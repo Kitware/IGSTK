@@ -30,7 +30,10 @@ DicomImageReaderBase
    m_FilenamesGenerator->SetDirectory( directoryName );
 }
 
+const std::vector<std::string> & DicomImageReaderBase::GetSeriesUIDs(){
+	return m_FilenamesGenerator->GetSeriesUIDs();
 
+}
 
 }  // end namespace ISIS
 
