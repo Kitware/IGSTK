@@ -708,7 +708,7 @@ void IGMTracking::ProcessAxialViewInteraction( void )
 
 void IGMTracking::ProcessAxialViewMouseMoveInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata)
 {
-  float pos[3];
+  double pos[3];
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
   if (pTracking->m_AxialViewer.m_Actor->GetInput() != NULL)
@@ -721,7 +721,7 @@ void IGMTracking::ProcessAxialViewMouseMoveInteraction(vtkObject *caller, unsign
 void IGMTracking::ProcessAxialViewRightClickInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata)
 {
   unsigned int i;
-  float pos[3];
+  double pos[3];
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
   if (pTracking->m_AxialViewer.m_Actor->GetInput() != NULL)
@@ -738,7 +738,7 @@ void IGMTracking::ProcessAxialViewRightClickInteraction(vtkObject *caller, unsig
 
 void IGMTracking::ProcessCoronalViewMouseMoveInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata)
 {
-  float pos[3];
+  double pos[3];
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
   if (pTracking->m_CoronalViewer.m_Actor->GetInput() != NULL)
@@ -751,7 +751,7 @@ void IGMTracking::ProcessCoronalViewMouseMoveInteraction(vtkObject *caller, unsi
 void IGMTracking::ProcessCoronalViewRightClickInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata)
 {
   unsigned int i;
-  float pos[3];
+  double pos[3];
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
   if (pTracking->m_CoronalViewer.m_Actor->GetInput() != NULL)
@@ -768,7 +768,7 @@ void IGMTracking::ProcessCoronalViewRightClickInteraction(vtkObject *caller, uns
 
 void IGMTracking::ProcessSagittalViewMouseMoveInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata)
 {
-  float pos[3];
+  double pos[3];
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
   if (pTracking->m_SagittalViewer.m_Actor->GetInput() != NULL)
@@ -781,7 +781,7 @@ void IGMTracking::ProcessSagittalViewMouseMoveInteraction(vtkObject *caller, uns
 void IGMTracking::ProcessSagittalViewRightClickInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata)
 {
   unsigned int i;
-  float pos[3];
+  double pos[3];
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
   if (pTracking->m_SagittalViewer.m_Actor->GetInput() != NULL)
@@ -850,7 +850,7 @@ void IGMTracking::SyncAllViews( const double aboutPoint[3] )
 	
 }
 
-int IGMTracking::TrackingPoint( const float aboutPoint[3], bool show )
+int IGMTracking::TrackingPoint( const double aboutPoint[3], bool show )
 {
   unsigned int i;
 	itk::Point< float, 3 > point;
@@ -1176,8 +1176,10 @@ void IGMTracking::OnOverlay( void )
 	double toolPositionInImageSpace[3], anotherPositionInImageSpace[3];
   float spacing[3];
   double anotherPosition[3];
-  float NoRefPosition1[3], NoRefPosition2[3];
-  double refToolNewPosition[3], offset[3], offsetInImageSpace1[3], offsetInImageSpace2[3];
+  double NoRefPosition1[3], NoRefPosition2[3];
+  double refToolNewPosition[3];
+  float offset[3];
+  double offsetInImageSpace1[3], offsetInImageSpace2[3];
   double tippos[3], hippos[3];
   char mes[128];
 //=======
@@ -1357,7 +1359,7 @@ void IGMTracking::OnOverlay( void )
 		this->PrintMessage("Thread Creation Failed.");
 	}
 }
-
+/*
 //<<<<<<< IGMTracking.cxx
 //float IGMTracking::GetImageScale( void )
 //=======
@@ -1456,7 +1458,7 @@ void IGMTracking::OnMotionTracking( void )
 		this->PrintMessage("Thread Creation Failed.");
 	}
 }
-
+*/
 
 double IGMTracking::GetImageScale( void )
 //>>>>>>> 1.6
@@ -1530,17 +1532,17 @@ void IGMTracking::SetProbeRadius( int i, const float val )
 
 void IGMTracking::PrintDebugInfo( void )
 {
-	double pos[3];
+	double pos1[3];
 	printf("Debug Information:\n");
 //<<<<<<< IGMTracking.cxx
 	m_SagittalViewer.m_TargetPositionMarker.GetCenter( pos1 );
 	printf("Target: %4.3f   %4.3f   %4.3f\n", pos1[0], pos1[1], pos1[2]);
 	m_SagittalViewer.m_EntryPositionMarker.GetCenter( pos1 );
 	printf("Entry: %4.3f   %4.3f   %4.3f\n", pos1[0], pos1[1], pos1[2]);
-	m_SagittalViewer.m_EntryToTargetPathMarker.m_LineSource->GetPoint1( pos1 );
-	m_SagittalViewer.m_EntryToTargetPathMarker.m_LineSource->GetPoint2( pos2 );
-	printf("Line Point 01: %4.3f   %4.3f   %4.3f\n", pos1[0], pos1[1], pos1[2]);
-	printf("Line Point 02: %4.3f   %4.3f   %4.3f\n", pos2[0], pos2[1], pos2[2]);
+//	m_SagittalViewer.m_EntryToTargetPathMarker.m_LineSource->GetPoint1( pos1 );
+//	m_SagittalViewer.m_EntryToTargetPathMarker.m_LineSource->GetPoint2( pos2 );
+//	printf("Line Point 01: %4.3f   %4.3f   %4.3f\n", pos1[0], pos1[1], pos1[2]);
+//	printf("Line Point 02: %4.3f   %4.3f   %4.3f\n", pos2[0], pos2[1], pos2[2]);
 /*=======
 	m_SaggitalViewer.m_TargetPositionMarker.GetCenter( pos );
 	printf("Target: %4.3f   %4.3f   %4.3f\n", pos[0], pos[1], pos[2]);

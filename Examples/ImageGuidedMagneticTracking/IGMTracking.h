@@ -106,7 +106,7 @@ public:
 	
 	virtual void SyncAllViews( const double aboutPoint[3] );
 
-  int TrackingPoint( const float aboutPoint[3], bool showpos = true );
+  int TrackingPoint( const double aboutPoint[3], bool showpos = true );
 
 	virtual void ProcessDicomReaderInteraction( void );
 	
