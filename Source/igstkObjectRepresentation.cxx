@@ -32,8 +32,10 @@ ObjectRepresentation::ObjectRepresentation()
   m_LastMTime = 0;
   m_PositionObserver    = ObserverType::New();
   m_OrientationObserver = ObserverType::New();
+  m_GeometryObserver    = ObserverType::New();
   m_PositionObserver->SetCallbackFunction(    this, & ObjectRepresentation::UpdatePositionFromGeometry    );
   m_OrientationObserver->SetCallbackFunction( this, & ObjectRepresentation::UpdateOrientationFromGeometry );
+  m_GeometryObserver->SetCallbackFunction(    this, & ObjectRepresentation::UpdateRepresentationFromGeometry );
 } 
 
 /** Destructor */
@@ -112,6 +114,15 @@ void ObjectRepresentation::UpdateOrientationFromGeometry()
 
   // Update the modified time
   m_LastMTime = this->GetMTime();
+}
+
+/** Update the object representation. This method must be overrided in every
+ * derived class. */
+void ObjectRepresentation::UpdateRepresentationFromGeometry()
+{
+  std::cerr << "If you see this message: it means that you forgot " << std::endl;
+  std::cerr << "to override the method UpdateRepresentationFromGeometry()" << std::endl;
+  std::cerr << "in a class deriving from ObjectRepresentation" << std::endl;
 }
 
 

@@ -22,11 +22,11 @@
 #endif
 
 #include <vector>
-#include <igstkMacros.h>
-#include <itkObject.h>
-#include <igstkSpatialObject.h>
-#include <vtkProp3D.h>
-#include <itkCommand.h>
+#include "igstkMacros.h"
+#include "itkObject.h"
+#include "igstkSpatialObject.h"
+#include "vtkProp3D.h"
+#include "itkCommand.h"
 
 
 namespace igstk
@@ -66,20 +66,13 @@ public:
   void SetColor(float r, float g, float b);
 
   /** Get each color component */
-  float GetRed() {return m_Color[0];}
-  float GetGreen() {return m_Color[1];}
-  float GetBlue() {return m_Color[2];}
+  float GetRed() const   {return m_Color[0];}
+  float GetGreen() const {return m_Color[1];}
+  float GetBlue() const  {return m_Color[2];}
 
   /** Set/Get the opacity */
   SetMacro(Opacity,float);
   GetMacro(Opacity,float);
-
-
-  /** Update the position of the visual representation by using the information
-   * from the Spatial Object. */
-  void UpdatePositionFromGeometry();  
-  void UpdateOrientationFromGeometry();  
-   
 
   /** Has the object been modified */
   bool IsModified() const;
@@ -108,7 +101,17 @@ private:
 
   ObserverType::Pointer       m_PositionObserver;
   ObserverType::Pointer       m_OrientationObserver;
+  ObserverType::Pointer       m_GeometryObserver;
 
+  /** Update the position of the visual representation by using the information
+   * from the Spatial Object. */
+  void UpdatePositionFromGeometry();  
+  void UpdateOrientationFromGeometry();  
+
+  /** update the visual representation with changes in the geometry */
+  virtual void UpdateRepresentationFromGeometry();
+
+ 
 };
 
 } // end namespace igstk
