@@ -22,6 +22,7 @@
 #include "itkCurvatureFlowImageFilter.h"
 #include "itkImage.h"
 
+#include "igstkMacros.h"
 
 /** 
 
@@ -50,10 +51,10 @@ public:
 
 
   /**  The expected input images for this module are stored
-       in 16 bits which is the common representation for CT
-       scans of liver cases. The type must be signed because
-       images in huntsfield units contain negative values */
-  typedef   signed short    InputPixelType;
+       in 8 bits and are the output of a resampling and intensity
+       windowing preprocessing.  */
+
+  typedef   unsigned char    InputPixelType;
 
 
 
@@ -67,6 +68,10 @@ public:
   /**  Image dimension. This module is specific for 3D images */
   itkStaticConstMacro( Dimension, unsigned int, 3 );
   
+
+
+  /** Type of the image to be used as input to the module. */
+  typedef itk::Image< InputPixelType,    Dimension >   InputImageType;
 
 
   /** Type of the image to be used for internal computation
@@ -92,7 +97,7 @@ public:
        is applied as a preprocessing step to the input image in order
        to reduce the statistical variability of the regions in the image. */
   typedef   itk::CurvatureFlowImageFilter< 
-                             InternalImageType, 
+                             InputImageType, 
                              InternalImageType >  SmoothingFilterType;
 
 
@@ -113,23 +118,49 @@ public:
 
 
 public:
-    
-    ConfidenceConnectedModule();
-    ~ConfidenceConnectedModule();
+  
+  ConfidenceConnectedModule();
 
-    void SetInput( const InternalImageType * filename );
-    const OutputImageType * GetOutput();
-    void SetSeedPoint( int x, int y, int z );
-    void SetMultiplier( float multiplier );
-    void SetNumberOfIterations( unsigned int iterations );
-    void Execute();
+  ~ConfidenceConnectedModule();
+  
+  void SetInput( const InputImageType * image );
 
+  const OutputImageType * GetOutput();
+
+  void SetSeedPoint( int x, int y, int z );
+  
+  void Execute();
+  
+  GetMacro( SmoothingTimeStep, double );
+  GetMacro( SmoothingIterations, unsigned int );
+  
+  GetMacro( Multiplier, double );
+  GetMacro( InitialNeighborhoodRadius, unsigned int );
+  GetMacro( NumberOfIterations, unsigned int );
+  
+  SetMacro( SmoothingTimeStep, double );
+  SetMacro( SmoothingIterations, unsigned int );
+  
+  SetMacro( Multiplier, double );
+  SetMacro( InitialNeighborhoodRadius, unsigned int );
+
+  SetMacro( NumberOfIterations, unsigned int );
+  
 private:
-
-    SmoothingFilterType::Pointer            m_SmoothingFilter;
-
-    ConnectedFilterType::Pointer            m_ConfidenceConnectedFilter;
-
+  
+  SmoothingFilterType::Pointer            m_SmoothingFilter;
+  
+  ConnectedFilterType::Pointer            m_ConfidenceConnectedFilter;
+  
+  /** Parameters for the Smoothing filter */
+  unsigned int   m_SmoothingIterations;
+  double         m_SmoothingTimeStep
+    ;
+  
+  /** Parameters for the Confidence Connected filter */
+  double         m_Multiplier;
+  unsigned int   m_NumberOfIterations;
+  unsigned int   m_InitialNeighborhoodRadius;
 };
 
 

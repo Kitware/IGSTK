@@ -30,12 +30,12 @@ ConnectedThresholdModule
   m_ConnectedThresholdFilter->SetInput( m_SmoothingFilter->GetOutput() );
 
   /*  Define reasonable defaults for the parameters */
-  m_SmoothingFilter->SetNumberOfIterations( 20 );
-  m_SmoothingFilter->SetTimeStep( 0.0625 );
-
-  m_ConnectedThresholdFilter->SetLower(   0 );
-  m_ConnectedThresholdFilter->SetUpper( 255 );
-  m_ConnectedThresholdFilter->SetReplaceValue( 255 );
+   m_SmoothingIterations = 20;
+   m_SmoothingTimeStep = 0.0625;
+   m_LowerThreshold = 0;
+   m_UpperThreshold = 255;
+  
+   m_ConnectedThresholdFilter->SetReplaceValue( 255 );
 
   // Allow filter to release data as the execution of
   // pipeline progresses from filter to filter.
@@ -59,7 +59,7 @@ ConnectedThresholdModule
 
 void
 ConnectedThresholdModule
-::SetInput( const InternalImageType * image )
+::SetInput( const InputImageType * image )
 {
   m_SmoothingFilter->SetInput( image );
 }
@@ -72,26 +72,6 @@ ConnectedThresholdModule
 {
    return m_ConnectedThresholdFilter->GetOutput();
 }
-
-
-
-void
-ConnectedThresholdModule
-::SetLowerThreshold( float pixelValue )
-{
-   m_ConnectedThresholdFilter->SetLower( pixelValue );
-}
-
-
-
-
-void
-ConnectedThresholdModule
-::SetUpperThreshold( float pixelValue )
-{
-   m_ConnectedThresholdFilter->SetUpper( pixelValue );
-}
-
 
 
 
@@ -115,17 +95,22 @@ ConnectedThresholdModule
 {
   try
     {
+    std::cout << "Initiating ConnectedThresholdModule Parameters ..." << std::endl;
+
+    m_SmoothingFilter->SetNumberOfIterations( m_SmoothingIterations );
+    m_SmoothingFilter->SetTimeStep( m_SmoothingTimeStep );
+    m_ConnectedThresholdFilter->SetLower( m_LowerThreshold );
+    m_ConnectedThresholdFilter->SetUpper( m_UpperThreshold );
+
     std::cout << "Initiating segmentation..." << std::endl;
     m_SmoothingFilter->Update();
     std::cout << "Image smoothed" << std::endl;
     m_ConnectedThresholdFilter->Update();
-    std::cout << "Image segmented" << std::endl;
-    std::cout << std::endl << "Module done !"; 
-    std::cout << std::endl << std::endl;
+    std::cout << "Image Segmentation Completed." << std::endl;
     }
   catch( itk::ExceptionObject & excep )
     {
-    std::cerr << "Exception caught !" << std::endl;
+    std::cerr << "Exception caught in ConnectedThresholdModule!" << std::endl;
     std::cerr << excep << std::endl;
     }
 }
