@@ -58,6 +58,8 @@ m_PortRestSpan(10)
   m_StateMachine.AddInput( m_ClosePortInput,  "ClosePort");
   m_StateMachine.AddInput( m_RestCommunication, "RestCommunication");
   m_StateMachine.AddInput( m_FlushOutputBuffer, "FlushOutputBuffer");
+  m_StateMachine.AddInput( m_SendString, "SendString");
+  m_StateMachine.AddInput( m_ReceiveString, "ReceiveString");
 
   const ActionType NoAction = 0;
 
@@ -74,6 +76,8 @@ m_PortRestSpan(10)
 
   m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_RestCommunication, m_PortReadyForCommunicationState, &SerialCommunication::RestCommunicationProcessing);
   m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_FlushOutputBuffer, m_PortReadyForCommunicationState, &SerialCommunication::FlushOutputBufferProcessing);
+  m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_SendString, m_PortReadyForCommunicationState, &SerialCommunication::SendStringProcessing);
+  m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_ReceiveString, m_PortReadyForCommunicationState, &SerialCommunication::ReceiveStringProcessing);
 
   m_StateMachine.SelectInitialState( m_IdleState );
 
@@ -118,7 +122,10 @@ void SerialCommunication::FlushOutputBuffer( void )
 
 void SerialCommunication::SendString( const CommunicationDataType& message )
 {
-//  m_StringToSend = message;
+  int strSize = (message.size()<m_WriteBufferSize) ? message.size() : m_WriteBufferSize;
+  memcpy(m_OutputBuffer, message.c_str(), sizeof(char)*strSize);
+  this->m_StateMachine.ProcessInput( m_SendString );
+  m_OutputBuffer[strSize] = '\0';
 }
 
 
@@ -151,8 +158,11 @@ void SerialCommunication::OpenCommunicationPortProcessing( void )
 void SerialCommunication::SetDataBufferSizeProcessing( void )
 {
   if (m_InputBuffer!=NULL) delete m_InputBuffer; 
-  m_InputBuffer = new unsigned char[ m_ReadBufferSize ];
-  if (!SetupComm(this->m_PortHandle, m_ReadBufferSize, m_WriteBufferSize)) 
+  m_InputBuffer = new char[ m_ReadBufferSize ];
+  if (m_OutputBuffer!=NULL) delete m_OutputBuffer; 
+  m_OutputBuffer = new char[ m_WriteBufferSize + 1 ]; // one extra byte to store end of string
+  if ((m_InputBuffer==NULL) || (m_OutputBuffer==NULL) || 
+      !SetupComm(this->m_PortHandle, m_ReadBufferSize, m_WriteBufferSize)) 
   {
     this->InvokeEvent( SetDataBufferSizeFailureEvent() );
   }
@@ -247,6 +257,9 @@ void SerialCommunication::ClearBuffersAndCloseCommunicationPortProcessing( void 
   if (m_InputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_InputBuffer;
   m_InputBuffer = NULL;
+  if (m_OutputBuffer!= NULL) // This check not required, still keeping for safety
+    delete m_OutputBuffer;
+  m_OutputBuffer = NULL;
   this->CloseCommunicationPortProcessing();
 }
 
@@ -280,6 +293,82 @@ void SerialCommunication::FlushOutputBufferProcessing( void )
     this->InvokeEvent( FlushOutputBufferFailureEvent() );
   }
 }
+
+
+void SerialCommunication::SendStringProcessing( void )
+{
+  //OVERLAPPED structure contains information used in asynchronous input and output (I/O).
+  OVERLAPPED    overlappedWrite = {0};
+
+  //create an overlapped event for asynchronous write
+  overlappedWrite.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+  if( overlappedWrite.hEvent == NULL )
+  {
+    this->InvokeEvent( SendStringCreateEventFailureEvent() );
+    return;
+  }
+
+  //try writing to the hardware
+  unsigned long   bytesToWrite = strlen(m_OutputBuffer);
+  unsigned long   writtenBytes;
+
+  bool successfulWrite = WriteFile(this->m_PortHandle, m_OutputBuffer, bytesToWrite, &writtenBytes, &overlappedWrite);
+ 
+  //check if writing event successful
+  if (successfulWrite) 
+  { // successfully wrote all data
+    if (writtenBytes==bytesToWrite)
+    {
+      this->InvokeEvent( SendStringSuccessfulEvent());
+    }
+    //write timeout occurred, and all data could not get written
+    else
+    {
+      this->InvokeEvent( SendStringWriteTimeoutEvent() );
+    }
+  }
+  //else check if writing operation is pending,
+  else if (GetLastError()==ERROR_IO_PENDING)
+  { // if so, wait for write to succeed or timeout.
+    DWORD waitResult = WaitForSingleObject(overlappedWrite.hEvent, INFINITE); 
+    switch(waitResult)
+    {
+    case WAIT_OBJECT_0:
+      //check if writing succeeded 
+      if( GetOverlappedResult(this->m_PortHandle, &overlappedWrite, &writtenBytes, FALSE)
+              && (writtenBytes==bytesToWrite))
+      {
+        this->InvokeEvent( SendStringSuccessfulEvent() );
+      }
+      //writing timeout occurred before all data could be written.
+      else
+      {
+        this->InvokeEvent( SendStringWriteTimeoutEvent() );
+      } 
+      break;
+    case WAIT_TIMEOUT:
+      //wait timeout occurred
+      this->InvokeEvent( SendStringWaitTimeoutEvent() );
+      break;
+    default:
+      this->InvokeEvent( SendStringFailureEvent() );
+    } 
+  }
+  //writing operation failed.
+  else
+  {
+      this->InvokeEvent( SendStringFailureEvent() );
+  }
+
+  //Close the created overlapped event.
+  CloseHandle(overlappedWrite.hEvent);
+}
+
+
+void SerialCommunication::ReceiveStringProcessing( void )
+{
+}
+
 
 void SerialCommunication::SetLogger( LoggerType* logger )
 {
