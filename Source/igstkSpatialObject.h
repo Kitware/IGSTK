@@ -46,6 +46,9 @@ public:
   typedef itk::SmartPointer<const Self>  ConstPointer; 
   typedef itk::SpatialObject<3>          SpatialObjectType;
 
+  typedef itk::Matrix<double,3,3>        MatrixType;
+  typedef itk::Vector<double,3>          VectorType;
+ 
   /**  Run-time type information (and related methods). */
   itkTypeMacro( Self, Object );
 
@@ -54,6 +57,12 @@ public:
 
   /** Set the offset in its Transformation */
   void SetOffset( double ox, double oy, double oz );
+
+  /** Return the Matrix and Offset related to the ObjectToWorld transformation
+   * of the SpatialObject */
+  VectorType GetOffset() const;
+  MatrixType GetMatrix() const;
+
 
 protected:
 

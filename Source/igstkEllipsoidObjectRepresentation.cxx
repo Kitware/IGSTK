@@ -72,7 +72,7 @@ void EllipsoidObjectRepresentation::SetEllipsoid( const EllipsoidObjectType * el
   m_EllipsoidObject->AddObserver( PositionModifiedEvent(), m_PositionObserver );
 
   m_GeometryObserver->SetCallbackFunction( this, & EllipsoidObjectRepresentation::UpdateRepresentationFromGeometry );
-  m_PositionObserver->SetCallbackFunction( this, & EllipsoidObjectRepresentation::UpdatePositionFromGeometry );
+  m_PositionObserver->SetCallbackFunction( this, & ObjectRepresentation::UpdatePositionFromGeometry );
 } 
 
 

@@ -93,7 +93,7 @@ void Scene::Update()
     // We update only if the object has been modified
     if((*it)->IsModified())
       {
-      (*it)->Update();
+      (*it)->UpdatePositionFromGeometry();
       }
     it++;
     }

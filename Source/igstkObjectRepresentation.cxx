@@ -68,12 +68,10 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
 
 /** Update the object representation (i.e vtkActors). Maybe we should check also the transform
  *  modified time. */
-void ObjectRepresentation::Update()
+void ObjectRepresentation::UpdatePositionFromGeometry()
 {
-  std::cout << "FIXME" << std::endl;
-  /*
-  itk::Matrix<double,3,3> itkMatrix = m_SpatialObject->GetObjectToWorldTransform()->GetMatrix();
-  itk::Vector<double,3>   offset = m_SpatialObject->GetObjectToWorldTransform()->GetOffset();
+  SpatialObject::MatrixType itkMatrix = m_SpatialObject->GetMatrix();
+  SpatialObject::VectorType offset    = m_SpatialObject->GetOffset();
  
   vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
   for(unsigned int i=0;i<3;i++)
@@ -93,7 +91,6 @@ void ObjectRepresentation::Update()
     (*it)->SetUserMatrix(vtkMatrix);
     it++;
   }
-*/
 
   // Update the modified time
   m_LastMTime = this->GetMTime();

@@ -46,6 +46,21 @@ void SpatialObject::SetOffset(double ofx, double ofy, double ofz)
   this->InvokeEvent( PositionModifiedEvent() ); 
 }
 
+/** Get Offset */
+SpatialObject::VectorType
+SpatialObject::GetOffset()  const
+{
+   return m_SpatialObject->GetObjectToWorldTransform()->GetOffset();
+}
+
+
+/** Get Matrix */
+SpatialObject::MatrixType
+SpatialObject::GetMatrix()  const
+{
+   return m_SpatialObject->GetObjectToWorldTransform()->GetMatrix();
+}
+
 
 } // end namespace igstk
 

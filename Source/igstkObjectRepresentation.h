@@ -74,8 +74,9 @@ public:
   GetMacro(Opacity,float);
 
 
-  /** Update */
-  void Update();  
+  /** Update the position of the visual representation by using the information
+   * from the Spatial Object. */
+  void UpdatePositionFromGeometry();  
    
 
   /** Has the object been modified */
