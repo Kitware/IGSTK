@@ -27,52 +27,50 @@ namespace igstk
 {
 
 /** \class MultipleOutput
-    \brief Class MultipleOutput allows writing simultaneously to multiple streams. 
-    Note that the class derives from std::streambuf and contains a std::set<> 
-    of std::ostream.
+    \brief Class MultipleOutput allows writing simultaneously to multiple
+    streams.  Note that the class derives from std::streambuf and contains a
+    std::set<> of std::ostream.
 */
 
 class MultipleOutput : virtual public std::streambuf
 {
 private:
   
-    typedef std::ostream               StreamType;
-    typedef std::set< StreamType * >   ContainerType;
+  typedef std::ostream               StreamType;
+  typedef std::set< StreamType * >   ContainerType;
 
 public:
 
-    /** Adds an output stream to the MultipleOutput for writing. */
-    void AddOutputStream( StreamType & output )
-    {
-        m_Output.insert( &output ); // insert the address
-    }
+  /** Constructor */
+  MultipleOutput();
 
-    /** The Flush method flushes all the streams. */  
-    void Flush( void )
-    {
-        ContainerType::iterator itr = m_Output.begin();
-        ContainerType::iterator end = m_Output.end();
-        while( itr != end )
-        {
-            (*(*itr)).flush(); 
-            ++itr;
-        }
-    }
+  /** Destructor */
+  ~MultipleOutput();
 
-    /** Definition of << operator */
 
-    template <class T>
-    MultipleOutput& operator << ( T tt )
-    {
-        ContainerType::iterator itr = m_Output.begin();
-        ContainerType::iterator end = m_Output.end();
-        while( itr != end )
-        {
-            *(*itr) << tt ;
-            ++itr;
-        }
-        return * this;
-    }
+  /** Register a additional output stream into the list of ostreams to write
+   * to. The messages will be sent to the streams in the same order that the
+   * streams have been added here.  */
+  void AddOutputStream( StreamType & output );
+
+
+  /** Broadcast a flush operation to all the output streams */
+  void Flush();
+
+  /** Operator that will receive different input types and will forward  them
+   * to the multiple outputs. */
+  template <class T>
+  MultipleOutput& operator << ( T tt )
+  {
+    ContainerType::iterator itr = m_Output.begin();
+    ContainerType::iterator end = m_Output.end();
+    while( itr != end )
+      {
+      *(*itr) << tt ;
+      ++itr;
+      }
+    return *this;
+  }
 
 
 private:

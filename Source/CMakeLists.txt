@@ -38,6 +38,7 @@ SET(IGSTK_SRCS
   igstkEllipsoidObject.cxx
   igstkEllipsoidObjectRepresentation.cxx
   igstkLogger.cxx
+  igstkMultipleOutput.cxx
   igstkObjectRepresentation.cxx
   igstkScene.cxx
   igstkSpatialObject.cxx
