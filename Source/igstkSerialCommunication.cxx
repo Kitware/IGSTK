@@ -14,15 +14,17 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+#include <iostream>
+
 #include "igstkSerialCommunication.h"
 
 
 namespace igstk
 { 
 /** Constructor */
-SerialCommunication::SerialCommunication() :   m_StateMachine( this ),
+SerialCommunication::SerialCommunication() :  m_StateMachine( this ),
 m_ReadBufferSize(3000), m_WriteBufferSize(200), m_InputBuffer( NULL),
-m_PortRestSpan(10)
+m_OutputBuffer( NULL), m_PortRestSpan(10)
 {
   /** Default communication settings */
   this->m_BaudRate = BAUD9600;
@@ -128,6 +130,10 @@ void SerialCommunication::SendString( const CommunicationDataType& message )
   m_OutputBuffer[strSize] = '\0';
 }
 
+void SerialCommunication::ReceiveString( void )
+{
+  this->m_StateMachine.ProcessInput( m_ReceiveString );
+}
 
 void SerialCommunication::OpenCommunicationPortProcessing( void )
 {
@@ -157,12 +163,12 @@ void SerialCommunication::OpenCommunicationPortProcessing( void )
 
 void SerialCommunication::SetDataBufferSizeProcessing( void )
 {
-  if (m_InputBuffer!=NULL) delete m_InputBuffer; 
-  m_InputBuffer = new char[ m_ReadBufferSize ];
-  if (m_OutputBuffer!=NULL) delete m_OutputBuffer; 
-  m_OutputBuffer = new char[ m_WriteBufferSize + 1 ]; // one extra byte to store end of string
-  if ((m_InputBuffer==NULL) || (m_OutputBuffer==NULL) || 
-      !SetupComm(this->m_PortHandle, m_ReadBufferSize, m_WriteBufferSize)) 
+  if (this->m_InputBuffer!=NULL) delete (this->m_InputBuffer); 
+  this->m_InputBuffer = new char[ this->m_ReadBufferSize ];
+  if (this->m_OutputBuffer!=NULL) delete this->m_OutputBuffer; 
+  this->m_OutputBuffer = new char[ this->m_WriteBufferSize + 1 ]; // one extra byte to store end of string
+  if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL) || 
+      !SetupComm(this->m_PortHandle, this->m_ReadBufferSize, this->m_WriteBufferSize)) 
   {
     this->InvokeEvent( SetDataBufferSizeFailureEvent() );
   }
@@ -170,10 +176,8 @@ void SerialCommunication::SetDataBufferSizeProcessing( void )
   {
     //Clear out buffers
     PurgeComm(this->m_PortHandle, PURGE_TXABORT | PURGE_TXCLEAR | PURGE_RXABORT | PURGE_RXCLEAR);
-    m_DataSize = 0;
-    m_BufferOffset = 0;
-    this->m_BufferOffset = 0;
-    this->m_DataSize = 0;
+    this->m_ReadDataSize = 0;
+    this->m_ReadBufferOffset = 0;
     memset(this->m_InputBuffer, '\0', sizeof(this->m_InputBuffer));
 
     igstkLogMacro( igstk::Logger::DEBUG, "SetDataBufferSizeParameters with Read Buffer size = ");
@@ -304,7 +308,7 @@ void SerialCommunication::SendStringProcessing( void )
   overlappedWrite.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
   if( overlappedWrite.hEvent == NULL )
   {
-    this->InvokeEvent( SendStringCreateEventFailureEvent() );
+    this->InvokeEvent( OverlappedEventCreationFailureEvent() );
     return;
   }
 
@@ -312,7 +316,7 @@ void SerialCommunication::SendStringProcessing( void )
   unsigned long   bytesToWrite = strlen(m_OutputBuffer);
   unsigned long   writtenBytes;
 
-  bool successfulWrite = WriteFile(this->m_PortHandle, m_OutputBuffer, bytesToWrite, &writtenBytes, &overlappedWrite);
+  bool successfulWrite = WriteFile(this->m_PortHandle, this->m_OutputBuffer, bytesToWrite, &writtenBytes, &overlappedWrite);
  
   //check if writing event successful
   if (successfulWrite) 
@@ -367,6 +371,89 @@ void SerialCommunication::SendStringProcessing( void )
 
 void SerialCommunication::ReceiveStringProcessing( void )
 {
+  std::cout << "Came to ReceiveStringProcessing" << std::endl;
+
+  //Get status of the communication device.
+  DWORD      communicationErrors = 0;
+  COMSTAT    communicationStatus = {0};
+  if( !ClearCommError( this->m_PortHandle, &communicationErrors, &communicationStatus ))
+  {
+      this->InvokeEvent( CommunicationStatusReportFailureEvent() );
+      return;
+  }
+
+  int bytesToRead = (communicationStatus.cbInQue < m_ReadBufferSize) ? communicationStatus.cbInQue : m_ReadBufferSize;
+
+  std::cout << "Bytes to read = " << bytesToRead << std::endl;
+
+  //OVERLAPPED structure contains information used in asynchronous input/output (I/O).
+  OVERLAPPED    overlappedRead = {0};
+  //create an overlapped event for asynchronous read
+  overlappedRead.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+  if( overlappedRead.hEvent == NULL )
+  {
+    this->InvokeEvent( OverlappedEventCreationFailureEvent() );
+    return;
+  }
+
+  //try reading from the hardware
+  unsigned long   readBytes;
+
+  bool successfulRead = ReadFile(this->m_PortHandle, this->m_InputBuffer, \
+    bytesToRead, &readBytes, &overlappedRead);
+
+  //check if reading event successful
+  if (successfulRead) 
+  { // successfully read all data
+    if (readBytes==bytesToRead)
+    {
+      this->InvokeEvent( ReceiveStringSuccessfulEvent());
+      this->m_ReadDataSize = readBytes;
+      this->m_ReadBufferOffset = 0;
+   }
+    //read timeout occurred, and all data could not get read
+    else
+    {
+      this->InvokeEvent( ReceiveStringReadTimeoutEvent() );
+    }
+  }
+  //else check if reading operation is pending,
+  else if (GetLastError()==ERROR_IO_PENDING)
+  { // if so, wait for read to succeed or timeout.
+    DWORD waitResult = WaitForSingleObject(overlappedRead.hEvent, 1000); 
+    switch(waitResult)
+    {
+    case WAIT_OBJECT_0:
+      //check if reading succeeded 
+      if( GetOverlappedResult(this->m_PortHandle, &overlappedRead, &readBytes, FALSE)
+              && (readBytes==bytesToRead))
+      {
+        this->InvokeEvent( ReceiveStringSuccessfulEvent() );
+      }
+      //reading timeout occurred before all data could be read.
+      else
+      {
+        this->InvokeEvent( ReceiveStringReadTimeoutEvent() );
+      } 
+      break;
+    case WAIT_TIMEOUT:
+      //wait timeout occurred
+      this->InvokeEvent( ReceiveStringWaitTimeoutEvent() );
+      break;
+    default:
+      this->InvokeEvent( ReceiveStringFailureEvent() );
+    } 
+  }
+  //writing operation failed.
+  else
+  {
+      this->InvokeEvent( ReceiveStringFailureEvent() );
+  }
+
+  std::cout << "String: " << this->m_InputBuffer << std::endl;
+ 
+  //Close the created overlapped event.
+  CloseHandle(overlappedRead.hEvent);
 }
 
 
