@@ -60,8 +60,8 @@ public:
 
   /** Return the Matrix and Offset related to the ObjectToWorld transformation
    * of the SpatialObject */
-  VectorType GetOffset() const;
-  MatrixType GetMatrix() const;
+  const VectorType & GetOffset() const;
+  const MatrixType & GetMatrix() const;
 
 
 protected:
@@ -80,6 +80,9 @@ private:
   /** Internal itkSpatialObject */
   SpatialObjectType::Pointer   m_SpatialObject;
 
+  /** Internal fake vector and matrix */
+  VectorType m_FakeVector;
+  MatrixType m_FakeMatrix;
 };
 
 } // end namespace igstk

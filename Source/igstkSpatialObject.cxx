@@ -17,7 +17,6 @@
 #include "igstkSpatialObject.h"
 #include "igstkEvents.h"
 
-
 namespace igstk
 { 
 
@@ -25,6 +24,7 @@ namespace igstk
 /** Constructor */
 SpatialObject::SpatialObject()
 {
+  m_SpatialObject = NULL;
 } 
 
 /** Destructor */
@@ -52,23 +52,38 @@ void SpatialObject::SetOffset(double ofx, double ofy, double ofz)
   offset[0] = ofx;
   offset[1] = ofy;
   offset[2] = ofz;
-  m_SpatialObject->GetObjectToWorldTransform()->SetOffset(offset);
-  this->InvokeEvent( PositionModifiedEvent() ); 
+  if(m_SpatialObject)
+    {
+    m_SpatialObject->GetObjectToWorldTransform()->SetOffset(offset);
+    this->InvokeEvent( PositionModifiedEvent() );
+    }
 }
 
 /** Get Offset */
-SpatialObject::VectorType
+const SpatialObject::VectorType &
 SpatialObject::GetOffset()  const
 {
-   return m_SpatialObject->GetObjectToWorldTransform()->GetOffset();
+  if(m_SpatialObject)
+    {
+    return m_SpatialObject->GetObjectToWorldTransform()->GetOffset();
+    }
+
+  // FIXME: we should handle error here
+  return m_FakeVector;
 }
 
 
 /** Get Matrix */
-SpatialObject::MatrixType
+const SpatialObject::MatrixType &
 SpatialObject::GetMatrix()  const
 {
-   return m_SpatialObject->GetObjectToWorldTransform()->GetMatrix();
+  if(m_SpatialObject)
+    {
+    return m_SpatialObject->GetObjectToWorldTransform()->GetMatrix();
+    }
+
+  // FIXME: we should handle error here
+  return m_FakeMatrix;
 }
 
 
