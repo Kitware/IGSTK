@@ -115,7 +115,10 @@ StateMachine< TClass >
     
   if( state == m_States.end() )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+    if( m_This )
+      {
+      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+      }
     std::cerr << "State selected as initial state has not been defined yet. " << std::endl;
     std::cerr << "Attempted state = " << initialState.GetIdentifier() << std::endl;
     std::cerr.flush();
@@ -139,7 +142,10 @@ StateMachine< TClass >
 
   if( !m_This )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+    if( m_This )
+      {
+      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+      }
     std::cerr << "Error: attempt to invoke a SetReadyToRun " << std::endl;
     std::cerr << "but the m_This pointer is null. " << std::endl;
     std::cerr << "The method SetOwnerClass() must be invoked with a valid pointer " << std::endl;
@@ -151,7 +157,10 @@ StateMachine< TClass >
 
   if( m_ReadyToRun )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+    if( m_This )
+      {
+      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+      }
     std::cerr << "Error: attempt to invoke SetReadyToRun() " << std::endl;
     std::cerr << "but the machine is ready to go " << std::endl;
     std::cerr << "There is no reason for invoking SetReadyToRun() twice." << std::endl;
@@ -163,7 +172,10 @@ StateMachine< TClass >
 
   if( !m_InitialStateSelected )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+    if( m_This )
+      {
+      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+      }
     std::cerr << "Error: No initial state has been selected. "   << std::endl;
     std::cerr << "You must select an initial State out of the " << std::endl;
     std::cerr << "set of states defined for the State Machine." << std::endl;
@@ -184,7 +196,10 @@ StateMachine< TClass >
 
   if( !m_This )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+    if( m_This )
+      {
+      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+      }
     std::cerr << "Error: attempt to invoke StateTransition() " << std::endl;
     std::cerr << "but the m_This pointer is null. " << std::endl;
     std::cerr << "The method SetOwnerClass() must be invoked with a valid pointer " << std::endl;
@@ -195,7 +210,10 @@ StateMachine< TClass >
 
   if( !m_ReadyToRun )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+    if( m_This )
+      {
+      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+      }
     std::cerr << "Error: attempt to invoke a StateTransition " << std::endl;
     std::cerr << "but the machine is not ready to go" << std::endl;
     std::cerr << "You must invoke the method SetReadyToRun() first." << std::endl;
@@ -209,7 +227,10 @@ StateMachine< TClass >
   
   if( transitionsFromThisState == m_Transitions.end() )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+    if( m_This )
+      {
+      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+      }
     std::cerr << "No transitions have been defined for current state = ";
     std::cerr << m_State << std::endl;
     std::cerr.flush();
@@ -221,7 +242,10 @@ StateMachine< TClass >
 
   if( transitionItr == transitionsFromThisState->second->end() )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+    if( m_This )
+      {
+      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+      }
     std::cerr << "No transitions have been defined for current state and input " << std::endl;
     std::cerr << "State = "  << m_State << std::endl;
     std::cerr << "Input = "  << input.GetIdentifier() << std::endl;
@@ -258,7 +282,10 @@ StateMachine< TClass >
     
   if( stateItr == m_States.end() )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+    if( m_This )
+      {
+      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+      }
     std::cerr << "Attempt to add a Transition for a State that does not exist" << std::endl;
     std::cerr << "Attempted state     = " << state.GetIdentifier() << std::endl;
     std::cerr << "Attempted input     = " << input.GetIdentifier() << std::endl;
@@ -272,7 +299,10 @@ StateMachine< TClass >
     
   if( inputItr == m_Inputs.end() )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+    if( m_This )
+      {
+      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+      }
     std::cerr << "Attempt to add a Transition for an Input that does not exist" << std::endl;
     std::cerr << "Attempted state     = " << state.GetIdentifier() << std::endl;
     std::cerr << "Attempted input     = " << input.GetIdentifier() << std::endl;
@@ -287,7 +317,10 @@ StateMachine< TClass >
     
   if( newstateItr == m_States.end() )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+    if( m_This )
+      {
+      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+      }
     std::cerr << "Attempt to add a Transition for a New State that does not exist" << std::endl;
     std::cerr << "Attempted state     = " << state.GetIdentifier() << std::endl;
     std::cerr << "Attempted input     = " << input.GetIdentifier() << std::endl;
@@ -326,7 +359,10 @@ StateMachine< TClass >
       // accident. 
       StateIdentifierType newStateIdentifier = 
                       transitionsFromThisStateAndInput->second.GetStateIdentifier();
-      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+      if( m_This )
+        {
+        std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
+        }
       std::cerr << "Attempt to override an existing transition. "
                 << "Please verify the programming of your state machine. "
                 << "There is already a transition defined for the combination: " << std::endl;
