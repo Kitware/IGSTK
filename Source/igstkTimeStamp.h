@@ -16,8 +16,8 @@
 =========================================================================*/
 
 
-#ifndef __itkTimeStamp_H
-#define __itkTimeStamp_H
+#ifndef __igstkTimeStamp_H
+#define __igstkTimeStamp_H
 
 
 #include <time.h>

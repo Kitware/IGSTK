@@ -90,6 +90,6 @@ TimeStamp
 
 
 
-} // end namespace itk
+} // end namespace igstk
 
 
