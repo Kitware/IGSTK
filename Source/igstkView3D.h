@@ -17,12 +17,14 @@
 #ifndef _igstkView3D_h
 #define _igstkView3D_h
 
-#include <FL/Fl.H>
-#include <FL/Fl_Gl_Window.H>
 #include "igstkView.h"
 
-namespace igstk{
+namespace igstk {
 
+  /** 
+   * \brief View3D provided the functionality of rendering a scene in a 3D window.
+   *
+   */
 class View3D : public View 
 {
 public:
@@ -39,3 +41,4 @@ protected:
 } // end namespace igstk
 
 #endif
+

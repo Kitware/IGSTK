@@ -15,19 +15,12 @@
 
 =========================================================================*/
 #include "igstkView3D.h"
-#include <FL/x.H>
-#include <vtkRenderWindow.h>
-#include <vtkRenderer.h>
-#include <vtkInteractorStyle.h>
-#include <vtkVersion.h>
-#include <vtkCommand.h>
 
 namespace igstk{
 
 /** Constructor */
 View3D::View3D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
 {
-
 }
 
 /** Destructor */
@@ -41,13 +34,5 @@ int View3D::handle( int event )
   return View::handle( event );
 }
 
-/** */
-static char const rcsid[] =
-  "Id";
-
-const char *View3D_rcsid(void)
-{
-  return rcsid;
-}
 
 } // end namespace igstk

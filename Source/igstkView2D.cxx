@@ -15,14 +15,9 @@
 
 =========================================================================*/
 #include "igstkView2D.h"
-#include <FL/x.H>
-#include <vtkRenderWindow.h>
-#include <vtkRenderer.h>
-#include <vtkInteractorStyle.h>
-#include <vtkVersion.h>
-#include <vtkCommand.h>
 
-namespace igstk{
+
+namespace igstk {
 
 /** Constructor */
 View2D::View2D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
@@ -35,19 +30,12 @@ View2D::~View2D()
 {
 }
 
+
 /** Main FLTK event handler */
 int View2D::handle( int event ) 
 {
   return View::handle( event );
 }
 
-/** */
-static char const rcsid[] =
-  "Id";
-
-const char *View2D_rcsid(void)
-{
-  return rcsid;
-}
 
 } // end namespace igstk

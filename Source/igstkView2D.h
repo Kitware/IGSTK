@@ -17,12 +17,15 @@
 #ifndef _igstkView2D_h
 #define _igstkView2D_h
 
-#include <FL/Fl.H>
-#include <FL/Fl_Gl_Window.H>
 #include "igstkView.h"
 
-namespace igstk{
+namespace igstk {
 
+
+  /**
+   * \brief View2D provies the functionality of rendering a scene in a 2D window.
+   *
+   */
 class View2D : public View 
 {
 public:
@@ -39,3 +42,4 @@ protected:
 } // end namespace igstk
 
 #endif
+
