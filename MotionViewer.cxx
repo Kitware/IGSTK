@@ -8,6 +8,8 @@
 #include "vtkTextProperty.h"
 #include "vtkInteractorStyleImage.h"
 
+#include <stdlib.h>
+
 namespace ISIS
 {
 	
@@ -25,8 +27,8 @@ namespace ISIS
 	{
 		m_Width = 512;  
 		m_Height = 512;
-		m_BarWidth = m_Width * 0.8;
-		m_BarHeight = m_Height * 0.1;
+		m_BarWidth = static_cast<int>( m_Width * 0.8 );
+		m_BarHeight = static_cast<int>( m_Height * 0.1 );
 		
 		m_Actor         = vtkImageActor::New();
 		m_Renderer      = vtkRenderer::New();
@@ -46,7 +48,7 @@ namespace ISIS
 		ImageCanvas->FillBox(0, m_Width, 0, m_Height);
 		
 		float home = (m_Width - m_BarWidth) / 2.0 + 0.2 * m_BarWidth;
-		m_XPos = home;
+		m_XPos = static_cast<int>( home ); 
 		
 		DrawBar();
 		
@@ -88,27 +90,27 @@ namespace ISIS
 		
 		char strLabel[10];
 		
-		for (i = 0; i < 6; i ++)
+		for (unsigned int ii = 0; ii < 6; ii ++)
 		{
-			itoa(1 - i, strLabel, 10);
+			itoa(1 - ii, strLabel, 10);
 			//	sprintf(strLable, "%1.1f", 
-			this->LabelMapper[i] = vtkTextMapper::New();
-			this->LabelMapper[i]->SetInput(strLabel);
-			this->LabelMapper[i]->GetTextProperty()->SetFontSize(11);
-			this->LabelMapper[i]->GetTextProperty()->SetFontFamilyToArial();
-			this->LabelMapper[i]->GetTextProperty()->BoldOn();
-			this->LabelMapper[i]->GetTextProperty()->ItalicOff();
-			this->LabelMapper[i]->GetTextProperty()->ShadowOff();
-			this->LabelMapper[i]->GetTextProperty()->SetJustificationToCentered();
-			this->LabelMapper[i]->GetTextProperty()->SetVerticalJustificationToCentered();
+			this->LabelMapper[ii] = vtkTextMapper::New();
+			this->LabelMapper[ii]->SetInput(strLabel);
+			this->LabelMapper[ii]->GetTextProperty()->SetFontSize(11);
+			this->LabelMapper[ii]->GetTextProperty()->SetFontFamilyToArial();
+			this->LabelMapper[ii]->GetTextProperty()->BoldOn();
+			this->LabelMapper[ii]->GetTextProperty()->ItalicOff();
+			this->LabelMapper[ii]->GetTextProperty()->ShadowOff();
+			this->LabelMapper[ii]->GetTextProperty()->SetJustificationToCentered();
+			this->LabelMapper[ii]->GetTextProperty()->SetVerticalJustificationToCentered();
 			
-			this->LabelActor[i] = vtkActor2D::New();
-			this->LabelActor[i]->SetMapper(this->LabelMapper[i]);
-			this->LabelActor[i]->GetPositionCoordinate()->SetCoordinateSystemToNormalizedDisplay();
-			this->LabelActor[i]->GetPositionCoordinate()->SetValue(((m_Width - this->m_BarWidth) / 2.0 + i * this->m_BarWidth / 5.0) / (float)m_Width, 0.43);
-			this->LabelActor[i]->GetProperty()->SetColor(0, 1, 0);
+			this->LabelActor[ii] = vtkActor2D::New();
+			this->LabelActor[ii]->SetMapper(this->LabelMapper[ii]);
+			this->LabelActor[ii]->GetPositionCoordinate()->SetCoordinateSystemToNormalizedDisplay();
+			this->LabelActor[ii]->GetPositionCoordinate()->SetValue(((m_Width - this->m_BarWidth) / 2.0 + ii * this->m_BarWidth / 5.0) / (float)m_Width, 0.43);
+			this->LabelActor[ii]->GetProperty()->SetColor(0, 1, 0);
 			
-			m_Renderer->AddActor2D(this->LabelActor[i]);
+			m_Renderer->AddActor2D(this->LabelActor[ii]);
 		}
 		
 	}
@@ -116,16 +118,16 @@ namespace ISIS
 	MotionViewer::~MotionViewer()
 	{
 		this->ImageCanvas->Delete();
-		for (int i = 0; i < 5; i ++)
+		for (unsigned int i = 0; i < 5; i ++)
 		{
 			this->TextActor[i]->Delete();
 			this->TextMapper[i]->Delete();
 		}
 		
-		for (i = 0; i < 6; i ++)
+		for (unsigned int j = 0; j < 6; j ++)
 		{
-			this->LabelActor[i]->Delete();
-			this->LabelMapper[i]->Delete();
+			this->LabelActor[j]->Delete();
+			this->LabelMapper[j]->Delete();
 		}	
 	}
 	
@@ -172,8 +174,8 @@ namespace ISIS
 		this->ImageCanvas->SetDrawColor(255, 0, 0);
 		int x0 = this->m_XPos - dx;
 		int x1 = this->m_XPos + dx;
-		int y0 = 0.5 * this->m_Height - dy;
-		int y1 = 0.5 * this->m_Height + dy;
+		int y0 = static_cast<int>( 0.5 * this->m_Height - dy );
+		int y1 = static_cast<int>( 0.5 * this->m_Height + dy );
 		if (x0 < xmin)
 			x0 = xmin;
 		if (x0 > xmax)
