@@ -27,11 +27,18 @@
 
 int igstkTrackerPortTest( int, char * [] )
 {
+    typedef igstk::TrackerTool  TrackerToolType;
     typedef igstk::TrackerPort  TrackerPortType;
     
+    TrackerToolType trackerTool;
+
     TrackerPortType trackerPort;
 
+    trackerPort.ClearTools();
 
+    trackerPort.AddTool( trackerTool );
+
+    trackerPort.ClearTools();
 
     return EXIT_SUCCESS;
 }
