@@ -10,6 +10,7 @@
 void RegisterTests()
 {
   REGISTER_TEST(igstkEllipsoidObjectTest);
+  REGISTER_TEST(igstkCylinderObjectTest);
   REGISTER_TEST(igstkSceneTest);
   REGISTER_TEST(igstkMouseTrackerTest);
 }

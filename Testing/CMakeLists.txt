@@ -24,6 +24,7 @@ ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 
 SET(BasicTests_SRCS
   igstkEllipsoidObjectTest.cxx
+  igstkCylinderObjectTest.cxx
   igstkSceneTest.cxx
   igstkMouseTrackerTest.cxx
   )
