@@ -14,6 +14,11 @@
 
 namespace ISIS
 {
+	/** \class ImageSlicerViewer
+	    \brief This class visualizes a volume
+      \warning
+	    \sa everyone needs to look at doxygen tags
+  */
 
 class ImageSliceViewer
 {
