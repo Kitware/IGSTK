@@ -1141,7 +1141,6 @@ int ndiGetPHINFGPIOStatus(ndicapi *pol)
 int ndiGetPHRQHandle(ndicapi *pol)
 {
   char *dp;
-  int n;
 
   dp = pol->phrq_reply;
   return (int)ndiHexToUnsignedLong(dp, 2);
