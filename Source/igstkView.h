@@ -68,7 +68,7 @@ private:
 protected:
 
   View( int x, int y, int w, int h, const char *l="");
-  ~View( void );
+  virtual ~View( void );
 
   // vtkRenderWindowInteractor overrides made protected in order to prevent
   // users from using these methods.
