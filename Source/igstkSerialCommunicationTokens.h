@@ -56,7 +56,7 @@ class SerialCommunicationBaudRate : public Token
       }
     
    const Self & operator=( const Self & token )
-      { m_BaudRate = token.m_BaudRate; } 
+      { m_BaudRate = token.m_BaudRate; return *this; } 
 
    bool operator!=( const Self & token )
       { return m_BaudRate != token.m_BaudRate; }
@@ -116,7 +116,7 @@ class SerialCommunicationDataBitsSize : public Token
       }
     
    const Self & operator=( const Self & token )
-      { m_DataBitsSize = token.m_DataBitsSize; } 
+      { m_DataBitsSize = token.m_DataBitsSize; return *this; } 
 
    bool operator!=( const Self & token )
       { return m_DataBitsSize != token.m_DataBitsSize; }
@@ -173,7 +173,7 @@ class SerialCommunicationParity : public Token
       }
     
    const Self & operator=( const Self & token )
-      { m_Parity = token.m_Parity; } 
+      { m_Parity = token.m_Parity; return *this; } 
 
    bool operator!=( const Self & token )
       { return m_Parity != token.m_Parity; }
@@ -231,7 +231,7 @@ class SerialCommunicationStopBits : public Token
       }
     
    const Self & operator=( const Self & token )
-      { m_StopBits = token.m_StopBits; } 
+      { m_StopBits = token.m_StopBits; return *this; } 
 
    bool operator!=( const Self & token )
       { return m_StopBits != token.m_StopBits; }
@@ -289,7 +289,7 @@ class SerialCommunicationHandshake : public Token
       }
     
    const Self & operator=( const Self & token )
-      { m_Handshake = token.m_Handshake; } 
+      { m_Handshake = token.m_Handshake; return *this; } 
 
    bool operator!=( const Self & token )
       { return m_Handshake != token.m_Handshake; }
