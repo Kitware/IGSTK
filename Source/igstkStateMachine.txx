@@ -391,7 +391,8 @@ StateMachine< TClass >
                 << "There is already a action defined for the combination: " << std::endl;
       std::cerr << "State     = " << stateDescriptor << std::endl;
       std::cerr << "Input     = " << inputDescriptor << std::endl;
-      std::cerr << "New state = " << actionsFromThisStateAndInput->second << std::endl;
+      // Commenting out the following line: Not compiling on bcc32 
+      //std::cerr << "New state = " << actionsFromThisStateAndInput->second << std::endl;
       std::cerr.flush();
       }
     else
