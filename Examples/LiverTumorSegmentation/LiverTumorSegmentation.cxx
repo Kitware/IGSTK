@@ -15,7 +15,7 @@ LiverTumorSegmentation::LiverTumorSegmentation()
   {
   m_AxialViewer.SetOrientation(    ISIS::ImageSliceViewer::Axial    );
   m_CoronalViewer.SetOrientation(  ISIS::ImageSliceViewer::Coronal  );
-  m_SaggitalViewer.SetOrientation( ISIS::ImageSliceViewer::Saggital );
+  m_SagittalViewer.SetOrientation( ISIS::ImageSliceViewer::Sagittal );
   
   m_ShiftScaleImageFilter = vtkImageShiftScale::New();
   
@@ -31,9 +31,9 @@ LiverTumorSegmentation::LiverTumorSegmentation()
   m_CoronalViewerCommand->SetCallbackFunction(this, &LiverTumorSegmentation::ProcessCoronalViewInteraction);
   m_CoronalViewer.AddObserver(ISIS::ClickedPointEvent(), m_CoronalViewerCommand);
   
-  m_SaggitalViewerCommand = itk::SimpleMemberCommand<LiverTumorSegmentation>::New();
-  m_SaggitalViewerCommand->SetCallbackFunction(this, &LiverTumorSegmentation::ProcessSaggitalViewInteraction);
-  m_SaggitalViewer.AddObserver(ISIS::ClickedPointEvent(), m_SaggitalViewerCommand);
+  m_SagittalViewerCommand = itk::SimpleMemberCommand<LiverTumorSegmentation>::New();
+  m_SagittalViewerCommand->SetCallbackFunction(this, &LiverTumorSegmentation::ProcessSagittalViewInteraction);
+  m_SagittalViewer.AddObserver(ISIS::ClickedPointEvent(), m_SagittalViewerCommand);
   
   m_DicomReaderCommand = itk::SimpleMemberCommand<LiverTumorSegmentation>::New();
   m_DicomReaderCommand->SetCallbackFunction(this, &LiverTumorSegmentation::ProcessDicomReaderInteraction);
@@ -84,7 +84,7 @@ void LiverTumorSegmentation::Show()
 	
 	m_AxialViewer.SetInteractor( axialView );
 	m_CoronalViewer.SetInteractor( coronalView );
-	m_SaggitalViewer.SetInteractor( saggitalView );
+	m_SagittalViewer.SetInteractor( saggitalView );
 	
 	axialView->Initialize();
 	coronalView->Initialize();
@@ -173,7 +173,7 @@ void LiverTumorSegmentation::LoadPostProcessing()
 	
 	m_AxialViewer.SetInput(    m_ShiftScaleImageFilter->GetOutput() );
 	m_CoronalViewer.SetInput(  m_ShiftScaleImageFilter->GetOutput() );
-	m_SaggitalViewer.SetInput( m_ShiftScaleImageFilter->GetOutput() );
+	m_SagittalViewer.SetInput( m_ShiftScaleImageFilter->GetOutput() );
 	
 	const unsigned int numberOfZslices = m_LoadedVolume->GetBufferedRegion().GetSize()[2];
 	const unsigned int numberOfYslices = m_LoadedVolume->GetBufferedRegion().GetSize()[1];
@@ -193,7 +193,7 @@ void LiverTumorSegmentation::LoadPostProcessing()
 	
 	m_AxialViewer.Render();
 	m_CoronalViewer.Render();
-	m_SaggitalViewer.Render();
+	m_SagittalViewer.Render();
 	
 	VisualizationVolumeType::IndexType index; 
 	itk::Point< double, 3 >	point;		
@@ -230,7 +230,7 @@ void LiverTumorSegmentation::SelectCoronalSlice( int slice )
 
 void LiverTumorSegmentation::SelectSaggitalSlice( int slice )
 {
-	m_SaggitalViewer.SelectSlice( slice );
+	m_SagittalViewer.SelectSlice( slice );
 	saggitalView->redraw();
 	Fl::check();
 }
@@ -502,9 +502,9 @@ void LiverTumorSegmentation::ProcessCoronalViewInteraction( void )
 }
 
 
-void LiverTumorSegmentation::ProcessSaggitalViewInteraction( void )
+void LiverTumorSegmentation::ProcessSagittalViewInteraction( void )
 {
-	m_SaggitalViewer.GetSelectPoint( m_SeedPoint );
+	m_SagittalViewer.GetSelectPoint( m_SeedPoint );
 	this->SyncAllViews();
 }
 
@@ -554,7 +554,7 @@ void LiverTumorSegmentation::SyncAllViews(void)
 
 	m_AxialViewer.SelectPoint(    m_SeedPoint[0], m_SeedPoint[1], m_SeedPoint[2] );
 	m_CoronalViewer.SelectPoint(  m_SeedPoint[0], m_SeedPoint[1], m_SeedPoint[2] );
-	m_SaggitalViewer.SelectPoint( m_SeedPoint[0], m_SeedPoint[1], m_SeedPoint[2] );
+	m_SagittalViewer.SelectPoint( m_SeedPoint[0], m_SeedPoint[1], m_SeedPoint[2] );
 	
 }
 
@@ -576,7 +576,7 @@ void LiverTumorSegmentation::OnSegmentation( void )
       
     m_AxialViewer.Render();
     m_CoronalViewer.Render();
-    m_SaggitalViewer.Render();
+    m_SagittalViewer.Render();
       
     /* Switch on Opacity Control knob. */
     this->SetSegmentedVolumeOpacityControlOn( m_SegmentedVolumeOpacity );
@@ -607,7 +607,7 @@ void LiverTumorSegmentation::SetImageScale( double val )
 	m_ShiftScaleImageFilter->UpdateWholeExtent();
 	m_AxialViewer.Render();
 	m_CoronalViewer.Render();
-	m_SaggitalViewer.Render();
+	m_SagittalViewer.Render();
 }
 
 
@@ -625,7 +625,7 @@ void LiverTumorSegmentation::SetImageShift( double val )
 	m_ShiftScaleImageFilter->UpdateWholeExtent();
 	m_AxialViewer.Render();
 	m_CoronalViewer.Render();
-	m_SaggitalViewer.Render();
+	m_SagittalViewer.Render();
 }
 
 
@@ -657,7 +657,7 @@ void LiverTumorSegmentation::OnOpacityControl( double opacity )
     m_ShiftScaleImageFilter->UpdateWholeExtent();
     m_AxialViewer.Render();
     m_CoronalViewer.Render();
-    m_SaggitalViewer.Render();
+    m_SagittalViewer.Render();
 }
 
 
@@ -673,7 +673,7 @@ void LiverTumorSegmentation::LoadSegmentedVolume( void )
 
 	m_AxialViewer.Render();
 	m_CoronalViewer.Render();
-	m_SaggitalViewer.Render();
+	m_SagittalViewer.Render();
 }
 
 

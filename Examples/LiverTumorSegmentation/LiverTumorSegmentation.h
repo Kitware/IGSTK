@@ -34,7 +34,7 @@ public:
 
    virtual void ProcessAxialViewInteraction( void );
    virtual void ProcessCoronalViewInteraction( void );
-   virtual void ProcessSaggitalViewInteraction( void );
+   virtual void ProcessSagittalViewInteraction( void );
    virtual void SyncAllViews(void);
 
    virtual void ProcessDicomReaderInteraction( void );
@@ -84,13 +84,13 @@ private:
 
   ISIS::ImageSliceViewer01  m_AxialViewer;
   ISIS::ImageSliceViewer01  m_CoronalViewer;
-  ISIS::ImageSliceViewer01  m_SaggitalViewer;
+  ISIS::ImageSliceViewer01  m_SagittalViewer;
 
   vtkImageShiftScale    * m_ShiftScaleImageFilter;
 
   itk::SimpleMemberCommand<LiverTumorSegmentation>::Pointer      m_AxialViewerCommand;
   itk::SimpleMemberCommand<LiverTumorSegmentation>::Pointer      m_CoronalViewerCommand;
-  itk::SimpleMemberCommand<LiverTumorSegmentation>::Pointer      m_SaggitalViewerCommand;
+  itk::SimpleMemberCommand<LiverTumorSegmentation>::Pointer      m_SagittalViewerCommand;
 
   itk::SimpleMemberCommand<LiverTumorSegmentation>::Pointer      m_DicomReaderCommand;
 

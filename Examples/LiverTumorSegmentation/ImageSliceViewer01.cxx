@@ -61,7 +61,7 @@ namespace ISIS
 			
 			switch( m_Orientation )
 			{
-			case Saggital:
+			case Sagittal:
 				m_Sphere->SetRadius(dimensions[0]/75);
 				break;
 			case Coronal:
