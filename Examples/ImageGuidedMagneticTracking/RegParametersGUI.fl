@@ -11,11 +11,13 @@ class RegParametersGUI {open
   }
   decl {int m_DualSensorRegNum;} {public
   }
+  decl {double m_Radius;} {public
+  }
   Function {RegParametersGUI(IGMTrackingBase* pTracking)} {open
   } {
     Fl_Window m_MainWindow {
       label {Registration Parameters} open
-      xywh {172 392 413 193} type Double visible
+      xywh {444 369 413 193} type Double visible
     } {
       Fl_Choice m_DualSensorChoice {
         label DualSensor
@@ -33,6 +35,10 @@ printf("%d\\n", m_DualSensorRegNum);} open
         callback {this->OnCancel();}
         xywh {310 150 80 25}
       }
+      Fl_Input m_RadiusInput {
+        label {Cluster Radius}
+        xywh {290 40 50 25} type Float
+      }
     }
     code {m_pTracking = pTracking;
 m_DualSensorRegNum = -1;
@@ -45,20 +51,22 @@ m_DualSensorChoice->add("Seq 4");
 m_DualSensorChoice->add("Seq 5");
 m_DualSensorChoice->add("Seq 6");
 m_DualSensorChoice->add("Seq 7");
-m_DualSensorChoice->value(0);} {selected
-    }
+m_DualSensorChoice->value(0);
+m_Radius = 7.0;
+m_RadiusInput->value("7.000");} {}
   }
-  Function {Show()} {open
-  } {
+  Function {Show()} {} {
     code {m_MainWindow->show();} {}
   }
-  Function {Hide()} {open
-  } {
+  Function {Hide()} {} {
     code {m_MainWindow->hide();} {}
   }
-  Function {OnOK()} {} {
+  Function {OnOK()} {open
+  } {
     code {this->Hide();
-m_pTracking->OnUpdateRegParameters();} {}
+m_Radius = atof(m_RadiusInput->value());
+m_pTracking->OnUpdateRegParameters();} {selected
+    }
   }
   Function {OnCancel()} {} {
     code {this->Hide();} {}
