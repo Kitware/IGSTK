@@ -36,7 +36,7 @@ int igstkCylinderObjectTest( int, char * [] )
   typedef igstk::CylinderObject ObjectType;
   ObjectType::Pointer cylinderObject = ObjectType::New();
 
-  cylinderRepresentation->SetCylinder( cylinderObject );
+  cylinderRepresentation->RequestSetCylinderObject( cylinderObject );
 
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetRadius() : ";

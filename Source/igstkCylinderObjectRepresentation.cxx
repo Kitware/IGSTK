@@ -25,12 +25,31 @@ namespace igstk
 { 
 
 /** Constructor */
-CylinderObjectRepresentation::CylinderObjectRepresentation()
+CylinderObjectRepresentation::CylinderObjectRepresentation():m_StateMachine(this)
 {
   // We create the ellipse spatial object
   m_CylinderSpatialObject = NULL;
   this->RequestSetSpatialObject( m_CylinderSpatialObject );
   m_CylinderSource = vtkCylinderSource::New();
+  
+  m_StateMachine.AddInput( m_ValidCylinderObjectInput,  "ValidCylinderObjectInput" );
+  m_StateMachine.AddInput( m_NullCylinderObjectInput,   "NullCylinderObjectInput"  );
+
+  m_StateMachine.AddState( m_NullCylinderObjectState,  "NullCylinderObjectState"     );
+  m_StateMachine.AddState( m_ValidCylinderObjectState, "ValidCylinderObjectState"     );
+
+  const ActionType NoAction = 0;
+
+  m_StateMachine.AddTransition( m_NullCylinderObjectState, m_NullCylinderObjectInput, m_NullCylinderObjectState,  NoAction );
+  m_StateMachine.AddTransition( m_NullCylinderObjectState, m_ValidCylinderObjectInput, m_ValidCylinderObjectState,  & CylinderObjectRepresentation::SetCylinderObject );
+  m_StateMachine.AddTransition( m_ValidCylinderObjectState, m_NullCylinderObjectInput, m_NullCylinderObjectState,  NoAction ); // Should remove actors  ?
+  m_StateMachine.AddTransition( m_ValidCylinderObjectState, m_ValidCylinderObjectInput, m_ValidCylinderObjectState,  & CylinderObjectRepresentation::SetCylinderObject ); // Should remove old actors ??
+
+  m_StateMachine.SelectInitialState( m_NullCylinderObjectState );
+
+  m_StateMachine.SetReadyToRun();
+
+
 } 
 
 /** Destructor */
@@ -43,14 +62,36 @@ CylinderObjectRepresentation::~CylinderObjectRepresentation()
     }
 }
 
+
+
+
+/** Set the Cylinderal Spatial Object */
+void CylinderObjectRepresentation::RequestSetCylinderObject( const CylinderSpatialObjectType * cylinder )
+{
+  m_CylinderObjectToAdd = cylinder;
+  if( !m_CylinderObjectToAdd )
+    {
+    m_StateMachine.ProcessInput( m_NullCylinderObjectInput );
+    }
+  else
+    {
+    m_StateMachine.ProcessInput( m_ValidCylinderObjectInput );
+    }
+
+
+}
+
+
+
+
 /** Set the Cylindrical Spatial Object */
-void CylinderObjectRepresentation::SetCylinder( const CylinderSpatialObjectType * cylinder )
+void CylinderObjectRepresentation::SetCylinderObject()
 {
   // We create the ellipse spatial object
-  m_CylinderSpatialObject = cylinder;
+  m_CylinderSpatialObject = m_CylinderObjectToAdd;
   this->RequestSetSpatialObject( m_CylinderSpatialObject );
 
-  if( cylinder != NULL )
+  if( m_CylinderSource != NULL )
     {
     m_CylinderSource->SetCenter(0, 0, 0);
     m_CylinderSource->SetRadius(m_CylinderSpatialObject->GetRadius());
@@ -103,7 +144,7 @@ CylinderObjectRepresentation::Copy() const
   Pointer newOR = CylinderObjectRepresentation::New();
   newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
   newOR->SetOpacity(this->GetOpacity());
-  newOR->SetCylinder(m_CylinderSpatialObject);
+  newOR->RequestSetCylinderObject(m_CylinderSpatialObject);
 
   return newOR;
 }

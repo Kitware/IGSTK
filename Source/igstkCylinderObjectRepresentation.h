@@ -21,6 +21,7 @@
 #include "igstkObjectRepresentation.h"
 #include "igstkCylinderObject.h"
 #include "vtkCylinderSource.h"
+#include "igstkStateMachine.h"
 
 namespace igstk
 {
@@ -56,9 +57,16 @@ public:
   Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
-  void SetCylinder( const CylinderSpatialObjectType * cylinderObject );
+  void RequestSetCylinderObject( const CylinderSpatialObjectType * cylinderObject );
 
 protected:
+
+  typedef StateMachine< Self > StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer   ActionType;
+  typedef StateMachineType::StateType                StateType;
+  typedef StateMachineType::InputType                InputType;
+
+  FriendClassMacro( StateMachineType );
 
   CylinderObjectRepresentation( void );
   ~CylinderObjectRepresentation( void );
@@ -79,6 +87,24 @@ private:
 
   /** update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationFromGeometry();
+
+  /** Connect this representation class to the spatial object. Only to be
+   * called by the State Machine. */
+  void SetCylinderObject(); 
+
+private:
+
+  StateMachineType     m_StateMachine;
+  
+  /** Inputs to the State Machine */
+  InputType            m_ValidCylinderObjectInput;
+  InputType            m_NullCylinderObjectInput;
+  
+  /** States for the State Machine */
+  StateType            m_NullCylinderObjectState;
+  StateType            m_ValidCylinderObjectState;
+
+  CylinderSpatialObjectType::ConstPointer m_CylinderObjectToAdd;
 
 };
 

@@ -44,7 +44,7 @@ int main(int , char** )
 
   // Create the cylinder representation
   igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
-  cylinderRepresentation->SetCylinder( cylinder );
+  cylinderRepresentation->RequestSetCylinderObject( cylinder );
   cylinderRepresentation->SetColor(1.0,0.0,0.0);
   cylinderRepresentation->SetOpacity(1.0);
 
