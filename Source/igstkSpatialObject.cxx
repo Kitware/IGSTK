@@ -48,40 +48,21 @@ void SpatialObject::SetSpatialObject( SpatialObjectType * spatialObject )
 /** Set the full Transform */
 void SpatialObject::SetTransform(const Transform & transform )
 {
+  m_Transform = transform;
   if(m_SpatialObject)
     {
-    VectorType offset = transform.GetTranslation();
+    Transform::VectorType offset = transform.GetTranslation();
     m_SpatialObject->GetObjectToWorldTransform()->SetOffset(offset);
     this->InvokeEvent( PositionModifiedEvent() );
     }
 }
 
 
-/** Get Offset */
-const SpatialObject::VectorType &
-SpatialObject::GetOffset()  const
+/** Get Transform */
+const Transform &
+SpatialObject::GetTransform()  const
 {
-  if(m_SpatialObject)
-    {
-    return m_SpatialObject->GetObjectToWorldTransform()->GetOffset();
-    }
-
-  // FIXME: we should handle error here
-  return m_FakeVector;
-}
-
-
-/** Get Matrix */
-const SpatialObject::MatrixType &
-SpatialObject::GetMatrix()  const
-{
-  if(m_SpatialObject)
-    {
-    return m_SpatialObject->GetObjectToWorldTransform()->GetMatrix();
-    }
-
-  // FIXME: we should handle error here
-  return m_FakeMatrix;
+  return m_Transform;
 }
 
 

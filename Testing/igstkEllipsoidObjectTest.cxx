@@ -115,31 +115,45 @@ int igstkEllipsoidObjectTest( int, char * [] )
   // Testing Update
   ellipsoidRepresentation->IsModified();
 
-  // Test GetOffset()
-  std::cout << "Testing Set/GetOffset(): ";
+  // Test GetTransform()
+  std::cout << "Testing Set/GetTransform(): ";
 
+  const double tolerance = 1e-8;
   double validityTimeInMilliseconds = 2000.0;
   igstk::Transform transform;
   igstk::Transform::VectorType translation;
   translation[0] = 0;
   translation[1] = 1;
   translation[2] = 2;
-  transform.SetTranslation( translation, validityTimeInMilliseconds );
+  igstk::Transform::VersorType rotation;
+  rotation.Set( 0.707, 0.0, 0.707, 0.0 );
+  transform.SetTranslationAndRotation( translation, rotation, validityTimeInMilliseconds );
   ellipsoidObject->SetTransform( transform );
-  igstk::SpatialObject::VectorType offset = ellipsoidObject->GetOffset();
-  for(unsigned int i=0;i<3;i++)
+  igstk::Transform  transform2 = ellipsoidObject->GetTransform();
+  igstk::Transform::VectorType translation2 = transform2.GetTranslation();
+  for( unsigned int i=0; i<3; i++ )
     {
-    if(offset[i] != i)
+    if( fabs( translation2[i]  - translation[i] ) > tolerance )
       {
       std::cout << "[FAILED]" << std::endl;
       return EXIT_FAILURE;
       }
     }
+
+  igstk::Transform::VersorType rotation2 = transform2.GetRotation();
+  for( unsigned int j=0; j<3; j++ )
+    {
+    if( !( rotation2 == rotation ) )
+      {
+      std::cout << "[FAILED]" << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+
+
+
   std::cout << "[PASSED]" << std::endl;
 
-  std::cout << "Testing Set/GetMatrix(): ";
-  const igstk::SpatialObject::MatrixType matrix = ellipsoidObject->GetMatrix();
-  std::cout << "[PASSED]" << std::endl;
 
   // Testing the Copy() function
   std::cout << "Testing Copy(): ";

@@ -24,7 +24,7 @@
 
 #include "itkVector.h"
 #include "itkVersor.h"
-
+#include "vtkMatrix4x4.h"
 
 /** \brief Transform representing relative positions and orientations in 3D space.
  * 
@@ -52,6 +52,8 @@
 namespace igstk 
 {
  
+
+
 class Transform
 {
 public:
@@ -64,6 +66,9 @@ public:
   /** Constructor and destructor */
   Transform();
   ~Transform();
+
+  /** Assign the values of one transform to another */
+  const Transform & operator=( const Transform & inputTransform );
 
   /** Set Translation and Rotation simultaneously. This values will override
    * any previously set rotation and translation. The information will be
@@ -137,6 +142,13 @@ public:
    * */
   bool IsValidAtTime( double timeToTestInMilliseconds ) const;
 
+
+  /** Export the content of the transformation in the format of a vtkMatrix4x4.
+   * Users must allocate the matrix first and then pass it by reference to this
+   * method.  The current method will simply fill in the transform using the
+   * current information of translation and rotation.
+   */
+  void ExportTransform( vtkMatrix4x4 & matrix );
 
 private:
 

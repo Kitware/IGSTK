@@ -89,8 +89,21 @@ int igstkSceneTest( int, char * [] )
     transform.SetTranslation( translation, validityTimeInMilliseconds );
     object->SetTransform( transform );
 
-    object->GetOffset();
-    object->GetMatrix();
+    const double tolerance = 1e-8;
+
+    igstk::Transform transform2 = object->GetTransform();
+    igstk::Transform::VectorType translation2 = transform2.GetTranslation();
+    for( unsigned int ti=0; ti<3; ti++)
+      {
+      if( fabs( translation2[ti] - translation[ti] ) > tolerance )
+         {
+         std::cerr << "GetTransform()/ SetTransform() failed" << std::endl;
+         std::cerr << "Set translation was = " << translation << std::endl;
+         std::cerr << "Get translation was = " << translation2 << std::endl;
+         return EXIT_FAILURE;
+        }
+      }
+
     object->GetNameOfClass();
     std::cout << "[PASSED]" << std::endl;
 

@@ -33,17 +33,14 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this)
   m_SpatialObject = NULL;
   m_LastMTime = 0;
   m_PositionObserver    = ObserverType::New();
-  m_OrientationObserver = ObserverType::New();
   m_GeometryObserver    = ObserverType::New();
   m_PositionObserver->SetCallbackFunction(    this, & ObjectRepresentation::RequestUpdatePosition );
-  m_OrientationObserver->SetCallbackFunction( this, & ObjectRepresentation::RequestUpdateOrientation );
   m_GeometryObserver->SetCallbackFunction(    this, & ObjectRepresentation::RequestUpdateRepresentation );
 
 
   m_StateMachine.AddInput( m_ValidSpatialObjectInput,  "ValidSpatialObjectInput" );
   m_StateMachine.AddInput( m_NullSpatialObjectInput,   "NullSpatialObjectInput"  );
   m_StateMachine.AddInput( m_UpdatePositionInput,      "UpdatePositionInput"  );
-  m_StateMachine.AddInput( m_UpdateOrientationInput,   "UpdateOrientationInput"  );
   m_StateMachine.AddInput( m_UpdateRepresentationInput,"UpdateRepresentationInput"  );
 
   m_StateMachine.AddState( m_NullSpatialObjectState,  "NullSpatialObjectState"     );
@@ -54,13 +51,11 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this)
   m_StateMachine.AddTransition( m_NullSpatialObjectState, m_NullSpatialObjectInput, m_NullSpatialObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullSpatialObjectState, m_ValidSpatialObjectInput, m_ValidSpatialObjectState,  & ObjectRepresentation::SetSpatialObject );
   m_StateMachine.AddTransition( m_NullSpatialObjectState, m_UpdatePositionInput, m_NullSpatialObjectState,  NoAction );
-  m_StateMachine.AddTransition( m_NullSpatialObjectState, m_UpdateOrientationInput, m_NullSpatialObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullSpatialObjectState, m_UpdateRepresentationInput, m_NullSpatialObjectState,  NoAction );
 
   m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_NullSpatialObjectInput, m_NullSpatialObjectState,  NoAction ); // Should remove actors  ?
   m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_ValidSpatialObjectInput, m_ValidSpatialObjectState,  & ObjectRepresentation::SetSpatialObject ); // Should remove old actors ??
   m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdatePositionInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdatePositionFromGeometry );
-  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdateOrientationInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdateOrientationFromGeometry );
   m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdateRepresentationInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdateRepresentationFromGeometry );
 
   m_StateMachine.SelectInitialState( m_NullSpatialObjectState );
@@ -126,7 +121,6 @@ void ObjectRepresentation::SetSpatialObject()
 {
   m_SpatialObject = m_SpatialObjectToAdd;
   m_SpatialObject->AddObserver( PositionModifiedEvent(),    m_PositionObserver    );
-  m_SpatialObject->AddObserver( OrientationModifiedEvent(), m_OrientationObserver );
   m_SpatialObject->AddObserver( GeometryModifiedEvent(), m_GeometryObserver );
 }
 
@@ -156,44 +150,6 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
   this->Modified();
 }
 
-
-/** Request Update the object representation (i.e vtkActors). Maybe we should check also the transform
- *  modified time. */
-void ObjectRepresentation::RequestUpdateOrientation()
-{
-    m_StateMachine.ProcessInput( m_UpdateOrientationInput );
-}
-
-
-/** Update the object representation (i.e vtkActors). Maybe we should check also the transform
- *  modified time. */
-void ObjectRepresentation::UpdateOrientationFromGeometry()
-{
-  SpatialObject::MatrixType itkMatrix = m_SpatialObject->GetMatrix();
-  SpatialObject::VectorType offset    = m_SpatialObject->GetOffset();
- 
-  vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
-  for(unsigned int i=0;i<3;i++)
-  {
-    for(unsigned int j=0;j<3;j++)
-    {
-      vtkMatrix->SetElement(i,j,itkMatrix.GetVnlMatrix().get(i,j));   
-    }
-
-    vtkMatrix->SetElement(i,3,offset[i]);
-  }
-
-  // Update all the actors
-  ActorsListType::iterator it = m_Actors.begin();
-  while(it != m_Actors.end())
-  {  
-    (*it)->SetUserMatrix(vtkMatrix);
-    it++;
-  }
-
-  // Update the modified time
-  m_LastMTime = this->GetMTime();
-}
 
 /** Request Update the object representation (i.e vtkActors). Maybe we should check also the transform
  *  modified time. */
@@ -227,19 +183,11 @@ void ObjectRepresentation::RequestUpdatePosition()
  *  modified time. */
 void ObjectRepresentation::UpdatePositionFromGeometry()
 {
-  SpatialObject::MatrixType itkMatrix = m_SpatialObject->GetMatrix();
-  SpatialObject::VectorType offset    = m_SpatialObject->GetOffset();
- 
-  vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
-  for(unsigned int i=0;i<3;i++)
-  {
-    for(unsigned int j=0;j<3;j++)
-    {
-      vtkMatrix->SetElement(i,j,itkMatrix.GetVnlMatrix().get(i,j));   
-    }
+  Transform transform = m_SpatialObject->GetTransform();
 
-    vtkMatrix->SetElement(i,3,offset[i]);
-  }
+  vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
+
+  transform.ExportTransform( *vtkMatrix );
 
   // Update all the actors
   ActorsListType::iterator it = m_Actors.begin();

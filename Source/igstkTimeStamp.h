@@ -62,6 +62,9 @@ public:
   ~TimeStamp();
 
 
+  /** Copy one time stamp into another */
+  const TimeStamp & operator=( const TimeStamp & inputTimeStamp );
+
   /** This method sets both the Start time and the Expiration time of the
    * TimeStamp. The StartTime is set to the current time value as returned by
    * the function clock(). The ExpirationTime is set to the StartTime plus the

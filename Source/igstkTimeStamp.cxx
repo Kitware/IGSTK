@@ -36,6 +36,14 @@ TimeStamp
 }
 
 
+const TimeStamp &
+TimeStamp
+::operator=( const TimeStamp & inputTimeStamp )
+{
+  m_StartTime      = inputTimeStamp.m_StartTime;
+  m_ExpirationTime = inputTimeStamp.m_ExpirationTime;
+  return *this;
+}
    
 
 void

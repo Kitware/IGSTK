@@ -114,13 +114,11 @@ private:
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
 
   ObserverType::Pointer       m_PositionObserver;
-  ObserverType::Pointer       m_OrientationObserver;
   ObserverType::Pointer       m_GeometryObserver;
 
   /** Request updating the position of the visual representation by using the
    * information from the Spatial Object. */
   void RequestUpdatePosition();  
-  void RequestUpdateOrientation();  
 
   /** update the visual representation with changes in the geometry */
   virtual void RequestUpdateRepresentation();
@@ -129,7 +127,6 @@ private:
   /** Update the position of the visual representation by using the information
    * from the Spatial Object. Only to be called by the State Machine. */
   void UpdatePositionFromGeometry();  
-  void UpdateOrientationFromGeometry();  
 
   /** update the visual representation with changes in the geometry. Only to be
    * called by the State Machine. */
@@ -145,7 +142,6 @@ private:
   /** Inputs to the State Machine */
   InputType            m_ValidSpatialObjectInput;
   InputType            m_NullSpatialObjectInput;
-  InputType            m_UpdateOrientationInput;
   InputType            m_UpdatePositionInput;
   InputType            m_UpdateRepresentationInput;
   

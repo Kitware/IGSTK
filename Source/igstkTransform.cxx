@@ -17,6 +17,7 @@
 
 #include "igstkTransform.h"
 
+
 namespace igstk
 {
 
@@ -30,6 +31,18 @@ Transform
 ::~Transform()
 {
 }
+
+
+const Transform &
+Transform
+::operator=( const Transform & inputTransform )
+{
+  m_Translation = inputTransform.m_Translation; 
+  m_Rotation    = inputTransform.m_Rotation;
+  m_TimeStamp   = inputTransform.m_TimeStamp;
+  return *this;
+}
+
 
 void 
 Transform
@@ -106,6 +119,24 @@ Transform
 ::IsValidAtTime( double timeToCheckInMilliseconds ) const
 {
   return m_TimeStamp.IsValidAtTime( timeToCheckInMilliseconds );
+}
+
+
+void 
+Transform
+::ExportTransform( ::vtkMatrix4x4 & outmatrix )
+{
+  VersorType::MatrixType inmatrix = m_Rotation.GetMatrix();
+ 
+  for(unsigned int i=0; i<3; i++ )
+    {
+    for(unsigned int j=0; j<3; j++ )
+      {
+      outmatrix.SetElement(i,j,inmatrix.GetVnlMatrix().get(i,j));   
+      }
+
+    outmatrix.SetElement(i,3,m_Translation[i]);
+    }
 }
 
 

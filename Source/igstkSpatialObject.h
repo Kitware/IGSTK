@@ -47,22 +47,19 @@ public:
   typedef itk::SmartPointer<const Self>  ConstPointer; 
   typedef itk::SpatialObject<3>          SpatialObjectType;
 
-  typedef itk::Matrix<double,3,3>        MatrixType;
-  typedef itk::Vector<double,3>          VectorType;
- 
   /**  Run-time type information (and related methods). */
   itkTypeMacro( Self, Object );
 
   /** Method for creation of a reference counted object. */
   NewMacro( SpatialObject );
 
-  /** Set Transform */
+  /** Set the Transform corresponding to the ObjectToWorld transformation of
+ * the SpatialObject. */
   void SetTransform( const Transform & transform );
 
-  /** Return the Matrix and Offset related to the ObjectToWorld transformation
+  /** Return the Transform associated to the ObjectToWorld transformation
    * of the SpatialObject */
-  const VectorType & GetOffset() const;
-  const MatrixType & GetMatrix() const;
+  const Transform & GetTransform() const;
 
 
 protected:
@@ -82,8 +79,7 @@ private:
   SpatialObjectType::Pointer   m_SpatialObject;
 
   /** Internal fake vector and matrix */
-  VectorType m_FakeVector;
-  MatrixType m_FakeMatrix;
+  Transform m_Transform;
 };
 
 } // end namespace igstk
