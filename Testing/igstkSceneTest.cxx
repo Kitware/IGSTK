@@ -61,6 +61,13 @@ int igstkSceneTest( int, char * [] )
     }
   std::cout << "[PASSED]" << std::endl;
 
+  // Testing the igstkSpatialObject
+  std::cout << "Testing SpatialObject: ";
+  igstk::SpatialObject::Pointer object = igstk::SpatialObject::New();
+  object->SetOffset(0,1,2);
+  object->GetOffset();
+  object->GetMatrix();
+  std::cout << "[PASSED]" << std::endl;
 
   return EXIT_SUCCESS;
 }

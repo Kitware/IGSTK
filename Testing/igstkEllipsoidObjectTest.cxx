@@ -50,6 +50,18 @@ int igstkEllipsoidObjectTest( int, char * [] )
       return EXIT_FAILURE;
       }
     }
+
+  ellipsoidObject->SetRadius(2,3,4);
+ 
+  radiusRead = ellipsoidObject->GetRadius();
+  for(unsigned int i=0;i<3;i++)
+    {
+    if(radiusRead[i] != radius[i]+1)
+      {
+      std::cout << "Radius error : " << radius[i] << " v.s " << i << std::endl; 
+      return EXIT_FAILURE;
+      }
+    }
   std::cout << "[PASSED]" << std::endl;
 
   // Test Property
@@ -80,11 +92,31 @@ int igstkEllipsoidObjectTest( int, char * [] )
 
   // Testing PrintSelf()
   ellipsoidRepresentation->Print(std::cout);
+  ellipsoidObject->Print(std::cout);
 
   // Testing CreateActors()
   std::cout << "Testing actors : ";
   ellipsoidRepresentation->CreateActors();
   std::cout << "[PASSED]" << std::endl;
+
+  // Testing Update
+  ellipsoidRepresentation->IsModified();
+
+  // Test GetOffset()
+  std::cout << "Testing Set/GetOffset(): ";
+  ellipsoidObject->SetOffset(0,1,2);
+  igstk::SpatialObject::VectorType offset = ellipsoidObject->GetOffset();
+  for(unsigned int i=0;i<3;i++)
+    {
+    if(offset[i] != i)
+      {
+      std::cout << "[FAILED]" << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  std::cout << "[PASSED]" << std::endl;
+
+
 
   std::cout << "Test [DONE]" << std::endl;
   return EXIT_SUCCESS;
