@@ -67,10 +67,14 @@ public:
   void OnTimer(void);
 
   /** Set the scene */
-  void SetScene(const Scene * scene);
+  void SetScene(Scene * scene);
 
   /** void Update the display */
   void Update();
+ 
+  /** Disable the interactions */
+  void DisableInteractions() {m_InteractionHandling = false;}
+  void EnableInteractions() {m_InteractionHandling = true;}
 
 protected:
   
@@ -89,12 +93,15 @@ protected:
   /** Get the vtk Camera */
   vtkCamera* GetCamera() {return m_Camera;}
 
+ 
+
 private:
   
   vtkRenderWindow    * m_RenderWindow;
   vtkRenderer        * m_Renderer;
   vtkCamera          * m_Camera;
-  Scene::ConstPointer m_Scene;
+  Scene::Pointer     m_Scene;
+  bool               m_InteractionHandling;
 };
 
 } // end namespace igstk

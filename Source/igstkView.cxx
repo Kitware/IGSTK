@@ -37,6 +37,7 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor()
   m_RenderWindow->BordersOff();
   m_Renderer->SetBackground(0.5,0.5,0.5);
   this->Initialize();
+  m_InteractionHandling = true;
   this->end();
 }
 
@@ -80,7 +81,7 @@ void View::Initialize()
 
 
 /** Set the scene */
-void View::SetScene(const Scene * scene)
+void View::SetScene(Scene * scene)
 {
   if(scene == NULL)
     {
@@ -116,9 +117,12 @@ void View::SetScene(const Scene * scene)
 /** Update the display */
 void View::Update()
 {
-
-
-
+  if(!m_Scene)
+    {
+    return;
+    }
+  m_Scene->Update();
+  this->redraw();
 }
 
 /** */
@@ -287,7 +291,7 @@ void View::resize( int x, int y, int w, int h )
 /** main FLTK event handler */
 int View::handle( int event ) 
 {
-  if( !Enabled ) 
+  if( !Enabled || !m_InteractionHandling) 
     {
     return 0;
     }
