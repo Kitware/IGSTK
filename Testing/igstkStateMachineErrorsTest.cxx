@@ -32,9 +32,9 @@ public:
   typedef StateMachineType::InputType                     InputType;
   typedef StateMachineType::StateIdentifierType           StateIdentifierType;
 
-  FriendClassMacro(StateMachineType);
+  igstkFriendClassMacro(StateMachineType);
 
-  TypeMacro( Tester1, None );
+  igstkTypeMacro( Tester1, None );
 
   Tester1():m_StateMachine(this)
     {
@@ -97,9 +97,9 @@ public:
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  FriendClassMacro(StateMachineType);
+  igstkFriendClassMacro(StateMachineType);
 
-  TypeMacro( Tester2, None );
+  igstkTypeMacro( Tester2, None );
 
   Tester2():m_StateMachine(this)
     {
@@ -140,9 +140,9 @@ public:
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  FriendClassMacro(StateMachineType);
+  igstkFriendClassMacro(StateMachineType);
 
-  TypeMacro( Tester3, None );
+  igstkTypeMacro( Tester3, None );
 
   Tester3():m_StateMachine(this)
     {
@@ -183,9 +183,9 @@ public:
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  FriendClassMacro(StateMachineType);
+  igstkFriendClassMacro(StateMachineType);
 
-  TypeMacro( Tester4, None );
+  igstkTypeMacro( Tester4, None );
 
   Tester4():m_StateMachine(this)
     {
@@ -228,9 +228,9 @@ public:
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  FriendClassMacro(StateMachineType);
+  igstkFriendClassMacro(StateMachineType);
 
-  TypeMacro( Tester5, None );
+  igstkTypeMacro( Tester5, None );
   
   Tester5():m_StateMachine(this)
     {
@@ -271,9 +271,9 @@ public:
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  FriendClassMacro(StateMachineType);
+  igstkFriendClassMacro(StateMachineType);
 
-  TypeMacro( Tester6, None );
+  igstkTypeMacro( Tester6, None );
 
   Tester6():m_StateMachine(this)
     {
@@ -336,9 +336,9 @@ public:
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  FriendClassMacro(StateMachineType);
+  igstkFriendClassMacro(StateMachineType);
 
-  TypeMacro( Tester7, None );
+  igstkTypeMacro( Tester7, None );
 
   Tester7():m_StateMachine(this)
     {

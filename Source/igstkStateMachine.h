@@ -22,8 +22,6 @@
 #include <map>
 #include <string>
 
-#include "igstkMacros.h"
-
 #include "igstkStateMachineState.h"
 #include "igstkStateMachineInput.h"
 

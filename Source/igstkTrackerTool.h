@@ -49,13 +49,13 @@ public:
 
     ~TrackerTool(void);
 
-    GetMacro( Position, PositionType );
-    GetMacro( Orientation, OrientationType );
-    GetMacro( Error, ErrorType );
+    igstkGetMacro( Position, PositionType );
+    igstkGetMacro( Orientation, OrientationType );
+    igstkGetMacro( Error, ErrorType );
 
-    SetMacro( Position, PositionType );
-    SetMacro( Orientation, OrientationType );
-    SetMacro( Error, ErrorType );
+    igstkSetMacro( Position, PositionType );
+    igstkSetMacro( Orientation, OrientationType );
+    igstkSetMacro( Error, ErrorType );
 
 
 private:

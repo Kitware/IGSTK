@@ -64,9 +64,9 @@ class Tracker : public itk::Object
   typedef itk::Versor<double>      OrientationType;
   typedef double                   ErrorType;
 
-  FriendClassMacro( StateMachineType );
-  FriendClassMacro( TrackerPort );
-  FriendClassMacro( TrackerTool );
+  igstkFriendClassMacro( StateMachineType );
+  igstkFriendClassMacro( TrackerPort );
+  igstkFriendClassMacro( TrackerTool );
 
 public:
 
@@ -80,10 +80,10 @@ public:
   typedef std::vector< TrackerPortType > TrackerPortVectorType;
 
   /**  Run-time type information (and related methods). */
-  itkTypeMacro(Tracker, Object);
+  igstkTypeMacro(Tracker, Object);
 
   /** Method for creation of a reference counted object. */
-  NewMacro(Self);  
+  igstkNewMacro(Self);  
 
   /** The "Initialize" method initializes the tracker. The input 
   is a file in XML format describing the set up configuration. The

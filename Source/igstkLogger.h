@@ -41,9 +41,9 @@ public:
     Logger( void );
 
 
-    SetMacro( PriorityLevel, PriorityLevelType );
+    igstkSetMacro( PriorityLevel, PriorityLevelType );
 
-    GetMacro( PriorityLevel, PriorityLevelType );
+    igstkGetMacro( PriorityLevel, PriorityLevelType );
 
 private:
 

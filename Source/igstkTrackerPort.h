@@ -42,7 +42,7 @@ public:
     typedef igstk::TrackerTool             TrackerToolType;
     typedef std::vector< TrackerToolType > TrackerToolVectorType;
 
-    FriendClassMacro( Tracker );
+    igstkFriendClassMacro( Tracker );
 
     TrackerPort(void);
 

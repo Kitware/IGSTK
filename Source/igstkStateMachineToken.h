@@ -66,7 +66,7 @@ public:
 
 
    /** Returns the unique identifier of the current instance */
-   GetMacro( Identifier, IdentifierType );
+   igstkGetMacro( Identifier, IdentifierType );
 
 
    /** \warning A SetIndentifier() method should never be created since it will

@@ -43,7 +43,7 @@ namespace igstk
 
 
 /** Set built-in type.  Creates member Set"name"() (e.g., SetTimeStep(time)); */
-#define  SetMacro(name,type) \
+#define  igstkSetMacro(name,type) \
 virtual void Set##name (const type _arg) \
 { \
     if (this->m_##name != _arg) \
@@ -54,7 +54,7 @@ virtual void Set##name (const type _arg) \
 
 
 /** Get built-in type.  Creates member Get"name"() (e.g., GetTimeStep(time)); */
-#define GetMacro(name,type) \
+#define igstkGetMacro(name,type) \
 virtual const type & Get##name () const \
 { \
     return this->m_##name; \
@@ -64,7 +64,7 @@ virtual const type & Get##name () const \
 /** New Macro creates a new object of a class that is using SmartPointers. This
  * macro differs from the one in ITK in that it DOES NOT uses factories.
  * Factories add run-time uncertainty that is undesirable for IGSTK. */
-#define NewMacro(x) \
+#define igstkNewMacro(x) \
 static Pointer New(void) \
 { \
   Pointer smartPtr; \
@@ -77,7 +77,7 @@ static Pointer New(void) \
 
 /** Type Macro defines the GetNameOfClass() method for every class where it is
  * invoked. */
-#define TypeMacro(thisClass,superclass) \
+#define igstkTypeMacro(thisClass,superclass) \
     virtual const char *GetNameOfClass() const \
         {return #thisClass;} 
 
@@ -85,9 +85,9 @@ static Pointer New(void) \
 /** Create a Macro for friend class. This will take care of platform specific
  * ways of declaring a class as a friend */
 #if defined(__GNUC__) 
-#define  FriendClassMacro(type) friend class type
+#define  igstkFriendClassMacro(type) friend class type
 #else 
-#define  FriendClassMacro(type) friend type
+#define  igstkFriendClassMacro(type) friend type
 #endif 
 
 
@@ -96,3 +96,4 @@ static Pointer New(void) \
 
 }
 #endif // __igstk_Macros_h_
+
