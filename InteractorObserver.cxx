@@ -50,6 +50,13 @@ InteractorObserver
     const int y = Fl::event_y();
     m_SliceViewer->SelectPoint( x, y );
     }
+
+  if ( eventId == ::vtkCommand::RightButtonPressEvent )
+  {
+    const int x = Fl::event_x();
+    const int y = Fl::event_y();
+    m_SliceViewer->SelectRightPoint( x, y );
+  }
 }
 
 
