@@ -51,7 +51,7 @@ public:
   typedef itk::SpatialObject<3>          SpatialObjectType;
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro( Self, Object );
+  igstkTypeMacro( SpatialObject, Object );
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro( SpatialObject );
@@ -71,7 +71,7 @@ public:
   void RequestAttachToTrackerTool( const TrackerTool * trackerTool );
 
   /** Export the description of the internal State Machine to an ostream */
-  void ExportStateMachine( stdOstreamType & ostr ) const;
+  void ExportStateMachineDescription( stdOstreamType & ostr ) const;
 
 
 protected:

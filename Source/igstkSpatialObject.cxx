@@ -160,9 +160,9 @@ SpatialObject::ReportInvalidRequest()
 
 
 void 
-SpatialObject::ExportStateMachine( stdOstreamType & ostr ) const
+SpatialObject::ExportStateMachineDescription( stdOstreamType & ostr ) const
 {
-  m_StateMachine.ExportTransitions( ostr );
+  m_StateMachine.ExportDescription( ostr );
 }
 
 
