@@ -62,12 +62,12 @@ namespace ISIS
 
 	public:
 		bool m_RightClickedPointValid;
-		void GetRightClickedPoint(float point[3]);
+		void GetRightClickedPoint(double point[3]);
 		void SelectRightPoint(int x, int y);
-		void GetImagePosition(int x, int y, float* pos);
+		void GetImagePosition(int x, int y, double* pos);
 //		void UpdateTipRadius();
 		void ShowAnnotation(int s);
-		void SetProbeTipAndDirection(int i, float tip[3], float end[3] );
+		void SetProbeTipAndDirection(int i, double tip[3], double end[3] );
 		void SetupCamera();
 		
 		Sphere		m_SelectedPositionMarker;

@@ -276,7 +276,7 @@ void IGMTTargetViewer::SetProbePosition(double *tip, double *hip)
     m_HipPoint[i] = hip[i];
   }  
 
-  m_Probe.SetTipAndDirection(tippos, hippos);
+  m_Probe.SetTipAndDirection(tip, hip);
   m_Probe.VisiblityOn();
 
   m_Renderer->WorldToView(tippos[0], tippos[1], tippos[2]);

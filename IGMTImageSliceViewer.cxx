@@ -400,7 +400,7 @@ namespace ISIS
 		m_Camera->SetParallelScale( max / 2  * m_ZoomFactor );
 	}
 
-  void IGMTImageSliceViewer::SetProbeTipAndDirection(int i, float tip[], float end[])
+  void IGMTImageSliceViewer::SetProbeTipAndDirection(int i, double tip[], double end[])
   {
     m_ProbeMarker[i].SetTipAndDirection(tip, end);
 
@@ -419,7 +419,7 @@ namespace ISIS
     m_TipPositionMarker.UpdateRadius();
   }*/
 
-  void IGMTImageSliceViewer::GetImagePosition(int x, int y, float *pos)
+  void IGMTImageSliceViewer::GetImagePosition(int x, int y, double *pos)
 {
     if (!m_Actor->GetInput()) 
     {
@@ -542,7 +542,7 @@ namespace ISIS
  
   }
   
-  void IGMTImageSliceViewer::GetRightClickedPoint(float point[])
+  void IGMTImageSliceViewer::GetRightClickedPoint(double point[])
   {
     if (m_RightClickedPointValid)
     {
