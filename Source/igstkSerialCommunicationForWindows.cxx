@@ -43,12 +43,12 @@ void SerialCommunicationForWindows::OpenCommunicationPortProcessing( void )
   if( this->m_PortHandle == INVALID_HANDLE_VALUE)
   {
     this->m_PortNumber = m_InvalidPortNumber;
-    m_ResultOfOpenCommunicationPortProcessing = false;
+    m_pOpenPortResultInput = &m_OpenPortFailureInput;
     this->InvokeEvent( OpenPortFailureEvent() );
   }
   else
   {
-    m_ResultOfOpenCommunicationPortProcessing = true;
+    m_pOpenPortResultInput = &m_OpenPortSuccessInput;
     igstkLogMacro( igstk::Logger::DEBUG, "COM port name: ");
     igstkLogMacro( igstk::Logger::DEBUG, portName);
     igstkLogMacro( igstk::Logger::DEBUG, " opened.\n");
@@ -65,12 +65,12 @@ void SerialCommunicationForWindows::SetUpDataBuffersProcessing( void )
   if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL) || 
       !SetupComm(this->m_PortHandle, this->m_ReadBufferSize, this->m_WriteBufferSize)) 
   {
-    m_ResultOfSetUpDataBuffersProcessing = false;
+    m_pDataBuffersSetUpResultInput = &m_DataBufferSetUpFailureInput;
     this->InvokeEvent( SetDataBufferSizeFailureEvent() );
   }
   else
   {
-    m_ResultOfSetUpDataBuffersProcessing = true;
+    m_pDataBuffersSetUpResultInput = &m_DataBufferSetUpSuccessInput;
     //Clear out buffers
     PurgeComm(this->m_PortHandle, PURGE_TXABORT | PURGE_TXCLEAR | PURGE_RXABORT | PURGE_RXCLEAR);
     this->m_ReadDataSize = 0;
@@ -88,7 +88,7 @@ void SerialCommunicationForWindows::SetUpDataBuffersProcessing( void )
 
 void SerialCommunicationForWindows::SetUpDataTransferParametersProcessing( void )
 {
-  m_ResultOfSetUpCommunicationParametersProcessing = false;
+  m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpFailureInput;
 
   // Control setting for a serial communications device
   DCB   dcb;
@@ -151,7 +151,7 @@ void SerialCommunicationForWindows::SetUpDataTransferParametersProcessing( void 
   {
     igstkLogMacro( igstk::Logger::DEBUG, "SetupCommunicationParameters succeeded.\n");
   }
-  m_ResultOfSetUpCommunicationParametersProcessing = true;
+  m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpSuccessInput;
 }
 
 void SerialCommunicationForWindows::ClearBuffersAndCloseCommunicationPortProcessing( void )

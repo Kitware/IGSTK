@@ -260,28 +260,28 @@ protected:
 
   /** List of Inputs */
   InputType                m_OpenPortInput;
-  InputType                m_OpenPortSuccess;
-  InputType                m_OpenPortFailure;
+  InputType                m_OpenPortSuccessInput;
+  InputType                m_OpenPortFailureInput;
 
   InputType                m_SetUpDataBuffersInput;
-  InputType                m_DataBufferSetUpSuccess;
-  InputType                m_DataBufferSetUpFailure;
+  InputType                m_DataBufferSetUpSuccessInput;
+  InputType                m_DataBufferSetUpFailureInput;
 
   InputType                m_SetUpDataTransferParametersInput;
-  InputType                m_DataTransferParametersSetUpSuccess;
-  InputType                m_DataTransferParametersSetUpFailure;
+  InputType                m_DataTransferParametersSetUpSuccessInput;
+  InputType                m_DataTransferParametersSetUpFailureInput;
 
-  InputType                m_RestCommunication;
-  InputType                m_FlushOutputBuffer;
-  InputType                m_ReceiveString;
-  InputType                m_SendString;
+  InputType                m_RestCommunicationInput;
+  InputType                m_FlushOutputBufferInput;
+  InputType                m_ReceiveStringInput;
+  InputType                m_SendStringInput;
 
   InputType                m_ClosePortInput;
 
-  /** Booleans to record result of state machine post-processing results. */
-  bool                     m_ResultOfOpenCommunicationPortProcessing;
-  bool                     m_ResultOfSetUpDataBuffersProcessing;
-  bool                     m_ResultOfSetUpCommunicationParametersProcessing;
+  /** Result of post-transition action taken by the state machine. */
+  InputType                *m_pOpenPortResultInput;
+  InputType                *m_pDataBuffersSetUpResultInput;
+  InputType                *m_pDataTransferParametersSetUpResultInput;
 };
 
 } // end namespace igstk
