@@ -8,13 +8,14 @@
 namespace IGSTK
 {
 
+void 
 IGMTVolumeViewer
-::IGMTVolumeViewer()
+::Init( vtkRenderWindow* renWin )
 {
-	m_Renderer = vtkRenderer::New();
+  m_Renderer = vtkRenderer::New();
 	m_Renderer->SetBackground(0, 0, 0);
 
-	m_RenderWindow = vtkRenderWindow::New();
+	m_RenderWindow = renWin;
 	m_RenderWindow->AddRenderer(m_Renderer);
   m_RenderWindow->SetDesiredUpdateRate( 25 );
 
@@ -141,6 +142,21 @@ IGMTVolumeViewer
 }
 
 IGMTVolumeViewer
+::IGMTVolumeViewer( vtkRenderWindow* renWin )
+{
+  this->Init( renWin );
+}
+
+IGMTVolumeViewer
+::IGMTVolumeViewer()
+{
+	m_RenderWindow = vtkRenderWindow::New();
+	
+  this->Init( m_RenderWindow );  
+  
+}
+
+IGMTVolumeViewer
 ::~IGMTVolumeViewer()
 {
 	if (m_Renderer)
@@ -148,12 +164,7 @@ IGMTVolumeViewer
 		m_Renderer->Delete();
 	}
 
-	if (m_RenderWindow)
-	{
-		m_RenderWindow->Delete();
-	}
-
-  if (m_ImageResampleRayCast)
+	if (m_ImageResampleRayCast)
   {
     m_ImageResampleRayCast->Delete();
   }

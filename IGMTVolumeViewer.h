@@ -43,6 +43,10 @@ public:
   void SetInput( vtkImageData * image );
 	
   IGMTVolumeViewer();
+
+  IGMTVolumeViewer( vtkRenderWindow* renWin );
+
+  void Init( vtkRenderWindow* renWin );
 	
   virtual ~IGMTVolumeViewer();
 
