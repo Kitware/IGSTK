@@ -1,0 +1,25 @@
+#
+# This file sets up include directories, link directories, and
+# compiler settings for a project to use IGSTK.  It should not be
+# included directly, but rather through the IGSTK_USE_FILE setting
+# obtained from IGSTKConfig.cmake.
+#
+
+IF(IGSTK_BUILD_SETTINGS_FILE)
+  INCLUDE(${CMAKE_ROOT}/Modules/CMakeImportBuildSettings.cmake)
+  CMAKE_IMPORT_BUILD_SETTINGS(${IGSTK_BUILD_SETTINGS_FILE})
+ENDIF(IGSTK_BUILD_SETTINGS_FILE)
+
+# Add compiler flags needed to use IGSTK.
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${IGSTK_REQUIRED_C_FLAGS}")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGSTK_REQUIRED_CXX_FLAGS}")
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${IGSTK_REQUIRED_LINK_FLAGS}")
+SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${IGSTK_REQUIRED_LINK_FLAGS}")
+SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${IGSTK_REQUIRED_LINK_FLAGS}")
+
+# Add include directories needed to use IGSTK.
+INCLUDE_DIRECTORIES(BEFORE ${IGSTK_INCLUDE_DIRS})
+
+# Add link directories needed to use IGSTK.
+LINK_DIRECTORIES(${IGSTK_LIBRARY_DIRS})
+

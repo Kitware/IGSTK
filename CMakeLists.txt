@@ -67,5 +67,54 @@ ENDIF(IGSTK_BUILD_EXAMPLES)
 #MARK_AS_ADVANCED(IGSTK_DATA_ROOT)
 
 
+#-----------------------------------------------------------------------------
+# The entire IGSTK tree should use the same include path, except for the
+# Wrapping directory.
+
+# Create the list of include directories needed for IGSTK header files.
+INCLUDE(${IGSTK_SOURCE_DIR}/igstkIncludeDirectories.cmake)
+
+# This should be the only INCLUDE_DIRECTORIES command in the entire
+# tree, except for the Utilities and Wrapping directories.  We need to
+# do this in one place to make sure the order is correct.
+INCLUDE_DIRECTORIES(
+  ${IGSTK_INCLUDE_DIRS_BUILD_TREE}
+  ${IGSTK_INCLUDE_DIRS_BUILD_TREE_CXX}
+  ${IGSTK_INCLUDE_DIRS_SYSTEM}
+)
+
+
+#-----------------------------------------------------------------------------
+# Help other projects use IGSTK.
+
+# Copy the UseIGSTK.cmake file to the binary tree for backward compatability.
+CONFIGURE_FILE(${IGSTK_SOURCE_DIR}/UseIGSTK.cmake.in
+               ${IGSTK_BINARY_DIR}/UseIGSTK.cmake COPYONLY IMMEDIATE)
+
+# Save the compiler settings so another project can import them.
+INCLUDE(${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
+CMAKE_EXPORT_BUILD_SETTINGS(${IGSTK_BINARY_DIR}/IGSTKBuildSettings.cmake)
+INSTALL_FILES(/lib/InsightToolkit .cmake IGSTKBuildSettings)
+
+# Save library dependencies.
+EXPORT_LIBRARY_DEPENDENCIES(${IGSTK_BINARY_DIR}/IGSTKLibraryDepends.cmake)
+
+# Create the IGSTKConfig.cmake file containing the IGSTK configuration.
+INCLUDE (${IGSTK_SOURCE_DIR}/igstkGenerateIGSTKConfig.cmake)
+
+# Install some files.
+INSTALL_FILES(/include/InsightToolkit .h igstkConfigure)
+INSTALL_FILES(/lib/InsightToolkit .cmake UseIGSTK IGSTKLibraryDepends)
+
+#-----------------------------------------------------------------------------
+# Add compiler flags IGSTK needs to work on this platform.  This must be
+# done AFTER the call to CMAKE_EXPORT_BUILD_SETTINGS.
+
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${IGSTK_REQUIRED_C_FLAGS}")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGSTK_REQUIRED_CXX_FLAGS}")
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${IGSTK_REQUIRED_LINK_FLAGS}")
+SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${IGSTK_REQUIRED_LINK_FLAGS}")
+SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${IGSTK_REQUIRED_LINK_FLAGS}")
+
 
 ENDIF(NOT IGSTK_SETUP_DASHBOARD)
