@@ -72,7 +72,7 @@ TARGET_LINK_LIBRARIES( IGSTK
     )
 
 # Add the testing directories
-OPTION(IGSTK_BUILD_TESTING "Test the project" OFF)
+OPTION(IGSTK_BUILD_TESTING "Test the project" ON)
 IF(IGSTK_BUILD_TESTING)
   ENABLE_TESTING()
   INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
@@ -81,7 +81,7 @@ ENDIF(IGSTK_BUILD_TESTING)
 
 
 # Add the examples directories
-OPTION(IGSTK_BUILD_EXAMPLES "Examples of the project" OFF)
+OPTION(IGSTK_BUILD_EXAMPLES "Examples of the project" ON)
 IF(IGSTK_BUILD_EXAMPLES)
   SUBDIRS(Examples)
 ENDIF(IGSTK_BUILD_EXAMPLES)
