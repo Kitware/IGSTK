@@ -22,12 +22,10 @@ namespace igstk
 
 TrackerTool::TrackerTool(void)
 {
-    // Initialize the variables
-    m_Position.SetElement(0,0);
-    m_Position.SetElement(1,0);
-    m_Position.SetElement(2,0);
-    m_Orientation.SetIdentity();
-    m_Error = 0.0;
+  // Initialize the variables
+  m_ValidityPeriod = 0.0; // current values are alreay invalid
+  m_Transform.SetToIdentity( m_ValidityPeriod ); 
+  m_Error = 0.0;
 }
 
 TrackerTool::~TrackerTool(void)
@@ -35,3 +33,4 @@ TrackerTool::~TrackerTool(void)
 }
 
 }
+

@@ -22,23 +22,67 @@ namespace igstk
 
 TrackerPort::TrackerPort(void)
 {
-    this->ClearTools();
+  this->ClearTools();
 }
+
 
 TrackerPort::~TrackerPort(void)
 {
-    this->ClearTools();
+  this->ClearTools();
 }
 
-void TrackerPort::AddTool( const TrackerToolType& tool)
+
+void 
+TrackerPort
+::AddTool( TrackerToolType * tool)
 {
-    m_Tools.push_back( tool );
+  TrackerToolPointer toolPtr = tool;
+  m_Tools.push_back( toolPtr );
 }
 
-void TrackerPort::ClearTools( void )
+
+
+void 
+TrackerPort
+::ClearTools( void )
 {
-    m_Tools.clear();
+  m_Tools.clear();
 }
 
 
+
+int 
+TrackerPort
+::GetNumberOfTools( void ) const
+{
+  return m_Tools.size();
 }
+
+
+const TrackerTool *
+TrackerPort
+::GetTool( unsigned int toolNumber ) const
+{
+  if( toolNumber >= m_Tools.size() )
+    {
+    return 0;  // FIXME  a STATE MACHINE SHOULD PREVENT THIS RISK
+    }
+  return m_Tools[toolNumber];
+}
+
+
+TrackerTool *
+TrackerPort
+::GetTool( unsigned int toolNumber ) 
+{
+  if( toolNumber >= m_Tools.size() )
+    {
+    return 0;  // FIXME  a STATE MACHINE SHOULD PREVENT THIS RISK
+    }
+  return m_Tools[toolNumber];
+}
+
+
+
+}
+

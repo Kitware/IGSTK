@@ -57,6 +57,9 @@ class TimeStamp
 
 public:
 
+  typedef double      TimePeriodType;
+
+
   /** Constructor and destructor */
   TimeStamp();
   ~TimeStamp();
@@ -69,20 +72,20 @@ public:
    * TimeStamp. The StartTime is set to the current time value as returned by
    * the function clock(). The ExpirationTime is set to the StartTime plus the
    * number of millisecondsToExpire argument provided by the user */
-  void SetStartTimeNowAndExpireAfter(double millisecondsToExpire);
+  void SetStartTimeNowAndExpireAfter( TimePeriodType millisecondsToExpire);
 
   
   /** Returns the time in milliseconds at which this stamp started to be valid.
    * This is the time at which the SetStartTimeNowAndExpireAfter() was invoked
    * last time. */
-  double GetStartTime() const;
+   TimePeriodType GetStartTime() const;
 
   
   /** Returns the time in milliseconds at which this stamp will expire. This
    * time is computed when the SetStartTimeNowAndExpireAfter() method is
    * invoked. The ExpirationTime is equal to the StartTime plus the value of
    * millisecondsToExpire provided as argument to that method. */
-  double GetExpirationTime() const;
+   TimePeriodType GetExpirationTime() const;
     
 
   /** This method returns 'true' is the current TimeStamp is still valid at the
@@ -92,7 +95,7 @@ public:
    * objects that are intended to be presented in a scene rendering at the time
    * specified in the argument.
    * */
-  bool IsValidAtTime( double milliseconds ) const;
+  bool IsValidAtTime(  TimePeriodType milliseconds ) const;
 
 
 private:
@@ -102,8 +105,8 @@ private:
 
 private:
 
-    double   m_StartTime;
-    double   m_ExpirationTime;
+     TimePeriodType   m_StartTime;
+     TimePeriodType   m_ExpirationTime;
 
 };
 

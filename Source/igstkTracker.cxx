@@ -105,7 +105,6 @@ Tracker::Tracker(void) : m_pCommunication( NULL), m_pLogger( NULL), m_StateMachi
       // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
 
-  m_Ports.clear();
 }
 
 Tracker::~Tracker(void)
@@ -166,23 +165,39 @@ void Tracker::UpdateStatus( void )
 }
 
 
-void Tracker::GetToolPosition( const int portNumber, const int toolNumber, PositionType &position ) const
+void Tracker::GetToolTransform( unsigned int portNumber, unsigned int toolNumber, TransformType &transitions ) const
 {
-  if ( (portNumber<=this->m_Ports.size()) &&
-       (toolNumber<=this->m_Ports[portNumber].m_Tools.size()) )
-  {
-      position = this->m_Ports[portNumber].m_Tools[toolNumber].GetPosition();
-  }
+  if ( portNumber < this->m_Ports.size()  )
+    {
+    TrackerPortPointer port = this->m_Ports[ portNumber ];
+    if ( port.IsNotNull() )
+      {
+      if( toolNumber < port->GetNumberOfTools() )
+        {
+        TrackerToolConstPointer tool = port->GetTool( toolNumber );
+        transitions = tool->GetTransform();
+        }
+      }
+    }
 }
 
 
-void Tracker::SetToolPosition( const int portNumber, const int toolNumber, const PositionType position )
+void Tracker::SetToolTransform( unsigned int portNumber, unsigned int toolNumber, const TransformType & transform )
 {
-  if ( (portNumber<=this->m_Ports.size()) &&
-    (toolNumber<=this->m_Ports[portNumber].m_Tools.size()) )
-  {
-    this->m_Ports[portNumber].m_Tools[toolNumber].SetPosition( position );
-  }
+
+  if ( portNumber < this->m_Ports.size()  )
+    {
+    TrackerPortPointer port = this->m_Ports[ portNumber ];
+    if ( port.IsNotNull() )
+      {
+      if( toolNumber < port->GetNumberOfTools() )
+        {
+        TrackerToolPointer tool = port->GetTool( toolNumber );
+        tool->SetTransform( transform );
+        }
+      }
+    }
+
 }
 
 void Tracker::Close( void )
@@ -192,9 +207,10 @@ void Tracker::Close( void )
   m_StateMachine.ProcessInput( *m_pCloseTrackingResultInput );
 }
 
-void Tracker::AddPort( const TrackerPortType& port)
+void Tracker::AddPort( TrackerPortType * port )
 {
-  this->m_Ports.push_back( port );
+  TrackerPortPointer portPtr = port;
+  this->m_Ports.push_back( portPtr );
 }
 
 void Tracker::ClearPorts( void )

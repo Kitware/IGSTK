@@ -1,4 +1,3 @@
-
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
@@ -19,10 +18,10 @@
 #ifndef __igstk_TrackerTool_h_
 #define __igstk_TrackerTool_h_
 
-#include "itkVersor.h"
-
-
+#include "itkObject.h"
+#include "igstkTransform.h"
 #include "igstkMacros.h"
+
 
 namespace igstk
 {
@@ -36,38 +35,54 @@ namespace igstk
     and error associated with the measurement used.
 */
 
-class TrackerTool
+class TrackerTool : public ::itk::Object
 {
 public:
+  /** Some required typedefs for itk::Object. */
 
-    typedef itk::Point< double, 3 >  PositionType;
-    typedef itk::Versor<double>      OrientationType;
-    typedef double                   ErrorType;
+  typedef TrackerTool                    Self;
+  typedef itk::SmartPointer<Self>        Pointer;
+  typedef itk::SmartPointer<const Self>  ConstPointer;
+
+  /**  Run-time type information (and related methods). */
+  igstkTypeMacro(TrackerTool, ::itk::Object);
+
+  /** Method for creation of a reference counted object. */
+  igstkNewMacro(Self);  
+
 
 public:
+
+    typedef Transform         TransformType;
+    typedef double            ErrorType;
+    typedef double            TimePeriodType;
+
+    igstkGetMacro( Transform, TransformType );
+    igstkGetMacro( ValidityPeriod, TimePeriodType );
+    igstkGetMacro( Error, ErrorType );
+
+    igstkSetMacro( Transform, TransformType );
+    igstkSetMacro( ValidityPeriod, TimePeriodType );
+    igstkSetMacro( Error, ErrorType );
+
+
+protected:
+
     TrackerTool(void);
 
     ~TrackerTool(void);
 
-    igstkGetMacro( Position, PositionType );
-    igstkGetMacro( Orientation, OrientationType );
-    igstkGetMacro( Error, ErrorType );
-
-    igstkSetMacro( Position, PositionType );
-    igstkSetMacro( Orientation, OrientationType );
-    igstkSetMacro( Error, ErrorType );
-
 
 private:
 
-    /** Position of the tool */
-    PositionType       m_Position;
-
-    /** Orientation of the tool */
-    OrientationType    m_Orientation;
+    /** Position and Orientation of the tool */
+    TransformType      m_Transform;
 
     /** Error reported in tool's position/orientation computation by the tracker */
     ErrorType          m_Error;
+
+    /** Time in milliseconds for which this tool will be reporting results */
+    TimePeriodType     m_ValidityPeriod;
 };
 
 }

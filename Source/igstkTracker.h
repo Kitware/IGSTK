@@ -26,6 +26,7 @@
 #include "igstkLogger.h"
 #include "igstkStateMachine.h"
 #include "igstkTrackerPort.h"
+#include "igstkTransform.h"
 
 namespace igstk
 {
@@ -47,6 +48,7 @@ namespace igstk
 
 class Tracker : public itk::Object
 {
+  public:
   typedef igstk::Communication           CommunicationType;
   typedef igstk::Logger                  LoggerType;
   typedef igstk::StateMachine< Tracker > StateMachineType;
@@ -60,13 +62,10 @@ class Tracker : public itk::Object
 
   /* typedefs from igstk::TrackerTool class */
 
-  typedef itk::Point< double, 3 >  PositionType;
-  typedef itk::Versor<double>      OrientationType;
+  typedef Transform                TransformType;
   typedef double                   ErrorType;
 
   igstkFriendClassMacro( StateMachineType );
-  igstkFriendClassMacro( TrackerPort );
-  igstkFriendClassMacro( TrackerTool );
 
 public:
 
@@ -77,7 +76,13 @@ public:
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
   typedef igstk::TrackerPort             TrackerPortType;
-  typedef std::vector< TrackerPortType > TrackerPortVectorType;
+  typedef TrackerPortType::Pointer       TrackerPortPointer;
+  typedef std::vector< TrackerPortPointer > TrackerPortVectorType;
+
+  typedef igstk::TrackerTool             TrackerToolType;
+  typedef TrackerToolType::Pointer       TrackerToolPointer;
+  typedef TrackerToolType::ConstPointer  TrackerToolConstPointer;
+
 
   /**  Run-time type information (and related methods). */
   igstkTypeMacro(Tracker, Object);
@@ -112,13 +117,17 @@ public:
   /** The "Close" method stops the tracker from use. */
   virtual void Close( void );
 
-  /** The "GetToolPosition" gets the position of tool numbered "toolNumber" on port numbered "portNumber"
-  in the variable "position". */
-  virtual void GetToolPosition( const int portNumber, const int toolNumber, PositionType &position ) const;
+  /** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
+   * port numbered "portNumber" in the variable "position". Note that this
+   * variable represents the position and orientation of the tool in 3D space.
+   * */
+  virtual void GetToolTransform( unsigned int portNumber, unsigned int toolNumber, TransformType &position ) const;
 
-  /** The "SetToolPosition" sets the position of tool numbered "toolNumber" on port numbered "portNumber"
-  by the content of variable "position". */
-  virtual void SetToolPosition( const int portNumber, const int toolNumber, const PositionType position );
+  /** The "SetToolTransform" sets the position of tool numbered "toolNumber" on
+   * port numbered "portNumber" by the content of variable "position". Note
+   * that this variable represents the position and orientation of the tool in
+   * 3D space.  */
+  virtual void SetToolTransform( unsigned int portNumber, unsigned int toolNumber, const TransformType & position );
 
   /** The SetLogger method is used to attach a logger object to the
   tracker object for logging purposes. */
@@ -137,7 +146,7 @@ protected:
   virtual ~Tracker(void);
 
   /** The "AddPort" method adds a port to the tracker. */
-  void AddPort( const TrackerPortType& port);
+  void AddPort( TrackerPortType * port);
 
   /** The "ClearPorts" clears all the ports. */
   void ClearPorts( void );

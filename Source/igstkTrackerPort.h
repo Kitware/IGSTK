@@ -32,38 +32,57 @@ namespace igstk
     the tracker port, and a vector of all tracker tools
     connected to the port.
 */
-
-class Tracker;
-
-class TrackerPort
+class TrackerPort : public ::itk::Object
 {
+
 public:
+  /** Some required typedefs for itk::Object. */
 
-    typedef igstk::TrackerTool             TrackerToolType;
-    typedef std::vector< TrackerToolType > TrackerToolVectorType;
+  typedef TrackerPort                    Self;
+  typedef itk::SmartPointer<Self>        Pointer;
+  typedef itk::SmartPointer<const Self>  ConstPointer;
 
-    igstkFriendClassMacro( Tracker );
+  /**  Run-time type information (and related methods). */
+  igstkTypeMacro(TrackerPort, ::itk::Object);
 
-    TrackerPort(void);
+  /** Method for creation of a reference counted object. */
+  igstkNewMacro(Self);  
 
-    ~TrackerPort(void);
 
-    /** The "AddTool" method adds a tool to the port. */
-    void AddTool( const TrackerToolType& tool);
+  /** Internal types */
+  typedef igstk::TrackerTool                TrackerToolType;
+  typedef TrackerToolType::Pointer          TrackerToolPointer;
+  typedef TrackerToolType::ConstPointer     TrackerToolConstPointer;
+  typedef std::vector< TrackerToolPointer > TrackerToolVectorType;
 
-    /** The "ClearTools" clears all the tools. */
-    void ClearTools( void );
 
-    /** The "GetNumberOfTools" method returns number of tools. */ 
-    inline int GetNumberOfTools( void )
-    {
-      return m_Tools.size();
-    }
+  /** The "AddTool" method adds a tool to the port. */
+  void AddTool( TrackerToolType * tool );
+
+  /** The "ClearTools" clears all the tools. */
+  void ClearTools( void );
+
+  /** The "GetNumberOfTools" method returns number of tools. */ 
+  int GetNumberOfTools( void ) const;
+
+  /** Get the pointer to a specific tool. Const and non-const versions of the
+   * same method */
+  TrackerToolType * GetTool( unsigned int );
+  const TrackerToolType * GetTool( unsigned int ) const;
+  
+
+protected:
+
+  TrackerPort(void);
+
+  ~TrackerPort(void);
+
 
 private:
 
     /** Vector of all tools on the port */
     TrackerToolVectorType       m_Tools;
+
 };
 
 }

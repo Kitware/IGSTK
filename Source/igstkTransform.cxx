@@ -49,7 +49,7 @@ Transform
 ::SetTranslationAndRotation(
           const  VectorType & translation,
           const  VersorType & rotation,
-          double millisecondsToExpiration)
+          TimePeriodType millisecondsToExpiration)
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Translation = translation;
@@ -61,7 +61,7 @@ void
 Transform
 ::SetTranslation(
           const  VectorType & translation,
-          double millisecondsToExpiration)
+          TimePeriodType millisecondsToExpiration)
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Translation = translation;
@@ -72,7 +72,7 @@ void
 Transform
 ::SetRotation(
           const  VersorType & rotation,
-          double millisecondsToExpiration)
+          TimePeriodType millisecondsToExpiration)
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Rotation = rotation;
@@ -97,7 +97,7 @@ Transform
 
 
 
-double 
+Transform::TimePeriodType 
 Transform
 ::GetStartTime() const
 {
@@ -106,7 +106,7 @@ Transform
 
 
 
-double 
+Transform::TimePeriodType 
 Transform
 ::GetExpirationTime() const
 {
@@ -116,7 +116,7 @@ Transform
 
 bool
 Transform
-::IsValidAtTime( double timeToCheckInMilliseconds ) const
+::IsValidAtTime( TimePeriodType timeToCheckInMilliseconds ) const
 {
   return m_TimeStamp.IsValidAtTime( timeToCheckInMilliseconds );
 }
@@ -138,6 +138,42 @@ Transform
     outmatrix.SetElement(i,3,m_Translation[i]);
     }
 }
+
+
+bool
+Transform
+::operator==( const Transform & inputTransform )
+{
+  // 
+  // FIXME Discuss how the == operator should be defined for the Transform.
+  // 
+  // In the meantime, let's go safe and consider two transforms equal
+  // only if they are the same object in memory. It is arguable whether this
+  // should be a method based on how close the numerical content of the two
+  // transforms is, based on some tolerance.
+  return (this==&inputTransform);
+}
+
+
+
+bool
+Transform
+::operator!=( const Transform & inputTransform )
+{
+  return !(this->operator==( inputTransform ));
+}
+
+
+
+void
+Transform
+::SetToIdentity( TimePeriodType millisecondsToExpiration )
+{
+  m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
+  m_Translation.Fill( 0.0 );
+  m_Rotation.SetIdentity();
+}
+
 
 
 } // end namespace itk

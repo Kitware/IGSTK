@@ -30,15 +30,24 @@ int igstkTrackerPortTest( int, char * [] )
     typedef igstk::TrackerTool  TrackerToolType;
     typedef igstk::TrackerPort  TrackerPortType;
     
-    TrackerToolType trackerTool;
+    TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
-    TrackerPortType trackerPort;
+    TrackerPortType::Pointer trackerPort = TrackerPortType::New();
 
-    trackerPort.ClearTools();
+    trackerPort->ClearTools();
 
-    trackerPort.AddTool( trackerTool );
+    trackerPort->AddTool( trackerTool );
 
-    trackerPort.ClearTools();
+    const unsigned int nt = trackerPort->GetNumberOfTools();
+    std::cout << "Number of tools = " << nt << std::endl;
+
+    TrackerToolType::Pointer trackerTool2 = trackerPort->GetTool(0);
+
+    // Exercise the const methods for GetTool()
+    TrackerPortType::ConstPointer trackerPort2 = trackerPort.GetPointer();
+    TrackerToolType::ConstPointer trackerTool3 = trackerPort2->GetTool(0);
+
+    trackerPort->ClearTools();
 
     return EXIT_SUCCESS;
 }

@@ -34,6 +34,10 @@ int igstkTransformTest( int, char * [] )
 
     TransformType t1;
     
+    // Test the SetToIdentity() method
+    const double identityValidityPeriod = 100.0; // milliseconds
+    t1.SetToIdentity( identityValidityPeriod );
+
     VectorType translation;
     translation[0] = 10.0;
     translation[1] = 20.0;
@@ -73,6 +77,10 @@ int igstkTransformTest( int, char * [] )
       std::cerr << "Expected to be invalid, but returned valid" << std::endl;
       return EXIT_FAILURE;
       }
+
+    std::cout << "Testing operator == and operator != " << std::endl;
+    bool shouldBeTrue  = ( t1 == t1 );
+    bool shouldBeFalse = ( t1 != t1 );
 
     }
   catch(...)

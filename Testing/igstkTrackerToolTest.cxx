@@ -27,21 +27,21 @@
 
 int igstkTrackerToolTest( int, char * [] )
 {
-    typedef igstk::TrackerTool  TrackerToolType;
-    typedef TrackerToolType::PositionType      PositionType;
-    typedef TrackerToolType::OrientationType   OrientationType;
+    typedef igstk::TrackerTool                 TrackerToolType;
+    typedef TrackerToolType::TransformType     TransformType;
     typedef TrackerToolType::ErrorType         ErrorType;
+    typedef TrackerToolType::ErrorType         TimePeriodType;
     
-    TrackerToolType trackerTool;
+    TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
-    PositionType    position    = trackerTool.GetPosition();
-    OrientationType orientation = trackerTool.GetOrientation();
-    ErrorType       errorvalue  = trackerTool.GetError();
+    TransformType   transform   = trackerTool->GetTransform();
+    ErrorType       errorvalue  = trackerTool->GetError();
 
-    trackerTool.SetPosition( position );
-    trackerTool.SetOrientation( orientation );
-    trackerTool.SetError( errorvalue );
+    trackerTool->SetTransform( transform );
+    trackerTool->SetError( errorvalue );
 
+    TimePeriodType period = 10.0; // measures are valid for 10 milliseconds
+    trackerTool->SetValidityPeriod( period );
 
     return EXIT_SUCCESS;
 }

@@ -60,6 +60,7 @@ public:
 
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
+  typedef TimeStamp::TimePeriodType   TimePeriodType;
   
 public:
 
@@ -77,7 +78,7 @@ public:
   void SetTranslationAndRotation(
           const  VectorType & translation,
           const  VersorType & rotation,
-          double millisecondsToExpiration);
+          TimePeriodType millisecondsToExpiration);
 
   /** Set only Rotation. This method should be used when the transform
    * represents only a rotation. Internally the translational part of the
@@ -87,7 +88,7 @@ public:
    * the method until that time plus the millisecondsToExpiration value. */
   void SetRotation( 
           const  VersorType & rotation,
-          double millisecondsToExpiration);
+          TimePeriodType millisecondsToExpiration);
 
   /** Set only Translation. This method should be used when the transform
    * represents only a translation. Internally the rotational part of the
@@ -97,7 +98,7 @@ public:
    * the method until that time plus the millisecondsToExpiration value. */
   void SetTranslation( 
           const  VectorType & translation,
-          double millisecondsToExpiration);
+          TimePeriodType millisecondsToExpiration);
 
 
   /** Returns the translational component. Users MUST check the validity time
@@ -119,7 +120,7 @@ public:
    * \sa TimeStamp 
    *
    * */
-  double GetStartTime() const;
+  TimePeriodType GetStartTime() const;
 
 
   /** Returns the time at which the validity of this information expires. The
@@ -129,7 +130,7 @@ public:
    * \sa TimeStamp 
    *
    * */
-  double GetExpirationTime() const;
+  TimePeriodType GetExpirationTime() const;
 
 
   /** Returns the validity status of the transform at the time passed as
@@ -140,7 +141,7 @@ public:
    * \sa TimeStamp 
    *
    * */
-  bool IsValidAtTime( double timeToTestInMilliseconds ) const;
+  bool IsValidAtTime( TimePeriodType timeToTestInMilliseconds ) const;
 
 
   /** Export the content of the transformation in the format of a vtkMatrix4x4.
@@ -149,6 +150,16 @@ public:
    * current information of translation and rotation.
    */
   void ExportTransform( vtkMatrix4x4 & matrix );
+
+
+  /** Assign the values of one transform to another */
+  bool operator==( const Transform & inputTransform );
+  bool operator!=( const Transform & inputTransform );
+
+
+  /** Resets the Transform to an Identity Transform */
+  void SetToIdentity( TimePeriodType validityPeriodInMilliseconds );
+  
 
 private:
 
