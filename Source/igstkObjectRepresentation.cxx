@@ -54,8 +54,8 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this)
   m_StateMachine.AddTransition( m_NullSpatialObjectState, m_UpdatePositionInput, m_NullSpatialObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullSpatialObjectState, m_UpdateRepresentationInput, m_NullSpatialObjectState,  NoAction );
 
-  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_NullSpatialObjectInput, m_NullSpatialObjectState,  NoAction ); // Should remove actors  ?
-  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_ValidSpatialObjectInput, m_ValidSpatialObjectState,  & ObjectRepresentation::SetSpatialObject ); // Should remove old actors ??
+  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_NullSpatialObjectInput, m_NullSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_ValidSpatialObjectInput, m_ValidSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdatePositionInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdatePositionFromGeometry );
   m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdateRepresentationInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdateRepresentationFromGeometry );
 
