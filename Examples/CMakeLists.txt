@@ -1,11 +1,7 @@
 SUBDIRS( 
     ApplicationModel
     LiverTumorSegmentation
-    ImageGuidedMagneticTracking
-    FileReformat
-    ICPRegistration
-    STLTest
-    ResliceTest    
+    ImageGuidedMagneticTracking     
 )
 
 OPTION(USE_QT "Use Qt for application GUI" OFF)
