@@ -1,0 +1,6 @@
+#ifndef __IGSTKSandbox_SystemInformation_h
+#define __IGSTKSandbox_SystemInformation_h
+
+#define IGSTKSandbox_BINARY_DIR "@IGSTKSandbox_BINARY_DIR@"
+
+#endif
