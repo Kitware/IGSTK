@@ -41,12 +41,12 @@ void FiducialRegistration::SetNumberOfFiducials(unsigned int number_fiducials)
 		this->m_SourceFiducialArray->Modified();
 		m_DestinationFiducialInitialized.resize(m_NumberOfFiducials);
 		m_SourceFiducialInitialized.resize(m_NumberOfFiducials);
-		for(unsigned int i=0; i<m_NumberOfFiducials; i++)
+/*		for(unsigned int i=0; i<m_NumberOfFiducials; i++)
 		{
 			m_DestinationFiducialInitialized[i] = false;
 			m_SourceFiducialInitialized[i] = false;
 		}
-	}
+*/	}
 }
 
 void FiducialRegistration::SetDestinationFiducial(unsigned int index, double x, double y, double z)
@@ -175,6 +175,13 @@ double FiducialRegistration::GetRMSError()
 //=======
 	double rms_error = pow(sum_dist/(2*m_NumberOfFiducials), 0.5);
 //>>>>>>> 1.3
+
+  int num = this->GetNumberOfFiducials();
+  if (num > 0)
+  {
+    rms_error = rms_error / (double)(num);
+  }
+  
 	return rms_error;
 }
 
