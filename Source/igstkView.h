@@ -52,9 +52,9 @@ class Scene;
 class View : public Fl_Gl_Window, public vtkRenderWindowInteractor 
 {
 
-private:
+public:
     
-  typedef View                                       Self;
+  typedef View      Self;
 
   igstkFriendClassMacro( Scene );
 
