@@ -27,7 +27,7 @@ SerialCommunication()
 {
 } 
 
-void SerialCommunicationForWindows::OpenCommunicationPortProcessing( void )
+void SerialCommunicationForWindows::OpenPortProcessing( void )
 {
   char portName[10];
   sprintf(portName, "COM%d", this->m_PortNumber + 1 ); //COM port numbering begins from 1
@@ -154,7 +154,7 @@ void SerialCommunicationForWindows::SetUpDataTransferParametersProcessing( void 
   m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpSuccessInput;
 }
 
-void SerialCommunicationForWindows::ClearBuffersAndCloseCommunicationPortProcessing( void )
+void SerialCommunicationForWindows::ClearBuffersAndClosePortProcessing( void )
 {
   if (m_InputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_InputBuffer;
@@ -162,17 +162,17 @@ void SerialCommunicationForWindows::ClearBuffersAndCloseCommunicationPortProcess
   if (m_OutputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_OutputBuffer;
   m_OutputBuffer = NULL;
-  this->CloseCommunicationPortProcessing();
+  this->ClosePortProcessing();
 }
 
-void SerialCommunicationForWindows::CloseCommunicationPortProcessing( void )
+void SerialCommunicationForWindows::ClosePortProcessing( void )
 {
   CloseHandle(this->m_PortHandle);
   this->m_PortHandle = (HandleType)INVALID_HANDLE_VALUE;
   igstkLogMacro( igstk::Logger::DEBUG, "Communication port closed.\n");
 }
 
-void SerialCommunicationForWindows::RestCommunicationProcessing( void )
+void SerialCommunicationForWindows::RestPortProcessing( void )
 {
   if (!SetCommBreak( this->m_PortHandle ))
   {

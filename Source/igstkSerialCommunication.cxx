@@ -47,14 +47,16 @@ m_OutputBuffer( NULL), m_PortRestSpan(10), m_InvalidPortNumber( -1 )
 
   // Set the state descriptors
   m_StateMachine.AddState( m_IdleState, "IdleState" );
-  m_StateMachine.AddState( m_AttemptingToOpenPortState, "AttemptingToOpenPortState" );
+  m_StateMachine.AddState( m_AttemptToOpenPortState, "AttemptToOpenPortState" );
   m_StateMachine.AddState( m_PortOpenState, "PortOpenState" );
 
-  m_StateMachine.AddState( m_AttemptingToSetUpDataBuffersState, "AttemptingToSetUpDataBuffersState" );
+  m_StateMachine.AddState( m_AttemptToSetUpDataBuffersState, "AttemptToSetUpDataBuffersState" );
   m_StateMachine.AddState( m_DataBuffersSetState, "DataBuffersSetState" );
 
-  m_StateMachine.AddState( m_AttemptingToSetUpDataTransferParametersState, "AttemptingToSetUpDataTransferParametersState" );
+  m_StateMachine.AddState( m_AttemptToSetUpDataTransferParametersState, "AttemptToSetUpDataTransferParametersState" );
   m_StateMachine.AddState( m_PortReadyForCommunicationState, "PortReadyForCommunication" );
+
+  m_StateMachine.AddState( m_AttemptToClosePortState, "m_AttemptToClosePortState" );
 
   // Set the input descriptors
   m_StateMachine.AddInput( m_OpenPortInput, "OpenPort");
@@ -65,12 +67,15 @@ m_OutputBuffer( NULL), m_PortRestSpan(10), m_InvalidPortNumber( -1 )
   m_StateMachine.AddInput( m_DataBufferSetUpSuccessInput, "DataBufferSetUpSuccessInput");
   m_StateMachine.AddInput( m_DataBufferSetUpFailureInput, "DataBufferSetUpFailureInput");
  
-  m_StateMachine.AddInput( m_SetUpDataTransferParametersInput, "SetUpDataTransferParameters");
+  m_StateMachine.AddInput( m_SetUpDataTransferParametersInput, "SetUpDataTransferParametersInput");
   m_StateMachine.AddInput( m_DataTransferParametersSetUpSuccessInput, "DataTransferParametersSetUpSuccessInput");
   m_StateMachine.AddInput( m_DataTransferParametersSetUpFailureInput, "DataTransferParametersSetUpFailureInput");
 
-  m_StateMachine.AddInput( m_ClosePortInput, "ClosePort");
-  m_StateMachine.AddInput( m_RestCommunicationInput, "RestCommunicationInput");
+  m_StateMachine.AddInput( m_ClosePortInput, "ClosePortInput");
+  m_StateMachine.AddInput( m_ClosePortSuccessInput, "ClosePortSuccessInput");
+  m_StateMachine.AddInput( m_ClosePortFailureInput, "ClosePortFailureInput");
+
+  m_StateMachine.AddInput( m_RestPortInput, "RestPortInput");
 
   m_StateMachine.AddInput( m_FlushOutputBufferInput, "FlushOutputBufferInput");
   m_StateMachine.AddInput( m_SendStringInput, "SendStringInput");
@@ -79,23 +84,26 @@ m_OutputBuffer( NULL), m_PortRestSpan(10), m_InvalidPortNumber( -1 )
   const ActionType NoAction = 0;
 
   // Programming the state machine transitions
-  m_StateMachine.AddTransition( m_IdleState, m_OpenPortInput, m_AttemptingToOpenPortState, &SerialCommunication::OpenCommunicationPortProcessing);
-  m_StateMachine.AddTransition( m_AttemptingToOpenPortState, m_OpenPortSuccessInput, m_PortOpenState, NoAction);
-  m_StateMachine.AddTransition( m_AttemptingToOpenPortState, m_OpenPortFailureInput, m_IdleState, NoAction);
+  m_StateMachine.AddTransition( m_IdleState, m_OpenPortInput, m_AttemptToOpenPortState, &SerialCommunication::OpenPortProcessing);
+  m_StateMachine.AddTransition( m_AttemptToOpenPortState, m_OpenPortSuccessInput, m_PortOpenState, NoAction);
+  m_StateMachine.AddTransition( m_AttemptToOpenPortState, m_OpenPortFailureInput, m_IdleState, NoAction);
 
-  m_StateMachine.AddTransition( m_PortOpenState, m_SetUpDataBuffersInput, m_AttemptingToSetUpDataBuffersState, &SerialCommunication::SetUpDataBuffersProcessing);
-  m_StateMachine.AddTransition( m_AttemptingToSetUpDataBuffersState, m_DataBufferSetUpSuccessInput, m_DataBuffersSetState, NoAction);
-  m_StateMachine.AddTransition( m_AttemptingToSetUpDataBuffersState, m_DataBufferSetUpFailureInput, m_PortOpenState, NoAction);
+  m_StateMachine.AddTransition( m_PortOpenState, m_SetUpDataBuffersInput, m_AttemptToSetUpDataBuffersState, &SerialCommunication::SetUpDataBuffersProcessing);
+  m_StateMachine.AddTransition( m_AttemptToSetUpDataBuffersState, m_DataBufferSetUpSuccessInput, m_DataBuffersSetState, NoAction);
+  m_StateMachine.AddTransition( m_AttemptToSetUpDataBuffersState, m_DataBufferSetUpFailureInput, m_PortOpenState, NoAction);
 
-  m_StateMachine.AddTransition( m_DataBuffersSetState, m_SetUpDataTransferParametersInput, m_AttemptingToSetUpDataTransferParametersState, &SerialCommunication::SetUpDataTransferParametersProcessing);
-  m_StateMachine.AddTransition( m_AttemptingToSetUpDataTransferParametersState, m_DataTransferParametersSetUpSuccessInput, m_PortReadyForCommunicationState, NoAction);
-  m_StateMachine.AddTransition( m_AttemptingToSetUpDataTransferParametersState, m_DataTransferParametersSetUpFailureInput, m_DataBuffersSetState, NoAction);
+  m_StateMachine.AddTransition( m_DataBuffersSetState, m_SetUpDataTransferParametersInput, m_AttemptToSetUpDataTransferParametersState, &SerialCommunication::SetUpDataTransferParametersProcessing);
+  m_StateMachine.AddTransition( m_AttemptToSetUpDataTransferParametersState, m_DataTransferParametersSetUpSuccessInput, m_PortReadyForCommunicationState, NoAction);
+  m_StateMachine.AddTransition( m_AttemptToSetUpDataTransferParametersState, m_DataTransferParametersSetUpFailureInput, m_DataBuffersSetState, NoAction);
 
-  m_StateMachine.AddTransition( m_PortOpenState, m_ClosePortInput, m_IdleState, &SerialCommunication::CloseCommunicationPortProcessing);
-  m_StateMachine.AddTransition( m_DataBuffersSetState, m_ClosePortInput, m_IdleState, &SerialCommunication::ClearBuffersAndCloseCommunicationPortProcessing);
-  m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_ClosePortInput, m_IdleState, &SerialCommunication::ClearBuffersAndCloseCommunicationPortProcessing);
+  m_StateMachine.AddTransition( m_PortOpenState, m_ClosePortInput, m_AttemptToClosePortState, &SerialCommunication::ClosePortProcessing);
+  m_StateMachine.AddTransition( m_DataBuffersSetState, m_ClosePortInput, m_AttemptToClosePortState, &SerialCommunication::ClearBuffersAndClosePortProcessing);
+  m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_ClosePortInput, m_AttemptToClosePortState, &SerialCommunication::ClearBuffersAndClosePortProcessing);
 
-  m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_RestCommunicationInput, m_PortReadyForCommunicationState, &SerialCommunication::RestCommunicationProcessing);
+  m_StateMachine.AddTransition( m_AttemptToClosePortState, m_ClosePortSuccessInput, m_IdleState, &SerialCommunication::ClosePortSuccessProcessing);
+  m_StateMachine.AddTransition( m_AttemptToClosePortState, m_ClosePortFailureInput, m_PortOpenState, &SerialCommunication::ClosePortFailureProcessing);
+
+  m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_RestPortInput, m_PortReadyForCommunicationState, &SerialCommunication::RestPortProcessing);
   m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_FlushOutputBufferInput, m_PortReadyForCommunicationState, &SerialCommunication::FlushOutputBufferProcessing);
   m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_SendStringInput, m_PortReadyForCommunicationState, &SerialCommunication::SendStringProcessing);
   m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_ReceiveStringInput, m_PortReadyForCommunicationState, &SerialCommunication::ReceiveStringProcessing);
@@ -107,6 +115,7 @@ m_OutputBuffer( NULL), m_PortRestSpan(10), m_InvalidPortNumber( -1 )
   m_pOpenPortResultInput = &m_OpenPortSuccessInput;
   m_pDataBuffersSetUpResultInput = &m_DataBufferSetUpSuccessInput;
   m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpSuccessInput;
+  m_pClosePortResultInput = &m_ClosePortSuccessInput;
 
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
@@ -122,6 +131,7 @@ SerialCommunication::~SerialCommunication()
 void SerialCommunication::CloseCommunication( void )
 {
   this->m_StateMachine.ProcessInput( m_ClosePortInput );
+  this->m_StateMachine.ProcessInput( *m_pClosePortResultInput );
 }
 
 
@@ -145,7 +155,7 @@ void SerialCommunication::OpenCommunication( const void *data )
 
 void SerialCommunication::RestCommunication( void )
 {
-  this->m_StateMachine.ProcessInput( m_RestCommunicationInput );
+  this->m_StateMachine.ProcessInput( m_RestPortInput );
 }
 
 
@@ -180,6 +190,17 @@ void SerialCommunication::SetLogger( LoggerType* logger )
 SerialCommunication::LoggerType* SerialCommunication::GetLogger(  void )
 {
     return m_pLogger;
+}
+
+
+void SerialCommunication::ClosePortSuccessProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::ClosePortSuccessProcessing called ...\n");
+}
+
+void SerialCommunication::ClosePortFailureProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::ClosePortFailureProcessing called ...\n");
 }
 
 } // end namespace igstk

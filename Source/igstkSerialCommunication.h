@@ -165,7 +165,7 @@ protected:
   ~SerialCommunication();
 
   /** Opens serial port for communication; */
-  virtual void OpenCommunicationPortProcessing( void ) = NULL;
+  virtual void OpenPortProcessing( void ) = NULL;
 
   /** Set up data buffer size. */
   virtual void SetUpDataBuffersProcessing( void ) = NULL;
@@ -174,13 +174,15 @@ protected:
   virtual void SetUpDataTransferParametersProcessing( void ) = NULL;
 
   /** Closes serial port  */
-  virtual void CloseCommunicationPortProcessing( void ) = NULL;
-  virtual void ClearBuffersAndCloseCommunicationPortProcessing( void ) = NULL;
+  virtual void ClosePortProcessing( void ) = NULL;
+  virtual void ClearBuffersAndClosePortProcessing( void ) = NULL;
+  virtual void ClosePortSuccessProcessing( void );
+  virtual void ClosePortFailureProcessing( void );
 
   /**Rests communication port by suspending character transmission  
   and placing the transmission line in a break state, and restarting
   transmission after a short delay.*/
-  virtual void RestCommunicationProcessing( void ) = NULL;
+  virtual void RestPortProcessing( void ) = NULL;
 
   virtual void FlushOutputBufferProcessing( void ) = NULL;
 
@@ -250,13 +252,14 @@ protected:
 
   /** List of States */
   StateType                m_IdleState;
-  StateType                m_AttemptingToOpenPortState;
+  StateType                m_AttemptToOpenPortState;
   StateType                m_PortOpenState;
-  StateType                m_AttemptingToSetUpDataBuffersState;
+  StateType                m_AttemptToSetUpDataBuffersState;
   StateType                m_DataBuffersSetState;
-  StateType                m_AttemptingToSetUpDataTransferParametersState;
+  StateType                m_AttemptToSetUpDataTransferParametersState;
   
   StateType                m_PortReadyForCommunicationState;
+  StateType                m_AttemptToClosePortState;
 
   /** List of Inputs */
   InputType                m_OpenPortInput;
@@ -271,17 +274,20 @@ protected:
   InputType                m_DataTransferParametersSetUpSuccessInput;
   InputType                m_DataTransferParametersSetUpFailureInput;
 
-  InputType                m_RestCommunicationInput;
+  InputType                m_RestPortInput;
   InputType                m_FlushOutputBufferInput;
   InputType                m_ReceiveStringInput;
   InputType                m_SendStringInput;
 
   InputType                m_ClosePortInput;
+  InputType                m_ClosePortSuccessInput;
+  InputType                m_ClosePortFailureInput;
 
   /** Result of post-transition action taken by the state machine. */
   InputType                *m_pOpenPortResultInput;
   InputType                *m_pDataBuffersSetUpResultInput;
   InputType                *m_pDataTransferParametersSetUpResultInput;
+  InputType                *m_pClosePortResultInput;
 };
 
 } // end namespace igstk
