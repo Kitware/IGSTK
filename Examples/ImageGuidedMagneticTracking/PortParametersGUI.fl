@@ -2,7 +2,7 @@
 version 1.0104 
 header_name {.h} 
 code_name {.cxx}
-decl {\#include "IGMTrackingBase.h"} {selected public
+decl {\#include "IGMTrackingBase.h"} {public
 } 
 
 class PortParametersGUI {open
@@ -109,7 +109,7 @@ this->Hide();}
   decl {IGMTrackingBase   *m_IGMTracking;} {}
   Function {Show()} {open return_type void
   } {
-    code {float offsetX, offsetY, offsetZ;
+    code {double offsetX, offsetY, offsetZ;
 char  str[25];
 
 m_IGMTracking->GetNeedleTipOffset(offsetX, offsetY, offsetZ);
@@ -149,7 +149,8 @@ else
    m_RefOption->value(0);
 	
 
-m_MainWindow->show();} {}
+m_MainWindow->show();} {selected
+    }
   }
   Function {Hide()} {open return_type void
   } {
