@@ -4,11 +4,13 @@
 
 # The header files
 SET(IGSTKSandbox_HEADS
+  igstkAuroraTracker.h
   igstkView.h
   igstkView2D.h
   igstkView3D.h
   igstkScene.h
   igstkSerialCommunication.h
+  igstkSerialCommunicationCommand.h
   igstkSpatialObject.h
   igstkEllipsoidObject.h  
   igstkCylinderObject.h
@@ -23,6 +25,7 @@ SET(IGSTKSandbox_HEADS
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
+  igstkAuroraTracker.cxx
   igstkView.cxx
   igstkView2D.cxx
   igstkView3D.cxx
