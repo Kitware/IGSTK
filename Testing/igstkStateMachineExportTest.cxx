@@ -31,7 +31,8 @@
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkScene.h"
-#include "igstkSpatialObject.h"
+#include "igstkEllipsoidObject.h"
+#include "igstkCylinderObject.h"
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
 #include "igstkView2D.h"
@@ -97,7 +98,8 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::CylinderObjectRepresentation, outputDirectory );
   igstkTestExportStateMachine1( igstk::EllipsoidObjectRepresentation, outputDirectory );
   igstkTestExportStateMachine1( igstk::Scene, outputDirectory );
-  igstkTestExportStateMachine1( igstk::SpatialObject, outputDirectory );
+  igstkTestExportStateMachine1( igstk::EllipsoidObject, outputDirectory );
+  igstkTestExportStateMachine1( igstk::CylinderObject, outputDirectory );
   igstkTestExportStateMachine1( igstk::Tracker, outputDirectory );
   igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory );
 
