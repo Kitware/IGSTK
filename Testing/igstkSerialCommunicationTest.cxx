@@ -147,6 +147,8 @@ int igstkSerialCommunicationTest( int, char * [] )
 
   serialComm->SetLogger( logger );
 
+  serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600() );
+
   serialComm->OpenCommunication();
 
   serialComm->SendString("Hello World!!!");
