@@ -1,18 +1,18 @@
-PROJECT( IGSTK )
+PROJECT( IGSTKSandbox )
 
-SET (LIBRARY_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all libraries." FORCE)
-SET (EXECUTABLE_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all executables." FORCE)
+SET (LIBRARY_OUTPUT_PATH ${IGSTKSandbox_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all libraries." FORCE)
+SET (EXECUTABLE_OUTPUT_PATH ${IGSTKSandbox_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all executables." FORCE)
 
 # Add the testing directories
-OPTION(IGSTK_BUILD_TESTING "Test the project" ON)
-IF(IGSTK_BUILD_TESTING)
+OPTION(IGSTKSandbox_BUILD_TESTING "Test the project" ON)
+IF(IGSTKSandbox_BUILD_TESTING)
   ENABLE_TESTING()
   INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
-ENDIF(IGSTK_BUILD_TESTING)
+ENDIF(IGSTKSandbox_BUILD_TESTING)
 
 SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
-IF(NOT IGSTK_SETUP_DASHBOARD)
+IF(NOT IGSTKSandbox_SETUP_DASHBOARD)
 
 #
 #  FIND ITK
@@ -47,25 +47,25 @@ ELSE (FLTK_FOUND)
   MESSAGE( FATAL_ERROR "This application requires FLTK. One of these components is missing. Please verify configuration")
 ENDIF (FLTK_FOUND)
 
-# The IGSTK Library
+# The IGSTKSandbox Library
 SUBDIRS(Source)
 
 # Add the testing directories
-IF(IGSTK_BUILD_TESTING)
+IF(IGSTKSandbox_BUILD_TESTING)
    SUBDIRS(Testing)
-ENDIF(IGSTK_BUILD_TESTING)
+ENDIF(IGSTKSandbox_BUILD_TESTING)
 
 # Add the examples directories
-OPTION(IGSTK_BUILD_EXAMPLES "Examples of the project" ON)
-IF(IGSTK_BUILD_EXAMPLES)
+OPTION(IGSTKSandbox_BUILD_EXAMPLES "Examples of the project" ON)
+IF(IGSTKSandbox_BUILD_EXAMPLES)
   #  SUBDIRS(Examples)
-ENDIF(IGSTK_BUILD_EXAMPLES)
+ENDIF(IGSTKSandbox_BUILD_EXAMPLES)
 
 #-----------------------------------------------------------------------------
-# Configure the default IGSTK_DATA_ROOT for the location of IGSTK Data.
-#FIND_PATH(IGSTK_DATA_ROOT IGSTKData.readme ${IGSTK_SOURCE_DIR}/Testing/Data $ENV{IGSTK_DATA_ROOT})
-#MARK_AS_ADVANCED(IGSTK_DATA_ROOT)
+# Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
+#FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_DIR}/Testing/Data $ENV{IGSTKSandbox_DATA_ROOT})
+#MARK_AS_ADVANCED(IGSTKSandbox_DATA_ROOT)
 
 
 
-ENDIF(NOT IGSTK_SETUP_DASHBOARD)
+ENDIF(NOT IGSTKSandbox_SETUP_DASHBOARD)
