@@ -41,6 +41,14 @@ namespace igstk{
 
 class Scene;
 
+/** \class View
+ * 
+ * \brief Base class for all View2D and View3D classes that display scenes in a
+ * VTK controlled window attached to the GUI.
+ *
+ * \ingroup Object
+ */
+
 class View : public Fl_Gl_Window, public vtkRenderWindowInteractor 
 {
 
