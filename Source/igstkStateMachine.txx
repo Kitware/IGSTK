@@ -339,9 +339,17 @@ StateMachine< TClass >
                         transitionsFromThisState->second->begin();
       while( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
         {
+        // find the label that identify the input.
+        InputDescriptorType label;
+        InputConstIterator inputItr = m_Inputs.find( 
+                                         transitionsFromThisStateAndInput->first ); 
+        if( inputItr != m_Inputs.end() )
+          {
+          label = inputItr->second;
+          }
         ostr << transitionsFromThisState->first << " -> ";
         ostr << transitionsFromThisStateAndInput->second.GetStateIdentifier();
-        ostr << " [label=\"" << transitionsFromThisStateAndInput->first << "\"";
+        ostr << " [label=\"" << label << "\"";
         ostr << " fontname=Helvetica, fontcolor=Blue";
         ostr << "];" << std::endl;
         ++transitionsFromThisStateAndInput;
@@ -355,7 +363,7 @@ StateMachine< TClass >
     StatesConstIterator  stateId = m_States.begin();
     while( stateId != m_States.end() )
       {
-      ostr << stateId->second << "  [label=\"";
+      ostr << stateId->first << "  [label=\"";
       ostr << stateId->second << "\"";
       ostr << " fontname=Helvetica, fontcolor=Black";
       ostr << "];" << std::endl;
@@ -363,6 +371,7 @@ StateMachine< TClass >
       }
     }
     ostr << "}" << std::endl;
+
 }
 
 
