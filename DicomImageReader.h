@@ -37,7 +37,7 @@ protected:
   void ReadVolume();
 
 
-private:
+public:
 
   ReaderPointer      m_Reader; 
   

@@ -108,6 +108,11 @@ DicomImageReader<TVolumeType>
     
   std::string selectedSerie = seriesBrowser->text( selectedLine );
 std::cout << "selectedSerie " << selectedSerie << std::endl;
+
+  seriesBrowserWindow->hide();  // added to hide the series window when loading DICOM data
+	
+  Fl::check();
+	
   m_Reader->SetFileNames( m_FilenamesGenerator->GetFileNames( selectedSerie ) );   
 
   itk::DICOMImageIO2::Pointer  dicomImageIO =  itk::DICOMImageIO2::New();
