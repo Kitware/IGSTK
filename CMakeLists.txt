@@ -59,8 +59,8 @@ ELSE (FLTK_FOUND)
   MESSAGE( FATAL_ERROR "This application requires FLTK. One of these components is missing. Please verify configuration")
 ENDIF (FLTK_FOUND)
 
-# The IGSTKSandbox Library
-SUBDIRS(Source)
+# The IGSTKSandbox Library and any Utilities that it requires
+SUBDIRS(Utilities Source)
 
 # Add the testing directories
 IF(IGSTKSandbox_BUILD_TESTING)
@@ -72,14 +72,6 @@ OPTION(IGSTKSandbox_BUILD_EXAMPLES "Examples of the project" ON)
 IF(IGSTKSandbox_BUILD_EXAMPLES)
     SUBDIRS(Examples)
 ENDIF(IGSTKSandbox_BUILD_EXAMPLES)
-
-# Option for using code in the Utilities directory
-OPTION(IGSTK_USE_UTILITIES "Use the code in the Utilities directory" OFF)
-MARK_AS_ADVANCED(IGSTK_USE_UTILITIES)
-IF( IGSTK_USE_UTILITIES )
-    SUBDIRS( Utilities )
-ENDIF( IGSTK_USE_UTILITIES )
-
 
 #-----------------------------------------------------------------------------
 # Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
