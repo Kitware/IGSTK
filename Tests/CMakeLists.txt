@@ -50,6 +50,7 @@ ADD_TEST(ICPRegistrationTest ${IGSTK_TESTS}
 	${IGSTK_DATA_ROOT}/Input/FixedPoints.dat
 	${IGSTK_DATA_ROOT}/Input/MovingPoints.dat
 	)
+ADD_TEST(igstkEllipseEstimatorTest ${IGSTK_TESTS} igstkEllipseEstimatorTest)
 
 #ENDIF(ITK_DATA_ROOT)
 
@@ -61,7 +62,8 @@ SET(BasicTests_SRCS
   LiverTumorSegmentationBaseTest.cxx
   MotionViewerTest.cxx
   ICPRegistrationTest.cxx
-  igstkStateMachineTest  
+  igstkStateMachineTest
+  igstkEllipseEstimatorTest.cxx  
   )
 
 ADD_EXECUTABLE(igstkTests igstkTests.cxx ${BasicTests_SRCS})
