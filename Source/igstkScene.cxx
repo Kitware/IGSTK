@@ -22,13 +22,10 @@ namespace igstk
 {
   
 /** Constructor */
-Scene::Scene()
+Scene::Scene():m_StateMachine(this)
 {
   m_LastAddedObject = 0;
   m_LastRemovedObject = 0;
-
-  // Preparing the State Machine 
-  m_StateMachine.SetOwnerClass( this );
 
   m_StateMachine.AddInput( m_ValidAddObject,     "ValidAddObject" );
   m_StateMachine.AddInput( m_NullAddObject,      "NullAddObject"  );

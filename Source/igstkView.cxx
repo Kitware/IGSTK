@@ -27,7 +27,8 @@ namespace igstk{
 
 /** Constructor */
 View::View( int x, int y, int w, int h, const char *l ) : 
-Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor()
+Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
+  m_StateMachine(this)
 {  
   // Create a default render window
   m_RenderWindow = vtkRenderWindow::New();
@@ -39,9 +40,6 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor()
   this->Initialize();
   m_InteractionHandling = true;
   this->end();
-
-  // Preparing the State Machine 
-  m_StateMachine.SetOwnerClass( this );
 
   m_StateMachine.AddInput( m_ValidAddActor,  "ValidAddActor" );
   m_StateMachine.AddInput( m_NullAddActor,   "NullAddActor"  );
