@@ -2,6 +2,7 @@
 
 #include "vtkImageData.h"
 #include "vtkInteractorStyleImage.h"
+#include "vtkLookupTable.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkActor.h"
@@ -19,21 +20,44 @@ namespace ISIS
 ImageSliceViewer
 ::ImageSliceViewer()
 {
-  m_Actor         = vtkImageActor::New();
+  m_ViewerMode = 2;
+
+  m_ImageActor    = vtkImageActor::New();
+
   m_Renderer      = vtkRenderer::New();
+
   m_RenderWindow  = vtkRenderWindow::New();
+
+  m_Renderer->AddActor( m_ImageActor );
+
+  m_GeoFilter = vtkImageDataGeometryFilter::New();
+
+  m_Mapper = vtkPolyDataMapper::New();
+
+  m_Actor = vtkActor::New();
 
   m_Renderer->AddActor( m_Actor );
 
-  m_Actor->Delete();
-
   m_Camera = m_Renderer->GetActiveCamera();
+
   m_Camera->ParallelProjectionOn();
 
   m_RenderWindow->AddRenderer( m_Renderer );
 
-  m_Renderer->Delete();
+  m_ImageMap = vtkImageMapToWindowLevelColors::New();
 
+  m_LUT = vtkWindowLevelLookupTable::New();
+
+  m_ImageReslice = vtkImageReslice::New();
+
+  m_Plane = vtkPlaneSource::New();
+
+  m_Texture = vtkTexture::New();
+
+  m_Transform = vtkTransform::New();
+
+  m_TransformFilter = vtkTransformPolyDataFilter::New();
+  
   this->SetOrientation( Axial );
 
   InteractorObserver * observer = InteractorObserver::New();
@@ -43,11 +67,17 @@ ImageSliceViewer
   m_Notifier      = itk::Object::New();
 
   m_NearPlane = 0.1;
+
   m_FarPlane  = 1000.0;
 
   m_ZoomFactor = 1.0;
 
   m_Renderer->SetBackground( 0, 0, 0 );
+
+  m_Window[0] = -600;
+
+  m_Window[1] = 1500;
+
 }
 
 
@@ -59,6 +89,11 @@ ImageSliceViewer
     {
     m_RenderWindow->Delete();
     }   
+
+  if ( m_ImageMap )
+  {
+    m_ImageMap->Delete();
+  }
 
   if( m_InteractorObserver )
     {
@@ -85,15 +120,65 @@ ImageSliceViewer
   return m_Renderer;
 }
 
+vtkImageData *
+ImageSliceViewer
+::GetInput()
+{
+  switch ( m_ViewerMode )
+  {
+  case 0: // ImageActor
+    return m_ImageActor->GetInput();
+  case 1: // Actor
+    return m_GeoFilter->GetInput();
+  case 2:
+    return m_ImageReslice->GetInput();
+  }
+  return NULL;
+}
+
 
 void
 ImageSliceViewer
 ::SetInput( vtkImageData * image )
 {
+  
+  image->GetExtent( m_Ext );
+  image->GetOrigin( m_Origin );
+  image->GetSpacing( m_Spacing );
 
-  image->GetExtent(m_Ext);
-  m_Actor->SetInput( image );
+  switch ( m_ViewerMode )
+  {
+  case 0:
+    m_ImageMap->SetInput( image );  
+    m_ImageActor->SetInput( m_ImageMap->GetOutput() );
+    m_ImageMap->UpdateWholeExtent();
+    break;
+  case 1:    
+    m_GeoFilter->SetInput( image );
+    m_Mapper->SetInput( m_GeoFilter->GetOutput() );
+    m_Actor->SetMapper( m_Mapper );
+    break;
+  case 2:    
+    m_ImageReslice->SetInput( image );
+    m_ImageReslice->SetResliceAxesDirectionCosines( m_AxisX, m_AxisY, m_AxisZ );
+    m_ImageReslice->SetResliceAxesOrigin( m_Origin[0], m_Origin[1], m_Origin[2] );
+    m_ImageReslice->SetOutputDimensionality(2);
+    m_Texture->SetInput( m_ImageReslice->GetOutput() );
+    m_Transform->Identity();
+    m_Transform->Translate( m_Origin[0], m_Origin[1], m_Origin[2] );
+    m_Transform->Scale( m_Spacing[0] * (m_Ext[1] - m_Ext[0] + 1), m_Spacing[1] * (m_Ext[3] - m_Ext[2] + 1), m_Spacing[2] * (m_Ext[5] - m_Ext[4] + 1));
+    m_Transform->Translate( 0.5, 0.5, 0 );
+    m_Transform->RotateX( 90.0 );
+    m_TransformFilter->SetTransform( m_Transform );
+    m_TransformFilter->SetInput( m_Plane->GetOutput() );
+    m_Mapper->SetInput( m_TransformFilter->GetOutput() );
+    m_Actor->SetMapper( m_Mapper );
+    m_Actor->SetTexture( m_Texture );
+    break;
+  }
+  
   this->SetupCamera();
+  this->SetWindowLevelWidth( m_Window[0], m_Window[1] );
 
 }
 
@@ -104,7 +189,7 @@ ImageSliceViewer
 ::SetupCamera()
 {
 
-  vtkImageData * image = m_Actor->GetInput();
+  vtkImageData * image = this->GetInput();
 
   if ( !image )
     {
@@ -114,6 +199,8 @@ ImageSliceViewer
   vtkFloatingPointType spacing[3];
   vtkFloatingPointType origin[3];
   int   dimensions[3];
+
+  image->UpdateData();
 
   image->GetSpacing(spacing);
   image->GetOrigin(origin);
@@ -146,7 +233,7 @@ ImageSliceViewer
   case Axial:
       {
       idx = 2;
-      m_Camera->SetViewUp (     0,  -1,  0 );
+      m_Camera->SetViewUp (     0,  -1,  0 );      
       break;
       }
     }
@@ -204,6 +291,42 @@ void
 ::SetOrientation( OrientationType orientation )
 {
   m_Orientation = orientation;
+  switch ( m_Orientation )
+  {
+  case Axial:
+    m_AxisX[0] = 1;
+    m_AxisX[1] = 0;
+    m_AxisX[2] = 0;
+    m_AxisY[0] = 0;
+    m_AxisY[1] = 1;
+    m_AxisY[2] = 0;
+    m_AxisZ[0] = 0;
+    m_AxisZ[1] = 0;
+    m_AxisZ[2] = 1;
+    break;
+  case Coronal:
+    m_AxisX[0] = 1;
+    m_AxisX[1] = 0;
+    m_AxisX[2] = 0;
+    m_AxisY[0] = 0;
+    m_AxisY[1] = 0;
+    m_AxisY[2] = 1;
+    m_AxisZ[0] = 0;
+    m_AxisZ[1] = 1;
+    m_AxisZ[2] = 0;
+    break;
+  case Sagittal:
+    m_AxisX[0] = 0;
+    m_AxisX[1] = 0;
+    m_AxisX[2] = 1;
+    m_AxisY[0] = 0;
+    m_AxisY[1] = 1;
+    m_AxisY[2] = 0;
+    m_AxisZ[0] = 1;
+    m_AxisZ[1] = 0;
+    m_AxisZ[2] = 0;
+    break;
+  }
   this->SetupCamera();
 }
 
@@ -214,15 +337,13 @@ void
   ImageSliceViewer
 ::SelectSlice( int slice )
 {
-  if (!m_Actor->GetInput()) 
+  if (!this->GetInput()) 
     {
     return;     // return, if no image is loaded yet.
     }
 
   int ext[6];
-  m_Actor->GetInput()->GetExtent( ext );
-
-//  printf("GetDisplayExtent: %d %d %d %d %d %d\n", ext[0], ext[1], ext[2], ext[3], ext[4], ext[5]);
+  this->GetInput()->GetExtent( ext );
 
   memcpy(ext, m_Ext, 6 * sizeof(int));
 
@@ -254,21 +375,121 @@ void
       break;
     }
 
- // printf("SetDisplayExtent: %d %d %d %d %d %d\n", ext[0], ext[1], ext[2], ext[3], ext[4], ext[5]);
-
-  m_Actor->SetDisplayExtent( ext );
+  switch ( m_ViewerMode )
+  {
+  case 0:
+    m_ImageActor->SetDisplayExtent( ext );
+    break;
+  case 1:
+    m_GeoFilter->SetExtent( ext );    
+    break;
+  case 2:
+    m_ImageReslice->SetResliceAxesDirectionCosines( m_AxisX, m_AxisY, m_AxisZ);
+    m_ImageReslice->SetResliceAxesOrigin( m_Origin[0] + ext[0] * m_Spacing[0], m_Origin[1] + ext[2] * m_Spacing[1], m_Origin[2] + ext[4] * m_Spacing[2] );
+    m_ImageReslice->SetOutputDimensionality(2);
+    m_Transform->Identity();
+    m_Transform->Translate( m_Origin[0] + ext[0] * m_Spacing[0], m_Origin[1] + ext[2] * m_Spacing[1], m_Origin[2] + ext[4] * m_Spacing[2] );
+    m_Transform->Scale( m_Spacing[0] * (m_Ext[1] - m_Ext[0] + 1), m_Spacing[1] * (m_Ext[3] - m_Ext[2] + 1), m_Spacing[2] * (m_Ext[5] - m_Ext[4] + 1));
+    
+    switch ( m_Orientation )
+    {
+    case Axial:
+      m_Transform->Translate( 0.5, 0.5, 0 );
+      break;
+    case Coronal:
+      m_Transform->Translate( 0.5, 0, 0.5 );
+      m_Transform->RotateX( 90 );
+      break;
+    case Sagittal:
+      m_Transform->Translate( 0, 0.5, 0.5 );
+      m_Transform->RotateY( -90 );
+      break;
+    }
+    m_TransformFilter->SetTransform( m_Transform );
+    break;
+  }
+  
 }
 
+void
+ImageSliceViewer
+::MovePoint( int x, int y, bool firstmove )
+{
+  if (!this->GetInput()) 
+  {
+    return;
+  }
+
+  double dx, dy;
+
+  if ( !firstmove )
+  {
+
+    dx = (double)(x - m_DragPoint[0]) / m_RenderWindow->GetSize()[0] * 1000;
+    dy = (double)(y - m_DragPoint[1]) / m_RenderWindow->GetSize()[1] * 1000;
+
+    m_Window[0] += dx;
+    m_Window[1] += dy;
+
+    m_Notifier->InvokeEvent( UpdateWindowLevelWidthEvent() );
+
+  }
+
+  m_DragPoint[0] = x;
+  m_DragPoint[1] = y;  
+
+}
+
+void
+ImageSliceViewer
+::GetWindowLevelWidth(double& level, double& width)
+{
+  level = m_Window[0];
+  width = m_Window[1];
+}
+
+void
+ImageSliceViewer
+::SetWindowLevelWidth(double level, double width)
+{
+  m_Window[0] = level;
+  m_Window[1] = width;
+
+  switch ( m_ViewerMode )
+  {
+  case 0:
+    m_ImageMap->SetLevel( level );
+    m_ImageMap->SetWindow( width );
+    break;
+  case 1:
+    m_LUT = vtkWindowLevelLookupTable::New();
+    m_LUT->SetLevel( level );
+    m_LUT->SetWindow( width );
+    m_LUT->Build();
+    m_Mapper->SetLookupTable( m_LUT );
+    m_Mapper->Update();
+    break;
+  case 2:
+    m_LUT = vtkWindowLevelLookupTable::New();
+    m_LUT->SetLevel( level );
+    m_LUT->SetWindow( width );
+    m_LUT->Build();
+    m_Texture->SetLookupTable( m_LUT );
+    break;
+  }  
+}
 
 void
 ImageSliceViewer
 ::SelectPoint( int x, int y )
 {
-  if (!m_Actor->GetInput()) 
+  if (!this->GetInput()) 
     {
     return;     // return, if no image is loaded yet.
     }
 
+  m_DragPoint[0] = x;
+  m_DragPoint[1] = y;
  
   // Invert the y coordinate (vtk uses opposite y as FLTK)
   int* winsize = m_RenderWindow->GetSize();
@@ -286,11 +507,11 @@ ImageSliceViewer
   vtkFloatingPointType origin[3] ={0,0,0};
 
   int dimensions[3] = { 100, 100, 100 };
-  if ( m_Actor->GetInput() )
+  if ( this->GetInput() )
     {
-    m_Actor->GetInput()->GetSpacing(spacing);
-    m_Actor->GetInput()->GetOrigin(origin);
-    m_Actor->GetInput()->GetDimensions(dimensions);
+    this->GetInput()->GetSpacing(spacing);
+    this->GetInput()->GetOrigin(origin);
+    this->GetInput()->GetDimensions(dimensions);
     }
 
   int idx = 0;
@@ -318,9 +539,7 @@ ImageSliceViewer
   // At this point we have 3D position in the variable wpoint
   this->SelectPoint(wpoint[0], wpoint[1], wpoint[2]);
 
-  m_Notifier->InvokeEvent( ClickedPointEvent() );
-
-  
+  m_Notifier->InvokeEvent( ClickedPointEvent() );  
 }
 
 void  
@@ -339,9 +558,6 @@ ImageSliceViewer::GetSelectPoint(double data[3])
     data[i] = m_SelectPoint[i];
   }
 }
-
-
-
 
 unsigned long 
 ImageSliceViewer::AddObserver( const itk::EventObject & event, itk::Command * command)

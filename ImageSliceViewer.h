@@ -8,6 +8,17 @@
 #include "vtkRenderWindow.h"
 #include "vtkCommand.h"
 #include "vtkInteractorStyleImage.h"
+#include "vtkImageReslice.h"
+#include "vtkImageResample.h"
+#include "vtkImageMapToWindowLevelColors.h"
+#include "vtkImageMapToColors.h"
+#include "vtkImageDataGeometryFilter.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkWindowLevelLookupTable.h"
+#include "vtkPlaneSource.h"
+#include "vtkTexture.h"
+#include "vtkTransform.h" 
+#include "vtkTransformPolyDataFilter.h"
 
 #include "itkEventObject.h"
 #include "itkCommand.h"
@@ -42,6 +53,8 @@ public:
 
   void SelectPoint( int x, int y);
 
+  void MovePoint( int x, int y, bool firstmove);
+
   virtual void SetInteractor( vtkRenderWindowInteractor * interactor );
 
   void Render( void );
@@ -58,6 +71,12 @@ public:
 
   virtual void SetZoomFactor( double factor );
 
+  void GetWindowLevelWidth(double& level, double& width);
+
+  void SetWindowLevelWidth(double level, double width);
+
+  vtkImageData* GetInput();
+
 protected:
 
   virtual void SetupCamera( void );
@@ -65,9 +84,8 @@ protected:
 
 public:
 	virtual void SelectRightPoint(int x, int y);
-	int m_Ext[6];
-
-  vtkImageActor     * m_Actor;
+	
+  vtkImageActor     * m_ImageActor;
 
   vtkRenderer       * m_Renderer;
 
@@ -83,13 +101,47 @@ public:
 
   itk::Object::Pointer   m_Notifier;
 
+  vtkImageMapToWindowLevelColors  * m_ImageMap;
+
+  vtkImageDataGeometryFilter      * m_GeoFilter;
+
+  vtkPolyDataMapper   * m_Mapper;
+
+  vtkActor            * m_Actor;
+
+  vtkWindowLevelLookupTable   * m_LUT;
+
+  vtkImageReslice     * m_ImageReslice;
+
+  vtkPlaneSource      * m_Plane;
+
+  vtkTexture          * m_Texture;
+
+  vtkTransformPolyDataFilter  * m_TransformFilter;
+
+  vtkTransform        * m_Transform;
+
+  int                 m_ViewerMode;
+
   double              m_NearPlane;
 
   double              m_FarPlane;
 
   double              m_ZoomFactor;
 
-  double               m_SelectPoint[3];
+  int                 m_Ext[6];
+
+  float               m_Origin[3];
+
+  float               m_Spacing[3];
+
+  double              m_SelectPoint[3];
+
+  double              m_DragPoint[2];
+
+  double              m_Window[2];
+
+  double              m_AxisX[3], m_AxisY[3], m_AxisZ[3];
 };
 
 
