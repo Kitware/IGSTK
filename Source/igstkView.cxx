@@ -45,6 +45,8 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor()
 
   m_StateMachine.AddInput( m_ValidAddActor,  "ValidAddActor" );
   m_StateMachine.AddInput( m_NullAddActor,   "NullAddActor"  );
+  m_StateMachine.AddInput( m_ValidRemoveActor,  "ValidRemoveActor" );
+  m_StateMachine.AddInput( m_NullRemoveActor,   "NullRemoveActor"  );
 
   m_StateMachine.AddState( m_IdleState,      "IdleState"     );
 
@@ -52,6 +54,8 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor()
 
   m_StateMachine.AddTransition( m_IdleState, m_ValidAddActor, m_IdleState,  & View::AddActor );
   m_StateMachine.AddTransition( m_IdleState, m_NullAddActor,  m_IdleState,          NoAction );
+  m_StateMachine.AddTransition( m_IdleState, m_ValidRemoveActor, m_IdleState,  & View::RemoveActor );
+  m_StateMachine.AddTransition( m_IdleState, m_NullRemoveActor,  m_IdleState,          NoAction );
 
   m_StateMachine.SelectInitialState( m_IdleState );
 
@@ -63,7 +67,8 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor()
   m_SceneRemoveObjectObserver->SetCallbackFunction(this, & View::UpdateViewFromRemovedObject);
 
   m_Scene = 0;
-
+  m_ActorToBeAdded = 0;
+  m_ActorToBeRemoved = 0;
 }
 
 /** Destructor */
@@ -159,8 +164,7 @@ void View::UpdateViewFromRemovedObject()
   ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
   while(actorIt != actors.end())
     {
-    // FIXME: This needs to use the state machine concept
-    m_Renderer->RemoveActor( *actorIt );
+    this->RequestRemoveActor( *actorIt );
     actorIt++;
     }
 
@@ -199,7 +203,7 @@ void View::SetScene(igstk::Scene* scene)
 /** */
 void View::RequestAddActor( vtkProp3D * actor )
 {
-  m_NewActor = actor;
+  m_ActorToBeAdded = actor;
   if( !actor )
     {
     m_StateMachine.ProcessInput( m_NullAddActor );
@@ -214,8 +218,31 @@ void View::RequestAddActor( vtkProp3D * actor )
 /** */
 void View::AddActor()
 {
-  m_Renderer->AddActor( m_NewActor );
+  m_Renderer->AddActor( m_ActorToBeAdded );
 }
+
+
+/** */
+void View::RequestRemoveActor( vtkProp3D * actor )
+{
+  m_ActorToBeRemoved = actor;
+  if( !actor )
+    {
+    m_StateMachine.ProcessInput( m_NullRemoveActor );
+    }
+  else
+    {
+    m_StateMachine.ProcessInput( m_ValidRemoveActor );
+    }
+}
+
+
+/** */
+void View::RemoveActor()
+{
+  m_Renderer->RemoveActor( m_ActorToBeRemoved );
+}
+
 
 
 /** */

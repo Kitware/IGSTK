@@ -51,6 +51,8 @@ private:
 
   FriendClassMacro( StateMachineType );
 
+  TypeMacro( View, vtkRenderWindowInteractor );
+  
 protected:
 
   View( int x, int y, int w, int h, const char *l="");
@@ -109,7 +111,8 @@ private:
   /** Member variables for holding temptative arguments of functions.
    *  This is needed for implementing a layer of security that decouples
    *  user invokations from the actual state of this class */
-  vtkProp3D            * m_NewActor;
+  vtkProp3D            * m_ActorToBeAdded;
+  vtkProp3D            * m_ActorToBeRemoved;
   
   ObserverType::Pointer     m_SceneAddObjectObserver;
   ObserverType::Pointer     m_SceneRemoveObjectObserver;
@@ -120,8 +123,11 @@ private:
 
   /** Add a vtk Actor */
   void AddActor();
+  void RemoveActor();
 
   void RequestAddActor( vtkProp3D * actor );
+  void RequestRemoveActor( vtkProp3D * actor );
+
   void UpdateViewFromAddedObject();
   void UpdateViewFromRemovedObject();
 
@@ -133,6 +139,8 @@ private:
   /** Inputs to the State Machine */
   InputType            m_ValidAddActor;
   InputType            m_NullAddActor;
+  InputType            m_ValidRemoveActor;
+  InputType            m_NullRemoveActor;
   
 
   /** States for the State Machine */
