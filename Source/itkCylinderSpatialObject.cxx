@@ -40,30 +40,63 @@ CylinderSpatialObject ::~CylinderSpatialObject()
 bool CylinderSpatialObject
 ::IsInside( const PointType & point) const
 {
+  double minSquareDist=999999.0;
+  
   if(!this->GetIndexToWorldTransform()->GetInverse(const_cast<TransformType *>(this->GetInternalInverseTransform())))
     {
     return false;
     }
-/*
-  PointType transformedPoint = this->GetInternalInverseTransform()->TransformPoint(point);  
-  double r = 0;
-  for(unsigned int i=0;i<3;i++)
+
+  PointType transformedPoint = this->GetInternalInverseTransform()->TransformPoint(point);
+       
+  this->ComputeLocalBoundingBox();
+
+  if( this->GetBounds()->IsInside(point) )
     {
-    if(m_Radius[i]!=0.0)
+    // Check if the point is on the normal plane
+    PointType a,b;
+    a[0] = 0;
+    a[1] = -m_Height/2;
+    a[2] = 0;
+      
+    b[0] = 0;
+    b[1] = m_Height/2;
+    b[2] = 0; 
+   
+    double A = 0;
+    double B = 0;
+
+    for(unsigned int i = 0;i<3;i++)
       {
-      r += (transformedPoint[i]*transformedPoint[i])/(m_Radius[i]*m_Radius[i]);
+      A += (b[i]-a[i])*(transformedPoint[i]-a[i]);
+      B += (b[i]-a[i])*(b[i]-a[i]);
       }
-    else if(transformedPoint[i]>0.0)  // Degenerate Cylinder
+
+    double lambda = A/B;
+
+    if( (
+         (lambda>-(m_Radius/(2*sqrt(B))))
+          && (lambda<0))
+          || ((lambda <= 1.0) && (lambda >= 0.0))       
+        )
       {
-      r = 2; // Keeps function from returning true here 
-     break;
+      PointType p;
+
+      for(unsigned int i = 0;i<3;i++)
+        {
+        p[i] = a[i]+lambda*(b[i]-a[i]);
+        }
+
+      double tempSquareDist=transformedPoint.EuclideanDistanceTo(p);
+
+      double R =  m_Radius;
+
+      if(tempSquareDist <= R)
+        {
+        return true;
+        }
       }
     }
-  
-  if(r<1)
-    {
-    return true;
-    }*/
   return false;
 }
 
@@ -97,33 +130,46 @@ bool CylinderSpatialObject
 bool CylinderSpatialObject
 ::ComputeLocalBoundingBox() const
 { 
-  itkDebugMacro( "Computing Cylinder bounding box" );
+  itkDebugMacro( "Computing tube bounding box" );
 
-/*  if( this->GetBoundingBoxChildrenName().empty() 
-      || strstr(typeid(Self).name(), this->GetBoundingBoxChildrenName().c_str()) )
+  // Check if the IndexToWorldTransform or the object itself has been modified
+  /*if( (this->GetMTime() == m_OldMTime)
+     && (m_IndexToWorldTransformMTime == this->GetIndexToWorldTransform()->GetMTime())
+    )
     {
-    PointType pnt;
-    PointType pnt2;
-    for(unsigned int i=0; i<;i++) 
-      {   
-      if(m_Radius[i]>0)
-        {
-        pnt[i]=-m_Radius[i];
-        pnt2[i]=m_Radius[i];
-        }
-      else
-        {
-        pnt[i]=m_Radius[i];
-        pnt2[i]=-m_Radius[i];
-        }
-      } 
-     
-      pnt = this->GetIndexToWorldTransform()->TransformPoint(pnt);
-      pnt2 = this->GetIndexToWorldTransform()->TransformPoint(pnt2);
-  */       
-//      const_cast<BoundingBoxType *>(this->GetBounds())->SetMinimum(pnt);
-//      const_cast<BoundingBoxType *>(this->GetBounds())->SetMaximum(pnt2);
- //   }
+    return true; // if not modified we return
+    }
+ 
+  m_OldMTime = this->GetMTime();
+  m_IndexToWorldTransformMTime = this->GetIndexToWorldTransform()->GetMTime();
+  */
+
+  if( this->GetBoundingBoxChildrenName().empty() 
+    || strstr(typeid(Self).name(), this->GetBoundingBoxChildrenName().c_str()) )
+    {
+      // First point
+      PointType ptMin,ptMax;
+      ptMin[0] = -m_Radius;
+      ptMin[1] = -m_Height/2;
+      ptMin[2] = -m_Radius;
+      ptMin = this->GetIndexToWorldTransform()->TransformPoint(ptMin);     
+      ptMax[0] = +m_Radius;
+      ptMax[1] = -m_Height/2;
+      ptMax[2] = +m_Radius;     
+      ptMax = this->GetIndexToWorldTransform()->TransformPoint(ptMax);
+      const_cast<BoundingBoxType *>(this->GetBounds())->SetMinimum(ptMin);
+      const_cast<BoundingBoxType *>(this->GetBounds())->SetMaximum(ptMax);    
+      ptMin[0] = -m_Radius;
+      ptMin[1] = +m_Height/2;
+      ptMin[2] = -m_Radius;
+      ptMin = this->GetIndexToWorldTransform()->TransformPoint(ptMin);     
+      ptMax[0] = +m_Radius;
+      ptMax[1] = +m_Height/2;
+      ptMax[2] = +m_Radius;           
+      ptMax = this->GetIndexToWorldTransform()->TransformPoint(ptMax);
+      const_cast<BoundingBoxType *>(this->GetBounds())->ConsiderPoint(ptMin);
+      const_cast<BoundingBoxType *>(this->GetBounds())->ConsiderPoint(ptMax);
+    }
   return true;
 } 
 
