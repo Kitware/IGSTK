@@ -3,6 +3,7 @@
 #define _IGSTK_IGMTVolumeViewer_H_
 
 #include "vtkActor.h"
+#include "vtkAssembly.h"
 #include "vtkColorTransferFunction.h"
 #include "vtkDecimatePro.h"
 #include "vtkImageData.h"
@@ -60,6 +61,14 @@ public:
 	void ShowProbe(int s);
 	void ShowFrame(int s);
 	void SetRenderingMethod(int rm);
+
+  vtkAssembly * GetRoot();
+
+private:
+
+  vtkAssembly* m_Root;
+
+  vtkAssembly* m_ProbeRoot;
 
   vtkRenderer* m_Renderer;
 
