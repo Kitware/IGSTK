@@ -24,14 +24,15 @@ namespace igstk
 /** Constructor */
 Scene::Scene():m_StateMachine(this)
 {
-  m_ViewToBeAdded = NULL;
-  m_ViewToBeRemoved = NULL;
+  m_ViewToAddress = NULL;
 
   m_StateMachine.AddInput( m_ValidAddObject,     "ValidAddObject" );
   m_StateMachine.AddInput( m_NullAddObject,      "NullAddObject"  );
+  m_StateMachine.AddInput( m_NullViewAddObject,  "NullViewAddObject"  );
   m_StateMachine.AddInput( m_ExistingAddObject,  "ExistingAddObject" );
   m_StateMachine.AddInput( m_ValidRemoveObject,  "ValidRemoveObject" );
   m_StateMachine.AddInput( m_NullRemoveObject,   "NullRemoveObject"  );
+  m_StateMachine.AddInput( m_NullViewRemoveObject, "NullViewRemoveObject"  );
   m_StateMachine.AddInput( m_RemoveAllObjects,   "RemoveAllObjects"  );
   m_StateMachine.AddInput( m_InexistingRemoveObject,  "InexistingRemoveObject" );
 
@@ -46,11 +47,12 @@ Scene::Scene():m_StateMachine(this)
   m_StateMachine.AddTransition( m_IdleState, m_NullRemoveObject,  m_IdleState,          NoAction );
   m_StateMachine.AddTransition( m_IdleState, m_InexistingRemoveObject,  m_IdleState,    NoAction );
   m_StateMachine.AddTransition( m_IdleState, m_RemoveAllObjects, m_IdleState,  & Scene::RemoveAllObjects );
+  m_StateMachine.AddTransition( m_IdleState, m_NullViewAddObject,  m_IdleState,  NoAction );
+  m_StateMachine.AddTransition( m_IdleState, m_NullViewRemoveObject,  m_IdleState, NoAction );
 
   m_StateMachine.SelectInitialState( m_IdleState );
 
   m_StateMachine.SetReadyToRun();
-
 
 }
 
@@ -63,51 +65,50 @@ Scene::~Scene()
 void Scene::RequestAddObject(View* view, ObjectRepresentation* pointer )
 {
   m_ObjectToBeAdded = pointer;
-  m_ViewToBeAdded = view;
+  m_ViewToAddress = view;
 
   if(!view)
     {
-    m_StateMachine.ProcessInput( m_NullAddObject );
+    m_StateMachine.ProcessInput( m_NullViewAddObject );
+    return;
     }
-  else if( !pointer )
+
+  if( !pointer )
     {
     m_StateMachine.ProcessInput( m_NullAddObject );
+    return;
+    }
+
+  ObjectListType::iterator it =    
+    std::find(m_Objects.begin(),m_Objects.end(),pointer);
+  if( it != m_Objects.end() )
+    {
+    m_StateMachine.ProcessInput( m_ExistingAddObject );
     }
   else
     {
-    ObjectListType::iterator it =    
-      std::find(m_Objects.begin(),m_Objects.end(),pointer);
-    if( it != m_Objects.end() )
-      {
-      m_StateMachine.ProcessInput( m_ExistingAddObject );
-      }
-    else
-      {
-      m_StateMachine.ProcessInput( m_ValidAddObject );
-      }
+    m_StateMachine.ProcessInput( m_ValidAddObject );
     }
 }
 
 
 /** Add an object to the Scene. This method should only be called by the state
- * machine. */
+ * machine. The state machine makes sure that this method is called with valid
+ * values in the ObjectToBeAdded and the m_ViewToAddress. */
 void Scene::AddObject()
 {
   m_Objects.push_back( m_ObjectToBeAdded );
   this->Modified();
   
-  if(m_ViewToBeAdded)
-    {
-    m_ObjectToBeAdded->CreateActors();
+  m_ObjectToBeAdded->CreateActors();
 
-    ObjectRepresentation::ActorsListType actors = m_ObjectToBeAdded->GetActors();
-    ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
-    while(actorIt != actors.end())
-      {
-      m_ViewToBeAdded->RequestAddActor(*actorIt);
-      actorIt++;
-      } 
-    }
+  ObjectRepresentation::ActorsListType actors = m_ObjectToBeAdded->GetActors();
+  ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
+  while(actorIt != actors.end())
+    {
+    m_ViewToAddress->RequestAddActor(*actorIt);
+    actorIt++;
+    } 
 }
 
 
@@ -115,58 +116,53 @@ void Scene::AddObject()
 void Scene::RequestRemoveObject( View* view, ObjectRepresentation* pointer )
 {
   m_ObjectToBeRemoved = pointer;
-  m_ViewToBeRemoved = view;
+  m_ViewToAddress = view;
   m_IteratorToObjectToBeRemoved = m_Objects.end(); 
   
   if(!view)
     {
-    m_StateMachine.ProcessInput( m_NullRemoveObject );
+    m_StateMachine.ProcessInput( m_NullViewRemoveObject );
+    return;
     }
+  
   if( !pointer )
     {
     m_StateMachine.ProcessInput( m_NullRemoveObject );
+    return;
+    }
+  
+  m_IteratorToObjectToBeRemoved =
+    std::find(m_Objects.begin(),m_Objects.end(),pointer);
+  if( m_IteratorToObjectToBeRemoved == m_Objects.end() )
+    {
+    m_StateMachine.ProcessInput( m_InexistingRemoveObject );
     }
   else
     {
-    m_IteratorToObjectToBeRemoved =
-      std::find(m_Objects.begin(),m_Objects.end(),pointer);
-    if( m_IteratorToObjectToBeRemoved == m_Objects.end() )
-      {
-      m_StateMachine.ProcessInput( m_InexistingRemoveObject );
-      }
-    else
-      {
-      m_StateMachine.ProcessInput( m_ValidRemoveObject );
-      }
+    m_StateMachine.ProcessInput( m_ValidRemoveObject );
     }
 }
 
 
-/** Remove a spatial object from the Scene */
+/** Remove a spatial object from the Scene. This method can only be invoked by
+ * the State Machine who will make sure that the content of
+ * m_IteratorToObjectToBeRemoved and m_ViewToAddress are valid. */
 void Scene::RemoveObject()
 {
   m_Objects.erase( m_IteratorToObjectToBeRemoved );
   this->Modified();
   
-  if(m_ViewToBeRemoved)
+  ObjectRepresentation::ActorsListType actors = m_ObjectToBeRemoved->GetActors();
+  ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
+  while(actorIt != actors.end())
     {
-    ObjectRepresentation::ActorsListType actors = m_ObjectToBeRemoved->GetActors();
-    ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
-    while(actorIt != actors.end())
-      {
-      m_ViewToBeRemoved->RequestRemoveActor(*actorIt);
-      actorIt++;
-      } 
-    }
+    m_ViewToAddress->RequestRemoveActor(*actorIt);
+    actorIt++;
+    } 
 }
 
 
-/** Return the number of objects in the Scene */
-unsigned int 
-Scene::GetNumberOfObjects() const
-{
-  return m_Objects.size();
-} 
+ 
 
 /** Print the object */
 void Scene::PrintSelf( std::ostream& os, itk::Indent indent ) const
@@ -188,11 +184,14 @@ void Scene::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 }
 
+
+
 /** Request for removing all the objects in the scene */
 void Scene::RequestRemoveAllObjects()
 {
   m_StateMachine.ProcessInput( m_RemoveAllObjects );
 }
+
 
 
 /** Remove all the objects in the scene */
@@ -202,7 +201,6 @@ void Scene::RemoveAllObjects()
 
   while( it != m_Objects.end() )
     {
-//    m_LastRemovedObject = *it;
     it = m_Objects.erase( it );
     this->Modified();
     

@@ -34,6 +34,9 @@ namespace igstk
 * plug any kind of spatial object representation.
 *
 * \sa SpatialObject
+* \sa View
+* \sa View2D
+* \sa View3D
 */ 
  
 class Scene : public itk::Object
@@ -58,21 +61,17 @@ public:
   /** Method for creation through the object factory */ 
   NewMacro(Self); 
 
-  /** Add an object to the list of children. */ 
-  void RequestAddObject( View* view, ObjectRepresentation* pointer ); 
+  /** Add an object representation to the list of children and associate it
+   * with a specific view. */ 
+  void RequestAddObject( View* view, ObjectRepresentation* object ); 
      
-  /** Remove the object passed as arguments from the list of 
-   *  children. May this function 
-   *  should return a false value if the object to remove is 
-   *  not found in the list. */ 
+  /** Remove the object passed as arguments from the list of children, only if
+   * it is associated to a particular view. */ 
   void RequestRemoveObject( View* view, ObjectRepresentation* object ); 
-
-  /** Returns a list of pointer to the children affiliated to this object.*/ 
-  GetMacro( Objects, ObjectListType );
 
   /** Returns the number of children currently assigned to the
    * Scene object.*/ 
-  unsigned int GetNumberOfObjects() const; 
+//  unsigned int GetNumberOfObjects() const; 
 
   /** Remove all the objects in the scene */
   void RequestRemoveAllObjects();
@@ -114,8 +113,7 @@ private:
   ObjectRepresentation::Pointer m_ObjectToBeAdded;
   ObjectRepresentation::Pointer m_ObjectToBeRemoved;
   ObjectListType::iterator      m_IteratorToObjectToBeRemoved;    
-  View*                         m_ViewToBeAdded;
-  View*                         m_ViewToBeRemoved;
+  View*                         m_ViewToAddress;
 
 private:
 
@@ -124,10 +122,12 @@ private:
   /** Inputs to the State Machine */
   InputType            m_ValidAddObject;
   InputType            m_NullAddObject;
+  InputType            m_NullViewAddObject;
   InputType            m_ExistingAddObject;
   InputType            m_ValidRemoveObject;
   InputType            m_InexistingRemoveObject;
   InputType            m_NullRemoveObject;
+  InputType            m_NullViewRemoveObject;
   InputType            m_RemoveAllObjects;
   
 
