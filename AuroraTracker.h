@@ -142,6 +142,8 @@ public:
 
 	int GetMyToolHandle( char * toolID );
 
+  int GetMyToolHandle2( char *toolID, int& toolhandle1, int& toolhandle2);
+
 	int GetToolHandle( char * toolID );
 
 	bool UpdateToolStatus( void );

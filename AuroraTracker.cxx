@@ -998,13 +998,40 @@ int AuroraTracker::GetMyToolHandle( char *toolID )
 	{
 		if ( this->m_HandleInformation[i].HandleInfo.bInitialized > 0 &&
 			 this->m_HandleInformation[i].szToolType[1] != '8' &&
-			 !strncmp(m_HandleInformation[i].szPhysicalPort,toolID, 2) )
+			 !strncmp(m_HandleInformation[i].szPhysicalPort, toolID, 2)
+       && strlen(m_HandleInformation[i].szPhysicalPort) == 2)
 		{
 			toolHandle = i;
 			break;
 		}
 	}
 	return toolHandle;
+}
+
+int AuroraTracker::GetMyToolHandle2( char *toolID, int& toolhandle1, int& toolhandle2)
+{
+	int ret = 0;
+  char toolID1[16], toolID2[16];
+  sprintf(toolID1, "%s-a", toolID);
+  sprintf(toolID2, "%s-b", toolID);
+	for ( int i = 0; i < NO_HANDLES; i ++ )
+	{
+		if ( this->m_HandleInformation[i].HandleInfo.bInitialized > 0 &&
+			 this->m_HandleInformation[i].szToolType[1] != '8' &&
+			 !strncmp(m_HandleInformation[i].szPhysicalPort, toolID1, 4) )
+		{
+			toolhandle1 = i;
+      ret++;
+		}
+    else if ( this->m_HandleInformation[i].HandleInfo.bInitialized > 0 &&
+			 this->m_HandleInformation[i].szToolType[1] != '8' &&
+			 !strncmp(m_HandleInformation[i].szPhysicalPort, toolID2, 4) )
+		{
+			toolhandle2 = i;
+      ret++;
+		}
+	}
+	return ret;
 }
 ////////////////////////////////////////////////////////////////////////////
 // Method:	GetToolHandle
