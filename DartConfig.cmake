@@ -23,8 +23,8 @@ SET (ROLLUP_URL "http://${DROP_SITE}/cgi-bin/IGSTK-rollup-dashboard.sh")
 #SET (CVS_WEB_URL "http://${DROP_SITE}/cgi-bin/cvsweb.cgi/IGSTK/")
 SET (CVS_WEB_CVSROOT "IGSTK")
 SET (USE_DOXYGEN "On")
-SET (DOXYGEN_URL "http://${DROP_SITE}/IGSTK/index.html" )
-#SET (GNATS_WEB_URL "http://public.kitware.com/Bug/index.php")
+#SET (DOXYGEN_URL "http://${DROP_SITE}/IGSTK/index.html" )
+SET (GNATS_WEB_URL "http://public.kitware.com/Bug/index.php")
 SET (USE_GNATS "On")
 
 # copy over the testing logo
