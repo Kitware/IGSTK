@@ -1,3 +1,4 @@
 SUBDIRS( 
-  HelloWorld 
+  HelloWorld
+  TwoViews
   )
