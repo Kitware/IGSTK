@@ -68,7 +68,7 @@ void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
 
   if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL)) 
   {
-    m_pDataBuffersSetUpResultInput = &m_DataBufferSetUpFailureInput;
+    m_pDataBuffersSetUpResultInput = &m_DataBuffersSetUpFailureInput;
     this->InvokeEvent( SetDataBufferSizeFailureEvent() );
   }
   else
