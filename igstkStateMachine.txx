@@ -41,6 +41,7 @@ StateMachine< TClass, VStates, VInputs >
     for(StateType state=0; state < VStates; state++)
       {
       m_Transition[ state ][ input ] = 0;
+      m_Action[ state ][ input ] = 0;
       }
     }
 
