@@ -40,9 +40,19 @@ void SpatialObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 /** Set the offset in the Transform */
+void SpatialObject::SetSpatialObject( SpatialObjectType * spatialObject )
+{
+  m_SpatialObject = spatialObject;
+}
+ 
+/** Set the offset in the Transform */
 void SpatialObject::SetOffset(double ofx, double ofy, double ofz)  
 {
-  std::cout << "SpatialObject::SetOffset() IMPLEMENT ME !!" << std::endl;
+  VectorType offset;
+  offset[0] = ofx;
+  offset[1] = ofy;
+  offset[2] = ofz;
+  m_SpatialObject->GetObjectToWorldTransform()->SetOffset(offset);
   this->InvokeEvent( PositionModifiedEvent() ); 
 }
 

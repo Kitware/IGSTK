@@ -70,7 +70,7 @@ protected:
   ~SpatialObject( void );
 
   /** Connect this representation class to the spatial object */
-  SetMacro( SpatialObject, SpatialObjectType * );
+  void SetSpatialObject( SpatialObjectType * );
 
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -78,7 +78,7 @@ protected:
 private:
 
   /** Internal itkSpatialObject */
-  SpatialObjectType::ConstPointer   m_SpatialObject;
+  SpatialObjectType::Pointer   m_SpatialObject;
 
 };
 
