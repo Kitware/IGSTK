@@ -140,7 +140,7 @@ StateMachine< TClass >
     {
     std::cerr << "Error: attempt to invoke a SetReadyToRun " << std::endl;
     std::cerr << "but the m_This pointer is null. " << std::endl;
-    std::cerr << "The method SetClass() must be invoked with a valid pointer " << std::endl;
+    std::cerr << "The method SetOwnerClass() must be invoked with a valid pointer " << std::endl;
     std::cerr << "before attempting to run the machine." << std::endl;
     std::cerr.flush();
     return;
@@ -182,7 +182,7 @@ StateMachine< TClass >
     {
     std::cerr << "Error: attempt to invoke StateTransition() " << std::endl;
     std::cerr << "but the m_This pointer is null. " << std::endl;
-    std::cerr << "The method SetClass() must be invoked with a valid pointer " << std::endl;
+    std::cerr << "The method SetOwnerClass() must be invoked with a valid pointer " << std::endl;
     std::cerr << "before attempting to run the machine." << std::endl;
     std::cerr.flush();
     return;
