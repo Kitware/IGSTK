@@ -47,11 +47,13 @@ int igstkBasicTrackerTest( int, char * [] )
 
     tracker->UpdateStatus();
 
+    tracker->Reset();
+
     tracker->StopTracking();
 
     std::cout << tracker->GetCurrentState() << std::endl;
 
-    tracker->Reset();
+    tracker->Close();
 
     return EXIT_SUCCESS;
 }
