@@ -135,8 +135,9 @@ private:
   void UpdatePositionFromGeometry();  
 
   /** update the visual representation with changes in the geometry. Only to be
-   * called by the State Machine. */
-  virtual void UpdateRepresentationFromGeometry();
+   * called by the State Machine. This is an abstract method that MUST be
+   * overloaded in every derived class. */
+  virtual void UpdateRepresentationFromGeometry() = 0;
 
   /** Set the spatial object for this class */
   void SetSpatialObject(); 

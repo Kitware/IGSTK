@@ -142,12 +142,10 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
   ActorsListType::iterator it = m_Actors.begin();
   while(it != m_Actors.end())
     {
-    static_cast<vtkActor*>(*it)->GetProperty()->SetColor(m_Color[0],
-                                   m_Color[1],
-                                   m_Color[2]); 
+    vtkActor * va = static_cast<vtkActor*>(*it);
+    va->GetProperty()->SetColor(m_Color[0], m_Color[1], m_Color[2]); 
     it++;
     }
-
   this->Modified();
 }
 
@@ -159,15 +157,6 @@ void ObjectRepresentation::RequestUpdateRepresentation()
     m_StateMachine.ProcessInput( m_UpdateRepresentationInput );
 }
 
-
-/** Update the object representation. This method must be overrided in every
- * derived class. */
-void ObjectRepresentation::UpdateRepresentationFromGeometry()
-{
-  std::cerr << "If you see this message: it means that you forgot " << std::endl;
-  std::cerr << "to override the method UpdateRepresentationFromGeometry()" << std::endl;
-  std::cerr << "in a class deriving from ObjectRepresentation" << std::endl;
-}
 
 
 
