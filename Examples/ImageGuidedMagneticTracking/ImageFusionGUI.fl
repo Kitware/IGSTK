@@ -1,0 +1,117 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0104 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include "IGMTrackingBase.h"} {public
+} 
+
+class ImageFusionGUI {open
+} {
+  decl {IGMTrackingBase* m_pTracking;} {public
+  }
+  Function {ImageFusionGUI(IGMTrackingBase* pTracking)} {open
+  } {
+    Fl_Window m_MainWindow {
+      label {Image Fusion Paramters}
+      xywh {607 362 378 226} type Double visible
+    } {
+      Fl_Slider m_OpacitySlider {
+        callback {this->OnUpdateOpacity(m_OpacitySlider->value());}
+        xywh {18 138 340 20} type Horizontal align 0 when 4
+        code0 {m_OpacitySlider->range(0.0, 1.0);}
+        code1 {m_OpacitySlider->step(0.01);}
+      }
+      Fl_Box {} {
+        label {Fusion Opacity}
+        xywh {18 108 105 25}
+      }
+      Fl_Return_Button {} {
+        label OK
+        callback {this->OnOK();}
+        xywh {213 173 60 25}
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {this->OnCancel()}
+        xywh {293 173 60 25}
+      }
+      Fl_Group {} {
+        xywh {25 25 117 69}
+      } {
+        Fl_Round_Button m_OriginalDataRadio {
+          label {Original Data}
+          xywh {25 25 115 25} type Radio down_box ROUND_DOWN_BOX
+          code0 {m_OriginalDataRadio->value(1);}
+        }
+        Fl_Round_Button m_FusSegDataRadio {
+          label {Fus/Seg Data}
+          xywh {26 47 115 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_BlendDataRadio {
+          label {Blend Data}
+          xywh {27 69 115 25} type Radio down_box ROUND_DOWN_BOX
+        }
+      }
+    }
+    code {m_pTracking = pTracking;
+switch (m_pTracking->m_Pipeline)
+{
+case 0:
+	m_OriginalDataRadio->value(1);
+	m_FusSegDataRadio->value(0);
+	m_BlendDataRadio->value(0);
+	break;	
+case 1:
+	m_OriginalDataRadio->value(0);
+	m_FusSegDataRadio->value(1);
+	m_BlendDataRadio->value(0);
+	break;
+case 2:
+	m_OriginalDataRadio->value(0);
+	m_FusSegDataRadio->value(0);
+	m_BlendDataRadio->value(1);
+	break;
+}
+this->SetFusionOpacity(m_pTracking->m_FusionOpacity);} {selected
+    }
+  }
+  Function {OnUpdateOpacity(double op)} {open return_type void
+  } {
+    code {m_pTracking->OnUpdateOpacity(op);
+m_pTracking->RenderAllWindow();} {}
+  }
+  Function {Show()} {return_type void
+  } {
+    code {m_MainWindow->show();} {}
+  }
+  Function {Hide()} {return_type void
+  } {
+    code {m_MainWindow->hide();} {}
+  }
+  Function {OnOK()} {open return_type void
+  } {
+    code {if (m_OriginalDataRadio->value() == 1)
+{
+	m_pTracking->SetInputData(0);
+}
+else if (m_FusSegDataRadio->value() == 1)
+{
+	m_pTracking->SetInputData(1);
+}
+else if (m_BlendDataRadio->value() == 1)
+{
+	m_pTracking->SetInputData(2);
+}
+this->OnUpdateOpacity(m_OpacitySlider->value());
+m_pTracking->RenderAllWindow();
+this->Hide();} {}
+  }
+  Function {OnCancel()} {return_type void
+  } {
+    code {this->Hide();} {}
+  }
+  Function {SetFusionOpacity(double opa)} {open return_type void
+  } {
+    code {m_OpacitySlider->value(opa);} {}
+  }
+} 
