@@ -15,15 +15,15 @@ public:
 
 	vtkActor* GetVTKActorPointer( void );
 
-	void SetRadius( float rad );
+	void SetRadius( const double rad );
 
-	void SetCenter( float pos[3] );
+	void SetCenter( double pos[3] );
 
-	void SetCenter( float x, float y, float z );
+	void SetCenter( const double x, const double y, const double z );
 
-	void GetCenter( float pos[3] );
+	void GetCenter( double pos[3] );
 
-	void SetColor( float r, float g, float b );
+	void SetColor( const double r, const double g, const double b );
 
 	Sphere &operator=( const Sphere &src );
 

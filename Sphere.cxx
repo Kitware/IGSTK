@@ -42,7 +42,7 @@ Sphere::~Sphere( void)
 }
 
 
-void Sphere::SetRadius( float rad)
+void Sphere::SetRadius( const double rad)
 {
 	m_Sphere->SetRadius( rad );	
 }
@@ -56,24 +56,24 @@ Sphere &Sphere::operator=( const Sphere &src )
 }
 
 
-void Sphere::SetCenter( float pos[3] )
+void Sphere::SetCenter( double pos[3] )
 {
 	m_Sphere->SetCenter( pos );
 }
 
-void Sphere::GetCenter( float pos[3] )
+void Sphere::GetCenter( double pos[3] )
 {
 	m_Sphere->GetCenter( pos );
 }
 
-void Sphere::SetCenter( float x, float y, float z )
+void Sphere::SetCenter( const double x, const double y, const double z )
 {
 	m_Sphere->SetCenter( x, y, z );
 }
 
 
 
-void Sphere::SetColor( float r, float g, float b )
+void Sphere::SetColor( const double r, const double g, const double b )
 {
 	m_SphereActor->GetProperty()->SetColor(r, g, b);
 }
