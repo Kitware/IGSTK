@@ -2,6 +2,7 @@
 #define _IGSTK_FANTASTICREGISTRATION_H_
 
 #include "itkCenteredAffineTransform.h"
+#include "itkCommand.h"
 #include "itkCumulativeGaussianOptimizer.h"
 #include "itkEuler3DTransform.h"
 #include "itkImage.h"
@@ -28,7 +29,11 @@ public:
   
   typedef PointSetType::PointType     PointType;
 
+  typedef PointSetType::PointsContainer PointsContainerType;
+
   typedef itk::TranslationTransform< double, 3 > TTransformType;
+
+  typedef TTransformType::ParametersType TParametersType;
 
   typedef itk::Euler3DTransform< double > E3DTransformType;
 
@@ -37,6 +42,10 @@ public:
   typedef itk::CenteredAffineTransform <double, 3> CATransformType;
 
   typedef CATransformType::ParametersType CAParametersType;
+
+  typedef itk::Rigid3DTransform <double> R3DTransformType;
+
+  typedef R3DTransformType::ParametersType R3DParametersType;
 
   typedef itk::RegularStepGradientDescentOptimizer RSGDOptimizerType;
 
@@ -52,13 +61,22 @@ public:
 
 public:
 	void StartRegistration();
+
 	void AddFixedPoint(double p[3]);
 
   void SetFixedPoint(int index, double p[3]);
 
+  void SetFixedPointSet(PointSetType::Pointer pointset);
+
   void AddMovingPoint(double p[3]);
 
   void SetMovingPoint(int index, double p[3]);
+
+  void SetMovingPointSet(PointSetType::Pointer pointset);
+
+  void SimplifyMovingPointSet(double radius);
+
+  void SimplifyFixedPointSet(double radius);
 
   PointSetType::Pointer m_FixedPointSet, m_MovingPointSet;
 
@@ -70,17 +88,23 @@ public:
 
   CATransformType::Pointer m_CATransform;
 
-  RSGDOptimizerType::Pointer m_RSGDOptimizer;
+  R3DTransformType::Pointer m_R3DTransform;
+
+  RSGDOptimizerType::Pointer m_Optimizer;
 
   LMOptimizerType::Pointer m_LMOptimizer;
 
   CGOptimizerType::Pointer m_CGOptimizer;
+
+  itk::SimpleMemberCommand<FantasticRegistration>* m_OptimizerProgress;
 
   PointSetToPointSetRegistrationType::Pointer m_PointSetToPointSetRegistration;
 
 	FantasticRegistration();
 
 	virtual ~FantasticRegistration();
+
+  void OptimizerProgress();
 
 };
 
