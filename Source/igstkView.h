@@ -31,11 +31,13 @@ namespace igstk{
 
 class View : public Fl_Gl_Window, public vtkRenderWindowInteractor 
 {
-public:
    
+protected:
+
    View( int x, int y, int w, int h, const char *l="");
    ~View( void );
 
+public:
    // vtkRenderWindowInteractor overrides
    void Initialize();
    void Enable();

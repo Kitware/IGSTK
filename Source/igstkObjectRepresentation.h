@@ -56,19 +56,25 @@ public:
   itkTypeMacro(ObjectRepresentation, itk::Object);
 
   /** Create the vtkActors */
-  virtual void CreateVTKActors()= 0;
+  virtual void CreateActors()= 0;
 
   /** Get the VTK actors */
-  ActorsListType & GetVTKActors() {return m_ActorList;}
+  GetMacro( Actors, ActorsListType );
+
+  /** Add an actor to the list */
+  void AddActor( vtkProp3D * );
 
   /** Get the object property */
-  ObjectProperty* GetProperty() {return & m_Property;}
+  ObjectProperty * GetProperty();
 
   /** Return the SpatialObjects */
-  SpatialObjectsListType & GetSpatialObjects() {return m_SpatialObjectList;}
+  GetMacro( SpatialObjects, SpatialObjectsListType );
+
+  /** Add a SpatialObject to the scene */
+  void AddSpatialObject( SpatialObjectType * );
 
   /** Return the number of children */
-  unsigned int GetNumberOfChildren( unsigned int depth, char * name );
+  unsigned int GetNumberOfChildren() const;
 
 protected:
 
@@ -80,8 +86,8 @@ protected:
 
 private:
 
-  ActorsListType           m_ActorList;
-  SpatialObjectsListType   m_SpatialObjectList;
+  ActorsListType           m_Actors;
+  SpatialObjectsListType   m_SpatialObjects;
   ObjectProperty           m_Property;
 
 };
@@ -89,3 +95,4 @@ private:
 } // end namespace igstk
 
 #endif // __igstkObject_h
+

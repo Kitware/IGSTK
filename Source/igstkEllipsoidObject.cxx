@@ -27,8 +27,8 @@ namespace igstk
 EllipsoidObject::EllipsoidObject()
 {
   // We create the ellipse spatial object
-  m_EllipseSO = EllipseSOType::New();
-  this->GetSpatialObjects().push_back(m_EllipseSO);
+  m_EllipseSpatialObject = EllipseSpatialObjectType::New();
+  this->AddSpatialObject( m_EllipseSpatialObject );
 } 
 
 /** Destructor */
@@ -36,57 +36,66 @@ EllipsoidObject::~EllipsoidObject()
 {
 }
 
+
 /** Set all radii to the same radius value */
-void EllipsoidObject::SetRadius(double radius)
+void 
+EllipsoidObject::SetRadius( double radius )
 {
-  m_EllipseSO->SetRadius(radius);
+  m_EllipseSpatialObject->SetRadius(radius);
 }
 
-void EllipsoidObject::SetRadius(double r0, double r1, double r2)
+
+void EllipsoidObject::SetRadius( double r0, double r1, double r2 )
 {
-  EllipseSOType::ArrayType radius;
+  EllipseSpatialObjectType::ArrayType radius;
   radius[0] = r0;
   radius[1] = r1;
   radius[2] = r2;
-  m_EllipseSO->SetRadius(radius);
+  m_EllipseSpatialObject->SetRadius(radius);
 }
 
+
 /** Get the radii of the ellipsoid */
-EllipsoidObject::ArrayType EllipsoidObject::GetRadius()
+EllipsoidObject::ArrayType 
+EllipsoidObject::GetRadius()
 {
-  return m_EllipseSO->GetRadius();
+  return m_EllipseSpatialObject->GetRadius();
 }
+
 
 /** Print Self function */
 void EllipsoidObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << m_EllipseSO << std::endl; 
+  os << indent << m_EllipseSpatialObject << std::endl; 
 }
 
 
 /** Create the vtk Actors */
-void EllipsoidObject::CreateVTKActors()
+void EllipsoidObject::CreateActors()
 {
   vtkPolyDataMapper *ellipsoidMapper = vtkPolyDataMapper::New();
   vtkActor* ellipsoid = vtkActor::New();
   vtkSuperquadricSource* ellipsoidSource = vtkSuperquadricSource::New();
   ellipsoidSource->SetCenter(0, 0, 0);
-  ellipsoidSource->SetScale(m_EllipseSO->GetRadius()[0],m_EllipseSO->GetRadius()[1],m_EllipseSO->GetRadius()[2]);
-  ellipsoidSource->SetThetaResolution(10);
-  ellipsoidSource->SetPhiResolution(10);
+  ellipsoidSource->SetScale( m_EllipseSpatialObject->GetRadius()[0],
+                             m_EllipseSpatialObject->GetRadius()[1],
+                             m_EllipseSpatialObject->GetRadius()[2]);
+  ellipsoidSource->SetThetaResolution( 10 );
+  ellipsoidSource->SetPhiResolution( 10 );
  
   ellipsoid->GetProperty()->SetColor(this->GetProperty()->GetRed(),
                                      this->GetProperty()->GetGreen(),
-                                     this->GetProperty()->GetBlue()); 
-        
-  ellipsoid->GetProperty()->SetOpacity(this->GetProperty()->GetOpacity()); 
-  ellipsoidMapper->SetInput(ellipsoidSource->GetOutput());
+                                     this->GetProperty()->GetBlue());
+
+  ellipsoid->GetProperty()->SetOpacity(this->GetProperty()->GetOpacity());
+
+  ellipsoidMapper->SetInput( ellipsoidSource->GetOutput() );
   ellipsoid->SetMapper(ellipsoidMapper);
   ellipsoidSource->Delete();
 
   // We should check if the actor doesn't exist
-  this->GetVTKActors().push_back(ellipsoid);
+  this->AddActor( ellipsoid );
   ellipsoidMapper->Delete();
 }
 

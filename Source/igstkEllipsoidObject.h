@@ -44,8 +44,8 @@ public:
   typedef ObjectRepresentation           Superclass;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer; 
-  typedef itk::EllipseSpatialObject<3>   EllipseSOType;
-  typedef EllipseSOType::ArrayType         ArrayType;
+  typedef itk::EllipseSpatialObject<3>   EllipseSpatialObjectType;
+  typedef EllipseSpatialObjectType::ArrayType         ArrayType;
 
   /**  Run-time type information (and related methods). */
   itkTypeMacro( Self, Superclass );
@@ -60,7 +60,7 @@ public:
   ArrayType GetRadius();
 
   /** Create the VTK actors */
-  void CreateVTKActors();
+  void CreateActors();
 
 protected:
 
@@ -73,10 +73,11 @@ protected:
 private:
 
   /** Internal itkSpatialObject */
-  EllipseSOType::Pointer   m_EllipseSO;
+  EllipseSpatialObjectType::Pointer   m_EllipseSpatialObject;
 
 };
 
 } // end namespace igstk
 
 #endif // __igstkEllipsoidObject_h
+

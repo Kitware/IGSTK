@@ -50,7 +50,7 @@ void View::Initialize()
 {
   // Create a default render window
   igstkRenderWindow = RenderWindow::New();
-  this->SetRenderWindow(this->igstkRenderWindow->GetVTKRenderWindow());
+  this->SetRenderWindow(this->igstkRenderWindow->GetRenderWindow());
 
   // if don't have render window then we can't do anything yet
   if (!RenderWindow)
@@ -90,20 +90,20 @@ void View::SetScene(const Scene * scene)
 
   while( it != objectEnd )
     {
-    (*it)->CreateVTKActors();
+    (*it)->CreateActors();
 
-    ObjectRepresentation::ActorsListType actors = (*it)->GetVTKActors();
+    ObjectRepresentation::ActorsListType actors = (*it)->GetActors();
     ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
     while(actorIt != actors.end())
       {
-      igstkRenderWindow->GetVTKRenderer()->AddActor(*actorIt);
+      igstkRenderWindow->GetRenderer()->AddActor(*actorIt);
       actorIt++;
       }
 
     it++;
     }
 
-  igstkRenderWindow->GetVTKRenderer()->ResetCamera();
+  igstkRenderWindow->GetRenderer()->ResetCamera();
 
 }
 

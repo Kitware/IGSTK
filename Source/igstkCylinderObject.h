@@ -53,14 +53,16 @@ public:
 
   /** Set all radii to the same radius value.  Each radius is
    *  half the length of one axis of the ellipse.  */
-  void   SetHeight(double height);
-  double GetHeight();
+  GetMacro( Radius, double );
+  SetMacro( Radius, double );
 
-  void   SetRadius(double radius);
-  double GetRadius();
+  /** Set the Height of the cylinder 
+   */
+  GetMacro(Height, double);
+  SetMacro(Height, double);
 
   /** Create the VTK actors */
-  void CreateVTKActors();
+  void CreateActors();
 
 protected:
 
@@ -78,10 +80,11 @@ private:
   /** Internal itkSpatialObject. A cylinder is represented as a tube spatial object with no point
    *  This is just for the hierarchy.
    */
-  TubeSOType::Pointer   m_TubeSO;
+  TubeSOType::Pointer   m_TubeSpatialObject;
 
 };
 
 } // end namespace igstk
 
 #endif // __igstkCylinderObject_h
+

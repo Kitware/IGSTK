@@ -68,13 +68,13 @@ public:
     NewMacro(Self);
     
     /** Get the vtk RenderWindow */
-    vtkRenderWindow* GetVTKRenderWindow() {return m_RenderWindow;}
+    vtkRenderWindow* GetRenderWindow() {return m_RenderWindow;}
     
     /** Get the vtk Renderer */
-    vtkRenderer* GetVTKRenderer() {return m_Renderer;}
+    vtkRenderer* GetRenderer() {return m_Renderer;}
     
     /** Get the vtk Camera */
-    vtkCamera* GetVTKCamera() {return m_Camera;}
+    vtkCamera* GetCamera() {return m_Camera;}
 
 protected:
 

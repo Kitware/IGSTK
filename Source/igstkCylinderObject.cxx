@@ -27,37 +27,13 @@ namespace igstk
 CylinderObject::CylinderObject()
 {
   // We create the ellipse spatial object
-  m_TubeSO = TubeSOType::New();
-  this->GetSpatialObjects().push_back(m_TubeSO);
+  m_TubeSpatialObject = TubeSOType::New();
+  this->AddSpatialObject( m_TubeSpatialObject );
 } 
 
 /** Destructor */
 CylinderObject::~CylinderObject()  
 {
-}
-
-/** Set the radius value */
-void CylinderObject::SetRadius(double radius)
-{
-  m_Radius = radius;
-}
-
-/** Get the radius */
-double CylinderObject::GetRadius()
-{
-  return m_Radius;
-}
-
-/** Set the height value */
-void CylinderObject::SetHeight(double height)
-{
-  m_Height = height;
-}
-
-/** Get the height */
-double CylinderObject::GetHeight()
-{
-  return m_Height;
 }
 
 /** Print Self function */
@@ -70,7 +46,7 @@ void CylinderObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 
 
 /** Create the vtk Actors */
-void CylinderObject::CreateVTKActors()
+void CylinderObject::CreateActors()
 {
   vtkPolyDataMapper *cylinderMapper = vtkPolyDataMapper::New();
   vtkActor* cylinder = vtkActor::New();
@@ -86,11 +62,11 @@ void CylinderObject::CreateVTKActors()
         
   cylinder->GetProperty()->SetOpacity(this->GetProperty()->GetOpacity()); 
   cylinderMapper->SetInput(cylinderSource->GetOutput());
-  cylinder->SetMapper(cylinderMapper);
+  cylinder->SetMapper( cylinderMapper );
   cylinderSource->Delete();
 
   // We should check if the actor doesn't exist
-  this->GetVTKActors().push_back(cylinder);
+    this->AddActor( cylinder );
   cylinderMapper->Delete();
 }
 
