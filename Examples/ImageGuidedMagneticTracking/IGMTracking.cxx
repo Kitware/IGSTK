@@ -2616,7 +2616,7 @@ void IGMTracking::OnUpdateLayout()
     {
       m_DesiredTriNum = m_Layout.m_DesiredTriNum;
       m_VolumeViewer.SetDesiredTriNum(m_DesiredTriNum);
-      m_VolumeViewer.m_MarchingCubes->Update();
+      m_VolumeViewer.GetMarchingCubes()->Update();
     }
     m_VolumeViewer.Render();
     break;
@@ -2735,7 +2735,7 @@ void IGMTracking::SaveSnapshot()
   switch (m_WindowType)
   {
   case 0: // volume
-    exporter->SetRenderWindow(m_VolumeViewer.m_RenderWindow);
+    exporter->SetRenderWindow(m_VolumeViewer.GetRenderWindow());
     break;
   case 1: // motion
     exporter->SetRenderWindow(m_MotionViewer.m_RenderWindow);
@@ -2754,7 +2754,7 @@ void IGMTracking::SaveSnapshot()
 void IGMTracking::MCProgressFunc(void *arg)
 {
   IGMTracking* tracking = (IGMTracking*)arg;
-  float f = tracking->m_VolumeViewer.m_MarchingCubes->GetProgress();
+  float f = tracking->m_VolumeViewer.GetMarchingCubes()->GetProgress();
 
   tracking->m_ProgressBar->value(f);
 	tracking->m_ProgressBar->color(fl_rgb_color((uchar)(255 - f * 255), 0, (uchar)(f * 255)));
@@ -2766,7 +2766,7 @@ void IGMTracking::MCProgressFunc(void *arg)
 void IGMTracking::DecProgressFunc(void *arg)
 {
   IGMTracking* tracking = (IGMTracking*)arg;
-  float f = tracking->m_VolumeViewer.m_DecimatePro->GetProgress();
+  float f = tracking->m_VolumeViewer.GetDecimatePro()->GetProgress();
 
   tracking->m_ProgressBar->value(f);
 	tracking->m_ProgressBar->color(fl_rgb_color((uchar)(255 - f * 255), 0, (uchar)(f * 255)));
@@ -2778,7 +2778,7 @@ void IGMTracking::DecProgressFunc(void *arg)
 void IGMTracking::SmoothProgressFunc(void *arg)
 {
   IGMTracking* tracking = (IGMTracking*)arg;
-  float f = tracking->m_VolumeViewer.m_SmoothFilter->GetProgress();
+  float f = tracking->m_VolumeViewer.GetSmoothFiler()->GetProgress();
 
   tracking->m_ProgressBar->value(f);
 	tracking->m_ProgressBar->color(fl_rgb_color((uchar)(255 - f * 255), 0, (uchar)(f * 255)));
