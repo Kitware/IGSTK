@@ -7,6 +7,7 @@
 #include "vtkImageActor.h"
 #include "vtkRenderWindow.h"
 #include "vtkCommand.h"
+#include "vtkInteractorStyleImage.h"
 
 #include "itkEventObject.h"
 #include "itkCommand.h"
@@ -36,7 +37,7 @@ public:
 
   void SelectPoint( int x, int y);
 
-  void SetInteractor( vtkRenderWindowInteractor * interactor );
+  virtual void SetInteractor( vtkRenderWindowInteractor * interactor );
 
   void Render( void );
 
