@@ -151,7 +151,7 @@ namespace ISIS {
       m_ThresholdLevelSetFilter->SetPropagationScaling( m_PropagationScaling );
       m_ThresholdLevelSetFilter->SetAdvectionScaling( m_AdvectionScaling );
       m_ThresholdLevelSetFilter->SetMaximumRMSError( m_MaximumRMSError );
-      m_ThresholdLevelSetFilter->SetNumberOfIterations( m_MaximumIterations );
+      m_ThresholdLevelSetFilter->SetMaximumIterations( m_MaximumIterations );
 
       // Initialize the progress counter
       m_ProgressAccumulator->ResetProgress();
