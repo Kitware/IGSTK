@@ -88,17 +88,6 @@ StateMachine< TClass >
 
 
 
-template<class TClass>
-const typename StateMachine< TClass >::StateIdentifierType & 
-StateMachine< TClass >
-::GetCurrentStateIdentifier() const
-{
-
-   return m_State;
-
-}
-
-
 
 
 template<class TClass>

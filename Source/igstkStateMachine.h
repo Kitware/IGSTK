@@ -159,7 +159,8 @@ public:
 
 
    /** Return the current state identifier */
-   const StateIdentifierType & GetCurrentStateIdentifier() const;
+   const StateIdentifierType & GetCurrentStateIdentifier() const
+                                  { return this->m_State; }
 
 
 private:
