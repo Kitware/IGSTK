@@ -441,14 +441,14 @@ void LiverTumorSegmentation::OnSegmentationParametersOk( int module )
 
      case CONFIDENCE_CONNECTED:
       this->m_ConfidenceConnectedModule.SetMultiplier( atof(m_Parameter001->value() ) );
-      this->m_ConfidenceConnectedModule.SetNumberOfIterations( atof(m_Parameter002->value() ) );
-      this->m_ConfidenceConnectedModule.SetInitialNeighborhoodRadius( atof(m_Parameter003->value() ) );
+      this->m_ConfidenceConnectedModule.SetNumberOfIterations( atoi(m_Parameter002->value() ) );
+      this->m_ConfidenceConnectedModule.SetInitialNeighborhoodRadius( atoi(m_Parameter003->value() ) );
       this->m_ConfidenceConnectedModule.SetSmoothingTimeStep( atof(m_Parameter101->value() ) );
       this->m_ConfidenceConnectedModule.SetSmoothingIterations( atoi(m_Parameter102->value() ) );
       break;
     case CONNECTED_THRESHOLD:
-      this->m_ConnectedThresholdModule.SetLowerThreshold( atof(m_Parameter001->value() ) );
-      this->m_ConnectedThresholdModule.SetUpperThreshold( atof(m_Parameter002->value() ) );
+      this->m_ConnectedThresholdModule.SetLowerThreshold( atoi(m_Parameter001->value() ) );
+      this->m_ConnectedThresholdModule.SetUpperThreshold( atoi(m_Parameter002->value() ) );
       this->m_ConnectedThresholdModule.SetSmoothingTimeStep( atof(m_Parameter101->value() ) );
       this->m_ConnectedThresholdModule.SetSmoothingIterations( atoi(m_Parameter102->value() ) );
       break;
