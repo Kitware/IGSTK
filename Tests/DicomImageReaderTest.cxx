@@ -17,6 +17,7 @@ int DicomImageReaderTest(int argc, char * argv [])
 
   if( argc > 1 ) 
     {
+
     reader.SetDirectory( argv[1] );
     }
 
