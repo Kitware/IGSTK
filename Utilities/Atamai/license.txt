@@ -1,0 +1,126 @@
+Copyright (c) 2005, Atamai Inc.
+
+Whereas ATAMAI is the owner of certain SOFTWARE (as defined herein) and
+has rights to redistribute it, and LICENSEE is interested in using the
+SOFTWARE, ATAMAI hereby provides a license under the conditions stated
+below. 
+
+
+I.  	Definitions
+
+ATAMAI: Atamai Inc. of London, Ontario, Canada
+
+LICENSEE: Kevin Cleary of Georgetown University in Washington, DC, USA
+
+AFFILIATES: Any employee, agent, or representative of LICENSEE, and any
+person, corporation, or entity which, directly or indirectly, is controlled
+by, or is under common control with LICENSEE, as well as every officer,
+director, agent and representative of any such person, corporation, or
+entity.
+
+SOFTWARE: The computer programs described as: "Atamai Tracking Classes for
+Aurora and Polaris."  A full list of the source files, executables, and
+associated data files that fit this description is provided in Appendix A
+of this agreement.
+
+DERIVATIVE PRODUCTS: Software created by LICENSEE which contain/incorporate
+the SOFTWARE or any portion thereof in binary or source-code form, except
+insofar as all incorporated portions of the SOFTWARE have already been
+received by LICENSEE from a third party without breach of any agreement,
+or are publicly available, or have already been independently developed
+by LICENSEE. 
+
+
+II.  	Conditions of Use
+
+a)	ATAMAI hereby grants, and LICENSEE hereby accepts, subject to the
+terms and conditions of this Agreement a license to use and modify the
+SOFTWARE and to create DERIVATIVE PRODUCTS for LICENSEE's non-commercial
+research endeavors.
+
+b)	The SOFTWARE provided by ATAMAI and DERIVATIVE PRODUCTS will not
+be sold or distributed by the LICENSEE, except that the SOFTWARE may be
+distributed to AFFILIATES solely in support of LICENSEE's non-commercial
+research endeavors.
+
+c)	LICENSEE agrees that any AFFILIATE utilizing the SOFTWARE will be
+advised of, and is subject to, the conditions in this agreement.
+
+d)	None of the SOFTWARE provided or DERIVATIVE PRODUCTS may be used
+for commercial purposes or development unless a release, option or license
+granting such permission is executed between ATAMAI and LICENSEE.  ATAMAI
+shall consider requests for a license that permits commercial use if there
+is interest in the commercialization of the SOFTWARE or DERIVATIVE PRODUCTS
+or in a confirmation test using the SOFTWARE or DERIVATIVE PRODUCTS.
+However, ATAMAI shall be under no obligation to grant such license.
+
+ 
+III.	Warranties and Liability
+
+a)	The SOFTWARE and related know-how are not intended for therapeutic
+or diagnostic purposes.
+
+b)	The SOFTWARE and any information or know-how delivered hereby is
+experimental in nature. ATAMAI makes no warranties, representation or
+undertaking with respect to the utility or appropriateness for a particular
+purpose.  ATAMAI further does not warrant that the SOFTWARE is free of
+infringement upon any patent or other proprietary right of a third party.
+
+c)	ATAMAI shall not be liable for any direct, indirect, incidental or
+consequential damages (including, but not limited to, loss of data, data
+becoming inaccurate, injury, or loss of life) arising in any way out of
+the use or inability to use the SOFTWARE, DERIVATIVE PRODUCTS, or related
+know-how, even if advised of the possibility of such damages.
+
+d)	LICENSEE will defend, indemnify, save and hold ATAMAI harmless
+from and against any third party claims, demands, suits, actions, losses,
+damages, fines and liabilities arising out of LICENSEE's use of the
+SOFTWARE or DERIVATIVE PRODUCTS, and will pay any costs and damages which,
+by final judgment, after exhaustion of all reasonable appeals, may be
+assessed against ATAMAI. The foregoing indemnification shall be contingent
+upon ATAMAI's promptly notifying LICENSEE of such action and providing
+reasonable cooperation and tendering to LICENSEE full authority to defend
+or settle the claim or suit.  ATAMAI has the right to participate (at its
+own expense) in the claim or suit and in selecting counsel therefore.
+Notwithstanding the foregoing, LICENSEE shall not settle any claim
+hereunder without ATAMAI's written consent, which consent shall not be
+unreasonably withheld.
+
+
+IV. 	General Terms
+
+a)	LICENSEE agrees that it will comply with all applicable Provincial,
+State and Federal regulatory and statutory requirements regarding use of
+the SOFTWARE and DERIVATIVE PRODUCTS.
+
+
+Appendix A
+
+The following source files constitute the Atamai Tracking Classes for
+Aurora and Polaris:
+
+ndicapi/ndicapi.h
+ndicapi/ndicapi.c
+ndicapi/ndicapi_math.h
+ndicapi/ndicapi_math.c
+ndicapi/ndicapi_serial.h
+ndicapi/ndicapi_serial.c
+ndicapi/ndicapi_thread.h
+ndicapi/ndicapi_thread.c
+ndicapi/polaris.h
+ndicapi/polaris_math.c
+ndicapi/vtkndicapi.def
+
+vtkTracker.h
+vtkTracker.cxx
+vtkTrackerTool.h
+vtkTrackerTool.cxx
+vtkTrackerBuffer.h
+vtkTrackerBuffer.cxx
+vtkFrameToTimeConverter.h
+vtkFrameToTimeConverter.cxx
+vtkPOLARISTracker.h
+vtkPOLARISTracker.cxx
+vtkNDITracker.h
+vtkNDITracker.cxx
+
