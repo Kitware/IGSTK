@@ -29,6 +29,13 @@ namespace igstk{
 View::View( int x, int y, int w, int h, const char *l ) : 
 Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor()
 {  
+  // Create a default render window
+  m_RenderWindow = vtkRenderWindow::New();
+  m_Renderer = vtkRenderer::New();
+  m_RenderWindow->AddRenderer(m_Renderer);
+  m_Camera = m_Renderer->GetActiveCamera();
+  m_RenderWindow->BordersOff();
+  m_Renderer->SetBackground(0.5,0.5,0.5);
   this->Initialize();
   this->end();
 }
@@ -43,15 +50,14 @@ View::~View()
     {
     ((Fl_Group*)parent())->remove(*(Fl_Gl_Window*)this);
     }
+  m_RenderWindow->Delete();
+  m_Renderer->Delete();
 }
 
 /** */
 void View::Initialize()
 {
-  // Create a default render window
-  igstkRenderWindow = RenderWindow::New();
-  this->SetRenderWindow(this->igstkRenderWindow->GetRenderWindow());
-
+  this->SetRenderWindow(m_RenderWindow);
   // if don't have render window then we can't do anything yet
   if (!RenderWindow)
     {
@@ -96,14 +102,14 @@ void View::SetScene(const Scene * scene)
     ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
     while(actorIt != actors.end())
       {
-      igstkRenderWindow->GetRenderer()->AddActor(*actorIt);
+      m_Renderer->AddActor(*actorIt);
       actorIt++;
       }
 
     it++;
     }
 
-  igstkRenderWindow->GetRenderer()->ResetCamera();
+  m_Renderer->ResetCamera();
 
 }
 

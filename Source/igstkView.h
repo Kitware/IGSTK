@@ -24,47 +24,76 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Gl_Window.H>
 #include <vtkRenderWindowInteractor.h>
-#include <igstkRenderWindow.h>
 #include <igstkScene.h>
+
+// VTK headers
+#include "vtkRenderWindow.h"
+#include "vtkRenderer.h"
+#include "vtkCamera.h"
+
+#include "igstkMacros.h"
+#include "igstkStateMachine.h"
 
 namespace igstk{
 
 class View : public Fl_Gl_Window, public vtkRenderWindowInteractor 
 {
-   
+
+private:
+    
+  typedef igstk::StateMachine< View > StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer ActionType;
+  typedef StateMachineType::StateType              StateType;
+  typedef StateMachineType::InputType              InputType;
+  typedef StateMachineType::StateIdentifierType    StateIdentifierType;
+
+  FriendClassMacro( StateMachineType );
+
 protected:
 
-   View( int x, int y, int w, int h, const char *l="");
-   ~View( void );
+  View( int x, int y, int w, int h, const char *l="");
+  ~View( void );
 
 public:
-   // vtkRenderWindowInteractor overrides
-   void Initialize();
-   void Enable();
-   void Disable();
-   void Start();
-   void SetRenderWindow(vtkRenderWindow *aren);
-   void UpdateSize(int x, int y);
-   int CreateTimer(int timertype);
-   int DestroyTimer();
-   void OnTimer(void);
+  // vtkRenderWindowInteractor overrides
+  void Initialize();
+  void Enable();
+  void Disable();
+  void Start();
+  void SetRenderWindow(vtkRenderWindow *aren);
+  void UpdateSize(int x, int y);
+  int CreateTimer(int timertype);
+  int DestroyTimer();
+  void OnTimer(void);
 
-   /** Set the scene */
-   void SetScene(const Scene * scene);
+  /** Set the scene */
+  void SetScene(const Scene * scene);
 
-   /** void Update the display */
-   void Update();
+  /** void Update the display */
+  void Update();
 
 protected:
-   // Fl_Gl_Window overrides
-   void flush(void);
-   void draw( void );
-   void resize( int x, int y, int w, int h );
-   virtual int  handle( int event );
+  
+  // Fl_Gl_Window overrides
+  void flush(void);
+  void draw( void );
+  void resize( int x, int y, int w, int h );
+  virtual int  handle( int event );
    
+  /** Get the vtk RenderWindow */
+  vtkRenderWindow* GetRenderWindow() {return m_RenderWindow;}
+    
+  /** Get the vtk Renderer */
+  vtkRenderer* GetRenderer() {return m_Renderer;}
+    
+  /** Get the vtk Camera */
+  vtkCamera* GetCamera() {return m_Camera;}
+
 private:
   
-  igstk::RenderWindow::Pointer igstkRenderWindow;
+  vtkRenderWindow    * m_RenderWindow;
+  vtkRenderer        * m_Renderer;
+  vtkCamera          * m_Camera;
   Scene::ConstPointer m_Scene;
 };
 
