@@ -51,6 +51,18 @@ INCLUDE_DIRECTORIES(
 #
 #  Define the list of source files
 #
+SET(IGSTK_HEADS
+  DicomImageReaderBase.h
+  RegistrationCTBase.h
+  ImageSliceViewer.h
+  vtkFlRenderWindowInteractor.h
+  InteractorObserver.h
+  ThresholdLevelSetSegmentationModule.h
+  LiverTumorSegmentationBase.h  
+  TubeWrappedLine.h
+  MotionViewer.h
+)
+
 SET(IGSTK_SRCS
   DicomImageReaderBase.cxx
   RegistrationCTBase.cxx
@@ -58,11 +70,31 @@ SET(IGSTK_SRCS
   vtkFlRenderWindowInteractor.cxx
   InteractorObserver.cxx
   ThresholdLevelSetSegmentationModule.cxx
-  LiverTumorSegmentationBase.cxx
+  LiverTumorSegmentationBase.cxx  
+  TubeWrappedLine.cxx
+  MotionViewer.cxx
   )
 
+SET(AURORA_TRACKER_HEADS
+  Tracker.h
+  AuroraTracker.h
+  CommonNDIDefines.h
+  Conversions.h
+  CyclicRedundancy.h
+  IniFileRW.h
+  SerialCommunication.h
+)
 
-ADD_LIBRARY(IGSTK ${IGSTK_SRCS})
+SET(AURORA_TRACKER_SRCS
+  Tracker.cxx
+  AuroraTracker.cxx
+  Conversions.cxx
+  CyclicRedundancy.cxx
+  IniFileRW.cxx
+  SerialCommunication.cxx
+)
+
+ADD_LIBRARY(IGSTK ${IGSTK_HEADS} ${IGSTK_SRCS} ${AURORA_TRACKER_HEADS} ${AURORA_TRACKER_SRCS})
 
 FLTK_WRAP_UI(IGSTK 
   DicomImageReaderGUI.fl
