@@ -57,17 +57,17 @@ int igstkBasicTrackerTest( int, char * [] )
 {
 
   igstk::TestingTracker::Pointer tracker = igstk::TestingTracker::New();
-  igstk::Logger logger;
+  igstk::Logger::Pointer logger = igstk::Logger::New();
 
-  std::ofstream fileStream1("outputLog1.txt");
-  std::ofstream fileStream2("outputLog2.txt");
+  std::ofstream fileStream1("outputBasicTrackerTestLog1.txt");
+  std::ofstream fileStream2("outputBasicTrackerTestLog2.txt");
 
-  logger.AddOutputStream( std::cout );
-  logger.AddOutputStream( fileStream1 );
+  logger->AddOutputStream( std::cout );
+  logger->AddOutputStream( fileStream1 );
 
-  logger.SetPriorityLevel( igstk::Logger::DEBUG );
+  logger->SetPriorityLevel( igstk::Logger::DEBUG );
 
-  tracker->SetLogger( &logger );
+  tracker->SetLogger( logger );
 
   tracker->Initialize();
 

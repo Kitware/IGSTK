@@ -35,9 +35,12 @@ namespace igstk
 
 #define igstkLogMacro( x, y)  \
 {         \
-    if (this->GetLogger() && (this->GetLogger()->GetPriorityLevel()>= x) ) \
+  if (this->GetLogger() ) \
     {  \
-        *(this->GetLogger()) << y; \
+    if ( this->GetLogger()->GetPriorityLevel()>= (x) ) \
+      {  \
+      this->GetLogger()->GetMultipleOutput() << (y); \
+      } \
     } \
 }
 

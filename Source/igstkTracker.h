@@ -131,7 +131,7 @@ public:
 
   /** The SetLogger method is used to attach a logger object to the
   tracker object for logging purposes. */
-  void SetLogger( LoggerType* logger );
+  void SetLogger( LoggerType * logger );
 
   /** The GetLogger method return pointer to the logger object. */
   LoggerType* GetLogger(  void );
@@ -268,7 +268,7 @@ private:
   InputType                m_CloseTrackingFailureInput;
 
   /** The Logger instance */
-  LoggerType               *m_pLogger;
+  LoggerType::Pointer      m_Logger;
 };
 
 }

@@ -26,7 +26,7 @@
 namespace igstk
 {
 
-Tracker::Tracker(void) : m_pCommunication( NULL), m_pLogger( NULL), m_StateMachine( this )
+Tracker::Tracker(void) : m_pCommunication( NULL), m_Logger( NULL), m_StateMachine( this )
 {
   // Set the state descriptors
   m_StateMachine.AddState( m_IdleState, "IdleState" );
@@ -115,44 +115,47 @@ Tracker::~Tracker(void)
 
 void Tracker::Initialize(  const char * )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "SetUpCommunication called ...\n");
+  igstkLogMacro( Logger::DEBUG, "SetUpCommunication called ...\n");
   this->m_StateMachine.ProcessInput( this->m_SetUpCommunicationInput );
 
   m_StateMachine.ProcessInput( *m_pSetUpCommunicationResultInput );
 
-  igstkLogMacro( igstk::Logger::DEBUG, "SetUpTools called ...\n");
+  igstkLogMacro( Logger::DEBUG, "SetUpTools called ...\n");
   this->m_StateMachine.ProcessInput( this->m_ActivateToolsInput );
 
   m_StateMachine.ProcessInput( *m_pActivateToolsResultInput );
 }
 
 
-void Tracker::SetLogger( LoggerType* logger )
+void Tracker::SetLogger( LoggerType * logger )
 {
-  m_pLogger = logger;
+  m_Logger = logger;
 }
+
 
 Tracker::LoggerType* Tracker::GetLogger(  void )
 {
-  return m_pLogger;
+  return m_Logger;
 }
+
 
 void Tracker::Reset( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "ResetTracking called ...\n");
+  igstkLogMacro( Logger::DEBUG, "ResetTracking called ...\n");
   m_StateMachine.ProcessInput( m_ResetTracking );
 }
 
+
 void Tracker::StartTracking( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "StartTracking called ...\n");
+  igstkLogMacro( Logger::DEBUG, "StartTracking called ...\n");
   m_StateMachine.ProcessInput( m_StartTrackingInput );
   m_StateMachine.ProcessInput( *m_pStartTrackingResultInput );
 }
 
 void Tracker::StopTracking( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "StopTracking called ...\n");
+  igstkLogMacro( Logger::DEBUG, "StopTracking called ...\n");
   m_StateMachine.ProcessInput( m_StopTracking );
   m_StateMachine.ProcessInput( *m_pStopTrackingResultInput );
 }
@@ -160,7 +163,7 @@ void Tracker::StopTracking( void )
 
 void Tracker::UpdateStatus( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "UpdateStatus called ...\n");
+  igstkLogMacro( Logger::DEBUG, "UpdateStatus called ...\n");
   m_StateMachine.ProcessInput( m_UpdateStatus );
 }
 
@@ -202,7 +205,7 @@ void Tracker::SetToolTransform( unsigned int portNumber, unsigned int toolNumber
 
 void Tracker::Close( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "CloseTracking called ...\n");
+  igstkLogMacro( Logger::DEBUG, "CloseTracking called ...\n");
   m_StateMachine.ProcessInput( m_CloseTracking );
   m_StateMachine.ProcessInput( *m_pCloseTrackingResultInput );
 }
@@ -225,92 +228,92 @@ const Tracker::StateIdentifierType & Tracker::GetCurrentState() const
 
 void Tracker::AttemptToSetUpCommunicationProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::AttemptToSetUpCommunicationProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::AttemptToSetUpCommunicationProcessing called ...\n");
 }
 
 
 void Tracker::CommunicationEstablishmentSuccessProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CommunicationEstablishmentSuccessProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::CommunicationEstablishmentSuccessProcessing called ...\n");
 }
 
 
 void Tracker::CommunicationEstablishmentFailureProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CommunicationEstablishmentFailureProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::CommunicationEstablishmentFailureProcessing called ...\n");
 }
 
 
 void Tracker::AttemptToSetUpToolsProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::AttemptToSetUpToolsProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::AttemptToSetUpToolsProcessing called ...\n");
 }
   
 
 void Tracker::ToolsActivationSuccessProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::ToolsActivationSuccessProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::ToolsActivationSuccessProcessing called ...\n");
 }
     
 void Tracker::ToolsActivationFailureProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::ToolsActivationFailureProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::ToolsActivationFailureProcessing called ...\n");
 }
     
 void Tracker::AttemptToStartTrackingProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::AttemptToStartTrackingProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::AttemptToStartTrackingProcessing called ...\n");
 }
    
 void Tracker::StartTrackingSuccessProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StartTrackingSuccessProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::StartTrackingSuccessProcessing called ...\n");
 }
 
 void Tracker::StartTrackingFailureProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StartTrackingFailureProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::StartTrackingFailureProcessing called ...\n");
 }
 
 void Tracker::UpdateStatusProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::UpdateStatusProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::UpdateStatusProcessing called ...\n");
 }
     
 void Tracker::AttemptToStopTrackingProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StopTrackingProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::StopTrackingProcessing called ...\n");
 }
 
 
 void Tracker::StopTrackingSuccessProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StopTrackingSuccessProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::StopTrackingSuccessProcessing called ...\n");
 }
 
 void Tracker::StopTrackingFailureProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StopTrackingFailureProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::StopTrackingFailureProcessing called ...\n");
 }
 
 void Tracker::ResetTrackingProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::ResetTrackingProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::ResetTrackingProcessing called ...\n");
 }
 
 void Tracker::DisableCommunicationProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::DisableCommunicationProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::DisableCommunicationProcessing called ...\n");
 }
 
 void Tracker::DisableToolsProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::DisableToolsProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::DisableToolsProcessing called ...\n");
 }
 
 void Tracker::CloseFromTrackingStateProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseFromTrackingStateProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::CloseFromTrackingStateProcessing called ...\n");
   this->AttemptToStopTrackingProcessing();
   this->DisableToolsProcessing();
   this->DisableCommunicationProcessing();
@@ -318,26 +321,26 @@ void Tracker::CloseFromTrackingStateProcessing( void )
 
 void Tracker::CloseFromToolsActiveStateProcessing( void)
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseFromToolsActiveStateProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::CloseFromToolsActiveStateProcessing called ...\n");
   this->DisableToolsProcessing();
   this->DisableCommunicationProcessing();
 }
 
 void Tracker::CloseFromCommunicatingStateProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseFromCommunicatingStateProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::CloseFromCommunicatingStateProcessing called ...\n");
   this->DisableCommunicationProcessing();
 }
 
 
 void Tracker::CloseTrackingSuccessProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseTrackingSuccessProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::CloseTrackingSuccessProcessing called ...\n");
 }
 
 void Tracker::CloseTrackingFailureProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseTrackingFailureProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "Tracker::CloseTrackingFailureProcessing called ...\n");
 }
 
 

@@ -20,6 +20,8 @@
 
 #include "igstkMacros.h"
 #include "igstkMultipleOutput.h"
+#include "itkObject.h"
+
 
 namespace igstk
 {
@@ -28,38 +30,64 @@ namespace igstk
     This class has been derived from MultipleOutput class. 
 */
 
-class Logger : public igstk::MultipleOutput
+class Logger : public itk::Object
 {
 public:
+
+  typedef Logger Self; 
+  typedef itk::Object Superclass; 
+  typedef itk::SmartPointer< Self > Pointer; 
+  typedef itk::SmartPointer< const Self > ConstPointer; 
+
+  /** Method for defining the name of the class */ 
+  igstkTypeMacro(Logger, Object); 
+
+  /** Method for creation through the object factory */ 
+  igstkNewMacro(Self); 
+
+  typedef  MultipleOutput::StreamType   StreamType;
 
   /** Definition of types of messages. These codes will be used to regulate the
    * level of detail of messages reported to the final outputs */
     typedef enum 
     { 
-        FATAL=0, 
-        CRITICAL, 
-        WARNING, 
-        DEBUG, 
-        NOTSET 
+      FATAL=0, 
+      CRITICAL, 
+      WARNING, 
+      DEBUG, 
+      NOTSET=1000 
     } PriorityLevelType;
    
-    /** Constructor */
-    Logger( void );
+  /** Set the priority level for the current logger. Only messages that have
+   * priorities equal or greater than the one set here will be posted to the
+   * current outputs */
+  igstkSetMacro( PriorityLevel, PriorityLevelType );
+
+  /** Get the priority level for the current logger. Only messages that have
+   * priorities equal or greater than the one set here will be posted to the
+   * current outputs */
+  igstkGetMacro( PriorityLevel, PriorityLevelType );
+
+  /** Registers another output stream with the multiple output. */
+  void AddOutputStream( StreamType & output );
+
+  /** Exposes the Multiple Output Object so messages can be sent out to it */
+  MultipleOutput & GetMultipleOutput();
 
 
-    /** Set the priority level for the current logger. Only messages that have
-     * priorities equal or greater than the one set here will be posted to the
-     * current outputs */
-    igstkSetMacro( PriorityLevel, PriorityLevelType );
+protected:
 
-    /** Get the priority level for the current logger. Only messages that have
-     * priorities equal or greater than the one set here will be posted to the
-     * current outputs */
-    igstkGetMacro( PriorityLevel, PriorityLevelType );
+  /** Constructor */
+  Logger();
+
+  /** Destructor */
+  virtual ~Logger();
 
 private:
 
-    PriorityLevelType    m_PriorityLevel;
+  PriorityLevelType    m_PriorityLevel;
+  
+  MultipleOutput       m_Output;
 
 };
 

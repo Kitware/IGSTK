@@ -34,11 +34,12 @@ namespace igstk
 
 class MultipleOutput : virtual public std::streambuf
 {
-private:
-  
-  typedef std::ostream               StreamType;
-  typedef std::set< StreamType * >   ContainerType;
 
+public:
+
+  typedef std::ostream               StreamType;
+
+  
 public:
 
   /** Constructor */
@@ -75,7 +76,9 @@ public:
 
 private:
   
-    ContainerType        m_Output;
+  typedef std::set< StreamType * >   ContainerType;
+
+  ContainerType        m_Output;
 
 };
 

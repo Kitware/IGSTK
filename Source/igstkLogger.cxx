@@ -20,9 +20,30 @@
 namespace igstk
 {
 
-Logger::Logger( void )
+Logger::Logger()
 {
   m_PriorityLevel = Logger::NOTSET;
+}
+
+Logger::~Logger()
+{
+  m_Output.Flush();
+}
+
+
+/** Adds an output stream to the MultipleOutput for writing. */
+void 
+Logger::AddOutputStream( StreamType & output )
+{
+  // delegates to MultipleOutput
+  m_Output.AddOutputStream( output ); 
+}
+
+
+MultipleOutput & 
+Logger::GetMultipleOutput()
+{
+  return m_Output;
 }
 
 

@@ -25,13 +25,45 @@
 
 #include "igstkLogger.h"
 
+class LoggerTesterClass
+{
+  typedef igstk::Logger  LoggerType;
+public:
+  void SetLogger( LoggerType * logger )
+  {
+    m_Logger = logger;
+  }
+  void ProduceLogOutput()
+  {
+    if(m_Logger.IsNotNull() )
+      {
+      m_Logger->GetMultipleOutput() << 12.4;
+      m_Logger->GetMultipleOutput() << " text ";
+      m_Logger->GetMultipleOutput() << 23;
+      }
+  }
+  void TestPriorityLevels()
+  {
+    igstkLogMacro( LoggerType::DEBUG, "This is a DEBUG message" );
+    igstkLogMacro( LoggerType::FATAL, "This is a FATAL message" );
+    igstkLogMacro( LoggerType::WARNING, "This is a WARNING message" );
+  }
+  LoggerType * GetLogger() 
+  {
+    return m_Logger;
+  }
+private:
+  LoggerType::Pointer m_Logger;
+};
+
+
 int igstkLoggerTest( int, char * [] )
 {
     typedef igstk::Logger  LoggerType;
     
-    LoggerType logger1;
+    LoggerType::Pointer logger1 = LoggerType::New();
 
-    LoggerType logger2;
+    LoggerType::Pointer logger2 = LoggerType::New();
 
     std::ofstream file1("fileLoggerOutput1.txt");
     std::ofstream file2("fileLoggerOutput2.txt");
@@ -42,9 +74,9 @@ int igstkLoggerTest( int, char * [] )
       return EXIT_FAILURE;
       }
 
-    logger1.AddOutputStream( std::cout );
-    logger1.AddOutputStream( file1 );
-    logger1.AddOutputStream( file2 );
+    logger1->AddOutputStream( std::cout );
+    logger1->AddOutputStream( file1 );
+    logger1->AddOutputStream( file2 );
 
     std::ofstream file3("fileLoggerOutput3.txt");
     std::ofstream file4("fileLoggerOutput4.txt");
@@ -55,26 +87,28 @@ int igstkLoggerTest( int, char * [] )
       return EXIT_FAILURE;
       }
 
-    logger1.AddOutputStream( std::cout );
-    logger1.AddOutputStream( file1 );
-    logger1.AddOutputStream( file2 );
+    logger1->AddOutputStream( std::cout );
+    logger1->AddOutputStream( file1 );
+    logger1->AddOutputStream( file2 );
 
-    logger2.AddOutputStream( std::cout );
-    logger2.AddOutputStream( file3 );
-    logger2.AddOutputStream( file4 );
+    logger2->AddOutputStream( std::cout );
+    logger2->AddOutputStream( file3 );
+    logger2->AddOutputStream( file4 );
 
-    logger1.SetPriorityLevel( LoggerType::WARNING );
-    logger2.SetPriorityLevel( LoggerType::DEBUG );
+    logger1->SetPriorityLevel( LoggerType::WARNING );
+    logger2->SetPriorityLevel( LoggerType::DEBUG );
 
-    logger1 << 12.4;
-    logger1 << " text ";
-    logger1.Flush();
-    logger1 << 23;
+    LoggerTesterClass testerA;
 
-    logger2 << 12.4;
-    logger2 << " text ";
-    logger2.Flush();
-    logger2 << 23;
+    testerA.SetLogger( logger1 );
+    testerA.ProduceLogOutput();
+    testerA.TestPriorityLevels();
+
+    LoggerTesterClass testerB;
+
+    testerB.SetLogger( logger2 );
+    testerB.ProduceLogOutput();
+    testerB.TestPriorityLevels();
 
     return EXIT_SUCCESS;
 }
