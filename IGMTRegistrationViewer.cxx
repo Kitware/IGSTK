@@ -15,8 +15,8 @@ IGMTRegistrationViewer::IGMTRegistrationViewer(void)
   m_FixedPointSetAssembly = vtkAssembly::New();
   m_MovingPointSetAssembly = vtkAssembly::New();
 
-  this->GetRoot()->AddPart(m_FixedPointSetAssembly);
-  this->GetRoot()->AddPart(m_MovingPointSetAssembly);
+//  this->GetRoot()->AddPart(m_FixedPointSetAssembly);
+//  this->GetRoot()->AddPart(m_MovingPointSetAssembly);
 }
 
 IGMTRegistrationViewer::~IGMTRegistrationViewer(void)
