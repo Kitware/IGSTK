@@ -23,6 +23,8 @@ public:
 
   void SetDirectory( const char * directory );
 
+  const std::vector<std::string> &GetSeriesUIDs();
+
 
 protected:
 
