@@ -93,7 +93,7 @@ void View::Initialize()
 
   int *size = RenderWindow->GetSize();
   // enable everything and start rendering
-  Enable();
+  this->Enable();
     
   // set the size in the render window interactor
   Size[0] = size[0];
