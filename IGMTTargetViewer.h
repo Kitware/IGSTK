@@ -4,7 +4,7 @@
 #include "vtkActor.h"
 #include "vtkCamera.h"
 #include "vtkLineSource.h"
-#include "vtkLookUpTable.h"
+#include "vtkLookupTable.h"
 #include "vtkPlaneSource.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkRenderer.h"
