@@ -326,6 +326,49 @@ private:
 };
 
 
+class Tester7
+{
+public:
+
+  typedef igstk::StateMachine< Tester7 >              StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer    ActionType;
+  typedef StateMachineType::StateType                 StateType;
+  typedef StateMachineType::InputType                 InputType;
+  typedef StateMachineType::StateIdentifierType       StateIdentifierType;
+
+  FriendClassMacro(StateMachineType);
+
+  TypeMacro( Tester7, None );
+
+  Tester7():m_StateMachine(this)
+    {
+    m_StateMachine.AddState( m_IdleState, "IdleState" );
+    m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
+    const ActionType NoAction = 0;
+    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
+    // On purpose NOT invoking SelectInitialState() before calling SetReadyToRun()
+    // COMMENTED OUT ON PURPOSE:  m_StateMachine.SelectInitialState( m_IdleState );
+    m_StateMachine.SetReadyToRun();
+    }
+
+  void InsertChange() 
+    {
+    std::cout << "Insert Change" << std::endl;
+    m_StateMachine.ProcessInput( m_QuarterInserted );
+    }
+ 
+private:
+  StateMachineType   m_StateMachine;
+
+  /** List of States */
+  StateType m_IdleState;
+
+  /** List of Inputs */
+  InputType m_QuarterInserted;
+
+};
+
+
 
 
 int igstkStateMachineErrorsTest( int, char * [] )
@@ -364,6 +407,10 @@ int igstkStateMachineErrorsTest( int, char * [] )
   std::cout << "Invoking  ProcessInput() in a state,input pair without transitions defined." << std::endl;
   Tester6 tester6;
   tester6.InvokeUndefinedStateInputTransition();
+
+  std::cout << "Invoking  SetReadyToRun() without having called SetInitialState()" << std::endl;
+  Tester7 tester7;
+  tester7.InsertChange();
 
 
   // The following call 
