@@ -9,12 +9,18 @@
 
 void RegisterTests()
 {
+    REGISTER_TEST(igstkEllipsoidObjectTest);
+    REGISTER_TEST(igstkCylinderObjectTest);
     REGISTER_TEST(igstkCommunicationTest);
     REGISTER_TEST(igstkMultipleOutputTest);
+    REGISTER_TEST(igstkSceneTest);
     REGISTER_TEST(igstkStateMachineTest);
     REGISTER_TEST(igstkStateMachineErrorsTest);
     REGISTER_TEST(igstkTokenTest);
     REGISTER_TEST(igstkBasicTrackerTest);
+    REGISTER_TEST(igstkTimeStampTest);
     REGISTER_TEST(igstkTrackerToolTest);
     REGISTER_TEST(igstkTrackerPortTest);
+    REGISTER_TEST(igstkTransformTest);
+    REGISTER_TEST(igstkViewTest);
 }

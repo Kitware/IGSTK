@@ -34,15 +34,33 @@ ADD_TEST(igstkTrackerToolTest ${IGSTK_TESTS} igstkTrackerToolTest)
 
 ADD_TEST(igstkTrackerPortTest ${IGSTK_TESTS} igstkTrackerPortTest)
 
+ADD_TEST(igstkSceneTest ${IGSTK_TESTS} igstkSceneTest)
+
+ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
+
+ADD_TEST(igstkTransformTest ${IGSTK_TESTS} igstkTransformTest)
+
+ADD_TEST(igstkTimeStampTest ${IGSTK_TESTS} igstkTimeStampTest)
+
+ADD_TEST(igstkEllipsoidObjectTest ${IGSTK_TESTS} igstkEllipsoidObjectTest)
+
+ADD_TEST(igstkCylinderObjectTest ${IGSTK_TESTS} igstkCylinderObjectTest)
+
 SET(BasicTests_SRCS
   igstkCommunicationTest
+  igstkCylinderObjectTest
+  igstkEllipsoidObjectTest
   igstkMultipleOutputTest
+  igstkSceneTest
   igstkStateMachineTest
   igstkStateMachineErrorsTest
   igstkTokenTest
   igstkBasicTrackerTest
+  igstkTimeStampTest
   igstkTrackerToolTest
   igstkTrackerPortTest
+  igstkTransformTest
+  igstkViewTest
   )
 
 ADD_EXECUTABLE(igstkTests igstkTests.cxx ${BasicTests_SRCS})
