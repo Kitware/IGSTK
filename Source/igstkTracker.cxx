@@ -28,90 +28,141 @@ namespace igstk
 
 Tracker::Tracker(void) : m_pCommunication( NULL), m_pLogger( NULL), m_StateMachine( this )
 {
-      // Set the state descriptors
-      m_StateMachine.AddState( m_IdleState, "IdleState" );
-      m_StateMachine.AddState( m_CommunicatingState, "CommunicatingState" );
-      m_StateMachine.AddState( m_ToolsActiveState, "ToolsActiveState" );
-      m_StateMachine.AddState( m_TrackingState, "TrackingState" );
+  // Set the state descriptors
+  m_StateMachine.AddState( m_IdleState, "IdleState" );
+  m_StateMachine.AddState( m_AttemptingToEstablishCommunicationState, "AttemptingToEstablishCommunicationState" );
+  m_StateMachine.AddState( m_CommunicationEstablishedState, "CommunicationEstablishedState" );
+  m_StateMachine.AddState( m_AttemptingToActivateToolsState, "AttemptingToActivateToolsState" );
+  m_StateMachine.AddState( m_ToolsActiveState, "ToolsActiveState" );
+  m_StateMachine.AddState( m_AttemptingToTrackState, "AttemptingToTrackState" );
+  m_StateMachine.AddState( m_TrackingState, "TrackingState" );
+  m_StateMachine.AddState( m_AttemptingToStopTrackingState, "AttemptingToStopTrackingState");
+  m_StateMachine.AddState( m_AttemptingToCloseTrackingState, "AttemptingToCloseTrackingState");
 
-      // Set the input descriptors
-      m_StateMachine.AddInput( m_SetUpCommunication, "SetUpCommunication");
-      m_StateMachine.AddInput( m_SetUpTools, "SetUpTools");
-      m_StateMachine.AddInput( m_StartTracking, "StartTracking");
-      m_StateMachine.AddInput( m_UpdateStatus,  "UpdateStatus");
-      m_StateMachine.AddInput( m_StopTracking,  "StopTracking");
-      m_StateMachine.AddInput( m_ResetTracking, "ResetTracking");
-      m_StateMachine.AddInput( m_CloseTracking, "CloseTracking");
+  // Set the input descriptors
+  m_StateMachine.AddInput( m_SetUpCommunicationInput, "SetUpCommunicationInput");
+  m_StateMachine.AddInput( m_CommunicationEstablishmentSuccessInput, "CommunicationEstablishmentSuccessInput");
+  m_StateMachine.AddInput( m_CommunicationEstablishmentFailureInput, "CommunicationEstablishmentFailureInput");
 
-      const ActionType NoAction = 0;
+  m_StateMachine.AddInput( m_ActivateToolsInput, "ActivateToolsInput");
+  m_StateMachine.AddInput( m_ToolsActivationSuccessInput, "ToolsActivationSuccessInput");
+  m_StateMachine.AddInput( m_ToolsActivationFailureInput, "ToolsActivationFailureInput");
 
-      // Programming the state machine transitions
-      m_StateMachine.AddTransition( m_IdleState,          m_SetUpCommunication,  m_CommunicatingState, &Tracker::SetUpCommunicationProcessing );
-      m_StateMachine.AddTransition( m_CommunicatingState, m_SetUpTools,          m_ToolsActiveState,   &Tracker::SetUpToolsProcessing );
-      m_StateMachine.AddTransition( m_ToolsActiveState,   m_StartTracking,       m_TrackingState,      &Tracker::StartTrackingProcessing );
-      m_StateMachine.AddTransition( m_TrackingState,      m_UpdateStatus,        m_TrackingState,      &Tracker::UpdateStatusProcessing );
-      m_StateMachine.AddTransition( m_TrackingState,      m_StopTracking,        m_ToolsActiveState,   &Tracker::StopTrackingProcessing );
-      m_StateMachine.AddTransition( m_TrackingState,      m_ResetTracking,       m_TrackingState,      &Tracker::ResetTrackingProcessing );
-      m_StateMachine.AddTransition( m_TrackingState,      m_CloseTracking,       m_IdleState,          &Tracker::CloseFromTrackingStateProcessing );
-      m_StateMachine.AddTransition( m_ToolsActiveState,   m_CloseTracking,       m_IdleState,          &Tracker::CloseFromToolsActiveStateProcessing );
-      m_StateMachine.AddTransition( m_CommunicatingState, m_CloseTracking,       m_IdleState,          &Tracker::CloseFromCommunicatingStateProcessing );
+  m_StateMachine.AddInput( m_StartTrackingInput, "StartTrackingInput");
+  m_StateMachine.AddInput( m_StartTrackingSuccessInput, "StartTrackingSuccessInput");
+  m_StateMachine.AddInput( m_StartTrackingFailureInput, "StartTrackingFailureInput");
 
-      m_StateMachine.SelectInitialState( m_IdleState );
+  m_StateMachine.AddInput( m_UpdateStatus,  "UpdateStatus");
+
+  m_StateMachine.AddInput( m_StopTracking,  "StopTracking");
+  m_StateMachine.AddInput( m_StopTrackingSuccessInput, "StopTrackingSuccessInput");
+  m_StateMachine.AddInput( m_StopTrackingFailureInput, "StopTrackingFailureInput");
+
+  m_StateMachine.AddInput( m_ResetTracking, "ResetTracking");
+
+  m_StateMachine.AddInput( m_CloseTracking, "CloseTracking");
+  m_StateMachine.AddInput( m_CloseTrackingSuccessInput, "CloseTrackingSuccessInput");
+  m_StateMachine.AddInput( m_CloseTrackingFailureInput, "CloseTrackingFailureInput");
+
+  const ActionType NoAction = 0;
+
+  // Programming the state machine transitions
+  m_StateMachine.AddTransition( m_IdleState, m_SetUpCommunicationInput,  m_AttemptingToEstablishCommunicationState, &Tracker::AttemptToSetUpCommunicationProcessing );
+  m_StateMachine.AddTransition( m_AttemptingToEstablishCommunicationState, m_CommunicationEstablishmentSuccessInput, m_CommunicationEstablishedState, &Tracker::CommunicationEstablishmentSuccessProcessing );
+  m_StateMachine.AddTransition( m_AttemptingToEstablishCommunicationState, m_CommunicationEstablishmentFailureInput, m_IdleState, &Tracker::CommunicationEstablishmentFailureProcessing);
+
+  m_StateMachine.AddTransition( m_CommunicationEstablishedState, m_ActivateToolsInput, m_AttemptingToActivateToolsState, &Tracker::AttemptToSetUpToolsProcessing );
+  m_StateMachine.AddTransition( m_AttemptingToActivateToolsState, m_ToolsActivationSuccessInput, m_ToolsActiveState, &Tracker::ToolsActivationSuccessProcessing );
+  m_StateMachine.AddTransition( m_AttemptingToActivateToolsState, m_ToolsActivationFailureInput, m_CommunicationEstablishedState, &Tracker::ToolsActivationFailureProcessing );
+
+  m_StateMachine.AddTransition( m_ToolsActiveState, m_StartTrackingInput, m_AttemptingToTrackState, &Tracker::AttemptToStartTrackingProcessing );
+  m_StateMachine.AddTransition( m_AttemptingToTrackState, m_StartTrackingSuccessInput, m_TrackingState, &Tracker::StartTrackingSuccessProcessing );
+  m_StateMachine.AddTransition( m_AttemptingToTrackState, m_StartTrackingFailureInput, m_ToolsActiveState, &Tracker::StartTrackingFailureProcessing );
+
+  m_StateMachine.AddTransition( m_TrackingState, m_UpdateStatus, m_TrackingState, &Tracker::UpdateStatusProcessing );
+
+  m_StateMachine.AddTransition( m_TrackingState, m_StopTracking, m_AttemptingToStopTrackingState, &Tracker::AttemptToStopTrackingProcessing );
+  m_StateMachine.AddTransition( m_AttemptingToStopTrackingState, m_StopTrackingSuccessInput, m_ToolsActiveState, &Tracker::StopTrackingSuccessProcessing );
+  m_StateMachine.AddTransition( m_AttemptingToStopTrackingState, m_StopTrackingFailureInput, m_TrackingState, &Tracker::StopTrackingFailureProcessing );
+
+  m_StateMachine.AddTransition( m_TrackingState, m_ResetTracking, m_TrackingState,  &Tracker::ResetTrackingProcessing );
+
+  m_StateMachine.AddTransition( m_TrackingState, m_CloseTracking, m_AttemptingToCloseTrackingState, &Tracker::CloseFromTrackingStateProcessing );
+  m_StateMachine.AddTransition( m_ToolsActiveState, m_CloseTracking, m_AttemptingToCloseTrackingState, &Tracker::CloseFromToolsActiveStateProcessing );
+  m_StateMachine.AddTransition( m_CommunicationEstablishedState, m_CloseTracking, m_AttemptingToCloseTrackingState, &Tracker::CloseFromCommunicatingStateProcessing );
+  m_StateMachine.AddTransition( m_AttemptingToCloseTrackingState, m_CloseTrackingSuccessInput, m_IdleState, &Tracker::CloseTrackingSuccessProcessing );
+  m_StateMachine.AddTransition( m_AttemptingToCloseTrackingState, m_CloseTrackingFailureInput, m_CommunicationEstablishedState, &Tracker::CloseTrackingFailureProcessing );
+
+  m_StateMachine.SelectInitialState( m_IdleState );
+
+  /** Initialize results of post-action methods */
+  m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentSuccessInput;
+  m_pActivateToolsResultInput = &m_ToolsActivationSuccessInput;
+  m_pStartTrackingResultInput = &m_StartTrackingSuccessInput;
+  m_pStopTrackingResultInput = &m_StopTrackingSuccessInput;
+  m_pCloseTrackingResultInput = &m_CloseTrackingSuccessInput;
 
       // Finish the programming and get ready to run
-      m_StateMachine.SetReadyToRun();
+  m_StateMachine.SetReadyToRun();
 
-      m_Ports.clear();
+  m_Ports.clear();
 }
 
 Tracker::~Tracker(void)
 {
-      m_Ports.clear();
+  m_Ports.clear();
 }
 
 
 void Tracker::Initialize(  const char * )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "SetUpCommunication called ...\n");
-    this->m_StateMachine.ProcessInput( this->m_SetUpCommunication );
-    igstkLogMacro( igstk::Logger::DEBUG, "SetUpTools called ...\n");
-    this->m_StateMachine.ProcessInput( this->m_SetUpTools );
+  igstkLogMacro( igstk::Logger::DEBUG, "SetUpCommunication called ...\n");
+  this->m_StateMachine.ProcessInput( this->m_SetUpCommunicationInput );
+
+  m_StateMachine.ProcessInput( *m_pSetUpCommunicationResultInput );
+
+  igstkLogMacro( igstk::Logger::DEBUG, "SetUpTools called ...\n");
+  this->m_StateMachine.ProcessInput( this->m_ActivateToolsInput );
+
+  m_StateMachine.ProcessInput( *m_pActivateToolsResultInput );
 }
 
 
 void Tracker::SetLogger( LoggerType* logger )
 {
-    m_pLogger = logger;
+  m_pLogger = logger;
 }
 
 Tracker::LoggerType* Tracker::GetLogger(  void )
 {
-    return m_pLogger;
+  return m_pLogger;
 }
 
 void Tracker::Reset( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "ResetTracking called ...\n");
-    m_StateMachine.ProcessInput( m_ResetTracking );
+  igstkLogMacro( igstk::Logger::DEBUG, "ResetTracking called ...\n");
+  m_StateMachine.ProcessInput( m_ResetTracking );
 }
 
 void Tracker::StartTracking( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "StartTracking called ...\n");
-    m_StateMachine.ProcessInput( m_StartTracking );
+  igstkLogMacro( igstk::Logger::DEBUG, "StartTracking called ...\n");
+  m_StateMachine.ProcessInput( m_StartTrackingInput );
+  m_StateMachine.ProcessInput( *m_pStartTrackingResultInput );
 }
 
 void Tracker::StopTracking( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "StopTracking called ...\n");
-    m_StateMachine.ProcessInput( m_StopTracking );
+  igstkLogMacro( igstk::Logger::DEBUG, "StopTracking called ...\n");
+  m_StateMachine.ProcessInput( m_StopTracking );
+  m_StateMachine.ProcessInput( *m_pStopTrackingResultInput );
 }
 
 
 void Tracker::UpdateStatus( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "UpdateStatus called ...\n");
-    m_StateMachine.ProcessInput( m_UpdateStatus );
+  igstkLogMacro( igstk::Logger::DEBUG, "UpdateStatus called ...\n");
+  m_StateMachine.ProcessInput( m_UpdateStatus );
 }
 
 
@@ -136,71 +187,117 @@ void Tracker::SetToolPosition( const int portNumber, const int toolNumber, const
 
 void Tracker::Close( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "CloseTracking called ...\n");
-    m_StateMachine.ProcessInput( m_CloseTracking );
+  igstkLogMacro( igstk::Logger::DEBUG, "CloseTracking called ...\n");
+  m_StateMachine.ProcessInput( m_CloseTracking );
+  m_StateMachine.ProcessInput( *m_pCloseTrackingResultInput );
 }
 
 void Tracker::AddPort( const TrackerPortType& port)
 {
-    this->m_Ports.push_back( port );
+  this->m_Ports.push_back( port );
 }
 
 void Tracker::ClearPorts( void )
 {
-    this->m_Ports.clear();
+  this->m_Ports.clear();
 }
 
 const Tracker::StateIdentifierType & Tracker::GetCurrentState() const
 {
-    return m_StateMachine.GetCurrentStateIdentifier();
+  return m_StateMachine.GetCurrentStateIdentifier();
 }
 
-void Tracker::SetUpCommunicationProcessing( void )
+void Tracker::AttemptToSetUpCommunicationProcessing( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::SetUpCommunicationProcessing called ...\n");
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::AttemptToSetUpCommunicationProcessing called ...\n");
+}
+
+
+void Tracker::CommunicationEstablishmentSuccessProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CommunicationEstablishmentSuccessProcessing called ...\n");
+}
+
+
+void Tracker::CommunicationEstablishmentFailureProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CommunicationEstablishmentFailureProcessing called ...\n");
+}
+
+
+void Tracker::AttemptToSetUpToolsProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::AttemptToSetUpToolsProcessing called ...\n");
+}
+  
+
+void Tracker::ToolsActivationSuccessProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::ToolsActivationSuccessProcessing called ...\n");
 }
     
-void Tracker::SetUpToolsProcessing( void )
+void Tracker::ToolsActivationFailureProcessing( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::SetUpToolsProcessing called ...\n");
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::ToolsActivationFailureProcessing called ...\n");
 }
     
-void Tracker::StartTrackingProcessing( void )
+void Tracker::AttemptToStartTrackingProcessing( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StartTrackingProcessing called ...\n");
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::AttemptToStartTrackingProcessing called ...\n");
 }
-    
+   
+void Tracker::StartTrackingSuccessProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StartTrackingSuccessProcessing called ...\n");
+}
+
+void Tracker::StartTrackingFailureProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StartTrackingFailureProcessing called ...\n");
+}
+
 void Tracker::UpdateStatusProcessing( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::UpdateStatusProcessing called ...\n");
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::UpdateStatusProcessing called ...\n");
 }
     
-void Tracker::StopTrackingProcessing( void )
+void Tracker::AttemptToStopTrackingProcessing( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StopTrackingProcessing called ...\n");
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StopTrackingProcessing called ...\n");
+}
+
+
+void Tracker::StopTrackingSuccessProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StopTrackingSuccessProcessing called ...\n");
+}
+
+void Tracker::StopTrackingFailureProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StopTrackingFailureProcessing called ...\n");
 }
 
 void Tracker::ResetTrackingProcessing( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::ResetTrackingProcessing called ...\n");
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::ResetTrackingProcessing called ...\n");
 }
 
 void Tracker::DisableCommunicationProcessing( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::DisableCommunicationProcessing called ...\n");
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::DisableCommunicationProcessing called ...\n");
 }
 
 void Tracker::DisableToolsProcessing( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::DisableToolsProcessing called ...\n");
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::DisableToolsProcessing called ...\n");
 }
 
 void Tracker::CloseFromTrackingStateProcessing( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseFromTrackingStateProcessing called ...\n");
-    this->StopTrackingProcessing();
-    this->DisableToolsProcessing();
-    this->DisableCommunicationProcessing();
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseFromTrackingStateProcessing called ...\n");
+  this->AttemptToStopTrackingProcessing();
+  this->DisableToolsProcessing();
+  this->DisableCommunicationProcessing();
 }
 
 void Tracker::CloseFromToolsActiveStateProcessing( void)
@@ -215,5 +312,18 @@ void Tracker::CloseFromCommunicatingStateProcessing( void )
   igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseFromCommunicatingStateProcessing called ...\n");
   this->DisableCommunicationProcessing();
 }
+
+
+void Tracker::CloseTrackingSuccessProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseTrackingSuccessProcessing called ...\n");
+}
+
+void Tracker::CloseTrackingFailureProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseTrackingFailureProcessing called ...\n");
+}
+
+
 
 }
