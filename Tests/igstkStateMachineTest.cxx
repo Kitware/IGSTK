@@ -10,6 +10,7 @@ public:
 
   typedef igstk::StateMachine< Tester, 4, 3 >   StateMachineType;
 
+  friend StateMachineType;
 
   Tester()
     {
@@ -49,8 +50,12 @@ public:
     }
 
 
+protected:
+
   // Reaction methods that will be invoked during the 
-  // state machine transitions.
+  // state machine transitions. Note that this methods
+  // are protected because they should only be called
+  // from the state machine.
   void CancelAndReturnChange() 
     {
     std::cout << "Cancelling and returning Change" << std::endl;
