@@ -10,7 +10,8 @@ SET(IGSTKSandbox_HEADS
   igstkView3D.h
   igstkScene.h
   igstkObjectRepresentation.h
-  igstkEllipsoidObject.h
+  igstkEllipsoidObject.h  
+  igstkCylinderObject.h
   igstkObjectProperty.h
 )
 
@@ -23,6 +24,7 @@ SET(IGSTKSandbox_SRCS
   igstkScene.cxx
   igstkObjectRepresentation.cxx
   igstkEllipsoidObject.cxx
+  igstkCylinderObject.cxx
   igstkObjectProperty.cxx
 )
 
