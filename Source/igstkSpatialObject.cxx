@@ -44,20 +44,18 @@ void SpatialObject::SetSpatialObject( SpatialObjectType * spatialObject )
 {
   m_SpatialObject = spatialObject;
 }
- 
-/** Set the offset in the Transform */
-void SpatialObject::SetOffset(double ofx, double ofy, double ofz)  
+  
+/** Set the full Transform */
+void SpatialObject::SetTransform(const Transform & transform )
 {
-  VectorType offset;
-  offset[0] = ofx;
-  offset[1] = ofy;
-  offset[2] = ofz;
   if(m_SpatialObject)
     {
+    VectorType offset = transform.GetTranslation();
     m_SpatialObject->GetObjectToWorldTransform()->SetOffset(offset);
     this->InvokeEvent( PositionModifiedEvent() );
     }
 }
+
 
 /** Get Offset */
 const SpatialObject::VectorType &

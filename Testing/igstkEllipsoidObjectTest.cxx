@@ -117,7 +117,15 @@ int igstkEllipsoidObjectTest( int, char * [] )
 
   // Test GetOffset()
   std::cout << "Testing Set/GetOffset(): ";
-  ellipsoidObject->SetOffset(0,1,2);
+
+  double validityTimeInMilliseconds = 2000.0;
+  igstk::Transform transform;
+  igstk::Transform::VectorType translation;
+  translation[0] = 0;
+  translation[1] = 1;
+  translation[2] = 2;
+  transform.SetTranslation( translation, validityTimeInMilliseconds );
+  ellipsoidObject->SetTransform( transform );
   igstk::SpatialObject::VectorType offset = ellipsoidObject->GetOffset();
   for(unsigned int i=0;i<3;i++)
     {

@@ -20,6 +20,7 @@
 #include "igstkMacros.h"
 #include "itkObject.h"
 #include "itkSpatialObject.h"
+#include "igstkTransform.h"
 
 namespace igstk
 {
@@ -55,8 +56,8 @@ public:
   /** Method for creation of a reference counted object. */
   NewMacro( SpatialObject );
 
-  /** Set the offset in its Transformation */
-  void SetOffset( double ox, double oy, double oz );
+  /** Set Transform */
+  void SetTransform( const Transform & transform );
 
   /** Return the Matrix and Offset related to the ObjectToWorld transformation
    * of the SpatialObject */

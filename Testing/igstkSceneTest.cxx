@@ -79,7 +79,16 @@ int igstkSceneTest( int, char * [] )
     // Testing the igstkSpatialObject
     std::cout << "Testing SpatialObject: ";
     igstk::SpatialObject::Pointer object = igstk::SpatialObject::New();
-    object->SetOffset(0,1,2);
+
+    double validityTimeInMilliseconds = 2000.0;
+    igstk::Transform transform;
+    igstk::Transform::VectorType translation;
+    translation[0] = 0;
+    translation[1] = 1;
+    translation[2] = 2;
+    transform.SetTranslation( translation, validityTimeInMilliseconds );
+    object->SetTransform( transform );
+
     object->GetOffset();
     object->GetMatrix();
     object->GetNameOfClass();

@@ -77,7 +77,18 @@ public:
         position[0] -= this->x()+this->w()/2;
         position[1] -= this->y()+this->h()/2;
         double factor = 100;
-        m_Object->SetOffset(position[0]/factor,-position[1]/factor,position[2]/factor);
+
+        typedef igstk::Transform  TransformType;
+        typedef TransformType::VectorType  VectorType;
+        TransformType transform;
+        VectorType    translation;
+        translation[0] =  position[0]/factor;
+        translation[1] = -position[1]/factor;
+        translation[2] =  position[2]/factor;
+        double validityPeriodInMilliseconds = 1000.0;
+        transform.SetTranslation( translation, validityPeriodInMilliseconds );
+        m_Object->SetTransform( transform );
+
         m_View->Update();
         m_View2->Update();
         }
