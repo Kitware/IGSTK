@@ -61,7 +61,10 @@ void MouseTracker::UpdateStatusProcessing( void )
   position[1] = Fl::event_y();
   position[2] = 0;
 
-  transform.SetTranslation( position, m_ValidityTime );
+  typedef TransformType::ErrorType  ErrorType;
+  ErrorType errorValue = 0.5; // +/- half Pixel Uncertainty
+
+  transform.SetTranslation( position, errorValue, m_ValidityTime );
   this->SetToolTransform( 0, 0, transform );
 
 }

@@ -83,13 +83,19 @@ public:
 
         typedef igstk::Transform  TransformType;
         typedef TransformType::VectorType  VectorType;
+        typedef TransformType::ErrorType  ErrorType;
+
         TransformType transform;
         VectorType    translation;
         translation[0] =  position[0]/factor;
         translation[1] = -position[1]/factor;
         translation[2] =  position[2]/factor;
         double validityPeriodInMilliseconds = 1000.0;
-        transform.SetTranslation( translation, validityPeriodInMilliseconds );
+        ErrorType errorValue = 0.5; // +/- half a pixel uncertainty
+
+        transform.SetTranslation( 
+            translation, errorValue, validityPeriodInMilliseconds );
+
         m_Object->SetTransform( transform );
 
         m_View->Update();
