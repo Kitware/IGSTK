@@ -37,7 +37,7 @@ int igstkBasicTrackerTest( int, char * [] )
     logger.AddOutputStream( std::cout );
     logger.AddOutputStream( fileStream1 );
 
-    logger.SetPriorityLevel( igstk::Logger::CRITICAL );
+    logger.SetPriorityLevel( igstk::Logger::DEBUG );
 
     tracker->SetLogger( &logger );
 
@@ -45,7 +45,7 @@ int igstkBasicTrackerTest( int, char * [] )
 
     tracker->StartTracking();
 
-    tracker->UpdateToolStatus();
+    tracker->UpdateStatus();
 
     tracker->StopTracking();
 
