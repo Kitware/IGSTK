@@ -62,6 +62,9 @@ SET(IGSTK_HEADS
   TubeWrappedLine.h
   MotionViewer.h
   FiducialRegistration.h
+  Sphere.h
+  IGMTImageSliceViewer.h
+  IGMTrackingBase.h
 )
 
 SET(IGSTK_SRCS
@@ -75,6 +78,9 @@ SET(IGSTK_SRCS
   TubeWrappedLine.cxx
   MotionViewer.cxx
   FiducialRegistration.cxx
+  Sphere.cxx
+  IGMTImageSliceViewer.cxx
+  IGMTrackingBase.cxx
   )
 
 SET(AURORA_TRACKER_HEADS
