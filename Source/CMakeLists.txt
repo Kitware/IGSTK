@@ -4,7 +4,6 @@
 
 # The header files
 SET(IGSTKSandbox_HEADS
-  igstkRenderWindow.h
   igstkView.h
   igstkView2D.h
   igstkView3D.h
@@ -12,13 +11,11 @@ SET(IGSTKSandbox_HEADS
   igstkObjectRepresentation.h
   igstkEllipsoidObject.h  
   igstkCylinderObject.h
-  igstkObjectProperty.h
   igstkMouseTracker.h
 )
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
-  igstkRenderWindow.cxx
   igstkView.cxx
   igstkView2D.cxx
   igstkView3D.cxx
@@ -26,7 +23,6 @@ SET(IGSTKSandbox_SRCS
   igstkObjectRepresentation.cxx
   igstkEllipsoidObject.cxx
   igstkCylinderObject.cxx
-  igstkObjectProperty.cxx
   igstkMouseTracker.cxx
 )
 
