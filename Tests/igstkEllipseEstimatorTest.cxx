@@ -80,6 +80,16 @@ int igstkEllipseEstimatorTest(int argc, char * argv [])
 	if ( estimator.GetEllipseParameter(4) != -5.6821493693518850e+000) { std::cout <<  "\n param 4 not corect";return EXIT_FAILURE; };
 	if ( estimator.GetEllipseParameter(5) != 4.75087777836207150e+001) { std::cout <<  "\n param 5 not corect";return EXIT_FAILURE; };
 	
+	VectorOfPointsType solutions = estimator.GetPoints(6.4);
+
+	PointType sol1 = solutions[0];
+	PointType sol2 = solutions[1];
+
+
+	if ( sol1[1] != 2.4463225515042906 ){ std::cout <<  "\n sol 1 not corect";return EXIT_FAILURE; };
+	if ( sol2[1] != 9.931790863150308 ){ std::cout <<  "\n sol 2 not corect";return EXIT_FAILURE; };
+	
+
   //print the ellipse parameters
 	/*
 	for ( int j=0; j < ellipseParameters.size(); j++)
