@@ -2,15 +2,18 @@
 #include "itkImage.h"
 #include "ImageSliceViewer.h"
 
+#include "vtkImageData.h"
+
+
 int ImageSliceViewerTest(int argc, char * argv [])
 {
 
 
-  ImageSliceViewer  viewer;
+  ISIS::ImageSliceViewer  viewer;
 
   vtkImageData * image = vtkImageData::New();
 
-  viewer->SetInput( image );
+  viewer.SetInput( image );
 
 
   return EXIT_SUCCESS;
