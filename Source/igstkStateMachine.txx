@@ -34,9 +34,9 @@ StateMachine< TClass >
 
   m_This = 0;
 
-
   m_ReadyToRun = false;
 
+  m_InitialStateSelected = false;
 }
 
 
@@ -123,6 +123,8 @@ StateMachine< TClass >
 
   m_State = state->first;
 
+  m_InitialStateSelected = true;
+
 }
 
 
@@ -153,6 +155,14 @@ StateMachine< TClass >
     std::cerr << "Something should be wrong in the logic or your " << std::endl;
     std::cerr << "state machine programming." << std::endl;
     std::cerr.flush();
+    return;
+    }
+
+  if( !m_InitialStateSelected )
+    {
+    std::cerr << "Error: No initial state has been selected. "   << std::endl;
+    std::cerr << "You must select an initial State out of the " << std::endl;
+    std::cerr << "set of states defined for the State Machine." << std::endl;
     return;
     }
 

@@ -182,6 +182,10 @@ private:
        forbiden and the method ProcessInput() becomes available */
    bool m_ReadyToRun;
 
+   /** This boolean flag indicates whether the user has defined an initial
+    * state or not. The machine will be be allowed to run until a valid state
+    * is selected as initial state. */
+   bool m_InitialStateSelected;
 
    /** Container type for States */
    typedef std::map< StateIdentifierType, StateDescriptorType >  StatesContainer;
