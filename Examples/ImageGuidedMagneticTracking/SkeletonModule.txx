@@ -14,6 +14,9 @@ SkeletonModule<TInputImage, TOutputImage>
   m_ProgressCallbackFunc = NULL;
 
   m_pImportFilter = ImportFilterType::New();
+  m_Skeleton = PointSetType::New();
+  
+  m_SkeletonPointNum = 0;
   
   m_ClusterRadius = 7.0;
 }
@@ -464,6 +467,8 @@ SkeletonModule<TInputImage, TOutputImage>
   
   signed char* buffer = new signed char[xy];
   memset(buffer, 0, xy * sizeof(char));
+  
+  m_SkeletonPointNum = 0;
 
   for (k = 0; k < size[2]; k++)
   {
@@ -483,7 +488,7 @@ SkeletonModule<TInputImage, TOutputImage>
 //    this->DeutschSkeleton(buffer, size[0], size[1]);
     this->MorphologySkeleton(buffer, size[0], size[1]);
     
-    this->Cluster2DSkeleton(buffer, size[0], size[1]);
+    this->Cluster2DSkeleton(buffer, size[0], size[1], k);
     
     p1 = buffer;
 	  p2 = m_pConnectedBuffer + k * xy;
@@ -535,7 +540,7 @@ SkeletonModule<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 SkeletonModule<TInputImage, TOutputImage>
-::Cluster2DSkeleton(signed char* buffer, int x, int y)
+::Cluster2DSkeleton(signed char* buffer, int x, int y, int slice)
 {
   int i, j, k, num, idx;
   double radius = m_ClusterRadius * m_ClusterRadius, dx, dy;
@@ -575,6 +580,9 @@ SkeletonModule<TInputImage, TOutputImage>
     }
   }
   
+  PointSetType::PointType point;
+  InputIndexType index;
+  
   if (num > 0)
   {
     memset(buffer, 0, x * y * sizeof(signed char));
@@ -582,9 +590,76 @@ SkeletonModule<TInputImage, TOutputImage>
     {
       idx = (int)(centerpos[k][1] + 0.5) * x + (int)(centerpos[k][0] + 0.5);
       buffer[idx] = 1;
+//      point[0] = centerpos[k][0];
+//      point[1] = centerpos[k][1];
+//      point[2] = slice;
+      index[0] = centerpos[k][0];
+      index[1] = centerpos[k][1];
+      index[2] = slice;
+      m_pInputImage->TransformIndexToPhysicalPoint(index, point);
+      m_Skeleton->SetPoint(m_SkeletonPointNum, point);
+      m_SkeletonPointNum++;
     }
-  }
+  }    
+}
+
+template <class TInputImage, class TOutputImage>
+void
+SkeletonModule<TInputImage, TOutputImage>
+::SmoothSkeleton()
+{/*
+  int i, k1, k2, k3;
+  double pos;
+  double ps1[m_SkeletonPointNum][3], ps2[m_SkeletonPointNum][3], ps3[m_SkeletonPointNum][3];
+  
+  for (i = 1; k < size[2] - 1; i++)
+  {
+    for (j = k2; j < k3; j++)
+    {
+      m_Skeleton->GetPoint(j, pos);
+      x2 = pos[0];
+      y2 = pos[1];
+      z2 = pos[2];
+      mindis = m_ClusterRadius;
+      find1 = true;
+      for (k = k1; k < k2; k++)
+      {
+        m_Skeleton->GetPoint(k, pos);
+        dx = x - pos[0];
+        dy = y - pos[1];
+        dis = dx * dx + dy * dy;
+        if (dis < mindis && dis < m_ClusterRadius)
+        {
+          x1 = pos[0];
+          y1 = pos[1];
+          find1 = true;
+        }
+      }
+      mindis = m_ClusterRadius;
+      find2 = false;
+      for (k = k3; k < k4; k++)
+      {
+        m_Skeleton->GetPoint(k, pos);
+        dx = x - pos[0];
+        dy = y - pos[1];
+        dis = dx * dx + dy * dy;
+        if (dis < mindis && dis < m_ClusterRadius)
+        {
+          x3 = pos[0];
+          y3 = pos[1];
+          find2 = true;
+        }
+      }
+      if (find1 && find2)
+      {
+        pos[0] = (x1 + x2 + x3) / 3.0;
+        pos[1] = (y1 + y2 + y3) / 3.0;
+        pos[2] = z2;
+        m_Skeleton->GetPoint(j, pos);
+      }
+    }
     
+  }*/
 }
 
 template <class TInputImage, class TOutputImage>
@@ -646,4 +721,5 @@ SkeletonModule<TInputImage, TOutputImage>
   m_pImportFilter->SetImportPointer(buffer, num, true);
 	
 }
+
 

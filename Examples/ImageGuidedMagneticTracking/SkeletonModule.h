@@ -4,6 +4,7 @@
 
 #include "itkImage.h"
 #include "itkImportImageFilter.h"
+#include "itkPointSet.h"
 
 
 template <class TInputImage, class TOutputImage>
@@ -31,6 +32,8 @@ public:
 
   typedef typename ImportFilterType::Pointer ImportFilterTypePointer;
 
+  typedef itk::PointSet<double> PointSetType;  
+
 public:
 
   const TInputImage* m_pInputImage;
@@ -44,6 +47,10 @@ public:
   void* m_CallData;
 
   double m_ClusterRadius;
+
+  PointSetType::Pointer m_Skeleton;
+
+  int m_SkeletonPointNum;
 
 public:
 
@@ -65,10 +72,12 @@ public:
 
   void SetProgressCallback(void(* func)(void*, double), void* cdata);
 
-  void Cluster2DSkeleton(signed char* buffer, int x, int y);
+  void Cluster2DSkeleton(signed char* buffer, int x, int y, int slice);
 
   void SetClusterRadius(double radius);
-  
+
+  void SmoothSkeleton();
+
 };
 
 
