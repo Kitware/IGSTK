@@ -232,7 +232,7 @@ namespace ISIS
 	{
     int i;
 
-		vtkImageData* pImageData = m_Actor->GetInput();
+		vtkImageData* pImageData = this->GetInput();
 
 		if (!pImageData)
 		{
@@ -271,7 +271,7 @@ namespace ISIS
 
   void IGMTImageSliceViewer::MakeEntryToTargetPathVisible()
 	{
- 		vtkImageData* pImageData = m_Actor->GetInput();
+ 		vtkImageData* pImageData = this->GetInput();
 
 		if (!pImageData)
 		{
@@ -326,11 +326,12 @@ namespace ISIS
 		interactorStyle->Delete();
 		interactor->AddObserver( ::vtkCommand::LeftButtonPressEvent, m_InteractorObserver );
 		interactor->AddObserver( ::vtkCommand::LeftButtonReleaseEvent, m_InteractorObserver );
+    interactor->AddObserver( ::vtkCommand::MouseMoveEvent, m_InteractorObserver );
 	}
 
 	void IGMTImageSliceViewer::SetupCamera()
 	{
-		vtkImageData * image = m_Actor->GetInput();
+		vtkImageData * image = this->GetInput();
 		
 		if ( !image )
 		{
@@ -421,7 +422,7 @@ namespace ISIS
 
   void IGMTImageSliceViewer::GetImagePosition(int x, int y, double *pos)
 {
-    if (!m_Actor->GetInput()) 
+    if (!this->GetInput()) 
     {
     return;     // return, if no image is loaded yet.
     }
@@ -442,11 +443,11 @@ namespace ISIS
   vtkFloatingPointType spacing[3]={1,1,1};
   vtkFloatingPointType origin[3] ={0,0,0};
   int dimensions[3] = { 100, 100, 100 };
-  if ( m_Actor->GetInput() )
+  if ( this->GetInput() )
     {
-    m_Actor->GetInput()->GetSpacing(spacing);
-    m_Actor->GetInput()->GetOrigin(origin);
-    m_Actor->GetInput()->GetDimensions(dimensions);
+    this->GetInput()->GetSpacing(spacing);
+    this->GetInput()->GetOrigin(origin);
+    this->GetInput()->GetDimensions(dimensions);
     }
 
   int idx = 0;
@@ -484,7 +485,7 @@ namespace ISIS
 
   void IGMTImageSliceViewer::SelectRightPoint(int x, int y)
   {
-    if (!m_Actor->GetInput()) 
+    if (!this->GetInput()) 
     {
       return;     // return, if no image is loaded yet.
     }
@@ -505,11 +506,11 @@ namespace ISIS
     vtkFloatingPointType spacing[3]={1,1,1};
     vtkFloatingPointType origin[3] ={0,0,0};
     int dimensions[3] = { 100, 100, 100 };
-    if ( m_Actor->GetInput() )
+    if ( this->GetInput() )
     {
-      m_Actor->GetInput()->GetSpacing(spacing);
-      m_Actor->GetInput()->GetOrigin(origin);
-      m_Actor->GetInput()->GetDimensions(dimensions);
+      this->GetInput()->GetSpacing(spacing);
+      this->GetInput()->GetOrigin(origin);
+      this->GetInput()->GetDimensions(dimensions);
     }
     
     int idx = 0;
