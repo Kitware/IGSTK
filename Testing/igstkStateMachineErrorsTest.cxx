@@ -276,6 +276,13 @@ public:
     const ActionType NoAction = 0;
     // On purpose NOT adding any transition: input m_Cancel
     m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
+
+    // On purpose Adding a Transition for a non existing state
+    m_StateMachine.AddTransition( m_NonRegisteredState, m_QuarterInserted, m_IdleState, NoAction );
+    // On purpose Adding a Transition for a non existing input
+    m_StateMachine.AddTransition( m_IdleState, m_NonRegisteredInput, m_IdleState, NoAction );
+
+
     m_StateMachine.SetReadyToRun();
     }
 
@@ -290,10 +297,12 @@ private:
 
   /** List of States */
   StateType m_IdleState;
+  StateType m_NonRegisteredState;
 
   /** List of Inputs */
   InputType m_QuarterInserted;
   InputType m_Cancel;
+  InputType m_NonRegisteredInput;
 
 };
 
