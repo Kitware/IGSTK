@@ -13,4 +13,5 @@ REGISTER_TEST(DicomImageReaderTest);
 REGISTER_TEST(DicomImageReaderTestDirectory);
 REGISTER_TEST(RegistrationCTTest);
 REGISTER_TEST(ImageSliceViewerTest);
+REGISTER_TEST(LiverTumorSegmentationBaseTest);
 }
