@@ -29,11 +29,13 @@ namespace igstk
 
 /** \class EllipsoidObjectRepresentation
  * 
- * \brief This class represents an ellipsoid object. The parameters of the object
- * are the three radii defining the lenght of the principal axes of the ellipsoid.
- * The axes of the ellipsoid are orthogonal.
+ * \brief This class represents an ellipsoid object. The parameters of the
+ * object are the three radii defining the lenght of the principal axes of the
+ * ellipsoid.  The axes of the ellipsoid are orthogonal. The Ellipsoidal object
+ * is rendered in a VTK scene using the vtkSuperquadricSource object.
+
  * 
- * \ingroup Object
+ * \ingroup ObjectRepresentation
  */
 
 class EllipsoidObjectRepresentation 

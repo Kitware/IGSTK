@@ -30,9 +30,11 @@ namespace igstk
 /** \class CylinderObjectRepresentation
  * 
  * \brief This class represents a cylinder object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is X.
+ * are the height of the object, and the radius. Default representation axis is
+ * X.  The cylindrical object is rendered in a VTK scene using the
+ * vtkCylinderSource object.
  * 
- * \ingroup Object
+ * \ingroup ObjectRepresentation
  */
 
 class CylinderObjectRepresentation 
@@ -42,7 +44,7 @@ class CylinderObjectRepresentation
 public:
 
   /** Typedefs */
-  typedef CylinderObjectRepresentation                 Self;
+  typedef CylinderObjectRepresentation   Self;
   typedef ObjectRepresentation           Superclass;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer; 
@@ -108,6 +110,7 @@ private:
   CylinderSpatialObjectType::ConstPointer m_CylinderObjectToAdd;
 
 };
+
 
 } // end namespace igstk
 
