@@ -1,5 +1,5 @@
 
-SET(IGSTKSandbox_TESTS ${CXX_TEST_PATH}/igstkTests)
+SET(IGSTKSandbox_TESTS ${CXX_TEST_PATH}/igstkSandboxTests)
 
 SET(IGSTKSandbox_TEST_OUTPUT_DIR "${IGSTKSandbox_BINARY_DIR}/Testing/Temporary")
 MAKE_DIRECTORY(${IGSTKSandbox_TEST_OUTPUT_DIR})
