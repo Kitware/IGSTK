@@ -156,6 +156,16 @@ int igstkStateMachineTest(int argc, char * argv [])
   tester.InsertChange();
   tester.SelectDrink();
 
+  std::cout << std::endl << std::endl;
+  std::cout << "Third test run " << std::endl;
+
+  // Insert some change, and then change your mind and cancel purchase.
+  Tester tester2;
+  tester2.InsertChange();
+  tester2.InsertChange();
+  tester2.CancelPurchase();
+
+
   // Exercise the GetCurrentState() method
   std::cout << tester.GetCurrentState() << std::endl;
   
