@@ -103,7 +103,7 @@ void SerialCommunication::CloseCommunication( void )
 void SerialCommunication::OpenCommunication( const void *data )
 {
   // Read data from XML file
-  this->m_PortNumber = 1;
+  this->m_PortNumber = 0;
   this->m_StateMachine.ProcessInput( m_OpenPortInput );
   this->m_StateMachine.ProcessInput( m_SetBuffersInput );
   this->m_StateMachine.ProcessInput( m_SetParametersInput );

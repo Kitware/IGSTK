@@ -30,7 +30,7 @@ SerialCommunication()
 void SerialCommunicationForWindows::OpenCommunicationPortProcessing( void )
 {
   char portName[10];
-  sprintf(portName, "COM%d", this->m_PortNumber );
+  sprintf(portName, "COM%d", this->m_PortNumber + 1 ); //COM port numbering begins from 1
 
   this->m_PortHandle = CreateFile(portName, GENERIC_READ | GENERIC_WRITE,
                                   0,   // opened with exclusive-access 

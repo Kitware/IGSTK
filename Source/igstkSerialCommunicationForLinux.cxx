@@ -30,8 +30,9 @@ SerialCommunication() , INVALID_HANDLE_VALUE(-1)
 
 void SerialCommunicationForLinux::OpenCommunicationPortProcessing( void )
 {
-  char portName[10];
-  sprintf(portName, "COM%d", this->m_PortNumber );
+  char portName[20];
+  sprintf(portName, "/dev/ttyS%.1d", this->m_PortNumber );
+  std::cout << portName << std::endl;
 
   if (this->m_PortHandle != SerialCommunicationForLinux::INVALID_HANDLE_VALUE)
   {
@@ -56,20 +57,22 @@ void SerialCommunicationForLinux::OpenCommunicationPortProcessing( void )
 
 void SerialCommunicationForLinux::SetDataBufferSizeProcessing( void )
 {
-  /*
+    igstkLogMacro( igstk::Logger::DEBUG, "In SetDataBufferSizeProcessing ...\n ");
   if (this->m_InputBuffer!=NULL) delete (this->m_InputBuffer); 
   this->m_InputBuffer = new char[ this->m_ReadBufferSize ];
   if (this->m_OutputBuffer!=NULL) delete this->m_OutputBuffer; 
   this->m_OutputBuffer = new char[ this->m_WriteBufferSize + 1 ]; // one extra byte to store end of string
+/*
   if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL) || 
       !SetupComm(this->m_PortHandle, this->m_ReadBufferSize, this->m_WriteBufferSize)) 
   {
     this->InvokeEvent( SetDataBufferSizeFailureEvent() );
   }
   else
+*/
   {
     //Clear out buffers
-    PurgeComm(this->m_PortHandle, PURGE_TXABORT | PURGE_TXCLEAR | PURGE_RXABORT | PURGE_RXCLEAR);
+//    PurgeComm(this->m_PortHandle, PURGE_TXABORT | PURGE_TXCLEAR | PURGE_RXABORT | PURGE_RXCLEAR);
     this->m_ReadDataSize = 0;
     this->m_ReadBufferOffset = 0;
     memset(this->m_InputBuffer, '\0', sizeof(this->m_InputBuffer));
@@ -80,12 +83,12 @@ void SerialCommunicationForLinux::SetDataBufferSizeProcessing( void )
     igstkLogMacro( igstk::Logger::DEBUG, m_WriteBufferSize);
     igstkLogMacro( igstk::Logger::DEBUG, " succeeded.\n");
   }
-  */
 }
 
 
 void SerialCommunicationForLinux::SetCommunicationTimeoutProcessing( void )
 {
+    igstkLogMacro( igstk::Logger::DEBUG, "In SetCommunicationTimeoutProcessing ...\n ");
   /*
   COMMTIMEOUTS       CommunicationTimeouts;
   CommunicationTimeouts.ReadIntervalTimeout = MAXWORD; //m_ReadIntervalTimeout
@@ -108,6 +111,7 @@ void SerialCommunicationForLinux::SetCommunicationTimeoutProcessing( void )
 
 void SerialCommunicationForLinux::SetupCommunicationProcessing( void )
 {
+    igstkLogMacro( igstk::Logger::DEBUG, "In SetupCommunicationProcessing ...\n ");
   /*
   // Control setting for a serial communications device
   DCB   dcb;
@@ -157,7 +161,6 @@ void SerialCommunicationForLinux::SetupCommunicationProcessing( void )
 
 void SerialCommunicationForLinux::ClearBuffersAndCloseCommunicationPortProcessing( void )
 {
-  /*
   if (m_InputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_InputBuffer;
   m_InputBuffer = NULL;
@@ -165,11 +168,11 @@ void SerialCommunicationForLinux::ClearBuffersAndCloseCommunicationPortProcessin
     delete m_OutputBuffer;
   m_OutputBuffer = NULL;
   this->CloseCommunicationPortProcessing();
-  */
 }
 
 void SerialCommunicationForLinux::CloseCommunicationPortProcessing( void )
 {
+  igstkLogMacro( igstk::Logger::DEBUG, "Attempt to close communication port .... \n");
   close(this->m_PortHandle);
   this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
   igstkLogMacro( igstk::Logger::DEBUG, "Communication port closed.\n");
