@@ -53,7 +53,6 @@ void MouseTracker::UpdateStatusProcessing( void )
     pos[0] = Fl::event_x();
     pos[1] = Fl::event_y();
     pos[2] = 0;
-    std::cout << "-> ( " << Fl::event_x() << "," << Fl::event_y() << "," << pos[2] << ")" << std::endl;
     this->SetToolPosition( 0, 0, pos );
 }
     
