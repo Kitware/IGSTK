@@ -262,6 +262,7 @@ void IGMTTargetViewer::TranslateTargetPoint(double offx, double offy, double off
   z = m_UpdatedTargetPoint[2];
   m_Renderer->WorldToView(x, y, z);
   m_TargetCrossLine.SetCenter(x * m_Renderer->GetSize()[0] / 2, y * m_Renderer->GetSize()[1] / 2);
+  m_TargetMarker.SetCenter(m_UpdatedTargetPoint[0], m_UpdatedTargetPoint[1], m_UpdatedTargetPoint[2]);
 }
 
 void IGMTTargetViewer::SetProbePosition(double *tip, double *hip)
