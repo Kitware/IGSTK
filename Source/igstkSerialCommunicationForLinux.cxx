@@ -45,10 +45,13 @@ void SerialCommunicationForLinux::OpenCommunicationPortProcessing( void )
   // O_NDELAY (do not care what state the DCD signal line is in)
   if( this->m_PortHandle < 0)
   {
+    this->m_PortNumber = m_InvalidPortNumber;
+    m_ResultOfOpenCommunicationPortProcessing = false;
     this->InvokeEvent( OpenPortFailureEvent() );
   }
   else
   {
+    m_ResultOfOpenCommunicationPortProcessing = true;
     igstkLogMacro( igstk::Logger::DEBUG, "COM port name: ");
     igstkLogMacro( igstk::Logger::DEBUG, portName);
     igstkLogMacro( igstk::Logger::DEBUG, " opened.\n");
@@ -56,19 +59,21 @@ void SerialCommunicationForLinux::OpenCommunicationPortProcessing( void )
 }
 
 
-void SerialCommunicationForLinux::SetDataBufferSizeProcessing( void )
+void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "In SetDataBufferSizeProcessing ...\n ");
   if (this->m_InputBuffer!=NULL) delete (this->m_InputBuffer); 
   this->m_InputBuffer = new char[ this->m_ReadBufferSize ];
   if (this->m_OutputBuffer!=NULL) delete this->m_OutputBuffer; 
   this->m_OutputBuffer = new char[ this->m_WriteBufferSize + 1 ]; // one extra byte to store end of string
+
   if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL)) 
   {
+    m_ResultOfSetUpDataBuffersProcessing = false;
     this->InvokeEvent( SetDataBufferSizeFailureEvent() );
   }
   else
   {
+    m_ResultOfSetUpDataBuffersProcessing = true;
     //Clear out buffers
     this->m_ReadDataSize = 0;
     this->m_ReadBufferOffset = 0;
@@ -84,13 +89,7 @@ void SerialCommunicationForLinux::SetDataBufferSizeProcessing( void )
 }
 
 
-void SerialCommunicationForLinux::SetCommunicationTimeoutProcessing( void )
-{
-    igstkLogMacro( igstk::Logger::DEBUG, "SetCommunicationTimeoutParameters not implemented under Linux ...\n");
-}
-
-
-void SerialCommunicationForLinux::SetupCommunicationProcessing( void )
+void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
 {
   // Control setting for a serial communications device
   struct termio portSettings;
