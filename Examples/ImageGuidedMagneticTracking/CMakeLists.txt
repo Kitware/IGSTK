@@ -8,10 +8,12 @@ PROJECT (IGMTracking)
 SET (IGMTracking_HEADS
 	IGMTracking.h	
   SkeletonModule.h
+  DICOMFile.h
  	)
 
 SET (IGMTracking_SRCS
-	IGMTracking.cxx	  
+	IGMTracking.cxx
+	DICOMFile.cxx	  
  	)
 
 ADD_EXECUTABLE (IGMTracking main.cxx 
