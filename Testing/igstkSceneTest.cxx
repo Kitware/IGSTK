@@ -22,14 +22,14 @@
 
 #include <iostream>
 #include "igstkScene.h"
-#include "igstkEllipsoidObject.h"
+#include "igstkEllipsoidObjectRepresentation.h"
 
 int igstkSceneTest( int, char * [] )
 {
   typedef igstk::Scene  SceneType;
   SceneType::Pointer scene = SceneType::New();
 
-  typedef igstk::EllipsoidObject  ObjectType;
+  typedef igstk::EllipsoidObjectRepresentation  ObjectType;
   ObjectType::Pointer ellipsoid = ObjectType::New();
 
   // Testing number of object

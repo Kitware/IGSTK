@@ -23,19 +23,28 @@
 #include <iostream>
 
 #include "igstkEllipsoidObject.h"
+#include "igstkEllipsoidObjectRepresentation.h"
 
 int igstkEllipsoidObjectTest( int, char * [] )
 {
-  typedef igstk::EllipsoidObject  ObjectType;
-  ObjectType::Pointer ellipsoid = ObjectType::New();
+  typedef igstk::EllipsoidObjectRepresentation  ObjectRepresentationType;
+  ObjectRepresentationType::Pointer ellipsoidRepresentation = ObjectRepresentationType::New();
 
+  typedef itk::EllipseSpatialObject<3>  ObjectType;
+  ObjectType::Pointer ellipsoidObject = ObjectType::New();
+    
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetRadius() : ";
-  ellipsoid->SetRadius(1,2,3);
-  igstk::EllipsoidObject::ArrayType radius = ellipsoid->GetRadius();
+  ObjectType::ArrayType radius;
+  radius[0] = 1;
+  radius[1] = 2;
+  radius[2] = 3;
+  ellipsoidObject->SetRadius(radius);
+
+  igstk::EllipsoidObject::ArrayType radiusRead = ellipsoidObject->GetRadius();
   for(unsigned int i=0;i<3;i++)
     {
-    if(radius[i] != i+1)
+    if(radiusRead[i] != radius[i])
       {
       std::cout << "Radius error : " << radius[i] << " v.s " << i << std::endl; 
       return EXIT_FAILURE;
@@ -45,24 +54,24 @@ int igstkEllipsoidObjectTest( int, char * [] )
 
   // Test Property
   std::cout << "Testing Property : ";
-  ellipsoid->SetColor(0.1,0.2,0.3);
-  ellipsoid->SetOpacity(0.4);
-  if(fabs(ellipsoid->GetRed()-0.1)>0.00001)
+  ellipsoidRepresentation->SetColor(0.1,0.2,0.3);
+  ellipsoidRepresentation->SetOpacity(0.4);
+  if(fabs(ellipsoidRepresentation->GetRed()-0.1)>0.00001)
     {
     std::cout << "GetRed() [FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
-  if(fabs(ellipsoid->GetGreen()-0.2)>0.00001)
+  if(fabs(ellipsoidRepresentation->GetGreen()-0.2)>0.00001)
     {
     std::cout << "GetGreen()[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
-  if(fabs(ellipsoid->GetBlue()-0.3)>0.00001)
+  if(fabs(ellipsoidRepresentation->GetBlue()-0.3)>0.00001)
     {
     std::cout << "GetBlue() [FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
-  if(fabs(ellipsoid->GetOpacity()-0.4)>0.00001)
+  if(fabs(ellipsoidRepresentation->GetOpacity()-0.4)>0.00001)
     {
     std::cout << "GetOpacity() [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -70,7 +79,7 @@ int igstkEllipsoidObjectTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
   // Testing PrintSelf()
-  ellipsoid->Print(std::cout);
+  ellipsoidRepresentation->Print(std::cout);
 
   std::cout << "Test [DONE]" << std::endl;
   return EXIT_SUCCESS;

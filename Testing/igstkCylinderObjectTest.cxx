@@ -23,16 +23,22 @@
 #include <iostream>
 
 #include "igstkCylinderObject.h"
+#include "igstkCylinderObjectRepresentation.h"
 
 int igstkCylinderObjectTest( int, char * [] )
 {
-  typedef igstk::CylinderObject  ObjectType;
-  ObjectType::Pointer Cylinder = ObjectType::New();
+  typedef igstk::CylinderObjectRepresentation  ObjectRepresentationType;
+  ObjectRepresentationType::Pointer cylinderRepresentation = ObjectRepresentationType::New();
+
+  typedef igstk::CylinderObject ObjectType;
+  ObjectType::Pointer cylinderObject = ObjectType::New();
+
+  cylinderRepresentation->SetCylinder( cylinderObject );
 
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetRadius() : ";
-  Cylinder->SetRadius(1.0);
-  double radius = Cylinder->GetRadius();
+  cylinderObject->SetRadius(1.0);
+  double radius = cylinderObject->GetRadius();
  
   if(radius != 1.0)
     {
@@ -43,8 +49,8 @@ int igstkCylinderObjectTest( int, char * [] )
 
   // Test Set/GetHeight()
   std::cout << "Testing Set/GetHeight() : ";
-  Cylinder->SetHeight(5.0);
-  double height = Cylinder->GetHeight();
+  cylinderObject->SetHeight(5.0);
+  double height = cylinderObject->GetHeight();
  
   if(height != 5.0)
     {
@@ -55,24 +61,24 @@ int igstkCylinderObjectTest( int, char * [] )
 
   // Test Property
   std::cout << "Testing Property : ";
-  Cylinder->SetColor(0.1,0.2,0.3);
-  Cylinder->SetOpacity(0.4);
-  if(fabs(Cylinder->GetRed()-0.1)>0.00001)
+  cylinderRepresentation->SetColor(0.1,0.2,0.3);
+  cylinderRepresentation->SetOpacity(0.4);
+  if(fabs(cylinderRepresentation->GetRed()-0.1)>0.00001)
     {
     std::cout << "GetRed() [FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
-  if(fabs(Cylinder->GetGreen()-0.2)>0.00001)
+  if(fabs(cylinderRepresentation->GetGreen()-0.2)>0.00001)
     {
     std::cout << "GetGreen()[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
-  if(fabs(Cylinder->GetBlue()-0.3)>0.00001)
+  if(fabs(cylinderRepresentation->GetBlue()-0.3)>0.00001)
     {
     std::cout << "GetBlue() [FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
-  if(fabs(Cylinder->GetOpacity()-0.4)>0.00001)
+  if(fabs(cylinderRepresentation->GetOpacity()-0.4)>0.00001)
     {
     std::cout << "GetOpacity() [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -80,7 +86,7 @@ int igstkCylinderObjectTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
   // Testing PrintSelf()
-  Cylinder->Print(std::cout);
+  cylinderRepresentation->Print(std::cout);
 
   std::cout << "Test [DONE]" << std::endl;
   return EXIT_SUCCESS;
