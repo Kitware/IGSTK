@@ -19,6 +19,7 @@
 #define __igstkScene_h 
 
 #include "igstkObjectRepresentation.h"   
+#include "igstkStateMachine.h"
  
 #include <list>
 
@@ -55,22 +56,23 @@ public:
   NewMacro(Self); 
 
   /** Add an object to the list of children. */ 
-  void AddObject( ObjectRepresentation * pointer ); 
+  void RequestAddObject( ObjectRepresentation * pointer ); 
      
   /** Remove the object passed as arguments from the list of 
    *  children. May this function 
    *  should return a false value if the object to remove is 
    *  not found in the list. */ 
-  void RemoveObject( ObjectRepresentation * object ); 
+  void RequestRemoveObject( ObjectRepresentation * object ); 
 
   /** Returns a list of pointer to the children affiliated to this object.*/ 
   GetMacro( Objects, ObjectListType );
 
-  /** Returns the number of children currently assigned to the SceneSpatialObject object.*/ 
+  /** Returns the number of children currently assigned to the
+   * SceneSpatialObject object.*/ 
   unsigned int GetNumberOfObjects() const; 
 
-  /** Clear function : Remove all the objects in the scene */
-  void Clear();
+  /** Remove all the objects in the scene */
+  void RequestRemoveAllObjects();
 
   /** Get the last added object */
   ObjectRepresentation* GetLastAddedObject() {return m_LastAddedObject;}
@@ -94,6 +96,48 @@ protected:
 
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+private:
+    
+  typedef igstk::StateMachine< Scene >               StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer   ActionType;
+  typedef StateMachineType::StateType                StateType;
+  typedef StateMachineType::InputType                InputType;
+
+  FriendClassMacro( StateMachineType );
+
+  // Actual execution method associated to the ones that can be requested from
+  // the external API. Only the state machine is allowed to call the execution
+  // methods below.
+  void AddObject();
+  void RemoveObject();
+  void RemoveAllObjects();
+
+private:
+
+  // Arguments for methods to be invoked by the state machine.
+  //
+  ObjectRepresentation * m_ObjectToBeAdded;
+  ObjectRepresentation * m_ObjectToBeRemoved;
+  ObjectListType::iterator m_IteratorToObjectToBeRemoved;    
+
+
+private:
+
+  StateMachineType     m_StateMachine;
+  
+  /** Inputs to the State Machine */
+  InputType            m_ValidAddObject;
+  InputType            m_NullAddObject;
+  InputType            m_ExistingAddObject;
+  InputType            m_ValidRemoveObject;
+  InputType            m_InexistingRemoveObject;
+  InputType            m_NullRemoveObject;
+  InputType            m_RemoveAllObjects;
+  
+
+  /** States for the State Machine */
+  StateType            m_IdleState;
 
 }; 
 
