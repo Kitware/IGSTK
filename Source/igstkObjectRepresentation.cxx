@@ -120,7 +120,7 @@ void ObjectRepresentation::RequestSetSpatialObject( const SpatialObjectType * sp
 void ObjectRepresentation::SetSpatialObject()
 {
   m_SpatialObject = m_SpatialObjectToAdd;
-  m_SpatialObject->AddObserver( PositionModifiedEvent(),    m_PositionObserver    );
+  m_SpatialObject->AddObserver( PositionModifiedEvent(), m_PositionObserver );
   m_SpatialObject->AddObserver( GeometryModifiedEvent(), m_GeometryObserver );
 }
 
