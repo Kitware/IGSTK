@@ -30,14 +30,16 @@ Communication::~Communication(void)
 {
 }
 
-void Communication::OpenCommunication(const void * )
+bool Communication::OpenCommunication( const char *XMLFileName )
 {
   std::cerr << "Communication::OpenCommunication() method is not implemented yet" << std::endl;
+  return true;
 }
 
-void Communication::CloseCommunication(void)
+bool Communication::CloseCommunication(void)
 {
   std::cerr << "Communication::CloseCommunication() method is not implemented yet" << std::endl;
+  return true;
 }
 
 }

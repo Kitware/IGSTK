@@ -18,6 +18,10 @@
 #ifndef __igstk_Communication_h_
 #define __igstk_Communication_h_
 
+
+#include "itkObject.h"
+
+
 namespace igstk
 {
 /** \class Communication
@@ -29,23 +33,19 @@ namespace igstk
     base Communication class.
 */
 
-class Communication
+class Communication  : public itk::Object
 {
 public:
     Communication(void);
+
     virtual ~Communication(void);
 
     /** The method OpenCommunication sets up communication as per the data
     provided. */
-    void OpenCommunication( const void *data );
+    virtual bool OpenCommunication( const char *XMLFileName = NULL );
 
     /** The method CloseCommunication closes the communication. */
-    void CloseCommunication( void );
-
-private:
-
-    /** Number of tries before quitting */
-    unsigned int  m_CommunicationTimeOut;
+    virtual bool CloseCommunication( void );
 
 };
 
