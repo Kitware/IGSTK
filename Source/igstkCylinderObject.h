@@ -19,7 +19,7 @@
 
 #include "igstkMacros.h"
 #include "igstkObjectRepresentation.h"
-#include <itkTubeSpatialObject.h>
+#include <itkCylinderSpatialObject.h>
 
 namespace igstk
 {
@@ -43,7 +43,7 @@ public:
   typedef ObjectRepresentation           Superclass;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer; 
-  typedef itk::TubeSpatialObject<3>      TubeSOType;
+  typedef itk::CylinderSpatialObject     CylinderSOType;
 
   /**  Run-time type information (and related methods). */
   itkTypeMacro( Self, Superclass );
@@ -51,15 +51,13 @@ public:
   /** Method for creation of a reference counted object. */
   NewMacro( CylinderObject );
 
-  /** Set all radii to the same radius value.  Each radius is
-   *  half the length of one axis of the ellipse.  */
-  GetMacro( Radius, double );
-  SetMacro( Radius, double );
+  /** Set/Get the radius of the cylinder */
+  void SetRadius(double radius);
+  double GetRadius();
 
-  /** Set the Height of the cylinder 
-   */
-  GetMacro(Height, double);
-  SetMacro(Height, double);
+  /** Set/Get the Height of the cylinder */
+  void SetHeight(double height);
+  double GetHeight();
 
   /** Create the VTK actors */
   void CreateActors();
@@ -74,13 +72,8 @@ protected:
 
 private:
 
-  double             m_Radius;
-  double             m_Height;
-
-  /** Internal itkSpatialObject. A cylinder is represented as a tube spatial object with no point
-   *  This is just for the hierarchy.
-   */
-  TubeSOType::Pointer   m_TubeSpatialObject;
+  /** Internal itkSpatialObject */
+  CylinderSOType::Pointer   m_CylinderSpatialObject;
 
 };
 

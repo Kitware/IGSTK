@@ -27,8 +27,8 @@ namespace igstk
 CylinderObject::CylinderObject()
 {
   // We create the ellipse spatial object
-  m_TubeSpatialObject = TubeSOType::New();
-  this->AddSpatialObject( m_TubeSpatialObject );
+  m_CylinderSpatialObject = CylinderSOType::New();
+  m_SpatialObject = m_CylinderSpatialObject;
 } 
 
 /** Destructor */
@@ -40,8 +40,30 @@ CylinderObject::~CylinderObject()
 void CylinderObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << "Radius = " << m_Radius << std::endl;
-  os << indent << "Height = " << m_Height << std::endl;
+}
+
+/** Set the radius of the cylinder */
+void CylinderObject::SetRadius(double radius)
+{
+  m_CylinderSpatialObject->SetRadius(radius);
+}
+
+/** Get the radius of the cylinder */
+double CylinderObject::GetRadius()
+{
+  return m_CylinderSpatialObject->GetRadius();
+}
+
+/** Set the Height of the cylinder */
+void CylinderObject::SetHeight(double height)
+{
+  m_CylinderSpatialObject->SetHeight(height);
+}
+
+/** Get the Height of the cylinder */
+double CylinderObject::GetHeight()
+{
+  return m_CylinderSpatialObject->GetHeight();
 }
 
 
@@ -52,8 +74,8 @@ void CylinderObject::CreateActors()
   vtkActor* cylinder = vtkActor::New();
   vtkCylinderSource* cylinderSource = vtkCylinderSource::New();
   cylinderSource->SetCenter(0, 0, 0);
-  cylinderSource->SetRadius(m_Radius);
-  cylinderSource->SetHeight(m_Height);
+  cylinderSource->SetRadius(m_CylinderSpatialObject->GetRadius());
+  cylinderSource->SetHeight(m_CylinderSpatialObject->GetHeight());
   cylinderSource->SetResolution(10);
  
   cylinder->GetProperty()->SetColor(this->GetRed(),

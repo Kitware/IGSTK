@@ -28,7 +28,7 @@ EllipsoidObject::EllipsoidObject()
 {
   // We create the ellipse spatial object
   m_EllipseSpatialObject = EllipseSpatialObjectType::New();
-  this->AddSpatialObject( m_EllipseSpatialObject );
+  m_SpatialObject = m_EllipseSpatialObject;
 } 
 
 /** Destructor */
