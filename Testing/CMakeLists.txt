@@ -20,11 +20,14 @@ INCLUDE_DIRECTORIES (
 
 ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
 
+ADD_TEST(igstkStateMachineErrorsTest ${IGSTK_TESTS} igstkStateMachineErrorsTest)
+
 ADD_TEST(igstkBasicTrackerTest ${IGSTK_TESTS} igstkBasicTrackerTest)
 
 
 SET(BasicTests_SRCS
   igstkStateMachineTest
+  igstkStateMachineErrorsTest
   igstkBasicTrackerTest
   )
 
