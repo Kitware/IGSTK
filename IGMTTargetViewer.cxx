@@ -154,7 +154,7 @@ IGMTTargetViewer::~IGMTTargetViewer()
 void IGMTTargetViewer::Render()
 {
 
-  float      allBounds[6];
+  vtkFloatingPointType      allBounds[6];
 
   m_Renderer->ComputeVisiblePropBounds( allBounds );
 
@@ -210,9 +210,9 @@ void IGMTTargetViewer::SetEntryTargetPoint(double *entry, double *target)
 
   if (dis >= 0.000001)
   {
-    for (i = 0; i < 3; i++)
+    for (unsigned int j = 0; j < 3; j++)
     {
-      m_Normal[i] /= dis;
+      m_Normal[j] /= dis;
     }
   }
   
@@ -238,7 +238,7 @@ void IGMTTargetViewer::UpdateTargetPoint(double *target)
     m_UpdatedTargetPoint[i] = target[i];
   }
 
-  float x, y, z;
+  vtkFloatingPointType x, y, z;
 
   x = m_UpdatedTargetPoint[0];
   y = m_UpdatedTargetPoint[1];
@@ -255,19 +255,18 @@ void IGMTTargetViewer::TranslateTargetPoint(double offx, double offy, double off
   m_UpdatedTargetPoint[1] = m_TargetPoint[1] + offy;
   m_UpdatedTargetPoint[2] = m_TargetPoint[2] + offz;
 
-  float x, y, z;
+  vtkFloatingPointType x, y, z;
 
   x = m_UpdatedTargetPoint[0];
   y = m_UpdatedTargetPoint[1];
   z = m_UpdatedTargetPoint[2];
   m_Renderer->WorldToView(x, y, z);
   m_TargetCrossLine.SetCenter(x * m_Renderer->GetSize()[0] / 2, y * m_Renderer->GetSize()[1] / 2);
-  m_TargetMarker.SetCenter(m_UpdatedTargetPoint[0], m_UpdatedTargetPoint[1], m_UpdatedTargetPoint[2]);
 }
 
 void IGMTTargetViewer::SetProbePosition(double *tip, double *hip)
 {
-  float tippos[3], hippos[3];
+  vtkFloatingPointType tippos[3], hippos[3];
    
   for (unsigned int i = 0; i < 3; i++)
   {
@@ -310,7 +309,7 @@ void IGMTTargetViewer::SetupCamera()
 
   m_Renderer->SetActiveCamera(m_Camera);
 
-  float x, y, z;
+  vtkFloatingPointType x, y, z;
   
   x = m_EntryPoint[0];
   y = m_EntryPoint[1];
