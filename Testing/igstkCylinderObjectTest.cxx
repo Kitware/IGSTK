@@ -193,10 +193,6 @@ int igstkCylinderObjectTest( int, char * [] )
 
   std::cout << "[PASSED]" << std::endl;
 
-  // Exercising the method to export the state machine description.
-  // 
-  cylinderObjectA->ExportStateMachine( std::cout );
-  
   std::cout << "Test [DONE]" << std::endl;
   return EXIT_SUCCESS;
 }

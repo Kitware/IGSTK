@@ -92,9 +92,9 @@ public:
     }
 
 
-  void ExportTransitions( std::ostream & ostr ) const
+  void ExportDescription( std::ostream & ostr ) const
     {
-    m_StateMachine.ExportTransitions( ostr );
+    m_StateMachine.ExportDescription( ostr );
     }
 
 
@@ -194,7 +194,7 @@ int igstkStateMachineTest( int , char * [] )
   std::cout << "Printing out the State Machine description in dot format" << std::endl;
   std::cout << std::endl << std::endl;
 
-  tester.ExportTransitions( std::cout );
+  tester.ExportDescription( std::cout );
 
 
   return EXIT_SUCCESS;
