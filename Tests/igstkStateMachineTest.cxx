@@ -4,142 +4,54 @@
 #include <iostream>
 
 
+
+
 class Tester
 {
 public:
 
-  typedef igstk::StateMachine< Tester, 4, 3 >   StateMachineType;
+  typedef igstk::StateMachine< Tester >   StateMachineType;
+
+  typedef StateMachineType::TMemberFunctionPointer        ActionType;
 
   friend StateMachineType;
 
   Tester()
     {
       // Connect the state machine to 'this' class.
-      m_StateMachine.SetClass( this );
-
-      // Programming the machine
-      m_StateMachine.SetTransition( 0, 0, 1, 0 );
-      m_StateMachine.SetTransition( 1, 0, 2, 0 );
-      m_StateMachine.SetTransition( 2, 0, 3, 0 );
-      m_StateMachine.SetTransition( 3, 0, 0, & Tester::CancelAndReturnChange );
-
-      m_StateMachine.SetTransition( 0, 1, 0, & Tester::NoEnoughChangeMessage );
-      m_StateMachine.SetTransition( 1, 1, 1, & Tester::NoEnoughChangeMessage );
-      m_StateMachine.SetTransition( 2, 1, 2, & Tester::NoEnoughChangeMessage );
-      m_StateMachine.SetTransition( 3, 1, 0, & Tester::DeliverDrink );
-
-      m_StateMachine.SetTransition( 0, 2, 0, & Tester::CancelAndReturnChange );
-      m_StateMachine.SetTransition( 1, 2, 0, & Tester::CancelAndReturnChange );
-      m_StateMachine.SetTransition( 2, 2, 0, & Tester::CancelAndReturnChange );
-      m_StateMachine.SetTransition( 3, 2, 0, & Tester::CancelAndReturnChange );
-
-      // Finish the programming and get ready to run
-      m_StateMachine.SetReadyToRun();
-    }
-
-
-
-  
-  // Methods that generate input signals
-  void InsertChange() 
-    {
-      m_StateMachine.SetInput( 0 );
-      std::cout << "Insert Change" << std::endl;
-      m_StateMachine.StateTransition();
-    }
- 
- 
-  void SelectDrink() 
-    {
-      m_StateMachine.SetInput( 1 );
-      std::cout << "Select Drink" << std::endl;
-      m_StateMachine.StateTransition();
-    }
-
-  void CancelPurchase() 
-    {
-      m_StateMachine.SetInput( 2 );
-      std::cout << "Cancelling Purchase" << std::endl;
-      m_StateMachine.StateTransition();
-    }
-
-
-protected:
-
-  // Reaction methods that will be invoked during the 
-  // state machine transitions. Note that this methods
-  // are protected because they should only be called
-  // from the state machine.
-  void CancelAndReturnChange() 
-    {
-    std::cout << "Cancelling and returning Change" << std::endl;
-    }
-
-
-  void DeliverDrink()
-    {
-    std::cout << "Deliver Drink" << std::endl;
-    }
-
-
-  void NoEnoughChangeMessage()
-    {
-    std::cout << "You have not inserted enough change" << std::endl;
-    }
-
-
-private:
-
-  StateMachineType   m_StateMachine;
-
-};
-
-
-
-
-class DescriptorTester
-{
-public:
-
-  typedef igstk::StateMachine< DescriptorTester, 4, 3 >   StateMachineType;
-
-  typedef StateMachineType::TMemberFunctionPointer        ActionType;
-
-  friend StateMachineType;
-
-  DescriptorTester()
-    {
-      // Connect the state machine to 'this' class.
-      m_StateMachine.SetClass( this );
+      m_StateMachine.SetOwnerClass( this );
 
       // Set the state descriptors
-      m_StateMachine.SetStateDescriptor( 0, "IdleState" );
-      m_StateMachine.SetStateDescriptor( 1, "OneQuarterCredit" );
-      m_StateMachine.SetStateDescriptor( 2, "TwoQuarterCredit" );
-      m_StateMachine.SetStateDescriptor( 3, "ThreeQuarterCredit" );
+      m_StateMachine.AddState( "IdleState" );
+      m_StateMachine.AddState( "OneQuarterCredit" );
+      m_StateMachine.AddState( "TwoQuarterCredit" );
+      m_StateMachine.AddState( "ThreeQuarterCredit" );
 
       // Set the input descriptors
-      m_StateMachine.SetInputDescriptor( 0, "QuarterInserted");
-      m_StateMachine.SetInputDescriptor( 1, "SelectDrink");
-      m_StateMachine.SetInputDescriptor( 2, "CancelPurchase");
+      m_StateMachine.AddInput( "QuarterInserted");
+      m_StateMachine.AddInput( "SelectDrink");
+      m_StateMachine.AddInput( "CancelPurchase");
 
       const ActionType NoAction = 0;
 
       // Programming the machine
-      m_StateMachine.SetTransition( "IdleState",          "QuarterInserted", "OneQuarterCredit",   NoAction );
-      m_StateMachine.SetTransition( "OneQuarterCredit",   "QuarterInserted", "TwoQuarterCredit",   NoAction );
-      m_StateMachine.SetTransition( "TwoQuarterCredit",   "QuarterInserted", "ThreeQuarterCredit", NoAction );
-      m_StateMachine.SetTransition( "ThreeQuarterCredit", "QuarterInserted", "IdleState",          & DescriptorTester::CancelAndReturnChange );
+      m_StateMachine.AddTransition( "IdleState",          "QuarterInserted", "OneQuarterCredit",    NoAction );
+      m_StateMachine.AddTransition( "OneQuarterCredit",   "QuarterInserted", "TwoQuarterCredit",    NoAction );
+      m_StateMachine.AddTransition( "TwoQuarterCredit",   "QuarterInserted", "ThreeQuarterCredit",  NoAction );
+      m_StateMachine.AddTransition( "ThreeQuarterCredit", "QuarterInserted", "IdleState",           & Tester::CancelAndReturnChange );
 
-      m_StateMachine.SetTransition(  "IdleState",          "SelectDrink",  "IdleState",         & DescriptorTester::NoEnoughChangeMessage );
-      m_StateMachine.SetTransition(  "OneQuarterCredit",   "SelectDrink",  "OneQuarterCredit",  & DescriptorTester::NoEnoughChangeMessage );
-      m_StateMachine.SetTransition(  "TwoQuarterCredit",   "SelectDrink",  "TwoQuarterCredit",  & DescriptorTester::NoEnoughChangeMessage );
-      m_StateMachine.SetTransition(  "ThreeQuarterCredit", "SelectDrink",  "IdleState",         & DescriptorTester::DeliverDrink );
+      m_StateMachine.AddTransition(  "IdleState",          "SelectDrink",     "IdleState",          & Tester::NoEnoughChangeMessage );
+      m_StateMachine.AddTransition(  "OneQuarterCredit",   "SelectDrink",     "OneQuarterCredit",   & Tester::NoEnoughChangeMessage );
+      m_StateMachine.AddTransition(  "TwoQuarterCredit",   "SelectDrink",     "TwoQuarterCredit",   & Tester::NoEnoughChangeMessage );
+      m_StateMachine.AddTransition(  "ThreeQuarterCredit", "SelectDrink",     "IdleState",          & Tester::DeliverDrink );
 
-      m_StateMachine.SetTransition(  "IdleState",          "CancelPurchase", "IdleState",   & DescriptorTester::CancelAndReturnChange );
-      m_StateMachine.SetTransition(  "OneQuarterCredit",   "CancelPurchase", "IdleState",   & DescriptorTester::CancelAndReturnChange );
-      m_StateMachine.SetTransition(  "TwoQuarterCredit",   "CancelPurchase", "IdleState",   & DescriptorTester::CancelAndReturnChange );
-      m_StateMachine.SetTransition(  "ThreeQuarterCredit", "CancelPurchase", "IdleState",   & DescriptorTester::CancelAndReturnChange );
+      m_StateMachine.AddTransition(  "IdleState",          "CancelPurchase",  "IdleState",          & Tester::CancelAndReturnChange );
+      m_StateMachine.AddTransition(  "OneQuarterCredit",   "CancelPurchase",  "IdleState",          & Tester::CancelAndReturnChange );
+      m_StateMachine.AddTransition(  "TwoQuarterCredit",   "CancelPurchase",  "IdleState",          & Tester::CancelAndReturnChange );
+      m_StateMachine.AddTransition(  "ThreeQuarterCredit", "CancelPurchase",  "IdleState",          & Tester::CancelAndReturnChange );
+
+
+      m_StateMachine.SelectInitialState( "IdleState");
 
       // Finish the programming and get ready to run
       m_StateMachine.SetReadyToRun();
@@ -151,24 +63,21 @@ public:
   // Methods that generate input signals
   void InsertChange() 
     {
-      m_StateMachine.SetInput( 0 );
       std::cout << "Insert Change" << std::endl;
-      m_StateMachine.StateTransition();
+      m_StateMachine.ProcessInput( "QuarterInserted" );
     }
  
  
   void SelectDrink() 
     {
-      m_StateMachine.SetInput( 1 );
       std::cout << "Select Drink" << std::endl;
-      m_StateMachine.StateTransition();
+      m_StateMachine.ProcessInput("SelectDrink");
     }
 
   void CancelPurchase() 
     {
-      m_StateMachine.SetInput( 2 );
       std::cout << "Cancelling Purchase" << std::endl;
-      m_StateMachine.StateTransition();
+      m_StateMachine.ProcessInput("CancelPurchase");
     }
 
 
@@ -216,45 +125,14 @@ private:
 int igstkStateMachineTest(int argc, char * argv [])
 {
 
-  Tester tester1;
+  Tester  tester;
 
-
-  std::cout << std::endl << std::endl;
-  std::cout << "FIRST test run " << std::endl;
 
   // This is the cannonical path for using the class. 
-  tester1.InsertChange();
-  tester1.InsertChange();
-  tester1.InsertChange();
-  tester1.SelectDrink();
-
-
-
-  std::cout << std::endl << std::endl;
-  std::cout << "Testing State Machine Descriptors" << std::endl;
-
-  std::cout << std::endl << std::endl;
-  std::cout << "Second test run " << std::endl;
-
-  // Try to get drink ealy on purpose, to test error states.
-  tester1.InsertChange();
-  tester1.SelectDrink();
-  tester1.InsertChange();
-  tester1.SelectDrink();
-  tester1.InsertChange();
-  tester1.SelectDrink();
-
-
-  DescriptorTester  tester2;
-
-  std::cout << std::endl << std::endl;
-  std::cout << "FIRST test run " << std::endl;
-
-  // This is the cannonical path for using the class. 
-  tester2.InsertChange();
-  tester2.InsertChange();
-  tester2.InsertChange();
-  tester2.SelectDrink();
+  tester.InsertChange();
+  tester.InsertChange();
+  tester.InsertChange();
+  tester.SelectDrink();
 
 
 
@@ -263,19 +141,19 @@ int igstkStateMachineTest(int argc, char * argv [])
   std::cout << "Second test run " << std::endl;
 
   // Try to get drink ealy on purpose, to test error states.
-  tester2.InsertChange();
-  tester2.SelectDrink();
-  tester2.InsertChange();
-  tester2.SelectDrink();
-  tester2.InsertChange();
-  tester2.SelectDrink();
+  tester.InsertChange();
+  tester.SelectDrink();
+  tester.InsertChange();
+  tester.SelectDrink();
+  tester.InsertChange();
+  tester.SelectDrink();
 
   
   std::cout << std::endl << std::endl;
   std::cout << "Printing out the State Machine description in dot format" << std::endl;
   std::cout << std::endl << std::endl;
 
-  tester2.ExportTransitions( std::cout );
+  tester.ExportTransitions( std::cout );
 
 
   return EXIT_SUCCESS;

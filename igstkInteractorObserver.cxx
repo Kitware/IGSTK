@@ -48,7 +48,7 @@ InteractorObserver
     {
     const int x = Fl::event_x();
     const int y = Fl::event_y();
-    m_SliceViewer->SelectPoint( x, y );
+    m_SliceViewer->SelectScreenPixel( x, y );
     }
 }
 

@@ -19,6 +19,7 @@
 #define __igstk_StateMachine_txx
 
 #include "igstkStateMachine.h"
+#include <algorithm>
 
 
 namespace igstk
@@ -27,39 +28,26 @@ namespace igstk
 
 
 
-template<class TClass, unsigned int VStates, unsigned int VInputs>
-StateMachine< TClass, VStates, VInputs >
+template<class TClass>
+StateMachine< TClass >
 ::StateMachine()
 {
 
   m_This = 0;
 
 
-  // Set all the transitions to the origin state
-  for(StateType state=0; state < VStates; state++)
-    {
-    for( InputType input=0; input < VInputs; input++)
-      {
-      m_Transition[ state ][ input ] = 0;
-      m_Action[ state ][ input ] = 0;
-      }
-    }
-
   m_ReadyToRun = false;
 
   // Initialize the machine in the idle state.
-  m_State = 0;
+  m_State = "";
 
-
-  // Assume the first input code.
-  m_Input = 0;
 }
 
 
 
 
-template<class TClass, unsigned int VStates, unsigned int VInputs>
-StateMachine< TClass, VStates, VInputs >
+template<class TClass>
+StateMachine< TClass >
 ::~StateMachine()
 {
 
@@ -69,10 +57,10 @@ StateMachine< TClass, VStates, VInputs >
 
 
 
-template<class TClass, unsigned int VStates, unsigned int VInputs>
+template<class TClass>
 void
-StateMachine< TClass, VStates, VInputs >
-::SetClass( TClass * theclass )
+StateMachine< TClass >
+::SetOwnerClass( TClass * theclass )
 {
    m_This = theclass;
 }
@@ -80,105 +68,57 @@ StateMachine< TClass, VStates, VInputs >
 
 
 
-template<class TClass, unsigned int VStates, unsigned int VInputs>
+
+template<class TClass>
 void
-StateMachine< TClass, VStates, VInputs >
-::SetInput( InputType input )
+StateMachine< TClass >
+::AddInput( const InputDescriptorType & descriptor )
 {
-   m_Input = input;
+
+   m_Inputs.push_back( descriptor );
+
 }
 
 
 
-template<class TClass, unsigned int VStates, unsigned int VInputs>
+
+template<class TClass>
 void
-StateMachine< TClass, VStates, VInputs >
-::SetInputDescriptor( InputType input , const InputDescriptorType & descriptor )
+StateMachine< TClass >
+::AddState( const StateDescriptorType & descriptor )
 {
 
-  if( input >= VInputs )
+   m_States.push_back( descriptor );
+
+}
+
+
+
+template<class TClass>
+void
+StateMachine< TClass >
+::SelectInitialState( const StateDescriptorType & descriptor )
+{
+
+  StatesContainer::const_iterator  state = std::find( m_States.begin(), m_States.end(), descriptor );
+    
+  if( state == m_States.end() )
     {
-    std::cerr << "Input code is out of range. " << std::endl;
-    std::cerr << "It should be between 0 and " << VInputs  << std::endl;
-    std::cerr << "but its value is " << input << std::endl;
+    std::cerr << "State selected as initial state has not been defined yet. " << std::endl;
+    std::cerr << "Attempted state = " << descriptor << std::endl;
     return;
-    }
+    } 
 
-   m_InputDescriptor[ input ] = descriptor;
+  m_State = *state;
 
 }
 
 
 
 
-
-template<class TClass, unsigned int VStates, unsigned int VInputs>
+template<class TClass>
 void
-StateMachine< TClass, VStates, VInputs >
-::SetInputDescriptor( InputType input , const char * descriptor )
-{
-
-  if( input >= VInputs )
-    {
-    std::cerr << "Input code is out of range. " << std::endl;
-    std::cerr << "It should be between 0 and " << VInputs  << std::endl;
-    std::cerr << "but its value is " << input << std::endl;
-    return;
-    }
-
-   m_InputDescriptor[ input ] = descriptor;
-
-}
-
-
-
-
-
-template<class TClass, unsigned int VStates, unsigned int VInputs>
-void
-StateMachine< TClass, VStates, VInputs >
-::SetStateDescriptor( StateType state , const StateDescriptorType & descriptor )
-{
-
-  if( state >= VStates )
-    {
-    std::cerr << "State code is out of range. " << std::endl;
-    std::cerr << "It should be between 0 and " << VStates  << std::endl;
-    std::cerr << "but its value is " << state << std::endl;
-    return;
-    }
-
-   m_StateDescriptor[ state ] = descriptor;
-
-}
-
-
-
-
-
-template<class TClass, unsigned int VStates, unsigned int VInputs>
-void
-StateMachine< TClass, VStates, VInputs >
-::SetStateDescriptor( StateType state , const char * descriptor )
-{
-
-  if( state >= VStates )
-    {
-    std::cerr << "State code is out of range. " << std::endl;
-    std::cerr << "It should be between 0 and " << VStates  << std::endl;
-    std::cerr << "but its value is " << state << std::endl;
-    return;
-    }
-
-   m_StateDescriptor[ state ] = descriptor;
-
-}
-
-
-
-template<class TClass, unsigned int VStates, unsigned int VInputs>
-void
-StateMachine< TClass, VStates, VInputs >
+StateMachine< TClass >
 ::SetReadyToRun()
 {
 
@@ -208,10 +148,10 @@ StateMachine< TClass, VStates, VInputs >
 
 
 
-template<class TClass, unsigned int VStates, unsigned int VInputs>
+template<class TClass>
 void
-StateMachine< TClass, VStates, VInputs >
-::StateTransition()
+StateMachine< TClass >
+::ProcessInput( const InputDescriptorType & input )
 {
 
   if( !m_This )
@@ -231,84 +171,68 @@ StateMachine< TClass, VStates, VInputs >
     return;
     }
 
-  if( m_State >= VStates )
+  TransitionContainer::const_iterator    transitionsFromThisState = m_Transitions.find( m_State );
+
+  
+  if( transitionsFromThisState == m_Transitions.end() )
     {
-    std::cerr << "m_State code is out of range. " << std::endl;
-    std::cerr << "It should be between 0 and " << VStates  << std::endl;
-    std::cerr << "but its value is " << m_State << std::endl;
+    std::cerr << "No transitions have been defined for curren state = " << m_State << std::endl;
     return;
-    }
+    } 
 
+  StatesPerInputContainer::const_iterator  newState = transitionsFromThisState->second->find( input );
 
-  if( m_Input >= VInputs )
+  if( newState == transitionsFromThisState->second->end() )
     {
-    std::cerr << "Input code is out of range. " << std::endl;
-    std::cerr << "It should be between 0 and " << VInputs  << std::endl;
-    std::cerr << "but its value is " << m_Input << std::endl;
+    std::cerr << "No transitions have been defined for curren state and input " << std::endl;
+    std::cerr << "State = "  << m_State << std::endl;
+    std::cerr << "Input = "  << input   << std::endl;
     return;
-    }
+    } 
 
-  StateType newstate = m_Transition[ m_State ][ m_Input ];
+  ActionContainer::const_iterator    actionsFromThisState = m_Actions.find( m_State );
 
-
-  TMemberFunctionPointer action = m_Action[ m_State ][ m_Input ];
-
-  if( action )
+  
+  if( actionsFromThisState == m_Actions.end() )
     {
-    ((*m_This).*(action))();
+    std::cerr << "No actions have been defined for curren state = " << m_State << std::endl;
+    return;
+    } 
+
+  ActionsPerInputContainer::const_iterator  action = actionsFromThisState->second->find( input );
+
+  if( action == actionsFromThisState->second->end() )
+    {
+    std::cerr << "No actions have been defined for curren state and input " << std::endl;
+    std::cerr << "State = "  << m_State << std::endl;
+    std::cerr << "Input = "  << input   << std::endl;
+    return;
+    } 
+
+    
+
+  if( action->second )
+    {
+    ((*m_This).*(action->second))();
     }
 
-  m_State = newstate;
+  m_State = newState->second;
 
 }
 
 
 
 
-template<class TClass, unsigned int VStates, unsigned int VInputs>
+template<class TClass>
 void
-StateMachine< TClass, VStates, VInputs >
-::SetTransition( const StateDescriptorType & stateDescriptor,   
+StateMachine< TClass >
+::AddTransition( const StateDescriptorType & stateDescriptor,   
                  const InputDescriptorType & inputDescriptor, 
                  const StateDescriptorType & newstateDescriptor, 
                        TMemberFunctionPointer action )
 {
 
-  StateType state;
-  InputType input;
-  StateType newstate;
-
-  for( StateType s = 0; s < VStates; s++)
-    {
-    if( m_StateDescriptor[ s ] == stateDescriptor )
-      {
-      state = s; 
-      break;
-      }
-    }
-
-
-  for( StateType ns = 0; ns < VStates; ns++)
-    {
-    if( m_StateDescriptor[ ns ] == newstateDescriptor )
-      {
-      newstate = ns; 
-      break;
-      }
-    }
-
-
-  for( InputType in = 0; in < VInputs; in++)
-    {
-    if( m_InputDescriptor[ in ] == inputDescriptor )
-      {
-      input = in; 
-      break;
-      }
-    }
-
-  this->SetTransition( state, input, newstate, action );
-
+    
 }
 
 
@@ -316,57 +240,7 @@ StateMachine< TClass, VStates, VInputs >
 
 
 
-template<class TClass, unsigned int VStates, unsigned int VInputs>
-void
-StateMachine< TClass, VStates, VInputs >
-::SetTransition( StateType state,    InputType input, 
-                 StateType newstate, TMemberFunctionPointer action )
-{
 
-  if( m_ReadyToRun )
-    {
-    std::cerr << "Error: attempt to invoke a SetTransition " << std::endl;
-    std::cerr << "but the machine is ready to go " << std::endl;
-    std::cerr << "All invokations to SetTransition() must be done " << std::endl;
-    std::cerr << "before calling SetReadyToRun()." << std::endl;
-    return;
-    }
-
-
-  if( state >= VStates )
-    {
-    std::cerr << "State code is out of range. " << std::endl;
-    std::cerr << "It should be between 0 and " << VStates  << std::endl;
-    std::cerr << "but its value is " << state << std::endl;
-    return;
-    }
-
-
-  if( input >= VInputs )
-    {
-    std::cerr << "Input code is out of range. " << std::endl;
-    std::cerr << "It should be between 0 and " << VInputs  << std::endl;
-    std::cerr << "but its value is " << input << std::endl;
-    return;
-    }
-
-
-  if( newstate >= VStates )
-    {
-    std::cerr << "New State code is out of range. " << std::endl;
-    std::cerr << "It should be between 0 and " << VStates  << std::endl;
-    std::cerr << "but its value is " << newstate << std::endl;
-    return;
-    }
-
-
-  m_Transition[ state ][ input ] = newstate;
-
-  m_Action[ state ][ input ] = action;
-
-}
-
- 
 
 
 /** The syntax of the string generated by this method is
@@ -375,36 +249,44 @@ StateMachine< TClass, VStates, VInputs >
     If this string is saved to a file, the file will be 
     a valid input for the "dot" tool.
  */
-template<class TClass, unsigned int VStates, unsigned int VInputs>
+template<class TClass>
 void
-StateMachine< TClass, VStates, VInputs >
+StateMachine< TClass >
 ::ExportTransitions( stdOstreamType & ostr ) const
 {
     ostr << "digraph G {" << std::endl;
 
     // Export all the transitions between states
     {
-    for(StateType state=0; state < VStates; state++)
+    TransitionContainer::const_iterator    transitionsFromThisState = m_Transitions.begin();
+    while( transitionsFromThisState != m_Transitions.end() )
       {
-      for( InputType input=0; input < VInputs; input++)
+      StatesPerInputContainer::const_iterator  
+                      transitionsFromThisStateAndInput =  
+                           transitionsFromThisState->second->begin();
+      while( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
         {
-        ostr << "  State" << state << " -> State";
-        ostr << m_Transition[ state ][ input ];
-        ostr << " [label=\"" << m_InputDescriptor[input] << "\"";
+        ostr << "  State" << transitionsFromThisStateAndInput->first << " -> State";
+        ostr << transitionsFromThisStateAndInput->first;
+        ostr << " [label=\"" << transitionsFromThisStateAndInput->second << "\"";
         ostr << " fontname=Helvetica, fontcolor=Blue";
         ostr << "];" << std::endl;
+        ++transitionsFromThisStateAndInput;
         }
+      ++transitionsFromThisState;
       }
     }
 
     // Export the descriptions of all states
     {
-    for(StateType state=0; state < VStates; state++)
+    StatesContainer::const_iterator  stateId = m_States.begin();
+    while( stateId != m_States.end() )
       {
-      ostr << "  State" << state << "  [label=\"";
-      ostr << m_StateDescriptor[state] << "\"";
+      ostr << "  State" << *stateId << "  [label=\"";
+      ostr << *stateId << "\"";
       ostr << " fontname=Helvetica, fontcolor=Black";
       ostr << "];" << std::endl;
+      ++stateId;
       }
     }
     ostr << "}" << std::endl;

@@ -51,7 +51,7 @@ class ImageSliceViewer
 {
 private:
 
-  typedef igstk::StateMachine< ImageSliceViewer, 2, 3 >   StateMachineType;
+  typedef igstk::StateMachine< ImageSliceViewer >   StateMachineType;
 
   typedef StateMachineType::TMemberFunctionPointer        ActionType;
 
@@ -79,16 +79,20 @@ public:
 
   virtual void SetInteractor( vtkRenderWindowInteractor * interactor );
 
-  void Render( void );
 
   unsigned long AddObserver( const itk::EventObject & event, itk::Command *);
 
   // Public methods that GENERATE INPUT signals
 
+
+  /** This is the request for refreshing the rendering of the image */
+  void RefreshRender( void );
+
+
   /** SetInput: This method inputs the image data to the viewer. 
   *   It generates "InputData" input signal, and calls for a State
   *   Transition. */ 
-  void SetInput( vtkImageData * image );
+  void SetImage( const vtkImageData * image );
 
   /** SelectSlice: This method inputs the slice number to be viewed
   *   by the viewer. It generates "SetSlice" input signal, and calls 
@@ -104,11 +108,16 @@ public:
   *   image. It generates "SetupCamera" input signal, and calls for a State 
   *   Transition. */
   void SetOrientation( const OrientationType orientation );
+  void SetOrientationCoronal();
+  void SetOrientationSaggital();
+  void SetOrientationAxial();
 
  /** SelectPoint: This method inputs co-ordinate of the clicked point
   *   in the viewer. It generates "SetPoint" input signal and calls for 
   *   a State Transition. */ 
-  virtual void SelectPoint( int x, int y);
+  virtual void SelectScreenPixel( int x, int y);
+
+  virtual void SetPoint( double x, double y, double z );
 
 protected:
 
@@ -117,12 +126,12 @@ protected:
 
   // Protected methods that GENERATE INPUT signals
 
-  virtual void SelectPoint( double x, double y, double z );
 
   virtual void  GetSelectPoint(double data[3]); 
 
   // Protected methods that are invoked through State Machine.
 
+  virtual void Render();
 
   /** SetupCamera: This method is invoked by the State Machine in response  
   *   to the "SetupCamera" input signal. */ 
@@ -133,7 +142,10 @@ protected:
   *   display extent of the input image data. */ 
   void SetSlice( void );
    
-
+  /** Defines the 3D coordinates of a selected point computed
+      from the 2D coordinates of the clicked screen pixel and
+      the current slice number and orientation */
+  virtual void SetPoint();
 
 
 private:
@@ -160,11 +172,13 @@ private:
 
   double              m_ZoomFactor;
 
-  double               m_SelectPoint[3];
+  double              m_SelectedPoint[3];
 
-  double               m_ImagePixelSpacing[3];
+  double              m_InputPoint[3];
 
-  double               m_ImageOrigin[3];
+  double              m_ImagePixelSpacing[3];
+
+  double              m_ImageOrigin[3];
 
   int                 m_ImageDimensions[3];
 

@@ -35,32 +35,51 @@ ImageSliceViewer
 ::ImageSliceViewer()
 {
 	// Connect the state machine to 'this' ImageSliceViewer class.
-  m_StateMachine.SetClass( this );
+  m_StateMachine.SetOwnerClass( this );
 
 	// Set the state descriptors
-	m_StateMachine.SetStateDescriptor( 0, "ImageNotLoadedState" );
-	m_StateMachine.SetStateDescriptor( 1, "ImageLoadedState" );
+	m_StateMachine.AddState( "ImageNotLoadedState" );
+	m_StateMachine.AddState( "RenderNeedsRefreshState" );
+	m_StateMachine.AddState( "RenderUpdatedState" );
 
 	// Set the input descriptors
-	m_StateMachine.SetInputDescriptor( 0, "ImageData");
-	m_StateMachine.SetInputDescriptor( 1, "SetUpCamera");
-  m_StateMachine.SetInputDescriptor( 2, "SetSlice");
-  m_StateMachine.SetInputDescriptor( 3, "SetPoint");
+	m_StateMachine.AddInput( "NewImageDataInput");
+	m_StateMachine.AddInput( "NullImageData");
+	m_StateMachine.AddInput( "SetUpCamera");
+  m_StateMachine.AddInput( "SelectSlice");
+  m_StateMachine.AddInput( "SelectSliceUnderFlow");
+  m_StateMachine.AddInput( "SelectSliceOverFlow");
+  m_StateMachine.AddInput( "SelectPoint");
+  m_StateMachine.AddInput( "RefreshRenderRequest");
 
 	const ActionType NoAction = 0;
 
+//  m_StateMachine.SetValidator( "SelectSliceInput", & ImageSliceViewer::ValidateSliceNumber );
+
+//  m_StateMachine.SetEntryAction( "RenderNeedsRefreshState", & ImageSliceViewer::EntryActionA );
+
 	// Programming the machine
-  m_StateMachine.SetTransition( "ImageNotLoadedState", "SetUpCamera", 
-    "ImageLoadedState", NoAction );
+  m_StateMachine.AddTransition( "ImageNotLoadedState",     "RefreshRenderRequest", "ImageNotLoadedState",         NoAction );
+  m_StateMachine.AddTransition( "ImageNotLoadedState",     "SetUpCamera",          "ImageNotLoadedState",         NoAction );
+  m_StateMachine.AddTransition( "ImageNotLoadedState",     "SelectSlice",          "ImageNotLoadedState",         NoAction );
+  m_StateMachine.AddTransition( "ImageNotLoadedState",     "SelectPoint",          "ImageNotLoadedState",         NoAction );
+  m_StateMachine.AddTransition( "ImageNotLoadedState",     "NewImageData",         "RenderNeedsRefreshState",     NoAction );
+  m_StateMachine.AddTransition( "ImageNotLoadedState",     "NullImageData",        "ImageNotLoadedState",         NoAction );
 
-  m_StateMachine.SetTransition( "ImageLoadedState", "SetUpCamera", 
-    "ImageLoadedState", & ImageSliceViewer::SetupCamera );
+  m_StateMachine.AddTransition( "RenderNeedsRefreshState", "SelectSlice",          "RenderNeedsRefreshState",   & ImageSliceViewer::SetSlice );
+  m_StateMachine.AddTransition( "RenderNeedsRefreshState", "SelectPoint",          "RenderNeedsRefreshState",   & ImageSliceViewer::SetPoint );
+  m_StateMachine.AddTransition( "RenderNeedsRefreshState", "NullImageData",        "ImageNotLoadedState",         NoAction );
+  m_StateMachine.AddTransition( "RenderNeedsRefreshState", "RefreshRenderRequest", "RenderUpdatedState",             & ImageSliceViewer::Render ); 
+  m_StateMachine.AddTransition( "RenderNeedsRefreshState", "NewImageData",         "RenderNeedsRefreshState",     NoAction );
+  m_StateMachine.AddTransition( "RenderNeedsRefreshState", "SetUpCamera",          "RenderNeedsRefreshState",   & ImageSliceViewer::SetupCamera );    
 
-  m_StateMachine.SetTransition( "ImageNotLoadedState", "SetSlice", 
-    "ImageLoadedState", NoAction );
+  m_StateMachine.AddTransition( "RenderUpdatedState",      "SelectSlice",          "RenderNeedsRefreshState",   & ImageSliceViewer::SetSlice );
+  m_StateMachine.AddTransition( "RenderUpdatedState",      "SelectPoint",          "RenderNeedsRefreshState",   & ImageSliceViewer::SetPoint );
+  m_StateMachine.AddTransition( "RenderUpdatedState",      "NullImageData",        "ImageNotLoadedState",         NoAction );
+  m_StateMachine.AddTransition( "RenderUpdatedState",      "RefreshRenderRequest", "RenderUpdatedState",               NoAction );
+  m_StateMachine.AddTransition( "RenderUpdatedState",      "NewImageData",         "RenderNeedsRefreshState",     NoAction );
+  m_StateMachine.AddTransition( "RenderUpdatedState",      "SetUpCamera",          "RenderNeedsRefreshState",   & ImageSliceViewer::SetupCamera );    
 
-  m_StateMachine.SetTransition( "ImageLoadedState", "SetSlice", 
-    "ImageLoadedState", & ImageSliceViewer::SetSlice );
 
 
 	// Finish the state machine programming and get ready to run
@@ -113,6 +132,15 @@ ImageSliceViewer
 
 void
 ImageSliceViewer
+::RefreshRender()
+{
+  m_StateMachine.ProcessInput( "RenderRequest" );
+}
+
+
+
+void
+ImageSliceViewer
 ::Render()
 {
   m_Camera->SetClippingRange( m_NearPlane, m_FarPlane );
@@ -129,15 +157,25 @@ ImageSliceViewer
 }
 
 
+
+CheckInputImagePointer();
+
 void
 ImageSliceViewer
-::SetInput( vtkImageData * image )
+::SetImage( const vtkImageData * image )
 {
-  m_Actor->SetInput( image );
-  m_StateMachine.SetInput( "ImageData" );
-  m_StateMachine.StateTransition();
-  m_StateMachine.SetInput( "SetUpCamera" );
-  m_StateMachine.StateTransition();
+
+  //  
+  vtkImageData * nonconstImage = const_cast< vtkImageData * >( image );
+
+  if( image == 0 )
+    {
+    m_StateMachine.ProcessInput( "NullImageData" );
+    return;
+    }
+  m_Actor->SetInput( nonconstImage );
+  m_StateMachine.ProcessInput( "NewImageData" );
+  m_StateMachine.ProcessInput( "SetUpCamera" );
 }
 
 
@@ -146,8 +184,7 @@ ImageSliceViewer
 ::SetZoomFactor( double factor )
 {
   m_ZoomFactor = factor;
-  m_StateMachine.SetInput( "SetUpCamera" );
-  m_StateMachine.StateTransition();
+  m_StateMachine.ProcessInput( "SetUpCamera" );
 }
 
 
@@ -172,8 +209,7 @@ ImageSliceViewer
 ::SetOrientation( OrientationType orientation )
 {
   m_Orientation = orientation;
-  m_StateMachine.SetInput( "SetUpCamera" );
-  m_StateMachine.StateTransition();
+  m_StateMachine.ProcessInput( "SetUpCamera" );
 }
 
 
@@ -183,20 +219,26 @@ ImageSliceViewer
 ::SelectSlice( int slice )
 {
   m_SliceNum = slice;
-  m_StateMachine.SetInput( "SetSlice" );
-  m_StateMachine.StateTransition();
+  // check range
+  if( slice < 100 ) 
+    {
+    m_StateMachine.ProcessInput( "SelectSlice" );
+    }
+  else
+    {
+    m_StateMachine.ProcessInput("InvalidSelectSlice");
+    }
 }
 
 
 
 void
 ImageSliceViewer
-::SelectPoint( int x, int y )
+::SelectScreenPixel( int x, int y )
 {
-  m_SelectPoint[0] = x ; 
-  m_SelectPoint[1] = y ;
-  m_StateMachine.SetInput( "SetPoint" );
-  m_StateMachine.StateTransition();
+  m_InputPoint[0] = x ; 
+  m_InputPoint[1] = y ;
+  m_StateMachine.ProcessInput( "SelectPoint" );
 }
 
 
@@ -322,15 +364,26 @@ ImageSliceViewer
 
 
 
+void  
+ImageSliceViewer
+::SetPoint( double x, double y, double z )
+{
+  m_InputPoint[0] = x;
+  m_InputPoint[1] = y;
+  m_InputPoint[2] = z;
+}
+
+
+
 
 
 void  
 ImageSliceViewer
-::SelectPoint( double x, double y, double z )
+::SetPoint()
 {
-  m_SelectPoint[0] = x;
-  m_SelectPoint[1] = y;
-  m_SelectPoint[2] = z;
+  m_SelectedPoint[0] = m_InputPoint[0];
+  m_SelectedPoint[1] = m_InputPoint[1];
+  m_SelectedPoint[2] = m_InputPoint[2];
 }
 
 
@@ -342,7 +395,7 @@ ImageSliceViewer
 {
   for(int i=0; i<3; i++)
   {
-    data[i] = m_SelectPoint[i];
+    data[i] = m_SelectedPoint[i];
   }
 }
 

@@ -20,6 +20,9 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
+#include <map>
+
 
 namespace igstk
 {
@@ -39,7 +42,7 @@ namespace igstk
 
 */
 
-template<class TClass, unsigned int VStates, unsigned int VInputs>
+template<class TClass>
 class StateMachine
 {
 
@@ -48,13 +51,11 @@ class StateMachine
 public:
 
    /** Type used to represent the codes of the states */
-   typedef unsigned int    StateType;
    typedef std::string     StateDescriptorType;
 
 
 
    /** Type used to represent the codes of the inputs */
-   typedef unsigned int    InputType;
    typedef std::string     InputDescriptorType;
 
 
@@ -79,19 +80,18 @@ public:
    /** Perform the state transition, invoke the corresponding action.
        This is the method that is systematically executed when the 
        state machine is running   */
-   void StateTransition();
+   void ProcessInput( const InputDescriptorType & input );
 
 
       
    /** Set the new state to be assume as a reaction to receiving the
        input code while the StateMachine is in state. The action is
        a member method of the TClass that will be invoked just before
-       changing the state. The SetTransition() method is the mechanism
+       changing the state. The AddTransition() method is the mechanism
        used for programming the state machine. This method should never
        be invoked while the state machine is running. Unless you want
        to debug a self-modifying machine or an evolutionary machine. */
-   void SetTransition( StateType state, InputType input, StateType newstate, TMemberFunctionPointer action );
-   void SetTransition( const StateDescriptorType & state, 
+   void AddTransition( const StateDescriptorType & state, 
                        const InputDescriptorType & input, 
                        const StateDescriptorType & newstate, 
                        TMemberFunctionPointer action );
@@ -99,30 +99,22 @@ public:
 
 
    /** Set the "this" pointer to the class to which this StateMachine belongs.  */
-   void SetClass( TClass * );
+   void SetOwnerClass( TClass * );
 
 
 
-   /** Set the code for the current input.  */
-   void SetInput( InputType input );
-   void SetInput( const InputDescriptorType & input );
-
-
-
-   /** This method terminates the programming mode in which SetTransition()
-    *  can be invoked and pass to the runnin mode where StateTransition() 
+   /** This method terminates the programming mode in which AddTransition()
+    *  can be invoked and pass to the runnin mode where ProcessInput() 
     *  can be called. */
    void SetReadyToRun();
 
 
    /** Set the descriptor of a state */
-   void SetStateDescriptor( StateType state, const StateDescriptorType & descriptor );
-   void SetStateDescriptor( StateType state, const char *  descriptor );
+   void AddState( const StateDescriptorType & descriptor );
 
 
    /** Set the descriptor of an input */
-   void SetInputDescriptor( InputType input, const InputDescriptorType & descriptor );
-   void SetInputDescriptor( InputType input, const char *  descriptor );
+   void AddInput( const InputDescriptorType & descriptor );
 
 
    /** This extra typedef is necessary for preventing an Internal Compiler Error in 
@@ -135,29 +127,18 @@ public:
    void ExportTransitions( stdOstreamType & ostr ) const;
 
 
+   /** Select Initial state */
+   void SelectInitialState( const StateDescriptorType & initialStateDescriptor );
+
+
 private:
 
    /** Variable that holds the code of the current state */
-   StateType    m_State;
+   StateDescriptorType    m_State;
 
 
    /** Variable that holds the code of the current input */
-   InputType    m_Input;
-
-
-   /** Matrix of state transitions. It encodes the next state for 
-       every pair of state and input */
-   StateType    m_Transition[ VStates ][ VInputs ];
-
-
-   /** Matrix of member function pointers. This pointer will
-       be associated to member functions in the TClass. They
-       are methods returning void and without arguments. 
-       The actions are invoked just before the state transition. 
-       This means that while the member method is executed, the
-       state of the machine is still the state from which the
-       transition was triggered.  */
-   TMemberFunctionPointer m_Action[ VStates ][ VInputs ];
+   InputDescriptorType    m_Input;
 
 
    /** Pointer to the class to which this state machine is pointing to.
@@ -168,19 +149,41 @@ private:
 
    /** This boolean flag is used as a security clip for separating the 
        programming stage from the running stage. During the programming stage
-       the method SetTransition() can be invoked while the method StateTransition() is
-       forbiden. Once the machine is set to run, the method SetTransition() is
-       forbiden and the method StateTransition() becomes available */
+       the method AddTransition() can be invoked while the method ProcessInput() is
+       forbiden. Once the machine is set to run, the method AddTransition() is
+       forbiden and the method ProcessInput() becomes available */
    bool m_ReadyToRun;
 
 
    /** Container of state identifiers  */
-   StateDescriptorType m_StateDescriptor[ VStates ];
+   typedef std::vector< StateDescriptorType >   StatesContainer;
+   StatesContainer                              m_States;
 
 
    /** Container of input identifiers  */
-   InputDescriptorType m_InputDescriptor[ VInputs ];
+   typedef std::vector< InputDescriptorType >   InputsContainer;
+   InputsContainer                              m_Inputs;
 
+
+
+   /** Matrix of state transitions. It encodes the next state for 
+       every pair of state and input */
+   typedef std::map< InputDescriptorType, StateDescriptorType >        StatesPerInputContainer;
+   typedef std::map< StateDescriptorType, StatesPerInputContainer * >  TransitionContainer;
+   TransitionContainer                                                 m_Transitions;
+
+
+
+   /** Matrix of member function pointers. This pointer will
+       be associated to member functions in the TClass. They
+       are methods returning void and without arguments. 
+       The actions are invoked just before the state transition. 
+       This means that while the member method is executed, the
+       state of the machine is still the state from which the
+       transition was triggered.  */
+   typedef std::map< InputDescriptorType, TMemberFunctionPointer >      ActionsPerInputContainer;
+   typedef std::map< StateDescriptorType, ActionsPerInputContainer * >  ActionContainer;
+   ActionContainer                                                      m_Actions; 
 
 
 };
