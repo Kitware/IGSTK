@@ -20,7 +20,7 @@
 
 #include <vector>
 
-#include "itkProcessObject.h"
+#include "itkObject.h"
 
 #include "igstkCommunication.h"
 #include "igstkLogger.h"
@@ -45,7 +45,7 @@ namespace igstk
     offline execution of tracker.)
 */
 
-class Tracker : public itk::ProcessObject
+class Tracker : public itk::Object
 {
     typedef igstk::Communication           CommunicationType;
     typedef igstk::Logger                  LoggerType;
@@ -70,8 +70,8 @@ public:
     /**  Run-time type information (and related methods). */
     itkTypeMacro(Tracker, Object);
 
-    /** Method for creation through the object factory. */
-    itkNewMacro(Self);  
+    /** Method for creation of a reference counted object. */
+    NewMacro(Self);  
 
     /** The "Initialize" method initializes the tracker. The input 
     is a file in XML format describing the set up configuration. The
