@@ -101,7 +101,7 @@ void ObjectRepresentation::UpdateOrientationFromGeometry()
       vtkMatrix->SetElement(i,j,itkMatrix.GetVnlMatrix().get(i,j));   
     }
 
-    vtkMatrix->SetElement(i,3,offset[i]/100);
+    vtkMatrix->SetElement(i,3,offset[i]);
   }
 
   // Update all the actors
@@ -141,7 +141,7 @@ void ObjectRepresentation::UpdatePositionFromGeometry()
       vtkMatrix->SetElement(i,j,itkMatrix.GetVnlMatrix().get(i,j));   
     }
 
-    vtkMatrix->SetElement(i,3,offset[i]/100);
+    vtkMatrix->SetElement(i,3,offset[i]);
   }
 
   // Update all the actors
