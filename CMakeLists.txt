@@ -50,7 +50,7 @@ ENDIF (FLTK_FOUND)
 
 # Add the testing directories
 IF(IGSTK_BUILD_TESTING)
-  #  SUBDIRS(Tests)
+   SUBDIRS(Testing)
 ENDIF(IGSTK_BUILD_TESTING)
 
 # Add the examples directories
@@ -61,7 +61,7 @@ ENDIF(IGSTK_BUILD_EXAMPLES)
 
 #-----------------------------------------------------------------------------
 # Configure the default IGSTK_DATA_ROOT for the location of IGSTK Data.
-#FIND_PATH(IGSTK_DATA_ROOT IGSTKData.readme ${IGSTK_SOURCE_DIR}/Tests/Data $ENV{IGSTK_DATA_ROOT})
+#FIND_PATH(IGSTK_DATA_ROOT IGSTKData.readme ${IGSTK_SOURCE_DIR}/Testing/Data $ENV{IGSTK_DATA_ROOT})
 #MARK_AS_ADVANCED(IGSTK_DATA_ROOT)
 
 
