@@ -13,7 +13,7 @@ ELSE(DROP_METHOD MATCHES http)
   SET (DROP_SITE_PASSWORD "public")
 ENDIF(DROP_METHOD MATCHES http)
 SET (TRIGGER_SITE 
-       "http://${DROP_SITE}/cgi-bin/Submit-IGSTK-TestingResults.pl")
+  "http://${DROP_SITE}/cgi-bin/Submit-IGSTK-TestingResults.pl")
 
 # Project Home Page
 #SET (PROJECT_URL "http://${DROP_SITE}/IFSTK")
