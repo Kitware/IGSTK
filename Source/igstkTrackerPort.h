@@ -33,20 +33,37 @@ namespace igstk
     connected to the port.
 */
 
+class Tracker;
+
 class TrackerPort
 {
 public:
+
+    typedef igstk::TrackerTool             TrackerToolType;
+    typedef std::vector< TrackerToolType > TrackerToolVectorType;
+
+    FriendClassMacro( Tracker );
 
     TrackerPort(void);
 
     ~TrackerPort(void);
 
+    /** The "AddTool" method adds a tool to the port. */
+    void AddTool( const TrackerToolType& tool);
+
+    /** The "ClearTools" clears all the tools. */
+    void ClearTools( void );
+
+    /** The "GetNumberOfTools" method returns number of tools. */ 
+    inline int GetNumberOfTools( void )
+    {
+      return m_Tools.size();
+    }
+
 private:
 
-protected:
-
     /** Vector of all tools on the port */
-    std::vector<igstk::TrackerTool>    m_Tools;
+    TrackerToolVectorType       m_Tools;
 };
 
 }

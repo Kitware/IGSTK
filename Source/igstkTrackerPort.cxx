@@ -22,12 +22,23 @@ namespace igstk
 
 TrackerPort::TrackerPort(void)
 {
-    m_Tools.clear();
+    this->ClearTools();
 }
 
 TrackerPort::~TrackerPort(void)
 {
+    this->ClearTools();
+}
+
+void TrackerPort::AddTool( const TrackerToolType& tool)
+{
+    m_Tools.push_back( tool );
+}
+
+void TrackerPort::ClearTools( void )
+{
     m_Tools.clear();
 }
+
 
 }
