@@ -55,7 +55,7 @@ void Sphere::SetRadius( const double rad)
 Sphere &Sphere::operator=( const Sphere &src )
 {
 	this->SetRadius( src.m_Sphere->GetRadius());
-  float ftmp[3];
+  vtkFloatingPointType ftmp[3];
   src.m_Sphere->GetCenter( ftmp );
 	this->SetCenter( ftmp[0], ftmp[1], ftmp[2] );
 	return *this;
@@ -69,7 +69,7 @@ void Sphere::SetCenter( double pos[3] )
 
 void Sphere::GetCenter( double pos[3] )
 {
-  float ftmp[3];
+  vtkFloatingPointType ftmp[3];
 	m_Sphere->GetCenter( ftmp );
   for(unsigned int i=0; i<3; i++)
     {
@@ -125,7 +125,7 @@ void Sphere::VisibilityOff()
 
 void Sphere::AddPosition(float x, float y, float z)
 {
-  float pos[3];
+  vtkFloatingPointType pos[3];
 
   m_Sphere->GetCenter(pos);
   m_Sphere->SetCenter(pos[0] + x, pos[1] + y, pos[2] + z);
