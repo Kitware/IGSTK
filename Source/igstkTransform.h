@@ -45,6 +45,8 @@
  * The validity period will be counted from the moment the Set method was
  * invoked.
  *
+ * \sa TimeStamp
+ *
  **/
 
 namespace igstk 
@@ -52,24 +54,92 @@ namespace igstk
  
 class Transform
 {
+public:
 
+  typedef ::itk::Vector<double, 3>    VectorType;
+  typedef ::itk::Versor<double>       VersorType;
+  
 public:
 
   /** Constructor and destructor */
   Transform();
   ~Transform();
 
-  /** Set Translation and Rotation simultaneously */
+  /** Set Translation and Rotation simultaneously. This values will override
+   * any previously set rotation and translation. The information will be
+   * considered valid from the time of invokation of the method until that time
+   * plus the millisecondsToExpiration value. */
   void SetTranslationAndRotation(
-          double tx, double ty, double tz,
-          double qx, double qy, double qz, double qw,
+          const  VectorType & translation,
+          const  VersorType & rotation,
           double millisecondsToExpiration);
+
+  /** Set only Rotation. This method should be used when the transform
+   * represents only a rotation. Internally the translational part of the
+   * transform will be set to zero. The assigned rotation will override any
+   * previouly set rotation and will set to zero any previous translation.
+   * The information will be considered valid from the time of invokation of
+   * the method until that time plus the millisecondsToExpiration value. */
+  void SetRotation( 
+          const  VersorType & rotation,
+          double millisecondsToExpiration);
+
+  /** Set only Translation. This method should be used when the transform
+   * represents only a translation. Internally the rotational part of the
+   * transform will be set to zero. The assigned translation will override any
+   * previouly set translation and will set to zero any previous rotation.
+   * The information will be considered valid from the time of invokation of
+   * the method until that time plus the millisecondsToExpiration value. */
+  void SetTranslation( 
+          const  VectorType & translation,
+          double millisecondsToExpiration);
+
+
+  /** Returns the translational component. Users MUST check the validity time
+   * of the transform before attempting to use this returned value. The content
+   * of the transform may have expired. */
+  const VectorType & GetTranslation() const; 
+ 
+  
+  /** Returns the rotational component. Users MUST check the validity time
+   * of the transform before attempting to use this returned value. The content
+   * of the transform may have expired. */
+  const VersorType & GetRotation() const; 
+       
+
+  /** Returns the time at which the validity of this information starts. The
+   * data in this transform should not be used for scenes to be rendered
+   * before that validity time. The time is returned in milliseconds. 
+   *
+   * \sa TimeStamp 
+   *
+   * */
+  double GetStartTime() const;
+
+
+  /** Returns the time at which the validity of this information expires. The
+   * data in this transform should not be used for scenes to be rendered
+   * after that validity time. The time is returned in milliseconds. 
+   *
+   * \sa TimeStamp 
+   *
+   * */
+  double GetExpirationTime() const;
+
+
+  /** Returns the validity status of the transform at the time passed as
+   * argument. The transform values should not be used in a scene if the time
+   * when the scene is to be rendered returned 'false' when passed to this
+   * IsValid() function. The time is passed in milliseconds. 
+   *
+   * \sa TimeStamp 
+   *
+   * */
+  bool IsValidAtTime( double timeToTestInMilliseconds ) const;
+
 
 private:
 
-  typedef ::itk::Vector<double, 3>    VectorType;
-  typedef ::itk::Versor<double>       VersorType;
-  
   TimeStamp       m_TimeStamp;
   VectorType      m_Translation;
   VersorType      m_Rotation;

@@ -34,15 +34,78 @@ Transform
 void 
 Transform
 ::SetTranslationAndRotation(
-          double tx, double ty, double tz,
-          double qx, double qy, double qz, double qw,
+          const  VectorType & translation,
+          const  VersorType & rotation,
           double millisecondsToExpiration)
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
-  m_Translation[0] = tx;
-  m_Translation[1] = ty;
-  m_Translation[2] = tz;
-  m_Rotation.Set( qx, qy, qz, qw );
+  m_Translation = translation;
+  m_Rotation    = rotation;
+}
+
+
+void 
+Transform
+::SetTranslation(
+          const  VectorType & translation,
+          double millisecondsToExpiration)
+{
+  m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
+  m_Translation = translation;
+}
+
+
+void 
+Transform
+::SetRotation(
+          const  VersorType & rotation,
+          double millisecondsToExpiration)
+{
+  m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
+  m_Rotation = rotation;
+}
+
+
+const Transform::VectorType &
+Transform
+::GetTranslation() const
+{
+  return m_Translation;
+}
+
+
+
+const Transform::VersorType &
+Transform
+::GetRotation() const
+{
+  return m_Rotation;
+}
+
+
+
+double 
+Transform
+::GetStartTime() const
+{
+  return m_TimeStamp.GetStartTime();
+}
+
+
+
+double 
+Transform
+::GetExpirationTime() const
+{
+  return m_TimeStamp.GetExpirationTime();
+}
+
+
+bool
+Transform
+::IsValidAtTime( double timeToCheckInMilliseconds ) const
+{
+  return m_TimeStamp.IsValidAtTime( timeToCheckInMilliseconds );
 }
 
 
