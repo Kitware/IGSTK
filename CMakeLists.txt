@@ -46,6 +46,8 @@ INCLUDE_DIRECTORIES(
   ${IGSTK_BINARY_DIR}
   )
 
+
+
 #
 #  Define the list of source files
 #
@@ -86,5 +88,11 @@ OPTION(IGSTK_BUILD_EXAMPLES "Examples of the project" ON)
 IF(IGSTK_BUILD_EXAMPLES)
   SUBDIRS(Examples)
 ENDIF(IGSTK_BUILD_EXAMPLES)
+
+#-----------------------------------------------------------------------------
+# Configure the default IGSTK_DATA_ROOT for the location of IGSTK Data.
+FIND_PATH(IGSTK_DATA_ROOT IGSTKData.readme ${IGSTK_SOURCE_DIR}/Tests/Data $ENV{IGSTK_DATA_ROOT})
+MARK_AS_ADVANCED(IGSTK_DATA_ROOT)
+
 
 
