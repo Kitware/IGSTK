@@ -105,7 +105,7 @@ m_Upper = 100;
 m_Radius = 2;
 m_Multiplier = 2.5;
 m_Iterations = 5;
-m_MultiResolution = 1;
+m_MultiResolution = 0;
 m_ResolutionXY = 2.0;
 m_ResolutionZ = 2.0;
 m_InterpolatorMethod = 1;
@@ -126,7 +126,8 @@ m_RadiusInput->value(s);
 sprintf(s, "%.2f", m_Multiplier);
 m_MultiplierInput->value(s);
 sprintf(s, "%d", m_Iterations);
-m_IterationsInput->value(s);} {}
+m_IterationsInput->value(s);} {selected
+    }
   }
   Function {Show()} {return_type void
   } {
@@ -163,8 +164,7 @@ else if (m_LInterpolatorRadio->value() == 1)
 	m_InterpolatorMethod = 1;
 }
 this->Hide();
-m_pTracking->OnUpdateSegParameters();} {selected
-    }
+m_pTracking->OnUpdateSegParameters();} {}
   }
   Function {OnCancel()} {return_type void
   } {
