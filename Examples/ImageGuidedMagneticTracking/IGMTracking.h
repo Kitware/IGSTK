@@ -137,9 +137,15 @@ public:
 	
 	virtual void ProcessAxialViewInteraction( void );
 
+  virtual void ProcessAxialViewUpdateWindowLevelWidth( void );
+
   virtual void ProcessCoronalViewInteraction( void );
+
+  virtual void ProcessCoronalViewUpdateWindowLevelWidth( void );
 	
 	virtual void ProcessSagittalViewInteraction( void );
+
+  virtual void ProcessSagittalViewUpdateWindowLevelWidth( void );
 	
 	virtual void SyncAllViews( const double aboutPoint[3] );
 
@@ -171,13 +177,15 @@ public:
 
 	virtual void OnOverlay( void );
 
-	virtual double GetImageScale( void );
+  virtual void SetWindow( double, double );
+
+	virtual double GetWindowLevel( void );
 	
-	virtual void SetImageScale( double val );
+	virtual void SetWindowLevel( double val );
 	
-	virtual double GetImageShift( void );
+	virtual double GetWindowWidth( void );
 	
-	virtual void SetImageShift( double val );
+	virtual void SetWindowWidth( double val );
 	
 	virtual void SetNeedleLength( const double val );
 	
@@ -251,17 +259,23 @@ public:
 	
 	itk::SimpleMemberCommand<IGMTracking>::Pointer      m_AxialViewerCommand;
 
+  itk::SimpleMemberCommand<IGMTracking>::Pointer      m_AxialViewerUpdateWindowLevelWidthCommand;
+
   vtkCallbackCommand*      m_AxialViewerMouseMoveCommand;
 
   vtkCallbackCommand*      m_AxialViewerRightClickCommand;
 
   itk::SimpleMemberCommand<IGMTracking>::Pointer      m_CoronalViewerCommand;
 
+  itk::SimpleMemberCommand<IGMTracking>::Pointer      m_CoronalViewerUpdateWindowLevelWidthCommand;
+
   vtkCallbackCommand*      m_CoronalViewerMouseMoveCommand;
 
   vtkCallbackCommand*      m_CoronalViewerRightClickCommand;
 	
 	itk::SimpleMemberCommand<IGMTracking>::Pointer      m_SagittalViewerCommand;
+
+  itk::SimpleMemberCommand<IGMTracking>::Pointer      m_SagittalViewerUpdateWindowLevelWidthCommand;
 
   vtkCallbackCommand*      m_SagittalViewerMouseMoveCommand;
 
@@ -319,6 +333,8 @@ public:
 
   double    m_4NeedlePosition[4][3], m_8CoilPosition[8][3];
 
+  double    m_Window[2];
+
  public:
 
   static void ProcessSkeleton(void* calldata, double);
@@ -326,12 +342,19 @@ public:
   void TransformPoint(double* in, double* out);
 
   void OnRecord(void);
+
   bool m_InRecord;
+  
   void OnLoadMatrix(void);
+  
   void OnSaveMatrix(void);
+  
   void OnLoadPET(void);
+  
   void OnLoadPath(void);
+  
   void OnLoadSkeleton(void);
+  
   void OnSimulatePath(void);
 
   void OnEvaluatePosition( double x, double y, double z );

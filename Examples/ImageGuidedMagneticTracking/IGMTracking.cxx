@@ -49,8 +49,8 @@ IGMTracking::IGMTracking()
 	m_FusionShiftScaleImageFilter->ClampOverflowOn();
 
   m_ImageBlend = vtkImageBlend::New();
-  m_ImageBlend->SetInput(0, m_ShiftScaleImageFilter->GetOutput());
-  m_ImageBlend->SetInput(1, m_FusionShiftScaleImageFilter->GetOutput());
+  m_ImageBlend->SetInput(0, m_ITK2VTKAdaptor->GetOutput());
+  m_ImageBlend->SetInput(1, m_FusionITK2VTKAdaptor->GetOutput());
   m_ImageBlend->SetOpacity(0, 1.0);
   m_ImageBlend->SetOpacity(1, 0.0);
 
@@ -69,6 +69,10 @@ IGMTracking::IGMTracking()
 	m_AxialViewerRightClickCommand->SetCallback(IGMTracking::ProcessAxialViewRightClickInteraction);
 	m_AxialViewerRightClickCommand->SetClientData(this);
   AxialView->AddObserver(vtkCommand::RightButtonReleaseEvent, m_AxialViewerRightClickCommand);
+
+  m_AxialViewerUpdateWindowLevelWidthCommand = itk::SimpleMemberCommand<IGMTracking>::New();
+	m_AxialViewerUpdateWindowLevelWidthCommand->SetCallbackFunction(this, &IGMTracking::ProcessAxialViewUpdateWindowLevelWidth);
+	m_AxialViewer.AddObserver(ISIS::UpdateWindowLevelWidthEvent(), m_AxialViewerUpdateWindowLevelWidthCommand);
 	
 	m_CoronalViewerCommand = itk::SimpleMemberCommand<IGMTracking>::New();
 	m_CoronalViewerCommand->SetCallbackFunction(this, &IGMTracking::ProcessCoronalViewInteraction);
@@ -83,6 +87,10 @@ IGMTracking::IGMTracking()
 	m_CoronalViewerRightClickCommand->SetCallback(IGMTracking::ProcessCoronalViewRightClickInteraction);
 	m_CoronalViewerRightClickCommand->SetClientData(this);
   CoronalView->AddObserver(vtkCommand::RightButtonReleaseEvent, m_CoronalViewerRightClickCommand);
+
+  m_CoronalViewerUpdateWindowLevelWidthCommand = itk::SimpleMemberCommand<IGMTracking>::New();
+	m_CoronalViewerUpdateWindowLevelWidthCommand->SetCallbackFunction(this, &IGMTracking::ProcessCoronalViewUpdateWindowLevelWidth);
+	m_CoronalViewer.AddObserver(ISIS::UpdateWindowLevelWidthEvent(), m_CoronalViewerUpdateWindowLevelWidthCommand);
 	
 	m_SagittalViewerCommand = itk::SimpleMemberCommand<IGMTracking>::New();
 	m_SagittalViewerCommand->SetCallbackFunction(this, &IGMTracking::ProcessSagittalViewInteraction);
@@ -97,6 +105,10 @@ IGMTracking::IGMTracking()
 	m_SagittalViewerRightClickCommand->SetCallback(IGMTracking::ProcessSagittalViewRightClickInteraction);
 	m_SagittalViewerRightClickCommand->SetClientData(this);
   SagittalView->AddObserver(vtkCommand::RightButtonReleaseEvent, m_SagittalViewerRightClickCommand);
+
+  m_SagittalViewerUpdateWindowLevelWidthCommand = itk::SimpleMemberCommand<IGMTracking>::New();
+	m_SagittalViewerUpdateWindowLevelWidthCommand->SetCallbackFunction(this, &IGMTracking::ProcessSagittalViewUpdateWindowLevelWidth);
+	m_SagittalViewer.AddObserver(ISIS::UpdateWindowLevelWidthEvent(), m_SagittalViewerUpdateWindowLevelWidthCommand);
 	
 	m_DicomReaderCommand = itk::SimpleMemberCommand<IGMTracking>::New();
 	m_DicomReaderCommand->SetCallbackFunction(this, &IGMTracking::ProcessDicomReaderInteraction);
@@ -258,6 +270,9 @@ IGMTracking::IGMTracking()
   m_FixedPointSet = PointSetType::New();
 
   m_E3DTransform = IGSTK::ICPRegistration::E3DTransformType::New() ;
+
+  m_Window[0] = -600;
+  m_Window[1] = 1500;
 
 }
 
@@ -498,25 +513,31 @@ void IGMTracking::FusionPostProcessing()
 void IGMTracking::LoadPostProcessing()
 {
 	
-	m_RescaleIntensity->SetInput( m_LoadedVolume );
-	
+//	m_RescaleIntensity->SetInput( m_LoadedVolume );
+
+  m_ITK2VTKAdaptor->SetInput( m_LoadedVolume );
+//  m_FusionITK2VTKAdaptor->SetInput( m_LoadedVolume );
+
+//  m_ShiftScaleImageFilter->SetOutputScalarTypeToUnsignedChar();
+//  m_FusionShiftScaleImageFilter->SetOutputScalarTypeToUnsignedChar();
+/*	
   try
   {
-    m_ShiftScaleImageFilter->UpdateWholeExtent();
+    m_ITK2VTKAdaptor->UpdateWholeExtent();
   }
   catch( itk::ExceptionObject & exp )
   {
     fl_message( exp.GetDescription() );
     return;
   }
-
+*/
   this->SetInputData(0);
 
-  vtkFloatingPointType * spacing = m_ShiftScaleImageFilter->GetOutput()->GetSpacing();
+  VolumeType::SpacingType spacing = m_LoadedVolume->GetSpacing();
 
   m_TargetViewer.SetSpacing(spacing[0], spacing[1], spacing[2]);
 
-  VolumeViewSlider->bounds(0.0, m_ShiftScaleImageFilter->GetOutput()->GetScalarTypeMax());
+  VolumeViewSlider->bounds(0.0, itk::NumericTraits< PixelType >::max());
   VolumeViewSlider->value(80);
 	
 	const unsigned int numberOfZslices = m_LoadedVolume->GetBufferedRegion().GetSize()[2];
@@ -546,10 +567,8 @@ void IGMTracking::LoadPostProcessing()
 	m_Overlay = false;
 	m_EntryPointSelected = false; 
 	m_TargetPointSelected = false;
-
-  /*
-
-	char name[1024];
+/*
+  char name[1024];
 	
 	itk::DICOMImageIO2* pDICOMImageIO2 = (itk::DICOMImageIO2*)m_DicomVolumeReader.m_Reader->GetImageIO();
 	
@@ -606,13 +625,17 @@ void IGMTracking::LoadPostProcessing()
   m_AxialViewer.m_pAnnotation->SetModel(name);
   m_CoronalViewer.m_pAnnotation->SetModel(name);
   m_SagittalViewer.m_pAnnotation->SetModel(name);
-  */
+  
+*/
+  this->SetWindow( this->m_Window[0], this->m_Window[1] );
+//  this->m_VolumeViewer.Render();
 
+/*
   m_AxialViewer.Render();
   m_CoronalViewer.Render();
   m_SagittalViewer.Render();
   m_VolumeViewer.Render();
-
+*/
   this->AppendInfo("DICOM data loaded!");
 
 }
@@ -784,12 +807,42 @@ void IGMTracking::ProcessAxialViewInteraction( void )
   this->AppendInfo(mes);
 }
 
+void IGMTracking::ProcessAxialViewUpdateWindowLevelWidth( void )
+{
+  double level, width;
+  
+  m_AxialViewer.GetWindowLevelWidth(level, width);
+
+  this->SetWindow( level, width );
+  
+}
+
+void IGMTracking::ProcessCoronalViewUpdateWindowLevelWidth( void )
+{
+  double level, width;
+  
+  m_CoronalViewer.GetWindowLevelWidth(level, width);
+
+  this->SetWindow( level, width );
+  
+}
+
+void IGMTracking::ProcessSagittalViewUpdateWindowLevelWidth( void )
+{
+  double level, width;
+  
+  m_SagittalViewer.GetWindowLevelWidth(level, width);
+
+  this->SetWindow( level, width );
+  
+}
+
 void IGMTracking::ProcessAxialViewMouseMoveInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata)
 {
   double pos[3];
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
-  if (pTracking->m_AxialViewer.m_Actor->GetInput() != NULL)
+  if (pTracking->m_AxialViewer.GetInput() != NULL)
   {
     pTracking->m_AxialViewer.GetImagePosition(Fl::event_x(), Fl::event_y(), pos);
     pTracking->TrackingPoint(pos);
@@ -803,7 +856,7 @@ void IGMTracking::ProcessAxialViewRightClickInteraction(vtkObject *caller, unsig
   char mes[128];
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
-  if (pTracking->m_AxialViewer.m_Actor->GetInput() != NULL)
+  if (pTracking->m_AxialViewer.GetInput() != NULL)
   {
    pTracking->m_AxialViewer.GetImagePosition(Fl::event_x(), Fl::event_y(), pos);
     for (i = 0; i < 3; i++)
@@ -830,7 +883,7 @@ void IGMTracking::ProcessCoronalViewMouseMoveInteraction(vtkObject *caller, unsi
   double pos[3];
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
-  if (pTracking->m_CoronalViewer.m_Actor->GetInput() != NULL)
+  if (pTracking->m_CoronalViewer.GetInput() != NULL)
   {
     pTracking->m_CoronalViewer.GetImagePosition(Fl::event_x(), Fl::event_y(), pos);
     pTracking->TrackingPoint(pos);
@@ -845,7 +898,7 @@ void IGMTracking::ProcessCoronalViewRightClickInteraction(vtkObject *caller, uns
 
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
-  if (pTracking->m_CoronalViewer.m_Actor->GetInput() != NULL)
+  if (pTracking->m_CoronalViewer.GetInput() != NULL)
   {
     pTracking->m_CoronalViewer.GetImagePosition(Fl::event_x(), Fl::event_y(), pos);
     for (i = 0; i < 3; i++)
@@ -871,7 +924,7 @@ void IGMTracking::ProcessSagittalViewMouseMoveInteraction(vtkObject *caller, uns
   double pos[3];
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
-  if (pTracking->m_SagittalViewer.m_Actor->GetInput() != NULL)
+  if (pTracking->m_SagittalViewer.GetInput() != NULL)
   {
     pTracking->m_SagittalViewer.GetImagePosition(Fl::event_x(), Fl::event_y(), pos);
     pTracking->TrackingPoint(pos);
@@ -886,7 +939,7 @@ void IGMTracking::ProcessSagittalViewRightClickInteraction(vtkObject *caller, un
 
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
-  if (pTracking->m_SagittalViewer.m_Actor->GetInput() != NULL)
+  if (pTracking->m_SagittalViewer.GetInput() != NULL)
   {
     pTracking->m_SagittalViewer.GetImagePosition(Fl::event_x(), Fl::event_y(), pos);
     for (i = 0; i < 3; i++)
@@ -2267,41 +2320,68 @@ void IGMTracking::OnOverlay( void )
   }
 }
 
-double IGMTracking::GetImageScale( void )
+void IGMTracking::SetWindow( double level, double width )
 {
-	return m_ShiftScaleImageFilter->GetScale();
-}
-	
-void IGMTracking::SetImageScale( double val )
-{
-	m_ShiftScaleImageFilter->SetScale( val );
+/*  double scale, shift;
+
+  m_Window[0] = level;
+  m_AxialViewer.m_Window[0] = level;
+  m_CoronalViewer.m_Window[0] = level;
+  m_SagittalViewer.m_Window[0] = level;
+
+  m_Window[1] = width;
+  m_AxialViewer.m_Window[1] = width;
+  m_CoronalViewer.m_Window[1] = width;
+  m_SagittalViewer.m_Window[1] = width;
+
+  scale = 255.0 / m_Window[1];
+  shift = - (m_Window[0] - m_Window[1] / 2.0);
+
+	m_ShiftScaleImageFilter->SetScale( scale );
+  m_ShiftScaleImageFilter->SetShift( shift );
 	m_ShiftScaleImageFilter->UpdateWholeExtent();
 
-  m_FusionShiftScaleImageFilter->SetScale( val );
+  m_FusionShiftScaleImageFilter->SetScale( scale );
+  m_FusionShiftScaleImageFilter->SetShift( shift );
 	m_FusionShiftScaleImageFilter->UpdateWholeExtent();
 
 	m_AxialViewer.Render();
 	m_CoronalViewer.Render();
-	m_SagittalViewer.Render();
-}
+	m_SagittalViewer.Render();*/
 
-	
-double IGMTracking::GetImageShift( void )
-{
-	return m_ShiftScaleImageFilter->GetShift();
-}
-	
-void IGMTracking::SetImageShift( double val )
-{
-	m_ShiftScaleImageFilter->SetShift( val );
-	m_ShiftScaleImageFilter->UpdateWholeExtent();
+  m_Window[0] = level;
+  m_Window[1] = width;
 
-  m_FusionShiftScaleImageFilter->SetShift( val );
-	m_FusionShiftScaleImageFilter->UpdateWholeExtent();
+  m_AxialViewer.SetWindowLevelWidth( level, width );
+	m_CoronalViewer.SetWindowLevelWidth( level, width );
+	m_SagittalViewer.SetWindowLevelWidth( level, width );
 
-	m_AxialViewer.Render();
+  m_AxialViewer.Render();
 	m_CoronalViewer.Render();
 	m_SagittalViewer.Render();
+
+  printf("%.3f %.3f\n", m_Window[0], m_Window[1]);
+}
+
+double IGMTracking::GetWindowLevel( void )
+{
+	return m_Window[0];
+}
+	
+void IGMTracking::SetWindowLevel( double val )
+{
+  this->SetWindow( val, this->m_Window[1] );
+}
+
+	
+double IGMTracking::GetWindowWidth( void )
+{
+	return m_Window[1];
+}
+	
+void IGMTracking::SetWindowWidth( double val )
+{
+	this->SetWindow( this->m_Window[0], val );
 }
 
 void IGMTracking::SetNeedleLength( const double val )
@@ -2884,7 +2964,7 @@ void IGMTracking::OnSegmentation()
       break;
     }
 
-    m_FusionRescaleIntensity->SetInput( m_ResampleImagePostFilter->GetOutput() );
+    m_FusionITK2VTKAdaptor->SetInput( m_ResampleImagePostFilter->GetOutput() );
 
   }
   else
@@ -2904,7 +2984,7 @@ void IGMTracking::OnSegmentation()
       m_ConfidenceConnectedFilter->SetNumberOfIterations(m_SegParameters.m_Iterations);
       m_ConfidenceConnectedFilter->SetInitialNeighborhoodRadius(m_SegParameters.m_Radius);
       
-      m_FusionRescaleIntensity->SetInput(m_ConfidenceConnectedFilter->GetOutput());
+      m_FusionITK2VTKAdaptor->SetInput(m_ConfidenceConnectedFilter->GetOutput());
       break;
     case 1:
       m_ConnectedThresholdFilter->SetInput(m_LoadedVolume);
@@ -2913,7 +2993,7 @@ void IGMTracking::OnSegmentation()
       m_ConnectedThresholdFilter->SetLower(pixel + m_SegParameters.m_Lower);
       m_ConnectedThresholdFilter->SetUpper(pixel + m_SegParameters.m_Upper);
       
-      m_FusionRescaleIntensity->SetInput(m_ConnectedThresholdFilter->GetOutput());
+      m_FusionITK2VTKAdaptor->SetInput(m_ConnectedThresholdFilter->GetOutput());
       break;
     case 2:
       m_NeighborhoodConnectedFilter->SetInput(m_LoadedVolume);
@@ -2923,7 +3003,7 @@ void IGMTracking::OnSegmentation()
       m_NeighborhoodConnectedFilter->SetUpper(pixel + m_SegParameters.m_Upper);
       m_NeighborhoodConnectedFilter->SetRadius(radius);
       
-      m_FusionRescaleIntensity->SetInput(m_NeighborhoodConnectedFilter->GetOutput());
+      m_FusionITK2VTKAdaptor->SetInput(m_NeighborhoodConnectedFilter->GetOutput());
       break;
     case 3:
       m_IsolatedConnectedFilter->SetInput(m_LoadedVolume);
@@ -2932,7 +3012,7 @@ void IGMTracking::OnSegmentation()
       m_IsolatedConnectedFilter->SetSeed2(index2);
       m_IsolatedConnectedFilter->SetLower(pixel + m_SegParameters.m_Lower);
       
-      m_FusionRescaleIntensity->SetInput(m_IsolatedConnectedFilter->GetOutput());
+      m_FusionITK2VTKAdaptor->SetInput(m_IsolatedConnectedFilter->GetOutput());
       break;
     }
   }  
@@ -2946,7 +3026,7 @@ void IGMTracking::OnSegmentation()
 void IGMTracking::SetInputData(int pipeline)
 {
   m_Pipeline = pipeline;
-
+/*
   switch (pipeline)
   {
   case 0:
@@ -2975,7 +3055,37 @@ void IGMTracking::SetInputData(int pipeline)
     m_VolumeViewer.SetInput( m_ImageBlend->GetOutput() );
     break;
   }
+*/ 
   
+  switch (pipeline)
+  {
+  case 0:
+    m_ITK2VTKAdaptor->Update();
+
+    m_AxialViewer.SetInput( m_ITK2VTKAdaptor->GetOutput() );
+    m_CoronalViewer.SetInput( m_ITK2VTKAdaptor->GetOutput() );
+    m_SagittalViewer.SetInput( m_ITK2VTKAdaptor->GetOutput() );
+    m_VolumeViewer.SetInput( m_ITK2VTKAdaptor->GetOutput() );
+    break;
+  case 1:
+    m_FusionITK2VTKAdaptor->Update();
+
+    m_AxialViewer.SetInput( m_FusionITK2VTKAdaptor->GetOutput() );
+    m_CoronalViewer.SetInput( m_FusionITK2VTKAdaptor->GetOutput() );
+    m_SagittalViewer.SetInput( m_FusionITK2VTKAdaptor->GetOutput() );
+    m_VolumeViewer.SetInput( m_FusionITK2VTKAdaptor->GetOutput() );
+    break;
+  case 2:
+    
+    m_ImageBlend->Update();
+
+    m_AxialViewer.SetInput( m_ImageBlend->GetOutput() );
+    m_CoronalViewer.SetInput( m_ImageBlend->GetOutput() );
+    m_SagittalViewer.SetInput( m_ImageBlend->GetOutput() );
+    m_VolumeViewer.SetInput( m_ImageBlend->GetOutput() );
+    break;
+  }
+
 }
 
 void IGMTracking::RenderAllWindow()
