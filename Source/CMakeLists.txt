@@ -15,7 +15,6 @@ SET(IGSTKSandbox_HEADS
   igstkEllipsoidObjectRepresentation.h  
   igstkCylinderObjectRepresentation.h
   igstkMouseTracker.h
-  itkCylinderSpatialObject.h
 )
 
 # The implementation files
@@ -31,7 +30,6 @@ SET(IGSTKSandbox_SRCS
   igstkEllipsoidObjectRepresentation.cxx
   igstkCylinderObjectRepresentation.cxx
   igstkMouseTracker.cxx
-  itkCylinderSpatialObject.cxx
 )
 
 # Adding the IGSTKSandbox library
@@ -40,7 +38,7 @@ ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS})
 # Linking with the FLTK, ITK and VTK libraries
 TARGET_LINK_LIBRARIES( IGSTKSandbox
     IGSTK
-    ITKIO ITKBasicFilters ITKNumerics ITKCommon 
+    ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject 
     vtkRendering vtkGraphics vtkHybrid vtkImaging 
     vtkIO vtkFiltering vtkCommon vtkPatented
     ${FLTK_LIBRARIES}
