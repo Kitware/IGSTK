@@ -3,20 +3,54 @@
 
 
 #include "IGMTrackingGUI.h"
-#include "IGMTImageSliceViewer.h"
-//#include "VolumeViewer.h"
 #include "AuroraTracker.h"
+#include "IGMTImageSliceViewer.h"
 #include "MotionViewer.h"
+#include "IGMTVolumeViewer.h"
+#include "IGMTTargetViewer.h"
 #include <process.h>
 
 #include "itkCommand.h"
+#include "vtkCallbackCommand.h"
 
 class vtkImageShiftScale;
 
+#define PORTNUM 4
 
 class IGMTracking : public IGMTrackingGUI
 {
+
 public:
+	void OnSaveSegmentationData();
+	void OnUpdateSegParameters();
+	void RenderAllWindow();
+	void SetInputData(int type);
+	void OnSegmentation();
+	static void MCProgressFunc(void* arg);
+  static void DecProgressFunc(void* arg);
+  static void SmoothProgressFunc(void* arg);
+
+	void SaveSnapshot();
+	void RenderSectionWindow();
+	void OnUpdateOpacity(double opa);
+
+	int m_VolumeType;
+  int m_Pipeline;
+	void OnFusionImage();
+
+  int m_Probe[PORTNUM], m_Ref[PORTNUM], m_UID[PORTNUM];
+  int m_ProbeID, m_RefID;
+  int m_FullSizeIdx;
+
+//  double m_FusionOpacity;
+
+  double m_Offset[PORTNUM], m_Length[PORTNUM], m_Radius[PORTNUM];
+
+ 	void OnUpdateProbeParameters();
+	void OnUpdateLayout();
+	void OnLayout();
+	void SetVolumeThreshold(int thres);
+//	void SaveAsRaw();
 	bool m_ForceRecord;
 	void RecordReference();
 	
@@ -25,6 +59,24 @@ public:
 	virtual ~IGMTracking( void );
 
 	void ProcessDicomReading();
+
+  void ProcessConnectedFilter();
+
+  void ProcessConnectedFilterStart();
+
+  void ProcessConnectedFilterEnd();
+
+  void ProcessResampleImagePreFilter();
+
+  void ProcessResampleImagePreFilterStart();
+
+  void ProcessResampleImagePreFilterEnd();
+
+  void ProcessResampleImagePostFilter();
+
+  void ProcessResampleImagePostFilterStart();
+
+  void ProcessResampleImagePostFilterEnd();
 	
 	virtual void Show( void );
 	
@@ -37,20 +89,24 @@ public:
 	virtual void LoadDICOM( void );
 	
 	virtual void LoadPostProcessing( void );
+
+	virtual void FusionPostProcessing( void );
 	
 	virtual void SelectAxialSlice( int );
 	
 	virtual void SelectCoronalSlice( int );
 	
-	virtual void SelectSaggitalSlice( int );
+	virtual void SelectSagittalSlice( int );
 	
 	virtual void ProcessAxialViewInteraction( void );
+
+  virtual void ProcessCoronalViewInteraction( void );
 	
-	virtual void ProcessCoronalViewInteraction( void );
-	
-	virtual void ProcessSaggitalViewInteraction( void );
+	virtual void ProcessSagittalViewInteraction( void );
 	
 	virtual void SyncAllViews( const double aboutPoint[3] );
+
+  int TrackingPoint( const float aboutPoint[3], bool showpos = true );
 
 	virtual void ProcessDicomReaderInteraction( void );
 	
@@ -78,7 +134,7 @@ public:
 
 	virtual void OnOverlay( void );
 
-	virtual void OnMotionTracking( void );
+//	virtual void OnMotionTracking( void );
 
 	virtual double GetImageScale( void );
 	
@@ -90,11 +146,21 @@ public:
 	
 	virtual void SetNeedleLength( const double val );
 	
+//<<<<<<< IGMTracking.h
+//	virtual void SetNeedleRadius( const float val );
+
+  virtual void SetProbeLength( int i, const float val );
+	
+	virtual void SetProbeRadius( int i, const float val );
+//=======
 	virtual void SetNeedleRadius( const double val );
+//>>>>>>> 1.3
 	
 	virtual void DisplaySelectedPosition( const bool show);
 
 	virtual void DisplayTargetPosition( const bool show);
+
+//  virtual void DisplayTipPosition( const bool show);
 
 	virtual void DisplayEntryPosition( const bool show);
 
@@ -112,29 +178,85 @@ public:
 	
 	bool		m_Overlay;							// remove this later with a state variable
 
+  static void  ProcessAxialViewMouseMoveInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata);
+
+  static void  ProcessAxialViewRightClickInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata);
+
+  static void  ProcessCoronalViewMouseMoveInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata);
+
+  static void  ProcessCoronalViewRightClickInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata);
+
+  static void  ProcessSagittalViewMouseMoveInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata);
+
+  static void  ProcessSagittalViewRightClickInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata);
+
 private:
+
+  int m_WindowType;
+
+  int m_RenderingMethod;
+
+  int m_RenderingCategory;
+
+  int m_DesiredTriNum;
 
 	ISIS::IGMTImageSliceViewer  m_AxialViewer;
 	
 	ISIS::IGMTImageSliceViewer  m_CoronalViewer;
 	
-	ISIS::IGMTImageSliceViewer  m_SaggitalViewer;
+	ISIS::IGMTImageSliceViewer  m_SagittalViewer;
 	
-//	ISIS::VolumeViewer			m_VolumeViewer;
-
 	ISIS::MotionViewer			m_MotionViewer;
+
+  IGSTK::IGMTVolumeViewer     m_VolumeViewer;
+
+  IGSTK::IGMTTargetViewer     m_TargetViewer;
 	
 	vtkImageShiftScale    * m_ShiftScaleImageFilter;
+
+  vtkImageShiftScale    * m_FusionShiftScaleImageFilter;
+
+  vtkImageBlend         * m_ImageBlend;
 	
 	itk::SimpleMemberCommand<IGMTracking>::Pointer      m_AxialViewerCommand;
+
+  vtkCallbackCommand*      m_AxialViewerMouseMoveCommand;
+
+  vtkCallbackCommand*      m_AxialViewerRightClickCommand;
+
+  itk::SimpleMemberCommand<IGMTracking>::Pointer      m_CoronalViewerCommand;
+
+  vtkCallbackCommand*      m_CoronalViewerMouseMoveCommand;
+
+  vtkCallbackCommand*      m_CoronalViewerRightClickCommand;
 	
-	itk::SimpleMemberCommand<IGMTracking>::Pointer      m_CoronalViewerCommand;
-	
-	itk::SimpleMemberCommand<IGMTracking>::Pointer      m_SaggitalViewerCommand;
+	itk::SimpleMemberCommand<IGMTracking>::Pointer      m_SagittalViewerCommand;
+
+  vtkCallbackCommand*      m_SagittalViewerMouseMoveCommand;
+
+  vtkCallbackCommand*      m_SagittalViewerRightClickCommand;
 	
 	itk::SimpleMemberCommand<IGMTracking>::Pointer      m_DicomReaderCommand;
 
-	itk::SimpleMemberCommand<IGMTracking>::Pointer		m_ProgressCommand;
+	itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_ProgressCommand;
+
+  itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_ConnectedFilterProgressCommand;
+
+  itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_ConnectedFilterStartCommand;
+
+  itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_ConnectedFilterEndCommand;
+
+  itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_ResampleImagePreProgressCommand;
+
+  itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_ResampleImagePreStartCommand;
+
+  itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_ResampleImagePreEndCommand;
+
+  itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_ResampleImagePostProgressCommand;
+
+  itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_ResampleImagePostStartCommand;
+
+  itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_ResampleImagePostEndCommand;
 
 	AuroraTracker	m_AuroraTracker;
 
@@ -142,7 +264,13 @@ private:
 
 	int				m_ReferenceToolHandle;
 
-	double			m_ClickedPoint[3]; 
+//<<<<<<< IGMTracking.h
+	double			m_ClickedPoint[3], m_RightClickedPoint[3]; 
+
+  int       m_PointIndex[3];
+//=======
+//	double			m_ClickedPoint[3]; 
+//>>>>>>> 1.3
 
 	bool			m_ShowVolume;
 
