@@ -24,6 +24,9 @@ namespace igstk
 Transform
 ::Transform()
 {
+  // Error is NEVER zero. In the best situation is on the range of the smaller
+  // non-zero epsilon that can be represented with the ErrorType. 
+  m_Error = itk::NumericTraits< ErrorType >::min();
 }
 
 
@@ -39,6 +42,7 @@ Transform
 {
   m_Translation = inputTransform.m_Translation; 
   m_Rotation    = inputTransform.m_Rotation;
+  m_Error       = inputTransform.m_Error;
   m_TimeStamp   = inputTransform.m_TimeStamp;
   return *this;
 }
@@ -49,11 +53,13 @@ Transform
 ::SetTranslationAndRotation(
           const  VectorType & translation,
           const  VersorType & rotation,
+                 ErrorType errorValue,
           TimePeriodType millisecondsToExpiration)
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Translation = translation;
   m_Rotation    = rotation;
+  m_Error       = errorValue;
 }
 
 
@@ -61,10 +67,12 @@ void
 Transform
 ::SetTranslation(
           const  VectorType & translation,
+                 ErrorType errorValue,
           TimePeriodType millisecondsToExpiration)
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Translation = translation;
+  m_Error       = errorValue;
 }
 
 
@@ -72,10 +80,12 @@ void
 Transform
 ::SetRotation(
           const  VersorType & rotation,
+                 ErrorType errorValue,
           TimePeriodType millisecondsToExpiration)
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Rotation = rotation;
+  m_Error       = errorValue;
 }
 
 
@@ -94,6 +104,15 @@ Transform
 {
   return m_Rotation;
 }
+
+
+const Transform::ErrorType &
+Transform
+::GetError() const
+{
+  return m_Error;
+}
+
 
 
 
@@ -172,6 +191,7 @@ Transform
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Translation.Fill( 0.0 );
   m_Rotation.SetIdentity();
+  m_Error = itk::NumericTraits< ErrorType >::min();
 }
 
 

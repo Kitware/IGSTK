@@ -60,6 +60,7 @@ public:
 
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
+  typedef double                      ErrorType;
   typedef TimeStamp::TimePeriodType   TimePeriodType;
   
 public:
@@ -78,6 +79,7 @@ public:
   void SetTranslationAndRotation(
           const  VectorType & translation,
           const  VersorType & rotation,
+                 ErrorType errorValue,
           TimePeriodType millisecondsToExpiration);
 
   /** Set only Rotation. This method should be used when the transform
@@ -88,6 +90,7 @@ public:
    * the method until that time plus the millisecondsToExpiration value. */
   void SetRotation( 
           const  VersorType & rotation,
+                 ErrorType errorValue,
           TimePeriodType millisecondsToExpiration);
 
   /** Set only Translation. This method should be used when the transform
@@ -98,6 +101,7 @@ public:
    * the method until that time plus the millisecondsToExpiration value. */
   void SetTranslation( 
           const  VectorType & translation,
+                 ErrorType errorValue,
           TimePeriodType millisecondsToExpiration);
 
 
@@ -112,6 +116,12 @@ public:
    * of the transform may have expired. */
   const VersorType & GetRotation() const; 
        
+
+  /** Returns the translational error of this transform. The correct
+   * interpretation of this error my be tracker dependent and therefore must be
+   * analyzed carefully. */
+  const ErrorType & GetError() const; 
+ 
 
   /** Returns the time at which the validity of this information starts. The
    * data in this transform should not be used for scenes to be rendered
@@ -166,6 +176,7 @@ private:
   TimeStamp       m_TimeStamp;
   VectorType      m_Translation;
   VersorType      m_Rotation;
+  ErrorType       m_Error;
 
 };
 
