@@ -48,7 +48,10 @@ EllipsoidObjectRepresentation::~EllipsoidObjectRepresentation()
 void EllipsoidObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << m_EllipsoidObject << std::endl; 
+  if(m_EllipsoidObject)
+    { 
+    os << indent << m_EllipsoidObject << std::endl; 
+    }
 }
 
 
