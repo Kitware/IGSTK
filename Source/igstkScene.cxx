@@ -81,24 +81,6 @@ void Scene::AddToView( View * view )
 }
 
 
-/** Update the scene */
-void Scene::Update()
-{
-  // call update on the objects in the scene
-  ObjectListType::iterator it = m_Objects.begin();
-  ObjectListType::iterator itEnd = m_Objects.end();
-
-  while(it != itEnd)
-    {
-    // We update only if the object has been modified
-    if((*it)->IsModified())
-      {
-      (*it)->UpdatePositionFromGeometry();
-      }
-    it++;
-    }
-}
-
 /** Return the number of objects in the Scene */
 unsigned int 
 Scene::GetNumberOfObjects() const

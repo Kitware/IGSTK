@@ -73,9 +73,6 @@ public:
   /** Clear function : Remove all the objects in the scene */
   void Clear();
 
-  /** Update the scene */
-  void Update();
-
   /** Connect the Scene to a particular View */
   void AddToView( View * view );
 
