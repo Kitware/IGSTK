@@ -44,13 +44,13 @@ ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${BasicTests_SRCS})
 
 TARGET_LINK_LIBRARIES(igstkSandboxTests IGSTKSandbox)
 
-ADD_EXECUTABLE(SystemInformation SystemInformation.cxx)
-ADD_TEST(SystemInformation ${EXECUTABLE_OUTPUT_PATH}/SystemInformation)
-TARGET_LINK_LIBRARIES(SystemInformation vtkCommon)
+ADD_EXECUTABLE(igstkSystemInformation igstkSystemInformation.cxx)
+ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation)
+TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon)
 
 
 # Configure a header needed by SystemInformation.
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/SystemInformation.h.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/SystemInformation.h"
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/igstkSystemInformation.h"
                @ONLY IMMEDIATE)
 
