@@ -17,6 +17,7 @@
 #ifndef __igstkSerialCommunication_h
 #define __igstkSerialCommunication_h
 
+#include "itkCommand.h"
 #include "itkObject.h"
 #include "itkEventObject.h"
 
@@ -24,6 +25,10 @@
 #include "igstkLogger.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
+
+
+class AuroraTracker;
+class SerialCommunicationCommand;
 
 namespace igstk
 {
@@ -35,10 +40,12 @@ namespace igstk
  * \ingroup Communication
  */
 
-/** INHERIT Communication class from itk::Object **/
-
-class SerialCommunication : public Communication, public itk::Object
+class SerialCommunication : public Communication
 {
+public:
+
+  FriendClassMacro( AuroraTracker );
+
 protected:
 
   const unsigned int m_ReadBufferSize; // read buffer size in bytes.
@@ -88,10 +95,10 @@ public:
 
 
   /**  Run-time type information (and related methods). */
-//  itkTypeMacro(SerialCommunication, Object);
+  itkTypeMacro(SerialCommunication, Object);
 
-  /** Method for creation of a reference counted object. */
-//  NewMacro(Self);  
+  /** Abstract class doesn't have a New method */
+  //NewMacro(Self);  
 
   GetMacro(BaudRate, BaudRateType);
 
@@ -116,25 +123,25 @@ public:
   /** The method OpenCommunication sets up communication as per the data
   provided. */
 
-  void OpenCommunication( const void *data  = NULL );
+  bool OpenCommunication( const void *data  = NULL );
 
   /** The method CloseCommunication closes the communication. */
-  void CloseCommunication( void );
+  bool CloseCommunication( void );
 
   /**Rests communication port by suspending character transmission  
   and placing the transmission line in a break state, and restarting
   transmission after a short delay.*/
-  void RestCommunication( void );
+  bool RestCommunication( void );
 
   /** Flushes output buffer of any waiting commands to the hardware. 
       Only flushes the transmit buffer, not the receive buffer.*/
-  void FlushOutputBuffer( void );
+  bool FlushOutputBuffer( void );
 
   /** SendString method sends the string to the hardware. */
-  void SendString( const CommunicationDataType& message );
+  bool SendString( const CommunicationDataType& message );
 
   /** ReceiveString method sends the string to the hardware. */
-  void ReceiveString( void ); //const CommunicationDataType& message );
+  bool ReceiveString( void ); //const CommunicationDataType& message );
 
    /** The SetLogger method is used to attach a logger object to the
    serial communication object for logging. */
@@ -194,6 +201,9 @@ protected:
 
   /** The GetLogger method return pointer to the logger object. */
   LoggerType* GetLogger(  void );
+
+  /** Command for the events created. */
+  itk::Command    *m_pCommand; 
 
   // Communication Parameters
 
@@ -267,8 +277,8 @@ protected:
   InputType                m_OpenPortFailureInput;
 
   InputType                m_SetUpDataBuffersInput;
-  InputType                m_DataBufferSetUpSuccessInput;
-  InputType                m_DataBufferSetUpFailureInput;
+  InputType                m_DataBuffersSetUpSuccessInput;
+  InputType                m_DataBuffersSetUpFailureInput;
 
   InputType                m_SetUpDataTransferParametersInput;
   InputType                m_DataTransferParametersSetUpSuccessInput;

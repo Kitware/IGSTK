@@ -65,12 +65,12 @@ void SerialCommunicationForWindows::SetUpDataBuffersProcessing( void )
   if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL) || 
       !SetupComm(this->m_PortHandle, this->m_ReadBufferSize, this->m_WriteBufferSize)) 
   {
-    m_pDataBuffersSetUpResultInput = &m_DataBufferSetUpFailureInput;
+    m_pDataBuffersSetUpResultInput = &m_DataBuffersSetUpFailureInput;
     this->InvokeEvent( SetDataBufferSizeFailureEvent() );
   }
   else
   {
-    m_pDataBuffersSetUpResultInput = &m_DataBufferSetUpSuccessInput;
+    m_pDataBuffersSetUpResultInput = &m_DataBuffersSetUpSuccessInput;
     //Clear out buffers
     PurgeComm(this->m_PortHandle, PURGE_TXABORT | PURGE_TXCLEAR | PURGE_RXABORT | PURGE_RXCLEAR);
     this->m_ReadDataSize = 0;

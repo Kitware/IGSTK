@@ -17,6 +17,7 @@
 #include <iostream>
 
 #include "igstkSerialCommunication.h"
+#include "igstkSerialCommunicationCommand.h"
 
 
 namespace igstk
@@ -64,8 +65,8 @@ m_OutputBuffer( NULL), m_PortRestSpan(10), m_InvalidPortNumber( -1 )
   m_StateMachine.AddInput( m_OpenPortFailureInput, "OpenPortFailureInput");
 
   m_StateMachine.AddInput( m_SetUpDataBuffersInput, "SetUpDataBuffersInput");
-  m_StateMachine.AddInput( m_DataBufferSetUpSuccessInput, "DataBufferSetUpSuccessInput");
-  m_StateMachine.AddInput( m_DataBufferSetUpFailureInput, "DataBufferSetUpFailureInput");
+  m_StateMachine.AddInput( m_DataBuffersSetUpSuccessInput, "DataBuffersSetUpSuccessInput");
+  m_StateMachine.AddInput( m_DataBuffersSetUpFailureInput, "DataBuffersSetUpFailureInput");
  
   m_StateMachine.AddInput( m_SetUpDataTransferParametersInput, "SetUpDataTransferParametersInput");
   m_StateMachine.AddInput( m_DataTransferParametersSetUpSuccessInput, "DataTransferParametersSetUpSuccessInput");
@@ -89,8 +90,8 @@ m_OutputBuffer( NULL), m_PortRestSpan(10), m_InvalidPortNumber( -1 )
   m_StateMachine.AddTransition( m_AttemptToOpenPortState, m_OpenPortFailureInput, m_IdleState, NoAction);
 
   m_StateMachine.AddTransition( m_PortOpenState, m_SetUpDataBuffersInput, m_AttemptToSetUpDataBuffersState, &SerialCommunication::SetUpDataBuffersProcessing);
-  m_StateMachine.AddTransition( m_AttemptToSetUpDataBuffersState, m_DataBufferSetUpSuccessInput, m_DataBuffersSetState, NoAction);
-  m_StateMachine.AddTransition( m_AttemptToSetUpDataBuffersState, m_DataBufferSetUpFailureInput, m_PortOpenState, NoAction);
+  m_StateMachine.AddTransition( m_AttemptToSetUpDataBuffersState, m_DataBuffersSetUpSuccessInput, m_DataBuffersSetState, NoAction);
+  m_StateMachine.AddTransition( m_AttemptToSetUpDataBuffersState, m_DataBuffersSetUpFailureInput, m_PortOpenState, NoAction);
 
   m_StateMachine.AddTransition( m_DataBuffersSetState, m_SetUpDataTransferParametersInput, m_AttemptToSetUpDataTransferParametersState, &SerialCommunication::SetUpDataTransferParametersProcessing);
   m_StateMachine.AddTransition( m_AttemptToSetUpDataTransferParametersState, m_DataTransferParametersSetUpSuccessInput, m_PortReadyForCommunicationState, NoAction);
@@ -104,8 +105,11 @@ m_OutputBuffer( NULL), m_PortRestSpan(10), m_InvalidPortNumber( -1 )
   m_StateMachine.AddTransition( m_AttemptToClosePortState, m_ClosePortFailureInput, m_PortOpenState, &SerialCommunication::ClosePortFailureProcessing);
 
   m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_RestPortInput, m_PortReadyForCommunicationState, &SerialCommunication::RestPortProcessing);
+
   m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_FlushOutputBufferInput, m_PortReadyForCommunicationState, &SerialCommunication::FlushOutputBufferProcessing);
+
   m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_SendStringInput, m_PortReadyForCommunicationState, &SerialCommunication::SendStringProcessing);
+
   m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_ReceiveStringInput, m_PortReadyForCommunicationState, &SerialCommunication::ReceiveStringProcessing);
 
   m_StateMachine.SelectInitialState( m_IdleState );
@@ -113,9 +117,12 @@ m_OutputBuffer( NULL), m_PortRestSpan(10), m_InvalidPortNumber( -1 )
   // Initialize result input pointers
 
   m_pOpenPortResultInput = &m_OpenPortSuccessInput;
-  m_pDataBuffersSetUpResultInput = &m_DataBufferSetUpSuccessInput;
+  m_pDataBuffersSetUpResultInput = &m_DataBuffersSetUpSuccessInput;
   m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpSuccessInput;
   m_pClosePortResultInput = &m_ClosePortSuccessInput;
+
+  // Create instance of serial command
+  m_pCommand = new SerialCommunicationCommand( this );
 
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
@@ -128,15 +135,12 @@ SerialCommunication::~SerialCommunication()
   this->CloseCommunication();
 }
 
-void SerialCommunication::CloseCommunication( void )
+bool SerialCommunication::OpenCommunication( const void *data )
 {
-  this->m_StateMachine.ProcessInput( m_ClosePortInput );
-  this->m_StateMachine.ProcessInput( *m_pClosePortResultInput );
-}
+//  if(m_pCommand==NULL)
+//  {
+//  }
 
-
-void SerialCommunication::OpenCommunication( const void *data )
-{
   // Read data from XML file
 
   // Attempt to open communication port
@@ -151,21 +155,37 @@ void SerialCommunication::OpenCommunication( const void *data )
   // Attempt to set up communication parameters 
   this->m_StateMachine.ProcessInput( m_SetUpDataTransferParametersInput );
   this->m_StateMachine.ProcessInput( *m_pDataTransferParametersSetUpResultInput );
- }
 
-void SerialCommunication::RestCommunication( void )
+  // Return "true" if successful, else return "false"
+  return(  (m_pOpenPortResultInput==&m_OpenPortSuccessInput)
+         &&(m_pDataBuffersSetUpResultInput==&m_DataBuffersSetUpSuccessInput)
+         &&(m_pDataTransferParametersSetUpResultInput==&m_DataTransferParametersSetUpSuccessInput) );
+}
+
+
+bool SerialCommunication::CloseCommunication( void )
+{
+  this->m_StateMachine.ProcessInput( m_ClosePortInput );
+  this->m_StateMachine.ProcessInput( *m_pClosePortResultInput );
+  return(m_pClosePortResultInput==&m_ClosePortSuccessInput);
+}
+
+
+bool SerialCommunication::RestCommunication( void )
 {
   this->m_StateMachine.ProcessInput( m_RestPortInput );
+  return true;
 }
 
 
-void SerialCommunication::FlushOutputBuffer( void )
+bool SerialCommunication::FlushOutputBuffer( void )
 {
   this->m_StateMachine.ProcessInput( m_FlushOutputBufferInput );
+  return true;
 }
 
 
-void SerialCommunication::SendString( const CommunicationDataType& message )
+bool SerialCommunication::SendString( const CommunicationDataType& message )
 {
   int strSize = (message.size()<m_WriteBufferSize) ? message.size() : m_WriteBufferSize;
   memcpy(m_OutputBuffer, message.c_str(), sizeof(char)*strSize);
@@ -173,11 +193,13 @@ void SerialCommunication::SendString( const CommunicationDataType& message )
 //  m_OutputBuffer[strSize+2] = '\0';
   std::cout << "Message length = " << strSize << ", Message = " << m_OutputBuffer << std::endl;
   this->m_StateMachine.ProcessInput( m_SendStringInput );
+  return true;
 }
 
-void SerialCommunication::ReceiveString( void )
+bool SerialCommunication::ReceiveString( void )
 {
   this->m_StateMachine.ProcessInput( m_ReceiveStringInput );
+  return true;
 }
 
 void SerialCommunication::SetLogger( LoggerType* logger )
