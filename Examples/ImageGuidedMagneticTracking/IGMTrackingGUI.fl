@@ -213,6 +213,11 @@ RecordButton->value(1 - RecordButton->value());}
             xywh {0 0 100 20}
           }
           menuitem {} {
+            label {Load Skeleton}
+            callback {this->OnLoadSkeleton();} selected
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
             label {Load Path}
             callback {this->OnLoadPath();}
             xywh {0 0 100 20}
@@ -633,6 +638,8 @@ m_InfoPane->show_insert_position();} {}
   } {}
   Function {OnSimulatePath()} {open return_type {virtual void}
   } {}
-  Function {OnLoadPET()} {open selected return_type {virtual void}
+  Function {OnLoadPET()} {open return_type {virtual void}
+  } {}
+  Function {OnLoadSkeleton()} {open return_type {virtual void}
   } {}
 } 

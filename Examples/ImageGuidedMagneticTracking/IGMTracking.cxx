@@ -255,9 +255,9 @@ IGMTracking::IGMTracking()
 
   m_MovingPointSet = PointSetType::New();
 
-  m_CATransform = IGSTK::FantasticRegistration::CATransformType::New() ;
+  m_FixedPointSet = PointSetType::New();
 
-  m_E3DTransform = IGSTK::FantasticRegistration::E3DTransformType::New() ;
+  m_E3DTransform = IGSTK::ICPRegistration::E3DTransformType::New() ;
 
 }
 
@@ -364,8 +364,8 @@ void IGMTracking::Quit()
  /* 
   unsigned int i;
   
-  IGSTK::FantasticRegistration::PointsContainerType::Pointer pc = IGSTK::FantasticRegistration::PointsContainerType::New();
-  IGSTK::FantasticRegistration::PointSetType::PointType point;
+  IGSTK::ICPRegistration::PointsContainerType::Pointer pc = IGSTK::ICPRegistration::PointsContainerType::New();
+  IGSTK::ICPRegistration::PointSetType::PointType point;
   unsigned int it = 0;
 
   for (i = 0; i < 15; i++)
@@ -377,10 +377,10 @@ void IGMTracking::Quit()
       it++;
   }
 
-  this->m_FantasticRegistration.m_FixedPointSet->SetPoints(pc);
+  this->m_ICPRegistration.m_FixedPointSet->SetPoints(pc);
 
   it = 0;
-  pc = IGSTK::FantasticRegistration::PointsContainerType::New();
+  pc = IGSTK::ICPRegistration::PointsContainerType::New();
 
   for (i = 0; i < 25; i++)
   {
@@ -393,10 +393,10 @@ void IGMTracking::Quit()
 
   }
 
-  this->m_FantasticRegistration.m_MovingPointSet->SetPoints(pc);
-  m_FantasticRegistration.StartRegistration();
+  this->m_ICPRegistration.m_MovingPointSet->SetPoints(pc);
+  m_ICPRegistration.StartRegistration();
  
-  IGSTK::FantasticRegistration::E3DParametersType para = m_FantasticRegistration.m_PointSetToPointSetRegistration->GetLastTransformParameters();
+  IGSTK::ICPRegistration::E3DParametersType para = m_ICPRegistration.m_PointSetToPointSetRegistration->GetLastTransformParameters();
 //  m_TTransform->SetParameters(para);
 
   double p[15];
@@ -406,8 +406,8 @@ void IGMTracking::Quit()
     p[i] = para[i];
   }
 
-  double s1 = m_FantasticRegistration.m_LMOptimizer->GetOptimizer()->get_start_error();
-  double s2 = m_FantasticRegistration.m_LMOptimizer->GetOptimizer()->get_end_error();
+  double s1 = m_ICPRegistration.m_LMOptimizer->GetOptimizer()->get_start_error();
+  double s2 = m_ICPRegistration.m_LMOptimizer->GetOptimizer()->get_end_error();
 */
   this->Hide();
 
@@ -1075,7 +1075,7 @@ void IGMTracking::SetImageFiducial( unsigned int fiducialNumber )
 		fiducialNumber + 1, m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
 	this->PrintMessage(m_StringBuffer);
 
-  m_FantasticRegistration.AddFixedPoint(point);
+//  m_ICPRegistration.AddFixedPoint(point);
 }
 
 
@@ -1384,7 +1384,7 @@ void IGMTracking::DumpRegisterMatrix( char* filename)
 
   double element;
   vtkMatrix4x4* matrix;
-  IGSTK::FantasticRegistration::CAParametersType para;
+  IGSTK::ICPRegistration::E3DParametersType para;
 
   sprintf(mes, "Reg=%d\n", m_RegParameters.m_RegType);
   if (fp)
@@ -1416,8 +1416,8 @@ void IGMTracking::DumpRegisterMatrix( char* filename)
     break;
   case 2:
     sprintf(mes, "");
-    para = m_FantasticRegistration.m_PointSetToPointSetRegistration->GetLastTransformParameters();
-    for (i = 0; i < m_FantasticRegistration.m_PointSetToPointSetRegistration->GetTransform()->GetNumberOfParameters(); i++)
+    para = m_ICPRegistration.m_PointSetToPointSetRegistration->GetLastTransformParameters();
+    for (i = 0; i < m_ICPRegistration.m_PointSetToPointSetRegistration->GetTransform()->GetNumberOfParameters(); i++)
     {
       sprintf(mes, "%s %4.3f\n", mes, para[i]);
     }
@@ -1468,8 +1468,8 @@ void IGMTracking::DumpRegisterInfo( void )
   vtkPoints* points;
   float* p;
 
-  IGSTK::FantasticRegistration::PointSetType::Pointer pointset;
-  IGSTK::FantasticRegistration::PointType point;
+  IGSTK::ICPRegistration::PointSetType::Pointer pointset;
+  IGSTK::ICPRegistration::PointType point;
 
   FILE * fp;  
   fp = fopen(filename, "w+");
@@ -1505,7 +1505,7 @@ void IGMTracking::DumpRegisterInfo( void )
     }
     break;
   case 2:
-    pointset = (IGSTK::FantasticRegistration::PointSetType*)m_FantasticRegistration.m_PointSetToPointSetRegistration->GetFixedPointSet();
+    pointset = (IGSTK::ICPRegistration::PointSetType*)m_ICPRegistration.m_PointSetToPointSetRegistration->GetFixedPointSet();
     for (i = 0; i < pointset->GetNumberOfPoints(); i++)
     {
       pointset->GetPoint(i, &point);
@@ -1516,7 +1516,7 @@ void IGMTracking::DumpRegisterInfo( void )
       }
     }
 
-    pointset = (IGSTK::FantasticRegistration::PointSetType*)m_FantasticRegistration.m_PointSetToPointSetRegistration->GetMovingPointSet();
+    pointset = (IGSTK::ICPRegistration::PointSetType*)m_ICPRegistration.m_PointSetToPointSetRegistration->GetMovingPointSet();
     for (i = 0; i < pointset->GetNumberOfPoints(); i++)
     {
       pointset->GetPoint(i, &point);
@@ -1544,7 +1544,7 @@ bool IGMTracking::OnRegister( void )
   bool ret = true, reg = false;
   char mes[128];
   
-  IGSTK::FantasticRegistration::CAParametersType para;  
+  IGSTK::ICPRegistration::CAParametersType para;  
 
   switch (m_RegParameters.m_RegType)
   {
@@ -1629,23 +1629,22 @@ bool IGMTracking::OnRegister( void )
     }
     break;
   case 2: // vascular registration
-    m_FantasticRegistration.SetFixedPointSet(m_Skeleton.m_Skeleton);
     if (m_RegParameters.m_SimplifyFixed == 1)
     {
-      m_FantasticRegistration.SimplifyFixedPointSet(m_RegParameters.m_Radius);
+      m_ICPRegistration.SimplifyFixedPointSet(m_RegParameters.m_Radius);
     }
-    m_FantasticRegistration.SetMovingPointSet(m_MovingPointSet);
+    m_ICPRegistration.SetMovingPointSet(m_MovingPointSet);
     if (m_RegParameters.m_SimplifyMoving == 1)
     {
-      m_FantasticRegistration.SimplifyMovingPointSet(m_RegParameters.m_Radius);
+      m_ICPRegistration.SimplifyMovingPointSet(m_RegParameters.m_Radius);
     }    
-    m_FantasticRegistration.StartRegistration();
-    para = m_FantasticRegistration.m_PointSetToPointSetRegistration->GetLastTransformParameters();
+    m_ICPRegistration.StartRegistration();
+    para = m_ICPRegistration.m_PointSetToPointSetRegistration->GetLastTransformParameters();
     m_E3DTransform->SetParameters(para);
-    num1 = m_FantasticRegistration.m_FixedPointSet->GetNumberOfPoints();
-    num2 = m_FantasticRegistration.m_MovingPointSet->GetNumberOfPoints();
-    starterr = m_FantasticRegistration.m_LMOptimizer->GetOptimizer()->get_start_error();
-    err = m_FantasticRegistration.m_LMOptimizer->GetOptimizer()->get_end_error();
+    num1 = m_ICPRegistration.m_FixedPointSet->GetNumberOfPoints();
+    num2 = m_ICPRegistration.m_MovingPointSet->GetNumberOfPoints();
+    starterr = m_ICPRegistration.m_LMOptimizer->GetOptimizer()->get_start_error();
+    err = m_ICPRegistration.m_LMOptimizer->GetOptimizer()->get_end_error();
     sprintf(mes, "Fixed/Moving points number:%d %d", num1, num2);
     this->AppendInfo(mes);
     sprintf(mes, "Start/end RMS error:%.3f %.3f", starterr, err);
@@ -1735,7 +1734,7 @@ void IGMTracking::OnTrackToolPosition( void )
 void IGMTracking::TransformPoint(double* in, double* out)
 {
   unsigned int i;
-  IGSTK::FantasticRegistration::E3DTransformType::InputPointType inputpoint, outputpoint;
+  IGSTK::ICPRegistration::E3DTransformType::InputPointType inputpoint, outputpoint;
 
   for (i = 0; i < 3; i++)
   {
@@ -3040,7 +3039,7 @@ void IGMTracking::OnUpdateRegParameters()
 {
   m_Skeleton.SetClusterRadius(m_RegParameters.m_Radius);
 
-  IGSTK::FantasticRegistration::LMOptimizerType::ScalesType scales( m_E3DTransform->GetNumberOfParameters() );
+  IGSTK::ICPRegistration::LMOptimizerType::ScalesType scales( m_E3DTransform->GetNumberOfParameters() );
   scales.Fill( m_RegParameters.m_Scales );
   
   unsigned long   numberOfIterations =  m_RegParameters.m_Iterations;
@@ -3048,11 +3047,11 @@ void IGMTracking::OnUpdateRegParameters()
   double          valueTolerance     =  m_RegParameters.m_Value;   // convergence criterion
   double          epsilonFunction    =  m_RegParameters.m_Epsilon;   // convergence criterion
 
-  m_FantasticRegistration.m_LMOptimizer->SetScales( scales );
-  m_FantasticRegistration.m_LMOptimizer->SetNumberOfIterations( numberOfIterations );
-  m_FantasticRegistration.m_LMOptimizer->SetValueTolerance( valueTolerance );
-  m_FantasticRegistration.m_LMOptimizer->SetGradientTolerance( gradientTolerance );
-  m_FantasticRegistration.m_LMOptimizer->SetEpsilonFunction( epsilonFunction );
+  m_ICPRegistration.m_LMOptimizer->SetScales( scales );
+  m_ICPRegistration.m_LMOptimizer->SetNumberOfIterations( numberOfIterations );
+  m_ICPRegistration.m_LMOptimizer->SetValueTolerance( valueTolerance );
+  m_ICPRegistration.m_LMOptimizer->SetGradientTolerance( gradientTolerance );
+  m_ICPRegistration.m_LMOptimizer->SetEpsilonFunction( epsilonFunction );
 
 }
 
@@ -3078,6 +3077,8 @@ void IGMTracking::OnSkeleton()
   m_FusionRescaleIntensity->SetInput(m_DistanceMapFilter->GetOutput());
   m_FusionRescaleIntensity->Update();
 */
+
+  m_ICPRegistration.SetFixedPointSet(m_Skeleton.m_Skeleton);
 }
 
 void IGMTracking::ProcessSkeleton(void* calldata, double f)
@@ -3410,7 +3411,7 @@ void IGMTracking::OnLoadMatrix(void)
 
   vtkMatrix4x4* matrix;
   float element;
-  IGSTK::FantasticRegistration::CAParametersType para;
+  IGSTK::ICPRegistration::E3DParametersType para(m_ICPRegistration.m_PointSetToPointSetRegistration->GetTransform()->GetNumberOfParameters());
 
   fscanf(fp, "Reg=%d", &regtype);
   switch (regtype)
@@ -3430,7 +3431,7 @@ void IGMTracking::OnLoadMatrix(void)
     }
     break;
   case 2:
-    for (i = 0; i < m_FantasticRegistration.m_PointSetToPointSetRegistration->GetTransform()->GetNumberOfParameters(); i++)
+    for (i = 0; i < m_ICPRegistration.m_PointSetToPointSetRegistration->GetTransform()->GetNumberOfParameters(); i++)
     {
       fscanf(fp, "%f", &element);
       para[i] = element;
@@ -3628,7 +3629,7 @@ void IGMTracking::OnLoadPET(void)
 
 //  m_Notifier->InvokeEvent( itk::EndEvent() );
 }
-
+/*
 void IGMTracking::OnLoadPath(void)
 {
   unsigned int i;
@@ -3638,7 +3639,7 @@ void IGMTracking::OnLoadPath(void)
   std::string str;
   IGMTracking::PointSetType::PointType pathpoint;
 
-  char * filename = fl_file_chooser("Matrix file","*.dat","");
+  char * filename = fl_file_chooser("Path file","*.dat","");
 
   if( !filename  || strlen(filename) == 0 )
   {
@@ -3678,6 +3679,140 @@ void IGMTracking::OnLoadPath(void)
   sprintf(mes, "%d path points loaded!", i);
   this->AppendInfo(mes);
 
+}*/
+
+void IGMTracking::OnLoadPath(void)
+{
+  unsigned int pointId = 0;
+  char mes[128];
+  std::ifstream pathfile;
+  IGMTracking::PointSetType::PointType point;
+
+  char * filename = fl_file_chooser("Path file", "*.dat", "");
+
+  if( !filename  || strlen(filename) == 0 )
+  {
+    return;
+  }
+
+  pathfile.open(filename);
+  if (pathfile.fail())
+  {
+    return;
+  }
+
+  typedef PointSetType::PointsContainer  PointsContainer;
+  PointSetType::Pointer ps  = PointSetType::New();
+  PointsContainer::Pointer pc  = PointsContainer::New();
+
+  while( !pathfile.eof() )
+  {
+    pathfile >> point;    
+    pc->InsertElement(pointId, point);
+    printf("%d %f %f %f\n", pointId, point[0], point[1], point[2]);
+    pointId++;
+  }
+
+  m_MovingPointSet->SetPoints(pc);
+
+  sprintf(mes, "%d path points loaded!", m_MovingPointSet->GetNumberOfPoints());
+  this->AppendInfo(mes);
+
+  m_ICPRegistration.SetMovingPointSet(m_MovingPointSet);
+
+}
+
+void IGMTracking::OnLoadSkeleton(void)
+{
+  unsigned int pointId = 0;
+  char mes[128];
+  std::ifstream pathfile;
+  IGMTracking::PointSetType::PointType point;
+
+  char * filename = fl_file_chooser("Skeleton file", "*.dat", "");
+
+  if( !filename  || strlen(filename) == 0 )
+  {
+    return;
+  }
+
+  pathfile.open(filename);
+  if (pathfile.fail())
+  {
+    return;
+  }
+
+  typedef PointSetType::PointsContainer  PointsContainer;
+  PointSetType::Pointer ps  = PointSetType::New();
+  PointsContainer::Pointer pc  = PointsContainer::New();
+
+  while( !pathfile.eof() )
+  {
+    pathfile >> point;    
+    pc->InsertElement(pointId, point);
+    pointId++;
+  }
+
+  m_FixedPointSet->SetPoints(pc);
+
+  sprintf(mes, "%d path points loaded!", m_FixedPointSet->GetNumberOfPoints());
+  this->AppendInfo(mes);
+
+  m_ICPRegistration.SetFixedPointSet(m_FixedPointSet);
+
+}
+
+void IGMTracking::OnEvaluatePosition( double x, double y, double z)
+{
+  double toolPositionInImageSpace[3], anotherPositionInImageSpace[3], pos1[3], pos2[3];
+  IGMTracking* pTracking = this;
+
+  pTracking->DisplayToolPosition( true );
+
+  pTracking->m_AxialViewer.ActivateProbe(pTracking->m_ProbeID);
+  pTracking->m_CoronalViewer.ActivateProbe(pTracking->m_ProbeID);
+  pTracking->m_SagittalViewer.ActivateProbe(pTracking->m_ProbeID);
+
+  pos1[0] = x;
+  pos1[1] = y;
+  pos1[2] = z;
+  pos2[0] = pos1[0] + 10;
+  pos2[1] = pos1[1] + 10;
+  pos2[2] = pos1[2] + 10;
+
+  switch (pTracking->m_RegParameters.m_RegType)
+  {
+  case 0:
+  case 1:
+  case 3:
+  case 4:
+    break;    
+  case 2:
+    pTracking->TransformPoint(pos1, toolPositionInImageSpace);
+    pTracking->TransformPoint(pos2, anotherPositionInImageSpace);
+    break;
+  }		
+
+
+
+  if (pTracking->m_FullSizeIdx != 3)
+  {
+    pTracking->m_AxialViewer.DeActivateSelectedPosition();
+    pTracking->m_CoronalViewer.DeActivateSelectedPosition();
+    pTracking->m_SagittalViewer.DeActivateSelectedPosition();
+
+    pTracking->m_AxialViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
+    pTracking->m_AxialViewer.MakeToolPositionMarkerVisible();
+
+    pTracking->m_CoronalViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
+    pTracking->m_CoronalViewer.MakeToolPositionMarkerVisible();
+
+    pTracking->m_SagittalViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
+    pTracking->m_SagittalViewer.MakeToolPositionMarkerVisible();
+
+    pTracking->SyncAllViews( toolPositionInImageSpace );
+  }	 
+
 }
 
 void IGMTracking::OnSimulatePath(void)
@@ -3686,9 +3821,13 @@ void IGMTracking::OnSimulatePath(void)
   double toolPositionInImageSpace[3], anotherPositionInImageSpace[3], pos1[3], pos2[3];
   IGMTracking* pTracking = this;
 
-  IGSTK::FantasticRegistration::PointType point;
+  IGSTK::ICPRegistration::PointType point;
 
   pTracking->DisplayToolPosition( true );
+
+  pTracking->m_AxialViewer.ActivateProbe(pTracking->m_ProbeID);
+  pTracking->m_CoronalViewer.ActivateProbe(pTracking->m_ProbeID);
+  pTracking->m_SagittalViewer.ActivateProbe(pTracking->m_ProbeID);
 
   for (i = 0; i < pTracking->m_MovingPointSet->GetNumberOfPoints(); i++)
   {
@@ -3719,9 +3858,10 @@ void IGMTracking::OnSimulatePath(void)
       pTracking->m_CoronalViewer.DeActivateSelectedPosition();
       pTracking->m_SagittalViewer.DeActivateSelectedPosition();
 
+      
       pTracking->m_AxialViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
       pTracking->m_AxialViewer.MakeToolPositionMarkerVisible();
-
+            
       pTracking->m_CoronalViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
       pTracking->m_CoronalViewer.MakeToolPositionMarkerVisible();
 
@@ -3732,7 +3872,6 @@ void IGMTracking::OnSimulatePath(void)
     }	
 
     Sleep(100);
-  }
-  
+  }  
   
 }

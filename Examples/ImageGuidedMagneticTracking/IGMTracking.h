@@ -9,7 +9,7 @@
 #include "IGMTVolumeViewer.h"
 #include "IGMTRegistrationViewer.h"
 #include "IGMTTargetViewer.h"
-#include "FantasticRegistration.h"
+#include "ICPRegistration.h"
 #include "SkeletonModule.h"
 #include <process.h>
 
@@ -38,7 +38,7 @@ public:
   
   DistanceFilterType::Pointer m_DistanceMapFilter;
 
-  PointSetType::Pointer m_MovingPointSet;
+  PointSetType::Pointer m_FixedPointSet, m_MovingPointSet;
 
 public:
 	void OnSkeleton();
@@ -293,11 +293,9 @@ public:
 
 	AuroraTracker	m_AuroraTracker;
 
-  IGSTK::FantasticRegistration m_FantasticRegistration;
+  IGSTK::ICPRegistration m_ICPRegistration;
 
-  IGSTK::FantasticRegistration::CATransformType::Pointer m_CATransform;
-
-  IGSTK::FantasticRegistration::E3DTransformType::Pointer m_E3DTransform;
+  IGSTK::ICPRegistration::E3DTransformType::Pointer m_E3DTransform;
 
 	int				m_ToolHandle, m_RegToolHandle, m_RegToolHandle1, m_RegToolHandle2;
 
@@ -321,7 +319,7 @@ public:
 
   double    m_4NeedlePosition[4][3], m_8CoilPosition[8][3];
 
-public:
+ public:
 
   static void ProcessSkeleton(void* calldata, double);
 
@@ -333,7 +331,10 @@ public:
   void OnSaveMatrix(void);
   void OnLoadPET(void);
   void OnLoadPath(void);
+  void OnLoadSkeleton(void);
   void OnSimulatePath(void);
+
+  void OnEvaluatePosition( double x, double y, double z );
 };
 
 

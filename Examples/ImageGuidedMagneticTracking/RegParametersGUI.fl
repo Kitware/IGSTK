@@ -19,7 +19,7 @@ class RegParametersGUI {open
   } {
     Fl_Window m_MainWindow {
       label {Registration Parameters}
-      xywh {290 215 539 356} type Double visible
+      xywh {565 290 559 386} type Double visible
     } {
       Fl_Choice m_DualSensorChoice {
         label DualSensor
@@ -30,12 +30,12 @@ printf("%d\\n", m_DualSensorRegNum);} open
       Fl_Return_Button {} {
         label OK
         callback {this->OnOK();}
-        xywh {310 305 85 25}
+        xywh {354 330 85 25}
       }
       Fl_Button {} {
         label Cancel
         callback {this->OnCancel();}
-        xywh {410 305 80 25}
+        xywh {454 330 80 25}
       }
       Fl_Input m_RadiusInput {
         label {Cluster Radius}
@@ -112,6 +112,23 @@ printf("%d\\n", m_DualSensorRegNum);} open
       Fl_Check_Button m_SimplifyMovingCheck {
         label {Simplify MovingPointSet}
         xywh {260 232 170 25} down_box DOWN_BOX
+      }
+      Fl_Input m_XInput {
+        label X
+        xywh {250 275 65 30} type Float
+      }
+      Fl_Input m_YInput {
+        label Y
+        xywh {340 275 65 30} type Float
+      }
+      Fl_Input m_ZInput {
+        label Z
+        xywh {428 275 65 30} type Float
+      }
+      Fl_Button {} {
+        label Evaluate
+        callback {this->OnEvaluatePosition();}
+        xywh {255 330 80 25}
       }
     }
     code {m_pTracking = pTracking;
@@ -193,8 +210,7 @@ else if (m_8CoilsRadio->value() == 1)
 {
   m_RegType = 4;
 }
-m_pTracking->OnUpdateRegParameters();} {selected
-    }
+m_pTracking->OnUpdateRegParameters();} {}
   }
   Function {OnCancel()} {} {
     code {this->Hide();} {}
@@ -202,5 +218,14 @@ m_pTracking->OnUpdateRegParameters();} {selected
   Function {ShowModal()} {} {
     code {m_MainWindow->set_modal();
 this->Show();} {}
+  }
+  Function {OnEvaluatePosition()} {open return_type void
+  } {
+    code {double x, y, z;
+x = atof(m_XInput->value());
+y = atof(m_YInput->value());
+z = atof(m_ZInput->value());
+m_pTracking->OnEvaluatePosition(x, y, z);} {selected
+    }
   }
 } 
