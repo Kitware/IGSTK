@@ -131,6 +131,10 @@ public:
    void SelectInitialState( const StateDescriptorType & initialStateDescriptor );
 
 
+   /** Return the current state */
+   const StateDescriptorType & GetCurrentState() const;
+
+
 private:
 
    /** Variable that holds the code of the current state */

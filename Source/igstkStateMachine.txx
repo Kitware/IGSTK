@@ -81,6 +81,18 @@ StateMachine< TClass >
 
 
 
+template<class TClass>
+const typename StateMachine< TClass >::StateDescriptorType & 
+StateMachine< TClass >
+::GetCurrentState() const
+{
+
+   return m_State;
+
+}
+
+
+
 
 template<class TClass>
 void

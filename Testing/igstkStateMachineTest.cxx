@@ -92,6 +92,12 @@ public:
     }
 
 
+  const StateMachineType::StateDescriptorType & GetCurrentState() const
+    {
+    return m_StateMachine.GetCurrentState();
+    }
+
+
 
 protected:
 
@@ -153,6 +159,8 @@ int igstkStateMachineTest(int argc, char * argv [])
   tester.InsertChange();
   tester.SelectDrink();
 
+  // Exercise the GetCurrentState() method
+  std::cout << tester.GetCurrentState() << std::endl;
   
   std::cout << std::endl << std::endl;
   std::cout << "Printing out the State Machine description in dot format" << std::endl;
