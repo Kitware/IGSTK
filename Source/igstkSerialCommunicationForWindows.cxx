@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    igstkSerialCommunication.cxx
+  Module:    igstkSerialCommunicationForWindows.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -16,128 +16,18 @@
 =========================================================================*/
 #include <iostream>
 
-#include "igstkSerialCommunication.h"
+#include "igstkSerialCommunicationForWindows.h"
 
 
 namespace igstk
 { 
 /** Constructor */
-SerialCommunication::SerialCommunication() :  m_StateMachine( this ),
-m_ReadBufferSize(3000), m_WriteBufferSize(200), m_InputBuffer( NULL),
-m_OutputBuffer( NULL), m_PortRestSpan(10)
+SerialCommunicationForWindows::SerialCommunicationForWindows() :  
+SerialCommunication()
 {
-  /** Default communication settings */
-  this->m_BaudRate = BAUD9600;
-  this->m_ByteSize = EIGHT_BITS;
-  this->m_Parity = NO_PARITY;
-  this->m_StopBits = ONE_STOP_BIT;
-  this->m_HardwareHandshake = HANDSHAKE_OFF;
-
-  /** Hardware Port Settings */
-  this->m_PortNumber = -1;
-
-  /** Communication Time Out Settings */
-  //ReadTimeout = m_ReadTotalTimeoutConstant + m_ReadTotalTimeoutMultiplier*Number_Of_Bytes_Read 
-  m_ReadIntervalTimeout = 0xFFFF;
-  m_ReadTotalTimeoutMultiplier = 0;
-  m_ReadTotalTimeoutConstant = 0;
-  //WriteTimeout = m_WriteTotalTimeoutConstant + m_WriteTotalTimeoutMultiplier*Number_Of_Bytes_Written 
-  m_WriteTotalTimeoutMultiplier = 10;
-  m_WriteTotalTimeoutConstant = 500;
-
-  // Set the state descriptors
-  m_StateMachine.AddState( m_IdleState, "IdleState" );
-  m_StateMachine.AddState( m_PortOpenState, "PortOpenState" );
-  m_StateMachine.AddState( m_BufferAllocatedState, "BufferAllocatedState" );
-  m_StateMachine.AddState( m_CommunicationParametersSetState, "CommunicationParametersSetState" );
-  m_StateMachine.AddState( m_PortReadyForCommunicationState, "PortReadyForCommunication" );
-
-  // Set the input descriptors
-  m_StateMachine.AddInput( m_OpenPortInput, "OpenPort");
-  m_StateMachine.AddInput( m_SetBuffersInput, "SetUpBuffers");
-  m_StateMachine.AddInput( m_SetParametersInput, "SetParameters");
-  m_StateMachine.AddInput( m_SetTimeoutsInput,  "SetTimeouts");
-  m_StateMachine.AddInput( m_ClosePortInput,  "ClosePort");
-  m_StateMachine.AddInput( m_RestCommunication, "RestCommunication");
-  m_StateMachine.AddInput( m_FlushOutputBuffer, "FlushOutputBuffer");
-  m_StateMachine.AddInput( m_SendString, "SendString");
-  m_StateMachine.AddInput( m_ReceiveString, "ReceiveString");
-
-  const ActionType NoAction = 0;
-
-  // Programming the state machine transitions
-  m_StateMachine.AddTransition( m_IdleState, m_OpenPortInput, m_PortOpenState, &SerialCommunication::OpenCommunicationPortProcessing);
-  m_StateMachine.AddTransition( m_PortOpenState, m_SetBuffersInput, m_BufferAllocatedState, &SerialCommunication::SetDataBufferSizeProcessing);
-  m_StateMachine.AddTransition( m_BufferAllocatedState, m_SetParametersInput, m_CommunicationParametersSetState, &SerialCommunication::SetupCommunicationProcessing);
-  m_StateMachine.AddTransition( m_CommunicationParametersSetState, m_SetTimeoutsInput, m_PortReadyForCommunicationState, &SerialCommunication::SetCommunicationTimeoutProcessing);
-
-  m_StateMachine.AddTransition( m_PortOpenState, m_ClosePortInput, m_IdleState, &SerialCommunication::CloseCommunicationPortProcessing);
-  m_StateMachine.AddTransition( m_BufferAllocatedState, m_ClosePortInput, m_IdleState, &SerialCommunication::ClearBuffersAndCloseCommunicationPortProcessing);
-  m_StateMachine.AddTransition( m_CommunicationParametersSetState, m_ClosePortInput, m_IdleState, &SerialCommunication::ClearBuffersAndCloseCommunicationPortProcessing);
-  m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_ClosePortInput, m_IdleState, &SerialCommunication::ClearBuffersAndCloseCommunicationPortProcessing);
-
-  m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_RestCommunication, m_PortReadyForCommunicationState, &SerialCommunication::RestCommunicationProcessing);
-  m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_FlushOutputBuffer, m_PortReadyForCommunicationState, &SerialCommunication::FlushOutputBufferProcessing);
-  m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_SendString, m_PortReadyForCommunicationState, &SerialCommunication::SendStringProcessing);
-  m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_ReceiveString, m_PortReadyForCommunicationState, &SerialCommunication::ReceiveStringProcessing);
-
-  m_StateMachine.SelectInitialState( m_IdleState );
-
-  // Finish the programming and get ready to run
-  m_StateMachine.SetReadyToRun();
 } 
 
-/** Destructor */
-SerialCommunication::~SerialCommunication()  
-{
-  // Close communication, if any 
-  this->CloseCommunication();
-}
-
-void SerialCommunication::CloseCommunication( void )
-{
-  this->m_StateMachine.ProcessInput( m_ClosePortInput );
-}
-
-
-void SerialCommunication::OpenCommunication( const void *data )
-{
-  // Read data from XML file
-  this->m_PortNumber = 1;
-  this->m_StateMachine.ProcessInput( m_OpenPortInput );
-  this->m_StateMachine.ProcessInput( m_SetBuffersInput );
-  this->m_StateMachine.ProcessInput( m_SetParametersInput );
-  this->m_StateMachine.ProcessInput( m_SetTimeoutsInput );
-}
-
-void SerialCommunication::RestCommunication( void )
-{
-  this->m_StateMachine.ProcessInput( m_RestCommunication );
-}
-
-
-void SerialCommunication::FlushOutputBuffer( void )
-{
-  this->m_StateMachine.ProcessInput( m_FlushOutputBuffer );
-}
-
-
-void SerialCommunication::SendString( const CommunicationDataType& message )
-{
-  int strSize = (message.size()<m_WriteBufferSize) ? message.size() : m_WriteBufferSize;
-  memcpy(m_OutputBuffer, message.c_str(), sizeof(char)*strSize);
-  m_OutputBuffer[strSize+2] = '\0';
-//  std::cout << "Message length = " << strSize << ", Message = " << m_OutputBuffer << std::endl;
-  this->m_StateMachine.ProcessInput( m_SendString );
-}
-
-void SerialCommunication::ReceiveString( void )
-{
-  this->m_StateMachine.ProcessInput( m_ReceiveString );
-}
-
-/*
-void SerialCommunication::OpenCommunicationPortProcessing( void )
+void SerialCommunicationForWindows::OpenCommunicationPortProcessing( void )
 {
   char portName[10];
   sprintf(portName, "COM%d", this->m_PortNumber );
@@ -163,7 +53,7 @@ void SerialCommunication::OpenCommunicationPortProcessing( void )
 }
 
 
-void SerialCommunication::SetDataBufferSizeProcessing( void )
+void SerialCommunicationForWindows::SetDataBufferSizeProcessing( void )
 {
   if (this->m_InputBuffer!=NULL) delete (this->m_InputBuffer); 
   this->m_InputBuffer = new char[ this->m_ReadBufferSize ];
@@ -191,7 +81,7 @@ void SerialCommunication::SetDataBufferSizeProcessing( void )
 }
 
 
-void SerialCommunication::SetCommunicationTimeoutProcessing( void )
+void SerialCommunicationForWindows::SetCommunicationTimeoutProcessing( void )
 {
   COMMTIMEOUTS       CommunicationTimeouts;
   CommunicationTimeouts.ReadIntervalTimeout = MAXWORD; //m_ReadIntervalTimeout
@@ -211,7 +101,7 @@ void SerialCommunication::SetCommunicationTimeoutProcessing( void )
 }
 
 
-void SerialCommunication::SetupCommunicationProcessing( void )
+void SerialCommunicationForWindows::SetupCommunicationProcessing( void )
 {
   // Control setting for a serial communications device
   DCB   dcb;
@@ -258,7 +148,7 @@ void SerialCommunication::SetupCommunicationProcessing( void )
   }
 }
 
-void SerialCommunication::ClearBuffersAndCloseCommunicationPortProcessing( void )
+void SerialCommunicationForWindows::ClearBuffersAndCloseCommunicationPortProcessing( void )
 {
   if (m_InputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_InputBuffer;
@@ -269,14 +159,14 @@ void SerialCommunication::ClearBuffersAndCloseCommunicationPortProcessing( void 
   this->CloseCommunicationPortProcessing();
 }
 
-void SerialCommunication::CloseCommunicationPortProcessing( void )
+void SerialCommunicationForWindows::CloseCommunicationPortProcessing( void )
 {
   CloseHandle(this->m_PortHandle);
   this->m_PortHandle = (HandleType)INVALID_HANDLE_VALUE;
   igstkLogMacro( igstk::Logger::DEBUG, "Communication port closed.\n");
 }
 
-void SerialCommunication::RestCommunicationProcessing( void )
+void SerialCommunicationForWindows::RestCommunicationProcessing( void )
 {
   if (!SetCommBreak( this->m_PortHandle ))
   {
@@ -292,7 +182,7 @@ void SerialCommunication::RestCommunicationProcessing( void )
 }
 
 
-void SerialCommunication::FlushOutputBufferProcessing( void )
+void SerialCommunicationForWindows::FlushOutputBufferProcessing( void )
 {
   if (!FlushFileBuffers( this->m_PortHandle ))
   {
@@ -301,7 +191,7 @@ void SerialCommunication::FlushOutputBufferProcessing( void )
 }
 
 
-void SerialCommunication::SendStringProcessing( void )
+void SerialCommunicationForWindows::SendStringProcessing( void )
 {
   //OVERLAPPED structure contains information used in asynchronous input and output (I/O).
   OVERLAPPED    overlappedWrite = {0};
@@ -373,7 +263,7 @@ void SerialCommunication::SendStringProcessing( void )
 }
 
 
-void SerialCommunication::ReceiveStringProcessing( void )
+void SerialCommunicationForWindows::ReceiveStringProcessing( void )
 {
   std::cout << "Came to ReceiveStringProcessing" << std::endl;
 
@@ -458,18 +348,6 @@ void SerialCommunication::ReceiveStringProcessing( void )
  
   //Close the created overlapped event.
   CloseHandle(overlappedRead.hEvent);
-}
-*/
-
-void SerialCommunication::SetLogger( LoggerType* logger )
-{
-    m_pLogger = logger;
-}
-
-
-SerialCommunication::LoggerType* SerialCommunication::GetLogger(  void )
-{
-    return m_pLogger;
 }
 
 } // end namespace igstk

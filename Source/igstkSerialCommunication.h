@@ -17,8 +17,6 @@
 #ifndef __igstkSerialCommunication_h
 #define __igstkSerialCommunication_h
 
-#include <windows.h>
-
 #include "itkObject.h"
 #include "itkEventObject.h"
 
@@ -41,6 +39,8 @@ namespace igstk
 
 class SerialCommunication : public Communication, public itk::Object
 {
+protected:
+
   const unsigned int m_ReadBufferSize; // read buffer size in bytes
   const unsigned int m_WriteBufferSize;// write buffer size in bytes
   const unsigned int m_PortRestSpan; // period of rest in communication, in msecs.
@@ -70,8 +70,6 @@ public:
     HANDSHAKE_OFF, HANDSHAKE_ON
   } HardwareHandshakeType;
 
-  typedef HANDLE HandleType;
-
   typedef igstk::StateMachine< SerialCommunication > StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer ActionType;
   typedef StateMachineType::StateType              StateType;
@@ -85,10 +83,10 @@ public:
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
   /**  Run-time type information (and related methods). */
-  itkTypeMacro(SerialCommunication, Object);
+//  itkTypeMacro(SerialCommunication, Object);
 
   /** Method for creation of a reference counted object. */
-  NewMacro(Self);  
+//  NewMacro(Self);  
 
   GetMacro(BaudRate, BaudRateType);
 
@@ -123,7 +121,8 @@ public:
   transmission after a short delay.*/
   void RestCommunication( void );
 
-  /** Flushes output buffer of any waiting commands to the hardware */
+  /** Flushes output buffer of any waiting commands to the hardware. 
+      Only flushes the transmit buffer, not the receive buffer.*/
   void FlushOutputBuffer( void );
 
   /** SendString method sends the string to the hardware. */
@@ -161,33 +160,33 @@ protected:
   ~SerialCommunication();
 
   /** Opens serial port for communication; */
-  virtual void OpenCommunicationPortProcessing( void );
+  virtual void OpenCommunicationPortProcessing( void ) = NULL;
 
   /** Closes serial port  */
-  virtual void CloseCommunicationPortProcessing( void );
-  virtual void ClearBuffersAndCloseCommunicationPortProcessing( void );
+  virtual void CloseCommunicationPortProcessing( void ) = NULL;
+  virtual void ClearBuffersAndCloseCommunicationPortProcessing( void ) = NULL;
 
   /** Set up communication time out values. */
-  virtual void SetCommunicationTimeoutProcessing( void );
+  virtual void SetCommunicationTimeoutProcessing( void ) = NULL;
 
   /** Sets up communication on the open port as per the communication parameters. */
-  virtual void SetupCommunicationProcessing( void );
+  virtual void SetupCommunicationProcessing( void ) = NULL;
 
   /** Set up data buffer size. */
-  virtual void SetDataBufferSizeProcessing( void );
+  virtual void SetDataBufferSizeProcessing( void ) = NULL;
 
   /**Rests communication port by suspending character transmission  
   and placing the transmission line in a break state, and restarting
   transmission after a short delay.*/
-  virtual void RestCommunicationProcessing( void );
+  virtual void RestCommunicationProcessing( void ) = NULL;
 
-  virtual void FlushOutputBufferProcessing( void );
+  virtual void FlushOutputBufferProcessing( void ) = NULL;
 
-  virtual void SendStringProcessing( void );
+  virtual void SendStringProcessing( void ) = NULL;
 
-  virtual void ReceiveStringProcessing( void );
+  virtual void ReceiveStringProcessing( void ) = NULL;
 
-private:
+protected:
 
   /** The GetLogger method return pointer to the logger object. */
   LoggerType* GetLogger(  void );
@@ -264,9 +263,6 @@ private:
   InputType                m_FlushOutputBuffer;
   InputType                m_SendString;
   InputType                m_ReceiveString;
-
-  // OS related variables
-  HandleType      m_PortHandle;     // com port handle
 };
 
 } // end namespace igstk

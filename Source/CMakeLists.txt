@@ -8,6 +8,7 @@ SET(IGSTKSandbox_HEADS
   igstkView2D.h
   igstkView3D.h
   igstkScene.h
+  igstkSerialCommunication.h
   igstkSpatialObject.h
   igstkEllipsoidObject.h  
   igstkCylinderObject.h
@@ -24,6 +25,7 @@ SET(IGSTKSandbox_SRCS
   igstkView2D.cxx
   igstkView3D.cxx
   igstkScene.cxx
+  igstkSerialCommunication.cxx
   igstkSpatialObject.cxx
   igstkEllipsoidObject.cxx
   igstkCylinderObject.cxx
@@ -34,12 +36,15 @@ SET(IGSTKSandbox_SRCS
 )
 
 IF( WIN32 )
-  SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} 
-    igstkSerialCommunication.h
-    )
-  SET(IGSTKSandbox_SRCS ${IGSTKSandbox_SRCS} 
-    igstkSerialCommunication.cxx
-    )
+  IF(NOT CYGWIN)
+    SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} 
+        igstkSerialCommunicationForWindows.h
+        )
+
+    SET(IGSTKSandbox_SRCS ${IGSTKSandbox_SRCS} 
+        igstkSerialCommunicationForWindows.cxx
+        )
+  ENDIF(NOT CYGWIN)
 ENDIF( WIN32 )
 
 # Adding the IGSTKSandbox library
