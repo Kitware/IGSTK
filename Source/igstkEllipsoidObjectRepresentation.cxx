@@ -24,12 +24,30 @@ namespace igstk
 { 
 
 /** Constructor */
-EllipsoidObjectRepresentation::EllipsoidObjectRepresentation()
+EllipsoidObjectRepresentation::EllipsoidObjectRepresentation():m_StateMachine(this)
 {
   // We create the ellipse spatial object
   m_EllipsoidObject = NULL;
   this->RequestSetSpatialObject( m_EllipsoidObject );
   m_EllipsoidSource = vtkSuperquadricSource::New();
+  
+  m_StateMachine.AddInput( m_ValidEllipsoidObjectInput,  "ValidEllipsoidObjectInput" );
+  m_StateMachine.AddInput( m_NullEllipsoidObjectInput,   "NullEllipsoidObjectInput"  );
+
+  m_StateMachine.AddState( m_NullEllipsoidObjectState,  "NullEllipsoidObjectState"     );
+  m_StateMachine.AddState( m_ValidEllipsoidObjectState, "ValidEllipsoidObjectState"     );
+
+  const ActionType NoAction = 0;
+
+  m_StateMachine.AddTransition( m_NullEllipsoidObjectState, m_NullEllipsoidObjectInput, m_NullEllipsoidObjectState,  NoAction );
+  m_StateMachine.AddTransition( m_NullEllipsoidObjectState, m_ValidEllipsoidObjectInput, m_ValidEllipsoidObjectState,  & EllipsoidObjectRepresentation::SetEllipsoidObject );
+  m_StateMachine.AddTransition( m_ValidEllipsoidObjectState, m_NullEllipsoidObjectInput, m_NullEllipsoidObjectState,  NoAction ); // Should remove actors  ?
+  m_StateMachine.AddTransition( m_ValidEllipsoidObjectState, m_ValidEllipsoidObjectInput, m_ValidEllipsoidObjectState,  & EllipsoidObjectRepresentation::SetEllipsoidObject ); // Should remove old actors ??
+
+  m_StateMachine.SelectInitialState( m_NullEllipsoidObjectState );
+
+  m_StateMachine.SetReadyToRun();
+
 } 
 
 /** Destructor */
@@ -56,10 +74,27 @@ void EllipsoidObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent ind
 
 
 /** Set the Ellipsoidal Spatial Object */
-void EllipsoidObjectRepresentation::SetEllipsoid( const EllipsoidObjectType * ellipsoid )
+void EllipsoidObjectRepresentation::RequestSetEllipsoidObject( const EllipsoidObjectType * ellipsoid )
+{
+  m_EllipsoidObjectToAdd = ellipsoid;
+  if( !m_EllipsoidObjectToAdd )
+    {
+    m_StateMachine.ProcessInput( m_NullEllipsoidObjectInput );
+    }
+  else
+    {
+    m_StateMachine.ProcessInput( m_ValidEllipsoidObjectInput );
+    }
+
+
+}
+
+
+/** Set the Ellipsoidal Spatial Object */
+void EllipsoidObjectRepresentation::SetEllipsoidObject()
 {
   // We create the ellipse spatial object
-  m_EllipsoidObject = ellipsoid;
+  m_EllipsoidObject = m_EllipsoidObjectToAdd;
   this->RequestSetSpatialObject( m_EllipsoidObject );
 
   if( m_EllipsoidSource != NULL )
@@ -109,12 +144,12 @@ void EllipsoidObjectRepresentation::CreateActors()
 
 /** Create a copy of the current object representation */
 EllipsoidObjectRepresentation::Pointer
-EllipsoidObjectRepresentation::Copy()
+EllipsoidObjectRepresentation::Copy() const
 {
   Pointer newOR = EllipsoidObjectRepresentation::New();
   newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
   newOR->SetOpacity(this->GetOpacity());
-  newOR->SetEllipsoid(m_EllipsoidObject);
+  newOR->RequestSetEllipsoidObject(m_EllipsoidObject);
 
   return newOR;
 }

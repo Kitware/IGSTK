@@ -21,6 +21,7 @@
 #include "igstkObjectRepresentation.h"
 #include "igstkEllipsoidObject.h"
 #include "vtkSuperquadricSource.h"
+#include "igstkStateMachine.h"
 
 namespace igstk
 {
@@ -54,15 +55,22 @@ public:
   NewMacro( EllipsoidObjectRepresentation );
 
   /** Return a copy of the current object representation */
-  Pointer Copy();
+  Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
-  void SetEllipsoid( const EllipsoidObjectType * ellipsoidObject );
+  void RequestSetEllipsoidObject( const EllipsoidObjectType * ellipsoidObject );
 
 protected:
 
+  typedef StateMachine< Self > StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer   ActionType;
+  typedef StateMachineType::StateType                StateType;
+  typedef StateMachineType::InputType                InputType;
+
+  FriendClassMacro( StateMachineType );
+
   EllipsoidObjectRepresentation( void );
-  ~EllipsoidObjectRepresentation( void );
+  virtual ~EllipsoidObjectRepresentation( void );
 
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -80,6 +88,24 @@ private:
 
   /** update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationFromGeometry();
+
+  /** Connect this representation class to the spatial object. Only to be
+   * called by the State Machine. */
+  void SetEllipsoidObject(); 
+
+private:
+
+  StateMachineType     m_StateMachine;
+  
+  /** Inputs to the State Machine */
+  InputType            m_ValidEllipsoidObjectInput;
+  InputType            m_NullEllipsoidObjectInput;
+  
+  /** States for the State Machine */
+  StateType            m_NullEllipsoidObjectState;
+  StateType            m_ValidEllipsoidObjectState;
+
+  EllipsoidObjectType::ConstPointer m_EllipsoidObjectToAdd;
 
 };
 
