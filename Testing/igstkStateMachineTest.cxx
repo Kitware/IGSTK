@@ -136,8 +136,10 @@ private:
 int igstkStateMachineTest(int argc, char * argv [])
 {
 
+  std::cout << "Construct the State Machine Tester" << std::endl;
   Tester  tester;
 
+  std::cout << "The State Machine has been programmed now" << std::endl;
 
   // This is the cannonical path for using the class. 
   tester.InsertChange();

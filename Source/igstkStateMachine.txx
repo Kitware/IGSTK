@@ -240,11 +240,88 @@ void
 StateMachine< TClass >
 ::AddTransition( const StateDescriptorType & stateDescriptor,   
                  const InputDescriptorType & inputDescriptor, 
-                 const StateDescriptorType & newstateDescriptor, 
+                 const StateDescriptorType & newStateDescriptor, 
                        TMemberFunctionPointer action )
 {
-
+  // First check if the State exists
+  StatesContainer::const_iterator  state = std::find( m_States.begin(), m_States.end(), stateDescriptor );
     
+  if( state == m_States.end() )
+    {
+    std::cerr << "Attempt to add a Transition for a State that does not exist" << std::endl;
+    std::cerr << "Attempted state     = " << stateDescriptor << std::endl;
+    std::cerr << "Attempted input     = " << inputDescriptor << std::endl;
+    std::cerr << "Attempted new state = " << newStateDescriptor << std::endl;
+    return;
+    } 
+
+  // Then check if the Input exists
+  InputsContainer::const_iterator  input = std::find( m_Inputs.begin(), m_Inputs.end(), inputDescriptor );
+    
+  if( input == m_Inputs.end() )
+    {
+    std::cerr << "Attempt to add a Transition for an Input that does not exist" << std::endl;
+    std::cerr << "Attempted state     = " << stateDescriptor << std::endl;
+    std::cerr << "Attempted input     = " << inputDescriptor << std::endl;
+    std::cerr << "Attempted new state = " << newStateDescriptor << std::endl;
+    return;
+    } 
+
+
+  // Check if the new State exists
+  StatesContainer::const_iterator  newstate = std::find( m_States.begin(), m_States.end(), newStateDescriptor );
+    
+  if( newstate == m_States.end() )
+    {
+    std::cerr << "Attempt to add a Transition for a New State that does not exist" << std::endl;
+    std::cerr << "Attempted state     = " << stateDescriptor << std::endl;
+    std::cerr << "Attempted input     = " << inputDescriptor << std::endl;
+    std::cerr << "Attempted new state = " << newStateDescriptor << std::endl;
+    return;
+    } 
+
+
+  // Search for existing Transitions for that State
+  TransitionContainer::const_iterator    transitionsFromThisState = m_Transitions.find( stateDescriptor );
+  
+  if( transitionsFromThisState == m_Transitions.end() )
+    {
+    // No transition has been created for this particular state.
+    // Therefore create a new entry for it.
+    StatesPerInputContainer *statesPerInput = new StatesPerInputContainer;
+
+    // Insert the new state that should be assumed if the inputDescriptor is received.
+    (*statesPerInput)[ inputDescriptor ] = newStateDescriptor;
+
+    // Add the statesPerInput container to the Transitions container.
+    m_Transitions[ stateDescriptor ] = statesPerInput;
+    return;
+    } 
+  else
+    {
+    // Check if the particular Input has already an Entry here
+    StatesPerInputContainer::const_iterator transitionsFromThisStateAndInput =
+                            transitionsFromThisState->second->find( inputDescriptor );
+    if( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
+      {
+      // There is already an entry for this input. This is suspicious
+      // because the user may be overriding a previous transition by
+      // accident. 
+      std::cerr << "Attempt to override an existing transition. "
+                << "Please verify the programming of your state machine. "
+                << "There is already a transition defined for the combination: " << std::endl;
+      std::cerr << "State     = " << stateDescriptor << std::endl;
+      std::cerr << "Input     = " << inputDescriptor << std::endl;
+      std::cerr << "New state = " << transitionsFromThisStateAndInput->second << std::endl;
+      return;
+      }
+    else
+      {
+      // Finally, add the Transition: new State to assume when the specific Input is received.
+      (*(transitionsFromThisState->second))[inputDescriptor] = newStateDescriptor;
+      }
+    }
+
 }
 
 
