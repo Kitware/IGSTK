@@ -37,7 +37,6 @@ ADD_TEST(DicomImageReaderTestDirectory ${IGSTK_TESTS}
 	)
 
 
-
 ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
 
 ADD_TEST(RegistrationCTTest ${IGSTK_TESTS} RegistrationCTTest)
@@ -45,6 +44,12 @@ ADD_TEST(RegistrationCTTest ${IGSTK_TESTS} RegistrationCTTest)
 ADD_TEST(ImageSliceViewerTest ${IGSTK_TESTS} ImageSliceViewerTest)
 
 ADD_TEST(MotionViewerTest ${IGSTK_TESTS} MotionViewerTest)
+
+ADD_TEST(ICPRegistrationTest ${IGSTK_TESTS} 
+	ICPRegistrationTest 
+	${IGSTK_DATA_ROOT}/Input/FixedPoints.dat
+	${IGSTK_DATA_ROOT}/Input/MovingPoints.dat
+	)
 
 #ENDIF(ITK_DATA_ROOT)
 
@@ -55,7 +60,8 @@ SET(BasicTests_SRCS
   ImageSliceViewerTest.cxx
   LiverTumorSegmentationBaseTest.cxx
   MotionViewerTest.cxx
-  igstkStateMachineTest
+  ICPRegistrationTest.cxx
+  igstkStateMachineTest  
   )
 
 ADD_EXECUTABLE(igstkTests igstkTests.cxx ${BasicTests_SRCS})
