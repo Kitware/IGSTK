@@ -48,7 +48,7 @@ int igstkEllipsoidObjectTest( int, char * [] )
     {
     if(radiusRead[i] != radius[i])
       {
-      std::cout << "Radius error : " << radius[i] << " v.s " << i << std::endl; 
+      std::cerr << "Radius error : " << radius[i] << " v.s " << i << std::endl; 
       return EXIT_FAILURE;
       }
     }
@@ -60,7 +60,7 @@ int igstkEllipsoidObjectTest( int, char * [] )
     {
     if(radiusRead[i] != radius[i]+1)
       {
-      std::cout << "Radius error : " << radius[i] << " v.s " << i << std::endl; 
+      std::cerr << "Radius error : " << radius[i] << " v.s " << i << std::endl; 
       return EXIT_FAILURE;
       }
     }
@@ -72,22 +72,22 @@ int igstkEllipsoidObjectTest( int, char * [] )
   ellipsoidRepresentation->SetOpacity(0.4);
   if(fabs(ellipsoidRepresentation->GetRed()-0.1)>0.00001)
     {
-    std::cout << "GetRed() [FAILED]" << std::endl;
+    std::cerr << "GetRed() [FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
   if(fabs(ellipsoidRepresentation->GetGreen()-0.2)>0.00001)
     {
-    std::cout << "GetGreen()[FAILED]" << std::endl;
+    std::cerr << "GetGreen()[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
   if(fabs(ellipsoidRepresentation->GetBlue()-0.3)>0.00001)
     {
-    std::cout << "GetBlue() [FAILED]" << std::endl;
+    std::cerr << "GetBlue() [FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
   if(fabs(ellipsoidRepresentation->GetOpacity()-0.4)>0.00001)
     {
-    std::cout << "GetOpacity() [FAILED]" << std::endl;
+    std::cerr << "GetOpacity() [FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
   std::cout << "[PASSED]" << std::endl;
@@ -135,19 +135,23 @@ int igstkEllipsoidObjectTest( int, char * [] )
     {
     if( fabs( translation2[i]  - translation[i] ) > tolerance )
       {
-      std::cout << "[FAILED]" << std::endl;
+      std::cerr << "Translation component is out of range [FAILED]" << std::endl;
+      std::cerr << "input  translation = " << translation << std::endl;
+      std::cerr << "output translation = " << translation2 << std::endl;
       return EXIT_FAILURE;
       }
     }
 
   igstk::Transform::VersorType rotation2 = transform2.GetRotation();
-  for( unsigned int j=0; j<3; j++ )
+  if( fabs( rotation2.GetX() - rotation.GetX() ) > tolerance ||
+      fabs( rotation2.GetY() - rotation.GetY() ) > tolerance ||
+      fabs( rotation2.GetZ() - rotation.GetZ() ) > tolerance ||
+      fabs( rotation2.GetW() - rotation.GetW() ) > tolerance     )
     {
-    if( !( rotation2 == rotation ) )
-      {
-      std::cout << "[FAILED]" << std::endl;
-      return EXIT_FAILURE;
-      }
+    std::cerr << "Rotation component is out of range [FAILED]" << std::endl;
+    std::cerr << "input  rotation = " << rotation << std::endl;
+    std::cerr << "output rotation = " << rotation2 << std::endl;
+    return EXIT_FAILURE;
     }
 
 
@@ -160,7 +164,7 @@ int igstkEllipsoidObjectTest( int, char * [] )
   ObjectRepresentationType::Pointer copy = ellipsoidRepresentation->Copy();
   if(copy->GetOpacity() != ellipsoidRepresentation->GetOpacity())
     {
-    std::cout << "[FAILED]" << std::endl;
+    std::cerr << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
   std::cout << "[PASSED]" << std::endl;
