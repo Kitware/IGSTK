@@ -222,6 +222,7 @@ private:
        {
        this->m_StateIdentifier = in.m_StateIdentifier;
        this->m_Action = in.m_Action;
+       return *this;
        }
      StateIdentifierType GetStateIdentifier() const { return m_StateIdentifier; }
      ActionType GetAction() const { return m_Action; }
