@@ -13,4 +13,5 @@ void RegisterTests()
   REGISTER_TEST(igstkCylinderObjectTest);
   REGISTER_TEST(igstkSceneTest);
   REGISTER_TEST(igstkMouseTrackerTest);
+  REGISTER_TEST(igstkSerialCommunicationTest);
 }

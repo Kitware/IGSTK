@@ -22,12 +22,14 @@ ADD_TEST(igstkEllipsoidObjectTest ${IGSTKSandbox_TESTS} igstkEllipsoidObjectTest
 ADD_TEST(igstkCylinderObjectTest ${IGSTKSandbox_TESTS} igstkCylinderObjectTest)
 ADD_TEST(igstkSceneTest ${IGSTKSandbox_TESTS} igstkSceneTest)
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
+ADD_TEST(igstkSerialCommunicationTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationTest)
 
 SET(BasicTests_SRCS
   igstkEllipsoidObjectTest.cxx
   igstkCylinderObjectTest.cxx
   igstkSceneTest.cxx
   igstkMouseTrackerTest.cxx
+  igstkSerialCommunicationTest.cxx
   )
 
 ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${BasicTests_SRCS})
