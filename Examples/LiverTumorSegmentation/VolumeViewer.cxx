@@ -112,12 +112,14 @@ VolumeViewer
     volumeMapper->SetInput(image);
 
     
-  double spacing[3];
-  double origin[3];
+  float spacing[3];
+  float origin[3];
   int   dimensions[3];
+
   image->GetSpacing(spacing);
   image->GetOrigin(origin);
   image->GetDimensions(dimensions);
+
   double focalPoint[3];
   for ( unsigned int cc = 0; cc < 3; cc++)
     {
