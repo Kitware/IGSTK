@@ -18,7 +18,7 @@
 #ifndef __igstk_StateMachine_h
 #define __igstk_StateMachine_h
 
-
+#include <string>
 
 namespace igstk
 {
@@ -48,11 +48,13 @@ public:
 
    /** Type used to represent the codes of the states */
    typedef unsigned int    StateType;
+   typedef std::string     StateDescriptorType;
 
 
 
    /** Type used to represent the codes of the inputs */
    typedef unsigned int    InputType;
+   typedef std::string     InputDescriptorType;
 
 
 
@@ -88,6 +90,10 @@ public:
        be invoked while the state machine is running. Unless you want
        to debug a self-modifying machine or an evolutionary machine. */
    void SetTransition( StateType state, InputType input, StateType newstate, TMemberFunctionPointer action );
+   void SetTransition( const StateDescriptorType & state, 
+                       const InputDescriptorType & input, 
+                       const StateDescriptorType & newstate, 
+                       TMemberFunctionPointer action );
 
 
 
@@ -98,6 +104,7 @@ public:
 
    /** Set the code for the current input.  */
    void SetInput( InputType input );
+   void SetInput( const InputDescriptorType & input );
 
 
 
@@ -105,6 +112,16 @@ public:
     *  can be invoked and pass to the runnin mode where StateTransition() 
     *  can be called. */
    void SetReadyToRun();
+
+
+   /** Set the descriptor of a state */
+   void SetStateDescriptor( StateType state, const StateDescriptorType & descriptor );
+   void SetStateDescriptor( StateType state, const char *  descriptor );
+
+
+   /** Set the descriptor of an input */
+   void SetInputDescriptor( InputType input, const InputDescriptorType & descriptor );
+   void SetInputDescriptor( InputType input, const char *  descriptor );
 
 
 
@@ -145,6 +162,16 @@ private:
        forbiden. Once the machine is set to run, the method SetTransition() is
        forbiden and the method StateTransition() becomes available */
    bool m_ReadyToRun;
+
+
+   /** Container of state identifiers  */
+   StateDescriptorType m_StateDescriptor[ VStates ];
+
+
+   /** Container of input identifiers  */
+   InputDescriptorType m_InputDescriptor[ VInputs ];
+
+
 
 };
 

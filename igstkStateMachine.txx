@@ -89,6 +89,91 @@ StateMachine< TClass, VStates, VInputs >
 
 
 
+template<class TClass, unsigned int VStates, unsigned int VInputs>
+void
+StateMachine< TClass, VStates, VInputs >
+::SetInputDescriptor( InputType input , const InputDescriptorType & descriptor )
+{
+
+  if( input >= VInputs )
+    {
+    std::cerr << "Input code is out of range. " << std::endl;
+    std::cerr << "It should be between 0 and " << VInputs  << std::endl;
+    std::cerr << "but its value is " << input << std::endl;
+    return;
+    }
+
+   m_InputDescriptor[ input ] = descriptor;
+
+}
+
+
+
+
+
+template<class TClass, unsigned int VStates, unsigned int VInputs>
+void
+StateMachine< TClass, VStates, VInputs >
+::SetInputDescriptor( InputType input , const char * descriptor )
+{
+
+  if( input >= VInputs )
+    {
+    std::cerr << "Input code is out of range. " << std::endl;
+    std::cerr << "It should be between 0 and " << VInputs  << std::endl;
+    std::cerr << "but its value is " << input << std::endl;
+    return;
+    }
+
+   m_InputDescriptor[ input ] = descriptor;
+
+}
+
+
+
+
+
+template<class TClass, unsigned int VStates, unsigned int VInputs>
+void
+StateMachine< TClass, VStates, VInputs >
+::SetStateDescriptor( StateType state , const StateDescriptorType & descriptor )
+{
+
+  if( state >= VStates )
+    {
+    std::cerr << "State code is out of range. " << std::endl;
+    std::cerr << "It should be between 0 and " << VStates  << std::endl;
+    std::cerr << "but its value is " << state << std::endl;
+    return;
+    }
+
+   m_StateDescriptor[ state ] = descriptor;
+
+}
+
+
+
+
+
+template<class TClass, unsigned int VStates, unsigned int VInputs>
+void
+StateMachine< TClass, VStates, VInputs >
+::SetStateDescriptor( StateType state , const char * descriptor )
+{
+
+  if( state >= VStates )
+    {
+    std::cerr << "State code is out of range. " << std::endl;
+    std::cerr << "It should be between 0 and " << VStates  << std::endl;
+    std::cerr << "but its value is " << state << std::endl;
+    return;
+    }
+
+   m_StateDescriptor[ state ] = descriptor;
+
+}
+
+
 
 template<class TClass, unsigned int VStates, unsigned int VInputs>
 void
@@ -179,6 +264,52 @@ StateMachine< TClass, VStates, VInputs >
 
 
 
+template<class TClass, unsigned int VStates, unsigned int VInputs>
+void
+StateMachine< TClass, VStates, VInputs >
+::SetTransition( const StateDescriptorType & stateDescriptor,   
+                 const InputDescriptorType & inputDescriptor, 
+                 const StateDescriptorType & newstateDescriptor, 
+                       TMemberFunctionPointer action )
+{
+
+  StateType state;
+  InputType input;
+  StateType newstate;
+
+  for( StateType s = 0; s < VStates; s++)
+    {
+    if( m_StateDescriptor[ s ] == stateDescriptor )
+      {
+      state = s; 
+      break;
+      }
+    }
+
+
+  for( StateType ns = 0; ns < VStates; ns++)
+    {
+    if( m_StateDescriptor[ ns ] == newstateDescriptor )
+      {
+      newstate = ns; 
+      break;
+      }
+    }
+
+
+  for( InputType in = 0; in < VInputs; in++)
+    {
+    if( m_InputDescriptor[ in ] == inputDescriptor )
+      {
+      input = in; 
+      break;
+      }
+    }
+
+  this->SetTransition( state, input, newstate, action );
+
+}
+
 
 
 
@@ -187,7 +318,7 @@ StateMachine< TClass, VStates, VInputs >
 template<class TClass, unsigned int VStates, unsigned int VInputs>
 void
 StateMachine< TClass, VStates, VInputs >
-::SetTransition( StateType state,    unsigned int input, 
+::SetTransition( StateType state,    InputType input, 
                  StateType newstate, TMemberFunctionPointer action )
 {
 
