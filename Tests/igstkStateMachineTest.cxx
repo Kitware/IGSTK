@@ -14,7 +14,12 @@ public:
 
   typedef StateMachineType::TMemberFunctionPointer        ActionType;
 
+#if defined(__GNUC__)
   friend class StateMachineType;
+#else
+  friend StateMachineType;
+#endif
+  
 
   Tester()
     {
