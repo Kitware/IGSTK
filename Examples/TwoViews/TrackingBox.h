@@ -64,8 +64,11 @@ public:
     while(m_Tracking)
       {
       m_Tracker->UpdateStatus();
-      TrackerType::PositionType position;
-      m_Tracker->GetPosition( position );
+      TrackerType::TransformType transform;
+
+      m_Tracker->GetTransform( transform );
+
+      igstk::Transform::VectorType position = transform.GetTranslation();
 
       // We update only if the mouse is inside the box
       if(

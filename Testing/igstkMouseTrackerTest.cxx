@@ -30,7 +30,7 @@
 
 int igstkMouseTrackerTest( int, char * [] )
 {
-  typedef itk::Point< double, 3 >  PositionType;
+  typedef igstk::Transform         TransformType;
   typedef igstk::MouseTracker      MouseTrackerType;
   typedef igstk::Logger            LoggerType; 
     
@@ -47,13 +47,16 @@ int igstkMouseTrackerTest( int, char * [] )
 
   tracker->UpdateStatus();
 
-  PositionType position;
+  TransformType transform;
 
-  tracker->GetPosition( position );
+  tracker->GetTransform( transform );
 
   tracker->Reset();
 
   tracker->StopTracking();
+
+  TransformType::VectorType position = transform.GetTranslation();
+  
   std::cout << "Mouse Position -> ( " << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
 
   tracker->Close();

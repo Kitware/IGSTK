@@ -1,4 +1,3 @@
-
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
@@ -34,32 +33,42 @@ void MouseTracker::Initialize( const char *fileName )
 {
   igstkLogMacro( igstk::Logger::DEBUG, "MouseTracker::Initialize called ...\n");
   Tracker::Initialize();
+  m_ValidityTime = 100.0; // 100.0 milliseconds
+  this->SetUpToolsProcessing();
 }
     
 void MouseTracker::SetUpToolsProcessing( void )
 {
   igstkLogMacro( igstk::Logger::DEBUG, "MouseTracker::SetUpToolsProcessing called ...\n");
-  TrackerPortType    port;
-  igstk::TrackerTool tool;
-  tool.SetError( 0 );
-  port.AddTool( tool );
-  this->AddPort( port );
+  m_Port = TrackerPortType::New();
+  m_Tool = TrackerToolType::New();
+  m_Tool->SetError( 1.0 ); // uncertainty of 1 pixel
+  m_Port->AddTool( m_Tool );
+  this->AddPort( m_Port );
 }
     
 void MouseTracker::UpdateStatusProcessing( void )
 {
   igstkLogMacro( igstk::Logger::DEBUG, "MouseTracker::UpdateStatusProcessing called ...\n");
-  typedef itk::Point< double, 3 >  PositionType;
+
+  typedef igstk::Transform   TransformType;
+  TransformType transform;
+  transform.SetToIdentity( m_ValidityTime );
+  
+  typedef TransformType::VectorType PositionType;
   PositionType  position;
   position[0] = Fl::event_x();
   position[1] = Fl::event_y();
   position[2] = 0;
-  this->SetToolPosition( 0, 0, position );
+
+  transform.SetTranslation( position, m_ValidityTime );
+  this->SetToolTransform( 0, 0, transform );
+
 }
  
-void MouseTracker::GetPosition(PositionType& position)
+void MouseTracker::GetTransform(TransformType & transform)
 {
-  Tracker::GetToolPosition(0, 0, position);
+  this->GetToolTransform(0, 0, transform);
 }
 
 }

@@ -23,24 +23,27 @@
 namespace igstk
 {
 /** \class MouseTracker
-    \brief Implementation of the Mouse Tracker class.
+    \brief Implementation of the Mouse TrackerTool class.
 
 */
-
 class MouseTracker : public igstk::Tracker
 {
 public:
     typedef MouseTracker                        Self;
     typedef itk::SmartPointer<Self>             Pointer;
     typedef itk::SmartPointer<const Self>       ConstPointer;
-    typedef itk::Point< double, 3 >  PositionType;
+    typedef Tracker                             Superclass;
+    typedef Superclass::TransformType           TransformType;
 
     /** Method for creation of a reference counted object. */
     igstkNewMacro( MouseTracker );  
 
     void Initialize( const char *fileName = NULL );
 
-    void GetPosition(PositionType& position);
+    void GetTransform(TransformType & transform);
+
+    typedef igstk::TrackerTool                  TrackerToolType;
+    typedef igstk::TrackerPort                  TrackerPortType;
 
 protected:
 
@@ -51,6 +54,13 @@ protected:
 
 private:
 
+    typedef Transform::TimePeriodType   TimePeriodType;
+
+    TimePeriodType                      m_ValidityTime;
+
+    igstk::TrackerTool::Pointer         m_Tool;
+
+    igstk::TrackerPort::Pointer         m_Port;
 };
 
 }
