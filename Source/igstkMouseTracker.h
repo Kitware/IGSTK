@@ -33,11 +33,14 @@ public:
     typedef MouseTracker                        Self;
     typedef itk::SmartPointer<Self>             Pointer;
     typedef itk::SmartPointer<const Self>       ConstPointer;
+    typedef itk::Point< double, 3 >  PositionType;
 
     /** Method for creation of a reference counted object. */
     NewMacro( MouseTracker );  
 
     void Initialize( const char *fileName = NULL );
+
+    void GetPosition(PositionType& position);
 
 protected:
 

@@ -49,11 +49,16 @@ void MouseTracker::UpdateStatusProcessing( void )
 {
     igstkLogMacro( igstk::Logger::DEBUG, "MouseTracker::UpdateStatusProcessing called ...\n");
     typedef itk::Point< double, 3 >  PositionType;
-    PositionType  pos;
-    pos[0] = Fl::event_x();
-    pos[1] = Fl::event_y();
-    pos[2] = 0;
-    this->SetToolPosition( 0, 0, pos );
+    PositionType  position;
+    position[0] = Fl::event_x();
+    position[1] = Fl::event_y();
+    position[2] = 0;
+    this->SetToolPosition( 0, 0, position );
 }
-    
+ 
+void MouseTracker::GetPosition(PositionType& position)
+{
+  Tracker::GetToolPosition(0, 0, position);
+}
+
 }
