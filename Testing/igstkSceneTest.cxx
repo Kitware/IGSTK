@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include "igstkScene.h"
+#include "igstkView3D.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 
 int igstkSceneTest( int, char * [] )
@@ -31,6 +32,8 @@ int igstkSceneTest( int, char * [] )
 
   typedef igstk::EllipsoidObjectRepresentation  ObjectType;
   ObjectType::Pointer ellipsoid = ObjectType::New();
+
+  igstk::View3D* view = new igstk::View3D(0,0,0,0);
 
   // Testing number of object
   std::cout << "Testing GetNumberOfObjects: ";
@@ -43,7 +46,7 @@ int igstkSceneTest( int, char * [] )
 
   // Add Object
   std::cout << "Testing RequestAddObject: ";
-  scene->RequestAddObject(ellipsoid); 
+  scene->RequestAddObject(view,ellipsoid); 
   if(scene->GetNumberOfObjects() != 1)
     { 
     std::cout << "[FAILED]" << std::endl;
@@ -53,7 +56,7 @@ int igstkSceneTest( int, char * [] )
 
   // Remove object
   std::cout << "Testing RequestRemoveObject: ";
-  scene->RequestRemoveObject(ellipsoid); 
+  scene->RequestRemoveObject(view,ellipsoid); 
   if(scene->GetNumberOfObjects() != 0)
     { 
     std::cout << "[FAILED]" << std::endl;
@@ -71,7 +74,7 @@ int igstkSceneTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
   // Testing Removing all object
-  scene->RequestAddObject(ellipsoid); 
+  scene->RequestAddObject(view,ellipsoid); 
   std::cout << "Testing Removing all object: ";
   scene->RequestRemoveAllObjects(); 
   if(scene->GetNumberOfObjects() != 0)
@@ -84,6 +87,8 @@ int igstkSceneTest( int, char * [] )
   // Testing printself
   scene->Print(std::cout);
   scene->GetNameOfClass();
+
+  delete view;
 
   return EXIT_SUCCESS;
 }

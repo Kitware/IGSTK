@@ -123,6 +123,17 @@ int igstkEllipsoidObjectTest( int, char * [] )
   const igstk::SpatialObject::MatrixType matrix = ellipsoidObject->GetMatrix();
   std::cout << "[PASSED]" << std::endl;
 
+  // Testing the Copy() function
+  std::cout << "Testing Copy(): ";
+  ObjectRepresentationType::Pointer copy = ellipsoidRepresentation->Copy();
+  if(copy->GetOpacity() != ellipsoidRepresentation->GetOpacity())
+    {
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "[PASSED]" << std::endl;
+
+
   std::cout << "Test [DONE]" << std::endl;
   return EXIT_SUCCESS;
 }
