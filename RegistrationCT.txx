@@ -13,6 +13,7 @@ RegistrationCT<TVolumeType>
 {
   m_Metric   = MetricType::New();
   m_Notifier = itk::Object::New();
+  m_Resampler = ResamplerType::New();
 }
 
 
@@ -30,7 +31,7 @@ const typename RegistrationCT<TVolumeType>::VolumeType *
 RegistrationCT<TVolumeType>
 ::GetOutput()
 {
-  return m_ResampleFilter->GetOutput();
+  return m_Resampler->GetOutput();
 }
 
 

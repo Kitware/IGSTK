@@ -4,6 +4,7 @@
 
 #include "RegistrationCTGUI.h"
 #include "itkMeanSquaresImageToImageMetric.h"
+#include "itkResampleImageFilter.h"
 
 
 namespace ISIS
@@ -16,6 +17,7 @@ public:
 
   typedef TVolumeType                           VolumeType;
   typedef typename VolumeType::Pointer          VolumePointer;
+  typedef typename VolumeType::ConstPointer     VolumeConstPointer;
 
   typedef itk::MeanSquaresImageToImageMetric< 
                                         VolumeType, 
@@ -23,6 +25,13 @@ public:
                                             >   MetricType;
 
   typedef typename MetricType::Pointer          MetricPointer;
+
+  typedef itk::ResampleImageFilter< 
+                              VolumeType, 
+                              VolumeType 
+                                          >  ResamplerType;
+
+  typedef typename ResamplerType::Pointer    ResamplerPointer;
 
 public:
   RegistrationCT( void );
@@ -45,12 +54,15 @@ protected:
 
 private:
 
-  VolumePointer             m_FixedImage;
-  VolumePointer             m_MovingImage;
+  VolumeConstPointer        m_FixedImage;
+  VolumeConstPointer        m_MovingImage;
  
   itk::Object::Pointer      m_Notifier;
 
   MetricPointer             m_Metric;
+  
+  ResamplerPointer          m_Resampler;
+
 };
 
 
