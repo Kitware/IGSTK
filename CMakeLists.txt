@@ -47,6 +47,9 @@ ELSE (FLTK_FOUND)
   MESSAGE( FATAL_ERROR "This application requires FLTK. One of these components is missing. Please verify configuration")
 ENDIF (FLTK_FOUND)
 
+# The IGSTK Library
+SUBDIRS(Source)
+
 # Add the testing directories
 IF(IGSTK_BUILD_TESTING)
    SUBDIRS(Testing)
