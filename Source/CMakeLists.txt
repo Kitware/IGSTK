@@ -1,20 +1,32 @@
 #
 #  Define the list of source files forming the IGSTKSandbox Library
 #
-# The header files
 
+# The header files
 SET(IGSTKSandbox_HEADS
   igstkRenderWindow.h
+  igstkView.h
+  igstkView2D.h
+  igstkView3D.h
+  igstkScene.h
+  igstkObjectRepresentation.h
+  igstkEllipsoidObject.h
+  igstkObjectProperty.h
 )
 
 # The implementation files
-
 SET(IGSTKSandbox_SRCS  
   igstkRenderWindow.cxx
+  igstkView.cxx
+  igstkView2D.cxx
+  igstkView3D.cxx
+  igstkScene.cxx
+  igstkObjectRepresentation.cxx
+  igstkEllipsoidObject.cxx
+  igstkObjectProperty.cxx
 )
 
 # Adding the IGSTKSandbox library
-
 ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS})
 
 # Linking with the FLTK, ITK and VTK libraries
