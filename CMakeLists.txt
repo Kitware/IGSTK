@@ -52,9 +52,15 @@ INCLUDE_DIRECTORIES(
 #  Define the list of source files
 #
 SET(IGSTK_HEADS
+  ConfidenceConnectedModule.h
+  ConnectedThresholdModule.h
   DicomImageReaderBase.h
   DicomImageReader.h
   RegistrationCTBase.h
+  igstkClickedPointEvent.h
+  igstkImageSliceViewer.h
+  igstkInteractorObserver.h
+  igstkStateMachine.h
   ImageSliceViewer.h
   vtkFlRenderWindowInteractor.h
   InteractorObserver.h
@@ -69,9 +75,13 @@ SET(IGSTK_HEADS
 )
 
 SET(IGSTK_SRCS
+  ConfidenceConnectedModule.cxx
+  ConnectedThresholdModule.cxx
   DicomImageReaderBase.cxx
   DicomImageReader.txx
   RegistrationCTBase.cxx
+  igstkImageSliceViewer.cxx
+  igstkStateMachine.cxx
   ImageSliceViewer.cxx
   vtkFlRenderWindowInteractor.cxx
   InteractorObserver.cxx
@@ -83,6 +93,8 @@ SET(IGSTK_SRCS
   Sphere.cxx
   IGMTImageSliceViewer.cxx
   IGMTrackingBase.cxx
+  igstkImageSliceViewer.cxx
+  igstkInteractorObserver.cxx
   )
 
 SET(AURORA_TRACKER_HEADS
