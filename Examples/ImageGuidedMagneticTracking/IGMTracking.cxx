@@ -13,8 +13,11 @@
 
 #include "Conversions.h"
 
+#include "DICOMFile.h"
+
 #include <stdlib.h>
 #include <conio.h>
+#include "io.h"
 #include "SYS\TIMEB.H"
 #include ".\igmtracking.h"
 
@@ -3453,4 +3456,283 @@ void IGMTracking::OnSaveMatrix(void)
   }
 
   this->DumpRegisterMatrix(filename);
+}
+
+void IGMTracking::OnLoadPET(void)
+{
+  const char * directoryname = fl_dir_chooser("PET Image directory","");
+	
+	if( !directoryname  || strlen(directoryname) == 0 )
+  {
+		return;
+  }
+	
+  m_VolumeType = 0;
+	
+	std::vector<std::string> filename;
+  std::vector<std::string>::iterator it;
+
+
+	
+	char name[1024];
+	sprintf(name, "%s", directoryname);
+	char* buf;
+	int n = static_cast<int>( strlen(name) );
+	if ( name[n - 1] == '/' ) 
+  {
+		buf = new char[n + 1 + 1];
+		sprintf(buf, "%s*", name);
+  } 
+	else
+  {
+		buf = new char[n + 2 + 1];
+		sprintf(buf, "%s/*", name);
+  }
+	
+	struct _finddata_t data;
+  
+	long srchHandle = _findfirst(buf, &data);
+	delete [] buf;
+  
+  if ( srchHandle == -1 )
+  {
+    return ;
+  }
+    
+  char s[256];
+  FILE* file;
+  CDICOMFile dicom;
+  dicom.SetSwap(true);
+  double spacing[3], position[3], sliceloc;
+  unsigned int size[3];
+  unsigned int i, j, slice = 0;
+  
+  do 
+  {
+    if (strcmp(data.name, ".") != 0 && strcmp(data.name, "..") != 0)
+    {
+      sprintf(s, "%s/%s", directoryname, data.name);
+		  filename.push_back(s);         
+		}
+  } 
+	while ( _findnext(srchHandle, &data) != -1 );
+	_findclose(srchHandle);  
+
+
+  int num;
+  signed short *buffer, *buffer2;
+  double *slicelocation;
+  it = filename.begin();
+  do 
+  {
+    file = fopen(it->c_str(), "rb+");
+    dicom.Open(file);
+    dicom.SwapImage();
+    fclose(file);
+    if (slice == 0)
+    {
+      for (i = 0; i < 3; i++)
+      {
+        position[i] = dicom.m_Position[i];
+      }
+      for (i = 0; i < 2; i++)
+      {
+        spacing[i] = dicom.m_Spacing[i];
+      }
+      sliceloc = dicom.m_SliceLocation;        
+      size[0] = dicom.m_CX;
+      size[1] = dicom.m_CY;
+      size[2] = filename.size();
+      num = size[0] * size[1] * size[2];
+      buffer = new signed short[num];
+      slicelocation = new double[size[2]];
+    }
+    else if (slice == 1)
+    {
+      spacing[2] = fabs(dicom.m_SliceLocation - sliceloc);
+    }
+    slicelocation[slice] = dicom.m_SliceLocation;
+    memcpy(buffer + slice * size[0] * size[1], dicom.m_pImage, size[0] * size[1] * sizeof(signed short));
+    slice++;
+    it++;
+  }
+  while (it != filename.end());
+
+  int* index = new int[size[2]], temp;
+  for (i = 0; i< size[2]; i++)
+  {
+    index[i] = i;
+  }
+  for (i = 0; i < size[2] - 1; i++)
+  {
+    for (j = i + 1; j < size[2]; j++)
+    {
+      if (slicelocation[index[i]] < slicelocation[index[j]])
+      {
+        temp = index[i];
+        index[i] = index[j];
+        index[j] = temp;
+      }
+    }
+  }
+
+  spacing[2] = fabs(slicelocation[index[1]] - slicelocation[index[0]]);
+
+  buffer2 = new signed short[num];
+  for (i = 0; i < size[2]; i++)
+  {
+    memcpy(buffer2 + i * size[0] * size[1], buffer + index[i] * size[0] * size[1], size[0] * size[1] * sizeof(signed short));
+  }
+
+  delete buffer;
+
+  typedef itk::ImportImageFilter<signed short, 3> ImportFilterType;
+
+  typedef ImportFilterType::Pointer ImportFilterTypePointer;
+
+  typedef itk::Image<signed short, 3>::RegionType InputRegionType;
+
+  typedef itk::Image<signed short, 3>::SizeType InputSizeType;
+
+  typedef itk::Image<signed short, 3>::IndexType InputIndexType;
+
+  ImportFilterTypePointer m_pImportFilter = ImportFilterType::New();
+
+  InputRegionType region;
+
+  InputSizeType ssize;
+
+  InputIndexType iindex;
+
+  for (i = 0; i < 3; i++)
+  {
+    ssize[i] = size[i];
+    iindex[i] = 0;
+  }
+  region.SetIndex(iindex);
+  region.SetSize(ssize);  
+
+  m_pImportFilter->SetRegion(region);
+  m_pImportFilter->SetSpacing(spacing);
+  m_pImportFilter->SetOrigin(position);
+
+  m_pImportFilter->SetImportPointer(buffer2, num, false);
+
+  m_LoadedVolume = m_pImportFilter->GetOutput();
+	
+//	m_Reader->SetFileNames(filename);	
+
+//  m_VolumeIsLoaded = true;
+
+  this->LoadPostProcessing();
+
+//  m_Notifier->InvokeEvent( itk::EndEvent() );
+}
+
+void IGMTracking::OnLoadPath(void)
+{
+  unsigned int i;
+  char mes[128];
+  float point[4];
+  std::ifstream pathfile;
+  std::string str;
+  IGMTracking::PointSetType::PointType pathpoint;
+
+  char * filename = fl_file_chooser("Matrix file","*.dat","");
+
+  if( !filename  || strlen(filename) == 0 )
+  {
+    return;
+  }
+
+  pathfile.open(filename);
+  if (pathfile.fail())
+  {
+    return;
+  }
+
+  i = 0;
+  while( !pathfile.eof() )
+  {
+    pathfile>>str;
+    if (str == "P-Tip:")
+    {
+      pathfile>>pathpoint;
+      i++;
+   //   if (i < 50)
+   //   {
+        m_MovingPointSet->SetPoint(m_MovingPointSet->GetNumberOfPoints(), pathpoint);
+   //   }
+      
+    }
+    else if (str == "P-Tip-Orientation:" || str == "R-Tip-Orientation0:" || str == "R-Tip-Orientation1:")
+    {
+      pathfile>>point[0]>>point[1]>>point[2]>>point[3];
+    }
+    else 
+    {
+      pathfile>>point[0]>>point[1]>>point[2];
+    }    
+  }
+
+  sprintf(mes, "%d path points loaded!", i);
+  this->AppendInfo(mes);
+
+}
+
+void IGMTracking::OnSimulatePath(void)
+{
+  unsigned int i, j;
+  double toolPositionInImageSpace[3], anotherPositionInImageSpace[3], pos1[3], pos2[3];
+  IGMTracking* pTracking = this;
+
+  IGSTK::FantasticRegistration::PointType point;
+
+  pTracking->DisplayToolPosition( true );
+
+  for (i = 0; i < pTracking->m_MovingPointSet->GetNumberOfPoints(); i++)
+  {
+    pTracking->m_MovingPointSet->GetPoint(i, &point);
+    
+    for (j = 0; j < 3; j++)
+    {
+      pos1[j] = point[j];
+      pos2[j] = point[j] + 10;
+    }
+
+    switch (pTracking->m_RegParameters.m_RegType)
+    {
+    case 0:
+    case 1:
+    case 3:
+    case 4:
+      break;    
+    case 2:
+      pTracking->TransformPoint(pos1, toolPositionInImageSpace);
+      pTracking->TransformPoint(pos2, anotherPositionInImageSpace);
+      break;
+    }		
+    
+    if (pTracking->m_FullSizeIdx != 3)
+    {
+      pTracking->m_AxialViewer.DeActivateSelectedPosition();
+      pTracking->m_CoronalViewer.DeActivateSelectedPosition();
+      pTracking->m_SagittalViewer.DeActivateSelectedPosition();
+
+      pTracking->m_AxialViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
+      pTracking->m_AxialViewer.MakeToolPositionMarkerVisible();
+
+      pTracking->m_CoronalViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
+      pTracking->m_CoronalViewer.MakeToolPositionMarkerVisible();
+
+      pTracking->m_SagittalViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
+      pTracking->m_SagittalViewer.MakeToolPositionMarkerVisible();
+
+      pTracking->SyncAllViews( toolPositionInImageSpace );
+    }	
+
+    Sleep(100);
+  }
+  
+  
 }
