@@ -86,14 +86,18 @@ namespace ISIS
 		this->TextActor[4]->GetPositionCoordinate()->SetValue(0.26, 0.65);
 		
 		int lh = this->m_BarHeight / 4;
-		this->ImageCanvas->DrawSegment(home, 0.6 * m_Height, home, 0.6 * m_Height - lh);
+    
+		this->ImageCanvas->DrawSegment( 
+                static_cast<int>( home ),  
+                static_cast<int>( 0.6 * m_Height),
+                static_cast<int>( home),
+                static_cast<int>( 0.6 * m_Height - lh) );
 		
 		char strLabel[10];
 		
 		for (unsigned int ii = 0; ii < 6; ii ++)
 		{
-			itoa(1 - ii, strLabel, 10);
-			//	sprintf(strLable, "%1.1f", 
+			sprintf(strLabel, "%02d", 1-ii); 
 			this->LabelMapper[ii] = vtkTextMapper::New();
 			this->LabelMapper[ii]->SetInput(strLabel);
 			this->LabelMapper[ii]->GetTextProperty()->SetFontSize(11);
@@ -147,16 +151,18 @@ namespace ISIS
 		this->DrawBar();
 		m_RenderWindow->Render();
 	}
+
 /*	
 	void MotionViewer::show()
 	{
 		this->Render();
 	}
 */	
+  
 	void MotionViewer::UpdateMotion(float x)
 	{
 		float home = (m_Width - this->m_BarWidth) / 2.0 + 0.2 * this->m_BarWidth;
-		this->m_XPos = home + (x / 5.0) * (this->m_BarWidth / 10.0);
+		this->m_XPos = static_cast<int>( home + (x / 5.0) * (this->m_BarWidth / 10.0) );
 		this->Render();
 	}
 	
@@ -171,29 +177,45 @@ namespace ISIS
 		
 		int dx = this->m_BarHeight / 5;
 		int dy = this->m_BarHeight * 9 / 20;
-		this->ImageCanvas->SetDrawColor(255, 0, 0);
+		
+    this->ImageCanvas->SetDrawColor(255, 0, 0);
+    
 		int x0 = this->m_XPos - dx;
 		int x1 = this->m_XPos + dx;
+    
 		int y0 = static_cast<int>( 0.5 * this->m_Height - dy );
 		int y1 = static_cast<int>( 0.5 * this->m_Height + dy );
+    
 		if (x0 < xmin)
+      {
 			x0 = xmin;
+      }
 		if (x0 > xmax)
+      {
 			x0 = xmax;
+      }
 		if (x1 < xmin)
+      {
 			x1 = xmin;
+      }
 		if (x1 > xmax)
+      {
 			x1 = xmax;
+      }
+    
 		this->ImageCanvas->FillBox(x0, x1, y0, y1);
 		
 		int lh = this->m_BarHeight / 4;
 		float step = (xmax - xmin) / 10.0; 
+    
 		this->ImageCanvas->SetDrawColor(0.1843 * 255, 0.3098 * 255, 0.3098 * 255);
+
 		for (float xc = xmin + step; xc < xmax; xc += step)
 		{
-			this->ImageCanvas->DrawSegment(xc, ymin, xc, ymin + lh);
-			this->ImageCanvas->DrawSegment(xc, m_Height / 2 - lh /2, xc, m_Height / 2 + lh / 2);
-			this->ImageCanvas->DrawSegment(xc, ymax, xc, ymax - lh);
+      const int ixc = static_cast<int>( xc );
+			this->ImageCanvas->DrawSegment(ixc, ymin, ixc, ymin + lh);
+			this->ImageCanvas->DrawSegment(ixc, m_Height / 2 - lh /2, ixc, m_Height / 2 + lh / 2);
+			this->ImageCanvas->DrawSegment(ixc, ymax, ixc, ymax - lh);
 		}
 	}
 	
@@ -207,8 +229,8 @@ namespace ISIS
 			return;
 		}
 		
-		float spacing[3];
-		float origin[3];
+		vtkFloatingPointType spacing[3];
+		vtkFloatingPointType origin[3];
 		int   dimensions[3];
 		
 		image->GetSpacing(spacing);
