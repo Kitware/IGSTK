@@ -6,12 +6,12 @@ PROJECT (IGMTracking)
 #
 
 SET (IGMTracking_HEADS
-	IGMTracking.h
-	)
+	IGMTracking.h	
+ 	)
 
 SET (IGMTracking_SRCS
-	IGMTracking.cxx
-	)
+	IGMTracking.cxx	
+ 	)
 
 ADD_EXECUTABLE (IGMTracking main.cxx 
 	${IGMTracking_HEADS} 
@@ -24,6 +24,10 @@ FLTK_WRAP_UI (IGMTracking
 	BrowserGUI.fl 
 	MessageWindowGUI.fl 
 	PortParametersGUI.fl
+	LayoutGUI.fl
+	ProbeParametersGUI.fl
+  	ImageFusionGUI.fl
+	SegParametersGUI.fl
 	)
 
 TARGET_LINK_LIBRARIES (IGMTracking IGSTK)
