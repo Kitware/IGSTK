@@ -1,11 +1,30 @@
 
 SET(IGSTK_TESTS ${CXX_TEST_PATH}/igstkTests)
 
+SET(IGSTK_TEST_OUTPUT_DIR "${IGSTK_BINARY_DIR}/Tests/Temporary")
+MAKE_DIRECTORY(${IGSTK_TEST_OUTPUT_DIR})
 
-ADD_TEST(DicomImageReaderTest ${IGSTK_TESTS} DicomImageReaderTest)
+#-----------------------------------------------------------------------------
+# Configure the default IGSTK_DATA_ROOT for the location of IGSTK Data.
+FIND_PATH(IGSTK_DATA_ROOT IGSTKData.readme ${IGSTK_SOURCE_DIR}/Tests/Data $ENV{IGSTK_DATA_ROOT})
+MARK_AS_ADVANCED(IGSTK_DATA_ROOT)
+
+
+#IF(ITK_DATA_ROOT)
+ADD_TEST(DicomImageReaderTest ${IGSTK_TESTS} --compare
+	${IGSTK_DATA_ROOT}/Baseline/DicomImageReader_pngInput.png 
+	${IGSTK_TEST_OUTPUT_DIR}/DicomImageReader_pngInput.png
+	DicomImageReaderTest 
+	${IGSTK_DATA_ROOT}/Input/DicomImageReader_InputSerie.dcm 
+	${IGSTK_TEST_OUTPUT_DIR}/DicomImageReader_pngInput.png
+	)
+
+
+
 ADD_TEST(RegistrationCTTest ${IGSTK_TESTS} RegistrationCTTest)
 ADD_TEST(ImageSliceViewerTest ${IGSTK_TESTS} ImageSliceViewerTest)
 
+#ENDIF(ITK_DATA_ROOT)
 
 SET(BasicTests_SRCS
   DicomImageReaderTest.cxx
