@@ -60,6 +60,21 @@ virtual const type & Get##name () const \
     return this->m_##name; \
 }
 
+
+/** New Macro creates a new object of a class that is using SmartPointers. This
+ * macro differs from the one in ITK in that it DOES NOT uses factories.
+ * Factories add run-time uncertainty that is undesirable for IGSTK. */
+#define NewMacro(x) \
+static Pointer New(void) \
+{ \
+  Pointer smartPtr; \
+  x *rawPtr = new x; \
+  smartPtr = rawPtr; \
+  rawPtr->UnRegister(); \
+  return smartPtr; \
+} 
+
+
 /** Create a Macro for friend class. This will take care of platform specific
  * ways of declaring a class as a friend */
 #if defined(__GNUC__) 
