@@ -26,7 +26,7 @@ public:
 
   typedef enum
     { 
-    Saggital, 
+    Sagittal, 
     Coronal, 
     Axial 
     } 
@@ -60,10 +60,12 @@ public:
 
 protected:
 
-  void SetupCamera( void );
+  virtual void SetupCamera( void );
 
 
 public:
+	virtual void SelectRightPoint(int x, int y);
+	int m_Ext[6];
 
   vtkImageActor     * m_Actor;
 

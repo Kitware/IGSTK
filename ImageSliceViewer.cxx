@@ -91,6 +91,7 @@ ImageSliceViewer
 ::SetInput( vtkImageData * image )
 {
 
+  image->GetExtent(m_Ext);
   m_Actor->SetInput( image );
   this->SetupCamera();
 
@@ -130,7 +131,7 @@ ImageSliceViewer
   int idx = 0;
   switch( m_Orientation )
     {
-  case Saggital:
+  case Sagittal:
       {
       idx = 0;
       m_Camera->SetViewUp (     0,  0,  -1 );
@@ -221,9 +222,13 @@ void
   int ext[6];
   m_Actor->GetInput()->GetExtent( ext );
 
+//  printf("GetDisplayExtent: %d %d %d %d %d %d\n", ext[0], ext[1], ext[2], ext[3], ext[4], ext[5]);
+
+  memcpy(ext, m_Ext, 6 * sizeof(int));
+
   switch( m_Orientation )
     {
-  case Saggital:
+  case Sagittal:
       if ((slice>=ext[0]) && (slice<=ext[1]))
       {
         ext[0] = slice;
@@ -249,6 +254,8 @@ void
       break;
     }
 
+ // printf("SetDisplayExtent: %d %d %d %d %d %d\n", ext[0], ext[1], ext[2], ext[3], ext[4], ext[5]);
+
   m_Actor->SetDisplayExtent( ext );
 }
 
@@ -262,6 +269,7 @@ ImageSliceViewer
     return;     // return, if no image is loaded yet.
     }
 
+ 
   // Invert the y coordinate (vtk uses opposite y as FLTK)
   int* winsize = m_RenderWindow->GetSize();
   y = winsize[1] - y;
@@ -288,7 +296,7 @@ ImageSliceViewer
   int idx = 0;
   switch( m_Orientation )
     {
-  case Saggital:
+  case Sagittal:
       {
       idx = 0;
       break;
@@ -311,6 +319,8 @@ ImageSliceViewer
   this->SelectPoint(wpoint[0], wpoint[1], wpoint[2]);
 
   m_Notifier->InvokeEvent( ClickedPointEvent() );
+
+  
 }
 
 void  
@@ -339,6 +349,11 @@ ImageSliceViewer::AddObserver( const itk::EventObject & event, itk::Command * co
   return m_Notifier->AddObserver( event, command );
 }
 
+void ImageSliceViewer::SelectRightPoint(int x, int y)
+{
 
 }
+
+}
+
 
