@@ -43,7 +43,7 @@ class SerialCommunication : public Communication, public itk::Object
 {
   const unsigned int m_ReadBufferSize; // read buffer size in bytes
   const unsigned int m_WriteBufferSize;// write buffer size in bytes
-  const unsigned int m_PortRestSpan; // period of rest in communication, in secs.
+  const unsigned int m_PortRestSpan; // period of rest in communication, in msecs.
 
   typedef igstk::Logger   LoggerType;
 
@@ -85,7 +85,7 @@ public:
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
   /**  Run-time type information (and related methods). */
-  itkTypeMacro(Tracker, Object);
+  itkTypeMacro(SerialCommunication, Object);
 
   /** Method for creation of a reference counted object. */
   NewMacro(Self);  
@@ -130,7 +130,7 @@ public:
   void SendString( const CommunicationDataType& message );
 
   /** ReceiveString method sends the string to the hardware. */
-  void ReceiveString( const CommunicationDataType& message );
+  void ReceiveString( void ); //const CommunicationDataType& message );
 
    /** The SetLogger method is used to attach a logger object to the
    serial communication object for logging. */
@@ -143,11 +143,16 @@ public:
   itkEventMacro( CommunicationTimeoutSetupFailureEvent, itk::AnyEvent );
   itkEventMacro( RestCommunicationFailureEvent, itk::AnyEvent );
   itkEventMacro( FlushOutputBufferFailureEvent, itk::AnyEvent );
-  itkEventMacro( SendStringCreateEventFailureEvent, itk::AnyEvent );
+  itkEventMacro( OverlappedEventCreationFailureEvent, itk::AnyEvent );
   itkEventMacro( SendStringSuccessfulEvent, itk::AnyEvent );
   itkEventMacro( SendStringFailureEvent, itk::AnyEvent );
   itkEventMacro( SendStringWriteTimeoutEvent, itk::AnyEvent );
   itkEventMacro( SendStringWaitTimeoutEvent, itk::AnyEvent );
+  itkEventMacro( CommunicationStatusReportFailureEvent, itk::AnyEvent );
+  itkEventMacro( ReceiveStringSuccessfulEvent, itk::AnyEvent );
+  itkEventMacro( ReceiveStringFailureEvent, itk::AnyEvent );
+  itkEventMacro( ReceiveStringReadTimeoutEvent, itk::AnyEvent );
+  itkEventMacro( ReceiveStringWaitTimeoutEvent, itk::AnyEvent );
 
 protected:
 
@@ -229,10 +234,10 @@ private:
   char *m_OutputBuffer;
 
   /** Offset of the current location in read buffer */
-  int           m_BufferOffset;
+  int           m_ReadBufferOffset;
 
   /** Bytes of data received */
-  int           m_DataSize;
+  int           m_ReadDataSize;
 
   /** The Logger instance */
   LoggerType     *m_pLogger;
