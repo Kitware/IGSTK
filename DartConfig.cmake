@@ -21,7 +21,7 @@ SET (TRIGGER_SITE
 
 # Dart server configuration 
 SET (ROLLUP_URL "http://${DROP_SITE}/cgi-bin/IGSTK-rollup-dashboard.sh")
-SET (CVS_WEB_URL "http://${DROP_SITE}/cgi-bin/cvsweb.cgi/IGSTK/")
+SET (CVS_WEB_URL "http://${DROP_SITE}/cgi-bin/viewcvs.cgi/")
 SET (CVS_WEB_CVSROOT "IGSTK")
 
 SET (USE_DOXYGEN "On")
