@@ -55,7 +55,7 @@ virtual void Set##name (const type _arg) \
 
 /** Get built-in type.  Creates member Get"name"() (e.g., GetTimeStep(time)); */
 #define GetMacro(name,type) \
-virtual type Get##name () \
+virtual const type & Get##name () const \
 { \
     return this->m_##name; \
 }
