@@ -73,6 +73,14 @@ IF(IGSTKSandbox_BUILD_EXAMPLES)
     SUBDIRS(Examples)
 ENDIF(IGSTKSandbox_BUILD_EXAMPLES)
 
+# Option for using code in the Utilities directory
+OPTION(IGSTK_USE_UTILITIES "Use the code in the Utilities directory" OFF)
+MARK_AS_ADVANCED(IGSTK_USE_UTILITIES)
+IF( IGSTK_USE_UTILITIES )
+    SUBDIRS( Utilities )
+ENDIF( IGSTK_USE_UTILITIES )
+
+
 #-----------------------------------------------------------------------------
 # Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
 #FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_DIR}/Testing/Data $ENV{IGSTKSandbox_DATA_ROOT})
