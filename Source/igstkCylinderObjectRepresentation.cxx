@@ -77,6 +77,9 @@ void CylinderObjectRepresentation::UpdateRepresentationFromGeometry()
 /** Create the vtk Actors */
 void CylinderObjectRepresentation::CreateActors()
 {
+  // to avoid duplicates we clean the previous actors
+  this->DeleteActors();
+   
   vtkPolyDataMapper *cylinderMapper = vtkPolyDataMapper::New();
   vtkActor* cylinderActor = vtkActor::New();
 

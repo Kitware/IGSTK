@@ -86,6 +86,9 @@ void EllipsoidObjectRepresentation::UpdateRepresentationFromGeometry()
 /** Create the vtk Actors */
 void EllipsoidObjectRepresentation::CreateActors()
 {
+  // to avoid duplicates we clean the previous actors
+  this->DeleteActors();
+
   vtkPolyDataMapper *ellipsoidMapper = vtkPolyDataMapper::New();
   vtkActor* ellipsoidActor = vtkActor::New();
   m_EllipsoidSource->SetCenter(0, 0, 0);
