@@ -29,7 +29,7 @@ int igstkMultipleOutputTest( int, char * [] )
 {
     typedef igstk::MultipleOutput  MultipleOutputType;
     
-    MultipleOutputType moutput;
+    MultipleOutputType multipleOutput;
 
     std::ofstream file1("fileMultipleOutput1.txt");
     std::ofstream file2("fileMultipleOutput2.txt");
@@ -40,14 +40,18 @@ int igstkMultipleOutputTest( int, char * [] )
       return EXIT_FAILURE;
       }
 
-    moutput.AddOutputStream( std::cout );
-    moutput.AddOutputStream( file1 );
-    moutput.AddOutputStream( file2 );
+    multipleOutput.AddOutputStream( std::cout );
+    multipleOutput.AddOutputStream( file1 );
+    multipleOutput.AddOutputStream( file2 );
 
-    moutput << 12.4;
-    moutput << " text ";
-    moutput.Flush();
-    moutput << 23;
+    multipleOutput << 12.4;
+    multipleOutput << " text ";
+    multipleOutput.Flush();
+    multipleOutput << 23;
+    multipleOutput << " reload ";
+
+    file1.close();
+    file2.close();
 
     return EXIT_SUCCESS;
 }

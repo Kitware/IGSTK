@@ -22,7 +22,7 @@ namespace igstk
 
 Logger::Logger( void )
 {
-    m_PriorityLevel = Logger::NOTSET;
+  m_PriorityLevel = Logger::NOTSET;
 }
 
 

@@ -13,6 +13,7 @@ void RegisterTests()
     REGISTER_TEST(igstkCylinderObjectTest);
     REGISTER_TEST(igstkCommunicationTest);
     REGISTER_TEST(igstkMultipleOutputTest);
+    REGISTER_TEST(igstkLoggerTest);
     REGISTER_TEST(igstkSceneTest);
     REGISTER_TEST(igstkStateMachineTest);
     REGISTER_TEST(igstkStateMachineErrorsTest);

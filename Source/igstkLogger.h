@@ -32,17 +32,29 @@ class Logger : public igstk::MultipleOutput
 {
 public:
 
+  /** Definition of types of messages. These codes will be used to regulate the
+   * level of detail of messages reported to the final outputs */
     typedef enum 
     { 
-        FATAL=0, CRITICAL, WARNING, DEBUG, NOTSET 
+        FATAL=0, 
+        CRITICAL, 
+        WARNING, 
+        DEBUG, 
+        NOTSET 
     } PriorityLevelType;
    
     /** Constructor */
     Logger( void );
 
 
+    /** Set the priority level for the current logger. Only messages that have
+     * priorities equal or greater than the one set here will be posted to the
+     * current outputs */
     igstkSetMacro( PriorityLevel, PriorityLevelType );
 
+    /** Get the priority level for the current logger. Only messages that have
+     * priorities equal or greater than the one set here will be posted to the
+     * current outputs */
     igstkGetMacro( PriorityLevel, PriorityLevelType );
 
 private:
