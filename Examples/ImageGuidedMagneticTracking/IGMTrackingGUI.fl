@@ -44,7 +44,7 @@ class IGMTrackingGUI {open : {public IGMTrackingBase}
   }
   decl {int m_FullSize[4];} {public
   }
-  decl {int m_ToolTrackingMode;} {selected public
+  decl {int m_ToolTrackingMode;} {public
   }
   Function {IGMTrackingGUI():m_FiducialBrowser(this), m_PortParameters(this), m_Layout(this), m_ProbeParameters(this), m_FusionParameters(this), m_SegParameters(this)} {} {
     Fl_Window mainWindow {
@@ -131,6 +131,7 @@ case 1:
   allFiducialsSet = this->SetFiducial(FiducialBrowserGUI::TRACKER_TYPE);
   break;
 case 2:
+  this->SetTrackerFiducial(-1);
   allFiducialsSet = true;
   break;
 }
@@ -138,7 +139,7 @@ case 2:
 if (allFiducialsSet)
 {
     TrackerFiducialsButton->value(1);
-}}
+}} selected
           xywh {142 219 120 25} type Normal
         }
         Fl_Light_Button RegisterButton {
@@ -430,7 +431,7 @@ if (str!=NULL)
     NumberFiducialsButton->value(1);
 }} {}
   }
-  Function {SetFiducial( FiducialBrowserGUI::FIDUCIAL_TYPE type )} {return_type {virtual bool}
+  Function {SetFiducial( FiducialBrowserGUI::FIDUCIAL_TYPE type )} {open return_type {virtual bool}
   } {
     code {bool result = false;
 if (this->GetNumberOfFiducials() > 0)
