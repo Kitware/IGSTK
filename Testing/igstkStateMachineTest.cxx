@@ -2,6 +2,10 @@
 #if defined(_MSC_VER)
    //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
+// Warning about: constructor of the state machine receiving a pointer to this
+// from a constructor. This is not a problem in this case, since the state
+// machine constructor is not using the pointer, just storing it internally.
+#pragma warning( disable : 4355 )
 #endif
 
 #include "igstkStateMachine.h"
