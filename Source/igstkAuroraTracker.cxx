@@ -45,19 +45,21 @@ AuroraTracker::~AuroraTracker(void)
 
 void AuroraTracker::AttemptToSetUpCommunicationProcessing( void )
 {
-  this->m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentFailureInput;
+//  this->m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentFailureInput;
 
 #ifdef WIN32
-  m_pCommunication = igstk::SerialCommunicationForWindows::New();
+//  m_pCommunication = igstk::SerialCommunicationForWindows::New();
 #else
-  m_pCommunication = igstk::SerialCommunicationForLinux::New();
+//  m_pCommunication = igstk::SerialCommunicationForLinux::New();
 #endif
 
+/*  
   if (m_pCommunication==NULL)
   {
     igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::ReceiveStringFailureEvent ******\n");
     return;
   }
+  */
 /*
   m_pCommunication->AddObserver( igstk::SerialCommunication::OpenPortFailureEvent(), my_command);
   m_pCommunication->AddObserver( igstk::SerialCommunication::SetupCommunicationParametersFailureEvent(), my_command);
@@ -75,11 +77,12 @@ void AuroraTracker::AttemptToSetUpCommunicationProcessing( void )
   m_pCommunication->AddObserver( igstk::SerialCommunication::ReceiveStringFailureEvent(), my_command);
   m_pCommunication->AddObserver( igstk::SerialCommunication::ReceiveStringReadTimeoutEvent(), my_command);
   m_pCommunication->AddObserver( igstk::SerialCommunication::ReceiveStringWaitTimeoutEvent(), my_command);
-*/
+
   if (m_pCommunication->OpenCommunication())
-  {
+    {
     this->m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentSuccessInput;
-  }
+    }
+*/
 }
 
 
