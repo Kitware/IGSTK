@@ -124,8 +124,8 @@ void SerialCommunicationForWindows::SetUpDataTransferParametersProcessing( void 
   default: ;//return error; shouldn't come here in the first place.
   }
   //Hardware Handsake
-  dcb.fOutxCtsFlow = m_HardwareHandshake ? 1 : 0;
-  dcb.fRtsControl =  m_HardwareHandshake ? RTS_CONTROL_HANDSHAKE : RTS_CONTROL_DISABLE;
+  dcb.fOutxCtsFlow = m_HardwareHandshake.Get() ? 1 : 0;
+  dcb.fRtsControl =  m_HardwareHandshake.Get() ? RTS_CONTROL_HANDSHAKE : RTS_CONTROL_DISABLE;
 
   //Set up communication state using Windows API
   if (!SetCommState(this->m_PortHandle, &dcb))

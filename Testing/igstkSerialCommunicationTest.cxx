@@ -151,6 +151,7 @@ int igstkSerialCommunicationTest( int, char * [] )
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600() );
   serialComm->SetByteSize( igstk::SerialCommunication::DataBits8() );
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1() );
+  serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff() );
 
   serialComm->OpenCommunication();
 

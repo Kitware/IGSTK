@@ -102,11 +102,16 @@ public:
 
 
 
+  /** Type used for encoding the number of stop bits used by the serial port */
+  typedef SerialCommunicationHandshake  HardwareHandshakeType;
+
+  /** Explicit instantiations for every accepted number of stop bits. Using
+   * types for the stop bits enforces safety on the assignment of values
+   * because the verification is done at compile time. */
+  typedef SerialCommunicationHandshakeValued< 0 > HandshakeOff;
+  typedef SerialCommunicationHandshakeValued< 1 > HandshakeOn;
 
 
-  typedef enum { 
-    HANDSHAKE_OFF, HANDSHAKE_ON
-  } HardwareHandshakeType;
 
   /** Data type for communication */
   typedef std::string  CommunicationDataType;

@@ -255,6 +255,63 @@ class SerialCommunicationStopBitsValued : public SerialCommunicationStopBits
 
 
 
+
+/** \class SerialCommunicationHandshake
+ * 
+ * \brief Defines a compile-time token for the type of handshake.
+ *
+ * This class enforces safety on the values that are admisible as handshake
+ * protocols for the serial port configuration. The actual value is assigned at
+ * construction time.
+ *
+ * \ingroup Communication
+ */
+class SerialCommunicationHandshake : public Token
+{
+  public:
+
+    typedef unsigned int HandshakeType;
+
+    typedef SerialCommunicationHandshake Self;
+
+  public:
+    SerialCommunicationHandshake( HandshakeType protocol )
+      {
+      m_Handshake = protocol;  
+      }
+
+    ~SerialCommunicationHandshake() 
+      {}
+    
+    HandshakeType Get() const
+      { 
+      return m_Handshake; 
+      }
+    
+   const Self & operator=( const Self & token )
+      { m_Handshake = token.m_Handshake; } 
+
+   bool operator!=( const Self & token )
+      { return m_Handshake != token.m_Handshake; }
+        
+   bool operator==( const Self & token )
+      { return m_Handshake == token.m_Handshake; }
+        
+  private:
+    
+    HandshakeType  m_Handshake;
+
+};
+
+template< unsigned int NHandshake >
+class SerialCommunicationHandshakeValued : public SerialCommunicationHandshake
+{
+  public:
+    SerialCommunicationHandshakeValued< NHandshake >():
+                 SerialCommunicationHandshake(NHandshake) {};
+};
+
+
 } // end namespace igstk
 
 #endif // __igstkSerialCommunicationBaudRate_h
