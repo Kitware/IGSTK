@@ -324,7 +324,7 @@ StateMachine< TClass >
 template<class TClass>
 void
 StateMachine< TClass >
-::ExportTransitions( stdOstreamType & ostr ) const
+::ExportDescription( stdOstreamType & ostr ) const
 {
     ostr << "digraph G {" << std::endl;
 

@@ -143,8 +143,7 @@ public:
 
    /** Export the schematic description of the state machine to a stream.
        This method use the format required as input by the "dot" tool from graphviz. */
-   
-   void ExportTransitions( stdOstreamType & ostr ) const;
+   void ExportDescription( stdOstreamType & ostr ) const;
 
 
    /** Select Initial state */
