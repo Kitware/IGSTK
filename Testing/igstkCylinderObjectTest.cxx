@@ -88,6 +88,11 @@ int igstkCylinderObjectTest( int, char * [] )
   // Testing PrintSelf()
   cylinderRepresentation->Print(std::cout);
 
+  // Testing CreateActors()
+  std::cout << "Testing actors : ";
+  cylinderRepresentation->CreateActors();
+  std::cout << "[PASSED]" << std::endl;
+
   std::cout << "Test [DONE]" << std::endl;
   return EXIT_SUCCESS;
 }

@@ -30,7 +30,7 @@ int igstkEllipsoidObjectTest( int, char * [] )
   typedef igstk::EllipsoidObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer ellipsoidRepresentation = ObjectRepresentationType::New();
 
-  typedef itk::EllipseSpatialObject<3>  ObjectType;
+  typedef igstk::EllipsoidObject  ObjectType;
   ObjectType::Pointer ellipsoidObject = ObjectType::New();
     
   // Test Set/GetRadius()
@@ -80,6 +80,11 @@ int igstkEllipsoidObjectTest( int, char * [] )
 
   // Testing PrintSelf()
   ellipsoidRepresentation->Print(std::cout);
+
+  // Testing CreateActors()
+  std::cout << "Testing actors : ";
+  ellipsoidRepresentation->CreateActors();
+  std::cout << "[PASSED]" << std::endl;
 
   std::cout << "Test [DONE]" << std::endl;
   return EXIT_SUCCESS;
