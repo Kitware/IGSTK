@@ -29,7 +29,7 @@ CylinderObjectRepresentation::CylinderObjectRepresentation()
 {
   // We create the ellipse spatial object
   m_CylinderSpatialObject = NULL;
-  this->SetSpatialObject( m_CylinderSpatialObject );
+  this->RequestSetSpatialObject( m_CylinderSpatialObject );
   m_CylinderSource = vtkCylinderSource::New();
 } 
 
@@ -48,7 +48,7 @@ void CylinderObjectRepresentation::SetCylinder( const CylinderSpatialObjectType 
 {
   // We create the ellipse spatial object
   m_CylinderSpatialObject = cylinder;
-  this->SetSpatialObject( m_CylinderSpatialObject );
+  this->RequestSetSpatialObject( m_CylinderSpatialObject );
 
   if( cylinder != NULL )
     {

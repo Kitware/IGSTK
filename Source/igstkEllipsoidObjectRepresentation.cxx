@@ -28,7 +28,7 @@ EllipsoidObjectRepresentation::EllipsoidObjectRepresentation()
 {
   // We create the ellipse spatial object
   m_EllipsoidObject = NULL;
-  this->SetSpatialObject( m_EllipsoidObject );
+  this->RequestSetSpatialObject( m_EllipsoidObject );
   m_EllipsoidSource = vtkSuperquadricSource::New();
 } 
 
@@ -60,7 +60,7 @@ void EllipsoidObjectRepresentation::SetEllipsoid( const EllipsoidObjectType * el
 {
   // We create the ellipse spatial object
   m_EllipsoidObject = ellipsoid;
-  this->SetSpatialObject( m_EllipsoidObject );
+  this->RequestSetSpatialObject( m_EllipsoidObject );
 
   if( m_EllipsoidSource != NULL )
     {

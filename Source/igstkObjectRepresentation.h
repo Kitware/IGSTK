@@ -27,10 +27,13 @@
 #include "igstkSpatialObject.h"
 #include "vtkProp3D.h"
 #include "itkCommand.h"
+#include "igstkStateMachine.h"
 
 
 namespace igstk
 {
+
+class Scene;
 
 /** \class Object
  * 
@@ -53,17 +56,13 @@ public:
 
   itkTypeMacro(ObjectRepresentation, itk::Object);
 
-  /** Create the vtkActors */
-  virtual void CreateActors()= 0;
+  typedef StateMachine< ObjectRepresentation > StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer   ActionType;
+  typedef StateMachineType::StateType                StateType;
+  typedef StateMachineType::InputType                InputType;
 
-  /** Empty the list of actors */
-  void DeleteActors();
-
-  /** Get the VTK actors */
-  GetMacro( Actors, ActorsListType );
-
-  /** Add an actor to the list */
-  void AddActor( vtkProp3D * );
+  FriendClassMacro( StateMachineType );
+  FriendClassMacro( Scene );
 
   /** Set the color */
   void SetColor(float r, float g, float b);
@@ -85,12 +84,24 @@ protected:
   ObjectRepresentation( void );
   ~ObjectRepresentation( void );
 
-  /** Set the spatial object for this class */
-  void SetSpatialObject( const SpatialObjectType *);
+  /** Add an actor to the list */
+  void AddActor( vtkProp3D * );
+
+  /** Create the vtkActors */
+  virtual void CreateActors()= 0;
+
+  /** Get the VTK actors */
+  GetMacro( Actors, ActorsListType );
+
+  /** Empty the list of actors */
+  void DeleteActors();
 
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
+  /** Request the state machine to set a Spatial Object */
+  void RequestSetSpatialObject( const SpatialObjectType * spatialObject );
+  
 private:
 
   ActorsListType              m_Actors;
@@ -106,18 +117,46 @@ private:
   ObserverType::Pointer       m_OrientationObserver;
   ObserverType::Pointer       m_GeometryObserver;
 
+  /** Request updating the position of the visual representation by using the
+   * information from the Spatial Object. */
+  void RequestUpdatePosition();  
+  void RequestUpdateOrientation();  
+
+  /** update the visual representation with changes in the geometry */
+  virtual void RequestUpdateRepresentation();
+
+
   /** Update the position of the visual representation by using the information
-   * from the Spatial Object. */
+   * from the Spatial Object. Only to be called by the State Machine. */
   void UpdatePositionFromGeometry();  
   void UpdateOrientationFromGeometry();  
 
-  /** update the visual representation with changes in the geometry */
+  /** update the visual representation with changes in the geometry. Only to be
+   * called by the State Machine. */
   virtual void UpdateRepresentationFromGeometry();
 
- 
+  /** Set the spatial object for this class */
+  void SetSpatialObject(); 
+
+private:
+
+  StateMachineType     m_StateMachine;
+  
+  /** Inputs to the State Machine */
+  InputType            m_ValidSpatialObjectInput;
+  InputType            m_NullSpatialObjectInput;
+  InputType            m_UpdateOrientationInput;
+  InputType            m_UpdatePositionInput;
+  InputType            m_UpdateRepresentationInput;
+  
+  /** States for the State Machine */
+  StateType            m_NullSpatialObjectState;
+  StateType            m_ValidSpatialObjectState;
+
+  SpatialObjectType::ConstPointer m_SpatialObjectToAdd;
 };
 
 } // end namespace igstk
 
-#endif // __igstkObject_h
+#endif // __igstkObjectRepresentation_h
 

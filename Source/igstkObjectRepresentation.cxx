@@ -24,7 +24,7 @@ namespace igstk
 { 
 
 /** Constructor */
-ObjectRepresentation::ObjectRepresentation()
+ObjectRepresentation::ObjectRepresentation():m_StateMachine(this)
 {
   m_Color[0] = 1.0;
   m_Color[1] = 1.0;
@@ -35,9 +35,38 @@ ObjectRepresentation::ObjectRepresentation()
   m_PositionObserver    = ObserverType::New();
   m_OrientationObserver = ObserverType::New();
   m_GeometryObserver    = ObserverType::New();
-  m_PositionObserver->SetCallbackFunction(    this, & ObjectRepresentation::UpdatePositionFromGeometry    );
-  m_OrientationObserver->SetCallbackFunction( this, & ObjectRepresentation::UpdateOrientationFromGeometry );
-  m_GeometryObserver->SetCallbackFunction(    this, & ObjectRepresentation::UpdateRepresentationFromGeometry );
+  m_PositionObserver->SetCallbackFunction(    this, & ObjectRepresentation::RequestUpdatePosition );
+  m_OrientationObserver->SetCallbackFunction( this, & ObjectRepresentation::RequestUpdateOrientation );
+  m_GeometryObserver->SetCallbackFunction(    this, & ObjectRepresentation::RequestUpdateRepresentation );
+
+
+  m_StateMachine.AddInput( m_ValidSpatialObjectInput,  "ValidSpatialObjectInput" );
+  m_StateMachine.AddInput( m_NullSpatialObjectInput,   "NullSpatialObjectInput"  );
+  m_StateMachine.AddInput( m_UpdatePositionInput,      "UpdatePositionInput"  );
+  m_StateMachine.AddInput( m_UpdateOrientationInput,   "UpdateOrientationInput"  );
+  m_StateMachine.AddInput( m_UpdateRepresentationInput,"UpdateRepresentationInput"  );
+
+  m_StateMachine.AddState( m_NullSpatialObjectState,  "NullSpatialObjectState"     );
+  m_StateMachine.AddState( m_ValidSpatialObjectState, "ValidSpatialObjectState"     );
+
+  const ActionType NoAction = 0;
+
+  m_StateMachine.AddTransition( m_NullSpatialObjectState, m_NullSpatialObjectInput, m_NullSpatialObjectState,  NoAction );
+  m_StateMachine.AddTransition( m_NullSpatialObjectState, m_ValidSpatialObjectInput, m_ValidSpatialObjectState,  & ObjectRepresentation::SetSpatialObject );
+  m_StateMachine.AddTransition( m_NullSpatialObjectState, m_UpdatePositionInput, m_NullSpatialObjectState,  NoAction );
+  m_StateMachine.AddTransition( m_NullSpatialObjectState, m_UpdateOrientationInput, m_NullSpatialObjectState,  NoAction );
+  m_StateMachine.AddTransition( m_NullSpatialObjectState, m_UpdateRepresentationInput, m_NullSpatialObjectState,  NoAction );
+
+  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_NullSpatialObjectInput, m_NullSpatialObjectState,  NoAction ); // Should remove actors  ?
+  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_ValidSpatialObjectInput, m_ValidSpatialObjectState,  & ObjectRepresentation::SetSpatialObject ); // Should remove old actors ??
+  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdatePositionInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdatePositionFromGeometry );
+  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdateOrientationInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdateOrientationFromGeometry );
+  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdateRepresentationInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdateRepresentationFromGeometry );
+
+  m_StateMachine.SelectInitialState( m_NullSpatialObjectState );
+
+  m_StateMachine.SetReadyToRun();
+
 } 
 
 /** Destructor */
@@ -77,16 +106,30 @@ bool ObjectRepresentation::IsModified() const
 
 
 /** Set the Spatial Object */
-void ObjectRepresentation::SetSpatialObject( const SpatialObjectType * spatialObject )
+void ObjectRepresentation::RequestSetSpatialObject( const SpatialObjectType * spatialObject )
 {
-  m_SpatialObject = spatialObject;
-  if( m_SpatialObject )
+  m_SpatialObjectToAdd = spatialObject;
+  if( !m_SpatialObjectToAdd )
     {
-    m_SpatialObject->AddObserver( PositionModifiedEvent(),    m_PositionObserver    );
-    m_SpatialObject->AddObserver( OrientationModifiedEvent(), m_OrientationObserver );
-    m_SpatialObject->AddObserver( GeometryModifiedEvent(), m_GeometryObserver );
+    m_StateMachine.ProcessInput( m_NullSpatialObjectInput );
     }
+  else
+    {
+    m_StateMachine.ProcessInput( m_ValidSpatialObjectInput );
+    }
+
 }
+
+
+/** Set the Spatial Object */
+void ObjectRepresentation::SetSpatialObject()
+{
+  m_SpatialObject = m_SpatialObjectToAdd;
+  m_SpatialObject->AddObserver( PositionModifiedEvent(),    m_PositionObserver    );
+  m_SpatialObject->AddObserver( OrientationModifiedEvent(), m_OrientationObserver );
+  m_SpatialObject->AddObserver( GeometryModifiedEvent(), m_GeometryObserver );
+}
+
 
 
 /** Set the color */
@@ -111,6 +154,14 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
     }
 
   this->Modified();
+}
+
+
+/** Request Update the object representation (i.e vtkActors). Maybe we should check also the transform
+ *  modified time. */
+void ObjectRepresentation::RequestUpdateOrientation()
+{
+    m_StateMachine.ProcessInput( m_UpdateOrientationInput );
 }
 
 
@@ -144,6 +195,14 @@ void ObjectRepresentation::UpdateOrientationFromGeometry()
   m_LastMTime = this->GetMTime();
 }
 
+/** Request Update the object representation (i.e vtkActors). Maybe we should check also the transform
+ *  modified time. */
+void ObjectRepresentation::RequestUpdateRepresentation()
+{
+    m_StateMachine.ProcessInput( m_UpdateRepresentationInput );
+}
+
+
 /** Update the object representation. This method must be overrided in every
  * derived class. */
 void ObjectRepresentation::UpdateRepresentationFromGeometry()
@@ -152,6 +211,16 @@ void ObjectRepresentation::UpdateRepresentationFromGeometry()
   std::cerr << "to override the method UpdateRepresentationFromGeometry()" << std::endl;
   std::cerr << "in a class deriving from ObjectRepresentation" << std::endl;
 }
+
+
+
+/** Request Update the object position. Maybe we should check also the transform
+ *  modified time. */
+void ObjectRepresentation::RequestUpdatePosition()
+{
+    m_StateMachine.ProcessInput( m_UpdatePositionInput );
+}
+
 
 
 /** Update the object representation (i.e vtkActors). Maybe we should check also the transform
