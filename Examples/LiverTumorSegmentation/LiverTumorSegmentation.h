@@ -10,9 +10,9 @@ class vtkImageShiftScale;
 
 class vtkImageBlend;
 
-static char *Volumes[] = { "Input Image", "Segmented Image", "Threshold Image" }; 
+//static char *Volumes[] = { "Input Image", "Segmented Image", "Threshold Image" }; 
 
-typedef enum { INPUT_VOLUME=1, SEGMENTED_VOLUME, THRESHOLDED_VOLUME } DisplayVolumeType;
+//typedef enum { INPUT_VOLUME=1, SEGMENTED_VOLUME, THRESHOLDED_VOLUME } DisplayVolumeType;
 
 class LiverTumorSegmentation : public LiverTumorSegmentationGUI
 {
@@ -39,12 +39,20 @@ public:
 
    virtual void ProcessDicomReaderInteraction( void );
 
-   virtual void OnImageControl( void );
-   virtual void OnImageControlOk( void );
+//   virtual void OnImageControl( void );
+//   virtual void OnImageControlOk( void );
+
+   virtual void OnOpacityControl( float opacity );
 
    virtual void OnSegmentation( void );
 
-   virtual void OnThreshold( const float lower, const float upper );
+//   virtual void OnThreshold( const float lower, const float upper );
+
+   virtual void OnSegmentationParameters( void );
+
+   virtual void OnSegmentationModuleSelection( int module );
+
+   virtual void OnSegmentationParametersOk( int module );
 
    virtual void SetSeedPoint( float x, float y, float z );
 
@@ -56,17 +64,17 @@ public:
 	
    virtual void SetImageShift( float val );
 
-   virtual float GetOverlayedVolumeOpacity( void );
+   virtual float GetSegmentedVolumeOpacity( void );
 
-   virtual bool SetOverlayedVolumeOpacity( const float value );
+   virtual bool SetSegmentedVolumeOpacity( const float value );
 
-   virtual DisplayVolumeType  GetBackgroundVolumeType( void );
+//   virtual DisplayVolumeType  GetBackgroundVolumeType( void );
 
-   virtual DisplayVolumeType  GetOverlayVolumeType( void );
+//   virtual DisplayVolumeType  GetOverlayVolumeType( void );
 
-   virtual void  SetBackgroundVolumeType( DisplayVolumeType type );
+//   virtual void  SetBackgroundVolumeType( DisplayVolumeType type );
 
-   virtual void  SetOverlayVolumeType( DisplayVolumeType type );
+//   virtual void  SetOverlayVolumeType( DisplayVolumeType type );
 
    virtual void LoadSegmentedVolume( void );
 
@@ -90,12 +98,16 @@ private:
   vtkImageBlend        * m_vtkImageBlender;
 
   // stores the array index in Volumes[] of the displayed background_volume and overlay_volume.
-  DisplayVolumeType		m_BackgroundVolume, m_OverlayVolume;
-  float				    m_OverlayedVolumeOpacity;
+//  DisplayVolumeType		m_BackgroundVolume, m_OverlayVolume;
 
-  bool					m_ShowVolumeView;
+  float				        m_SegmentedVolumeOpacity;
+
+  bool					      m_ShowVolumeView;
 
   ISIS::VolumeViewer	m_VolumeViewer;
+
+  SegmentationModuleType    m_ModuleType;
+
 };
 
 

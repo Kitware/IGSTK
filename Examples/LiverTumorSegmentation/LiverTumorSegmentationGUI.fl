@@ -14,20 +14,20 @@ class LiverTumorSegmentationGUI {open : {public LiverTumorSegmentationBase}
   } {
     Fl_Window m_MainWindow {
       label {Liver Tumor Segmentation, ISIS Center, Georgetown University, Washington DC.} open
-      xywh {387 46 633 672} type Double resizable
+      xywh {643 113 633 672} type Double color 148 resizable
       code0 {\#include "LiverTumorSegmentationBase.h"} visible
     } {
       Fl_Box axialView {
-        xywh {124 21 250 300} box DOWN_FRAME align 2
+        xywh {124 21 251 300} box PLASTIC_UP_FRAME color 56 selection_color 32 align 2
         code0 {\#include "vtkFlRenderWindowInteractor.h"}
         class vtkFlRenderWindowInteractor
       }
       Fl_Value_Slider axialViewSlider {
         callback {this->SelectAxialSlice( static_cast<int>( o->value() ));}
-        xywh {125 323 250 10} type Horizontal color 25 maximum 100 step 1
+        xywh {125 323 250 10} type Horizontal color 25 labelcolor 32 maximum 100 step 1
       }
       Fl_Box coronalView {
-        xywh {378 21 250 300} box DOWN_FRAME align 2
+        xywh {378 21 250 300} box PLASTIC_UP_FRAME align 2
         code0 {\#include "vtkFlRenderWindowInteractor.h"}
         class vtkFlRenderWindowInteractor
       }
@@ -36,7 +36,7 @@ class LiverTumorSegmentationGUI {open : {public LiverTumorSegmentationBase}
         xywh {378 323 250 10} type Horizontal color 25 maximum 100 step 1
       }
       Fl_Box saggitalView {
-        xywh {125 335 250 300} box DOWN_FRAME align 2
+        xywh {125 335 250 300} box PLASTIC_UP_FRAME align 2
         code0 {\#include "vtkFlRenderWindowInteractor.h"}
         class vtkFlRenderWindowInteractor
       }
@@ -96,49 +96,7 @@ if (fname != NULL)
         } {
           menuitem {} {
             label {Segmentation Parameters}
-            callback {float ftmp;
-
-ftmp = this->m_LiverTumorSegmentationModule.GetLowerThreshold();
-sprintf(m_MessageString, "%4.1f", ftmp);
-m_LowerThreshold->value( m_MessageString );
-
-ftmp = this->m_LiverTumorSegmentationModule.GetUpperThreshold();
-sprintf(m_MessageString, "%4.1f", ftmp);
-m_UpperThreshold->value( m_MessageString );
-
-ftmp = this->m_LiverTumorSegmentationModule.GetCurvatureScaling();
-sprintf(m_MessageString, "%4.3f", ftmp);
-m_CurvatureScaling->value( m_MessageString );
-
-ftmp = this->m_LiverTumorSegmentationModule.GetPropagationScaling();
-sprintf(m_MessageString, "%4.3f", ftmp);
-m_PropagationScaling->value( m_MessageString );
-
-ftmp = this->m_LiverTumorSegmentationModule.GetAdvectionScaling();
-sprintf(m_MessageString, "%4.3f", ftmp);
-m_AdvectionScaling->value( m_MessageString );
-
-ftmp = this->m_LiverTumorSegmentationModule.GetMaximumRMSError();
-sprintf(m_MessageString, "%4.3f", ftmp);
-m_MaxRMSError->value( m_MessageString );
-
-int itmp = this->m_LiverTumorSegmentationModule.GetMaximumIterations();
-sprintf(m_MessageString, "%d", itmp);
-m_MaxIterations->value( m_MessageString );
-
-ftmp = this->m_LiverTumorSegmentationModule.GetMultiplier();
-sprintf(m_MessageString, "%4.3f", ftmp);
-m_Multiplier->value( m_MessageString );
-
-itmp = this->m_LiverTumorSegmentationModule.GetNumberOfIterations();
-sprintf(m_MessageString, "%d", itmp);
-m_NumberOfIterations->value( m_MessageString );
-
-ftmp = this->m_LiverTumorSegmentationModule.GetInitialNeighborhoodRadius();
-sprintf(m_MessageString, "%4.3f", ftmp);
-m_InitialRadius->value( m_MessageString );
-
-m_SegmentationParametersWindow->show();}
+            callback {this->OnSegmentationParameters();}
             xywh {0 0 100 20}
           }
           menuitem {} {
@@ -149,37 +107,6 @@ sprintf(m_MessageString, "%4.3f", this->GetImageScale());
 m_Scale->value( m_MessageString );
 m_ShiftAndScaleParameterWindow->show();}
             xywh {0 0 100 20}
-          }
-          menuitem {} {
-            label {Image Control}
-            callback {this->OnImageControl();
-m_ImageControlWindow->show();}
-            xywh {0 0 100 20}
-          }
-        }
-        submenu {} {
-          label Processing open
-          xywh {10 10 100 20}
-        } {
-          menuitem {} {
-            label Threshold
-            callback {float ftmp;
-
-ftmp = this->m_LiverTumorSegmentationModule.GetLowerThreshold();
-sprintf(m_MessageString, "%4.1f", ftmp);
-m_LowerThresholdValue->value( m_MessageString );
-
-ftmp = this->m_LiverTumorSegmentationModule.GetUpperThreshold();
-sprintf(m_MessageString, "%4.1f", ftmp);
-m_UpperThresholdValue->value( m_MessageString );
-
-m_ThresholdWindow->show();}
-            xywh {0 0 100 20}
-          }
-          menuitem {} {
-            label Segmentation
-            callback {this->OnSegmentation();}
-            xywh {10 10 100 20}
           }
         }
         submenu {} {
@@ -212,21 +139,21 @@ help->show();}
       Fl_Button {} {
         label {Load Image}
         callback {this->Load();}
-        xywh {5 35 115 30} box PLASTIC_UP_BOX color 67
+        xywh {5 35 115 30} box PLASTIC_UP_BOX color 67 labelfont 1
       }
       Fl_Button {} {
         label Segmentation
         callback {this->OnSegmentation();}
-        xywh {5 77 115 30} box PLASTIC_UP_BOX color 67
+        xywh {5 77 115 30} box PLASTIC_UP_BOX color 67 labelfont 1
       }
       Fl_Button {} {
         label Quit
         callback {this->Quit();}
-        xywh {5 120 115 30} box PLASTIC_UP_BOX color 67
+        xywh {5 120 115 30} box PLASTIC_UP_BOX color 67 labelfont 1
       }
       Fl_Group {} {
         label {Seed Point}
-        xywh {5 565 115 82} box PLASTIC_UP_BOX labelfont 1 labelcolor 116 align 5
+        xywh {5 565 115 82} box PLASTIC_UP_BOX color 146 labelfont 1 labelcolor 32 align 5
       } {
         Fl_Input m_SeedX {
           label X
@@ -245,80 +172,69 @@ help->show();}
         }
       }
       Fl_Box volumeView {
-        xywh {380 335 250 300} box DOWN_FRAME align 2
+        xywh {380 335 250 300} box PLASTIC_UP_FRAME align 2
         code0 {\#include "vtkFlRenderWindowInteractor.h"}
         class vtkFlRenderWindowInteractor
+      }
+      Fl_Roller m_SegmentedVolumeOpacityControl {
+        label {Blend Control}
+        callback {OnOpacityControl( m_SegmentedVolumeOpacityControl->value());} selected
+        xywh {5 517 115 26} type Horizontal color 17 selection_color 147 labelfont 1 align 5 when 4 step 0.01 value 0.5 hotspot
       }
     }
     Fl_Window m_SegmentationParametersWindow {
       label {Segmentation Parameters}
-      xywh {707 116 258 431} type Double labelfont 3 visible
+      xywh {991 160 285 525} type Double color 140 labelfont 3 visible
     } {
-      Fl_Input m_LowerThreshold {
-        label {Lower Threshold }
-        xywh {155 8 75 26} labelfont 1
+      Fl_Input m_Parameter001 {
+        xywh {196 98 75 26} labelfont 1
       }
-      Fl_Input m_UpperThreshold {
-        label {Upper Threshold }
-        xywh {155 44 75 25} labelfont 1
+      Fl_Input m_Parameter002 {
+        xywh {196 134 75 26} labelfont 1
       }
       Fl_Return_Button {} {
         label Ok
-        callback {this->m_LiverTumorSegmentationModule.SetLowerThreshold( atof(m_LowerThreshold->value() ) );
-this->m_LiverTumorSegmentationModule.SetUpperThreshold( atof(m_UpperThreshold->value() ) );
-this->m_LiverTumorSegmentationModule.SetCurvatureScaling( atof(m_CurvatureScaling->value() ) );
-this->m_LiverTumorSegmentationModule.SetPropagationScaling( atof(m_PropagationScaling->value() ) );
-this->m_LiverTumorSegmentationModule.SetAdvectionScaling( atof(m_AdvectionScaling->value() ) );
-this->m_LiverTumorSegmentationModule.SetMaximumRMSError( atof(m_MaxRMSError->value() ) );
-this->m_LiverTumorSegmentationModule.SetMaximumIterations( atoi(m_MaxIterations->value() ) );
-this->m_LiverTumorSegmentationModule.SetMultiplier( atof(m_Multiplier->value() ) );
-this->m_LiverTumorSegmentationModule.SetInitialNeighborhoodRadius( atoi(m_InitialRadius->value() ) );
-this->m_LiverTumorSegmentationModule.SetNumberOfIterations( atoi(m_NumberOfIterations->value() ) );
-
-m_SegmentationParametersWindow->hide();}
-        xywh {118 398 45 25} labelfont 1
+        callback {this->OnSegmentationParametersOk( m_Module->value() );}
+        xywh {123 488 45 25} labelfont 1
       }
       Fl_Button {} {
         label Cancel
         callback {m_SegmentationParametersWindow->hide();}
-        xywh {177 398 53 25} labelfont 1
+        xywh {182 488 53 25} labelfont 1
       }
-      Fl_Input m_CurvatureScaling {
-        label {Curvature Scaling}
-        xywh {155 80 75 25} labelfont 1
+      Fl_Input m_Parameter003 {
+        xywh {196 170 75 26} labelfont 1
       }
-      Fl_Input m_PropagationScaling {
-        label {Propagation Scaling}
-        xywh {155 116 75 25} labelfont 1
+      Fl_Input m_Parameter004 {
+        xywh {196 206 75 26} labelfont 1
       }
-      Fl_Input m_AdvectionScaling {
-        label {Advection Scaling}
-        xywh {155 152 75 25} labelfont 1
+      Fl_Input m_Parameter005 {
+        xywh {196 242 75 26} labelfont 1
       }
-      Fl_Input m_MaxRMSError {
-        label {Max RMS Error}
-        xywh {155 188 75 25} labelfont 1
+      Fl_Input m_Parameter006 {
+        xywh {196 278 75 26} labelfont 1
       }
-      Fl_Input m_MaxIterations {
-        label {Max Iterations}
-        xywh {155 224 75 25} labelfont 1
+      Fl_Input m_Parameter007 {
+        xywh {196 314 75 26} labelfont 1
       }
       Fl_Group {} {
-        label PreProcess
-        xywh {1 271 255 116} box PLASTIC_UP_BOX labelfont 2 align 5
+        label {Pre-Processing Parameters}
+        xywh {6 361 274 116} box PLASTIC_UP_BOX color 178 labelfont 3 align 5
       } {
-        Fl_Input m_Multiplier {
-          label Multiplier
-          xywh {160 272 75 25} labelfont 1
+        Fl_Input m_Parameter101 {
+          xywh {196 370 75 26} labelfont 1
         }
-        Fl_Input m_NumberOfIterations {
-          label {Number Of Iterations}
-          xywh {160 308 75 25} labelfont 1
+        Fl_Input m_Parameter102 {
+          xywh {196 406 75 26} labelfont 1
         }
-        Fl_Input m_InitialRadius {
-          label {Initial Radius}
-          xywh {160 344 75 25} labelfont 1
+        Fl_Input m_Parameter103 {
+          xywh {196 442 75 26} labelfont 1
         }
+      }
+      Fl_Browser m_Module {
+        label Module
+        callback {this->OnSegmentationModuleSelection(m_Module->value())}
+        xywh {60 10 220 75} type Hold labelfont 1 align 4 when 3
       }
     }
     Fl_Window m_ShiftAndScaleParameterWindow {
@@ -365,59 +281,6 @@ m_ShiftAndScaleParameterWindow->hide();}
     }
     code {m_TextBuffer.append("Tumor Segmentation\\nISIS Center\\nGeorgetown University");
 m_TextDisplay->buffer(m_TextBuffer);} {}
-    Fl_Window m_ImageControlWindow {
-      label {Image Controls}
-      xywh {-32000 -32000 318 201} type Double hide
-    } {
-      Fl_Return_Button {} {
-        label Ok
-        callback {this->OnImageControlOk();
-m_ImageControlWindow->hide();}
-        xywh {197 170 45 25} labelfont 1
-      }
-      Fl_Button {} {
-        label Cancel
-        callback {m_ImageControlWindow->hide();}
-        xywh {256 170 55 25} labelfont 1
-      }
-      Fl_Value_Slider m_OverlayOpacity {
-        label {Overlay Volume Opacity}
-        callback {//this->SetOverlayedVolumeOpacity( m_OverlayOpacity->value() );}
-        xywh {10 136 300 20} type Horizontal labelfont 1 align 5
-      }
-      Fl_Browser m_BackgroundVolumeList {
-        label {Background Volume}
-        xywh {10 30 145 70} type Hold labelfont 1 align 5
-      }
-      Fl_Browser m_OverlayVolumeList {
-        label {Overlay Volume}
-        xywh {165 30 140 70} type Hold labelfont 1 align 5
-      }
-    }
-    Fl_Window m_ThresholdWindow {
-      label {Threshold Volume}
-      xywh {-32000 -32000 243 119} type Double hide
-    } {
-      Fl_Input m_LowerThresholdValue {
-        label {Lower Threshold }
-        xywh {155 8 75 26} labelfont 1
-      }
-      Fl_Input m_UpperThresholdValue {
-        label {Upper Threshold }
-        xywh {155 44 75 25} labelfont 1
-      }
-      Fl_Return_Button {} {
-        label Ok
-        callback {this->OnThreshold( atof(m_LowerThresholdValue->value()), atof(m_UpperThresholdValue->value()) );
-m_ThresholdWindow->hide();}
-        xywh {118 85 45 25} labelfont 1
-      }
-      Fl_Button {} {
-        label Cancel
-        callback {m_ThresholdWindow->hide();}
-        xywh {177 85 53 25} labelfont 1
-      }
-    }
   }
   Function {~LiverTumorSegmentationGUI()} {return_type virtual
   } {}
@@ -430,18 +293,14 @@ m_ThresholdWindow->hide();}
     code {m_MainWindow->show();
 m_SegmentationParametersWindow->hide();
 m_ShiftAndScaleParameterWindow->hide();
-m_AboutWindow->hide();
-m_ImageControlWindow->hide();
-m_ThresholdWindow->hide();} {}
+m_AboutWindow->hide();} {}
   }
   Function {Hide()} {return_type {virtual void}
   } {
     code {m_MainWindow->hide();
 m_SegmentationParametersWindow->hide();
 m_ShiftAndScaleParameterWindow->hide();
-m_AboutWindow->hide();
-m_ImageControlWindow->hide();
-m_ThresholdWindow->hide();} {}
+m_AboutWindow->hide();} {}
   }
   Function {SelectAxialSlice( int )} {open return_type {virtual void}
   } {}
@@ -451,7 +310,7 @@ m_ThresholdWindow->hide();} {}
   } {}
   Function {LoadDICOM()} {open return_type {virtual void}
   } {}
-  Function {OnSegmentation()} {open return_type {virtual void}
+  Function {OnSegmentation()} {return_type {virtual void}
   } {}
   Function {GetImageScale(void)} {return_type {virtual float}
   } {
@@ -459,7 +318,7 @@ m_ThresholdWindow->hide();} {}
   }
   Function {SetImageScale( float val)} {return_type {virtual void}
   } {}
-  Function {GetImageShift(void)} {selected return_type {virtual float}
+  Function {GetImageShift(void)} {return_type {virtual float}
   } {
     code {return 1.0f;} {}
   }
@@ -474,14 +333,25 @@ m_ThresholdWindow->hide();} {}
   } {
     code {return false;} {}
   }
-  Function {OnThreshold( const float lower, const float upper )} {return_type {virtual void}
-  } {}
-  Function {OnImageControl()} {return_type {virtual void}
-  } {}
-  Function {OnImageControlOk()} {return_type {virtual void}
-  } {}
   Function {LoadSegmentedVolume( void )} {open return_type {virtual void}
   } {}
   Function {OnDebugButton()} {open return_type {virtual void}
   } {}
+  Function {OnSegmentationParameters(void)} {open return_type {virtual void}
+  } {}
+  Function {OnSegmentationParametersOk( int module )} {open return_type {virtual void}
+  } {}
+  Function {OnSegmentationModuleSelection(int module)} {open return_type {virtual void}
+  } {}
+  Function {OnOpacityControl( float opacity )} {open return_type {virtual void}
+  } {}
+  Function {SetSegmentedVolumeOpacityControlOn( float val )} {return_type {virtual void}
+  } {
+    code {m_SegmentedVolumeOpacityControl->value( val );
+m_SegmentedVolumeOpacityControl->show();} {}
+  }
+  Function {SetSegmentedVolumeOpacityControlOff( void )} {return_type {virtual void}
+  } {
+    code {m_SegmentedVolumeOpacityControl->hide();} {}
+  }
 } 

@@ -12,51 +12,56 @@
 #include "vtkImageBlend.h"
 
 LiverTumorSegmentation::LiverTumorSegmentation()
-{
-	m_AxialViewer.SetOrientation(    ISIS::ImageSliceViewer::Axial    );
-	m_CoronalViewer.SetOrientation(  ISIS::ImageSliceViewer::Coronal  );
-	m_SaggitalViewer.SetOrientation( ISIS::ImageSliceViewer::Saggital );
-	
-	m_ShiftScaleImageFilter = vtkImageShiftScale::New();
-	
-	m_ShiftScaleImageFilter->SetInput(  m_ITK2VTKAdaptor->GetOutput() );
-	m_ShiftScaleImageFilter->SetOutputScalarTypeToUnsignedChar();
-	m_ShiftScaleImageFilter->ClampOverflowOn();
-	
-	m_AxialViewerCommand = itk::SimpleMemberCommand<LiverTumorSegmentation>::New();
-	m_AxialViewerCommand->SetCallbackFunction(this, &LiverTumorSegmentation::ProcessAxialViewInteraction);
-	m_AxialViewer.AddObserver(ISIS::ClickedPointEvent(), m_AxialViewerCommand);
-	
-	m_CoronalViewerCommand = itk::SimpleMemberCommand<LiverTumorSegmentation>::New();
-	m_CoronalViewerCommand->SetCallbackFunction(this, &LiverTumorSegmentation::ProcessCoronalViewInteraction);
-	m_CoronalViewer.AddObserver(ISIS::ClickedPointEvent(), m_CoronalViewerCommand);
-	
-	m_SaggitalViewerCommand = itk::SimpleMemberCommand<LiverTumorSegmentation>::New();
-	m_SaggitalViewerCommand->SetCallbackFunction(this, &LiverTumorSegmentation::ProcessSaggitalViewInteraction);
-	m_SaggitalViewer.AddObserver(ISIS::ClickedPointEvent(), m_SaggitalViewerCommand);
-	
-	m_DicomReaderCommand = itk::SimpleMemberCommand<LiverTumorSegmentation>::New();
-	m_DicomReaderCommand->SetCallbackFunction(this, &LiverTumorSegmentation::ProcessDicomReaderInteraction);
-	m_DicomVolumeReader.AddObserver( m_DicomReaderCommand );
-	
-	m_ProgressSlider->Observe( m_LiverTumorSegmentationModule.GetNotifier() );
-
-	m_BackgroundVolume = INPUT_VOLUME;
-	m_OverlayVolume = SEGMENTED_VOLUME;
-	m_OverlayedVolumeOpacity = 0.5;
-
-	this->SetBackgroundVolumeType( m_BackgroundVolume );
-	this->SetOverlayVolumeType( m_OverlayVolume );
-
-    m_vtkImageBlender = vtkImageBlend::New();
-    m_vtkImageBlender->SetInput( 0, m_ITK2VTKAdaptor->GetOutput() );
-    m_vtkImageBlender->SetInput( 1, m_OverlayVolumeITK2VTKAdaptor->GetOutput() );
-	m_vtkImageBlender->SetOpacity(0, 1.0 - m_OverlayedVolumeOpacity );
-	m_vtkImageBlender->SetOpacity(1, m_OverlayedVolumeOpacity );
-
-    m_ShiftScaleImageFilter->SetInput( m_vtkImageBlender->GetOutput() );
-
-	m_ShowVolumeView = true;
+  {
+  m_AxialViewer.SetOrientation(    ISIS::ImageSliceViewer::Axial    );
+  m_CoronalViewer.SetOrientation(  ISIS::ImageSliceViewer::Coronal  );
+  m_SaggitalViewer.SetOrientation( ISIS::ImageSliceViewer::Saggital );
+  
+  m_ShiftScaleImageFilter = vtkImageShiftScale::New();
+  
+  m_ShiftScaleImageFilter->SetInput(  m_ITK2VTKAdaptor->GetOutput() );
+  m_ShiftScaleImageFilter->SetOutputScalarTypeToUnsignedChar();
+  m_ShiftScaleImageFilter->ClampOverflowOn();
+  
+  m_AxialViewerCommand = itk::SimpleMemberCommand<LiverTumorSegmentation>::New();
+  m_AxialViewerCommand->SetCallbackFunction(this, &LiverTumorSegmentation::ProcessAxialViewInteraction);
+  m_AxialViewer.AddObserver(ISIS::ClickedPointEvent(), m_AxialViewerCommand);
+  
+  m_CoronalViewerCommand = itk::SimpleMemberCommand<LiverTumorSegmentation>::New();
+  m_CoronalViewerCommand->SetCallbackFunction(this, &LiverTumorSegmentation::ProcessCoronalViewInteraction);
+  m_CoronalViewer.AddObserver(ISIS::ClickedPointEvent(), m_CoronalViewerCommand);
+  
+  m_SaggitalViewerCommand = itk::SimpleMemberCommand<LiverTumorSegmentation>::New();
+  m_SaggitalViewerCommand->SetCallbackFunction(this, &LiverTumorSegmentation::ProcessSaggitalViewInteraction);
+  m_SaggitalViewer.AddObserver(ISIS::ClickedPointEvent(), m_SaggitalViewerCommand);
+  
+  m_DicomReaderCommand = itk::SimpleMemberCommand<LiverTumorSegmentation>::New();
+  m_DicomReaderCommand->SetCallbackFunction(this, &LiverTumorSegmentation::ProcessDicomReaderInteraction);
+  m_DicomVolumeReader.AddObserver( m_DicomReaderCommand );
+  
+  m_ProgressSlider->Observe( m_ThresholdLevelSetModule.GetNotifier() );
+  
+  m_SegmentedVolumeOpacity = 0.5;
+  
+  m_RescaleIntensity->SetInput( m_LoadedVolume );
+  m_SegmentedVolumeRescaleIntensity->SetInput( m_SegmentedVolume );
+  
+  m_vtkImageBlender = vtkImageBlend::New();
+  m_vtkImageBlender->SetInput( 0, m_ITK2VTKAdaptor->GetOutput() );
+  m_vtkImageBlender->SetInput( 1, m_SegmentedVolumeITK2VTKAdaptor->GetOutput() );
+  m_vtkImageBlender->SetOpacity(0, 1.0 - m_SegmentedVolumeOpacity );
+  m_vtkImageBlender->SetOpacity(1, m_SegmentedVolumeOpacity );
+  
+  m_ShiftScaleImageFilter->SetInput( m_ITK2VTKAdaptor->GetOutput() );
+  
+  m_ShowVolumeView = true;
+  
+  m_ModuleType = THRESHOLD_LEVEL_SET;
+  
+  for(unsigned int i=0; i<NUMBER_OF_ALGORITHMS; i++)
+    {
+    m_Module->add( ModuleNames[i] );
+    }
 }
 
 
@@ -114,6 +119,12 @@ void LiverTumorSegmentation::Load( void )
 	
 	if (LiverTumorSegmentationBase::Load( filename ) )
     {
+    /* Put off Image Blending. Show only the loaded image. */
+    m_ShiftScaleImageFilter->SetInput( m_ITK2VTKAdaptor->GetOutput() );
+
+    /* Switch off Opacity Control knob. */
+    this->SetSegmentedVolumeOpacityControlOff();
+  
 		this->LoadPostProcessing();
 		sprintf( m_MessageString, "File %s has been loaded successfully.", filename );
 		m_MessageBar->label( m_MessageString );
@@ -237,6 +248,238 @@ void LiverTumorSegmentation::ProcessDicomReaderInteraction( void )
     }
 }
 
+
+void LiverTumorSegmentation::OnSegmentationParameters( void )
+{
+  m_Module->value( m_ModuleType );
+
+  this->OnSegmentationModuleSelection( m_ModuleType );
+  
+  m_SegmentationParametersWindow->show();
+}
+
+
+void LiverTumorSegmentation::OnSegmentationModuleSelection( int module )
+{
+  float ftmp;
+  int   itmp;
+  
+  m_ModuleType = (SegmentationModuleType) module;
+  
+  m_Parameter001->hide();
+  m_Parameter002->hide();
+  m_Parameter003->hide();
+  m_Parameter004->hide();
+  m_Parameter005->hide();
+  m_Parameter006->hide();
+  m_Parameter007->hide();
+  m_Parameter101->hide();
+  m_Parameter102->hide();
+  m_Parameter103->hide();
+  
+  switch( module )
+  {
+    case THRESHOLD:
+      m_Parameter001->label("Lower Threshold");
+      ftmp = this->m_ThresholdLevelSetModule.GetLowerThreshold();
+      sprintf(m_MessageString, "%4.1f", ftmp);
+      m_Parameter001->value( m_MessageString );
+      m_Parameter001->show();
+      
+      m_Parameter002->label("Upper Threshold");
+      ftmp = this->m_ThresholdLevelSetModule.GetUpperThreshold();
+      sprintf(m_MessageString, "%4.1f", ftmp);
+      m_Parameter002->value( m_MessageString );
+      m_Parameter002->show();
+      break;
+
+    case CONFIDENCE_CONNECTED:
+      m_Parameter001->label("Multiplier");
+      ftmp = this->m_ConfidenceConnectedModule.GetMultiplier();
+      sprintf(m_MessageString, "%4.3f", ftmp);
+      m_Parameter001->value( m_MessageString );
+      m_Parameter001->show();
+      
+      m_Parameter002->label("Number Of Iterations");
+      itmp = this->m_ConfidenceConnectedModule.GetNumberOfIterations();
+      sprintf(m_MessageString, "%d", itmp);
+      m_Parameter002->value( m_MessageString );
+      m_Parameter002->show();
+      
+      m_Parameter003->label("Initial Radius");
+      ftmp = this->m_ConfidenceConnectedModule.GetInitialNeighborhoodRadius();
+      sprintf(m_MessageString, "%4.3f", ftmp);
+      m_Parameter003->value( m_MessageString );
+      m_Parameter003->show();
+      
+      m_Parameter101->label("Time Step");
+      ftmp = this->m_ConfidenceConnectedModule.GetSmoothingTimeStep();
+      sprintf(m_MessageString, "%4.3f", ftmp);
+      m_Parameter101->value( m_MessageString );
+      m_Parameter101->show();
+      
+      m_Parameter102->label("Number Of Iterations");
+      itmp = this->m_ConfidenceConnectedModule.GetSmoothingIterations();
+      sprintf(m_MessageString, "%d", itmp);
+      m_Parameter102->value( m_MessageString );
+      m_Parameter102->show();
+      
+      break;
+      
+    case CONNECTED_THRESHOLD:
+      m_Parameter001->label("Lower Threshold");
+      ftmp = this->m_ConnectedThresholdModule.GetLowerThreshold();
+      sprintf(m_MessageString, "%4.1f", ftmp);
+      m_Parameter001->value( m_MessageString );
+      m_Parameter001->show();
+      
+      m_Parameter002->label("Upper Threshold");
+      ftmp = this->m_ConnectedThresholdModule.GetUpperThreshold();
+      sprintf(m_MessageString, "%4.1f", ftmp);
+      m_Parameter002->value( m_MessageString );
+      m_Parameter002->show();
+      
+      m_Parameter101->label("Time Step");
+      ftmp = this->m_ConnectedThresholdModule.GetSmoothingTimeStep();
+      sprintf(m_MessageString, "%4.3f", ftmp);
+      m_Parameter101->value( m_MessageString );
+      m_Parameter101->show();
+      
+      m_Parameter102->label("Number Of Iterations");
+      itmp = this->m_ConnectedThresholdModule.GetSmoothingIterations();
+      sprintf(m_MessageString, "%d", itmp);
+      m_Parameter102->value( m_MessageString );
+      m_Parameter102->show();
+      break;
+      
+    case THRESHOLD_LEVEL_SET:
+      m_Parameter001->label("Lower Threshold");
+      ftmp = this->m_ThresholdLevelSetModule.GetLowerThreshold();
+      sprintf(m_MessageString, "%4.1f", ftmp);
+      m_Parameter001->value( m_MessageString );
+      m_Parameter001->show();
+      
+      m_Parameter002->label("Upper Threshold");
+      ftmp = this->m_ThresholdLevelSetModule.GetUpperThreshold();
+      sprintf(m_MessageString, "%4.1f", ftmp);
+      m_Parameter002->value( m_MessageString );
+      m_Parameter002->show();
+      
+      m_Parameter003->label("Curvature Scaling");
+      ftmp = this->m_ThresholdLevelSetModule.GetCurvatureScaling();
+      sprintf(m_MessageString, "%4.3f", ftmp);
+      m_Parameter003->value( m_MessageString );
+      m_Parameter003->show();
+      
+      m_Parameter004->label("Propagation Scaling");
+      ftmp = this->m_ThresholdLevelSetModule.GetPropagationScaling();
+      sprintf(m_MessageString, "%4.3f", ftmp);
+      m_Parameter004->value( m_MessageString );
+      m_Parameter004->show();
+      
+      m_Parameter005->label("Advection Scaling");
+      ftmp = this->m_ThresholdLevelSetModule.GetAdvectionScaling();
+      sprintf(m_MessageString, "%4.3f", ftmp);
+      m_Parameter005->value( m_MessageString );
+      m_Parameter005->show();
+      
+      m_Parameter006->label("Maximum RMS Error");
+      ftmp = this->m_ThresholdLevelSetModule.GetMaximumRMSError();
+      sprintf(m_MessageString, "%4.3f", ftmp);
+      m_Parameter006->value( m_MessageString );
+      m_Parameter006->show();
+      
+      m_Parameter007->label("Maximum Iterations");
+      itmp = this->m_ThresholdLevelSetModule.GetMaximumIterations();
+      sprintf(m_MessageString, "%d", itmp);
+      m_Parameter007->value( m_MessageString );
+      m_Parameter007->show();
+      
+      m_Parameter101->label("Multiplier");
+      ftmp = this->m_ThresholdLevelSetModule.GetMultiplier();
+      sprintf(m_MessageString, "%4.3f", ftmp);
+      m_Parameter101->value( m_MessageString );
+      m_Parameter101->show();
+      
+      m_Parameter102->label("Number Of Iterations");
+      itmp = this->m_ThresholdLevelSetModule.GetNumberOfIterations();
+      sprintf(m_MessageString, "%d", itmp);
+      m_Parameter102->value( m_MessageString );
+      m_Parameter102->show();
+      
+      m_Parameter103->label("Initial Radius");
+      ftmp = this->m_ThresholdLevelSetModule.GetInitialNeighborhoodRadius();
+      sprintf(m_MessageString, "%4.3f", ftmp);
+      m_Parameter103->value( m_MessageString );
+      m_Parameter103->show();
+      break;
+
+    case ISOLATED_CONNECTED:
+      break;
+
+    case FAST_MARCHING:
+      break;
+
+    case GEODESIC_ACTIVE_CONTOUR:
+      break;
+
+    case WATERSHED:
+      break;
+  }
+}
+
+
+void LiverTumorSegmentation::OnSegmentationParametersOk( int module )
+{
+  switch( module )
+  {
+    case THRESHOLD:
+
+      this->m_ThresholdLevelSetModule.SetLowerThreshold( atof(m_Parameter001->value() ) );
+      this->m_ThresholdLevelSetModule.SetUpperThreshold( atof(m_Parameter002->value() ) );
+      break;
+
+     case CONFIDENCE_CONNECTED:
+      this->m_ConfidenceConnectedModule.SetMultiplier( atof(m_Parameter001->value() ) );
+      this->m_ConfidenceConnectedModule.SetNumberOfIterations( atof(m_Parameter002->value() ) );
+      this->m_ConfidenceConnectedModule.SetInitialNeighborhoodRadius( atof(m_Parameter003->value() ) );
+      this->m_ConfidenceConnectedModule.SetSmoothingTimeStep( atof(m_Parameter101->value() ) );
+      this->m_ConfidenceConnectedModule.SetSmoothingIterations( atoi(m_Parameter102->value() ) );
+      break;
+    case CONNECTED_THRESHOLD:
+      this->m_ConnectedThresholdModule.SetLowerThreshold( atof(m_Parameter001->value() ) );
+      this->m_ConnectedThresholdModule.SetUpperThreshold( atof(m_Parameter002->value() ) );
+      this->m_ConnectedThresholdModule.SetSmoothingTimeStep( atof(m_Parameter101->value() ) );
+      this->m_ConnectedThresholdModule.SetSmoothingIterations( atoi(m_Parameter102->value() ) );
+      break;
+    case THRESHOLD_LEVEL_SET:
+      this->m_ThresholdLevelSetModule.SetLowerThreshold( atof(m_Parameter001->value() ) );
+      this->m_ThresholdLevelSetModule.SetUpperThreshold( atof(m_Parameter002->value() ) );
+      this->m_ThresholdLevelSetModule.SetCurvatureScaling( atof(m_Parameter003->value() ) );
+      this->m_ThresholdLevelSetModule.SetPropagationScaling( atof(m_Parameter004->value() ) );
+      this->m_ThresholdLevelSetModule.SetAdvectionScaling( atof(m_Parameter005->value() ) );
+      this->m_ThresholdLevelSetModule.SetMaximumRMSError( atof(m_Parameter006->value() ) );
+      this->m_ThresholdLevelSetModule.SetMaximumIterations( atoi(m_Parameter007->value() ) );
+      this->m_ThresholdLevelSetModule.SetMultiplier( atof(m_Parameter101->value() ) );
+      this->m_ThresholdLevelSetModule.SetNumberOfIterations( atoi(m_Parameter102->value() ) );
+      this->m_ThresholdLevelSetModule.SetInitialNeighborhoodRadius( atoi(m_Parameter103->value() ) );
+      break;
+    case ISOLATED_CONNECTED:
+      break;
+
+    case FAST_MARCHING:
+      break;
+
+    case GEODESIC_ACTIVE_CONTOUR:
+      break;
+
+    case WATERSHED:
+      break;
+   }
+   m_SegmentationParametersWindow->hide();
+}
+
+
 void  
 LiverTumorSegmentation::SetSeedPoint( float x, float y, float z )
 {
@@ -318,71 +561,37 @@ void LiverTumorSegmentation::SyncAllViews(void)
 
 void LiverTumorSegmentation::OnSegmentation( void )
 {
-	printf("Doing Segmentation ...\n");
-	if (LiverTumorSegmentationBase::DoSegmentation())
-	{
-//		if (m_OverlayVolume!=SEGMENTED_VOLUME)
-		{ 
-			this->SetOverlayVolumeType( SEGMENTED_VOLUME );
-		}
-
-		try
-		{
-			m_ShiftScaleImageFilter->UpdateWholeExtent();
-		}
-		catch( itk::ExceptionObject & exp )
-		{
-			fl_message( exp.GetDescription() );
-			m_MessageBar->label( "Segmentation Unsuccessful." );
-			return;
-		}
-
-		m_AxialViewer.Render();
-		m_CoronalViewer.Render();
-		m_SaggitalViewer.Render();
-
-		printf( "Elapsed iterations = %d\n", m_LiverTumorSegmentationModule.GetElapsedIterations());
-		
-		m_MessageBar->label( "Segmentation completed." );
-	}
-	else
-	{
-		fl_alert("Segmentation unsuccessful.");
-		m_MessageBar->label( "Segmentation Unsuccessful." );
-	}
-}
-
-
-
-void LiverTumorSegmentation::OnThreshold( const float lower, const float upper )
-{
-	if (LiverTumorSegmentationBase::DoThreshold( lower, upper ))
-	{
-//		if (m_OverlayVolume!=THRESHOLDED_VOLUME)
-		{
-			this->SetOverlayVolumeType( THRESHOLDED_VOLUME );
-		}
-
-		try
-		{
-			m_ShiftScaleImageFilter->UpdateWholeExtent();
-		}
-		catch( itk::ExceptionObject & exp )
-		{
-			fl_message( exp.GetDescription() );
-			return;
-		}
-
-		m_AxialViewer.Render();
-		m_CoronalViewer.Render();
-		m_SaggitalViewer.Render();
-	}
-	else
-	{
-		fl_alert("Thresholding unsuccessful.");
-	}
-}
-
+  printf("Doing Segmentation ...\n");
+  try
+    {
+    if (!LiverTumorSegmentationBase::DoSegmentation( m_ModuleType ))
+      throw;
+    
+		m_RescaleIntensity->SetInput( m_LoadedVolume );
+    m_SegmentedVolumeRescaleIntensity->SetInput( m_SegmentedVolume );
+      
+    /* Put on Image Blending with Input and Segmented image. */
+    m_ShiftScaleImageFilter->SetInput( m_vtkImageBlender->GetOutput() );
+    m_ShiftScaleImageFilter->UpdateWholeExtent();
+      
+    m_AxialViewer.Render();
+    m_CoronalViewer.Render();
+    m_SaggitalViewer.Render();
+      
+    /* Switch on Opacity Control knob. */
+    this->SetSegmentedVolumeOpacityControlOn( m_SegmentedVolumeOpacity );
+      
+    m_MessageBar->label( "Segmentation completed." );
+    }
+  catch( itk::ExceptionObject & exp )
+    {
+    fl_message( exp.GetDescription() );
+    fl_alert("Segmentation unsuccessful.");
+    m_MessageBar->label( "Segmentation Unsuccessful." );
+    return;
+    }
+      
+ }
 
 
 float LiverTumorSegmentation::GetImageScale( void )
@@ -420,107 +629,35 @@ void LiverTumorSegmentation::SetImageShift( float val )
 }
 
 
-float LiverTumorSegmentation::GetOverlayedVolumeOpacity( void )
+float LiverTumorSegmentation::GetSegmentedVolumeOpacity( void )
 {
-	return m_OverlayedVolumeOpacity;
+	return m_SegmentedVolumeOpacity;
 }
 
 
-bool LiverTumorSegmentation::SetOverlayedVolumeOpacity( const float value )
+bool LiverTumorSegmentation::SetSegmentedVolumeOpacity( const float value )
 {
 	if ((value>=0.0f) && (value<=1.0f))
 	{
-		m_OverlayedVolumeOpacity = value;
+		m_SegmentedVolumeOpacity = value;
 
-		m_vtkImageBlender->SetOpacity(0, 1.0 - m_OverlayedVolumeOpacity );
-		m_vtkImageBlender->SetOpacity(1, m_OverlayedVolumeOpacity );
+		m_vtkImageBlender->SetOpacity(0, 1.0 - m_SegmentedVolumeOpacity );
+		m_vtkImageBlender->SetOpacity(1, m_SegmentedVolumeOpacity );
 
 		return true;
 	}
 	return false;
 }
 
-void LiverTumorSegmentation::OnImageControl( void )
+
+void LiverTumorSegmentation::OnOpacityControl( float opacity )
 {
-	m_BackgroundVolumeList->clear();
-	m_OverlayVolumeList->clear();
-
-	for(int i=0; i<3; i++)
-	{
-		m_BackgroundVolumeList->add( Volumes[i] );
-		m_OverlayVolumeList->add( Volumes[i] );
-	}
-	m_BackgroundVolumeList->value( (int) m_BackgroundVolume );
-	m_OverlayVolumeList->value( (int) m_OverlayVolume );
-	m_OverlayOpacity->value( m_OverlayedVolumeOpacity );	
-}
-
-void LiverTumorSegmentation::OnImageControlOk( void )
-{
-//	if (m_BackgroundVolume!=m_BackgroundVolumeList->value())
-	{
-		this->SetBackgroundVolumeType((DisplayVolumeType)m_BackgroundVolumeList->value());
-	}
-//	if (m_OverlayVolume!=m_OverlayVolumeList->value())
-	{
-		this->SetOverlayVolumeType((DisplayVolumeType)m_OverlayVolumeList->value());
-	}
-//	if ( m_OverlayedVolumeOpacity!=m_OverlayOpacity->value())
-	{
-		this->SetOverlayedVolumeOpacity( m_OverlayOpacity->value() );
-	}
-	m_ShiftScaleImageFilter->UpdateWholeExtent();
-	m_AxialViewer.Render();
-	m_CoronalViewer.Render();
-	m_SaggitalViewer.Render();
-}
-
-
-DisplayVolumeType LiverTumorSegmentation::GetBackgroundVolumeType( void )
-{
-	return m_BackgroundVolume;
-}
-
-
-void LiverTumorSegmentation::SetBackgroundVolumeType( DisplayVolumeType type )
-{
-	m_BackgroundVolume = type;
-	switch(type)
-	{
-	case INPUT_VOLUME: 
-		m_RescaleIntensity->SetInput( m_LoadedVolume );
-		break;
-	case SEGMENTED_VOLUME:
-		m_RescaleIntensity->SetInput( m_SegmentedVolume );
-		break;
-	case THRESHOLDED_VOLUME:
-		m_RescaleIntensity->SetInput( m_ThresholdedVolume );
-		break;
-	}
-}
-
-
-DisplayVolumeType LiverTumorSegmentation::GetOverlayVolumeType( void )
-{
-	return m_OverlayVolume;
-}
-
-
-void LiverTumorSegmentation::SetOverlayVolumeType( DisplayVolumeType type )
-{
-	m_OverlayVolume = type;
-	switch(type)
-	{
-	case INPUT_VOLUME: 
-		m_OverlayVolumeRescaleIntensity->SetInput( m_LoadedVolume );
-		break;
-	case SEGMENTED_VOLUME:
-		m_OverlayVolumeRescaleIntensity->SetInput( m_SegmentedVolume );
-		break;
-	case THRESHOLDED_VOLUME:
-		m_OverlayVolumeRescaleIntensity->SetInput( m_ThresholdedVolume );
-		break;
-	}
+		this->SetSegmentedVolumeOpacity( opacity );
+    
+    m_ShiftScaleImageFilter->UpdateWholeExtent();
+    m_AxialViewer.Render();
+    m_CoronalViewer.Render();
+    m_SaggitalViewer.Render();
 }
 
 
@@ -532,9 +669,6 @@ void LiverTumorSegmentation::LoadSegmentedVolume( void )
 	temp_VolumeReader->Update();
 	m_SegmentedVolume = temp_VolumeReader->GetOutput();
 		
-	this->SetBackgroundVolumeType( INPUT_VOLUME );
-	this->SetOverlayVolumeType( SEGMENTED_VOLUME );
-
 	m_ShiftScaleImageFilter->UpdateWholeExtent();
 
 	m_AxialViewer.Render();
