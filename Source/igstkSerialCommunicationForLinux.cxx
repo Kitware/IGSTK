@@ -73,7 +73,7 @@ void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
   }
   else
   {
-    m_pDataBuffersSetUpResultInput = &m_DataBufferSetUpSuccessInput;
+    m_pDataBuffersSetUpResultInput = &m_DataBuffersSetUpSuccessInput;
     //Clear out buffers
     this->m_ReadDataSize = 0;
     this->m_ReadBufferOffset = 0;
@@ -216,7 +216,7 @@ void SerialCommunicationForLinux::ClearBuffersAndClosePortProcessing( void )
   if (m_OutputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_OutputBuffer;
   m_OutputBuffer = NULL;
-  this->CloseCommunicationPortProcessing();
+  this->ClosePortProcessing();
 }
 
 void SerialCommunicationForLinux::ClosePortProcessing( void )
