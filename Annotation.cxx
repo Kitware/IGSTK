@@ -124,9 +124,9 @@ void Annotation::SetImageOrientation(int i)
     break;
   case 2: // Sagittal
     m_ppDirectionMapper[0]->SetInput("S");
-    m_ppDirectionMapper[1]->SetInput("A");
+    m_ppDirectionMapper[1]->SetInput("P");
     m_ppDirectionMapper[2]->SetInput("I");
-    m_ppDirectionMapper[3]->SetInput("P");
+    m_ppDirectionMapper[3]->SetInput("A");
     break;
   }
 }
