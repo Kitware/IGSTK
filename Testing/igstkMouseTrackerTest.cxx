@@ -27,21 +27,19 @@
 #include <FL/Fl_Window.H>
 
 #include "igstkMouseTracker.h"
-#include "igstkLogger.h"
 
 int igstkMouseTrackerTest( int, char * [] )
 {
     typedef itk::Point< double, 3 >  PositionType;
-    igstk::MouseTracker::Pointer tracker = igstk::MouseTracker::New();
-    igstk::Logger logger;
-
-    Fl_Window mouseWindow(20, 20, 400, 400,"Mouse Tracker Test");
+    typedef igstk::MouseTracker      MouseTrackerType;
+    typedef igstk::Logger            LoggerType; 
     
-    mouseWindow.show();               
-
+    // logger object created for logging mouse activities
+    LoggerType            logger;
     logger.AddOutputStream( std::cout );
-
     logger.SetPriorityLevel( igstk::Logger::DEBUG );
+
+    MouseTrackerType::Pointer tracker = MouseTrackerType::New();
 
     tracker->SetLogger( &logger );
 
@@ -51,15 +49,16 @@ int igstkMouseTrackerTest( int, char * [] )
 
     tracker->UpdateStatus();
 
-    PositionType pos;
+    PositionType position;
 
-    tracker->GetToolPosition( 0, 0, pos );
+    tracker->GetPosition( position );
 
     tracker->StopTracking();
-    std::cout << "Tool Position -> ( " << pos[0] << "," << pos[1] << "," << pos[2] << ")" << std::endl;
+    std::cout << "Mouse Position -> ( " << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
 
     tracker->Reset();
 
-    return Fl::run();
-    //return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
+
+
