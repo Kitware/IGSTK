@@ -91,6 +91,7 @@ void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
 
 void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
 {
+  m_ResultOfSetUpCommunicationParametersProcessing = false;
   // Control setting for a serial communications device
   struct termio portSettings;
   struct termios portOptions;
@@ -195,12 +196,14 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
       && (tcsetattr(this->m_PortHandle, TCSANOW, &portOptions)>=0) ))
   {
     this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-    std::cout << "Setup Communication Failed.\n" << std::endl; 
+    std::cout << "Setup Communication Failed.\n" << std::endl;
+    return;
   }
   else
   {
     igstkLogMacro( igstk::Logger::DEBUG, "SetupCommunicationParameters succeeded.\n");
   }
+  m_ResultOfSetUpCommunicationParametersProcessing = true;
 }
 
 void SerialCommunicationForLinux::ClearBuffersAndCloseCommunicationPortProcessing( void )
