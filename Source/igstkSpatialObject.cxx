@@ -51,8 +51,11 @@ void SpatialObject::SetTransform(const Transform & transform )
   m_Transform = transform;
   if(m_SpatialObject)
     {
-    Transform::VectorType offset = transform.GetTranslation();
-    m_SpatialObject->GetObjectToWorldTransform()->SetOffset(offset);
+    Transform::VectorType translation = transform.GetTranslation();
+    m_SpatialObject->GetObjectToWorldTransform()->SetOffset( translation );
+    Transform::VersorType rotation = transform.GetRotation();
+    Transform::VersorType::MatrixType matrix = rotation.GetMatrix();
+    m_SpatialObject->GetObjectToWorldTransform()->SetMatrix( matrix );
     this->InvokeEvent( PositionModifiedEvent() );
     }
 }
