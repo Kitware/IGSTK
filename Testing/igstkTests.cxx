@@ -9,6 +9,7 @@
 
 void RegisterTests()
 {
+    REGISTER_TEST(igstkCommunicationTest);
     REGISTER_TEST(igstkMultipleOutputTest);
     REGISTER_TEST(igstkStateMachineTest);
     REGISTER_TEST(igstkStateMachineErrorsTest);
