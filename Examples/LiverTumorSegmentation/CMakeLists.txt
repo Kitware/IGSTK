@@ -6,9 +6,7 @@ PROJECT( LiverTumorSegmentation )
 SET(LIVER_TUMOR_SEGMENTATION_SOURCES
   ImageSliceViewer01.cxx
   VolumeViewer.cxx
-  LiverTumorSegmentationBase.cxx
   LiverTumorSegmentation.cxx
-  LiverTumorThresholdLevelSetSegmentationModule.cxx
   fltkProgressBar.cxx
   )
 
