@@ -15,10 +15,9 @@
 
 namespace ISIS
 {
-
-
+void
 ImageSliceViewer
-::ImageSliceViewer()
+::Init( vtkRenderWindow* renWin )
 {
   m_ViewerMode = 2;
 
@@ -26,7 +25,7 @@ ImageSliceViewer
 
   m_Renderer      = vtkRenderer::New();
 
-  m_RenderWindow  = vtkRenderWindow::New();
+  m_RenderWindow  = renWin;
 
   m_Renderer->AddActor( m_ImageActor );
 
@@ -77,6 +76,23 @@ ImageSliceViewer
   m_Window[0] = -600;
 
   m_Window[1] = 1500;
+}
+
+ImageSliceViewer
+::ImageSliceViewer()
+{
+
+  m_RenderWindow  = vtkRenderWindow::New();
+
+  this->Init( m_RenderWindow );
+
+}
+
+ImageSliceViewer
+::ImageSliceViewer( vtkRenderWindow* renWin )
+{
+
+  this->Init( renWin );
 
 }
 
@@ -86,19 +102,69 @@ ImageSliceViewer
 ::~ImageSliceViewer()
 {
   if( m_RenderWindow )
-    {
+  {
     m_RenderWindow->Delete();
-    }   
+  }   
 
   if ( m_ImageMap )
   {
     m_ImageMap->Delete();
   }
 
+  if (m_ImageActor)
+  {
+    m_ImageActor->Delete();
+  }
+
   if( m_InteractorObserver )
-    {
+  {
     m_InteractorObserver->Delete();
-    }
+  }
+
+  if (m_Renderer)
+  {
+    m_Renderer->Delete();
+  }
+
+  if (m_GeoFilter)
+  {
+    m_GeoFilter->Delete();
+  }
+
+  if (m_Mapper)
+  {
+    m_Mapper->Delete();
+  }
+
+  if (m_LUT)
+  {
+    m_LUT->Delete();
+  }
+
+  if (m_ImageReslice)
+  {
+    m_ImageReslice->Delete();
+  }
+
+  if (m_Plane)
+  {
+    m_Plane->Delete();
+  }
+
+  if (m_Texture)
+  {
+    m_Texture->Delete();
+  }
+
+  if (m_Transform)
+  {
+    m_Transform->Delete();
+  }
+
+  if (m_TransformFilter)
+  {
+    m_TransformFilter->Delete();
+  }
 }
 
 
