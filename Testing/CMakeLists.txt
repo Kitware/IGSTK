@@ -18,24 +18,12 @@ INCLUDE_DIRECTORIES (
   ${IGSTKSandbox_BINARY_DIR}/Testing
   )
 
-ADD_TEST(igstkEllipsoidObjectTest ${IGSTKSandbox_TESTS} igstkEllipsoidObjectTest)
-ADD_TEST(igstkCylinderObjectTest ${IGSTKSandbox_TESTS} igstkCylinderObjectTest)
-ADD_TEST(igstkSceneTest ${IGSTKSandbox_TESTS} igstkSceneTest)
-ADD_TEST(igstkViewTest ${IGSTKSandbox_TESTS} igstkViewTest)
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 ADD_TEST(igstkSerialCommunicationTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationTest)
-ADD_TEST(igstkTimeStampTest ${IGSTKSandbox_TESTS} igstkTimeStampTest)
-ADD_TEST(igstkTransformTest ${IGSTKSandbox_TESTS} igstkTransformTest)
 
 SET(BasicTests_SRCS
-  igstkEllipsoidObjectTest.cxx
-  igstkCylinderObjectTest.cxx
-  igstkSceneTest.cxx
-  igstkViewTest.cxx
   igstkMouseTrackerTest.cxx
   igstkSerialCommunicationTest.cxx
-  igstkTimeStampTest.cxx
-  igstkTransformTest.cxx
   )
 
 
