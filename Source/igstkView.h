@@ -58,12 +58,8 @@ protected:
   View( int x, int y, int w, int h, const char *l="");
   ~View( void );
 
-public:
-  
-  typedef View                               Self;
-  typedef itk::SimpleMemberCommand< Self >   ObserverType;
-  
-  // vtkRenderWindowInteractor overrides
+  // vtkRenderWindowInteractor overrides made protected in order to prevent
+  // users from using these methods.
   void Initialize();
   void Enable();
   void Disable();
@@ -75,6 +71,12 @@ public:
   void OnTimer(void);
   void ResetCamera();
 
+  static void OnTimerGlobal(void *p);
+
+public:
+  
+  typedef View                               Self;
+  
   /** void Update the display */
   void Update();
  
@@ -83,8 +85,11 @@ public:
   void EnableInteractions();
 
   /** Add a vtk Actor */
-  void SetScene(igstk::Scene* scene);
+  void RequestSetScene(igstk::Scene* scene);
 
+  /** Request to return the camera to a known position */
+  void RequestResetCamera();
+  
 protected:
   
   // Fl_Gl_Window overrides
@@ -107,6 +112,7 @@ private:
   vtkCamera             * m_Camera;
   bool                    m_InteractionHandling;
   igstk::Scene::Pointer   m_Scene;          
+  igstk::Scene::Pointer   m_SceneToBeSet;          
 
   /** Member variables for holding temptative arguments of functions.
    *  This is needed for implementing a layer of security that decouples
@@ -114,6 +120,8 @@ private:
   vtkProp3D            * m_ActorToBeAdded;
   vtkProp3D            * m_ActorToBeRemoved;
   
+  typedef itk::SimpleMemberCommand< Self >   ObserverType;
+
   ObserverType::Pointer     m_SceneAddObjectObserver;
   ObserverType::Pointer     m_SceneRemoveObjectObserver;
 
@@ -121,7 +129,8 @@ private:
 
   /** Methods that will only be invoked by the State Machine */
 
-  /** Add a vtk Actor */
+  /** Add and remove vtk Actors. Intended to be called only by the state
+   * machine */
   void AddActor();
   void RemoveActor();
 
@@ -131,7 +140,9 @@ private:
   void UpdateViewFromAddedObject();
   void UpdateViewFromRemovedObject();
 
-
+  /** Set the scene. Intended to be called only by the state machine */
+  void SetScene();
+  
 private:
 
   StateMachineType     m_StateMachine;
@@ -141,6 +152,9 @@ private:
   InputType            m_NullAddActor;
   InputType            m_ValidRemoveActor;
   InputType            m_NullRemoveActor;
+  InputType            m_ValidSetScene;
+  InputType            m_NullSetScene;
+  InputType            m_ResetCameraInput;
   
 
   /** States for the State Machine */

@@ -47,6 +47,9 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor()
   m_StateMachine.AddInput( m_NullAddActor,   "NullAddActor"  );
   m_StateMachine.AddInput( m_ValidRemoveActor,  "ValidRemoveActor" );
   m_StateMachine.AddInput( m_NullRemoveActor,   "NullRemoveActor"  );
+  m_StateMachine.AddInput( m_ValidSetScene,  "ValidSetScene" );
+  m_StateMachine.AddInput( m_NullSetScene,   "NullSetScene"  );
+  m_StateMachine.AddInput( m_ResetCameraInput,   "ResetCameraInput"  );
 
   m_StateMachine.AddState( m_IdleState,      "IdleState"     );
 
@@ -56,6 +59,9 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor()
   m_StateMachine.AddTransition( m_IdleState, m_NullAddActor,  m_IdleState,          NoAction );
   m_StateMachine.AddTransition( m_IdleState, m_ValidRemoveActor, m_IdleState,  & View::RemoveActor );
   m_StateMachine.AddTransition( m_IdleState, m_NullRemoveActor,  m_IdleState,          NoAction );
+  m_StateMachine.AddTransition( m_IdleState, m_ValidSetScene, m_IdleState,  & View::SetScene );
+  m_StateMachine.AddTransition( m_IdleState, m_NullSetScene,  m_IdleState,          NoAction );
+  m_StateMachine.AddTransition( m_IdleState, m_ResetCameraInput,  m_IdleState,  & View::ResetCamera );
 
   m_StateMachine.SelectInitialState( m_IdleState );
 
@@ -173,10 +179,24 @@ void View::UpdateViewFromRemovedObject()
 
 }
 
-/** Set the scene */
-void View::SetScene(igstk::Scene* scene)
+/** Request to set the scene */
+void View::RequestSetScene(igstk::Scene* scene)
 {
-  m_Scene = scene;
+  m_SceneToBeSet = scene;
+  if( !scene )
+    {
+    m_StateMachine.ProcessInput( m_NullSetScene );
+    }
+  else
+    {
+    m_StateMachine.ProcessInput( m_ValidSetScene );
+    }
+}
+
+/** Set the scene */
+void View::SetScene()
+{
+  m_Scene = m_SceneToBeSet;
   m_Scene->AddObserver( SceneAddObjectEvent(),   m_SceneAddObjectObserver);
   m_Scene->AddObserver( SceneRemoveObjectEvent(),   m_SceneRemoveObjectObserver);
 
@@ -257,6 +277,13 @@ void View::DisableInteractions()
   m_InteractionHandling = false;
 }
 
+
+
+/** */
+void View::RequestResetCamera()
+{
+  m_StateMachine.ProcessInput( m_ResetCameraInput );
+}
 
 
 /** */
@@ -341,7 +368,7 @@ void View::UpdateSize(int W, int H)
 }
 /** FLTK needs global timer callbacks, but we set it up so that this global
  *  callback knows which instance OnTimer() to call */
-void OnTimerGlobal(void *p)
+void View::OnTimerGlobal(void *p)
 {
   if (p)
     {
