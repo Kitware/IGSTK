@@ -26,11 +26,8 @@ public:
 
   TypeMacro( Tester, None );
 
-  Tester()
+  Tester():m_StateMachine(this)
     {
-      // Connect the state machine to 'this' class.
-      m_StateMachine.SetOwnerClass( this );
-
       // Set the state descriptors
       m_StateMachine.AddState( m_IdleState, "IdleState" );
       m_StateMachine.AddState( m_OneQuarterCredit, "OneQuarterCredit" );

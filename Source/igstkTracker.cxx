@@ -26,11 +26,8 @@
 namespace igstk
 {
 
-Tracker::Tracker(void) : m_pCommunication( NULL), m_pLogger( NULL)
+Tracker::Tracker(void) : m_pCommunication( NULL), m_pLogger( NULL), m_StateMachine( this )
 {
-      // Connect the state machine to 'this' class.
-      m_StateMachine.SetOwnerClass( this );
-
       // Set the state descriptors
       m_StateMachine.AddState( m_IdleState, "IdleState" );
       m_StateMachine.AddState( m_CommunicatingState, "CommunicatingState" );

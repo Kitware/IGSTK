@@ -32,11 +32,8 @@ public:
 
   TypeMacro( Tester1, None );
 
-  Tester1()
+  Tester1():m_StateMachine(this)
     {
-    // Connect the state machine to 'this' class.
-    m_StateMachine.SetOwnerClass( this );
-
     // Set the state descriptors
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.AddState( m_OneQuarterCredit, "OneQuarterCredit" );
@@ -100,9 +97,8 @@ public:
 
   TypeMacro( Tester2, None );
 
-  Tester2()
+  Tester2():m_StateMachine(this)
     {
-    // On purpose NOT calling : m_StateMachine.SetOwnerClass( this );
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.SetReadyToRun();
@@ -144,9 +140,8 @@ public:
 
   TypeMacro( Tester3, None );
 
-  Tester3()
+  Tester3():m_StateMachine(this)
     {
-    m_StateMachine.SetOwnerClass( this );
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
@@ -188,9 +183,8 @@ public:
 
   TypeMacro( Tester4, None );
 
-  Tester4()
+  Tester4():m_StateMachine(this)
     {
-    m_StateMachine.SetOwnerClass( this );
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
@@ -234,9 +228,8 @@ public:
 
   TypeMacro( Tester5, None );
   
-  Tester5()
+  Tester5():m_StateMachine(this)
     {
-    m_StateMachine.SetOwnerClass( this );
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
@@ -278,9 +271,8 @@ public:
 
   TypeMacro( Tester6, None );
 
-  Tester6()
+  Tester6():m_StateMachine(this)
     {
-    m_StateMachine.SetOwnerClass( this );
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.AddState( m_ChangeMindState, "ChangeMindState" );
     m_StateMachine.SelectInitialState( m_IdleState );

@@ -95,7 +95,7 @@ public:
 
    /** Constructor. It initialize all the transitions to the 
        start state.  */
-   StateMachine();
+   StateMachine( TClass * );
 
 
 
@@ -122,11 +122,6 @@ public:
                        const InputType  & input, 
                        const StateType  & newstate, 
                        const ActionType & action );
-
-
-
-   /** Set the "this" pointer to the class to which this StateMachine belongs.  */
-   void SetOwnerClass( TClass * );
 
 
 
