@@ -4,6 +4,8 @@
 #include "vtkProperty.h"
 #include <math.h>
 
+#include "vtkRenderWindowInteractor.h"
+
 namespace ISIS
 {
 	IGMTImageSliceViewer::IGMTImageSliceViewer()
@@ -153,6 +155,18 @@ namespace ISIS
 			m_ToolPositionMarker.AddPosition(ext[1], 0, 0);
 			break;
 		}
+	}
+
+	void IGMTImageSliceViewer::SetInteractor( vtkRenderWindowInteractor * interactor )
+	{
+		m_RenderWindow->SetInteractor( interactor );
+		
+		vtkInteractorStyleImage * interactorStyle = vtkInteractorStyleImage::New();
+		interactor->SetInteractorStyle( interactorStyle );
+		interactorStyle->Delete();
+		interactor->AddObserver( ::vtkCommand::LeftButtonPressEvent, m_InteractorObserver );
+		interactor->AddObserver( ::vtkCommand::LeftButtonReleaseEvent, m_InteractorObserver );
+//		interactor->AddObserver( ::vtkCommand::MouseMoveEvent, m_InteractorObserver );
 	}
 
 }

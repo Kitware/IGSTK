@@ -17,6 +17,8 @@ namespace ISIS
 		IGMTImageSliceViewer();
 		
 		~IGMTImageSliceViewer();
+
+		void SetInteractor( vtkRenderWindowInteractor * interactor );
 		
 		virtual void SetOrientation( OrientationType orientation );
 
