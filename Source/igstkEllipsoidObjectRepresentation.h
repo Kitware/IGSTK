@@ -48,7 +48,7 @@ public:
   typedef EllipsoidObject                EllipsoidObjectType;
 
   /**  Run-time type information (and related methods). */
-  itkTypeMacro( Self, Superclass );
+  itkTypeMacro( Self, ObjectRepresentation );
 
   /** Method for creation of a reference counted object. */
   NewMacro( EllipsoidObjectRepresentation );

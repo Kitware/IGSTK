@@ -51,7 +51,7 @@ public:
      
 
   /** Method for creation through the object factory */ 
-  itkTypeMacro(Self, Superclass); 
+  itkTypeMacro(Self, Object); 
   NewMacro(Self); 
 
   /** Add an object to the list of children. */ 
