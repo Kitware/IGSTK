@@ -1,4 +1,3 @@
-
 PROJECT( IGSTK )
 
 SET (LIBRARY_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all libraries." FORCE)
