@@ -75,54 +75,68 @@ public:
   /** Destructor */
   virtual ~ImageSliceViewer( void );
 
-  // Public methods that GENERATE INPUT signals
-
-  /** SetInput: This method inputs the image data to the viewer. 
-  This generates "InputData" input signal, and calls for a State
-  Transition. */ 
-  void SetInput( vtkImageData * image );
-
-  /** SelectSlice: This method inputs the slice number to be viewed
-  *   by the viewer. This generates "SetSlice" input signal, and calls 
-  *   for a State Transition. */
-  void SelectSlice( const int slice );
-
-  void SetZoomFactor( const double factor );
-
-  void SetOrientation( const OrientationType orientation );
-
-  // Methods that DO NOT GENERATE input signals
+  // Public methods that DO NOT GENERATE input signals
 
   virtual void SetInteractor( vtkRenderWindowInteractor * interactor );
 
   void Render( void );
 
+  unsigned long AddObserver( const itk::EventObject & event, itk::Command *);
+
+  // Public methods that GENERATE INPUT signals
+
+  /** SetInput: This method inputs the image data to the viewer. 
+  *   It generates "InputData" input signal, and calls for a State
+  *   Transition. */ 
+  void SetInput( vtkImageData * image );
+
+  /** SelectSlice: This method inputs the slice number to be viewed
+  *   by the viewer. It generates "SetSlice" input signal, and calls 
+  *   for a State Transition. */
+  void SelectSlice( const int slice );
+
+  /** SetZoomFactor: This method inputs the zoom factor for the viewer.
+  *   It generates "SetupCamera" input signal, and calls for a State 
+  *   Transition. */
+  void SetZoomFactor( const double factor );
+
+  /** SetOrientation: This method inputs the viewing orientation of the 
+  *   image. It generates "SetupCamera" input signal, and calls for a State 
+  *   Transition. */
+  void SetOrientation( const OrientationType orientation );
+
 protected:
 
-  // Protected methods that GENERATE INPUT signals
-  /** SelectPoint: This method inputs the slice number to be viewed
-  *   by the viewer. This is achieved by setting the display extent
-  *   of the input image data. */ 
-  virtual void SelectPoint( int x, int y);
-
-  /** UpdateImageInformation: This method is invokes by the State Machine
-  *   in response to the "InputData" input signal. */
-  virtual void UpdateImageInformation( void );
-
-  /** This is achieved by setting the display extent
-    *   of the input image data. */ 
-  void SetSlice( void );
-   
   // Protected methods that DO NOT GENERATE input signals
   vtkRenderer * GetRenderer( void );
 
-public:
+  // Protected methods that GENERATE INPUT signals
 
-  unsigned long AddObserver( const itk::EventObject & event, itk::Command *);
+  /** SelectPoint: This method inputs co-ordinate of the clicked point
+  *   in the viewer. It generates "SetPoint" input signal and calls for 
+  *   a State Transition. */ 
+  virtual void SelectPoint( int x, int y);
 
-protected:
+  // Protected methods that are invoked through State Machine.
 
+  /** UpdateImageInformation: This method is invoked by the State Machine
+  *   in response to the "InputData" input signal. */
+  virtual void UpdateImageInformation( void );
+
+  /** SetupCamera: This method is invoked by the State Machine in response  
+  *   to the "SetupCamera" input signal. */ 
   void SetupCamera( void );
+
+  /** SetSlice: This method is invoked by the State Machine in response to 
+  *   the "SetSlice" input signal. Slice setting is done by setting the  
+  *   display extent of the input image data. */ 
+  void SetSlice( void );
+   
+  /** SetPoint: This method is invoked by the State Machine in response to 
+  *   the "SetPoint" input signal. It uses the co-ordinate of the clicked 
+  *   point in the view window and m_SliceNum to compute the co-ordinates
+  *   of the clicked point in the image space. */ 
+  void SetPoint( void );
 
 
 private:

@@ -45,6 +45,7 @@ ImageSliceViewer
 	m_StateMachine.SetInputDescriptor( 0, "ImageData");
 	m_StateMachine.SetInputDescriptor( 1, "SetUpCamera");
   m_StateMachine.SetInputDescriptor( 2, "SetSlice");
+  m_StateMachine.SetInputDescriptor( 3, "SetPoint");
 
 	const ActionType NoAction = 0;
 
@@ -66,6 +67,12 @@ ImageSliceViewer
 
   m_StateMachine.SetTransition( "ImageLoadedState", "SetSlice", 
     "ImageLoadedState", & ImageSliceViewer::SetSlice );
+
+  m_StateMachine.SetTransition( "ImageNotLoadedState", "SetPoint", 
+    "ImageLoadedState", NoAction );
+
+  m_StateMachine.SetTransition( "ImageLoadedState", "SetPoint", 
+    "ImageLoadedState", & ImageSliceViewer::SetPoint );
 
 	// Finish the state machine programming and get ready to run
 	m_StateMachine.SetReadyToRun();
@@ -147,6 +154,107 @@ ImageSliceViewer
 
 void
 ImageSliceViewer
+::SetZoomFactor( double factor )
+{
+  m_ZoomFactor = factor;
+  m_StateMachine->SetInput( "SetUpCamera" );
+  m_StateMachine->StateTransition();
+}
+
+
+
+void
+ImageSliceViewer
+::SetInteractor( vtkRenderWindowInteractor * interactor )
+{
+  m_RenderWindow->SetInteractor( interactor );
+
+  vtkInteractorStyleImage * interactorStyle = vtkInteractorStyleImage::New();
+  interactor->SetInteractorStyle( interactorStyle );
+  interactorStyle->Delete();
+  interactor->AddObserver( ::vtkCommand::LeftButtonPressEvent, m_InteractorObserver );
+  interactor->AddObserver( ::vtkCommand::LeftButtonReleaseEvent, m_InteractorObserver );
+  interactor->AddObserver( ::vtkCommand::MouseMoveEvent, m_InteractorObserver );
+}
+
+
+void
+ImageSliceViewer
+::SetOrientation( OrientationType orientation )
+{
+  m_Orientation = orientation;
+  m_StateMachine->SetInput( "SetUpCamera" );
+  m_StateMachine->StateTransition();
+}
+
+
+
+void
+ImageSliceViewer
+::SelectSlice( int slice )
+{
+  m_SliceNum = slice;
+  m_StateMachine->SetInput( "SetSlice" );
+  m_StateMachine->StateTransition();
+}
+
+
+
+void
+ImageSliceViewer
+::SelectPoint( int x, int y )
+{
+  m_SelectPoint[0] = x ; 
+  m_SelectPoint[1] = y ;
+  m_StateMachine->SetInput( "SetPoint" );
+  m_StateMachine->StateTransition();
+}
+
+
+
+void
+ImageSliceViewer
+::SetSlice( void )
+{
+  int ext[6];
+  m_Actor->GetInput()->GetExtent( ext );
+
+  switch( m_Orientation )
+    {
+  case Saggital:
+    {
+      if(m_SliceNum<ext[0]) m_SliceNum = ext[0];
+      if(m_SliceNum>ext[1]) m_SliceNum = ext[1];
+      ext[0] = m_SliceNum;
+      ext[1] = m_SliceNum;
+      break;
+    }
+  case Coronal:
+    {
+      if(m_SliceNum<ext[2]) m_SliceNum = ext[2];
+      if(m_SliceNum>ext[3]) m_SliceNum = ext[3];
+      ext[2] = m_SliceNum;
+      ext[3] = m_SliceNum;
+      break;
+    }
+  case Axial:
+    {
+      if(m_SliceNum<ext[4]) m_SliceNum = ext[4];
+      if(m_SliceNum>ext[5]) m_SliceNum = ext[5];
+      ext[4] = m_SliceNum;
+      ext[5] = m_SliceNum;
+      break;
+    }
+    }
+
+  m_Actor->SetDisplayExtent( ext );
+}
+
+
+
+
+void
+ImageSliceViewer
 ::UpdateImageInformation( void )
 {
   vtkImageData * image = m_Actor->GetInput();
@@ -157,9 +265,12 @@ ImageSliceViewer
   m_SliceNum = m_Dimensions[m_Orientation]/2;
 }
 
+
+
+
 void
 ImageSliceViewer
-::SetupCamera()
+::SetupCamera( void )
 {
   float focalPoint[3];
   float position[3];
@@ -218,100 +329,12 @@ ImageSliceViewer
 
 void
 ImageSliceViewer
-::SetZoomFactor( double factor )
+::SetPoint( void )
 {
-  m_ZoomFactor = factor;
-  m_StateMachine->SetInput( "SetUpCamera" );
-  m_StateMachine->StateTransition();
-}
 
-
-
-void
-ImageSliceViewer
-::SetInteractor( vtkRenderWindowInteractor * interactor )
-{
-  m_RenderWindow->SetInteractor( interactor );
-
-  vtkInteractorStyleImage * interactorStyle = vtkInteractorStyleImage::New();
-  interactor->SetInteractorStyle( interactorStyle );
-  interactorStyle->Delete();
-  interactor->AddObserver( ::vtkCommand::LeftButtonPressEvent, m_InteractorObserver );
-  interactor->AddObserver( ::vtkCommand::LeftButtonReleaseEvent, m_InteractorObserver );
-  interactor->AddObserver( ::vtkCommand::MouseMoveEvent, m_InteractorObserver );
-}
-
-
-void
-ImageSliceViewer
-::SetOrientation( OrientationType orientation )
-{
-  m_Orientation = orientation;
-  m_StateMachine->SetInput( "SetUpCamera" );
-  m_StateMachine->StateTransition();
-}
-
-
-
-void
-ImageSliceViewer
-::SelectSlice( int slice )
-{
-  m_SliceNum = slice;
-  m_StateMachine->SetInput( "SetSlice" );
-  m_StateMachine->StateTransition();
-}
-
-
-
-void
-ImageSliceViewer
-::SetSlice( void )
-{
-  int ext[6];
-  m_Actor->GetInput()->GetExtent( ext );
-
-  switch( m_Orientation )
-    {
-  case Saggital:
-    {
-      if(m_SliceNum<ext[0]) m_SliceNum = ext[0];
-      if(m_SliceNum>ext[1]) m_SliceNum = ext[1];
-      ext[0] = m_SliceNum;
-      ext[1] = m_SliceNum;
-      break;
-    }
-  case Coronal:
-    {
-      if(m_SliceNum<ext[2]) m_SliceNum = ext[2];
-      if(m_SliceNum>ext[3]) m_SliceNum = ext[3];
-      ext[2] = m_SliceNum;
-      ext[3] = m_SliceNum;
-      break;
-    }
-  case Axial:
-    {
-      if(m_SliceNum<ext[4]) m_SliceNum = ext[4];
-      if(m_SliceNum>ext[5]) m_SliceNum = ext[5];
-      ext[4] = m_SliceNum;
-      ext[5] = m_SliceNum;
-      break;
-    }
-    }
-
-  m_Actor->SetDisplayExtent( ext );
-}
-
-
-void
-ImageSliceViewer
-::SelectPoint( int x, int y )
-{
-  if (!m_Actor->GetInput()) 
-    {
-    return;     // return, if no image is loaded yet.
-    }
-
+  int x = m_SelectPoint[0]; 
+  int y = m_SelectPoint[1];
+  
   // Invert the y coordinate (vtk uses opposite y as FLTK)
   int* winsize = m_RenderWindow->GetSize();
   y = winsize[1] - y;
@@ -362,6 +385,9 @@ ImageSliceViewer
   m_Notifier->InvokeEvent( ClickedPointEvent() );
 }
 
+
+
+
 void  
 ImageSliceViewer
 ::SelectPoint( float x, float y, float z )
@@ -370,6 +396,9 @@ ImageSliceViewer
   m_SelectPoint[1] = y;
   m_SelectPoint[2] = z;
 }
+
+
+
 
 void 
 ImageSliceViewer
