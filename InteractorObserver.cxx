@@ -36,7 +36,15 @@ void
 InteractorObserver
 ::Execute(vtkObject * caller, unsigned long eventId, void *callData)
 {
-  if( m_SliceViewer )
+  if ( eventId == ::vtkCommand::LeftButtonPressEvent )
+    {
+    m_Motion = true;
+    }
+  if ( eventId == ::vtkCommand::LeftButtonReleaseEvent )
+    {
+    m_Motion = false;
+    }
+  if( m_SliceViewer && m_Motion )
     {
     const int x = Fl::event_x();
     const int y = Fl::event_y();

@@ -82,7 +82,6 @@ private:
   double              m_ZoomFactor;
 
   float               m_SelectPoint[3];
- 
 };
 
 

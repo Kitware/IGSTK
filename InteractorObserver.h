@@ -23,6 +23,7 @@ protected:
 private:
 
   ImageSliceViewer   * m_SliceViewer;
+  bool                 m_Motion;
 
 };
 

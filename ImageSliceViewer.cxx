@@ -201,6 +201,8 @@ void
   interactor->SetInteractorStyle( interactorStyle );
   interactorStyle->Delete();
   interactor->AddObserver( ::vtkCommand::LeftButtonPressEvent, m_InteractorObserver );
+  interactor->AddObserver( ::vtkCommand::LeftButtonReleaseEvent, m_InteractorObserver );
+  interactor->AddObserver( ::vtkCommand::MouseMoveEvent, m_InteractorObserver );
 }
 
 
