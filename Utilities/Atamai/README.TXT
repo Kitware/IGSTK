@@ -1,5 +1,5 @@
 The main tracking code is in the ndicapi directory.  This code can be
-built using cmake, and will provide a library "libvtkndicapi.a". 
+built using cmake, and will provide a library "libndicapi.a". 
 If desired, the CMakeLists.txt file can be edited to change the name
 of the library.  This library provides communication with the NDI
 POLARIS and AURORA devices either under the old POLARIS API or the
