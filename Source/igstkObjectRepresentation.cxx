@@ -43,9 +43,9 @@ void ObjectRepresentation::AddActor( vtkProp3D * actor )
 }
 
 /** Has the object been modified */
-bool ObjectRepresentation::IsModified()
+bool ObjectRepresentation::IsModified() const
 {
-  if(m_LastMTime<this->GetMTime())
+  if( m_LastMTime < this->GetMTime() )
     {
     return true;
     }
@@ -65,22 +65,13 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
   this->Modified();
 }
 
-/** Set the offset of the object */
-void ObjectRepresentation::SetOffset(double x, double y, double z)
-{
-  SpatialObjectType::VectorType offset;
-  offset[0] = x;
-  offset[1] = y;
-  offset[2] = z;
-  m_SpatialObject->GetObjectToParentTransform()->SetOffset(offset);
-  m_SpatialObject->ComputeObjectToWorldTransform();
-  this->Modified();
-}
 
 /** Update the object representation (i.e vtkActors). Maybe we should check also the transform
  *  modified time. */
 void ObjectRepresentation::Update()
 {
+  std::cout << "FIXME" << std::endl;
+  /*
   itk::Matrix<double,3,3> itkMatrix = m_SpatialObject->GetObjectToWorldTransform()->GetMatrix();
   itk::Vector<double,3>   offset = m_SpatialObject->GetObjectToWorldTransform()->GetOffset();
  
@@ -102,6 +93,7 @@ void ObjectRepresentation::Update()
     (*it)->SetUserMatrix(vtkMatrix);
     it++;
   }
+*/
 
   // Update the modified time
   m_LastMTime = this->GetMTime();

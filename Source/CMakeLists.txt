@@ -8,9 +8,12 @@ SET(IGSTKSandbox_HEADS
   igstkView2D.h
   igstkView3D.h
   igstkScene.h
-  igstkObjectRepresentation.h
+  igstkSpatialObject.h
   igstkEllipsoidObject.h  
   igstkCylinderObject.h
+  igstkObjectRepresentation.h
+  igstkEllipsoidObjectRepresentation.h  
+  igstkCylinderObjectRepresentation.h
   igstkMouseTracker.h
   itkCylinderSpatialObject.h
 )
@@ -21,9 +24,12 @@ SET(IGSTKSandbox_SRCS
   igstkView2D.cxx
   igstkView3D.cxx
   igstkScene.cxx
-  igstkObjectRepresentation.cxx
+  igstkSpatialObject.cxx
   igstkEllipsoidObject.cxx
   igstkCylinderObject.cxx
+  igstkObjectRepresentation.cxx
+  igstkEllipsoidObjectRepresentation.cxx
+  igstkCylinderObjectRepresentation.cxx
   igstkMouseTracker.cxx
   itkCylinderSpatialObject.cxx
 )

@@ -56,11 +56,11 @@ public:
 
   /** Set/Get the radius */
   itkSetMacro(Radius,double);
-  itkGetMacro(Radius,double);
+  itkGetConstReferenceMacro(Radius,double);
 
   /** Set/Get the height */
   itkSetMacro(Height,double);
-  itkGetMacro(Height,double);
+  itkGetConstReferenceMacro(Height,double);
 
   /** Returns a degree of membership to the object. 
    *  That's useful for fuzzy objects. */ 

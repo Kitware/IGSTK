@@ -24,7 +24,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Gl_Window.H>
 #include <vtkRenderWindowInteractor.h>
-#include <igstkScene.h>
 
 // VTK headers
 #include "vtkRenderWindow.h"
@@ -65,16 +64,17 @@ public:
   int CreateTimer(int timertype);
   int DestroyTimer();
   void OnTimer(void);
-
-  /** Set the scene */
-  void SetScene(Scene * scene);
+  void ResetCamera();
 
   /** void Update the display */
   void Update();
  
   /** Disable the interactions */
-  void DisableInteractions() {m_InteractionHandling = false;}
-  void EnableInteractions() {m_InteractionHandling = true;}
+  void DisableInteractions();
+  void EnableInteractions();
+
+  /** Add a vtk Actor */
+  void AddActor( vtkProp3D * actor );
 
 protected:
   
@@ -97,11 +97,10 @@ protected:
 
 private:
   
-  vtkRenderWindow    * m_RenderWindow;
-  vtkRenderer        * m_Renderer;
-  vtkCamera          * m_Camera;
-  Scene::Pointer     m_Scene;
-  bool               m_InteractionHandling;
+  vtkRenderWindow       * m_RenderWindow;
+  vtkRenderer           * m_Renderer;
+  vtkCamera             * m_Camera;
+  bool                    m_InteractionHandling;
 };
 
 } // end namespace igstk

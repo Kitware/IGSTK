@@ -18,8 +18,8 @@
 #define __igstkEllipsoidObject_h
 
 #include "igstkMacros.h"
-#include "igstkObjectRepresentation.h"
-#include <itkEllipseSpatialObject.h>
+#include "igstkSpatialObject.h"
+#include "itkEllipseSpatialObject.h"
 
 namespace igstk
 {
@@ -34,33 +34,31 @@ namespace igstk
  */
 
 class EllipsoidObject 
-: public ObjectRepresentation
+: public SpatialObject
 {
 
 public:
 
   /** Typedefs */
   typedef EllipsoidObject                Self;
-  typedef ObjectRepresentation           Superclass;
+  typedef SpatialObject                  Superclass;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer; 
   typedef itk::EllipseSpatialObject<3>   EllipseSpatialObjectType;
   typedef EllipseSpatialObjectType::ArrayType         ArrayType;
 
   /**  Run-time type information (and related methods). */
-  itkTypeMacro( Self, Superclass );
+  itkTypeMacro( Self, SpatialObject );
 
   /** Method for creation of a reference counted object. */
   NewMacro( EllipsoidObject );
 
-  /** Set all radii to the same radius value.  Each radius is
-   *  half the length of one axis of the ellipse.  */
-  void SetRadius(double radius);
-  void SetRadius(double r0, double r1, double r2);
-  ArrayType GetRadius();
+  /** Set the radius of the underlying ITK Spatial object */
+  void SetRadius( double rx, double ry, double rz );
+  void SetRadius( const ArrayType & radius );
 
-  /** Create the VTK actors */
-  void CreateActors();
+  /** Get the three radius */
+  const ArrayType & GetRadius() const;
 
 protected:
 

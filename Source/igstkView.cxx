@@ -73,56 +73,49 @@ void View::Initialize()
   // set the size in the render window interactor
   Size[0] = size[0];
   Size[1] = size[1];
-  m_Scene = NULL;
 
   // this is initialized
   Initialized = 1;
-}
-
-
-/** Set the scene */
-void View::SetScene(Scene * scene)
-{
-  if(scene == NULL)
-    {
-    return;
-    }
-
-  this->m_Scene = scene;
-
-  // Get all the objects in the scene and force a rendering
-  const Scene::ObjectListType & objects = scene->GetObjects();
-  Scene::ObjectListConstIterator it        = objects.begin();
-  Scene::ObjectListConstIterator objectEnd = objects.end();
-
-  while( it != objectEnd )
-    {
-    (*it)->CreateActors();
-
-    ObjectRepresentation::ActorsListType actors = (*it)->GetActors();
-    ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
-    while(actorIt != actors.end())
-      {
-      m_Renderer->AddActor(*actorIt);
-      actorIt++;
-      }
-
-    it++;
-    }
-
   m_Renderer->ResetCamera();
-
 }
+
+
 
 /** Update the display */
 void View::Update()
 {
-  if(!m_Scene)
+  this->redraw();
+}
+
+/** */
+void View::AddActor( vtkProp3D * actor )
+{
+  if( !actor )
     {
     return;
     }
-  m_Scene->Update();
-  this->redraw();
+  m_Renderer->AddActor( actor );
+}
+
+
+/** */
+void View::EnableInteractions()
+{
+  m_InteractionHandling = true;
+}
+
+/** */
+void View::DisableInteractions()
+{
+  m_InteractionHandling = false;
+}
+
+
+
+/** */
+void View::ResetCamera()
+{
+  m_Renderer->ResetCamera();
 }
 
 /** */
@@ -135,7 +128,8 @@ void View::Enable()
     }
   // that's it
   Enabled = 1;
-  Modified();
+  m_Renderer->ResetCamera();
+  this->Modified();
 }
 
 /** */
@@ -149,7 +143,7 @@ void View::Disable()
   
   // that's it (we can't remove the event handler like it should be...)
   Enabled = 0;
-  Modified();
+  this->Modified();
 }
 
 /** */

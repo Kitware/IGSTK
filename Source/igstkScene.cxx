@@ -58,6 +58,28 @@ void Scene::RemoveObject( ObjectRepresentation * pointer )
     }
 }
 
+/** Add an  object to the Scene */
+void Scene::AddToView( View * view )
+{
+  Scene::ObjectListConstIterator it        = m_Objects.begin();
+  Scene::ObjectListConstIterator objectEnd = m_Objects.end();
+
+  while( it != objectEnd )
+    {
+    (*it)->CreateActors();
+
+    ObjectRepresentation::ActorsListType actors = (*it)->GetActors();
+    ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
+    while(actorIt != actors.end())
+      {
+      view->AddActor(*actorIt);
+      actorIt++;
+      }
+
+    it++;
+    }
+}
+
 
 /** Update the scene */
 void Scene::Update()

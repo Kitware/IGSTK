@@ -18,7 +18,7 @@
 #define __igstkCylinderObject_h
 
 #include "igstkMacros.h"
-#include "igstkObjectRepresentation.h"
+#include "igstkSpatialObject.h"
 #include <itkCylinderSpatialObject.h>
 
 namespace igstk
@@ -33,35 +33,37 @@ namespace igstk
  */
 
 class CylinderObject 
-: public ObjectRepresentation
+: public SpatialObject
 {
 
 public:
 
   /** Typedefs */
   typedef CylinderObject                 Self;
-  typedef ObjectRepresentation           Superclass;
+  typedef SpatialObject                  Superclass;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer; 
-  typedef itk::CylinderSpatialObject     CylinderSOType;
+  typedef itk::CylinderSpatialObject     CylinderSpatialObjectType;
 
   /**  Run-time type information (and related methods). */
-  itkTypeMacro( Self, Superclass );
+  itkTypeMacro( Self, SpatialObject );
 
   /** Method for creation of a reference counted object. */
   NewMacro( CylinderObject );
 
-  /** Set/Get the radius of the cylinder */
-  void SetRadius(double radius);
-  double GetRadius();
 
-  /** Set/Get the Height of the cylinder */
-  void SetHeight(double height);
-  double GetHeight();
-
-  /** Create the VTK actors */
-  void CreateActors();
-
+  /** Set the radius of the Cylinder */
+  void SetRadius( double radius );
+  
+  /** Get the radius of the Cylinder */
+  double GetRadius() const;
+  
+  /** Set the height of the Cylinder */
+  void SetHeight( double height );
+  
+  /** Get the height of the Cylinder */
+  double GetHeight() const;
+  
 protected:
 
   CylinderObject( void );
@@ -73,7 +75,7 @@ protected:
 private:
 
   /** Internal itkSpatialObject */
-  CylinderSOType::Pointer   m_CylinderSpatialObject;
+  CylinderSpatialObjectType::Pointer   m_CylinderSpatialObject;
 
 };
 

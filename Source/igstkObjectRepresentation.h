@@ -23,8 +23,8 @@
 
 #include <vector>
 #include <igstkMacros.h>
-#include <itkSpatialObject.h>
 #include <itkObject.h>
+#include <igstkSpatialObject.h>
 #include <vtkProp3D.h>
 
 
@@ -47,7 +47,7 @@ public:
   typedef itk::SmartPointer < Self >         Pointer;
   typedef itk::SmartPointer < const Self >   ConstPointer;
   typedef itk::Object                        Superclass;
-  typedef itk::SpatialObject<3>              SpatialObjectType;
+  typedef SpatialObject                      SpatialObjectType;
   typedef std::vector<vtkProp3D*>            ActorsListType; 
 
   itkTypeMacro(ObjectRepresentation, itk::Object);
@@ -73,24 +73,25 @@ public:
   SetMacro(Opacity,float);
   GetMacro(Opacity,float);
 
-  /** Set the offset of the object */
-  void SetOffset(double x, double y, double z);
 
   /** Update */
   void Update();  
    
 
   /** Has the object been modified */
-  bool IsModified();
+  bool IsModified() const;
 
 protected:
 
   ObjectRepresentation( void );
   ~ObjectRepresentation( void );
 
+  /** Set the spatial object for this class */
+  SetMacro(SpatialObject, SpatialObjectType *);
+
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
-  SpatialObjectType::Pointer  m_SpatialObject;
+  SpatialObjectType::ConstPointer  m_SpatialObject;
 
 private:
 

@@ -19,6 +19,7 @@
 #define __igstkScene_h 
 
 #include "igstkObjectRepresentation.h"  
+#include "igstkView.h"  
  
 #include <list>
 
@@ -74,6 +75,9 @@ public:
 
   /** Update the scene */
   void Update();
+
+  /** Connect the Scene to a particular View */
+  void AddToView( View * view );
 
 protected: 
 
