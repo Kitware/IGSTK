@@ -105,6 +105,11 @@ public:
   *   Transition. */
   void SetOrientation( const OrientationType orientation );
 
+ /** SelectPoint: This method inputs co-ordinate of the clicked point
+  *   in the viewer. It generates "SetPoint" input signal and calls for 
+  *   a State Transition. */ 
+  virtual void SelectPoint( int x, int y);
+
 protected:
 
   // Protected methods that DO NOT GENERATE input signals
@@ -112,16 +117,12 @@ protected:
 
   // Protected methods that GENERATE INPUT signals
 
-  /** SelectPoint: This method inputs co-ordinate of the clicked point
-  *   in the viewer. It generates "SetPoint" input signal and calls for 
-  *   a State Transition. */ 
-  virtual void SelectPoint( int x, int y);
+  virtual void SelectPoint( float x, float y, float z );
+
+  virtual void  GetSelectPoint(float data[3]); 
 
   // Protected methods that are invoked through State Machine.
 
-  /** UpdateImageInformation: This method is invoked by the State Machine
-  *   in response to the "InputData" input signal. */
-  virtual void UpdateImageInformation( void );
 
   /** SetupCamera: This method is invoked by the State Machine in response  
   *   to the "SetupCamera" input signal. */ 
@@ -132,11 +133,7 @@ protected:
   *   display extent of the input image data. */ 
   void SetSlice( void );
    
-  /** SetPoint: This method is invoked by the State Machine in response to 
-  *   the "SetPoint" input signal. It uses the co-ordinate of the clicked 
-  *   point in the view window and m_SliceNum to compute the co-ordinates
-  *   of the clicked point in the image space. */ 
-  void SetPoint( void );
+
 
 
 private:

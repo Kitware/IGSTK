@@ -50,12 +50,6 @@ ImageSliceViewer
 	const ActionType NoAction = 0;
 
 	// Programming the machine
-	m_StateMachine.SetTransition( "ImageNotLoadedState", "ImageData", 
-		"ImageLoadedState", & ImageSliceViewer::UpdateImageInformation );
-
-	m_StateMachine.SetTransition( "ImageLoadedState", "ImageData", 
-		"ImageLoadedState", & ImageSliceViewer::UpdateImageInformation );
-
   m_StateMachine.SetTransition( "ImageNotLoadedState", "SetUpCamera", 
     "ImageLoadedState", NoAction );
 
@@ -68,11 +62,6 @@ ImageSliceViewer
   m_StateMachine.SetTransition( "ImageLoadedState", "SetSlice", 
     "ImageLoadedState", & ImageSliceViewer::SetSlice );
 
-  m_StateMachine.SetTransition( "ImageNotLoadedState", "SetPoint", 
-    "ImageLoadedState", NoAction );
-
-  m_StateMachine.SetTransition( "ImageLoadedState", "SetPoint", 
-    "ImageLoadedState", & ImageSliceViewer::SetPoint );
 
 	// Finish the state machine programming and get ready to run
 	m_StateMachine.SetReadyToRun();
@@ -253,25 +242,28 @@ ImageSliceViewer
 
 
 
-void
-ImageSliceViewer
-::UpdateImageInformation( void )
-{
-  vtkImageData * image = m_Actor->GetInput();
-  image->GetSpacing(m_ImagePixelSpacing);
-  image->GetOrigin(m_ImageOrigin);
-  image->GetDimensions(m_ImageDimensions);
-  image->GetExtent( m_ImageExtents );
-  m_SliceNum = m_Dimensions[m_Orientation]/2;
-}
-
-
 
 
 void
 ImageSliceViewer
 ::SetupCamera( void )
 {
+
+   vtkImageData * image = m_Actor->GetInput();
+
+  if ( !image )
+    {
+    return;
+    }
+
+  float spacing[3];
+  float origin[3];
+  int   dimensions[3];
+
+  image->GetSpacing(spacing);
+  image->GetOrigin(origin);
+  image->GetDimensions(dimensions);
+
   float focalPoint[3];
   float position[3];
 
@@ -327,63 +319,6 @@ ImageSliceViewer
 }
 
 
-void
-ImageSliceViewer
-::SetPoint( void )
-{
-
-  int x = m_SelectPoint[0]; 
-  int y = m_SelectPoint[1];
-  
-  // Invert the y coordinate (vtk uses opposite y as FLTK)
-  int* winsize = m_RenderWindow->GetSize();
-  y = winsize[1] - y;
-
-  // Convert display point to world point
-  float wpoint[4];
-  const double z = m_SliceNum / ( m_FarPlane - m_NearPlane );
-  m_Renderer->SetDisplayPoint( x, y, 0 );
-  m_Renderer->DisplayToWorld();
-  m_Renderer->GetWorldPoint( wpoint );
-
-  // Fix camera Z coorinate to match the current slice
-  float spacing[3]={1,1,1};
-  float origin[3] ={0,0,0};
-  int dimensions[3] = { 100, 100, 100 };
-  if ( m_Actor->GetInput() )
-    {
-    m_Actor->GetInput()->GetSpacing(spacing);
-    m_Actor->GetInput()->GetOrigin(origin);
-    m_Actor->GetInput()->GetDimensions(dimensions);
-    }
-
-  int idx = 0;
-  switch( m_Orientation )
-    {
-  case Saggital:
-      {
-      idx = 0;
-      break;
-      }
-  case Coronal:
-      {
-      idx = 1;
-      break;
-      }
-  case Axial:
-      {
-      idx = 2;
-      break;
-      }
-    }
-  float realz = m_SliceNum * spacing[idx] + origin[idx];
-  wpoint[idx] = realz;
-
-  // At this point we have 3D position in the variable wpoint
-  this->SetClickedPoint(wpoint[0], wpoint[1], wpoint[2]);
-
-  m_Notifier->InvokeEvent( ClickedPointEvent() );
-}
 
 
 
