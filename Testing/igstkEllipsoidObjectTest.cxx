@@ -45,23 +45,24 @@ int igstkEllipsoidObjectTest( int, char * [] )
 
   // Test Property
   std::cout << "Testing Property : ";
-  ellipsoid->GetProperty()->SetColor(0.1,0.2,0.3,0.4);
-  if(fabs(ellipsoid->GetProperty()->GetRed()-0.1)>0.00001)
+  ellipsoid->SetColor(0.1,0.2,0.3);
+  ellipsoid->SetOpacity(0.4);
+  if(fabs(ellipsoid->GetRed()-0.1)>0.00001)
     {
-    std::cout << ellipsoid->GetProperty()->GetRed() << " != 0.1 [FAILED]" << std::endl;
+    std::cout << "GetRed() [FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
-  if(fabs(ellipsoid->GetProperty()->GetGreen()-0.2)>0.00001)
+  if(fabs(ellipsoid->GetGreen()-0.2)>0.00001)
     {
     std::cout << "GetGreen()[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
-  if(fabs(ellipsoid->GetProperty()->GetBlue()-0.3)>0.00001)
+  if(fabs(ellipsoid->GetBlue()-0.3)>0.00001)
     {
     std::cout << "GetBlue() [FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
-  if(fabs(ellipsoid->GetProperty()->GetOpacity()-0.4)>0.00001)
+  if(fabs(ellipsoid->GetOpacity()-0.4)>0.00001)
     {
     std::cout << "GetOpacity() [FAILED]" << std::endl;
     return EXIT_FAILURE;
