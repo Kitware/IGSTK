@@ -138,6 +138,16 @@ int igstkSceneTest( int, char * [] )
     scene->RequestAddObject(0,ellipsoid); 
     scene->RequestAddObject(0,0); 
 
+    // Exercise error conditions by adding twice the same object
+    scene->RequestAddObject(view,ellipsoid); 
+    scene->RequestAddObject(view,ellipsoid); 
+
+    // Exercise error conditions by removing twice the same object
+    scene->RequestRemoveObject(view,ellipsoid); 
+    scene->RequestRemoveObject(view,ellipsoid); 
+   
+    // Testing printself again when there are object in the scene
+    scene->Print(std::cout);
     } 
   catch(...)
     {

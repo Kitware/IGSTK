@@ -103,6 +103,24 @@ int igstkViewTest( int, char * [] )
     // Remove the cylinder from the scene
     scene->RequestRemoveObject(view3D,cylinderRepresentation);
 
+    // Exercise error conditions.
+    //
+    // Attempt to add an object with null pointer
+    scene->RequestAddObject(view3D,0);
+    // Attempt to add a view with null pointer
+    scene->RequestAddObject(0,cylinderRepresentation);
+    // Attempt to add view and object with null pointers
+    scene->RequestAddObject(0,0);
+
+    // Exercise error conditions.
+    //
+    // Attempt to remove an object with null pointer
+    scene->RequestRemoveObject(view3D,0);
+    // Attempt to remove a view with null pointer
+    scene->RequestRemoveObject(0,cylinderRepresentation);
+    // Attempt to remove view and object with null pointers
+    scene->RequestRemoveObject(0,0);
+
 
     form->hide();
 
