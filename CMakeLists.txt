@@ -53,6 +53,7 @@ INCLUDE_DIRECTORIES(
 #
 SET(IGSTK_HEADS
   DicomImageReaderBase.h
+  DicomImageReader.h
   RegistrationCTBase.h
   ImageSliceViewer.h
   vtkFlRenderWindowInteractor.h
@@ -69,6 +70,7 @@ SET(IGSTK_HEADS
 
 SET(IGSTK_SRCS
   DicomImageReaderBase.cxx
+  DicomImageReader.txx
   RegistrationCTBase.cxx
   ImageSliceViewer.cxx
   vtkFlRenderWindowInteractor.cxx
