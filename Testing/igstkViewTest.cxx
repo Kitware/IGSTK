@@ -21,35 +21,54 @@
 #endif
 
 #include <iostream>
+#include "igstkView2D.h"
 #include "igstkView3D.h"
 
 int igstkViewTest( int, char * [] )
 {
-  typedef igstk::View3D  ViewType;
+  typedef igstk::View2D  View2DType;
+  typedef igstk::View3D  View3DType;
 
-  // Create an FLTK minimal GUI
-  Fl_Window * form = new Fl_Window(510+300,300,"View3D Test");
-  
-  ViewType * view = new ViewType(10,10,280,280,"Axial View");
-
-  form->end();
-  // End of the GUI creation
-
-  form->show();
-  
-  view->RequestResetCamera();
-  view->RequestEnableInteractions();
-  
-  
-  for(unsigned int i=0; i<10; i++)
+  try
     {
-    view->Update();  // schedule redraw of the view
-    Fl::check();     // trigger FLTK redraws
+
+    // Create an FLTK minimal GUI
+    Fl_Window * form = new Fl_Window(600,300,"View3D Test");
+    
+    View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
+    View3DType * view3D = new View3DType(310,10,280,280,"3D View");
+
+    form->end();
+    // End of the GUI creation
+
+    form->show();
+    
+    view2D->RequestResetCamera();
+    view2D->RequestEnableInteractions();
+    
+    view3D->RequestResetCamera();
+    view3D->RequestEnableInteractions();
+    
+    
+    for(unsigned int i=0; i<100; i++)
+      {
+      view2D->Update();  // schedule redraw of the view
+      view3D->Update();  // schedule redraw of the view
+      Fl::check();       // trigger FLTK redraws
+      }
+
+    view2D->RequestDisableInteractions();
+    view3D->RequestDisableInteractions();
+
+    delete view2D;
+    delete view3D;
+
     }
-
-  view->RequestDisableInteractions();
-
-  delete view;
+  catch(...)
+    {
+    std::cerr << "Exception catched !!" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   return EXIT_SUCCESS;
 }
