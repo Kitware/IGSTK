@@ -8,13 +8,9 @@ int MotionViewerTest(int argc, char * argv [])
 {
 	ISIS::MotionViewer  viewer;
 	
-//	Fl_Window mainWindow( 600, 600 );	
-	
 	vtkFlRenderWindowInteractor * interactor =
-		new vtkFlRenderWindowInteractor( 10, 10, 512, 512, "Viewer" );
+		new vtkFlRenderWindowInteractor(0, 0, 512, 512, "MotionViewer" );
 	
-//	mainWindow.end();
-//	mainWindow.show();
 	interactor->show();
 	
 	viewer.SetInteractor( interactor );
@@ -23,17 +19,10 @@ int MotionViewerTest(int argc, char * argv [])
 
 	viewer.SetupCamera();
 
-//	for (int i = -20; i < 20; i++)
-//	{
-//		viewer.UpdateMotion(i);
-//	}
-	
-	Fl::check();
-	Fl::check();
-	Fl::check();
-	Fl::check();
-	
-//	mainWindow.hide();
+	for (int i = -20; i < 20; i++)
+	{
+		viewer.UpdateMotion(i);
+	}
 	
 	interactor->Delete();
 	
