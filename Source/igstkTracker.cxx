@@ -66,7 +66,7 @@ Tracker::~Tracker(void)
 }
 
 
-void Tracker::Initialize(  const char *fileName )
+void Tracker::Initialize(  const char * )
 {
     this->SetUpCommunication();
     this->SetUpTools();
