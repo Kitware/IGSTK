@@ -1,0 +1,70 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0104 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include "IGMTrackingBase.h"} {public
+} 
+
+class DisplayParametersGUI {open
+} {
+  Function {DisplayParametersGUI(IGMTrackingBase *IGM):m_IGMTrackingBase(IGM)} {open selected
+  } {
+    Fl_Window m_MainWindow {
+      label {Display Parameter Setting}
+      xywh {860 295 271 228} type Double visible
+    } {
+      Fl_Return_Button {} {
+        label Ok
+        callback {this->OnOk();
+this->Hide();}
+        xywh {156 184 45 25}
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {this->Hide();}
+        xywh {211 184 50 25}
+      }
+      Fl_Check_Button m_ClickedPosition {
+        label {Show Clicked Position}
+        xywh {15 15 270 30} down_box DOWN_BOX labeltype EMBOSSED_LABEL
+      }
+      Fl_Check_Button m_EntryPosition {
+        label {Show Entry Position}
+        xywh {15 48 270 30} down_box DOWN_BOX labeltype EMBOSSED_LABEL
+      }
+      Fl_Check_Button m_TargetPosition {
+        label {Show Target Position}
+        xywh {15 82 270 30} down_box DOWN_BOX labeltype EMBOSSED_LABEL
+      }
+      Fl_Check_Button m_EntryToTargetPath {
+        label {Show Entry To Target Path}
+        xywh {15 116 270 30} down_box DOWN_BOX labeltype EMBOSSED_LABEL
+      }
+      Fl_Check_Button m_Needle {
+        label {Show Needle}
+        xywh {15 150 270 30} down_box DOWN_BOX labeltype EMBOSSED_LABEL
+      }
+    }
+  }
+  decl {IGMTrackingBase   *m_IGMTracking;} {}
+  Function {Show()} {return_type void
+  } {
+    code {m_MainWindow->show();} {}
+  }
+  Function {Hide()} {return_type void
+  } {
+    code {m_MainWindow->hide();} {}
+  }
+  Function {OnOk(void)} {return_type void
+  } {
+    code {m_IGMTrackingGUI->DisplaySelectedPosition( m_ClickedPosition->value());
+
+m_IGMTrackingGUI->DisplayTargetPosition( m_TargetPosition->value() );
+
+m_IGMTrackingGUI->DisplayEntryPosition( m_EntryPosition->value() );
+
+m_IGMTrackingGUI->DisplayToolPosition( m_Needle->value() );
+
+m_IGMTrackingGUI->DisplayEntryToTargetPath( m_EntryToTargetPath->value() );} {}
+  }
+} 

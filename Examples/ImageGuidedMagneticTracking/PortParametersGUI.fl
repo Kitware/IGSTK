@@ -1,0 +1,174 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0104 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include "IGMTrackingBase.h"} {selected public
+} 
+
+class PortParametersGUI {open
+} {
+  Function {PortParametersGUI(IGMTrackingBase *IGMBase):m_IGMTracking(IGMBase)} {open
+  } {
+    Fl_Window m_MainWindow {
+      label {Needle Parameters} open
+      xywh {690 295 330 277} type Double visible
+    } {
+      Fl_Box {} {
+        label {Tip Offset:}
+        xywh {16 51 75 25} labeltype EMBOSSED_LABEL
+      }
+      Fl_Input m_TipOffsetX {
+        label {X }
+        xywh {51 75 54 25} labeltype SHADOW_LABEL
+      }
+      Fl_Input m_TipOffsetY {
+        label {Y }
+        xywh {130 75 54 25} labeltype SHADOW_LABEL
+      }
+      Fl_Input m_TipOffsetZ {
+        label {Z }
+        xywh {210 75 54 25} labeltype SHADOW_LABEL
+      }
+      Fl_Return_Button {} {
+        label Ok
+        callback {this->OnOk();
+this->Hide();}
+        xywh {218 246 45 25}
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {this->Hide();}
+        xywh {273 246 50 25}
+      }
+      Fl_Input m_Radius {
+        label {Radius }
+        xywh {72 30 54 25} labeltype EMBOSSED_LABEL
+      }
+      Fl_Input m_Length {
+        label {Length }
+        xywh {231 30 54 25} labeltype EMBOSSED_LABEL
+      }
+      Fl_Box {} {
+        label {Main Needle (Port 0)}
+        xywh {5 5 135 25} labeltype EMBOSSED_LABEL
+      }
+      Fl_Box {} {
+        label mm
+        xywh {130 35 30 20}
+      }
+      Fl_Box {} {
+        label mm
+        xywh {290 35 30 20}
+      }
+      Fl_Box {} {
+        label mm
+        xywh {270 77 30 23}
+      }
+      Fl_Box {} {
+        label {Tip Offset:}
+        xywh {20 188 75 25} labeltype EMBOSSED_LABEL
+      }
+      Fl_Input m_RefOffsetX {
+        label {X }
+        xywh {60 213 54 25} labeltype SHADOW_LABEL
+      }
+      Fl_Input m_RefOffsetY {
+        label {Y }
+        xywh {139 213 54 25} labeltype SHADOW_LABEL
+      }
+      Fl_Input m_RefOffsetZ {
+        label {Z }
+        xywh {219 213 54 25} labeltype SHADOW_LABEL
+      }
+      Fl_Check_Button m_RefOption {
+        label {Use Reference Needle (Port 1)}
+        xywh {5 163 220 25} down_box DOWN_BOX labeltype EMBOSSED_LABEL
+      }
+      Fl_Box {} {
+        label {End Offset:}
+        xywh {18 106 75 25} labeltype EMBOSSED_LABEL
+      }
+      Fl_Input m_EndOffsetX {
+        label {X }
+        xywh {53 130 54 25} labeltype SHADOW_LABEL
+      }
+      Fl_Input m_EndOffsetY {
+        label {Y }
+        xywh {132 130 54 25} labeltype SHADOW_LABEL
+      }
+      Fl_Input m_EndOffsetZ {
+        label {Z }
+        xywh {212 130 54 25} labeltype SHADOW_LABEL
+      }
+      Fl_Box {} {
+        label mm
+        xywh {272 132 30 23}
+      }
+    }
+  }
+  decl {IGMTrackingBase   *m_IGMTracking;} {}
+  Function {Show()} {open return_type void
+  } {
+    code {float offsetX, offsetY, offsetZ;
+char  str[25];
+
+m_IGMTracking->GetNeedleTipOffset(offsetX, offsetY, offsetZ);
+sprintf(str, "%4.2f", offsetX);
+m_TipOffsetX->value(str);
+sprintf(str, "%4.2f", offsetY);
+m_TipOffsetY->value(str);
+sprintf(str, "%4.2f", offsetZ);
+m_TipOffsetZ->value(str);
+sprintf(str, "%4.2f", m_IGMTracking->GetNeedleRadius());
+
+m_IGMTracking->GetNeedleEndOffset(offsetX, offsetY, offsetZ);
+sprintf(str, "%4.2f", offsetX);
+m_EndOffsetX->value(str);
+sprintf(str, "%4.2f", offsetY);
+m_EndOffsetY->value(str);
+sprintf(str, "%4.2f", offsetZ);
+m_EndOffsetZ->value(str);
+
+sprintf(str, "%4.2f", m_IGMTracking->GetNeedleRadius());
+m_Radius->value(str);
+
+sprintf(str, "%4.2f", m_IGMTracking->GetNeedleLength());
+m_Length->value(str);
+
+m_IGMTracking->GetReferenceNeedleTipOffset(offsetX, offsetY, offsetZ);
+sprintf(str, "%4.2f", offsetX);
+m_RefOffsetX->value(str);
+sprintf(str, "%4.2f", offsetY);
+m_RefOffsetY->value(str);
+sprintf(str, "%4.2f", offsetZ);
+m_RefOffsetZ->value(str);
+
+if (m_IGMTracking->GetUseReferenceNeedleOption())
+   m_RefOption->value(1);
+else
+   m_RefOption->value(0);
+	
+
+m_MainWindow->show();} {}
+  }
+  Function {Hide()} {open return_type void
+  } {
+    code {m_MainWindow->hide();} {}
+  }
+  Function {OnOk(void)} {open return_type void
+  } {
+    code {m_IGMTracking->SetNeedleTipOffset(atof(m_TipOffsetX->value()),
+atof(m_TipOffsetY->value()),atof(m_TipOffsetZ->value()));
+
+m_IGMTracking->SetNeedleEndOffset(atof(m_EndOffsetX->value()),
+atof(m_EndOffsetY->value()),atof(m_EndOffsetZ->value()));
+
+m_IGMTracking->SetNeedleLength(atof(m_Length->value()));
+m_IGMTracking->SetNeedleRadius(atof(m_Radius->value()));
+m_IGMTracking->SetReferenceNeedleTipOffset(atof(m_RefOffsetX->value()),
+atof(m_RefOffsetY->value()),atof(m_RefOffsetZ->value()));
+m_IGMTracking->SetUseReferenceNeedleOption(m_RefOption->value());
+
+fl_alert("Please do \\"Start Tracking\\" once again if the Reference port has been added.");} {}
+  }
+} 

@@ -1,0 +1,85 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0104 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <string>} {public
+} 
+
+decl {\#include "IGMTrackingBase.h"} {selected public
+} 
+
+class FiducialBrowserGUI {open
+} {
+  decl {IGMTrackingBase  *m_IGMTracking;} {public
+  }
+  decl {typedef enum {IMAGE_TYPE, TRACKER_TYPE} FIDUCIAL_TYPE;} {public
+  }
+  Function {FiducialBrowserGUI(IGMTrackingBase *trackingBase):m_IGMTracking(trackingBase)} {open
+  } {
+    Fl_Window BrowserWindow {
+      label Fiducials open
+      xywh {494 321 226 337} type Double visible
+    } {
+      Fl_Button {} {
+        label Cancel
+        callback {this->Hide();}
+        xywh {160 305 55 25}
+      }
+      Fl_Browser TheBrowser {
+        xywh {5 10 215 285} type Hold
+      }
+      Fl_Return_Button {} {
+        label Ok
+        callback {this->ProcessOk();
+this->Hide();}
+        xywh {95 305 55 25}
+      }
+    }
+  }
+  Function {~FiducialBrowserGUI()} {return_type virtual
+  } {}
+  Function {Show(FIDUCIAL_TYPE type, unsigned int numberOfFiducials )} {return_type {virtual void}
+  } {
+    code {TheBrowser->clear();
+m_FiducialType = type;
+char title[25];
+switch(type)
+{
+    case IMAGE_TYPE:
+        sprintf(title, "Image");
+        break;
+    case TRACKER_TYPE:
+        sprintf(title, "Tracker");
+        break;
+}
+
+sprintf(m_CharBuffer, "%s Fiducials", title);
+BrowserWindow->label(m_CharBuffer);
+
+for(int i=0; i<numberOfFiducials; i++)
+{
+    sprintf(m_CharBuffer, "%s Fiducial %.3d", title, i+1);
+    TheBrowser->add(m_CharBuffer);
+}
+BrowserWindow->show();} {}
+  }
+  Function {ProcessOk( void )} {open return_type {virtual void}
+  } {
+    code {unsigned int  fiducialNumber = TheBrowser->value() - 1;
+switch(m_FiducialType)
+{
+case IMAGE_TYPE:
+    m_IGMTracking->SetImageFiducial( fiducialNumber );
+    break;
+case TRACKER_TYPE:
+    m_IGMTracking->SetTrackerFiducial( fiducialNumber );
+    break;
+}} {}
+  }
+  Function {Hide()} {return_type {virtual void}
+  } {
+    code {BrowserWindow->hide();} {}
+  }
+  decl {char  m_CharBuffer[50];} {}
+  decl {FIDUCIAL_TYPE  m_FiducialType;} {}
+} 

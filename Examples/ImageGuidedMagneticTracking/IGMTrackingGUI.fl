@@ -1,0 +1,403 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0104 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include "BrowserGUI.h"} {public
+} 
+
+decl {\#include "MessageWindowGUI.h"} {public
+} 
+
+decl {\#include "PortParametersGUI.h"} {public
+} 
+
+class IGMTrackingGUI {open : {public IGMTrackingBase}
+} {
+  decl {PortParametersGUI m_PortParameters;} {}
+  decl {FiducialBrowserGUI  m_FiducialBrowser;} {public
+  }
+  decl {MessageWindowGUI m_MessageWindow;} {}
+  Function {IGMTrackingGUI():m_FiducialBrowser(this), m_PortParameters(this)} {} {
+    Fl_Window mainWindow {
+      label {Image Guided Biopsy and Magnetic Tracking System - ISIS}
+      xywh {-32000 -32000 750 687} type Double align 17 hide resizable
+      code0 {\#include "IGMTrackingBase.h"}
+    } {
+      Fl_Box AxialView {
+        xywh {160 30 280 300} box DOWN_FRAME align 2
+        code0 {\#include "vtkFlRenderWindowInteractor.h"}
+        class vtkFlRenderWindowInteractor
+      }
+      Fl_Value_Slider AxialViewSlider {
+        callback {this->SelectAxialSlice( static_cast<int>( o->value() ));}
+        xywh {160 340 280 15} type {Horz Knob} maximum 100 step 1
+      }
+      Fl_Group {} {
+        label Control
+        xywh {2 27 153 413} box DOWN_BOX labelfont 1 labelcolor 184 align 21
+      } {
+        Fl_Light_Button LoadImageButton {
+          label {Load Image}
+          callback {this->LoadDICOM();
+LoadImageButton->value(1);
+TargetPointButton->value(0);
+EntryPointButton->value(0);}
+          xywh {7 49 145 25} type Normal
+        }
+        Fl_Light_Button TargetPointButton {
+          label {Target Point}
+          callback {this->OnTargetPoint();
+TargetPointButton->value(1);}
+          xywh {7 78 145 25} type Normal
+        }
+        Fl_Light_Button EntryPointButton {
+          label {Entry Point}
+          callback {this->OnEntryPoint();
+EntryPointButton->value(1);}
+          xywh {7 107 145 25} type Normal
+        }
+        Fl_Light_Button NumberFiducialsButton {
+          label {Number of Fiducials}
+          callback {this->SetNumberOfFiducials();
+ImageFiducialsButton->value(0);
+TrackerFiducialsButton->value(0);}
+          xywh {7 137 145 25} type Normal
+        }
+        Fl_Light_Button ImageFiducialsButton {
+          label {Image Fiducials}
+          callback {bool allFiducialsSet = this->SetFiducial(FiducialBrowserGUI::IMAGE_TYPE);
+if (allFiducialsSet)
+{
+    ImageFiducialsButton->value(1);
+}}
+          xywh {7 166 145 25} type Normal
+        }
+        Fl_Light_Button InitializeTrackerButton {
+          label {Initialize Tracker}
+          callback {this->OnInitializeTracker();
+InitializeTrackerButton->value(1);}
+          xywh {7 196 145 25} type Normal
+        }
+        Fl_Light_Button ActivateToolsButton {
+          label {Activate Tools}
+          callback {this->ActivateTools();
+ActivateToolsButton->value(1);}
+          xywh {7 225 145 25} type Normal
+        }
+        Fl_Light_Button StartTrackingButton {
+          label {Start Tracking}
+          callback {this->StartTracking();
+StartTrackingButton->value(1);
+StopTrackingButton->value(0);}
+          xywh {7 254 145 25} type Normal
+        }
+        Fl_Light_Button TrackerFiducialsButton {
+          label {Tracker Fiducials}
+          callback {this->OnToolPosition();
+bool allFiducialsSet = this->SetFiducial(FiducialBrowserGUI::TRACKER_TYPE);
+if (allFiducialsSet)
+{
+    TrackerFiducialsButton->value(1);
+}}
+          xywh {7 284 145 25} type Normal
+        }
+        Fl_Light_Button RegisterButton {
+          label Register
+          callback {if (this->RegisterImageWithTrackerAndComputeRMSError())
+    RegisterButton->value(1);}
+          xywh {7 313 145 25} type Normal
+        }
+        Fl_Light_Button OverlayButton {
+          label Overlay
+          callback {OverlayButton->value(1);
+this->OnOverlay();}
+          xywh {7 343 145 25} type Normal
+        }
+        Fl_Light_Button StopTrackingButton {
+          label {Stop Tracking}
+          callback {this->StopTracking();
+StartTrackingButton->value(0);
+OverlayButton->value(0);
+StopTrackingButton->value(1);}
+          xywh {7 372 145 25} type Normal
+        }
+        Fl_Light_Button QuitButton {
+          label Quit
+          callback {this->Quit();}
+          xywh {7 402 145 25} type Normal
+        }
+      }
+      Fl_Menu_Bar mainMenuBar {open
+        xywh {0 0 825 25}
+      } {
+        submenu {} {
+          label File
+          xywh {0 0 100 20}
+        } {
+          menuitem {} {
+            label Quit
+            callback {this->Quit();}
+            xywh {0 0 100 20}
+          }
+        }
+        submenu {} {
+          label Tracker open
+          xywh {0 0 100 20}
+        } {
+          menuitem {} {
+            label {Initialize Tracker}
+            callback {this->OnInitializeTracker();}
+            xywh {0 0 100 20}
+            code0 {\#include "Fl/Fl_File_Chooser.h"}
+          }
+          menuitem {} {
+            label {Activate Tools}
+            callback {this->ActivateTools();}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {Start Tracking}
+            callback {this->StartTracking();}
+            xywh {5 5 100 20}
+          }
+          menuitem {} {
+            label {Tool Position}
+            callback {this->OnToolPosition();}
+            xywh {5 5 100 20}
+          }
+          menuitem {} {
+            label {Stop Tracking}
+            callback {this->StopTracking();}
+            xywh {10 10 100 20}
+          }
+          menuitem {} {
+            label {Track Tool Position}
+            callback {this->OnTrackToolPosition();}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {Record Reference}
+            callback {this->RecordReference();}
+            xywh {0 0 100 20}
+          }
+        }
+        submenu {} {
+          label Settings open
+          xywh {0 0 100 20}
+        } {
+          menuitem {} {
+            label {Port Parameters}
+            callback {this->OnPortParameters();}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {Image Shift Setting}
+            callback {char  cvalue[25];
+sprintf(cvalue, "%4.3f", this->GetImageShift());
+const char *str = fl_input("Image Shift", cvalue);
+if (str!=NULL)
+this->SetImageShift(atof(str));}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {Image Scale Setting}
+            callback {char  cvalue[25];
+sprintf(cvalue, "%4.3f", this->GetImageScale());
+const char *str = fl_input("Image Scale", cvalue);
+if (str!=NULL)
+this->SetImageScale(atof(str));}
+            xywh {10 10 100 20}
+          }
+          menuitem {} {
+            label {Needle Length}
+            callback {char  cvalue[25];
+sprintf(cvalue, "%4.3f", this->GetNeedleLength());
+const char *str = fl_input("Needle Length", cvalue);
+if (str!=NULL)
+this->SetNeedleLength(atof(str));}
+            xywh {10 10 100 20}
+          }
+          menuitem {} {
+            label {Needle Radius}
+            callback {char  cvalue[25];
+sprintf(cvalue, "%4.3f", this->GetNeedleRadius());
+const char *str = fl_input("Needle Radius", cvalue);
+if (str!=NULL)
+this->SetNeedleRadius(atof(str));}
+            xywh {20 20 100 20}
+          }
+        }
+        submenu {} {
+          label Help open
+          xywh {10 10 100 20}
+        } {
+          menuitem {} {
+            label {Message Window}
+            callback {m_MessageWindow.Show();}
+            xywh {10 10 100 20}
+          }
+          menuitem {} {
+            label About
+            xywh {15 15 100 20}
+          }
+          menuitem {} {
+            label DebugInfo
+            callback {this->PrintDebugInfo();}
+            xywh {0 0 100 20}
+          }
+        }
+      }
+      Fl_Box CoronalView {
+        xywh {454 30 280 300} box DOWN_FRAME align 2
+        code0 {\#include "vtkFlRenderWindowInteractor.h"}
+        class vtkFlRenderWindowInteractor
+      }
+      Fl_Box SaggitalView {
+        xywh {160 364 280 300} box DOWN_FRAME align 2
+        code0 {\#include "vtkFlRenderWindowInteractor.h"}
+        class vtkFlRenderWindowInteractor
+      }
+      Fl_Value_Slider SaggitalViewSlider {
+        callback {this->SelectSaggitalSlice( static_cast<int>( o->value() ));}
+        xywh {160 668 280 15} type {Horz Knob} maximum 100 step 1
+      }
+      Fl_Value_Slider CoronalViewSlider {
+        callback {this->SelectCoronalSlice( static_cast<int>( o->value() ));}
+        xywh {454 341 280 15} type {Horz Knob} maximum 100 step 1
+      }
+      Fl_Box ISISLogo {
+        image {ISIS.gif} xywh {20 593 120 85}
+      }
+      Fl_Box VolumeView {
+        xywh {453 364 280 300} box DOWN_FRAME align 2
+        code0 {\#include "vtkFlRenderWindowInteractor.h"}
+        class vtkFlRenderWindowInteractor
+      }
+    }
+  }
+  Function {~IGMTrackingGUI()} {return_type virtual
+  } {}
+  Function {Quit()} {return_type {virtual void}
+  } {}
+  Function {Load()} {return_type {virtual void}
+  } {}
+  Function {Show()} {return_type {virtual void}
+  } {
+    code {mainWindow->show();
+//m_MessageWindow.Show();} {}
+  }
+  Function {Hide()} {return_type {virtual void}
+  } {
+    code {mainWindow->hide();
+m_MessageWindow.Hide();} {}
+  }
+  Function {LoadDICOM()} {return_type {virtual void}
+  } {}
+  Function {SelectImageOrientation()} {return_type {virtual void}
+  } {}
+  Function {OnTargetPoint()} {return_type {virtual void}
+  } {}
+  Function {OnEntryPoint()} {return_type {virtual void}
+  } {}
+  Function {PrintMessage(char *msg)} {return_type {virtual void}
+  } {
+    code {m_MessageWindow.AppendMessage(msg);} {}
+  }
+  Function {SetNumberOfFiducials()} {open return_type {virtual void}
+  } {
+    code {const char *str = fl_input("Number of Fiducials", "0");
+if (str!=NULL)
+{
+    IGMTrackingBase::SetNumberOfFiducials(atoi(str));
+    NumberFiducialsButton->value(1);
+}} {selected
+    }
+  }
+  Function {SetFiducial( FiducialBrowserGUI::FIDUCIAL_TYPE type )} {return_type {virtual bool}
+  } {
+    code {bool result = false;
+if (this->GetNumberOfFiducials() > 0)
+{
+      m_FiducialBrowser.Show(type, this->GetNumberOfFiducials());
+     while (m_FiducialBrowser.BrowserWindow->visible())
+     {
+       Fl::wait();
+      }
+     if (type==FiducialBrowserGUI::IMAGE_TYPE)
+          result = m_FiducialRegistration.AreDestinationFiducialsInitialized();
+     else									
+          result = m_FiducialRegistration.AreSourceFiducialsInitialized();
+}
+else
+{
+   fl_alert("Number of Fiducials not set.");
+}
+return result;} {}
+  }
+  Function {InitializeTracker(const char *fname)} {open return_type {virtual void}
+  } {}
+  Function {StartTracking(void)} {open return_type {virtual void}
+  } {}
+  Function {StopTracking(void)} {open return_type {virtual void}
+  } {}
+  Function {OnToolPosition(void)} {open return_type {virtual void}
+  } {}
+  Function {OnOverlay(void)} {open return_type {virtual void}
+  } {}
+  Function {SelectAxialSlice( int )} {return_type {virtual void}
+  } {}
+  Function {SelectCoronalSlice( int )} {return_type {virtual void}
+  } {}
+  Function {SelectSaggitalSlice( int )} {return_type {virtual void}
+  } {}
+  Function {ActivateTools(void)} {return_type {virtual void}
+  } {}
+  Function {OnInitializeTracker(void)} {open return_type void
+  } {
+    code {const char *fname = fl_file_chooser("Initialization File Name","*.ini","");
+if (fname!=NULL)
+{
+   InitializeTracker(fname);
+}
+else
+{
+   fl_alert("No initialization file specified.");
+}} {}
+  }
+  Function {OnPortParameters(void)} {return_type void
+  } {
+    code {m_PortParameters.Show();} {}
+  }
+  Function {GetImageScale(void)} {return_type {virtual float}
+  } {
+    code {return 1.0f;} {}
+  }
+  Function {SetImageScale( float val)} {open return_type {virtual void}
+  } {}
+  Function {GetImageShift(void)} {return_type {virtual float}
+  } {
+    code {return 1.0f;} {}
+  }
+  Function {SetImageShift( float val)} {open return_type {virtual void}
+  } {}
+  Function {OnRegister()} {return_type {virtual bool}
+  } {
+    code {return true;} {}
+  }
+  Function {PrintDebugInfo(void)} {return_type {virtual void}
+  } {}
+  Function {DisplaySelectedPosition( const bool show)} {open return_type {virtual void}
+  } {}
+  Function {DisplayTargetPosition( const bool show )} {open return_type {virtual void}
+  } {}
+  Function {DisplayEntryPosition( const bool show )} {open return_type {virtual void}
+  } {}
+  Function {DisplayToolPosition( const bool show )} {open return_type {virtual void}
+  } {}
+  Function {DisplayEntryToTargetPath( const bool show )} {open return_type {virtual void}
+  } {}
+  Function {OnTrackToolPosition( void )} {open return_type {virtual void}
+  } {}
+  Function {RecordReference()} {open return_type void
+  } {}
+} 
