@@ -45,9 +45,10 @@ public:
   typedef itk::SmartPointer< const Self > ConstPointer; 
   typedef ObjectRepresentation::Pointer ObjectPointer;
 
-  typedef std::list< ObjectPointer >  ObjectListType; 
+  typedef std::list< ObjectPointer >        ObjectListType; 
+  typedef ObjectListType::iterator          ObjectListIterator;
+  typedef ObjectListType::const_iterator    ObjectListConstIterator;
      
-  itkStaticConstMacro(MaximumDepth, unsigned int, 9999999);
 
   /** Method for creation through the object factory */ 
   itkTypeMacro(Self, Superclass); 
@@ -63,12 +64,10 @@ public:
   void RemoveObject( ObjectRepresentation * object ); 
 
   /** Returns a list of pointer to the children affiliated to this object.*/ 
-  ObjectListType * GetObjects( unsigned int depth=MaximumDepth,
-                               char * name=NULL );
+  GetMacro( Objects, ObjectListType );
 
   /** Returns the number of children currently assigned to the SceneSpatialObject object.*/ 
-  unsigned int GetNumberOfObjects( unsigned int depth=MaximumDepth,
-                                   char * name=NULL ); 
+  unsigned int GetNumberOfObjects() const; 
 
   /** Clear function : Remove all the objects in the scene */
   void Clear();

@@ -59,52 +59,11 @@ void Scene::RemoveObject( ObjectRepresentation * pointer )
 }
 
 
-/** Return the children list */
-Scene::ObjectListType * Scene::GetObjects( unsigned int depth, char * name )
-{
-  ObjectListType * newList = new ObjectListType;
-  ObjectListType::const_iterator it = m_Objects.begin();
-  ObjectListType::const_iterator itEnd = m_Objects.end();
-
-  while(it != itEnd)
-    {
-    if(name == NULL || strstr(typeid(**it).name(), name))
-      {
-      newList->push_back(*it);
-      }
-    it++;
-    }
-
-  return newList;
-}
-
 /** Return the number of objects in the Scene */
-unsigned int Scene::GetNumberOfObjects( unsigned int depth, char * name )
+unsigned int 
+Scene::GetNumberOfObjects() const
 {
-  ObjectListType::iterator it = m_Objects.begin();
-  ObjectListType::iterator itEnd = m_Objects.end();
-
-  unsigned int cnt = 0;
-  while(it != itEnd)
-    {
-    if(name == NULL || strstr(typeid(**it).name(), name))
-      {
-      cnt++;
-      }
-    it++;
-    }
-
-  it = m_Objects.begin();
-  itEnd = m_Objects.end();
-  if( depth > 0 )
-    {
-    while(it != itEnd)
-      {
-      cnt += (*it).GetPointer()->GetNumberOfChildren( depth-1, name );
-      it++;
-      }
-    }
-  return cnt;
+  return m_Objects.size();
 } 
 
 /** Print the object */
