@@ -465,10 +465,10 @@ void IGMTracking::LoadDICOM()
 
 void IGMTracking::FusionPostProcessing()
 {
-  unsigned int i;
   VolumeType::RegionType region;
   VolumeType::SizeType size, fussize;
-  VolumeType::SpacingType spacing, resspacing;
+  VolumeType::SpacingType spacing;
+  VolumeType::SpacingType resspacing;
   VolumeType::PointType origin;
 
   region = m_LoadedVolume->GetLargestPossibleRegion();
@@ -478,15 +478,15 @@ void IGMTracking::FusionPostProcessing()
   spacing = m_FusionVolume->GetSpacing();
   origin = m_FusionVolume->GetOrigin();
   
-  for (i = 0; i < 3; i++)
-  {
+  for (unsigned int i = 0; i < 3; i++)
+    {
     resspacing[i] = spacing[i] * fussize[i] / size[i];
-  }  
+    }  
 
   m_ResampleImageFusionFilter->SetInput( m_FusionVolume );
-  m_ResampleImageFusionFilter->SetSize(size); 
-  m_ResampleImageFusionFilter->SetOutputSpacing(resspacing);
-  m_ResampleImageFusionFilter->SetOutputOrigin(origin);
+  m_ResampleImageFusionFilter->SetSize( size ); 
+  m_ResampleImageFusionFilter->SetOutputSpacing( resspacing );
+  m_ResampleImageFusionFilter->SetOutputOrigin( origin );
 
   this->OnUpdateOpacity(0.5);
 
@@ -512,7 +512,7 @@ void IGMTracking::LoadPostProcessing()
 
   this->SetInputData(0);
 
-  float* spacing = m_ShiftScaleImageFilter->GetOutput()->GetSpacing();
+  vtkFloatingPointType * spacing = m_ShiftScaleImageFilter->GetOutput()->GetSpacing();
 
   m_TargetViewer.SetSpacing(spacing[0], spacing[1], spacing[2]);
 
@@ -1466,7 +1466,7 @@ void IGMTracking::DumpRegisterInfo( void )
   sprintf(filename, "register%s.dat", tmpbuf);
 
   vtkPoints* points;
-  float* p;
+  vtkFloatingPointType * p;
 
   IGSTK::ICPRegistration::PointSetType::Pointer pointset;
   IGSTK::ICPRegistration::PointType point;
@@ -1947,7 +1947,7 @@ void IGMTracking::OnOverlay( void )
 //  double HomePos[3];
   double d[3], dis, motiondis;
   double toolPositionInImageSpace[3], anotherPositionInImageSpace[3];
-  float spacing[3];
+  vtkFloatingPointType spacing[3];
   double anotherPosition[3];
   double NoRefPosition1[3], NoRefPosition2[3];
   double refToolNewPosition[3];
@@ -2174,7 +2174,7 @@ void IGMTracking::OnOverlay( void )
       toolPositionInImageSpace[0], toolPositionInImageSpace[1], toolPositionInImageSpace[2]);
     pTracking->m_ProbePosPane->value(mes);
 
-    pTracking->m_ShiftScaleImageFilter->GetOutput()->GetSpacing(spacing);
+    pTracking->m_ShiftScaleImageFilter->GetOutput()->GetSpacing( spacing );
 
     dis = 0;
     for (i = 0; i < 3; i++)
