@@ -29,21 +29,51 @@ int igstkTransformTest( int, char * [] )
   try
     {
     typedef igstk::Transform    TransformType;
+    typedef TransformType::VectorType   VectorType;
+    typedef TransformType::VersorType   VersorType;
 
     TransformType t1;
     
-    const double tx = 10.0;
-    const double ty = 10.0;
-    const double tz = 10.0;
+    VectorType translation;
+    translation[0] = 10.0;
+    translation[1] = 20.0;
+    translation[2] = 30.0;
 
-    const double qx =  1.0;
-    const double qy =  0.0;
-    const double qz =  0.0;
-    const double qw =  0.0;
+    VersorType rotation;
+    rotation.Set(0.0, 0.0, 1.0, 0.0); // 90 degrees around Z
 
     const double validityPeriod = 10.0; // milliseconds
+    
+    t1.SetTranslationAndRotation( translation, rotation, validityPeriod );
 
-    t1.SetTranslationAndRotation( tx,ty,tz, qx,qy,qz,qw, validityPeriod );
+    t1.SetRotation( rotation, validityPeriod );
+
+    t1.SetTranslation( translation, validityPeriod );
+
+    VectorType translationSet = t1.GetTranslation();
+    VersorType rotationSet    = t1.GetRotation();
+
+    double timeToCheck = t1.GetStartTime() + validityPeriod / 2.0;
+
+    bool validAtTime = t1.IsValidAtTime( timeToCheck );
+    if( !validAtTime )
+      {
+      std::cerr << "Error in IsValid() test" << std::endl;
+      std::cerr << "Expected to be valid, but returned invalid" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+
+    double timeExpired = t1.GetExpirationTime() + 10.0;
+
+    bool invalidAtTime = t1.IsValidAtTime( timeExpired );
+    if( !invalidAtTime )
+      {
+      std::cerr << "Error in IsValid() test" << std::endl;
+      std::cerr << "Expected to be invalid, but returned valid" << std::endl;
+      return EXIT_FAILURE;
+      }
+
     }
   catch(...)
     {
