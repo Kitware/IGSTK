@@ -190,7 +190,7 @@ StateMachine< TClass >
     return;
     } 
 
-  ActionContainer::const_iterator    actionsFromThisState = m_Actions.find( m_State );
+  typename ActionContainer::const_iterator    actionsFromThisState = m_Actions.find( m_State );
 
   
   if( actionsFromThisState == m_Actions.end() )
@@ -199,7 +199,7 @@ StateMachine< TClass >
     return;
     } 
 
-  ActionsPerInputContainer::const_iterator  action = actionsFromThisState->second->find( input );
+  typename ActionsPerInputContainer::const_iterator  action = actionsFromThisState->second->find( input );
 
   if( action == actionsFromThisState->second->end() )
     {

@@ -55,7 +55,7 @@ private:
 
   typedef StateMachineType::TMemberFunctionPointer        ActionType;
 
-  friend StateMachineType;
+  friend class StateMachineType;
 
 public:
 
