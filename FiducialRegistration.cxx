@@ -170,7 +170,11 @@ double FiducialRegistration::GetRMSError()
 		sum_dist = sum_dist + dist;
 	}
 
+//<<<<<<< FiducialRegistration.cxx
+//	float rms_error = pow(sum_dist/(2*m_NumberOfFiducials), 0.5f);
+//=======
 	double rms_error = pow(sum_dist/(2*m_NumberOfFiducials), 0.5);
+//>>>>>>> 1.3
 	return rms_error;
 }
 
