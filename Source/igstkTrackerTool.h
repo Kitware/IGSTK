@@ -65,7 +65,7 @@ protected:
     OrientationType    m_Orientation;
 
     /** Error reported in tool's position/orientation computation by the tracker */
-    double             m_Error;
+    ErrorType          m_Error;
 };
 
 }

@@ -15,7 +15,7 @@
 
 =========================================================================*/
 
-#include ".\igstkLogger.h"
+#include "igstkLogger.h"
 
 namespace igstk
 {

@@ -16,7 +16,7 @@
 
 =========================================================================*/
 
-#include ".\igstkTracker.h"
+#include "igstkTracker.h"
 
 namespace igstk
 {

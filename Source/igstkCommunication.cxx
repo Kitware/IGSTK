@@ -15,7 +15,7 @@
 
 =========================================================================*/
 
-#include ".\igstkCommunication.h"
+#include "igstkCommunication.h"
 
 namespace igstk
 {

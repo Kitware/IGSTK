@@ -17,8 +17,6 @@
 #ifndef __igstk_Macros_h_
 #define __igstk_Macros_h_
 
-#include "itkmacro.h"
-
 /**
   igstkMacro.h defines standard system-wide macros, constants, and other 
   common parameters in the IGstk Library. It includes the Get, Set and
