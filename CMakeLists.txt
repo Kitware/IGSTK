@@ -81,7 +81,6 @@ SET(IGSTK_SRCS
   DicomImageReader.txx
   RegistrationCTBase.cxx
   igstkImageSliceViewer.cxx
-  igstkStateMachine.cxx
   ImageSliceViewer.cxx
   vtkFlRenderWindowInteractor.cxx
   InteractorObserver.cxx
