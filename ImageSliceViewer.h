@@ -131,9 +131,9 @@ public:
 
   int                 m_Ext[6];
 
-  float               m_Origin[3];
+  vtkFloatingPointType            m_Origin[3];
 
-  float               m_Spacing[3];
+  vtkFloatingPointType               m_Spacing[3];
 
   double              m_SelectPoint[3];
 
