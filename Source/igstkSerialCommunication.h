@@ -66,6 +66,7 @@ public:
   typedef SerialCommunicationBaudRateValued< 19200 > BaudRate19200;
 
 
+
   /** Type used for encoding the number of bits used for data size by the serial port */
   typedef SerialCommunicationDataBitsSize  DataSizeType;
 
@@ -77,9 +78,18 @@ public:
   typedef SerialCommunicationDataBitsSizeValued< 8 > DataBits8;
 
 
-  typedef enum {
-    NO_PARITY, ODD_PARITY, EVEN_PARITY
-  } ParityType;
+
+  /** Type used for encoding the parity used by the serial port */
+  typedef SerialCommunicationParity  ParityType;
+
+  /** Explicit instantiations for every accepted parity. Using types for the
+   * parity enforces safety on the assignment of values because the
+   * verification is done at compile time. */
+  typedef SerialCommunicationParityValued< 0 > NoParity;
+  typedef SerialCommunicationParityValued< 1 > OddParity;
+  typedef SerialCommunicationParityValued< 2 > EvenParity;
+
+
 
   typedef enum { 
     ONE_STOP_BIT, TWO_STOP_BITS

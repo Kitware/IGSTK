@@ -158,16 +158,16 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
        portSettings.c_cflag |= CS8; 
   }
   // Parity parameter settings
-  switch(this->m_Parity)
+  switch(this->m_Parity.Get())
   {
-  case NO_PARITY: 
+  case 0:  // None
        portSettings.c_cflag &= ~PARENB; // Disable parity.
        break;
-  case ODD_PARITY: 
+  case 1:  // Odd
        portSettings.c_cflag |= PARENB; // Enable parity.
        portSettings.c_cflag |= PARODD; // Odd parity.
        break;
-  case EVEN_PARITY: 
+  case 2:  // Even
        portSettings.c_cflag |= PARENB; // Enable parity.
        portSettings.c_cflag &= ~PARODD; // Even parity.
        break;

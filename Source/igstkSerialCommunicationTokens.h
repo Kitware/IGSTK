@@ -137,6 +137,62 @@ class SerialCommunicationDataBitsSizeValued : public SerialCommunicationDataBits
 };
 
 
+
+/** \class SerialCommunicationParity
+ * 
+ * \brief Defines a compile-time token for the parity
+ *
+ * This class enforces safety on the values that are admisible as parity for
+ * the serial port configuration. The actual parity value is assigned at
+ * construction time and cannot be changed.
+ *
+ * \ingroup Communication
+ */
+class SerialCommunicationParity : public Token
+{
+  public:
+
+    typedef unsigned int ParityType;
+
+    typedef SerialCommunicationParity Self;
+
+  public:
+    SerialCommunicationParity( ParityType parity )
+      {
+      m_Parity = parity;  
+      }
+
+    ~SerialCommunicationParity() 
+      {}
+    
+    ParityType Get() const
+      { 
+      return m_Parity; 
+      }
+    
+   const Self & operator=( const Self & token )
+      { m_Parity = token.m_Parity; } 
+
+   bool operator!=( const Self & token )
+      { return m_Parity != token.m_Parity; }
+        
+   bool operator==( const Self & token )
+      { return m_Parity == token.m_Parity; }
+        
+  private:
+    
+    ParityType  m_Parity;
+
+};
+
+template< unsigned int NParity >
+class SerialCommunicationParityValued : public SerialCommunicationParity
+{
+  public:
+    SerialCommunicationParityValued< NParity >():SerialCommunicationParity(NParity) {};
+};
+
+
 } // end namespace igstk
 
 #endif // __igstkSerialCommunicationBaudRate_h
