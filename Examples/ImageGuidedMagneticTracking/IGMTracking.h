@@ -7,6 +7,7 @@
 #include "IGMTImageSliceViewer.h"
 #include "MotionViewer.h"
 #include "IGMTVolumeViewer.h"
+#include "IGMTRegistrationViewer.h"
 #include "IGMTTargetViewer.h"
 #include "FantasticRegistration.h"
 #include "SkeletonModule.h"
@@ -28,10 +29,16 @@ class IGMTracking : public IGMTrackingGUI
 public:
 
   typedef itk::BinaryThresholdImageFilter<VolumeType, VolumeType> InvertFilterType;
+  
   typedef itk::DanielssonDistanceMapImageFilter<VolumeType, VolumeType> DistanceFilterType;
+  
+  typedef itk::PointSet<double, 3> PointSetType;
 
   InvertFilterType::Pointer m_InvertFilter;
+  
   DistanceFilterType::Pointer m_DistanceMapFilter;
+
+  PointSetType::Pointer m_MovingPointSet;
 
 public:
 	void OnSkeleton();
@@ -49,6 +56,14 @@ public:
 	void SaveSnapshot();
 	void RenderSectionWindow();
 	void OnUpdateOpacity(double opa);
+
+  void DumpRegisterInfo( void );
+
+  void DumpRegisterMatrix( void );
+
+  void DumpRegisterMatrix( char* filename );
+  
+  void DumpSkeletonInfo( void );
 
   typedef SkeletonModule<VolumeType, VolumeType> SkeletonModuleType;
 
@@ -186,9 +201,11 @@ public:
 
 //protected:
 	
-	virtual void OnToolPosition( void ); 
+	virtual void OnRegisterPosition( void ); 
+  
+  virtual void OnProbePosition( void ); 
 	
-	virtual void OnTrackToolPosition( void ); 
+//	virtual void OnTrackToolPosition( void ); 
 	
 	bool		m_Overlay;							// remove this later with a state variable
 
@@ -204,7 +221,7 @@ public:
 
   static void  ProcessSagittalViewRightClickInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata);
 
-private:
+public:
 
   int m_WindowType;
 
@@ -222,7 +239,7 @@ private:
 	
 	ISIS::MotionViewer			m_MotionViewer;
 
-  IGSTK::IGMTVolumeViewer     m_VolumeViewer;
+  IGSTK::IGMTRegistrationViewer     m_VolumeViewer;
 
   IGSTK::IGMTTargetViewer     m_TargetViewer;
 	
@@ -278,7 +295,13 @@ private:
 
   IGSTK::FantasticRegistration m_FantasticRegistration;
 
+  IGSTK::FantasticRegistration::CATransformType::Pointer m_CATransform;
+
+  IGSTK::FantasticRegistration::E3DTransformType::Pointer m_E3DTransform;
+
 	int				m_ToolHandle, m_RegToolHandle, m_RegToolHandle1, m_RegToolHandle2;
+
+  int       m_4NeedleRegToolHandle[4], m_8CoilRegToolHandle[8];
 
 	int				m_ReferenceToolHandle;
 
@@ -292,11 +315,22 @@ private:
 
   double    m_CoilOffset1[3], m_CoilOffset2[3];
 
+  double    m_4NeedleOffset[4][3], m_8CoilOffset[8][3];
+
   double    m_CoilPosition[4][3];
+
+  double    m_4NeedlePosition[4][3], m_8CoilPosition[8][3];
+
 public:
 
   static void ProcessSkeleton(void* calldata, double);
 
+  void TransformPoint(double* in, double* out);
+
+  void OnRecord(void);
+  bool m_InRecord;
+  void OnLoadMatrix(void);
+  void OnSaveMatrix(void);
 };
 
 

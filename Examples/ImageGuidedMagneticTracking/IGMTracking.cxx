@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include "SYS\TIMEB.H"
+#include ".\igmtracking.h"
 
 bool	continueTracking;
 
@@ -24,6 +25,7 @@ bool	continueTracking;
 #endif
 
 IGMTracking::IGMTracking()
+: m_InRecord(false)
 {
 	m_AxialViewer.SetOrientation( ISIS::ImageSliceViewer::Axial    );
 	m_CoronalViewer.SetOrientation( ISIS::ImageSliceViewer::Coronal    );
@@ -164,7 +166,6 @@ IGMTracking::IGMTracking()
 	m_ShowVolume = false; //false;//
 	m_EntryPointSelected = false; 
 	m_TargetPointSelected = false;
-//	m_RefRecorded = false;
 	m_ForceRecord = false;
 
   m_FullSizeIdx = -1;
@@ -176,8 +177,7 @@ IGMTracking::IGMTracking()
 
   m_ProbeID = 0;
   m_RegisterID = 0;
-  m_ToolTrackingMode = 0;
-
+  
   m_Probe[0] = 1;
   m_Register[0] = 1;
   m_Ref[0] = 0;
@@ -221,6 +221,20 @@ IGMTracking::IGMTracking()
 
   int i;
 
+  for (i = 0; i < 4; i++)
+  {
+    m_4NeedleOffset[i][0] = 0;
+    m_4NeedleOffset[i][1] = 0;
+    m_4NeedleOffset[i][2] = 0;
+  }
+
+  for (i = 0; i < 8; i++)
+  {
+    m_8CoilOffset[i][0] = 0;
+    m_8CoilOffset[i][1] = 0;
+    m_8CoilOffset[i][2] = 0;
+  }
+
   for (i = 0; i < PORTNUM; i++)
   {
     m_ProbeParameters.SetDeviceLine(i, m_Probe[i], m_Register[i], m_Ref[i], m_UID[i], m_Offset[i], m_Length[i], m_Radius[i]);
@@ -235,6 +249,12 @@ IGMTracking::IGMTracking()
   {
     m_PointIndex[i] = 0;
   }  
+
+  m_MovingPointSet = PointSetType::New();
+
+  m_CATransform = IGSTK::FantasticRegistration::CATransformType::New() ;
+
+  m_E3DTransform = IGSTK::FantasticRegistration::E3DTransformType::New() ;
 
 }
 
@@ -338,7 +358,54 @@ void IGMTracking::Hide()
 
 void IGMTracking::Quit()
 {
+ /* 
+  unsigned int i;
+  
+  IGSTK::FantasticRegistration::PointsContainerType::Pointer pc = IGSTK::FantasticRegistration::PointsContainerType::New();
+  IGSTK::FantasticRegistration::PointSetType::PointType point;
+  unsigned int it = 0;
 
+  for (i = 0; i < 15; i++)
+  {
+    point[0] = point[1] = 5.0;
+    point[2] = i * 0.1 + 0.1;
+
+    pc->InsertElement(it, point);
+      it++;
+  }
+
+  this->m_FantasticRegistration.m_FixedPointSet->SetPoints(pc);
+
+  it = 0;
+  pc = IGSTK::FantasticRegistration::PointsContainerType::New();
+
+  for (i = 0; i < 25; i++)
+  {
+    point[0] = 4.0;
+    point[1] = 5.0;
+    point[2] = i * 0.1 + 0.1;
+
+    pc->InsertElement(it, point);
+      it++;
+
+  }
+
+  this->m_FantasticRegistration.m_MovingPointSet->SetPoints(pc);
+  m_FantasticRegistration.StartRegistration();
+ 
+  IGSTK::FantasticRegistration::E3DParametersType para = m_FantasticRegistration.m_PointSetToPointSetRegistration->GetLastTransformParameters();
+//  m_TTransform->SetParameters(para);
+
+  double p[15];
+
+  for (i = 0; i < 15; i++)
+  {
+    p[i] = para[i];
+  }
+
+  double s1 = m_FantasticRegistration.m_LMOptimizer->GetOptimizer()->get_start_error();
+  double s2 = m_FantasticRegistration.m_LMOptimizer->GetOptimizer()->get_end_error();
+*/
   this->Hide();
 
 	exit(0);
@@ -655,27 +722,7 @@ void IGMTracking::DisplayTargetPosition( const bool show)
 	m_CoronalViewer.Render();
 	m_SagittalViewer.Render();
 }
-/*
-void IGMTracking::DisplayTipPosition( const bool show)
-{
-	if (show)
-	{
-		m_AxialViewer.ActivateTipPosition();
-		m_CoronalViewer.ActivateTipPosition();
-		m_SagittalViewer.ActivateTipPosition();
-	}
-	else
-	{
-		m_AxialViewer.DeActivateTipPosition();
-		m_CoronalViewer.DeActivateTipPosition();
-		m_SagittalViewer.DeActivateTipPosition();
-	}
 
-	m_AxialViewer.Render();
-	m_CoronalViewer.Render();
-	m_SagittalViewer.Render();
-}
-*/
 void IGMTracking::DisplayEntryToTargetPath( const bool show)
 {
 	if (show)
@@ -701,19 +748,12 @@ void IGMTracking::DisplayToolPosition( const bool show)
 {
 	if (show)
 	{
-//		m_AxialViewer.ActivateToolPosition();
-//		m_CoronalViewer.ActivateToolPosition();
-//		m_SagittalViewer.ActivateToolPosition();
-
 		m_AxialViewer.ActivateProbe(m_ProbeID);
 		m_CoronalViewer.ActivateProbe(m_ProbeID);
 		m_SagittalViewer.ActivateProbe(m_ProbeID);
 	}
 	else
 	{
-//		m_AxialViewer.DeActivateToolPosition();
-//		m_CoronalViewer.DeActivateToolPosition();
-//		m_SagittalViewer.DeActivateToolPosition();
     m_AxialViewer.DeActivateProbe(m_ProbeID);
 		m_CoronalViewer.DeActivateProbe(m_ProbeID);
 		m_SagittalViewer.DeActivateProbe(m_ProbeID);
@@ -1039,24 +1079,29 @@ void IGMTracking::SetImageFiducial( unsigned int fiducialNumber )
 	
 void IGMTracking::SetTrackerFiducial( unsigned int fiducialNumber )
 {
-	IGMTrackingBase::SetTrackerFiducial( fiducialNumber, m_NeedlePosition );
-	sprintf(m_StringBuffer, "Tracker Fiducials %d set at ( %4.3f, %4.3f, %4.3f)", 
-		fiducialNumber + 1, m_NeedlePosition[0], m_NeedlePosition[1], m_NeedlePosition[2] );
-	this->PrintMessage(m_StringBuffer);
+  unsigned int i;
 
-  switch (m_ToolTrackingMode)
+	IGMTrackingBase::SetTrackerFiducial( fiducialNumber, m_NeedlePosition );
+  
+  switch (m_RegParameters.m_RegType)
   {
+  case 0:
+    sprintf(m_StringBuffer, "Tracker Fiducials %d set at ( %4.3f, %4.3f, %4.3f)", 
+		  fiducialNumber + 1, m_NeedlePosition[0], m_NeedlePosition[1], m_NeedlePosition[2] );
+	  this->PrintMessage(m_StringBuffer);  
+    break;
   case 1:
-    m_FantasticRegistration.SetMovingPoint(fiducialNumber, m_NeedlePosition);
+    for (i = 0; i < 4; i++)
+    {
+      sprintf(m_StringBuffer, "Tracker Fiducials %d set at ( %4.3f, %4.3f, %4.3f)", 
+		    i, m_CoilPosition[i][0], m_CoilPosition[i][1], m_CoilPosition[i][2] );
+	    this->PrintMessage(m_StringBuffer);  
+    }
     break;
   case 2:
-    for (unsigned int i = 0; i < 4; i++)
-    {
-//      m_FantasticRegistration.SetMovingPoint(i, m_CoilPosition[i]);
-      m_FantasticRegistration.AddMovingPoint(m_CoilPosition[i]);
-    }   
     break;
-  } 
+  }
+	
 }
 
 	
@@ -1065,13 +1110,11 @@ void IGMTracking::InitializeTracker( const char *fileName )
 	if (!m_AuroraTracker.InitializeTracker( fileName ))
 	{
 		this->PrintMessage("Initialization of Aurora Failed...");
-//		fl_alert("Initialization of Aurora Failed...");
 		this->AppendInfo("Initialization of Aurora Failed...");
 	}
 	else
 	{
 		this->PrintMessage("Initialization Aurora Succeeded...");
-//		fl_alert("Initialization of Aurora Succeeded...");
 		this->AppendInfo("Initialization of Aurora Succeeded...");
 	}
 }
@@ -1082,13 +1125,11 @@ void IGMTracking::ActivateTools( void )
 	if (!m_AuroraTracker.ActivateTools())
 	{
 		this->PrintMessage("Activation of Aurora Tools Failed...");
-//		fl_alert("Activation of Aurora Tools Failed...");
     this->AppendInfo("Activation of Aurora Tools Failed...");
 	}
 	else
 	{
 		this->PrintMessage("Activation of Aurora Tools Succeeded...");
-//		fl_alert("Activation of Aurora Tools Succeeded...");
     this->AppendInfo("Activation of Aurora Tools Succeeded...");
 	}
 }
@@ -1096,74 +1137,108 @@ void IGMTracking::ActivateTools( void )
 
 void IGMTracking::StartTracking( void )
 {	
-  int i, ret;
+  int i, ret, tool1, tool2, tool;
   char toolID[10];
   char mes[128];
 
-  m_ToolTrackingMode = 0;
-	m_AuroraTracker.StartTracking();
-	
+  m_AuroraTracker.StartTracking();
+
   for (i = 0; i < 4; i++)
   {
     if (m_Probe[i] == 1)
     {
-      sprintf(toolID, "%02d", i + 1);
-	    m_ToolHandle = m_AuroraTracker.GetMyToolHandle( toolID );
-      if (m_ToolHandle < 0)
+      switch (m_RegParameters.m_RegType)
       {
-        ret = m_AuroraTracker.GetMyToolHandle2(toolID, m_RegToolHandle1, m_RegToolHandle2 );
+      case 0:
+      case 3:
+      case 4:
+        sprintf(toolID, "%02d", i + 1);
+	      tool = m_AuroraTracker.GetMyToolHandle( toolID );
+        sprintf(mes, "Tool on port %d recognised ...", i);
+        this->AppendInfo(mes);
+        if (m_RegisterID == i)
+        {
+          m_RegToolHandle = tool;
+        }
+        break;
+      case 1:
+        sprintf(toolID, "%02d", i + 1);
+        ret = m_AuroraTracker.GetMyToolHandle2(toolID, tool1, tool2);
         if (ret < 2)
         {
-          sprintf(mes, "No tool on port %d detected ...", i);
-          this->AppendInfo(mes);
+          sprintf(mes, "Not two tool on port %d detected ...", i);          
         }
         else
         {
           sprintf(mes, "Two tools on port %d recognised ...", i);
-          this->AppendInfo(mes);
-          m_ToolTrackingMode = 2;
         }
-      }
-      else
-      {
+        this->AppendInfo(mes);
+        if (m_RegisterID == i)
+        {
+          m_RegToolHandle1 = tool1;
+          m_RegToolHandle2 = tool2;
+        }
+        break;
+      case 2:
+        sprintf(toolID, "%02d", i + 1);
+	      tool = m_AuroraTracker.GetMyToolHandle( toolID );        
         sprintf(mes, "Tool on port %d recognised ...", i);
         this->AppendInfo(mes);
-        m_RegToolHandle = m_ToolHandle;
-        m_ToolTrackingMode = 1;
-      }
+        if (m_RegisterID == i)
+        {
+          m_RegToolHandle = tool;
+        }
+        break;
+      }      
     }      
   }
-
+  
   sprintf(toolID, "%02d", m_ProbeID + 1);
 	m_ToolHandle = m_AuroraTracker.GetMyToolHandle( toolID );
+  sprintf(mes, "Probe Tool on port %d recognised ...", m_ProbeID);
+  this->AppendInfo(mes);
 
   if (m_UseReferenceNeedle)
 	{
     sprintf(toolID, "%02d", m_RefID + 1 );
 		m_ReferenceToolHandle = m_AuroraTracker.GetMyToolHandle( toolID );
-
     printf("Ref:%d handle:%d\n", m_RefID, m_ReferenceToolHandle);
-
 		if (m_ReferenceToolHandle<0)
 		{
       sprintf(mes, "No reference tool on port %d detected ...", m_RefID);
-//			fl_alert(mes);
-			this->AppendInfo(mes);
 		}
 		else
 		{
       sprintf(mes, "Rreference tool on port %d recognised ...", m_RefID);
-//			fl_alert(mes);
-      this->AppendInfo(mes);
 		}
+    this->AppendInfo(mes);
 	}
+
+  for (i = 0; i < 4; i++)
+  {
+    sprintf(toolID, "%02d", i + 1);
+	  m_4NeedleRegToolHandle[i] = m_AuroraTracker.GetMyToolHandle( toolID );
+    sprintf(toolID, "%02d", i + 1);
+    ret = m_AuroraTracker.GetMyToolHandle2(toolID, tool1, tool2);
+    if (ret == 2)
+    {
+      m_8CoilRegToolHandle[i * 2] = tool1;
+      m_8CoilRegToolHandle[i * 2 + 1] = tool2;
+    }
+  }
+
+  m_InRecord = false;
+
 }
 
 void IGMTracking::StopTracking( void )
 {
 	m_AuroraTracker.StopTracking();
   continueTracking = false;
-  this->DisplayToolPosition(false);
+  if (m_RegParameters.m_RFAPosition == 0)
+  {
+    this->DisplayToolPosition(false);
+  }
 }
 
 void IGMTracking::PrintToolPosition( const int toolHandle )
@@ -1187,50 +1262,295 @@ void IGMTracking::PrintToolPosition( const int toolHandle )
 }
 
 	
-void IGMTracking::OnToolPosition( void )
+void IGMTracking::OnRegisterPosition( void )
 {
-	m_AuroraTracker.UpdateToolStatus();
+  unsigned int i;
+  m_AuroraTracker.UpdateToolStatus();
 
-  switch (m_ToolTrackingMode)
+  switch (m_RegParameters.m_RegType)
   {
-  case 1:
+  case 0:
     m_AuroraTracker.GetOffsetCorrectedToolPosition( m_RegToolHandle, m_RegNeedleTipOffset, m_NeedlePosition);
+    printf("register: %.3f %.3f %.3f\n", 
+      m_NeedlePosition[0], m_NeedlePosition[1], m_NeedlePosition[2]);
     break;
-  case 2:
+  case 1:
     m_AuroraTracker.GetOffsetCorrectedToolPosition( m_RegToolHandle1, m_CoilOffset1, m_CoilPosition[0]);
     m_AuroraTracker.GetOffsetCorrectedToolPosition( m_RegToolHandle1, m_CoilOffset2, m_CoilPosition[1]);
     m_AuroraTracker.GetOffsetCorrectedToolPosition( m_RegToolHandle2, m_CoilOffset1, m_CoilPosition[2]);
     m_AuroraTracker.GetOffsetCorrectedToolPosition( m_RegToolHandle2, m_CoilOffset2, m_CoilPosition[3]);
+    for (i = 0; i < 4; i++)
+    {
+      printf("register %d: %.3f %.3f %.3f\n", i,
+        m_CoilPosition[i][0], m_CoilPosition[i][1], m_CoilPosition[i][2]);
+    }
+    break;
+  case 2:
+    break;
+  case 3:
+    for (i = 0; i < 4; i++)
+    {
+      m_AuroraTracker.GetOffsetCorrectedToolPosition( m_4NeedleRegToolHandle[i], m_4NeedleOffset[i], m_4NeedlePosition[i]);
+      printf("register %d: %.3f %.3f %.3f\n", i, 
+        m_4NeedlePosition[i][0], m_4NeedlePosition[i][1], m_4NeedlePosition[i][2]);
+    }    
+    break;
+  case 4:
+    for (i = 0; i < 8; i++)
+    {
+      m_AuroraTracker.GetOffsetCorrectedToolPosition( m_8CoilRegToolHandle[i], m_8CoilOffset[i], m_8CoilPosition[i]);
+      printf("register %d: %.3f %.3f %.3f\n", i, 
+        m_8CoilPosition[i][0], m_8CoilPosition[i][1], m_8CoilPosition[i][2]);
+    } 
     break;
   }	
-
 	this->PrintToolPosition( m_ToolHandle ); 
 }
 
-
-void CheckKeyPress(void *dummy)
+void IGMTracking::OnProbePosition( void )
 {
-	_getch();
-//	printf("Key Press detected ****************\n");
-	continueTracking = false;
-//	_endthread();
+//  unsigned int i;
+	m_AuroraTracker.UpdateToolStatus();
+/*
+  switch (m_RegParameters.m_RegType)
+  {
+  case 0:
+  case 1:
+  case 2:
+    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle, m_RegNeedleTipOffset, m_NeedlePosition);
+    break;
+  case 3:
+    for (i = 0; i < 4; i++)
+    {
+      m_AuroraTracker.GetOffsetCorrectedToolPosition( m_4NeedleRegToolHandle[i], m_4NeedleOffset[i], m_4NeedlePosition[i]);
+    }    
+    break;
+  case 4:
+    for (i = 0; i < 8; i++)
+    {
+      m_AuroraTracker.GetOffsetCorrectedToolPosition( m_8CoilRegToolHandle[i], m_8CoilOffset[i], m_8CoilPosition[i]);
+    } 
+    break;
+  }	
+*/
+	m_AuroraTracker.UpdateToolStatus();
+  m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle, m_NeedleTipOffset, m_NeedlePosition);  	
+	this->PrintToolPosition( m_ToolHandle ); 
 }
 
+void IGMTracking::DumpSkeletonInfo( void )
+{
+  unsigned int i, num = m_Skeleton.m_Skeleton->GetNumberOfPoints();
+  char filename[256], tmpbuf[128], mes[128];
+  SkeletonModuleType::PointSetType::PointType point;
+  
+  _strtime( tmpbuf );
+  
+  for (i = 0; i < strlen(tmpbuf); i++)
+  {
+    if (tmpbuf[i] == ':')
+    {
+      tmpbuf[i] = ' ';
+    }
+  }
+  
+  sprintf(filename, "skeleton%s.dat", tmpbuf);
+
+  FILE * fp;  
+  fp = fopen(filename, "w+");
+
+  for (i = 0; i < num; i++)
+  {
+    m_Skeleton.m_Skeleton->GetPoint(i, &point);
+    sprintf(mes, " %4.3f %4.3f %4.3f\n", point[0], point[1], point[2]);
+    if (fp)
+    {
+      fprintf(fp, mes);
+    }
+  }
+
+  fclose(fp);
+}
+
+void IGMTracking::DumpRegisterMatrix( char* filename)
+{
+  unsigned int i, j;
+  char mes[128];
+
+  FILE* fp = fopen(filename, "w+");
+
+  double element;
+  vtkMatrix4x4* matrix;
+  IGSTK::FantasticRegistration::CAParametersType para;
+
+  sprintf(mes, "Reg=%d\n", m_RegParameters.m_RegType);
+  if (fp)
+  {
+    fprintf(fp, mes);
+  }
+
+  switch (m_RegParameters.m_RegType)
+  {
+  case 0:
+  case 1:
+  case 3:
+  case 4:
+    matrix = this->m_FiducialRegistration.m_LandmarkTransform->GetMatrix();
+    for (j = 0; j < 4; j++)
+    {
+      sprintf(mes, "");
+      for (i = 0; i < 4; i++)
+      {
+        element = matrix->GetElement(i, j);
+        sprintf(mes, "%s %4.3f ", mes, element);
+      }
+      sprintf(mes, "%s\n", mes);
+      if (fp)
+      {
+        fprintf(fp, mes);
+      }
+    }
+    break;
+  case 2:
+    sprintf(mes, "");
+    para = m_FantasticRegistration.m_PointSetToPointSetRegistration->GetLastTransformParameters();
+    for (i = 0; i < m_FantasticRegistration.m_PointSetToPointSetRegistration->GetTransform()->GetNumberOfParameters(); i++)
+    {
+      sprintf(mes, "%s %4.3f\n", mes, para[i]);
+    }
+    if (fp)
+    {
+      fprintf(fp, mes);
+    }
+    break;
+  }
+
+  if (fp)
+  {
+    fclose(fp);
+  }
+}
+
+void IGMTracking::DumpRegisterMatrix( void )
+{
+  unsigned int i;
+  char filename[256], tmpbuf[128];
+  _strtime( tmpbuf );
+  for (i = 0; i < strlen(tmpbuf); i++)
+  {
+    if (tmpbuf[i] == ':')
+    {
+      tmpbuf[i] = ' ';
+    }
+  }
+  sprintf(filename, "matrix%s.dat", tmpbuf);
+
+  this->DumpRegisterMatrix(filename); 
+}
+
+void IGMTracking::DumpRegisterInfo( void )
+{
+  unsigned int i;
+  char filename[256], tmpbuf[128], mes[128];
+  _strtime( tmpbuf );
+  for (i = 0; i < strlen(tmpbuf); i++)
+  {
+    if (tmpbuf[i] == ':')
+    {
+      tmpbuf[i] = ' ';
+    }
+  }
+  sprintf(filename, "register%s.dat", tmpbuf);
+
+  vtkPoints* points;
+  float* p;
+
+  IGSTK::FantasticRegistration::PointSetType::Pointer pointset;
+  IGSTK::FantasticRegistration::PointType point;
+
+  FILE * fp;  
+  fp = fopen(filename, "w+");
+
+  switch (m_RegParameters.m_RegType)
+  {
+  case 0:
+  case 1:
+  case 3:
+  case 4:
+    points = m_FiducialRegistration.m_LandmarkTransform->GetSourceLandmarks();
+
+    for (i = 0; i < points->GetNumberOfPoints(); i++)
+    {
+      p = points->GetPoint(i);
+      sprintf(mes, "S-P%d: %4.3f %4.3f %4.3f\n", i, *p, *(p + 1), *(p + 2));
+      if (fp)
+      {
+        fprintf(fp, mes);
+      }
+    }
+
+    points = m_FiducialRegistration.m_LandmarkTransform->GetTargetLandmarks();
+
+    for (i = 0; i < points->GetNumberOfPoints(); i++)
+    {
+      p = points->GetPoint(i);
+      sprintf(mes, "D-P%d: %4.3f %4.3f %4.3f\n", i, *p, *(p + 1), *(p + 2));
+      if (fp)
+      {
+        fprintf(fp, mes);
+      }
+    }
+    break;
+  case 2:
+    pointset = (IGSTK::FantasticRegistration::PointSetType*)m_FantasticRegistration.m_PointSetToPointSetRegistration->GetFixedPointSet();
+    for (i = 0; i < pointset->GetNumberOfPoints(); i++)
+    {
+      pointset->GetPoint(i, &point);
+      sprintf(mes, "S-P%d: %4.3f %4.3f %4.3f\n", i, point[0], point[1], point[2]);
+      if (fp)
+      {
+        fprintf(fp, mes);
+      }
+    }
+
+    pointset = (IGSTK::FantasticRegistration::PointSetType*)m_FantasticRegistration.m_PointSetToPointSetRegistration->GetMovingPointSet();
+    for (i = 0; i < pointset->GetNumberOfPoints(); i++)
+    {
+      pointset->GetPoint(i, &point);
+      sprintf(mes, "D-P%d: %4.3f %4.3f %4.3f\n", i, point[0], point[1], point[2]);
+      if (fp)
+      {
+        fprintf(fp, mes);
+      }
+    }
+    break;
+  } 
+
+  if (fp)
+  {
+    fclose(fp);
+  }
+
+}
 
 bool IGMTracking::OnRegister( void )
 {
-  unsigned int i, j, k, idx[4], minidx[4], id;
-  double err, minerr = 100000;
+  unsigned int i, j, k, k1, idx[4], minidx[4], id;
+  double err, starterr, minerr = 100000;
+  unsigned int num1, num2;
   bool ret = true, reg = false;
   char mes[128];
+  
+  IGSTK::FantasticRegistration::CAParametersType para;  
 
-  switch (m_ToolTrackingMode)
+  switch (m_RegParameters.m_RegType)
   {
-  case 1:
+  case 0: // points pair landmark
     ret = this->RegisterImageWithTrackerAndComputeRMSError();
     this->AppendInfo(m_StringBuffer);
+    this->DumpRegisterInfo();
     break;
-  case 2:
+  case 1: // dual sensor cathetor 
     id = 0;
     for (i = 0; i < 2 && !reg; i++)
     {
@@ -1256,6 +1576,7 @@ bool IGMTracking::OnRegister( void )
         if (id == m_RegParameters.m_DualSensorRegNum)
         {
           reg = true;
+          this->DumpRegisterInfo();
         }
         id++;
       }      
@@ -1285,6 +1606,7 @@ bool IGMTracking::OnRegister( void )
         if (id == m_RegParameters.m_DualSensorRegNum)
         {
           reg = true;
+          this->DumpRegisterInfo();
         }
         id++;
       }      
@@ -1296,24 +1618,74 @@ bool IGMTracking::OnRegister( void )
       {
         m_FiducialRegistration.SetSourceFiducial(k, m_CoilPosition[minidx[k]]);
       }
-      this->RegisterImageWithTrackerAndComputeRMSError();
+      this->RegisterImageWithTrackerAndComputeRMSError();      
       err = m_FiducialRegistration.GetRMSError();
       sprintf(mes, "The final registration error:%.2f", err);
       this->AppendInfo(mes);
+      this->DumpRegisterInfo();
     }
+    break;
+  case 2: // vascular registration
+    m_FantasticRegistration.SetFixedPointSet(m_Skeleton.m_Skeleton);
+    if (m_RegParameters.m_SimplifyFixed == 1)
+    {
+      m_FantasticRegistration.SimplifyFixedPointSet(m_RegParameters.m_Radius);
+    }
+    m_FantasticRegistration.SetMovingPointSet(m_MovingPointSet);
+    if (m_RegParameters.m_SimplifyMoving == 1)
+    {
+      m_FantasticRegistration.SimplifyMovingPointSet(m_RegParameters.m_Radius);
+    }    
+    m_FantasticRegistration.StartRegistration();
+    para = m_FantasticRegistration.m_PointSetToPointSetRegistration->GetLastTransformParameters();
+    m_E3DTransform->SetParameters(para);
+    num1 = m_FantasticRegistration.m_FixedPointSet->GetNumberOfPoints();
+    num2 = m_FantasticRegistration.m_MovingPointSet->GetNumberOfPoints();
+    starterr = m_FantasticRegistration.m_LMOptimizer->GetOptimizer()->get_start_error();
+    err = m_FantasticRegistration.m_LMOptimizer->GetOptimizer()->get_end_error();
+    sprintf(mes, "Fixed/Moving points number:%d %d", num1, num2);
+    this->AppendInfo(mes);
+    sprintf(mes, "Start/end RMS error:%.3f %.3f", starterr, err);
+    this->AppendInfo(mes);
+    this->DumpRegisterInfo();
+    break;
+  case 3:
+/*    for (k = 0; k < 4; k++)
+    {
+      m_FiducialRegistration.SetSourceFiducial(k, m_4NeedlePosition[k]);
+    }
+*/    
+    for (k = 0, k1 = 8; k < 4; k++)
+    {
+      k1 -= m_RegParameters.m_Needle[k];
+    }
+    for (k = 0; k < 4; k++ )
+    {
+      if (m_RegParameters.m_Needle[k] == 1)
+      {
+        m_FiducialRegistration.SetSourceFiducial(k1, m_4NeedlePosition[k]);
+        k1++;
+      }
+    }
+    ret = this->RegisterImageWithTrackerAndComputeRMSError();
+    this->AppendInfo(m_StringBuffer);
+    this->DumpRegisterInfo();
+    break;
+  case 4:
+    for (k = 0; k < 8; k++)
+    {
+      m_FiducialRegistration.SetSourceFiducial(k, m_8CoilPosition[k]);
+    }
+    ret = this->RegisterImageWithTrackerAndComputeRMSError();
+    this->AppendInfo(m_StringBuffer);
+    this->DumpRegisterInfo();
     break;
   }  
 
-  /*
-  m_FantasticRegistration.StartRegistration();
-
-//  double value = m_FantasticRegistration.m_LMOptimizer->GetValue();
-  IGSTK::FantasticRegistration::CAParametersType para = m_FantasticRegistration.m_PointSetToPointSetRegistration->GetLastTransformParameters();
-  */
   return true;
 }
 
-
+/*
 void IGMTracking::OnTrackToolPosition( void )
 {
 	static   int run = 0;
@@ -1356,16 +1728,31 @@ void IGMTracking::OnTrackToolPosition( void )
 		this->PrintMessage("Thread Creation Failed.");
 	}
 }
-
-
-void IGMTracking::OnOverlay( void )
+*/
+void IGMTracking::TransformPoint(double* in, double* out)
 {
-	static   int run = 0;
   unsigned int i;
-	bool firstpos = true;
-//<<<<<<< IGMTracking.cxx
-	double HomePos[3], d[3], dis, motiondis;
-	double toolPositionInImageSpace[3], anotherPositionInImageSpace[3];
+  IGSTK::FantasticRegistration::E3DTransformType::InputPointType inputpoint, outputpoint;
+
+  for (i = 0; i < 3; i++)
+  {
+    inputpoint[i] = in[i];
+  }
+  outputpoint = m_E3DTransform->TransformPoint(inputpoint);
+  for (i = 0; i < 3; i++)
+  {
+    out[i] = outputpoint[i];
+  }
+}
+/*
+void OverlayTracking(void* p)
+{
+  IGMTracking* pTracking = (IGMTracking*)p;
+  static   int run = 0;
+  unsigned int i;
+  bool firstpos = true;
+  double HomePos[3], d[3], dis, motiondis;
+  double toolPositionInImageSpace[3], anotherPositionInImageSpace[3];
   float spacing[3];
   double anotherPosition[3];
   double NoRefPosition1[3], NoRefPosition2[3];
@@ -1374,286 +1761,511 @@ void IGMTracking::OnOverlay( void )
   double offsetInImageSpace1[3], offsetInImageSpace2[3];
   double tippos[3], hippos[3];
   char mes[128];
-//=======
-//	double HomePos[3], d[3], dis;
-//	double toolPositionInImageSpace[3], anotherPositionInImageSpace[3];
-// >>>>>>> 1.6
 
-	
-	if (_beginthread(CheckKeyPress, 0, NULL) != -1)
-	{
-		this->PrintMessage("Thread Successfully Created. Press any key to exit thread...");
-		printf("Thread started. Press any key to exit thread ...\n");
+  IGMTracking::PointSetType::PointType recordpoint;
 
-		FILE * fp;
-		fp = fopen("overlay_track_position.dat", "a+");
-		
-		sprintf(m_StringBuffer, "***********   OVERLAY RUN %.3d DATA   *********\n", ++run );	
-		if (fp != NULL) fprintf(fp, m_StringBuffer);
-		printf( m_StringBuffer );
+  FILE * fp;
+  fp = fopen("overlay_track_position.dat", "a+");
 
-		if (m_UseReferenceNeedle && !m_ForceRecord)
-		{
-			m_AuroraTracker.UpdateToolStatus();
-			m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ReferenceToolHandle, 
-				m_ReferenceNeedleTipOffset, m_ReferenceNeedlePosition);
+  sprintf(pTracking->m_StringBuffer, "***********   OVERLAY RUN %.3d DATA   *********\n", ++run );	
+  if (fp != NULL) fprintf(fp, pTracking->m_StringBuffer);
+  printf ( pTracking->m_StringBuffer );
 
-			memcpy(HomePos, m_ReferenceNeedlePosition, 3 * sizeof(double));
-		}
+  if (pTracking->m_UseReferenceNeedle && !pTracking->m_ForceRecord)
+  {
+    pTracking->m_AuroraTracker.UpdateToolStatus();
+    pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ReferenceToolHandle, 
+      pTracking->m_ReferenceNeedleTipOffset, pTracking->m_ReferenceNeedlePosition);
 
-		m_Overlay = true;
-		continueTracking = true;
-		this->DisplayToolPosition( true );
+    for (i = 0; i < 3; i++)
+    {
+      HomePos[i] = pTracking->m_ReferenceNeedlePosition[i];
+    }
+  }
 
-		while(continueTracking)
-		{
-			this->OnToolPosition();
-//<<<<<<< IGMTracking.cxx
-		
-//=======
-			
-//			double anotherPosition[3];
-			
-//>>>>>>> 1.6
-			m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle, m_NeedleEndOffset, anotherPosition);
-			
-			if (m_UseReferenceNeedle)
-			{
-//<<<<<<< IGMTracking.cxx
-//=======
-				//double refToolNewPosition[3], offset[3];
-//>>>>>>> 1.6
-				m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ReferenceToolHandle, 
-					m_ReferenceNeedleTipOffset, refToolNewPosition);
-				
-				for (i=0; i<3; i++)
-				{
-					offset[i] = refToolNewPosition[i] - m_ReferenceNeedlePosition[i];
-          NoRefPosition1[i] = m_NeedlePosition[i];
-					m_NeedlePosition[i] -= offset[i];
-          NoRefPosition2[i] = anotherPosition[i];
-					anotherPosition[i] -= offset[i];
-				}
-		
-        if (m_WindowType == 1)
+  pTracking->m_Overlay = true;
+  continueTracking = true;
+  pTracking->DisplayToolPosition( true );
+
+  while (continueTracking)
+  {
+    printf("loop\n");
+    pTracking->OnProbePosition();
+    pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ToolHandle, pTracking->m_NeedleEndOffset, anotherPosition);
+
+    if (pTracking->m_UseReferenceNeedle)
+    {
+      pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ReferenceToolHandle, 
+        pTracking->m_ReferenceNeedleTipOffset, refToolNewPosition);
+
+      for (i=0; i<3; i++)
+      {
+        offset[i] = refToolNewPosition[i] - pTracking->m_ReferenceNeedlePosition[i];
+        NoRefPosition1[i] = pTracking->m_NeedlePosition[i];
+        pTracking->m_NeedlePosition[i] -= offset[i];
+        NoRefPosition2[i] = anotherPosition[i];
+        anotherPosition[i] -= offset[i];
+      }
+
+      if (pTracking->m_WindowType == 1)
+      {
+        for (i = 0; i < 3; i++)
         {
-          for (i = 0; i < 3; i++)
-          {
-            d[i] = HomePos[i] - refToolNewPosition[i];
-          }
-          
-          motiondis = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
-          m_MotionViewer.UpdateMotion(motiondis);
+          d[i] = HomePos[i] - refToolNewPosition[i];
         }
-			}
-			
-//<<<<<<< IGMTracking.cxx
-//=======
-//			double toolPositionInImageSpace[3], anotherPositionInImageSpace[3];
-			
-//>>>>>>> 1.6
-			m_FiducialRegistration.FromSourceSpaceToDestinationSpace(m_NeedlePosition,toolPositionInImageSpace);
-			m_FiducialRegistration.FromSourceSpaceToDestinationSpace(anotherPosition,anotherPositionInImageSpace);
-		      
-      sprintf(mes, "(%.2f %.2f %.2f)", 
-        toolPositionInImageSpace[0], toolPositionInImageSpace[1], toolPositionInImageSpace[2]);
-      m_ProbePosPane->value(mes);
 
-      m_ShiftScaleImageFilter->GetOutput()->GetSpacing(spacing);
-
-      dis = 0;
-      for (i = 0; i < 3; i++)
-      {
-        d[i] = toolPositionInImageSpace[i] - m_ClickedPoint[i];
-        dis += d[i] * d[i];
+        motiondis = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+        pTracking->m_MotionViewer.UpdateMotion(motiondis);
       }
-      sprintf(mes, "%.3fmm", sqrt(dis));
-      m_DistancePane->value(mes);
+    }
 
-      if (m_FullSizeIdx != 3)
+    switch (pTracking->m_RegParameters.m_RegType)
+    {
+    case 0:
+    case 1:
+      pTracking->m_FiducialRegistration.FromSourceSpaceToDestinationSpace(pTracking->m_NeedlePosition,toolPositionInImageSpace);
+      pTracking->m_FiducialRegistration.FromSourceSpaceToDestinationSpace(anotherPosition,anotherPositionInImageSpace);
+      break;
+    case 2:
+      pTracking->TransformPoint(pTracking->m_NeedlePosition, toolPositionInImageSpace);
+      pTracking->TransformPoint(anotherPosition, anotherPositionInImageSpace);
+      break;
+    }			
+
+    sprintf(mes, "(%.2f %.2f %.2f)", 
+      toolPositionInImageSpace[0], toolPositionInImageSpace[1], toolPositionInImageSpace[2]);
+    pTracking->m_ProbePosPane->value(mes);
+
+    pTracking->m_ShiftScaleImageFilter->GetOutput()->GetSpacing(spacing);
+
+    dis = 0;
+    for (i = 0; i < 3; i++)
+    {
+      d[i] = toolPositionInImageSpace[i] - pTracking->m_ClickedPoint[i];
+      dis += d[i] * d[i];
+    }
+    sprintf(mes, "%.3fmm", sqrt(dis));
+    pTracking->m_DistancePane->value(mes);
+
+    if (pTracking->m_FullSizeIdx != 3)
+    {
+      pTracking->m_AxialViewer.DeActivateSelectedPosition();
+      pTracking->m_CoronalViewer.DeActivateSelectedPosition();
+      pTracking->m_SagittalViewer.DeActivateSelectedPosition();
+
+      pTracking->m_AxialViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
+      pTracking->m_AxialViewer.MakeToolPositionMarkerVisible();
+
+      pTracking->m_CoronalViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
+      pTracking->m_CoronalViewer.MakeToolPositionMarkerVisible();
+
+      pTracking->m_SagittalViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
+      pTracking->m_SagittalViewer.MakeToolPositionMarkerVisible();
+
+      //pTracking->SyncAllViews( toolPositionInImageSpace );
+    }
+
+    if (pTracking->m_WindowType == 0 && pTracking->m_VolumeViewer.GetProbeVisibility() == 1)
+    {
+      pTracking->m_VolumeViewer.SetProbeTipAndDirection(toolPositionInImageSpace,anotherPositionInImageSpace);
+      pTracking->m_VolumeViewer.Render();
+    }
+
+    if (pTracking->m_WindowType == 2)
+    {
+      if (pTracking->m_UseReferenceNeedle)
       {
-        m_AxialViewer.DeActivateSelectedPosition();
-        m_CoronalViewer.DeActivateSelectedPosition();
-        m_SagittalViewer.DeActivateSelectedPosition();
-
-        m_AxialViewer.SetProbeTipAndDirection(m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
-        m_AxialViewer.MakeToolPositionMarkerVisible();
-        
-        m_CoronalViewer.SetProbeTipAndDirection(m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
-        m_CoronalViewer.MakeToolPositionMarkerVisible();
-        
-        m_SagittalViewer.SetProbeTipAndDirection(m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
-        m_SagittalViewer.MakeToolPositionMarkerVisible();
-        
-        this->SyncAllViews( toolPositionInImageSpace );
-      }
-
-//      this->TrackingPoint(toolPositionInImageSpace, false);
-
-      if (m_WindowType == 0 && m_VolumeViewer.GetProbeVisibility() == 1)
-      {
-        m_VolumeViewer.SetProbeTipAndDirection(toolPositionInImageSpace,anotherPositionInImageSpace);
-        m_VolumeViewer.Render();
-      }
-  
-      if (m_WindowType == 2)
-      {
-        if (m_UseReferenceNeedle)
+        switch (pTracking->m_RegParameters.m_RegType)
         {
-          m_FiducialRegistration.FromSourceSpaceToDestinationSpace(NoRefPosition1, toolPositionInImageSpace);
-          m_FiducialRegistration.FromSourceSpaceToDestinationSpace(NoRefPosition2, anotherPositionInImageSpace);
-          m_FiducialRegistration.FromSourceSpaceToDestinationSpace(refToolNewPosition, offsetInImageSpace2);
-          m_FiducialRegistration.FromSourceSpaceToDestinationSpace(m_ReferenceNeedlePosition, offsetInImageSpace1);
+        case 0:
+        case 1:
+          pTracking->m_FiducialRegistration.FromSourceSpaceToDestinationSpace(NoRefPosition1, toolPositionInImageSpace);
+          pTracking->m_FiducialRegistration.FromSourceSpaceToDestinationSpace(NoRefPosition2, anotherPositionInImageSpace);
+          pTracking->m_FiducialRegistration.FromSourceSpaceToDestinationSpace(refToolNewPosition, offsetInImageSpace2);
+          pTracking->m_FiducialRegistration.FromSourceSpaceToDestinationSpace(pTracking->m_ReferenceNeedlePosition, offsetInImageSpace1);
+          break;
+        case 2:
+          pTracking->TransformPoint(NoRefPosition1, toolPositionInImageSpace);
+          pTracking->TransformPoint(NoRefPosition2, anotherPositionInImageSpace);
+          pTracking->TransformPoint(refToolNewPosition, offsetInImageSpace2);
+          pTracking->TransformPoint(pTracking->m_ReferenceNeedlePosition, offsetInImageSpace1);                
+          break;
+        }
 
-  //        printf("off: %.2f %.2f %.2f\n", offset[0], offset[1], offset[2]);
- //         printf("offimage: %.2f %.2f %.2f\n", offsetInImageSpace[0], offsetInImageSpace[1], offsetInImageSpace[2]);
-          
-          for (i = 0; i < 3; i++)
-          {
-            tippos[i] = toolPositionInImageSpace[i];
-            hippos[i] = anotherPositionInImageSpace[i];
-          }
-          m_TargetViewer.SetProbePosition(tippos, hippos);
-          m_TargetViewer.TranslateTargetPoint(offsetInImageSpace2[0] - offsetInImageSpace1[0], 
-            offsetInImageSpace2[1] - offsetInImageSpace1[1], 
-            offsetInImageSpace2[2] - offsetInImageSpace1[2]);
-          m_TargetViewer.Render();
-        }  
-        else
+        for (i = 0; i < 3; i++)
         {
-          for (i = 0; i < 3; i++)
-          {
-            tippos[i] = toolPositionInImageSpace[i];
-            hippos[i] = anotherPositionInImageSpace[i];
-          }
-          m_TargetViewer.SetProbePosition(tippos, hippos);
-          m_TargetViewer.Render();
-        }      
-      }     
-      
-			sprintf(m_StringBuffer, "%4.3f   %4.3f   %4.3f\n", toolPositionInImageSpace[0], toolPositionInImageSpace[1], toolPositionInImageSpace[2]);
-			if (fp != NULL) fprintf(fp, m_StringBuffer);	  	
-		
-			Sleep(10);
-		}
+          tippos[i] = toolPositionInImageSpace[i];
+          hippos[i] = anotherPositionInImageSpace[i];
+        }
+        pTracking->m_TargetViewer.SetProbePosition(tippos, hippos);
+        pTracking->m_TargetViewer.TranslateTargetPoint(offsetInImageSpace2[0] - offsetInImageSpace1[0], 
+          offsetInImageSpace2[1] - offsetInImageSpace1[1], 
+          offsetInImageSpace2[2] - offsetInImageSpace1[2]);
+        pTracking->m_TargetViewer.Render();
+      }  
+      else
+      {
+        for (i = 0; i < 3; i++)
+        {
+          tippos[i] = toolPositionInImageSpace[i];
+          hippos[i] = anotherPositionInImageSpace[i];
+        }
+        pTracking->m_TargetViewer.SetProbePosition(tippos, hippos);
+        pTracking->m_TargetViewer.Render();
+      }      
+    }     
 
-		if (fp!=NULL) 
-		{
-			fprintf(fp, "\n\n\n\n\n");
-			fclose(fp);
-		}
+    sprintf(pTracking->m_StringBuffer, "%4.3f   %4.3f   %4.3f\n", toolPositionInImageSpace[0], toolPositionInImageSpace[1], toolPositionInImageSpace[2]);
+    if (fp != NULL) fprintf(fp, pTracking->m_StringBuffer);	  	
 
-		this->PrintMessage("Thread Stopped....");
-		printf("Thread Stopped...\n");
-	}
-	else
-	{
-		this->PrintMessage("Thread Creation Failed.");
-	}
-}
-/*
-//<<<<<<< IGMTracking.cxx
-//float IGMTracking::GetImageScale( void )
-//=======
-void IGMTracking::OnMotionTracking( void )
-{
-	static   int run = 0;
-	bool firstpos = true;
-	double HomePos[3], d[3], dis;
-//	double toolPositionInImageSpace[3];
-	double refPositionInImageSpace[3];
+    Sleep(10);
+  }
 
-	if (_beginthread(CheckKeyPress, 0, NULL) != -1)
-	{
-		this->PrintMessage("Thread Successfully Created. Press any key to exit thread...");
-		printf("Thread started. Press any key to exit thread ...\n");
+  if (fp!=NULL) 
+  {
+    fprintf(fp, "\n\n\n\n\n");
+    fclose(fp);
+  }
 
-		if (m_UseReferenceNeedle)
-		{
-			m_AuroraTracker.UpdateToolStatus();
-			m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ReferenceToolHandle, 
-				m_ReferenceNeedleTipOffset, m_ReferenceNeedlePosition);
-		}
-
-		m_Overlay = true;
-		continueTracking = true;
-//		this->DisplayToolPosition( true );
-
-		while(continueTracking)
-		{
-			this->OnToolPosition();
-			
-			double anotherPosition[3];
-
-	//		m_AuroraTracker.UpdateToolStatus();
-			
-			m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle, m_NeedleEndOffset, anotherPosition);
-			
-			if (m_UseReferenceNeedle)
-			{
-				double refToolNewPosition[3];
-				m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ReferenceToolHandle, 
-					m_ReferenceNeedleTipOffset, refToolNewPosition);
-
-				sprintf(m_StringBuffer, "Port0: %4.3f   %4.3f   %4.3f\nPort1: %4.3f   %4.3f   %4.3f\n", 
-					anotherPosition[0], anotherPosition[1], anotherPosition[2], refToolNewPosition[0], refToolNewPosition[1], refToolNewPosition[2]);
-				printf( m_StringBuffer );
-				
-//				for(int i=0; i<3; i++)
-//				{
-//					offset[i] = refToolNewPosition[i] - m_ReferenceNeedlePosition[i];
-//					m_NeedlePosition[i] -= offset[i];
-//					anotherPosition[i] -= offset[i];
-//				}
-
-				m_FiducialRegistration.FromSourceSpaceToDestinationSpace(refToolNewPosition,refPositionInImageSpace);
-//				m_FiducialRegistration.FromSourceSpaceToDestinationSpace(anotherPosition,anotherPositionInImageSpace);
-
-				if (firstpos)
-				{
-					memcpy(HomePos, refPositionInImageSpace, 3 * sizeof(double));
-					firstpos = false;
-				}
-				
-				for (int i = 0; i < 3; i++)
-				{
-					d[i] = HomePos[i] - refPositionInImageSpace[i];
-				}
-				
-				dis = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
-				m_MotionViewer.UpdateMotion(dis);
-
-				sprintf(m_StringBuffer, "Dis: %4.3f\n", dis);
-				printf( m_StringBuffer );
-			}
-			
-//			m_FiducialRegistration.FromSourceSpaceToDestinationSpace(m_NeedlePosition,toolPositionInImageSpace);
-//			m_FiducialRegistration.FromSourceSpaceToDestinationSpace(anotherPosition,anotherPositionInImageSpace);
-			
-//			m_AxialViewer.m_ToolPositionMarker.SetTipAndDirection(toolPositionInImageSpace,anotherPositionInImageSpace);
-//			m_CoronalViewer.m_ToolPositionMarker.SetTipAndDirection(toolPositionInImageSpace,anotherPositionInImageSpace);
-//			m_SaggitalViewer.m_ToolPositionMarker.SetTipAndDirection(toolPositionInImageSpace,anotherPositionInImageSpace);
-			
-//			sprintf(m_StringBuffer, "%4.3f   %4.3f   %4.3f\n", toolPositionInImageSpace[0], toolPositionInImageSpace[1], toolPositionInImageSpace[2]);
-//			printf( m_StringBuffer );
-
-//			this->SyncAllViews( toolPositionInImageSpace );
-			
-			Sleep(10);
-		}
-
-		this->PrintMessage("Thread Stopped....");
-		printf("Thread Stopped...\n");
-	}
-	else
-	{
-		this->PrintMessage("Thread Creation Failed.");
-	}
+  _endthread();
 }
 */
+void OverlayTracking(void *p)
+{
+  _getch();
+  continueTracking = false;    /* _endthread implied */
+}
+
+void IGMTracking::OnOverlay( void )
+{
+  IGMTracking* pTracking = this;
+  static   int run = 0;
+  unsigned int i;
+  bool firstpos = true;
+//  double HomePos[3];
+  double d[3], dis, motiondis;
+  double toolPositionInImageSpace[3], anotherPositionInImageSpace[3];
+  float spacing[3];
+  double anotherPosition[3];
+  double NoRefPosition1[3], NoRefPosition2[3];
+  double refToolNewPosition[3];
+  float offset[3];
+  double offsetInImageSpace1[3], offsetInImageSpace2[3];
+  double tippos[3], hippos[3];
+  char mes[128];
+
+  IGMTracking::PointSetType::PointType recordpoint;
+
+  char filename[256], tmpbuf[128];;
+  _strtime( tmpbuf );
+  for (i = 0; i < strlen(tmpbuf); i++)
+  {
+    if (tmpbuf[i] == ':')
+    {
+      tmpbuf[i] = ' ';
+    }
+  }
+  sprintf(filename, "overlay%s.dat", tmpbuf);
+
+  FILE * fp;
+  fp = fopen(filename, "w+");
+
+  double tmpPosition[3], tmpQuad[4];
+
+  if (pTracking->m_UseReferenceNeedle && !pTracking->m_ForceRecord 
+    && pTracking->m_ReferenceToolHandle > 0)
+  {
+    pTracking->m_AuroraTracker.UpdateToolStatus();    
+
+ //   for (i = 0; i < 3; i++)
+//    {
+  //    HomePos[i] = pTracking->m_ReferenceNeedlePosition[i];
+//    }
+
+    pTracking->m_AuroraTracker.GetToolPosition( pTracking->m_ReferenceToolHandle, 
+      tmpPosition);
+/*    sprintf(mes, "InitialRefPosition: %4.3f %4.3f %4.3f\n",
+      tmpPosition[0], tmpPosition[1], tmpPosition[2]);
+    if (strlen(mes) > 100)
+    {
+      sprintf(mes, "");
+    }
+    if (fp != NULL) 
+    {
+      fprintf(fp, mes);
+    }
+*/
+    pTracking->m_AuroraTracker.GetToolOrientation( pTracking->m_ReferenceToolHandle, 
+      tmpQuad);
+/*    sprintf(mes, "InitialRefOrientation: %4.3f %4.3f %4.3f %4.3f\n",
+      tmpQuad[0], tmpQuad[1], tmpQuad[2], tmpQuad[3]);
+    if (strlen(mes) > 100)
+    {
+      sprintf(mes, "");
+    }
+    if (fp != NULL) 
+    {
+      fprintf(fp, mes);
+    }
+*/
+    pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ReferenceToolHandle, 
+      pTracking->m_ReferenceNeedleTipOffset, pTracking->m_ReferenceNeedlePosition);
+/*    sprintf(mes, "InitialOffsetedRef: %4.3f %4.3f %4.3f\n",
+      pTracking->m_ReferenceNeedlePosition[0], pTracking->m_ReferenceNeedlePosition[1], pTracking->m_ReferenceNeedlePosition[2]);
+    if (strlen(mes) > 100)
+    {
+      sprintf(mes, "");
+    }
+    if (fp != NULL) 
+    {
+      fprintf(fp, mes);
+    }
+    */
+  }
+
+  pTracking->m_Overlay = true;
+  continueTracking = true;
+  pTracking->DisplayToolPosition( true );
+
+  if (_beginthread(OverlayTracking, 0, NULL) != -1)
+  {
+    this->PrintMessage("Thread Successfully Created.");
+  }
+  else
+  {
+    this->PrintMessage("Thread Creation Failed.");
+  }
+
+  while (continueTracking)
+  {
+    pTracking->OnProbePosition();
+/*
+    pTracking->m_AuroraTracker.GetToolPosition( pTracking->m_ToolHandle, 
+      tmpPosition);
+    sprintf(mes, "P-Tip Position: %4.3f %4.3f %4.3f\n",
+      tmpPosition[0], tmpPosition[1], tmpPosition[2]);
+    if (strlen(mes) > 100)
+    {
+      sprintf(mes, "");
+    }
+    if (fp != NULL) 
+    {
+      fprintf(fp, mes);
+    }
+
+    pTracking->m_AuroraTracker.GetToolOrientation( pTracking->m_ToolHandle, 
+      tmpQuad);
+    sprintf(mes, "P-Tip Orientation: %4.3f %4.3f %4.3f %4.3f\n",
+      tmpQuad[0], tmpQuad[1], tmpQuad[2], tmpQuad[3]);
+    if (strlen(mes) > 100)
+    {
+      sprintf(mes, "");
+    }
+    if (fp != NULL) 
+    {
+      fprintf(fp, mes);
+    }
+*/    
+    pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ToolHandle, pTracking->m_NeedleTipOffset, pTracking->m_NeedlePosition);
+/*    sprintf(mes, "P-Tip: %4.3f %4.3f %4.3f\n", 
+      pTracking->m_NeedlePosition[0], pTracking->m_NeedlePosition[1], pTracking->m_NeedlePosition[2]);
+    if (strlen(mes) > 100)
+    {
+      sprintf(mes, "");
+    }
+    if (fp != NULL)
+    { 
+      fprintf(fp, mes);
+    }
+*/
+    pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ToolHandle, pTracking->m_NeedleEndOffset, anotherPosition);
+/*    sprintf(mes, "P-Hip: %4.3f %4.3f %4.3f\n", 
+      anotherPosition[0], anotherPosition[1], anotherPosition[2]);
+    if (strlen(mes) > 100)
+    {
+      sprintf(mes, "");
+    }
+    if (fp != NULL)
+    { 
+      fprintf(fp, mes);
+    }
+*/
+    if (pTracking->m_UseReferenceNeedle && pTracking->m_ReferenceToolHandle > 0)
+    {
+/*      pTracking->m_AuroraTracker.GetToolPosition( pTracking->m_ReferenceToolHandle, 
+        tmpPosition);
+      sprintf(mes, "RefPosition: %4.3f %4.3f %4.3f\n",
+        tmpPosition[0], tmpPosition[1], tmpPosition[2]);
+      if (strlen(mes) > 100)
+    {
+      sprintf(mes, "");
+    }
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+
+      pTracking->m_AuroraTracker.GetToolOrientation( pTracking->m_ReferenceToolHandle, 
+        tmpQuad);
+      sprintf(mes, "RefOrientation: %4.3f %4.3f %4.3f %4.3f\n",
+        tmpQuad[0], tmpQuad[1], tmpQuad[2], tmpQuad[3]);
+      if (strlen(mes) > 100)
+    {
+      sprintf(mes, "");
+    }
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+*/
+      pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ReferenceToolHandle, 
+        pTracking->m_ReferenceNeedleTipOffset, refToolNewPosition);
+
+  /*    sprintf(mes, "Ref: %4.3f %4.3f %4.3f\n", 
+        refToolNewPosition[0], refToolNewPosition[1], refToolNewPosition[2]);
+      if (strlen(mes) > 100)
+    {
+      sprintf(mes, "");
+    }
+      if (fp != NULL)
+      { 
+        fprintf(fp, mes);
+      }
+*/
+      for (i=0; i<3; i++)
+      {
+        offset[i] = refToolNewPosition[i] - pTracking->m_ReferenceNeedlePosition[i];
+        NoRefPosition1[i] = pTracking->m_NeedlePosition[i];
+        pTracking->m_NeedlePosition[i] -= offset[i];
+        NoRefPosition2[i] = anotherPosition[i];
+        anotherPosition[i] -= offset[i];
+      }
+
+      if (pTracking->m_WindowType == 1)
+      {
+        for (i = 0; i < 3; i++)
+        {
+          d[i] = pTracking->m_ReferenceNeedlePosition[i] - refToolNewPosition[i];
+        }
+
+        motiondis = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+        pTracking->m_MotionViewer.UpdateMotion(motiondis);
+      }
+    }
+
+    switch (pTracking->m_RegParameters.m_RegType)
+    {
+    case 0:
+    case 1:
+    case 3:
+    case 4:
+      pTracking->m_FiducialRegistration.FromSourceSpaceToDestinationSpace(pTracking->m_NeedlePosition,toolPositionInImageSpace);
+      pTracking->m_FiducialRegistration.FromSourceSpaceToDestinationSpace(anotherPosition,anotherPositionInImageSpace);
+      break;    
+    case 2:
+      pTracking->TransformPoint(pTracking->m_NeedlePosition, toolPositionInImageSpace);
+      pTracking->TransformPoint(anotherPosition, anotherPositionInImageSpace);
+      break;
+    }			
+
+    sprintf(mes, "(%.2f %.2f %.2f)", 
+      toolPositionInImageSpace[0], toolPositionInImageSpace[1], toolPositionInImageSpace[2]);
+    pTracking->m_ProbePosPane->value(mes);
+
+    pTracking->m_ShiftScaleImageFilter->GetOutput()->GetSpacing(spacing);
+
+    dis = 0;
+    for (i = 0; i < 3; i++)
+    {
+      d[i] = toolPositionInImageSpace[i] - pTracking->m_ClickedPoint[i];
+      dis += d[i] * d[i];
+    }
+    sprintf(mes, "%.3fmm\n", sqrt(dis));
+    pTracking->m_DistancePane->value(mes);
+
+    sprintf(mes, "");
+
+    if (pTracking->m_FullSizeIdx != 3)
+    {
+      pTracking->m_AxialViewer.DeActivateSelectedPosition();
+      pTracking->m_CoronalViewer.DeActivateSelectedPosition();
+      pTracking->m_SagittalViewer.DeActivateSelectedPosition();
+
+      pTracking->m_AxialViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
+      pTracking->m_AxialViewer.MakeToolPositionMarkerVisible();
+
+      pTracking->m_CoronalViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
+      pTracking->m_CoronalViewer.MakeToolPositionMarkerVisible();
+
+      pTracking->m_SagittalViewer.SetProbeTipAndDirection(pTracking->m_ProbeID, toolPositionInImageSpace,anotherPositionInImageSpace);
+      pTracking->m_SagittalViewer.MakeToolPositionMarkerVisible();
+
+      pTracking->SyncAllViews( toolPositionInImageSpace );
+    }
+
+    if (pTracking->m_WindowType == 0 && pTracking->m_VolumeViewer.GetProbeVisibility() == 1)
+    {
+      pTracking->m_VolumeViewer.SetProbeTipAndDirection(toolPositionInImageSpace,anotherPositionInImageSpace);
+      pTracking->m_VolumeViewer.Render();
+    }
+
+    if (pTracking->m_WindowType == 2)
+    {
+      if (pTracking->m_UseReferenceNeedle && pTracking->m_ReferenceToolHandle > 0)
+      {
+        switch (pTracking->m_RegParameters.m_RegType)
+        {
+        case 0:
+        case 1:
+        case 3:
+        case 4:
+          pTracking->m_FiducialRegistration.FromSourceSpaceToDestinationSpace(NoRefPosition1, toolPositionInImageSpace);
+          pTracking->m_FiducialRegistration.FromSourceSpaceToDestinationSpace(NoRefPosition2, anotherPositionInImageSpace);
+          pTracking->m_FiducialRegistration.FromSourceSpaceToDestinationSpace(refToolNewPosition, offsetInImageSpace2);
+          pTracking->m_FiducialRegistration.FromSourceSpaceToDestinationSpace(pTracking->m_ReferenceNeedlePosition, offsetInImageSpace1);
+          break;
+        case 2:
+          pTracking->TransformPoint(NoRefPosition1, toolPositionInImageSpace);
+          pTracking->TransformPoint(NoRefPosition2, anotherPositionInImageSpace);
+          pTracking->TransformPoint(refToolNewPosition, offsetInImageSpace2);
+          pTracking->TransformPoint(pTracking->m_ReferenceNeedlePosition, offsetInImageSpace1);                
+          break;
+        }
+
+        for (i = 0; i < 3; i++)
+        {
+          tippos[i] = toolPositionInImageSpace[i];
+          hippos[i] = anotherPositionInImageSpace[i];
+        }
+        pTracking->m_TargetViewer.SetProbePosition(tippos, hippos);
+        pTracking->m_TargetViewer.TranslateTargetPoint(offsetInImageSpace2[0] - offsetInImageSpace1[0], 
+          offsetInImageSpace2[1] - offsetInImageSpace1[1], 
+          offsetInImageSpace2[2] - offsetInImageSpace1[2]);
+        pTracking->m_TargetViewer.Render();
+      }  
+      else
+      {
+        for (i = 0; i < 3; i++)
+        {
+          tippos[i] = toolPositionInImageSpace[i];
+          hippos[i] = anotherPositionInImageSpace[i];
+        }
+        pTracking->m_TargetViewer.SetProbePosition(tippos, hippos);
+        pTracking->m_TargetViewer.Render();
+      }      
+    }     
+
+    Sleep(10);
+  }
+
+  if (fp!=NULL) 
+  {
+    fprintf(fp, "\n\n\n\n\n");
+    fclose(fp);
+  }
+}
 
 double IGMTracking::GetImageScale( void )
-//>>>>>>> 1.6
 {
 	return m_ShiftScaleImageFilter->GetScale();
 }
@@ -1693,22 +2305,15 @@ void IGMTracking::SetImageShift( double val )
 void IGMTracking::SetNeedleLength( const double val )
 {
 	IGMTrackingBase::SetNeedleLength( val );
-//	m_AxialViewer.m_ToolPositionMarker.SetLength(val);
-//	m_CoronalViewer.m_ToolPositionMarker.SetLength(val);
-//	m_SagittalViewer.m_ToolPositionMarker.SetLength(val);
 }
 	
 void IGMTracking::SetNeedleRadius( const double val )
 {
 	IGMTrackingBase::SetNeedleRadius( val );
-//	m_AxialViewer.m_ToolPositionMarker.SetRadius(val);
-//	m_CoronalViewer.m_ToolPositionMarker.SetRadius(val);
-//	m_SagittalViewer.m_ToolPositionMarker.SetRadius(val);
 }
 
 void IGMTracking::SetProbeLength( int i, const float val )
 {
-//	IGMTrackingBase::SetNeedleLength( val );
   m_AxialViewer.m_ProbeMarker[i].SetLength(val);
   m_CoronalViewer.m_ProbeMarker[i].SetLength(val);
   m_SagittalViewer.m_ProbeMarker[i].SetLength(val);
@@ -1716,7 +2321,6 @@ void IGMTracking::SetProbeLength( int i, const float val )
 	
 void IGMTracking::SetProbeRadius( int i, const float val )
 {
-//	IGMTrackingBase::SetNeedleRadius( val );
 	m_AxialViewer.m_ProbeMarker[i].SetRadius(val);
 	m_CoronalViewer.m_ProbeMarker[i].SetRadius(val);
 	m_SagittalViewer.m_ProbeMarker[i].SetRadius(val);
@@ -1726,28 +2330,10 @@ void IGMTracking::PrintDebugInfo( void )
 {
 	double pos1[3];
 	printf("Debug Information:\n");
-//<<<<<<< IGMTracking.cxx
 	m_SagittalViewer.m_TargetPositionMarker.GetCenter( pos1 );
 	printf("Target: %4.3f   %4.3f   %4.3f\n", pos1[0], pos1[1], pos1[2]);
 	m_SagittalViewer.m_EntryPositionMarker.GetCenter( pos1 );
 	printf("Entry: %4.3f   %4.3f   %4.3f\n", pos1[0], pos1[1], pos1[2]);
-//	m_SagittalViewer.m_EntryToTargetPathMarker.m_LineSource->GetPoint1( pos1 );
-//	m_SagittalViewer.m_EntryToTargetPathMarker.m_LineSource->GetPoint2( pos2 );
-//	printf("Line Point 01: %4.3f   %4.3f   %4.3f\n", pos1[0], pos1[1], pos1[2]);
-//	printf("Line Point 02: %4.3f   %4.3f   %4.3f\n", pos2[0], pos2[1], pos2[2]);
-/*=======
-	m_SaggitalViewer.m_TargetPositionMarker.GetCenter( pos );
-	printf("Target: %4.3f   %4.3f   %4.3f\n", pos[0], pos[1], pos[2]);
-	m_SaggitalViewer.m_EntryPositionMarker.GetCenter( pos );
-	printf("Entry: %4.3f   %4.3f   %4.3f\n", pos[0], pos[1], pos[2]);
-
-  float fpos1[3], fpos2[3];
-	m_SaggitalViewer.m_EntryToTargetPathMarker.m_LineSource->GetPoint1( fpos1 );
-	m_SaggitalViewer.m_EntryToTargetPathMarker.m_LineSource->GetPoint2( fpos2 );
-	printf("Line Point 01: %4.3f   %4.3f   %4.3f\n", fpos1[0], fpos1[1], fpos1[2]);
-	printf("Line Point 02: %4.3f   %4.3f   %4.3f\n", fpos2[0], fpos2[1], fpos2[2]);
->>>>>>> 1.6
-*/
 	printf("End of Debug Information:\n");
 }
 
@@ -1765,7 +2351,6 @@ void IGMTracking::RecordReference()
 
 void IGMTracking::ProcessDicomReading()
 {
-//<<<<<<< IGMTracking.cxx
 	float f;
   
   if (m_VolumeType == 0)
@@ -1863,10 +2448,6 @@ void IGMTracking::ProcessResampleImagePreFilterEnd()
     - starttime.time - starttime.millitm * 0.001;
   sprintf(mes, "Pre-Resample Time: %.3fs", durtime);
   this->AppendInfo(mes);
-//=======
-//	double f = m_DicomVolumeReader.m_Reader->GetProgress();
-//	printf("%.3f\n", f);
-//>>>>>>> 1.6
 
 	Fl::check();
 }
@@ -1917,31 +2498,7 @@ void IGMTracking::ProcessDistanceMapFilter()
 
 	Fl::check();
 }
-/*
-void IGMTracking::SaveAsRaw()
-{
-	if (!m_VolumeReader->GetOutput())
-	{
-		return;
-	}
 
-	RawWriterType::Pointer writer = RawWriterType::New();
-	RawImageIOType::Pointer rawIO = RawImageIOType::New();
-
-	const char * filename = fl_file_chooser("Raw filename", "*.*", "");
-	
-	if( !filename  || strlen(filename) == 0 )
-    {
-		return;
-    }
-
-	writer->SetFileName(filename);
-	writer->SetImageIO(rawIO);
-	writer->SetInput(m_DicomVolumeReader.m_Reader->GetOutput());
-
-	writer->Update();
-}
-*/
 void IGMTracking::SetVolumeThreshold(int thres)
 {
   m_VolumeViewer.SetThreshold(thres);
@@ -2096,6 +2653,8 @@ void IGMTracking::OnUpdateProbeParameters()
     SetProbeLength(i, m_Length[i]);
     SetProbeRadius(i, m_Radius[i]);
 
+    m_4NeedleOffset[i][2] = m_Offset[i];
+
     if (probe == 1)
     {
       m_ProbeID = i;
@@ -2114,8 +2673,6 @@ void IGMTracking::OnUpdateProbeParameters()
     if (m_Register[i] == 1)
     {
       m_RegisterID = i;
-      sprintf(toolID, "%02d", m_RegisterID + 1);
-	    m_RegToolHandle = m_AuroraTracker.GetMyToolHandle( toolID );
       m_RegNeedleTipOffset[2] = m_Offset[i];
       m_RegNeedleEndOffset[2] = m_Length[i];
       m_CoilOffset1[2] = m_Offset[i];
@@ -2479,6 +3036,21 @@ void IGMTracking::OnSaveSegmentationData()
 void IGMTracking::OnUpdateRegParameters()
 {
   m_Skeleton.SetClusterRadius(m_RegParameters.m_Radius);
+
+  IGSTK::FantasticRegistration::LMOptimizerType::ScalesType scales( m_E3DTransform->GetNumberOfParameters() );
+  scales.Fill( m_RegParameters.m_Scales );
+  
+  unsigned long   numberOfIterations =  m_RegParameters.m_Iterations;
+  double          gradientTolerance  =  m_RegParameters.m_Gradient;   // convergence criterion
+  double          valueTolerance     =  m_RegParameters.m_Value;   // convergence criterion
+  double          epsilonFunction    =  m_RegParameters.m_Epsilon;   // convergence criterion
+
+  m_FantasticRegistration.m_LMOptimizer->SetScales( scales );
+  m_FantasticRegistration.m_LMOptimizer->SetNumberOfIterations( numberOfIterations );
+  m_FantasticRegistration.m_LMOptimizer->SetValueTolerance( valueTolerance );
+  m_FantasticRegistration.m_LMOptimizer->SetGradientTolerance( gradientTolerance );
+  m_FantasticRegistration.m_LMOptimizer->SetEpsilonFunction( epsilonFunction );
+
 }
 
 void IGMTracking::OnSkeleton()
@@ -2486,8 +3058,14 @@ void IGMTracking::OnSkeleton()
   m_Skeleton.SetInput(m_FusionRescaleIntensity->GetInput());
   m_Skeleton.SetProgressCallback(IGMTracking::ProcessSkeleton, this);
   m_Skeleton.ExtractSkeleton();
+
   m_FusionRescaleIntensity->SetInput(m_Skeleton.GetOutput());
   m_FusionRescaleIntensity->Update();
+
+  this->DumpSkeletonInfo();
+
+//  m_VolumeViewer.SetFixedPointRadius(m_RegParameters.m_Radius);
+//  m_VolumeViewer.SetFixedPointSet(m_Skeleton.m_Skeleton);
 
   this->RenderSectionWindow();
   
@@ -2507,4 +3085,372 @@ void IGMTracking::ProcessSkeleton(void* calldata, double f)
 	pTracking->m_ProgressBar->color(fl_rgb_color((uchar)(255 - f * 255), 0, (uchar)(f * 255)));
 
 	Fl::check();
+}
+
+void RecordTracking(void* p)
+{
+  IGMTracking* pTracking = (IGMTracking*) p;
+
+  static   int run = 0;
+  unsigned int i, j;
+	double anotherPosition[3];
+  double NoRefPosition1[3], NoRefPosition2[3];
+  double refToolNewPosition[3];
+  float offset[3];
+ 
+  IGMTracking::PointSetType::PointType recordpoint;
+
+  int h[2], n;
+  char toolID[128];
+  sprintf(toolID, "%02d", pTracking->m_RefID + 1);
+  n = pTracking->m_AuroraTracker.GetMyToolHandle2(toolID, h[0], h[1]);
+
+  char filename[256], tmpbuf[128], mes[128];
+  _strtime( tmpbuf );
+  for (i = 0; i < strlen(tmpbuf); i++)
+  {
+    if (tmpbuf[i] == ':')
+    {
+      tmpbuf[i] = ' ';
+    }
+  }
+  sprintf(filename, "record%s.dat", tmpbuf);
+
+  FILE* fp = fopen(filename, "w+");
+
+  double tmpPosition[3], tmpQuad[4];
+
+  if (pTracking->m_UseReferenceNeedle && pTracking->m_ReferenceToolHandle > 0)
+	{
+		pTracking->m_AuroraTracker.UpdateToolStatus();
+
+    pTracking->m_AuroraTracker.GetToolPosition(pTracking->m_ReferenceToolHandle, tmpPosition);
+    sprintf(mes, "InitialRefPosition: %4.3f %4.3f %4.3f\n",
+      tmpPosition[0], tmpPosition[1], tmpPosition[2]);
+    if (fp != NULL) 
+    {
+      fprintf(fp, mes);
+    }
+
+    pTracking->m_AuroraTracker.GetToolOrientation(pTracking->m_ReferenceToolHandle, tmpQuad);
+    sprintf(mes, "InitialRefOrientation: %4.3f %4.3f %4.3f %4.3f\n",
+      tmpQuad[0], tmpQuad[1], tmpQuad[2], tmpQuad[3]);
+    if (fp != NULL) 
+    {
+      fprintf(fp, mes);
+    }
+
+    pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ReferenceToolHandle, 
+			pTracking->m_ReferenceNeedleTipOffset, pTracking->m_ReferenceNeedlePosition);   
+    sprintf(mes, "InitialRefOffsetedPosition: %4.3f %4.3f %4.3f\n",
+      pTracking->m_ReferenceNeedlePosition[0], pTracking->m_ReferenceNeedlePosition[1], pTracking->m_ReferenceNeedlePosition[2]);
+    if (fp != NULL) 
+    {
+      fprintf(fp, mes);
+    }
+	}
+
+  while (pTracking->m_InRecord)
+  {
+  	pTracking->OnProbePosition();		
+
+    switch (pTracking->m_RegParameters.m_RegType)
+    {
+    case 0:
+    case 1:
+      pTracking->m_AuroraTracker.GetToolPosition(pTracking->m_ToolHandle, tmpPosition);
+      sprintf(mes, "P-Tip-Position: %4.3f %4.3f %4.3f\n",
+        tmpPosition[0], tmpPosition[1], tmpPosition[2]);
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+      
+      pTracking->m_AuroraTracker.GetToolOrientation(pTracking->m_ToolHandle, tmpQuad);
+      sprintf(mes, "P-Tip-Orientation: %4.3f %4.3f %4.3f %4.3f\n",
+        tmpQuad[0], tmpQuad[1], tmpQuad[2], tmpQuad[3]);
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+      
+      pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ToolHandle, 
+        pTracking->m_NeedleTipOffset, pTracking->m_NeedlePosition);
+      sprintf(mes, "P-Tip: %4.3f %4.3f %4.3f\n", 
+        pTracking->m_NeedlePosition[0], pTracking->m_NeedlePosition[1], pTracking->m_NeedlePosition[2]);
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+
+      printf(mes);
+      
+      pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ToolHandle, 
+        pTracking->m_NeedleEndOffset, anotherPosition);
+      sprintf(mes, "P-Hip: %4.3f %4.3f %4.3f\n",
+        anotherPosition[0], anotherPosition[1], anotherPosition[2]);
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+      break;
+    case 2:
+      pTracking->m_AuroraTracker.GetToolPosition(pTracking->m_ToolHandle, tmpPosition);
+      sprintf(mes, "P-Tip-Position: %4.3f %4.3f %4.3f\n",
+        tmpPosition[0], tmpPosition[1], tmpPosition[2]);
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+      
+      pTracking->m_AuroraTracker.GetToolOrientation(pTracking->m_ToolHandle, tmpQuad);
+      sprintf(mes, "P-Tip-Orientation: %4.3f %4.3f %4.3f %4.3f\n",
+        tmpQuad[0], tmpQuad[1], tmpQuad[2], tmpQuad[3]);
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+      
+      pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ToolHandle, 
+        pTracking->m_NeedleTipOffset, pTracking->m_NeedlePosition);
+      sprintf(mes, "P-Tip: %4.3f %4.3f %4.3f\n", 
+        pTracking->m_NeedlePosition[0], pTracking->m_NeedlePosition[1], pTracking->m_NeedlePosition[2]);
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+
+      printf(mes);
+      
+      pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ToolHandle, 
+        pTracking->m_NeedleEndOffset, anotherPosition);
+      sprintf(mes, "P-Hip: %4.3f %4.3f %4.3f\n",
+        anotherPosition[0], anotherPosition[1], anotherPosition[2]);
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+
+      if (n == 2)
+      {
+        for (j = 0; j < 2; j++)
+        {
+          pTracking->m_AuroraTracker.GetToolPosition(h[j], tmpPosition);
+          sprintf(mes, "R-Tip-Position%d: %4.3f %4.3f %4.3f\n",
+            j, tmpPosition[0], tmpPosition[1], tmpPosition[2]);
+          if (fp != NULL) 
+          {
+            fprintf(fp, mes);
+          }
+          
+          pTracking->m_AuroraTracker.GetToolOrientation(h[j], tmpQuad);
+          sprintf(mes, "R-Tip-Orientation%d: %4.3f %4.3f %4.3f %4.3f\n",
+            j, tmpQuad[0], tmpQuad[1], tmpQuad[2], tmpQuad[3]);
+          if (fp != NULL) 
+          {
+            fprintf(fp, mes);
+          }
+        }
+      }
+      break;
+    case 3:
+      for ( i = 0; i < 4; i++)
+      {
+        pTracking->m_AuroraTracker.GetToolPosition(pTracking->m_4NeedleRegToolHandle[i], tmpPosition);
+        sprintf(mes, "P-Tip-Position%d: %4.3f %4.3f %4.3f\n",
+          i, tmpPosition[0], tmpPosition[1], tmpPosition[2]);
+        if (fp != NULL) 
+        {
+          fprintf(fp, mes);
+        }
+        
+        pTracking->m_AuroraTracker.GetToolOrientation(pTracking->m_4NeedleRegToolHandle[i], tmpQuad);
+        sprintf(mes, "P-Tip-Orientation%d: %4.3f %4.3f %4.3f %4.3f\n",
+          i, tmpQuad[0], tmpQuad[1], tmpQuad[2], tmpQuad[3]);
+        if (fp != NULL) 
+        {
+          fprintf(fp, mes);
+        }
+
+        pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_4NeedleRegToolHandle[i], 
+          pTracking->m_4NeedleOffset[i], pTracking->m_4NeedlePosition[i]);
+        sprintf(mes, "P-Tip%d: %4.3f %4.3f %4.3f\n", 
+          i, pTracking->m_4NeedlePosition[i][0], pTracking->m_4NeedlePosition[i][1], pTracking->m_4NeedlePosition[i][2]);
+        if (fp != NULL) 
+        {
+          fprintf(fp, mes);
+        }
+      }
+      break;
+    case 4:
+      for ( i = 0; i < 8; i++)
+      {
+        pTracking->m_AuroraTracker.GetToolPosition(pTracking->m_8CoilRegToolHandle[i], tmpPosition);
+        sprintf(mes, "P-Tip-Position%d: %4.3f %4.3f %4.3f\n",
+          i, tmpPosition[0], tmpPosition[1], tmpPosition[2]);
+        if (fp != NULL) 
+        {
+          fprintf(fp, mes);
+        }
+        
+        pTracking->m_AuroraTracker.GetToolOrientation(pTracking->m_8CoilRegToolHandle[i], tmpQuad);
+        sprintf(mes, "P-Tip-Orientation%d: %4.3f %4.3f %4.3f %4.3f\n",
+          i, tmpQuad[0], tmpQuad[1], tmpQuad[2], tmpQuad[3]);
+        if (fp != NULL) 
+        {
+          fprintf(fp, mes);
+        }
+        
+        pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_8CoilRegToolHandle[i], 
+          pTracking->m_8CoilOffset[i], pTracking->m_8CoilPosition[i]);
+        sprintf(mes, "P-Tip%d: %4.3f %4.3f %4.3f\n", 
+          i, pTracking->m_8CoilPosition[i][0], pTracking->m_8CoilPosition[i][1], pTracking->m_8CoilPosition[i][2]);
+        if (fp != NULL) 
+        {
+          fprintf(fp, mes);
+        }        
+      }
+      break;
+    }
+    
+
+    if (pTracking->m_UseReferenceNeedle && pTracking->m_ReferenceToolHandle > 0)
+		{
+      pTracking->m_AuroraTracker.GetToolPosition(pTracking->m_ReferenceToolHandle, tmpPosition);
+      sprintf(mes, "RefPosition: %4.3f %4.3f %4.3f\n",
+        tmpPosition[0], tmpPosition[1], tmpPosition[2]);
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+
+      pTracking->m_AuroraTracker.GetToolOrientation(pTracking->m_ReferenceToolHandle, tmpQuad);
+      sprintf(mes, "RefOrientation: %4.3f %4.3f %4.3f %4.3f\n",
+        tmpQuad[0], tmpQuad[1], tmpQuad[2], tmpQuad[3]);
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+
+		  pTracking->m_AuroraTracker.GetOffsetCorrectedToolPosition( pTracking->m_ReferenceToolHandle, 
+			  pTracking->m_ReferenceNeedleTipOffset, refToolNewPosition);
+      sprintf(mes, "Ref: %4.3f %4.3f %4.3f\n",
+        refToolNewPosition[0], refToolNewPosition[1], refToolNewPosition[2]);
+
+      if (fp != NULL) 
+      {
+        fprintf(fp, mes);
+      }
+				
+			for (i = 0; i < 3; i++)
+			{
+				offset[i] = refToolNewPosition[i] - pTracking->m_ReferenceNeedlePosition[i];
+        NoRefPosition1[i] = pTracking->m_NeedlePosition[i];
+				pTracking->m_NeedlePosition[i] -= offset[i];
+        NoRefPosition2[i] = anotherPosition[i];
+				anotherPosition[i] -= offset[i];
+			}		
+		}
+			
+    for (i = 0; i < 3; i++)
+    {
+      recordpoint[i] = pTracking->m_NeedlePosition[i];
+    }
+      
+    pTracking->m_MovingPointSet->SetPoint(pTracking->m_MovingPointSet->GetNumberOfPoints(), recordpoint);
+
+    Sleep(10); 
+    
+  }
+
+  if (fp != NULL)
+  {
+    fclose(fp);
+  }
+
+  _endthread();
+
+}
+
+void IGMTracking::OnRecord(void)
+{
+  m_InRecord = !m_InRecord;
+
+  if (m_InRecord)
+  {
+    if (_beginthread(RecordTracking, 0, (void*) this) != -1)
+    {
+      this->PrintMessage("Thread Successfully Created.");
+    }
+    else
+    {
+      this->PrintMessage("Thread Creation Failed.");
+    }
+  }
+}
+
+void IGMTracking::OnLoadMatrix(void)
+{
+  const char * filename = fl_file_chooser("Matrix file","*.dat","");
+
+  if( !filename  || strlen(filename) == 0 )
+  {
+    return;
+  }
+
+  int regtype;
+  unsigned int i, j;
+
+  printf("dfsdf");
+
+  FILE *fp = fopen(filename, "r");
+
+  vtkMatrix4x4* matrix;
+  float element;
+  IGSTK::FantasticRegistration::CAParametersType para;
+
+  fscanf(fp, "Reg=%d", &regtype);
+  switch (regtype)
+  {
+  case 0:
+  case 1:
+  case 3:
+  case 4:
+    matrix = this->m_FiducialRegistration.m_LandmarkTransform->GetMatrix();
+    for (j = 0; j < 4; j++)
+    {
+      for (i = 0; i < 4; i++)
+      {
+        fscanf(fp, "%f", &element);
+        matrix->SetElement(i, j, element);
+      }
+    }
+    break;
+  case 2:
+    for (i = 0; i < m_FantasticRegistration.m_PointSetToPointSetRegistration->GetTransform()->GetNumberOfParameters(); i++)
+    {
+      fscanf(fp, "%f", &element);
+      para[i] = element;
+    }
+    m_E3DTransform->SetParameters(para);
+    break;
+  }
+
+  if (fp)
+  {
+    fclose(fp);
+  }
+
+}
+
+void IGMTracking::OnSaveMatrix(void)
+{
+  char * filename = fl_file_chooser("Matrix file","*.dat","");
+
+  if( !filename  || strlen(filename) == 0 )
+  {
+    return;
+  }
+
+  this->DumpRegisterMatrix(filename);
 }
