@@ -18,7 +18,7 @@
 #ifndef __igstk_StateMachineState_h
 #define __igstk_StateMachineState_h
 
-#include "igstkStateMachineToken.h"
+#include "igstkToken.h"
 
 
 namespace igstk
@@ -45,13 +45,13 @@ namespace igstk
     
     \sa StateMachine
     \sa StateMachineInput
-    \sa StateMachineToken
+    \sa Token
     \sa StateMachineAction
 
 */
 
 template< class T >
-class StateMachineState : public StateMachineToken
+class StateMachineState : public Token
 {
 
 

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkStateMachineToken.cxx
+  Module:    igstkToken.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -15,7 +15,8 @@
 
 =========================================================================*/
 
-#include "igstkStateMachineToken.h"
+#include "igstkToken.h"
+#include "itkFastMutexLock.h"
 
 #include <iostream>
 
@@ -25,23 +26,30 @@ namespace igstk
 
 
 
-  StateMachineToken::IdentifierType StateMachineToken::IdentifierCounter = 1;
+  /** The counter for providing pseudo-unique identifiers for tokens */
+  Token::IdentifierType Token::IdentifierCounter = 1;
+
+  /** Used for mutex locking */
+  static ::itk::SimpleFastMutexLock    TokenMutex;
+    
 
 
-
-  StateMachineToken::StateMachineToken()
+  Token::Token()
   {
+    /** Start mutual exclusion section. This prevent race conditions when
+     * multiple threads are creating Tokens simultaneously */
+    TokenMutex.Lock();
+    
+    /** When the IdentifierCounter rolls over (reaches it maximum value and
+     * restars from zero) the Uniqueness of identifiers can no longer be
+     * guaranted. */
     this->m_Identifier  = IdentifierCounter++;
 
-    if( IdentifierCounter == 0 )
-      {
-      std::cerr << "Maximum number of token identifiers has been reached." << std::endl;
-      std::cerr << "Uniqueness of identifiers can no longer be guaranted." << std::endl;
-      }
+    TokenMutex.Unlock();
   }
 
 
-  StateMachineToken::~StateMachineToken()
+  Token::~Token()
   {
   }
 

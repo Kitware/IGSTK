@@ -11,7 +11,7 @@ SET(IGSTK_HEADS
   igstkStateMachine.h
   igstkStateMachineInput.h
   igstkStateMachineState.h
-  igstkStateMachineToken.h
+  igstkToken.h
   igstkTracker.h
   igstkTrackerPort.h
   igstkTrackerTool.h
@@ -23,7 +23,7 @@ SET(IGSTK_SRCS
   igstkCommunication.cxx
   igstkLogger.cxx
   igstkStateMachine.txx
-  igstkStateMachineToken.cxx
+  igstkToken.cxx
   igstkTracker.cxx
   igstkTrackerPort.cxx
   igstkTrackerTool.cxx

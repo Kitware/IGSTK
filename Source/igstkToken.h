@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkStateMachineToken.h
+  Module:    igstkToken.h
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_StateMachineToken_h
-#define __igstk_StateMachineToken_h
+#ifndef __igstk_Token_h
+#define __igstk_Token_h
 
 #include <string>
 
@@ -27,7 +27,7 @@ namespace igstk
 {
 
 
-/** \class StateMachineToken
+/** \class Token
     \brief Class that provides unique identifiers.
 
     This class is intended to be used as the base class for the
@@ -42,7 +42,7 @@ namespace igstk
 
 */
 
-class StateMachineToken
+class Token
 {
 
 
@@ -54,24 +54,27 @@ public:
    typedef unsigned long    IdentifierType;
 
 
-
    /** Constructor. It initializes all the member variables */
-   StateMachineToken();
+   Token();
 
 
 
    /** Destructor    */
-   ~StateMachineToken();
+   ~Token();
 
 
 
    /** Returns the unique identifier of the current instance */
    igstkGetMacro( Identifier, IdentifierType );
 
+   
 
    /** \warning A SetIndentifier() method should never be created since it will
-    * open a door for violating the uniqueness of the Identifier. */ 
-
+    * open a door for violating the uniqueness of the Identifier.  
+    *
+    *    SetIndentifier();      Purposely not created.
+    *
+    */
 
 
 private:

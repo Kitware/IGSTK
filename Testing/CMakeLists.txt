@@ -26,7 +26,7 @@ ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
 
 ADD_TEST(igstkStateMachineErrorsTest ${IGSTK_TESTS} igstkStateMachineErrorsTest)
 
-ADD_TEST(igstkStateMachineTokenTest ${IGSTK_TESTS} igstkStateMachineTokenTest)
+ADD_TEST(igstkTokenTest ${IGSTK_TESTS} igstkTokenTest)
 
 ADD_TEST(igstkBasicTrackerTest ${IGSTK_TESTS} igstkBasicTrackerTest)
 
@@ -39,7 +39,7 @@ SET(BasicTests_SRCS
   igstkMultipleOutputTest
   igstkStateMachineTest
   igstkStateMachineErrorsTest
-  igstkStateMachineTokenTest
+  igstkTokenTest
   igstkBasicTrackerTest
   igstkTrackerToolTest
   igstkTrackerPortTest
