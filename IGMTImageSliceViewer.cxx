@@ -2,6 +2,8 @@
 #include "IGMTImageSliceViewer.h"
 #include "vtkImageData.h"
 #include "vtkProperty.h"
+#include "vtkProperty2D.h"
+#include "vtkTextProperty.h"
 #include <math.h>
 
 #include "vtkRenderWindowInteractor.h"
@@ -37,6 +39,24 @@ namespace ISIS
 
 		this->GetRenderer()->AddActor( m_ToolPositionMarker.GetVTKActorPointerHip() );
 
+		m_LabelMapper = vtkTextMapper::New();
+		m_LabelMapper->SetInput("");
+		m_LabelMapper->GetTextProperty()->SetFontSize(12);
+		m_LabelMapper->GetTextProperty()->SetFontFamilyToArial();
+		m_LabelMapper->GetTextProperty()->BoldOn();
+		m_LabelMapper->GetTextProperty()->ItalicOff();
+		m_LabelMapper->GetTextProperty()->ShadowOff();
+		m_LabelMapper->GetTextProperty()->SetJustificationToCentered();
+		m_LabelMapper->GetTextProperty()->SetVerticalJustificationToCentered();
+		m_LabelMapper->GetTextProperty()->SetLineSpacing(0.6);
+
+		m_LabelActor = vtkActor2D::New();
+		m_LabelActor->SetMapper(m_LabelMapper);
+		m_LabelActor->GetPositionCoordinate()->SetCoordinateSystemToNormalizedDisplay();
+		m_LabelActor->GetProperty()->SetColor(1, 1, 0);
+		m_LabelActor->GetPositionCoordinate()->SetValue(0.5, 0.1);
+		this->GetRenderer()->AddActor(m_LabelActor);
+
 		this->DeActivateSelectedPosition();
 		this->DeActivateTargetPosition();
 		this->DeActivateEntryPosition();
@@ -46,6 +66,15 @@ namespace ISIS
 	
 	IGMTImageSliceViewer::~IGMTImageSliceViewer()
 	{
+		if (m_LabelMapper)
+		{
+			m_LabelMapper->Delete();
+		}
+
+		if (m_LabelActor)
+		{
+			m_LabelActor->Delete();
+		}
 	}
 	
 	void IGMTImageSliceViewer::SelectPoint( int x, int y )
@@ -128,6 +157,19 @@ namespace ISIS
 	void IGMTImageSliceViewer::SetOrientation( OrientationType orientation )
 	{
 		ImageSliceViewer::SetOrientation( orientation );
+		
+		switch (orientation)
+		{
+		case Axial:
+			m_LabelMapper->SetInput("Axial");
+			break;
+		case Coronal:
+			m_LabelMapper->SetInput("Coronal");
+			break;
+		case Saggital:
+			m_LabelMapper->SetInput("Saggittal");
+			break;
+		}		
 	}
 	
 	void IGMTImageSliceViewer::MakeToolPositionMarkerVisible()

@@ -4,7 +4,8 @@
 #include "ImageSliceViewer.h"
 #include "Sphere.h"
 #include "TubeWrappedLine.h"
-//#include "Line.h"
+#include "vtkTextMapper.h"
+#include "vtkActor2D.h"
 
 namespace ISIS
 {
@@ -61,6 +62,10 @@ namespace ISIS
 		//Line		m_ToolPositionMarker;
 
 		//Line		m_EntryToTargetPathMarker;
+
+		vtkTextMapper*	m_LabelMapper;
+		
+		vtkActor2D*		m_LabelActor;
 	};
 	
 	
