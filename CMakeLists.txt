@@ -61,6 +61,7 @@ SET(IGSTK_HEADS
   LiverTumorSegmentationBase.h  
   TubeWrappedLine.h
   MotionViewer.h
+  FiducialRegistration.h
 )
 
 SET(IGSTK_SRCS
@@ -73,6 +74,7 @@ SET(IGSTK_SRCS
   LiverTumorSegmentationBase.cxx  
   TubeWrappedLine.cxx
   MotionViewer.cxx
+  FiducialRegistration.cxx
   )
 
 SET(AURORA_TRACKER_HEADS
