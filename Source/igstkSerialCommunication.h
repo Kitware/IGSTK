@@ -50,7 +50,7 @@ protected:
 public:
 
   typedef enum { 
-    BAUD9600  = 9600,  BAUD14400 = 14400, BAUD19200 = 19200,
+    BAUD9600  = 9600,  /*BAUD14400 = 14400,*/ BAUD19200 = 19200,
     BAUD38400 = 38400, BAUD57600 = 57600, BAUD115200 = 115200
   } BaudRateType;
 
