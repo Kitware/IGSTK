@@ -99,21 +99,21 @@ void SerialCommunicationForWindows::SetUpDataTransferParametersProcessing( void 
   }
 
   // Baudrate parameter settings
-  dcb.BaudRate = this->m_BaudRate;
+  dcb.BaudRate = this->m_BaudRate.Get();
   // Bytesize parameter settings
-  switch(this->m_ByteSize)
+  switch(this->m_ByteSize.Get())
   {
-  case SEVEN_BITS: dcb.ByteSize = 7; break;
-  case EIGHT_BITS: dcb.ByteSize = 8; break;
+  case 7: dcb.ByteSize = 7; break;
+  case 8: dcb.ByteSize = 8; break;
   default: ;//return error; shouldn't come here in the first place.
   }
   // Parity parameter settings
-  dcb.fParity = (this->m_Parity==NO_PARITY) ? 0 : 1;
-  switch(this->m_Parity)
+  dcb.fParity = (this->m_Parity==0) ? 0 : 1;
+  switch(this->m_Parity.Get())
   {
-  case NO_PARITY: dcb.Parity = NOPARITY; break;
-  case ODD_PARITY: dcb.Parity = ODDPARITY; break; 
-  case EVEN_PARITY: dcb.Parity = EVENPARITY; break;  
+  case 0: dcb.Parity = NOPARITY; break;
+  case 1: dcb.Parity = ODDPARITY; break; 
+  case 2: dcb.Parity = EVENPARITY; break;  
   default: ;//return error; shouldn't come here in the first place.
   }
   // Stop bit parameter settings
