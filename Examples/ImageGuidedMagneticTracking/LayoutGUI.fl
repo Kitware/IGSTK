@@ -103,23 +103,23 @@ class LayoutGUI {open
         xywh {65 189 70 60}
       } {
         Fl_Button {m_ppFullSizeButton[0]} {
-          label UL
+          label 0
           callback {this->SetFullSizeIdx(0);}
           xywh {65 189 35 30} type Toggle
         }
         Fl_Button {m_ppFullSizeButton[1]} {
-          label UR
+          label 1
           callback {this->SetFullSizeIdx(1);}
           xywh {100 189 35 30} type Toggle
         }
         Fl_Button {m_ppFullSizeButton[2]} {
-          label DL
+          label 2
           callback {this->SetFullSizeIdx(2);}
           xywh {65 219 35 30} type Toggle
         }
         Fl_Button {m_ppFullSizeButton[3]} {
-          label UR
-          callback {this->SetFullSizeIdx(3);}
+          label 3
+          callback {this->SetFullSizeIdx(3);} selected
           xywh {100 219 35 30} type Toggle
         }
       }
@@ -246,8 +246,7 @@ m_ShowAnnotation = m_ShowAnnotationCheck->value();
 m_DesiredTriNum = atoi(m_DesiredTriNumInput->value());
 m_Ret = 1;
 this->Hide();
-m_pTracking->OnUpdateLayout();} {selected
-    }
+m_pTracking->OnUpdateLayout();} {}
   }
   Function {OnCancel()} {return_type void
   } {
