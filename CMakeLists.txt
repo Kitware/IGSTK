@@ -81,7 +81,7 @@ SET(IGSTK_HEADS
   IGMTTargetViewer.h
   IGMTVolumeViewer.h
   CrossLine.h
-  FantasticRegistration.h
+  ICPRegistration.h
   IGMTRegistrationViewer.h
 )
 
@@ -112,7 +112,7 @@ SET(IGSTK_SRCS
   IGMTVolumeViewer.cxx
   CrossLine.cxx
   igstkInteractorObserver.cxx
-  FantasticRegistration.cxx
+  ICPRegistration.cxx
   IGMTRegistrationViewer.cxx
   )
 
