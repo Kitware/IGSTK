@@ -15,4 +15,5 @@ void RegisterTests()
   REGISTER_TEST(igstkViewTest);
   REGISTER_TEST(igstkMouseTrackerTest);
   REGISTER_TEST(igstkSerialCommunicationTest);
+  REGISTER_TEST(igstkTimeStampTest);
 }

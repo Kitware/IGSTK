@@ -16,6 +16,7 @@ SET(IGSTKSandbox_HEADS
   igstkEllipsoidObjectRepresentation.h  
   igstkCylinderObjectRepresentation.h
   igstkMouseTracker.h
+  igstkTimeStamp.h
 )
 
 
@@ -33,6 +34,7 @@ SET(IGSTKSandbox_SRCS
   igstkEllipsoidObjectRepresentation.cxx
   igstkCylinderObjectRepresentation.cxx
   igstkMouseTracker.cxx
+  igstkTimeStamp.cxx
 )
 
 IF( WIN32 )
