@@ -260,6 +260,11 @@ void
 ImageSliceViewer
 ::SelectPoint( int x, int y )
 {
+  if (!m_Actor->GetInput()) 
+    {
+    return;     // return, if no image is loaded yet.
+    }
+
   // Invert the y coordinate (vtk uses opposite y as FLTK)
   int* winsize = m_RenderWindow->GetSize();
   y = winsize[1] - y;
