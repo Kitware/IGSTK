@@ -14,6 +14,20 @@ SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
 IF(NOT IGSTKSandbox_SETUP_DASHBOARD)
 
+
+#
+#  FIND IGSTK
+#
+FIND_PACKAGE(IGSTK)
+IF (USE_IGSTK_FILE)
+  INCLUDE (${USE_IGSTK_FILE})
+ELSE (USE_IGSTK_FILE)
+  MESSAGE( FATAL_ERROR "This application requires IGSTK. One of these components is missing. Please verify configuration")
+ENDIF (USE_IGSTK_FILE)
+
+
+
+
 #
 #  FIND ITK
 #
