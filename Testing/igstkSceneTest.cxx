@@ -23,6 +23,7 @@
 #include <iostream>
 #include "igstkScene.h"
 #include "igstkView3D.h"
+#include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 
 int igstkSceneTest( int, char * [] )
@@ -33,13 +34,19 @@ int igstkSceneTest( int, char * [] )
     typedef igstk::Scene  SceneType;
     SceneType::Pointer scene = SceneType::New();
 
-    typedef igstk::EllipsoidObjectRepresentation  ObjectType;
-    ObjectType::Pointer ellipsoid = ObjectType::New();
+    typedef igstk::EllipsoidObject ObjectType;
+    ObjectType::Pointer ellipsoidObject = ObjectType::New();
+    ellipsoidObject->SetRadius(1,2,1);
      
+    typedef igstk::EllipsoidObjectRepresentation  ObjectRepresentationType;
+    ObjectRepresentationType::Pointer ellipsoid = ObjectRepresentationType::New();
+     
+    ellipsoid->RequestSetEllipsoidObject( ellipsoidObject );
+
     // Create an FLTK minimal GUI
-    Fl_Window * form = new Fl_Window(600,300,"View3D Test");
+    Fl_Window * form = new Fl_Window(300,300,"View3D Test");
    
-    igstk::View3D* view = new igstk::View3D(0,0,0,0);
+    igstk::View3D* view = new igstk::View3D(10,10,280,2800,"2D View");
 
     form->end();
 
@@ -78,7 +85,7 @@ int igstkSceneTest( int, char * [] )
 
     // Testing the igstkSpatialObject
     std::cout << "Testing SpatialObject: ";
-    igstk::SpatialObject::Pointer object = igstk::SpatialObject::New();
+    igstk::EllipsoidObject::Pointer object = igstk::EllipsoidObject::New();
 
     double validityTimeInMilliseconds = 2000.0;
     igstk::Transform transform;
@@ -154,6 +161,18 @@ int igstkSceneTest( int, char * [] )
     // Testing printself again when there are object in the scene
     scene->Print(std::cout);
     } 
+  catch(itk::ExceptionObject & excp)
+    {
+    std::cerr << "Exception catched !!!" << std::endl;
+    std::cerr << excp << std::endl;
+    return EXIT_FAILURE;
+    }
+  catch(std::exception & excp)
+    {
+    std::cerr << "Exception catched !!!" << std::endl;
+    std::cerr << excp.what() << std::endl;
+    return EXIT_FAILURE;
+    }
   catch(...)
     {
     std::cerr << "Exception catched !!!" << std::endl;
