@@ -36,6 +36,10 @@ int igstkTimeStampTest( int, char * [] )
 
     TimeStampType stamp;
     
+    std::cout << "Testing the first Set" << std::endl;
+
+    { // convenience block for local variable declarations.
+
     stamp.SetStartTimeNowAndExpireAfter( millisecondsToExpire );
 
     const double startingTime   = stamp.GetStartTime();
@@ -108,6 +112,87 @@ int igstkTimeStampTest( int, char * [] )
       return EXIT_FAILURE;
       }
 
+    } // end of first block
+    
+    std::cout << "Testing the second Set" << std::endl;
+
+    { // convenience block for local variable declarations.
+
+    stamp.SetStartTimeNowAndExpireAfter( millisecondsToExpire );
+
+    const double startingTime   = stamp.GetStartTime();
+    const double expirationTime = stamp.GetExpirationTime();
+    
+    const double expectedExpirationTime = startingTime + millisecondsToExpire;
+
+    if( fabs( expectedExpirationTime - expirationTime ) > tolerance )
+      {
+      std::cerr << "Error in expiration time" << std::endl;
+      std::cerr << "Expected expiration time = " << expectedExpirationTime << std::endl;
+      std::cerr << "Actual   expiration time = " << expirationTime << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    const double scheduledRenderTime1 = startingTime - 1000.0;
+    const double scheduledRenderTime2 = startingTime - 1.0;
+    const double scheduledRenderTime3 = startingTime + 1.0;
+    const double scheduledRenderTime4 = startingTime + millisecondsToExpire / 2.0;
+    const double scheduledRenderTime5 = expirationTime - 1.0;
+    const double scheduledRenderTime6 = expirationTime + 1.0;
+    const double scheduledRenderTime7 = expirationTime + 1000.0;
+
+    if( stamp.IsValidAtTime( scheduledRenderTime1 ) )
+      {
+      std::cerr << "Error in IsValidAtTime()." << std::endl; 
+      std::cerr << "Expected value was 'false', but returned 'true'" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    if( stamp.IsValidAtTime( scheduledRenderTime2 ) )
+      {
+      std::cerr << "Error in IsValidAtTime()." << std::endl; 
+      std::cerr << "Expected value was 'false', but returned 'true'" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    if( !stamp.IsValidAtTime( scheduledRenderTime3 ) )
+      {
+      std::cerr << "Error in IsValidAtTime()." << std::endl; 
+      std::cerr << "Expected value was 'true', but returned 'false'" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    if( !stamp.IsValidAtTime( scheduledRenderTime4 ) )
+      {
+      std::cerr << "Error in IsValidAtTime()." << std::endl; 
+      std::cerr << "Expected value was 'true', but returned 'false'" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    if( !stamp.IsValidAtTime( scheduledRenderTime5 ) )
+      {
+      std::cerr << "Error in IsValidAtTime()." << std::endl; 
+      std::cerr << "Expected value was 'true', but returned 'false'" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    if( stamp.IsValidAtTime( scheduledRenderTime6 ) )
+      {
+      std::cerr << "Error in IsValidAtTime()." << std::endl; 
+      std::cerr << "Expected value was 'false', but returned 'true'" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    if( stamp.IsValidAtTime( scheduledRenderTime7 ) )
+      {
+      std::cerr << "Error in IsValidAtTime()." << std::endl; 
+      std::cerr << "Expected value was 'false', but returned 'true'" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    } // end of first block
+
+
     }
   catch(...)
     {
@@ -115,6 +200,7 @@ int igstkTimeStampTest( int, char * [] )
     return EXIT_FAILURE;
     }
 
+  std::cout << "Test PASSED ! " << std::endl;
 
   return EXIT_SUCCESS;
 }
