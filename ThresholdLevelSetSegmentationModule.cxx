@@ -140,6 +140,8 @@ namespace ISIS {
   {
     try
     {
+      std::cout << "Initiating Threshold Level Set parameters..." << std::endl;
+      
       // Set the variable values into itk Objects
       m_ConfidenceConnectedFilter->SetMultiplier( m_Multiplier ); 
       m_ConfidenceConnectedFilter->SetNumberOfIterations( m_NumberOfIterations ); 
@@ -155,8 +157,6 @@ namespace ISIS {
 
       // Initialize the progress counter
       m_ProgressAccumulator->ResetProgress();
-      
-      std::cout << "Initiating segmentation..." << std::endl;
       
       m_ConfidenceConnectedFilter->Update();
       

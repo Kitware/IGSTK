@@ -29,21 +29,7 @@
 #include "itkProcessObject.h"
 
 
-#define  SetMacro(name,type) \
-  virtual void Set##name (const type _arg) \
-  { \
-  if (this->m_##name != _arg) \
-      { \
-      this->m_##name = _arg; \
-      } \
-  } 
-
-#define GetMacro(name,type) \
-  virtual type Get##name () \
-  { \
-     return this->m_##name; \
-  }
-
+#include "igstkMacros.h"
 
 /** 
 
@@ -86,6 +72,7 @@ public:
   /**  The expected input images for this module are stored
        in 8 bits and are the output of a resampling and intensity
        windowing preprocessing.  */
+
   typedef   unsigned char     InputPixelType;
 
 
@@ -93,8 +80,8 @@ public:
   typedef   float             InternalPixelType;
 
   typedef   unsigned char     OutputPixelType;
-  typedef   unsigned char     MaskPixelType;
 
+  typedef   unsigned char     MaskPixelType;
 
 
   /**  Image dimension. This module is specific for 3D images */
@@ -156,7 +143,7 @@ public:
 
     ~ThresholdLevelSetSegmentationModule();
 
-    void SetInput( const InputImageType * filename );
+    void SetInput( const InputImageType * image );
 
     const OutputImageType * GetOutput();
 
