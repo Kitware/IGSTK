@@ -128,8 +128,7 @@ void Scene::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 /** Clear function : Remove all the objects in the scene */
-template <unsigned int SpaceDimension>
-void Scene ::Clear()
+void Scene::Clear()
 {
   m_Objects.clear();
 }
