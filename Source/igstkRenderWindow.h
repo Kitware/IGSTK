@@ -44,6 +44,7 @@ namespace igstk
 
 class RenderWindow : public itk::Object
 {
+
 private:
     typedef igstk::StateMachine< RenderWindow > StateMachineType;
     typedef StateMachineType::TMemberFunctionPointer ActionType;
@@ -54,33 +55,36 @@ private:
     FriendClassMacro( StateMachineType );
 
 public:
-    /** Some required typedefs for itk::Object. */
 
+    /** Some required typedefs for itk::Object. */
     typedef RenderWindow                   Self;
     typedef itk::SmartPointer<Self>        Pointer;
     typedef itk::SmartPointer<const Self>  ConstPointer;
-
 
     /**  Run-time type information (and related methods). */
     itkTypeMacro(RenderWindow, Object);
 
     /** Method for creation of a reference counted object. */
-    NewMacro(Self);  
-
+    NewMacro(Self);
+    
+    /** Get the vtk RenderWindow */
+    vtkRenderWindow* GetVTKRenderWindow() {return m_RenderWindow;}
+    
+    /** Get the vtk Renderer */
+    vtkRenderer* GetVTKRenderer() {return m_Renderer;}
+    
+    /** Get the vtk Camera */
+    vtkCamera* GetVTKCamera() {return m_Camera;}
 
 protected:
 
     RenderWindow(void);
-
     ~RenderWindow(void);
-
 
 private:
 
     vtkRenderWindow    * m_RenderWindow;
-
     vtkRenderer        * m_Renderer;
-
     vtkCamera          * m_Camera;
 
 };
