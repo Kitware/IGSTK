@@ -26,11 +26,10 @@ namespace igstk
 /** Constructor */
 SerialCommunication::SerialCommunication() :  m_StateMachine( this ),
 m_ReadBufferSize(3000), m_WriteBufferSize(200), m_InputBuffer( NULL),
-m_OutputBuffer( NULL), m_PortRestSpan(10), m_InvalidPortNumber( -1 )
+m_OutputBuffer( NULL), m_PortRestSpan(10), m_InvalidPortNumber( -1 ),
+m_BaudRate( BaudRate9600() ), m_ByteSize( DataBits8() )
 {
   /** Default communication settings */
-  this->m_BaudRate = BAUD9600;
-  this->m_ByteSize = EIGHT_BITS;
   this->m_Parity = NO_PARITY;
   this->m_StopBits = ONE_STOP_BIT;
   this->m_HardwareHandshake = HANDSHAKE_OFF;

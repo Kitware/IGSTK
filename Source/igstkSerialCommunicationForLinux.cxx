@@ -128,19 +128,19 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
 
   // Baudrate parameter settings
   portSettings.c_cflag &= ~CBAUD; // Clear baud rate bits.
-  switch(this->m_BaudRate)
+  switch( this->m_BaudRate.Get() )
   {
-  case BAUD2400:
+  case 2400:
           baudRate = B2400; break;
-  case BAUD9600:
+  case 9600:
           baudRate = B9600; break;
-  case BAUD19200:
+  case 19200:
           baudRate = B19200; break;
-  case BAUD38400:
+  case 38400:
           baudRate = B38400; break;
-  case BAUD57600:
+  case 57600:
           baudRate = B57600; break;
-  case BAUD115200:
+  case 115200:
           baudRate = B115200; break;
   default: 
           baudRate = B9600; 
@@ -148,11 +148,11 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
   portSettings.c_cflag |= baudRate;
 
   // Bytesize parameter settings
-  switch(this->m_ByteSize)
+  switch(this->m_ByteSize.Get())
   {
-  case SEVEN_BITS: 
+  case 7: 
        portSettings.c_cflag |= CS7; break;
-  case EIGHT_BITS: 
+  case 8: 
        portSettings.c_cflag |= CS8; break;
   default: //return error; shouldn't come here in the first place.
        portSettings.c_cflag |= CS8; 

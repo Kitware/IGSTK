@@ -18,55 +18,64 @@
 #ifndef __igstkSerialCommunication_h
 #define __igstkSerialCommunication_h
 
-#include "itkCommand.h"
 #include "itkObject.h"
 #include "itkEventObject.h"
 
+#include "igstkMacros.h"
 #include "igstkCommunication.h"
 #include "igstkLogger.h"
-#include "igstkMacros.h"
 #include "igstkStateMachine.h"
 
-
-class AuroraTracker;
-class SerialCommunicationCommand;
+#include "igstkSerialCommunicationTokens.h"
 
 namespace igstk
 {
+
 
 /** \class SerialCommunication
  * 
  * \brief This class implements 32-bit communication over a Serial Port
  *        (RS-232 connection).
+ *
  * \ingroup Communication
  */
 
 class SerialCommunication : public Communication
 {
-public:
-
-  igstkFriendClassMacro( AuroraTracker );
 
 protected:
 
-  const unsigned int m_ReadBufferSize; // read buffer size in bytes.
-  const unsigned int m_WriteBufferSize;// write buffer size in bytes.
-  const unsigned int m_PortRestSpan; // period of rest in communication, in msecs.
-  const int m_InvalidPortNumber; // Number assigned to m_PortNumber, if port not initialized.
+  const unsigned int m_ReadBufferSize;    // read buffer size in bytes.
+  const unsigned int m_WriteBufferSize;   // write buffer size in bytes.
+  const unsigned int m_PortRestSpan;      // period of rest in communication, in msecs.
+  const int          m_InvalidPortNumber; // Number assigned to m_PortNumber, if port not initialized.
 
   typedef igstk::Logger   LoggerType;
 
 public:
 
-  typedef enum { 
-    BAUD2400  = 2400,
-    BAUD9600  = 9600,  /*BAUD14400 = 14400,*/ BAUD19200 = 19200,
-    BAUD38400 = 38400, BAUD57600 = 57600, BAUD115200 = 115200
-  } BaudRateType;
+  /** Type used for encoding the baud rate of the serial port */
+  typedef SerialCommunicationBaudRate  BaudRateType;
 
-  typedef enum { 
-    SEVEN_BITS, EIGHT_BITS
-  } ByteSizeType;
+  /** Explicit instantiations for every accepted BaudRate. Using types for the
+   * rates enforces safety on the assignment of values because the verification
+   * is done at compile time. */
+  typedef SerialCommunicationBaudRateValued<  2400 > BaudRate2400;
+  typedef SerialCommunicationBaudRateValued<  9600 > BaudRate9600;
+  typedef SerialCommunicationBaudRateValued< 14400 > BaudRate14400;
+  typedef SerialCommunicationBaudRateValued< 19200 > BaudRate19200;
+
+
+  /** Type used for encoding the number of bits used for data size by the serial port */
+  typedef SerialCommunicationDataBitsSize  DataSizeType;
+
+  /** Explicit instantiations for every accepted DataBitsSize. Using types for the
+   * sizes enforces safety on the assignment of values because the verification
+   * is done at compile time. */
+  typedef SerialCommunicationDataBitsSizeValued< 6 > DataBits6;
+  typedef SerialCommunicationDataBitsSizeValued< 7 > DataBits7;
+  typedef SerialCommunicationDataBitsSizeValued< 8 > DataBits8;
+
 
   typedef enum {
     NO_PARITY, ODD_PARITY, EVEN_PARITY
@@ -87,14 +96,6 @@ public:
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
-
-  /** State machine related types */
-  typedef igstk::StateMachine< Self > StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer ActionType;
-  typedef StateMachineType::StateType              StateType;
-  typedef StateMachineType::InputType              InputType;
-
-
   /**  Run-time type information (and related methods). */
   igstkTypeMacro(SerialCommunication, Object);
 
@@ -103,7 +104,7 @@ public:
 
   igstkGetMacro(BaudRate, BaudRateType);
 
-  igstkGetMacro(ByteSize, ByteSizeType);
+  igstkGetMacro(ByteSize, DataSizeType);
 
   igstkGetMacro(Parity, ParityType);
 
@@ -113,7 +114,7 @@ public:
 
   igstkSetMacro(BaudRate, BaudRateType);
 
-  igstkSetMacro(ByteSize, ByteSizeType);
+  igstkSetMacro(ByteSize, DataSizeType);
 
   igstkSetMacro(Parity, ParityType);
 
@@ -166,6 +167,9 @@ public:
   itkEventMacro( ReceiveStringReadTimeoutEvent, itk::AnyEvent );
   itkEventMacro( ReceiveStringWaitTimeoutEvent, itk::AnyEvent );
 
+  /** Declarations related to the State Machine */
+  igstkStateMachineMacro();
+
 protected:
 
   SerialCommunication();
@@ -198,7 +202,7 @@ protected:
 
   virtual void ReceiveStringProcessing( void ) = NULL;
 
-protected:
+protected:  // FIXME should be private:
 
   /** The GetLogger method return pointer to the logger object. */
   LoggerType* GetLogger(  void );
@@ -212,7 +216,7 @@ protected:
   BaudRateType    m_BaudRate;  
 
   /** number of bits/byte */
-  ByteSizeType    m_ByteSize;
+  DataSizeType    m_ByteSize;
 
   /** parity */
   ParityType      m_Parity;
@@ -256,10 +260,9 @@ protected:
   /** The Logger instance */
   LoggerType     *m_pLogger;
 
-  int             m_PortNumber;     // Port Number
+  /**  Port Number */
+  int             m_PortNumber;     
   
-  /** The "StateMachine" instance */
-  StateMachineType         m_StateMachine; 
 
   /** List of States */
   StateType                m_IdleState;
@@ -299,6 +302,8 @@ protected:
   InputType                *m_pDataBuffersSetUpResultInput;
   InputType                *m_pDataTransferParametersSetUpResultInput;
   InputType                *m_pClosePortResultInput;
+
+
 };
 
 } // end namespace igstk
