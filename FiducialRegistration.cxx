@@ -41,7 +41,7 @@ void FiducialRegistration::SetNumberOfFiducials(unsigned int number_fiducials)
 		this->m_SourceFiducialArray->Modified();
 		m_DestinationFiducialInitialized.resize(m_NumberOfFiducials);
 		m_SourceFiducialInitialized.resize(m_NumberOfFiducials);
-		for(int i=0; i<m_NumberOfFiducials; i++)
+		for(unsigned int i=0; i<m_NumberOfFiducials; i++)
 		{
 			m_DestinationFiducialInitialized[i] = false;
 			m_SourceFiducialInitialized[i] = false;
@@ -95,7 +95,7 @@ bool FiducialRegistration::AreSourceFiducialsInitialized( void )
 	if ( this->m_NumberOfFiducials > 0 )
 	{
 		bool result = true;
-		for(int i=0; i<this->m_NumberOfFiducials; i++)
+		for(unsigned int i=0; i<this->m_NumberOfFiducials; i++)
 		{
 			result = (result && this->m_SourceFiducialInitialized[i]);
 		}
@@ -113,7 +113,7 @@ bool FiducialRegistration::AreDestinationFiducialsInitialized( void )
 	if ( this->m_NumberOfFiducials > 0 )
 	{
 		bool result = true;
-		for(int i=0; i<this->m_NumberOfFiducials; i++)
+		for(unsigned int i=0; i<this->m_NumberOfFiducials; i++)
 		{
 			result = (result && this->m_DestinationFiducialInitialized[i]);
 		}
@@ -139,10 +139,12 @@ float FiducialRegistration::GetRMSError()
 	float input[3];
 	float output[3];
 	float target[3];
-	float dist, sum_dist;
+	double dist;
+  double sum_dist;
+
 	sum_dist = 0.0;
 
-	for (int i=0; i<m_NumberOfFiducials; i++)
+	for (unsigned int i=0; i<m_NumberOfFiducials; i++)
 	{
 		this->m_SourceFiducialArray->GetPoint(i, input);
 		this->m_DestinationFiducialArray->GetPoint(i, target);
@@ -155,11 +157,11 @@ float FiducialRegistration::GetRMSError()
 		sum_dist = sum_dist + dist;
 	}
 
-	for (i=0; i<m_NumberOfFiducials; i++)
+	for (unsigned int k=0; k < m_NumberOfFiducials; k++)
 	{
-		this->m_DestinationFiducialArray->GetPoint(i, input);
-		this->m_SourceFiducialArray->GetPoint(i, target);
-		this->FromDestinationSpaceToSourceSpace(input, output);
+		this->m_DestinationFiducialArray->GetPoint( k, input );
+		this->m_SourceFiducialArray->GetPoint( k, target );
+		this->FromDestinationSpaceToSourceSpace( input, output );
 		//cout << "input: " << input[0] << "," << input[1] << "," << input[2] << endl;
 		//cout << "output: " << output[0] << "," << output[1] << "," << output[2] << endl;
 		//cout << "target: " << target[0] << "," << target[1] << "," << target[2] << endl;
@@ -168,7 +170,7 @@ float FiducialRegistration::GetRMSError()
 		sum_dist = sum_dist + dist;
 	}
 
-	float rms_error = pow(sum_dist/(2*m_NumberOfFiducials), 0.5);
+	double rms_error = pow(sum_dist/(2*m_NumberOfFiducials), 0.5);
 	return rms_error;
 }
 
@@ -183,7 +185,10 @@ void FiducialRegistration::PrintDetails( void )
 	cout << "Number of fiducials = " << m_NumberOfFiducials << endl;
 	cout << "Image Fiducials at" << endl;
 	float point[3];
-	for(int i=0; i<m_NumberOfFiducials; i++)
+
+  unsigned int i;
+
+	for(i=0; i < m_NumberOfFiducials; i++)
 	{
 		this->m_DestinationFiducialArray->GetPoint(i, point);
 		cout << "   Fiducial " << i << ": " << point[0] << "," << point[1] << "," << point[2] << endl;
@@ -195,7 +200,10 @@ void FiducialRegistration::PrintDetails( void )
 		cout << "   Fiducial " << i << ": " << point[0] << "," << point[1] << "," << point[2] << endl;
 	}
 	cout << "Image Fiducial distances: " << endl;
-	float to[3], from[3], distance;
+	float to[3];
+  float from[3];
+  float distance;
+
 	for(i=0; i<(m_NumberOfFiducials-1); i++)
 	{
 		this->m_DestinationFiducialArray->GetPoint(i, to);
