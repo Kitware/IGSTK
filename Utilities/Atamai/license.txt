@@ -6,7 +6,7 @@ SOFTWARE, ATAMAI hereby provides a license under the conditions stated
 below. 
 
 
-I.  	Definitions
+I.    Definitions
 
 ATAMAI: Atamai Inc. of London, Ontario, Canada
 
@@ -31,22 +31,22 @@ or are publicly available, or have already been independently developed
 by LICENSEE. 
 
 
-II.  	Conditions of Use
+II.    Conditions of Use
 
-a)	ATAMAI hereby grants, and LICENSEE hereby accepts, subject to the
+a)  ATAMAI hereby grants, and LICENSEE hereby accepts, subject to the
 terms and conditions of this Agreement a license to use and modify the
 SOFTWARE and to create DERIVATIVE PRODUCTS for LICENSEE's non-commercial
 research endeavors.
 
-b)	The SOFTWARE provided by ATAMAI and DERIVATIVE PRODUCTS will not
+b)  The SOFTWARE provided by ATAMAI and DERIVATIVE PRODUCTS will not
 be sold or distributed by the LICENSEE, except that the SOFTWARE may be
 distributed to AFFILIATES solely in support of LICENSEE's non-commercial
 research endeavors.
 
-c)	LICENSEE agrees that any AFFILIATE utilizing the SOFTWARE will be
+c)  LICENSEE agrees that any AFFILIATE utilizing the SOFTWARE will be
 advised of, and is subject to, the conditions in this agreement.
 
-d)	None of the SOFTWARE provided or DERIVATIVE PRODUCTS may be used
+d)  None of the SOFTWARE provided or DERIVATIVE PRODUCTS may be used
 for commercial purposes or development unless a release, option or license
 granting such permission is executed between ATAMAI and LICENSEE.  ATAMAI
 shall consider requests for a license that permits commercial use if there
@@ -55,24 +55,24 @@ or in a confirmation test using the SOFTWARE or DERIVATIVE PRODUCTS.
 However, ATAMAI shall be under no obligation to grant such license.
 
  
-III.	Warranties and Liability
+III.  Warranties and Liability
 
-a)	The SOFTWARE and related know-how are not intended for therapeutic
+a)  The SOFTWARE and related know-how are not intended for therapeutic
 or diagnostic purposes.
 
-b)	The SOFTWARE and any information or know-how delivered hereby is
+b)  The SOFTWARE and any information or know-how delivered hereby is
 experimental in nature. ATAMAI makes no warranties, representation or
 undertaking with respect to the utility or appropriateness for a particular
 purpose.  ATAMAI further does not warrant that the SOFTWARE is free of
 infringement upon any patent or other proprietary right of a third party.
 
-c)	ATAMAI shall not be liable for any direct, indirect, incidental or
+c)  ATAMAI shall not be liable for any direct, indirect, incidental or
 consequential damages (including, but not limited to, loss of data, data
 becoming inaccurate, injury, or loss of life) arising in any way out of
 the use or inability to use the SOFTWARE, DERIVATIVE PRODUCTS, or related
 know-how, even if advised of the possibility of such damages.
 
-d)	LICENSEE will defend, indemnify, save and hold ATAMAI harmless
+d)  LICENSEE will defend, indemnify, save and hold ATAMAI harmless
 from and against any third party claims, demands, suits, actions, losses,
 damages, fines and liabilities arising out of LICENSEE's use of the
 SOFTWARE or DERIVATIVE PRODUCTS, and will pay any costs and damages which,
@@ -87,9 +87,9 @@ hereunder without ATAMAI's written consent, which consent shall not be
 unreasonably withheld.
 
 
-IV. 	General Terms
+IV.   General Terms
 
-a)	LICENSEE agrees that it will comply with all applicable Provincial,
+a)  LICENSEE agrees that it will comply with all applicable Provincial,
 State and Federal regulatory and statutory requirements regarding use of
 the SOFTWARE and DERIVATIVE PRODUCTS.
 
