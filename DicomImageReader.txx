@@ -60,20 +60,27 @@ DicomImageReader<TVolumeType>
 {
 
   typedef std::vector<std::string> seriesContainer;
-  const  seriesContainer seriesUID = m_FilenamesGenerator->GetSeriesUIDs();
-
-  seriesContainer::const_iterator seriesItr = seriesUID.begin();
-  seriesContainer::const_iterator seriesEnd = seriesUID.end();
+  seriesContainer seriesUID = m_FilenamesGenerator->GetSeriesUIDs();
   
-  seriesBrowser->clear();
+  if (seriesUID.size() == 1)
+  {
+    this->ReadVolume(seriesUID.back().c_str());
+  }
+  else
+  {
+	seriesContainer::const_iterator seriesItr = seriesUID.begin();
+	seriesContainer::const_iterator seriesEnd = seriesUID.end();
   
-  while( seriesItr != seriesEnd )
-    {
-    seriesBrowser->add( seriesItr->c_str() );
-    seriesItr++;
+	seriesBrowser->clear();
+  
+	while( seriesItr != seriesEnd )
+	{
+		seriesBrowser->add( seriesItr->c_str() );
+		seriesItr++;
     }
   
-  this->ShowSeriesBrowser();
+	this->ShowSeriesBrowser();
+  }
  
 }
 
@@ -96,9 +103,7 @@ void
 DicomImageReader<TVolumeType>
 ::ReadVolume()
 {
-
-  m_VolumeIsLoaded = false;
-
+ 
   const unsigned int selectedLine = seriesBrowser->value();
 
   if( selectedLine == 0 )
@@ -107,13 +112,25 @@ DicomImageReader<TVolumeType>
     }
     
   std::string selectedSerie = seriesBrowser->text( selectedLine );
-std::cout << "selectedSerie " << selectedSerie << std::endl;
+  std::cout << "selectedSerie " << selectedSerie << std::endl;
 
   seriesBrowserWindow->hide();  // added to hide the series window when loading DICOM data
 	
   Fl::check();
-	
-  m_Reader->SetFileNames( m_FilenamesGenerator->GetFileNames( selectedSerie ) );   
+  
+  this->ReadVolume( selectedSerie );
+  
+}
+
+template < class TVolumeType >
+void
+DicomImageReader<TVolumeType>
+::ReadVolume( std::string series)
+{
+
+  m_VolumeIsLoaded = false;
+
+  m_Reader->SetFileNames( m_FilenamesGenerator->GetFileNames( series ) );   
 
   itk::DICOMImageIO2::Pointer  dicomImageIO =  itk::DICOMImageIO2::New();
 
@@ -145,8 +162,6 @@ std::cout << "selectedSerie " << selectedSerie << std::endl;
   m_Notifier->InvokeEvent( itk::EndEvent() );
 
 }
-
-
 
 }  // end namespace ISIS
 

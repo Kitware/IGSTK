@@ -36,6 +36,8 @@ protected:
 
   void ReadVolume();
 
+  void ReadVolume( std::string );
+
 
 public:
 
