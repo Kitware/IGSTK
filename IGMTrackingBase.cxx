@@ -11,7 +11,7 @@ IGMTrackingBase::IGMTrackingBase()
 	m_RescaleIntensity->SetOutputMinimum( itk::NumericTraits< VisualizationPixelType >::min() );
   
   m_ITK2VTKAdaptor    = ITK2VTKAdaptorFilterType::New();
-	m_ITK2VTKAdaptor->SetInput( m_RescaleIntensity->GetOutput() );
+//	m_ITK2VTKAdaptor->SetInput( m_RescaleIntensity->GetOutput() );
   
   // 2
   m_FusionVolumeReader      = VolumeReaderType::New();
@@ -31,7 +31,7 @@ IGMTrackingBase::IGMTrackingBase()
 	m_FusionRescaleIntensity->SetOutputMinimum( itk::NumericTraits< VisualizationPixelType >::min() );
 	
   m_FusionITK2VTKAdaptor    = ITK2VTKAdaptorFilterType::New();
-	m_FusionITK2VTKAdaptor->SetInput( m_FusionRescaleIntensity->GetOutput() );
+//	m_FusionITK2VTKAdaptor->SetInput( m_FusionRescaleIntensity->GetOutput() );
 	
   // 3
   m_ResampleImagePreFilter = ResampleImageFilterType::New();

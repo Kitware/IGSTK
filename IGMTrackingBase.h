@@ -50,7 +50,7 @@ public:
 		VisualizationVolumeType >   RescaleIntensityFilterType;
 	
 	typedef itk::ImageToVTKImageFilter< 
-		VisualizationVolumeType >   ITK2VTKAdaptorFilterType;
+		VolumeType >   ITK2VTKAdaptorFilterType;
 
   typedef itk::ConfidenceConnectedImageFilter< 
     VolumeType, VolumeType> ConfidenceConnectedFilterType;
