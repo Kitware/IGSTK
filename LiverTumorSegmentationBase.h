@@ -5,16 +5,28 @@
 #include "itkImageFileReader.h"
 #include "itkImageToVTKImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
-#include "DicomImageReader.h"
-#include "ThresholdLevelSetSegmentationModule.h"
 #include "itkImageFileWriter.h"
 #include "itkThresholdImageFilter.h"
+
+#include "DicomImageReader.h"
+#include "ConfidenceConnectedModule.h"
+#include "ConnectedThresholdModule.h"
+#include "ThresholdLevelSetSegmentationModule.h"
+
+const int NUMBER_OF_ALGORITHMS = 7;
+
+static char *ModuleNames[] = { "Threshold Module", "Threshold Level Set Module", "Confidence Connected Module", 
+    "Connected Threshold Module", "Isolated Connected Module", "Fast Marching Module",
+    "Geodesic Active Contour Module", "Watershed Module"
+    }; 
+
+typedef enum { THRESHOLD = 1, THRESHOLD_LEVEL_SET, CONFIDENCE_CONNECTED, CONNECTED_THRESHOLD, 
+  ISOLATED_CONNECTED, FAST_MARCHING, GEODESIC_ACTIVE_CONTOUR, WATERSHED} SegmentationModuleType;
 
 class LiverTumorSegmentationBase 
 {
 public:
   
-//  typedef signed short   PixelType;
   typedef unsigned char   PixelType;
 
   typedef unsigned char  VisualizationPixelType;
@@ -44,6 +56,7 @@ public:
 
   /** Writer that will send the content of the segmented image to
       a file.  This is expected to be a binary mask */
+
   typedef  itk::ImageFileWriter<  OutputImageType  > WriterType;
 
 public:
@@ -56,9 +69,9 @@ public:
   
   virtual void GetSeedPoint(float data[3]); 
   
-  virtual bool DoSegmentation( void );
+  virtual bool DoSegmentation( SegmentationModuleType sType = THRESHOLD_LEVEL_SET );
   
-  virtual bool DoThreshold( float lower, float upper );
+//  virtual bool DoThreshold( float lower, float upper );
 
   virtual void WriteSegmentedVolume( const char *fname );
 
@@ -72,19 +85,17 @@ protected:
 
   int                                     m_SeedIndex[3];
 
-  float									  m_SeedValue;
+  float									                  m_SeedValue;
 
   VolumeReaderType::Pointer               m_VolumeReader;
   
   RescaleIntensityFilterType::Pointer     m_RescaleIntensity;
 
-  ThresholdFilterType::Pointer            m_ThresholdVolumeFilter;
-
   ITK2VTKAdaptorFilterType::Pointer       m_ITK2VTKAdaptor;
   
-  RescaleIntensityFilterType::Pointer     m_OverlayVolumeRescaleIntensity;
+  RescaleIntensityFilterType::Pointer     m_SegmentedVolumeRescaleIntensity;
 
-  ITK2VTKAdaptorFilterType::Pointer       m_OverlayVolumeITK2VTKAdaptor;
+  ITK2VTKAdaptorFilterType::Pointer       m_SegmentedVolumeITK2VTKAdaptor;
   
   DicomReaderType                         m_DicomVolumeReader;
 
@@ -92,15 +103,21 @@ protected:
 
   VolumeType::ConstPointer                m_SegmentedVolume;
 
-  VolumeType::ConstPointer                m_ThresholdedVolume;
+//  VolumeType::ConstPointer                m_ThresholdedVolume;
 
-  ISIS::ThresholdLevelSetSegmentationModule	  m_LiverTumorSegmentationModule;
+  ThresholdFilterType::Pointer            m_ThresholdVolumeFilter;
 
-  char									  m_MessageString[256];
+  ISIS::ThresholdLevelSetSegmentationModule	  m_ThresholdLevelSetModule;
 
-  WriterType::Pointer					  m_Writer;
+  ISIS::ConfidenceConnectedModule	        m_ConfidenceConnectedModule;
 
-  VolumeReaderType::Pointer	temp_VolumeReader;
+  ISIS::ConnectedThresholdModule	        m_ConnectedThresholdModule;
+
+  char									                  m_MessageString[256];
+
+  WriterType::Pointer					            m_Writer;
+
+  VolumeReaderType::Pointer	              temp_VolumeReader;
 };
 
 

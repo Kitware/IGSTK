@@ -52,8 +52,6 @@ INCLUDE_DIRECTORIES(
 #  Define the list of source files
 #
 SET(IGSTK_HEADS
-  ConfidenceConnectedModule.h
-  ConnectedThresholdModule.h
   DicomImageReaderBase.h
   DicomImageReader.h
   RegistrationCTBase.h
@@ -64,8 +62,14 @@ SET(IGSTK_HEADS
   ImageSliceViewer.h
   vtkFlRenderWindowInteractor.h
   InteractorObserver.h
+  ConfidenceConnectedModule.h
+  ConnectedThresholdModule.h
   ThresholdLevelSetSegmentationModule.h
   LiverTumorSegmentationBase.h  
+#  FastMarchingModule.h
+#  GeodesicActiveContourModule.h
+#  IsolatedConnectedModule.h
+#  WatershedModule.h
   TubeWrappedLine.h
   MotionViewer.h
   FiducialRegistration.h
@@ -75,8 +79,6 @@ SET(IGSTK_HEADS
 )
 
 SET(IGSTK_SRCS
-  ConfidenceConnectedModule.cxx
-  ConnectedThresholdModule.cxx
   DicomImageReaderBase.cxx
   DicomImageReader.txx
   RegistrationCTBase.cxx
@@ -84,7 +86,13 @@ SET(IGSTK_SRCS
   ImageSliceViewer.cxx
   vtkFlRenderWindowInteractor.cxx
   InteractorObserver.cxx
+  ConfidenceConnectedModule.cxx
+  ConnectedThresholdModule.cxx
   ThresholdLevelSetSegmentationModule.cxx
+#  FastMarchingModule.cxx
+#  GeodesicActiveContourModule.cxx
+#  IsolatedConnectedModule.cxx
+#  WatershedModule.cxx
   LiverTumorSegmentationBase.cxx  
   TubeWrappedLine.cxx
   MotionViewer.cxx

@@ -16,13 +16,14 @@ LiverTumorSegmentationBase
   m_ITK2VTKAdaptor    = ITK2VTKAdaptorFilterType::New();
   m_ITK2VTKAdaptor->SetInput( m_RescaleIntensity->GetOutput() );
   
-  m_OverlayVolumeRescaleIntensity  = RescaleIntensityFilterType::New();
-  m_OverlayVolumeRescaleIntensity->SetOutputMaximum( itk::NumericTraits< VisualizationPixelType >::max() );
-  m_OverlayVolumeRescaleIntensity->SetOutputMinimum( itk::NumericTraits< VisualizationPixelType >::min() );
-  m_OverlayVolumeITK2VTKAdaptor    = ITK2VTKAdaptorFilterType::New();
-  m_OverlayVolumeITK2VTKAdaptor->SetInput( m_OverlayVolumeRescaleIntensity->GetOutput() );
+  m_SegmentedVolumeRescaleIntensity  = RescaleIntensityFilterType::New();
+  m_SegmentedVolumeRescaleIntensity->SetOutputMaximum( itk::NumericTraits< VisualizationPixelType >::max() );
+  m_SegmentedVolumeRescaleIntensity->SetOutputMinimum( itk::NumericTraits< VisualizationPixelType >::min() );
+  m_SegmentedVolumeITK2VTKAdaptor    = ITK2VTKAdaptorFilterType::New();
+  m_SegmentedVolumeITK2VTKAdaptor->SetInput( m_SegmentedVolumeRescaleIntensity->GetOutput() );
 
   m_ThresholdVolumeFilter = ThresholdFilterType::New();
+
   m_SeedValue = 0.0f;
 
     m_Writer = WriterType::New();
@@ -92,32 +93,63 @@ LiverTumorSegmentationBase::GetSeedPoint(float data[3])
   }
 }
 
-bool  LiverTumorSegmentationBase::DoSegmentation( void )
-{
+bool  LiverTumorSegmentationBase::DoSegmentation( SegmentationModuleType sType )
+  {
   if (!m_LoadedVolume) return false;
-
+  
   try 
-   {
-  m_LiverTumorSegmentationModule.SetInput( m_LoadedVolume );
-  printf("Seed Index -> ( %d  %d  %d )\n", m_SeedIndex[0], m_SeedIndex[1], m_SeedIndex[2] );
-  m_LiverTumorSegmentationModule.SetSeedPoint( m_SeedIndex[0], m_SeedIndex[1], m_SeedIndex[2] );
-  m_LiverTumorSegmentationModule.Execute();
-  m_SegmentedVolume = m_LiverTumorSegmentationModule.GetOutput();  
+    {
+    switch( sType )
+      {
+      case THRESHOLD:
+        m_ThresholdVolumeFilter->SetInput( m_LoadedVolume );
+        m_ThresholdVolumeFilter->SetOutsideValue( 0 );
+        m_ThresholdVolumeFilter->ThresholdOutside( 
+          static_cast<PixelType>( m_ThresholdLevelSetModule.GetLowerThreshold() ), 
+          static_cast<PixelType>( m_ThresholdLevelSetModule.GetUpperThreshold() ));
+        m_ThresholdVolumeFilter->Update();
+        m_SegmentedVolume = m_ThresholdVolumeFilter->GetOutput();  
+        break;
 
-  //**************** For debugging ( R E M O V E       L A T E R  )
-  m_Writer->SetFileName( "confidence_connected.gipl" );
-  m_Writer->SetInput( m_LiverTumorSegmentationModule.GetInitialSegmentationOutput() );
-  m_Writer->Update();
-  // End 
+      case CONFIDENCE_CONNECTED:
+        m_ConfidenceConnectedModule.SetInput( m_LoadedVolume );
+        printf("Seed Index -> ( %d  %d  %d )\n", m_SeedIndex[0], m_SeedIndex[1], m_SeedIndex[2] );
+        m_ConfidenceConnectedModule.SetSeedPoint( m_SeedIndex[0], m_SeedIndex[1], m_SeedIndex[2] );
+        m_ConfidenceConnectedModule.Execute();
+        m_SegmentedVolume = m_ConfidenceConnectedModule.GetOutput(); 
+       break;
 
-  return true;
+      case CONNECTED_THRESHOLD:
+        m_ConnectedThresholdModule.SetInput( m_LoadedVolume );
+        printf("Seed Index -> ( %d  %d  %d )\n", m_SeedIndex[0], m_SeedIndex[1], m_SeedIndex[2] );
+        m_ConnectedThresholdModule.SetSeedPoint( m_SeedIndex[0], m_SeedIndex[1], m_SeedIndex[2] );
+        m_ConnectedThresholdModule.Execute();
+        m_SegmentedVolume = m_ConnectedThresholdModule.GetOutput(); 
+        break;
+
+      case THRESHOLD_LEVEL_SET:
+        m_ThresholdLevelSetModule.SetInput( m_LoadedVolume );
+        printf("Seed Index -> ( %d  %d  %d )\n", m_SeedIndex[0], m_SeedIndex[1], m_SeedIndex[2] );
+        m_ThresholdLevelSetModule.SetSeedPoint( m_SeedIndex[0], m_SeedIndex[1], m_SeedIndex[2] );
+        m_ThresholdLevelSetModule.Execute();
+        m_SegmentedVolume = m_ThresholdLevelSetModule.GetOutput(); 
+        break;
+     }
+     
+     //**************** For debugging ( R E M O V E       L A T E R  )
+//     m_Writer->SetFileName( "confidence_connected.gipl" );
+//     m_Writer->SetInput( m_ThresholdLevelSetModule.GetInitialSegmentationOutput() );
+//     m_Writer->Update();
+     // End 
+     
+     return true;
   }
   catch( std::exception & e )
-  {
+    {
     std::cerr << e.what() << std::endl;
     std::cerr << "exception in Liver Tumor Segmentation Base Segmentation Method " << std::endl;
     return false;
-  }
+    }
 }
 
 
@@ -158,6 +190,7 @@ void LiverTumorSegmentationBase::WriteBinarySegmentedVolume( const char *fname )
   }
 }
 
+/*
 bool LiverTumorSegmentationBase::DoThreshold( float lower, float upper )
 {
   if (!m_LoadedVolume) return false;
@@ -179,6 +212,6 @@ bool LiverTumorSegmentationBase::DoThreshold( float lower, float upper )
     return false;
   }
 }
-
+*/
 
 
