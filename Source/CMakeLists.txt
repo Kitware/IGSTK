@@ -13,6 +13,7 @@ SET(IGSTKSandbox_HEADS
   igstkEllipsoidObject.h  
   igstkCylinderObject.h
   igstkObjectProperty.h
+  igstkMouseTracker.h
 )
 
 # The implementation files
@@ -26,6 +27,7 @@ SET(IGSTKSandbox_SRCS
   igstkEllipsoidObject.cxx
   igstkCylinderObject.cxx
   igstkObjectProperty.cxx
+  igstkMouseTracker.cxx
 )
 
 # Adding the IGSTKSandbox library
