@@ -268,13 +268,13 @@ void QuatToRotationMatrix( const QuatRotation *pQuatRotation, RotationMatrix rot
 	float QyQz = pQuatRotation->m_Qy * pQuatRotation->m_Qz ;
 
 	rotationMatrix[0][0] = Q0Q0 + QxQx - QyQy - QzQz ;
-	rotationMatrix[0][1] = 2.0 * ( - Q0Qz + QxQy );
-	rotationMatrix[0][2] = 2.0 * (   Q0Qy + QxQz );
-	rotationMatrix[1][0] = 2.0 * (   Q0Qz + QxQy );
+	rotationMatrix[0][1] = 2.0f * ( - Q0Qz + QxQy );
+	rotationMatrix[0][2] = 2.0f * (   Q0Qy + QxQz );
+	rotationMatrix[1][0] = 2.0f * (   Q0Qz + QxQy );
 	rotationMatrix[1][1] = Q0Q0 - QxQx + QyQy - QzQz ;
-	rotationMatrix[1][2] = 2.0 * ( - Q0Qx + QyQz );
-	rotationMatrix[2][0] = 2.0 * ( - Q0Qy + QxQz );
-	rotationMatrix[2][1] = 2.0 * (   Q0Qx + QyQz );
+	rotationMatrix[1][2] = 2.0f * ( - Q0Qx + QyQz );
+	rotationMatrix[2][0] = 2.0f * ( - Q0Qy + QxQz );
+	rotationMatrix[2][1] = 2.0f * (   Q0Qx + QyQz );
 	rotationMatrix[2][2] = Q0Q0 - QxQx - QyQy + QzQz ;
 }
 
