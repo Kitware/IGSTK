@@ -21,11 +21,13 @@ INCLUDE_DIRECTORIES (
 ADD_TEST(igstkRenderWindowTest ${IGSTKSandbox_TESTS} igstkRenderWindowTest)
 ADD_TEST(igstkEllipsoidObjectTest ${IGSTKSandbox_TESTS} igstkEllipsoidObjectTest)
 ADD_TEST(igstkSceneTest ${IGSTKSandbox_TESTS} igstkSceneTest)
+ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 
 SET(BasicTests_SRCS
   igstkRenderWindowTest.cxx
   igstkEllipsoidObjectTest.cxx
   igstkSceneTest.cxx
+  igstkMouseTrackerTest.cxx
   )
 
 ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${BasicTests_SRCS})
