@@ -8,7 +8,7 @@ class Tester
 {
 public:
 
-  typedef igstk::StateMachine< Tester, 3, 3 >   StateMachineType;
+  typedef igstk::StateMachine< Tester, 4, 3 >   StateMachineType;
 
 
   Tester()
@@ -32,21 +32,28 @@ public:
     }
 
   
+  // Methods that generate input signals
   void InsertChange() 
     {
     std::cout << "Insert Change" << std::endl;
+    m_StateMachine.SetInput( 0 );
+    m_StateMachine.StateTransition();
     }
  
-
-  void CancelAndReturnChange() 
-    {
-    std::cout << "Cancelling and returning Change" << std::endl;
-    }
-
  
   void SelectDrink() 
     {
     std::cout << "Select Drink" << std::endl;
+    m_StateMachine.SetInput( 1 );
+    m_StateMachine.StateTransition();
+    }
+
+
+  // Reaction methods that will be invoked during the 
+  // state machine transitions.
+  void CancelAndReturnChange() 
+    {
+    std::cout << "Cancelling and returning Change" << std::endl;
     }
 
 
@@ -82,8 +89,24 @@ int igstkStateMachineTest(int argc, char * argv [])
   typedef igstk::StateMachine< Tester, 3, 3 >   StateMachineType;
 
 
+  std::cout << std::endl << std::endl;
+  std::cout << "FIRST test run " << std::endl;
+
+  // This is the cannonical path for using the class. 
   tester.InsertChange();
   tester.InsertChange();
+  tester.InsertChange();
+  tester.SelectDrink();
+
+
+  std::cout << std::endl << std::endl;
+  std::cout << "Second test run " << std::endl;
+
+  // try to get drink ealy on purpose
+  tester.InsertChange();
+  tester.SelectDrink();
+  tester.InsertChange();
+  tester.SelectDrink();
   tester.InsertChange();
   tester.SelectDrink();
 
