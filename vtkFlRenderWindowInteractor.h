@@ -32,7 +32,7 @@
 #include <vtkRenderWindowInteractor.h>
 
 class vtkFlRenderWindowInteractor : public Fl_Gl_Window, public vtkRenderWindowInteractor {
- protected:
+ public:
    // Fl_Gl_Window overrides
    void flush(void);
    void draw( void );
