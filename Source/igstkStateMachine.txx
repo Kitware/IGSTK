@@ -118,6 +118,7 @@ StateMachine< TClass >
     {
     std::cerr << "State selected as initial state has not been defined yet. " << std::endl;
     std::cerr << "Attempted state = " << descriptor << std::endl;
+    std::cerr.flush();
     return;
     } 
 
@@ -140,6 +141,7 @@ StateMachine< TClass >
     std::cerr << "but the m_This pointer is null. " << std::endl;
     std::cerr << "The method SetClass() must be invoked with a valid pointer " << std::endl;
     std::cerr << "before attempting to run the machine." << std::endl;
+    std::cerr.flush();
     return;
     }
 
@@ -151,6 +153,7 @@ StateMachine< TClass >
     std::cerr << "There is no reason for invoking SetReadyToRun() twice." << std::endl;
     std::cerr << "Something should be wrong in the logic or your " << std::endl;
     std::cerr << "state machine programming." << std::endl;
+    std::cerr.flush();
     return;
     }
 
@@ -172,6 +175,7 @@ StateMachine< TClass >
     std::cerr << "but the m_This pointer is null. " << std::endl;
     std::cerr << "The method SetClass() must be invoked with a valid pointer " << std::endl;
     std::cerr << "before attempting to run the machine." << std::endl;
+    std::cerr.flush();
     return;
     }
 
@@ -180,6 +184,7 @@ StateMachine< TClass >
     std::cerr << "Error: attempt to invoke a StateTransition " << std::endl;
     std::cerr << "but the machine is not ready to go" << std::endl;
     std::cerr << "You must invoke the method SetReadyToRun() first." << std::endl;
+    std::cerr.flush();
     return;
     }
 
@@ -189,6 +194,7 @@ StateMachine< TClass >
   if( transitionsFromThisState == m_Transitions.end() )
     {
     std::cerr << "No transitions have been defined for curren state = " << m_State << std::endl;
+    std::cerr.flush();
     return;
     } 
 
@@ -199,6 +205,8 @@ StateMachine< TClass >
     std::cerr << "No transitions have been defined for curren state and input " << std::endl;
     std::cerr << "State = "  << m_State << std::endl;
     std::cerr << "Input = "  << input   << std::endl;
+    std::cerr << std::endl;
+    std::cerr.flush();
     return;
     } 
 
@@ -208,6 +216,7 @@ StateMachine< TClass >
   if( actionsFromThisState == m_Actions.end() )
     {
     std::cerr << "No actions have been defined for curren state = " << m_State << std::endl;
+    std::cerr.flush();
     return;
     } 
 
@@ -218,6 +227,8 @@ StateMachine< TClass >
     std::cerr << "No actions have been defined for curren state and input " << std::endl;
     std::cerr << "State = "  << m_State << std::endl;
     std::cerr << "Input = "  << input   << std::endl;
+    std::cerr << std::endl;
+    std::cerr.flush();
     return;
     } 
 
@@ -252,6 +263,7 @@ StateMachine< TClass >
     std::cerr << "Attempted state     = " << stateDescriptor << std::endl;
     std::cerr << "Attempted input     = " << inputDescriptor << std::endl;
     std::cerr << "Attempted new state = " << newStateDescriptor << std::endl;
+    std::cerr.flush();
     return;
     } 
 
@@ -264,6 +276,7 @@ StateMachine< TClass >
     std::cerr << "Attempted state     = " << stateDescriptor << std::endl;
     std::cerr << "Attempted input     = " << inputDescriptor << std::endl;
     std::cerr << "Attempted new state = " << newStateDescriptor << std::endl;
+    std::cerr.flush();
     return;
     } 
 
@@ -277,6 +290,7 @@ StateMachine< TClass >
     std::cerr << "Attempted state     = " << stateDescriptor << std::endl;
     std::cerr << "Attempted input     = " << inputDescriptor << std::endl;
     std::cerr << "Attempted new state = " << newStateDescriptor << std::endl;
+    std::cerr.flush();
     return;
     } 
 
@@ -313,6 +327,7 @@ StateMachine< TClass >
       std::cerr << "State     = " << stateDescriptor << std::endl;
       std::cerr << "Input     = " << inputDescriptor << std::endl;
       std::cerr << "New state = " << transitionsFromThisStateAndInput->second << std::endl;
+      std::cerr.flush();
       return;
       }
     else
@@ -321,6 +336,52 @@ StateMachine< TClass >
       (*(transitionsFromThisState->second))[inputDescriptor] = newStateDescriptor;
       }
     }
+
+
+  // Now do the equivalent for the Action
+
+  // Search for existing Actions for that State
+  typename ActionContainer::const_iterator  actionsFromThisState = m_Actions.find( stateDescriptor );
+  
+  if( actionsFromThisState == m_Actions.end() )
+    {
+    // No action has been created for this particular state.
+    // Therefore create a new entry for it.
+    ActionsPerInputContainer *statesPerInput = new ActionsPerInputContainer;
+
+    // Insert the new state that should be assumed if the inputDescriptor is received.
+    (*statesPerInput)[ inputDescriptor ] = action;
+
+    // Add the statesPerInput container to the Actions container.
+    m_Actions[ stateDescriptor ] = statesPerInput;
+    return;
+    } 
+  else
+    {
+    // Check if the particular Input has already an Entry here
+    typename ActionsPerInputContainer::const_iterator actionsFromThisStateAndInput =
+                            actionsFromThisState->second->find( inputDescriptor );
+    if( actionsFromThisStateAndInput != actionsFromThisState->second->end() )
+      {
+      // There is already an entry for this input. This is suspicious
+      // because the user may be overriding a previous action by
+      // accident. 
+      std::cerr << "Attempt to override an existing action. "
+                << "Please verify the programming of your state machine. "
+                << "There is already a action defined for the combination: " << std::endl;
+      std::cerr << "State     = " << stateDescriptor << std::endl;
+      std::cerr << "Input     = " << inputDescriptor << std::endl;
+      std::cerr << "New state = " << actionsFromThisStateAndInput->second << std::endl;
+      std::cerr.flush();
+      return;
+      }
+    else
+      {
+      // Finally, add the Action: new State to assume when the specific Input is received.
+      (*(actionsFromThisState->second))[inputDescriptor] = action;
+      }
+    }
+
 
 }
 
@@ -355,9 +416,9 @@ StateMachine< TClass >
                            transitionsFromThisState->second->begin();
       while( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
         {
-        ostr << "  State" << transitionsFromThisStateAndInput->first << " -> State";
-        ostr << transitionsFromThisStateAndInput->first;
-        ostr << " [label=\"" << transitionsFromThisStateAndInput->second << "\"";
+        ostr << transitionsFromThisState->first << " -> ";
+        ostr << transitionsFromThisStateAndInput->second;
+        ostr << " [label=\"" << transitionsFromThisStateAndInput->first << "\"";
         ostr << " fontname=Helvetica, fontcolor=Blue";
         ostr << "];" << std::endl;
         ++transitionsFromThisStateAndInput;
@@ -371,7 +432,7 @@ StateMachine< TClass >
     StatesContainer::const_iterator  stateId = m_States.begin();
     while( stateId != m_States.end() )
       {
-      ostr << "  State" << *stateId << "  [label=\"";
+      ostr << *stateId << "  [label=\"";
       ostr << *stateId << "\"";
       ostr << " fontname=Helvetica, fontcolor=Black";
       ostr << "];" << std::endl;
