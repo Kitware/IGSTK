@@ -107,5 +107,18 @@ void EllipsoidObjectRepresentation::CreateActors()
   ellipsoidMapper->Delete();
 }
 
+/** Create a copy of the current object representation */
+EllipsoidObjectRepresentation::Pointer
+EllipsoidObjectRepresentation::Copy()
+{
+  Pointer newOR = EllipsoidObjectRepresentation::New();
+  newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
+  newOR->SetOpacity(this->GetOpacity());
+  newOR->SetEllipsoid(m_EllipsoidObject);
+
+  return newOR;
+}
+
+
 } // end namespace igstk
 

@@ -96,5 +96,19 @@ void CylinderObjectRepresentation::CreateActors()
   cylinderMapper->Delete();
 }
 
+/** Create a copy of the current object representation */
+CylinderObjectRepresentation::Pointer
+CylinderObjectRepresentation::Copy()
+{
+  Pointer newOR = CylinderObjectRepresentation::New();
+  newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
+  newOR->SetOpacity(this->GetOpacity());
+  newOR->SetCylinder(m_CylinderSpatialObject);
+
+  return newOR;
+}
+
+
+
 } // end namespace igstk
 

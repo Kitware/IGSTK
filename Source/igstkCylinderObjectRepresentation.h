@@ -55,6 +55,9 @@ public:
   /** Create the VTK actors */
   void CreateActors();
 
+  /** Return a copy of the current object representation */
+  Pointer Copy();
+
   /** Connect this representation class to the spatial object */
   void SetCylinder( const CylinderSpatialObjectType * cylinderObject );
 

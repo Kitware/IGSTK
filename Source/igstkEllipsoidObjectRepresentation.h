@@ -53,8 +53,11 @@ public:
   /** Method for creation of a reference counted object. */
   NewMacro( EllipsoidObjectRepresentation );
 
-  /** Create the VTK actors */
+  /** Create the VTK actors per view */
   void CreateActors();
+
+  /** Return a copy of the current object representation */
+  Pointer Copy();
 
   /** Connect this representation class to the spatial object */
   void SetEllipsoid( const EllipsoidObjectType * ellipsoidObject );
