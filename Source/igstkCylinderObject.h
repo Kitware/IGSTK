@@ -47,10 +47,10 @@ public:
   typedef itk::CylinderSpatialObject     CylinderSpatialObjectType;
 
   /**  Run-time type information (and related methods). */
-  itkTypeMacro( Self, SpatialObject );
+  igstkTypeMacro( Self, SpatialObject );
 
   /** Method for creation of a reference counted object. */
-  NewMacro( CylinderObject );
+  igstkNewMacro( CylinderObject );
 
 
   /** Set the radius of the Cylinder */

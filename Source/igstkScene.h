@@ -56,10 +56,10 @@ public:
   typedef ObjectListType::const_iterator    ObjectListConstIterator;
      
   /** Method for defining the name of the class */ 
-  TypeMacro(Scene, Object); 
+  igstkTypeMacro(Scene, Object); 
 
   /** Method for creation through the object factory */ 
-  NewMacro(Self); 
+  igstkNewMacro(Self); 
 
   /** Add an object representation to the list of children and associate it
    * with a specific view. */ 
@@ -97,7 +97,7 @@ private:
   typedef StateMachineType::StateType                StateType;
   typedef StateMachineType::InputType                InputType;
 
-  FriendClassMacro( StateMachineType );
+  igstkFriendClassMacro( StateMachineType );
 
   // Actual execution method associated to the ones that can be requested from
   // the external API. Only the state machine is allowed to call the execution

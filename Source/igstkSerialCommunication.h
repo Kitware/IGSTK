@@ -45,7 +45,7 @@ class SerialCommunication : public Communication
 {
 public:
 
-  FriendClassMacro( AuroraTracker );
+  igstkFriendClassMacro( AuroraTracker );
 
 protected:
 
@@ -96,30 +96,30 @@ public:
 
 
   /**  Run-time type information (and related methods). */
-  itkTypeMacro(SerialCommunication, Object);
+  igstkTypeMacro(SerialCommunication, Object);
 
   /** Abstract class doesn't have a New method */
-  //NewMacro(Self);  
+  //igstkNewMacro(Self);  
 
-  GetMacro(BaudRate, BaudRateType);
+  igstkGetMacro(BaudRate, BaudRateType);
 
-  GetMacro(ByteSize, ByteSizeType);
+  igstkGetMacro(ByteSize, ByteSizeType);
 
-  GetMacro(Parity, ParityType);
+  igstkGetMacro(Parity, ParityType);
 
-  GetMacro(StopBits, StopBitsType);
+  igstkGetMacro(StopBits, StopBitsType);
 
-  GetMacro(HardwareHandshake, HardwareHandshakeType);
+  igstkGetMacro(HardwareHandshake, HardwareHandshakeType);
 
-  SetMacro(BaudRate, BaudRateType);
+  igstkSetMacro(BaudRate, BaudRateType);
 
-  SetMacro(ByteSize, ByteSizeType);
+  igstkSetMacro(ByteSize, ByteSizeType);
 
-  SetMacro(Parity, ParityType);
+  igstkSetMacro(Parity, ParityType);
 
-  SetMacro(StopBits, StopBitsType);
+  igstkSetMacro(StopBits, StopBitsType);
 
-  SetMacro(HardwareHandshake, HardwareHandshakeType);
+  igstkSetMacro(HardwareHandshake, HardwareHandshakeType);
 
   /** The method OpenCommunication sets up communication as per the data
   provided. */

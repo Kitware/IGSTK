@@ -36,7 +36,7 @@ public:
     typedef itk::Point< double, 3 >  PositionType;
 
     /** Method for creation of a reference counted object. */
-    NewMacro( MouseTracker );  
+    igstkNewMacro( MouseTracker );  
 
     void Initialize( const char *fileName = NULL );
 

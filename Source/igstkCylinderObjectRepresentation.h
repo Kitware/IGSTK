@@ -49,10 +49,10 @@ public:
   typedef CylinderObject                 CylinderSpatialObjectType;
 
   /**  Run-time type information (and related methods). */
-  itkTypeMacro( Self, ObjectRepresentation );
+  igstkTypeMacro( Self, ObjectRepresentation );
 
   /** Method for creation of a reference counted object. */
-  NewMacro( CylinderObjectRepresentation );
+  igstkNewMacro( CylinderObjectRepresentation );
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
@@ -67,7 +67,7 @@ protected:
   typedef StateMachineType::StateType                StateType;
   typedef StateMachineType::InputType                InputType;
 
-  FriendClassMacro( StateMachineType );
+  igstkFriendClassMacro( StateMachineType );
 
   CylinderObjectRepresentation( void );
   ~CylinderObjectRepresentation( void );

@@ -50,10 +50,10 @@ public:
   typedef EllipsoidObject                EllipsoidObjectType;
 
   /**  Run-time type information (and related methods). */
-  itkTypeMacro( Self, ObjectRepresentation );
+  igstkTypeMacro( Self, ObjectRepresentation );
 
   /** Method for creation of a reference counted object. */
-  NewMacro( EllipsoidObjectRepresentation );
+  igstkNewMacro( EllipsoidObjectRepresentation );
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
@@ -68,7 +68,7 @@ protected:
   typedef StateMachineType::StateType                StateType;
   typedef StateMachineType::InputType                InputType;
 
-  FriendClassMacro( StateMachineType );
+  igstkFriendClassMacro( StateMachineType );
 
   EllipsoidObjectRepresentation( void );
   virtual ~EllipsoidObjectRepresentation( void );

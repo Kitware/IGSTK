@@ -49,10 +49,10 @@ public:
   typedef itk::SpatialObject<3>          SpatialObjectType;
 
   /**  Run-time type information (and related methods). */
-  itkTypeMacro( Self, Object );
+  igstkTypeMacro( Self, Object );
 
   /** Method for creation of a reference counted object. */
-  NewMacro( SpatialObject );
+  igstkNewMacro( SpatialObject );
 
   /** Set the Transform corresponding to the ObjectToWorld transformation of
  * the SpatialObject. */

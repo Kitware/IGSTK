@@ -55,15 +55,15 @@ public:
   typedef SpatialObject                      SpatialObjectType;
   typedef std::vector<vtkProp3D*>            ActorsListType; 
 
-  itkTypeMacro(ObjectRepresentation, itk::Object);
+  igstkTypeMacro(ObjectRepresentation, itk::Object);
 
   typedef StateMachine< Self >                       StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer   ActionType;
   typedef StateMachineType::StateType                StateType;
   typedef StateMachineType::InputType                InputType;
 
-  FriendClassMacro( StateMachineType );
-  FriendClassMacro( Scene );
+  igstkFriendClassMacro( StateMachineType );
+  igstkFriendClassMacro( Scene );
 
   /** Set the color */
   void SetColor(float r, float g, float b);
@@ -74,8 +74,8 @@ public:
   float GetBlue() const  {return m_Color[2];}
 
   /** Set/Get the opacity */
-  SetMacro(Opacity,float);
-  GetMacro(Opacity,float);
+  igstkSetMacro(Opacity,float);
+  igstkGetMacro(Opacity,float);
 
   /** Has the object been modified */
   bool IsModified() const;
@@ -92,7 +92,7 @@ protected:
   virtual void CreateActors()= 0;
 
   /** Get the VTK actors */
-  GetMacro( Actors, ActorsListType );
+  igstkGetMacro( Actors, ActorsListType );
 
   /** Empty the list of actors */
   void DeleteActors();

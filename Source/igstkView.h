@@ -60,10 +60,10 @@ private:
   typedef StateMachineType::StateType                StateType;
   typedef StateMachineType::InputType                InputType;
 
-  FriendClassMacro( StateMachineType );
-  FriendClassMacro( Scene );
+  igstkFriendClassMacro( StateMachineType );
+  igstkFriendClassMacro( Scene );
 
-  TypeMacro( View, vtkRenderWindowInteractor );
+  igstkTypeMacro( View, vtkRenderWindowInteractor );
   
 protected:
 
