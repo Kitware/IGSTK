@@ -31,14 +31,14 @@ SET(BasicTests_SRCS
   )
 
 
-IF(WIN32)
-  IF(NOT CYGWIN)
+#IF(WIN32)
+#  IF(NOT CYGWIN)
     ADD_TEST(igstkSerialCommunicationForWindowsTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationForWindowsTest)
     SET(BasicTests_SRCS ${BasicTests_SRCS}
-        igstkSerialCommunicationForWindowsTest.cxx
+        igstkSerialCommunicationTest.cxx
        )
-  ENDIF(NOT CYGWIN)
-ENDIF(WIN32)
+#  ENDIF(NOT CYGWIN)
+#ENDIF(WIN32)
 
 ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${BasicTests_SRCS})
 

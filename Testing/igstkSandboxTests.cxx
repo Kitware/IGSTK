@@ -13,7 +13,7 @@ void RegisterTests()
   REGISTER_TEST(igstkCylinderObjectTest);
   REGISTER_TEST(igstkSceneTest);
   REGISTER_TEST(igstkMouseTrackerTest);
-#if defined(_WIN32) && !defined(__CYGWIN__)
-  REGISTER_TEST(igstkSerialCommunicationForWindowsTest);
-#endif
+//#if defined(_WIN32) && !defined(__CYGWIN__)
+  REGISTER_TEST(igstkSerialCommunicationTest);
+//#endif
 }
