@@ -306,13 +306,13 @@ EllipseEstimator::GetPoints ( double x )
 
 	double delta = B *B - 4 *A * C;
 
+    PointType p1(2);
+	PointType p2(2);
 	if ( ( delta >= 0) && ( A != 0 ) )
 	{
-	  PointType p1(2);
 	  p1[0] = x;
 	  p1[1] = ( -B - sqrt(delta) ) / (2 * A);
-
-	  PointType p2(2);
+	  
 	  p2[0] = x;
 	  p2[1] = ( -B + sqrt(delta) ) / (2 * A);
 
@@ -320,10 +320,7 @@ EllipseEstimator::GetPoints ( double x )
 	  points[1] = p2;
 	}
 	else {
-	  PointType p1;
 	  p1[0] =  p1[1] = 0;
-
-	  PointType p2;
 	  p2[0] = p2[1] = 0;
 
 	  points[0] = p1;
