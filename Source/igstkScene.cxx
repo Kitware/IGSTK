@@ -16,6 +16,7 @@
 =========================================================================*/
 #include "igstkScene.h"
 #include <algorithm>
+#include <igstkEvents.h>
 
 namespace igstk
 {
@@ -23,6 +24,8 @@ namespace igstk
 /** Constructor */
 Scene::Scene()
 {
+  m_LastAddedObject = 0;
+  m_LastRemovedObject = 0;
 }
 
 /** Destructor */
@@ -35,6 +38,8 @@ void Scene::AddObject(ObjectRepresentation * pointer )
 {
   m_Objects.push_back( pointer );
   this->Modified();
+  m_LastAddedObject = pointer;
+  this->InvokeEvent( SceneAddObjectEvent() );
 }
 
 /** Remove a spatial object from the Scene */
@@ -48,7 +53,9 @@ void Scene::RemoveObject( ObjectRepresentation * pointer )
     if( *it == pointer )
       {
       m_Objects.erase( it );
+      m_LastRemovedObject = pointer;
       this->Modified();
+      this->InvokeEvent( SceneRemoveObjectEvent() );
       }
     }
   else
@@ -56,28 +63,7 @@ void Scene::RemoveObject( ObjectRepresentation * pointer )
     //throw an exception object to let user know that he tried to remove an object
     // which is not in the list of the children.
     }
-}
 
-/** Add an  object to the Scene */
-void Scene::AddToView( View * view )
-{
-  Scene::ObjectListConstIterator it        = m_Objects.begin();
-  Scene::ObjectListConstIterator objectEnd = m_Objects.end();
-
-  while( it != objectEnd )
-    {
-    (*it)->CreateActors();
-
-    ObjectRepresentation::ActorsListType actors = (*it)->GetActors();
-    ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
-    while(actorIt != actors.end())
-      {
-      view->RequestAddActor(*actorIt);
-      actorIt++;
-      }
-
-    it++;
-    }
 }
 
 

@@ -34,6 +34,7 @@
 
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
+#include "igstkScene.h"
 
 namespace igstk{
 
@@ -55,6 +56,10 @@ protected:
   ~View( void );
 
 public:
+  
+  typedef View                               Self;
+  typedef itk::SimpleMemberCommand< Self >   ObserverType;
+  
   // vtkRenderWindowInteractor overrides
   void Initialize();
   void Enable();
@@ -75,7 +80,7 @@ public:
   void EnableInteractions();
 
   /** Add a vtk Actor */
-  void RequestAddActor( vtkProp3D * actor );
+  void SetScene(igstk::Scene* scene);
 
 protected:
   
@@ -98,13 +103,15 @@ private:
   vtkRenderer           * m_Renderer;
   vtkCamera             * m_Camera;
   bool                    m_InteractionHandling;
-
+  igstk::Scene::Pointer   m_Scene;          
 
   /** Member variables for holding temptative arguments of functions.
    *  This is needed for implementing a layer of security that decouples
    *  user invokations from the actual state of this class */
   vtkProp3D            * m_NewActor;
   
+  ObserverType::Pointer     m_SceneAddObjectObserver;
+  ObserverType::Pointer     m_SceneRemoveObjectObserver;
 
 private:
 
@@ -112,6 +119,10 @@ private:
 
   /** Add a vtk Actor */
   void AddActor();
+
+  void RequestAddActor( vtkProp3D * actor );
+  void UpdateViewFromAddedObject();
+  void UpdateViewFromRemovedObject();
 
 
 private:

@@ -21,7 +21,7 @@
 #include <vtkInteractorStyle.h>
 #include <vtkVersion.h>
 #include <vtkCommand.h>
-
+#include <igstkEvents.h>
 
 namespace igstk{
 
@@ -56,6 +56,13 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor()
   m_StateMachine.SelectInitialState( m_IdleState );
 
   m_StateMachine.SetReadyToRun();
+
+  m_SceneAddObjectObserver =  ObserverType::New();
+  m_SceneAddObjectObserver->SetCallbackFunction(this, & View::UpdateViewFromAddedObject);
+  m_SceneRemoveObjectObserver =  ObserverType::New();
+  m_SceneRemoveObjectObserver->SetCallbackFunction(this, & View::UpdateViewFromRemovedObject);
+
+  m_Scene = 0;
 
 }
 
@@ -105,6 +112,90 @@ void View::Update()
   this->redraw();
 }
 
+/** Callback function, if the scene has been modified, i.e. an object has been added */
+void View::UpdateViewFromAddedObject()
+{
+  if(!m_Scene)
+    {
+    return;
+    }
+
+  ObjectRepresentation* object = m_Scene->GetLastAddedObject();
+
+  if(!object)
+    {
+    return;
+    }
+
+  object->CreateActors();
+
+  ObjectRepresentation::ActorsListType actors = object->GetActors();
+  ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
+  while(actorIt != actors.end())
+    {
+    this->RequestAddActor(*actorIt);
+    actorIt++;
+    }
+
+}
+
+/** Callback function, if the scene has been modified, i.e. an object has been removed */
+void View::UpdateViewFromRemovedObject()
+{
+  if(!m_Scene)
+    {
+    return;
+    }
+
+  ObjectRepresentation* object = m_Scene->GetLastRemovedObject();
+
+  if(!object)
+    {
+    return;
+    }
+
+  // First we need to remove the actor from the renderer
+  ObjectRepresentation::ActorsListType actors = object->GetActors();
+  ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
+  while(actorIt != actors.end())
+    {
+    // FIXME: This needs to use the state machine concept
+    m_Renderer->RemoveActor( *actorIt );
+    actorIt++;
+    }
+
+  // Second we delete the actors created by the object
+  object->DeleteActors();
+
+}
+
+/** Set the scene */
+void View::SetScene(igstk::Scene* scene)
+{
+  m_Scene = scene;
+  m_Scene->AddObserver( SceneAddObjectEvent(),   m_SceneAddObjectObserver);
+  m_Scene->AddObserver( SceneRemoveObjectEvent(),   m_SceneRemoveObjectObserver);
+
+  Scene::ObjectListType objects = m_Scene->GetObjects();
+  Scene::ObjectListConstIterator it        = objects.begin();
+  Scene::ObjectListConstIterator objectEnd = objects.end();
+
+  while( it != objectEnd )
+    {
+    (*it)->CreateActors();
+
+    ObjectRepresentation::ActorsListType actors = (*it)->GetActors();
+    ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
+    while(actorIt != actors.end())
+      {
+      this->RequestAddActor(*actorIt);
+      actorIt++;
+      }
+    it++;
+    }
+}
+
+
 /** */
 void View::RequestAddActor( vtkProp3D * actor )
 {
@@ -118,7 +209,6 @@ void View::RequestAddActor( vtkProp3D * actor )
     m_StateMachine.ProcessInput( m_ValidAddActor );
     }
 }
-
 
 
 /** */
@@ -333,8 +423,10 @@ int View::handle( int event )
       
     case FL_KEYBOARD:   // keypress
       this->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);        
-      this->InvokeEvent(vtkCommand::KeyPressEvent, NULL);
-      this->InvokeEvent(vtkCommand::CharEvent, NULL);
+      
+      // Disabling VTK keyboard interaction
+      //this->InvokeEvent(vtkCommand::KeyPressEvent, NULL);
+      //this->InvokeEvent(vtkCommand::CharEvent, NULL);
      
       // now for possible controversy: there is no way to find out if the InteractorStyle actually did
       // something with this event.  To play it safe (and have working hotkeys), we return "0", which indicates

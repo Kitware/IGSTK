@@ -18,8 +18,7 @@
 #ifndef __igstkScene_h 
 #define __igstkScene_h 
 
-#include "igstkObjectRepresentation.h"  
-#include "igstkView.h"  
+#include "igstkObjectRepresentation.h"   
  
 #include <list>
 
@@ -73,13 +72,19 @@ public:
   /** Clear function : Remove all the objects in the scene */
   void Clear();
 
-  /** Connect the Scene to a particular View */
-  void AddToView( View * view );
+  /** Get the last added object */
+  ObjectRepresentation* GetLastAddedObject() {return m_LastAddedObject;}
+
+  /** Get the last removed object */
+  ObjectRepresentation* GetLastRemovedObject() {return m_LastRemovedObject;}
 
 protected: 
 
   /** List of the children object plug to the SceneSpatialObject spatial object. */
   ObjectListType m_Objects; 
+
+  ObjectPointer  m_LastAddedObject;
+  ObjectPointer  m_LastRemovedObject;
 
   /** constructor */ 
   Scene(); 
