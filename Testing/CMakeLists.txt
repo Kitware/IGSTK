@@ -23,6 +23,7 @@ ADD_TEST(igstkCylinderObjectTest ${IGSTKSandbox_TESTS} igstkCylinderObjectTest)
 ADD_TEST(igstkSceneTest ${IGSTKSandbox_TESTS} igstkSceneTest)
 ADD_TEST(igstkViewTest ${IGSTKSandbox_TESTS} igstkViewTest)
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
+ADD_TEST(igstkSerialCommunicationTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationTest)
 
 SET(BasicTests_SRCS
   igstkEllipsoidObjectTest.cxx
@@ -30,17 +31,10 @@ SET(BasicTests_SRCS
   igstkSceneTest.cxx
   igstkViewTest.cxx
   igstkMouseTrackerTest.cxx
+  igstkSerialCommunicationTest.cxx
   )
 
 
-#IF(WIN32)
-#  IF(NOT CYGWIN)
-    ADD_TEST(igstkSerialCommunicationForWindowsTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationForWindowsTest)
-    SET(BasicTests_SRCS ${BasicTests_SRCS}
-        igstkSerialCommunicationTest.cxx
-       )
-#  ENDIF(NOT CYGWIN)
-#ENDIF(WIN32)
 
 ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${BasicTests_SRCS})
 
