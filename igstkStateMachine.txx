@@ -390,8 +390,9 @@ StateMachine< TClass, VStates, VInputs >
         {
         ostr << "  State" << state << " -> State";
         ostr << m_Transition[ state ][ input ];
-        ostr << " [label=\"" << m_InputDescriptor[input] << "\"]";
-        ostr << ";" << std::endl;
+        ostr << " [label=\"" << m_InputDescriptor[input] << "\"";
+        ostr << " fontname=Helvetica, fontcolor=Blue";
+        ostr << "];" << std::endl;
         }
       }
     }
@@ -401,7 +402,9 @@ StateMachine< TClass, VStates, VInputs >
     for(StateType state=0; state < VStates; state++)
       {
       ostr << "  State" << state << "  [label=\"";
-      ostr << m_StateDescriptor[state] << "\"];" << std::endl;
+      ostr << m_StateDescriptor[state] << "\"";
+      ostr << " fontname=Helvetica, fontcolor=Black";
+      ostr << "];" << std::endl;
       }
     }
     ostr << "}" << std::endl;
