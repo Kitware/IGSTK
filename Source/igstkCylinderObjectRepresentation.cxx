@@ -43,8 +43,8 @@ CylinderObjectRepresentation::CylinderObjectRepresentation():m_StateMachine(this
 
   m_StateMachine.AddTransition( m_NullCylinderObjectState, m_NullCylinderObjectInput, m_NullCylinderObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullCylinderObjectState, m_ValidCylinderObjectInput, m_ValidCylinderObjectState,  & CylinderObjectRepresentation::SetCylinderObject );
-  m_StateMachine.AddTransition( m_ValidCylinderObjectState, m_NullCylinderObjectInput, m_NullCylinderObjectState,  NoAction ); // Should remove actors  ?
-  m_StateMachine.AddTransition( m_ValidCylinderObjectState, m_ValidCylinderObjectInput, m_ValidCylinderObjectState,  & CylinderObjectRepresentation::SetCylinderObject ); // Should remove old actors ??
+  m_StateMachine.AddTransition( m_ValidCylinderObjectState, m_NullCylinderObjectInput, m_NullCylinderObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidCylinderObjectState, m_ValidCylinderObjectInput, m_ValidCylinderObjectState,  NoAction ); 
 
   m_StateMachine.SelectInitialState( m_NullCylinderObjectState );
 
@@ -108,6 +108,7 @@ void CylinderObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent inde
   Superclass::PrintSelf(os, indent);
 }
 
+
 /** Update the visual representation in response to changes in the geometric
  * object */
 void CylinderObjectRepresentation::UpdateRepresentationFromGeometry()
@@ -115,6 +116,7 @@ void CylinderObjectRepresentation::UpdateRepresentationFromGeometry()
   m_CylinderSource->SetRadius(m_CylinderSpatialObject->GetRadius());
   m_CylinderSource->SetHeight(m_CylinderSpatialObject->GetHeight());
 }
+
 
 /** Create the vtk Actors */
 void CylinderObjectRepresentation::CreateActors()

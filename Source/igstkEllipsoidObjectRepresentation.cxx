@@ -42,8 +42,8 @@ EllipsoidObjectRepresentation::EllipsoidObjectRepresentation():m_StateMachine(th
 
   m_StateMachine.AddTransition( m_NullEllipsoidObjectState, m_NullEllipsoidObjectInput, m_NullEllipsoidObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullEllipsoidObjectState, m_ValidEllipsoidObjectInput, m_ValidEllipsoidObjectState,  & EllipsoidObjectRepresentation::SetEllipsoidObject );
-  m_StateMachine.AddTransition( m_ValidEllipsoidObjectState, m_NullEllipsoidObjectInput, m_NullEllipsoidObjectState,  NoAction ); // Should remove actors  ?
-  m_StateMachine.AddTransition( m_ValidEllipsoidObjectState, m_ValidEllipsoidObjectInput, m_ValidEllipsoidObjectState,  & EllipsoidObjectRepresentation::SetEllipsoidObject ); // Should remove old actors ??
+  m_StateMachine.AddTransition( m_ValidEllipsoidObjectState, m_NullEllipsoidObjectInput, m_NullEllipsoidObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidEllipsoidObjectState, m_ValidEllipsoidObjectInput, m_ValidEllipsoidObjectState,  NoAction ); 
 
   m_StateMachine.SelectInitialState( m_NullEllipsoidObjectState );
 
