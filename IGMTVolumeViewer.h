@@ -62,7 +62,21 @@ public:
 	void ShowFrame(int s);
 	void SetRenderingMethod(int rm);
 
-  vtkAssembly * GetRoot();
+  vtkAssembly * GetRoot()
+  { return m_Root; };
+
+public:
+  vtkMarchingCubes* GetMarchingCubes() 
+  { return m_MarchingCubes; };
+
+  vtkRenderWindow* GetRenderWindow()
+  { return m_RenderWindow; };
+
+  vtkDecimatePro* GetDecimatePro()
+  { return m_DecimatePro; };
+
+  vtkSmoothPolyDataFilter* GetSmoothFiler()
+  { return m_SmoothFilter; };
 
 private:
 
