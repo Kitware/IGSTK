@@ -1,4 +1,5 @@
 SUBDIRS( 
     ApplicationModel
     LiverTumorSegmentation
+    ImageGuidedMagneticTracking
 )
