@@ -17,6 +17,8 @@
 #include "igstkObjectRepresentation.h" 
 #include "vtkMatrix4x4.h"
 #include "igstkEvents.h"
+#include "vtkActor.h"
+#include "vtkProperty.h"
 
 namespace igstk 
 { 
@@ -49,6 +51,20 @@ void ObjectRepresentation::AddActor( vtkProp3D * actor )
   m_Actors.push_back( actor );
 }
 
+/** Empty the list of actors */
+void ObjectRepresentation::DeleteActors()
+{
+  ActorsListType::iterator it = m_Actors.begin();
+  while(it != m_Actors.end())
+    {
+    (*it)->Delete();
+    it++;
+    }
+
+  // Reset the list of actors
+  m_Actors.clear();
+}
+
 /** Has the object been modified */
 bool ObjectRepresentation::IsModified() const
 {
@@ -68,6 +84,7 @@ void ObjectRepresentation::SetSpatialObject( const SpatialObjectType * spatialOb
     {
     m_SpatialObject->AddObserver( PositionModifiedEvent(),    m_PositionObserver    );
     m_SpatialObject->AddObserver( OrientationModifiedEvent(), m_OrientationObserver );
+    m_SpatialObject->AddObserver( GeometryModifiedEvent(), m_GeometryObserver );
     }
 }
 
@@ -82,6 +99,17 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
   m_Color[0] = r;
   m_Color[1] = g;
   m_Color[2] = b;
+
+  // Update all the actors
+  ActorsListType::iterator it = m_Actors.begin();
+  while(it != m_Actors.end())
+    {
+    static_cast<vtkActor*>(*it)->GetProperty()->SetColor(m_Color[0],
+                                   m_Color[1],
+                                   m_Color[2]); 
+    it++;
+    }
+
   this->Modified();
 }
 

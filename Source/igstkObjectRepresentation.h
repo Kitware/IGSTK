@@ -56,6 +56,9 @@ public:
   /** Create the vtkActors */
   virtual void CreateActors()= 0;
 
+  /** Empty the list of actors */
+  void DeleteActors();
+
   /** Get the VTK actors */
   GetMacro( Actors, ActorsListType );
 
