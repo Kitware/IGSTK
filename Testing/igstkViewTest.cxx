@@ -60,9 +60,6 @@ int igstkViewTest( int, char * [] )
     view2D->RequestDisableInteractions();
     view3D->RequestDisableInteractions();
 
-    delete view2D;
-    delete view3D;
-
     }
   catch(...)
     {
