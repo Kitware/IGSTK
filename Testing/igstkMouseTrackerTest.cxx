@@ -30,35 +30,32 @@
 
 int igstkMouseTrackerTest( int, char * [] )
 {
-    typedef itk::Point< double, 3 >  PositionType;
-    typedef igstk::MouseTracker      MouseTrackerType;
-    typedef igstk::Logger            LoggerType; 
+  typedef itk::Point< double, 3 >  PositionType;
+  typedef igstk::MouseTracker      MouseTrackerType;
+  typedef igstk::Logger            LoggerType; 
     
-    // logger object created for logging mouse activities
-    LoggerType            logger;
-    logger.AddOutputStream( std::cout );
-    logger.SetPriorityLevel( igstk::Logger::DEBUG );
+  // logger object created for logging mouse activities
+  LoggerType            logger;
+  logger.AddOutputStream( std::cout );
+  logger.SetPriorityLevel( igstk::Logger::DEBUG );
 
-    MouseTrackerType::Pointer tracker = MouseTrackerType::New();
+  MouseTrackerType::Pointer tracker = MouseTrackerType::New();
+  tracker->SetLogger( &logger );
+  tracker->Initialize();
 
-    tracker->SetLogger( &logger );
+  tracker->StartTracking();
 
-    tracker->Initialize();
+  tracker->UpdateStatus();
 
-    tracker->StartTracking();
+  PositionType position;
 
-    tracker->UpdateStatus();
+  tracker->GetPosition( position );
 
-    PositionType position;
+  tracker->StopTracking();
+  std::cout << "Mouse Position -> ( " << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
+  tracker->Reset();
 
-    tracker->GetPosition( position );
-
-    tracker->StopTracking();
-    std::cout << "Mouse Position -> ( " << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
-
-    tracker->Reset();
-
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 
