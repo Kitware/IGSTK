@@ -168,8 +168,8 @@ void Scene::RemoveAllObjects()
 
   while( it != m_Objects.end() )
     {
-    m_Objects.erase( it );
     m_LastRemovedObject = *it;
+    it = m_Objects.erase( it );
     this->Modified();
     this->InvokeEvent( SceneRemoveObjectEvent() );
     }
