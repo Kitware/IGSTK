@@ -20,23 +20,17 @@ INCLUDE_DIRECTORIES (
 
 ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
 
+ADD_TEST(igstkBasicTrackerTest ${IGSTK_TESTS} igstkBasicTrackerTest)
+
+
 SET(BasicTests_SRCS
   igstkStateMachineTest
+  igstkBasicTrackerTest
   )
 
 ADD_EXECUTABLE(igstkTests igstkTests.cxx ${BasicTests_SRCS})
 
-#
-#  TARGET_LINK_LIBRARIES(igstkTests IGSTK)  
-#  There is no IGSTK lib yet... so by now we link with all ITK, VTK, FLTK
-#  .. but once we have IGSTK back, it should be enough to link with IGSTK
-#
-TARGET_LINK_LIBRARIES(igstkTests
-    ITKIO ITKBasicFilters ITKNumerics ITKCommon 
-    vtkRendering vtkGraphics vtkHybrid vtkImaging 
-    vtkIO vtkFiltering vtkCommon vtkPatented
-    ${FLTK_LIBRARIES}
-)
+TARGET_LINK_LIBRARIES(igstkTests IGSTK)
 
 ADD_EXECUTABLE(SystemInformation SystemInformation.cxx)
 ADD_TEST(SystemInformation ${EXECUTABLE_OUTPUT_PATH}/SystemInformation)

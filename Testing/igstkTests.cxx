@@ -9,5 +9,6 @@
 
 void RegisterTests()
 {
-REGISTER_TEST(igstkStateMachineTest);
+    REGISTER_TEST(igstkStateMachineTest);
+    REGISTER_TEST(igstkBasicTrackerTest);
 }
