@@ -5,20 +5,31 @@
 #include "vtkTubeFilter.h"
 #include "vtkPolyDataMapper.h" 
 #include "vtkActor.h"
+#include "vtkAssembly.h"
+
+#include "Sphere.h"
 
 class TubeWrappedLine
 {
 public:
+//<<<<<<< TubeWrappedLine.h
+	void TipBubbleVisibilityOn();
+  void TipBubbleVisibilityOff();
+	void UpdateTipBubbleRadius();
+	void VisibilityOff();
+	void VisiblityOn();
+//	void AddPosition(float x, float y, float z);
+//	void AddPosition(float* pos);
+//=======
 	void AddPosition(const double x, const double y, const double z);
 	void AddPosition(double* pos);
+//>>>>>>> 1.2
 
 	TubeWrappedLine( void );
 
 	~TubeWrappedLine( void );
 
-	vtkActor* GetVTKActorPointer( void );
-
-	vtkActor* GetVTKActorPointerHip( void );
+	vtkProp* GetVTKActorPointer( void );
 
 	void SetEnds( double tip[3], double end[3] );
 
@@ -57,7 +68,15 @@ public:
 
 	vtkActor			* m_LineActorHip;
 
+//<<<<<<< TubeWrappedLine.h
+  vtkAssembly      * m_ProbeActor;
+
+  Sphere  m_TipBubble;
+
+//	float				m_Length;		// in the measurement unit of the data (mm)
+//=======
 	double				m_Length;		// in the measurement unit of the data (mm)
+//>>>>>>> 1.2
 
 };
 
