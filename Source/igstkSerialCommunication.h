@@ -129,6 +129,9 @@ public:
   /** SendString method sends the string to the hardware. */
   void SendString( const CommunicationDataType& message );
 
+  /** ReceiveString method sends the string to the hardware. */
+  void ReceiveString( const CommunicationDataType& message );
+
    /** The SetLogger method is used to attach a logger object to the
    serial communication object for logging. */
   void SetLogger( LoggerType* logger );
@@ -140,6 +143,11 @@ public:
   itkEventMacro( CommunicationTimeoutSetupFailureEvent, itk::AnyEvent );
   itkEventMacro( RestCommunicationFailureEvent, itk::AnyEvent );
   itkEventMacro( FlushOutputBufferFailureEvent, itk::AnyEvent );
+  itkEventMacro( SendStringCreateEventFailureEvent, itk::AnyEvent );
+  itkEventMacro( SendStringSuccessfulEvent, itk::AnyEvent );
+  itkEventMacro( SendStringFailureEvent, itk::AnyEvent );
+  itkEventMacro( SendStringWriteTimeoutEvent, itk::AnyEvent );
+  itkEventMacro( SendStringWaitTimeoutEvent, itk::AnyEvent );
 
 protected:
 
@@ -169,6 +177,10 @@ protected:
   virtual void RestCommunicationProcessing( void );
 
   virtual void FlushOutputBufferProcessing( void );
+
+  virtual void SendStringProcessing( void );
+
+  virtual void ReceiveStringProcessing( void );
 
 private:
 
@@ -213,7 +225,8 @@ private:
 
   // Input Buffer
   /** Input buffer */
-  unsigned char *m_InputBuffer;
+  char *m_InputBuffer;
+  char *m_OutputBuffer;
 
   /** Offset of the current location in read buffer */
   int           m_BufferOffset;
@@ -244,8 +257,8 @@ private:
   InputType                m_ClosePortInput;
   InputType                m_RestCommunication;
   InputType                m_FlushOutputBuffer;
-
-//  CommunicationDataType& m_StringToSend;
+  InputType                m_SendString;
+  InputType                m_ReceiveString;
 
   // OS related variables
   HandleType      m_PortHandle;     // com port handle
