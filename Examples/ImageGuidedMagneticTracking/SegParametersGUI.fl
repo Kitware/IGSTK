@@ -1,0 +1,178 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0104 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include "IGMTrackingBase.h"} {public
+} 
+
+class SegParametersGUI {open
+} {
+  decl {IGMTrackingBase* m_pTracking;} {public
+  }
+  decl {int m_SegAlgorithm, m_Radius, m_Iterations, m_MultiResolution, m_InterpolatorMethod} {public
+  }
+  decl {double m_Lower, m_Upper, m_Multiplier, m_ResolutionXY, m_ResolutionZ;} {public
+  }
+  Function {SegParametersGUI(IGMTrackingBase* pTracking)} {open
+  } {
+    Fl_Window m_MainWindow {
+      label {Segmentation Parameters}
+      xywh {579 342 413 353} type Double visible
+    } {
+      Fl_Group {} {open
+        xywh {25 25 162 99}
+      } {
+        Fl_Round_Button m_ConfidenceRadio {
+          label {Confidence Connect}
+          xywh {26 25 160 30} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_ThresholdRadio {
+          label {Threshold Connect}
+          xywh {26 49 160 30} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_NeighborhoodRadio {
+          label {Neighborhood Connect}
+          xywh {26 71 160 30} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_IsolatedRadio {
+          label {Isolated Connect}
+          xywh {26 94 160 30} type Radio down_box ROUND_DOWN_BOX
+        }
+      }
+      Fl_Input m_LowerInput {
+        label Lower
+        callback {m_Lower = atof(m_LowerInput->value());}
+        xywh {305 25 75 25} type Float when 1
+      }
+      Fl_Input m_UpperInput {
+        label Upper
+        callback {m_Upper = atof(m_UpperInput->value());}
+        xywh {305 55 75 25} type Float when 1
+      }
+      Fl_Input m_RadiusInput {
+        label Radius
+        callback {m_Radius = atoi(m_RadiusInput->value());}
+        xywh {305 85 75 25} type Int when 1
+      }
+      Fl_Input m_ResolutionXYInput {
+        label {X-Y Axis}
+        callback {m_ResolutionXY = atof(m_ResolutionXYInput->value());}
+        xywh {100 230 75 25} type Float when 1
+      }
+      Fl_Return_Button {} {
+        label OK
+        callback {this->OnOK();}
+        xywh {206 301 75 25}
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {this->OnCancel();}
+        xywh {301 301 75 25}
+      }
+      Fl_Input m_IterationsInput {
+        label Iterations
+        callback {m_Iterations = atoi(m_IterationsInput->value());}
+        xywh {305 143 75 25} type Int when 1
+      }
+      Fl_Input m_MultiplierInput {
+        label Multiplier
+        callback {m_Multiplier = atof(m_MultiplierInput->value());}
+        xywh {305 114 75 25} type Float when 1
+      }
+      Fl_Input m_ResolutionZInput {
+        label {Z Axis}
+        callback {m_ResolutionZ = atof(m_ResolutionZInput->value());}
+        xywh {100 258 75 25} type Float when 1
+      }
+      Fl_Check_Button m_MultiResolutionCheck {
+        label {Mutli-Resolution}
+        callback {m_MultiResolution = m_MultiResolutionCheck->value();}
+        xywh {153 199 20 30} down_box DOWN_BOX align 4 when 1
+      }
+      Fl_Round_Button m_NNInterpolatorRadio {
+        label NearestNeighborhood
+        xywh {225 230 165 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Round_Button m_LInterpolatorRadio {
+        label Linear
+        xywh {225 254 165 25} type Radio down_box ROUND_DOWN_BOX
+      }
+    }
+    code {m_pTracking = pTracking;
+m_SegAlgorithm = 1;
+m_Lower = -200;
+m_Upper = 100;
+m_Radius = 2;
+m_Multiplier = 2.5;
+m_Iterations = 5;
+m_MultiResolution = 1;
+m_ResolutionXY = 2.0;
+m_ResolutionZ = 2.0;
+m_InterpolatorMethod = 1;
+char s[128];
+m_ThresholdRadio->value(1);
+m_MultiResolutionCheck->value(m_MultiResolution);
+m_LInterpolatorRadio->value(1);
+sprintf(s, "%.2f", m_ResolutionXY);
+m_ResolutionXYInput->value(s);
+sprintf(s, "%.2f", m_ResolutionZ);
+m_ResolutionZInput->value(s);
+sprintf(s, "%.2f", m_Lower);
+m_LowerInput->value(s);
+sprintf(s, "%.2f", m_Upper);
+m_UpperInput->value(s);
+sprintf(s, "%d", m_Radius);
+m_RadiusInput->value(s);
+sprintf(s, "%.2f", m_Multiplier);
+m_MultiplierInput->value(s);
+sprintf(s, "%d", m_Iterations);
+m_IterationsInput->value(s);} {selected
+    }
+  }
+  Function {Show()} {return_type void
+  } {
+    code {m_MainWindow->show();} {}
+  }
+  Function {Hide()} {return_type void
+  } {
+    code {m_MainWindow->hide();} {}
+  }
+  Function {OnOK()} {open return_type void
+  } {
+    code {if (m_ConfidenceRadio->value() == 1)
+{
+	m_SegAlgorithm = 0;
+}
+else if (m_ThresholdRadio->value() == 1)
+{
+	m_SegAlgorithm = 1;
+}
+else if (m_NeighborhoodRadio->value() == 1)
+{
+	m_SegAlgorithm = 2;
+}
+else if (m_IsolatedRadio->value() == 1)
+{
+	m_SegAlgorithm = 3;
+}
+if (m_NNInterpolatorRadio->value() == 1)
+{
+	m_InterpolatorMethod = 0;
+}
+else if (m_LInterpolatorRadio->value() == 1)
+{
+	m_InterpolatorMethod = 1;
+}
+this->Hide();
+m_pTracking->OnUpdateSegParameters();} {}
+  }
+  Function {OnCancel()} {return_type void
+  } {
+    code {this->Hide();} {}
+  }
+  Function {ShowModal()} {return_type void
+  } {
+    code {m_MainWindow->set_modal();
+this->Show();} {}
+  }
+} 
