@@ -46,6 +46,7 @@ int igstkMultipleOutputTest( int, char * [] )
 
     moutput << 12.4;
     moutput << " text ";
+    moutput.Flush();
     moutput << 23;
 
     return EXIT_SUCCESS;
