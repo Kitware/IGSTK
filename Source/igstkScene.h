@@ -72,6 +72,9 @@ public:
   /** Clear function : Remove all the objects in the scene */
   void Clear();
 
+  /** Update the scene */
+  void Update();
+
 protected: 
 
   /** List of the children object plug to the SceneSpatialObject spatial object. */

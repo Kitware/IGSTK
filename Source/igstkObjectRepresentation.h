@@ -48,9 +48,7 @@ public:
   typedef itk::SmartPointer < const Self >   ConstPointer;
   typedef itk::Object                        Superclass;
   typedef itk::SpatialObject<3>              SpatialObjectType;
-  typedef std::vector<vtkProp3D*>            ActorsListType;
-  typedef std::vector<SpatialObjectType* >   SpatialObjectsListType;
- 
+  typedef std::vector<vtkProp3D*>            ActorsListType; 
 
   itkTypeMacro(ObjectRepresentation, itk::Object);
 
@@ -62,15 +60,6 @@ public:
 
   /** Add an actor to the list */
   void AddActor( vtkProp3D * );
-
-  /** Return the SpatialObjects */
-  GetMacro( SpatialObjects, SpatialObjectsListType );
-
-  /** Add a SpatialObject to the scene */
-  void AddSpatialObject( SpatialObjectType * );
-
-  /** Return the number of children */
-  unsigned int GetNumberOfChildren() const;
 
   /** Set the color */
   void SetColor(float r, float g, float b);
@@ -84,6 +73,13 @@ public:
   SetMacro(Opacity,float);
   GetMacro(Opacity,float);
 
+  /** Set the offset of the object */
+  void SetOffset(double x, double y, double z);
+
+  /** Update */
+  void Update();  
+   
+
 protected:
 
   ObjectRepresentation( void );
@@ -91,13 +87,13 @@ protected:
 
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
+  SpatialObjectType::Pointer  m_SpatialObject;
 
 private:
 
-  ActorsListType           m_Actors;
-  SpatialObjectsListType   m_SpatialObjects;
-  float                    m_Color[3];
-  float                    m_Opacity;
+  ActorsListType              m_Actors;
+  float                       m_Color[3];
+  float                       m_Opacity;
 };
 
 } // end namespace igstk
