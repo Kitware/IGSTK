@@ -34,6 +34,17 @@
  * contains a TimeStamp defining the validity period for the information in the
  * transform. 
  * 
+ * This class can be used for storing Translation and Rotation simultaneously,
+ * or only Translation, or only Rotation. When only Translation or only
+ * Rotation are used, the other component of the transform is set to an
+ * identity. If the user intends to use both rotations and translation, she
+ * must invoke the SetTranslationAndRotation() method.
+ * 
+ * All the set methods require an argument that defines the number of
+ * milliseconds for which the stored information is considered to be valid.
+ * The validity period will be counted from the moment the Set method was
+ * invoked.
+ *
  **/
 
 namespace igstk 
@@ -48,6 +59,11 @@ public:
   Transform();
   ~Transform();
 
+  /** Set Translation and Rotation simultaneously */
+  void SetTranslationAndRotation(
+          double tx, double ty, double tz,
+          double qx, double qy, double qz, double qw,
+          double millisecondsToExpiration);
 
 private:
 

@@ -31,6 +31,20 @@ Transform
 {
 }
 
+void 
+Transform
+::SetTranslationAndRotation(
+          double tx, double ty, double tz,
+          double qx, double qy, double qz, double qw,
+          double millisecondsToExpiration)
+{
+  m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
+  m_Translation[0] = tx;
+  m_Translation[1] = ty;
+  m_Translation[2] = tz;
+  m_Rotation.Set( qx, qy, qz, qw );
+}
+
 
 } // end namespace itk
 

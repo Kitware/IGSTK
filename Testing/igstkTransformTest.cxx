@@ -32,6 +32,18 @@ int igstkTransformTest( int, char * [] )
 
     TransformType t1;
     
+    const double tx = 10.0;
+    const double ty = 10.0;
+    const double tz = 10.0;
+
+    const double qx =  1.0;
+    const double qy =  0.0;
+    const double qz =  0.0;
+    const double qw =  0.0;
+
+    const double validityPeriod = 10.0; // milliseconds
+
+    t1.SetTranslationAndRotation( tx,ty,tz, qx,qy,qz,qw, validityPeriod );
     }
   catch(...)
     {
