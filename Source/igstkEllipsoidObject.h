@@ -59,9 +59,6 @@ public:
   void SetRadius(double r0, double r1, double r2);
   ArrayType GetRadius();
 
-  /** Get radii via an array of radius values */
-  itkGetConstReferenceMacro(Radius,ArrayType);
-
   /** Create the VTK actors */
   void CreateVTKActors();
 
@@ -74,9 +71,6 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
-
-  /** Radius array */
-  ArrayType               m_Radius;
 
   /** Internal itkSpatialObject */
   EllipseSOType::Pointer   m_EllipseSO;
