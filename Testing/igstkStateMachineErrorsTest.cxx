@@ -63,42 +63,6 @@ public:
     m_StateMachine.SetReadyToRun();
     }
 
-
-
-  
-  // Methods that generate input signals
-  void InsertChange() 
-    {
-    std::cout << "Insert Change" << std::endl;
-    m_StateMachine.ProcessInput( "QuarterInserted" );
-    }
- 
- 
-  void SelectDrink() 
-    {
-    std::cout << "Select Drink" << std::endl;
-    m_StateMachine.ProcessInput("SelectDrink");
-    }
-
-  void CancelPurchase() 
-    {
-    std::cout << "Cancelling Purchase" << std::endl;
-    m_StateMachine.ProcessInput("CancelPurchase");
-    }
-
-
-  void ExportTransitions( std::ostream & ostr ) const
-    {
-    m_StateMachine.ExportTransitions( ostr );
-    }
-
-
-  const StateMachineType::StateDescriptorType & GetCurrentState() const
-    {
-    return m_StateMachine.GetCurrentState();
-    }
-
-
   void triggerError1()
   {
     m_StateMachine.SelectInitialState("ThisStateDoesntExists");
@@ -136,6 +100,8 @@ private:
 
 
 
+
+
 class Tester2
 {
 public:
@@ -151,6 +117,110 @@ public:
     m_StateMachine.SelectInitialState( "IdleState");
     m_StateMachine.SetReadyToRun();
     }
+
+  void InsertChange() 
+    {
+    std::cout << "Insert Change" << std::endl;
+    m_StateMachine.ProcessInput( "QuarterInserted" );
+    }
+ 
+private:
+  StateMachineType   m_StateMachine;
+};
+
+
+
+
+class Tester3
+{
+public:
+
+  typedef igstk::StateMachine< Tester3 >   StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer        ActionType;
+  FriendClassMacro(StateMachineType);
+
+  Tester3()
+    {
+    m_StateMachine.SetOwnerClass( this );
+    m_StateMachine.AddState( "IdleState" );
+    m_StateMachine.SelectInitialState( "IdleState");
+    m_StateMachine.AddInput( "QuarterInserted");
+    const ActionType NoAction = 0;
+    m_StateMachine.AddTransition( "IdleState", "QuarterInserted", "IdleState", NoAction );
+    // On purpose NOT calling : m_StateMachine.SetReadyToRun();
+    }
+
+  void InsertChange() 
+    {
+    std::cout << "Insert Change" << std::endl;
+    m_StateMachine.ProcessInput( "QuarterInserted" );
+    }
+ 
+private:
+  StateMachineType   m_StateMachine;
+};
+
+
+
+class Tester4
+{
+public:
+
+  typedef igstk::StateMachine< Tester4 >   StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer        ActionType;
+  FriendClassMacro(StateMachineType);
+
+  Tester4()
+    {
+    m_StateMachine.SetOwnerClass( this );
+    m_StateMachine.AddState( "IdleState" );
+    m_StateMachine.SelectInitialState( "IdleState");
+    m_StateMachine.AddInput( "QuarterInserted");
+    const ActionType NoAction = 0;
+    m_StateMachine.AddTransition( "IdleState", "QuarterInserted", "IdleState", NoAction );
+
+    // On purpose invode SetReadyToRun() twice.
+    m_StateMachine.SetReadyToRun();
+    m_StateMachine.SetReadyToRun();
+    }
+
+  void InsertChange() 
+    {
+    std::cout << "Insert Change" << std::endl;
+    m_StateMachine.ProcessInput( "QuarterInserted" );
+    }
+ 
+private:
+  StateMachineType   m_StateMachine;
+};
+
+
+class Tester5
+{
+public:
+
+  typedef igstk::StateMachine< Tester5 >   StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer        ActionType;
+  FriendClassMacro(StateMachineType);
+
+  Tester5()
+    {
+    m_StateMachine.SetOwnerClass( this );
+    m_StateMachine.AddState( "IdleState" );
+    m_StateMachine.SelectInitialState( "IdleState");
+    m_StateMachine.AddInput( "QuarterInserted");
+    const ActionType NoAction = 0;
+    // On purpose NOT adding any transition: for testing error condition.
+    // m_StateMachine.AddTransition( "IdleState", "QuarterInserted", "IdleState", NoAction );
+    m_StateMachine.SetReadyToRun();
+    }
+
+  void InvokeUndefinedTransition() 
+    {
+    std::cout << "Insert Change" << std::endl;
+    m_StateMachine.ProcessInput( "QuarterInserted" );
+    }
+ 
 private:
   StateMachineType   m_StateMachine;
 };
@@ -173,10 +243,23 @@ int igstkStateMachineErrorsTest(int argc, char * argv [])
   std::cout << "Invoking as Initial state a state that doesn't exist." << std::endl;
   tester1.triggerError1();
 
-
-  std::cout << "Invoking as Run when there is no parent class connected." << std::endl;
+  std::cout << "Invoking SetReadyToRun() (in constructor) without parent class connected." << std::endl;
   Tester2 tester2;
 
+  std::cout << "Invoking ProcessInput() without parent class connected." << std::endl;
+  tester2.InsertChange();
+
+  std::cout << "Invoking ProcessInput() without having called SetReadyToRun() ." << std::endl;
+  Tester3 tester3;
+  tester3.InsertChange();
+
+  std::cout << "Invoking  SetReadyToRun() twice." << std::endl;
+  Tester4 tester4;
+  tester4.InsertChange();
+
+  std::cout << "Invoking  ProcessInput() in a state without transitions defined." << std::endl;
+  Tester5 tester5;
+  tester5.InvokeUndefinedTransition();
 
   // The following call 
   return EXIT_SUCCESS;
