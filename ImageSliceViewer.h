@@ -45,6 +45,10 @@ public:
 
   ImageSliceViewer( void );
 
+  ImageSliceViewer( vtkRenderWindow* renWin );
+
+  void Init( vtkRenderWindow* renWin );
+
   virtual ~ImageSliceViewer( void );
 
   void SetInput( vtkImageData * image );
