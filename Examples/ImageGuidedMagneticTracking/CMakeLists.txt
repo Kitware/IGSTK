@@ -11,8 +11,7 @@ SET (IGMTracking_HEADS
  	)
 
 SET (IGMTracking_SRCS
-	IGMTracking.cxx	
-  SkeletonModule.txx
+	IGMTracking.cxx	  
  	)
 
 ADD_EXECUTABLE (IGMTracking main.cxx 
@@ -22,7 +21,6 @@ ADD_EXECUTABLE (IGMTracking main.cxx
 
 FLTK_WRAP_UI (IGMTracking
 	IGMTrackingGUI.fl 
-#	DicomImageReaderGUI.fl 
 	BrowserGUI.fl 
 	MessageWindowGUI.fl 
 	PortParametersGUI.fl
