@@ -253,7 +253,12 @@ void
 }
 
 
-
+void
+ImageSliceViewer
+::SeedPoint( int x, int y )
+{
+	SelectPoint(x, y);
+}
 
 
 void
@@ -315,7 +320,11 @@ ImageSliceViewer
   m_Notifier->InvokeEvent( ClickedPointEvent() );
 }
 
-
+void  
+ImageSliceViewer::SeedPoint( float x, float y, float z )
+{
+	SelectPoint(x, y, z);
+}
 
 void  
 ImageSliceViewer::SelectPoint( float x, float y, float z )
@@ -325,6 +334,11 @@ ImageSliceViewer::SelectPoint( float x, float y, float z )
   m_SelectPoint[2] = z;
 }
 
+void 
+ImageSliceViewer::GetSeedPoint(float data[3])
+{
+	GetSelectPoint(data);
+}
 
 void 
 ImageSliceViewer::GetSelectPoint(float data[3])
