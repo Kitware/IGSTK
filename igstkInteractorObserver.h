@@ -24,6 +24,7 @@ private:
 
   ImageSliceViewer   * m_SliceViewer;
   bool                 m_Motion;
+  int                  m_LButtonDownPoint[2];
 
 };
 
