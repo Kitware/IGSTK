@@ -98,7 +98,7 @@ void CylinderObjectRepresentation::CreateActors()
 
 /** Create a copy of the current object representation */
 CylinderObjectRepresentation::Pointer
-CylinderObjectRepresentation::Copy()
+CylinderObjectRepresentation::Copy() const
 {
   Pointer newOR = CylinderObjectRepresentation::New();
   newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());

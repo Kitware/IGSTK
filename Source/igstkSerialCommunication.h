@@ -70,17 +70,20 @@ public:
     HANDSHAKE_OFF, HANDSHAKE_ON
   } HardwareHandshakeType;
 
-  typedef igstk::StateMachine< SerialCommunication > StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer ActionType;
-  typedef StateMachineType::StateType              StateType;
-  typedef StateMachineType::InputType              InputType;
-
   /** Data type for communication */
   typedef std::string  CommunicationDataType;
 
   typedef SerialCommunication            Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
+
+
+  /** State machine related types */
+  typedef igstk::StateMachine< Self > StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer ActionType;
+  typedef StateMachineType::StateType              StateType;
+  typedef StateMachineType::InputType              InputType;
+
 
   /**  Run-time type information (and related methods). */
 //  itkTypeMacro(SerialCommunication, Object);

@@ -56,7 +56,7 @@ public:
 
   itkTypeMacro(ObjectRepresentation, itk::Object);
 
-  typedef StateMachine< ObjectRepresentation > StateMachineType;
+  typedef StateMachine< Self >                       StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer   ActionType;
   typedef StateMachineType::StateType                StateType;
   typedef StateMachineType::InputType                InputType;

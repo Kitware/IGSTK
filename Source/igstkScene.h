@@ -92,7 +92,7 @@ protected:
 
 private:
     
-  typedef igstk::StateMachine< Scene >               StateMachineType;
+  typedef igstk::StateMachine< Self >               StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer   ActionType;
   typedef StateMachineType::StateType                StateType;
   typedef StateMachineType::InputType                InputType;

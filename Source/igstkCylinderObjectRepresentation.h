@@ -53,7 +53,7 @@ public:
   NewMacro( CylinderObjectRepresentation );
 
   /** Return a copy of the current object representation */
-  Pointer Copy();
+  Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
   void SetCylinder( const CylinderSpatialObjectType * cylinderObject );

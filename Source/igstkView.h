@@ -55,7 +55,7 @@ class View : public Fl_Gl_Window, public vtkRenderWindowInteractor
 private:
     
   typedef View                                       Self;
-  typedef igstk::StateMachine< View >                StateMachineType;
+  typedef igstk::StateMachine< Self >                StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer   ActionType;
   typedef StateMachineType::StateType                StateType;
   typedef StateMachineType::InputType                InputType;
