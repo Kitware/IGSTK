@@ -3,22 +3,106 @@
 
 IGMTrackingBase::IGMTrackingBase()
 {
-	m_VolumeReader      = VolumeReaderType::New();
-	m_RescaleIntensity  = RescaleIntensityFilterType::New();
+  // 1
+  m_VolumeReader      = VolumeReaderType::New();
 
-	m_ITK2VTKAdaptor    = ITK2VTKAdaptorFilterType::New();
-	m_ITK2VTKAdaptor->SetInput( m_RescaleIntensity->GetOutput() );
-	
-	m_RescaleIntensity->SetOutputMaximum( itk::NumericTraits< VisualizationPixelType >::max() );
+	m_RescaleIntensity  = RescaleIntensityFilterType::New();
+  m_RescaleIntensity->SetOutputMaximum( itk::NumericTraits< VisualizationPixelType >::max() );
 	m_RescaleIntensity->SetOutputMinimum( itk::NumericTraits< VisualizationPixelType >::min() );
+  
+  m_ITK2VTKAdaptor    = ITK2VTKAdaptorFilterType::New();
+	m_ITK2VTKAdaptor->SetInput( m_RescaleIntensity->GetOutput() );
+  
+  // 2
+  m_FusionVolumeReader      = VolumeReaderType::New();
+
+  m_Transform = TransformType::New();
+  m_LInterpolate = LInterpolateType::New();
+  m_NNInterpolate = NNInterpolateType::New();
+
+  m_ResampleImageFusionFilter = ResampleImageFilterType::New();
+  m_ResampleImageFusionFilter->SetTransform(m_Transform);
+  m_ResampleImageFusionFilter->SetInterpolator(m_LInterpolate);
+  m_ResampleImageFusionFilter->SetDefaultPixelValue(0);
+	
+  m_FusionRescaleIntensity  = RescaleIntensityFilterType::New();
+  m_FusionRescaleIntensity->SetInput(m_ResampleImageFusionFilter->GetOutput());
+  m_FusionRescaleIntensity->SetOutputMaximum( itk::NumericTraits< VisualizationPixelType >::max() );
+	m_FusionRescaleIntensity->SetOutputMinimum( itk::NumericTraits< VisualizationPixelType >::min() );
+	
+  m_FusionITK2VTKAdaptor    = ITK2VTKAdaptorFilterType::New();
+	m_FusionITK2VTKAdaptor->SetInput( m_FusionRescaleIntensity->GetOutput() );
+	
+  // 3
+  m_ResampleImagePreFilter = ResampleImageFilterType::New();
+  m_ResampleImagePreFilter->SetTransform(m_Transform);
+  m_ResampleImagePreFilter->SetInterpolator(m_LInterpolate);
+  m_ResampleImagePreFilter->SetDefaultPixelValue(0);
+  
+  m_ConfidenceConnectedFilter = ConfidenceConnectedFilterType::New();
+  m_ConfidenceConnectedFilter->SetInput(m_ResampleImagePreFilter->GetOutput());
+  m_ConfidenceConnectedFilter->SetMultiplier(2.5);
+  m_ConfidenceConnectedFilter->SetNumberOfIterations(5);
+  m_ConfidenceConnectedFilter->SetReplaceValue(255);
+  m_ConfidenceConnectedFilter->SetInitialNeighborhoodRadius(1);
+
+  m_ConnectedThresholdFilter = ConnectedThresholdFilterType::New();
+  m_ConnectedThresholdFilter->SetInput(m_ResampleImagePreFilter->GetOutput());
+  m_ConnectedThresholdFilter->SetLower(80);
+  m_ConnectedThresholdFilter->SetUpper(100);
+  m_ConnectedThresholdFilter->SetReplaceValue(255);
+
+  VolumeType::SizeType radius;
+  radius[0] = 1;
+  radius[1] = 1;
+
+  m_NeighborhoodConnectedFilter = NeighborhoodConnectedFilterType::New();
+  m_NeighborhoodConnectedFilter->SetInput(m_ResampleImagePreFilter->GetOutput());
+  m_NeighborhoodConnectedFilter->SetLower(80);
+  m_NeighborhoodConnectedFilter->SetUpper(100);
+  m_NeighborhoodConnectedFilter->SetRadius(radius);
+  m_NeighborhoodConnectedFilter->SetReplaceValue(255);
+
+  m_IsolatedConnectedFilter = IsolatedConnectedFilterType::New();
+  m_IsolatedConnectedFilter->SetInput(m_ResampleImagePreFilter->GetOutput());
+  m_IsolatedConnectedFilter->SetLower(0);
+  m_IsolatedConnectedFilter->SetReplaceValue(255);
+
+  m_ResampleImagePostFilter = ResampleImageFilterType::New();
+//  m_ResampleImagePostFilter->SetInput(m_ConfidenceConnectedFilter->GetOutput());
+  m_ResampleImagePostFilter->SetTransform(m_Transform);
+  m_ResampleImagePostFilter->SetInterpolator(m_LInterpolate);
+  m_ResampleImagePostFilter->SetDefaultPixelValue(0);
+/*  
+  m_ImageResample = vtkImageResample::New();
+
+  m_ImageReslice = vtkImageReslice::New();
+
+  m_ImageMap = vtkImageMapToRGBA::New();
+
+  m_LUT = vtkLookupTable::New();
+*/
+
+  // 4
+//  m_ImageBlend = vtkImageBlend::New();
+/*
+  m_ImageBlend->SetInput(0, m_ITK2VTKAdaptor->GetOutput());
+  m_ImageResample->SetInput(m_FusionITK2VTKAdaptor->GetOutput());
+  m_ImageBlend->SetInput(1, m_ImageResample->GetOutput());
+*/
+//  m_ImageBlend->SetOpacity(0, 1.0);
+//  m_ImageBlend->SetOpacity(1, 0.0);
+  
+  m_FusionOpacity = 0.5;
+  m_Pipeline = 1;
 
 	m_NeedleTipOffset[0] = 0.0f;
 	m_NeedleTipOffset[1] = 0.0f;
-	m_NeedleTipOffset[2] = -10.4f; 
+	m_NeedleTipOffset[2] = 10.4f; 
 
 	m_NeedleEndOffset[0] = 0.0f;
 	m_NeedleEndOffset[1] = 0.0f;
-	m_NeedleEndOffset[2] = -210.4f; 
+	m_NeedleEndOffset[2] = 210.4f; 
 
 	m_NeedleLength = 100.0f; 
 	m_NeedleRadius = 1.5f;
@@ -26,14 +110,36 @@ IGMTrackingBase::IGMTrackingBase()
 	m_UseReferenceNeedle = false;
 	m_ReferenceNeedleTipOffset[0] = 0.0f;
 	m_ReferenceNeedleTipOffset[1] = 0.0f;
-	m_ReferenceNeedleTipOffset[2] = -19.1f; 
+	m_ReferenceNeedleTipOffset[2] = 19.1f; 
 }
-
-
-
 
 IGMTrackingBase::~IGMTrackingBase()
 {
+/*  if (m_ImageBlend)
+  {
+    m_ImageBlend->Delete();
+  }
+
+  if (m_ImageResample)
+  {
+    m_ImageResample->Delete();
+  }
+
+  if (m_ImageReslice)
+  {
+    m_ImageReslice->Delete();
+  }
+
+  if (m_ImageMap)
+  {
+    m_ImageMap->Delete();
+  }
+
+  if (m_LUT)
+  {
+    m_LUT->Delete();
+  }
+*/ 
 }
 
 
@@ -209,5 +315,40 @@ void IGMTrackingBase::SetNeedleRadius( const double val )
 	m_NeedleRadius = val;
 }
 	
+void IGMTrackingBase::OnUpdateLayout()
+{
 
+}
 
+void IGMTrackingBase::OnUpdateProbeParameters()
+{
+
+}
+
+void IGMTrackingBase::OnUpdateOpacity(double opa)
+{
+/*  m_ImageBlend->SetOpacity(0, 1.0 - opa);
+  m_ImageBlend->SetOpacity(1, opa);
+
+  m_FusionOpacity = opa;*/
+}
+
+void IGMTrackingBase::RenderSectionWindow()
+{
+
+}
+
+void IGMTrackingBase::RenderAllWindow()
+{
+
+}
+
+void IGMTrackingBase::SetInputData(int pipeline)
+{
+
+}
+
+void IGMTrackingBase::OnUpdateSegParameters()
+{
+
+}

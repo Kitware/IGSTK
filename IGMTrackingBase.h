@@ -1,13 +1,27 @@
 #ifndef __ISIS_IGMTrackingBase__h__
 #define __ISIS_IGMTrackingBase__h__
 
-
+#include "itkAffineTransform.h"
+#include "itkConfidenceConnectedImageFilter.h"
+#include "itkConnectedThresholdImageFilter.h"
 #include "itkImage.h"
 #include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
 #include "itkImageToVTKImageFilter.h"
+#include "itkIsolatedConnectedImageFilter.h"
+#include "itkLinearInterpolateImageFunction.h"
+#include "itkNearestNeighborInterpolateImageFunction.h"
+#include "itkNeighborhoodConnectedImageFilter.h"
+#include "itkRawImageIO.h"
+#include "itkResampleImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
 #include "DicomImageReader.h"
 #include "FiducialRegistration.h"
+#include "vtkImageBlend.h"
+#include "vtkImageResample.h"
+#include "vtkImageReslice.h"
+#include "vtkImageMapToRGBA.h"
+#include "vtkLookupTable.h"
 
 class IGMTrackingBase 
 {
@@ -26,6 +40,10 @@ public:
 	typedef ISIS::DicomImageReader< VolumeType >        DicomReaderType;
 	
 	typedef itk::Image< VisualizationPixelType, 3 >     VisualizationVolumeType;
+
+	typedef itk::ImageFileWriter< VolumeType >			RawWriterType;
+
+	typedef itk::RawImageIO< PixelType, 3 >				RawImageIOType;
 	
 	typedef itk::RescaleIntensityImageFilter< 
 		VolumeType,
@@ -33,8 +51,38 @@ public:
 	
 	typedef itk::ImageToVTKImageFilter< 
 		VisualizationVolumeType >   ITK2VTKAdaptorFilterType;
-	
+
+  typedef itk::ConfidenceConnectedImageFilter< 
+    VolumeType, VolumeType> ConfidenceConnectedFilterType;
+
+  typedef itk::ConnectedThresholdImageFilter< 
+    VolumeType, VolumeType> ConnectedThresholdFilterType;
+
+  typedef itk::NeighborhoodConnectedImageFilter< 
+    VolumeType, VolumeType> NeighborhoodConnectedFilterType;
+
+  typedef itk::IsolatedConnectedImageFilter< 
+    VolumeType, VolumeType> IsolatedConnectedFilterType;
+
+  typedef itk::ResampleImageFilter<
+    VolumeType, VolumeType> ResampleImageFilterType;
+
+  typedef itk::AffineTransform <double, 3> TransformType;
+
+  typedef itk::LinearInterpolateImageFunction<VolumeType, double> LInterpolateType;
+
+  typedef itk::NearestNeighborInterpolateImageFunction<VolumeType, double> NNInterpolateType;
+
 public:
+	virtual void OnUpdateSegParameters();
+	virtual void SetInputData(int pipeline);
+	virtual void RenderAllWindow();
+  virtual void RenderSectionWindow();
+  double m_FusionOpacity;
+  int m_Pipeline;
+	virtual void OnUpdateOpacity(double opa);
+	virtual void OnUpdateProbeParameters();
+	virtual void OnUpdateLayout();
 	
 	IGMTrackingBase();
 	
@@ -93,16 +141,60 @@ protected:
 protected:
 	
 	VolumeReaderType::Pointer               m_VolumeReader;
+
+  VolumeReaderType::Pointer               m_FusionVolumeReader;
 	
 	RescaleIntensityFilterType::Pointer     m_RescaleIntensity;
+
+  RescaleIntensityFilterType::Pointer     m_FusionRescaleIntensity;
 	
 	ITK2VTKAdaptorFilterType::Pointer       m_ITK2VTKAdaptor;
+
+  ITK2VTKAdaptorFilterType::Pointer       m_FusionITK2VTKAdaptor;
 	
-	DicomReaderType                         m_DicomVolumeReader;
+  ConfidenceConnectedFilterType::Pointer  m_ConfidenceConnectedFilter;
+
+  ConnectedThresholdFilterType::Pointer   m_ConnectedThresholdFilter;
+
+  NeighborhoodConnectedFilterType::Pointer    m_NeighborhoodConnectedFilter;
+
+  IsolatedConnectedFilterType::Pointer    m_IsolatedConnectedFilter;
+
+  ResampleImageFilterType::Pointer        m_ResampleImagePreFilter;
+
+  ResampleImageFilterType::Pointer        m_ResampleImagePostFilter;
+
+  ResampleImageFilterType::Pointer        m_ResampleImageFusionFilter;
+
+  TransformType::Pointer                  m_Transform;
+
+  LInterpolateType::Pointer               m_LInterpolate;
+
+  NNInterpolateType::Pointer              m_NNInterpolate;
+	
+  DicomReaderType                         m_DicomVolumeReader;
+
+  DicomReaderType                         m_FusionDicomVolumeReader;
 	
 	VolumeType::ConstPointer                m_LoadedVolume;
 
+//<<<<<<< IGMTrackingBase.h
+  VolumeType::ConstPointer                m_FusionVolume;
+/*
+  vtkImageBlend*                  m_ImageBlend;
+
+  vtkImageResample*                 m_ImageResample;
+
+  vtkImageReslice*                  m_ImageReslice;
+
+  vtkImageMapToRGBA*                m_ImageMap;
+
+  vtkLookupTable*                   m_LUT;
+*/
+//	double									m_TargetPoint[3];
+//=======
 	double									m_TargetPoint[3];
+//>>>>>>> 1.2
 
 	double									m_EntryPoint[3];
 
