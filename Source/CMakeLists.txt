@@ -45,6 +45,14 @@ IF( WIN32 )
         igstkSerialCommunicationForWindows.cxx
         )
   ENDIF(NOT CYGWIN)
+ELSE( WIN32 )
+    SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} 
+        igstkSerialCommunicationForLinux.h
+        )
+
+    SET(IGSTKSandbox_SRCS ${IGSTKSandbox_SRCS} 
+        igstkSerialCommunicationForLinux.cxx
+        )
 ENDIF( WIN32 )
 
 # Adding the IGSTKSandbox library
