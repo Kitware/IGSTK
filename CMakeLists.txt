@@ -83,6 +83,7 @@ SET(IGSTK_HEADS
   CrossLine.h
   ICPRegistration.h
   IGMTRegistrationViewer.h
+  igstkEllipseEstimator.h
 )
 
 SET(IGSTK_SRCS
@@ -114,6 +115,7 @@ SET(IGSTK_SRCS
   igstkInteractorObserver.cxx
   ICPRegistration.cxx
   IGMTRegistrationViewer.cxx
+  igstkEllipseEstimator.cxx
   )
 
 SET(AURORA_TRACKER_HEADS
