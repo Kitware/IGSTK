@@ -1,0 +1,40 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0105 
+header_name {.h} 
+code_name {.cxx}
+class TwoViews {open
+} {
+  Function {TwoViews()} {open
+  } {
+    Fl_Window Window {
+      label {IGSTK: Two Views Example} open
+      xywh {619 249 780 494} type Double resizable visible
+    } {
+      Fl_Box Display1 {
+        label {Display 1}
+        xywh {5 5 380 330} box FLAT_BOX color 0 labelcolor 7
+        code0 {\#include <igstkView3D.h>}
+        class {igstk::View3D}
+      }
+      Fl_Light_Button TrackingBt {
+        label Tracking
+        callback {MouseTrackerBox->SetTracking(o->value());}
+        xywh {30 410 85 25} labelsize 11
+      }
+      Fl_Box MouseTrackerBox {
+        label {Mouse Tracking}
+        xywh {140 340 635 150} box FLAT_BOX color 8 labelsize 11 labelcolor 7
+        code0 {\#include <TrackingBox.h>}
+        class TrackingBox
+      }
+      Fl_Box Display2 {
+        label {Display 2} selected
+        xywh {395 5 380 330} box FLAT_BOX color 0 labelcolor 7
+        code0 {\#include <igstkView3D.h>}
+        class {igstk::View3D}
+      }
+    }
+  }
+  Function {~TwoViews()} {open
+  } {}
+} 
