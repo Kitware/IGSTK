@@ -62,15 +62,6 @@ public:
   /** Connect this representation class to the spatial object */
   void RequestSetCylinderObject( const CylinderSpatialObjectType * cylinderObject );
 
-protected:
-
-  typedef StateMachine< Self > StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer   ActionType;
-  typedef StateMachineType::StateType                StateType;
-  typedef StateMachineType::InputType                InputType;
-
-  igstkFriendClassMacro( StateMachineType );
-
   CylinderObjectRepresentation( void );
   ~CylinderObjectRepresentation( void );
 
@@ -79,6 +70,9 @@ protected:
 
   /** Create the VTK actors */
   void CreateActors();
+
+  /** Declarations needed for the State Machine */
+  igstkStateMachineMacro();
 
 private:
 
@@ -97,8 +91,6 @@ private:
 
 private:
 
-  StateMachineType     m_StateMachine;
-  
   /** Inputs to the State Machine */
   InputType            m_ValidCylinderObjectInput;
   InputType            m_NullCylinderObjectInput;

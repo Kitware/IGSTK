@@ -54,27 +54,21 @@ public:
 
 public:
 
-    typedef Transform         TransformType;
-    typedef double            ErrorType;
-    typedef double            TimePeriodType;
+  typedef Transform         TransformType;
+  typedef double            ErrorType;
+  typedef double            TimePeriodType;
 
-    igstkGetMacro( Transform, TransformType );
-    igstkGetMacro( ValidityPeriod, TimePeriodType );
-    igstkGetMacro( Error, ErrorType );
+  igstkGetMacro( Transform, TransformType );
+  igstkGetMacro( ValidityPeriod, TimePeriodType );
+  igstkGetMacro( Error, ErrorType );
 
-    igstkSetMacro( Transform, TransformType );
-    igstkSetMacro( ValidityPeriod, TimePeriodType );
-    igstkSetMacro( Error, ErrorType );
+  igstkSetMacro( Transform, TransformType );
+  igstkSetMacro( ValidityPeriod, TimePeriodType );
+  igstkSetMacro( Error, ErrorType );
 
-private:
-    
-  typedef igstk::StateMachine< Self >               StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer   ActionType;
-  typedef StateMachineType::StateType                StateType;
-  typedef StateMachineType::InputType                InputType;
 
-  igstkFriendClassMacro( StateMachineType );
-
+  /** Declarations needed for the State Machine */
+  igstkStateMachineMacro();
 
 protected:
 
@@ -96,8 +90,6 @@ private:
 
 private:
 
-  StateMachineType     m_StateMachine;
-  
   /** Inputs to the State Machine */
   InputType            m_InitializeInput;
   

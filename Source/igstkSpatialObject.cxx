@@ -159,12 +159,6 @@ SpatialObject::ReportInvalidRequest()
 }
 
 
-void 
-SpatialObject::ExportStateMachineDescription( stdOstreamType & ostr ) const
-{
-  m_StateMachine.ExportDescription( ostr );
-}
-
 
 } // end namespace igstk
 

@@ -63,14 +63,10 @@ public:
   /** Connect this representation class to the spatial object */
   void RequestSetEllipsoidObject( const EllipsoidObjectType * ellipsoidObject );
 
+  /** Declarations needed for the State Machine */
+  igstkStateMachineMacro();
+
 protected:
-
-  typedef StateMachine< Self > StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer   ActionType;
-  typedef StateMachineType::StateType                StateType;
-  typedef StateMachineType::InputType                InputType;
-
-  igstkFriendClassMacro( StateMachineType );
 
   EllipsoidObjectRepresentation( void );
   virtual ~EllipsoidObjectRepresentation( void );
@@ -98,8 +94,6 @@ private:
 
 private:
 
-  StateMachineType     m_StateMachine;
-  
   /** Inputs to the State Machine */
   InputType            m_ValidEllipsoidObjectInput;
   InputType            m_NullEllipsoidObjectInput;

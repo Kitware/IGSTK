@@ -26,7 +26,7 @@
 namespace igstk
 {
 
-Tracker::Tracker(void) : m_pCommunication( NULL), m_Logger( NULL), m_StateMachine( this )
+Tracker::Tracker(void) : m_Logger( NULL), m_StateMachine( this )
 {
   // Set the state descriptors
   m_StateMachine.AddState( m_IdleState, "IdleState" );
@@ -219,11 +219,6 @@ void Tracker::AddPort( TrackerPortType * port )
 void Tracker::ClearPorts( void )
 {
   this->m_Ports.clear();
-}
-
-const Tracker::StateIdentifierType & Tracker::GetCurrentState() const
-{
-  return m_StateMachine.GetCurrentStateIdentifier();
 }
 
 void Tracker::AttemptToSetUpCommunicationProcessing( void )

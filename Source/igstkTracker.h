@@ -48,26 +48,18 @@ namespace igstk
 
 class Tracker : public itk::Object
 {
-  public:
+
+public:
+  
   typedef igstk::Communication           CommunicationType;
   typedef igstk::Logger                  LoggerType;
-  typedef igstk::StateMachine< Tracker > StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer ActionType;
-  typedef StateMachineType::StateType              StateType;
-  typedef StateMachineType::InputType              InputType;
-  typedef StateMachineType::StateIdentifierType    StateIdentifierType;
 
   /* typedefs from igstk::TrackerPort class */
   typedef igstk::TrackerTool             TrackerToolType;
 
   /* typedefs from igstk::TrackerTool class */
-
   typedef Transform                TransformType;
   typedef double                   ErrorType;
-
-  igstkFriendClassMacro( StateMachineType );
-
-public:
 
   /** Some required typedefs for itk::Object. */
 
@@ -136,8 +128,8 @@ public:
   /** The GetLogger method return pointer to the logger object. */
   LoggerType* GetLogger(  void );
 
-  /** Type used to represent the codes of the states */
-  const StateIdentifierType & GetCurrentState() const;
+  /** Declarations needed for the State Machine */
+  igstkStateMachineMacro();
 
 protected:
 
@@ -210,13 +202,13 @@ protected:
   /** The "DisableToolsProcessing" method disables tools. */
   virtual void DisableToolsProcessing( void );
 
-protected:
+private:
 
   /** Vector of all tool ports on the tracker */
   TrackerPortVectorType     m_Ports;
   
   /** The "Communication" instance */
-  CommunicationType        *m_pCommunication;
+  CommunicationType::Pointer    m_Communication;
  
   /** Results of post-transition event actions by the state machine */
   InputType                *m_pSetUpCommunicationResultInput;
@@ -228,12 +220,6 @@ protected:
   InputType                m_SetUpCommunicationInput;
   InputType                m_CommunicationEstablishmentSuccessInput;
   InputType                m_CommunicationEstablishmentFailureInput;
-
-private:
-
-
-  /** The "StateMachine" instance */
-  StateMachineType         m_StateMachine;
 
   /** List of States */
   StateType                m_IdleState;
@@ -269,6 +255,7 @@ private:
 
   /** The Logger instance */
   LoggerType::Pointer      m_Logger;
+
 };
 
 }

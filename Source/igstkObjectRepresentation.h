@@ -62,12 +62,6 @@ public:
 
   igstkTypeMacro(ObjectRepresentation, itk::Object);
 
-  typedef StateMachine< Self >                       StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer   ActionType;
-  typedef StateMachineType::StateType                StateType;
-  typedef StateMachineType::InputType                InputType;
-
-  igstkFriendClassMacro( StateMachineType );
   igstkFriendClassMacro( Scene );
 
   /** Set the color */
@@ -84,6 +78,9 @@ public:
 
   /** Has the object been modified */
   bool IsModified() const;
+
+  /** Declarations needed for the State Machine */
+  igstkStateMachineMacro();
 
 protected:
 
@@ -144,8 +141,6 @@ private:
 
 private:
 
-  StateMachineType     m_StateMachine;
-  
   /** Inputs to the State Machine */
   InputType            m_ValidSpatialObjectInput;
   InputType            m_NullSpatialObjectInput;

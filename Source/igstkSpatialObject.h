@@ -70,9 +70,8 @@ public:
    * tool. */
   void RequestAttachToTrackerTool( const TrackerTool * trackerTool );
 
-  /** Export the description of the internal State Machine to an ostream */
-  void ExportStateMachineDescription( stdOstreamType & ostr ) const;
-
+  /** Declarations needed for the State Machine */
+  igstkStateMachineMacro();
 
 protected:
 
@@ -84,15 +83,6 @@ protected:
 
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
-
-private:
-    
-  typedef igstk::StateMachine< Self >                StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer   ActionType;
-  typedef StateMachineType::StateType                StateType;
-  typedef StateMachineType::InputType                InputType;
-
-  igstkFriendClassMacro( StateMachineType );
 
 
 private:
@@ -108,9 +98,6 @@ private:
   TrackerTool::ConstPointer    m_TrackerTool;
   TrackerTool::ConstPointer    m_TrackerToolToAttachTo;
 
-  /** The State Machine controlling this object */
-  StateMachineType     m_StateMachine;
-  
   /** Inputs to the State Machine */
   InputType            m_TrackingEnabledInput;
   InputType            m_TrackingLostInput;

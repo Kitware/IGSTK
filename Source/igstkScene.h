@@ -71,10 +71,12 @@ public:
 
   /** Returns the number of children currently assigned to the
    * Scene object.*/ 
-//  unsigned int GetNumberOfObjects() const; 
 
   /** Remove all the objects in the scene */
   void RequestRemoveAllObjects();
+
+  /** Declarations needed for the State Machine */
+  igstkStateMachineMacro();
 
 protected: 
 
@@ -92,13 +94,6 @@ protected:
 
 private:
     
-  typedef igstk::StateMachine< Self >               StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer   ActionType;
-  typedef StateMachineType::StateType                StateType;
-  typedef StateMachineType::InputType                InputType;
-
-  igstkFriendClassMacro( StateMachineType );
-
   // Actual execution method associated to the ones that can be requested from
   // the external API. Only the state machine is allowed to call the execution
   // methods below.
@@ -117,8 +112,6 @@ private:
 
 private:
 
-  StateMachineType     m_StateMachine;
-  
   /** Inputs to the State Machine */
   InputType            m_ValidAddObject;
   InputType            m_NullAddObject;

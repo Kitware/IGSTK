@@ -75,7 +75,7 @@ ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation
 TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon)
 
 ADD_EXECUTABLE(igstkStateMachineExportTest igstkStateMachineExportTest.cxx)
-ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest)
+ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_TEST_OUTPUT_DIR})
 TARGET_LINK_LIBRARIES(igstkStateMachineExportTest IGSTK)
 
 # Configure a header needed by igstkSystemInformation.

@@ -79,8 +79,6 @@ int igstkBasicTrackerTest( int, char * [] )
 
   tracker->StopTracking();
 
-  std::cout << tracker->GetCurrentState() << std::endl;
-
   std::cout << "Testing the interaction with tools" << std::endl;
   const unsigned int toolNumber = 0;
   const unsigned int portNumber = 0;

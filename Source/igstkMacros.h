@@ -94,6 +94,28 @@ static Pointer New(void) \
 #endif 
 
 
+/** Macro that defines all the standard elements related to the StateMachine.
+ * This macro factorizes code that should always be present when using the StateMachine. */
+#define  igstkStateMachineMacro() \
+private: \
+  typedef StateMachine< Self > StateMachineType; \
+  typedef StateMachineType::TMemberFunctionPointer   ActionType; \
+  typedef StateMachineType::StateType                StateType;  \
+  typedef StateMachineType::InputType                InputType;  \
+  igstkFriendClassMacro( StateMachineType ); \
+  StateMachineType     m_StateMachine; \
+public:  \
+  void ExportStateMachineDescription( stdOstreamType & ostr  ) const \
+   { m_StateMachine.ExportDescription( ostr ); } \
+private: 
+  
+// NOTE: the last "private:" statement above is a safeguard for preventing
+// this macro from openening by accident the access to method in the host
+// class. The igstkStateMachineMacro() should always be used just before a
+// access scope keyword in the host class {protected,privated,public}.
+
+
+
 
 
 
