@@ -31,9 +31,6 @@ public:
 
   void AddObserver( itk::Command * );
 
-
-protected:
-
   void ReadVolume();
 
   void ReadVolume( std::string );
