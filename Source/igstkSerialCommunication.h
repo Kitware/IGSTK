@@ -91,9 +91,18 @@ public:
 
 
 
-  typedef enum { 
-    ONE_STOP_BIT, TWO_STOP_BITS
-  } StopBitsType;
+  /** Type used for encoding the number of stop bits used by the serial port */
+  typedef SerialCommunicationStopBits  StopBitsType;
+
+  /** Explicit instantiations for every accepted number of stop bits. Using
+   * types for the stop bits enforces safety on the assignment of values
+   * because the verification is done at compile time. */
+  typedef SerialCommunicationStopBitsValued< 1 > StopBits1;
+  typedef SerialCommunicationStopBitsValued< 2 > StopBits2;
+
+
+
+
 
   typedef enum { 
     HANDSHAKE_OFF, HANDSHAKE_ON

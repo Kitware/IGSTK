@@ -29,7 +29,7 @@ namespace igstk
  *
  * This class enforces safety on the values that are admisible as baud rates
  * for the serial port configuration. The actual Baud Rate value is assigned at
- * construction time and cannot be changed.
+ * construction time.
  *
  * \ingroup Communication
  */
@@ -74,7 +74,8 @@ template< unsigned long NRate >
 class SerialCommunicationBaudRateValued : public SerialCommunicationBaudRate
 {
   public:
-    SerialCommunicationBaudRateValued<NRate>():SerialCommunicationBaudRate(NRate) {};
+    SerialCommunicationBaudRateValued<NRate>():
+               SerialCommunicationBaudRate(NRate) {};
 };
 
 
@@ -88,7 +89,7 @@ class SerialCommunicationBaudRateValued : public SerialCommunicationBaudRate
  *
  * This class enforces safety on the values that are admisible as data bits size
  * for the serial port configuration. The actual data size value is assigned at
- * construction time and cannot be changed.
+ * construction time.
  *
  * \ingroup Communication
  */
@@ -133,7 +134,8 @@ template< unsigned int NDataSize >
 class SerialCommunicationDataBitsSizeValued : public SerialCommunicationDataBitsSize
 {
   public:
-    SerialCommunicationDataBitsSizeValued< NDataSize >():SerialCommunicationDataBitsSize(NDataSize) {};
+    SerialCommunicationDataBitsSizeValued< NDataSize >():
+                 SerialCommunicationDataBitsSize(NDataSize) {};
 };
 
 
@@ -144,7 +146,7 @@ class SerialCommunicationDataBitsSizeValued : public SerialCommunicationDataBits
  *
  * This class enforces safety on the values that are admisible as parity for
  * the serial port configuration. The actual parity value is assigned at
- * construction time and cannot be changed.
+ * construction time.
  *
  * \ingroup Communication
  */
@@ -189,8 +191,68 @@ template< unsigned int NParity >
 class SerialCommunicationParityValued : public SerialCommunicationParity
 {
   public:
-    SerialCommunicationParityValued< NParity >():SerialCommunicationParity(NParity) {};
+    SerialCommunicationParityValued< NParity >():
+                   SerialCommunicationParity(NParity) {};
 };
+
+
+
+
+/** \class SerialCommunicationStopBits
+ * 
+ * \brief Defines a compile-time token for the number of stop bits 
+ *
+ * This class enforces safety on the values that are admisible as stop bits
+ * size for the serial port configuration. The actual data size value is
+ * assigned at construction time.
+ *
+ * \ingroup Communication
+ */
+class SerialCommunicationStopBits : public Token
+{
+  public:
+
+    typedef unsigned int StopBitsType;
+
+    typedef SerialCommunicationStopBits Self;
+
+  public:
+    SerialCommunicationStopBits( StopBitsType rate )
+      {
+      m_StopBits = rate;  
+      }
+
+    ~SerialCommunicationStopBits() 
+      {}
+    
+    StopBitsType Get() const
+      { 
+      return m_StopBits; 
+      }
+    
+   const Self & operator=( const Self & token )
+      { m_StopBits = token.m_StopBits; } 
+
+   bool operator!=( const Self & token )
+      { return m_StopBits != token.m_StopBits; }
+        
+   bool operator==( const Self & token )
+      { return m_StopBits == token.m_StopBits; }
+        
+  private:
+    
+    StopBitsType  m_StopBits;
+
+};
+
+template< unsigned int NStopBits >
+class SerialCommunicationStopBitsValued : public SerialCommunicationStopBits
+{
+  public:
+    SerialCommunicationStopBitsValued< NStopBits >():
+                 SerialCommunicationStopBits(NStopBits) {};
+};
+
 
 
 } // end namespace igstk

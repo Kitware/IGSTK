@@ -176,11 +176,11 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
   }
 
   // Stop bit parameter settings
-  switch(this->m_StopBits)
+  switch(this->m_StopBits.Get())
   {
-  case ONE_STOP_BIT: 
+  case 1: 
        portSettings.c_cflag &= ~CSTOPB; break; 
-  case TWO_STOP_BITS: 
+  case 2:
        portSettings.c_cflag |= CSTOPB; break; 
   default: //return error; shouldn't come here in the first place.
        portSettings.c_cflag &= ~CSTOPB;  

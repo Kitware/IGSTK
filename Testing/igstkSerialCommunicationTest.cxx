@@ -147,9 +147,10 @@ int igstkSerialCommunicationTest( int, char * [] )
 
   serialComm->SetLogger( logger );
 
+  serialComm->SetParity(   igstk::SerialCommunication::NoParity() );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600() );
   serialComm->SetByteSize( igstk::SerialCommunication::DataBits8() );
-  serialComm->SetParity(   igstk::SerialCommunication::NoParity() );
+  serialComm->SetStopBits( igstk::SerialCommunication::StopBits1() );
 
   serialComm->OpenCommunication();
 
