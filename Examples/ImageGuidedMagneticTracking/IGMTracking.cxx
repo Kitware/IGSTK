@@ -955,16 +955,18 @@ void IGMTracking::SetNeedleRadius( const double val )
 
 void IGMTracking::PrintDebugInfo( void )
 {
-	double pos1[3], pos2[3];
+	double pos[3];
 	printf("Debug Information:\n");
-	m_SaggitalViewer.m_TargetPositionMarker.GetCenter( pos1 );
-	printf("Target: %4.3f   %4.3f   %4.3f\n", pos1[0], pos1[1], pos1[2]);
-	m_SaggitalViewer.m_EntryPositionMarker.GetCenter( pos1 );
-	printf("Entry: %4.3f   %4.3f   %4.3f\n", pos1[0], pos1[1], pos1[2]);
-	m_SaggitalViewer.m_EntryToTargetPathMarker.m_LineSource->GetPoint1( pos1 );
-	m_SaggitalViewer.m_EntryToTargetPathMarker.m_LineSource->GetPoint2( pos2 );
-	printf("Line Point 01: %4.3f   %4.3f   %4.3f\n", pos1[0], pos1[1], pos1[2]);
-	printf("Line Point 02: %4.3f   %4.3f   %4.3f\n", pos2[0], pos2[1], pos2[2]);
+	m_SaggitalViewer.m_TargetPositionMarker.GetCenter( pos );
+	printf("Target: %4.3f   %4.3f   %4.3f\n", pos[0], pos[1], pos[2]);
+	m_SaggitalViewer.m_EntryPositionMarker.GetCenter( pos );
+	printf("Entry: %4.3f   %4.3f   %4.3f\n", pos[0], pos[1], pos[2]);
+
+  float fpos1[3], fpos2[3];
+	m_SaggitalViewer.m_EntryToTargetPathMarker.m_LineSource->GetPoint1( fpos1 );
+	m_SaggitalViewer.m_EntryToTargetPathMarker.m_LineSource->GetPoint2( fpos2 );
+	printf("Line Point 01: %4.3f   %4.3f   %4.3f\n", fpos1[0], fpos1[1], fpos1[2]);
+	printf("Line Point 02: %4.3f   %4.3f   %4.3f\n", fpos2[0], fpos2[1], fpos2[2]);
 	printf("End of Debug Information:\n");
 }
 
