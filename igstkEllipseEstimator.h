@@ -69,6 +69,15 @@ public:
 	*/
   const double GetEllipseParameter(int i);
 
+  /**Checks if the estimated parameters are of an ellipse
+  */
+  bool IsEllipse( );
+
+  /**given x coordinate computes the coresponding two points
+  *  
+  */
+  EllipseEstimator::VectorOfPointsType GetPoints ( double x );
+
 
   void PrintParameters();
   

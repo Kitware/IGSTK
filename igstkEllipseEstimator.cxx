@@ -18,6 +18,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkEllipseEstimator.h"
 
 #include <iostream>
+#include <math.h>
 
 #define cross(a, b, ab) ab[0] = a[1]*b[2] - a[2]*b[1]; \
 			ab[1] = a[2]*b[0] - a[0]*b[2]; \
@@ -277,6 +278,60 @@ EllipseEstimator::ToConic(EllipseEstimator::VectorOfPointsType inputPoints,
 }
 
 
+
+  /**
+  */
+bool
+EllipseEstimator::IsEllipse( )
+{
+  double delta = ( GetEllipseParameter(1) * GetEllipseParameter(1) ) - 4 * GetEllipseParameter(0) * GetEllipseParameter(2);
+	
+  if ( delta < 0 ) return true;
+  else return false;
+}
+
+  /**given x coordinate computes the coresponding two points
+  *  if no points exist, the returned points have 0 sa coordinate values
+  */
+EllipseEstimator::VectorOfPointsType 
+EllipseEstimator::GetPoints ( double x )
+{
+  EllipseEstimator::VectorOfPointsType	points(2);
+
+  if ( IsEllipse() )
+  {
+    double A = GetEllipseParameter(2);
+	double B = GetEllipseParameter(1) * x + GetEllipseParameter(4);
+	double C = GetEllipseParameter(0) * x * x + GetEllipseParameter(3) * x + GetEllipseParameter(5);
+
+	double delta = B *B - 4 *A * C;
+
+	if ( ( delta >= 0) && ( A != 0 ) )
+	{
+	  PointType p1(2);
+	  p1[0] = x;
+	  p1[1] = ( -B - sqrt(delta) ) / (2 * A);
+
+	  PointType p2(2);
+	  p2[0] = x;
+	  p2[1] = ( -B + sqrt(delta) ) / (2 * A);
+
+	  points[0] = p1;
+	  points[1] = p2;
+	}
+	else {
+	  PointType p1;
+	  p1[0] =  p1[1] = 0;
+
+	  PointType p2;
+	  p2[0] = p2[1] = 0;
+
+	  points[0] = p1;
+	  points[1] = p2; 
+	}
+  }
+  return points;
+}
 /**
 */
 void
