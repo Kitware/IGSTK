@@ -42,8 +42,8 @@ int igstkSceneTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
   // Add Object
-  std::cout << "Testing AddObject: ";
-  scene->AddObject(ellipsoid); 
+  std::cout << "Testing RequestAddObject: ";
+  scene->RequestAddObject(ellipsoid); 
   if(scene->GetNumberOfObjects() != 1)
     { 
     std::cout << "[FAILED]" << std::endl;
@@ -52,8 +52,8 @@ int igstkSceneTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
   // Remove object
-  std::cout << "Testing RemoveObject: ";
-  scene->RemoveObject(ellipsoid); 
+  std::cout << "Testing RequestRemoveObject: ";
+  scene->RequestRemoveObject(ellipsoid); 
   if(scene->GetNumberOfObjects() != 0)
     { 
     std::cout << "[FAILED]" << std::endl;
