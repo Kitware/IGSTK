@@ -16,8 +16,10 @@ FLTK_WRAP_UI(ApplicationModel
   )
 
 
+INCLUDE_DIRECTORIES(
+  ${ApplicationModel_SOURCE_DIR}
+  ${ApplicationModel_BINARY_DIR}
+  )
 
-TARGET_LINK_LIBRARIES( ApplicationModel
-    IGSTK 
-    )
+TARGET_LINK_LIBRARIES( ApplicationModel IGSTK )
 
