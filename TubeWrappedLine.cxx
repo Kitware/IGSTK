@@ -107,32 +107,6 @@ void TubeWrappedLine::SetEnds( double tip[3], double end[3] )
 
 void TubeWrappedLine::SetTipAndDirection( double tip[3], double end[3] )
 {
-//<<<<<<< TubeWrappedLine.cxx
-/*	m_LineSource->SetPoint1( tip ); 
-	float direction[3];
-=======
-	m_LineSource->SetPoint1( tip[0], tip[1], tip[2] ); 
-	double direction[3];
->>>>>>> 1.3
-	direction[0] = end[0] - tip[0];
-	direction[1] = end[1] - tip[1];
-	direction[2] = end[2] - tip[2];
-	double length = sqrt(direction[0]*direction[0]+direction[1]*direction[1]+direction[2]*direction[2]);
-	direction[0] /= length;
-	direction[1] /= length;
-	direction[2] /= length;
-	double otherEnd[3];
-	otherEnd[0] = tip[0] + m_Length * direction[0];
-	otherEnd[1] = tip[1] + m_Length * direction[1];
-	otherEnd[2] = tip[2] + m_Length * direction[2];
-	m_LineSource->SetPoint2( otherEnd[0], otherEnd[1], otherEnd[2] );
-
-	m_LineSourceHip->SetPoint1( otherEnd[0], otherEnd[1], otherEnd[2] );
-	otherEnd[0] -= m_Length * direction[0] / 6.0f;
-	otherEnd[1] -= m_Length * direction[1] / 6.0f;
-	otherEnd[2] -= m_Length * direction[2] / 6.0f;
-<<<<<<< TubeWrappedLine.cxx
-	m_LineSourceHip->SetPoint2( otherEnd ); */
 
 	m_LineSource->SetPoint1( tip[0], tip[1], tip[2] ); 
 	float direction[3];
@@ -143,7 +117,7 @@ void TubeWrappedLine::SetTipAndDirection( double tip[3], double end[3] )
 	direction[0] /= length;
 	direction[1] /= length;
 	direction[2] /= length;
-	float otherEnd[3];
+	vtkFloatingPointType otherEnd[3];
 	otherEnd[0] = tip[0] + length * direction[0];
 	otherEnd[1] = tip[1] + length * direction[1];
 	otherEnd[2] = tip[2] + length * direction[2];
@@ -156,9 +130,9 @@ void TubeWrappedLine::SetTipAndDirection( double tip[3], double end[3] )
 	m_LineSourceHip->SetPoint2( otherEnd ); 
 
   m_TipBubble.SetCenter(tip);
-//=======
+
 	m_LineSourceHip->SetPoint2( otherEnd[0], otherEnd[1], otherEnd[2] );
-//>>>>>>> 1.3
+
 }
 
 
@@ -201,7 +175,7 @@ void TubeWrappedLine::AddPosition(double *pos)
 
 void TubeWrappedLine::AddPosition(double x, double y, double z)
 {
-	float point[3];
+	vtkFloatingPointType point[3];
 
 	m_LineSource->GetPoint1(point);
 	m_LineSource->SetPoint1(point[0] + x, point[1] + y, point[2] + z);
