@@ -270,10 +270,10 @@ this->m_LiverTumorSegmentationModule.SetCurvatureScaling( atof(m_CurvatureScalin
 this->m_LiverTumorSegmentationModule.SetPropagationScaling( atof(m_PropagationScaling->value() ) );
 this->m_LiverTumorSegmentationModule.SetAdvectionScaling( atof(m_AdvectionScaling->value() ) );
 this->m_LiverTumorSegmentationModule.SetMaximumRMSError( atof(m_MaxRMSError->value() ) );
-this->m_LiverTumorSegmentationModule.SetMaximumIterations( atof(m_MaxIterations->value() ) );
+this->m_LiverTumorSegmentationModule.SetMaximumIterations( atoi(m_MaxIterations->value() ) );
 this->m_LiverTumorSegmentationModule.SetMultiplier( atof(m_Multiplier->value() ) );
-this->m_LiverTumorSegmentationModule.SetInitialNeighborhoodRadius( atof(m_InitialRadius->value() ) );
-this->m_LiverTumorSegmentationModule.SetNumberOfIterations( atof(m_NumberOfIterations->value() ) );
+this->m_LiverTumorSegmentationModule.SetInitialNeighborhoodRadius( atoi(m_InitialRadius->value() ) );
+this->m_LiverTumorSegmentationModule.SetNumberOfIterations( atoi(m_NumberOfIterations->value() ) );
 
 m_SegmentationParametersWindow->hide();}
         xywh {118 398 45 25} labelfont 1

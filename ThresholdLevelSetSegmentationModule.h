@@ -60,18 +60,18 @@
 */
 
 namespace itk {
-	class Notifier : public ProcessObject
-	{
-	protected:
-		Notifier() {};
-		~Notifier() {};
-	public:
-		typedef Notifier Self;
-		typedef ProcessObject Superclass;
-		typedef SmartPointer < Self > Pointer;
-		typedef SmartPointer < const Self> ConstPointer;
-		itkNewMacro( Self );
-	};
+  class Notifier : public ProcessObject
+  {
+  protected:
+    Notifier() {};
+    ~Notifier() {};
+  public:
+    typedef Notifier Self;
+    typedef ProcessObject Superclass;
+    typedef SmartPointer < Self > Pointer;
+    typedef SmartPointer < const Self> ConstPointer;
+    itkNewMacro( Self );
+  };
 };
 
 
@@ -148,7 +148,7 @@ public:
   typedef itk::ProgressAccumulator::Pointer           AccumulatorPointer;
 
 
-  typedef itk::Notifier                 NotifierType;						
+  typedef itk::Notifier                 NotifierType;            
 
 public:
     
@@ -164,35 +164,35 @@ public:
 
     void Execute();
 
- 	int GetElapsedIterations( void );
+   int GetElapsedIterations( void );
 
    const OutputImageType * GetInitialSegmentationOutput();
 
-	NotifierType*   GetNotifier( void );
+  NotifierType*   GetNotifier( void );
 
-	GetMacro( LowerThreshold, float );
-	GetMacro( UpperThreshold, float );
-	GetMacro( CurvatureScaling, float );
-	GetMacro( PropagationScaling, float );
-	GetMacro( AdvectionScaling, float );
-	GetMacro( MaximumRMSError, float );
-	GetMacro( MaximumIterations, int );
+  GetMacro( LowerThreshold, float );
+  GetMacro( UpperThreshold, float );
+  GetMacro( CurvatureScaling, float );
+  GetMacro( PropagationScaling, float );
+  GetMacro( AdvectionScaling, float );
+  GetMacro( MaximumRMSError, float );
+  GetMacro( MaximumIterations, int );
 
-	GetMacro( Multiplier, float );
-	GetMacro( InitialNeighborhoodRadius, float );
-	GetMacro( NumberOfIterations, int );
+  GetMacro( Multiplier, float );
+  GetMacro( InitialNeighborhoodRadius, float );
+  GetMacro( NumberOfIterations, unsigned int );
 
-	SetMacro( LowerThreshold, float );
-	SetMacro( UpperThreshold, float );
-	SetMacro( CurvatureScaling, float );
-	SetMacro( PropagationScaling, float );
-	SetMacro( AdvectionScaling, float );
-	SetMacro( MaximumRMSError, float );
-	SetMacro( MaximumIterations, int );
+  SetMacro( LowerThreshold, float );
+  SetMacro( UpperThreshold, float );
+  SetMacro( CurvatureScaling, float );
+  SetMacro( PropagationScaling, float );
+  SetMacro( AdvectionScaling, float );
+  SetMacro( MaximumRMSError, float );
+  SetMacro( MaximumIterations, unsigned int );
 
-	SetMacro( Multiplier, float );
-	SetMacro( InitialNeighborhoodRadius, float );
-	SetMacro( NumberOfIterations, int );
+  SetMacro( Multiplier, float );
+  SetMacro( InitialNeighborhoodRadius, unsigned int );
+  SetMacro( NumberOfIterations, unsigned int );
 
 
 private:
@@ -210,19 +210,19 @@ private:
    /** Progress tracking object */
    AccumulatorPointer        m_ProgressAccumulator;
 
-   NotifierType::Pointer						 m_Notifier;
+   NotifierType::Pointer             m_Notifier;
 
    /** Parameters for the Threshold filter */
-   float		m_LowerThreshold, m_UpperThreshold;
-   float		m_CurvatureScaling;
-   float		m_PropagationScaling;
-   float		m_AdvectionScaling;
-   float		m_MaximumRMSError;
-   int			m_MaximumIterations;
+   float          m_LowerThreshold, m_UpperThreshold;
+   float          m_CurvatureScaling;
+   float          m_PropagationScaling;
+   float          m_AdvectionScaling;
+   float          m_MaximumRMSError;
+   unsigned int      m_MaximumIterations;
    /** Parameters for the ConfidenceConnected filter */
-   float		m_Multiplier;
-   int			m_NumberOfIterations;
-   float		m_InitialNeighborhoodRadius;
+   float          m_Multiplier;
+   unsigned int   m_NumberOfIterations;
+   unsigned int   m_InitialNeighborhoodRadius;
 
 };
 
