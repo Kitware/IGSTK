@@ -33,7 +33,8 @@ namespace igstk
  * \brief This class encapsulates an ITK spatial object with the goal of
  * restricting access to functionalities that are not essential for IGS
  * applications, or to functionalities thay may present risks and unnecessary
- * flexibility. 
+ * flexibility.  This is an abstract class, you should use the derived classes
+ * that represent specific shapes.
  *
  * \ingroup Object
  */
@@ -52,9 +53,6 @@ public:
 
   /**  Run-time type information (and related methods). */
   igstkTypeMacro( SpatialObject, Object );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( SpatialObject );
 
   /** Set the Transform corresponding to the ObjectToWorld transformation of
    * the SpatialObject. */
@@ -79,7 +77,7 @@ protected:
   ~SpatialObject( void );
 
   /** Connect this representation class to the spatial object */
-  void SetSpatialObject( SpatialObjectType * );
+  void RequestSetSpatialObject( SpatialObjectType * );
 
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -89,6 +87,7 @@ private:
 
   /** Internal itkSpatialObject */
   SpatialObjectType::Pointer   m_SpatialObject;
+  SpatialObjectType::Pointer   m_SpatialObjectToBeSet;
 
   /** Internal Transform and temporary transform */
   Transform            m_Transform;
@@ -99,6 +98,8 @@ private:
   TrackerTool::ConstPointer    m_TrackerToolToAttachTo;
 
   /** Inputs to the State Machine */
+  InputType            m_SpatialObjectNullInput;
+  InputType            m_SpatialObjectValidInput;
   InputType            m_TrackingEnabledInput;
   InputType            m_TrackingLostInput;
   InputType            m_TrackingRestoredInput;
@@ -106,11 +107,13 @@ private:
   InputType            m_ManualTransformInput;
 
   /** States for the State Machine */
+  StateType            m_InitialState;
   StateType            m_NonTrackedState;
   StateType            m_TrackedState;
   StateType            m_TrackedLostState;
 
   /** Action methods to be invoked only by the state machine */
+  void SetSpatialObject();
   void ReportTrackingRestored();
   void ReportTrackingDisabled();
   void ReportTrackingLost();

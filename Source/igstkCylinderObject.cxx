@@ -25,7 +25,7 @@ CylinderObject::CylinderObject()
 {
   // We create the ellipse spatial object
   m_CylinderSpatialObject = CylinderSpatialObjectType::New();
-  this->SetSpatialObject( m_CylinderSpatialObject );
+  this->RequestSetSpatialObject( m_CylinderSpatialObject );
 } 
 
 /** Destructor */
