@@ -80,6 +80,9 @@ public:
   void Update();  
    
 
+  /** Has the object been modified */
+  bool IsModified();
+
 protected:
 
   ObjectRepresentation( void );
@@ -94,6 +97,7 @@ private:
   ActorsListType              m_Actors;
   float                       m_Color[3];
   float                       m_Opacity;
+  unsigned long               m_LastMTime;
 };
 
 } // end namespace igstk

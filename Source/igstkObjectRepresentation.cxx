@@ -28,6 +28,7 @@ ObjectRepresentation::ObjectRepresentation()
   m_Color[2] = 1.0;
   m_Opacity = 1.0;
   m_SpatialObject = NULL;
+  m_LastMTime = 0;
 } 
 
 /** Destructor */
@@ -36,10 +37,19 @@ ObjectRepresentation::~ObjectRepresentation()
 }
 
 /** Add an actor to the actors list */
-void
-ObjectRepresentation::AddActor( vtkProp3D * actor )
+void ObjectRepresentation::AddActor( vtkProp3D * actor )
 {
   m_Actors.push_back( actor );
+}
+
+/** Has the object been modified */
+bool ObjectRepresentation::IsModified()
+{
+  if(m_LastMTime<this->GetMTime())
+    {
+    return true;
+    }
+  return false;
 }
 
 /** Set the color */
@@ -64,9 +74,11 @@ void ObjectRepresentation::SetOffset(double x, double y, double z)
   offset[2] = z;
   m_SpatialObject->GetObjectToParentTransform()->SetOffset(offset);
   m_SpatialObject->ComputeObjectToWorldTransform();
+  this->Modified();
 }
 
-/** Check if the SpatialObject has been modified, if yes call an UpdateActors */
+/** Update the object representation (i.e vtkActors). Maybe we should check also the transform
+ *  modified time. */
 void ObjectRepresentation::Update()
 {
   itk::Matrix<double,3,3> itkMatrix = m_SpatialObject->GetObjectToWorldTransform()->GetMatrix();
@@ -90,6 +102,9 @@ void ObjectRepresentation::Update()
     (*it)->SetUserMatrix(vtkMatrix);
     it++;
   }
+
+  // Update the modified time
+  m_LastMTime = this->GetMTime();
 }
 
 

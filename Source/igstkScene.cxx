@@ -68,7 +68,11 @@ void Scene::Update()
 
   while(it != itEnd)
     {
-    (*it)->Update();
+    // We update only if the object has been modified
+    if((*it)->IsModified())
+      {
+      (*it)->Update();
+      }
     it++;
     }
 }
