@@ -105,6 +105,30 @@ int igstkCylinderObjectTest( int, char * [] )
   // this will indirectly call CreateActors() 
   scene->RequestAddObject( view2D, cylinderRepresentation );
 
+  // Exercise Copy() method
+  ObjectRepresentationType::Pointer cylinderRepresentation2 = cylinderRepresentation->Copy();
+  scene->RequestAddObject( view2D, cylinderRepresentation2 );
+  if(cylinderRepresentation2->GetOpacity() != cylinderRepresentation->GetOpacity())
+    {
+    std::cerr << "Copy() [FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "[PASSED]" << std::endl;
+
+  // Exercise RequestSetCylinderObject() with a null pointer as argument
+  std::cout << "Testing RequestSetCylinderObject() with NULL argument: ";
+  ObjectRepresentationType::Pointer cylinderRepresentation3 = ObjectRepresentationType::New();
+  cylinderRepresentation3->RequestSetCylinderObject( 0 );
+
+  // Exercise RequestSetCylinderObject() called twice. The second call should be ignored.
+  std::cout << "Testing RequestSetCylinderObject() called twice: ";
+  ObjectRepresentationType::Pointer cylinderRepresentation4 = ObjectRepresentationType::New();
+  ObjectType::Pointer cylinderObjectA = ObjectType::New();
+  ObjectType::Pointer cylinderObjectB = ObjectType::New();
+  cylinderRepresentation4->RequestSetCylinderObject( cylinderObjectA );
+  cylinderRepresentation4->RequestSetCylinderObject( cylinderObjectB );
+
+
   std::cout << "[PASSED]" << std::endl;
 
   std::cout << "Test [DONE]" << std::endl;

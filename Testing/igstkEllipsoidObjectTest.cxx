@@ -169,6 +169,18 @@ int igstkEllipsoidObjectTest( int, char * [] )
     }
   std::cout << "[PASSED]" << std::endl;
 
+  // Exercise RequestSetEllipsoidObject() with a null pointer as argument
+  std::cout << "Testing RequestSetEllipsoidObject() with NULL argument: ";
+  ObjectRepresentationType::Pointer ellipsoidRepresentation3 = ObjectRepresentationType::New();
+  ellipsoidRepresentation3->RequestSetEllipsoidObject( 0 );
+
+  // Exercise RequestSetEllipsoidObject() called twice. The second call should be ignored.
+  std::cout << "Testing RequestSetEllipsoidObject() called twice: ";
+  ObjectRepresentationType::Pointer ellipsoidRepresentation4 = ObjectRepresentationType::New();
+  ObjectType::Pointer ellipsoidObjectA = ObjectType::New();
+  ObjectType::Pointer ellipsoidObjectB = ObjectType::New();
+  ellipsoidRepresentation4->RequestSetEllipsoidObject( ellipsoidObjectA );
+  ellipsoidRepresentation4->RequestSetEllipsoidObject( ellipsoidObjectB );
 
   std::cout << "Test [DONE]" << std::endl;
   return EXIT_SUCCESS;
