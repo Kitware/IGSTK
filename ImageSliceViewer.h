@@ -36,8 +36,6 @@ public:
 
   void SelectPoint( int x, int y);
 
-  void SeedPoint( int x, int y);
-
   void SetInteractor( vtkRenderWindowInteractor * interactor );
 
   void Render( void );
@@ -48,12 +46,8 @@ public:
 
   virtual void SelectPoint( float x, float y, float z );
 
-  virtual void SeedPoint( float x, float y, float z );
-
   virtual void  GetSelectPoint(float data[3]); 
   
-  virtual void  GetSeedPoint(float data[3]); 
-
   unsigned long AddObserver( const itk::EventObject & event, itk::Command *);
 
   virtual void SetZoomFactor( double factor );

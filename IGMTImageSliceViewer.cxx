@@ -46,15 +46,15 @@ namespace ISIS
 	{
 	}
 	
-	void IGMTImageSliceViewer::SeedPoint( int x, int y )
+	void IGMTImageSliceViewer::SelectPoint( int x, int y )
 	{
-		ImageSliceViewer::SeedPoint(x,y);
+		ImageSliceViewer::SelectPoint(x,y);
 	}
 	
 	
-	void IGMTImageSliceViewer::SeedPoint( float x, float y, float z )
+	void IGMTImageSliceViewer::SelectPoint( float x, float y, float z )
 	{
-		ImageSliceViewer::SeedPoint(x,y,z);
+		ImageSliceViewer::SelectPoint(x,y,z);
 		m_SelectedPositionMarker.SetCenter( x, y, z );
 	}
 	

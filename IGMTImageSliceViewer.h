@@ -20,9 +20,9 @@ namespace ISIS
 		
 		virtual void SetOrientation( OrientationType orientation );
 
-		virtual void SeedPoint( int x, int y );
+		virtual void SelectPoint( int x, int y );
 		
-		virtual void SeedPoint( float x, float y, float z );
+		virtual void SelectPoint( float x, float y, float z );
 
 		virtual void ActivateSelectedPosition( void );
 
