@@ -126,8 +126,7 @@ m_RadiusInput->value(s);
 sprintf(s, "%.2f", m_Multiplier);
 m_MultiplierInput->value(s);
 sprintf(s, "%d", m_Iterations);
-m_IterationsInput->value(s);} {selected
-    }
+m_IterationsInput->value(s);} {}
   }
   Function {Show()} {return_type void
   } {
@@ -164,7 +163,8 @@ else if (m_LInterpolatorRadio->value() == 1)
 	m_InterpolatorMethod = 1;
 }
 this->Hide();
-m_pTracking->OnUpdateSegParameters();} {}
+m_pTracking->OnUpdateSegParameters();} {selected
+    }
   }
   Function {OnCancel()} {return_type void
   } {
