@@ -126,7 +126,7 @@ void SerialCommunication::SendString( const CommunicationDataType& message )
 {
   int strSize = (message.size()<m_WriteBufferSize) ? message.size() : m_WriteBufferSize;
   memcpy(m_OutputBuffer, message.c_str(), sizeof(char)*strSize);
-  m_OutputBuffer[strSize+2] = '\0';
+  m_OutputBuffer[strSize+2] = '\r';
 //  std::cout << "Message length = " << strSize << ", Message = " << m_OutputBuffer << std::endl;
   this->m_StateMachine.ProcessInput( m_SendString );
 }

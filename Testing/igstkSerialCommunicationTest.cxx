@@ -145,9 +145,17 @@ int igstkSerialCommunicationTest( int, char * [] )
   serialComm->OpenCommunication();
 
   serialComm->SendString("Hello World!!!");
+  serialComm->SendString("Hello World!!!");
+  serialComm->SendString("Hello World!!!");
+  serialComm->SendString("Hello World!!!");
+  serialComm->SendString("Hello World!!!");
+  serialComm->SendString("Hello World!!!");
 
   serialComm->FlushOutputBuffer();
 
+  serialComm->ReceiveString();
+  serialComm->ReceiveString();
+  serialComm->ReceiveString();
   serialComm->ReceiveString();
 
   serialComm->CloseCommunication();

@@ -40,8 +40,9 @@ void SerialCommunicationForLinux::OpenCommunicationPortProcessing( void )
     return;
   }
 
-  this->m_PortHandle = open(portName, O_RDWR );
-
+  this->m_PortHandle = open(portName, O_RDWR | O_NOCTTY); // | O_NDELAY);
+  // O_RDWR (Read/Write), O_NOCTTY (not a controlling terminal)
+  // O_NDELAY (do not care what state the DCD signal line is in)
   if( this->m_PortHandle < 0)
   {
     this->InvokeEvent( OpenPortFailureEvent() );
@@ -73,7 +74,8 @@ void SerialCommunicationForLinux::SetDataBufferSizeProcessing( void )
     this->m_ReadBufferOffset = 0;
     memset(this->m_InputBuffer, '\0', sizeof(this->m_InputBuffer));
 
-    igstkLogMacro( igstk::Logger::DEBUG, "SetDataBufferSizeParameters with Read Buffer size = ");
+    igstkLogMacro( igstk::Logger::DEBUG, "SetDataBufferSizeParameters ");
+    igstkLogMacro( igstk::Logger::DEBUG, "with Read Buffer size = ");
     igstkLogMacro( igstk::Logger::DEBUG, m_ReadBufferSize);
     igstkLogMacro( igstk::Logger::DEBUG, " and Write Buffer Size = ");
     igstkLogMacro( igstk::Logger::DEBUG, m_WriteBufferSize);
@@ -90,16 +92,16 @@ void SerialCommunicationForLinux::SetCommunicationTimeoutProcessing( void )
 
 void SerialCommunicationForLinux::SetupCommunicationProcessing( void )
 {
-    igstkLogMacro( igstk::Logger::DEBUG, "In SetupCommunicationProcessing ...\n ");
   // Control setting for a serial communications device
   struct termio portSettings;
   struct termios portOptions;
   unsigned int baudRate;
 
-  if ( (ioctl(this->m_PortHandle, TCGETA, &portSettings)!=0) ||
-       (tcgetattr(this->m_PortHandle, &portOptions)!=0) )
+  if (!( (ioctl(this->m_PortHandle, TCGETA, &portSettings)>=0) &&
+         (tcgetattr(this->m_PortHandle, &portOptions)>=0) ))
   {
        this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+       std::cout << "Setup Communication Failed.\n" << std::endl; 
        return;
   }
 
@@ -107,7 +109,7 @@ void SerialCommunicationForLinux::SetupCommunicationProcessing( void )
   //Input mode settings
   portSettings.c_iflag &= ~(IXON | IXOFF | IXANY); // Hardware handshake.
   portSettings.c_iflag &= ~IGNCR; // Allow carriage return.
-  //portSettings.c_iflag &= ~IGNBRK; // Allow serial break.
+  portSettings.c_iflag &= ~ICRNL; // Do not map CR to NL. 
 
   //Output mode settings
   portSettings.c_oflag &= ~OCRNL; // Do not map CR to NL.
@@ -121,12 +123,13 @@ void SerialCommunicationForLinux::SetupCommunicationProcessing( void )
   //Control mode settings (Hardware control)
   portSettings.c_cflag |= CLOCAL; // Local line. Modem off.
   portSettings.c_cflag |= CREAD; // Enable read from port.
-  portSettings.c_cflag |= CREAD; // Enable read from port.
 
   // Baudrate parameter settings
   portSettings.c_cflag &= ~CBAUD; // Clear baud rate bits.
   switch(this->m_BaudRate)
   {
+  case BAUD2400:
+          baudRate = B2400; break;
   case BAUD9600:
           baudRate = B9600; break;
   case BAUD19200:
@@ -137,13 +140,10 @@ void SerialCommunicationForLinux::SetupCommunicationProcessing( void )
           baudRate = B57600; break;
   case BAUD115200:
           baudRate = B115200; break;
-          break;
   default: 
-          baudRate = B9600; break;
+          baudRate = B9600; 
   }
   portSettings.c_cflag |= baudRate;
-  cfsetispeed(&portOptions, baudRate); // Set input baudrate.
-  cfsetospeed(&portOptions, baudRate); // Set output baudrate.
 
   // Bytesize parameter settings
   switch(this->m_ByteSize)
@@ -152,8 +152,8 @@ void SerialCommunicationForLinux::SetupCommunicationProcessing( void )
        portSettings.c_cflag |= CS7; break;
   case EIGHT_BITS: 
        portSettings.c_cflag |= CS8; break;
-  default: ;//return error; shouldn't come here in the first place.
-       portSettings.c_cflag |= CS8; break;
+  default: //return error; shouldn't come here in the first place.
+       portSettings.c_cflag |= CS8; 
   }
   // Parity parameter settings
   switch(this->m_Parity)
@@ -169,10 +169,10 @@ void SerialCommunicationForLinux::SetupCommunicationProcessing( void )
        portSettings.c_cflag |= PARENB; // Enable parity.
        portSettings.c_cflag &= ~PARODD; // Even parity.
        break;
-  default: ;//return error; shouldn't come here in the first place.
+  default: //return error; shouldn't come here in the first place.
        portSettings.c_cflag &= ~PARENB; // Disable parity.
-       break;
   }
+
   // Stop bit parameter settings
   switch(this->m_StopBits)
   {
@@ -180,19 +180,23 @@ void SerialCommunicationForLinux::SetupCommunicationProcessing( void )
        portSettings.c_cflag &= ~CSTOPB; break; 
   case TWO_STOP_BITS: 
        portSettings.c_cflag |= CSTOPB; break; 
-  default: ;//return error; shouldn't come here in the first place.
-       portSettings.c_cflag |= CSTOPB; break; 
+  default: //return error; shouldn't come here in the first place.
+       portSettings.c_cflag &= ~CSTOPB;  
   }
 
   //Control characters
-//  portSettings.c_cc[VMIN] = 0; //return immediately if no char
-//  portSettings.c_cc[VTIME] = 1; //read waits 100 miliseconds
+  portSettings.c_cc[VMIN] = 0; //return immediately if no char
+  portSettings.c_cc[VTIME] = 1; //read waits 100 miliseconds
+
+  cfsetispeed(&portOptions, baudRate); // Set input baudrate.
+  cfsetospeed(&portOptions, baudRate); // Set output baudrate.
 
   //Set up communication state using Linux services 
-  if (   (ioctl(this->m_PortHandle, TCSETA, &portSettings)!=0)
-      || (tcsetattr(this->m_PortHandle, TCSANOW, &portOptions)!=0) )
+  if (!(  (ioctl(this->m_PortHandle, TCSETA, &portSettings)>=0)
+      && (tcsetattr(this->m_PortHandle, TCSANOW, &portOptions)>=0) ))
   {
     this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+    std::cout << "Setup Communication Failed.\n" << std::endl; 
   }
   else
   {
@@ -213,7 +217,6 @@ void SerialCommunicationForLinux::ClearBuffersAndCloseCommunicationPortProcessin
 
 void SerialCommunicationForLinux::CloseCommunicationPortProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "Attempt to close communication port .... \n");
   close(this->m_PortHandle);
   this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
   igstkLogMacro( igstk::Logger::DEBUG, "Communication port closed.\n");
@@ -257,7 +260,7 @@ void SerialCommunicationForLinux::SendStringProcessing( void )
   //check if writing event successful
   if (writtenBytes==bytesToWrite)
   {
-    std::cout << "Bytes to write = " << bytesToWrite << ", Written buyes = " << writtenBytes << std::endl;
+    std::cout << "Written bytes = " << writtenBytes << std::endl;
     this->InvokeEvent( SendStringSuccessfulEvent());
   }
   else
@@ -269,13 +272,17 @@ void SerialCommunicationForLinux::SendStringProcessing( void )
 
 void SerialCommunicationForLinux::ReceiveStringProcessing( void )
 {
-  std::cout << "Came to ReceiveStringProcessing" << std::endl;
   unsigned long readBytes;
-  readBytes = read(this->m_PortHandle, this->m_InputBuffer, 14); //this->m_ReadBufferSize);
+  readBytes = read(this->m_PortHandle, this->m_InputBuffer, this->m_ReadBufferSize);
+
   std::cout << "Read number of bytes = " << readBytes << ". String: " << m_InputBuffer << std::endl;
  
   
 }
-
+/*
+  int bytesAvailable = -1;
+  ioctl(this->m_PortHandle, FIONREAD, &bytesAvailable);
+  std::cout << "Number bytes available for read = " << bytesAvailable << std::endl;
+*/
 } // end namespace igstk
 
