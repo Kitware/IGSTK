@@ -75,6 +75,13 @@ static Pointer New(void) \
 } 
 
 
+/** Type Macro defines the GetNameOfClass() method for every class where it is
+ * invoked. */
+#define TypeMacro(thisClass,superclass) \
+    virtual const char *GetNameOfClass() const \
+        {return #thisClass;} 
+
+
 /** Create a Macro for friend class. This will take care of platform specific
  * ways of declaring a class as a friend */
 #if defined(__GNUC__) 
