@@ -82,11 +82,11 @@ SET(IGSTK_HEADS
   IGMTVolumeViewer.h
   CrossLine.h
   FantasticRegistration.h
+  IGMTRegistrationViewer.h
 )
 
 SET(IGSTK_SRCS
   DicomImageReaderBase.cxx
-  DicomImageReader.txx
   RegistrationCTBase.cxx
   igstkImageSliceViewer.cxx
   ImageSliceViewer.cxx
@@ -113,6 +113,7 @@ SET(IGSTK_SRCS
   CrossLine.cxx
   igstkInteractorObserver.cxx
   FantasticRegistration.cxx
+  IGMTRegistrationViewer.cxx
   )
 
 SET(AURORA_TRACKER_HEADS
