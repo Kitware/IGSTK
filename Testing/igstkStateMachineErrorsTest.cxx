@@ -282,6 +282,12 @@ public:
     // On purpose Adding a Transition for a non existing input
     m_StateMachine.AddTransition( m_IdleState, m_NonRegisteredInput, m_IdleState, NoAction );
 
+    // On purpose Adding a Transition for a non existing new state
+    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_NonRegisteredState, NoAction );
+
+    // On purpose Adding a Transition for a {State,Input} pair for which a
+    // transition ALREADY exists
+    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_ChangeMindState, NoAction );
 
     m_StateMachine.SetReadyToRun();
     }
@@ -298,6 +304,7 @@ private:
   /** List of States */
   StateType m_IdleState;
   StateType m_NonRegisteredState;
+  StateType m_ChangeMindState;
 
   /** List of Inputs */
   InputType m_QuarterInserted;
