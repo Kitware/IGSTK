@@ -355,3 +355,8 @@ void IGMTrackingBase::OnUpdateSegParameters()
 {
 
 }
+
+void IGMTrackingBase::OnUpdateRegParameters()
+{
+
+}

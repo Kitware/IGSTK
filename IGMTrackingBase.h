@@ -74,6 +74,7 @@ public:
   typedef itk::NearestNeighborInterpolateImageFunction<VolumeType, double> NNInterpolateType;
 
 public:
+	virtual void OnUpdateRegParameters();
 	virtual void OnUpdateSegParameters();
 	virtual void SetInputData(int pipeline);
 	virtual void RenderAllWindow();
@@ -211,6 +212,12 @@ protected:
 	double			m_NeedleEndOffset[3];		// Offset of tool end head from the coil
 
 	double			m_NeedleLength, m_NeedleRadius;
+
+  double			m_RegNeedleTipOffset[3];		// Offset of tool tip head from the coil
+
+	double			m_RegNeedleEndOffset[3];		// Offset of tool end head from the coil
+
+	double			m_RegNeedleLength, m_RegNeedleRadius;
 
 	// Reference Needle Parameters
 
