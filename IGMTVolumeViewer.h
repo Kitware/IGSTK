@@ -3,6 +3,7 @@
 #define _IGSTK_IGMTVolumeViewer_H_
 
 #include "vtkActor.h"
+#include "vtkAssembly.h"
 #include "vtkColorTransferFunction.h"
 #include "vtkDecimatePro.h"
 #include "vtkImageData.h"
@@ -66,6 +67,10 @@ public:
 	vtkRenderWindow* m_RenderWindow;
 	
   vtkRenderWindowInteractor* m_Interactor;
+
+  vtkAssembly* m_Root;
+
+  vtkAssembly* m_ProbeRoot;
 
   vtkLODProp3D* m_LOD;
 
