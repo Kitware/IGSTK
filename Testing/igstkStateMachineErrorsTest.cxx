@@ -30,6 +30,8 @@ public:
 
   FriendClassMacro(StateMachineType);
 
+  TypeMacro( Tester1, None );
+
   Tester1()
     {
     // Connect the state machine to 'this' class.
@@ -96,6 +98,8 @@ public:
 
   FriendClassMacro(StateMachineType);
 
+  TypeMacro( Tester2, None );
+
   Tester2()
     {
     // On purpose NOT calling : m_StateMachine.SetOwnerClass( this );
@@ -138,6 +142,8 @@ public:
 
   FriendClassMacro(StateMachineType);
 
+  TypeMacro( Tester3, None );
+
   Tester3()
     {
     m_StateMachine.SetOwnerClass( this );
@@ -179,6 +185,8 @@ public:
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
   FriendClassMacro(StateMachineType);
+
+  TypeMacro( Tester4, None );
 
   Tester4()
     {
@@ -224,6 +232,8 @@ public:
 
   FriendClassMacro(StateMachineType);
 
+  TypeMacro( Tester5, None );
+  
   Tester5()
     {
     m_StateMachine.SetOwnerClass( this );
@@ -265,6 +275,8 @@ public:
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
   FriendClassMacro(StateMachineType);
+
+  TypeMacro( Tester6, None );
 
   Tester6()
     {

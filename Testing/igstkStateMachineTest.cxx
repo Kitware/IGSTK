@@ -24,6 +24,8 @@ public:
 
   FriendClassMacro(StateMachineType);
 
+  TypeMacro( Tester, None );
+
   Tester()
     {
       // Connect the state machine to 'this' class.
