@@ -26,11 +26,7 @@ Scene::Scene()
 {
   m_LastAddedObject = 0;
   m_LastRemovedObject = 0;
-}
 
-/** Destructor */
-Scene::~Scene()
-{
   // Preparing the State Machine 
   m_StateMachine.SetOwnerClass( this );
 
@@ -56,7 +52,11 @@ Scene::~Scene()
   m_StateMachine.SelectInitialState( m_IdleState );
 
   m_StateMachine.SetReadyToRun();
+}
 
+/** Destructor */
+Scene::~Scene()
+{
 }
 
 /** Request for Adding an object to the Scene */
