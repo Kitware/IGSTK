@@ -229,7 +229,10 @@ void SerialCommunicationForLinux::ClosePortProcessing( void )
 
 void SerialCommunicationForLinux::RestPortProcessing( void )
 {
-   igstkLogMacro( igstk::Logger::DEBUG, "*** RestPortProcessing NOT IMPLEMENTED ...\n");
+  // clear input/output buffers
+  tcflush(this->m_PortHandle,TCIOFLUSH);
+  // send the break
+  tcsendbreak(this->m_PortHandle, 0);
 }
 
 
