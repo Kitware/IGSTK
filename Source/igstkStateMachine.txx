@@ -56,16 +56,6 @@ StateMachine< TClass >
     }
   m_Transitions.clear();
 
-  // Release memory from Actions container
-  ActionIterator actionsItr = m_Actions.begin();
-  ActionIterator actionsEnd = m_Actions.end();
-  while( actionsItr != actionsEnd )
-    {
-    delete actionsItr->second;
-    ++actionsItr;
-    }
-  m_Actions.clear();
-
 }
 
 
@@ -214,15 +204,16 @@ StateMachine< TClass >
   
   if( transitionsFromThisState == m_Transitions.end() )
     {
-    std::cerr << "No transitions have been defined for current state = " << m_State << std::endl;
+    std::cerr << "No transitions have been defined for current state = ";
+    std::cerr << m_State << std::endl;
     std::cerr.flush();
     return;
     } 
 
-  StatesPerInputConstIterator  newState = 
+  TransitionsPerInputConstIterator  transitionItr = 
             transitionsFromThisState->second->find( input.GetIdentifier() );
 
-  if( newState == transitionsFromThisState->second->end() )
+  if( transitionItr == transitionsFromThisState->second->end() )
     {
     std::cerr << "No transitions have been defined for current state and input " << std::endl;
     std::cerr << "State = "  << m_State << std::endl;
@@ -232,38 +223,14 @@ StateMachine< TClass >
     return;
     } 
 
-  ActionConstIterator  actionsFromThisState = 
-                                                 m_Actions.find( m_State );
+  StateActionPair transition = transitionItr->second;
 
-  
-  if( actionsFromThisState == m_Actions.end() )
+  if( transition.GetAction() )
     {
-    std::cerr << "No actions have been defined for current state = " << m_State << std::endl;
-    std::cerr.flush();
-    return;
-    } 
-
-  ActionsPerInputConstIterator  action = actionsFromThisState->second->find( input.GetIdentifier() );
-
-  if( action == actionsFromThisState->second->end() )
-    {
-    std::cerr << "No actions have been defined for current state and input " << std::endl;
-    std::cerr << "State = "  << m_State << std::endl;
-    std::cerr << "Input = "  << input.GetIdentifier() << std::endl;
-    std::cerr << "this state has " << actionsFromThisState->second->size() << " action transitions " << std::endl;
-    std::cerr << std::endl;
-    std::cerr.flush();
-    return;
-    } 
-
-    
-
-  if( action->second )
-    {
-    ((*m_This).*(action->second))();
+    ((*m_This).*(transition.GetAction()))();
     }
 
-  m_State = newState->second;
+  m_State = transition.GetStateIdentifier();
 
 }
 
@@ -273,10 +240,10 @@ StateMachine< TClass >
 template<class TClass>
 void
 StateMachine< TClass >
-::AddTransition( const StateType & state,   
-                 const InputType & input, 
-                 const StateType & newState, 
-                       TMemberFunctionPointer action )
+::AddTransition( const StateType  & state,   
+                 const InputType  & input, 
+                 const StateType  & newState, 
+                 const ActionType & action )
 {
  
   // First check if the State exists
@@ -328,84 +295,43 @@ StateMachine< TClass >
     {
     // No transition has been created for this particular state.
     // Therefore create a new entry for it.
-    StatesPerInputContainer *statesPerInput = new StatesPerInputContainer;
+    TransitionsPerInputContainer *transitionsPerInput = new TransitionsPerInputContainer;
 
     // Insert the new state that should be assumed if the input is received.
-    (*statesPerInput)[ input.GetIdentifier() ] = newState.GetIdentifier();
+    StateActionPair transition( newState.GetIdentifier(), action );
+    (*transitionsPerInput)[ input.GetIdentifier() ] = transition;
 
-    // Add the statesPerInput container to the Transitions container.
-    m_Transitions[ state.GetIdentifier() ] = statesPerInput;
+    // Add the transitionsPerInput container to the Transitions container.
+    m_Transitions[ state.GetIdentifier() ] = transitionsPerInput;
     } 
   else
     {
     // Check if the particular Input has already an Entry here
-    StatesPerInputConstIterator transitionsFromThisStateAndInput =
+    TransitionsPerInputConstIterator transitionsFromThisStateAndInput =
                      transitionsFromThisState->second->find( input.GetIdentifier() );
     if( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
       {
       // There is already an entry for this input. This is suspicious
       // because the user may be overriding a previous transition by
       // accident. 
+      StateIdentifierType newStateIdentifier = 
+                      transitionsFromThisStateAndInput->second.GetStateIdentifier();
       std::cerr << "Attempt to override an existing transition. "
                 << "Please verify the programming of your state machine. "
                 << "There is already a transition defined for the combination: " << std::endl;
       std::cerr << "State     = " << state.GetIdentifier() << std::endl;
       std::cerr << "Input     = " << input.GetIdentifier() << std::endl;
-      std::cerr << "New state = " << transitionsFromThisStateAndInput->second << std::endl;
+      std::cerr << "New state = " << newStateIdentifier    << std::endl;
       std::cerr.flush();
       }
     else
       {
-      // Finally, add the Transition: new State to assume when the specific Input is received.
-      (*(transitionsFromThisState->second))[input.GetIdentifier()] = newState.GetIdentifier();
+      // Finally, add the Transition: new State to assume when the specific
+      // Input is received.  and the Action to be taken.
+      StateActionPair newTransition( newState.GetIdentifier(), action ); 
+      (*(transitionsFromThisState->second))[input.GetIdentifier()] = newTransition;
       }
     }
-
-
-  // Now do the equivalent for the Action
-
-  // Search for existing Actions for that State
-  ActionConstIterator  actionsFromThisState = 
-                            m_Actions.find( state.GetIdentifier() );
-  
-  if( actionsFromThisState == m_Actions.end() )
-    {
-    // No action has been created for this particular state.
-    // Therefore create a new entry for it.
-    ActionsPerInputContainer *statesPerInput = new ActionsPerInputContainer;
-
-    // Insert the new state that should be assumed if the input is received.
-    (*statesPerInput)[ input.GetIdentifier() ] = action;
-
-    // Add the statesPerInput container to the Actions container.
-    m_Actions[ state.GetIdentifier() ] = statesPerInput;
-    } 
-  else
-    {
-    // Check if the particular Input has already an Entry here
-      ActionsPerInputConstIterator actionsFromThisStateAndInput =
-                            actionsFromThisState->second->find( input.GetIdentifier() );
-    if( actionsFromThisStateAndInput != actionsFromThisState->second->end() )
-      {
-      // There is already an entry for this input. This is suspicious
-      // because the user may be overriding a previous action by
-      // accident. 
-      std::cerr << "Attempt to override an existing action. "
-                << "Please verify the programming of your state machine. "
-                << "There is already a action defined for the combination: " << std::endl;
-      std::cerr << "State     = " << state.GetIdentifier() << std::endl;
-      std::cerr << "Input     = " << input.GetIdentifier() << std::endl;
-      // Commenting out the following line: Not compiling on bcc32 
-      //std::cerr << "New state = " << actionsFromThisStateAndInput->second << std::endl;
-      std::cerr.flush();
-      }
-    else
-      {
-      // Finally, add the Action: new State to assume when the specific Input is received.
-      (*(actionsFromThisState->second))[ input.GetIdentifier() ] = action;
-      }
-    }
-
 
 }
 
@@ -436,13 +362,13 @@ StateMachine< TClass >
                                        m_Transitions.begin();
     while( transitionsFromThisState != m_Transitions.end() )
       {
-      StatesPerInputConstIterator  
+      TransitionsPerInputConstIterator  
              transitionsFromThisStateAndInput =  
                         transitionsFromThisState->second->begin();
       while( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
         {
         ostr << transitionsFromThisState->first << " -> ";
-        ostr << transitionsFromThisStateAndInput->second;
+        ostr << transitionsFromThisStateAndInput->second.GetStateIdentifier();
         ostr << " [label=\"" << transitionsFromThisStateAndInput->first << "\"";
         ostr << " fontname=Helvetica, fontcolor=Blue";
         ostr << "];" << std::endl;

@@ -82,10 +82,15 @@ public:
    typedef std::string       InputDescriptorType;
 
 
+     
    /** Type of the action member funtion of TClass to be invoked at the end of
      * a state transition. */
   typedef  void (TClass::*TMemberFunctionPointer)();
 
+
+   /** Type for the Action to be taken. This is a pointer to a method of the
+    * class that will own the State Machine */
+   typedef TMemberFunctionPointer   ActionType;
 
 
    /** Constructor. It initialize all the transitions to the 
@@ -113,10 +118,10 @@ public:
        used for programming the state machine. This method should never
        be invoked while the state machine is running. Unless you want
        to debug a self-modifying machine or an evolutionary machine. */
-   void AddTransition( const StateType & state, 
-                       const InputType & input, 
-                       const StateType & newstate, 
-                       TMemberFunctionPointer action );
+   void AddTransition( const StateType  & state, 
+                       const InputType  & input, 
+                       const StateType  & newstate, 
+                       const ActionType & action );
 
 
 
@@ -194,41 +199,48 @@ private:
    /** Container for Inputs */
    InputsContainer   m_Inputs;
 
+
+   /** Pair class containing an output State and an Action to be taken */
+   class StateActionPair {
+   public:
+     StateActionPair()
+       {
+       this->m_StateIdentifier  = 0;
+       this->m_Action = 0;
+       }
+     StateActionPair( StateIdentifierType state, ActionType action )
+       {
+       this->m_StateIdentifier  = state;
+       this->m_Action = action;
+       }
+     StateActionPair( const StateActionPair & in )
+       {
+       this->m_StateIdentifier  = in.m_StateIdentifier;
+       this->m_Action = in.m_Action;
+       }
+     const StateActionPair & operator=( const StateActionPair & in )
+       {
+       this->m_StateIdentifier = in.m_StateIdentifier;
+       this->m_Action = in.m_Action;
+       }
+     StateIdentifierType GetStateIdentifier() const { return m_StateIdentifier; }
+     ActionType GetAction() const { return m_Action; }
+   private:
+     StateIdentifierType     m_StateIdentifier;
+     ActionType              m_Action;
+     };
+   
  
    /** Matrix of state transitions. It encodes the next state for 
        every pair of state and input */
-   typedef std::map< InputIdentifierType, StateIdentifierType > StatesPerInputContainer;
-   typedef std::map< StateIdentifierType, StatesPerInputContainer * >  TransitionContainer;
-   typedef typename TransitionContainer::iterator            TransitionIterator;
-   typedef typename TransitionContainer::const_iterator      TransitionConstIterator;
-   typedef typename StatesPerInputContainer::iterator        StatesPerInputIterator;
-   typedef typename StatesPerInputContainer::const_iterator  StatesPerInputConstIterator;
+   typedef std::map< InputIdentifierType, StateActionPair > TransitionsPerInputContainer;
+   typedef std::map< StateIdentifierType, TransitionsPerInputContainer * >  TransitionContainer;
+   typedef typename TransitionContainer::iterator                 TransitionIterator;
+   typedef typename TransitionContainer::const_iterator           TransitionConstIterator;
+   typedef typename TransitionsPerInputContainer::iterator        TransitionsPerInputIterator;
+   typedef typename TransitionsPerInputContainer::const_iterator  TransitionsPerInputConstIterator;
 
-   TransitionContainer                                                 m_Transitions;
-
-
-
-   /** Matrix of member function pointers. This pointer will
-       be associated to member functions in the TClass. They
-       are methods returning void and without arguments. 
-       The actions are invoked just before the state transition. 
-       This means that while the member method is executed, the
-       state of the machine is still the state from which the
-       transition was triggered.  */
-   typedef std::map< InputIdentifierType, 
-                     TMemberFunctionPointer >      ActionsPerInputContainer;
-
-   typedef typename ActionsPerInputContainer::iterator        ActionsPerInputIterator;
-   typedef typename ActionsPerInputContainer::const_iterator  ActionsPerInputConstIterator;
-
-   typedef std::map< StateIdentifierType, 
-                     ActionsPerInputContainer * >    ActionContainer;
-
-   typedef typename ActionContainer::iterator        ActionIterator;
-   typedef typename ActionContainer::const_iterator  ActionConstIterator;
-
-   ActionContainer                                 m_Actions; 
-
+   TransitionContainer                                           m_Transitions;
 
 };
 
