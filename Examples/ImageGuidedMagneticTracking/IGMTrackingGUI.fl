@@ -26,7 +26,10 @@ decl {\#include "Fl_Double_Window_Ex.H"} {public
 decl {\#include "SegParametersGUI.h"} {public
 } 
 
-class IGMTrackingGUI {open : {public IGMTrackingBase}
+decl {\#include "RegParametersGUI.h"} {public
+} 
+
+class IGMTrackingGUI {open selected : {public IGMTrackingBase}
 } {
   decl {PortParametersGUI m_PortParameters;} {}
   decl {FiducialBrowserGUI  m_FiducialBrowser;} {public
@@ -40,15 +43,17 @@ class IGMTrackingGUI {open : {public IGMTrackingBase}
   }
   decl {SegParametersGUI m_SegParameters;} {public
   }
+  decl {RegParametersGUI m_RegParameters;} {public
+  }
   decl {int m_OriginalSize[4][4];} {public
   }
   decl {int m_FullSize[4];} {public
   }
   decl {int m_ToolTrackingMode;} {public
   }
-  Function {IGMTrackingGUI():m_FiducialBrowser(this), m_PortParameters(this), m_Layout(this), m_ProbeParameters(this), m_FusionParameters(this), m_SegParameters(this)} {} {
+  Function {IGMTrackingGUI():m_FiducialBrowser(this), m_PortParameters(this), m_Layout(this), m_ProbeParameters(this), m_FusionParameters(this), m_SegParameters(this), m_RegParameters(this)} {} {
     Fl_Window mainWindow {
-      label {Image Guided Biopsy and Magnetic Tracking System - ISIS} open
+      label {Image Guided Biopsy and Magnetic Tracking System - ISIS}
       xywh {133 42 887 692} type Double align 17 when 1 resizable
       code0 {\#include "IGMTrackingBase.h"}
       class Fl_Double_Window_Ex visible
@@ -139,7 +144,7 @@ case 2:
 if (allFiducialsSet)
 {
     TrackerFiducialsButton->value(1);
-}} selected
+}}
           xywh {142 219 120 25} type Normal
         }
         Fl_Light_Button RegisterButton {
@@ -286,6 +291,11 @@ this->SetImageScale(atof(str));}
           menuitem {} {
             label {Segmentation Parameters}
             callback {this->OnSegParameters();}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {Registration Parameters}
+            callback {this->OnRegParameters();}
             xywh {0 0 100 20}
           }
         }
@@ -524,7 +534,7 @@ else
   } {
     code {m_Layout.ShowModal();} {}
   }
-  Function {OnProbeParameters()} {open return_type {virtual void}
+  Function {OnProbeParameters()} {return_type {virtual void}
   } {
     code {m_ProbeParameters.ShowModal();} {}
   }
@@ -566,10 +576,13 @@ m_InfoPane->show_insert_position();} {}
   } {}
   Function {OnSegmentation()} {open return_type {virtual void}
   } {}
-  Function {OnSegParameters()} {open return_type {virtual void}
+  Function {OnSegParameters()} {return_type {virtual void}
   } {
     code {m_SegParameters.ShowModal();} {}
   }
   Function {OnSaveSegmentationData()} {open return_type {virtual void}
   } {}
+  Function {OnRegParameters()} {} {
+    code {m_RegParameters.ShowModal();} {}
+  }
 } 
