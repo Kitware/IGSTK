@@ -86,7 +86,12 @@ int igstkSceneTest( int, char * [] )
     translation[0] = 0;
     translation[1] = 1;
     translation[2] = 2;
-    transform.SetTranslation( translation, validityTimeInMilliseconds );
+
+    igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
+
+    transform.SetTranslation( 
+        translation, errorValue, validityTimeInMilliseconds );
+
     object->SetTransform( transform );
 
     const double tolerance = 1e-8;

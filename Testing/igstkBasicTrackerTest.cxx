@@ -94,8 +94,10 @@ int igstkBasicTrackerTest( int, char * [] )
 
   const double validityPeriod = 500.0; // valid for 500 milliseconds.
 
+  igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
+
   std::cout << "Stored translation = " << translation << std::endl;
-  transform.SetTranslation( translation, validityPeriod );
+  transform.SetTranslation( translation, errorValue, validityPeriod );
   tracker->SetToolTransform( toolNumber, portNumber, transform );
 
   igstk::Tracker::TransformType transform2;

@@ -48,11 +48,14 @@ int igstkTransformTest( int, char * [] )
 
     const double validityPeriod = 10.0; // milliseconds
     
-    t1.SetTranslationAndRotation( translation, rotation, validityPeriod );
+    igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
+  
+    t1.SetTranslationAndRotation( 
+        translation, rotation, errorValue, validityPeriod );
 
-    t1.SetRotation( rotation, validityPeriod );
+    t1.SetRotation( rotation, errorValue, validityPeriod );
 
-    t1.SetTranslation( translation, validityPeriod );
+    t1.SetTranslation( translation,  errorValue, validityPeriod );
 
     VectorType translationSet = t1.GetTranslation();
     VersorType rotationSet    = t1.GetRotation();

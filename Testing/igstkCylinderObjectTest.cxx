@@ -129,7 +129,11 @@ int igstkCylinderObjectTest( int, char * [] )
   translation[2] = 2;
   igstk::Transform::VersorType rotation;
   rotation.Set( 0.707, 0.0, 0.707, 0.0 );
-  transform.SetTranslationAndRotation( translation, rotation, validityTimeInMilliseconds );
+  igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
+
+  transform.SetTranslationAndRotation( 
+      translation, rotation, errorValue, validityTimeInMilliseconds );
+
   cylinderObject->SetTransform( transform );
   igstk::Transform  transform2 = cylinderObject->GetTransform();
   igstk::Transform::VectorType translation2 = transform2.GetTranslation();
