@@ -42,6 +42,8 @@ ADD_TEST(RegistrationCTTest ${IGSTK_TESTS} RegistrationCTTest)
 
 ADD_TEST(ImageSliceViewerTest ${IGSTK_TESTS} ImageSliceViewerTest)
 
+ADD_TEST(MotionViewerTest ${IGSTK_TESTS} MotionViewerTest)
+
 #ENDIF(ITK_DATA_ROOT)
 
 SET(BasicTests_SRCS
@@ -50,6 +52,7 @@ SET(BasicTests_SRCS
   RegistrationCTTest.cxx
   ImageSliceViewerTest.cxx
   LiverTumorSegmentationBaseTest.cxx
+  MotionViewerTest.cxx
   )
 
 ADD_EXECUTABLE(igstkTests igstkTests.cxx ${BasicTests_SRCS})
