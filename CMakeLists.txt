@@ -118,22 +118,29 @@ SET(IGSTK_SRCS
 
 SET(AURORA_TRACKER_HEADS
   Tracker.h
-  AuroraTracker.h
-  CommonNDIDefines.h
   Conversions.h
-  CyclicRedundancy.h
-  IniFileRW.h
-  SerialCommunication.h
 )
 
 SET(AURORA_TRACKER_SRCS
   Tracker.cxx
-  AuroraTracker.cxx
   Conversions.cxx
-  CyclicRedundancy.cxx
-  IniFileRW.cxx
-  SerialCommunication.cxx
 )
+
+IF( WIN32 )
+  SET(AURORA_TRACKER_HEADS ${AURORA_TRACKER_HEADS}
+    SerialCommunication.h
+    CyclicRedundancy.h
+    IniFileRW.h
+    AuroraTracker.h
+    )
+  SET(AURORA_TRACKER_SRCS ${AURORA_TRACKER_SRCS}
+    SerialCommunication.cxx
+    CyclicRedundancy.cxx
+    IniFileRW.cxx
+    AuroraTracker.cxx
+    )
+ENDIF(WIN32)
+
 
 ADD_LIBRARY(IGSTK ${IGSTK_HEADS} ${IGSTK_SRCS} ${AURORA_TRACKER_HEADS} ${AURORA_TRACKER_SRCS})
 
