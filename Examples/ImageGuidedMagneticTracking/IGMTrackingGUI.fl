@@ -44,10 +44,12 @@ class IGMTrackingGUI {open : {public IGMTrackingBase}
   }
   decl {int m_FullSize[4];} {public
   }
+  decl {int m_ToolTrackingMode;} {selected public
+  }
   Function {IGMTrackingGUI():m_FiducialBrowser(this), m_PortParameters(this), m_Layout(this), m_ProbeParameters(this), m_FusionParameters(this), m_SegParameters(this)} {} {
     Fl_Window mainWindow {
       label {Image Guided Biopsy and Magnetic Tracking System - ISIS} open
-      xywh {297 51 887 692} type Double align 17 when 1 resizable
+      xywh {133 42 887 692} type Double align 17 when 1 resizable
       code0 {\#include "IGMTrackingBase.h"}
       class Fl_Double_Window_Ex visible
     } {
@@ -121,8 +123,18 @@ StopTrackingButton->value(0);}
         }
         Fl_Light_Button TrackerFiducialsButton {
           label {Track Fiducials}
-          callback {this->OnToolPosition();
-bool allFiducialsSet = this->SetFiducial(FiducialBrowserGUI::TRACKER_TYPE);
+          callback {bool allFiducialsSet;
+this->OnToolPosition();
+switch (m_ToolTrackingMode)
+{
+case 1:
+  allFiducialsSet = this->SetFiducial(FiducialBrowserGUI::TRACKER_TYPE);
+  break;
+case 2:
+  allFiducialsSet = true;
+  break;
+}
+
 if (allFiducialsSet)
 {
     TrackerFiducialsButton->value(1);
@@ -477,7 +489,7 @@ else
   } {
     code {return 1.0f;} {}
   }
-  Function {SetImageScale( double val)} {open selected return_type {virtual void}
+  Function {SetImageScale( double val)} {open return_type {virtual void}
   } {}
   Function {GetImageShift(void)} {return_type {virtual double}
   } {
@@ -557,6 +569,6 @@ m_InfoPane->show_insert_position();} {}
   } {
     code {m_SegParameters.ShowModal();} {}
   }
-  Function {OnSaveSegmentationData()} {open selected return_type {virtual void}
+  Function {OnSaveSegmentationData()} {open return_type {virtual void}
   } {}
 } 

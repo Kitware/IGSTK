@@ -21,6 +21,7 @@ class IGMTracking : public IGMTrackingGUI
 {
 
 public:
+
 	void OnSaveSegmentationData();
 	void OnUpdateSegParameters();
 	void RenderAllWindow();
@@ -134,8 +135,6 @@ public:
 
 	virtual void OnOverlay( void );
 
-//	virtual void OnMotionTracking( void );
-
 	virtual double GetImageScale( void );
 	
 	virtual void SetImageScale( double val );
@@ -146,21 +145,15 @@ public:
 	
 	virtual void SetNeedleLength( const double val );
 	
-//<<<<<<< IGMTracking.h
-//	virtual void SetNeedleRadius( const float val );
-
   virtual void SetProbeLength( int i, const float val );
 	
 	virtual void SetProbeRadius( int i, const float val );
-//=======
-	virtual void SetNeedleRadius( const double val );
-//>>>>>>> 1.3
+
+  virtual void SetNeedleRadius( const double val );
 	
 	virtual void DisplaySelectedPosition( const bool show);
 
 	virtual void DisplayTargetPosition( const bool show);
-
-//  virtual void DisplayTipPosition( const bool show);
 
 	virtual void DisplayEntryPosition( const bool show);
 
@@ -260,21 +253,21 @@ private:
 
 	AuroraTracker	m_AuroraTracker;
 
-	int				m_ToolHandle;
+	int				m_ToolHandle, m_ToolHandle1, m_ToolHandle2;
 
 	int				m_ReferenceToolHandle;
 
-//<<<<<<< IGMTracking.h
 	double			m_ClickedPoint[3], m_RightClickedPoint[3]; 
 
   int       m_PointIndex[3];
-//=======
-//	double			m_ClickedPoint[3]; 
-//>>>>>>> 1.3
 
 	bool			m_ShowVolume;
 
 	bool			m_EntryPointSelected, m_TargetPointSelected;
+
+  double    m_CoilOffset1[3], m_CoilOffset2[3];
+
+  double    m_CoilPosition[4][3];
 };
 
 

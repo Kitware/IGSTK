@@ -159,6 +159,7 @@ IGMTracking::IGMTracking()
   m_Pipeline = 0;
 
   m_ProbeID = 0;
+  m_ToolTrackingMode = 0;
 
   m_Probe[0] = 1;
   m_Ref[0] = 0;
@@ -187,6 +188,11 @@ IGMTracking::IGMTracking()
   m_Offset[3] = 0.0;
   m_Length[3] = 10.0;
   m_Radius[3] = 1.0;
+
+  m_CoilOffset1[0] = m_CoilOffset1[1] = 0;
+  m_CoilOffset1[2] = 4.5;
+  m_CoilOffset2[0] = m_CoilOffset2[1] = 0;
+  m_CoilOffset2[2] = -4.5;
 
   int i;
 
@@ -1012,10 +1018,11 @@ void IGMTracking::ActivateTools( void )
 
 void IGMTracking::StartTracking( void )
 {	
-  int i;
+  int i, ret;
   char toolID[10];
   char mes[128];
 
+  m_ToolTrackingMode = 0;
 	m_AuroraTracker.StartTracking();
 	
   for (i = 0; i < 4; i++)
@@ -1024,18 +1031,26 @@ void IGMTracking::StartTracking( void )
     {
       sprintf(toolID, "%02d", i + 1);
 	    m_ToolHandle = m_AuroraTracker.GetMyToolHandle( toolID );
-      printf("Probe:%d handle:%d\n", i, m_ToolHandle);
-      if (m_ToolHandle<0)
+      if (m_ToolHandle < 0)
       {
-        sprintf(mes, "No tool on port %d detected ...", i);
-//        fl_alert(mes);
-        this->AppendInfo(mes);
+        ret = m_AuroraTracker.GetMyToolHandle2(toolID, m_ToolHandle1, m_ToolHandle2 );
+        if (ret < 2)
+        {
+          sprintf(mes, "No tool on port %d detected ...", i);
+          this->AppendInfo(mes);
+        }
+        else
+        {
+          sprintf(mes, "Two tools on port %d recognised ...", i);
+          this->AppendInfo(mes);
+          m_ToolTrackingMode = 2;
+        }
       }
       else
       {
         sprintf(mes, "Tool on port %d recognised ...", i);
-//        fl_alert(mes);
         this->AppendInfo(mes);
+        m_ToolTrackingMode = 1;
       }
     }      
   }
@@ -1097,7 +1112,18 @@ void IGMTracking::OnToolPosition( void )
 {
 	m_AuroraTracker.UpdateToolStatus();
 
-	m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle, m_NeedleTipOffset, m_NeedlePosition);
+  switch (m_ToolTrackingMode)
+  {
+  case 1:
+    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle, m_NeedleTipOffset, m_NeedlePosition);
+    break;
+  case 2:
+    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle1, m_CoilOffset1, m_CoilPosition[0]);
+    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle1, m_CoilOffset2, m_CoilPosition[1]);
+    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle2, m_CoilOffset1, m_CoilPosition[2]);
+    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle2, m_CoilOffset2, m_CoilPosition[3]);
+    break;
+  }	
 
 	this->PrintToolPosition( m_ToolHandle ); 
 }
