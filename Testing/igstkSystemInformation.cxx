@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    SystemInformation.cxx
+  Module:    igstkSystemInformation.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -21,10 +21,10 @@
 // CMakeCache.txt file.  This test will display the file.
 
 #include "vtkDebugLeaks.h"
-#include "SystemInformation.h"
+#include "igstkSystemInformation.h"
 #include <sys/stat.h>
 
-void vtkSystemInformationPrintFile(const char* name, ostream& os)
+void igstkSystemInformationPrintFile(const char* name, ostream& os)
 {
   os << "================================================================\n";
   struct stat fs;
@@ -81,7 +81,7 @@ int main(int,char *[])
   const char** f;
   for(f = files; *f; ++f)
     {
-    vtkSystemInformationPrintFile(*f, cout);
+    igstkSystemInformationPrintFile(*f, cout);
     }
   
   return 0;

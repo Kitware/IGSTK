@@ -1,0 +1,6 @@
+#ifndef __igstk_SystemInformation_h
+#define __igstk_SystemInformation_h
+
+#define IGSTK_BINARY_DIR "@IGSTK_BINARY_DIR@"
+
+#endif
