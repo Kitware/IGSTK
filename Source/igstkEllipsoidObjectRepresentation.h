@@ -20,8 +20,7 @@
 #include "igstkMacros.h"
 #include "igstkObjectRepresentation.h"
 #include "igstkEllipsoidObject.h"
-#include <vtkSuperquadricSource.h>
-#include "itkCommand.h"
+#include "vtkSuperquadricSource.h"
 
 namespace igstk
 {
@@ -76,12 +75,8 @@ private:
   /** VTK class that generates the geometrical representation of the cylinder */
   vtkSuperquadricSource * m_EllipsoidSource;
 
-  typedef itk::SimpleMemberCommand< Self >   ObserverType;
-
-  ObserverType::Pointer          m_GeometryObserver;
-
   /** update the visual representation with changes in the geometry */
-  void UpdateRepresentationFromGeometry();
+  virtual void UpdateRepresentationFromGeometry();
 
 };
 

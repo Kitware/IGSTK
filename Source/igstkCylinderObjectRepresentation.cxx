@@ -31,7 +31,6 @@ CylinderObjectRepresentation::CylinderObjectRepresentation()
   m_CylinderSpatialObject = NULL;
   this->SetSpatialObject( m_CylinderSpatialObject );
   m_CylinderSource = vtkCylinderSource::New();
-  m_GeometryObserver       = ObserverType::New();
 } 
 
 /** Destructor */
@@ -57,11 +56,7 @@ void CylinderObjectRepresentation::SetCylinder( const CylinderSpatialObjectType 
     m_CylinderSource->SetRadius(m_CylinderSpatialObject->GetRadius());
     m_CylinderSource->SetHeight(m_CylinderSpatialObject->GetHeight());
     m_CylinderSource->SetResolution(10);
-   
-    m_CylinderSpatialObject->AddObserver( GeometryModifiedEvent(), m_GeometryObserver );
     }
-
-  m_GeometryObserver->SetCallbackFunction( this, & CylinderObjectRepresentation::UpdateRepresentationFromGeometry );
 } 
 
 

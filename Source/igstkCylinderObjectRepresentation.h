@@ -19,9 +19,8 @@
 
 #include "igstkMacros.h"
 #include "igstkObjectRepresentation.h"
-#include <igstkCylinderObject.h>
-#include <vtkCylinderSource.h>
-#include "itkCommand.h"
+#include "igstkCylinderObject.h"
+#include "vtkCylinderSource.h"
 
 namespace igstk
 {
@@ -75,12 +74,8 @@ private:
   /** VTK class that generates the geometrical representation of the cylinder */
   vtkCylinderSource * m_CylinderSource;
 
-  typedef itk::SimpleMemberCommand< Self >   ObserverType;
-
-  ObserverType::Pointer          m_GeometryObserver;
-
   /** update the visual representation with changes in the geometry */
-  void UpdateRepresentationFromGeometry();
+  virtual void UpdateRepresentationFromGeometry();
 
 };
 
