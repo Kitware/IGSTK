@@ -148,7 +148,7 @@ int igstkEllipsoidObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  ellipsoidObject->SetTransform( transform );
+  ellipsoidObject->RequestSetTransform( transform );
   igstk::Transform  transform2 = ellipsoidObject->GetTransform();
   igstk::Transform::VectorType translation2 = transform2.GetTranslation();
   for( unsigned int i=0; i<3; i++ )

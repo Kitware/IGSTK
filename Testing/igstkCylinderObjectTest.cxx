@@ -134,7 +134,7 @@ int igstkCylinderObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  cylinderObject->SetTransform( transform );
+  cylinderObject->RequestSetTransform( transform );
   igstk::Transform  transform2 = cylinderObject->GetTransform();
   igstk::Transform::VectorType translation2 = transform2.GetTranslation();
   for( unsigned int i=0; i<3; i++ )
@@ -193,6 +193,10 @@ int igstkCylinderObjectTest( int, char * [] )
 
   std::cout << "[PASSED]" << std::endl;
 
+  // Exercising the method to export the state machine description.
+  // 
+  cylinderObjectA->ExportStateMachine( std::cout );
+  
   std::cout << "Test [DONE]" << std::endl;
   return EXIT_SUCCESS;
 }
