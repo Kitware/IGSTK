@@ -6,7 +6,7 @@
 #include "itkImageToVTKImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
 #include "DicomImageReader.h"
-#include "LiverTumorSegmentationModule.h"
+#include "LiverTumorThresholdLevelSetSegmentationModule.h"
 #include "itkImageFileWriter.h"
 #include "itkThresholdImageFilter.h"
 
