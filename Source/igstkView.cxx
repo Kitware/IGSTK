@@ -21,8 +21,6 @@
 
 #include "igstkView.h"
 #include <FL/x.H>
-#include <vtkRenderWindow.h>
-#include <vtkRenderer.h>
 #include <vtkInteractorStyle.h>
 #include <vtkVersion.h>
 #include <vtkCommand.h>
