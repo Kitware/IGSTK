@@ -46,12 +46,12 @@ void SerialCommunicationForLinux::OpenCommunicationPortProcessing( void )
   if( this->m_PortHandle < 0)
   {
     this->m_PortNumber = m_InvalidPortNumber;
-    m_ResultOfOpenCommunicationPortProcessing = false;
+    m_pOpenPortResultInput = &m_OpenPortFailureInput;
     this->InvokeEvent( OpenPortFailureEvent() );
   }
   else
   {
-    m_ResultOfOpenCommunicationPortProcessing = true;
+    m_pOpenPortResultInput = &m_OpenPortSuccessInput;
     igstkLogMacro( igstk::Logger::DEBUG, "COM port name: ");
     igstkLogMacro( igstk::Logger::DEBUG, portName);
     igstkLogMacro( igstk::Logger::DEBUG, " opened.\n");
@@ -68,12 +68,12 @@ void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
 
   if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL)) 
   {
-    m_ResultOfSetUpDataBuffersProcessing = false;
+    m_pDataBuffersSetUpResultInput = &m_DataBufferSetUpFailureInput;
     this->InvokeEvent( SetDataBufferSizeFailureEvent() );
   }
   else
   {
-    m_ResultOfSetUpDataBuffersProcessing = true;
+    m_pDataBuffersSetUpResultInput = &m_DataBufferSetUpSuccessInput;
     //Clear out buffers
     this->m_ReadDataSize = 0;
     this->m_ReadBufferOffset = 0;
@@ -91,7 +91,8 @@ void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
 
 void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
 {
-  m_ResultOfSetUpCommunicationParametersProcessing = false;
+  m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpFailureInput;
+
   // Control setting for a serial communications device
   struct termio portSettings;
   struct termios portOptions;
@@ -203,7 +204,8 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
   {
     igstkLogMacro( igstk::Logger::DEBUG, "SetupCommunicationParameters succeeded.\n");
   }
-  m_ResultOfSetUpCommunicationParametersProcessing = true;
+
+  m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpSuccessInput;
 }
 
 void SerialCommunicationForLinux::ClearBuffersAndCloseCommunicationPortProcessing( void )
