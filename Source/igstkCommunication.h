@@ -20,6 +20,7 @@
 
 
 #include "itkObject.h"
+#include "igstkMacros.h"
 
 
 namespace igstk
@@ -35,19 +36,40 @@ namespace igstk
 
 class Communication  : public itk::Object
 {
-public:
+ 
+public: 
+
+  typedef Communication Self; 
+  typedef itk::Object Superclass; 
+  typedef itk::SmartPointer< Self > Pointer; 
+  typedef itk::SmartPointer< const Self > ConstPointer; 
+
+  /** Method for defining the name of the class */ 
+  igstkTypeMacro(Communication, Object); 
+
+  /** Method for creation through the object factory */ 
+  igstkNewMacro(Self); 
+
+  /** The method OpenCommunication sets up communication as per the data
+  provided. */
+  virtual bool OpenCommunication( const char *XMLFileName = NULL );
+
+  /** The method CloseCommunication closes the communication. */
+  virtual bool CloseCommunication( void );
+
+
+  
+protected:
+
+    /** Constructor is protected in order to enforce 
+     *  the use of the New() operator */
     Communication(void);
 
     virtual ~Communication(void);
 
-    /** The method OpenCommunication sets up communication as per the data
-    provided. */
-    virtual bool OpenCommunication( const char *XMLFileName = NULL );
-
-    /** The method CloseCommunication closes the communication. */
-    virtual bool CloseCommunication( void );
-
 };
 
-}
+} // end of namespace igstk
+
 #endif //__igstk_Communication_h_
+

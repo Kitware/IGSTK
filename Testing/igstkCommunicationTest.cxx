@@ -28,11 +28,11 @@ int igstkCommunicationTest( int, char * [] )
 {
     typedef igstk::Communication  CommunicationType;
     
-    CommunicationType communicator;
+    CommunicationType::Pointer communicator = CommunicationType::New();
 
-    communicator.OpenCommunication("Test");
+    communicator->OpenCommunication("Test");
 
-    communicator.CloseCommunication();
+    communicator->CloseCommunication();
 
     return EXIT_SUCCESS;
 }
