@@ -67,7 +67,7 @@ int igstkTransformTest( int, char * [] )
     double timeExpired = t1.GetExpirationTime() + 10.0;
 
     bool invalidAtTime = t1.IsValidAtTime( timeExpired );
-    if( !invalidAtTime )
+    if( invalidAtTime )
       {
       std::cerr << "Error in IsValid() test" << std::endl;
       std::cerr << "Expected to be invalid, but returned valid" << std::endl;
