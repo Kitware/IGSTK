@@ -58,7 +58,7 @@ public:
   
   virtual bool DoSegmentation( void );
   
-  virtual bool DoThreshold( const float lower, const float upper );
+  virtual bool DoThreshold( float lower, float upper );
 
   virtual void WriteSegmentedVolume( const char *fname );
 
