@@ -15,7 +15,7 @@
 
 =========================================================================*/
 #include "igstkCylinderObject.h"
-
+#include "igstkEvents.h"
 
 namespace igstk
 { 
@@ -37,12 +37,14 @@ CylinderObject::~CylinderObject()
 void CylinderObject::SetRadius( double radius )
 {
   m_CylinderSpatialObject->SetRadius( radius );
+  this->InvokeEvent( GeometryModifiedEvent() );
 }
 
 
 void CylinderObject::SetHeight( double height ) 
 {
   m_CylinderSpatialObject->SetHeight( height );
+  this->InvokeEvent( GeometryModifiedEvent() );
 }
 
 double CylinderObject::GetRadius() const
@@ -55,8 +57,6 @@ double CylinderObject::GetHeight() const
 {
   return m_CylinderSpatialObject->GetHeight();
 }
-
-
 
 
 /** Print Self function */
