@@ -389,7 +389,9 @@ StateMachine< TClass, VStates, VInputs >
       for( InputType input=0; input < VInputs; input++)
         {
         ostr << "  State" << state << " -> State";
-        ostr << m_Transition[ state ][ input ] << ";" << std::endl;
+        ostr << m_Transition[ state ][ input ];
+        ostr << " [label=\"" << m_InputDescriptor[input] << "\"]";
+        ostr << ";" << std::endl;
         }
       }
     }
