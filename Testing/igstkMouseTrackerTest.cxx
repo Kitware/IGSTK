@@ -51,9 +51,12 @@ int igstkMouseTrackerTest( int, char * [] )
 
   tracker->GetPosition( position );
 
+  tracker->Reset();
+
   tracker->StopTracking();
   std::cout << "Mouse Position -> ( " << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
-  tracker->Reset();
+
+  tracker->Close();
 
   return EXIT_SUCCESS;
 }
