@@ -121,6 +121,9 @@ int igstkEllipsoidObjectTest( int, char * [] )
   // Testing Update
   ellipsoidRepresentation->IsModified();
 
+  // Testing again in order to exercise the other half of an if().
+  ellipsoidRepresentation->IsModified();
+
   // Test GetTransform()
   std::cout << "Testing Set/GetTransform(): ";
 
@@ -187,6 +190,13 @@ int igstkEllipsoidObjectTest( int, char * [] )
   ObjectType::Pointer ellipsoidObjectB = ObjectType::New();
   ellipsoidRepresentation4->RequestSetEllipsoidObject( ellipsoidObjectA );
   ellipsoidRepresentation4->RequestSetEllipsoidObject( ellipsoidObjectB );
+
+  // Set properties again in order to exercise the loop that goes through
+  // Actors
+  std::cout << "Testing set properties : ";
+  ellipsoidRepresentation->SetColor(0.9,0.7,0.1);
+  ellipsoidRepresentation->SetOpacity(0.8);
+
 
   std::cout << "Test [DONE]" << std::endl;
   return EXIT_SUCCESS;

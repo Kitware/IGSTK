@@ -133,6 +133,11 @@ int igstkSceneTest( int, char * [] )
     scene->Print(std::cout);
     scene->GetNameOfClass();
 
+    // Exercise error conditions by adding NULL pointers
+    scene->RequestAddObject(view,0); 
+    scene->RequestAddObject(0,ellipsoid); 
+    scene->RequestAddObject(0,0); 
+
     } 
   catch(...)
     {

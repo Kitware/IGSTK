@@ -108,6 +108,9 @@ int igstkCylinderObjectTest( int, char * [] )
   // Testing Update
   cylinderRepresentation->IsModified();
 
+  // Testing again in order to exercise the other half of an if().
+  cylinderRepresentation->IsModified();
+
   // Test GetTransform()
   std::cout << "Testing Set/GetTransform(): ";
 
@@ -172,6 +175,11 @@ int igstkCylinderObjectTest( int, char * [] )
   cylinderRepresentation4->RequestSetCylinderObject( cylinderObjectA );
   cylinderRepresentation4->RequestSetCylinderObject( cylinderObjectB );
 
+  // Set properties again in order to exercise the loop that goes through
+  // Actors
+  std::cout << "Testing set properties : ";
+  cylinderRepresentation->SetColor(0.9,0.7,0.1);
+  cylinderRepresentation->SetOpacity(0.8);
 
   std::cout << "[PASSED]" << std::endl;
 
