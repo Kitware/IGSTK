@@ -21,6 +21,7 @@
 #include "itkObject.h"
 #include "igstkTransform.h"
 #include "igstkMacros.h"
+#include "igstkStateMachine.h"
 
 
 namespace igstk
@@ -65,6 +66,15 @@ public:
     igstkSetMacro( ValidityPeriod, TimePeriodType );
     igstkSetMacro( Error, ErrorType );
 
+private:
+    
+  typedef igstk::StateMachine< Self >               StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer   ActionType;
+  typedef StateMachineType::StateType                StateType;
+  typedef StateMachineType::InputType                InputType;
+
+  igstkFriendClassMacro( StateMachineType );
+
 
 protected:
 
@@ -83,6 +93,24 @@ private:
 
     /** Time in milliseconds for which this tool will be reporting results */
     TimePeriodType     m_ValidityPeriod;
+
+private:
+
+  StateMachineType     m_StateMachine;
+  
+  /** Inputs to the State Machine */
+  InputType            m_InitializeInput;
+  
+
+  /** States for the State Machine */
+  StateType            m_Invalid;
+  StateType            m_NotAvailable;
+  StateType            m_Available;
+  StateType            m_Initialized;
+  StateType            m_Tracking;
+  StateType            m_Visible;
+
+
 };
 
 }
