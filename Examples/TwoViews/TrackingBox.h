@@ -96,7 +96,7 @@ public:
         transform.SetTranslation( 
             translation, errorValue, validityPeriodInMilliseconds );
 
-        m_Object->SetTransform( transform );
+        m_Object->RequestSetTransform( transform );
 
         m_View->Update();
         m_View2->Update();
