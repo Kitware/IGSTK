@@ -125,9 +125,14 @@ public:
    void SetInputDescriptor( InputType input, const char *  descriptor );
 
 
+   /** This extra typedef is necessary for preventing an Internal Compiler Error in 
+       Microsoft Visual C++ 6.0. This typedef is not needed for any other compiler. */
+   typedef std::ostream     stdOstreamType;
+
    /** Export the schematic description of the state machine to a stream.
        This method use the format required as input by the "dot" tool from graphviz. */
-   void ExportTransitions( std::ostream & ostr ) const;
+   
+   void ExportTransitions( stdOstreamType & ostr ) const;
 
 
 private:

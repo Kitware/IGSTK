@@ -378,7 +378,7 @@ StateMachine< TClass, VStates, VInputs >
 template<class TClass, unsigned int VStates, unsigned int VInputs>
 void
 StateMachine< TClass, VStates, VInputs >
-::ExportTransitions( std::ostream & ostr ) const
+::ExportTransitions( stdOstreamType & ostr ) const
 {
     ostr << "digraph G {" << std::endl;
 
