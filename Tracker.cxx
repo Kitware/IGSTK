@@ -1,0 +1,18 @@
+/////////////////////////////////////////////////////////////////////////////////
+//
+// General tracking class
+//
+// Created by: Sohan R Ranjan, ISIS Center, Georgetown University
+//
+// Date:	5 Sept 2003
+//
+/////////////////////////////////////////////////////////////////////////////////
+
+#include "tracker.h"
+
+
+int Tracker::InitializeTracker( const char *fileName )
+{
+	m_Parameters.SetFileName( fileName );
+	return 1;
+}
