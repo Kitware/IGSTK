@@ -20,12 +20,12 @@ public:
     m_StateMachine.SetTransition( 0, 0, 1, 0 );
     m_StateMachine.SetTransition( 1, 0, 2, 0 );
     m_StateMachine.SetTransition( 2, 0, 3, 0 );
-    m_StateMachine.SetTransition( 3, 0, 0, CancelAndReturnChange );
+    m_StateMachine.SetTransition( 3, 0, 0, & Tester::CancelAndReturnChange );
 
-    m_StateMachine.SetTransition( 0, 1, 0, NoEnoughChangeMessage );
-    m_StateMachine.SetTransition( 1, 1, 1, NoEnoughChangeMessage );
-    m_StateMachine.SetTransition( 2, 1, 2, NoEnoughChangeMessage );
-    m_StateMachine.SetTransition( 3, 1, 0, DeliverDrink );
+    m_StateMachine.SetTransition( 0, 1, 0, & Tester::NoEnoughChangeMessage );
+    m_StateMachine.SetTransition( 1, 1, 1, & Tester::NoEnoughChangeMessage );
+    m_StateMachine.SetTransition( 2, 1, 2, & Tester::NoEnoughChangeMessage );
+    m_StateMachine.SetTransition( 3, 1, 0, & Tester::DeliverDrink );
 
     // Finish the programming and get ready to run
     m_StateMachine.SetReadyToRun();
