@@ -14,39 +14,53 @@ public:
 
   Tester()
     {
-    // Connect the state machine to 'this' class.
-    m_StateMachine.SetClass( this );
+      // Connect the state machine to 'this' class.
+      m_StateMachine.SetClass( this );
 
-    // Programming the machine
-    m_StateMachine.SetTransition( 0, 0, 1, 0 );
-    m_StateMachine.SetTransition( 1, 0, 2, 0 );
-    m_StateMachine.SetTransition( 2, 0, 3, 0 );
-    m_StateMachine.SetTransition( 3, 0, 0, & Tester::CancelAndReturnChange );
+      // Programming the machine
+      m_StateMachine.SetTransition( 0, 0, 1, 0 );
+      m_StateMachine.SetTransition( 1, 0, 2, 0 );
+      m_StateMachine.SetTransition( 2, 0, 3, 0 );
+      m_StateMachine.SetTransition( 3, 0, 0, & Tester::CancelAndReturnChange );
 
-    m_StateMachine.SetTransition( 0, 1, 0, & Tester::NoEnoughChangeMessage );
-    m_StateMachine.SetTransition( 1, 1, 1, & Tester::NoEnoughChangeMessage );
-    m_StateMachine.SetTransition( 2, 1, 2, & Tester::NoEnoughChangeMessage );
-    m_StateMachine.SetTransition( 3, 1, 0, & Tester::DeliverDrink );
+      m_StateMachine.SetTransition( 0, 1, 0, & Tester::NoEnoughChangeMessage );
+      m_StateMachine.SetTransition( 1, 1, 1, & Tester::NoEnoughChangeMessage );
+      m_StateMachine.SetTransition( 2, 1, 2, & Tester::NoEnoughChangeMessage );
+      m_StateMachine.SetTransition( 3, 1, 0, & Tester::DeliverDrink );
 
-    // Finish the programming and get ready to run
-    m_StateMachine.SetReadyToRun();
+      m_StateMachine.SetTransition( 0, 2, 0, & Tester::CancelAndReturnChange );
+      m_StateMachine.SetTransition( 1, 2, 0, & Tester::CancelAndReturnChange );
+      m_StateMachine.SetTransition( 2, 2, 0, & Tester::CancelAndReturnChange );
+      m_StateMachine.SetTransition( 3, 2, 0, & Tester::CancelAndReturnChange );
+
+      // Finish the programming and get ready to run
+      m_StateMachine.SetReadyToRun();
     }
+
+
 
   
   // Methods that generate input signals
   void InsertChange() 
     {
-    std::cout << "Insert Change" << std::endl;
-    m_StateMachine.SetInput( 0 );
-    m_StateMachine.StateTransition();
+      m_StateMachine.SetInput( 0 );
+      std::cout << "Insert Change" << std::endl;
+      m_StateMachine.StateTransition();
     }
  
  
   void SelectDrink() 
     {
-    std::cout << "Select Drink" << std::endl;
-    m_StateMachine.SetInput( 1 );
-    m_StateMachine.StateTransition();
+      m_StateMachine.SetInput( 1 );
+      std::cout << "Select Drink" << std::endl;
+      m_StateMachine.StateTransition();
+    }
+
+  void CancelPurchase() 
+    {
+      m_StateMachine.SetInput( 2 );
+      std::cout << "Cancelling Purchase" << std::endl;
+      m_StateMachine.StateTransition();
     }
 
 
@@ -91,8 +105,6 @@ int igstkStateMachineTest(int argc, char * argv [])
 
   Tester tester;
 
-  typedef igstk::StateMachine< Tester, 3, 3 >   StateMachineType;
-
 
   std::cout << std::endl << std::endl;
   std::cout << "FIRST test run " << std::endl;
@@ -104,10 +116,12 @@ int igstkStateMachineTest(int argc, char * argv [])
   tester.SelectDrink();
 
 
+
+
   std::cout << std::endl << std::endl;
   std::cout << "Second test run " << std::endl;
 
-  // try to get drink ealy on purpose
+  // Try to get drink ealy on purpose, to test error states.
   tester.InsertChange();
   tester.SelectDrink();
   tester.InsertChange();
