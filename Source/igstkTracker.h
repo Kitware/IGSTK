@@ -51,6 +51,9 @@ class Tracker : public itk::ProcessObject
     typedef igstk::Logger                  LoggerType;
     typedef igstk::StateMachine< Tracker > StateMachineType;
     typedef StateMachineType::TMemberFunctionPointer ActionType;
+    typedef StateMachineType::StateType              StateType;
+    typedef StateMachineType::InputType              InputType;
+    typedef StateMachineType::StateIdentifierType    StateIdentifierType;
 
     FriendClassMacro( StateMachineType );
     FriendClassMacro( TrackerPort );
@@ -102,8 +105,7 @@ public:
     LoggerType* GetLogger(  void );
 
     /** Type used to represent the codes of the states */
-    typedef std::string     StateDescriptorType;
-    const StateDescriptorType & GetCurrentState() const;
+    const StateIdentifierType & GetCurrentState() const;
 
 protected:
 
@@ -131,6 +133,19 @@ private:
     /** The "StateMachine" instance */
     StateMachineType         m_StateMachine;
 
+    /** List of States */
+    StateType                m_IdleState;
+    StateType                m_CommunicatingState;
+    StateType                m_ToolsActiveState;
+    StateType                m_TrackingState;
+
+    /** List of Inputs */
+    InputType                m_SetUpCommunication;
+    InputType                m_SetUpTools;
+    InputType                m_StartTracking;
+    InputType                m_UpdateToolStatus;
+    InputType                m_StopTracking;
+    
     /** The Logger instance */
     LoggerType               *m_pLogger;
 };

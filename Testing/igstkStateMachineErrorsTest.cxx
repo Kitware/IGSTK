@@ -24,6 +24,9 @@ public:
   typedef igstk::StateMachine< Tester1 >   StateMachineType;
 
   typedef StateMachineType::TMemberFunctionPointer        ActionType;
+  typedef StateMachineType::StateType                     StateType;
+  typedef StateMachineType::InputType                     InputType;
+  typedef StateMachineType::StateIdentifierType           StateIdentifierType;
 
   FriendClassMacro(StateMachineType);
 
@@ -33,22 +36,22 @@ public:
     m_StateMachine.SetOwnerClass( this );
 
     // Set the state descriptors
-    m_StateMachine.AddState( "IdleState" );
-    m_StateMachine.AddState( "OneQuarterCredit" );
-    m_StateMachine.AddState( "TwoQuarterCredit" );
-    m_StateMachine.AddState( "ThreeQuarterCredit" );
+    m_StateMachine.AddState( m_IdleState, "IdleState" );
+    m_StateMachine.AddState( m_OneQuarterCredit, "OneQuarterCredit" );
+    m_StateMachine.AddState( m_TwoQuarterCredit, "TwoQuarterCredit" );
+    m_StateMachine.AddState( m_ThreeQuarterCredit, "ThreeQuarterCredit" );
 
     // Set the input descriptors
-    m_StateMachine.AddInput( "QuarterInserted");
+    m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
 
     const ActionType NoAction = 0;
 
     // Programming the machine
-    m_StateMachine.AddTransition( "IdleState",          "QuarterInserted", "OneQuarterCredit",    NoAction );
-    m_StateMachine.AddTransition( "OneQuarterCredit",   "QuarterInserted", "TwoQuarterCredit",    NoAction );
-    m_StateMachine.AddTransition( "TwoQuarterCredit",   "QuarterInserted", "ThreeQuarterCredit",  NoAction );
+    m_StateMachine.AddTransition( m_IdleState,          m_QuarterInserted, m_OneQuarterCredit,    NoAction );
+    m_StateMachine.AddTransition( m_OneQuarterCredit,   m_QuarterInserted, m_TwoQuarterCredit,    NoAction );
+    m_StateMachine.AddTransition( m_TwoQuarterCredit,   m_QuarterInserted, m_ThreeQuarterCredit,  NoAction );
 
-    m_StateMachine.SelectInitialState( "IdleState");
+    m_StateMachine.SelectInitialState( m_IdleState );
 
     // Finish the programming and get ready to run
     m_StateMachine.SetReadyToRun();
@@ -56,12 +59,24 @@ public:
 
   void triggerError1()
   {
-    m_StateMachine.SelectInitialState("ThisStateDoesntExists");
+    // NOTE that on purpose the m_ThisStateDoesntExist was not added as a state
+    // with AddState() */
+    m_StateMachine.SelectInitialState( m_ThisStateDoesntExist );
   }
 
 private:
 
   StateMachineType   m_StateMachine;
+
+  /** List of States */
+  StateType m_IdleState;
+  StateType m_OneQuarterCredit;
+  StateType m_TwoQuarterCredit;
+  StateType m_ThreeQuarterCredit;
+  StateType m_ThisStateDoesntExist;
+  
+  /** List of Inputs */
+  InputType m_QuarterInserted;
 
 };
 
@@ -73,26 +88,39 @@ class Tester2
 {
 public:
 
-  typedef igstk::StateMachine< Tester2 >   StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer        ActionType;
+  typedef igstk::StateMachine< Tester2 >              StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer    ActionType;
+  typedef StateMachineType::StateType                 StateType;
+  typedef StateMachineType::InputType                 InputType;
+  typedef StateMachineType::StateIdentifierType       StateIdentifierType;
+
   FriendClassMacro(StateMachineType);
 
   Tester2()
     {
     // On purpose NOT calling : m_StateMachine.SetOwnerClass( this );
-    m_StateMachine.AddState( "IdleState" );
-    m_StateMachine.SelectInitialState( "IdleState");
+    m_StateMachine.AddState( m_IdleState, "IdleState" );
+    m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.SetReadyToRun();
+
     }
 
   void InsertChange() 
     {
     std::cout << "Insert Change" << std::endl;
-    m_StateMachine.ProcessInput( "QuarterInserted" );
+    // On purpose we didn't set m_QuarterInserted with AddInput();
+    m_StateMachine.ProcessInput( m_QuarterInserted );
     }
  
 private:
   StateMachineType   m_StateMachine;
+
+  /** List of States */
+  StateType m_IdleState;
+
+  /** List of Inputs */
+  InputType m_QuarterInserted;
+
 };
 
 
@@ -102,29 +130,40 @@ class Tester3
 {
 public:
 
-  typedef igstk::StateMachine< Tester3 >   StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer        ActionType;
+  typedef igstk::StateMachine< Tester3 >              StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer    ActionType;
+  typedef StateMachineType::StateType                 StateType;
+  typedef StateMachineType::InputType                 InputType;
+  typedef StateMachineType::StateIdentifierType       StateIdentifierType;
+
   FriendClassMacro(StateMachineType);
 
   Tester3()
     {
     m_StateMachine.SetOwnerClass( this );
-    m_StateMachine.AddState( "IdleState" );
-    m_StateMachine.SelectInitialState( "IdleState");
-    m_StateMachine.AddInput( "QuarterInserted");
+    m_StateMachine.AddState( m_IdleState, "IdleState" );
+    m_StateMachine.SelectInitialState( m_IdleState );
+    m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
     const ActionType NoAction = 0;
-    m_StateMachine.AddTransition( "IdleState", "QuarterInserted", "IdleState", NoAction );
+    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
     // On purpose NOT calling : m_StateMachine.SetReadyToRun();
     }
 
   void InsertChange() 
     {
     std::cout << "Insert Change" << std::endl;
-    m_StateMachine.ProcessInput( "QuarterInserted" );
+    m_StateMachine.ProcessInput( m_QuarterInserted );
     }
  
 private:
   StateMachineType   m_StateMachine;
+
+  /** List of States */
+  StateType m_IdleState;
+
+  /** List of Inputs */
+  InputType m_QuarterInserted;
+
 };
 
 
@@ -133,18 +172,22 @@ class Tester4
 {
 public:
 
-  typedef igstk::StateMachine< Tester4 >   StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer        ActionType;
+  typedef igstk::StateMachine< Tester4 >              StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer    ActionType;
+  typedef StateMachineType::StateType                 StateType;
+  typedef StateMachineType::InputType                 InputType;
+  typedef StateMachineType::StateIdentifierType       StateIdentifierType;
+
   FriendClassMacro(StateMachineType);
 
   Tester4()
     {
     m_StateMachine.SetOwnerClass( this );
-    m_StateMachine.AddState( "IdleState" );
-    m_StateMachine.SelectInitialState( "IdleState");
-    m_StateMachine.AddInput( "QuarterInserted");
+    m_StateMachine.AddState( m_IdleState, "IdleState" );
+    m_StateMachine.SelectInitialState( m_IdleState );
+    m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
     const ActionType NoAction = 0;
-    m_StateMachine.AddTransition( "IdleState", "QuarterInserted", "IdleState", NoAction );
+    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
 
     // On purpose invode SetReadyToRun() twice.
     m_StateMachine.SetReadyToRun();
@@ -154,11 +197,18 @@ public:
   void InsertChange() 
     {
     std::cout << "Insert Change" << std::endl;
-    m_StateMachine.ProcessInput( "QuarterInserted" );
+    m_StateMachine.ProcessInput( m_QuarterInserted );
     }
  
 private:
   StateMachineType   m_StateMachine;
+
+  /** List of States */
+  StateType m_IdleState;
+
+  /** List of Inputs */
+  InputType m_QuarterInserted;
+
 };
 
 
@@ -168,28 +218,39 @@ public:
 
   typedef igstk::StateMachine< Tester5 >   StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer        ActionType;
+  typedef StateMachineType::StateType                 StateType;
+  typedef StateMachineType::InputType                 InputType;
+  typedef StateMachineType::StateIdentifierType       StateIdentifierType;
+
   FriendClassMacro(StateMachineType);
 
   Tester5()
     {
     m_StateMachine.SetOwnerClass( this );
-    m_StateMachine.AddState( "IdleState" );
-    m_StateMachine.SelectInitialState( "IdleState");
-    m_StateMachine.AddInput( "QuarterInserted");
+    m_StateMachine.AddState( m_IdleState, "IdleState" );
+    m_StateMachine.SelectInitialState( m_IdleState );
+    m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
     const ActionType NoAction = 0;
     // On purpose NOT adding any transition: for testing error condition.
-    // m_StateMachine.AddTransition( "IdleState", "QuarterInserted", "IdleState", NoAction );
+    // m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
     m_StateMachine.SetReadyToRun();
     }
 
   void InvokeUndefinedTransition() 
     {
     std::cout << "Insert Change" << std::endl;
-    m_StateMachine.ProcessInput( "QuarterInserted" );
+    m_StateMachine.ProcessInput( m_QuarterInserted );
     }
  
 private:
   StateMachineType   m_StateMachine;
+
+  /** List of States */
+  StateType m_IdleState;
+
+  /** List of Inputs */
+  InputType m_QuarterInserted;
+
 };
 
 
@@ -197,31 +258,43 @@ class Tester6
 {
 public:
 
-  typedef igstk::StateMachine< Tester6 >   StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer        ActionType;
+  typedef igstk::StateMachine< Tester6 >              StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer    ActionType;
+  typedef StateMachineType::StateType                 StateType;
+  typedef StateMachineType::InputType                 InputType;
+  typedef StateMachineType::StateIdentifierType       StateIdentifierType;
+
   FriendClassMacro(StateMachineType);
 
   Tester6()
     {
     m_StateMachine.SetOwnerClass( this );
-    m_StateMachine.AddState( "IdleState" );
-    m_StateMachine.SelectInitialState( "IdleState");
-    m_StateMachine.AddInput( "QuarterInserted");
-    m_StateMachine.AddInput( "Cancel");
+    m_StateMachine.AddState( m_IdleState, "IdleState" );
+    m_StateMachine.SelectInitialState( m_IdleState );
+    m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
+    m_StateMachine.AddInput( m_Cancel, "Cancel");
     const ActionType NoAction = 0;
-    // On purpose NOT adding any transition: input "Cancel"
-    m_StateMachine.AddTransition( "IdleState", "QuarterInserted", "IdleState", NoAction );
+    // On purpose NOT adding any transition: input m_Cancel
+    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
     m_StateMachine.SetReadyToRun();
     }
 
   void InvokeUndefinedStateInputTransition() 
     {
     std::cout << "Invoking Cancel" << std::endl;
-    m_StateMachine.ProcessInput( "Cancel" );
+    m_StateMachine.ProcessInput( m_Cancel );
     }
  
 private:
   StateMachineType   m_StateMachine;
+
+  /** List of States */
+  StateType m_IdleState;
+
+  /** List of Inputs */
+  InputType m_QuarterInserted;
+  InputType m_Cancel;
+
 };
 
 

@@ -19,7 +19,6 @@
 #define __igstk_StateMachine_txx
 
 #include "igstkStateMachine.h"
-#include <algorithm>
 
 
 namespace igstk
@@ -38,9 +37,6 @@ StateMachine< TClass >
 
   m_ReadyToRun = false;
 
-  // Initialize the machine in the idle state.
-  m_State = "";
-
 }
 
 
@@ -51,7 +47,6 @@ StateMachine< TClass >
 ::~StateMachine()
 {
   // Release memory from Transitions container
-  typedef typename TransitionContainer::iterator  TransitionIterator;
   TransitionIterator transitionItr = m_Transitions.begin();
   TransitionIterator transitionEnd = m_Transitions.end();
   while( transitionItr != transitionEnd )
@@ -62,7 +57,6 @@ StateMachine< TClass >
   m_Transitions.clear();
 
   // Release memory from Actions container
-  typedef typename ActionContainer::iterator  ActionIterator;
   ActionIterator actionsItr = m_Actions.begin();
   ActionIterator actionsEnd = m_Actions.end();
   while( actionsItr != actionsEnd )
@@ -93,19 +87,21 @@ StateMachine< TClass >
 template<class TClass>
 void
 StateMachine< TClass >
-::AddInput( const InputDescriptorType & descriptor )
+::AddInput( const InputType & input, const InputDescriptorType & descriptor )
 {
 
-   m_Inputs.push_back( descriptor );
+   /** The structure of the StateMachineToken guarantees that identifiers are
+    * unique. */
+   m_Inputs[ input.GetIdentifier() ] = descriptor;
 
 }
 
 
 
 template<class TClass>
-const typename StateMachine< TClass >::StateDescriptorType & 
+const typename StateMachine< TClass >::StateIdentifierType & 
 StateMachine< TClass >
-::GetCurrentState() const
+::GetCurrentStateIdentifier() const
 {
 
    return m_State;
@@ -118,10 +114,12 @@ StateMachine< TClass >
 template<class TClass>
 void
 StateMachine< TClass >
-::AddState( const StateDescriptorType & descriptor )
+::AddState( const StateType & state, const StateDescriptorType & descriptor )
 {
 
-   m_States.push_back( descriptor );
+   /** The structure of the StateMachineToken guarantees that identifiers are
+    * unique. */
+   m_States[ state.GetIdentifier() ] = descriptor;
 
 }
 
@@ -130,20 +128,21 @@ StateMachine< TClass >
 template<class TClass>
 void
 StateMachine< TClass >
-::SelectInitialState( const StateDescriptorType & descriptor )
+::SelectInitialState( const StateType & initialState )
 {
 
-  StatesContainer::const_iterator  state = std::find( m_States.begin(), m_States.end(), descriptor );
+  StatesConstIterator  state = 
+              m_States.find( initialState.GetIdentifier() );
     
   if( state == m_States.end() )
     {
     std::cerr << "State selected as initial state has not been defined yet. " << std::endl;
-    std::cerr << "Attempted state = " << descriptor << std::endl;
+    std::cerr << "Attempted state = " << initialState.GetIdentifier() << std::endl;
     std::cerr.flush();
     return;
     } 
 
-  m_State = *state;
+  m_State = state->first;
 
 }
 
@@ -187,7 +186,7 @@ StateMachine< TClass >
 template<class TClass>
 void
 StateMachine< TClass >
-::ProcessInput( const InputDescriptorType & input )
+::ProcessInput( const InputType & input )
 {
 
   if( !m_This )
@@ -209,7 +208,8 @@ StateMachine< TClass >
     return;
     }
 
-  TransitionContainer::const_iterator    transitionsFromThisState = m_Transitions.find( m_State );
+  TransitionConstIterator transitionsFromThisState = 
+                                 m_Transitions.find( m_State );
 
   
   if( transitionsFromThisState == m_Transitions.end() )
@@ -219,19 +219,21 @@ StateMachine< TClass >
     return;
     } 
 
-  StatesPerInputContainer::const_iterator  newState = transitionsFromThisState->second->find( input );
+  StatesPerInputConstIterator  newState = 
+            transitionsFromThisState->second->find( input.GetIdentifier() );
 
   if( newState == transitionsFromThisState->second->end() )
     {
     std::cerr << "No transitions have been defined for current state and input " << std::endl;
     std::cerr << "State = "  << m_State << std::endl;
-    std::cerr << "Input = "  << input   << std::endl;
+    std::cerr << "Input = "  << input.GetIdentifier() << std::endl;
     std::cerr << std::endl;
     std::cerr.flush();
     return;
     } 
 
-  typename ActionContainer::const_iterator    actionsFromThisState = m_Actions.find( m_State );
+  ActionConstIterator  actionsFromThisState = 
+                                                 m_Actions.find( m_State );
 
   
   if( actionsFromThisState == m_Actions.end() )
@@ -241,13 +243,13 @@ StateMachine< TClass >
     return;
     } 
 
-  typename ActionsPerInputContainer::const_iterator  action = actionsFromThisState->second->find( input );
+  ActionsPerInputConstIterator  action = actionsFromThisState->second->find( input.GetIdentifier() );
 
   if( action == actionsFromThisState->second->end() )
     {
     std::cerr << "No actions have been defined for current state and input " << std::endl;
     std::cerr << "State = "  << m_State << std::endl;
-    std::cerr << "Input = "  << input   << std::endl;
+    std::cerr << "Input = "  << input.GetIdentifier() << std::endl;
     std::cerr << "this state has " << actionsFromThisState->second->size() << " action transitions " << std::endl;
     std::cerr << std::endl;
     std::cerr.flush();
@@ -271,55 +273,56 @@ StateMachine< TClass >
 template<class TClass>
 void
 StateMachine< TClass >
-::AddTransition( const StateDescriptorType & stateDescriptor,   
-                 const InputDescriptorType & inputDescriptor, 
-                 const StateDescriptorType & newStateDescriptor, 
+::AddTransition( const StateType & state,   
+                 const InputType & input, 
+                 const StateType & newState, 
                        TMemberFunctionPointer action )
 {
  
   // First check if the State exists
-  StatesContainer::const_iterator  state = std::find( m_States.begin(), m_States.end(), stateDescriptor );
+  StatesConstIterator stateItr = m_States.find( state.GetIdentifier() );
     
-  if( state == m_States.end() )
+  if( stateItr == m_States.end() )
     {
     std::cerr << "Attempt to add a Transition for a State that does not exist" << std::endl;
-    std::cerr << "Attempted state     = " << stateDescriptor << std::endl;
-    std::cerr << "Attempted input     = " << inputDescriptor << std::endl;
-    std::cerr << "Attempted new state = " << newStateDescriptor << std::endl;
+    std::cerr << "Attempted state     = " << state.GetIdentifier() << std::endl;
+    std::cerr << "Attempted input     = " << input.GetIdentifier() << std::endl;
+    std::cerr << "Attempted new state = " << newState.GetIdentifier() << std::endl;
     std::cerr.flush();
     return;
     } 
 
   // Then check if the Input exists
-  InputsContainer::const_iterator  input = std::find( m_Inputs.begin(), m_Inputs.end(), inputDescriptor );
+  InputConstIterator inputItr = m_Inputs.find( input.GetIdentifier() );
     
-  if( input == m_Inputs.end() )
+  if( inputItr == m_Inputs.end() )
     {
     std::cerr << "Attempt to add a Transition for an Input that does not exist" << std::endl;
-    std::cerr << "Attempted state     = " << stateDescriptor << std::endl;
-    std::cerr << "Attempted input     = " << inputDescriptor << std::endl;
-    std::cerr << "Attempted new state = " << newStateDescriptor << std::endl;
+    std::cerr << "Attempted state     = " << state.GetIdentifier() << std::endl;
+    std::cerr << "Attempted input     = " << input.GetIdentifier() << std::endl;
+    std::cerr << "Attempted new state = " << newState.GetIdentifier() << std::endl;
     std::cerr.flush();
     return;
     } 
 
 
   // Check if the new State exists
-  StatesContainer::const_iterator  newstate = std::find( m_States.begin(), m_States.end(), newStateDescriptor );
+  StatesConstIterator newstateItr = m_States.find( newState.GetIdentifier() );
     
-  if( newstate == m_States.end() )
+  if( newstateItr == m_States.end() )
     {
     std::cerr << "Attempt to add a Transition for a New State that does not exist" << std::endl;
-    std::cerr << "Attempted state     = " << stateDescriptor << std::endl;
-    std::cerr << "Attempted input     = " << inputDescriptor << std::endl;
-    std::cerr << "Attempted new state = " << newStateDescriptor << std::endl;
+    std::cerr << "Attempted state     = " << state.GetIdentifier() << std::endl;
+    std::cerr << "Attempted input     = " << input.GetIdentifier() << std::endl;
+    std::cerr << "Attempted new state = " << newState.GetIdentifier() << std::endl;
     std::cerr.flush();
     return;
     } 
 
 
   // Search for existing Transitions for that State
-  TransitionContainer::const_iterator    transitionsFromThisState = m_Transitions.find( stateDescriptor );
+  TransitionConstIterator transitionsFromThisState = 
+                               m_Transitions.find( state.GetIdentifier() );
   
   if( transitionsFromThisState == m_Transitions.end() )
     {
@@ -327,17 +330,17 @@ StateMachine< TClass >
     // Therefore create a new entry for it.
     StatesPerInputContainer *statesPerInput = new StatesPerInputContainer;
 
-    // Insert the new state that should be assumed if the inputDescriptor is received.
-    (*statesPerInput)[ inputDescriptor ] = newStateDescriptor;
+    // Insert the new state that should be assumed if the input is received.
+    (*statesPerInput)[ input.GetIdentifier() ] = newState.GetIdentifier();
 
     // Add the statesPerInput container to the Transitions container.
-    m_Transitions[ stateDescriptor ] = statesPerInput;
+    m_Transitions[ state.GetIdentifier() ] = statesPerInput;
     } 
   else
     {
     // Check if the particular Input has already an Entry here
-    StatesPerInputContainer::const_iterator transitionsFromThisStateAndInput =
-                            transitionsFromThisState->second->find( inputDescriptor );
+    StatesPerInputConstIterator transitionsFromThisStateAndInput =
+                     transitionsFromThisState->second->find( input.GetIdentifier() );
     if( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
       {
       // There is already an entry for this input. This is suspicious
@@ -346,15 +349,15 @@ StateMachine< TClass >
       std::cerr << "Attempt to override an existing transition. "
                 << "Please verify the programming of your state machine. "
                 << "There is already a transition defined for the combination: " << std::endl;
-      std::cerr << "State     = " << stateDescriptor << std::endl;
-      std::cerr << "Input     = " << inputDescriptor << std::endl;
+      std::cerr << "State     = " << state.GetIdentifier() << std::endl;
+      std::cerr << "Input     = " << input.GetIdentifier() << std::endl;
       std::cerr << "New state = " << transitionsFromThisStateAndInput->second << std::endl;
       std::cerr.flush();
       }
     else
       {
       // Finally, add the Transition: new State to assume when the specific Input is received.
-      (*(transitionsFromThisState->second))[inputDescriptor] = newStateDescriptor;
+      (*(transitionsFromThisState->second))[input.GetIdentifier()] = newState.GetIdentifier();
       }
     }
 
@@ -362,7 +365,8 @@ StateMachine< TClass >
   // Now do the equivalent for the Action
 
   // Search for existing Actions for that State
-  typename ActionContainer::const_iterator  actionsFromThisState = m_Actions.find( stateDescriptor );
+  ActionConstIterator  actionsFromThisState = 
+                            m_Actions.find( state.GetIdentifier() );
   
   if( actionsFromThisState == m_Actions.end() )
     {
@@ -370,17 +374,17 @@ StateMachine< TClass >
     // Therefore create a new entry for it.
     ActionsPerInputContainer *statesPerInput = new ActionsPerInputContainer;
 
-    // Insert the new state that should be assumed if the inputDescriptor is received.
-    (*statesPerInput)[ inputDescriptor ] = action;
+    // Insert the new state that should be assumed if the input is received.
+    (*statesPerInput)[ input.GetIdentifier() ] = action;
 
     // Add the statesPerInput container to the Actions container.
-    m_Actions[ stateDescriptor ] = statesPerInput;
+    m_Actions[ state.GetIdentifier() ] = statesPerInput;
     } 
   else
     {
     // Check if the particular Input has already an Entry here
-    typename ActionsPerInputContainer::const_iterator actionsFromThisStateAndInput =
-                            actionsFromThisState->second->find( inputDescriptor );
+      ActionsPerInputConstIterator actionsFromThisStateAndInput =
+                            actionsFromThisState->second->find( input.GetIdentifier() );
     if( actionsFromThisStateAndInput != actionsFromThisState->second->end() )
       {
       // There is already an entry for this input. This is suspicious
@@ -389,8 +393,8 @@ StateMachine< TClass >
       std::cerr << "Attempt to override an existing action. "
                 << "Please verify the programming of your state machine. "
                 << "There is already a action defined for the combination: " << std::endl;
-      std::cerr << "State     = " << stateDescriptor << std::endl;
-      std::cerr << "Input     = " << inputDescriptor << std::endl;
+      std::cerr << "State     = " << state.GetIdentifier() << std::endl;
+      std::cerr << "Input     = " << input.GetIdentifier() << std::endl;
       // Commenting out the following line: Not compiling on bcc32 
       //std::cerr << "New state = " << actionsFromThisStateAndInput->second << std::endl;
       std::cerr.flush();
@@ -398,7 +402,7 @@ StateMachine< TClass >
     else
       {
       // Finally, add the Action: new State to assume when the specific Input is received.
-      (*(actionsFromThisState->second))[inputDescriptor] = action;
+      (*(actionsFromThisState->second))[ input.GetIdentifier() ] = action;
       }
     }
 
@@ -428,12 +432,13 @@ StateMachine< TClass >
 
     // Export all the transitions between states
     {
-    TransitionContainer::const_iterator    transitionsFromThisState = m_Transitions.begin();
+    TransitionConstIterator transitionsFromThisState =
+                                       m_Transitions.begin();
     while( transitionsFromThisState != m_Transitions.end() )
       {
-      StatesPerInputContainer::const_iterator  
-                      transitionsFromThisStateAndInput =  
-                           transitionsFromThisState->second->begin();
+      StatesPerInputConstIterator  
+             transitionsFromThisStateAndInput =  
+                        transitionsFromThisState->second->begin();
       while( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
         {
         ostr << transitionsFromThisState->first << " -> ";
@@ -449,11 +454,11 @@ StateMachine< TClass >
 
     // Export the descriptions of all states
     {
-    StatesContainer::const_iterator  stateId = m_States.begin();
+    StatesConstIterator  stateId = m_States.begin();
     while( stateId != m_States.end() )
       {
-      ostr << *stateId << "  [label=\"";
-      ostr << *stateId << "\"";
+      ostr << stateId->second << "  [label=\"";
+      ostr << stateId->second << "\"";
       ostr << " fontname=Helvetica, fontcolor=Black";
       ostr << "];" << std::endl;
       ++stateId;

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkBasicTrackerTest.cxx
+  Module:    igstkStateMachineTokenTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -21,37 +21,28 @@
 #endif
 
 #include <iostream>
-#include <fstream>
 
-#include "igstkTracker.h"
-#include "igstkLogger.h"
+#include "igstkStateMachineToken.h"
 
-int igstkBasicTrackerTest( int, char * [] )
+int igstkStateMachineTokenTest( int, char * [] )
 {
-    igstk::Tracker::Pointer tracker = igstk::Tracker::New();
-    igstk::Logger logger;
+    typedef igstk::StateMachineToken  StateMachineTokenType;
+    
+    StateMachineTokenType token;
 
-    std::ofstream fileStream1("outputLog1.txt");
-    std::ofstream fileStream2("outputLog2.txt");
+    std::cout << "Test the rollup of the number 2^32" << std::endl;
+    const unsigned int biggest = (unsigned int)(-1);
+    // Invoking the constructor of the token up to reaching the numeric limit.
+    for(unsigned int i=0; i<biggest; i++)
+      {
+      StateMachineTokenType createOneMoreToken;
+      }
 
-    logger.AddOutputStream( std::cout );
-    logger.AddOutputStream( fileStream1 );
-
-    logger.SetPriorityLevel( igstk::Logger::CRITICAL );
-
-    tracker->SetLogger( &logger );
-
-    tracker->Initialize();
-
-    tracker->StartTracking();
-
-    tracker->UpdateToolStatus();
-
-    tracker->StopTracking();
-
-    std::cout << tracker->GetCurrentState() << std::endl;
-
-    tracker->Reset();
+    // and yet... do a little bit more
+    for(unsigned int j=0; j<100; j++)
+      {
+      StateMachineTokenType createOneMoreToken;
+      }
 
     return EXIT_SUCCESS;
 }

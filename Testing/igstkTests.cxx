@@ -11,5 +11,8 @@ void RegisterTests()
 {
     REGISTER_TEST(igstkStateMachineTest);
     REGISTER_TEST(igstkStateMachineErrorsTest);
+    REGISTER_TEST(igstkStateMachineTokenTest);
     REGISTER_TEST(igstkBasicTrackerTest);
+    REGISTER_TEST(igstkTrackerToolTest);
+    REGISTER_TEST(igstkTrackerPortTest);
 }

@@ -18,6 +18,9 @@ public:
   typedef igstk::StateMachine< Tester >   StateMachineType;
 
   typedef StateMachineType::TMemberFunctionPointer        ActionType;
+  typedef StateMachineType::StateType                     StateType;
+  typedef StateMachineType::InputType                     InputType;
+  typedef StateMachineType::StateIdentifierType           StateIdentifierType;
 
   FriendClassMacro(StateMachineType);
 
@@ -27,36 +30,36 @@ public:
       m_StateMachine.SetOwnerClass( this );
 
       // Set the state descriptors
-      m_StateMachine.AddState( "IdleState" );
-      m_StateMachine.AddState( "OneQuarterCredit" );
-      m_StateMachine.AddState( "TwoQuarterCredit" );
-      m_StateMachine.AddState( "ThreeQuarterCredit" );
+      m_StateMachine.AddState( m_IdleState, "IdleState" );
+      m_StateMachine.AddState( m_OneQuarterCredit, "OneQuarterCredit" );
+      m_StateMachine.AddState( m_TwoQuarterCredit, "TwoQuarterCredit" );
+      m_StateMachine.AddState( m_ThreeQuarterCredit, "ThreeQuarterCredit" );
 
       // Set the input descriptors
-      m_StateMachine.AddInput( "QuarterInserted");
-      m_StateMachine.AddInput( "SelectDrink");
-      m_StateMachine.AddInput( "CancelPurchase");
-
+      m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
+      m_StateMachine.AddInput( m_SelectDrink, "SelectDrink" );
+      m_StateMachine.AddInput( m_CancelPurchase, "CancelPurchase" );
+                               
       const ActionType NoAction = 0;
 
       // Programming the machine
-      m_StateMachine.AddTransition( "IdleState",          "QuarterInserted", "OneQuarterCredit",    NoAction );
-      m_StateMachine.AddTransition( "OneQuarterCredit",   "QuarterInserted", "TwoQuarterCredit",    NoAction );
-      m_StateMachine.AddTransition( "TwoQuarterCredit",   "QuarterInserted", "ThreeQuarterCredit",  NoAction );
-      m_StateMachine.AddTransition( "ThreeQuarterCredit", "QuarterInserted", "IdleState",           & Tester::CancelAndReturnChange );
+      m_StateMachine.AddTransition( m_IdleState,          m_QuarterInserted, m_OneQuarterCredit,    NoAction );
+      m_StateMachine.AddTransition( m_OneQuarterCredit,   m_QuarterInserted, m_TwoQuarterCredit,    NoAction );
+      m_StateMachine.AddTransition( m_TwoQuarterCredit,   m_QuarterInserted, m_ThreeQuarterCredit,  NoAction );
+      m_StateMachine.AddTransition( m_ThreeQuarterCredit, m_QuarterInserted, m_IdleState,           & Tester::CancelAndReturnChange );
 
-      m_StateMachine.AddTransition(  "IdleState",          "SelectDrink",     "IdleState",          & Tester::NoEnoughChangeMessage );
-      m_StateMachine.AddTransition(  "OneQuarterCredit",   "SelectDrink",     "OneQuarterCredit",   & Tester::NoEnoughChangeMessage );
-      m_StateMachine.AddTransition(  "TwoQuarterCredit",   "SelectDrink",     "TwoQuarterCredit",   & Tester::NoEnoughChangeMessage );
-      m_StateMachine.AddTransition(  "ThreeQuarterCredit", "SelectDrink",     "IdleState",          & Tester::DeliverDrink );
+      m_StateMachine.AddTransition( m_IdleState ,         m_SelectDrink ,    m_IdleState ,          & Tester::NoEnoughChangeMessage );
+      m_StateMachine.AddTransition( m_OneQuarterCredit ,  m_SelectDrink ,    m_OneQuarterCredit ,   & Tester::NoEnoughChangeMessage );
+      m_StateMachine.AddTransition( m_TwoQuarterCredit ,  m_SelectDrink ,    m_TwoQuarterCredit ,   & Tester::NoEnoughChangeMessage );
+      m_StateMachine.AddTransition( m_ThreeQuarterCredit ,m_SelectDrink ,    m_IdleState ,          & Tester::DeliverDrink );
 
-      m_StateMachine.AddTransition(  "IdleState",          "CancelPurchase",  "IdleState",          & Tester::CancelAndReturnChange );
-      m_StateMachine.AddTransition(  "OneQuarterCredit",   "CancelPurchase",  "IdleState",          & Tester::CancelAndReturnChange );
-      m_StateMachine.AddTransition(  "TwoQuarterCredit",   "CancelPurchase",  "IdleState",          & Tester::CancelAndReturnChange );
-      m_StateMachine.AddTransition(  "ThreeQuarterCredit", "CancelPurchase",  "IdleState",          & Tester::CancelAndReturnChange );
+      m_StateMachine.AddTransition( m_IdleState ,         m_CancelPurchase , m_IdleState ,          & Tester::CancelAndReturnChange );
+      m_StateMachine.AddTransition( m_OneQuarterCredit ,  m_CancelPurchase , m_IdleState ,          & Tester::CancelAndReturnChange );
+      m_StateMachine.AddTransition( m_TwoQuarterCredit ,  m_CancelPurchase , m_IdleState ,          & Tester::CancelAndReturnChange );
+      m_StateMachine.AddTransition( m_ThreeQuarterCredit ,m_CancelPurchase , m_IdleState ,          & Tester::CancelAndReturnChange );
 
 
-      m_StateMachine.SelectInitialState( "IdleState");
+      m_StateMachine.SelectInitialState( m_IdleState );
 
       // Finish the programming and get ready to run
       m_StateMachine.SetReadyToRun();
@@ -69,20 +72,20 @@ public:
   void InsertChange() 
     {
       std::cout << "Insert Change" << std::endl;
-      m_StateMachine.ProcessInput( "QuarterInserted" );
+      m_StateMachine.ProcessInput( m_QuarterInserted );
     }
  
  
   void SelectDrink() 
     {
       std::cout << "Select Drink" << std::endl;
-      m_StateMachine.ProcessInput("SelectDrink");
+      m_StateMachine.ProcessInput( m_SelectDrink );
     }
 
   void CancelPurchase() 
     {
       std::cout << "Cancelling Purchase" << std::endl;
-      m_StateMachine.ProcessInput("CancelPurchase");
+      m_StateMachine.ProcessInput( m_CancelPurchase );
     }
 
 
@@ -92,9 +95,9 @@ public:
     }
 
 
-  const StateMachineType::StateDescriptorType & GetCurrentState() const
+  const StateIdentifierType & GetCurrentState() const
     {
-    return m_StateMachine.GetCurrentState();
+    return m_StateMachine.GetCurrentStateIdentifier();
     }
 
 
@@ -127,8 +130,18 @@ private:
 
   StateMachineType   m_StateMachine;
 
-};
+  /** List of States */
+  StateType m_IdleState;
+  StateType m_OneQuarterCredit;
+  StateType m_TwoQuarterCredit;
+  StateType m_ThreeQuarterCredit;
+  
+  /** List of Inputs */
+  InputType m_QuarterInserted;
+  InputType m_SelectDrink;
+  InputType m_CancelPurchase;
 
+};
 
 
 

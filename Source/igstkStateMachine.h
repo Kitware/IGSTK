@@ -18,12 +18,15 @@
 #ifndef __igstk_StateMachine_h
 #define __igstk_StateMachine_h
 
-#include <string>
 #include <iostream>
-#include <vector>
 #include <map>
+#include <string>
 
 #include "igstkMacros.h"
+
+#include "igstkStateMachineState.h"
+#include "igstkStateMachineInput.h"
+
 
 namespace igstk
 {
@@ -41,6 +44,10 @@ namespace igstk
     inputs and a transition matrix that defines for each pair
     of (state,input) what is the next state to assume.
 
+    \sa StateMachineState
+    \sa StateMachineInput
+    \sa StateMachineAction
+
 */
 
 template<class TClass>
@@ -52,13 +59,27 @@ class StateMachine
 public:
 
    /** Type used to represent the codes of the states */
-   typedef std::string     StateDescriptorType;
+   typedef StateMachineState<TClass>     StateType;
 
+
+   /** Type used to represent the unique identifier of the states */
+   typedef typename StateType::IdentifierType     StateIdentifierType;
 
 
    /** Type used to represent the codes of the inputs */
-   typedef std::string     InputDescriptorType;
+   typedef StateMachineInput<TClass>     InputType;
 
+
+   /** Type used to represent the unique identifier of the inputs */
+   typedef typename InputType::IdentifierType     InputIdentifierType;
+
+
+   /** Type for the description of the States */
+   typedef std::string       StateDescriptorType;
+
+
+   /** Type for the description of the Inputs */
+   typedef std::string       InputDescriptorType;
 
 
    /** Type of the action member funtion of TClass to be invoked at the end of
@@ -81,7 +102,7 @@ public:
    /** Perform the state transition, invoke the corresponding action.
        This is the method that is systematically executed when the 
        state machine is running   */
-   void ProcessInput( const InputDescriptorType & input );
+   void ProcessInput( const InputType & input );
 
 
       
@@ -92,9 +113,9 @@ public:
        used for programming the state machine. This method should never
        be invoked while the state machine is running. Unless you want
        to debug a self-modifying machine or an evolutionary machine. */
-   void AddTransition( const StateDescriptorType & state, 
-                       const InputDescriptorType & input, 
-                       const StateDescriptorType & newstate, 
+   void AddTransition( const StateType & state, 
+                       const InputType & input, 
+                       const StateType & newstate, 
                        TMemberFunctionPointer action );
 
 
@@ -111,11 +132,11 @@ public:
 
 
    /** Set the descriptor of a state */
-   void AddState( const StateDescriptorType & descriptor );
+   void AddState( const StateType & state, const StateDescriptorType & description );
 
 
    /** Set the descriptor of an input */
-   void AddInput( const InputDescriptorType & descriptor );
+   void AddInput( const InputType & input, const InputDescriptorType & description );
 
 
    /** This extra typedef is necessary for preventing an Internal Compiler Error in 
@@ -129,21 +150,17 @@ public:
 
 
    /** Select Initial state */
-   void SelectInitialState( const StateDescriptorType & initialStateDescriptor );
+   void SelectInitialState( const StateType & initialState );
 
 
-   /** Return the current state */
-   const StateDescriptorType & GetCurrentState() const;
+   /** Return the current state identifier */
+   const StateIdentifierType & GetCurrentStateIdentifier() const;
 
 
 private:
 
    /** Variable that holds the code of the current state */
-   StateDescriptorType    m_State;
-
-
-   /** Variable that holds the code of the current input */
-   InputDescriptorType    m_Input;
+   StateIdentifierType    m_State;
 
 
    /** Pointer to the class to which this state machine is pointing to.
@@ -160,21 +177,33 @@ private:
    bool m_ReadyToRun;
 
 
-   /** Container of state identifiers  */
-   typedef std::vector< StateDescriptorType >   StatesContainer;
-   StatesContainer                              m_States;
+   /** Container type for States */
+   typedef std::map< StateIdentifierType, StateDescriptorType >  StatesContainer;
+   typedef typename StatesContainer::iterator        StatesIterator;
+   typedef typename StatesContainer::const_iterator  StatesConstIterator;
+
+   /** Container for States */
+   StatesContainer   m_States;
 
 
-   /** Container of input identifiers  */
-   typedef std::vector< InputDescriptorType >   InputsContainer;
-   InputsContainer                              m_Inputs;
+    /** Container type for Inputs */
+   typedef std::map< InputIdentifierType, InputDescriptorType >  InputsContainer;
+   typedef typename InputsContainer::iterator        InputIterator;
+   typedef typename InputsContainer::const_iterator  InputConstIterator;
 
+   /** Container for Inputs */
+   InputsContainer   m_Inputs;
 
-
+ 
    /** Matrix of state transitions. It encodes the next state for 
        every pair of state and input */
-   typedef std::map< InputDescriptorType, StateDescriptorType >        StatesPerInputContainer;
-   typedef std::map< StateDescriptorType, StatesPerInputContainer * >  TransitionContainer;
+   typedef std::map< InputIdentifierType, StateIdentifierType > StatesPerInputContainer;
+   typedef std::map< StateIdentifierType, StatesPerInputContainer * >  TransitionContainer;
+   typedef typename TransitionContainer::iterator            TransitionIterator;
+   typedef typename TransitionContainer::const_iterator      TransitionConstIterator;
+   typedef typename StatesPerInputContainer::iterator        StatesPerInputIterator;
+   typedef typename StatesPerInputContainer::const_iterator  StatesPerInputConstIterator;
+
    TransitionContainer                                                 m_Transitions;
 
 
@@ -186,9 +215,19 @@ private:
        This means that while the member method is executed, the
        state of the machine is still the state from which the
        transition was triggered.  */
-   typedef std::map< InputDescriptorType, TMemberFunctionPointer >      ActionsPerInputContainer;
-   typedef std::map< StateDescriptorType, ActionsPerInputContainer * >  ActionContainer;
-   ActionContainer                                                      m_Actions; 
+   typedef std::map< InputIdentifierType, 
+                     TMemberFunctionPointer >      ActionsPerInputContainer;
+
+   typedef typename ActionsPerInputContainer::iterator        ActionsPerInputIterator;
+   typedef typename ActionsPerInputContainer::const_iterator  ActionsPerInputConstIterator;
+
+   typedef std::map< StateIdentifierType, 
+                     ActionsPerInputContainer * >    ActionContainer;
+
+   typedef typename ActionContainer::iterator        ActionIterator;
+   typedef typename ActionContainer::const_iterator  ActionConstIterator;
+
+   ActionContainer                                 m_Actions; 
 
 
 };
