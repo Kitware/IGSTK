@@ -92,7 +92,6 @@ SET(IGSTK_SRCS
   Sphere.cxx
   IGMTImageSliceViewer.cxx
   IGMTrackingBase.cxx
-  igstkImageSliceViewer.cxx
   igstkInteractorObserver.cxx
   )
 
