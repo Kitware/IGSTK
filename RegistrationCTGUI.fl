@@ -1,0 +1,31 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0103 
+header_name {.h} 
+code_name {.cxx}
+class RegistrationCTGUI {open selected : {public ISIS::RegistrationCTBase}
+} {
+  Function {RegistrationCTGUI()} {open
+  } {
+    Fl_Window controlWindow {
+      label {Registration CT} open
+      xywh {222 395 500 360}
+      code0 {\#include "RegistrationCTBase.h"} visible
+    } {
+      Fl_Button {} {
+        label Close
+        callback {this->Hide();}
+        xywh {390 305 70 30}
+      }
+    }
+  }
+  Function {~RegistrationCTGUI()} {return_type virtual
+  } {}
+  Function {Show()} {return_type virtual
+  } {
+    code {controlWindow->show();} {}
+  }
+  Function {Hide()} {return_type virtual
+  } {
+    code {controlWindow->hide();} {}
+  }
+} 
