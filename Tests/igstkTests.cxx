@@ -10,4 +10,5 @@
 void RegisterTests()
 {
 REGISTER_TEST(DicomImageReaderTest);
+REGISTER_TEST(RegistrationCTTest);
 }
