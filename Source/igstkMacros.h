@@ -60,6 +60,13 @@ virtual type Get##name () \
     return this->m_##name; \
 }
 
+/** Create a Macro for friend class. This will take care of platform specific
+ * ways of declaring a class as a friend */
+#if defined(__GNUC__) 
+#define  FriendClassMacro(type) friend class type; 
+#else 
+#define  FriendClassMacro(type) friend type; 
+#endif 
 
 
 

@@ -52,13 +52,8 @@ class Tracker : public itk::ProcessObject
     typedef igstk::StateMachine< Tracker > StateMachineType;
     typedef StateMachineType::TMemberFunctionPointer ActionType;
 
-#if defined(__GNUC__)
-    friend class StateMachineType;
-    friend class TrackerPort;
-#else
-    friend StateMachineType;
-    friend TrackerPort;
-#endif
+    FriendClassMacro( StateMachineType );
+    FriendClassMacro( TrackerPort );
 
 public:
 
