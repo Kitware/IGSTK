@@ -76,6 +76,11 @@ SET(IGSTK_HEADS
   Sphere.h
   IGMTImageSliceViewer.h
   IGMTrackingBase.h
+  Annotation.h
+  Fl_Double_Window_Ex.h
+  IGMTTargetViewer.h
+  IGMTVolumeViewer.h
+  CrossLine.h
 )
 
 SET(IGSTK_SRCS
@@ -100,6 +105,11 @@ SET(IGSTK_SRCS
   Sphere.cxx
   IGMTImageSliceViewer.cxx
   IGMTrackingBase.cxx
+  Annotation.cxx
+  Fl_Double_Window_Ex.cxx
+  IGMTTargetViewer.cxx
+  IGMTVolumeViewer.cxx
+  CrossLine.cxx
   igstkInteractorObserver.cxx
   )
 
@@ -132,7 +142,7 @@ FLTK_WRAP_UI(IGSTK
 TARGET_LINK_LIBRARIES( IGSTK
     ITKIO ITKBasicFilters ITKNumerics ITKCommon 
     vtkRendering vtkGraphics vtkHybrid vtkImaging 
-    vtkIO vtkFiltering vtkCommon 
+    vtkIO vtkFiltering vtkCommon vtkPatented
     ${FLTK_LIBRARIES}
     )
 
