@@ -133,7 +133,7 @@ private:
 
 
 
-int igstkStateMachineTest(int argc, char * argv [])
+int igstkStateMachineTest( int , char * [] )
 {
 
   std::cout << "Construct the State Machine Tester" << std::endl;

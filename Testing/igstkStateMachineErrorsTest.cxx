@@ -227,7 +227,7 @@ private:
 
 
 
-int igstkStateMachineErrorsTest(int argc, char * argv [])
+int igstkStateMachineErrorsTest( int, char * [] )
 {
 
   std::cout << "Construct the State Machine Tester" << std::endl;

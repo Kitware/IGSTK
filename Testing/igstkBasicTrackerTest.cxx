@@ -26,7 +26,7 @@
 #include "igstkTracker.h"
 #include "igstkLogger.h"
 
-int igstkBasicTrackerTest(int argc, char * argv [])
+int igstkBasicTrackerTest( int, char * [] )
 {
     igstk::Tracker::Pointer tracker = igstk::Tracker::New();
     igstk::Logger logger;
