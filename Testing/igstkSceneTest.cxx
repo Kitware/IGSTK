@@ -61,11 +61,6 @@ int igstkSceneTest( int, char * [] )
     }
   std::cout << "[PASSED]" << std::endl;
 
-  /** Returns a list of pointer to the children affiliated to this object.*/ 
-  //ObjectListType * GetObjects( unsigned int depth=MaximumDepth,
-  //                             char * name=NULL );
-  
-
 
   return EXIT_SUCCESS;
 }
