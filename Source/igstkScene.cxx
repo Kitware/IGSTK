@@ -72,7 +72,7 @@ void Scene::AddToView( View * view )
     ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
     while(actorIt != actors.end())
       {
-      view->AddActor(*actorIt);
+      view->RequestAddActor(*actorIt);
       actorIt++;
       }
 

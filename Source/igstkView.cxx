@@ -39,6 +39,24 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor()
   this->Initialize();
   m_InteractionHandling = true;
   this->end();
+
+  // Preparing the State Machine 
+  m_StateMachine.SetOwnerClass( this );
+
+  m_StateMachine.AddInput( m_ValidAddActor,  "ValidAddActor" );
+  m_StateMachine.AddInput( m_NullAddActor,   "NullAddActor"  );
+
+  m_StateMachine.AddState( m_IdleState,      "IdleState"     );
+
+  const ActionType NoAction = 0;
+
+  m_StateMachine.AddTransition( m_IdleState, m_ValidAddActor, m_IdleState,  & View::AddActor );
+  m_StateMachine.AddTransition( m_IdleState, m_NullAddActor,  m_IdleState,          NoAction );
+
+  m_StateMachine.SelectInitialState( m_IdleState );
+
+  m_StateMachine.SetReadyToRun();
+
 }
 
 /** Destructor */
@@ -88,13 +106,25 @@ void View::Update()
 }
 
 /** */
-void View::AddActor( vtkProp3D * actor )
+void View::RequestAddActor( vtkProp3D * actor )
 {
+  m_NewActor = actor;
   if( !actor )
     {
-    return;
+    m_StateMachine.ProcessInput( m_NullAddActor );
     }
-  m_Renderer->AddActor( actor );
+  else
+    {
+    m_StateMachine.ProcessInput( m_ValidAddActor );
+    }
+}
+
+
+
+/** */
+void View::AddActor()
+{
+  m_Renderer->AddActor( m_NewActor );
 }
 
 

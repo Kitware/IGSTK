@@ -40,11 +40,10 @@ class View : public Fl_Gl_Window, public vtkRenderWindowInteractor
 
 private:
     
-  typedef igstk::StateMachine< View > StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer ActionType;
-  typedef StateMachineType::StateType              StateType;
-  typedef StateMachineType::InputType              InputType;
-  typedef StateMachineType::StateIdentifierType    StateIdentifierType;
+  typedef igstk::StateMachine< View >                StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer   ActionType;
+  typedef StateMachineType::StateType                StateType;
+  typedef StateMachineType::InputType                InputType;
 
   FriendClassMacro( StateMachineType );
 
@@ -74,7 +73,7 @@ public:
   void EnableInteractions();
 
   /** Add a vtk Actor */
-  void AddActor( vtkProp3D * actor );
+  void RequestAddActor( vtkProp3D * actor );
 
 protected:
   
@@ -90,17 +89,41 @@ protected:
   /** Get the vtk Renderer */
   vtkRenderer* GetRenderer() {return m_Renderer;}
     
-  /** Get the vtk Camera */
-  vtkCamera* GetCamera() {return m_Camera;}
-
  
-
 private:
   
   vtkRenderWindow       * m_RenderWindow;
   vtkRenderer           * m_Renderer;
   vtkCamera             * m_Camera;
   bool                    m_InteractionHandling;
+
+
+  /** Member variables for holding temptative arguments of functions.
+   *  This is needed for implementing a layer of security that decouples
+   *  user invokations from the actual state of this class */
+  vtkProp3D            * m_NewActor;
+  
+
+private:
+
+  /** Methods that will only be invoked by the State Machine */
+
+  /** Add a vtk Actor */
+  void AddActor();
+
+
+private:
+
+  StateMachineType     m_StateMachine;
+  
+  /** Inputs to the State Machine */
+  InputType            m_ValidAddActor;
+  InputType            m_NullAddActor;
+  
+
+  /** States for the State Machine */
+  StateType            m_IdleState;
+
 };
 
 } // end namespace igstk
