@@ -193,7 +193,7 @@ StateMachine< TClass >
   
   if( transitionsFromThisState == m_Transitions.end() )
     {
-    std::cerr << "No transitions have been defined for curren state = " << m_State << std::endl;
+    std::cerr << "No transitions have been defined for current state = " << m_State << std::endl;
     std::cerr.flush();
     return;
     } 
@@ -202,7 +202,7 @@ StateMachine< TClass >
 
   if( newState == transitionsFromThisState->second->end() )
     {
-    std::cerr << "No transitions have been defined for curren state and input " << std::endl;
+    std::cerr << "No transitions have been defined for current state and input " << std::endl;
     std::cerr << "State = "  << m_State << std::endl;
     std::cerr << "Input = "  << input   << std::endl;
     std::cerr << std::endl;
@@ -215,7 +215,7 @@ StateMachine< TClass >
   
   if( actionsFromThisState == m_Actions.end() )
     {
-    std::cerr << "No actions have been defined for curren state = " << m_State << std::endl;
+    std::cerr << "No actions have been defined for current state = " << m_State << std::endl;
     std::cerr.flush();
     return;
     } 
@@ -224,9 +224,10 @@ StateMachine< TClass >
 
   if( action == actionsFromThisState->second->end() )
     {
-    std::cerr << "No actions have been defined for curren state and input " << std::endl;
+    std::cerr << "No actions have been defined for current state and input " << std::endl;
     std::cerr << "State = "  << m_State << std::endl;
     std::cerr << "Input = "  << input   << std::endl;
+    std::cerr << "this state has " << actionsFromThisState->second->size() << " action transitions " << std::endl;
     std::cerr << std::endl;
     std::cerr.flush();
     return;
@@ -254,6 +255,7 @@ StateMachine< TClass >
                  const StateDescriptorType & newStateDescriptor, 
                        TMemberFunctionPointer action )
 {
+ 
   // First check if the State exists
   StatesContainer::const_iterator  state = std::find( m_States.begin(), m_States.end(), stateDescriptor );
     
@@ -309,7 +311,6 @@ StateMachine< TClass >
 
     // Add the statesPerInput container to the Transitions container.
     m_Transitions[ stateDescriptor ] = statesPerInput;
-    return;
     } 
   else
     {
@@ -328,7 +329,6 @@ StateMachine< TClass >
       std::cerr << "Input     = " << inputDescriptor << std::endl;
       std::cerr << "New state = " << transitionsFromThisStateAndInput->second << std::endl;
       std::cerr.flush();
-      return;
       }
     else
       {
@@ -354,7 +354,6 @@ StateMachine< TClass >
 
     // Add the statesPerInput container to the Actions container.
     m_Actions[ stateDescriptor ] = statesPerInput;
-    return;
     } 
   else
     {
@@ -373,7 +372,6 @@ StateMachine< TClass >
       std::cerr << "Input     = " << inputDescriptor << std::endl;
       std::cerr << "New state = " << actionsFromThisStateAndInput->second << std::endl;
       std::cerr.flush();
-      return;
       }
     else
       {
