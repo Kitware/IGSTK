@@ -1,0 +1,70 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0104 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include "IGMTrackingBase.h"} {public
+} 
+
+class RegParametersGUI {open
+} {
+  decl {IGMTrackingBase* m_pTracking;} {public
+  }
+  decl {int m_DualSensorRegNum;} {public
+  }
+  Function {RegParametersGUI(IGMTrackingBase* pTracking)} {open
+  } {
+    Fl_Window m_MainWindow {
+      label {Registration Parameters} open
+      xywh {172 392 413 193} type Double visible
+    } {
+      Fl_Choice m_DualSensorChoice {
+        label DualSensor
+        callback {m_DualSensorRegNum = m_DualSensorChoice->value() - 1;
+printf("%d\\n", m_DualSensorRegNum);} open
+        xywh {95 40 85 25} down_box BORDER_BOX
+      } {}
+      Fl_Return_Button {} {
+        label OK
+        callback {this->OnOK();}
+        xywh {210 150 85 25}
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {this->OnCancel();}
+        xywh {310 150 80 25}
+      }
+    }
+    code {m_pTracking = pTracking;
+m_DualSensorRegNum = -1;
+m_DualSensorChoice->add("Minimum RMS");
+m_DualSensorChoice->add("Seq 0");
+m_DualSensorChoice->add("Seq 1");
+m_DualSensorChoice->add("Seq 2");
+m_DualSensorChoice->add("Seq 3");
+m_DualSensorChoice->add("Seq 4");
+m_DualSensorChoice->add("Seq 5");
+m_DualSensorChoice->add("Seq 6");
+m_DualSensorChoice->add("Seq 7");
+m_DualSensorChoice->value(0);} {selected
+    }
+  }
+  Function {Show()} {open
+  } {
+    code {m_MainWindow->show();} {}
+  }
+  Function {Hide()} {open
+  } {
+    code {m_MainWindow->hide();} {}
+  }
+  Function {OnOK()} {} {
+    code {this->Hide();
+m_pTracking->OnUpdateRegParameters();} {}
+  }
+  Function {OnCancel()} {} {
+    code {this->Hide();} {}
+  }
+  Function {ShowModal()} {} {
+    code {m_MainWindow->set_modal();
+this->Show();} {}
+  }
+} 
