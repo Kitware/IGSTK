@@ -29,7 +29,7 @@ decl {\#include "SegParametersGUI.h"} {public
 decl {\#include "RegParametersGUI.h"} {public
 } 
 
-class IGMTrackingGUI {open selected : {public IGMTrackingBase}
+class IGMTrackingGUI {open : {public IGMTrackingBase}
 } {
   decl {PortParametersGUI m_PortParameters;} {}
   decl {FiducialBrowserGUI  m_FiducialBrowser;} {public
@@ -54,9 +54,9 @@ class IGMTrackingGUI {open selected : {public IGMTrackingBase}
   Function {IGMTrackingGUI():m_FiducialBrowser(this), m_PortParameters(this), m_Layout(this), m_ProbeParameters(this), m_FusionParameters(this), m_SegParameters(this), m_RegParameters(this)} {} {
     Fl_Window mainWindow {
       label {Image Guided Biopsy and Magnetic Tracking System - ISIS}
-      xywh {133 42 887 692} type Double align 17 when 1 resizable
+      xywh {-32000 -32000 887 692} type Double align 17 when 1 hide resizable
       code0 {\#include "IGMTrackingBase.h"}
-      class Fl_Double_Window_Ex visible
+      class Fl_Double_Window_Ex
     } {
       Fl_Box AxialView {
         xywh {290 30 280 300} box DOWN_FRAME align 2
@@ -178,16 +178,22 @@ StopTrackingButton->value(1);}
           label {Fusion Image}
           callback {this->OnFusionImage();
 FusionImageButton->value(1);}
-          xywh {12 83 120 25} type Normal
+          xywh {142 48 120 25} type Normal
         }
         Fl_Light_Button SegmentationButton {
           label Segmentation
           callback {this->OnSegmentation();
 SegmentationButton->value(1);}
-          xywh {141 83 120 25} type Normal
+          xywh {11 83 120 25} type Normal
+        }
+        Fl_Light_Button SkeletonButton {
+          label Skeleton
+          callback {this->OnSkeleton();
+SkeletonButton->value(1);}
+          xywh {142 83 120 25} type Normal
         }
       }
-      Fl_Menu_Bar mainMenuBar {open
+      Fl_Menu_Bar mainMenuBar {open selected
         xywh {0 0 905 25}
       } {
         submenu {} {
@@ -274,7 +280,7 @@ this->SetImageScale(atof(str));}
             xywh {10 10 100 20}
           }
           menuitem {} {
-            label Layout
+            label {Rendering Parameters}
             callback {this->OnLayout();}
             xywh {0 0 100 20}
           }
@@ -585,4 +591,6 @@ m_InfoPane->show_insert_position();} {}
   Function {OnRegParameters()} {} {
     code {m_RegParameters.ShowModal();} {}
   }
+  Function {OnSkeleton()} {open return_type {virtual void}
+  } {}
 } 
