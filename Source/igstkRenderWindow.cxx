@@ -17,27 +17,26 @@
 
 #include "igstkRenderWindow.h"
 
-
-
 namespace igstk
 {
 
+/** Constructor */
+RenderWindow::RenderWindow()
+{
+  m_RenderWindow = vtkRenderWindow::New();
+  m_Renderer = vtkRenderer::New();
+  m_RenderWindow->AddRenderer(m_Renderer);
+  m_Camera = m_Renderer->GetActiveCamera();
+  m_RenderWindow->BordersOff();
+  m_Renderer->SetBackground(0.5,0.5,0.5);
+}
 
-  RenderWindow::RenderWindow()
-  {
-    m_RenderWindow = vtkRenderWindow::New();
-    
-    m_Renderer = vtkRenderer::New();
-    
-    m_Camera = vtkCamera::New();
-    
-  }
-
-
-
-  RenderWindow::~RenderWindow()
-  {
-  }
+/** Destructor */
+RenderWindow::~RenderWindow()
+{
+  m_RenderWindow->Delete();
+  m_Renderer->Delete();
+}
   
 
-}
+} // end namespace igstk
