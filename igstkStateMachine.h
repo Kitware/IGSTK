@@ -96,6 +96,11 @@ public:
 
 
 
+   /** Set the code for the current input.  */
+   void SetInput( InputType input );
+
+
+
    /** This method terminates the programming mode in which SetTransition()
     *  can be invoked and pass to the runnin mode where StateTransition() 
     *  can be called. */

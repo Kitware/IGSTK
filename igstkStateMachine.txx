@@ -46,6 +46,12 @@ StateMachine< TClass, VStates, VInputs >
 
   m_ReadyToRun = false;
 
+  // Initialize the machine in the idle state.
+  m_State = 0;
+
+
+  // Assume the first input code.
+  m_Input = 0;
 }
 
 
@@ -68,6 +74,17 @@ StateMachine< TClass, VStates, VInputs >
 ::SetClass( TClass * theclass )
 {
    m_This = theclass;
+}
+
+
+
+
+template<class TClass, unsigned int VStates, unsigned int VInputs>
+void
+StateMachine< TClass, VStates, VInputs >
+::SetInput( InputType input )
+{
+   m_Input = input;
 }
 
 
