@@ -19,6 +19,10 @@
 
 bool	continueTracking;
 
+#ifdef _MSC_VER
+#pragma warning ( disable : 4786 )
+#endif
+
 IGMTracking::IGMTracking()
 {
 	m_AxialViewer.SetOrientation( ISIS::ImageSliceViewer::Axial    );
@@ -144,6 +148,18 @@ IGMTracking::IGMTracking()
 	m_ResampleImagePostEndCommand->SetCallbackFunction(this, IGMTracking::ProcessResampleImagePostFilterEnd);
   m_ResampleImagePostFilter->AddObserver(itk::EndEvent(), m_ResampleImagePostEndCommand);
 
+  m_InvertFilter = InvertFilterType::New();
+  m_InvertFilter->SetLowerThreshold(250);
+  m_InvertFilter->SetUpperThreshold(260);
+  m_InvertFilter->SetOutsideValue(255);
+  m_InvertFilter->SetInsideValue(0);
+
+  m_DistanceMapFilter = DistanceFilterType::New();
+
+  m_DistanceMapProgressCommand = itk::SimpleMemberCommand<IGMTracking>::New();
+	m_DistanceMapProgressCommand->SetCallbackFunction(this, IGMTracking::ProcessDistanceMapFilter);
+  m_DistanceMapFilter->AddObserver(itk::ProgressEvent(), m_DistanceMapProgressCommand);
+
 	m_Overlay = false;
 	m_ShowVolume = false; //false;//
 	m_EntryPointSelected = false; 
@@ -194,6 +210,10 @@ IGMTracking::IGMTracking()
   m_Length[3] = 10.0;
   m_Radius[3] = 1.0;
 
+  m_RegNeedleTipOffset[0] = 0.0;
+  m_RegNeedleTipOffset[1] = 0.0;
+  m_RegNeedleTipOffset[2] = -12.6;
+  
   m_CoilOffset1[0] = m_CoilOffset1[1] = 0;
   m_CoilOffset1[2] = 4.5;
   m_CoilOffset2[0] = m_CoilOffset2[1] = 0;
@@ -215,6 +235,7 @@ IGMTracking::IGMTracking()
   {
     m_PointIndex[i] = 0;
   }  
+
 }
 
 
@@ -318,11 +339,9 @@ void IGMTracking::Hide()
 void IGMTracking::Quit()
 {
 
-//  this->Hide();
+  this->Hide();
 
-//	exit(0);
-
-  AxialView->clear_visible();
+	exit(0);
 
 }
 
@@ -458,6 +477,8 @@ void IGMTracking::LoadPostProcessing()
 	m_EntryPointSelected = false; 
 	m_TargetPointSelected = false;
 
+  /*
+
 	char name[1024];
 	
 	itk::DICOMImageIO2* pDICOMImageIO2 = (itk::DICOMImageIO2*)m_DicomVolumeReader.m_Reader->GetImageIO();
@@ -515,6 +536,7 @@ void IGMTracking::LoadPostProcessing()
   m_AxialViewer.m_pAnnotation->SetModel(name);
   m_CoronalViewer.m_pAnnotation->SetModel(name);
   m_SagittalViewer.m_pAnnotation->SetModel(name);
+  */
 
   m_AxialViewer.Render();
   m_CoronalViewer.Render();
@@ -734,7 +756,8 @@ void IGMTracking::ProcessAxialViewMouseMoveInteraction(vtkObject *caller, unsign
 void IGMTracking::ProcessAxialViewRightClickInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata)
 {
   unsigned int i;
-  double pos[3];
+  double pos[3], dis, d[3];
+  char mes[128];
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
   if (pTracking->m_AxialViewer.m_Actor->GetInput() != NULL)
@@ -746,7 +769,17 @@ void IGMTracking::ProcessAxialViewRightClickInteraction(vtkObject *caller, unsig
     }
     pTracking->m_AxialViewer.SelectPoint(pos[0], pos[1], pos[2]);
     pTracking->m_AxialViewer.Render();
-  } 
+    
+    dis = 0;
+    for (i = 0; i < 3; i++)
+    {
+      d[i] = pTracking->m_RightClickedPoint[i] - pTracking->m_ClickedPoint[i];
+      dis += d[i] * d[i];
+    }
+    sprintf(mes, "%.3fmm", sqrt(dis));
+    pTracking->m_DistancePane->value(mes);
+  }  
+
 }
 
 void IGMTracking::ProcessCoronalViewMouseMoveInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata)
@@ -764,7 +797,9 @@ void IGMTracking::ProcessCoronalViewMouseMoveInteraction(vtkObject *caller, unsi
 void IGMTracking::ProcessCoronalViewRightClickInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata)
 {
   unsigned int i;
-  double pos[3];
+  double pos[3], dis, d[3];
+  char mes[128];
+
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
   if (pTracking->m_CoronalViewer.m_Actor->GetInput() != NULL)
@@ -776,6 +811,15 @@ void IGMTracking::ProcessCoronalViewRightClickInteraction(vtkObject *caller, uns
     }
     pTracking->m_CoronalViewer.SelectPoint(pos[0], pos[1], pos[2]);
     pTracking->m_CoronalViewer.Render();
+
+    dis = 0;
+    for (i = 0; i < 3; i++)
+    {
+      d[i] = pTracking->m_RightClickedPoint[i] - pTracking->m_ClickedPoint[i];
+      dis += d[i] * d[i];
+    }
+    sprintf(mes, "%.3fmm", sqrt(dis));
+    pTracking->m_DistancePane->value(mes);
   } 
 }
 
@@ -794,7 +838,9 @@ void IGMTracking::ProcessSagittalViewMouseMoveInteraction(vtkObject *caller, uns
 void IGMTracking::ProcessSagittalViewRightClickInteraction(vtkObject *caller, unsigned long eid, void *clientdata, void *calldata)
 {
   unsigned int i;
-  double pos[3];
+  double pos[3], dis, d[3];
+  char mes[128];
+
   IGMTracking* pTracking = (IGMTracking*)clientdata;
 
   if (pTracking->m_SagittalViewer.m_Actor->GetInput() != NULL)
@@ -806,6 +852,15 @@ void IGMTracking::ProcessSagittalViewRightClickInteraction(vtkObject *caller, un
     }
     pTracking->m_SagittalViewer.SelectPoint(pos[0], pos[1], pos[2]);
     pTracking->m_SagittalViewer.Render();
+
+    dis = 0;
+    for (i = 0; i < 3; i++)
+    {
+      d[i] = pTracking->m_RightClickedPoint[i] - pTracking->m_ClickedPoint[i];
+      dis += d[i] * d[i];
+    }
+    sprintf(mes, "%.3fmm", sqrt(dis));
+    pTracking->m_DistancePane->value(mes);
   } 
 }
 
@@ -1073,6 +1128,7 @@ void IGMTracking::StartTracking( void )
       {
         sprintf(mes, "Tool on port %d recognised ...", i);
         this->AppendInfo(mes);
+        m_RegToolHandle = m_ToolHandle;
         m_ToolTrackingMode = 1;
       }
     }      
@@ -1849,6 +1905,18 @@ void IGMTracking::ProcessResampleImagePostFilterEnd()
 	Fl::check();
 }
 
+
+void IGMTracking::ProcessDistanceMapFilter()
+{
+	float f;
+  
+  f = m_DistanceMapFilter->GetProgress();
+  
+	m_ProgressBar->value(f);
+	m_ProgressBar->color(fl_rgb_color((uchar)(255 - f * 255), 0, (uchar)(f * 255)));
+
+	Fl::check();
+}
 /*
 void IGMTracking::SaveAsRaw()
 {
@@ -2410,5 +2478,33 @@ void IGMTracking::OnSaveSegmentationData()
 
 void IGMTracking::OnUpdateRegParameters()
 {
+  m_Skeleton.SetClusterRadius(m_RegParameters.m_Radius);
+}
 
+void IGMTracking::OnSkeleton()
+{
+  m_Skeleton.SetInput(m_FusionRescaleIntensity->GetInput());
+  m_Skeleton.SetProgressCallback(IGMTracking::ProcessSkeleton, this);
+  m_Skeleton.ExtractSkeleton();
+  m_FusionRescaleIntensity->SetInput(m_Skeleton.GetOutput());
+  m_FusionRescaleIntensity->Update();
+
+  this->RenderSectionWindow();
+  
+/*
+  m_InvertFilter->SetInput(m_FusionRescaleIntensity->GetInput());
+  m_DistanceMapFilter->SetInput(m_InvertFilter->GetOutput());
+  m_FusionRescaleIntensity->SetInput(m_DistanceMapFilter->GetOutput());
+  m_FusionRescaleIntensity->Update();
+*/
+}
+
+void IGMTracking::ProcessSkeleton(void* calldata, double f)
+{
+  IGMTracking* pTracking = (IGMTracking*)calldata;
+  
+  pTracking->m_ProgressBar->value(f);
+	pTracking->m_ProgressBar->color(fl_rgb_color((uchar)(255 - f * 255), 0, (uchar)(f * 255)));
+
+	Fl::check();
 }

@@ -9,10 +9,14 @@
 #include "IGMTVolumeViewer.h"
 #include "IGMTTargetViewer.h"
 #include "FantasticRegistration.h"
+#include "SkeletonModule.h"
 #include <process.h>
 
 #include "itkCommand.h"
 #include "vtkCallbackCommand.h"
+
+#include "itkDanielssonDistanceMapImageFilter.h"
+#include "itkBinaryThresholdImageFilter.h"
 
 class vtkImageShiftScale;
 
@@ -22,6 +26,15 @@ class IGMTracking : public IGMTrackingGUI
 {
 
 public:
+
+  typedef itk::BinaryThresholdImageFilter<VolumeType, VolumeType> InvertFilterType;
+  typedef itk::DanielssonDistanceMapImageFilter<VolumeType, VolumeType> DistanceFilterType;
+
+  InvertFilterType::Pointer m_InvertFilter;
+  DistanceFilterType::Pointer m_DistanceMapFilter;
+
+public:
+	void OnSkeleton();
 	void OnUpdateRegParameters();
 
 	void OnSaveSegmentationData();
@@ -36,6 +49,10 @@ public:
 	void SaveSnapshot();
 	void RenderSectionWindow();
 	void OnUpdateOpacity(double opa);
+
+  typedef SkeletonModule<VolumeType, VolumeType> SkeletonModuleType;
+
+  SkeletonModuleType m_Skeleton;
 
 	int m_VolumeType;
   int m_Pipeline;
@@ -80,6 +97,8 @@ public:
   void ProcessResampleImagePostFilterStart();
 
   void ProcessResampleImagePostFilterEnd();
+
+  void ProcessDistanceMapFilter();
 	
 	virtual void Show( void );
 	
@@ -253,6 +272,8 @@ private:
 
   itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_ResampleImagePostEndCommand;
 
+  itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_DistanceMapProgressCommand;
+
 	AuroraTracker	m_AuroraTracker;
 
   IGSTK::FantasticRegistration m_FantasticRegistration;
@@ -272,6 +293,10 @@ private:
   double    m_CoilOffset1[3], m_CoilOffset2[3];
 
   double    m_CoilPosition[4][3];
+public:
+
+  static void ProcessSkeleton(void* calldata, double);
+
 };
 
 
