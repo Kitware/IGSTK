@@ -17,6 +17,7 @@ SET(IGSTKSandbox_HEADS
   igstkCylinderObjectRepresentation.h
   igstkMouseTracker.h
   igstkTimeStamp.h
+  igstkTransform.h
 )
 
 
@@ -35,6 +36,7 @@ SET(IGSTKSandbox_SRCS
   igstkCylinderObjectRepresentation.cxx
   igstkMouseTracker.cxx
   igstkTimeStamp.cxx
+  igstkTransform.cxx
 )
 
 IF( WIN32 )

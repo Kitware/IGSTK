@@ -25,6 +25,7 @@ ADD_TEST(igstkViewTest ${IGSTKSandbox_TESTS} igstkViewTest)
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 ADD_TEST(igstkSerialCommunicationTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationTest)
 ADD_TEST(igstkTimeStampTest ${IGSTKSandbox_TESTS} igstkTimeStampTest)
+ADD_TEST(igstkTransformTest ${IGSTKSandbox_TESTS} igstkTransformTest)
 
 SET(BasicTests_SRCS
   igstkEllipsoidObjectTest.cxx
@@ -34,6 +35,7 @@ SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkSerialCommunicationTest.cxx
   igstkTimeStampTest.cxx
+  igstkTransformTest.cxx
   )
 
 
