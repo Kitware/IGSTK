@@ -50,9 +50,10 @@ public:
   typedef ObjectListType::iterator          ObjectListIterator;
   typedef ObjectListType::const_iterator    ObjectListConstIterator;
      
+  /** Method for defining the name of the class */ 
+  TypeMacro(Scene, Object); 
 
   /** Method for creation through the object factory */ 
-  itkTypeMacro(Self, Object); 
   NewMacro(Self); 
 
   /** Add an object to the list of children. */ 
