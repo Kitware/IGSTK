@@ -51,7 +51,7 @@ public:
   void SetMCEndMethod(void(*f)(void *), void* arg);
   void SetDecProgressMethod(void(*f)(void *), void* arg);
   void SetSmoothProgressMethod(void(*f)(void *), void* arg);
-	void SetProbeTipAndDirection(float* tip, float* hip);
+	void SetProbeTipAndDirection(double* tip, double* hip);
 	void SetRenderingCategory(int rc);
 	void SetResampleRate(double r);
   void SetResampleRateLOD(double r1, double r2);

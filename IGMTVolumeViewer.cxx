@@ -496,7 +496,7 @@ IGMTVolumeViewer
 
 void 
 IGMTVolumeViewer
-::SetProbeTipAndDirection(float *tip, float *hip)
+::SetProbeTipAndDirection(double *tip, double *hip)
 {
   m_Probe.SetTipAndDirection(tip, hip);
   m_Probe.UpdateTipBubbleRadius();
