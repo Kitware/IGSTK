@@ -53,7 +53,7 @@ class IGMTrackingGUI {open : {public IGMTrackingBase}
   } {
     Fl_Window mainWindow {
       label {Image Guided Biopsy and Magnetic Tracking System - ISIS} open
-      xywh {445 91 887 692} type Double align 17 when 1 resizable
+      xywh {537 191 887 692} type Double align 17 when 1 resizable
       code0 {\#include "IGMTrackingBase.h"}
       class Fl_Double_Window_Ex visible
     } {
@@ -208,13 +208,23 @@ RecordButton->value(1 - RecordButton->value());}
           xywh {0 0 100 20}
         } {
           menuitem {} {
+            label {Load PET}
+            callback {this->OnLoadPET();}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {Load Path}
+            callback {this->OnLoadPath();}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
             label {Load Matrix}
             callback {this->OnLoadMatrix();}
             xywh {0 0 100 20}
           }
           menuitem {} {
             label {Save Matrix}
-            callback {this->OnSaveMatrix();} selected
+            callback {this->OnSaveMatrix();}
             xywh {0 0 100 20}
           }
           menuitem {} {
@@ -230,6 +240,11 @@ RecordButton->value(1 - RecordButton->value());}
           menuitem {} {
             label Quit
             callback {this->Quit();}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {Simulate Path}
+            callback {this->OnSimulatePath();}
             xywh {0 0 100 20}
           }
         }
@@ -613,5 +628,11 @@ m_InfoPane->show_insert_position();} {}
   Function {OnLoadMatrix()} {open return_type {virtual void}
   } {}
   Function {OnSaveMatrix()} {open return_type {virtual void}
+  } {}
+  Function {OnLoadPath()} {open return_type {virtual void}
+  } {}
+  Function {OnSimulatePath()} {open return_type {virtual void}
+  } {}
+  Function {OnLoadPET()} {open selected return_type {virtual void}
   } {}
 } 

@@ -331,6 +331,9 @@ public:
   bool m_InRecord;
   void OnLoadMatrix(void);
   void OnSaveMatrix(void);
+  void OnLoadPET(void);
+  void OnLoadPath(void);
+  void OnSimulatePath(void);
 };
 
 
