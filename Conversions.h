@@ -38,3 +38,6 @@ void DetermineR( Rotation *pRotationAngle, RotationMatrix rotationMatrix );
 void QuatToRotationMatrix( const QuatRotation *pQuatRotation, RotationMatrix rotationMatrix );
 
 #endif
+
+
+
