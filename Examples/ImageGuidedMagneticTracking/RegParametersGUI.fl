@@ -9,38 +9,122 @@ class RegParametersGUI {open
 } {
   decl {IGMTrackingBase* m_pTracking;} {public
   }
-  decl {int m_DualSensorRegNum;} {public
+  decl {int m_DualSensorRegNum, m_Iterations, m_Needle[4];} {public
   }
-  decl {double m_Radius;} {public
+  decl {double m_Radius, m_Scales, m_Gradient, m_Value, m_Epsilon;} {public
+  }
+  decl {int m_RegType, m_RFAPosition, m_SimplifyFixed, m_SimplifyMoving;} {public
   }
   Function {RegParametersGUI(IGMTrackingBase* pTracking)} {open
   } {
     Fl_Window m_MainWindow {
-      label {Registration Parameters} open
-      xywh {444 369 413 193} type Double visible
+      label {Registration Parameters}
+      xywh {290 215 539 356} type Double visible
     } {
       Fl_Choice m_DualSensorChoice {
         label DualSensor
         callback {m_DualSensorRegNum = m_DualSensorChoice->value() - 1;
 printf("%d\\n", m_DualSensorRegNum);} open
-        xywh {95 40 85 25} down_box BORDER_BOX
+        xywh {95 19 85 25} down_box BORDER_BOX
       } {}
       Fl_Return_Button {} {
         label OK
         callback {this->OnOK();}
-        xywh {210 150 85 25}
+        xywh {310 305 85 25}
       }
       Fl_Button {} {
         label Cancel
         callback {this->OnCancel();}
-        xywh {310 150 80 25}
+        xywh {410 305 80 25}
       }
       Fl_Input m_RadiusInput {
         label {Cluster Radius}
-        xywh {290 40 50 25} type Float
+        xywh {290 19 50 25} type Float
+      }
+      Fl_Group {} {open
+        xywh {20 62 111 116}
+      } {
+        Fl_Round_Button m_LandmarkRadio {
+          label Landmark
+          xywh {20 62 100 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_CatheterRadio {
+          label Catheter
+          xywh {20 85 100 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_ICPRadio {
+          label ICP
+          xywh {21 108 100 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_4NeedlesRadio {
+          label {4 Needles}
+          xywh {21 131 100 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_8CoilsRadio {
+          label {8 Coils}
+          xywh {21 153 100 25} type Radio down_box ROUND_DOWN_BOX
+        }
+      }
+      Fl_Check_Button m_RFAPositionCheck {
+        label {RFA Position}
+        xywh {20 200 120 25} down_box DOWN_BOX
+      }
+      Fl_Input m_IterationsInput {
+        label Iterations
+        xywh {290 60 80 20}
+      }
+      Fl_Input m_ScalesInput {
+        label Scales
+        xywh {290 86 80 20}
+      }
+      Fl_Input m_GradientInput {
+        label {Gradient Tolerance}
+        xywh {290 111 80 20}
+      }
+      Fl_Input m_ValueInput {
+        label {Value Tolerance}
+        xywh {290 134 80 20}
+      }
+      Fl_Input m_EpsilonInput {
+        label {Epsilon Function}
+        xywh {290 158 80 20}
+      }
+      Fl_Check_Button {m_NeedleCheck[0]} {
+        label {Needle 0}
+        xywh {25 235 80 25} down_box DOWN_BOX
+      }
+      Fl_Check_Button {m_NeedleCheck[1]} {
+        label {Needle 1}
+        xywh {25 260 80 25} down_box DOWN_BOX
+      }
+      Fl_Check_Button {m_NeedleCheck[2]} {
+        label {Needle 2}
+        xywh {25 285 80 25} down_box DOWN_BOX
+      }
+      Fl_Check_Button {m_NeedleCheck[3]} {
+        label {Needle 3}
+        xywh {25 310 80 25} down_box DOWN_BOX
+      }
+      Fl_Check_Button m_SimplifyFixedCheck {
+        label {Simplify FixedPointSet}
+        xywh {260 210 170 25} down_box DOWN_BOX
+      }
+      Fl_Check_Button m_SimplifyMovingCheck {
+        label {Simplify MovingPointSet}
+        xywh {260 232 170 25} down_box DOWN_BOX
       }
     }
     code {m_pTracking = pTracking;
+m_SimplifyFixed = 1;
+m_SimplifyFixedCheck->value(1);
+m_SimplifyMoving = 1;
+m_SimplifyMovingCheck->value(1);
+m_RFAPosition = 0;
+for (unsigned int i = 0; i < 4; i++)
+{
+  m_Needle[i] = 1;
+  m_NeedleCheck[i]->value(1);
+}
 m_DualSensorRegNum = -1;
 m_DualSensorChoice->add("Minimum RMS");
 m_DualSensorChoice->add("Seq 0");
@@ -53,7 +137,19 @@ m_DualSensorChoice->add("Seq 6");
 m_DualSensorChoice->add("Seq 7");
 m_DualSensorChoice->value(0);
 m_Radius = 7.0;
-m_RadiusInput->value("7.000");} {}
+m_RadiusInput->value("7.000");
+m_RegType = 0;
+m_LandmarkRadio->value(1);
+m_Iterations = 1000;
+m_IterationsInput->value("1000");
+m_Scales = 0.001;
+m_ScalesInput->value("0.001");
+m_Gradient = 0.0001;
+m_GradientInput->value("0.0001");
+m_Value = 0.0001;
+m_ValueInput->value("0.0001");
+m_Epsilon = 0.000001;
+m_EpsilonInput->value("0.000001");} {}
   }
   Function {Show()} {} {
     code {m_MainWindow->show();} {}
@@ -65,6 +161,38 @@ m_RadiusInput->value("7.000");} {}
   } {
     code {this->Hide();
 m_Radius = atof(m_RadiusInput->value());
+m_RFAPosition = m_RFAPositionCheck->value();
+m_SimplifyFixed = m_SimplifyFixedCheck->value();
+m_SimplifyMoving = m_SimplifyMovingCheck->value();
+for (unsigned int i = 0; i < 4; i++)
+{
+  m_Needle[i] = m_NeedleCheck[i]->value();
+}
+m_Iterations = atoi(m_IterationsInput->value());
+m_Scales = atof(m_ScalesInput->value());
+m_Gradient = atof(m_GradientInput->value());
+m_Value = atof(m_ValueInput->value());
+m_Epsilon = atof(m_EpsilonInput->value());
+if (m_LandmarkRadio->value() == 1)
+{
+  m_RegType = 0;
+}
+else if (m_CatheterRadio->value() == 1)
+{
+  m_RegType = 1;
+}
+else if (m_ICPRadio->value() == 1)
+{
+  m_RegType = 2;
+}
+else if (m_4NeedlesRadio->value() == 1)
+{
+  m_RegType = 3;
+}
+else if (m_8CoilsRadio->value() == 1)
+{
+  m_RegType = 4;
+}
 m_pTracking->OnUpdateRegParameters();} {selected
     }
   }
