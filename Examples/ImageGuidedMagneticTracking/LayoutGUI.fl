@@ -1,0 +1,301 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0104 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include "IGMTrackingBase.h"} {public
+} 
+
+class LayoutGUI {open
+} {
+  decl {int m_WindowType;} {public
+  }
+  decl {int m_RenderingMethod;} {public
+  }
+  decl {int m_RenderingCategory;} {public
+  }
+  decl {int m_Ret;} {public
+  }
+  decl {IGMTrackingBase* m_pTracking;} {public
+  }
+  decl {int m_ShowFrame;} {public
+  }
+  decl {int m_ShowProbe;} {public
+  }
+  decl {int m_FullSizeIdx;} {public
+  }
+  decl {int m_ShowAnnotation;} {public
+  }
+  decl {int m_DesiredTriNum;} {public
+  }
+  Function {LayoutGUI(IGMTrackingBase* pTracking)} {open
+  } {
+    Fl_Window m_MainWindow {
+      label Layout
+      xywh {318 378 652 309} type Double visible
+    } {
+      Fl_Group {} {
+        label {Volume Rendering Method} open
+        xywh {203 25 170 95} labeltype EMBOSSED_LABEL align 5
+      } {
+        Fl_Round_Button m_CompositeRadio {
+          label Composite
+          xywh {223 35 100 25} type Radio down_box ROUND_DOWN_BOX
+          code0 {m_CompositeRadio->value(1);}
+        }
+        Fl_Round_Button m_IsoSurfaceRadio {
+          label {Iso Surface}
+          xywh {223 55 95 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_MaxIPRadio {
+          label {Max IP}
+          xywh {223 75 95 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_MinIPRadio {
+          label {Min IP}
+          xywh {223 95 100 25} type Radio down_box ROUND_DOWN_BOX
+        }
+      }
+      Fl_Group {} {
+        label Window
+        xywh {37 26 136 89} labeltype EMBOSSED_LABEL align 5
+      } {
+        Fl_Round_Button m_MotionViewerRadio {
+          label {Motion Viewer}
+          xywh {47 58 115 30} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_VolumeViewerRadio {
+          label {Volume Viewer}
+          xywh {47 35 105 30} type Radio down_box ROUND_DOWN_BOX
+          code0 {m_VolumeViewerRadio->value(1);}
+        }
+        Fl_Round_Button m_TargetViewerRadio {
+          label {Target Viewer}
+          xywh {47 80 115 30} type Radio down_box ROUND_DOWN_BOX
+        }
+      }
+      Fl_Return_Button {} {
+        label OK
+        callback {this->OnOK();}
+        xywh {455 264 64 26}
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {this->OnCancel();}
+        xywh {535 264 64 26}
+      }
+      Fl_Check_Button m_ShowFrameCheck {
+        label {Show Frame}
+        xywh {210 174 136 25} down_box DOWN_BOX
+        code0 {m_ShowFrameCheck->value(1);}
+      }
+      Fl_Check_Button m_ShowProbeCheck {
+        label {Show Probe}
+        xywh {210 199 134 25} down_box DOWN_BOX
+        code0 {m_ShowProbeCheck->value(0);}
+      }
+      Fl_Check_Button m_ShowAnnotationCheck {
+        label {Show Annotation}
+        xywh {210 227 130 25} down_box DOWN_BOX
+        code0 {m_ShowAnnotationCheck->value(1);}
+      }
+      Fl_Group {} {
+        label {Full Size}
+        xywh {65 189 70 60}
+      } {
+        Fl_Button {m_ppFullSizeButton[0]} {
+          label UL
+          callback {this->SetFullSizeIdx(0);}
+          xywh {65 189 35 30} type Toggle
+        }
+        Fl_Button {m_ppFullSizeButton[1]} {
+          label UR
+          callback {this->SetFullSizeIdx(1);}
+          xywh {100 189 35 30} type Toggle
+        }
+        Fl_Button {m_ppFullSizeButton[2]} {
+          label DL
+          callback {this->SetFullSizeIdx(2);}
+          xywh {65 219 35 30} type Toggle
+        }
+        Fl_Button {m_ppFullSizeButton[3]} {
+          label UR
+          callback {this->SetFullSizeIdx(3);}
+          xywh {100 219 35 30} type Toggle
+        }
+      }
+      Fl_Group {} {
+        label {Rendering Category} open
+        xywh {405 25 195 115} labeltype EMBOSSED_LABEL
+      } {
+        Fl_Round_Button m_RayCastRadio {
+          label {Ray Casting}
+          callback {m_CompositeRadio->activate();
+m_IsoSurfaceRadio->activate();
+m_MaxIPRadio->activate();
+m_MinIPRadio->deactivate();}
+          xywh {435 39 100 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_Tex2DRadio {
+          label {Texture Mapping 2D}
+          callback {m_CompositeRadio->activate();
+m_IsoSurfaceRadio->deactivate();
+m_MaxIPRadio->deactivate();
+m_MinIPRadio->deactivate();}
+          xywh {435 58 155 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_LODRadio {
+          label {Level of Detail}
+          callback {m_CompositeRadio->activate();
+m_IsoSurfaceRadio->activate();
+m_MaxIPRadio->activate();
+m_MinIPRadio->deactivate();}
+          xywh {435 77 155 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_VProRadio {
+          label VolumePro
+          callback {m_CompositeRadio->activate();
+m_IsoSurfaceRadio->deactivate();
+m_MaxIPRadio->activate();
+m_MinIPRadio->activate();}
+          xywh {435 96 155 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button m_MCRadio {
+          label {Marching Cubes}
+          callback {m_CompositeRadio->deactivate();
+m_IsoSurfaceRadio->activate();
+m_MaxIPRadio->deactivate();
+m_MinIPRadio->deactivate();}
+          xywh {435 115 155 25} type Radio down_box ROUND_DOWN_BOX
+        }
+      }
+      Fl_Input m_DesiredTriNumInput {
+        label {Desired Tri Num}
+        xywh {515 175 95 25}
+        code0 {m_DesiredTriNumInput->value("30000");}
+      }
+    }
+    code {m_Ret = 0;
+m_WindowType = 0;
+m_RenderingMethod = 0;
+m_RenderingCategory = 0;
+m_ShowFrame = 1;
+m_ShowProbe = 0;
+m_ShowAnnotation = 1;
+m_pTracking = pTracking;
+m_FullSizeIdx = -1;
+m_DesiredTriNum = 30000;} {}
+  }
+  Function {Show()} {return_type void
+  } {
+    code {m_MainWindow->show();} {}
+  }
+  Function {OnOK()} {open return_type void
+  } {
+    code {if (m_VolumeViewerRadio->value() == 1)
+{
+	m_WindowType = 0;
+}
+else if (m_MotionViewerRadio->value() == 1)
+{
+	m_WindowType = 1;
+}
+else if (m_TargetViewerRadio->value() == 1)
+{
+	m_WindowType = 2;
+}
+
+if (m_CompositeRadio->value() == 1)
+{
+	m_RenderingMethod = 0;
+}
+else if (m_IsoSurfaceRadio->value() == 1)
+{
+	m_RenderingMethod = 1;
+}
+else if (m_MaxIPRadio->value() == 1)
+{
+	m_RenderingMethod = 2;
+}
+else if (m_MinIPRadio->value() == 1)
+{
+	m_RenderingMethod = 3;
+}
+if (m_RayCastRadio->value() == 1)
+{
+	m_RenderingCategory = 0;
+}
+else if (m_Tex2DRadio->value() == 1)
+{
+	m_RenderingCategory = 1;
+}
+else if (m_LODRadio->value() == 1)
+{
+	m_RenderingCategory = 2;
+}
+else if (m_VProRadio->value() == 1)
+{
+	m_RenderingCategory = 3;
+}
+else if (m_MCRadio->value() == 1)
+{
+	m_RenderingCategory = 4;
+}
+m_ShowFrame = m_ShowFrameCheck->value();
+m_ShowProbe = m_ShowProbeCheck->value();
+m_ShowAnnotation = m_ShowAnnotationCheck->value();
+m_DesiredTriNum = atoi(m_DesiredTriNumInput->value());
+m_Ret = 1;
+this->Hide();
+m_pTracking->OnUpdateLayout();} {selected
+    }
+  }
+  Function {OnCancel()} {return_type void
+  } {
+    code {m_Ret = 0;
+this->Hide();} {}
+  }
+  Function {Hide()} {return_type void
+  } {
+    code {m_MainWindow->hide();} {}
+  }
+  Function {GetWindowType()} {return_type int
+  } {
+    code {return m_WindowType;} {}
+  }
+  Function {SetWindowType(int w)} {return_type void
+  } {
+    code {m_WindowType = w;} {}
+  }
+  Function {GetRenderingMethod()} {return_type int
+  } {
+    code {return m_RenderingMethod;} {}
+  }
+  Function {SetRenderingMethod(int r)} {return_type void
+  } {
+    code {m_RenderingMethod = r;} {}
+  }
+  Function {ShowModal()} {return_type void
+  } {
+    code {m_MainWindow->set_modal();
+this->Show();} {}
+  }
+  Function {SetFullSizeIdx(int i)} {return_type void
+  } {
+    code {for (int j = 0; j < 4; j++)
+{
+	if (j != i)
+	{
+		m_ppFullSizeButton[j]->value(0);
+	}
+}
+m_FullSizeIdx = (m_ppFullSizeButton[i]->value() == 1)? i : -1;} {}
+  }
+  Function {GetFullSizeIdx()} {return_type int
+  } {
+    code {return m_FullSizeIdx;} {}
+  }
+  Function {GetRenderingCategory()} {return_type int
+  } {
+    code {return m_RenderingCategory;} {}
+  }
+} 
