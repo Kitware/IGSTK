@@ -55,8 +55,18 @@ class Tracker : public itk::Object
     typedef StateMachineType::InputType              InputType;
     typedef StateMachineType::StateIdentifierType    StateIdentifierType;
 
+    /* typedefs from igstk::TrackerPort class */
+    typedef igstk::TrackerTool             TrackerToolType;
+
+   /* typedefs from igstk::TrackerTool class */
+
+    typedef itk::Point< double, 3 >  PositionType;
+    typedef itk::Versor<double>      OrientationType;
+    typedef double                   ErrorType;
+
     FriendClassMacro( StateMachineType );
     FriendClassMacro( TrackerPort );
+    FriendClassMacro( TrackerTool );
 
 public:
 
@@ -66,6 +76,8 @@ public:
     typedef itk::SmartPointer<Self>        Pointer;
     typedef itk::SmartPointer<const Self>  ConstPointer;
 
+    typedef igstk::TrackerPort             TrackerPortType;
+    typedef std::vector< TrackerPortType > TrackerPortVectorType;
 
     /**  Run-time type information (and related methods). */
     itkTypeMacro(Tracker, Object);
@@ -75,7 +87,7 @@ public:
 
     /** The "Initialize" method initializes the tracker. The input 
     is a file in XML format describing the set up configuration. The
-    configuraion file specifies type of communication between the 
+    configuration file specifies type of communication between the 
     tracker object and the actual hardware (a file name for offline
     operation), number of ports, number of tools on each port, port
     and tool description, etc.
@@ -93,11 +105,22 @@ public:
     /** The "EndTracking" stops tracker from tracking the tools. */
     virtual void StopTracking( void );
 
-    /** The "UpdateToolStatus" method is used for updating the tools 
-    status when the tracker is in tracking state. */
-    virtual void UpdateToolStatus( void );
+    /** The "UpdateStatus" method is used for updating the status of 
+    port and tools when the tracker is in tracking state. */
+    virtual void UpdateStatus( void );
 
-    /** The SetLogger method is used to attach a logger object to the
+    /** The "Close" method stops the tracker from use. */
+    virtual void Close( void );
+
+    /** The "GetToolPosition" gets the position of tool numbered "toolNumber" on port numbered "portNumber"
+        in the variable "position". */
+    virtual void GetToolPosition( const int portNumber, const int toolNumber, PositionType &position ) const;
+
+    /** The "SetToolPosition" sets the position of tool numbered "toolNumber" on port numbered "portNumber"
+    by the content of variable "position". */
+    virtual void SetToolPosition( const int portNumber, const int toolNumber, const PositionType position );
+
+   /** The SetLogger method is used to attach a logger object to the
     tracker object for logging purposes. */
     void SetLogger( LoggerType* logger );
 
@@ -113,17 +136,31 @@ protected:
 
     virtual ~Tracker(void);
 
-    /** The "SetupCommunication" method initializes the communication. */
-    virtual void SetUpCommunication( void ); 
+    /** The "AddPort" method adds a port to the tracker. */
+    void AddPort( const TrackerPortType& port);
 
-    /** The "SetupTools" method initializes all the tracking tools. */
-    virtual void SetUpTools( void );    
+    /** The "ClearPorts" clears all the ports. */
+    void ClearPorts( void );
 
+    /** The "SetUpCommunicationProcessing" method sets up communication. */
+    virtual void SetUpCommunicationProcessing( void );
+
+    /** The "SetUpToolsProcessing" method sets up ports and tools. */
+    virtual void SetUpToolsProcessing( void );
+
+    /** The "StartTrackingProcessing" method initiates tracking. */
+    virtual void StartTrackingProcessing( void );
+
+    /** The "UpdateStatusProcessing" method updates tracker status. */
+    virtual void UpdateStatusProcessing( void );
+
+    /** The "StopTrackingProcessing" method stop tracking. */
+    virtual void StopTrackingProcessing( void );
 
 protected:
 
     /** Vector of all tool ports on the tracker */
-    std::vector< TrackerPort >        m_Ports;
+    TrackerPortVectorType     m_Ports;
 
 private:
 
@@ -143,7 +180,7 @@ private:
     InputType                m_SetUpCommunication;
     InputType                m_SetUpTools;
     InputType                m_StartTracking;
-    InputType                m_UpdateToolStatus;
+    InputType                m_UpdateStatus;
     InputType                m_StopTracking;
     
     /** The Logger instance */
