@@ -1,0 +1,301 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0104 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include "IGMTrackingBase.h"} {public
+} 
+
+class ProbeParametersGUI {open
+} {
+  decl {IGMTrackingBase* m_pTracking;} {public
+  }
+  Function {ProbeParametersGUI(IGMTrackingBase* pTracking)} {} {
+    code {m_pTracking = pTracking;} {}
+    Fl_Window m_MainWindow {
+      label {Probe Parameters}
+      xywh {396 384 572 179} type Double visible
+    } {
+      Fl_Box {} {
+        label Probe
+        xywh {97 20 55 25}
+      }
+      Fl_Box {} {
+        label UID
+        xywh {227 20 55 25}
+      }
+      Fl_Box {} {
+        label Offset
+        xywh {280 21 55 25}
+      }
+      Fl_Box {} {
+        label End
+        xywh {337 20 55 25}
+      }
+      Fl_Box {} {
+        label Radius
+        xywh {394 20 55 25}
+      }
+      Fl_Round_Button {m_ppProbeCheck[0]} {
+        xywh {116 44 25 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Round_Button {m_ppProbeCheck[1]} {
+        xywh {116 64 25 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Round_Button {m_ppProbeCheck[2]} {
+        xywh {116 84 25 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Round_Button {m_ppProbeCheck[3]} {
+        xywh {116 104 25 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Input {m_ppUID[0]} {
+        xywh {231 42 45 20}
+      }
+      Fl_Input {m_ppUID[1]} {
+        xywh {231 63 45 20}
+      }
+      Fl_Input {m_ppUID[2]} {
+        xywh {231 84 45 20}
+      }
+      Fl_Input {m_ppUID[3]} {
+        xywh {231 105 45 20}
+      }
+      Fl_Input {m_ppOffset[0]} {
+        xywh {286 42 45 20}
+      }
+      Fl_Input {m_ppOffset[1]} {
+        xywh {286 63 45 20}
+      }
+      Fl_Input {m_ppOffset[2]} {
+        xywh {286 84 45 20}
+      }
+      Fl_Input {m_ppOffset[3]} {
+        xywh {286 105 45 20}
+      }
+      Fl_Input {m_ppLength[0]} {
+        xywh {341 41 45 20}
+      }
+      Fl_Input {m_ppLength[1]} {
+        xywh {341 62 45 20}
+      }
+      Fl_Input {m_ppLength[2]} {
+        xywh {341 83 45 20}
+      }
+      Fl_Input {m_ppLength[3]} {
+        xywh {341 104 45 20}
+      }
+      Fl_Input {m_ppRadius[0]} {
+        xywh {397 40 45 20}
+      }
+      Fl_Input {m_ppRadius[1]} {
+        xywh {397 61 45 20}
+      }
+      Fl_Input {m_ppRadius[2]} {
+        xywh {397 82 45 20}
+      }
+      Fl_Input {m_ppRadius[3]} {
+        xywh {397 103 45 20}
+      }
+      Fl_Box {} {
+        label mm
+        xywh {449 40 25 20}
+      }
+      Fl_Box {} {
+        label mm
+        xywh {449 61 25 20}
+      }
+      Fl_Box {} {
+        label mm
+        xywh {450 82 25 20}
+      }
+      Fl_Box {} {
+        label mm
+        xywh {450 103 25 20}
+      }
+      Fl_Return_Button {} {
+        label OK
+        callback {this->OnOK();}
+        xywh {330 140 60 25}
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {this->OnCancel();}
+        xywh {405 140 55 25}
+      }
+      Fl_Light_Button {m_ppDevice[0]} {
+        label {Device 0}
+        callback {DeviceLine(0, m_ppDevice[0]->value());}
+        xywh {15 46 85 20}
+      }
+      Fl_Light_Button {m_ppDevice[1]} {
+        label {Device 1}
+        callback {DeviceLine(1, m_ppDevice[1]->value());}
+        xywh {15 67 85 20}
+      }
+      Fl_Light_Button {m_ppDevice[2]} {
+        label {Device 2}
+        callback {DeviceLine(2, m_ppDevice[2]->value());}
+        xywh {15 87 85 20}
+      }
+      Fl_Light_Button {m_ppDevice[3]} {
+        label {Device 3}
+        callback {DeviceLine(3, m_ppDevice[3]->value());}
+        xywh {15 108 85 20}
+      }
+      Fl_Group {} {open
+        xywh {160 43 40 82}
+      } {
+        Fl_Round_Button {m_ppRefRadio[0]} {
+          xywh {176 44 20 20} type Radio down_box ROUND_DOWN_BOX deactivate
+        }
+        Fl_Round_Button {m_ppRefRadio[1]} {
+          xywh {176 65 20 20} type Radio down_box ROUND_DOWN_BOX deactivate
+        }
+        Fl_Round_Button {m_ppRefRadio[2]} {
+          xywh {176 85 20 20} type Radio down_box ROUND_DOWN_BOX deactivate
+        }
+        Fl_Round_Button {m_ppRefRadio[3]} {
+          xywh {177 105 20 20} type Radio down_box ROUND_DOWN_BOX deactivate
+        }
+      }
+      Fl_Light_Button m_RefButton {
+        label Ref
+        callback {EnableRefRow(m_RefButton->value());}
+        xywh {161 20 55 25} box NO_BOX
+      }
+      Fl_Button {} {
+        label Invert
+        callback {this->InvertDirection(0);}
+        xywh {493 40 72 20}
+      }
+      Fl_Button {} {
+        label Invert
+        callback {this->InvertDirection(1);}
+        xywh {493 61 72 20}
+      }
+      Fl_Button {} {
+        label Invert
+        callback {this->InvertDirection(2);}
+        xywh {493 82 72 20}
+      }
+      Fl_Button {} {
+        label Invert
+        callback {this->InvertDirection(3);}
+        xywh {493 103 72 20}
+      }
+    }
+    code {this->DeviceLine(0, 1);
+this->DeviceLine(1, 0);
+this->DeviceLine(2, 0);
+this->DeviceLine(3, 0);} {}
+  }
+  Function {Show()} {return_type void
+  } {
+    code {m_MainWindow->show();} {}
+  }
+  Function {Hide()} {return_type void
+  } {
+    code {m_MainWindow->hide();} {}
+  }
+  Function {ShowModal()} {return_type void
+  } {
+    code {m_MainWindow->set_modal();
+this->Show();} {}
+  }
+  Function {OnOK()} {return_type void
+  } {
+    code {this->Hide();
+m_pTracking->OnUpdateProbeParameters();} {}
+  }
+  Function {OnCancel()} {return_type void
+  } {
+    code {this->Hide();} {}
+  }
+  Function {EnableDeviceLine(int n)} {return_type void
+  } {
+    code {m_ppDevice[n]->value(1);
+m_ppProbeCheck[n]->activate();
+if (m_RefButton->value() == 1)
+{
+	m_ppRefRadio[n]->activate();
+}
+m_ppUID[n]->activate();
+m_ppOffset[n]->activate();
+m_ppLength[n]->activate();
+m_ppRadius[n]->activate();} {}
+  }
+  Function {DisableDeviceLine(int n)} {return_type void
+  } {
+    code {m_ppDevice[n]->value(0);
+m_ppProbeCheck[n]->deactivate();
+m_ppRefRadio[n]->deactivate();
+m_ppUID[n]->deactivate();
+m_ppOffset[n]->deactivate();
+m_ppLength[n]->deactivate();
+m_ppRadius[n]->deactivate();} {}
+  }
+  Function {DeviceLine(int dev, int i)} {return_type void
+  } {
+    code {if (i == 1)
+{
+	EnableDeviceLine(dev);
+}
+else
+{
+	DisableDeviceLine(dev);
+}} {}
+  }
+  Function {SetDeviceLine(int dev, int probe, int ref, int uid, double off, double len, double rad)} {open return_type void
+  } {
+    code {char s[128];
+m_ppProbeCheck[dev]->value(probe);
+m_ppRefRadio[dev]->value(ref);
+sprintf(s, "%d", uid);
+m_ppUID[dev]->value(s);
+sprintf(s, "%4.2f", off);
+m_ppOffset[dev]->value(s);
+sprintf(s, "%4.2f", len);
+m_ppLength[dev]->value(s);
+sprintf(s, "%4.2f", rad);
+m_ppRadius[dev]->value(s);} {}
+  }
+  Function {GetDeviceLine(int dev, int& probe, int& ref, int& uid, double& off, double& len, double& rad)} {open return_type void
+  } {
+    code {probe = m_ppProbeCheck[dev]->value();
+ref = m_ppRefRadio[dev]->value();
+uid = atoi(m_ppUID[dev]->value());
+off = atof(m_ppOffset[dev]->value());
+len = atof(m_ppLength[dev]->value());
+rad = atof(m_ppRadius[dev]->value());} {}
+  }
+  Function {GetDevice(int dev)} {return_type int
+  } {
+    code {return m_ppDevice[dev]->value();} {}
+  }
+  Function {UseReference()} {return_type int
+  } {
+    code {return m_RefButton->value();} {}
+  }
+  Function {EnableRefRow(int e)} {return_type void
+  } {
+    code {for (int i = 0; i < 4; i++)
+{
+	if (e == 1)
+	{
+		m_ppRefRadio[i]->activate();
+	}
+	else
+	{
+		m_ppRefRadio[i]->deactivate();
+	}
+}} {}
+  }
+  Function {InvertDirection(int i)} {open return_type void
+  } {
+    code {char s[128];
+sprintf(s, "%4.2f", -atof(m_ppOffset[i]->value()));
+m_ppOffset[i]->value(s);
+sprintf(s, "%4.2f", -atof(m_ppLength[i]->value()));
+m_ppLength[i]->value(s);} {selected
+    }
+  }
+} 
