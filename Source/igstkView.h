@@ -19,6 +19,8 @@
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4018 )
+   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+#pragma warning( disable : 4284 )
 #endif
 
 #include <FL/Fl.H>
