@@ -6,58 +6,69 @@
 #define __ISIS_MotionViewer_h__
 
 #include "vtkActor2D.h"
-#include "vtkTextMapper.h"
-#include "vtkImageCanvasSource2D.h"
-#include "vtkRenderWindowInteractor.h"
 #include "vtkCamera.h"
-#include "vtkRenderer.h"
-#include "vtkImageActor.h"
-#include "vtkRenderWindow.h"
 #include "vtkCommand.h"
+#include "vtkImageActor.h"
+#include "vtkImageCanvasSource2D.h"
+#include "vtkRenderer.h"
+#include "vtkRenderWindow.h"
+#include "vtkRenderWindowInteractor.h"
+#include "vtkTextMapper.h"
 
-class MotionViewer  
+namespace ISIS
 {
-public:
-	int w, h;
 
-	MotionViewer();
-	virtual ~MotionViewer();
-	
-public:
-	void SetInteractor( vtkRenderWindowInteractor * interactor );
-	
-	void DrawBar();
-	
-	void Render();
-	
-	void show();
-	
-	void UpdateMotion(float x);
+	class MotionViewer  
+	{
+	public:
+		MotionViewer();
+		
+		virtual ~MotionViewer();
+		
+	public:
+		void SetInteractor( vtkRenderWindowInteractor * interactor );
+		
+		void DrawBar();
+		
+		void Render();
+		
+//		void show();
+		
+		void UpdateMotion(float x);
+		
+		void SetupCamera( void );
+		
+	protected:
 
-	void SetupCamera( void );
-	
-protected:
+		int m_Width, m_Height;
 
-	vtkImageActor     * m_Actor;
-	
-	vtkRenderer       * m_Renderer;
-	
-	vtkCamera         * m_Camera;
-	
-	vtkRenderWindow   * m_RenderWindow;
+		int m_BarHeight;
 
-	vtkRenderWindowInteractor * m_Interactor;
-	
-	vtkImageCanvasSource2D * ImageCanvas;
-	vtkTextMapper * LabelMapper[11];
-	vtkActor2D * LabelActor[11];
-	vtkTextMapper * TextMapper[5];
-	vtkActor2D * TextActor[5];
-	
-	int BarHeight;
-	int BarWidth;
-	int XPos;
-	
-};
+		int m_BarWidth;
+		
+		int m_XPos;
+		
+		vtkImageActor     * m_Actor;
+		
+		vtkRenderer       * m_Renderer;
+		
+		vtkCamera         * m_Camera;
+		
+		vtkRenderWindow   * m_RenderWindow;
+		
+		vtkRenderWindowInteractor * m_Interactor;
+		
+		vtkImageCanvasSource2D * ImageCanvas;
+
+		vtkTextMapper * LabelMapper[6];
+		
+		vtkActor2D * LabelActor[6];
+		
+		vtkTextMapper * TextMapper[5];
+		
+		vtkActor2D * TextActor[5];		
+	};	
+
+}
 
 #endif
