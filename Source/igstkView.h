@@ -35,9 +35,11 @@
 
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
-#include "igstkScene.h"
+#include "itkCommand.h"
 
 namespace igstk{
+
+class Scene;
 
 class View : public Fl_Gl_Window, public vtkRenderWindowInteractor 
 {
@@ -50,6 +52,7 @@ private:
   typedef StateMachineType::InputType                InputType;
 
   FriendClassMacro( StateMachineType );
+  FriendClassMacro( Scene );
 
   TypeMacro( View, vtkRenderWindowInteractor );
   
@@ -84,9 +87,6 @@ public:
   void DisableInteractions();
   void EnableInteractions();
 
-  /** Add a vtk Actor */
-  void RequestSetScene(igstk::Scene* scene);
-
   /** Request to return the camera to a known position */
   void RequestResetCamera();
   
@@ -111,8 +111,6 @@ private:
   vtkRenderer           * m_Renderer;
   vtkCamera             * m_Camera;
   bool                    m_InteractionHandling;
-  igstk::Scene::Pointer   m_Scene;          
-  igstk::Scene::Pointer   m_SceneToBeSet;          
 
   /** Member variables for holding temptative arguments of functions.
    *  This is needed for implementing a layer of security that decouples
@@ -121,9 +119,6 @@ private:
   vtkProp3D            * m_ActorToBeRemoved;
   
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
-
-  ObserverType::Pointer     m_SceneAddObjectObserver;
-  ObserverType::Pointer     m_SceneRemoveObjectObserver;
 
 private:
 
@@ -136,12 +131,6 @@ private:
 
   void RequestAddActor( vtkProp3D * actor );
   void RequestRemoveActor( vtkProp3D * actor );
-
-  void UpdateViewFromAddedObject();
-  void UpdateViewFromRemovedObject();
-
-  /** Set the scene. Intended to be called only by the state machine */
-  void SetScene();
   
 private:
 
@@ -152,10 +141,7 @@ private:
   InputType            m_NullAddActor;
   InputType            m_ValidRemoveActor;
   InputType            m_NullRemoveActor;
-  InputType            m_ValidSetScene;
-  InputType            m_NullSetScene;
   InputType            m_ResetCameraInput;
-  
 
   /** States for the State Machine */
   StateType            m_IdleState;

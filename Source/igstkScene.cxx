@@ -24,8 +24,8 @@ namespace igstk
 /** Constructor */
 Scene::Scene():m_StateMachine(this)
 {
-  m_LastAddedObject = 0;
-  m_LastRemovedObject = 0;
+  m_ViewToBeAdded = NULL;
+  m_ViewToBeRemoved = NULL;
 
   m_StateMachine.AddInput( m_ValidAddObject,     "ValidAddObject" );
   m_StateMachine.AddInput( m_NullAddObject,      "NullAddObject"  );
@@ -50,6 +50,8 @@ Scene::Scene():m_StateMachine(this)
   m_StateMachine.SelectInitialState( m_IdleState );
 
   m_StateMachine.SetReadyToRun();
+
+
 }
 
 /** Destructor */
@@ -58,10 +60,16 @@ Scene::~Scene()
 }
 
 /** Request for Adding an object to the Scene */
-void Scene::RequestAddObject(ObjectRepresentation * pointer )
+void Scene::RequestAddObject(View* view, ObjectRepresentation* pointer )
 {
   m_ObjectToBeAdded = pointer;
-  if( !pointer )
+  m_ViewToBeAdded = view;
+
+  if(!view)
+    {
+    m_StateMachine.ProcessInput( m_NullAddObject );
+    }
+  else if( !pointer )
     {
     m_StateMachine.ProcessInput( m_NullAddObject );
     }
@@ -87,16 +95,33 @@ void Scene::AddObject()
 {
   m_Objects.push_back( m_ObjectToBeAdded );
   this->Modified();
-  m_LastAddedObject = m_ObjectToBeAdded;
-  this->InvokeEvent( SceneAddObjectEvent() );
+  
+  if(m_ViewToBeAdded)
+    {
+    m_ObjectToBeAdded->CreateActors();
+
+    ObjectRepresentation::ActorsListType actors = m_ObjectToBeAdded->GetActors();
+    ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
+    while(actorIt != actors.end())
+      {
+      m_ViewToBeAdded->RequestAddActor(*actorIt);
+      actorIt++;
+      } 
+    }
 }
 
 
 /** Request for removing a spatial object from the Scene */
-void Scene::RequestRemoveObject( ObjectRepresentation * pointer )
+void Scene::RequestRemoveObject( View* view, ObjectRepresentation* pointer )
 {
   m_ObjectToBeRemoved = pointer;
+  m_ViewToBeRemoved = view;
   m_IteratorToObjectToBeRemoved = m_Objects.end(); 
+  
+  if(!view)
+    {
+    m_StateMachine.ProcessInput( m_NullRemoveObject );
+    }
   if( !pointer )
     {
     m_StateMachine.ProcessInput( m_NullRemoveObject );
@@ -121,9 +146,18 @@ void Scene::RequestRemoveObject( ObjectRepresentation * pointer )
 void Scene::RemoveObject()
 {
   m_Objects.erase( m_IteratorToObjectToBeRemoved );
-  m_LastRemovedObject = m_ObjectToBeRemoved;
   this->Modified();
-  this->InvokeEvent( SceneRemoveObjectEvent() );
+  
+  if(m_ViewToBeRemoved)
+    {
+    ObjectRepresentation::ActorsListType actors = m_ObjectToBeRemoved->GetActors();
+    ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
+    while(actorIt != actors.end())
+      {
+      m_ViewToBeRemoved->RequestRemoveActor(*actorIt);
+      actorIt++;
+      } 
+    }
 }
 
 
@@ -168,10 +202,12 @@ void Scene::RemoveAllObjects()
 
   while( it != m_Objects.end() )
     {
-    m_LastRemovedObject = *it;
+//    m_LastRemovedObject = *it;
     it = m_Objects.erase( it );
     this->Modified();
-    this->InvokeEvent( SceneRemoveObjectEvent() );
+    
+    
+    //this->InvokeEvent( SceneRemoveObjectEvent() );
     }
 
   m_Objects.clear();

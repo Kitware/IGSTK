@@ -20,6 +20,7 @@
 
 #include "igstkObjectRepresentation.h"   
 #include "igstkStateMachine.h"
+#include "igstkView.h"
  
 #include <list>
 
@@ -44,8 +45,9 @@ public:
   typedef itk::Object Superclass; 
   typedef itk::SmartPointer< Self > Pointer; 
   typedef itk::SmartPointer< const Self > ConstPointer; 
-  typedef ObjectRepresentation::Pointer ObjectPointer;
 
+  // Object representation types
+  typedef ObjectRepresentation::Pointer     ObjectPointer;
   typedef std::list< ObjectPointer >        ObjectListType; 
   typedef ObjectListType::iterator          ObjectListIterator;
   typedef ObjectListType::const_iterator    ObjectListConstIterator;
@@ -57,13 +59,13 @@ public:
   NewMacro(Self); 
 
   /** Add an object to the list of children. */ 
-  void RequestAddObject( ObjectRepresentation * pointer ); 
+  void RequestAddObject( View* view, ObjectRepresentation* pointer ); 
      
   /** Remove the object passed as arguments from the list of 
    *  children. May this function 
    *  should return a false value if the object to remove is 
    *  not found in the list. */ 
-  void RequestRemoveObject( ObjectRepresentation * object ); 
+  void RequestRemoveObject( View* view, ObjectRepresentation* object ); 
 
   /** Returns a list of pointer to the children affiliated to this object.*/ 
   GetMacro( Objects, ObjectListType );
@@ -75,19 +77,10 @@ public:
   /** Remove all the objects in the scene */
   void RequestRemoveAllObjects();
 
-  /** Get the last added object */
-  ObjectRepresentation* GetLastAddedObject() {return m_LastAddedObject;}
-
-  /** Get the last removed object */
-  ObjectRepresentation* GetLastRemovedObject() {return m_LastRemovedObject;}
-
 protected: 
 
   /** List of the children object plug to the SceneSpatialObject spatial object. */
   ObjectListType m_Objects; 
-
-  ObjectPointer  m_LastAddedObject;
-  ObjectPointer  m_LastRemovedObject;
 
   /** constructor */ 
   Scene(); 
@@ -118,10 +111,11 @@ private:
 
   // Arguments for methods to be invoked by the state machine.
   //
-  ObjectRepresentation * m_ObjectToBeAdded;
-  ObjectRepresentation * m_ObjectToBeRemoved;
-  ObjectListType::iterator m_IteratorToObjectToBeRemoved;    
-
+  ObjectRepresentation::Pointer m_ObjectToBeAdded;
+  ObjectRepresentation::Pointer m_ObjectToBeRemoved;
+  ObjectListType::iterator      m_IteratorToObjectToBeRemoved;    
+  View*                         m_ViewToBeAdded;
+  View*                         m_ViewToBeRemoved;
 
 private:
 
