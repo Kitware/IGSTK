@@ -10,7 +10,7 @@
 #ifndef __AuroraTracker_h__
 #define __AuroraTracker_h__
 
-#include "tracker.h"
+#include "Tracker.h"
 #include <stdlib.h>
 #include "SerialCommunication.h"
 #include <stdio.h>

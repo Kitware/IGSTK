@@ -8,7 +8,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-#include "tracker.h"
+#include "Tracker.h"
 
 
 int Tracker::InitializeTracker( const char *fileName )
