@@ -86,6 +86,8 @@ INCLUDE_DIRECTORIES(
 
 #-----------------------------------------------------------------------------
 # Help other projects use IGSTK.
+SET(IGSTK_LIBRARY_PATH ${LIBRARY_OUTPUT_PATH})
+
 
 # Copy the UseIGSTK.cmake file to the binary tree for backward compatability.
 CONFIGURE_FILE(${IGSTK_SOURCE_DIR}/UseIGSTK.cmake.in
