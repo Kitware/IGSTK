@@ -29,24 +29,24 @@ int igstkRenderWindowTest( int, char * [] )
   typedef igstk::RenderWindow  RenderWindowType;   
   RenderWindowType::Pointer renderWindow = RenderWindowType::New();
 
-  std::cout << "Testing GetVTKRenderWindow: ";
-  if(!renderWindow->GetVTKRenderWindow())
+  std::cout << "Testing GetRenderWindow: ";
+  if(!renderWindow->GetRenderWindow())
     {
     std::cout << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
   std::cout << "[PASSED]" << std::endl;
     
-  std::cout << "Testing GetVTKRenderer: ";
-  if(!renderWindow->GetVTKRenderer())
+  std::cout << "Testing GetRenderer: ";
+  if(!renderWindow->GetRenderer())
     {
     std::cout << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
   std::cout << "[PASSED]" << std::endl;
 
-  std::cout << "Testing GetVTKCamera: ";
-  if(!renderWindow->GetVTKCamera())
+  std::cout << "Testing GetCamera: ";
+  if(!renderWindow->GetCamera())
     {
     std::cout << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
