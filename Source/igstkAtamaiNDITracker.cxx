@@ -94,5 +94,21 @@ void AtamaiNDITracker::UpdateStatusProcessing( void )
   this->m_VTKTracker->Update();
 }
 
+
+void AtamaiNDITracker::ResetTrackingProcessing( void )
+{
+  igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::ResetTrackingProcessing called ...\n");
+}
+
+void AtamaiNDITracker::DisableCommunicationProcessing( void )
+{
+  igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::DisableCommunicationProcessing called ...\n");
+}
+
+void AtamaiNDITracker::DisableToolsProcessing( void )
+{
+  igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::DisableToolsProcessing called ...\n");
+}
+
 }
 

@@ -69,6 +69,12 @@ protected:
 
   virtual void UpdateStatusProcessing( void );
 
+  virtual void ResetTrackingProcessing( void );
+
+  virtual void DisableCommunicationProcessing( void );
+
+  virtual void DisableToolsProcessing( void );
+
 private:
 
 };

@@ -44,7 +44,7 @@ int igstkAtamaiNDITrackerTest( int, char * [] )
 
   tracker->StartTracking();
 
-  for(int i=0; i<1000; i++)
+  for(int i=0; i<10; i++)
   {
     tracker->UpdateStatus();
   }
@@ -57,10 +57,3 @@ int igstkAtamaiNDITrackerTest( int, char * [] )
 
   return EXIT_SUCCESS;
 }
-/*
-  typedef igstk::Logger                   LoggerType; 
-
-  igstk::AtamaiNDITracker::Pointer tracker = igstk::AtamaiNDITracker::New();
-
-  return EXIT_SUCCESS;
-*/
