@@ -57,18 +57,15 @@ protected:
   /** Opens serial port for communication; */
   virtual void OpenCommunicationPortProcessing( void );
 
+  /** Set up data buffer size. */
+  virtual void SetUpDataBuffersProcessing( void );
+
+  /** Sets up communication on the open port as per the communication parameters. */
+  virtual void SetUpDataTransferParametersProcessing( void );
+
   /** Closes serial port  */
   virtual void CloseCommunicationPortProcessing( void );
   virtual void ClearBuffersAndCloseCommunicationPortProcessing( void );
-
-  /** Set up communication time out values. */
-  virtual void SetCommunicationTimeoutProcessing( void );
-
-  /** Sets up communication on the open port as per the communication parameters. */
-  virtual void SetupCommunicationProcessing( void );
-
-  /** Set up data buffer size. */
-  virtual void SetDataBufferSizeProcessing( void );
 
   /**Rests communication port by suspending character transmission  
   and placing the transmission line in a break state, and restarting

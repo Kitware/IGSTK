@@ -42,10 +42,13 @@ void SerialCommunicationForWindows::OpenCommunicationPortProcessing( void )
 
   if( this->m_PortHandle == INVALID_HANDLE_VALUE)
   {
+    this->m_PortNumber = m_InvalidPortNumber;
+    m_ResultOfOpenCommunicationPortProcessing = false;
     this->InvokeEvent( OpenPortFailureEvent() );
   }
   else
   {
+    m_ResultOfOpenCommunicationPortProcessing = true;
     igstkLogMacro( igstk::Logger::DEBUG, "COM port name: ");
     igstkLogMacro( igstk::Logger::DEBUG, portName);
     igstkLogMacro( igstk::Logger::DEBUG, " opened.\n");
@@ -53,7 +56,7 @@ void SerialCommunicationForWindows::OpenCommunicationPortProcessing( void )
 }
 
 
-void SerialCommunicationForWindows::SetDataBufferSizeProcessing( void )
+void SerialCommunicationForWindows::SetUpDataBuffersProcessing( void )
 {
   if (this->m_InputBuffer!=NULL) delete (this->m_InputBuffer); 
   this->m_InputBuffer = new char[ this->m_ReadBufferSize ];
@@ -62,10 +65,12 @@ void SerialCommunicationForWindows::SetDataBufferSizeProcessing( void )
   if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL) || 
       !SetupComm(this->m_PortHandle, this->m_ReadBufferSize, this->m_WriteBufferSize)) 
   {
+    m_ResultOfSetUpDataBuffersProcessing = false;
     this->InvokeEvent( SetDataBufferSizeFailureEvent() );
   }
   else
   {
+    m_ResultOfSetUpDataBuffersProcessing = true;
     //Clear out buffers
     PurgeComm(this->m_PortHandle, PURGE_TXABORT | PURGE_TXCLEAR | PURGE_RXABORT | PURGE_RXCLEAR);
     this->m_ReadDataSize = 0;
@@ -81,32 +86,16 @@ void SerialCommunicationForWindows::SetDataBufferSizeProcessing( void )
 }
 
 
-void SerialCommunicationForWindows::SetCommunicationTimeoutProcessing( void )
+void SerialCommunicationForWindows::SetUpDataTransferParametersProcessing( void )
 {
-  COMMTIMEOUTS       CommunicationTimeouts;
-  CommunicationTimeouts.ReadIntervalTimeout = MAXWORD; //m_ReadIntervalTimeout
-  CommunicationTimeouts.ReadTotalTimeoutConstant = m_ReadTotalTimeoutConstant;
-  CommunicationTimeouts.ReadTotalTimeoutMultiplier = m_ReadTotalTimeoutMultiplier;
-  CommunicationTimeouts.WriteTotalTimeoutConstant = m_WriteTotalTimeoutConstant;
-  CommunicationTimeouts.WriteTotalTimeoutMultiplier = m_WriteTotalTimeoutMultiplier;
+  m_ResultOfSetUpCommunicationParametersProcessing = false;
 
-  if (!SetCommTimeouts(this->m_PortHandle, &CommunicationTimeouts))
-  {
-    this->InvokeEvent( CommunicationTimeoutSetupFailureEvent() );
-  }
-  else
-  {
-    igstkLogMacro( igstk::Logger::DEBUG, "SetCommunicationTimeoutParameters succeeded.\n");
-  }
-}
-
-
-void SerialCommunicationForWindows::SetupCommunicationProcessing( void )
-{
   // Control setting for a serial communications device
   DCB   dcb;
   if (!GetCommState(this->m_PortHandle, &dcb))
+  {
        return;
+  }
 
   // Baudrate parameter settings
   dcb.BaudRate = this->m_BaudRate;
@@ -141,11 +130,28 @@ void SerialCommunicationForWindows::SetupCommunicationProcessing( void )
   if (!SetCommState(this->m_PortHandle, &dcb))
   {
     this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+    return;
+  }
+
+  // Set up communication timeouts
+
+  COMMTIMEOUTS       CommunicationTimeouts;
+  CommunicationTimeouts.ReadIntervalTimeout = MAXWORD; //m_ReadIntervalTimeout
+  CommunicationTimeouts.ReadTotalTimeoutConstant = m_ReadTotalTimeoutConstant;
+  CommunicationTimeouts.ReadTotalTimeoutMultiplier = m_ReadTotalTimeoutMultiplier;
+  CommunicationTimeouts.WriteTotalTimeoutConstant = m_WriteTotalTimeoutConstant;
+  CommunicationTimeouts.WriteTotalTimeoutMultiplier = m_WriteTotalTimeoutMultiplier;
+
+  if (!SetCommTimeouts(this->m_PortHandle, &CommunicationTimeouts))
+  {
+    this->InvokeEvent( CommunicationTimeoutSetupFailureEvent() );
+    return;
   }
   else
   {
     igstkLogMacro( igstk::Logger::DEBUG, "SetupCommunicationParameters succeeded.\n");
   }
+  m_ResultOfSetUpCommunicationParametersProcessing = true;
 }
 
 void SerialCommunicationForWindows::ClearBuffersAndCloseCommunicationPortProcessing( void )
@@ -215,7 +221,7 @@ void SerialCommunicationForWindows::SendStringProcessing( void )
   { // successfully wrote all data
     if (writtenBytes==bytesToWrite)
     {
-      std::cout << "Bytes to write = " << bytesToWrite << ", Written buyes = " << writtenBytes << std::endl;
+      std::cout << "Bytes to write = " << bytesToWrite << ", Written bytes = " << writtenBytes << std::endl;
       this->InvokeEvent( SendStringSuccessfulEvent());
     }
     //write timeout occurred, and all data could not get written

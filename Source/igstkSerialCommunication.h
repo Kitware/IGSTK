@@ -41,9 +41,10 @@ class SerialCommunication : public Communication, public itk::Object
 {
 protected:
 
-  const unsigned int m_ReadBufferSize; // read buffer size in bytes
-  const unsigned int m_WriteBufferSize;// write buffer size in bytes
+  const unsigned int m_ReadBufferSize; // read buffer size in bytes.
+  const unsigned int m_WriteBufferSize;// write buffer size in bytes.
   const unsigned int m_PortRestSpan; // period of rest in communication, in msecs.
+  const int m_InvalidPortNumber; // Number assigned to m_PortNumber, if port not initialized.
 
   typedef igstk::Logger   LoggerType;
 
@@ -166,18 +167,15 @@ protected:
   /** Opens serial port for communication; */
   virtual void OpenCommunicationPortProcessing( void ) = NULL;
 
+  /** Set up data buffer size. */
+  virtual void SetUpDataBuffersProcessing( void ) = NULL;
+
+  /** Sets up communication on the open port as per the communication parameters. */
+  virtual void SetUpDataTransferParametersProcessing( void ) = NULL;
+
   /** Closes serial port  */
   virtual void CloseCommunicationPortProcessing( void ) = NULL;
   virtual void ClearBuffersAndCloseCommunicationPortProcessing( void ) = NULL;
-
-  /** Set up communication time out values. */
-  virtual void SetCommunicationTimeoutProcessing( void ) = NULL;
-
-  /** Sets up communication on the open port as per the communication parameters. */
-  virtual void SetupCommunicationProcessing( void ) = NULL;
-
-  /** Set up data buffer size. */
-  virtual void SetDataBufferSizeProcessing( void ) = NULL;
 
   /**Rests communication port by suspending character transmission  
   and placing the transmission line in a break state, and restarting
@@ -248,25 +246,42 @@ protected:
   int             m_PortNumber;     // Port Number
   
   /** The "StateMachine" instance */
-  StateMachineType         m_StateMachine;
+  StateMachineType         m_StateMachine; 
 
   /** List of States */
   StateType                m_IdleState;
+  StateType                m_AttemptingToOpenPortState;
   StateType                m_PortOpenState;
-  StateType                m_BufferAllocatedState;
-  StateType                m_CommunicationParametersSetState;
+  StateType                m_AttemptingToSetUpDataBuffersState;
+  StateType                m_DataBuffersSetState;
+  StateType                m_AttemptingToSetUpDataTransferParametersState;
+  
   StateType                m_PortReadyForCommunicationState;
 
   /** List of Inputs */
   InputType                m_OpenPortInput;
-  InputType                m_SetBuffersInput;
-  InputType                m_SetParametersInput;
-  InputType                m_SetTimeoutsInput;
-  InputType                m_ClosePortInput;
+  InputType                m_OpenPortSuccess;
+  InputType                m_OpenPortFailure;
+
+  InputType                m_SetUpDataBuffersInput;
+  InputType                m_DataBufferSetUpSuccess;
+  InputType                m_DataBufferSetUpFailure;
+
+  InputType                m_SetUpDataTransferParametersInput;
+  InputType                m_DataTransferParametersSetUpSuccess;
+  InputType                m_DataTransferParametersSetUpFailure;
+
   InputType                m_RestCommunication;
   InputType                m_FlushOutputBuffer;
-  InputType                m_SendString;
   InputType                m_ReceiveString;
+  InputType                m_SendString;
+
+  InputType                m_ClosePortInput;
+
+  /** Booleans to record result of state machine post-processing results. */
+  bool                     m_ResultOfOpenCommunicationPortProcessing;
+  bool                     m_ResultOfSetUpDataBuffersProcessing;
+  bool                     m_ResultOfSetUpCommunicationParametersProcessing;
 };
 
 } // end namespace igstk
