@@ -21,7 +21,7 @@
 // CMakeCache.txt file.  This test will display the file.
 
 #include "vtkDebugLeaks.h"
-#include "Tests/SystemInformation.h"
+#include "SystemInformation.h"
 #include <sys/stat.h>
 
 void vtkSystemInformationPrintFile(const char* name, ostream& os)
