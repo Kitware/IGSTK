@@ -15,9 +15,8 @@ SET(IGSTKSandbox_HEADS
   igstkEllipsoidObjectRepresentation.h  
   igstkCylinderObjectRepresentation.h
   igstkMouseTracker.h
-  itkCylinderSpatialObject.h
-  igstkSerialCommunication.h
 )
+
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
@@ -32,8 +31,16 @@ SET(IGSTKSandbox_SRCS
   igstkEllipsoidObjectRepresentation.cxx
   igstkCylinderObjectRepresentation.cxx
   igstkMouseTracker.cxx
-  igstkSerialCommunication.cxx
 )
+
+IF( WIN32 )
+  SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} 
+    igstkSerialCommunication.h
+    )
+  SET(IGSTKSandbox_SRCS ${IGSTKSandbox_SRCS} 
+    igstkSerialCommunication.cxx
+    )
+ENDIF( WIN32 )
 
 # Adding the IGSTKSandbox library
 ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS})
