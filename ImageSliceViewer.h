@@ -57,7 +57,7 @@ protected:
   void SetupCamera( void );
 
 
-private:
+protected:
 
   vtkImageActor     * m_Actor;
 
