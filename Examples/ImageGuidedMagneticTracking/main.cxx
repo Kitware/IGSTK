@@ -2,6 +2,9 @@
 
 #include "IGMTracking.h"
 
+#ifdef _MSC_VER
+#pragma warning ( disable : 4786 )
+#endif
 
 int main( int argc,  char * argv [] )
 {
