@@ -4,6 +4,9 @@ SET(IGSTK_TESTS ${CXX_TEST_PATH}/igstkTests)
 SET(IGSTK_TEST_OUTPUT_DIR "${IGSTK_BINARY_DIR}/Testing/Temporary")
 MAKE_DIRECTORY(${IGSTK_TEST_OUTPUT_DIR})
 
+SET(IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR "${IGSTK_TEST_OUTPUT_DIR}/StateMachineDiagrams")
+MAKE_DIRECTORY(${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
+
 #-----------------------------------------------------------------------------
 # Configure the default IGSTK_DATA_ROOT for the location of IGSTK Data.
 FIND_PATH(IGSTK_DATA_ROOT IGSTKData.readme ${IGSTK_SOURCE_DIR}/Testing/Data $ENV{IGSTK_DATA_ROOT})
@@ -75,7 +78,7 @@ ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation
 TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon)
 
 ADD_EXECUTABLE(igstkStateMachineExportTest igstkStateMachineExportTest.cxx)
-ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_TEST_OUTPUT_DIR})
+ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
 TARGET_LINK_LIBRARIES(igstkStateMachineExportTest IGSTK)
 
 # Configure a header needed by igstkSystemInformation.
