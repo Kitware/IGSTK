@@ -27,11 +27,11 @@
 namespace igstk 
 { 
 
-/** \class SceneSpatialObject
-* \brief a SceneSpatialObject has a list of SpatialObjects
+/** \class Scene
+* \brief a Scene has a list of SpatialObjects
 *
-* This class represent a SceneSpatialObject object into which one can
-* plug any kind of spatial object.
+* This class represent a Scene object into which one can
+* plug any kind of spatial object representation.
 *
 * \sa SpatialObject
 */ 
@@ -71,7 +71,7 @@ public:
   GetMacro( Objects, ObjectListType );
 
   /** Returns the number of children currently assigned to the
-   * SceneSpatialObject object.*/ 
+   * Scene object.*/ 
   unsigned int GetNumberOfObjects() const; 
 
   /** Remove all the objects in the scene */
@@ -79,7 +79,7 @@ public:
 
 protected: 
 
-  /** List of the children object plug to the SceneSpatialObject spatial object. */
+  /** List of the children object plug to the Scene spatial object. */
   ObjectListType m_Objects; 
 
   /** constructor */ 

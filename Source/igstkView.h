@@ -46,6 +46,7 @@ class View : public Fl_Gl_Window, public vtkRenderWindowInteractor
 
 private:
     
+  typedef View                                       Self;
   typedef igstk::StateMachine< View >                StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer   ActionType;
   typedef StateMachineType::StateType                StateType;
@@ -73,19 +74,23 @@ protected:
   int DestroyTimer();
   void OnTimer(void);
   void ResetCamera();
+  void DisableInteractions();
+  void EnableInteractions();
+
 
   static void OnTimerGlobal(void *p);
 
 public:
   
-  typedef View                               Self;
   
-  /** void Update the display */
+  /** Update the display in order to render the new content of the scene*/
   void Update();
  
-  /** Disable the interactions */
-  void DisableInteractions();
-  void EnableInteractions();
+  /** Disable user interactions with the window via mouse and keyboard */
+  void RequestDisableInteractions();
+
+  /** Enable user interactions with the window via mouse and keyboard */
+  void RequestEnableInteractions();
 
   /** Request to return the camera to a known position */
   void RequestResetCamera();
@@ -142,6 +147,8 @@ private:
   InputType            m_ValidRemoveActor;
   InputType            m_NullRemoveActor;
   InputType            m_ResetCameraInput;
+  InputType            m_EnableInteractionsInput;
+  InputType            m_DisableInteractionsInput;
 
   /** States for the State Machine */
   StateType            m_IdleState;

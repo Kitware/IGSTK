@@ -50,9 +50,9 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   m_StateMachine.AddInput( m_NullAddActor,   "NullAddActor"  );
   m_StateMachine.AddInput( m_ValidRemoveActor,  "ValidRemoveActor" );
   m_StateMachine.AddInput( m_NullRemoveActor,   "NullRemoveActor"  );
- // m_StateMachine.AddInput( m_ValidSetScene,  "ValidSetScene" );
- // m_StateMachine.AddInput( m_NullSetScene,   "NullSetScene"  );
   m_StateMachine.AddInput( m_ResetCameraInput,   "ResetCameraInput"  );
+  m_StateMachine.AddInput( m_EnableInteractionsInput,   "EnableInteractionsInput"  );
+  m_StateMachine.AddInput( m_DisableInteractionsInput,   "DisableInteractionsInput"  );
 
   m_StateMachine.AddState( m_IdleState,      "IdleState"     );
 
@@ -62,21 +62,16 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   m_StateMachine.AddTransition( m_IdleState, m_NullAddActor,  m_IdleState,          NoAction );
   m_StateMachine.AddTransition( m_IdleState, m_ValidRemoveActor, m_IdleState,  & View::RemoveActor );
   m_StateMachine.AddTransition( m_IdleState, m_NullRemoveActor,  m_IdleState,          NoAction );
-//  m_StateMachine.AddTransition( m_IdleState, m_ValidSetScene, m_IdleState,  & View::SetScene );
-//  m_StateMachine.AddTransition( m_IdleState, m_NullSetScene,  m_IdleState,          NoAction );
   m_StateMachine.AddTransition( m_IdleState, m_ResetCameraInput,  m_IdleState,  & View::ResetCamera );
+  m_StateMachine.AddTransition( m_IdleState, m_EnableInteractionsInput,  m_IdleState,  & View::EnableInteractions );
+  m_StateMachine.AddTransition( m_IdleState, m_DisableInteractionsInput,  m_IdleState,  & View::DisableInteractions );
 
   m_StateMachine.SelectInitialState( m_IdleState );
 
   m_StateMachine.SetReadyToRun();
 
-//  m_SceneAddObjectObserver =  ObserverType::New();
-//  m_SceneAddObjectObserver->SetCallbackFunction(this, & View::UpdateViewFromAddedObject);
-//  m_SceneRemoveObjectObserver =  ObserverType::New();
-//  m_SceneRemoveObjectObserver->SetCallbackFunction(this, & View::UpdateViewFromRemovedObject);
-
-//  m_ActorToBeAdded = 0;
-//  m_ActorToBeRemoved = 0;
+  m_ActorToBeAdded = 0;
+  m_ActorToBeRemoved = 0;
 }
 
 /** Destructor */
@@ -125,102 +120,6 @@ void View::Update()
   this->redraw();
 }
 
-/** Callback function, if the scene has been modified, i.e. an object has been added */
-/*void View::UpdateViewFromAddedObject()
-{
-  if(!m_Scene)
-    {
-    return;
-    }
-
-  ObjectRepresentation* object = m_Scene->GetLastAddedObject();
-
-  if(!object)
-    {
-    return;
-    }
-
-  object->CreateActors();
-
-  ObjectRepresentation::ActorsListType actors = object->GetActors();
-  ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
-  while(actorIt != actors.end())
-    {
-    this->RequestAddActor(*actorIt);
-    actorIt++;
-    }
-
-}*/
-
-/** Callback function, if the scene has been modified, i.e. an object has been removed */
-/*void View::UpdateViewFromRemovedObject()
-{
-  if(!m_Scene)
-    {
-    return;
-    }
-
-  ObjectRepresentation* object = m_Scene->GetLastRemovedObject();
-
-  if(!object)
-    {
-    return;
-    }
-
-  // First we need to remove the actor from the renderer
-  ObjectRepresentation::ActorsListType actors = object->GetActors();
-  ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
-  while(actorIt != actors.end())
-    {
-    this->RequestRemoveActor( *actorIt );
-    actorIt++;
-    }
-
-  // Second we delete the actors created by the object
-  object->DeleteActors();
-
-}*/
-
-/** Request to set the scene */
-/*void View::RequestSetScene(igstk::Scene* scene)
-{
-  m_SceneToBeSet = scene;
-  if( !scene )
-    {
-    m_StateMachine.ProcessInput( m_NullSetScene );
-    }
-  else
-    {
-    m_StateMachine.ProcessInput( m_ValidSetScene );
-    }
-}*/
-
-/** Set the scene */
-/*void View::SetScene()
-{
-  m_Scene = m_SceneToBeSet;
-  m_Scene->AddObserver( SceneAddObjectEvent(),   m_SceneAddObjectObserver);
-  m_Scene->AddObserver( SceneRemoveObjectEvent(),   m_SceneRemoveObjectObserver);
-
-  Scene::ObjectListType objects = m_Scene->GetObjects();
-  Scene::ObjectListConstIterator it        = objects.begin();
-  Scene::ObjectListConstIterator objectEnd = objects.end();
-
-  while( it != objectEnd )
-    {
-    (*it)->CreateActors();
-
-    ObjectRepresentation::ActorsListType actors = (*it)->GetActors();
-    ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
-    while(actorIt != actors.end())
-      {
-      this->RequestAddActor(*actorIt);
-      actorIt++;
-      }
-    it++;
-    }
-}*/
-
 
 /** */
 void View::RequestAddActor( vtkProp3D * actor )
@@ -265,6 +164,19 @@ void View::RemoveActor()
   m_Renderer->RemoveActor( m_ActorToBeRemoved );
 }
 
+
+/** */
+void View::RequestEnableInteractions()
+{
+  m_StateMachine.ProcessInput( m_EnableInteractionsInput );
+}
+
+
+/** */
+void View::RequestDisableInteractions()
+{
+  m_StateMachine.ProcessInput( m_DisableInteractionsInput );
+}
 
 
 /** */

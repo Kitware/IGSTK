@@ -62,13 +62,13 @@ int main(int , char** )
   m_GUI->Display2->Update();
 
   // Enable interactions
-  m_GUI->Display2->EnableInteractions();
+  m_GUI->Display2->RequestEnableInteractions();
 
   m_GUI->Display1->RequestResetCamera();
   m_GUI->Display1->Update();
 
   // Enable interactions
-  m_GUI->Display1->EnableInteractions();
+  m_GUI->Display1->RequestEnableInteractions();
 
   m_GUI->MouseTrackerBox->SetObjectToTrack(ellipsoid);
   m_GUI->MouseTrackerBox->SetView(m_GUI->Display1);
