@@ -30,24 +30,21 @@
 
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkEllipsoidObjectRepresentation.h"
-#include "igstkObjectRepresentation.h"
 #include "igstkScene.h"
 #include "igstkSpatialObject.h"
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
-#include "igstkView.h"
+#include "igstkView2D.h"
+#include "igstkView3D.h"
 
 namespace igstk 
 {
   
-template<class TType>
-class StateMachineDescription
-{
-  typedef TType ClassType;
-public:
-  static void Export( const std::string & outputDirectory )
+template<class ClassType>
+void ExportStateMachineDescription( 
+              const ClassType * instance, 
+              const std::string & outputDirectory )
   {
-  typename ClassType::Pointer instance = ClassType::New();
   std::string filename = outputDirectory+"/";
   filename = filename + "igstk";
   filename = filename + instance->GetNameOfClass();
@@ -64,9 +61,27 @@ public:
   instance->ExportStateMachineDescription( outputFile );
   outputFile.close();
   }
-};
 
 } // end namespace igstk
+
+
+// This is for classes that use SmartPointers
+#define igstkTestExportStateMachine1( type, outputDirectory ) \
+  { \
+  type::Pointer instance = type::New(); \
+  igstk::ExportStateMachineDescription( instance.GetPointer(), outputDirectory ); \
+  }
+
+// This is for classes that do not use SmartPointers and have a default constructor
+#define igstkTestExportStateMachine2( type, outputDirectory ) \
+  { \
+  type * instance = new type; \
+  igstk::ExportStateMachineDescription( instance, outputDirectory ); \
+  delete instance; \
+  }
+
+
+
 
 int main( int argc, char * argv [] )
 {
@@ -77,8 +92,21 @@ int main( int argc, char * argv [] )
     }
 
   std::cout << "Output directory = " << outputDirectory << std::endl;
+  
+  // This is for classes that use SmartPointers
+  igstkTestExportStateMachine1( igstk::CylinderObjectRepresentation, outputDirectory );
+  igstkTestExportStateMachine1( igstk::EllipsoidObjectRepresentation, outputDirectory );
+  igstkTestExportStateMachine1( igstk::Scene, outputDirectory );
+  igstkTestExportStateMachine1( igstk::SpatialObject, outputDirectory );
+  igstkTestExportStateMachine1( igstk::Tracker, outputDirectory );
+  igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory );
 
-  igstk::StateMachineDescription< igstk::SpatialObject >::Export( outputDirectory );
+  // The View classes don't use SmartPointer and don't have a default constructor.
+  igstk::View2D view2D(0,0, 100, 100, "dummy view for testing");
+  igstk::ExportStateMachineDescription( &view2D, outputDirectory ); 
+
+  igstk::View3D view3D(0,0, 100, 100, "dummy view for testing");
+  igstk::ExportStateMachineDescription( &view3D, outputDirectory ); 
 
 
   return EXIT_SUCCESS;
