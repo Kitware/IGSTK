@@ -1,5 +1,13 @@
 SUBDIRS( 
-    ApplicationModel
-    LiverTumorSegmentation
+  ApplicationModel
+  LiverTumorSegmentation
+  )
+
+
+IF(WIN32)
+  SUBDIRS( 
     ImageGuidedMagneticTracking
-)
+    )
+ENDIF(WIN32)
+
+
