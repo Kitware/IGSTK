@@ -216,7 +216,7 @@ void SerialCommunicationForLinux::ClearBuffersAndClosePortProcessing( void )
   if (m_OutputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_OutputBuffer;
   m_OutputBuffer = NULL;
-  this->CloseCommunicationPortProcessing();
+  this->ClosePortProcessing();
 }
 
 void SerialCommunicationForLinux::ClosePortProcessing( void )
