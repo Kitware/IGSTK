@@ -172,6 +172,13 @@ public:
     }
 
 
+  void ExportTransitions( std::ostream & ostr ) const
+    {
+    m_StateMachine.ExportTransitions( ostr );
+    }
+
+
+
 protected:
 
   // Reaction methods that will be invoked during the 
@@ -262,6 +269,13 @@ int igstkStateMachineTest(int argc, char * argv [])
   tester2.SelectDrink();
   tester2.InsertChange();
   tester2.SelectDrink();
+
+  
+  std::cout << std::endl << std::endl;
+  std::cout << "Printing out the State Machine description in dot format" << std::endl;
+  std::cout << std::endl << std::endl;
+
+  tester2.ExportTransitions( std::cout );
 
 
   return EXIT_SUCCESS;

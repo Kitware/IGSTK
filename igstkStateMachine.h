@@ -19,6 +19,7 @@
 #define __igstk_StateMachine_h
 
 #include <string>
+#include <iostream>
 
 namespace igstk
 {
@@ -123,6 +124,10 @@ public:
    void SetInputDescriptor( InputType input, const InputDescriptorType & descriptor );
    void SetInputDescriptor( InputType input, const char *  descriptor );
 
+
+   /** Export the schematic description of the state machine to a stream.
+       This method use the format required as input by the "dot" tool from graphviz. */
+   void ExportTransitions( std::ostream & ostr ) const;
 
 
 private:
