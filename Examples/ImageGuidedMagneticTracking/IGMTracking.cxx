@@ -810,7 +810,8 @@ void IGMTracking::OnMotionTracking( void )
 	static   int run = 0;
 	bool firstpos = true;
 	float HomePos[3], d[3], dis;
-	float toolPositionInImageSpace[3], refPositionInImageSpace[3];
+//	float toolPositionInImageSpace[3];
+	float refPositionInImageSpace[3];
 
 	if (_beginthread(CheckKeyPress, 0, NULL) != -1)
 	{
@@ -883,8 +884,8 @@ void IGMTracking::OnMotionTracking( void )
 //			m_CoronalViewer.m_ToolPositionMarker.SetTipAndDirection(toolPositionInImageSpace,anotherPositionInImageSpace);
 //			m_SaggitalViewer.m_ToolPositionMarker.SetTipAndDirection(toolPositionInImageSpace,anotherPositionInImageSpace);
 			
-			sprintf(m_StringBuffer, "%4.3f   %4.3f   %4.3f\n", toolPositionInImageSpace[0], toolPositionInImageSpace[1], toolPositionInImageSpace[2]);
-			printf( m_StringBuffer );
+//			sprintf(m_StringBuffer, "%4.3f   %4.3f   %4.3f\n", toolPositionInImageSpace[0], toolPositionInImageSpace[1], toolPositionInImageSpace[2]);
+//			printf( m_StringBuffer );
 
 //			this->SyncAllViews( toolPositionInImageSpace );
 			
