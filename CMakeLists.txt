@@ -57,6 +57,8 @@ SET(IGSTK_SRCS
   ImageSliceViewer.cxx
   vtkFlRenderWindowInteractor.cxx
   InteractorObserver.cxx
+  ThresholdLevelSetSegmentationModule.cxx
+  LiverTumorSegmentationBase.cxx
   )
 
 
