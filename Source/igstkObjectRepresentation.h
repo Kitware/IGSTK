@@ -24,7 +24,6 @@
 #include <vector>
 #include <igstkMacros.h>
 #include <itkSpatialObject.h>
-#include <igstkObjectProperty.h>
 #include <itkObject.h>
 #include <vtkProp3D.h>
 
@@ -64,9 +63,6 @@ public:
   /** Add an actor to the list */
   void AddActor( vtkProp3D * );
 
-  /** Get the object property */
-  ObjectProperty * GetProperty();
-
   /** Return the SpatialObjects */
   GetMacro( SpatialObjects, SpatialObjectsListType );
 
@@ -75,6 +71,18 @@ public:
 
   /** Return the number of children */
   unsigned int GetNumberOfChildren() const;
+
+  /** Set the color */
+  void SetColor(float r, float g, float b);
+
+  /** Get each color component */
+  float GetRed() {return m_Color[0];}
+  float GetGreen() {return m_Color[1];}
+  float GetBlue() {return m_Color[2];}
+
+  /** Set/Get the opacity */
+  SetMacro(Opacity,float);
+  GetMacro(Opacity,float);
 
 protected:
 
@@ -88,8 +96,8 @@ private:
 
   ActorsListType           m_Actors;
   SpatialObjectsListType   m_SpatialObjects;
-  ObjectProperty           m_Property;
-
+  float                    m_Color[3];
+  float                    m_Opacity;
 };
 
 } // end namespace igstk

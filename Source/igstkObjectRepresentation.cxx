@@ -22,6 +22,10 @@ namespace igstk
 /** Constructor */
 ObjectRepresentation::ObjectRepresentation()
 {
+  m_Color[0] = 1.0;
+  m_Color[1] = 1.0;
+  m_Color[2] = 1.0;
+  m_Opacity = 1.0;
 } 
 
 /** Destructor */
@@ -44,13 +48,6 @@ ObjectRepresentation::GetNumberOfChildren() const
   return m_SpatialObjects.size();
 }
 
-/** Return the Property used for rendering */
-ObjectProperty * 
-ObjectRepresentation::GetProperty()
-{
-  return & m_Property;
-}
-
 /** Add an actor to the actors list */
 void
 ObjectRepresentation::AddActor( vtkProp3D * actor )
@@ -58,11 +55,26 @@ ObjectRepresentation::AddActor( vtkProp3D * actor )
   m_Actors.push_back( actor );
 }
 
+/** Set the color */
+void ObjectRepresentation::SetColor(float r, float g, float b)
+{
+  if(m_Color[0] == r && m_Color[1] == g && m_Color[2] == b)
+    {
+    return;
+    }
+  m_Color[0] = r;
+  m_Color[1] = g;
+  m_Color[2] = b;
+  this->Modified();
+}
+
 
 /** Print Self function */
 void ObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << indent << "Color: " << m_Color[0] << " : " << m_Color[1] << " : " << m_Color[2] << std::endl;
+  os << indent << "Opacity: " << m_Opacity << std::endl;
 }
 
 } // end namespace igstk

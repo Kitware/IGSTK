@@ -84,11 +84,11 @@ void EllipsoidObject::CreateActors()
   ellipsoidSource->SetThetaResolution( 10 );
   ellipsoidSource->SetPhiResolution( 10 );
  
-  ellipsoid->GetProperty()->SetColor(this->GetProperty()->GetRed(),
-                                     this->GetProperty()->GetGreen(),
-                                     this->GetProperty()->GetBlue());
+  ellipsoid->GetProperty()->SetColor(this->GetRed(),
+                                     this->GetGreen(),
+                                     this->GetBlue());
 
-  ellipsoid->GetProperty()->SetOpacity(this->GetProperty()->GetOpacity());
+  ellipsoid->GetProperty()->SetOpacity(this->GetOpacity());
 
   ellipsoidMapper->SetInput( ellipsoidSource->GetOutput() );
   ellipsoid->SetMapper(ellipsoidMapper);

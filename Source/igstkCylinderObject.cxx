@@ -56,17 +56,17 @@ void CylinderObject::CreateActors()
   cylinderSource->SetHeight(m_Height);
   cylinderSource->SetResolution(10);
  
-  cylinder->GetProperty()->SetColor(this->GetProperty()->GetRed(),
-                                     this->GetProperty()->GetGreen(),
-                                     this->GetProperty()->GetBlue()); 
+  cylinder->GetProperty()->SetColor(this->GetRed(),
+                                     this->GetGreen(),
+                                     this->GetBlue()); 
         
-  cylinder->GetProperty()->SetOpacity(this->GetProperty()->GetOpacity()); 
+  cylinder->GetProperty()->SetOpacity(this->GetOpacity()); 
   cylinderMapper->SetInput(cylinderSource->GetOutput());
   cylinder->SetMapper( cylinderMapper );
   cylinderSource->Delete();
 
   // We should check if the actor doesn't exist
-    this->AddActor( cylinder );
+  this->AddActor( cylinder );
   cylinderMapper->Delete();
 }
 
