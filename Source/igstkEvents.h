@@ -22,7 +22,11 @@
 namespace igstk 
 {
 
-itkEventMacro( PositionModifiedEvent, itk::UserEvent );
+itkEventMacro( IGSTKEvent,               itk::UserEvent );
+itkEventMacro( PositionModifiedEvent,    IGSTKEvent );
+itkEventMacro( OrientationModifiedEvent, IGSTKEvent );
+itkEventMacro( GeometryModifiedEvent,    IGSTKEvent );
+itkEventMacro( PropertyModifiedEvent,    IGSTKEvent );
 
 }
 

@@ -26,6 +26,7 @@
 #include <itkObject.h>
 #include <igstkSpatialObject.h>
 #include <vtkProp3D.h>
+#include <itkCommand.h>
 
 
 namespace igstk
@@ -77,6 +78,7 @@ public:
   /** Update the position of the visual representation by using the information
    * from the Spatial Object. */
   void UpdatePositionFromGeometry();  
+  void UpdateOrientationFromGeometry();  
    
 
   /** Has the object been modified */
@@ -88,11 +90,10 @@ protected:
   ~ObjectRepresentation( void );
 
   /** Set the spatial object for this class */
-  SetMacro(SpatialObject, SpatialObjectType *);
+  void SetSpatialObject( const SpatialObjectType *);
 
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
-  SpatialObjectType::ConstPointer  m_SpatialObject;
 
 private:
 
@@ -100,6 +101,14 @@ private:
   float                       m_Color[3];
   float                       m_Opacity;
   unsigned long               m_LastMTime;
+
+  SpatialObjectType::ConstPointer  m_SpatialObject;
+
+  typedef itk::SimpleMemberCommand< Self >   ObserverType;
+
+  ObserverType::Pointer       m_PositionObserver;
+  ObserverType::Pointer       m_OrientationObserver;
+
 };
 
 } // end namespace igstk

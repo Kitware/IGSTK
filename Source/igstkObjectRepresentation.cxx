@@ -15,7 +15,8 @@
 
 =========================================================================*/
 #include "igstkObjectRepresentation.h" 
-#include <vtkMatrix4x4.h>
+#include "vtkMatrix4x4.h"
+#include "igstkEvents.h"
 
 namespace igstk 
 { 
@@ -29,6 +30,10 @@ ObjectRepresentation::ObjectRepresentation()
   m_Opacity = 1.0;
   m_SpatialObject = NULL;
   m_LastMTime = 0;
+  m_PositionObserver    = ObserverType::New();
+  m_OrientationObserver = ObserverType::New();
+  m_PositionObserver->SetCallbackFunction(    this, & ObjectRepresentation::UpdatePositionFromGeometry    );
+  m_OrientationObserver->SetCallbackFunction( this, & ObjectRepresentation::UpdateOrientationFromGeometry );
 } 
 
 /** Destructor */
@@ -52,6 +57,19 @@ bool ObjectRepresentation::IsModified() const
   return false;
 }
 
+
+/** Set the Spatial Object */
+void ObjectRepresentation::SetSpatialObject( const SpatialObjectType * spatialObject )
+{
+  m_SpatialObject = spatialObject;
+  if( m_SpatialObject )
+    {
+    m_SpatialObject->AddObserver( PositionModifiedEvent(),    m_PositionObserver    );
+    m_SpatialObject->AddObserver( OrientationModifiedEvent(), m_OrientationObserver );
+    }
+}
+
+
 /** Set the color */
 void ObjectRepresentation::SetColor(float r, float g, float b)
 {
@@ -63,6 +81,37 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
   m_Color[1] = g;
   m_Color[2] = b;
   this->Modified();
+}
+
+
+/** Update the object representation (i.e vtkActors). Maybe we should check also the transform
+ *  modified time. */
+void ObjectRepresentation::UpdateOrientationFromGeometry()
+{
+  SpatialObject::MatrixType itkMatrix = m_SpatialObject->GetMatrix();
+  SpatialObject::VectorType offset    = m_SpatialObject->GetOffset();
+ 
+  vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
+  for(unsigned int i=0;i<3;i++)
+  {
+    for(unsigned int j=0;j<3;j++)
+    {
+      vtkMatrix->SetElement(i,j,itkMatrix.GetVnlMatrix().get(i,j));   
+    }
+
+    vtkMatrix->SetElement(i,3,offset[i]/100);
+  }
+
+  // Update all the actors
+  ActorsListType::iterator it = m_Actors.begin();
+  while(it != m_Actors.end())
+  {  
+    (*it)->SetUserMatrix(vtkMatrix);
+    it++;
+  }
+
+  // Update the modified time
+  m_LastMTime = this->GetMTime();
 }
 
 

@@ -29,9 +29,9 @@ CylinderObjectRepresentation::CylinderObjectRepresentation()
 {
   // We create the ellipse spatial object
   m_CylinderSpatialObject = NULL;
-  m_SpatialObject  = m_CylinderSpatialObject;
+  this->SetSpatialObject( m_CylinderSpatialObject );
   m_CylinderSource = vtkCylinderSource::New();
-  m_Observer       = ObserverType::New();
+  m_GeometryObserver       = ObserverType::New();
 } 
 
 /** Destructor */
@@ -49,16 +49,19 @@ void CylinderObjectRepresentation::SetCylinder( const CylinderSpatialObjectType 
 {
   // We create the ellipse spatial object
   m_CylinderSpatialObject = cylinder;
-  m_SpatialObject = m_CylinderSpatialObject;
+  this->SetSpatialObject( m_CylinderSpatialObject );
 
-  m_CylinderSource->SetCenter(0, 0, 0);
-  m_CylinderSource->SetRadius(m_CylinderSpatialObject->GetRadius());
-  m_CylinderSource->SetHeight(m_CylinderSpatialObject->GetHeight());
-  m_CylinderSource->SetResolution(10);
- 
-  m_CylinderSpatialObject->AddObserver( itk::AnyEvent(), m_Observer );
+  if( cylinder != NULL )
+    {
+    m_CylinderSource->SetCenter(0, 0, 0);
+    m_CylinderSource->SetRadius(m_CylinderSpatialObject->GetRadius());
+    m_CylinderSource->SetHeight(m_CylinderSpatialObject->GetHeight());
+    m_CylinderSource->SetResolution(10);
+   
+    m_CylinderSpatialObject->AddObserver( GeometryModifiedEvent(), m_GeometryObserver );
+    }
 
-  m_Observer->SetCallbackFunction( this, & CylinderObjectRepresentation::UpdateRepresentationFromGeometry );
+  m_GeometryObserver->SetCallbackFunction( this, & CylinderObjectRepresentation::UpdateRepresentationFromGeometry );
 } 
 
 

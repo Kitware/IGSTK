@@ -28,10 +28,9 @@ EllipsoidObjectRepresentation::EllipsoidObjectRepresentation()
 {
   // We create the ellipse spatial object
   m_EllipsoidObject = NULL;
-  m_SpatialObject = m_EllipsoidObject;
+  this->SetSpatialObject( m_EllipsoidObject );
   m_EllipsoidSource = vtkSuperquadricSource::New();
   m_GeometryObserver = ObserverType::New();
-  m_PositionObserver = ObserverType::New();
 } 
 
 /** Destructor */
@@ -59,20 +58,21 @@ void EllipsoidObjectRepresentation::SetEllipsoid( const EllipsoidObjectType * el
 {
   // We create the ellipse spatial object
   m_EllipsoidObject = ellipsoid;
-  m_SpatialObject = m_EllipsoidObject;
+  this->SetSpatialObject( m_EllipsoidObject );
 
-  m_EllipsoidSource->SetCenter(0, 0, 0);
+  if( m_EllipsoidSource != NULL )
+    {
+    m_EllipsoidSource->SetCenter(0, 0, 0);
 
-  EllipsoidObjectType::ArrayType radius = m_EllipsoidObject->GetRadius();
-  m_EllipsoidSource->SetScale( radius[0], radius[1], radius[2] );
-  m_EllipsoidSource->SetThetaResolution( 10 );
-  m_EllipsoidSource->SetPhiResolution( 10 );
- 
-  m_EllipsoidObject->AddObserver( itk::AnyEvent(), m_GeometryObserver );
-  m_EllipsoidObject->AddObserver( PositionModifiedEvent(), m_PositionObserver );
+    EllipsoidObjectType::ArrayType radius = m_EllipsoidObject->GetRadius();
+    m_EllipsoidSource->SetScale( radius[0], radius[1], radius[2] );
+    m_EllipsoidSource->SetThetaResolution( 10 );
+    m_EllipsoidSource->SetPhiResolution( 10 );
+   
+    m_EllipsoidObject->AddObserver( GeometryModifiedEvent(), m_GeometryObserver );
+    }
 
   m_GeometryObserver->SetCallbackFunction( this, & EllipsoidObjectRepresentation::UpdateRepresentationFromGeometry );
-  m_PositionObserver->SetCallbackFunction( this, & ObjectRepresentation::UpdatePositionFromGeometry );
 } 
 
 

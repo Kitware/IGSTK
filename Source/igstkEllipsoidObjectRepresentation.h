@@ -79,7 +79,6 @@ private:
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
 
   ObserverType::Pointer          m_GeometryObserver;
-  ObserverType::Pointer          m_PositionObserver;
 
   /** update the visual representation with changes in the geometry */
   void UpdateRepresentationFromGeometry();
