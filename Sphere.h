@@ -5,6 +5,11 @@
 #include "vtkSphereSource.h" 
 #include "vtkPolyDataMapper.h" 
 
+	/** \class Sphere
+	    \brief 
+      \warning
+	    \sa Get back to this class to remove conversion from double to float needed for VTK 4.2 (not for VTK 4.4)
+  */
 class Sphere
 {
 public:

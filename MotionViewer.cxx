@@ -207,8 +207,8 @@ namespace ISIS
 			return;
 		}
 		
-		double spacing[3];
-		double origin[3];
+		float spacing[3];
+		float origin[3];
 		int   dimensions[3];
 		
 		image->GetSpacing(spacing);

@@ -51,19 +51,26 @@ void Sphere::SetRadius( const double rad)
 Sphere &Sphere::operator=( const Sphere &src )
 {
 	this->SetRadius( src.m_Sphere->GetRadius());
-	this->SetCenter( src.m_Sphere->GetCenter());
+  float ftmp[3];
+  src.m_Sphere->GetCenter( ftmp );
+	this->SetCenter( ftmp[0], ftmp[1], ftmp[2] );
 	return *this;
 }
 
 
 void Sphere::SetCenter( double pos[3] )
 {
-	m_Sphere->SetCenter( pos );
+	m_Sphere->SetCenter( pos[0], pos[1], pos[2] );
 }
 
 void Sphere::GetCenter( double pos[3] )
 {
-	m_Sphere->GetCenter( pos );
+  float ftmp[3];
+	m_Sphere->GetCenter( ftmp );
+  for(unsigned int i=0; i<3; i++)
+    {
+      pos[i] = ftmp[i];
+    }
 }
 
 void Sphere::SetCenter( const double x, const double y, const double z )
