@@ -14,7 +14,7 @@ Application
 {
   m_AxialViewer.SetOrientation(    ISIS::ImageSliceViewer::Axial    );
   m_CoronalViewer.SetOrientation(  ISIS::ImageSliceViewer::Coronal  );
-  m_SaggitalViewer.SetOrientation( ISIS::ImageSliceViewer::Saggital );
+  m_SagittalViewer.SetOrientation( ISIS::ImageSliceViewer::Sagittal );
 
   m_ShiftScaleImageFilter = vtkImageShiftScale::New();
 
@@ -32,9 +32,9 @@ Application
   m_CoronalViewer.AddObserver(ISIS::ClickedPointEvent(), m_CoronalViewerCommand);
 
 
-  m_SaggitalViewerCommand = itk::SimpleMemberCommand<Application>::New();
-  m_SaggitalViewerCommand->SetCallbackFunction(this, &Application::ProcessSaggitalViewInteraction);
-  m_SaggitalViewer.AddObserver(ISIS::ClickedPointEvent(), m_SaggitalViewerCommand);
+  m_SagittalViewerCommand = itk::SimpleMemberCommand<Application>::New();
+  m_SagittalViewerCommand->SetCallbackFunction(this, &Application::ProcessSagittalViewInteraction);
+  m_SagittalViewer.AddObserver(ISIS::ClickedPointEvent(), m_SagittalViewerCommand);
   
   m_DicomReaderCommand = itk::SimpleMemberCommand<Application>::New();
   m_DicomReaderCommand->SetCallbackFunction(this, &Application::ProcessDicomReaderInteraction);
@@ -63,15 +63,15 @@ Application
   mainWindow->show();
   axialView->show();
   coronalView->show();
-  saggitalView->show();
+  sagittalView->show();
 
   m_AxialViewer.SetInteractor( axialView );
   m_CoronalViewer.SetInteractor( coronalView );
-  m_SaggitalViewer.SetInteractor( saggitalView );
+  m_SagittalViewer.SetInteractor( sagittalView );
 
   axialView->Initialize();
   coronalView->Initialize();
-  saggitalView->Initialize();
+  sagittalView->Initialize();
 
 }
 
@@ -160,7 +160,7 @@ Application
 
   m_AxialViewer.SetInput(    m_ShiftScaleImageFilter->GetOutput() );
   m_CoronalViewer.SetInput(  m_ShiftScaleImageFilter->GetOutput() );
-  m_SaggitalViewer.SetInput( m_ShiftScaleImageFilter->GetOutput() );
+  m_SagittalViewer.SetInput( m_ShiftScaleImageFilter->GetOutput() );
 
   const unsigned int numberOfZslices = m_LoadedVolume->GetBufferedRegion().GetSize()[2];
   const unsigned int numberOfYslices = m_LoadedVolume->GetBufferedRegion().GetSize()[1];
@@ -174,13 +174,13 @@ Application
   coronalViewSlider->value( numberOfYslices / 2 );
   this->SelectCoronalSlice( numberOfYslices / 2 );
 
-  saggitalViewSlider->bounds( 0.0, numberOfXslices-1 );
-  saggitalViewSlider->value( numberOfXslices / 2 );
-  this->SelectSaggitalSlice( numberOfXslices / 2 );
+  sagittalViewSlider->bounds( 0.0, numberOfXslices-1 );
+  sagittalViewSlider->value( numberOfXslices / 2 );
+  this->SelectSagittalSlice( numberOfXslices / 2 );
 
   m_AxialViewer.Render();
   m_CoronalViewer.Render();
-  m_SaggitalViewer.Render();
+  m_SagittalViewer.Render();
   
 }
 
@@ -210,10 +210,10 @@ Application
 
 void 
 Application
-::SelectSaggitalSlice( int slice )
+::SelectSagittalSlice( int slice )
 {
-  m_SaggitalViewer.SelectSlice( slice );
-  saggitalView->redraw();
+  m_SagittalViewer.SelectSlice( slice );
+  sagittalView->redraw();
   Fl::check();
 }
 
@@ -255,9 +255,9 @@ Application
 
 void  
 Application
-::ProcessSaggitalViewInteraction( void )
+::ProcessSagittalViewInteraction( void )
 {
-  m_SaggitalViewer.GetSelectPoint( m_SeedPoint );
+  m_SagittalViewer.GetSelectPoint( m_SeedPoint );
   this->SyncAllViews();
 }
 
@@ -281,17 +281,17 @@ Application
     {
     axialViewSlider->value(    index[2]  );
     coronalViewSlider->value(  index[1]  );
-    saggitalViewSlider->value( index[0]  );
+    sagittalViewSlider->value( index[0]  );
 
     this->SelectAxialSlice(    index[2] );
     this->SelectCoronalSlice(  index[1] );
-    this->SelectSaggitalSlice( index[0] );
+    this->SelectSagittalSlice( index[0] );
     }
 
   // Sync the selected point in all the views even if it is outside the image
   m_AxialViewer.SelectPoint(    m_SeedPoint[0], m_SeedPoint[1], m_SeedPoint[2] );
   m_CoronalViewer.SelectPoint(  m_SeedPoint[0], m_SeedPoint[1], m_SeedPoint[2] );
-  m_SaggitalViewer.SelectPoint( m_SeedPoint[0], m_SeedPoint[1], m_SeedPoint[2] );
+  m_SagittalViewer.SelectPoint( m_SeedPoint[0], m_SeedPoint[1], m_SeedPoint[2] );
 
 }
 

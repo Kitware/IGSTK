@@ -1,13 +1,13 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0103 
+version 1.0104 
 header_name {.h} 
 code_name {.cxx}
 class ApplicationGUI {open : {public ApplicationBase}
 } {
   Function {ApplicationGUI()} {} {
     Fl_Window mainWindow {
-      label {ISIS - Application} selected
-      xywh {455 38 1013 1009} resizable
+      label {ISIS - Application} open
+      xywh {7 0 1013 746} type Double resizable
       code0 {\#include "ApplicationBase.h"} visible
     } {
       Fl_Button {} {
@@ -40,14 +40,14 @@ class ApplicationGUI {open : {public ApplicationBase}
         callback {this->SelectCoronalSlice( static_cast<int>( o->value() ) );}
         xywh {958 25 20 445} maximum 100 step 1
       }
-      Fl_Box saggitalView {
+      Fl_Box sagittalView {
         label Saggital
         xywh {515 500 440 445} box DOWN_FRAME align 2
         code0 {\#include "vtkFlRenderWindowInteractor.h"}
         class vtkFlRenderWindowInteractor
       }
-      Fl_Value_Slider saggitalViewSlider {
-        callback {this->SelectSaggitalSlice( static_cast<int>( o->value() ) );}
+      Fl_Value_Slider sagittalViewSlider {
+        callback {this->SelectSagittalSlice( static_cast<int>( o->value() ) );}
         xywh {959 500 20 445} maximum 100 step 1
       }
       Fl_Button {} {
@@ -71,7 +71,7 @@ class ApplicationGUI {open : {public ApplicationBase}
   } {}
   Function {SelectCoronalSlice( int )} {open return_type {virtual void}
   } {}
-  Function {SelectSaggitalSlice( int )} {open return_type {virtual void}
+  Function {SelectSagittalSlice( int )} {selected return_type {virtual void}
   } {}
   Function {LoadDICOM()} {return_type {virtual void}
   } {}
