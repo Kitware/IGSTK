@@ -34,7 +34,8 @@ Scene::Scene()
   m_StateMachine.AddInput( m_NullAddObject,      "NullAddObject"  );
   m_StateMachine.AddInput( m_ExistingAddObject,  "ExistingAddObject" );
   m_StateMachine.AddInput( m_ValidRemoveObject,  "ValidRemoveObject" );
-  m_StateMachine.AddInput( m_NullRemoveObject,   "NullRemoveAObject"  );
+  m_StateMachine.AddInput( m_NullRemoveObject,   "NullRemoveObject"  );
+  m_StateMachine.AddInput( m_RemoveAllObjects,   "RemoveAllObjects"  );
   m_StateMachine.AddInput( m_InexistingRemoveObject,  "InexistingRemoveObject" );
 
   m_StateMachine.AddState( m_IdleState,      "IdleState"     );
