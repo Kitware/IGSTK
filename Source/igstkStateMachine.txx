@@ -50,6 +50,27 @@ template<class TClass>
 StateMachine< TClass >
 ::~StateMachine()
 {
+  // Release memory from Transitions container
+  typedef typename TransitionContainer::iterator  TransitionIterator;
+  TransitionIterator transitionItr = m_Transitions.begin();
+  TransitionIterator transitionEnd = m_Transitions.end();
+  while( transitionItr != transitionEnd )
+    {
+    delete transitionItr->second;
+    ++transitionItr;
+    }
+  m_Transitions.clear();
+
+  // Release memory from Actions container
+  typedef typename ActionContainer::iterator  ActionIterator;
+  ActionIterator actionsItr = m_Actions.begin();
+  ActionIterator actionsEnd = m_Actions.end();
+  while( actionsItr != actionsEnd )
+    {
+    delete actionsItr->second;
+    ++actionsItr;
+    }
+  m_Actions.clear();
 
 }
 
