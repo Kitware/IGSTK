@@ -145,10 +145,10 @@ ImageSliceViewer
 ::SetInput( vtkImageData * image )
 {
   m_Actor->SetInput( image );
-  m_StateMachine->SetInput( "ImageData" );
-  m_StateMachine->StateTransition();
-  m_StateMachine->SetInput( "SetUpCamera" );
-  m_StateMachine->StateTransition();
+  m_StateMachine.SetInput( "ImageData" );
+  m_StateMachine.StateTransition();
+  m_StateMachine.SetInput( "SetUpCamera" );
+  m_StateMachine.StateTransition();
 }
 
 
@@ -157,8 +157,8 @@ ImageSliceViewer
 ::SetZoomFactor( double factor )
 {
   m_ZoomFactor = factor;
-  m_StateMachine->SetInput( "SetUpCamera" );
-  m_StateMachine->StateTransition();
+  m_StateMachine.SetInput( "SetUpCamera" );
+  m_StateMachine.StateTransition();
 }
 
 
@@ -183,8 +183,8 @@ ImageSliceViewer
 ::SetOrientation( OrientationType orientation )
 {
   m_Orientation = orientation;
-  m_StateMachine->SetInput( "SetUpCamera" );
-  m_StateMachine->StateTransition();
+  m_StateMachine.SetInput( "SetUpCamera" );
+  m_StateMachine.StateTransition();
 }
 
 
@@ -194,8 +194,8 @@ ImageSliceViewer
 ::SelectSlice( int slice )
 {
   m_SliceNum = slice;
-  m_StateMachine->SetInput( "SetSlice" );
-  m_StateMachine->StateTransition();
+  m_StateMachine.SetInput( "SetSlice" );
+  m_StateMachine.StateTransition();
 }
 
 
@@ -206,8 +206,8 @@ ImageSliceViewer
 {
   m_SelectPoint[0] = x ; 
   m_SelectPoint[1] = y ;
-  m_StateMachine->SetInput( "SetPoint" );
-  m_StateMachine->StateTransition();
+  m_StateMachine.SetInput( "SetPoint" );
+  m_StateMachine.StateTransition();
 }
 
 
