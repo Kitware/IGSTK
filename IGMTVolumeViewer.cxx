@@ -18,12 +18,6 @@ IGMTVolumeViewer
 	m_RenderWindow->AddRenderer(m_Renderer);
   m_RenderWindow->SetDesiredUpdateRate( 25 );
 
-  m_Root = vtkAssembly::New();
-  m_Renderer->AddActor(m_Root);
-
-  m_ProbeRoot = vtkAssembly::New();
-  m_Renderer->AddActor(m_ProbeRoot);
-
   m_ResampleRateRayCastLOD = 0.5;
 
   m_ResampleRateTex2DLOD = 0.25;
@@ -83,15 +77,13 @@ IGMTVolumeViewer
 	m_Volume->SetProperty(m_Property);
   m_Volume->SetMapper(m_RayCastMapper);
   m_Volume->VisibilityOff();
-//	m_Renderer->AddProp(m_Volume);
-  m_Root->AddPart(m_Volume);
+	m_Renderer->AddProp(m_Volume);
 
   m_LOD = vtkLODProp3D::New();
   m_LOD->AddLOD(m_RayCastMapper, m_Property, 0.0);
   m_LOD->AddLOD(m_Tex2DMapper, m_Property, 0.0);
   m_LOD->VisibilityOff();
-//  m_Renderer->AddProp(m_LOD);
-  m_Root->AddPart(m_LOD);
+  m_Renderer->AddProp(m_LOD);
 
   m_ImageResampleMarchingCubes = vtkImageResample::New();
   m_ImageResampleMarchingCubes->SetAxisMagnificationFactor(0, 0.3);
@@ -123,25 +115,21 @@ IGMTVolumeViewer
   m_ContourActor->GetProperty()->SetAmbient(0.2);
   m_ContourActor->GetProperty()->SetDiffuse(0.8);
   m_ContourActor->VisibilityOff();
-//	m_Renderer->AddActor(m_ContourActor);
-  m_Root->AddPart(m_ContourActor);
+	m_Renderer->AddActor(m_ContourActor);
 
 	m_Outline = vtkOutlineFilter::New();
 
 	m_OutlineMapper = vtkPolyDataMapper::New();
 
 	m_OutlineActor = vtkActor::New();
-//	m_Renderer->AddActor(m_OutlineActor);
-  m_Root->AddPart(m_OutlineActor);
+	m_Renderer->AddActor(m_OutlineActor);
 
   m_Probe.SetColor( 0.5294, 0.8078, 0.9804);
   m_Probe.SetRadius( 2.0f );
   m_Probe.SetLength( 70.0f);
 
   m_Probe.GetVTKActorPointer()->VisibilityOff();
-//  m_Renderer->AddActor( m_Probe.GetVTKActorPointer() );
-  m_ProbeRoot->AddPart( (vtkProp3D*)m_Probe.GetVTKActorPointer() );
-  m_ProbeRoot->VisibilityOff();
+  m_Renderer->AddActor( m_Probe.GetVTKActorPointer() );
 
 	m_Interactor = NULL;
 	m_ImageData = NULL;
@@ -318,15 +306,6 @@ IGMTVolumeViewer
 	m_OutlineActor->SetMapper(m_OutlineMapper);
 
 	m_Renderer->SetBackground(0, 0, 1);
-
-  float* center = m_Root->GetCenter();
-  float* pos = m_Root->GetPosition();
-
-  m_Root->AddPosition(- center[0], - center[1], - center[2]);
-  m_ProbeRoot->AddPosition(- center[0], - center[1], - center[2]);
-
-  center = m_Root->GetCenter();
-  pos = m_Root->GetPosition();
 }
 
 void 
@@ -418,12 +397,10 @@ IGMTVolumeViewer
   if (s == 1)
   {
     m_Probe.GetVTKActorPointer()->VisibilityOn();
-    m_ProbeRoot->VisibilityOn();
   }
   else
   {
     m_Probe.GetVTKActorPointer()->VisibilityOff();
-    m_ProbeRoot->VisibilityOff();
   }
 }
 
@@ -527,30 +504,34 @@ IGMTVolumeViewer
 
 void 
 IGMTVolumeViewer
-::SetMCProgressMethod(void (__cdecl *f)(void *), void* arg)
+::SetMCProgressMethod(void (*f)(void *), void* arg)
 {
-  m_MarchingCubes->SetProgressMethod(f, arg);
+//  THIS METHOD HAS BEEN DEPRECATED
+//  m_MarchingCubes->SetProgressMethod(f, arg);
 }
 
 void 
 IGMTVolumeViewer
-::SetMCEndMethod(void (__cdecl *f)(void *), void* arg)
+::SetMCEndMethod(void (*f)(void *), void* arg)
 {
-  m_MarchingCubes->SetEndMethod(f, arg);
+//  THIS METHOD HAS BEEN DEPRECATED
+//  m_MarchingCubes->SetEndMethod(f, arg);
 }
 
 void 
 IGMTVolumeViewer
-::SetDecProgressMethod(void (__cdecl *f)(void *), void* arg)
+::SetDecProgressMethod(void (*f)(void *), void* arg)
 {
-  m_DecimatePro->SetProgressMethod(f, arg);
+//  THIS METHOD HAS BEEN DEPRECATED
+//  m_DecimatePro->SetProgressMethod(f, arg);
 }
 
 void 
 IGMTVolumeViewer
-::SetSmoothProgressMethod(void (__cdecl *f)(void *), void* arg)
+::SetSmoothProgressMethod(void (*f)(void *), void* arg)
 {
-  m_SmoothFilter->SetProgressMethod(f, arg);
+//  THIS METHOD HAS BEEN DEPRECATED
+//  m_SmoothFilter->SetProgressMethod(f, arg);
 }
 
 void 
