@@ -17,6 +17,8 @@
 
 #include "igstkCommunication.h"
 
+#include <iostream>
+
 namespace igstk
 {
 
@@ -26,6 +28,16 @@ Communication::Communication(void)
 
 Communication::~Communication(void)
 {
+}
+
+void Communication::OpenCommunication(const void * )
+{
+  std::cerr << "Communication::OpenCommunication() method is not implemented yet" << std::endl;
+}
+
+void Communication::CloseCommunication(void)
+{
+  std::cerr << "Communication::CloseCommunication() method is not implemented yet" << std::endl;
 }
 
 }
