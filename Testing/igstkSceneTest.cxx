@@ -67,7 +67,23 @@ int igstkSceneTest( int, char * [] )
   object->SetOffset(0,1,2);
   object->GetOffset();
   object->GetMatrix();
+  object->GetNameOfClass();
   std::cout << "[PASSED]" << std::endl;
+
+  // Testing Removing all object
+  scene->RequestAddObject(ellipsoid); 
+  std::cout << "Testing Removing all object: ";
+  scene->RequestRemoveAllObjects(); 
+  if(scene->GetNumberOfObjects() != 0)
+    { 
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "[PASSED]" << std::endl;
+
+  // Testing printself
+  scene->Print(std::cout);
+  scene->GetNameOfClass();
 
   return EXIT_SUCCESS;
 }

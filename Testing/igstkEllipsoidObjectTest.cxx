@@ -91,8 +91,11 @@ int igstkEllipsoidObjectTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
   // Testing PrintSelf()
+  ellipsoidRepresentation->SetEllipsoid(ellipsoidObject);
   ellipsoidRepresentation->Print(std::cout);
   ellipsoidObject->Print(std::cout);
+  ellipsoidObject->GetNameOfClass();
+  ellipsoidRepresentation->GetNameOfClass();
 
   // Testing CreateActors()
   std::cout << "Testing actors : ";
@@ -116,7 +119,9 @@ int igstkEllipsoidObjectTest( int, char * [] )
     }
   std::cout << "[PASSED]" << std::endl;
 
-
+  std::cout << "Testing Set/GetMatrix(): ";
+  const igstk::SpatialObject::MatrixType matrix = ellipsoidObject->GetMatrix();
+  std::cout << "[PASSED]" << std::endl;
 
   std::cout << "Test [DONE]" << std::endl;
   return EXIT_SUCCESS;

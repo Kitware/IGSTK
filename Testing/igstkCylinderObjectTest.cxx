@@ -87,6 +87,9 @@ int igstkCylinderObjectTest( int, char * [] )
 
   // Testing PrintSelf()
   cylinderRepresentation->Print(std::cout);
+  cylinderRepresentation->GetNameOfClass();
+  cylinderObject->GetNameOfClass();
+  cylinderObject->Print(std::cout);
 
   // Testing CreateActors()
   std::cout << "Testing actors : ";
