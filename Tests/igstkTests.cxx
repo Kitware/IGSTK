@@ -17,4 +17,5 @@ REGISTER_TEST(LiverTumorSegmentationBaseTest);
 REGISTER_TEST(MotionViewerTest);
 REGISTER_TEST(igstkStateMachineTest);
 REGISTER_TEST(ICPRegistrationTest);
+REGISTER_TEST(igstkEllipseEstimatorTest);
 }
