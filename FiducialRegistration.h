@@ -37,7 +37,7 @@ public:
 
 	bool AreDestinationFiducialsInitialized( void );
 
-protected:
+public:
 
 	unsigned int		m_NumberOfFiducials;
 
