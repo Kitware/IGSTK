@@ -93,7 +93,7 @@ int igstkEllipsoidObjectTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
   // Testing PrintSelf()
-  ellipsoidRepresentation->SetEllipsoid(ellipsoidObject);
+  ellipsoidRepresentation->RequestSetEllipsoidObject(ellipsoidObject);
   ellipsoidRepresentation->Print(std::cout);
   ellipsoidObject->Print(std::cout);
   ellipsoidObject->GetNameOfClass();

@@ -33,7 +33,7 @@ int main(int , char** )
   
   // Create the ellipsoid representation
   igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
-  ellipsoidRepresentation->SetEllipsoid( ellipsoid );
+  ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
   ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
   ellipsoidRepresentation->SetOpacity(1.0);
 
