@@ -18,6 +18,8 @@ INCLUDE_DIRECTORIES (
   ${IGSTK_BINARY_DIR}/Testing
   )
 
+ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
+
 ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
 
 ADD_TEST(igstkStateMachineErrorsTest ${IGSTK_TESTS} igstkStateMachineErrorsTest)
@@ -31,6 +33,7 @@ ADD_TEST(igstkTrackerToolTest ${IGSTK_TESTS} igstkTrackerToolTest)
 ADD_TEST(igstkTrackerPortTest ${IGSTK_TESTS} igstkTrackerPortTest)
 
 SET(BasicTests_SRCS
+  igstkMultipleOutputTest
   igstkStateMachineTest
   igstkStateMachineErrorsTest
   igstkStateMachineTokenTest

@@ -9,6 +9,7 @@
 
 void RegisterTests()
 {
+    REGISTER_TEST(igstkMultipleOutputTest);
     REGISTER_TEST(igstkStateMachineTest);
     REGISTER_TEST(igstkStateMachineErrorsTest);
     REGISTER_TEST(igstkStateMachineTokenTest);
