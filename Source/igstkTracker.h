@@ -205,11 +205,23 @@ protected:
 
   /** Vector of all tool ports on the tracker */
   TrackerPortVectorType     m_Ports;
+  
+  /** The "Communication" instance */
+  CommunicationType        *m_pCommunication;
+ 
+  /** Results of post-transition event actions by the state machine */
+  InputType                *m_pSetUpCommunicationResultInput;
+  InputType                *m_pActivateToolsResultInput;
+  InputType                *m_pStartTrackingResultInput;
+  InputType                *m_pStopTrackingResultInput;
+  InputType                *m_pCloseTrackingResultInput;
+
+  InputType                m_SetUpCommunicationInput;
+  InputType                m_CommunicationEstablishmentSuccessInput;
+  InputType                m_CommunicationEstablishmentFailureInput;
 
 private:
 
-  /** The "Communication" instance */
-  CommunicationType        *m_pCommunication;
 
   /** The "StateMachine" instance */
   StateMachineType         m_StateMachine;
@@ -226,10 +238,6 @@ private:
   StateType                m_AttemptingToCloseTrackingState;
 
   /** List of Inputs */
-  InputType                m_SetUpCommunicationInput;
-  InputType                m_CommunicationEstablishmentSuccessInput;
-  InputType                m_CommunicationEstablishmentFailureInput;
-
   InputType                m_ActivateToolsInput;
   InputType                m_ToolsActivationSuccessInput;
   InputType                m_ToolsActivationFailureInput;
@@ -250,13 +258,6 @@ private:
   InputType                m_CloseTrackingSuccessInput;
   InputType                m_CloseTrackingFailureInput;
 
-  /** Results of post-transition event actions by the state machine */
-  InputType                *m_pSetUpCommunicationResultInput;
-  InputType                *m_pActivateToolsResultInput;
-  InputType                *m_pStartTrackingResultInput;
-  InputType                *m_pStopTrackingResultInput;
-  InputType                *m_pCloseTrackingResultInput;
-    
   /** The Logger instance */
   LoggerType               *m_pLogger;
 };
