@@ -25,10 +25,14 @@ ImageSliceViewer
 
   m_Renderer->AddActor( m_Actor );
 
+  m_Actor->Delete();
+
   m_Camera = m_Renderer->GetActiveCamera();
   m_Camera->ParallelProjectionOn();
 
   m_RenderWindow->AddRenderer( m_Renderer );
+
+  m_Renderer->Delete();
 
   this->SetOrientation( Axial );
 
@@ -51,21 +55,6 @@ ImageSliceViewer
 ImageSliceViewer
 ::~ImageSliceViewer()
 {
-  if( m_Actor )
-    {
-    m_Actor->Delete();
-    }   
-
-  if( m_Renderer )
-    {
-    m_Renderer->Delete();
-    }   
-
-  if( m_Camera )
-    {
-    m_Camera->Delete();
-    }   
-
   if( m_RenderWindow )
     {
     m_RenderWindow->Delete();
