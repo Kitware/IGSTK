@@ -969,6 +969,8 @@ void IGMTracking::SetImageFiducial( unsigned int fiducialNumber )
 	sprintf(m_StringBuffer, "Image Fiducials %d set at ( %4.3f, %4.3f, %4.3f)", 
 		fiducialNumber + 1, m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
 	this->PrintMessage(m_StringBuffer);
+
+  m_FantasticRegistration.AddFixedPoint(point);
 }
 
 
@@ -979,6 +981,20 @@ void IGMTracking::SetTrackerFiducial( unsigned int fiducialNumber )
 	sprintf(m_StringBuffer, "Tracker Fiducials %d set at ( %4.3f, %4.3f, %4.3f)", 
 		fiducialNumber + 1, m_NeedlePosition[0], m_NeedlePosition[1], m_NeedlePosition[2] );
 	this->PrintMessage(m_StringBuffer);
+
+  switch (m_ToolTrackingMode)
+  {
+  case 1:
+    m_FantasticRegistration.SetMovingPoint(fiducialNumber, m_NeedlePosition);
+    break;
+  case 2:
+    for (unsigned int i = 0; i < 4; i++)
+    {
+//      m_FantasticRegistration.SetMovingPoint(i, m_CoilPosition[i]);
+      m_FantasticRegistration.AddMovingPoint(m_CoilPosition[i]);
+    }   
+    break;
+  } 
 }
 
 	
@@ -1140,11 +1156,60 @@ void CheckKeyPress(void *dummy)
 
 bool IGMTracking::OnRegister( void )
 {
-	bool ret = this->RegisterImageWithTrackerAndComputeRMSError();
+  unsigned int i, j, k, idx[4], minidx[4], id;
+  double err, minerr = 100000;
+  bool ret = true;
+  char mes[128];
 
-  this->AppendInfo(m_StringBuffer);
-  
-  return ret;
+  switch (m_ToolTrackingMode)
+  {
+  case 1:
+    ret = this->RegisterImageWithTrackerAndComputeRMSError();
+    this->AppendInfo(m_StringBuffer);
+    break;
+  case 2:
+    id = 0;
+    for (i = 0; i < 2; i++)
+    {
+      idx[0] = i;
+      idx[1] = 1 - i;
+      for (j = 2; j < 4; j++)
+      {
+        idx[2] = j;
+        idx[3] = 5 - j;
+        for (k = 0; k < 4; k++)
+        {
+          m_FiducialRegistration.SetSourceFiducial(k, m_CoilPosition[idx[k]]);
+        }
+        this->RegisterImageWithTrackerAndComputeRMSError();
+        err = m_FiducialRegistration.GetRMSError();
+        sprintf(mes, "The %drd registration error:%.2f", id, err);
+        this->AppendInfo(mes);
+        if (err < minerr)
+        {
+          memcpy(minidx, idx, 4 * sizeof(unsigned int));
+          minerr = err;
+        }
+        id++;
+      }
+    }
+    
+    for (k = 0; k < 4; k++)
+    {
+      m_FiducialRegistration.SetSourceFiducial(k, m_CoilPosition[minidx[k]]);
+    }
+    this->RegisterImageWithTrackerAndComputeRMSError();
+    err = m_FiducialRegistration.GetRMSError();
+    break;
+  }  
+
+  /*
+  m_FantasticRegistration.StartRegistration();
+
+//  double value = m_FantasticRegistration.m_LMOptimizer->GetValue();
+  IGSTK::FantasticRegistration::CAParametersType para = m_FantasticRegistration.m_PointSetToPointSetRegistration->GetLastTransformParameters();
+  */
+  return true;
 }
 
 

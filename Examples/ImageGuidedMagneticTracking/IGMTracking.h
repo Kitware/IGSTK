@@ -8,6 +8,7 @@
 #include "MotionViewer.h"
 #include "IGMTVolumeViewer.h"
 #include "IGMTTargetViewer.h"
+#include "FantasticRegistration.h"
 #include <process.h>
 
 #include "itkCommand.h"
@@ -252,6 +253,8 @@ private:
   itk::SimpleMemberCommand<IGMTracking>::Pointer		  m_ResampleImagePostEndCommand;
 
 	AuroraTracker	m_AuroraTracker;
+
+  IGSTK::FantasticRegistration m_FantasticRegistration;
 
 	int				m_ToolHandle, m_ToolHandle1, m_ToolHandle2;
 
