@@ -38,6 +38,8 @@ namespace igstk
 
 class TrackerTool
 {
+public:
+
     typedef itk::Point< double, 3 >  PositionType;
     typedef itk::Versor<double>      OrientationType;
     typedef double                   ErrorType;
@@ -56,7 +58,7 @@ public:
     SetMacro( Error, ErrorType );
 
 
-protected:
+private:
 
     /** Position of the tool */
     PositionType       m_Position;
