@@ -19,6 +19,14 @@ ADD_TEST(DicomImageReaderTest ${IGSTK_TESTS} --compare
 	${IGSTK_TEST_OUTPUT_DIR}/DicomImageReader_pngInput.png
 	)
 
+ADD_TEST(DicomImageReaderTestDirectory ${IGSTK_TESTS} 
+	DicomImageReaderTestDirectory 
+	${IGSTK_DATA_ROOT}/Baseline/DicomDirectory
+	2
+	1.3.12.2.1107.5.1.4.24515.4.0.6770456214062487
+	1.3.12.2.1107.5.1.4.24515.4.0.6771144821591421
+	)
+
 
 
 ADD_TEST(RegistrationCTTest ${IGSTK_TESTS} RegistrationCTTest)
@@ -28,6 +36,7 @@ ADD_TEST(ImageSliceViewerTest ${IGSTK_TESTS} ImageSliceViewerTest)
 
 SET(BasicTests_SRCS
   DicomImageReaderTest.cxx
+  DicomImageReaderTestDirectory.cxx
   RegistrationCTTest.cxx
   ImageSliceViewerTest.cxx
   )
