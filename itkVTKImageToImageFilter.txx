@@ -61,7 +61,6 @@ template <class TOutputImage>
 VTKImageToImageFilter<TOutputImage>
 ::~VTKImageToImageFilter()
 {
-  m_Exporter->Delete();
 }
 
 

@@ -61,7 +61,6 @@ template <class TInputImage>
 ImageToVTKImageFilter<TInputImage>
 ::~ImageToVTKImageFilter()
 {
-  m_Importer->Delete();
 }
 
 
