@@ -27,6 +27,7 @@ SET(BasicTests_SRCS
   igstkCylinderObjectTest.cxx
   igstkSceneTest.cxx
   igstkMouseTrackerTest.cxx
+  itkCylinderSpatialObjectTest.cxx
   )
 
 ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${BasicTests_SRCS})
