@@ -25,7 +25,7 @@ SET (CVS_WEB_URL "http://${DROP_SITE}/cgi-bin/viewcvs.cgi/")
 SET (CVS_WEB_CVSROOT "IGSTK")
 
 SET (USE_DOXYGEN "On")
-#SET (DOXYGEN_URL "http://${DROP_SITE}/IGSTK/index.html" )
+SET (DOXYGEN_URL "http://public.kitware.com/IGSTK/NightlyDoc/" )
 
 SET (USE_GNATS "On")
 SET (GNATS_WEB_URL "http://public.kitware.com/Bug/index.php")
