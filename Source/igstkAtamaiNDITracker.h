@@ -19,7 +19,8 @@
 #define __igstk_AtamaiNDITracker_h_
 
 #include "igstkTracker.h"
-#include "vtkNDITracker.h"
+#include "..\Utilities\Atamai\AtamaiTracking\vtkNDITracker.h"
+#include "..\Utilities\Atamai\AtamaiTracking\vtkTrackerTool.h"
 
 namespace igstk
 {
@@ -28,7 +29,7 @@ namespace igstk
 
 */
 
-class AtamaiNDITracker : public Tracker
+  class AtamaiNDITracker : public igstk::Tracker
 {
 public:
 
@@ -38,6 +39,10 @@ public:
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
+  typedef vtkTrackerTool               TrackerToolType;
+  typedef TrackerToolType*             TrackerToolPointer;
+  typedef std::vector< TrackerToolPointer > TrackerToolVectorType;
+
   /**  Run-time type information (and related methods). */
   igstkTypeMacro(AtamaiNDITracker, Object);
 
@@ -46,11 +51,23 @@ public:
 
 protected:
 
-  vtkNDITracker *m_VTKTracker;
+  vtkNDITracker       *m_VTKTracker;
+
+  TrackerToolVectorType m_Tools;
 
   AtamaiNDITracker(void);
 
   virtual ~AtamaiNDITracker(void);
+
+  virtual void AttemptToSetUpCommunicationProcessing( void );
+
+  virtual void AttemptToSetUpToolsProcessing( void );
+
+  virtual void AttemptToStartTrackingProcessing( void );
+
+  virtual void AttemptToStopTrackingProcessing( void );
+
+  virtual void UpdateStatusProcessing( void );
 
 private:
 
