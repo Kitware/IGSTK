@@ -3,7 +3,9 @@
 
 Sphere::Sphere( void)
 {
-	m_Sphere      = vtkSphereSource::New();
+	m_Sphere = vtkSphereSource::New();
+  m_Sphere->SetThetaResolution(36);
+  m_Sphere->SetPhiResolution(36);
 	
 	m_SphereActor = vtkActor::New();  
 	
@@ -45,6 +47,8 @@ Sphere::~Sphere( void)
 void Sphere::SetRadius( const double rad)
 {
 	m_Sphere->SetRadius( rad );	
+
+  m_CurRadius = m_Radius = rad;
 }
 
 
@@ -90,4 +94,40 @@ void Sphere::SetColor( const double r, const double g, const double b )
 vtkActor* Sphere::GetVTKActorPointer( void )
 {
 	return m_SphereActor;
+}
+
+void Sphere::SetOpacity(double op)
+{
+  m_SphereActor->GetProperty()->SetOpacity(op);
+}
+
+void Sphere::UpdateRadius()
+{
+  m_CurRadius += m_Radius / 6.0;
+
+  if (m_CurRadius > m_Radius)
+  {
+    m_CurRadius = 0;
+  }
+
+  m_Sphere->SetRadius( m_CurRadius );	
+}
+
+void Sphere::VisibilityOn()
+{
+  m_SphereActor->VisibilityOn();
+}
+
+void Sphere::VisibilityOff()
+{
+  m_SphereActor->VisibilityOff();
+}
+
+void Sphere::AddPosition(float x, float y, float z)
+{
+  float pos[3];
+
+  m_Sphere->GetCenter(pos);
+  m_Sphere->SetCenter(pos[0] + x, pos[1] + y, pos[2] + z);
+
 }

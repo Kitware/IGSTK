@@ -13,6 +13,11 @@
 class Sphere
 {
 public:
+	void AddPosition(float x, float y, float z);
+	void VisibilityOff();
+	void VisibilityOn();
+	void UpdateRadius();
+	void SetOpacity(double op);
 
 	Sphere( void );
 
@@ -36,9 +41,13 @@ protected:
 
 	bool				m_ClipOn;
 
+  double      m_Radius;
+
+  double      m_CurRadius;
+
 	vtkActor			* m_SphereActor;
 	
-    vtkSphereSource		* m_Sphere;
+  vtkSphereSource		* m_Sphere;
 	
 	vtkPolyDataMapper	* m_SphereMapper;
 };

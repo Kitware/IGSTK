@@ -38,7 +38,7 @@ namespace ISIS
 		
 		void SetupCamera( void );
 		
-	protected:
+	public:
 
 		int m_Width, m_Height;
 
