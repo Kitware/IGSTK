@@ -24,11 +24,16 @@ ADD_TEST(igstkStateMachineErrorsTest ${IGSTK_TESTS} igstkStateMachineErrorsTest)
 
 ADD_TEST(igstkBasicTrackerTest ${IGSTK_TESTS} igstkBasicTrackerTest)
 
+ADD_TEST(igstkTrackerToolTest ${IGSTK_TESTS} igstkTrackerToolTest)
+
+ADD_TEST(igstkTrackerPortTest ${IGSTK_TESTS} igstkTrackerPortTest)
 
 SET(BasicTests_SRCS
   igstkStateMachineTest
   igstkStateMachineErrorsTest
   igstkBasicTrackerTest
+  igstkTrackerToolTest
+  igstkTrackerPortTest
   )
 
 ADD_EXECUTABLE(igstkTests igstkTests.cxx ${BasicTests_SRCS})
