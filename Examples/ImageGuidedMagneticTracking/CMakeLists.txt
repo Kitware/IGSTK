@@ -26,8 +26,9 @@ FLTK_WRAP_UI (IGMTracking
 	PortParametersGUI.fl
 	LayoutGUI.fl
 	ProbeParametersGUI.fl
-  	ImageFusionGUI.fl
+  ImageFusionGUI.fl
 	SegParametersGUI.fl
+  RegParametersGUI.fl
 	)
 
 TARGET_LINK_LIBRARIES (IGMTracking IGSTK)
