@@ -95,8 +95,9 @@ void SpatialObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 /** Request setting the ITK spatial object that provide internal functionalities. */
 void SpatialObject::RequestSetSpatialObject( SpatialObjectType * spatialObject )
 {
-  std::cout << "SpatialObject::RequestSetSpatialObject() " << std::endl;
+  
   m_SpatialObjectToBeSet = spatialObject;
+
   if( m_SpatialObjectToBeSet.IsNull() )
     {
     m_StateMachine.ProcessInput( m_SpatialObjectNullInput );
@@ -112,7 +113,6 @@ void SpatialObject::RequestSetSpatialObject( SpatialObjectType * spatialObject )
  * method should only be called from the StateMachine */
 void SpatialObject::SetSpatialObject()
 {
-  std::cout << "SpatialObject::SetSpatialObject()" << std::endl;
   m_SpatialObject = m_SpatialObjectToBeSet;
 }
 
@@ -122,31 +122,22 @@ void SpatialObject::SetSpatialObject()
  * tracked by a TrackerTool. */
 void SpatialObject::RequestSetTransform(const Transform & transform )
 {
-  std::cout << "SpatialObject::RequestSetTransform" << std::endl;
-  std::cout << " translation = " << transform.GetTranslation() << std::endl;
   m_TransformToBeSet = transform;
-  std::cout << " assigned = " << m_TransformToBeSet.GetTranslation() << std::endl;
   m_StateMachine.ProcessInput( m_ManualTransformInput );
-  std::cout << "after processing the m_ManualTransformInput" << std::endl;
 }
 
 /** Set the full Transform. Only to be called by the State Machine. */
 void SpatialObject::SetTransform()
 {
-  std::cout << " Setting transform to " << m_TransformToBeSet.GetTranslation() << std::endl;
   m_Transform = m_TransformToBeSet;
   if( m_SpatialObject.IsNotNull() )
     {
     Transform::VectorType translation = m_Transform.GetTranslation();
-    std::cout << "translation = " << translation << std::endl;
     m_SpatialObject->GetObjectToWorldTransform()->SetOffset( translation );
     Transform::VersorType rotation = m_Transform.GetRotation();
-    std::cout << "rotation = " << rotation << std::endl;
     Transform::VersorType::MatrixType matrix = rotation.GetMatrix();
     m_SpatialObject->GetObjectToWorldTransform()->SetMatrix( matrix );
-    std::cout << "Before the event " << std::endl;
     this->InvokeEvent( PositionModifiedEvent() );
-    std::cout << "After the event " << std::endl;
     }
 }
 
