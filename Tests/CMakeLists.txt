@@ -38,6 +38,8 @@ ADD_TEST(DicomImageReaderTestDirectory ${IGSTK_TESTS}
 
 
 
+ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
+
 ADD_TEST(RegistrationCTTest ${IGSTK_TESTS} RegistrationCTTest)
 
 ADD_TEST(ImageSliceViewerTest ${IGSTK_TESTS} ImageSliceViewerTest)
@@ -53,6 +55,7 @@ SET(BasicTests_SRCS
   ImageSliceViewerTest.cxx
   LiverTumorSegmentationBaseTest.cxx
   MotionViewerTest.cxx
+  igstkStateMachineTest
   )
 
 ADD_EXECUTABLE(igstkTests igstkTests.cxx ${BasicTests_SRCS})
@@ -61,6 +64,7 @@ TARGET_LINK_LIBRARIES(igstkTests IGSTK)
 ADD_EXECUTABLE(SystemInformation SystemInformation.cxx)
 ADD_TEST(SystemInformation ${EXECUTABLE_OUTPUT_PATH}/SystemInformation)
 TARGET_LINK_LIBRARIES(SystemInformation vtkCommon)
+
 
 # Configure a header needed by SystemInformation.
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/SystemInformation.h.in"
