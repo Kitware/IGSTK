@@ -22,9 +22,10 @@
 #include "itkObject.h"
 #include "itkEventObject.h"
 
+#include "igstkCommunication.h"
 #include "igstkLogger.h"
 #include "igstkMacros.h"
-#include "igstkCommunication.h"
+#include "igstkStateMachine.h"
 
 namespace igstk
 {
@@ -40,8 +41,9 @@ namespace igstk
 
 class SerialCommunication : public Communication, public itk::Object
 {
-  const unsigned int m_ReadBufferSize;
-  const unsigned int m_WriteBufferSize;
+  const unsigned int m_ReadBufferSize; // read buffer size in bytes
+  const unsigned int m_WriteBufferSize;// write buffer size in bytes
+  const unsigned int m_PortRestSpan; // period of rest in communication, in secs.
 
   typedef igstk::Logger   LoggerType;
 
@@ -70,9 +72,23 @@ public:
 
   typedef HANDLE HandleType;
 
-  SerialCommunication();
+  typedef igstk::StateMachine< SerialCommunication > StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer ActionType;
+  typedef StateMachineType::StateType              StateType;
+  typedef StateMachineType::InputType              InputType;
 
-  ~SerialCommunication();
+  /** Data type for communication */
+  typedef std::string  CommunicationDataType;
+
+  typedef SerialCommunication            Self;
+  typedef itk::SmartPointer<Self>        Pointer;
+  typedef itk::SmartPointer<const Self>  ConstPointer;
+
+  /**  Run-time type information (and related methods). */
+  itkTypeMacro(Tracker, Object);
+
+  /** Method for creation of a reference counted object. */
+  NewMacro(Self);  
 
   GetMacro(BaudRate, BaudRateType);
 
@@ -97,10 +113,21 @@ public:
   /** The method OpenCommunication sets up communication as per the data
   provided. */
 
-  void OpenCommunication( const void *data );
+  void OpenCommunication( const void *data  = NULL );
 
   /** The method CloseCommunication closes the communication. */
   void CloseCommunication( void );
+
+  /**Rests communication port by suspending character transmission  
+  and placing the transmission line in a break state, and restarting
+  transmission after a short delay.*/
+  void RestCommunication( void );
+
+  /** Flushes output buffer of any waiting commands to the hardware */
+  void FlushOutputBuffer( void );
+
+  /** SendString method sends the string to the hardware. */
+  void SendString( const CommunicationDataType& message );
 
    /** The SetLogger method is used to attach a logger object to the
    serial communication object for logging. */
@@ -111,24 +138,37 @@ public:
   itkEventMacro( SetupCommunicationParametersFailureEvent, itk::AnyEvent );
   itkEventMacro( SetDataBufferSizeFailureEvent, itk::AnyEvent );
   itkEventMacro( CommunicationTimeoutSetupFailureEvent, itk::AnyEvent );
+  itkEventMacro( RestCommunicationFailureEvent, itk::AnyEvent );
+  itkEventMacro( FlushOutputBufferFailureEvent, itk::AnyEvent );
 
-  // FOLLOWING METHODS WOULD BE MADE PROTECTED LATER 
-  //================================================
+protected:
 
-  /** Opens serial port for communication; portNum 0->COM1, 1->COM2, ... */
-  virtual void OpenCommunicationPort( const unsigned int portNum );
+  SerialCommunication();
 
-  /** Closes serial port , if open for communication */
-  virtual void CloseCommunicationPort( void );
+  ~SerialCommunication();
+
+  /** Opens serial port for communication; */
+  virtual void OpenCommunicationPortProcessing( void );
+
+  /** Closes serial port  */
+  virtual void CloseCommunicationPortProcessing( void );
+  virtual void ClearBuffersAndCloseCommunicationPortProcessing( void );
 
   /** Set up communication time out values. */
-  virtual void SetCommunicationTimeoutParameters( void );
+  virtual void SetCommunicationTimeoutProcessing( void );
 
   /** Sets up communication on the open port as per the communication parameters. */
-  void SetupCommunicationParameters( void );
+  virtual void SetupCommunicationProcessing( void );
 
   /** Set up data buffer size. */
-  virtual void SetDataBufferSizeParameters( void );
+  virtual void SetDataBufferSizeProcessing( void );
+
+  /**Rests communication port by suspending character transmission  
+  and placing the transmission line in a break state, and restarting
+  transmission after a short delay.*/
+  virtual void RestCommunicationProcessing( void );
+
+  virtual void FlushOutputBufferProcessing( void );
 
 private:
 
@@ -185,6 +225,27 @@ private:
   LoggerType     *m_pLogger;
 
   int             m_PortNumber;     // Port Number
+  
+  /** The "StateMachine" instance */
+  StateMachineType         m_StateMachine;
+
+  /** List of States */
+  StateType                m_IdleState;
+  StateType                m_PortOpenState;
+  StateType                m_BufferAllocatedState;
+  StateType                m_CommunicationParametersSetState;
+  StateType                m_PortReadyForCommunicationState;
+
+  /** List of Inputs */
+  InputType                m_OpenPortInput;
+  InputType                m_SetBuffersInput;
+  InputType                m_SetParametersInput;
+  InputType                m_SetTimeoutsInput;
+  InputType                m_ClosePortInput;
+  InputType                m_RestCommunication;
+  InputType                m_FlushOutputBuffer;
+
+//  CommunicationDataType& m_StringToSend;
 
   // OS related variables
   HandleType      m_PortHandle;     // com port handle
