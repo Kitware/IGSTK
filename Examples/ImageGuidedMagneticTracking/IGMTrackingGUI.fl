@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0104 
+version 1.0200 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include "BrowserGUI.h"} {public
@@ -52,8 +52,8 @@ class IGMTrackingGUI {open : {public IGMTrackingBase}
   Function {IGMTrackingGUI():m_FiducialBrowser(this), m_PortParameters(this), m_Layout(this), m_ProbeParameters(this), m_FusionParameters(this), m_SegParameters(this), m_RegParameters(this)} {open
   } {
     Fl_Window mainWindow {
-      label {Image Guided Biopsy and Magnetic Tracking System - ISIS} open
-      xywh {537 191 887 692} type Double align 17 when 1 resizable
+      label {Image Guided Biopsy and Magnetic Tracking System - ISIS}
+      xywh {334 169 887 692} type Double align 17 when 1 resizable
       code0 {\#include "IGMTrackingBase.h"}
       class Fl_Double_Window_Ex visible
     } {
@@ -214,7 +214,7 @@ RecordButton->value(1 - RecordButton->value());}
           }
           menuitem {} {
             label {Load Skeleton}
-            callback {this->OnLoadSkeleton();} selected
+            callback {this->OnLoadSkeleton();}
             xywh {0 0 100 20}
           }
           menuitem {} {
@@ -299,21 +299,21 @@ RecordButton->value(1 - RecordButton->value());}
           xywh {0 0 100 20}
         } {
           menuitem {} {
-            label {Image Shift Setting}
+            label {Window Level}
             callback {char  cvalue[25];
-sprintf(cvalue, "%4.3f", this->GetImageShift());
-const char *str = fl_input("Image Shift", cvalue);
+sprintf(cvalue, "%4.3f", this->GetWindowLevel());
+const char *str = fl_input("Window Level", cvalue);
 if (str!=NULL)
-this->SetImageShift(atof(str));}
+this->SetWindowLevel(atof(str));}
             xywh {0 0 100 20}
           }
           menuitem {} {
-            label {Image Scale Setting}
+            label {Window Width}
             callback {char  cvalue[25];
-sprintf(cvalue, "%4.3f", this->GetImageScale());
-const char *str = fl_input("Image Scale", cvalue);
+sprintf(cvalue, "%4.3f", this->GetWindowWidth());
+const char *str = fl_input("Window Width", cvalue);
 if (str!=NULL)
-this->SetImageScale(atof(str));}
+this->SetWindowWidth(atof(str));}
             xywh {10 10 100 20}
           }
           menuitem {} {
@@ -539,17 +539,17 @@ else
   } {
     code {m_PortParameters.Show();} {}
   }
-  Function {GetImageScale(void)} {return_type {virtual double}
+  Function {GetWindowLevel(void)} {open return_type {virtual double}
   } {
     code {return 1.0f;} {}
   }
-  Function {SetImageScale( double val)} {open return_type {virtual void}
+  Function {SetWindowLevel( double val)} {open return_type {virtual void}
   } {}
-  Function {GetImageShift(void)} {return_type {virtual double}
+  Function {GetWindowWidth(void)} {return_type {virtual double}
   } {
     code {return 1.0f;} {}
   }
-  Function {SetImageShift( double val)} {open return_type {virtual void}
+  Function {SetWindowWidth( double val)} {open selected return_type {virtual void}
   } {}
   Function {OnRegister()} {return_type {virtual bool}
   } {
