@@ -15,13 +15,12 @@ IGMTRegistrationViewer::IGMTRegistrationViewer(void)
   m_FixedPointSetAssembly = vtkAssembly::New();
   m_MovingPointSetAssembly = vtkAssembly::New();
 
-  m_Root->AddPart(m_FixedPointSetAssembly);
-  m_Root->AddPart(m_MovingPointSetAssembly);
+  this->GetRoot()->AddPart(m_FixedPointSetAssembly);
+  this->GetRoot()->AddPart(m_MovingPointSetAssembly);
 }
 
 IGMTRegistrationViewer::~IGMTRegistrationViewer(void)
 {
-  IGMTVolumeViewer::~IGMTVolumeViewer();
 }
 
 void IGMTRegistrationViewer::SetFixedPointSet(PointSetType::Pointer pointset)

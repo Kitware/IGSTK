@@ -12,32 +12,30 @@
 namespace IGSTK
 {
 
-class IGMTRegistrationViewer :
-  public IGMTVolumeViewer
+class IGMTRegistrationViewer : public IGMTVolumeViewer
 {
 public:
 
   typedef itk::PointSet<double, 3> PointSetType;
 
 public:
+  
+  IGMTRegistrationViewer(void);
+  
+  virtual ~IGMTRegistrationViewer(void);
+
+  void SetFixedPointSet(PointSetType::Pointer pointset);
+
+  void SetFixedPointRadius(double radius);
+
+private:
 
   vtkAssembly* m_FixedPointSetAssembly;
   
   vtkAssembly* m_MovingPointSetAssembly;
 
-public:
-
   double m_FixedPointRadius;
 
-public:
-  
-  IGMTRegistrationViewer(void);
-  
-  ~IGMTRegistrationViewer(void);
-
-  void SetFixedPointSet(PointSetType::Pointer pointset);
-
-  void SetFixedPointRadius(double radius);
 
 };
 
