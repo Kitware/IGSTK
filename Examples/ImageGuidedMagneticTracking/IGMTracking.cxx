@@ -44,6 +44,10 @@ IGMTracking::IGMTracking()
 	m_DicomReaderCommand->SetCallbackFunction(this, &IGMTracking::ProcessDicomReaderInteraction);
 	m_DicomVolumeReader.AddObserver( m_DicomReaderCommand );
 
+	m_ProgressCommand = itk::SimpleMemberCommand<IGMTracking>::New();
+	m_ProgressCommand->SetCallbackFunction(this, IGMTracking::ProcessDicomReading);
+	m_DicomVolumeReader.m_Reader->AddObserver(itk::ProgressEvent(), m_ProgressCommand);
+
 	m_Overlay = false;
 	m_ShowVolume = false; //false;//
 	m_EntryPointSelected = false; 
@@ -170,6 +174,7 @@ void IGMTracking::LoadDICOM()
 	
 	// Attempt to read
 	m_DicomVolumeReader.CollectSeriesAndSelectOne();
+
 }
 
 
@@ -973,4 +978,18 @@ void IGMTracking::RecordReference()
 
 		m_ForceRecord = true;
 	}
+}
+
+void IGMTracking::ProcessDicomReading()
+{
+	float f = m_DicomVolumeReader.m_Reader->GetProgress();
+	printf("%.3f\n", f);
+
+	m_ProgressBar->value(f);
+	m_ProgressBar->color(fl_rgb_color((uchar)(255 - f * 255), 0, (uchar)(f * 255)));
+
+	m_ProgressDial->value(f);
+	m_ProgressDial->color(fl_rgb_color((uchar)(255 - f * 255), 0, (uchar)(f * 255)));
+
+	Fl::check();
 }

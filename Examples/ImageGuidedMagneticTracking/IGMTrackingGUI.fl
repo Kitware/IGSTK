@@ -17,11 +17,12 @@ class IGMTrackingGUI {open : {public IGMTrackingBase}
   decl {FiducialBrowserGUI  m_FiducialBrowser;} {public
   }
   decl {MessageWindowGUI m_MessageWindow;} {}
-  Function {IGMTrackingGUI():m_FiducialBrowser(this), m_PortParameters(this)} {} {
+  Function {IGMTrackingGUI():m_FiducialBrowser(this), m_PortParameters(this)} {open
+  } {
     Fl_Window mainWindow {
       label {Image Guided Biopsy and Magnetic Tracking System - ISIS}
-      xywh {-32000 -32000 750 687} type Double align 17 hide resizable
-      code0 {\#include "IGMTrackingBase.h"}
+      xywh {259 47 750 687} type Double align 17 resizable
+      code0 {\#include "IGMTrackingBase.h"} visible
     } {
       Fl_Box AxialView {
         xywh {160 30 280 300} box DOWN_FRAME align 2
@@ -127,7 +128,7 @@ StopTrackingButton->value(1);}
           xywh {7 402 145 25} type Normal
         }
       }
-      Fl_Menu_Bar mainMenuBar {open
+      Fl_Menu_Bar mainMenuBar {open selected
         xywh {0 0 825 25}
       } {
         submenu {} {
@@ -273,6 +274,17 @@ this->SetNeedleRadius(atof(str));}
         code0 {\#include "vtkFlRenderWindowInteractor.h"}
         class vtkFlRenderWindowInteractor
       }
+      Fl_Progress m_ProgressBar {
+        xywh {5 455 150 20}
+        code0 {m_ProgressBar->minimum(0.0f);}
+        code1 {m_ProgressBar->maximum(1.0f);}
+      }
+      Fl_Dial m_ProgressDial {
+        xywh {30 485 100 95}
+        code0 {m_ProgressDial->angle1(0);}
+        code1 {m_ProgressDial->angle2(360);}
+        code2 {m_ProgressDial->type(FL_FILL_DIAL);}
+      }
     }
   }
   Function {~IGMTrackingGUI()} {return_type virtual
@@ -310,8 +322,7 @@ if (str!=NULL)
 {
     IGMTrackingBase::SetNumberOfFiducials(atoi(str));
     NumberFiducialsButton->value(1);
-}} {selected
-    }
+}} {}
   }
   Function {SetFiducial( FiducialBrowserGUI::FIDUCIAL_TYPE type )} {return_type {virtual bool}
   } {

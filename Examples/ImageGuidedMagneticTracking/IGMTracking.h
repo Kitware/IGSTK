@@ -9,6 +9,8 @@
 #include "MotionViewer.h"
 #include <process.h>
 
+#include "itkCommand.h"
+
 class vtkImageShiftScale;
 
 
@@ -21,6 +23,8 @@ public:
 	IGMTracking( void );
 	
 	virtual ~IGMTracking( void );
+
+	void ProcessDicomReading();
 	
 	virtual void Show( void );
 	
@@ -129,6 +133,8 @@ private:
 	itk::SimpleMemberCommand<IGMTracking>::Pointer      m_SaggitalViewerCommand;
 	
 	itk::SimpleMemberCommand<IGMTracking>::Pointer      m_DicomReaderCommand;
+
+	itk::SimpleMemberCommand<IGMTracking>::Pointer		m_ProgressCommand;
 
 	AuroraTracker	m_AuroraTracker;
 
