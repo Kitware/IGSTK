@@ -75,7 +75,6 @@ int main(int,char *[])
       IGSTK_BINARY_DIR "/CMakeCache.txt", 
       IGSTK_BINARY_DIR "/CMakeOutput.log",
       IGSTK_BINARY_DIR "/CMakeError.log",
-      IGSTK_BINARY_DIR "/CMake/CMakeCache.txt", 
       0
     };
 
