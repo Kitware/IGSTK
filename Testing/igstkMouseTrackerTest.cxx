@@ -35,12 +35,12 @@ int igstkMouseTrackerTest( int, char * [] )
   typedef igstk::Logger            LoggerType; 
     
   // logger object created for logging mouse activities
-  LoggerType            logger;
-  logger.AddOutputStream( std::cout );
-  logger.SetPriorityLevel( igstk::Logger::DEBUG );
+  LoggerType::Pointer   logger = LoggerType::New();
+  logger->AddOutputStream( std::cout );
+  logger->SetPriorityLevel( igstk::Logger::DEBUG );
 
   MouseTrackerType::Pointer tracker = MouseTrackerType::New();
-  tracker->SetLogger( &logger );
+  tracker->SetLogger( logger );
   tracker->Initialize();
 
   tracker->StartTracking();

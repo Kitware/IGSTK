@@ -124,9 +124,9 @@ int igstkSerialCommunicationTest( int, char * [] )
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
 
   // logger object created for logging mouse activities
-  LoggerType            logger;
-  logger.AddOutputStream( std::cout );
-  logger.SetPriorityLevel( igstk::Logger::DEBUG );
+  LoggerType::Pointer   logger = LoggerType::New();
+  logger->AddOutputStream( std::cout );
+  logger->SetPriorityLevel( igstk::Logger::DEBUG );
 
   serialComm->AddObserver( igstk::SerialCommunication::OpenPortFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::SetupCommunicationParametersFailureEvent(), my_command);
@@ -145,7 +145,7 @@ int igstkSerialCommunicationTest( int, char * [] )
   serialComm->AddObserver( igstk::SerialCommunication::ReceiveStringReadTimeoutEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::ReceiveStringWaitTimeoutEvent(), my_command);
 
-  serialComm->SetLogger( &logger );
+  serialComm->SetLogger( logger );
 
   serialComm->OpenCommunication();
 
