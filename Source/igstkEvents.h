@@ -27,8 +27,6 @@ itkEventMacro( PositionModifiedEvent,    IGSTKEvent );
 itkEventMacro( OrientationModifiedEvent, IGSTKEvent );
 itkEventMacro( GeometryModifiedEvent,    IGSTKEvent );
 itkEventMacro( PropertyModifiedEvent,    IGSTKEvent );
-itkEventMacro( SceneAddObjectEvent,      IGSTKEvent );
-itkEventMacro( SceneRemoveObjectEvent,   IGSTKEvent );
 
 }
 
