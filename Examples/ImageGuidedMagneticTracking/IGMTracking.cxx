@@ -382,33 +382,33 @@ void IGMTracking::DisplayToolPosition( const bool show)
 
 void IGMTracking::ProcessAxialViewInteraction( void )
 {
-	m_AxialViewer.GetSeedPoint( m_ClickedPoint );
+	m_AxialViewer.GetSelectPoint( m_ClickedPoint );
 	this->SyncAllViews( m_ClickedPoint );
-	m_AxialViewer.SeedPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
-	m_CoronalViewer.SeedPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
-	m_SaggitalViewer.SeedPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );	
+	m_AxialViewer.SelectPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
+	m_CoronalViewer.SelectPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
+	m_SaggitalViewer.SelectPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );	
 	this->DisplaySelectedPosition( true );
 }
 
 
 void IGMTracking::ProcessCoronalViewInteraction( void )
 {
-	m_CoronalViewer.GetSeedPoint( m_ClickedPoint );
+	m_CoronalViewer.GetSelectPoint( m_ClickedPoint );
 	this->SyncAllViews( m_ClickedPoint );
-	m_AxialViewer.SeedPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
-	m_CoronalViewer.SeedPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
-	m_SaggitalViewer.SeedPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );	
+	m_AxialViewer.SelectPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
+	m_CoronalViewer.SelectPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
+	m_SaggitalViewer.SelectPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );	
 	this->DisplaySelectedPosition( true );
 }
 
 
 void IGMTracking::ProcessSaggitalViewInteraction( void )
 {
-	m_SaggitalViewer.GetSeedPoint( m_ClickedPoint );
+	m_SaggitalViewer.GetSelectPoint( m_ClickedPoint );
 	this->SyncAllViews( m_ClickedPoint );
-	m_AxialViewer.SeedPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
-	m_CoronalViewer.SeedPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
-	m_SaggitalViewer.SeedPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );	
+	m_AxialViewer.SelectPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
+	m_CoronalViewer.SelectPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );
+	m_SaggitalViewer.SelectPoint( m_ClickedPoint[0], m_ClickedPoint[1], m_ClickedPoint[2] );	
 	this->DisplaySelectedPosition( true );
 }
 
