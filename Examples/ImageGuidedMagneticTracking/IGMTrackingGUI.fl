@@ -11,31 +11,58 @@ decl {\#include "MessageWindowGUI.h"} {public
 decl {\#include "PortParametersGUI.h"} {public
 } 
 
+decl {\#include "LayoutGUI.h"} {public
+} 
+
+decl {\#include "ProbeParametersGUI.h"} {public
+} 
+
+decl {\#include "ImageFusionGUI.h"} {public
+} 
+
+decl {\#include "Fl_Double_Window_Ex.H"} {public
+} 
+
+decl {\#include "SegParametersGUI.h"} {public
+} 
+
 class IGMTrackingGUI {open : {public IGMTrackingBase}
 } {
   decl {PortParametersGUI m_PortParameters;} {}
   decl {FiducialBrowserGUI  m_FiducialBrowser;} {public
   }
   decl {MessageWindowGUI m_MessageWindow;} {}
-  Function {IGMTrackingGUI():m_FiducialBrowser(this), m_PortParameters(this)} {open
-  } {
+  decl {LayoutGUI m_Layout;} {public
+  }
+  decl {ProbeParametersGUI m_ProbeParameters;} {public
+  }
+  decl {ImageFusionGUI m_FusionParameters;} {public
+  }
+  decl {SegParametersGUI m_SegParameters;} {public
+  }
+  decl {int m_OriginalSize[4][4];} {public
+  }
+  decl {int m_FullSize[4];} {public
+  }
+  Function {IGMTrackingGUI():m_FiducialBrowser(this), m_PortParameters(this), m_Layout(this), m_ProbeParameters(this), m_FusionParameters(this), m_SegParameters(this)} {} {
     Fl_Window mainWindow {
-      label {Image Guided Biopsy and Magnetic Tracking System - ISIS}
-      xywh {549 57 750 687} type Double align 17 resizable
-      code0 {\#include "IGMTrackingBase.h"} visible
+      label {Image Guided Biopsy and Magnetic Tracking System - ISIS} open
+      xywh {297 51 887 692} type Double align 17 when 1 resizable
+      code0 {\#include "IGMTrackingBase.h"}
+      class Fl_Double_Window_Ex visible
     } {
       Fl_Box AxialView {
-        xywh {160 30 280 300} box DOWN_FRAME align 2
+        xywh {290 30 280 300} box DOWN_FRAME align 2
         code0 {\#include "vtkFlRenderWindowInteractor.h"}
         class vtkFlRenderWindowInteractor
       }
       Fl_Value_Slider AxialViewSlider {
         callback {this->SelectAxialSlice( static_cast<int>( o->value() ));}
-        xywh {160 340 280 15} type {Horz Knob} maximum 100 step 1
+        xywh {290 340 280 15} type {Horz Knob} maximum 100 step 1
       }
       Fl_Group {} {
         label Control
-        xywh {2 27 153 413} box DOWN_BOX labelfont 1 labelcolor 184 align 21
+        xywh {0 27 275 333} box DOWN_BOX labelfont 1 labelcolor 184 align 21
       } {
         Fl_Light_Button LoadImageButton {
           label {Load Image}
@@ -43,26 +70,26 @@ class IGMTrackingGUI {open : {public IGMTrackingBase}
 LoadImageButton->value(1);
 TargetPointButton->value(0);
 EntryPointButton->value(0);}
-          xywh {7 49 145 25} type Normal
+          xywh {12 48 120 25} type Normal
         }
         Fl_Light_Button TargetPointButton {
           label {Target Point}
           callback {this->OnTargetPoint();
 TargetPointButton->value(1);}
-          xywh {7 78 145 25} type Normal
+          xywh {11 118 120 25} type Normal
         }
         Fl_Light_Button EntryPointButton {
           label {Entry Point}
           callback {this->OnEntryPoint();
 EntryPointButton->value(1);}
-          xywh {7 107 145 25} type Normal
+          xywh {142 117 120 25} type Normal
         }
         Fl_Light_Button NumberFiducialsButton {
-          label {Number of Fiducials}
+          label {Fiducials Num}
           callback {this->SetNumberOfFiducials();
 ImageFiducialsButton->value(0);
 TrackerFiducialsButton->value(0);}
-          xywh {7 137 145 25} type Normal
+          xywh {10 153 120 25} type Normal
         }
         Fl_Light_Button ImageFiducialsButton {
           label {Image Fiducials}
@@ -71,48 +98,50 @@ if (allFiducialsSet)
 {
     ImageFiducialsButton->value(1);
 }}
-          xywh {7 166 145 25} type Normal
+          xywh {142 152 120 25} type Normal
         }
         Fl_Light_Button InitializeTrackerButton {
           label {Initialize Tracker}
           callback {this->OnInitializeTracker();
 InitializeTrackerButton->value(1);}
-          xywh {7 196 145 25} type Normal
+          xywh {11 186 120 25} type Normal
         }
         Fl_Light_Button ActivateToolsButton {
           label {Activate Tools}
           callback {this->ActivateTools();
 ActivateToolsButton->value(1);}
-          xywh {7 225 145 25} type Normal
+          xywh {142 186 120 25} type Normal
         }
         Fl_Light_Button StartTrackingButton {
           label {Start Tracking}
           callback {this->StartTracking();
 StartTrackingButton->value(1);
 StopTrackingButton->value(0);}
-          xywh {7 254 145 25} type Normal
+          xywh {11 219 120 25} type Normal
         }
         Fl_Light_Button TrackerFiducialsButton {
-          label {Tracker Fiducials}
+          label {Track Fiducials}
           callback {this->OnToolPosition();
 bool allFiducialsSet = this->SetFiducial(FiducialBrowserGUI::TRACKER_TYPE);
 if (allFiducialsSet)
 {
     TrackerFiducialsButton->value(1);
 }}
-          xywh {7 284 145 25} type Normal
+          xywh {142 219 120 25} type Normal
         }
         Fl_Light_Button RegisterButton {
           label Register
-          callback {if (this->RegisterImageWithTrackerAndComputeRMSError())
-    RegisterButton->value(1);}
-          xywh {7 313 145 25} type Normal
+          callback {if (this->OnRegister())
+{
+    RegisterButton->value(1);
+}}
+          xywh {12 252 120 25} type Normal
         }
         Fl_Light_Button OverlayButton {
           label Overlay
           callback {OverlayButton->value(1);
 this->OnOverlay();}
-          xywh {7 343 145 25} type Normal
+          xywh {142 252 120 25} type Normal
         }
         Fl_Light_Button StopTrackingButton {
           label {Stop Tracking}
@@ -120,21 +149,43 @@ this->OnOverlay();}
 StartTrackingButton->value(0);
 OverlayButton->value(0);
 StopTrackingButton->value(1);}
-          xywh {7 372 145 25} type Normal
+          xywh {12 286 120 25} type Normal
         }
         Fl_Light_Button QuitButton {
           label Quit
           callback {this->Quit();}
-          xywh {7 402 145 25} type Normal
+          xywh {12 321 120 25} type Normal
+        }
+        Fl_Light_Button FusionImageButton {
+          label {Fusion Image}
+          callback {this->OnFusionImage();
+FusionImageButton->value(1);}
+          xywh {12 83 120 25} type Normal
+        }
+        Fl_Light_Button SegmentationButton {
+          label Segmentation
+          callback {this->OnSegmentation();
+SegmentationButton->value(1);}
+          xywh {141 83 120 25} type Normal
         }
       }
       Fl_Menu_Bar mainMenuBar {open
-        xywh {0 0 825 25}
+        xywh {0 0 905 25}
       } {
         submenu {} {
-          label File
+          label File open
           xywh {0 0 100 20}
         } {
+          menuitem {} {
+            label {Save Snapshot}
+            callback {this->SaveSnapshot();}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {Save Segmentation Data}
+            callback {this->OnSaveSegmentationData();}
+            xywh {0 0 100 20}
+          }
           menuitem {} {
             label Quit
             callback {this->Quit();}
@@ -187,11 +238,6 @@ StopTrackingButton->value(1);}
           xywh {0 0 100 20}
         } {
           menuitem {} {
-            label {Port Parameters}
-            callback {this->OnPortParameters();}
-            xywh {0 0 100 20}
-          }
-          menuitem {} {
             label {Image Shift Setting}
             callback {char  cvalue[25];
 sprintf(cvalue, "%4.3f", this->GetImageShift());
@@ -210,22 +256,24 @@ this->SetImageScale(atof(str));}
             xywh {10 10 100 20}
           }
           menuitem {} {
-            label {Needle Length}
-            callback {char  cvalue[25];
-sprintf(cvalue, "%4.3f", this->GetNeedleLength());
-const char *str = fl_input("Needle Length", cvalue);
-if (str!=NULL)
-this->SetNeedleLength(atof(str));}
-            xywh {10 10 100 20}
+            label Layout
+            callback {this->OnLayout();}
+            xywh {0 0 100 20}
           }
           menuitem {} {
-            label {Needle Radius}
-            callback {char  cvalue[25];
-sprintf(cvalue, "%4.3f", this->GetNeedleRadius());
-const char *str = fl_input("Needle Radius", cvalue);
-if (str!=NULL)
-this->SetNeedleRadius(atof(str));}
-            xywh {20 20 100 20}
+            label {Probe Parameters}
+            callback {this->OnProbeParameters();}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {Fusion Parameters}
+            callback {this->OnFusionParameters();}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {Segmentation Parameters}
+            callback {this->OnSegParameters();}
+            xywh {0 0 100 20}
           }
         }
         submenu {} {
@@ -249,43 +297,89 @@ this->SetNeedleRadius(atof(str));}
         }
       }
       Fl_Box CoronalView {
-        xywh {454 30 280 300} box DOWN_FRAME align 2
+        xywh {584 30 280 300} box DOWN_FRAME align 2
         code0 {\#include "vtkFlRenderWindowInteractor.h"}
         class vtkFlRenderWindowInteractor
       }
-      Fl_Box SaggitalView {
-        xywh {160 364 280 300} box DOWN_FRAME align 2
+      Fl_Box SagittalView {
+        xywh {290 364 280 300} box DOWN_FRAME align 2
         code0 {\#include "vtkFlRenderWindowInteractor.h"}
         class vtkFlRenderWindowInteractor
       }
-      Fl_Value_Slider SaggitalViewSlider {
-        callback {this->SelectSaggitalSlice( static_cast<int>( o->value() ));}
-        xywh {160 668 280 15} type {Horz Knob} maximum 100 step 1
+      Fl_Value_Slider SagittalViewSlider {
+        callback {this->SelectSagittalSlice( static_cast<int>( o->value() ));}
+        xywh {290 668 280 15} type {Horz Knob} maximum 100 step 1
       }
       Fl_Value_Slider CoronalViewSlider {
         callback {this->SelectCoronalSlice( static_cast<int>( o->value() ));}
-        xywh {454 341 280 15} type {Horz Knob} maximum 100 step 1
+        xywh {584 341 280 15} type {Horz Knob} maximum 100 step 1
       }
       Fl_Box ISISLogo {
-        image {ISIS.gif} xywh {20 593 120 85}
+        image {ISIS.gif} xywh {10 383 260 80}
       }
       Fl_Box VolumeView {
-        xywh {453 364 280 300} box DOWN_FRAME align 2
+        xywh {583 364 280 300} box DOWN_FRAME align 2
         code0 {\#include "vtkFlRenderWindowInteractor.h"}
         class vtkFlRenderWindowInteractor
       }
       Fl_Progress m_ProgressBar {
-        xywh {5 455 150 20}
+        xywh {10 665 265 15}
         code0 {m_ProgressBar->minimum(0.0f);}
         code1 {m_ProgressBar->maximum(1.0f);}
       }
-      Fl_Dial m_ProgressDial {
-        xywh {30 485 100 95}
-        code0 {m_ProgressDial->angle1(0);}
-        code1 {m_ProgressDial->angle2(360);}
-        code2 {m_ProgressDial->type(FL_FILL_DIAL);}
+      Fl_Value_Slider VolumeViewSlider {
+        callback {this->SetVolumeThreshold( static_cast<int>( o->value() ));}
+        xywh {584 667 280 15} type {Horz Knob} when 4 maximum 100 step 1
+      }
+      Fl_Box MotionView {
+        xywh {593 374 280 300} box DOWN_FRAME align 2
+        code0 {\#include "vtkFlRenderWindowInteractor.h"}
+        class vtkFlRenderWindowInteractor
+      }
+      Fl_Box {m_ppBox[0]} {
+        label {Box 0}
+        xywh {291 30 280 300} hide
+      }
+      Fl_Box {m_ppBox[1]} {
+        label {Box 1}
+        xywh {585 30 280 300} hide
+      }
+      Fl_Box {m_ppBox[2]} {
+        label {Box 2}
+        xywh {291 365 280 300} hide
+      }
+      Fl_Box {m_ppBox[3]} {
+        label {Box 3}
+        xywh {584 365 280 300} hide
+      }
+      Fl_Box {m_ppBox[4]} {
+        label {Box 4}
+        xywh {291 30 575 655} hide
+      }
+      Fl_Box TargetView {
+        xywh {603 384 280 300} box DOWN_FRAME align 2
+        code0 {\#include "vtkFlRenderWindowInteractor.h"}
+        class vtkFlRenderWindowInteractor
+      }
+      Fl_Text_Display m_InfoPane {
+        xywh {10 575 265 85}
+        code0 {m_InfoPane->buffer(new Fl_Text_Buffer());}
+      }
+      Fl_Output m_ImagePosPane {
+        label {Image Pos}
+        xywh {80 483 190 25}
+      }
+      Fl_Output m_ProbePosPane {
+        label {Probe Pos}
+        xywh {80 513 190 25}
+      }
+      Fl_Output m_DistancePane {
+        label Distance
+        xywh {80 543 190 25}
       }
     }
+    code {OnResize();} {}
+    code {mainWindow->SetResizeCallback(IGMTrackingGUI::OnResizeCallback, this);} {}
   }
   Function {~IGMTrackingGUI()} {return_type virtual
   } {}
@@ -315,7 +409,7 @@ m_MessageWindow.Hide();} {}
   } {
     code {m_MessageWindow.AppendMessage(msg);} {}
   }
-  Function {SetNumberOfFiducials()} {open return_type {virtual void}
+  Function {SetNumberOfFiducials()} {return_type {virtual void}
   } {
     code {const char *str = fl_input("Number of Fiducials", "0");
 if (str!=NULL)
@@ -345,7 +439,7 @@ else
 }
 return result;} {}
   }
-  Function {InitializeTracker(const char *fname)} {open return_type {virtual void}
+  Function {InitializeTracker(const char *fname)} {return_type {virtual void}
   } {}
   Function {StartTracking(void)} {open return_type {virtual void}
   } {}
@@ -359,11 +453,11 @@ return result;} {}
   } {}
   Function {SelectCoronalSlice( int )} {return_type {virtual void}
   } {}
-  Function {SelectSaggitalSlice( int )} {return_type {virtual void}
+  Function {SelectSagittalSlice( int )} {return_type {virtual void}
   } {}
   Function {ActivateTools(void)} {return_type {virtual void}
   } {}
-  Function {OnInitializeTracker(void)} {open return_type void
+  Function {OnInitializeTracker(void)} {return_type void
   } {
     code {const char *fname = fl_file_chooser("Initialization File Name","*.ini","");
 if (fname!=NULL)
@@ -410,5 +504,59 @@ else
   Function {OnTrackToolPosition( void )} {open return_type {virtual void}
   } {}
   Function {RecordReference()} {open return_type void
+  } {}
+  Function {SetVolumeThreshold( int )} {return_type {virtual void}
+  } {}
+  Function {OnLayout()} {return_type {virtual void}
+  } {
+    code {m_Layout.ShowModal();} {}
+  }
+  Function {OnProbeParameters()} {open return_type {virtual void}
+  } {
+    code {m_ProbeParameters.ShowModal();} {}
+  }
+  Function {OnResizeCallback(void* cdata)} {return_type {static void}
+  } {
+    code {((IGMTrackingGUI*)cdata)->OnResize();} {}
+  }
+  Function {OnResize()} {return_type void
+  } {
+    code {unsigned int i;
+for (i = 0; i < 4; i++)
+{
+	m_OriginalSize[i][0] = m_ppBox[i]->x();
+	m_OriginalSize[i][1] = m_ppBox[i]->y();
+	m_OriginalSize[i][2] = m_ppBox[i]->w();
+	m_OriginalSize[i][3] = m_ppBox[i]->h();
+}
+m_FullSize[0] = m_ppBox[4]->x();
+m_FullSize[1] = m_ppBox[4]->y();
+m_FullSize[2] = m_ppBox[4]->w();
+m_FullSize[3] = m_ppBox[4]->h();} {}
+  }
+  Function {OnFusionImage()} {return_type {virtual void}
+  } {}
+  Function {OnFusionParameters()} {return_type void
+  } {
+    code {m_FusionParameters.SetFusionOpacity(m_FusionOpacity);
+m_FusionParameters.Show();} {}
+  }
+  Function {AppendInfo(char* info)} {return_type void
+  } {
+    code {m_InfoPane->insert(info);
+m_InfoPane->insert("\\n");
+// m_NumberOfLines++;
+// m_InfoPane->scroll(m_NumberOfLines, 0);
+m_InfoPane->show_insert_position();} {}
+  }
+  Function {SaveSnapshot()} {open return_type {virtual void}
+  } {}
+  Function {OnSegmentation()} {open return_type {virtual void}
+  } {}
+  Function {OnSegParameters()} {open return_type {virtual void}
+  } {
+    code {m_SegParameters.ShowModal();} {}
+  }
+  Function {OnSaveSegmentationData()} {open selected return_type {virtual void}
   } {}
 } 
