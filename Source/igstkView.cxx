@@ -74,7 +74,7 @@ void View::Initialize()
 
 
 /** Set the scene */
-void View::SetScene(Scene * scene)
+void View::SetScene(const Scene * scene)
 {
   if(scene == NULL)
     {
@@ -84,10 +84,11 @@ void View::SetScene(Scene * scene)
   this->m_Scene = scene;
 
   // Get all the objects in the scene and force a rendering
-  Scene::ObjectListType* objects = scene->GetObjects();
-  Scene::ObjectListType::iterator it = objects->begin();
+  const Scene::ObjectListType & objects = scene->GetObjects();
+  Scene::ObjectListConstIterator it        = objects.begin();
+  Scene::ObjectListConstIterator objectEnd = objects.end();
 
-  while(it != objects->end())
+  while( it != objectEnd )
     {
     (*it)->CreateVTKActors();
 
@@ -101,8 +102,6 @@ void View::SetScene(Scene * scene)
 
     it++;
     }
-
-  delete objects;
 
   igstkRenderWindow->GetVTKRenderer()->ResetCamera();
 

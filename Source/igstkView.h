@@ -48,7 +48,7 @@ public:
    void OnTimer(void);
 
    /** Set the scene */
-   void SetScene(Scene * scene);
+   void SetScene(const Scene * scene);
 
    /** void Update the display */
    void Update();
@@ -63,7 +63,7 @@ protected:
 private:
   
   igstk::RenderWindow::Pointer igstkRenderWindow;
-  Scene::Pointer m_Scene;
+  Scene::ConstPointer m_Scene;
 };
 
 } // end namespace igstk
