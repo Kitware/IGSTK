@@ -196,7 +196,7 @@ void LiverTumorSegmentation::LoadPostProcessing()
 	m_SaggitalViewer.Render();
 	
 	VisualizationVolumeType::IndexType index; 
-	itk::Point< float, 3 >	point;		
+	itk::Point< double, 3 >	point;		
 	index[0] = numberOfXslices / 2;
 	index[1] = numberOfYslices / 2;
 	index[2] = numberOfZslices / 2;
@@ -261,7 +261,7 @@ void LiverTumorSegmentation::OnSegmentationParameters( void )
 
 void LiverTumorSegmentation::OnSegmentationModuleSelection( int module )
 {
-  float ftmp;
+  double ftmp;
   int   itmp;
   
   m_ModuleType = (SegmentationModuleType) module;
@@ -481,7 +481,7 @@ void LiverTumorSegmentation::OnSegmentationParametersOk( int module )
 
 
 void  
-LiverTumorSegmentation::SetSeedPoint( float x, float y, float z )
+LiverTumorSegmentation::SetSeedPoint( double x, double y, double z )
 {
 	if (!m_LoadedVolume) return ;
 	LiverTumorSegmentationBase::SetSeedPoint( x, y, z );
@@ -518,7 +518,7 @@ void LiverTumorSegmentation::SyncAllViews(void)
 	sprintf( m_MessageString, "%5.2f", m_SeedPoint[2] );
 	m_SeedZ->value( m_MessageString );
 
-	itk::Point< float, 3 > point;
+	itk::Point< double, 3 > point;
 	point[0] = m_SeedPoint[0];
 	point[1] = m_SeedPoint[1];
 	point[2] = m_SeedPoint[2];
@@ -594,14 +594,14 @@ void LiverTumorSegmentation::OnSegmentation( void )
  }
 
 
-float LiverTumorSegmentation::GetImageScale( void )
+double LiverTumorSegmentation::GetImageScale( void )
 {
 	return m_ShiftScaleImageFilter->GetScale();
 }
 
 
 
-void LiverTumorSegmentation::SetImageScale( float val )
+void LiverTumorSegmentation::SetImageScale( double val )
 {
 	m_ShiftScaleImageFilter->SetScale( val );
 	m_ShiftScaleImageFilter->UpdateWholeExtent();
@@ -612,14 +612,14 @@ void LiverTumorSegmentation::SetImageScale( float val )
 
 
 
-float LiverTumorSegmentation::GetImageShift( void )
+double LiverTumorSegmentation::GetImageShift( void )
 {
 	return m_ShiftScaleImageFilter->GetShift();
 }
 
 
 
-void LiverTumorSegmentation::SetImageShift( float val )
+void LiverTumorSegmentation::SetImageShift( double val )
 {
 	m_ShiftScaleImageFilter->SetShift( val );
 	m_ShiftScaleImageFilter->UpdateWholeExtent();
@@ -629,13 +629,13 @@ void LiverTumorSegmentation::SetImageShift( float val )
 }
 
 
-float LiverTumorSegmentation::GetSegmentedVolumeOpacity( void )
+double LiverTumorSegmentation::GetSegmentedVolumeOpacity( void )
 {
 	return m_SegmentedVolumeOpacity;
 }
 
 
-bool LiverTumorSegmentation::SetSegmentedVolumeOpacity( const float value )
+bool LiverTumorSegmentation::SetSegmentedVolumeOpacity( const double value )
 {
 	if ((value>=0.0f) && (value<=1.0f))
 	{
@@ -650,7 +650,7 @@ bool LiverTumorSegmentation::SetSegmentedVolumeOpacity( const float value )
 }
 
 
-void LiverTumorSegmentation::OnOpacityControl( float opacity )
+void LiverTumorSegmentation::OnOpacityControl( double opacity )
 {
 		this->SetSegmentedVolumeOpacity( opacity );
     

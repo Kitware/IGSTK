@@ -40,17 +40,17 @@ public:
 	
 	virtual ~IGMTrackingBase();
 
-	virtual void SetTargetPoint( float x, float y, float z );
+	virtual void SetTargetPoint( double x, double y, double z );
 
-	virtual void SetEntryPoint( float x, float y, float z );
+	virtual void SetEntryPoint( double x, double y, double z );
 
 	virtual void SetNumberOfFiducials( unsigned int number );
 
-	virtual void SetImageFiducial( unsigned int index, float *position );
+	virtual void SetImageFiducial( unsigned int index, double *position );
 	
 	virtual void SetImageFiducial( unsigned int index ) = NULL;
 	
-	virtual void SetTrackerFiducial( unsigned int index, float *position);
+	virtual void SetTrackerFiducial( unsigned int index, double *position);
 	
 	virtual void SetTrackerFiducial( unsigned int index ) = NULL;
 	
@@ -58,25 +58,25 @@ public:
 
 	virtual bool RegisterImageWithTrackerAndComputeRMSError( void );
 	
-	virtual void SetNeedleTipOffset( const float offsetX, const float offsetY, const float offsetZ );
+	virtual void SetNeedleTipOffset( const double offsetX, const double offsetY, const double offsetZ );
 
-	virtual void GetNeedleTipOffset( float& offsetX, float& offsetY, float& offsetZ );
+	virtual void GetNeedleTipOffset( double& offsetX, double& offsetY, double& offsetZ );
 
-	virtual void SetNeedleEndOffset( const float offsetX, const float offsetY, const float offsetZ );
+	virtual void SetNeedleEndOffset( const double offsetX, const double offsetY, const double offsetZ );
 
-	virtual void GetNeedleEndOffset( float& offsetX, float& offsetY, float& offsetZ );
+	virtual void GetNeedleEndOffset( double& offsetX, double& offsetY, double& offsetZ );
 
-	virtual float GetNeedleLength( void );
+	virtual double GetNeedleLength( void );
 	
-	virtual void SetNeedleLength( const float val );
+	virtual void SetNeedleLength( const double val );
 	
-	virtual float GetNeedleRadius( void );
+	virtual double GetNeedleRadius( void );
 	
-	virtual void SetNeedleRadius( const float val );
+	virtual void SetNeedleRadius( const double val );
 
-	virtual void SetReferenceNeedleTipOffset( const float offsetX, const float offsetY, const float offsetZ );
+	virtual void SetReferenceNeedleTipOffset( const double offsetX, const double offsetY, const double offsetZ );
 
-	virtual void GetReferenceNeedleTipOffset( float& offsetX, float& offsetY, float& offsetZ );
+	virtual void GetReferenceNeedleTipOffset( double& offsetX, double& offsetY, double& offsetZ );
 	
 	virtual void SetUseReferenceNeedleOption( const bool option );
 
@@ -84,9 +84,9 @@ public:
 
 protected:
 	
-	virtual void SetTargetPoint( const float point[3] );	
+	virtual void SetTargetPoint( const double point[3] );	
 
-	virtual void SetEntryPoint( const float point[3] );	
+	virtual void SetEntryPoint( const double point[3] );	
 
 	virtual void PrintMessage( char *msg );
 	
@@ -102,9 +102,9 @@ protected:
 	
 	VolumeType::ConstPointer                m_LoadedVolume;
 
-	float									m_TargetPoint[3];
+	double									m_TargetPoint[3];
 
-	float									m_EntryPoint[3];
+	double									m_EntryPoint[3];
 
 	FiducialRegistration					m_FiducialRegistration;
 
@@ -112,21 +112,21 @@ protected:
 	
 	// Main Needle Parameters
 
-	float			m_NeedlePosition[3]; 
+	double			m_NeedlePosition[3]; 
 
-	float			m_NeedleTipOffset[3];		// Offset of tool tip head from the coil
+	double			m_NeedleTipOffset[3];		// Offset of tool tip head from the coil
 
-	float			m_NeedleEndOffset[3];		// Offset of tool end head from the coil
+	double			m_NeedleEndOffset[3];		// Offset of tool end head from the coil
 
-	float			m_NeedleLength, m_NeedleRadius;
+	double			m_NeedleLength, m_NeedleRadius;
 
 	// Reference Needle Parameters
 
 	bool			m_UseReferenceNeedle;
 
-	float			m_ReferenceNeedlePosition[3]; 
+	double			m_ReferenceNeedlePosition[3]; 
 
-	float			m_ReferenceNeedleTipOffset[3];		
+	double			m_ReferenceNeedleTipOffset[3];		
 };
 
 

@@ -54,11 +54,11 @@ bool LiverTumorSegmentationBase::Load( const char *filename )
 
 
 void  
-LiverTumorSegmentationBase::SetSeedPoint( float x, float y, float z )
+LiverTumorSegmentationBase::SetSeedPoint( double x, double y, double z )
 {
   if (m_LoadedVolume) 
   {
-    itk::Point< float, 3 > point;
+    itk::Point< double, 3 > point;
     point[0] = x;  
     point[1] = y;
     point[2] = z;
@@ -85,7 +85,7 @@ LiverTumorSegmentationBase::SetSeedPoint( float x, float y, float z )
 
 
 void 
-LiverTumorSegmentationBase::GetSeedPoint(float data[3])
+LiverTumorSegmentationBase::GetSeedPoint(double data[3])
 {
   for(int i=0; i<3; i++)
   {
@@ -191,7 +191,7 @@ void LiverTumorSegmentationBase::WriteBinarySegmentedVolume( const char *fname )
 }
 
 /*
-bool LiverTumorSegmentationBase::DoThreshold( float lower, float upper )
+bool LiverTumorSegmentationBase::DoThreshold( double lower, double upper )
 {
   if (!m_LoadedVolume) return false;
 

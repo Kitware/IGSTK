@@ -50,7 +50,7 @@ public:
 	
 	virtual void ProcessSaggitalViewInteraction( void );
 	
-	virtual void SyncAllViews( const float aboutPoint[3] );
+	virtual void SyncAllViews( const double aboutPoint[3] );
 
 	virtual void ProcessDicomReaderInteraction( void );
 	
@@ -80,17 +80,17 @@ public:
 
 	virtual void OnMotionTracking( void );
 
-	virtual float GetImageScale( void );
+	virtual double GetImageScale( void );
 	
-	virtual void SetImageScale( float val );
+	virtual void SetImageScale( double val );
 	
-	virtual float GetImageShift( void );
+	virtual double GetImageShift( void );
 	
-	virtual void SetImageShift( float val );
+	virtual void SetImageShift( double val );
 	
-	virtual void SetNeedleLength( const float val );
+	virtual void SetNeedleLength( const double val );
 	
-	virtual void SetNeedleRadius( const float val );
+	virtual void SetNeedleRadius( const double val );
 	
 	virtual void DisplaySelectedPosition( const bool show);
 
@@ -142,7 +142,7 @@ private:
 
 	int				m_ReferenceToolHandle;
 
-	float			m_ClickedPoint[3]; 
+	double			m_ClickedPoint[3]; 
 
 	bool			m_ShowVolume;
 

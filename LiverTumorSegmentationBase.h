@@ -65,13 +65,13 @@ public:
   
   virtual ~LiverTumorSegmentationBase();
   
-  virtual void SetSeedPoint( float x, float y, float z );
+  virtual void SetSeedPoint( double x, double y, double z );
   
-  virtual void GetSeedPoint(float data[3]); 
+  virtual void GetSeedPoint(double data[3]); 
   
   virtual bool DoSegmentation( SegmentationModuleType sType = THRESHOLD_LEVEL_SET );
   
-//  virtual bool DoThreshold( float lower, float upper );
+//  virtual bool DoThreshold( double lower, double upper );
 
   virtual void WriteSegmentedVolume( const char *fname );
 
@@ -81,11 +81,11 @@ public:
 
 protected:
   
-  float                                   m_SeedPoint[3];
+  double                                   m_SeedPoint[3];
 
   int                                     m_SeedIndex[3];
 
-  float									                  m_SeedValue;
+  double									                  m_SeedValue;
 
   VolumeReaderType::Pointer               m_VolumeReader;
   

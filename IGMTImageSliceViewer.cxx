@@ -126,7 +126,7 @@ namespace ISIS
 	
 	void IGMTImageSliceViewer::ActivateEntryToTargetPathMarker( void )
 	{
-		float entryPoint[3], targetPoint[3];
+		double entryPoint[3], targetPoint[3];
 		m_EntryPositionMarker.GetCenter( entryPoint );
 		m_TargetPositionMarker.GetCenter( targetPoint );
 		//float length = sqrt((entryPoint[0]-targetPoint[0])*(entryPoint[0]-targetPoint[0])

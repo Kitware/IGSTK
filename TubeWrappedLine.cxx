@@ -76,29 +76,29 @@ TubeWrappedLine::~TubeWrappedLine( void)
 }
 
 
-void TubeWrappedLine::SetEnds( float tip[3], float end[3] )
+void TubeWrappedLine::SetEnds( double tip[3], double end[3] )
 {
 	m_LineSource->SetPoint1( tip ); 
 	m_LineSource->SetPoint2( end );
-	float diff[3];
+	double diff[3];
 	diff[0] = end[0] - tip[0];
 	diff[1] = end[1] - tip[1];
 	diff[2] = end[2] - tip[2];
 	m_Length = sqrt(diff[0]*diff[0] + diff[1]*diff[1] + diff[2]*diff[2]);
 }
 
-void TubeWrappedLine::SetTipAndDirection( float tip[3], float end[3] )
+void TubeWrappedLine::SetTipAndDirection( double tip[3], double end[3] )
 {
 	m_LineSource->SetPoint1( tip ); 
-	float direction[3];
+	double direction[3];
 	direction[0] = end[0] - tip[0];
 	direction[1] = end[1] - tip[1];
 	direction[2] = end[2] - tip[2];
-	float length = sqrt(direction[0]*direction[0]+direction[1]*direction[1]+direction[2]*direction[2]);
+	double length = sqrt(direction[0]*direction[0]+direction[1]*direction[1]+direction[2]*direction[2]);
 	direction[0] /= length;
 	direction[1] /= length;
 	direction[2] /= length;
-	float otherEnd[3];
+	double otherEnd[3];
 	otherEnd[0] = tip[0] + m_Length * direction[0];
 	otherEnd[1] = tip[1] + m_Length * direction[1];
 	otherEnd[2] = tip[2] + m_Length * direction[2];
@@ -112,7 +112,7 @@ void TubeWrappedLine::SetTipAndDirection( float tip[3], float end[3] )
 }
 
 
-void TubeWrappedLine::SetColor( float r, float g, float b )
+void TubeWrappedLine::SetColor( double r, double g, double b )
 {
 	m_LineActor->GetProperty()->SetColor(r, g, b);
 }
@@ -128,35 +128,35 @@ vtkActor* TubeWrappedLine::GetVTKActorPointerHip( void )
 	return m_LineActorHip;
 }
 
-void TubeWrappedLine::SetRadius( float rad )
+void TubeWrappedLine::SetRadius( double rad )
 {
 	m_TubeFilter->SetRadius( rad );
 }
 
 
-float TubeWrappedLine::GetRadius( void )
+double TubeWrappedLine::GetRadius( void )
 {
 	return m_TubeFilter->GetRadius();
 }
 
-void TubeWrappedLine::SetLength( float len )
+void TubeWrappedLine::SetLength( double len )
 {
 	m_Length = len;
 }
 
-float TubeWrappedLine::GetLength( void )
+double TubeWrappedLine::GetLength( void )
 {
 	return m_Length;
 }
 
-void TubeWrappedLine::AddPosition(float *pos)
+void TubeWrappedLine::AddPosition(double *pos)
 {
 	AddPosition(pos[0], pos[1], pos[2]);	
 }
 
-void TubeWrappedLine::AddPosition(float x, float y, float z)
+void TubeWrappedLine::AddPosition(double x, double y, double z)
 {
-	float point[3];
+	double point[3];
 
 	m_LineSource->GetPoint1(point);
 	m_LineSource->SetPoint1(point[0] + x, point[1] + y, point[2] + z);

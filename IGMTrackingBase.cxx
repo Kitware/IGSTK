@@ -37,7 +37,7 @@ IGMTrackingBase::~IGMTrackingBase()
 }
 
 
-void IGMTrackingBase::SetTargetPoint( const float point[3] )
+void IGMTrackingBase::SetTargetPoint( const double point[3] )
 {
 	for(int i=0; i<3; i++)
 	{
@@ -46,7 +46,7 @@ void IGMTrackingBase::SetTargetPoint( const float point[3] )
 }
 
 
-void IGMTrackingBase::SetTargetPoint( float x, float y, float z )
+void IGMTrackingBase::SetTargetPoint( double x, double y, double z )
 {
 	m_TargetPoint[0] = x;
 	m_TargetPoint[1] = y;
@@ -54,7 +54,7 @@ void IGMTrackingBase::SetTargetPoint( float x, float y, float z )
 }
 
 
-void IGMTrackingBase::SetEntryPoint( const float point[3] )
+void IGMTrackingBase::SetEntryPoint( const double point[3] )
 {
 	for(int i=0; i<3; i++)
 	{
@@ -63,7 +63,7 @@ void IGMTrackingBase::SetEntryPoint( const float point[3] )
 }
 
 
-void IGMTrackingBase::SetEntryPoint( float x, float y, float z )
+void IGMTrackingBase::SetEntryPoint( double x, double y, double z )
 {
 	m_EntryPoint[0] = x;
 	m_EntryPoint[1] = y;
@@ -84,7 +84,7 @@ unsigned int IGMTrackingBase::GetNumberOfFiducials( void )
 }
 
 
-void IGMTrackingBase::SetImageFiducial( unsigned int index, float *position )
+void IGMTrackingBase::SetImageFiducial( unsigned int index, double *position )
 {
 	//	std::cout << "Image Fiducial " << index << " set at ( " << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
 	m_FiducialRegistration.SetDestinationFiducial( index, position );
@@ -92,7 +92,7 @@ void IGMTrackingBase::SetImageFiducial( unsigned int index, float *position )
 
 
 
-void IGMTrackingBase::SetTrackerFiducial( unsigned int index, float *position )
+void IGMTrackingBase::SetTrackerFiducial( unsigned int index, double *position )
 {
 	m_FiducialRegistration.SetSourceFiducial( index, position );
 }
@@ -125,7 +125,7 @@ bool IGMTrackingBase::RegisterImageWithTrackerAndComputeRMSError( void )
 }
 
 
-void IGMTrackingBase::SetNeedleTipOffset( const float offsetX, const float offsetY, const float offsetZ )
+void IGMTrackingBase::SetNeedleTipOffset( const double offsetX, const double offsetY, const double offsetZ )
 {
 	m_NeedleTipOffset[0] = offsetX;
 	m_NeedleTipOffset[1] = offsetY;
@@ -133,7 +133,7 @@ void IGMTrackingBase::SetNeedleTipOffset( const float offsetX, const float offse
 }
 
 
-void IGMTrackingBase::GetNeedleTipOffset( float& offsetX, float& offsetY, float& offsetZ )
+void IGMTrackingBase::GetNeedleTipOffset( double& offsetX, double& offsetY, double& offsetZ )
 {
 	offsetX = m_NeedleTipOffset[0];
 	offsetY = m_NeedleTipOffset[1];
@@ -141,7 +141,7 @@ void IGMTrackingBase::GetNeedleTipOffset( float& offsetX, float& offsetY, float&
 }
 
 
-void IGMTrackingBase::SetNeedleEndOffset( const float offsetX, const float offsetY, const float offsetZ )
+void IGMTrackingBase::SetNeedleEndOffset( const double offsetX, const double offsetY, const double offsetZ )
 {
 	m_NeedleEndOffset[0] = offsetX;
 	m_NeedleEndOffset[1] = offsetY;
@@ -149,7 +149,7 @@ void IGMTrackingBase::SetNeedleEndOffset( const float offsetX, const float offse
 }
 
 
-void IGMTrackingBase::GetNeedleEndOffset( float& offsetX, float& offsetY, float& offsetZ )
+void IGMTrackingBase::GetNeedleEndOffset( double& offsetX, double& offsetY, double& offsetZ )
 {
 	offsetX = m_NeedleEndOffset[0];
 	offsetY = m_NeedleEndOffset[1];
@@ -157,7 +157,7 @@ void IGMTrackingBase::GetNeedleEndOffset( float& offsetX, float& offsetY, float&
 }
 
 
-void IGMTrackingBase::SetReferenceNeedleTipOffset( const float offsetX, const float offsetY, const float offsetZ )
+void IGMTrackingBase::SetReferenceNeedleTipOffset( const double offsetX, const double offsetY, const double offsetZ )
 {
 	m_ReferenceNeedleTipOffset[0] = offsetX;
 	m_ReferenceNeedleTipOffset[1] = offsetY;
@@ -165,7 +165,7 @@ void IGMTrackingBase::SetReferenceNeedleTipOffset( const float offsetX, const fl
 }
 
 
-void IGMTrackingBase::GetReferenceNeedleTipOffset( float& offsetX, float& offsetY, float& offsetZ )
+void IGMTrackingBase::GetReferenceNeedleTipOffset( double& offsetX, double& offsetY, double& offsetZ )
 {
 	offsetX = m_ReferenceNeedleTipOffset[0];
 	offsetY = m_ReferenceNeedleTipOffset[1];
@@ -183,28 +183,28 @@ bool IGMTrackingBase::GetUseReferenceNeedleOption( void )
 }
 
 
-float IGMTrackingBase::GetNeedleLength( void )
+double IGMTrackingBase::GetNeedleLength( void )
 {
 	return m_NeedleLength; 
 }
 
 
 	
-void IGMTrackingBase::SetNeedleLength( const float val )
+void IGMTrackingBase::SetNeedleLength( const double val )
 {
 	m_NeedleLength = val;
 }
 	
 
 
-float IGMTrackingBase::GetNeedleRadius( void )
+double IGMTrackingBase::GetNeedleRadius( void )
 {
 	return 	m_NeedleRadius;
 }
 
 
 	
-void IGMTrackingBase::SetNeedleRadius( const float val )
+void IGMTrackingBase::SetNeedleRadius( const double val )
 {
 	m_NeedleRadius = val;
 }

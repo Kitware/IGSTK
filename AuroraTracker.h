@@ -146,11 +146,11 @@ public:
 
 	bool UpdateToolStatus( void );
 	
-	bool GetToolPosition(const int toolHandle, float position[3]);
+	bool GetToolPosition(const int toolHandle, double position[3]);
 
-	bool GetToolOrientation(const int toolHandle, float quad[4]);
+	bool GetToolOrientation(const int toolHandle, double quad[4]);
 
-	bool GetOffsetCorrectedToolPosition(const int toolHandle, const float offset[3], float position[3]);
+	bool GetOffsetCorrectedToolPosition(const int toolHandle, const double offset[3], double position[3]);
 
 private:
 

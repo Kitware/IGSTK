@@ -117,9 +117,9 @@ protected:
 
   // Protected methods that GENERATE INPUT signals
 
-  virtual void SelectPoint( float x, float y, float z );
+  virtual void SelectPoint( double x, double y, double z );
 
-  virtual void  GetSelectPoint(float data[3]); 
+  virtual void  GetSelectPoint(double data[3]); 
 
   // Protected methods that are invoked through State Machine.
 
@@ -160,11 +160,11 @@ private:
 
   double              m_ZoomFactor;
 
-  float               m_SelectPoint[3];
+  double               m_SelectPoint[3];
 
-  float               m_ImagePixelSpacing[3];
+  double               m_ImagePixelSpacing[3];
 
-  float               m_ImageOrigin[3];
+  double               m_ImageOrigin[3];
 
   int                 m_ImageDimensions[3];
 

@@ -50,9 +50,9 @@ public:
 
   vtkRenderer *  GetRenderer( void );
 
-  virtual void SelectPoint( float x, float y, float z );
+  virtual void SelectPoint( double x, double y, double z );
 
-  virtual void  GetSelectPoint(float data[3]); 
+  virtual void  GetSelectPoint(double data[3]); 
   
   unsigned long AddObserver( const itk::EventObject & event, itk::Command *);
 
@@ -87,7 +87,7 @@ public:
 
   double              m_ZoomFactor;
 
-  float               m_SelectPoint[3];
+  double               m_SelectPoint[3];
 };
 
 

@@ -49,7 +49,7 @@ void FiducialRegistration::SetNumberOfFiducials(unsigned int number_fiducials)
 	}
 }
 
-void FiducialRegistration::SetDestinationFiducial(unsigned int index, float x, float y, float z)
+void FiducialRegistration::SetDestinationFiducial(unsigned int index, double x, double y, double z)
 {
 	if (index < this->m_NumberOfFiducials)
 	{
@@ -59,7 +59,7 @@ void FiducialRegistration::SetDestinationFiducial(unsigned int index, float x, f
 	}
 }
 
-void FiducialRegistration::SetDestinationFiducial(unsigned int index, float *position )
+void FiducialRegistration::SetDestinationFiducial(unsigned int index, double *position )
 {
 	if (index < this->m_NumberOfFiducials)
 	{
@@ -69,7 +69,7 @@ void FiducialRegistration::SetDestinationFiducial(unsigned int index, float *pos
 	}
 }
 
-void FiducialRegistration::SetSourceFiducial( unsigned int index, float x, float y,float z)
+void FiducialRegistration::SetSourceFiducial( unsigned int index, double x, double y,double z)
 {
 	if (index < this->m_NumberOfFiducials)
 	{
@@ -79,7 +79,7 @@ void FiducialRegistration::SetSourceFiducial( unsigned int index, float x, float
 	}
 }
 
-void FiducialRegistration::SetSourceFiducial( unsigned int index, float *position )
+void FiducialRegistration::SetSourceFiducial( unsigned int index, double *position )
 {
 	if (index < this->m_NumberOfFiducials)
 	{
@@ -127,7 +127,7 @@ bool FiducialRegistration::AreDestinationFiducialsInitialized( void )
 
 
 
-float FiducialRegistration::GetRMSError()
+double FiducialRegistration::GetRMSError()
 {
 	if ( !(this->AreSourceFiducialsInitialized()) || !(this->AreDestinationFiducialsInitialized()))
 		return -1;
@@ -136,11 +136,11 @@ float FiducialRegistration::GetRMSError()
 
 	m_LandmarkTransform->Update(); // Not needed
 
-	float input[3];
-	float output[3];
-	float target[3];
+	double input[3];
+	double output[3];
+	double target[3];
 	double dist;
-  double sum_dist;
+    double sum_dist;
 
 	sum_dist = 0.0;
 
@@ -184,7 +184,7 @@ void FiducialRegistration::PrintDetails( void )
 {
 	cout << "Number of fiducials = " << m_NumberOfFiducials << endl;
 	cout << "Image Fiducials at" << endl;
-	float point[3];
+	double point[3];
 
   unsigned int i;
 
@@ -200,9 +200,10 @@ void FiducialRegistration::PrintDetails( void )
 		cout << "   Fiducial " << i << ": " << point[0] << "," << point[1] << "," << point[2] << endl;
 	}
 	cout << "Image Fiducial distances: " << endl;
-	float to[3];
-  float from[3];
-  float distance;
+
+	double to[3];
+    double from[3];
+    double distance;
 
 	for(i=0; i<(m_NumberOfFiducials-1); i++)
 	{
@@ -232,14 +233,14 @@ void FiducialRegistration::PrintDetails( void )
 	this->m_LandmarkTransform->GetMatrix()->Print(cout);
 }
 
-void FiducialRegistration::FromDestinationSpaceToSourceSpace(float *input, float *output)
+void FiducialRegistration::FromDestinationSpaceToSourceSpace(double *input, double *output)
 {
 	this->m_LandmarkTransform->Inverse();
 	this->m_LandmarkTransform->TransformPoint(input, output);
 	this->m_LandmarkTransform->Inverse();
 }
 
-void FiducialRegistration::FromSourceSpaceToDestinationSpace(float *input, float *output)
+void FiducialRegistration::FromSourceSpaceToDestinationSpace(double *input, double *output)
 {
 	this->m_LandmarkTransform->TransformPoint(input, output);
 }

@@ -44,15 +44,15 @@ public:
   
   virtual ~ApplicationBase();
   
-  virtual void SetSeedPoint( float x, float y, float z );
+  virtual void SetSeedPoint( double x, double y, double z );
   
-  virtual void  GetSeedPoint(float data[3]); 
+  virtual void  GetSeedPoint(double data[3]); 
   
   
   
 protected:
   
-  float                                   m_SeedPoint[3];
+  double                                   m_SeedPoint[3];
   
   VolumeReaderType::Pointer               m_VolumeReader;
   

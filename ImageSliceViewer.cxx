@@ -110,16 +110,16 @@ ImageSliceViewer
     return;
     }
 
-  float spacing[3];
-  float origin[3];
+  double spacing[3];
+  double origin[3];
   int   dimensions[3];
 
   image->GetSpacing(spacing);
   image->GetOrigin(origin);
   image->GetDimensions(dimensions);
 
-  float focalPoint[3];
-  float position[3];
+  double focalPoint[3];
+  double position[3];
 
   for ( unsigned int cc = 0; cc < 3; cc++)
     {
@@ -150,7 +150,7 @@ ImageSliceViewer
       }
     }
 
-  const float distanceToFocalPoint = 1000;
+  const double distanceToFocalPoint = 1000;
   position[idx] += distanceToFocalPoint;
 
   m_Camera->SetPosition (   position );
@@ -161,7 +161,7 @@ ImageSliceViewer
    int d1 = (idx + 1) % 3;
    int d2 = (idx + 2) % 3;
  
-  float max = myMAX( 
+  double max = myMAX( 
     spacing[d1] * dimensions[d1],
     spacing[d2] * dimensions[d2]);
 
@@ -267,15 +267,15 @@ ImageSliceViewer
   y = winsize[1] - y;
 
   // Convert display point to world point
-  float wpoint[4];
+  double wpoint[4];
   const double z = m_SliceNum / ( m_FarPlane - m_NearPlane );
   m_Renderer->SetDisplayPoint( x, y, 0 );
   m_Renderer->DisplayToWorld();
   m_Renderer->GetWorldPoint( wpoint );
 
   // Fix camera Z coorinate to match the current slice
-  float spacing[3]={1,1,1};
-  float origin[3] ={0,0,0};
+  double spacing[3]={1,1,1};
+  double origin[3] ={0,0,0};
   int dimensions[3] = { 100, 100, 100 };
   if ( m_Actor->GetInput() )
     {
@@ -303,7 +303,7 @@ ImageSliceViewer
       break;
       }
     }
-  float realz = m_SliceNum * spacing[idx] + origin[idx];
+  double realz = m_SliceNum * spacing[idx] + origin[idx];
   wpoint[idx] = realz;
 
   // At this point we have 3D position in the variable wpoint
@@ -313,7 +313,7 @@ ImageSliceViewer
 }
 
 void  
-ImageSliceViewer::SelectPoint( float x, float y, float z )
+ImageSliceViewer::SelectPoint( double x, double y, double z )
 {
   m_SelectPoint[0] = x;
   m_SelectPoint[1] = y;
@@ -321,7 +321,7 @@ ImageSliceViewer::SelectPoint( float x, float y, float z )
 }
 
 void 
-ImageSliceViewer::GetSelectPoint(float data[3])
+ImageSliceViewer::GetSelectPoint(double data[3])
 {
   for(int i=0; i<3; i++)
   {

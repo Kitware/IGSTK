@@ -266,7 +266,7 @@ void
 Application
 ::SyncAllViews(void)
 {
-  itk::Point< float, 3 > point;
+  itk::Point< double, 3 > point;
   point[0] = m_SeedPoint[0];
   point[1] = m_SeedPoint[1];
   point[2] = m_SeedPoint[2];

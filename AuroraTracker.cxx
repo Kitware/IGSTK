@@ -1804,8 +1804,8 @@ bool AuroraTracker::BuildCommand( char *command, bool addCRC )
 	return true;
 } 
 
-bool AuroraTracker::GetOffsetCorrectedToolPosition(const int toolHandle, const float offset[3], 
-												   float position[3])
+bool AuroraTracker::GetOffsetCorrectedToolPosition(const int toolHandle, const double offset[3], 
+												   double position[3])
 {
 	if ( this->m_HandleInformation[toolHandle].Xfrms.ulFlags == TRANSFORM_VALID )
 	{
@@ -1838,7 +1838,7 @@ bool AuroraTracker::GetOffsetCorrectedToolPosition(const int toolHandle, const f
 	}
 }
 
-bool AuroraTracker::GetToolPosition(const int toolHandle, float position[3])
+bool AuroraTracker::GetToolPosition(const int toolHandle, double position[3])
 {
 	if ( this->m_HandleInformation[toolHandle].Xfrms.ulFlags == TRANSFORM_VALID )
 	{
@@ -1853,7 +1853,7 @@ bool AuroraTracker::GetToolPosition(const int toolHandle, float position[3])
 	}
 }
 
-bool AuroraTracker::GetToolOrientation(const int toolHandle, float quad[4])
+bool AuroraTracker::GetToolOrientation(const int toolHandle, double quad[4])
 {
 	if ( this->m_HandleInformation[toolHandle].Xfrms.ulFlags == TRANSFORM_VALID )
 	{

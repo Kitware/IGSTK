@@ -15,23 +15,23 @@ public:
 
 	void SetNumberOfFiducials( unsigned int number);
 
-	void SetDestinationFiducial( unsigned int index, float posx, float posy, float posz );
+	void SetDestinationFiducial( unsigned int index, double posx, double posy, double posz );
 
-	void SetDestinationFiducial( unsigned int index, float *position );
+	void SetDestinationFiducial( unsigned int index, double *position );
 	
-    void SetSourceFiducial( unsigned int index, float posx, float posy, float posz );
+    void SetSourceFiducial( unsigned int index, double posx, double posy, double posz );
 
-    void SetSourceFiducial( unsigned int index, float *position );
+    void SetSourceFiducial( unsigned int index, double *position );
 
 	unsigned int GetNumberOfFiducials( void );
 
-	void FromDestinationSpaceToSourceSpace(float *input, float *output);
+	void FromDestinationSpaceToSourceSpace(double *input, double *output);
 
-	void FromSourceSpaceToDestinationSpace(float *input, float *output);
+	void FromSourceSpaceToDestinationSpace(double *input, double *output);
 
 	void PrintDetails( void );
 
-	float GetRMSError( void );
+	double GetRMSError( void );
 
 	bool AreSourceFiducialsInitialized( void );
 

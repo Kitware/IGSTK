@@ -29,7 +29,7 @@ ApplicationBase
 
 
 void  
-ApplicationBase::SetSeedPoint( float x, float y, float z )
+ApplicationBase::SetSeedPoint( double x, double y, double z )
 {
   m_SeedPoint[0] = x;
   m_SeedPoint[1] = y;
@@ -38,7 +38,7 @@ ApplicationBase::SetSeedPoint( float x, float y, float z )
 
 
 void 
-ApplicationBase::GetSeedPoint(float data[3])
+ApplicationBase::GetSeedPoint(double data[3])
 {
   for(int i=0; i<3; i++)
   {

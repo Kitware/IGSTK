@@ -418,9 +418,9 @@ void IGMTracking::ProcessSaggitalViewInteraction( void )
 }
 
 
-void IGMTracking::SyncAllViews( const float aboutPoint[3] )
+void IGMTracking::SyncAllViews( const double aboutPoint[3] )
 {
-	itk::Point< float, 3 > point;
+	itk::Point< double, 3 > point;
 	
 	point[0] = aboutPoint[0];
 	point[1] = aboutPoint[1];
@@ -513,7 +513,7 @@ void IGMTracking::SetNumberOfFiducials( unsigned int number )
 
 void IGMTracking::SetImageFiducial( unsigned int fiducialNumber )
 {
-	float   point[3];
+	double   point[3];
 	point[0] = m_ClickedPoint[0];
 	point[1] = m_ClickedPoint[1];
 	point[2] = m_ClickedPoint[2];
@@ -716,8 +716,8 @@ void IGMTracking::OnOverlay( void )
 {
 	static   int run = 0;
 	bool firstpos = true;
-	float HomePos[3], d[3], dis;
-	float toolPositionInImageSpace[3], anotherPositionInImageSpace[3];
+	double HomePos[3], d[3], dis;
+	double toolPositionInImageSpace[3], anotherPositionInImageSpace[3];
 
 	if (_beginthread(CheckKeyPress, 0, NULL) != -1)
 	{
@@ -737,7 +737,7 @@ void IGMTracking::OnOverlay( void )
 			m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ReferenceToolHandle, 
 				m_ReferenceNeedleTipOffset, m_ReferenceNeedlePosition);
 
-			memcpy(HomePos, m_ReferenceNeedlePosition, 3 * sizeof(float));
+			memcpy(HomePos, m_ReferenceNeedlePosition, 3 * sizeof(double));
 		}
 
 		m_Overlay = true;
@@ -748,13 +748,13 @@ void IGMTracking::OnOverlay( void )
 		{
 			this->OnToolPosition();
 			
-			float anotherPosition[3];
+			double anotherPosition[3];
 			
 			m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle, m_NeedleEndOffset, anotherPosition);
 			
 			if (m_UseReferenceNeedle)
 			{
-				float refToolNewPosition[3], offset[3];
+				double refToolNewPosition[3], offset[3];
 				m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ReferenceToolHandle, 
 					m_ReferenceNeedleTipOffset, refToolNewPosition);
 				
@@ -774,7 +774,7 @@ void IGMTracking::OnOverlay( void )
 				m_MotionViewer.UpdateMotion(dis);
 			}
 			
-//			float toolPositionInImageSpace[3], anotherPositionInImageSpace[3];
+//			double toolPositionInImageSpace[3], anotherPositionInImageSpace[3];
 			
 			m_FiducialRegistration.FromSourceSpaceToDestinationSpace(m_NeedlePosition,toolPositionInImageSpace);
 			m_FiducialRegistration.FromSourceSpaceToDestinationSpace(anotherPosition,anotherPositionInImageSpace);
@@ -814,9 +814,9 @@ void IGMTracking::OnMotionTracking( void )
 {
 	static   int run = 0;
 	bool firstpos = true;
-	float HomePos[3], d[3], dis;
-//	float toolPositionInImageSpace[3];
-	float refPositionInImageSpace[3];
+	double HomePos[3], d[3], dis;
+//	double toolPositionInImageSpace[3];
+	double refPositionInImageSpace[3];
 
 	if (_beginthread(CheckKeyPress, 0, NULL) != -1)
 	{
@@ -838,7 +838,7 @@ void IGMTracking::OnMotionTracking( void )
 		{
 			this->OnToolPosition();
 			
-			float anotherPosition[3];
+			double anotherPosition[3];
 
 	//		m_AuroraTracker.UpdateToolStatus();
 			
@@ -846,7 +846,7 @@ void IGMTracking::OnMotionTracking( void )
 			
 			if (m_UseReferenceNeedle)
 			{
-				float refToolNewPosition[3];
+				double refToolNewPosition[3];
 				m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ReferenceToolHandle, 
 					m_ReferenceNeedleTipOffset, refToolNewPosition);
 
@@ -866,7 +866,7 @@ void IGMTracking::OnMotionTracking( void )
 
 				if (firstpos)
 				{
-					memcpy(HomePos, refPositionInImageSpace, 3 * sizeof(float));
+					memcpy(HomePos, refPositionInImageSpace, 3 * sizeof(double));
 					firstpos = false;
 				}
 				
@@ -907,12 +907,12 @@ void IGMTracking::OnMotionTracking( void )
 }
 
 
-float IGMTracking::GetImageScale( void )
+double IGMTracking::GetImageScale( void )
 {
 	return m_ShiftScaleImageFilter->GetScale();
 }
 	
-void IGMTracking::SetImageScale( float val )
+void IGMTracking::SetImageScale( double val )
 {
 	m_ShiftScaleImageFilter->SetScale( val );
 	m_ShiftScaleImageFilter->UpdateWholeExtent();
@@ -922,12 +922,12 @@ void IGMTracking::SetImageScale( float val )
 }
 
 	
-float IGMTracking::GetImageShift( void )
+double IGMTracking::GetImageShift( void )
 {
 	return m_ShiftScaleImageFilter->GetShift();
 }
 	
-void IGMTracking::SetImageShift( float val )
+void IGMTracking::SetImageShift( double val )
 {
 	m_ShiftScaleImageFilter->SetShift( val );
 	m_ShiftScaleImageFilter->UpdateWholeExtent();
@@ -936,7 +936,7 @@ void IGMTracking::SetImageShift( float val )
 	m_SaggitalViewer.Render();
 }
 
-void IGMTracking::SetNeedleLength( const float val )
+void IGMTracking::SetNeedleLength( const double val )
 {
 	IGMTrackingBase::SetNeedleLength( val );
 	m_AxialViewer.m_ToolPositionMarker.SetLength(val);
@@ -944,7 +944,7 @@ void IGMTracking::SetNeedleLength( const float val )
 	m_SaggitalViewer.m_ToolPositionMarker.SetLength(val);
 }
 	
-void IGMTracking::SetNeedleRadius( const float val )
+void IGMTracking::SetNeedleRadius( const double val )
 {
 	IGMTrackingBase::SetNeedleRadius( val );
 	m_AxialViewer.m_ToolPositionMarker.SetRadius(val);
@@ -955,7 +955,7 @@ void IGMTracking::SetNeedleRadius( const float val )
 
 void IGMTracking::PrintDebugInfo( void )
 {
-	float pos1[3], pos2[3];
+	double pos1[3], pos2[3];
 	printf("Debug Information:\n");
 	m_SaggitalViewer.m_TargetPositionMarker.GetCenter( pos1 );
 	printf("Target: %4.3f   %4.3f   %4.3f\n", pos1[0], pos1[1], pos1[2]);
@@ -982,7 +982,7 @@ void IGMTracking::RecordReference()
 
 void IGMTracking::ProcessDicomReading()
 {
-	float f = m_DicomVolumeReader.m_Reader->GetProgress();
+	double f = m_DicomVolumeReader.m_Reader->GetProgress();
 	printf("%.3f\n", f);
 
 	m_ProgressBar->value(f);

@@ -42,11 +42,11 @@ public:
 //   virtual void OnImageControl( void );
 //   virtual void OnImageControlOk( void );
 
-   virtual void OnOpacityControl( float opacity );
+   virtual void OnOpacityControl( double opacity );
 
    virtual void OnSegmentation( void );
 
-//   virtual void OnThreshold( const float lower, const float upper );
+//   virtual void OnThreshold( const double lower, const double upper );
 
    virtual void OnSegmentationParameters( void );
 
@@ -54,19 +54,19 @@ public:
 
    virtual void OnSegmentationParametersOk( int module );
 
-   virtual void SetSeedPoint( float x, float y, float z );
+   virtual void SetSeedPoint( double x, double y, double z );
 
-   virtual float GetImageScale( void );
+   virtual double GetImageScale( void );
    
-   virtual void SetImageScale( float val );
+   virtual void SetImageScale( double val );
 	
-   virtual float GetImageShift( void );
+   virtual double GetImageShift( void );
 	
-   virtual void SetImageShift( float val );
+   virtual void SetImageShift( double val );
 
-   virtual float GetSegmentedVolumeOpacity( void );
+   virtual double GetSegmentedVolumeOpacity( void );
 
-   virtual bool SetSegmentedVolumeOpacity( const float value );
+   virtual bool SetSegmentedVolumeOpacity( const double value );
 
 //   virtual DisplayVolumeType  GetBackgroundVolumeType( void );
 
@@ -100,7 +100,7 @@ private:
   // stores the array index in Volumes[] of the displayed background_volume and overlay_volume.
 //  DisplayVolumeType		m_BackgroundVolume, m_OverlayVolume;
 
-  float				        m_SegmentedVolumeOpacity;
+  double				        m_SegmentedVolumeOpacity;
 
   bool					      m_ShowVolumeView;
 

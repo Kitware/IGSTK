@@ -9,8 +9,8 @@
 class TubeWrappedLine
 {
 public:
-	void AddPosition(float x, float y, float z);
-	void AddPosition(float* pos);
+	void AddPosition(const double x, const double y, const double z);
+	void AddPosition(double* pos);
 
 	TubeWrappedLine( void );
 
@@ -20,22 +20,22 @@ public:
 
 	vtkActor* GetVTKActorPointerHip( void );
 
-	void SetEnds( float tip[3], float end[3] );
+	void SetEnds( double tip[3], double end[3] );
 
 	// SetTipAndDirection:: The end point is used to get the direction only.
 	// The actual endpoint is computed as per the m_Length defined for the line.
 
-	void SetTipAndDirection( float tip[3], float end[3] );
+	void SetTipAndDirection( double tip[3], double end[3] );
 
-	void SetColor( float r, float g, float b );
+	void SetColor( double r, double g, double b );
 
-	void SetRadius( float rad );
+	void SetRadius( double rad );
 
-	void SetLength( float length );
+	void SetLength( double length );
 
-	float GetRadius( void );
+	double GetRadius( void );
 
-	float GetLength( void );
+	double GetLength( void );
 
 //	TubeWrappedLine &operator=( const TubeWrappedLine &src );
 
@@ -57,7 +57,7 @@ public:
 
 	vtkActor			* m_LineActorHip;
 
-	float				m_Length;		// in the measurement unit of the data (mm)
+	double				m_Length;		// in the measurement unit of the data (mm)
 
 };
 

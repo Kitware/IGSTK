@@ -207,8 +207,8 @@ namespace ISIS
 			return;
 		}
 		
-		float spacing[3];
-		float origin[3];
+		double spacing[3];
+		double origin[3];
 		int   dimensions[3];
 		
 		image->GetSpacing(spacing);
@@ -221,8 +221,8 @@ namespace ISIS
 		dimensions[2] = 0;
 		origin[0] = origin[1] = origin[2] = 0;
 		
-		float focalPoint[3];
-		float position[3];
+		double focalPoint[3];
+		double position[3];
 		
 		for ( unsigned int cc = 0; cc < 3; cc++)
 		{
@@ -230,7 +230,7 @@ namespace ISIS
 			position[cc]   = focalPoint[cc];
 		}
 		
-		const float distanceToFocalPoint = 1000;
+		const double distanceToFocalPoint = 1000;
 		int idx = 2;
 		
 		position[idx] -= distanceToFocalPoint;

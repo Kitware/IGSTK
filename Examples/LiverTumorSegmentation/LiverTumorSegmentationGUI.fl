@@ -14,7 +14,7 @@ class LiverTumorSegmentationGUI {open : {public LiverTumorSegmentationBase}
   } {
     Fl_Window m_MainWindow {
       label {Liver Tumor Segmentation, ISIS Center, Georgetown University, Washington DC.} open
-      xywh {643 113 633 672} type Double color 148 resizable
+      xywh {459 110 633 672} type Double color 148 resizable
       code0 {\#include "LiverTumorSegmentationBase.h"} visible
     } {
       Fl_Box axialView {
@@ -178,7 +178,7 @@ help->show();}
       }
       Fl_Roller m_SegmentedVolumeOpacityControl {
         label {Blend Control}
-        callback {OnOpacityControl( m_SegmentedVolumeOpacityControl->value());} selected
+        callback {OnOpacityControl( m_SegmentedVolumeOpacityControl->value());}
         xywh {5 517 115 26} type Horizontal color 17 selection_color 147 labelfont 1 align 5 when 4 step 0.01 value 0.5 hotspot
       }
     }
@@ -312,24 +312,24 @@ m_AboutWindow->hide();} {}
   } {}
   Function {OnSegmentation()} {return_type {virtual void}
   } {}
-  Function {GetImageScale(void)} {return_type {virtual float}
+  Function {GetImageScale(void)} {return_type {virtual double}
   } {
     code {return 1.0f;} {}
   }
-  Function {SetImageScale( float val)} {return_type {virtual void}
+  Function {SetImageScale( double val)} {return_type {virtual void}
   } {}
-  Function {GetImageShift(void)} {return_type {virtual float}
+  Function {GetImageShift(void)} {selected return_type {virtual double}
   } {
     code {return 1.0f;} {}
   }
-  Function {SetImageShift( float val)} {return_type {virtual void}
+  Function {SetImageShift( double val)} {return_type {virtual void}
   } {}
   decl {Fl_Text_Buffer m_TextBuffer;} {}
   Function {GetOverlayedVolumeOpacity()} {return_type {virtual float}
   } {
     code {return 0.0f;} {}
   }
-  Function {SetOverlayedVolumeOpacity( const float val )} {return_type {virtual bool}
+  Function {SetOverlayedVolumeOpacity( const double val )} {return_type {virtual bool}
   } {
     code {return false;} {}
   }
@@ -345,7 +345,7 @@ m_AboutWindow->hide();} {}
   } {}
   Function {OnOpacityControl( float opacity )} {open return_type {virtual void}
   } {}
-  Function {SetSegmentedVolumeOpacityControlOn( float val )} {return_type {virtual void}
+  Function {SetSegmentedVolumeOpacityControlOn( double val )} {return_type {virtual void}
   } {
     code {m_SegmentedVolumeOpacityControl->value( val );
 m_SegmentedVolumeOpacityControl->show();} {}
