@@ -117,10 +117,10 @@ void SerialCommunicationForWindows::SetUpDataTransferParametersProcessing( void 
   default: ;//return error; shouldn't come here in the first place.
   }
   // Stop bit parameter settings
-  switch(this->m_StopBits)
+  switch(this->m_StopBits.Get())
   {
-  case ONE_STOP_BIT: dcb.StopBits = ONESTOPBIT; break;
-  case TWO_STOP_BITS: dcb.StopBits = TWOSTOPBITS; break;
+  case 1: dcb.StopBits = ONESTOPBIT; break;
+  case 2: dcb.StopBits = TWOSTOPBITS; break;
   default: ;//return error; shouldn't come here in the first place.
   }
   //Hardware Handsake
