@@ -231,6 +231,8 @@ public:
   virtual void OnRecord(void)
   {
   }
+
+  virtual void OnEvaluatePosition(double x, double y, double z){};
 };
 
 
