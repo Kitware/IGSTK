@@ -270,23 +270,27 @@ public:
     {
     m_StateMachine.SetOwnerClass( this );
     m_StateMachine.AddState( m_IdleState, "IdleState" );
+    m_StateMachine.AddState( m_ChangeMindState, "ChangeMindState" );
     m_StateMachine.SelectInitialState( m_IdleState );
+
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
     m_StateMachine.AddInput( m_Cancel, "Cancel");
     const ActionType NoAction = 0;
-    // On purpose NOT adding any transition: input m_Cancel
+   
+    std::cout << "TEST: On purpose NOT adding any transition for input m_Cancel" << std::endl;
     m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
 
-    // On purpose Adding a Transition for a non existing state
+    std::cout << "TEST: On purpose Adding a Transition for a non existing state " << std::endl;
     m_StateMachine.AddTransition( m_NonRegisteredState, m_QuarterInserted, m_IdleState, NoAction );
-    // On purpose Adding a Transition for a non existing input
+    
+    std::cout << "TEST: On purpose Adding a Transition for a non existing input " << std::endl;
     m_StateMachine.AddTransition( m_IdleState, m_NonRegisteredInput, m_IdleState, NoAction );
 
-    // On purpose Adding a Transition for a non existing new state
+    std::cout << "TEST: On purpose Adding a Transition for a non existing new state " << std::endl;
     m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_NonRegisteredState, NoAction );
 
-    // On purpose Adding a Transition for a {State,Input} pair for which a
-    // transition ALREADY exists
+    std::cout << "TEST: On purpose Adding a Transition for a {State,Input} pair " << std::endl;
+    std::cout << "      for which a transition ALREADY exists " << std::endl;
     m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_ChangeMindState, NoAction );
 
     m_StateMachine.SetReadyToRun();
