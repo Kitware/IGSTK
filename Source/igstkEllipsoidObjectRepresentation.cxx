@@ -80,21 +80,8 @@ void EllipsoidObjectRepresentation::SetEllipsoid( const EllipsoidObjectType * el
  * object */
 void EllipsoidObjectRepresentation::UpdateRepresentationFromGeometry()
 {
-  // for efficienty sake, this method should have an switch for different
-  // events, or it should be splitted in many different callack methods.
   EllipsoidObjectType::ArrayType radius = m_EllipsoidObject->GetRadius();
   m_EllipsoidSource->SetScale( radius[0], radius[1], radius[2] );
-  std::cout<< "EllipsoidObjectRepresentation::UpdateRepresentationFromGeometry() " << std::endl;
-}
-
-
-
-/** Update the visual representation in response to changes in the object
- * position */
-void EllipsoidObjectRepresentation::UpdatePositionFromGeometry()
-{
-  std::cout << "IMPLEMENTME: " << std::endl;
-  std::cout << "EllipsoidObjectRepresentation::UpdatePositionFromGeometry() " << std::endl;
 }
 
 

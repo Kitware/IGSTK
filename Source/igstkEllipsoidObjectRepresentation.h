@@ -83,7 +83,6 @@ private:
 
   /** update the visual representation with changes in the geometry */
   void UpdateRepresentationFromGeometry();
-  void UpdatePositionFromGeometry();
 
 };
 

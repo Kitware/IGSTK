@@ -72,11 +72,8 @@ void CylinderObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent inde
  * object */
 void CylinderObjectRepresentation::UpdateRepresentationFromGeometry()
 {
-  // for efficienty sake, this method should have an switch for different
-  // events, or it should be splitted in many different callack methods.
   m_CylinderSource->SetRadius(m_CylinderSpatialObject->GetRadius());
   m_CylinderSource->SetHeight(m_CylinderSpatialObject->GetHeight());
-  std::cout<< "CylinderObjectRepresentation::UpdateRepresentationFromGeometry() " << std::endl;
 }
 
 /** Create the vtk Actors */
@@ -86,8 +83,8 @@ void CylinderObjectRepresentation::CreateActors()
   vtkActor* cylinderActor = vtkActor::New();
 
   cylinderActor->GetProperty()->SetColor(this->GetRed(),
-                                     this->GetGreen(),
-                                     this->GetBlue()); 
+                                         this->GetGreen(),
+                                         this->GetBlue()); 
         
   cylinderActor->GetProperty()->SetOpacity(this->GetOpacity()); 
   cylinderMapper->SetInput(m_CylinderSource->GetOutput());
