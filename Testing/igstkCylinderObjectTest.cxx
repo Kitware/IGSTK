@@ -105,6 +105,50 @@ int igstkCylinderObjectTest( int, char * [] )
   // this will indirectly call CreateActors() 
   scene->RequestAddObject( view2D, cylinderRepresentation );
 
+  // Testing Update
+  cylinderRepresentation->IsModified();
+
+  // Test GetTransform()
+  std::cout << "Testing Set/GetTransform(): ";
+
+  const double tolerance = 1e-8;
+  double validityTimeInMilliseconds = 2000.0;
+  igstk::Transform transform;
+  igstk::Transform::VectorType translation;
+  translation[0] = 0;
+  translation[1] = 1;
+  translation[2] = 2;
+  igstk::Transform::VersorType rotation;
+  rotation.Set( 0.707, 0.0, 0.707, 0.0 );
+  transform.SetTranslationAndRotation( translation, rotation, validityTimeInMilliseconds );
+  cylinderObject->SetTransform( transform );
+  igstk::Transform  transform2 = cylinderObject->GetTransform();
+  igstk::Transform::VectorType translation2 = transform2.GetTranslation();
+  for( unsigned int i=0; i<3; i++ )
+    {
+    if( fabs( translation2[i]  - translation[i] ) > tolerance )
+      {
+      std::cerr << "Translation component is out of range [FAILED]" << std::endl;
+      std::cerr << "input  translation = " << translation << std::endl;
+      std::cerr << "output translation = " << translation2 << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+
+  igstk::Transform::VersorType rotation2 = transform2.GetRotation();
+  if( fabs( rotation2.GetX() - rotation.GetX() ) > tolerance ||
+      fabs( rotation2.GetY() - rotation.GetY() ) > tolerance ||
+      fabs( rotation2.GetZ() - rotation.GetZ() ) > tolerance ||
+      fabs( rotation2.GetW() - rotation.GetW() ) > tolerance     )
+    {
+    std::cerr << "Rotation component is out of range [FAILED]" << std::endl;
+    std::cerr << "input  rotation = " << rotation << std::endl;
+    std::cerr << "output rotation = " << rotation2 << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
+
   // Exercise Copy() method
   ObjectRepresentationType::Pointer cylinderRepresentation2 = cylinderRepresentation->Copy();
   scene->RequestAddObject( view2D, cylinderRepresentation2 );

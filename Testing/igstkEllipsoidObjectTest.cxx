@@ -112,6 +112,12 @@ int igstkEllipsoidObjectTest( int, char * [] )
     
   std::cout << "[PASSED]" << std::endl;
 
+  // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
+  // geometrical parameters should trigger an update in the representation
+  // class.
+  std::cout << "Testing UpdateRepresentationFromGeometry() : ";
+  ellipsoidObject->SetRadius( 20.0, 37.0, 39.0 );
+  
   // Testing Update
   ellipsoidRepresentation->IsModified();
 
