@@ -157,6 +157,27 @@ protected:
     /** The "StopTrackingProcessing" method stop tracking. */
     virtual void StopTrackingProcessing( void );
 
+    /** The "ResetTrackingProcessing" method resets tracker to a known configuration. */
+    virtual void ResetTrackingProcessing( void );
+
+    /** The "CloseFromTrackingStateProcessing" method closes tracker in use, when the tracker is
+      * in tracking state. */
+    virtual void CloseFromTrackingStateProcessing( void );
+
+    /** The "CloseFromToolsActiveStateProcessing" method closes tracker in use, when the tracker is
+      * in active tools state. */
+    virtual void CloseFromToolsActiveStateProcessing( void);
+
+    /** The "CloseFromCommunicatingStateProcessing" method closes tracker in use, when the tracker is
+      * in communicating state. */
+    virtual void CloseFromCommunicatingStateProcessing( void );
+
+    /** The "DisableCommunicationProcessing" disables communication. */
+    virtual void DisableCommunicationProcessing( void );
+
+    /** The "DisableToolsProcessing" method disables tools. */
+    virtual void DisableToolsProcessing( void );
+
 protected:
 
     /** Vector of all tool ports on the tracker */
@@ -182,6 +203,8 @@ private:
     InputType                m_StartTracking;
     InputType                m_UpdateStatus;
     InputType                m_StopTracking;
+    InputType                m_ResetTracking;
+    InputType                m_CloseTracking;
     
     /** The Logger instance */
     LoggerType               *m_pLogger;

@@ -41,8 +41,10 @@ Tracker::Tracker(void) : m_pCommunication( NULL), m_pLogger( NULL)
       m_StateMachine.AddInput( m_SetUpCommunication, "SetUpCommunication");
       m_StateMachine.AddInput( m_SetUpTools, "SetUpTools");
       m_StateMachine.AddInput( m_StartTracking, "StartTracking");
-      m_StateMachine.AddInput( m_UpdateStatus, "UpdateStatus");
-      m_StateMachine.AddInput( m_StopTracking, "StopTracking");
+      m_StateMachine.AddInput( m_UpdateStatus,  "UpdateStatus");
+      m_StateMachine.AddInput( m_StopTracking,  "StopTracking");
+      m_StateMachine.AddInput( m_ResetTracking, "ResetTracking");
+      m_StateMachine.AddInput( m_CloseTracking, "CloseTracking");
 
       const ActionType NoAction = 0;
 
@@ -52,6 +54,10 @@ Tracker::Tracker(void) : m_pCommunication( NULL), m_pLogger( NULL)
       m_StateMachine.AddTransition( m_ToolsActiveState,   m_StartTracking,       m_TrackingState,      &Tracker::StartTrackingProcessing );
       m_StateMachine.AddTransition( m_TrackingState,      m_UpdateStatus,        m_TrackingState,      &Tracker::UpdateStatusProcessing );
       m_StateMachine.AddTransition( m_TrackingState,      m_StopTracking,        m_ToolsActiveState,   &Tracker::StopTrackingProcessing );
+      m_StateMachine.AddTransition( m_TrackingState,      m_ResetTracking,       m_TrackingState,      &Tracker::ResetTrackingProcessing );
+      m_StateMachine.AddTransition( m_TrackingState,      m_CloseTracking,       m_IdleState,          &Tracker::CloseFromTrackingStateProcessing );
+      m_StateMachine.AddTransition( m_ToolsActiveState,   m_CloseTracking,       m_IdleState,          &Tracker::CloseFromToolsActiveStateProcessing );
+      m_StateMachine.AddTransition( m_CommunicatingState, m_CloseTracking,       m_IdleState,          &Tracker::CloseFromCommunicatingStateProcessing );
 
       m_StateMachine.SelectInitialState( m_IdleState );
 
@@ -69,10 +75,10 @@ Tracker::~Tracker(void)
 
 void Tracker::Initialize(  const char * )
 {
-    this->m_StateMachine.ProcessInput( this->m_SetUpCommunication );
     igstkLogMacro( igstk::Logger::DEBUG, "SetUpCommunication called ...\n");
-    this->m_StateMachine.ProcessInput( this->m_SetUpTools );
+    this->m_StateMachine.ProcessInput( this->m_SetUpCommunication );
     igstkLogMacro( igstk::Logger::DEBUG, "SetUpTools called ...\n");
+    this->m_StateMachine.ProcessInput( this->m_SetUpTools );
 }
 
 
@@ -88,25 +94,27 @@ Tracker::LoggerType* Tracker::GetLogger(  void )
 
 void Tracker::Reset( void )
 {
+    igstkLogMacro( igstk::Logger::DEBUG, "ResetTracking called ...\n");
+    m_StateMachine.ProcessInput( m_ResetTracking );
 }
 
 void Tracker::StartTracking( void )
 {
-    m_StateMachine.ProcessInput( m_StartTracking );
     igstkLogMacro( igstk::Logger::DEBUG, "StartTracking called ...\n");
+    m_StateMachine.ProcessInput( m_StartTracking );
 }
 
 void Tracker::StopTracking( void )
 {
-    m_StateMachine.ProcessInput( m_StopTracking );
     igstkLogMacro( igstk::Logger::DEBUG, "StopTracking called ...\n");
+    m_StateMachine.ProcessInput( m_StopTracking );
 }
 
 
 void Tracker::UpdateStatus( void )
 {
-    m_StateMachine.ProcessInput( m_UpdateStatus );
     igstkLogMacro( igstk::Logger::DEBUG, "UpdateStatus called ...\n");
+    m_StateMachine.ProcessInput( m_UpdateStatus );
 }
 
 
@@ -131,6 +139,8 @@ void Tracker::SetToolPosition( const int portNumber, const int toolNumber, const
 
 void Tracker::Close( void )
 {
+    igstkLogMacro( igstk::Logger::DEBUG, "CloseTracking called ...\n");
+    m_StateMachine.ProcessInput( m_CloseTracking );
 }
 
 void Tracker::AddPort( const TrackerPortType& port)
@@ -171,6 +181,42 @@ void Tracker::UpdateStatusProcessing( void )
 void Tracker::StopTrackingProcessing( void )
 {
     igstkLogMacro( igstk::Logger::DEBUG, "Tracker::StopTrackingProcessing called ...\n");
+}
+
+void Tracker::ResetTrackingProcessing( void )
+{
+    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::ResetTrackingProcessing called ...\n");
+}
+
+void Tracker::DisableCommunicationProcessing( void )
+{
+    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::DisableCommunicationProcessing called ...\n");
+}
+
+void Tracker::DisableToolsProcessing( void )
+{
+    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::DisableToolsProcessing called ...\n");
+}
+
+void Tracker::CloseFromTrackingStateProcessing( void )
+{
+    igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseFromTrackingStateProcessing called ...\n");
+    this->StopTrackingProcessing();
+    this->DisableToolsProcessing();
+    this->DisableCommunicationProcessing();
+}
+
+void Tracker::CloseFromToolsActiveStateProcessing( void)
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseFromToolsActiveStateProcessing called ...\n");
+  this->DisableToolsProcessing();
+  this->DisableCommunicationProcessing();
+}
+
+void Tracker::CloseFromCommunicatingStateProcessing( void )
+{
+  igstkLogMacro( igstk::Logger::DEBUG, "Tracker::CloseFromCommunicatingStateProcessing called ...\n");
+  this->DisableCommunicationProcessing();
 }
 
 }
