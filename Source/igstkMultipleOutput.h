@@ -47,8 +47,20 @@ public:
         m_Output.insert( &output ); // insert the address
     }
 
+    /** The Flush method flushes all the streams. */  
+    void Flush( void )
+    {
+        ContainerType::iterator itr = m_Output.begin();
+        ContainerType::iterator end = m_Output.end();
+        while( itr != end )
+        {
+            (*(*itr)).flush(); 
+            ++itr;
+        }
+    }
 
     /** Definition of << operator */
+
     template <class T>
     MultipleOutput& operator << ( T tt )
     {
@@ -56,11 +68,12 @@ public:
         ContainerType::iterator end = m_Output.end();
         while( itr != end )
         {
-            *(*itr) << tt << std::endl;
+            *(*itr) << tt ;
             ++itr;
         }
         return * this;
     }
+
 
 private:
   
