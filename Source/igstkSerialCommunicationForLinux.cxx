@@ -28,7 +28,7 @@ SerialCommunication() , INVALID_HANDLE_VALUE(-1)
   this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
 } 
 
-void SerialCommunicationForLinux::OpenCommunicationPortProcessing( void )
+void SerialCommunicationForLinux::OpenPortProcessing( void )
 {
   char portName[20];
   sprintf(portName, "/dev/ttyS%.1d", this->m_PortNumber );
@@ -208,7 +208,7 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
   m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpSuccessInput;
 }
 
-void SerialCommunicationForLinux::ClearBuffersAndCloseCommunicationPortProcessing( void )
+void SerialCommunicationForLinux::ClearBuffersAndClosePortProcessing( void )
 {
   if (m_InputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_InputBuffer;
@@ -219,28 +219,16 @@ void SerialCommunicationForLinux::ClearBuffersAndCloseCommunicationPortProcessin
   this->CloseCommunicationPortProcessing();
 }
 
-void SerialCommunicationForLinux::CloseCommunicationPortProcessing( void )
+void SerialCommunicationForLinux::ClosePortProcessing( void )
 {
   close(this->m_PortHandle);
   this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
   igstkLogMacro( igstk::Logger::DEBUG, "Communication port closed.\n");
 }
 
-void SerialCommunicationForLinux::RestCommunicationProcessing( void )
+void SerialCommunicationForLinux::RestPortProcessing( void )
 {
-  /*
-  if (!SetCommBreak( this->m_PortHandle ))
-  {
-    this->InvokeEvent( RestCommunicationFailureEvent() );
-  }
-
-  Sleep( m_PortRestSpan );
-
-  if (!ClearCommBreak( this->m_PortHandle ))
-  {
-    this->InvokeEvent( RestCommunicationFailureEvent() );
-  }
-  */
+   igstkLogMacro( igstk::Logger::DEBUG, "*** RestPortProcessing NOT IMPLEMENTED ...\n");
 }
 
 

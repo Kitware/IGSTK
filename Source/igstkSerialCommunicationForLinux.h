@@ -61,7 +61,7 @@ protected:
 //  ~SerialCommunicationForLinux();
 
   /** Opens serial port for communication; */
-  virtual void OpenCommunicationPortProcessing( void );
+  virtual void OpenPortProcessing( void );
 
   /** Set up data buffer size. */
   virtual void SetUpDataBuffersProcessing( void );
@@ -70,13 +70,13 @@ protected:
   virtual void SetUpDataTransferParametersProcessing( void );
 
   /** Closes serial port  */
-  virtual void CloseCommunicationPortProcessing( void );
-  virtual void ClearBuffersAndCloseCommunicationPortProcessing( void );
+  virtual void ClosePortProcessing( void );
+  virtual void ClearBuffersAndClosePortProcessing( void );
 
   /**Rests communication port by suspending character transmission  
   and placing the transmission line in a break state, and restarting
   transmission after a short delay.*/
-  virtual void RestCommunicationProcessing( void );
+  virtual void RestPortProcessing( void );
 
   virtual void FlushOutputBufferProcessing( void );
 
