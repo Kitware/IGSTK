@@ -6,7 +6,6 @@
 #include "ICPRegistration.h"
 #include <iostream>
 #include <fstream>
-#include "conio.h"
 
 int ICPRegistrationTest(int argc, char * argv[] )
 {
