@@ -21,15 +21,11 @@ INCLUDE_DIRECTORIES (
 ADD_TEST(igstkRenderWindowTest ${IGSTKSandbox_TESTS} igstkRenderWindowTest)
 ADD_TEST(igstkEllipsoidObjectTest ${IGSTKSandbox_TESTS} igstkEllipsoidObjectTest)
 ADD_TEST(igstkSceneTest ${IGSTKSandbox_TESTS} igstkSceneTest)
-ADD_TEST(igstkView2DTest ${IGSTKSandbox_TESTS} igstkView2DTest)
-ADD_TEST(igstkView3DTest ${IGSTKSandbox_TESTS} igstkView3DTest)
 
 SET(BasicTests_SRCS
   igstkRenderWindowTest.cxx
   igstkEllipsoidObjectTest.cxx
   igstkSceneTest.cxx
-  igstkView2DTest.cxx
-  igstkView3DTest.cxx
   )
 
 ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${BasicTests_SRCS})
