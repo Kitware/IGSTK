@@ -1,0 +1,58 @@
+PROJECT( ApplicationQt )
+
+# 
+# Find QT
+#
+INCLUDE (${CMAKE_ROOT}/Modules/FindQt.cmake)
+
+
+#
+#  Define the list of source files
+#
+SET(APPLICATIONQT_HEADS
+  ApplicationBase.h
+  Application.h
+  vtkQtRenderWindow.h
+  vtkQtRenderWindowInteractor.h
+  )
+
+SET(APPLICATIONQT_SRCS
+  ApplicationBase.cxx
+  Application.cxx
+  vtkQtRenderWindow.cpp
+  vtkQtRenderWindowInteractor.cpp
+  )
+
+INCLUDE_DIRECTORIES(
+  ${QT_INCLUDE_DIR}
+  ${QT_INCLUDE_PATH}
+  ${ApplicationQt_SOURCE_DIR}
+  ${ApplicationQt_BINARY_DIR}
+  )
+
+SET(APPLICATIONQT_GUI_SRCS 
+  ApplicationGUI.ui
+)
+
+SET(APPLICATIONQT_MOC_SRCS 
+  vtkQtRenderWindowInteractor.h
+)
+
+IF(QT_WRAP_UI)
+  QT_WRAP_UI(ApplicationQt APPLICATIONQT_GUI_DST_HEADS APPLICATIONQT_GUI_DST_SRCS ${APPLICATIONQT_GUI_SRCS} )
+ENDIF(QT_WRAP_UI)
+
+IF(QT_WRAP_CPP)
+  QT_WRAP_CPP(ApplicationQt APPLICATIONQT_MOC_DST_SRCS ${APPLICATIONQT_MOC_SRCS} )
+ENDIF(QT_WRAP_CPP)
+
+ADD_DEFINITIONS(-DQT_DLL)
+
+ADD_DEFINITIONS(-DQT_THREAD_SUPPORT)
+
+ADD_EXECUTABLE( ApplicationQt main.cxx ${APPLICATIONQT_HEADS} ${APPLICATIONQT_SRCS} 
+	${APPLICATIONQT_GUI_DST_HEADS}  ${APPLICATIONQT_GUI_DST_SRCS}
+	${APPLICATIONQT_MOC_DST_SRCS} )
+
+TARGET_LINK_LIBRARIES( ApplicationQt IGSTK ${QT_QT_LIBRARY})
+
