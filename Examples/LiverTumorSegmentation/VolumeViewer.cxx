@@ -112,8 +112,8 @@ VolumeViewer
     volumeMapper->SetInput(image);
 
     
-  float spacing[3];
-  float origin[3];
+  vtkFloatingPointType spacing[3];
+  vtkFloatingPointType origin[3];
   int   dimensions[3];
 
   image->GetSpacing(spacing);
