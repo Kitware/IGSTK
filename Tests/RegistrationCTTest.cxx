@@ -11,7 +11,7 @@ int RegistrationCTTest(int argc, char * argv [])
 
   typedef ISIS::RegistrationCT< VolumeType >        RegistratorType;
 
-  RegistratorType registrator;
+  RegistratorType registrator;  //
 
   VolumeType::Pointer fixedImage  = VolumeType::New();
   VolumeType::Pointer movingImage = VolumeType::New();
