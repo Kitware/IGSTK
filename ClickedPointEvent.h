@@ -9,6 +9,8 @@ namespace ISIS
 
   itkEventMacro( ClickedPointEvent, itk::AnyEvent );
 
+  itkEventMacro( UpdateWindowLevelWidthEvent, itk::AnyEvent );
+
 }  // end namespace ISIS
 
 #endif
