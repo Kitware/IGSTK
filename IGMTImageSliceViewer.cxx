@@ -337,16 +337,16 @@ namespace ISIS
 			return;
 		}
 		
-		float spacing[3];
-		float origin[3];
+		vtkFloatingPointType spacing[3];
+		vtkFloatingPointType origin[3];
 		int   dimensions[3];
 		
 		image->GetSpacing(spacing);
 		image->GetOrigin(origin);
 		image->GetDimensions(dimensions);
 		
-		float focalPoint[3];
-		float position[3];
+		vtkFloatingPointType focalPoint[3];
+		vtkFloatingPointType position[3];
 		
 		for ( unsigned int cc = 0; cc < 3; cc++)
 		{
@@ -355,7 +355,7 @@ namespace ISIS
 		}
 		
 		int idx = 0;
-		const float distanceToFocalPoint = 1000;
+		const vtkFloatingPointType distanceToFocalPoint = 1000;
 		
 		switch( m_Orientation )
 		{
@@ -392,7 +392,7 @@ namespace ISIS
 		int d1 = (idx + 1) % 3;
 		int d2 = (idx + 2) % 3;
 		
-		float max = myMAX( 
+		vtkFloatingPointType max = myMAX( 
 			spacing[d1] * dimensions[d1],
 			spacing[d2] * dimensions[d2]);
 		
@@ -432,15 +432,15 @@ namespace ISIS
   y = winsize[1] - y;
 
   // Convert display point to world point
-  float wpoint[4];
+  vtkFloatingPointType wpoint[4];
   const double z = m_SliceNum / ( m_FarPlane - m_NearPlane );
   m_Renderer->SetDisplayPoint( x, y, 0 );
   m_Renderer->DisplayToWorld();
   m_Renderer->GetWorldPoint( wpoint );
 
   // Fix camera Z coorinate to match the current slice
-  float spacing[3]={1,1,1};
-  float origin[3] ={0,0,0};
+  vtkFloatingPointType spacing[3]={1,1,1};
+  vtkFloatingPointType origin[3] ={0,0,0};
   int dimensions[3] = { 100, 100, 100 };
   if ( m_Actor->GetInput() )
     {
@@ -495,15 +495,15 @@ namespace ISIS
     y = winsize[1] - y;
     
     // Convert display point to world point
-    float wpoint[4];
+    vtkFloatingPointType wpoint[4];
     const double z = m_SliceNum / ( m_FarPlane - m_NearPlane );
     m_Renderer->SetDisplayPoint( x, y, 0 );
     m_Renderer->DisplayToWorld();
     m_Renderer->GetWorldPoint( wpoint );
     
     // Fix camera Z coorinate to match the current slice
-    float spacing[3]={1,1,1};
-    float origin[3] ={0,0,0};
+    vtkFloatingPointType spacing[3]={1,1,1};
+    vtkFloatingPointType origin[3] ={0,0,0};
     int dimensions[3] = { 100, 100, 100 };
     if ( m_Actor->GetInput() )
     {
@@ -531,7 +531,7 @@ namespace ISIS
         break;
       }
     }
-    float realz = m_SliceNum * spacing[idx] + origin[idx];
+    vtkFloatingPointType realz = m_SliceNum * spacing[idx] + origin[idx];
     wpoint[idx] = realz;
   
     m_RightClickedPoint[0] = wpoint[0];
