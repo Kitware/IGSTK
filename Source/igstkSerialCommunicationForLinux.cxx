@@ -23,7 +23,7 @@ namespace igstk
 { 
 /** Constructor */
 SerialCommunicationForLinux::SerialCommunicationForLinux() :  
-SerialCommunication()
+SerialCommunication() , INVALID_HANDLE_VALUE(-1)
 {
   this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
 } 
@@ -170,7 +170,7 @@ void SerialCommunicationForLinux::ClearBuffersAndCloseCommunicationPortProcessin
 
 void SerialCommunicationForLinux::CloseCommunicationPortProcessing( void )
 {
-  closeHandle(this->m_PortHandle);
+  close(this->m_PortHandle);
   this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
   igstkLogMacro( igstk::Logger::DEBUG, "Communication port closed.\n");
 }

@@ -17,6 +17,10 @@
 #ifndef __igstkSerialCommunicationForLinux_h
 #define __igstkSerialCommunicationForLinux_h
 
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <termio.h> 
 
 #include "igstkSerialCommunication.h"
@@ -36,7 +40,7 @@ class SerialCommunicationForLinux : public SerialCommunication
 {
 public:
 
-  typedef INVALID_HANDLE_VALUE -1;
+  const int INVALID_HANDLE_VALUE;
 
   typedef int HandleType;
 
