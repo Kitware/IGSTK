@@ -139,7 +139,7 @@ protected:
 
 	virtual void PrintMessage( char *msg );
 	
-protected:
+public:
 	
 	VolumeReaderType::Pointer               m_VolumeReader;
 
@@ -226,6 +226,11 @@ protected:
 	double			m_ReferenceNeedlePosition[3]; 
 
 	double			m_ReferenceNeedleTipOffset[3];		
+public:
+
+  virtual void OnRecord(void)
+  {
+  }
 };
 
 
