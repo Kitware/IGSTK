@@ -200,7 +200,10 @@ void IGMTrackingBase::SetImageFiducial( unsigned int index, double *position )
 
 void IGMTrackingBase::SetTrackerFiducial( unsigned int index, double *position )
 {
-	m_FiducialRegistration.SetSourceFiducial( index, position );
+  if (index != -1)
+  {
+	  m_FiducialRegistration.SetSourceFiducial( index, position );
+  }
 }
 
 
