@@ -19,13 +19,11 @@ IF(NOT IGSTKSandbox_SETUP_DASHBOARD)
 #  FIND IGSTK
 #
 FIND_PACKAGE(IGSTK)
-IF (USE_IGSTK_FILE)
-  INCLUDE (${USE_IGSTK_FILE})
-ELSE (USE_IGSTK_FILE)
+IF (IGSTK_USE_FILE)
+  INCLUDE (${IGSTK_USE_FILE})
+ELSE (IGSTK_USE_FILE)
   MESSAGE( FATAL_ERROR "This application requires IGSTK. One of these components is missing. Please verify configuration")
-ENDIF (USE_IGSTK_FILE)
-
-
+ENDIF (IGSTK_USE_FILE)
 
 
 #
@@ -72,7 +70,7 @@ ENDIF(IGSTKSandbox_BUILD_TESTING)
 # Add the examples directories
 OPTION(IGSTKSandbox_BUILD_EXAMPLES "Examples of the project" ON)
 IF(IGSTKSandbox_BUILD_EXAMPLES)
-  #  SUBDIRS(Examples)
+    SUBDIRS(Examples)
 ENDIF(IGSTKSandbox_BUILD_EXAMPLES)
 
 #-----------------------------------------------------------------------------
@@ -80,6 +78,8 @@ ENDIF(IGSTKSandbox_BUILD_EXAMPLES)
 #FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_DIR}/Testing/Data $ENV{IGSTKSandbox_DATA_ROOT})
 #MARK_AS_ADVANCED(IGSTKSandbox_DATA_ROOT)
 
-
+INCLUDE_DIRECTORIES(
+${IGSTKSandbox_SOURCE_DIR}/Source
+)
 
 ENDIF(NOT IGSTKSandbox_SETUP_DASHBOARD)
