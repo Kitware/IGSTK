@@ -133,19 +133,19 @@ ImageSliceViewer
   case Saggital:
       {
       idx = 0;
-      m_Camera->SetViewUp (     0,  0,  1 );
+      m_Camera->SetViewUp (     0,  0,  -1 );
       break;
       }
   case Coronal:
       {
       idx = 1;
-      m_Camera->SetViewUp (     0,  0,  1 );
+      m_Camera->SetViewUp (     0,  0,  -1 );
       break;
       }
   case Axial:
       {
       idx = 2;
-      m_Camera->SetViewUp (     0,  1,  0 );
+      m_Camera->SetViewUp (     0,  -1,  0 );
       break;
       }
     }
@@ -191,7 +191,7 @@ void
   interactorStyle->Delete();
   interactor->AddObserver( ::vtkCommand::LeftButtonPressEvent, m_InteractorObserver );
   interactor->AddObserver( ::vtkCommand::LeftButtonReleaseEvent, m_InteractorObserver );
-  interactor->AddObserver( ::vtkCommand::MouseMoveEvent, m_InteractorObserver );
+//  interactor->AddObserver( ::vtkCommand::MouseMoveEvent, m_InteractorObserver );
 }
 
 
