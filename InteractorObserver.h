@@ -23,7 +23,8 @@ protected:
 private:
 
   ImageSliceViewer   * m_SliceViewer;
-  bool                 m_Motion;
+  bool                 m_Motion, m_FirstMove;
+  int                  m_LButtonDownPoint[2];
 
 };
 
