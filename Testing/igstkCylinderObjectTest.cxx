@@ -24,6 +24,9 @@
 
 #include "igstkCylinderObject.h"
 #include "igstkCylinderObjectRepresentation.h"
+#include "igstkScene.h"
+#include "igstkView2D.h"
+
 
 int igstkCylinderObjectTest( int, char * [] )
 {
@@ -93,7 +96,15 @@ int igstkCylinderObjectTest( int, char * [] )
 
   // Testing CreateActors()
   std::cout << "Testing actors : ";
-  cylinderRepresentation->CreateActors();
+  typedef igstk::Scene   SceneType;
+  SceneType::Pointer scene = SceneType::New();
+
+  typedef igstk::View2D  View2DType;
+  View2DType * view2D = new View2DType(0,0,200,200,"View 2D");
+  
+  // this will indirectly call CreateActors() 
+  scene->RequestAddObject( view2D, cylinderRepresentation );
+
   std::cout << "[PASSED]" << std::endl;
 
   std::cout << "Test [DONE]" << std::endl;

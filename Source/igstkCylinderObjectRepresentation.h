@@ -52,9 +52,6 @@ public:
   /** Method for creation of a reference counted object. */
   NewMacro( CylinderObjectRepresentation );
 
-  /** Create the VTK actors */
-  void CreateActors();
-
   /** Return a copy of the current object representation */
   Pointer Copy();
 
@@ -68,6 +65,9 @@ protected:
 
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+  /** Create the VTK actors */
+  void CreateActors();
 
 private:
 
