@@ -22,6 +22,7 @@ class IGMTracking : public IGMTrackingGUI
 {
 
 public:
+	void OnUpdateRegParameters();
 
 	void OnSaveSegmentationData();
 	void OnUpdateSegParameters();
@@ -40,8 +41,8 @@ public:
   int m_Pipeline;
 	void OnFusionImage();
 
-  int m_Probe[PORTNUM], m_Ref[PORTNUM], m_UID[PORTNUM];
-  int m_ProbeID, m_RefID;
+  int m_Probe[PORTNUM], m_Register[PORTNUM], m_Ref[PORTNUM], m_UID[PORTNUM];
+  int m_ProbeID, m_RefID, m_RegisterID;
   int m_FullSizeIdx;
 
 //  double m_FusionOpacity;
@@ -256,11 +257,11 @@ private:
 
   IGSTK::FantasticRegistration m_FantasticRegistration;
 
-	int				m_ToolHandle, m_ToolHandle1, m_ToolHandle2;
+	int				m_ToolHandle, m_RegToolHandle, m_RegToolHandle1, m_RegToolHandle2;
 
 	int				m_ReferenceToolHandle;
 
-	double			m_ClickedPoint[3], m_RightClickedPoint[3]; 
+	double    m_ClickedPoint[3], m_RightClickedPoint[3]; 
 
   int       m_PointIndex[3];
 

@@ -159,9 +159,11 @@ IGMTracking::IGMTracking()
   m_Pipeline = 0;
 
   m_ProbeID = 0;
+  m_RegisterID = 0;
   m_ToolTrackingMode = 0;
 
   m_Probe[0] = 1;
+  m_Register[0] = 1;
   m_Ref[0] = 0;
   m_UID[0] = 1042;
   m_Offset[0] = -12.6;
@@ -169,6 +171,7 @@ IGMTracking::IGMTracking()
   m_Radius[0] = 1.5;
 
   m_Probe[1] = 0;
+  m_Register[1] = 0;
   m_Ref[1] = 1;
   m_UID[1] = 1027;
   m_Offset[1] = -19.1;
@@ -176,6 +179,7 @@ IGMTracking::IGMTracking()
   m_Radius[1] = 1.5;
 
   m_Probe[2] = 0;
+  m_Register[2] = 0;
   m_Ref[2] = 0;
   m_UID[2] = 0;
   m_Offset[2] = 0.0;
@@ -183,6 +187,7 @@ IGMTracking::IGMTracking()
   m_Radius[2] = 1.0;
 
   m_Probe[3] = 0;
+  m_Register[3] = 0;
   m_Ref[3] = 0;
   m_UID[3] = 0;
   m_Offset[3] = 0.0;
@@ -198,7 +203,7 @@ IGMTracking::IGMTracking()
 
   for (i = 0; i < PORTNUM; i++)
   {
-    m_ProbeParameters.SetDeviceLine(i, m_Probe[i], m_Ref[i], m_UID[i], m_Offset[i], m_Length[i], m_Radius[i]);
+    m_ProbeParameters.SetDeviceLine(i, m_Probe[i], m_Register[i], m_Ref[i], m_UID[i], m_Offset[i], m_Length[i], m_Radius[i]);
   }
 
 	this->SetNeedleLength( this->GetNeedleLength() );
@@ -313,9 +318,11 @@ void IGMTracking::Hide()
 void IGMTracking::Quit()
 {
 
-  this->Hide();
+//  this->Hide();
 
-	exit(0);
+//	exit(0);
+
+  AxialView->clear_visible();
 
 }
 
@@ -1049,7 +1056,7 @@ void IGMTracking::StartTracking( void )
 	    m_ToolHandle = m_AuroraTracker.GetMyToolHandle( toolID );
       if (m_ToolHandle < 0)
       {
-        ret = m_AuroraTracker.GetMyToolHandle2(toolID, m_ToolHandle1, m_ToolHandle2 );
+        ret = m_AuroraTracker.GetMyToolHandle2(toolID, m_RegToolHandle1, m_RegToolHandle2 );
         if (ret < 2)
         {
           sprintf(mes, "No tool on port %d detected ...", i);
@@ -1131,13 +1138,13 @@ void IGMTracking::OnToolPosition( void )
   switch (m_ToolTrackingMode)
   {
   case 1:
-    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle, m_NeedleTipOffset, m_NeedlePosition);
+    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_RegToolHandle, m_RegNeedleTipOffset, m_NeedlePosition);
     break;
   case 2:
-    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle1, m_CoilOffset1, m_CoilPosition[0]);
-    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle1, m_CoilOffset2, m_CoilPosition[1]);
-    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle2, m_CoilOffset1, m_CoilPosition[2]);
-    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_ToolHandle2, m_CoilOffset2, m_CoilPosition[3]);
+    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_RegToolHandle1, m_CoilOffset1, m_CoilPosition[0]);
+    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_RegToolHandle1, m_CoilOffset2, m_CoilPosition[1]);
+    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_RegToolHandle2, m_CoilOffset1, m_CoilPosition[2]);
+    m_AuroraTracker.GetOffsetCorrectedToolPosition( m_RegToolHandle2, m_CoilOffset2, m_CoilPosition[3]);
     break;
   }	
 
@@ -1158,7 +1165,7 @@ bool IGMTracking::OnRegister( void )
 {
   unsigned int i, j, k, idx[4], minidx[4], id;
   double err, minerr = 100000;
-  bool ret = true;
+  bool ret = true, reg = false;
   char mes[128];
 
   switch (m_ToolTrackingMode)
@@ -1169,11 +1176,11 @@ bool IGMTracking::OnRegister( void )
     break;
   case 2:
     id = 0;
-    for (i = 0; i < 2; i++)
+    for (i = 0; i < 2 && !reg; i++)
     {
       idx[0] = i;
       idx[1] = 1 - i;
-      for (j = 2; j < 4; j++)
+      for (j = 2; j < 4 && !reg; j++)
       {
         idx[2] = j;
         idx[3] = 5 - j;
@@ -1190,16 +1197,54 @@ bool IGMTracking::OnRegister( void )
           memcpy(minidx, idx, 4 * sizeof(unsigned int));
           minerr = err;
         }
+        if (id == m_RegParameters.m_DualSensorRegNum)
+        {
+          reg = true;
+        }
         id++;
-      }
+      }      
+    }
+
+    for (i = 2; i < 4 && !reg; i++)
+    {
+      idx[0] = i;
+      idx[1] = 5 - i;
+      for (j = 0; j < 2 && !reg; j++)
+      {
+        idx[2] = j;
+        idx[3] = 1 - j;
+        for (k = 0; k < 4; k++)
+        {
+          m_FiducialRegistration.SetSourceFiducial(k, m_CoilPosition[idx[k]]);
+        }
+        this->RegisterImageWithTrackerAndComputeRMSError();
+        err = m_FiducialRegistration.GetRMSError();
+        sprintf(mes, "The %drd registration error:%.2f", id, err);
+        this->AppendInfo(mes);
+        if (err < minerr)
+        {
+          memcpy(minidx, idx, 4 * sizeof(unsigned int));
+          minerr = err;
+        }
+        if (id == m_RegParameters.m_DualSensorRegNum)
+        {
+          reg = true;
+        }
+        id++;
+      }      
     }
     
-    for (k = 0; k < 4; k++)
+    if (m_RegParameters.m_DualSensorRegNum == -1)
     {
-      m_FiducialRegistration.SetSourceFiducial(k, m_CoilPosition[minidx[k]]);
+      for (k = 0; k < 4; k++)
+      {
+        m_FiducialRegistration.SetSourceFiducial(k, m_CoilPosition[minidx[k]]);
+      }
+      this->RegisterImageWithTrackerAndComputeRMSError();
+      err = m_FiducialRegistration.GetRMSError();
+      sprintf(mes, "The final registration error:%.2f", err);
+      this->AppendInfo(mes);
     }
-    this->RegisterImageWithTrackerAndComputeRMSError();
-    err = m_FiducialRegistration.GetRMSError();
     break;
   }  
 
@@ -1884,6 +1929,7 @@ void IGMTracking::OnUpdateLayout()
     MotionView->resize(0, 0, 0, 0);
     TargetView->resize(0, 0, 0, 0);
     AxialView->resize(m_FullSize[0], m_FullSize[1], m_FullSize[2], m_FullSize[3]);
+    AxialView->set_visible_focus();
     break;
   case 1:
     AxialView->resize(0, 0, 0, 0);
@@ -1892,6 +1938,7 @@ void IGMTracking::OnUpdateLayout()
     MotionView->resize(0, 0, 0, 0);
     TargetView->resize(0, 0, 0, 0);
     CoronalView->resize(m_FullSize[0], m_FullSize[1], m_FullSize[2], m_FullSize[3]);
+    CoronalView->set_visible_focus();
     break;
   case 2:
     CoronalView->resize(0, 0, 0, 0);
@@ -1900,6 +1947,7 @@ void IGMTracking::OnUpdateLayout()
     MotionView->resize(0, 0, 0, 0);
     TargetView->resize(0, 0, 0, 0);
     SagittalView->resize(m_FullSize[0], m_FullSize[1], m_FullSize[2], m_FullSize[3]);
+    SagittalView->set_visible_focus();
     break;
   case 3:
     AxialView->resize(0, 0, 0, 0);
@@ -1909,18 +1957,21 @@ void IGMTracking::OnUpdateLayout()
     {
     case 0:
       VolumeView->resize(m_FullSize[0], m_FullSize[1], m_FullSize[2], m_FullSize[3]);
+      VolumeView->set_visible_focus();
       MotionView->resize(0, 0, 0, 0);
       TargetView->resize(0, 0, 0, 0);
       break;
     case 1:
       VolumeView->resize(0, 0, 0, 0);
       MotionView->resize(m_FullSize[0], m_FullSize[1], m_FullSize[2], m_FullSize[3]);
+      MotionView->set_visible_focus();
       TargetView->resize(0, 0, 0, 0);
       break;
     case 2:
       VolumeView->resize(0, 0, 0, 0);
       MotionView->resize(0, 0, 0, 0);
       TargetView->resize(m_FullSize[0], m_FullSize[1], m_FullSize[2], m_FullSize[3]);
+      TargetView->set_visible_focus();
     }
     break;
   }
@@ -1972,7 +2023,7 @@ void IGMTracking::OnUpdateProbeParameters()
   {
     m_Probe[i] = m_ProbeParameters.GetDevice(i);
 
-    m_ProbeParameters.GetDeviceLine(i, probe, m_Ref[i], m_UID[i], m_Offset[i], m_Length[i], m_Radius[i]);
+    m_ProbeParameters.GetDeviceLine(i, probe, m_Register[i], m_Ref[i], m_UID[i], m_Offset[i], m_Length[i], m_Radius[i]);
 
     SetProbeLength(i, m_Length[i]);
     SetProbeRadius(i, m_Radius[i]);
@@ -1990,6 +2041,17 @@ void IGMTracking::OnUpdateProbeParameters()
       m_AxialViewer.DeActivateProbe(i);
       m_CoronalViewer.DeActivateProbe(i);
       m_SagittalViewer.DeActivateProbe(i);
+    }
+
+    if (m_Register[i] == 1)
+    {
+      m_RegisterID = i;
+      sprintf(toolID, "%02d", m_RegisterID + 1);
+	    m_RegToolHandle = m_AuroraTracker.GetMyToolHandle( toolID );
+      m_RegNeedleTipOffset[2] = m_Offset[i];
+      m_RegNeedleEndOffset[2] = m_Length[i];
+      m_CoilOffset1[2] = m_Offset[i];
+      m_CoilOffset2[2] = -m_Offset[i];
     }
 
     if (m_ProbeParameters.UseReference() && m_Ref[i] == 1)
@@ -2344,4 +2406,9 @@ void IGMTracking::OnSaveSegmentationData()
 	writer->SetInput(m_FusionRescaleIntensity->GetInput());
 
 	writer->Update();
+}
+
+void IGMTracking::OnUpdateRegParameters()
+{
+
 }
