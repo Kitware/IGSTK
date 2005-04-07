@@ -22,6 +22,7 @@
 
 class vtkNDITracker;
 class vtkTrackerTool;
+class vtkCallbackCommand;
 
 namespace igstk
 {
@@ -40,9 +41,9 @@ public:
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
-  typedef vtkTrackerTool               TrackerToolType;
-  typedef TrackerToolType*             TrackerToolPointer;
-  typedef std::vector< TrackerToolPointer > TrackerToolVectorType;
+  typedef vtkTrackerTool                  VTKTrackerToolType;
+  typedef VTKTrackerToolType*             VTKTrackerToolPointer;
+  typedef std::vector< VTKTrackerToolPointer > VTKTrackerToolVectorType;
 
   /**  Run-time type information (and related methods). */
   igstkTypeMacro(AtamaiNDITracker, Object);
@@ -52,9 +53,17 @@ public:
 
 protected:
 
-  vtkNDITracker       *m_VTKTracker;
-
-  TrackerToolVectorType m_Tools;
+  /** The VTK class that communicates with the tracking device */
+  vtkNDITracker        *m_VTKTracker;
+  /** The tools */
+  VTKTrackerToolVectorType m_VTKTrackerTools;
+  /** A callback command for catching VTK errors */
+  vtkCallbackCommand   *m_VTKErrorCommand;
+  /** A callback function that the vtkCallbackCommand uses */
+  friend void AtamaiNDITrackerErrorCallback(vtkObject *, unsigned long,
+                                            void *, void *);
+  /** A flag that is set when the VTK class generates an error */
+  int                   m_VTKError;
 
   AtamaiNDITracker(void);
 
