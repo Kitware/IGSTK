@@ -19,8 +19,9 @@
 #define __igstk_AtamaiNDITracker_h_
 
 #include "igstkTracker.h"
-#include "..\Utilities\Atamai\AtamaiTracking\vtkNDITracker.h"
-#include "..\Utilities\Atamai\AtamaiTracking\vtkTrackerTool.h"
+
+class vtkNDITracker;
+class vtkTrackerTool;
 
 namespace igstk
 {
@@ -29,7 +30,7 @@ namespace igstk
 
 */
 
-  class AtamaiNDITracker : public igstk::Tracker
+class AtamaiNDITracker : public igstk::Tracker
 {
 public:
 

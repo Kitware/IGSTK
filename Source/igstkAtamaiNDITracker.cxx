@@ -21,6 +21,7 @@
 #endif
 
 #include "igstkAtamaiNDITracker.h"
+#include "vtkNDITracker.h"
 #include "vtkTrackerTool.h"
 
 
