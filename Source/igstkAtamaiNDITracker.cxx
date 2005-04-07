@@ -24,6 +24,8 @@
 #include "vtkNDITracker.h"
 #include "vtkTrackerTool.h"
 #include "vtkCallbackCommand.h"
+#include "vtkMath.h"
+#include "vtkTransform.h"
 
 namespace igstk
 {
@@ -110,6 +112,7 @@ void AtamaiNDITracker::AttemptToSetUpToolsProcessing( void )
   // count the number of ports that aren't empty
   int numTools = 0;
   m_VTKTrackerTools.clear();
+  this->ClearPorts();
   for (int i = 0; i < maxTools; i++)
     { 
     if (!m_VTKTracker->GetTool(i)->IsMissing())
@@ -173,13 +176,53 @@ void AtamaiNDITracker::UpdateStatusProcessing( void )
     // an error occurred
     }
 
-  // need code that queries the vtkTrackerTool and updates the corresponding
-  // TrackerPort and its TrackerTool (the vtkNDITracker assumes that there
-  // is only one tool per port)
-
   // loop through m_VTKTrackerTools, and for each tool get the vtkTransform,
-  // convert to TransformType, and then call
-  // this->SetToolTransform(i,0,transform)
+  // convert to TransformType, and then call SetToolTransform()
+  int numTools = m_VTKTrackerTools.size();
+
+  // a vector full of zeros
+  double origin[3];
+  origin[0] = 0.0;
+  origin[1] = 0.0;
+  origin[2] = 0.0;
+
+  for (int i = 0; i < numTools; i++)
+    {
+    vtkTransform *vtktrans = m_VTKTrackerTools[i]->GetTransform();
+    // here is the most direct way of getting the position and orientation
+    double position[3];
+    double orientation[3][3];
+    vtktrans->Update();
+    // for a linear transform, this just pulls the values from the 4x4 matrix
+    vtktrans->InternalTransformDerivative(origin, position, orientation);
+    double quaternion[4];
+    vtkMath::Matrix3x3ToQuaternion(orientation, quaternion);
+    
+    // create the transform
+    TransformType transform;
+
+    typedef TransformType::VectorType TranslationType;
+    TranslationType translation;
+    translation[0] = position[0];
+    translation[1] = position[1];
+    translation[2] = position[2];
+
+    typedef TransformType::VersorType RotationType;
+    RotationType rotation;
+    rotation.Set(quaternion[0],quaternion[1],quaternion[2],quaternion[3]);
+
+    typedef TransformType::ErrorType  ErrorType;
+    ErrorType errorValue = 0.5; // actually it varies
+
+    typedef TransformType::TimePeriodType TimePeriodType;
+    TimePeriodType validityTime = 100.0;
+
+    transform.SetToIdentity(validityTime);
+    transform.SetTranslationAndRotation(translation, rotation, errorValue,
+                                        validityTime);
+
+    this->SetToolTransform(i,0,transform);
+    }
 }
 
 void AtamaiNDITracker::ResetTrackingProcessing( void )
