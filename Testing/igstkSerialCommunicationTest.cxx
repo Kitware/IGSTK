@@ -121,6 +121,8 @@ int igstkSerialCommunicationTest( int, char * [] )
   igstk::SerialCommunicationForLinux::Pointer serialComm = igstk::SerialCommunicationForLinux::New();
 #endif
 
+  serialComm->ExportStateMachineDescription( std::cout );
+
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
 
   // logger object created for logging mouse activities
@@ -170,6 +172,7 @@ int igstkSerialCommunicationTest( int, char * [] )
   serialComm->ReceiveString();
 
   serialComm->CloseCommunication();
+
 
   return EXIT_SUCCESS;
 }

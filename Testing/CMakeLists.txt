@@ -4,6 +4,9 @@ SET(IGSTKSandbox_TESTS ${CXX_TEST_PATH}/igstkSandboxTests)
 SET(IGSTKSandbox_TEST_OUTPUT_DIR "${IGSTKSandbox_BINARY_DIR}/Testing/Temporary")
 MAKE_DIRECTORY(${IGSTKSandbox_TEST_OUTPUT_DIR})
 
+SET(IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR "${IGSTKSandbox_TEST_OUTPUT_DIR}/StateMachineDiagrams")
+MAKE_DIRECTORY(${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
+
 #-----------------------------------------------------------------------------
 # Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
 FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_DIR}/Testing/Data $ENV{IGSTKSandbox_DATA_ROOT})
@@ -38,6 +41,10 @@ ADD_EXECUTABLE(igstkSystemInformation igstkSystemInformation.cxx)
 ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation)
 TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon)
 
+
+ADD_EXECUTABLE(igstkStateMachineExportTest igstkStateMachineExportTest.cxx)
+ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
+TARGET_LINK_LIBRARIES(igstkStateMachineExportTest IGSTKSandbox)
 
 # Configure a header needed by SystemInformation.
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
