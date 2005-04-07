@@ -32,7 +32,7 @@ SerialCommunication() , INVALID_HANDLE_VALUE(-1)
 void SerialCommunicationForLinux::OpenPortProcessing( void )
 {
   char portName[20];
-  sprintf(portName, "/dev/ttyS%.1d", this->m_PortNumber );
+  sprintf(portName, "/dev/ttyS%.1d", this->GetPortNumber() );
   std::cout << portName << std::endl;
 
   if (this->m_PortHandle != SerialCommunicationForLinux::INVALID_HANDLE_VALUE)
@@ -46,7 +46,7 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
   // O_NDELAY (do not care what state the DCD signal line is in)
   if( this->m_PortHandle < 0)
   {
-    this->m_PortNumber = m_InvalidPortNumber;
+    this->SetPortNumber( m_InvalidPortNumber );
     m_pOpenPortResultInput = &m_OpenPortFailureInput;
     this->InvokeEvent( OpenPortFailureEvent() );
   }

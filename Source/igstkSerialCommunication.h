@@ -126,42 +126,46 @@ public:
   /** Abstract class doesn't have a New method */
   //igstkNewMacro(Self);  
 
-  igstkGetMacro(BaudRate, BaudRateType);
+  /** Only GetPortNumbe is public. The Set method should be protected */
+  igstkGetMacro( PortNumber, int );
 
-  igstkGetMacro(ByteSize, DataSizeType);
+  igstkGetMacro( BaudRate, BaudRateType );
 
-  igstkGetMacro(Parity, ParityType);
+  igstkGetMacro( ByteSize, DataSizeType );
 
-  igstkGetMacro(StopBits, StopBitsType);
+  igstkGetMacro( Parity, ParityType );
 
-  igstkGetMacro(HardwareHandshake, HardwareHandshakeType);
+  igstkGetMacro( StopBits, StopBitsType );
 
-  igstkSetMacro(BaudRate, BaudRateType);
+  igstkGetMacro( HardwareHandshake, HardwareHandshakeType );
 
-  igstkSetMacro(ByteSize, DataSizeType);
+  igstkSetMacro( BaudRate, BaudRateType );
 
-  igstkSetMacro(Parity, ParityType);
+  igstkSetMacro( ByteSize, DataSizeType );
 
-  igstkSetMacro(StopBits, StopBitsType);
+  igstkSetMacro( Parity, ParityType );
 
-  igstkSetMacro(HardwareHandshake, HardwareHandshakeType);
+  igstkSetMacro( StopBits, StopBitsType );
+
+  igstkSetMacro( HardwareHandshake, HardwareHandshakeType );
+
 
   /** The method OpenCommunication sets up communication as per the data
   provided. */
 
-  bool OpenCommunication( const void *data  = NULL );
+  bool OpenCommunication( const void *data  = 0 );
 
   /** The method CloseCommunication closes the communication. */
-  bool CloseCommunication( void );
+  bool CloseCommunication();
 
   /**Rests communication port by suspending character transmission  
   and placing the transmission line in a break state, and restarting
   transmission after a short delay.*/
-  bool RestCommunication( void );
+  bool RestCommunication();
 
   /** Flushes output buffer of any waiting commands to the hardware. 
       Only flushes the transmit buffer, not the receive buffer.*/
-  bool FlushOutputBuffer( void );
+  bool FlushOutputBuffer();
 
   /** SendString method sends the string to the hardware. */
   bool SendString( const CommunicationDataType& message );
@@ -201,36 +205,41 @@ protected:
   ~SerialCommunication();
 
   /** Opens serial port for communication; */
-  virtual void OpenPortProcessing( void ) = NULL;
+  virtual void OpenPortProcessing( void ) = 0;
 
   /** Set up data buffer size. */
-  virtual void SetUpDataBuffersProcessing( void ) = NULL;
+  virtual void SetUpDataBuffersProcessing( void ) = 0;
 
   /** Sets up communication on the open port as per the communication parameters. */
-  virtual void SetUpDataTransferParametersProcessing( void ) = NULL;
+  virtual void SetUpDataTransferParametersProcessing( void ) = 0;
 
   /** Closes serial port  */
-  virtual void ClosePortProcessing( void ) = NULL;
-  virtual void ClearBuffersAndClosePortProcessing( void ) = NULL;
+  virtual void ClosePortProcessing( void ) = 0;
+  virtual void ClearBuffersAndClosePortProcessing( void ) = 0;
   virtual void ClosePortSuccessProcessing( void );
   virtual void ClosePortFailureProcessing( void );
 
   /**Rests communication port by suspending character transmission  
   and placing the transmission line in a break state, and restarting
   transmission after a short delay.*/
-  virtual void RestPortProcessing( void ) = NULL;
+  virtual void RestPortProcessing( void ) = 0;
 
-  virtual void FlushOutputBufferProcessing( void ) = NULL;
+  virtual void FlushOutputBufferProcessing( void ) = 0;
 
-  virtual void SendStringProcessing( void ) = NULL;
+  virtual void SendStringProcessing( void ) = 0;
 
-  virtual void ReceiveStringProcessing( void ) = NULL;
+  virtual void ReceiveStringProcessing( void ) = 0;
 
-protected:  // FIXME should be private:
+  /** Set the port number */
+  igstkSetMacro( PortNumber, int );
+
+protected: 
 
   /** The GetLogger method return pointer to the logger object. */
   LoggerType* GetLogger(  void );
 
+protected:  // FIXME all these variables should be private
+  
   /** Command for the events created. */
   itk::Command    *m_pCommand; 
 
@@ -257,15 +266,19 @@ protected:  // FIXME should be private:
   /** Maximum time allowed to elapse between the arrival of two characters 
   on the communications line, in milliseconds. */
   unsigned int m_ReadIntervalTimeout;
+  
   /**  Total time-out period for read operations per byte, in milliseconds. */
   unsigned int m_ReadTotalTimeoutMultiplier;
+  
   /** Constant used to calculate the total time-out period for read 
   operations for every red operation, in milliseconds. */
   unsigned int m_ReadTotalTimeoutConstant;
+  
   //** Write operation timeout parameters */
   //WriteTimeout = m_WriteTotalTimeoutConstant + m_WriteTotalTimeoutMultiplier*Number_Of_Bytes_Written 
   /**  Total time-out period for write operations per byte, in milliseconds. */
   unsigned int m_WriteTotalTimeoutMultiplier;
+  
   /** Constant used to calculate the total time-out period for write 
   operations for every write operation, in milliseconds. */
   unsigned int m_WriteTotalTimeoutConstant;
@@ -288,6 +301,13 @@ protected:  // FIXME should be private:
   int             m_PortNumber;     
   
 
+  
+  /** 
+   *
+   *         State Machine variables 
+   *
+   **/
+  
   /** List of States */
   StateType                m_IdleState;
   StateType                m_AttemptToOpenPortState;
@@ -299,6 +319,7 @@ protected:  // FIXME should be private:
   StateType                m_PortReadyForCommunicationState;
   StateType                m_AttemptToClosePortState;
 
+protected:  // FIXME:  this should be private once the state machine is reorganized.
   /** List of Inputs */
   InputType                m_OpenPortInput;
   InputType                m_OpenPortSuccessInput;
@@ -322,6 +343,8 @@ protected:  // FIXME should be private:
   InputType                m_ClosePortFailureInput;
 
   /** Result of post-transition action taken by the state machine. */
+protected:  // FIXME:  this should be private once the state machine is reorganized.
+
   InputType                *m_pOpenPortResultInput;
   InputType                *m_pDataBuffersSetUpResultInput;
   InputType                *m_pDataTransferParametersSetUpResultInput;
