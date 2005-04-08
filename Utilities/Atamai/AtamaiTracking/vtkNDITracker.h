@@ -76,6 +76,8 @@ public:
   // of the device.
   vtkGetStringMacro(Version);
 
+  vtkGetVectorMacro(PortEnabled, int, VTK_NDI_NTOOLS);
+
   // Description:
   // Set which serial port to use, 1 through 4.
   vtkSetMacro(SerialPort, int);
@@ -102,10 +104,6 @@ public:
   // Get an update from the tracking system and push the new transforms
   // to the tools.  This should only be used within vtkTracker.cxx.
   void InternalUpdate();
-
-  // Description:
-  // Set the version information.
-  vtkGetVectorMacro(PortEnabled,int,VTK_NDI_NTOOLS)
 
 protected:
   vtkNDITracker();
@@ -168,8 +166,8 @@ protected:
   int BaudRate;
   int IsDeviceTracking;
 
-  int PortHandle[VTK_NDI_NTOOLS];
   int PortEnabled[VTK_NDI_NTOOLS];
+  int PortHandle[VTK_NDI_NTOOLS];
   unsigned char *VirtualSROM[VTK_NDI_NTOOLS];
 
   char CommandReply[VTK_NDI_REPLY_LEN];

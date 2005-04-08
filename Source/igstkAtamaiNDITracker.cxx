@@ -21,11 +21,11 @@
 #endif
 
 #include "igstkAtamaiNDITracker.h"
-#include "vtkNDITracker.h"
-#include "vtkTrackerTool.h"
-#include "vtkCallbackCommand.h"
-#include "vtkMath.h"
-#include "vtkTransform.h"
+#include <vtkNDITracker.h>
+#include <vtkTrackerTool.h>
+#include <vtkCallbackCommand.h>
+#include <vtkMath.h>
+#include <vtkTransform.h>
 
 namespace igstk
 {
@@ -113,17 +113,12 @@ void AtamaiNDITracker::AttemptToSetUpToolsProcessing( void )
   int numTools = 0;
   m_VTKTrackerTools.clear();
   this->ClearPorts();
+  int portEnabled[VTK_NDI_NTOOLS];
+  m_VTKTracker->GetPortEnabled(portEnabled);
   for (int i = 0; i < maxTools; i++)
     { 
-    vtkTrackerTool *pTool = m_VTKTracker->GetTool(i);
-    if (pTool->IsMissing()  || pTool->IsOutOfView() )
-      {
-      std::cout << "missing or out of view" << std::endl;
-      continue;
-      }
-      
- //   if (!m_VTKTracker->GetTool(i)->IsMissing())
-    if( m_VTKTracker->GetPortEnabled()[i] )
+//    if (!m_VTKTracker->GetTool(i)->IsMissing())
+      if( portEnabled[i] )
       {
       m_VTKTrackerTools.push_back(m_VTKTracker->GetTool(i));
       numTools++;
@@ -198,6 +193,13 @@ std::cout << "AtamaiNDITracker::UpdateStatusProcessing() numTools = " << numTool
 
   for (int i = 0; i < numTools; i++)
     {
+//    m_VTKTracker->GetTool(i)->Update();
+    vtkTrackerTool *pTool = m_VTKTracker->GetTool(i);
+    if (pTool->IsMissing()  || pTool->IsOutOfView() )
+    {
+      std::cout << "missing or out of view" << std::endl;
+      continue;
+    }
     vtkTransform *vtktrans = m_VTKTrackerTools[i]->GetTransform();
     // here is the most direct way of getting the position and orientation
     double position[3];
@@ -235,6 +237,15 @@ std::cout << "R: " << rotation << std::endl;
                                         validityTime);
 
     this->SetToolTransform(i,0,transform);
+/*
+    std::cout << translation[0] << "   "
+      << translation[1] << "   "
+      << translation[2] << ",   "
+      << quaternion[0] << "   "
+      << quaternion[1] << "   "
+      << quaternion[2] << "   "
+      << quaternion[3] << "   " << std::endl;
+*/
     }
 }
 
