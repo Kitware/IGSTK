@@ -128,8 +128,6 @@ void AtamaiNDITracker::AttemptToSetUpToolsProcessing( void )
       }
     }
 
-  std::cout << "AtamaiNDITracker::Number of tools = " << numTools << std::endl;
-
   // stop tracking, since we only wanted to activate the tools
   m_VTKTracker->StopTracking();
 
@@ -181,8 +179,6 @@ void AtamaiNDITracker::UpdateStatusProcessing( void )
   // convert to TransformType, and then call SetToolTransform()
   int numTools = m_VTKTrackerTools.size();
 
-std::cout << "AtamaiNDITracker::UpdateStatusProcessing() numTools = " << numTools << std::endl;
-
   // a vector full of zeros
   double origin[3];
   origin[0] = 0.0;
@@ -191,13 +187,21 @@ std::cout << "AtamaiNDITracker::UpdateStatusProcessing() numTools = " << numTool
 
   for (int i = 0; i < numTools; i++)
     {
-//    m_VTKTracker->GetTool(i)->Update();
+
     vtkTrackerTool *pTool = m_VTKTracker->GetTool(i);
-    if (pTool->IsMissing()  || pTool->IsOutOfView() )
-    {
-      std::cout << "missing or out of view" << std::endl;
+
+    if ( pTool->IsMissing() )
+      {
+      igstkLogMacro( Logger::DEBUG, "Tool Missing...\n");
       continue;
-    }
+      }
+
+    if ( pTool->IsOutOfView() )
+      {
+      igstkLogMacro( Logger::DEBUG, "Tool out of View...\n");
+      continue;
+      }
+
     vtkTransform *vtktrans = m_VTKTrackerTools[i]->GetTransform();
     // here is the most direct way of getting the position and orientation
     double position[3];
@@ -227,23 +231,11 @@ std::cout << "AtamaiNDITracker::UpdateStatusProcessing() numTools = " << numTool
     typedef TransformType::TimePeriodType TimePeriodType;
     TimePeriodType validityTime = 100.0;
 
-std::cout << "T: " << translation << " ";
-std::cout << "R: " << rotation << std::endl;
-
     transform.SetToIdentity(validityTime);
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         validityTime);
 
     this->SetToolTransform(i,0,transform);
-/*
-    std::cout << translation[0] << "   "
-      << translation[1] << "   "
-      << translation[2] << ",   "
-      << quaternion[0] << "   "
-      << quaternion[1] << "   "
-      << quaternion[2] << "   "
-      << quaternion[3] << "   " << std::endl;
-*/
     }
 }
 
