@@ -70,7 +70,7 @@ void AtamaiNDITracker::AttemptToSetUpCommunicationProcessing( void )
 #else
   m_VTKTracker->SetSerialDevice("/dev/ttyS0");
 #endif
-  m_VTKTracker->SetBaudRate(9600);
+  m_VTKTracker->SetBaudRate(115200);
 
   // probe the com port to see if we can talk to the device
   if (m_VTKTracker->Probe())
