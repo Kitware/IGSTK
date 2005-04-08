@@ -115,7 +115,15 @@ void AtamaiNDITracker::AttemptToSetUpToolsProcessing( void )
   this->ClearPorts();
   for (int i = 0; i < maxTools; i++)
     { 
-    if (!m_VTKTracker->GetTool(i)->IsMissing())
+    vtkTrackerTool *pTool = m_VTKTracker->GetTool(i);
+    if (pTool->IsMissing()  || pTool->IsOutOfView() )
+      {
+      std::cout << "missing or out of view" << std::endl;
+      continue;
+      }
+      
+ //   if (!m_VTKTracker->GetTool(i)->IsMissing())
+    if( m_VTKTracker->GetPortEnabled()[i] )
       {
       m_VTKTrackerTools.push_back(m_VTKTracker->GetTool(i));
       numTools++;
@@ -180,6 +188,8 @@ void AtamaiNDITracker::UpdateStatusProcessing( void )
   // convert to TransformType, and then call SetToolTransform()
   int numTools = m_VTKTrackerTools.size();
 
+std::cout << "AtamaiNDITracker::UpdateStatusProcessing() numTools = " << numTools << std::endl;
+
   // a vector full of zeros
   double origin[3];
   origin[0] = 0.0;
@@ -216,6 +226,9 @@ void AtamaiNDITracker::UpdateStatusProcessing( void )
 
     typedef TransformType::TimePeriodType TimePeriodType;
     TimePeriodType validityTime = 100.0;
+
+std::cout << "T: " << translation << " ";
+std::cout << "R: " << rotation << std::endl;
 
     transform.SetToIdentity(validityTime);
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
