@@ -983,7 +983,7 @@ void vtkNDITracker::InternalLoadVirtualSROM(int tool,
     return;
     }
 
-  for (int i = 0; i < 1024; i += 64)
+  for ( i = 0; i < 1024; i += 64)
     {
     ndiCommand(this->Device, "PVWR:%02X%04X%.128s",
          ph, i, ndiHexEncode(hexbuffer, &data[i], 64));
