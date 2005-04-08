@@ -60,11 +60,9 @@ public:
 
   igstkGetMacro( Transform, TransformType );
   igstkGetMacro( ValidityPeriod, TimePeriodType );
-  igstkGetMacro( Error, ErrorType );
 
   igstkSetMacro( Transform, TransformType );
   igstkSetMacro( ValidityPeriod, TimePeriodType );
-  igstkSetMacro( Error, ErrorType );
 
 
   /** Declarations needed for the State Machine */
@@ -81,9 +79,6 @@ private:
 
     /** Position and Orientation of the tool */
     TransformType      m_Transform;
-
-    /** Error reported in tool's position/orientation computation by the tracker */
-    ErrorType          m_Error;
 
     /** Time in milliseconds for which this tool will be reporting results */
     TimePeriodType     m_ValidityPeriod;

@@ -35,10 +35,8 @@ int igstkTrackerToolTest( int, char * [] )
     TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
     TransformType   transform   = trackerTool->GetTransform();
-    ErrorType       errorvalue  = trackerTool->GetError();
 
     trackerTool->SetTransform( transform );
-    trackerTool->SetError( errorvalue );
 
     TimePeriodType period = 10.0; // measures are valid for 10 milliseconds
     trackerTool->SetValidityPeriod( period );
