@@ -103,6 +103,10 @@ public:
   // to the tools.  This should only be used within vtkTracker.cxx.
   void InternalUpdate();
 
+  // Description:
+  // Set the version information.
+  vtkGetVectorMacro(PortEnabled,int,VTK_NDI_NTOOLS)
+
 protected:
   vtkNDITracker();
   ~vtkNDITracker();
