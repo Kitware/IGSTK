@@ -1,4 +1,5 @@
 SUBDIRS( 
   HelloWorld
   TwoViews
+  FourViewsAndTracking
   )
