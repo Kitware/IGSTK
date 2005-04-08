@@ -42,7 +42,6 @@ void MouseTracker::SetUpToolsProcessing( void )
   igstkLogMacro( igstk::Logger::DEBUG, "MouseTracker::SetUpToolsProcessing called ...\n");
   m_Port = TrackerPortType::New();
   m_Tool = TrackerToolType::New();
-  m_Tool->SetError( 1.0 ); // uncertainty of 1 pixel
   m_Port->AddTool( m_Tool );
   this->AddPort( m_Port );
 }

@@ -117,14 +117,12 @@ void AtamaiNDITracker::AttemptToSetUpToolsProcessing( void )
   m_VTKTracker->GetPortEnabled(portEnabled);
   for (int i = 0; i < maxTools; i++)
     { 
-//    if (!m_VTKTracker->GetTool(i)->IsMissing())
       if( portEnabled[i] )
       {
       m_VTKTrackerTools.push_back(m_VTKTracker->GetTool(i));
       numTools++;
       TrackerToolPointer tool = TrackerToolType::New();
       TrackerPortPointer port = TrackerPortType::New();
-      tool->SetError(0.5); // approximately 0.5mm error
       port->AddTool(tool);
       this->AddPort(port);
       }
