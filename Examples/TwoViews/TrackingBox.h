@@ -26,6 +26,7 @@
 #include "igstkSpatialObject.h"
 #include "FL/Fl_Box.h"
 #include "igstkView.h"
+#include "igstkTransform.h"
 
 class TrackingBox : public Fl_Box
 {
@@ -40,6 +41,7 @@ public:
     m_Tracking = false;
     m_Tracker = TrackerType::New();
     m_Tracker->Initialize();
+    m_Tracker->SetScaleFactor( 1000.0 );
     };
 
   ~TrackingBox() 
@@ -54,7 +56,7 @@ public:
       {
       m_Tracker->StartTracking();
       m_Tracker->Reset();
-      Loop();
+      this->Loop();
       }
     }
 
@@ -72,32 +74,30 @@ public:
 
       // We update only if the mouse is inside the box
       if(
-        position[0] > this->x() && position[0] < this->x()+this->w()
-        && position[1] > this->y() && position[1] < this->y()+this->h()
+        position[0] > this->x() && position[0] < this->x()+this->w() &&
+        position[1] > this->y() && position[1] < this->y()+this->h()
         )
         {
         // Put everything in the reference frame of the current box
         position[0] -= this->x()+this->w()/2;
         position[1] -= this->y()+this->h()/2;
         double factor = 100;
-
         typedef igstk::Transform  TransformType;
         typedef TransformType::VectorType  VectorType;
         typedef TransformType::ErrorType  ErrorType;
-
         TransformType transform;
         VectorType    translation;
         translation[0] =  position[0]/factor;
         translation[1] = -position[1]/factor;
         translation[2] =  position[2]/factor;
         double validityPeriodInMilliseconds = 1000.0;
-        ErrorType errorValue = 0.5; // +/- half a pixel uncertainty
-
+        ErrorType errorValue = 0.5; // +/- half a pixel precision
         transform.SetTranslation( 
             translation, errorValue, validityPeriodInMilliseconds );
-
-        m_Object->RequestSetTransform( transform );
-
+        const unsigned int toolPort = 0;
+        const unsigned int toolNumber = 0;
+        m_Tracker->SetToolTransform( toolPort, toolNumber, transform );
+std::cout << "Tracking box T: " << translation << std::endl;
         m_View->Update();
         m_View2->Update();
         }
@@ -106,9 +106,23 @@ public:
     m_Tracker->StopTracking();
     }
 
-  void SetObjectToTrack(ObjectType* object) {m_Object = object;}
-  void SetView(ViewType* view) {m_View = view;}
-  void SetView2(ViewType* view) {m_View2 = view;}
+  void SetObjectToTrack(ObjectType* object) 
+    {
+    m_Object = object;
+    const unsigned int toolPort = 0;
+    const unsigned int toolNumber = 0;
+    m_Tracker->AttachObjectToTrackerTool( toolPort, toolNumber, m_Object );
+    }
+  
+  void SetView( ViewType * view ) 
+    {
+    m_View = view;
+    }
+
+  void SetView2( ViewType * view ) 
+    {
+    m_View2 = view;
+    }
 
 protected:
 
