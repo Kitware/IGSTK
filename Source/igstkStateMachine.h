@@ -30,11 +30,6 @@ namespace igstk
 {
 
 
-/** This extra typedef is necessary for preventing an Internal Compiler Error in 
-  * Microsoft Visual C++ 6.0. This typedef is not needed for any other compiler. */
- typedef std::ostream     stdOstreamType;
-
-
 /** \class StateMachine
     \brief Generic implementation of the State Machine model.
 
@@ -51,12 +46,9 @@ namespace igstk
     \sa StateMachineAction
 
 */
-
 template<class TClass>
 class StateMachine
 {
-
-
 
 public:
 
@@ -141,9 +133,14 @@ public:
    void AddInput( const InputType & input, const InputDescriptorType & description );
 
 
+  /** This extra typedef is necessary for preventing an Internal Compiler Error in 
+    * Microsoft Visual C++ 6.0. This typedef is not needed for any other compiler. */
+    typedef std::ostream               OutputStreamType;
+
+
    /** Export the schematic description of the state machine to a stream.
        This method use the format required as input by the "dot" tool from graphviz. */
-   void ExportDescription( stdOstreamType & ostr ) const;
+   void ExportDescription( OutputStreamType & ostr ) const;
 
 
    /** Select Initial state */

@@ -102,10 +102,11 @@ private: \
   typedef StateMachineType::TMemberFunctionPointer   ActionType; \
   typedef StateMachineType::StateType                StateType;  \
   typedef StateMachineType::InputType                InputType;  \
+  typedef StateMachineType::OutputStreamType OutputStreamType; \
   igstkFriendClassMacro( StateMachineType ); \
   StateMachineType     m_StateMachine; \
 public:  \
-  void ExportStateMachineDescription( stdOstreamType & ostr  ) const \
+  void ExportStateMachineDescription( OutputStreamType & ostr  ) const \
    { m_StateMachine.ExportDescription( ostr ); } \
 private: 
   
