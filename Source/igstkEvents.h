@@ -14,6 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+#ifndef __igstk_Events_h_
+#define __igstk_Events_h_
 
 /** 
  * This file contains the declarations of IGSTK Events used to communicate among components.
@@ -31,4 +33,4 @@ itkEventMacro( PropertyModifiedEvent,    IGSTKEvent );
 }
 
 
-
+#endif
