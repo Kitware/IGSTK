@@ -61,9 +61,9 @@ public:
   igstkGetMacro( Transform, TransformType );
   igstkGetMacro( ValidityPeriod, TimePeriodType );
 
-  igstkSetMacro( Transform, TransformType );
   igstkSetMacro( ValidityPeriod, TimePeriodType );
 
+  void SetTransform( const TransformType & transform );
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
