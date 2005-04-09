@@ -24,6 +24,8 @@
 #include "igstkTransform.h"
 #include "igstkStateMachine.h"
 #include "igstkTrackerTool.h"
+#include "igstkEvents.h"
+#include "itkCommand.h"
 
 namespace igstk
 {
@@ -84,18 +86,32 @@ protected:
 
 
 private:
+  
+  /** Command observer that will receive events from traker tools */
+  typedef ::itk::ReceptorMemberCommand< Self >           CommandType;
 
   /** Internal itkSpatialObject */
   SpatialObjectType::Pointer   m_SpatialObject;
   SpatialObjectType::Pointer   m_SpatialObjectToBeSet;
 
   /** Internal Transform and temporary transform */
-  Transform            m_Transform;
-  Transform            m_TransformToBeSet;
+  Transform                    m_Transform;
+  Transform                    m_TransformToBeSet;
 
   /** TrackerTool to be attached to, and temporary pointer */
   TrackerTool::ConstPointer    m_TrackerTool;
   TrackerTool::ConstPointer    m_TrackerToolToAttachTo;
+
+  /** Command observer that will listen for Events sent from a TrackerTool. */
+  CommandType::Pointer         m_TrackerToolObserver;
+
+  /** Command observer that will listen for Events sent from a TrackerTool. */
+  virtual void TransformUpdateFromTrackerTool( const ::itk::EventObject & event  );
+
+  /** Set the Transform corresponding to the ObjectToWorld transformation of
+   * the SpatialObject. This method is only intended to be called from a callback
+   * that is observing events from a TrackerTool object. */
+  void RequestSetTrackedTransform(const Transform & transform );
 
   /** Inputs to the State Machine */
   InputType            m_SpatialObjectNullInput;
@@ -105,6 +121,7 @@ private:
   InputType            m_TrackingRestoredInput;
   InputType            m_TrackingDisabledInput;
   InputType            m_ManualTransformInput;
+  InputType            m_TrackerTransformInput;
 
   /** States for the State Machine */
   StateType            m_InitialState;
