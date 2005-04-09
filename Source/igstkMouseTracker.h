@@ -45,7 +45,14 @@ public:
     typedef igstk::TrackerTool                  TrackerToolType;
     typedef igstk::TrackerPort                  TrackerPortType;
 
+    igstkSetMacro( ScaleFactor, double );
+    igstkGetMacro( ScaleFactor, double );
+
 protected:
+
+    MouseTracker();
+
+    virtual ~MouseTracker();
 
     virtual void SetUpToolsProcessing( void );
 
@@ -61,6 +68,8 @@ private:
     igstk::TrackerTool::Pointer         m_Tool;
 
     igstk::TrackerPort::Pointer         m_Port;
+
+    double                              m_ScaleFactor;
 };
 
 }

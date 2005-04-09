@@ -28,6 +28,14 @@ namespace igstk
 {
 
 
+MouseTracker::MouseTracker()
+{
+  m_ScaleFactor = 1.0;
+}
+
+MouseTracker::~MouseTracker()
+{
+}
 
 void MouseTracker::Initialize( const char *fileName )
 {
@@ -56,8 +64,8 @@ void MouseTracker::UpdateStatusProcessing( void )
   
   typedef TransformType::VectorType PositionType;
   PositionType  position;
-  position[0] = Fl::event_x();
-  position[1] = Fl::event_y();
+  position[0] = Fl::event_x() / m_ScaleFactor;
+  position[1] = Fl::event_y() / m_ScaleFactor;
   position[2] = 0;
 
   typedef TransformType::ErrorType  ErrorType;
