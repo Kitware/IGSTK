@@ -339,5 +339,24 @@ void Tracker::CloseTrackingFailureProcessing( void )
 }
 
 
+void Tracker::AttachObjectToTrackerTool( 
+        unsigned int portNumber, unsigned int toolNumber, SpatialObject * objectToTrack )
+{
+
+  if ( portNumber < this->m_Ports.size()  )
+    {
+    TrackerPortPointer port = this->m_Ports[ portNumber ];
+    if ( port.IsNotNull() )
+      {
+      if( toolNumber < port->GetNumberOfTools() )
+        {
+        TrackerToolPointer tool = port->GetTool( toolNumber );
+        objectToTrack->RequestAttachToTrackerTool( tool );
+        }
+      }
+    }
+
+
+}
 
 }

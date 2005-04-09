@@ -27,6 +27,7 @@
 #include "igstkStateMachine.h"
 #include "igstkTrackerPort.h"
 #include "igstkTransform.h"
+#include "igstkSpatialObject.h"
 
 namespace igstk
 {
@@ -120,6 +121,10 @@ public:
    * that this variable represents the position and orientation of the tool in
    * 3D space.  */
   virtual void SetToolTransform( unsigned int portNumber, unsigned int toolNumber, const TransformType & position );
+
+  /** Associate a TrackerTool to an object to be tracked. This is a one-to-one
+   * association and cannot be changed during the life of the application */
+  virtual void AttachObjectToTrackerTool( unsigned int portNumber, unsigned int toolNumber, SpatialObject * objectToTrack );
 
   /** The SetLogger method is used to attach a logger object to the
   tracker object for logging purposes. */
