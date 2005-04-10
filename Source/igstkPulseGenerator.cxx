@@ -134,15 +134,14 @@ PulseGenerator::SetFrequency()
 void
 PulseGenerator::SetTimer()
 {
-  std::cout << "DEBUG: Setting timer for period = " << m_Period << std::endl;
-  Fl::add_timeout( m_Period, CallbackTimerGlobal, (void *)this );
+  Fl::add_timeout( m_Period, 
+            ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
 }
 
 
 void
 PulseGenerator::CallbackTimerGlobal( void *caller )
 {
-  std::cout << "CallbackTimerGlobal() " << std::endl;
   // dynamic_cast<> cannot be used on void *
   // so we have to use the old style cast.
   Self * pulseGenerator = ( Self * )( caller );
@@ -156,26 +155,25 @@ PulseGenerator::CallbackTimerGlobal( void *caller )
 void
 PulseGenerator::CallbackTimer()
 {
-  std::cout << "CallbackTimer() " << std::endl;
   // Set the timer for the next pulse
-  this->SetTimer(); 
+  Fl::repeat_timeout( m_Period, 
+            ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
   // Process this pulse
   m_StateMachine.ProcessInput( m_PulseInput );
-}
-
-
-void
-PulseGenerator::EmitPulse()
-{
-  std::cout << "Emiting pulse" << std::endl;
-  // Notify potential observers that the generator emited a pulse.
-  this->InvokeEvent( PulseEvent() );
 
   // Let the state machine know that we returned from Emiting the pulse.  This
   // is important because we don't know how long it takes to accomplish the
   // operations tied to InvokeEvent(). Observers of this PulseGenerator may have
   // Execute methods that take longer than the m_Period time.
   m_StateMachine.ProcessInput( m_EventReturnInput );
+}
+
+
+void
+PulseGenerator::EmitPulse()
+{
+  // Notify potential observers that the generator emited a pulse.
+  this->InvokeEvent( PulseEvent() );
 }
 
 
