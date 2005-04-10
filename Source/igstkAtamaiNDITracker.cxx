@@ -219,7 +219,7 @@ void AtamaiNDITracker::UpdateStatusProcessing( void )
     TranslationType translation;
     translation[0] = position[0];
     translation[1] = position[1];
-    translation[2] = position[2];
+    translation[2] = position[2] + 1900; // correction for origin of Polaris in mm.
 
     typedef TransformType::VersorType RotationType;
     RotationType rotation;
