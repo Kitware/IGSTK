@@ -29,6 +29,7 @@ itkEventMacro( PositionModifiedEvent,    IGSTKEvent );
 itkEventMacro( OrientationModifiedEvent, IGSTKEvent );
 itkEventMacro( GeometryModifiedEvent,    IGSTKEvent );
 itkEventMacro( PropertyModifiedEvent,    IGSTKEvent );
+itkEventMacro( PulseEvent,           IGSTKEvent );
 
 }
 

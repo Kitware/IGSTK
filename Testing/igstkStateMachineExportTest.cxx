@@ -33,6 +33,7 @@
 #include "igstkScene.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
+#include "igstkPulseGenerator.h"
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
 #include "igstkView2D.h"
@@ -100,6 +101,7 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::Scene, outputDirectory );
   igstkTestExportStateMachine1( igstk::EllipsoidObject, outputDirectory );
   igstkTestExportStateMachine1( igstk::CylinderObject, outputDirectory );
+  igstkTestExportStateMachine1( igstk::PulseGenerator, outputDirectory );
   igstkTestExportStateMachine1( igstk::Tracker, outputDirectory );
   igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory );
 

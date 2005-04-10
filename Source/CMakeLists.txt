@@ -13,6 +13,7 @@ SET(IGSTK_HEADS
   igstkMacros.h
   igstkMultipleOutput.h
   igstkObjectRepresentation.h
+  igstkPulseGenerator.h
   igstkScene.h
   igstkSpatialObject.h
   igstkStateMachine.h
@@ -40,6 +41,7 @@ SET(IGSTK_SRCS
   igstkLogger.cxx
   igstkMultipleOutput.cxx
   igstkObjectRepresentation.cxx
+  igstkPulseGenerator.cxx
   igstkScene.cxx
   igstkSpatialObject.cxx
   igstkStateMachine.txx
