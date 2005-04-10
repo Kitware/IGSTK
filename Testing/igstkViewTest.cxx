@@ -23,12 +23,69 @@
 #include <iostream>
 #include "igstkView2D.h"
 #include "igstkView3D.h"
-
+#include "igstkEvents.h"
 #include "igstkScene.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
+
+namespace ViewTest
+{
+  class ViewObserver : public ::itk::Command 
+  {
+  public:
+    typedef  ViewObserver   Self;
+    typedef  ::itk::Command    Superclass;
+    typedef  ::itk::SmartPointer<Self>  Pointer;
+    itkNewMacro( Self );
+  protected:
+    ViewObserver() 
+      {
+      m_PulseCounter = 0;
+      m_Form = 0;
+      }
+  public:
+
+    void SetForm( Fl_Window * form )
+      {
+      m_Form = form;
+      }
+    void Execute(const itk::Object *caller, const itk::EventObject & event)
+      {
+      std::cerr << "Execute( const * ) should not be called" << std::endl;         
+      }
+        
+    void Execute(itk::Object *caller, const itk::EventObject & event)
+      {
+        
+      ::igstk::View * view = 
+        dynamic_cast< ::igstk::View * >( caller );
+      
+      if( ::igstk::RefreshEvent().CheckEvent( &event ) )
+        {
+        m_PulseCounter++;
+
+        if( m_PulseCounter > 20 )
+          {
+          view->Stop();
+          if( m_Form )
+            {
+            m_Form->hide();
+            }
+          return;
+          }
+        }
+      }
+  private:
+    unsigned long       m_PulseCounter;
+    Fl_Window *         m_Form;
+  };
+
+
+
+}
+
 
 int igstkViewTest( int, char * [] )
 {
@@ -87,12 +144,15 @@ int igstkViewTest( int, char * [] )
     scene->RequestAddObject(view3D,cylinderRepresentation);
 
     
+    // Do manual redraws
     for(unsigned int i=0; i<100; i++)
       {
       view2D->Update();  // schedule redraw of the view
       view3D->Update();  // schedule redraw of the view
       Fl::check();       // trigger FLTK redraws
       }
+
+
 
     view2D->RequestDisableInteractions();
     view3D->RequestDisableInteractions();
@@ -122,10 +182,23 @@ int igstkViewTest( int, char * [] )
     scene->RequestRemoveObject(0,0);
 
 
-    form->hide();
+    // Do automatic redraws using the internal PulseGenerator
+    scene->RequestAddObject(view2D,ellipsoidRepresentation);
+    scene->RequestAddObject(view3D,cylinderRepresentation);
+    typedef ViewTest::ViewObserver ObserverType;
+    ObserverType::Pointer viewObserver = ObserverType::New();
+    view3D->AddObserver( ::igstk::RefreshEvent(), viewObserver );
+    viewObserver->SetForm( form );
+
+    view3D->Start();
+
+    Fl::run();
+
+    // at this point the observer should have hide the form
 
     delete view2D;
     delete view3D;
+    delete form;
     }
   catch(...)
     {

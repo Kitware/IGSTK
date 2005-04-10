@@ -70,6 +70,16 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
 
   m_ActorToBeAdded = 0;
   m_ActorToBeRemoved = 0;
+
+  m_PulseGenerator = PulseGenerator::New();
+  m_Reporter = ::itk::Object::New();
+
+  m_PulseObserver = ObserverType::New();
+  m_PulseObserver->SetCallbackFunction( this, & View::RefreshRender );
+
+  m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
+
+  this->RequestSetRefreshRate( 30 ); // 30 Hz is rather low frequency for video.
 }
 
 /** Destructor */
@@ -108,6 +118,7 @@ void View::Initialize()
   // this is initialized
   Initialized = 1;
   m_Renderer->ResetCamera();
+
 }
 
 
@@ -116,6 +127,13 @@ void View::Initialize()
 void View::Update()
 {
   this->redraw();
+}
+
+
+void View::AddObserver( const ::itk::EventObject & event, 
+                              ::itk::Command * observer )
+{
+  m_Reporter->AddObserver( event, observer );
 }
 
 
@@ -235,9 +253,17 @@ void View::Disable()
 /** */
 void View::Start()
 {
-  // the interactor cannot control the event loop
-  vtkErrorMacro(<<"View::Start() interactor cannot control event loop.");
+  // the internal pulse generator will control the redraws
+  m_PulseGenerator->RequestStart();
 }
+
+/** */
+void View::Stop()
+{
+  // the internal pulse generator will control the redraws
+  m_PulseGenerator->RequestStop();
+}
+
 
 /** */
 void View::SetRenderWindow(vtkRenderWindow *aren)
@@ -278,6 +304,25 @@ void View::UpdateSize(int W, int H)
       }
     }
 }
+
+
+/** Define the refresh rate by programming the internal pulse generator */
+void View::RequestSetRefreshRate( double frequencyHz )
+{
+  // Let the state machine of the pulse generator manage this request
+  m_PulseGenerator->RequestSetFrequency( frequencyHz );
+}
+
+
+/** Refresh the rendering. This function is called in response to pulses from
+ * the pulse generator. */
+void View::RefreshRender()
+{
+  this->redraw();
+  m_Reporter->InvokeEvent( RefreshEvent() );
+}
+
+
 /** FLTK needs global timer callbacks, but we set it up so that this global
  *  callback knows which instance OnTimer() to call */
 void View::OnTimerGlobal(void *p)

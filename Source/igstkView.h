@@ -24,18 +24,23 @@
 #pragma warning( disable : 4284 )
 #endif
 
+// FLTK headers
 #include <FL/Fl.H>
 #include <FL/Fl_Gl_Window.H>
-#include <vtkRenderWindowInteractor.h>
 
 // VTK headers
+#include <vtkRenderWindowInteractor.h>
 #include "vtkRenderWindow.h"
 #include "vtkRenderer.h"
 #include "vtkCamera.h"
 
+// ITK headers
+#include "itkCommand.h"
+
+// IGSTK headers
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
-#include "itkCommand.h"
+#include "igstkPulseGenerator.h"
 
 namespace igstk{
 
@@ -60,9 +65,21 @@ public:
 
   igstkTypeMacro( View, vtkRenderWindowInteractor );
   
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
+  /** Set the desired frequency for refreshing the view. It is not worth to
+   * attempt to go faster than your monitor, nor more than double than your
+   * trackers */
+  void RequestSetRefreshRate( double frequency );
+  
+  /** Add an observer to this View class */
+  void AddObserver( const ::itk::EventObject & event, ::itk::Command * observer );
+  
+  /** This should be managed by the state machine... */
+  void Start();
+  void Stop();
 
+   /** Declarations needed for the State Machine */
+  igstkStateMachineMacro();
+ 
 protected:
 
   View( int x, int y, int w, int h, const char *l="");
@@ -73,7 +90,6 @@ protected:
   void Initialize();
   void Enable();
   void Disable();
-  void Start();
   void SetRenderWindow(vtkRenderWindow *aren);
   void UpdateSize(int x, int y);
   int CreateTimer(int timertype);
@@ -130,6 +146,13 @@ private:
   vtkProp3D            * m_ActorToBeRemoved;
   
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
+
+  PulseGenerator::Pointer   m_PulseGenerator;
+  ObserverType::Pointer     m_PulseObserver;
+  ::itk::Object::Pointer    m_Reporter;
+
+  /** Method that will refresh the view.. and the GUI */
+  void RefreshRender();
 
 private:
 

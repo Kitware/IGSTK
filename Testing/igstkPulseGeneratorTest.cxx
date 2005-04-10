@@ -26,6 +26,10 @@
 #include "itkCommand.h"
 #include "igstkEvents.h"
 
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Value_Output.H>
+
 namespace PulseGeneratorTest
 {
   class PulseObserver : public ::itk::Command 
@@ -36,45 +40,55 @@ namespace PulseGeneratorTest
     typedef  ::itk::SmartPointer<Self>  Pointer;
     itkNewMacro( Self );
     typedef ::igstk::PulseGenerator  PulseGeneratorType;
+    void SetForm( Fl_Window * form )
+      {
+      m_Form = form ;
+      }
+    void SetCounter( Fl_Value_Output * valueOutput )
+      {
+      m_ValueOutput = valueOutput;
+      }
   protected:
     PulseObserver() 
       {
       m_PulseCounter = 0;
+      m_Form = 0;
+      m_ValueOutput = 0;
       }
   public:
 
-    void Execute(const itk::Object * caller, const itk::EventObject & event)
+    void Execute(const itk::Object *caller, const itk::EventObject & event)
       {
-      std::cerr << "Const Executed should not be called"  << std::endl;
+      std::cerr << "Execute( const * ) should not be called" << std::endl;         
       }
-
+        
     void Execute(itk::Object *caller, const itk::EventObject & event)
       {
         
-        PulseGeneratorType * generator = 
-          dynamic_cast< PulseGeneratorType * >( caller );
-        
-        if( ::igstk::PulseEvent().CheckEvent( &event ) )
-          {
-          std::cout << "pulse" << std::endl;
-          }
-        
+      PulseGeneratorType * generator = 
+        dynamic_cast< PulseGeneratorType * >( caller );
+      
+      if( ::igstk::PulseEvent().CheckEvent( &event ) )
+        {
         m_PulseCounter++;
+
+        m_ValueOutput->value( m_PulseCounter );
         
-        if( m_PulseCounter > 1000 )
+        if( m_PulseCounter > 100 )
           {
           generator->RequestStop();
+          if( m_Form )
+            {
+            m_Form->hide(); // close the FLTK window
+            }
           return;
           }
-
-        if( m_PulseCounter % 100 )
-          {
-          std::cout << "Pulse # " << m_PulseCounter << std::endl;
-          return;
-          }
+        }
       }
   private:
-    unsigned long m_PulseCounter;
+    unsigned long       m_PulseCounter;
+    Fl_Window *         m_Form;
+    Fl_Value_Output *   m_ValueOutput;
   };
 
 
@@ -93,8 +107,21 @@ int igstkPulseGeneratorTest( int, char * [] )
 
     pulseGenerator->AddObserver( igstk::PulseEvent(), observer );
     
-    pulseGenerator->RequestSetFrequency( 10 );  // 10 Hz
+    pulseGenerator->RequestSetFrequency( 100 );  // 10 Hz
     pulseGenerator->RequestStart();  
+
+    // Create an FLTK minimal GUI
+    Fl_Window * form = new Fl_Window(300,100,"Pulse Generator Test");
+    Fl_Value_Output * counter = new Fl_Value_Output(150,20,80,20,"Number of Pulses");
+    form->end();
+    // End of the GUI creation
+
+    form->show();
+    
+    observer->SetForm( form );
+    observer->SetCounter( counter );
+
+    Fl::run();
 
     std::cout << "End of the pulses" << std::endl;
 
