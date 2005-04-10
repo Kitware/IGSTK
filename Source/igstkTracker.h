@@ -28,6 +28,7 @@
 #include "igstkTrackerPort.h"
 #include "igstkTransform.h"
 #include "igstkSpatialObject.h"
+#include "igstkPulseGenerator.h"
 
 namespace igstk
 {
@@ -208,6 +209,13 @@ protected:
   virtual void DisableToolsProcessing( void );
 
 private:
+
+  /** Pulse generator for driving the rate of tracker updates. */
+  PulseGenerator::Pointer   m_PulseGenerator;
+  
+  /** Pulse observer for receiving the events from the pulse generator. */
+  typedef itk::SimpleMemberCommand< Self >   ObserverType;
+  ObserverType::Pointer     m_PulseObserver;
 
   /** Vector of all tool ports on the tracker */
   TrackerPortVectorType     m_Ports;

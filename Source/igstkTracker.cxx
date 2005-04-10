@@ -104,7 +104,15 @@ Tracker::Tracker(void) : m_Logger( NULL), m_StateMachine( this )
 
       // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
+  
+  m_PulseGenerator = PulseGenerator::New();
 
+  m_PulseObserver = ObserverType::New();
+  m_PulseObserver->SetCallbackFunction( this, & Tracker::UpdateStatusProcessing );
+
+  m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
+
+  m_PulseGenerator->RequestSetFrequency( 30 ); // 30 Hz is rather low frequency for tracking.
 }
 
 Tracker::~Tracker(void)
@@ -263,6 +271,7 @@ void Tracker::AttemptToStartTrackingProcessing( void )
 void Tracker::StartTrackingSuccessProcessing( void )
 {
   igstkLogMacro( Logger::DEBUG, "Tracker::StartTrackingSuccessProcessing called ...\n");
+  m_PulseGenerator->RequestStart();
 }
 
 void Tracker::StartTrackingFailureProcessing( void )
@@ -284,6 +293,7 @@ void Tracker::AttemptToStopTrackingProcessing( void )
 void Tracker::StopTrackingSuccessProcessing( void )
 {
   igstkLogMacro( Logger::DEBUG, "Tracker::StopTrackingSuccessProcessing called ...\n");
+  m_PulseGenerator->RequestStop();
 }
 
 void Tracker::StopTrackingFailureProcessing( void )
