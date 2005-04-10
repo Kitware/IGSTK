@@ -86,6 +86,12 @@ int main(int , char** )
   scene->RequestRemoveObject(m_GUI->Display1,cylinderRepresentation);
   m_GUI->Display1->Update();
 
+  m_GUI->Display1->RequestSetRefreshRate( 30 ); // 30 Hz
+  m_GUI->Display2->RequestSetRefreshRate( 30 ); // 30 Hz
+
+  m_GUI->Display1->Start();
+  m_GUI->Display2->Start();
+
   Fl::run();
 
   delete m_GUI;
