@@ -107,17 +107,8 @@ private: \
   StateMachineType     m_StateMachine; \
 public:  \
   void ExportStateMachineDescription( OutputStreamType & ostr  ) const \
-   { m_StateMachine.ExportDescription( ostr ); } \
-private: 
+   { m_StateMachine.ExportDescription( ostr ); } 
   
-// NOTE: the last "private:" statement above is a safeguard for preventing
-// this macro from openening by accident the access to method in the host
-// class. The igstkStateMachineMacro() should always be used just before a
-// access scope keyword in the host class {protected,privated,public}.
-
-
-
-
 
 
 }
