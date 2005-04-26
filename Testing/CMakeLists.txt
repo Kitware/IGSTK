@@ -25,10 +25,25 @@ ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 ADD_TEST(igstkSerialCommunicationTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationTest)
 ADD_TEST(igstkAtamaiNDITrackerTest ${IGSTKSandbox_TESTS} igstkAtamaiNDITrackerTest)
 
+ADD_TEST(itkRealtimeClockTest ${IGSTKSandbox_TESTS} itkRealtimeClockTest)
+ADD_TEST(itkStdStreamLogOutputTest ${IGSTKSandbox_TESTS} itkStdStreamLogOutputTest)
+ADD_TEST(itkMultipleLogOutputTest ${IGSTKSandbox_TESTS} itkMultipleLogOutputTest)
+ADD_TEST(itkLoggerTest ${IGSTKSandbox_TESTS} itkLoggerTest)
+ADD_TEST(itkThreadLoggerTest ${IGSTKSandbox_TESTS} itkThreadLoggerTest)
+ADD_TEST(itkLoggerOutputTest ${IGSTKSandbox_TESTS} itkLoggerOutputTest)
+ADD_TEST(itkLoggerManagerTest ${IGSTKSandbox_TESTS} itkLoggerManagerTest)
+
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkSerialCommunicationTest.cxx
   igstkAtamaiNDITrackerTest.cxx
+  itkRealtimeClockTest.cxx
+  itkStdStreamLogOutputTest.cxx
+  itkMultipleLogOutputTest.cxx
+  itkLoggerTest.cxx
+  itkThreadLoggerTest.cxx
+  itkLoggerOutputTest.cxx
+  itkLoggerManagerTest.cxx
   )
 
 
