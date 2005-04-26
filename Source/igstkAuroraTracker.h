@@ -15,45 +15,58 @@
 
 =========================================================================*/
 
-#ifndef __igstk_AuroraTracker_h_
-#define __igstk_AuroraTracker_h_
+#ifndef __igstk_NDITracker_h_
+#define __igstk_NDITracker_h_
 
+#include "itkXMLFile.h"
 #include "igstkTracker.h"
 
 namespace igstk
 {
-/** \class AuroraTracker
+/** \class NDITracker
     \brief Implementation of the Aurora Tracker class.
 
 */
 
-class AuroraTracker : public Tracker
+class NDIConfigurationReader : public itk::XMLReaderBase
+{
+  virtual int CanReadFile(const char* name);
+  virtual void StartElement(const char * name,const char **atts);
+  virtual void EndElement(const char *name);
+  virtual void CharacterDataHandler(const char *inData, int inLength);
+};
+
+class NDITracker : public igstk::Tracker
 {
 public:
 
   /** Some required typedefs for itk::Object. */
-
-  typedef AuroraTracker                  Self;
+  typedef NDITracker                  Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro(AuroraTracker, Object);
+  igstkTypeMacro(NDITracker, Object);
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro(Self);  
 
 protected:
 
-  AuroraTracker(void);
+  NDITracker(void);
 
-  virtual ~AuroraTracker(void);
+  virtual ~NDITracker(void);
 
-  void AttemptToSetUpCommunicationProcessing( void );
+  virtual void ReadConfigurationFile( const char *file );
+
+  virtual void AttemptToSetUpCommunicationProcessing( void );
+
+
+private:
 
 
 };
 
 }
 
-#endif //__igstk_AuroraTracker_h_
+#endif //__igstk_NDITracker_h_

@@ -35,55 +35,49 @@
 namespace igstk
 {
 
-AuroraTracker::AuroraTracker(void) : Tracker()
+NDITracker::NDITracker(void) : Tracker()
 {
 }
 
-AuroraTracker::~AuroraTracker(void)
+NDITracker::~NDITracker(void)
 {
 }
 
-void AuroraTracker::AttemptToSetUpCommunicationProcessing( void )
+void NDITracker::AttemptToSetUpCommunicationProcessing( void )
 {
-//  this->m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentFailureInput;
-
+  /*
+  this->m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentFailureInput;
 #ifdef WIN32
-//  m_pCommunication = igstk::SerialCommunicationForWindows::New();
+  m_pCommunication = igstk::SerialCommunicationForWindows::New();
 #else
-//  m_pCommunication = igstk::SerialCommunicationForLinux::New();
+  m_pCommunication = igstk::SerialCommunicationForLinux::New();
 #endif
-
-/*  
-  if (m_pCommunication==NULL)
-  {
-    igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::ReceiveStringFailureEvent ******\n");
-    return;
-  }
-  */
-/*
-  m_pCommunication->AddObserver( igstk::SerialCommunication::OpenPortFailureEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::SetupCommunicationParametersFailureEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::SetDataBufferSizeFailureEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::CommunicationTimeoutSetupFailureEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::RestCommunicationFailureEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::FlushOutputBufferFailureEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::OverlappedEventCreationFailureEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::SendStringSuccessfulEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::SendStringFailureEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::SendStringWriteTimeoutEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::SendStringWaitTimeoutEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::CommunicationStatusReportFailureEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::ReceiveStringSuccessfulEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::ReceiveStringFailureEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::ReceiveStringReadTimeoutEvent(), my_command);
-  m_pCommunication->AddObserver( igstk::SerialCommunication::ReceiveStringWaitTimeoutEvent(), my_command);
-
-  if (m_pCommunication->OpenCommunication())
-    {
+  if (m_pCommunication)
     this->m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentSuccessInput;
-    }
-*/
+    */
 }
 
+
+void NDITracker::ReadConfigurationFile( const char *file )
+{
+  NDIConfigurationReader  my_reader;
+}
+
+int NDIConfigurationReader::CanReadFile(const char* name) 
+{
+  return 1;
+}
+
+void NDIConfigurationReader::StartElement(const char * name,const char **atts) 
+{
+}
+
+void NDIConfigurationReader::EndElement(const char *name) 
+{
+}
+
+void NDIConfigurationReader::CharacterDataHandler(const char *inData, int inLength) 
+{
+}
 
 }

@@ -8,6 +8,15 @@ SET(IGSTKSandbox_HEADS
   igstkSerialCommunication.h
   igstkSerialCommunicationCommand.h
   igstkMouseTracker.h
+  itkLogger.h
+  itkStdStreamLogOutput.h
+  itkThreadLogger.h
+  itkRealtimeClock.h
+  itkMultipleLogOutput.h
+  itkLogOutput.h
+  itkLogMacro.h
+  itkLoggerOutput.h
+  itkLoggerManager.h
 )
 
 
@@ -16,6 +25,13 @@ SET(IGSTKSandbox_SRCS
   igstkAuroraTracker.cxx
   igstkSerialCommunication.cxx
   igstkMouseTracker.cxx
+  itkLogger.cxx
+  itkStdStreamLogOutput.cxx
+  itkThreadLogger.cxx
+  itkRealtimeClock.cxx
+  itkMultipleLogOutput.cxx
+  itkLoggerOutput.cxx
+  itkLoggerManager.cxx
 )
 
 # Variable for holding extra libraries
