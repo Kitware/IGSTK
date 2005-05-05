@@ -324,7 +324,7 @@ StateMachine< TClass >
 template<class TClass>
 void
 StateMachine< TClass >
-::ExportDescription( OutputStreamType & ostr ) const
+::ExportDescription( OutputStreamType & ostr, bool skipLoops=false ) const
 {
     ostr << "digraph G {" << std::endl;
 
@@ -347,11 +347,16 @@ StateMachine< TClass >
           {
           label = inputItr->second;
           }
-        ostr << transitionsFromThisState->first << " -> ";
-        ostr << transitionsFromThisStateAndInput->second.GetStateIdentifier();
-        ostr << " [label=\"" << label << "\"";
-        ostr << " fontname=Helvetica, fontcolor=Blue";
-        ostr << "];" << std::endl;
+        if( !skipLoops ||
+             transitionsFromThisState->first !=
+             transitionsFromThisStateAndInput->second.GetStateIdentifier() )
+          {
+          ostr << transitionsFromThisState->first << " -> ";
+          ostr << transitionsFromThisStateAndInput->second.GetStateIdentifier();
+          ostr << " [label=\"" << label << "\"";
+          ostr << " fontname=Helvetica, fontcolor=Blue";
+          ostr << "];" << std::endl;
+          }
         ++transitionsFromThisStateAndInput;
         }
       ++transitionsFromThisState;

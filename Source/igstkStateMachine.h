@@ -140,7 +140,7 @@ public:
 
    /** Export the schematic description of the state machine to a stream.
        This method use the format required as input by the "dot" tool from graphviz. */
-   void ExportDescription( OutputStreamType & ostr ) const;
+   void ExportDescription( OutputStreamType & ostr, bool skipLoops ) const;
 
 
    /** Select Initial state */

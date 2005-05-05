@@ -106,8 +106,8 @@ private: \
   igstkFriendClassMacro( StateMachineType ); \
   StateMachineType     m_StateMachine; \
 public:  \
-  void ExportStateMachineDescription( OutputStreamType & ostr  ) const \
-   { m_StateMachine.ExportDescription( ostr ); } 
+  void ExportStateMachineDescription( OutputStreamType & ostr, bool skipLoops=false ) const \
+   { m_StateMachine.ExportDescription( ostr, skipLoops ); } \
   
 
 
