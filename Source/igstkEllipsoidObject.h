@@ -49,7 +49,7 @@ public:
   typedef EllipseSpatialObjectType::ArrayType         ArrayType;
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro( Self, SpatialObject );
+  igstkTypeMacro( EllipsoidObject, SpatialObject );
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro( EllipsoidObject );

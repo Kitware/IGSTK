@@ -52,7 +52,7 @@ public:
   typedef EllipsoidObject                EllipsoidObjectType;
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro( Self, ObjectRepresentation );
+  igstkTypeMacro( EllipsoidObjectRepresentation, ObjectRepresentation );
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro( EllipsoidObjectRepresentation );

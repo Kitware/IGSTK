@@ -51,7 +51,7 @@ public:
   typedef CylinderObject                 CylinderSpatialObjectType;
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro( Self, ObjectRepresentation );
+  igstkTypeMacro( CylinderObjectRepresentation, ObjectRepresentation );
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro( CylinderObjectRepresentation );
