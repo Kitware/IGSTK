@@ -34,7 +34,8 @@
 namespace igstk
 {
 
-class Scene;
+class Scene;   // FIXME this should go
+class View;
 
 /** \class ObjectRepresentation
  * 
@@ -62,7 +63,8 @@ public:
 
   igstkTypeMacro(ObjectRepresentation, itk::Object);
 
-  igstkFriendClassMacro( Scene );
+  igstkFriendClassMacro( Scene );  // FIXME: this should go now that the view is pulling data
+  igstkFriendClassMacro( View );
 
   /** Set the color */
   void SetColor(float r, float g, float b);

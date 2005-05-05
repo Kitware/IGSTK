@@ -41,6 +41,7 @@
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
 #include "igstkPulseGenerator.h"
+#include "igstkObjectRepresentation.h"   
 
 namespace igstk{
 
@@ -73,9 +74,24 @@ public:
   /** Add an observer to this View class */
   void AddObserver( const ::itk::EventObject & event, ::itk::Command * observer );
   
+  /** Object representation types */
+  typedef ObjectRepresentation::Pointer     ObjectPointer;
+  typedef std::list< ObjectPointer >        ObjectListType; 
+  typedef ObjectListType::iterator          ObjectListIterator;
+  typedef ObjectListType::const_iterator    ObjectListConstIterator;
+
   /** This should be managed by the state machine... */
   void Start();
   void Stop();
+  
+  /** Add an object representation to the list of children and associate it
+   * with a specific view. */ 
+  void RequestAddObject( ObjectRepresentation* object ); 
+
+  /** Remove the object passed as arguments from the list of children, only if
+   * it is associated to a particular view. */ 
+  void RequestRemoveObject( ObjectRepresentation* object ); 
+
 
    /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
@@ -151,8 +167,8 @@ private:
   ObserverType::Pointer     m_PulseObserver;
   ::itk::Object::Pointer    m_Reporter;
 
-  /** Method that will refresh the view.. and the GUI */
-  void RefreshRender();
+  /** List of the children object plug to the Scene spatial object. */
+  ObjectListType m_Objects; 
 
 private:
 
@@ -163,16 +179,38 @@ private:
   void AddActor();
   void RemoveActor();
 
+  /** Add and remove RepresentationObject classes */
+  void AddObject();
+  void RemoveObject();
+
+  /** Method that will refresh the view.. and the GUI */
+  void RefreshRender();
+
   void RequestAddActor( vtkProp3D * actor );
   void RequestRemoveActor( vtkProp3D * actor );
   
+  /** Report any invalid request to the logger */
+  void ReportInvalidRequest();
+
 private:
+  
+  // Arguments for methods to be invoked by the state machine.
+  //
+  ObjectRepresentation::Pointer m_ObjectToBeAdded;
+  ObjectRepresentation::Pointer m_ObjectToBeRemoved;
+  ObjectListType::iterator      m_IteratorToObjectToBeRemoved;
 
   /** Inputs to the State Machine */
   InputType            m_ValidAddActor;
   InputType            m_NullAddActor;
   InputType            m_ValidRemoveActor;
   InputType            m_NullRemoveActor;
+  InputType            m_ValidAddObject;
+  InputType            m_NullAddObject;
+  InputType            m_ExistingAddObject;
+  InputType            m_ValidRemoveObject;
+  InputType            m_InexistingRemoveObject;
+  InputType            m_NullRemoveObject;
   InputType            m_ResetCameraInput;
   InputType            m_EnableInteractionsInput;
   InputType            m_DisableInteractionsInput;

@@ -18,7 +18,6 @@
 #ifndef __igstkScene_h 
 #define __igstkScene_h 
 
-#include "igstkObjectRepresentation.h"   
 #include "igstkStateMachine.h"
 #include "igstkView.h"
  
@@ -50,10 +49,10 @@ public:
   typedef itk::SmartPointer< const Self > ConstPointer; 
 
   // Object representation types
-  typedef ObjectRepresentation::Pointer     ObjectPointer;
-  typedef std::list< ObjectPointer >        ObjectListType; 
-  typedef ObjectListType::iterator          ObjectListIterator;
-  typedef ObjectListType::const_iterator    ObjectListConstIterator;
+  typedef View::ObjectPointer               ObjectPointer;
+  typedef View::ObjectListType              ObjectListType; 
+  typedef View::ObjectListIterator          ObjectListIterator;
+  typedef View::ObjectListConstIterator     ObjectListConstIterator;
      
   /** Method for defining the name of the class */ 
   igstkTypeMacro(Scene, Object); 
@@ -69,9 +68,6 @@ public:
    * it is associated to a particular view. */ 
   void RequestRemoveObject( View* view, ObjectRepresentation* object ); 
 
-  /** Returns the number of children currently assigned to the
-   * Scene object.*/ 
-
   /** Remove all the objects in the scene */
   void RequestRemoveAllObjects();
 
@@ -79,9 +75,6 @@ public:
   igstkStateMachineMacro();
 
 protected: 
-
-  /** List of the children object plug to the Scene spatial object. */
-  ObjectListType m_Objects; 
 
   /** constructor */ 
   Scene(); 
@@ -103,11 +96,14 @@ private:
 
 private:
 
+  /** List of the children object plug to the Scene spatial object. */
+  ObjectListType m_Objects; 
+
   // Arguments for methods to be invoked by the state machine.
   //
   ObjectRepresentation::Pointer m_ObjectToBeAdded;
   ObjectRepresentation::Pointer m_ObjectToBeRemoved;
-  ObjectListType::iterator      m_IteratorToObjectToBeRemoved;    
+  ObjectListType::iterator      m_IteratorToObjectToBeRemoved;
   View*                         m_ViewToAddress;
 
 private:

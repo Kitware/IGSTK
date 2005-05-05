@@ -44,6 +44,12 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   m_InteractionHandling = true;
   this->end();
 
+  m_StateMachine.AddInput( m_ValidAddObject,     "ValidAddObject" );
+  m_StateMachine.AddInput( m_NullAddObject,      "NullAddObject"  );
+  m_StateMachine.AddInput( m_ExistingAddObject,  "ExistingAddObject" );
+  m_StateMachine.AddInput( m_ValidRemoveObject,  "ValidRemoveObject" );
+  m_StateMachine.AddInput( m_InexistingRemoveObject,  "InexistingRemoveObject" );
+  m_StateMachine.AddInput( m_NullRemoveObject,   "NullRemoveObject"  );
   m_StateMachine.AddInput( m_ValidAddActor,  "ValidAddActor" );
   m_StateMachine.AddInput( m_NullAddActor,   "NullAddActor"  );
   m_StateMachine.AddInput( m_ValidRemoveActor,  "ValidRemoveActor" );
@@ -56,6 +62,12 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
 
   const ActionType NoAction = 0;
 
+  m_StateMachine.AddTransition( m_IdleState, m_ValidAddObject, m_IdleState,  & View::AddObject );
+  m_StateMachine.AddTransition( m_IdleState, m_NullAddObject,  m_IdleState,  & View::ReportInvalidRequest );
+  m_StateMachine.AddTransition( m_IdleState, m_ExistingAddObject,  m_IdleState,  & View::ReportInvalidRequest );
+  m_StateMachine.AddTransition( m_IdleState, m_ValidRemoveObject, m_IdleState,  & View::RemoveObject );
+  m_StateMachine.AddTransition( m_IdleState, m_NullRemoveObject,  m_IdleState,  & View::ReportInvalidRequest );
+  m_StateMachine.AddTransition( m_IdleState, m_InexistingRemoveObject,  m_IdleState,  & View::ReportInvalidRequest );
   m_StateMachine.AddTransition( m_IdleState, m_ValidAddActor, m_IdleState,  & View::AddActor );
   m_StateMachine.AddTransition( m_IdleState, m_NullAddActor,  m_IdleState,          NoAction );
   m_StateMachine.AddTransition( m_IdleState, m_ValidRemoveActor, m_IdleState,  & View::RemoveActor );
@@ -320,6 +332,103 @@ void View::RefreshRender()
 {
   this->redraw();
   m_Reporter->InvokeEvent( RefreshEvent() );
+}
+
+
+/** Request for Adding an object to the View */
+void View::RequestAddObject( ObjectRepresentation* pointer )
+{
+  m_ObjectToBeAdded = pointer;
+
+  if( !pointer )
+    {
+    m_StateMachine.ProcessInput( m_NullAddObject );
+    return;
+    }
+
+  ObjectListType::iterator it =    
+    std::find(m_Objects.begin(),m_Objects.end(),pointer);
+  if( it != m_Objects.end() )
+    {
+    m_StateMachine.ProcessInput( m_ExistingAddObject );
+    }
+  else
+    {
+    m_StateMachine.ProcessInput( m_ValidAddObject );
+    }
+}
+
+
+/** Add an object to the View. This method should only be called by the state
+ * machine. The state machine makes sure that this method is called with a valid
+ * value in the ObjectToBeAdded. */
+void View::AddObject()
+{
+  m_Objects.push_back( m_ObjectToBeAdded );
+  this->Modified();
+  
+  m_ObjectToBeAdded->CreateActors();
+
+  ObjectRepresentation::ActorsListType actors = m_ObjectToBeAdded->GetActors();
+  ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
+  while(actorIt != actors.end())
+    {
+    this->RequestAddActor(*actorIt);
+    actorIt++;
+    } 
+}
+
+/** Request for removing a spatial object from the View */
+void View::RequestRemoveObject( ObjectRepresentation* pointer )
+{
+  m_ObjectToBeRemoved = pointer;
+  
+  m_IteratorToObjectToBeRemoved = m_Objects.end(); 
+  
+  if( !pointer )
+    {
+    m_StateMachine.ProcessInput( m_NullRemoveObject );
+    return;
+    }
+  
+  m_IteratorToObjectToBeRemoved =
+    std::find(m_Objects.begin(),m_Objects.end(),pointer);
+  if( m_IteratorToObjectToBeRemoved == m_Objects.end() )
+    {
+    m_StateMachine.ProcessInput( m_InexistingRemoveObject );
+    }
+  else
+    {
+    m_StateMachine.ProcessInput( m_ValidRemoveObject );
+    }
+}
+
+
+/** Remove a spatial object from the View. This method can only be invoked by
+ * the State Machine who will make sure that the content of
+ * m_IteratorToObjectToBeRemoved is valid. */
+void View::RemoveObject()
+{
+  m_Objects.erase( m_IteratorToObjectToBeRemoved );
+  this->Modified();
+  
+  ObjectRepresentation::ActorsListType actors = m_ObjectToBeRemoved->GetActors();
+  ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
+  while(actorIt != actors.end())
+    {
+    this->RequestRemoveActor(*actorIt);
+    actorIt++;
+    } 
+}
+
+
+/** Report that an invalid or suspicious operation has been requested. This may
+ * mean that an error condition has arised in one of the componenta that
+ * interact with this class. */
+void View::ReportInvalidRequest()
+{
+  // FIXME this line must be replaced with an invokation to the logger.
+  std::cerr << "View::ReportInvalidRequest()" << std::endl;
 }
 
 
