@@ -92,9 +92,9 @@ public:
     }
 
 
-  void ExportDescription( std::ostream & ostr ) const
+  void ExportDescription( std::ostream & ostr, bool skipLoops ) const
     {
-    m_StateMachine.ExportDescription( ostr );
+    m_StateMachine.ExportDescription( ostr, skipLoops );
     }
 
 
@@ -194,7 +194,9 @@ int igstkStateMachineTest( int , char * [] )
   std::cout << "Printing out the State Machine description in dot format" << std::endl;
   std::cout << std::endl << std::endl;
 
-  tester.ExportDescription( std::cout );
+  const double skipLoops = false;
+
+  tester.ExportDescription( std::cout, skipLoops );
 
 
   return EXIT_SUCCESS;

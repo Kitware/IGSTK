@@ -38,6 +38,7 @@
 #include "igstkTrackerTool.h"
 #include "igstkView2D.h"
 #include "igstkView3D.h"
+#include "igstkSpatialObject.h"
 
 namespace igstk 
 {
@@ -45,7 +46,7 @@ namespace igstk
 template<class ClassType>
 void ExportStateMachineDescription( 
               const ClassType * instance, 
-              const std::string & outputDirectory )
+              const std::string & outputDirectory, bool skipLoops )
   {
   std::string filename = outputDirectory+"/";
   filename = filename + "igstk";
@@ -60,29 +61,46 @@ void ExportStateMachineDescription(
     excp.SetDescription("Problem opening file");
     throw excp;
     }
-  instance->ExportStateMachineDescription( outputFile );
+  instance->ExportStateMachineDescription( outputFile, skipLoops );
   outputFile.close();
   }
+
 
 } // end namespace igstk
 
 
 // This is for classes that use SmartPointers
-#define igstkTestExportStateMachine1( type, outputDirectory ) \
+#define igstkTestExportStateMachine1( type, outputDirectory, skipLoops ) \
   { \
   type::Pointer instance = type::New(); \
-  igstk::ExportStateMachineDescription( instance.GetPointer(), outputDirectory ); \
+  igstk::ExportStateMachineDescription( instance.GetPointer(), outputDirectory, skipLoops ); \
   }
 
 // This is for classes that do not use SmartPointers and have a default constructor
-#define igstkTestExportStateMachine2( type, outputDirectory ) \
+#define igstkTestExportStateMachine2( type, outputDirectory, skipLoops ) \
   { \
   type * instance = new type; \
-  igstk::ExportStateMachineDescription( instance, outputDirectory ); \
+  igstk::ExportStateMachineDescription( instance, outputDirectory, skipLoops ); \
   delete instance; \
   }
 
 
+#define igstkDeclareSurrogateClass( surrogate, type ) \
+class surrogate : public type \
+  {  \
+public:      \
+    typedef surrogate                      Self;    \
+    typedef itk::Object                    Superclass;    \
+    typedef itk::SmartPointer<Self>        Pointer;       \
+    igstkTypeMacro( surrogate, type );   \
+    igstkNewMacro( Self );      \
+  };    \
+
+
+namespace igstk
+{
+  igstkDeclareSurrogateClass( SpatialObjectSurrogate, SpatialObject );
+}
 
 
 int main( int argc, char * argv [] )
@@ -95,23 +113,30 @@ int main( int argc, char * argv [] )
 
   std::cout << "Output directory = " << outputDirectory << std::endl;
   
+  const bool skipLoops = true;
+
   // This is for classes that use SmartPointers
-  igstkTestExportStateMachine1( igstk::CylinderObjectRepresentation, outputDirectory );
-  igstkTestExportStateMachine1( igstk::EllipsoidObjectRepresentation, outputDirectory );
-  igstkTestExportStateMachine1( igstk::Scene, outputDirectory );
-  igstkTestExportStateMachine1( igstk::EllipsoidObject, outputDirectory );
-  igstkTestExportStateMachine1( igstk::CylinderObject, outputDirectory );
-  igstkTestExportStateMachine1( igstk::PulseGenerator, outputDirectory );
-  igstkTestExportStateMachine1( igstk::Tracker, outputDirectory );
-  igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory );
+  igstkTestExportStateMachine1( igstk::CylinderObjectRepresentation, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::EllipsoidObjectRepresentation, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::Scene, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::EllipsoidObject, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::CylinderObject, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::PulseGenerator, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::Tracker, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory, skipLoops );
+
 
   // The View classes don't use SmartPointer and don't have a default constructor.
   igstk::View2D view2D(0,0, 100, 100, "dummy view for testing");
-  igstk::ExportStateMachineDescription( &view2D, outputDirectory ); 
+  igstk::ExportStateMachineDescription( &view2D, outputDirectory, skipLoops ); 
 
   igstk::View3D view3D(0,0, 100, 100, "dummy view for testing");
-  igstk::ExportStateMachineDescription( &view3D, outputDirectory ); 
+  igstk::ExportStateMachineDescription( &view3D, outputDirectory, skipLoops ); 
 
+
+
+  // Exporting Abstract classes by creating derived surrogates for them.
+  igstkTestExportStateMachine1( igstk::SpatialObjectSurrogate, outputDirectory, skipLoops );
 
   return EXIT_SUCCESS;
 }
