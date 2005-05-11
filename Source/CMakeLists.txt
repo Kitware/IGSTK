@@ -17,6 +17,9 @@ SET(IGSTKSandbox_HEADS
   itkLogMacro.h
   itkLoggerOutput.h
   itkLoggerManager.h
+  igstkVTKLoggerOutput.h
+  igstkFLTKTextLogOutput.h
+  igstkFLTKTextBufferLogOutput.h
 )
 
 
@@ -32,6 +35,9 @@ SET(IGSTKSandbox_SRCS
   itkMultipleLogOutput.cxx
   itkLoggerOutput.cxx
   itkLoggerManager.cxx
+  igstkVTKLoggerOutput.cxx
+  igstkFLTKTextLogOutput.cxx
+  igstkFLTKTextBufferLogOutput.cxx
 )
 
 # Variable for holding extra libraries
