@@ -20,6 +20,8 @@
 
 #include "itkXMLFile.h"
 #include "igstkTracker.h"
+#include "igstkNDICyclicRedundancy.h"
+
 
 namespace igstk
 {
@@ -40,6 +42,9 @@ class NDITracker : public igstk::Tracker
 {
 public:
 
+#define NDI_NUMBER_OF_PORTS  4
+#define NDI_COMMAND_MAX_LEN  2048
+
   /** Some required typedefs for itk::Object. */
   typedef NDITracker                  Self;
   typedef itk::SmartPointer<Self>        Pointer;
@@ -57,14 +62,40 @@ protected:
 
   virtual ~NDITracker(void);
 
-  virtual void ReadConfigurationFile( const char *file );
+//  virtual void ReadConfigurationFile( const char *file );
 
   virtual void AttemptToSetUpCommunicationProcessing( void );
 
+  virtual void AttemptToSetUpToolsProcessing( void );
+
+  virtual void AttemptToStartTrackingProcessing( void );
+
+  virtual void AttemptToStopTrackingProcessing( void );
+
+  virtual void UpdateStatusProcessing( void );
+
+  virtual void ResetTrackingProcessing( void );
+
+  virtual void DisableCommunicationProcessing( void );
+
+  virtual void DisableToolsProcessing( void );
+
+  void AttachSROMFileNameToPort( const int portNum, std::string fileName );
 
 private:
 
+  bool LoadVirtualSROM( const int i, std::string SROMFileName);
 
+  void SendCommand(const char *command, bool addCRC = true);
+
+// Sends a raw command to the tracking unit.
+  char *NDITracker::SendCommand(const char *command);
+
+  char m_CommandBuffer[NDI_COMMAND_MAX_LEN];
+
+  std::string m_SROMFileNames[NDI_NUMBER_OF_PORTS];
+
+  NDICyclicRedundancy  m_CyclicRedundancy;
 };
 
 }
