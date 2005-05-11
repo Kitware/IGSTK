@@ -54,7 +54,7 @@ void StdStreamLogOutput::Flush()
 }
 
 
-/** Write to multiple outputs */
+/** Write to a buffer */
 void StdStreamLogOutput::Write(double timestamp)
 {
   StdStreamLogOutput::m_Mutex.Lock();

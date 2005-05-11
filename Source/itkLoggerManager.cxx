@@ -57,6 +57,12 @@ void LoggerManager::AddLogger( const NameType &name, Logger* logger )
 
 Logger* LoggerManager::GetLogger( const NameType &name )
 {
+  /*
+  Logger* logger = this->m_LoggerSet[name];
+  if( logger == this->m_LoggerSet.end() )
+    return NULL;
+  return logger;
+  */
   return this->m_LoggerSet[name];
 }
 
