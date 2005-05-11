@@ -104,11 +104,18 @@ int itkLoggerManagerTest( int, char * [] )
     manager->Write(itk::Logger::FATAL, "This is the FATAL message.\n");
     manager->Write(itk::Logger::MUSTFLUSH, "This is the MUSTFLUSH message.\n");
     std::cout << "  Message #3" << std::endl;
+    itk::Logger* pLogger;
+    pLogger = manager->GetLogger("org.itk.logTester.logger");
+    if( pLogger == NULL )
+      throw "LoggerManager::GetLogger() failed";
+    pLogger->Write(itk::Logger::INFO, "This is the message from the logger got from a LoggerManager");
+    if( manager->GetLogger("abc") != NULL )
+      throw "LoggerManager::GetLogger() must return NULL";
     manager->Flush();
     }
-  catch(...)
+  catch(const char * errmsg)
     {
-    std::cerr << "Exception catched !!" << std::endl;
+    std::cerr << "Exception catched !! : " << errmsg << std::endl;
     return EXIT_FAILURE;
     }
 

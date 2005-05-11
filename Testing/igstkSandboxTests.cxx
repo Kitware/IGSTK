@@ -19,4 +19,7 @@ void RegisterTests()
   REGISTER_TEST(itkThreadLoggerTest);
   REGISTER_TEST(itkLoggerOutputTest);
   REGISTER_TEST(itkLoggerManagerTest);
+  REGISTER_TEST(igstkVTKLoggerOutputTest);
+  REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
+  REGISTER_TEST(igstkFLTKTextLogOutputTest);
 }

@@ -32,6 +32,10 @@ ADD_TEST(itkLoggerTest ${IGSTKSandbox_TESTS} itkLoggerTest)
 ADD_TEST(itkThreadLoggerTest ${IGSTKSandbox_TESTS} itkThreadLoggerTest)
 ADD_TEST(itkLoggerOutputTest ${IGSTKSandbox_TESTS} itkLoggerOutputTest)
 ADD_TEST(itkLoggerManagerTest ${IGSTKSandbox_TESTS} itkLoggerManagerTest)
+ADD_TEST(igstkVTKLoggerOutputTest ${IGSTKSandbox_TESTS} igstkVTKLoggerOutputTest)
+ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextLogOutputTest)
+ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextBufferLogOutputTest)
+
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
@@ -44,6 +48,9 @@ SET(BasicTests_SRCS
   itkThreadLoggerTest.cxx
   itkLoggerOutputTest.cxx
   itkLoggerManagerTest.cxx
+  igstkVTKLoggerOutputTest.cxx
+  igstkFLTKTextLogOutputTest.cxx
+  igstkFLTKTextBufferLogOutputTest.cxx
   )
 
 
