@@ -31,7 +31,14 @@ SerialCommunication()
 void SerialCommunicationForWindows::OpenPortProcessing( void )
 {
   char portName[10];
-  sprintf(portName, "COM%d", this->m_PortNumber + 1 ); //COM port numbering begins from 1
+
+  switch(this->m_PortNumber.Get())
+  {
+  case 0: sprintf(portName, "COM1" ); break;
+  case 1: sprintf(portName, "COM2" ); break;
+  case 2: sprintf(portName, "COM3" ); break;
+  case 3: sprintf(portName, "COM4" ); break;
+  }
 
   this->m_PortHandle = CreateFile(portName, GENERIC_READ | GENERIC_WRITE,
                                   0,   // opened with exclusive-access 
@@ -43,7 +50,6 @@ void SerialCommunicationForWindows::OpenPortProcessing( void )
 
   if( this->m_PortHandle == INVALID_HANDLE_VALUE)
   {
-    this->m_PortNumber = m_InvalidPortNumber;
     m_pOpenPortResultInput = &m_OpenPortFailureInput;
     this->InvokeEvent( OpenPortFailureEvent() );
   }
