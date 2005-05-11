@@ -23,6 +23,66 @@
 namespace igstk
 {
 
+/** \class SerialCommunicationPortNumber
+ * 
+ * \brief Defines a compile-time token for every serial port number.
+ *
+ * This class enforces safety on the values that are admisible as port numbers
+ * for the serial port configuration. The actual port number value is assigned at
+ * construction time.
+ *
+ * \ingroup Communication
+ */
+class SerialCommunicationPortNumber : public Token
+{
+  public:
+
+    typedef unsigned int PortNumberType;
+
+    typedef SerialCommunicationPortNumber Self;
+
+  public:
+    SerialCommunicationPortNumber( PortNumberType portNum )
+      {
+      m_PortNumber = portNum;  
+      }
+
+    ~SerialCommunicationPortNumber() 
+      {}
+    
+    PortNumberType Get() const
+      { 
+      return m_PortNumber; 
+      }
+    
+   const Self & operator=( const Self & token )
+      { m_PortNumber = token.m_PortNumber; return *this; } 
+
+   bool operator!=( const Self & token )
+      { return m_PortNumber != token.m_PortNumber; }
+        
+   bool operator==( const Self & token )
+      { return m_PortNumber == token.m_PortNumber; }
+        
+  private:
+    
+    PortNumberType m_PortNumber;
+
+};
+
+template< unsigned int PortNumber >
+class SerialCommunicationPortNumberValued : public SerialCommunicationPortNumber
+{
+  public:
+    SerialCommunicationPortNumberValued<PortNumber>():
+               SerialCommunicationPortNumber(PortNumber) {};
+};
+
+
+
+
+
+
 /** \class SerialCommunicationBaudRate
  * 
  * \brief Defines a compile-time token for every baud rate.
@@ -35,38 +95,39 @@ namespace igstk
  */
 class SerialCommunicationBaudRate : public Token
 {
-  public:
+public:
 
-    typedef unsigned long int BaudRateType;
+  typedef unsigned long int BaudRateType;
 
-    typedef SerialCommunicationBaudRate Self;
+  typedef SerialCommunicationBaudRate Self;
 
-  public:
-    SerialCommunicationBaudRate( BaudRateType rate )
-      {
-      m_BaudRate = rate;  
-      }
+public:
+  SerialCommunicationBaudRate( BaudRateType rate )
+  {
+    std::cout << "Constructor SerialCommunicationBaudRate " << rate << std::endl;
+    m_BaudRate = rate;  
+  }
 
-    ~SerialCommunicationBaudRate() 
-      {}
-    
-    BaudRateType Get() const
-      { 
-      return m_BaudRate; 
-      }
-    
-   const Self & operator=( const Self & token )
-      { m_BaudRate = token.m_BaudRate; return *this; } 
+  ~SerialCommunicationBaudRate() 
+  {}
 
-   bool operator!=( const Self & token )
-      { return m_BaudRate != token.m_BaudRate; }
-        
-   bool operator==( const Self & token )
-      { return m_BaudRate == token.m_BaudRate; }
-        
-  private:
-    
-    BaudRateType m_BaudRate;
+  BaudRateType Get() const
+  { 
+    return m_BaudRate; 
+  }
+
+  const Self & operator=( const Self & token )
+  { m_BaudRate = token.m_BaudRate; return *this; } 
+
+  bool operator!=( const Self & token )
+  { return m_BaudRate != token.m_BaudRate; }
+
+  bool operator==( const Self & token )
+  { return m_BaudRate == token.m_BaudRate; }
+
+private:
+
+  BaudRateType m_BaudRate;
 
 };
 
