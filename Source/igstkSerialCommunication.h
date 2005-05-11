@@ -48,11 +48,24 @@ protected:
   const unsigned int m_ReadBufferSize;    // read buffer size in bytes.
   const unsigned int m_WriteBufferSize;   // write buffer size in bytes.
   const unsigned int m_PortRestSpan;      // period of rest in communication, in msecs.
-  const int          m_InvalidPortNumber; // Number assigned to m_PortNumber, if port not initialized.
+//  const int          m_InvalidPortNumber; // Number assigned to m_PortNumber, if port not initialized.
 
   typedef igstk::Logger   LoggerType;
 
 public:
+
+  /** Type used for encoding the port number of the serial port */
+  typedef SerialCommunicationPortNumber  PortNumberType;
+
+  /** Explicit instantiations for every accepted BaudRate. Using types for the
+   * rates enforces safety on the assignment of values because the verification
+   * is done at compile time. */
+  typedef SerialCommunicationPortNumberValued< 0 > PortNumber0;
+  typedef SerialCommunicationPortNumberValued< 1 > PortNumber1;
+  typedef SerialCommunicationPortNumberValued< 2 > PortNumber2;
+  typedef SerialCommunicationPortNumberValued< 3 > PortNumber3;
+
+
 
   /** Type used for encoding the baud rate of the serial port */
   typedef SerialCommunicationBaudRate  BaudRateType;
@@ -126,8 +139,9 @@ public:
   /** Abstract class doesn't have a New method */
   //igstkNewMacro(Self);  
 
-  /** Only GetPortNumbe is public. The Set method should be protected */
-  igstkGetMacro( PortNumber, int );
+  /** Get methods */
+
+  igstkGetMacro( PortNumber, PortNumberType );
 
   igstkGetMacro( BaudRate, BaudRateType );
 
@@ -138,6 +152,10 @@ public:
   igstkGetMacro( StopBits, StopBitsType );
 
   igstkGetMacro( HardwareHandshake, HardwareHandshakeType );
+
+  /** Set methods */
+
+  igstkSetMacro( PortNumber, PortNumberType );
 
   igstkSetMacro( BaudRate, BaudRateType );
 
@@ -153,7 +171,7 @@ public:
   /** The method OpenCommunication sets up communication as per the data
   provided. */
 
-  bool OpenCommunication( const void *data  = 0 );
+  bool OpenCommunication( void );
 
   /** The method CloseCommunication closes the communication. */
   bool CloseCommunication();
@@ -230,9 +248,6 @@ protected:
 
   virtual void ReceiveStringProcessing( void ) = 0;
 
-  /** Set the port number */
-  igstkSetMacro( PortNumber, int );
-
 protected: 
 
   /** The GetLogger method return pointer to the logger object. */
@@ -244,6 +259,9 @@ protected:  // FIXME all these variables should be private
   itk::Command    *m_pCommand; 
 
   // Communication Parameters
+
+  /**  Port Number */
+  PortNumberType  m_PortNumber;   
 
   /** Baud rate of communication */
   BaudRateType    m_BaudRate;  
@@ -286,6 +304,7 @@ protected:  // FIXME all these variables should be private
   // Input Buffer
   /** Input buffer */
   char *m_InputBuffer;
+
   char *m_OutputBuffer;
 
   /** Offset of the current location in read buffer */
@@ -297,9 +316,6 @@ protected:  // FIXME all these variables should be private
   /** The Logger instance */
   LoggerType     *m_pLogger;
 
-  /**  Port Number */
-  int             m_PortNumber;     
-  
 
   
   /** 

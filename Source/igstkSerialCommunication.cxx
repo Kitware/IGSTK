@@ -30,17 +30,13 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this ),
                                               m_InputBuffer( NULL),
                                               m_OutputBuffer( NULL),
                                               m_PortRestSpan(10),
-                                              m_InvalidPortNumber( -1 ),
+                                              m_PortNumber( PortNumber0() ),
                                               m_BaudRate( BaudRate9600() ),
                                               m_ByteSize( DataBits8() ),
                                               m_Parity( NoParity() ),
                                               m_StopBits( StopBits1() ),
-                                              m_HardwareHandshake(
-                                                  HandshakeOff() )
+                                              m_HardwareHandshake( HandshakeOff() )
 {
-
-  /** Hardware Port Settings */
-  this->m_PortNumber = m_InvalidPortNumber;
 
   /** Communication Time Out Settings */
   //ReadTimeout = m_ReadTotalTimeoutConstant + m_ReadTotalTimeoutMultiplier*Number_Of_Bytes_Read 
@@ -140,16 +136,9 @@ SerialCommunication::~SerialCommunication()
   this->CloseCommunication();
 }
 
-bool SerialCommunication::OpenCommunication( const void *data )
+bool SerialCommunication::OpenCommunication( void )
 {
-//  if(m_pCommand==NULL)
-//  {
-//  }
-
-  // Read data from XML file
-
   // Attempt to open communication port
-  this->m_PortNumber = 0;
   this->m_StateMachine.ProcessInput( m_OpenPortInput );
   this->m_StateMachine.ProcessInput( *m_pOpenPortResultInput );
 
