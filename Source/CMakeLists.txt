@@ -5,6 +5,7 @@
 # The header files
 SET(IGSTKSandbox_HEADS
   igstkAuroraTracker.h
+  igstkNDICyclicRedundancy.h
   igstkSerialCommunication.h
   igstkSerialCommunicationCommand.h
   igstkMouseTracker.h
@@ -26,6 +27,7 @@ SET(IGSTKSandbox_HEADS
 # The implementation files
 SET(IGSTKSandbox_SRCS  
   igstkAuroraTracker.cxx
+  igstkNDICyclicRedundancy.cxx
   igstkSerialCommunication.cxx
   igstkMouseTracker.cxx
   itkLogger.cxx
