@@ -156,7 +156,6 @@ void SpatialObject::SetTransform()
     m_SpatialObject->GetObjectToWorldTransform()->SetMatrix( matrix );
 
   std::cout << " SpatialObject::SetTransform() T: " << translation << " R: " << rotation << std::endl;
-    this->InvokeEvent( PositionModifiedEvent() );
     }
 }
 

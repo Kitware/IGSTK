@@ -24,7 +24,6 @@
 
 #include "igstkCylinderObject.h"
 #include "igstkCylinderObjectRepresentation.h"
-#include "igstkScene.h"
 #include "igstkView2D.h"
 
 
@@ -96,14 +95,12 @@ int igstkCylinderObjectTest( int, char * [] )
 
   // Testing CreateActors()
   std::cout << "Testing actors : ";
-  typedef igstk::Scene   SceneType;
-  SceneType::Pointer scene = SceneType::New();
 
   typedef igstk::View2D  View2DType;
   View2DType * view2D = new View2DType(0,0,200,200,"View 2D");
   
   // this will indirectly call CreateActors() 
-  scene->RequestAddObject( view2D, cylinderRepresentation );
+  view2D->RequestAddObject( cylinderRepresentation );
 
   // Testing Update
   cylinderRepresentation->IsModified();
@@ -164,7 +161,7 @@ int igstkCylinderObjectTest( int, char * [] )
 
   // Exercise Copy() method
   ObjectRepresentationType::Pointer cylinderRepresentation2 = cylinderRepresentation->Copy();
-  scene->RequestAddObject( view2D, cylinderRepresentation2 );
+  view2D->RequestAddObject( cylinderRepresentation2 );
   if(cylinderRepresentation2->GetOpacity() != cylinderRepresentation->GetOpacity())
     {
     std::cerr << "Copy() [FAILED]" << std::endl;

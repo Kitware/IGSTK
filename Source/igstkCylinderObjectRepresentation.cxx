@@ -111,7 +111,7 @@ void CylinderObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent inde
 
 /** Update the visual representation in response to changes in the geometric
  * object */
-void CylinderObjectRepresentation::UpdateRepresentationFromGeometry()
+void CylinderObjectRepresentation::UpdateRepresentation()
 {
   m_CylinderSource->SetRadius(m_CylinderSpatialObject->GetRadius());
   m_CylinderSource->SetHeight(m_CylinderSpatialObject->GetHeight());

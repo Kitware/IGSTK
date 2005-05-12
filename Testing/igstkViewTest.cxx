@@ -24,7 +24,6 @@
 #include "igstkView2D.h"
 #include "igstkView3D.h"
 #include "igstkEvents.h"
-#include "igstkScene.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
@@ -95,8 +94,6 @@ int igstkViewTest( int, char * [] )
 
   try
     {
-    // Create the scene
-    igstk::Scene::Pointer scene = igstk::Scene::New();
 
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
@@ -137,11 +134,11 @@ int igstkViewTest( int, char * [] )
     view3D->RequestEnableInteractions();
     
  
-    // Add the ellipsoid to the scene
-    scene->RequestAddObject(view2D,ellipsoidRepresentation);
+    // Add the ellipsoid to the view
+    view2D->RequestAddObject( ellipsoidRepresentation );
     
-    // Add the cylinder to the scene
-    scene->RequestAddObject(view3D,cylinderRepresentation);
+    // Add the cylinder to the view
+    view3D->RequestAddObject( cylinderRepresentation );
 
     
     // Do manual redraws
@@ -157,34 +154,25 @@ int igstkViewTest( int, char * [] )
     view2D->RequestDisableInteractions();
     view3D->RequestDisableInteractions();
 
-    // Remove the ellipsoid from the scene
-    scene->RequestRemoveObject(view2D,ellipsoidRepresentation);
+    // Remove the ellipsoid from the view
+    view2D->RequestRemoveObject( ellipsoidRepresentation );
     
-    // Remove the cylinder from the scene
-    scene->RequestRemoveObject(view3D,cylinderRepresentation);
+    // Remove the cylinder from the view
+    view3D->RequestRemoveObject( cylinderRepresentation );
 
     // Exercise error conditions.
     //
     // Attempt to add an object with null pointer
-    scene->RequestAddObject(view3D,0);
-    // Attempt to add a view with null pointer
-    scene->RequestAddObject(0,cylinderRepresentation);
-    // Attempt to add view and object with null pointers
-    scene->RequestAddObject(0,0);
+    view3D->RequestAddObject( 0 );
 
     // Exercise error conditions.
     //
     // Attempt to remove an object with null pointer
-    scene->RequestRemoveObject(view3D,0);
-    // Attempt to remove a view with null pointer
-    scene->RequestRemoveObject(0,cylinderRepresentation);
-    // Attempt to remove view and object with null pointers
-    scene->RequestRemoveObject(0,0);
-
+    view3D->RequestRemoveObject( 0 );
 
     // Do automatic redraws using the internal PulseGenerator
-    scene->RequestAddObject(view2D,ellipsoidRepresentation);
-    scene->RequestAddObject(view3D,cylinderRepresentation);
+    view2D->RequestAddObject( ellipsoidRepresentation );
+    view3D->RequestAddObject( cylinderRepresentation );
     typedef ViewTest::ViewObserver ObserverType;
     ObserverType::Pointer viewObserver = ObserverType::New();
     view3D->AddObserver( ::igstk::RefreshEvent(), viewObserver );

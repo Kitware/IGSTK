@@ -30,7 +30,6 @@
 
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkEllipsoidObjectRepresentation.h"
-#include "igstkScene.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
 #include "igstkPulseGenerator.h"
@@ -118,7 +117,6 @@ int main( int argc, char * argv [] )
   // This is for classes that use SmartPointers
   igstkTestExportStateMachine1( igstk::CylinderObjectRepresentation, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::EllipsoidObjectRepresentation, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::Scene, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::EllipsoidObject, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::CylinderObject, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::PulseGenerator, outputDirectory, skipLoops );

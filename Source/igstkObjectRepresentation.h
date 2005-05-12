@@ -63,7 +63,6 @@ public:
 
   igstkTypeMacro(ObjectRepresentation, itk::Object);
 
-  igstkFriendClassMacro( Scene );  // FIXME: this should go now that the view is pulling data
   igstkFriendClassMacro( View );
 
   /** Set the color */
@@ -116,27 +115,13 @@ private:
 
   SpatialObjectType::ConstPointer  m_SpatialObject;
 
-  typedef itk::SimpleMemberCommand< Self >   ObserverType;
-
-  ObserverType::Pointer       m_PositionObserver;
-  ObserverType::Pointer       m_GeometryObserver;
-
-  /** Request updating the position of the visual representation by using the
-   * information from the Spatial Object. */
-  void RequestUpdatePosition();  
-
   /** update the visual representation with changes in the geometry */
-  virtual void RequestUpdateRepresentation();
-
-
-  /** Update the position of the visual representation by using the information
-   * from the Spatial Object. Only to be called by the State Machine. */
-  void UpdatePositionFromGeometry();  
+  virtual void RequestUpdateRepresentation( const TimeStamp & time );
 
   /** update the visual representation with changes in the geometry. Only to be
    * called by the State Machine. This is an abstract method that MUST be
    * overloaded in every derived class. */
-  virtual void UpdateRepresentationFromGeometry() = 0;
+  virtual void UpdateRepresentation() = 0;
 
   /** Set the spatial object for this class */
   void SetSpatialObject(); 
@@ -154,6 +139,10 @@ private:
   StateType            m_ValidSpatialObjectState;
 
   SpatialObjectType::ConstPointer m_SpatialObjectToAdd;
+
+  /** Time stamp for the time at which the next rendering will take place */
+  TimeStamp            m_TimeToRender;
+
 };
 
 } // end namespace igstk

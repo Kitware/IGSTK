@@ -37,14 +37,12 @@ CylinderObject::~CylinderObject()
 void CylinderObject::SetRadius( double radius )
 {
   m_CylinderSpatialObject->SetRadius( radius );
-  this->InvokeEvent( GeometryModifiedEvent() );
 }
 
 
 void CylinderObject::SetHeight( double height ) 
 {
   m_CylinderSpatialObject->SetHeight( height );
-  this->InvokeEvent( GeometryModifiedEvent() );
 }
 
 double CylinderObject::GetRadius() const

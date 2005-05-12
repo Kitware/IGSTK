@@ -330,7 +330,25 @@ void View::RequestSetRefreshRate( double frequencyHz )
  * the pulse generator. */
 void View::RefreshRender()
 {
+  // First, compute the time at which we estimate that the scene will be rendered
+  TimeStamp renderTime;
+  double frequency = m_PulseGenerator->GetFrequency();
+  renderTime.SetStartTimeNowAndExpireAfter( 1.0 / frequency ); // milliseconds
+
+  // Second, notify all the representation object of the time at which this
+  // scene will be rendered.
+  ObjectListType::iterator itr    = m_Objects.begin();
+  ObjectListType::iterator endItr = m_Objects.end();
+  while( itr != endItr )
+    {
+    (*itr)->RequestUpdateRepresentation( renderTime );
+    ++itr;
+    }
+
+  // Third, trigger VTK rendering by invoking a refresh of the GUI.
   this->redraw();
+
+  // Last, report to observers that a refresh event took place.
   m_Reporter->InvokeEvent( RefreshEvent() );
 }
 

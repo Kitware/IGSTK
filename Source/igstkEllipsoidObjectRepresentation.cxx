@@ -112,7 +112,7 @@ void EllipsoidObjectRepresentation::SetEllipsoidObject()
 
 /** Update the visual representation in response to changes in the geometric
  * object */
-void EllipsoidObjectRepresentation::UpdateRepresentationFromGeometry()
+void EllipsoidObjectRepresentation::UpdateRepresentation()
 {
   EllipsoidObjectType::ArrayType radius = m_EllipsoidObject->GetRadius();
   m_EllipsoidSource->SetScale( radius[0], radius[1], radius[2] );

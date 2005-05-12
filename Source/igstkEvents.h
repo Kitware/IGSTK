@@ -25,10 +25,6 @@ namespace igstk
 {
 
 itkEventMacro( IGSTKEvent,               itk::UserEvent );
-itkEventMacro( PositionModifiedEvent,    IGSTKEvent );
-itkEventMacro( OrientationModifiedEvent, IGSTKEvent );
-itkEventMacro( GeometryModifiedEvent,    IGSTKEvent );
-itkEventMacro( PropertyModifiedEvent,    IGSTKEvent );
 itkEventMacro( PulseEvent,               IGSTKEvent );
 itkEventMacro( RefreshEvent,             IGSTKEvent );
 

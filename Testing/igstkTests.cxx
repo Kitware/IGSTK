@@ -15,7 +15,6 @@ void RegisterTests()
     REGISTER_TEST(igstkMultipleOutputTest);
     REGISTER_TEST(igstkLoggerTest);
     REGISTER_TEST(igstkPulseGeneratorTest);
-    REGISTER_TEST(igstkSceneTest);
     REGISTER_TEST(igstkStateMachineTest);
     REGISTER_TEST(igstkStateMachineErrorsTest);
     REGISTER_TEST(igstkTokenTest);

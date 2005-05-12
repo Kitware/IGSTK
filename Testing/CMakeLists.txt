@@ -41,8 +41,6 @@ ADD_TEST(igstkTrackerToolTest ${IGSTK_TESTS} igstkTrackerToolTest)
 
 ADD_TEST(igstkTrackerPortTest ${IGSTK_TESTS} igstkTrackerPortTest)
 
-ADD_TEST(igstkSceneTest ${IGSTK_TESTS} igstkSceneTest)
-
 ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
 
 ADD_TEST(igstkTransformTest ${IGSTK_TESTS} igstkTransformTest)
@@ -60,7 +58,6 @@ SET(BasicTests_SRCS
   igstkMultipleOutputTest
   igstkLoggerTest
   igstkPulseGeneratorTest
-  igstkSceneTest
   igstkStateMachineTest
   igstkStateMachineErrorsTest
   igstkTokenTest

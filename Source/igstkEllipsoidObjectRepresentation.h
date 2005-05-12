@@ -86,7 +86,7 @@ private:
   vtkSuperquadricSource * m_EllipsoidSource;
 
   /** update the visual representation with changes in the geometry */
-  virtual void UpdateRepresentationFromGeometry();
+  virtual void UpdateRepresentation();
 
   /** Connect this representation class to the spatial object. Only to be
    * called by the State Machine. */

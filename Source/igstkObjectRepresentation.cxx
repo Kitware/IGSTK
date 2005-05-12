@@ -33,11 +33,6 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this)
   m_Opacity = 1.0;
   m_SpatialObject = NULL;
   m_LastMTime = 0;
-  m_PositionObserver    = ObserverType::New();
-  m_GeometryObserver    = ObserverType::New();
-  m_PositionObserver->SetCallbackFunction(    this, & ObjectRepresentation::RequestUpdatePosition );
-  m_GeometryObserver->SetCallbackFunction(    this, & ObjectRepresentation::RequestUpdateRepresentation );
-
 
   m_StateMachine.AddInput( m_ValidSpatialObjectInput,  "ValidSpatialObjectInput" );
   m_StateMachine.AddInput( m_NullSpatialObjectInput,   "NullSpatialObjectInput"  );
@@ -56,8 +51,7 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this)
 
   m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_NullSpatialObjectInput, m_NullSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_ValidSpatialObjectInput, m_ValidSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdatePositionInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdatePositionFromGeometry );
-  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdateRepresentationInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdateRepresentationFromGeometry );
+  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdateRepresentationInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdateRepresentation );
 
   m_StateMachine.SelectInitialState( m_NullSpatialObjectState );
 
@@ -121,8 +115,6 @@ void ObjectRepresentation::RequestSetSpatialObject( const SpatialObjectType * sp
 void ObjectRepresentation::SetSpatialObject()
 {
   m_SpatialObject = m_SpatialObjectToAdd;
-  m_SpatialObject->AddObserver( PositionModifiedEvent(), m_PositionObserver );
-  m_SpatialObject->AddObserver( GeometryModifiedEvent(), m_GeometryObserver );
 }
 
 
@@ -152,26 +144,18 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
 
 /** Request Update the object representation (i.e vtkActors). Maybe we should check also the transform
  *  modified time. */
-void ObjectRepresentation::RequestUpdateRepresentation()
+void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 {
-    m_StateMachine.ProcessInput( m_UpdateRepresentationInput );
+  m_TimeToRender = time; 
+  m_StateMachine.ProcessInput( m_UpdateRepresentationInput );
 }
 
-
-
-
-/** Request Update the object position. Maybe we should check also the transform
- *  modified time. */
-void ObjectRepresentation::RequestUpdatePosition()
-{
-    m_StateMachine.ProcessInput( m_UpdatePositionInput );
-}
 
 
 
 /** Update the object representation (i.e vtkActors). Maybe we should check also the transform
  *  modified time. */
-void ObjectRepresentation::UpdatePositionFromGeometry()
+void ObjectRepresentation::UpdateRepresentation()
 {
   Transform transform = m_SpatialObject->GetTransform();
 

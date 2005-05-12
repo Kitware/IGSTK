@@ -70,6 +70,9 @@ public:
    * not be honored depending on the current state of the StateMachine. */
   void RequestStop();
 
+  /** Return the value set for the frequency of this pulse generator */
+  igstkGetMacro( Frequency, double );
+      
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 

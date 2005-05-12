@@ -24,7 +24,6 @@
 
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
-#include "igstkScene.h"
 #include "igstkView2D.h"
 
 int igstkEllipsoidObjectTest( int, char * [] )
@@ -101,14 +100,12 @@ int igstkEllipsoidObjectTest( int, char * [] )
 
   // testing actors
   std::cout << "Testing actors : ";
-  typedef igstk::Scene   SceneType;
-  SceneType::Pointer scene = SceneType::New();
 
   typedef igstk::View2D  View2DType;
   View2DType * view2D = new View2DType(0,0,200,200,"View 2D");
   
   // this will indirectly call CreateActors() 
-  scene->RequestAddObject( view2D, ellipsoidRepresentation );
+  view2D->RequestAddObject( ellipsoidRepresentation );
     
   std::cout << "[PASSED]" << std::endl;
 

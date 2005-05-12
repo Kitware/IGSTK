@@ -42,7 +42,6 @@ void EllipsoidObject::SetRadius( double rx, double ry, double rz )
   radius[1] = ry;
   radius[2] = rz;
   m_EllipseSpatialObject->SetRadius( radius );
-  this->InvokeEvent( GeometryModifiedEvent() );
 }
 
 
@@ -50,7 +49,6 @@ void EllipsoidObject::SetRadius( double rx, double ry, double rz )
 void EllipsoidObject::SetRadius( const ArrayType & radii )
 {
   m_EllipseSpatialObject->SetRadius( radii );
-  this->InvokeEvent( GeometryModifiedEvent() );
 }
 
 
