@@ -22,6 +22,7 @@
 #include "itkObject.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
+#include "igstkLogger.h"
 
 
 namespace igstk
@@ -73,6 +74,13 @@ public:
   /** Return the value set for the frequency of this pulse generator */
   igstkGetMacro( Frequency, double );
       
+  /** Logger class */
+  typedef igstk::Logger                  LoggerType;
+
+  /** The SetLogger method is used to attach a logger to this object for
+   * debugging and retrospective analysis purposes. */
+  void SetLogger( LoggerType * logger );
+
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
@@ -137,6 +145,11 @@ private:
   /** Send a pulse. This method will notify observers. */
   void EmitPulse();
 
+  /** The Logger instance */
+  mutable LoggerType::Pointer      m_Logger;
+
+  /** Get pointer to the Logger */
+  LoggerType * GetLogger() const;
 };
 
 } // end of namespace igstk

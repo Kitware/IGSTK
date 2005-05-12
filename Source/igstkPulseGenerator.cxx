@@ -28,6 +28,9 @@ double PulseGenerator::m_MaximumFrequency = 10000; // 10 KHz
 
 PulseGenerator::PulseGenerator():m_StateMachine(this)
 {
+
+  m_Logger = NULL;
+  
   m_StateMachine.AddInput( m_ValidFrequencyInput,  "FrequencyInput" );
   m_StateMachine.AddInput( m_InvalidLowFrequencyInput,  "InvalidLowFrequencyInput" );
   m_StateMachine.AddInput( m_InvalidHighFrequencyInput,  "InvalidHighFrequencyInput" );
@@ -89,6 +92,7 @@ PulseGenerator::~PulseGenerator()
 void
 PulseGenerator::RequestSetFrequency( double frequency )
 {
+  igstkLogMacro( Logger::DEBUG, "SetFrequency() called ...\n");
 
   m_FrequencyToBeSet = frequency;
   if( frequency <= 0.0 )
@@ -108,10 +112,25 @@ PulseGenerator::RequestSetFrequency( double frequency )
 }
 
 
+void 
+PulseGenerator::SetLogger( LoggerType * logger )
+{
+  m_Logger = logger;
+}
+
+
+PulseGenerator::LoggerType* 
+PulseGenerator::GetLogger() const
+{
+  return m_Logger;
+}
+
+
 
 void
 PulseGenerator::RequestStart()
 {
+  igstkLogMacro( Logger::DEBUG, "RequestStart() called ...\n");
   m_StateMachine.ProcessInput( m_StartInput );
 }
  
@@ -119,6 +138,7 @@ PulseGenerator::RequestStart()
 void
 PulseGenerator::RequestStop()
 {
+  igstkLogMacro( Logger::DEBUG, "RequestStop() called ...\n");
   m_StateMachine.ProcessInput( m_StopInput );
 }
  
@@ -126,6 +146,7 @@ PulseGenerator::RequestStop()
 void
 PulseGenerator::SetFrequency()
 {
+  igstkLogMacro( Logger::DEBUG, "SetFrequency() called ...\n");
   m_Frequency = m_FrequencyToBeSet;
   m_Period = 1.0 / m_Frequency;
 }
@@ -134,6 +155,7 @@ PulseGenerator::SetFrequency()
 void
 PulseGenerator::SetTimer()
 {
+  igstkLogMacro( Logger::DEBUG, "SetTimer() called ...\n");
   Fl::add_timeout( m_Period, 
             ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
 }
@@ -155,6 +177,9 @@ PulseGenerator::CallbackTimerGlobal( void *caller )
 void
 PulseGenerator::CallbackTimer()
 {
+  
+  igstkLogMacro( Logger::DEBUG, "CallbackTimer() called ...\n");
+  
   // Set the timer for the next pulse
   Fl::repeat_timeout( m_Period, 
             ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
@@ -172,26 +197,23 @@ PulseGenerator::CallbackTimer()
 void
 PulseGenerator::EmitPulse()
 {
+  igstkLogMacro( Logger::DEBUG, "EmitPulse() called ...\n");
   // Notify potential observers that the generator emited a pulse.
   this->InvokeEvent( PulseEvent() );
 }
 
 
 void
-PulseGenerator::ReportErrorCondition(void)
+PulseGenerator::ReportErrorCondition()
 {
-  // FIXME: this must be replaced with a logger message.
-  std::cerr << "Error condition in Pulse Generator" << std::endl;
+  igstkLogMacro( Logger::WARNING, "ReportErrorCondition() called ...\n");
 }
 
+
 void
-PulseGenerator::ReportMissedPulse(void)
+PulseGenerator::ReportMissedPulse()
 {
-  // FIXME: this must be replaced with a logger message.
-  std::cerr << "Pulse Missed !!!. It means that the frequency of the pulse ";
-  std::cerr << "generator is to high for the time needed by Observers to ";
-  std::cerr << "complete their execute method. Please reduce the frequency, ";
-  std::cerr << "of use faster Execute methjods." << std::endl;
+  igstkLogMacro( Logger::WARNING, "ReportMissedPulse() called ...Pulse Missed !!!. It means that the frequency of the pulse generator is to high for the time needed by Observers to complete their execute method. Please reduce the frequency, of use faster Execute methjods.");
 }
 
 }
