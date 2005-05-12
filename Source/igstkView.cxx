@@ -61,8 +61,11 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   m_StateMachine.AddInput( m_ResetCameraInput,   "ResetCameraInput"  );
   m_StateMachine.AddInput( m_EnableInteractionsInput,   "EnableInteractionsInput"  );
   m_StateMachine.AddInput( m_DisableInteractionsInput,   "DisableInteractionsInput"  );
+  m_StateMachine.AddInput( m_StartRefreshingInput,   "StartRefreshingInput"  );
+  m_StateMachine.AddInput( m_StopRefreshingInput,   "StopRefreshingInput"  );
 
-  m_StateMachine.AddState( m_IdleState,      "IdleState"     );
+  m_StateMachine.AddState( m_IdleState,       "IdleState"       );
+  m_StateMachine.AddState( m_RefreshingState, "RefreshingState" );
 
   const ActionType NoAction = 0;
 
@@ -73,12 +76,31 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   m_StateMachine.AddTransition( m_IdleState, m_NullRemoveObject,  m_IdleState,  & View::ReportInvalidRequest );
   m_StateMachine.AddTransition( m_IdleState, m_InexistingRemoveObject,  m_IdleState,  & View::ReportInvalidRequest );
   m_StateMachine.AddTransition( m_IdleState, m_ValidAddActor, m_IdleState,  & View::AddActor );
-  m_StateMachine.AddTransition( m_IdleState, m_NullAddActor,  m_IdleState,          NoAction );
+  m_StateMachine.AddTransition( m_IdleState, m_NullAddActor,  m_IdleState,  & View::ReportInvalidRequest );
   m_StateMachine.AddTransition( m_IdleState, m_ValidRemoveActor, m_IdleState,  & View::RemoveActor );
-  m_StateMachine.AddTransition( m_IdleState, m_NullRemoveActor,  m_IdleState,          NoAction );
+  m_StateMachine.AddTransition( m_IdleState, m_NullRemoveActor,  m_IdleState,  & View::ReportInvalidRequest );
   m_StateMachine.AddTransition( m_IdleState, m_ResetCameraInput,  m_IdleState,  & View::ResetCamera );
   m_StateMachine.AddTransition( m_IdleState, m_EnableInteractionsInput,  m_IdleState,  & View::EnableInteractions );
   m_StateMachine.AddTransition( m_IdleState, m_DisableInteractionsInput,  m_IdleState,  & View::DisableInteractions );
+  m_StateMachine.AddTransition( m_IdleState, m_StartRefreshingInput,  m_RefreshingState,  & View::Start );
+  m_StateMachine.AddTransition( m_IdleState, m_StopRefreshingInput,  m_IdleState,  & View::ReportInvalidRequest );
+
+  m_StateMachine.AddTransition( m_RefreshingState, m_ValidAddObject, m_RefreshingState,  & View::AddObject );
+  m_StateMachine.AddTransition( m_RefreshingState, m_NullAddObject,  m_RefreshingState,  & View::ReportInvalidRequest );
+  m_StateMachine.AddTransition( m_RefreshingState, m_ExistingAddObject,  m_RefreshingState,  & View::ReportInvalidRequest );
+  m_StateMachine.AddTransition( m_RefreshingState, m_ValidRemoveObject, m_RefreshingState,  & View::RemoveObject );
+  m_StateMachine.AddTransition( m_RefreshingState, m_NullRemoveObject,  m_RefreshingState,  & View::ReportInvalidRequest );
+  m_StateMachine.AddTransition( m_RefreshingState, m_InexistingRemoveObject,  m_RefreshingState,  & View::ReportInvalidRequest );
+  m_StateMachine.AddTransition( m_RefreshingState, m_ValidAddActor, m_RefreshingState,  & View::AddActor );
+  m_StateMachine.AddTransition( m_RefreshingState, m_NullAddActor,  m_RefreshingState,  & View::ReportInvalidRequest );
+  m_StateMachine.AddTransition( m_RefreshingState, m_ValidRemoveActor, m_RefreshingState,  & View::RemoveActor );
+  m_StateMachine.AddTransition( m_RefreshingState, m_NullRemoveActor,  m_RefreshingState,  & View::ReportInvalidRequest );
+  m_StateMachine.AddTransition( m_RefreshingState, m_ResetCameraInput,  m_RefreshingState,  & View::ResetCamera );
+  m_StateMachine.AddTransition( m_RefreshingState, m_EnableInteractionsInput,  m_RefreshingState,  & View::EnableInteractions );
+  m_StateMachine.AddTransition( m_RefreshingState, m_DisableInteractionsInput,  m_RefreshingState,  & View::DisableInteractions );
+  m_StateMachine.AddTransition( m_RefreshingState, m_StartRefreshingInput,  m_RefreshingState,  & View::ReportInvalidRequest );
+  m_StateMachine.AddTransition( m_RefreshingState, m_StopRefreshingInput,  m_IdleState,  & View::Stop );
+
 
   m_StateMachine.SelectInitialState( m_IdleState );
 
@@ -475,6 +497,26 @@ void View::RemoveObject()
     this->RequestRemoveActor(*actorIt);
     actorIt++;
     } 
+}
+
+
+/** Request to Start the Pulse Generator for periodically refreshing the View
+ * */
+void View::RequestStart()
+{
+  igstkLogMacro( Logger::DEBUG, "RequestStart() called ...\n");
+
+  m_StateMachine.ProcessInput( m_StartRefreshingInput );
+}
+
+
+/** Request to Stop the Pulse Generator for periodically refreshing the View
+ * */
+void View::RequestStop()
+{
+  igstkLogMacro( Logger::DEBUG, "RequestStop() called ...\n");
+
+  m_StateMachine.ProcessInput( m_StopRefreshingInput );
 }
 
 

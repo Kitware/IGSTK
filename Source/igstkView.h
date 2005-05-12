@@ -81,10 +81,6 @@ public:
   typedef ObjectListType::iterator          ObjectListIterator;
   typedef ObjectListType::const_iterator    ObjectListConstIterator;
 
-  /** This should be managed by the state machine... */
-  void Start();
-  void Stop();
-  
   /** Add an object representation to the list of children and associate it
    * with a specific view. */ 
   void RequestAddObject( ObjectRepresentation* object ); 
@@ -140,6 +136,12 @@ public:
   /** Request to return the camera to a known position */
   void RequestResetCamera();
   
+  /** Request Start the periodic refreshing of the view */
+  void RequestStart();
+
+  /** Request Stopping the periodic refreshing of the view */
+  void RequestStop();
+
 protected:
   
   // Fl_Gl_Window overrides
@@ -199,6 +201,10 @@ private:
   /** Report any invalid request to the logger */
   void ReportInvalidRequest();
 
+  /** This should be called by the state machine */
+  void Start();
+  void Stop();
+  
 private:
   
   // Arguments for methods to be invoked by the state machine.
@@ -221,9 +227,12 @@ private:
   InputType            m_ResetCameraInput;
   InputType            m_EnableInteractionsInput;
   InputType            m_DisableInteractionsInput;
+  InputType            m_StartRefreshingInput;
+  InputType            m_StopRefreshingInput;
 
   /** States for the State Machine */
   StateType            m_IdleState;
+  StateType            m_RefreshingState;
 
   /** The Logger instance */
   mutable LoggerType::Pointer      m_Logger;
