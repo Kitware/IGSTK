@@ -50,14 +50,16 @@ int igstkFLTKTextBufferLogOutputTest( int, char * [] )
     output->SetStream(*textBuffer);
     output->Write(1.2345);
     output->Write("This is the test message.\n");
-    double stamp;
-    for( stamp = 1; stamp < 100; stamp += 1 )
-    {
-      output->Write("This is the test message.\n", stamp);
-    }
-    output->Flush();
 
-    Fl::run();
+    double stamp;
+    
+    for( stamp = 1; stamp < 100; stamp += 1 )
+      {
+      output->Write("This is the test message.\n", stamp);
+      output->Flush();
+      Fl::check();
+      }
+
     }
   catch(...)
     {

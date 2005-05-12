@@ -52,12 +52,12 @@ int igstkFLTKTextLogOutputTest( int, char * [] )
     output->Write("This is the test message.\n");
     double stamp;
     for( stamp = 1; stamp < 100; stamp += 1 )
-    {
+      {
       output->Write("This is the test message.\n", stamp);
-    }
-    output->Flush();
+      output->Flush();
+      Fl::check();
+      }
 
-    Fl::run();
     }
   catch(...)
     {
