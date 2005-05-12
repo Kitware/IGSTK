@@ -67,7 +67,7 @@ namespace ViewTest
 
         if( m_PulseCounter > 20 )
           {
-          view->Stop();
+          view->RequestStop();
           if( m_Form )
             {
             m_Form->hide();
@@ -178,7 +178,7 @@ int igstkViewTest( int, char * [] )
     view3D->AddObserver( ::igstk::RefreshEvent(), viewObserver );
     viewObserver->SetForm( form );
 
-    view3D->Start();
+    view3D->RequestStart();
 
     Fl::run();
 
