@@ -25,8 +25,8 @@
 #include "igstkFLTKTextBufferLogOutput.h"
 #include <FL/Fl.h>
 #include <FL/Fl_Window.h>
-#include <FL/Fl_Text_Display.h>
-#include <FL/Fl_Text_Buffer.h>
+#include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Text_Buffer.H>
 
 
 int igstkFLTKTextBufferLogOutputTest( int, char * [] )

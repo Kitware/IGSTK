@@ -25,7 +25,7 @@
 #include"itkObjectFactory.h"
 #include"itkSimpleFastMutexLock.h"
 #include"itkLogOutput.h"
-#include"FL/Fl_Text_Buffer.h"
+#include"FL/Fl_Text_Buffer.H"
 
 
 namespace igstk
