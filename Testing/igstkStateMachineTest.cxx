@@ -194,7 +194,7 @@ int igstkStateMachineTest( int , char * [] )
   std::cout << "Printing out the State Machine description in dot format" << std::endl;
   std::cout << std::endl << std::endl;
 
-  const double skipLoops = false;
+  const bool skipLoops = false;
 
   tester.ExportDescription( std::cout, skipLoops );
 
