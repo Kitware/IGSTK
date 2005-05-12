@@ -32,7 +32,11 @@ namespace igstk{
 View::View( int x, int y, int w, int h, const char *l ) : 
 Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   m_StateMachine(this)
-{  
+{ 
+  igstkLogMacro( Logger::DEBUG, "Constructor() called ...\n");
+  
+  m_Logger = NULL;
+  
   // Create a default render window
   m_RenderWindow = vtkRenderWindow::New();
   m_Renderer = vtkRenderer::New();
@@ -97,6 +101,8 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
 /** Destructor */
 View::~View()
 {
+  igstkLogMacro( Logger::DEBUG, "Destructor() called ...\n");
+  
   // according to the fltk docs, destroying a widget does NOT remove it from
   // its parent, so we have to do that explicitly at destruction
   // (and remember, NEVER delete() an instance of this class)
@@ -111,6 +117,8 @@ View::~View()
 /** */
 void View::Initialize()
 {
+  igstkLogMacro( Logger::DEBUG, "Initialize() called ...\n");
+
   this->SetRenderWindow(m_RenderWindow);
   // if don't have render window then we can't do anything yet
   if (!RenderWindow)
@@ -138,6 +146,7 @@ void View::Initialize()
 /** Update the display */
 void View::Update()
 {
+  igstkLogMacro( Logger::DEBUG, "Update() called ...\n");
   this->redraw();
 }
 
@@ -145,6 +154,7 @@ void View::Update()
 void View::AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer )
 {
+  igstkLogMacro( Logger::DEBUG, "AddObserver() called ...\n");
   m_Reporter->AddObserver( event, observer );
 }
 
@@ -152,6 +162,7 @@ void View::AddObserver( const ::itk::EventObject & event,
 /** */
 void View::RequestAddActor( vtkProp3D * actor )
 {
+  igstkLogMacro( Logger::DEBUG, "RequestAddActor() called ...\n");
   m_ActorToBeAdded = actor;
   if( !actor )
     {
@@ -167,6 +178,7 @@ void View::RequestAddActor( vtkProp3D * actor )
 /** */
 void View::AddActor()
 {
+  igstkLogMacro( Logger::DEBUG, "AddActor() called ...\n");
   m_Renderer->AddActor( m_ActorToBeAdded );
 }
 
@@ -174,6 +186,7 @@ void View::AddActor()
 /** */
 void View::RequestRemoveActor( vtkProp3D * actor )
 {
+  igstkLogMacro( Logger::DEBUG, "RequestRemoveActor() called ...\n");
   m_ActorToBeRemoved = actor;
   if( !actor )
     {
@@ -189,6 +202,7 @@ void View::RequestRemoveActor( vtkProp3D * actor )
 /** */
 void View::RemoveActor()
 {
+  igstkLogMacro( Logger::DEBUG, "RemoveActor() called ...\n");
   m_Renderer->RemoveActor( m_ActorToBeRemoved );
 }
 
@@ -196,6 +210,7 @@ void View::RemoveActor()
 /** */
 void View::RequestEnableInteractions()
 {
+  igstkLogMacro( Logger::DEBUG, "RequestEnableInteractions() called ...\n");
   m_StateMachine.ProcessInput( m_EnableInteractionsInput );
 }
 
@@ -203,6 +218,7 @@ void View::RequestEnableInteractions()
 /** */
 void View::RequestDisableInteractions()
 {
+  igstkLogMacro( Logger::DEBUG, "RequestDisableInteractions() called ...\n");
   m_StateMachine.ProcessInput( m_DisableInteractionsInput );
 }
 
@@ -210,12 +226,14 @@ void View::RequestDisableInteractions()
 /** */
 void View::EnableInteractions()
 {
+  igstkLogMacro( Logger::DEBUG, "EnableInteractions() called ...\n");
   m_InteractionHandling = true;
 }
 
 /** */
 void View::DisableInteractions()
 {
+  igstkLogMacro( Logger::DEBUG, "DisableInteractions() called ...\n");
   m_InteractionHandling = false;
 }
 
@@ -224,6 +242,7 @@ void View::DisableInteractions()
 /** */
 void View::RequestResetCamera()
 {
+  igstkLogMacro( Logger::DEBUG, "RequestResetCamera() called ...\n");
   m_StateMachine.ProcessInput( m_ResetCameraInput );
 }
 
@@ -231,12 +250,14 @@ void View::RequestResetCamera()
 /** */
 void View::ResetCamera()
 {
+  igstkLogMacro( Logger::DEBUG, "ResetCamera() called ...\n");
   m_Renderer->ResetCamera();
 }
 
 /** */
 void View::Enable()
 {
+  igstkLogMacro( Logger::DEBUG, "Enable() called ...\n");
   // if already enabled then done
   if (Enabled)
     {
@@ -251,6 +272,7 @@ void View::Enable()
 /** */
 void View::Disable()
 {
+  igstkLogMacro( Logger::DEBUG, "Disable() called ...\n");
   // if already disabled then done
   if (!Enabled)
     {
@@ -265,6 +287,7 @@ void View::Disable()
 /** */
 void View::Start()
 {
+  igstkLogMacro( Logger::DEBUG, "Start() called ...\n");
   // the internal pulse generator will control the redraws
   m_PulseGenerator->RequestStart();
 }
@@ -272,6 +295,7 @@ void View::Start()
 /** */
 void View::Stop()
 {
+  igstkLogMacro( Logger::DEBUG, "Stop() called ...\n");
   // the internal pulse generator will control the redraws
   m_PulseGenerator->RequestStop();
 }
@@ -280,6 +304,7 @@ void View::Stop()
 /** */
 void View::SetRenderWindow(vtkRenderWindow *aren)
 {
+  igstkLogMacro( Logger::DEBUG, "SetRenderWindow() called ...\n");
   vtkRenderWindowInteractor::SetRenderWindow(aren);
   // if a View has been shown already, and one
   // re-sets the RenderWindow, neither UpdateSize nor draw is called,
@@ -294,6 +319,7 @@ void View::SetRenderWindow(vtkRenderWindow *aren)
 /** this gets called during FLTK window draw()s and resize()s */
 void View::UpdateSize(int W, int H)
 {
+  igstkLogMacro( Logger::DEBUG, "UpdateSize() called ...\n");
   if (RenderWindow != NULL)
     {
     // if the size changed tell render window
@@ -321,6 +347,7 @@ void View::UpdateSize(int W, int H)
 /** Define the refresh rate by programming the internal pulse generator */
 void View::RequestSetRefreshRate( double frequencyHz )
 {
+  igstkLogMacro( Logger::DEBUG, "RequestSetRefreshRate() called ...\n");
   // Let the state machine of the pulse generator manage this request
   m_PulseGenerator->RequestSetFrequency( frequencyHz );
 }
@@ -330,6 +357,8 @@ void View::RequestSetRefreshRate( double frequencyHz )
  * the pulse generator. */
 void View::RefreshRender()
 {
+  igstkLogMacro( Logger::DEBUG, "RefreshRender() called ...\n");
+
   // First, compute the time at which we estimate that the scene will be rendered
   TimeStamp renderTime;
   double frequency = m_PulseGenerator->GetFrequency();
@@ -356,6 +385,8 @@ void View::RefreshRender()
 /** Request for Adding an object to the View */
 void View::RequestAddObject( ObjectRepresentation* pointer )
 {
+  igstkLogMacro( Logger::DEBUG, "RequestAddObject() called ...\n");
+
   m_ObjectToBeAdded = pointer;
 
   if( !pointer )
@@ -382,6 +413,8 @@ void View::RequestAddObject( ObjectRepresentation* pointer )
  * value in the ObjectToBeAdded. */
 void View::AddObject()
 {
+  igstkLogMacro( Logger::DEBUG, "AddObject() called ...\n");
+  
   m_Objects.push_back( m_ObjectToBeAdded );
   this->Modified();
   
@@ -399,6 +432,8 @@ void View::AddObject()
 /** Request for removing a spatial object from the View */
 void View::RequestRemoveObject( ObjectRepresentation* pointer )
 {
+  igstkLogMacro( Logger::DEBUG, "RequestRemoveObject() called ...\n");
+
   m_ObjectToBeRemoved = pointer;
   
   m_IteratorToObjectToBeRemoved = m_Objects.end(); 
@@ -427,11 +462,14 @@ void View::RequestRemoveObject( ObjectRepresentation* pointer )
  * m_IteratorToObjectToBeRemoved is valid. */
 void View::RemoveObject()
 {
+  igstkLogMacro( Logger::DEBUG, "RemoveObject() called ...\n");
+
   m_Objects.erase( m_IteratorToObjectToBeRemoved );
   this->Modified();
   
   ObjectRepresentation::ActorsListType actors = m_ObjectToBeRemoved->GetActors();
   ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
+
   while(actorIt != actors.end())
     {
     this->RequestRemoveActor(*actorIt);
@@ -445,8 +483,7 @@ void View::RemoveObject()
  * interact with this class. */
 void View::ReportInvalidRequest()
 {
-  // FIXME this line must be replaced with an invokation to the logger.
-  std::cerr << "View::ReportInvalidRequest()" << std::endl;
+  igstkLogMacro( Logger::WARNING, "ReportInvalidRequest() called ...\n");
 }
 
 
@@ -463,6 +500,8 @@ void View::OnTimerGlobal(void *p)
 /** */
 int View::CreateTimer(int timertype)
 {
+  igstkLogMacro( Logger::DEBUG, "CreateTimer() called ...\n");
+  
   // to be called every 10 milliseconds, one shot timer
   // we pass "this" so that the correct OnTimer instance will be called
   if (timertype == VTKI_TIMER_FIRST)
@@ -482,6 +521,8 @@ int View::CreateTimer(int timertype)
 /** */
 int View::DestroyTimer()
 {
+  igstkLogMacro( Logger::DEBUG, "DestroyTimer() called ...\n");
+
   // do nothing
   return 1;
 }
@@ -489,6 +530,8 @@ int View::DestroyTimer()
 /** */
 void View::OnTimer(void)
 {
+  igstkLogMacro( Logger::DEBUG, "OnTimer() called ...\n");
+
   if (!Enabled)
     {
     return;
@@ -501,6 +544,7 @@ void View::OnTimer(void)
 /** FLTK event handlers */
 void View::flush(void)
 {
+  igstkLogMacro( Logger::DEBUG, "flush() called ...\n");
   // err, we don't want to do any fansy pansy Fl_Gl_Window stuff, so we
   // bypass all of it (else we'll get our front and back buffers in all
   // kinds of tangles, and need extra glXSwapBuffers() calls and all that)
@@ -510,6 +554,8 @@ void View::flush(void)
 /** Draw function */
 void View::draw(void)
 {
+  igstkLogMacro( Logger::DEBUG, "draw() called ...\n");
+
   if (RenderWindow!=NULL)
     {
     // make sure the vtk part knows where and how large we are
@@ -533,6 +579,8 @@ void View::draw(void)
 /** Resize function */
 void View::resize( int x, int y, int w, int h ) 
 {
+  igstkLogMacro( Logger::DEBUG, "resize() called ...\n");
+
   // make sure VTK knows about the new situation
   UpdateSize( w, h );
   // resize the FLTK window by calling ancestor method
@@ -543,6 +591,8 @@ void View::resize( int x, int y, int w, int h )
 /** main FLTK event handler */
 int View::handle( int event ) 
 {
+  igstkLogMacro( Logger::DEBUG, "handle() called ...\n");
+  
   if( !Enabled || !m_InteractionHandling) 
     {
     return 0;
@@ -618,6 +668,22 @@ int View::handle( int event )
 
   return 1; // we handled the event if we didn't return earlier
 }
+
+
+void 
+View::SetLogger( LoggerType * logger )
+{
+  m_Logger = logger;
+}
+
+
+View::LoggerType* 
+View::GetLogger() const
+{
+  return m_Logger;
+}
+
+
 
 /** */
 static char const rcsid[] =

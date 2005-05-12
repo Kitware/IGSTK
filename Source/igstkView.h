@@ -42,6 +42,7 @@
 #include "igstkStateMachine.h"
 #include "igstkPulseGenerator.h"
 #include "igstkObjectRepresentation.h"   
+#include "igstkLogger.h"
 
 namespace igstk{
 
@@ -92,6 +93,12 @@ public:
    * it is associated to a particular view. */ 
   void RequestRemoveObject( ObjectRepresentation* object ); 
 
+  /** Logger class */
+  typedef igstk::Logger                  LoggerType;
+
+  /** The SetLogger method is used to attach a logger to this object for
+   * debugging and retrospective analysis purposes. */
+  void SetLogger( LoggerType * logger );
 
    /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
@@ -217,6 +224,12 @@ private:
 
   /** States for the State Machine */
   StateType            m_IdleState;
+
+  /** The Logger instance */
+  mutable LoggerType::Pointer      m_Logger;
+
+  /** Get pointer to the Logger */
+  LoggerType * GetLogger() const;
 
 };
 
