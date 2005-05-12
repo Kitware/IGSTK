@@ -150,7 +150,7 @@ protected:
   /** The "ClearPorts" clears all the ports. */
   void ClearPorts( void );
 
-  /** The "AttemptToSetUpCommunicationProcessing" method attempts to sets up communication. */
+  /** The "AttemptToSetUpCommunicationProcessing" method attempts to sets up communication.
       That means, m_Communication must be set using SetCommunication prior to this call. */
   virtual void AttemptToSetUpCommunicationProcessing( void );
   /** Post-processing after communication setup has been successful. */ 
