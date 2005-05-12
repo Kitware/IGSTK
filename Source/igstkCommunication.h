@@ -1,3 +1,4 @@
+
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
@@ -57,8 +58,12 @@ public:
   /** The method CloseCommunication closes the communication. */
   virtual bool CloseCommunication( void );
 
+  /** SendString method sends the string via communication link. */
+  virtual bool SendString( const char *data ) { return false; };
 
-  
+  /** ReceiveString method receives string via communication link. */
+  virtual bool ReceiveString( char *data ) { return false; }; 
+
 protected:
 
     /** Constructor is protected in order to enforce 
