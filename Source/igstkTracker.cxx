@@ -140,6 +140,11 @@ void Tracker::SetLogger( LoggerType * logger )
   m_Logger = logger;
 }
 
+void Tracker::SetCommunication( const CommunicationType::Pointer communication )
+{
+  m_Communication = communication;
+}
+
 
 Tracker::LoggerType* Tracker::GetLogger(  void )
 {
