@@ -674,6 +674,7 @@ void
 View::SetLogger( LoggerType * logger )
 {
   m_Logger = logger;
+  m_PulseGenerator->SetLogger( logger );
 }
 
 
