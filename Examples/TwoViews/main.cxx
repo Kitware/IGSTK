@@ -85,8 +85,8 @@ int main(int , char** )
   m_GUI->Display1->RequestSetRefreshRate( 30 ); // 30 Hz
   m_GUI->Display2->RequestSetRefreshRate( 30 ); // 30 Hz
 
-  m_GUI->Display1->Start();
-  m_GUI->Display2->Start();
+  m_GUI->Display1->RequestStart();
+  m_GUI->Display2->RequestStart();
 
   Fl::run();
 
