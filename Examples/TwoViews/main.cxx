@@ -20,7 +20,6 @@
 #endif
 
 #include "TwoViews.h"
-#include "igstkScene.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
@@ -32,9 +31,6 @@ int main(int , char** )
 { 
   TwoViews* m_GUI = new TwoViews();
   m_GUI->Window->show();
-
-  // Create the scene
-  igstk::Scene::Pointer scene = igstk::Scene::New();
 
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
@@ -57,15 +53,15 @@ int main(int , char** )
   cylinderRepresentation->SetColor(1.0,0.0,0.0);
   cylinderRepresentation->SetOpacity(1.0);
 
-  // Add the ellipsoid to the scene
-  scene->RequestAddObject(m_GUI->Display1,ellipsoidRepresentation);
+  // Add the ellipsoid to the view
+  m_GUI->Display1->RequestAddObject( ellipsoidRepresentation );
 
-  // Add the cylinder to the scene
-  scene->RequestAddObject(m_GUI->Display1,cylinderRepresentation);
+  // Add the cylinder to the view
+  m_GUI->Display1->RequestAddObject( cylinderRepresentation );
 
   // Add another Object representations to the second display
-  scene->RequestAddObject(m_GUI->Display2,ellipsoidRepresentation->Copy());
-  scene->RequestAddObject(m_GUI->Display2,cylinderRepresentation->Copy());
+  m_GUI->Display2->RequestAddObject( ellipsoidRepresentation->Copy() );
+  m_GUI->Display2->RequestAddObject( cylinderRepresentation->Copy() );
 
   m_GUI->Display2->RequestResetCamera();
   m_GUI->Display2->Update();
@@ -79,11 +75,11 @@ int main(int , char** )
   // Enable interactions
   m_GUI->Display1->RequestEnableInteractions();
 
-  m_GUI->MouseTrackerBox->SetObjectToTrack(ellipsoid);
-  m_GUI->MouseTrackerBox->SetView(m_GUI->Display1);
-  m_GUI->MouseTrackerBox->SetView2(m_GUI->Display2);
+  m_GUI->MouseTrackerBox->SetObjectToTrack( ellipsoid );
+  m_GUI->MouseTrackerBox->SetView( m_GUI->Display1 );
+  m_GUI->MouseTrackerBox->SetView2( m_GUI->Display2 );
    
-  scene->RequestRemoveObject(m_GUI->Display1,cylinderRepresentation);
+  m_GUI->Display1->RequestRemoveObject( cylinderRepresentation );
   m_GUI->Display1->Update();
 
   m_GUI->Display1->RequestSetRefreshRate( 30 ); // 30 Hz
