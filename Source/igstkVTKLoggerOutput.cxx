@@ -23,6 +23,9 @@
 
 namespace igstk
 {
+
+vtkCxxRevisionMacro(VTKLoggerOutput, "1.3");
+
 /** Send a string to display. */
 void VTKLoggerOutput::DisplayText(const char* t)
 {
