@@ -27,7 +27,9 @@ namespace igstk
 void VTKLoggerOutput::DisplayText(const char* t)
 {
   if( this->Logger )
+    {
     this->Logger->Write(itk::Logger::INFO, t);
+    }
 }
 
 
@@ -37,7 +39,9 @@ void VTKLoggerOutput::DisplayText(const char* t)
 void VTKLoggerOutput::DisplayErrorText(const char *t)
 {
   if( this->Logger )
+    {
     this->Logger->Write(itk::Logger::CRITICAL, t);
+    }
 }
 
 
@@ -47,7 +51,9 @@ void VTKLoggerOutput::DisplayErrorText(const char *t)
 void VTKLoggerOutput::DisplayWarningText(const char *t)
 {
   if( this->Logger )
+    {
     this->Logger->Write(itk::Logger::WARNING, t);
+    }
 }
 
 
@@ -57,7 +63,9 @@ void VTKLoggerOutput::DisplayWarningText(const char *t)
 void VTKLoggerOutput::DisplayGenericWarningText(const char *t)
 {
   if( this->Logger )
+    {
     this->Logger->Write(itk::Logger::WARNING, t);
+    }
 }
 
 
@@ -67,7 +75,9 @@ void VTKLoggerOutput::DisplayGenericWarningText(const char *t)
 void VTKLoggerOutput::DisplayDebugText(const char *t)
 {
   if( this->Logger )
+    {
     this->Logger->Write(itk::Logger::DEBUG, t);
+    }
 }
 
 
