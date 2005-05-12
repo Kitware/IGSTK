@@ -65,7 +65,7 @@ public:
   virtual bool ReceiveString( char *data ) { return false; }; 
 
   /** Flush "flushes" out any commands in the buffer through the communication link. */
-  virtual bool Flush( void ) (return false; };
+  virtual bool Flush( void ) { return false; }
 
 protected:
 
