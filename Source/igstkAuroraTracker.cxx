@@ -47,14 +47,6 @@ NDITracker::~NDITracker(void)
 void NDITracker::AttemptToSetUpCommunicationProcessing( void )
 {
   igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::AttemptToSetUpCommunicationProcessing called ...\n");
-  // m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentFailureInput;
-
-  // probe the com port to see if we can talk to the device
-  if (m_Communication && m_Communication->OpenCommunication())
-   {
-      //m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentSuccessInput;
-      return;
-   }
 }
 
 
