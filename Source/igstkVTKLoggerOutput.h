@@ -43,7 +43,7 @@ public:
   typedef vtkOutputWindow  Superclass;
   
   /** Run-time type information (and related methods). */
-  itkTypeRevisionMacro(VTKLoggerOutput, vtkOutputWindow);
+  vtkTypeRevisionMacro(VTKLoggerOutput, vtkOutputWindow);
 
   typedef itk::Logger*   LoggerType;
 
