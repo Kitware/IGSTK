@@ -33,6 +33,10 @@ public:
   {
     m_Logger = logger;
   }
+  const char * GetNameOfClass() const 
+  {
+    return "LoggerTesterClass";
+  }
   void ProduceLogOutput()
   {
     if(m_Logger.IsNotNull() )

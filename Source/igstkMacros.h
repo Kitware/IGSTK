@@ -39,6 +39,7 @@ namespace igstk
     {  \
     if ( this->GetLogger()->GetPriorityLevel()>= (x) ) \
       {  \
+      this->GetLogger()->GetMultipleOutput() << this->GetNameOfClass() << "::"; \
       this->GetLogger()->GetMultipleOutput() << (y); \
       } \
     } \
