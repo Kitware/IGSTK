@@ -131,9 +131,6 @@ public:
   tracker object for logging purposes. */
   void SetLogger( LoggerType * logger );
 
-  /** The GetLogger method return pointer to the logger object. */
-  LoggerType* GetLogger(  void );
-
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
@@ -207,6 +204,9 @@ protected:
 
   /** The "DisableToolsProcessing" method disables tools. */
   virtual void DisableToolsProcessing( void );
+
+  /** The GetLogger method return pointer to the logger object. */
+  LoggerType* GetLogger(  void );
 
 private:
 
