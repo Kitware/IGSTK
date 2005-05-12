@@ -131,6 +131,10 @@ public:
   tracker object for logging purposes. */
   void SetLogger( LoggerType * logger );
 
+  /** The SetCommunication method is used to attach a communication object to the
+  tracker object for communication with the tracker hardware. */
+  void SetCommunication( const CommunicationType::Pointer communication );
+
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
@@ -147,6 +151,7 @@ protected:
   void ClearPorts( void );
 
   /** The "AttemptToSetUpCommunicationProcessing" method attempts to sets up communication. */
+      That means, m_Communication must be set using SetCommunication prior to this call. */
   virtual void AttemptToSetUpCommunicationProcessing( void );
   /** Post-processing after communication setup has been successful. */ 
   virtual void CommunicationEstablishmentSuccessProcessing( void );
