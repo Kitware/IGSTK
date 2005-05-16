@@ -127,8 +127,6 @@ public:
 
 
   /** Data type for communication */
-  typedef std::string  CommunicationDataType;
-
   typedef SerialCommunication            Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
@@ -183,13 +181,13 @@ public:
 
   /** Flushes output buffer of any waiting commands to the hardware. 
       Only flushes the transmit buffer, not the receive buffer.*/
-  bool FlushOutputBuffer();
+  bool Flush();
 
-  /** SendString method sends the string to the hardware. */
-  bool SendString( const CommunicationDataType& message );
+  /** SendString method sends the string via the communication link. */
+  bool SendString( const char *message );
 
-  /** ReceiveString method sends the string to the hardware. */
-  bool ReceiveString( void ); //const CommunicationDataType& message );
+  /** ReceiveString method receives the string via the communication link. */
+  bool ReceiveString( char *data ); 
 
    /** The SetLogger method is used to attach a logger object to the
    serial communication object for logging. */

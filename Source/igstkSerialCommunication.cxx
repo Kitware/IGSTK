@@ -172,17 +172,17 @@ bool SerialCommunication::RestCommunication( void )
 }
 
 
-bool SerialCommunication::FlushOutputBuffer( void )
+bool SerialCommunication::Flush( void )
 {
   this->m_StateMachine.ProcessInput( m_FlushOutputBufferInput );
   return true;
 }
 
 
-bool SerialCommunication::SendString( const CommunicationDataType& message )
+bool SerialCommunication::SendString( const char *data )
 {
-  int strSize = (message.size()<m_WriteBufferSize) ? message.size() : m_WriteBufferSize;
-  memcpy(m_OutputBuffer, message.c_str(), sizeof(char)*strSize);
+  int strSize = (strlen(data)<m_WriteBufferSize) ? strlen(data) : m_WriteBufferSize;
+  memcpy(m_OutputBuffer, data, sizeof(char)*strSize);
 //  m_OutputBuffer[strSize+2] = '\r';
 //  m_OutputBuffer[strSize+2] = '\0';
   std::cout << "Message length = " << strSize << ", Message = " << m_OutputBuffer << std::endl;
@@ -190,7 +190,7 @@ bool SerialCommunication::SendString( const CommunicationDataType& message )
   return true;
 }
 
-bool SerialCommunication::ReceiveString( void )
+bool SerialCommunication::ReceiveString( char *data )
 {
   this->m_StateMachine.ProcessInput( m_ReceiveStringInput );
   return true;
