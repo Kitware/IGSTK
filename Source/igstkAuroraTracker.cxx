@@ -47,7 +47,31 @@ NDITracker::~NDITracker(void)
 void NDITracker::AttemptToSetUpCommunicationProcessing( void )
 {
   igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::AttemptToSetUpCommunicationProcessing called ...\n");
+  // m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentFailureInput;
+
+  // Open communication if the job of opening remains with NDITracker, else
+  // probe the com port to see if we can talk to the device
+  if (m_Communication && m_Communication->OpenCommunication())
+   {
+      //m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentSuccessInput;
+      return;
+   }
 }
+
+
+void NDITracker::AttemptToSetUpToolsProcessing( void )
+{
+  igstkLogMacro( Logger::DEBUG, "NDITracker::AttemptToSetUpToolsProcessing called ...\n");
+  //m_pActivateToolsResultInput = &(m_ToolsActivationFailureInput);
+
+  // load any SROMS that are needed
+  for (int i = 0; i < NDI_NUMBER_OF_PORTS; i++)
+  { 
+    if (!m_SROMFileNames[i].empty())
+      this->LoadVirtualSROM(i, m_SROMFileNames[i]);
+  }
+}
+
 
 
 void NDITracker::AttachSROMFileNameToPort( const int portNum, std::string fileName )
@@ -76,26 +100,12 @@ void NDITracker::AttemptToStopTrackingProcessing( void )
 
 
 
-void NDITracker::AttemptToSetUpToolsProcessing( void )
-{
-  igstkLogMacro( Logger::DEBUG, "NDITracker::AttemptToSetUpToolsProcessing called ...\n");
-  //m_pActivateToolsResultInput = &(m_ToolsActivationFailureInput);
-
-  // load any SROMS that are needed
-  for (int i = 0; i < NDI_NUMBER_OF_PORTS; i++)
-  { 
-    if (!m_SROMFileNames[i].empty())
-      this->LoadVirtualSROM(i, m_SROMFileNames[i]);
-  }
-}
-
-
-// Send a command to the tracking unit.
+// Send a command to the tracking unit in TEXT MODE.
 
 void NDITracker::SendCommand(const char *command, bool addCRC)
 {
   // FIXME: Mutex lock/unlock may be needed
-/*
+
   int commandLength = strlen(command);
 
   strncpy(m_CommandBuffer, command, commandLength);
@@ -111,7 +121,9 @@ void NDITracker::SendCommand(const char *command, bool addCRC)
     }
     sprintf(&command[commandLength],"%04X",crc);
   }
-*/
+
+  m_Communication->SendString( command );
+  m_Communication->Flush();
 }
 
 //void NDITracker::ReadConfigurationFile( const char *file )
