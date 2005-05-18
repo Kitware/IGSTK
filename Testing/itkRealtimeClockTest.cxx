@@ -34,7 +34,7 @@ int itkRealtimeClockTest( int, char * [] )
     std::cout << "Testing itk::RealtimeClock" << std::endl;
     std::cout << "Frequency: " << clock->GetFrequency() << std::endl;
 
-    std::cout.precision(15);
+    std::cout.precision(30);
 
     int i;
     double timestamps[5];

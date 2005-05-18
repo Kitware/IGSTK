@@ -116,11 +116,15 @@ protected:
   /** Print contents of a Logger */
   virtual void PrintSelf(std::ostream &os, Indent indent) const;
 
+protected:
+
   PriorityLevelType m_PriorityLevel;
 
   PriorityLevelType m_LevelForFlushing;
 
   MultipleLogOutput::Pointer  m_Output;
+
+private:
 
   RealtimeClock::Pointer  m_Clock;
 

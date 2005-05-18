@@ -32,7 +32,9 @@ StdStreamLogOutput::StdStreamLogOutput()
 StdStreamLogOutput::~StdStreamLogOutput()
 {
   if( this->m_Stream )
+  {
     this->m_Stream->flush();
+  }
 }
 
 
@@ -40,7 +42,7 @@ StdStreamLogOutput::~StdStreamLogOutput()
 void StdStreamLogOutput::SetStream(StreamType &Stream)
 {
   this->m_Stream = &Stream;
-  this->m_Stream->precision(15);
+  this->m_Stream->precision(30);
 }
 
 
@@ -49,7 +51,9 @@ void StdStreamLogOutput::Flush()
 {
   StdStreamLogOutput::m_Mutex.Lock();
   if( this->m_Stream )
+  {
     this->m_Stream->flush();
+  }
   StdStreamLogOutput::m_Mutex.Unlock();
 }
 
@@ -59,7 +63,9 @@ void StdStreamLogOutput::Write(double timestamp)
 {
   StdStreamLogOutput::m_Mutex.Lock();
   if( this->m_Stream )
+  {
     (*this->m_Stream) << timestamp;
+  }
   StdStreamLogOutput::m_Mutex.Unlock();
 }
 
@@ -69,7 +75,9 @@ void StdStreamLogOutput::Write(std::string const &content)
 {
   StdStreamLogOutput::m_Mutex.Lock();
   if( this->m_Stream )
+  {
     (*this->m_Stream) << content;
+  }
   StdStreamLogOutput::m_Mutex.Unlock();
 }
 
@@ -79,7 +87,9 @@ void StdStreamLogOutput::Write(std::string const &content, double timestamp)
 {
   StdStreamLogOutput::m_Mutex.Lock();
   if( this->m_Stream )
+  {
     (*this->m_Stream) << timestamp << "  :  " << content;
+  }
   StdStreamLogOutput::m_Mutex.Unlock();
 }
 

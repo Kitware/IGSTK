@@ -107,10 +107,14 @@ int itkLoggerManagerTest( int, char * [] )
     itk::Logger* pLogger;
     pLogger = manager->GetLogger("org.itk.logTester.logger");
     if( pLogger == NULL )
+    {
       throw "LoggerManager::GetLogger() failed";
+    }
     pLogger->Write(itk::Logger::INFO, "This is the message from the logger got from a LoggerManager");
     if( manager->GetLogger("abc") != NULL )
+    {
       throw "LoggerManager::GetLogger() must return NULL";
+    }
     manager->Flush();
     }
   catch(const char * errmsg)

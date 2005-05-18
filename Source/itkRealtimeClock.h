@@ -70,6 +70,10 @@ private:
   
   double m_Frequency;
 
+  double m_Diff;
+
+  double m_Origin;
+
 };
 
 } // end of namespace itk

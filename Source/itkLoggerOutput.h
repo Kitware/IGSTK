@@ -78,7 +78,8 @@ public:
 
   itkGetMacro(Logger, LoggerType);
 
-  virtual void OverrideITKWindow() {
+  virtual void OverrideITKWindow() 
+  {
     itk::OutputWindow::SetInstance(this);
   }
  
@@ -87,6 +88,7 @@ protected:
   virtual ~LoggerOutput() {}
   virtual void PrintSelf(std::ostream& os, Indent indent) const {}
 
+private:
   Logger* m_Logger;
 };
   

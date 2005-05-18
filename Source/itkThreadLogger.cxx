@@ -137,9 +137,9 @@ void ThreadLogger::Flush()
 /** Constructor */
 ThreadLogger::ThreadLogger()
 {
-  m_WaitMutex.Lock();
-  m_Threader = MultiThreader::New();
-  m_ThreadID = m_Threader->SpawnThread(ThreadFunction, this);
+  this->m_WaitMutex.Lock();
+  this->m_Threader = MultiThreader::New();
+  this->m_ThreadID = this->m_Threader->SpawnThread(ThreadFunction, this);
 }
 
 
@@ -148,9 +148,11 @@ ThreadLogger::~ThreadLogger()
 {
 //  this->Flush();    // <-- very dangerous
 //  m_Mutex.Lock();
-  m_WaitMutex.Unlock();
-  if( m_Threader )
-    m_Threader->TerminateThread(m_ThreadID);
+  this->m_WaitMutex.Unlock();
+  if( this->m_Threader )
+  {
+    this->m_Threader->TerminateThread(this->m_ThreadID);
+  }
 //  m_Mutex.Unlock();
 }
 
@@ -160,10 +162,14 @@ ITK_THREAD_RETURN_TYPE ThreadLogger::ThreadFunction(void* pInfoStruct)
   struct MultiThreader::ThreadInfoStruct * pInfo = (struct MultiThreader::ThreadInfoStruct*)pInfoStruct;
 
   if( pInfo == NULL )
+  {
     return ITK_THREAD_RETURN_VALUE;
+  }
 
   if( pInfo->UserData == NULL )
+  {
     return ITK_THREAD_RETURN_VALUE;
+  }
 
   ThreadLogger *pLogger = (ThreadLogger*)pInfo->UserData;
 
@@ -176,7 +182,9 @@ ITK_THREAD_RETURN_TYPE ThreadLogger::ThreadFunction(void* pInfoStruct)
     int activeFlag = *pInfo->ActiveFlag;
     pInfo->ActiveFlagLock->Unlock();
     if( !activeFlag )
+    {
       break;
+    }
     
     pLogger->m_Mutex.Lock();
     while( !pLogger->m_OperationQ.empty() )
