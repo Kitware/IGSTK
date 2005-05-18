@@ -19,10 +19,14 @@
 =========================================================================*/
 
 #include"igstkVTKLoggerOutput.h"
+#include"vtkObjectFactory.h"
 
 
 namespace igstk
 {
+vtkCxxRevisionMacro(VTKLoggerOutput, "1.5");
+vtkStandardNewMacro(VTKLoggerOutput);
+
 /** Send a string to display. */
 void VTKLoggerOutput::DisplayText(const char* t)
 {
@@ -80,14 +84,14 @@ void VTKLoggerOutput::DisplayDebugText(const char *t)
   }
 }
 
-
+/*
 VTKLoggerOutput* VTKLoggerOutput::New()
 {
   VTKLoggerOutput* ret = new VTKLoggerOutput();
   ret->Register(NULL);
   return ret;
 }
-
+*/
   
 } // end namespace igstk
 
