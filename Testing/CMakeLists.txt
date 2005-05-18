@@ -26,6 +26,7 @@ ADD_TEST(igstkSerialCommunicationTest ${IGSTKSandbox_TESTS} igstkSerialCommunica
 ADD_TEST(igstkNDICommandInterpreterTest ${IGSTKSandbox_TESTS} igstkNDICommandInterpreterTest)
 ADD_TEST(igstkAtamaiNDITrackerTest ${IGSTKSandbox_TESTS} igstkAtamaiNDITrackerTest)
 ADD_TEST(igstkNDICyclicRedundancyTest ${IGSTKSandbox_TESTS} igstkNDICyclicRedundancyTest)
+ADD_TEST(igstkAuroraTrackerTest ${IGSTKSandbox_TESTS} igstkAuroraTrackerTest)
 
 ADD_TEST(itkRealtimeClockTest ${IGSTKSandbox_TESTS} itkRealtimeClockTest)
 ADD_TEST(itkStdStreamLogOutputTest ${IGSTKSandbox_TESTS} itkStdStreamLogOutputTest)
@@ -45,6 +46,7 @@ SET(BasicTests_SRCS
   igstkNDICommandInterpreterTest.cxx
   igstkAtamaiNDITrackerTest.cxx
   igstkNDICyclicRedundancyTest.cxx
+  igstkAuroraTrackerTest.cxx
   itkRealtimeClockTest.cxx
   itkStdStreamLogOutputTest.cxx
   itkMultipleLogOutputTest.cxx
