@@ -11,6 +11,7 @@ void RegisterTests()
 {
   REGISTER_TEST(igstkMouseTrackerTest);
   REGISTER_TEST(igstkSerialCommunicationTest);
+  REGISTER_TEST(igstkNDICommandInterpreterTest);
   REGISTER_TEST(igstkAtamaiNDITrackerTest);
   REGISTER_TEST(igstkNDICyclicRedundancyTest);
   REGISTER_TEST(itkRealtimeClockTest);

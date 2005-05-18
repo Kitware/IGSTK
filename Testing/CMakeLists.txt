@@ -23,6 +23,7 @@ INCLUDE_DIRECTORIES (
 
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 ADD_TEST(igstkSerialCommunicationTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationTest)
+ADD_TEST(igstkNDICommandInterpreterTest ${IGSTKSandbox_TESTS} igstkNDICommandInterpreterTest)
 ADD_TEST(igstkAtamaiNDITrackerTest ${IGSTKSandbox_TESTS} igstkAtamaiNDITrackerTest)
 ADD_TEST(igstkNDICyclicRedundancyTest ${IGSTKSandbox_TESTS} igstkNDICyclicRedundancyTest)
 
@@ -41,6 +42,7 @@ ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextBuf
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkSerialCommunicationTest.cxx
+  igstkNDICommandInterpreterTest.cxx
   igstkAtamaiNDITrackerTest.cxx
   igstkNDICyclicRedundancyTest.cxx
   itkRealtimeClockTest.cxx
