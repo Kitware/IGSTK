@@ -37,25 +37,45 @@ namespace igstk
 
 NDITracker::NDITracker(void) : Tracker()
 {
+  m_CommandInterpreter = NDICommandInterpreter::New();
 }
+
 
 NDITracker::~NDITracker(void)
 {
+  //delete m_CommandInterpreter;
+}
+
+
+void NDITracker::SetCommunication( CommunicationType *communication )
+{
+  std::cout << "Entered ..." << std::endl;
+  igstkLogMacro( Logger::DEBUG, "NDITracker:: Entered SetCommunication ...\n");
+  Tracker::SetCommunication( communication );
+  //m_CommandInterpreter->SetCommunication( communication );
+  igstkLogMacro( Logger::DEBUG, "NDITracker:: Exiting SetCommunication ...\n"); 
 }
 
 
 void NDITracker::AttemptToSetUpCommunicationProcessing( void )
 {
-  igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::AttemptToSetUpCommunicationProcessing called ...\n");
+  igstkLogMacro( Logger::DEBUG, "NDITracker::AttemptToSetUpCommunicationProcessing called ...\n");
   // m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentFailureInput;
 
-  // Open communication if the job of opening remains with NDITracker, else
-  // probe the com port to see if we can talk to the device
-  if (m_Communication && m_Communication->OpenCommunication())
-   {
-      //m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentSuccessInput;
-      return;
-   }
+  // Initialize the device 
+  const char *reply = m_CommandInterpreter->Command("INIT:");
+
+  igstkLogMacro( Logger::DEBUG,  reply );
+  igstkLogMacro( Logger::DEBUG, "...\n");
+
+  if (m_CommandInterpreter->GetError())
+  {
+    m_CommandInterpreter->BEEP(200);
+  }
+  else
+  {
+//    m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentSuccessInput;
+  }
 }
 
 
@@ -95,13 +115,12 @@ void NDITracker::AttemptToStopTrackingProcessing( void )
     {
   //m_pStopTrackingResultInput = &(m_StopTrackingSuccessInput);
     }
-    */
+*/
 }
 
 
-
 // Send a command to the tracking unit in TEXT MODE.
-
+/*
 void NDITracker::SendCommand(const char *command, bool addCRC)
 {
   // FIXME: Mutex lock/unlock may be needed
@@ -125,6 +144,8 @@ void NDITracker::SendCommand(const char *command, bool addCRC)
   m_Communication->SendString( command );
   m_Communication->Flush();
 }
+*/
+
 
 //void NDITracker::ReadConfigurationFile( const char *file )
 //{

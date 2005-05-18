@@ -20,8 +20,9 @@
 
 #include "itkXMLFile.h"
 #include "igstkTracker.h"
+#include "igstkCommunication.h"
 #include "igstkNDICyclicRedundancy.h"
-
+#include "igstkNDICommandInterpreter.h"
 
 namespace igstk
 {
@@ -56,6 +57,10 @@ public:
   /** Method for creation of a reference counted object. */
   igstkNewMacro(Self);  
 
+  /** The SetCommunication method is used to attach a communication object to the
+  tracker object for communication with the tracker hardware. */
+  virtual void SetCommunication( CommunicationType *communication );
+
 protected:
 
   NDITracker(void);
@@ -68,34 +73,39 @@ protected:
 
   virtual void AttemptToSetUpToolsProcessing( void );
 
-  virtual void AttemptToStartTrackingProcessing( void );
+  virtual void AttemptToStartTrackingProcessing( void ) {};
 
   virtual void AttemptToStopTrackingProcessing( void );
 
-  virtual void UpdateStatusProcessing( void );
+  virtual void UpdateStatusProcessing( void ) {};
 
-  virtual void ResetTrackingProcessing( void );
+  virtual void ResetTrackingProcessing( void ) {};
 
-  virtual void DisableCommunicationProcessing( void );
+  virtual void DisableCommunicationProcessing( void ) {};
 
-  virtual void DisableToolsProcessing( void );
+  virtual void DisableToolsProcessing( void ) {};
+
 
   void AttachSROMFileNameToPort( const int portNum, std::string fileName );
 
 private:
 
-  bool LoadVirtualSROM( const int i, std::string SROMFileName);
+  bool LoadVirtualSROM( const int i, std::string SROMFileName) { return true; };
 
+  /*
   void SendCommand(const char *command, bool addCRC = true);
 
 // Sends a raw command to the tracking unit.
   char *NDITracker::SendCommand(const char *command);
 
   char m_CommandBuffer[NDI_COMMAND_MAX_LEN];
+*/
 
   std::string m_SROMFileNames[NDI_NUMBER_OF_PORTS];
 
-  NDICyclicRedundancy  m_CyclicRedundancy;
+  NDICyclicRedundancy     m_CyclicRedundancy;
+
+  NDICommandInterpreter   *m_CommandInterpreter;
 };
 
 }
