@@ -23,23 +23,23 @@
 
 namespace igstk
 {
-
 /** max tools is 12 active plus 9 passive, so 24 is a safe number  */
 /* (note that we are only counting the number of handles that can */
 /* be simultaneously occupied)                                    */
 #define NDI_MAX_HANDLES 24
 
 /*=====================================================================*/
-/*! \defgroup ErrorCodes Error Codes 
+/** \defgroup NDIErrorCodes NDICommandInterpreter Error Codes 
   The error code is set only by Command() or by 
   macros and functions that call Command().
 
   Error codes that equal to or less than 0xff are error codes reported
-  by the Measurement System itself.  Error codes greater than 0xff are
+  by the device itself.  Error codes greater than 0xff are
   errors that are reported by the host computer.
 
-  The error code is returned by GetError() and the corresponding
-  text is available by passing the code to ErrorString().
+  The error code is returned by NDICommandInterpreter::GetError() and
+  the corresponding text is available by passing the code to
+  NDICommandInterpreter::ErrorString().
 */
   
 /*\{*/
@@ -69,7 +69,7 @@ namespace igstk
 #define NDI_DSTOP_FAIL      0x17  /*!<\brief Failure to stop diagnostic mode */
 #define NDI_IRCHK_FAIL      0x18  /*!<\brief Failure to determine environmental IR */
 #define NDI_FIRMWARE        0x19  /*!<\brief Failure to read firmware version */
-#define NDI_INTERNAL        0x1a  /*!<\brief Internal Measurement System error */
+#define NDI_INTERNAL        0x1a  /*!<\brief Internal device error */
 #define NDI_IRINIT_FAIL     0x1b /*!<\brief Failure to initialize for IR diagnostics*/
 #define NDI_IRED_FAIL       0x1c  /*!<\brief Failure to set marker firing signature */
 #define NDI_SROM_FAIL       0x1d  /*!<\brief Failure to search for SROM IDs */
@@ -90,14 +90,14 @@ namespace igstk
 
 /* error codes returned by the C api */
 
-#define NDI_BAD_CRC         0x0100  /*!<\brief Bad CRC received from Measurement System */
+#define NDI_BAD_CRC         0x0100  /*!<\brief Bad CRC received from device */
 #define NDI_OPEN_ERROR      0x0200  /*!<\brief Error opening serial device */
 #define NDI_BAD_COMM        0x0300  /*!<\brief Bad communication parameters for host*/
-#define NDI_TIMEOUT         0x0400  /*!<\brief Measurement System took >5 secs to reply */
+#define NDI_TIMEOUT         0x0400  /*!<\brief device took >5 secs to reply */
 #define NDI_WRITE_ERROR     0x0500  /*!<\brief Device write error */
 #define NDI_READ_ERROR      0x0600  /*!<\brief Device read error */
-#define NDI_RESET_FAIL      0x0700  /*!<\brief Measurement System failed to reset on break */
-#define NDI_PROBE_FAIL      0x0800  /*!<\brief Measurement System not found on specified port */
+#define NDI_RESET_FAIL      0x0700  /*!<\brief device failed to reset on break */
+#define NDI_PROBE_FAIL      0x0800  /*!<\brief device not found on specified port */
 /*\}*/
 
 
@@ -301,6 +301,8 @@ namespace igstk
 /*\}*/
 
 
+class NDICommandInterpreter : public itk::Object
+{
 /** \class NDICommandInterpreter
     \brief Mediate between a Tracker and its Communication object.
 
@@ -313,14 +315,13 @@ namespace igstk
     private instance of NDICommandInterpreter, and then pass
     their Communication objects to the NDICommandInterpreter.
 */
-class NDICommandInterpreter : public itk::Object
-{
 
 public:
 
   /** Some required typedefs for itk::Object. */
 
   typedef NDICommandInterpreter          Self;
+  typedef itk::Object                    Superclass; 
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
@@ -335,24 +336,24 @@ public:
   /** Set the communication object that commands will be sent to */
   itkSetObjectMacro(Communication, CommunicationType);
 
-/*!
-  Send a command to the Measurement System using a printf-style format string.
+  /**
+  Send a text command to the device and receive a text reply.
 
-  \param command a command to be sent without formatting
-  \param format a printf-style format string
+  \param command the command to send, without the trailing CRC
 
-  \return       the text reply from the Measurement System with the 
+  \return       the text reply from the device with the 
                 CRC chopped off
 
   The standard format of an NDI API command is, for example, "INIT:" or
   "PENA:AD".  A CRC value and a carriage return will be appended to the
-  command before it is sent to the Measurement System.
+  command before it is sent to the device.
   
   This function will automatically recogize certain commands and behave
   accordingly:
-  - NULL - A serial break will be sent to the Measurement System. 
+  - 0 - A serial break will be sent to the device if the command is a
+        null string
   - "COMM:" - After the COMM is sent, the host computer serial port is
-           adjusted to match the Measurement System.
+           adjusted to match the device.
   - "INIT:" - After the INIT is sent, communication will be paused
            for 100ms.
   - "PHSR:" - The information returned by the PHSR command is stored and can
@@ -371,51 +372,67 @@ public:
            can be retrieved through the GetIRCHK() functions.
 
   <p>The GetError() function can be used to check whether an error
-  occured or, alternatively, SetErrorCallback() can be used to set
-  a function that will be called whenever an error occurs.
-
-  For convenience, there is a set of macros for sending commands to the
-  Measurement Systems.  These are listed in \ref NDIMacros.
-*/
+  occured.
+  */
   const char *Command(const char *command);
+
+
+  /**
+  Send a command to the device using printf-style format string.
+  */
   const char *Command(const char *format, int a);
+  /**
+  Send a command to the device using printf-style format string.
+  */
   const char *Command(const char *format, int a, int b);
+  /**
+  Send a command to the device using printf-style format string.
+  */
   const char *Command(const char *format, int a, int b, int c);
+  /**
+  Send a command to the device using printf-style format string.
+  */
   const char *Command(const char *format, int a, int b, int c, int d);
+  /**
+  Send a command to the device using printf-style format string.
+  */
   const char *Command(const char *format, int a, int b, const char *c);
+  /**
+  Send a command to the device using printf-style format string.
+  */
   const char *Command(const char *format, const char *a, const char *b,
                       const char *c, const char *d, const char *e);
 
-/*!
-  Cause the Measurement System to beep.
+  /**
+  Cause the device to beep.
 
   \param n   the number of times to beep, an integer between 1 and 9
 
-  A reply of "0" means that the Measurement System is already beeping
+  A reply of "0" means that the device is already beeping
   and cannot service this beep request.
 
   This command can be used in tracking mode.
-*/
+  */
   void BEEP(int n) {
     this->Command("BEEP:%i", n); }
 
-/*!
-  Change the Measurement System communication parameters.  The host parameters
+  /**
+  Change the device communication parameters.  The host parameters
   will automatically be adjusted to match.  If the specified baud rate is
   not supported by the serial port, then the error code will be set to
-  NDI_BAD_COMM and the Measurement System will have to be reset before
+  NDI_BAD_COMM and the device will have to be reset before
   communication can continue.  Most modern UNIX systems accept all baud
   rates except 14400, and Windows systems support all baud rates.
 
-  \param baud one of NDI_9600, NDI_14400, NDI_19200, NDI_38400, NDI_57600,
-         NDI_115200
-  \param dps  should usually be NDI_8N1, the most common mode
-  \param h   one of NDI_HANDSHAKE or NDI_NOHANDSHAKE
-*/
+  \param baud        one of NDI_9600, NDI_14400, NDI_19200, NDI_38400,
+                     NDI_57600, NDI_115200
+  \param dps         should usually be NDI_8N1, the most common mode
+  \param handshake   one of NDI_HANDSHAKE or NDI_NOHANDSHAKE
+  */
   void COMM(int baud, int dps, int handshake)  {
     this->Command("COMM:%d%03d%d", baud, dps, handshake); }
 
-/*!
+  /**
   Request tracking information from the system.  This command is
   only available in tracking mode.  Please note that this command has
   been deprecated in favor of the TX command.
@@ -440,20 +457,21 @@ public:
   - unsigned long \ref GetGXFrame(int port)
   - int \ref GetGXNumberOfPassiveStrays()
   - int \ref GetGXPassiveStray(int i, double coord[3])
-*/
+  */
   void GX(int mode) {
     this->Command("GX:%04X", mode); }
 
-/*!
-  Initialize the Measurement System.  The Measurement System must be
+  /**
+  Initialize the device.  The device must be
   initialized before any other commands are sent.
-*/
+  */
   void INIT() {
     this->Command("INIT:"); }
 
-/*!
-  Check for sources of environmental infrared.  This command is only
-  valid in diagnostic mode after an IRINIT command.
+  /**
+  Check for sources of environmental infrared.
+
+  This command is only valid in diagnostic mode after an IRINIT command.
 
   \param mode  reply mode bits:
   - NDI_DETECTED   0x0001 - return '1' if IR detected, else '0'
@@ -461,11 +479,11 @@ public:
 
   <p>The IRCHK command is used to update the information returned by the
   ndiGetIRCHKDetected() and ndiGetIRCHKSourceXY() functions.
-*/
+  */
   void IRCHK(int mode) {
     this->Command("IRCHK:%04X", mode); }
 
-/*!
+  /**
   Set a tool LED to a particular state.
 
   \param ph     valid port handle in the range 0x01 to 0xFF
@@ -473,37 +491,39 @@ public:
   \param state  desired state: NDI_BLANK 'B', NDI_FLASH 'F' or NDI_SOLID 'S'
 
   This command can be used in tracking mode.
-*/
+  */
   void LED(int ph, int led, int state) {
     this->Command("LED:%02X%d%c", ph, led, state); }
 
-/*!
+  /**
   Disable transform reporting on the specified port handle.
 
   \param ph valid port handle in the range 0x01 to 0xFF
-*/
+  */
   void PDIS(int ph) {
     this->Command("PDIS:%02X", ph); }
 
-/*!
+  /**
   Enable transform reporting on the specified port handle.
 
   \param ph valid port handle in the range 0x01 to 0xFF
   \param mode one of NDI_STATIC 'S', NDI_DYNAMIC 'D' or NDI_BUTTON_BOX 'B'
-*/
+  */
   void PENA(int ph, int mode) {
     this->Command("PENA:%02X%c", ph, mode); }
 
-/*!
+  /**
   Free the specified port handle.
 
   \param ph valid port handle in the range 0x01 to 0xFF 
-*/
+  */
   void PHF(int ph) {
     this->Command("PHF:%02X", ph); }
 
-/*!
-  Ask the Measurement System for information about a tool handle.
+  /**
+  Ask the device for information about a tool handle.
+
+  \param ph valid port handle in the range 0x01 to 0xFF 
 
   \param format  a reply format mode composed of the following bits:
   - NDI_BASIC           0x0001 - get port status and basic tool information
@@ -523,11 +543,11 @@ public:
   - int \ref GetPHINFMarkerType()
 
   <p>This command is not available during tracking mode.
-*/
+  */
   void PHINF(int ph, int format) {
     this->Command("PHINF:%02X%04X", ph, format); }
 
-/*!
+  /**
   Requeset a port handle given specific tool criteria.
 
   \param  num    8-digit device number or wildcard "********"
@@ -539,12 +559,12 @@ public:
   <p>The use of the PHRQ command updates the information returned by the
   following commands:
   - int \ref GetPHRQHandle()
-*/
+  */
   void PHRQ(const char *num, const char *sys, const char *tool,
             const char *port, const char *chan) {
     this->Command("PHRQ:%-8.8s%1.1s%1.1s%2.2s%2.2s", num, sys, tool, port, chan); }
 
-/*!
+  /**
   List the port handles.
 
   \param mode   the reply mode:
@@ -561,19 +581,19 @@ public:
   - int \ref GetPHSRInformation(int i)
 
   <p>This command is not available during tracking mode.
-*/
+  */
   void PHSR(int mode) {
     this->Command("PHSR:%02X", mode); }
 
-/*!
+  /**
   Initialize the tool on the specified port handle.
 
   \param ph valid port handle in the range 0x01 to 0xFF 
-*/
+  */
   void PINIT(int ph) {
     this->Command("PINIT:%02X", ph); }
 
-/*!
+  /**
   Set the three GPIO wire states for an AURORA tool.
   The states available are 'N' (no change), 'S' (solid on),
   'P' (pulse) and 'O' (off).
@@ -582,11 +602,11 @@ public:
   \param a   GPIO 1 state
   \param b   GPIO 2 state
   \param c   GPIO 3 state
-*/
+  */
   void PSOUT(int ph, int a, int b, int c) {
     this->Command("PSOUT:%02X%c%c%c", ph, a, b, c); };
 
-/*!
+  /**
   Ask for information about the tool ports.  This command has been
   deprecated in favor of the PHINF command.  
 
@@ -609,44 +629,41 @@ public:
   - int \ref GetPSTATMarkerType(int port)
 
   <p>This command is not available during tracking mode.
-*/
+  */
   void PSTAT(int format) {
     this->Command("PSTAT:%04X", format); }
 
-/*!
+  /**
   Clear the virtual SROM for the specified port.  For a passive tool,
   this is equivalent to unplugging the tool.  This command has been
   deprecated in favor of PHF.
 
   \param port one of '1', '2', '3' or 'A' to 'I'
-*/
+  */
   void PVCLR(int port) {
     this->Command("PVCLR:%c", port); }
 
-/*!
+  /**
   Write to a virtual SROM address on the specified port handle.
-  The PVWRFromFile() function provides a more convenient means
-  of uploading tool descriptions.
+  Note that the PVWRFromFile() allows direct reading of the SROM
+  information from a .rom file..
 
   \param ph valid port handle in the range 0x01 to 0xFF 
   \param a an address between 0x0000 and 0x07C0
   \param x 64-byte data array encoded as a 128-character hexadecimal string
-
-  The HexEncode() function can be used to encode the data into
-  hexadecimal.
-*/
+  */
   void PVWR(int ph, int a, const char *x) {
     this->Command("PVWR:%02X%04X%.128s", ph, a, x); }
 
-/*!
-  Send a serial break to reset the Measurement System.  If the reset was not
+  /**
+  Send a serial break to reset the device.  If the reset was not
   successful, the error code will be set to NDI_RESET_FAIL.
-*/
+  */
   void RESET() {
     this->Command(0); }
 
-/*!
-  Get a feature list for this Measurement System.
+  /**
+  Get a feature list for this device.
 
   \param mode  the desired reply mode
   - 0x00 - 32-bit feature summary encoded as 8 hexadecimal digits
@@ -660,24 +677,24 @@ public:
   - 0x00000002 - passive tool ports are available
   - 0x00000004 - multiple volumes are available
   - 0x00000008 - tool-in-port current sensing is available
-*/
+  */
   void SFLIST(int mode) {
     this->Command("SFLIST:%02X", mode); }
 
-/*!
-  Put the Measurement System into tracking mode.
-*/
+  /**
+  Put the device into tracking mode.
+  */
   void TSTART() {
     this->Command("TSTART:"); }
 
-/*!
-  Take the Measurement System out of tracking mode.
-*/
+  /**
+  Take the device out of tracking mode.
+  */
   void TSTOP() {
     this->Command("TSTOP:"); }
 
-/*!
-  Request tracking information from the Measurement System.  This command is
+  /**
+  Request tracking information from the device.  This command is
   only available in tracking mode.
 
   \param mode a reply mode containing the following bits:
@@ -697,12 +714,12 @@ public:
   - int \ref GetTXNumberOfPassiveStrays()
   - int \ref GetTXPassiveStray(int i, double coord[3])
   - int \ref GetTXSystemStatus()
-*/
+  */
   void TX(int mode) {
     this->Command("TX:%04X", mode); }
 
-/*!
-  Get a string that describes the Measurement System firmware version.
+  /**
+  Get a string that describes the device firmware version.
 
   \param n   the processor to get the firmware revision of:
   - 0 - control firmware
@@ -710,11 +727,11 @@ public:
   - 2 - right sensor firmware
   - 3 - TIU firmware
   - 4 - control firmware with enhanced versioning
-*/
+  */
   void VER(int n) {
     this->Command("VER:%d", n); }
 
-/*! 
+  /** 
   Write data from a ROM file into the virtual SROM for the specified port.
 
   \param ph        valid port handle in the range 0x01 to 0xFF
@@ -724,54 +741,53 @@ public:
 
   If the return value is not NDI_OKAY but GetError() returns NDI_OKAY,
   then the ROM file could not be read and no information was written
-  to the Measurement System.
+  to the device.
 
   This function uses the PVWR command to write the SROM.  The total size
   of the virtual SROM is 1024 bytes.  If the file is shorter than this,
   then zeros will be written to the remaining space in the SROM.
-*/
+  */
   int PVWRFromFile(int ph, const char *filename);
-/*\}*/
 
-/*!
+  /**
   Get error code from the last command.  An error code of NDI_OKAY signals
-  that no error occurred.  The error codes are listed in \ref ErrorCodes.
-*/
+  that no error occurred.  The error codes are listed in \ref NDIErrorCodes.
+  */
   int GetError() const;
 
-/*!
+  /**
   Get the port handle returned by a PHRQ command.
 
   \return  a port handle between 0x01 and 0xFF
 
   <p>An SROM can be written to the port handle wit the PVWR command.
-*/
+  */
   int GetPHRQHandle() const;
 
-/*!
+  /**
   Get the number of port handles as returned by a PHSR command.
 
   \return  an integer, the maximum possible value is 255
-*/
+  */
   int GetPHSRNumberOfHandles() const;
 
-/*!
+  /**
   Get one of the port handles returned by a PHSR command.
 
-  \param i         a value between 0 and \em n where \n is the
+  \param i         a value between 0 and \em n where \em n is the
                    value returned by GetPHSRNumberOfHandles().
 
   \return  a port handle between 0x01 and 0xFF
 
   <p>The PHINF command can be used to get detailed information about the
    port handle.
-*/
+  */
   int GetPHSRHandle(int i) const;
 
-/*!
+  /**
   Get the information for a port handle returned by a PHSR command.
 
-  \param i         a value between 0 and \em n where \n is the
+  \param i         a value between 0 and \em n where \em n is the
                    value returned by GetPHSRNumberOfHandles().
 
   \return  a 12-bit bitfield where the following bits are defined:
@@ -785,13 +801,13 @@ public:
 
   <p>The PHINF command can be used to get detailed information about the
    port handle.
-*/
+  */
   int GetPHSRInformation(int i) const;
 
-/*!
+  /**
   Get the 8-bit status value for the port handle.
 
-   \return a an integer composed of the following bits:
+   \return an integer composed of the following bits:
   - NDI_TOOL_IN_PORT        0x01 - there is a tool in the port
   - NDI_SWITCH_1_ON         0x02 - button 1 is pressed
   - NDI_SWITCH_2_ON         0x04 - button 2 is pressed
@@ -802,13 +818,12 @@ public:
 
   <p>The return value is updated only when a PHINF command is sent with
   the NDI_BASIC (0x0001) bit set in the reply mode.
-*/
+  */
   int GetPHINFPortStatus() const;
 
-/*!
+  /**
   Get a 31-byte string describing the tool.
 
-  \param piol         valid NDI Measurement System handle
   \param information array that information is returned in (the
                      resulting string is not null-terminated)
 
@@ -823,23 +838,21 @@ public:
   
   The information is updated only when a PHINF command is sent with
   the NDI_BASIC (0x0001) bit set in the reply mode.
-*/
+  */
   int GetPHINFToolInfo(char information[31]) const;
 
-/*!
+  /**
   Return the results of a current test on the IREDS on an active 
   POLARIS tool.
-
-  \param  ts          valid NDI Measurement System handle
 
   \return 32-bit integer (see NDI documentation)
 
   The information is updated only when a PHINF command is sent with
   the NDI_TESTING (0x0002) bit set in the reply mode.
-*/
+  */
   unsigned long GetPHINFCurrentTest() const;
 
-/*!
+  /**
   Get a 20-byte string that contains the part number of the tool.
 
   \param part        array that part number is returned in (the
@@ -849,18 +862,18 @@ public:
   - NDI_OKAY - information was returned
   - NDI_UNOCCUPIED - port is unoccupied or no information is available
 
-  <p>If a terminated string is required, then set part[20] to '\0'
+  <p>If a terminated string is required, then set part[20] to 0
   before calling this function.
 
   The information is updated only when a PHINF command is sent with
   the NDI_PART_NUMBER (0x0004) bit set in the reply mode.
-*/
+  */
   int GetPHINFPartNumber(char part[20]) const;
 
-/*!
+  /**
   Get the 8-bit value specifying the tool accessories.
 
-  \return a an integer composed of the following bits:
+  \return an integer composed of the following bits:
   - NDI_TOOL_IN_PORT_SWITCH   0x01  - tool has tool-in-port switch
   - NDI_SWITCH_1              0x02  - tool has button 1
   - NDI_SWITCH_2              0x04  - tool has button 2
@@ -875,10 +888,10 @@ public:
 
   The return value is updated only when a PHINF command is sent with
   the NDI_ACCESSORIES (0x0008) bit set in the reply mode.
-*/
+  */
   int GetPHINFAccessories() const;
 
-/*!
+  /**
   Get an 8-bit value describing the marker type for the tool.
   The low three bits descibe the wavelength, and the high three
   bits are the marker type code.
@@ -896,10 +909,10 @@ public:
 
   <p>The return value is updated only when a PHINF command is sent with
   the NDI_MARKER_TYPE (0x0010) bit set in the reply mode.
-*/
+  */
   int GetPHINFMarkerType() const;
 
-/*!
+  /**
   Get a 14-byte description of the physical location of the tool
   on the system.
 
@@ -912,20 +925,20 @@ public:
 
   <p>The return value is updated only when a PHINF command is sent with
   the NDI_PORT_LOCATION_TYPE (0x0020) bit set in the reply mode.
-*/
+  */
   int GetPHINFPortLocation(char location[14]) const;
 
-/*!
+  /**
   Get the 8-bit GPIO status for this tool.
 
   \return  an 8-bit integer, see NDI documentation for more information.
 
   <p>The return value is updated only when a PHINF command is sent with
   the NDI_GPIO_STATUS (0x0040) bit set in the reply mode.
-*/
+  */
   int GetPHINFGPIOStatus() const;
 
-/*!
+  /**
   Get the transformation for the specified port.
   The first four numbers are a quaternion, the next three numbers are
   the coodinates in millimetres, and the final number
@@ -943,11 +956,11 @@ public:
   supplied transform array will be left unchanged.
 
   The transformations for each of the port handles remain the same
-  until the next TX command is sent to Measurement System.
-*/ 
+  until the next TX command is sent to the device.
+  */ 
   int GetTXTransform(int ph, double transform[8]) const;
 
-/*!
+  /**
   Get the 16-bit status value for the specified port handle.
 
   \param ph        valid port handle in range 0x01 to 0xFF
@@ -963,11 +976,11 @@ public:
   - NDI_PARTIALLY_IN_VOLUME 0x0080
 
   This information is updated each time that the TX command
-  is sent to the Measurement System.
-*/
+  is sent to the device.
+  */
   int GetTXPortStatus(int ph) const;
 
-/*!
+  /**
   Get the camera frame number for the latest transform.
 
   \param ph        valid port handle in range 0x01 to 0xFF
@@ -975,11 +988,11 @@ public:
   \return a 32-bit frame number, or zero if no information was available
 
   This information is updated each time that the TX command
-  is sent to the Measurement System.
-*/
+  is sent to the device.
+  */
   unsigned long GetTXFrame(int ph) const;
 
-/*!
+  /**
   Get additional information about the tool transformation.
 
   \param ph        valid port handle in range 0x01 to 0xFF
@@ -991,10 +1004,10 @@ public:
 
   <p>The tool information is only updated when the TX command is called with
   the NDI_ADDITIONAL_INFO (0x0002) mode bit.
-*/
+  */
   int GetTXToolInfo(int ph) const;
 
-/*!
+  /**
   Get additional information about the tool markers.
 
   \param ph        valid port handle in range 0x01 to 0xFF
@@ -1008,10 +1021,10 @@ public:
 
   <p>The tool marker information is only updated when the TX command is
   called with the NDI_ADDITIONAL_INFO (0x0002) mode bit set.
-*/
+  */
   int GetTXMarkerInfo(int ph, int marker) const;
 
-/*!
+  /**
   Get the coordinates of a stray marker on a wired POLARIS tool.
   This command is only meaningful for tools that have a stray
   marker.
@@ -1022,24 +1035,24 @@ public:
   \return the return value will be one of
   - NDI_OKAY - values returned in coord
   - NDI_DISABLED - port disabled or illegal port specified
-  - NDI_MISSING - stray marker is not visible to the Measurement System
+  - NDI_MISSING - stray marker is not visible to the device
 
   <p>The stray marker position is only updated when the GX command is
   called with the NDI_SINGLE_STRAY (0x0004) bit set.
-*/
+  */
   int GetTXSingleStray(int ph, double coord[3]) const;
 
-/*!
+  /**
   Get the number of passive stray markers detected.
 
   \return          a number between 0 and 20
   
   The passive stray marker coordinates are updated when a TX command
   is sent with the NDI_PASSIVE_STRAY (0x1000) bit set in the reply mode.
-*/
+  */
   int GetTXNumberOfPassiveStrays() const;
 
-/*!
+  /**
   Copy the coordinates of the specified stray marker into the
   supplied array.
 
@@ -1055,10 +1068,10 @@ public:
   
   The passive stray marker coordinates are updated when a TX command
   is sent with the NDI_PASSIVE_STRAY (0x1000) bit set in the reply mode.
-*/
+  */
   int GetTXPassiveStray(int i, double coord[3]) const;
 
-/*!
+  /**
   Get an 16-bit status bitfield for the system.
 
   \return status bits or zero if there is no information:
@@ -1073,10 +1086,10 @@ public:
 
   <p>The system stutus information is updated whenever the TX command is
   called with the NDI_XFORMS_AND_STATUS (0x0001) bit set in the reply mode.
-*/
+  */
   int GetTXSystemStatus() const;
 
-/*!
+  /**
   Get the transformation for the specified port.
   The first four numbers are a quaternion, the next three numbers are
   the coodinates in millimetres, and the final number
@@ -1103,10 +1116,10 @@ public:
   The transformation for any particular port will remain unchanged
   until it is updated by a GX command with an appropriate reply mode
   as specified above.
-*/ 
+  */ 
   int GetGXTransform(int port, double transform[8]) const;
 
-/*!
+  /**
   Get the 8-bit status value for the specified port.
 
   \param port      one of '1', '2', '3' or 'A' to 'I'
@@ -1123,10 +1136,10 @@ public:
 
   The status of the ports is updated according to the same rules as
   specified for GetGXTransform().
-*/
+  */
   int GetGXPortStatus(int port) const;
 
-/*!
+  /**
   Get an 8-bit status bitfield for the system.
 
   \return status bits or zero if there is no information:
@@ -1136,10 +1149,10 @@ public:
 
   <p>The system stutus information is updated whenever the GX command is
   called with the NDI_XFORMS_AND_STATUS (0x0001) bit set in the reply mode.
-*/
+  */
   int GetGXSystemStatus() const;
 
-/*!
+  /**
   Get additional information about the tool transformation.
 
   \param port      one of '1', '2', '3' or 'A' to 'I'
@@ -1152,10 +1165,10 @@ public:
   <p>The tool information is only updated when the GX command is called with
   the NDI_ADDITIONAL_INFO (0x0002) mode bit, and then only for the ports
   specified by the NDI_PASSIVE (0x8000) and NDI_PASSIVE_EXTRA (0x2000) bits.
-*/
+  */
   int GetGXToolInfo(int port) const;
 
-/*!
+  /**
   Get additional information about the tool markers.
 
   \param port      one of '1', '2', '3' or 'A' to 'I'
@@ -1171,10 +1184,10 @@ public:
   called with the NDI_ADDITIONAL_INFO (0x0002) mode bit set, and then only
   for the ports specified by the NDI_PASSIVE (0x8000) and
   NDI_PASSIVE_EXTRA (0x2000) bits.
-*/
+  */
   int GetGXMarkerInfo(int port, int marker) const;
 
-/*!
+  /**
   Get the coordinates of a stray marker on an active tool.
   This command is only meaningful for active tools that have a stray
   marker.
@@ -1185,14 +1198,14 @@ public:
   \return the return value will be one of
   - NDI_OKAY - values returned in coord
   - NDI_DISABLED - port disabled or illegal port specified
-  - NDI_MISSING - stray marker is not visible to the Measurement System
+  - NDI_MISSING - stray marker is not visible to the device
 
   <p>The stray marker position is only updated when the GX command is
   called with the NDI_SINGLE_STRAY (0x0004) bit set.
-*/
+  */
   int GetGXSingleStray(int port, double coord[3]) const;
 
-/*!
+  /**
   Get the camera frame number for the latest transform.
 
   \param port      one of '1', '2', '3' (active ports only)
@@ -1202,10 +1215,10 @@ public:
   The frame number is only updated when the GX command is called with
   the NDI_FRAME_NUMBER (0x0008) bit, and then only for the ports specified
   by the NDI_PASSIVE (0x8000) and NDI_PASSIVE_EXTRA (0x2000) bits.
-*/
+  */
   unsigned long GetGXFrame(int port) const;
 
-/*!
+  /**
   Get the number of passive stray markers detected.
 
   \return          a number between 0 and 20
@@ -1216,10 +1229,10 @@ public:
   sent with these bits set.
 
   If no information is available, the return value is zero.
-*/
+  */
   int GetGXNumberOfPassiveStrays() const;
 
-/*!
+  /**
   Copy the coordinates of the specified stray marker into the
   supplied array.
 
@@ -1237,15 +1250,15 @@ public:
   is sent with the NDI_PASSIVE_STRAY (0x1000) and NDI_PASSIVE (0x8000)
   bits set in the reply mode.  The information persists until the next
   time GX is sent with these bits set.
-*/
+  */
   int GetGXPassiveStray(int i, double coord[3]) const;
 
-/*!
+  /**
   Get the 8-bit status value for the specified port.
 
   \param port      one of '1', '2', '3' or 'A' to 'I'
 
-  \return a an integer composed of the following bits:
+  \return an integer composed of the following bits:
   - NDI_TOOL_IN_PORT        0x01 - there is a tool in the port
   - NDI_SWITCH_1_ON         0x02 - button 1 is pressed
   - NDI_SWITCH_2_ON         0x04 - button 2 is pressed
@@ -1258,10 +1271,10 @@ public:
   an illegal port specifier value is used, the return value is zero.
   The return value is updated only when a PSTAT command is sent with
   the NDI_BASIC (0x0001) bit set in the reply mode.
-*/
+  */
   int GetPSTATPortStatus(int port) const;
 
-/*!
+  /**
   Get a 30-byte string describing the tool in the specified port.
 
   \param port        one of '1', '2', '3' or 'A' to 'I'
@@ -1279,24 +1292,23 @@ public:
   
   The information is updated only when a PSTAT command is sent with
   the NDI_BASIC (0x0001) bit set in the reply mode.
-*/
+  */
   int GetPSTATToolInfo(int port, char information[30]) const;
 
-/*!
+  /**
   Return the results of a current test on the IREDS on the specified
   tool.  
 
-  \param  ts          valid NDI Measurement System handle
   \param  port        one of '1', '2', '3'
 
   \return 32-bit integer (see NDI documentation)
 
   The information is updated only when a PSTAT command is sent with
   the NDI_TESTING (0x0002) bit set in the reply mode.
-*/
+  */
   unsigned long GetPSTATCurrentTest(int port) const;
 
-/*!
+  /**
   Get a 20-byte string that contains the part number of the tool.
 
   \param port        one of '1', '2', '3' or 'A' to 'I'
@@ -1307,20 +1319,20 @@ public:
   - NDI_OKAY - information was returned
   - NDI_UNOCCUPIED - port is unoccupied or no information is available
 
-  <p>If a terminated string is required, then set part[20] to '\0'
+  <p>If a terminated string is required, then set part[20] to 0
   before calling this function.
 
   The information is updated only when a PSTAT command is sent with
   the NDI_PART_NUMBER (0x0004) bit set in the reply mode.
-*/
+  */
   int GetPSTATPartNumber(int port, char part[20]) const;
 
-/*!
+  /**
   Get the 8-bit value specifying the accessories for the specified tool.
 
   \param port      one of '1', '2', '3' (active ports only)
 
-  \return a an integer composed of the following bits:
+  \return an integer composed of the following bits:
   - NDI_TOOL_IN_PORT_SWITCH   0x01  - tool has tool-in-port switch
   - NDI_SWITCH_1              0x02  - tool has button 1
   - NDI_SWITCH_2              0x04  - tool has button 2
@@ -1336,10 +1348,10 @@ public:
 
   The return value is updated only when a PSTAT command is sent with
   the NDI_ACCESSORIES (0x0008) bit set in the reply mode.
-*/
+  */
   int GetPSTATAccessories(int port) const;
 
-/*!
+  /**
   Get an 8-bit value describing the marker type for the tool.
   The low three bits descibe the wavelength, and the high three
   bits are the marker type code.
@@ -1362,10 +1374,10 @@ public:
 
   The return value is updated only when a PSTAT command is sent with
   the NDI_MARKER_TYPE (0x0010) bit set in the reply mode.
-*/
+  */
   int GetPSTATMarkerType(int port) const;
 
-/*!
+  /**
   Get the status of the control processor.
 
   \return an int with the following bit definitions for errors:
@@ -1374,10 +1386,10 @@ public:
 
   <p>This information is updated only when the SSTAT command is sent
   with the NDI_CONTROL (0x0001) bit set in the reply mode.
-*/
+  */
   int GetSSTATControl() const;
 
-/*!
+  /**
   Get the status of the sensor processors.
 
   \return an int with the following bit definitions for errors:
@@ -1390,10 +1402,10 @@ public:
 
   <p>This information is updated only when the SSTAT command is sent
   with the NDI_SENSORS (0x0002) bit set in the reply mode.
-*/
+  */
   int GetSSTATSensors() const;
 
-/*!
+  /**
   Get the status of the sensor processors.
 
   \return an int with the following bit definitions for errors:
@@ -1406,20 +1418,20 @@ public:
 
   <p>This information is updated only when the SSTAT command is sent
   with the NDI_TIU (0x0004) bit set in the reply mode.
-*/
+  */
   int GetSSTATTIU() const;
 
-/*!
+  /**
   Check to see whether environmental infrared was detected.
  
   \return       1 if infrared was detected and 0 otherwise.
 
   This information is only updated if the IRCHK command is called
   with the NDI_DETECTED (0x0001) format bit set.
-*/
+  */
   int GetIRCHKDetected() const;
 
-/*!
+  /**
   Get the number of infrared sources seen by one of the two sensors.
 
   \param side   one of NDI_LEFT or NDI_RIGHT
@@ -1429,14 +1441,15 @@ public:
   This information is valid only immediately after the IRCHK command
   has been called with the NDI_SOURCES (0x0002) format bit set.  Otherwise,
   the return value will be zero.
-*/
+  */
   int GetIRCHKNumberOfSources(int side) const;
 
-/*!
+  /**
   Get the coordinates of one of the infrared sources seen by one of
   the two sensors. 
 
   \param side   one of NDI_LEFT or NDI_RIGHT
+  \param i      the source to get the coordinates for
   \param xy     space to store the returned coordinates
 
   return  NDI_OKAY or NDI_MISSING
@@ -1447,15 +1460,15 @@ public:
 
   This information is valid only immediately after the IRCHK command
   has been called with the NDI_SOURCES (0x0002) format bit set.
-*/
+  */
   int GetIRCHKSourceXY(int side, int i, double xy[2]) const;
 
-/*!
+  /**
   Convert an error code returned by ndiGetError() into a string that
-  describes the error.  The error codes are listed in \ref ErrorCodes.
+  describes the error.  The error codes are listed in \ref NDIErrorCodes.
 
   An unrecognized error code will return "Unrecognized error code".
-*/
+  */
   static const char *ErrorString(int errnum);
 
 protected:
@@ -1575,58 +1588,58 @@ private:
   void HelperForSSTAT(const char *cp, const char *crp);
   void HelperForPHRQ(const char *cp, const char *crp);
 
-/*!
+  /*!
   Convert \em n characters of a hexadecimal string into an unsigned long.
   The conversion halts if a non-hexadecimal digit is found.
 
   The primary use of this function is decoding replies from the
-  Measurement System.
-*/
+  device.
+  */
   static unsigned long HexadecimalStringToUnsignedLong(const char *cp,
                                                        int n);
 
-/*!
+  /*!
   Convert \em n characters of a hexadecimal string into an integer..
   The conversion halts if a non-hexadecimal digit is found.
 
   The primary use of this function is decoding replies from the
-  Measurement System.
-*/
+  device.
+  */
   static int HexadecimalStringToInt(const char *cp, int n);
 
-/*!
+  /*!
   Convert \em n characters of a signed decimal string to a long.
   The first character in the string must be '+' or '-', otherwise
   the result will be zero.
 
   The primary use of this function is decoding replies from the
-  Measurement System.
-*/
+  device.
+  */
   static int SignedStringToInt(const char *cp, int n);
 
-/*!
+  /*!
   This function is used to convert raw binary data into a stream of
-  hexadecimal digits that can be sent to the Measurement System.
+  hexadecimal digits that can be sent to the device.
   The length of the output string will be twice the number of bytes
   in the input data, since each byte will be represented by two
   hexadecimal digits.
 
   As a convenience, the return value is a pointer to the hexadecimal
-  string.  If the string must be terminated, then set cp[2*n] to '\0'
+  string.  If the string must be terminated, then set cp[2*n] to 0
   before calling this function, otherwise the string will be left
   unterminated.
-*/
+  */
   static char *HexEncode(char *cp, const void *data, int n);
 
-/*!
+  /*!
   This function converts a hex-encoded string into binary data.
-  This can be used to decode the SROM data sent from the Measurement System.
+  This can be used to decode the SROM data sent from the device.
   The length of the input string must be twice the expected number
   of bytes in the output data, since each binary byte is ecoded by
   two hexadecimal digits.
 
   As a convenience, the return value is a pointer to the decoded data.
-*/
+  */
   static void *HexDecode(void *data, const char *cp, int n);
   
   NDICommandInterpreter(const Self&); //purposely not implemented
