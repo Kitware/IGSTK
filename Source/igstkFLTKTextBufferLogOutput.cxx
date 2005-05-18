@@ -70,7 +70,9 @@ void FLTKTextBufferLogOutput::Write(std::string const &content)
 {
   FLTKTextBufferLogOutput::m_Mutex.Lock();
   if( this->m_Stream )
+  {
     this->m_Stream->append( content.c_str() );
+  }
   FLTKTextBufferLogOutput::m_Mutex.Unlock();
 }
 
