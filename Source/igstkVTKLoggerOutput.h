@@ -76,7 +76,8 @@ public:
 
   vtkGetMacro(Logger, LoggerType);
 
-  virtual void OverrideVTKWindow() {
+  virtual void OverrideVTKWindow() 
+  {
     vtkOutputWindow::SetInstance(this);
   }
  
@@ -85,6 +86,7 @@ protected:
   virtual ~VTKLoggerOutput() {}
   virtual void PrintSelf(std::ostream& os, vtkIndent indent) const {}
 
+private:
   itk::Logger* Logger;
 };
   
