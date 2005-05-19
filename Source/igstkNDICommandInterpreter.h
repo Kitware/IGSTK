@@ -334,7 +334,7 @@ public:
   igstkNewMacro(Self);  
 
   /** Set the communication object that commands will be sent to */
-  itkSetObjectMacro(Communication, CommunicationType);
+  void SetCommunication(CommunicationType *communication);
 
   /**
   Send a text command to the device and receive a text reply.
@@ -728,8 +728,8 @@ public:
   - 3 - TIU firmware
   - 4 - control firmware with enhanced versioning
   */
-  void VER(int n) {
-    this->Command("VER:%d", n); }
+  const char *VER(int n) {
+    return this->Command("VER:%d", n); }
 
   /** 
   Write data from a ROM file into the virtual SROM for the specified port.
@@ -1477,6 +1477,9 @@ protected:
 
   /** Destructor */
   virtual ~NDICommandInterpreter();
+
+  /** Get the communication object */
+  CommunicationType *GetCommunication();
 
 private:
 

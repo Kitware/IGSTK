@@ -46,6 +46,19 @@ NDICommandInterpreter::~NDICommandInterpreter()
 }
 
 /*---------------------------------------------------------------------*/
+void NDICommandInterpreter::SetCommunication(CommunicationType *communication)
+{
+  m_Communication = communication;
+}
+
+/*---------------------------------------------------------------------*/
+NDICommandInterpreter::CommunicationType *
+NDICommandInterpreter::GetCommunication()
+{
+  return m_Communication;
+}
+
+/*---------------------------------------------------------------------*/
 unsigned long
 NDICommandInterpreter::HexadecimalStringToUnsignedLong(const char *cp, int n)
 {
