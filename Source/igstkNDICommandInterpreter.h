@@ -1471,6 +1471,31 @@ public:
   */
   static const char *ErrorString(int errnum);
 
+  /*!
+  This function is used to convert raw binary data into a stream of
+  hexadecimal digits that can be sent to the device.
+  The length of the output string will be twice the number of bytes
+  in the input data, since each byte will be represented by two
+  hexadecimal digits.
+
+  As a convenience, the return value is a pointer to the hexadecimal
+  string.  If the string must be terminated, then set cp[2*n] to 0
+  before calling this function, otherwise the string will be left
+  unterminated.
+  */
+  static char *HexEncode(char *cp, const void *data, int n);
+
+  /*!
+  This function converts a hex-encoded string into binary data.
+  This can be used to decode the SROM data sent from the device.
+  The length of the input string must be twice the expected number
+  of bytes in the output data, since each binary byte is ecoded by
+  two hexadecimal digits.
+
+  As a convenience, the return value is a pointer to the decoded data.
+  */
+  static void *HexDecode(void *data, const char *cp, int n);
+  
 protected:
   /** Constructor */
   NDICommandInterpreter();
@@ -1620,31 +1645,6 @@ private:
   */
   static int SignedStringToInt(const char *cp, int n);
 
-  /*!
-  This function is used to convert raw binary data into a stream of
-  hexadecimal digits that can be sent to the device.
-  The length of the output string will be twice the number of bytes
-  in the input data, since each byte will be represented by two
-  hexadecimal digits.
-
-  As a convenience, the return value is a pointer to the hexadecimal
-  string.  If the string must be terminated, then set cp[2*n] to 0
-  before calling this function, otherwise the string will be left
-  unterminated.
-  */
-  static char *HexEncode(char *cp, const void *data, int n);
-
-  /*!
-  This function converts a hex-encoded string into binary data.
-  This can be used to decode the SROM data sent from the device.
-  The length of the input string must be twice the expected number
-  of bytes in the output data, since each binary byte is ecoded by
-  two hexadecimal digits.
-
-  As a convenience, the return value is a pointer to the decoded data.
-  */
-  static void *HexDecode(void *data, const char *cp, int n);
-  
   NDICommandInterpreter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 };
