@@ -133,7 +133,7 @@ public:
 
   /** The SetCommunication method is used to attach a communication object to the
   tracker object for communication with the tracker hardware. */
-  void SetCommunication( const CommunicationType::Pointer communication );
+  void SetCommunication( CommunicationType * communication );
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
