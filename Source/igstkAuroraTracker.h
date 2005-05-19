@@ -44,6 +44,7 @@ class NDITracker : public igstk::Tracker
 public:
 
 #define NDI_NUMBER_OF_PORTS  4
+#define NDI_MAX_TOOLS 12        // the number of tools the polaris can handle
 #define NDI_COMMAND_MAX_LEN  2048
 
   /** Some required typedefs for itk::Object. */
@@ -90,16 +91,21 @@ protected:
 
 private:
 
-  bool LoadVirtualSROM( const int i, std::string SROMFileName) { return true; };
+  bool LoadVirtualSROM( const int i, std::string SROMFileName) ;
 
-  /*
-  void SendCommand(const char *command, bool addCRC = true);
+  /** Enable all tool ports that have tools plugged into them.
+   * {The reference port is enabled with NDI_STATIC.} */
 
-// Sends a raw command to the tracking unit.
-  char *NDITracker::SendCommand(const char *command);
+  void EnableToolPorts( void );
 
-  char m_CommandBuffer[NDI_COMMAND_MAX_LEN];
-*/
+  /** Find the tool for a specific port handle (-1 if not found). */
+  int GetToolFromHandle(int handle);
+
+  int PortEnabled[NDI_MAX_TOOLS];
+
+  int PortHandle[NDI_MAX_TOOLS];
+
+  int IsDeviceTracking;
 
   std::string m_SROMFileNames[NDI_NUMBER_OF_PORTS];
 
