@@ -25,7 +25,7 @@
 namespace igstk
 {
 
-AuroraTool::AuroraTool()
+AuroraTool::AuroraTool() : TrackerTool()
 {
   this->ToolType = 0;
   this->ToolRevision = 0;

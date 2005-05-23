@@ -14,7 +14,18 @@ class AuroraTool : public igstk::TrackerTool
 {
 public:
   AuroraTool();
-  ~AuroraTool();
+
+  ~AuroraTool() {};
+
+  typedef AuroraTool                    Self;
+  typedef itk::SmartPointer<Self>        Pointer;
+  typedef itk::SmartPointer<const Self>  ConstPointer;
+
+  /**  Run-time type information (and related methods). */
+  igstkTypeMacro(AuroraTool, ::itk::Object);
+
+  /** Method for creation of a reference counted object. */
+  igstkNewMacro(Self);  
 
 
 private:
