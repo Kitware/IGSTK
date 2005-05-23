@@ -21,16 +21,8 @@
 #pragma warning( disable : 4786 )
 #endif
 
-
-#ifdef WIN32
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForLinux.h"
-#endif
-
 #include "igstkAuroraTracker.h"
-
-
+#include "igstkTrackerPort.h"
 
 namespace igstk
 {
