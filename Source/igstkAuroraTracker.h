@@ -137,7 +137,7 @@ private:
 
 //  NDICyclicRedundancy     m_CyclicRedundancy;
 
-  NDICommandInterpreter   *m_CommandInterpreter;
+  NDICommandInterpreter::Pointer m_CommandInterpreter;
 };
 
 }
