@@ -165,8 +165,6 @@ int igstkAuroraTrackerTest( int, char * [] )
 
   tracker->SetCommunication( serialComm );
 
-  logger->Flush();
-
   std::cout << "Exited SetCommunication ..." << std::endl;
 
   tracker->Initialize();
@@ -189,7 +187,6 @@ int igstkAuroraTrackerTest( int, char * [] )
  */
 
   serialComm->CloseCommunication();
-
 
   return EXIT_SUCCESS;
 }
