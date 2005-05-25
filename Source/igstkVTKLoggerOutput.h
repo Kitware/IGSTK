@@ -35,7 +35,7 @@ namespace igstk
  *
  * \ingroup OSSystemObjects
  */
-class VTK_COMMON_EXPORT VTKLoggerOutput : public vtkOutputWindow 
+class VTKLoggerOutput : public vtkOutputWindow 
 {
 public:
   /** Standard class typedefs. */
