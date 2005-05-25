@@ -79,6 +79,8 @@ public:
   tracker object for communication with the tracker hardware. */
   virtual void SetCommunication( CommunicationType *communication );
 
+  igstkGetMacro( NumberOfTools, unsigned int );
+
 protected:
 
   NDITracker(void);
@@ -102,7 +104,6 @@ protected:
   virtual void DisableCommunicationProcessing( void );
 
   virtual void DisableToolsProcessing( void );
-
 
   void AttachSROMFileNameToPort( const int portNum, std::string fileName );
 
@@ -133,11 +134,13 @@ private:
 
 //  AuroraToolVectorType   m_AuroraTools;
 
-  std::string m_SROMFileNames[NDI_NUMBER_OF_PORTS];
+  unsigned int          m_NumberOfTools;
+
+  std::string    m_SROMFileNames[NDI_NUMBER_OF_PORTS];
 
 //  NDICyclicRedundancy     m_CyclicRedundancy;
 
-  NDICommandInterpreter::Pointer m_CommandInterpreter;
+  NDICommandInterpreter::Pointer  m_CommandInterpreter;
 };
 
 }

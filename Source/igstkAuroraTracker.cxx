@@ -31,6 +31,7 @@ NDITracker::NDITracker(void) : Tracker()
 {
   this->m_CommandInterpreter = NDICommandInterpreter::New();
   this->IsDeviceTracking = 0;
+  m_NumberOfTools = 0;
 }
 
 
@@ -89,6 +90,7 @@ void NDITracker::AttemptToSetUpToolsProcessing( void )
 
   this->ClearPorts();
 
+  m_NumberOfTools = 0;
   for(int i = 0; i < NDI_NUMBER_OF_PORTS; i++)
   { 
     if( this->PortEnabled[i] )
@@ -97,6 +99,7 @@ void NDITracker::AttemptToSetUpToolsProcessing( void )
       TrackerPortPointer port = TrackerPortType::New();
       port->AddTool(tool);
       this->AddPort(port);
+      m_NumberOfTools++;
     }
   }
 }
