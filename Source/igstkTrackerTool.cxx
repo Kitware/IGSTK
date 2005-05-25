@@ -46,6 +46,8 @@ TrackerTool::~TrackerTool(void)
 void 
 TrackerTool::SetTransform( const TransformType & transform )
 {
+  m_Transform = transform;
+
   TransformModifiedEvent event;
   event.SetTransform( transform );
   this->InvokeEvent( event );
