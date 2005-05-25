@@ -104,11 +104,11 @@ private: \
   typedef StateMachineType::StateType                StateType;  \
   typedef StateMachineType::InputType                InputType;  \
   typedef StateMachineType::OutputStreamType OutputStreamType; \
-  igstkFriendClassMacro( StateMachineType ); \
+  igstkFriendClassMacro( StateMachine< Self > ); \
   StateMachineType     m_StateMachine; \
 public:  \
   void ExportStateMachineDescription( OutputStreamType & ostr, bool skipLoops=false ) const \
-   { m_StateMachine.ExportDescription( ostr, skipLoops ); } \
+   { m_StateMachine.ExportDescription( ostr, skipLoops ); }
   
 
 

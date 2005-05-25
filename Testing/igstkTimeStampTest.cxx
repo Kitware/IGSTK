@@ -18,9 +18,9 @@
 #if defined(_MSC_VER)
    //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
-#include <math.h>
 #endif
 
+#include <math.h>
 #include <iostream>
 #include "igstkTimeStamp.h"
 

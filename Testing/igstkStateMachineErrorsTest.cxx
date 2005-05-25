@@ -19,20 +19,21 @@
 #include <iostream>
 
 
+namespace igstk
+{
 
 
 class Tester1
 {
 public:
 
-  typedef igstk::StateMachine< Tester1 >   StateMachineType;
-
+  typedef StateMachine< Tester1 >                         StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer        ActionType;
   typedef StateMachineType::StateType                     StateType;
   typedef StateMachineType::InputType                     InputType;
   typedef StateMachineType::StateIdentifierType           StateIdentifierType;
 
-  igstkFriendClassMacro(StateMachineType);
+  igstkFriendClassMacro( StateMachine< Tester1 > );
 
   igstkTypeMacro( Tester1, None );
 
@@ -91,13 +92,13 @@ class Tester2
 {
 public:
 
-  typedef igstk::StateMachine< Tester2 >              StateMachineType;
+  typedef StateMachine< Tester2 >                     StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer    ActionType;
   typedef StateMachineType::StateType                 StateType;
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  igstkFriendClassMacro(StateMachineType);
+  igstkFriendClassMacro( StateMachine< Tester2 > );
 
   igstkTypeMacro( Tester2, None );
 
@@ -134,13 +135,13 @@ class Tester3
 {
 public:
 
-  typedef igstk::StateMachine< Tester3 >              StateMachineType;
+  typedef StateMachine< Tester3 >                     StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer    ActionType;
   typedef StateMachineType::StateType                 StateType;
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  igstkFriendClassMacro(StateMachineType);
+  igstkFriendClassMacro( StateMachine< Tester3 > );
 
   igstkTypeMacro( Tester3, None );
 
@@ -177,13 +178,13 @@ class Tester4
 {
 public:
 
-  typedef igstk::StateMachine< Tester4 >              StateMachineType;
+  typedef StateMachine< Tester4 >                     StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer    ActionType;
   typedef StateMachineType::StateType                 StateType;
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  igstkFriendClassMacro(StateMachineType);
+  igstkFriendClassMacro( StateMachine< Tester4 > );
 
   igstkTypeMacro( Tester4, None );
 
@@ -222,13 +223,13 @@ class Tester5
 {
 public:
 
-  typedef igstk::StateMachine< Tester5 >   StateMachineType;
+  typedef StateMachine< Tester5 >                     StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer        ActionType;
   typedef StateMachineType::StateType                 StateType;
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  igstkFriendClassMacro(StateMachineType);
+  igstkFriendClassMacro( StateMachine< Tester5 > );
 
   igstkTypeMacro( Tester5, None );
   
@@ -265,13 +266,13 @@ class Tester6
 {
 public:
 
-  typedef igstk::StateMachine< Tester6 >              StateMachineType;
+  typedef StateMachine< Tester6 >                     StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer    ActionType;
   typedef StateMachineType::StateType                 StateType;
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  igstkFriendClassMacro(StateMachineType);
+  igstkFriendClassMacro( StateMachine< Tester6 > );
 
   igstkTypeMacro( Tester6, None );
 
@@ -330,13 +331,13 @@ class Tester7
 {
 public:
 
-  typedef igstk::StateMachine< Tester7 >              StateMachineType;
+  typedef StateMachine< Tester7 >                     StateMachineType;
   typedef StateMachineType::TMemberFunctionPointer    ActionType;
   typedef StateMachineType::StateType                 StateType;
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  igstkFriendClassMacro(StateMachineType);
+  igstkFriendClassMacro( StateMachine< Tester7 > );
 
   igstkTypeMacro( Tester7, None );
 
@@ -368,6 +369,7 @@ private:
 
 };
 
+} // namespace igstk
 
 
 
@@ -375,7 +377,7 @@ int igstkStateMachineErrorsTest( int, char * [] )
 {
 
   std::cout << "Construct the State Machine Tester" << std::endl;
-  Tester1  tester1;
+  igstk::Tester1  tester1;
 
   std::cout << std::endl << std::endl;
   std::cout << "Trigger error conditions on purpose" << std::endl;
@@ -387,29 +389,29 @@ int igstkStateMachineErrorsTest( int, char * [] )
   tester1.triggerError1();
 
   std::cout << "Invoking SetReadyToRun() (in constructor) without parent class connected." << std::endl;
-  Tester2 tester2;
+  igstk::Tester2 tester2;
 
   std::cout << "Invoking ProcessInput() without parent class connected." << std::endl;
   tester2.InsertChange();
 
   std::cout << "Invoking ProcessInput() without having called SetReadyToRun() ." << std::endl;
-  Tester3 tester3;
+  igstk::Tester3 tester3;
   tester3.InsertChange();
 
   std::cout << "Invoking  SetReadyToRun() twice." << std::endl;
-  Tester4 tester4;
+  igstk::Tester4 tester4;
   tester4.InsertChange();
 
   std::cout << "Invoking  ProcessInput() in a state without transitions defined." << std::endl;
-  Tester5 tester5;
+  igstk::Tester5 tester5;
   tester5.InvokeUndefinedTransition();
 
   std::cout << "Invoking  ProcessInput() in a state,input pair without transitions defined." << std::endl;
-  Tester6 tester6;
+  igstk::Tester6 tester6;
   tester6.InvokeUndefinedStateInputTransition();
 
   std::cout << "Invoking  SetReadyToRun() without having called SetInitialState()" << std::endl;
-  Tester7 tester7;
+  igstk::Tester7 tester7;
   tester7.InsertChange();
 
 
@@ -417,5 +419,4 @@ int igstkStateMachineErrorsTest( int, char * [] )
   return EXIT_SUCCESS;
 
 }
-
 

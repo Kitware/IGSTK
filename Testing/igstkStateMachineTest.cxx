@@ -13,20 +13,21 @@
 #include <iostream>
 
 
-
+namespace igstk
+{
 
 class Tester
 {
 public:
 
-  typedef igstk::StateMachine< Tester >   StateMachineType;
+  typedef StateMachine< Tester >   StateMachineType;
 
   typedef StateMachineType::TMemberFunctionPointer        ActionType;
   typedef StateMachineType::StateType                     StateType;
   typedef StateMachineType::InputType                     InputType;
   typedef StateMachineType::StateIdentifierType           StateIdentifierType;
 
-  igstkFriendClassMacro(StateMachineType);
+  igstkFriendClassMacro(StateMachine< Tester >);
 
   igstkTypeMacro( Tester, None );
 
@@ -146,14 +147,13 @@ private:
 
 };
 
-
-
+} // namespace igstk
 
 int igstkStateMachineTest( int , char * [] )
 {
 
   std::cout << "Construct the State Machine Tester" << std::endl;
-  Tester  tester;
+  igstk::Tester  tester;
 
 
   std::cout << std::endl << "We use the machine now " << std::endl << std::endl;
@@ -181,7 +181,7 @@ int igstkStateMachineTest( int , char * [] )
   std::cout << "Third test run " << std::endl;
 
   // Insert some change, and then change your mind and cancel purchase.
-  Tester tester2;
+  igstk::Tester tester2;
   tester2.InsertChange();
   tester2.InsertChange();
   tester2.CancelPurchase();
