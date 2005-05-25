@@ -27,10 +27,12 @@
 #include "igstkStateMachine.h"
 
 #include "igstkSerialCommunicationTokens.h"
+//#include "igstkSerialCommunicationCommand.h"
 
 namespace igstk
 {
 
+class SerialCommunicationCommand;
 
 /** \class SerialCommunication
  * 
@@ -254,7 +256,7 @@ protected:
 protected:  // FIXME all these variables should be private
   
   /** Command for the events created. */
-  itk::Command    *m_pCommand; 
+  igstk::SerialCommunicationCommand    *m_pCommand; 
 
   // Communication Parameters
 

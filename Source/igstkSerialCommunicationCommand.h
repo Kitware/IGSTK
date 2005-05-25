@@ -22,6 +22,7 @@
 
 #include "igstkMacros.h"
 #include "igstkSerialCommunication.h"
+#include "igstkLogger.h"
 
 namespace igstk
 {
@@ -36,20 +37,28 @@ namespace igstk
 class SerialCommunicationCommand : public itk::Command 
 {
 public:
-/*
+
   typedef  SerialCommunicationCommand   Self;
   typedef  itk::Command             Superclass;
   typedef itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
 
-protected:
-*/
-  SerialCommunicationCommand( SerialCommunication::Pointer object ) 
+  typedef igstk::Logger   LoggerType;
+
+       /** The SetLogger method is used to attach a logger object to the
+   serial communication command object for logging. */
+  void SetLogger( LoggerType* logger )
   {
-    m_pSerialCommunication = object;
+    m_pLogger = logger;
   }
 
 public:
+private:
+  SerialCommunicationCommand() // SerialCommunication::Pointer object ) 
+  {
+//    m_pSerialCommunication = object;
+  }
+
   void Execute(itk::Object *caller, const itk::EventObject & event)
   {
     Execute( (const itk::Object *)caller, event);
@@ -57,7 +66,6 @@ public:
 
   void Execute(const itk::Object * object, const itk::EventObject & event)
   {
-    /*
     if ( typeid(event)== typeid(igstk::SerialCommunication::OpenPortFailureEvent))
     {
         igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::OpenPortFailureEvent Error Occurred ...\n");
@@ -114,12 +122,19 @@ public:
     {
         igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::Some other Error Occurred ...\n");
     }
-    */
  }
 
-protected:
+private:
+  /** The Logger instance */
+  LoggerType     *m_pLogger;
 
-  SerialCommunication::Pointer        m_pSerialCommunication;
+    /** The GetLogger method return pointer to the logger object. */
+  LoggerType* GetLogger(  void )
+  {
+    return m_pLogger;
+  }
+
+//  SerialCommunication::Pointer        m_pSerialCommunication;
 };
 
 }

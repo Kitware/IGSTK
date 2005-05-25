@@ -123,7 +123,7 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this ),
   m_pClosePortResultInput = &m_ClosePortSuccessInput;
 
   // Create instance of serial command
-  m_pCommand = new SerialCommunicationCommand( this );
+  m_pCommand = SerialCommunicationCommand::New();// this );
 
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
@@ -185,7 +185,10 @@ bool SerialCommunication::SendString( const char *data )
   memcpy(m_OutputBuffer, data, sizeof(char)*strSize);
 //  m_OutputBuffer[strSize+2] = '\r';
 //  m_OutputBuffer[strSize+2] = '\0';
-  std::cout << "Message length = " << strSize << ", Message = " << m_OutputBuffer << std::endl;
+  igstkLogMacro( Logger::DEBUG, "Message length = ");
+  igstkLogMacro( Logger::DEBUG, strSize);
+  igstkLogMacro( Logger::DEBUG, "Message = "); 
+  igstkLogMacro( Logger::DEBUG, m_OutputBuffer);
   this->m_StateMachine.ProcessInput( m_SendStringInput );
   return true;
 }
@@ -193,12 +196,14 @@ bool SerialCommunication::SendString( const char *data )
 bool SerialCommunication::ReceiveString( char *data )
 {
   this->m_StateMachine.ProcessInput( m_ReceiveStringInput );
+  memcpy(data, m_InputBuffer, m_ReadDataSize);
   return true;
 }
 
 void SerialCommunication::SetLogger( LoggerType* logger )
 {
     m_pLogger = logger;
+    m_pCommand->SetLogger( logger );
 }
 
 

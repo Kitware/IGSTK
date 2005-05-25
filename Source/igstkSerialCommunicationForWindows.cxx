@@ -357,7 +357,8 @@ void SerialCommunicationForWindows::ReceiveStringProcessing( void )
       this->InvokeEvent( ReceiveStringFailureEvent() );
   }
 
-  std::cout << "String: " << this->m_InputBuffer << std::endl;
+  igstkLogMacro( Logger::DEBUG, "String: ");
+  igstkLogMacro( Logger::DEBUG, this->m_InputBuffer);
  
   //Close the created overlapped event.
   CloseHandle(overlappedRead.hEvent);
