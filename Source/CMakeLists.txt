@@ -62,7 +62,7 @@ ADD_LIBRARY(IGSTK ${IGSTK_HEADS} ${IGSTK_SRCS})
 TARGET_LINK_LIBRARIES( IGSTK
     ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject
     vtkRendering vtkGraphics vtkHybrid vtkImaging 
-    vtkIO vtkFiltering vtkCommon vtkPatented
+    vtkIO vtkFiltering vtkCommon
     ${FLTK_LIBRARIES}
 )
 
