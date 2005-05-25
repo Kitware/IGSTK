@@ -24,7 +24,6 @@ INCLUDE_DIRECTORIES (
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 ADD_TEST(igstkSerialCommunicationTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationTest)
 ADD_TEST(igstkNDICommandInterpreterTest ${IGSTKSandbox_TESTS} igstkNDICommandInterpreterTest)
-ADD_TEST(igstkAtamaiNDITrackerTest ${IGSTKSandbox_TESTS} igstkAtamaiNDITrackerTest)
 ADD_TEST(igstkNDICyclicRedundancyTest ${IGSTKSandbox_TESTS} igstkNDICyclicRedundancyTest)
 ADD_TEST(igstkAuroraTrackerTest ${IGSTKSandbox_TESTS} igstkAuroraTrackerTest)
 
@@ -39,12 +38,10 @@ ADD_TEST(igstkVTKLoggerOutputTest ${IGSTKSandbox_TESTS} igstkVTKLoggerOutputTest
 ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextLogOutputTest)
 ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextBufferLogOutputTest)
 
-
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkSerialCommunicationTest.cxx
   igstkNDICommandInterpreterTest.cxx
-  igstkAtamaiNDITrackerTest.cxx
   igstkNDICyclicRedundancyTest.cxx
   igstkAuroraTrackerTest.cxx
   itkRealtimeClockTest.cxx
@@ -59,6 +56,10 @@ SET(BasicTests_SRCS
   igstkFLTKTextBufferLogOutputTest.cxx
   )
 
+IF (IGSTK_USE_ATAMAI)
+  ADD_TEST(igstkAtamaiNDITrackerTest ${IGSTKSandbox_TESTS} igstkAtamaiNDITrackerTest)
+  SET(BasicTests_SRCS ${BasicTests_SRCS} igstkAtamaiNDITrackerTest)
+ENDIF (IGSTK_USE_ATAMAI)
 
 
 ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${BasicTests_SRCS})

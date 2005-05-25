@@ -1,8 +1,10 @@
 # Option for using code in the Atamai directory
 OPTION(IGSTK_USE_ATAMAI "Use the code from Atamai directory" OFF)
 MARK_AS_ADVANCED(IGSTK_USE_ATAMAI)
+SET( IGSTK_USE_ATAMAI_CONFIG 0 )
 IF( IGSTK_USE_ATAMAI )
     SUBDIRS( Atamai )
+    SET( IGSTK_USE_ATAMAI_CONFIG 1 )
 ENDIF( IGSTK_USE_ATAMAI )
 
 

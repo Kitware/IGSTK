@@ -1,0 +1,29 @@
+/*=========================================================================
+Configure file for IGSTKSandbox
+=========================================================================*/
+#ifndef __igstkSandboxConfigure_h
+#define __igstkSandboxConfigure_h
+
+/* no option to build shared libs yet */
+#if 0  /* @IGSTKSandbox_BUILD_SHARED_LIBS_CONFIG@ */
+# define @PROJECT_NAME@_SHARED
+#endif
+
+#if defined(_MSC_VER) && defined(@PROJECT_NAME@_SHARED)
+# pragma warning ( disable : 4275 )
+#endif
+
+#if defined(_WIN32) && defined(@PROJECT_NAME@_SHARED)
+# if defined(@PROJECT_NAME@_EXPORTS)
+#  define @PROJECT_NAME@_EXPORT __declspec( dllexport ) 
+# else
+#  define @PROJECT_NAME@_EXPORT __declspec( dllimport ) 
+# endif
+#else
+# define @PROJECT_NAME@_EXPORT
+#endif
+
+/* options defined by cmake */
+#cmakedefine IGSTK_USE_ATAMAI
+
+#endif // __igstkSandboxConfigure_h

@@ -3,6 +3,11 @@ PROJECT( IGSTKSandbox )
 SET (LIBRARY_OUTPUT_PATH ${IGSTKSandbox_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all libraries." FORCE)
 SET (EXECUTABLE_OUTPUT_PATH ${IGSTKSandbox_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all executables." FORCE)
 
+# Create the header to configure the classes.
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/igstkSandboxConfigure.h.in
+               ${PROJECT_BINARY_DIR}/igstkSandboxConfigure.h
+               @ONLY IMMEDIATE)
+
 # Add the testing directories
 OPTION(IGSTKSandbox_BUILD_TESTING "Test the project" ON)
 IF(IGSTKSandbox_BUILD_TESTING)

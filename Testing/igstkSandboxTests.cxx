@@ -5,14 +5,13 @@
 #endif
 #include <iostream>
 #include "itkTestMain.h" 
-
+#include "igstkSandboxConfigure.h"
 
 void RegisterTests()
 {
   REGISTER_TEST(igstkMouseTrackerTest);
   REGISTER_TEST(igstkSerialCommunicationTest);
   REGISTER_TEST(igstkNDICommandInterpreterTest);
-  REGISTER_TEST(igstkAtamaiNDITrackerTest);
   REGISTER_TEST(igstkNDICyclicRedundancyTest);
   REGISTER_TEST(igstkAuroraTrackerTest);
 
@@ -27,4 +26,9 @@ void RegisterTests()
   REGISTER_TEST(igstkVTKLoggerOutputTest);
   REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
   REGISTER_TEST(igstkFLTKTextLogOutputTest);
+
+#ifdef IGSTK_USE_ATAMAI
+  REGISTER_TEST(igstkAtamaiNDITrackerTest);
+#endif /* IGSTK_USE_ATAMAI */
+
 }
