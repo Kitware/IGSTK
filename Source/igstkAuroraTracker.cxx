@@ -64,11 +64,11 @@ void NDITracker::AttemptToSetUpCommunicationProcessing( void )
 
   if (m_CommandInterpreter->GetError())
   {
-    m_CommandInterpreter->BEEP(2000);
+    m_CommandInterpreter->BEEP(5);
   }
   else
   {
-    m_CommandInterpreter->BEEP(200);
+    m_CommandInterpreter->BEEP(8);
 //  m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentSuccessInput;
   }
 }
