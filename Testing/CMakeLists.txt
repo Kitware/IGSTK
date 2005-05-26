@@ -22,35 +22,21 @@ INCLUDE_DIRECTORIES (
   )
 
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
-ADD_TEST(igstkSerialCommunicationTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationTest)
+#ADD_TEST(igstkSerialCommunicationTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationTest)
 ADD_TEST(igstkNDICommandInterpreterTest ${IGSTKSandbox_TESTS} igstkNDICommandInterpreterTest)
 ADD_TEST(igstkNDICyclicRedundancyTest ${IGSTKSandbox_TESTS} igstkNDICyclicRedundancyTest)
 ADD_TEST(igstkAuroraTrackerTest ${IGSTKSandbox_TESTS} igstkAuroraTrackerTest)
 
-ADD_TEST(itkRealtimeClockTest ${IGSTKSandbox_TESTS} itkRealtimeClockTest)
-ADD_TEST(itkStdStreamLogOutputTest ${IGSTKSandbox_TESTS} itkStdStreamLogOutputTest)
-ADD_TEST(itkMultipleLogOutputTest ${IGSTKSandbox_TESTS} itkMultipleLogOutputTest)
-ADD_TEST(itkLoggerTest ${IGSTKSandbox_TESTS} itkLoggerTest)
-ADD_TEST(itkThreadLoggerTest ${IGSTKSandbox_TESTS} itkThreadLoggerTest)
-ADD_TEST(itkLoggerOutputTest ${IGSTKSandbox_TESTS} itkLoggerOutputTest)
-ADD_TEST(itkLoggerManagerTest ${IGSTKSandbox_TESTS} itkLoggerManagerTest)
 ADD_TEST(igstkVTKLoggerOutputTest ${IGSTKSandbox_TESTS} igstkVTKLoggerOutputTest)
 ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextLogOutputTest)
 ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextBufferLogOutputTest)
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
-  igstkSerialCommunicationTest.cxx
+#  igstkSerialCommunicationTest.cxx
   igstkNDICommandInterpreterTest.cxx
   igstkNDICyclicRedundancyTest.cxx
   igstkAuroraTrackerTest.cxx
-  itkRealtimeClockTest.cxx
-  itkStdStreamLogOutputTest.cxx
-  itkMultipleLogOutputTest.cxx
-  itkLoggerTest.cxx
-  itkThreadLoggerTest.cxx
-  itkLoggerOutputTest.cxx
-  itkLoggerManagerTest.cxx
   igstkVTKLoggerOutputTest.cxx
   igstkFLTKTextLogOutputTest.cxx
   igstkFLTKTextBufferLogOutputTest.cxx

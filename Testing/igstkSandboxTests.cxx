@@ -15,14 +15,6 @@ void RegisterTests()
   REGISTER_TEST(igstkNDICyclicRedundancyTest);
   REGISTER_TEST(igstkAuroraTrackerTest);
 
-  REGISTER_TEST(itkRealtimeClockTest);
-  REGISTER_TEST(itkStdStreamLogOutputTest);
-  REGISTER_TEST(itkMultipleLogOutputTest);
-  REGISTER_TEST(itkLoggerTest);
-  REGISTER_TEST(itkThreadLoggerTest);
-  REGISTER_TEST(itkLoggerOutputTest);
-  REGISTER_TEST(itkLoggerManagerTest);
-
   REGISTER_TEST(igstkVTKLoggerOutputTest);
   REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
   REGISTER_TEST(igstkFLTKTextLogOutputTest);
