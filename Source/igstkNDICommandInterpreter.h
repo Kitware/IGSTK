@@ -133,6 +133,15 @@ namespace igstk
 #define  NDI_HANDSHAKE    1
 /*\}*/
 
+/* PHSR() handle types */
+/*\{*/
+#define  NDI_ALL_HANDLES            0x00
+#define  NDI_STALE_HANDLES          0x01
+#define  NDI_UNINITIALIZED_HANDLES  0x02
+#define  NDI_UNENABLED_HANDLES      0x03
+#define  NDI_ENABLED_HANDLES        0x04
+/*\}*/
+
 /* PENA() tracking modes */
 /*\{*/
 #define  NDI_STATIC      'S'    /* relatively immobile tool */ 
@@ -433,6 +442,19 @@ public:
     this->Command("COMM:%d%03d%d", baud, dps, handshake); }
 
   /**
+  Put the Measurement System into diagnostic mode.  This must be done prior
+  to executing the IRCHK() command.  Diagnostic mode is only useful on the POLARIS.
+  */
+  void DSTART() {
+    this->Command("DSTART:"); }
+
+  /**
+  Take the Measurement System out of diagnostic mode.
+  */
+  void DSTOP() {
+    this->Command("DSTOP:"); }
+
+  /**
   Request tracking information from the system.  This command is
   only available in tracking mode.  Please note that this command has
   been deprecated in favor of the TX command.
@@ -478,10 +500,17 @@ public:
   - NDI_SOURCES    0x0002 - locations of up to 20 sources per camera
 
   <p>The IRCHK command is used to update the information returned by the
-  ndiGetIRCHKDetected() and ndiGetIRCHKSourceXY() functions.
+  GetIRCHKDetected() and GetIRCHKSourceXY() functions.
   */
   void IRCHK(int mode) {
     this->Command("IRCHK:%04X", mode); }
+
+  /**
+  Initialize the diagnostic environmental infrared checking system.
+  This command must be called prior to using the IRCHK command.
+  */
+  void IRINIT() {
+    this->Command("IRINIT:"); }
 
   /**
   Set a tool LED to a particular state.
