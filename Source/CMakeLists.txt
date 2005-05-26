@@ -6,7 +6,7 @@
 SET(IGSTKSandbox_HEADS
   igstkAuroraTracker.h
   igstkAuroraTool.h
-#  igstkNDICommandInterpreter.h
+  igstkNDICommandInterpreter.h
   igstkNDICyclicRedundancy.h
   igstkSerialCommunication.h
   igstkSerialCommunicationCommand.h
@@ -21,7 +21,7 @@ SET(IGSTKSandbox_HEADS
 SET(IGSTKSandbox_SRCS  
   igstkAuroraTracker.cxx
   igstkAuroraTool.cxx
-#  igstkNDICommandInterpreter.cxx
+  igstkNDICommandInterpreter.cxx
   igstkNDICyclicRedundancy.cxx
   igstkSerialCommunication.cxx
   igstkMouseTracker.cxx
