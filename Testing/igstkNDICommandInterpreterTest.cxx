@@ -14,13 +14,19 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+
+#if defined(_MSC_VER)
+   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+#pragma warning( disable : 4786 )
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <set>
 
 #include "itkCommand.h"
 
-#include "igstkLogger.h"
+#include "itkLogger.h"
 #include "igstkNDICommandInterpreter.h"
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
@@ -45,6 +51,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
   // create the communication object
   CommunicationType::Pointer  serialComm = CommunicationType::New();
+  serialComm->SetLogger(logger);
   serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0() );
   serialComm->SetParity( igstk::SerialCommunication::NoParity() );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600() );
@@ -59,9 +66,78 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
   interpreter->SetCommunication(serialComm);
 
+  //---------------------------------
   // send some commands to the device
-  //interpreter->RESET();
-  //interpreter->INIT();
+  int i, j, a, ph;
+  unsigned long l;
+  double vals[8];
+  int portHandles[256];
+  int numberOfHandles;
+
+  // -- basic initialization commands --
+  //interpreter->RESET();  // serial break not implemented yet
+  interpreter->INIT();
+  interpreter->COMM(NDI_9600, NDI_8N1, NDI_NOHANDSHAKE);
+  interpreter->BEEP(2);
+
+  // -- get information about the device --
+  std::cout << interpreter->VER(0) << std::endl;
+  interpreter->SFLIST(0);
+
+  // -- diagnostic commands, POLARIS only --
+  /*
+  interpreter->DSTART();
+  interpreter->IRCHK(NDI_DETECTED);
+  a = interpreter->GetIRCHKDetected();
+  interpreter->IRCHK(NDI_SOURCES);
+  n = interpreter->GetIRCHKNumberOfSources(0);
+  for (i = 0; i < n; i++)
+    {
+    interpreter->GetIRCHKSourceXY(0, i, vals);
+    }
+  interpreter->DSTOP();
+  */
+
+  // -- enable tool ports --
+  interpreter->PHSR(0x02); // all unenabled handles
+  numberOfHandles = interpreter->GetPHSRNumberOfHandles();
+  for (i = 0; i < numberOfHandles; i++)
+    {
+    portHandles[i] = interpreter->GetPHSRHandle(i);
+    a = interpreter->GetPHSRInformation(i);
+    }
+
+  for (i = 0; i < numberOfHandles; i++)
+    {
+    ph = portHandles[i];
+    interpreter->PINIT(ph);
+    interpreter->PENA(ph, NDI_DYNAMIC);
+    }
+
+  // -- start tracking --
+  interpreter->TSTART();
+  interpreter->TX(NDI_XFORMS_AND_STATUS);
+  for (j = 0; j < 10; j++)
+    {
+    for (i = 0; i < numberOfHandles; i++)
+      {
+      ph = portHandles[i];
+      a = interpreter->GetTXTransform(ph, vals);
+      a = interpreter->GetTXPortStatus(ph);
+      l = interpreter->GetTXFrame(ph);
+      }
+    interpreter->BEEP(1);
+    }
+  interpreter->TSTOP();
+
+  // -- free the tool ports --
+  for (i = 0; i < numberOfHandles; i++)
+    {
+    ph = portHandles[i];
+    interpreter->PDIS(ph);
+    interpreter->PHF(ph);
+    }
+  numberOfHandles = 0;
 
   serialComm->CloseCommunication();
 
