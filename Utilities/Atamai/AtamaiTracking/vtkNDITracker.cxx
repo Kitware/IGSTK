@@ -4,7 +4,7 @@
   Module:    vtkNDITracker.cxx
   Creator:   David Gobbi <dgobbi@atamai.com>
   Language:  C++
-  Author:    $Author: ibanez $
+  Author:    $Author: dgobbi $
   Date:      $Date$
   Version:   $Revision$
 
@@ -362,7 +362,7 @@ int vtkNDITracker::InternalStopTracking()
 }
 
 //----------------------------------------------------------------------------
-// Important notes on the data collection rate of the NDI:
+// Important notes on the data collection rate of the Polaris:
 //
 // The camera frame rate is 60Hz, and therefore the maximum data
 // collection rate is also 60Hz.  The maximum data transfer rate
@@ -505,16 +505,16 @@ void vtkNDITracker::InternalUpdate()
     if (this->ReferenceTool >= 0 && tool != this->ReferenceTool)
       {
       if (!absent[tool])
-  {
-  if (absent[this->ReferenceTool])
-    {
-    flags |= TR_OUT_OF_VIEW;
-    }
-  if (status[this->ReferenceTool] & NDI_OUT_OF_VOLUME)
-    {
-    flags |= TR_OUT_OF_VOLUME;
-    }
-  }
+        {
+        if (absent[this->ReferenceTool])
+          {
+          flags |= TR_OUT_OF_VIEW;
+          }
+        if (status[this->ReferenceTool] & NDI_OUT_OF_VOLUME)
+          {
+          flags |= TR_OUT_OF_VOLUME;
+          }
+        }
       // pre-multiply transform by inverse of relative tool transform
       ndiRelativeTransform(transform[tool],referenceTransform,transform[tool]);
       }
@@ -632,7 +632,6 @@ void vtkNDITracker::EnableToolPorts()
   int tool;
   int ph;
   int port;
-  int info;
   int mode;
   int ntools;
   int status;
@@ -686,9 +685,9 @@ void vtkNDITracker::EnableToolPorts()
       //fprintf(stderr,"PINIT:%02X\n",ph);
       errnum = ndiGetError(this->Device);
       if (errnum)
-  { 
-  vtkErrorMacro(<< ndiErrorString(errnum));
-  }
+        { 
+        vtkErrorMacro(<< ndiErrorString(errnum));
+        }
       }
     }
   while (ntools > 0 && errnum == 0);
@@ -804,7 +803,6 @@ void vtkNDITracker::DisableToolPorts()
   int ph;
   int tool;
   int ntools;
-  int status;
 
   // stop tracking
   if (this->IsDeviceTracking)
@@ -955,15 +953,15 @@ void vtkNDITracker::InternalLoadVirtualSROM(int tool,
     for (i = 0; i < n; i++)
       {
       if (ndiGetPHSRInformation(this->Device,i) & NDI_TOOL_IN_PORT)
-  {
-  ph = ndiGetPHSRHandle(this->Device,i);
-  ndiCommand(this->Device,"PHINF:%02X0021",ph);
-  ndiGetPHINFPortLocation(this->Device,location);
-  if (tool == (location[10]-'0')*10 + (location[11]-'0') - 1)
-    {
-    break;
-    }
-  }
+        {
+        ph = ndiGetPHSRHandle(this->Device,i);
+        ndiCommand(this->Device,"PHINF:%02X0021",ph);
+        ndiGetPHINFPortLocation(this->Device,location);
+        if (tool == (location[10]-'0')*10 + (location[11]-'0') - 1)
+          {
+          break;
+          }
+        }
       }
     if (i == n)
       {
