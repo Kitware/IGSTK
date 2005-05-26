@@ -6,20 +6,11 @@
 SET(IGSTKSandbox_HEADS
   igstkAuroraTracker.h
   igstkAuroraTool.h
-  igstkNDICommandInterpreter.h
+#  igstkNDICommandInterpreter.h
   igstkNDICyclicRedundancy.h
   igstkSerialCommunication.h
   igstkSerialCommunicationCommand.h
   igstkMouseTracker.h
-  itkLogger.h
-  itkStdStreamLogOutput.h
-  itkThreadLogger.h
-  itkRealtimeClock.h
-  itkMultipleLogOutput.h
-  itkLogOutput.h
-  itkLogMacro.h
-  itkLoggerOutput.h
-  itkLoggerManager.h
   igstkVTKLoggerOutput.h
   igstkFLTKTextLogOutput.h
   igstkFLTKTextBufferLogOutput.h
@@ -30,17 +21,10 @@ SET(IGSTKSandbox_HEADS
 SET(IGSTKSandbox_SRCS  
   igstkAuroraTracker.cxx
   igstkAuroraTool.cxx
-  igstkNDICommandInterpreter.cxx
+#  igstkNDICommandInterpreter.cxx
   igstkNDICyclicRedundancy.cxx
   igstkSerialCommunication.cxx
   igstkMouseTracker.cxx
-  itkLogger.cxx
-  itkStdStreamLogOutput.cxx
-  itkThreadLogger.cxx
-  itkRealtimeClock.cxx
-  itkMultipleLogOutput.cxx
-  itkLoggerOutput.cxx
-  itkLoggerManager.cxx
   igstkVTKLoggerOutput.cxx
   igstkFLTKTextLogOutput.cxx
   igstkFLTKTextBufferLogOutput.cxx
