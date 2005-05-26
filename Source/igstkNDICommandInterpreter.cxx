@@ -433,13 +433,13 @@ const char *NDICommandInterpreter::Command(const char *command)
   nc = 0;                    /* length of 'command' part of command */
 
   m_ErrorCode = 0;           /* clear error */
-  cp[0] = '\0';
   rp[0] = '\0';
   crp[0] = '\0';
 
   /* if the command is NULL, send a break to reset the Measurement System */
   if (command == NULL)
     {
+    cp[0] = '\0';
     m_Tracking = 0;
 
     /* need to replace with SerialCommunication calls */
