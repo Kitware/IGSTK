@@ -40,7 +40,9 @@ namespace igstk
 {         \
   if (this->GetLogger() ) \
     {  \
-    this->GetLogger()->Write(::itk::Logger::x, y); \
+    ::itk::OStringStream message; \
+    message << y; \
+    this->GetLogger()->Write(::itk::Logger::x, message.str()); \
     }  \
 }
 
@@ -52,7 +54,9 @@ namespace igstk
 {         \
   if (obj->GetLogger() ) \
     {  \
-    obj->GetLogger()->Write(::itk::Logger::x, y); \
+    ::itk::OStringStream message; \
+    message << y; \
+    obj->GetLogger()->Write(::itk::Logger::x, message.str()); \
     }  \
 }
 
