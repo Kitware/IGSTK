@@ -58,8 +58,7 @@ void NDITracker::AttemptToSetUpCommunicationProcessing( void )
   // Initialize the device 
   const char *reply = m_CommandInterpreter->Command("INIT:");
 
-  igstkLogMacro( DEBUG,  reply );
-  igstkLogMacro( DEBUG, "...\n");
+  igstkLogMacro( DEBUG,  reply << "...\n");
 
   if (m_CommandInterpreter->GetError())
   {
@@ -112,8 +111,8 @@ void NDITracker::AttemptToStartTrackingProcessing( void )
   int errnum = m_CommandInterpreter->GetError();
   if (errnum) 
   {
-    igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+    igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
   }
   else
   {
@@ -138,8 +137,8 @@ void NDITracker::AttemptToStopTrackingProcessing( void )
   int errnum = m_CommandInterpreter->GetError();
   if (errnum) 
   {
-    igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+    igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
     return;
   }
   //m_pStopTrackingResultInput = &(m_StopTrackingSuccessInput);
@@ -169,8 +168,8 @@ void NDITracker::DisableCommunicationProcessing( void )
   int errnum = m_CommandInterpreter->GetError();
   if (errnum) 
   {
-    igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+    igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
   }
   //ndiClose(this->Device); To be done by the application
 }
@@ -267,8 +266,8 @@ bool NDITracker::LoadVirtualSROM( const int tool, std::string SROMFileName)
   errnum = m_CommandInterpreter->GetError();
   if (errnum)
   {
-    igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+    igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
     //vtkErrorMacro(<< ndiErrorString(errnum));
     return false;
   }
@@ -310,8 +309,8 @@ void NDITracker::EnableToolPorts()
     errnum = m_CommandInterpreter->GetError();
     if (errnum)
     { 
-      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
     }    
   }
 
@@ -326,8 +325,8 @@ void NDITracker::EnableToolPorts()
     errnum = m_CommandInterpreter->GetError();
     if (errnum)
     { 
-      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+    igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
     }
   }
 
@@ -343,8 +342,8 @@ void NDITracker::EnableToolPorts()
       errnum = m_CommandInterpreter->GetError();
       if (errnum)
       { 
-      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
       }
     }
   }
@@ -376,8 +375,8 @@ void NDITracker::EnableToolPorts()
     errnum = m_CommandInterpreter->GetError();
     if (errnum)
     {
-      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
     }
   }
 
@@ -391,8 +390,8 @@ void NDITracker::EnableToolPorts()
     errnum = m_CommandInterpreter->GetError();
     if (errnum)
     { 
-      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
       continue;
     }    
     // get the physical port identifier
@@ -453,8 +452,8 @@ void NDITracker::EnableToolPorts()
     errnum = m_CommandInterpreter->GetError();
     if (errnum)
     { 
-      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
     }
   }
 }
@@ -474,8 +473,8 @@ void NDITracker::DisableToolPorts( void )
     errnum = m_CommandInterpreter->GetError();
     if (errnum)
     { 
-      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
     }    
   }
 
@@ -490,8 +489,8 @@ void NDITracker::DisableToolPorts( void )
     errnum = m_CommandInterpreter->GetError();
     if (errnum)
     { 
-      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
     }    
   }
 
@@ -508,8 +507,8 @@ void NDITracker::DisableToolPorts( void )
     errnum = m_CommandInterpreter->GetError();
     if (errnum)
     { 
-      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
     }
   }
 }
@@ -555,7 +554,7 @@ void NDITracker::InternalUpdate()
 
   if (!this->IsDeviceTracking)
   {
-    igstkLogMacro( DEBUG, "called Update() when NDI was not tracking");
+    igstkLogMacro( DEBUG, "called Update() when NDI was not tracking\n");
     return;
   }
 
@@ -577,11 +576,11 @@ void NDITracker::InternalUpdate()
   {
     if (errnum == NDI_BAD_CRC || errnum == NDI_TIMEOUT) // common errors
     {
-      igstkLogMacro( WARNING, m_CommandInterpreter->ErrorString(errnum));
+      igstkLogMacro( WARNING, m_CommandInterpreter->ErrorString(errnum)<<"\n");
     }
     else
     {
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum));
+      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum)<<"\n");
     }
     return;
   }

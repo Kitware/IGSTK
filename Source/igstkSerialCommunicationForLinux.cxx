@@ -52,9 +52,7 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
   else
   {
     m_pOpenPortResultInput = &m_OpenPortSuccessInput;
-    igstkLogMacro( DEBUG, "COM port name: ");
-    igstkLogMacro( DEBUG, portName);
-    igstkLogMacro( DEBUG, " opened.\n");
+    igstkLogMacro( DEBUG, "COM port name: " << portName << " opened.\n");
   }
 }
 
@@ -79,12 +77,7 @@ void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
     this->m_ReadBufferOffset = 0;
     memset(this->m_InputBuffer, '\0', sizeof(this->m_InputBuffer));
 
-    igstkLogMacro( DEBUG, "SetDataBufferSizeParameters ");
-    igstkLogMacro( DEBUG, "with Read Buffer size = ");
-    igstkLogMacro( DEBUG, m_ReadBufferSize);
-    igstkLogMacro( DEBUG, " and Write Buffer Size = ");
-    igstkLogMacro( DEBUG, m_WriteBufferSize);
-    igstkLogMacro( DEBUG, " succeeded.\n");
+    igstkLogMacro( DEBUG, "SetDataBufferSizeParameters with Read Buffer size = " << m_ReadBufferSize << " and Write Buffer Size = " << m_WriteBufferSize << " succeeded.\n");
   }
 }
 

@@ -185,10 +185,8 @@ bool SerialCommunication::SendString( const char *data )
   memcpy(m_OutputBuffer, data, sizeof(char)*strSize);
 //  m_OutputBuffer[strSize+2] = '\r';
 //  m_OutputBuffer[strSize+2] = '\0';
-  igstkLogMacro( DEBUG, "Message length = ");
-  igstkLogMacro( DEBUG, strSize);
-  igstkLogMacro( DEBUG, "Message = "); 
-  igstkLogMacro( DEBUG, m_OutputBuffer);
+  igstkLogMacro( DEBUG, "Message length = " << strSize << std::endl );
+  igstkLogMacro( DEBUG, "Message = " << m_OutputBuffer << std::endl );
   this->m_StateMachine.ProcessInput( m_SendStringInput );
   return true;
 }
