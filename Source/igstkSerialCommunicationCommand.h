@@ -19,10 +19,10 @@
 #define __igstkSerialCommunicationCommand_h
 
 #include "itkCommand.h"
+#include "itkLogger.h"
 
 #include "igstkMacros.h"
 #include "igstkSerialCommunication.h"
-#include "igstkLogger.h"
 
 namespace igstk
 {
@@ -43,7 +43,7 @@ public:
   typedef itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
 
-  typedef igstk::Logger   LoggerType;
+  typedef itk::Logger   LoggerType;
 
        /** The SetLogger method is used to attach a logger object to the
    serial communication command object for logging. */
@@ -68,59 +68,59 @@ private:
   {
     if ( typeid(event)== typeid(igstk::SerialCommunication::OpenPortFailureEvent))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::OpenPortFailureEvent Error Occurred ...\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::OpenPortFailureEvent Error Occurred ...\n");
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::SetupCommunicationParametersFailureEvent ))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::SetupCommunicationParametersFailureEvent Error Occurred ...\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::SetupCommunicationParametersFailureEvent Error Occurred ...\n");
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::SetDataBufferSizeFailureEvent ))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::SetDataBufferSizeFailureEvent Error Occurred ...\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::SetDataBufferSizeFailureEvent Error Occurred ...\n");
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::CommunicationTimeoutSetupFailureEvent ))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::CommunicationTimeoutSetupFailureEvent Error Occurred ...\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::CommunicationTimeoutSetupFailureEvent Error Occurred ...\n");
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::SendStringSuccessfulEvent ))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::SendStringSuccessfulEvent ******\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::SendStringSuccessfulEvent ******\n");
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::SendStringFailureEvent ))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::SendStringFailureEvent ******\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::SendStringFailureEvent ******\n");
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::SendStringWriteTimeoutEvent ))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::SendStringWriteTimeoutEvent ******\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::SendStringWriteTimeoutEvent ******\n");
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::SendStringWaitTimeoutEvent ))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::SendStringWaitTimeoutEvent ******\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::SendStringWaitTimeoutEvent ******\n");
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::CommunicationStatusReportFailureEvent ))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::CommunicationStatusReportFailureEvent ******\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::CommunicationStatusReportFailureEvent ******\n");
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::ReceiveStringSuccessfulEvent ))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::ReceiveStringSuccessfulEvent ******\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::ReceiveStringSuccessfulEvent ******\n");
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::ReceiveStringFailureEvent ))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::ReceiveStringFailureEvent ******\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::ReceiveStringFailureEvent ******\n");
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::ReceiveStringReadTimeoutEvent ))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::ReceiveStringReadTimeoutEvent ******\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::ReceiveStringReadTimeoutEvent ******\n");
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::ReceiveStringWaitTimeoutEvent ))
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::ReceiveStringWaitTimeoutEvent ******\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::ReceiveStringWaitTimeoutEvent ******\n");
     }
    else 
     {
-        igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::Some other Error Occurred ...\n");
+        igstkLogMacro( DEBUG, "SerialCommunication::Some other Error Occurred ...\n");
     }
  }
 

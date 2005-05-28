@@ -37,7 +37,7 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
 
   if (this->m_PortHandle != SerialCommunicationForLinux::INVALID_HANDLE_VALUE)
   {
-    igstkLogMacro( igstk::Logger::DEBUG, "**** COM port already in use. Exiting .... ****\n");
+    igstkLogMacro( DEBUG, "**** COM port already in use. Exiting .... ****\n");
     return;
   }
 
@@ -52,9 +52,9 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
   else
   {
     m_pOpenPortResultInput = &m_OpenPortSuccessInput;
-    igstkLogMacro( igstk::Logger::DEBUG, "COM port name: ");
-    igstkLogMacro( igstk::Logger::DEBUG, portName);
-    igstkLogMacro( igstk::Logger::DEBUG, " opened.\n");
+    igstkLogMacro( DEBUG, "COM port name: ");
+    igstkLogMacro( DEBUG, portName);
+    igstkLogMacro( DEBUG, " opened.\n");
   }
 }
 
@@ -79,12 +79,12 @@ void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
     this->m_ReadBufferOffset = 0;
     memset(this->m_InputBuffer, '\0', sizeof(this->m_InputBuffer));
 
-    igstkLogMacro( igstk::Logger::DEBUG, "SetDataBufferSizeParameters ");
-    igstkLogMacro( igstk::Logger::DEBUG, "with Read Buffer size = ");
-    igstkLogMacro( igstk::Logger::DEBUG, m_ReadBufferSize);
-    igstkLogMacro( igstk::Logger::DEBUG, " and Write Buffer Size = ");
-    igstkLogMacro( igstk::Logger::DEBUG, m_WriteBufferSize);
-    igstkLogMacro( igstk::Logger::DEBUG, " succeeded.\n");
+    igstkLogMacro( DEBUG, "SetDataBufferSizeParameters ");
+    igstkLogMacro( DEBUG, "with Read Buffer size = ");
+    igstkLogMacro( DEBUG, m_ReadBufferSize);
+    igstkLogMacro( DEBUG, " and Write Buffer Size = ");
+    igstkLogMacro( DEBUG, m_WriteBufferSize);
+    igstkLogMacro( DEBUG, " succeeded.\n");
   }
 }
 
@@ -202,7 +202,7 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
   }
   else
   {
-    igstkLogMacro( igstk::Logger::DEBUG, "SetupCommunicationParameters succeeded.\n");
+    igstkLogMacro( DEBUG, "SetupCommunicationParameters succeeded.\n");
   }
 
   m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpSuccessInput;
@@ -223,7 +223,7 @@ void SerialCommunicationForLinux::ClosePortProcessing( void )
 {
   close(this->m_PortHandle);
   this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
-  igstkLogMacro( igstk::Logger::DEBUG, "Communication port closed.\n");
+  igstkLogMacro( DEBUG, "Communication port closed.\n");
 }
 
 void SerialCommunicationForLinux::RestPortProcessing( void )

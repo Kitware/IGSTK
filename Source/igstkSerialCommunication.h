@@ -20,10 +20,10 @@
 
 #include "itkObject.h"
 #include "itkEventObject.h"
+#include "itkLogger.h"
 
 #include "igstkMacros.h"
 #include "igstkCommunication.h"
-#include "igstkLogger.h"
 #include "igstkStateMachine.h"
 
 #include "igstkSerialCommunicationTokens.h"
@@ -52,7 +52,7 @@ protected:
   const unsigned int m_PortRestSpan;      // period of rest in communication, in msecs.
 //  const int          m_InvalidPortNumber; // Number assigned to m_PortNumber, if port not initialized.
 
-  typedef igstk::Logger   LoggerType;
+  typedef itk::Logger   LoggerType;
 
 public:
 

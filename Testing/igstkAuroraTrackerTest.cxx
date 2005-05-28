@@ -24,8 +24,9 @@
 #include <set>
 
 #include "itkCommand.h"
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
 
-#include "igstkLogger.h"
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
 #else
@@ -113,7 +114,8 @@ public:
 
 int igstkAuroraTrackerTest( int, char * [] )
 {
-  typedef igstk::Logger                   LoggerType; 
+  typedef itk::Logger                   LoggerType; 
+  typedef itk::StdStreamLogOutput       LogOutputType;
 
 #ifdef WIN32
   igstk::SerialCommunicationForWindows::Pointer serialComm = igstk::SerialCommunicationForWindows::New();
@@ -125,8 +127,10 @@ int igstkAuroraTrackerTest( int, char * [] )
 
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
-  logger->AddOutputStream( std::cout );
-  logger->SetPriorityLevel( igstk::Logger::DEBUG );
+  LogOutputType::Pointer logOutput = LogOutputType::New();  
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   serialComm->AddObserver( igstk::SerialCommunication::OpenPortFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::SetupCommunicationParametersFailureEvent(), my_command);

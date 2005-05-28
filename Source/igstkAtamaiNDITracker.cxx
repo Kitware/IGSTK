@@ -58,7 +58,7 @@ AtamaiNDITracker::~AtamaiNDITracker(void)
 
 void AtamaiNDITracker::AttemptToSetUpCommunicationProcessing( void )
 {
-  igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::AttemptToSetUpCommunicationProcessing called ...\n");
+  igstkLogMacro( DEBUG, "AtamaiNDITracker::AttemptToSetUpCommunicationProcessing called ...\n");
   // m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentFailureInput;
 
   // clear the error indicator
@@ -94,7 +94,7 @@ void AtamaiNDITracker::AttemptToSetUpCommunicationProcessing( void )
 void AtamaiNDITracker::AttemptToSetUpToolsProcessing( void )
 {
   //m_pActivateToolsResultInput = &(m_ToolsActivationFailureInput);
-  igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::AttemptToSetUpToolsProcessing called ...\n");
+  igstkLogMacro( DEBUG, "AtamaiNDITracker::AttemptToSetUpToolsProcessing called ...\n");
 
   m_VTKError = 0;
 
@@ -139,7 +139,7 @@ void AtamaiNDITracker::AttemptToSetUpToolsProcessing( void )
 
 void AtamaiNDITracker::AttemptToStartTrackingProcessing( void )
 {
-  igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::AttemptToStartTrackingProcessing called ...\n");
+  igstkLogMacro( DEBUG, "AtamaiNDITracker::AttemptToStartTrackingProcessing called ...\n");
 
   //m_pStartTrackingResultInput = &(m_StartTrackingFailureInput);
   m_VTKError = 0;
@@ -153,7 +153,7 @@ void AtamaiNDITracker::AttemptToStartTrackingProcessing( void )
 
 void AtamaiNDITracker::AttemptToStopTrackingProcessing( void )
 {
-  igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::StopTrackingProcessing called ...\n");  //m_pStopTrackingResultInput = &(m_StopTrackingFailureInput);
+  igstkLogMacro( DEBUG, "AtamaiNDITracker::StopTrackingProcessing called ...\n");  //m_pStopTrackingResultInput = &(m_StopTrackingFailureInput);
 
   m_VTKError = 0;
   m_VTKTracker->StopTracking();
@@ -166,7 +166,7 @@ void AtamaiNDITracker::AttemptToStopTrackingProcessing( void )
 
 void AtamaiNDITracker::UpdateStatusProcessing( void )
 {
-  igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::UpdateStatusProcessing called ...\n");
+  igstkLogMacro( DEBUG, "AtamaiNDITracker::UpdateStatusProcessing called ...\n");
 
   m_VTKError = 0;
   m_VTKTracker->Update();
@@ -192,13 +192,13 @@ void AtamaiNDITracker::UpdateStatusProcessing( void )
 
     if ( pTool->IsMissing() )
       {
-      igstkLogMacro( Logger::DEBUG, "Tool Missing...\n");
+      igstkLogMacro( DEBUG, "Tool Missing...\n");
       continue;
       }
 
     if ( pTool->IsOutOfView() )
       {
-      igstkLogMacro( Logger::DEBUG, "Tool out of View...\n");
+      igstkLogMacro( DEBUG, "Tool out of View...\n");
       continue;
       }
 
@@ -241,7 +241,7 @@ void AtamaiNDITracker::UpdateStatusProcessing( void )
 
 void AtamaiNDITracker::ResetTrackingProcessing( void )
 {
-  igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::ResetTrackingProcessing called ...\n");
+  igstkLogMacro( DEBUG, "AtamaiNDITracker::ResetTrackingProcessing called ...\n");
 
   if (m_VTKTracker->IsTracking())
     {
@@ -253,13 +253,13 @@ void AtamaiNDITracker::ResetTrackingProcessing( void )
 
 void AtamaiNDITracker::DisableCommunicationProcessing( void )
 {
-  igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::DisableCommunicationProcessing called ...\n");
+  igstkLogMacro( DEBUG, "AtamaiNDITracker::DisableCommunicationProcessing called ...\n");
   // nothing to do: communication is disabled when vtkTracker isn't tracking
 }
 
 void AtamaiNDITracker::DisableToolsProcessing( void )
 {
-  igstkLogMacro( Logger::DEBUG, "AtamaiNDITracker::DisableToolsProcessing called ...\n");
+  igstkLogMacro( DEBUG, "AtamaiNDITracker::DisableToolsProcessing called ...\n");
   // nothing to do: tools are disabled when vtkTracker isn't tracking
 }
 

@@ -25,8 +25,9 @@
 #include <set>
 
 #include "itkCommand.h"
-
 #include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
+
 #include "igstkNDICommandInterpreter.h"
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
@@ -42,12 +43,15 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   typedef igstk::SerialCommunicationForLinux    CommunicationType;
 #endif
   typedef igstk::NDICommandInterpreter  CommandInterpreterType;
-  typedef igstk::Logger                 LoggerType; 
+  typedef itk::Logger                   LoggerType; 
+  typedef itk::StdStreamLogOutput       LogOutputType;
    
   // create the logger object
   LoggerType::Pointer   logger = LoggerType::New();
-  logger->AddOutputStream( std::cout );
-  logger->SetPriorityLevel( igstk::Logger::DEBUG );
+  LogOutputType::Pointer logOutput = LogOutputType::New();  
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // create the communication object
   CommunicationType::Pointer  serialComm = CommunicationType::New();

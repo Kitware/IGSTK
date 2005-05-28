@@ -19,8 +19,8 @@
 #include <set>
 
 #include "itkCommand.h"
+#include "itkLogger.h"
 
-#include "igstkLogger.h"
 #include "igstkSerialCommunicationForWindows.h"
 
 
@@ -104,7 +104,7 @@ public:
 
 int igstkSerialCommunicationForWindowsTest( int, char * [] )
 {
-  typedef igstk::Logger                   LoggerType; 
+  typedef itk::Logger                   LoggerType; 
 
   igstk::SerialCommunicationForWindows::Pointer serialComm = igstk::SerialCommunicationForWindows::New();
 
@@ -113,7 +113,7 @@ int igstkSerialCommunicationForWindowsTest( int, char * [] )
   // logger object created for logging mouse activities
   LoggerType            logger;
   logger.AddOutputStream( std::cout );
-  logger.SetPriorityLevel( igstk::Logger::DEBUG );
+  logger.SetPriorityLevel( itk::Logger::DEBUG );
 
   serialComm->AddObserver( igstk::SerialCommunication::OpenPortFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::SetupCommunicationParametersFailureEvent(), my_command);

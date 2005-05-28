@@ -26,18 +26,24 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
+
 #include "igstkMouseTracker.h"
 
 int igstkMouseTrackerTest( int, char * [] )
 {
   typedef igstk::Transform         TransformType;
   typedef igstk::MouseTracker      MouseTrackerType;
-  typedef igstk::Logger            LoggerType; 
-    
+  typedef itk::Logger              LoggerType; 
+  typedef itk::StdStreamLogOutput  LogOutputType;
+
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
-  logger->AddOutputStream( std::cout );
-  logger->SetPriorityLevel( igstk::Logger::DEBUG );
+  LogOutputType::Pointer logOutput = LogOutputType::New();  
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   MouseTrackerType::Pointer tracker = MouseTrackerType::New();
   tracker->SetLogger( logger );

@@ -185,10 +185,10 @@ bool SerialCommunication::SendString( const char *data )
   memcpy(m_OutputBuffer, data, sizeof(char)*strSize);
 //  m_OutputBuffer[strSize+2] = '\r';
 //  m_OutputBuffer[strSize+2] = '\0';
-  igstkLogMacro( Logger::DEBUG, "Message length = ");
-  igstkLogMacro( Logger::DEBUG, strSize);
-  igstkLogMacro( Logger::DEBUG, "Message = "); 
-  igstkLogMacro( Logger::DEBUG, m_OutputBuffer);
+  igstkLogMacro( DEBUG, "Message length = ");
+  igstkLogMacro( DEBUG, strSize);
+  igstkLogMacro( DEBUG, "Message = "); 
+  igstkLogMacro( DEBUG, m_OutputBuffer);
   this->m_StateMachine.ProcessInput( m_SendStringInput );
   return true;
 }
@@ -216,12 +216,12 @@ SerialCommunication::LoggerType* SerialCommunication::GetLogger(  void )
 
 void SerialCommunication::ClosePortSuccessProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::ClosePortSuccessProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::ClosePortSuccessProcessing called ...\n");
 }
 
 void SerialCommunication::ClosePortFailureProcessing( void )
 {
-  igstkLogMacro( igstk::Logger::DEBUG, "SerialCommunication::ClosePortFailureProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::ClosePortFailureProcessing called ...\n");
 }
 
 } // end namespace igstk

@@ -56,9 +56,9 @@ void SerialCommunicationForWindows::OpenPortProcessing( void )
   else
   {
     m_pOpenPortResultInput = &m_OpenPortSuccessInput;
-    igstkLogMacro( igstk::Logger::DEBUG, "COM port name: ");
-    igstkLogMacro( igstk::Logger::DEBUG, portName);
-    igstkLogMacro( igstk::Logger::DEBUG, " opened.\n");
+    igstkLogMacro( DEBUG, "COM port name: ");
+    igstkLogMacro( DEBUG, portName);
+    igstkLogMacro( DEBUG, " opened.\n");
   }
 }
 
@@ -84,11 +84,11 @@ void SerialCommunicationForWindows::SetUpDataBuffersProcessing( void )
     this->m_ReadBufferOffset = 0;
     memset(this->m_InputBuffer, '\0', sizeof(this->m_InputBuffer));
 
-    igstkLogMacro( igstk::Logger::DEBUG, "SetDataBufferSizeParameters with Read Buffer size = ");
-    igstkLogMacro( igstk::Logger::DEBUG, m_ReadBufferSize);
-    igstkLogMacro( igstk::Logger::DEBUG, " and Write Buffer Size = ");
-    igstkLogMacro( igstk::Logger::DEBUG, m_WriteBufferSize);
-    igstkLogMacro( igstk::Logger::DEBUG, " succeeded.\n");
+    igstkLogMacro( DEBUG, "SetDataBufferSizeParameters with Read Buffer size = ");
+    igstkLogMacro( DEBUG, m_ReadBufferSize);
+    igstkLogMacro( DEBUG, " and Write Buffer Size = ");
+    igstkLogMacro( DEBUG, m_WriteBufferSize);
+    igstkLogMacro( DEBUG, " succeeded.\n");
   }
 }
 
@@ -156,7 +156,7 @@ void SerialCommunicationForWindows::SetUpDataTransferParametersProcessing( void 
   }
   else
   {
-    igstkLogMacro( igstk::Logger::DEBUG, "SetupCommunicationParameters succeeded.\n");
+    igstkLogMacro( DEBUG, "SetupCommunicationParameters succeeded.\n");
   }
   m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpSuccessInput;
 }
@@ -176,7 +176,7 @@ void SerialCommunicationForWindows::ClosePortProcessing( void )
 {
   CloseHandle(this->m_PortHandle);
   this->m_PortHandle = (HandleType)INVALID_HANDLE_VALUE;
-  igstkLogMacro( igstk::Logger::DEBUG, "Communication port closed.\n");
+  igstkLogMacro( DEBUG, "Communication port closed.\n");
 }
 
 void SerialCommunicationForWindows::RestPortProcessing( void )
@@ -357,8 +357,8 @@ void SerialCommunicationForWindows::ReceiveStringProcessing( void )
       this->InvokeEvent( ReceiveStringFailureEvent() );
   }
 
-  igstkLogMacro( Logger::DEBUG, "String: ");
-  igstkLogMacro( Logger::DEBUG, this->m_InputBuffer);
+  igstkLogMacro( DEBUG, "String: ");
+  igstkLogMacro( DEBUG, this->m_InputBuffer);
  
   //Close the created overlapped event.
   CloseHandle(overlappedRead.hEvent);
