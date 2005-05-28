@@ -181,11 +181,8 @@ bool SerialCommunication::Flush( void )
 
 bool SerialCommunication::SendString( const char *data )
 {
-  int strSize = (strlen(data)<m_WriteBufferSize) ? strlen(data) : m_WriteBufferSize;
-  memcpy(m_OutputBuffer, data, sizeof(char)*strSize);
-//  m_OutputBuffer[strSize+2] = '\r';
-//  m_OutputBuffer[strSize+2] = '\0';
-  igstkLogMacro( DEBUG, "Message length = " << strSize << std::endl );
+  strncpy(m_OutputBuffer, data, m_WriteBufferSize);
+  igstkLogMacro( DEBUG, "Message length = " << strlen(data) << std::endl );
   igstkLogMacro( DEBUG, "Message = " << m_OutputBuffer << std::endl );
   this->m_StateMachine.ProcessInput( m_SendStringInput );
   return true;
@@ -194,6 +191,7 @@ bool SerialCommunication::SendString( const char *data )
 bool SerialCommunication::ReceiveString( char *data )
 {
   this->m_StateMachine.ProcessInput( m_ReceiveStringInput );
+  strncpy(m_OutputBuffer, data, m_ReadBufferSize);
   memcpy(data, m_InputBuffer, m_ReadDataSize);
   return true;
 }
