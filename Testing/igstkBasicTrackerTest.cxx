@@ -23,8 +23,10 @@
 #include <iostream>
 #include <fstream>
 
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
+
 #include "igstkTracker.h"
-#include "igstkLogger.h"
 
 namespace igstk
 {
@@ -57,15 +59,19 @@ int igstkBasicTrackerTest( int, char * [] )
 {
 
   igstk::TestingTracker::Pointer tracker = igstk::TestingTracker::New();
-  igstk::Logger::Pointer logger = igstk::Logger::New();
+  itk::Logger::Pointer logger = itk::Logger::New();
+
+  // create the outputs for the logger
+  itk::StdStreamLogOutput::Pointer fileLogOutput1 = 
+    itk::StdStreamLogOutput::New();
+  itk::StdStreamLogOutput::Pointer consoleLogOutput =
+    itk::StdStreamLogOutput::New();
 
   std::ofstream fileStream1("outputBasicTrackerTestLog1.txt");
-  std::ofstream fileStream2("outputBasicTrackerTestLog2.txt");
+  fileLogOutput1->SetStream( fileStream1 );
+  consoleLogOutput->SetStream( std::cout );
 
-  logger->AddOutputStream( std::cout );
-  logger->AddOutputStream( fileStream1 );
-
-  logger->SetPriorityLevel( igstk::Logger::DEBUG );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   tracker->SetLogger( logger );
 

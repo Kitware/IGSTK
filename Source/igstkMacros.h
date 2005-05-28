@@ -33,16 +33,27 @@
 namespace igstk
 {
 
+/** Macro for simplifying the use of logging: the first argument is
+ *  the priority (see itkMacro.h) and the second argument is the
+ *  message. */
 #define igstkLogMacro( x, y)  \
 {         \
   if (this->GetLogger() ) \
     {  \
-    if ( this->GetLogger()->GetPriorityLevel()>= (x) ) \
-      {  \
-      this->GetLogger()->GetMultipleOutput() << this->GetNameOfClass() << "::"; \
-      this->GetLogger()->GetMultipleOutput() << (y); \
-      } \
-    } \
+    this->GetLogger()->Write(::itk::Logger::x, y); \
+    }  \
+}
+
+
+/** Macro for simplifying the use of logging: the first argument is
+ *  an object that has a logger, the second argument is the priority
+ *  (see itkMacro.h) and the second argument is the message. */
+#define igstkLogMacroStatic( obj, x, y)  \
+{         \
+  if (obj->GetLogger() ) \
+    {  \
+    obj->GetLogger()->Write(::itk::Logger::x, y); \
+    }  \
 }
 
 
@@ -57,7 +68,8 @@ virtual void Set##name (const type _arg) \
 } 
 
 
-/** Get built-in type.  Creates member Get"name"() (e.g., GetTimeStep(time)); */
+/** Get built-in type.  Creates member Get"name"() (e.g., GetTimeStep(time));
+ */
 #define igstkGetMacro(name,type) \
 virtual const type & Get##name () const \
 { \

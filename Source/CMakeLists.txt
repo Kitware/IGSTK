@@ -9,7 +9,6 @@ SET(IGSTK_HEADS
   igstkCylinderObjectRepresentation.h
   igstkEllipsoidObject.h  
   igstkEllipsoidObjectRepresentation.h  
-  igstkLogger.h
   igstkMacros.h
   igstkMultipleOutput.h
   igstkObjectRepresentation.h
@@ -37,7 +36,6 @@ SET(IGSTK_SRCS
   igstkCylinderObjectRepresentation.cxx
   igstkEllipsoidObject.cxx
   igstkEllipsoidObjectRepresentation.cxx
-  igstkLogger.cxx
   igstkMultipleOutput.cxx
   igstkObjectRepresentation.cxx
   igstkPulseGenerator.cxx

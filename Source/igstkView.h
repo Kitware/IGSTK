@@ -36,13 +36,13 @@
 
 // ITK headers
 #include "itkCommand.h"
+#include "itkLogger.h"
 
 // IGSTK headers
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
 #include "igstkPulseGenerator.h"
 #include "igstkObjectRepresentation.h"   
-#include "igstkLogger.h"
 
 namespace igstk{
 
@@ -90,7 +90,7 @@ public:
   void RequestRemoveObject( ObjectRepresentation* object ); 
 
   /** Logger class */
-  typedef igstk::Logger                  LoggerType;
+  typedef itk::Logger                  LoggerType;
 
   /** The SetLogger method is used to attach a logger to this object for
    * debugging and retrospective analysis purposes. */

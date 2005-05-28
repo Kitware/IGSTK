@@ -21,9 +21,9 @@
 #include <vector>
 
 #include "itkObject.h"
+#include "itkLogger.h"
 
 #include "igstkCommunication.h"
-#include "igstkLogger.h"
 #include "igstkStateMachine.h"
 #include "igstkTrackerPort.h"
 #include "igstkTransform.h"
@@ -54,7 +54,7 @@ class Tracker : public itk::Object
 public:
   
   typedef igstk::Communication           CommunicationType;
-  typedef igstk::Logger                  LoggerType;
+  typedef itk::Logger                    LoggerType;
 
   /* typedefs from igstk::TrackerPort class */
   typedef igstk::TrackerTool             TrackerToolType;

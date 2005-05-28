@@ -25,8 +25,6 @@ ADD_TEST(igstkCommunicationTest ${IGSTK_TESTS} igstkCommunicationTest)
 
 ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
 
-ADD_TEST(igstkLoggerTest ${IGSTK_TESTS} igstkLoggerTest)
-
 ADD_TEST(igstkPulseGeneratorTest ${IGSTK_TESTS} igstkPulseGeneratorTest)
 
 ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
@@ -56,7 +54,6 @@ SET(BasicTests_SRCS
   igstkCylinderObjectTest
   igstkEllipsoidObjectTest
   igstkMultipleOutputTest
-  igstkLoggerTest
   igstkPulseGeneratorTest
   igstkStateMachineTest
   igstkStateMachineErrorsTest

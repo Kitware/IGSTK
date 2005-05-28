@@ -20,9 +20,10 @@
 
 
 #include "itkObject.h"
+#include "itkLogger.h"
+
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
-#include "igstkLogger.h"
 
 
 namespace igstk
@@ -75,7 +76,7 @@ public:
   igstkGetMacro( Frequency, double );
       
   /** Logger class */
-  typedef igstk::Logger                  LoggerType;
+  typedef itk::Logger                  LoggerType;
 
   /** The SetLogger method is used to attach a logger to this object for
    * debugging and retrospective analysis purposes. */
