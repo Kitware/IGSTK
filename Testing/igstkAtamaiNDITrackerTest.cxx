@@ -26,19 +26,22 @@
 
 #include "itkCommand.h"
 #include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
 
 #include "igstkAtamaiNDITracker.h"
-
 
 int igstkAtamaiNDITrackerTest( int, char * [] )
 {
   typedef igstk::Transform         TransformType;
   typedef igstk::AtamaiNDITracker  AtamaiNDITrackerType;
   typedef itk::Logger              LoggerType; 
+  typedef itk::StdStreamLogOutput  LogOutputType;
    
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
-  logger->AddOutputStream( std::cout );
+  LogOutputType::Pointer logOutput = LogOutputType::New();  
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   AtamaiNDITrackerType::Pointer tracker = AtamaiNDITrackerType::New();
