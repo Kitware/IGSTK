@@ -191,8 +191,7 @@ bool SerialCommunication::SendString( const char *data )
 bool SerialCommunication::ReceiveString( char *data )
 {
   this->m_StateMachine.ProcessInput( m_ReceiveStringInput );
-  strncpy(m_OutputBuffer, data, m_ReadBufferSize);
-  memcpy(data, m_InputBuffer, m_ReadDataSize);
+  strncpy(data, m_InputBuffer, m_ReadBufferSize);
   return true;
 }
 

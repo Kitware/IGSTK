@@ -516,6 +516,7 @@ const char *NDICommandInterpreter::Command(const char *command)
   m_Communication->Flush();
 
   /* send the command to the device */
+  std::cout << "NDI sending: " << cp << std::endl;
   if (!m_Communication->SendString(cp))
     {
     errcode = NDI_WRITE_ERROR;
@@ -535,12 +536,28 @@ const char *NDICommandInterpreter::Command(const char *command)
   /* read the reply from the device */
   if (errcode == 0)
     {
-    if (!m_Communication->ReceiveString(rp))
+    m = 0;
+    for (;;)
       {
-      errcode = NDI_WRITE_ERROR;
+      if (!m_Communication->ReceiveString(&rp[m]))
+        {
+        errcode = NDI_WRITE_ERROR;
+        std::cout << "NDI read error"<< std::endl;
+        break;
+        }
+
+      m = strlen(rp);
+
+      /* check for carriage return */
+      if (m != 0 && rp[m-1] == '\r')
+        {
+        std::cout << "NDI read complete: " << rp << std::endl;
+        break;
+        }
+
+      std::cout << "NDI read " << m << " bytes: " << rp << std::endl;
       }
     }
-  m = strlen(rp);
 
   /* here is the old code from ndicapi.c */
   //m = 0;

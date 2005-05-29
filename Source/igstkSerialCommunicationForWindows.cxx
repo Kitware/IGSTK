@@ -283,7 +283,15 @@ void SerialCommunicationForWindows::ReceiveStringProcessing( void )
       return;
   }
 
-  int bytesToRead = (communicationStatus.cbInQue < m_ReadBufferSize) ? communicationStatus.cbInQue : m_ReadBufferSize;
+  int bytesToRead = communicationStatus.cbInQue;
+  if (bytesToRead == 0)
+    {
+    bytesToRead = 1;
+    }
+  if (bytesToRead > m_ReadBufferSize)
+    {
+    bytesToRead = m_ReadBufferSize;
+    }
 
   std::cout << "Bytes to read = " << bytesToRead << std::endl;
 
@@ -298,10 +306,11 @@ void SerialCommunicationForWindows::ReceiveStringProcessing( void )
   }
 
   //try reading from the hardware
-  unsigned long   readBytes;
+  unsigned long   readBytes = 0;
 
   bool successfulRead = ReadFile(this->m_PortHandle, this->m_InputBuffer, \
     bytesToRead, &readBytes, &overlappedRead);
+  this->m_InputBuffer[readBytes] = 0; // terminate the string
 
   //check if reading event successful
   if (successfulRead) 
@@ -326,10 +335,14 @@ void SerialCommunicationForWindows::ReceiveStringProcessing( void )
     {
     case WAIT_OBJECT_0:
       //check if reading succeeded 
-      if( GetOverlappedResult(this->m_PortHandle, &overlappedRead, &readBytes, FALSE)
-              && (readBytes==bytesToRead))
+      successfulRead = GetOverlappedResult(this->m_PortHandle, &overlappedRead, &readBytes, FALSE);
+      this->m_InputBuffer[readBytes] = 0; // terminate the string
+
+      if (successfulRead && (readBytes==bytesToRead))
       {
         this->InvokeEvent( ReceiveStringSuccessfulEvent() );
+        this->m_ReadDataSize = readBytes;
+        this->m_ReadBufferOffset = 0;
       }
       //reading timeout occurred before all data could be read.
       else
