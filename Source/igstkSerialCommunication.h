@@ -32,7 +32,9 @@
 namespace igstk
 {
 
+// since we can't include the header, define the type and the pointer
 class SerialCommunicationCommand;
+typedef itk::SmartPointer<SerialCommunicationCommand> SerialCommunicationCommandPointer;
 
 /** \class SerialCommunication
  * 
@@ -256,7 +258,7 @@ protected:
 protected:  // FIXME all these variables should be private
   
   /** Command for the events created. */
-  igstk::SerialCommunicationCommand    *m_pCommand; 
+  SerialCommunicationCommandPointer  m_pCommand; 
 
   // Communication Parameters
 

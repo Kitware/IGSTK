@@ -126,7 +126,7 @@ private:
 
 private:
   /** The Logger instance */
-  LoggerType     *m_pLogger;
+  LoggerType::Pointer    m_pLogger;
 
     /** The GetLogger method return pointer to the logger object. */
   LoggerType* GetLogger(  void )
