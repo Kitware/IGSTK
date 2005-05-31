@@ -101,8 +101,10 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this ),
   m_StateMachine.AddTransition( m_PortOpenState, m_ClosePortInput, m_AttemptToClosePortState, &SerialCommunication::ClosePortProcessing);
   m_StateMachine.AddTransition( m_DataBuffersSetState, m_ClosePortInput, m_AttemptToClosePortState, &SerialCommunication::ClearBuffersAndClosePortProcessing);
   m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_ClosePortInput, m_AttemptToClosePortState, &SerialCommunication::ClearBuffersAndClosePortProcessing);
+  m_StateMachine.AddTransition( m_IdleState, m_ClosePortInput, m_IdleState, NoAction);
 
   m_StateMachine.AddTransition( m_AttemptToClosePortState, m_ClosePortSuccessInput, m_IdleState, &SerialCommunication::ClosePortSuccessProcessing);
+  m_StateMachine.AddTransition( m_IdleState, m_ClosePortSuccessInput, m_IdleState, NoAction);
   m_StateMachine.AddTransition( m_AttemptToClosePortState, m_ClosePortFailureInput, m_PortOpenState, &SerialCommunication::ClosePortFailureProcessing);
 
   m_StateMachine.AddTransition( m_PortReadyForCommunicationState, m_RestPortInput, m_PortReadyForCommunicationState, &SerialCommunication::RestPortProcessing);
@@ -191,7 +193,8 @@ bool SerialCommunication::SendString( const char *data )
 bool SerialCommunication::ReceiveString( char *data )
 {
   this->m_StateMachine.ProcessInput( m_ReceiveStringInput );
-  strncpy(data, m_InputBuffer, m_ReadBufferSize);
+  strncpy(data, m_InputBuffer, m_ReadDataSize);
+  data[m_ReadDataSize] = '\0'; // terminate the string
   return true;
 }
 
