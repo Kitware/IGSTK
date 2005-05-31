@@ -42,7 +42,6 @@ NDITracker::~NDITracker(void)
 
 void NDITracker::SetCommunication( CommunicationType *communication )
 {
-  std::cout << "Entered ..." << std::endl;
   igstkLogMacro( DEBUG, "NDITracker:: Entered SetCommunication ...\n");
   Tracker::SetCommunication( communication );
   m_CommandInterpreter->SetCommunication( communication );
@@ -66,7 +65,7 @@ void NDITracker::AttemptToSetUpCommunicationProcessing( void )
   }
   else
   {
-    m_CommandInterpreter->BEEP(8);
+    m_CommandInterpreter->BEEP(2);
 //  m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentSuccessInput;
   }
 }
@@ -108,6 +107,7 @@ void NDITracker::AttemptToStartTrackingProcessing( void )
 {
   igstkLogMacro( DEBUG, "NDITracker::StartTrackingProcessing called ...\n");  
   m_CommandInterpreter->Command("TSTART:");
+
   int errnum = m_CommandInterpreter->GetError();
   if (errnum) 
   {
@@ -446,16 +446,16 @@ void NDITracker::EnableToolPorts()
   }
 
   // re-start the tracking
-  if (this->IsDeviceTracking)
-  {
-    m_CommandInterpreter->Command("TSTART:");
-    errnum = m_CommandInterpreter->GetError();
-    if (errnum)
-    { 
-      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
-    }
-  }
+//  if (this->IsDeviceTracking)
+//  {
+//    m_CommandInterpreter->Command("TSTART:");
+//    errnum = m_CommandInterpreter->GetError();
+//    if (errnum)
+//    { 
+//      igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
+//      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
+//    }
+//  }
 }
 
 
@@ -552,11 +552,11 @@ void NDITracker::InternalUpdate()
 
   // FIXME: TO Remove this check 
 
-  if (!this->IsDeviceTracking)
-  {
-    igstkLogMacro( DEBUG, "called Update() when NDI was not tracking\n");
-    return;
-  }
+ // if (!this->IsDeviceTracking)
+ // {
+ //   igstkLogMacro( DEBUG, "called Update() when NDI was not tracking\n");
+  //  return;
+  //}
 
   // initialize transformations to identity
   // FIXME: May be, a memset could be used below for initialization.
