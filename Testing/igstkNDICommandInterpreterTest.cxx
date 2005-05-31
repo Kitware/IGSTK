@@ -120,9 +120,9 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
   // -- start tracking --
   interpreter->TSTART();
-  interpreter->TX(NDI_XFORMS_AND_STATUS);
-  for (j = 0; j < 10; j++)
+  for (j = 0; j < 50; j++)
     {
+    interpreter->TX(NDI_XFORMS_AND_STATUS);
     for (i = 0; i < numberOfHandles; i++)
       {
       ph = portHandles[i];
@@ -130,7 +130,6 @@ int igstkNDICommandInterpreterTest( int, char * [] )
       a = interpreter->GetTXPortStatus(ph);
       l = interpreter->GetTXFrame(ph);
       }
-    interpreter->BEEP(1);
     }
   interpreter->TSTOP();
 
