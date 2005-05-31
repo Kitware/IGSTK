@@ -81,6 +81,8 @@ public:
 
   igstkGetMacro( NumberOfTools, unsigned int );
 
+  void AttachSROMFileNameToPort( const int portNum, std::string fileName );
+
 protected:
 
   NDITracker(void);
@@ -104,8 +106,6 @@ protected:
   virtual void DisableCommunicationProcessing( void );
 
   virtual void DisableToolsProcessing( void );
-
-  void AttachSROMFileNameToPort( const int portNum, std::string fileName );
 
 private:
 
