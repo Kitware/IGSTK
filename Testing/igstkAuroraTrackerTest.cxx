@@ -26,13 +26,17 @@
 #include "itkCommand.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+#include "itkVector.h"
+#include "itkVersor.h"
 
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
 #else
 #include "igstkSerialCommunicationForLinux.h"
 #endif
+
 #include "igstkAuroraTracker.h"
+#include "igstkTransform.h"
 
 class SerialCommunicationTestCommand : public itk::Command 
 {
@@ -126,11 +130,12 @@ int igstkAuroraTrackerTest( int, char * [] )
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
 
   // logger object created for logging mouse activities
+
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();  
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( itk::Logger::WARNING); //DEBUG );
 
   serialComm->AddObserver( igstk::SerialCommunication::OpenPortFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::SetupCommunicationParametersFailureEvent(), my_command);
@@ -171,24 +176,28 @@ int igstkAuroraTrackerTest( int, char * [] )
 
   std::cout << "Exited SetCommunication ..." << std::endl;
 
+  tracker->AttachSROMFileNameToPort( 0, "C:/Program Files/Northern Digital Inc/SROM Image Files/5D.ROM" );
+
   tracker->Initialize();
 
-  /*
-  serialComm->SendString("Hello World!!!");
+  tracker->StartTracking();
 
-  serialComm->SendString("Hello World!!!");
-  serialComm->SendString("Hello World!!!");
-  serialComm->SendString("Hello World!!!");
-  serialComm->SendString("Hello World!!!");
-  serialComm->SendString("Hello World!!!");
+  typedef igstk::Transform            TransformType;
+  typedef ::itk::Vector<double, 3>    VectorType;
+  typedef ::itk::Versor<double>       VersorType;
 
-  serialComm->FlushOutputBuffer();
+  TransformType             transitions;
+  VectorType                position;
 
-  serialComm->ReceiveString();
-  serialComm->ReceiveString();
-  serialComm->ReceiveString();
-  serialComm->ReceiveString();
- */
+  for(int i=0; i<10; i++)
+  {
+    tracker->UpdateStatus();
+    tracker->GetToolTransform( 0, 0, transitions );
+    position = transitions.GetTranslation();
+    std::cout << "Position = (" << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
+  }
+
+  tracker->StopTracking();
 
   serialComm->CloseCommunication();
 
