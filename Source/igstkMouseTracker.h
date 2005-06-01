@@ -59,6 +59,9 @@ protected:
     /** The "UpdateStatusProcessing" method updates mouse status. */
     virtual void UpdateStatusProcessing( void );
 
+    /** Print object information */
+    virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 private:
 
     typedef Transform::TimePeriodType   TimePeriodType;

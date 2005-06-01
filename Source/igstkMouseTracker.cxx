@@ -81,4 +81,21 @@ void MouseTracker::GetTransform(TransformType & transform)
   this->GetToolTransform(0, 0, transform);
 }
 
+/** Print Self function */
+void MouseTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  os << indent << "Validity Time: " << m_ValidityTime << std::endl;
+  if( this->m_Tool )
+  {
+    os << indent << *m_Tool << std::endl;
+  }
+  if( this->m_Port )
+  {
+    os << indent << *m_Port << std::endl;
+  }
+  os << indent << "Scale Factor: " << m_ScaleFactor << std::endl;
+}
+
 }

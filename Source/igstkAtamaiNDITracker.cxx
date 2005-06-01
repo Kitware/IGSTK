@@ -263,5 +263,11 @@ void AtamaiNDITracker::DisableToolsProcessing( void )
   // nothing to do: tools are disabled when vtkTracker isn't tracking
 }
 
+/** Print Self function */
+void AtamaiNDITracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
 }
 

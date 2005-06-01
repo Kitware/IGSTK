@@ -79,6 +79,9 @@ protected:
 
   virtual void ReceiveStringProcessing( void );
 
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 private:
 
   HandleType      m_PortHandle;     // com port handle

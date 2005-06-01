@@ -728,4 +728,27 @@ void NDITracker::InternalUpdate()
 }
 
 
+/** Print Self function */
+void NDITracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  int i;
+  for( i = 0; i < NDI_NUMBER_OF_PORTS; ++i )
+  {
+    os << indent << "Port " << i << " Enabled: " << PortEnabled[i] << std::endl;
+  }
+  for( i = 0; i < NDI_NUMBER_OF_PORTS; ++i )
+  {
+    os << indent << "Port " << i << " Handle: " << PortHandle[i] << std::endl;
+  }
+  os << indent << "Tracking: " << IsDeviceTracking << std::endl;
+  os << indent << "Number of tools: " << m_NumberOfTools << std::endl;
+  for( i = 0; i < NDI_NUMBER_OF_PORTS; ++i )
+  {
+    os << indent << "SROM filename " << i << " : " << m_SROMFileNames[i] << std::endl;
+  }
+}
+
+
 }

@@ -2604,5 +2604,16 @@ int NDICommandInterpreter::SetErrorCode(int errnum)
   return errnum;
 }
 
+
+/** Print Self function */
+void NDICommandInterpreter::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  os << indent << "Tracking: " << m_Tracking << std::endl;
+  os << indent << "Error code: " << m_ErrorCode << std::endl;
+}
+
+
 }
 

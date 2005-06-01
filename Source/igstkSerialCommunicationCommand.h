@@ -53,6 +53,14 @@ public:
   }
 
 public:
+
+protected:
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const
+  {
+    Superclass::PrintSelf(os, indent);
+  }
+
 private:
   SerialCommunicationCommand() // SerialCommunication::Pointer object ) 
   {
@@ -136,6 +144,12 @@ private:
 
 //  SerialCommunication::Pointer        m_pSerialCommunication;
 };
+
+std::ostream& operator<<(std::ostream& os, const SerialCommunicationCommand& o)
+{
+  o.Print(os, 0);
+  return os;
+}
 
 }
 

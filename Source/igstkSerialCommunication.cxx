@@ -222,5 +222,36 @@ void SerialCommunication::ClosePortFailureProcessing( void )
   igstkLogMacro( DEBUG, "SerialCommunication::ClosePortFailureProcessing called ...\n");
 }
 
+
+
+
+;
+
+
+/** Print Self function */
+void SerialCommunication::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  if( this->m_pCommand )
+  {
+    os << indent << *m_pCommand << std::endl;
+  }
+  os << indent << "Port number: " << m_PortNumber.Get() << std::endl;
+  os << indent << "Baud rate: " << m_BaudRate.Get() << std::endl;
+  os << indent << "Number of bits per byte: " << m_ByteSize.Get() << std::endl;
+  os << indent << "Parity: " << m_Parity.Get() << std::endl;
+  os << indent << "StopBits: " << m_StopBits.Get() << std::endl;
+  os << indent << "HardwareHandshake: " << m_HardwareHandshake.Get() << std::endl;
+  os << indent << "ReadIntervalTimeout: " << m_ReadIntervalTimeout << std::endl;
+  os << indent << "ReadTotalTimeoutMultiplier: " << m_ReadTotalTimeoutMultiplier << std::endl;
+  os << indent << "ReadTotalTimeoutConstant: " << m_ReadTotalTimeoutConstant << std::endl;
+  os << indent << "WriteTotalTimeoutMultiplier: " << m_WriteTotalTimeoutMultiplier << std::endl;
+  os << indent << "WriteTotalTimeoutConstant: " << m_WriteTotalTimeoutConstant << std::endl;
+  os << indent << "ReadBufferOffset: " << m_ReadBufferOffset << std::endl;
+  os << indent << "ReadDataSize: " << m_ReadDataSize << std::endl;
+}
+
+
 } // end namespace igstk
 

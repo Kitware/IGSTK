@@ -1535,6 +1535,9 @@ protected:
   /** Get the communication object */
   CommunicationType *GetCommunication();
 
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 private:
 
   /** the communication object */

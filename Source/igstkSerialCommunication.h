@@ -250,6 +250,9 @@ protected:
 
   virtual void ReceiveStringProcessing( void ) = 0;
 
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 protected: 
 
   /** The GetLogger method return pointer to the logger object. */

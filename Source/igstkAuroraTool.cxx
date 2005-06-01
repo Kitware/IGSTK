@@ -34,4 +34,33 @@ AuroraTool::AuroraTool() : TrackerTool()
   this->ToolManufacturer = 0;
 }
 
+
+/** Print Self function */
+void AuroraTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  if( this->ToolType )
+  {
+    os << indent << "Tool type: " << this->ToolType << std::endl;
+  }
+  if( this->ToolRevision )
+  {
+    os << indent << "Tool revision: " << this->ToolRevision << std::endl;
+  }
+  if( this->ToolSerialNumber )
+  {
+    os << indent << "Tool serial number: " << this->ToolSerialNumber << std::endl;
+  }
+  if( this->ToolPartNumber )
+  {
+    os << indent << "Tool part number: " << this->ToolPartNumber << std::endl;
+  }
+  if( this->ToolManufacturer )
+  {
+    os << indent << "Tool manufacturer: " << this->ToolManufacturer << std::endl;
+  }
+}
+
+
 }

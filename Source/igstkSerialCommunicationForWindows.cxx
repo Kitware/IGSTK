@@ -370,5 +370,14 @@ void SerialCommunicationForWindows::ReceiveStringProcessing( void )
   CloseHandle(overlappedRead.hEvent);
 }
 
+
+/** Print Self function */
+void SerialCommunicationForWindows::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  os << indent << "Port Handle: " << m_PortHandle << std::endl;
+}
+
 } // end namespace igstk
 

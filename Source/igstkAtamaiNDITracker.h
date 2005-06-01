@@ -85,6 +85,9 @@ protected:
 
   virtual void DisableToolsProcessing( void );
 
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 private:
 
 };
