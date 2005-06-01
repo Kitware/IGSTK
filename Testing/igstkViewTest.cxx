@@ -43,6 +43,7 @@ namespace ViewTest
       {
       m_PulseCounter = 0;
       m_Form = 0;
+      m_View = 0;
       }
   public:
 
@@ -54,12 +55,19 @@ namespace ViewTest
       {
       std::cerr << "Execute( const * ) should not be called" << std::endl;         
       }
-        
+
+    void SetView( ::igstk::View * view )
+    {
+    m_View = view;
+    if( m_View )
+      {
+      m_View->AddObserver( ::igstk::RefreshEvent(), this );
+      }
+    }
+
     void Execute(itk::Object *caller, const itk::EventObject & event)
       {
-        
-      ::igstk::View * view = 
-        dynamic_cast< ::igstk::View * >( caller );
+      std::cout << "Toto" << std::endl;
       
       if( ::igstk::RefreshEvent().CheckEvent( &event ) )
         {
@@ -67,7 +75,14 @@ namespace ViewTest
 
         if( m_PulseCounter > 20 )
           {
-          view->RequestStop();
+          if( m_View )
+            {
+            m_View->RequestStop();
+            } 
+          else
+            {
+            std::cerr << "View pointer is NULL " << std::endl;
+            }
           if( m_Form )
             {
             m_Form->hide();
@@ -78,7 +93,8 @@ namespace ViewTest
       }
   private:
     unsigned long       m_PulseCounter;
-    Fl_Window *         m_Form;
+    Fl_Window          *m_Form;
+    ::igstk::View      *m_View;
   };
 
 
@@ -175,9 +191,11 @@ int igstkViewTest( int, char * [] )
     view3D->RequestAddObject( cylinderRepresentation );
     typedef ViewTest::ViewObserver ObserverType;
     ObserverType::Pointer viewObserver = ObserverType::New();
-    view3D->AddObserver( ::igstk::RefreshEvent(), viewObserver );
+    
+    viewObserver->SetView( view3D );
     viewObserver->SetForm( form );
 
+    view2D->RequestStart();
     view3D->RequestStart();
 
     Fl::run();
