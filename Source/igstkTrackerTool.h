@@ -74,6 +74,9 @@ protected:
 
     ~TrackerTool(void);
 
+  /** Print the object information in a stream. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 
 private:
 
@@ -99,6 +102,8 @@ private:
 
 
 };
+
+std::ostream& operator<<(std::ostream& os, const TrackerTool& o);
 
 }
 

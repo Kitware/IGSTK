@@ -77,6 +77,9 @@ protected:
 
   ~TrackerPort(void);
 
+  /** Print the object information in a stream. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 
 private:
 
@@ -84,6 +87,10 @@ private:
     TrackerToolVectorType       m_Tools;
 
 };
+
+
+std::ostream& operator<<(std::ostream& os, const TrackerPort& o);
+
 
 }
 #endif //__igstk_TrackerPort_h_

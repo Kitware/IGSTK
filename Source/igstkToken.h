@@ -19,7 +19,7 @@
 #define __igstk_Token_h
 
 #include <string>
-
+#include <itkLightObject.h>
 #include "igstkMacros.h"
 
 
@@ -76,6 +76,12 @@ public:
     *
     */
 
+   void Print(std::ostream& os, itk::Indent indent) const;
+
+protected:
+
+  /** Print the object information in a stream. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
 
@@ -92,11 +98,7 @@ private:
 };
 
 
-
-
-
-
-
+std::ostream& operator<<(std::ostream& os, const Token& o);
 
 } // end namespace igstk
 

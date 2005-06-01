@@ -81,7 +81,7 @@ protected:
   /** Connect this representation class to the spatial object */
   void RequestSetSpatialObject( SpatialObjectType * );
 
-  /** Print the object informations in a stream. */
+  /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 

@@ -65,7 +65,10 @@ EllipsoidObject::GetRadius() const
 void EllipsoidObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << m_EllipseSpatialObject << std::endl; 
+  if( m_EllipseSpatialObject )
+  {
+    os << indent << m_EllipseSpatialObject << std::endl; 
+  }
 }
 
 

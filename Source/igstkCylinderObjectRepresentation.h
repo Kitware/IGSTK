@@ -65,14 +65,16 @@ public:
   CylinderObjectRepresentation( void );
   ~CylinderObjectRepresentation( void );
 
-  /** Print the object informations in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
-
   /** Create the VTK actors */
   void CreateActors();
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
+
+protected:
+
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
 

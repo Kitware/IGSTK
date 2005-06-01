@@ -118,11 +118,13 @@ protected:
   void DisableInteractions();
   void EnableInteractions();
 
+  /** Print the object information in a stream. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 
   static void OnTimerGlobal(void *p);
 
 public:
-  
   
   /** Update the display in order to render the new content of the scene*/
   void Update();

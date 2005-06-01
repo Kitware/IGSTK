@@ -83,6 +83,28 @@ TrackerPort
 }
 
 
+/** Print object information */
+void TrackerPort::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  os << indent << "Number of tools: " << this->m_Tools.size() << std::endl;
+  for(int i=0; i < m_Tools.size(); ++i )
+  {
+    if( this->m_Tools[i] )
+    {
+      os << indent << *(this->m_Tools[i]) << std::endl;
+    }
+  }
+}
+
+
+std::ostream& operator<<(std::ostream& os, const TrackerPort& o)
+{
+  o.Print(os, 0);
+  return os;
+}
+
 
 }
 

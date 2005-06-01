@@ -106,6 +106,11 @@ void CylinderObjectRepresentation::SetCylinderObject()
 void CylinderObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+
+  if( this->m_CylinderSource )
+  {
+    os << indent << this->m_CylinderSource << std::endl;
+  }
 }
 
 
@@ -151,7 +156,6 @@ CylinderObjectRepresentation::Copy() const
 
   return newOR;
 }
-
 
 
 } // end namespace igstk

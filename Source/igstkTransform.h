@@ -169,7 +169,17 @@ public:
 
   /** Resets the Transform to an Identity Transform */
   void SetToIdentity( TimePeriodType validityPeriodInMilliseconds );
-  
+
+  void Print(std::ostream& os, itk::Indent indent) const;
+
+protected:
+
+  void PrintHeader(std::ostream& os, itk::Indent indent) const;
+
+  void PrintTrailer(std::ostream& itkNotUsed(os), itk::Indent itkNotUsed(indent)) const;
+
+  /** Print the object information in a stream. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
 
@@ -181,7 +191,10 @@ private:
 };
 
 
+std::ostream& operator<<(std::ostream& os, const igstk::Transform& o);
 }
+
+
 
 #endif
 

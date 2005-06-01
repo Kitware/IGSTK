@@ -737,4 +737,33 @@ const char *View_rcsid(void)
     return rcsid;
 }
 
+
+/** Print object information */
+void View::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
+
+  os << indent << "RenderWindow Pointer: " << this->m_RenderWindow << std::endl;
+  os << indent << "Renderer Pointer: " << this->m_Renderer << std::endl;
+  os << indent << "Camera Pointer: " << this->m_Camera << std::endl;
+  os << indent << "InteractionHandling: " << this->m_InteractionHandling << std::endl;
+  if( this->m_PulseGenerator )
+  {
+    os << indent;
+    this->m_PulseGenerator->Print(os);
+  }
+  if( this->m_PulseObserver )
+  {
+    os << indent;
+    this->m_PulseObserver->Print(os);
+  }
+
+  ObjectListConstIterator itr;
+  for( itr = this->m_Objects.begin(); itr != this->m_Objects.end(); ++itr )
+  {
+    os << indent << *itr << std::endl;
+  }
+}
+
+
 } // end namespace igstk

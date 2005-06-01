@@ -93,6 +93,8 @@ protected:
 
   virtual ~PulseGenerator(void);
 
+  /** Print the object information. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
 

@@ -216,6 +216,15 @@ PulseGenerator::ReportMissedPulse()
   igstkLogMacro( WARNING, "ReportMissedPulse() called ...Pulse Missed !!!. It means that the frequency of the pulse generator is to high for the time needed by Observers to complete their execute method. Please reduce the frequency, of use faster Execute methjods.");
 }
 
+
+/** Print Self function */
+void PulseGenerator::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+  os << indent << "Frequency: " << m_Frequency << std::endl;
+  os << indent << "Period: " << m_Period << std::endl;
+}
+
 }
 
 

@@ -33,6 +33,7 @@ namespace igstk {
 class View3D : public View 
 {
 public:
+  igstkTypeMacro( View3D, View );
    
   /** Constructor. The parameters of this constructor are related to the FLTK
    * box class. They include the screen coordinates of the upper left
@@ -47,6 +48,9 @@ protected:
   /** This method implements the user interactions with the view. It is an
    * overload of a virtual medthod defined for FLTK classes. */
   int  handle( int event );
+
+  /** Print the object information in a stream. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 };
 

@@ -38,4 +38,10 @@ int View2D::handle( int event )
 }
 
 
+/** Print object information */
+void View2D::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+}
+
+
 } // end namespace igstk

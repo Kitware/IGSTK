@@ -35,4 +35,10 @@ int View3D::handle( int event )
 }
 
 
+/** Print object information */
+void View3D::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+}
+
+
 } // end namespace igstk

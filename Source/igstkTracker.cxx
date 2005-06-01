@@ -372,4 +372,30 @@ void Tracker::AttachObjectToTrackerTool(
 
 }
 
+/** Print object information */
+void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  if( this->m_PulseGenerator )
+  {
+    os << indent << this->m_PulseGenerator << std::endl;
+  }
+
+  if( this->m_PulseObserver )
+  {
+    os << indent << this->m_PulseObserver << std::endl;
+  }
+
+  os << indent << "Number of ports: " << this->m_Ports.size() << std::endl;
+  for(int i=0; i < m_Ports.size(); ++i )
+  {
+    if( this->m_Ports[i] )
+    {
+      os << indent << *this->m_Ports[i] << std::endl;
+    }
+  }
+}
+
+
 }

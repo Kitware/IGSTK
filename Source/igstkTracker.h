@@ -213,6 +213,9 @@ protected:
   /** The GetLogger method return pointer to the logger object. */
   LoggerType* GetLogger(  void );
 
+  /** Print the object information in a stream. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 private:
 
   /** Pulse generator for driving the rate of tracker updates. */

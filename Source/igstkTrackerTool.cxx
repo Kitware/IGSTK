@@ -53,5 +53,23 @@ TrackerTool::SetTransform( const TransformType & transform )
   this->InvokeEvent( event );
 }
 
+
+/** Print object information */
+void TrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  os << indent << this->m_Transform << std::endl;
+  os << indent << this->m_ValidityPeriod << std::endl;
+}
+
+
+std::ostream& operator<<(std::ostream& os, const TrackerTool& o)
+{
+  o.Print(os, 0);
+  return os;  
+}
+
+
 }
 

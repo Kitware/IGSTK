@@ -21,6 +21,8 @@
 
 
 #include <time.h>
+#include <iostream>
+#include <itkLightObject.h>
 #include "itkWin32Header.h"
 
 
@@ -97,6 +99,16 @@ public:
    * */
   bool IsValidAtTime(  TimePeriodType milliseconds ) const;
 
+  void Print(std::ostream& os, itk::Indent indent) const;
+
+protected:
+
+  void PrintHeader(std::ostream& os, itk::Indent indent) const;
+
+  void PrintTrailer(std::ostream& itkNotUsed(os), itk::Indent itkNotUsed(indent)) const;
+
+  /** Print the object information in a stream. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
 
@@ -110,6 +122,7 @@ private:
 
 };
 
+std::ostream& operator<<(std::ostream& os, const TimeStamp& o);
 
 }
 

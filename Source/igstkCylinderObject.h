@@ -70,7 +70,7 @@ protected:
   CylinderObject( void );
   ~CylinderObject( void );
 
-  /** Print the object informations in a stream. */
+  /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:

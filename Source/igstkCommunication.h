@@ -69,12 +69,14 @@ public:
 
 protected:
 
-    /** Constructor is protected in order to enforce 
-     *  the use of the New() operator */
-    Communication(void);
+  /** Constructor is protected in order to enforce 
+   *  the use of the New() operator */
+  Communication(void);
 
-    virtual ~Communication(void);
+  virtual ~Communication(void);
 
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 };
 
 } // end of namespace igstk

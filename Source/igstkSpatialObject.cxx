@@ -97,6 +97,16 @@ SpatialObject::~SpatialObject()
 void SpatialObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+
+  if( this->m_SpatialObject )
+  {
+    os << indent << this->m_SpatialObject << std::endl;
+  }
+  os << indent << this->m_Transform << std::endl;
+  if( this->m_TrackerTool )
+  {
+    os << indent << m_TrackerTool << std::endl;
+  }
 }
 
 /** Request setting the ITK spatial object that provide internal functionalities. */

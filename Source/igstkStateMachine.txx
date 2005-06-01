@@ -381,6 +381,34 @@ StateMachine< TClass >
 
 
 
+/** Print Self function */
+template<class TClass>
+void
+StateMachine< TClass >
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+//  Superclass::PrintSelf(os, indent);
+  os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
+
+  os << indent << m_State << std::endl;
+  if( this->m_This )
+  {
+    os << indent << "the object pointed is set:" << this->m_This << std::endl;
+  }
+  else
+  {
+    os << indent << "the object pointed is null" << std::endl;
+  }
+
+  os << indent << "ReadyToRun: " << m_ReadyToRun << std::endl;
+  os << indent << "InitialStateSelected: " << m_InitialStateSelected << std::endl;
+  os << indent << "Number of States: " << m_States.size() << std::endl;
+  os << indent << "Number of Inputs: " << m_Inputs.size() << std::endl;
+  os << indent << "Number of Transitions: " << m_Transitions.size() << std::endl;
+
+}
+
+
 }
 
 

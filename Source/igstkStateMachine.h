@@ -152,6 +152,11 @@ public:
                                   { return this->m_State; }
 
 
+protected:
+
+  /** Print the object information in a stream. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 private:
 
    /** Variable that holds the code of the current state */

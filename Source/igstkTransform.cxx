@@ -196,6 +196,62 @@ Transform
 
 
 
+void 
+Transform
+::Print(std::ostream& os, itk::Indent indent) const
+{
+  this->PrintHeader(os, indent); 
+  this->PrintSelf(os, indent.GetNextIndent());
+  this->PrintTrailer(os, indent);
+}
+
+
+/**
+ * Define a default print header for all objects.
+ */
+void 
+Transform
+::PrintHeader(std::ostream& os, itk::Indent indent) const
+{
+  os << indent << "Transform" << " (" << this << ")\n";
+}
+
+
+/**
+ * Define a default print trailer for all objects.
+ */
+void 
+Transform
+::PrintTrailer(std::ostream& itkNotUsed(os), itk::Indent itkNotUsed(indent)) const
+{
+}
+
+
+/**
+ * This operator allows all subclasses of LightObject to be printed via <<.
+ * It in turn invokes the Print method, which in turn will invoke the
+ * PrintSelf method that all objects should define, if they have anything
+ * interesting to print out.
+ */
+std::ostream& operator<<(std::ostream& os, const Transform& o)
+{
+  o.Print(os, 0);
+  return os;
+}
+
+
+/** Print object information */
+void Transform::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
+
+  os << indent << this->m_TimeStamp << std::endl;
+  os << indent << this->m_Translation << std::endl;
+  os << indent << this->m_Rotation << std::endl;
+  os << indent << this->m_Error << std::endl;
+}
+
+
 } // end namespace itk
 
 

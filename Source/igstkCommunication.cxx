@@ -42,6 +42,14 @@ bool Communication::CloseCommunication(void)
   return true;
 }
 
+void Communication::PrintSelf(std::ostream &os, itk::Indent indent) const
+{
+  Superclass::PrintSelf(os,indent);
+  
+//  os << indent << "Name: " << this->GetName() << std::endl;
+}
+
+
 }
 
 

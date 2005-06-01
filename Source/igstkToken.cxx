@@ -54,6 +54,29 @@ namespace igstk
   }
 
 
+  /** Print Self function */
+  void Token::PrintSelf( std::ostream& os, itk::Indent indent ) const
+  {
+    os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
+
+    os << indent << "Identifier: " << this->m_Identifier << std::endl;
+  }
+
+  void 
+  Token
+  ::Print(std::ostream& os, itk::Indent indent) const
+  {
+    os << indent << "Token" << " (" << this << ")\n";
+    this->PrintSelf(os, indent.GetNextIndent());
+  }
+
+  std::ostream& operator<<(std::ostream& os, const Token& o)
+  {
+    o.Print(os, 0);
+    return os;
+  }
+
+
 } // end namespace igstk
 
 

@@ -97,6 +97,60 @@ TimeStamp
 }
 
 
+void 
+TimeStamp
+::Print(std::ostream& os, itk::Indent indent) const
+{
+  this->PrintHeader(os, indent); 
+  this->PrintSelf(os, indent.GetNextIndent());
+  this->PrintTrailer(os, indent);
+}
+
+
+/**
+ * Define a default print header for all objects.
+ */
+void 
+TimeStamp
+::PrintHeader(std::ostream& os, itk::Indent indent) const
+{
+  os << indent << "Transform" << " (" << this << ")\n";
+}
+
+
+/**
+ * Define a default print trailer for all objects.
+ */
+void 
+TimeStamp
+::PrintTrailer(std::ostream& itkNotUsed(os), itk::Indent itkNotUsed(indent)) const
+{
+}
+
+
+/**
+ * This operator allows all subclasses of LightObject to be printed via <<.
+ * It in turn invokes the Print method, which in turn will invoke the
+ * PrintSelf method that all objects should define, if they have anything
+ * interesting to print out.
+ */
+std::ostream& operator<<(std::ostream& os, const TimeStamp& o)
+{
+  o.Print(os, 0);
+  return os;
+}
+
+
+/** Print Self function */
+void TimeStamp::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
+
+  os << indent << this->m_StartTime << std::endl;
+  os << indent << this->m_ExpirationTime << std::endl;
+}
+
+
 
 } // end namespace igstk
 

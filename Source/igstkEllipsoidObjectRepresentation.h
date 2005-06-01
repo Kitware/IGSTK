@@ -71,7 +71,7 @@ protected:
   EllipsoidObjectRepresentation( void );
   virtual ~EllipsoidObjectRepresentation( void );
 
-  /** Print the object informations in a stream. */
+  /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
   /** Create the VTK actors per view */
