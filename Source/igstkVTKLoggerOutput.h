@@ -84,7 +84,7 @@ public:
 protected:
   VTKLoggerOutput() {}
   virtual ~VTKLoggerOutput() {}
-  virtual void PrintSelf(std::ostream& os, vtkIndent indent) const {}
+  virtual void PrintSelf(std::ostream& os, vtkIndent indent) const;
 
 private:
   itk::Logger* Logger;
