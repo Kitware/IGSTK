@@ -78,6 +78,9 @@ protected:
   /** Destructor */
   virtual ~FLTKTextLogOutput();
 
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 private:
 
   StreamPointerType m_Stream;

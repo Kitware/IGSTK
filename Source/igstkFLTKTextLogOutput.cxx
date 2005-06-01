@@ -92,5 +92,20 @@ void FLTKTextLogOutput::Write(std::string const &content, double timestamp)
 }
 
 
+/** Print Self function */
+void FLTKTextLogOutput::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  if( this->m_Stream )
+  {
+    os << indent << "Stream is available" << std::endl;
+  }
+  else
+  {
+    os << indent << "Stream is NULL" << std::endl;
+  }
+}
+
 }
 
