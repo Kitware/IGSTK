@@ -67,8 +67,6 @@ namespace ViewTest
 
     void Execute(itk::Object *caller, const itk::EventObject & event)
       {
-      std::cout << "Toto" << std::endl;
-      
       if( ::igstk::RefreshEvent().CheckEvent( &event ) )
         {
         m_PulseCounter++;
