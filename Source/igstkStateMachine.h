@@ -151,11 +151,11 @@ public:
    const StateIdentifierType & GetCurrentStateIdentifier() const
                                   { return this->m_State; }
 
+   void Print(std::ostream& os, itk::Indent indent) const;
 
 protected:
-
   /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
 
@@ -245,10 +245,9 @@ private:
 };
 
 
-
-
-
-
+/** Print the object information in a stream. */
+template<class TClass>
+std::ostream& operator<<(std::ostream& os, const StateMachine<TClass>& o);
 
 
 } // end namespace igstk
