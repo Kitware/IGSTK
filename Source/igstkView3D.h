@@ -33,6 +33,8 @@ namespace igstk {
 class View3D : public View 
 {
 public:
+  typedef View3D    Self;
+  typedef View      Superclass;
   igstkTypeMacro( View3D, View );
    
   /** Constructor. The parameters of this constructor are related to the FLTK
@@ -50,7 +52,7 @@ protected:
   int  handle( int event );
 
   /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, vtkIndent indent ); 
 
 };
 
