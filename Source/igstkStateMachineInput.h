@@ -57,6 +57,8 @@ class StateMachineInput : public Token
 
 
 public:
+  typedef StateMachineInput Self;
+  typedef Token             Superclass;
 
 
    /** Constructor. It initializes all the member variables */
@@ -70,6 +72,13 @@ public:
    ~StateMachineInput()
    {
    }
+
+protected:
+  /** Print the object information in a stream. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const
+  {
+    Superclass::PrintSelf(os, indent);
+  }
 
 };
 

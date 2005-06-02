@@ -58,6 +58,8 @@ class StateMachineState : public Token
 
 public:
 
+  typedef StateMachineState Self;
+  typedef Token             Superclass;
 
    /** Constructor. It initializes all the member variables */
    StateMachineState()
@@ -71,6 +73,12 @@ public:
    {
    }
 
+protected:
+  /** Print the object information in a stream. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const
+  {
+    Superclass::PrintSelf(os, indent);
+  }
 };
 
 
