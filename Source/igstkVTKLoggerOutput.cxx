@@ -24,7 +24,7 @@
 
 namespace igstk
 {
-vtkCxxRevisionMacro(VTKLoggerOutput, "1.6");
+vtkCxxRevisionMacro(VTKLoggerOutput, "1.7");
 vtkStandardNewMacro(VTKLoggerOutput);
 
 /** Send a string to display. */
@@ -85,7 +85,7 @@ void VTKLoggerOutput::DisplayDebugText(const char *t)
 }
 
 
-void VTKLoggerOutput::PrintSelf(std::ostream& os, vtkIndent indent) const
+void VTKLoggerOutput::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   os << indent << "VTKLoggerOutput (" << this << ")\n";
   indent = indent.GetNextIndent();
