@@ -81,7 +81,9 @@ public:
     vtkOutputWindow::SetInstance(this);
   }
  
-  virtual void PrintSelf(std::ostream& os, vtkIndent indent);
+  typedef std::ostream StdOStreamType;
+  void PrintSelf(StdOStreamType& os, vtkIndent indent);
+  void Print(StdOStreamType& os);
 
 protected:
   VTKLoggerOutput() {}
@@ -92,6 +94,9 @@ private:
 };
   
 } // end namespace igstk
+
+std::ostream& operator<<(std::ostream& os, const vtkObjectBase& o);
+std::ostream& operator<<(std::ostream& os, const vtkIndent& o);
 
 
 #endif  // __igstkVTKLoggerOutput_h

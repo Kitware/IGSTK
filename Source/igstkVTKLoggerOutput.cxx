@@ -20,11 +20,13 @@
 
 #include"igstkVTKLoggerOutput.h"
 #include"vtkObjectFactory.h"
+#include "vtkIndent.h"
+#include <iostream>
 
 
 namespace igstk
 {
-vtkCxxRevisionMacro(VTKLoggerOutput, "1.7");
+vtkCxxRevisionMacro(VTKLoggerOutput, "1.8");
 vtkStandardNewMacro(VTKLoggerOutput);
 
 /** Send a string to display. */
@@ -85,15 +87,32 @@ void VTKLoggerOutput::DisplayDebugText(const char *t)
 }
 
 
-void VTKLoggerOutput::PrintSelf(std::ostream& os, vtkIndent indent)
+void VTKLoggerOutput::PrintSelf(StdOStreamType& os, vtkIndent indent)
 {
-  os << indent << "VTKLoggerOutput (" << this << ")\n";
+//  os << indent << "VTKLoggerOutput (" << this << ")\n";
+  Superclass::PrintSelf((ostream&)os, indent);
   indent = indent.GetNextIndent();
 
   if( this->Logger )
   {
+//    ::operator<<((ostream&)os , indent);
     os << indent << *this->Logger << std::endl;
   }
+}
+
+void VTKLoggerOutput::Print(StdOStreamType& os)
+{
+  vtkIndent indent;
+
+  os << indent << this->GetClassName() << " (" << this << ")\n";
+  this->PrintSelf(os, indent.GetNextIndent());
+  os << indent << "\n";
+}
+
+std::ostream& operator<<(std::ostream& os, VTKLoggerOutput& o)
+{
+  o.Print(os);
+  return os;
 }
 
 /*
