@@ -26,7 +26,7 @@
 
 namespace igstk
 {
-vtkCxxRevisionMacro(VTKLoggerOutput, "1.8");
+vtkCxxRevisionMacro(VTKLoggerOutput, "1.9");
 vtkStandardNewMacro(VTKLoggerOutput);
 
 /** Send a string to display. */
@@ -91,21 +91,24 @@ void VTKLoggerOutput::PrintSelf(StdOStreamType& os, vtkIndent indent)
 {
 //  os << indent << "VTKLoggerOutput (" << this << ")\n";
   Superclass::PrintSelf((ostream&)os, indent);
-  indent = indent.GetNextIndent();
+//  indent = indent.GetNextIndent();
 
   if( this->Logger )
   {
 //    ::operator<<((ostream&)os , indent);
-    os << indent << *this->Logger << std::endl;
+//    os << indent << *this->Logger << std::endl;
+//    os << indent << "Logger is available" << std::endl;
+    os << "  Logger is available" << std::endl;
   }
 }
 
 void VTKLoggerOutput::Print(StdOStreamType& os)
 {
-  vtkIndent indent;
+//  vtkIndent indent;
+  std::string indent("  ");
 
   os << indent << this->GetClassName() << " (" << this << ")\n";
-  this->PrintSelf(os, indent.GetNextIndent());
+  this->PrintSelf(os, 0);//indent.GetNextIndent());
   os << indent << "\n";
 }
 
