@@ -148,6 +148,31 @@ StateMachine< TClass >
 
 
 
+template<class TClass>
+void
+StateMachine< TClass >
+::PushInput( const InputType & input )
+{
+   m_QueuedInputs.push( input );
+}
+
+
+
+template<class TClass>
+void
+StateMachine< TClass >
+::ProcessInputs()
+{
+
+  while( ! m_QueuedInputs.empty() )
+    {
+    this->ProcessInput( m_QueuedInputs.front() );
+    m_QueuedInputs.pop();
+    }
+
+}
+
+
 
 template<class TClass>
 void

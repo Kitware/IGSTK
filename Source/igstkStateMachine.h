@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <map>
+#include <queue>
 #include <string>
 
 #include "igstkStateMachineState.h"
@@ -97,14 +98,24 @@ public:
    ~StateMachine();
 
 
+   /** Push a new input in the queue of inputs to be processed.  */
+   void PushInput( const InputType & input );
 
+
+ 
    /** Perform the state transition, invoke the corresponding action.
        This is the method that is systematically executed when the 
        state machine is running   */
    void ProcessInput( const InputType & input );
 
 
-      
+  
+   /** Perform the state transition and invoke the corresponding action for
+     * every pending input stored in the input queue.  */
+   void ProcessInputs();
+
+
+     
    /** Set the new state to be assume as a reaction to receiving the
        input code while the StateMachine is in state. The action is
        a member method of the TClass that will be invoked just before
@@ -194,6 +205,8 @@ private:
    typedef std::map< InputIdentifierType, InputDescriptorType >  InputsContainer;
    typedef typename InputsContainer::iterator        InputIterator;
    typedef typename InputsContainer::const_iterator  InputConstIterator;
+   typedef std::queue< InputType >                   InputsQueueContainer;
+
 
    /** Container for Inputs */
    InputsContainer   m_Inputs;
@@ -242,6 +255,7 @@ private:
 
    TransitionContainer                                           m_Transitions;
 
+   InputsQueueContainer                                          m_QueuedInputs;                      
 };
 
 
