@@ -35,6 +35,7 @@ class View3D : public View
 public:
   typedef View3D    Self;
   typedef View      Superclass;
+
   igstkTypeMacro( View3D, View );
    
   /** Constructor. The parameters of this constructor are related to the FLTK
@@ -45,14 +46,14 @@ public:
   /** Destructor */
   ~View3D( void );
 
+  /** Print the object information in a stream. */
+  void PrintSelf( std::ostream& os, vtkIndent indent ); 
+
 protected:
 
   /** This method implements the user interactions with the view. It is an
    * overload of a virtual medthod defined for FLTK classes. */
   int  handle( int event );
-
-  /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, vtkIndent indent ); 
 
 };
 

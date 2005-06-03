@@ -739,7 +739,7 @@ const char *View_rcsid(void)
 
 
 /** Print object information */
-void View::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void View::PrintSelf( std::ostream& os, vtkIndent indent )
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
 

@@ -36,6 +36,7 @@ class View2D : public View
 {
 public:
   typedef View2D    Self;
+  typedef View      Superclass;
 
   igstkTypeMacro( View2D, View );
    
@@ -47,14 +48,14 @@ public:
   /** Destructor */
   ~View2D( void );
 
+  /** Print the object information in a stream. */
+  void PrintSelf( std::ostream& os, vtkIndent indent ); 
+
 protected:
 
   /** This method implements the user interactions with the view. It is an
    * overload of a virtual medthod defined for FLTK classes. */
   int  handle( int event );
-
-  /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 };
 

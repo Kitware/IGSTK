@@ -62,6 +62,7 @@ class View : public Fl_Gl_Window, public vtkRenderWindowInteractor
 public:
     
   typedef View      Self;
+  typedef vtkRenderWindowInteractor Superclass;
 
   igstkFriendClassMacro( Scene );
 
@@ -98,6 +99,9 @@ public:
 
    /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
+
+  /** Print the object information in a stream. */
+  void PrintSelf( std::ostream& os, vtkIndent indent ); 
  
 protected:
 
@@ -117,10 +121,6 @@ protected:
   void ResetCamera();
   void DisableInteractions();
   void EnableInteractions();
-
-  /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
-
 
   static void OnTimerGlobal(void *p);
 
