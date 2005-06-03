@@ -131,7 +131,7 @@ int igstkViewTest( int, char * [] )
     cylinderRepresentation->SetOpacity(1.0);
 
     // Create an FLTK minimal GUI
-    Fl_Window * form = new Fl_Window(600,300,"View3D Test");
+    Fl_Window * form = new Fl_Window(601,301,"View3D Test");
     
     View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
     View3DType * view3D = new View3DType(310,10,280,280,"3D View");
@@ -193,12 +193,19 @@ int igstkViewTest( int, char * [] )
     viewObserver->SetView( view3D );
     viewObserver->SetForm( form );
 
+    // Exercise the code for resizing the window
+    form->resize(100, 100, 600, 300);
+
+    // Exercise and test the PrintSelf() methods
+    view2D->PrintSelf(std::cout, 0);
+    view3D->PrintSelf(std::cout, 0);
+
     view2D->RequestStart();
     view3D->RequestStart();
 
     Fl::run();
 
-    // at this point the observer should have hide the form
+    // at this point the observer should have hid the form
 
     delete view2D;
     delete view3D;
