@@ -729,8 +729,9 @@ View::GetLogger() const
 
 
 /** Print object information */
-void View::PrintSelf( std::ostream& os, ::vtkIndent indent )
+void View::PrintSelf( std::ostream& os, ::vtkIndent vindent )
 {
+  std::string indent("  ");
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
 
   os << indent << "RenderWindow Pointer: " << this->m_RenderWindow << std::endl;

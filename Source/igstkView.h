@@ -248,6 +248,6 @@ private:
 
 } // end namespace igstk
 std::ostream& operator<<(std::ostream& os, const vtkObjectBase& o);
-std::ostream& operator<<(std::ostream& os, const vtkIndent& o);
+//std::ostream& operator<<(std::ostream& os, const vtkIndent& o);
 
 #endif
