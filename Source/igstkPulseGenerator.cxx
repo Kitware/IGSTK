@@ -97,17 +97,20 @@ PulseGenerator::RequestSetFrequency( double frequency )
   m_FrequencyToBeSet = frequency;
   if( frequency <= 0.0 )
     {
-    m_StateMachine.ProcessInput( m_InvalidLowFrequencyInput );
+    m_StateMachine.PushInput( m_InvalidLowFrequencyInput );
+    m_StateMachine.ProcessInputs();
     return;
     }
  
   if( frequency >= m_MaximumFrequency )
     {
-    m_StateMachine.ProcessInput( m_InvalidHighFrequencyInput );
+    m_StateMachine.PushInput( m_InvalidHighFrequencyInput );
+    m_StateMachine.ProcessInputs();
     return;
     }
 
-  m_StateMachine.ProcessInput( m_ValidFrequencyInput );
+  m_StateMachine.PushInput( m_ValidFrequencyInput );
+  m_StateMachine.ProcessInputs();
 
 }
 
@@ -131,7 +134,8 @@ void
 PulseGenerator::RequestStart()
 {
   igstkLogMacro( DEBUG, "RequestStart() called ...\n");
-  m_StateMachine.ProcessInput( m_StartInput );
+  m_StateMachine.PushInput( m_StartInput );
+  m_StateMachine.ProcessInputs();
 }
  
 
@@ -139,7 +143,8 @@ void
 PulseGenerator::RequestStop()
 {
   igstkLogMacro( DEBUG, "RequestStop() called ...\n");
-  m_StateMachine.ProcessInput( m_StopInput );
+  m_StateMachine.PushInput( m_StopInput );
+  m_StateMachine.ProcessInputs();
 }
  
 
@@ -184,13 +189,15 @@ PulseGenerator::CallbackTimer()
   Fl::repeat_timeout( m_Period, 
             ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
   // Process this pulse
-  m_StateMachine.ProcessInput( m_PulseInput );
+  m_StateMachine.PushInput( m_PulseInput );
+  m_StateMachine.ProcessInputs();
 
   // Let the state machine know that we returned from Emiting the pulse.  This
   // is important because we don't know how long it takes to accomplish the
   // operations tied to InvokeEvent(). Observers of this PulseGenerator may have
   // Execute methods that take longer than the m_Period time.
-  m_StateMachine.ProcessInput( m_EventReturnInput );
+  m_StateMachine.PushInput( m_EventReturnInput );
+  m_StateMachine.ProcessInputs();
 }
 
 
