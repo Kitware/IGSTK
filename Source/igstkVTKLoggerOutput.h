@@ -81,10 +81,11 @@ public:
     vtkOutputWindow::SetInstance(this);
   }
  
+  virtual void PrintSelf(std::ostream& os, vtkIndent indent);
+
 protected:
   VTKLoggerOutput() {}
   virtual ~VTKLoggerOutput() {}
-  virtual void PrintSelf(std::ostream& os, vtkIndent indent);
 
 private:
   itk::Logger* Logger;
