@@ -26,6 +26,7 @@
 #include <vtkCommand.h>
 #include <igstkEvents.h>
 
+
 namespace igstk{
 
 /** Constructor */
@@ -727,19 +728,8 @@ View::GetLogger() const
 }
 
 
-
-/** */
-static char const rcsid[] =
-  "Id";
-
-const char *View_rcsid(void)
-{
-    return rcsid;
-}
-
-
 /** Print object information */
-void View::PrintSelf( std::ostream& os, vtkIndent indent )
+void View::PrintSelf( std::ostream& os, ::vtkIndent indent )
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
 
@@ -763,6 +753,17 @@ void View::PrintSelf( std::ostream& os, vtkIndent indent )
   {
     os << indent << *itr << std::endl;
   }
+}
+
+
+
+/** */
+static char const rcsid[] =
+  "Id";
+
+const char *View_rcsid(void)
+{
+    return rcsid;
 }
 
 
