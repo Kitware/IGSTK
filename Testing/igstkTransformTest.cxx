@@ -60,6 +60,8 @@ int igstkTransformTest( int, char * [] )
     VectorType translationSet = t1.GetTranslation();
     VersorType rotationSet    = t1.GetRotation();
 
+    std::cout << t1 << std::endl;
+
     double timeToCheck = t1.GetStartTime() + validityPeriod / 2.0;
 
     bool validAtTime = t1.IsValidAtTime( timeToCheck );

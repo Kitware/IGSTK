@@ -153,7 +153,6 @@ int igstkViewTest( int, char * [] )
     
     // Add the cylinder to the view
     view3D->RequestAddObject( cylinderRepresentation );
-
     
     // Do manual redraws
     for(unsigned int i=0; i<100; i++)
@@ -202,6 +201,9 @@ int igstkViewTest( int, char * [] )
 
     view2D->RequestStart();
     view3D->RequestStart();
+
+    std::cout << *view2D << std::endl;
+    std::cout << *view3D << std::endl;
 
     Fl::run();
 

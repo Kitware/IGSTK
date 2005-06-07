@@ -47,6 +47,8 @@ int igstkTrackerPortTest( int, char * [] )
     TrackerPortType::ConstPointer trackerPort2 = trackerPort.GetPointer();
     TrackerToolType::ConstPointer trackerTool3 = trackerPort2->GetTool(0);
 
+    std::cout << trackerPort << std::endl;
+
     trackerPort->ClearTools();
 
     return EXIT_SUCCESS;

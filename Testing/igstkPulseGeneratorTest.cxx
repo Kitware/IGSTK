@@ -110,6 +110,8 @@ int igstkPulseGeneratorTest( int, char * [] )
     pulseGenerator->RequestSetFrequency( 100 );  // 10 Hz
     pulseGenerator->RequestStart();  
 
+    std::cout << pulseGenerator << std::endl;
+
     // Create an FLTK minimal GUI
     Fl_Window * form = new Fl_Window(300,100,"Pulse Generator Test");
     Fl_Value_Output * counter = new Fl_Value_Output(150,20,80,20,"Number of Pulses");

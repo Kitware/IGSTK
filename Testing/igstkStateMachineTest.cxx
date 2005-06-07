@@ -67,6 +67,10 @@ public:
 
       // Finish the programming and get ready to run
       m_StateMachine.SetReadyToRun();
+
+      std::cout << m_StateMachine << std::endl;
+      std::cout << m_IdleState << std::endl;
+      std::cout << m_SelectDrink << std::endl;
     }
 
 

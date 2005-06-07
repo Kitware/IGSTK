@@ -41,6 +41,8 @@ int igstkTrackerToolTest( int, char * [] )
     TimePeriodType period = 10.0; // measures are valid for 10 milliseconds
     trackerTool->SetValidityPeriod( period );
 
+    std::cout << trackerTool << std::endl;
+
     return EXIT_SUCCESS;
 }
 

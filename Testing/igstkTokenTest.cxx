@@ -30,6 +30,8 @@ int igstkTokenTest( int argc , char * argv [] )
     
     TokenType token;
 
+    std::cout << token << std::endl;
+
     if( argc > 1 )
       {
       if( atoi( argv[1] ) )

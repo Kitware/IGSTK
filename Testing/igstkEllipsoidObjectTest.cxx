@@ -205,6 +205,8 @@ int igstkEllipsoidObjectTest( int, char * [] )
   ellipsoidRepresentation->SetColor(0.9,0.7,0.1);
   ellipsoidRepresentation->SetOpacity(0.8);
 
+  std::cout << ellipsoidRepresentation << std::endl;
+  std::cout << ellipsoidObjectA << std::endl;
 
   std::cout << "Test [DONE]" << std::endl;
   return EXIT_SUCCESS;

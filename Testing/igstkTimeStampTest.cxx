@@ -43,6 +43,8 @@ int igstkTimeStampTest( int, char * [] )
 
     stamp.SetStartTimeNowAndExpireAfter( millisecondsToExpire );
 
+    std::cout << stamp << std::endl;
+
     const double startingTime   = stamp.GetStartTime();
     const double expirationTime = stamp.GetExpirationTime();
     

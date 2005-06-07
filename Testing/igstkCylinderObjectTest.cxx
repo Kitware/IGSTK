@@ -188,6 +188,9 @@ int igstkCylinderObjectTest( int, char * [] )
   cylinderRepresentation->SetColor(0.9,0.7,0.1);
   cylinderRepresentation->SetOpacity(0.8);
 
+  std::cout << cylinderRepresentation << std::endl;
+  std::cout << cylinderObjectA << std::endl;
+
   std::cout << "[PASSED]" << std::endl;
 
   std::cout << "Test [DONE]" << std::endl;
