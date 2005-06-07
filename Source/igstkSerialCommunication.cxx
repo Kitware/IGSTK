@@ -141,16 +141,22 @@ SerialCommunication::~SerialCommunication()
 bool SerialCommunication::OpenCommunication( void )
 {
   // Attempt to open communication port
-  this->m_StateMachine.ProcessInput( m_OpenPortInput );
-  this->m_StateMachine.ProcessInput( *m_pOpenPortResultInput );
+  this->m_StateMachine.PushInput( m_OpenPortInput );
+  this->m_StateMachine.ProcessInputs();
+  this->m_StateMachine.PushInput( *m_pOpenPortResultInput );
+  this->m_StateMachine.ProcessInputs();
 
   // Attempt to set up data buffers
-  this->m_StateMachine.ProcessInput( m_SetUpDataBuffersInput );
-  this->m_StateMachine.ProcessInput( *m_pDataBuffersSetUpResultInput );
+  this->m_StateMachine.PushInput( m_SetUpDataBuffersInput );
+  this->m_StateMachine.ProcessInputs();
+  this->m_StateMachine.PushInput( *m_pDataBuffersSetUpResultInput );
+  this->m_StateMachine.ProcessInputs();
  
   // Attempt to set up communication parameters 
-  this->m_StateMachine.ProcessInput( m_SetUpDataTransferParametersInput );
-  this->m_StateMachine.ProcessInput( *m_pDataTransferParametersSetUpResultInput );
+  this->m_StateMachine.PushInput( m_SetUpDataTransferParametersInput );
+  this->m_StateMachine.ProcessInputs();
+  this->m_StateMachine.PushInput( *m_pDataTransferParametersSetUpResultInput );
+  this->m_StateMachine.ProcessInputs();
 
   // Return "true" if successful, else return "false"
   return(  (m_pOpenPortResultInput==&m_OpenPortSuccessInput)
@@ -161,22 +167,26 @@ bool SerialCommunication::OpenCommunication( void )
 
 bool SerialCommunication::CloseCommunication( void )
 {
-  this->m_StateMachine.ProcessInput( m_ClosePortInput );
-  this->m_StateMachine.ProcessInput( *m_pClosePortResultInput );
+  this->m_StateMachine.PushInput( m_ClosePortInput );
+  this->m_StateMachine.ProcessInputs();
+  this->m_StateMachine.PushInput( *m_pClosePortResultInput );
+  this->m_StateMachine.ProcessInputs();
   return(m_pClosePortResultInput==&m_ClosePortSuccessInput);
 }
 
 
 bool SerialCommunication::RestCommunication( void )
 {
-  this->m_StateMachine.ProcessInput( m_RestPortInput );
+  this->m_StateMachine.PushInput( m_RestPortInput );
+  this->m_StateMachine.ProcessInputs();
   return true;
 }
 
 
 bool SerialCommunication::Flush( void )
 {
-  this->m_StateMachine.ProcessInput( m_FlushOutputBufferInput );
+  this->m_StateMachine.PushInput( m_FlushOutputBufferInput );
+  this->m_StateMachine.ProcessInputs();
   return true;
 }
 
@@ -186,13 +196,15 @@ bool SerialCommunication::SendString( const char *data )
   strncpy(m_OutputBuffer, data, m_WriteBufferSize);
   igstkLogMacro( DEBUG, "Message length = " << strlen(data) << std::endl );
   igstkLogMacro( DEBUG, "Message = " << m_OutputBuffer << std::endl );
-  this->m_StateMachine.ProcessInput( m_SendStringInput );
+  this->m_StateMachine.PushInput( m_SendStringInput );
+  this->m_StateMachine.ProcessInputs();
   return true;
 }
 
 bool SerialCommunication::ReceiveString( char *data )
 {
-  this->m_StateMachine.ProcessInput( m_ReceiveStringInput );
+  this->m_StateMachine.PushInput( m_ReceiveStringInput );
+  this->m_StateMachine.ProcessInputs();
   strncpy(data, m_InputBuffer, m_ReadDataSize);
   data[m_ReadDataSize] = '\0'; // terminate the string
   return true;
