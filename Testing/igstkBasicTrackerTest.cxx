@@ -75,6 +75,8 @@ int igstkBasicTrackerTest( int, char * [] )
 
   tracker->SetLogger( logger );
 
+  std::cout << tracker << std::endl;
+
   tracker->Initialize();
 
   tracker->StartTracking();

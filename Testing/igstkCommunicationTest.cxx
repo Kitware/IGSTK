@@ -32,6 +32,8 @@ int igstkCommunicationTest( int, char * [] )
 
     communicator->OpenCommunication("Test");
 
+    std::cout << communicator << std::endl;
+
     communicator->CloseCommunication();
 
     return EXIT_SUCCESS;
