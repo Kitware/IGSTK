@@ -748,7 +748,8 @@ View
 ::Print(std::ostream& os)
 {
   os << "  " << "Transform" << " (" << this << ")\n";
-  this->PrintSelf(os, NULL);
+  itk::Indent indent;
+  this->PrintSelf(os, indent);
 }
 
 
