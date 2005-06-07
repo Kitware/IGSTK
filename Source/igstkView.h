@@ -104,6 +104,8 @@ public:
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, vtkIndent indent ); 
  
+  void Print(std::ostream& os);
+
 protected:
 
   View( int x, int y, int w, int h, const char *l="");
@@ -245,9 +247,10 @@ private:
 
 };
 
+std::ostream& operator<<(std::ostream& os, View& o);
 
 } // end namespace igstk
-std::ostream& operator<<(std::ostream& os, const vtkObjectBase& o);
+//std::ostream& operator<<(std::ostream& os, const vtkObjectBase& o);
 //std::ostream& operator<<(std::ostream& os, const vtkIndent& o);
 
 #endif

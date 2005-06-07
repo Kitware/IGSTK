@@ -728,6 +728,28 @@ View::GetLogger() const
 }
 
 
+void 
+View
+::Print(std::ostream& os)
+{
+  os << "  " << "Transform" << " (" << this << ")\n";
+  this->PrintSelf(os, NULL);
+}
+
+
+/**
+ * This operator allows all subclasses of LightObject to be printed via <<.
+ * It in turn invokes the Print method, which in turn will invoke the
+ * PrintSelf method that all objects should define, if they have anything
+ * interesting to print out.
+ */
+std::ostream& operator<<(std::ostream& os, View& o)
+{
+  o.Print(os);
+  return os;
+}
+
+
 /** Print object information */
 void View::PrintSelf( std::ostream& os, ::vtkIndent vindent )
 {
