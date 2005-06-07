@@ -80,20 +80,23 @@ public:
   void InsertChange() 
     {
       std::cout << "Insert Change" << std::endl;
-      m_StateMachine.ProcessInput( m_QuarterInserted );
+      m_StateMachine.PushInput( m_QuarterInserted );
+      m_StateMachine.ProcessInputs();
     }
  
  
   void SelectDrink() 
     {
       std::cout << "Select Drink" << std::endl;
-      m_StateMachine.ProcessInput( m_SelectDrink );
+      m_StateMachine.PushInput( m_SelectDrink );
+      m_StateMachine.ProcessInputs();
     }
 
   void CancelPurchase() 
     {
       std::cout << "Cancelling Purchase" << std::endl;
-      m_StateMachine.ProcessInput( m_CancelPurchase );
+      m_StateMachine.PushInput( m_CancelPurchase );
+      m_StateMachine.ProcessInputs();
     }
 
 

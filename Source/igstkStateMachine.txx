@@ -153,7 +153,7 @@ void
 StateMachine< TClass >
 ::PushInput( const InputType & input )
 {
-   m_QueuedInputs.push( input );
+  m_QueuedInputs.push( input.GetIdentifier() );
 }
 
 
@@ -166,8 +166,11 @@ StateMachine< TClass >
 
   while( ! m_QueuedInputs.empty() )
     {
-    this->ProcessInput( m_QueuedInputs.front() );
+    InputIdentifierType inputId = m_QueuedInputs.front();
     m_QueuedInputs.pop();
+    // WARNING: It is very important to do the pop() before invoking ProcessInput()
+    // otherwise the inputs will accumulate in the queue.
+    this->ProcessInput( inputId );
     }
 
 }
@@ -177,7 +180,7 @@ StateMachine< TClass >
 template<class TClass>
 void
 StateMachine< TClass >
-::ProcessInput( const InputType & input )
+::ProcessInput( const InputIdentifierType & inputIdentifier )
 {
   if( !m_ReadyToRun )
     {
@@ -203,14 +206,14 @@ StateMachine< TClass >
     } 
 
   TransitionsPerInputConstIterator  transitionItr = 
-            transitionsFromThisState->second->find( input.GetIdentifier() );
+            transitionsFromThisState->second->find( inputIdentifier );
 
   if( transitionItr == transitionsFromThisState->second->end() )
     {
     std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
     std::cerr << "No transitions have been defined for current state and input " << std::endl;
     std::cerr << "State = "  << m_State << std::endl;
-    std::cerr << "Input = "  << input.GetIdentifier() << std::endl;
+    std::cerr << "Input = "  << inputIdentifier << std::endl;
     std::cerr << std::endl;
     std::cerr.flush();
     return;

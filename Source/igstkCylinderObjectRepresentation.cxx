@@ -72,11 +72,13 @@ void CylinderObjectRepresentation::RequestSetCylinderObject( const CylinderSpati
   m_CylinderObjectToAdd = cylinder;
   if( !m_CylinderObjectToAdd )
     {
-    m_StateMachine.ProcessInput( m_NullCylinderObjectInput );
+    m_StateMachine.PushInput( m_NullCylinderObjectInput );
+    m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.ProcessInput( m_ValidCylinderObjectInput );
+    m_StateMachine.PushInput( m_ValidCylinderObjectInput );
+    m_StateMachine.ProcessInputs();
     }
 
 

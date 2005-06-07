@@ -189,11 +189,13 @@ void View::RequestAddActor( vtkProp3D * actor )
   m_ActorToBeAdded = actor;
   if( !actor )
     {
-    m_StateMachine.ProcessInput( m_NullAddActor );
+    m_StateMachine.PushInput( m_NullAddActor );
+    m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.ProcessInput( m_ValidAddActor );
+    m_StateMachine.PushInput( m_ValidAddActor );
+    m_StateMachine.ProcessInputs();
     }
 }
 
@@ -213,11 +215,13 @@ void View::RequestRemoveActor( vtkProp3D * actor )
   m_ActorToBeRemoved = actor;
   if( !actor )
     {
-    m_StateMachine.ProcessInput( m_NullRemoveActor );
+    m_StateMachine.PushInput( m_NullRemoveActor );
+    m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.ProcessInput( m_ValidRemoveActor );
+    m_StateMachine.PushInput( m_ValidRemoveActor );
+    m_StateMachine.ProcessInputs();
     }
 }
 
@@ -234,7 +238,8 @@ void View::RemoveActor()
 void View::RequestEnableInteractions()
 {
   igstkLogMacro( DEBUG, "RequestEnableInteractions() called ...\n");
-  m_StateMachine.ProcessInput( m_EnableInteractionsInput );
+  m_StateMachine.PushInput( m_EnableInteractionsInput );
+  m_StateMachine.ProcessInputs();
 }
 
 
@@ -242,7 +247,8 @@ void View::RequestEnableInteractions()
 void View::RequestDisableInteractions()
 {
   igstkLogMacro( DEBUG, "RequestDisableInteractions() called ...\n");
-  m_StateMachine.ProcessInput( m_DisableInteractionsInput );
+  m_StateMachine.PushInput( m_DisableInteractionsInput );
+  m_StateMachine.ProcessInputs();
 }
 
 
@@ -266,7 +272,8 @@ void View::DisableInteractions()
 void View::RequestResetCamera()
 {
   igstkLogMacro( DEBUG, "RequestResetCamera() called ...\n");
-  m_StateMachine.ProcessInput( m_ResetCameraInput );
+  m_StateMachine.PushInput( m_ResetCameraInput );
+  m_StateMachine.ProcessInputs();
 }
 
 
@@ -414,7 +421,8 @@ void View::RequestAddObject( ObjectRepresentation* pointer )
 
   if( !pointer )
     {
-    m_StateMachine.ProcessInput( m_NullAddObject );
+    m_StateMachine.PushInput( m_NullAddObject );
+    m_StateMachine.ProcessInputs();
     return;
     }
 
@@ -422,11 +430,13 @@ void View::RequestAddObject( ObjectRepresentation* pointer )
     std::find(m_Objects.begin(),m_Objects.end(),pointer);
   if( it != m_Objects.end() )
     {
-    m_StateMachine.ProcessInput( m_ExistingAddObject );
+    m_StateMachine.PushInput( m_ExistingAddObject );
+    m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.ProcessInput( m_ValidAddObject );
+    m_StateMachine.PushInput( m_ValidAddObject );
+    m_StateMachine.ProcessInputs();
     }
 }
 
@@ -463,7 +473,8 @@ void View::RequestRemoveObject( ObjectRepresentation* pointer )
   
   if( !pointer )
     {
-    m_StateMachine.ProcessInput( m_NullRemoveObject );
+    m_StateMachine.PushInput( m_NullRemoveObject );
+    m_StateMachine.ProcessInputs();
     return;
     }
   
@@ -471,11 +482,13 @@ void View::RequestRemoveObject( ObjectRepresentation* pointer )
     std::find(m_Objects.begin(),m_Objects.end(),pointer);
   if( m_IteratorToObjectToBeRemoved == m_Objects.end() )
     {
-    m_StateMachine.ProcessInput( m_InexistingRemoveObject );
+    m_StateMachine.PushInput( m_InexistingRemoveObject );
+    m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.ProcessInput( m_ValidRemoveObject );
+    m_StateMachine.PushInput( m_ValidRemoveObject );
+    m_StateMachine.ProcessInputs();
     }
 }
 
@@ -507,7 +520,8 @@ void View::RequestStart()
 {
   igstkLogMacro( DEBUG, "RequestStart() called ...\n");
 
-  m_StateMachine.ProcessInput( m_StartRefreshingInput );
+  m_StateMachine.PushInput( m_StartRefreshingInput );
+  m_StateMachine.ProcessInputs();
 }
 
 
@@ -517,7 +531,8 @@ void View::RequestStop()
 {
   igstkLogMacro( DEBUG, "RequestStop() called ...\n");
 
-  m_StateMachine.ProcessInput( m_StopRefreshingInput );
+  m_StateMachine.PushInput( m_StopRefreshingInput );
+  m_StateMachine.ProcessInputs();
 }
 
 
@@ -751,31 +766,32 @@ std::ostream& operator<<(std::ostream& os, View& o)
 
 
 /** Print object information */
-void View::PrintSelf( std::ostream& os, ::vtkIndent vindent )
+void View::PrintSelf( std::ostream& os, itk::Indent indent )
 {
-  std::string indent("  ");
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
-
   os << indent << "RenderWindow Pointer: " << this->m_RenderWindow << std::endl;
   os << indent << "Renderer Pointer: " << this->m_Renderer << std::endl;
   os << indent << "Camera Pointer: " << this->m_Camera << std::endl;
   os << indent << "InteractionHandling: " << this->m_InteractionHandling << std::endl;
+
   if( this->m_PulseGenerator )
-  {
+    {
     os << indent;
     this->m_PulseGenerator->Print(os);
-  }
+    }
+
   if( this->m_PulseObserver )
-  {
+    {
     os << indent;
     this->m_PulseObserver->Print(os);
-  }
+    }
 
   ObjectListConstIterator itr;
+
   for( itr = this->m_Objects.begin(); itr != this->m_Objects.end(); ++itr )
-  {
+    {
     os << indent << *itr << std::endl;
-  }
+    }
 }
 
 

@@ -57,7 +57,7 @@ PulseGenerator::PulseGenerator():m_StateMachine(this)
   m_StateMachine.AddTransition( m_StoppedState, m_ValidFrequencyInput, m_StoppedState,  & PulseGenerator::SetFrequency );
   m_StateMachine.AddTransition( m_StoppedState, m_InvalidLowFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
   m_StateMachine.AddTransition( m_StoppedState, m_InvalidHighFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_StoppedState, m_StopInput, m_StoppedState,  NoAction );
+  m_StateMachine.AddTransition( m_StoppedState, m_StopInput, m_StoppedState,   & PulseGenerator::StopPulses );
   m_StateMachine.AddTransition( m_StoppedState, m_StartInput, m_PulsingState, & PulseGenerator::SetTimer );
   m_StateMachine.AddTransition( m_StoppedState, m_PulseInput, m_StoppedState, & PulseGenerator::ReportErrorCondition );
   m_StateMachine.AddTransition( m_StoppedState, m_EventReturnInput, m_StoppedState, & PulseGenerator::ReportErrorCondition );
@@ -65,7 +65,7 @@ PulseGenerator::PulseGenerator():m_StateMachine(this)
   m_StateMachine.AddTransition( m_PulsingState, m_ValidFrequencyInput, m_PulsingState,  & PulseGenerator::SetFrequency );
   m_StateMachine.AddTransition( m_PulsingState, m_InvalidLowFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
   m_StateMachine.AddTransition( m_PulsingState, m_InvalidHighFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_PulsingState, m_StopInput, m_StoppedState,  NoAction );
+  m_StateMachine.AddTransition( m_PulsingState, m_StopInput, m_StoppedState,  & PulseGenerator::StopPulses );
   m_StateMachine.AddTransition( m_PulsingState, m_StartInput, m_PulsingState, & PulseGenerator::ReportErrorCondition );
   m_StateMachine.AddTransition( m_PulsingState, m_PulseInput, m_WaitingEventReturnState, & PulseGenerator::EmitPulse );
   m_StateMachine.AddTransition( m_PulsingState, m_EventReturnInput, m_StoppedState, & PulseGenerator::ReportErrorCondition );
@@ -73,7 +73,7 @@ PulseGenerator::PulseGenerator():m_StateMachine(this)
   m_StateMachine.AddTransition( m_WaitingEventReturnState, m_ValidFrequencyInput, m_WaitingEventReturnState,  & PulseGenerator::SetFrequency );
   m_StateMachine.AddTransition( m_WaitingEventReturnState, m_InvalidLowFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
   m_StateMachine.AddTransition( m_WaitingEventReturnState, m_InvalidHighFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_WaitingEventReturnState, m_StopInput, m_StoppedState,  NoAction );
+  m_StateMachine.AddTransition( m_WaitingEventReturnState, m_StopInput, m_StoppedState,  & PulseGenerator::StopPulses );
   m_StateMachine.AddTransition( m_WaitingEventReturnState, m_StartInput, m_WaitingEventReturnState, & PulseGenerator::ReportErrorCondition );
   m_StateMachine.AddTransition( m_WaitingEventReturnState, m_PulseInput, m_WaitingEventReturnState, & PulseGenerator::ReportMissedPulse );
   m_StateMachine.AddTransition( m_WaitingEventReturnState, m_EventReturnInput, m_PulsingState, NoAction );
@@ -167,6 +167,15 @@ PulseGenerator::SetTimer()
 
 
 void
+PulseGenerator::StopPulses()
+{
+  igstkLogMacro( DEBUG, "StopPulses() called ...\n");
+  Fl::remove_timeout( 
+            ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
+}
+
+
+void
 PulseGenerator::CallbackTimerGlobal( void *caller )
 {
   // dynamic_cast<> cannot be used on void *
@@ -184,7 +193,7 @@ PulseGenerator::CallbackTimer()
 {
   
   igstkLogMacro( DEBUG, "CallbackTimer() called ...\n");
-  
+
   // Set the timer for the next pulse
   Fl::repeat_timeout( m_Period, 
             ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );

@@ -49,7 +49,7 @@ public:
   ~View2D( void );
 
   /** Print the object information in a stream. */
-  void PrintSelf( std::ostream& os, vtkIndent indent ); 
+  void PrintSelf( std::ostream& os, ::itk::Indent indent ); 
 
 protected:
 

@@ -148,6 +148,9 @@ private:
   /** Send a pulse. This method will notify observers. */
   void EmitPulse();
 
+  /** Stop the generation of pulses by purging the timer. */
+  void StopPulses();
+
   /** The Logger instance */
   mutable LoggerType::Pointer      m_Logger;
 

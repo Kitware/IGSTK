@@ -39,7 +39,7 @@ int View2D::handle( int event )
 
 
 /** Print object information */
-void View2D::PrintSelf( std::ostream& os, vtkIndent indent )
+void View2D::PrintSelf( std::ostream& os, ::itk::Indent indent )
 {
   this->Superclass::PrintSelf(os,indent);
 }

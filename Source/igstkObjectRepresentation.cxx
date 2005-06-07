@@ -101,11 +101,13 @@ void ObjectRepresentation::RequestSetSpatialObject( const SpatialObjectType * sp
   m_SpatialObjectToAdd = spatialObject;
   if( !m_SpatialObjectToAdd )
     {
-    m_StateMachine.ProcessInput( m_NullSpatialObjectInput );
+    m_StateMachine.PushInput( m_NullSpatialObjectInput );
+    m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.ProcessInput( m_ValidSpatialObjectInput );
+    m_StateMachine.PushInput( m_ValidSpatialObjectInput );
+    m_StateMachine.ProcessInputs();
     }
 
 }
@@ -147,7 +149,8 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
 void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 {
   m_TimeToRender = time; 
-  m_StateMachine.ProcessInput( m_UpdateRepresentationInput );
+  m_StateMachine.PushInput( m_UpdateRepresentationInput );
+  m_StateMachine.ProcessInputs();
 }
 
 

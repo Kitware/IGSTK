@@ -114,7 +114,8 @@ public:
     {
     std::cout << "Insert Change" << std::endl;
     // On purpose we didn't set m_QuarterInserted with AddInput();
-    m_StateMachine.ProcessInput( m_QuarterInserted );
+    m_StateMachine.PushInput( m_QuarterInserted );
+    m_StateMachine.ProcessInputs();
     }
  
 private:
@@ -158,7 +159,8 @@ public:
   void InsertChange() 
     {
     std::cout << "Insert Change" << std::endl;
-    m_StateMachine.ProcessInput( m_QuarterInserted );
+    m_StateMachine.PushInput( m_QuarterInserted );
+    m_StateMachine.ProcessInputs();
     }
  
 private:
@@ -204,7 +206,8 @@ public:
   void InsertChange() 
     {
     std::cout << "Insert Change" << std::endl;
-    m_StateMachine.ProcessInput( m_QuarterInserted );
+    m_StateMachine.PushInput( m_QuarterInserted );
+    m_StateMachine.ProcessInputs();
     }
  
 private:
@@ -247,7 +250,8 @@ public:
   void InvokeUndefinedTransition() 
     {
     std::cout << "Insert Change" << std::endl;
-    m_StateMachine.ProcessInput( m_QuarterInserted );
+    m_StateMachine.PushInput( m_QuarterInserted );
+    m_StateMachine.ProcessInputs();
     }
  
 private:
@@ -308,7 +312,8 @@ public:
   void InvokeUndefinedStateInputTransition() 
     {
     std::cout << "Invoking Cancel" << std::endl;
-    m_StateMachine.ProcessInput( m_Cancel );
+    m_StateMachine.PushInput( m_Cancel );
+    m_StateMachine.ProcessInputs();
     }
  
 private:
@@ -355,7 +360,8 @@ public:
   void InsertChange() 
     {
     std::cout << "Insert Change" << std::endl;
-    m_StateMachine.ProcessInput( m_QuarterInserted );
+    m_StateMachine.PushInput( m_QuarterInserted );
+    m_StateMachine.ProcessInputs();
     }
  
 private:
@@ -391,10 +397,10 @@ int igstkStateMachineErrorsTest( int, char * [] )
   std::cout << "Invoking SetReadyToRun() (in constructor) without parent class connected." << std::endl;
   igstk::Tester2 tester2;
 
-  std::cout << "Invoking ProcessInput() without parent class connected." << std::endl;
+  std::cout << "Invoking ProcessInputs() without parent class connected." << std::endl;
   tester2.InsertChange();
 
-  std::cout << "Invoking ProcessInput() without having called SetReadyToRun() ." << std::endl;
+  std::cout << "Invoking ProcessInputs() without having called SetReadyToRun() ." << std::endl;
   igstk::Tester3 tester3;
   tester3.InsertChange();
 
@@ -402,11 +408,11 @@ int igstkStateMachineErrorsTest( int, char * [] )
   igstk::Tester4 tester4;
   tester4.InsertChange();
 
-  std::cout << "Invoking  ProcessInput() in a state without transitions defined." << std::endl;
+  std::cout << "Invoking  ProcessInputs() in a state without transitions defined." << std::endl;
   igstk::Tester5 tester5;
   tester5.InvokeUndefinedTransition();
 
-  std::cout << "Invoking  ProcessInput() in a state,input pair without transitions defined." << std::endl;
+  std::cout << "Invoking  ProcessInputs() in a state,input pair without transitions defined." << std::endl;
   igstk::Tester6 tester6;
   tester6.InvokeUndefinedStateInputTransition();
 

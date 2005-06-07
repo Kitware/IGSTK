@@ -124,14 +124,18 @@ Tracker::~Tracker(void)
 void Tracker::Initialize(  const char * )
 {
   igstkLogMacro( DEBUG, "SetUpCommunication called ...\n");
-  this->m_StateMachine.ProcessInput( this->m_SetUpCommunicationInput );
+  this->m_StateMachine.PushInput( this->m_SetUpCommunicationInput );
+  this->m_StateMachine.ProcessInputs();
 
-  m_StateMachine.ProcessInput( *m_pSetUpCommunicationResultInput );
+  m_StateMachine.PushInput( *m_pSetUpCommunicationResultInput );
+  m_StateMachine.ProcessInputs();
 
   igstkLogMacro( DEBUG, "SetUpTools called ...\n");
-  this->m_StateMachine.ProcessInput( this->m_ActivateToolsInput );
+  this->m_StateMachine.PushInput( this->m_ActivateToolsInput );
+  this->m_StateMachine.ProcessInputs();
 
-  m_StateMachine.ProcessInput( *m_pActivateToolsResultInput );
+  m_StateMachine.PushInput( *m_pActivateToolsResultInput );
+  m_StateMachine.ProcessInputs();
 }
 
 
@@ -153,29 +157,35 @@ void Tracker::SetCommunication( CommunicationType * communication )
 void Tracker::Reset( void )
 {
   igstkLogMacro( DEBUG, "ResetTracking called ...\n");
-  m_StateMachine.ProcessInput( m_ResetTracking );
+  m_StateMachine.PushInput( m_ResetTracking );
+  m_StateMachine.ProcessInputs();
 }
 
 
 void Tracker::StartTracking( void )
 {
   igstkLogMacro( DEBUG, "StartTracking called ...\n");
-  m_StateMachine.ProcessInput( m_StartTrackingInput );
-  m_StateMachine.ProcessInput( *m_pStartTrackingResultInput );
+  m_StateMachine.PushInput( m_StartTrackingInput );
+  m_StateMachine.ProcessInputs();
+  m_StateMachine.PushInput( *m_pStartTrackingResultInput );
+  m_StateMachine.ProcessInputs();
 }
 
 void Tracker::StopTracking( void )
 {
   igstkLogMacro( DEBUG, "StopTracking called ...\n");
-  m_StateMachine.ProcessInput( m_StopTracking );
-  m_StateMachine.ProcessInput( *m_pStopTrackingResultInput );
+  m_StateMachine.PushInput( m_StopTracking );
+  m_StateMachine.ProcessInputs();
+  m_StateMachine.PushInput( *m_pStopTrackingResultInput );
+  m_StateMachine.ProcessInputs();
 }
 
 
 void Tracker::UpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "UpdateStatus called ...\n");
-  m_StateMachine.ProcessInput( m_UpdateStatus );
+  m_StateMachine.PushInput( m_UpdateStatus );
+  m_StateMachine.ProcessInputs();
 }
 
 
@@ -217,8 +227,10 @@ void Tracker::SetToolTransform( unsigned int portNumber, unsigned int toolNumber
 void Tracker::Close( void )
 {
   igstkLogMacro( DEBUG, "CloseTracking called ...\n");
-  m_StateMachine.ProcessInput( m_CloseTracking );
-  m_StateMachine.ProcessInput( *m_pCloseTrackingResultInput );
+  m_StateMachine.PushInput( m_CloseTracking );
+  m_StateMachine.ProcessInputs();
+  m_StateMachine.PushInput( *m_pCloseTrackingResultInput );
+  m_StateMachine.ProcessInputs();
 }
 
 void Tracker::AddPort( TrackerPortType * port )

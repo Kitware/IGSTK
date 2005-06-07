@@ -25,6 +25,8 @@
 #include "igstkPulseGenerator.h"
 #include "itkCommand.h"
 #include "igstkEvents.h"
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -76,6 +78,7 @@ namespace PulseGeneratorTest
         
         if( m_PulseCounter > 100 )
           {
+            std::cout << m_PulseCounter << std::endl;
           generator->RequestStop();
           if( m_Form )
             {
@@ -108,6 +111,14 @@ int igstkPulseGeneratorTest( int, char * [] )
     pulseGenerator->AddObserver( igstk::PulseEvent(), observer );
     
     pulseGenerator->RequestSetFrequency( 100 );  // 10 Hz
+
+
+    itk::Logger::Pointer logger = itk::Logger::New();
+    itk::StdStreamLogOutput::Pointer logOutput = itk::StdStreamLogOutput::New();
+    logOutput->SetStream( std::cout );
+
+    logger->SetPriorityLevel( itk::Logger::DEBUG );
+
     pulseGenerator->RequestStart();  
 
     std::cout << pulseGenerator << std::endl;

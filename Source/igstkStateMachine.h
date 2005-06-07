@@ -102,13 +102,6 @@ public:
    void PushInput( const InputType & input );
 
 
- 
-   /** Perform the state transition, invoke the corresponding action.
-       This is the method that is systematically executed when the 
-       state machine is running   */
-   void ProcessInput( const InputType & input );
-
-
   
    /** Perform the state transition and invoke the corresponding action for
      * every pending input stored in the input queue.  */
@@ -165,8 +158,17 @@ public:
    void Print(std::ostream& os, itk::Indent indent) const;
 
 protected:
+   
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
+ 
+  
+   /** Perform the state transition, invoke the corresponding action.
+       This is the method that is systematically executed when the 
+       state machine is running   */
+   void ProcessInput( const InputIdentifierType & input );
+
+
 
 private:
 
@@ -205,7 +207,7 @@ private:
    typedef std::map< InputIdentifierType, InputDescriptorType >  InputsContainer;
    typedef typename InputsContainer::iterator        InputIterator;
    typedef typename InputsContainer::const_iterator  InputConstIterator;
-   typedef std::queue< InputType >                   InputsQueueContainer;
+   typedef std::queue< InputIdentifierType >         InputsQueueContainer;
 
 
    /** Container for Inputs */

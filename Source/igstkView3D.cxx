@@ -36,7 +36,7 @@ int View3D::handle( int event )
 
 
 /** Print object information */
-void View3D::PrintSelf( std::ostream& os, vtkIndent indent )
+void View3D::PrintSelf( std::ostream& os, ::itk::Indent indent )
 {
   this->Superclass::PrintSelf(os,indent);
 }

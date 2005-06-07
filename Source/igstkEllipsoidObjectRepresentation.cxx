@@ -80,11 +80,13 @@ void EllipsoidObjectRepresentation::RequestSetEllipsoidObject( const EllipsoidOb
   m_EllipsoidObjectToAdd = ellipsoid;
   if( !m_EllipsoidObjectToAdd )
     {
-    m_StateMachine.ProcessInput( m_NullEllipsoidObjectInput );
+    m_StateMachine.PushInput( m_NullEllipsoidObjectInput );
+    m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.ProcessInput( m_ValidEllipsoidObjectInput );
+    m_StateMachine.PushInput( m_ValidEllipsoidObjectInput );
+    m_StateMachine.ProcessInputs();
     }
 
 

@@ -117,11 +117,13 @@ void SpatialObject::RequestSetSpatialObject( SpatialObjectType * spatialObject )
 
   if( m_SpatialObjectToBeSet.IsNull() )
     {
-    m_StateMachine.ProcessInput( m_SpatialObjectNullInput );
+    m_StateMachine.PushInput( m_SpatialObjectNullInput );
+    m_StateMachine.ProcessInputs();
     }
   else 
     {
-    m_StateMachine.ProcessInput( m_SpatialObjectValidInput );
+    m_StateMachine.PushInput( m_SpatialObjectValidInput );
+    m_StateMachine.ProcessInputs();
     }
 }
   
@@ -140,7 +142,8 @@ void SpatialObject::SetSpatialObject()
 void SpatialObject::RequestSetTransform(const Transform & transform )
 {
   m_TransformToBeSet = transform;
-  m_StateMachine.ProcessInput( m_ManualTransformInput );
+  m_StateMachine.PushInput( m_ManualTransformInput );
+  m_StateMachine.ProcessInputs();
 }
 
 /** Set the full Transform from a tracker. This call should only be invoked
@@ -149,7 +152,8 @@ void SpatialObject::RequestSetTransform(const Transform & transform )
 void SpatialObject::RequestSetTrackedTransform(const Transform & transform )
 {
   m_TransformToBeSet = transform;
-  m_StateMachine.ProcessInput( m_TrackerTransformInput );
+  m_StateMachine.PushInput( m_TrackerTransformInput );
+  m_StateMachine.ProcessInputs();
 }
 
 
@@ -184,7 +188,8 @@ SpatialObject::GetTransform()  const
 void SpatialObject::RequestAttachToTrackerTool(const TrackerTool * tool )
 {
   m_TrackerToolToAttachTo = tool;
-  m_StateMachine.ProcessInput( m_TrackingEnabledInput );
+  m_StateMachine.PushInput( m_TrackingEnabledInput );
+  m_StateMachine.ProcessInputs();
 }
 
 /** Make necessary connections to the TrackerTool */

@@ -73,6 +73,9 @@ int igstkBasicTrackerTest( int, char * [] )
 
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
+  logger->AddLogOutput( fileLogOutput1 );
+  logger->AddLogOutput( consoleLogOutput );
+
   tracker->SetLogger( logger );
 
   std::cout << tracker << std::endl;
