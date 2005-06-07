@@ -51,6 +51,8 @@ int igstkFLTKTextBufferLogOutputTest( int, char * [] )
     output->Write(1.2345);
     output->Write("This is the test message.\n");
 
+    std::cout << output << std::endl;
+
     double stamp;
     
     for( stamp = 1; stamp < 100; stamp += 1 )

@@ -70,6 +70,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
   interpreter->SetCommunication(serialComm);
 
+  std::cout << interpreter << std::endl;
   //---------------------------------
   // send some commands to the device
   int i, j, a, ph;

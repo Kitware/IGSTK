@@ -46,6 +46,7 @@ int igstkAtamaiNDITrackerTest( int, char * [] )
 
   AtamaiNDITrackerType::Pointer tracker = AtamaiNDITrackerType::New();
 
+  std::cout << tracker << std::endl;
 
   tracker->SetLogger( logger );
 

@@ -133,6 +133,8 @@ int igstkSerialCommunicationTest( int, char * [] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
+  std::cout << serialComm << std::endl;
+
   serialComm->AddObserver( igstk::SerialCommunication::OpenPortFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::SetupCommunicationParametersFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::SetDataBufferSizeFailureEvent(), my_command);
