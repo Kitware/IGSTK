@@ -20,13 +20,13 @@
 
 #include"igstkVTKLoggerOutput.h"
 #include"vtkObjectFactory.h"
-#include "vtkIndent.h"
+#include"itkIndent.h"
 #include <iostream>
 
 
 namespace igstk
 {
-vtkCxxRevisionMacro(VTKLoggerOutput, "1.10");
+vtkCxxRevisionMacro(VTKLoggerOutput, "1.11");
 vtkStandardNewMacro(VTKLoggerOutput);
 
 /** Send a string to display. */
@@ -87,16 +87,13 @@ void VTKLoggerOutput::DisplayDebugText(const char *t)
 }
 
 
-void VTKLoggerOutput::PrintSelf(StdOStreamType& os, vtkIndent vindent)
+void VTKLoggerOutput::PrintSelf(StdOStreamType& os, itk::Indent indent) const
 {
-  std::string indent("  ");
-  os << indent << "VTKLoggerOutput (" << this << ")\n";
-//  Superclass::PrintSelf((ostream&)os, indent);
-//  indent = indent.GetNextIndent();
+  os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
+  indent = indent.GetNextIndent();
 
   if( this->Logger )
   {
-//    ::operator<<((ostream&)os , indent);
 //    os << indent << *this->Logger << std::endl;
     os << indent << "Logger is available" << std::endl;
   }
@@ -104,11 +101,10 @@ void VTKLoggerOutput::PrintSelf(StdOStreamType& os, vtkIndent vindent)
 
 void VTKLoggerOutput::Print(StdOStreamType& os)
 {
-//  vtkIndent indent;
-  std::string indent("  ");
+  itk::Indent indent;
 
   os << indent << this->GetClassName() << " (" << this << ")\n";
-  this->PrintSelf(os, 0);//indent.GetNextIndent());
+  this->PrintSelf(os, indent.GetNextIndent());
   os << indent << "\n";
 }
 
@@ -117,16 +113,7 @@ std::ostream& operator<<(std::ostream& os, VTKLoggerOutput& o)
   o.Print(os);
   return os;
 }
-
-/*
-VTKLoggerOutput* VTKLoggerOutput::New()
-{
-  VTKLoggerOutput* ret = new VTKLoggerOutput();
-  ret->Register(NULL);
-  return ret;
-}
-*/
   
-} // end namespace igstk
+} // the end of the namespace igstk
 
 

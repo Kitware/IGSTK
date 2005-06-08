@@ -82,12 +82,12 @@ public:
   }
  
   typedef std::ostream StdOStreamType;
-  void PrintSelf(StdOStreamType& os, vtkIndent indent);
   void Print(StdOStreamType& os);
 
 protected:
   VTKLoggerOutput() {}
   virtual ~VTKLoggerOutput() {}
+  void PrintSelf(StdOStreamType& os, itk::Indent indent) const;
 
 private:
   itk::Logger* Logger;
