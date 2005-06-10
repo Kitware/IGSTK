@@ -37,6 +37,7 @@ MouseTracker::~MouseTracker()
 {
 }
 
+/*
 void MouseTracker::Initialize( const char *fileName )
 {
   igstkLogMacro( DEBUG, "MouseTracker::Initialize called ...\n");
@@ -44,19 +45,22 @@ void MouseTracker::Initialize( const char *fileName )
   m_ValidityTime = 100.0; // 100.0 milliseconds
   this->SetUpToolsProcessing();
 }
+*/
     
-void MouseTracker::SetUpToolsProcessing( void )
+MouseTracker::ResultType MouseTracker::InternalInitialize( void )
 {
-  igstkLogMacro( DEBUG, "MouseTracker::SetUpToolsProcessing called ...\n");
+  igstkLogMacro( DEBUG, "MouseTracker::InternalInitialize called ...\n");
+  m_ValidityTime = 100.0; // 100.0 milliseconds
   m_Port = TrackerPortType::New();
   m_Tool = TrackerToolType::New();
   m_Port->AddTool( m_Tool );
   this->AddPort( m_Port );
+  return SUCCESS;
 }
     
-void MouseTracker::UpdateStatusProcessing( void )
+MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "MouseTracker::UpdateStatusProcessing called ...\n");
+  igstkLogMacro( DEBUG, "MouseTracker::InternalUpdateStatus called ...\n");
 
   typedef igstk::Transform   TransformType;
   TransformType transform;
@@ -74,6 +78,7 @@ void MouseTracker::UpdateStatusProcessing( void )
   transform.SetTranslation( position, errorValue, m_ValidityTime );
   this->SetToolTransform( 0, 0, transform );
 
+  return SUCCESS;
 }
  
 void MouseTracker::GetTransform(TransformType & transform)

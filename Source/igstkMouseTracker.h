@@ -38,12 +38,14 @@ public:
     /** Method for creation of a reference counted object. */
     igstkNewMacro( MouseTracker );  
 
-    void Initialize( const char *fileName = NULL );
+//    void Initialize( const char *fileName = NULL );
 
     void GetTransform(TransformType & transform);
 
     typedef igstk::TrackerTool                  TrackerToolType;
     typedef igstk::TrackerPort                  TrackerPortType;
+
+    typedef Tracker::ResultType                 ResultType;
 
     igstkSetMacro( ScaleFactor, double );
     igstkGetMacro( ScaleFactor, double );
@@ -54,10 +56,10 @@ protected:
 
     virtual ~MouseTracker();
 
-    virtual void SetUpToolsProcessing( void );
+    virtual ResultType InternalInitialize( void );
 
     /** The "UpdateStatusProcessing" method updates mouse status. */
-    virtual void UpdateStatusProcessing( void );
+    virtual ResultType InternalUpdateStatus( void );
 
     /** Print object information */
     virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

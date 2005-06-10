@@ -75,9 +75,11 @@ public:
   typedef AuroraToolType::Pointer        AuroraToolPointer;
   typedef AuroraToolType::ConstPointer   AuroraToolConstPointer;
 
+  typedef Tracker::ResultType   ResultType;
+
   /** The SetCommunication method is used to attach a communication object to the
   tracker object for communication with the tracker hardware. */
-  virtual void SetCommunication( CommunicationType *communication );
+  void SetCommunication( CommunicationType *communication );
 
   igstkGetMacro( NumberOfTools, unsigned int );
 
@@ -91,21 +93,21 @@ protected:
 
 //  virtual void ReadConfigurationFile( const char *file );
 
-  virtual void AttemptToSetUpCommunicationProcessing( void );
+  virtual ResultType InternalOpen( void );
 
-  virtual void AttemptToSetUpToolsProcessing( void );
+  virtual ResultType InternalInitialize( void );
 
-  virtual void AttemptToStartTrackingProcessing( void );
+  virtual ResultType InternalStartTracking( void );
 
-  virtual void AttemptToStopTrackingProcessing( void );
+  virtual ResultType InternalUpdateStatus( void );
 
-  virtual void UpdateStatusProcessing( void );
+  virtual ResultType InternalReset( void );
 
-  virtual void ResetTrackingProcessing( void ) {};
+  virtual ResultType InternalStopTracking( void );
 
-  virtual void DisableCommunicationProcessing( void );
+  virtual ResultType InternalUninitialize( void );
 
-  virtual void DisableToolsProcessing( void );
+  virtual ResultType InternalClose( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -140,6 +142,9 @@ private:
   unsigned int          m_NumberOfTools;
 
   std::string    m_SROMFileNames[NDI_NUMBER_OF_PORTS];
+
+  /** The "Communication" instance */
+  CommunicationType::Pointer    m_Communication;
 
 //  NDICyclicRedundancy     m_CyclicRedundancy;
 

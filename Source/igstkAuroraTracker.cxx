@@ -43,15 +43,16 @@ NDITracker::~NDITracker(void)
 void NDITracker::SetCommunication( CommunicationType *communication )
 {
   igstkLogMacro( DEBUG, "NDITracker:: Entered SetCommunication ...\n");
-  Tracker::SetCommunication( communication );
+//  Tracker::SetCommunication( communication );
+  m_Communication = communication;
   m_CommandInterpreter->SetCommunication( communication );
   igstkLogMacro( DEBUG, "NDITracker:: Exiting SetCommunication ...\n"); 
 }
 
 
-void NDITracker::AttemptToSetUpCommunicationProcessing( void )
+NDITracker::ResultType NDITracker::InternalOpen( void )
 {
-  igstkLogMacro( DEBUG, "NDITracker::AttemptToSetUpCommunicationProcessing called ...\n");
+  igstkLogMacro( DEBUG, "NDITracker::InternalOpen called ...\n");
   // m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentFailureInput;
 
   // Initialize the device 
@@ -62,18 +63,20 @@ void NDITracker::AttemptToSetUpCommunicationProcessing( void )
   if (m_CommandInterpreter->GetError())
   {
     m_CommandInterpreter->BEEP(5);
+    return FAILURE;
   }
   else
   {
     m_CommandInterpreter->BEEP(2);
 //  m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentSuccessInput;
+    return SUCCESS;
   }
 }
 
 
-void NDITracker::AttemptToSetUpToolsProcessing( void )
+NDITracker::ResultType NDITracker::InternalInitialize( void )
 {
-  igstkLogMacro( DEBUG, "NDITracker::AttemptToSetUpToolsProcessing called ...\n");
+  igstkLogMacro( DEBUG, "NDITracker::InternalInitialize called ...\n");
   //m_pActivateToolsResultInput = &(m_ToolsActivationFailureInput);
 
   // load any SROMS that are needed
@@ -99,13 +102,14 @@ void NDITracker::AttemptToSetUpToolsProcessing( void )
       m_NumberOfTools++;
     }
   }
+  return NDITracker::SUCCESS;
 }
 
 
 
-void NDITracker::AttemptToStartTrackingProcessing( void )
+NDITracker::ResultType NDITracker::InternalStartTracking( void )
 {
-  igstkLogMacro( DEBUG, "NDITracker::StartTrackingProcessing called ...\n");  
+  igstkLogMacro( DEBUG, "NDITracker::InternalStartTracking called ...\n");  
   m_CommandInterpreter->Command("TSTART:");
 
   int errnum = m_CommandInterpreter->GetError();
@@ -113,24 +117,27 @@ void NDITracker::AttemptToStartTrackingProcessing( void )
   {
     igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
     igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
+    return FAILURE;
   }
   else
   {
     this->IsDeviceTracking = 1;
+    return SUCCESS;
   }
 }
 
 
 
-void NDITracker::UpdateStatusProcessing( void )
+NDITracker::ResultType NDITracker::InternalUpdateStatus( void )
 {
   this->InternalUpdate();
+  return SUCCESS;
 }
 
 
-void NDITracker::AttemptToStopTrackingProcessing( void )
+NDITracker::ResultType NDITracker::InternalStopTracking( void )
 {
-  igstkLogMacro( DEBUG, "NDITracker::StopTrackingProcessing called ...\n");  
+  igstkLogMacro( DEBUG, "NDITracker::InternalStopTracking called ...\n");  
   //m_pStopTrackingResultInput = &(m_StopTrackingFailureInput);
 
   m_CommandInterpreter->Command("TSTOP:");
@@ -139,14 +146,21 @@ void NDITracker::AttemptToStopTrackingProcessing( void )
   {
     igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
     igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
-    return;
+    return FAILURE;
   }
   //m_pStopTrackingResultInput = &(m_StopTrackingSuccessInput);
   this->IsDeviceTracking = 0;
+  return SUCCESS;
 }
 
 
-void NDITracker::DisableToolsProcessing( void )
+NDITracker::ResultType NDITracker::InternalReset( void )
+{
+  return SUCCESS;
+}
+
+
+NDITracker::ResultType NDITracker::InternalUninitialize( void )
 {
   for (int i = 0; i < NDI_NUMBER_OF_PORTS; i++)
   { 
@@ -157,11 +171,12 @@ void NDITracker::DisableToolsProcessing( void )
   }
 
   this->DisableToolPorts();
+  return SUCCESS;
 }
 
 
 
-void NDITracker::DisableCommunicationProcessing( void )
+NDITracker::ResultType NDITracker::InternalClose( void )
 {
   // return to default comm settings
   m_CommandInterpreter->Command("COMM:00000");
@@ -170,8 +185,10 @@ void NDITracker::DisableCommunicationProcessing( void )
   {
     igstkLogMacro( DEBUG, "NDITracker::LoadVirtualSROM: Error ...\n");
     igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
+    return FAILURE;
   }
   //ndiClose(this->Device); To be done by the application
+  return SUCCESS;
 }
 
 
