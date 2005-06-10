@@ -29,6 +29,7 @@
 #include "igstkTransform.h"
 #include "igstkSpatialObject.h"
 #include "igstkPulseGenerator.h"
+#include "itkVersorTransform.h"
 
 namespace igstk
 {
@@ -63,6 +64,14 @@ public:
   typedef Transform                TransformType;
   typedef double                   ErrorType;
 
+  /* typedefs for WorldTransform */
+  typedef itk::VersorTransform<double>       WorldTransformType;
+  typedef WorldTransformType::Pointer  WorldTransformPointer;
+
+  /* typedefs for ToolCalibrationTransform */
+  typedef itk::Transform<double>       ToolCalibrationTransformType;
+  typedef ToolCalibrationTransformType::Pointer  ToolCalibrationTransformPointer;
+
   /** Some required typedefs for itk::Object. */
 
   typedef Tracker                        Self;
@@ -77,72 +86,162 @@ public:
   typedef TrackerToolType::Pointer       TrackerToolPointer;
   typedef TrackerToolType::ConstPointer  TrackerToolConstPointer;
 
-
   /**  Run-time type information (and related methods). */
   igstkTypeMacro(Tracker, Object);
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro(Self);  
 
-  /** The "Initialize" method initializes the tracker. The input 
-  is a file in XML format describing the set up configuration. The
-  configuration file specifies type of communication between the 
-  tracker object and the actual hardware (a file name for offline
-  operation), number of ports, number of tools on each port, port
-  and tool description, etc.
-  */
-  virtual void Initialize( const char *fileName = NULL );
+  /** The SetLogger method is used to attach a logger object to the
+  tracker object for logging purposes. */
+  void SetLogger( LoggerType * logger );
+
+  /** The "Open" method attempts to open communication with the tracking device. */
+  void Open( void );
+
+  /** The "Close" method closes communication with the device. */
+  void Close( void );
+
+  /** The "Initialize" method initializes a newly opened device. */
+  void Initialize( void );
 
   /** The "Reset" tracker method should be used to bring the tracker
   to some defined default state. */
-  virtual void Reset( void );
+  void Reset( void );
 
   /** The "StartTracking" method readies the tracker for tracking the
   tools connected to the tracker. */
-  virtual void StartTracking( void );
+  void StartTracking( void );
 
   /** The "EndTracking" stops tracker from tracking the tools. */
-  virtual void StopTracking( void );
+  void StopTracking( void );
 
   /** The "UpdateStatus" method is used for updating the status of 
-  port and tools when the tracker is in tracking state. */
-  virtual void UpdateStatus( void );
-
-  /** The "Close" method stops the tracker from use. */
-  virtual void Close( void );
+  ports and tools when the tracker is in tracking state. */
+  void UpdateStatus( void );
 
   /** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
    * port numbered "portNumber" in the variable "position". Note that this
    * variable represents the position and orientation of the tool in 3D space.
    * */
-  virtual void GetToolTransform( unsigned int portNumber, unsigned int toolNumber, TransformType &position ) const;
-
-  /** The "SetToolTransform" sets the position of tool numbered "toolNumber" on
-   * port numbered "portNumber" by the content of variable "position". Note
-   * that this variable represents the position and orientation of the tool in
-   * 3D space.  */
-  virtual void SetToolTransform( unsigned int portNumber, unsigned int toolNumber, const TransformType & position );
+  void GetToolTransform( unsigned int portNumber, unsigned int toolNumber, TransformType &position ) const;
 
   /** Associate a TrackerTool to an object to be tracked. This is a one-to-one
    * association and cannot be changed during the life of the application */
-  virtual void AttachObjectToTrackerTool( unsigned int portNumber, unsigned int toolNumber, SpatialObject * objectToTrack );
+  void AttachObjectToTrackerTool( unsigned int portNumber, unsigned int toolNumber, SpatialObject * objectToTrack );
 
-  /** The SetLogger method is used to attach a logger object to the
-  tracker object for logging purposes. */
-  void SetLogger( LoggerType * logger );
+  /** The "SetReferenceTool" sets the reference tool. */
+//  void SetReferenceTool( bool applyReferenceTool, unsigned int portNumber, unsigned int toolNumber );
+
+  /** The "GetReferenceTool" gets the reference tool.
+   * If the reference tool is not applied, it returns false.
+   * Otherwise, it returns true. */
+//  bool GetReferenceTool( unsigned int &portNumber, unsigned int &toolNumber ) const;
+
+  /** The "SetWorldTransform" sets WorldTransform.
+
+    T ' = W * R^-1 * T
+
+    where:
+    " T " is the original tool transform reported by the device,
+    " R^-1 " is the inverse of the transform for the reference tool,
+    " W " is the world transform (it specifies the position of the reference
+    with respect to patient coordinates), and
+    " T ' " is the transformation that is reported to the spatial objects
+  */
+//  void SetWorldTransform( WorldTransformType* _arg );
+
+//  void SetToolCalibrationTransform( ToolCalibrationTransformType* _arg );
+
+  /** The "GetWorldTransform" gets WorldTransform. */
+//  const WorldTransformType* GetWorldTransform() const; 
 
   /** The SetCommunication method is used to attach a communication object to the
   tracker object for communication with the tracker hardware. */
-  void SetCommunication( CommunicationType * communication );
+//  void SetCommunication( CommunicationType * communication );
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
 protected:
 
+  typedef enum 
+  { 
+    FAILURE=0, 
+    SUCCESS
+  } ResultType;
+
   Tracker(void);
 
   virtual ~Tracker(void);
+
+  /** The "InternalOpen" method opens communication with a tracking device.
+      This method is to be overriden by a decendent class 
+      and responsible for device-specific processing */
+  virtual ResultType InternalOpen( void );
+
+  /** The "InternalClose" method closes communication with a tracking device.
+      This method is to be overriden by a decendent class 
+      and responsible for device-specific processing */
+  virtual ResultType InternalClose( void );
+
+  /** The "InternalReset" method resets tracker to a known configuration. 
+      This method is to be overriden by a decendent class 
+      and responsible for device-specific processing */
+  virtual ResultType InternalReset( void );
+
+  /** The "InternalInitialize" method initializes a newly opened device.
+      This method is to be overriden by a decendent class 
+      and responsible for device-specific processing */
+  virtual ResultType InternalInitialize( void );
+
+  /** The "InternalUninitialize" method initializes a newly opened device.
+      This method is to be overriden by a decendent class 
+      and responsible for device-specific processing */
+  virtual ResultType InternalUninitialize( void );
+
+  /** The "InternalStartTracking" method starts tracking.
+      This method is to be overriden by a decendent class 
+      and responsible for device-specific processing */
+  virtual ResultType InternalStartTracking( void );
+
+  /** The "InternalStopTracking" method stops tracking.
+      This method is to be overriden by a decendent class 
+      and responsible for device-specific processing */
+  virtual ResultType InternalStopTracking( void );
+
+  /** The "UpdateStatusProcessing" method updates tracker status.
+      This method is to be overriden by a decendent class 
+      and responsible for device-specific processing */
+  virtual ResultType InternalUpdateStatus( void );
+
+  /** Post-processing after communication setup has been successful. */ 
+  virtual void CommunicationEstablishmentSuccessProcessing( void );
+  /** Post-processing after communication setup has failed. */ 
+  virtual void CommunicationEstablishmentFailureProcessing( void );
+
+  /** Post-processing after ports and tools setup has been successful. */ 
+  virtual void ToolsActivationSuccessProcessing( void );
+  /** Post-processing after ports and tools setup has failed. */ 
+  virtual void ToolsActivationFailureProcessing( void );
+
+  /** Post-processing after start tracking has been successful. */ 
+  virtual void StartTrackingSuccessProcessing( void );
+  /** Post-processing after start tracking has failed. */ 
+  virtual void StartTrackingFailureProcessing( void );
+
+  /** Post-processing after stop tracking has been successful. */ 
+  virtual void StopTrackingSuccessProcessing( void );
+  /** Post-processing after start tracking has failed. */ 
+  virtual void StopTrackingFailureProcessing( void );
+
+  /** Post-processing after close tracking has been successful. */ 
+  virtual void CloseTrackingSuccessProcessing( void );
+  /** Post-processing after close tracking has failed. */ 
+  virtual void CloseTrackingFailureProcessing( void );
+
+  /** The GetLogger method return pointer to the logger object. */
+  LoggerType* GetLogger(  void );
 
   /** The "AddPort" method adds a port to the tracker. */
   void AddPort( TrackerPortType * port);
@@ -150,68 +249,11 @@ protected:
   /** The "ClearPorts" clears all the ports. */
   void ClearPorts( void );
 
-  /** The "AttemptToSetUpCommunicationProcessing" method attempts to sets up communication.
-      That means, m_Communication must be set using SetCommunication prior to this call. */
-  virtual void AttemptToSetUpCommunicationProcessing( void );
-  /** Post-processing after communication setup has been successful. */ 
-  virtual void CommunicationEstablishmentSuccessProcessing( void );
-  /** Post-processing after communication setup has failed. */ 
-  virtual void CommunicationEstablishmentFailureProcessing( void );
-
-
-  /** The "AttempToSetUpToolsProcessing" method attemps to sets up ports and tools. */
-  virtual void AttemptToSetUpToolsProcessing( void );
-  /** Post-processing after ports and tools setup has been successful. */ 
-  virtual void ToolsActivationSuccessProcessing( void );
-  /** Post-processing after ports and tools setup has failed. */ 
-  virtual void ToolsActivationFailureProcessing( void );
-
-  /** The "AttempToStartTrackingProcessing" method attemps to start tracking. */
-  virtual void AttemptToStartTrackingProcessing( void );
-  /** Post-processing after start tracking has been successful. */ 
-  virtual void StartTrackingSuccessProcessing( void );
-  /** Post-processing after start tracking has failed. */ 
-  virtual void StartTrackingFailureProcessing( void );
-
-  /** The "UpdateStatusProcessing" method updates tracker status. */
-  virtual void UpdateStatusProcessing( void );
-
-  /** The "AttempToStopTrackingProcessing" method attemps to stop tracking. */
-  virtual void AttemptToStopTrackingProcessing( void );
-  /** Post-processing after stop tracking has been successful. */ 
-  virtual void StopTrackingSuccessProcessing( void );
-  /** Post-processing after start tracking has failed. */ 
-  virtual void StopTrackingFailureProcessing( void );
-
-  /** The "ResetTrackingProcessing" method resets tracker to a known configuration. */
-  virtual void ResetTrackingProcessing( void );
-
-  /** The "CloseFromTrackingStateProcessing" method closes tracker in use, when the tracker is
-    * in tracking state. */
-  virtual void CloseFromTrackingStateProcessing( void );
-
-  /** The "CloseFromToolsActiveStateProcessing" method closes tracker in use, when the tracker is
-    * in active tools state. */
-  virtual void CloseFromToolsActiveStateProcessing( void);
-
-  /** The "CloseFromCommunicatingStateProcessing" method closes tracker in use, when the tracker is
-    * in communicating state. */
-  virtual void CloseFromCommunicatingStateProcessing( void );
-
-  /** Post-processing after close tracking has been successful. */ 
-  virtual void CloseTrackingSuccessProcessing( void );
-
-  /** Post-processing after close tracking has failed. */ 
-  virtual void CloseTrackingFailureProcessing( void );
-
-  /** The "DisableCommunicationProcessing" disables communication. */
-  virtual void DisableCommunicationProcessing( void );
-
-  /** The "DisableToolsProcessing" method disables tools. */
-  virtual void DisableToolsProcessing( void );
-
-  /** The GetLogger method return pointer to the logger object. */
-  LoggerType* GetLogger(  void );
+  /** The "SetToolTransform" sets the position of tool numbered "toolNumber" on
+   * port numbered "portNumber" by the content of variable "position". Note
+   * that this variable represents the position and orientation of the tool in
+   * 3D space.  */
+  void SetToolTransform( unsigned int portNumber, unsigned int toolNumber, const TransformType & position );
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -229,18 +271,18 @@ private:
   TrackerPortVectorType     m_Ports;
   
   /** The "Communication" instance */
-  CommunicationType::Pointer    m_Communication;
+//  CommunicationType::Pointer    m_Communication;
  
-  /** Results of post-transition event actions by the state machine */
-  InputType                *m_pSetUpCommunicationResultInput;
-  InputType                *m_pActivateToolsResultInput;
-  InputType                *m_pStartTrackingResultInput;
-  InputType                *m_pStopTrackingResultInput;
-  InputType                *m_pCloseTrackingResultInput;
+  /** The reference tool */
+  /*
+  bool                      m_ApplyingReferenceTool;
+  TrackerToolPointer        m_ReferenceTool;
+  unsigned int              m_ReferenceToolPortNumber;
+  unsigned int              m_ReferenceToolNumber;
+  */
 
-  InputType                m_SetUpCommunicationInput;
-  InputType                m_CommunicationEstablishmentSuccessInput;
-  InputType                m_CommunicationEstablishmentFailureInput;
+  /** World Transform */
+  // WorldTransformPointer     m_WorldTransform;
 
   /** List of States */
   StateType                m_IdleState;
@@ -254,6 +296,10 @@ private:
   StateType                m_AttemptingToCloseTrackingState;
 
   /** List of Inputs */
+  InputType                m_SetUpCommunicationInput;
+  InputType                m_CommunicationEstablishmentSuccessInput;
+  InputType                m_CommunicationEstablishmentFailureInput;
+
   InputType                m_ActivateToolsInput;
   InputType                m_ToolsActivationSuccessInput;
   InputType                m_ToolsActivationFailureInput;
@@ -262,20 +308,57 @@ private:
   InputType                m_StartTrackingSuccessInput;
   InputType                m_StartTrackingFailureInput;
 
-  InputType                m_UpdateStatus;
+  InputType                m_UpdateStatusInput;
 
-  InputType                m_StopTracking;
+  InputType                m_StopTrackingInput;
   InputType                m_StopTrackingSuccessInput;
   InputType                m_StopTrackingFailureInput;
 
-  InputType                m_ResetTracking;
+  InputType                m_ResetTrackingInput;
 
-  InputType                m_CloseTracking;
+  InputType                m_CloseTrackingInput;
   InputType                m_CloseTrackingSuccessInput;
   InputType                m_CloseTrackingFailureInput;
 
   /** The Logger instance */
   LoggerType::Pointer      m_Logger;
+
+  /** The "AttemptToOpen" method attempts to open communication with a tracking device. */
+  void AttemptToOpen( void );
+
+  /** The "AttemptToOpen" method attempts to close communication with a tracking device. */
+  void AttemptToClose( void );
+
+  /** The "AttemptToReset" method attempts to bring the tracker
+  to some defined default state. */
+  void AttemptToReset( void );
+
+  /** The "AttemptToInitialize" method attempts to initialize a newly opened device. */
+  void AttemptToInitialize( void );
+
+  /** The "AttemptToUninitialize" method attempts to uninitialize a newly opened device. */
+  void AttemptToUninitialize( void );
+
+  /** The "AttemptToStartTracking" method attempts to start tracking. */
+  void AttemptToStartTracking( void );
+
+  /** The "AttemptToStopTracking" method attempts to stop tracking. */
+  void AttemptToStopTracking( void );
+
+  /** The "AttemptToUpdateStatus" method attempts to update status during tracking. */
+  void AttemptToUpdateStatus( void );
+
+  /** The "CloseFromTrackingStateProcessing" method closes tracker in use, when the tracker is
+    * in tracking state. */
+  void CloseFromTrackingStateProcessing( void );
+
+  /** The "CloseFromToolsActiveStateProcessing" method closes tracker in use, when the tracker is
+    * in active tools state. */
+  void CloseFromToolsActiveStateProcessing( void);
+
+  /** The "CloseFromCommunicatingStateProcessing" method closes tracker in use, when the tracker is
+    * in communicating state. */
+  void CloseFromCommunicatingStateProcessing( void );
 
 };
 
