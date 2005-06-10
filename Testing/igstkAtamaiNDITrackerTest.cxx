@@ -50,6 +50,8 @@ int igstkAtamaiNDITrackerTest( int, char * [] )
 
   tracker->SetLogger( logger );
 
+  tracker->Open();
+
   tracker->Initialize();
 
   tracker->StartTracking();

@@ -47,23 +47,26 @@ int igstkMouseTrackerTest( int, char * [] )
 
   MouseTrackerType::Pointer tracker = MouseTrackerType::New();
   tracker->SetLogger( logger );
+
+  tracker->Open();
+
   tracker->Initialize();
 
   tracker->StartTracking();
 
-  tracker->UpdateStatus();
-
   TransformType transform;
 
+  tracker->UpdateStatus();
+
   tracker->GetTransform( transform );
-
-  tracker->Reset();
-
-  tracker->StopTracking();
 
   TransformType::VectorType position = transform.GetTranslation();
   
   std::cout << "Mouse Position -> ( " << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
+
+  tracker->Reset();
+
+  tracker->StopTracking();
 
   std::cout << tracker << std::endl;
   std::cout << transform << std::endl;

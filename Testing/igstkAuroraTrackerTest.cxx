@@ -176,6 +176,8 @@ int igstkAuroraTrackerTest( int, char * [] )
 
   std::cout << "Exited SetCommunication ..." << std::endl;
 
+  tracker->Open();
+
   tracker->AttachSROMFileNameToPort( 0, "C:/Program Files/Northern Digital Inc/SROM Image Files/5D.ROM" );
 
   std::cout << tracker << std::endl;
@@ -200,6 +202,8 @@ int igstkAuroraTrackerTest( int, char * [] )
   }
 
   tracker->StopTracking();
+
+  tracker->Close();
 
   serialComm->CloseCommunication();
 
