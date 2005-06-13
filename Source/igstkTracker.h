@@ -215,31 +215,6 @@ protected:
       and responsible for device-specific processing */
   virtual ResultType InternalUpdateStatus( void );
 
-  /** Post-processing after communication setup has been successful. */ 
-  virtual void CommunicationEstablishmentSuccessProcessing( void );
-  /** Post-processing after communication setup has failed. */ 
-  virtual void CommunicationEstablishmentFailureProcessing( void );
-
-  /** Post-processing after ports and tools setup has been successful. */ 
-  virtual void ToolsActivationSuccessProcessing( void );
-  /** Post-processing after ports and tools setup has failed. */ 
-  virtual void ToolsActivationFailureProcessing( void );
-
-  /** Post-processing after start tracking has been successful. */ 
-  virtual void StartTrackingSuccessProcessing( void );
-  /** Post-processing after start tracking has failed. */ 
-  virtual void StartTrackingFailureProcessing( void );
-
-  /** Post-processing after stop tracking has been successful. */ 
-  virtual void StopTrackingSuccessProcessing( void );
-  /** Post-processing after start tracking has failed. */ 
-  virtual void StopTrackingFailureProcessing( void );
-
-  /** Post-processing after close tracking has been successful. */ 
-  virtual void CloseTrackingSuccessProcessing( void );
-  /** Post-processing after close tracking has failed. */ 
-  virtual void CloseTrackingFailureProcessing( void );
-
   /** The GetLogger method return pointer to the logger object. */
   LoggerType* GetLogger(  void );
 
@@ -323,20 +298,24 @@ private:
   /** The Logger instance */
   LoggerType::Pointer      m_Logger;
 
-  /** The "AttemptToOpen" method attempts to open communication with a tracking device. */
+  /** The "AttemptToOpen" method attempts to open communication with a
+      tracking device. */
   void AttemptToOpen( void );
-
-  /** The "AttemptToOpen" method attempts to close communication with a tracking device. */
+  
+  /** The "AttemptToOpen" method attempts to close communication with
+      a tracking device. */
   void AttemptToClose( void );
 
   /** The "AttemptToReset" method attempts to bring the tracker
-  to some defined default state. */
+      to some defined default state. */
   void AttemptToReset( void );
 
-  /** The "AttemptToInitialize" method attempts to initialize a newly opened device. */
+  /** The "AttemptToInitialize" method attempts to initialize a newly
+      opened device. */
   void AttemptToInitialize( void );
 
-  /** The "AttemptToUninitialize" method attempts to uninitialize a newly opened device. */
+  /** The "AttemptToUninitialize" method attempts to uninitialize a
+      newly opened device. */
   void AttemptToUninitialize( void );
 
   /** The "AttemptToStartTracking" method attempts to start tracking. */
@@ -345,20 +324,51 @@ private:
   /** The "AttemptToStopTracking" method attempts to stop tracking. */
   void AttemptToStopTracking( void );
 
-  /** The "AttemptToUpdateStatus" method attempts to update status during tracking. */
+  /** The "AttemptToUpdateStatus" method attempts to update status
+      during tracking. */
   void AttemptToUpdateStatus( void );
 
-  /** The "CloseFromTrackingStateProcessing" method closes tracker in use, when the tracker is
-    * in tracking state. */
+  /** The "CloseFromTrackingStateProcessing" method closes tracker in
+      use, when the tracker is in tracking state. */
   void CloseFromTrackingStateProcessing( void );
 
-  /** The "CloseFromToolsActiveStateProcessing" method closes tracker in use, when the tracker is
-    * in active tools state. */
+  /** The "CloseFromToolsActiveStateProcessing" method closes tracker
+      in use, when the tracker is in active tools state. */
   void CloseFromToolsActiveStateProcessing( void);
 
-  /** The "CloseFromCommunicatingStateProcessing" method closes tracker in use, when the tracker is
-    * in communicating state. */
+  /** The "CloseFromCommunicatingStateProcessing" method closes
+      tracker in use, when the tracker is in communicating state. */
   void CloseFromCommunicatingStateProcessing( void );
+
+  /** Post-processing after communication setup has been successful. */ 
+  void CommunicationEstablishmentSuccessProcessing( void );
+
+  /** Post-processing after communication setup has failed. */ 
+  void CommunicationEstablishmentFailureProcessing( void );
+
+  /** Post-processing after ports and tools setup has been successful. */ 
+  void ToolsActivationSuccessProcessing( void );
+
+  /** Post-processing after ports and tools setup has failed. */ 
+  void ToolsActivationFailureProcessing( void );
+
+  /** Post-processing after start tracking has been successful. */ 
+  void StartTrackingSuccessProcessing( void );
+
+  /** Post-processing after start tracking has failed. */ 
+  void StartTrackingFailureProcessing( void );
+
+  /** Post-processing after stop tracking has been successful. */ 
+  void StopTrackingSuccessProcessing( void );
+
+  /** Post-processing after start tracking has failed. */ 
+  void StopTrackingFailureProcessing( void );
+
+  /** Post-processing after close tracking has been successful. */ 
+  void CloseTrackingSuccessProcessing( void );
+
+  /** Post-processing after close tracking has failed. */ 
+  void CloseTrackingFailureProcessing( void );
 
 };
 
