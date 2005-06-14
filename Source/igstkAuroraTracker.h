@@ -95,7 +95,7 @@ protected:
 
   virtual ResultType InternalOpen( void );
 
-  virtual ResultType InternalInitialize( void );
+  virtual ResultType InternalActivateTools( void );
 
   virtual ResultType InternalStartTracking( void );
 
@@ -105,7 +105,7 @@ protected:
 
   virtual ResultType InternalStopTracking( void );
 
-  virtual ResultType InternalUninitialize( void );
+  virtual ResultType InternalDeactivateTools( void );
 
   virtual ResultType InternalClose( void );
 

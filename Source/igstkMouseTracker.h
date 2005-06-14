@@ -56,7 +56,7 @@ protected:
 
     virtual ~MouseTracker();
 
-    virtual ResultType InternalInitialize( void );
+    virtual ResultType InternalActivateTools( void );
 
     /** The "UpdateStatusProcessing" method updates mouse status. */
     virtual ResultType InternalUpdateStatus( void );

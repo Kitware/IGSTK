@@ -74,9 +74,9 @@ NDITracker::ResultType NDITracker::InternalOpen( void )
 }
 
 
-NDITracker::ResultType NDITracker::InternalInitialize( void )
+NDITracker::ResultType NDITracker::InternalActivateTools( void )
 {
-  igstkLogMacro( DEBUG, "NDITracker::InternalInitialize called ...\n");
+  igstkLogMacro( DEBUG, "NDITracker::InternalActivateTools called ...\n");
   //m_pActivateToolsResultInput = &(m_ToolsActivationFailureInput);
 
   // load any SROMS that are needed
@@ -160,7 +160,7 @@ NDITracker::ResultType NDITracker::InternalReset( void )
 }
 
 
-NDITracker::ResultType NDITracker::InternalUninitialize( void )
+NDITracker::ResultType NDITracker::InternalDeactivateTools( void )
 {
   for (int i = 0; i < NDI_NUMBER_OF_PORTS; i++)
   { 

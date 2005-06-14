@@ -47,9 +47,9 @@ void MouseTracker::Initialize( const char *fileName )
 }
 */
     
-MouseTracker::ResultType MouseTracker::InternalInitialize( void )
+MouseTracker::ResultType MouseTracker::InternalActivateTools( void )
 {
-  igstkLogMacro( DEBUG, "MouseTracker::InternalInitialize called ...\n");
+  igstkLogMacro( DEBUG, "MouseTracker::InternalActivateTools called ...\n");
   m_ValidityTime = 100.0; // 100.0 milliseconds
   m_Port = TrackerPortType::New();
   m_Tool = TrackerToolType::New();
