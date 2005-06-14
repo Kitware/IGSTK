@@ -52,7 +52,7 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
   }
   else
   {
-    tcflush(serial_port,TCIOFLUSH);         /* flush the buffers for good luck */
+    tcflush(this->m_PortHandle,TCIOFLUSH);         /* flush the buffers for good luck */
     m_pOpenPortResultInput = &m_OpenPortSuccessInput;
     igstkLogMacro( DEBUG, "COM port name: " << portName << " opened.\n");
   }
