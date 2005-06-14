@@ -52,6 +52,7 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
   }
   else
   {
+    tcflush(serial_port,TCIOFLUSH);         /* flush the buffers for good luck */
     m_pOpenPortResultInput = &m_OpenPortSuccessInput;
     igstkLogMacro( DEBUG, "COM port name: " << portName << " opened.\n");
   }
@@ -157,6 +158,7 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
   {
   case 0:  // None
        portSettings.c_cflag &= ~PARENB; // Disable parity.
+       portSettings.c_cflag &= ~PARODD; // Even parity.
        break;
   case 1:  // Odd
        portSettings.c_cflag |= PARENB; // Enable parity.
@@ -168,6 +170,7 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
        break;
   default: //return error; shouldn't come here in the first place.
        portSettings.c_cflag &= ~PARENB; // Disable parity.
+       portSettings.c_cflag &= ~PARODD; // Even parity.
   }
 
   // Stop bit parameter settings
@@ -237,7 +240,7 @@ void SerialCommunicationForLinux::RestPortProcessing( void )
 void SerialCommunicationForLinux::FlushOutputBufferProcessing( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::FlushOutputBufferProcessing called ...\n");
-  if (tcflush(this->m_PortHandle,TCIFLUSH)!=0)
+  if (tcflush(this->m_PortHandle,TCOFLUSH)!=0)
   {
     this->InvokeEvent( FlushOutputBufferFailureEvent() );
   }
@@ -251,17 +254,33 @@ void SerialCommunicationForLinux::SendStringProcessing( void )
   unsigned long   bytesToWrite = strlen(m_OutputBuffer);
   unsigned long   writtenBytes;
 
-  writtenBytes = write(this->m_PortHandle, this->m_OutputBuffer, bytesToWrite);
- 
+  while( bytesToWrite > 0 )
+  {
+    if( (writtenBytes = write(this->m_PortHandle, this->m_OutputBuffer, bytesToWrite)) == -1 )
+    {
+      if( errno == EAGAIN ) // retry
+      {
+        writtenBytes = 0;
+      }
+      else
+      {
+        break;
+      }
+    }
+    bytesToWrite -= writtenBytes;
+  }
+
   //check if writing event successful
-  if (writtenBytes==bytesToWrite)
+  if (0==bytesToWrite)
   {
     std::cout << "Written bytes = " << writtenBytes << std::endl;
     this->InvokeEvent( SendStringSuccessfulEvent());
+    igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SendStringProcessing succeeded ...\n");
   }
   else
   {
-      this->InvokeEvent( SendStringFailureEvent() );
+    this->InvokeEvent( SendStringFailureEvent() );
+    igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SendStringProcessing failed ...\n");
   }
 }
 
@@ -270,11 +289,37 @@ void SerialCommunicationForLinux::ReceiveStringProcessing( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::ReceiveStringProcessing called ...\n");
   unsigned long readBytes;
-  readBytes = read(this->m_PortHandle, this->m_InputBuffer, this->m_ReadBufferSize);
 
-  std::cout << "Read number of bytes = " << readBytes << ". String: " << m_InputBuffer << std::endl;
+  while(1)
+  {
+    readBytes = read(this->m_PortHandle, this->m_InputBuffer, this->m_ReadBufferSize);
+    if( readBytes == -1 )
+    {
+      if( errno == EAGAIN )
+      {
+        continue;
+      }
+      else  // IO error occurred
+      {
+        this->InvokeEvent( ReceiveStringFailureEvent() );
+        return;
+      }
+    }
+    else if( readBytes == 0 ) // time out
+    {
+      this->InvokeEvent( ReceiveStringReadTimeoutEvent() );
+    }
+    else
+    {
+      this->m_ReadDataSize = readBytes;
+      this->m_ReadBufferOffset = 0;
+      this->m_InputBuffer[readBytes] = 0; // terminate the string
+      std::cout << "Read number of bytes = " << readBytes << ". String: " << m_InputBuffer << std::endl;
+      this->InvokeEvent( ReceiveStringSuccessfulEvent());
+      break;
+    }
+  }
  
-  
 }
 /*
   int bytesAvailable = -1;
