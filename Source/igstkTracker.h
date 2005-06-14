@@ -190,15 +190,15 @@ protected:
       and responsible for device-specific processing */
   virtual ResultType InternalReset( void );
 
-  /** The "InternalInitialize" method initializes a newly opened device.
+  /** The "InternalActivateTools" method activates tools.
       This method is to be overriden by a decendent class 
       and responsible for device-specific processing */
-  virtual ResultType InternalInitialize( void );
+  virtual ResultType InternalActivateTools( void );
 
-  /** The "InternalUninitialize" method initializes a newly opened device.
+  /** The "InternalDeactivateTools" method deactivates tools.
       This method is to be overriden by a decendent class 
       and responsible for device-specific processing */
-  virtual ResultType InternalUninitialize( void );
+  virtual ResultType InternalDeactivateTools( void );
 
   /** The "InternalStartTracking" method starts tracking.
       This method is to be overriden by a decendent class 
@@ -310,13 +310,11 @@ private:
       to some defined default state. */
   void AttemptToReset( void );
 
-  /** The "AttemptToInitialize" method attempts to initialize a newly
-      opened device. */
-  void AttemptToInitialize( void );
+  /** The "AttemptToActivateTools" method attempts to activate tools. */
+  void AttemptToActivateTools( void );
 
-  /** The "AttemptToUninitialize" method attempts to uninitialize a
-      newly opened device. */
-  void AttemptToUninitialize( void );
+  /** The "AttemptToDeactivateTools" method attempts to deactivate tools. */
+  void AttemptToDeactivateTools( void );
 
   /** The "AttemptToStartTracking" method attempts to start tracking. */
   void AttemptToStartTracking( void );
