@@ -31,6 +31,7 @@ SerialCommunication() , INVALID_HANDLE_VALUE(-1)
 
 void SerialCommunicationForLinux::OpenPortProcessing( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::OpenPortProcessing called ...\n");
   char portName[20];
   sprintf(portName, "/dev/ttyS%.1d", this->GetPortNumber().Get() );
   std::cout << portName << std::endl;
@@ -59,6 +60,7 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
 
 void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SetUpDataBuffersProcessing called ...\n");
   if (this->m_InputBuffer!=NULL) delete (this->m_InputBuffer); 
   this->m_InputBuffer = new char[ this->m_ReadBufferSize ];
   if (this->m_OutputBuffer!=NULL) delete this->m_OutputBuffer; 
@@ -84,6 +86,7 @@ void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
 
 void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SetUpDataTransferParametersProcessing called ...\n");
   m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpFailureInput;
 
   // Control setting for a serial communications device
@@ -203,6 +206,7 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
 
 void SerialCommunicationForLinux::ClearBuffersAndClosePortProcessing( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::ClearBuffersAndClosePortProcessing called ...\n");
   if (m_InputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_InputBuffer;
   m_InputBuffer = NULL;
@@ -214,6 +218,7 @@ void SerialCommunicationForLinux::ClearBuffersAndClosePortProcessing( void )
 
 void SerialCommunicationForLinux::ClosePortProcessing( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::ClosePortProcessing called ...\n");
   close(this->m_PortHandle);
   this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
   igstkLogMacro( DEBUG, "Communication port closed.\n");
@@ -221,6 +226,7 @@ void SerialCommunicationForLinux::ClosePortProcessing( void )
 
 void SerialCommunicationForLinux::RestPortProcessing( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::RestPortProcessing called ...\n");
   // clear input/output buffers
   tcflush(this->m_PortHandle,TCIOFLUSH);
   // send the break
@@ -230,6 +236,7 @@ void SerialCommunicationForLinux::RestPortProcessing( void )
 
 void SerialCommunicationForLinux::FlushOutputBufferProcessing( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::FlushOutputBufferProcessing called ...\n");
   if (tcflush(this->m_PortHandle,TCIFLUSH)!=0)
   {
     this->InvokeEvent( FlushOutputBufferFailureEvent() );
@@ -239,6 +246,7 @@ void SerialCommunicationForLinux::FlushOutputBufferProcessing( void )
 
 void SerialCommunicationForLinux::SendStringProcessing( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SendStringProcessing called ...\n");
   //try writing to the hardware
   unsigned long   bytesToWrite = strlen(m_OutputBuffer);
   unsigned long   writtenBytes;
@@ -260,6 +268,7 @@ void SerialCommunicationForLinux::SendStringProcessing( void )
 
 void SerialCommunicationForLinux::ReceiveStringProcessing( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::ReceiveStringProcessing called ...\n");
   unsigned long readBytes;
   readBytes = read(this->m_PortHandle, this->m_InputBuffer, this->m_ReadBufferSize);
 

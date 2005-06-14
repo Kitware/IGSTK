@@ -37,6 +37,29 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this ),
                                               m_StopBits( StopBits1() ),
                                               m_HardwareHandshake( HandshakeOff() )
 {
+/*
+  std::cout << m_OpenPortInput.GetIdentifier() << std::endl;
+  std::cout << m_OpenPortSuccessInput << std::endl;
+  std::cout << m_OpenPortFailureInput << std::endl;
+
+  std::cout << m_SetUpDataBuffersInput << std::endl;
+  std::cout << m_DataBuffersSetUpSuccessInput << std::endl;
+  std::cout << m_DataBuffersSetUpFailureInput << std::endl;
+
+  std::cout << m_SetUpDataTransferParametersInput << std::endl;
+  std::cout << m_DataTransferParametersSetUpSuccessInput << std::endl;
+  std::cout << m_DataTransferParametersSetUpFailureInput << std::endl;
+
+  std::cout << m_RestPortInput << std::endl;
+  std::cout << m_FlushOutputBufferInput << std::endl;
+  std::cout << m_ReceiveStringInput << std::endl;
+  std::cout << m_SendStringInput << std::endl;
+
+  std::cout << m_ClosePortInput << std::endl;
+  std::cout << m_ClosePortSuccessInput << std::endl;
+  std::cout << m_ClosePortFailureInput << std::endl;
+*/
+
 
   /** Communication Time Out Settings */
   //ReadTimeout = m_ReadTotalTimeoutConstant + m_ReadTotalTimeoutMultiplier*Number_Of_Bytes_Read 
@@ -140,6 +163,7 @@ SerialCommunication::~SerialCommunication()
 
 bool SerialCommunication::OpenCommunication( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunication::OpenCommunication called ...\n");
   // Attempt to open communication port
   this->m_StateMachine.PushInput( m_OpenPortInput );
   this->m_StateMachine.ProcessInputs();
@@ -167,6 +191,7 @@ bool SerialCommunication::OpenCommunication( void )
 
 bool SerialCommunication::CloseCommunication( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunication::CloseCommunication called ...\n");
   this->m_StateMachine.PushInput( m_ClosePortInput );
   this->m_StateMachine.ProcessInputs();
   this->m_StateMachine.PushInput( *m_pClosePortResultInput );
@@ -177,6 +202,7 @@ bool SerialCommunication::CloseCommunication( void )
 
 bool SerialCommunication::RestCommunication( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunication::RestCommunication called ...\n");
   this->m_StateMachine.PushInput( m_RestPortInput );
   this->m_StateMachine.ProcessInputs();
   return true;
@@ -185,6 +211,7 @@ bool SerialCommunication::RestCommunication( void )
 
 bool SerialCommunication::Flush( void )
 {
+  igstkLogMacro( DEBUG, "SerialCommunication::Flush called ...\n");
   this->m_StateMachine.PushInput( m_FlushOutputBufferInput );
   this->m_StateMachine.ProcessInputs();
   return true;
@@ -193,6 +220,7 @@ bool SerialCommunication::Flush( void )
 
 bool SerialCommunication::SendString( const char *data )
 {
+  igstkLogMacro( DEBUG, "SerialCommunication::SendString called ...\n");
   strncpy(m_OutputBuffer, data, m_WriteBufferSize);
   igstkLogMacro( DEBUG, "Message length = " << strlen(data) << std::endl );
   igstkLogMacro( DEBUG, "Message = " << m_OutputBuffer << std::endl );
@@ -203,6 +231,7 @@ bool SerialCommunication::SendString( const char *data )
 
 bool SerialCommunication::ReceiveString( char *data )
 {
+  igstkLogMacro( DEBUG, "SerialCommunication::ReceiveString called ...\n");
   this->m_StateMachine.PushInput( m_ReceiveStringInput );
   this->m_StateMachine.ProcessInputs();
   strncpy(data, m_InputBuffer, m_ReadDataSize);
