@@ -71,7 +71,7 @@ Tracker::Tracker(void) : m_Logger( NULL), m_StateMachine( this )
   m_StateMachine.AddTransition( m_AttemptingToEstablishCommunicationState, m_CommunicationEstablishmentSuccessInput, m_CommunicationEstablishedState, &Tracker::CommunicationEstablishmentSuccessProcessing );
   m_StateMachine.AddTransition( m_AttemptingToEstablishCommunicationState, m_CommunicationEstablishmentFailureInput, m_IdleState, &Tracker::CommunicationEstablishmentFailureProcessing);
 
-  m_StateMachine.AddTransition( m_CommunicationEstablishedState, m_ActivateToolsInput, m_AttemptingToActivateToolsState, &Tracker::AttemptToInitialize );
+  m_StateMachine.AddTransition( m_CommunicationEstablishedState, m_ActivateToolsInput, m_AttemptingToActivateToolsState, &Tracker::AttemptToActivateTools );
   m_StateMachine.AddTransition( m_AttemptingToActivateToolsState, m_ToolsActivationSuccessInput, m_ToolsActiveState, &Tracker::ToolsActivationSuccessProcessing );
   m_StateMachine.AddTransition( m_AttemptingToActivateToolsState, m_ToolsActivationFailureInput, m_CommunicationEstablishedState, &Tracker::ToolsActivationFailureProcessing );
 
@@ -315,16 +315,16 @@ Tracker::ResultType Tracker::InternalReset( void )
 }
 
 
-Tracker::ResultType Tracker::InternalInitialize( void )
+Tracker::ResultType Tracker::InternalActivateTools( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalInitialize called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::InternalActivateTools called ...\n");
   return SUCCESS;
 }
 
 
-Tracker::ResultType Tracker::InternalUninitialize( void )
+Tracker::ResultType Tracker::InternalDeactivateTools( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalUninitialize called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::InternalDeactivateTools called ...\n");
   return SUCCESS;
 }
 
@@ -395,11 +395,11 @@ void Tracker::AttemptToReset( void )
 }
 
 
-void Tracker::AttemptToInitialize( void )
+void Tracker::AttemptToActivateTools( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToInitialize called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToActivateTools called ...\n");
   ResultType result;
-  result = InternalInitialize();
+  result = InternalActivateTools();
   
   if( result == SUCCESS )
     {
@@ -507,18 +507,18 @@ void Tracker::AttemptToClose( void )
     }
 }
 
-void Tracker::AttemptToUninitialize( void )
+void Tracker::AttemptToDeactivateTools( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToUninitialize called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToDeactivateTools called ...\n");
   ResultType result;
-  result = InternalUninitialize();
+  result = InternalDeactivateTools();
   if( result == SUCCESS )
     {
-    igstkLogMacro( DEBUG, "igstk::Tracker::InternalUninitialize succeeded ...\n");
+    igstkLogMacro( DEBUG, "igstk::Tracker::InternalDeactivateTools succeeded ...\n");
     }
   else if( result == FAILURE )
     {
-    igstkLogMacro( DEBUG, "igstk::Tracker::InternalUninitialize failed ...\n");
+    igstkLogMacro( DEBUG, "igstk::Tracker::InternalDeactivateTools failed ...\n");
     }
 }
 
@@ -526,14 +526,14 @@ void Tracker::CloseFromTrackingStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromTrackingStateProcessing called ...\n");
   this->AttemptToStopTracking();
-  this->AttemptToUninitialize();
+  this->AttemptToDeactivateTools();
   this->AttemptToClose();
 }
 
 void Tracker::CloseFromToolsActiveStateProcessing( void)
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromToolsActiveStateProcessing called ...\n");
-  this->AttemptToUninitialize();
+  this->AttemptToDeactivateTools();
   this->AttemptToClose();
 }
 
