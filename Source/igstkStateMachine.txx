@@ -199,8 +199,9 @@ StateMachine< TClass >
   if( transitionsFromThisState == m_Transitions.end() )
     {
     std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
-    std::cerr << "No transitions have been defined for current state = ";
-    std::cerr << m_State << std::endl;
+    std::cerr << "No transitions have been defined for current state ";
+    std::cerr << "State = " << m_State;
+    std::cerr << " [" << m_States[m_State] << "]" << std::endl;
     std::cerr.flush();
     return;
     } 
@@ -212,9 +213,10 @@ StateMachine< TClass >
     {
     std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
     std::cerr << "No transitions have been defined for current state and input " << std::endl;
-    std::cerr << "State = "  << m_State << std::endl;
-    std::cerr << "Input = "  << inputIdentifier << std::endl;
-    std::cerr << std::endl;
+    std::cerr << "State = " << m_State;
+    std::cerr << " [" << m_States[m_State] << "]" << std::endl;
+    std::cerr << "Input = " << inputIdentifier;
+    std::cerr << " [" << m_Inputs[inputIdentifier] << "]" << std::endl;
     std::cerr.flush();
     return;
     } 
@@ -249,9 +251,12 @@ StateMachine< TClass >
     {
     std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
     std::cerr << "Attempt to add a Transition for a State that does not exist" << std::endl;
-    std::cerr << "Attempted state     = " << state.GetIdentifier() << std::endl;
-    std::cerr << "Attempted input     = " << input.GetIdentifier() << std::endl;
-    std::cerr << "Attempted new state = " << newState.GetIdentifier() << std::endl;
+    std::cerr << "Attempted state     = " << state.GetIdentifier();
+    std::cerr << " [" << m_States[state.GetIdentifier()] << "]" << std::endl;
+    std::cerr << "Attempted input     = " << input.GetIdentifier();
+    std::cerr << " [" << m_Inputs[input.GetIdentifier()] << "]" << std::endl;
+    std::cerr << "Attempted new state = " << newState.GetIdentifier();
+    std::cerr << " [" << m_States[newState.GetIdentifier()] << "]" << std::endl;
     std::cerr.flush();
     return;
     } 
@@ -263,9 +268,12 @@ StateMachine< TClass >
     {
     std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
     std::cerr << "Attempt to add a Transition for an Input that does not exist" << std::endl;
-    std::cerr << "Attempted state     = " << state.GetIdentifier() << std::endl;
-    std::cerr << "Attempted input     = " << input.GetIdentifier() << std::endl;
-    std::cerr << "Attempted new state = " << newState.GetIdentifier() << std::endl;
+    std::cerr << "Attempted state     = " << state.GetIdentifier();
+    std::cerr << " [" << m_States[state.GetIdentifier()] << "]" << std::endl;
+    std::cerr << "Attempted input     = " << input.GetIdentifier();
+    std::cerr << " [" << m_Inputs[input.GetIdentifier()] << "]" << std::endl;
+    std::cerr << "Attempted new state = " << newState.GetIdentifier();
+    std::cerr << " [" << m_States[newState.GetIdentifier()] << "]" << std::endl;
     std::cerr.flush();
     return;
     } 
@@ -278,9 +286,12 @@ StateMachine< TClass >
     {
     std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
     std::cerr << "Attempt to add a Transition for a New State that does not exist" << std::endl;
-    std::cerr << "Attempted state     = " << state.GetIdentifier() << std::endl;
-    std::cerr << "Attempted input     = " << input.GetIdentifier() << std::endl;
-    std::cerr << "Attempted new state = " << newState.GetIdentifier() << std::endl;
+    std::cerr << "Attempted state     = " << state.GetIdentifier();
+    std::cerr << " [" << m_States[state.GetIdentifier()] << "]" << std::endl;
+    std::cerr << "Attempted input     = " << input.GetIdentifier();
+    std::cerr << " [" << m_Inputs[input.GetIdentifier()] << "]" << std::endl;
+    std::cerr << "Attempted new state = " << newState.GetIdentifier();
+    std::cerr << " [" << m_States[newState.GetIdentifier()] << "]" << std::endl;
     std::cerr.flush();
     return;
     } 
@@ -319,9 +330,12 @@ StateMachine< TClass >
       std::cerr << "Attempt to override an existing transition. "
                 << "Please verify the programming of your state machine. "
                 << "There is already a transition defined for the combination: " << std::endl;
-      std::cerr << "State     = " << state.GetIdentifier() << std::endl;
-      std::cerr << "Input     = " << input.GetIdentifier() << std::endl;
-      std::cerr << "New state = " << newStateIdentifier    << std::endl;
+      std::cerr << "State     = " << state.GetIdentifier();
+      std::cerr << " [" << m_States[state.GetIdentifier()] << "]" << std::endl;
+      std::cerr << "Input     = " << input.GetIdentifier();
+      std::cerr << " [" << m_Inputs[input.GetIdentifier()] << "]" << std::endl;
+      std::cerr << "New state = " << newStateIdentifier;
+      std::cerr << " [" << m_States[newStateIdentifier] << "]" << std::endl;
       std::cerr.flush();
       }
     else
