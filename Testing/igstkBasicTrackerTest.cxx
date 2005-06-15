@@ -37,54 +37,23 @@ namespace igstk
       typedef TestingTracker                 Self;
       typedef itk::SmartPointer<Self>        Pointer;
       typedef itk::SmartPointer<const Self>  ConstPointer;
+      typedef igstk::Tracker::TransformType  TransformType;
+      typedef TransformType::VectorType      VectorType;
 
       igstkNewMacro(Self);
       igstkTypeMacro(TestingTracker,Tracker);
 
-      bool TestTransform()
+      void SetTranslation(VectorType &translation)
         {
-        igstk::Tracker::TransformType transform;
-        igstk::Tracker::TransformType::VectorType translation;
-        translation[0] = 17;
-        translation[1] = 19;
-        translation[2] = 21;
-
-        const unsigned int toolNumber = 0;
-        const unsigned int portNumber = 0;
-        const double validityPeriod = 500.0; // valid for 500 milliseconds.
-
-        igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
-
-        std::cout << "Stored translation = " << translation << std::endl;
-        transform.SetTranslation( translation, errorValue, validityPeriod );
-        this->SetToolTransform( toolNumber, portNumber, transform );
-
-        igstk::Tracker::TransformType transform2;
-        this->GetToolTransform( toolNumber, portNumber, transform2 );
-  
-        igstk::Tracker::TransformType::VectorType translation2;
-        translation2 = transform2.GetTranslation();
-        std::cout << "Retrieved translation = " << translation2 << std::endl;
-
-          {
-          double tolerance = 1e-5;
-          for(unsigned int i=0; i<3; i++)
-            {
-            if( fabs( translation2[i] - translation[i] ) > tolerance )
-              {
-              std::cerr << "Recovered translation does not match the stored one" << std::endl;
-              return false;
-              }
-            }
-          }
-        return true;
+        m_Translation = translation;
         }
 
     protected:
+
       TestingTracker()
         {
-        typedef igstk::TrackerTool  TrackerToolType;
-        typedef igstk::TrackerPort  TrackerPortType;
+        typedef TrackerTool  TrackerToolType;
+        typedef TrackerPort  TrackerPortType;
         TrackerToolType::Pointer trackerTool = TrackerToolType::New();
         TrackerPortType::Pointer trackerPort = TrackerPortType::New();
         trackerPort->AddTool( trackerTool );
@@ -181,9 +150,24 @@ namespace igstk
           success = true;
           return FAILURE;
           }
+
+        const unsigned int toolNumber = 0;
+        const unsigned int portNumber = 0;
+        const double validityPeriod = 500.0; // valid for 500 milliseconds.
+
+        TransformType transform;
+        TransformType::ErrorType errorValue = 0.01; // 10 microns
+
+        transform.SetTranslation( m_Translation, errorValue, validityPeriod );
+        this->SetToolTransform( toolNumber, portNumber, transform );
+
         return SUCCESS;
         }
-  
+
+    private:
+
+      igstk::Transform::VectorType m_Translation;
+ 
   };
 }   // namespace igstk
 
@@ -232,14 +216,39 @@ int igstkBasicTrackerTest( int, char * [] )
   tracker->UpdateStatus();  // for success
 
   std::cout << "Testing the interaction with tools" << std::endl;
-  if( !tracker->TestTransform() )
-    return EXIT_FAILURE;
+
+  igstk::Tracker::TransformType::VectorType translation;
+  translation[0] = 17;
+  translation[1] = 19;
+  translation[2] = 21;
+  std::cout << "Stored translation = " << translation << std::endl;
+  tracker->SetTranslation(translation);
+
+  tracker->UpdateStatus();
+
+  igstk::Tracker::TransformType transform2;
+  tracker->GetToolTransform( 0, 0, transform2 );
+  igstk::Tracker::TransformType::VectorType translation2;
+  translation2 = transform2.GetTranslation();
+
+  std::cout << "Retrieved translation = " << translation2 << std::endl;
+
+  double tolerance = 1e-5;
+  for ( unsigned int i=0; i<3; i++)
+    {
+    if( fabs( translation2[i] - translation[i] ) > tolerance )
+      {
+      std::cerr << "Recovered translation does not match the stored one" << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
 
   tracker->Reset(); // for failure
   tracker->Reset(); // for success
 
   tracker->StopTracking();  // for failure
-  tracker->Close();   // for failure
+  tracker->Close();   // for failure of DeactivateTools
+  tracker->Close();   // for failure of Close
   tracker->Close();
 
   // for testing CloseFromToolsActiveStateProcessing()
