@@ -302,19 +302,12 @@ private:
       tracking device. */
   void AttemptToOpen( void );
   
-  /** The "AttemptToOpen" method attempts to close communication with
-      a tracking device. */
-  void AttemptToClose( void );
-
   /** The "AttemptToReset" method attempts to bring the tracker
       to some defined default state. */
   void AttemptToReset( void );
 
   /** The "AttemptToActivateTools" method attempts to activate tools. */
   void AttemptToActivateTools( void );
-
-  /** The "AttemptToDeactivateTools" method attempts to deactivate tools. */
-  void AttemptToDeactivateTools( void );
 
   /** The "AttemptToStartTracking" method attempts to start tracking. */
   void AttemptToStartTracking( void );

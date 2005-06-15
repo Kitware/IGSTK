@@ -416,12 +416,12 @@ void Tracker::ToolsActivationSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::ToolsActivationSuccessProcessing called ...\n");
 }
-    
+
 void Tracker::ToolsActivationFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::ToolsActivationFailureProcessing called ...\n");
 }
-    
+
 void Tracker::AttemptToStartTracking( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStartTracking called ...\n");
@@ -437,7 +437,7 @@ void Tracker::AttemptToStartTracking( void )
     m_StateMachine.PushInput( m_StartTrackingFailureInput );
     }
 }
-   
+
 void Tracker::StartTrackingSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StartTrackingSuccessProcessing called ...\n");
@@ -492,8 +492,55 @@ void Tracker::AttemptToUpdateStatus( void )
     }
 }
 
-void Tracker::AttemptToClose( void )
+void Tracker::CloseFromTrackingStateProcessing( void )
 {
+  igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromTrackingStateProcessing called ...\n");
+
+  ResultType result;
+  result = InternalStopTracking();
+  if( result == SUCCESS )
+    {
+    result = InternalDeactivateTools();
+    if ( result == SUCCESS )
+      {
+      result = InternalClose();
+      }
+    }
+
+  if (result == SUCCESS )
+    {
+    m_StateMachine.PushInput( m_CloseTrackingSuccessInput );
+    }
+  else if( result == FAILURE )
+    {
+    m_StateMachine.PushInput( m_CloseTrackingFailureInput );
+    }
+}
+
+void Tracker::CloseFromToolsActiveStateProcessing( void)
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromToolsActiveStateProcessing called ...\n");
+
+  ResultType result;
+  result = InternalDeactivateTools();
+  if ( result == SUCCESS )
+    {
+    result = InternalClose();
+    }
+
+  if (result == SUCCESS )
+    {
+    m_StateMachine.PushInput( m_CloseTrackingSuccessInput );
+    }
+  else if( result == FAILURE )
+    {
+    m_StateMachine.PushInput( m_CloseTrackingFailureInput );
+    }
+}
+
+void Tracker::CloseFromCommunicatingStateProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromCommunicatingStateProcessing called ...\n");
   igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToClose called ...\n");
   ResultType result;
   result = InternalClose();
@@ -505,42 +552,6 @@ void Tracker::AttemptToClose( void )
     {
     m_StateMachine.PushInput( m_CloseTrackingFailureInput );
     }
-}
-
-void Tracker::AttemptToDeactivateTools( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToDeactivateTools called ...\n");
-  ResultType result;
-  result = InternalDeactivateTools();
-  if( result == SUCCESS )
-    {
-    igstkLogMacro( DEBUG, "igstk::Tracker::InternalDeactivateTools succeeded ...\n");
-    }
-  else if( result == FAILURE )
-    {
-    igstkLogMacro( DEBUG, "igstk::Tracker::InternalDeactivateTools failed ...\n");
-    }
-}
-
-void Tracker::CloseFromTrackingStateProcessing( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromTrackingStateProcessing called ...\n");
-  this->AttemptToStopTracking();
-  this->AttemptToDeactivateTools();
-  this->AttemptToClose();
-}
-
-void Tracker::CloseFromToolsActiveStateProcessing( void)
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromToolsActiveStateProcessing called ...\n");
-  this->AttemptToDeactivateTools();
-  this->AttemptToClose();
-}
-
-void Tracker::CloseFromCommunicatingStateProcessing( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromCommunicatingStateProcessing called ...\n");
-  this->AttemptToClose();
 }
 
 
