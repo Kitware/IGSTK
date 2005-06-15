@@ -23,6 +23,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <termio.h> 
+#include <sys/time.h>
 
 #include "igstkSerialCommunication.h"
 
@@ -42,6 +43,8 @@ class SerialCommunicationForLinux : public SerialCommunication
 public:
 
   const int INVALID_HANDLE_VALUE;
+  const int NDI_MAX_SAVE_STATE;
+  const int TIMEOUT_PERIOD;
 
   typedef int HandleType;
 
@@ -87,7 +90,11 @@ protected:
 
 private:
 
-  HandleType      m_PortHandle;     // com port handle
+  HandleType      m_PortHandle;
+
+  HandleType      m_OpenHandles[4];
+
+  termios         m_NDISaveTermIOs[4];
 };
 
 } // end namespace igstk

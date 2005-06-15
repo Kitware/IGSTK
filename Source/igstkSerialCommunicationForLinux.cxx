@@ -15,6 +15,13 @@
 
 =========================================================================*/
 
+/* =========== standard includes */
+#include <errno.h>
+#include <time.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <iostream>
 
 #include "igstkSerialCommunicationForLinux.h"
@@ -24,38 +31,99 @@ namespace igstk
 { 
 /** Constructor */
 SerialCommunicationForLinux::SerialCommunicationForLinux() :  
-SerialCommunication() , INVALID_HANDLE_VALUE(-1)
+SerialCommunication() , INVALID_HANDLE_VALUE(-1), NDI_MAX_SAVE_STATE(4), TIMEOUT_PERIOD(5000)
 {
   this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
+  for(int i=0; i < NDI_MAX_SAVE_STATE; ++i )
+  {
+    this->m_OpenHandles[i] = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
+  }
 } 
 
 void SerialCommunicationForLinux::OpenPortProcessing( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::OpenPortProcessing called ...\n");
-  char portName[20];
-  sprintf(portName, "/dev/ttyS%.1d", this->GetPortNumber().Get() );
-  std::cout << portName << std::endl;
+  static struct flock fl = { F_WRLCK, 0, 0, 0 }; /* for file locking */
+  static struct flock fu = { F_UNLCK, 0, 0, 0 }; /* for file unlocking */
+  struct termios t;
+  int i;
 
-  if (this->m_PortHandle != SerialCommunicationForLinux::INVALID_HANDLE_VALUE)
+  if( this->m_PortHandle != SerialCommunicationForLinux::INVALID_HANDLE_VALUE )
   {
-    igstkLogMacro( DEBUG, "**** COM port already in use. Exiting .... ****\n");
+    igstkLogMacro( DEBUG, "SerialCommunicationForLinux::OpenPortProcessing : port is already open! ...\n");
+  }
+
+  char device[20];
+  sprintf(device, "/dev/ttyS%.1d", this->GetPortNumber().Get() );
+  std::cout << device << std::endl;
+
+  /* port is readable/writable and is (for now) non-blocking */
+  this->m_PortHandle = open(device,O_RDWR|O_NOCTTY|O_NDELAY);
+
+  if (this->m_PortHandle == SerialCommunicationForLinux::INVALID_HANDLE_VALUE) {
+    m_pOpenPortResultInput = &m_OpenPortFailureInput;
+    this->InvokeEvent( OpenPortFailureEvent() );
+    return;             /* bail out on error */
+  }
+
+  /* restore blocking now that the port is open (we just didn't want */
+  /* the port to block while we were trying to open it) */
+  fcntl(this->m_PortHandle, F_SETFL, 0);
+
+#ifndef __APPLE__
+  /* get exclusive lock on the serial port */
+  /* on many unices, this has no effect for device files */
+  if (fcntl(this->m_PortHandle, F_SETLK, &fl)) {
+    close(this->m_PortHandle);
+    m_pOpenPortResultInput = &m_OpenPortFailureInput;
+    this->InvokeEvent( OpenPortFailureEvent() );
+    return;             /* bail out on error */
+  }
+#endif /* __APPLE__ */
+
+  /* get I/O information */
+  if (tcgetattr(this->m_PortHandle,&t) == -1) {
+    fcntl(this->m_PortHandle, F_SETLK, &fu);
+    close(this->m_PortHandle);
+    m_pOpenPortResultInput = &m_OpenPortFailureInput;
+    this->InvokeEvent( OpenPortFailureEvent() );
     return;
   }
 
-  this->m_PortHandle = open(portName, O_RDWR | O_NOCTTY); // | O_NDELAY);
-  // O_RDWR (Read/Write), O_NOCTTY (not a controlling terminal)
-  // O_NDELAY (do not care what state the DCD signal line is in)
-  if( this->m_PortHandle < 0)
-  {
+  /* save the serial port state so that it can be restored when
+     the serial port is closed in ndiSerialClose() */
+  for (i = 0; i < NDI_MAX_SAVE_STATE; i++) {
+    if (m_OpenHandles[i] == this->m_PortHandle || m_OpenHandles[i] == SerialCommunicationForLinux::INVALID_HANDLE_VALUE) {
+      m_OpenHandles[i] = this->m_PortHandle;
+      tcgetattr(this->m_PortHandle,&m_NDISaveTermIOs[i]);
+      break;
+    }
+  }
+
+  /* clear everything specific to terminals */
+  t.c_lflag = 0;
+  t.c_iflag = 0;
+  t.c_oflag = 0;
+
+  t.c_cc[VMIN] = 0;                    /* use constant, not interval timout */
+  t.c_cc[VTIME] = SerialCommunicationForLinux::TIMEOUT_PERIOD/100;  /* wait for 5 secs max */
+
+  if (tcsetattr(this->m_PortHandle,TCSANOW,&t) == -1) { /* set I/O information */
+    if (i < NDI_MAX_SAVE_STATE) { /* if we saved the state, forget the state */
+      m_OpenHandles[i] = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
+    }
+    fcntl(this->m_PortHandle, F_SETLK, &fu);
+    close(this->m_PortHandle);
     m_pOpenPortResultInput = &m_OpenPortFailureInput;
     this->InvokeEvent( OpenPortFailureEvent() );
+    return;
   }
-  else
-  {
-    tcflush(this->m_PortHandle,TCIOFLUSH);         /* flush the buffers for good luck */
-    m_pOpenPortResultInput = &m_OpenPortSuccessInput;
-    igstkLogMacro( DEBUG, "COM port name: " << portName << " opened.\n");
-  }
+
+  tcflush(this->m_PortHandle,TCIOFLUSH);         /* flush the buffers for good luck */
+  m_pOpenPortResultInput = &m_OpenPortSuccessInput;
+  igstkLogMacro( DEBUG, "COM port name: " << device << " opened.\n");
+
+  return;
 }
 
 
@@ -87,124 +155,169 @@ void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
 
 void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
 {
+  struct termios t;
+  int newbaud;
+
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SetUpDataTransferParametersProcessing called ...\n");
   m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpFailureInput;
 
-  // Control setting for a serial communications device
-  struct termio portSettings;
-  struct termios portOptions;
-  unsigned int baudRate;
+  unsigned int baud = this->m_BaudRate.Get();
 
-  if (!( (ioctl(this->m_PortHandle, TCGETA, &portSettings)>=0) &&
-         (tcgetattr(this->m_PortHandle, &portOptions)>=0) ))
-  {
-       this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-       std::cout << "Setup Communication Failed.\n" << std::endl; 
-       return;
+#if defined(linux) || defined(__linux__)
+  switch (baud)
+    {
+    case 9600:   newbaud = B9600;   break;
+    case 14400:
+                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+                 std::cout << "Setup Communication Failed.\n" << std::endl;
+                 return;
+    case 19200:  newbaud = B19200;  break;
+    case 38400:  newbaud = B38400;  break;
+    case 57600:  newbaud = B57600;  break;
+    case 115200: newbaud = B115200; break;
+    default:
+                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+                 std::cout << "Setup Communication Failed.\n" << std::endl;
+                 return;
+
+    }
+#elif defined(__APPLE__)
+  switch (baud)
+    {
+    case 9600:    newbaud = B9600;   break;
+    case 14400:
+                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+                 std::cout << "Setup Communication Failed.\n" << std::endl;
+                 return;
+    case 19200:   newbaud = B19200;  break;
+    case 38400:   newbaud = B38400;  break;
+    case 57600:   newbaud = B57600;  break;
+    case 115200:  newbaud = B115200; break;
+    default:
+                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+                 std::cout << "Setup Communication Failed.\n" << std::endl;
+                 return;
+    }
+#elif defined(sgi) && defined(__NEW_MAX_BAUD)
+  switch (baud)
+    {
+    case 9600:    newbaud = 9600;   break;
+    case 14400:
+                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+                 std::cout << "Setup Communication Failed.\n" << std::endl;
+                 return;
+    case 19200:   newbaud = 19200;  break;
+    case 38400:   newbaud = 38400;  break;
+    case 57600:   newbaud = 57600;  break;
+    case 115200:  newbaud = 115200; break;
+    default:
+                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+                 std::cout << "Setup Communication Failed.\n" << std::endl;
+                 return;
+    }
+#else
+  switch (baud)
+    {
+    case 9600:   newbaud = B9600;  break;
+    case 14400:
+                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+                 std::cout << "Setup Communication Failed.\n" << std::endl;
+                 return;
+    case 19200:  newbaud = B19200;  break;
+    case 38400:  newbaud = B38400;  break;
+    case 57600:
+                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+                 std::cout << "Setup Communication Failed.\n" << std::endl;
+                 return;
+    case 115200: 
+                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+                 std::cout << "Setup Communication Failed.\n" << std::endl;
+                 return;
+    default:
+                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+                 std::cout << "Setup Communication Failed.\n" << std::endl;
+                 return;
+    }
+#endif
+
+  tcgetattr(this->m_PortHandle,&t);          /* get I/O information */
+  t.c_cflag &= ~CSIZE;                /* clear flags */
+
+#if defined(linux) || defined(__linux__)
+  t.c_cflag &= ~CBAUD;
+  t.c_cflag |= newbaud;                /* set baud rate */
+#elif defined(__APPLE__)
+  cfsetispeed(&t, newbaud);
+  cfsetospeed(&t, newbaud);
+#elif defined(sgi) && defined(__NEW_MAX_BAUD)
+  t.c_ospeed = newbaud;
+#else
+  t.c_cflag &= ~CBAUD;
+  t.c_cflag |= newbaud;                /* set baud rate */
+#endif
+
+  if (this->m_ByteSize.Get() == 8) {                 /* set data bits */
+    t.c_cflag |= CS8; 
   }
-
-  // Some initial port settings
-  //Input mode settings
-  portSettings.c_iflag &= ~(IXON | IXOFF | IXANY); // Hardware handshake.
-  portSettings.c_iflag &= ~IGNCR; // Allow carriage return.
-  portSettings.c_iflag &= ~ICRNL; // Do not map CR to NL. 
-
-  //Output mode settings
-  portSettings.c_oflag &= ~OCRNL; // Do not map CR to NL.
-  portSettings.c_oflag &= ~OPOST; // No post-processing of output. 
-   
-  //Local mode settings (line discipline)
-  portSettings.c_lflag &= ~ICANON; // Non-canonical input.
-  portSettings.c_lflag &= ~ECHO; // No echoing of received/transmitted chars.
-  portSettings.c_lflag &= ~ISIG; // Disable signals (no input <cntr> char checking.
-
-  //Control mode settings (Hardware control)
-  portSettings.c_cflag |= CLOCAL; // Local line. Modem off.
-  portSettings.c_cflag |= CREAD; // Enable read from port.
-
-  // Baudrate parameter settings
-  portSettings.c_cflag &= ~CBAUD; // Clear baud rate bits.
-  switch( this->m_BaudRate.Get() )
-  {
-  case 2400:
-          baudRate = B2400; break;
-  case 9600:
-          baudRate = B9600; break;
-  case 19200:
-          baudRate = B19200; break;
-  case 38400:
-          baudRate = B38400; break;
-  case 57600:
-          baudRate = B57600; break;
-  case 115200:
-          baudRate = B115200; break;
-  default: 
-          baudRate = B9600; 
+  else if (this->m_ByteSize.Get() == 7) {
+    t.c_cflag |= CS7;
   }
-  portSettings.c_cflag |= baudRate;
-
-  // Bytesize parameter settings
-  switch(this->m_ByteSize.Get())
-  {
-  case 7: 
-       portSettings.c_cflag |= CS7; break;
-  case 8: 
-       portSettings.c_cflag |= CS8; break;
-  default: //return error; shouldn't come here in the first place.
-       portSettings.c_cflag |= CS8; 
-  }
-  // Parity parameter settings
-  switch(this->m_Parity.Get())
-  {
-  case 0:  // None
-       portSettings.c_cflag &= ~PARENB; // Disable parity.
-       portSettings.c_cflag &= ~PARODD; // Even parity.
-       break;
-  case 1:  // Odd
-       portSettings.c_cflag |= PARENB; // Enable parity.
-       portSettings.c_cflag |= PARODD; // Odd parity.
-       break;
-  case 2:  // Even
-       portSettings.c_cflag |= PARENB; // Enable parity.
-       portSettings.c_cflag &= ~PARODD; // Even parity.
-       break;
-  default: //return error; shouldn't come here in the first place.
-       portSettings.c_cflag &= ~PARENB; // Disable parity.
-       portSettings.c_cflag &= ~PARODD; // Even parity.
-  }
-
-  // Stop bit parameter settings
-  switch(this->m_StopBits.Get())
-  {
-  case 1: 
-       portSettings.c_cflag &= ~CSTOPB; break; 
-  case 2:
-       portSettings.c_cflag |= CSTOPB; break; 
-  default: //return error; shouldn't come here in the first place.
-       portSettings.c_cflag &= ~CSTOPB;  
-  }
-
-  //Control characters
-  portSettings.c_cc[VMIN] = 0; //return immediately if no char
-  portSettings.c_cc[VTIME] = 1; //read waits 100 miliseconds
-
-  cfsetispeed(&portOptions, baudRate); // Set input baudrate.
-  cfsetospeed(&portOptions, baudRate); // Set output baudrate.
-
-  //Set up communication state using Linux services 
-  if (!(  (ioctl(this->m_PortHandle, TCSETA, &portSettings)>=0)
-      && (tcsetattr(this->m_PortHandle, TCSANOW, &portOptions)>=0) ))
-  {
+  else {
     this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
     std::cout << "Setup Communication Failed.\n" << std::endl;
     return;
   }
-  else
-  {
-    igstkLogMacro( DEBUG, "SetupCommunicationParameters succeeded.\n");
+
+  if (this->m_Parity.Get() == 0) { // none                /* set parity */
+    t.c_cflag &= ~PARENB;
+    t.c_cflag &= ~PARODD;
+  }
+  else if (this->m_Parity.Get() == 1) { // odd
+    t.c_cflag |= PARENB;
+    t.c_cflag |= PARODD;
+  }
+  else if (this->m_Parity.Get() == 2) { // even
+    t.c_cflag |= PARENB;
+    t.c_cflag &= ~PARODD;
+  }
+  else {
+    this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+    std::cout << "Setup Communication Failed.\n" << std::endl;
+    return;
   }
 
+  if (this->m_StopBits.Get() == 1) {                  /* set stop bits */
+    t.c_cflag &= ~CSTOPB; 
+  }
+  else if (this->m_StopBits.Get() == 2) {
+    t.c_cflag |= CSTOPB; 
+  }
+  else {
+    this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
+    std::cout << "Setup Communication Failed.\n" << std::endl;
+    return;
+  }
+
+  if (this->m_HardwareHandshake.Get()) {
+#ifdef sgi
+    t.c_cflag |= CNEW_RTSCTS;       /* enable hardware handshake */
+#else
+    t.c_cflag |= CRTSCTS;           
+#endif
+  }
+  else {
+#ifdef sgi
+    t.c_cflag &= ~CNEW_RTSCTS;          /* turn off hardware handshake */
+#else
+    t.c_cflag &= ~CRTSCTS;
+#endif     
+  } 
+
+  tcsetattr(this->m_PortHandle,TCSADRAIN,&t);  /* set I/O information */
+
+  igstkLogMacro( DEBUG, "SetupCommunicationParameters succeeded.\n");
   m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpSuccessInput;
+  return;
 }
 
 void SerialCommunicationForLinux::ClearBuffersAndClosePortProcessing( void )
@@ -221,105 +334,124 @@ void SerialCommunicationForLinux::ClearBuffersAndClosePortProcessing( void )
 
 void SerialCommunicationForLinux::ClosePortProcessing( void )
 {
+  static struct flock fu = { F_UNLCK, 0, 0, 0 }; /* for file unlocking */
+  int i;
+
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::ClosePortProcessing called ...\n");
+  /* restore the comm port state to from before it was opened */
+  for (i = 0; i < NDI_MAX_SAVE_STATE; i++) {
+    if (m_OpenHandles[i] == this->m_PortHandle && m_OpenHandles[i] != SerialCommunicationForLinux::INVALID_HANDLE_VALUE) {
+      tcsetattr(this->m_PortHandle,TCSANOW,&m_NDISaveTermIOs[i]);
+      m_OpenHandles[i] = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
+      break;
+    }
+  }
+
+  /* release our lock on the serial port */
+  fcntl(this->m_PortHandle, F_SETLK, &fu);
+
   close(this->m_PortHandle);
-  this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
   igstkLogMacro( DEBUG, "Communication port closed.\n");
 }
 
 void SerialCommunicationForLinux::RestPortProcessing( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::RestPortProcessing called ...\n");
-  // clear input/output buffers
-  tcflush(this->m_PortHandle,TCIOFLUSH);
-  // send the break
-  tcsendbreak(this->m_PortHandle, 0);
+
+  tcflush(this->m_PortHandle,TCIOFLUSH);     /* clear input/output buffers */
+  tcsendbreak(this->m_PortHandle,0);         /* send the break */
+
+  return;
 }
 
 
 void SerialCommunicationForLinux::FlushOutputBufferProcessing( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::FlushOutputBufferProcessing called ...\n");
-  if (tcflush(this->m_PortHandle,TCOFLUSH)!=0)
+  int flushtype = TCIOFLUSH;
+/*
+  if (buffers == NDI_IFLUSH) {
+    flushtype = TCIFLUSH;
+  }
+  else if (buffers == NDI_OFLUSH) {
+*/
+    flushtype = TCOFLUSH;
+//  }    
+
+  if( tcflush(this->m_PortHandle,flushtype) != 0)     /* clear input/output buffers */
   {
     this->InvokeEvent( FlushOutputBufferFailureEvent() );
   }
+
+  return;
 }
 
 
 void SerialCommunicationForLinux::SendStringProcessing( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SendStringProcessing called ...\n");
-  //try writing to the hardware
+  int i = 0;
+  int m;
   unsigned long   bytesToWrite = strlen(m_OutputBuffer);
-  unsigned long   writtenBytes;
 
-  while( bytesToWrite > 0 )
-  {
-    if( (writtenBytes = write(this->m_PortHandle, this->m_OutputBuffer, bytesToWrite)) == -1 )
-    {
-      if( errno == EAGAIN ) // retry
-      {
-        writtenBytes = 0;
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SendStringProcessing called ...\n");
+  while (bytesToWrite > 0) { 
+    if ((m = write(this->m_PortHandle,&this->m_OutputBuffer[i], bytesToWrite)) == -1) {
+      if (errno == EAGAIN) 
+      { /* system cancelled us, retry */
+        m = 0;
       }
-      else
-      {
-        break;
+      else {
+        this->InvokeEvent( SendStringFailureEvent() );
+        igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SendStringProcessing failed ...\n");
+        return;  /* IO error occurred */
       }
     }
-    bytesToWrite -= writtenBytes;
+
+    bytesToWrite -= m;  /* n is number of chars left to write */
+    i += m;  /* i is the number of chars written */
   }
 
-  //check if writing event successful
-  if (0==bytesToWrite)
-  {
-    std::cout << "Written bytes = " << writtenBytes << std::endl;
-    this->InvokeEvent( SendStringSuccessfulEvent());
-    igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SendStringProcessing succeeded ...\n");
-  }
-  else
-  {
-    this->InvokeEvent( SendStringFailureEvent() );
-    igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SendStringProcessing failed ...\n");
-  }
+  std::cout << "Written bytes = " << i << std::endl;
+  this->InvokeEvent( SendStringSuccessfulEvent());
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SendStringProcessing succeeded ...\n");
+  return;  /* return the number of characters written */
 }
 
 
 void SerialCommunicationForLinux::ReceiveStringProcessing( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::ReceiveStringProcessing called ...\n");
-  unsigned long readBytes;
+  int i = 0;
+  int m;
+  int n = this->m_ReadBufferSize;
 
-  while(1)
-  {
-    readBytes = read(this->m_PortHandle, this->m_InputBuffer, this->m_ReadBufferSize);
-    if( readBytes == -1 )
-    {
-      if( errno == EAGAIN )
-      {
-        continue;
+  while (n > 0) {                        /* read reply until <CR> */
+    if ((m = read(this->m_PortHandle,&this->m_InputBuffer[i], n)) == -1) {
+      if (errno == EAGAIN) 
+      {      /* cancelled, so retry */
+        m = 0;
       }
-      else  // IO error occurred
-      {
+      else {
         this->InvokeEvent( ReceiveStringFailureEvent() );
-        return;
+        return;  /* IO error occurred */
       }
     }
-    else if( readBytes == 0 ) // time out
-    {
+    else if (m == 0) { /* no characters read, must have timed out */
       this->InvokeEvent( ReceiveStringReadTimeoutEvent() );
+      return;
     }
-    else
-    {
-      this->m_ReadDataSize = readBytes;
-      this->m_ReadBufferOffset = 0;
-      this->m_InputBuffer[readBytes] = 0; // terminate the string
-      std::cout << "Read number of bytes = " << readBytes << ". String: " << m_InputBuffer << std::endl;
-      this->InvokeEvent( ReceiveStringSuccessfulEvent());
+    n -= m;  /* n is number of chars left to read */
+    i += m;  /* i is the number of chars read */
+    if (this->m_InputBuffer[i-1] == '\r') {  /* done when carriage return received */
       break;
     }
   }
- 
+
+  this->m_ReadDataSize = i;
+  this->m_ReadBufferOffset = 0;
+  this->m_InputBuffer[i] = 0; // terminate the string
+  std::cout << "Read number of bytes = " << i << ". String: " << this->m_InputBuffer << std::endl;
+  this->InvokeEvent( ReceiveStringSuccessfulEvent());
+  return;
 }
 /*
   int bytesAvailable = -1;
