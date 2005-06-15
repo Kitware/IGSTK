@@ -34,10 +34,6 @@ SerialCommunicationForLinux::SerialCommunicationForLinux() :
 SerialCommunication() , INVALID_HANDLE_VALUE(-1), NDI_MAX_SAVE_STATE(4), TIMEOUT_PERIOD(5000)
 {
   this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
-  for(int i=0; i < NDI_MAX_SAVE_STATE; ++i )
-  {
-    this->m_OpenHandles[i] = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
-  }
 } 
 
 void SerialCommunicationForLinux::OpenPortProcessing( void )
@@ -92,13 +88,7 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
 
   /* save the serial port state so that it can be restored when
      the serial port is closed in ndiSerialClose() */
-  for (i = 0; i < NDI_MAX_SAVE_STATE; i++) {
-    if (m_OpenHandles[i] == this->m_PortHandle || m_OpenHandles[i] == SerialCommunicationForLinux::INVALID_HANDLE_VALUE) {
-      m_OpenHandles[i] = this->m_PortHandle;
-      tcgetattr(this->m_PortHandle,&m_NDISaveTermIOs[i]);
-      break;
-    }
-  }
+  tcgetattr(this->m_PortHandle,&m_SaveTermIOs);
 
   /* clear everything specific to terminals */
   t.c_lflag = 0;
@@ -109,9 +99,6 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
   t.c_cc[VTIME] = SerialCommunicationForLinux::TIMEOUT_PERIOD/100;  /* wait for 5 secs max */
 
   if (tcsetattr(this->m_PortHandle,TCSANOW,&t) == -1) { /* set I/O information */
-    if (i < NDI_MAX_SAVE_STATE) { /* if we saved the state, forget the state */
-      m_OpenHandles[i] = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
-    }
     fcntl(this->m_PortHandle, F_SETLK, &fu);
     close(this->m_PortHandle);
     m_pOpenPortResultInput = &m_OpenPortFailureInput;
@@ -339,13 +326,7 @@ void SerialCommunicationForLinux::ClosePortProcessing( void )
 
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::ClosePortProcessing called ...\n");
   /* restore the comm port state to from before it was opened */
-  for (i = 0; i < NDI_MAX_SAVE_STATE; i++) {
-    if (m_OpenHandles[i] == this->m_PortHandle && m_OpenHandles[i] != SerialCommunicationForLinux::INVALID_HANDLE_VALUE) {
-      tcsetattr(this->m_PortHandle,TCSANOW,&m_NDISaveTermIOs[i]);
-      m_OpenHandles[i] = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
-      break;
-    }
-  }
+  tcsetattr(this->m_PortHandle,TCSANOW,&m_SaveTermIOs);
 
   /* release our lock on the serial port */
   fcntl(this->m_PortHandle, F_SETLK, &fu);

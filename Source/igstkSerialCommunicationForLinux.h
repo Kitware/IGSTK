@@ -92,9 +92,7 @@ private:
 
   HandleType      m_PortHandle;
 
-  HandleType      m_OpenHandles[4];
-
-  termios         m_NDISaveTermIOs[4];
+  termios         m_SaveTermIOs;
 };
 
 } // end namespace igstk
