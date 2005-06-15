@@ -69,21 +69,21 @@ protected:
 
   virtual ~AtamaiNDITracker(void);
 
-  virtual void AttemptToSetUpCommunicationProcessing( void );
+  virtual ResultType InternalOpen( void );
 
-  virtual void AttemptToSetUpToolsProcessing( void );
+  virtual ResultType InternalClose( void );
 
-  virtual void AttemptToStartTrackingProcessing( void );
+  virtual ResultType InternalActivateTools( void );
 
-  virtual void AttemptToStopTrackingProcessing( void );
+  virtual ResultType InternalDeactivateTools( void );
 
-  virtual void UpdateStatusProcessing( void );
+  virtual ResultType InternalStartTracking( void );
 
-  virtual void ResetTrackingProcessing( void );
+  virtual ResultType InternalStopTracking( void );
 
-  virtual void DisableCommunicationProcessing( void );
+  virtual ResultType InternalUpdateStatus( void );
 
-  virtual void DisableToolsProcessing( void );
+  virtual ResultType InternalReset( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

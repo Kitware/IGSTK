@@ -38,6 +38,7 @@ void AtamaiNDITrackerErrorCallback(vtkObject *vtkobj, unsigned long,
   tracker->m_VTKError = 1;
 } 
 
+
 AtamaiNDITracker::AtamaiNDITracker(void) : Tracker()
 {
   // create the VTK tracker instance and an error callback
@@ -50,16 +51,18 @@ AtamaiNDITracker::AtamaiNDITracker(void) : Tracker()
 
 }
 
+
 AtamaiNDITracker::~AtamaiNDITracker(void)
 {
   m_VTKTracker->Delete();
   m_VTKErrorCommand->Delete();
 }
 
-void AtamaiNDITracker::AttemptToSetUpCommunicationProcessing( void )
+
+AtamaiNDITracker::ResultType
+AtamaiNDITracker::InternalOpen( void )
 {
   igstkLogMacro( DEBUG, "AtamaiNDITracker::AttemptToSetUpCommunicationProcessing called ...\n");
-  // m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentFailureInput;
 
   // clear the error indicator
   m_VTKError = 0;
@@ -75,25 +78,23 @@ void AtamaiNDITracker::AttemptToSetUpCommunicationProcessing( void )
   // probe the com port to see if we can talk to the device
   if (m_VTKTracker->Probe())
     {
-    // successful
-    //m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentSuccessInput;
-    return;
+    return SUCCESS;
     }
 
   // if probe failed, try sending a serial break to reset the device
   char *reply = m_VTKTracker->Command(0); // null command causes reset
   if (strncmp(reply,"RESET",5) == 0 && m_VTKError == 0)
     {
-    // successful
-    //m_pSetUpCommunicationResultInput = &m_CommunicationEstablishmentSuccessInput;
-    return;
+    return SUCCESS;
     }
+  
+  return FAILURE;
 }
 
 
-void AtamaiNDITracker::AttemptToSetUpToolsProcessing( void )
+AtamaiNDITracker::ResultType
+AtamaiNDITracker::InternalActivateTools( void )
 {
-  //m_pActivateToolsResultInput = &(m_ToolsActivationFailureInput);
   igstkLogMacro( DEBUG, "AtamaiNDITracker::AttemptToSetUpToolsProcessing called ...\n");
 
   m_VTKError = 0;
@@ -131,40 +132,47 @@ void AtamaiNDITracker::AttemptToSetUpToolsProcessing( void )
   // stop tracking, since we only wanted to activate the tools
   m_VTKTracker->StopTracking();
 
-  if (m_VTKError == 0)
+  if (m_VTKError != 0)
     {
-    //m_pActivateToolsResultInput = &(m_ToolsActivationSuccessInput);
+    return FAILURE;
     }
+
+  return SUCCESS;
 }
 
-void AtamaiNDITracker::AttemptToStartTrackingProcessing( void )
+AtamaiNDITracker::ResultType
+AtamaiNDITracker::InternalStartTracking( void )
 {
   igstkLogMacro( DEBUG, "AtamaiNDITracker::AttemptToStartTrackingProcessing called ...\n");
 
-  //m_pStartTrackingResultInput = &(m_StartTrackingFailureInput);
   m_VTKError = 0;
   m_VTKTracker->StartTracking();
-  if (m_VTKError == 0)
+  if (m_VTKError != 0)
     {
-    //m_pStartTrackingResultInput = &(m_StartTrackingSuccessInput);
+    return FAILURE;
     }
+
+  return SUCCESS;
 }
 
 
-void AtamaiNDITracker::AttemptToStopTrackingProcessing( void )
+AtamaiNDITracker::ResultType
+AtamaiNDITracker::InternalStopTracking( void )
 {
-  igstkLogMacro( DEBUG, "AtamaiNDITracker::StopTrackingProcessing called ...\n");  //m_pStopTrackingResultInput = &(m_StopTrackingFailureInput);
-
+  igstkLogMacro( DEBUG, "AtamaiNDITracker::StopTrackingProcessing called ...\n")
   m_VTKError = 0;
   m_VTKTracker->StopTracking();
-  if (m_VTKError == 0)
+  if (m_VTKError != 0)
     {
-  //m_pStopTrackingResultInput = &(m_StopTrackingSuccessInput);
+    return FAILURE;
     }
+
+  return SUCCESS;
 }
 
 
-void AtamaiNDITracker::UpdateStatusProcessing( void )
+AtamaiNDITracker::ResultType
+AtamaiNDITracker::InternalUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "AtamaiNDITracker::UpdateStatusProcessing called ...\n");
 
@@ -172,7 +180,7 @@ void AtamaiNDITracker::UpdateStatusProcessing( void )
   m_VTKTracker->Update();
   if (m_VTKError != 0)
     {
-    // an error occurred
+    return FAILURE;
     }
 
   // loop through m_VTKTrackerTools, and for each tool get the vtkTransform,
@@ -187,7 +195,6 @@ void AtamaiNDITracker::UpdateStatusProcessing( void )
 
   for (int i = 0; i < numTools; i++)
     {
-
     vtkTrackerTool *pTool = m_VTKTracker->GetTool(i);
 
     if ( pTool->IsMissing() )
@@ -237,9 +244,13 @@ void AtamaiNDITracker::UpdateStatusProcessing( void )
 
     this->SetToolTransform(i,0,transform);
     }
+
+  return SUCCESS;
 }
 
-void AtamaiNDITracker::ResetTrackingProcessing( void )
+
+AtamaiNDITracker::ResultType
+AtamaiNDITracker::InternalReset( void )
 {
   igstkLogMacro( DEBUG, "AtamaiNDITracker::ResetTrackingProcessing called ...\n");
 
@@ -249,18 +260,26 @@ void AtamaiNDITracker::ResetTrackingProcessing( void )
     }
   // send a serial break to force the device to reset
   m_VTKTracker->Command(0);
+
+  return SUCCESS;
 }
 
-void AtamaiNDITracker::DisableCommunicationProcessing( void )
+
+AtamaiNDITracker::ResultType
+AtamaiNDITracker::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "AtamaiNDITracker::DisableCommunicationProcessing called ...\n");
   // nothing to do: communication is disabled when vtkTracker isn't tracking
+  return SUCCESS;
 }
 
-void AtamaiNDITracker::DisableToolsProcessing( void )
+
+AtamaiNDITracker::ResultType
+AtamaiNDITracker::InternalDeactivateTools( void )
 {
   igstkLogMacro( DEBUG, "AtamaiNDITracker::DisableToolsProcessing called ...\n");
   // nothing to do: tools are disabled when vtkTracker isn't tracking
+  return SUCCESS;
 }
 
 /** Print Self function */
