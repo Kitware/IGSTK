@@ -236,6 +236,7 @@ bool SerialCommunication::ReceiveString( char *data )
   this->m_StateMachine.ProcessInputs();
   strncpy(data, m_InputBuffer, m_ReadDataSize);
   data[m_ReadDataSize] = '\0'; // terminate the string
+  igstkLogMacro( DEBUG, "SerialCommunication::ReceiveString : (" << m_ReadDataSize << ") " << data << "...\n");
   return true;
 }
 
