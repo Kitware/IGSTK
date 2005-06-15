@@ -47,6 +47,36 @@ void MouseTracker::Initialize( const char *fileName )
 }
 */
     
+MouseTracker::ResultType MouseTracker::InternalOpen( void )
+{
+  return SUCCESS;
+}
+
+MouseTracker::ResultType MouseTracker::InternalStartTracking( void )
+{
+  return SUCCESS;
+}
+
+MouseTracker::ResultType MouseTracker::InternalReset( void )
+{
+  return SUCCESS;
+}
+
+MouseTracker::ResultType MouseTracker::InternalStopTracking( void )
+{
+  return SUCCESS;
+}
+
+MouseTracker::ResultType MouseTracker::InternalDeactivateTools( void )
+{
+  return SUCCESS;
+}
+
+MouseTracker::ResultType MouseTracker::InternalClose( void )
+{
+  return SUCCESS;
+}
+
 MouseTracker::ResultType MouseTracker::InternalActivateTools( void )
 {
   igstkLogMacro( DEBUG, "MouseTracker::InternalActivateTools called ...\n");

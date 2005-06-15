@@ -56,10 +56,21 @@ protected:
 
     virtual ~MouseTracker();
 
+    virtual ResultType InternalOpen( void );
+
     virtual ResultType InternalActivateTools( void );
 
-    /** The "UpdateStatusProcessing" method updates mouse status. */
+    virtual ResultType InternalStartTracking( void );
+
     virtual ResultType InternalUpdateStatus( void );
+
+    virtual ResultType InternalReset( void );
+
+    virtual ResultType InternalStopTracking( void );
+
+    virtual ResultType InternalDeactivateTools( void );
+
+    virtual ResultType InternalClose( void );
 
     /** Print object information */
     virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
