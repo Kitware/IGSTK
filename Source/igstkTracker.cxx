@@ -293,7 +293,7 @@ void Tracker::ClearPorts( void )
   this->m_Ports.clear();
 }
 
-
+/*
 Tracker::ResultType Tracker::InternalOpen( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::InternalOpen called ...\n");
@@ -348,6 +348,7 @@ Tracker::ResultType Tracker::InternalUpdateStatus( void )
   igstkLogMacro( DEBUG, "igstk::Tracker::InternalUpdateStatus called ...\n");
   return SUCCESS;
 }
+*/
 
 
 void Tracker::AttemptToOpen( void )
