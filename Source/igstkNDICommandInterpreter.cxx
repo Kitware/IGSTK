@@ -554,6 +554,11 @@ const char *NDICommandInterpreter::Command(const char *command)
         std::cout << "NDI read complete: " << rp << std::endl;
         break;
         }
+      else if (m == 0)
+        {
+        std::cout << "NDI read failed due to timeout" << std::endl;
+        break;
+        }
 
       std::cout << "NDI read " << m << " bytes: " << rp << std::endl;
       }
