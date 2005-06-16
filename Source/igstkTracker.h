@@ -178,42 +178,42 @@ protected:
   /** The "InternalOpen" method opens communication with a tracking device.
       This method is to be overriden by a decendent class 
       and responsible for device-specific processing */
-  virtual ResultType InternalOpen( void ) = 0;
+  virtual ResultType InternalOpen( void ) { return FAILURE; }
 
   /** The "InternalClose" method closes communication with a tracking device.
       This method is to be overriden by a decendent class 
       and responsible for device-specific processing */
-  virtual ResultType InternalClose( void ) = 0;
+  virtual ResultType InternalClose( void ) { return FAILURE; }
 
   /** The "InternalReset" method resets tracker to a known configuration. 
       This method is to be overriden by a decendent class 
       and responsible for device-specific processing */
-  virtual ResultType InternalReset( void ) = 0;
+  virtual ResultType InternalReset( void ) { return FAILURE; }
 
   /** The "InternalActivateTools" method activates tools.
       This method is to be overriden by a decendent class 
       and responsible for device-specific processing */
-  virtual ResultType InternalActivateTools( void ) = 0;
+  virtual ResultType InternalActivateTools( void ) { return FAILURE; }
 
   /** The "InternalDeactivateTools" method deactivates tools.
       This method is to be overriden by a decendent class 
       and responsible for device-specific processing */
-  virtual ResultType InternalDeactivateTools( void ) = 0;
+  virtual ResultType InternalDeactivateTools( void ) { return FAILURE; }
 
   /** The "InternalStartTracking" method starts tracking.
       This method is to be overriden by a decendent class 
       and responsible for device-specific processing */
-  virtual ResultType InternalStartTracking( void ) = 0;
+  virtual ResultType InternalStartTracking( void ) { return FAILURE; }
 
   /** The "InternalStopTracking" method stops tracking.
       This method is to be overriden by a decendent class 
       and responsible for device-specific processing */
-  virtual ResultType InternalStopTracking( void ) = 0;
+  virtual ResultType InternalStopTracking( void ) { return FAILURE; }
 
   /** The "UpdateStatusProcessing" method updates tracker status.
       This method is to be overriden by a decendent class 
       and responsible for device-specific processing */
-  virtual ResultType InternalUpdateStatus( void ) = 0;
+  virtual ResultType InternalUpdateStatus( void ) { return FAILURE; }
 
   /** The GetLogger method return pointer to the logger object. */
   LoggerType* GetLogger(  void );
