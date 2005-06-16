@@ -170,11 +170,21 @@ bool SerialCommunication::OpenCommunication( void )
   this->m_StateMachine.PushInput( *m_pOpenPortResultInput );
   this->m_StateMachine.ProcessInputs();
 
+  if( m_pOpenPortResultInput == &m_OpenPortFailureInput )
+  {
+    return false;
+  }
+
   // Attempt to set up data buffers
   this->m_StateMachine.PushInput( m_SetUpDataBuffersInput );
   this->m_StateMachine.ProcessInputs();
   this->m_StateMachine.PushInput( *m_pDataBuffersSetUpResultInput );
   this->m_StateMachine.ProcessInputs();
+
+  if( m_pDataBuffersSetUpResultInput == &m_DataBuffersSetUpFailureInput )
+  {
+    return false;
+  }
  
   // Attempt to set up communication parameters 
   this->m_StateMachine.PushInput( m_SetUpDataTransferParametersInput );
