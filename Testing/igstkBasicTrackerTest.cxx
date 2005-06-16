@@ -256,6 +256,22 @@ int igstkBasicTrackerTest( int, char * [] )
   tracker->Initialize();
   tracker->Close();
 
+  // covering the base tracker's internal functions
+  igstk::Tracker::Pointer basetracker = igstk::Tracker::New();
+  basetracker->SetLogger( logger );
+
+  basetracker->Open();
+
+  basetracker->Initialize();
+
+  basetracker->StartTracking();
+
+  basetracker->UpdateStatus();
+  basetracker->Reset();
+
+  basetracker->StopTracking();
+  basetracker->Close();
+
   return EXIT_SUCCESS;
 }
 
