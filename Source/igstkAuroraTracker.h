@@ -15,25 +15,24 @@
 
 =========================================================================*/
 
-#ifndef __igstk_NDITracker_h_
-#define __igstk_NDITracker_h_
+#ifndef __igstk_AuroraTracker_h_
+#define __igstk_AuroraTracker_h_
 
 #include "itkXMLFile.h"
 
 #include "igstkCommunication.h"
-//#include "igstkNDICyclicRedundancy.h"
 #include "igstkNDICommandInterpreter.h"
 #include "igstkAuroraTool.h"
 #include "igstkTracker.h"
 
 namespace igstk
 {
-/** \class NDITracker
+/** \class AuroraTracker
     \brief Implementation of the Aurora Tracker class.
 
 */
 
-  enum {
+enum {
   TR_MISSING       = 0x0001,  // tool or tool port is not available
   TR_OUT_OF_VIEW   = 0x0002,  // cannot obtain transform for tool
   TR_OUT_OF_VOLUME = 0x0004  // tool is not within the sweet spot of system
@@ -42,6 +41,8 @@ namespace igstk
 //  TR_SWITCH3_IS_ON = 0x0040
 };
 
+// the number of ports to allow
+#define NDI_NUMBER_OF_PORTS  4
 
 class NDIConfigurationReader : public itk::XMLReaderBase
 {
@@ -52,21 +53,17 @@ class NDIConfigurationReader : public itk::XMLReaderBase
 };
 
 
-class NDITracker : public igstk::Tracker
+class AuroraTracker : public igstk::Tracker
 {
 public:
 
-#define NDI_NUMBER_OF_PORTS  4
-//#define NDI_MAX_TOOLS 4        // the number of tools aurora can handle
-#define NDI_COMMAND_MAX_LEN  2048
-
   /** Some required typedefs for itk::Object. */
-  typedef NDITracker                  Self;
+  typedef AuroraTracker                  Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro(NDITracker, Object);
+  igstkTypeMacro(AuroraTracker, Object);
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro(Self);  
@@ -77,8 +74,8 @@ public:
 
   typedef Tracker::ResultType   ResultType;
 
-  /** The SetCommunication method is used to attach a communication object to the
-  tracker object for communication with the tracker hardware. */
+  /** The SetCommunication method is used to attach a communication
+      object to the tracker object. */
   void SetCommunication( CommunicationType *communication );
 
   igstkGetMacro( NumberOfTools, unsigned int );
@@ -87,70 +84,62 @@ public:
 
 protected:
 
-  NDITracker(void);
+  AuroraTracker(void);
 
-  virtual ~NDITracker(void);
-
-//  virtual void ReadConfigurationFile( const char *file );
+  virtual ~AuroraTracker(void);
 
   virtual ResultType InternalOpen( void );
 
+  virtual ResultType InternalClose( void );
+
   virtual ResultType InternalActivateTools( void );
 
+  virtual ResultType InternalDeactivateTools( void );
+
   virtual ResultType InternalStartTracking( void );
+
+  virtual ResultType InternalStopTracking( void );
 
   virtual ResultType InternalUpdateStatus( void );
 
   virtual ResultType InternalReset( void );
-
-  virtual ResultType InternalStopTracking( void );
-
-  virtual ResultType InternalDeactivateTools( void );
-
-  virtual ResultType InternalClose( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
 
+  /** Load a virtual SROM, given the file name of the ROM file */
   bool LoadVirtualSROM( const int i, std::string SROMFileName) ;
 
-  void ClearVirtualSROM(int tool);
+  /** Clear the virtual SROM for a tool */
+  void ClearVirtualSROM( int tool );
 
   /** Enable all tool ports that have tools plugged into them.
-   * {The reference port is enabled with NDI_STATIC.} */
-
+   * {The reference tool port is enabled as a static tool.} */
   void EnableToolPorts( void );
 
   /** Disable all enabled tool ports. */
   void DisableToolPorts( void );
 
   /** Find the tool for a specific port handle (-1 if not found). */
-  int GetToolFromHandle(int handle);
+  int GetToolFromHandle( int handle );
 
-  void InternalUpdate();
+  int m_PortEnabled[NDI_NUMBER_OF_PORTS];
 
-  int PortEnabled[NDI_NUMBER_OF_PORTS];
+  int m_PortHandle[NDI_NUMBER_OF_PORTS];
 
-  int PortHandle[NDI_NUMBER_OF_PORTS];
-
-  int IsDeviceTracking;
-
-//  AuroraToolVectorType   m_AuroraTools;
-
-  unsigned int          m_NumberOfTools;
+  unsigned int   m_NumberOfTools;
 
   std::string    m_SROMFileNames[NDI_NUMBER_OF_PORTS];
 
   /** The "Communication" instance */
-  CommunicationType::Pointer    m_Communication;
+  CommunicationType::Pointer      m_Communication;
 
-//  NDICyclicRedundancy     m_CyclicRedundancy;
-
+  /** The command interpreter */
   NDICommandInterpreter::Pointer  m_CommandInterpreter;
 };
 
 }
 
-#endif //__igstk_NDITracker_h_
+#endif //__igstk_AuroraTracker_h_

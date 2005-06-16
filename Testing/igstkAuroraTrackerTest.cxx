@@ -164,9 +164,9 @@ int igstkAuroraTrackerTest( int, char * [] )
 
   serialComm->OpenCommunication();
 
-  igstk::NDITracker::Pointer  tracker;
+  igstk::AuroraTracker::Pointer  tracker;
 
-  tracker = igstk::NDITracker::New();
+  tracker = igstk::AuroraTracker::New();
 
   tracker->SetLogger( logger );
 
