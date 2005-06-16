@@ -29,6 +29,7 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this ),
                                               m_WriteBufferSize(200),
                                               m_InputBuffer( NULL),
                                               m_OutputBuffer( NULL),
+                                              m_ReadDataSize(0),
                                               m_PortRestSpan(10),
                                               m_PortNumber( PortNumber0() ),
                                               m_BaudRate( BaudRate9600() ),
@@ -231,9 +232,12 @@ bool SerialCommunication::Flush( void )
 bool SerialCommunication::SendString( const char *data )
 {
   igstkLogMacro( DEBUG, "SerialCommunication::SendString called ...\n");
-  strncpy(m_OutputBuffer, data, m_WriteBufferSize);
+  if( m_OutputBuffer != NULL )
+  {
+    strncpy(m_OutputBuffer, data, m_WriteBufferSize);
+    igstkLogMacro( DEBUG, "Message = " << m_OutputBuffer << std::endl );
+  }
   igstkLogMacro( DEBUG, "Message length = " << strlen(data) << std::endl );
-  igstkLogMacro( DEBUG, "Message = " << m_OutputBuffer << std::endl );
   this->m_StateMachine.PushInput( m_SendStringInput );
   this->m_StateMachine.ProcessInputs();
   return true;
@@ -244,7 +248,10 @@ bool SerialCommunication::ReceiveString( char *data )
   igstkLogMacro( DEBUG, "SerialCommunication::ReceiveString called ...\n");
   this->m_StateMachine.PushInput( m_ReceiveStringInput );
   this->m_StateMachine.ProcessInputs();
-  strncpy(data, m_InputBuffer, m_ReadDataSize);
+  if( m_InputBuffer != NULL )
+  {
+    strncpy(data, m_InputBuffer, m_ReadDataSize);
+  }
   data[m_ReadDataSize] = '\0'; // terminate the string
   igstkLogMacro( DEBUG, "SerialCommunication::ReceiveString : (" << m_ReadDataSize << ") " << data << "...\n");
   return true;
@@ -273,12 +280,6 @@ void SerialCommunication::ClosePortFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunication::ClosePortFailureProcessing called ...\n");
 }
-
-
-
-
-;
-
 
 /** Print Self function */
 void SerialCommunication::PrintSelf( std::ostream& os, itk::Indent indent ) const
