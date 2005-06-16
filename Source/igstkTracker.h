@@ -90,7 +90,7 @@ public:
   igstkTypeMacro(Tracker, Object);
 
   /** Method for creation of a reference counted object. */
-//  igstkNewMacro(Self);  
+  igstkNewMacro(Self);  
 
   /** The SetLogger method is used to attach a logger object to the
   tracker object for logging purposes. */
