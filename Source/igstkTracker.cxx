@@ -517,6 +517,9 @@ void Tracker::CloseFromTrackingStateProcessing( void )
     {
     m_StateMachine.PushInput( m_CloseTrackingFailureInput );
     }
+
+  // stop the pulse generator
+  m_PulseGenerator->RequestStop();
 }
 
 void Tracker::CloseFromToolsActiveStateProcessing( void)
