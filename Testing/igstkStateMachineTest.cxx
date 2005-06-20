@@ -99,6 +99,13 @@ public:
       m_StateMachine.ProcessInputs();
     }
 
+  void SelectDrinkOrCancelPurchase(bool condition)
+  {
+    std::cout << "Select Drink if true, Cancel Purchase if false: " << condition << std::endl;
+    m_StateMachine.PushInputBoolean(condition, m_SelectDrink, m_CancelPurchase );
+    m_StateMachine.ProcessInputs();
+  }
+
 
   void ExportDescription( std::ostream & ostr, bool skipLoops ) const
     {
@@ -176,7 +183,7 @@ int igstkStateMachineTest( int , char * [] )
   std::cout << std::endl << std::endl;
   std::cout << "Second test run " << std::endl;
 
-  // Try to get drink ealy on purpose, to test error states.
+  // Try to get drink early on purpose, to test error states.
   tester.InsertChange();
   tester.SelectDrink();
   tester.InsertChange();
@@ -193,9 +200,28 @@ int igstkStateMachineTest( int , char * [] )
   tester2.InsertChange();
   tester2.CancelPurchase();
 
+  std::cout << std::endl << std::endl;
+  std::cout << "Fourth test run " << std::endl;
+
+  // use a condition set whether to purchase or cancel
+  bool makePurchase;
+
+  makePurchase = 0;
+  igstk::Tester tester3;
+  tester3.InsertChange();
+  tester3.InsertChange();
+  tester3.InsertChange();
+  tester3.SelectDrinkOrCancelPurchase(makePurchase);
+  makePurchase = 1;
+  tester3.InsertChange();
+  tester3.InsertChange();
+  tester3.InsertChange();
+  tester3.SelectDrinkOrCancelPurchase(makePurchase);
+
+  std::cout << std::endl;
 
   // Exercise the GetCurrentState() method
-  std::cout << tester.GetCurrentState() << std::endl;
+  std::cout << "Current State: " << tester.GetCurrentState() << std::endl;
   
   std::cout << std::endl << std::endl;
   std::cout << "Printing out the State Machine description in dot format" << std::endl;

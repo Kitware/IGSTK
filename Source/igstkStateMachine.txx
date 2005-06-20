@@ -161,6 +161,24 @@ StateMachine< TClass >
 template<class TClass>
 void
 StateMachine< TClass >
+::PushInputBoolean( bool condition, const InputType & inputIfTrue,
+                    const InputType & inputIfFalse )
+{
+  const InputType *input = & inputIfFalse;
+
+  if ( condition )
+    {
+    input = & inputIfTrue;
+    }
+
+  m_QueuedInputs.push( input->GetIdentifier() );
+}
+
+
+
+template<class TClass>
+void
+StateMachine< TClass >
 ::ProcessInputs()
 {
 

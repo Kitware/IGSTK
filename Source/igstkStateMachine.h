@@ -102,7 +102,12 @@ public:
    void PushInput( const InputType & input );
 
 
-  
+   /** Push one of two inputs onto the queue, according two whether a
+    *  condition is true or false */
+   void PushInputBoolean( bool condition, const InputType & inputIfTrue,
+                          const InputType & inputIfFalse);
+
+
    /** Perform the state transition and invoke the corresponding action for
      * every pending input stored in the input queue.  */
    void ProcessInputs();
@@ -159,8 +164,8 @@ public:
 
 protected:
    
-  /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
+   /** Print the object information in a stream. */
+   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
  
   
    /** Perform the state transition, invoke the corresponding action.
