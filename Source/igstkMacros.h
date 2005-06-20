@@ -111,6 +111,17 @@ static Pointer New(void) \
 #endif 
 
 
+/** Macro that defines all the standard elements related to the Logger.
+ * LoggerType must be defined before this macro is used. */
+#define  igstkLoggerMacro() \
+protected: \
+  LoggerType* GetLogger() { return m_Logger; } \
+private: \
+  LoggerType::Pointer   m_Logger; \
+public: \
+  void SetLogger(LoggerType* logger) { m_Logger = logger; }
+
+
 /** Macro that defines all the standard elements related to the StateMachine.
  * This macro factorizes code that should always be present when using the StateMachine. */
 #define  igstkStateMachineMacro() \
