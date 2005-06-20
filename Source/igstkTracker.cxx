@@ -358,14 +358,8 @@ void Tracker::AttemptToOpen( void )
   ResultType result;
   result = InternalOpen();
   
-  if( result == SUCCESS )
-    {
-    m_StateMachine.PushInput( m_CommunicationEstablishmentSuccessInput );
-    }
-  else if( result == FAILURE )
-    {
-    m_StateMachine.PushInput( m_CommunicationEstablishmentFailureInput );
-    }
+  m_StateMachine.PushInputBoolean( (bool)result, m_CommunicationEstablishmentSuccessInput,
+    m_CommunicationEstablishmentFailureInput );
 }
 
 
@@ -403,14 +397,7 @@ void Tracker::AttemptToActivateTools( void )
   ResultType result;
   result = InternalActivateTools();
   
-  if( result == SUCCESS )
-    {
-    m_StateMachine.PushInput( m_ToolsActivationSuccessInput );
-    }
-  else if( result == FAILURE )
-    {
-    m_StateMachine.PushInput( m_ToolsActivationFailureInput );
-    }
+  m_StateMachine.PushInputBoolean( (bool)result, m_ToolsActivationSuccessInput, m_ToolsActivationFailureInput );
 }
   
 
@@ -430,14 +417,7 @@ void Tracker::AttemptToStartTracking( void )
   ResultType result;
   result = InternalStartTracking();
   
-  if( result == SUCCESS )
-    {
-    m_StateMachine.PushInput( m_StartTrackingSuccessInput );
-    }
-  else if( result == FAILURE )
-    {
-    m_StateMachine.PushInput( m_StartTrackingFailureInput );
-    }
+  m_StateMachine.PushInputBoolean( (bool)result, m_StartTrackingSuccessInput, m_StartTrackingFailureInput );
 }
 
 void Tracker::StartTrackingSuccessProcessing( void )
@@ -457,14 +437,7 @@ void Tracker::AttemptToStopTracking( void )
   ResultType result;
   result = InternalStopTracking();
   
-  if( result == SUCCESS )
-    {
-    m_StateMachine.PushInput( m_StopTrackingSuccessInput );
-    }
-  else if( result == FAILURE )
-    {
-    m_StateMachine.PushInput( m_StopTrackingFailureInput );
-    }
+  m_StateMachine.PushInputBoolean( (bool)result, m_StopTrackingSuccessInput, m_StopTrackingFailureInput );
 }
 
 
@@ -509,14 +482,7 @@ void Tracker::CloseFromTrackingStateProcessing( void )
       }
     }
 
-  if (result == SUCCESS )
-    {
-    m_StateMachine.PushInput( m_CloseTrackingSuccessInput );
-    }
-  else if( result == FAILURE )
-    {
-    m_StateMachine.PushInput( m_CloseTrackingFailureInput );
-    }
+  m_StateMachine.PushInputBoolean( (bool)result, m_CloseTrackingSuccessInput, m_CloseTrackingFailureInput );
 
   // stop the pulse generator
   m_PulseGenerator->RequestStop();
@@ -533,14 +499,7 @@ void Tracker::CloseFromToolsActiveStateProcessing( void)
     result = InternalClose();
     }
 
-  if (result == SUCCESS )
-    {
-    m_StateMachine.PushInput( m_CloseTrackingSuccessInput );
-    }
-  else if( result == FAILURE )
-    {
-    m_StateMachine.PushInput( m_CloseTrackingFailureInput );
-    }
+  m_StateMachine.PushInputBoolean( (bool)result, m_CloseTrackingSuccessInput, m_CloseTrackingFailureInput );
 }
 
 void Tracker::CloseFromCommunicatingStateProcessing( void )
@@ -549,14 +508,7 @@ void Tracker::CloseFromCommunicatingStateProcessing( void )
   igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToClose called ...\n");
   ResultType result;
   result = InternalClose();
-  if( result == SUCCESS )
-    {
-    m_StateMachine.PushInput( m_CloseTrackingSuccessInput );
-    }
-  else if( result == FAILURE )
-    {
-    m_StateMachine.PushInput( m_CloseTrackingFailureInput );
-    }
+  m_StateMachine.PushInputBoolean( (bool)result, m_CloseTrackingSuccessInput, m_CloseTrackingFailureInput );
 }
 
 
