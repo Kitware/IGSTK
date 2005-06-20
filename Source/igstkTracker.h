@@ -92,10 +92,6 @@ public:
   /** Method for creation of a reference counted object. */
   igstkNewMacro(Self);  
 
-  /** The SetLogger method is used to attach a logger object to the
-  tracker object for logging purposes. */
-  void SetLogger( LoggerType * logger );
-
   /** The "Open" method attempts to open communication with the tracking device. */
   void Open( void );
 
@@ -162,6 +158,8 @@ public:
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
+  /** Declarations needed for the Logger */
+  igstkLoggerMacro();
 
 protected:
 
@@ -214,9 +212,6 @@ protected:
       This method is to be overriden by a decendent class 
       and responsible for device-specific processing */
   virtual ResultType InternalUpdateStatus( void );
-
-  /** The GetLogger method return pointer to the logger object. */
-  LoggerType* GetLogger(  void );
 
   /** The "AddPort" method adds a port to the tracker. */
   void AddPort( TrackerPortType * port);
@@ -294,9 +289,6 @@ private:
   InputType                m_CloseTrackingInput;
   InputType                m_CloseTrackingSuccessInput;
   InputType                m_CloseTrackingFailureInput;
-
-  /** The Logger instance */
-  LoggerType::Pointer      m_Logger;
 
   /** The "AttemptToOpen" method attempts to open communication with a
       tracking device. */

@@ -116,16 +116,6 @@ Tracker::~Tracker(void)
 }
 
 
-void Tracker::SetLogger( LoggerType * logger )
-{
-  m_Logger = logger;
-}
-
-Tracker::LoggerType* Tracker::GetLogger(  void )
-{
-  return m_Logger;
-}
-
 void Tracker::Open( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::Open called...\n");
