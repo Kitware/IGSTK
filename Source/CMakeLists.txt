@@ -48,7 +48,6 @@ ENDIF( IGSTK_USE_ATAMAI )
 
 
 IF( WIN32 )
-  IF(NOT CYGWIN)
     SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} 
         igstkSerialCommunicationForWindows.h
         )
@@ -56,7 +55,6 @@ IF( WIN32 )
     SET(IGSTKSandbox_SRCS ${IGSTKSandbox_SRCS} 
         igstkSerialCommunicationForWindows.cxx
         )
-  ENDIF(NOT CYGWIN)
 ELSE( WIN32 )
     SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} 
         igstkSerialCommunicationForLinux.h
