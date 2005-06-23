@@ -26,6 +26,7 @@ namespace igstk
 SpatialObject::SpatialObject():m_StateMachine(this)
 {
   m_SpatialObject = NULL;
+  m_TrackerTool = NULL;
 
   m_StateMachine.AddInput( m_SpatialObjectValidInput,  "SpatialObjectValidInput" );
   m_StateMachine.AddInput( m_SpatialObjectNullInput,  "SpatialObjectNullInput" );
@@ -82,6 +83,7 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   m_StateMachine.SelectInitialState( m_InitialState );
 
   m_StateMachine.SetReadyToRun();
+
 
   m_TrackerToolObserver = CommandType::New();
   m_TrackerToolObserver->SetCallbackFunction( this, &SpatialObject::TransformUpdateFromTrackerTool );
@@ -168,8 +170,7 @@ void SpatialObject::SetTransform()
     Transform::VersorType rotation = m_Transform.GetRotation();
     Transform::VersorType::MatrixType matrix = rotation.GetMatrix();
     m_SpatialObject->GetObjectToWorldTransform()->SetMatrix( matrix );
-
-  std::cout << " SpatialObject::SetTransform() T: " << translation << " R: " << rotation << std::endl;
+    std::cout << " SpatialObject::SetTransform() T: " << translation << " R: " << rotation << std::endl;
     }
 }
 
