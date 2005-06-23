@@ -115,9 +115,9 @@ static Pointer New(void) \
  * LoggerType must be defined before this macro is used. */
 #define  igstkLoggerMacro() \
 protected: \
-  LoggerType* GetLogger() { return m_Logger; } \
+  LoggerType* GetLogger() const { return m_Logger; } \
 private: \
-  LoggerType::Pointer   m_Logger; \
+  mutable LoggerType::Pointer   m_Logger; \
 public: \
   void SetLogger(LoggerType* logger) { m_Logger = logger; }
 
