@@ -30,6 +30,24 @@ ELSE (IGSTK_USE_FILE)
   MESSAGE( FATAL_ERROR "This application requires IGSTK. One of these components is missing. Please verify configuration")
 ENDIF (IGSTK_USE_FILE)
 
+# If we have IGSTK in the path we load its cache
+IF(IGSTK_DIR)
+  LOAD_CACHE(${IGSTK_DIR}
+  EXCLUDE
+    BUILD_TESTING
+    BUILD_EXAMPLES
+    LIBRARY_OUTPUT_PATH
+    EXECUTABLE_OUTPUT_PATH
+    MAKECOMMAND 
+    SITE
+    BUILDNAME
+    CVS_UPDATE_OPTIONS
+    DART_TESTING_TIMEOUT
+    PURIFYCOMMAND
+    CVSCOMMAND
+    CMAKE_BACKWARDS_COMPATIBILITY
+  )
+ENDIF(IGSTK_DIR)
 
 #
 #  FIND ITK
