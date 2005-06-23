@@ -78,12 +78,11 @@ public:
   /** Logger class */
   typedef itk::Logger                  LoggerType;
 
-  /** The SetLogger method is used to attach a logger to this object for
-   * debugging and retrospective analysis purposes. */
-  void SetLogger( LoggerType * logger );
-
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
+
+  /** Declarations needed for the Logger */
+  igstkLoggerMacro();
 
 protected:
 
@@ -151,11 +150,6 @@ private:
   /** Stop the generation of pulses by purging the timer. */
   void StopPulses();
 
-  /** The Logger instance */
-  mutable LoggerType::Pointer      m_Logger;
-
-  /** Get pointer to the Logger */
-  LoggerType * GetLogger() const;
 };
 
 } // end of namespace igstk

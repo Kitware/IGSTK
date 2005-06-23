@@ -115,21 +115,6 @@ PulseGenerator::RequestSetFrequency( double frequency )
 }
 
 
-void 
-PulseGenerator::SetLogger( LoggerType * logger )
-{
-  m_Logger = logger;
-}
-
-
-PulseGenerator::LoggerType* 
-PulseGenerator::GetLogger() const
-{
-  return m_Logger;
-}
-
-
-
 void
 PulseGenerator::RequestStart()
 {
