@@ -50,6 +50,10 @@ namespace PulseGeneratorTest
       {
       m_ValueOutput = valueOutput;
       }
+    void SetEndFlag( bool * end )
+      {
+      m_End = end;
+      }
   protected:
     PulseObserver() 
       {
@@ -75,15 +79,18 @@ namespace PulseGeneratorTest
         m_PulseCounter++;
 
         m_ValueOutput->value( m_PulseCounter );
-        
+  
         if( m_PulseCounter > 100 )
           {
-            std::cout << m_PulseCounter << std::endl;
+          std::cout << m_PulseCounter << std::endl;
           generator->RequestStop();
           if( m_Form )
             {
+            std::cout << "hiding a form." << std::endl;
             m_Form->hide(); // close the FLTK window
+            std::cout << "the form is hidden." << std::endl;
             }
+          *m_End = true;
           return;
           }
         }
@@ -92,6 +99,7 @@ namespace PulseGeneratorTest
     unsigned long       m_PulseCounter;
     Fl_Window *         m_Form;
     Fl_Value_Output *   m_ValueOutput;
+    bool *              m_End;
   };
 
 
@@ -106,18 +114,21 @@ int igstkPulseGeneratorTest( int, char * [] )
 
     typedef PulseGeneratorTest::PulseObserver  ObserverType;
 
+    bool bEnd = false;
     ObserverType::Pointer observer = ObserverType::New();
-
-    pulseGenerator->AddObserver( igstk::PulseEvent(), observer );
-    
-    pulseGenerator->RequestSetFrequency( 100 );  // 10 Hz
-
 
     itk::Logger::Pointer logger = itk::Logger::New();
     itk::StdStreamLogOutput::Pointer logOutput = itk::StdStreamLogOutput::New();
     logOutput->SetStream( std::cout );
 
+    logger->AddLogOutput( logOutput );
     logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+    pulseGenerator->SetLogger( logger );
+
+    pulseGenerator->AddObserver( igstk::PulseEvent(), observer );
+    
+    pulseGenerator->RequestSetFrequency( 100 );  // 10 Hz
 
     pulseGenerator->RequestStart();  
 
@@ -133,8 +144,17 @@ int igstkPulseGeneratorTest( int, char * [] )
     
     observer->SetForm( form );
     observer->SetCounter( counter );
+    observer->SetEndFlag( &bEnd );
 
-    Fl::run();
+//    Fl::run();
+    while(1)
+      {
+      Fl::wait(0.1);
+      if( bEnd )
+        {
+        break;
+        }
+      }
 
     std::cout << "End of the pulses" << std::endl;
 
