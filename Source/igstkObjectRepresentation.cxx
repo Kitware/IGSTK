@@ -48,7 +48,8 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this)
   m_StateMachine.AddTransition( m_NullSpatialObjectState, m_ValidSpatialObjectInput, m_ValidSpatialObjectState,  & ObjectRepresentation::SetSpatialObject );
   m_StateMachine.AddTransition( m_NullSpatialObjectState, m_UpdatePositionInput, m_NullSpatialObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullSpatialObjectState, m_UpdateRepresentationInput, m_NullSpatialObjectState,  NoAction );
-
+ 
+  m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdatePositionInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdatePosition );
   m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_NullSpatialObjectInput, m_NullSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_ValidSpatialObjectInput, m_ValidSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidSpatialObjectState, m_UpdateRepresentationInput, m_ValidSpatialObjectState,  & ObjectRepresentation::UpdateRepresentation );
@@ -154,11 +155,18 @@ void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 }
 
 
-
+/** Request Update the object position (i.e vtkActors). Maybe we should check also the transform
+ *  modified time. */
+void ObjectRepresentation::RequestUpdatePosition( const TimeStamp & time )
+{
+  m_TimeToRender = time; 
+  m_StateMachine.PushInput( m_UpdatePositionInput );
+  m_StateMachine.ProcessInputs();
+}
 
 /** Update the object representation (i.e vtkActors). Maybe we should check also the transform
  *  modified time. */
-void ObjectRepresentation::UpdateRepresentation()
+void ObjectRepresentation::UpdatePosition()
 {
   Transform transform = m_SpatialObject->GetTransform();
 
@@ -169,10 +177,10 @@ void ObjectRepresentation::UpdateRepresentation()
   // Update all the actors
   ActorsListType::iterator it = m_Actors.begin();
   while(it != m_Actors.end())
-  {  
+    {  
     (*it)->SetUserMatrix(vtkMatrix);
     it++;
-  }
+    }
 
   // Update the modified time
   m_LastMTime = this->GetMTime();

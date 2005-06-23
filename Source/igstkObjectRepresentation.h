@@ -122,6 +122,12 @@ private:
    * called by the State Machine. This is an abstract method that MUST be
    * overloaded in every derived class. */
   virtual void UpdateRepresentation() = 0;
+ 
+  /** update the visual representation position */
+  virtual void RequestUpdatePosition( const TimeStamp & time );
+
+  /** update the position of the object. This should not be overloaded by other classes */
+  void UpdatePosition();
 
   /** Set the spatial object for this class */
   void SetSpatialObject(); 
