@@ -18,7 +18,6 @@
 #include <iostream>
 
 #include "igstkSerialCommunication.h"
-#include "igstkSerialCommunicationCommand.h"
 
 
 namespace igstk
@@ -148,9 +147,6 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this ),
   m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpSuccessInput;
   m_pClosePortResultInput = &m_ClosePortSuccessInput;
 
-  // Create instance of serial command
-  m_pCommand = SerialCommunicationCommand::New();// this );
-
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
 } 
@@ -260,9 +256,7 @@ bool SerialCommunication::ReceiveString( char *data )
 void SerialCommunication::SetLogger( LoggerType* logger )
 {
     m_pLogger = logger;
-    m_pCommand->SetLogger( logger );
 }
-
 
 
 SerialCommunication::LoggerType* SerialCommunication::GetLogger(  void )
@@ -286,10 +280,6 @@ void SerialCommunication::PrintSelf( std::ostream& os, itk::Indent indent ) cons
 {
   Superclass::PrintSelf(os, indent);
 
-  if( this->m_pCommand )
-  {
-    os << indent << *m_pCommand << std::endl;
-  }
   os << indent << "Port number: " << m_PortNumber.Get() << std::endl;
   os << indent << "Baud rate: " << m_BaudRate.Get() << std::endl;
   os << indent << "Number of bits per byte: " << m_ByteSize.Get() << std::endl;

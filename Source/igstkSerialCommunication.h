@@ -27,14 +27,9 @@
 #include "igstkStateMachine.h"
 
 #include "igstkSerialCommunicationTokens.h"
-//#include "igstkSerialCommunicationCommand.h"
 
 namespace igstk
 {
-
-// since we can't include the header, define the type and the pointer
-class SerialCommunicationCommand;
-typedef itk::SmartPointer<SerialCommunicationCommand> SerialCommunicationCommandPointer;
 
 /** \class SerialCommunication
  * 
@@ -260,9 +255,6 @@ protected:
 
 protected:  // FIXME all these variables should be private
   
-  /** Command for the events created. */
-  SerialCommunicationCommandPointer  m_pCommand; 
-
   // Communication Parameters
 
   /**  Port Number */
