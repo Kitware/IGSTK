@@ -198,7 +198,7 @@ bool SerialCommunication::OpenCommunication( void )
 
 bool SerialCommunication::CloseCommunication( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunication::CloseCommunication called ...\n");
+  // igstkLogMacro( DEBUG, "SerialCommunication::CloseCommunication called ...\n");
   this->m_StateMachine.PushInput( m_ClosePortInput );
   this->m_StateMachine.ProcessInputs();
   this->m_StateMachine.PushInput( *m_pClosePortResultInput );
