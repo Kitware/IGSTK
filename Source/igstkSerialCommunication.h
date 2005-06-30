@@ -188,10 +188,6 @@ public:
   /** ReceiveString method receives the string via the communication link. */
   bool ReceiveString( char *data ); 
 
-   /** The SetLogger method is used to attach a logger object to the
-   serial communication object for logging. */
-  void SetLogger( LoggerType* logger );
-
   /** Events initiated by SerialCommunication object */
   itkEventMacro( OpenPortFailureEvent, itk::AnyEvent );
   itkEventMacro( SetupCommunicationParametersFailureEvent, itk::AnyEvent );
@@ -212,6 +208,9 @@ public:
 
   /** Declarations related to the State Machine */
   igstkStateMachineMacro();
+
+  /** Declarations related to the Logger */
+  igstkLoggerMacro();
 
 protected:
 
@@ -247,11 +246,6 @@ protected:
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
-
-protected: 
-
-  /** The GetLogger method return pointer to the logger object. */
-  LoggerType* GetLogger(  void );
 
 protected:  // FIXME all these variables should be private
   
@@ -309,10 +303,6 @@ protected:  // FIXME all these variables should be private
 
   /** Bytes of data received */
   int           m_ReadDataSize;
-
-  /** The Logger instance */
-  LoggerType     *m_pLogger;
-
 
   
   /** 
