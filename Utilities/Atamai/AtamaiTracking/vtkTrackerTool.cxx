@@ -4,13 +4,13 @@
   Module:    vtkTrackerTool.cxx
   Creator:   David Gobbi <dgobbi@atamai.com>
   Language:  C++
-  Author:    $Author: ibanez $
+  Author:    $Author: dgobbi $
   Date:      $Date$
   Version:   $Revision$
 
 ==========================================================================
 
-Copyright (c) 2000-2002 Atamai, Inc.
+Copyright (c) 2000-2005 Atamai, Inc.
 
 Use, modification and redistribution of the software, in source or
 binary forms, are permitted provided that the following terms and
@@ -230,8 +230,8 @@ void vtkTrackerToolCalibrationFunction(void *userData)
   if (n > 1)
     {
     r = sqrt((sxx - sx*sx/n)/(n-1) +
-       (syy - sy*sy/n)/(n-1) +
-       (szz - sz*sz/n)/(n-1));
+             (syy - sy*sy/n)/(n-1) +
+             (szz - sz*sz/n)/(n-1));
     }
   else
     {
@@ -281,9 +281,9 @@ void vtkTrackerTool::SetCalibrationMatrix(vtkMatrix4x4 *vmat)
     for (j = 0; j < 4; j++)
       {
       if (this->CalibrationMatrix->GetElement(i,j) != vmat->GetElement(i,j))
-  {
-  break;
-  }
+        {
+        break;
+        }
       }
     if (j < 4)
       { 
@@ -366,20 +366,20 @@ void vtkTrackerTool::UpdateAndCalibrate(vtkMatrix4x4 *trans, long flags)
   vtkMatrix4x4 *matrix = this->Transform->GetMatrix();
   
   vtkMatrix4x4::Multiply4x4(this->RawMatrix,
-          this->CalibrationMatrix,
-          this->TempMatrix);
+                            this->CalibrationMatrix,
+                            this->TempMatrix);
   vtkMatrix4x4::Multiply4x4(this->Tracker->GetWorldCalibrationMatrix(),
-          this->TempMatrix,
-          this->TempMatrix);
+                            this->TempMatrix,
+                            this->TempMatrix);
     
   for (i = 0; i < 4; i++) 
     {
     for (j = 0; j < 4; j++)
       {
       if (matrix->GetElement(i,j) != TempMatrix->GetElement(i,j))
-  {
-  break;
-  }
+        {
+        break;
+        }
       }
     if (j < 4)
       { 

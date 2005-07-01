@@ -4,13 +4,13 @@
   Module:    vtkTrackerBuffer.h
   Creator:   David Gobbi <dgobbi@atamai.com>
   Language:  C++
-  Author:    $Author: ibanez $
+  Author:    $Author: dgobbi $
   Date:      $Date$
   Version:   $Revision$
 
 ==========================================================================
 
-Copyright (c) 2000-2002 Atamai, Inc.
+Copyright (c) 2000-2005 Atamai, Inc.
 
 Use, modification and redistribution of the software, in source or
 binary forms, are permitted provided that the following terms and

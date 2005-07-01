@@ -4,13 +4,13 @@
   Module:    vtkTracker.h
   Creator:   David Gobbi <dgobbi@atamai.com>
   Language:  C++
-  Author:    $Author: ibanez $
+  Author:    $Author: dgobbi $
   Date:      $Date$
   Version:   $Revision$
 
 ==========================================================================
 
-Copyright (c) 2000-2002 Atamai, Inc.
+Copyright (c) 2000-2005 Atamai, Inc.
 
 Use, modification and redistribution of the software, in source or
 binary forms, are permitted provided that the following terms and
@@ -34,7 +34,7 @@ WITHOUT EXPRESSED OR IMPLIED WARRANTY INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
 PURPOSE.  IN NO EVENT SHALL ANY COPYRIGHT HOLDER OR OTHER PARTY WHO MAY
 MODIFY AND/OR REDISTRIBUTE THE SOFTWARE UNDER THE TERMS OF THIS LICENSE
-vBE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL OR CONSEQUENTIAL DAMAGES
+BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, LOSS OF DATA OR DATA BECOMING INACCURATE
 OR LOSS OF PROFIT OR BUSINESS INTERRUPTION) ARISING IN ANY WAY OUT OF
 THE USE OR INABILITY TO USE THE SOFTWARE, EVEN IF ADVISED OF THE

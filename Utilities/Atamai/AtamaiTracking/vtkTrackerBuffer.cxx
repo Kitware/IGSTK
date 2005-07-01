@@ -4,13 +4,13 @@
   Module:    vtkTrackerBuffer.cxx
   Creator:   David Gobbi <dgobbi@atamai.com>
   Language:  C++
-  Author:    $Author: ibanez $
+  Author:    $Author: dgobbi $
   Date:      $Date$
   Version:   $Revision$
 
 ==========================================================================
 
-Copyright (c) 2000-2002 Atamai, Inc.
+Copyright (c) 2000-2005 Atamai, Inc.
 
 Use, modification and redistribution of the software, in source or
 binary forms, are permitted provided that the following terms and
@@ -216,15 +216,15 @@ void vtkTrackerBuffer::GetMatrix(vtkMatrix4x4 *matrix, int i)
   if (this->ToolCalibrationMatrix)
     {
     vtkMatrix4x4::Multiply4x4(matrix,
-            this->ToolCalibrationMatrix,
-            matrix);
+                              this->ToolCalibrationMatrix,
+                              matrix);
     }
 
   if (this->WorldCalibrationMatrix)
     {
     vtkMatrix4x4::Multiply4x4(this->WorldCalibrationMatrix,
-            matrix,
-            matrix);
+                              matrix,
+                              matrix);
     }
 }
 
