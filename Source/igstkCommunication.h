@@ -53,30 +53,47 @@ public:
 
   /** The method OpenCommunication sets up communication as per the data
   provided. */
-  virtual bool OpenCommunication( const char *XMLFileName = NULL );
+  virtual void OpenCommunication( void );
 
   /** The method CloseCommunication closes the communication. */
-  virtual bool CloseCommunication( void );
+  virtual void CloseCommunication( void );
 
-  /** SendString method sends the string via communication link. */
-  virtual bool SendString( const char *data ) { return false; };
+  /** The method SetTimeoutPeriod sets the amount of time to wait on a reply 
+  from the device before generating a timeout event. */
+  virtual void SetTimeoutPeriod( int milliseconds ) { };
 
-  /** ReceiveString method receives string via communication link. */
-  virtual bool ReceiveString( char *data ) { return false; }; 
+  /** The method SetReadTerminationCharacter sets a special character that 
+  the device uses to mark the end of a reply 
+  (defaults to end-of-file character, ascii 255). */
+  void SetReadTerminationCharacter( char c ) { m_ReadTerminationCharacter = c; };
 
-  /** Flush "flushes" out any commands in the buffer through the communication link. */
-  virtual bool Flush( void ) { return false; }
+  /** The method SetUseReadTerminationCharacter sets 
+  whether to use the termination character, or not use a termination character. */
+  void SetUseReadTerminationCharacter( bool bUse ) { m_UseReadTerminationCharacter = bUse; };
+
+  /** Write method sends the string via communication link. */
+  virtual void Write( const char *data, int numberOfBytes ) { };
+
+  /** Read method receives string via communication link. */
+  virtual void Read( char *data, int numberOfBytes, int &bytesRead ) { }; 
 
 protected:
 
   /** Constructor is protected in order to enforce 
    *  the use of the New() operator */
-  Communication(void);
+  Communication( void );
 
-  virtual ~Communication(void);
+  virtual ~Communication( void );
+
+  /** Flush "flushes" out any commands in the buffer through the communication link. */
+  virtual void Flush( void ) { }
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+  char m_ReadTerminationCharacter;
+
+  bool m_UseReadTerminationCharacter;
 };
 
 } // end of namespace igstk
