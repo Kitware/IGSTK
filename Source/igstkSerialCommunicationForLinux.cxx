@@ -333,14 +333,14 @@ SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSet
 {
   struct termios t;
 
-  if (tcgetattr(serial_port,&t) == -1) {
+  if (tcgetattr(this->m_PortHandle,&t) == -1) {
     return FAILURE;
   }
 
   t.c_cc[VMIN] = 0;                  /* use constant, not interval timout */
   t.c_cc[VTIME] = milliseconds/100;  /* wait time is in 10ths of a second */
 
-  if (tcsetattr(serial_port,TCSANOW,&t) == -1) {
+  if (tcsetattr(m_PortHandle,TCSANOW,&t) == -1) {
     return FAILURE;
   }
 
