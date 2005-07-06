@@ -513,14 +513,17 @@ const char *NDICommandInterpreter::Command(const char *command)
 
   /* flush the input buffer, because anything that we haven't read
        yet is garbage left over by a previously failed command */
-  m_Communication->Flush();
+//  m_Communication->Flush();
 
   /* send the command to the device */
   std::cout << "NDI sending: " << cp << std::endl;
+  m_Communication->Write(cp, strlen(cp));
+  /* commented out because of void return value.
   if (!m_Communication->SendString(cp))
     {
     errcode = NDI_WRITE_ERROR;
     }
+  */
 
   /* here is the old code from ndicapi.c */
   //if (errcode == 0) {
@@ -539,12 +542,16 @@ const char *NDICommandInterpreter::Command(const char *command)
     m = 0;
     for (;;)
       {
+      int bytesRead;
+      m_Communication->Read(&rp[m], 255, bytesRead);
+      /* commented out because of void return value.
       if (!m_Communication->ReceiveString(&rp[m]))
         {
         errcode = NDI_WRITE_ERROR;
         std::cout << "NDI read error"<< std::endl;
         break;
         }
+      */
 
       m = strlen(rp);
 

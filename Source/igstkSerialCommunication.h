@@ -168,43 +168,43 @@ public:
   /** The method OpenCommunication sets up communication as per the data
   provided. */
 
-  bool OpenCommunication( void );
+  void OpenCommunication( void );
 
   /** The method CloseCommunication closes the communication. */
-  bool CloseCommunication();
+  void CloseCommunication();
+
+  /** The method SetTimeoutPeriod sets the amount of time to wait on a reply 
+  from the device before generating a timeout event. */
+  virtual void SetTimeoutPeriod( int milliseconds ) { };
 
   /**Rests communication port by suspending character transmission  
   and placing the transmission line in a break state, and restarting
   transmission after a short delay.*/
-  bool RestCommunication();
+  void SendBreak();
 
-  /** Flushes output buffer of any waiting commands to the hardware. 
-      Only flushes the transmit buffer, not the receive buffer.*/
-  bool Flush();
+  /** Write method sends the string via the communication link. */
+  void Write( const char *message, int numberOfBytes );
 
-  /** SendString method sends the string via the communication link. */
-  bool SendString( const char *message );
-
-  /** ReceiveString method receives the string via the communication link. */
-  bool ReceiveString( char *data ); 
+  /** Read method receives the string via the communication link. */
+  void Read( char *data, int numberOfBytes, int &bytesRead ); 
 
   /** Events initiated by SerialCommunication object */
   itkEventMacro( OpenPortFailureEvent, itk::AnyEvent );
-  itkEventMacro( SetupCommunicationParametersFailureEvent, itk::AnyEvent );
+  itkEventMacro( SetCommunicationParametersFailureEvent, itk::AnyEvent );
   itkEventMacro( SetDataBufferSizeFailureEvent, itk::AnyEvent );
   itkEventMacro( CommunicationTimeoutSetupFailureEvent, itk::AnyEvent );
-  itkEventMacro( RestCommunicationFailureEvent, itk::AnyEvent );
+  itkEventMacro( SendBreakFailureEvent, itk::AnyEvent );
   itkEventMacro( FlushOutputBufferFailureEvent, itk::AnyEvent );
   itkEventMacro( OverlappedEventCreationFailureEvent, itk::AnyEvent );
-  itkEventMacro( SendStringSuccessfulEvent, itk::AnyEvent );
-  itkEventMacro( SendStringFailureEvent, itk::AnyEvent );
-  itkEventMacro( SendStringWriteTimeoutEvent, itk::AnyEvent );
-  itkEventMacro( SendStringWaitTimeoutEvent, itk::AnyEvent );
+  itkEventMacro( WriteSuccessfulEvent, itk::AnyEvent );
+  itkEventMacro( WriteFailureEvent, itk::AnyEvent );
+  itkEventMacro( WriteTimeoutEvent, itk::AnyEvent );
+  itkEventMacro( WriteWaitTimeoutEvent, itk::AnyEvent );
   itkEventMacro( CommunicationStatusReportFailureEvent, itk::AnyEvent );
-  itkEventMacro( ReceiveStringSuccessfulEvent, itk::AnyEvent );
-  itkEventMacro( ReceiveStringFailureEvent, itk::AnyEvent );
-  itkEventMacro( ReceiveStringReadTimeoutEvent, itk::AnyEvent );
-  itkEventMacro( ReceiveStringWaitTimeoutEvent, itk::AnyEvent );
+  itkEventMacro( ReadSuccessfulEvent, itk::AnyEvent );
+  itkEventMacro( ReadFailureEvent, itk::AnyEvent );
+  itkEventMacro( ReadTimeoutEvent, itk::AnyEvent );
+  itkEventMacro( ReadWaitTimeoutEvent, itk::AnyEvent );
 
   /** Declarations related to the State Machine */
   igstkStateMachineMacro();
@@ -214,35 +214,45 @@ public:
 
 protected:
 
+  typedef enum 
+  { 
+    FAILURE=0, 
+    SUCCESS
+  } ResultType;
+
   SerialCommunication();
 
   ~SerialCommunication();
 
   /** Opens serial port for communication; */
-  virtual void OpenPortProcessing( void ) = 0;
+  virtual ResultType InternalOpenCommunication( void ) = 0;
 
   /** Set up data buffer size. */
-  virtual void SetUpDataBuffersProcessing( void ) = 0;
+  virtual ResultType InternalSetUpDataBuffers( void ) = 0;
 
-  /** Sets up communication on the open port as per the communication parameters. */
-  virtual void SetUpDataTransferParametersProcessing( void ) = 0;
+  /** Set communication on the open port as per the communication parameters. */
+  virtual ResultType InternalSetTransferParameters( void ) = 0;
 
   /** Closes serial port  */
-  virtual void ClosePortProcessing( void ) = 0;
-  virtual void ClearBuffersAndClosePortProcessing( void ) = 0;
+  virtual ResultType InternalClosePort( void ) = 0;
+  virtual ResultType InternalClearBuffersAndClosePort( void ) = 0;
   virtual void ClosePortSuccessProcessing( void );
   virtual void ClosePortFailureProcessing( void );
 
   /**Rests communication port by suspending character transmission  
   and placing the transmission line in a break state, and restarting
   transmission after a short delay.*/
-  virtual void RestPortProcessing( void ) = 0;
+  virtual void InternalSendBreak( void ) = 0;
 
-  virtual void FlushOutputBufferProcessing( void ) = 0;
+  virtual void InternalFlushOutputBuffer( void ) = 0;
 
-  virtual void SendStringProcessing( void ) = 0;
+  virtual void InternalWrite( void ) = 0;
 
-  virtual void ReceiveStringProcessing( void ) = 0;
+  virtual void InternalRead( void ) = 0;
+
+  /** Flushes output buffer of any waiting commands to the hardware. 
+      Only flushes the transmit buffer, not the receive buffer.*/
+  void Flush( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -304,7 +314,13 @@ protected:  // FIXME all these variables should be private
   /** Bytes of data received */
   int           m_ReadDataSize;
 
-  
+  /** the parameter NumberOfBytes in Write() */
+  int m_WriteNumberOfBytes;
+  /** the parameter NumberOfBytes in Read() */
+  int m_ReadNumberOfBytes;
+  /** the parameter ReadBytes in Read() */
+  int m_BytesRead;
+
   /** 
    *
    *         State Machine variables 
@@ -317,7 +333,7 @@ protected:  // FIXME all these variables should be private
   StateType                m_PortOpenState;
   StateType                m_AttemptToSetUpDataBuffersState;
   StateType                m_DataBuffersSetState;
-  StateType                m_AttemptToSetUpDataTransferParametersState;
+  StateType                m_AttemptToSetTransferParametersState;
   
   StateType                m_PortReadyForCommunicationState;
   StateType                m_AttemptToClosePortState;
@@ -332,28 +348,31 @@ protected:  // FIXME:  this should be private once the state machine is reorgani
   InputType                m_DataBuffersSetUpSuccessInput;
   InputType                m_DataBuffersSetUpFailureInput;
 
-  InputType                m_SetUpDataTransferParametersInput;
+  InputType                m_SetTransferParametersInput;
   InputType                m_DataTransferParametersSetUpSuccessInput;
   InputType                m_DataTransferParametersSetUpFailureInput;
 
-  InputType                m_RestPortInput;
+  InputType                m_SendBreakInput;
   InputType                m_FlushOutputBufferInput;
-  InputType                m_ReceiveStringInput;
-  InputType                m_SendStringInput;
+  InputType                m_ReadInput;
+  InputType                m_WriteInput;
 
   InputType                m_ClosePortInput;
   InputType                m_ClosePortSuccessInput;
   InputType                m_ClosePortFailureInput;
 
-  /** Result of post-transition action taken by the state machine. */
-protected:  // FIXME:  this should be private once the state machine is reorganized.
+protected:
 
-  InputType                *m_pOpenPortResultInput;
-  InputType                *m_pDataBuffersSetUpResultInput;
-  InputType                *m_pDataTransferParametersSetUpResultInput;
-  InputType                *m_pClosePortResultInput;
+private:
+  void AttemptToOpenCommunication( void );
 
+  void AttemptToSetUpDataBuffers( void );
 
+  void AttemptToSetTransferParameters( void );
+
+  void AttemptToClosePort( void );
+
+  void AttemptToClearBuffersAndClosePort( void );
 };
 
 } // end namespace igstk
