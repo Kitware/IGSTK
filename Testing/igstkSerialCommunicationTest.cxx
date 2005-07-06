@@ -55,7 +55,7 @@ public:
     {
         std::cout << "OpenPortFailureEvent Error Occurred ...\n";
     }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::SetupCommunicationParametersFailureEvent ))
+    else if ( typeid(event)== typeid( igstk::SerialCommunication::SetCommunicationParametersFailureEvent ))
     {
         std::cout << "SetupCommunicationParametersFailureEvent Error Occurred ...\n";
     }
@@ -67,41 +67,41 @@ public:
     {
         std::cout << "CommunicationTimeoutSetupFailureEvent Error Occurred ...\n";
     }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::SendStringSuccessfulEvent ))
+    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteSuccessfulEvent ))
     {
-        std::cout << "****** SendStringSuccessfulEvent ******\n";
+        std::cout << "****** WriteSuccessfulEvent ******\n";
     }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::SendStringFailureEvent ))
+    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteFailureEvent ))
     {
-        std::cout << "****** SendStringFailureEvent ******\n";
+        std::cout << "****** WriteFailureEvent ******\n";
     }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::SendStringWriteTimeoutEvent ))
+    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteTimeoutEvent ))
     {
-        std::cout << "****** SendStringWriteTimeoutEvent ******\n";
+        std::cout << "****** WriteTimeoutEvent ******\n";
     }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::SendStringWaitTimeoutEvent ))
+    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteWaitTimeoutEvent ))
     {
-        std::cout << "****** SendStringWaitTimeoutEvent ******\n";
+        std::cout << "****** WriteWaitTimeoutEvent ******\n";
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::CommunicationStatusReportFailureEvent ))
     {
         std::cout << "****** CommunicationStatusReportFailureEvent ******\n";
     }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReceiveStringSuccessfulEvent ))
+    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadSuccessfulEvent ))
     {
-        std::cout << "****** ReceiveStringSuccessfulEvent ******\n";
+        std::cout << "****** ReadSuccessfulEvent ******\n";
     }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReceiveStringFailureEvent ))
+    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadFailureEvent ))
     {
-        std::cout << "****** ReceiveStringFailureEvent ******\n";
+        std::cout << "****** ReadFailureEvent ******\n";
     }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReceiveStringReadTimeoutEvent ))
+    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadTimeoutEvent ))
     {
-        std::cout << "****** ReceiveStringReadTimeoutEvent ******\n";
+        std::cout << "****** ReadTimeoutEvent ******\n";
     }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReceiveStringWaitTimeoutEvent ))
+    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadWaitTimeoutEvent ))
     {
-        std::cout << "****** ReceiveStringWaitTimeoutEvent ******\n";
+        std::cout << "****** ReadWaitTimeoutEvent ******\n";
     }
    else 
     {
@@ -136,21 +136,21 @@ int igstkSerialCommunicationTest( int, char * [] )
   std::cout << serialComm << std::endl;
 
   serialComm->AddObserver( igstk::SerialCommunication::OpenPortFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::SetupCommunicationParametersFailureEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::SetCommunicationParametersFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::SetDataBufferSizeFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::CommunicationTimeoutSetupFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::RestCommunicationFailureEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::SendBreakFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::FlushOutputBufferFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::OverlappedEventCreationFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::SendStringSuccessfulEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::SendStringFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::SendStringWriteTimeoutEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::SendStringWaitTimeoutEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::WriteSuccessfulEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::WriteFailureEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::WriteTimeoutEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::WriteWaitTimeoutEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::CommunicationStatusReportFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::ReceiveStringSuccessfulEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::ReceiveStringFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::ReceiveStringReadTimeoutEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::ReceiveStringWaitTimeoutEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::ReadSuccessfulEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::ReadFailureEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::ReadTimeoutEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::ReadWaitTimeoutEvent(), my_command);
 
   serialComm->SetLogger( logger );
 
@@ -163,20 +163,21 @@ int igstkSerialCommunicationTest( int, char * [] )
 
   serialComm->OpenCommunication();
 
-  serialComm->SendString("Hello World!!!");
+  int len = strlen("Hello World!!!");
+  serialComm->Write("Hello World!!!", len);
 
-  serialComm->SendString("Hello World!!!");
-  serialComm->SendString("Hello World!!!");
-  serialComm->SendString("Hello World!!!");
-  serialComm->SendString("Hello World!!!");
-  serialComm->SendString("Hello World!!!");
+  serialComm->Write("Hello World!!!", len);
+  serialComm->Write("Hello World!!!", len);
+  serialComm->Write("Hello World!!!", len);
+  serialComm->Write("Hello World!!!", len);
+  serialComm->Write("Hello World!!!", len);
 
   //serialComm->FlushOutputBuffer();
 
-  //serialComm->ReceiveString();
-  //serialComm->ReceiveString();
-  //serialComm->ReceiveString();
-  //serialComm->ReceiveString();
+  //serialComm->Read();
+  //serialComm->Read();
+  //serialComm->Read();
+  //serialComm->Read();
 
   serialComm->CloseCommunication();
 
