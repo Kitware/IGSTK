@@ -23,59 +23,94 @@
 namespace igstk
 { 
 /** Constructor */
-SerialCommunicationForWindows::SerialCommunicationForWindows() :  
-SerialCommunication()
+SerialCommunicationForWindows::SerialCommunicationForWindows() : 
+SerialCommunication(), TIMEOUT_PERIOD(5000), NDI_INVALID_HANDLE(INVALID_HANDLE_VALUE)
 {
+  this->m_PortHandle = SerialCommunicationForWindows::NDI_INVALID_HANDLE;
 } 
 
-void SerialCommunicationForWindows::OpenPortProcessing( void )
+SerialCommunicationForWindows::ResultType SerialCommunicationForWindows::InternalOpenCommunication( void )
 {
-  char portName[10];
+  static COMMTIMEOUTS default_ctmo = { MAXDWORD, MAXDWORD,
+               TIMEOUT_PERIOD, 
+               2, 
+               TIMEOUT_PERIOD };
+  HANDLE serial_port;
+  DCB comm_settings;
 
-  switch(this->m_PortNumber.Get())
-  {
-  case 0: sprintf(portName, "COM1" ); break;
-  case 1: sprintf(portName, "COM2" ); break;
-  case 2: sprintf(portName, "COM3" ); break;
-  case 3: sprintf(portName, "COM4" ); break;
+  char device[20];
+  sprintf(device, "COM%.1d:", this->GetPortNumber().Get()+1 );
+  std::cout << device << std::endl;
+
+  serial_port = CreateFile(device,
+                           GENERIC_READ|GENERIC_WRITE,
+                           0,  /* not allowed to share ports */
+                           0,  /* child-processes don't inherit handle */
+                           OPEN_EXISTING, 
+                           FILE_ATTRIBUTE_NORMAL,
+                           NULL); /* no template file */
+
+  if (serial_port == INVALID_HANDLE_VALUE) {
+    return FAILURE;
   }
 
-  this->m_PortHandle = CreateFile(portName, GENERIC_READ | GENERIC_WRITE,
-                                  0,   // opened with exclusive-access 
-                                  0,    // no security attributes
-                                  OPEN_EXISTING, 
-                                  FILE_FLAG_OVERLAPPED, // For asynchronous write operations 
-                                  NULL  
-                                  );
+  /* save the serial port state so that it can be restored when
+     the serial port is closed in ndiSerialClose() */
+  if (this->m_PortHandle == serial_port || this->m_PortHandle == INVALID_HANDLE_VALUE) {
+    this->m_PortHandle = serial_port;
+    GetCommTimeouts(serial_port,&m_SaveTimeout);
+    GetCommState(serial_port,&m_SaveDCB);
+  }
 
-  if( this->m_PortHandle == INVALID_HANDLE_VALUE)
-  {
-    m_pOpenPortResultInput = &m_OpenPortFailureInput;
-    this->InvokeEvent( OpenPortFailureEvent() );
+  if (SetupComm(serial_port, this->m_ReadBufferSize, this->m_WriteBufferSize) == FALSE) { /* set buffer size */
+    this->m_PortHandle = INVALID_HANDLE_VALUE;
+    CloseHandle(serial_port);
+    return FAILURE;
   }
-  else
-  {
-    m_pOpenPortResultInput = &m_OpenPortSuccessInput;
-    igstkLogMacro( DEBUG, "COM port name: " << portName << " opened\n" );
+
+  if (GetCommState(serial_port,&comm_settings) == FALSE) {
+    this->m_PortHandle = INVALID_HANDLE_VALUE;
+    CloseHandle(serial_port);
+    return FAILURE;
   }
+
+  comm_settings.fOutX = FALSE;             /* no S/W handshake */
+  comm_settings.fInX = FALSE;
+  comm_settings.fAbortOnError = FALSE;     /* don't need to clear errors */
+  comm_settings.fOutxDsrFlow = FALSE;      /* no modem-style flow stuff*/
+  comm_settings.fDtrControl = DTR_CONTROL_ENABLE;  
+
+  if (SetCommState(serial_port,&comm_settings) == FALSE) {
+    this->m_PortHandle = INVALID_HANDLE_VALUE;
+    CloseHandle(serial_port);
+    return FAILURE;
+  }
+  
+  if (SetCommTimeouts(serial_port,&default_ctmo) == FALSE) {
+    SetCommState(serial_port,&comm_settings);
+    SetCommState(serial_port,&m_SaveDCB); 
+    this->m_PortHandle = INVALID_HANDLE_VALUE;
+    CloseHandle(serial_port);
+    return FAILURE;
+  }
+
+  return SUCCESS;
 }
 
 
-void SerialCommunicationForWindows::SetUpDataBuffersProcessing( void )
+SerialCommunicationForWindows::ResultType SerialCommunicationForWindows::InternalSetUpDataBuffers( void )
 {
   if (this->m_InputBuffer!=NULL) delete (this->m_InputBuffer); 
   this->m_InputBuffer = new char[ this->m_ReadBufferSize ];
   if (this->m_OutputBuffer!=NULL) delete this->m_OutputBuffer; 
   this->m_OutputBuffer = new char[ this->m_WriteBufferSize + 1 ]; // one extra byte to store end of string
-  if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL) || 
-      !SetupComm(this->m_PortHandle, this->m_ReadBufferSize, this->m_WriteBufferSize)) 
+  if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL) )
   {
-    m_pDataBuffersSetUpResultInput = &m_DataBuffersSetUpFailureInput;
     this->InvokeEvent( SetDataBufferSizeFailureEvent() );
+    return FAILURE;
   }
   else
   {
-    m_pDataBuffersSetUpResultInput = &m_DataBuffersSetUpSuccessInput;
     //Clear out buffers
     PurgeComm(this->m_PortHandle, PURGE_TXABORT | PURGE_TXCLEAR | PURGE_RXABORT | PURGE_RXCLEAR);
     this->m_ReadDataSize = 0;
@@ -83,79 +118,91 @@ void SerialCommunicationForWindows::SetUpDataBuffersProcessing( void )
     memset(this->m_InputBuffer, '\0', sizeof(this->m_InputBuffer));
 
     igstkLogMacro( DEBUG, "SetDataBufferSizeParameters with Read Buffer size = " << m_ReadBufferSize << " and Write Buffer Size = " << m_WriteBufferSize << " succeeded.\n");
+    return SUCCESS;
   }
 }
 
 
-void SerialCommunicationForWindows::SetUpDataTransferParametersProcessing( void )
+SerialCommunicationForWindows::ResultType SerialCommunicationForWindows::InternalSetTransferParameters( void )
 {
-  m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpFailureInput;
+  DCB comm_settings;
+  int newbaud;
 
-  // Control setting for a serial communications device
-  DCB   dcb;
-  if (!GetCommState(this->m_PortHandle, &dcb))
-  {
-       return;
+  unsigned int baud = this->m_BaudRate.Get();
+
+  switch (baud)
+    {
+    case 9600:   newbaud = CBR_9600;   break;
+    case 14400:  newbaud = CBR_14400;  break;
+    case 19200:  newbaud = CBR_19200;  break;
+    case 38400:  newbaud = CBR_38400;  break;
+    case 57600:  newbaud = CBR_57600;  break;
+    case 115200: newbaud = CBR_115200; break;
+    default:     
+                 this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+                 igstkLogMacro( DEBUG, "Setting Communication Parameters Failed.(invalid baud rate)\n" << std::endl );
+                 return FAILURE;
+    }
+
+  GetCommState(this->m_PortHandle,&comm_settings);
+
+  comm_settings.BaudRate = newbaud;     /* speed */
+
+  if (this->m_HardwareHandshake.Get()) {  /* set handshaking */
+    comm_settings.fOutxCtsFlow = TRUE;       /* on */
+    comm_settings.fRtsControl = RTS_CONTROL_HANDSHAKE;
+  }
+  else {
+    comm_settings.fOutxCtsFlow = FALSE;       /* off */
+    comm_settings.fRtsControl = RTS_CONTROL_DISABLE;
+  }    
+
+  if (this->m_ByteSize.Get() == 8) {                 /* set data bits */
+    comm_settings.ByteSize = 8;
+  }
+  else if (this->m_ByteSize.Get() == 7) {
+    comm_settings.ByteSize = 7;
+  }
+  else {
+    this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+    igstkLogMacro( DEBUG, "Setting Communication Parameters Failed.(invalid data bits)\n" << std::endl );
+    return FAILURE;
   }
 
-  // Baudrate parameter settings
-  dcb.BaudRate = this->m_BaudRate.Get();
-  // Bytesize parameter settings
-  switch(this->m_ByteSize.Get())
-  {
-  case 7: dcb.ByteSize = 7; break;
-  case 8: dcb.ByteSize = 8; break;
-  default: ;//return error; shouldn't come here in the first place.
+  if (this->m_Parity.Get() == 0) { // none                /* set parity */
+    comm_settings.Parity = NOPARITY;
   }
-  // Parity parameter settings
-  dcb.fParity = (this->m_Parity==0) ? 0 : 1;
-  switch(this->m_Parity.Get())
-  {
-  case 0: dcb.Parity = NOPARITY; break;
-  case 1: dcb.Parity = ODDPARITY; break; 
-  case 2: dcb.Parity = EVENPARITY; break;  
-  default: ;//return error; shouldn't come here in the first place.
+  else if (this->m_Parity.Get() == 1) { // odd
+    comm_settings.Parity = ODDPARITY;
   }
-  // Stop bit parameter settings
-  switch(this->m_StopBits.Get())
-  {
-  case 1: dcb.StopBits = ONESTOPBIT; break;
-  case 2: dcb.StopBits = TWOSTOPBITS; break;
-  default: ;//return error; shouldn't come here in the first place.
+  else if (this->m_Parity.Get() == 2) { // even
+    comm_settings.Parity = EVENPARITY;
   }
-  //Hardware Handsake
-  dcb.fOutxCtsFlow = m_HardwareHandshake.Get() ? 1 : 0;
-  dcb.fRtsControl =  m_HardwareHandshake.Get() ? RTS_CONTROL_HANDSHAKE : RTS_CONTROL_DISABLE;
-
-  //Set up communication state using Windows API
-  if (!SetCommState(this->m_PortHandle, &dcb))
-  {
-    this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-    return;
+  else {
+    this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+    igstkLogMacro( DEBUG, "Setting Communication Parameters Failed.(invalid parity)\n" << std::endl );
+    return FAILURE;
   }
 
-  // Set up communication timeouts
-
-  COMMTIMEOUTS       CommunicationTimeouts;
-  CommunicationTimeouts.ReadIntervalTimeout = MAXWORD; //m_ReadIntervalTimeout
-  CommunicationTimeouts.ReadTotalTimeoutConstant = m_ReadTotalTimeoutConstant;
-  CommunicationTimeouts.ReadTotalTimeoutMultiplier = m_ReadTotalTimeoutMultiplier;
-  CommunicationTimeouts.WriteTotalTimeoutConstant = m_WriteTotalTimeoutConstant;
-  CommunicationTimeouts.WriteTotalTimeoutMultiplier = m_WriteTotalTimeoutMultiplier;
-
-  if (!SetCommTimeouts(this->m_PortHandle, &CommunicationTimeouts))
-  {
-    this->InvokeEvent( CommunicationTimeoutSetupFailureEvent() );
-    return;
+  if (this->m_StopBits.Get() == 1) {                  /* set stop bits */
+    comm_settings.StopBits = ONESTOPBIT;
   }
-  else
-  {
-    igstkLogMacro( DEBUG, "SetupCommunicationParameters succeeded.\n");
+  else if (this->m_StopBits.Get() == 2) {
+    comm_settings.StopBits = TWOSTOPBITS;
   }
-  m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpSuccessInput;
+  else {
+    this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+    igstkLogMacro( DEBUG, "Setting Communication Parameters Failed.(invalid stop bits)\n" << std::endl );
+    return FAILURE;
+  }
+
+  SetCommState(this->m_PortHandle,&comm_settings);
+
+  igstkLogMacro( DEBUG, "SetCommunicationParameters succeeded.\n");
+  return SUCCESS;
 }
 
-void SerialCommunicationForWindows::ClearBuffersAndClosePortProcessing( void )
+SerialCommunicationForWindows::ResultType SerialCommunicationForWindows::InternalClearBuffersAndClosePort( void )
 {
   if (m_InputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_InputBuffer;
@@ -163,211 +210,141 @@ void SerialCommunicationForWindows::ClearBuffersAndClosePortProcessing( void )
   if (m_OutputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_OutputBuffer;
   m_OutputBuffer = NULL;
-  this->ClosePortProcessing();
+  return this->InternalClosePort();
 }
 
-void SerialCommunicationForWindows::ClosePortProcessing( void )
+SerialCommunicationForWindows::ResultType SerialCommunicationForWindows::InternalClosePort( void )
 {
+  /* restore the comm port state to from before it was opened */
+  if ( this->m_PortHandle != INVALID_HANDLE_VALUE ) {
+      SetCommTimeouts(this->m_PortHandle,&m_SaveTimeout);
+      SetCommState(this->m_PortHandle,&m_SaveDCB);
+      this->m_PortHandle = INVALID_HANDLE_VALUE;      
+  }
+
   CloseHandle(this->m_PortHandle);
-  this->m_PortHandle = (HandleType)INVALID_HANDLE_VALUE;
-  igstkLogMacro( DEBUG, "Communication port closed.\n");
+  return SUCCESS;
 }
 
-void SerialCommunicationForWindows::RestPortProcessing( void )
+SerialCommunicationForWindows::ResultType SerialCommunicationForWindows::InternalSetTimeoutPeriod( int milliseconds )
 {
-  if (!SetCommBreak( this->m_PortHandle ))
-  {
-    this->InvokeEvent( RestCommunicationFailureEvent() );
+  COMMTIMEOUTS ctmo;
+  
+  if (GetCommTimeouts(this->m_PortHandle,&ctmo) == FALSE) {
+    return FAILURE;
+  }
+  
+  ctmo.ReadIntervalTimeout = MAXDWORD;
+  ctmo.ReadTotalTimeoutMultiplier = MAXDWORD;
+  ctmo.ReadTotalTimeoutConstant = milliseconds;
+  ctmo.WriteTotalTimeoutConstant = milliseconds;
+
+  if (SetCommTimeouts(this->m_PortHandle,&ctmo) == FALSE) {
+    return FAILURE;
   }
 
-  Sleep( m_PortRestSpan );
+  return SUCCESS;
+}
 
-  if (!ClearCommBreak( this->m_PortHandle ))
-  {
-    this->InvokeEvent( RestCommunicationFailureEvent() );
-  }
+void SerialCommunicationForWindows::InternalSendBreak( void )
+{
+  DWORD dumb;
+
+  ClearCommError(this->m_PortHandle,&dumb,NULL);       /* clear error */
+  PurgeComm(this->m_PortHandle,PURGE_TXCLEAR|PURGE_RXCLEAR); /* clear buffers */
+
+  SetCommBreak(this->m_PortHandle);
+  Sleep(300);                            /* hold break for 0.3 seconds */ 
+  ClearCommBreak(this->m_PortHandle);
+
+  return;
 }
 
 
-void SerialCommunicationForWindows::FlushOutputBufferProcessing( void )
+void SerialCommunicationForWindows::InternalFlushOutputBuffer( void )
 {
-  if (!FlushFileBuffers( this->m_PortHandle ))
-  {
-    this->InvokeEvent( FlushOutputBufferFailureEvent() );
-  }
+  DWORD dumb;
+  DWORD flushtype = PURGE_TXCLEAR | PURGE_RXCLEAR;
+
+  ClearCommError(this->m_PortHandle,&dumb,NULL);       /* clear error */
+  PurgeComm(this->m_PortHandle,flushtype);             /* clear buffers */
+
+  return;
 }
 
 
-void SerialCommunicationForWindows::SendStringProcessing( void )
+void SerialCommunicationForWindows::InternalWrite( void )
 {
-  //OVERLAPPED structure contains information used in asynchronous input and output (I/O).
-  OVERLAPPED    overlappedWrite = {0};
+  DWORD m, dumb;
+  int i = 0;
+//  unsigned long  bytesToWrite = strlen(m_OutputBuffer);
+  unsigned long  bytesToWrite = m_WriteNumberOfBytes;
 
-  //create an overlapped event for asynchronous write
-  overlappedWrite.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-  if( overlappedWrite.hEvent == NULL )
-  {
-    this->InvokeEvent( OverlappedEventCreationFailureEvent() );
-    return;
-  }
-
-  //try writing to the hardware
-  unsigned long   bytesToWrite = strlen(m_OutputBuffer);
-  unsigned long   writtenBytes;
-
-  bool successfulWrite = WriteFile(this->m_PortHandle, this->m_OutputBuffer, bytesToWrite, &writtenBytes, &overlappedWrite);
- 
-  //check if writing event successful
-  if (successfulWrite) 
-  { // successfully wrote all data
-    if (writtenBytes==bytesToWrite)
-    {
-      std::cout << "Bytes to write = " << bytesToWrite << ", Written bytes = " << writtenBytes << std::endl;
-      this->InvokeEvent( SendStringSuccessfulEvent());
-    }
-    //write timeout occurred, and all data could not get written
-    else
-    {
-      this->InvokeEvent( SendStringWriteTimeoutEvent() );
-    }
-  }
-  //else check if writing operation is pending,
-  else if (GetLastError()==ERROR_IO_PENDING)
-  { // if so, wait for write to succeed or timeout.
-    DWORD waitResult = WaitForSingleObject(overlappedWrite.hEvent, INFINITE); 
-    switch(waitResult)
-    {
-    case WAIT_OBJECT_0:
-      //check if writing succeeded 
-      if( GetOverlappedResult(this->m_PortHandle, &overlappedWrite, &writtenBytes, FALSE)
-              && (writtenBytes==bytesToWrite))
-      {
-        std::cout << "Bytes to write = " << bytesToWrite << ", Written buyes = " << writtenBytes << std::endl;
-        this->InvokeEvent( SendStringSuccessfulEvent() );
+  igstkLogMacro( DEBUG, "InternalWrite called ...\n");
+  while (bytesToWrite > 0) {
+    if (WriteFile(this->m_PortHandle, &this->m_OutputBuffer[i], bytesToWrite, &m, NULL) == FALSE) {
+      if (GetLastError() == ERROR_OPERATION_ABORTED) 
+      {/* system cancelled us */
+        ClearCommError(this->m_PortHandle,&dumb,NULL); /* so clear error and retry */
       }
-      //writing timeout occurred before all data could be written.
-      else
-      {
-        this->InvokeEvent( SendStringWriteTimeoutEvent() );
-      } 
-      break;
-    case WAIT_TIMEOUT:
-      //wait timeout occurred
-      this->InvokeEvent( SendStringWaitTimeoutEvent() );
-      break;
-    default:
-      this->InvokeEvent( SendStringFailureEvent() );
-    } 
-  }
-  //writing operation failed.
-  else
-  {
-      this->InvokeEvent( SendStringFailureEvent() );
-  }
-
-  //Close the created overlapped event.
-  CloseHandle(overlappedWrite.hEvent);
-}
-
-
-void SerialCommunicationForWindows::ReceiveStringProcessing( void )
-{
-  std::cout << "Came to ReceiveStringProcessing" << std::endl;
-
-  //Get status of the communication device.
-  DWORD      communicationErrors = 0;
-  COMSTAT    communicationStatus = {0};
-  if( !ClearCommError( this->m_PortHandle, &communicationErrors, &communicationStatus ))
-  {
-      this->InvokeEvent( CommunicationStatusReportFailureEvent() );
+      else {
+        this->InvokeEvent( WriteFailureEvent() );
+        igstkLogMacro( DEBUG, "InternalWrite failed ...\n");
+        return;  /* IO error occurred */
+      }
+    }
+    else if (m == 0) { /* no characters written, must have timed out */
+      this->InvokeEvent( WriteTimeoutEvent() );
+      igstkLogMacro( DEBUG, "InternalWrite failed with timeout...\n");
       return;
-  }
-
-  int bytesToRead = communicationStatus.cbInQue;
-  if (bytesToRead == 0)
-    {
-    bytesToRead = 1;
-    }
-  if (bytesToRead > m_ReadBufferSize)
-    {
-    bytesToRead = m_ReadBufferSize;
     }
 
-  std::cout << "Bytes to read = " << bytesToRead << std::endl;
-
-  //OVERLAPPED structure contains information used in asynchronous input/output (I/O).
-  OVERLAPPED    overlappedRead = {0};
-  //create an overlapped event for asynchronous read
-  overlappedRead.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-  if( overlappedRead.hEvent == NULL )
-  {
-    this->InvokeEvent( OverlappedEventCreationFailureEvent() );
-    return;
+    bytesToWrite -= m;  /* bytesToWrite is number of chars left to write */
+    i += m;  /* i is the number of chars written */
   }
 
-  //try reading from the hardware
-  unsigned long   readBytes = 0;
+  igstkLogMacro( DEBUG, "Written bytes = " << i << std::endl);
+  this->InvokeEvent( WriteSuccessfulEvent());
+  return;  /* return the number of characters written */
+}
 
-  bool successfulRead = ReadFile(this->m_PortHandle, this->m_InputBuffer, \
-    bytesToRead, &readBytes, &overlappedRead);
-  this->m_InputBuffer[readBytes] = 0; // terminate the string
 
-  //check if reading event successful
-  if (successfulRead) 
-  { // successfully read all data
-    if (readBytes==bytesToRead)
-    {
-      this->InvokeEvent( ReceiveStringSuccessfulEvent());
-      this->m_ReadDataSize = readBytes;
-      this->m_ReadBufferOffset = 0;
-   }
-    //read timeout occurred, and all data could not get read
-    else
-    {
-      this->InvokeEvent( ReceiveStringReadTimeoutEvent() );
-    }
-  }
-  //else check if reading operation is pending,
-  else if (GetLastError()==ERROR_IO_PENDING)
-  { // if so, wait for read to succeed or timeout.
-    DWORD waitResult = WaitForSingleObject(overlappedRead.hEvent, 1000); 
-    switch(waitResult)
-    {
-    case WAIT_OBJECT_0:
-      //check if reading succeeded 
-      successfulRead = GetOverlappedResult(this->m_PortHandle, &overlappedRead, &readBytes, FALSE);
-      this->m_InputBuffer[readBytes] = 0; // terminate the string
-
-      if (successfulRead && (readBytes==bytesToRead))
-      {
-        this->InvokeEvent( ReceiveStringSuccessfulEvent() );
-        this->m_ReadDataSize = readBytes;
-        this->m_ReadBufferOffset = 0;
+void SerialCommunicationForWindows::InternalRead( void )
+{
+  int i = 0;
+  DWORD m,dumb;
+//  int n = this->m_ReadBufferSize;
+  int n = this->m_ReadNumberOfBytes;
+  
+  while (n > 0) {
+    if (ReadFile(this->m_PortHandle, &this->m_InputBuffer[i], n, &m, NULL) == FALSE) { 
+      if (GetLastError() == ERROR_OPERATION_ABORTED) {/* cancelled */
+        ClearCommError(this->m_PortHandle,&dumb,NULL); /* so clear error and retry */
       }
-      //reading timeout occurred before all data could be read.
-      else
-      {
-        this->InvokeEvent( ReceiveStringReadTimeoutEvent() );
-      } 
+      else {
+        igstkLogMacro( DEBUG, "InternalRead failed ...\n");
+        this->InvokeEvent( ReadFailureEvent() );
+        return;  /* IO error occurred */
+      }
+    }
+    else if (m == 0) { /* no characters read, must have timed out */
+      igstkLogMacro( DEBUG, "InternalRead failed with timeout...\n");
+      this->InvokeEvent( ReadTimeoutEvent() );
+      return;
+    }
+    n -= m;  /* n is number of chars left to read */
+    i += m;  /* i is the number of chars read */
+    if (this->m_InputBuffer[i-1] == '\r') {  /* done when carriage return received */
       break;
-    case WAIT_TIMEOUT:
-      //wait timeout occurred
-      this->InvokeEvent( ReceiveStringWaitTimeoutEvent() );
-      break;
-    default:
-      this->InvokeEvent( ReceiveStringFailureEvent() );
-    } 
-  }
-  //writing operation failed.
-  else
-  {
-      this->InvokeEvent( ReceiveStringFailureEvent() );
+    }
   }
 
-  igstkLogMacro( DEBUG, "String: " << this->m_InputBuffer << std::endl );
- 
-  //Close the created overlapped event.
-  CloseHandle(overlappedRead.hEvent);
+  this->m_ReadDataSize = i;
+  this->m_ReadBufferOffset = 0;
+  this->m_InputBuffer[i] = 0;
+  igstkLogMacro( DEBUG, "Read number of bytes = " << i << ". String: " << this->m_InputBuffer << std::endl );
+  this->InvokeEvent( ReadSuccessfulEvent());
+  return;
 }
 
 

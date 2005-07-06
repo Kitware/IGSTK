@@ -31,22 +31,22 @@ namespace igstk
 { 
 /** Constructor */
 SerialCommunicationForLinux::SerialCommunicationForLinux() :  
-SerialCommunication() , INVALID_HANDLE_VALUE(-1), NDI_MAX_SAVE_STATE(4), TIMEOUT_PERIOD(5000)
+SerialCommunication(), TIMEOUT_PERIOD(5000), NDI_INVALID_HANDLE(-1)
 {
-  this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE_VALUE;
+  this->m_PortHandle = SerialCommunicationForLinux::NDI_INVALID_HANDLE;
 } 
 
-void SerialCommunicationForLinux::OpenPortProcessing( void )
+SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalOpenCommunication( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::OpenPortProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalOpenPort called ...\n");
   static struct flock fl = { F_WRLCK, 0, 0, 0 }; /* for file locking */
   static struct flock fu = { F_UNLCK, 0, 0, 0 }; /* for file unlocking */
   struct termios t;
   int i;
 
-  if( this->m_PortHandle != SerialCommunicationForLinux::INVALID_HANDLE_VALUE )
+  if( this->m_PortHandle != SerialCommunicationForLinux::NDI_INVALID_HANDLE )
   {
-    igstkLogMacro( DEBUG, "SerialCommunicationForLinux::OpenPortProcessing : port is already open! ...\n");
+    igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalOpenPort : port is already open! ...\n");
   }
 
   char device[20];
@@ -56,10 +56,9 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
   /* port is readable/writable and is (for now) non-blocking */
   this->m_PortHandle = open(device,O_RDWR|O_NOCTTY|O_NDELAY);
 
-  if (this->m_PortHandle == SerialCommunicationForLinux::INVALID_HANDLE_VALUE) {
-    m_pOpenPortResultInput = &m_OpenPortFailureInput;
+  if (this->m_PortHandle == SerialCommunicationForLinux::NDI_INVALID_HANDLE) {
     this->InvokeEvent( OpenPortFailureEvent() );
-    return;             /* bail out on error */
+    return FAILURE;             /* bail out on error */
   }
 
   /* restore blocking now that the port is open (we just didn't want */
@@ -71,9 +70,8 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
   /* on many unices, this has no effect for device files */
   if (fcntl(this->m_PortHandle, F_SETLK, &fl)) {
     close(this->m_PortHandle);
-    m_pOpenPortResultInput = &m_OpenPortFailureInput;
     this->InvokeEvent( OpenPortFailureEvent() );
-    return;             /* bail out on error */
+    return FAILURE;             /* bail out on error */
   }
 #endif /* __APPLE__ */
 
@@ -81,9 +79,8 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
   if (tcgetattr(this->m_PortHandle,&t) == -1) {
     fcntl(this->m_PortHandle, F_SETLK, &fu);
     close(this->m_PortHandle);
-    m_pOpenPortResultInput = &m_OpenPortFailureInput;
     this->InvokeEvent( OpenPortFailureEvent() );
-    return;
+    return FAILURE;
   }
 
   /* save the serial port state so that it can be restored when
@@ -101,22 +98,20 @@ void SerialCommunicationForLinux::OpenPortProcessing( void )
   if (tcsetattr(this->m_PortHandle,TCSANOW,&t) == -1) { /* set I/O information */
     fcntl(this->m_PortHandle, F_SETLK, &fu);
     close(this->m_PortHandle);
-    m_pOpenPortResultInput = &m_OpenPortFailureInput;
     this->InvokeEvent( OpenPortFailureEvent() );
-    return;
+    return FAILURE;
   }
 
   tcflush(this->m_PortHandle,TCIOFLUSH);         /* flush the buffers for good luck */
-  m_pOpenPortResultInput = &m_OpenPortSuccessInput;
   igstkLogMacro( DEBUG, "COM port name: " << device << " opened.\n");
 
-  return;
+  return SUCCESS;
 }
 
 
-void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
+SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSetUpDataBuffers( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SetUpDataBuffersProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalSetUpDataBuffers called ...\n");
   if (this->m_InputBuffer!=NULL) delete (this->m_InputBuffer); 
   this->m_InputBuffer = new char[ this->m_ReadBufferSize ];
   if (this->m_OutputBuffer!=NULL) delete this->m_OutputBuffer; 
@@ -124,29 +119,28 @@ void SerialCommunicationForLinux::SetUpDataBuffersProcessing( void )
 
   if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL)) 
   {
-    m_pDataBuffersSetUpResultInput = &m_DataBuffersSetUpFailureInput;
     this->InvokeEvent( SetDataBufferSizeFailureEvent() );
+    return FAILURE;
   }
   else
   {
-    m_pDataBuffersSetUpResultInput = &m_DataBuffersSetUpSuccessInput;
     //Clear out buffers
     this->m_ReadDataSize = 0;
     this->m_ReadBufferOffset = 0;
     memset(this->m_InputBuffer, '\0', sizeof(this->m_InputBuffer));
 
     igstkLogMacro( DEBUG, "SetDataBufferSizeParameters with Read Buffer size = " << m_ReadBufferSize << " and Write Buffer Size = " << m_WriteBufferSize << " succeeded.\n");
+    return SUCCESS;
   }
 }
 
 
-void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
+SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSetTransferParameters( void )
 {
   struct termios t;
   int newbaud;
 
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SetUpDataTransferParametersProcessing called ...\n");
-  m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpFailureInput;
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalSetTransferParameters called ...\n");
 
   unsigned int baud = this->m_BaudRate.Get();
 
@@ -155,17 +149,17 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
     {
     case 9600:   newbaud = B9600;   break;
     case 14400:
-                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-                 std::cout << "Setup Communication Failed.\n" << std::endl;
-                 return;
+                 this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+                 std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+                 return FAILURE;
     case 19200:  newbaud = B19200;  break;
     case 38400:  newbaud = B38400;  break;
     case 57600:  newbaud = B57600;  break;
     case 115200: newbaud = B115200; break;
     default:
-                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-                 std::cout << "Setup Communication Failed.\n" << std::endl;
-                 return;
+                 this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+                 std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+                 return FAILURE;
 
     }
 #elif defined(__APPLE__)
@@ -173,57 +167,57 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
     {
     case 9600:    newbaud = B9600;   break;
     case 14400:
-                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-                 std::cout << "Setup Communication Failed.\n" << std::endl;
-                 return;
+                 this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+                 std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+                 return FAILURE;
     case 19200:   newbaud = B19200;  break;
     case 38400:   newbaud = B38400;  break;
     case 57600:   newbaud = B57600;  break;
     case 115200:  newbaud = B115200; break;
     default:
-                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-                 std::cout << "Setup Communication Failed.\n" << std::endl;
-                 return;
+                 this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+                 std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+                 return FAILURE;
     }
 #elif defined(sgi) && defined(__NEW_MAX_BAUD)
   switch (baud)
     {
     case 9600:    newbaud = 9600;   break;
     case 14400:
-                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-                 std::cout << "Setup Communication Failed.\n" << std::endl;
-                 return;
+                 this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+                 std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+                 return FAILURE;
     case 19200:   newbaud = 19200;  break;
     case 38400:   newbaud = 38400;  break;
     case 57600:   newbaud = 57600;  break;
     case 115200:  newbaud = 115200; break;
     default:
-                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-                 std::cout << "Setup Communication Failed.\n" << std::endl;
-                 return;
+                 this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+                 std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+                 return FAILURE;
     }
 #else
   switch (baud)
     {
     case 9600:   newbaud = B9600;  break;
     case 14400:
-                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-                 std::cout << "Setup Communication Failed.\n" << std::endl;
-                 return;
+                 this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+                 std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+                 return FAILURE;
     case 19200:  newbaud = B19200;  break;
     case 38400:  newbaud = B38400;  break;
     case 57600:
-                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-                 std::cout << "Setup Communication Failed.\n" << std::endl;
-                 return;
+                 this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+                 std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+                 return FAILURE;
     case 115200: 
-                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-                 std::cout << "Setup Communication Failed.\n" << std::endl;
-                 return;
+                 this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+                 std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+                 return FAILURE;
     default:
-                 this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-                 std::cout << "Setup Communication Failed.\n" << std::endl;
-                 return;
+                 this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+                 std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+                 return FAILURE;
     }
 #endif
 
@@ -250,9 +244,9 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
     t.c_cflag |= CS7;
   }
   else {
-    this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-    std::cout << "Setup Communication Failed.\n" << std::endl;
-    return;
+      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+    return FAILURE;
   }
 
   if (this->m_Parity.Get() == 0) { // none                /* set parity */
@@ -268,9 +262,9 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
     t.c_cflag &= ~PARODD;
   }
   else {
-    this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-    std::cout << "Setup Communication Failed.\n" << std::endl;
-    return;
+      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+    return FAILURE;
   }
 
   if (this->m_StopBits.Get() == 1) {                  /* set stop bits */
@@ -280,9 +274,9 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
     t.c_cflag |= CSTOPB; 
   }
   else {
-    this->InvokeEvent( SetupCommunicationParametersFailureEvent() );
-    std::cout << "Setup Communication Failed.\n" << std::endl;
-    return;
+      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
+      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+    return FAILURE;
   }
 
   if (this->m_HardwareHandshake.Get()) {
@@ -302,29 +296,28 @@ void SerialCommunicationForLinux::SetUpDataTransferParametersProcessing( void )
 
   tcsetattr(this->m_PortHandle,TCSADRAIN,&t);  /* set I/O information */
 
-  igstkLogMacro( DEBUG, "SetupCommunicationParameters succeeded.\n");
-  m_pDataTransferParametersSetUpResultInput = &m_DataTransferParametersSetUpSuccessInput;
-  return;
+  igstkLogMacro( DEBUG, "SetCommunicationParameters succeeded.\n");
+  return SUCCESS;
 }
 
-void SerialCommunicationForLinux::ClearBuffersAndClosePortProcessing( void )
+SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalClearBuffersAndClosePort( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::ClearBuffersAndClosePortProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalClearBuffersAndClosePort called ...\n");
   if (m_InputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_InputBuffer;
   m_InputBuffer = NULL;
   if (m_OutputBuffer!= NULL) // This check not required, still keeping for safety
     delete m_OutputBuffer;
   m_OutputBuffer = NULL;
-  this->ClosePortProcessing();
+  return this->InternalClosePort();
 }
 
-void SerialCommunicationForLinux::ClosePortProcessing( void )
+SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalClosePort( void )
 {
   static struct flock fu = { F_UNLCK, 0, 0, 0 }; /* for file unlocking */
   int i;
 
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::ClosePortProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalClosePort called ...\n");
   /* restore the comm port state to from before it was opened */
   tcsetattr(this->m_PortHandle,TCSANOW,&m_SaveTermIOs);
 
@@ -333,11 +326,30 @@ void SerialCommunicationForLinux::ClosePortProcessing( void )
 
   close(this->m_PortHandle);
   igstkLogMacro( DEBUG, "Communication port closed.\n");
+  return SUCCESS;
 }
 
-void SerialCommunicationForLinux::RestPortProcessing( void )
+SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSetTimeoutPeriod( int milliseconds )
 {
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::RestPortProcessing called ...\n");
+  struct termios t;
+
+  if (tcgetattr(serial_port,&t) == -1) {
+    return FAILURE;
+  }
+
+  t.c_cc[VMIN] = 0;                  /* use constant, not interval timout */
+  t.c_cc[VTIME] = milliseconds/100;  /* wait time is in 10ths of a second */
+
+  if (tcsetattr(serial_port,TCSANOW,&t) == -1) {
+    return FAILURE;
+  }
+
+  return SUCCESS;
+}
+
+void SerialCommunicationForLinux::InternalSendBreak( void )
+{
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalSendBreak called ...\n");
 
   tcflush(this->m_PortHandle,TCIOFLUSH);     /* clear input/output buffers */
   tcsendbreak(this->m_PortHandle,0);         /* send the break */
@@ -346,9 +358,9 @@ void SerialCommunicationForLinux::RestPortProcessing( void )
 }
 
 
-void SerialCommunicationForLinux::FlushOutputBufferProcessing( void )
+void SerialCommunicationForLinux::InternalFlushOutputBuffer( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::FlushOutputBufferProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalFlushOutputBuffer called ...\n");
   int flushtype = TCIOFLUSH;
 /*
   if (buffers == NDI_IFLUSH) {
@@ -368,13 +380,14 @@ void SerialCommunicationForLinux::FlushOutputBufferProcessing( void )
 }
 
 
-void SerialCommunicationForLinux::SendStringProcessing( void )
+void SerialCommunicationForLinux::InternalWrite( void )
 {
   int i = 0;
   int m;
-  unsigned long   bytesToWrite = strlen(m_OutputBuffer);
+  unsigned long  bytesToWrite = m_WriteNumberOfBytes;
+//  unsigned long   bytesToWrite = strlen(m_OutputBuffer);
 
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SendStringProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalWrite called ...\n");
   while (bytesToWrite > 0) { 
     if ((m = write(this->m_PortHandle,&this->m_OutputBuffer[i], bytesToWrite)) == -1) {
       if (errno == EAGAIN) 
@@ -382,8 +395,8 @@ void SerialCommunicationForLinux::SendStringProcessing( void )
         m = 0;
       }
       else {
-        this->InvokeEvent( SendStringFailureEvent() );
-        igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SendStringProcessing failed ...\n");
+        this->InvokeEvent( WriteFailureEvent() );
+        igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalWrite failed ...\n");
         return;  /* IO error occurred */
       }
     }
@@ -393,17 +406,18 @@ void SerialCommunicationForLinux::SendStringProcessing( void )
   }
 
   std::cout << "Written bytes = " << i << std::endl;
-  this->InvokeEvent( SendStringSuccessfulEvent());
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::SendStringProcessing succeeded ...\n");
+  this->InvokeEvent( WriteSuccessfulEvent());
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalWrite succeeded ...\n");
   return;  /* return the number of characters written */
 }
 
 
-void SerialCommunicationForLinux::ReceiveStringProcessing( void )
+void SerialCommunicationForLinux::InternalRead( void )
 {
   int i = 0;
   int m;
-  int n = this->m_ReadBufferSize;
+  int n = this->m_ReadNumberOfBytes;
+//  int n = this->m_ReadBufferSize;
 
   while (n > 0) {                        /* read reply until <CR> */
     if ((m = read(this->m_PortHandle,&this->m_InputBuffer[i], n)) == -1) {
@@ -412,12 +426,12 @@ void SerialCommunicationForLinux::ReceiveStringProcessing( void )
         m = 0;
       }
       else {
-        this->InvokeEvent( ReceiveStringFailureEvent() );
+        this->InvokeEvent( ReadFailureEvent() );
         return;  /* IO error occurred */
       }
     }
     else if (m == 0) { /* no characters read, must have timed out */
-      this->InvokeEvent( ReceiveStringReadTimeoutEvent() );
+      this->InvokeEvent( ReadTimeoutEvent() );
       return;
     }
     n -= m;  /* n is number of chars left to read */
@@ -431,7 +445,7 @@ void SerialCommunicationForLinux::ReceiveStringProcessing( void )
   this->m_ReadBufferOffset = 0;
   this->m_InputBuffer[i] = 0; // terminate the string
   std::cout << "Read number of bytes = " << i << ". String: " << this->m_InputBuffer << std::endl;
-  this->InvokeEvent( ReceiveStringSuccessfulEvent());
+  this->InvokeEvent( ReadSuccessfulEvent());
   return;
 }
 /*

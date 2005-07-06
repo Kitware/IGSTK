@@ -42,11 +42,10 @@ class SerialCommunicationForLinux : public SerialCommunication
 {
 public:
 
-  const int INVALID_HANDLE_VALUE;
-  const int NDI_MAX_SAVE_STATE;
-  const int TIMEOUT_PERIOD;
-
   typedef int HandleType;
+
+  const HandleType NDI_INVALID_HANDLE;
+  const int TIMEOUT_PERIOD;
 
   typedef SerialCommunicationForLinux  Self;
   typedef itk::SmartPointer<Self>        Pointer;
@@ -60,33 +59,38 @@ public:
 
 protected:
 
+  typedef SerialCommunication::ResultType ResultType;
+
   SerialCommunicationForLinux();
 
 //  ~SerialCommunicationForLinux();
 
   /** Opens serial port for communication; */
-  virtual void OpenPortProcessing( void );
+  virtual ResultType InternalOpenCommunication( void );
 
   /** Set up data buffer size. */
-  virtual void SetUpDataBuffersProcessing( void );
+  virtual ResultType InternalSetUpDataBuffers( void );
 
-  /** Sets up communication on the open port as per the communication parameters. */
-  virtual void SetUpDataTransferParametersProcessing( void );
+  /** Set communication on the open port as per the communication parameters. */
+  virtual ResultType InternalSetTransferParameters( void );
 
   /** Closes serial port  */
-  virtual void ClosePortProcessing( void );
-  virtual void ClearBuffersAndClosePortProcessing( void );
+  virtual ResultType InternalClosePort( void );
 
-  /**Rests communication port by suspending character transmission  
-  and placing the transmission line in a break state, and restarting
+  virtual ResultType InternalClearBuffersAndClosePort( void );
+
+  /** Set the amount of time to wait on a reply from the device before generating a timeout event. */
+  virtual ResultType InternalSetTimeoutPeriod( int milliseconds );
+
+  /**Send break, and restarting
   transmission after a short delay.*/
-  virtual void RestPortProcessing( void );
+  virtual void InternalSendBreak( void );
 
-  virtual void FlushOutputBufferProcessing( void );
+  virtual void InternalFlushOutputBuffer( void );
 
-  virtual void SendStringProcessing( void );
+  virtual void InternalWrite( void );
 
-  virtual void ReceiveStringProcessing( void );
+  virtual void InternalRead( void );
 
 private:
 

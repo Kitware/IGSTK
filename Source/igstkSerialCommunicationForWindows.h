@@ -39,6 +39,10 @@ public:
 
   typedef HANDLE HandleType;
 
+  const HandleType NDI_INVALID_HANDLE;
+  /* time out period in milliseconds */
+  const int TIMEOUT_PERIOD;
+
   typedef SerialCommunicationForWindows  Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
@@ -51,33 +55,38 @@ public:
 
 protected:
 
+  typedef SerialCommunication::ResultType ResultType;
+
   SerialCommunicationForWindows();
 
 //  ~SerialCommunicationForWindows();
 
   /** Opens serial port for communication; */
-  virtual void OpenPortProcessing( void );
+  virtual ResultType InternalOpenCommunication( void );
 
   /** Set up data buffer size. */
-  virtual void SetUpDataBuffersProcessing( void );
+  virtual ResultType InternalSetUpDataBuffers( void );
 
   /** Sets up communication on the open port as per the communication parameters. */
-  virtual void SetUpDataTransferParametersProcessing( void );
+  virtual ResultType InternalSetTransferParameters( void );
 
   /** Closes serial port  */
-  virtual void ClosePortProcessing( void );
-  virtual void ClearBuffersAndClosePortProcessing( void );
+  virtual ResultType InternalClosePort( void );
 
-  /**Rests communication port by suspending character transmission  
-  and placing the transmission line in a break state, and restarting
+  virtual ResultType InternalClearBuffersAndClosePort( void );
+
+  /**Send break and restarting
   transmission after a short delay.*/
-  virtual void RestPortProcessing( void );
+  virtual void InternalSendBreak( void );
 
-  virtual void FlushOutputBufferProcessing( void );
+  /** Set the amount of time to wait on a reply from the device before generating a timeout event. */
+  virtual ResultType InternalSetTimeoutPeriod( int milliseconds );
 
-  virtual void SendStringProcessing( void );
+  virtual void InternalFlushOutputBuffer( void );
 
-  virtual void ReceiveStringProcessing( void );
+  virtual void InternalWrite( void );
+
+  virtual void InternalRead( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -85,6 +94,10 @@ protected:
 private:
 
   HandleType      m_PortHandle;     // com port handle
+
+  COMMTIMEOUTS    m_SaveTimeout;
+
+  DCB             m_SaveDCB;
 };
 
 } // end namespace igstk
