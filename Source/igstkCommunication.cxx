@@ -22,24 +22,26 @@
 namespace igstk
 {
 
-Communication::Communication(void)
+Communication::Communication( void )
+{
+  m_ReadTerminationCharacter = 255;
+  m_UseReadTerminationCharacter = false;
+}
+
+Communication::~Communication( void )
 {
 }
 
-Communication::~Communication(void)
-{
-}
-
-bool Communication::OpenCommunication( const char *XMLFileName )
+void Communication::OpenCommunication( void )
 {
   std::cerr << "Communication::OpenCommunication() method is not implemented yet" << std::endl;
-  return true;
+  return;
 }
 
-bool Communication::CloseCommunication(void)
+void Communication::CloseCommunication( void )
 {
   std::cerr << "Communication::CloseCommunication() method is not implemented yet" << std::endl;
-  return true;
+  return;
 }
 
 void Communication::PrintSelf(std::ostream &os, itk::Indent indent) const

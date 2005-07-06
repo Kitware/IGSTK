@@ -30,7 +30,7 @@ int igstkCommunicationTest( int, char * [] )
     
     CommunicationType::Pointer communicator = CommunicationType::New();
 
-    communicator->OpenCommunication("Test");
+    communicator->OpenCommunication();
 
     std::cout << communicator << std::endl;
 
