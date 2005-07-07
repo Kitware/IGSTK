@@ -18,6 +18,11 @@
 #ifndef __igstkSerialCommunication_h
 #define __igstkSerialCommunication_h
 
+// Disabling warning C4355: 'this' : used in base member initializer list
+#if defined(_MSC_VER)
+#pragma warning ( disable : 4355 )
+#endif
+
 #include "itkObject.h"
 #include "itkEventObject.h"
 #include "itkLogger.h"
