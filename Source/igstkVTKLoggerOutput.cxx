@@ -26,8 +26,16 @@
 
 namespace igstk
 {
-vtkCxxRevisionMacro(VTKLoggerOutput, "1.11");
+vtkCxxRevisionMacro(VTKLoggerOutput, "1.12");
 vtkStandardNewMacro(VTKLoggerOutput);
+
+
+/** Constructor */
+VTKLoggerOutput::VTKLoggerOutput()
+{
+  this->Logger = NULL;
+}
+
 
 /** Send a string to display. */
 void VTKLoggerOutput::DisplayText(const char* t)
