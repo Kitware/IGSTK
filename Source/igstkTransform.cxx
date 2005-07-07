@@ -27,6 +27,7 @@ Transform
   // Error is NEVER zero. In the best situation is on the range of the smaller
   // non-zero epsilon that can be represented with the ErrorType. 
   m_Error = itk::NumericTraits< ErrorType >::min();
+  m_Translation.Fill(0.0); 
 }
 
 
