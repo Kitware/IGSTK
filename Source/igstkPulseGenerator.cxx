@@ -14,6 +14,10 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+// Disabling warning C4355: 'this' : used in base member initializer list
+#if defined(_MSC_VER)
+#pragma warning ( disable : 4355 )
+#endif
 
 #include "igstkPulseGenerator.h"
 
