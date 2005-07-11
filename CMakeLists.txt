@@ -1,7 +1,7 @@
 PROJECT( IGSTK )
 
-SET (LIBRARY_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all libraries." FORCE)
-SET (EXECUTABLE_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all executables." FORCE)
+SET (LIBRARY_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries." FORCE)
+SET (EXECUTABLE_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables." FORCE)
 
 # Add the testing directories
 OPTION(IGSTK_BUILD_TESTING "Test the project" ON)
