@@ -419,7 +419,8 @@ void SerialCommunicationForLinux::InternalRead( void )
   int n = this->m_ReadNumberOfBytes;
 //  int n = this->m_ReadBufferSize;
 
-  while (n > 0) {                        /* read reply until <CR> */
+  while (n > 0) {                 /* read reply until ReadTerminationCharacter 
+                                   if UseTerminationCharacter option is set */
     if ((m = read(this->m_PortHandle,&this->m_InputBuffer[i], n)) == -1) {
       if (errno == EAGAIN) 
       {      /* cancelled, so retry */
@@ -436,9 +437,12 @@ void SerialCommunicationForLinux::InternalRead( void )
     }
     n -= m;  /* n is number of chars left to read */
     i += m;  /* i is the number of chars read */
-    if (this->m_InputBuffer[i-1] == '\r') {  /* done when carriage return received */
-      break;
-    }
+    if ( this->m_UseReadTerminationCharacter )
+      {
+      if (this->m_InputBuffer[i-1] == this->m_ReadTerminationCharacter ) {  /* done when ReadTerminationCharacter received */
+        break;
+        }
+      }
   }
 
   this->m_ReadDataSize = i;

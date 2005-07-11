@@ -334,9 +334,12 @@ void SerialCommunicationForWindows::InternalRead( void )
     }
     n -= m;  /* n is number of chars left to read */
     i += m;  /* i is the number of chars read */
-    if (this->m_InputBuffer[i-1] == '\r') {  /* done when carriage return received */
-      break;
-    }
+    if ( this->m_UseReadTerminationCharacter )
+      {
+      if (this->m_InputBuffer[i-1] == this->m_ReadTerminationCharacter ) {  /* done when ReadTerminationCharacter received */
+        break;
+        }
+      }
   }
 
   this->m_ReadDataSize = i;

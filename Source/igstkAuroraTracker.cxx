@@ -43,6 +43,11 @@ void AuroraTracker::SetCommunication( CommunicationType *communication )
   igstkLogMacro( DEBUG, "AuroraTracker:: Entered SetCommunication ...\n");
   m_Communication = communication;
   m_CommandInterpreter->SetCommunication( communication );
+  if( communication )
+    {
+    communication->SetUseReadTerminationCharacter( true );
+    communication->SetReadTerminationCharacter( '\r' );
+    }
   igstkLogMacro( DEBUG, "AuroraTracker:: Exiting SetCommunication ...\n"); 
 }
 
