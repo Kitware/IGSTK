@@ -56,6 +56,8 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   // create the communication object
   CommunicationType::Pointer  serialComm = CommunicationType::New();
   serialComm->SetLogger(logger);
+  serialComm->SetUseReadTerminationCharacter(true);
+  serialComm->SetReadTerminationCharacter('\r');
   serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0() );
   serialComm->SetParity( igstk::SerialCommunication::NoParity() );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600() );
