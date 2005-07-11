@@ -30,6 +30,10 @@ int igstkCommunicationTest( int, char * [] )
     
     CommunicationType::Pointer communicator = CommunicationType::New();
 
+    communicator->SetUseReadTerminationCharacter(true);
+
+    communicator->SetReadTerminationCharacter( '\r' );
+
     communicator->OpenCommunication();
 
     std::cout << communicator << std::endl;
