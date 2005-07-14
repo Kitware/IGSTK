@@ -18,6 +18,8 @@ void RegisterTests()
   REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
   REGISTER_TEST(igstkFLTKTextLogOutputTest);
 
+  REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
+
 #ifdef IGSTK_USE_ATAMAI
   REGISTER_TEST(igstkAtamaiNDITrackerTest);
 #endif /* IGSTK_USE_ATAMAI */

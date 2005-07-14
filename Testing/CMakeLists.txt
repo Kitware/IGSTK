@@ -29,10 +29,12 @@ ADD_TEST(igstkAuroraTrackerTest ${IGSTKSandbox_TESTS} igstkAuroraTrackerTest)
 ADD_TEST(igstkVTKLoggerOutputTest ${IGSTKSandbox_TESTS} igstkVTKLoggerOutputTest)
 ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextLogOutputTest)
 ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextBufferLogOutputTest)
+ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationSimulatorTest)
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkSerialCommunicationTest.cxx
+  igstkSerialCommunicationSimulatorTest.cxx
   igstkNDICommandInterpreterTest.cxx
   igstkAuroraTrackerTest.cxx
   igstkVTKLoggerOutputTest.cxx
@@ -64,3 +66,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
                "${CMAKE_CURRENT_BINARY_DIR}/igstkSystemInformation.h"
                @ONLY IMMEDIATE)
 
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/polaris_stream_07_13_2005.txt"
+               "${CMAKE_CURRENT_BINARY_DIR}/polaris_stream_07_13_2005.txt"
+               @ONLY IMMEDIATE)

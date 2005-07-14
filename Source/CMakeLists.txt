@@ -8,6 +8,7 @@ SET(IGSTKSandbox_HEADS
   igstkAuroraTool.h
   igstkNDICommandInterpreter.h
   igstkSerialCommunication.h
+  igstkSerialCommunicationSimulator.h
   igstkMouseTracker.h
   igstkVTKLoggerOutput.h
   igstkFLTKTextLogOutput.h
@@ -21,6 +22,7 @@ SET(IGSTKSandbox_SRCS
   igstkAuroraTool.cxx
   igstkNDICommandInterpreter.cxx
   igstkSerialCommunication.cxx
+  igstkSerialCommunicationSimulator.cxx
   igstkMouseTracker.cxx
   igstkVTKLoggerOutput.cxx
   igstkFLTKTextLogOutput.cxx
