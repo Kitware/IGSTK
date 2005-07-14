@@ -67,5 +67,9 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
                @ONLY IMMEDIATE)
 
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/polaris_stream_07_13_2005.txt"
+               "${EXECUTABLE_OUTPUT_PATH}/polaris_stream_07_13_2005.txt"
+               @ONLY IMMEDIATE)
+
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/polaris_stream_07_13_2005.txt"
                "${CMAKE_CURRENT_BINARY_DIR}/polaris_stream_07_13_2005.txt"
                @ONLY IMMEDIATE)
