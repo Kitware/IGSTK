@@ -196,7 +196,7 @@ void SerialCommunicationSimulator::InternalWrite( void )
 void SerialCommunicationSimulator::InternalRead( void )
 {
   int i = 0;
-  DWORD m;
+  unsigned long m;
   int n = this->m_ReadNumberOfBytes;
   
   while (n > 0) {

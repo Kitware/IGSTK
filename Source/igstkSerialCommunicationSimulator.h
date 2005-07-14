@@ -18,7 +18,6 @@
 #ifndef __igstkSerialCommunicationSimulator_h
 #define __igstkSerialCommunicationSimulator_h
 
-#include <windows.h>
 #include <fstream>
 #include <iomanip>
 #include <map>
