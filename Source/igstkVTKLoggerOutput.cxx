@@ -18,15 +18,15 @@
 
 =========================================================================*/
 
-#include"igstkVTKLoggerOutput.h"
-#include"vtkObjectFactory.h"
-#include"itkIndent.h"
 #include <iostream>
+#include <vtkObjectFactory.h>
+#include <itkIndent.h>
+#include "igstkVTKLoggerOutput.h"
 
 
 namespace igstk
 {
-vtkCxxRevisionMacro(VTKLoggerOutput, "1.12");
+vtkCxxRevisionMacro(VTKLoggerOutput, "1.13");
 vtkStandardNewMacro(VTKLoggerOutput);
 
 
@@ -41,9 +41,9 @@ VTKLoggerOutput::VTKLoggerOutput()
 void VTKLoggerOutput::DisplayText(const char* t)
 {
   if( this->Logger )
-  {
+    {
     this->Logger->Write(itk::Logger::INFO, t);
-  }
+    }
 }
 
 
@@ -53,9 +53,9 @@ void VTKLoggerOutput::DisplayText(const char* t)
 void VTKLoggerOutput::DisplayErrorText(const char *t)
 {
   if( this->Logger )
-  {
+    {
     this->Logger->Write(itk::Logger::CRITICAL, t);
-  }
+    }
 }
 
 
@@ -65,9 +65,9 @@ void VTKLoggerOutput::DisplayErrorText(const char *t)
 void VTKLoggerOutput::DisplayWarningText(const char *t)
 {
   if( this->Logger )
-  {
+    {
     this->Logger->Write(itk::Logger::WARNING, t);
-  }
+    }
 }
 
 
@@ -77,9 +77,9 @@ void VTKLoggerOutput::DisplayWarningText(const char *t)
 void VTKLoggerOutput::DisplayGenericWarningText(const char *t)
 {
   if( this->Logger )
-  {
+    {
     this->Logger->Write(itk::Logger::WARNING, t);
-  }
+    }
 }
 
 
@@ -89,24 +89,25 @@ void VTKLoggerOutput::DisplayGenericWarningText(const char *t)
 void VTKLoggerOutput::DisplayDebugText(const char *t)
 {
   if( this->Logger )
-  {
+    {
     this->Logger->Write(itk::Logger::DEBUG, t);
-  }
+    }
 }
 
-
+/** Print information about this object */
 void VTKLoggerOutput::PrintSelf(StdOStreamType& os, itk::Indent indent) const
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
   indent = indent.GetNextIndent();
 
   if( this->Logger )
-  {
-//    os << indent << *this->Logger << std::endl;
-    os << indent << "Logger is available" << std::endl;
-  }
+    {
+    os << indent;
+    this->Logger->Print(os, indent);
+    }
 }
 
+/** Print information about this object */
 void VTKLoggerOutput::Print(StdOStreamType& os)
 {
   itk::Indent indent;
@@ -116,6 +117,7 @@ void VTKLoggerOutput::Print(StdOStreamType& os)
   os << indent << "\n";
 }
 
+/** Operator<< for output stream */
 std::ostream& operator<<(std::ostream& os, VTKLoggerOutput& o)
 {
   o.Print(os);

@@ -21,19 +21,21 @@
 #ifndef __igstkVTKLoggerOutput_h
 #define __igstkVTKLoggerOutput_h
 
-#include<vtkOutputWindow.h>
-#include"itkLogger.h"
+#include <vtkOutputWindow.h>
+#include <itkLogger.h>
+#include "igstkMacros.h"
 
 
 namespace igstk
 {
 /** \class VTKLoggerOutput
- * \brief This class is meant for overriding vtk::OutputWindow to redirect messages to itk::Logger.
+ * \brief This class overrides vtk::OutputWindow 
+ * to redirect messages from VTK to itk::Logger.
  *
  * Text messages that the system should display to the user are sent to 
- * this object (or subclasses of this object).
+ * this object (or subclasses of this class).
  *
- * \ingroup OSSystemObjects
+ * \ingroup Logging
  */
 class VTKLoggerOutput : public vtkOutputWindow 
 {
@@ -44,9 +46,12 @@ public:
   
   /** Run-time type information (and related methods). */
   vtkTypeRevisionMacro(VTKLoggerOutput, vtkOutputWindow);
+  igstkTypeMacro(VTKLoggerOutput, vtkOutputWindow);
 
-  typedef itk::Logger*   LoggerType;
+  /** Logger pointer type definition */
+  typedef itk::Logger*   LoggerPointerType;
 
+  /** Create an object */
   static VTKLoggerOutput* New();
 
   /** Send a string to display. */
@@ -72,32 +77,40 @@ public:
    * could present this message differently. */
   virtual void DisplayDebugText(const char *t);
 
-  vtkSetMacro(Logger, LoggerType);
+  /** Set/Get a logger pointer to be used */
+  vtkSetMacro(Logger, LoggerPointerType);
+  vtkGetMacro(Logger, LoggerPointerType);
 
-  vtkGetMacro(Logger, LoggerType);
-
+  /** Overrides a VTK log window */
   virtual void OverrideVTKWindow() 
   {
     vtkOutputWindow::SetInstance(this);
   }
- 
+
+  /** Type definition for the standard output stream */ 
   typedef std::ostream StdOStreamType;
+
+  /** Print information about this object */
   void Print(StdOStreamType& os);
 
 protected:
+  /** Constructor */
   VTKLoggerOutput();
+
+  /** Destructor */
   virtual ~VTKLoggerOutput() {}
+
+  /** Print information about this object */
   void PrintSelf(StdOStreamType& os, itk::Indent indent) const;
 
 private:
-  LoggerType Logger;
+  /** Logger pointer */
+  LoggerPointerType Logger;
 };
   
+/** operator << for printing out through the output stream */
 std::ostream& operator<<(std::ostream& os, VTKLoggerOutput& o);
 } // end namespace igstk
-
-//std::ostream& operator<<(std::ostream& os, const vtkObjectBase& o);
-//std::ostream& operator<<(std::ostream& os, const vtkIndent& o);
 
 
 #endif  // __igstkVTKLoggerOutput_h
