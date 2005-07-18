@@ -28,10 +28,7 @@ namespace igstk
 
 /** \class MeshObjectRepresentation
  * 
- * \brief This class represents a Mesh object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is
- * X.  The cylindrical object is rendered in a VTK scene using the
- * vtkMeshSource object.
+ * \brief This class represents a Mesh object.
  * 
  * \ingroup ObjectRepresentation
  */
@@ -79,9 +76,6 @@ private:
 
   /** Internal itkSpatialObject */
   MeshObjectType::ConstPointer   m_MeshObject;
-
-  /** VTK class that generates the geometrical representation of the Mesh */
-//  vtkMeshSource * m_MeshSource;
 
   /** update the visual representation with changes in the geometry */
   virtual void UpdateRepresentation();

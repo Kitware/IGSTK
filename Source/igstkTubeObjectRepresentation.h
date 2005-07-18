@@ -28,10 +28,7 @@ namespace igstk
 
 /** \class TubeObjectRepresentation
  * 
- * \brief This class represents a Tube object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is
- * X.  The cylindrical object is rendered in a VTK scene using the
- * vtkTubeSource object.
+ * \brief This class represents a Tube object.
  * 
  * \ingroup ObjectRepresentation
  */
@@ -79,9 +76,6 @@ private:
 
   /** Internal itkSpatialObject */
   TubeObjectType::ConstPointer   m_TubeSpatialObject;
-
-  /** VTK class that generates the geometrical representation of the Tube */
-//  vtkTubeSource * m_TubeSource;
 
   /** update the visual representation with changes in the geometry */
   virtual void UpdateRepresentation();
