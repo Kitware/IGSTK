@@ -62,9 +62,6 @@ public:
   /** Connect this representation class to the spatial object */
   void RequestSetCylinderObject( const CylinderSpatialObjectType * cylinderObject );
 
-  CylinderObjectRepresentation( void );
-  ~CylinderObjectRepresentation( void );
-
   /** Create the VTK actors */
   void CreateActors();
 
@@ -72,6 +69,9 @@ public:
   igstkStateMachineMacro();
 
 protected:
+
+  CylinderObjectRepresentation( void );
+  virtual ~CylinderObjectRepresentation( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
