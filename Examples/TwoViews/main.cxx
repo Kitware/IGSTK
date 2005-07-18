@@ -22,8 +22,12 @@
 #include "TwoViews.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
+#include "igstkTubeObject.h"
+#include "igstkMeshObject.h"
+#include "igstkTubeObjectRepresentation.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
+#include "igstkMeshObjectRepresentation.h"
 #include "igstkMouseTracker.h"
 #include "vtkInteractorObserver.h"
 
@@ -58,6 +62,38 @@ int main(int , char** )
 
   // Add the cylinder to the view
   m_GUI->Display1->RequestAddObject( cylinderRepresentation );
+
+  // Create the tube 
+  igstk::TubeObject::Pointer tube = igstk::TubeObject::New();
+  igstk::TubeObject::PointType p1;
+  p1.SetPosition(5,5,5);
+  p1.SetRadius(1);
+  tube->AddPoint(p1);
+  igstk::TubeObject::PointType p2;
+  p2.SetPosition(10,10,10);
+  p2.SetRadius(2);
+  tube->AddPoint(p2);
+
+  // Create the cylinder representation
+  igstk::TubeObjectRepresentation::Pointer tubeRepresentation = igstk::TubeObjectRepresentation::New();
+  tubeRepresentation->RequestSetTubeObject( tube );
+  tubeRepresentation->SetColor(0,0,1.0);
+  m_GUI->Display1->RequestAddObject( tubeRepresentation );
+
+  // Create the mesh 
+  igstk::MeshObject::Pointer mesh = igstk::MeshObject::New();
+  mesh->AddPoint(0,0,0,0);
+  mesh->AddPoint(1,9,0,0);
+  mesh->AddPoint(2,9,9,0);
+  mesh->AddPoint(3,0,0,9);
+  mesh->AddTetrahedronCell(0,0,1,2,3);
+
+  // Create the cylinder representation
+  igstk::MeshObjectRepresentation::Pointer meshRepresentation = igstk::MeshObjectRepresentation::New();
+  meshRepresentation->RequestSetMeshObject( mesh );
+  meshRepresentation->SetColor(1,0,0);
+  m_GUI->Display1->RequestAddObject( meshRepresentation );
+
 
   // Add another Object representations to the second display
   m_GUI->Display2->RequestAddObject( ellipsoidRepresentation->Copy() );
