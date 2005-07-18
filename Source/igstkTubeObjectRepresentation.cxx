@@ -1,0 +1,355 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkTubeObjectRepresentation.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
+#include "igstkTubeObjectRepresentation.h"
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkProperty.h>
+#include "igstkEvents.h"
+
+#include <vtkPoints.h>
+#include <vtkFloatArray.h>
+#include <vtkSphereSource.h>
+#include <vtkPolyLine.h>
+#include <vtkCellArray.h>
+#include <vtkPointData.h>
+#include <vtkCleanPolyData.h>
+#include <vtkTubeFilter.h>
+
+namespace igstk
+{ 
+
+/** Constructor */
+TubeObjectRepresentation::TubeObjectRepresentation():m_StateMachine(this)
+{
+  // We create the ellipse spatial object
+  m_TubeSpatialObject = NULL;
+  this->RequestSetSpatialObject( m_TubeSpatialObject );
+  
+  m_StateMachine.AddInput( m_ValidTubeObjectInput,  "ValidTubeObjectInput" );
+  m_StateMachine.AddInput( m_NullTubeObjectInput,   "NullTubeObjectInput"  );
+
+  m_StateMachine.AddState( m_NullTubeObjectState,  "NullTubeObjectState"     );
+  m_StateMachine.AddState( m_ValidTubeObjectState, "ValidTubeObjectState"     );
+
+  const ActionType NoAction = 0;
+
+  m_StateMachine.AddTransition( m_NullTubeObjectState, m_NullTubeObjectInput, m_NullTubeObjectState,  NoAction );
+  m_StateMachine.AddTransition( m_NullTubeObjectState, m_ValidTubeObjectInput, m_ValidTubeObjectState,  & TubeObjectRepresentation::SetTubeObject );
+  m_StateMachine.AddTransition( m_ValidTubeObjectState, m_NullTubeObjectInput, m_NullTubeObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidTubeObjectState, m_ValidTubeObjectInput, m_ValidTubeObjectState,  NoAction ); 
+
+  m_StateMachine.SelectInitialState( m_NullTubeObjectState );
+
+  m_StateMachine.SetReadyToRun();
+
+
+} 
+
+/** Destructor */
+TubeObjectRepresentation::~TubeObjectRepresentation()  
+{
+}
+
+
+
+
+/** Set the Tubeal Spatial Object */
+void TubeObjectRepresentation::RequestSetTubeObject( const TubeObjectType * Tube )
+{
+  m_TubeObjectToAdd = Tube;
+  if( !m_TubeObjectToAdd )
+    {
+    m_StateMachine.PushInput( m_NullTubeObjectInput );
+    m_StateMachine.ProcessInputs();
+    }
+  else
+    {
+    m_StateMachine.PushInput( m_ValidTubeObjectInput );
+    m_StateMachine.ProcessInputs();
+    }
+}
+
+
+
+
+/** Set the Cylindrical Spatial Object */
+void TubeObjectRepresentation::SetTubeObject()
+{
+  // We create the ellipse spatial object
+  m_TubeSpatialObject = m_TubeObjectToAdd;
+  this->RequestSetSpatialObject( m_TubeSpatialObject );
+
+} 
+
+
+/** Print Self function */
+void TubeObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+
+/** Update the visual representation in response to changes in the geometric
+ * object */
+void TubeObjectRepresentation::UpdateRepresentation()
+{
+}
+
+
+/** Create the vtk Actors */
+void TubeObjectRepresentation::CreateActors()
+{
+  // to avoid duplicates we clean the previous actors
+  this->DeleteActors();
+      
+  if(m_TubeSpatialObject->GetNumberOfPoints() < 2)
+    {
+    std::cout << "Not enough points to render a tube" << std::endl;
+    return;
+    }
+      
+//  const double* spacing = m_TubeSpatialObject->GetTransform()->GetScaleComponent();
+
+  double spacing[3];
+ spacing[0] = 1;
+ spacing[1] = 1;
+ spacing[2] = 1;
+  //Step 1: copy skeleton points from a vessel into vtkPoints
+  //vtkpoints assumes a triplet is coming so use pointer arithmetic
+   //to jump to the next spot in a multidimensional array      
+        int nPoints = m_TubeSpatialObject->GetNumberOfPoints();
+
+        vtkPoints* vPoints = vtkPoints::New();
+        vPoints->SetNumberOfPoints(nPoints);
+        vtkFloatArray* vScalars = vtkFloatArray::New();
+        vScalars->SetNumberOfTuples(nPoints);
+        vtkFloatArray* vColorScalars = vtkFloatArray::New();
+        vColorScalars->SetNumberOfTuples(nPoints);
+        vtkFloatArray* vVectors = vtkFloatArray::New();
+        vVectors->SetNumberOfTuples(3*nPoints);
+        vVectors->SetNumberOfComponents(3);
+
+        const TubeObjectType::PointType* pt = static_cast<const TubeObjectType::PointType*>(m_TubeSpatialObject->GetPoint(0)); 
+        vtkSphereSource * sphereSource1 = vtkSphereSource::New();
+        sphereSource1->SetCenter((float)(pt->GetPosition()[0]*spacing[0]), (float)(pt->GetPosition()[1]*spacing[1]), (float)(pt->GetPosition()[2]*spacing[2]));
+        sphereSource1->SetRadius(pt->GetRadius()*0.95*spacing[0]);
+  
+        vtkPolyDataMapper *sphereMapper1 = vtkPolyDataMapper::New();
+        sphereMapper1->SetInput(sphereSource1->GetOutput());
+  
+        vtkActor* sphere1 = vtkActor::New();
+        sphere1->SetMapper(sphereMapper1);
+  
+/*        if(useColorPoints)
+          {
+          sphere1->GetProperty()->SetColor(pt->GetRed(),
+                                         pt->GetGreen(),
+                                         pt->GetBlue());
+          }
+        else
+          {*/
+          sphere1->GetProperty()->SetColor(this->GetRed(),
+                                         this->GetGreen(),
+                                         this->GetBlue());
+          //}
+        
+        sphere1->GetProperty()->SetOpacity(1.0); 
+      
+        this->AddActor( sphere1 );
+
+        sphereMapper1->Delete();
+        sphereSource1->Delete();
+
+         unsigned int i;
+        for(i=0;i<nPoints;i++)
+          {
+          const TubeObjectType::PointType* pt = static_cast<const TubeObjectType::PointType*>(m_TubeSpatialObject->GetPoint(i)); 
+          vPoints->SetPoint(i, (float)(pt->GetPosition()[0]*spacing[0]), (float)(pt->GetPosition()[1]*spacing[1]), (float)(pt->GetPosition()[2]*spacing[2]));
+          vScalars->SetTuple1(i,pt->GetRadius()*0.95*spacing[0]);
+/*          if(useColorPoints)
+          {
+          vColorScalars->SetTuple1(i,GetLookUpTableIndex(pt->GetColor()[0],pt->GetColor()[1],pt->GetColor()[2]));
+          }
+        else
+          {*/
+          //vColorScalars->SetTuple1(i,GetLookUpTableIndex(m_TubeSpatialObject->GetProperty()->GetColor()[0],m_TubeSpatialObject->GetProperty()->GetColor()[1],m_TubeSpatialObject->GetProperty()->GetColor()[2]));
+          //}       
+          vVectors->SetTuple3(i,pt->GetRadius()*0.95*spacing[0],0,0);
+          }  
+
+        pt = static_cast<const TubeObjectType::PointType*>(m_TubeSpatialObject->GetPoint(nPoints-1)); 
+        vtkSphereSource * sphereSource2 = vtkSphereSource::New();
+        sphereSource2->SetCenter((float)(pt->GetPosition()[0]*spacing[0]), (float)(pt->GetPosition()[1]*spacing[1]), (float)(pt->GetPosition()[2]*spacing[2]));
+        sphereSource2->SetRadius(pt->GetRadius()*0.95*spacing[0]);
+  
+        vtkPolyDataMapper *sphereMapper2 = vtkPolyDataMapper::New();
+        sphereMapper2->SetInput(sphereSource2->GetOutput());
+  
+        vtkActor* sphere2 = vtkActor::New();
+        sphere2->SetMapper(sphereMapper2);
+ 
+        sphere2->GetProperty()->SetColor(this->GetRed(),
+                                         this->GetGreen(),
+                                         this->GetBlue());
+
+
+
+        sphere2->GetProperty()->SetOpacity(1.0); 
+
+        this->AddActor( sphere2 );
+
+        sphereMapper2->Delete();
+        sphereSource2->Delete();
+  
+        //Step 2: create a point id list (for a polyline this is just linear)
+        vtkIdType* pntIds = new vtkIdType[nPoints];
+        for (i = 0; i < nPoints; i++)
+          {
+          pntIds[i] = i;
+          }
+        //Step3: create a polyline from the points and pt id list
+        vtkPolyLine* vPLine = vtkPolyLine::New();
+        vPLine->Initialize(nPoints, pntIds, vPoints);
+
+        //Step 4: convert this to a cellarray (required for input to polydata)
+        vtkCellArray* vCA = vtkCellArray::New();
+        vCA->InsertNextCell(vPLine); 
+
+        //Step 5: create a scalar array that indicates the radius at each
+        //skeleton point. Vtk's way of setting radius is screwy: it fails if every
+        //point has the same radius. It also uses a minimum radius  (called radius)
+        //and a max radius (defined by scale factor). In order to get this to work, 
+        //you need to find the min and max of your vessel radii--if the same, later
+        //set a constant radius in the tube filter. If not the same, you need to 
+        //define the min radius and the ratio max/min. If you send these params,
+        //the tube will end up with proper radius settings. Weird.
+
+        //Step 6: convert to polydata (required for input to anything else)
+        vtkPolyData* vPData = vtkPolyData::New();
+        vPData->SetLines(vCA);
+        vPData->SetPoints(vPoints);
+        vtkFloatingPointType range[2];
+        bool use_scalars = false;
+        float min_scalar, max_scalar;
+        vScalars->GetRange(range);
+        min_scalar = range[0];
+        max_scalar = range[1];
+        if (min_scalar <= 0.0001) 
+          {
+           min_scalar = 0.0001;
+          }
+        if(max_scalar < min_scalar) 
+          {
+          max_scalar = min_scalar;
+          }
+        
+        use_scalars = true;
+        vPData->GetPointData()->SetScalars(vScalars);
+        vPData->GetPointData()->SetVectors(vVectors); 
+
+        //Step 7: remove any duplicate points from polydata. The tube filter
+        //fails if any duplicates are present
+        vtkCleanPolyData* vClean = vtkCleanPolyData::New();
+        vClean->SetInput(vPData);
+
+        //Step 8: make tubes. The number of sides per tube is set by nsides.
+        //Even an nsides of 3 looks surprisingly good.
+        vtkTubeFilter* vTFilter = vtkTubeFilter::New();
+        vTFilter->SetNumberOfSides(5);
+        vTFilter->SetInput(vClean->GetOutput());
+        vTFilter->CappingOff();
+
+/*        if(range[0] == range[1])
+          {
+          vTFilter->SetRadiusMin(range[0]);
+          vTFilter->SetRadiusMin(range[0]+1);
+          }
+        else
+          {
+          vTFilter->SetRadiusMin(range[0]);
+          vTFilter->SetRadiusMax(range[1]);  
+          }*/
+
+        /*if(use_scalars)
+          {
+          vTFilter->SetVaryRadiusToVaryRadiusByVector();
+          vTFilter->SetRadius(min_scalar);   //this call sets min rad. Weird.
+          vTFilter->SetRadiusFactor(max_scalar/min_scalar); //sets max rad. Weird
+          }
+        else
+          {*/
+          vTFilter->SetRadius(min_scalar);   //this call sets min rad. Weird.
+          vTFilter->SetRadiusFactor(max_scalar/min_scalar); //sets max rad. Weird
+          vTFilter->SetVaryRadiusToVaryRadiusByScalar();
+         // }
+  
+        //Step 9: create a mapper of the tube
+        vtkPolyDataMapper* vMapper = vtkPolyDataMapper::New();
+        vMapper->SetInput(vTFilter->GetOutput());
+        /*if(useColorPoints)
+          {
+          vMapper->ScalarVisibilityOn();    //interpret scalars as color command
+          }
+        else
+          {*/
+          vMapper->ScalarVisibilityOff();    //interpret scalars as color command
+          //}
+        //Step 10: Add the mapper to the actor. You can now delete everything.
+        //A matrix for the actor, colors, opacities, etc can be set by
+        //the caller before or after this function is called.
+        vtkActor* TubeActor = vtkActor::New();
+        TubeActor->SetMapper(vMapper);
+
+
+
+
+          TubeActor->GetProperty()->SetColor(this->GetRed(),
+                                         this->GetGreen(),
+                                         this->GetBlue()); 
+
+
+          this->AddActor( TubeActor );
+
+        vPoints->Delete();
+        delete [] pntIds;
+        vScalars->Delete();
+        vPLine->Delete();
+        vClean->Delete();
+        vCA->Delete();
+        vPData->Delete();
+        vTFilter->Delete();
+        vMapper->Delete();
+        vColorScalars->Delete();
+        vVectors->Delete();
+}
+
+/** Create a copy of the current object representation */
+TubeObjectRepresentation::Pointer
+TubeObjectRepresentation::Copy() const
+{
+  Pointer newOR = TubeObjectRepresentation::New();
+  newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
+  newOR->SetOpacity(this->GetOpacity());
+  newOR->RequestSetTubeObject(m_TubeSpatialObject);
+
+  return newOR;
+}
+
+
+} // end namespace igstk
+
