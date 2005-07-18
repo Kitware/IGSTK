@@ -19,6 +19,8 @@ void RegisterTests()
   REGISTER_TEST(igstkFLTKTextLogOutputTest);
 
   REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
+  REGISTER_TEST(igstkTubeObjectTest);
+  REGISTER_TEST(igstkMeshObjectTest);
 
 #ifdef IGSTK_USE_ATAMAI
   REGISTER_TEST(igstkAtamaiNDITrackerTest);

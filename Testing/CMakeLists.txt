@@ -30,6 +30,9 @@ ADD_TEST(igstkVTKLoggerOutputTest ${IGSTKSandbox_TESTS} igstkVTKLoggerOutputTest
 ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextLogOutputTest)
 ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextBufferLogOutputTest)
 ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationSimulatorTest)
+ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationSimulatorTest)
+ADD_TEST(igstkTubeObjectTest ${IGSTKSandbox_TESTS} igstkTubeObjectTest)
+ADD_TEST(igstkMeshObjectTest ${IGSTKSandbox_TESTS} igstkMeshObjectTest)
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
@@ -40,6 +43,8 @@ SET(BasicTests_SRCS
   igstkVTKLoggerOutputTest.cxx
   igstkFLTKTextLogOutputTest.cxx
   igstkFLTKTextBufferLogOutputTest.cxx
+  igstkTubeObjectTest.cxx
+  igstkMeshObjectTest.cxx
   )
 
 IF (IGSTK_USE_ATAMAI)
