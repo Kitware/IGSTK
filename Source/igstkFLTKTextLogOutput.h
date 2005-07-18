@@ -18,30 +18,33 @@
 #ifndef __igstk_FLTKTextLogOutput_h_
 #define __igstk_FLTKTextLogOutput_h_
 
-#include<iostream>
-#include<string>
-#include"itkMacro.h"
-#include"itkObject.h"
-#include"itkObjectFactory.h"
-#include"itkSimpleFastMutexLock.h"
-#include"itkLogOutput.h"
-#include"FL/Fl_Text_Buffer.H"
-#include"FL/Fl_Text_Display.H"
+#include <iostream>
+#include <string>
+#include <itkObject.h>
+#include <itkObjectFactory.h>
+#include <itkSimpleFastMutexLock.h>
+#include <itkLogOutput.h>
+#include <FL/Fl_Text_Buffer.H>
+#include <FL/Fl_Text_Display.H>
+#include <igstkMacros.h>
 
 
 namespace igstk
 {
 
 /** \class FLTKTextLogOutput
-    \brief Class FLTKTextLogOutput represents LogOutput for FLTK Fl_Text_Display.
-    This class provides thread safety for logging on FLTK Fl_Text_Display.
-*/
+ *    \brief Class FLTKTextLogOutput represents LogOutput for FLTK Fl_Text_Display.
+ *    This class provides thread safety for logging on FLTK Fl_Text_Display.
+ *
+ *  \ingroup Logging
+ */
 
 class FLTKTextLogOutput : public itk::LogOutput
 {
 
 public:
 
+  /** Typedefs */
   typedef FLTKTextLogOutput Self;
   typedef itk::LogOutput  Superclass;
   typedef itk::SmartPointer<Self>  Pointer;
@@ -50,13 +53,16 @@ public:
   typedef Fl_Text_Display  StreamType;
   typedef StreamType*     StreamPointerType;
 
-  itkTypeMacro(FLTKTextLogOutput, itk::LogOutput);
+  /**  Run-time type information (and related methods). */
+  igstkTypeMacro(FLTKTextLogOutput, itk::LogOutput);
   
-  itkNewMacro(FLTKTextLogOutput);
+  /** Method for creation of a reference counted object. */
+  igstkNewMacro(FLTKTextLogOutput);
 
-  itkGetMacro(Stream, StreamPointerType);
+  /** Get an output stream pointer */
+  igstkGetMacro(Stream, StreamPointerType);
 
-  /** Set a standard stream pointer */
+  /** Set an output stream pointer */
   void SetStream(StreamType &Stream);
   
   /** flush a buffer */
@@ -83,11 +89,13 @@ protected:
 
 private:
 
+  /** Stream pointer (pointer to a FLTK Fl_Text_Display) */
   StreamPointerType m_Stream;
 
+  /** Mutex lock */
   itk::SimpleFastMutexLock m_Mutex;
 };
 
-}
+} // end namespace igstk
 
 #endif //__igstk_FLTKTextLogOutput_h_

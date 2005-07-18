@@ -15,10 +15,10 @@
 
 =========================================================================*/
 
-#include<iostream>
-#include<stdio.h>
-#include"itkMacro.h"
-#include"igstkFLTKTextBufferLogOutput.h"
+#include <iostream>
+#include <stdio.h>
+#include <itkMacro.h>
+#include "igstkFLTKTextBufferLogOutput.h"
 
 
 namespace igstk
@@ -36,18 +36,16 @@ FLTKTextBufferLogOutput::~FLTKTextBufferLogOutput()
 }
 
 
-/** Set file stream */
+/** Set an output stream */
 void FLTKTextBufferLogOutput::SetStream(StreamType &Stream)
 {
   this->m_Stream = &Stream;
 }
 
 
-/** flush a buffer */
+/** Flush a buffer */
 void FLTKTextBufferLogOutput::Flush()
 {
-//  FLTKTextBufferLogOutput::m_Mutex.Lock();
-//  FLTKTextBufferLogOutput::m_Mutex.Unlock();
 }
 
 
@@ -56,11 +54,11 @@ void FLTKTextBufferLogOutput::Write(double timestamp)
 {
   FLTKTextBufferLogOutput::m_Mutex.Lock();
   if( this->m_Stream )
-  {
+    {
     itk::OStringStream ostr;
     ostr << timestamp;
     this->m_Stream->append( ostr.str().c_str() );
-  }
+    }
   FLTKTextBufferLogOutput::m_Mutex.Unlock();
 }
 
@@ -70,9 +68,9 @@ void FLTKTextBufferLogOutput::Write(std::string const &content)
 {
   FLTKTextBufferLogOutput::m_Mutex.Lock();
   if( this->m_Stream )
-  {
+    {
     this->m_Stream->append( content.c_str() );
-  }
+    }
   FLTKTextBufferLogOutput::m_Mutex.Unlock();
 }
 
@@ -82,11 +80,11 @@ void FLTKTextBufferLogOutput::Write(std::string const &content, double timestamp
 {
   FLTKTextBufferLogOutput::m_Mutex.Lock();
   if( this->m_Stream )
-  {
+    {
     itk::OStringStream ostr;
     ostr << timestamp << "  :  " << content;
     this->m_Stream->append( ostr.str().c_str() );
-  }
+    }
   FLTKTextBufferLogOutput::m_Mutex.Unlock();
 }
 
@@ -97,15 +95,15 @@ void FLTKTextBufferLogOutput::PrintSelf( std::ostream& os, itk::Indent indent ) 
   Superclass::PrintSelf(os, indent);
 
   if( this->m_Stream )
-  {
+    {
     os << indent << "Stream is available" << std::endl;
-  }
+    }
   else
-  {
+    {
     os << indent << "Stream is NULL" << std::endl;
-  }
+    }
 }
 
 
-}
+} // end namespace igstk
 

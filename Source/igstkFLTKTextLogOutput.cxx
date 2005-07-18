@@ -15,10 +15,10 @@
 
 =========================================================================*/
 
-#include<iostream>
-#include<stdio.h>
-#include"itkMacro.h"
-#include"igstkFLTKTextLogOutput.h"
+#include <iostream>
+#include <stdio.h>
+#include <itkMacro.h>
+#include "igstkFLTKTextLogOutput.h"
 
 
 namespace igstk
@@ -36,18 +36,16 @@ FLTKTextLogOutput::~FLTKTextLogOutput()
 }
 
 
-/** Set file stream */
+/** Set an output stream */
 void FLTKTextLogOutput::SetStream(StreamType &Stream)
 {
   this->m_Stream = &Stream;
 }
 
 
-/** flush a buffer */
+/** Flush a buffer */
 void FLTKTextLogOutput::Flush()
 {
-//  FLTKTextLogOutput::m_Mutex.Lock();
-//  FLTKTextLogOutput::m_Mutex.Unlock();
 }
 
 
@@ -56,11 +54,11 @@ void FLTKTextLogOutput::Write(double timestamp)
 {
   FLTKTextLogOutput::m_Mutex.Lock();
   if( this->m_Stream  &&  this->m_Stream->buffer() )
-  {
+    {
     itk::OStringStream ostr;
     ostr << timestamp;
     this->m_Stream->insert( ostr.str().c_str() );
-  }
+    }
   FLTKTextLogOutput::m_Mutex.Unlock();
 }
 
@@ -70,9 +68,9 @@ void FLTKTextLogOutput::Write(std::string const &content)
 {
   FLTKTextLogOutput::m_Mutex.Lock();
   if( this->m_Stream  &&  this->m_Stream->buffer() )
-  {
+    {
     this->m_Stream->insert( content.c_str() );
-  }
+    }
   FLTKTextLogOutput::m_Mutex.Unlock();
 }
 
@@ -82,30 +80,30 @@ void FLTKTextLogOutput::Write(std::string const &content, double timestamp)
 {
   FLTKTextLogOutput::m_Mutex.Lock();
   if( this->m_Stream  &&  this->m_Stream->buffer() )
-  {
+    {
     itk::OStringStream ostr;
     ostr << timestamp << "  :  " << content;
     this->m_Stream->insert( ostr.str().c_str() );
     this->m_Stream->scroll(this->m_Stream->insert_position(), 0);
-  }
+    }
   FLTKTextLogOutput::m_Mutex.Unlock();
 }
 
 
-/** Print Self function */
+/** PrintSelf function */
 void FLTKTextLogOutput::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
   if( this->m_Stream )
-  {
+    {
     os << indent << "Stream is available" << std::endl;
-  }
+    }
   else
-  {
+    {
     os << indent << "Stream is NULL" << std::endl;
-  }
+    }
 }
 
-}
+} // end namespace igstk
 
