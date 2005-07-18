@@ -13,6 +13,10 @@ SET(IGSTKSandbox_HEADS
   igstkVTKLoggerOutput.h
   igstkFLTKTextLogOutput.h
   igstkFLTKTextBufferLogOutput.h
+  igstkTubeObject.h
+  igstkTubeObjectRepresentation.h
+  igstkMeshObject.h
+  igstkMeshObjectRepresentation.h
 )
 
 
@@ -27,6 +31,10 @@ SET(IGSTKSandbox_SRCS
   igstkVTKLoggerOutput.cxx
   igstkFLTKTextLogOutput.cxx
   igstkFLTKTextBufferLogOutput.cxx
+  igstkTubeObject.cxx
+  igstkTubeObjectRepresentation.cxx
+  igstkMeshObject.cxx
+  igstkMeshObjectRepresentation.cxx
 )
 
 # Variable for holding extra libraries
