@@ -38,6 +38,8 @@ public:
     /** Method for creation of a reference counted object. */
     igstkNewMacro( MouseTracker );  
 
+    igstkTypeMacro( MouseTracker, Tracker );
+
 //    void Initialize( const char *fileName = NULL );
 
     void GetTransform(TransformType & transform);
