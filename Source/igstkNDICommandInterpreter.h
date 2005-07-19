@@ -24,6 +24,10 @@
 namespace igstk
 {
 
+/** Maximum number of handles that will ever be in use simultaneously */
+const int NDI_MAX_HANDLES = 24;
+
+
 class NDICommandInterpreter : public itk::Object
 {
 /** \class NDICommandInterpreter
@@ -40,9 +44,6 @@ class NDICommandInterpreter : public itk::Object
 */
 
 public:
-
-  /** Maximum number of handles that will ever be in use simultaneously */
-  static const int NDI_MAX_HANDLES = 24;
 
   /** Device and host error codes
 
