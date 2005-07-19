@@ -25,7 +25,7 @@
 #include <vtkPoints.h>
 #include <vtkIdList.h>
 #include <vtkDataSetMapper.h>
-#include <vtkDataSetTriangleFilter.h>
+#include <vtkUnstructuredGrid.h>
 
 namespace igstk
 { 
