@@ -27,11 +27,6 @@ namespace igstk
 
 AuroraTool::AuroraTool() : TrackerTool()
 {
-  this->ToolType = 0;
-  this->ToolRevision = 0;
-  this->ToolSerialNumber = 0;
-  this->ToolPartNumber = 0;
-  this->ToolManufacturer = 0;
 }
 
 
@@ -39,27 +34,6 @@ AuroraTool::AuroraTool() : TrackerTool()
 void AuroraTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-
-  if( this->ToolType )
-  {
-    os << indent << "Tool type: " << this->ToolType << std::endl;
-  }
-  if( this->ToolRevision )
-  {
-    os << indent << "Tool revision: " << this->ToolRevision << std::endl;
-  }
-  if( this->ToolSerialNumber )
-  {
-    os << indent << "Tool serial number: " << this->ToolSerialNumber << std::endl;
-  }
-  if( this->ToolPartNumber )
-  {
-    os << indent << "Tool part number: " << this->ToolPartNumber << std::endl;
-  }
-  if( this->ToolManufacturer )
-  {
-    os << indent << "Tool manufacturer: " << this->ToolManufacturer << std::endl;
-  }
 }
 
 

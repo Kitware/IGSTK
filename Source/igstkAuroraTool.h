@@ -32,11 +32,7 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
-  char *ToolType;
-  char *ToolRevision;
-  char *ToolSerialNumber;
-  char *ToolPartNumber;
-  char *ToolManufacturer;
+
 };  
 
 
