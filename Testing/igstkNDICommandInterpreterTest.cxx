@@ -100,6 +100,14 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   std::cout << "Calling SFLIST" << std::endl;
   interpreter->SFLIST(CommandInterpreterType::NDI_FEATURE_SUMMARY);
 
+  std::cout << "Calling SSTAT" << std::endl;
+  interpreter->SSTAT(CommandInterpreterType::NDI_CONTROL |
+                     CommandInterpreterType::NDI_SENSORS |
+                     CommandInterpreterType::NDI_TIU);
+  a = interpreter->GetSSTATControl();
+  a = interpreter->GetSSTATSensors();
+  a = interpreter->GetSSTATTIU();
+
   // -- diagnostic commands, POLARIS only --
   std::cout << "Calling DSTART" << std::endl;
   interpreter->DSTART();

@@ -363,13 +363,21 @@ public:
   /** SFLIST() reply mode */
   typedef enum
   {
-    NDI_FEATURE_SUMMARY = 0x00, /**< 32-bit feature summary as 8 hexadecimal digits */
-    NDI_ACTIVE_PORTS    = 0x01, /**< number of active tool ports as a single digit */
-    NDI_PASSIVE_PORTS   = 0x02, /**< number of passive tool ports as a single digit */
-    NDI_VOLUMES         = 0x03, /**< list of volumes available (see NDI docs) */
-    NDI_TIP_PORTS       = 0x04, /**< number of ports supporting tool-in-port sensing */
+    NDI_FEATURE_SUMMARY = 0x00, /**< feature summary */
+    NDI_ACTIVE_PORTS    = 0x01, /**< number of active tool ports */
+    NDI_PASSIVE_PORTS   = 0x02, /**< number of passive tool ports  */
+    NDI_VOLUMES         = 0x03, /**< list of volumes available (see NDI docs)*/
+    NDI_TIP_PORTS       = 0x04, /**< number of ports with current sensing */
   } SFLISTModeType;
 
+  /** SFLIST() summary bits */
+  typedef enum
+  {
+    NDI_SUPPORTS_ACTIVE  = 0x0001, /**< active tool ports are available */
+    NDI_SUPPORTS_PASSIVE = 0x0002, /**< passive tool ports are available */
+    NDI_SUPPORTS_VOLUMES = 0x0004, /**< multiple volumes are available */
+    NDI_SUPPORTS_SENSING = 0x0008, /**< tool-in-port sensing is available */
+  } SFLISTSummaryType;
 
   /** Some required typedefs for itk::Object. */
 
@@ -467,20 +475,6 @@ public:
   */
   void DSTOP() {
     this->Command("DSTOP:"); }
-
-  /**
-  Request tracking information from the system.  This command is
-  only available in tracking mode.  Please note that this command has
-  been deprecated in favor of the TX() command.
-
-  \param mode a reply mode containing the following bits:
-  - NDI_XFORMS_AND_STATUS  0x0001 - transforms and status
-  - NDI_ADDITIONAL_INFO    0x0002 - additional tool transform info
-  - NDI_SINGLE_STRAY       0x0004 - stray active marker reporting
-  - NDI_FRAME_NUMBER       0x0008 - frame number for each tool
-  - NDI_PASSIVE            0x8000 - include information for ports 'A', 'B', 'C'
-  - NDI_PASSIVE_EXTRA      0x2000 - with NDI_PASSIVE, ports 'A' to 'I'
-  - NDI_PASSIVE_STRAY      0x1000 - stray passive marker reporting
 
   /**
   Initialize the device.  The device must be
@@ -671,11 +665,8 @@ public:
   - NDI_VOLUMES          0x03 - list of volumes available (see NDI docs)
   - NDI_TIP_PORTS        0x04 - number of ports supporting tool-in-port sensing
 
-  <p>The feature summary bits are defined as follow:
-  - 0x00000001 - active tool ports are available
-  - 0x00000002 - passive tool ports are available
-  - 0x00000004 - multiple volumes are available
-  - 0x00000008 - tool-in-port current sensing is available
+  <p>The use of the SFLIST command with the appropriate reply format updates
+  the information returned by the following commands:
   */
   void SFLIST(SFLISTModeType mode) {
     this->Command("SFLIST:%02X", mode); }
