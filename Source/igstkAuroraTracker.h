@@ -57,6 +57,17 @@ class AuroraTracker : public igstk::Tracker
 {
 public:
 
+  /** typedefs for the tool */
+  typedef igstk::AuroraTool              AuroraToolType;
+  typedef AuroraToolType::Pointer        AuroraToolPointer;
+  typedef AuroraToolType::ConstPointer   AuroraToolConstPointer;
+
+  /** typedef for command interpreter */
+  typedef igstk::NDICommandInterpreter   CommandInterpreterType;
+
+  /** typedef for internal boolean return type */
+  typedef Tracker::ResultType   ResultType;
+
   /** Some required typedefs for itk::Object. */
   typedef AuroraTracker                  Self;
   typedef itk::SmartPointer<Self>        Pointer;
@@ -67,12 +78,6 @@ public:
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro(Self);  
-
-  typedef igstk::AuroraTool              AuroraToolType;
-  typedef AuroraToolType::Pointer        AuroraToolPointer;
-  typedef AuroraToolType::ConstPointer   AuroraToolConstPointer;
-
-  typedef Tracker::ResultType   ResultType;
 
   /** The SetCommunication method is used to attach a communication
       object to the tracker object. */
@@ -134,10 +139,10 @@ private:
   std::string    m_SROMFileNames[NDI_NUMBER_OF_PORTS];
 
   /** The "Communication" instance */
-  CommunicationType::Pointer      m_Communication;
+  CommunicationType::Pointer       m_Communication;
 
   /** The command interpreter */
-  NDICommandInterpreter::Pointer  m_CommandInterpreter;
+  CommandInterpreterType::Pointer  m_CommandInterpreter;
 };
 
 }

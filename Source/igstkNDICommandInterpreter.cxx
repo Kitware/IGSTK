@@ -59,11 +59,11 @@ NDICommandInterpreter::GetCommunication()
 }
 
 /*---------------------------------------------------------------------*/
-unsigned long
-NDICommandInterpreter::HexadecimalStringToUnsignedLong(const char *cp, int n)
+unsigned int
+NDICommandInterpreter::HexadecimalStringToUnsignedInt(const char *cp, int n)
 {
   int i;
-  unsigned long result = 0;
+  unsigned int result = 0;
   int c;
 
   for (i = 0; i < n; i++)
@@ -240,43 +240,6 @@ void *NDICommandInterpreter::HexDecode(void *data, const char *cp, int n)
 }
 
 /*---------------------------------------------------------------------*/
-int NDICommandInterpreter::PVWRFromFile(int port, const char *filename)
-{
-  unsigned char buffer[1024];
-  char hexdata[128];
-  FILE *file;
-  int addr;
-
-  m_ErrorCode = 0;
-
-  file = fopen(filename,"rb");
-  if (file == NULL)
-    {
-    return -1;
-    }
-
-  memset(buffer, 0, 1024);      /* clear buffer to zero */
-  fread(buffer, 1, 1024, file); /* read at most 1k from file */
-  if (ferror(file))
-    {
-    fclose(file);
-    return -1;
-    }
-  fclose(file);
-
-  for (addr = 0; addr < 1024; addr += 64)
-    { /* write in chunks of 64 bytes */
-    this->PVWR(port, addr, this->HexEncode(hexdata, &buffer[addr], 64));
-    if (this->GetError() != NDI_OKAY)
-      {
-      return -1;
-      }
-    }
- 
-  return 0;
-}
-
-/*---------------------------------------------------------------------*/
 int NDICommandInterpreter::GetError() const
 {
   return m_ErrorCode;
@@ -399,24 +362,24 @@ Description:
     X^16 + X^15 + X^2 + 1.
 
 *****************************************************************/
-static const int oddparity[16] =    { 0, 1, 1, 0, 1, 0, 0, 1,
-                                      1, 0, 0, 1, 0, 1, 1, 0 };
 
-#define CalcCRC16(nextchar, puCRC16) \
-{ \
-    int data; \
-    data = nextchar; \
-    data = (data ^ (*(puCRC16) & 0xff)) & 0xff; \
-    *puCRC16 >>= 8; \
-    if ( oddparity[data & 0x0f] ^ oddparity[data >> 4] ) \
-      { \
-      *(puCRC16) ^= 0xc001; \
-      } /* if */ \
-    data <<= 6; \
-    *puCRC16 ^= data; \
-    data <<= 1; \
-    *puCRC16 ^= data; \
-} /* CalcCRC16 */ 
+inline void CalcCRC16(int nextchar, unsigned int *puCRC16)
+{
+  static const int oddparity[16] =    { 0, 1, 1, 0, 1, 0, 0, 1,
+                                        1, 0, 0, 1, 0, 1, 1, 0 };
+  int data;
+  data = nextchar;
+  data = (data ^ (*(puCRC16) & 0xff)) & 0xff;
+  *puCRC16 >>= 8;
+  if ( oddparity[data & 0x0f] ^ oddparity[data >> 4] )
+    {
+    *(puCRC16) ^= 0xc001;
+    }
+  data <<= 6;
+  *puCRC16 ^= data;
+  data <<= 1;
+  *puCRC16 ^= data;
+}
 
 /*---------------------------------------------------------------------*/
 const char *NDICommandInterpreter::Command(const char *command)
@@ -611,7 +574,7 @@ const char *NDICommandInterpreter::Command(const char *command)
   crp[i] = '\0';           
 
   /* read and check the CRC value of the reply */
-  if (CRC16 != this->HexadecimalStringToUnsignedLong(&rp[m], 4)) {
+  if (CRC16 != this->HexadecimalStringToUnsignedInt(&rp[m], 4)) {
     this->SetErrorCode(NDI_BAD_CRC);
     return crp;
   }
@@ -619,7 +582,7 @@ const char *NDICommandInterpreter::Command(const char *command)
   /* check for error code */
   if (crp[0] == 'E' && strncmp(crp, "ERROR", 5) == 0)
     {
-    this->SetErrorCode(this->HexadecimalStringToUnsignedLong(&crp[5], 2));
+    this->SetErrorCode(this->HexadecimalStringToUnsignedInt(&crp[5], 2));
     return crp;
     }
 
@@ -629,10 +592,6 @@ const char *NDICommandInterpreter::Command(const char *command)
   if (cp[0] == 'T' && cp[1] == 'X' && nc == 2)
     { /* the TX command */
     HelperForTX(cp, crp);
-    }
-  else if (cp[0] == 'G' && cp[1] == 'X' && nc == 2)
-    { /* the GX command */
-    HelperForGX(cp, crp);
     }
   else if (cp[0] == 'C' && nc == 4 && strncmp(cp, "COMM", nc) == 0)
     {
@@ -657,10 +616,6 @@ const char *NDICommandInterpreter::Command(const char *command)
   else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHSR", nc) == 0)
     {
     HelperForPHSR(cp, crp);
-    }
-  else if (cp[0] == 'P' && nc == 5 && strncmp(cp, "PSTAT", nc) == 0)
-    {
-    HelperForPSTAT(cp, crp);
     }
   else if (cp[0] == 'S' && nc == 5 && strncmp(cp, "SSTAT", nc) == 0)
     {
@@ -745,7 +700,7 @@ int NDICommandInterpreter::GetPHINFToolInfo(char information[31]) const
 }
 
 /*---------------------------------------------------------------------*/
-unsigned long NDICommandInterpreter::GetPHINFCurrentTest() const
+unsigned int NDICommandInterpreter::GetPHINFCurrentTest() const
 {
   const char *dp;
 
@@ -911,7 +866,7 @@ int NDICommandInterpreter::GetTXTransform(int ph, double transform[8]) const
   transform[6] = this->SignedStringToInt(&dp[38], 7)*0.01;
   transform[7] = this->SignedStringToInt(&dp[45], 6)*0.0001;
 
-  return NDI_OKAY;
+  return NDI_TRANSFORM_OKAY;
 }
 
 /*---------------------------------------------------------------------*/
@@ -939,7 +894,7 @@ int NDICommandInterpreter::GetTXPortStatus(int ph) const
 }
 
 /*---------------------------------------------------------------------*/
-unsigned long NDICommandInterpreter::GetTXFrame(int ph) const
+unsigned int NDICommandInterpreter::GetTXFrame(int ph) const
 {
   const char *dp;
   int i, n;
@@ -959,7 +914,7 @@ unsigned long NDICommandInterpreter::GetTXFrame(int ph) const
 
   dp = m_TXFrame[i];
 
-  return this->HexadecimalStringToUnsignedLong(dp, 8);
+  return this->HexadecimalStringToUnsignedInt(dp, 8);
 }
 
 /*---------------------------------------------------------------------*/
@@ -1095,417 +1050,6 @@ int NDICommandInterpreter::GetTXSystemStatus() const
   dp = m_TXSystemStatus;
 
   return this->HexadecimalStringToInt(dp, 4);
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetGXTransform(int port, double transform[8]) const
-{
-  const char *dp;
-  
-  if (port >= '1' && port <= '3')
-    {
-    dp = m_GXTransforms[port - '1'];
-    }
-  else if (port >= 'A' && port <= 'I')
-    {
-    dp = m_GXPassiveTransforms[port - 'A'];
-    }
-  else
-    {
-    return NDI_DISABLED;
-    }
-
-  if (*dp == 'D' || *dp == '\0')
-    {
-    return NDI_DISABLED;
-    }
-  else if (*dp == 'M')
-    {
-    return NDI_MISSING;
-    }
-
-  transform[0] = this->SignedStringToInt(&dp[0],  6)*0.0001;
-  transform[1] = this->SignedStringToInt(&dp[6],  6)*0.0001;
-  transform[2] = this->SignedStringToInt(&dp[12], 6)*0.0001;
-  transform[3] = this->SignedStringToInt(&dp[18], 6)*0.0001;
-  transform[4] = this->SignedStringToInt(&dp[24], 7)*0.01;
-  transform[5] = this->SignedStringToInt(&dp[31], 7)*0.01;
-  transform[6] = this->SignedStringToInt(&dp[38], 7)*0.01;
-  transform[7] = this->SignedStringToInt(&dp[45], 6)*0.0001;
-
-  return NDI_OKAY;
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetGXPortStatus(int port) const
-{
-  const char *dp;
-
-  if (port >= '1' && port <= '3')
-    {
-    dp = &m_GXStatus[6 - 2*(port - '1')];
-    }
-  else if (port >= 'A' && port <= 'C')
-    {
-    dp = &m_GXPassiveStatus[6 - 2*(port - 'A')];
-    }
-  else if (port >= 'D' && port <= 'F')
-    {
-    dp = &m_GXPassiveStatus[14 - 2*(port - 'D')];
-    }
-  else if (port >= 'G' && port <= 'I')
-    {
-    dp = &m_GXPassiveStatus[22 - 2*(port - 'G')];
-    }
-  else
-    {
-    return 0;
-    }
-
-  return this->HexadecimalStringToInt(dp, 2);
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetGXSystemStatus() const
-{
-  const char *dp;
-
-  dp = m_GXStatus;
-
-  if (*dp == '\0')
-    {
-    dp = m_GXPassiveStatus;
-    }
-
-  return this->HexadecimalStringToInt(dp, 2);
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetGXToolInfo(int port) const
-{
-  const char *dp;
-
-  if (port >= '1' && port <= '3')
-    {
-    dp = m_GXInformation[port - '1'];
-    }
-  else if (port >= 'A' && port <= 'I')
-    {
-    dp = m_GXPassiveInformation[port - 'A'];
-    }
-  else
-    {
-    return 0;
-    }
-
-  return this->HexadecimalStringToInt(dp, 2);
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetGXMarkerInfo(int port, int marker) const
-{
-  const char *dp;
-
-  if (marker < 'A' || marker > 'T')
-    {
-    return 0;
-    }
-
-  if (port >= '1' && port <= '3')
-    {
-    dp = m_GXInformation[port - '1'];
-    }
-  else if (port >= 'A' && port <= 'I')
-    {
-    dp = m_GXPassiveInformation[port - 'A'];
-    }
-  else
-    {
-    return 0;
-    }
-  dp += 11 - (marker - 'A');
-
-  return this->HexadecimalStringToInt(dp, 1);
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetGXSingleStray(int port, double coord[3]) const
-{
-  const char *dp;
-  
-  if (port >= '1' && port <= '3')
-    {
-    dp = m_GXSingleStray[port - '1'];
-    }
-  else
-    {
-    return NDI_DISABLED;
-    }
-
-  if (*dp == 'D' || *dp == '\0')
-    {
-    return NDI_DISABLED;
-    }
-  else if (*dp == 'M')
-    {
-    return NDI_MISSING;
-    }
-
-  coord[0] = this->SignedStringToInt(&dp[0],  7)*0.01;
-  coord[1] = this->SignedStringToInt(&dp[7],  7)*0.01;
-  coord[2] = this->SignedStringToInt(&dp[14], 7)*0.01;
-
-  return NDI_OKAY;
-}
-
-/*---------------------------------------------------------------------*/
-unsigned long NDICommandInterpreter::GetGXFrame(int port) const
-{
-  const char *dp;
-
-  if (port >= '1' && port <= '3')
-    {
-    dp = m_GXFrame[port - '1'];
-    }
-  else if (port >= 'A' && port <= 'I')
-    {
-    dp = m_GXPassiveFrame[port - 'A'];
-    }
-  else
-    {
-    return 0;
-    }
-
-  return this->HexadecimalStringToUnsignedLong(dp, 8);
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetGXNumberOfPassiveStrays() const
-{
-  const char *dp;
-  int n;
-
-  dp = m_GXPassiveStray;
-
-  if (*dp == '\0')
-    {
-    return 0;
-    }
-  
-  n = this->SignedStringToInt(dp, 3);
-  if (n < 0)
-    {
-    return 0;
-    }
-  if (n > 20)
-    {
-    return 20;
-    }
-
-  return n; 
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetGXPassiveStray(int i, double coord[3]) const
-{
-  const char *dp;
-  int n;
-
-  dp = m_GXPassiveStray;
-
-  if (*dp == '\0')
-    {
-    return NDI_DISABLED;
-    }
-
-  n = this->SignedStringToInt(dp, 3);
-  dp += 3;
-  if (n < 0)
-    {
-    return NDI_MISSING;
-    }
-  if (n > 20)
-    {
-    n = 20;
-    }
-
-  if (i < 0 || i >= n)
-    {
-    return NDI_MISSING;
-    }
-
-  dp += 7*3*i;
-  coord[0] = this->SignedStringToInt(&dp[0],  7)*0.01;
-  coord[1] = this->SignedStringToInt(&dp[7],  7)*0.01;
-  coord[2] = this->SignedStringToInt(&dp[14], 7)*0.01;
-
-  return NDI_OKAY;
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetPSTATPortStatus(int port) const
-{
-  const char *dp;
-
-  if (port >= '1' && port <= '3')
-    {
-    dp = m_PSTATBasic[port - '1'];
-    }
-  else if (port >= 'A' && port <= 'I')
-    {
-    dp = m_PSTATPassiveBasic[port - 'A'];
-    }
-  else
-    {
-    return 0;
-    }
-
-  /* the 'U' is for UNOCCUPIED */
-  if (*dp == 'U' || *dp == '\0')
-    {
-    return 0;
-    }
-
-  /* skip to the last two characters */
-  dp += 30;
-
-  return this->HexadecimalStringToInt(dp, 2);
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetPSTATToolInfo(int port,
-                                            char information[30]) const
-{
-  const char *dp;
-
-  if (port >= '1' && port <= '3')
-    {
-    dp = m_PSTATBasic[port - '1'];
-    }
-  else if (port >= 'A' && port <= 'I')
-    {
-    dp = m_PSTATPassiveBasic[port - 'A'];
-    }
-  else
-    {
-    return NDI_UNOCCUPIED;
-    }
-
-  /* the 'U' is for UNOCCUPIED */
-  if (*dp == 'U' || *dp == '\0')
-    {
-    return NDI_UNOCCUPIED;
-    }
-
-  strncpy(information, dp, 30);
-
-  return NDI_OKAY;
-}
-
-/*---------------------------------------------------------------------*/
-unsigned long NDICommandInterpreter::GetPSTATCurrentTest(int port) const
-{
-  const char *dp;
-
-  if (port >= '1' && port <= '3')
-    {
-    dp = m_PSTATTesting[port - '1'];
-    }
-  else if (port >= 'A' && port <= 'I')
-    {
-    dp = m_PSTATPassiveTesting[port - 'A'];
-    }
-  else
-    {
-    return 0;
-    }
-
-  if (*dp == '\0')
-    {
-    return 0;
-    }
-
-  return this->HexadecimalStringToUnsignedLong(dp, 8);
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetPSTATPartNumber(int port, char part[20]) const
-{
-  const char *dp;
-
-  if (port >= '1' && port <= '3')
-    {
-    dp = m_PSTATPartNumber[port - '1'];
-    }
-  else if (port >= 'A' && port <= 'I')
-    {
-    dp = m_PSTATPassivePartNumber[port - 'A'];
-    }
-  else
-    {
-    return NDI_UNOCCUPIED;
-    }
-
-  if (*dp == '\0')
-    {
-    return NDI_UNOCCUPIED;
-    }
-
-  strncpy(part, dp, 20);
-
-  return NDI_OKAY;
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetPSTATAccessories(int port) const
-{
-  const char *dp;
-
-  if (port >= '1' && port <= '3')
-    {
-    dp = m_PSTATAccessories[port - '1'];
-    }
-  else if (port >= 'A' && port <= 'I')
-    {
-    dp = m_PSTATPassiveAccessories[port - 'A'];
-    }
-  else
-    {
-    return 0;
-    }
-
-  if (*dp == '\0')
-    {
-    return 0;
-    }
-
-  return this->HexadecimalStringToInt(dp, 2);
-}
-
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::GetPSTATMarkerType(int port) const
-{
-  const char *dp;
-
-  if (port >= '1' && port <= '3')
-    {
-    dp = m_PSTATMarkerType[port - '1'];
-    }
-  else if (port >= 'A' && port <= 'I')
-    {
-    dp = m_PSTATPassiveMarkerType[port - 'A'];
-    }
-  else
-    {
-    return 0;
-    }
-
-  if (*dp == '\0')
-    {
-    return 0;
-    }
-
-  return this->HexadecimalStringToInt(dp, 2);
 }
 
 /*---------------------------------------------------------------------*/
@@ -1663,7 +1207,7 @@ int NDICommandInterpreter::GetIRCHKSourceXY(int side, int i,
 */
 void NDICommandInterpreter::HelperForPHINF(const char *cp, const char *crp)
 {
-  unsigned long mode = 0x0001; /* the default reply mode */
+  unsigned int mode = 0x0001; /* the default reply mode */
   char *dp;
   int j;
   int unoccupied = NDI_OKAY;
@@ -1671,7 +1215,7 @@ void NDICommandInterpreter::HelperForPHINF(const char *cp, const char *crp)
   /* if the PHINF command had a reply mode, read it */
   if ((cp[5] == ':' && cp[10] != '\r') || (cp[5] == ' ' && cp[6] != '\r'))
     { 
-    mode = this->HexadecimalStringToUnsignedLong(&cp[8], 4);
+    mode = this->HexadecimalStringToUnsignedInt(&cp[8], 4);
     }
 
   /* check for unoccupied */
@@ -1882,7 +1426,7 @@ void NDICommandInterpreter::HelperForPHSR(const char *cp, const char *crp)
 */
 void NDICommandInterpreter::HelperForTX(const char *cp, const char *crp)
 {
-  unsigned long mode = 0x0001; /* the default reply mode */
+  unsigned int mode = 0x0001; /* the default reply mode */
   char *dp;
   int i, j, n;
   int ph, nhandles, nstray;
@@ -1890,7 +1434,7 @@ void NDICommandInterpreter::HelperForTX(const char *cp, const char *crp)
   /* if the TX command had a reply mode, read it */
   if ((cp[2] == ':' && cp[7] != '\r') || (cp[2] == ' ' && cp[3] != '\r'))
     { 
-    mode = this->HexadecimalStringToUnsignedLong(&cp[3], 4);
+    mode = this->HexadecimalStringToUnsignedInt(&cp[3], 4);
     }
 
   /* get the number of handles */
@@ -2070,437 +1614,15 @@ void NDICommandInterpreter::HelperForTX(const char *cp, const char *crp)
 }
 
 /*---------------------------------------------------------------------
-  Copy all the GX reply information into the ndicapi structure, according
-  to the GX reply mode that was requested.
-
-  This function is called every time a GX command is sent to the
-  Measurement System.
-
-  This information can be later extracted through one of the ndiGetGXxx()
-  functions.
-*/
-void NDICommandInterpreter::HelperForGX(const char *cp, const char *crp)
-{
-  unsigned long mode = 0x0001; /* the default reply mode */
-  char *dp;
-  int i, j, k;
-  int npassive, nactive;
-
-  /* if the GX command had a reply mode, read it */
-  if ((cp[2] == ':' && cp[7] != '\r') || (cp[2] == ' ' && cp[3] != '\r'))
-    { 
-    mode = this->HexadecimalStringToUnsignedLong(&cp[3], 4);
-    }
-
-  /* always three active ports */
-  nactive = 3;
-
-  if (mode & NDI_XFORMS_AND_STATUS)
-    {
-    for (k = 0; k < nactive; k += 3)
-      {
-      /* grab the three transforms */
-      for (i = 0; i < 3; i++)
-        {
-        dp = m_GXTransforms[i];
-        for (j = 0; j < 51 && *crp >= ' '; j++)
-          {
-          *dp++ = *crp++;
-          }
-        *dp = '\0';
-        /* fprintf(stderr, "xf %.51s\n", m_GXTransforms[i]); */
-        /* eat the trailing newline */
-        if (*crp == '\n')
-          {
-          crp++;
-          }
-        }
-      /* grab the status flags */
-      dp = m_GXStatus + k/3*8;
-      for (j = 0; j < 8 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "st %.8s\n", m_GXStatus); */
-      }
-    /* eat the trailing newline */
-    if (*crp == '\n')
-      {
-      crp++;
-      }
-    }
-
-  if (mode & NDI_ADDITIONAL_INFO)
-    {
-    /* grab information for each port */
-    for (i = 0; i < nactive; i++)
-      {
-      dp = m_GXInformation[i];
-      for (j = 0; j < 12 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "ai %.12s\n", m_GXInformation[i]); */
-      }
-    /* eat the trailing newline */
-    if (*crp == '\n')
-      {
-      crp++;
-      }
-    }
-
-  if (mode & NDI_SINGLE_STRAY)
-    {
-    /* grab stray marker for each port */
-    for (i = 0; i < nactive; i++)
-      {
-      dp = m_GXSingleStray[i];
-      for (j = 0; j < 21 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      *dp = '\0';
-      /* fprintf(stderr, "ss %.21s\n", m_GXSingleStray[i]); */      
-      /* eat the trailing newline */
-      if (*crp == '\n')
-        {
-        crp++;
-        }
-      }
-    }
-
-  if (mode & NDI_FRAME_NUMBER)
-    {
-    /* get frame number for each port */
-    for (i = 0; i < nactive; i++)
-      {
-      dp = m_GXFrame[i];
-      for (j = 0; j < 8 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "fn %.8s\n", m_GXFrame[i]); */
-    }
-    /* eat the trailing newline */
-    if (*crp == '\n')
-      {
-      crp++;
-      }
-    }
-
-  /* if there is no passive information, stop here */
-  if (!(mode & NDI_PASSIVE))
-    {
-    return;
-    }
-
-  /* in case there are 9 passive tools instead of just 3 */
-  npassive = 3;
-  if (mode & NDI_PASSIVE_EXTRA)
-    {
-    npassive = 9;
-    }
-
-  if ((mode & NDI_XFORMS_AND_STATUS) || (mode == NDI_PASSIVE))
-    {
-    /* the information is grouped in threes */
-    for (k = 0; k < npassive; k += 3)
-      {
-      /* grab the three transforms */
-      for (i = 0; i < 3; i++)
-        {
-        dp = m_GXPassiveTransforms[k+i];
-        for (j = 0; j < 51 && *crp >= ' '; j++)
-          {
-          *dp++ = *crp++;
-          }
-        *dp = '\0';
-        /* fprintf(stderr, "pxf %.31s\n", m_GXPassiveTransforms[k+i]); */
-        /* eat the trailing newline */
-        if (*crp == '\n')
-          {
-          crp++;
-          }
-        }
-      /* grab the status flags */
-      dp = m_GXPassiveStatus + k/3*8;
-      for (j = 0; j < 8 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "pst %.8s\n", m_GXPassiveStatus + k/3*8); */
-      /* skip the newline */
-      if (*crp == '\n')
-        {
-        crp++;
-        }
-      else
-        { /* no newline: no more passive transforms */
-        npassive = k + 3;
-        }
-      }
-    /* eat the trailing newline */
-    if (*crp == '\n')
-      {
-      crp++;
-      }
-    }
-
-  if (mode & NDI_ADDITIONAL_INFO)
-    {
-    /* grab information for each port */
-    for (i = 0; i < npassive; i++)
-      {
-      dp = m_GXPassiveInformation[i];
-      for (j = 0; j < 12 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "pai %.12s\n", m_GXPassiveInformation[i]); */
-      }
-    /* eat the trailing newline */
-    if (*crp == '\n')
-      {
-      crp++;
-      }
-    }
-
-  if (mode & NDI_FRAME_NUMBER)
-    {
-    /* get frame number for each port */
-    for (i = 0; i < npassive; i++)
-      {
-      dp = m_GXPassiveFrame[i];
-      for (j = 0; j < 8 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "pfn %.8s\n", m_GXPassiveFrame[i]); */      
-      }
-    /* eat the trailing newline */
-    if (*crp == '\n')
-      {
-      crp++;
-      }
-    }
-
-  if (mode & NDI_PASSIVE_STRAY)
-    {
-    /* get all the passive stray information */
-    /* this will be a maximum of 3 + 20*3*7 = 423 bytes */
-    dp = m_GXPassiveStray;
-    for (j = 0; j < 423 && *crp >= ' '; j++)
-      {
-      *dp++ = *crp++;
-      }
-    /* fprintf(stderr, "psm %s\n", m_GXPassiveStray); */
-    }
-}
-
-/*---------------------------------------------------------------------
-  Copy all the PSTAT reply information into the ndicapi structure.
-*/
-void NDICommandInterpreter::HelperForPSTAT(const char *cp, const char *crp)
-{
-  unsigned long mode = 0x0001; /* the default reply mode */
-  char *dp;
-  int i, j;
-  int npassive, nactive;
-
-  /* if the PSTAT command had a reply mode, read it */
-  if ((cp[5] == ':' && cp[10] != '\r') || (cp[5] == ' ' && cp[6] != '\r'))
-    { 
-    mode = this->HexadecimalStringToUnsignedLong(&cp[6], 4);
-    }
-
-  /* always three active ports */
-  nactive = 3;
-
-  /* information for each port is separated by a newline */
-  for (i = 0; i < nactive; i++)
-    {
-    /* basic tool information and port status */
-    if (mode & NDI_BASIC)
-      {
-      dp = m_PSTATBasic[i];
-      for (j = 0; j < 32 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* terminate if UNOCCUPIED */
-      if (j < 32)
-        {
-        *dp = '\0';
-        }
-      /* fprintf(stderr, "ba %.32s\n", m_pstat_basic[i]); */
-      }
-
-    /* current testing */
-    if (mode & NDI_TESTING)
-      {
-      dp = m_PSTATTesting[i];
-      *dp = '\0';
-      for (j = 0; j < 8 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "ai %.8s\n", m_pstat_testing[i]); */
-      }
-
-    /* part number */
-    if (mode & NDI_PART_NUMBER)
-      {
-      dp = m_PSTATPartNumber[i];
-      *dp = '\0';
-      for (j = 0; j < 20 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "pn %.20s\n", m_pstat_part_number[i]); */
-      }
-    
-    /* accessories */
-    if (mode & NDI_ACCESSORIES)
-      {
-      dp = m_PSTATAccessories[i];
-      *dp = '\0';
-      for (j = 0; j < 2 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "ac %.2s\n", m_pstat_accessories[i]); */
-      }
-
-    /* marker type */
-    if (mode & NDI_MARKER_TYPE)
-      {
-      dp = m_PSTATMarkerType[i];
-      *dp = '\0';
-      for (j = 0; j < 2 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "mt %.2s\n", m_pstat_marker_type[i]); */
-      }
-
-    /* skip any other information that might be present */
-    while (*crp >= ' ')
-      {
-      crp++;
-      }
-
-    /* eat the trailing newline */
-    if (*crp == '\n')
-      {
-      crp++;
-      }
-    }
-
-  /* if there is no passive information, stop here */
-  if (!(mode & NDI_PASSIVE))
-    {
-    return;
-    }
-
-  /* in case there are 9 passive tools instead of just 3 */
-  npassive = 3;
-  if (mode & NDI_PASSIVE_EXTRA)
-    {
-    npassive = 9;
-    }
-
-  /* information for each port is separated by a newline */
-  for (i = 0; i < npassive; i++)
-    {
-    /* basic tool information and port status */
-    if (mode & NDI_BASIC)
-      {
-      dp = m_PSTATPassiveBasic[i];
-      *dp = '\0';
-      for (j = 0; j < 32 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* terminate if UNOCCUPIED */
-      if (j < 32)
-        {
-        *dp = '\0';
-        }
-      /* fprintf(stderr, "pba %.32s\n", m_pstat_passive_basic[i]); */
-      }
-
-    /* current testing */
-    if (mode & NDI_TESTING)
-      {
-      dp = m_PSTATPassiveTesting[i];
-      *dp = '\0';
-      for (j = 0; j < 8 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "pai %.8s\n", m_pstat_passive_testing[i]); */
-      }
-
-    /* part number */
-    if (mode & NDI_PART_NUMBER)
-      {
-      dp = m_PSTATPassivePartNumber[i];
-      *dp = '\0';
-      for (j = 0; j < 20 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "ppn %.20s\n", m_pstat_passive_part_number[i]); */
-      }
-    
-    /* accessories */
-    if (mode & NDI_ACCESSORIES)
-      {
-      dp = m_PSTATPassiveAccessories[i];
-      *dp = '\0';
-      for (j = 0; j < 2 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "pac %.2s\n", m_pstat_passive_accessories[i]); */
-      }
-
-    /* marker type */
-    if (mode & NDI_MARKER_TYPE)
-      {
-      dp = m_PSTATPassiveMarkerType[i];
-      *dp = '\0';
-      for (j = 0; j < 2 && *crp >= ' '; j++)
-        {
-        *dp++ = *crp++;
-        }
-      /* fprintf(stderr, "pmt %.2s\n", m_pstat_passive_marker_type[i]); */
-      }
-
-    /* skip any other information that might be present */
-    while (*crp >= ' ')
-      {
-      crp++;
-      }
-
-    /* eat the trailing newline */
-    if (*crp == '\n')
-      {
-      crp++;
-      }
-    }
-}
-
-/*---------------------------------------------------------------------
   Copy all the SSTAT reply information into the ndicapi structure.
 */
 void NDICommandInterpreter::HelperForSSTAT(const char *cp, const char *crp)
 {
-  unsigned long mode;
+  unsigned int mode;
   char *dp;
 
   /* read the SSTAT command reply mode */
-  mode = this->HexadecimalStringToUnsignedLong(&cp[6], 4);
+  mode = this->HexadecimalStringToUnsignedInt(&cp[6], 4);
 
   if (mode & NDI_CONTROL)
     {
@@ -2529,13 +1651,13 @@ void NDICommandInterpreter::HelperForSSTAT(const char *cp, const char *crp)
 */
 void NDICommandInterpreter::HelperForIRCHK(const char *cp, const char *crp)
 {
-  unsigned long mode = 0x0001; /* the default reply mode */
+  unsigned int mode = 0x0001; /* the default reply mode */
   int j;
 
   /* if the IRCHK command had a reply mode, read it */
   if ((cp[5] == ':' && cp[10] != '\r') || (cp[5] == ' ' && cp[6] != '\r'))
     { 
-    mode = this->HexadecimalStringToUnsignedLong(&cp[6], 4);
+    mode = this->HexadecimalStringToUnsignedInt(&cp[6], 4);
     }
 
   /* a single character, '0' or '1' */
@@ -2600,7 +1722,7 @@ void NDICommandInterpreter::HelperForCOMM(const char *cp, const char *crp)
 /*---------------------------------------------------------------------
   Sleep for 100 milliseconds after an INIT command.
 */
-void NDICommandInterpreter::HelperForINIT(const char *cp, const char *crp)
+void NDICommandInterpreter::HelperForINIT(const char *, const char *)
 {
   /* need to go to sleep for 100 milliseconds somehow */
   //ndiSerialSleep(serial_device, 100);

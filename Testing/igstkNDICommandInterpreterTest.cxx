@@ -84,19 +84,22 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   // -- basic initialization commands --
   //interpreter->RESET();  // serial break not implemented yet
   interpreter->INIT();
-  interpreter->COMM(NDI_9600, NDI_8N1, NDI_NOHANDSHAKE);
+  interpreter->COMM(CommandInterpreterType::NDI_9600,
+                    CommandInterpreterType::NDI_8N1,
+                    CommandInterpreterType::NDI_NOHANDSHAKE);
   interpreter->BEEP(2);
 
   // -- get information about the device --
-  std::cout << interpreter->VER(0) << std::endl;
-  interpreter->SFLIST(0);
+  std::cout << interpreter->VER(CommandInterpreterType::NDI_CONTROL_FIRMWARE)
+            << std::endl;
+  interpreter->SFLIST(CommandInterpreterType::NDI_FEATURE_SUMMARY);
 
   // -- diagnostic commands, POLARIS only --
   /*
   interpreter->DSTART();
-  interpreter->IRCHK(NDI_DETECTED);
+  interpreter->IRCHK(CommandInterpreterType::NDI_DETECTED);
   a = interpreter->GetIRCHKDetected();
-  interpreter->IRCHK(NDI_SOURCES);
+  interpreter->IRCHK(CommandInterpreterType::NDI_SOURCES);
   n = interpreter->GetIRCHKNumberOfSources(0);
   for (i = 0; i < n; i++)
     {
@@ -106,7 +109,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   */
 
   // -- enable tool ports --
-  interpreter->PHSR(0x02); // all unenabled handles
+  interpreter->PHSR(CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
   numberOfHandles = interpreter->GetPHSRNumberOfHandles();
   for (i = 0; i < numberOfHandles; i++)
     {
@@ -118,14 +121,14 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     {
     ph = portHandles[i];
     interpreter->PINIT(ph);
-    interpreter->PENA(ph, NDI_DYNAMIC);
+    interpreter->PENA(ph, CommandInterpreterType::NDI_DYNAMIC);
     }
 
   // -- start tracking --
   interpreter->TSTART();
   for (j = 0; j < 50; j++)
     {
-    interpreter->TX(NDI_XFORMS_AND_STATUS);
+    interpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
     for (i = 0; i < numberOfHandles; i++)
       {
       ph = portHandles[i];
