@@ -116,6 +116,9 @@ int igstkSerialCommunicationTest( int, char * [] )
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
 
+  // this is set if the test failed in any way
+  int testStatus = EXIT_SUCCESS;
+
 #ifdef WIN32
   igstk::SerialCommunicationForWindows::Pointer serialComm = igstk::SerialCommunicationForWindows::New();
 #else
@@ -164,25 +167,53 @@ int igstkSerialCommunicationTest( int, char * [] )
   serialComm->OpenCommunication();
 
   int len = strlen("Hello World!!!");
+  int numberOfBytesRead = 0;
+  const int MAX_REPLY_SIZE = 1024;
+  char reply[MAX_REPLY_SIZE];
+  
+  // test a simple write/read sequence
   serialComm->Write("Hello World!!!", len);
+  serialComm->Read(reply, len, numberOfBytesRead);
 
-  serialComm->Write("Hello World!!!", len);
-  serialComm->Write("Hello World!!!", len);
-  serialComm->Write("Hello World!!!", len);
-  serialComm->Write("Hello World!!!", len);
-  serialComm->Write("Hello World!!!", len);
+  if (numberOfBytesRead != len ||
+      strncmp(reply, "Hello World!!!", len) != 0)
+    {
+    std::cerr << "Failed simple read/write test" << std::endl;
+    serialComm->CloseCommunication();
+    return EXIT_FAILURE;
+    }
 
-  //serialComm->FlushOutputBuffer();
+  // try reading more chars than available to generate a timeout
+  serialComm->Write("Hello World!!!", len);
+  serialComm->Read(reply, MAX_REPLY_SIZE, numberOfBytesRead);
 
-  //serialComm->Read();
-  //serialComm->Read();
-  //serialComm->Read();
-  //serialComm->Read();
+  if (numberOfBytesRead != len)
+    {
+    std::cerr << "Failed timout test" << std::endl;
+    testStatus = EXIT_FAILURE;
+    }
 
+  // try reading only part of the reply
+  serialComm->Write("Hello World!!!", len);
+  serialComm->Read(reply, len-2, numberOfBytesRead);
+  if (numberOfBytesRead != len-2)
+    {
+    std::cerr << "failed partial read test 1st part" << std::endl;
+    testStatus = EXIT_FAILURE;
+    }
+  serialComm->Read(reply, 2, numberOfBytesRead);
+  if (numberOfBytesRead != 2)
+    {
+    std::cerr << "failed partial read test 2nd part" << std::endl;
+    testStatus = EXIT_FAILURE;
+    }
+
+  // send a serial break (there isn't any way to test that it was sent)
+  serialComm->SendBreak();
+  
   serialComm->CloseCommunication();
 
-
-  return EXIT_SUCCESS;
+  return testStatus;
 }
 
 
