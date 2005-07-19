@@ -60,7 +60,7 @@ public:
 
 
    /** Destructor    */
-   ~Token();
+   virtual ~Token();
 
 
 
@@ -76,6 +76,8 @@ public:
     *
     */
 
+   /** Method for printing out the member variables of this object to a ostream
+    * */
    void Print(std::ostream& os, itk::Indent indent) const;
 
 protected:

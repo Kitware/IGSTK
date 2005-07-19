@@ -67,7 +67,7 @@ public:
 
   /** Constructor and destructor */
   Transform();
-  ~Transform();
+  virtual ~Transform();
 
   /** Assign the values of one transform to another */
   const Transform & operator=( const Transform & inputTransform );
@@ -170,6 +170,7 @@ public:
   /** Resets the Transform to an Identity Transform */
   void SetToIdentity( TimePeriodType validityPeriodInMilliseconds );
 
+  /** Method for printing the member variables of this class to an ostream */
   void Print(std::ostream& os, itk::Indent indent) const;
 
 protected:

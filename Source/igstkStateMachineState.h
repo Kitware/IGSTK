@@ -69,7 +69,7 @@ public:
 
 
    /** Destructor    */
-   ~StateMachineState()
+   virtual ~StateMachineState()
    {
    }
 

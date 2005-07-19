@@ -64,7 +64,7 @@ public:
 
   /** Constructor and destructor */
   TimeStamp();
-  ~TimeStamp();
+  virtual ~TimeStamp();
 
 
   /** Copy one time stamp into another */

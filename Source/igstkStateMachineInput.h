@@ -69,7 +69,7 @@ public:
 
 
    /** Destructor    */
-   ~StateMachineInput()
+   virtual ~StateMachineInput()
    {
    }
 
