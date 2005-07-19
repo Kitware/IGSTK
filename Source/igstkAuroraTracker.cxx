@@ -475,15 +475,15 @@ void AuroraTracker::EnableToolPorts()
     m_CommandInterpreter->GetPHINFToolInfo(identity);
     if (identity[1] == CommandInterpreterType::NDI_TYPE_BUTTON)
       { // button-box or foot pedal
-      mode = NDICommandInterpreter::NDI_BUTTON_BOX;
+      mode = CommandInterpreterType::NDI_BUTTON_BOX;
       }
     else if (identity[1] == CommandInterpreterType::NDI_TYPE_REFERENCE)
       { // reference
-      mode = NDICommandInterpreter::NDI_STATIC;
+      mode = CommandInterpreterType::NDI_STATIC;
       }
     else
       { // anything else
-      mode = NDICommandInterpreter::NDI_DYNAMIC;
+      mode = CommandInterpreterType::NDI_DYNAMIC;
       }
 
     // enable the tool

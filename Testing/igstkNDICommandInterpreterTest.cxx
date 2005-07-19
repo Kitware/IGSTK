@@ -76,7 +76,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   //---------------------------------
   // send some commands to the device
   int i, j, a, ph;
-  unsigned long l;
+  unsigned int l;
   double vals[8];
   int portHandles[256];
   int numberOfHandles;
@@ -119,9 +119,43 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
   for (i = 0; i < numberOfHandles; i++)
     {
+    char toolInformation[32];
+    char toolPartNumber[24];
+    char portLocation[16];
+
     ph = portHandles[i];
+    // get information about tool
+    interpreter->PHINF(ph,
+                       CommandInterpreterType::NDI_BASIC |
+                       CommandInterpreterType::NDI_PART_NUMBER |
+                       CommandInterpreterType::NDI_ACCESSORIES |
+                       CommandInterpreterType::NDI_PORT_LOCATION);
+    
+    a = interpreter->GetPHINFPortStatus();
+    interpreter->GetPHINFToolInfo(toolInformation);
+    interpreter->GetPHINFPartNumber(toolPartNumber);
+    a = interpreter->GetPHINFAccessories();
+    interpreter->GetPHINFPortLocation(portLocation);
+
+    // initialize tool
     interpreter->PINIT(ph);
-    interpreter->PENA(ph, CommandInterpreterType::NDI_DYNAMIC);
+
+    // enable tool according to type
+    int mode = 0;
+    if (toolInformation[1] == CommandInterpreterType::NDI_TYPE_BUTTON)
+      { // button-box or foot pedal
+      mode = CommandInterpreterType::NDI_BUTTON_BOX;
+      }
+    else if (toolInformation[1] == CommandInterpreterType::NDI_TYPE_REFERENCE)
+      { // reference
+      mode = CommandInterpreterType::NDI_STATIC;
+      }
+    else
+      { // anything else
+      mode = CommandInterpreterType::NDI_DYNAMIC;
+      }
+
+    interpreter->PENA(ph, mode);
     }
 
   // -- start tracking --
@@ -129,6 +163,8 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   for (j = 0; j < 50; j++)
     {
     interpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
+    a = interpreter->GetTXSystemStatus();      
+
     for (i = 0; i < numberOfHandles; i++)
       {
       ph = portHandles[i];

@@ -923,7 +923,7 @@ public:
   - 2 chars: hexadecimal channel number
 
   <p>The return value is updated only when a PHINF() command is sent with
-  the NDI_PORT_LOCATION_TYPE (0x0020) bit set in the reply mode.
+  the NDI_PORT_LOCATION (0x0020) bit set in the reply mode.
   */
   int GetPHINFPortLocation(char location[14]) const;
 
@@ -947,12 +947,13 @@ public:
   \param transform space for the 8 numbers in the transformation
   
   \return one of the following: 
-  - NDI_OKAY if successful
+  - NDI_TRANSFORM_OKAY if successful
   - NDI_DISABLED if tool port is nonexistent or disabled
-  - NDI_MISSING if tool transform cannot be computed
+  - NDI_MISSING if tool transform cannot be computed (tool is out of range)
+  - NDI_UNOCCUPIED if the tool port is not occupied
 
-  <p>If NDI_DISABLED or NDI_MISSING is returned, then the values in the
-  supplied transform array will be left unchanged.
+  <p>If NDI_DISABLED, NDI_MISSING or NDI_UNOCCUPIED is returned, then
+  the values in the supplied transform array will be left unchanged.
 
   The transformations for each of the port handles remain the same
   until the next TX() command is sent to the device.
