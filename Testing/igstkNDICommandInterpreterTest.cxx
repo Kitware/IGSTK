@@ -75,7 +75,8 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   std::cout << interpreter << std::endl;
   //---------------------------------
   // send some commands to the device
-  int i, j, a, ph;
+  int i, j, n, a, ph;
+  int errorCode;
   unsigned int l;
   double vals[8];
   int portHandles[256];
@@ -83,32 +84,48 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
   // -- basic initialization commands --
   //interpreter->RESET();  // serial break not implemented yet
+  std::cout << "Calling INIT" << std::endl;
   interpreter->INIT();
+  std::cout << "Calling COMM" << std::endl;
   interpreter->COMM(CommandInterpreterType::NDI_9600,
                     CommandInterpreterType::NDI_8N1,
                     CommandInterpreterType::NDI_NOHANDSHAKE);
+  std::cout << "Calling BEEP" << std::endl;
   interpreter->BEEP(2);
 
   // -- get information about the device --
+  std::cout << "Calling VER" << std::endl;
   std::cout << interpreter->VER(CommandInterpreterType::NDI_CONTROL_FIRMWARE)
             << std::endl;
+  std::cout << "Calling SFLIST" << std::endl;
   interpreter->SFLIST(CommandInterpreterType::NDI_FEATURE_SUMMARY);
 
   // -- diagnostic commands, POLARIS only --
-  /*
+  std::cout << "Calling DSTART" << std::endl;
   interpreter->DSTART();
+  std::cout << "Calling IRCHK" << std::endl;
   interpreter->IRCHK(CommandInterpreterType::NDI_DETECTED);
-  a = interpreter->GetIRCHKDetected();
+  errorCode = interpreter->GetError();
+  if (errorCode != CommandInterpreterType::NDI_OKAY)
+    {
+    std::cout << interpreter->ErrorString(errorCode) << std::endl;
+    }
+  std::cout << "Calling IRCHK" << std::endl;
   interpreter->IRCHK(CommandInterpreterType::NDI_SOURCES);
+  if (errorCode != CommandInterpreterType::NDI_OKAY)
+    {
+    std::cout << interpreter->ErrorString(errorCode) << std::endl;
+    }
   n = interpreter->GetIRCHKNumberOfSources(0);
   for (i = 0; i < n; i++)
     {
     interpreter->GetIRCHKSourceXY(0, i, vals);
     }
+  std::cout << "Calling DSTOP" << std::endl;
   interpreter->DSTOP();
-  */
 
   // -- enable tool ports --
+  std::cout << "Calling PHSR" << std::endl;
   interpreter->PHSR(CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
   numberOfHandles = interpreter->GetPHSRNumberOfHandles();
   for (i = 0; i < numberOfHandles; i++)
@@ -125,6 +142,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
     ph = portHandles[i];
     // get information about tool
+    std::cout << "Calling PHINF" << std::endl;
     interpreter->PHINF(ph,
                        CommandInterpreterType::NDI_BASIC |
                        CommandInterpreterType::NDI_PART_NUMBER |
@@ -138,6 +156,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     interpreter->GetPHINFPortLocation(portLocation);
 
     // initialize tool
+    std::cout << "Calling PINIT" << std::endl;
     interpreter->PINIT(ph);
 
     // enable tool according to type
@@ -155,13 +174,16 @@ int igstkNDICommandInterpreterTest( int, char * [] )
       mode = CommandInterpreterType::NDI_DYNAMIC;
       }
 
+    std::cout << "Calling PENA" << std::endl;
     interpreter->PENA(ph, mode);
     }
 
   // -- start tracking --
+  std::cout << "Calling TSTART" << std::endl;
   interpreter->TSTART();
   for (j = 0; j < 50; j++)
     {
+    std::cout << "Calling TX" << std::endl;
     interpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
     a = interpreter->GetTXSystemStatus();      
 
@@ -173,13 +195,32 @@ int igstkNDICommandInterpreterTest( int, char * [] )
       l = interpreter->GetTXFrame(ph);
       }
     }
+
+  // -- do one more TX with additional options --
+  std::cout << "Calling TX" << std::endl;
+  interpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS |
+                  CommandInterpreterType::NDI_ADDITIONAL_INFO);
+
+  for (i = 0; i < numberOfHandles; i++)
+    {
+    ph = portHandles[i];
+    a = interpreter->GetTXTransform(ph, vals);
+    a = interpreter->GetTXPortStatus(ph);
+    l = interpreter->GetTXFrame(ph);
+    a = interpreter->GetTXPortStatus(ph);
+    a = interpreter->GetTXToolInfo(ph);
+    }
+
+  std::cout << "Calling TSTOP" << std::endl;
   interpreter->TSTOP();
 
   // -- free the tool ports --
   for (i = 0; i < numberOfHandles; i++)
     {
     ph = portHandles[i];
+    std::cout << "Calling PDIS" << std::endl;    
     interpreter->PDIS(ph);
+    std::cout << "Calling PHF" << std::endl;    
     interpreter->PHF(ph);
     }
   numberOfHandles = 0;
