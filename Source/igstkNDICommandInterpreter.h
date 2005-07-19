@@ -751,7 +751,7 @@ public:
 
   /**
   Get error code from the last command.  An error code of NDI_OKAY signals
-  that no error occurred.  The error codes are listed in \ref NDIErrorCodes.
+  that no error occurred.  The error codes are listed in \ref ErrorCodeType.
   */
   int GetError() const;
 
@@ -1177,7 +1177,7 @@ public:
   int GetIRCHKSourceXY(int side, int i, double xy[2]) const;
 
   /**
-  Convert an error code returned by ndiGetError() into a string that
+  Convert an error code returned by GetError() into a string that
   describes the error.
 
   An unrecognized error code will return "Unrecognized error code".
