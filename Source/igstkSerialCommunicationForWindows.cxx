@@ -335,8 +335,8 @@ void SerialCommunicationForWindows::InternalWrite( void )
                   bytesToWrite, &m, NULL) == FALSE)
       {
       if (GetLastError() == ERROR_OPERATION_ABORTED) 
-        {/* // system cancelled us so clear error and retry
-        ClearCommError(this->m_PortHandle,&dumb,NULL); */
+        { // system cancelled us so clear error and retry
+        ClearCommError(this->m_PortHandle,&dumb,NULL);
         }
       else
         {
