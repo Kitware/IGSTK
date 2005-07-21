@@ -144,7 +144,7 @@ class SerialCommunicationBaudRateValued : public SerialCommunicationBaudRate
 
 
 
-/** \class SerialCommunicationDataBitsSize
+/** \class SerialCommunicationDataBits
  * 
  * \brief Defines a compile-time token for every size of data bits
  *
@@ -154,49 +154,49 @@ class SerialCommunicationBaudRateValued : public SerialCommunicationBaudRate
  *
  * \ingroup Communication
  */
-class SerialCommunicationDataBitsSize : public Token
+class SerialCommunicationDataBits : public Token
 {
   public:
 
-    typedef unsigned int DataBitsSizeType;
+    typedef unsigned int DataBitsType;
 
-    typedef SerialCommunicationDataBitsSize Self;
+    typedef SerialCommunicationDataBits Self;
 
   public:
-    SerialCommunicationDataBitsSize( DataBitsSizeType rate )
+    SerialCommunicationDataBits( DataBitsType rate )
       {
-      m_DataBitsSize = rate;  
+      m_DataBits = rate;  
       }
 
-    ~SerialCommunicationDataBitsSize() 
+    ~SerialCommunicationDataBits() 
       {}
     
-    DataBitsSizeType Get() const
+    DataBitsType Get() const
       { 
-      return m_DataBitsSize; 
+      return m_DataBits; 
       }
     
    const Self & operator=( const Self & token )
-      { m_DataBitsSize = token.m_DataBitsSize; return *this; } 
+      { m_DataBits = token.m_DataBits; return *this; } 
 
    bool operator!=( const Self & token )
-      { return m_DataBitsSize != token.m_DataBitsSize; }
+      { return m_DataBits != token.m_DataBits; }
         
    bool operator==( const Self & token )
-      { return m_DataBitsSize == token.m_DataBitsSize; }
+      { return m_DataBits == token.m_DataBits; }
         
   private:
     
-    DataBitsSizeType  m_DataBitsSize;
+    DataBitsType  m_DataBits;
 
 };
 
-template< unsigned int NDataSize >
-class SerialCommunicationDataBitsSizeValued : public SerialCommunicationDataBitsSize
+template< unsigned int NDataBits >
+class SerialCommunicationDataBitsValued : public SerialCommunicationDataBits
 {
   public:
-    SerialCommunicationDataBitsSizeValued< NDataSize >():
-                 SerialCommunicationDataBitsSize(NDataSize) {};
+    SerialCommunicationDataBitsValued< NDataBits >():
+                 SerialCommunicationDataBits(NDataBits) {};
 };
 
 

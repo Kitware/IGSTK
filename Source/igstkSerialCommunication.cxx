@@ -27,49 +27,17 @@ namespace igstk
 SerialCommunication::SerialCommunication() :  m_StateMachine( this ),
                                               m_ReadBufferSize(1600),
                                               m_WriteBufferSize(1600),
-                                              m_InputBuffer( NULL),
-                                              m_OutputBuffer( NULL),
-                                              m_ReadDataSize(0),
-                                              m_PortRestSpan(10),
-                                              m_PortNumber( PortNumber0() ),
-                                              m_BaudRate( BaudRate9600() ),
-                                              m_ByteSize( DataBits8() ),
-                                              m_Parity( NoParity() ),
-                                              m_StopBits( StopBits1() ),
-                                              m_HardwareHandshake( HandshakeOff() )
+                                              m_PortNumber(PortNumber0()),
+                                              m_BaudRate(BaudRate9600()),
+                                              m_DataBits(DataBits8()),
+                                              m_Parity(NoParity()),
+                                              m_StopBits(StopBits1()),
+                                        m_HardwareHandshake(HandshakeOff())
 {
-/*
-  std::cout << m_OpenPortInput.GetIdentifier() << std::endl;
-  std::cout << m_OpenPortSuccessInput << std::endl;
-  std::cout << m_OpenPortFailureInput << std::endl;
-
-  std::cout << m_SetUpDataBuffersInput << std::endl;
-  std::cout << m_DataBuffersSetUpSuccessInput << std::endl;
-  std::cout << m_DataBuffersSetUpFailureInput << std::endl;
-
-  std::cout << m_SetTransferParametersInput << std::endl;
-  std::cout << m_DataTransferParametersSetUpSuccessInput << std::endl;
-  std::cout << m_DataTransferParametersSetUpFailureInput << std::endl;
-
-  std::cout << m_SendBreakInput << std::endl;
-  std::cout << m_FlushOutputBufferInput << std::endl;
-  std::cout << m_ReadInput << std::endl;
-  std::cout << m_WriteInput << std::endl;
-
-  std::cout << m_ClosePortInput << std::endl;
-  std::cout << m_ClosePortSuccessInput << std::endl;
-  std::cout << m_ClosePortFailureInput << std::endl;
-*/
-
-
-  /** Communication Time Out Settings */
-  //ReadTimeout = m_ReadTotalTimeoutConstant + m_ReadTotalTimeoutMultiplier*Number_Of_Bytes_Read 
-  m_ReadIntervalTimeout = 0xFFFF;
-  m_ReadTotalTimeoutMultiplier = 0;
-  m_ReadTotalTimeoutConstant = 0;
-  //WriteTimeout = m_WriteTotalTimeoutConstant + m_WriteTotalTimeoutMultiplier*Number_Of_Bytes_Written 
-  m_WriteTotalTimeoutMultiplier = 10;
-  m_WriteTotalTimeoutConstant = 500;
+  m_InputBuffer = 0;
+  m_OutputBuffer = 0;
+  m_ReadDataSize = 0;
+  m_TimeoutPeriod = 500;
 
   // Set the state descriptors
   m_StateMachine.AddState( m_IdleState, "IdleState" );
@@ -141,12 +109,10 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this ),
 
   m_StateMachine.SelectInitialState( m_IdleState );
 
-  // Create instance of serial command
-//  m_pCommand = SerialCommunicationCommand::New();
-
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
 } 
+
 
 /** Destructor */
 SerialCommunication::~SerialCommunication()  
@@ -154,6 +120,7 @@ SerialCommunication::~SerialCommunication()
   // Close communication, if any 
   this->CloseCommunication();
 }
+
 
 void SerialCommunication::OpenCommunication( void )
 {
@@ -177,6 +144,7 @@ void SerialCommunication::SendBreak( void )
   igstkLogMacro( DEBUG, "SerialCommunication::SendBreak called ...\n");
   this->m_StateMachine.PushInput( m_SendBreakInput );
   this->m_StateMachine.ProcessInputs();
+
   return;
 }
 
@@ -186,6 +154,7 @@ void SerialCommunication::Flush( void )
   igstkLogMacro( DEBUG, "SerialCommunication::Flush called ...\n");
   this->m_StateMachine.PushInput( m_FlushOutputBufferInput );
   this->m_StateMachine.ProcessInputs();
+
   return;
 }
 
@@ -207,9 +176,10 @@ void SerialCommunication::Write( const char *data, int numberOfBytes )
   igstkLogMacro( DEBUG, "Message length = " << strlen(data) << std::endl );
   this->m_StateMachine.PushInput( m_WriteInput );
   this->m_StateMachine.ProcessInputs();
-  this->Flush();
+
   return;
 }
+
 
 void SerialCommunication::Read( char *data, int numberOfBytes, int &bytesRead )
 {
@@ -228,6 +198,7 @@ void SerialCommunication::Read( char *data, int numberOfBytes, int &bytesRead )
     }
   data[m_ReadDataSize] = '\0'; // terminate the string
   igstkLogMacro( DEBUG, "SerialCommunication::Read : (" << m_ReadDataSize << ") " << data << "...\n");
+
   return;
 }
 
@@ -237,10 +208,12 @@ void SerialCommunication::ClosePortSuccessProcessing( void )
   igstkLogMacro( DEBUG, "SerialCommunication::ClosePortSuccessProcessing called ...\n");
 }
 
+
 void SerialCommunication::ClosePortFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunication::ClosePortFailureProcessing called ...\n");
 }
+
 
 void SerialCommunication::AttemptToOpenCommunication()
 {
@@ -254,6 +227,7 @@ void SerialCommunication::AttemptToOpenCommunication()
   }
 }
 
+
 void SerialCommunication::AttemptToSetUpDataBuffers()
 {
   ResultType result;
@@ -264,6 +238,7 @@ void SerialCommunication::AttemptToSetUpDataBuffers()
     this->m_StateMachine.PushInput( m_SetTransferParametersInput );
   }
 }
+
 
 void SerialCommunication::AttemptToSetTransferParameters()
 {
@@ -289,22 +264,18 @@ void SerialCommunication::AttemptToClearBuffersAndClosePort()
 }
 
 
-/** Print Self function */
 void SerialCommunication::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Port number: " << m_PortNumber.Get() << std::endl;
-  os << indent << "Baud rate: " << m_BaudRate.Get() << std::endl;
-  os << indent << "Number of bits per byte: " << m_ByteSize.Get() << std::endl;
+  os << indent << "PortNumber: " << m_PortNumber.Get() << std::endl;
+  os << indent << "BaudRate: " << m_BaudRate.Get() << std::endl;
+  os << indent << "DataBits: " << m_DataBits.Get() << std::endl;
   os << indent << "Parity: " << m_Parity.Get() << std::endl;
   os << indent << "StopBits: " << m_StopBits.Get() << std::endl;
-  os << indent << "HardwareHandshake: " << m_HardwareHandshake.Get() << std::endl;
-  os << indent << "ReadIntervalTimeout: " << m_ReadIntervalTimeout << std::endl;
-  os << indent << "ReadTotalTimeoutMultiplier: " << m_ReadTotalTimeoutMultiplier << std::endl;
-  os << indent << "ReadTotalTimeoutConstant: " << m_ReadTotalTimeoutConstant << std::endl;
-  os << indent << "WriteTotalTimeoutMultiplier: " << m_WriteTotalTimeoutMultiplier << std::endl;
-  os << indent << "WriteTotalTimeoutConstant: " << m_WriteTotalTimeoutConstant << std::endl;
+  os << indent << "HardwareHandshake: " << m_HardwareHandshake.Get() 
+     << std::endl;
+  os << indent << "TimeoutPeriod: " << m_TimeoutPeriod << std::endl;
   os << indent << "ReadBufferOffset: " << m_ReadBufferOffset << std::endl;
   os << indent << "ReadDataSize: " << m_ReadDataSize << std::endl;
 }

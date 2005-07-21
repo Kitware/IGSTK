@@ -46,17 +46,18 @@ namespace igstk
 
 class SerialCommunication : public Communication
 {
+public:
 
-protected:
+  /** Data type for communication */
+  typedef SerialCommunication            Self;
+  typedef itk::SmartPointer<Self>        Pointer;
+  typedef itk::SmartPointer<const Self>  ConstPointer;
 
-  const unsigned int m_ReadBufferSize;    // read buffer size in bytes.
-  const unsigned int m_WriteBufferSize;   // write buffer size in bytes.
-  const unsigned int m_PortRestSpan;      // period of rest in communication, in msecs.
-//  const int          m_InvalidPortNumber; // Number assigned to m_PortNumber, if port not initialized.
-
+  /** Data type for the logger */
   typedef itk::Logger   LoggerType;
 
-public:
+  /**  Run-time type information (and related methods). */
+  igstkTypeMacro(SerialCommunication, Object);
 
   /** Type used for encoding the port number of the serial port */
   typedef SerialCommunicationPortNumber  PortNumberType;
@@ -69,8 +70,6 @@ public:
   typedef SerialCommunicationPortNumberValued< 2 > PortNumber2;
   typedef SerialCommunicationPortNumberValued< 3 > PortNumber3;
 
-
-
   /** Type used for encoding the baud rate of the serial port */
   typedef SerialCommunicationBaudRate  BaudRateType;
 
@@ -82,19 +81,15 @@ public:
   typedef SerialCommunicationBaudRateValued< 14400 > BaudRate14400;
   typedef SerialCommunicationBaudRateValued< 19200 > BaudRate19200;
 
-
-
   /** Type used for encoding the number of bits used for data size by the serial port */
-  typedef SerialCommunicationDataBitsSize  DataSizeType;
+  typedef SerialCommunicationDataBits  DataBitsType;
 
   /** Explicit instantiations for every accepted DataBitsSize. Using types for the
    * sizes enforces safety on the assignment of values because the verification
    * is done at compile time. */
-  typedef SerialCommunicationDataBitsSizeValued< 6 > DataBits6;
-  typedef SerialCommunicationDataBitsSizeValued< 7 > DataBits7;
-  typedef SerialCommunicationDataBitsSizeValued< 8 > DataBits8;
-
-
+  typedef SerialCommunicationDataBitsValued< 6 > DataBits6;
+  typedef SerialCommunicationDataBitsValued< 7 > DataBits7;
+  typedef SerialCommunicationDataBitsValued< 8 > DataBits8;
 
   /** Type used for encoding the parity used by the serial port */
   typedef SerialCommunicationParity  ParityType;
@@ -106,8 +101,6 @@ public:
   typedef SerialCommunicationParityValued< 1 > OddParity;
   typedef SerialCommunicationParityValued< 2 > EvenParity;
 
-
-
   /** Type used for encoding the number of stop bits used by the serial port */
   typedef SerialCommunicationStopBits  StopBitsType;
 
@@ -116,8 +109,6 @@ public:
    * because the verification is done at compile time. */
   typedef SerialCommunicationStopBitsValued< 1 > StopBits1;
   typedef SerialCommunicationStopBitsValued< 2 > StopBits2;
-
-
 
   /** Type used for encoding the number of stop bits used by the serial port */
   typedef SerialCommunicationHandshake  HardwareHandshakeType;
@@ -128,51 +119,28 @@ public:
   typedef SerialCommunicationHandshakeValued< 0 > HandshakeOff;
   typedef SerialCommunicationHandshakeValued< 1 > HandshakeOn;
 
-
-
-  /** Data type for communication */
-  typedef SerialCommunication            Self;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro(SerialCommunication, Object);
-
-  /** Abstract class doesn't have a New method */
-  //igstkNewMacro(Self);  
-
-  /** Get methods */
-
+  /** Specify which serial port to use.  If communication is open,
+   * this has no effect until communication is closed and reopened */
+  igstkSetMacro( PortNumber, PortNumberType );
   igstkGetMacro( PortNumber, PortNumberType );
 
+  igstkSetMacro( BaudRate, BaudRateType );
   igstkGetMacro( BaudRate, BaudRateType );
 
-  igstkGetMacro( ByteSize, DataSizeType );
-
-  igstkGetMacro( Parity, ParityType );
-
-  igstkGetMacro( StopBits, StopBitsType );
-
-  igstkGetMacro( HardwareHandshake, HardwareHandshakeType );
-
-  /** Set methods */
-
-  igstkSetMacro( PortNumber, PortNumberType );
-
-  igstkSetMacro( BaudRate, BaudRateType );
-
-  igstkSetMacro( ByteSize, DataSizeType );
+  igstkSetMacro( DataBits, DataBitsType );
+  igstkGetMacro( DataBits, DataBitsType );
 
   igstkSetMacro( Parity, ParityType );
+  igstkGetMacro( Parity, ParityType );
 
   igstkSetMacro( StopBits, StopBitsType );
+  igstkGetMacro( StopBits, StopBitsType );
 
   igstkSetMacro( HardwareHandshake, HardwareHandshakeType );
-
+  igstkGetMacro( HardwareHandshake, HardwareHandshakeType );
 
   /** The method OpenCommunication sets up communication as per the data
-  provided. */
-
+      provided. */
   void OpenCommunication( void );
 
   /** The method CloseCommunication closes the communication. */
@@ -182,10 +150,12 @@ public:
   from the device before generating a timeout event. */
   virtual void SetTimeoutPeriod( int milliseconds ) { };
 
-  /**Rests communication port by suspending character transmission  
-  and placing the transmission line in a break state, and restarting
-  transmission after a short delay.*/
-  void SendBreak();
+  /** Send a break in the serial communication, which by definition is
+      a series of zeroes that lasts for a 0.3 second duration.  Some
+      devices interpret this as a "reset" signal because the device is
+      guaranteed to see it even if the baud rate, parity, or data bits
+      are not matched between the host and the device. */
+  void SendBreak( void );
 
   /** Write method sends the string via the communication link. */
   void Write( const char *message, int numberOfBytes );
@@ -200,16 +170,12 @@ public:
   itkEventMacro( CommunicationTimeoutSetupFailureEvent, itk::AnyEvent );
   itkEventMacro( SendBreakFailureEvent, itk::AnyEvent );
   itkEventMacro( FlushOutputBufferFailureEvent, itk::AnyEvent );
-  itkEventMacro( OverlappedEventCreationFailureEvent, itk::AnyEvent );
-  itkEventMacro( WriteSuccessfulEvent, itk::AnyEvent );
+  itkEventMacro( WriteSuccessEvent, itk::AnyEvent );
   itkEventMacro( WriteFailureEvent, itk::AnyEvent );
   itkEventMacro( WriteTimeoutEvent, itk::AnyEvent );
-  itkEventMacro( WriteWaitTimeoutEvent, itk::AnyEvent );
-  itkEventMacro( CommunicationStatusReportFailureEvent, itk::AnyEvent );
-  itkEventMacro( ReadSuccessfulEvent, itk::AnyEvent );
+  itkEventMacro( ReadSuccessEvent, itk::AnyEvent );
   itkEventMacro( ReadFailureEvent, itk::AnyEvent );
   itkEventMacro( ReadTimeoutEvent, itk::AnyEvent );
-  itkEventMacro( ReadWaitTimeoutEvent, itk::AnyEvent );
 
   /** Declarations related to the State Machine */
   igstkStateMachineMacro();
@@ -229,30 +195,33 @@ protected:
 
   ~SerialCommunication();
 
+  // these methods are the interface to the derived classes
+
   /** Opens serial port for communication; */
   virtual ResultType InternalOpenCommunication( void ) = 0;
 
   /** Set up data buffer size. */
   virtual ResultType InternalSetUpDataBuffers( void ) = 0;
 
-  /** Set communication on the open port as per the communication parameters. */
+  /** Set communication parameters on the open port. */
   virtual ResultType InternalSetTransferParameters( void ) = 0;
 
   /** Closes serial port  */
   virtual ResultType InternalClosePort( void ) = 0;
-  virtual ResultType InternalClearBuffersAndClosePort( void ) = 0;
-  virtual void ClosePortSuccessProcessing( void );
-  virtual void ClosePortFailureProcessing( void );
 
-  /**Rests communication port by suspending character transmission  
-  and placing the transmission line in a break state, and restarting
-  transmission after a short delay.*/
+  /** Closes serial port  */
+  virtual ResultType InternalClearBuffersAndClosePort( void ) = 0;
+
+  /** Send a break to the across the serial port */
   virtual void InternalSendBreak( void ) = 0;
 
+  /** Flush the output buffer */
   virtual void InternalFlushOutputBuffer( void ) = 0;
 
+  /** write the data to the serial port */
   virtual void InternalWrite( void ) = 0;
 
+  /** read the data from the serial port */
   virtual void InternalRead( void ) = 0;
 
   /** Flushes output buffer of any waiting commands to the hardware. 
@@ -262,8 +231,11 @@ protected:
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
-protected:  // FIXME all these variables should be private
-  
+  /** read buffer size in bytes */
+  const unsigned int m_ReadBufferSize;
+  /** read buffer size in bytes */
+  const unsigned int m_WriteBufferSize;
+
   // Communication Parameters
 
   /**  Port Number */
@@ -272,52 +244,32 @@ protected:  // FIXME all these variables should be private
   /** Baud rate of communication */
   BaudRateType    m_BaudRate;  
 
-  /** number of bits/byte */
-  DataSizeType    m_ByteSize;
+  /** Number of bits/byte */
+  DataBitsType    m_DataBits;
 
-  /** parity */
+  /** Parity */
   ParityType      m_Parity;
 
-  /** 0,1,2 = 1, 1.5, 2 */
+  /** Stop bits: 0,1,2 = 1, 1.5, 2 */
   StopBitsType    m_StopBits;
 
-  /** hardware handshaking */
+  /** Hardware handshaking */
   HardwareHandshakeType  m_HardwareHandshake;
 
-  // Communication time out parameters
-  //** Read operation timeout parameters */
-  //ReadTimeout = m_ReadTotalTimeoutConstant + m_ReadTotalTimeoutMultiplier*Number_Of_Bytes_Read 
-  /** Maximum time allowed to elapse between the arrival of two characters 
-  on the communications line, in milliseconds. */
-  unsigned int m_ReadIntervalTimeout;
-  
-  /**  Total time-out period for read operations per byte, in milliseconds. */
-  unsigned int m_ReadTotalTimeoutMultiplier;
-  
-  /** Constant used to calculate the total time-out period for read 
-  operations for every red operation, in milliseconds. */
-  unsigned int m_ReadTotalTimeoutConstant;
-  
-  //** Write operation timeout parameters */
-  //WriteTimeout = m_WriteTotalTimeoutConstant + m_WriteTotalTimeoutMultiplier*Number_Of_Bytes_Written 
-  /**  Total time-out period for write operations per byte, in milliseconds. */
-  unsigned int m_WriteTotalTimeoutMultiplier;
-  
-  /** Constant used to calculate the total time-out period for write 
-  operations for every write operation, in milliseconds. */
-  unsigned int m_WriteTotalTimeoutConstant;
+  /** Timeout period, in milliseconds */
+  int m_TimeoutPeriod;
 
-  // Input Buffer
   /** Input buffer */
   char *m_InputBuffer;
 
+  /** Output buffer */
   char *m_OutputBuffer;
 
   /** Offset of the current location in read buffer */
-  int           m_ReadBufferOffset;
+  int m_ReadBufferOffset;
 
   /** Bytes of data received */
-  int           m_ReadDataSize;
+  int m_ReadDataSize;
 
   /** the parameter NumberOfBytes in Write() */
   int m_WriteNumberOfBytes;
@@ -326,12 +278,8 @@ protected:  // FIXME all these variables should be private
   /** the parameter ReadBytes in Read() */
   int m_BytesRead;
 
-  /** 
-   *
-   *         State Machine variables 
-   *
-   **/
-  
+private:
+
   /** List of States */
   StateType                m_IdleState;
   StateType                m_AttemptToOpenPortState;
@@ -343,7 +291,6 @@ protected:  // FIXME all these variables should be private
   StateType                m_PortReadyForCommunicationState;
   StateType                m_AttemptToClosePortState;
 
-protected:  // FIXME:  this should be private once the state machine is reorganized.
   /** List of Inputs */
   InputType                m_OpenPortInput;
   InputType                m_OpenPortSuccessInput;
@@ -366,17 +313,25 @@ protected:  // FIXME:  this should be private once the state machine is reorgani
   InputType                m_ClosePortSuccessInput;
   InputType                m_ClosePortFailureInput;
 
-protected:
+  /** called by state machine serial port is successfully closed */
+  virtual void ClosePortSuccessProcessing( void );
 
-private:
+  /** called by state machine when serial port fails to close */
+  virtual void ClosePortFailureProcessing( void );
+
+  /** Called by the state machine when communication is to be opened */
   void AttemptToOpenCommunication( void );
 
+  /** Called by the state machine when data buffers are to be created */
   void AttemptToSetUpDataBuffers( void );
 
+  /** Called by the state machine when transfer parameters are to be set */
   void AttemptToSetTransferParameters( void );
 
+  /** Called by the state machine when communication is to be closed */
   void AttemptToClosePort( void );
 
+  /** Called by the state machine when communication is to be closed */
   void AttemptToClearBuffersAndClosePort( void );
 };
 

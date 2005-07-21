@@ -251,11 +251,11 @@ SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSet
 #endif
 
   // set data bits
-  if (this->m_ByteSize.Get() == 8)
+  if (this->m_DataBits.Get() == 8)
     {                 
     t.c_cflag |= CS8; 
     }
-  else if (this->m_ByteSize.Get() == 7)
+  else if (this->m_DataBits.Get() == 7)
     {
     t.c_cflag |= CS7;
     }
@@ -438,7 +438,7 @@ void SerialCommunicationForLinux::InternalWrite( void )
     }
 
   std::cout << "Written bytes = " << i << std::endl;
-  this->InvokeEvent( WriteSuccessfulEvent());
+  this->InvokeEvent( WriteSuccessEvent());
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalWrite succeeded ...\n");
   return;  // return the number of characters written
 }
@@ -485,7 +485,7 @@ void SerialCommunicationForLinux::InternalRead( void )
   this->m_ReadBufferOffset = 0;
   this->m_InputBuffer[i] = 0; // terminate the string
   std::cout << "Read number of bytes = " << i << ". String: " << this->m_InputBuffer << std::endl;
-  this->InvokeEvent( ReadSuccessfulEvent());
+  this->InvokeEvent( ReadSuccessEvent());
 
   return;
 }

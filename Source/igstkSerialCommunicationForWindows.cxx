@@ -177,13 +177,13 @@ SerialCommunicationForWindows::InternalSetTransferParameters( void )
     }    
 
   // set data bits
-  if (this->m_ByteSize.Get() == 8)
+  if (this->m_DataBits.Get() == 8)
     {
-    comm_settings.ByteSize = 8;
+    comm_settings.DataBits = 8;
     }
-  else if (this->m_ByteSize.Get() == 7)
+  else if (this->m_DataBits.Get() == 7)
     {
-    comm_settings.ByteSize = 7;
+    comm_settings.DataBits = 7;
     }
   else
     {
@@ -357,7 +357,7 @@ void SerialCommunicationForWindows::InternalWrite( void )
     }
 
   igstkLogMacro( DEBUG, "Written bytes = " << i << std::endl);
-  this->InvokeEvent( WriteSuccessfulEvent() );
+  this->InvokeEvent( WriteSuccessEvent() );
 
   return;  // return the number of characters written
 }
@@ -406,7 +406,7 @@ void SerialCommunicationForWindows::InternalRead( void )
   this->m_ReadBufferOffset = 0;
   this->m_InputBuffer[i] = 0;
   igstkLogMacro( DEBUG, "Read number of bytes = " << i << ". String: " << this->m_InputBuffer << std::endl );
-  this->InvokeEvent( ReadSuccessfulEvent());
+  this->InvokeEvent( ReadSuccessEvent());
 
   return;
 }

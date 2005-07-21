@@ -61,7 +61,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0() );
   serialComm->SetParity( igstk::SerialCommunication::NoParity() );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600() );
-  serialComm->SetByteSize( igstk::SerialCommunication::DataBits8() );
+  serialComm->SetDataBits( igstk::SerialCommunication::DataBits8() );
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1() );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff() );
 

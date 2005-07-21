@@ -188,7 +188,8 @@ void SerialCommunicationSimulator::InternalWrite( void )
 
   strcpy( this->m_InputBuffer, this->m_ResponseTable[this->m_OutputBuffer].c_str() );
   igstkLogMacro( DEBUG, "Written bytes = " << bytesToWrite << std::endl);
-  this->InvokeEvent( WriteSuccessfulEvent());
+  this->InvokeEvent( WriteSuccessEvent());
+
   return;  /* return the number of characters written */
 }
 
@@ -216,7 +217,7 @@ void SerialCommunicationSimulator::InternalRead( void )
   this->m_ReadBufferOffset = 0;
   this->m_InputBuffer[i] = 0;
   igstkLogMacro( DEBUG, "Read number of bytes = " << i << ". String: " << this->m_InputBuffer << std::endl );
-  this->InvokeEvent( ReadSuccessfulEvent() );
+  this->InvokeEvent( ReadSuccessEvent() );
   return;
 }
 
