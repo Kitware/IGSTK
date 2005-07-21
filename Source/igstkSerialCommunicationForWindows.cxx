@@ -24,7 +24,7 @@ namespace igstk
 { 
 /** Constructor */
 SerialCommunicationForWindows::SerialCommunicationForWindows() : 
-  SerialCommunication(), TIMEOUT_PERIOD(5000)
+  TIMEOUT_PERIOD(5000)
 {
   this->m_PortHandle = INVALID_HANDLE_VALUE;
 } 

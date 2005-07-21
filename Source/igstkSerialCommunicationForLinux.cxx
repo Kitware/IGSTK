@@ -31,9 +31,10 @@ namespace igstk
 { 
 /** Constructor */
 SerialCommunicationForLinux::SerialCommunicationForLinux() : 
-  TIMEOUT_PERIOD(5000)
+  TIMEOUT_PERIOD(5000),
+  INVALID_HANDLE(-1)
 {
-  this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE;
+  this->m_PortHandle = INVALID_HANDLE;
 } 
 
 SerialCommunicationForLinux::ResultType

@@ -37,11 +37,6 @@ class SerialCommunicationForWindows : public SerialCommunication
 {
 public:
 
-  typedef HANDLE HandleType;
-
-  /* time out period in milliseconds */
-  const int TIMEOUT_PERIOD;
-
   typedef SerialCommunicationForWindows  Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
@@ -54,11 +49,17 @@ public:
 
 protected:
 
+  /** Windows file handle type */
+  typedef HANDLE HandleType;
+
+  /** time out period in milliseconds */
+  const int TIMEOUT_PERIOD;
+
   typedef SerialCommunication::ResultType ResultType;
 
   SerialCommunicationForWindows();
 
-//  ~SerialCommunicationForWindows();
+  // ~SerialCommunicationForWindows();
 
   /** Opens serial port for communication; */
   virtual ResultType InternalOpenCommunication( void );

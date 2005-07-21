@@ -42,11 +42,6 @@ class SerialCommunicationForLinux : public SerialCommunication
 {
 public:
 
-  typedef int HandleType;
-
-  const HandleType INVALID_HANDLE;
-  const int TIMEOUT_PERIOD;
-
   typedef SerialCommunicationForLinux  Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
@@ -59,11 +54,17 @@ public:
 
 protected:
 
+  /** UNIX file handle type */
+  typedef int HandleType;
+
+  const HandleType INVALID_HANDLE;
+  const int TIMEOUT_PERIOD;
+
   typedef SerialCommunication::ResultType ResultType;
 
   SerialCommunicationForLinux();
 
-//  ~SerialCommunicationForLinux();
+  // ~SerialCommunicationForLinux();
 
   /** Opens serial port for communication; */
   virtual ResultType InternalOpenCommunication( void );
