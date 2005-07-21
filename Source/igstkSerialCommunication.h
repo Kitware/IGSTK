@@ -78,7 +78,6 @@ public:
    * is done at compile time. */
   typedef SerialCommunicationBaudRateValued<  2400 > BaudRate2400;
   typedef SerialCommunicationBaudRateValued<  9600 > BaudRate9600;
-  typedef SerialCommunicationBaudRateValued< 14400 > BaudRate14400;
   typedef SerialCommunicationBaudRateValued< 19200 > BaudRate19200;
 
   /** Type used for encoding the number of bits used for data size by the serial port */
@@ -87,7 +86,6 @@ public:
   /** Explicit instantiations for every accepted DataBitsSize. Using types for the
    * sizes enforces safety on the assignment of values because the verification
    * is done at compile time. */
-  typedef SerialCommunicationDataBitsValued< 6 > DataBits6;
   typedef SerialCommunicationDataBitsValued< 7 > DataBits7;
   typedef SerialCommunicationDataBitsValued< 8 > DataBits8;
 
