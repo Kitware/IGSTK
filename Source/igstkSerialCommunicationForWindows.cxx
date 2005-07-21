@@ -179,11 +179,11 @@ SerialCommunicationForWindows::InternalSetTransferParameters( void )
   // set data bits
   if (this->m_DataBits.Get() == 8)
     {
-    comm_settings.DataBits = 8;
+    comm_settings.ByteSize = 8;
     }
   else if (this->m_DataBits.Get() == 7)
     {
-    comm_settings.DataBits = 7;
+    comm_settings.ByteSize = 7;
     }
   else
     {
