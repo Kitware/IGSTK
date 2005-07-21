@@ -44,7 +44,7 @@ public:
 
   typedef int HandleType;
 
-  const HandleType NDI_INVALID_HANDLE;
+  const HandleType INVALID_HANDLE;
   const int TIMEOUT_PERIOD;
 
   typedef SerialCommunicationForLinux  Self;

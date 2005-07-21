@@ -39,7 +39,6 @@ public:
 
   typedef HANDLE HandleType;
 
-  const HandleType NDI_INVALID_HANDLE;
   /* time out period in milliseconds */
   const int TIMEOUT_PERIOD;
 

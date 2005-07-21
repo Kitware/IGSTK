@@ -30,10 +30,10 @@
 namespace igstk
 { 
 /** Constructor */
-SerialCommunicationForLinux::SerialCommunicationForLinux() :  
-SerialCommunication(), TIMEOUT_PERIOD(5000), NDI_INVALID_HANDLE(-1)
+SerialCommunicationForLinux::SerialCommunicationForLinux() : 
+  TIMEOUT_PERIOD(5000)
 {
-  this->m_PortHandle = SerialCommunicationForLinux::NDI_INVALID_HANDLE;
+  this->m_PortHandle = SerialCommunicationForLinux::INVALID_HANDLE;
 } 
 
 SerialCommunicationForLinux::ResultType
@@ -45,7 +45,7 @@ SerialCommunicationForLinux::InternalOpenCommunication( void )
   struct termios t;
   int i;
 
-  if( this->m_PortHandle != SerialCommunicationForLinux::NDI_INVALID_HANDLE )
+  if( this->m_PortHandle != INVALID_HANDLE )
   {
     igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalOpenPort : port is already open! ...\n");
   }
@@ -57,7 +57,7 @@ SerialCommunicationForLinux::InternalOpenCommunication( void )
   // port is readable/writable and is (for now) non-blocking
   this->m_PortHandle = open(device,O_RDWR|O_NOCTTY|O_NDELAY);
 
-  if (this->m_PortHandle == SerialCommunicationForLinux::NDI_INVALID_HANDLE)
+  if (this->m_PortHandle == INVALID_HANDLE)
     {
     this->InvokeEvent( OpenPortFailureEvent() );
     return FAILURE;             // bail out on error
@@ -83,6 +83,7 @@ SerialCommunicationForLinux::InternalOpenCommunication( void )
     {
     fcntl(this->m_PortHandle, F_SETLK, &fu);
     close(this->m_PortHandle);
+    this->m_PortHandle = INVALID_HANDLE;
     this->InvokeEvent( OpenPortFailureEvent() );
     return FAILURE;
     }
@@ -97,12 +98,13 @@ SerialCommunicationForLinux::InternalOpenCommunication( void )
   t.c_oflag = 0;
 
   t.c_cc[VMIN] = 0;                    // use constant, not interval timout
-  t.c_cc[VTIME] = SerialCommunicationForLinux::TIMEOUT_PERIOD/100;
+  t.c_cc[VTIME] = TIMEOUT_PERIOD/100;
 
   if (tcsetattr(this->m_PortHandle,TCSANOW,&t) == -1)
     { // set I/O information
     fcntl(this->m_PortHandle, F_SETLK, &fu);
     close(this->m_PortHandle);
+    this->m_PortHandle = INVALID_HANDLE;
     this->InvokeEvent( OpenPortFailureEvent() );
     return FAILURE;
     }
@@ -161,75 +163,56 @@ SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSet
   switch (baud)
     {
     case 9600:   newbaud = B9600;   break;
-    case 14400:
-      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
-      return FAILURE;
     case 19200:  newbaud = B19200;  break;
     case 38400:  newbaud = B38400;  break;
     case 57600:  newbaud = B57600;  break;
     case 115200: newbaud = B115200; break;
+    case 14400:
     default:
       this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+      std::cout << "Setting Communication Parameters Failed: Baud.\n" << std::endl;
       return FAILURE;
-
     }
 #elif defined(__APPLE__)
   switch (baud)
     {
     case 9600:    newbaud = B9600;   break;
-    case 14400:
-      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
-      return FAILURE;
     case 19200:   newbaud = B19200;  break;
     case 38400:   newbaud = B38400;  break;
     case 57600:   newbaud = B57600;  break;
     case 115200:  newbaud = B115200; break;
+    case 14400:
     default:
       this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+      std::cout << "Setting Communication Parameters Failed: Baud.\n" << std::endl;
       return FAILURE;
     }
 #elif defined(sgi) && defined(__NEW_MAX_BAUD)
   switch (baud)
     {
     case 9600:    newbaud = 9600;   break;
-    case 14400:
-      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
-      return FAILURE;
     case 19200:   newbaud = 19200;  break;
     case 38400:   newbaud = 38400;  break;
     case 57600:   newbaud = 57600;  break;
     case 115200:  newbaud = 115200; break;
+    case 14400:
     default:
       this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+      std::cout << "Setting Communication Parameters Failed: Baud\n" << std::endl;
                  return FAILURE;
     }
 #else
   switch (baud)
     {
     case 9600:   newbaud = B9600;  break;
-    case 14400:
-      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
-      return FAILURE;
     case 19200:  newbaud = B19200;  break;
     case 38400:  newbaud = B38400;  break;
+    case 14400:
     case 57600:
-      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
-      return FAILURE;
     case 115200: 
-      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
-      return FAILURE;
     default:
       this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+      std::cout << "Setting Communication Parameters Failed: Baud\n" << std::endl;
       return FAILURE;
     }
 #endif
@@ -262,7 +245,7 @@ SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSet
   else
     {
     this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-    std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+    std::cout << "Setting Communication Parameters Failed: DataBits\n" << std::endl;
     return FAILURE;
     }
 
@@ -285,7 +268,7 @@ SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSet
   else
     {
     this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-    std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+    std::cout << "Setting Communication Parameters Failed: Parity\n" << std::endl;
     return FAILURE;
     }
 
@@ -300,7 +283,7 @@ SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSet
   else
     {
     this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-    std::cout << "Setting Communication Parameters Failed.\n" << std::endl;
+    std::cout << "Setting Communication Parameters Failed: Stop Bits\n" << std::endl;
     return FAILURE;
     }
 
@@ -359,6 +342,7 @@ SerialCommunicationForLinux::InternalClosePort( void )
   fcntl(this->m_PortHandle, F_SETLK, &fu);
 
   close(this->m_PortHandle);
+  this->m_PortHandle = INVALID_HANDLE;
   igstkLogMacro( DEBUG, "Communication port closed.\n");
 
   return SUCCESS;

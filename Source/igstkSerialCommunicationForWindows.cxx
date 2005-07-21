@@ -24,10 +24,9 @@ namespace igstk
 { 
 /** Constructor */
 SerialCommunicationForWindows::SerialCommunicationForWindows() : 
-  SerialCommunication(), TIMEOUT_PERIOD(5000),
-  NDI_INVALID_HANDLE(INVALID_HANDLE_VALUE)
+  SerialCommunication(), TIMEOUT_PERIOD(5000)
 {
-  this->m_PortHandle = SerialCommunicationForWindows::NDI_INVALID_HANDLE;
+  this->m_PortHandle = INVALID_HANDLE_VALUE;
 } 
 
 SerialCommunicationForWindows::ResultType
@@ -72,15 +71,15 @@ SerialCommunicationForWindows::InternalOpenCommunication( void )
   if (SetupComm(serial_port, this->m_ReadBufferSize, this->m_WriteBufferSize)
       == FALSE)
     { /* set buffer size */
-    this->m_PortHandle = INVALID_HANDLE_VALUE;
     CloseHandle(serial_port);
+    m_PortHandle = INVALID_HANDLE_VALUE;
     return FAILURE;
     }
 
   if (GetCommState(serial_port,&comm_settings) == FALSE)
     {
-    this->m_PortHandle = INVALID_HANDLE_VALUE;
     CloseHandle(serial_port);
+    m_PortHandle = INVALID_HANDLE_VALUE;
     return FAILURE;
     }
 
@@ -92,8 +91,8 @@ SerialCommunicationForWindows::InternalOpenCommunication( void )
 
   if (SetCommState(serial_port,&comm_settings) == FALSE)
     {
-    this->m_PortHandle = INVALID_HANDLE_VALUE;
     CloseHandle(serial_port);
+    this->m_PortHandle = INVALID_HANDLE_VALUE;
     return FAILURE;
     }
   
@@ -101,8 +100,8 @@ SerialCommunicationForWindows::InternalOpenCommunication( void )
     {
     SetCommState(serial_port,&comm_settings);
     SetCommState(serial_port,&m_SaveDCB); 
-    this->m_PortHandle = INVALID_HANDLE_VALUE;
     CloseHandle(serial_port);
+    this->m_PortHandle = INVALID_HANDLE_VALUE;
     return FAILURE;
     }
 
@@ -262,10 +261,10 @@ SerialCommunicationForWindows::InternalClosePort( void )
     {
     SetCommTimeouts(this->m_PortHandle,&m_SaveTimeout);
     SetCommState(this->m_PortHandle,&m_SaveDCB);
-    this->m_PortHandle = INVALID_HANDLE_VALUE;      
     }
 
   CloseHandle(this->m_PortHandle);
+  this->m_PortHandle = INVALID_HANDLE_VALUE;
 
   return SUCCESS;
 }
