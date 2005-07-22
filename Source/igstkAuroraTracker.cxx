@@ -32,7 +32,7 @@ AuroraTracker::AuroraTracker(void) : Tracker()
   m_NumberOfTools = 0;
   for (int i = 0; i < NDI_NUMBER_OF_PORTS; i++)
     {
-    this->m_PortEnabled[i];
+    this->m_PortEnabled[i] = 0;
     }
 }
 
