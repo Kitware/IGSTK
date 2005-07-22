@@ -123,12 +123,12 @@ SerialCommunicationForLinux::InternalSetUpDataBuffers( void )
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalSetUpDataBuffers called ...\n");
   if (this->m_InputBuffer!=NULL)
     {
-    delete (this->m_InputBuffer);
+    delete [] this->m_InputBuffer;
     }
   this->m_InputBuffer = new char[ this->m_ReadBufferSize ];
   if (this->m_OutputBuffer!=NULL)
     {
-    delete this->m_OutputBuffer;
+    delete [] this->m_OutputBuffer;
     } 
   // one extra byte to store end of string
   this->m_OutputBuffer = new char[ this->m_WriteBufferSize + 1 ];
@@ -317,12 +317,12 @@ SerialCommunicationForLinux::InternalClearBuffersAndClosePort( void )
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalClearBuffersAndClosePort called ...\n");
   if (m_InputBuffer!= NULL)
     { // This check not required, still keeping for safety
-    delete m_InputBuffer;
+    delete [] m_InputBuffer;
     m_InputBuffer = NULL;
     }
   if (m_OutputBuffer!= NULL)
     {// This check not required, still keeping for safety
-    delete m_OutputBuffer;
+    delete [] m_OutputBuffer;
     m_OutputBuffer = NULL;
     }
 
