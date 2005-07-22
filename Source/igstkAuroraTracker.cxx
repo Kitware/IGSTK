@@ -33,6 +33,7 @@ AuroraTracker::AuroraTracker(void) : Tracker()
   for (int i = 0; i < NDI_NUMBER_OF_PORTS; i++)
     {
     this->m_PortEnabled[i] = 0;
+    this->m_PortHandle[i] = 0;
     }
 }
 
