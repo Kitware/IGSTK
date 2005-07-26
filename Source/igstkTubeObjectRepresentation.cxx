@@ -21,6 +21,7 @@
 #include <vtkProperty.h>
 #include "igstkEvents.h"
 
+#include <vtkPolyData.h>
 #include <vtkPoints.h>
 #include <vtkFloatArray.h>
 #include <vtkSphereSource.h>
