@@ -1,7 +1,7 @@
 PROJECT( IGSTKSandbox )
 
-SET (LIBRARY_OUTPUT_PATH ${IGSTKSandbox_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all libraries." FORCE)
-SET (EXECUTABLE_OUTPUT_PATH ${IGSTKSandbox_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all executables." FORCE)
+SET (LIBRARY_OUTPUT_PATH ${IGSTKSandbox_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries." FORCE)
+SET (EXECUTABLE_OUTPUT_PATH ${IGSTKSandbox_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables." FORCE)
 
 # Create the header to configure the classes.
 CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/igstkSandboxConfigure.h.in
