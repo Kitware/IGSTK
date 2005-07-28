@@ -21,8 +21,7 @@
 #include <fstream>
 #include <iomanip>
 #include <map>
-#include <string>
-
+#include "igstkBinaryData.h"
 #include "igstkSerialCommunication.h"
 
 namespace igstk
@@ -41,7 +40,7 @@ public:
 
   typedef std::ifstream   FileType;
 
-  typedef SerialCommunicationSimulator  Self;
+  typedef SerialCommunicationSimulator   Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
@@ -97,7 +96,7 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
   /** The mapping table for the request and response */
-  typedef std::map<std::string, std::string> ResponseTableType;
+  typedef std::map<BinaryData, BinaryData> ResponseTableType;
 
 private:
 

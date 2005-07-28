@@ -21,6 +21,7 @@
 #endif
 
 #include <iostream>
+#include <algorithm>
 #include <string.h>
 
 #include "igstkSerialCommunicationSimulator.h"
@@ -63,38 +64,65 @@ SerialCommunicationSimulator::ResultType SerialCommunicationSimulator::InternalO
     return FAILURE;
     }
 
-  std::string recvmsg, sentmsg;
-  char buf[1024];
-  char temp[5];
-  unsigned sent, recv, len;
+  BinaryData recvmsg, sentmsg;
+  unsigned char buf[64*1024];
+  char numberString[20], temp[20], byte;
+  int sent, recv, len, numberLength, number;
   sent = recv = 0;
   while( !m_File.eof() )
     {
-    m_File.getline(buf, 1023, '\r');
-    m_File.getline(temp, 4, '\n');
-    len = strlen(buf);
-    buf[len] = '\r';
-    buf[len+1] = 0;
-
-    memcpy(temp, buf, 4);
-    temp[4] = 0;
-
-    if( strncmp( temp, "sent", 4 ) == 0 )
+    m_File.read(&byte, 1);
+    if( byte == '#' )
       {
-      memcpy(temp, &buf[5], 4);
-      temp[4] = 0;
-      sscanf(temp, "%04d", &sent);
-      sentmsg.assign(&buf[12]);
+      m_File.getline((char*)buf, 64*1024);
+      continue;
       }
-    else if( strncmp( temp, "recv", 4 ) == 0 )
+
+    if( m_File.eof() )
       {
-      memcpy(temp, &buf[5], 4);
-      temp[4] = 0;
-      sscanf(temp, "%04d", &recv);
-      recvmsg.assign( &buf[12] );
+      break;
+      }
+    numberLength = 0;
+    numberString[numberLength++] = byte;
+    while( byte != '.' )
+      {
+      m_File.read(&byte, 1);
+      numberString[numberLength++] = byte;
+      }
+    numberString[numberLength] = 0;
+    
+    number = atoi(numberString);
+
+    m_File.read(&byte, 1);  // to consume a space
+    m_File.read(temp, 7);
+    temp[7] = 0;
+
+    m_File.read(&byte, 1);  // to consume [
+    numberLength = 0;
+    while( byte != ']' )
+      {
+      m_File.read(&byte, 1);
+      numberString[numberLength++] = byte;
+      }
+    numberString[numberLength] = 0;
+    len = atoi(numberString);
+    m_File.read(&byte, 1);  // to consume a space
+    m_File.read((char*)buf, len);
+    buf[len] = 0;
+    m_File.read(&byte, 1);  // to consume a newline
+
+    if( strncmp("command", temp, 7) == 0 )
+      {
+      sent = number;
+      sentmsg.CopyFrom(&buf[0], len);
+      }
+    else if( strncmp("receive", temp, 7) == 0 )
+      {
+      recv = number;
+      recvmsg.CopyFrom(&buf[0], len);
       if( sent < recv )
         {
-        m_ResponseTable[std::string("")] = recvmsg;
+        m_ResponseTable[BinaryData()] = recvmsg;
         igstkLogMacro( DEBUG, "SERIAL BREAK ::: " << recvmsg << std::endl );
         }
       else if( sent == recv )
@@ -106,6 +134,7 @@ SerialCommunicationSimulator::ResultType SerialCommunicationSimulator::InternalO
       }
     }
 
+  m_File.close();
   return SUCCESS;
 }
 
@@ -166,9 +195,8 @@ SerialCommunicationSimulator::ResultType SerialCommunicationSimulator::InternalS
 
 void SerialCommunicationSimulator::InternalSendBreak( void )
 {
-  strcpy( this->m_InputBuffer, this->m_ResponseTable[std::string("")].c_str() );
-  this->m_ReadDataSize = strlen(this->m_InputBuffer);
-  this->m_ReadBufferOffset = 0;
+  const BinaryData& response = this->m_ResponseTable[BinaryData()];
+  response.CopyTo( (unsigned char*)&this->m_InputBuffer[0] );
 
   return;
 }
@@ -186,7 +214,11 @@ void SerialCommunicationSimulator::InternalWrite( void )
 
   igstkLogMacro( DEBUG, "InternalWrite called ...\n");
 
-  strcpy( this->m_InputBuffer, this->m_ResponseTable[this->m_OutputBuffer].c_str() );
+  BinaryData output;
+  output.CopyFrom( (unsigned char*)&this->m_OutputBuffer[0], bytesToWrite );
+  const BinaryData& response = this->m_ResponseTable[output];
+  response.CopyTo( (unsigned char*)&this->m_InputBuffer[0] );
+  this->m_ReadDataSize = response.GetSize();
   igstkLogMacro( DEBUG, "Written bytes = " << bytesToWrite << std::endl);
   this->InvokeEvent( WriteSuccessEvent());
 
@@ -196,27 +228,24 @@ void SerialCommunicationSimulator::InternalWrite( void )
 
 void SerialCommunicationSimulator::InternalRead( void )
 {
-  int i = 0;
-  unsigned long m;
-  int n = this->m_ReadNumberOfBytes;
+  int i = m_ReadDataSize;
   
-  while (n > 0) {
-    m = strlen(this->m_InputBuffer);
-    n -= m;  /* n is number of chars left to read */
-    i += m;  /* i is the number of chars read */
-    if ( this->m_UseReadTerminationCharacter )
-      {
-      if (this->m_InputBuffer[i-1] == this->m_ReadTerminationCharacter ) 
-        {  /* done when ReadTerminationCharacter received */
-        break;
-        }
-      }
-  }
+  if (i == 0)
+    { // no characters read, must have timed out
+    igstkLogMacro( DEBUG, "InternalRead failed with timeout...\n");
+    this->InvokeEvent( ReadTimeoutEvent() );
+    return;
+    }
 
   this->m_ReadDataSize = i;
   this->m_ReadBufferOffset = 0;
   this->m_InputBuffer[i] = 0;
-  igstkLogMacro( DEBUG, "Read number of bytes = " << i << ". String: " << this->m_InputBuffer << std::endl );
+  igstkLogMacro( DEBUG, "Read number of bytes = " << i << ". Data: " );
+  for( i = 0; i < this->m_ReadDataSize; ++i )
+    {
+    std::cout << this->m_InputBuffer[i];
+    }
+  std::cout << std::endl;
   this->InvokeEvent( ReadSuccessEvent() );
   return;
 }
