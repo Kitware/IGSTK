@@ -23,6 +23,9 @@
 #include <itkObject.h>
 #include <vector>
 
+namespace igstk 
+{
+ 
 /** \brief BinaryData representing a binary data chunk.
  * 
  * This class represents a binary data chunk.
@@ -31,21 +34,19 @@
  *
  **/
 
-namespace igstk 
-{
- 
-
 class BinaryData
 {
 public:
 
+  /** Data container type definition */
   typedef std::vector<unsigned char>  ContainerType;
   
 public:
 
-  /** Constructor and destructor */
+  /** Constructor */
   BinaryData();
 
+  /** Destructor */
   virtual ~BinaryData();
 
   /** SetSize method resizes/allocates memory */
@@ -54,8 +55,10 @@ public:
   /** GetSize method returns the size of data */
   unsigned int GetSize() const;
 
-  /** Get a data container */
+  /** Get a data container (returns constant) */
   const ContainerType& GetData() const { return this->m_data; }
+
+  /** Get a data container */
   ContainerType& GetData() { return this->m_data; }
 
   /** Copy data from an array */
@@ -67,11 +70,19 @@ public:
   /** Assign the values of one BinaryData to another */
   const BinaryData & operator=( const BinaryData & inputBinaryData );
 
-  /** operator redefinitions */
+  /** operator== redefinition */
   bool operator==( const BinaryData & inputBinaryData ) const;
+
+  /** operator!= redefinition */
   bool operator!=( const BinaryData & inputBinaryData ) const;
+
+  /** operator< redefinition */
   bool operator<( const BinaryData & inputBinaryData ) const ;
+
+  /** operator[] redefinition */
   unsigned char operator[]( const unsigned int index ) const;
+
+  /** operator[] redefinition (returns reference) */
   unsigned char& operator[]( const unsigned int index );
 
   /** Method for printing the member variables of this class to an ostream */
@@ -79,8 +90,10 @@ public:
 
 protected:
 
+  /** Method for printing the header to an ostream */
   void PrintHeader(std::ostream& os, itk::Indent indent) const;
 
+  /** Method for printing the trailer to an ostream */
   void PrintTrailer(std::ostream& itkNotUsed(os), itk::Indent itkNotUsed(indent)) const;
 
   /** Print the object information in a stream. */
@@ -93,7 +106,7 @@ private:
 
 };
 
-
+/** operator<< redefinition */
 std::ostream& operator<<(std::ostream& os, const igstk::BinaryData& o);
 }
 
