@@ -17,6 +17,7 @@ SET(IGSTKSandbox_HEADS
   igstkTubeObjectRepresentation.h
   igstkMeshObject.h
   igstkMeshObjectRepresentation.h
+  igstkBinaryData.h
 )
 
 
@@ -35,6 +36,7 @@ SET(IGSTKSandbox_SRCS
   igstkTubeObjectRepresentation.cxx
   igstkMeshObject.cxx
   igstkMeshObjectRepresentation.cxx
+  igstkBinaryData.cxx
 )
 
 # Variable for holding extra libraries
