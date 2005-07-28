@@ -106,7 +106,7 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
   typedef itk::StdStreamLogOutput       LogOutputType;
 
   igstk::SerialCommunicationSimulator::Pointer serialComm = igstk::SerialCommunicationSimulator::New();
-  serialComm->SetFileName("polaris_stream_07_13_2005.txt");
+  serialComm->SetFileName("polaris_stream_07_27_2005.bin");
 
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
 

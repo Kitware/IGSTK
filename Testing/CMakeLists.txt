@@ -32,6 +32,7 @@ ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextBuf
 ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationSimulatorTest)
 ADD_TEST(igstkTubeObjectTest ${IGSTKSandbox_TESTS} igstkTubeObjectTest)
 ADD_TEST(igstkMeshObjectTest ${IGSTKSandbox_TESTS} igstkMeshObjectTest)
+ADD_TEST(igstkBinaryDataTest ${IGSTKSandbox_TESTS} igstkBinaryDataTest)
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
@@ -44,6 +45,7 @@ SET(BasicTests_SRCS
   igstkFLTKTextBufferLogOutputTest.cxx
   igstkTubeObjectTest.cxx
   igstkMeshObjectTest.cxx
+  igstkBinaryDataTest.cxx
   )
 
 IF (IGSTK_USE_ATAMAI)
@@ -70,10 +72,10 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
                "${CMAKE_CURRENT_BINARY_DIR}/igstkSystemInformation.h"
                @ONLY IMMEDIATE)
 
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/polaris_stream_07_13_2005.txt"
-               "${CXX_TEST_PATH}/polaris_stream_07_13_2005.txt"
-               @ONLY IMMEDIATE)
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/polaris_stream_07_27_2005.bin"
+               "${CXX_TEST_PATH}/polaris_stream_07_27_2005.bin"
+               COPYONLY @ONLY IMMEDIATE)
 
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/polaris_stream_07_13_2005.txt"
-               "${CMAKE_CURRENT_BINARY_DIR}/polaris_stream_07_13_2005.txt"
-               @ONLY IMMEDIATE)
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/polaris_stream_07_27_2005.bin"
+               "${CMAKE_CURRENT_BINARY_DIR}/polaris_stream_07_27_2005.bin"
+               COPYONLY @ONLY IMMEDIATE)
