@@ -165,7 +165,7 @@ void SerialCommunication::Write( const char *data, int numberOfBytes )
   if( m_OutputBuffer != NULL )
     {
     m_WriteNumberOfBytes = ( m_WriteBufferSize < numberOfBytes ) ? m_WriteBufferSize : numberOfBytes;
-    strncpy(m_OutputBuffer, data, m_WriteNumberOfBytes );
+    memcpy(m_OutputBuffer, data, m_WriteNumberOfBytes );
     m_OutputBuffer[m_WriteNumberOfBytes] = 0;
     igstkLogMacro( DEBUG, "Message = " << m_OutputBuffer << std::endl );
     }
@@ -173,7 +173,7 @@ void SerialCommunication::Write( const char *data, int numberOfBytes )
     {
     m_WriteNumberOfBytes = 0;
     }
-  igstkLogMacro( DEBUG, "Message length = " << strlen(data) << std::endl );
+  igstkLogMacro( DEBUG, "Message length = " << m_WriteNumberOfBytes << std::endl );
   this->m_StateMachine.PushInput( m_WriteInput );
   this->m_StateMachine.ProcessInputs();
 
@@ -189,15 +189,15 @@ void SerialCommunication::Read( char *data, int numberOfBytes, int &bytesRead )
   this->m_StateMachine.ProcessInputs();
   if( m_InputBuffer != NULL )
     {
-    strncpy(data, m_InputBuffer, m_ReadDataSize);
+    memcpy(data, m_InputBuffer, m_ReadDataSize);
     bytesRead = m_ReadDataSize;
     }
   else
     {
     bytesRead = 0;
     }
-  data[m_ReadDataSize] = '\0'; // terminate the string
-  igstkLogMacro( DEBUG, "SerialCommunication::Read : (" << m_ReadDataSize << ") " << data << "...\n");
+  data[bytesRead] = '\0'; // terminate the string
+  igstkLogMacro( DEBUG, "SerialCommunication::Read : (" << bytesRead << ") " << data << "...\n");
 
   return;
 }
