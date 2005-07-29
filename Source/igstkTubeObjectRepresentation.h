@@ -28,8 +28,10 @@ namespace igstk
 
 /** \class TubeObjectRepresentation
  * 
- * \brief This class represents a Tube object.
- * 
+ * \brief This class implements the representation a Tube object.
+ * Basically the tube is represented as a VTK actor using a
+ * vtkTubeFilter.
+ *
  * \ingroup ObjectRepresentation
  */
 
@@ -58,9 +60,6 @@ public:
   /** Connect this representation class to the spatial object */
   void RequestSetTubeObject( const TubeObjectType * TubeObject );
 
-  TubeObjectRepresentation( void );
-  ~TubeObjectRepresentation( void );
-
   /** Create the VTK actors */
   void CreateActors();
 
@@ -68,6 +67,12 @@ public:
   igstkStateMachineMacro();
 
 protected:
+  
+  /** Constructor */
+  TubeObjectRepresentation( void );
+
+  /** Destructor */
+  ~TubeObjectRepresentation( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

@@ -27,11 +27,16 @@
 namespace igstk
 {
 
-/** \class MeshObject
- * 
- * \brief This class represents a Mesh object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is X.
- * 
+/** \class Mesh
+ * \brief Implements the 3-dimensional mesh structure.
+ *
+ * \par Overview
+ * Mesh implements the 3-dimensional mesh structure.  It provides
+ * an API to perform operations on points, cells, boundaries, etc.
+ *
+ * Mesh is an adaptive, evolving structure. Typically points and cells
+ * are created, with the cells referring to their defining points.
+ *
  * \ingroup Object
  */
 
@@ -46,15 +51,30 @@ public:
   typedef SpatialObject                             Superclass;
   typedef itk::SmartPointer<Self>                   Pointer;
   typedef itk::SmartPointer<const Self>             ConstPointer;
+
+  /** Unlike DefaultStaticMeshTraits, the DefaultDynamicMeshTraits structure
+   * is designed to create Mesh instances that will have many insert and delete
+   * operations done on them. **/
   typedef itk::DefaultDynamicMeshTraits<float,3,3>  MeshTrait;
+  
+  /** Type of the itk mesh taking three template parameters:
+   *  First, the type stored as data for an entity (cell, point, or boundary).
+   *  Second, the dimensionality of the mesh. and third, the type information
+   *  structure for the mesh. **/
   typedef itk::Mesh<float,3,MeshTrait>              MeshType;
-  typedef MeshType::PointType                       PointType;
+
+  /** Type of the internal MeshSpatialObject. Templated of the itkMesh type */
   typedef itk::MeshSpatialObject<MeshType>          MeshSpatialObjectType;
+
+  /** Type of the point used to describe the mesh */
+  typedef MeshType::PointType                       PointType;
   typedef MeshType::CellTraits                      CellTraits;
   typedef itk::CellInterface< float, CellTraits >   CellInterfaceType;
   typedef itk::TetrahedronCell<CellInterfaceType>   TetraCellType;
   typedef MeshType::CellType                        CellType;
   typedef CellType::CellAutoPointer                 CellAutoPointer;
+
+  /** Type of containers used to store the points and cells */
   typedef MeshType::PointsContainer                 PointsContainer;
   typedef MeshType::PointsContainerPointer          PointsContainerPointer;
   typedef MeshType::CellsContainer                  CellsContainer;
@@ -73,14 +93,17 @@ public:
   bool AddTetrahedronCell(unsigned int id,unsigned int vertex1,unsigned int vertex2,unsigned int vertex3,unsigned int vertex4);
 
   /** Return the points */
-  PointsContainerPointer GetPoints() const;
+  const PointsContainerPointer GetPoints() const;
 
   /** Return the cells */
-  CellsContainerPointer GetCells() const;
+  const CellsContainerPointer GetCells() const;
 
 protected:
 
+  /** Constructor */
   MeshObject( void );
+
+  /** Destructor */
   ~MeshObject( void );
 
   /** Print object information */
@@ -97,4 +120,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkMeshObject_h
-

@@ -49,6 +49,15 @@ int igstkTubeObjectTest( int, char * [] )
   p2.SetRadius(10);
   TubeObject->AddPoint(p2);
 
+  std::cout << "Testing the GetPoints() method: ";
+  ObjectType::PointListType points = TubeObject->GetPoints();
+  if(points.size() != 2)
+    {
+    std::cout << "GetPoints error : " << points.size() << " v.s 2" << std::endl; 
+    return EXIT_FAILURE;
+    }
+  std::cout << "[PASSED]" << std::endl;
+
   std::cout << "Testing GetNumberOfPoints: ";
   unsigned int nPoints = TubeObject->GetNumberOfPoints();
   if(nPoints != 2)

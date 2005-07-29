@@ -55,20 +55,16 @@ const TubeObject::PointType * TubeObject::GetPoint(unsigned int pointId) const
     }
 
   PointListType points = m_TubeSpatialObject->GetPoints();
-  PointListType::const_iterator it = points.begin();
-  unsigned int i=0;
-  while(it != points.end())
-    {
-    if(i == pointId)
-      {
-      return &(*it);
-      }
-    i++;
-    it++;
-    }
-
-  return NULL;
+  return &(points[pointId]);
 }
+
+
+/** Return the internal list of points */
+const TubeObject::PointListType TubeObject::GetPoints() const
+{
+  return m_TubeSpatialObject->GetPoints();
+}
+
 
 /** Print object information */
 void TubeObject::PrintSelf( std::ostream& os, itk::Indent indent ) const

@@ -66,13 +66,13 @@ bool MeshObject::AddTetrahedronCell(unsigned int id,unsigned int vertex1,unsigne
 }
 
 /** Return the points */  
-MeshObject::PointsContainerPointer MeshObject::GetPoints() const
+const MeshObject::PointsContainerPointer MeshObject::GetPoints() const
 {
   return m_Mesh->GetPoints();
 }
 
 /** Return the cells */  
-MeshObject::CellsContainerPointer MeshObject::GetCells() const
+const MeshObject::CellsContainerPointer MeshObject::GetCells() const
 {
   return m_Mesh->GetCells();
 }
@@ -86,6 +86,7 @@ void MeshObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
     {
     os << indent << this->m_MeshSpatialObject << std::endl;
     }
+   os << indent << this->m_Mesh << std::endl;
 }
 
 

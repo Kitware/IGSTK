@@ -14,7 +14,6 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
 #include "igstkMeshObjectRepresentation.h"
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
@@ -36,7 +35,6 @@ MeshObjectRepresentation::MeshObjectRepresentation():m_StateMachine(this)
   // We create the ellipse spatial object
   m_MeshObject = NULL;
   this->RequestSetSpatialObject( m_MeshObject );
-//  m_MeshSource = vtkMeshSource::New();
   
   m_StateMachine.AddInput( m_ValidMeshObjectInput,  "ValidMeshObjectInput" );
   m_StateMachine.AddInput( m_NullMeshObjectInput,   "NullMeshObjectInput"  );
@@ -61,14 +59,7 @@ MeshObjectRepresentation::MeshObjectRepresentation():m_StateMachine(this)
 /** Destructor */
 MeshObjectRepresentation::~MeshObjectRepresentation()  
 {
-/*  if( m_MeshSource )
-    {
-    m_MeshSource->Delete();
-    m_MeshSource = NULL;
-    }*/
 }
-
-
 
 
 /** Set the Meshal Spatial Object */
@@ -85,11 +76,7 @@ void MeshObjectRepresentation::RequestSetMeshObject( const MeshObjectType * Mesh
     m_StateMachine.PushInput( m_ValidMeshObjectInput );
     m_StateMachine.ProcessInputs();
     }
-
-
 }
-
-
 
 
 /** Set the Cylindrical Spatial Object */
@@ -98,14 +85,6 @@ void MeshObjectRepresentation::SetMeshObject()
   // We create the ellipse spatial object
   m_MeshObject = m_MeshObjectToAdd;
   this->RequestSetSpatialObject( m_MeshObject );
-/*
-  if( m_MeshSource != NULL )
-    {
-    m_MeshSource->SetCenter(0, 0, 0);
-    m_MeshSource->SetRadius(m_MeshObject->GetRadius());
-    m_MeshSource->SetHeight(m_MeshObject->GetHeight());
-    m_MeshSource->SetResolution(10);
-    }*/
 } 
 
 
@@ -113,22 +92,14 @@ void MeshObjectRepresentation::SetMeshObject()
 void MeshObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-/*
-  if( this->m_MeshSource )
-  {
-    os << indent << this->m_MeshSource << std::endl;
-  }*/
 }
 
 
 /** Update the visual representation in response to changes in the geometric
- * object */
+ *  object */
 void MeshObjectRepresentation::UpdateRepresentation()
 {
-//  m_MeshSource->SetRadius(m_MeshObject->GetRadius());
-//  m_MeshSource->SetHeight(m_MeshObject->GetHeight());
 }
-
 
 /** Create the vtk Actors */
 void MeshObjectRepresentation::CreateActors()

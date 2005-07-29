@@ -58,9 +58,6 @@ public:
   /** Connect this representation class to the spatial object */
   void RequestSetMeshObject( const MeshObjectType * MeshObject );
 
-  MeshObjectRepresentation( void );
-  ~MeshObjectRepresentation( void );
-
   /** Create the VTK actors */
   void CreateActors();
 
@@ -71,6 +68,12 @@ protected:
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  
+  /** Constructor */
+  MeshObjectRepresentation( void );
+
+  /** Destructor */
+  ~MeshObjectRepresentation( void );
 
 private:
 

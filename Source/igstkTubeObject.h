@@ -27,9 +27,10 @@ namespace igstk
 
 /** \class TubeObject
  * 
- * \brief This class represents a Tube object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is X.
- * 
+ * \brief This class represents a Tube object.
+ * The tube is basically defined by a set of points representing its centerline.
+ * Each point as a position and an associated radius value.
+ *
  * \ingroup Object
  */
 
@@ -44,6 +45,8 @@ public:
   typedef SpatialObject                         Superclass;
   typedef itk::SmartPointer<Self>               Pointer;
   typedef itk::SmartPointer<const Self>         ConstPointer; 
+
+  /** Internal typedef */
   typedef itk::TubeSpatialObject<3>             TubeSpatialObjectType;
   typedef TubeSpatialObjectType::TubePointType  PointType;
   typedef TubeSpatialObjectType::PointListType  PointListType;
@@ -63,9 +66,15 @@ public:
   /** Return a given point */
   const PointType * GetPoint(unsigned int pointId) const;
 
+  /** Return the internal list of points */
+  const PointListType GetPoints() const;
+
 protected:
 
+  /** Constructor */
   TubeObject( void );
+
+  /** Destructor */
   ~TubeObject( void );
 
   /** Print object information */
