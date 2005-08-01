@@ -26,14 +26,15 @@ namespace igstk
 /** Constructor */
 SerialCommunication::SerialCommunication() :  m_StateMachine( this ),
                                               m_ReadBufferSize(1600),
-                                              m_WriteBufferSize(1600),
-                                              m_PortNumber(PortNumber0()),
-                                              m_BaudRate(BaudRate9600()),
-                                              m_DataBits(DataBits8()),
-                                              m_Parity(NoParity()),
-                                              m_StopBits(StopBits1()),
-                                        m_HardwareHandshake(HandshakeOff())
+                                              m_WriteBufferSize(1600)
 {
+  m_PortNumber = PortNumber0;
+  m_BaudRate = BaudRate9600;
+  m_DataBits = DataBits8;
+  m_Parity = NoParity;
+  m_StopBits = StopBits1;
+  m_HardwareHandshake = HandshakeOff;
+
   m_InputBuffer = 0;
   m_OutputBuffer = 0;
   m_ReadDataSize = 0;
@@ -268,12 +269,12 @@ void SerialCommunication::PrintSelf( std::ostream& os, itk::Indent indent ) cons
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "PortNumber: " << m_PortNumber.Get() << std::endl;
-  os << indent << "BaudRate: " << m_BaudRate.Get() << std::endl;
-  os << indent << "DataBits: " << m_DataBits.Get() << std::endl;
-  os << indent << "Parity: " << m_Parity.Get() << std::endl;
-  os << indent << "StopBits: " << m_StopBits.Get() << std::endl;
-  os << indent << "HardwareHandshake: " << m_HardwareHandshake.Get() 
+  os << indent << "PortNumber: " << m_PortNumber << std::endl;
+  os << indent << "BaudRate: " << m_BaudRate << std::endl;
+  os << indent << "DataBits: " << m_DataBits << std::endl;
+  os << indent << "Parity: " << m_Parity << std::endl;
+  os << indent << "StopBits: " << m_StopBits << std::endl;
+  os << indent << "HardwareHandshake: " << m_HardwareHandshake 
      << std::endl;
   os << indent << "TimeoutPeriod: " << m_TimeoutPeriod << std::endl;
   os << indent << "ReadBufferOffset: " << m_ReadBufferOffset << std::endl;

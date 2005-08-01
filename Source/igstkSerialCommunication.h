@@ -31,15 +31,13 @@
 #include "igstkCommunication.h"
 #include "igstkStateMachine.h"
 
-#include "igstkSerialCommunicationTokens.h"
-
 namespace igstk
 {
 
 /** \class SerialCommunication
  * 
- * \brief This class implements 32-bit communication over a Serial Port
- *        (RS-232 connection).
+ * \brief This class implements communication over a serial port
+ *        via RS-232.
  *
  * \ingroup Communication
  */
@@ -47,6 +45,36 @@ namespace igstk
 class SerialCommunication : public Communication
 {
 public:
+
+  /** Available port numbers. */
+  enum PortNumberType { PortNumber0 = 0,
+                        PortNumber1 = 1,
+                        PortNumber2 = 2,
+                        PortNumber3 = 3 };
+
+  /** Available baud rates. */
+  enum BaudRateType { BaudRate9600 = 9600,
+                      BaudRate19200 = 19200,
+                      BaudRate38400 = 38400,
+                      BaudRate57600 = 57600,
+                      BaudRate115200 = 115200 };
+
+  /** Available data bits settings. */
+  enum DataBitsType { DataBits7 = 7,
+                      DataBits8 = 8 };
+
+  /** Available parity settings. */
+  enum ParityType { NoParity = 'N',
+                    OddParity = 'O',
+                    EvenParity = 'E' };
+
+  /** Available stop bits settings. */
+  enum StopBitsType { StopBits1 = 1,
+                      StopBits2 = 2 };
+
+  /** Available hardware handshaking settings. */
+  enum HardwareHandshakeType { HandshakeOff = 0,
+                               HandshakeOn = 1 };
 
   /** Data type for communication */
   typedef SerialCommunication            Self;
@@ -59,82 +87,37 @@ public:
   /**  Run-time type information (and related methods). */
   igstkTypeMacro(SerialCommunication, Object);
 
-  /** Type used for encoding the port number of the serial port */
-  typedef SerialCommunicationPortNumber  PortNumberType;
-
-  /** Explicit instantiations for every accepted BaudRate. Using types for the
-   * rates enforces safety on the assignment of values because the verification
-   * is done at compile time. */
-  typedef SerialCommunicationPortNumberValued< 0 > PortNumber0;
-  typedef SerialCommunicationPortNumberValued< 1 > PortNumber1;
-  typedef SerialCommunicationPortNumberValued< 2 > PortNumber2;
-  typedef SerialCommunicationPortNumberValued< 3 > PortNumber3;
-
-  /** Type used for encoding the baud rate of the serial port */
-  typedef SerialCommunicationBaudRate  BaudRateType;
-
-  /** Explicit instantiations for every accepted BaudRate. Using types for the
-   * rates enforces safety on the assignment of values because the verification
-   * is done at compile time. */
-  typedef SerialCommunicationBaudRateValued<  2400 > BaudRate2400;
-  typedef SerialCommunicationBaudRateValued<  9600 > BaudRate9600;
-  typedef SerialCommunicationBaudRateValued< 19200 > BaudRate19200;
-
-  /** Type used for encoding the number of bits used for data size by the serial port */
-  typedef SerialCommunicationDataBits  DataBitsType;
-
-  /** Explicit instantiations for every accepted DataBitsSize. Using types for the
-   * sizes enforces safety on the assignment of values because the verification
-   * is done at compile time. */
-  typedef SerialCommunicationDataBitsValued< 7 > DataBits7;
-  typedef SerialCommunicationDataBitsValued< 8 > DataBits8;
-
-  /** Type used for encoding the parity used by the serial port */
-  typedef SerialCommunicationParity  ParityType;
-
-  /** Explicit instantiations for every accepted parity. Using types for the
-   * parity enforces safety on the assignment of values because the
-   * verification is done at compile time. */
-  typedef SerialCommunicationParityValued< 0 > NoParity;
-  typedef SerialCommunicationParityValued< 1 > OddParity;
-  typedef SerialCommunicationParityValued< 2 > EvenParity;
-
-  /** Type used for encoding the number of stop bits used by the serial port */
-  typedef SerialCommunicationStopBits  StopBitsType;
-
-  /** Explicit instantiations for every accepted number of stop bits. Using
-   * types for the stop bits enforces safety on the assignment of values
-   * because the verification is done at compile time. */
-  typedef SerialCommunicationStopBitsValued< 1 > StopBits1;
-  typedef SerialCommunicationStopBitsValued< 2 > StopBits2;
-
-  /** Type used for encoding the number of stop bits used by the serial port */
-  typedef SerialCommunicationHandshake  HardwareHandshakeType;
-
-  /** Explicit instantiations for every accepted number of stop bits. Using
-   * types for the stop bits enforces safety on the assignment of values
-   * because the verification is done at compile time. */
-  typedef SerialCommunicationHandshakeValued< 0 > HandshakeOff;
-  typedef SerialCommunicationHandshakeValued< 1 > HandshakeOn;
-
   /** Specify which serial port to use.  If communication is open,
-   * this has no effect until communication is closed and reopened */
+      this has no effect until communication is closed and reopened */
   igstkSetMacro( PortNumber, PortNumberType );
+  /** Get the serial port, where the ports are numbered 0 through 3 */
   igstkGetMacro( PortNumber, PortNumberType );
 
+  /** Set the baud rate to use.  Baud rates of 56000 or higher should
+      not be used unless some sort of error checking is in place. */
   igstkSetMacro( BaudRate, BaudRateType );
+  /** Get the baud rate. */
   igstkGetMacro( BaudRate, BaudRateType );
 
+  /** Set the number of bits per character.  This should usually be
+      set to 8, since 7 bits is only valid for pure ASCII data. */
   igstkSetMacro( DataBits, DataBitsType );
+  /** Get the number of bits per character. */
   igstkGetMacro( DataBits, DataBitsType );
 
+  /** Set the parity.  The default is no parity. */
   igstkSetMacro( Parity, ParityType );
+  /** Get the parity. */
   igstkGetMacro( Parity, ParityType );
 
+  /** Set the number of stop bits.  The default is one stop bit. */
   igstkSetMacro( StopBits, StopBitsType );
+  /** Get the number of stop bits. */
   igstkGetMacro( StopBits, StopBitsType );
 
+  /** Set whether to use hardware handshaking. */
   igstkSetMacro( HardwareHandshake, HardwareHandshakeType );
+  /** Get whether hardware handshaking is enabled. */
   igstkGetMacro( HardwareHandshake, HardwareHandshakeType );
 
   /** The method OpenCommunication sets up communication as per the data

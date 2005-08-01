@@ -52,7 +52,7 @@ SerialCommunicationForLinux::InternalOpenCommunication( void )
   }
 
   char device[20];
-  sprintf(device, "/dev/ttyS%.1d", this->GetPortNumber().Get() );
+  sprintf(device, "/dev/ttyS%.1d", this->GetPortNumber() );
   std::cout << device << std::endl;
 
   // port is readable/writable and is (for now) non-blocking
@@ -158,37 +158,9 @@ SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSet
 
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalSetTransferParameters called ...\n");
 
-  unsigned int baud = this->m_BaudRate.Get();
+  unsigned int baud = this->m_BaudRate;
 
-#if defined(linux) || defined(__linux__)
-  switch (baud)
-    {
-    case 9600:   newbaud = B9600;   break;
-    case 19200:  newbaud = B19200;  break;
-    case 38400:  newbaud = B38400;  break;
-    case 57600:  newbaud = B57600;  break;
-    case 115200: newbaud = B115200; break;
-    case 14400:
-    default:
-      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed: Baud.\n" << std::endl;
-      return FAILURE;
-    }
-#elif defined(__APPLE__)
-  switch (baud)
-    {
-    case 9600:    newbaud = B9600;   break;
-    case 19200:   newbaud = B19200;  break;
-    case 38400:   newbaud = B38400;  break;
-    case 57600:   newbaud = B57600;  break;
-    case 115200:  newbaud = B115200; break;
-    case 14400:
-    default:
-      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed: Baud.\n" << std::endl;
-      return FAILURE;
-    }
-#elif defined(sgi) && defined(__NEW_MAX_BAUD)
+#if defined(sgi) && defined(__NEW_MAX_BAUD)
   switch (baud)
     {
     case 9600:    newbaud = 9600;   break;
@@ -196,99 +168,69 @@ SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSet
     case 38400:   newbaud = 38400;  break;
     case 57600:   newbaud = 57600;  break;
     case 115200:  newbaud = 115200; break;
-    case 14400:
-    default:
-      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed: Baud\n" << std::endl;
-                 return FAILURE;
     }
 #else
   switch (baud)
     {
-    case 9600:   newbaud = B9600;  break;
+    case 9600:   newbaud = B9600;   break;
     case 19200:  newbaud = B19200;  break;
     case 38400:  newbaud = B38400;  break;
-    case 14400:
-    case 57600:
-    case 115200: 
-    default:
-      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      std::cout << "Setting Communication Parameters Failed: Baud\n" << std::endl;
-      return FAILURE;
+    case 57600:  newbaud = B57600;  break;
+    case 115200: newbaud = B115200; break;
     }
 #endif
 
   tcgetattr(this->m_PortHandle,&t);          // get I/O information
   t.c_cflag &= ~CSIZE;                // clear flags
 
-#if defined(linux) || defined(__linux__)
-  t.c_cflag &= ~CBAUD;
-  t.c_cflag |= newbaud;                // set baud rate
+  // set baud rate
+#if defined(sgi) && defined(__NEW_MAX_BAUD)
+  t.c_ospeed = newbaud;
 #elif defined(__APPLE__)
   cfsetispeed(&t, newbaud);
   cfsetospeed(&t, newbaud);
-#elif defined(sgi) && defined(__NEW_MAX_BAUD)
-  t.c_ospeed = newbaud;
 #else
   t.c_cflag &= ~CBAUD;
   t.c_cflag |= newbaud;                // set baud rate
 #endif
 
   // set data bits
-  if (this->m_DataBits.Get() == 8)
+  if (this->m_DataBits == DataBits8)
     {                 
     t.c_cflag |= CS8; 
     }
-  else if (this->m_DataBits.Get() == 7)
+  else if (this->m_DataBits == DataBits7)
     {
     t.c_cflag |= CS7;
     }
-  else
-    {
-    this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-    std::cout << "Setting Communication Parameters Failed: DataBits\n" << std::endl;
-    return FAILURE;
-    }
 
   // set parity
-  if (this->m_Parity.Get() == 0)
+  if (this->m_Parity == NoParity)
     { // none            
     t.c_cflag &= ~PARENB;
     t.c_cflag &= ~PARODD;
     }
-  else if (this->m_Parity.Get() == 1)
+  else if (this->m_Parity == OddParity)
     { // odd
     t.c_cflag |= PARENB;
     t.c_cflag |= PARODD;
     }
-  else if (this->m_Parity.Get() == 2)
+  else if (this->m_Parity == EvenParity)
     { // even
     t.c_cflag |= PARENB;
     t.c_cflag &= ~PARODD;
     }
-  else
-    {
-    this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-    std::cout << "Setting Communication Parameters Failed: Parity\n" << std::endl;
-    return FAILURE;
-    }
 
-  if (this->m_StopBits.Get() == 1)
+  if (this->m_StopBits == StopBits1)
     {                  // set stop bits
     t.c_cflag &= ~CSTOPB; 
     }
-  else if (this->m_StopBits.Get() == 2)
+  else if (this->m_StopBits == StopBits2)
     {
     t.c_cflag |= CSTOPB; 
     }
-  else
-    {
-    this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-    std::cout << "Setting Communication Parameters Failed: Stop Bits\n" << std::endl;
-    return FAILURE;
-    }
 
-  if (this->m_HardwareHandshake.Get())
+  if (this->m_HardwareHandshake == HandshakeOn)
     {
 #ifdef sgi
     t.c_cflag |= CNEW_RTSCTS;       // enable hardware handshake

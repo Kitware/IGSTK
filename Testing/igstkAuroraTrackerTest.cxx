@@ -139,12 +139,12 @@ int igstkAuroraTrackerTest( int, char * [] )
   serialComm->AddObserver( igstk::SerialCommunication::ReadTimeoutEvent(), my_command);
   serialComm->SetLogger( logger );
 
-  serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0() );
-  serialComm->SetParity( igstk::SerialCommunication::NoParity() );
-  serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600() );
-  serialComm->SetDataBits( igstk::SerialCommunication::DataBits8() );
-  serialComm->SetStopBits( igstk::SerialCommunication::StopBits1() );
-  serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff() );
+  serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
+  serialComm->SetParity( igstk::SerialCommunication::NoParity );
+  serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
+  serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
+  serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
+  serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
   serialComm->OpenCommunication();
 

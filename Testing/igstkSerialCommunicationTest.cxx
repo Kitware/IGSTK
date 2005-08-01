@@ -151,12 +151,12 @@ int igstkSerialCommunicationTest( int, char * [] )
 
   serialComm->SetLogger( logger );
 
-  serialComm->SetPortNumber( CommunicationType::PortNumber0() );
-  serialComm->SetParity( CommunicationType::NoParity() );
-  serialComm->SetBaudRate( CommunicationType::BaudRate9600() );
-  serialComm->SetDataBits( CommunicationType::DataBits8() );
-  serialComm->SetStopBits( CommunicationType::StopBits1() );
-  serialComm->SetHardwareHandshake( CommunicationType::HandshakeOff() );
+  serialComm->SetPortNumber( CommunicationType::PortNumber0 );
+  serialComm->SetParity( CommunicationType::NoParity );
+  serialComm->SetBaudRate( CommunicationType::BaudRate9600 );
+  serialComm->SetDataBits( CommunicationType::DataBits8 );
+  serialComm->SetStopBits( CommunicationType::StopBits1 );
+  serialComm->SetHardwareHandshake( CommunicationType::HandshakeOff );
 
   serialComm->OpenCommunication();
 
@@ -214,26 +214,26 @@ int igstkSerialCommunicationTest( int, char * [] )
   // send a serial break (there isn't any way to test that it was sent)
   serialComm->SendBreak();
 
-  // test all baud rates etc
+  // test a couple baud rates
   CommunicationType::BaudRateType allBaudRates[2] = {
-    CommunicationType::BaudRate9600(),
-    CommunicationType::BaudRate19200(),
+    CommunicationType::BaudRate9600,
+    CommunicationType::BaudRate19200,
   };
 
   CommunicationType::DataBitsType allDataBits[2] = {
-    CommunicationType::DataBits7(),
-    CommunicationType::DataBits8(),
+    CommunicationType::DataBits7,
+    CommunicationType::DataBits8,
   };
   
   CommunicationType::ParityType allParities[3] = {
-    CommunicationType::NoParity(),
-    CommunicationType::OddParity(),
-    CommunicationType::EvenParity(),
+    CommunicationType::NoParity,
+    CommunicationType::OddParity,
+    CommunicationType::EvenParity,
   };
 
   CommunicationType::StopBitsType allStopBits[2] = {
-    CommunicationType::StopBits1(),
-    CommunicationType::StopBits2(),
+    CommunicationType::StopBits1,
+    CommunicationType::StopBits2,
   };
 
   // note that we can't test hardware handshaking unless the loopback

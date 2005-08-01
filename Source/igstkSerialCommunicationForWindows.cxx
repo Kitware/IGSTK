@@ -42,7 +42,7 @@ SerialCommunicationForWindows::InternalOpenCommunication( void )
   DCB comm_settings;
 
   char device[20];
-  sprintf(device, "COM%.1d:", this->GetPortNumber().Get()+1 );
+  sprintf(device, "COM%.1d:", this->GetPortNumber()+1 );
   std::cout << device << std::endl;
 
   serial_port = CreateFile(device,
@@ -147,22 +147,17 @@ SerialCommunicationForWindows::ResultType
 SerialCommunicationForWindows::InternalSetTransferParameters( void )
 {
   DCB comm_settings;
-  int newbaud;
+  int newbaud = CBR_9600;
 
-  unsigned int baud = this->m_BaudRate.Get();
+  unsigned int baud = this->m_BaudRate;
 
   switch (baud)
     {
     case 9600:   newbaud = CBR_9600;   break;
-    case 14400:  newbaud = CBR_14400;  break;
     case 19200:  newbaud = CBR_19200;  break;
     case 38400:  newbaud = CBR_38400;  break;
     case 57600:  newbaud = CBR_57600;  break;
     case 115200: newbaud = CBR_115200; break;
-    default:     
-      this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-      igstkLogMacro( DEBUG, "Setting Communication Parameters Failed.(invalid baud rate)\n" << std::endl );
-      return FAILURE;
     }
 
   GetCommState(this->m_PortHandle,&comm_settings);
@@ -170,7 +165,7 @@ SerialCommunicationForWindows::InternalSetTransferParameters( void )
   comm_settings.BaudRate = newbaud;     // speed
 
   // set handshaking
-  if (this->m_HardwareHandshake.Get())
+  if (this->m_HardwareHandshake == HandshakeOn)
     {
     comm_settings.fOutxCtsFlow = TRUE;       // on
     comm_settings.fRtsControl = RTS_CONTROL_HANDSHAKE;
@@ -182,55 +177,37 @@ SerialCommunicationForWindows::InternalSetTransferParameters( void )
     }    
 
   // set data bits
-  if (this->m_DataBits.Get() == 8)
+  if (this->m_DataBits == DataBits8)
     {
     comm_settings.ByteSize = 8;
     }
-  else if (this->m_DataBits.Get() == 7)
+  else if (this->m_DataBits == DataBits7)
     {
     comm_settings.ByteSize = 7;
     }
-  else
-    {
-    this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-    igstkLogMacro( DEBUG, "Setting Communication Parameters Failed.(invalid data bits)\n" << std::endl );
-    return FAILURE;
-    }
 
   // set parity
-  if (this->m_Parity.Get() == 0)
+  if (this->m_Parity == NoParity)
     { // none                
     comm_settings.Parity = NOPARITY;
     }
-  else if (this->m_Parity.Get() == 1)
+  else if (this->m_Parity == OddParity)
     { // odd
     comm_settings.Parity = ODDPARITY;
     }
-  else if (this->m_Parity.Get() == 2)
+  else if (this->m_Parity == EvenParity)
     { // even
     comm_settings.Parity = EVENPARITY;
     }
-  else
-    {
-    this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-    igstkLogMacro( DEBUG, "Setting Communication Parameters Failed.(invalid parity)\n" << std::endl );
-    return FAILURE;
-    }
 
   // set stop bits
-  if (this->m_StopBits.Get() == 1)
+  if (this->m_StopBits == StopBits1)
     {
     comm_settings.StopBits = ONESTOPBIT;
     }
-  else if (this->m_StopBits.Get() == 2)
+  else if (this->m_StopBits == StopBits2)
     {
     comm_settings.StopBits = TWOSTOPBITS;
-    }
-  else
-    {
-    this->InvokeEvent( SetCommunicationParametersFailureEvent() );
-    igstkLogMacro( DEBUG, "Setting Communication Parameters Failed.(invalid stop bits)\n" << std::endl );
-    return FAILURE;
     }
 
   SetCommState(this->m_PortHandle,&comm_settings);
