@@ -73,6 +73,9 @@ public:
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
+  /** typedef for CommunicationType */
+  typedef Communication                 CommunicationType;
+
   /**  Run-time type information (and related methods). */
   igstkTypeMacro(AuroraTracker, Object);
 
