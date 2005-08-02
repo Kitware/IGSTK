@@ -1,13 +1,13 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkVTKLoggerOutput.h
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
 
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm for details.
@@ -48,8 +48,8 @@ public:
   vtkTypeRevisionMacro(VTKLoggerOutput, vtkOutputWindow);
   igstkTypeMacro(VTKLoggerOutput, vtkOutputWindow);
 
-  /** Logger pointer type definition */
-  typedef itk::Logger*   LoggerPointerType;
+  /** Logger type definition */
+  typedef itk::Logger           LoggerType;
 
   /** Create an object */
   static VTKLoggerOutput* New();
@@ -77,15 +77,8 @@ public:
    * could present this message differently. */
   virtual void DisplayDebugText(const char *t);
 
-  /** Set/Get a logger pointer to be used */
-  vtkSetMacro(Logger, LoggerPointerType);
-  vtkGetMacro(Logger, LoggerPointerType);
-
   /** Overrides a VTK log window */
-  virtual void OverrideVTKWindow() 
-  {
-    vtkOutputWindow::SetInstance(this);
-  }
+  virtual void OverrideVTKWindow()  {  vtkOutputWindow::SetInstance(this);  };
 
   /** Type definition for the standard output stream */ 
   typedef std::ostream StdOStreamType;
@@ -93,19 +86,18 @@ public:
   /** Print information about this object */
   void Print(StdOStreamType& os);
 
+  /** Declarations related to the Logger */
+  igstkLoggerMacro();
+
 protected:
   /** Constructor */
   VTKLoggerOutput();
 
   /** Destructor */
-  virtual ~VTKLoggerOutput() {}
+  virtual ~VTKLoggerOutput() {};
 
   /** Print information about this object */
   void PrintSelf(StdOStreamType& os, itk::Indent indent) const;
-
-private:
-  /** Logger pointer */
-  LoggerPointerType Logger;
 };
   
 /** operator << for printing out through the output stream */

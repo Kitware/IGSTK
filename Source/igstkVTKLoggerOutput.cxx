@@ -1,13 +1,13 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkVTKLoggerOutput.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
 
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm for details.
@@ -26,23 +26,22 @@
 
 namespace igstk
 {
-vtkCxxRevisionMacro(VTKLoggerOutput, "1.13");
+vtkCxxRevisionMacro(VTKLoggerOutput, "1.14");
 vtkStandardNewMacro(VTKLoggerOutput);
 
 
 /** Constructor */
 VTKLoggerOutput::VTKLoggerOutput()
 {
-  this->Logger = NULL;
 }
 
 
 /** Send a string to display. */
 void VTKLoggerOutput::DisplayText(const char* t)
 {
-  if( this->Logger )
+  if( m_Logger )
     {
-    this->Logger->Write(itk::Logger::INFO, t);
+    m_Logger->Write(itk::Logger::INFO, t);
     }
 }
 
@@ -52,9 +51,9 @@ void VTKLoggerOutput::DisplayText(const char* t)
  * could present this message differently. */
 void VTKLoggerOutput::DisplayErrorText(const char *t)
 {
-  if( this->Logger )
+  if( m_Logger )
     {
-    this->Logger->Write(itk::Logger::CRITICAL, t);
+    m_Logger->Write(itk::Logger::CRITICAL, t);
     }
 }
 
@@ -64,9 +63,9 @@ void VTKLoggerOutput::DisplayErrorText(const char *t)
  * could present this message differently. */
 void VTKLoggerOutput::DisplayWarningText(const char *t)
 {
-  if( this->Logger )
+  if( m_Logger )
     {
-    this->Logger->Write(itk::Logger::WARNING, t);
+    m_Logger->Write(itk::Logger::WARNING, t);
     }
 }
 
@@ -76,9 +75,9 @@ void VTKLoggerOutput::DisplayWarningText(const char *t)
  * could present this message differently. */
 void VTKLoggerOutput::DisplayGenericWarningText(const char *t)
 {
-  if( this->Logger )
+  if( m_Logger )
     {
-    this->Logger->Write(itk::Logger::WARNING, t);
+    m_Logger->Write(itk::Logger::WARNING, t);
     }
 }
 
@@ -88,9 +87,9 @@ void VTKLoggerOutput::DisplayGenericWarningText(const char *t)
  * could present this message differently. */
 void VTKLoggerOutput::DisplayDebugText(const char *t)
 {
-  if( this->Logger )
+  if( m_Logger )
     {
-    this->Logger->Write(itk::Logger::DEBUG, t);
+    m_Logger->Write(itk::Logger::DEBUG, t);
     }
 }
 
@@ -100,10 +99,10 @@ void VTKLoggerOutput::PrintSelf(StdOStreamType& os, itk::Indent indent) const
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
   indent = indent.GetNextIndent();
 
-  if( this->Logger )
+  if( m_Logger )
     {
     os << indent;
-    this->Logger->Print(os, indent);
+    m_Logger->Print(os, indent);
     }
 }
 
