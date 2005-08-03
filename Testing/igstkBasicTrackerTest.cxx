@@ -58,6 +58,20 @@ namespace igstk
         TrackerPortType::Pointer trackerPort = TrackerPortType::New();
         trackerPort->AddTool( trackerTool );
         this->AddPort( trackerPort );
+
+        TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
+        TrackerPortType::Pointer trackerPort2 = TrackerPortType::New();
+        trackerPort2->AddTool( trackerTool2 );
+        this->AddPort( trackerPort2 );
+        igstk::Transform::VectorType translation;
+        igstk::Transform::VersorType rotation;
+        igstk::Transform transform;
+        translation[0] = -100;
+        translation[1] = -100;
+        translation[2] = -100;
+        rotation.SetRotationAroundZ(0.1);
+        transform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
+        SetToolTransform(1, 0, transform);
         }
 
       ~TestingTracker() 
@@ -196,6 +210,46 @@ int igstkBasicTrackerTest( int, char * [] )
 
   std::cout << tracker << std::endl;
 
+  igstk::Transform::VectorType translation;
+  igstk::Transform::VersorType rotation;
+  igstk::Transform transform, patientTransform, toolCalibrationTransform;
+  tracker->GetToolTransform(0, 0, transform);
+  std::cout << transform << std::endl;
+
+  translation[0] = 1;
+  translation[1] = 2;
+  translation[2] = 3;
+  rotation.SetRotationAroundX(1.0);
+  patientTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
+  tracker->SetPatientTransform(patientTransform);
+  patientTransform.SetToIdentity(10000);
+  patientTransform = tracker->GetPatientTransform();
+  std::cout << patientTransform << std::endl;
+
+  translation[0] = -2;
+  translation[1] = -4;
+  translation[2] = -6;
+  rotation.SetRotationAroundX(-1.0);
+  toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
+  tracker->SetToolCalibrationTransform(toolCalibrationTransform);
+  toolCalibrationTransform.SetToIdentity(10000);
+  toolCalibrationTransform = tracker->GetToolCalibrationTransform();
+  std::cout << toolCalibrationTransform << std::endl;
+
+  tracker->SetReferenceTool(true, 1, 0);
+  unsigned int refTool;
+  unsigned int refPort;
+  bool bApplyRefTool;
+  bApplyRefTool = tracker->GetReferenceTool(refPort, refTool);
+  if( bApplyRefTool != true  ||  refTool != 0  ||  refPort != 1 )
+    {
+    std::cerr << "SetReferenceTool() or GetReferenceTool() doesn't work correctly!" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  tracker->GetToolTransform(0, 0, transform);
+  std::cout << transform << std::endl;
+
   igstk::CylinderObject::Pointer object = igstk::CylinderObject::New();
   object->SetRadius(1.0);
   object->SetHeight(1.0);
@@ -215,33 +269,7 @@ int igstkBasicTrackerTest( int, char * [] )
   tracker->UpdateStatus();  // for failure
   tracker->UpdateStatus();  // for success
 
-  std::cout << "Testing the interaction with tools" << std::endl;
-
-  igstk::Tracker::TransformType::VectorType translation;
-  translation[0] = 17;
-  translation[1] = 19;
-  translation[2] = 21;
-  std::cout << "Stored translation = " << translation << std::endl;
-  tracker->SetTranslation(translation);
-
   tracker->UpdateStatus();
-
-  igstk::Tracker::TransformType transform2;
-  tracker->GetToolTransform( 0, 0, transform2 );
-  igstk::Tracker::TransformType::VectorType translation2;
-  translation2 = transform2.GetTranslation();
-
-  std::cout << "Retrieved translation = " << translation2 << std::endl;
-
-  double tolerance = 1e-5;
-  for ( unsigned int i=0; i<3; i++)
-    {
-    if( fabs( translation2[i] - translation[i] ) > tolerance )
-      {
-      std::cerr << "Recovered translation does not match the stored one" << std::endl;
-      return EXIT_FAILURE;
-      }
-    }
 
   tracker->Reset(); // for failure
   tracker->Reset(); // for success
@@ -272,6 +300,7 @@ int igstkBasicTrackerTest( int, char * [] )
   basetracker->StopTracking();
   basetracker->Close();
 
+  std::cout << "[PASSED]" << std::endl;
   return EXIT_SUCCESS;
 }
 

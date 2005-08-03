@@ -23,7 +23,6 @@
 #include "itkObject.h"
 #include "itkLogger.h"
 
-#include "igstkCommunication.h"
 #include "igstkStateMachine.h"
 #include "igstkTrackerPort.h"
 #include "igstkTransform.h"
@@ -34,52 +33,49 @@
 namespace igstk
 {
 /** \class Tracker
-    \brief Generic implementation of the Tracker class.
-
-    This class provides a generic implementation of a tracker
-    class. It has two member variables, an instant of a state
-    machine, and reference to an instance of "communication"
-    class. 
-
-    The state machine implements the basic state transitions
-    of a tracker.
-
-    The communications object manages communication, either
-    through serial/parallel ports, or through data files (for
-    offline execution of tracker.)
-*/
+ *  \brief Generic implementation of the Tracker class.
+ *
+ *  This class provides a generic implementation of a tracker
+ *  class. It has two member variables, an instant of a state
+ *  machine, and reference to an instance of "communication"
+ *  class. 
+ *
+ *  The state machine implements the basic state transitions
+ *  of a tracker.
+ *
+ *  The communications object manages communication, either
+ *  through serial/parallel ports, or through data files (for
+ *  offline execution of tracker.)
+ */
 
 class Tracker : public itk::Object
 {
 
 public:
   
-  typedef igstk::Communication           CommunicationType;
+  /** typedef for LoggerType */
   typedef itk::Logger                    LoggerType;
 
-  /* typedefs from igstk::TrackerPort class */
+  /** typedefs from igstk::TrackerPort class */
   typedef igstk::TrackerTool             TrackerToolType;
 
-  /* typedefs from igstk::TrackerTool class */
+  /** typedefs from igstk::TrackerTool class */
   typedef Transform                TransformType;
   typedef double                   ErrorType;
 
-  /* typedefs for WorldTransform */
-  typedef itk::VersorTransform<double>       WorldTransformType;
-  typedef WorldTransformType::Pointer  WorldTransformPointer;
+  /** typedefs for PatientTransform */
+  typedef Transform                      PatientTransformType;
 
-  /* typedefs for ToolCalibrationTransform */
-  typedef itk::Transform<double>       ToolCalibrationTransformType;
-  typedef ToolCalibrationTransformType::Pointer  ToolCalibrationTransformPointer;
+  /** typedefs for ToolCalibrationTransform */
+  typedef Transform                               ToolCalibrationTransformType;
 
   /** Some required typedefs for itk::Object. */
-
   typedef Tracker                        Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
-  typedef igstk::TrackerPort             TrackerPortType;
-  typedef TrackerPortType::Pointer       TrackerPortPointer;
+  typedef igstk::TrackerPort                TrackerPortType;
+  typedef TrackerPortType::Pointer          TrackerPortPointer;
   typedef std::vector< TrackerPortPointer > TrackerPortVectorType;
 
   typedef igstk::TrackerTool             TrackerToolType;
@@ -109,7 +105,7 @@ public:
   tools connected to the tracker. */
   void StartTracking( void );
 
-  /** The "EndTracking" stops tracker from tracking the tools. */
+  /** The "StopTracking" stops tracker from tracking the tools. */
   void StopTracking( void );
 
   /** The "UpdateStatus" method is used for updating the status of 
@@ -127,34 +123,35 @@ public:
   void AttachObjectToTrackerTool( unsigned int portNumber, unsigned int toolNumber, SpatialObject * objectToTrack );
 
   /** The "SetReferenceTool" sets the reference tool. */
-//  void SetReferenceTool( bool applyReferenceTool, unsigned int portNumber, unsigned int toolNumber );
+  void SetReferenceTool( bool applyReferenceTool, unsigned int portNumber, unsigned int toolNumber );
 
   /** The "GetReferenceTool" gets the reference tool.
    * If the reference tool is not applied, it returns false.
    * Otherwise, it returns true. */
-//  bool GetReferenceTool( unsigned int &portNumber, unsigned int &toolNumber ) const;
+  bool GetReferenceTool( unsigned int &portNumber, unsigned int &toolNumber ) const;
 
-  /** The "SetWorldTransform" sets WorldTransform.
+  /** The "SetPatientTransform" sets PatientTransform.
 
-    T ' = W * R^-1 * T
+    T ' = W * R^-1 * T * C
 
     where:
     " T " is the original tool transform reported by the device,
     " R^-1 " is the inverse of the transform for the reference tool,
-    " W " is the world transform (it specifies the position of the reference
+    " W " is the Patient transform (it specifies the position of the reference
     with respect to patient coordinates), and
     " T ' " is the transformation that is reported to the spatial objects
+    " C " is the tool calibration transform.
   */
-//  void SetWorldTransform( WorldTransformType* _arg );
+  void SetPatientTransform( const PatientTransformType& _arg );
 
-//  void SetToolCalibrationTransform( ToolCalibrationTransformType* _arg );
+  /** The "GetPatientTransform" gets PatientTransform. */
+  PatientTransformType GetPatientTransform() const; 
 
-  /** The "GetWorldTransform" gets WorldTransform. */
-//  const WorldTransformType* GetWorldTransform() const; 
+  /** The "SetToolCalibrationTransform" sets the tool calibration transform */
+  void SetToolCalibrationTransform( const ToolCalibrationTransformType& _arg );
 
-  /** The SetCommunication method is used to attach a communication object to the
-  tracker object for communication with the tracker hardware. */
-//  void SetCommunication( CommunicationType * communication );
+  /** The "GetToolCalibrationTransform" gets the tool calibration transform */
+  ToolCalibrationTransformType GetToolCalibrationTransform() const;
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
@@ -208,7 +205,7 @@ protected:
       and responsible for device-specific processing */
   virtual ResultType InternalStopTracking( void );
 
-  /** The "UpdateStatusProcessing" method updates tracker status.
+  /** The "InternalUpdateStatus" method updates tracker status.
       This method is to be overriden by a decendent class 
       and responsible for device-specific processing */
   virtual ResultType InternalUpdateStatus( void );
@@ -240,19 +237,17 @@ private:
   /** Vector of all tool ports on the tracker */
   TrackerPortVectorType     m_Ports;
   
-  /** The "Communication" instance */
-//  CommunicationType::Pointer    m_Communication;
- 
   /** The reference tool */
-  /*
   bool                      m_ApplyingReferenceTool;
   TrackerToolPointer        m_ReferenceTool;
   unsigned int              m_ReferenceToolPortNumber;
   unsigned int              m_ReferenceToolNumber;
-  */
 
-  /** World Transform */
-  // WorldTransformPointer     m_WorldTransform;
+  /** Patient Transform */
+  PatientTransformType      m_PatientTransform;
+
+  /** ToolCalibration Transform */
+  ToolCalibrationTransformType    m_ToolCalibrationTransform;
 
   /** List of States */
   StateType                m_IdleState;
