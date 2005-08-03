@@ -36,22 +36,22 @@ int igstkBinaryDataTest( int, char * [] )
     igstk::BinaryData data3;
     
     /* creating an array */
-    unsigned char buffer[100];
+    unsigned char buffer[201];
 
     /* allocating memory and assigning data */
     data.SetSize(11);
-    data2.SetSize(21);
+    data2.SetSize(201);
     unsigned int i;
     for( i = 0; i < 10; ++i )
       {
       data[i] = (unsigned char)i + '0';
       }
     data[10] = 0;
-    for( i = 0; i < 20; ++i )
+    for( i = 0; i < 200; ++i )
       {
-      data2[i] = (unsigned char)i + '0';
+      data2[i] = (unsigned char)i + 1;
       }
-    data2[20] = 0;
+    data2[200] = 0;
 
     /* copy data into an array */
     data2.CopyTo(buffer);
@@ -87,11 +87,11 @@ int igstkBinaryDataTest( int, char * [] )
 
     if( data < data2 )
       {
+      std::cerr << "operator< failed !!" << std::endl;
+      return EXIT_FAILURE;
       }
     else
       {
-      std::cerr << "operator< failed !!" << std::endl;
-      return EXIT_FAILURE;
       }
     }
   catch(...)
