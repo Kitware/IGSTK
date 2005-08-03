@@ -60,17 +60,9 @@ public:
     {
         std::cout << "OpenPortFailureEvent Error Occurred ...\n";
     }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::SetCommunicationParametersFailureEvent ))
+    else if ( typeid(event)== typeid( igstk::SerialCommunication::SetTransferParametersFailureEvent ))
     {
         std::cout << "SetupCommunicationParametersFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::SetDataBufferSizeFailureEvent ))
-    {
-        std::cout << "SetDataBufferSizeFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::CommunicationTimeoutSetupFailureEvent ))
-    {
-        std::cout << "CommunicationTimeoutSetupFailureEvent Error Occurred ...\n";
     }
     else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteSuccessEvent ))
     {
@@ -126,11 +118,8 @@ int igstkAuroraTrackerTest( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG); //DEBUG );
 
   serialComm->AddObserver( igstk::SerialCommunication::OpenPortFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::SetCommunicationParametersFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::SetDataBufferSizeFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::CommunicationTimeoutSetupFailureEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::SetTransferParametersFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::SendBreakFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::FlushOutputBufferFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::WriteSuccessEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::WriteFailureEvent(), my_command);
   serialComm->AddObserver( igstk::SerialCommunication::WriteTimeoutEvent(), my_command);

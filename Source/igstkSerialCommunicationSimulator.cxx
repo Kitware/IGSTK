@@ -29,9 +29,8 @@
 
 namespace igstk
 { 
-/** Constructor */
-SerialCommunicationSimulator::SerialCommunicationSimulator() : 
-SerialCommunication()
+
+SerialCommunicationSimulator::SerialCommunicationSimulator()
 {
   m_ResponseTable.clear();
 } 
@@ -39,21 +38,17 @@ SerialCommunication()
 
 SerialCommunicationSimulator::~SerialCommunicationSimulator()
 {
-  if( m_File.is_open() )
-    {
-    m_File.close();
-    }
 } 
 
 
-void
-SerialCommunicationSimulator::SetFileName(const char* filename)
+void SerialCommunicationSimulator::SetFileName(const char* filename)
 {
   m_FileName.assign(filename);
 } 
 
 
-SerialCommunicationSimulator::ResultType SerialCommunicationSimulator::InternalOpenCommunication( void )
+SerialCommunicationSimulator::ResultType
+SerialCommunicationSimulator::InternalOpenPort( void )
 {
   igstkLogMacro( DEBUG, m_FileName << std::endl );
 
@@ -64,6 +59,7 @@ SerialCommunicationSimulator::ResultType SerialCommunicationSimulator::InternalO
     return FAILURE;
     }
 
+  // read a command-to-response table from a file
   BinaryData recvmsg, sentmsg;
   unsigned char buf[64*1024];
   char numberString[20], temp[20], byte;
@@ -135,128 +131,101 @@ SerialCommunicationSimulator::ResultType SerialCommunicationSimulator::InternalO
     }
 
   m_File.close();
+
   return SUCCESS;
 }
 
 
-SerialCommunicationSimulator::ResultType SerialCommunicationSimulator::InternalSetUpDataBuffers( void )
-{
-  if (this->m_InputBuffer!=NULL) delete (this->m_InputBuffer); 
-  this->m_InputBuffer = new char[ this->m_ReadBufferSize ];
-  if (this->m_OutputBuffer!=NULL) delete this->m_OutputBuffer; 
-  this->m_OutputBuffer = new char[ this->m_WriteBufferSize + 1 ]; // one extra byte to store end of string
-  if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL) )
-  {
-    this->InvokeEvent( SetDataBufferSizeFailureEvent() );
-    return FAILURE;
-  }
-  else
-  {
-    this->m_ReadDataSize = 0;
-    this->m_ReadBufferOffset = 0;
-    memset(this->m_InputBuffer, '\0', sizeof(this->m_InputBuffer));
-
-    igstkLogMacro( DEBUG, "SetDataBufferSizeParameters with Read Buffer size = " << m_ReadBufferSize << " and Write Buffer Size = " << m_WriteBufferSize << " succeeded.\n");
-    return SUCCESS;
-  }
-}
-
-
-SerialCommunicationSimulator::ResultType SerialCommunicationSimulator::InternalSetTransferParameters( void )
+SerialCommunicationSimulator::ResultType
+SerialCommunicationSimulator::InternalSetTransferParameters( void )
 {
   igstkLogMacro( DEBUG, "SetCommunicationParameters succeeded.\n");
   return SUCCESS;
 }
 
-SerialCommunicationSimulator::ResultType SerialCommunicationSimulator::InternalClearBuffersAndClosePort( void )
-{
-  if (m_InputBuffer!= NULL) // This check not required, still keeping for safety
-    delete m_InputBuffer;
-  m_InputBuffer = NULL;
-  if (m_OutputBuffer!= NULL) // This check not required, still keeping for safety
-    delete m_OutputBuffer;
-  m_OutputBuffer = NULL;
-  return this->InternalClosePort();
-}
 
-SerialCommunicationSimulator::ResultType SerialCommunicationSimulator::InternalClosePort( void )
+SerialCommunicationSimulator::ResultType
+SerialCommunicationSimulator::InternalClosePort( void )
 {
-  if ( m_File.is_open() )
-    {
-    m_File.close();
-    }
   return SUCCESS;
 }
 
-SerialCommunicationSimulator::ResultType SerialCommunicationSimulator::InternalSetTimeoutPeriod( int milliseconds )
-{
-  return SUCCESS;
-}
 
 void SerialCommunicationSimulator::InternalSendBreak( void )
 {
-  const BinaryData& response = this->m_ResponseTable[BinaryData()];
-  response.CopyTo( (unsigned char*)&this->m_InputBuffer[0] );
-
-  return;
+  // The response table might have a response for a serial break,
+  //  which we signify with an empty string
+  m_Command = BinaryData();
 }
 
 
-void SerialCommunicationSimulator::InternalFlushOutputBuffer( void )
+void SerialCommunicationSimulator::InternalSleep( void )
 {
-  return;
+  // Sleep isn't really needed during simulation, since
+  //  responses are instantaneous
 }
 
+
+void SerialCommunicationSimulator::InternalPurgeBuffers( void )
+{
+  // Simulator does not support purging buffers.
+}
 
 void SerialCommunicationSimulator::InternalWrite( void )
 {
-  unsigned long  bytesToWrite = m_WriteNumberOfBytes;
+  unsigned int bytesToWrite = m_BytesToWrite;
 
   igstkLogMacro( DEBUG, "InternalWrite called ...\n");
 
-  BinaryData output;
-  output.CopyFrom( (unsigned char*)&this->m_OutputBuffer[0], bytesToWrite );
-  const BinaryData& response = this->m_ResponseTable[output];
-  response.CopyTo( (unsigned char*)&this->m_InputBuffer[0] );
-  this->m_ReadDataSize = response.GetSize();
+  // Just copy the data to m_Command for later use.
+  m_Command.CopyFrom( (unsigned char*)&m_OutputData[0], bytesToWrite );
+
   igstkLogMacro( DEBUG, "Written bytes = " << bytesToWrite << std::endl);
   this->InvokeEvent( WriteSuccessEvent());
-
-  return;  /* return the number of characters written */
 }
 
 
 void SerialCommunicationSimulator::InternalRead( void )
 {
-  int i = m_ReadDataSize;
-  
-  if (i == 0)
-    { // no characters read, must have timed out
+  const BinaryData& response = m_ResponseTable[m_Command];
+  int bytesRead = response.GetSize();
+
+  // Number of bytes read can't be greater than number asked for.
+  bytesRead = ((m_BytesToRead < bytesRead) ? m_BytesToRead : bytesRead);
+
+  // Only copy the specified number of characters
+  for (int j = 0; j < bytesRead; j++)
+    {
+    ((unsigned char *)m_InputData)[j] = response[j];
+    } 
+
+  m_BytesRead = bytesRead;
+
+  // Check whether to simulate a timeout
+  if (bytesRead == 0 ||
+      (m_UseReadTerminationCharacter && 
+       m_InputData[bytesRead-1] != m_ReadTerminationCharacter) ||
+      (!m_UseReadTerminationCharacter &&
+       bytesRead < m_BytesToRead))
+    {
     igstkLogMacro( DEBUG, "InternalRead failed with timeout...\n");
     this->InvokeEvent( ReadTimeoutEvent() );
     return;
     }
 
-  this->m_ReadDataSize = i;
-  this->m_ReadBufferOffset = 0;
-  this->m_InputBuffer[i] = 0;
-  igstkLogMacro( DEBUG, "Read number of bytes = " << i << ". Data: " );
-  for( i = 0; i < this->m_ReadDataSize; ++i )
-    {
-    std::cout << this->m_InputBuffer[i];
-    }
-  std::cout << std::endl;
+  igstkLogMacro( DEBUG, "Read number of bytes = " << bytesRead << ". Data: " );
+
   this->InvokeEvent( ReadSuccessEvent() );
-  return;
 }
 
 
 /** Print Self function */
-void SerialCommunicationSimulator::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void SerialCommunicationSimulator::PrintSelf( std::ostream& os,
+                                              itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "File: " << m_File << std::endl;
+  os << indent << "FileName: " << m_FileName << std::endl;
 }
 
 } // end namespace igstk

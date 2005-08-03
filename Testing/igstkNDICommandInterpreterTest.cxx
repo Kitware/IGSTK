@@ -56,38 +56,40 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   // create the communication object
   CommunicationType::Pointer  serialComm = CommunicationType::New();
   serialComm->SetLogger(logger);
-  serialComm->SetUseReadTerminationCharacter(true);
-  serialComm->SetReadTerminationCharacter('\r');
-  serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
-  serialComm->SetParity( igstk::SerialCommunication::NoParity );
-  serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
-  serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
-  serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
-  serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
   // create the interpreter object
   CommandInterpreterType::Pointer interpreter = CommandInterpreterType::New();
 
   serialComm->OpenCommunication();
 
+  // NDICommandInterpreter will set the communication parameters itself
   interpreter->SetCommunication(serialComm);
 
   std::cout << interpreter << std::endl;
   //---------------------------------
   // send some commands to the device
   int i, j, n, a, ph;
-  int errorCode;
   unsigned int l;
   double vals[8];
   int portHandles[256];
   int numberOfHandles;
+  int errorCode = 0;
+
+  // -- the most basic test is to see if the device will reset --
+  std::cout << "Sending RESET" << std::endl;
+  interpreter->RESET();
 
   // -- basic initialization commands --
-  //interpreter->RESET();  // serial break not implemented yet
   std::cout << "Calling INIT" << std::endl;
   interpreter->INIT();
+  if (interpreter->GetError())
+    {
+    std::cout << "Failed to init, device must not be attached" << std::endl;
+    // set a fast timeout so that the test won't take forever
+    serialComm->SetTimeoutPeriod(100);
+    }
   std::cout << "Calling COMM" << std::endl;
-  interpreter->COMM(CommandInterpreterType::NDI_9600,
+  interpreter->COMM(CommandInterpreterType::NDI_38400,
                     CommandInterpreterType::NDI_8N1,
                     CommandInterpreterType::NDI_NOHANDSHAKE);
   std::cout << "Calling BEEP" << std::endl;
@@ -101,11 +103,11 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   interpreter->SFLIST(CommandInterpreterType::NDI_FEATURE_SUMMARY);
 
   std::cout << "Calling SSTAT" << std::endl;
-  interpreter->SSTAT(CommandInterpreterType::NDI_CONTROL |
-                     CommandInterpreterType::NDI_SENSORS |
-                     CommandInterpreterType::NDI_TIU);
+  interpreter->SSTAT(CommandInterpreterType::NDI_CONTROL);
   a = interpreter->GetSSTATControl();
+  interpreter->SSTAT(CommandInterpreterType::NDI_SENSORS);
   a = interpreter->GetSSTATSensors();
+  interpreter->SSTAT(CommandInterpreterType::NDI_TIU);
   a = interpreter->GetSSTATTIU();
 
   // -- diagnostic commands, POLARIS only --

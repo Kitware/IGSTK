@@ -29,16 +29,24 @@
 
 namespace igstk
 { 
-/** Constructor */
-SerialCommunicationForLinux::SerialCommunicationForLinux() : 
-  TIMEOUT_PERIOD(5000),
-  INVALID_HANDLE(-1)
+
+// value for invalid handle
+const int INVALID_HANDLE = -1;
+
+
+SerialCommunicationForLinux::SerialCommunicationForLinux()
 {
-  this->m_PortHandle = INVALID_HANDLE;
+  m_PortHandle = INVALID_HANDLE;
 } 
 
+
+SerialCommunicationForLinux::~SerialCommunicationForLinux()
+{
+} 
+
+
 SerialCommunicationForLinux::ResultType
-SerialCommunicationForLinux::InternalOpenCommunication( void )
+SerialCommunicationForLinux::InternalOpenPort( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalOpenPort called ...\n");
   static struct flock fl = { F_WRLCK, 0, 0, 0 }; // for file locking
@@ -46,19 +54,19 @@ SerialCommunicationForLinux::InternalOpenCommunication( void )
   struct termios t;
   int i;
 
-  if( this->m_PortHandle != INVALID_HANDLE )
+  if( m_PortHandle != INVALID_HANDLE )
   {
     igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalOpenPort : port is already open! ...\n");
   }
 
   char device[20];
+  // it would be really nice to support the devices for other OS
   sprintf(device, "/dev/ttyS%.1d", this->GetPortNumber() );
-  std::cout << device << std::endl;
 
   // port is readable/writable and is (for now) non-blocking
-  this->m_PortHandle = open(device,O_RDWR|O_NOCTTY|O_NDELAY);
+  m_PortHandle = open(device,O_RDWR|O_NOCTTY|O_NDELAY);
 
-  if (this->m_PortHandle == INVALID_HANDLE)
+  if (m_PortHandle == INVALID_HANDLE)
     {
     this->InvokeEvent( OpenPortFailureEvent() );
     return FAILURE;             // bail out on error
@@ -66,32 +74,32 @@ SerialCommunicationForLinux::InternalOpenCommunication( void )
 
   // restore blocking now that the port is open (we just didn't want
   // the port to block while we were trying to open it)
-  fcntl(this->m_PortHandle, F_SETFL, 0);
+  fcntl(m_PortHandle, F_SETFL, 0);
 
 #ifndef __APPLE__
   // get exclusive lock on the serial port
   // on many unices, this has no effect for device files
-  if (fcntl(this->m_PortHandle, F_SETLK, &fl))
+  if (fcntl(m_PortHandle, F_SETLK, &fl))
     {
-    close(this->m_PortHandle);
+    close(m_PortHandle);
     this->InvokeEvent( OpenPortFailureEvent() );
     return FAILURE;             // bail out on error
     }
 #endif /* __APPLE__ */
 
   // get I/O information
-  if (tcgetattr(this->m_PortHandle,&t) == -1)
+  if (tcgetattr(m_PortHandle,&t) == -1)
     {
-    fcntl(this->m_PortHandle, F_SETLK, &fu);
-    close(this->m_PortHandle);
-    this->m_PortHandle = INVALID_HANDLE;
+    fcntl(m_PortHandle, F_SETLK, &fu);
+    close(m_PortHandle);
+    m_PortHandle = INVALID_HANDLE;
     this->InvokeEvent( OpenPortFailureEvent() );
     return FAILURE;
     }
 
   // save the serial port state so that it can be restored when
   //   the serial port is closed in ndiSerialClose()
-  tcgetattr(this->m_PortHandle,&m_SaveTermIOs);
+  tcgetattr(m_PortHandle,&m_SaveTermIOs);
 
   // clear everything specific to terminals
   t.c_lflag = 0;
@@ -99,18 +107,18 @@ SerialCommunicationForLinux::InternalOpenCommunication( void )
   t.c_oflag = 0;
 
   t.c_cc[VMIN] = 0;                    // use constant, not interval timout
-  t.c_cc[VTIME] = TIMEOUT_PERIOD/100;
+  t.c_cc[VTIME] = m_TimeoutPeriod/100;
 
-  if (tcsetattr(this->m_PortHandle,TCSANOW,&t) == -1)
+  if (tcsetattr(m_PortHandle,TCSANOW,&t) == -1)
     { // set I/O information
-    fcntl(this->m_PortHandle, F_SETLK, &fu);
-    close(this->m_PortHandle);
-    this->m_PortHandle = INVALID_HANDLE;
+    fcntl(m_PortHandle, F_SETLK, &fu);
+    close(m_PortHandle);
+    m_PortHandle = INVALID_HANDLE;
     this->InvokeEvent( OpenPortFailureEvent() );
     return FAILURE;
     }
 
-  tcflush(this->m_PortHandle,TCIOFLUSH); // flush the buffers for good luck
+  tcflush(m_PortHandle,TCIOFLUSH); // flush the buffers for good luck
   igstkLogMacro( DEBUG, "COM port name: " << device << " opened.\n");
 
   return SUCCESS;
@@ -118,47 +126,14 @@ SerialCommunicationForLinux::InternalOpenCommunication( void )
 
 
 SerialCommunicationForLinux::ResultType
-SerialCommunicationForLinux::InternalSetUpDataBuffers( void )
-{
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalSetUpDataBuffers called ...\n");
-  if (this->m_InputBuffer!=NULL)
-    {
-    delete [] this->m_InputBuffer;
-    }
-  this->m_InputBuffer = new char[ this->m_ReadBufferSize ];
-  if (this->m_OutputBuffer!=NULL)
-    {
-    delete [] this->m_OutputBuffer;
-    } 
-  // one extra byte to store end of string
-  this->m_OutputBuffer = new char[ this->m_WriteBufferSize + 1 ];
-
-  if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL)) 
-    {
-    this->InvokeEvent( SetDataBufferSizeFailureEvent() );
-    return FAILURE;
-    }
-  else
-    {
-    //Clear out buffers
-    this->m_ReadDataSize = 0;
-    this->m_ReadBufferOffset = 0;
-    memset(this->m_InputBuffer, '\0', sizeof(this->m_InputBuffer));
-
-    igstkLogMacro( DEBUG, "SetDataBufferSizeParameters with Read Buffer size = " << m_ReadBufferSize << " and Write Buffer Size = " << m_WriteBufferSize << " succeeded.\n");
-    return SUCCESS;
-    }
-}
-
-
-SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSetTransferParameters( void )
+SerialCommunicationForLinux::InternalSetTransferParameters( void )
 {
   struct termios t;
   int newbaud;
 
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalSetTransferParameters called ...\n");
 
-  unsigned int baud = this->m_BaudRate;
+  unsigned int baud = m_BaudRate;
 
 #if defined(sgi) && defined(__NEW_MAX_BAUD)
   switch (baud)
@@ -180,7 +155,7 @@ SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSet
     }
 #endif
 
-  tcgetattr(this->m_PortHandle,&t);          // get I/O information
+  tcgetattr(m_PortHandle,&t);          // get I/O information
   t.c_cflag &= ~CSIZE;                // clear flags
 
   // set baud rate
@@ -195,42 +170,44 @@ SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSet
 #endif
 
   // set data bits
-  if (this->m_DataBits == DataBits8)
+  if (m_DataBits == DataBits8)
     {                 
     t.c_cflag |= CS8; 
     }
-  else if (this->m_DataBits == DataBits7)
+  else if (m_DataBits == DataBits7)
     {
     t.c_cflag |= CS7;
     }
 
   // set parity
-  if (this->m_Parity == NoParity)
+  if (m_Parity == NoParity)
     { // none            
     t.c_cflag &= ~PARENB;
     t.c_cflag &= ~PARODD;
     }
-  else if (this->m_Parity == OddParity)
+  else if (m_Parity == OddParity)
     { // odd
     t.c_cflag |= PARENB;
     t.c_cflag |= PARODD;
     }
-  else if (this->m_Parity == EvenParity)
+  else if (m_Parity == EvenParity)
     { // even
     t.c_cflag |= PARENB;
     t.c_cflag &= ~PARODD;
     }
 
-  if (this->m_StopBits == StopBits1)
-    {                  // set stop bits
+  // set stop bits
+  if (m_StopBits == StopBits1)
+    { 
     t.c_cflag &= ~CSTOPB; 
     }
-  else if (this->m_StopBits == StopBits2)
+  else if (m_StopBits == StopBits2)
     {
     t.c_cflag |= CSTOPB; 
     }
 
-  if (this->m_HardwareHandshake == HandshakeOn)
+  // set handshaking
+  if (m_HardwareHandshake == HandshakeOn)
     {
 #ifdef sgi
     t.c_cflag |= CNEW_RTSCTS;       // enable hardware handshake
@@ -247,29 +224,25 @@ SerialCommunicationForLinux::ResultType SerialCommunicationForLinux::InternalSet
 #endif     
     } 
 
-  tcsetattr(this->m_PortHandle,TCSADRAIN,&t);  // set I/O information
+  // set timeout period
+  t.c_cc[VMIN] = 0;                     // use constant, not interval timout
+  t.c_cc[VTIME] = m_TimeoutPeriod/100;  // wait time is in 10ths of a second
 
-  igstkLogMacro( DEBUG, "SetCommunicationParameters succeeded.\n");
+  // set I/O information
+  if (tcsetattr(m_PortHandle,TCSADRAIN,&t) == -1)
+    {
+    igstkLogMacro( DEBUG, "SetTransferParameters failed.\n");
+
+    this->InvokeEvent( SetTransferParametersFailureEvent() );
+
+    return FAILURE;
+    }
+
+  igstkLogMacro( DEBUG, "SetTransferParameters succeeded.\n");
+
   return SUCCESS;
 }
 
-SerialCommunicationForLinux::ResultType
-SerialCommunicationForLinux::InternalClearBuffersAndClosePort( void )
-{
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalClearBuffersAndClosePort called ...\n");
-  if (m_InputBuffer!= NULL)
-    { // This check not required, still keeping for safety
-    delete [] m_InputBuffer;
-    m_InputBuffer = NULL;
-    }
-  if (m_OutputBuffer!= NULL)
-    {// This check not required, still keeping for safety
-    delete [] m_OutputBuffer;
-    m_OutputBuffer = NULL;
-    }
-
-  return this->InternalClosePort();
-}
 
 SerialCommunicationForLinux::ResultType
 SerialCommunicationForLinux::InternalClosePort( void )
@@ -279,60 +252,55 @@ SerialCommunicationForLinux::InternalClosePort( void )
 
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalClosePort called ...\n");
   // restore the comm port state to from before it was opened
-  tcsetattr(this->m_PortHandle,TCSANOW,&m_SaveTermIOs);
+  tcsetattr(m_PortHandle,TCSANOW,&m_SaveTermIOs);
 
   // release our lock on the serial port
-  fcntl(this->m_PortHandle, F_SETLK, &fu);
+  fcntl(m_PortHandle, F_SETLK, &fu);
 
-  close(this->m_PortHandle);
-  this->m_PortHandle = INVALID_HANDLE;
+  if (close(m_PortHandle) == -1)
+    {
+    this->InvokeEvent( ClosePortFailureEvent() );
+    return FAILURE;
+    }
+
+  m_PortHandle = INVALID_HANDLE;
+
   igstkLogMacro( DEBUG, "Communication port closed.\n");
 
   return SUCCESS;
 }
 
-SerialCommunicationForLinux::ResultType
-SerialCommunicationForLinux::InternalSetTimeoutPeriod( int milliseconds )
-{
-  struct termios t;
-
-  if (tcgetattr(this->m_PortHandle,&t) == -1)
-    {
-    return FAILURE;
-    }
-
-  t.c_cc[VMIN] = 0;                  // use constant, not interval timout
-  t.c_cc[VTIME] = milliseconds/100;  // wait time is in 10ths of a second
-
-  if (tcsetattr(m_PortHandle,TCSANOW,&t) == -1)
-    {
-    return FAILURE;
-    }
-
-  return SUCCESS;
-}
 
 void SerialCommunicationForLinux::InternalSendBreak( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalSendBreak called ...\n");
 
-  tcflush(this->m_PortHandle,TCIOFLUSH);     // clear input/output buffers
-  tcsendbreak(this->m_PortHandle,0);         // send the break
-
-  return;
+  // send the break
+  if (tcsendbreak(m_PortHandle,0) == -1)
+    {
+    this->InvokeEvent( SendBreakFailureEvent() );
+    }
 }
 
 
-void SerialCommunicationForLinux::InternalFlushOutputBuffer( void )
+void SerialCommunicationForLinux::InternalSleep( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalFlushOutputBuffer called ...\n");
+  int milliseconds = m_SleepPeriod;
 
-  if( tcflush(this->m_PortHandle, TCOFLUSH) != 0)  // clear output buffers
-    {
-    this->InvokeEvent( FlushOutputBufferFailureEvent() );
-    }
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalSleep called ...\n");
 
-  return;
+  struct timespec sleep_time, dummy;
+  sleep_time.tv_sec = milliseconds/1000;
+  sleep_time.tv_nsec = (milliseconds - sleep_time.tv_sec*1000)*1000000;
+  nanosleep(&sleep_time,&dummy);
+}
+
+
+void SerialCommunicationForLinux::InternalPurgeBuffers( void )
+{
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalPurgeBuffers called ...\n");
+
+  tcflush(m_PortHandle, TCIOFLUSH);  // clear output buffers
 }
 
 
@@ -340,34 +308,34 @@ void SerialCommunicationForLinux::InternalWrite( void )
 {
   int i = 0;
   int m;
-  unsigned long  bytesToWrite = m_WriteNumberOfBytes;
+  int n = m_BytesToWrite;
+  int writeError = 0;
 
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalWrite called ...\n");
-
-  while (bytesToWrite > 0)
+  while (n > 0)
     { 
-    if ((m = write(this->m_PortHandle,&this->m_OutputBuffer[i], bytesToWrite)) == -1)
+    if ((m = write(m_PortHandle, &m_OutputData[i], n)) == -1)
       {
-      if (errno == EAGAIN) 
-        { // system cancelled us, retry
-        m = 0;
-        }
-      else
+      // if error is not EAGAIN, break
+      m = 0;
+      if (errno != EAGAIN) 
         {
-        this->InvokeEvent( WriteFailureEvent() );
-        igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalWrite failed ...\n");
-        return;  // IO error occurred
+        writeError = 1;
+        break;
         }
       }
 
-    bytesToWrite -= m;  // n is number of chars left to write
+    n -= m;  // n is number of chars left to write
     i += m;  // i is the number of chars written
     }
-
-  std::cout << "Written bytes = " << i << std::endl;
-  this->InvokeEvent( WriteSuccessEvent());
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalWrite succeeded ...\n");
-  return;  // return the number of characters written
+  
+  if (writeError)
+    {
+    this->InvokeEvent( WriteFailureEvent() );
+    }
+  else
+    {
+    this->InvokeEvent( WriteSuccessEvent() );
+    }
 }
 
 
@@ -375,46 +343,64 @@ void SerialCommunicationForLinux::InternalRead( void )
 {
   int i = 0;
   int m;
-  int n = this->m_ReadNumberOfBytes;
+  int n = m_BytesToRead;
+  int readError = 0;
 
+  // Read reply either until n bytes have been read,
+  // or if UseReadTerminationCharacter is set then read
+  // until the termination character is found.
   while (n > 0)
-    { // read reply until ReadTerminationCharacter 
-      //  if the UseTerminationCharacter option is set 
-    if ((m = read(this->m_PortHandle,&this->m_InputBuffer[i], n)) == -1)
+    {
+    if ((m = read(m_PortHandle,&m_InputData[i], 1)) == -1)
       {
-      if (errno == EAGAIN) 
-        {      // cancelled, so retry
-        m = 0;
-        }
-      else
+      // if error is not EAGAIN, break
+      m = 0;
+      if (errno != EAGAIN) 
         {
-        this->InvokeEvent( ReadFailureEvent() );
-        return;  // IO error occurred
+        readError = 1;
+        break;
         }
       }
     else if (m == 0)
       { // no characters read, must have timed out
-      this->InvokeEvent( ReadTimeoutEvent() );
+      readError = 2;
       return;
       }
     n -= m;  // n is number of chars left to read
     i += m;  // i is the number of chars read
-    if ( this->m_UseReadTerminationCharacter )
-      {
-      if (this->m_InputBuffer[i-1] == this->m_ReadTerminationCharacter )
-        {  // done when ReadTerminationCharacter received
-        break;
-        }
+
+    // done when ReadTerminationCharacter received
+    if ( m_UseReadTerminationCharacter &&
+         m_InputData[i-1] == m_ReadTerminationCharacter )
+      {  
+      break;
       }
     }
 
-  this->m_ReadDataSize = i;
-  this->m_ReadBufferOffset = 0;
-  this->m_InputBuffer[i] = 0; // terminate the string
-  std::cout << "Read number of bytes = " << i << ". String: " << this->m_InputBuffer << std::endl;
-  this->InvokeEvent( ReadSuccessEvent());
+  // set the number of bytes that were read
+  m_BytesRead = i;
+  m_InputData[i] = '\0';
 
-  return;
+  // invoke the appropriate event
+  if (readError == 1)
+    {
+    this->InvokeEvent( ReadFailureEvent() );
+    }
+  else if (readError == 2)
+    {
+    this->InvokeEvent( ReadTimeoutEvent() );
+    }
+  else
+    {
+    this->InvokeEvent( ReadSuccessEvent() );
+    }
+}
+
+
+void SerialCommunicationForLinux::PrintSelf( std::ostream& os,
+                                             itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
 }
 
 } // end namespace igstk

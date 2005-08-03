@@ -20,7 +20,11 @@
 #include <string.h>
 
 // maximum allowed size for a command to the device
-#define NDI_MAX_COMMAND_SIZE 2047
+const int NDI_MAX_COMMAND_SIZE = 2047;
+const int NDI_MAX_REPLY_SIZE = 2047;
+// timeouts for tracking and non-tracking modes
+const int NDI_NORMAL_TIMEOUT = 5000;
+const int NDI_TRACKING_TIMEOUT = 100;
 
 namespace igstk
 {
@@ -30,8 +34,8 @@ NDICommandInterpreter::NDICommandInterpreter()
   m_Communication = 0;
 
   m_SerialCommand = new char[NDI_MAX_COMMAND_SIZE+1];
-  m_SerialReply = new char[NDI_MAX_COMMAND_SIZE+1];
-  m_CommandReply = new char[NDI_MAX_COMMAND_SIZE+1];
+  m_SerialReply = new char[NDI_MAX_REPLY_SIZE+1];
+  m_CommandReply = new char[NDI_MAX_REPLY_SIZE+1];
 
   m_Tracking = 0;
   m_ErrorCode = 0;
@@ -49,6 +53,42 @@ NDICommandInterpreter::~NDICommandInterpreter()
 void NDICommandInterpreter::SetCommunication(CommunicationType *communication)
 {
   m_Communication = communication;
+ 
+  /* These are the communication parameters that the NDI devices are
+     set up for when they are turned on or reset. */
+  communication->SetBaudRate(SerialCommunication::BaudRate9600);
+  communication->SetDataBits(SerialCommunication::DataBits8);
+  communication->SetParity(SerialCommunication::NoParity);
+  communication->SetStopBits(SerialCommunication::StopBits1);
+  communication->SetHardwareHandshake(SerialCommunication::HandshakeOff);
+
+  /* The timeouts are tricky to deal with.  The NDI devices reply
+     almost immediately after most command, with notable exceptions:
+     INIT, RESET, PINIT and some diagnostic commands tie up the
+     device for quite some time.  The worst offender is PINIT,
+     since port initialization can take up to 5 seconds.
+
+     A long timeout is a problem if a line error (i.e. error caused
+     by noise in the serial cable) occurs.  Line errors occur
+     infrequently at 57600 baud and frequenty at 115200 baud.
+     A line error can cause a loss of the trailing carriage return
+     on a data record, and the Read() command will of course keep
+     waiting for this nonexistent carriage return. Five seconds is
+     a long time to wait!  As a solution, while in tracking mode, the
+     timeout period is reduced to just 0.1 seconds so that errors
+     can be detected and dealt with swiftly.
+
+     Line errors in tracking mode are no danger, since CRC checking will
+     automatically detect and discard bad data records.  However, we
+     don't want the system to freeze for 5 seconds each time an error
+     like this occurs, which is why we reduce the timeout to 0.1s in
+     tracking mode.
+  */
+  communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
+
+  /* All replies from the NDI devices end in a carriage return. */
+  communication->SetUseReadTerminationCharacter(1);
+  communication->SetReadTerminationCharacter('\r');
 }
 
 /*---------------------------------------------------------------------*/
@@ -399,17 +439,21 @@ const char *NDICommandInterpreter::Command(const char *command)
   rp[0] = '\0';
   crp[0] = '\0';
 
-  /* if the command is NULL, send a break to reset the Measurement System */
+  /* if the command is NULL, send a break to reset the device */
   if (command == NULL)
     {
     cp[0] = '\0';
+    /* serial break will force tracking to stop */
     m_Tracking = 0;
+    m_Communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
 
-    /* need to replace with SerialCommunication calls */
-    // ndiSerialComm(pol->serial_device, 9600, "8N1", 0);
-    // ndiSerialFlush(pol->serial_device, NDI_IOFLUSH);
-    // ndiSerialBreak(pol->serial_device);
-    // m = ndiSerialRead(pol->serial_device, rp, 2047);
+    /* Reset the comm parameters and send a serial break */
+    m_Communication->SetBaudRate(SerialCommunication::BaudRate9600);
+    m_Communication->SetHardwareHandshake(SerialCommunication::HandshakeOff);
+    m_Communication->PurgeBuffers();
+    m_Communication->SendBreak();
+
+    m_Communication->Read(rp, NDI_MAX_REPLY_SIZE, m);
 
     /* check for correct reply */
     if (strncmp(rp, "RESETBE6F\r", 8) != 0)
@@ -468,85 +512,41 @@ const char *NDICommandInterpreter::Command(const char *command)
       (nc == 4 && strncmp(cp, "INIT", nc) == 0))
     {
     m_Tracking = 0;
-    }
-  else if (nc == 6 && strncmp(cp, "TSTART", nc) == 0)
-    {
-    m_Tracking = 1;
+    m_Communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
     }
 
   /* flush the input buffer, because anything that we haven't read
        yet is garbage left over by a previously failed command */
-//  m_Communication->Flush();
+  m_Communication->PurgeBuffers();
 
   /* send the command to the device */
-  std::cout << "NDI sending: " << cp << std::endl;
   m_Communication->Write(cp, strlen(cp));
-  /* commented out because of void return value.
-  if (!m_Communication->SendString(cp))
-    {
-    errcode = NDI_WRITE_ERROR;
-    }
-  */
-
-  /* here is the old code from ndicapi.c */
-  //if (errcode == 0) {
-  //  m = ndiSerialWrite(pol->serial_device, cp, i);
-  //  if (m < 0) {
-  //    errcode = NDI_WRITE_ERROR;
-  //  }
-  //  else if (m < i) {
-  //    errcode = NDI_TIMEOUT;
-  //  }
-  //}
+  /* is there any easy way to check if the write failed, or
+   * is it necessary to catch the events? There should be code
+   * here to check, and set errcode = NDI_WRITE_ERROR or 
+   * NDI_TIMEOUT */
 
   /* read the reply from the device */
+  m = 0;
   if (errcode == 0)
     {
-    m = 0;
-    for (;;)
+    m_Communication->Read(rp, NDI_MAX_REPLY_SIZE, m);
+
+    /* need better code to check for error and set NDI_WRITE_ERROR or
+     * NDI_TIMEOUT, since both result in m=0 */
+
+    if (m == 0)
       {
-      int bytesRead;
-      m_Communication->Read(&rp[m], 255, bytesRead);
-      /* commented out because of void return value.
-      if (!m_Communication->ReceiveString(&rp[m]))
-        {
-        errcode = NDI_WRITE_ERROR;
-        std::cout << "NDI read error"<< std::endl;
-        break;
-        }
-      */
-
-      m = strlen(rp);
-
-      /* check for carriage return */
-      if (m != 0 && rp[m-1] == '\r')
-        {
-        std::cout << "NDI read complete: " << rp << std::endl;
-        break;
-        }
-      else if (m == 0)
-        {
-        std::cout << "NDI read failed due to timeout" << std::endl;
-        break;
-        }
-
-      std::cout << "NDI read " << m << " bytes: " << rp << std::endl;
+      errcode = NDI_TIMEOUT;
       }
-    }
+    else if (rp[m-1] != '\r')
+      {
+      errcode = NDI_READ_ERROR;
+      m = 0;
+      }
 
-  /* here is the old code from ndicapi.c */
-  //m = 0;
-  //if (errcode == 0) {
-  //m = ndiSerialRead(pol->serial_device, rp, 2047);
-  //  if (m < 0) {
-  //    errcode = NDI_WRITE_ERROR;
-  //    m = 0;
-  //  }
-  //  else if (m == 0) {
-  //    errcode = NDI_TIMEOUT;
-  //  }
-  //  rp[m] = '\0';   /* terminate string */
-  //}
+    rp[m] = '\0';   /* terminate string */
+    }
 
   if (errcode != 0)
     {
@@ -586,6 +586,16 @@ const char *NDICommandInterpreter::Command(const char *command)
     return crp;
     }
 
+  /* anything past here is only executed if no error occurred */
+
+  if (nc == 6 && strncmp(cp, "TSTART", nc) == 0)
+    {
+    /* decrease the timeout, since otherwise the system will freeze
+       for 5 seconds each time there is a CRC error */
+    m_Communication->SetTimeoutPeriod(NDI_TRACKING_TIMEOUT);
+    m_Tracking = 1;
+    }
+
   /*----------------------------------------*/
   /* special behavior for specific commands */
 
@@ -596,10 +606,6 @@ const char *NDICommandInterpreter::Command(const char *command)
   else if (cp[0] == 'C' && nc == 4 && strncmp(cp, "COMM", nc) == 0)
     {
     HelperForCOMM(cp, crp);
-    }
-  else if (cp[0] == 'I' && nc == 4 && strncmp(cp, "INIT", nc) == 0)
-    {
-    HelperForINIT(cp, crp);
     }
   else if (cp[0] == 'I' && nc == 5 && strncmp(cp, "IRCHK", nc) == 0)
     {
@@ -616,6 +622,10 @@ const char *NDICommandInterpreter::Command(const char *command)
   else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHSR", nc) == 0)
     {
     HelperForPHSR(cp, crp);
+    }
+  else if (cp[0] == 'S' && nc == 5 && strncmp(cp, "SSTAT", nc) == 0)
+    {
+    HelperForSSTAT(cp, crp);
     }
   else if (cp[0] == 'S' && nc == 5 && strncmp(cp, "SSTAT", nc) == 0)
     {
@@ -1682,50 +1692,43 @@ void NDICommandInterpreter::HelperForIRCHK(const char *cp, const char *crp)
 */
 void NDICommandInterpreter::HelperForCOMM(const char *cp, const char *crp)
 {
-  static int convert_baud[6] = { 9600, 14400, 19200, 38400, 57600, 115200 };
-  char newdps[4] = "8N1";
-  int newspeed = 9600;
-  int newhand = 0;
+  static SerialCommunication::BaudRateType convert_baud[6] = {
+    SerialCommunication::BaudRate9600,
+    SerialCommunication::BaudRate19200,
+    SerialCommunication::BaudRate19200,
+    SerialCommunication::BaudRate38400,
+    SerialCommunication::BaudRate57600,
+    SerialCommunication::BaudRate115200 };
+
+  SerialCommunication::BaudRateType
+    newspeed = SerialCommunication::BaudRate9600;
+  
+  SerialCommunication::HandshakeType
+    newhand = SerialCommunication::HandshakeOff;
+
+  /* Force to 8N1, don't allow 14400 baud (not supported by UNIX) */
+  if (cp[5] < '0' || cp[5] == '1' || cp[5] > '5' ||
+      cp[6] != '0' || cp[7] != '0' || cp[8] != '0')
+    {
+    this->SetErrorCode(NDI_BAD_COMM);
+    return;
+    }
 
   if (cp[5] >= '0' && cp[5] <= '5')
     {
     newspeed = convert_baud[cp[5]-'0'];
     }
-  if (cp[6] == '1')
-    {
-    newdps[0] = '7';
-    }
-  if (cp[7] == '1')
-    {
-    newdps[1] = 'O';
-    }
-  else if (cp[7] == '2')
-    {
-    newdps[1] = 'E';
-    }
-  if (cp[8] == '1')
-    {
-    newdps[2] = '2';
-    }
+
   if (cp[9] == '1')
     {
-    newhand = 1;
+    newhand = SerialCommunication::HandshakeOn;
     } 
 
-  /* this code must be replace with SerialCommunication calls */
-  // ndiSerialSleep(pol->serial_device, 100);  /* let the device adjust  */
-  //if (ndiSerialComm(pol->serial_device, newspeed, newdps, newhand) != 0) {
-  //  this->SetErrorCode(NDI_BAD_COMM);
-  //}
-}
+  m_Communication->Sleep(100);  /* let the device adjust  */
+  m_Communication->SetBaudRate(newspeed);
+  m_Communication->SetHardwareHandshake(newhand);
 
-/*---------------------------------------------------------------------
-  Sleep for 100 milliseconds after an INIT command.
-*/
-void NDICommandInterpreter::HelperForINIT(const char *, const char *)
-{
-  /* need to go to sleep for 100 milliseconds somehow */
-  //ndiSerialSleep(serial_device, 100);
+  /* should set error code to NDI_BAD_COMM if the above fails */
 }
 
 /*---------------------------------------------------------------------
@@ -1739,13 +1742,16 @@ int NDICommandInterpreter::SetErrorCode(int errnum)
 }
 
 
-/** Print Self function */
-void NDICommandInterpreter::PrintSelf( std::ostream& os, itk::Indent indent ) const
+/*---------------------------------------------------------------------
+  PrintSelf function.
+*/
+void NDICommandInterpreter::PrintSelf( std::ostream& os,
+                                       itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Tracking: " << m_Tracking << std::endl;
-  os << indent << "Error code: " << m_ErrorCode << std::endl;
+  os << indent << "ErrorCode: " << m_ErrorCode << std::endl;
 }
 
 

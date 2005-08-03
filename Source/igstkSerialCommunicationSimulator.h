@@ -38,6 +38,7 @@ class SerialCommunicationSimulator : public SerialCommunication
 {
 public:
 
+  /** The type for the file that holds simulation data. */
   typedef std::ifstream   FileType;
 
   typedef SerialCommunicationSimulator   Self;
@@ -57,34 +58,30 @@ protected:
 
   typedef SerialCommunication::ResultType ResultType;
 
+  /** Constructor */
   SerialCommunicationSimulator();
 
-  virtual ~SerialCommunicationSimulator();
+  /** Destructor */
+  ~SerialCommunicationSimulator();
 
   /** Opens serial port for communication; */
-  virtual ResultType InternalOpenCommunication( void );
+  virtual ResultType InternalOpenPort( void );
 
-  /** Set up data buffer size. */
-  virtual ResultType InternalSetUpDataBuffers( void );
-
-  /** Sets up communication on the open port as per the communication parameters. */
+  /** Sets up communication on the open port as per the communication
+      parameters. */
   virtual ResultType InternalSetTransferParameters( void );
 
   /** Closes serial port  */
   virtual ResultType InternalClosePort( void );
 
-  /** Clear buffers and close port */
-  virtual ResultType InternalClearBuffersAndClosePort( void );
-
-  /** Send break and restarting
-  transmission after a short delay.*/
+  /** Send a serial break */
   virtual void InternalSendBreak( void );
 
-  /** Set the amount of time to wait on a reply from the device before generating a timeout event. */
-  virtual ResultType InternalSetTimeoutPeriod( int milliseconds );
+  /** Sleep for the amount of time stored in m_SleepPeriod */
+  virtual void InternalSleep( void );
 
-  /** Flush output buffer */
-  virtual void InternalFlushOutputBuffer( void );
+  /** Purge the input and output buffers */
+  virtual void InternalPurgeBuffers( void );
 
   /** Write data */
   virtual void InternalWrite( void );
@@ -95,16 +92,23 @@ protected:
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
+private:
+
   /** The mapping table for the request and response */
   typedef std::map<BinaryData, BinaryData> ResponseTableType;
 
-private:
+  /** The file that holds the simulation data. */
+  FileType  m_File;
 
-  FileType      m_File;
+  /** The name of the simulation data file. */
+  std::string  m_FileName;
 
-  std::string        m_FileName;
+  /** A table that maps commands to responses. */
+  ResponseTableType  m_ResponseTable;
 
-  ResponseTableType   m_ResponseTable;
+  /** The most recently sent command */
+  BinaryData  m_Command;
+
 };
 
 } // end namespace igstk

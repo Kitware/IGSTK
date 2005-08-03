@@ -64,6 +64,13 @@ AuroraTracker::ResultType AuroraTracker::InternalOpen( void )
   // Initialize the device 
   m_CommandInterpreter->INIT();
 
+  // Reset and try again if error
+  if (m_CommandInterpreter->GetError())
+    {
+    m_CommandInterpreter->RESET();
+    m_CommandInterpreter->INIT();
+    }
+
   if (m_CommandInterpreter->GetError())
     {
     return FAILURE;
@@ -84,11 +91,11 @@ AuroraTracker::ResultType AuroraTracker::InternalClose( void )
   int errnum = m_CommandInterpreter->GetError();
   if (errnum) 
   {
-    igstkLogMacro( DEBUG, "AuroraTracker::LoadVirtualSROM: Error ...\n");
+    igstkLogMacro( DEBUG, "AuroraTracker::InternalClose: Error ...\n");
     igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
     return FAILURE;
   }
-  //ndiClose(this->Device); To be done by the application
+
   return SUCCESS;
 }
 

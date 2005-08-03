@@ -20,7 +20,7 @@
 
 #include "itkXMLFile.h"
 
-#include "igstkCommunication.h"
+#include "igstkSerialCommunication.h"
 #include "igstkNDICommandInterpreter.h"
 #include "igstkAuroraTool.h"
 #include "igstkTracker.h"
@@ -65,6 +65,9 @@ public:
   /** typedef for command interpreter */
   typedef igstk::NDICommandInterpreter   CommandInterpreterType;
 
+  /** communication type */
+  typedef igstk::SerialCommunication     CommunicationType;
+
   /** typedef for internal boolean return type */
   typedef Tracker::ResultType   ResultType;
 
@@ -72,9 +75,6 @@ public:
   typedef AuroraTracker                  Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
-
-  /** typedef for CommunicationType */
-  typedef Communication                 CommunicationType;
 
   /**  Run-time type information (and related methods). */
   igstkTypeMacro(AuroraTracker, Object);

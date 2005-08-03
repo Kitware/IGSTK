@@ -42,6 +42,9 @@ class SerialCommunicationForLinux : public SerialCommunication
 {
 public:
 
+  /** Return value type for interface functions */ 
+  typedef SerialCommunication::ResultType ResultType;
+
   typedef SerialCommunicationForLinux  Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
@@ -54,49 +57,46 @@ public:
 
 protected:
 
-  /** UNIX file handle type */
-  typedef int HandleType;
-
-  const HandleType INVALID_HANDLE;
-  const int TIMEOUT_PERIOD;
-
-  typedef SerialCommunication::ResultType ResultType;
-
+  /** Constructor */
   SerialCommunicationForLinux();
 
-  // ~SerialCommunicationForLinux();
+  /** Destructor */
+  ~SerialCommunicationForLinux();
 
   /** Opens serial port for communication; */
-  virtual ResultType InternalOpenCommunication( void );
+  virtual ResultType InternalOpenPort( void );
 
-  /** Set up data buffer size. */
-  virtual ResultType InternalSetUpDataBuffers( void );
-
-  /** Set communication on the open port as per the communication parameters. */
+  /** Set communication on the open port as per the communication
+      parameters. */
   virtual ResultType InternalSetTransferParameters( void );
 
   /** Closes serial port  */
   virtual ResultType InternalClosePort( void );
 
-  virtual ResultType InternalClearBuffersAndClosePort( void );
-
-  /** Set the amount of time to wait on a reply from the device before generating a timeout event. */
-  virtual ResultType InternalSetTimeoutPeriod( int milliseconds );
-
-  /**Send break, and restarting
-  transmission after a short delay.*/
+  /** Send a serial break */
   virtual void InternalSendBreak( void );
 
-  virtual void InternalFlushOutputBuffer( void );
+  /** Sleep for the amount of time stored in m_SleepPeriod */
+  virtual void InternalSleep( void );
 
+  /** Purge the input and output buffers */
+  virtual void InternalPurgeBuffers( void );
+
+  /** Write data */
   virtual void InternalWrite( void );
 
+  /** Read data */
   virtual void InternalRead( void );
+
+  /** Print object information. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
 
-  HandleType      m_PortHandle;
+  /** The serial port handle. */
+  int             m_PortHandle;
 
+  /** Data structure to save the original serial port parameters. */
   termios         m_SaveTermIOs;
 };
 

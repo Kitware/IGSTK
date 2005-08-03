@@ -27,6 +27,7 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#include "igstkEvents.h"
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
 #else
@@ -63,17 +64,9 @@ public:
     {
         std::cout << "OpenPortFailureEvent Error Occurred ...\n";
     }
-    else if ( typeid(event)== typeid( CommunicationType::SetCommunicationParametersFailureEvent ))
+    else if ( typeid(event)== typeid( CommunicationType::SetTransferParametersFailureEvent ))
     {
         std::cout << "SetupCommunicationParametersFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( CommunicationType::SetDataBufferSizeFailureEvent ))
-    {
-        std::cout << "SetDataBufferSizeFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( CommunicationType::CommunicationTimeoutSetupFailureEvent ))
-    {
-        std::cout << "CommunicationTimeoutSetupFailureEvent Error Occurred ...\n";
     }
     else if ( typeid(event)== typeid( CommunicationType::WriteSuccessEvent ))
     {
@@ -136,18 +129,7 @@ int igstkSerialCommunicationTest( int, char * [] )
 
   std::cout << serialComm << std::endl;
 
-  serialComm->AddObserver( CommunicationType::OpenPortFailureEvent(), my_command);
-  serialComm->AddObserver( CommunicationType::SetCommunicationParametersFailureEvent(), my_command);
-  serialComm->AddObserver( CommunicationType::SetDataBufferSizeFailureEvent(), my_command);
-  serialComm->AddObserver( CommunicationType::CommunicationTimeoutSetupFailureEvent(), my_command);
-  serialComm->AddObserver( CommunicationType::SendBreakFailureEvent(), my_command);
-  serialComm->AddObserver( CommunicationType::FlushOutputBufferFailureEvent(), my_command);
-  serialComm->AddObserver( CommunicationType::WriteSuccessEvent(), my_command);
-  serialComm->AddObserver( CommunicationType::WriteFailureEvent(), my_command);
-  serialComm->AddObserver( CommunicationType::WriteTimeoutEvent(), my_command);
-  serialComm->AddObserver( CommunicationType::ReadSuccessEvent(), my_command);
-  serialComm->AddObserver( CommunicationType::ReadFailureEvent(), my_command);
-  serialComm->AddObserver( CommunicationType::ReadTimeoutEvent(), my_command);
+  serialComm->AddObserver( itk::AnyEvent(), my_command);
 
   serialComm->SetLogger( logger );
 

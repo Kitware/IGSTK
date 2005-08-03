@@ -37,6 +37,9 @@ class SerialCommunicationForWindows : public SerialCommunication
 {
 public:
 
+  /** Return value type for interface functions */ 
+  typedef SerialCommunication::ResultType ResultType;
+
   typedef SerialCommunicationForWindows  Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
@@ -52,43 +55,38 @@ protected:
   /** Windows file handle type */
   typedef HANDLE HandleType;
 
-  /** time out period in milliseconds */
-  const int TIMEOUT_PERIOD;
-
-  typedef SerialCommunication::ResultType ResultType;
-
+  /** Constructor */
   SerialCommunicationForWindows();
 
-  // ~SerialCommunicationForWindows();
+  /** Destructor */
+  ~SerialCommunicationForWindows();
 
   /** Opens serial port for communication; */
-  virtual ResultType InternalOpenCommunication( void );
+  virtual ResultType InternalOpenPort( void );
 
-  /** Set up data buffer size. */
-  virtual ResultType InternalSetUpDataBuffers( void );
-
-  /** Sets up communication on the open port as per the communication parameters. */
+  /** Sets up communication on the open port as per the communication
+      parameters. */
   virtual ResultType InternalSetTransferParameters( void );
 
   /** Closes serial port  */
   virtual ResultType InternalClosePort( void );
 
-  virtual ResultType InternalClearBuffersAndClosePort( void );
-
-  /**Send break and restarting
-  transmission after a short delay.*/
+  /** Send a serial break */
   virtual void InternalSendBreak( void );
 
-  /** Set the amount of time to wait on a reply from the device before generating a timeout event. */
-  virtual ResultType InternalSetTimeoutPeriod( int milliseconds );
+  /** Sleep for the number of milliseconds stored in m_SleepPeriod */
+  virtual void InternalSleep( void );
 
-  virtual void InternalFlushOutputBuffer( void );
+  /** Purge the input and output buffers */
+  virtual void InternalPurgeBuffers( void );
 
+  /** Write data */
   virtual void InternalWrite( void );
 
+  /** Read data */
   virtual void InternalRead( void );
 
-  /** Print object information */
+  /** Print object information. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:

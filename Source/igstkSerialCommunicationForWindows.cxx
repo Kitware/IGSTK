@@ -22,27 +22,33 @@
 
 namespace igstk
 { 
-/** Constructor */
-SerialCommunicationForWindows::SerialCommunicationForWindows() : 
-  TIMEOUT_PERIOD(5000)
+
+SerialCommunicationForWindows::SerialCommunicationForWindows()
 {
-  this->m_PortHandle = INVALID_HANDLE_VALUE;
+  m_PortHandle = INVALID_HANDLE_VALUE;
 } 
 
-SerialCommunicationForWindows::ResultType
-SerialCommunicationForWindows::InternalOpenCommunication( void )
+
+SerialCommunicationForWindows::~SerialCommunicationForWindows()
 {
-  static COMMTIMEOUTS default_ctmo = {
+} 
+
+
+SerialCommunicationForWindows::ResultType
+SerialCommunicationForWindows::InternalOpenPort( void )
+{
+  COMMTIMEOUTS default_ctmo = {
     MAXDWORD, MAXDWORD,
-    TIMEOUT_PERIOD, 
+    m_TimeoutPeriod, 
     2, 
-    TIMEOUT_PERIOD
+    m_TimeoutPeriod
   };
   HANDLE serial_port;
   DCB comm_settings;
 
   char device[20];
-  sprintf(device, "COM%.1d:", this->GetPortNumber()+1 );
+  //sprintf(device, "COM%.1d:", this->GetPortNumber()+1 );
+  sprintf(device, "COM2:" );
   std::cout << device << std::endl;
 
   serial_port = CreateFile(device,
@@ -60,15 +66,15 @@ SerialCommunicationForWindows::InternalOpenCommunication( void )
 
   /* save the serial port state so that it can be restored when
      the serial port is closed in ndiSerialClose() */
-  if (this->m_PortHandle == serial_port ||
-      this->m_PortHandle == INVALID_HANDLE_VALUE)
+  if (m_PortHandle == serial_port ||
+      m_PortHandle == INVALID_HANDLE_VALUE)
     {
-    this->m_PortHandle = serial_port;
+    m_PortHandle = serial_port;
     GetCommTimeouts(serial_port,&m_SaveTimeout);
     GetCommState(serial_port,&m_SaveDCB);
     }
 
-  if (SetupComm(serial_port, this->m_ReadBufferSize, this->m_WriteBufferSize)
+  if (SetupComm(serial_port, 1600, 1600)
       == FALSE)
     { /* set buffer size */
     CloseHandle(serial_port);
@@ -92,7 +98,7 @@ SerialCommunicationForWindows::InternalOpenCommunication( void )
   if (SetCommState(serial_port,&comm_settings) == FALSE)
     {
     CloseHandle(serial_port);
-    this->m_PortHandle = INVALID_HANDLE_VALUE;
+    m_PortHandle = INVALID_HANDLE_VALUE;
     return FAILURE;
     }
   
@@ -101,7 +107,7 @@ SerialCommunicationForWindows::InternalOpenCommunication( void )
     SetCommState(serial_port,&comm_settings);
     SetCommState(serial_port,&m_SaveDCB); 
     CloseHandle(serial_port);
-    this->m_PortHandle = INVALID_HANDLE_VALUE;
+    m_PortHandle = INVALID_HANDLE_VALUE;
     return FAILURE;
     }
 
@@ -110,46 +116,13 @@ SerialCommunicationForWindows::InternalOpenCommunication( void )
 
 
 SerialCommunicationForWindows::ResultType
-SerialCommunicationForWindows::InternalSetUpDataBuffers( void )
-{
-  if (this->m_InputBuffer!=NULL)
-    {
-    delete [] this->m_InputBuffer;
-    } 
-  this->m_InputBuffer = new char[ this->m_ReadBufferSize ];
-  if (this->m_OutputBuffer!=NULL)
-    {
-    delete [] this->m_OutputBuffer;
-    }
-  // one extra byte to store end of string
-  this->m_OutputBuffer = new char[ this->m_WriteBufferSize + 1 ];
-  if ((this->m_InputBuffer==NULL) || (this->m_OutputBuffer==NULL) )
-    {
-    this->InvokeEvent( SetDataBufferSizeFailureEvent() );
-    return FAILURE;
-    }
-  else
-    {
-    //Clear out buffers
-    PurgeComm(this->m_PortHandle,
-              PURGE_TXABORT | PURGE_TXCLEAR | PURGE_RXABORT | PURGE_RXCLEAR);
-    this->m_ReadDataSize = 0;
-    this->m_ReadBufferOffset = 0;
-    memset(this->m_InputBuffer, '\0', sizeof(this->m_InputBuffer));
-
-    igstkLogMacro( DEBUG, "SetDataBufferSizeParameters with Read Buffer size = " << m_ReadBufferSize << " and Write Buffer Size = " << m_WriteBufferSize << " succeeded.\n");
-    return SUCCESS;
-    }
-}
-
-
-SerialCommunicationForWindows::ResultType
 SerialCommunicationForWindows::InternalSetTransferParameters( void )
 {
   DCB comm_settings;
+  COMMTIMEOUTS ctmo;
+  
   int newbaud = CBR_9600;
-
-  unsigned int baud = this->m_BaudRate;
+  unsigned int baud = m_BaudRate;
 
   switch (baud)
     {
@@ -160,12 +133,13 @@ SerialCommunicationForWindows::InternalSetTransferParameters( void )
     case 115200: newbaud = CBR_115200; break;
     }
 
-  GetCommState(this->m_PortHandle,&comm_settings);
+  GetCommState(m_PortHandle,&comm_settings);
+  GetCommTimeouts(m_PortHandle,&ctmo);
 
   comm_settings.BaudRate = newbaud;     // speed
 
   // set handshaking
-  if (this->m_HardwareHandshake == HandshakeOn)
+  if (m_HardwareHandshake == HandshakeOn)
     {
     comm_settings.fOutxCtsFlow = TRUE;       // on
     comm_settings.fRtsControl = RTS_CONTROL_HANDSHAKE;
@@ -177,40 +151,50 @@ SerialCommunicationForWindows::InternalSetTransferParameters( void )
     }    
 
   // set data bits
-  if (this->m_DataBits == DataBits8)
+  if (m_DataBits == DataBits8)
     {
     comm_settings.ByteSize = 8;
     }
-  else if (this->m_DataBits == DataBits7)
+  else if (m_DataBits == DataBits7)
     {
     comm_settings.ByteSize = 7;
     }
 
   // set parity
-  if (this->m_Parity == NoParity)
+  if (m_Parity == NoParity)
     { // none                
     comm_settings.Parity = NOPARITY;
     }
-  else if (this->m_Parity == OddParity)
+  else if (m_Parity == OddParity)
     { // odd
     comm_settings.Parity = ODDPARITY;
     }
-  else if (this->m_Parity == EvenParity)
+  else if (m_Parity == EvenParity)
     { // even
     comm_settings.Parity = EVENPARITY;
     }
 
   // set stop bits
-  if (this->m_StopBits == StopBits1)
+  if (m_StopBits == StopBits1)
     {
     comm_settings.StopBits = ONESTOPBIT;
     }
-  else if (this->m_StopBits == StopBits2)
+  else if (m_StopBits == StopBits2)
     {
     comm_settings.StopBits = TWOSTOPBITS;
     }
 
-  SetCommState(this->m_PortHandle,&comm_settings);
+  // set timeout
+  ctmo.ReadIntervalTimeout = MAXDWORD;
+  ctmo.ReadTotalTimeoutMultiplier = MAXDWORD;
+  ctmo.ReadTotalTimeoutConstant = m_TimeoutPeriod;
+  ctmo.WriteTotalTimeoutConstant = m_TimeoutPeriod;
+
+  if (SetCommState(m_PortHandle,&comm_settings) == FALSE ||
+      SetCommTimeouts(m_PortHandle,&ctmo) == FALSE)
+    {
+    return FAILURE;
+    }
 
   igstkLogMacro( DEBUG, "SetCommunicationParameters succeeded.\n");
 
@@ -219,59 +203,14 @@ SerialCommunicationForWindows::InternalSetTransferParameters( void )
 
 
 SerialCommunicationForWindows::ResultType
-SerialCommunicationForWindows::InternalClearBuffersAndClosePort( void )
-{
-  if (m_InputBuffer!= NULL) 
-    { // This check not required, still keeping for safety
-    delete [] m_InputBuffer;
-    }
-  m_InputBuffer = NULL;
-  if (m_OutputBuffer!= NULL)
-    { // This check not required, still keeping for safety
-    delete [] m_OutputBuffer;
-    }
-  m_OutputBuffer = NULL;
-
-  return this->InternalClosePort();
-}
-
-
-SerialCommunicationForWindows::ResultType
 SerialCommunicationForWindows::InternalClosePort( void )
 {
   // restore the comm port state to from before it was opened
-  if ( this->m_PortHandle != INVALID_HANDLE_VALUE )
-    {
-    SetCommTimeouts(this->m_PortHandle,&m_SaveTimeout);
-    SetCommState(this->m_PortHandle,&m_SaveDCB);
-    }
+  SetCommTimeouts(m_PortHandle,&m_SaveTimeout);
+  SetCommState(m_PortHandle,&m_SaveDCB);
 
-  CloseHandle(this->m_PortHandle);
-  this->m_PortHandle = INVALID_HANDLE_VALUE;
-
-  return SUCCESS;
-}
-
-
-SerialCommunicationForWindows::ResultType
-SerialCommunicationForWindows::InternalSetTimeoutPeriod( int milliseconds )
-{
-  COMMTIMEOUTS ctmo;
-  
-  if (GetCommTimeouts(this->m_PortHandle,&ctmo) == FALSE)
-    {
-    return FAILURE;
-    }
-  
-  ctmo.ReadIntervalTimeout = MAXDWORD;
-  ctmo.ReadTotalTimeoutMultiplier = MAXDWORD;
-  ctmo.ReadTotalTimeoutConstant = milliseconds;
-  ctmo.WriteTotalTimeoutConstant = milliseconds;
-
-  if (SetCommTimeouts(this->m_PortHandle,&ctmo) == FALSE)
-    {
-    return FAILURE;
-    }
+  CloseHandle(m_PortHandle);
+  m_PortHandle = INVALID_HANDLE_VALUE;
 
   return SUCCESS;
 }
@@ -281,67 +220,75 @@ void SerialCommunicationForWindows::InternalSendBreak( void )
 {
   DWORD dumb;
 
-  ClearCommError(this->m_PortHandle,&dumb,NULL);       // clear error
-  PurgeComm(this->m_PortHandle,PURGE_TXCLEAR|PURGE_RXCLEAR); // clear buffers
+  ClearCommError(m_PortHandle,&dumb,NULL);       // clear error
 
-  SetCommBreak(this->m_PortHandle);
-  Sleep(300);                            // hold break for 0.3 seconds
-  ClearCommBreak(this->m_PortHandle);
-
-  return;
+  SetCommBreak(m_PortHandle);
+  ::Sleep(300);                            // hold break for 0.3 seconds
+  ClearCommBreak(m_PortHandle);
 }
 
 
-void SerialCommunicationForWindows::InternalFlushOutputBuffer( void )
+void SerialCommunicationForWindows::InternalPurgeBuffers( void )
 {
   DWORD dumb;
   DWORD flushtype = PURGE_TXCLEAR | PURGE_RXCLEAR;
 
-  ClearCommError(this->m_PortHandle,&dumb,NULL);       // clear error
-  PurgeComm(this->m_PortHandle,flushtype);             // clear buffers
-
-  return;
+  ClearCommError(m_PortHandle,&dumb,NULL);       // clear error
+  PurgeComm(m_PortHandle,flushtype);             // clear buffers
 }
 
+
+void SerialCommunicationForWindows::InternalSleep( void )
+{
+  // use Windows sleep function
+  ::Sleep(m_SleepPeriod);
+}
 
 void SerialCommunicationForWindows::InternalWrite( void )
 {
   DWORD m, dumb;
   int i = 0;
-  unsigned long  bytesToWrite = m_WriteNumberOfBytes;
+  int bytesToWrite = m_BytesToWrite;
+  int writeError = 0;
 
   igstkLogMacro( DEBUG, "InternalWrite called ...\n");
   while (bytesToWrite > 0)
     {
-    if (WriteFile(this->m_PortHandle, &this->m_OutputBuffer[i],
+    if (WriteFile(m_PortHandle, &m_OutputData[i],
                   bytesToWrite, &m, NULL) == FALSE)
       {
       if (GetLastError() == ERROR_OPERATION_ABORTED) 
         { // system cancelled us so clear error and retry
-        ClearCommError(this->m_PortHandle,&dumb,NULL);
+        ClearCommError(m_PortHandle,&dumb,NULL);
         }
       else
-        {
-        this->InvokeEvent( WriteFailureEvent() );
-        igstkLogMacro( DEBUG, "InternalWrite failed ...\n");
-        return;  // IO error occurred 
+        {  // IO error occurred 
+        writeError = 1;
+        break;
         }
       }
     else if (m == 0)
       { // no characters written, must have timed out
-      this->InvokeEvent( WriteTimeoutEvent() );
-      igstkLogMacro( DEBUG, "InternalWrite failed with timeout...\n");
-      return;
+      writeError = 2;
+      break;
       }
 
     bytesToWrite -= m;  // bytesToWrite is number of chars left to write
     i += m;  // i is the number of chars written
     }
 
-  igstkLogMacro( DEBUG, "Written bytes = " << i << std::endl);
-  this->InvokeEvent( WriteSuccessEvent() );
-
-  return;  // return the number of characters written
+  if (writeError == 1)
+    {
+    this->InvokeEvent( WriteFailureEvent() );
+    }
+  else if (writeError == 2)
+    {
+    this->InvokeEvent( WriteTimeoutEvent() );
+    }
+  else
+    {
+    this->InvokeEvent( WriteSuccessEvent() );
+    }
 }
 
 
@@ -349,58 +296,62 @@ void SerialCommunicationForWindows::InternalRead( void )
 {
   int i = 0;
   DWORD m,dumb;
-  int n = this->m_ReadNumberOfBytes;
+  int n = m_BytesToRead;
+  int readError = 0;
   
   while (n > 0)
     {
-    if (ReadFile(this->m_PortHandle, &this->m_InputBuffer[i],
-                 n, &m, NULL) == FALSE)
+    if (ReadFile(m_PortHandle, &m_InputData[i],
+                 1, &m, NULL) == FALSE)
       { 
       if (GetLastError() == ERROR_OPERATION_ABORTED)
         { // cancelled 
-        ClearCommError(this->m_PortHandle,&dumb,NULL); // clear error and retry
+        ClearCommError(m_PortHandle,&dumb,NULL); // clear error and retry
         }
       else
-        {
-        igstkLogMacro( DEBUG, "InternalRead failed ...\n");
-        this->InvokeEvent( ReadFailureEvent() );
-        return;  // IO error occurred
+        { // IO error occurred
+        readError = 1;
+        break;
         }
       }
     else if (m == 0)
       { // no characters read, must have timed out
-      igstkLogMacro( DEBUG, "InternalRead failed with timeout...\n");
-      this->InvokeEvent( ReadTimeoutEvent() );
-      return;
+      readError = 2;
+      break;
       }
     n -= m;  // n is number of chars left to read
     i += m;  // i is the number of chars read
-    if ( this->m_UseReadTerminationCharacter )
-      {
-      if (this->m_InputBuffer[i-1] == this->m_ReadTerminationCharacter )
-        {  // done when ReadTerminationCharacter received
-        break;
-        }
+
+    // done when ReadTerminationCharacter received
+    if ( m_UseReadTerminationCharacter &&
+         m_InputData[i-1] == m_ReadTerminationCharacter )
+      {  
+      break;
       }
     }
 
-  this->m_ReadDataSize = i;
-  this->m_ReadBufferOffset = 0;
-  this->m_InputBuffer[i] = 0;
-  igstkLogMacro( DEBUG, "Read number of bytes = " << i << ". String: " << this->m_InputBuffer << std::endl );
-  this->InvokeEvent( ReadSuccessEvent());
+  m_BytesRead = i;
+  m_InputData[i] = '\0';
 
-  return;
+  if (readError == 1)
+    {
+    this->InvokeEvent( ReadFailureEvent() );
+    }
+  else if (readError == 2)
+    {
+    this->InvokeEvent( ReadTimeoutEvent() );
+    }
+  else
+    {
+    this->InvokeEvent( ReadSuccessEvent());
+    }
 }
 
 
-/** Print Self function */
-void SerialCommunicationForWindows::PrintSelf( std::ostream& os, 
+void SerialCommunicationForWindows::PrintSelf( std::ostream& os,
                                                itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-
-  os << indent << "Port Handle: " << m_PortHandle << std::endl;
 }
 
 } // end namespace igstk

@@ -19,7 +19,7 @@
 #define __NDICommandInterpreter_h__
 
 #include "itkObject.h"
-#include "igstkCommunication.h"
+#include "igstkSerialCommunication.h"
 
 namespace igstk
 {
@@ -386,7 +386,7 @@ public:
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
-  typedef Communication                  CommunicationType;
+  typedef SerialCommunication            CommunicationType;
 
   /**  Run-time type information (and related methods). */
   igstkTypeMacro(NDICommandInterpreter, Object);
@@ -415,8 +415,6 @@ public:
         null string
   - "COMM:" - After the COMM() is sent, the host computer serial port is
            adjusted to match the device.
-  - "INIT:" - After the INIT() is sent, communication will be paused
-           for 100ms.
   - "PHSR:" - The information returned by the PHSR() command is stored and can
            be retrieved though the GetPHSR() functions.
   - "PHINF:" - The information returned by the PHINF() command is stored and
@@ -1313,7 +1311,6 @@ private:
   void HelperForPHINF(const char *cp, const char *crp);
   void HelperForPHSR(const char *cp, const char *crp);
   void HelperForTX(const char *cp, const char *crp);
-  void HelperForINIT(const char *cp, const char *crp);
   void HelperForIRCHK(const char *cp, const char *crp);
   void HelperForSSTAT(const char *cp, const char *crp);
   void HelperForPHRQ(const char *cp, const char *crp);
