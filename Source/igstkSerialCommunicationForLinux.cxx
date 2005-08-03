@@ -364,7 +364,7 @@ void SerialCommunicationForLinux::InternalRead( void )
     else if (m == 0)
       { // no characters read, must have timed out
       readError = 2;
-      return;
+      break;
       }
     n -= m;  // n is number of chars left to read
     i += m;  // i is the number of chars read
