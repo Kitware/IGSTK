@@ -47,9 +47,7 @@ SerialCommunicationForWindows::InternalOpenPort( void )
   DCB comm_settings;
 
   char device[20];
-  //sprintf(device, "COM%.1d:", this->GetPortNumber()+1 );
-  sprintf(device, "COM2:" );
-  std::cout << device << std::endl;
+  sprintf(device, "COM%.1d:", this->GetPortNumber()+1 );
 
   serial_port = CreateFile(device,
                            GENERIC_READ|GENERIC_WRITE,
