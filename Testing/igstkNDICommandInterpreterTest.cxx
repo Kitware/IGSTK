@@ -24,6 +24,8 @@
 #include <fstream>
 #include <set>
 
+#include <ctype.h>
+
 #include "itkCommand.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -236,6 +238,36 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   numberOfHandles = 0;
 
   serialComm->CloseCommunication();
+
+  // -- test the utility functions --
+  std::cout << "Testing HexDecode/HexEncode" << std::endl;
+  const char *hexString = "789ABC0123def45600ff";
+  char hexString2[22];  // extra space for null at end
+  unsigned char binaryString[10];
+
+  CommandInterpreterType::HexDecode(binaryString,
+                                    hexString,
+                                    10);
+  CommandInterpreterType::HexEncode(hexString2,
+                                    binaryString,
+                                    10);
+  // HexEncode does not null-terminate, so do it here
+  hexString2[20] = '\0';
+  
+  // to do check, need a full uppercase version
+  char hexString3[22];  // extra space for null at end
+  strncpy(hexString3, hexString, 22);
+  for (char *cp = hexString3; *cp != '\0'; cp++)
+    {
+    *cp = toupper(*cp);
+    }
+
+  if (strcmp(hexString3, hexString2) != 0)
+    {
+    std::cout << "Encode/Decode mismatch: \"" << hexString << "\" != \""
+              << hexString2 << "\"" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   return EXIT_SUCCESS;
 }
