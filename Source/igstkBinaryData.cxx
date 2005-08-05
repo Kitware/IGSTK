@@ -218,7 +218,10 @@ void BinaryData::PrintSelf( std::ostream& os, itk::Indent indent ) const
       }
     else
       {
-      os << '\\' << std::hex << (int)this->m_data[i];
+      os << "\\x";
+      os.width(2);
+      os.fill('0');
+      os << std::hex << (int)this->m_data[i];
       }
     }
   os << std::endl;
