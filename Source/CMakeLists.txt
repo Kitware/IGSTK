@@ -6,6 +6,10 @@
 SET(IGSTKSandbox_HEADS
   igstkAuroraTracker.h
   igstkAuroraTool.h
+  igstkCTImageReader.h
+  igstkImageSpatialObject.h
+  igstkImageSpatialObjectRepresentation.h
+  igstkImageReader.h
   igstkNDICommandInterpreter.h
   igstkSerialCommunication.h
   igstkSerialCommunicationSimulator.h
@@ -25,6 +29,10 @@ SET(IGSTKSandbox_HEADS
 SET(IGSTKSandbox_SRCS  
   igstkAuroraTracker.cxx
   igstkAuroraTool.cxx
+  igstkCTImageReader.cxx
+  igstkImageSpatialObject.cxx
+  igstkImageSpatialObjectRepresentation.cxx
+  igstkImageReader.cxx
   igstkNDICommandInterpreter.cxx
   igstkSerialCommunication.cxx
   igstkSerialCommunicationSimulator.cxx
