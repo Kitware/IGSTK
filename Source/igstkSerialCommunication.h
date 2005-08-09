@@ -40,6 +40,12 @@ namespace igstk
  * \brief This class implements communication over a serial port
  *        via RS-232.
  *
+ * This class provides a common interface for the interactions with a serial
+ * port independently of the platform. The actual interactions are implemented
+ * on derived classes that are platform specific. This class is not intended
+ * for being instantiated directly, instead, the derived classes should be
+ * used.
+ *
  * \ingroup Communication
  */
 
