@@ -182,6 +182,8 @@ void ObjectRepresentation::UpdatePosition()
     it++;
     }
 
+  vtkMatrix->Delete();
+
   // Update the modified time
   m_LastMTime = this->GetMTime();
 }
