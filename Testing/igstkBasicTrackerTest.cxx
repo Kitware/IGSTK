@@ -72,6 +72,7 @@ namespace igstk
         rotation.SetRotationAroundZ(0.1);
         transform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
         SetToolTransform(1, 0, transform);
+        m_Translation = translation;
         }
 
       ~TestingTracker() 
