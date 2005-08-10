@@ -69,7 +69,6 @@ void igstkSystemInformationPrintFile(const char* name, ostream& os)
 
 int main(int,char *[])
 {
-  vtkDebugLeaks::PromptUserOff();
   const char* files[] =
     {
       IGSTK_BINARY_DIR "/CMakeCache.txt", 
