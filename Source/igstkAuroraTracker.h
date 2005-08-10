@@ -18,8 +18,6 @@
 #ifndef __igstk_AuroraTracker_h_
 #define __igstk_AuroraTracker_h_
 
-#include "itkXMLFile.h"
-
 #include "igstkSerialCommunication.h"
 #include "igstkNDICommandInterpreter.h"
 #include "igstkAuroraTool.h"
@@ -28,29 +26,16 @@
 namespace igstk
 {
 /** \class AuroraTracker
-    \brief Implementation of the Aurora Tracker class.
-
+  * \brief Provides support for the AURORA magnetic tracker.
+  *
+  * The Aurora is a magnetic tracker from Northern Digital Inc.
+  * in Waterloo, Ontario, Canada.  This class provides an
+  * an interface to the Aurora.
 */
 
-enum {
-  TR_MISSING       = 0x0001,  // tool or tool port is not available
-  TR_OUT_OF_VIEW   = 0x0002,  // cannot obtain transform for tool
-  TR_OUT_OF_VOLUME = 0x0004  // tool is not within the sweet spot of system
-//  TR_SWITCH1_IS_ON = 0x0010,  // various buttons/switches on tool
-//  TR_SWITCH2_IS_ON = 0x0020,
-//  TR_SWITCH3_IS_ON = 0x0040
-};
 
 // the number of ports to allow
 #define NDI_NUMBER_OF_PORTS  4
-
-class NDIConfigurationReader : public itk::XMLReaderBase
-{
-  virtual int CanReadFile(const char* name);
-  virtual void StartElement(const char * name,const char **atts);
-  virtual void EndElement(const char *name);
-  virtual void CharacterDataHandler(const char *inData, int inLength);
-};
 
 
 class AuroraTracker : public igstk::Tracker
@@ -83,11 +68,13 @@ public:
   igstkNewMacro(Self);  
 
   /** The SetCommunication method is used to attach a communication
-      object to the tracker object. */
+    * object to the tracker object. */
   void SetCommunication( CommunicationType *communication );
 
+  /** Get the number of tools that have been detected. */
   igstkGetMacro( NumberOfTools, unsigned int );
 
+  /** Specify an SROM file to be used with a passive or custom tool. */
   void AttachSROMFileNameToPort( const int portNum, std::string fileName );
 
 protected:
@@ -96,20 +83,28 @@ protected:
 
   virtual ~AuroraTracker(void);
 
+  /** Open communication with the tracking device. */
   virtual ResultType InternalOpen( void );
 
+  /** Close communication with the tracking device. */
   virtual ResultType InternalClose( void );
 
+  /** Activate the tools attached to the tracking device. */
   virtual ResultType InternalActivateTools( void );
 
+  /** Deactivate the tools attached to the tracking device. */
   virtual ResultType InternalDeactivateTools( void );
 
+  /** Put the tracking device into tracking mode. */
   virtual ResultType InternalStartTracking( void );
 
+  /** Take the tracking device out of tracking mode. */
   virtual ResultType InternalStopTracking( void );
 
+  /** Update the status and the transforms for all TrackerTools. */
   virtual ResultType InternalUpdateStatus( void );
 
+  /** Reset the tracking device to put it back to its original state. */
   virtual ResultType InternalReset( void );
 
   /** Print object information */
@@ -133,12 +128,16 @@ private:
   /** Find the tool for a specific port handle (-1 if not found). */
   int GetToolFromHandle( int handle );
 
+  /** Information about which tool ports are enabled. */
   int m_PortEnabled[NDI_NUMBER_OF_PORTS];
 
+  /** The tool handles that the device has provides us with. */
   int m_PortHandle[NDI_NUMBER_OF_PORTS];
 
+  /** Total number of tools detected. */
   unsigned int   m_NumberOfTools;
 
+  /** Names of the SROM files for passive tools and custom tools. */
   std::string    m_SROMFileNames[NDI_NUMBER_OF_PORTS];
 
   /** The "Communication" instance */
