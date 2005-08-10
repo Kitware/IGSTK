@@ -25,10 +25,15 @@
 namespace igstk
 {
 
-AuroraTool::AuroraTool() : TrackerTool()
+/** Constructor (initializes Aurora-specific tool values) */
+AuroraTool::AuroraTool()
 {
 }
 
+/** Destructor */
+AuroraTool::~AuroraTool()
+{
+}
 
 /** Print Self function */
 void AuroraTool::PrintSelf( std::ostream& os, itk::Indent indent ) const

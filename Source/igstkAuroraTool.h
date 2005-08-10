@@ -23,28 +23,33 @@
 namespace igstk
 {
 /** \class AuroraTool
-    \brief Implementation of the Aurora Tool class.
-
+  * \brief An Aurora-specific TrackerTool class.
+  *
+  * This class is a for providing Aurora-specific functionality
+  * for TrackerTools, and also to allow compile-time type enforcement
+  * for other classes and functions that specifically require
+  * an Aurora tool.
 */
 
 class AuroraTool : public igstk::TrackerTool
 {
 public:
-  AuroraTool();
 
-  ~AuroraTool() {};
-
-  typedef AuroraTool                    Self;
+  typedef AuroraTool                     Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
-  /**  Run-time type information (and related methods). */
+  /** Run-time type information (and related methods). */
   igstkTypeMacro(AuroraTool, TrackerTool);
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro(Self);  
 
 protected:
+
+  AuroraTool();
+  ~AuroraTool();
+
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
