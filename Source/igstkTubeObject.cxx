@@ -54,7 +54,7 @@ const TubeObject::PointType * TubeObject::GetPoint(unsigned int pointId) const
     return NULL;
     }
 
-  PointListType points = m_TubeSpatialObject->GetPoints();
+  PointListType &points = m_TubeSpatialObject->GetPoints();
   return &(points[pointId]);
 }
 
