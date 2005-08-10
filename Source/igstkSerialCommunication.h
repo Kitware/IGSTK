@@ -91,7 +91,7 @@ public:
   typedef itk::Logger   LoggerType;
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro(SerialCommunication, Object);
+  igstkTypeMacro(SerialCommunication, Communication);
 
   /** Specify which serial port to use.  If communication is open,
    *  this has no effect until communication is closed and reopened. */
