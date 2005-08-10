@@ -63,7 +63,7 @@ namespace igstk
 
 /** Set built-in type.  Creates member Set"name"() (e.g., SetTimeStep(time)); */
 #define  igstkSetMacro(name,type) \
-virtual void Set##name (const type _arg) \
+virtual void Set##name (const type & _arg) \
 { \
     if (this->m_##name != _arg) \
     { \
