@@ -199,10 +199,10 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
   igstkLogMacro( DEBUG, "AuroraTracker::InternalUpdateStatus called ...\n");
 
   int errnum, port, ph;
-  int status[NDI_NUMBER_OF_PORTS] = {0,};
-  int absent[NDI_NUMBER_OF_PORTS] = {0,};
-  unsigned long frame[NDI_NUMBER_OF_PORTS] = {0,};
-  double transform8[NDI_NUMBER_OF_PORTS][8] = {0,};
+  int status[NDI_NUMBER_OF_PORTS];
+  int absent[NDI_NUMBER_OF_PORTS];
+  unsigned long frame[NDI_NUMBER_OF_PORTS];
+  double transform8[NDI_NUMBER_OF_PORTS][8];
   long flags;
   const unsigned long mflags = (CommandInterpreterType::NDI_TOOL_IN_PORT |
                                 CommandInterpreterType::NDI_INITIALIZED |
@@ -246,6 +246,9 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
   for (port = 0; port < NDI_NUMBER_OF_PORTS; port++)
     {
     ph = this->m_PortHandle[port];
+    absent[port] = 0;
+    status[port] = 0;
+    frame[port] = 0;
     if (ph == 0)
       {
       continue;
