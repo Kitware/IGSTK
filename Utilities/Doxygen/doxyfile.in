@@ -73,7 +73,7 @@ EXPAND_ONLY_PREDEF   = YES
 
 PREDEFINED  =  "igstkNotUsed(x)="\
                "igstkTypeMacro(thisClass,superclass)= \
-                  virtual const char *GetClassName() const;" \
+                  virtual const char *GetNameOfClass() const;" \
                "igstkSetMacro(name,type)= \
                   virtual void Set##name (type _arg);" \
                "igstkGetMacro(name,type)= \
