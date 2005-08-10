@@ -28,7 +28,9 @@ const int NDI_TRACKING_TIMEOUT = 100;
 
 namespace igstk
 {
-/*---------------------------------------------------------------------*/
+
+
+/** Constructor: initialize internal variables. */
 NDICommandInterpreter::NDICommandInterpreter()
 {
   m_Communication = 0;
@@ -41,7 +43,7 @@ NDICommandInterpreter::NDICommandInterpreter()
   m_ErrorCode = 0;
 }
 
-/*---------------------------------------------------------------------*/
+/** Destructor: free any memory that has been allocated. */
 NDICommandInterpreter::~NDICommandInterpreter()
 {
   delete [] m_SerialCommand;
@@ -49,8 +51,8 @@ NDICommandInterpreter::~NDICommandInterpreter()
   delete [] m_CommandReply;
 }
 
-/*---------------------------------------------------------------------*/
-void NDICommandInterpreter::SetCommunication(CommunicationType *communication)
+/** Set the communication object to use. */
+void NDICommandInterpreter::SetCommunication(CommunicationType* communication)
 {
   m_Communication = communication;
  
@@ -91,16 +93,16 @@ void NDICommandInterpreter::SetCommunication(CommunicationType *communication)
   communication->SetReadTerminationCharacter('\r');
 }
 
-/*---------------------------------------------------------------------*/
+/** Get the communication object. */
 NDICommandInterpreter::CommunicationType *
 NDICommandInterpreter::GetCommunication()
 {
   return m_Communication;
 }
 
-/*---------------------------------------------------------------------*/
+/** Convert an ASCII hex string of length "n" to an unsigned integer. */
 unsigned int
-NDICommandInterpreter::HexadecimalStringToUnsignedInt(const char *cp, int n)
+NDICommandInterpreter::HexadecimalStringToUnsignedInt(const char* cp, int n)
 {
   int i;
   unsigned int result = 0;
@@ -130,8 +132,8 @@ NDICommandInterpreter::HexadecimalStringToUnsignedInt(const char *cp, int n)
   return result;
 }
 
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::HexadecimalStringToInt(const char *cp, int n)
+/** Convert an ASCII hex string of length "n" to an integer. */
+int NDICommandInterpreter::HexadecimalStringToInt(const char* cp, int n)
 {
   int i;
   int result = 0;
@@ -161,8 +163,8 @@ int NDICommandInterpreter::HexadecimalStringToInt(const char *cp, int n)
   return result;
 }
 
-/*---------------------------------------------------------------------*/
-int NDICommandInterpreter::SignedStringToInt(const char *cp, int n)
+/** Convert an ASCII decimal string of length "n" to an integer. */
+int NDICommandInterpreter::SignedStringToInt(const char* cp, int n)
 {
   int i;
   int c;
@@ -200,15 +202,15 @@ int NDICommandInterpreter::SignedStringToInt(const char *cp, int n)
   return sign*result;
 }
 
-/*---------------------------------------------------------------------*/
-char *NDICommandInterpreter::HexEncode(char *cp, const void *data, int n)
+/** Encode binary data in to hexidecimal ASCII. */
+char* NDICommandInterpreter::HexEncode(char* cp, const void* data, int n)
 {
-  const unsigned char *bdata;
+  const unsigned char* bdata;
   int i, c1, c2;
   unsigned int d;
-  char *tcp;
+  char* tcp;
 
-  bdata = (const unsigned char *)data;
+  bdata = (const unsigned char* )data;
   tcp = cp;
 
   for (i = 0; i < n; i++)
@@ -233,14 +235,14 @@ char *NDICommandInterpreter::HexEncode(char *cp, const void *data, int n)
   return cp;
 }
 
-/*---------------------------------------------------------------------*/
-void *NDICommandInterpreter::HexDecode(void *data, const char *cp, int n)
+/** Encode binary data in to hexidecimal ASCII. */
+void *NDICommandInterpreter::HexDecode(void *data, const char* cp, int n)
 {
-  unsigned char *bdata;
+  unsigned char* bdata;
   int i, c1, c2;
   unsigned int d;
 
-  bdata = (unsigned char *)data;
+  bdata = (unsigned char* )data;
 
   for (i = 0; i < n; i++)
     {
@@ -279,16 +281,16 @@ void *NDICommandInterpreter::HexDecode(void *data, const char *cp, int n)
   return data;
 }
 
-/*---------------------------------------------------------------------*/
+/** Return an error code (see header file for value definitions). */
 int NDICommandInterpreter::GetError() const
 {
   return m_ErrorCode;
 }
 
-/*---------------------------------------------------------------------*/
-const char *NDICommandInterpreter::ErrorString(int errnum)
+/** Get a string that describes an error value. */
+const char* NDICommandInterpreter::ErrorString(int errnum)
 {
-  static char *textarrayLow[] = /* values from 0x01 to 0x21 */ 
+  static char* textarrayLow[] = /* values from 0x01 to 0x21 */ 
   {
     "No error",
     "Invalid command",
@@ -342,7 +344,7 @@ const char *NDICommandInterpreter::ErrorString(int errnum)
     "Invalid input or output state",    
   };
 
-  static char *textarrayHigh[] = /* values from 0xf6 to 0xf4 */
+  static char* textarrayHigh[] = /* values from 0xf6 to 0xf4 */
   {
     "Too much environmental infrared",
     "Unrecognized error code",
@@ -352,7 +354,7 @@ const char *NDICommandInterpreter::ErrorString(int errnum)
     "Unable to erase Flash EPROM"
   };
 
-  static char *textarrayApi[] = /* values specific to the API */
+  static char* textarrayApi[] = /* values specific to the API */
   {
     "Bad CRC on reply from Measurement System",
     "Error opening serial connection",
@@ -421,14 +423,14 @@ inline void CalcCRC16(int nextchar, unsigned int *puCRC16)
   *puCRC16 ^= data;
 }
 
-/*---------------------------------------------------------------------*/
-const char *NDICommandInterpreter::Command(const char *command)
+/** Send a command to the device via the Communication object. */
+const char* NDICommandInterpreter::Command(const char* command)
 {
   int i, m, nc;
   unsigned int CRC16 = 0;
   int useCRC = 0;
   int inCommand = 1;
-  char *cp, *rp, *crp;
+  char* cp, *rp, *crp;
 
   cp = m_SerialCommand;      /* text sent to ndicapi */
   rp = m_SerialReply;        /* text received from ndicapi */
@@ -636,67 +638,67 @@ const char *NDICommandInterpreter::Command(const char *command)
   return crp;
 }
 
-/*---------------------------------------------------------------------*/
-const char *NDICommandInterpreter::Command(const char *format, int a)
+/** Use printf-style formatting to create a command. */
+const char* NDICommandInterpreter::Command(const char* format, int a)
 {
   sprintf(m_SerialCommand, format, a);
   return this->Command(m_SerialCommand);
 }
 
-/*---------------------------------------------------------------------*/
-const char *NDICommandInterpreter::Command(const char *format, int a, int b)
+/** Use printf-style formatting to create a command. */
+const char* NDICommandInterpreter::Command(const char* format, int a, int b)
 {
   sprintf(m_SerialCommand, format, a, b);
   return this->Command(m_SerialCommand);
 }
 
-/*---------------------------------------------------------------------*/
-const char *NDICommandInterpreter::Command(const char *format, int a, int b,
+/** Use printf-style formatting to create a command. */
+const char* NDICommandInterpreter::Command(const char* format, int a, int b,
                                            int c)
 {
   sprintf(m_SerialCommand, format, a, b, c);
   return this->Command(m_SerialCommand);
 }
 
-/*---------------------------------------------------------------------*/
-const char *NDICommandInterpreter::Command(const char *format, int a, int b,
+/** Use printf-style formatting to create a command. */
+const char* NDICommandInterpreter::Command(const char* format, int a, int b,
                                            int c, int d)
 {
   sprintf(m_SerialCommand, format, a, b, c, d);
   return this->Command(m_SerialCommand);
 }
 
-/*---------------------------------------------------------------------*/
-const char *NDICommandInterpreter::Command(const char *format, int a, int b,
-                                           const char *c)
+/** Use printf-style formatting to create a command. */
+const char* NDICommandInterpreter::Command(const char* format, int a, int b,
+                                           const char* c)
 {
   sprintf(m_SerialCommand, format, a, b, c);
   return this->Command(m_SerialCommand);
 }
 
-/*---------------------------------------------------------------------*/
-const char *NDICommandInterpreter::Command(const char *format, const char *a,
-                                           const char *b, const char *c,
-                                           const char *d, const char *e)
+/** Use printf-style formatting to create a command. */
+const char* NDICommandInterpreter::Command(const char* format, const char* a,
+                                           const char* b, const char* c,
+                                           const char* d, const char* e)
 {
   sprintf(m_SerialCommand, format, a, b, c, d, e);
   return this->Command(m_SerialCommand);
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data that was received from a PHINF command. */
 int NDICommandInterpreter::GetPHINFPortStatus() const
 {
-  const char *dp;
+  const char* dp;
 
   dp = &m_PHINFBasic[31];
 
   return this->HexadecimalStringToInt(dp, 2);  
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data that was received from a PHINF command. */
 int NDICommandInterpreter::GetPHINFToolInfo(char information[31]) const
 {
-  const char *dp;
+  const char* dp;
   int i;
   
   dp = m_PHINFBasic;
@@ -709,20 +711,20 @@ int NDICommandInterpreter::GetPHINFToolInfo(char information[31]) const
   return m_PHINFUnoccupied;
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data that was received from a PHINF command. */
 unsigned int NDICommandInterpreter::GetPHINFCurrentTest() const
 {
-  const char *dp;
+  const char* dp;
 
   dp = m_PHINFTesting;
 
   return this->HexadecimalStringToInt(dp, 8);  
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data that was received from a PHINF command. */
 int NDICommandInterpreter::GetPHINFPartNumber(char part[20]) const
 {
-  const char *dp;
+  const char* dp;
   int i;
   
   dp = m_PHINFPartNumber;
@@ -735,30 +737,30 @@ int NDICommandInterpreter::GetPHINFPartNumber(char part[20]) const
   return m_PHINFUnoccupied;
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data that was received from a PHINF command. */
 int NDICommandInterpreter::GetPHINFAccessories() const
 {
-  const char *dp;
+  const char* dp;
 
   dp = m_PHINFAccessories;
 
   return this->HexadecimalStringToInt(dp, 2);  
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data that was received from a PHINF command. */
 int NDICommandInterpreter::GetPHINFMarkerType() const
 {
-  const char *dp;
+  const char* dp;
 
   dp = m_PHINFMarkerType;
 
   return this->HexadecimalStringToInt(dp, 2);  
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data that was received from a PHINF command. */
 int NDICommandInterpreter::GetPHINFPortLocation(char location[14]) const
 {
-  const char *dp;
+  const char* dp;
   int i;
   
   dp = m_PHINFPortLocation;
@@ -771,39 +773,39 @@ int NDICommandInterpreter::GetPHINFPortLocation(char location[14]) const
   return m_PHINFUnoccupied;
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data that was received from a PHINF command. */
 int NDICommandInterpreter::GetPHINFGPIOStatus() const
 {
-  const char *dp;
+  const char* dp;
 
   dp = m_PHINFGPIOStatus;
 
   return this->HexadecimalStringToInt(dp, 2);  
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data that was received from a PHRQ command. */
 int NDICommandInterpreter::GetPHRQHandle() const
 {
-  const char *dp;
+  const char* dp;
 
   dp = m_PHRQReply;
   return this->HexadecimalStringToInt(dp, 2);
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data that was received from a PHSR command. */
 int NDICommandInterpreter::GetPHSRNumberOfHandles() const
 {
-  const char *dp;
+  const char* dp;
 
   dp = m_PHSRReply;
 
   return this->HexadecimalStringToInt(dp, 2);  
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data that was received from a PHSR command. */
 int NDICommandInterpreter::GetPHSRHandle(int i) const
 {
-  const char *dp;
+  const char* dp;
   int n;
 
   dp = m_PHSRReply;
@@ -819,10 +821,10 @@ int NDICommandInterpreter::GetPHSRHandle(int i) const
   return this->HexadecimalStringToInt(dp, 2);  
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data that was received from a PHSR command. */
 int NDICommandInterpreter::GetPHSRInformation(int i) const
 {
-  const char *dp;
+  const char* dp;
   int n;
 
   dp = m_PHSRReply;
@@ -838,10 +840,10 @@ int NDICommandInterpreter::GetPHSRInformation(int i) const
   return this->HexadecimalStringToInt(dp, 3);  
 }
 
-/*---------------------------------------------------------------------*/
+/** Return a transform that was received after a TX command. */
 int NDICommandInterpreter::GetTXTransform(int ph, double transform[8]) const
 {
-  const char *dp;
+  const char* dp;
   int i, n;
   
   n = m_TXNumberOfHandles;
@@ -879,10 +881,10 @@ int NDICommandInterpreter::GetTXTransform(int ph, double transform[8]) const
   return NDI_TRANSFORM_OKAY;
 }
 
-/*---------------------------------------------------------------------*/
+/** Return port status info that was received after a TX command. */
 int NDICommandInterpreter::GetTXPortStatus(int ph) const
 {
-  const char *dp;
+  const char* dp;
   int i, n;
   
   n = m_TXNumberOfHandles;
@@ -903,10 +905,10 @@ int NDICommandInterpreter::GetTXPortStatus(int ph) const
   return this->HexadecimalStringToInt(dp, 8);
 }
 
-/*---------------------------------------------------------------------*/
+/** Return the frame number for data received from a TX command. */
 unsigned int NDICommandInterpreter::GetTXFrame(int ph) const
 {
-  const char *dp;
+  const char* dp;
   int i, n;
 
   n = m_TXNumberOfHandles;
@@ -927,10 +929,10 @@ unsigned int NDICommandInterpreter::GetTXFrame(int ph) const
   return this->HexadecimalStringToUnsignedInt(dp, 8);
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data received from a TX command. */
 int NDICommandInterpreter::GetTXToolInfo(int ph) const
 {
-  const char *dp;
+  const char* dp;
   int i, n;
   
   n = m_TXNumberOfHandles;
@@ -950,10 +952,10 @@ int NDICommandInterpreter::GetTXToolInfo(int ph) const
   return this->HexadecimalStringToInt(dp, 2);
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data received from a TX command. */
 int NDICommandInterpreter::GetTXMarkerInfo(int ph, int marker) const
 {
-  const char *dp;
+  const char* dp;
   int i, n;
   
   n = m_TXNumberOfHandles;
@@ -973,10 +975,10 @@ int NDICommandInterpreter::GetTXMarkerInfo(int ph, int marker) const
   return this->HexadecimalStringToInt(dp, 1);
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data received from a TX command. */
 int NDICommandInterpreter::GetTXSingleStray(int ph, double coord[3]) const
 {
-  const char *dp;
+  const char* dp;
   int i, n;
   
   n = m_TXNumberOfHandles;
@@ -1009,16 +1011,16 @@ int NDICommandInterpreter::GetTXSingleStray(int ph, double coord[3]) const
   return NDI_OKAY;
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data received from a TX command. */
 int NDICommandInterpreter::GetTXNumberOfPassiveStrays() const
 {
   return m_TXNumberOfPassiveStrays; 
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data received from a TX command. */
 int NDICommandInterpreter::GetTXPassiveStray(int i, double coord[3]) const
 {
-  const char *dp;
+  const char* dp;
   int n;
 
   dp = m_TXPassiveStray;
@@ -1052,20 +1054,20 @@ int NDICommandInterpreter::GetTXPassiveStray(int i, double coord[3]) const
   return NDI_OKAY;
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data received from a TX command. */
 int NDICommandInterpreter::GetTXSystemStatus() const
 {
-  const char *dp;
+  const char* dp;
 
   dp = m_TXSystemStatus;
 
   return this->HexadecimalStringToInt(dp, 4);
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data received from an SSTAT command. */
 int NDICommandInterpreter::GetSSTATControl() const
 {
-  const char *dp;
+  const char* dp;
 
   dp = m_SSTATControl;
 
@@ -1077,10 +1079,10 @@ int NDICommandInterpreter::GetSSTATControl() const
   return this->HexadecimalStringToInt(dp, 2);
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data received from an SSTAT command. */
 int NDICommandInterpreter::GetSSTATSensors() const
 {
-  const char *dp;
+  const char* dp;
 
   dp = m_SSTATSensor;
 
@@ -1092,10 +1094,10 @@ int NDICommandInterpreter::GetSSTATSensors() const
   return this->HexadecimalStringToInt(dp, 2);
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data received from an SSTAT command. */
 int NDICommandInterpreter::GetSSTATTIU() const
 {
-  const char *dp;
+  const char* dp;
 
   dp = m_SSTATTIU;
 
@@ -1107,7 +1109,7 @@ int NDICommandInterpreter::GetSSTATTIU() const
   return this->HexadecimalStringToInt(dp, 2);
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data received from an SSTAT command. */
 int NDICommandInterpreter::GetIRCHKDetected() const
 {
   if (m_IRCHKDetected == '1')
@@ -1117,10 +1119,10 @@ int NDICommandInterpreter::GetIRCHKDetected() const
   return 0;
 }
 
-/*---------------------------------------------------------------------*/
+/** Return data received from an IRCHK command. */
 int NDICommandInterpreter::GetIRCHKNumberOfSources(int side) const
 {
-  const char *dp;
+  const char* dp;
   int n, m;
 
   dp = m_IRCHKSources;
@@ -1153,11 +1155,11 @@ int NDICommandInterpreter::GetIRCHKNumberOfSources(int side) const
   return 0;
 }
  
-/*---------------------------------------------------------------------*/
+/** Return data received from an IRCHK command. */
 int NDICommandInterpreter::GetIRCHKSourceXY(int side, int i,
                                             double xy[2]) const
 {
-  const char *dp;
+  const char* dp;
   int n, m;
 
   dp = m_IRCHKSources;
@@ -1215,10 +1217,10 @@ int NDICommandInterpreter::GetIRCHKSourceXY(int side, int i,
   This information can be later extracted through one of the ndiGetPHINFxx()
   functions.
 */
-void NDICommandInterpreter::HelperForPHINF(const char *cp, const char *crp)
+void NDICommandInterpreter::HelperForPHINF(const char* cp, const char* crp)
 {
   unsigned int mode = 0x0001; /* the default reply mode */
-  char *dp;
+  char* dp;
   int j;
   int unoccupied = NDI_OKAY;
 
@@ -1390,9 +1392,9 @@ void NDICommandInterpreter::HelperForPHINF(const char *cp, const char *crp)
   This information can be later extracted through one of the ndiGetPHRQHandle()
   functions.
 */
-void NDICommandInterpreter::HelperForPHRQ(const char *cp, const char *crp)
+void NDICommandInterpreter::HelperForPHRQ(const char* cp, const char* crp)
 {
-  char *dp;
+  char* dp;
   int j;
 
   dp = m_PHRQReply;
@@ -1411,9 +1413,9 @@ void NDICommandInterpreter::HelperForPHRQ(const char *cp, const char *crp)
   This information can be later extracted through one of the ndiGetPHSRxx()
   functions.
 */
-void NDICommandInterpreter::HelperForPHSR(const char *cp, const char *crp)
+void NDICommandInterpreter::HelperForPHSR(const char* cp, const char* crp)
 {
-  char *dp;
+  char* dp;
   int j;
 
   dp = m_PHSRReply;
@@ -1434,10 +1436,10 @@ void NDICommandInterpreter::HelperForPHSR(const char *cp, const char *crp)
   This information can be later extracted through one of the ndiGetTXxx()
   functions.
 */
-void NDICommandInterpreter::HelperForTX(const char *cp, const char *crp)
+void NDICommandInterpreter::HelperForTX(const char* cp, const char* crp)
 {
   unsigned int mode = 0x0001; /* the default reply mode */
-  char *dp;
+  char* dp;
   int i, j, n;
   int ph, nhandles, nstray;
 
@@ -1626,10 +1628,10 @@ void NDICommandInterpreter::HelperForTX(const char *cp, const char *crp)
 /*---------------------------------------------------------------------
   Copy all the SSTAT reply information into the ndicapi structure.
 */
-void NDICommandInterpreter::HelperForSSTAT(const char *cp, const char *crp)
+void NDICommandInterpreter::HelperForSSTAT(const char* cp, const char* crp)
 {
   unsigned int mode;
-  char *dp;
+  char* dp;
 
   /* read the SSTAT command reply mode */
   mode = this->HexadecimalStringToUnsignedInt(&cp[6], 4);
@@ -1659,7 +1661,7 @@ void NDICommandInterpreter::HelperForSSTAT(const char *cp, const char *crp)
 /*---------------------------------------------------------------------
   Copy all the IRCHK reply information into the ndicapi structure.
 */
-void NDICommandInterpreter::HelperForIRCHK(const char *cp, const char *crp)
+void NDICommandInterpreter::HelperForIRCHK(const char* cp, const char* crp)
 {
   unsigned int mode = 0x0001; /* the default reply mode */
   int j;
@@ -1690,7 +1692,7 @@ void NDICommandInterpreter::HelperForIRCHK(const char *cp, const char *crp)
 /*---------------------------------------------------------------------
   Adjust the host to match a COMM command.
 */
-void NDICommandInterpreter::HelperForCOMM(const char *cp, const char *crp)
+void NDICommandInterpreter::HelperForCOMM(const char* cp, const char* crp)
 {
   static SerialCommunication::BaudRateType convert_baud[6] = {
     SerialCommunication::BaudRate9600,

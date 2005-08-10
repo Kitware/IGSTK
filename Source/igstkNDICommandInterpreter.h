@@ -41,6 +41,8 @@ class NDICommandInterpreter : public itk::Object
     The AuroraTracker and PolarisTracker classes should create a
     private instance of NDICommandInterpreter, and then pass
     their Communication objects to the NDICommandInterpreter.
+
+    \ingroup Tracking
 */
 
 public:
@@ -395,7 +397,7 @@ public:
   igstkNewMacro(Self);  
 
   /** Set the communication object that commands will be sent to */
-  void SetCommunication(CommunicationType *communication);
+  void SetCommunication(CommunicationType* communication);
 
   /**
   Send a text command to the device and receive a text reply.
@@ -436,9 +438,6 @@ public:
   Cause the device to beep.
 
   \param n   the number of times to beep, an integer between 1 and 9
-
-  A reply of "0" means that the device is already beeping
-  and cannot service this beep request.
 
   This command can be used in tracking mode.
   */
@@ -580,8 +579,8 @@ public:
   following commands:
   - int \ref GetPHRQHandle()
   */
-  void PHRQ(const char *num, const char *sys, const char *tool,
-            const char *port, const char *chan) {
+  void PHRQ(const char* num, const char* sys, const char* tool,
+            const char* port, const char* chan) {
     this->Command("PHRQ:%-8.8s%1.1s%1.1s%2.2s%2.2s", num, sys, tool, port, chan); }
 
   /**
@@ -643,7 +642,7 @@ public:
   \param a an address between 0x0000 and 0x07C0
   \param x 64-byte data array encoded as a 128-character hexadecimal string
   */
-  void PVWR(int ph, int a, const char *x) {
+  void PVWR(int ph, int a, const char* x) {
     this->Command("PVWR:%02X%04X%.128s", ph, a, x); }
 
   /**
@@ -735,7 +734,7 @@ public:
   - NDI_TIU_CIRMWARE              3 - TIU firmware
   - NDI_CONTROL_FIRMWARE_ENHANCED 4 - control firmware with enhanced versioning
   */
-  const char *VER(VERModeType n) {
+  const char* VER(VERModeType n) {
     return this->Command("VER:%d", n); }
 
   /**
@@ -1171,7 +1170,7 @@ public:
 
   An unrecognized error code will return "Unrecognized error code".
   */
-  static const char *ErrorString(int errnum);
+  static const char* ErrorString(int errnum);
 
   /**
   This function is used to convert raw binary data into a stream of
@@ -1185,7 +1184,7 @@ public:
   before calling this function, otherwise the string will be left
   unterminated.
   */
-  static char *HexEncode(char *cp, const void *data, int n);
+  static char* HexEncode(char* cp, const void* data, int n);
 
   /**
   This function converts a hex-encoded string into binary data.
@@ -1196,7 +1195,7 @@ public:
 
   As a convenience, the return value is a pointer to the decoded data.
   */
-  static void *HexDecode(void *data, const char *cp, int n);
+  static void* HexDecode(void* data, const char* cp, int n);
   
 protected:
   /** Constructor */
@@ -1206,7 +1205,7 @@ protected:
   virtual ~NDICommandInterpreter();
 
   /** Get the communication object */
-  CommunicationType *GetCommunication();
+  CommunicationType* GetCommunication();
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -1278,28 +1277,28 @@ private:
   /**
   Send a command to the device using printf-style format string.
   */
-  const char *Command(const char *format, int a);
+  const char* Command(const char* format, int a);
   /**
   Send a command to the device using printf-style format string.
   */
-  const char *Command(const char *format, int a, int b);
+  const char* Command(const char* format, int a, int b);
   /**
   Send a command to the device using printf-style format string.
   */
-  const char *Command(const char *format, int a, int b, int c);
+  const char* Command(const char* format, int a, int b, int c);
   /**
   Send a command to the device using printf-style format string.
   */
-  const char *Command(const char *format, int a, int b, int c, int d);
+  const char* Command(const char* format, int a, int b, int c, int d);
   /**
   Send a command to the device using printf-style format string.
   */
-  const char *Command(const char *format, int a, int b, const char *c);
+  const char* Command(const char* format, int a, int b, const char* c);
   /**
   Send a command to the device using printf-style format string.
   */
-  const char *Command(const char *format, const char *a, const char *b,
-                      const char *c, const char *d, const char *e);
+  const char* Command(const char* format, const char* a, const char* b,
+                      const char* c, const char* d, const char* e);
 
   /** set error indicator */
   int SetErrorCode(int errnum);
@@ -1307,13 +1306,13 @@ private:
   /** helper functions that set the appropriate ivar as a result of
      information that is received from the AURORA or POLARIS */
   
-  void HelperForCOMM(const char *cp, const char *crp);
-  void HelperForPHINF(const char *cp, const char *crp);
-  void HelperForPHSR(const char *cp, const char *crp);
-  void HelperForTX(const char *cp, const char *crp);
-  void HelperForIRCHK(const char *cp, const char *crp);
-  void HelperForSSTAT(const char *cp, const char *crp);
-  void HelperForPHRQ(const char *cp, const char *crp);
+  void HelperForCOMM(const char* cp, const char* crp);
+  void HelperForPHINF(const char* cp, const char* crp);
+  void HelperForPHSR(const char* cp, const char* crp);
+  void HelperForTX(const char* cp, const char* crp);
+  void HelperForIRCHK(const char* cp, const char* crp);
+  void HelperForSSTAT(const char* cp, const char* crp);
+  void HelperForPHRQ(const char* cp, const char* crp);
 
   /**
   Convert \em n characters of a hexadecimal string into an unsigned int.
@@ -1322,7 +1321,7 @@ private:
   The primary use of this function is decoding replies from the
   device.
   */
-  static unsigned int HexadecimalStringToUnsignedInt(const char *cp, int n);
+  static unsigned int HexadecimalStringToUnsignedInt(const char* cp, int n);
 
   /**
   Convert \em n characters of a hexadecimal string into an integer..
@@ -1331,7 +1330,7 @@ private:
   The primary use of this function is decoding replies from the
   device.
   */
-  static int HexadecimalStringToInt(const char *cp, int n);
+  static int HexadecimalStringToInt(const char* cp, int n);
 
   /**
   Convert \em n characters of a signed decimal string to a long.
@@ -1341,7 +1340,7 @@ private:
   The primary use of this function is decoding replies from the
   device.
   */
-  static int SignedStringToInt(const char *cp, int n);
+  static int SignedStringToInt(const char* cp, int n);
 
   NDICommandInterpreter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
