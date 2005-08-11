@@ -35,10 +35,8 @@ IMAGE_PATH           = "@IGSTK_BINARY_DIR@/Utilities/Doxygen/contrib"
 
 OUTPUT_DIRECTORY     = "@IGSTK_BINARY_DIR@/Utilities/Doxygen/doc"
 
-INPUT                = \
- "@IGSTK_SOURCE_DIR@/Source" 
-
-
+INPUT                = "@IGSTK_SOURCE_DIR@/Source" \
+                       "@IGSTK_SOURCE_DIR@/../Sandbox/Source"
 
 EXTRACT_ALL          = YES
 EXTRACT_PRIVATE      = NO
@@ -57,7 +55,7 @@ DISTRIBUTE_GROUP_DOC = YES
 TAB_SIZE             = 3
 
 FILE_PATTERNS        = *.h *.hxx
-RECURSIVE            = NO
+RECURSIVE            = YES
 EXCLUDE_PATTERNS     =
 
 HTML_ALIGN_MEMBERS   = YES
@@ -68,21 +66,39 @@ IGNORE_PREFIX        = igstk
 ENABLE_PREPROCESSING = YES
 MACRO_EXPANSION      = YES
 SEARCH_INCLUDES      = YES
-INCLUDE_PATH         =
+INCLUDE_PATH         = 
+                      
 EXPAND_ONLY_PREDEF   = YES
 
-PREDEFINED  =  "igstkNotUsed(x)="\
-               "igstkTypeMacro(thisClass,superclass)= \
-                  virtual const char *GetNameOfClass() const;" \
-               "igstkSetMacro(name,type)= \
-                  virtual void Set##name (type _arg);" \
-               "igstkGetMacro(name,type)= \
-                  virtual type Get##name ();" \
+
+PREDEFINED  =  "igstkNotUsed(x)="										\
+               "igstkTypeMacro(thisClass,superclass)=					\
+                  virtual const char *GetNameOfClass() const;"			\
+               "igstkSetMacro(name,type)=								\
+                  virtual void Set##name (type _arg);"					\
+               "igstkGetMacro(name,type)=								\
+                  virtual type Get##name ();"							\
                "igstkNewMacro(name)= \
-                    static Self::Pointer New()                          \
-                      { return new Self(); }                            \
-                  private:"                                             \
-		"FREEVERSION" "ERROR_CHECKING"                          \
+                  static Pointer New(void);"                            \
+               "itkEventMacro(thisClass,superclass)= \
+                  class thisClass : public superclass {};" \
+               "vtkTypeRevisionMacro(thisClass,superclass)= \
+                   typedef superclass Superclass; \
+                   virtual const char *GetClassName(); \
+                   static int IsTypeOf(const char *type); \
+                   virtual int IsA(const char *type); \
+                   static thisClass* SafeDownCast(vtkObject *o);"\
+               "igstkLogMacro( x, y)=igstkLogMacro( x, y);"				\
+               "igstkLogMacroStatic( obj, x, y)=igstkLogMacroStatic( obj, x, y);"\
+               "igstkFriendClassMacro(type)="							\                 
+               "igstkLoggerMacro()=										\
+               protected:                                               \
+                 LoggerType* GetLogger() const;                         \
+               public:
+                   void SetLogger(LoggerType* logger);"					\
+               "igstkStateMachineMacro()=								\
+                   void ExportStateMachineDescription( OutputStreamType & ostr, bool skipLoops=false ) const; "\
+               "FREEVERSION" "ERROR_CHECKING"							\
                 "HAS_TIFF" "HAS_JPEG" "HAS_NETLIB" "HAS_PNG" "HAS_ZLIB" \
                 "HAS_GLUT" "HAS_QT"                                     \
                "VCL_USE_NATIVE_STL=1" "VCL_USE_NATIVE_COMPLEX=1"        \
