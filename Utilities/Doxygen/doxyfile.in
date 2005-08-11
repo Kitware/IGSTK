@@ -94,7 +94,7 @@ PREDEFINED  =  "igstkNotUsed(x)="										\
                "igstkLoggerMacro()=										\
                protected:                                               \
                  LoggerType* GetLogger() const;                         \
-               public:
+               public:   \
                    void SetLogger(LoggerType* logger);"					\
                "igstkStateMachineMacro()=								\
                    void ExportStateMachineDescription( OutputStreamType & ostr, bool skipLoops=false ) const; "\
