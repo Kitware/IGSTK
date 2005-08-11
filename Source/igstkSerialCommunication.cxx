@@ -219,6 +219,8 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
 
+  m_Recording = false;
+
 } 
 
 
@@ -233,18 +235,6 @@ SerialCommunication::~SerialCommunication()
 void SerialCommunication::SetRecordingFileName(const char* filename)
 {
   m_RecordingFilename = filename;
-}
-
-
-void SerialCommunication::SetRecording(bool recordingOn)
-{
-  m_Recording = recordingOn;
-}
-
-
-bool SerialCommunication::GetRecording()
-{
-  return m_Recording;
 }
 
 
