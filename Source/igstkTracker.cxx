@@ -621,7 +621,10 @@ void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 void Tracker::SetReferenceTool( bool applyReferenceTool, unsigned int portNumber, unsigned int toolNumber )
 {
   if( applyReferenceTool == false )
+    {
     m_ApplyingReferenceTool = applyReferenceTool;
+    return;
+    }
   if ( portNumber < this->m_Ports.size()  )
     {
     TrackerPortPointer port = this->m_Ports[ portNumber ];
