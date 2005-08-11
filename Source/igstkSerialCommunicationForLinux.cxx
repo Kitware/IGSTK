@@ -49,15 +49,8 @@ SerialCommunicationForLinux::ResultType
 SerialCommunicationForLinux::InternalOpenPort( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalOpenPort called ...\n");
-  static struct flock fl = { F_WRLCK, 0, 0, 0 }; // for file locking
-  static struct flock fu = { F_UNLCK, 0, 0, 0 }; // for file unlocking
   struct termios t;
   int i;
-
-  if( m_PortHandle != INVALID_HANDLE )
-  {
-    igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalOpenPort : port is already open! ...\n");
-  }
 
   char device[20];
   // it would be really nice to support the devices for other OS
@@ -76,21 +69,9 @@ SerialCommunicationForLinux::InternalOpenPort( void )
   // the port to block while we were trying to open it)
   fcntl(m_PortHandle, F_SETFL, 0);
 
-#ifndef __APPLE__
-  // get exclusive lock on the serial port
-  // on many unices, this has no effect for device files
-  if (fcntl(m_PortHandle, F_SETLK, &fl))
-    {
-    close(m_PortHandle);
-    this->InvokeEvent( OpenPortFailureEvent() );
-    return FAILURE;             // bail out on error
-    }
-#endif /* __APPLE__ */
-
   // get I/O information
   if (tcgetattr(m_PortHandle,&t) == -1)
     {
-    fcntl(m_PortHandle, F_SETLK, &fu);
     close(m_PortHandle);
     m_PortHandle = INVALID_HANDLE;
     this->InvokeEvent( OpenPortFailureEvent() );
@@ -111,7 +92,6 @@ SerialCommunicationForLinux::InternalOpenPort( void )
 
   if (tcsetattr(m_PortHandle,TCSANOW,&t) == -1)
     { // set I/O information
-    fcntl(m_PortHandle, F_SETLK, &fu);
     close(m_PortHandle);
     m_PortHandle = INVALID_HANDLE;
     this->InvokeEvent( OpenPortFailureEvent() );
@@ -247,15 +227,11 @@ SerialCommunicationForLinux::InternalSetTransferParameters( void )
 SerialCommunicationForLinux::ResultType
 SerialCommunicationForLinux::InternalClosePort( void )
 {
-  static struct flock fu = { F_UNLCK, 0, 0, 0 }; // for file unlocking
   int i;
 
   igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalClosePort called ...\n");
   // restore the comm port state to from before it was opened
   tcsetattr(m_PortHandle,TCSANOW,&m_SaveTermIOs);
-
-  // release our lock on the serial port
-  fcntl(m_PortHandle, F_SETLK, &fu);
 
   if (close(m_PortHandle) == -1)
     {
