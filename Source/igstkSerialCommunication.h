@@ -91,46 +91,47 @@ public:
   typedef itk::Logger   LoggerType;
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro(SerialCommunication, Communication);
+  igstkTypeMacro( SerialCommunication, Communication );
 
   /** Specify which serial port to use.  If communication is open,
    *  this has no effect until communication is closed and reopened. */
-  void SetPortNumber( PortNumberType port );
+  igstkSetMacro( PortNumber, PortNumberType );
   /** Get the serial port, where the ports are numbered 0 through 3. */
-  PortNumberType GetPortNumber() { return m_PortNumber; };
+  igstkGetMacro( PortNumber, PortNumberType );
 
   /** Set the baud rate to use.  Baud rates of 57600 or higher should
    *  not be used unless some sort of error checking is in place. */
   void SetBaudRate( BaudRateType );
   /** Get the baud rate. */
-  BaudRateType GetBaudRate() { return m_BaudRate; };
+  igstkGetMacro( BaudRate, BaudRateType );
 
   /** Set the number of bits per character.  This should usually be
    *  set to 8, since 7 bits is only valid for pure ASCII data. */
   void SetDataBits( DataBitsType dataBits );
   /** Get the number of bits per character. */
-  DataBitsType GetDataBits() { return m_DataBits; };
+  igstkGetMacro( DataBits, DataBitsType );
 
   /** Set the parity.  The default is no parity. */
   void SetParity( ParityType parity );
   /** Get the parity. */
-  ParityType GetParity() { return m_Parity; };
+  igstkGetMacro( Parity, ParityType );
 
   /** Set the number of stop bits.  The default is one stop bit. */
   void SetStopBits( StopBitsType stopBits );
   /** Get the number of stop bits. */
-  StopBitsType GetStopBits() { return m_StopBits; };
+  igstkGetMacro( StopBits, StopBitsType );
 
   /** Set whether to use hardware handshaking. */
   void SetHardwareHandshake( HandshakeType handshake );
   /** Get whether hardware handshaking is enabled. */
-  HandshakeType GetHardwareHandshake() { return m_HardwareHandshake; };
+  igstkGetMacro( HardwareHandshake, HandshakeType );
 
   /** The method SetTimeoutPeriod sets the amount of time to wait on a reply 
-  from the device before generating a timeout event. */
+   *  from the device before generating a timeout event.  The default
+   *  value is 500 (0.5 seconds). */
   void SetTimeoutPeriod( int milliseconds );
   /** Get the timeout period */
-  int GetTimeoutPeriod() { return m_TimeoutPeriod; };
+  igstkGetMacro( TimeoutPeriod, int );
 
   /** The method OpenCommunication sets up communication as per the data
       provided. */

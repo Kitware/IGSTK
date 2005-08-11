@@ -243,12 +243,6 @@ void SerialCommunication::CloseCommunication( void )
 }
 
 
-void SerialCommunication::SetPortNumber( PortNumberType portNumber )
-{
-  m_PortNumber = portNumber;
-}
-
-
 void SerialCommunication::SetBaudRate( BaudRateType baudRate )
 {
   igstkLogMacro( DEBUG, "SerialCommunication::SetBaudRate(" << baudRate << ") called ...\n");
