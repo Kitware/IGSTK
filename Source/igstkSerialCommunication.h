@@ -133,6 +133,15 @@ public:
   /** Get the timeout period */
   igstkGetMacro( TimeoutPeriod, int );
 
+  /** Set a filename of the file in which the data stream is recorded */
+  void SetRecordingFileName(const char* filename);
+
+  /** Set a recording flag */
+  void SetRecording(bool recordingOn);
+
+  /** Get a recording flag */
+  bool GetRecording();
+
   /** The method OpenCommunication sets up communication as per the data
       provided. */
   void OpenCommunication( void );
@@ -284,6 +293,21 @@ protected:
 
 private:
 
+  /** Record file name */
+  std::string              m_RecordingFilename;
+
+  /** File output stream for recording stream into a file */
+  std::ofstream            m_FileStream;
+
+  /** Currently sent message number */
+  unsigned                 m_SendNo;
+
+  /** Currently received message number */
+  unsigned                 m_RecvNo;
+
+  /** Recording flag */
+  bool                     m_Recording;
+
   // List of States 
   StateType                m_IdleState;
   StateType                m_AttemptingToOpenPortState;
@@ -331,6 +355,7 @@ private:
 
   /** Called by the state machine when communication is to be closed */
   void AttemptToClosePort( void );
+
 };
 
 } // end namespace igstk
