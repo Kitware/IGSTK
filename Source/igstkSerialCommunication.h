@@ -137,10 +137,10 @@ public:
   void SetRecordingFileName(const char* filename);
 
   /** Set a recording flag */
-  void SetRecording(bool recordingOn);
+  igstkSetMacro( Recording, bool );
 
   /** Get a recording flag */
-  bool GetRecording();
+  igstkGetMacro( Recording, bool );
 
   /** The method OpenCommunication sets up communication as per the data
       provided. */
