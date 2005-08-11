@@ -17,6 +17,10 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <string>
+#include <iostream>
+#include <iomanip>
+#include <time.h>
 
 #include "igstkSerialCommunication.h"
 
@@ -214,6 +218,7 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
 
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
+
 } 
 
 
@@ -225,9 +230,43 @@ SerialCommunication::~SerialCommunication()
 }
 
 
+void SerialCommunication::SetRecordingFileName(const char* filename)
+{
+  m_RecordingFilename = filename;
+}
+
+
+void SerialCommunication::SetRecording(bool recordingOn)
+{
+  m_Recording = recordingOn;
+}
+
+
+bool SerialCommunication::GetRecording()
+{
+  return m_Recording;
+}
+
+
 void SerialCommunication::OpenCommunication( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunication::OpenCommunication called ...\n");
+
+  // Open a file for writing data stream.
+  if( m_Recording )
+    {
+    time_t ti;
+    time(&ti);
+    igstkLogMacro( DEBUG, "Recording is on. Filename: " << m_RecordingFilename << std::endl );
+    m_FileStream.open(m_RecordingFilename.c_str(), std::ios::binary);
+    if( !m_FileStream.is_open() )
+      {
+      igstkLogMacro( CRITICAL, "failed to open a file for writing data stream." << std::endl );
+      }
+    m_SendNo = 1;
+    m_RecvNo = 1;
+    m_FileStream << "# recorded " << asctime(localtime(&ti)) << "\r\n";
+    }
 
   // Attempt to open communication port
   m_StateMachine.PushInput( m_OpenPortInput );
@@ -240,6 +279,7 @@ void SerialCommunication::CloseCommunication( void )
   igstkLogMacro( DEBUG, "SerialCommunication::CloseCommunication called ...\n");
   m_StateMachine.PushInput( m_ClosePortInput );
   m_StateMachine.ProcessInputs();
+  m_FileStream.close();
 }
 
 
@@ -345,6 +385,19 @@ void SerialCommunication::Write( const char *data, int numberOfBytes )
   m_OutputData = data;
   m_BytesToWrite = numberOfBytes;
 
+  // Recording for data sent
+  if( m_Recording )
+    {
+    m_SendNo = m_RecvNo;
+    m_FileStream << m_SendNo << ". command[" << numberOfBytes << "] ";
+    int i;
+    for( i = 0; i < numberOfBytes; ++i )
+      {
+      m_FileStream << m_OutputData[i];
+      }
+    m_FileStream << '\n';
+    }
+
   m_StateMachine.PushInput( m_WriteInput );
   m_StateMachine.ProcessInputs();
 }
@@ -363,6 +416,17 @@ void SerialCommunication::Read( char *data, int numberOfBytes, int &bytesRead )
 
   // terminate the string
   data[bytesRead] = '\0';
+
+  /** Recording for data received */
+  if( m_Recording )
+    {
+    m_FileStream << m_RecvNo++ << ". receive[" << bytesRead << "] ";
+    for(int i = 0; i < bytesRead; ++i )
+      {
+      m_FileStream << m_InputData[i];
+      }
+    m_FileStream << '\n';
+    }
 
   igstkLogMacro( DEBUG, "SerialCommunication::Read : (" << bytesRead << ") " << data << "...\n");
 }
