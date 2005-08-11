@@ -31,7 +31,7 @@ namespace igstk
   * an Aurora tool.
 */
 
-class AuroraTool : public igstk::TrackerTool
+class AuroraTool : public TrackerTool
 {
 public:
 

@@ -38,7 +38,7 @@ namespace igstk
 #define NDI_NUMBER_OF_PORTS  4
 
 
-class AuroraTracker : public igstk::Tracker
+class AuroraTracker : public Tracker
 {
 public:
 
@@ -62,7 +62,7 @@ public:
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro(AuroraTracker, Object);
+  igstkTypeMacro(AuroraTracker, Tracker);
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro(Self);  
