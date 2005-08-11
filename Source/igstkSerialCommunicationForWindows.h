@@ -45,7 +45,7 @@ public:
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro(SerialCommunicationForWindows, Object);
+  igstkTypeMacro(SerialCommunicationForWindows, SerialCommunication);
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro(Self);  
