@@ -45,7 +45,6 @@ public:
   typedef vtkOutputWindow  Superclass;
   
   /** Run-time type information (and related methods). */
-  vtkTypeRevisionMacro(VTKLoggerOutput, vtkOutputWindow);
   igstkTypeMacro(VTKLoggerOutput, vtkOutputWindow);
 
   /** Logger type definition */
