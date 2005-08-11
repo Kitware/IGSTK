@@ -195,6 +195,14 @@ int igstkSerialCommunicationTest( int, char * [] )
   serialComm->SetStopBits( CommunicationType::StopBits1 );
   serialComm->SetHardwareHandshake( CommunicationType::HandshakeOff );
 
+  serialComm->SetRecordingFileName( "RecordedStreamBySerialCommunicationTest.bin" );
+  serialComm->SetRecording( true );
+  if( serialComm->GetRecording() != true )
+    {
+    std::cout << "Set/GetRecording() failed" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    }
+
   serialComm->OpenCommunication();
 
   int len = strlen("Hello World!!!");
