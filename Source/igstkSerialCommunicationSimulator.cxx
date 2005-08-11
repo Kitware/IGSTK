@@ -56,6 +56,7 @@ SerialCommunicationSimulator::InternalOpenPort( void )
 
   if (!m_File.is_open()) 
     {
+    m_File.clear();
     return FAILURE;
     }
 
