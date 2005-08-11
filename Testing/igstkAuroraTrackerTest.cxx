@@ -101,6 +101,10 @@ int igstkAuroraTrackerTest( int, char * [] )
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
 
+  igstk::AuroraTool::Pointer tool = igstk::AuroraTool::New();
+  std::cout << tool->GetNameOfClass() << std::endl;
+  std::cout << tool << std::endl;
+
 #ifdef WIN32
   igstk::SerialCommunicationForWindows::Pointer serialComm = igstk::SerialCommunicationForWindows::New();
 #else
@@ -156,6 +160,10 @@ int igstkAuroraTrackerTest( int, char * [] )
   std::cout << tracker << std::endl;
 
   tracker->Initialize();
+
+  unsigned int ntools = tracker->GetNumberOfTools();
+
+  std::cout << "number of tools : " << ntools << std::endl;
 
   tracker->StartTracking();
 

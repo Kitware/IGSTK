@@ -47,7 +47,15 @@ int igstkFLTKTextBufferLogOutputTest( int, char * [] )
     win->end();
     win->show();
 
+    std::cout << output << std::endl;
     output->SetStream(*textBuffer);
+    igstk::FLTKTextBufferLogOutput::StreamPointerType stream;
+    stream = output->GetStream();
+    if( stream != textBuffer )
+      {
+      std::cout << "[FAILED]" << std::endl;
+      return EXIT_FAILURE;
+      }
     output->Write(1.2345);
     output->Write("This is the test message.\n");
 

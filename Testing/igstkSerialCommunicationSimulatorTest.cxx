@@ -98,6 +98,13 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
   typedef itk::StdStreamLogOutput       LogOutputType;
 
   igstk::SerialCommunicationSimulator::Pointer serialComm = igstk::SerialCommunicationSimulator::New();
+
+  std::cout << serialComm->GetNameOfClass() << std::endl;
+
+  // for increasing test coverage
+  serialComm->SetFileName("wrong_name");
+  serialComm->OpenCommunication();
+
   serialComm->SetFileName("polaris_stream_07_27_2005.bin");
 
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
@@ -120,6 +127,8 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
+
+  std::cout << serialComm << std::endl;
 
   serialComm->OpenCommunication();
 

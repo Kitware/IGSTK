@@ -60,6 +60,7 @@ int igstkVTKLoggerOutputTest( int, char * [] )
 
     // Create an igstk::VTKLoggerOutput and then test it.
     igstk::VTKLoggerOutput* pOver = igstk::VTKLoggerOutput::New();
+    std::cout << pOver->GetNameOfClass() << std::endl;
     pOver->OverrideVTKWindow();
     pOver->SetLogger(logger);  // redirect messages from ITK OutputWindow -> logger2
 

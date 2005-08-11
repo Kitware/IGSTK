@@ -48,6 +48,9 @@ int igstkMouseTrackerTest( int, char * [] )
   MouseTrackerType::Pointer tracker = MouseTrackerType::New();
   tracker->SetLogger( logger );
 
+  tracker->SetScaleFactor(1.0);
+  double scale = tracker->GetScaleFactor();
+
   tracker->Open();
 
   tracker->Initialize();

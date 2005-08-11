@@ -93,6 +93,22 @@ int igstkBinaryDataTest( int, char * [] )
     else
       {
       }
+
+    data.SetSize(2);
+    data2.SetSize(3);
+    data[0] = '\\';
+    data[1] = 0;
+    data2[0] = '\\';
+    data2[1] = '\\';
+    data2[2] = 0;
+
+    std::cout << data << std::endl;
+    bool less = (data < data2);
+    if( !less )
+      {
+      std::cerr << "operator< failed !!" << std::endl;
+      return EXIT_FAILURE;
+      }
     }
   catch(...)
     {
