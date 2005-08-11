@@ -237,6 +237,7 @@ int igstkBasicTrackerTest( int, char * [] )
   toolCalibrationTransform = tracker->GetToolCalibrationTransform();
   std::cout << toolCalibrationTransform << std::endl;
 
+  tracker->SetReferenceTool(false, 1, 0);
   tracker->SetReferenceTool(true, 1, 0);
   unsigned int refTool;
   unsigned int refPort;
