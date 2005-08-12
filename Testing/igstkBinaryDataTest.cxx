@@ -99,7 +99,7 @@ int igstkBinaryDataTest( int, char * [] )
     data[0] = '\\';
     data[1] = 0;
     data2[0] = '\\';
-    data2[1] = '\\';
+    data2[1] = 0;
     data2[2] = 0;
 
     std::cout << data << std::endl;
