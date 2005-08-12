@@ -195,6 +195,13 @@ int igstkSerialCommunicationTest( int, char * [] )
   serialComm->SetStopBits( CommunicationType::StopBits1 );
   serialComm->SetHardwareHandshake( CommunicationType::HandshakeOff );
 
+  serialComm->GetPortNumber();
+  serialComm->GetParity();
+  serialComm->GetBaudRate();
+  serialComm->GetDataBits();
+  serialComm->GetStopBits();
+  serialComm->GetHardwareHandshake();
+
   serialComm->SetRecordingFileName( "RecordedStreamBySerialCommunicationTest.bin" );
   serialComm->SetRecording( true );
   if( serialComm->GetRecording() != true )
