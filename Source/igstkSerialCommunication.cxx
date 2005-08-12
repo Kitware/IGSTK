@@ -252,6 +252,7 @@ void SerialCommunication::OpenCommunication( void )
     if( !m_FileStream.is_open() )
       {
       igstkLogMacro( CRITICAL, "failed to open a file for writing data stream." << std::endl );
+      m_Recording = false;
       }
     m_SendNo = 1;
     m_RecvNo = 1;
