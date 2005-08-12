@@ -208,13 +208,13 @@ void BinaryData::PrintSelf( std::ostream& os, itk::Indent indent ) const
   unsigned int i;
   for( i = 0; i < this->m_data.size(); ++i )
     {
-    if( this->m_data[i] >= 0x20  &&  this->m_data[i] <= 0x7E )
-      {
-      os << this->m_data[i];
-      }
-    else if( this->m_data[i] == '\\' )
+    if( this->m_data[i] == '\\' )
       {
       os << "\\\\";
+      }
+    else if( this->m_data[i] >= 0x20  &&  this->m_data[i] <= 0x7E )
+      {
+      os << this->m_data[i];
       }
     else
       {
