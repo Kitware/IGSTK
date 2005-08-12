@@ -21,6 +21,7 @@
 #include <fstream>
 #include <iomanip>
 #include <map>
+#include <vector>
 #include "igstkBinaryData.h"
 #include "igstkSerialCommunication.h"
 
@@ -94,8 +95,11 @@ protected:
 
 private:
 
-  /** The mapping table for the request and response */
-  typedef std::map<BinaryData, BinaryData> ResponseTableType;
+  /** The mapping table type definition for the request and response */
+  typedef std::map<BinaryData, std::vector<BinaryData> > ResponseTableType;
+
+  /** The response counter type definition : counter is used to respond sequentially */
+  typedef std::map<BinaryData, unsigned> ResponseCounterType;
 
   /** The file that holds the simulation data. */
   FileType  m_File;
@@ -105,6 +109,9 @@ private:
 
   /** A table that maps commands to responses. */
   ResponseTableType  m_ResponseTable;
+
+  /** A table that maps commands to index number of responses. */
+  ResponseCounterType m_CounterTable;
 
   /** The most recently sent command */
   BinaryData  m_Command;

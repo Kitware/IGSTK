@@ -33,6 +33,7 @@ namespace igstk
 SerialCommunicationSimulator::SerialCommunicationSimulator()
 {
   m_ResponseTable.clear();
+  m_CounterTable.clear();
 } 
 
 
@@ -119,12 +120,12 @@ SerialCommunicationSimulator::InternalOpenPort( void )
       recvmsg.CopyFrom(&buf[0], len);
       if( sent < recv )
         {
-        m_ResponseTable[BinaryData()] = recvmsg;
+        m_ResponseTable[BinaryData()].push_back(recvmsg);
         igstkLogMacro( DEBUG, "SERIAL BREAK ::: " << recvmsg << std::endl );
         }
       else if( sent == recv )
         {
-        m_ResponseTable[sentmsg] = recvmsg;
+        m_ResponseTable[sentmsg].push_back(recvmsg);
         igstkLogMacro( DEBUG, "sent " << sent << " : " << sentmsg << std::endl );
         igstkLogMacro( DEBUG, "recv " << recv << " : " << recvmsg << std::endl );
         }
@@ -188,8 +189,14 @@ void SerialCommunicationSimulator::InternalWrite( void )
 
 void SerialCommunicationSimulator::InternalRead( void )
 {
-  const BinaryData& response = m_ResponseTable[m_Command];
+  unsigned index = m_CounterTable[m_Command]++;
+  const BinaryData& response = m_ResponseTable[m_Command][index];
   int bytesRead = response.GetSize();
+
+  if( index+1 >= m_ResponseTable[m_Command].size() )
+    {
+    m_CounterTable[m_Command] = 0;
+    }
 
   // Number of bytes read can't be greater than number asked for.
   bytesRead = ((m_BytesToRead < bytesRead) ? m_BytesToRead : bytesRead);
