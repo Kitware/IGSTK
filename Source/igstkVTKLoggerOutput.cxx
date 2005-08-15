@@ -27,6 +27,7 @@
 namespace igstk
 {
 vtkStandardNewMacro(VTKLoggerOutput);
+vtkCxxRevisionMacro(VTKLoggerOutput, "1.16");
 
 
 /** Constructor */

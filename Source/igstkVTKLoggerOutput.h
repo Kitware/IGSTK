@@ -46,6 +46,7 @@ public:
   
   /** Run-time type information (and related methods). */
   igstkTypeMacro(VTKLoggerOutput, vtkOutputWindow);
+  vtkTypeRevisionMacro(VTKLoggerOutput, vtkOutputWindow);
 
   /** Logger type definition */
   typedef itk::Logger           LoggerType;
