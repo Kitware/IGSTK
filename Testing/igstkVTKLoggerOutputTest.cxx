@@ -72,8 +72,6 @@ int igstkVTKLoggerOutputTest( int, char * [] )
     vtkOutputWindow::GetInstance()->DisplayGenericWarningText("** This is from vtkOutputWindow **\n");
 
     std::cout << *pOver << std::endl;
-
-    pOver->Delete();
     }
   catch(...)
     {
