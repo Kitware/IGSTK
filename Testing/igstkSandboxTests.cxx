@@ -13,6 +13,7 @@ void RegisterTests()
   REGISTER_TEST(igstkSerialCommunicationTest);
   REGISTER_TEST(igstkNDICommandInterpreterTest);
   REGISTER_TEST(igstkAuroraTrackerTest);
+  REGISTER_TEST(igstkPolarisTrackerTest);
 
   REGISTER_TEST(igstkVTKLoggerOutputTest);
   REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
