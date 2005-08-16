@@ -35,6 +35,11 @@ namespace igstk
  * Text messages that the system should display to the user are sent to 
  * this object (or subclasses of this class).
  *
+ * Although this is a VTK class, do not call Delete() if you have
+ * called OverrideVTKWindow().  After you call OverrideVTKWindow(),
+ * the VTKLoggerOutput object will automatically be deleted when
+ * the program exits.
+ *
  * \ingroup Logging
  */
 class VTKLoggerOutput : public vtkOutputWindow 
@@ -77,7 +82,9 @@ public:
    * could present this message differently. */
   virtual void DisplayDebugText(const char *t);
 
-  /** Overrides a VTK log window */
+  /** Overrides a VTK log window.  After you call OverrideVTKWindow(),
+   * the VTKLoggerOutput object will automatically be deleted when
+   * the program exits. */
   virtual void OverrideVTKWindow()  {  vtkOutputWindow::SetInstance(this);  };
 
   /** Type definition for the standard output stream */ 
