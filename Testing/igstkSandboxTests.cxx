@@ -15,10 +15,6 @@ void RegisterTests()
   REGISTER_TEST(igstkAuroraTrackerTest);
   REGISTER_TEST(igstkPolarisTrackerTest);
 
-  REGISTER_TEST(igstkVTKLoggerOutputTest);
-  REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
-  REGISTER_TEST(igstkFLTKTextLogOutputTest);
-
   REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
   REGISTER_TEST(igstkTubeObjectTest);
   REGISTER_TEST(igstkMeshObjectTest);

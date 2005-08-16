@@ -16,9 +16,6 @@ SET(IGSTKSandbox_HEADS
   igstkSerialCommunication.h
   igstkSerialCommunicationSimulator.h
   igstkMouseTracker.h
-  igstkVTKLoggerOutput.h
-  igstkFLTKTextLogOutput.h
-  igstkFLTKTextBufferLogOutput.h
   igstkTubeObject.h
   igstkTubeObjectRepresentation.h
   igstkMeshObject.h
@@ -41,9 +38,6 @@ SET(IGSTKSandbox_SRCS
   igstkSerialCommunication.cxx
   igstkSerialCommunicationSimulator.cxx
   igstkMouseTracker.cxx
-  igstkVTKLoggerOutput.cxx
-  igstkFLTKTextLogOutput.cxx
-  igstkFLTKTextBufferLogOutput.cxx
   igstkTubeObject.cxx
   igstkTubeObjectRepresentation.cxx
   igstkMeshObject.cxx

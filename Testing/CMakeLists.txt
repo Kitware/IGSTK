@@ -26,9 +26,6 @@ ADD_TEST(igstkSerialCommunicationTest ${IGSTKSandbox_TESTS} igstkSerialCommunica
 ADD_TEST(igstkNDICommandInterpreterTest ${IGSTKSandbox_TESTS} igstkNDICommandInterpreterTest)
 ADD_TEST(igstkAuroraTrackerTest ${IGSTKSandbox_TESTS} igstkAuroraTrackerTest)
 ADD_TEST(igstkPolarisTrackerTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerTest)
-ADD_TEST(igstkVTKLoggerOutputTest ${IGSTKSandbox_TESTS} igstkVTKLoggerOutputTest)
-ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextLogOutputTest)
-ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTKSandbox_TESTS} igstkFLTKTextBufferLogOutputTest)
 ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTKSandbox_TESTS} igstkSerialCommunicationSimulatorTest)
 ADD_TEST(igstkTubeObjectTest ${IGSTKSandbox_TESTS} igstkTubeObjectTest)
 ADD_TEST(igstkMeshObjectTest ${IGSTKSandbox_TESTS} igstkMeshObjectTest)
@@ -41,9 +38,6 @@ SET(BasicTests_SRCS
   igstkNDICommandInterpreterTest.cxx
   igstkAuroraTrackerTest.cxx
   igstkPolarisTrackerTest.cxx
-  igstkVTKLoggerOutputTest.cxx
-  igstkFLTKTextLogOutputTest.cxx
-  igstkFLTKTextBufferLogOutputTest.cxx
   igstkTubeObjectTest.cxx
   igstkMeshObjectTest.cxx
   igstkBinaryDataTest.cxx
