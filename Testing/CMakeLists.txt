@@ -49,6 +49,13 @@ ADD_TEST(igstkEllipsoidObjectTest ${IGSTK_TESTS} igstkEllipsoidObjectTest)
 
 ADD_TEST(igstkCylinderObjectTest ${IGSTK_TESTS} igstkCylinderObjectTest)
 
+ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
+
+ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTK_TESTS} igstkFLTKTextLogOutputTest)
+
+ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTK_TESTS} igstkFLTKTextBufferLogOutputTest)
+
+
 SET(BasicTests_SRCS
   igstkCommunicationTest
   igstkCylinderObjectTest
@@ -64,6 +71,9 @@ SET(BasicTests_SRCS
   igstkTrackerPortTest
   igstkTransformTest
   igstkViewTest
+  igstkVTKLoggerOutputTest
+  igstkFLTKTextLogOutputTest
+  igstkFLTKTextBufferLogOutputTest
   )
 
 ADD_EXECUTABLE(igstkTests igstkTests.cxx ${BasicTests_SRCS})

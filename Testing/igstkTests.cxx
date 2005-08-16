@@ -23,4 +23,7 @@ void RegisterTests()
     REGISTER_TEST(igstkTrackerPortTest);
     REGISTER_TEST(igstkTransformTest);
     REGISTER_TEST(igstkViewTest);
+    REGISTER_TEST(igstkVTKLoggerOutputTest);
+    REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
+    REGISTER_TEST(igstkFLTKTextLogOutputTest);
 }
