@@ -26,6 +26,9 @@ SET(IGSTK_HEADS
   igstkView.h
   igstkView2D.h
   igstkView3D.h
+  igstkVTKLoggerOutput.h
+  igstkFLTKTextLogOutput.h
+  igstkFLTKTextBufferLogOutput.h
 )
 
 # The implementation files
@@ -50,6 +53,9 @@ SET(IGSTK_SRCS
   igstkView.cxx
   igstkView2D.cxx
   igstkView3D.cxx
+  igstkVTKLoggerOutput.cxx
+  igstkFLTKTextLogOutput.cxx
+  igstkFLTKTextBufferLogOutput.cxx
 )
 
 # Adding the IGSTK library
