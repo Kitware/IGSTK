@@ -101,7 +101,7 @@ int igstkAuroraTrackerTest( int, char * [] )
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
 
-  igstk::AuroraTool::Pointer tool = igstk::AuroraTool::New();
+  igstk::AuroraTrackerTool::Pointer tool = igstk::AuroraTrackerTool::New();
   std::cout << tool->GetNameOfClass() << std::endl;
   std::cout << tool << std::endl;
 
