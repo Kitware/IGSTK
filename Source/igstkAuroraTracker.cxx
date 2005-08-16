@@ -137,7 +137,7 @@ AuroraTracker::ResultType AuroraTracker::InternalActivateTools( void )
     { 
     if( this->m_PortEnabled[i] )
       {
-      AuroraToolPointer tool = AuroraToolType::New();
+      AuroraTrackerToolPointer tool = AuroraTrackerToolType::New();
       TrackerPortPointer port = TrackerPortType::New();
       port->AddTool(tool);
       this->AddPort(port);

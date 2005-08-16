@@ -20,7 +20,7 @@
 
 #include "igstkSerialCommunication.h"
 #include "igstkNDICommandInterpreter.h"
-#include "igstkAuroraTool.h"
+#include "igstkAuroraTrackerTool.h"
 #include "igstkTracker.h"
 
 namespace igstk
@@ -43,9 +43,9 @@ class AuroraTracker : public Tracker
 public:
 
   /** typedefs for the tool */
-  typedef igstk::AuroraTool              AuroraToolType;
-  typedef AuroraToolType::Pointer        AuroraToolPointer;
-  typedef AuroraToolType::ConstPointer   AuroraToolConstPointer;
+  typedef igstk::AuroraTrackerTool              AuroraTrackerToolType;
+  typedef AuroraTrackerToolType::Pointer        AuroraTrackerToolPointer;
+  typedef AuroraTrackerToolType::ConstPointer   AuroraTrackerToolConstPointer;
 
   /** typedef for command interpreter */
   typedef igstk::NDICommandInterpreter   CommandInterpreterType;
