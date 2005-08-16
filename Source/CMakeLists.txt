@@ -5,7 +5,9 @@
 # The header files
 SET(IGSTKSandbox_HEADS
   igstkAuroraTracker.h
-  igstkAuroraTool.h
+  igstkAuroraTrackerTool.h
+  igstkPolarisTracker.h
+  igstkPolarisTrackerTool.h
   igstkCTImageReader.h
   igstkImageSpatialObject.h
   igstkImageSpatialObjectRepresentation.h
@@ -28,7 +30,9 @@ SET(IGSTKSandbox_HEADS
 # The implementation files
 SET(IGSTKSandbox_SRCS  
   igstkAuroraTracker.cxx
-  igstkAuroraTool.cxx
+  igstkAuroraTrackerTool.cxx
+  igstkPolarisTracker.cxx
+  igstkPolarisTrackerTool.cxx
   igstkCTImageReader.cxx
   igstkImageSpatialObject.cxx
   igstkImageSpatialObjectRepresentation.cxx
