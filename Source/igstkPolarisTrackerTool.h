@@ -1,0 +1,65 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkPolarisTrackerTool.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
+#ifndef __igstk_PolarisTrackerTool_h_
+#define __igstk_PolarisTrackerTool_h_
+
+#include "igstkTrackerTool.h"
+
+namespace igstk
+{
+/** \class PolarisTrackerTool
+  * \brief An Polaris-specific TrackerTool class.
+  *
+  * This class is a for providing Polaris-specific functionality
+  * for TrackerTools, and also to allow compile-time type enforcement
+  * for other classes and functions that specifically require
+  * an Polaris tool.
+*/
+
+class PolarisTrackerTool : public TrackerTool
+{
+public:
+
+  typedef PolarisTrackerTool                     Self;
+  typedef itk::SmartPointer<Self>        Pointer;
+  typedef itk::SmartPointer<const Self>  ConstPointer;
+
+  /** Run-time type information (and related methods). */
+  igstkTypeMacro(PolarisTrackerTool, TrackerTool);
+
+  /** Method for creation of a reference counted object. */
+  igstkNewMacro(Self);  
+
+protected:
+
+  PolarisTrackerTool();
+  ~PolarisTrackerTool();
+
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+private:
+
+};  
+
+
+} // namespace igstk
+
+
+#endif  // __igstk_PolarisTrackerTool_h_
+
