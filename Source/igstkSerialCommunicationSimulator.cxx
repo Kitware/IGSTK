@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-//Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters in
+// the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -47,11 +48,15 @@ void SerialCommunicationSimulator::SetFileName(const char* filename)
   m_FileName.assign(filename);
 } 
 
+const char *SerialCommunicationSimulator::GetFileName() const
+{
+  return m_FileName.c_str();
+} 
 
 SerialCommunicationSimulator::ResultType
 SerialCommunicationSimulator::InternalOpenPort( void )
 {
-  igstkLogMacro( DEBUG, m_FileName << std::endl );
+  igstkLogMacro( DEBUG, m_FileName << "\n" );
 
   m_File.open(m_FileName.c_str(), std::ios::binary);
 
@@ -121,13 +126,13 @@ SerialCommunicationSimulator::InternalOpenPort( void )
       if( sent < recv )
         {
         m_ResponseTable[BinaryData()].push_back(recvmsg);
-        igstkLogMacro( DEBUG, "SERIAL BREAK ::: " << recvmsg << std::endl );
+        igstkLogMacro( DEBUG, "SERIAL BREAK ::: " << recvmsg << "\n" );
         }
       else if( sent == recv )
         {
         m_ResponseTable[sentmsg].push_back(recvmsg);
-        igstkLogMacro( DEBUG, "sent " << sent << " : " << sentmsg << std::endl );
-        igstkLogMacro( DEBUG, "recv " << recv << " : " << recvmsg << std::endl );
+        igstkLogMacro( DEBUG, "sent " << sent << " : " << sentmsg << "\n" );
+        igstkLogMacro( DEBUG, "recv " << recv << " : " << recvmsg << "\n" );
         }
       }
     }
@@ -182,7 +187,7 @@ void SerialCommunicationSimulator::InternalWrite( void )
   // Just copy the data to m_Command for later use.
   m_Command.CopyFrom( (unsigned char*)&m_OutputData[0], bytesToWrite );
 
-  igstkLogMacro( DEBUG, "Written bytes = " << bytesToWrite << std::endl);
+  igstkLogMacro( DEBUG, "Written bytes = " << bytesToWrite << "\n");
   this->InvokeEvent( WriteSuccessEvent());
 }
 
@@ -221,7 +226,7 @@ void SerialCommunicationSimulator::InternalRead( void )
     return;
     }
 
-  igstkLogMacro( DEBUG, "Read number of bytes = " << bytesRead << ". Data: " );
+  igstkLogMacro( DEBUG, "Read number of bytes = " << bytesRead << "\n" );
 
   this->InvokeEvent( ReadSuccessEvent() );
 }

@@ -22,6 +22,7 @@
 #include <iomanip>
 #include <map>
 #include <vector>
+
 #include "igstkBinaryData.h"
 #include "igstkSerialCommunication.h"
 
@@ -54,6 +55,8 @@ public:
 
   /** Set a file name of the input file recorded serial communication stream */
   void SetFileName(const char* filename);
+  /** Get the file name for the recorded data */
+  const char *GetFileName() const;
 
 protected:
 
