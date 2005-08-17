@@ -202,11 +202,11 @@ int igstkSerialCommunicationTest( int, char * [] )
   serialComm->GetStopBits();
   serialComm->GetHardwareHandshake();
 
-  serialComm->SetRecordingFileName( "RecordedStreamBySerialCommunicationTest.bin" );
-  serialComm->SetRecording( true );
-  if( serialComm->GetRecording() != true )
+  serialComm->SetCaptureFileName( "RecordedStreamBySerialCommunicationTest.bin" );
+  serialComm->SetCapture( true );
+  if( serialComm->GetCapture() != true )
     {
-    std::cout << "Set/GetRecording() failed" << std::endl;
+    std::cout << "Set/GetCapture() failed" << std::endl;
     std::cout << "[FAILED]" << std::endl;
     }
 

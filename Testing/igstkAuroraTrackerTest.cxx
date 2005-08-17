@@ -139,8 +139,8 @@ int igstkAuroraTrackerTest( int, char * [] )
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
-  serialComm->SetRecordingFileName( "RecordedStreamByAuroraTrackerTest.bin" );
-  serialComm->SetRecording( true );
+  serialComm->SetCaptureFileName( "RecordedStreamByAuroraTrackerTest.bin" );
+  serialComm->SetCapture( true );
 
   serialComm->OpenCommunication();
 

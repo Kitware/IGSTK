@@ -45,6 +45,10 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
   m_BytesRead = 0;
   m_TimeoutPeriod = 500;
 
+  m_CaptureFileName = "";
+  m_Capture = false;
+  m_CaptureMessageNumber = 0;
+
   // Set the state descriptors
   m_StateMachine.AddState( m_IdleState,
                            "IdleState" );
@@ -219,8 +223,6 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
 
-  m_Recording = false;
-
 } 
 
 
@@ -232,37 +234,21 @@ SerialCommunication::~SerialCommunication()
 }
 
 
-void SerialCommunication::SetRecordingFileName(const char* filename)
+void SerialCommunication::SetCaptureFileName(const char* filename)
 {
-  m_RecordingFilename = filename;
+  m_CaptureFileName = filename;
+}
+
+
+const char *SerialCommunication::GetCaptureFileName() const
+{
+  return m_CaptureFileName.c_str();
 }
 
 
 void SerialCommunication::OpenCommunication( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunication::OpenCommunication called ...\n");
-
-  // Open a file for writing data stream.
-  if( m_Recording )
-    {
-    time_t ti;
-    time(&ti);
-
-    igstkLogMacro( DEBUG, "Recording is on. Filename: "
-                   << m_RecordingFilename << "\n" );
-
-    m_FileStream.open(m_RecordingFilename.c_str(), std::ios::binary);
-    if( !m_FileStream.is_open() )
-      {
-      igstkLogMacro( CRITICAL,
-                     "failed to open a file for writing data stream.\n" );
-
-      m_Recording = false;
-      }
-    m_SendNo = 1;
-    m_RecvNo = 1;
-    m_FileStream << "# recorded " << asctime(localtime(&ti)) << "\r\n";
-    }
 
   // Attempt to open communication port
   m_StateMachine.PushInput( m_OpenPortInput );
@@ -277,7 +263,8 @@ void SerialCommunication::CloseCommunication( void )
 
   m_StateMachine.PushInput( m_ClosePortInput );
   m_StateMachine.ProcessInputs();
-  m_FileStream.close();
+
+  m_CaptureFileStream.close();
 }
 
 
@@ -392,16 +379,18 @@ void SerialCommunication::Write( const char *data, int numberOfBytes )
   m_BytesToWrite = numberOfBytes;
 
   // Recording for data sent
-  if( m_Recording )
+  if( m_Capture && m_CaptureFileStream.is_open() )
     {
-    m_SendNo = m_RecvNo;
-    m_FileStream << m_SendNo << ". command[" << numberOfBytes << "] ";
+    m_CaptureMessageNumber++;
+    m_CaptureFileStream << m_CaptureMessageNumber
+                        << ". command[" << numberOfBytes << "] ";
     int i;
     for( i = 0; i < numberOfBytes; ++i )
       {
-      m_FileStream << m_OutputData[i];
+      m_CaptureFileStream << m_OutputData[i];
       }
-    m_FileStream << '\n';
+    m_CaptureFileStream << '\n';
+    m_CaptureFileStream.flush();
     }
 
   m_StateMachine.PushInput( m_WriteInput );
@@ -423,15 +412,18 @@ void SerialCommunication::Read( char *data, int numberOfBytes, int &bytesRead )
   // terminate the string
   data[bytesRead] = '\0';
 
-  /** Recording for data received */
-  if( m_Recording )
+  // Recording for data received
+  if( m_Capture && m_CaptureFileStream.is_open() )
     {
-    m_FileStream << m_RecvNo++ << ". receive[" << bytesRead << "] ";
+    m_CaptureFileStream << m_CaptureMessageNumber
+                        << ". receive[" << bytesRead << "] ";
+
     for(int i = 0; i < bytesRead; ++i )
       {
-      m_FileStream << m_InputData[i];
+      m_CaptureFileStream << m_InputData[i];
       }
-    m_FileStream << '\n';
+    m_CaptureFileStream << '\n';
+    m_CaptureFileStream.flush();
     }
 
   igstkLogMacro( DEBUG, "SerialCommunication::Read(" << data << ", "
@@ -444,14 +436,37 @@ void SerialCommunication::OpenPortSuccessProcessing( void )
   igstkLogMacro( DEBUG, "SerialCommunication::OpenPortSuccessProcessing"
                  " called ...\n");
 
-  // if the port was opened successfully, then set transfer parameters next
+  // Open a file for writing data stream.
+  if( m_Capture )
+    {
+    time_t ti;
+    time(&ti);
+
+    igstkLogMacro( DEBUG, "Capture is on. Filename: "
+                   << m_CaptureFileName << "\n" );
+
+    m_CaptureFileStream.open(m_CaptureFileName.c_str(), std::ios::binary);
+    if( !m_CaptureFileStream.is_open() )
+      {
+      igstkLogMacro( CRITICAL,
+                     "failed to open a file for writing data stream.\n" );
+      }
+    else
+      {
+      m_CaptureFileStream << "# recorded " << asctime(localtime(&ti))
+                          << "\r\n";
+      m_CaptureFileStream.flush();
+      }
+    }
+
+   // if the port was opened successfully, then set transfer parameters next
   m_StateMachine.PushInput( m_SetTransferParametersInput );
 }
 
 
 void SerialCommunication::AttemptToOpenPort()
 {
-  m_StateMachine.PushInputBoolean( (bool)InternalOpenPort(), 
+  m_StateMachine.PushInputBoolean( (bool)this->InternalOpenPort(), 
                                    m_OpenPortSuccessInput,
                                    m_OpenPortFailureInput );
 }
@@ -459,7 +474,7 @@ void SerialCommunication::AttemptToOpenPort()
 
 void SerialCommunication::AttemptToSetTransferParameters()
 {
-  m_StateMachine.PushInputBoolean( (bool)InternalSetTransferParameters(),
+  m_StateMachine.PushInputBoolean( (bool)this->InternalSetTransferParameters(),
                                    m_SetTransferParametersSuccessInput,
                                    m_SetTransferParametersFailureInput );
 }
@@ -467,7 +482,7 @@ void SerialCommunication::AttemptToSetTransferParameters()
 
 void SerialCommunication::AttemptToClosePort()
 {
-  m_StateMachine.PushInputBoolean( (bool)InternalClosePort(),
+  m_StateMachine.PushInputBoolean( (bool)this->InternalClosePort(),
                                    m_ClosePortSuccessInput,
                                    m_ClosePortFailureInput );
 }
@@ -485,6 +500,12 @@ void SerialCommunication::PrintSelf( std::ostream& os,
   os << indent << "StopBits: " << m_StopBits << std::endl;
   os << indent << "HardwareHandshake: " << m_HardwareHandshake << std::endl;
   os << indent << "TimeoutPeriod: " << m_TimeoutPeriod << std::endl;
+
+  os << indent << "Capture: " << m_Capture << std::endl;
+  os << indent << "CaptureFileName: " << m_CaptureFileName << std::endl;
+  os << indent << "CaptureFileStream: " << m_CaptureFileStream << std::endl;
+  os << indent << "CaptureMessageNumber: " << m_CaptureMessageNumber
+     << std::endl;
 }
 
 

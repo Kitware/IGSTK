@@ -62,8 +62,8 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   // create the interpreter object
   CommandInterpreterType::Pointer interpreter = CommandInterpreterType::New();
 
-  serialComm->SetRecordingFileName( "RecordedStreamByNDICommandInterpreterTest.bin" );
-  serialComm->SetRecording( true );
+  serialComm->SetCaptureFileName( "RecordedStreamByNDICommandInterpreterTest.bin" );
+  serialComm->SetCapture( true );
 
   serialComm->OpenCommunication();
 

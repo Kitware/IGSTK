@@ -139,8 +139,8 @@ int igstkPolarisTrackerTest( int, char * [] )
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
-  serialComm->SetRecordingFileName( "RecordedStreamByPolarisTrackerTest.bin" );
-  serialComm->SetRecording( true );
+  serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerTest.bin" );
+  serialComm->SetCapture( true );
 
   serialComm->OpenCommunication();
 
