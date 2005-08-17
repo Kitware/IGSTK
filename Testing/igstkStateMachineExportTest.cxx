@@ -27,8 +27,10 @@
  */
 
 #include <fstream>
+#include <iostream>
 
 #include "igstkMacros.h"
+#include "itkExceptionObject.h"
 
 namespace igstk 
 {
