@@ -34,7 +34,7 @@
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
 #else
-#include "igstkSerialCommunicationForLinux.h"
+#include "igstkSerialCommunicationForPosix.h"
 #endif
 
 int igstkNDICommandInterpreterTest( int, char * [] )
@@ -42,7 +42,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 #ifdef WIN32
   typedef igstk::SerialCommunicationForWindows  CommunicationType;
 #else
-  typedef igstk::SerialCommunicationForLinux    CommunicationType;
+  typedef igstk::SerialCommunicationForPosix    CommunicationType;
 #endif
   typedef igstk::NDICommandInterpreter  CommandInterpreterType;
   typedef itk::Logger                   LoggerType; 

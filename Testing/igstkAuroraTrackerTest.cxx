@@ -32,7 +32,7 @@
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
 #else
-#include "igstkSerialCommunicationForLinux.h"
+#include "igstkSerialCommunicationForPosix.h"
 #endif
 
 #include "igstkAuroraTracker.h"
@@ -108,7 +108,7 @@ int igstkAuroraTrackerTest( int, char * [] )
 #ifdef WIN32
   igstk::SerialCommunicationForWindows::Pointer serialComm = igstk::SerialCommunicationForWindows::New();
 #else
-  igstk::SerialCommunicationForLinux::Pointer serialComm = igstk::SerialCommunicationForLinux::New();
+  igstk::SerialCommunicationForPosix::Pointer serialComm = igstk::SerialCommunicationForPosix::New();
 #endif
 
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();

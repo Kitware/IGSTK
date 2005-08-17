@@ -93,13 +93,6 @@ int main( int argc, char * argv [] )
   
   // This is for classes that use SmartPointers
 
-#ifdef WIN32
-  igstkTestExportStateMachine1( igstk::SerialCommunicationForWindows, outputDirectory );
-#else
-  igstkTestExportStateMachine1( igstk::SerialCommunicationForLinux, outputDirectory );
-#endif
-
-
 
   return EXIT_SUCCESS;
 }

@@ -13,14 +13,11 @@ SET(IGSTKSandbox_HEADS
   igstkImageSpatialObjectRepresentation.h
   igstkImageReader.h
   igstkNDICommandInterpreter.h
-  igstkSerialCommunication.h
-  igstkSerialCommunicationSimulator.h
   igstkMouseTracker.h
   igstkTubeObject.h
   igstkTubeObjectRepresentation.h
   igstkMeshObject.h
   igstkMeshObjectRepresentation.h
-  igstkBinaryData.h
 )
 
 
@@ -35,14 +32,11 @@ SET(IGSTKSandbox_SRCS
   igstkImageSpatialObjectRepresentation.cxx
   igstkImageReader.cxx
   igstkNDICommandInterpreter.cxx
-  igstkSerialCommunication.cxx
-  igstkSerialCommunicationSimulator.cxx
   igstkMouseTracker.cxx
   igstkTubeObject.cxx
   igstkTubeObjectRepresentation.cxx
   igstkMeshObject.cxx
   igstkMeshObjectRepresentation.cxx
-  igstkBinaryData.cxx
 )
 
 # Variable for holding extra libraries
@@ -62,25 +56,6 @@ IF( IGSTK_USE_ATAMAI )
   )
   SET(EXTRA_LIBS ${EXTRA_LIBS} vtkAtamaiTracking)
 ENDIF( IGSTK_USE_ATAMAI )
-
-
-IF( WIN32 )
-    SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} 
-        igstkSerialCommunicationForWindows.h
-        )
-
-    SET(IGSTKSandbox_SRCS ${IGSTKSandbox_SRCS} 
-        igstkSerialCommunicationForWindows.cxx
-        )
-ELSE( WIN32 )
-    SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} 
-        igstkSerialCommunicationForLinux.h
-        )
-
-    SET(IGSTKSandbox_SRCS ${IGSTKSandbox_SRCS} 
-        igstkSerialCommunicationForLinux.cxx
-        )
-ENDIF( WIN32 )
 
 # Adding the IGSTKSandbox library
 ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS})

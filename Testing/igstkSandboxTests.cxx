@@ -10,15 +10,11 @@
 void RegisterTests()
 {
   REGISTER_TEST(igstkMouseTrackerTest);
-  REGISTER_TEST(igstkSerialCommunicationTest);
   REGISTER_TEST(igstkNDICommandInterpreterTest);
   REGISTER_TEST(igstkAuroraTrackerTest);
   REGISTER_TEST(igstkPolarisTrackerTest);
-
-  REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
   REGISTER_TEST(igstkTubeObjectTest);
   REGISTER_TEST(igstkMeshObjectTest);
-  REGISTER_TEST(igstkBinaryDataTest);
 
 #ifdef IGSTK_USE_ATAMAI
   REGISTER_TEST(igstkAtamaiNDITrackerTest);
