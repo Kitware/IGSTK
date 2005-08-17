@@ -247,11 +247,16 @@ void SerialCommunication::OpenCommunication( void )
     {
     time_t ti;
     time(&ti);
-    igstkLogMacro( DEBUG, "Recording is on. Filename: " << m_RecordingFilename << std::endl );
+
+    igstkLogMacro( DEBUG, "Recording is on. Filename: "
+                   << m_RecordingFilename << "\n" );
+
     m_FileStream.open(m_RecordingFilename.c_str(), std::ios::binary);
     if( !m_FileStream.is_open() )
       {
-      igstkLogMacro( CRITICAL, "failed to open a file for writing data stream." << std::endl );
+      igstkLogMacro( CRITICAL,
+                     "failed to open a file for writing data stream.\n" );
+
       m_Recording = false;
       }
     m_SendNo = 1;
@@ -267,7 +272,9 @@ void SerialCommunication::OpenCommunication( void )
 
 void SerialCommunication::CloseCommunication( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunication::CloseCommunication called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::CloseCommunication"
+                 " called ...\n" );
+
   m_StateMachine.PushInput( m_ClosePortInput );
   m_StateMachine.ProcessInputs();
   m_FileStream.close();
@@ -276,7 +283,8 @@ void SerialCommunication::CloseCommunication( void )
 
 void SerialCommunication::SetBaudRate( BaudRateType baudRate )
 {
-  igstkLogMacro( DEBUG, "SerialCommunication::SetBaudRate(" << baudRate << ") called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::SetBaudRate(" << baudRate
+                 << ") called ...\n" );
 
   m_BaudRate = baudRate;
 
@@ -287,7 +295,8 @@ void SerialCommunication::SetBaudRate( BaudRateType baudRate )
 
 void SerialCommunication::SetDataBits( DataBitsType bits)
 {
-  igstkLogMacro( DEBUG, "SerialCommunication::SetDataBits(" << bits << ") called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::SetDataBits(" << bits
+                 << ") called ...\n" );
 
   m_DataBits = bits;
 
@@ -298,7 +307,8 @@ void SerialCommunication::SetDataBits( DataBitsType bits)
 
 void SerialCommunication::SetParity( ParityType parity)
 {
-  igstkLogMacro( DEBUG, "SerialCommunication::SetParity(" << parity << ") called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::SetParity(" << parity
+                 << ") called ...\n" );
 
   m_Parity = parity;
 
@@ -309,7 +319,8 @@ void SerialCommunication::SetParity( ParityType parity)
 
 void SerialCommunication::SetStopBits( StopBitsType bits)
 {
-  igstkLogMacro( DEBUG, "SerialCommunication::SetStopBits(" << bits << ") called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::SetStopBits(" << bits
+                 << ") called ...\n" );
 
   m_StopBits = bits;
 
@@ -320,7 +331,8 @@ void SerialCommunication::SetStopBits( StopBitsType bits)
 
 void SerialCommunication::SetHardwareHandshake( HandshakeType handshake)
 {
-  igstkLogMacro( DEBUG, "SerialCommunication::SetHardwareHandshake(" << handshake << ") called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::SetHardwareHandshake("
+                 << handshake << ") called ...\n" );
 
   m_HardwareHandshake = handshake;
 
@@ -331,7 +343,8 @@ void SerialCommunication::SetHardwareHandshake( HandshakeType handshake)
 
 void SerialCommunication::SetTimeoutPeriod( int milliseconds )
 {
-  igstkLogMacro( DEBUG, "SerialCommunication::SetTimeoutPeriod(" << milliseconds << ") called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::SetTimeoutPeriod("
+                 << milliseconds << ") called ...\n" );
 
   m_TimeoutPeriod = milliseconds;
 
@@ -342,7 +355,7 @@ void SerialCommunication::SetTimeoutPeriod( int milliseconds )
 
 void SerialCommunication::SendBreak( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunication::SendBreak called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::SendBreak called ...\n" );
 
   m_StateMachine.PushInput( m_SendBreakInput );
   m_StateMachine.ProcessInputs();
@@ -351,7 +364,7 @@ void SerialCommunication::SendBreak( void )
 
 void SerialCommunication::PurgeBuffers( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunication::PurgeBuffers called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::PurgeBuffers called ...\n" );
 
   m_StateMachine.PushInput( m_PurgeBuffersInput );
   m_StateMachine.ProcessInputs();
@@ -360,7 +373,8 @@ void SerialCommunication::PurgeBuffers( void )
 
 void SerialCommunication::Sleep( int milliseconds )
 {
-  igstkLogMacro( DEBUG, "SerialCommunication::Sleep(" << milliseconds << ") called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::Sleep(" << milliseconds
+                 << ") called ...\n" );
 
   m_SleepPeriod = milliseconds;
   m_StateMachine.PushInput( m_SleepInput );
@@ -371,7 +385,8 @@ void SerialCommunication::Sleep( int milliseconds )
 void SerialCommunication::Write( const char *data, int numberOfBytes )
 {
   // this call to the log macro assumes data is null terminated
-  igstkLogMacro( DEBUG, "SerialCommunication::Write : (" << numberOfBytes << ") " << data << "...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::Write(" 
+                 << data << ", " << numberOfBytes << ") called...\n" );
 
   m_OutputData = data;
   m_BytesToWrite = numberOfBytes;
@@ -419,13 +434,15 @@ void SerialCommunication::Read( char *data, int numberOfBytes, int &bytesRead )
     m_FileStream << '\n';
     }
 
-  igstkLogMacro( DEBUG, "SerialCommunication::Read : (" << bytesRead << ") " << data << "...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::Read(" << data << ", "
+                 << numberOfBytes << ", " << bytesRead << ") called...\n" );
 }
 
 
 void SerialCommunication::OpenPortSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunication::OpenPortSuccessProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunication::OpenPortSuccessProcessing"
+                 " called ...\n");
 
   // if the port was opened successfully, then set transfer parameters next
   m_StateMachine.PushInput( m_SetTransferParametersInput );
@@ -456,7 +473,8 @@ void SerialCommunication::AttemptToClosePort()
 }
 
 
-void SerialCommunication::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void SerialCommunication::PrintSelf( std::ostream& os,
+                                     itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
@@ -465,8 +483,7 @@ void SerialCommunication::PrintSelf( std::ostream& os, itk::Indent indent ) cons
   os << indent << "DataBits: " << m_DataBits << std::endl;
   os << indent << "Parity: " << m_Parity << std::endl;
   os << indent << "StopBits: " << m_StopBits << std::endl;
-  os << indent << "HardwareHandshake: " << m_HardwareHandshake 
-     << std::endl;
+  os << indent << "HardwareHandshake: " << m_HardwareHandshake << std::endl;
   os << indent << "TimeoutPeriod: " << m_TimeoutPeriod << std::endl;
 }
 

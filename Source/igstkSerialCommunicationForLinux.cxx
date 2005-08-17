@@ -48,7 +48,9 @@ SerialCommunicationForLinux::~SerialCommunicationForLinux()
 SerialCommunicationForLinux::ResultType
 SerialCommunicationForLinux::InternalOpenPort( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalOpenPort called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalOpenPort"
+                 " called ...\n" );
+
   struct termios t;
   int i;
 
@@ -99,7 +101,8 @@ SerialCommunicationForLinux::InternalOpenPort( void )
     }
 
   tcflush(m_PortHandle,TCIOFLUSH); // flush the buffers for good luck
-  igstkLogMacro( DEBUG, "COM port name: " << device << " opened.\n");
+
+  igstkLogMacro( DEBUG, "COM port name: " << device << " opened.\n" );
 
   return SUCCESS;
 }
@@ -111,7 +114,8 @@ SerialCommunicationForLinux::InternalSetTransferParameters( void )
   struct termios t;
   int newbaud;
 
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalSetTransferParameters called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::"
+                 "InternalSetTransferParameters called ...\n" );
 
   unsigned int baud = m_BaudRate;
 
@@ -211,14 +215,14 @@ SerialCommunicationForLinux::InternalSetTransferParameters( void )
   // set I/O information
   if (tcsetattr(m_PortHandle,TCSADRAIN,&t) == -1)
     {
-    igstkLogMacro( DEBUG, "SetTransferParameters failed.\n");
+    igstkLogMacro( DEBUG, "SetTransferParameters failed.\n" );
 
     this->InvokeEvent( SetTransferParametersFailureEvent() );
 
     return FAILURE;
     }
 
-  igstkLogMacro( DEBUG, "SetTransferParameters succeeded.\n");
+  igstkLogMacro( DEBUG, "SetTransferParameters succeeded.\n" );
 
   return SUCCESS;
 }
@@ -229,7 +233,8 @@ SerialCommunicationForLinux::InternalClosePort( void )
 {
   int i;
 
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalClosePort called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::"
+                 "InternalClosePort called ...\n" );
   // restore the comm port state to from before it was opened
   tcsetattr(m_PortHandle,TCSANOW,&m_SaveTermIOs);
 
@@ -241,7 +246,7 @@ SerialCommunicationForLinux::InternalClosePort( void )
 
   m_PortHandle = INVALID_HANDLE;
 
-  igstkLogMacro( DEBUG, "Communication port closed.\n");
+  igstkLogMacro( DEBUG, "Communication port closed.\n" );
 
   return SUCCESS;
 }
@@ -249,7 +254,8 @@ SerialCommunicationForLinux::InternalClosePort( void )
 
 void SerialCommunicationForLinux::InternalSendBreak( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalSendBreak called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::"
+                 "InternalSendBreak called ...\n" );
 
   // send the break
   if (tcsendbreak(m_PortHandle,0) == -1)
@@ -263,7 +269,8 @@ void SerialCommunicationForLinux::InternalSleep( void )
 {
   int milliseconds = m_SleepPeriod;
 
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalSleep called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::"
+                 "InternalSleep called ...\n" );
 
   struct timespec sleep_time, dummy;
   sleep_time.tv_sec = milliseconds/1000;
@@ -274,7 +281,8 @@ void SerialCommunicationForLinux::InternalSleep( void )
 
 void SerialCommunicationForLinux::InternalPurgeBuffers( void )
 {
-  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::InternalPurgeBuffers called ...\n");
+  igstkLogMacro( DEBUG, "SerialCommunicationForLinux::"
+                 "InternalPurgeBuffers called ...\n" );
 
   tcflush(m_PortHandle, TCIOFLUSH);  // clear output buffers
 }
@@ -377,6 +385,8 @@ void SerialCommunicationForLinux::PrintSelf( std::ostream& os,
                                              itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+
+  os << indent << "PortHandle: " << m_PortHandle << std::endl;
 }
 
 } // end namespace igstk

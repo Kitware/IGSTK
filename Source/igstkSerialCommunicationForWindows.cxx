@@ -72,8 +72,7 @@ SerialCommunicationForWindows::InternalOpenPort( void )
     GetCommState(serial_port,&m_SaveDCB);
     }
 
-  if (SetupComm(serial_port, 1600, 1600)
-      == FALSE)
+  if (SetupComm(serial_port, 1600, 1600) == FALSE)
     { /* set buffer size */
     CloseHandle(serial_port);
     m_PortHandle = INVALID_HANDLE_VALUE;
@@ -194,7 +193,7 @@ SerialCommunicationForWindows::InternalSetTransferParameters( void )
     return FAILURE;
     }
 
-  igstkLogMacro( DEBUG, "SetCommunicationParameters succeeded.\n");
+  igstkLogMacro( DEBUG, "SetCommunicationParameters succeeded.\n" );
 
   return SUCCESS;
 }
@@ -249,7 +248,7 @@ void SerialCommunicationForWindows::InternalWrite( void )
   int bytesToWrite = m_BytesToWrite;
   int writeError = 0;
 
-  igstkLogMacro( DEBUG, "InternalWrite called ...\n");
+  igstkLogMacro( DEBUG, "InternalWrite called ...\n" );
   while (bytesToWrite > 0)
     {
     if (WriteFile(m_PortHandle, &m_OutputData[i],
@@ -350,6 +349,8 @@ void SerialCommunicationForWindows::PrintSelf( std::ostream& os,
                                                itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+
+  os << indent << "PortHandle: " << m_PortHandle << std::endl;
 }
 
 } // end namespace igstk
