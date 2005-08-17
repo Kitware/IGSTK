@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkSerialCommunicationForLinux.h
+  Module:    igstkSerialCommunicationForPosix.h
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
