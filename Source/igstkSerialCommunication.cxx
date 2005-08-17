@@ -63,14 +63,14 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
                            "AttemptingToSetTransferParametersState" );
 
   m_StateMachine.AddState( m_ReadyForCommunicationState,
-                           "ReadyForCommunication" );
+                           "ReadyForCommunicationState" );
 
   m_StateMachine.AddState( m_AttemptingToClosePortState,
                            "m_AttemptingToClosePortState" );
 
   // Set the input descriptors
   m_StateMachine.AddInput( m_OpenPortInput,
-                           "OpenPort");
+                           "OpenPortInput");
 
   m_StateMachine.AddInput( m_OpenPortSuccessInput,
                            "OpenPortSuccessInput");
