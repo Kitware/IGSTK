@@ -9,6 +9,7 @@
 
 void RegisterTests()
 {
+    REGISTER_TEST(igstkBinaryDataTest);
     REGISTER_TEST(igstkEllipsoidObjectTest);
     REGISTER_TEST(igstkCylinderObjectTest);
     REGISTER_TEST(igstkCommunicationTest);
@@ -18,6 +19,8 @@ void RegisterTests()
     REGISTER_TEST(igstkStateMachineErrorsTest);
     REGISTER_TEST(igstkTokenTest);
     REGISTER_TEST(igstkBasicTrackerTest);
+    REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
+    REGISTER_TEST(igstkSerialCommunicationTest);
     REGISTER_TEST(igstkTimeStampTest);
     REGISTER_TEST(igstkTrackerToolTest);
     REGISTER_TEST(igstkTrackerPortTest);

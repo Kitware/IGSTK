@@ -4,6 +4,7 @@
 # The header files
 
 SET(IGSTK_HEADS
+  igstkBinaryData.h
   igstkCommunication.h
   igstkCylinderObject.h
   igstkCylinderObjectRepresentation.h
@@ -13,6 +14,8 @@ SET(IGSTK_HEADS
   igstkMultipleOutput.h
   igstkObjectRepresentation.h
   igstkPulseGenerator.h
+  igstkSerialCommunication.h
+  igstkSerialCommunicationSimulator.h
   igstkSpatialObject.h
   igstkStateMachine.h
   igstkStateMachineInput.h
@@ -34,6 +37,7 @@ SET(IGSTK_HEADS
 # The implementation files
 
 SET(IGSTK_SRCS  
+  igstkBinaryData.cxx
   igstkCommunication.cxx
   igstkCylinderObject.cxx
   igstkCylinderObjectRepresentation.cxx
@@ -42,6 +46,8 @@ SET(IGSTK_SRCS
   igstkMultipleOutput.cxx
   igstkObjectRepresentation.cxx
   igstkPulseGenerator.cxx
+  igstkSerialCommunication.cxx
+  igstkSerialCommunicationSimulator.cxx
   igstkSpatialObject.cxx
   igstkStateMachine.txx
   igstkTimeStamp.cxx
@@ -57,6 +63,24 @@ SET(IGSTK_SRCS
   igstkFLTKTextLogOutput.cxx
   igstkFLTKTextBufferLogOutput.cxx
 )
+
+
+IF( WIN32 )
+  SET(IGSTK_HEADS ${IGSTK_HEADS} 
+    igstkSerialCommunicationForWindows.h
+  )
+  SET(IGSTK_SRCS ${IGSTK_SRCS} 
+    igstkSerialCommunicationForWindows.cxx
+  )
+ELSE( WIN32 )
+  SET(IGSTK_HEADS ${IGSTK_HEADS} 
+    igstkSerialCommunicationForPosix.h
+  )
+  SET(IGSTK_SRCS ${IGSTK_SRCS} 
+    igstkSerialCommunicationForPosix.cxx
+  )
+ENDIF( WIN32 )
+
 
 # Adding the IGSTK library
 

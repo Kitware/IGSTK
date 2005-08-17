@@ -21,6 +21,8 @@ INCLUDE_DIRECTORIES (
   ${IGSTK_BINARY_DIR}/Testing
   )
 
+ADD_TEST(igstkBinaryDataTest ${IGSTK_TESTS} igstkBinaryDataTest)
+
 ADD_TEST(igstkCommunicationTest ${IGSTK_TESTS} igstkCommunicationTest)
 
 ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
@@ -30,6 +32,10 @@ ADD_TEST(igstkPulseGeneratorTest ${IGSTK_TESTS} igstkPulseGeneratorTest)
 ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
 
 ADD_TEST(igstkStateMachineErrorsTest ${IGSTK_TESTS} igstkStateMachineErrorsTest)
+
+ADD_TEST(igstkSerialCommunicationTest ${IGSTK_TESTS} igstkSerialCommunicationTest)
+
+ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS} igstkSerialCommunicationSimulatorTest)
 
 ADD_TEST(igstkTokenTest ${IGSTK_TESTS} igstkTokenTest)
 
@@ -57,11 +63,14 @@ ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTK_TESTS} igstkFLTKTextBufferLogO
 
 
 SET(BasicTests_SRCS
+  igstkBinaryDataTest
   igstkCommunicationTest
   igstkCylinderObjectTest
   igstkEllipsoidObjectTest
   igstkMultipleOutputTest
   igstkPulseGeneratorTest
+  igstkSerialCommunicationSimulatorTest
+  igstkSerialCommunicationTest
   igstkStateMachineTest
   igstkStateMachineErrorsTest
   igstkTokenTest
