@@ -102,3 +102,10 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
                "${CMAKE_CURRENT_BINARY_DIR}/igstkSystemInformation.h"
                @ONLY IMMEDIATE)
 
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/Input/polaris_stream_07_27_2005.bin"
+               "${CXX_TEST_PATH}/polaris_stream_07_27_2005.bin"
+               COPYONLY @ONLY IMMEDIATE)
+
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/Input/polaris_stream_07_27_2005.bin"
+               "${CMAKE_CURRENT_BINARY_DIR}/polaris_stream_07_27_2005.bin"
+               COPYONLY @ONLY IMMEDIATE)
