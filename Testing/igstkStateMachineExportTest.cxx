@@ -28,12 +28,7 @@
 
 #include <fstream>
 
-
-#ifdef WIN32
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForLinux.h"
-#endif
+#include "igstkMacros.h"
 
 namespace igstk 
 {
