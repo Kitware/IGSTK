@@ -4,31 +4,25 @@
 
 # The header files
 SET(IGSTKSandbox_HEADS
-  igstkAuroraTracker.h
-  igstkAuroraTrackerTool.h
-  igstkPolarisTracker.h
-  igstkPolarisTrackerTool.h
   igstkCTImageReader.h
+  igstkImageReader.h
   igstkImageSpatialObject.h
   igstkImageSpatialObjectRepresentation.h
-  igstkImageReader.h
-  igstkNDICommandInterpreter.h
   igstkMouseTracker.h
+  igstkPolarisTracker.h
+  igstkPolarisTrackerTool.h
 )
 
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
-  igstkAuroraTracker.cxx
-  igstkAuroraTrackerTool.cxx
-  igstkPolarisTracker.cxx
-  igstkPolarisTrackerTool.cxx
   igstkCTImageReader.cxx
+  igstkImageReader.cxx
   igstkImageSpatialObject.cxx
   igstkImageSpatialObjectRepresentation.cxx
-  igstkImageReader.cxx
-  igstkNDICommandInterpreter.cxx
   igstkMouseTracker.cxx
+  igstkPolarisTracker.cxx
+  igstkPolarisTrackerTool.cxx
 )
 
 # Variable for holding extra libraries

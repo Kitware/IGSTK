@@ -22,16 +22,12 @@ INCLUDE_DIRECTORIES (
   )
 
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
-ADD_TEST(igstkNDICommandInterpreterTest ${IGSTKSandbox_TESTS} igstkNDICommandInterpreterTest)
-ADD_TEST(igstkAuroraTrackerTest ${IGSTKSandbox_TESTS} igstkAuroraTrackerTest)
 ADD_TEST(igstkPolarisTrackerTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerTest)
 ADD_TEST(igstkTubeObjectTest ${IGSTKSandbox_TESTS} igstkTubeObjectTest)
 ADD_TEST(igstkMeshObjectTest ${IGSTKSandbox_TESTS} igstkMeshObjectTest)
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
-  igstkNDICommandInterpreterTest.cxx
-  igstkAuroraTrackerTest.cxx
   igstkPolarisTrackerTest.cxx
   igstkTubeObjectTest.cxx
   igstkMeshObjectTest.cxx

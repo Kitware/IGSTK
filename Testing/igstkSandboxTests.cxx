@@ -10,8 +10,6 @@
 void RegisterTests()
 {
   REGISTER_TEST(igstkMouseTrackerTest);
-  REGISTER_TEST(igstkNDICommandInterpreterTest);
-  REGISTER_TEST(igstkAuroraTrackerTest);
   REGISTER_TEST(igstkPolarisTrackerTest);
   REGISTER_TEST(igstkTubeObjectTest);
   REGISTER_TEST(igstkMeshObjectTest);
