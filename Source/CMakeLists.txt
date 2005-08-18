@@ -15,6 +15,8 @@ SET(IGSTK_HEADS
   igstkFLTKTextBufferLogOutput.h
   igstkFLTKTextLogOutput.h
   igstkMacros.h
+  igstkMeshObject.h
+  igstkMeshObjectRepresentation.h
   igstkMultipleOutput.h
   igstkNDICommandInterpreter.h
   igstkObjectRepresentation.h
@@ -31,6 +33,8 @@ SET(IGSTK_HEADS
   igstkTracker.h
   igstkTrackerPort.h
   igstkTrackerTool.h
+  igstkTubeObject.h
+  igstkTubeObjectRepresentation.h
   igstkView.h
   igstkView2D.h
   igstkView3D.h
@@ -48,6 +52,8 @@ SET(IGSTK_SRCS
   igstkCylinderObjectRepresentation.cxx
   igstkEllipsoidObject.cxx
   igstkEllipsoidObjectRepresentation.cxx
+  igstkMeshObject.cxx
+  igstkMeshObjectRepresentation.cxx
   igstkFLTKTextBufferLogOutput.cxx
   igstkFLTKTextLogOutput.cxx
   igstkMultipleOutput.cxx
@@ -64,6 +70,8 @@ SET(IGSTK_SRCS
   igstkTrackerPort.cxx
   igstkTrackerTool.cxx
   igstkTransform.cxx
+  igstkTubeObject.cxx
+  igstkTubeObjectRepresentation.cxx
   igstkView.cxx
   igstkView2D.cxx
   igstkView3D.cxx
