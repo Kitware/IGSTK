@@ -14,10 +14,6 @@ SET(IGSTKSandbox_HEADS
   igstkImageReader.h
   igstkNDICommandInterpreter.h
   igstkMouseTracker.h
-  igstkTubeObject.h
-  igstkTubeObjectRepresentation.h
-  igstkMeshObject.h
-  igstkMeshObjectRepresentation.h
 )
 
 
@@ -33,10 +29,6 @@ SET(IGSTKSandbox_SRCS
   igstkImageReader.cxx
   igstkNDICommandInterpreter.cxx
   igstkMouseTracker.cxx
-  igstkTubeObject.cxx
-  igstkTubeObjectRepresentation.cxx
-  igstkMeshObject.cxx
-  igstkMeshObjectRepresentation.cxx
 )
 
 # Variable for holding extra libraries
