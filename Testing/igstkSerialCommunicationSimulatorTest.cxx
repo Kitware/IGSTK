@@ -23,13 +23,17 @@
 #include <fstream>
 #include <set>
 
+#include <string.h>
+
 #include "itkCommand.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkVector.h"
 #include "itkVersor.h"
 
+#include "igstkSystemInformation.h"
 #include "igstkSerialCommunicationSimulator.h"
+
 
 //#include "igstkAuroraTracker.h"
 #include "igstkTransform.h"
@@ -92,6 +96,31 @@ public:
 };
 
 
+/** append a file name to a directory name and provide the result */
+static void joinDirAndFile(char *result, int maxLen,
+                           const char *dirName, const char *fileName)
+{
+  int dirNameLen = strlen( dirName );
+  int fileNameLen = strlen( fileName );
+  const char* slash = ( (dirName[dirNameLen-1] == '/') ? "" : "/" );
+  int slashLen = strlen( slash );
+
+  // allocate temporary string, concatenate
+  char* fullName = new char[dirNameLen + slashLen + fileNameLen + 1];
+  strncpy(&fullName[0], dirName, dirNameLen);
+  strncpy(&fullName[dirNameLen], slash, slashLen);
+  strncpy(&fullName[dirNameLen + slashLen], fileName, fileNameLen);
+  fullName[dirNameLen + slashLen + fileNameLen] = '\0';
+
+  // copy to the result
+  strncpy(result, fullName, maxLen);
+  result[maxLen-1] = '\0';
+
+  // delete temporary string
+  delete [] fullName;
+}
+
+
 int igstkSerialCommunicationSimulatorTest( int, char * [] )
 {
   typedef itk::Logger                   LoggerType; 
@@ -105,7 +134,13 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
   serialComm->SetFileName("wrong_name");
   serialComm->OpenCommunication();
 
-  serialComm->SetFileName("polaris_stream_07_27_2005.bin");
+  // set the name of the actual data file
+  char fullName[1024];
+  joinDirAndFile( fullName, 1024,
+                  IGSTK_DATA_ROOT,
+                  "Input/polaris_stream_07_27_2005.bin" );
+  std::cout << fullName << std::endl; 
+  serialComm->SetFileName( fullName );
 
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
 
@@ -115,7 +150,7 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
   LogOutputType::Pointer logOutput = LogOutputType::New();  
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG); //DEBUG );
+  logger->SetPriorityLevel( itk::Logger::DEBUG);
 
   serialComm->AddObserver( itk::AnyEvent(), my_command);
 

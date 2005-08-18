@@ -2,5 +2,6 @@
 #define __igstk_SystemInformation_h
 
 #define IGSTK_BINARY_DIR "@IGSTK_BINARY_DIR@"
+#define IGSTK_DATA_ROOT "@IGSTK_DATA_ROOT@"
 
 #endif
