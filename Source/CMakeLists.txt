@@ -4,14 +4,19 @@
 # The header files
 
 SET(IGSTK_HEADS
+  igstkAuroraTracker.h
+  igstkAuroraTrackerTool.h
   igstkBinaryData.h
   igstkCommunication.h
   igstkCylinderObject.h
   igstkCylinderObjectRepresentation.h
   igstkEllipsoidObject.h  
   igstkEllipsoidObjectRepresentation.h  
+  igstkFLTKTextBufferLogOutput.h
+  igstkFLTKTextLogOutput.h
   igstkMacros.h
   igstkMultipleOutput.h
+  igstkNDICommandInterpreter.h
   igstkObjectRepresentation.h
   igstkPulseGenerator.h
   igstkSerialCommunication.h
@@ -30,20 +35,23 @@ SET(IGSTK_HEADS
   igstkView2D.h
   igstkView3D.h
   igstkVTKLoggerOutput.h
-  igstkFLTKTextLogOutput.h
-  igstkFLTKTextBufferLogOutput.h
 )
 
 # The implementation files
 
 SET(IGSTK_SRCS  
+  igstkAuroraTracker.cxx
+  igstkAuroraTrackerTool.cxx
   igstkBinaryData.cxx
   igstkCommunication.cxx
   igstkCylinderObject.cxx
   igstkCylinderObjectRepresentation.cxx
   igstkEllipsoidObject.cxx
   igstkEllipsoidObjectRepresentation.cxx
+  igstkFLTKTextBufferLogOutput.cxx
+  igstkFLTKTextLogOutput.cxx
   igstkMultipleOutput.cxx
+  igstkNDICommandInterpreter.cxx
   igstkObjectRepresentation.cxx
   igstkPulseGenerator.cxx
   igstkSerialCommunication.cxx
@@ -60,8 +68,6 @@ SET(IGSTK_SRCS
   igstkView2D.cxx
   igstkView3D.cxx
   igstkVTKLoggerOutput.cxx
-  igstkFLTKTextLogOutput.cxx
-  igstkFLTKTextBufferLogOutput.cxx
 )
 
 

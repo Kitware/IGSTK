@@ -21,11 +21,15 @@ INCLUDE_DIRECTORIES (
   ${IGSTK_BINARY_DIR}/Testing
   )
 
+ADD_TEST(igstkAuroraTrackerTest ${IGSTK_TESTS} igstkAuroraTrackerTest)
+
 ADD_TEST(igstkBinaryDataTest ${IGSTK_TESTS} igstkBinaryDataTest)
 
 ADD_TEST(igstkCommunicationTest ${IGSTK_TESTS} igstkCommunicationTest)
 
 ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
+
+ADD_TEST(igstkNDICommandInterpreterTest ${IGSTK_TESTS} igstkNDICommandInterpreterTest)
 
 ADD_TEST(igstkPulseGeneratorTest ${IGSTK_TESTS} igstkPulseGeneratorTest)
 
@@ -41,48 +45,51 @@ ADD_TEST(igstkTokenTest ${IGSTK_TESTS} igstkTokenTest)
 
 ADD_TEST(igstkBasicTrackerTest ${IGSTK_TESTS} igstkBasicTrackerTest)
 
+ADD_TEST(igstkCylinderObjectTest ${IGSTK_TESTS} igstkCylinderObjectTest)
+
+ADD_TEST(igstkEllipsoidObjectTest ${IGSTK_TESTS} igstkEllipsoidObjectTest)
+
+ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTK_TESTS} igstkFLTKTextBufferLogOutputTest)
+
+ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTK_TESTS} igstkFLTKTextLogOutputTest)
+
 ADD_TEST(igstkTrackerToolTest ${IGSTK_TESTS} igstkTrackerToolTest)
 
 ADD_TEST(igstkTrackerPortTest ${IGSTK_TESTS} igstkTrackerPortTest)
-
-ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
 
 ADD_TEST(igstkTransformTest ${IGSTK_TESTS} igstkTransformTest)
 
 ADD_TEST(igstkTimeStampTest ${IGSTK_TESTS} igstkTimeStampTest)
 
-ADD_TEST(igstkEllipsoidObjectTest ${IGSTK_TESTS} igstkEllipsoidObjectTest)
-
-ADD_TEST(igstkCylinderObjectTest ${IGSTK_TESTS} igstkCylinderObjectTest)
+ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
 
 ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 
-ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTK_TESTS} igstkFLTKTextLogOutputTest)
-
-ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTK_TESTS} igstkFLTKTextBufferLogOutputTest)
 
 
 SET(BasicTests_SRCS
+  igstkAuroraTrackerTest
+  igstkBasicTrackerTest
   igstkBinaryDataTest
   igstkCommunicationTest
   igstkCylinderObjectTest
   igstkEllipsoidObjectTest
+  igstkFLTKTextBufferLogOutputTest
+  igstkFLTKTextLogOutputTest
   igstkMultipleOutputTest
+  igstkNDICommandInterpreterTest
   igstkPulseGeneratorTest
-  igstkSerialCommunicationSimulatorTest
   igstkSerialCommunicationTest
+  igstkSerialCommunicationSimulatorTest
   igstkStateMachineTest
   igstkStateMachineErrorsTest
-  igstkTokenTest
-  igstkBasicTrackerTest
   igstkTimeStampTest
-  igstkTrackerToolTest
+  igstkTokenTest
   igstkTrackerPortTest
+  igstkTrackerToolTest
   igstkTransformTest
   igstkViewTest
   igstkVTKLoggerOutputTest
-  igstkFLTKTextLogOutputTest
-  igstkFLTKTextBufferLogOutputTest
   )
 
 ADD_EXECUTABLE(igstkTests igstkTests.cxx ${BasicTests_SRCS})

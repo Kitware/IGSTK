@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkSerialCommunicationSimulatorTest.cxx
+  Module:    igstkAuroraTrackerTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -23,16 +23,17 @@
 #include <fstream>
 #include <set>
 
-#include <string.h>
-
 #include "itkCommand.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkVector.h"
 #include "itkVersor.h"
 
-#include "igstkSystemInformation.h"
-#include "igstkSerialCommunicationSimulator.h"
+#ifdef WIN32
+#include "igstkSerialCommunicationForWindows.h"
+#else
+#include "igstkSerialCommunicationForPosix.h"
+#endif
 
 #include "igstkAuroraTracker.h"
 #include "igstkTransform.h"
@@ -95,51 +96,20 @@ public:
 };
 
 
-/** append a file name to a directory name and provide the result */
-static void joinDirAndFile(char *result, int maxLen,
-                           const char *dirName, const char *fileName)
-{
-  int dirNameLen = strlen( dirName );
-  int fileNameLen = strlen( fileName );
-  const char* slash = ( (dirName[dirNameLen-1] == '/') ? "" : "/" );
-  int slashLen = strlen( slash );
-
-  // allocate temporary string, concatenate
-  char* fullName = new char[dirNameLen + slashLen + fileNameLen + 1];
-  strncpy(&fullName[0], dirName, dirNameLen);
-  strncpy(&fullName[dirNameLen], slash, slashLen);
-  strncpy(&fullName[dirNameLen + slashLen], fileName, fileNameLen);
-  fullName[dirNameLen + slashLen + fileNameLen] = '\0';
-
-  // copy to the result
-  strncpy(result, fullName, maxLen);
-  result[maxLen-1] = '\0';
-
-  // delete temporary string
-  delete [] fullName;
-}
-
-
-int igstkSerialCommunicationSimulatorTest( int, char * [] )
+int igstkAuroraTrackerTest( int, char * [] )
 {
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
 
-  igstk::SerialCommunicationSimulator::Pointer serialComm = igstk::SerialCommunicationSimulator::New();
+  igstk::AuroraTrackerTool::Pointer tool = igstk::AuroraTrackerTool::New();
+  std::cout << tool->GetNameOfClass() << std::endl;
+  std::cout << tool << std::endl;
 
-  std::cout << serialComm->GetNameOfClass() << std::endl;
-
-  // for increasing test coverage
-  serialComm->SetFileName("wrong_name");
-  serialComm->OpenCommunication();
-
-  // set the name of the actual data file
-  char fullName[1024];
-  joinDirAndFile( fullName, 1024,
-                  IGSTK_DATA_ROOT,
-                  "Input/polaris_stream_07_27_2005.bin" );
-  std::cout << fullName << std::endl; 
-  serialComm->SetFileName( fullName );
+#ifdef WIN32
+  igstk::SerialCommunicationForWindows::Pointer serialComm = igstk::SerialCommunicationForWindows::New();
+#else
+  igstk::SerialCommunicationForPosix::Pointer serialComm = igstk::SerialCommunicationForPosix::New();
+#endif
 
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
 
@@ -149,10 +119,17 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
   LogOutputType::Pointer logOutput = LogOutputType::New();  
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG);
+  logger->SetPriorityLevel( itk::Logger::DEBUG); //DEBUG );
 
-  serialComm->AddObserver( itk::AnyEvent(), my_command);
-
+  serialComm->AddObserver( igstk::SerialCommunication::OpenPortFailureEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::SetTransferParametersFailureEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::SendBreakFailureEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::WriteSuccessEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::WriteFailureEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::WriteTimeoutEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::ReadSuccessEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::ReadFailureEvent(), my_command);
+  serialComm->AddObserver( igstk::SerialCommunication::ReadTimeoutEvent(), my_command);
   serialComm->SetLogger( logger );
 
   serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
@@ -162,7 +139,8 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
-  std::cout << serialComm << std::endl;
+  serialComm->SetCaptureFileName( "RecordedStreamByAuroraTrackerTest.bin" );
+  serialComm->SetCapture( true );
 
   serialComm->OpenCommunication();
 
@@ -186,6 +164,10 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
 
   tracker->Initialize();
 
+  unsigned int ntools = tracker->GetNumberOfTools();
+
+  std::cout << "number of tools : " << ntools << std::endl;
+
   tracker->StartTracking();
 
   typedef igstk::Transform            TransformType;
@@ -196,12 +178,12 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
   VectorType                position;
 
   for(int i=0; i<10; i++)
-    {
+  {
     tracker->UpdateStatus();
     tracker->GetToolTransform( 0, 0, transitions );
     position = transitions.GetTranslation();
     std::cout << "Position = (" << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
-    }
+  }
 
   tracker->StopTracking();
 
