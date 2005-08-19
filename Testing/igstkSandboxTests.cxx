@@ -11,8 +11,6 @@ void RegisterTests()
 {
   REGISTER_TEST(igstkMouseTrackerTest);
   REGISTER_TEST(igstkPolarisTrackerTest);
-  REGISTER_TEST(igstkTubeObjectTest);
-  REGISTER_TEST(igstkMeshObjectTest);
 
 #ifdef IGSTK_USE_ATAMAI
   REGISTER_TEST(igstkAtamaiNDITrackerTest);
