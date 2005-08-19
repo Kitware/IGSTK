@@ -25,6 +25,7 @@
 #include <set>
 
 #include <ctype.h>
+#include <stdio.h>
 
 #include "itkCommand.h"
 #include "itkLogger.h"
@@ -94,13 +95,13 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   char fullName[1024];
   joinDirAndFile( fullName, 1024,
                   IGSTK_DATA_ROOT,
-                  "Input/polaris_stream_08_17_2005.bin" );
+                  "Input/polaris_stream_08_18_2005.bin" );
   serialComm->SetFileName( fullName );
 
   // uncomment to capture a new file
   //serialComm->SetCaptureFileName( "PolarisCaptureForNDICommandInterpreterTest.bin" );
-  //serialComm->SetCapture( true );
-  //serialComm->SetPortNumber(CommunicationType::PortNumber0);
+  serialComm->SetCapture( true );
+  serialComm->SetPortNumber(CommunicationType::PortNumber0);
 
   serialComm->OpenCommunication();
 
@@ -169,6 +170,8 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   // -- diagnostic commands, POLARIS only --
   std::cout << "Calling DSTART" << std::endl;
   interpreter->DSTART();
+  std::cout << "Calling IRINIT" << std::endl;
+  interpreter->IRINIT();
   std::cout << "Calling IRCHK" << std::endl;
   interpreter->IRCHK(CommandInterpreterType::NDI_DETECTED);
   errorCode = interpreter->GetError();
@@ -189,6 +192,33 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     }
   std::cout << "Calling DSTOP" << std::endl;
   interpreter->DSTOP();
+
+  // -- request a passive port on a POLARIS--
+  interpreter->PHRQ("********",  // device number (any device)
+                    "*",         // any system
+                    "*",         // wireless
+                    "0A",        // specifically request wireless port A
+                    "**");       // AURORA tool channel (not used for POLARIS)
+  ph = interpreter->GetPHRQHandle();
+
+
+  // -- write a virtual SROM to this port
+  char data[1024]; // to hold the srom data
+  memset( data, 0, 1024 );
+  joinDirAndFile( fullName, 1024,
+                  IGSTK_DATA_ROOT,
+                  "Input/polaris_passive_pointer_1.rom" );
+  FILE *file = fopen( fullName, "rb" );
+  fread( data, 1, 1024, file );
+  fclose( file );
+  for ( i = 0; i < 1024; i += 64 )
+    {
+    // convert data to hexidecimal and write to virtual SROM in
+    // 64-byte chunks, as described in the manual
+    char hexbuffer[128]; // holds hexidecimal data to be sent to device
+    interpreter->HexEncode(hexbuffer, &data[i], 64);
+    interpreter->PVWR(ph, i, hexbuffer);
+    }
 
   // -- enable tool ports --
   std::cout << "Calling PHSR" << std::endl;
@@ -247,6 +277,8 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   // -- start tracking --
   std::cout << "Calling TSTART" << std::endl;
   interpreter->TSTART();
+
+  // -- do 50 basic TX calls
   for (j = 0; j < 50; j++)
     {
     std::cout << "Calling TX" << std::endl;
@@ -262,8 +294,55 @@ int igstkNDICommandInterpreterTest( int, char * [] )
       }
     }
 
+  // -- do some more TX commands, with passive stray tracking
+
+  for (j = 0; j < 50; j++)
+    {
+    std::cout << "Calling TX wth NDI_PASSIVE_STRAY" << std::endl;
+    interpreter->TX(CommandInterpreterType::NDI_PASSIVE_STRAY);
+    a = interpreter->GetTXSystemStatus();      
+
+    for (i = 0; i < numberOfHandles; i++)
+      {
+      ph = portHandles[i];
+      a = interpreter->GetTXTransform(ph, vals);
+      a = interpreter->GetTXPortStatus(ph);
+      l = interpreter->GetTXFrame(ph);
+      }
+
+    n = interpreter->GetTXNumberOfPassiveStrays();
+    std::cout << n << ": ";
+    for (i = 0; i < n; i++)
+      {
+      double coord[3];
+      a = interpreter->GetTXPassiveStray(i, coord);
+      std::cout << "(" << coord[0] << "," << coord[1] << "," << coord[2]
+                << "), ";
+      }
+    std::cout << std::endl;
+    }
+
+  // -- do 50 calls with NDI_SINGLE_STRAY
+  for (j = 0; j < 50; j++)
+    {
+    std::cout << "Calling TX with NDI_SINGLE_STRAY" << std::endl;
+    interpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS |
+                    CommandInterpreterType::NDI_SINGLE_STRAY);
+    a = interpreter->GetTXSystemStatus();      
+
+    for (i = 0; i < numberOfHandles; i++)
+      {
+      double coord[3];
+      ph = portHandles[i];
+      a = interpreter->GetTXSingleStray(ph, coord);
+      a = interpreter->GetTXTransform(ph, vals);
+      a = interpreter->GetTXPortStatus(ph);
+      l = interpreter->GetTXFrame(ph);
+      }
+    }
+
   // -- do one more TX with additional options --
-  std::cout << "Calling TX" << std::endl;
+  std::cout << "Calling TX with NDI_ADDITIONAL_INFO" << std::endl;
   interpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS |
                   CommandInterpreterType::NDI_ADDITIONAL_INFO);
 
