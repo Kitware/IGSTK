@@ -23,14 +23,10 @@ INCLUDE_DIRECTORIES (
 
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 ADD_TEST(igstkPolarisTrackerTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerTest)
-ADD_TEST(igstkTubeObjectTest ${IGSTKSandbox_TESTS} igstkTubeObjectTest)
-ADD_TEST(igstkMeshObjectTest ${IGSTKSandbox_TESTS} igstkMeshObjectTest)
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkPolarisTrackerTest.cxx
-  igstkTubeObjectTest.cxx
-  igstkMeshObjectTest.cxx
   )
 
 IF (IGSTK_USE_ATAMAI)
