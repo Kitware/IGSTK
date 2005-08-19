@@ -1333,8 +1333,17 @@ private:
   static int HexadecimalStringToInt(const char* cp, int n);
 
   /**
-  Convert \em n characters of a signed decimal string to a long.
-  The first character in the string must be '+' or '-', otherwise
+  Convert \em n digits of a decimal string to an int.  No characters
+  other than decimal digits are permitted.
+
+  The primary use of this function is decoding replies from the
+  device.
+  */
+  static int StringToInt(const char* cp, int n);
+
+  /**
+  Convert \em n characters of a signed decimal string to an int.
+  The first character in the string can be '+' or '-', otherwise
   the result will be zero.
 
   The primary use of this function is decoding replies from the

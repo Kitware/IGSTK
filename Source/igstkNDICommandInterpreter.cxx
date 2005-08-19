@@ -164,12 +164,35 @@ int NDICommandInterpreter::HexadecimalStringToInt(const char* cp, int n)
 }
 
 /** Convert an ASCII decimal string of length "n" to an integer. */
+int NDICommandInterpreter::StringToInt(const char* cp, int n)
+{
+  int i;
+  int c;
+  int result = 0;
+
+  for (i = 0; i < n; i++)
+    {
+    c = cp[i];
+    if (c >= '0' && c <= '9')
+      {
+      result = (result * 10) + (c - '0');
+      }
+    else
+      {
+      break;
+      }
+    }
+
+  return result;
+}
+
+/** Convert an ASCII decimal string of length "n" to an integer. */
 int NDICommandInterpreter::SignedStringToInt(const char* cp, int n)
 {
   int i;
   int c;
   int result = 0;
-  int sign = 1;
+  int sign = 0;
 
   c = cp[0];
 
@@ -180,10 +203,6 @@ int NDICommandInterpreter::SignedStringToInt(const char* cp, int n)
   else if (c == '-')
     {
     sign = -1;
-    }
-  else
-    {
-    return 0;
     }
 
   for (i = 1; i < n; i++)
@@ -458,7 +477,7 @@ const char* NDICommandInterpreter::Command(const char* command)
     m_Communication->Read(rp, NDI_MAX_REPLY_SIZE, m);
 
     /* check for correct reply */
-    if (strncmp(rp, "RESETBE6F\r", 8) != 0)
+    if (strncmp(rp, "RESETBE6F\r", 10) != 0)
       { 
       this->SetErrorCode(NDI_RESET_FAIL);
       return crp;
@@ -1031,14 +1050,13 @@ int NDICommandInterpreter::GetTXPassiveStray(int i, double coord[3]) const
     }
 
   n = m_TXNumberOfPassiveStrays;
-  dp += 3;
   if (n < 0)
     {
     return NDI_MISSING;
     }
-  if (n > 20)
+  if (n > 50)
     {
-    n = 20;
+    n = 50;
     }
 
   if (i < 0 || i >= n)
@@ -1590,7 +1608,7 @@ void NDICommandInterpreter::HelperForTX(const char* cp, const char* crp)
   if (mode & NDI_PASSIVE_STRAY)
     {
     /* get the number of strays */
-    nstray = this->SignedStringToInt(crp, 3);
+    nstray = this->StringToInt(crp, 2);
     for (j = 0; j < 2 && *crp >= ' '; j++)
       {
       crp++;
