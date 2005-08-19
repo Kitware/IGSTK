@@ -17,6 +17,7 @@ void RegisterTests()
   REGISTER_TEST(igstkEllipsoidObjectTest);
   REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
   REGISTER_TEST(igstkFLTKTextLogOutputTest);
+  REGISTER_TEST(igstkMeshObjectTest);
   REGISTER_TEST(igstkMultipleOutputTest);
   REGISTER_TEST(igstkNDICommandInterpreterTest);
   REGISTER_TEST(igstkPulseGeneratorTest);
@@ -26,6 +27,7 @@ void RegisterTests()
   REGISTER_TEST(igstkStateMachineErrorsTest);
   REGISTER_TEST(igstkTimeStampTest);
   REGISTER_TEST(igstkTokenTest);
+  REGISTER_TEST(igstkTubeObjectTest);
   REGISTER_TEST(igstkTrackerPortTest);
   REGISTER_TEST(igstkTrackerToolTest);
   REGISTER_TEST(igstkTransformTest);

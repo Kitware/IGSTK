@@ -23,27 +23,11 @@ INCLUDE_DIRECTORIES (
 
 ADD_TEST(igstkAuroraTrackerTest ${IGSTK_TESTS} igstkAuroraTrackerTest)
 
+ADD_TEST(igstkBasicTrackerTest ${IGSTK_TESTS} igstkBasicTrackerTest)
+
 ADD_TEST(igstkBinaryDataTest ${IGSTK_TESTS} igstkBinaryDataTest)
 
 ADD_TEST(igstkCommunicationTest ${IGSTK_TESTS} igstkCommunicationTest)
-
-ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
-
-ADD_TEST(igstkNDICommandInterpreterTest ${IGSTK_TESTS} igstkNDICommandInterpreterTest)
-
-ADD_TEST(igstkPulseGeneratorTest ${IGSTK_TESTS} igstkPulseGeneratorTest)
-
-ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
-
-ADD_TEST(igstkStateMachineErrorsTest ${IGSTK_TESTS} igstkStateMachineErrorsTest)
-
-ADD_TEST(igstkSerialCommunicationTest ${IGSTK_TESTS} igstkSerialCommunicationTest)
-
-ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS} igstkSerialCommunicationSimulatorTest)
-
-ADD_TEST(igstkTokenTest ${IGSTK_TESTS} igstkTokenTest)
-
-ADD_TEST(igstkBasicTrackerTest ${IGSTK_TESTS} igstkBasicTrackerTest)
 
 ADD_TEST(igstkCylinderObjectTest ${IGSTK_TESTS} igstkCylinderObjectTest)
 
@@ -53,18 +37,37 @@ ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTK_TESTS} igstkFLTKTextBufferLogO
 
 ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTK_TESTS} igstkFLTKTextLogOutputTest)
 
+ADD_TEST(igstkMeshObjectTest ${IGSTK_TESTS} igstkMeshObjectTest)
+
+ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
+
+ADD_TEST(igstkNDICommandInterpreterTest ${IGSTK_TESTS} igstkNDICommandInterpreterTest)
+
+ADD_TEST(igstkPulseGeneratorTest ${IGSTK_TESTS} igstkPulseGeneratorTest)
+
+ADD_TEST(igstkSerialCommunicationTest ${IGSTK_TESTS} igstkSerialCommunicationTest)
+
+ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS} igstkSerialCommunicationSimulatorTest)
+
+ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
+
+ADD_TEST(igstkStateMachineErrorsTest ${IGSTK_TESTS} igstkStateMachineErrorsTest)
+
+ADD_TEST(igstkTimeStampTest ${IGSTK_TESTS} igstkTimeStampTest)
+
+ADD_TEST(igstkTokenTest ${IGSTK_TESTS} igstkTokenTest)
+
 ADD_TEST(igstkTrackerToolTest ${IGSTK_TESTS} igstkTrackerToolTest)
 
 ADD_TEST(igstkTrackerPortTest ${IGSTK_TESTS} igstkTrackerPortTest)
 
 ADD_TEST(igstkTransformTest ${IGSTK_TESTS} igstkTransformTest)
 
-ADD_TEST(igstkTimeStampTest ${IGSTK_TESTS} igstkTimeStampTest)
+ADD_TEST(igstkTubeObjectTest ${IGSTK_TESTS} igstkTubeObjectTest)
 
 ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
 
 ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
-
 
 
 SET(BasicTests_SRCS
@@ -76,6 +79,7 @@ SET(BasicTests_SRCS
   igstkEllipsoidObjectTest
   igstkFLTKTextBufferLogOutputTest
   igstkFLTKTextLogOutputTest
+  igstkMeshObjectTest
   igstkMultipleOutputTest
   igstkNDICommandInterpreterTest
   igstkPulseGeneratorTest
@@ -88,6 +92,7 @@ SET(BasicTests_SRCS
   igstkTrackerPortTest
   igstkTrackerToolTest
   igstkTransformTest
+  igstkTubeObjectTest
   igstkViewTest
   igstkVTKLoggerOutputTest
   )
