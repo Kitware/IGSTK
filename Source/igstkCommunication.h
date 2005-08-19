@@ -52,30 +52,33 @@ public:
   igstkNewMacro(Self); 
 
   /** The method OpenCommunication sets up communication as per the data
-  provided. */
+   *  provided. */
   virtual void OpenCommunication( void );
 
   /** The method CloseCommunication closes the communication. */
   virtual void CloseCommunication( void );
 
   /** The method SetTimeoutPeriod sets the amount of time to wait on a reply 
-  from the device before generating a timeout event. */
-  virtual void SetTimeoutPeriod( int milliseconds ) { };
+   *  from the device before generating a timeout event. */
+  virtual void SetTimeoutPeriod( unsigned int milliseconds ) { };
 
   /** The method SetReadTerminationCharacter sets a special character that 
-  the device uses to mark the end of a reply 
-  (defaults to end-of-file character, ascii 255). */
-  void SetReadTerminationCharacter( char c ) { m_ReadTerminationCharacter = c; };
+   *  the device uses to mark the end of a reply 
+   *  (defaults to end-of-file character, ascii 255). */
+  igstkSetMacro( ReadTerminationCharacter, char );
+  igstkGetMacro( ReadTerminationCharacter, char );
 
-  /** The method SetUseReadTerminationCharacter sets 
-  whether to use the termination character, or not use a termination character. */
-  void SetUseReadTerminationCharacter( bool bUse ) { m_UseReadTerminationCharacter = bUse; };
+  /** The method SetUseReadTerminationCharacter sets whether to use
+   *  the termination character, or not use a termination character. */
+  igstkSetMacro( UseReadTerminationCharacter, bool );
+  igstkGetMacro( UseReadTerminationCharacter, bool );
 
   /** Write method sends the string via communication link. */
-  virtual void Write( const char *data, int numberOfBytes ) { };
+  virtual void Write( const char *data, unsigned int numberOfBytes ) { };
 
   /** Read method receives string via communication link. */
-  virtual void Read( char *data, int numberOfBytes, int &bytesRead ) { }; 
+  virtual void Read( char *data, unsigned int numberOfBytes,
+                     unsigned int &bytesRead ) { }; 
 
 protected:
 
@@ -85,7 +88,8 @@ protected:
 
   virtual ~Communication( void );
 
-  /** Flush "flushes" out any commands in the buffer through the communication link. */
+  /** Flush "flushes" out any commands in the buffer through the
+   *  communication link. */
   virtual void Flush( void ) { }
 
   /** Print object information */

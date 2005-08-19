@@ -445,7 +445,7 @@ inline void CalcCRC16(int nextchar, unsigned int *puCRC16)
 /** Send a command to the device via the Communication object. */
 const char* NDICommandInterpreter::Command(const char* command)
 {
-  int i, m, nc;
+  unsigned int i, m, nc;
   unsigned int CRC16 = 0;
   int useCRC = 0;
   int inCommand = 1;

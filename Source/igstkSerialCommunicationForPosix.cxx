@@ -290,9 +290,9 @@ void SerialCommunicationForPosix::InternalPurgeBuffers( void )
 
 void SerialCommunicationForPosix::InternalWrite( void )
 {
-  int i = 0;
+  unsigned int i = 0;
   int m;
-  int n = m_BytesToWrite;
+  unsigned int n = m_BytesToWrite;
   int writeError = 0;
 
   while (n > 0)
@@ -325,9 +325,9 @@ void SerialCommunicationForPosix::InternalWrite( void )
 
 void SerialCommunicationForPosix::InternalRead( void )
 {
-  int i = 0;
+  unsigned int i = 0;
   int m;
-  int n = m_BytesToRead;
+  unsigned int n = m_BytesToRead;
   int readError = 0;
 
   // Read reply either until n bytes have been read,

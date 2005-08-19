@@ -17,6 +17,8 @@
 
 #include <iostream>
 
+#include <stdio.h>
+
 #include "igstkSerialCommunicationForWindows.h"
 
 
@@ -244,8 +246,8 @@ void SerialCommunicationForWindows::InternalSleep( void )
 void SerialCommunicationForWindows::InternalWrite( void )
 {
   DWORD m, dumb;
-  int i = 0;
-  int bytesToWrite = m_BytesToWrite;
+  unsigned int i = 0;
+  unsigned int bytesToWrite = m_BytesToWrite;
   int writeError = 0;
 
   igstkLogMacro( DEBUG, "InternalWrite called ...\n" );
@@ -291,9 +293,9 @@ void SerialCommunicationForWindows::InternalWrite( void )
 
 void SerialCommunicationForWindows::InternalRead( void )
 {
-  int i = 0;
+  unsigned int i = 0;
   DWORD m,dumb;
-  int n = m_BytesToRead;
+  unsigned int n = m_BytesToRead;
   int readError = 0;
   
   while (n > 0)

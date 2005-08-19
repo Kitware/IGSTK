@@ -100,58 +100,6 @@ public:
 };
 
 
-class SerialCommunicationBase : public igstk::SerialCommunication
-{
-public:
-  /** Return value type for interface functions */ 
-  typedef SerialCommunication::ResultType ResultType;
-
-  typedef SerialCommunicationBase  Self;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro(SerialCommunicationBase, SerialCommunication);
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro(Self);  
-
-protected:
-
-  /** Constructor */
-  SerialCommunicationBase() {}
-
-  /** Destructor */
-  ~SerialCommunicationBase() {}
-
-  /** Opens serial port for communication; */
-  virtual ResultType InternalOpenPort( void ) { return SUCCESS; }
-
-  /** Sets up communication on the open port as per the communication
-      parameters. */
-  virtual ResultType InternalSetTransferParameters( void ) { return SUCCESS; }
-
-  /** Closes serial port  */
-  virtual ResultType InternalClosePort( void ) { return SUCCESS; }
-
-  /** Send a serial break */
-  virtual void InternalSendBreak( void ) {}
-
-  /** Sleep for the number of milliseconds stored in m_SleepPeriod */
-  virtual void InternalSleep( void ) {}
-
-  /** Purge the input and output buffers */
-  virtual void InternalPurgeBuffers( void ) {}
-
-  /** Write data */
-  virtual void InternalWrite( void ) {}
-
-  /** Read data */
-  virtual void InternalRead( void ) {}
-  
-};
-
-
 int igstkSerialCommunicationTest( int, char * [] )
 {
   typedef itk::Logger                   LoggerType; 
@@ -165,9 +113,6 @@ int igstkSerialCommunicationTest( int, char * [] )
 
   // this is set if the test failed in any way
   int testStatus = EXIT_SUCCESS;
-
-  SerialCommunicationBase::Pointer base_serialComm = SerialCommunicationBase::New();
-  std::cout << base_serialComm << std::endl;
 
   CommunicationType::Pointer serialComm = CommunicationType::New();
 
@@ -212,9 +157,9 @@ int igstkSerialCommunicationTest( int, char * [] )
 
   serialComm->OpenCommunication();
 
-  int len = strlen("Hello World!!!");
-  int numberOfBytesRead = 0;
-  const int MAX_REPLY_SIZE = 1024;
+  unsigned int len = strlen("Hello World!!!");
+  unsigned int numberOfBytesRead = 0;
+  const unsigned int MAX_REPLY_SIZE = 1024;
   char reply[MAX_REPLY_SIZE];
   
   // test a simple write/read sequence

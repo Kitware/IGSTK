@@ -129,9 +129,9 @@ public:
   /** The method SetTimeoutPeriod sets the amount of time to wait on a reply 
    *  from the device before generating a timeout event.  The default
    *  value is 500 (0.5 seconds). */
-  void SetTimeoutPeriod( int milliseconds );
+  void SetTimeoutPeriod( unsigned int milliseconds );
   /** Get the timeout period */
-  igstkGetMacro( TimeoutPeriod, int );
+  igstkGetMacro( TimeoutPeriod, unsigned int );
 
   /** Set the name of the file into which the data stream is recorded. */
   void SetCaptureFileName(const char* filename);
@@ -161,7 +161,7 @@ public:
    *  after a reset of a device on the other end of the serial port,
    *  if the device is known to take a certain amount of time to
    *  initialize. */
-  void Sleep( int milliseconds );
+  void Sleep( unsigned int milliseconds );
 
   /** Purge the contents of the buffers.  This is used if the device 
    *  connected to the serial port has just been reset after an error,
@@ -170,12 +170,13 @@ public:
   void PurgeBuffers( void );
 
   /** Write method sends the string via the communication link. */
-  void Write( const char *message, int numberOfBytes );
+  void Write( const char *message, unsigned int numberOfBytes );
 
   /** Read method receives the string via the communication link. The
    *  data will always be null-terminated, so ensure that 'data' is at
    *  least numberOfBytes+1 in size. */
-  void Read( char *data, int numberOfBytes, int &bytesRead );
+  void Read( char *data, unsigned int numberOfBytes,
+             unsigned int &bytesRead );
 
   /** Event that denotes that an error has occurred. */
   itkEventMacro( CommunicationFailureEvent, IGSTKEvent);
@@ -272,10 +273,10 @@ protected:
   HandshakeType  m_HardwareHandshake;
 
   /** Timeout period, in milliseconds. */
-  int m_TimeoutPeriod;
+  unsigned int m_TimeoutPeriod;
 
   /** Time to sleep for, in milliseconds. */
-  int m_SleepPeriod;
+  unsigned int m_SleepPeriod;
 
   /** Input data */
   char *m_InputData;
@@ -284,13 +285,13 @@ protected:
   const char *m_OutputData;
 
   /** The number of bytes to write. */
-  int m_BytesToWrite;
+  unsigned int m_BytesToWrite;
 
   /** Number of bytes to try to read. */
-  int m_BytesToRead;
+  unsigned int m_BytesToRead;
 
   /** Actual number of bytes read. */
-  int m_BytesRead;
+  unsigned int m_BytesRead;
 
 private:
 

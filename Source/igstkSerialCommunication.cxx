@@ -328,7 +328,7 @@ void SerialCommunication::SetHardwareHandshake( HandshakeType handshake)
 }
 
 
-void SerialCommunication::SetTimeoutPeriod( int milliseconds )
+void SerialCommunication::SetTimeoutPeriod( unsigned int milliseconds )
 {
   igstkLogMacro( DEBUG, "SerialCommunication::SetTimeoutPeriod("
                  << milliseconds << ") called ...\n" );
@@ -358,7 +358,7 @@ void SerialCommunication::PurgeBuffers( void )
 }
 
 
-void SerialCommunication::Sleep( int milliseconds )
+void SerialCommunication::Sleep( unsigned int milliseconds )
 {
   igstkLogMacro( DEBUG, "SerialCommunication::Sleep(" << milliseconds
                  << ") called ...\n" );
@@ -369,7 +369,7 @@ void SerialCommunication::Sleep( int milliseconds )
 }
 
 
-void SerialCommunication::Write( const char *data, int numberOfBytes )
+void SerialCommunication::Write( const char *data, unsigned int numberOfBytes )
 {
   // this call to the log macro assumes data is null terminated
   igstkLogMacro( DEBUG, "SerialCommunication::Write(" 
@@ -398,7 +398,8 @@ void SerialCommunication::Write( const char *data, int numberOfBytes )
 }
 
 
-void SerialCommunication::Read( char *data, int numberOfBytes, int &bytesRead )
+void SerialCommunication::Read( char *data, unsigned int numberOfBytes,
+                                unsigned int &bytesRead )
 {
   m_BytesRead = 0;
   m_BytesToRead = numberOfBytes;
