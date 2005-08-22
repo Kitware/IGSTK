@@ -999,6 +999,7 @@ int NDICommandInterpreter::GetTXSingleStray(int ph, double coord[3]) const
 {
   const char* dp;
   int i, n;
+  int status;
   
   n = m_TXNumberOfHandles;
   for (i = 0; i < n; i++)
@@ -1014,18 +1015,19 @@ int NDICommandInterpreter::GetTXSingleStray(int ph, double coord[3]) const
     }
 
   dp = m_TXSingleStray[i];
-  if (*dp == 'D' || *dp == '\0')
+  status = HexadecimalStringToInt(dp, 2);
+  if (status == 0x00)
     {
     return NDI_DISABLED;
     }
-  else if (*dp == 'M')
+  else if (status == 0x02)
     {
     return NDI_MISSING;
     }
 
-  coord[0] = this->SignedStringToInt(&dp[0],  7)*0.01;
-  coord[1] = this->SignedStringToInt(&dp[7],  7)*0.01;
-  coord[2] = this->SignedStringToInt(&dp[14], 7)*0.01;
+  coord[0] = this->SignedStringToInt(&dp[2],  7)*0.01;
+  coord[1] = this->SignedStringToInt(&dp[9],  7)*0.01;
+  coord[2] = this->SignedStringToInt(&dp[16], 7)*0.01;
 
   return NDI_OKAY;
 }
@@ -1550,7 +1552,7 @@ void NDICommandInterpreter::HelperForTX(const char* cp, const char* crp)
     if (mode & NDI_ADDITIONAL_INFO)
       {
       dp = m_TXInformation[i];
-      for (j = 0; j < 20 && *crp >= ' '; j++)
+      for (j = 0; j < 22 && *crp >= ' '; j++)
         {
         *dp++ = *crp++;
         }
@@ -1560,26 +1562,19 @@ void NDICommandInterpreter::HelperForTX(const char* cp, const char* crp)
     if (mode & NDI_SINGLE_STRAY)
       {
       dp = m_TXSingleStray[i];
-      if (*crp == 'M')
+      if ((dp[0] == '0' && dp[1] == '0') ||
+          (dp[0] == '0' && dp[1] == '2'))
         {
-        /* check for "MISSING" */
-        for (j = 0; j < 7 && *crp >= ' '; j++)
-          {
-          *dp++ = *crp++;
-          }
-        }
-      else if (*crp == 'D')
-        {
-        /* check for "DISABLED" */
-        for (j = 0; j < 8 && *crp >= ' '; j++)
+        /* read the status only */
+        for (j = 0; j < 2 && *crp >= ' '; j++)
           {
           *dp++ = *crp++;
           }
         }
       else
         {
-        /* read the single stray position */
-        for (j = 0; j < 21 && *crp >= ' '; j++)
+        /* read the status and the single stray position */
+        for (j = 0; j < 23 && *crp >= ' '; j++)
           {
           *dp++ = *crp++;
           }
