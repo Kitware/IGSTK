@@ -1562,19 +1562,18 @@ void NDICommandInterpreter::HelperForTX(const char* cp, const char* crp)
     if (mode & NDI_SINGLE_STRAY)
       {
       dp = m_TXSingleStray[i];
-      if ((dp[0] == '0' && dp[1] == '0') ||
-          (dp[0] == '0' && dp[1] == '2'))
+      dp[0] = '0';
+      dp[1] = '0';
+      /* read the status */
+      for (j = 0; j < 2 && *crp >= ' '; j++)
         {
-        /* read the status only */
-        for (j = 0; j < 2 && *crp >= ' '; j++)
-          {
-          *dp++ = *crp++;
-          }
+        *dp++ = *crp++;
         }
-      else
+      /* read the coordinates if tool isn't missing */
+      if (!(dp[0] == '0' && dp[1] == '0') &&
+          !(dp[0] == '0' && dp[1] == '2'))
         {
-        /* read the status and the single stray position */
-        for (j = 0; j < 23 && *crp >= ' '; j++)
+        for (j = 0; j < 21 && *crp >= ' '; j++)
           {
           *dp++ = *crp++;
           }
