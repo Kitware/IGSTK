@@ -1,10 +1,10 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0105 
+version 1.0106 
 header_name {.h} 
 code_name {.cxx}
-class FourViewsAndTracking {open selected
+class FourViewsTrackingWithCT {open
 } {
-  Function {FourViewsAndTracking()} {open
+  Function {FourViewsTrackingWithCT()} {open
   } {
     Fl_Window mainWindow {
       label {IGSTK: Four Quadrants Example} open
@@ -47,7 +47,7 @@ else             this->DisableTracking();}
       }
     }
   }
-  Function {~FourViewsAndTracking()} {return_type virtual
+  Function {~FourViewsTrackingWithCT()} {selected return_type virtual
   } {}
   Function {Quit()} {open return_type {virtual void}
   } {
