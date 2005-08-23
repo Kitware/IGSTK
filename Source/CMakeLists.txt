@@ -11,6 +11,7 @@ SET(IGSTKSandbox_HEADS
   igstkMouseTracker.h
   igstkPolarisTracker.h
   igstkPolarisTrackerTool.h
+  igstkLandmarkRegistration.h
 )
 
 
@@ -23,6 +24,7 @@ SET(IGSTKSandbox_SRCS
   igstkMouseTracker.cxx
   igstkPolarisTracker.cxx
   igstkPolarisTrackerTool.cxx
+  igstkLandmarkRegistration.txx
 )
 
 # Variable for holding extra libraries
