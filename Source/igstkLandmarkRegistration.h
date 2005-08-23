@@ -31,33 +31,41 @@ public:
   typedef  unsigned char  PixelType;
     
   typedef itk::Image< PixelType, Dimension >    TrackerImageType;
-  typedef itk::Image< PixelType, Dimension >    TrackerImageImageType;
+  typedef itk::Image< PixelType, Dimension >    ModalityImageType;
   //typedef itk::Rigid3DTransform< double > TransformType;
   typedef itk::VersorRigid3DTransform< double > TransformType;
   typedef typename TransformType::Pointer       TransformPointerType;
 
   typedef itk::LandmarkBasedTransformInitializer< TransformType, 
-            TrackerImageType, TrackerImageImageType > TransformInitializerType;
+            TrackerImageType, ModalityImageType > TransformInitializerType;
 
   typedef typename TransformInitializerType::LandmarkPointContainer LandmarkPointContainerType;
   typedef typename TransformInitializerType::LandmarkPointType      LandmarkPointType;
   typedef typename TransformInitializerType::Pointer                TransformInitializerPointerType;
-  typedef typename LandmarkPointContainerType::const_iterator        PointsContainerConstIterator;
+  typedef typename LandmarkPointContainerType::const_iterator       PointsContainerConstIterator;
 
 
-/** Method for creation of a reference counted object. */
+  typedef typename TrackerImageType::Pointer                        TrackerImagePointerType;
+  typedef typename ModalityImageType::Pointer                       ModalityImagePointerType;
+
+
+  /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
 
-  /* Set/Get methods for landmark point containers */  
+  /**  Set/Get methods for landmark point containers */  
 
-  igstkSetMacro(TrackerLandmarks,LandmarkPointContainerType);
   igstkSetMacro(TrackerImageLandmarks,LandmarkPointContainerType);
+  igstkSetMacro(ModalityImageLandmarks,LandmarkPointContainerType);
 
-  igstkGetMacro(TrackerLandmarks,LandmarkPointContainerType);
   igstkGetMacro(TrackerImageLandmarks,LandmarkPointContainerType);
+  igstkGetMacro(ModalityImageLandmarks,LandmarkPointContainerType);
 
   igstkGetMacro(TransformInitializer,TransformInitializerPointerType);
   igstkGetMacro(Transform,TransformPointerType);
+
+  /**  Set tracker and modality images */
+  igstkSetMacro(TrackerImage,TrackerImagePointerType);
+  igstkSetMacro(ModalityImage,ModalityImagePointerType);
   
   /* Peform registration */
   void EvaluateTransform();
@@ -71,11 +79,13 @@ protected:
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
-
+  TrackerImagePointerType                                m_TrackerImage;
+  ModalityImagePointerType                               m_ModalityImage;
   TransformPointerType                                   m_Transform;
   TransformInitializerPointerType                        m_TransformInitializer;
-  LandmarkPointContainerType                             m_TrackerLandmarks;
   LandmarkPointContainerType                             m_TrackerImageLandmarks;
+  LandmarkPointContainerType                             m_ModalityImageLandmarks;
+  
 };
 
 } // end namespace igstk
