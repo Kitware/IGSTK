@@ -25,9 +25,10 @@ LandmarkRegistration<TDimension>::~LandmarkRegistration()
 template <unsigned int TDimension>
 void LandmarkRegistration<TDimension>::EvaluateTransform()  
 {
-  /** Determine the transformation parameters */
-  m_TransformInitializer->SetFixedLandmarks(m_TrackerLandmarks);
-  m_TransformInitializer->SetMovingLandmarks(m_TrackerImageLandmarks);
+  m_TransformInitializer->SetFixedImage( m_TrackerImage);
+  m_TransformInitializer->SetMovingImage( m_ModalityImage );
+  m_TransformInitializer->SetFixedLandmarks(m_TrackerImageLandmarks);
+  m_TransformInitializer->SetMovingLandmarks(m_ModalityImageLandmarks);
   m_TransformInitializer->SetTransform( m_Transform );
   m_TransformInitializer->InitializeTransform(); 
 }
@@ -37,15 +38,16 @@ template <unsigned int TDimension>
 void LandmarkRegistration<TDimension>::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  PointsContainerConstIterator fitr = m_TrackerLandmarks.begin();
-  while( fitr != m_TrackerLandmarks.end() )
+  os << indent << "TrackerImage Landmarks: " << std::endl;
+  PointsContainerConstIterator fitr = m_TrackerImageLandmarks.begin();
+  while( fitr != m_TrackerImageLandmarks.end() )
     {
     os << indent << *fitr << std::endl;
     ++fitr;
     }
-  os << indent << "TrackerImage Landmarks: " << std::endl;
-  PointsContainerConstIterator mitr = m_TrackerImageLandmarks.begin();
-  while( mitr != m_TrackerImageLandmarks.end() )
+  os << indent << "ModalityImage Landmarks: " << std::endl;
+  PointsContainerConstIterator mitr = m_ModalityImageLandmarks.begin();
+  while( mitr != m_ModalityImageLandmarks.end() )
     {
     os << indent << *mitr << std::endl;
     ++mitr;
