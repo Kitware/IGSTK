@@ -1461,7 +1461,7 @@ void NDICommandInterpreter::HelperForTX(const char* cp, const char* crp)
   unsigned int mode = 0x0001; /* the default reply mode */
   char* dp;
   int i, j, n;
-  int ph, nhandles, nstray;
+  int ph, nhandles, nstray, status;
 
   /* if the TX command had a reply mode, read it */
   if ((cp[2] == ':' && cp[7] != '\r') || (cp[2] == ' ' && cp[3] != '\r'))
@@ -1561,17 +1561,15 @@ void NDICommandInterpreter::HelperForTX(const char* cp, const char* crp)
     /* grab the single marker info */ 
     if (mode & NDI_SINGLE_STRAY)
       {
+      status = this->HexadecimalStringToInt(crp, 2);
       dp = m_TXSingleStray[i];
-      dp[0] = '0';
-      dp[1] = '0';
       /* read the status */
       for (j = 0; j < 2 && *crp >= ' '; j++)
         {
         *dp++ = *crp++;
         }
       /* read the coordinates if tool isn't missing */
-      if (!(dp[0] == '0' && dp[1] == '0') &&
-          !(dp[0] == '0' && dp[1] == '2'))
+      if (!(status == 0) && !(status == 2))
         {
         for (j = 0; j < 21 && *crp >= ' '; j++)
           {
