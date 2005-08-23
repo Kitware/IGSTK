@@ -67,47 +67,82 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
 
     rigid3DTransform->SetOffset( ioffset );
 
-    fixedPoint[0] =  50.0;
+    fixedPoint[0] =  25.0;
     fixedPoint[1] =  1.0;
-    fixedPoint[2] =  0.0;
+    fixedPoint[2] =  15.0;
 
     fpointcontainer.push_back(fixedPoint);
   
     movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
     mpointcontainer.push_back(movingPoint);
 
-    fixedPoint[0] =  50.0;
-    fixedPoint[1] =  2.0;
-    fixedPoint[2] =  0.0;
+    fixedPoint[0] =  15.0;
+    fixedPoint[1] =  21.0;
+    fixedPoint[2] =  17.0;
 
     fpointcontainer.push_back(fixedPoint);
 
     movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
     mpointcontainer.push_back(movingPoint);
 
-
-    fixedPoint[0] =  50.0;
-    fixedPoint[1] =  3.0;
-    fixedPoint[2] =  0.0;
-
-    fpointcontainer.push_back(fixedPoint);
-
-    movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
-    mpointcontainer.push_back(movingPoint);
-
-    fixedPoint[0] =  50.0;
-    fixedPoint[1] =  4.0;
-    fixedPoint[2] =  0.0;
+    fixedPoint[0] =  14.0;
+    fixedPoint[1] =  25.0;
+    fixedPoint[2] =  11.0;
 
     fpointcontainer.push_back(fixedPoint);
 
     movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
     mpointcontainer.push_back(movingPoint);
 
-    //Set the fixed and moving coordinates
+    fixedPoint[0] =  10.0;
+    fixedPoint[1] =  11.0;
+    fixedPoint[2] =  8.0;
 
-    landmarkRegister->SetTrackerLandmarks(fpointcontainer);
-    landmarkRegister->SetTrackerImageLandmarks(mpointcontainer);
+    fpointcontainer.push_back(fixedPoint);
+
+    movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
+    mpointcontainer.push_back(movingPoint);
+
+    //Set the tracker and modality image coordinates
+    landmarkRegister->SetTrackerImageLandmarks(fpointcontainer);
+    landmarkRegister->SetModalityImageLandmarks(mpointcontainer);
+
+    // Set the tracker and modality image
+    typedef igstk::LandmarkRegistration<3>::TrackerImageType              TrackerImageType;
+    typedef igstk::LandmarkRegistration<3>::ModalityImageType              ModalityImageType;
+
+    TrackerImageType::Pointer  trackerImage  = TrackerImageType::New();
+    ModalityImageType::Pointer modalityImage = ModalityImageType::New();
+
+    // Create tracker and modality image type
+    TrackerImageType::RegionType fRegion;
+    TrackerImageType::SizeType   fSize;
+    TrackerImageType::IndexType  fIndex;
+    fSize.Fill(30);
+    fIndex.Fill(0);
+    fRegion.SetSize( fSize );
+    fRegion.SetIndex( fIndex );
+    trackerImage->SetLargestPossibleRegion( fRegion );
+    trackerImage->SetBufferedRegion( fRegion );
+    trackerImage->SetRequestedRegion( fRegion );
+    trackerImage->Allocate();
+
+
+    ModalityImageType::RegionType mRegion;
+    ModalityImageType::SizeType   mSize;
+    ModalityImageType::IndexType  mIndex;
+    mSize.Fill(30);
+    mIndex.Fill(0);
+    mRegion.SetSize( mSize );
+    mRegion.SetIndex( mIndex );
+    modalityImage->SetLargestPossibleRegion( mRegion );
+    modalityImage->SetBufferedRegion( mRegion );
+    modalityImage->SetRequestedRegion( mRegion );
+    modalityImage->Allocate();
+
+    //Set the tracker and modality images
+    landmarkRegister->SetTrackerImage(trackerImage);
+    landmarkRegister->SetModalityImage(modalityImage);
 
     //Print out the two sets of coordinates 
     landmarkRegister->Print(std::cout);
@@ -130,7 +165,7 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
 
     while( mitr != mpointcontainer.end() )
       {
-      std::cout << "  Tracker Landmark: " << *fitr << " TrackerImage landmark " << *mitr
+      std::cout << "  Tracker image Landmark: " << *fitr << " Modality Image landmark " << *mitr
         << " Transformed trackerLandmark : " <<
         landmarkRegister->GetTransform()->TransformPoint( *fitr ) << std::endl;
 
@@ -147,7 +182,7 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
       {
       // Hang heads in shame
       std::cout << "  Tracker landmarks transformed by the transform did not match closely "
-        << " enough with the moving landmarks.  The transform computed was: ";
+        << " enough with the modality image landmarks.  The transform computed was: ";
       landmarkRegister->GetTransform()->Print(std::cout);
       std::cout << "  [FAILED]" << std::endl;
       return EXIT_FAILURE;
