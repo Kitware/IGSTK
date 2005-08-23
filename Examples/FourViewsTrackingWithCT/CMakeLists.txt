@@ -23,6 +23,14 @@ LINK_LIBRARIES(
   )
 
 FLTK_WRAP_UI(FourViewsTrackingWithCT ${FourViewsTrackingWithCT_GUI_SRCS})
-ADD_EXECUTABLE(FourViewsTrackingWithCT ${FourViewsTrackingWithCT_SRCS})
+
+IF("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.2)
+  # For CMake version below 2.2
+  ADD_EXECUTABLE(FourViewsTrackingWithCT ${FourViewsTrackingWithCT_SRCS})
+ELSE ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.2)
+  # For CMake version higher or equal than 2.2
+  ADD_EXECUTABLE(FourViewsTrackingWithCT ${FourViewsTrackingWithCT_SRCS} ${FourViewsTrackingWithCT_FLTK_UI_SRCS})
+ENDIF("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.2)
+
 
 
