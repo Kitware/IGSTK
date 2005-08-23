@@ -23,10 +23,12 @@ INCLUDE_DIRECTORIES (
 
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 ADD_TEST(igstkPolarisTrackerTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerTest)
+ADD_TEST(igstkLandmarkRegistrationTest ${IGSTKSandbox_TESTS} igstkLandmarkRegistrationTest)
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkPolarisTrackerTest.cxx
+  igstkLandmarkRegistrationTest.cxx
   )
 
 IF (IGSTK_USE_ATAMAI)
