@@ -100,7 +100,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
   // uncomment to capture a new file
   //serialComm->SetCaptureFileName( "PolarisCaptureForNDICommandInterpreterTest.bin" );
-  serialComm->SetCapture( true );
+  //serialComm->SetCapture( true );
   serialComm->SetPortNumber(CommunicationType::PortNumber0);
 
   serialComm->OpenCommunication();
