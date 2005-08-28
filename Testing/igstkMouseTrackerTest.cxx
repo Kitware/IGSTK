@@ -48,8 +48,15 @@ int igstkMouseTrackerTest( int, char * [] )
   MouseTrackerType::Pointer tracker = MouseTrackerType::New();
   tracker->SetLogger( logger );
 
-  tracker->SetScaleFactor(1.0);
-  double scale = tracker->GetScaleFactor();
+  // Test SetScaleFactor()/GetScaleFactor() methods
+  const double scale = 1.0;
+  tracker->SetScaleFactor( scale );
+  const double scaleReturned = tracker->GetScaleFactor();
+  if( fabs( scale - scaleReturned ) > 1e-5 )
+    {
+    std::cerr << "Error in SetScaleFactor()/GetScaleFactor() " << std::endl;
+    return EXIT_FAILURE;
+    }
 
   tracker->Open();
 
