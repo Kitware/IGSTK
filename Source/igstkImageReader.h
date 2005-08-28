@@ -58,13 +58,12 @@ public:
   /** Method to get the VTK image data */
   const vtkImageData * GetVTKImageData() const;
 
-/***
-  /** Set method for the DICOM file name * /
+
+  /** Set method for the DICOM file name */
   void SetFileName( const char *filename );
 
-  /** Returns true if the reader can open the file and the header is valid * /
+  /** Returns true if the reader can open the file and the header is valid */
   bool CheckFileIsValid();
-***/
 
 protected:
 
