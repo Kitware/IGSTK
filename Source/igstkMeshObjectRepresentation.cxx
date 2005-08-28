@@ -114,7 +114,7 @@ void MeshObjectRepresentation::CreateActors()
   MeshObjectType::PointsContainer::const_iterator it = points->begin();
 
   unsigned long nPoints = points->size();
-  unsigned long id = 0;
+
   polyPoints->SetNumberOfPoints(nPoints);
 
   for(;it != points->end();it++)

@@ -274,7 +274,6 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
 
   // default to incrementing frame count by one (in case there are
   // no transforms for any tools)
-  unsigned long nextcount = 0;
 
   for (port = 0; port < NDI_NUMBER_OF_PORTS; port++)
     {

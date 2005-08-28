@@ -26,7 +26,7 @@ namespace igstk
 {
 
 /** Constructor */
-Tracker::Tracker(void) : m_Logger( NULL), m_StateMachine( this )
+Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
 {
   // Set the state descriptors
   m_StateMachine.AddState( m_IdleState, "IdleState" );
@@ -64,7 +64,6 @@ Tracker::Tracker(void) : m_Logger( NULL), m_StateMachine( this )
   m_StateMachine.AddInput( m_CloseTrackingSuccessInput, "CloseTrackingSuccessInput");
   m_StateMachine.AddInput( m_CloseTrackingFailureInput, "CloseTrackingFailureInput");
 
-  const ActionType NoAction = 0;
 
   // Programming the state machine transitions
   m_StateMachine.AddTransition( m_IdleState, m_SetUpCommunicationInput,  m_AttemptingToEstablishCommunicationState, &Tracker::AttemptToOpen );
@@ -607,7 +606,7 @@ void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
   }
 
   os << indent << "Number of ports: " << this->m_Ports.size() << std::endl;
-  for(int i=0; i < m_Ports.size(); ++i )
+  for(unsigned int i=0; i < m_Ports.size(); ++i )
   {
     if( this->m_Ports[i] )
     {

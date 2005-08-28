@@ -68,7 +68,6 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   m_StateMachine.AddState( m_IdleState,       "IdleState"       );
   m_StateMachine.AddState( m_RefreshingState, "RefreshingState" );
 
-  const ActionType NoAction = 0;
 
   m_StateMachine.AddTransition( m_IdleState, m_ValidAddObject, m_IdleState,  & View::AddObject );
   m_StateMachine.AddTransition( m_IdleState, m_NullAddObject,  m_IdleState,  & View::ReportInvalidRequest );

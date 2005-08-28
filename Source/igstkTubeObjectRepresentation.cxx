@@ -120,7 +120,7 @@ void TubeObjectRepresentation::CreateActors()
   //Step 1: copy skeleton points from a vessel into vtkPoints
   //vtkpoints assumes a triplet is coming so use pointer arithmetic
   //to jump to the next spot in a multidimensional array      
-  int nPoints = m_TubeSpatialObject->GetNumberOfPoints();
+  unsigned int nPoints = m_TubeSpatialObject->GetNumberOfPoints();
 
   vtkPoints* vPoints = vtkPoints::New();
   vPoints->SetNumberOfPoints(nPoints);
@@ -152,8 +152,7 @@ void TubeObjectRepresentation::CreateActors()
   sphereMapper1->Delete();
   sphereSource1->Delete();
 
-  unsigned int i;
-  for(i=0;i<nPoints;i++)
+  for( unsigned int i=0; i < nPoints; i++ )
     {
     const TubeObjectType::PointType* pt = m_TubeSpatialObject->GetPoint(i); 
     vPoints->SetPoint(i, (float)(pt->GetPosition()[0]*spacing[0]), (float)(pt->GetPosition()[1]*spacing[1]), (float)(pt->GetPosition()[2]*spacing[2]));
@@ -183,9 +182,9 @@ void TubeObjectRepresentation::CreateActors()
   
   //Step 2: create a point id list (for a polyline this is just linear)
   vtkIdType* pntIds = new vtkIdType[nPoints];
-  for (i = 0; i < nPoints; i++)
+  for (unsigned int j = 0; j < nPoints; j++)
     {
-    pntIds[i] = i;
+    pntIds[j] = j;
     }
         
   //Step3: create a polyline from the points and pt id list

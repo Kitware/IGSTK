@@ -51,7 +51,7 @@ TrackerPort
 
 
 
-int 
+unsigned int 
 TrackerPort
 ::GetNumberOfTools( void ) const
 {
@@ -89,7 +89,7 @@ void TrackerPort::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Number of tools: " << this->m_Tools.size() << std::endl;
-  for(int i=0; i < m_Tools.size(); ++i )
+  for(unsigned int i=0; i < m_Tools.size(); ++i )
   {
     if( this->m_Tools[i] )
     {

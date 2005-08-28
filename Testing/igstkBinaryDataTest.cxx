@@ -69,6 +69,14 @@ int igstkBinaryDataTest( int, char * [] )
     const igstk::BinaryData::ContainerType& obj = data.GetData();
     igstk::BinaryData::ContainerType& obj2 = data.GetData();
 
+    /* Compare the containers sizes.*/
+    if( obj.size() != obj2.size() )
+      {
+      std::cerr << "GetData() const and non-const methods are not consistent" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    
     /* comparison operator tests */
     if( data == data2 )
       {

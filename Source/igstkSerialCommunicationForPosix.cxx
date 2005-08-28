@@ -52,7 +52,6 @@ SerialCommunicationForPosix::InternalOpenPort( void )
                  " called ...\n" );
 
   struct termios t;
-  int i;
 
   char device[20];
   // it would be really nice to support the devices for other OS
@@ -231,7 +230,6 @@ SerialCommunicationForPosix::InternalSetTransferParameters( void )
 SerialCommunicationForPosix::ResultType
 SerialCommunicationForPosix::InternalClosePort( void )
 {
-  int i;
 
   igstkLogMacro( DEBUG, "SerialCommunicationForPosix::"
                  "InternalClosePort called ...\n" );

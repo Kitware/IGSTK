@@ -384,8 +384,7 @@ void SerialCommunication::Write( const char *data, unsigned int numberOfBytes )
     m_CaptureMessageNumber++;
     m_CaptureFileStream << m_CaptureMessageNumber
                         << ". command[" << numberOfBytes << "] ";
-    int i;
-    for( i = 0; i < numberOfBytes; ++i )
+    for( unsigned int i = 0; i < numberOfBytes; ++i )
       {
       m_CaptureFileStream << m_OutputData[i];
       }
@@ -419,7 +418,7 @@ void SerialCommunication::Read( char *data, unsigned int numberOfBytes,
     m_CaptureFileStream << m_CaptureMessageNumber
                         << ". receive[" << bytesRead << "] ";
 
-    for(int i = 0; i < bytesRead; ++i )
+    for( unsigned int i = 0; i < bytesRead; ++i )
       {
       m_CaptureFileStream << m_InputData[i];
       }

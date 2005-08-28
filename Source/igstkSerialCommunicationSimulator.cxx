@@ -196,7 +196,7 @@ void SerialCommunicationSimulator::InternalRead( void )
 {
   unsigned index = m_CounterTable[m_Command]++;
   const BinaryData& response = m_ResponseTable[m_Command][index];
-  int bytesRead = response.GetSize();
+  unsigned int bytesRead = response.GetSize();
 
   if( index+1 >= m_ResponseTable[m_Command].size() )
     {
@@ -207,7 +207,7 @@ void SerialCommunicationSimulator::InternalRead( void )
   bytesRead = ((m_BytesToRead < bytesRead) ? m_BytesToRead : bytesRead);
 
   // Only copy the specified number of characters
-  for (int j = 0; j < bytesRead; j++)
+  for (unsigned int j = 0; j < bytesRead; j++)
     {
     ((unsigned char *)m_InputData)[j] = response[j];
     } 

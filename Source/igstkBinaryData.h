@@ -26,7 +26,9 @@
 namespace igstk 
 {
  
-/** \brief BinaryData representing a binary data chunk.
+/** \class BinaryData 
+ *
+ * \brief BinaryData representing a binary data chunk.
  * 
  * This class represents a binary data chunk.
  * 

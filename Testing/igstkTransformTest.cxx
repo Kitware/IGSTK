@@ -87,6 +87,18 @@ int igstkTransformTest( int, char * [] )
     bool shouldBeTrue  = ( t1 == t1 );
     bool shouldBeFalse = ( t1 != t1 );
 
+    if( shouldBeTrue == false )
+      {
+      std::cerr << "Error in operator==" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    if( shouldBeFalse == true )
+      {
+      std::cerr << "Error in operator!=" << std::endl;
+      return EXIT_FAILURE;
+      }
+
     }
   catch(...)
     {

@@ -73,7 +73,7 @@ public:
       std::cout << m_SelectDrink << std::endl;
     }
 
-
+  virtual ~Tester() {};
 
   
   // Methods that generate input signals

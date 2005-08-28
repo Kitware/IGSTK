@@ -63,7 +63,7 @@ public:
   void ClearTools( void );
 
   /** The "GetNumberOfTools" method returns number of tools. */ 
-  int GetNumberOfTools( void ) const;
+  unsigned int GetNumberOfTools( void ) const;
 
   /** Get the pointer to a specific tool. Const and non-const versions of the
    * same method */

@@ -72,9 +72,8 @@ void
 BinaryData
 ::CopyTo(unsigned char* output) const
 {
-  unsigned int i;
-  unsigned int size = this->m_data.size();
-  for( i = 0; i < this->m_data.size(); ++i )
+  const unsigned int size = this->m_data.size();
+  for( unsigned int i = 0; i < size; ++i )
     {
     output[i] = this->m_data[i];
     }

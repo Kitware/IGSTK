@@ -61,6 +61,8 @@ public:
     m_StateMachine.SetReadyToRun();
     }
 
+  virtual ~Tester1() {}
+
   void triggerError1()
   {
     // NOTE that on purpose the m_ThisStateDoesntExist was not added as a state
@@ -107,8 +109,9 @@ public:
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.SetReadyToRun();
-
     }
+
+  virtual ~Tester2() {}
 
   void InsertChange() 
     {
@@ -155,6 +158,8 @@ public:
     m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
     // On purpose NOT calling : m_StateMachine.SetReadyToRun();
     }
+
+  virtual ~Tester3() {}
 
   void InsertChange() 
     {
@@ -203,6 +208,8 @@ public:
     m_StateMachine.SetReadyToRun();
     }
 
+  virtual ~Tester4() {}
+
   void InsertChange() 
     {
     std::cout << "Insert Change" << std::endl;
@@ -241,11 +248,14 @@ public:
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
-    const ActionType NoAction = 0;
+
     // On purpose NOT adding any transition: for testing error condition.
+    // const ActionType NoAction = 0;
     // m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
     m_StateMachine.SetReadyToRun();
     }
+
+  virtual ~Tester5() {}
 
   void InvokeUndefinedTransition() 
     {
@@ -309,6 +319,8 @@ public:
     m_StateMachine.SetReadyToRun();
     }
 
+  virtual ~Tester6() {}
+
   void InvokeUndefinedStateInputTransition() 
     {
     std::cout << "Invoking Cancel" << std::endl;
@@ -356,6 +368,8 @@ public:
     // COMMENTED OUT ON PURPOSE:  m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.SetReadyToRun();
     }
+
+  virtual ~Tester7() {}
 
   void InsertChange() 
     {
