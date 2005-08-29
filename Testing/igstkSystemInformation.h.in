@@ -4,4 +4,17 @@
 #define IGSTK_BINARY_DIR "@IGSTK_BINARY_DIR@"
 #define IGSTK_DATA_ROOT "@IGSTK_DATA_ROOT@"
 
+
+#cmakedefine IGSTK_TEST_AURORA_ATTACHED
+#define IGSTK_TEST_AURORA_PORT_NUMBER \
+    igstk::SerialCommunication::PortNumber@IGSTK_TEST_AURORA_PORT_NUMBER@
+
+#cmakedefine IGSTK_TEST_POLARIS_ATTACHED
+#define IGSTK_TEST_POLARIS_PORT_NUMBER \
+    igstk::SerialCommunication::PortNumber@IGSTK_TEST_POLARIS_PORT_NUMBER@
+
+#cmakedefine IGSTK_TEST_LOOPBACK_ATTACHED
+#define IGSTK_TEST_LOOPBACK_PORT_NUMBER \
+    igstk::SerialCommunication::PortNumber@IGSTK_TEST_LOOPBACK_PORT_NUMBER@
+
 #endif

@@ -27,6 +27,7 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#include "igstkSystemInformation.h"
 #include "igstkEvents.h"
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
@@ -120,7 +121,7 @@ int igstkSerialCommunicationTest( int, char * [] )
 
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
 
-  // logger object created for logging mouse activities
+  // logger object
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
@@ -155,25 +156,31 @@ int igstkSerialCommunicationTest( int, char * [] )
     std::cout << "[FAILED]" << std::endl;
     }
 
-  serialComm->OpenCommunication();
-
   unsigned int len = strlen("Hello World!!!");
   unsigned int numberOfBytesRead = 0;
   const unsigned int MAX_REPLY_SIZE = 1024;
   char reply[MAX_REPLY_SIZE];
-  
-  // test a simple write/read sequence
+
+#ifndef IGSTK_TEST_LOOPBACK_ATTACHED
+  // do a simple write/read sequence
+  serialComm->OpenCommunication();  
   serialComm->Write("Hello World!!!", len);
   serialComm->Read(reply, len, numberOfBytesRead);
+  serialComm->CloseCommunication();
+  // exit since a real test isn't possible without loopback device
+  return EXIT_SUCCESS;
+#endif /* IGSTK_TEST_LOOPBACK_ATTACHED */
 
-  // if no bytes were read, that means a loopback is not attached to
-  // the serial port and the test cannot run properly
-  if (numberOfBytesRead == 0)
-    {
-    std::cerr << "Warning: no loopback on serial port, test is terminating prematurely" << std::endl;
-    serialComm->CloseCommunication();
-    return EXIT_SUCCESS;
-    }
+#ifdef IGSTK_TEST_LOOPBACK_ATTACHED
+  // run tests assuming a loopback is attached, which will reply
+  // exactly the same text that is sent
+
+  serialComm->SetPortNumber( IGSTK_TEST_LOOPBACK_PORT_NUMBER );
+  serialComm->OpenCommunication();  
+
+  // perform a simple read/write test
+  serialComm->Write("Hello World!!!", len);
+  serialComm->Read(reply, len, numberOfBytesRead);
 
   if (numberOfBytesRead != len ||
       strncmp(reply, "Hello World!!!", len) != 0)
@@ -297,6 +304,8 @@ int igstkSerialCommunicationTest( int, char * [] )
   serialComm->CloseCommunication();
 
   return testStatus;
+
+#endif /* IGSTK_TEST_LOOPBACK_ATTACHED */
 }
 
 

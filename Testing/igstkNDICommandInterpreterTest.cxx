@@ -67,12 +67,16 @@ static void joinDirAndFile(char *result, int maxLen,
 
 int igstkNDICommandInterpreterTest( int, char * [] )
 {
-//#ifdef WIN32
-//  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-//#else
-//  typedef igstk::SerialCommunicationForPosix    CommunicationType;
-//#endif
-  typedef igstk::SerialCommunicationSimulator     CommunicationType;
+#ifdef IGSTK_TEST_POLARIS_ATTACHED
+#ifdef WIN32
+  typedef igstk::SerialCommunicationForWindows  CommunicationType;
+#else
+  typedef igstk::SerialCommunicationForPosix    CommunicationType;
+#endif
+#else /* IGSTK_TEST_POLARIS_ATTACHED */
+  typedef igstk::SerialCommunicationSimulator   CommunicationType;
+#endif /* IGSTK_TEST_POLARIS_ATTACHED */
+
   typedef igstk::NDICommandInterpreter  CommandInterpreterType;
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
@@ -91,17 +95,20 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   // create the interpreter object
   CommandInterpreterType::Pointer interpreter = CommandInterpreterType::New();
 
-  // set the name of the actual data file
-  char fullName[1024];
-  joinDirAndFile( fullName, 1024,
+#ifdef IGSTK_TEST_POLARIS_ATTACHED
+  // capture a fresh data file
+  serialComm->SetCaptureFileName( "PolarisCaptureForNDICommandInterpreterTest.bin" );
+  serialComm->SetCapture( true );
+#else /* IGSTK_TEST_POLARIS_ATTACHED */
+  // load a previously captured file
+  char pathToCaptureFile[1024];
+  joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTK_DATA_ROOT,
                   "Input/polaris_stream_08_18_2005.bin" );
-  serialComm->SetFileName( fullName );
+  serialComm->SetFileName( pathToCaptureFile );
+#endif /* IGSTK_TEST_POLARIS_ATTACHED */
 
-  // uncomment to capture a new file
-  //serialComm->SetCaptureFileName( "PolarisCaptureForNDICommandInterpreterTest.bin" );
-  //serialComm->SetCapture( true );
-  serialComm->SetPortNumber(CommunicationType::PortNumber0);
+  serialComm->SetPortNumber(IGSTK_TEST_POLARIS_PORT_NUMBER);
 
   serialComm->OpenCommunication();
 
@@ -179,6 +186,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     {
     std::cout << interpreter->ErrorString(errorCode) << std::endl;
     }
+  a = interpreter->GetIRCHKDetected();
   std::cout << "Calling IRCHK" << std::endl;
   interpreter->IRCHK(CommandInterpreterType::NDI_SOURCES);
   if (errorCode != CommandInterpreterType::NDI_OKAY)
@@ -205,10 +213,11 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   // -- write a virtual SROM to this port
   char data[1024]; // to hold the srom data
   memset( data, 0, 1024 );
-  joinDirAndFile( fullName, 1024,
+  char pathToRomFile[1024];
+  joinDirAndFile( pathToRomFile, 1024,
                   IGSTK_DATA_ROOT,
                   "Input/polaris_passive_pointer_1.rom" );
-  FILE *file = fopen( fullName, "rb" );
+  FILE *file = fopen( pathToRomFile, "rb" );
   fread( data, 1, 1024, file );
   fclose( file );
   for ( i = 0; i < 1024; i += 64 )

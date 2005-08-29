@@ -29,71 +29,40 @@
 #include "itkVector.h"
 #include "itkVersor.h"
 
+#include "igstkSystemInformation.h"
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
 #else
 #include "igstkSerialCommunicationForPosix.h"
 #endif
-
+#include "igstkSerialCommunicationSimulator.h"
 #include "igstkAuroraTracker.h"
 #include "igstkTransform.h"
 
-class SerialCommunicationTestCommand : public itk::Command 
+
+/** append a file name to a directory name and provide the result */
+static void joinDirAndFile(char *result, int maxLen,
+                           const char *dirName, const char *fileName)
 {
-public:
-  typedef  SerialCommunicationTestCommand   Self;
-  typedef  itk::Command             Superclass;
-  typedef itk::SmartPointer<Self>  Pointer;
-  itkNewMacro( Self );
-protected:
-  SerialCommunicationTestCommand() {};
+  int dirNameLen = strlen( dirName );
+  int fileNameLen = strlen( fileName );
+  const char* slash = ( (dirName[dirNameLen-1] == '/') ? "" : "/" );
+  int slashLen = strlen( slash );
 
-public:
-  void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
-    Execute( (const itk::Object *)caller, event);
-  }
+  // allocate temporary string, concatenate
+  char* fullName = new char[dirNameLen + slashLen + fileNameLen + 1];
+  strncpy(&fullName[0], dirName, dirNameLen);
+  strncpy(&fullName[dirNameLen], slash, slashLen);
+  strncpy(&fullName[dirNameLen + slashLen], fileName, fileNameLen);
+  fullName[dirNameLen + slashLen + fileNameLen] = '\0';
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
-  {
-    if ( typeid(event)== typeid(igstk::SerialCommunication::OpenPortFailureEvent))
-    {
-        std::cout << "OpenPortFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::SetTransferParametersFailureEvent ))
-    {
-        std::cout << "SetupCommunicationParametersFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteSuccessEvent ))
-    {
-        std::cout << "****** WriteSuccessEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteFailureEvent ))
-    {
-        std::cout << "****** WriteFailureEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteTimeoutEvent ))
-    {
-        std::cout << "****** WriteTimeoutEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadSuccessEvent ))
-    {
-        std::cout << "****** ReadSuccessEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadFailureEvent ))
-    {
-        std::cout << "****** ReadFailureEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadTimeoutEvent ))
-    {
-        std::cout << "****** ReadTimeoutEvent ******\n";
-    }
-   else 
-    {
-        std::cout << "Some other Error Occurred ...\n";
-    }
- }
-};
+  // copy to the result
+  strncpy(result, fullName, maxLen);
+  result[maxLen-1] = '\0';
+
+  // delete temporary string
+  delete [] fullName;
+}
 
 
 int igstkAuroraTrackerTest( int, char * [] )
@@ -105,13 +74,15 @@ int igstkAuroraTrackerTest( int, char * [] )
   std::cout << tool->GetNameOfClass() << std::endl;
   std::cout << tool << std::endl;
 
+#ifdef IGSTK_TEST_AURORA_ATTACHED
 #ifdef WIN32
   igstk::SerialCommunicationForWindows::Pointer serialComm = igstk::SerialCommunicationForWindows::New();
 #else
   igstk::SerialCommunicationForPosix::Pointer serialComm = igstk::SerialCommunicationForPosix::New();
 #endif
-
-  SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
+#else /* IGSTK_TEST_AURORA_ATTACHED */
+    igstk::SerialCommunicationSimulator::Pointer serialComm = igstk::SerialCommunicationSimulator::New();
+#endif /* IGSTK_TEST_AURORA_ATTACHED */
 
   // logger object created for logging mouse activities
 
@@ -121,15 +92,6 @@ int igstkAuroraTrackerTest( int, char * [] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG); //DEBUG );
 
-  serialComm->AddObserver( igstk::SerialCommunication::OpenPortFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::SetTransferParametersFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::SendBreakFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::WriteSuccessEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::WriteFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::WriteTimeoutEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::ReadSuccessEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::ReadFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::ReadTimeoutEvent(), my_command);
   serialComm->SetLogger( logger );
 
   serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
@@ -139,8 +101,19 @@ int igstkAuroraTrackerTest( int, char * [] )
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
+#ifdef IGSTK_TEST_AURORA_ATTACHED
+  serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
   serialComm->SetCaptureFileName( "RecordedStreamByAuroraTrackerTest.bin" );
   serialComm->SetCapture( true );
+#else /* IGSTK_TEST_AURORA_ATTACHED */
+  // load a previously captured file
+  // (it is a polaris file for now, but should be changed to aurora)
+  char pathToCaptureFile[1024];
+  joinDirAndFile( pathToCaptureFile, 1024,
+                  IGSTK_DATA_ROOT,
+                  "Input/polaris_stream_07_27_2005.bin" );
+  serialComm->SetFileName( pathToCaptureFile );
+#endif /* IGSTK_TEST_AURORA_ATTACHED */
 
   serialComm->OpenCommunication();
 
@@ -157,8 +130,6 @@ int igstkAuroraTrackerTest( int, char * [] )
   std::cout << "Exited SetCommunication ..." << std::endl;
 
   tracker->Open();
-
-  tracker->AttachSROMFileNameToPort( 0, "C:/Program Files/Northern Digital Inc/SROM Image Files/5D.ROM" );
 
   std::cout << tracker << std::endl;
 

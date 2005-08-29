@@ -7,6 +7,17 @@ MAKE_DIRECTORY(${IGSTK_TEST_OUTPUT_DIR})
 SET(IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR "${IGSTK_TEST_OUTPUT_DIR}/StateMachineDiagrams")
 MAKE_DIRECTORY(${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
 
+# options for devices attached to serial port for testing
+OPTION(IGSTK_TEST_AURORA_ATTACHED "Aurora is attached to computer" OFF)
+SET( IGSTK_TEST_AURORA_PORT_NUMBER 0 CACHE STRING
+     "Serial port number (0, 1, 2, 3)" )
+OPTION(IGSTK_TEST_POLARIS_ATTACHED "Polaris is attached to computer" OFF)
+SET( IGSTK_TEST_POLARIS_PORT_NUMBER 0 CACHE STRING
+     "Serial port number (0, 1, 2, 3)" )
+OPTION(IGSTK_TEST_LOOPBACK_ATTACHED "Serial Loopback is attached" OFF)
+SET( IGSTK_TEST_LOOPBACK_PORT_NUMBER 1 CACHE STRING
+     "Serial port number (0, 1, 2, 3)" )
+
 #-----------------------------------------------------------------------------
 # Configure the default IGSTK_DATA_ROOT for the location of IGSTK Data.
 FIND_PATH(IGSTK_DATA_ROOT IGSTKData.readme ${IGSTK_SOURCE_DIR}/Testing/Data $ENV{IGSTK_DATA_ROOT})
