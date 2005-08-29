@@ -30,6 +30,7 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
     typedef igstk::LandmarkRegistration<3>                                 LandmarkRegistrationType;
     typedef igstk::LandmarkRegistration<3>::LandmarkPointContainerType     LandmarkPointContainerType;
     typedef igstk::LandmarkRegistration<3>::LandmarkPointType              LandmarkPointType;
+    typedef LandmarkRegistrationType::TransformType::OutputVectorType  OutputVectorType;
 
     LandmarkRegistrationType::Pointer landmarkRegister = LandmarkRegistrationType::New();    
     LandmarkPointContainerType  fpointcontainer;
@@ -107,10 +108,84 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
     landmarkRegister->SetTrackerImageLandmarks(fpointcontainer);
     landmarkRegister->SetModalityImageLandmarks(mpointcontainer);
 
+
+    //Get the tracker and modailty image coordinates and compare with
+    LandmarkPointContainerType  trackerLandmarkPointcontainer;
+    LandmarkPointContainerType  modalityLandmarkPointcontainer;
+
+    trackerLandmarkPointcontainer=landmarkRegister->GetTrackerImageLandmarks();
+    modalityLandmarkPointcontainer=landmarkRegister->GetModalityImageLandmarks();
+
+
+    OutputVectorType error;
+    OutputVectorType::RealValueType tolerance = 0.00001;
+    bool failed = false;
+
+    LandmarkRegistrationType::PointsContainerConstIterator
+      trackerlandmarkitb = fpointcontainer.begin();
+
+    LandmarkRegistrationType::PointsContainerConstIterator
+      trackerlandmarkita = trackerLandmarkPointcontainer.begin();
+
+    while( trackerlandmarkitb != fpointcontainer.end() )
+      {
+      std::cout<<"Trackerlandmark passed:"<<*trackerlandmarkitb<<std::endl;
+      std::cout<<"Trackerlandmark read "<<*trackerlandmarkita<<std::endl;
+      error = *trackerlandmarkitb - *trackerlandmarkita;
+      if( error.GetNorm() > tolerance )
+        {
+        failed = true;
+        }
+      ++trackerlandmarkitb;
+      ++trackerlandmarkita;
+      }
+
+     if( failed )
+      {
+      std::cout << "Landmark coordinates are not properly set" << std::endl;
+      std::cout << "  [FAILED]" << std::endl;
+      return EXIT_FAILURE;
+      }
+    else
+      {
+      std::cout << "  Tracker landmark coordinates are properly set [PASSED]" << std::endl;
+      }
+
+
+    LandmarkRegistrationType::PointsContainerConstIterator
+      modalitylandmarkitb = mpointcontainer.begin();
+
+    LandmarkRegistrationType::PointsContainerConstIterator
+      modalitylandmarkita = modalityLandmarkPointcontainer.begin();
+
+
+    while( modalitylandmarkitb != mpointcontainer.end() )
+      {
+      std::cout<<"Modalitylandmark passed:"<<*modalitylandmarkitb<<std::endl;
+      std::cout<<"Modalitylandmark read "<<*modalitylandmarkita<<std::endl;
+      error = *modalitylandmarkitb - *modalitylandmarkita;
+      if( error.GetNorm() > tolerance )
+        {
+        failed = true;
+        }
+      ++modalitylandmarkitb;
+      ++modalitylandmarkita;
+      }
+
+     if( failed )
+      {
+      std::cout << "Landmark coordinates are not properly set" << std::endl;
+      std::cout << "  [FAILED]" << std::endl;
+      return EXIT_FAILURE;
+      }
+    else
+      {
+      std::cout << "  Modality landmark coordinates are properly set [PASSED]" << std::endl;
+      }
+
     // Set the tracker and modality image
     typedef igstk::LandmarkRegistration<3>::TrackerImageType              TrackerImageType;
     typedef igstk::LandmarkRegistration<3>::ModalityImageType              ModalityImageType;
-
     TrackerImageType::Pointer  trackerImage  = TrackerImageType::New();
     ModalityImageType::Pointer modalityImage = ModalityImageType::New();
 
@@ -158,10 +233,10 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
     LandmarkRegistrationType::PointsContainerConstIterator
       mitr = mpointcontainer.begin();
 
-    typedef LandmarkRegistrationType::TransformType::OutputVectorType  OutputVectorType;
-    OutputVectorType error;
-    OutputVectorType::RealValueType tolerance = 0.1;
-    bool failed = false;
+
+    OutputVectorType errortr;
+    tolerance = 0.1;
+    failed = false;
 
     while( mitr != mpointcontainer.end() )
       {
@@ -169,8 +244,8 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
         << " Transformed trackerLandmark : " <<
         landmarkRegister->GetTransform()->TransformPoint( *fitr ) << std::endl;
 
-      error = *mitr - landmarkRegister->GetTransform()->TransformPoint( *fitr);
-      if( error.GetNorm() > tolerance )
+      errortr = *mitr - landmarkRegister->GetTransform()->TransformPoint( *fitr);
+      if( errortr.GetNorm() > tolerance )
         {
         failed = true;
         }
