@@ -104,7 +104,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   char pathToCaptureFile[1024];
   joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTK_DATA_ROOT,
-                  "Input/polaris_stream_08_18_2005.bin" );
+                  "Input/polaris_stream_08_29_2005.bin" );
   serialComm->SetFileName( pathToCaptureFile );
 #endif /* IGSTK_TEST_POLARIS_ATTACHED */
 
@@ -193,10 +193,15 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     {
     std::cout << interpreter->ErrorString(errorCode) << std::endl;
     }
-  n = interpreter->GetIRCHKNumberOfSources(0);
+  n = interpreter->GetIRCHKNumberOfSources(CommandInterpreterType::NDI_LEFT);
   for (i = 0; i < n; i++)
     {
-    interpreter->GetIRCHKSourceXY(0, i, vals);
+    interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_LEFT, i, vals);
+    }
+  n = interpreter->GetIRCHKNumberOfSources(CommandInterpreterType::NDI_RIGHT);
+  for (i = 0; i < n; i++)
+    {
+    interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_RIGHT, i, vals);
     }
   std::cout << "Calling DSTOP" << std::endl;
   interpreter->DSTOP();
@@ -241,6 +246,23 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
   for (i = 0; i < numberOfHandles; i++)
     {
+    // initialize tool
+    std::cout << "Calling PINIT " << std::endl;
+    ph = portHandles[i];
+    interpreter->PINIT(ph);
+    }
+
+  std::cout << "Calling PHSR" << std::endl;
+  interpreter->PHSR(CommandInterpreterType::NDI_UNENABLED_HANDLES);
+  numberOfHandles = interpreter->GetPHSRNumberOfHandles();
+  for (i = 0; i < numberOfHandles; i++)
+    {
+    portHandles[i] = interpreter->GetPHSRHandle(i);
+    a = interpreter->GetPHSRInformation(i);
+    }
+
+  for (i = 0; i < numberOfHandles; i++)
+    {
     char toolInformation[32];
     char toolPartNumber[24];
     char portLocation[16];
@@ -260,9 +282,16 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     a = interpreter->GetPHINFAccessories();
     interpreter->GetPHINFPortLocation(portLocation);
 
-    // initialize tool
-    std::cout << "Calling PINIT" << std::endl;
-    interpreter->PINIT(ph);
+    // check if this is a wired tool
+    if (toolInformation[9] == '0')
+      {
+      std::cout << "Calling PHINF with wired-tool specifics" << std::endl;
+      interpreter->PHINF(ph,
+                         CommandInterpreterType::NDI_TESTING |
+                         CommandInterpreterType::NDI_MARKER_TYPE);
+      a = interpreter->GetPHINFMarkerType();
+      a = interpreter->GetPHINFCurrentTest();
+      }
 
     // enable tool according to type
     int mode = 0;
@@ -363,10 +392,48 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     l = interpreter->GetTXFrame(ph);
     a = interpreter->GetTXPortStatus(ph);
     a = interpreter->GetTXToolInfo(ph);
+    for (j = 0; j < 20; j++)
+      {
+      a = interpreter->GetTXMarkerInfo(ph, j);
+      }
     }
 
   std::cout << "Calling TSTOP" << std::endl;
   interpreter->TSTOP();
+
+  // call PHINF again
+  for (i = 0; i < numberOfHandles; i++)
+    {
+    char toolInformation[32];
+    char toolPartNumber[24];
+    char portLocation[16];
+
+    ph = portHandles[i];
+    // get information about tool
+    std::cout << "Calling PHINF" << std::endl;
+    interpreter->PHINF(ph,
+                       CommandInterpreterType::NDI_BASIC |
+                       CommandInterpreterType::NDI_PART_NUMBER |
+                       CommandInterpreterType::NDI_ACCESSORIES |
+                       CommandInterpreterType::NDI_PORT_LOCATION);
+    
+    a = interpreter->GetPHINFPortStatus();
+    interpreter->GetPHINFToolInfo(toolInformation);
+    interpreter->GetPHINFPartNumber(toolPartNumber);
+    a = interpreter->GetPHINFAccessories();
+    interpreter->GetPHINFPortLocation(portLocation);
+
+    // check if this is a wired tool
+    if (toolInformation[9] == '0')
+      {
+      std::cout << "Calling PHINF with wired-tool specifics" << std::endl;
+      interpreter->PHINF(ph,
+                         CommandInterpreterType::NDI_TESTING |
+                         CommandInterpreterType::NDI_MARKER_TYPE);
+      a = interpreter->GetPHINFMarkerType();
+      a = interpreter->GetPHINFCurrentTest();
+      }
+    }
 
   // -- free the tool ports --
   for (i = 0; i < numberOfHandles; i++)
