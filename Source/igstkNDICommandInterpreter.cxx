@@ -467,11 +467,12 @@ const char* NDICommandInterpreter::Command(const char* command)
     /* serial break will force tracking to stop */
     m_Tracking = 0;
     m_Communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
+    m_Communication->SetBaudRate(SerialCommunication::BaudRate9600);
+    m_Communication->SetHardwareHandshake(SerialCommunication::HandshakeOff);
+    m_Communication->Sleep(500);
 
     /* send brain, reset the comm parameters, and sleep for 2 seconds */
     m_Communication->SendBreak();
-    m_Communication->SetBaudRate(SerialCommunication::BaudRate9600);
-    m_Communication->SetHardwareHandshake(SerialCommunication::HandshakeOff);
     m_Communication->Sleep(2000);
 
     m_Communication->Read(rp, NDI_MAX_REPLY_SIZE, m);
