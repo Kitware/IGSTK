@@ -25,10 +25,24 @@ ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 ADD_TEST(igstkPolarisTrackerTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerTest)
 ADD_TEST(igstkLandmarkRegistrationTest ${IGSTKSandbox_TESTS} igstkLandmarkRegistrationTest)
 
+
+ADD_TEST( igstkDICOMImageReaderTest ${IGSTKSandbox_TESTS}
+   --compare ${IGSTKSandbox_DATA_ROOT}/E000192.mhd
+             ${IGSTKSandbox_TEST_OUTPUT_DIR}/E00192.mhd
+   igstkDICOMImageReaderTest ${IGSTKSandbox_DATA_ROOT}/E00192 ${IGSTKSandbox_TEST_OUTPUT_DIR}/E00192.mhd)
+
+
+ADD_TEST( igstkCTImageReaderTest ${IGSTKSandbox_TESTS}
+   --compare ${IGSTKSandbox_DATA_ROOT}/E000192.mhd
+             ${IGSTKSandbox_TEST_OUTPUT_DIR}/E00192.mhd
+   igstkCTImageReaderTest ${IGSTKSandbox_DATA_ROOT}/E00192 ${IGSTKSandbox_TEST_OUTPUT_DIR}/E00192.mhd)
+
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkPolarisTrackerTest.cxx
   igstkLandmarkRegistrationTest.cxx
+  igstkDICOMImageReaderTest.cxx
+  igstkCTImageReaderTest.cxx
   )
 
 IF (IGSTK_USE_ATAMAI)
