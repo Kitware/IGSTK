@@ -6,6 +6,7 @@
 SET(IGSTKSandbox_HEADS
   igstkCTImageReader.h
   igstkImageReader.h
+  igstkDICOMImageReader.h
   igstkImageSpatialObject.h
   igstkImageSpatialObjectRepresentation.h
   igstkMouseTracker.h
@@ -18,7 +19,8 @@ SET(IGSTKSandbox_HEADS
 # The implementation files
 SET(IGSTKSandbox_SRCS  
   igstkCTImageReader.cxx
-  igstkImageReader.cxx
+  igstkImageReader.txx
+  igstkDICOMImageReader.txx
   igstkImageSpatialObject.cxx
   igstkImageSpatialObjectRepresentation.cxx
   igstkMouseTracker.cxx
