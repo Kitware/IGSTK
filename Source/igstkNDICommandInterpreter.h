@@ -182,7 +182,7 @@ public:
     NDI_BUTTON_BOX  = 'B',    /**< tool with no IREDs (foot pedal) */
   } PENATrackingModeType;
 
-  /** TX() reply mode bit definitions */
+  /** TX() & BX() reply mode bit definitions */
   typedef enum
   {
     NDI_XFORMS_AND_STATUS  = 0x0001,  /**< transforms and status */
@@ -211,6 +211,11 @@ public:
     NDI_ENABLED             = 0x20,
     NDI_OUT_OF_VOLUME       = 0x40,
     NDI_PARTIALLY_IN_VOLUME = 0x80,
+    NDI_DISTURBANCE_DETECTED = 0x0200,
+    NDI_SIGNAL_TOO_SMALL    = 0x0400,
+    NDI_SIGNAL_TOO_BIG      = 0x0800,
+    NDI_PROCESSING_EXCEPTION = 0x1000,
+    NDI_PORT_HARDWARE_FAILURE    = 0x2000,
   } TXPortStatusType;
 
   /** GetTXSystemStatus() return value bits */
@@ -725,6 +730,33 @@ public:
     this->Command("TX:%04X", mode); }
 
   /**
+  Request tracking information from the device.  This command is
+  only available in tracking mode.
+
+  \param mode a reply mode containing the following bits:
+  - NDI_XFORMS_AND_STATUS  0x0001 - transforms and status
+  - NDI_ADDITIONAL_INFO    0x0002 - additional tool transform info
+  - NDI_SINGLE_STRAY       0x0004 - stray active marker reporting
+  - NDI_PASSIVE_STRAY      0x1000 - stray passive marker reporting
+
+  <p>The BX command with the appropriate reply mode is used to update the
+  data that is returned by the following functions:
+  Note: To use the BX command, you must set the data bits parameter in the COMM
+        command to 0 (8bits).
+  - int \ref GetBXTransform(int ph, double transform[8])
+  - int \ref GetBXPortStatus(int ph)
+  - unsigned int \ref GetBXFrame(int ph)
+  - int \ref GetBXToolInfo(int ph)
+  - int \ref GetBXMarkerInfo(int ph, int marker)
+  - int \ref GetBXSingleStray(int ph, double coord[3])
+  - int \ref GetBXNumberOfPassiveStrays()
+  - int \ref GetBXPassiveStray(int i, double coord[3])
+  - int \ref GetBXSystemStatus()
+  */
+  void BX(int mode) {
+    this->Command("BX:%04X", mode); }
+
+  /**
   Get a string that describes the device firmware version.
 
   \param n   the processor to get the firmware revision of:
@@ -1079,6 +1111,163 @@ public:
   int GetTXSystemStatus() const;
 
   /**
+  Get the transformation for the specified port.
+  The first four numbers are a quaternion, the next three numbers are
+  the coodinates in millimetres, and the final number
+  is a unitless error estimate.
+
+  \param ph        valid port handle in range 0x01 to 0xFF
+  \param transform space for the 8 numbers in the transformation
+  
+  \return one of the following: 
+  - NDI_TRANSFORM_OKAY if successful
+  - NDI_DISABLED if tool port is nonexistent or disabled
+  - NDI_MISSING if tool transform cannot be computed (tool is out of range)
+  - NDI_UNOCCUPIED if the tool port is not occupied
+
+  <p>If NDI_DISABLED, NDI_MISSING or NDI_UNOCCUPIED is returned, then
+  the values in the supplied transform array will be left unchanged.
+
+  The transformations for each of the port handles remain the same
+  until the next BX() command is sent to the device.
+  */ 
+  int GetBXTransform(int ph, double transform[8]) const;
+
+  /**
+  Get the 16-bit status value for the specified port handle.
+
+  \param ph        valid port handle in range 0x01 to 0xFF
+
+  \return status bits or zero if there is no information:
+  - NDI_TOOL_IN_PORT        0x0001
+  - NDI_SWITCH_1_ON         0x0002
+  - NDI_SWITCH_2_ON         0x0004
+  - NDI_SWITCH_3_ON         0x0008
+  - NDI_INITIALIZED         0x0010
+  - NDI_ENABLED             0x0020
+  - NDI_OUT_OF_VOLUME       0x0040
+  - NDI_PARTIALLY_IN_VOLUME 0x0080
+  - NDI_DISTURBANCE_DETECTED 0x0200;
+  - NDI_SIGNAL_TOO_SMALL     0x0400;
+  - NDI_SIGNAL_TOO_BIG       0x0800;
+  - NDI_PROCESSING_EXCEPTION 0x1000;
+  - NDI_HARDWARE_FAILURE     0x2000;
+
+  This information is updated each time that the BX() command
+  is sent to the device.
+  */
+  int GetBXPortStatus(int ph) const;
+
+  /**
+  Get the camera frame number for the latest transform.
+
+  \param ph        valid port handle in range 0x01 to 0xFF
+
+  \return a 32-bit frame number, or zero if no information was available
+
+  This information is updated each time that the BX() command
+  is sent to the device.
+  */
+  unsigned int GetBXFrame(int ph) const;
+
+  /**
+  Get additional information about the tool transformation.
+
+  \param ph        valid port handle in range 0x01 to 0xFF
+
+  \return status bits, or zero if there is no information available
+  - NDI_BAD_TRANSFORM_FIT   0x01
+  - NDI_NOT_ENOUGH_MARKERS  0x02
+  - NDI_TOOL_FACE_USED      0x70 - 3 bits give 8 possible faces
+
+  <p>The tool information is only updated when the BX() command is called with
+  the NDI_ADDITIONAL_INFO (0x0002) mode bit.
+  */
+  int GetBXToolInfo(int ph) const;
+
+  /**
+  Get additional information about the tool markers.
+
+  \param ph        valid port handle in range 0x01 to 0xFF
+  \param marker    one of 'A' through 'T' for the 20 markers
+
+  \return status bits, or zero if there is no information available
+  - NDI_MARKER_MISSING             0
+  - NDI_MARKER_EXCEEDED_MAX_ANGLE  1
+  - NDI_MARKER_EXCEEDED_MAX_ERROR  2
+  - NDI_MARKER_USED                3  
+
+  <p>The tool marker information is only updated when the BX() command is
+  called with the NDI_ADDITIONAL_INFO (0x0002) mode bit set.
+  */
+  int GetBXMarkerInfo(int ph, int marker) const;
+
+  /**
+  Get the coordinates of a stray marker on a wired POLARIS tool.
+  This command is only meaningful for tools that have a stray
+  marker.
+
+  \param ph        valid port handle in range 0x01 to 0xFF
+  \param coord     array to hold the three coordinates
+
+  \return the return value will be one of
+  - NDI_OKAY - values returned in coord
+  - NDI_DISABLED - port disabled or illegal port specified
+  - NDI_MISSING - stray marker is not visible to the device
+
+  <p>The stray marker position is only updated when the BX() command is
+  called with the NDI_SINGLE_STRAY (0x0004) bit set.
+  */
+  int GetBXSingleStray(int ph, double coord[3]) const;
+
+  /**
+  Get the number of passive stray markers detected.
+
+  \return          a number between 0 and 20
+  
+  The passive stray marker coordinates are updated when a BX() command
+  is sent with the NDI_PASSIVE_STRAY (0x1000) bit set in the reply mode.
+  */
+  int GetBXNumberOfPassiveStrays() const;
+
+  /**
+  Copy the coordinates of the specified stray marker into the
+  supplied array.
+
+  \param i         a number between 0 and 19
+  \param coord     array to hold the coordinates
+  \return          one of:
+  - NDI_OKAY - information was returned in coord
+  - NDI_DISABLED - no stray marker reporting is available
+  - NDI_MISSING - marker number i is not visible
+
+  <p>Use GetTXNumberOfPassiveStrays() to get the number of stray
+  markers that are visible.
+  
+  The passive stray marker coordinates are updated when a BX() command
+  is sent with the NDI_PASSIVE_STRAY (0x1000) bit set in the reply mode.
+  */
+  int GetBXPassiveStray(int i, double coord[3]) const;
+
+  /**
+  Get an 16-bit status bitfield for the system.
+
+  \return status bits or zero if there is no information:
+  - NDI_COMM_SYNC_ERROR            0x0001
+  - NDI_TOO_MUCH_EXTERNAL_INFRARED 0x0002
+  - NDI_COMM_CRC_ERROR             0x0004
+  - NDI_COMM_RECOVERABLE           0x0008
+  - NDI_HARDWARE_FAILURE           0x0010
+  - NDI_HARDWARE_CHANGE            0x0020
+  - NDI_PORT_OCCUPIED              0x0040
+  - NDI_PORT_UNOCCUPIED            0x0080
+
+  <p>The system stutus information is updated whenever the BX() command is
+  called with the NDI_XFORMS_AND_STATUS (0x0001) bit set in the reply mode.
+  */
+  int GetBXSystemStatus() const;
+
+  /**
   Get the status of the control processor.
 
   \return an int with the following bit definitions for errors:
@@ -1274,6 +1463,36 @@ private:
   char m_TXPassiveStrayOutOfVolume[14];
   char m_TXPassiveStray[1052];
 
+  /** BX command reply data */
+
+    /** common data for BX command reply */
+  int m_BXNumberOfHandles;
+  unsigned char m_BXHandles[NDI_MAX_HANDLES];
+  unsigned char m_BXHandleStatus[NDI_MAX_HANDLES];
+  unsigned short m_BXSystemStatus;
+
+    /** for option 0x0001 : Transformation data */
+  float m_BXRotation[NDI_MAX_HANDLES][4];        /** quarternion */
+  float m_BXTranslation[NDI_MAX_HANDLES][3];
+  unsigned long m_BXRMSError[NDI_MAX_HANDLES];
+  unsigned long m_BXPortStatus[NDI_MAX_HANDLES];
+  unsigned long m_BXFrame[NDI_MAX_HANDLES];
+
+    /** for option 0x0002 : Tool and Marker information */
+  unsigned char m_BXToolInformation[NDI_MAX_HANDLES];
+  unsigned char m_BXMarkerInformation[NDI_MAX_HANDLES][10];
+
+    /** for option 0x0004 : Latest 3D Position of Single, Stray, Active Marker */
+  unsigned char m_BXActiveMarkerStatus[NDI_MAX_HANDLES];
+  float         m_BXActiveMarkerPosition[NDI_MAX_HANDLES][3];
+
+    /** for option 0x1000 : 3D Position of Stray Passive Markers */
+  int m_BXNumberOfPassiveStrays;
+  unsigned char m_BXPassiveStrayOutOfVolume[7];
+  int m_BXNumberOfPassiveStraysInsideVolume;
+  int m_BXNumberOfAvailableStrayPositions;  /** Number of available stray positions */
+  float m_BXPassiveStrayPosition[50][3];
+
   /**
   Send a command to the device using printf-style format string.
   */
@@ -1310,6 +1529,7 @@ private:
   void HelperForPHINF(const char* cp, const char* crp);
   void HelperForPHSR(const char* cp, const char* crp);
   void HelperForTX(const char* cp, const char* crp);
+  void HelperForBX(const char* cp, const unsigned char* crp);
   void HelperForIRCHK(const char* cp, const char* crp);
   void HelperForSSTAT(const char* cp, const char* crp);
   void HelperForPHRQ(const char* cp, const char* crp);
