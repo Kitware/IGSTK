@@ -104,7 +104,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   char pathToCaptureFile[1024];
   joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTK_DATA_ROOT,
-                  "Input/polaris_stream_08_29_2005.bin" );
+                  "Input/polaris_stream_08_31_2005.bin" );
   serialComm->SetFileName( pathToCaptureFile );
 #endif /* IGSTK_TEST_POLARIS_ATTACHED */
 
@@ -283,7 +283,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     interpreter->GetPHINFPortLocation(portLocation);
 
     // check if this is a wired tool
-    if (toolInformation[9] == '0')
+    if (portLocation[9] == '0')
       {
       std::cout << "Calling PHINF with wired-tool specifics" << std::endl;
       interpreter->PHINF(ph,
@@ -424,7 +424,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     interpreter->GetPHINFPortLocation(portLocation);
 
     // check if this is a wired tool
-    if (toolInformation[9] == '0')
+    if (portLocation[9] == '0')
       {
       std::cout << "Calling PHINF with wired-tool specifics" << std::endl;
       interpreter->PHINF(ph,
