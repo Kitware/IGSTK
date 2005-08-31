@@ -309,7 +309,7 @@ int NDICommandInterpreter::GetError() const
 /** Get a string that describes an error value. */
 const char* NDICommandInterpreter::ErrorString(int errnum)
 {
-  static char* textarrayLow[] = /* values from 0x01 to 0x21 */ 
+  static char* textarrayLow[] = /* values from 0x01 to 0x23 */ 
   {
     "No error",
     "Invalid command",
@@ -361,6 +361,8 @@ const char* NDICommandInterpreter::ErrorString(int errnum)
     "Invalid port description",
     "Requested port already assigned to a port handle",
     "Invalid input or output state",    
+    "No camera parameters for this wavelength",
+    "Command parameters out of range"
   };
 
   static char* textarrayHigh[] = /* values from 0xf6 to 0xf4 */
@@ -385,11 +387,11 @@ const char* NDICommandInterpreter::ErrorString(int errnum)
     "Measurement System not found on specified port"
   };
 
-  if (errnum >= 0x00 && errnum <= 0x31)
+  if (errnum >= 0x00 && errnum <= 0x23)
     {
     return textarrayLow[errnum];
     }
-  else if (errnum <= 0xf6 && errnum >= 0xf1)
+  else if (errnum <= 0xf6 && errnum >= 0xf4)
     {
     return textarrayHigh[errnum-0xf1];
     }
@@ -441,6 +443,27 @@ inline void CalcCRC16(int nextchar, unsigned int *puCRC16)
   data <<= 1;
   *puCRC16 ^= data;
 }
+
+/*---------------------------------------------------------------------
+  Make a 16bits WORD from two bytes.
+*/
+inline void* MakeWord(void* pWord, unsigned char b1, unsigned char b2)
+{
+  *(unsigned short *)pWord = (b1 << 8) | (b2);
+  return pWord;
+}
+
+
+/*---------------------------------------------------------------------
+  Make a 32bits DWORD from four bytes.
+*/
+inline void* MakeDWord(void* pDWord, unsigned char b1, unsigned char b2,
+                                     unsigned char b3, unsigned char b4)
+{
+  *(unsigned long *)pDWord = (b1 << 24) | (b2 << 16) | (b3 << 8) | (b4);
+  return pDWord;
+}
+
 
 /** Send a command to the device via the Communication object. */
 const char* NDICommandInterpreter::Command(const char* command)
@@ -552,22 +575,96 @@ const char* NDICommandInterpreter::Command(const char* command)
   m = 0;
   if (errcode == 0)
     {
-    m_Communication->Read(rp, NDI_MAX_REPLY_SIZE, m);
+    if (cp[0] == 'B' && cp[1] == 'X' && nc == 2)
+      { /* the BX command */
+      m_Communication->SetUseReadTerminationCharacter( false );
+      m_Communication->Read(rp, 6, m);
 
-    /* need better code to check for error and set NDI_WRITE_ERROR or
-     * NDI_TIMEOUT, since both result in m=0 */
+      if (m == 0)
+        {
+        this->SetErrorCode(NDI_TIMEOUT);
+        return crp;
+        }
 
-    if (m == 0)
-      {
-      errcode = NDI_TIMEOUT;
+      for ( i = 0; i < m; ++i )
+        {
+        crp[i] = rp[i];
+        }
+      unsigned short ReplyLength;
+      char StartBytes[2] = { 0xC4, 0xA5 };
+      unsigned int HeaderCRC16, BodyCRC16;
+
+      if( crp[0] != StartBytes[0]  ||  crp[1] != StartBytes[1] )
+        {
+        /* ERROR : The reply is not for BX! */
+        return crp;
+        }
+
+      MakeWord( &ReplyLength, crp[3], crp[2] );
+
+      // Check Header CRC16
+      HeaderCRC16 = 0;
+      for( i = 0; i < 4; ++i )
+        {
+        CalcCRC16(crp[i], &HeaderCRC16);
+        }
+      unsigned short ReplyedHeaderCRC16 = 0;
+      MakeWord( &ReplyedHeaderCRC16, crp[5], crp[4] );
+      if( HeaderCRC16 != ReplyedHeaderCRC16 )
+        {
+        this->SetErrorCode(NDI_BAD_CRC);
+        return crp;
+        }
+
+      m_Communication->Read(rp, ReplyLength+2, m);
+      if (m == 0)
+        {
+        this->SetErrorCode(NDI_TIMEOUT);
+        return crp;
+        }
+
+      for ( i = 0; i < m; ++i )
+        {
+        crp[i] = rp[i];
+        }
+
+      // Check Body CRC16
+      BodyCRC16 = 0;
+      for( i = 0; i < ReplyLength; ++i )
+        {
+        CalcCRC16(crp[i], &BodyCRC16);
+        }
+      unsigned short ReplyedBodyCRC16 = 0;
+      MakeWord( &ReplyedBodyCRC16, crp[ReplyLength+1], crp[ReplyLength] );
+      if( BodyCRC16 != ReplyedBodyCRC16 )
+        {
+        this->SetErrorCode(NDI_BAD_CRC);
+        return crp;
+        }
+
+      HelperForBX(cp, (const unsigned char*)crp);
+      return crp;
       }
-    else if (rp[m-1] != '\r')
+    else
       {
-      errcode = NDI_READ_ERROR;
-      m = 0;
-      }
+      m_Communication->SetUseReadTerminationCharacter( true );
+      m_Communication->Read(rp, NDI_MAX_REPLY_SIZE, m);
 
-    rp[m] = '\0';   /* terminate string */
+      /* need better code to check for error and set NDI_WRITE_ERROR or
+       * NDI_TIMEOUT, since both result in m=0 */
+
+      if (m == 0)
+        {
+        errcode = NDI_TIMEOUT;
+        }
+      else if (rp[m-1] != '\r')
+        {
+        errcode = NDI_READ_ERROR;
+        m = 0;
+        }
+
+      rp[m] = '\0';   /* terminate string */
+      }
     }
 
   if (errcode != 0)
@@ -1634,6 +1731,382 @@ void NDICommandInterpreter::HelperForTX(const char* cp, const char* crp)
     {
     *dp++ = *crp++;
     }
+}
+
+
+/*---------------------------------------------------------------------
+  Copy all the BX reply information into the ndicapi structure, according
+  to the BX reply mode that was requested.
+
+  This function is called every time a BX command is sent to the
+  Measurement System.
+
+  This information can be later extracted through one of the ndiGetBXxx()
+  functions.
+*/
+void NDICommandInterpreter::HelperForBX(const char* cp, const unsigned char* crp)
+{
+  unsigned int mode = 0x0001; /* the default reply mode */
+  int i, j;
+  int handle, nHandles;
+
+  /* if the TX command had a reply mode, read it */
+  if ((cp[2] == ':' && cp[7] != '\r') || (cp[2] == ' ' && cp[3] != '\r'))
+    { 
+    mode = this->HexadecimalStringToUnsignedInt(&cp[3], 4);
+    }
+
+  /* get the number of handles */
+  m_BXNumberOfHandles = 0;
+  nHandles = crp[0];
+  ++crp;
+
+  /* go through the information for each handle */
+  for (i = 0; i < nHandles; i++)
+    {
+    /* get the handle itself */
+    handle = *crp;
+    ++crp;
+    /* save the port handle in the list */
+    m_BXHandles[i] = handle;
+    m_BXHandleStatus[i] = *crp;
+    ++crp;
+
+    /* check for DISABLED */
+    if (m_BXHandleStatus[i] & 0x04)
+      {
+      continue;
+      }
+    
+    if (mode & NDI_XFORMS_AND_STATUS )
+      {
+      if (! (m_BXHandleStatus[i] & 0x02) ) // NOT MISSING
+        {
+        /* get the transform */
+        for ( j = 0; j < 4; ++j )
+          {
+          MakeDWord( &m_BXRotation[i][j], *(crp+3), *(crp+2), *(crp+1), *crp );
+          crp += 4;
+          }
+        for ( j = 0; j < 3; ++j )
+          {
+          MakeDWord( &m_BXTranslation[i][j], *(crp+3), *(crp+2), *(crp+1), *crp );
+          crp += 4;
+          }
+        MakeDWord( &m_BXRMSError[i], *(crp+3), *(crp+2), *(crp+1), *crp );
+        crp += 4;
+        }
+
+      /* get the port status */
+      MakeDWord( &m_BXPortStatus[i], *(crp+3), *(crp+2), *(crp+1), *crp );
+      crp += 4;
+
+      /* get the frame number */
+      MakeDWord( &m_BXFrame[i], *(crp+3), *(crp+2), *(crp+1), *crp );
+      crp += 4;
+
+      if ( (m_BXPortStatus[i] & 0x01) == 0 )
+        {
+        // unoccupied port.
+        --i;
+        --nHandles;
+        continue;
+        }
+      }
+
+    /* grab additonal information */
+    if (mode & NDI_ADDITIONAL_INFO)
+      {
+      /* get the tool information */
+      m_BXToolInformation[i] = *crp;
+      ++crp;
+      /* get the marker information */
+      memcpy(m_BXMarkerInformation[i], crp, 10);
+      crp += 10;
+      }
+
+    /* grab the single marker info */ 
+    if (mode & NDI_SINGLE_STRAY)
+      {
+      /* read the status */
+      m_BXActiveMarkerStatus[i] = *crp;
+      ++crp;
+      /* read the coordinates if tool isn't missing */
+      for (j = 0; j < 3; ++j)
+        {
+        MakeDWord( &m_BXActiveMarkerPosition[i][j], *(crp+3), *(crp+2), *(crp+1), *(crp) );
+        crp += 4;
+        }
+      }
+    }
+  /* save the number of handles (minus the unoccupied handles) */
+  m_BXNumberOfHandles = nHandles;
+
+  /* get all the passive stray information */
+  if (mode & NDI_PASSIVE_STRAY)
+    {
+    /* get the number of strays */
+    m_BXNumberOfPassiveStrays = *crp;
+    ++crp;
+    /* get the out-of-volume bits */
+    int nBytes;
+    nBytes = m_BXNumberOfPassiveStrays / 8;
+    if( m_BXNumberOfPassiveStrays % 8 != 0 )
+      {
+      ++nBytes;
+      }
+    for ( i = 0; i < 7; ++i )
+      {
+      m_BXPassiveStrayOutOfVolume[i] = 0;
+      }
+    for ( i = 0; i < nBytes; ++i )
+      {
+      m_BXPassiveStrayOutOfVolume[i] = *crp;
+      ++crp;
+      }
+
+    m_BXNumberOfPassiveStraysInsideVolume = m_BXNumberOfPassiveStrays;
+    for ( i = 0; i < 7; ++i )
+      {
+      for ( j = 0; j < 8; ++j )
+        {
+        if ( m_BXPassiveStrayOutOfVolume[i] & (0x01 << j) )
+          {
+          --m_BXNumberOfPassiveStraysInsideVolume;
+          }
+        }
+      }
+    /* get the coordinates */
+    if( mode & 0x0800 )
+      {
+      m_BXNumberOfAvailableStrayPositions = m_BXNumberOfPassiveStrays;;
+      }
+    else
+      {
+      m_BXNumberOfAvailableStrayPositions = m_BXNumberOfPassiveStraysInsideVolume;
+      m_BXNumberOfPassiveStrays = m_BXNumberOfPassiveStraysInsideVolume;
+      }
+    for ( i = 0; i < m_BXNumberOfAvailableStrayPositions; ++i )
+      {
+      for ( j = 0; j < 3; ++j )
+        {
+        MakeDWord( &m_BXPassiveStrayPosition[i][j], *(crp+3), *(crp+2), *(crp+1), *crp );
+        crp += 4;
+        }
+      }
+    }
+
+  /* get the system status */
+  MakeWord( &m_BXSystemStatus, *(crp+1), *(crp) );
+  crp += 2;
+}
+
+
+/** Return a transform that was received after a BX command. */
+int NDICommandInterpreter::GetBXTransform(int ph, double transform[8]) const
+{
+  int i, n;
+  
+  n = m_BXNumberOfHandles;
+  for (i = 0; i < n; i++)
+    {
+    if (m_BXHandles[i] == ph)
+      {
+      break;
+      }
+    }
+  if (i == n)
+    {
+    return NDI_DISABLED;
+    }
+
+  if (m_BXHandleStatus[i] & 0x04 )
+    {
+    return NDI_DISABLED;
+    }
+
+  if (m_BXHandleStatus[i] & 0x02 )
+    {
+    return NDI_MISSING;
+    }
+
+  transform[0] = m_BXRotation[i][0];
+  transform[1] = m_BXRotation[i][1];
+  transform[2] = m_BXRotation[i][2];
+  transform[3] = m_BXRotation[i][3];
+  transform[4] = m_BXTranslation[i][0];
+  transform[5] = m_BXTranslation[i][1];
+  transform[6] = m_BXTranslation[i][2];
+  transform[7] = m_BXRMSError[i];
+  return NDI_TRANSFORM_OKAY;
+}
+
+/** Return port status info that was received after a BX command. */
+int NDICommandInterpreter::GetBXPortStatus(int ph) const
+{
+  int i, n;
+  
+  n = m_BXNumberOfHandles;
+  for (i = 0; i < n; i++)
+    {
+    if (m_BXHandles[i] == ph)
+      {
+      break;
+      }
+    }
+  if (i == n)
+    {
+    return 0;
+    }
+
+  return m_BXPortStatus[i];
+}
+
+/** Return the frame number for data received from a BX command. */
+unsigned int NDICommandInterpreter::GetBXFrame(int ph) const
+{
+  int i, n;
+
+  n = m_BXNumberOfHandles;
+  for (i = 0; i < n; i++)
+    {
+    if (m_BXHandles[i] == ph)
+      {
+      break;
+      }
+    }
+  if (i == n)
+    {
+    return 0;
+    }
+
+  return m_BXFrame[i];
+}
+
+/** Return data received from a BX command. */
+int NDICommandInterpreter::GetBXToolInfo(int ph) const
+{
+  int i, n;
+  
+  n = m_BXNumberOfHandles;
+  for (i = 0; i < n; i++)
+    {
+    if (m_BXHandles[i] == ph)
+      {
+      break;
+      }
+    }
+  if (i == n)
+    {
+    return 0;
+    }
+
+  return m_BXToolInformation[i];
+}
+
+/** Return data received from a BX command. */
+int NDICommandInterpreter::GetBXMarkerInfo(int ph, int marker) const
+{
+  int i, n;
+  
+  n = m_BXNumberOfHandles;
+  for (i = 0; i < n; i++)
+    {
+    if (m_BXHandles[i] == ph)
+      {
+      break;
+      }
+    }
+  if (i == n || marker < 0 || marker >= 20)
+    {
+    return NDI_DISABLED;
+    }
+
+  int byte = m_BXMarkerInformation[i][marker/2];
+  if( marker % 2 == 0 )
+    {
+    byte &= 0x0F;
+    }
+  else
+    {
+    byte &= 0xF0;
+    }
+  return byte;
+}
+
+/** Return data received from a BX command. */
+int NDICommandInterpreter::GetBXSingleStray(int ph, double coord[3]) const
+{
+  int i, n;
+  int status;
+  
+  n = m_BXNumberOfHandles;
+  for (i = 0; i < n; i++)
+    {
+    if (m_BXHandles[i] == ph)
+      {
+      break;
+      }
+    }
+  if (i == n)
+    {
+    return NDI_DISABLED;
+    }
+
+  status = m_BXActiveMarkerStatus[i];
+  if (status == 0x00)
+    {
+    return NDI_DISABLED;
+    }
+  else if (status == 0x02)
+    {
+    return NDI_MISSING;
+    }
+
+  coord[0] = m_BXActiveMarkerPosition[i][0];
+  coord[1] = m_BXActiveMarkerPosition[i][1];
+  coord[2] = m_BXActiveMarkerPosition[i][2];
+
+  return NDI_OKAY;
+}
+
+/** Return data received from a BX command. */
+int NDICommandInterpreter::GetBXNumberOfPassiveStrays() const
+{
+  return m_BXNumberOfPassiveStrays; 
+}
+
+/** Return data received from a BX command. */
+int NDICommandInterpreter::GetBXPassiveStray(int i, double coord[3]) const
+{
+  int n;
+
+  n = m_BXNumberOfAvailableStrayPositions;
+  if (n < 0)
+    {
+    return NDI_MISSING;
+    }
+  if (n > 50)
+    {
+    n = 50;
+    }
+
+  if (i < 0 || i >= n)
+    {
+    return NDI_MISSING;
+    }
+
+  coord[0] = m_BXPassiveStrayPosition[i][0];
+  coord[1] = m_BXPassiveStrayPosition[i][1];
+  coord[2] = m_BXPassiveStrayPosition[i][2];
+
+  return NDI_OKAY;
+}
+
+/** Return data received from a BX command. */
+int NDICommandInterpreter::GetBXSystemStatus() const
+{
+  return m_BXSystemStatus;
 }
 
 /*---------------------------------------------------------------------

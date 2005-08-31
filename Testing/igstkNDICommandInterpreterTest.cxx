@@ -81,6 +81,8 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
    
+  std::ofstream fout("bx_test.txt");
+
   // create the logger object
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();  
@@ -104,7 +106,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   char pathToCaptureFile[1024];
   joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTK_DATA_ROOT,
-                  "Input/polaris_stream_08_31_2005.bin" );
+                  "Input/polaris_stream_08_31_2005_NDICommandInterpreter.bin" );
   serialComm->SetFileName( pathToCaptureFile );
 #endif /* IGSTK_TEST_POLARIS_ATTACHED */
 
@@ -315,6 +317,148 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   // -- start tracking --
   std::cout << "Calling TSTART" << std::endl;
   interpreter->TSTART();
+
+  // -- do 50 basic BX calls
+  for (j = 0; j < 50; j++)
+    {
+    std::cout << "Calling BX" << std::endl;
+    fout << "Calling BX #" << j << std::endl;
+    interpreter->BX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
+    a = interpreter->GetBXSystemStatus();      
+    fout << "  system status : " << std::hex << a << std::endl;
+
+    for (i = 0; i < numberOfHandles; i++)
+      {
+      ph = portHandles[i];
+      fout << "    port[" << ph << "] : " << std::endl;
+
+      a = interpreter->GetBXTransform(ph, vals);
+
+      fout << "    Transform : {return:" << std::hex << a << "} (" << vals[0] << ", " << vals[1] <<
+        ", " << vals[2] << ", " << vals[3] << ") , (" <<
+        vals[4] << ", " << vals[5] << ", " << vals[6] << ") , " <<
+        vals[7] << std::endl;
+
+      a = interpreter->GetBXPortStatus(ph);
+
+      fout << "    PortStatus : " << std::hex << a << std::endl;
+
+      l = interpreter->GetBXFrame(ph);
+
+      fout << "    Frame : " << l << std::endl;
+      }
+    }
+
+  fout << std::endl;
+  // -- do some more BX commands, with passive stray tracking
+
+  for (j = 0; j < 50; j++)
+    {
+    std::cout << "Calling BX wth NDI_PASSIVE_STRAY" << std::endl;
+    
+    fout << "Calling BX with NDI_PASSIVE_STRAY" << std::endl;
+
+    interpreter->BX(CommandInterpreterType::NDI_PASSIVE_STRAY);
+    a = interpreter->GetBXSystemStatus();      
+    fout << "  BXSystemStatus : " << std::hex << a << std::endl;
+
+    for (i = 0; i < numberOfHandles; i++)
+      {
+      ph = portHandles[i];
+      fout << "    port[" << ph << "] : " << std::endl;
+
+      a = interpreter->GetBXTransform(ph, vals);
+      fout << "    Transform : {return:" << std::hex << a << "} (" << vals[0] << ", " << vals[1] <<
+        ", " << vals[2] << ", " << vals[3] << ") , (" <<
+        vals[4] << ", " << vals[5] << ", " << vals[6] << ") , " <<
+        vals[7] << std::endl;
+
+      a = interpreter->GetBXPortStatus(ph);
+      fout << "    PortStatus : " << std::hex << a << std::endl;
+
+      l = interpreter->GetBXFrame(ph);
+      fout << "    Frame : " << std::dec << l << std::endl;
+      }
+
+    n = interpreter->GetBXNumberOfPassiveStrays();
+    fout << "  NumberOfPassiveStrays : " << n << std::endl;
+    std::cout << n << ": ";
+    for (i = 0; i < n; i++)
+      {
+      double coord[3];
+      a = interpreter->GetBXPassiveStray(i, coord);
+      std::cout << "(" << coord[0] << "," << coord[1] << "," << coord[2]
+                << "), ";
+      fout << "    #" << i << " : {" << std::hex << a << " (" << coord[0] << "," 
+                << coord[1] << "," << coord[2] << "), " << std::endl;
+      }
+    std::cout << std::endl;
+    }
+  fout << std::endl;
+
+  // -- do 50 calls with NDI_SINGLE_STRAY
+  for (j = 0; j < 50; j++)
+    {
+    fout << "Calling BX with NDI_SINGLE_STRAY" << std::endl;
+
+    std::cout << "Calling BX with NDI_SINGLE_STRAY" << std::endl;
+    interpreter->BX(CommandInterpreterType::NDI_XFORMS_AND_STATUS |
+                    CommandInterpreterType::NDI_SINGLE_STRAY);
+    a = interpreter->GetBXSystemStatus();      
+    fout << "  BXSystemStatus : " << std::hex << a << std::endl;
+
+    for (i = 0; i < numberOfHandles; i++)
+      {
+      double coord[3];
+      ph = portHandles[i];
+      fout << "    port[" << ph << "] : " << std::endl;
+
+      a = interpreter->GetBXSingleStray(ph, coord);
+      fout << "    #" << i << " :  {" << std::hex << a << " (" << coord[0] << "," << coord[1] << "," << coord[2]
+                << "), " << std::endl;
+
+      a = interpreter->GetBXTransform(ph, vals);
+      fout << "    Transform : {return:" << std::hex << a << "} (" << vals[0] << ", " << vals[1] <<
+        ", " << vals[2] << ", " << vals[3] << ") , (" <<
+        vals[4] << ", " << vals[5] << ", " << vals[6] << ") , " <<
+        vals[7] << std::endl;
+
+      a = interpreter->GetBXPortStatus(ph);
+      fout << "    PortStatus : " << std::hex << a << std::endl;
+
+      l = interpreter->GetBXFrame(ph);
+      fout << "    Frame : " << l << std::endl;
+      }
+    }
+  fout << std::endl;
+
+  // -- do one more BX with additional options --
+  std::cout << "Calling BX with NDI_ADDITIONAL_INFO" << std::endl;
+  fout << "Calling BX with NDI_ADDITIONAL_INFO" << std::endl;
+  interpreter->BX(CommandInterpreterType::NDI_XFORMS_AND_STATUS |
+                  CommandInterpreterType::NDI_ADDITIONAL_INFO);
+
+  for (i = 0; i < numberOfHandles; i++)
+    {
+    ph = portHandles[i];
+      fout << "  port[" << ph << "] : " << std::endl;
+
+    a = interpreter->GetBXTransform(ph, vals);
+    fout << "  Transform : {return:" << std::hex << a << "} (" << vals[0] << ", " << vals[1] <<
+        ", " << vals[2] << ", " << vals[3] << ") , (" <<
+        vals[4] << ", " << vals[5] << ", " << vals[6] << ") , " <<
+        vals[7] << std::endl;
+
+    a = interpreter->GetBXPortStatus(ph);
+    fout << "  PortStatus : " << std::hex << a << std::endl;
+
+    l = interpreter->GetBXFrame(ph);
+    fout << "  Frame : " << l << std::endl;
+    a = interpreter->GetBXPortStatus(ph);
+    a = interpreter->GetBXToolInfo(ph);
+    fout << "  ToolInfo : " << std::hex << a << std::endl;
+    }
+  fout << std::endl;
 
   // -- do 50 basic TX calls
   for (j = 0; j < 50; j++)
