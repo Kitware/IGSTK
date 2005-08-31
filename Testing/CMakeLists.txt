@@ -10,6 +10,7 @@ MAKE_DIRECTORY(${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
 #-----------------------------------------------------------------------------
 # Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
 FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_DIR}/Testing/Data $ENV{IGSTKSandbox_DATA_ROOT})
+
 MARK_AS_ADVANCED(IGSTKSandbox_DATA_ROOT)
 
 INCLUDE_DIRECTORIES (
@@ -26,16 +27,18 @@ ADD_TEST(igstkPolarisTrackerTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerTest)
 ADD_TEST(igstkLandmarkRegistrationTest ${IGSTKSandbox_TESTS} igstkLandmarkRegistrationTest)
 
 
-ADD_TEST( igstkDICOMImageReaderTest ${IGSTKSandbox_TESTS}
-   --compare ${IGSTKSandbox_DATA_ROOT}/E000192.mhd
-             ${IGSTKSandbox_TEST_OUTPUT_DIR}/E00192.mhd
-   igstkDICOMImageReaderTest ${IGSTKSandbox_DATA_ROOT}/E00192 ${IGSTKSandbox_TEST_OUTPUT_DIR}/E00192.mhd)
+IF (IGSTKSandbox_DATA_ROOT) 
+   ADD_TEST( igstkDICOMImageReaderTest ${IGSTKSandbox_TESTS}
+     --compare ${IGSTKSandbox_DATA_ROOT}/E000192_dicom.mhd
+             ${IGSTKSandbox_TEST_OUTPUT_DIR}/E000192_dicom.mhd
+    igstkDICOMImageReaderTest ${IGSTKSandbox_DATA_ROOT}/E000192 ${IGSTKSandbox_TEST_OUTPUT_DIR}/E000192_dicom.mhd)
 
+   ADD_TEST( igstkCTImageReaderTest ${IGSTKSandbox_TESTS}
+     --compare ${IGSTKSandbox_DATA_ROOT}/E000192_CT.mhd
+             ${IGSTKSandbox_TEST_OUTPUT_DIR}/E000192_CT.mhd 
+   igstkCTImageReaderTest ${IGSTKSandbox_DATA_ROOT}/E000192 ${IGSTKSandbox_TEST_OUTPUT_DIR}/E000192_CT.mhd)
+ENDIF(IGSTKSandbox_DATA_ROOT)
 
-ADD_TEST( igstkCTImageReaderTest ${IGSTKSandbox_TESTS}
-   --compare ${IGSTKSandbox_DATA_ROOT}/E000192.mhd
-             ${IGSTKSandbox_TEST_OUTPUT_DIR}/E00192.mhd
-   igstkCTImageReaderTest ${IGSTKSandbox_DATA_ROOT}/E00192 ${IGSTKSandbox_TEST_OUTPUT_DIR}/E00192.mhd)
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
