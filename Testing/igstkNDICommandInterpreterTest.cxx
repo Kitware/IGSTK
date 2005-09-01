@@ -122,7 +122,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   // send some commands to the device
   int i, j, n, a, ph;
   unsigned int l;
-  double vals[8];
+  double vals[8] = { 0, };
   int portHandles[256];
   int numberOfHandles;
   int errorCode = 0;
@@ -457,6 +457,8 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     a = interpreter->GetBXPortStatus(ph);
     a = interpreter->GetBXToolInfo(ph);
     fout << "  ToolInfo : " << std::hex << a << std::endl;
+    a = interpreter->GetBXMarkerInfo(ph, 0);
+    fout << "  MarkerInfo : " << std::hex << a << std::endl;
     }
   fout << std::endl;
 

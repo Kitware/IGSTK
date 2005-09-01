@@ -40,7 +40,7 @@ NDICommandInterpreter::NDICommandInterpreter()
   m_CommandReply = new char[NDI_MAX_REPLY_SIZE+1];
 
   m_Tracking = 0;
-  m_ErrorCode = 0;
+  this->SetErrorCode(0);
 }
 
 /** Destructor: free any memory that has been allocated. */
@@ -137,7 +137,7 @@ int NDICommandInterpreter::HexadecimalStringToInt(const char* cp, int n)
 {
   int i;
   int result = 0;
-  int c;
+  int c = 0;
 
   for (i = 0; i < n; i++)
     {
