@@ -1574,6 +1574,7 @@ void NDICommandInterpreter::HelperForTX(const char* cp, const char* crp)
     crp++;
     }
 
+  memset(m_TXInformation, 0, sizeof(char)*NDI_MAX_HANDLES*12);
   /* go through the information for each handle */
   for (i = 0; i < nhandles; i++)
     {
