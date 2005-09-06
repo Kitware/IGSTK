@@ -241,13 +241,14 @@ StateMachine< TClass >
 
   StateActionPair transition = transitionItr->second;
 
+  // set the new state
+  m_State = transition.GetStateIdentifier();
+
+  // call the transition function
   if( transition.GetAction() )
     {
     ((*m_This).*(transition.GetAction()))();
     }
-
-  m_State = transition.GetStateIdentifier();
-
 }
 
 
