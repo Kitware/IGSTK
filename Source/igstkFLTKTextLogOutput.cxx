@@ -33,6 +33,8 @@ FLTKTextLogOutput::FLTKTextLogOutput()
 /** Destructor */
 FLTKTextLogOutput::~FLTKTextLogOutput()
 {
+  free( m_Stream->buffer()->text() );
+  m_Stream->buffer()->text("");
 }
 
 
@@ -57,6 +59,7 @@ void FLTKTextLogOutput::Write(double timestamp)
   if( this->m_Stream  &&  this->m_Stream->buffer() )
     {
     itk::OStringStream ostr;
+    ostr.precision(30);
     ostr << timestamp;
     this->m_Stream->insert( ostr.str().c_str() );
     }
@@ -83,6 +86,7 @@ void FLTKTextLogOutput::Write(std::string const &content, double timestamp)
   if( this->m_Stream  &&  this->m_Stream->buffer() )
     {
     itk::OStringStream ostr;
+    ostr.precision(30);
     ostr << timestamp << "  :  " << content;
     this->m_Stream->insert( ostr.str().c_str() );
     this->m_Stream->scroll(this->m_Stream->insert_position(), 0);
