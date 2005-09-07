@@ -128,7 +128,13 @@ int igstkPulseGeneratorTest( int, char * [] )
 
     pulseGenerator->AddObserver( igstk::PulseEvent(), observer );
     
-    pulseGenerator->RequestSetFrequency( 100 );  // 10 Hz
+    // On purpose set invalid frequency values,
+    // just to check code coverage of error conditions
+    pulseGenerator->RequestSetFrequency( 20000 );  // Frequency too high
+    pulseGenerator->RequestSetFrequency(   -10 );  // Negative frequency is invalid
+
+    // Now set up a valid frequency rate value
+    pulseGenerator->RequestSetFrequency( 100 );  // 100 Hz
 
     pulseGenerator->RequestStart();  
 
