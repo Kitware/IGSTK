@@ -195,6 +195,13 @@ void SerialCommunicationSimulator::InternalWrite( void )
 void SerialCommunicationSimulator::InternalRead( void )
 {
   unsigned index = m_CounterTable[m_Command]++;
+  if( m_ResponseTable[m_Command].size() == 0 )
+    {
+    m_BytesRead = 0;
+    igstkLogMacro( DEBUG, "InternalRead failed with timeout...\n");
+    this->InvokeEvent( ReadTimeoutEvent() );
+    return;
+    }
   const BinaryData& response = m_ResponseTable[m_Command][index];
   unsigned int bytesRead = response.GetSize();
 
