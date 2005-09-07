@@ -140,6 +140,7 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
                   "Input/polaris_stream_07_27_2005.bin" );
   std::cout << fullName << std::endl; 
   serialComm->SetFileName( fullName );
+  serialComm->GetFileName();
 
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
 
