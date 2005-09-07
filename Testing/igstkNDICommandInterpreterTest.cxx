@@ -200,11 +200,13 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     {
     interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_LEFT, i, vals);
     }
+  interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_LEFT, 0, vals);
   n = interpreter->GetIRCHKNumberOfSources(CommandInterpreterType::NDI_RIGHT);
   for (i = 0; i < n; i++)
     {
     interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_RIGHT, i, vals);
     }
+  interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_RIGHT, 0, vals);
   std::cout << "Calling DSTOP" << std::endl;
   interpreter->DSTOP();
 
@@ -277,7 +279,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
                        CommandInterpreterType::NDI_PART_NUMBER |
                        CommandInterpreterType::NDI_ACCESSORIES |
                        CommandInterpreterType::NDI_PORT_LOCATION);
-    
+    int iostatus = interpreter->GetPHINFGPIOStatus();
     a = interpreter->GetPHINFPortStatus();
     interpreter->GetPHINFToolInfo(toolInformation);
     interpreter->GetPHINFPartNumber(toolPartNumber);
