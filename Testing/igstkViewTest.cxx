@@ -71,7 +71,7 @@ namespace ViewTest
         {
         m_PulseCounter++;
 
-        if( m_PulseCounter > 20 )
+        if( m_PulseCounter > 100 )
           {
           if( m_View )
             {
@@ -204,6 +204,9 @@ int igstkViewTest( int, char * [] )
 
     std::cout << *view2D << std::endl;
     std::cout << *view3D << std::endl;
+
+    view2D->RequestSetRefreshRate( 30 );
+    view3D->RequestSetRefreshRate( 10 );
 
     Fl::run();
 
