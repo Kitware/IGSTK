@@ -156,6 +156,8 @@ int igstkAuroraTrackerTest( int, char * [] )
     std::cout << "Position = (" << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
   }
 
+  tracker->Reset();
+
   tracker->StopTracking();
 
   tracker->Close();
