@@ -33,5 +33,6 @@ void RegisterTests()
   REGISTER_TEST(igstkTrackerToolTest);
   REGISTER_TEST(igstkTransformTest);
   REGISTER_TEST(igstkViewTest);
+  REGISTER_TEST(igstkViewRefreshRateTest);
   REGISTER_TEST(igstkVTKLoggerOutputTest);
 }

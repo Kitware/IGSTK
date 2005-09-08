@@ -80,6 +80,8 @@ ADD_TEST(igstkTubeObjectTest ${IGSTK_TESTS} igstkTubeObjectTest)
 
 ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
 
+ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
+
 ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 
 
@@ -108,6 +110,7 @@ SET(BasicTests_SRCS
   igstkTransformTest
   igstkTubeObjectTest
   igstkViewTest
+  igstkViewRefreshRateTest
   igstkVTKLoggerOutputTest
   )
 
