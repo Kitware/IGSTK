@@ -1481,6 +1481,8 @@ void NDICommandInterpreter::HelperForPHINF(const char* cp, const char* crp)
       }
     }
   
+  m_PHINFGPIOStatus[0] = 0;
+  m_PHINFGPIOStatus[1] = 0;
   if (mode & NDI_GPIO_STATUS)
     {
     dp = m_PHINFGPIOStatus;
@@ -2150,6 +2152,9 @@ void NDICommandInterpreter::HelperForIRCHK(const char* cp, const char* crp)
 {
   unsigned int mode = 0x0001; /* the default reply mode */
   int j;
+  
+  m_IRCHKSources[0] = '\0';
+  m_IRCHKDetected = 0;
 
   /* if the IRCHK command had a reply mode, read it */
   if ((cp[5] == ':' && cp[10] != '\r') || (cp[5] == ' ' && cp[6] != '\r'))
