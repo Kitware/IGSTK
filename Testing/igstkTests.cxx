@@ -20,6 +20,7 @@ void RegisterTests()
   REGISTER_TEST(igstkMeshObjectTest);
   REGISTER_TEST(igstkMultipleOutputTest);
   REGISTER_TEST(igstkNDICommandInterpreterTest);
+  REGISTER_TEST(igstkNDICommandInterpreterStressTest);
   REGISTER_TEST(igstkPulseGeneratorTest);
   REGISTER_TEST(igstkSerialCommunicationTest);
   REGISTER_TEST(igstkSerialCommunicationSimulatorTest);

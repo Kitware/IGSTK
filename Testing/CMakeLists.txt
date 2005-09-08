@@ -54,6 +54,8 @@ ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
 
 ADD_TEST(igstkNDICommandInterpreterTest ${IGSTK_TESTS} igstkNDICommandInterpreterTest)
 
+ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTK_TESTS} igstkNDICommandInterpreterStressTest)
+
 ADD_TEST(igstkPulseGeneratorTest ${IGSTK_TESTS} igstkPulseGeneratorTest)
 
 ADD_TEST(igstkSerialCommunicationTest ${IGSTK_TESTS} igstkSerialCommunicationTest)
@@ -93,6 +95,7 @@ SET(BasicTests_SRCS
   igstkMeshObjectTest
   igstkMultipleOutputTest
   igstkNDICommandInterpreterTest
+  igstkNDICommandInterpreterStressTest
   igstkPulseGeneratorTest
   igstkSerialCommunicationTest
   igstkSerialCommunicationSimulatorTest
