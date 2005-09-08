@@ -31,6 +31,9 @@
 #include "igstkMouseTracker.h"
 #include "vtkInteractorObserver.h"
 
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
+
 int main(int , char** )
 { 
   TwoViews* m_GUI = new TwoViews();
@@ -118,6 +121,23 @@ int main(int , char** )
   m_GUI->Display1->RequestRemoveObject( cylinderRepresentation );
   m_GUI->Display1->Update();
 
+  // Setup the logging system
+  itk::Logger::Pointer logger = itk::Logger::New();
+  itk::StdStreamLogOutput::Pointer logOutput = itk::StdStreamLogOutput::New();
+  itk::StdStreamLogOutput::Pointer fileOutput = itk::StdStreamLogOutput::New();
+  
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  std::ofstream ofs( "log.txt" );
+  fileOutput->SetStream( ofs );
+  logger->AddLogOutput( logOutput );
+ 
+  m_GUI->Display1->SetLogger( logger ); 
+  m_GUI->Display2->SetLogger( logger ); 
+  m_GUI->MouseTrackerBox->GetTracker()->SetLogger( logger );
+
   m_GUI->Display1->RequestSetRefreshRate( 30 ); // 30 Hz
   m_GUI->Display2->RequestSetRefreshRate( 30 ); // 30 Hz
 
@@ -127,6 +147,8 @@ int main(int , char** )
   Fl::run();
 
   delete m_GUI;
+
+  ofs.close();
 
   return EXIT_SUCCESS;
 }
