@@ -57,6 +57,10 @@ public:
       m_Tracker->StartTracking();
       m_Tracker->Reset();
       }
+    else
+      {
+      m_Tracker->StopTracking();
+      }
     }
 
   void SetObjectToTrack(ObjectType* object) 
