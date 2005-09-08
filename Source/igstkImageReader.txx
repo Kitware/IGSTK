@@ -34,6 +34,10 @@ ImageReader<TPixelType,TDimension>::ImageReader()
 {
  // Create the ITK image file reader
   m_ImageFileReader = ImageFileReaderType::New();
+ 
+ // Create the ITK export and VTK import filter
+  m_vtkImporter = vtkImageImport::New();
+  m_itkExporter = ExportFilterType::New(); 
 } 
 
 /** Destructor */
