@@ -56,7 +56,7 @@ void DICOMImageReader<TPixelType>::SetDirectory( const char *directory )
     igstkLogMacro( DEBUG, "Reading the DICOM series...\n");
     m_ImageSeriesReader->Update();
 
-    //this->m_itkExporter->SetInput( m_ImageSeriesReader->GetOutput() );
+    this->m_itkExporter->SetInput( m_ImageSeriesReader->GetOutput() );
     }
 }
 
