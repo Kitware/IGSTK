@@ -40,6 +40,7 @@ public:
     {
     m_Tracking = false;
     m_Tracker = TrackerType::New();
+    m_Tracker->Open();
     m_Tracker->Initialize();
     m_Tracker->SetScaleFactor( 1000.0 );
     };
@@ -80,6 +81,8 @@ public:
     {
     m_View2 = view;
     }
+
+  TrackerType *GetTracker() { return m_Tracker; }
 
 protected:
 
