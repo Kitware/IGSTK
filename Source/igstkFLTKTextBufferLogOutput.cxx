@@ -34,7 +34,6 @@ FLTKTextBufferLogOutput::FLTKTextBufferLogOutput()
 FLTKTextBufferLogOutput::~FLTKTextBufferLogOutput()
 {
   free( m_Stream->text() );
-  m_Stream->text("");
 }
 
 
