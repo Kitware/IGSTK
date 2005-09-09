@@ -554,8 +554,8 @@ Tracker::ResultType Tracker::InternalThreadedUpdateStatus( void )
 void Tracker::AttemptToOpen( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToOpen called ...\n");
-  ResultType result;
-  result = InternalOpen();
+
+  ResultType result = this->InternalOpen();
   
   m_StateMachine.PushInputBoolean( (bool)result,
                                    m_CommunicationEstablishmentSuccessInput,
@@ -581,6 +581,7 @@ void Tracker::CommunicationEstablishmentFailureProcessing( void )
 void Tracker::ResetFromTrackingStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::ResetFromTrackingStateProcessing( called ...\n");
+  // leaving TrackingState, going to CommunicationEstablishedState
   this->ExitTrackingStateProcessing();
   this->ResetFromToolsActiveStateProcessing();
 }
@@ -595,9 +596,8 @@ void Tracker::ResetFromToolsActiveStateProcessing( void )
 /** The Reset methods force the tracker to the CommunicationEstablished state */
 void Tracker::ResetFromCommunicatingStateProcessing( void )
 {
-  ResultType result;
+  ResultType result = this->InternalReset();
 
-  result = this->InternalReset();
   if( result == SUCCESS )
     {
     igstkLogMacro( DEBUG, "igstk::Tracker::InternalReset succeeded ...\n");
@@ -612,8 +612,8 @@ void Tracker::ResetFromCommunicatingStateProcessing( void )
 void Tracker::AttemptToActivateTools( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToActivateTools called ...\n");
-  ResultType result;
-  result = InternalActivateTools();
+
+  ResultType result = this->InternalActivateTools();
   
   m_StateMachine.PushInputBoolean( (bool)result,
                                    m_ToolsActivationSuccessInput,
@@ -637,8 +637,8 @@ void Tracker::ToolsActivationFailureProcessing( void )
 void Tracker::AttemptToStartTracking( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStartTracking called ...\n");
-  ResultType result;
-  result = InternalStartTracking();
+
+  ResultType result = this->InternalStartTracking();
   
   m_StateMachine.PushInputBoolean( (bool)result,
                                    m_StartTrackingSuccessInput,
@@ -649,6 +649,7 @@ void Tracker::AttemptToStartTracking( void )
 void Tracker::StartTrackingSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StartTrackingSuccessProcessing called ...\n");
+  // going from AttemptingToActivateToolsState to TrackingState
   this->EnterTrackingStateProcessing();
 }
 
@@ -662,10 +663,10 @@ void Tracker::StartTrackingFailureProcessing( void )
 void Tracker::AttemptToStopTracking( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStopTracking called ...\n");
-  ResultType result;
-
+  // leaving TrackingState, going to AttemptingToStopTrackingState
   this->ExitTrackingStateProcessing();
-  result = this->InternalStopTracking();
+
+  ResultType result = this->InternalStopTracking();
   
   m_StateMachine.PushInputBoolean( (bool)result,
                                    m_StopTrackingSuccessInput,
@@ -683,6 +684,8 @@ void Tracker::StopTrackingSuccessProcessing( void )
 void Tracker::StopTrackingFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StopTrackingFailureProcessing called ...\n");
+  // going from AttemptingToStopTrackingState to TrackingState
+  this->EnterTrackingStateProcessing();
 }
 
 /** Needs to be called every time when entering tracking state. */ 
@@ -718,8 +721,9 @@ void Tracker::ExitTrackingStateProcessing( void )
 void Tracker::AttemptToUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToUpdateStatus called ...\n");
-  ResultType result;
-  result = InternalUpdateStatus();
+  
+  ResultType result = this->InternalUpdateStatus();
+
   if( result == SUCCESS )
     {
     igstkLogMacro( DEBUG, "igstk::Tracker::InternalUpdateStatus succeeded ...\n");
@@ -736,8 +740,11 @@ void Tracker::CloseFromTrackingStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromTrackingStateProcessing called ...\n");
 
+  // leaving TrackingState, going to AttemptingToCloseState
   this->ExitTrackingStateProcessing();
-  ResultType result = InternalStopTracking();
+
+  ResultType result = this->InternalStopTracking();
+
   if( result == SUCCESS )
     {
     result = InternalDeactivateTools();
@@ -758,11 +765,11 @@ void Tracker::CloseFromToolsActiveStateProcessing( void)
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromToolsActiveStateProcessing called ...\n");
 
-  ResultType result;
-  result = InternalDeactivateTools();
+  ResultType result = this->InternalDeactivateTools();
+
   if ( result == SUCCESS )
     {
-    result = InternalClose();
+    result = this->InternalClose();
     }
 
   m_StateMachine.PushInputBoolean( (bool)result,
@@ -775,9 +782,9 @@ void Tracker::CloseFromToolsActiveStateProcessing( void)
 void Tracker::CloseFromCommunicatingStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromCommunicatingStateProcessing called ...\n");
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToClose called ...\n");
-  ResultType result;
-  result = InternalClose();
+
+  ResultType result = this->InternalClose();
+
   m_StateMachine.PushInputBoolean( (bool)result,
                                    m_CloseCommunicationSuccessInput,
                                    m_CloseCommunicationFailureInput );
