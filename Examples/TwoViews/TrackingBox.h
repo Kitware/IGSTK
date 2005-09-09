@@ -42,7 +42,7 @@ public:
     m_Tracker = TrackerType::New();
     m_Tracker->Open();
     m_Tracker->Initialize();
-    m_Tracker->SetScaleFactor( 1000.0 );
+    m_Tracker->SetScaleFactor( 100.0 );
     };
 
   ~TrackingBox() 
