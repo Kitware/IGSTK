@@ -130,7 +130,7 @@ int main(int , char** )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
-  std::ofstream ofs( "log.txt" );
+  std::ofstream ofs( "logTwoViews.txt" );
   fileOutput->SetStream( ofs );
   logger->AddLogOutput( logOutput );
  
