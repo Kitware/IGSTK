@@ -649,7 +649,7 @@ void Tracker::AttemptToStartTracking( void )
 void Tracker::StartTrackingSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StartTrackingSuccessProcessing called ...\n");
-  // going from AttemptingToActivateToolsState to TrackingState
+  // going from AttemptingToTrackState to TrackingState
   this->EnterTrackingStateProcessing();
 }
 
