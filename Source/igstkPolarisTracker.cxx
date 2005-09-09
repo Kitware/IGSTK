@@ -44,6 +44,7 @@ PolarisTracker::PolarisTracker(void)
     this->m_PortEnabled[i] = 0;
     this->m_PortHandle[i] = 0;
     }
+  this->SetThreadingEnabled(true);
 }
 
 /** Destructor */
