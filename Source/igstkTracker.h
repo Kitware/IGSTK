@@ -116,14 +116,17 @@ public:
    * port numbered "portNumber" in the variable "position". Note that this
    * variable represents the position and orientation of the tool in 3D space.
    * */
-  void GetToolTransform( unsigned int portNumber, unsigned int toolNumber, TransformType &position ) const;
+  void GetToolTransform( unsigned int portNumber, unsigned int toolNumber,
+                         TransformType &position ) const;
 
   /** Associate a TrackerTool to an object to be tracked. This is a one-to-one
    * association and cannot be changed during the life of the application */
-  void AttachObjectToTrackerTool( unsigned int portNumber, unsigned int toolNumber, SpatialObject * objectToTrack );
+  void AttachObjectToTrackerTool( unsigned int portNumber, unsigned int toolNumber,
+                                  SpatialObject * objectToTrack );
 
   /** The "SetReferenceTool" sets the reference tool. */
-  void SetReferenceTool( bool applyReferenceTool, unsigned int portNumber, unsigned int toolNumber );
+  void SetReferenceTool( bool applyReferenceTool, unsigned int portNumber,
+                         unsigned int toolNumber );
 
   /** The "GetReferenceTool" gets the reference tool.
    * If the reference tool is not applied, it returns false.
@@ -252,16 +255,16 @@ private:
   /** List of States */
   StateType                m_IdleState;
   StateType                m_AttemptingToEstablishCommunicationState;
+  StateType                m_AttemptingToCloseCommunicationState;
   StateType                m_CommunicationEstablishedState;
   StateType                m_AttemptingToActivateToolsState;
   StateType                m_ToolsActiveState;
   StateType                m_AttemptingToTrackState;
   StateType                m_TrackingState;
   StateType                m_AttemptingToStopTrackingState;
-  StateType                m_AttemptingToCloseTrackingState;
 
   /** List of Inputs */
-  InputType                m_SetUpCommunicationInput;
+  InputType                m_EstablishCommunicationInput;
   InputType                m_CommunicationEstablishmentSuccessInput;
   InputType                m_CommunicationEstablishmentFailureInput;
 
@@ -279,20 +282,16 @@ private:
   InputType                m_StopTrackingSuccessInput;
   InputType                m_StopTrackingFailureInput;
 
-  InputType                m_ResetTrackingInput;
+  InputType                m_ResetInput;
 
-  InputType                m_CloseTrackingInput;
-  InputType                m_CloseTrackingSuccessInput;
-  InputType                m_CloseTrackingFailureInput;
+  InputType                m_CloseCommunicationInput;
+  InputType                m_CloseCommunicationSuccessInput;
+  InputType                m_CloseCommunicationFailureInput;
 
   /** The "AttemptToOpen" method attempts to open communication with a
       tracking device. */
   void AttemptToOpen( void );
   
-  /** The "AttemptToReset" method attempts to bring the tracker
-      to some defined default state. */
-  void AttemptToReset( void );
-
   /** The "AttemptToActivateTools" method attempts to activate tools. */
   void AttemptToActivateTools( void );
 
@@ -317,6 +316,18 @@ private:
   /** The "CloseFromCommunicatingStateProcessing" method closes
       tracker in use, when the tracker is in communicating state. */
   void CloseFromCommunicatingStateProcessing( void );
+
+  /** The "ResetFromTrackingStateProcessing" method resets tracker in
+      use, when the tracker is in tracking state. */
+  void ResetFromTrackingStateProcessing( void );
+
+  /** The "ResetFromToolsActiveStateProcessing" method resets tracker
+      in use, when the tracker is in active tools state. */
+  void ResetFromToolsActiveStateProcessing( void);
+
+  /** The "ResetFromCommunicatingStateProcessing" method resets
+      tracker in use, when the tracker is in communicating state. */
+  void ResetFromCommunicatingStateProcessing( void );
 
   /** Post-processing after communication setup has been successful. */ 
   void CommunicationEstablishmentSuccessProcessing( void );
@@ -343,10 +354,16 @@ private:
   void StopTrackingFailureProcessing( void );
 
   /** Post-processing after close tracking has been successful. */ 
-  void CloseTrackingSuccessProcessing( void );
+  void CloseCommunicationSuccessProcessing( void );
 
   /** Post-processing after close tracking has failed. */ 
-  void CloseTrackingFailureProcessing( void );
+  void CloseCommunicationFailureProcessing( void );
+
+  /** Always called when entering tracking state. */
+  void EnterTrackingStateProcessing( void );
+
+  /** Always called when entering tracking state. */
+  void ExitTrackingStateProcessing( void );
 
 };
 

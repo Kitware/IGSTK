@@ -29,69 +29,202 @@ namespace igstk
 Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
 {
   // Set the state descriptors
-  m_StateMachine.AddState( m_IdleState, "IdleState" );
-  m_StateMachine.AddState( m_AttemptingToEstablishCommunicationState, "AttemptingToEstablishCommunicationState" );
-  m_StateMachine.AddState( m_CommunicationEstablishedState, "CommunicationEstablishedState" );
-  m_StateMachine.AddState( m_AttemptingToActivateToolsState, "AttemptingToActivateToolsState" );
-  m_StateMachine.AddState( m_ToolsActiveState, "ToolsActiveState" );
-  m_StateMachine.AddState( m_AttemptingToTrackState, "AttemptingToTrackState" );
-  m_StateMachine.AddState( m_TrackingState, "TrackingState" );
-  m_StateMachine.AddState( m_AttemptingToStopTrackingState, "AttemptingToStopTrackingState");
-  m_StateMachine.AddState( m_AttemptingToCloseTrackingState, "AttemptingToCloseTrackingState");
+  m_StateMachine.AddState( m_IdleState,
+                           "IdleState" );
+
+  m_StateMachine.AddState( m_AttemptingToEstablishCommunicationState,
+                           "AttemptingToEstablishCommunicationState" );
+
+  m_StateMachine.AddState( m_AttemptingToCloseCommunicationState,
+                           "AttemptingToCloseCommunicationState");
+
+  m_StateMachine.AddState( m_CommunicationEstablishedState,
+                           "CommunicationEstablishedState" );
+
+  m_StateMachine.AddState( m_AttemptingToActivateToolsState,
+                           "AttemptingToActivateToolsState" );
+
+  m_StateMachine.AddState( m_ToolsActiveState,
+                           "ToolsActiveState" );
+
+  m_StateMachine.AddState( m_AttemptingToTrackState,
+                           "AttemptingToTrackState" );
+
+  m_StateMachine.AddState( m_AttemptingToStopTrackingState,
+                           "AttemptingToStopTrackingState");
+
+  m_StateMachine.AddState( m_TrackingState,
+                           "TrackingState" );
 
   // Set the input descriptors
-  m_StateMachine.AddInput( m_SetUpCommunicationInput, "SetUpCommunicationInput");
-  m_StateMachine.AddInput( m_CommunicationEstablishmentSuccessInput, "CommunicationEstablishmentSuccessInput");
-  m_StateMachine.AddInput( m_CommunicationEstablishmentFailureInput, "CommunicationEstablishmentFailureInput");
+  m_StateMachine.AddInput( m_EstablishCommunicationInput,
+                           "EstablishCommunicationInput");
 
-  m_StateMachine.AddInput( m_ActivateToolsInput, "ActivateToolsInput");
-  m_StateMachine.AddInput( m_ToolsActivationSuccessInput, "ToolsActivationSuccessInput");
-  m_StateMachine.AddInput( m_ToolsActivationFailureInput, "ToolsActivationFailureInput");
+  m_StateMachine.AddInput( m_CommunicationEstablishmentSuccessInput,
+                           "CommunicationEstablishmentSuccessInput");
 
-  m_StateMachine.AddInput( m_StartTrackingInput, "StartTrackingInput");
-  m_StateMachine.AddInput( m_StartTrackingSuccessInput, "StartTrackingSuccessInput");
-  m_StateMachine.AddInput( m_StartTrackingFailureInput, "StartTrackingFailureInput");
+  m_StateMachine.AddInput( m_CommunicationEstablishmentFailureInput,
+                           "CommunicationEstablishmentFailureInput");
 
-  m_StateMachine.AddInput( m_UpdateStatusInput,  "UpdateStatus");
+  m_StateMachine.AddInput( m_ActivateToolsInput,
+                           "ActivateToolsInput");
 
-  m_StateMachine.AddInput( m_StopTrackingInput,  "StopTracking");
-  m_StateMachine.AddInput( m_StopTrackingSuccessInput, "StopTrackingSuccessInput");
-  m_StateMachine.AddInput( m_StopTrackingFailureInput, "StopTrackingFailureInput");
+  m_StateMachine.AddInput( m_ToolsActivationSuccessInput,
+                           "ToolsActivationSuccessInput");
 
-  m_StateMachine.AddInput( m_ResetTrackingInput, "ResetTracking");
+  m_StateMachine.AddInput( m_ToolsActivationFailureInput,
+                           "ToolsActivationFailureInput");
 
-  m_StateMachine.AddInput( m_CloseTrackingInput, "CloseTracking");
-  m_StateMachine.AddInput( m_CloseTrackingSuccessInput, "CloseTrackingSuccessInput");
-  m_StateMachine.AddInput( m_CloseTrackingFailureInput, "CloseTrackingFailureInput");
+  m_StateMachine.AddInput( m_StartTrackingInput,
+                           "StartTrackingInput");
+
+  m_StateMachine.AddInput( m_StartTrackingSuccessInput,
+                           "StartTrackingSuccessInput");
+
+  m_StateMachine.AddInput( m_StartTrackingFailureInput,
+                           "StartTrackingFailureInput");
+
+  m_StateMachine.AddInput( m_UpdateStatusInput,
+                           "UpdateStatusInput");
+
+  m_StateMachine.AddInput( m_StopTrackingInput,
+                           "StopTrackingInput");
+
+  m_StateMachine.AddInput( m_StopTrackingSuccessInput,
+                           "StopTrackingSuccessInput");
+
+  m_StateMachine.AddInput( m_StopTrackingFailureInput,
+                           "StopTrackingFailureInput");
+
+  m_StateMachine.AddInput( m_ResetInput,
+                           "ResetInput");
+
+  m_StateMachine.AddInput( m_CloseCommunicationInput,
+                           "CloseCommunicationInput");
+
+  m_StateMachine.AddInput( m_CloseCommunicationSuccessInput,
+                           "CloseCommunicationSuccessInput");
+
+  m_StateMachine.AddInput( m_CloseCommunicationFailureInput,
+                           "CloseCommunicationFailureInput");
 
 
-  // Programming the state machine transitions
-  m_StateMachine.AddTransition( m_IdleState, m_SetUpCommunicationInput,  m_AttemptingToEstablishCommunicationState, &Tracker::AttemptToOpen );
-  m_StateMachine.AddTransition( m_AttemptingToEstablishCommunicationState, m_CommunicationEstablishmentSuccessInput, m_CommunicationEstablishedState, &Tracker::CommunicationEstablishmentSuccessProcessing );
-  m_StateMachine.AddTransition( m_AttemptingToEstablishCommunicationState, m_CommunicationEstablishmentFailureInput, m_IdleState, &Tracker::CommunicationEstablishmentFailureProcessing);
+  // Programming the state machine transitions:
 
-  m_StateMachine.AddTransition( m_CommunicationEstablishedState, m_ActivateToolsInput, m_AttemptingToActivateToolsState, &Tracker::AttemptToActivateTools );
-  m_StateMachine.AddTransition( m_AttemptingToActivateToolsState, m_ToolsActivationSuccessInput, m_ToolsActiveState, &Tracker::ToolsActivationSuccessProcessing );
-  m_StateMachine.AddTransition( m_AttemptingToActivateToolsState, m_ToolsActivationFailureInput, m_CommunicationEstablishedState, &Tracker::ToolsActivationFailureProcessing );
+  // Transitions from the IdleState
+  m_StateMachine.AddTransition( m_IdleState,
+                                m_EstablishCommunicationInput,
+                                m_AttemptingToEstablishCommunicationState,
+                                &Tracker::AttemptToOpen );
 
-  m_StateMachine.AddTransition( m_ToolsActiveState, m_StartTrackingInput, m_AttemptingToTrackState, &Tracker::AttemptToStartTracking );
-  m_StateMachine.AddTransition( m_AttemptingToTrackState, m_StartTrackingSuccessInput, m_TrackingState, &Tracker::StartTrackingSuccessProcessing );
-  m_StateMachine.AddTransition( m_AttemptingToTrackState, m_StartTrackingFailureInput, m_ToolsActiveState, &Tracker::StartTrackingFailureProcessing );
+  // Transitions from the AttemptingToEstablishCommunicationState
+  m_StateMachine.AddTransition( m_AttemptingToEstablishCommunicationState,
+                                m_CommunicationEstablishmentSuccessInput,
+                                m_CommunicationEstablishedState,
+                                &Tracker::CommunicationEstablishmentSuccessProcessing );
 
-  m_StateMachine.AddTransition( m_TrackingState, m_UpdateStatusInput, m_TrackingState, &Tracker::AttemptToUpdateStatus );
+  m_StateMachine.AddTransition( m_AttemptingToEstablishCommunicationState,
+                                m_CommunicationEstablishmentFailureInput,
+                                m_IdleState,
+                                &Tracker::CommunicationEstablishmentFailureProcessing);
 
-  m_StateMachine.AddTransition( m_TrackingState, m_StopTrackingInput, m_AttemptingToStopTrackingState, &Tracker::AttemptToStopTracking );
-  m_StateMachine.AddTransition( m_AttemptingToStopTrackingState, m_StopTrackingSuccessInput, m_ToolsActiveState, &Tracker::StopTrackingSuccessProcessing );
-  m_StateMachine.AddTransition( m_AttemptingToStopTrackingState, m_StopTrackingFailureInput, m_TrackingState, &Tracker::StopTrackingFailureProcessing );
+  // Transitions from CommunicationEstablishedState
+  m_StateMachine.AddTransition( m_CommunicationEstablishedState,
+                                m_ActivateToolsInput,
+                                m_AttemptingToActivateToolsState,
+                                &Tracker::AttemptToActivateTools );
 
-  m_StateMachine.AddTransition( m_TrackingState, m_ResetTrackingInput, m_TrackingState,  &Tracker::AttemptToReset );
+  m_StateMachine.AddTransition( m_CommunicationEstablishedState,
+                                m_CloseCommunicationInput,
+                                m_AttemptingToCloseCommunicationState,
+                                &Tracker::CloseFromCommunicatingStateProcessing );
 
-  m_StateMachine.AddTransition( m_TrackingState, m_CloseTrackingInput, m_AttemptingToCloseTrackingState, &Tracker::CloseFromTrackingStateProcessing );
-  m_StateMachine.AddTransition( m_ToolsActiveState, m_CloseTrackingInput, m_AttemptingToCloseTrackingState, &Tracker::CloseFromToolsActiveStateProcessing );
-  m_StateMachine.AddTransition( m_CommunicationEstablishedState, m_CloseTrackingInput, m_AttemptingToCloseTrackingState, &Tracker::CloseFromCommunicatingStateProcessing );
-  m_StateMachine.AddTransition( m_AttemptingToCloseTrackingState, m_CloseTrackingSuccessInput, m_IdleState, &Tracker::CloseTrackingSuccessProcessing );
-  m_StateMachine.AddTransition( m_AttemptingToCloseTrackingState, m_CloseTrackingFailureInput, m_CommunicationEstablishedState, &Tracker::CloseTrackingFailureProcessing );
+  m_StateMachine.AddTransition( m_CommunicationEstablishedState,
+                                m_ResetInput,
+                                m_CommunicationEstablishedState,
+                                &Tracker::ResetFromCommunicatingStateProcessing );
 
+  // Transitions from AttemptingToActivateToolsState
+  m_StateMachine.AddTransition( m_AttemptingToActivateToolsState,
+                                m_ToolsActivationSuccessInput,
+                                m_ToolsActiveState,
+                                &Tracker::ToolsActivationSuccessProcessing );
+
+  m_StateMachine.AddTransition( m_AttemptingToActivateToolsState,
+                                m_ToolsActivationFailureInput,
+                                m_CommunicationEstablishedState,
+                                &Tracker::ToolsActivationFailureProcessing );
+
+  // Transitions from ToolsActiveState
+  m_StateMachine.AddTransition( m_ToolsActiveState,
+                                m_StartTrackingInput,
+                                m_AttemptingToTrackState,
+                                &Tracker::AttemptToStartTracking );
+
+  m_StateMachine.AddTransition( m_ToolsActiveState,
+                                m_CloseCommunicationInput,
+                                m_AttemptingToCloseCommunicationState,
+                                &Tracker::CloseFromToolsActiveStateProcessing );
+
+  m_StateMachine.AddTransition( m_ToolsActiveState,
+                                m_ResetInput,
+                                m_CommunicationEstablishedState,
+                                &Tracker::ResetFromToolsActiveStateProcessing );
+
+  // Transitions from AttemptingToTrackState
+  m_StateMachine.AddTransition( m_AttemptingToTrackState,
+                                m_StartTrackingSuccessInput,
+                                m_TrackingState,
+                                &Tracker::StartTrackingSuccessProcessing );
+
+  m_StateMachine.AddTransition( m_AttemptingToTrackState,
+                                m_StartTrackingFailureInput,
+                                m_ToolsActiveState,
+                                &Tracker::StartTrackingFailureProcessing );
+
+  // Transitions from TrackingState
+  m_StateMachine.AddTransition( m_TrackingState,
+                                m_UpdateStatusInput,
+                                m_TrackingState,
+                                &Tracker::AttemptToUpdateStatus );
+
+  m_StateMachine.AddTransition( m_TrackingState,
+                                m_StopTrackingInput,
+                                m_AttemptingToStopTrackingState,
+                                &Tracker::AttemptToStopTracking );
+
+  m_StateMachine.AddTransition( m_TrackingState,
+                                m_ResetInput,
+                                m_CommunicationEstablishedState,
+                                &Tracker::ResetFromTrackingStateProcessing );
+
+  m_StateMachine.AddTransition( m_TrackingState,
+                                m_CloseCommunicationInput,
+                                m_AttemptingToCloseCommunicationState,
+                                &Tracker::CloseFromTrackingStateProcessing );
+
+  // Transitions from AttemptingToStopTrackingState
+  m_StateMachine.AddTransition( m_AttemptingToStopTrackingState,
+                                m_StopTrackingSuccessInput,
+                                m_ToolsActiveState,
+                                &Tracker::StopTrackingSuccessProcessing );
+
+  m_StateMachine.AddTransition( m_AttemptingToStopTrackingState,
+                                m_StopTrackingFailureInput,
+                                m_TrackingState,
+                                &Tracker::StopTrackingFailureProcessing );
+
+  m_StateMachine.AddTransition( m_AttemptingToCloseCommunicationState,
+                                m_CloseCommunicationSuccessInput,
+                                m_IdleState,
+                                &Tracker::CloseCommunicationSuccessProcessing );
+
+  m_StateMachine.AddTransition( m_AttemptingToCloseCommunicationState,
+                                m_CloseCommunicationFailureInput,
+                                m_CommunicationEstablishedState,
+                                &Tracker::CloseCommunicationFailureProcessing );
+
+  // Select the initial state of the state machine
   m_StateMachine.SelectInitialState( m_IdleState );
 
   // Finish the programming and get ready to run
@@ -105,9 +238,11 @@ Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
 
   m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
 
-  m_PulseGenerator->RequestSetFrequency( 30 ); // 30 Hz is rather low frequency for tracking.
+  // This is update rate for sending tracking information to the
+  // spatial objects, it should be set to at least 30 Hz
+  m_PulseGenerator->RequestSetFrequency( 30 );
 
-  // For default, the reference tool's transform is not applied to other tool transforms.
+  // By default, the reference is not used
   m_ApplyingReferenceTool = false;
 }
 
@@ -123,7 +258,7 @@ Tracker::~Tracker(void)
 void Tracker::Open( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::Open called...\n");
-  this->m_StateMachine.PushInput( this->m_SetUpCommunicationInput );
+  this->m_StateMachine.PushInput( this->m_EstablishCommunicationInput );
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -132,7 +267,7 @@ void Tracker::Open( void )
 void Tracker::Close( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::Close called ...\n");
-  m_StateMachine.PushInput( m_CloseTrackingInput );
+  m_StateMachine.PushInput( m_CloseCommunicationInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -151,7 +286,7 @@ void Tracker::Initialize( void )
 void Tracker::Reset( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::Reset called ...\n");
-  m_StateMachine.PushInput( m_ResetTrackingInput );
+  m_StateMachine.PushInput( m_ResetInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -189,7 +324,9 @@ void Tracker::UpdateStatus( void )
  * port numbered "portNumber" in the variable "position". Note that this
  * variable represents the position and orientation of the tool in 3D space.
  * */
-void Tracker::GetToolTransform( unsigned int portNumber, unsigned int toolNumber, TransformType &transitions ) const
+void Tracker::GetToolTransform( unsigned int portNumber,
+                                unsigned int toolNumber,
+                                TransformType &transitions ) const
 {
   if ( portNumber < this->m_Ports.size()  )
     {
@@ -259,7 +396,9 @@ void Tracker::GetToolTransform( unsigned int portNumber, unsigned int toolNumber
  * port numbered "portNumber" by the content of variable "position". Note
  * that this variable represents the position and orientation of the tool in
  * 3D space.  */
-void Tracker::SetToolTransform( unsigned int portNumber, unsigned int toolNumber, const TransformType & transform )
+void Tracker::SetToolTransform( unsigned int portNumber,
+                                unsigned int toolNumber,
+                                const TransformType & transform )
 {
 
   if ( portNumber < this->m_Ports.size()  )
@@ -279,8 +418,9 @@ void Tracker::SetToolTransform( unsigned int portNumber, unsigned int toolNumber
 
 /** Associate a TrackerTool to an object to be tracked. This is a one-to-one
  * association and cannot be changed during the life of the application */
-void Tracker::AttachObjectToTrackerTool( 
-        unsigned int portNumber, unsigned int toolNumber, SpatialObject * objectToTrack )
+void Tracker::AttachObjectToTrackerTool( unsigned int portNumber,
+                                         unsigned int toolNumber,
+                                         SpatialObject * objectToTrack )
 {
 
   if ( portNumber < this->m_Ports.size()  )
@@ -402,8 +542,9 @@ void Tracker::AttemptToOpen( void )
   ResultType result;
   result = InternalOpen();
   
-  m_StateMachine.PushInputBoolean( (bool)result, m_CommunicationEstablishmentSuccessInput,
-    m_CommunicationEstablishmentFailureInput );
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_CommunicationEstablishmentSuccessInput,
+                                   m_CommunicationEstablishmentFailureInput );
 }
 
 
@@ -421,11 +562,24 @@ void Tracker::CommunicationEstablishmentFailureProcessing( void )
 }
 
 
-/** The "AttemptToReset" method attempts to bring the tracker
-    to some defined default state. */
-void Tracker::AttemptToReset( void )
+/** The Reset methods force the tracker to the CommunicationEstablished state */
+void Tracker::ResetFromTrackingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToReset called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::ResetFromTrackingStateProcessing( called ...\n");
+  this->ExitTrackingStateProcessing();
+  this->ResetFromToolsActiveStateProcessing();
+}
+
+/** The Reset methods force the tracker to the CommunicationEstablished state */
+void Tracker::ResetFromToolsActiveStateProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::ResetFromToolsActiveStateProcessing( called ...\n");
+  this->ResetFromCommunicatingStateProcessing();
+}
+
+/** The Reset methods force the tracker to the CommunicationEstablished state */
+void Tracker::ResetFromCommunicatingStateProcessing( void )
+{
   ResultType result;
   result = InternalReset();
   if( result == SUCCESS )
@@ -438,7 +592,6 @@ void Tracker::AttemptToReset( void )
     }
 }
 
-
 /** The "AttemptToActivateTools" method attempts to activate tools. */
 void Tracker::AttemptToActivateTools( void )
 {
@@ -446,7 +599,9 @@ void Tracker::AttemptToActivateTools( void )
   ResultType result;
   result = InternalActivateTools();
   
-  m_StateMachine.PushInputBoolean( (bool)result, m_ToolsActivationSuccessInput, m_ToolsActivationFailureInput );
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_ToolsActivationSuccessInput,
+                                   m_ToolsActivationFailureInput );
 }
   
 
@@ -469,14 +624,16 @@ void Tracker::AttemptToStartTracking( void )
   ResultType result;
   result = InternalStartTracking();
   
-  m_StateMachine.PushInputBoolean( (bool)result, m_StartTrackingSuccessInput, m_StartTrackingFailureInput );
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_StartTrackingSuccessInput,
+                                   m_StartTrackingFailureInput );
 }
 
 /** Post-processing after start tracking has been successful. */ 
 void Tracker::StartTrackingSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StartTrackingSuccessProcessing called ...\n");
-  m_PulseGenerator->RequestStart();
+  this->EnterTrackingStateProcessing();
 }
 
 /** Post-processing after start tracking has failed. */ 
@@ -490,9 +647,11 @@ void Tracker::AttemptToStopTracking( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStopTracking called ...\n");
   ResultType result;
-  result = InternalStopTracking();
+  result = this->InternalStopTracking();
   
-  m_StateMachine.PushInputBoolean( (bool)result, m_StopTrackingSuccessInput, m_StopTrackingFailureInput );
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_StopTrackingSuccessInput,
+                                   m_StopTrackingFailureInput );
 }
 
 
@@ -500,13 +659,29 @@ void Tracker::AttemptToStopTracking( void )
 void Tracker::StopTrackingSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StopTrackingSuccessProcessing called ...\n");
-  m_PulseGenerator->RequestStop();
+  this->ExitTrackingStateProcessing();
 }
 
 /** Post-processing after start tracking has failed. */ 
 void Tracker::StopTrackingFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StopTrackingFailureProcessing called ...\n");
+}
+
+/** Needs to be called every time when entering tracking state. */ 
+void Tracker::EnterTrackingStateProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::EnterTrackingStateProcessing called ...\n");
+  // start the tracking thread here
+  m_PulseGenerator->RequestStart();
+}
+
+/** Needs to be called every time when exiting tracking state. */ 
+void Tracker::ExitTrackingStateProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::ExitTrackingStateProcessing called ...\n");
+  m_PulseGenerator->RequestStop();
+  // stop the tracking thread here
 }
 
 /** The "AttemptToUpdateStatus" method attempts to update status
@@ -536,6 +711,8 @@ void Tracker::CloseFromTrackingStateProcessing( void )
   result = InternalStopTracking();
   if( result == SUCCESS )
     {
+    this->ExitTrackingStateProcessing();
+
     result = InternalDeactivateTools();
     if ( result == SUCCESS )
       {
@@ -543,10 +720,9 @@ void Tracker::CloseFromTrackingStateProcessing( void )
       }
     }
 
-  m_StateMachine.PushInputBoolean( (bool)result, m_CloseTrackingSuccessInput, m_CloseTrackingFailureInput );
-
-  // stop the pulse generator
-  m_PulseGenerator->RequestStop();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_CloseCommunicationSuccessInput,
+                                   m_CloseCommunicationFailureInput );
 }
 
 /** The "CloseFromToolsActiveStateProcessing" method closes tracker
@@ -562,7 +738,9 @@ void Tracker::CloseFromToolsActiveStateProcessing( void)
     result = InternalClose();
     }
 
-  m_StateMachine.PushInputBoolean( (bool)result, m_CloseTrackingSuccessInput, m_CloseTrackingFailureInput );
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_CloseCommunicationSuccessInput,
+                                   m_CloseCommunicationFailureInput );
 }
 
 /** The "CloseFromCommunicatingStateProcessing" method closes
@@ -573,20 +751,22 @@ void Tracker::CloseFromCommunicatingStateProcessing( void )
   igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToClose called ...\n");
   ResultType result;
   result = InternalClose();
-  m_StateMachine.PushInputBoolean( (bool)result, m_CloseTrackingSuccessInput, m_CloseTrackingFailureInput );
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_CloseCommunicationSuccessInput,
+                                   m_CloseCommunicationFailureInput );
 }
 
 
 /** Post-processing after close tracking has been successful. */ 
-void Tracker::CloseTrackingSuccessProcessing( void )
+void Tracker::CloseCommunicationSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::CloseTrackingSuccessProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::CloseCommunicationSuccessProcessing called ...\n");
 }
 
 /** Post-processing after close tracking has failed. */ 
-void Tracker::CloseTrackingFailureProcessing( void )
+void Tracker::CloseCommunicationFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::CloseTrackingFailureProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::CloseCommunicationFailureProcessing called ...\n");
 }
 
 
@@ -617,7 +797,9 @@ void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 
 
 /** The "SetReferenceTool" sets the reference tool. */
-void Tracker::SetReferenceTool( bool applyReferenceTool, unsigned int portNumber, unsigned int toolNumber )
+void Tracker::SetReferenceTool( bool applyReferenceTool,
+                                unsigned int portNumber,
+                                unsigned int toolNumber )
 {
   if( applyReferenceTool == false )
     {
@@ -645,7 +827,8 @@ void Tracker::SetReferenceTool( bool applyReferenceTool, unsigned int portNumber
 /** The "GetReferenceTool" gets the reference tool.
  * If the reference tool is not applied, it returns false.
  * Otherwise, it returns true. */
-bool Tracker::GetReferenceTool( unsigned int &portNumber, unsigned int &toolNumber ) const
+bool Tracker::GetReferenceTool( unsigned int &portNumber,
+                                unsigned int &toolNumber ) const
 {
   portNumber = m_ReferenceToolPortNumber;
   toolNumber = m_ReferenceToolNumber;
