@@ -37,7 +37,8 @@
 int main(int , char** )
 { 
   TwoViews* m_GUI = new TwoViews();
-  m_GUI->Window->show();
+
+  m_GUI->MainWindow->show();
 
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
@@ -114,10 +115,21 @@ int main(int , char** )
   // Enable interactions
   m_GUI->Display1->RequestEnableInteractions();
 
-  m_GUI->MouseTrackerBox->SetObjectToTrack( ellipsoid );
-  m_GUI->MouseTrackerBox->SetView( m_GUI->Display1 );
-  m_GUI->MouseTrackerBox->SetView2( m_GUI->Display2 );
-   
+   // Create a tracker
+  igstk::MouseTracker::Pointer tracker = igstk::MouseTracker::New();
+
+  // Initialize the tracker
+  tracker->Open();
+  tracker->Initialize();
+  tracker->SetScaleFactor( 100.0 );
+
+  const unsigned int toolPort = 0;
+  const unsigned int toolNumber = 0;
+  tracker->AttachObjectToTrackerTool( toolPort, toolNumber, ellipsoid );
+
+  m_GUI->SetTracker( tracker );
+
+  
   m_GUI->Display1->RequestRemoveObject( cylinderRepresentation );
   m_GUI->Display1->Update();
 
@@ -136,7 +148,7 @@ int main(int , char** )
  
   m_GUI->Display1->SetLogger( logger ); 
   m_GUI->Display2->SetLogger( logger ); 
-  m_GUI->MouseTrackerBox->GetTracker()->SetLogger( logger );
+  tracker->SetLogger( logger );
 
   m_GUI->Display1->RequestSetRefreshRate( 30 ); // 30 Hz
   m_GUI->Display2->RequestSetRefreshRate( 30 ); // 30 Hz
@@ -145,6 +157,9 @@ int main(int , char** )
   m_GUI->Display2->RequestStart();
 
   Fl::run();
+
+  tracker->StopTracking();
+  tracker->Close();
 
   delete m_GUI;
 

@@ -1,14 +1,14 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0105 
+version 1.0106 
 header_name {.h} 
 code_name {.cxx}
 class TwoViews {open
 } {
   Function {TwoViews()} {open
   } {
-    Fl_Window Window {
+    Fl_Window MainWindow {
       label {IGSTK: Two Views Example} open
-      xywh {619 249 780 494} type Double resizable visible
+      xywh {495 249 780 375} type Double resizable visible
     } {
       Fl_Box Display1 {
         label {Display 1}
@@ -18,23 +18,44 @@ class TwoViews {open
       }
       Fl_Light_Button TrackingBt {
         label Tracking
-        callback {MouseTrackerBox->SetTracking(o->value());}
-        xywh {30 410 85 25} labelsize 11
-      }
-      Fl_Box MouseTrackerBox {
-        label {Mouse Tracking}
-        xywh {140 340 635 150} box FLAT_BOX color 8 labelsize 11 labelcolor 7
-        code0 {\#include <TrackingBox.h>}
-        class TrackingBox
+        callback {this->SetTracking(o->value());}
+        xywh {5 345 85 25} labelsize 11
+        code0 {\#include "igstkTracker.h"}
       }
       Fl_Box Display2 {
-        label {Display 2} selected
+        label {Display 2}
         xywh {395 5 380 330} box FLAT_BOX color 0 labelcolor 7
         code0 {\#include <igstkView3D.h>}
         class {igstk::View3D}
       }
+      Fl_Button {} {
+        label Quit
+        callback {this->Quit();}
+        xywh {690 345 85 25}
+      }
     }
   }
-  Function {~TwoViews()} {open
+  Function {~TwoViews()} {open return_type virtual
   } {}
+  Function {Quit()} {return_type {virtual void}
+  } {
+    code {this->MainWindow->hide();} {}
+  }
+  Function {SetTracking( bool tracking )} {open return_type {virtual void}
+  } {
+    code {if( tracking )
+  {
+  this->m_Tracker->StartTracking();
+  }
+else
+  {
+  this->m_Tracker->StopTracking();
+  }} {selected
+    }
+  }
+  Function {SetTracker( igstk::Tracker * tracker )} {return_type {virtual void}
+  } {
+    code {this->m_Tracker = tracker;} {}
+  }
+  decl {igstk::Tracker::Pointer m_Tracker;} {}
 } 
