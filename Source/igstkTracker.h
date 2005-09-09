@@ -22,13 +22,15 @@
 
 #include "itkObject.h"
 #include "itkLogger.h"
+#include "itkMutexLock.h"
+#include "itkMultiThreader.h"
+#include "itkVersorTransform.h"
 
 #include "igstkStateMachine.h"
 #include "igstkTrackerPort.h"
 #include "igstkTransform.h"
 #include "igstkSpatialObject.h"
 #include "igstkPulseGenerator.h"
-#include "itkVersorTransform.h"
 
 namespace igstk
 {
@@ -169,9 +171,18 @@ protected:
     SUCCESS
   } ResultType;
 
+  /** itk::MutexLock object pointer */
+  itk::MutexLock::Pointer         m_TrackingThreadLock;
+
   Tracker(void);
 
   virtual ~Tracker(void);
+
+  /** SetThreadingEnabled(bool) : set m_ThreadingEnabled value */
+  igstkSetMacro( ThreadingEnabled, bool );
+
+  /** GetThreadingEnabled(bool) : get m_ThreadingEnabled value  */
+  igstkGetMacro( ThreadingEnabled, bool );
 
   /** The "InternalOpen" method opens communication with a tracking device.
       This method is to be overriden by a decendent class 
@@ -213,6 +224,12 @@ protected:
       and responsible for device-specific processing */
   virtual ResultType InternalUpdateStatus( void );
 
+  /** The "InternalThreadedUpdateStatus" method updates tracker status.
+      This method is called in a separate thread.
+      This method is to be overriden by a decendent class
+      and responsible for device-specific processing */
+  virtual ResultType InternalThreadedUpdateStatus( void );
+
   /** The "AddPort" method adds a port to the tracker. */
   void AddPort( TrackerPortType * port);
 
@@ -252,6 +269,16 @@ private:
   /** ToolCalibration Transform */
   ToolCalibrationTransformType    m_ToolCalibrationTransform;
 
+  /** Multi-threading enabled flag : The decendent class will use multi-threading,
+      if this flag is set as true */
+  bool                            m_ThreadingEnabled;
+
+  /** itk::MultiThreader object pointer */
+  itk::MultiThreader::Pointer     m_Threader;
+
+  /** Tracking ThreadID */
+  int                             m_ThreadID;
+
   /** List of States */
   StateType                m_IdleState;
   StateType                m_AttemptingToEstablishCommunicationState;
@@ -287,6 +314,9 @@ private:
   InputType                m_CloseCommunicationInput;
   InputType                m_CloseCommunicationSuccessInput;
   InputType                m_CloseCommunicationFailureInput;
+
+  /** Thread function for tracking */
+  static ITK_THREAD_RETURN_TYPE TrackingThreadFunction(void* pInfoStruct);
 
   /** The "AttemptToOpen" method attempts to open communication with a
       tracking device. */

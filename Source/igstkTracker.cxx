@@ -244,6 +244,10 @@ Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
 
   // By default, the reference is not used
   m_ApplyingReferenceTool = false;
+
+  m_TrackingThreadLock = itk::MutexLock::New();
+  m_Threader = itk::MultiThreader::New();
+  m_ThreadingEnabled = false;
 }
 
 
@@ -534,6 +538,17 @@ Tracker::ResultType Tracker::InternalUpdateStatus( void )
 }
 
 
+/** The "InternalThreadedUpdateStatus" method updates tracker status.
+    This method is called in a separate thread.
+    This method is to be overriden by a decendent class
+    and responsible for device-specific processing */
+Tracker::ResultType Tracker::InternalThreadedUpdateStatus( void )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::InternalThreadedUpdateStatus called ...\n");
+  return SUCCESS;
+}
+
+
 /** The "AttemptToOpen" method attempts to open communication with a
     tracking device. */
 void Tracker::AttemptToOpen( void )
@@ -581,7 +596,8 @@ void Tracker::ResetFromToolsActiveStateProcessing( void )
 void Tracker::ResetFromCommunicatingStateProcessing( void )
 {
   ResultType result;
-  result = InternalReset();
+
+  result = this->InternalReset();
   if( result == SUCCESS )
     {
     igstkLogMacro( DEBUG, "igstk::Tracker::InternalReset succeeded ...\n");
@@ -647,6 +663,8 @@ void Tracker::AttemptToStopTracking( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStopTracking called ...\n");
   ResultType result;
+
+  this->ExitTrackingStateProcessing();
   result = this->InternalStopTracking();
   
   m_StateMachine.PushInputBoolean( (bool)result,
@@ -659,7 +677,6 @@ void Tracker::AttemptToStopTracking( void )
 void Tracker::StopTrackingSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StopTrackingSuccessProcessing called ...\n");
-  this->ExitTrackingStateProcessing();
 }
 
 /** Post-processing after start tracking has failed. */ 
@@ -674,6 +691,10 @@ void Tracker::EnterTrackingStateProcessing( void )
   igstkLogMacro( DEBUG, "igstk::Tracker::EnterTrackingStateProcessing called ...\n");
   // start the tracking thread here
   m_PulseGenerator->RequestStart();
+  if( this->GetThreadingEnabled() )
+    {
+    m_ThreadID = m_Threader->SpawnThread(TrackingThreadFunction, this);
+    }
 }
 
 /** Needs to be called every time when exiting tracking state. */ 
@@ -682,6 +703,14 @@ void Tracker::ExitTrackingStateProcessing( void )
   igstkLogMacro( DEBUG, "igstk::Tracker::ExitTrackingStateProcessing called ...\n");
   m_PulseGenerator->RequestStop();
   // stop the tracking thread here
+  // Terminating the TrackingThread.
+  m_TrackingThreadLock->Lock();
+  if( this->GetThreadingEnabled() )
+    {
+    m_Threader->TerminateThread(m_ThreadID);
+    }
+
+  m_TrackingThreadLock->Unlock();
 }
 
 /** The "AttemptToUpdateStatus" method attempts to update status
@@ -707,12 +736,10 @@ void Tracker::CloseFromTrackingStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromTrackingStateProcessing called ...\n");
 
-  ResultType result;
-  result = InternalStopTracking();
+  this->ExitTrackingStateProcessing();
+  ResultType result = InternalStopTracking();
   if( result == SUCCESS )
     {
-    this->ExitTrackingStateProcessing();
-
     result = InternalDeactivateTools();
     if ( result == SUCCESS )
       {
@@ -872,6 +899,42 @@ void Tracker::SetToolCalibrationTransform( const Tracker::ToolCalibrationTransfo
 Tracker::ToolCalibrationTransformType Tracker::GetToolCalibrationTransform() const
 {
   return m_ToolCalibrationTransform;
+}
+
+
+/** Thread function for tracking */
+ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
+{
+  struct itk::MultiThreader::ThreadInfoStruct * pInfo = (struct itk::MultiThreader::ThreadInfoStruct*)pInfoStruct;
+
+  if( pInfo == NULL )
+  {
+    return ITK_THREAD_RETURN_VALUE;
+  }
+
+  if( pInfo->UserData == NULL )
+  {
+    return ITK_THREAD_RETURN_VALUE;
+  }
+
+  Tracker *pTracker = (Tracker*)pInfo->UserData;
+
+  while( 1 )
+  {
+    pTracker->InternalThreadedUpdateStatus();
+
+    // check to see if we are being told to quit 
+    pInfo->ActiveFlagLock->Lock();
+    int activeFlag = *pInfo->ActiveFlag;
+    pInfo->ActiveFlagLock->Unlock();
+    if( !activeFlag )
+      {
+      break;
+      }
+  }
+
+  igstkLogMacroStatic(pTracker, DEBUG, "TrackingThreadFunction was terminated." << std::endl );
+  return ITK_THREAD_RETURN_VALUE;
 }
 
 
