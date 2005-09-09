@@ -37,15 +37,14 @@ MouseTracker::~MouseTracker()
 {
 }
 
-/*
-void MouseTracker::Initialize( const char *fileName )
+
+void MouseTracker::Initialize()
 {
   igstkLogMacro( DEBUG, "MouseTracker::Initialize called ...\n");
-  Tracker::Initialize();
   m_ValidityTime = 100.0; // 100.0 milliseconds
-  this->SetUpToolsProcessing();
+  this->Tracker::Initialize();
 }
-*/
+
     
 MouseTracker::ResultType MouseTracker::InternalOpen( void )
 {

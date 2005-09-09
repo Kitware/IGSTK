@@ -40,7 +40,7 @@ public:
 
     igstkTypeMacro( MouseTracker, Tracker );
 
-//    void Initialize( const char *fileName = NULL );
+    void Initialize();
 
     void GetTransform(TransformType & transform);
 
