@@ -6,7 +6,6 @@ SET(TwoViews_GUI_SRCS
   
 SET(TwoViews_SRCS
     main.cxx
-    TrackingBox.h
     )
 
 INCLUDE_DIRECTORIES(
