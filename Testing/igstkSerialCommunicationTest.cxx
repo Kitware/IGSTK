@@ -155,6 +155,7 @@ int igstkSerialCommunicationTest( int, char * [] )
     std::cout << "Set/GetCapture() failed" << std::endl;
     std::cout << "[FAILED]" << std::endl;
     }
+  std::cout << "CaptureFileName: " << serialComm->GetCaptureFileName() << std::endl;
 
   unsigned int len = strlen("Hello World!!!");
   unsigned int numberOfBytesRead = 0;
@@ -166,6 +167,9 @@ int igstkSerialCommunicationTest( int, char * [] )
   serialComm->OpenCommunication();  
   serialComm->Write("Hello World!!!", len);
   serialComm->Read(reply, len, numberOfBytesRead);
+  serialComm->PurgeBuffers();
+  serialComm->Sleep(1000);
+  serialComm->SendBreak();
   serialComm->CloseCommunication();
   // exit since a real test isn't possible without loopback device
   return EXIT_SUCCESS;
@@ -181,6 +185,8 @@ int igstkSerialCommunicationTest( int, char * [] )
   // perform a simple read/write test
   serialComm->Write("Hello World!!!", len);
   serialComm->Read(reply, len, numberOfBytesRead);
+  serialComm->PurgeBuffers();
+  serialComm->Sleep(1000);
 
   if (numberOfBytesRead != len ||
       strncmp(reply, "Hello World!!!", len) != 0)
