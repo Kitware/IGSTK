@@ -158,6 +158,10 @@ int igstkAuroraTrackerTest( int, char * [] )
 
   tracker->Reset();
 
+  tracker->Initialize();
+  
+  tracker->StartTracking();
+
   tracker->StopTracking();
 
   tracker->Close();
