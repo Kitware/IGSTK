@@ -45,7 +45,8 @@ public:
   /** Return value type for interface functions */ 
   typedef SerialCommunication::ResultType ResultType;
 
-  typedef SerialCommunicationForPosix  Self;
+  typedef SerialCommunicationForPosix    Self;
+  typedef SerialCommunication            Superclass;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 

@@ -44,6 +44,7 @@ public:
   typedef std::ifstream   FileType;
 
   typedef SerialCommunicationSimulator   Self;
+  typedef SerialCommunication            Superclass;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
