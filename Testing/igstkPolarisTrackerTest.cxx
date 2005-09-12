@@ -186,6 +186,10 @@ int igstkPolarisTrackerTest( int, char * [] )
   }
   
   tracker->Reset();
+  
+  tracker->Initialize();
+  
+  tracker->StartTracking();
 
   tracker->StopTracking();
 
