@@ -184,6 +184,8 @@ int igstkPolarisTrackerTest( int, char * [] )
     position = transitions.GetTranslation();
     std::cout << "Position = (" << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
   }
+  
+  tracker->Reset();
 
   tracker->StopTracking();
 
