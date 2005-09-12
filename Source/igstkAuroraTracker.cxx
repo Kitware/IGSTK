@@ -401,22 +401,6 @@ bool AuroraTracker::LoadVirtualSROM( const int tool, std::string SROMFileName)
       return false;
       }
     }
-  else // wireless tools
-    {
-    // This is actually code for the POLARIS:
-    // all tools past the first three assumed to be passive tools
-    // identified by the letters "A", "B", "C", etc.
-    char portIdentifier[3] = "00";
-    portIdentifier[1] = tool-3+'A';
-
-    m_CommandInterpreter->PHRQ("********", // device number
-                               "*",        // TIU or SCU
-                               "*",        // wired or wireless
-                               portIdentifier,      // port
-                               "**");      // channel
- 
-    ph = m_CommandInterpreter->GetPHRQHandle();
-    }
   errnum = m_CommandInterpreter->GetError();
   if (errnum)
     {
