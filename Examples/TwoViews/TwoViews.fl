@@ -4,6 +4,10 @@ header_name {.h}
 code_name {.cxx}
 class TwoViews {open
 } {
+  decl {typedef igstk::Tracker   TrackerType;} {public
+  }
+  decl {typedef TrackerType::Pointer  TrackerPointer;} {public
+  }
   Function {TwoViews()} {open
   } {
     Fl_Window MainWindow {
@@ -50,12 +54,11 @@ class TwoViews {open
 else
   {
   this->m_Tracker->StopTracking();
-  }} {selected
-    }
+  }} {}
   }
-  Function {SetTracker( igstk::Tracker * tracker )} {return_type {virtual void}
+  Function {SetTracker( TrackerType * tracker )} {selected return_type {virtual void}
   } {
     code {this->m_Tracker = tracker;} {}
   }
-  decl {igstk::Tracker::Pointer m_Tracker;} {}
+  decl {TrackerPointer m_Tracker;} {}
 } 
