@@ -84,6 +84,7 @@ public:
                        HandshakeOn = 1 };
 
   typedef SerialCommunication            Self;
+  typedef Communication                  Superclass;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 

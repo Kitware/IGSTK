@@ -42,6 +42,7 @@ public:
   /** Some required typedefs for itk::Object. */
 
   typedef TrackerTool                    Self;
+  typedef itk::Object                    Superclass;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 

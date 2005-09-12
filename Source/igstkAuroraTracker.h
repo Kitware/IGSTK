@@ -58,6 +58,7 @@ public:
 
   /** Some required typedefs for itk::Object. */
   typedef AuroraTracker                  Self;
+  typedef Tracker                        Superclass;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
