@@ -65,9 +65,17 @@ public:
     {
         std::cout << "OpenPortFailureEvent Error Occurred ...\n";
     }
+    else if ( typeid(event)== typeid( CommunicationType::ClosePortFailureEvent))
+    {
+        std::cout << "ClosePortFailureEvent Error Occurred ...\n";
+    }
     else if ( typeid(event)== typeid( CommunicationType::SetTransferParametersFailureEvent ))
     {
         std::cout << "SetupCommunicationParametersFailureEvent Error Occurred ...\n";
+    }
+    else if ( typeid(event)== typeid( CommunicationType::SendBreakFailureEvent ))
+    {
+        std::cout << "SendBreakFailureEvent Error Occurred ...\n";
     }
     else if ( typeid(event)== typeid( CommunicationType::WriteSuccessEvent ))
     {
@@ -128,6 +136,7 @@ int igstkSerialCommunicationTest( int, char * [] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
+  std::cout << serialComm->GetNameOfClass() << std::endl;
   std::cout << serialComm << std::endl;
 
   serialComm->AddObserver( itk::AnyEvent(), my_command);
@@ -140,13 +149,15 @@ int igstkSerialCommunicationTest( int, char * [] )
   serialComm->SetDataBits( CommunicationType::DataBits8 );
   serialComm->SetStopBits( CommunicationType::StopBits1 );
   serialComm->SetHardwareHandshake( CommunicationType::HandshakeOff );
+  serialComm->SetTimeoutPeriod(100);
 
-  serialComm->GetPortNumber();
-  serialComm->GetParity();
-  serialComm->GetBaudRate();
-  serialComm->GetDataBits();
-  serialComm->GetStopBits();
-  serialComm->GetHardwareHandshake();
+  std::cout << "PortNumber: " << serialComm->GetPortNumber() << std::endl;
+  std::cout << "Parity: " << serialComm->GetParity() << std::endl;
+  std::cout << "BaudRate: " << serialComm->GetBaudRate() << std::endl;
+  std::cout << "DataBits: " << serialComm->GetDataBits() << std::endl;
+  std::cout << "StopBits: " << serialComm->GetStopBits() << std::endl;
+  std::cout << "HardwareHandshake: " << serialComm->GetHardwareHandshake() << std::endl;
+  std::cout << "TimeoutPeriod: " << serialComm->GetTimeoutPeriod() << std::endl;
 
   serialComm->SetCaptureFileName( "RecordedStreamBySerialCommunicationTest.bin" );
   serialComm->SetCapture( true );
