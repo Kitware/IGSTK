@@ -29,6 +29,12 @@ namespace igstk
  * 
  * \brief This class implements Windows specific methods for 32-bit 
  *        communication over a Serial Port(RS-232 connection).
+ *
+ *
+ *  \image html  igstkSerialCommunicationForWindows.png  "SerialCommunicationForWindows State Machine Diagram"
+ *  \image latex igstkSerialCommunicationForWindows.eps  "SerialCommunicationForWindows State Machine Diagram" 
+ *
+ *        
  * \ingroup Communication
  * \ingroup SerialCommunication
  */

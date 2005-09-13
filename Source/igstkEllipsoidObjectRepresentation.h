@@ -33,7 +33,11 @@ namespace igstk
  * object are the three radii defining the lenght of the principal axes of the
  * ellipsoid.  The axes of the ellipsoid are orthogonal. The Ellipsoidal object
  * is rendered in a VTK scene using the vtkSuperquadricSource object.
-
+ *
+ *
+ *  \image html  igstkEllipsoidObjectRepresentation.png  "EllipsoidObjectRepresentation State Machine Diagram"
+ *  \image latex igstkEllipsoidObjectRepresentation.eps  "EllipsoidObjectRepresentation State Machine Diagram" 
+ *
  * 
  * \ingroup ObjectRepresentation
  */

@@ -29,6 +29,10 @@ namespace igstk {
    * from a point of view in which the camera can change its orientation and
    * position.
    *
+   *
+   *  \image html  igstkView3D.png  "View3D State Machine Diagram"
+   *  \image latex igstkView3D.eps  "View3D State Machine Diagram" 
+   *
    */
 class View3D : public View 
 {

@@ -34,7 +34,6 @@
 namespace igstk
 {
 
-class Scene;   // FIXME this should go
 class View;
 
 /** \class ObjectRepresentation
@@ -44,6 +43,10 @@ class View;
  * This class serves as the base class for all the representation objects that
  * will provide a VTK visualization of the Spatial Objects that are composing a
  * give scene.
+ *
+ *
+ *  \image html  igstkObjectRepresentation.png  "ObjectRepresentation State Machine Diagram"
+ *  \image latex igstkObjectRepresentation.eps  "ObjectRepresentation State Machine Diagram" 
  *
  * \ingroup Object
  */

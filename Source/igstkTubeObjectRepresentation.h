@@ -32,6 +32,9 @@ namespace igstk
  * Basically the tube is represented as a VTK actor using a
  * vtkTubeFilter.
  *
+ *  \image html  igstkTubeObjectRepresentation.png  "TubeObjectRepresentation State Machine Diagram"
+ *  \image latex igstkTubeObjectRepresentation.eps  "TubeObjectRepresentation State Machine Diagram" 
+ *
  * \ingroup ObjectRepresentation
  */
 

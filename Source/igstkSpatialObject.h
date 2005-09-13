@@ -38,6 +38,10 @@ namespace igstk
  * flexibility.  This is an abstract class, you should use the derived classes
  * that represent specific shapes.
  *
+ *
+ *  \image html  igstkSpatialObject.png  "SpatialObject State Machine Diagram"
+ *  \image latex igstkSpatialObject.eps  "SpatialObject State Machine Diagram" 
+ *
  * \ingroup Object
  */
 

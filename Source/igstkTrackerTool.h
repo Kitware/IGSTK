@@ -27,14 +27,21 @@
 namespace igstk
 {
 
-/** \class TrackerTool
-    \brief Generic implementation of the Tracker tool.
-
-    This class provides a generic implementation of a tool of
-    a tracker. This may contain hardware specific details of 
-    the tool, along with the fields for position, orientation
-    and error associated with the measurement used.
-*/
+/**  \class TrackerTool
+  *  \brief Generic implementation of the Tracker tool.
+  *
+  *  This class provides a generic implementation of a tool of
+  *  a tracker. This may contain hardware specific details of 
+  *  the tool, along with the fields for position, orientation
+  *  and error associated with the measurement used.
+  *
+  *
+  *
+  *  \image html  igstkTrackerTool.png  "TrackerTool State Machine Diagram"
+  *  \image latex igstkTrackerTool.eps  "TrackerTool State Machine Diagram" 
+  *
+  *
+  */
 
 class TrackerTool : public ::itk::Object
 {

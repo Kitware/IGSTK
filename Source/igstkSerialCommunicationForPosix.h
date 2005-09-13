@@ -34,6 +34,13 @@ namespace igstk
  * 
  * \brief This class implements Posix specific methods for 32-bit 
  *        communication over a Serial Port(RS-232 connection).
+ *
+ *
+ *
+ *  \image html  igstkSerialCommunicationForPosix.png  "SerialCommunicationForPosix State Machine Diagram"
+ *  \image latex igstkSerialCommunicationForPosix.eps  "SerialCommunicationForPosix State Machine Diagram" 
+ *
+ *        
  * \ingroup Communication
  * \ingroup SerialCommunication
  */

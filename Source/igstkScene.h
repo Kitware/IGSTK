@@ -32,6 +32,8 @@ namespace igstk
 * This class represent a Scene object into which one can
 * plug any kind of spatial object representation.
 *
+* \deprecated
+*
 * \sa SpatialObject
 * \sa View
 * \sa View2D

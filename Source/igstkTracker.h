@@ -48,6 +48,13 @@ namespace igstk
  *  The communications object manages communication, either
  *  through serial/parallel ports, or through data files (for
  *  offline execution of tracker.)
+ *
+ *  The following diagram illustrates the state machine of 
+ *  the tracker class
+ *
+ *  \image html  igstkTracker.png  "Tracker State Machine Diagram"
+ *  \image latex igstkTracker.eps  "Tracker State Machine Diagram" 
+ *
  */
 
 class Tracker : public itk::Object

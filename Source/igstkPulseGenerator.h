@@ -30,17 +30,21 @@ namespace igstk
 {
 /** \class PulseGenerator
  *
-    \brief This class produces ClockTickEvents at a user-defined frequency.
-
-    The PulseGenerator is used for generating ClockTickEvents at regular
-    intervals. The pulses are used by classes that need to perform tasks at
-    user-defined frequencies. For example the View classes use the
-    PulseGenerator in order to refresh a predefined frame rate. The precision
-    of the time interval between the pulses is limited by the underlying time
-    functions of the platform. In most cases you should not expect precision
-    below the millisecond range. 
-
-*/
+ *  \brief This class produces ClockTickEvents at a user-defined frequency.
+ *
+ *  The PulseGenerator is used for generating ClockTickEvents at regular
+ *  intervals. The pulses are used by classes that need to perform tasks at
+ *  user-defined frequencies. For example the View classes use the
+ *  PulseGenerator in order to refresh a predefined frame rate. The precision
+ *  of the time interval between the pulses is limited by the underlying time
+ *  functions of the platform. In most cases you should not expect precision
+ *  below the millisecond range. 
+ *
+ *
+ *  \image html  igstkPulseGenerator.png  "PulseGenerator State Machine Diagram"
+ *  \image latex igstkPulseGenerator.eps  "PulseGenerator State Machine Diagram" 
+ *
+ */
 
 class PulseGenerator  : public itk::Object
 {

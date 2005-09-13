@@ -31,6 +31,10 @@ namespace igstk {
    * the field of view. Zooming and Panning operations are possible in this
    * window.
    *
+   *
+   *  \image html  igstkView2D.png  "View2D State Machine Diagram"
+   *  \image latex igstkView2D.eps  "View2D State Machine Diagram" 
+   *
    */
 class View2D : public View 
 {
