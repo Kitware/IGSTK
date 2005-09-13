@@ -45,10 +45,6 @@ public:
   typedef typename LandmarkPointContainerType::const_iterator       PointsContainerConstIterator;
 
 
-  typedef typename TrackerImageType::Pointer                        TrackerImagePointerType;
-  typedef typename ModalityImageType::Pointer                       ModalityImagePointerType;
-
-
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
 
@@ -63,10 +59,6 @@ public:
   igstkGetMacro(TransformInitializer,TransformInitializerPointerType);
   igstkGetMacro(Transform,TransformPointerType);
 
-  /**  Set tracker and modality images */
-  igstkSetMacro(TrackerImage,TrackerImagePointerType);
-  igstkSetMacro(ModalityImage,ModalityImagePointerType);
-  
   /* Peform registration */
   void EvaluateTransform();
 
@@ -79,8 +71,6 @@ protected:
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
-  TrackerImagePointerType                                m_TrackerImage;
-  ModalityImagePointerType                               m_ModalityImage;
   TransformPointerType                                   m_Transform;
   TransformInitializerPointerType                        m_TransformInitializer;
   LandmarkPointContainerType                             m_TrackerImageLandmarks;

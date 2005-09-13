@@ -25,8 +25,6 @@ LandmarkRegistration<TDimension>::~LandmarkRegistration()
 template <unsigned int TDimension>
 void LandmarkRegistration<TDimension>::EvaluateTransform()  
 {
-  m_TransformInitializer->SetFixedImage( m_TrackerImage);
-  m_TransformInitializer->SetMovingImage( m_ModalityImage );
   m_TransformInitializer->SetFixedLandmarks(m_TrackerImageLandmarks);
   m_TransformInitializer->SetMovingLandmarks(m_ModalityImageLandmarks);
   m_TransformInitializer->SetTransform( m_Transform );
