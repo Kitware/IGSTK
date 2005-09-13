@@ -38,6 +38,11 @@
 #include "igstkView2D.h"
 #include "igstkView3D.h"
 #include "igstkSpatialObject.h"
+#ifdef WIN32
+#include "igstkSerialCommunicationForWindows.h"
+#else
+#include "igstkSerialCommunicationForPosix.h"
+#endif
 
 namespace igstk 
 {
@@ -135,6 +140,17 @@ int main( int argc, char * argv [] )
 
   // Exporting Abstract classes by creating derived surrogates for them.
   igstkTestExportStateMachine1( igstk::SpatialObjectSurrogate, outputDirectory, skipLoops );
+
+
+
+  // Export the state diagrams for the Serial Communication classes according
+  // to the current platform.
+#ifdef WIN32
+  igstkTestExportStateMachine1( igstk::SerialCommunicationForWindows, outputDirectory, skipLoops );
+#else
+  igstkTestExportStateMachine1( igstk::SerialCommunicationForPosix, outputDirectory, skipLoops );
+#endif
+
 
   return EXIT_SUCCESS;
 }
