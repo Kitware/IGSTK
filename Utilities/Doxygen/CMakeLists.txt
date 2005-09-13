@@ -29,7 +29,6 @@ IF (BUILD_DOCUMENTATION)
     GET_FILENAME_COMPONENT(ImageBase ${Imagebase} NAME_WE)
     GET_FILENAME_COMPONENT(ImagePath ${dotfile} PATH)
     SET(pngfile ${ImagePath}/${ImageBase}.png)
-    MESSAGE( ${dotfile} ":" ${pngfile} )
     ADD_CUSTOM_COMMAND( 
     SOURCE    ${dotfile}
     COMMAND   ${DOT}
