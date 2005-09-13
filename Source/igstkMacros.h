@@ -124,19 +124,24 @@ public: \
 
 /** Macro that defines all the standard elements related to the StateMachine.
  * This macro factorizes code that should always be present when using the StateMachine. */
-#define  igstkStateMachineMacro() \
+#define  igstkStateMachineMacroBase( igstktypename ) \
 private: \
   typedef StateMachine< Self > StateMachineType; \
-  typedef StateMachineType::TMemberFunctionPointer   ActionType; \
-  typedef StateMachineType::StateType                StateType;  \
-  typedef StateMachineType::InputType                InputType;  \
-  typedef StateMachineType::OutputStreamType OutputStreamType; \
+  typedef igstktypename StateMachineType::TMemberFunctionPointer   ActionType; \
+  typedef igstktypename StateMachineType::StateType                StateType;  \
+  typedef igstktypename StateMachineType::InputType                InputType;  \
+  typedef igstktypename StateMachineType::OutputStreamType OutputStreamType; \
   igstkFriendClassMacro( StateMachine< Self > ); \
   StateMachineType     m_StateMachine; \
 public:  \
   void ExportStateMachineDescription( OutputStreamType & ostr, bool skipLoops=false ) const \
    { m_StateMachine.ExportDescription( ostr, skipLoops ); }
   
+/** This is the StateMachine Macro to be used with non-templated classes */
+#define igstkStateMachineMacro()  igstkStateMachineMacroBase()
+
+/** This is the StateMachine Macro to be used with templated classes */
+#define igstkStateMachineTemplatedMacro() igstkStateMachineMacroBase( typename )
 
 
 }
