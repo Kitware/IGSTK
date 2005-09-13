@@ -265,6 +265,7 @@ int igstkNDICommandInterpreterStressTest( int, char * [] )
                        CommandInterpreterType::NDI_ACCESSORIES |
                        CommandInterpreterType::NDI_PORT_LOCATION);
     int iostatus = interpreter->GetPHINFGPIOStatus();
+    std::cout << "IOStatus: " << iostatus << std::endl;
     a = interpreter->GetPHINFPortStatus();
     interpreter->GetPHINFToolInfo(toolInformation);
     interpreter->GetPHINFPartNumber(toolPartNumber);
