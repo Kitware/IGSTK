@@ -31,7 +31,8 @@ GRAPHICAL_HIERARCHY  = YES
 
 ALLEXTERNALS         = NO
 
-IMAGE_PATH           = "@IGSTK_BINARY_DIR@/Utilities/Doxygen/contrib"
+IMAGE_PATH           = "@IGSTK_BINARY_DIR@/Testing/Temporary/StateMachineDiagrams"
+
 
 OUTPUT_DIRECTORY     = "@IGSTK_BINARY_DIR@/Utilities/Doxygen/doc"
 

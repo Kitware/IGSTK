@@ -22,8 +22,29 @@ IF (BUILD_DOCUMENTATION)
     ${CMAKE_CURRENT_SOURCE_DIR}/doc_makeall.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/doc_makeall.sh)
 
+  FILE(GLOB STATE_MACHINE_DOT_FILES "${IGSTK_BINARY_DIR}/Testing/Temporary/StateMachineDiagrams/*.dot")
+
+  FOREACH(dotfile ${STATE_MACHINE_DOT_FILES})
+    GET_FILENAME_COMPONENT(Imagebase ${dotfile} NAME)
+    GET_FILENAME_COMPONENT(ImageBase ${Imagebase} NAME_WE)
+    GET_FILENAME_COMPONENT(ImagePath ${dotfile} PATH)
+    SET(pngfile ${ImagePath}/${ImageBase}.png)
+    MESSAGE( ${dotfile} ":" ${pngfile} )
+    ADD_CUSTOM_COMMAND( 
+    SOURCE    ${dotfile}
+    COMMAND   ${DOT}
+    ARGS      -Tpng 
+              -o ${pngfile}
+              ${dotfile}
+    TARGET    Documentation
+    OUTPUTS   ${pngfile}
+    )
+    SET(DOT_PNG_DEPS ${DOT_PNG_DEPS} ${pngfile})
+  ENDFOREACH(dotfile)
+
   ADD_CUSTOM_TARGET(Documentation
     ${BASH}
-    ${CMAKE_CURRENT_BINARY_DIR}/doc_makeall.sh)
+    ${CMAKE_CURRENT_BINARY_DIR}/doc_makeall.sh
+    DEPENDS ${DOT_PNG_DEPS})
 
 ENDIF (BUILD_DOCUMENTATION)
