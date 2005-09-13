@@ -246,6 +246,7 @@ Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
   m_ApplyingReferenceTool = false;
 
   m_TrackingThreadLock = itk::MutexLock::New();
+  m_ConditionNextTransformReceived = itk::ConditionVariable::New();
   m_Threader = itk::MultiThreader::New();
   m_ThreadingEnabled = false;
 }
@@ -321,6 +322,15 @@ void Tracker::UpdateStatus( void )
   igstkLogMacro( DEBUG, "igstk::Tracker::UpdateStatus called ...\n");
   m_StateMachine.PushInput( m_UpdateStatusInput );
   m_StateMachine.ProcessInputs();
+}
+
+
+/** The "WaitForNextTransform" waits for the next transform received 
+  * Right now, timeout is ignored 
+  * because itk::ConditionVariable doesn't support */
+void Tracker::WaitForNextTransform( unsigned int timeout )
+{
+  m_ConditionNextTransformReceived->Wait(&m_LockForConditionNextTransformReceived);  
 }
 
 
@@ -929,6 +939,7 @@ ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
   while( 1 )
   {
     pTracker->InternalThreadedUpdateStatus();
+    pTracker->m_ConditionNextTransformReceived->Broadcast();
 
     // check to see if we are being told to quit 
     pInfo->ActiveFlagLock->Lock();
