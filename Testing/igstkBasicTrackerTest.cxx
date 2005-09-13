@@ -276,6 +276,9 @@ int igstkBasicTrackerTest( int, char * [] )
   tracker->Reset(); // for failure
   tracker->Reset(); // for success
 
+  tracker->Initialize();
+  tracker->StartTracking();
+  
   tracker->StopTracking();  // for failure
   tracker->Close();   // for failure of DeactivateTools
   tracker->Close();   // for failure of Close
@@ -298,7 +301,8 @@ int igstkBasicTrackerTest( int, char * [] )
 
   basetracker->UpdateStatus();
   basetracker->Reset();
-
+  basetracker->Initialize();
+  basetracker->StartTracking();
   basetracker->StopTracking();
   basetracker->Close();
 
