@@ -184,42 +184,6 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
       std::cout << "  Modality landmark coordinates are properly set [PASSED]" << std::endl;
       }
 
-    // Set the tracker and modality image
-    typedef igstk::LandmarkRegistration<3>::TrackerImageType              TrackerImageType;
-    typedef igstk::LandmarkRegistration<3>::ModalityImageType              ModalityImageType;
-    TrackerImageType::Pointer  trackerImage  = TrackerImageType::New();
-    ModalityImageType::Pointer modalityImage = ModalityImageType::New();
-
-    // Create tracker and modality image type
-    TrackerImageType::RegionType fRegion;
-    TrackerImageType::SizeType   fSize;
-    TrackerImageType::IndexType  fIndex;
-    fSize.Fill(30);
-    fIndex.Fill(0);
-    fRegion.SetSize( fSize );
-    fRegion.SetIndex( fIndex );
-    trackerImage->SetLargestPossibleRegion( fRegion );
-    trackerImage->SetBufferedRegion( fRegion );
-    trackerImage->SetRequestedRegion( fRegion );
-    trackerImage->Allocate();
-
-
-    ModalityImageType::RegionType mRegion;
-    ModalityImageType::SizeType   mSize;
-    ModalityImageType::IndexType  mIndex;
-    mSize.Fill(30);
-    mIndex.Fill(0);
-    mRegion.SetSize( mSize );
-    mRegion.SetIndex( mIndex );
-    modalityImage->SetLargestPossibleRegion( mRegion );
-    modalityImage->SetBufferedRegion( mRegion );
-    modalityImage->SetRequestedRegion( mRegion );
-    modalityImage->Allocate();
-
-    //Set the tracker and modality images
-    landmarkRegister->SetTrackerImage(trackerImage);
-    landmarkRegister->SetModalityImage(modalityImage);
-
     //Print out the two sets of coordinates 
     landmarkRegister->Print(std::cout);
 
