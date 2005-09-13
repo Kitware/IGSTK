@@ -26,7 +26,11 @@
 #include "itkWin32Header.h"
 
 
-/** \brief TimeStamp provides periods of validity for data.
+namespace igstk 
+{
+ 
+/** \class TimeStamp 
+ *  \brief TimeStamp provides periods of validity for data.
  * 
  * A time stamp consists of two time values. They indicate respectively when a
  * particular data object was acquired and when its data will no longer be
@@ -51,9 +55,6 @@
  * 
  **/
 
-namespace igstk 
-{
- 
 class TimeStamp
 {
 

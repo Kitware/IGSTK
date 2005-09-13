@@ -26,7 +26,11 @@
 #include "itkVersor.h"
 #include "vtkMatrix4x4.h"
 
-/** \brief Transform representing relative positions and orientations in 3D space.
+namespace igstk 
+{
+ 
+/** \class Transform 
+ *  \brief Transform representing relative positions and orientations in 3D space.
  * 
  * This class represents relative positions and orientations in 3D space. It is
  * intended to be used for positioning objects in the Scene and as a
@@ -49,9 +53,6 @@
  *
  **/
 
-namespace igstk 
-{
- 
 
 
 class Transform
