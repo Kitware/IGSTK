@@ -580,7 +580,7 @@ void Tracker::CommunicationEstablishmentFailureProcessing( void )
 /** The Reset methods force the tracker to the CommunicationEstablished state */
 void Tracker::ResetFromTrackingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::ResetFromTrackingStateProcessing( called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::ResetFromTrackingStateProcessing() called ...\n");
   // leaving TrackingState, going to CommunicationEstablishedState
   this->ExitTrackingStateProcessing();
   this->ResetFromToolsActiveStateProcessing();
@@ -589,7 +589,7 @@ void Tracker::ResetFromTrackingStateProcessing( void )
 /** The Reset methods force the tracker to the CommunicationEstablished state */
 void Tracker::ResetFromToolsActiveStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::ResetFromToolsActiveStateProcessing( called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::ResetFromToolsActiveStateProcessing() called ...\n");
   this->ResetFromCommunicatingStateProcessing();
 }
 
@@ -707,13 +707,13 @@ void Tracker::ExitTrackingStateProcessing( void )
   m_PulseGenerator->RequestStop();
   // stop the tracking thread here
   // Terminating the TrackingThread.
-  m_TrackingThreadLock->Lock();
+//  m_TrackingThreadLock->Lock();
   if( this->GetThreadingEnabled() )
     {
     m_Threader->TerminateThread(m_ThreadID);
     }
 
-  m_TrackingThreadLock->Unlock();
+//  m_TrackingThreadLock->Unlock();
 }
 
 /** The "AttemptToUpdateStatus" method attempts to update status
