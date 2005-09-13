@@ -23,6 +23,7 @@
 #include "itkObject.h"
 #include "itkLogger.h"
 #include "itkMutexLock.h"
+#include "itkConditionVariable.h"
 #include "itkMultiThreader.h"
 #include "itkVersorTransform.h"
 
@@ -117,6 +118,11 @@ public:
 
   /** The "StopTracking" stops tracker from tracking the tools. */
   void StopTracking( void );
+  
+  /** The "WaitForNextTransform" waits for the next transform received 
+   * Right now, timeout is ignored 
+   * because itk::ConditionVariable doesn't support */
+  void WaitForNextTransform( unsigned int timeout );
 
   /** The "UpdateStatus" method is used for updating the status of 
   ports and tools when the tracker is in tracking state. */
@@ -181,6 +187,12 @@ protected:
 
   /** itk::MutexLock object pointer */
   itk::MutexLock::Pointer         m_TrackingThreadLock;
+  
+  /** itk::ConditionVariable object pointer to signal for the next transform */
+  itk::ConditionVariable::Pointer m_ConditionNextTransformReceived;
+  
+  /** itk::SimpleMutexLock object to be used for m_ConditionNextTransformReceived */
+  itk::SimpleMutexLock            m_LockForConditionNextTransformReceived;
 
   Tracker(void);
 
