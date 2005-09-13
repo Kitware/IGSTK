@@ -22,6 +22,7 @@
 
 #include <itkObject.h>
 #include <vector>
+#include <string>
 
 namespace igstk 
 {
@@ -47,6 +48,12 @@ public:
 
   /** Constructor */
   BinaryData();
+  
+  /** Constructor that copies data from an encoded string. */
+  BinaryData(const char* encodedString);
+
+  /** Constructor that copies data from an encoded string. */
+  BinaryData(const std::string& encodedString);
 
   /** Destructor */
   virtual ~BinaryData();
@@ -69,6 +76,12 @@ public:
   /** Copy data into an array */
   void CopyTo(unsigned char* output) const;
 
+  /** Append a byte */
+  void Append(unsigned char byte);
+  
+  /** Append data from an array */
+  void Append(const unsigned char* inputBegin, unsigned int inputLength);
+
   /** Assign the values of one BinaryData to another */
   const BinaryData & operator=( const BinaryData & inputBinaryData );
 
@@ -86,9 +99,18 @@ public:
 
   /** operator[] redefinition (returns reference) */
   unsigned char& operator[]( const unsigned int index );
+  
+  /** operator that converts BinaryData to std::string type after encoding as ASCII */
+  operator std::string() const;
 
   /** Method for printing the member variables of this class to an ostream */
   void Print(std::ostream& os, itk::Indent indent) const;
+  
+  /** Encode method encodes binary data to ASCII string in std::string. */
+  static void Encode( std::string& output, const unsigned char *data, unsigned int size );
+
+  /** Decode method decodes encoded ASCII string to binary data */
+  bool Decode( const std::string& asciiString );
 
 protected:
 

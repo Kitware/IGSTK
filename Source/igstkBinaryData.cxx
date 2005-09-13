@@ -28,6 +28,22 @@ BinaryData
 }
 
 
+/** Constructor that copies data from an encoded string. */
+BinaryData
+::BinaryData(const char* encodedString)
+{
+  this->Decode(encodedString);
+}
+
+
+/** Constructor that copies data from an encoded string. */
+BinaryData
+::BinaryData(const std::string& encodedString)
+{
+  this->Decode(encodedString);
+}
+
+
 /** Destructor */
 BinaryData
 ::~BinaryData()
@@ -196,6 +212,98 @@ std::ostream& operator<<(std::ostream& os, const BinaryData& o)
 }
 
 
+/** operator that converts BinaryData to std::string type after encoding as ASCII */
+BinaryData::operator std::string() const
+{
+  std::string encodedString;
+  
+  BinaryData::Encode( encodedString, &this->m_data[0], this->GetSize() );
+  return encodedString;
+}
+
+
+/** Encode method encodes binary data to ASCII string in std::string. */
+void BinaryData::Encode( std::string& output, const unsigned char *data, unsigned int size )
+{
+  unsigned int i;
+  itk::OStringStream os;
+  
+  for( i = 0; i < size; ++i )
+    {
+    if( data[i] == '\\' )
+      {
+      os << "\\\\";
+      }
+    else if( data[i] >= 0x20  &&  data[i] <= 0x7E )
+      {
+      os << data[i];
+      }
+    else
+      {
+      os << "\\x";
+      os.width(2);
+      os.fill('0');
+      os << std::hex << std::uppercase << (int)data[i];
+      }
+    }
+  
+  output = os.str();
+}
+
+
+/** Decode method decodes encoded ASCII string to binary data */
+bool BinaryData::Decode( const std::string& asciiString )
+{
+  unsigned int i;
+  unsigned char byte;
+
+  this->SetSize(0);
+  for( i = 0; i < asciiString.length(); )
+    {
+    if( asciiString[i] == '\\' )
+      {
+      if( asciiString[i+1] == '\\' )
+        {
+        this->Append( '\\' );
+        i+=2;
+        }
+      else if( asciiString[i+1] == 'x' )
+        {
+        byte = (asciiString[i+2] - '0') * 0x10;
+        byte += (asciiString[i+3] - '0');
+        i+=4;
+        this->Append( byte );
+        }
+      else  // error
+        {
+        return false;
+        }
+      }
+    else
+      {
+      this->Append( asciiString[i] );
+      ++i;
+      }
+    }
+  return false;
+}
+
+
+/** Append a byte */
+void BinaryData::Append(unsigned char byte)
+{
+  m_data.push_back(byte);
+}
+
+
+/** Append data from an array */
+void BinaryData::Append(const unsigned char* inputBegin, unsigned int inputLength)
+{
+  unsigned int i;
+  m_data.insert(m_data.end(), inputBegin, &inputBegin[inputLength]);
+}
+
+
 /** Print object information */
 void BinaryData::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
@@ -220,7 +328,7 @@ void BinaryData::PrintSelf( std::ostream& os, itk::Indent indent ) const
       os << "\\x";
       os.width(2);
       os.fill('0');
-      os << std::hex << (int)this->m_data[i];
+      os << std::hex << std::uppercase << (int)this->m_data[i];
       }
     }
   os << std::endl;

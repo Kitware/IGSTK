@@ -35,6 +35,8 @@ int igstkBinaryDataTest( int, char * [] )
     igstk::BinaryData data2;
     igstk::BinaryData data3;
     
+    std::string encoded;
+    
     /* creating an array */
     unsigned char buffer[201];
 
@@ -57,13 +59,24 @@ int igstkBinaryDataTest( int, char * [] )
     data2.CopyTo(buffer);
 
     /* print objects out */
-    std::cout << data << std::endl;
-    std::cout << data2 << std::endl;
+    std::cout << "data: " << data << std::endl;
+    std::cout << "data2: " << data2 << std::endl;
     std::cout << "buffer: " << buffer << std::endl;
 
     /* copy data from an array */
     data3.CopyFrom(buffer, data2.GetSize());
-    std::cout << data3 << std::endl;
+    std::cout << "data3: " << data3 << std::endl;
+    
+    encoded = data3;
+    std::cout << "encoded: " << encoded << std::endl;
+    igstk::BinaryData data4(encoded);
+    std::cout << "data4: " << data4 << std::endl;
+    igstk::BinaryData data5("\\\\abc\\x37");
+    std::cout << "data5: " << data5 << std::endl;
+    
+    unsigned char array[] = "124897as";
+    data5.Append(array, strlen((const char*)array));
+    std::cout << "data5: " << data5 << std::endl;
 
     /* get container objects */
     const igstk::BinaryData::ContainerType& obj = data.GetData();
