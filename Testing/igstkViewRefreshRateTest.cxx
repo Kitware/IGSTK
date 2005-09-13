@@ -169,7 +169,8 @@ int igstkViewRefreshRateTest( int, char * [] )
 
     const float refreshRate = 20;
     const float expectedNumberOfSeconds = 20;
-    const float numberOfPulsesToStop = refreshRate * expectedNumberOfSeconds;
+    const unsigned int numberOfPulsesToStop = 
+      static_cast<unsigned int>( refreshRate * expectedNumberOfSeconds );
 
     // Set the refresh rate for the view that we are validating
     view2D->RequestSetRefreshRate( refreshRate );
