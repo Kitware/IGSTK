@@ -136,9 +136,11 @@ private: \
 public:  \
   void ExportStateMachineDescription( OutputStreamType & ostr, bool skipLoops=false ) const \
    { m_StateMachine.ExportDescription( ostr, skipLoops ); }
-  
+
+#define EMPTYPARAMETER
+
 /** This is the StateMachine Macro to be used with non-templated classes */
-#define igstkStateMachineMacro()  igstkStateMachineMacroBase()
+#define igstkStateMachineMacro()  igstkStateMachineMacroBase( EMPTYPARAMETER )
 
 /** This is the StateMachine Macro to be used with templated classes */
 #define igstkStateMachineTemplatedMacro() igstkStateMachineMacroBase( typename )
