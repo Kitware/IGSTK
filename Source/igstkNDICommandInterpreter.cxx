@@ -363,6 +363,22 @@ const char* NDICommandInterpreter::ErrorString(int errnum)
     "Invalid input or output state",    
     "No camera parameters for this wavelength",
     "Command parameters out of range"
+    "No camera parameters for this volume",
+    "Failure to determine supported features",
+    "Unrecognized error code",
+    "Unrecognized error code",
+    "SCU has changed state",
+    "Main processor firmware corrupt",
+    "Memory is full",
+    "Requested handle has not been allocated",
+    "Requested handle has become unoccupied",
+    "All handles have been allocated",
+    "Incompatible firmware versions",
+    "Invalid port description",
+    "Requested port is already assigned",
+    "Invalid input or output state",
+    "Invalid operation for tool",
+    "Feature not available",
   };
 
   static char* textarrayHigh[] = /* values from 0xf6 to 0xf4 */
@@ -387,7 +403,7 @@ const char* NDICommandInterpreter::ErrorString(int errnum)
     "Measurement System not found on specified port"
   };
 
-  if (errnum >= 0x00 && errnum <= 0x23)
+  if (errnum >= 0x00 && errnum <= 0x33)
     {
     return textarrayLow[errnum];
     }
@@ -2229,6 +2245,8 @@ void NDICommandInterpreter::HelperForCOMM(const char* cp, const char* crp)
 int NDICommandInterpreter::SetErrorCode(int errnum)
 {
   m_ErrorCode = errnum;
+
+  this->InvokeEvent( NDIErrorEvent(errnum) );
 
   return errnum;
 }

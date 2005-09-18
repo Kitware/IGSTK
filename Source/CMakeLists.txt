@@ -19,6 +19,7 @@ SET(IGSTK_HEADS
   igstkMeshObjectRepresentation.h
   igstkMultipleOutput.h
   igstkNDICommandInterpreter.h
+  igstkNDIErrorEvent.h
   igstkObjectRepresentation.h
   igstkPulseGenerator.h
   igstkSerialCommunication.h

@@ -66,6 +66,42 @@ static void joinDirAndFile(char *result, int maxLen,
   delete [] fullName;
 }
 
+class NDICommandInterpreterTestCommand : public itk::Command 
+{
+public:
+
+  typedef NDICommandInterpreterTestCommand   Self;
+  typedef itk::Command             Superclass;
+  typedef itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
+
+protected:
+  NDICommandInterpreterTestCommand() {};
+
+public:
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+  {
+    Execute( (const itk::Object *)caller, event);
+  }
+
+  void Execute(const itk::Object * object, const itk::EventObject & event)
+  {
+    const igstk::NDIErrorEvent * ndiEvent = 
+      dynamic_cast< const igstk::NDIErrorEvent * >( &event );
+
+    if( ndiEvent )
+      {
+      int errorCode = ndiEvent->GetErrorCode();
+ 
+      std::cout << "NDI Error " << std::showbase << std::hex << errorCode
+                << std::dec << std::noshowbase << ": "
+                << igstk::NDICommandInterpreter::ErrorString(errorCode)
+                << "." << std::endl;
+      }
+  }
+};
+
+
 int igstkNDICommandInterpreterStressTest( int, char * [] )
 {
   typedef igstk::SerialCommunicationSimulator   CommunicationType;
@@ -73,6 +109,9 @@ int igstkNDICommandInterpreterStressTest( int, char * [] )
   typedef igstk::NDICommandInterpreter  CommandInterpreterType;
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
+
+  NDICommandInterpreterTestCommand::Pointer errorCommand =
+    NDICommandInterpreterTestCommand::New();
    
   // create the logger object
   LoggerType::Pointer   logger = LoggerType::New();
@@ -87,6 +126,9 @@ int igstkNDICommandInterpreterStressTest( int, char * [] )
 
   // create the interpreter object
   CommandInterpreterType::Pointer interpreter = CommandInterpreterType::New();
+
+  // set an observer for the interpreter
+  interpreter->AddObserver( igstk::NDIErrorEvent(), errorCommand );
 
   // load a previously captured file
   char pathToCaptureFile[1024];
