@@ -442,6 +442,122 @@ StateMachine< TClass >
 
 
 
+
+template<class TClass>
+void
+StateMachine< TClass >
+::ExportDescriptionToLTS( OutputStreamType & ostr, bool skipLoops=false ) const
+{
+
+  // Export all the transitions between states
+  
+   int out_count = 0;
+   int in_count = 0;
+   int in_flag = 0;
+   int out_flag = 0;
+   
+   StatesConstIterator  stateId;
+  
+  TransitionConstIterator transitionsFromThisState =
+                                     m_Transitions.begin();
+                                     
+  while( transitionsFromThisState != m_Transitions.end() )
+    {
+    out_count++;
+    ++transitionsFromThisState;
+    }
+    
+  transitionsFromThisState =
+                                     m_Transitions.begin();                            
+                                     
+  while( transitionsFromThisState != m_Transitions.end() )
+    {
+    TransitionsPerInputConstIterator  
+           transitionsFromThisStateAndInput =  
+                      transitionsFromThisState->second->begin();
+    in_count = 0;                        
+                      
+    while( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
+      {
+      in_count ++;
+      ++transitionsFromThisStateAndInput;
+      }
+      
+      transitionsFromThisStateAndInput =  
+                      transitionsFromThisState->second->begin();
+
+    in_flag = 1;
+
+    while( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
+      {
+      // find the label that identify the input.
+      InputDescriptorType label;
+      InputConstIterator inputItr = m_Inputs.find( 
+                                       transitionsFromThisStateAndInput->first ); 
+      if( inputItr != m_Inputs.end() )
+        {
+        label = inputItr->second;
+        }
+      if( !skipLoops ||
+           transitionsFromThisState->first !=
+           transitionsFromThisStateAndInput->second.GetStateIdentifier() )
+        {
+        if (in_flag ==1)
+          {
+          stateId = m_States.begin();
+          while( stateId != m_States.end() )
+            {
+            if(stateId->first == transitionsFromThisState->first)
+              {
+              ostr << stateId->second << " = ( ";
+              }
+
+            ++stateId;
+            }
+          }
+
+        ostr << label << " -> ";
+        
+        stateId = m_States.begin();
+        while( stateId != m_States.end() )
+          {
+          if(stateId->first == transitionsFromThisStateAndInput->second.GetStateIdentifier())
+            {
+            ostr << stateId->second;
+            }
+          ++stateId;
+          }
+
+        if(in_flag<in_count)
+          {
+          ostr << "|" << std::endl;
+          in_flag ++;
+          }
+        else
+          {
+          ostr << ")";
+          }
+        }
+      ++transitionsFromThisStateAndInput;
+      }  // in-while
+      
+      out_flag++;
+      if( out_flag < out_count )
+        {
+        ostr << "," << std::endl;
+        }
+      else
+        {
+        ostr << "." << std::endl;
+        }
+
+      ++transitionsFromThisState;
+      } //out-while
+     
+}
+
+
+
   /** Print Self function */
 template<class TClass>
 void

@@ -152,6 +152,13 @@ public:
    void ExportDescription( OutputStreamType & ostr, bool skipLoops ) const;
 
 
+   /** Export the schematic description of the state machine to a stream.
+       This method use the format required as input by the "LTSA" analysis tools. 
+       LTSA (Labeled Transition Systems Analyzer) available from  
+       http://www-dse.doc.ic.ac.uk/concurrency.   */
+   void ExportDescriptionToLTS( OutputStreamType & ostr, bool skipLoops) const;
+
+
    /** Select Initial state */
    void SelectInitialState( const StateType & initialState );
 

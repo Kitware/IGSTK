@@ -1,4 +1,19 @@
+/*=========================================================================
 
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkStateMachineTest.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #if defined(_MSC_VER)
    //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
@@ -113,6 +128,12 @@ public:
     }
 
 
+  void ExportDescriptionToLTS( std::ostream & ostr, bool skipLoops ) const
+    {
+      m_StateMachine.ExportDescriptionToLTS( ostr, skipLoops );
+    }
+
+
   const StateIdentifierType & GetCurrentState() const
     {
     return m_StateMachine.GetCurrentStateIdentifier();
@@ -223,13 +244,39 @@ int igstkStateMachineTest( int , char * [] )
   // Exercise the GetCurrentState() method
   std::cout << "Current State: " << tester.GetCurrentState() << std::endl;
   
+  bool skipLoops = false;
+
   std::cout << std::endl << std::endl;
   std::cout << "Printing out the State Machine description in dot format" << std::endl;
   std::cout << std::endl << std::endl;
 
-  const bool skipLoops = false;
+  tester.ExportDescription( std::cout, skipLoops );
+ 
+  std::cout << std::endl << std::endl;
+  std::cout << "Printing out the State Machine description in lts format" << std::endl;
+  std::cout << std::endl << std::endl;
+
+  tester.ExportDescriptionToLTS( std::cout, skipLoops );
+
+  
+  std::cout << std::endl << std::endl;
+  std::cout << "Testing now with loops = true " << std::endl;
+  std::cout << std::endl << std::endl;
+
+  skipLoops = true;
+
+  std::cout << std::endl << std::endl;
+  std::cout << "Printing out the State Machine description in dot format" << std::endl;
+  std::cout << std::endl << std::endl;
 
   tester.ExportDescription( std::cout, skipLoops );
+ 
+  std::cout << std::endl << std::endl;
+  std::cout << "Printing out the State Machine description in lts format" << std::endl;
+  std::cout << std::endl << std::endl;
+
+  tester.ExportDescriptionToLTS( std::cout, skipLoops );
+
 
 
   return EXIT_SUCCESS;

@@ -55,18 +55,35 @@ void ExportStateMachineDescription(
   std::string filename = outputDirectory+"/";
   filename = filename + "igstk";
   filename = filename + instance->GetNameOfClass();
-  filename = filename + ".dot";
-  std::ofstream outputFile;
-  outputFile.open( filename.c_str() );
-  if( outputFile.fail() )
+
+
+  std::string dotfilename = filename + ".dot";
+  std::ofstream dotOutputFile;
+  dotOutputFile.open( dotfilename.c_str() );
+  if( dotOutputFile.fail() )
     {
     std::cerr << "Problem opening the file " << filename << std::endl;
     itk::ExceptionObject excp;
     excp.SetDescription("Problem opening file");
     throw excp;
     }
-  instance->ExportStateMachineDescription( outputFile, skipLoops );
-  outputFile.close();
+  instance->ExportStateMachineDescription( dotOutputFile, skipLoops );
+  dotOutputFile.close();
+
+
+  std::string ltsfilename = filename + ".lts";
+  std::ofstream ltsOutputFile;
+  ltsOutputFile.open( ltsfilename.c_str() );
+  if( ltsOutputFile.fail() )
+    {
+    std::cerr << "Problem opening the file " << filename << std::endl;
+    itk::ExceptionObject excp;
+    excp.SetDescription("Problem opening file");
+    throw excp;
+    }
+  instance->ExportStateMachineDescription( ltsOutputFile, skipLoops );
+  ltsOutputFile.close();
+
   }
 
 
