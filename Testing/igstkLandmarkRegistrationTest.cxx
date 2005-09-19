@@ -24,6 +24,52 @@
 #include "igstkLandmarkRegistration.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+#include "itkObject.h"
+#include "itkCommand.h"
+#include "itkMacro.h"
+
+
+class LandmarkRegistrationErrorCallback : public itk::Command
+{
+public:
+  typedef LandmarkRegistrationErrorCallback Self;
+  typedef itk::SmartPointer<Self>      Pointer;
+  typedef itk::Command                 Superclass;
+  itkNewMacro(Self);
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  {
+
+  }
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+  {
+    std::cerr<<"Error in transform computation"<<std::endl;
+  }
+protected:
+  LandmarkRegistrationErrorCallback()   { };
+
+private:
+};
+
+class LandmarkRegistrationInvalidRequestCallback : public itk::Command
+{
+public:
+  typedef LandmarkRegistrationInvalidRequestCallback Self;
+  typedef itk::SmartPointer<Self>      Pointer;
+  typedef itk::Command                 Superclass;
+  itkNewMacro(Self);
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  {
+
+  }
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+  {
+    std::cerr<<"Invalid input request!!"<<std::endl;
+  }
+protected:
+  LandmarkRegistrationInvalidRequestCallback()   { };
+
+private:
+};
 
 int igstkLandmarkRegistrationTest( int argv, char * argc[] )
 {
@@ -44,6 +90,15 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
     LandmarkImagePointType fixedPoint;
     LandmarkTrackerPointType movingPoint;
 
+   //Add observer for invalid input request
+    LandmarkRegistrationInvalidRequestCallback::Pointer lrcb = LandmarkRegistrationInvalidRequestCallback::New();
+    ::itk::EventObject* eventInvalidRequest =    new igstk::LandmarkRegistration<3>::InvalidRequestErrorEvent();
+    landmarkRegister->AddObserver(*eventInvalidRequest, lrcb );
+
+   //Add observer for erro in computation 
+    LandmarkRegistrationErrorCallback::Pointer ecb = LandmarkRegistrationErrorCallback::New();
+    ::itk::EventObject* eventError =    new igstk::LandmarkRegistration<3>::TransformComputationFailureEvent();
+    landmarkRegister->AddObserver(*eventError, ecb );
 
 // logger object
     LoggerType::Pointer   logger = LoggerType::New();
@@ -141,7 +196,7 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
     bool failed = false;
     //Print out the two sets of coordinates 
     landmarkRegister->Print(std::cout);
-    landmarkRegister->GetTransform()->DebugOn();
+    //landmarkRegister->GetTransform()->DebugOn();
 
     //Check if the transformation parameters were evaluated correctely
     LandmarkRegistrationType::PointsContainerConstIterator
