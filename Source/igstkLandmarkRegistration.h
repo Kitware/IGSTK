@@ -10,6 +10,8 @@
 #include "igstkMacros.h"
 #include "itkObject.h"
 #include "itkLogger.h"
+#include "itkEventObject.h"
+#include "igstkEvents.h"
 
 namespace igstk
 {
@@ -53,17 +55,6 @@ public:
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
 
-  /**  Set/Get methods for landmark point containers */  
-
-  igstkSetMacro(TrackerLandmarks,LandmarkPointContainerType);
-  igstkSetMacro(ImageLandmarks,LandmarkPointContainerType);
-
-  igstkGetMacro(TrackerLandmarks,LandmarkPointContainerType);
-  igstkGetMacro(ImageLandmarks,LandmarkPointContainerType);
-
-  igstkGetMacro(TransformInitializer,TransformInitializerPointerType);
-  igstkGetMacro(Transform,TransformPointerType);
-
   /** The "RequestAddImageLandmarkPoint" should be used to add point to the image landmark point container */
   void RequestAddImageLandmarkPoint(LandmarkImagePointType pt);
   
@@ -81,19 +72,33 @@ public:
 * transform parameter calculation */
   void RequestComputeTransform();
   
-
-/** The "RequestGetTransformParmeters" should be used to get the
-  transform parameters */
-  void RequestGetTransformParameters();
-
-  /* Peform registration */
-  void EvaluateTransform();
-
   /** Declarations needed for the State Machine */
   igstkStateMachineTemplatedMacro();
 
+/** The "GetTransform()" method returns the transform  */
+  TransformPointerType GetTransform();
+
   /** Declarations needed for the Logger */
   igstkLoggerMacro();
+
+  /** Set methods for the Tracker and Image landmarks */
+  igstkSetMacro(TrackerLandmarks,LandmarkPointContainerType);
+  igstkSetMacro(ImageLandmarks,LandmarkPointContainerType);
+
+  /** Get methods for the Tracker and Image landmarks */
+  igstkGetMacro(TrackerLandmarks,LandmarkPointContainerType);
+  igstkGetMacro(ImageLandmarks,LandmarkPointContainerType);
+
+  /** Get the Transform */
+  igstkGetMacro(TransformInitializer,TransformInitializerPointerType);
+  igstkGetMacro(Transform,TransformPointerType);
+
+  /** Landmark registration events..they have to be eventually added
+     to the igstkEvents class */
+
+  itkEventMacro( TransformInitializerEvent,                IGSTKEvent);
+  itkEventMacro( TransformComputationFailureEvent,         TransformInitializerEvent);
+  itkEventMacro( InvalidRequestErrorEvent,                 TransformInitializerEvent );
 
 protected:
 
@@ -120,28 +125,21 @@ private:
   StateType                                              m_TrackerLandmark2AddedState;
   StateType                                              m_ImageLandmark3AddedState;
   StateType                                              m_TrackerLandmark3AddedState;
-  StateType                                              m_ReadyToComputeTransformState;
-  StateType                                              m_FailedTransformComputationState;
-  StateType                                              m_SuccessfulTransformComputationState;
   
 
 /** List of Inputs */
   InputType                                              m_ImageLandmarkInput;
   InputType                                              m_TrackerLandmarkInput;
   InputType                                              m_ComputeTransformInput;
-  InputType                                              m_TransformComputationFailureInput;
-  InputType                                              m_TransformComputationSuccessInput;
   InputType                                              m_ResetRegistrationInput;
-  InputType                                              m_GetTransformParameterInput;
-
 
 /** The "AddImageLandmark" method adds landmark points to the image
-* landmark point container */
+ landmark point container */
 
   void AddImageLandmarkPoint();
   
 /** The "AddTrackerLandmark" method adds landmark points to the
-* tracker landmark point container */
+ tracker landmark point container */
   void AddTrackerLandmarkPoint();
 
 /** The "ResetRegsitration" method empties the landmark point
@@ -152,16 +150,9 @@ containers to start the process again */
   transformation parameters */
   void ComputeTransform();
 
-/** The "GetTransformParameters()" method returns transformation parameters */
-  void GetTransformParameters();
-
-/** The "TransformComputationSuccessProcessing" method processes
-* succesful transform computation */
-  void TransformComputationSuccessProcessing();
-  
-/** The "TransformComputationFailureProcessing" method processes a
-* failed transform computation */
-  void TransformComputationFailureProcessing();
+/** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent
+ when invalid requests are made */
+  void ReportInvalidRequest();
 };
 
 } // end namespace igstk
