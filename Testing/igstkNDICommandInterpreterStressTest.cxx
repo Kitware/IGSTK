@@ -190,8 +190,8 @@ int igstkNDICommandInterpreterStressTest( int, char * [] )
 
   // -- get information about the device --
   std::cout << "Calling VER" << std::endl;
-  std::cout << interpreter->VER(CommandInterpreterType::NDI_CONTROL_FIRMWARE)
-            << std::endl;
+  interpreter->VER(CommandInterpreterType::NDI_CONTROL_FIRMWARE);
+  std::cout << interpreter->GetVERText() << std::endl;
   std::cout << "Calling SFLIST" << std::endl;
   interpreter->SFLIST(CommandInterpreterType::NDI_FEATURE_SUMMARY);
 
@@ -305,14 +305,14 @@ int igstkNDICommandInterpreterStressTest( int, char * [] )
                        CommandInterpreterType::NDI_BASIC |
                        CommandInterpreterType::NDI_PART_NUMBER |
                        CommandInterpreterType::NDI_ACCESSORIES |
-                       CommandInterpreterType::NDI_PORT_LOCATION);
-    int iostatus = interpreter->GetPHINFGPIOStatus();
-    std::cout << "IOStatus: " << iostatus << std::endl;
+                       CommandInterpreterType::NDI_PORT_LOCATION |
+                       CommandInterpreterType::NDI_GPIO_STATUS);
     a = interpreter->GetPHINFPortStatus();
     interpreter->GetPHINFToolInfo(toolInformation);
     interpreter->GetPHINFPartNumber(toolPartNumber);
     a = interpreter->GetPHINFAccessories();
     interpreter->GetPHINFPortLocation(portLocation);
+    a = interpreter->GetPHINFGPIOStatus();
 
     // check if this is a wired tool
     if (portLocation[9] == '0')
@@ -386,6 +386,7 @@ int igstkNDICommandInterpreterStressTest( int, char * [] )
       {
       double coord[3];
       a = interpreter->GetTXPassiveStray(i, coord);
+      std::cout << interpreter->GetTXPassiveStrayOutOfVolume(i) << ":";
       std::cout << "(" << coord[0] << "," << coord[1] << "," << coord[2]
                 << "), ";
       }
@@ -464,6 +465,11 @@ int igstkNDICommandInterpreterStressTest( int, char * [] )
                          CommandInterpreterType::NDI_MARKER_TYPE);
       a = interpreter->GetPHINFMarkerType();
       a = interpreter->GetPHINFCurrentTest();
+      std::cout << "Calling PSOUT" << std::endl;
+      interpreter->PSOUT(ph,
+                         CommandInterpreterType::NDI_GPIO_OFF,
+                         CommandInterpreterType::NDI_GPIO_SOLID,
+                         CommandInterpreterType::NDI_GPIO_PULSE);
       }
     }
 

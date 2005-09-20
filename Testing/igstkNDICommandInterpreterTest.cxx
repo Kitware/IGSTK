@@ -158,6 +158,11 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
   // NDICommandInterpreter will set the communication parameters itself
   interpreter->SetCommunication(serialComm);
+  // GetCommunication for coverage
+  if (interpreter->GetCommunication() != serialComm)
+    {
+    return EXIT_FAILURE;
+    }
 
   std::cout << interpreter << std::endl;
   //---------------------------------
@@ -205,8 +210,8 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
   // -- get information about the device --
   std::cout << "Calling VER" << std::endl;
-  std::cout << interpreter->VER(CommandInterpreterType::NDI_CONTROL_FIRMWARE)
-            << std::endl;
+  interpreter->VER(CommandInterpreterType::NDI_CONTROL_FIRMWARE);
+  std::cout << interpreter->GetVERText() << std::endl;
   std::cout << "Calling SFLIST" << std::endl;
   interpreter->SFLIST(CommandInterpreterType::NDI_FEATURE_SUMMARY);
 
@@ -321,8 +326,6 @@ int igstkNDICommandInterpreterTest( int, char * [] )
                        CommandInterpreterType::NDI_PART_NUMBER |
                        CommandInterpreterType::NDI_ACCESSORIES |
                        CommandInterpreterType::NDI_PORT_LOCATION);
-    int iostatus = interpreter->GetPHINFGPIOStatus();
-    std::cout << "IOStatus: " << iostatus << std::endl;
     a = interpreter->GetPHINFPortStatus();
     interpreter->GetPHINFToolInfo(toolInformation);
     interpreter->GetPHINFPartNumber(toolPartNumber);
@@ -379,10 +382,15 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
       a = interpreter->GetBXTransform(ph, vals);
 
-      fout << "    Transform : {return:" << std::hex << a << "} (" << vals[0] << ", " << vals[1] <<
-        ", " << vals[2] << ", " << vals[3] << ") , (" <<
-        vals[4] << ", " << vals[5] << ", " << vals[6] << ") , " <<
-        vals[7] << std::endl;
+      fout << "    Transform : {return:" << std::hex << a << "}";
+      if (a == CommandInterpreterType::NDI_VALID)
+        {
+        fout << " (" << vals[0] << ", " << vals[1] << ", " <<
+          vals[2] << ", " << vals[3] << ") , (" <<
+          vals[4] << ", " << vals[5] << ", " << vals[6] << ") , " <<
+          vals[7];
+        }
+      fout << std::endl;
 
       a = interpreter->GetBXPortStatus(ph);
 
@@ -432,6 +440,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
       {
       double coord[3];
       a = interpreter->GetBXPassiveStray(i, coord);
+      std::cout << interpreter->GetBXPassiveStrayOutOfVolume(i) << ":";
       std::cout << "(" << coord[0] << "," << coord[1] << "," << coord[2]
                 << "), ";
       fout << "    #" << i << " : {" << std::hex << a << " (" << coord[0] << "," 
@@ -496,10 +505,8 @@ int igstkNDICommandInterpreterTest( int, char * [] )
 
     a = interpreter->GetBXPortStatus(ph);
     fout << "  PortStatus : " << std::hex << a << std::endl;
-
     l = interpreter->GetBXFrame(ph);
     fout << "  Frame : " << l << std::endl;
-    a = interpreter->GetBXPortStatus(ph);
     a = interpreter->GetBXToolInfo(ph);
     fout << "  ToolInfo : " << std::hex << a << std::endl;
     a = interpreter->GetBXMarkerInfo(ph, 0);
@@ -545,6 +552,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
       {
       double coord[3];
       a = interpreter->GetTXPassiveStray(i, coord);
+      std::cout << interpreter->GetTXPassiveStrayOutOfVolume(i) << ":";
       std::cout << "(" << coord[0] << "," << coord[1] << "," << coord[2]
                 << "), ";
       }

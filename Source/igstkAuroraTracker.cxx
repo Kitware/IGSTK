@@ -286,7 +286,8 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
       continue;
       }
 
-    absent[port] = m_CommandInterpreter->GetTXTransform(ph, transform8[port]);
+    int tstat = m_CommandInterpreter->GetTXTransform(ph, transform8[port]);
+    absent[port] = (tstat != CommandInterpreterType::NDI_VALID);
     status[port] = m_CommandInterpreter->GetTXPortStatus(ph);
     frame[port] = m_CommandInterpreter->GetTXFrame(ph);
   }

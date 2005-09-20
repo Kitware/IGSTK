@@ -200,37 +200,38 @@ public:
   /** TX() & BX() reply mode bit definitions */
   typedef enum
   {
-    NDI_XFORMS_AND_STATUS  = 0x0001,  /**< transforms and status */
-    NDI_ADDITIONAL_INFO    = 0x0002,  /**< additional tool transform info */
-    NDI_SINGLE_STRAY       = 0x0004,  /**< stray active marker reporting */
-    NDI_PASSIVE_STRAY      = 0x1000,  /**< stray passive marker reporting */
+    NDI_XFORMS_AND_STATUS     = 0x0001,  /**< transforms and status */
+    NDI_ADDITIONAL_INFO       = 0x0002,  /**< additional tool transform info */
+    NDI_SINGLE_STRAY          = 0x0004,  /**< stray active marker reporting */
+    NDI_INCLUDE_OUT_OF_VOLUME = 0x0800,  /**< include out-of-volume tools */ 
+    NDI_PASSIVE_STRAY         = 0x1000,  /**< stray passive marker reporting */
   } TXModeType;
 
-  /** GetTXTransform() return values */
+  /** GetTXTransform() and general-purpose transform return values */
   typedef enum
   {
-    NDI_TRANSFORM_OKAY =  0, /**< transform has been returned */
-    NDI_DISABLED       =  1, /**< port is disabled */
-    NDI_MISSING        =  2, /**< tool is out of view or otherwise missing */
-    NDI_UNOCCUPIED     =  3, /**< port is unoccupied */
+    NDI_UNOCCUPIED   = 0x00, /**< port unoccupied or no information */
+    NDI_VALID        = 0x01, /**< transform has been returned */
+    NDI_MISSING      = 0x02, /**< tool is out of view or otherwise missing */
+    NDI_DISABLED     = 0x04, /**< port is disabled or tool was unplugged */
   } TXTransformType;
 
   /** GetTXPortStatus() return value bits */
   typedef enum
   {
-    NDI_TOOL_IN_PORT        = 0x01,
-    NDI_SWITCH_1_ON         = 0x02,
-    NDI_SWITCH_2_ON         = 0x04,
-    NDI_SWITCH_3_ON         = 0x08,
-    NDI_INITIALIZED         = 0x10,
-    NDI_ENABLED             = 0x20,
-    NDI_OUT_OF_VOLUME       = 0x40,
-    NDI_PARTIALLY_IN_VOLUME = 0x80,
-    NDI_DISTURBANCE_DETECTED = 0x0200,
-    NDI_SIGNAL_TOO_SMALL    = 0x0400,
-    NDI_SIGNAL_TOO_BIG      = 0x0800,
-    NDI_PROCESSING_EXCEPTION = 0x1000,
-    NDI_PORT_HARDWARE_FAILURE    = 0x2000,
+    NDI_TOOL_IN_PORT          = 0x0001,
+    NDI_SWITCH_1_ON           = 0x0002,
+    NDI_SWITCH_2_ON           = 0x0004,
+    NDI_SWITCH_3_ON           = 0x0008,
+    NDI_INITIALIZED           = 0x0010,
+    NDI_ENABLED               = 0x0020,
+    NDI_OUT_OF_VOLUME         = 0x0040,
+    NDI_PARTIALLY_IN_VOLUME   = 0x0080,
+    NDI_DISTURBANCE_DETECTED  = 0x0200,
+    NDI_SIGNAL_TOO_SMALL      = 0x0400,
+    NDI_SIGNAL_TOO_BIG        = 0x0800,
+    NDI_PROCESSING_EXCEPTION  = 0x1000,
+    NDI_PORT_HARDWARE_FAILURE = 0x2000,
   } TXPortStatusType;
 
   /** GetTXSystemStatus() return value bits */
@@ -418,6 +419,9 @@ public:
 
   /** Set the communication object that commands will be sent to */
   void SetCommunication(CommunicationType* communication);
+
+  /** Get the communication object */
+  CommunicationType* GetCommunication();
 
   /**
   Send a text command to the device and receive a text reply.
@@ -727,6 +731,7 @@ public:
   - NDI_XFORMS_AND_STATUS  0x0001 - transforms and status
   - NDI_ADDITIONAL_INFO    0x0002 - additional tool transform info
   - NDI_SINGLE_STRAY       0x0004 - stray active marker reporting
+  - NDI_INCLUDE_OUT_OF_VOLUME 0x0800 - include out-of-volume tools
   - NDI_PASSIVE_STRAY      0x1000 - stray passive marker reporting
 
   <p>The TX command with the appropriate reply mode is used to update the
@@ -752,6 +757,7 @@ public:
   - NDI_XFORMS_AND_STATUS  0x0001 - transforms and status
   - NDI_ADDITIONAL_INFO    0x0002 - additional tool transform info
   - NDI_SINGLE_STRAY       0x0004 - stray active marker reporting
+  - NDI_INCLUDE_OUT_OF_VOLUME 0x0800 - include out-of-volume tools
   - NDI_PASSIVE_STRAY      0x1000 - stray passive marker reporting
 
   <p>The BX command with the appropriate reply mode is used to update the
@@ -781,8 +787,8 @@ public:
   - NDI_TIU_CIRMWARE              3 - TIU firmware
   - NDI_CONTROL_FIRMWARE_ENHANCED 4 - control firmware with enhanced versioning
   */
-  const char* VER(VERModeType n) {
-    return this->Command("VER:%d", n); }
+  void VER(VERModeType n) {
+    this->Command("VER:%d", n); }
 
   /**
   Get error code from the last command.  An error code of NDI_OKAY signals
@@ -863,8 +869,8 @@ public:
                      resulting string is not null-terminated)
 
   \return  one of:
-  - NDI_OKAY - information was returned
   - NDI_UNOCCUPIED - port is unoccupied or no information is available
+  - NDI_VALID - information was returned
 
   <p>The returned string will not be null-terminated by default.  You
   must set information[31] to 0 in order to terminate the string.
@@ -894,8 +900,8 @@ public:
                      resulting string is not null-terminated)
 
   \return  one of:
-  - NDI_OKAY - information was returned
   - NDI_UNOCCUPIED - port is unoccupied or no information is available
+  - NDI_VALID - information was returned
 
   <p>If a terminated string is required, then set part[20] to 0
   before calling this function.
@@ -982,14 +988,14 @@ public:
   \param ph        valid port handle in range 0x01 to 0xFF
   \param transform space for the 8 numbers in the transformation
   
-  \return one of the following: 
-  - NDI_TRANSFORM_OKAY if successful
+  \return one of the following:
+  - NDI_UOCCUPIED if an invalid port handle was specified
+  - NDI_VALID if successful
   - NDI_DISABLED if tool port is nonexistent or disabled
   - NDI_MISSING if tool transform cannot be computed (tool is out of range)
-  - NDI_UNOCCUPIED if the tool port is not occupied
 
-  <p>If NDI_DISABLED, NDI_MISSING or NDI_UNOCCUPIED is returned, then
-  the values in the supplied transform array will be left unchanged.
+  <p>If NDI_VALID is not returned, then the values in the
+  supplied transform array will be left unchanged.
 
   The transformations for each of the port handles remain the same
   until the next TX() command is sent to the device.
@@ -1069,7 +1075,8 @@ public:
   \param coord     array to hold the three coordinates
 
   \return the return value will be one of
-  - NDI_OKAY - values returned in coord
+  - NDI_UOCCUPIED - no information available
+  - NDI_VALID - values returned in coord
   - NDI_DISABLED - port disabled or illegal port specified
   - NDI_MISSING - stray marker is not visible to the device
 
@@ -1092,12 +1099,11 @@ public:
   Copy the coordinates of the specified stray marker into the
   supplied array.
 
-  \param i         a number between 0 and 19
+  \param i         a number between 0 and 49
   \param coord     array to hold the coordinates
   \return          one of:
-  - NDI_OKAY - information was returned in coord
-  - NDI_DISABLED - no stray marker reporting is available
-  - NDI_MISSING - marker number i is not visible
+  - NDI_UNOCCUPIED - the index \em i is out of range
+  - NDI_VALID      - information was returned in coord
 
   <p>Use GetTXNumberOfPassiveStrays() to get the number of stray
   markers that are visible.
@@ -1106,6 +1112,23 @@ public:
   is sent with the NDI_PASSIVE_STRAY (0x1000) bit set in the reply mode.
   */
   int GetTXPassiveStray(int i, double coord[3]) const;
+
+  /**
+  Determine whether a passive stray is outside of the characterized volume.
+
+  \param i         a number between 0 and 49
+  \return          one of:
+  - 1  - marker is out of volume
+  - 0  - marker is inside volume or \em i is out of range
+
+  <p>Use GetTXNumberOfPassiveStrays() to get the number of stray
+  markers that are visible.
+  
+  This information is updated when a TX() command is sent with
+  the NDI_PASSIVE_STRAY (0x1000) and 
+  the NDI_INCLUDE_OUT_OF_VOLUME (0x0800) bits set in the reply mode..
+  */
+  int GetTXPassiveStrayOutOfVolume(int i) const;
 
   /**
   Get an 16-bit status bitfield for the system.
@@ -1135,13 +1158,13 @@ public:
   \param transform space for the 8 numbers in the transformation
   
   \return one of the following: 
-  - NDI_TRANSFORM_OKAY if successful
+  - NDI_UNOCCUPIED if an invalid port handle was supplied
+  - NDI_VALID if successful
   - NDI_DISABLED if tool port is nonexistent or disabled
   - NDI_MISSING if tool transform cannot be computed (tool is out of range)
-  - NDI_UNOCCUPIED if the tool port is not occupied
 
-  <p>If NDI_DISABLED, NDI_MISSING or NDI_UNOCCUPIED is returned, then
-  the values in the supplied transform array will be left unchanged.
+  <p>If NDI_VALID is not returned, then the values in the supplied
+  transform array will be left unchanged.
 
   The transformations for each of the port handles remain the same
   until the next BX() command is sent to the device.
@@ -1226,7 +1249,8 @@ public:
   \param coord     array to hold the three coordinates
 
   \return the return value will be one of
-  - NDI_OKAY - values returned in coord
+  - NDI_UNOCCUPIED - no information is available
+  - NDI_VALID - values returned in coord
   - NDI_DISABLED - port disabled or illegal port specified
   - NDI_MISSING - stray marker is not visible to the device
 
@@ -1252,9 +1276,8 @@ public:
   \param i         a number between 0 and 19
   \param coord     array to hold the coordinates
   \return          one of:
-  - NDI_OKAY - information was returned in coord
-  - NDI_DISABLED - no stray marker reporting is available
-  - NDI_MISSING - marker number i is not visible
+  - NDI_UNOCCUPIED - the index \em i is out of range
+  - NDI_VALID - information was returned in coord
 
   <p>Use GetTXNumberOfPassiveStrays() to get the number of stray
   markers that are visible.
@@ -1263,6 +1286,23 @@ public:
   is sent with the NDI_PASSIVE_STRAY (0x1000) bit set in the reply mode.
   */
   int GetBXPassiveStray(int i, double coord[3]) const;
+
+  /**
+  Determine whether a passive stray is outside of the characterized volume.
+
+  \param i         a number between 0 and 49
+  \return          one of:
+  - 1  - marker is out of volume
+  - 0  - marker is inside volume or \em i is out of range
+
+  <p>Use GetBXNumberOfPassiveStrays() to get the number of stray
+  markers that are visible.
+  
+  This information is updated when a BX() command is sent with
+  the NDI_PASSIVE_STRAY (0x1000) and 
+  the NDI_INCLUDE_OUT_OF_VOLUME (0x0800) bits set in the reply mode..
+  */
+  int GetBXPassiveStrayOutOfVolume(int i) const;
 
   /**
   Get an 16-bit status bitfield for the system.
@@ -1327,6 +1367,11 @@ public:
   int GetSSTATTIU() const;
 
   /**
+  Get the version information returned by the VER() command.
+  */
+  const char *GetVERText() const;
+
+  /**
   Check to see whether environmental infrared was detected.
  
   \return       1 if infrared was detected and 0 otherwise.
@@ -1357,7 +1402,7 @@ public:
   \param i      the source to get the coordinates for
   \param xy     space to store the returned coordinates
 
-  return  NDI_OKAY or NDI_MISSING
+  return  NDI_VALID, or NDI_UNOCCUPIED if \em i is out of range
 
   If there is no available information, then the xy array will be left
   unchanged and the value NDI_MISSING will be returned.  Otherwise,
@@ -1408,9 +1453,6 @@ protected:
   /** Destructor */
   virtual ~NDICommandInterpreter();
 
-  /** Get the communication object */
-  CommunicationType* GetCommunication();
-
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
@@ -1454,7 +1496,7 @@ private:
 
   /** PHINF command reply data */
 
-  int m_PHINFUnoccupied;
+  int m_PHINFOccupied;
   char m_PHINFBasic[34];
   char m_PHINFTesting[8];
   char m_PHINFPartNumber[20];
@@ -1467,46 +1509,52 @@ private:
 
   int m_TXNumberOfHandles;
   unsigned char m_TXHandles[NDI_MAX_HANDLES];
-  char m_TXTransforms[NDI_MAX_HANDLES][52];
-  char m_TXStatus[NDI_MAX_HANDLES][8];
-  char m_TXFrame[NDI_MAX_HANDLES][8];
-  char m_TXInformation[NDI_MAX_HANDLES][12];
-  char m_TXSingleStray[NDI_MAX_HANDLES][24];
+  unsigned char m_TXHandleStatus[NDI_MAX_HANDLES];
   char m_TXSystemStatus[4];
+  
+  /** TX with option NDI_XFORMS_AND_STATUS */
+  char m_TXTransforms[NDI_MAX_HANDLES][52];
+  char m_TXPortStatus[NDI_MAX_HANDLES][8];
+  char m_TXFrame[NDI_MAX_HANDLES][8];
 
+  /** TX with option NDI_ADDITIONAL_INFO */
+  char m_TXInformation[NDI_MAX_HANDLES][12];
+
+  /** TX with option NDI_SINGLE_STRAY */  
+  char m_TXSingleStray[NDI_MAX_HANDLES][24];
+
+  /** TX with option NDI_PASSIVE_STRAY */  
   int m_TXNumberOfPassiveStrays;
   char m_TXPassiveStrayOutOfVolume[14];
   char m_TXPassiveStray[1052];
 
   /** BX command reply data */
 
-  /** common data for BX command reply */
   int m_BXNumberOfHandles;
   unsigned char m_BXHandles[NDI_MAX_HANDLES];
   unsigned char m_BXHandleStatus[NDI_MAX_HANDLES];
   unsigned short m_BXSystemStatus;
 
-  /** for option 0x0001 : Transformation data */
-  float m_BXRotation[NDI_MAX_HANDLES][4];        /** quarternion */
-  float m_BXTranslation[NDI_MAX_HANDLES][3];
-  unsigned long m_BXRMSError[NDI_MAX_HANDLES];
-  unsigned long m_BXPortStatus[NDI_MAX_HANDLES];
-  unsigned long m_BXFrame[NDI_MAX_HANDLES];
+  /** BX with option NDI_XFORMS_AND_STATUS */
+  float m_BXTransforms[NDI_MAX_HANDLES][8];
+  unsigned int m_BXPortStatus[NDI_MAX_HANDLES];
+  unsigned int m_BXFrame[NDI_MAX_HANDLES];
 
-  /** for option 0x0002 : Tool and Marker information */
+  /** BX with option NDI_ADDITIONAL_INFO */
   unsigned char m_BXToolInformation[NDI_MAX_HANDLES];
-  unsigned char m_BXMarkerInformation[NDI_MAX_HANDLES][10];
+  unsigned char m_BXMarkerInformation[NDI_MAX_HANDLES][20];
 
-  /** for option 0x0004 : Latest 3D Position of Single, Stray, Active Marker */
-  unsigned char m_BXActiveMarkerStatus[NDI_MAX_HANDLES];
-  float         m_BXActiveMarkerPosition[NDI_MAX_HANDLES][3];
+  /** BX with option NDI_SINGLE_STRAY */    
+  unsigned char m_BXSingleStrayStatus[NDI_MAX_HANDLES];
+  float m_BXSingleStrayPosition[NDI_MAX_HANDLES][3];
 
-  /** for option 0x1000 : 3D Position of Stray Passive Markers */
+  /** BX with option NDI_PASSIVE_STRAY */  
   int m_BXNumberOfPassiveStrays;
   unsigned char m_BXPassiveStrayOutOfVolume[7];
-  int m_BXNumberOfPassiveStraysInsideVolume;
-  int m_BXNumberOfAvailableStrayPositions;  /** Number of available stray positions */
   float m_BXPassiveStrayPosition[50][3];
+
+  /** VER command reply data */
+  char m_VERText[1028];
 
   /**
   Send a command to the device using printf-style format string.
@@ -1542,12 +1590,19 @@ private:
   
   void HelperForCOMM(const char* cp, const char* crp);
   void HelperForPHINF(const char* cp, const char* crp);
+  void HelperForPHRQ(const char* cp, const char* crp);
   void HelperForPHSR(const char* cp, const char* crp);
   void HelperForTX(const char* cp, const char* crp);
-  void HelperForBX(const char* cp, const unsigned char* crp);
+  void HelperForBX(const char* cp, const char* crp);
   void HelperForIRCHK(const char* cp, const char* crp);
   void HelperForSSTAT(const char* cp, const char* crp);
-  void HelperForPHRQ(const char* cp, const char* crp);
+  void HelperForVER(const char* cp, const char* crp);
+
+  /**
+  For a port handle \em ph, get the index \em i into the array of port
+  handles. Returns false if the port handle was not in the array.
+  */
+  int TXIndexFromPortHandle(int ph, int *ip) const;
 
   /**
   Convert \em n characters of a hexadecimal string into an unsigned int.
@@ -1585,6 +1640,43 @@ private:
   device.
   */
   static int SignedStringToInt(const char* cp, int n);
+
+  /**
+  For a port handle \em ph, get the index \em i into the array of port
+  handles. Returns false if the port handle was not in the array.
+  */
+  int BXIndexFromPortHandle(int ph, int *ip) const;
+
+  /**
+  Convert one bytes of a little-endian binary string into an unsigned char
+  */
+  static unsigned char BinaryToUnsignedChar(const char *cp) {
+    const unsigned char *ucp = (const unsigned char *)cp;
+    return ucp[0]; }
+
+  /**
+  Convert two bytes of a little-endian binary string into an unsigned short
+  */
+  static unsigned short BinaryToUnsignedShort(const char *cp) {
+    const unsigned char *ucp = (const unsigned char *)cp;
+    return ((ucp[1] << 8) | ucp[0]); }
+
+  /**
+  Convert four bytes of a little-endian binary string to an unsigned int
+  */
+  static unsigned int BinaryToUnsignedInt(const char *cp) {
+    const unsigned char *ucp = (const unsigned char *)cp;
+    return (((ucp[3] << 8) | ucp[2]) << 16) | ((ucp[1] << 8) | ucp[0]); }
+
+  /**
+  Convert four bytes of a little-endian binary string to a float
+  */
+  static float BinaryToFloat(const char *cp) {
+    const unsigned char *ucp = (const unsigned char *)cp;
+    union { float f; unsigned int i; } u;
+    u.i = (((ucp[3] << 8) | ucp[2]) << 16) | ((ucp[1] << 8) | ucp[0]);
+    return u.f; }
+  
 
   NDICommandInterpreter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
