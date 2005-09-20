@@ -255,7 +255,7 @@ void BinaryData::Encode( std::string& output, const unsigned char *data, unsigne
 bool BinaryData::Decode( const std::string& asciiString )
 {
   unsigned int i;
-  unsigned char byte;
+  unsigned char byte, digit;
 
   this->SetSize(0);
   for( i = 0; i < asciiString.length(); )
@@ -269,8 +269,37 @@ bool BinaryData::Decode( const std::string& asciiString )
         }
       else if( asciiString[i+1] == 'x' )
         {
-        byte = (asciiString[i+2] - '0') * 0x10;
-        byte += (asciiString[i+3] - '0');
+        if( isalpha(asciiString[i+2]) )
+          {
+          if( islower(asciiString[i+2]) )
+            {
+            byte = (asciiString[i+2] - 'a' + 0x0a) * 0x10;
+            }
+          else
+            {
+            byte = (asciiString[i+2] - 'A' + 0x0A) * 0x10;
+            }
+          }
+        else
+          {
+          byte = (asciiString[i+2] - '0') * 0x10;
+          }
+          
+        if( isalpha(asciiString[i+3]) )
+          {
+          if( islower(asciiString[i+3]) )
+            {
+            byte += (asciiString[i+3] - 'a' + 0x0a);
+            }
+          else
+            {
+            byte += (asciiString[i+3] - 'A' + 0x0A);
+            }
+          }
+        else
+          {
+          byte += (asciiString[i+3] - '0');
+          }
         i+=4;
         this->Append( byte );
         }
@@ -285,7 +314,7 @@ bool BinaryData::Decode( const std::string& asciiString )
       ++i;
       }
     }
-  return false;
+  return true;
 }
 
 
