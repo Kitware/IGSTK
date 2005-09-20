@@ -121,6 +121,24 @@ private: \
 public: \
   void SetLogger(LoggerType* logger) { m_Logger = logger; }
 
+/** Set character string.  Creates member Set"name"()
+ * (e.g., SetFilename(char *)). The macro assumes that
+ * the class member (name) is declared a type std::string. */
+#define igstkSetStringMacro(name) \
+  virtual void Set##name (const char* _arg) \
+  { \
+    if ( _arg && (_arg == this->m_##name) ) { return;} \
+    if (_arg) \
+      { \
+      this->m_##name = _arg;\
+      } \
+     else \
+      { \
+      this->m_##name = ""; \
+      } \
+    this->Modified(); \
+  }
+
 
 /** Macro that defines all the standard elements related to the StateMachine.
  * This macro factorizes code that should always be present when using the StateMachine. */
