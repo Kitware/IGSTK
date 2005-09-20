@@ -488,6 +488,7 @@ const char* NDICommandInterpreter::Command(const char* command)
   unsigned int CRC16 = 0;
   int useCRC = 0;
   int inCommand = 1;
+  int readError;
   char* cp, *rp, *crp;
 
   cp = m_SerialCommand;      /* text sent to ndicapi */
@@ -514,7 +515,18 @@ const char* NDICommandInterpreter::Command(const char* command)
     m_Communication->SendBreak();
     m_Communication->Sleep(2000);
 
-    m_Communication->Read(rp, NDI_MAX_REPLY_SIZE, m);
+    readError = m_Communication->Read(rp, NDI_MAX_REPLY_SIZE, m);
+    
+    if ( readError == Communication::FAILURE )
+      {
+      this->SetErrorCode( NDI_READ_ERROR );
+      return crp;
+      }
+    else if ( readError == Communication::TIMEOUT )
+      {
+      this->SetErrorCode( NDI_TIMEOUT );
+      return crp;
+      }
 
     /* check for correct reply */
     if (strncmp(rp, "RESETBE6F\r", 10) != 0)
@@ -581,11 +593,19 @@ const char* NDICommandInterpreter::Command(const char* command)
   m_Communication->PurgeBuffers();
 
   /* send the command to the device */
-  m_Communication->Write(cp, strlen(cp));
+  int writeError = m_Communication->Write(cp, strlen(cp));
   /* is there any easy way to check if the write failed, or
    * is it necessary to catch the events? There should be code
    * here to check, and set errcode = NDI_WRITE_ERROR or 
    * NDI_TIMEOUT */
+  if ( writeError == Communication::FAILURE )
+    {
+    errcode = NDI_WRITE_ERROR;
+    }
+  else if ( writeError == Communication::TIMEOUT )
+    {
+    errcode = NDI_TIMEOUT;
+    }
 
   /* read the reply from the device */
   m = 0;
@@ -594,7 +614,17 @@ const char* NDICommandInterpreter::Command(const char* command)
     if (cp[0] == 'B' && cp[1] == 'X' && nc == 2)
       { /* the BX command */
       m_Communication->SetUseReadTerminationCharacter( false );
-      m_Communication->Read(rp, 6, m);
+      readError = m_Communication->Read(rp, 6, m);
+      if ( readError == Communication::FAILURE )
+        {
+        this->SetErrorCode(NDI_READ_ERROR);
+        return crp;
+        }
+      else if ( readError == Communication::TIMEOUT )
+        {
+        this->SetErrorCode(NDI_TIMEOUT);
+        return crp;
+        }
 
       if (m == 0)
         {
@@ -632,7 +662,18 @@ const char* NDICommandInterpreter::Command(const char* command)
         return crp;
         }
 
-      m_Communication->Read(rp, ReplyLength+2, m);
+      readError = m_Communication->Read(rp, ReplyLength+2, m);
+      if ( readError == Communication::FAILURE )
+        {
+        this->SetErrorCode(NDI_READ_ERROR);
+        return crp;
+        }
+      else if ( readError == Communication::TIMEOUT )
+        {
+        this->SetErrorCode(NDI_TIMEOUT);
+        return crp;
+        }
+      
       if (m == 0)
         {
         this->SetErrorCode(NDI_TIMEOUT);
@@ -664,7 +705,16 @@ const char* NDICommandInterpreter::Command(const char* command)
     else
       {
       m_Communication->SetUseReadTerminationCharacter( true );
-      m_Communication->Read(rp, NDI_MAX_REPLY_SIZE, m);
+      readError = m_Communication->Read(rp, NDI_MAX_REPLY_SIZE, m);
+      if ( readError == Communication::FAILURE )
+        {
+        errcode = NDI_READ_ERROR;
+        m = 0;
+        }
+      else if ( readError == Communication::TIMEOUT )
+        {
+        errcode = NDI_TIMEOUT;
+        }
 
       /* need better code to check for error and set NDI_WRITE_ERROR or
        * NDI_TIMEOUT, since both result in m=0 */

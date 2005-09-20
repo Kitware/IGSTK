@@ -26,11 +26,13 @@
 #include "itkObject.h"
 #include "itkEventObject.h"
 #include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
 
 #include "igstkMacros.h"
 #include "igstkEvents.h"
 #include "igstkCommunication.h"
 #include "igstkStateMachine.h"
+
 
 namespace igstk
 {
@@ -82,6 +84,8 @@ public:
   /** Available hardware handshaking settings. */
   enum HandshakeType { HandshakeOff = 0,
                        HandshakeOn = 1 };
+
+  typedef Communication::ResultType      ResultType;
 
   typedef SerialCommunication            Self;
   typedef Communication                  Superclass;
@@ -171,12 +175,12 @@ public:
   void PurgeBuffers( void );
 
   /** Write method sends the string via the communication link. */
-  void Write( const char *message, unsigned int numberOfBytes );
+  ResultType Write( const char *message, unsigned int numberOfBytes );
 
   /** Read method receives the string via the communication link. The
    *  data will always be null-terminated, so ensure that 'data' is at
    *  least numberOfBytes+1 in size. */
-  void Read( char *data, unsigned int numberOfBytes,
+  ResultType Read( char *data, unsigned int numberOfBytes,
              unsigned int &bytesRead );
 
   /** Event that denotes that an error has occurred. */
@@ -214,12 +218,6 @@ public:
 
 protected:
 
-  typedef enum 
-  { 
-    FAILURE=0, 
-    SUCCESS
-  } ResultType;
-
   SerialCommunication();
 
   ~SerialCommunication();
@@ -245,10 +243,10 @@ protected:
   virtual void InternalPurgeBuffers( void ) = 0;
 
   /** write the data to the serial port. */
-  virtual void InternalWrite( void ) = 0;
+  virtual ResultType InternalWrite( void ) = 0;
 
   /** read the data from the serial port. */
-  virtual void InternalRead( void ) = 0;
+  virtual ResultType InternalRead( void ) = 0;
 
   /** Print object information. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -296,6 +294,9 @@ protected:
 
 private:
 
+  /** Type used to map between integer values and inputs */
+  typedef std::map<int, InputType>     IntegerInputMapType;
+  
   /** Record file name */
   std::string              m_CaptureFileName;
 
@@ -307,6 +308,20 @@ private:
 
   /** Recording flag */
   bool                     m_Capture;
+  
+  /** Logger for recording */
+  itk::Logger::Pointer     m_Recorder;
+  
+  /** LogOutput for File output stream */
+  itk::StdStreamLogOutput::Pointer  m_CaptureFileOutput;
+  
+  ResultType                        m_WriteReturnValue;
+  
+  ResultType                        m_ReadReturnValue;
+  
+  IntegerInputMapType               m_WriteResultInputMap;
+  
+  IntegerInputMapType               m_ReadResultInputMap;
 
   // List of States 
   StateType                m_IdleState;
@@ -315,6 +330,8 @@ private:
   StateType                m_AttemptingToSetTransferParametersState;
   StateType                m_ReadyForCommunicationState;
   StateType                m_AttemptingToClosePortState;
+  StateType                m_AttemptingToReadState;
+  StateType                m_AttemptingToWriteState;
 
   // List of Inputs
   InputType                m_OpenPortInput;
@@ -331,6 +348,13 @@ private:
   InputType                m_ReadInput;
   InputType                m_WriteInput;
 
+  InputType                m_WriteSuccessInput;
+  InputType                m_WriteFailureInput;
+  InputType                m_WriteTimeoutInput;
+  InputType                m_ReadSuccessInput;
+  InputType                m_ReadFailureInput;
+  InputType                m_ReadTimeoutInput;
+                           
   InputType                m_ClosePortInput;
   InputType                m_ClosePortSuccessInput;
   InputType                m_ClosePortFailureInput;
@@ -346,6 +370,24 @@ private:
 
   /** called by state machine when serial port fails to close */
   void ClosePortFailureProcessing( void );
+  
+  /** called by state machine when writing succeeded */
+  void WriteSuccessProcessing( void );
+  
+  /** called by state machine when writing failed */
+  void WriteFailureProcessing( void );
+  
+  /** called by state machine when writing was timed out */
+  void WriteTimeoutProcessing( void );
+  
+  /** called by state machine when reading succeeded */
+  void ReadSuccessProcessing( void );
+  
+  /** called by state machine when reading failed */
+  void ReadFailureProcessing( void );
+  
+  /** called by state machine when reading was timed out */
+  void ReadTimeoutProcessing( void );
 
   /** Called by the state machine when communication is to be opened */
   void AttemptToOpenPort( void );
@@ -355,6 +397,12 @@ private:
 
   /** Called by the state machine when communication is to be closed */
   void AttemptToClosePort( void );
+  
+  /** Called by the state machine when writing is to be done */
+  void AttemptToWrite( void );
+  
+  /** Called by the state machine when reading is to be done */
+  void AttemptToRead( void );
 
 };
 

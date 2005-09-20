@@ -22,6 +22,7 @@
 #include <iomanip>
 #include <time.h>
 
+#include "igstkBinaryData.h"
 #include "igstkSerialCommunication.h"
 
 
@@ -48,6 +49,14 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
   m_CaptureFileName = "";
   m_Capture = false;
   m_CaptureMessageNumber = 0;
+  
+  m_WriteResultInputMap[SUCCESS] = m_WriteSuccessInput;
+  m_WriteResultInputMap[FAILURE] = m_WriteFailureInput;
+  m_WriteResultInputMap[TIMEOUT] = m_WriteTimeoutInput;
+
+  m_ReadResultInputMap[SUCCESS] = m_ReadSuccessInput;
+  m_ReadResultInputMap[FAILURE] = m_ReadFailureInput;
+  m_ReadResultInputMap[TIMEOUT] = m_ReadTimeoutInput;
 
   // Set the state descriptors
   m_StateMachine.AddState( m_IdleState,
@@ -67,6 +76,12 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
 
   m_StateMachine.AddState( m_AttemptingToClosePortState,
                            "m_AttemptingToClosePortState" );
+                           
+  m_StateMachine.AddState( m_AttemptingToReadState,
+                           "m_AttemptingToReadState" );
+                           
+  m_StateMachine.AddState( m_AttemptingToWriteState,
+                           "m_AttemptingToWriteState" );
 
   // Set the input descriptors
   m_StateMachine.AddInput( m_OpenPortInput,
@@ -110,7 +125,25 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
 
   m_StateMachine.AddInput( m_ReadInput,
                            "ReadInput");
-
+                           
+  m_StateMachine.AddInput( m_WriteSuccessInput,
+                           "m_WriteSuccessInput" );
+                           
+  m_StateMachine.AddInput( m_WriteFailureInput,
+                           "m_WriteFailureInput" );
+                           
+  m_StateMachine.AddInput( m_WriteTimeoutInput,
+                           "m_WriteTimeoutInput" );
+                           
+  m_StateMachine.AddInput( m_ReadSuccessInput,
+                           "m_ReadSuccessInput" );
+                           
+  m_StateMachine.AddInput( m_ReadFailureInput,
+                           "m_ReadFailureInput" );
+                           
+  m_StateMachine.AddInput( m_ReadTimeoutInput,
+                           "m_ReadTimeoutInput" );
+                           
   // ----------------------------------------
   // Programming the state machine transitions
 
@@ -188,13 +221,43 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
 
   m_StateMachine.AddTransition( m_ReadyForCommunicationState,
                                 m_WriteInput,
+                                m_AttemptingToWriteState,
+                                &SerialCommunication::AttemptToWrite);
+                                
+  m_StateMachine.AddTransition( m_AttemptingToWriteState,
+                                m_WriteSuccessInput,
                                 m_ReadyForCommunicationState,
-                                &SerialCommunication::InternalWrite);
+                                &SerialCommunication::WriteSuccessProcessing);
+                                
+  m_StateMachine.AddTransition( m_AttemptingToWriteState,
+                                m_WriteFailureInput,
+                                m_ReadyForCommunicationState,
+                                &SerialCommunication::WriteFailureProcessing);
+                                
+  m_StateMachine.AddTransition( m_AttemptingToWriteState,
+                                m_WriteTimeoutInput,
+                                m_ReadyForCommunicationState,
+                                &SerialCommunication::WriteTimeoutProcessing);
 
   m_StateMachine.AddTransition( m_ReadyForCommunicationState,
                                 m_ReadInput,
+                                m_AttemptingToReadState,
+                                &SerialCommunication::AttemptToRead);
+
+  m_StateMachine.AddTransition( m_AttemptingToReadState,
+                                m_ReadSuccessInput,
                                 m_ReadyForCommunicationState,
-                                &SerialCommunication::InternalRead);
+                                &SerialCommunication::ReadSuccessProcessing);
+                                
+  m_StateMachine.AddTransition( m_AttemptingToReadState,
+                                m_ReadFailureInput,
+                                m_ReadyForCommunicationState,
+                                &SerialCommunication::ReadFailureProcessing);
+                                
+  m_StateMachine.AddTransition( m_AttemptingToReadState,
+                                m_ReadTimeoutInput,
+                                m_ReadyForCommunicationState,
+                                &SerialCommunication::ReadTimeoutProcessing);
 
   m_StateMachine.AddTransition( m_ReadyForCommunicationState,
                                 m_ClosePortInput,
@@ -369,7 +432,8 @@ void SerialCommunication::Sleep( unsigned int milliseconds )
 }
 
 
-void SerialCommunication::Write( const char *data, unsigned int numberOfBytes )
+SerialCommunication::ResultType 
+SerialCommunication::Write( const char *data, unsigned int numberOfBytes )
 {
   // this call to the log macro assumes data is null terminated
   igstkLogMacro( DEBUG, "SerialCommunication::Write(" 
@@ -382,22 +446,20 @@ void SerialCommunication::Write( const char *data, unsigned int numberOfBytes )
   if( m_Capture && m_CaptureFileStream.is_open() )
     {
     m_CaptureMessageNumber++;
-    m_CaptureFileStream << m_CaptureMessageNumber
-                        << ". command[" << numberOfBytes << "] ";
-    for( unsigned int i = 0; i < numberOfBytes; ++i )
-      {
-      m_CaptureFileStream << m_OutputData[i];
-      }
-    m_CaptureFileStream << '\n';
-    m_CaptureFileStream.flush();
+    std::string encodedString;
+    BinaryData::Encode(encodedString, (const unsigned char*)m_OutputData, numberOfBytes);
+    igstkLogMacro2( m_Recorder, INFO, m_CaptureMessageNumber
+                        << ". command[" << numberOfBytes << "] " << encodedString << std::endl );
     }
 
   m_StateMachine.PushInput( m_WriteInput );
   m_StateMachine.ProcessInputs();
+  return m_WriteReturnValue;
 }
 
 
-void SerialCommunication::Read( char *data, unsigned int numberOfBytes,
+SerialCommunication::ResultType 
+SerialCommunication::Read( char *data, unsigned int numberOfBytes,
                                 unsigned int &bytesRead )
 {
   m_BytesRead = 0;
@@ -415,19 +477,15 @@ void SerialCommunication::Read( char *data, unsigned int numberOfBytes,
   // Recording for data received
   if( m_Capture && m_CaptureFileStream.is_open() )
     {
-    m_CaptureFileStream << m_CaptureMessageNumber
-                        << ". receive[" << bytesRead << "] ";
-
-    for( unsigned int i = 0; i < bytesRead; ++i )
-      {
-      m_CaptureFileStream << m_InputData[i];
-      }
-    m_CaptureFileStream << '\n';
-    m_CaptureFileStream.flush();
+    std::string encodedString;
+    BinaryData::Encode(encodedString, (const unsigned char*)m_InputData, bytesRead);
+    igstkLogMacro2( m_Recorder, INFO, m_CaptureMessageNumber
+                        << ". receive[" << bytesRead << "] " << encodedString << std::endl );
     }
 
   igstkLogMacro( DEBUG, "SerialCommunication::Read(" << data << ", "
                  << numberOfBytes << ", " << bytesRead << ") called...\n" );
+  return m_ReadReturnValue;
 }
 
 
@@ -445,7 +503,17 @@ void SerialCommunication::OpenPortSuccessProcessing( void )
     igstkLogMacro( DEBUG, "Capture is on. Filename: "
                    << m_CaptureFileName << "\n" );
 
-    m_CaptureFileStream.open(m_CaptureFileName.c_str(), std::ios::binary);
+    if( m_Recorder.IsNull() )
+      {
+      m_Recorder = itk::Logger::New();
+      m_Recorder->SetPriorityLevel(itk::Logger::DEBUG);
+      m_Recorder->SetLevelForFlushing(itk::Logger::DEBUG);
+      }
+    if( m_CaptureFileOutput.IsNull() )
+      {
+      m_CaptureFileOutput = itk::StdStreamLogOutput::New();
+      }
+    m_CaptureFileStream.open(m_CaptureFileName.c_str());
     if( !m_CaptureFileStream.is_open() )
       {
       igstkLogMacro( CRITICAL,
@@ -453,14 +521,59 @@ void SerialCommunication::OpenPortSuccessProcessing( void )
       }
     else
       {
-      m_CaptureFileStream << "# recorded " << asctime(localtime(&ti))
-                          << "\r\n";
-      m_CaptureFileStream.flush();
+      m_CaptureFileOutput->SetStream( m_CaptureFileStream );
+      m_Recorder->AddLogOutput( m_CaptureFileOutput );
+      igstkLogMacro2( m_Recorder, DEBUG, "# recorded " << asctime(localtime(&ti))
+                          << "\r\n" );
       }
     }
 
    // if the port was opened successfully, then set transfer parameters next
   m_StateMachine.PushInput( m_SetTransferParametersInput );
+}
+
+
+void SerialCommunication::AttemptToWrite()
+{
+  int condition = this->InternalWrite();
+  IntegerInputMapType& conditionInputMap = m_WriteResultInputMap;
+  const InputType *input = &m_WriteFailureInput;
+  IntegerInputMapType::const_iterator itr;
+
+  itr = conditionInputMap.find(condition);
+  if ( itr != conditionInputMap.end() )
+    {
+    input = & (itr->second);
+    }
+  else
+    {
+    std::cerr << "WARNING : Default Input is pushed because the condition value didn't have a corresponding input."
+              << " Please make sure the condition value is correct. condition: " << condition << std::endl;
+    }
+
+  m_StateMachine.PushInput( *input );
+}
+
+
+void SerialCommunication::AttemptToRead()
+{
+  int condition = this->InternalRead();
+  IntegerInputMapType& conditionInputMap = m_ReadResultInputMap;
+  const InputType *input = & m_ReadFailureInput;
+  IntegerInputMapType::const_iterator itr;
+
+  itr = conditionInputMap.find(condition);
+  if ( itr != conditionInputMap.end() )
+    {
+    input = & (itr->second);
+    }
+  else
+    {
+    std::cerr << "WARNING : Default Input is pushed because the condition value didn't have a corresponding input."
+              << " Please make sure the condition value is correct. condition: " << condition << std::endl;
+    }
+
+  m_StateMachine.PushInput( *input );
 }
 
 
@@ -485,6 +598,42 @@ void SerialCommunication::AttemptToClosePort()
   m_StateMachine.PushInputBoolean( (bool)this->InternalClosePort(),
                                    m_ClosePortSuccessInput,
                                    m_ClosePortFailureInput );
+}
+
+
+void SerialCommunication::WriteSuccessProcessing()
+{
+  m_WriteReturnValue = SUCCESS;
+}
+
+
+void SerialCommunication::WriteFailureProcessing()
+{
+  m_WriteReturnValue = FAILURE;
+}
+
+
+void SerialCommunication::WriteTimeoutProcessing()
+{
+  m_WriteReturnValue = TIMEOUT;
+}
+
+
+void SerialCommunication::ReadSuccessProcessing()
+{
+  m_ReadReturnValue = SUCCESS;
+}
+
+
+void SerialCommunication::ReadFailureProcessing()
+{
+  m_ReadReturnValue = FAILURE;
+}
+
+
+void SerialCommunication::ReadTimeoutProcessing()
+{
+  m_ReadReturnValue = TIMEOUT;
 }
 
 

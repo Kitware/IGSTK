@@ -286,12 +286,13 @@ void SerialCommunicationForPosix::InternalPurgeBuffers( void )
 }
 
 
-void SerialCommunicationForPosix::InternalWrite( void )
+SerialCommunicationForPosix::ResultType
+SerialCommunicationForPosix::InternalWrite( void )
 {
   unsigned int i = 0;
   int m;
   unsigned int n = m_BytesToWrite;
-  int writeError = 0;
+  ResultType writeError = SUCCESS;
 
   while (n > 0)
     { 
@@ -301,7 +302,7 @@ void SerialCommunicationForPosix::InternalWrite( void )
       m = 0;
       if (errno != EAGAIN) 
         {
-        writeError = 1;
+        writeError = FAILURE;
         break;
         }
       }
@@ -310,23 +311,25 @@ void SerialCommunicationForPosix::InternalWrite( void )
     i += m;  // i is the number of chars written
     }
   
-  if (writeError)
+  if (writeError == FAILURE)
     {
     this->InvokeEvent( WriteFailureEvent() );
     }
-  else
+  else if (writeError == SUCCESS)
     {
     this->InvokeEvent( WriteSuccessEvent() );
     }
+  return writeError;
 }
 
 
-void SerialCommunicationForPosix::InternalRead( void )
+SerialCommunicationForPosix::ResultType
+SerialCommunicationForPosix::InternalRead( void )
 {
   unsigned int i = 0;
   int m;
   unsigned int n = m_BytesToRead;
-  int readError = 0;
+  ResultType readError = SUCCESS;
 
   // Read reply either until n bytes have been read,
   // or if UseReadTerminationCharacter is set then read
@@ -339,13 +342,13 @@ void SerialCommunicationForPosix::InternalRead( void )
       m = 0;
       if (errno != EAGAIN) 
         {
-        readError = 1;
+        readError = FAILURE;
         break;
         }
       }
     else if (m == 0)
       { // no characters read, must have timed out
-      readError = 2;
+      readError = TIMEOUT;
       break;
       }
     n -= m;  // n is number of chars left to read
@@ -364,18 +367,19 @@ void SerialCommunicationForPosix::InternalRead( void )
   m_InputData[i] = '\0';
 
   // invoke the appropriate event
-  if (readError == 1)
+  if (readError == FAILURE)
     {
     this->InvokeEvent( ReadFailureEvent() );
     }
-  else if (readError == 2)
+  else if (readError == TIMEOUT)
     {
     this->InvokeEvent( ReadTimeoutEvent() );
     }
-  else
+  else if (readError == SUCCESS)
     {
     this->InvokeEvent( ReadSuccessEvent() );
     }
+  return readError;
 }
 
 

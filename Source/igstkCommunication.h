@@ -44,6 +44,13 @@ public:
   typedef itk::Object Superclass; 
   typedef itk::SmartPointer< Self > Pointer; 
   typedef itk::SmartPointer< const Self > ConstPointer; 
+  
+  typedef enum 
+  { 
+    FAILURE=0, 
+    SUCCESS=1,
+    TIMEOUT=2
+  } ResultType;
 
   /** Method for defining the name of the class */ 
   igstkTypeMacro(Communication, Object); 
@@ -74,11 +81,11 @@ public:
   igstkGetMacro( UseReadTerminationCharacter, bool );
 
   /** Write method sends the string via communication link. */
-  virtual void Write( const char *data, unsigned int numberOfBytes ) { };
+  virtual ResultType Write( const char *data, unsigned int numberOfBytes ) { return SUCCESS; };
 
   /** Read method receives string via communication link. */
-  virtual void Read( char *data, unsigned int numberOfBytes,
-                     unsigned int &bytesRead ) { }; 
+  virtual ResultType Read( char *data, unsigned int numberOfBytes,
+                     unsigned int &bytesRead ) { return SUCCESS; }; 
 
 protected:
 

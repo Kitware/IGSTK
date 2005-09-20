@@ -243,12 +243,13 @@ void SerialCommunicationForWindows::InternalSleep( void )
   ::Sleep(m_SleepPeriod);
 }
 
-void SerialCommunicationForWindows::InternalWrite( void )
+SerialCommunicationForWindows::ResultType
+SerialCommunicationForWindows::InternalWrite( void )
 {
   DWORD m, dumb;
   unsigned int i = 0;
   unsigned int bytesToWrite = m_BytesToWrite;
-  int writeError = 0;
+  ResultType writeError = SUCCESS;
 
   igstkLogMacro( DEBUG, "InternalWrite called ...\n" );
   while (bytesToWrite > 0)
@@ -262,13 +263,13 @@ void SerialCommunicationForWindows::InternalWrite( void )
         }
       else
         {  // IO error occurred 
-        writeError = 1;
+        writeError = FAILURE;
         break;
         }
       }
     else if (m == 0)
       { // no characters written, must have timed out
-      writeError = 2;
+      writeError = TIMEOUT;
       break;
       }
 
@@ -276,27 +277,29 @@ void SerialCommunicationForWindows::InternalWrite( void )
     i += m;  // i is the number of chars written
     }
 
-  if (writeError == 1)
+  if (writeError == FAILURE)
     {
     this->InvokeEvent( WriteFailureEvent() );
     }
-  else if (writeError == 2)
+  else if (writeError == TIMEOUT)
     {
     this->InvokeEvent( WriteTimeoutEvent() );
     }
-  else
+  else if (writeError == SUCCESS)
     {
     this->InvokeEvent( WriteSuccessEvent() );
     }
+  return writeError;
 }
 
 
-void SerialCommunicationForWindows::InternalRead( void )
+SerialCommunicationForWindows::ResultType
+SerialCommunicationForWindows::InternalRead( void )
 {
   unsigned int i = 0;
   DWORD m,dumb;
   unsigned int n = m_BytesToRead;
-  int readError = 0;
+  ResultType readError = SUCCESS;
   
   while (n > 0)
     {
@@ -309,13 +312,13 @@ void SerialCommunicationForWindows::InternalRead( void )
         }
       else
         { // IO error occurred
-        readError = 1;
+        readError = FAILURE;
         break;
         }
       }
     else if (m == 0)
       { // no characters read, must have timed out
-      readError = 2;
+      readError = TIMEOUT;
       break;
       }
     n -= m;  // n is number of chars left to read
@@ -332,18 +335,19 @@ void SerialCommunicationForWindows::InternalRead( void )
   m_BytesRead = i;
   m_InputData[i] = '\0';
 
-  if (readError == 1)
+  if (readError == FAILURE)
     {
     this->InvokeEvent( ReadFailureEvent() );
     }
-  else if (readError == 2)
+  else if (readError == TIMEOUT)
     {
     this->InvokeEvent( ReadTimeoutEvent() );
     }
-  else
+  else if (readError == SUCCESS)
     {
     this->InvokeEvent( ReadSuccessEvent());
     }
+  return readError;
 }
 
 
