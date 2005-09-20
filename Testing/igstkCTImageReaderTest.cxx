@@ -55,7 +55,7 @@ int igstkCTImageReaderTest( int argc, char* argv[] )
 
   reader->SetDirectory(argv[1]);
   
-  typedef unsigned short      OutputPixelType;
+  typedef signed short        OutputPixelType;
   const   unsigned int        OutputDimension = 3;
 
   typedef itk::Image< OutputPixelType, OutputDimension >   ImageOutputType;
