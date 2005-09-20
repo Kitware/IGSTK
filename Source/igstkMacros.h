@@ -61,6 +61,20 @@ namespace igstk
 }
 
 
+/** Macro for simplifying the use of logging: the first argument is
+ *  a pointer to a logger, the second argument is the priority
+ *  (see itkMacro.h) and the second argument is the message. */
+#define igstkLogMacro2( logger, x, y)  \
+{         \
+  if ( logger ) \
+    {  \
+    ::itk::OStringStream message; \
+    message << y; \
+    logger->Write(::itk::Logger::x, message.str()); \
+    }  \
+}
+
+
 /** Set built-in type.  Creates member Set"name"() (e.g., SetTimeStep(time)); */
 #define  igstkSetMacro(name,type) \
 virtual void Set##name (const type & _arg) \
