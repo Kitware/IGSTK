@@ -14,14 +14,14 @@ namespace igstk
  * \ingroup Object
  */
 
-class CTImageReader : public DICOMImageReader<unsigned short>
+class CTImageReader : public DICOMImageReader<signed short>
 {
 
 public:
 
   /** Typedefs */
   typedef CTImageReader                         Self;
-  typedef DICOMImageReader<unsigned short>       Superclass;
+  typedef DICOMImageReader<signed short>       Superclass;
   typedef itk::SmartPointer<Self>               Pointer;
   typedef itk::SmartPointer<const Self>         ConstPointer;
 
