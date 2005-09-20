@@ -5,8 +5,14 @@
 #include "igstkMacros.h"
 #include "igstkImageReader.h"
 
+#include "igstkStateMachine.h"
+#include "itkLogger.h"
+
 #include "itkImageSeriesReader.h"
 #include "itkObject.h"
+#include "itkEventObject.h"
+
+#include "igstkEvents.h"
 
 #include "itkGDCMImageIO.h"
 #include "itkGDCMSeriesFileNames.h"
@@ -36,6 +42,7 @@ public:
   typedef itk::SmartPointer<const Self>                ConstPointer;
   typedef typename Superclass::ImageType               ImageType;
   typedef typename ImageType::ConstPointer             ImageConstPointer;
+  typedef itk::Logger                                  LoggerType;
 
   typedef itk::ImageSeriesReader<ImageType>     ImageSeriesReaderType;
 
@@ -45,11 +52,24 @@ public:
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
 
-  /** Method to set the directory containing the CT image data */
+  /** Method to pass the directory name containing the DICOM image data */
   void SetDirectory( const char *directory );
 
-  /** Method to get the ITK Image data */
-  ImageConstPointer GetITKImageData() const;
+  /** This method request image read **/
+  void RequestImageRead();
+
+  /** This method requests image buffer emptied */
+  void RequestEmptyImageBuffer();
+
+  vtkImageData   *   GetVTKImageData() const;
+  ImageConstPointer  GetITKImageData() const;
+
+  /** Declarations needed for the State Machine */
+  igstkStateMachineTemplatedMacro();
+
+  /** Declarations needed for the Logger */
+  igstkLoggerMacro();
+
 
 protected:
 
@@ -63,11 +83,40 @@ protected:
   /* Internal itkImageSeriesReader */
   typename ImageSeriesReaderType::Pointer        m_ImageSeriesReader;
 
+
+  itkEventMacro( DICOMImageReaderEvent,                    IGSTKEvent);
+  itkEventMacro( InvalidRequestErrorEvent,                 DICOMImageReaderEvent );
+  itkEventMacro( ImageReadingErrorEvent,                   DICOMImageReaderEvent );
+
+
+
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
 
+  std::string                  m_ImageDirectoryName;
+  /** List of States */
+  StateType                    m_IdleState;
+  StateType                    m_ImageDirectoryNameReadState;
+  StateType                    m_ImageReadState;
+
+
+  /** List of State Inputs */
+  InputType                     m_ImageDirectoryNameInput;
+  InputType                     m_ReadImageRequestInput;
+  
+  void ReadDirectoryName();
+
+  /** This method request image read **/
+  void ReadImage();
+
+/** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent
+ when invalid requests are made */
+  void ReportInvalidRequest();
+
+  igstkSetStringMacro(ImageDirectoryName);
+  
 };
 
 } // end namespace igstk
