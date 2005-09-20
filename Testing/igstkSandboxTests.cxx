@@ -14,6 +14,7 @@ void RegisterTests()
   REGISTER_TEST(igstkLandmarkRegistrationTest);
   REGISTER_TEST(igstkDICOMImageReaderTest);
   REGISTER_TEST(igstkCTImageReaderTest);
+  REGISTER_TEST(igstkMRImageReaderTest);
 
 #ifdef IGSTK_USE_ATAMAI
   REGISTER_TEST(igstkAtamaiNDITrackerTest);

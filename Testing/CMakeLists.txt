@@ -25,6 +25,7 @@ INCLUDE_DIRECTORIES (
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 ADD_TEST(igstkPolarisTrackerTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerTest)
 ADD_TEST(igstkLandmarkRegistrationTest ${IGSTKSandbox_TESTS} igstkLandmarkRegistrationTest)
+ADD_TEST(igstkMRImageReaderTest  ${IGSTKSandbox_TESTS} igstkMRImageReaderTest)
 
 
 IF (IGSTKSandbox_DATA_ROOT) 
@@ -46,6 +47,7 @@ SET(BasicTests_SRCS
   igstkLandmarkRegistrationTest.cxx
   igstkDICOMImageReaderTest.cxx
   igstkCTImageReaderTest.cxx
+  igstkMRImageReaderTest.cxx
   )
 
 IF (IGSTK_USE_ATAMAI)
