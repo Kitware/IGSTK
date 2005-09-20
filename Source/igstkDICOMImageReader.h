@@ -115,7 +115,7 @@ private:
  when invalid requests are made */
   void ReportInvalidRequest();
 
-  igstkSetStringMacro(ImageDirectoryName);
+  itkSetStringMacro(ImageDirectoryName);
   
 };
 
