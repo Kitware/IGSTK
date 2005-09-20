@@ -352,8 +352,9 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
 
     double transform[8];
     int status, absent;
-
-    absent = m_CommandInterpreter->GetTXTransform(ph, transform);
+    int result = m_CommandInterpreter->GetTXTransform(ph, transform);
+    
+    absent = (result != CommandInterpreterType::NDI_VALID);
     status = m_CommandInterpreter->GetTXPortStatus(ph);
     frame[port] = m_CommandInterpreter->GetTXFrame(ph);
 
