@@ -55,6 +55,7 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
   std::cout<<"Reading the DICOM series : "<<argv[1]<<std::endl;
 
   reader->SetDirectory(argv[1]);
+  reader->RequestImageRead();
   
   typedef short      OutputPixelType;
   const   unsigned int        OutputDimension = 3;
