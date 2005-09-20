@@ -5,6 +5,7 @@
 # The header files
 SET(IGSTKSandbox_HEADS
   igstkCTImageReader.h
+  igstkMRImageReader.h
   igstkImageReader.h
   igstkDICOMImageReader.h
   igstkImageSpatialObject.h
@@ -19,6 +20,7 @@ SET(IGSTKSandbox_HEADS
 # The implementation files
 SET(IGSTKSandbox_SRCS  
   igstkCTImageReader.cxx
+  igstkMRImageReader.cxx
   igstkImageReader.txx
   igstkDICOMImageReader.txx
   igstkImageSpatialObject.cxx
