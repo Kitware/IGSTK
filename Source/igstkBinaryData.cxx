@@ -255,7 +255,7 @@ void BinaryData::Encode( std::string& output, const unsigned char *data, unsigne
 bool BinaryData::Decode( const std::string& asciiString )
 {
   unsigned int i;
-  unsigned char byte, digit;
+  unsigned char byte;
 
   this->SetSize(0);
   for( i = 0; i < asciiString.length(); )
@@ -328,7 +328,6 @@ void BinaryData::Append(unsigned char byte)
 /** Append data from an array */
 void BinaryData::Append(const unsigned char* inputBegin, unsigned int inputLength)
 {
-  unsigned int i;
   m_data.insert(m_data.end(), inputBegin, &inputBegin[inputLength]);
 }
 
