@@ -44,6 +44,7 @@ void ImageSpatialObject::SetDirectory( const char *directory )
   if( m_CTImageReader )
     {
     m_CTImageReader->SetDirectory( directory );
+    m_CTImageReader->RequestImageRead();
     }
 }
 
