@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <string>
 #include <string.h>
 
 #include "igstkSerialCommunicationSimulator.h"
@@ -58,7 +59,7 @@ SerialCommunicationSimulator::InternalOpenPort( void )
 {
   igstkLogMacro( DEBUG, m_FileName << "\n" );
 
-  m_File.open(m_FileName.c_str(), std::ios::binary);
+  m_File.open(m_FileName.c_str());
 
   if (!m_File.is_open()) 
     {
@@ -71,13 +72,17 @@ SerialCommunicationSimulator::InternalOpenPort( void )
   unsigned char buf[64*1024];
   char numberString[20], temp[20], byte;
   int sent, recv, len, numberLength, number;
+  double timestamp;
   sent = recv = 0;
   while( !m_File.eof() )
     {
-    m_File.read(&byte, 1);
-    if( byte == '#' )
+    m_File >> timestamp;
+    m_File >> byte;       // consuming #
+    m_File >> temp;
+    if( strncmp("(DEBUG)", temp, 7) == 0 )
       {
       m_File.getline((char*)buf, 64*1024);
+      
       continue;
       }
 
@@ -85,14 +90,14 @@ SerialCommunicationSimulator::InternalOpenPort( void )
       {
       break;
       }
+    m_File.read(&byte, 1);  // consuming ' '(white space)
     numberLength = 0;
-    numberString[numberLength++] = byte;
-    while( byte != '.' )
-      {
+    do {
       m_File.read(&byte, 1);
       numberString[numberLength++] = byte;
       }
-    numberString[numberLength] = 0;
+    while( byte != '.' );
+    numberString[numberLength-1] = 0;
     
     number = atoi(numberString);
 
@@ -107,22 +112,28 @@ SerialCommunicationSimulator::InternalOpenPort( void )
       m_File.read(&byte, 1);
       numberString[numberLength++] = byte;
       }
-    numberString[numberLength] = 0;
+    numberString[numberLength-1] = 0;
     len = atoi(numberString);
     m_File.read(&byte, 1);  // to consume a space
-    m_File.read((char*)buf, len);
-    buf[len] = 0;
-    m_File.read(&byte, 1);  // to consume a newline
+    m_File.getline((char*)buf, 64*1024);
+    len = strlen((const char*)buf);
+    if( buf[len-1] == '\r' || buf[len-1] == '\n' )
+      {
+      buf[len-1] == '\0';
+      }
+    len = strlen((const char*)buf);
+    std::string encodedString;
+    encodedString.assign((const char*)buf);
 
     if( strncmp("command", temp, 7) == 0 )
       {
       sent = number;
-      sentmsg.CopyFrom(&buf[0], len);
+      sentmsg.Decode(encodedString);
       }
     else if( strncmp("receive", temp, 7) == 0 )
       {
       recv = number;
-      recvmsg.CopyFrom(&buf[0], len);
+      recvmsg.Decode(encodedString);
       if( sent < recv )
         {
         m_ResponseTable[BinaryData()].push_back(recvmsg);
@@ -178,7 +189,8 @@ void SerialCommunicationSimulator::InternalPurgeBuffers( void )
   // Simulator does not support purging buffers.
 }
 
-void SerialCommunicationSimulator::InternalWrite( void )
+SerialCommunicationSimulator::ResultType
+SerialCommunicationSimulator::InternalWrite( void )
 {
   unsigned int bytesToWrite = m_BytesToWrite;
 
@@ -189,18 +201,21 @@ void SerialCommunicationSimulator::InternalWrite( void )
 
   igstkLogMacro( DEBUG, "Written bytes = " << bytesToWrite << "\n");
   this->InvokeEvent( WriteSuccessEvent());
+  return SUCCESS;
 }
 
 
-void SerialCommunicationSimulator::InternalRead( void )
+SerialCommunicationSimulator::ResultType
+SerialCommunicationSimulator::InternalRead( void )
 {
   unsigned index = m_CounterTable[m_Command]++;
+  
   if( m_ResponseTable[m_Command].size() == 0 )
     {
     m_BytesRead = 0;
     igstkLogMacro( DEBUG, "InternalRead failed with timeout...\n");
     this->InvokeEvent( ReadTimeoutEvent() );
-    return;
+    return TIMEOUT;
     }
   const BinaryData& response = m_ResponseTable[m_Command][index];
   unsigned int bytesRead = response.GetSize();
@@ -230,12 +245,13 @@ void SerialCommunicationSimulator::InternalRead( void )
     {
     igstkLogMacro( DEBUG, "InternalRead failed with timeout...\n");
     this->InvokeEvent( ReadTimeoutEvent() );
-    return;
+    return TIMEOUT;
     }
 
   igstkLogMacro( DEBUG, "Read number of bytes = " << bytesRead << "\n" );
 
   this->InvokeEvent( ReadSuccessEvent() );
+  return SUCCESS;
 }
 
 

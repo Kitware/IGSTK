@@ -89,10 +89,10 @@ protected:
   virtual void InternalPurgeBuffers( void );
 
   /** Write data */
-  virtual void InternalWrite( void );
+  virtual ResultType InternalWrite( void );
 
   /** Read data */
-  virtual void InternalRead( void );
+  virtual ResultType InternalRead( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

@@ -159,7 +159,7 @@ int igstkSerialCommunicationTest( int, char * [] )
   std::cout << "HardwareHandshake: " << serialComm->GetHardwareHandshake() << std::endl;
   std::cout << "TimeoutPeriod: " << serialComm->GetTimeoutPeriod() << std::endl;
 
-  serialComm->SetCaptureFileName( "RecordedStreamBySerialCommunicationTest.bin" );
+  serialComm->SetCaptureFileName( "RecordedStreamBySerialCommunicationTest.txt" );
   serialComm->SetCapture( true );
   if( serialComm->GetCapture() != true )
     {

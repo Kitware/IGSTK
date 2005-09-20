@@ -137,7 +137,7 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
   char fullName[1024];
   joinDirAndFile( fullName, 1024,
                   IGSTK_DATA_ROOT,
-                  "Input/polaris_stream_07_27_2005.bin" );
+                  "Input/polaris_stream_07_27_2005.txt" );
   std::cout << fullName << std::endl; 
   serialComm->SetFileName( fullName );
   serialComm->GetFileName();

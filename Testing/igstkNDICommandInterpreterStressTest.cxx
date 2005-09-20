@@ -134,7 +134,7 @@ int igstkNDICommandInterpreterStressTest( int, char * [] )
   char pathToCaptureFile[1024];
   joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTK_DATA_ROOT,
-                  "Input/polaris_stream_NDICommandInterpreterStress.bin" );
+                  "Input/polaris_stream_NDICommandInterpreterStress.txt" );
   serialComm->SetFileName( pathToCaptureFile );
 
   serialComm->SetPortNumber(IGSTK_TEST_POLARIS_PORT_NUMBER);

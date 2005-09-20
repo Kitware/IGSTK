@@ -103,7 +103,7 @@ int igstkAuroraTrackerTest( int, char * [] )
 
 #ifdef IGSTK_TEST_AURORA_ATTACHED
   serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
-  serialComm->SetCaptureFileName( "RecordedStreamByAuroraTrackerTest.bin" );
+  serialComm->SetCaptureFileName( "RecordedStreamByAuroraTrackerTest.txt" );
   serialComm->SetCapture( true );
 #else /* IGSTK_TEST_AURORA_ATTACHED */
   // load a previously captured file
@@ -111,7 +111,7 @@ int igstkAuroraTrackerTest( int, char * [] )
   char pathToCaptureFile[1024];
   joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTK_DATA_ROOT,
-                  "Input/polaris_stream_07_27_2005.bin" );
+                  "Input/polaris_stream_07_27_2005.txt" );
   serialComm->SetFileName( pathToCaptureFile );
 #endif /* IGSTK_TEST_AURORA_ATTACHED */
 
