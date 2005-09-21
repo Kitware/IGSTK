@@ -19,6 +19,7 @@
 #pragma warning( disable : 4786 )
 #endif
 
+#define IGSTK_TEST_POLARIS_ATTACHED
 #include <iostream>
 #include <fstream>
 #include <set>
@@ -29,14 +30,41 @@
 #include "itkVector.h"
 #include "itkVersor.h"
 
+#include "igstkSystemInformation.h"
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
 #else
 #include "igstkSerialCommunicationForPosix.h"
 #endif
 
+#include "igstkSerialCommunicationSimulator.h"
 #include "igstkPolarisTracker.h"
 #include "igstkTransform.h"
+
+/** append a file name to a directory name and provide the result */
+static void joinDirAndFile(char *result, int maxLen,
+                           const char *dirName, const char *fileName)
+{
+  int dirNameLen = strlen( dirName );
+  int fileNameLen = strlen( fileName );
+  const char* slash = ( (dirName[dirNameLen-1] == '/') ? "" : "/" );
+  int slashLen = strlen( slash );
+
+  // allocate temporary string, concatenate
+  char* fullName = new char[dirNameLen + slashLen + fileNameLen + 1];
+  strncpy(&fullName[0], dirName, dirNameLen);
+  strncpy(&fullName[dirNameLen], slash, slashLen);
+  strncpy(&fullName[dirNameLen + slashLen], fileName, fileNameLen);
+  fullName[dirNameLen + slashLen + fileNameLen] = '\0';
+
+  // copy to the result
+  strncpy(result, fullName, maxLen);
+  result[maxLen-1] = '\0';
+
+  // delete temporary string
+  delete [] fullName;
+}
+
 
 class SerialCommunicationTestCommand : public itk::Command 
 {
@@ -105,11 +133,15 @@ int igstkPolarisTrackerTest( int, char * [] )
   std::cout << tool->GetNameOfClass() << std::endl;
   std::cout << tool << std::endl;
 
+#ifdef IGSTK_TEST_POLARIS_ATTACHED
 #ifdef WIN32
   igstk::SerialCommunicationForWindows::Pointer serialComm = igstk::SerialCommunicationForWindows::New();
 #else
   igstk::SerialCommunicationForPosix::Pointer serialComm = igstk::SerialCommunicationForPosix::New();
 #endif
+#else /* IGSTK_TEST_POLARIS_ATTACHED */
+    igstk::SerialCommunicationSimulator::Pointer serialComm = igstk::SerialCommunicationSimulator::New();
+#endif /* IGSTK_TEST_POLARIS_ATTACHED */
 
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
 
@@ -139,8 +171,17 @@ int igstkPolarisTrackerTest( int, char * [] )
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
+#ifdef IGSTK_TEST_POLARIS_ATTACHED
   serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerTest.txt" );
   serialComm->SetCapture( true );
+#else /* IGSTK_TEST_POLARIS_ATTACHED */
+  // load a previously captured file
+  char pathToCaptureFile[1024];
+  joinDirAndFile( pathToCaptureFile, 1024,
+                  IGSTKSandbox_DATA_ROOT,
+                  "polaris_stream_07_27_2005.txt" );
+  serialComm->SetFileName( pathToCaptureFile );
+#endif /* IGSTK_TEST_POLARIS_ATTACHED */
 
   serialComm->OpenCommunication();
 
@@ -158,7 +199,11 @@ int igstkPolarisTrackerTest( int, char * [] )
 
   tracker->Open();
 
-  tracker->AttachSROMFileNameToPort( 0, "C:/Program Files/Northern Digital Inc/SROM Image Files/5D.ROM" );
+  char pathToSROMFile[1024];
+  joinDirAndFile( pathToSROMFile, 1024,
+                  IGSTKSandbox_DATA_ROOT,
+                  "ta2p0003-3-120.rom" );
+  tracker->AttachSROMFileNameToPort( 0, pathToSROMFile );
 
   std::cout << tracker << std::endl;
 
