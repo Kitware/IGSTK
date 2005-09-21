@@ -200,7 +200,6 @@ SerialCommunicationSimulator::InternalWrite( void )
   m_Command.CopyFrom( (unsigned char*)&m_OutputData[0], bytesToWrite );
 
   igstkLogMacro( DEBUG, "Written bytes = " << bytesToWrite << "\n");
-  this->InvokeEvent( WriteSuccessEvent());
   return SUCCESS;
 }
 
@@ -214,7 +213,6 @@ SerialCommunicationSimulator::InternalRead( void )
     {
     m_BytesRead = 0;
     igstkLogMacro( DEBUG, "InternalRead failed with timeout...\n");
-    this->InvokeEvent( ReadTimeoutEvent() );
     return TIMEOUT;
     }
   const BinaryData& response = m_ResponseTable[m_Command][index];
@@ -244,13 +242,11 @@ SerialCommunicationSimulator::InternalRead( void )
        bytesRead < m_BytesToRead))
     {
     igstkLogMacro( DEBUG, "InternalRead failed with timeout...\n");
-    this->InvokeEvent( ReadTimeoutEvent() );
     return TIMEOUT;
     }
 
   igstkLogMacro( DEBUG, "Read number of bytes = " << bytesRead << "\n" );
 
-  this->InvokeEvent( ReadSuccessEvent() );
   return SUCCESS;
 }
 
