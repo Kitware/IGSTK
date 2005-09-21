@@ -466,76 +466,35 @@ inline void ndiCalcCRC16(int nextchar, unsigned int *puCRC16)
   *puCRC16 ^= data;
 }
 
-/** Send a command to the device via the Communication object. */
-const char* NDICommandInterpreter::Command(const char* command)
+/** Write a serial break to the device */
+int NDICommandInterpreter::WriteSerialBreak()
 {
-  unsigned int i, m, nc;
-  unsigned int CRC16 = 0;
+  /* serial break will force tracking to stop */
+  m_Communication->SetBaudRate(SerialCommunication::BaudRate9600);
+  m_Communication->SetHardwareHandshake(SerialCommunication::HandshakeOff);
+  m_Communication->Sleep(500);
+
+  /* send break, reset the comm parameters, and sleep for 2 seconds */
+  m_Communication->SendBreak();
+  m_Communication->Sleep(2000);
+
+  return 0;
+}
+
+/** Add a CRC value to a command and write it, and return the size of
+    the command prefix in nc (the part before the ":" or space. */
+int NDICommandInterpreter::WriteCommand(unsigned int *nc)
+{
+  unsigned int i;
+  unsigned int n = 0;
   int useCRC = 0;
   int inCommand = 1;
-  int readError;
-  char* cp, *rp, *crp;
+  unsigned int CRC16 = 0;
+  char *cp;
 
-  cp = m_SerialCommand;      /* text sent to ndicapi */
-  rp = m_SerialReply;        /* text received from ndicapi */
-  crp = m_CommandReply;      /* received text, with CRC hacked off */
-  nc = 0;                    /* length of 'command' part of command */
+  cp = m_SerialCommand;      /* the command to send */
 
-  m_ErrorCode = 0;           /* clear error */
-  rp[0] = '\0';
-  crp[0] = '\0';
-
-  /* if the command is NULL, send a break to reset the device */
-  if (command == NULL)
-    {
-    cp[0] = '\0';
-    /* serial break will force tracking to stop */
-    m_Tracking = 0;
-    m_Communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
-    m_Communication->SetBaudRate(SerialCommunication::BaudRate9600);
-    m_Communication->SetHardwareHandshake(SerialCommunication::HandshakeOff);
-    m_Communication->Sleep(500);
-
-    /* send brain, reset the comm parameters, and sleep for 2 seconds */
-    m_Communication->SendBreak();
-    m_Communication->Sleep(2000);
-
-    readError = m_Communication->Read(rp, NDI_MAX_REPLY_SIZE, m);
-    
-    if (readError == Communication::FAILURE)
-      {
-      this->SetErrorCode(NDI_READ_ERROR);
-      return crp;
-      }
-    else if (readError == Communication::TIMEOUT)
-      {
-      this->SetErrorCode(NDI_TIMEOUT);
-      return crp;
-      }
-
-    /* check for correct reply */
-    if (strncmp(rp, "RESETBE6F\r", 10) != 0)
-      { 
-      this->SetErrorCode(NDI_RESET_FAIL);
-      return crp;
-      }
-
-    /* terminate the reply string */
-    rp[m] = '\0';
-    m -= 5;
-    strncpy(crp, rp, m);
-    crp[m] = '\0';
-    
-    /* return the reply string, minus the CRC */
-    return crp;
-    }
-
-  if (cp != command)
-    {
-    strncpy(cp, command, NDI_MAX_COMMAND_SIZE);
-    }
-
-  CRC16 = 0;                                  /* calculate CRC */
+  /* calculate CRC and command prefix size*/
   for (i = 0; cp[i] != '\0'; i++)
     {
     ndiCalcCRC16(cp[i], &CRC16);
@@ -547,7 +506,7 @@ const char* NDICommandInterpreter::Command(const char* command)
                        (cp[i] >= '0' && cp[i] <= '9')))
       {
       inCommand = 0;                          /* 'command' part has ended */
-      nc = i;                                 /* command length */
+      *nc = i;                                /* command length */
       }
     }
 
@@ -562,145 +521,148 @@ const char* NDICommandInterpreter::Command(const char* command)
   cp[i++] = '\r';                             /* tack on carriage return */
   cp[i] = '\0';                               /* terminate for good luck */
 
-  /* send the command directly to the device and get a reply */
-  int errcode = 0;
-
-  /* change  m_Tracking  if either TSTOP or TSTART or INIT is sent  */ 
-  if ((nc == 5 && strncmp(cp, "TSTOP", nc) == 0) ||
-      (nc == 4 && strncmp(cp, "INIT", nc) == 0))
-    {
-    m_Tracking = 0;
-    m_Communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
-    }
-
-  /* flush the input buffer, because anything that we haven't read
-       yet is garbage left over by a previously failed command */
-  m_Communication->PurgeBuffers();
+  /* get the length */
+  n = i;
 
   /* send the command to the device */
-  int writeError = m_Communication->Write(cp, strlen(cp));
-  /* is there any easy way to check if the write failed, or
-   * is it necessary to catch the events? There should be code
-   * here to check, and set errcode = NDI_WRITE_ERROR or 
-   * NDI_TIMEOUT */
-  if (writeError == Communication::FAILURE)
+  int writeError = m_Communication->Write(cp, n);
+  if (writeError != Communication::SUCCESS)
     {
-    errcode = NDI_WRITE_ERROR;
-    }
-  else if (writeError == Communication::TIMEOUT)
-    {
-    errcode = NDI_TIMEOUT;
-    }
-
-  /* read the reply from the device */
-  m = 0;
-  if (errcode == 0)
-    {
-    /* offset at which to start reading the reply */
-    int offset = 0;
-
-    if (cp[0] == 'B' && cp[1] == 'X' && nc == 2)
+    int errcode = NDI_TIMEOUT;
+    if (writeError == Communication::FAILURE)
       {
-      /* the BX command needs special handling*/
-      unsigned short replyLength;
-
-      /* read fixed-length records, rather than checking for CR */
-      m_Communication->SetUseReadTerminationCharacter(0);
-
-      /* read the header first */
-      readError = m_Communication->Read(rp, 6, m);
-      if (readError == Communication::FAILURE)
-        {
-        this->SetErrorCode(NDI_READ_ERROR);
-        return crp;
-        }
-      else if (readError == Communication::TIMEOUT)
-        {
-        this->SetErrorCode(NDI_TIMEOUT);
-        return crp;
-        }
-
-      /* set offset to header size for continuation of read */
-      offset = 6;
-
-      /* check the magic word to identify a BX reply */
-      if(this->BinaryToUnsignedShort(rp) == 0xA5C4)
-        {
-        /* check the CRC16 of the header */
-        CRC16 = 0;
-        for (i = 0; i < 4; i++)
-          {
-          ndiCalcCRC16(rp[i], &CRC16);
-          crp[i] = rp[i];
-          }
-        crp[4] = '\0';
-
-        if(CRC16 != this->BinaryToUnsignedShort(&rp[4]))
-          {
-          this->SetErrorCode(NDI_BAD_CRC);
-          return crp;
-          }
-
-        /* get the length of the data record */
-        replyLength = this->BinaryToUnsignedShort(&crp[2]);
-
-        /* read the actual BX data record, plus the 2-byte CRC */
-        m_Communication->Read(rp, replyLength + 2U, m);
-        if (m != replyLength + 2U)
-          {
-          this->SetErrorCode(NDI_TIMEOUT);
-          return crp;
-          }
-
-        /* copy to the reply data, after the 0xA5C4 and the length */
-        CRC16 = 0;
-        for (i = 0; i < replyLength; i++)
-          {
-          ndiCalcCRC16(rp[i], &CRC16);
-          crp[i+4] = rp[i];
-          }
-        crp[replyLength+4] = '\0';
-
-        if(CRC16 != this->BinaryToUnsignedShort(&rp[replyLength]))
-          {
-          this->SetErrorCode(NDI_BAD_CRC);
-          return crp;
-          }
-
-        this->HelperForBX(cp, crp);
-
-        return crp;
-        }
+      errcode = NDI_WRITE_ERROR;
       }
+    return this->SetErrorCode(errcode);
+    }
+  
+  return 0;
+}
 
-    /* the "offset" is nonzero if we have already read a few bytes */
-    m_Communication->SetUseReadTerminationCharacter(1);
-    m_Communication->Read(&rp[offset], NDI_MAX_REPLY_SIZE-offset, m);
+/* read the binary reply from a BX command */
+int NDICommandInterpreter::ReadBinaryReply(unsigned int offset)
+{
+  unsigned int i;
+  unsigned int m = 0;
+  char *rp;
+  char *crp;
+  unsigned int CRC16 = 0;
+  int readError;
+  unsigned int recordLength;
 
-    if (readError == Communication::FAILURE)
+  rp = m_SerialReply;        /* reply from the device */
+  crp = m_CommandReply;      /* received text, with CRC hacked off */
+
+  /* read fixed-length records, rather than checking for CR */
+  m_Communication->SetUseReadTerminationCharacter(0);
+
+  /* read the header first */
+  if (offset < 6)
+    {
+    readError = m_Communication->Read(&rp[offset], 6-offset, m);
+    offset += m;
+    if (readError != Communication::SUCCESS)
       {
-      errcode = NDI_READ_ERROR;
-      m = 0;
+      int errcode = NDI_READ_ERROR;
+      if (readError == Communication::TIMEOUT)
+        {
+        errcode = NDI_TIMEOUT;
+        }
+      return this->SetErrorCode(errcode);
       }
-    else if (readError == Communication::TIMEOUT)
+    }
+
+  /* check the magic word to identify a BX reply */
+  if(this->BinaryToUnsignedShort(rp) != 0xA5C4)
+    {
+    return this->ReadAsciiReply(offset);
+    }
+
+  /* check the CRC16 of the header */
+  CRC16 = 0;
+  for (i = 0; i < 4; i++)
+    {
+    ndiCalcCRC16(rp[i], &CRC16);
+    crp[i] = rp[i];
+    }
+  crp[4] = '\0';
+
+  if(CRC16 != this->BinaryToUnsignedShort(&rp[4]))
+    {
+    return this->SetErrorCode(NDI_BAD_CRC);
+    }
+
+  /* get the length of the data record */
+  recordLength = this->BinaryToUnsignedShort(&crp[2]);
+
+  /* the full reply length is recordLength + 6 (for header) + 2 * (for CRC) */
+  if (offset < recordLength + 8)
+    { 
+    readError = m_Communication->Read(&rp[offset],
+                                      recordLength + 8 - offset,
+                                      m);
+
+    if (readError != Communication::SUCCESS)
+      {
+      int errcode = NDI_READ_ERROR;
+      if (readError == Communication::TIMEOUT)
+        {
+        errcode = NDI_TIMEOUT;
+        }
+      return this->SetErrorCode(errcode);
+      }
+    }
+
+  /* copy to the reply data, after the 0xA5C4 and the length */
+  CRC16 = 0;
+  for (i = 0; i < recordLength; i++)
+    {
+    ndiCalcCRC16(rp[6 + i], &CRC16);
+    crp[4 + i] = rp[6 + i];
+    }
+  crp[recordLength+4] = '\0';
+
+  if(CRC16 != this->BinaryToUnsignedShort(&rp[6 + recordLength]))
+    {
+    return this->SetErrorCode(NDI_BAD_CRC);
+    }
+
+  return 0;
+}
+
+int NDICommandInterpreter::ReadAsciiReply(unsigned int offset)
+{
+  unsigned int i;
+  unsigned int m = 0;
+  char *rp, *crp;
+  unsigned int CRC16 = 0;
+  int readError;
+
+  rp = m_SerialReply;        /* reply from the device */
+  crp = m_CommandReply;      /* received text, with CRC hacked off */
+
+  m_Communication->SetUseReadTerminationCharacter(1);
+  readError = m_Communication->Read(&rp[offset],
+                                    NDI_MAX_REPLY_SIZE - offset,
+                                    m);
+  m += offset;
+
+  if (readError != Communication::SUCCESS)
+    {
+    int errcode = NDI_READ_ERROR;
+    if (readError == Communication::TIMEOUT)
       {
       errcode = NDI_TIMEOUT;
       }
-
-    rp[m] = '\0';   /* terminate string */
+    return this->SetErrorCode(errcode);
     }
 
-  if (errcode != 0)
-    {
-    this->SetErrorCode(errcode);
-    return crp;
-    }
+  rp[m] = '\0';   /* terminate string */
 
-  /* back up to before the CRC */
+  /* back up to before the CRC and carriage return */
   if (m < 5)
     {
-    this->SetErrorCode(NDI_BAD_CRC);
-    return crp;
+    return this->SetErrorCode(NDI_BAD_CRC);
     }
   m -= 5;
 
@@ -713,66 +675,159 @@ const char* NDICommandInterpreter::Command(const char* command)
     }
 
   /* terminate command_reply before the CRC */
-  crp[i] = '\0';           
+  crp[i] = '\0';
 
   /* read and check the CRC value of the reply */
   if (CRC16 != this->HexadecimalStringToUnsignedInt(&rp[m], 4))
     {
-    this->SetErrorCode(NDI_BAD_CRC);
-    return crp;
+    return this->SetErrorCode(NDI_BAD_CRC);
     }
 
   /* check for error code */
   if (crp[0] == 'E' && strncmp(crp, "ERROR", 5) == 0)
     {
-    this->SetErrorCode(this->HexadecimalStringToUnsignedInt(&crp[5], 2));
-    return crp;
+    int errcode = this->HexadecimalStringToUnsignedInt(&crp[5], 2);
+    return this->SetErrorCode(errcode);
     }
 
-  /* anything past here is only executed if no error occurred */
+  return 0;
+}
 
-  if (nc == 6 && strncmp(cp, "TSTART", nc) == 0)
+/** Send a command to the device via the Communication object. */
+const char* NDICommandInterpreter::Command(const char* command)
+{
+  int i;
+  unsigned int nc;
+  char* cp, *rp, *crp;
+
+  cp = m_SerialCommand;      /* text sent to device */
+  rp = m_SerialReply;        /* text received from device */
+  crp = m_CommandReply;      /* received text, with CRC hacked off */
+  nc = 0;                    /* length of 'command' part of command */
+
+  rp[0] = '\0';
+  crp[0] = '\0';
+
+  /* clear error */
+  this->SetErrorCode(0);
+
+  /* purge the buffer, because anything that we haven't read or
+     written yet is garbage left over by a previously failed command */
+  m_Communication->PurgeBuffers();
+
+  /* if the command is NULL, send a break to reset the device */
+  if (command == 0)
     {
-    /* decrease the timeout, since otherwise the system will freeze
-       for 5 seconds each time there is a CRC error */
-    m_Communication->SetTimeoutPeriod(NDI_TRACKING_TIMEOUT);
-    m_Tracking = 1;
+    /* serial break will force tracking to stop */
+    m_Tracking = 0;
+    m_Communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
+    /* set m_SerialCommand to null string */ 
+    cp[0] = '\0';
+    this->WriteSerialBreak();
+    }
+  else
+    {
+    /* copy command into m_SerialCommand */
+    if (cp != command)
+      {
+      for (i = 0; i < NDI_MAX_COMMAND_SIZE; i++)
+        {
+        if ((cp[i] = command[i]) == 0)
+          {
+          break;
+          }
+        }
+      }
+
+    /* change m_Tracking  if either TSTOP or INIT is sent  */ 
+    if (cp[0] == 'T' && (strncmp(cp, "TSTOP", 5) == 0) ||
+        cp[1] == 'I' && (strncmp(cp, "INIT", 4) == 0))
+      {
+      m_Tracking = 0;
+      m_Communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
+      }
+
+    /* add a CRC, write the data, and get command prefix size in "nc" */
+    this->WriteCommand(&nc);
     }
 
-  /*----------------------------------------*/
-  /* special behavior for specific commands */
+  /* read the reply from the device */
+  if (m_ErrorCode == 0)
+    {
+    if (cp[0] == 'B' && cp[1] == 'X' && nc == 2)
+      {
+      /* the BX command needs special handling */
+      this->ReadBinaryReply(0);
+      }
+    else
+      {
+      this->ReadAsciiReply(0);
+      }
+    }
 
-  if (cp[0] == 'T' && cp[1] == 'X' && nc == 2)
-    { /* the TX command */
-    HelperForTX(cp, crp);
-    }
-  else if (cp[0] == 'C' && nc == 4 && strncmp(cp, "COMM", nc) == 0)
+  /* if the command was NULL, check reset reply */
+  if (m_ErrorCode == 0)
     {
-    HelperForCOMM(cp, crp);
+    if (command == 0)
+      {
+      if (strncmp(crp, "RESET", 5) != 0)
+        {
+        this->SetErrorCode(NDI_RESET_FAIL);
+        }
+      }
     }
-  else if (cp[0] == 'I' && nc == 5 && strncmp(cp, "IRCHK", nc) == 0)
+    
+  /* do any needed processing of the reply */
+  if (m_ErrorCode == 0)
     {
-    HelperForIRCHK(cp, crp);
-    }
-  else if (cp[0] == 'P' && nc == 5 && strncmp(cp, "PHINF", nc) == 0)
-    {
-    HelperForPHINF(cp, crp);
-    }
-  else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHRQ", nc) == 0)
-    {
-    HelperForPHRQ(cp, crp);
-    }
-  else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHSR", nc) == 0)
-    {
-    HelperForPHSR(cp, crp);
-    }
-  else if (cp[0] == 'S' && nc == 5 && strncmp(cp, "SSTAT", nc) == 0)
-    {
-    HelperForSSTAT(cp, crp);
-    }
-  else if (cp[0] == 'V' && nc == 3 && strncmp(cp, "VER", nc) == 0)
-    {
-    HelperForVER(cp, crp);
+
+    if (cp[0] == 'T' && nc == 6 && strncmp(cp, "TSTART", nc) == 0)
+      {
+      /* if TSTART, then decrease the timeout, since otherwise the
+         system will freeze for 5 seconds each time there is a error */
+      m_Communication->SetTimeoutPeriod(NDI_TRACKING_TIMEOUT);
+      m_Tracking = 1;
+      }
+
+    /*----------------------------------------*/
+    /* special behavior for specific commands */
+
+    if (cp[0] == 'B' && cp[1] == 'X' && nc == 2)
+      { /* the BX command */
+      HelperForBX(cp, crp);
+      }
+    else if (cp[0] == 'T' && cp[1] == 'X' && nc == 2)
+      { /* the TX command */
+      HelperForTX(cp, crp);
+      }
+    else if (cp[0] == 'C' && nc == 4 && strncmp(cp, "COMM", nc) == 0)
+      {
+      HelperForCOMM(cp, crp);
+      }
+    else if (cp[0] == 'I' && nc == 5 && strncmp(cp, "IRCHK", nc) == 0)
+      {
+      HelperForIRCHK(cp, crp);
+      }
+    else if (cp[0] == 'P' && nc == 5 && strncmp(cp, "PHINF", nc) == 0)
+      {
+      HelperForPHINF(cp, crp);
+      }
+    else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHRQ", nc) == 0)
+      {
+      HelperForPHRQ(cp, crp);
+      }
+    else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHSR", nc) == 0)
+      {
+      HelperForPHSR(cp, crp);
+      }
+    else if (cp[0] == 'S' && nc == 5 && strncmp(cp, "SSTAT", nc) == 0)
+      {
+      HelperForSSTAT(cp, crp);
+      }
+    else if (cp[0] == 'V' && nc == 3 && strncmp(cp, "VER", nc) == 0)
+      {
+      HelperForVER(cp, crp);
+      }
     }
 
   /* return the device's reply, but with the CRC hacked off */
@@ -2245,7 +2300,10 @@ int NDICommandInterpreter::SetErrorCode(int errnum)
 {
   m_ErrorCode = errnum;
 
-  this->InvokeEvent(NDIErrorEvent(errnum));
+  if (errnum != 0)
+    {
+    this->InvokeEvent(NDIErrorEvent(errnum));
+    }
 
   return errnum;
 }

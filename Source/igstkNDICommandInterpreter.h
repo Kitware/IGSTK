@@ -1582,6 +1582,32 @@ private:
   const char* Command(const char* format, const char* a, const char* b,
                       const char* c, const char* d, const char* e);
 
+  /** Sends a serial break to the tracker */
+  int WriteSerialBreak();
+
+  /**
+  Add a CRC to m_SerialCommand, write it, and return the number of
+  characters in the command prefix in \em nc.
+  If an error occurred, m_ErrorCode will be set.
+  */
+  int WriteCommand(unsigned int *nc);
+
+  /**
+  Read a BX reply from the device into m_CommandReply, assuming
+  that \em offset characters have already been read.  If the
+  data does not start with the magic number "A5C4" then
+  ReadAsciiReply() will be called instead.
+  If an error occurred, m_ErrorCode will be set.
+  */
+  int ReadBinaryReply(unsigned int offset);
+
+  /**
+  Read a reply from the device into m_CommandReply, assuming
+  that \em offset characters have already been read.
+  If an error occurred, m_ErrorCode will be set.
+  */
+  int ReadAsciiReply(unsigned int offset);
+
   /** set error indicator */
   int SetErrorCode(int errnum);
 
