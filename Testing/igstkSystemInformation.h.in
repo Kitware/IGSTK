@@ -2,5 +2,6 @@
 #define __IGSTKSandbox_SystemInformation_h
 
 #define IGSTKSandbox_BINARY_DIR "@IGSTKSandbox_BINARY_DIR@"
+#define IGSTKSandbox_DATA_ROOT "@IGSTKSandbox_DATA_ROOT@"
 
 #endif
