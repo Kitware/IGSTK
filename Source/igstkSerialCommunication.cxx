@@ -604,36 +604,42 @@ void SerialCommunication::AttemptToClosePort()
 void SerialCommunication::WriteSuccessProcessing()
 {
   m_WriteReturnValue = SUCCESS;
+  this->InvokeEvent( WriteSuccessEvent() );
 }
 
 
 void SerialCommunication::WriteFailureProcessing()
 {
   m_WriteReturnValue = FAILURE;
+  this->InvokeEvent( WriteFailureEvent() );
 }
 
 
 void SerialCommunication::WriteTimeoutProcessing()
 {
   m_WriteReturnValue = TIMEOUT;
+  this->InvokeEvent( WriteTimeoutEvent() );
 }
 
 
 void SerialCommunication::ReadSuccessProcessing()
 {
   m_ReadReturnValue = SUCCESS;
+  this->InvokeEvent( ReadSuccessEvent());
 }
 
 
 void SerialCommunication::ReadFailureProcessing()
 {
   m_ReadReturnValue = FAILURE;
+  this->InvokeEvent( ReadFailureEvent() );
 }
 
 
 void SerialCommunication::ReadTimeoutProcessing()
 {
   m_ReadReturnValue = TIMEOUT;
+  this->InvokeEvent( ReadTimeoutEvent() );
 }
 
 

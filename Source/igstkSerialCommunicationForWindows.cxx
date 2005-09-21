@@ -277,18 +277,6 @@ SerialCommunicationForWindows::InternalWrite( void )
     i += m;  // i is the number of chars written
     }
 
-  if (writeError == FAILURE)
-    {
-    this->InvokeEvent( WriteFailureEvent() );
-    }
-  else if (writeError == TIMEOUT)
-    {
-    this->InvokeEvent( WriteTimeoutEvent() );
-    }
-  else if (writeError == SUCCESS)
-    {
-    this->InvokeEvent( WriteSuccessEvent() );
-    }
   return writeError;
 }
 
@@ -335,18 +323,6 @@ SerialCommunicationForWindows::InternalRead( void )
   m_BytesRead = i;
   m_InputData[i] = '\0';
 
-  if (readError == FAILURE)
-    {
-    this->InvokeEvent( ReadFailureEvent() );
-    }
-  else if (readError == TIMEOUT)
-    {
-    this->InvokeEvent( ReadTimeoutEvent() );
-    }
-  else if (readError == SUCCESS)
-    {
-    this->InvokeEvent( ReadSuccessEvent());
-    }
   return readError;
 }
 
