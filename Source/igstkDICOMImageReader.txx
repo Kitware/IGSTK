@@ -24,7 +24,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this), m_Logge
 
   m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameInput,m_ImageDirectoryNameReadState,&DICOMImageReader::ReadDirectoryName);
   m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,m_ReadImageRequestInput,m_ImageReadState,&DICOMImageReader::ReadImage);
-
+  m_StateMachine.AddTransition(m_IdleState,m_ReadImageRequestInput,m_IdleState,&DICOMImageReader::ReportInvalidRequest);
 
    // Select the initial state of the state machine
   m_StateMachine.SelectInitialState( m_IdleState );
@@ -61,7 +61,6 @@ void DICOMImageReader<TPixelType>:: RequestImageRead()
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::RequestImageRead called...\n");
   this->m_StateMachine.PushInput( this->m_ReadImageRequestInput);
   this->m_StateMachine.ProcessInputs();
-  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::RequestImageRead called...\n");
 }
 
 /** Read in the DICOM series image */
@@ -81,6 +80,9 @@ void DICOMImageReader<TPixelType>::ReadImage( )
   m_ImageSeriesReader->SetImageIO( m_io );
   m_ImageSeriesReader->Update();
   this->m_itkExporter->SetInput( m_ImageSeriesReader->GetOutput() );
+  m_io->GetPatientName(  m_PatientName  );
+  m_io->GetPatientID(    m_PatientID    );
+  m_io->GetModality(     m_Modality     );
 }
 
 /* The ReportInvalidRequest function reports invalid requests */
@@ -107,6 +109,22 @@ typename DICOMImageReader<TPixelType>::ImageConstPointer
 DICOMImageReader<TPixelType>::GetITKImageData() const
 {
   return( m_ImageSeriesReader->GetOutput() );
+}
+
+/** Get the DICOM modality */
+template <class TPixelType>
+const char *
+DICOMImageReader<TPixelType>::GetModality() const
+{
+  return( m_Modality);
+}
+
+/** Get the patient name */
+template <class TPixelType>
+const char *
+DICOMImageReader<TPixelType>::GetPatientName() const
+{
+  return( m_PatientName);
 }
 
 

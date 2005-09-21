@@ -61,6 +61,10 @@ public:
   /** This method requests image buffer emptied */
   void RequestEmptyImageBuffer();
 
+  /* These Get functions should be converted to a get request inputs to
+* the state machine */
+  const char *             GetModality()     const ;
+  const char *             GetPatientName()  const;
   vtkImageData   *   GetVTKImageData() const;
   ImageConstPointer  GetITKImageData() const;
 
@@ -115,8 +119,12 @@ private:
  when invalid requests are made */
   void ReportInvalidRequest();
 
-  itkSetStringMacro(ImageDirectoryName);
-  
+  igstkSetStringMacro(ImageDirectoryName);
+
+  char m_PatientName[2048 ];
+  char m_PatientID[2048 ];
+  char m_Modality[2048]; 
+
 };
 
 } // end namespace igstk
