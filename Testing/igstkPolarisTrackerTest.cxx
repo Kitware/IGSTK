@@ -84,43 +84,8 @@ public:
 
   void Execute(const itk::Object * object, const itk::EventObject & event)
   {
-    if ( typeid(event)== typeid(igstk::SerialCommunication::OpenPortFailureEvent))
-    {
-        std::cout << "OpenPortFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::SetTransferParametersFailureEvent ))
-    {
-        std::cout << "SetupCommunicationParametersFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteSuccessEvent ))
-    {
-        std::cout << "****** WriteSuccessEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteFailureEvent ))
-    {
-        std::cout << "****** WriteFailureEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteTimeoutEvent ))
-    {
-        std::cout << "****** WriteTimeoutEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadSuccessEvent ))
-    {
-        std::cout << "****** ReadSuccessEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadFailureEvent ))
-    {
-        std::cout << "****** ReadFailureEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadTimeoutEvent ))
-    {
-        std::cout << "****** ReadTimeoutEvent ******\n";
-    }
-   else 
-    {
-        std::cout << "Some other Error Occurred ...\n";
-    }
- }
+    std::cout << event.GetEventName() << std::endl;
+  }
 };
 
 
@@ -153,15 +118,8 @@ int igstkPolarisTrackerTest( int, char * [] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG); //DEBUG );
 
-  serialComm->AddObserver( igstk::SerialCommunication::OpenPortFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::SetTransferParametersFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::SendBreakFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::WriteSuccessEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::WriteFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::WriteTimeoutEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::ReadSuccessEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::ReadFailureEvent(), my_command);
-  serialComm->AddObserver( igstk::SerialCommunication::ReadTimeoutEvent(), my_command);
+  serialComm->AddObserver( itk::AnyEvent(), my_command);
+
   serialComm->SetLogger( logger );
 
   serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
