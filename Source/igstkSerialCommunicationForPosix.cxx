@@ -36,6 +36,7 @@ const int INVALID_HANDLE = -1;
 
 SerialCommunicationForPosix::SerialCommunicationForPosix()
 {
+  m_OldTimeoutPeriod = 0;
   m_PortHandle = INVALID_HANDLE;
 } 
 
@@ -60,63 +61,66 @@ SerialCommunicationForPosix::InternalOpenPort( void )
   // port is readable/writable and is (for now) non-blocking
   m_PortHandle = open(device,O_RDWR|O_NOCTTY|O_NDELAY);
 
-  if (m_PortHandle == INVALID_HANDLE)
+  if (m_PortHandle != INVALID_HANDLE)
     {
-    this->InvokeEvent( OpenPortFailureEvent() );
-    return FAILURE;             // bail out on error
-    }
+    // restore blocking now that the port is open (we just didn't want
+    // the port to block while we were trying to open it)
+    fcntl(m_PortHandle, F_SETFL, 0);
 
-  // restore blocking now that the port is open (we just didn't want
-  // the port to block while we were trying to open it)
-  fcntl(m_PortHandle, F_SETFL, 0);
+    // get I/O information
+    if (tcgetattr(m_PortHandle,&t) != -1)
+      {
+      // save the serial port state so that it can be restored when
+      //   the serial port is closed in ndiSerialClose()
+      tcgetattr(m_PortHandle,&m_SaveTermIOs);
 
-  // get I/O information
-  if (tcgetattr(m_PortHandle,&t) == -1)
-    {
+      // clear everything specific to terminals
+      t.c_lflag = 0;
+      t.c_iflag = 0;
+      t.c_oflag = 0;
+
+      // use constant, not interval timout
+      t.c_cc[VMIN] = 0;
+      t.c_cc[VTIME] = (this->GetTimeoutPeriod()+99)/100;
+      m_OldTimeoutPeriod = this->GetTimeoutPeriod();
+
+      // set initial I/O parameters
+      if (tcsetattr(m_PortHandle,TCSANOW,&t) != -1)
+        {
+        // flush the buffers for good luck
+        if (tcflush(m_PortHandle,TCIOFLUSH) != -1)
+          {
+          igstkLogMacro( DEBUG, "COM port name: " << device << " opened.\n" );
+          return SUCCESS;
+          }
+        }
+      }
+
+    // if the code gets to here, an error occurred after the port opened
     close(m_PortHandle);
-    m_PortHandle = INVALID_HANDLE;
-    this->InvokeEvent( OpenPortFailureEvent() );
-    return FAILURE;
     }
 
-  // save the serial port state so that it can be restored when
-  //   the serial port is closed in ndiSerialClose()
-  tcgetattr(m_PortHandle,&m_SaveTermIOs);
+  // if the code gets to here, an error occurred before the port opened
+  m_PortHandle = INVALID_HANDLE;
 
-  // clear everything specific to terminals
-  t.c_lflag = 0;
-  t.c_iflag = 0;
-  t.c_oflag = 0;
-
-  t.c_cc[VMIN] = 0;                    // use constant, not interval timout
-  t.c_cc[VTIME] = m_TimeoutPeriod/100;
-
-  if (tcsetattr(m_PortHandle,TCSANOW,&t) == -1)
-    { // set I/O information
-    close(m_PortHandle);
-    m_PortHandle = INVALID_HANDLE;
-    this->InvokeEvent( OpenPortFailureEvent() );
-    return FAILURE;
-    }
-
-  tcflush(m_PortHandle,TCIOFLUSH); // flush the buffers for good luck
-
-  igstkLogMacro( DEBUG, "COM port name: " << device << " opened.\n" );
-
-  return SUCCESS;
+  return FAILURE;
 }
 
-
 SerialCommunicationForPosix::ResultType
-SerialCommunicationForPosix::InternalSetTransferParameters( void )
+SerialCommunicationForPosix::InternalUpdateParameters( void )
 {
   struct termios t;
   int newbaud;
 
   igstkLogMacro( DEBUG, "SerialCommunicationForPosix::"
-                 "InternalSetTransferParameters called ...\n" );
+                 "InternalUpdateParameters called ...\n" );
 
-  unsigned int baud = m_BaudRate;
+  unsigned int timeoutPeriod = this->GetTimeoutPeriod();
+  unsigned int baud = this->GetBaudRate();
+  DataBitsType dataBits = this->GetDataBits();
+  ParityType parity = this->GetParity();
+  StopBitsType stopBits = this->GetStopBits();
+  HandshakeType handshake = this->GetHardwareHandshake();
 
 #if defined(sgi) && defined(__NEW_MAX_BAUD)
   switch (baud)
@@ -153,55 +157,49 @@ SerialCommunicationForPosix::InternalSetTransferParameters( void )
 #endif
 
   // set data bits
-  if (m_DataBits == DataBits8)
+  if (dataBits == DataBits8)
     {                 
-    t.c_cflag |= CS8; 
+    t.c_cflag |= CS8;
     }
-  else if (m_DataBits == DataBits7)
+  else if (dataBits == DataBits7)
     {
     t.c_cflag |= CS7;
     }
 
   // set parity
-  if (m_Parity == NoParity)
+  if (parity == NoParity)
     { // none            
     t.c_cflag &= ~PARENB;
     t.c_cflag &= ~PARODD;
     }
-  else if (m_Parity == OddParity)
-    { // odd
-    t.c_cflag |= PARENB;
-    t.c_cflag |= PARODD;
-    }
-  else if (m_Parity == EvenParity)
+  else if (parity == EvenParity)
     { // even
     t.c_cflag |= PARENB;
     t.c_cflag &= ~PARODD;
     }
 
   // set stop bits
-  if (m_StopBits == StopBits1)
+  if (stopBits == StopBits1)
     { 
     t.c_cflag &= ~CSTOPB; 
     }
-  else if (m_StopBits == StopBits2)
+  else if (stopBits == StopBits2)
     {
     t.c_cflag |= CSTOPB; 
     }
 
-  // set handshaking
-  if (m_HardwareHandshake == HandshakeOn)
-    {
+  // enable hardware handshake by default
 #ifdef sgi
-    t.c_cflag |= CNEW_RTSCTS;       // enable hardware handshake
+  t.c_cflag |= CNEW_RTSCTS;       
 #else
-    t.c_cflag |= CRTSCTS;           
+  t.c_cflag |= CRTSCTS;           
 #endif
-    }
-  else
+
+  // turn off hardware handshake if requested
+  if (handshake == HandshakeOff);
     {
 #ifdef sgi
-    t.c_cflag &= ~CNEW_RTSCTS;       // turn off hardware handshake
+    t.c_cflag &= ~CNEW_RTSCTS;
 #else
     t.c_cflag &= ~CRTSCTS;
 #endif     
@@ -209,21 +207,17 @@ SerialCommunicationForPosix::InternalSetTransferParameters( void )
 
   // set timeout period
   t.c_cc[VMIN] = 0;                     // use constant, not interval timout
-  t.c_cc[VTIME] = m_TimeoutPeriod/100;  // wait time is in 10ths of a second
+  t.c_cc[VTIME] = (timeoutPeriod + 99)/100; // wait time in 10ths of a second
+  m_OldTimeoutPeriod = timeoutPeriod;
 
+  ResultType result = FAILURE;
   // set I/O information
-  if (tcsetattr(m_PortHandle,TCSADRAIN,&t) == -1)
+  if (tcsetattr(m_PortHandle,TCSADRAIN,&t) != -1)
     {
-    igstkLogMacro( DEBUG, "SetTransferParameters failed.\n" );
-
-    this->InvokeEvent( SetTransferParametersFailureEvent() );
-
-    return FAILURE;
+    result = SUCCESS;
     }
 
-  igstkLogMacro( DEBUG, "SetTransferParameters succeeded.\n" );
-
-  return SUCCESS;
+  return result;
 }
 
 
@@ -236,37 +230,53 @@ SerialCommunicationForPosix::InternalClosePort( void )
   // restore the comm port state to from before it was opened
   tcsetattr(m_PortHandle,TCSANOW,&m_SaveTermIOs);
 
-  if (close(m_PortHandle) == -1)
+  ResultType result = FAILURE;
+  if (close(m_PortHandle) != -1)
     {
-    this->InvokeEvent( ClosePortFailureEvent() );
-    return FAILURE;
+    igstkLogMacro( DEBUG, "Communication port closed.\n" );
+    result = SUCCESS;
+    m_PortHandle = INVALID_HANDLE;
     }
 
-  m_PortHandle = INVALID_HANDLE;
-
-  igstkLogMacro( DEBUG, "Communication port closed.\n" );
-
-  return SUCCESS;
+  return result;
 }
 
 
-void SerialCommunicationForPosix::InternalSendBreak( void )
+SerialCommunicationForPosix::ResultType
+SerialCommunicationForPosix::InternalSendBreak( void )
 {
   igstkLogMacro( DEBUG, "SerialCommunicationForPosix::"
                  "InternalSendBreak called ...\n" );
 
   // send the break
-  if (tcsendbreak(m_PortHandle,0) == -1)
+  ResultType result = FAILURE;
+  if (tcsendbreak(m_PortHandle,0) != -1)
     {
-    this->InvokeEvent( SendBreakFailureEvent() );
+    result = SUCCESS;
     }
+
+  return result;
 }
 
 
-void SerialCommunicationForPosix::InternalSleep( void )
+SerialCommunicationForPosix::ResultType
+SerialCommunicationForPosix::InternalPurgeBuffers( void )
 {
-  int milliseconds = m_SleepPeriod;
+  igstkLogMacro( DEBUG, "SerialCommunicationForPosix::"
+                 "InternalPurgeBuffers called ...\n" );
 
+  ResultType result = FAILURE;
+  if (tcflush(m_PortHandle, TCIOFLUSH) != -1)
+    {
+    result = SUCCESS;
+    }
+
+  return result;
+}
+
+
+void SerialCommunicationForPosix::InternalSleep( unsigned int milliseconds )
+{
   igstkLogMacro( DEBUG, "SerialCommunicationForPosix::"
                  "InternalSleep called ...\n" );
 
@@ -277,26 +287,17 @@ void SerialCommunicationForPosix::InternalSleep( void )
 }
 
 
-void SerialCommunicationForPosix::InternalPurgeBuffers( void )
-{
-  igstkLogMacro( DEBUG, "SerialCommunicationForPosix::"
-                 "InternalPurgeBuffers called ...\n" );
-
-  tcflush(m_PortHandle, TCIOFLUSH);  // clear output buffers
-}
-
-
 SerialCommunicationForPosix::ResultType
-SerialCommunicationForPosix::InternalWrite( void )
+SerialCommunicationForPosix::InternalWrite( const char *data,
+                                            unsigned int n )
 {
   unsigned int i = 0;
   int m;
-  unsigned int n = m_BytesToWrite;
   ResultType writeError = SUCCESS;
 
   while (n > 0)
     { 
-    if ((m = write(m_PortHandle, &m_OutputData[i], n)) == -1)
+    if ((m = write(m_PortHandle, &data[i], n)) == -1)
       {
       // if error is not EAGAIN, break
       m = 0;
@@ -316,47 +317,73 @@ SerialCommunicationForPosix::InternalWrite( void )
 
 
 SerialCommunicationForPosix::ResultType
-SerialCommunicationForPosix::InternalRead( void )
+SerialCommunicationForPosix::InternalRead( char *data,
+                                           unsigned int n,
+                                           unsigned int &bytesRead )
 {
+  char terminationCharacter = this->GetReadTerminationCharacter();
+  bool useTerminationCharacter = this->GetUseReadTerminationCharacter();
+  unsigned int timeoutPeriod = this->GetTimeoutPeriod();
+
   unsigned int i = 0;
   int m;
-  unsigned int n = m_BytesToRead;
   ResultType readError = SUCCESS;
 
-  // Read reply either until n bytes have been read,
-  // or if UseReadTerminationCharacter is set then read
-  // until the termination character is found.
-  while (n > 0)
+  // check to see if timeout needs to be adjusted
+  if (m_OldTimeoutPeriod != timeoutPeriod)
     {
-    if ((m = read(m_PortHandle,&m_InputData[i], 1)) == -1)
+    struct termios t;
+
+    readError = FAILURE;
+    if (tcgetattr(m_PortHandle, &t) != -1)
       {
-      // if error is not EAGAIN, break
-      m = 0;
-      if (errno != EAGAIN) 
+      t.c_cc[VMIN] = 0;
+      t.c_cc[VTIME] = (timeoutPeriod+99)/100;
+      if (tcsetattr(m_PortHandle,TCSANOW,&t) != -1)
         {
-        readError = FAILURE;
-        break;
+        m_OldTimeoutPeriod = timeoutPeriod;
+        readError = SUCCESS;
         }
       }
-    else if (m == 0)
-      { // no characters read, must have timed out
-      readError = TIMEOUT;
-      break;
-      }
-    n -= m;  // n is number of chars left to read
-    i += m;  // i is the number of chars read
+    }
 
-    // done when ReadTerminationCharacter received
-    if ( m_UseReadTerminationCharacter &&
-         m_InputData[i-1] == m_ReadTerminationCharacter )
-      {  
-      break;
+  if (readError == SUCCESS)
+    {
+    // Read reply either until n bytes have been read,
+    // or if UseReadTerminationCharacter is set then read
+    // until the termination character is found.
+    while (n > 0)
+      {
+      if ((m = read(m_PortHandle, &data[i], 1)) == -1)
+        {
+        // if error is not EAGAIN, break
+        m = 0;
+        if (errno != EAGAIN) 
+          {
+          readError = FAILURE;
+          break;
+          }
+        }
+      else if (m == 0)
+        { // no characters read, must have timed out
+        readError = TIMEOUT;
+        break;
+        }
+      n -= m;  // n is number of chars left to read
+      i += m;  // i is the number of chars read
+
+      // done when ReadTerminationCharacter received
+      if ( useTerminationCharacter &&
+           data[i-1] == terminationCharacter )
+        {  
+        break;
+        }
       }
     }
 
   // set the number of bytes that were read
-  m_BytesRead = i;
-  m_InputData[i] = '\0';
+  bytesRead = i;
+  data[i] = '\0';
 
   return readError;
 }
@@ -368,6 +395,7 @@ void SerialCommunicationForPosix::PrintSelf( std::ostream& os,
   Superclass::PrintSelf(os, indent);
 
   os << indent << "PortHandle: " << m_PortHandle << std::endl;
+  os << indent << "OldTimeoutPeriod: " << m_OldTimeoutPeriod << std::endl;
 }
 
 } // end namespace igstk

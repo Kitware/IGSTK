@@ -55,43 +55,8 @@ public:
 
   void Execute(const itk::Object * object, const itk::EventObject & event)
   {
-    if ( typeid(event)== typeid(igstk::SerialCommunication::OpenPortFailureEvent))
-    {
-        std::cout << "OpenPortFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::SetTransferParametersFailureEvent ))
-    {
-        std::cout << "SetupCommunicationParametersFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteSuccessEvent ))
-    {
-        std::cout << "****** WriteSuccessEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteFailureEvent ))
-    {
-        std::cout << "****** WriteFailureEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::WriteTimeoutEvent ))
-    {
-        std::cout << "****** WriteTimeoutEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadSuccessEvent ))
-    {
-        std::cout << "****** ReadSuccessEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadFailureEvent ))
-    {
-        std::cout << "****** ReadFailureEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( igstk::SerialCommunication::ReadTimeoutEvent ))
-    {
-        std::cout << "****** ReadTimeoutEvent ******\n";
-    }
-   else 
-    {
-        std::cout << "Some other Error Occurred ...\n";
-    }
- }
+    std::cout << event.GetEventName() << std::endl;
+  }
 };
 
 

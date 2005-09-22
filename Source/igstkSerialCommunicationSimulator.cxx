@@ -119,7 +119,7 @@ SerialCommunicationSimulator::InternalOpenPort( void )
     len = strlen((const char*)buf);
     if( buf[len-1] == '\r' || buf[len-1] == '\n' )
       {
-      buf[len-1] == '\0';
+      buf[len-1] = '\0';
       }
     len = strlen((const char*)buf);
     std::string encodedString;
@@ -155,9 +155,8 @@ SerialCommunicationSimulator::InternalOpenPort( void )
 
 
 SerialCommunicationSimulator::ResultType
-SerialCommunicationSimulator::InternalSetTransferParameters( void )
+SerialCommunicationSimulator::InternalUpdateParameters( void )
 {
-  igstkLogMacro( DEBUG, "SetCommunicationParameters succeeded.\n");
   return SUCCESS;
 }
 
@@ -169,35 +168,38 @@ SerialCommunicationSimulator::InternalClosePort( void )
 }
 
 
-void SerialCommunicationSimulator::InternalSendBreak( void )
+SerialCommunicationSimulator::ResultType
+SerialCommunicationSimulator::InternalSendBreak( void )
 {
   // The response table might have a response for a serial break,
   //  which we signify with an empty string
   m_Command = BinaryData();
+  return SUCCESS;
 }
 
 
-void SerialCommunicationSimulator::InternalSleep( void )
+void SerialCommunicationSimulator::InternalSleep( unsigned int  )
 {
   // Sleep isn't really needed during simulation, since
   //  responses are instantaneous
 }
 
 
-void SerialCommunicationSimulator::InternalPurgeBuffers( void )
+SerialCommunicationSimulator::ResultType
+SerialCommunicationSimulator::InternalPurgeBuffers( void )
 {
   // Simulator does not support purging buffers.
+  return SUCCESS;
 }
 
 SerialCommunicationSimulator::ResultType
-SerialCommunicationSimulator::InternalWrite( void )
+SerialCommunicationSimulator::InternalWrite( const char *data,
+                                             unsigned int bytesToWrite )
 {
-  unsigned int bytesToWrite = m_BytesToWrite;
-
   igstkLogMacro( DEBUG, "InternalWrite called ...\n");
 
   // Just copy the data to m_Command for later use.
-  m_Command.CopyFrom( (unsigned char*)&m_OutputData[0], bytesToWrite );
+  m_Command.CopyFrom( (unsigned char*)&data[0], bytesToWrite );
 
   igstkLogMacro( DEBUG, "Written bytes = " << bytesToWrite << "\n");
   return SUCCESS;
@@ -205,18 +207,22 @@ SerialCommunicationSimulator::InternalWrite( void )
 
 
 SerialCommunicationSimulator::ResultType
-SerialCommunicationSimulator::InternalRead( void )
+SerialCommunicationSimulator::InternalRead( char *data,
+                                            unsigned int bytesToRead,
+                                            unsigned int &bytesRead )
 {
   unsigned index = m_CounterTable[m_Command]++;
+  char terminationCharacter = this->GetReadTerminationCharacter();
+  bool useTerminationCharacter = this->GetUseReadTerminationCharacter();
   
   if( m_ResponseTable[m_Command].size() == 0 )
     {
-    m_BytesRead = 0;
+    bytesRead = 0;
     igstkLogMacro( DEBUG, "InternalRead failed with timeout...\n");
     return TIMEOUT;
     }
   const BinaryData& response = m_ResponseTable[m_Command][index];
-  unsigned int bytesRead = response.GetSize();
+  bytesRead = response.GetSize();
 
   if( index+1 >= m_ResponseTable[m_Command].size() )
     {
@@ -224,22 +230,20 @@ SerialCommunicationSimulator::InternalRead( void )
     }
 
   // Number of bytes read can't be greater than number asked for.
-  bytesRead = ((m_BytesToRead < bytesRead) ? m_BytesToRead : bytesRead);
+  bytesRead = ((bytesToRead < bytesRead) ? bytesToRead : bytesRead);
 
   // Only copy the specified number of characters
   for (unsigned int j = 0; j < bytesRead; j++)
     {
-    ((unsigned char *)m_InputData)[j] = response[j];
+    ((unsigned char *)data)[j] = response[j];
     } 
-
-  m_BytesRead = bytesRead;
 
   // Check whether to simulate a timeout
   if (bytesRead == 0 ||
-      (m_UseReadTerminationCharacter && 
-       m_InputData[bytesRead-1] != m_ReadTerminationCharacter) ||
-      (!m_UseReadTerminationCharacter &&
-       bytesRead < m_BytesToRead))
+      (useTerminationCharacter && 
+       data[bytesRead-1] != terminationCharacter) ||
+      (!useTerminationCharacter &&
+       bytesRead < bytesToRead))
     {
     igstkLogMacro( DEBUG, "InternalRead failed with timeout...\n");
     return TIMEOUT;

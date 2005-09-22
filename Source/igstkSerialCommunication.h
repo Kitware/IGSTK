@@ -106,37 +106,30 @@ public:
 
   /** Set the baud rate to use.  Baud rates of 57600 or higher should
    *  not be used unless some sort of error checking is in place. */
-  void SetBaudRate( BaudRateType );
+  igstkSetMacro( BaudRate, BaudRateType );
   /** Get the baud rate. */
   igstkGetMacro( BaudRate, BaudRateType );
 
   /** Set the number of bits per character.  This should usually be
    *  set to 8, since 7 bits is only valid for pure ASCII data. */
-  void SetDataBits( DataBitsType dataBits );
+  igstkSetMacro( DataBits, DataBitsType );
   /** Get the number of bits per character. */
   igstkGetMacro( DataBits, DataBitsType );
 
   /** Set the parity.  The default is no parity. */
-  void SetParity( ParityType parity );
+  igstkSetMacro( Parity, ParityType );
   /** Get the parity. */
   igstkGetMacro( Parity, ParityType );
 
   /** Set the number of stop bits.  The default is one stop bit. */
-  void SetStopBits( StopBitsType stopBits );
+  igstkSetMacro( StopBits, StopBitsType );
   /** Get the number of stop bits. */
   igstkGetMacro( StopBits, StopBitsType );
 
   /** Set whether to use hardware handshaking. */
-  void SetHardwareHandshake( HandshakeType handshake );
+  igstkSetMacro( HardwareHandshake, HandshakeType );
   /** Get whether hardware handshaking is enabled. */
   igstkGetMacro( HardwareHandshake, HandshakeType );
-
-  /** The method SetTimeoutPeriod sets the amount of time to wait on a reply 
-   *  from the device before generating a timeout event.  The default
-   *  value is 500 (0.5 seconds). */
-  void SetTimeoutPeriod( unsigned int milliseconds );
-  /** Get the timeout period */
-  igstkGetMacro( TimeoutPeriod, unsigned int );
 
   /** Set the name of the file into which the data stream is recorded. */
   void SetCaptureFileName(const char* filename);
@@ -148,31 +141,16 @@ public:
   /** Get whether the data is being recorded. */
   igstkGetMacro( Capture, bool );
 
+  /** Update the communication parameters, in case you need to change
+   *  the baud rate, handshaking, timeout, etc. after opening the port */
+  ResultType UpdateParameters( void );
+
   /** The method OpenCommunication sets up communication as per the data
    *  provided. */
-  void OpenCommunication( void );
+  ResultType OpenCommunication( void );
 
   /** The method CloseCommunication closes the communication. */
-  void CloseCommunication();
-
-  /** Send a break in the serial communication, which by definition is
-   *  a series of zeroes that lasts for a 0.3 second duration.  Some
-   *  devices interpret this as a "reset" signal because the device is
-   *  guaranteed to see it even if the baud rate, parity, or data bits
-   *  are not matched between the host and the device. */
-  void SendBreak( void );
-
-  /** Sleep for the specified number of milliseconds. This is useful
-   *  after a reset of a device on the other end of the serial port,
-   *  if the device is known to take a certain amount of time to
-   *  initialize. */
-  void Sleep( unsigned int milliseconds );
-
-  /** Purge the contents of the buffers.  This is used if the device 
-   *  connected to the serial port has just been reset after an error,
-   *  and the contents of the serial port buffers has to be thrown out
-   *  before communication can continue.*/
-  void PurgeBuffers( void );
+  ResultType CloseCommunication( void );
 
   /** Write method sends the string via the communication link. */
   ResultType Write( const char *message, unsigned int numberOfBytes );
@@ -181,34 +159,26 @@ public:
    *  data will always be null-terminated, so ensure that 'data' is at
    *  least numberOfBytes+1 in size. */
   ResultType Read( char *data, unsigned int numberOfBytes,
-             unsigned int &bytesRead );
+                   unsigned int &bytesRead );
 
-  /** Event that denotes that an error has occurred. */
-  itkEventMacro( CommunicationFailureEvent, IGSTKEvent);
-  /** Event that denotes that some action has been successful. */
-  itkEventMacro( CommunicationSuccessEvent, IGSTKEvent);
-  /** Serial port could not be opened. */
-  itkEventMacro( OpenPortFailureEvent, CommunicationFailureEvent );
-  /** Serial port could not be closed. */
-  itkEventMacro( ClosePortFailureEvent, CommunicationFailureEvent );
-  /** Data was successfully sent. */
-  itkEventMacro( WriteSuccessEvent, CommunicationSuccessEvent );
-  /** Error while sending data. */
-  itkEventMacro( WriteFailureEvent, CommunicationFailureEvent );
-  /** Timeout while sending data. */
-  itkEventMacro( WriteTimeoutEvent, WriteFailureEvent );
-  /** Data was successfully received. */
-  itkEventMacro( ReadSuccessEvent, CommunicationSuccessEvent );
-  /** Error while receiving data. */
-  itkEventMacro( ReadFailureEvent, CommunicationFailureEvent );
-  /** Timeout while waiting for data. */
-  itkEventMacro( ReadTimeoutEvent, ReadFailureEvent );
-  /** Error while setting some communication parameter. */
-  itkEventMacro( SetTransferParametersFailureEvent,
-                 CommunicationFailureEvent );
-  /** Error while sending a serial break. */
-  itkEventMacro( SendBreakFailureEvent,
-                 CommunicationFailureEvent );
+  /** Send a break in the serial communication, which by definition is
+   *  a series of zeroes that lasts for a 0.3 second duration.  Some
+   *  devices interpret this as a "reset" signal because the device is
+   *  guaranteed to see it even if the baud rate, parity, or data bits
+   *  are not matched between the host and the device. */
+  ResultType SendBreak( void );
+
+  /** Purge the contents of the buffers.  This is used if the device 
+   *  connected to the serial port has just been reset after an error,
+   *  and the contents of the serial port buffers has to be thrown out
+   *  before communication can continue.*/
+  ResultType PurgeBuffers( void );
+
+  /** Sleep for the specified number of milliseconds. This is useful
+   *  after a reset of a device on the other end of the serial port,
+   *  if the device is known to take a certain amount of time to
+   *  initialize. */
+  void Sleep( unsigned int milliseconds );
 
   /** Declarations related to the State Machine. */
   igstkStateMachineMacro();
@@ -225,31 +195,35 @@ protected:
   // These methods are the interface to the derived classes.
 
   /** Opens serial port for communication; */
-  virtual ResultType InternalOpenPort( void ) = 0;
+  virtual ResultType InternalOpenPort( void ) { return SUCCESS; };
 
   /** Set communication parameters on the open port. */
-  virtual ResultType InternalSetTransferParameters( void ) = 0;
+  virtual ResultType InternalUpdateParameters( void ) { return SUCCESS; };
 
   /** Closes serial port. */
-  virtual ResultType InternalClosePort( void ) = 0;
-
-  /** Send a break to the across the serial port. */
-  virtual void InternalSendBreak( void ) = 0;
-
-  /** Sleep for the period of time stored in m_SleepPeriod, in millisecs. */
-  virtual void InternalSleep( void ) = 0;
-
-  /** Purge the buffers. */
-  virtual void InternalPurgeBuffers( void ) = 0;
+  virtual ResultType InternalClosePort( void ) { return SUCCESS; };
 
   /** write the data to the serial port. */
-  virtual ResultType InternalWrite( void ) = 0;
+  virtual ResultType InternalWrite( const char *, unsigned int ) {
+    return TIMEOUT; };
 
   /** read the data from the serial port. */
-  virtual ResultType InternalRead( void ) = 0;
+  virtual ResultType InternalRead( char *, unsigned int, unsigned int &) {
+    return TIMEOUT; };
+
+  /** Send a break to the across the serial port. */
+  virtual ResultType InternalSendBreak( void ) { return SUCCESS; };
+
+  /** Purge the buffers. */
+  virtual ResultType InternalPurgeBuffers( void ) { return SUCCESS; };
+
+  /** Sleep for the period of time specified, in milliseconds. */
+  virtual void InternalSleep( unsigned int ) {};
 
   /** Print object information. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+private:
 
   // Communication Parameters
 
@@ -271,9 +245,6 @@ protected:
   /** Hardware handshaking */
   HandshakeType  m_HardwareHandshake;
 
-  /** Timeout period, in milliseconds. */
-  unsigned int m_TimeoutPeriod;
-
   /** Time to sleep for, in milliseconds. */
   unsigned int m_SleepPeriod;
 
@@ -291,8 +262,6 @@ protected:
 
   /** Actual number of bytes read. */
   unsigned int m_BytesRead;
-
-private:
 
   /** Type used to map between integer values and inputs */
   typedef std::map<int, InputType>     IntegerInputMapType;
@@ -315,49 +284,37 @@ private:
   /** LogOutput for File output stream */
   itk::StdStreamLogOutput::Pointer  m_CaptureFileOutput;
   
-  ResultType                        m_WriteReturnValue;
+  /** For storing return values */
+  ResultType                m_ReturnValue;
   
-  ResultType                        m_ReadReturnValue;
+  /** For mapping return values to state machine inputs */
+  IntegerInputMapType       m_ResultInputMap;
   
-  IntegerInputMapType               m_WriteResultInputMap;
-  
-  IntegerInputMapType               m_ReadResultInputMap;
-
   // List of States 
   StateType                m_IdleState;
   StateType                m_AttemptingToOpenPortState;
   StateType                m_PortOpenState;
-  StateType                m_AttemptingToSetTransferParametersState;
+  StateType                m_AttemptingToUpdateParametersState;
   StateType                m_ReadyForCommunicationState;
   StateType                m_AttemptingToClosePortState;
   StateType                m_AttemptingToReadState;
   StateType                m_AttemptingToWriteState;
+  StateType                m_AttemptingToSendBreakState;
+  StateType                m_AttemptingToPurgeBuffersState;
+  StateType                m_SleepState;
 
   // List of Inputs
+  InputType                m_SuccessInput;
+  InputType                m_FailureInput;
+  InputType                m_TimeoutInput;
   InputType                m_OpenPortInput;
-  InputType                m_OpenPortSuccessInput;
-  InputType                m_OpenPortFailureInput;
-
-  InputType                m_SetTransferParametersInput;
-  InputType                m_SetTransferParametersSuccessInput;
-  InputType                m_SetTransferParametersFailureInput;
-
+  InputType                m_ClosePortInput;
+  InputType                m_UpdateParametersInput;
+  InputType                m_ReadInput;
+  InputType                m_WriteInput;
   InputType                m_SendBreakInput;
   InputType                m_PurgeBuffersInput;
   InputType                m_SleepInput;
-  InputType                m_ReadInput;
-  InputType                m_WriteInput;
-
-  InputType                m_WriteSuccessInput;
-  InputType                m_WriteFailureInput;
-  InputType                m_WriteTimeoutInput;
-  InputType                m_ReadSuccessInput;
-  InputType                m_ReadFailureInput;
-  InputType                m_ReadTimeoutInput;
-                           
-  InputType                m_ClosePortInput;
-  InputType                m_ClosePortSuccessInput;
-  InputType                m_ClosePortFailureInput;
 
   /** called by state machine serial port is successfully opened */
   void OpenPortSuccessProcessing( void );
@@ -372,28 +329,19 @@ private:
   void ClosePortFailureProcessing( void );
   
   /** called by state machine when writing succeeded */
-  void WriteSuccessProcessing( void );
+  void SuccessProcessing( void );
   
   /** called by state machine when writing failed */
-  void WriteFailureProcessing( void );
+  void FailureProcessing( void );
   
   /** called by state machine when writing was timed out */
-  void WriteTimeoutProcessing( void );
+  void TimeoutProcessing( void );
   
-  /** called by state machine when reading succeeded */
-  void ReadSuccessProcessing( void );
-  
-  /** called by state machine when reading failed */
-  void ReadFailureProcessing( void );
-  
-  /** called by state machine when reading was timed out */
-  void ReadTimeoutProcessing( void );
-
   /** Called by the state machine when communication is to be opened */
   void AttemptToOpenPort( void );
 
   /** Called by the state machine when transfer parameters are to be set */
-  void AttemptToSetTransferParameters( void );
+  void AttemptToUpdateParameters( void );
 
   /** Called by the state machine when communication is to be closed */
   void AttemptToClosePort( void );
@@ -404,6 +352,17 @@ private:
   /** Called by the state machine when reading is to be done */
   void AttemptToRead( void );
 
+  /** Called by the state machine to send a break */
+  void AttemptToSendBreak( void );
+
+  /** Called by the state machine to purge the buffers */
+  void AttemptToPurgeBuffers( void );
+
+  /** Called by the state machine to purge the buffers */
+  void SleepProcessing( void );
+
+  /** Helper function to map a return value to an input */
+  const InputType &MapResultToInput( int condition );
 };
 
 } // end namespace igstk

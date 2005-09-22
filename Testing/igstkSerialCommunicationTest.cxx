@@ -61,51 +61,8 @@ public:
 
   void Execute(const itk::Object * object, const itk::EventObject & event)
   {
-    if ( typeid(event)== typeid(CommunicationType::OpenPortFailureEvent))
-    {
-        std::cout << "OpenPortFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( CommunicationType::ClosePortFailureEvent))
-    {
-        std::cout << "ClosePortFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( CommunicationType::SetTransferParametersFailureEvent ))
-    {
-        std::cout << "SetupCommunicationParametersFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( CommunicationType::SendBreakFailureEvent ))
-    {
-        std::cout << "SendBreakFailureEvent Error Occurred ...\n";
-    }
-    else if ( typeid(event)== typeid( CommunicationType::WriteSuccessEvent ))
-    {
-        std::cout << "****** WriteSuccessEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( CommunicationType::WriteFailureEvent ))
-    {
-        std::cout << "****** WriteFailureEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( CommunicationType::WriteTimeoutEvent ))
-    {
-        std::cout << "****** WriteTimeoutEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( CommunicationType::ReadSuccessEvent ))
-    {
-        std::cout << "****** ReadSuccessEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( CommunicationType::ReadFailureEvent ))
-    {
-        std::cout << "****** ReadFailureEvent ******\n";
-    }
-    else if ( typeid(event)== typeid( CommunicationType::ReadTimeoutEvent ))
-    {
-        std::cout << "****** ReadTimeoutEvent ******\n";
-    }
-   else 
-    {
-        std::cout << "Some other Error Occurred ...\n";
-    }
- }
+    std::cout << event.GetEventName() << std::endl;
+  }
 };
 
 
@@ -202,18 +159,20 @@ int igstkSerialCommunicationTest( int, char * [] )
   if (numberOfBytesRead != len ||
       strncmp(reply, "Hello World!!!", len) != 0)
     {
-    std::cerr << "Failed simple read/write test" << std::endl;
+    std::cout << "Failed simple read/write test" << std::endl;
     serialComm->CloseCommunication();
     return EXIT_FAILURE;
     }
 
   // try reading more chars than available to generate a timeout
+  serialComm->SetTimeoutPeriod(50);
   serialComm->Write("Hello World!!!", len);
+  serialComm->SetTimeoutPeriod(500);
   serialComm->Read(reply, MAX_REPLY_SIZE, numberOfBytesRead);
 
   if (numberOfBytesRead != len)
     {
-    std::cerr << "Failed timout test" << std::endl;
+    std::cout << "Failed timout test" << std::endl;
     testStatus = EXIT_FAILURE;
     }
 
@@ -222,18 +181,22 @@ int igstkSerialCommunicationTest( int, char * [] )
   serialComm->Read(reply, len-2, numberOfBytesRead);
   if (numberOfBytesRead != len-2)
     {
-    std::cerr << "failed partial read test 1st part" << std::endl;
+    std::cout << "failed partial read test 1st part" << std::endl;
     testStatus = EXIT_FAILURE;
     }
   serialComm->Read(reply, 2, numberOfBytesRead);
   if (numberOfBytesRead != 2)
     {
-    std::cerr << "failed partial read test 2nd part" << std::endl;
+    std::cout << "failed partial read test 2nd part" << std::endl;
     testStatus = EXIT_FAILURE;
     }
 
   // send a serial break (there isn't any way to test that it was sent)
   serialComm->SendBreak();
+
+  // purge buffers of all the zeros that were looped back from the break
+  serialComm->Sleep(10);
+  serialComm->PurgeBuffers();
 
   // test a couple baud rates
   CommunicationType::BaudRateType allBaudRates[2] = {
@@ -264,56 +227,52 @@ int igstkSerialCommunicationTest( int, char * [] )
 
   for (counter = 0; counter < 2 && !(testStatus == EXIT_FAILURE); counter++)
     {
-    serialComm->CloseCommunication();
     serialComm->SetBaudRate(allBaudRates[counter]);
-    serialComm->OpenCommunication();
+    serialComm->UpdateParameters();
     serialComm->Write("Hello World!!!", len);
     serialComm->Read(reply, len, numberOfBytesRead);
     if (strncmp(reply, "Hello World!!!", len) != 0)
       {
-      std::cerr << "failed SetBaudRate test" << std::endl;
+      std::cout << "failed SetBaudRate test" << std::endl;
       testStatus = EXIT_FAILURE;
       }
     }
 
   for (counter = 0; counter < 2 && !(testStatus == EXIT_FAILURE); counter++)
     {
-    serialComm->CloseCommunication();
     serialComm->SetDataBits(allDataBits[counter]);
-    serialComm->OpenCommunication();
+    serialComm->UpdateParameters();
     serialComm->Write("Hello World!!!", len);
     serialComm->Read(reply, len, numberOfBytesRead);
     if (strncmp(reply, "Hello World!!!", len) != 0)
       {
-      std::cerr << "failed SetDataBits test" << std::endl;
+      std::cout << "failed SetDataBits test" << std::endl;
       testStatus = EXIT_FAILURE;
       }
     }
 
   for (counter = 0; counter < 3 && !(testStatus == EXIT_FAILURE); counter++)
     {
-    serialComm->CloseCommunication();
     serialComm->SetParity(allParities[counter]);
-    serialComm->OpenCommunication();
+    serialComm->UpdateParameters();
     serialComm->Write("Hello World!!!", len);
     serialComm->Read(reply, len, numberOfBytesRead);
     if (strncmp(reply, "Hello World!!!", len) != 0)
       {
-      std::cerr << "failed SetParity test" << std::endl;
+      std::cout << "failed SetParity test" << std::endl;
       testStatus = EXIT_FAILURE;
       }
     }
 
   for (counter = 0; counter < 2 && !(testStatus == EXIT_FAILURE); counter++)
     {
-    serialComm->CloseCommunication();
     serialComm->SetStopBits(allStopBits[counter]);
-    serialComm->OpenCommunication();
+    serialComm->UpdateParameters();
     serialComm->Write("Hello World!!!", len);
     serialComm->Read(reply, len, numberOfBytesRead);
     if (strncmp(reply, "Hello World!!!", len) != 0)
       {
-      std::cerr << "failed SetStopBits test" << std::endl;
+      std::cout << "failed SetStopBits test" << std::endl;
       testStatus = EXIT_FAILURE;
       }
     }

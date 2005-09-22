@@ -24,6 +24,7 @@ namespace igstk
 
 Communication::Communication( void )
 {
+  m_TimeoutPeriod = 5000;
   m_ReadTerminationCharacter = 255;
   m_UseReadTerminationCharacter = false;
 }
@@ -32,23 +33,33 @@ Communication::~Communication( void )
 {
 }
 
-void Communication::OpenCommunication( void )
+Communication::ResultType Communication::OpenCommunication( void )
 {
-  std::cerr << "Communication::OpenCommunication() method is not implemented yet" << std::endl;
-  return;
+  std::cerr << "Communication::OpenCommunication() method is"
+            << " not implemented yet" << std::endl;
+
+  return SUCCESS;
 }
 
-void Communication::CloseCommunication( void )
+Communication::ResultType Communication::CloseCommunication( void )
 {
-  std::cerr << "Communication::CloseCommunication() method is not implemented yet" << std::endl;
-  return;
+  std::cerr << "Communication::CloseCommunication() method is"
+            << " not implemented yet" << std::endl;
+ 
+ return SUCCESS;
 }
 
 void Communication::PrintSelf(std::ostream &os, itk::Indent indent) const
 {
   Superclass::PrintSelf(os,indent);
   
-//  os << indent << "Name: " << this->GetName() << std::endl;
+  os << indent << "TimeoutPeriod: " << m_TimeoutPeriod 
+     << std::endl;
+  os << indent << "ReadTerminationCharacter: " << m_ReadTerminationCharacter 
+     << std::endl;
+  os << indent << "UseReadTerminationCharacter: "
+     << m_UseReadTerminationCharacter 
+     << std::endl;
 }
 
 

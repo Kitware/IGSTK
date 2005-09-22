@@ -27,6 +27,11 @@ namespace igstk
 itkEventMacro( IGSTKEvent,               itk::UserEvent );
 itkEventMacro( PulseEvent,               IGSTKEvent );
 itkEventMacro( RefreshEvent,             IGSTKEvent );
+itkEventMacro( CompletedEvent,           IGSTKEvent );
+itkEventMacro( InputOutputErrorEvent,    IGSTKEvent );
+itkEventMacro( InputOutputTimeoutEvent,  IGSTKEvent );
+itkEventMacro( OpenPortErrorEvent,       IGSTKEvent );
+itkEventMacro( ClosePortErrorEvent,      IGSTKEvent );
 
 }
 

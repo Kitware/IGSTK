@@ -40,7 +40,7 @@ NDICommandInterpreter::NDICommandInterpreter()
   m_CommandReply = new char[NDI_MAX_REPLY_SIZE+1];
 
   m_Tracking = 0;
-  this->SetErrorCode(0);
+  m_ErrorCode = 0;
 }
 
 /** Destructor: free any memory that has been allocated. */
@@ -63,6 +63,7 @@ void NDICommandInterpreter::SetCommunication(CommunicationType* communication)
   communication->SetParity(SerialCommunication::NoParity);
   communication->SetStopBits(SerialCommunication::StopBits1);
   communication->SetHardwareHandshake(SerialCommunication::HandshakeOff);
+  communication->UpdateParameters();
 
   /* The timeouts are tricky to deal with.  The NDI devices reply
      almost immediately after most command, with notable exceptions:
@@ -471,14 +472,28 @@ int NDICommandInterpreter::WriteSerialBreak()
 {
   /* serial break will force tracking to stop */
   m_Communication->SetBaudRate(SerialCommunication::BaudRate9600);
+  m_Communication->SetDataBits(SerialCommunication::DataBits8);
+  m_Communication->SetParity(SerialCommunication::NoParity);
+  m_Communication->SetStopBits(SerialCommunication::StopBits1);
   m_Communication->SetHardwareHandshake(SerialCommunication::HandshakeOff);
-  m_Communication->Sleep(500);
+  
+  int result = NDI_BAD_COMM;
 
-  /* send break, reset the comm parameters, and sleep for 2 seconds */
-  m_Communication->SendBreak();
-  m_Communication->Sleep(2000);
+  if (m_Communication->UpdateParameters() == Communication::SUCCESS)
+    {
+    m_Communication->Sleep(500);
 
-  return 0;
+    result = NDI_WRITE_ERROR;
+    /* send break, reset the comm parameters, and sleep for 2 seconds */
+    if (m_Communication->SendBreak() == Communication::SUCCESS)
+      {
+      m_Communication->Sleep(2000);
+      
+      result = 0;
+      }
+    }
+
+  return this->SetErrorCode(result);
 }
 
 /** Add a CRC value to a command and write it, and return the size of
@@ -526,17 +541,17 @@ int NDICommandInterpreter::WriteCommand(unsigned int *nc)
 
   /* send the command to the device */
   int writeError = m_Communication->Write(cp, n);
-  if (writeError != Communication::SUCCESS)
+  int errcode = NDI_TIMEOUT;
+  if (writeError != Communication::TIMEOUT)
     {
-    int errcode = NDI_TIMEOUT;
-    if (writeError == Communication::FAILURE)
+    errcode = NDI_WRITE_ERROR;
+    if (writeError == Communication::SUCCESS)
       {
-      errcode = NDI_WRITE_ERROR;
+      errcode = 0;
       }
-    return this->SetErrorCode(errcode);
     }
   
-  return 0;
+  return this->SetErrorCode(errcode);
 }
 
 /* read the binary reply from a BX command */
@@ -721,6 +736,7 @@ const char* NDICommandInterpreter::Command(const char* command)
     /* serial break will force tracking to stop */
     m_Tracking = 0;
     m_Communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
+
     /* set m_SerialCommand to null string */ 
     cp[0] = '\0';
     this->WriteSerialBreak();
@@ -1957,7 +1973,7 @@ void NDICommandInterpreter::HelperForTX(const char* cp, const char* crp)
       }
 
     /* if not reporting out-of-volume, reduce nstray */
-    if (mode & NDI_INCLUDE_OUT_OF_VOLUME == 0)
+    if ((mode & NDI_INCLUDE_OUT_OF_VOLUME) == 0)
       {
       for (i = 0; i < n; i++)
         {
@@ -2254,7 +2270,9 @@ void NDICommandInterpreter::HelperForIRCHK(const char* cp, const char* crp)
 */
 void NDICommandInterpreter::HelperForCOMM(const char* cp, const char* crp)
 {
-  static SerialCommunication::BaudRateType convert_baud[6] = {
+  int errcode = NDI_BAD_COMM;
+
+  static SerialCommunication::BaudRateType convertBaud[6] = {
     SerialCommunication::BaudRate9600,
     SerialCommunication::BaudRate19200,
     SerialCommunication::BaudRate19200,
@@ -2262,35 +2280,67 @@ void NDICommandInterpreter::HelperForCOMM(const char* cp, const char* crp)
     SerialCommunication::BaudRate57600,
     SerialCommunication::BaudRate115200 };
 
+  static SerialCommunication::ParityType convertParity[3] = {
+    SerialCommunication::NoParity,
+    SerialCommunication::OddParity,
+    SerialCommunication::EvenParity };
+
   SerialCommunication::BaudRateType
     newspeed = SerialCommunication::BaudRate9600;
   
+  SerialCommunication::DataBitsType
+    newdata = SerialCommunication::DataBits7;
+
+  SerialCommunication::ParityType
+    newparity = SerialCommunication::NoParity;
+
+  SerialCommunication::StopBitsType
+    newstop = SerialCommunication::StopBits2;
+
   SerialCommunication::HandshakeType
     newhand = SerialCommunication::HandshakeOn;
 
-  /* Force to 8N1, don't allow 14400 baud (not supported by UNIX) */
-  if (cp[5] < '0' || cp[5] == '1' || cp[5] > '5' ||
-      cp[6] != '0' || cp[7] != '0' || cp[8] != '0')
+  /* baud rate of 14400 is not allowed by SerialCommunication */
+  if (cp[5] >= '0' && cp[5] <= '5' && cp[5] != '1' &&
+      cp[6] >= '0' && cp[6] <= '1' &&
+      cp[7] >= '0' && cp[7] <= '2' && 
+      cp[8] >= '0' && cp[8] <= '1' && 
+      cp[9] >= '0' && cp[9] <= '1')
     {
-    this->SetErrorCode(NDI_BAD_COMM);
-    return;
+    newspeed = convertBaud[cp[5]-'0'];
+    newparity = convertParity[cp[7]-'0'];
+
+    if (cp[6] == '0')
+      {
+      newdata = SerialCommunication::DataBits8;
+      }
+
+    if (cp[8] == '0')
+      {
+      newstop = SerialCommunication::StopBits1;
+      }
+
+    if (cp[9] == '0')
+      {
+      newhand = SerialCommunication::HandshakeOff;
+      }
+
+    /* let the device sleep a bit */
+    m_Communication->Sleep(100);
+
+    m_Communication->SetBaudRate(newspeed);
+    m_Communication->SetDataBits(newdata);
+    m_Communication->SetParity(newparity);
+    m_Communication->SetStopBits(newstop);
+    m_Communication->SetHardwareHandshake(newhand);
+
+    if (m_Communication->UpdateParameters() == Communication::SUCCESS)
+      {
+      errcode = 0;
+      }
     }
 
-  if (cp[5] >= '0' && cp[5] <= '5')
-    {
-    newspeed = convert_baud[cp[5]-'0'];
-    }
-
-  if (cp[9] == '0')
-    {
-    newhand = SerialCommunication::HandshakeOff;
-    } 
-
-  m_Communication->Sleep(100);  /* let the device adjust  */
-  m_Communication->SetBaudRate(newspeed);
-  m_Communication->SetHardwareHandshake(newhand);
-
-  /* should set error code to NDI_BAD_COMM if the above fails */
+  this->SetErrorCode(errcode);
 }
 
 /*---------------------------------------------------------------------

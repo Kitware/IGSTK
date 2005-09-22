@@ -1,4 +1,3 @@
-
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
@@ -60,14 +59,17 @@ public:
 
   /** The method OpenCommunication sets up communication as per the data
    *  provided. */
-  virtual void OpenCommunication( void );
+  virtual ResultType OpenCommunication( void );
 
   /** The method CloseCommunication closes the communication. */
-  virtual void CloseCommunication( void );
+  virtual ResultType CloseCommunication( void );
 
-  /** The method SetTimeoutPeriod sets the amount of time to wait on a reply 
-   *  from the device before generating a timeout event. */
-  virtual void SetTimeoutPeriod( unsigned int milliseconds ) { };
+  /** The method SetTimeoutPeriod sets the amount of time, in
+   *  milliseconds to wait on a reply from the device before
+   *  generating a timeout event.  The default will vary
+   *  depending on the communication method that is used.. */
+  igstkSetMacro( TimeoutPeriod, unsigned int );
+  igstkGetMacro( TimeoutPeriod, unsigned int );
 
   /** The method SetReadTerminationCharacter sets a special character that 
    *  the device uses to mark the end of a reply 
@@ -81,11 +83,13 @@ public:
   igstkGetMacro( UseReadTerminationCharacter, bool );
 
   /** Write method sends the string via communication link. */
-  virtual ResultType Write( const char *data, unsigned int numberOfBytes ) { return SUCCESS; };
+  virtual ResultType Write( const char *data,
+                            unsigned int numberOfBytes ) { return SUCCESS; };
 
   /** Read method receives string via communication link. */
-  virtual ResultType Read( char *data, unsigned int numberOfBytes,
-                     unsigned int &bytesRead ) { return SUCCESS; }; 
+  virtual ResultType Read( char *data,
+                           unsigned int numberOfBytes,
+                           unsigned int &bytesRead ) { return SUCCESS; }; 
 
 protected:
 
@@ -95,12 +99,12 @@ protected:
 
   virtual ~Communication( void );
 
-  /** Flush "flushes" out any commands in the buffer through the
-   *  communication link. */
-  virtual void Flush( void ) { }
-
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+private:
+
+  unsigned int m_TimeoutPeriod;
 
   char m_ReadTerminationCharacter;
 

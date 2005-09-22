@@ -28,6 +28,7 @@ namespace igstk
 SerialCommunicationForWindows::SerialCommunicationForWindows()
 {
   m_PortHandle = INVALID_HANDLE_VALUE;
+  m_OldTimeoutPeriod = 0;
 } 
 
 
@@ -39,11 +40,13 @@ SerialCommunicationForWindows::~SerialCommunicationForWindows()
 SerialCommunicationForWindows::ResultType
 SerialCommunicationForWindows::InternalOpenPort( void )
 {
+  unsigned int timeoutPeriod = this->GetTimeoutPeriod();
+
   COMMTIMEOUTS default_ctmo = {
     MAXDWORD, MAXDWORD,
-    m_TimeoutPeriod, 
+    timeoutPeriod, 
     2, 
-    m_TimeoutPeriod
+    timeoutPeriod,
   };
   HANDLE serial_port;
   DCB comm_settings;
@@ -110,18 +113,25 @@ SerialCommunicationForWindows::InternalOpenPort( void )
     return FAILURE;
     }
 
+  m_OldTimeoutPeriod = timeoutPeriod;
+
   return SUCCESS;
 }
 
 
 SerialCommunicationForWindows::ResultType
-SerialCommunicationForWindows::InternalSetTransferParameters( void )
+SerialCommunicationForWindows::InternalUpdateParameters( void )
 {
   DCB comm_settings;
   COMMTIMEOUTS ctmo;
   
+  unsigned int timeoutPeriod = this->GetTimeoutPeriod();
   int newbaud = CBR_9600;
-  unsigned int baud = m_BaudRate;
+  unsigned int baud = this->GetBaudRate();
+  DataBitsType dataBits = this->GetDataBits();
+  ParityType parity = this->GetParity();
+  StopBitsType stopBits = this->GetStopBits();
+  HandshakeType handshake = this->GetHardwareHandshake();
 
   switch (baud)
     {
@@ -138,7 +148,7 @@ SerialCommunicationForWindows::InternalSetTransferParameters( void )
   comm_settings.BaudRate = newbaud;     // speed
 
   // set handshaking
-  if (m_HardwareHandshake == HandshakeOn)
+  if (handshake == HandshakeOn)
     {
     comm_settings.fOutxCtsFlow = TRUE;       // on
     comm_settings.fRtsControl = RTS_CONTROL_HANDSHAKE;
@@ -150,35 +160,35 @@ SerialCommunicationForWindows::InternalSetTransferParameters( void )
     }    
 
   // set data bits
-  if (m_DataBits == DataBits8)
+  if (dataBits == DataBits8)
     {
     comm_settings.ByteSize = 8;
     }
-  else if (m_DataBits == DataBits7)
+  else if (dataBits == DataBits7)
     {
     comm_settings.ByteSize = 7;
     }
 
   // set parity
-  if (m_Parity == NoParity)
+  if (parity == NoParity)
     { // none                
     comm_settings.Parity = NOPARITY;
     }
-  else if (m_Parity == OddParity)
+  else if (parity == OddParity)
     { // odd
     comm_settings.Parity = ODDPARITY;
     }
-  else if (m_Parity == EvenParity)
+  else if (parity == EvenParity)
     { // even
     comm_settings.Parity = EVENPARITY;
     }
 
   // set stop bits
-  if (m_StopBits == StopBits1)
+  if (stopBits == StopBits1)
     {
     comm_settings.StopBits = ONESTOPBIT;
     }
-  else if (m_StopBits == StopBits2)
+  else if (stopBits == StopBits2)
     {
     comm_settings.StopBits = TWOSTOPBITS;
     }
@@ -186,14 +196,16 @@ SerialCommunicationForWindows::InternalSetTransferParameters( void )
   // set timeout
   ctmo.ReadIntervalTimeout = MAXDWORD;
   ctmo.ReadTotalTimeoutMultiplier = MAXDWORD;
-  ctmo.ReadTotalTimeoutConstant = m_TimeoutPeriod;
-  ctmo.WriteTotalTimeoutConstant = m_TimeoutPeriod;
+  ctmo.ReadTotalTimeoutConstant = timeoutPeriod;
+  ctmo.WriteTotalTimeoutConstant = timeoutPeriod;
 
   if (SetCommState(m_PortHandle,&comm_settings) == FALSE ||
       SetCommTimeouts(m_PortHandle,&ctmo) == FALSE)
     {
     return FAILURE;
     }
+
+  m_OldTimeoutPeriod = timeoutPeriod;
 
   igstkLogMacro( DEBUG, "SetCommunicationParameters succeeded.\n" );
 
@@ -215,66 +227,116 @@ SerialCommunicationForWindows::InternalClosePort( void )
 }
 
 
-void SerialCommunicationForWindows::InternalSendBreak( void )
+SerialCommunicationForWindows::ResultType
+SerialCommunicationForWindows::InternalSendBreak( void )
 {
   DWORD dumb;
+  ResultType result = FAILURE;
 
-  ClearCommError(m_PortHandle,&dumb,NULL);       // clear error
+  ClearCommError(m_PortHandle,&dumb,NULL);  // clear error
 
-  SetCommBreak(m_PortHandle);
-  ::Sleep(300);                            // hold break for 0.3 seconds
-  ClearCommBreak(m_PortHandle);
+  if (SetCommBreak(m_PortHandle))
+    {
+    ::Sleep(300);   // hold break for 0.3 seconds
+
+    if (ClearCommBreak(m_PortHandle))
+      {
+      result = SUCCESS;
+      }
+    }
+
+  return result;
 }
 
 
-void SerialCommunicationForWindows::InternalPurgeBuffers( void )
+SerialCommunicationForWindows::ResultType
+SerialCommunicationForWindows::InternalPurgeBuffers( void )
 {
   DWORD dumb;
   DWORD flushtype = PURGE_TXCLEAR | PURGE_RXCLEAR;
+  ResultType result = FAILURE;
 
   ClearCommError(m_PortHandle,&dumb,NULL);       // clear error
-  PurgeComm(m_PortHandle,flushtype);             // clear buffers
+  if (PurgeComm(m_PortHandle,flushtype))             // clear buffers
+    {
+    result = SUCCESS;
+    }
+
+  return result;
 }
 
 
-void SerialCommunicationForWindows::InternalSleep( void )
+void SerialCommunicationForWindows::InternalSleep( int milliseconds )
 {
   // use Windows sleep function
-  ::Sleep(m_SleepPeriod);
+  ::Sleep(milliseconds);
 }
 
+
 SerialCommunicationForWindows::ResultType
-SerialCommunicationForWindows::InternalWrite( void )
+SerialCommunicationForWindows::InternalSetTimeout( unsigned int timeoutPeriod )
+{
+  ResultType result = SUCCESS;
+
+  if (timeoutPeriod != m_OldTimeoutPeriod)
+    {
+    COMMTIMEOUTS ctmo;
+    GetCommTimeouts(m_PortHandle,&ctmo);
+    // set timeout
+    ctmo.ReadIntervalTimeout = MAXDWORD;
+    ctmo.ReadTotalTimeoutMultiplier = MAXDWORD;
+    ctmo.ReadTotalTimeoutConstant = timeoutPeriod;
+    ctmo.WriteTotalTimeoutConstant = timeoutPeriod;
+    result = FAILURE;
+    if (SetCommTimeouts(m_PortHandle,&ctmo) != FALSE)
+      {
+      result = SUCCESS;
+      m_OldTimeoutPeriod = timeoutPeriod;
+      }
+    }
+
+  return result;
+}
+  
+
+SerialCommunicationForWindows::ResultType
+SerialCommunicationForWindows::InternalWrite( const char *data,
+                                              unsigned int n )
 {
   DWORD m, dumb;
   unsigned int i = 0;
-  unsigned int bytesToWrite = m_BytesToWrite;
   ResultType writeError = SUCCESS;
-
+  
   igstkLogMacro( DEBUG, "InternalWrite called ...\n" );
-  while (bytesToWrite > 0)
+
+  writeError = this->InternalSetTimeout(this->GetTimeoutPeriod());
+
+  if (writeError == SUCCESS)
     {
-    if (WriteFile(m_PortHandle, &m_OutputData[i],
-                  bytesToWrite, &m, NULL) == FALSE)
+    while (n > 0)
       {
-      if (GetLastError() == ERROR_OPERATION_ABORTED) 
-        { // system cancelled us so clear error and retry
-        ClearCommError(m_PortHandle,&dumb,NULL);
+      if (WriteFile(m_PortHandle, &data[i],
+                    n, &m, NULL) == FALSE)
+        {
+        if (GetLastError() == ERROR_OPERATION_ABORTED) 
+          { // system cancelled us so clear error and retry
+          ClearCommError(m_PortHandle,&dumb,NULL);
+          }
+        else
+          {  // IO error occurred 
+          writeError = FAILURE;
+          break;
+          }
         }
-      else
-        {  // IO error occurred 
-        writeError = FAILURE;
+      else if (m == 0)
+        { // no characters written, must have timed out
+        writeError = TIMEOUT;
         break;
         }
-      }
-    else if (m == 0)
-      { // no characters written, must have timed out
-      writeError = TIMEOUT;
-      break;
-      }
 
-    bytesToWrite -= m;  // bytesToWrite is number of chars left to write
-    i += m;  // i is the number of chars written
+      n -= m;  // bytesToWrite is number of chars left to write
+      i += m;  // i is the number of chars written
+      }
     }
 
   return writeError;
@@ -282,46 +344,54 @@ SerialCommunicationForWindows::InternalWrite( void )
 
 
 SerialCommunicationForWindows::ResultType
-SerialCommunicationForWindows::InternalRead( void )
+SerialCommunicationForWindows::InternalRead( char *data,
+                                             unsigned int n,
+                                             unsigned int &bytesRead )
 {
   unsigned int i = 0;
   DWORD m,dumb;
-  unsigned int n = m_BytesToRead;
   ResultType readError = SUCCESS;
-  
-  while (n > 0)
+  char terminationCharacter = this->GetReadTerminationCharacter();
+  bool useTerminationCharacter = this->GetUseReadTerminationCharacter();
+
+  readError = this->InternalSetTimeout(this->GetTimeoutPeriod());
+
+  if (readError == SUCCESS)
     {
-    if (ReadFile(m_PortHandle, &m_InputData[i],
-                 1, &m, NULL) == FALSE)
-      { 
-      if (GetLastError() == ERROR_OPERATION_ABORTED)
-        { // cancelled 
-        ClearCommError(m_PortHandle,&dumb,NULL); // clear error and retry
+    while (n > 0)
+      {
+      if (ReadFile(m_PortHandle, &data[i],
+                   1, &m, NULL) == FALSE)
+        { 
+        if (GetLastError() == ERROR_OPERATION_ABORTED)
+          { // cancelled 
+          ClearCommError(m_PortHandle,&dumb,NULL); // clear error and retry
+          }
+        else
+          { // IO error occurred
+          readError = FAILURE;
+          break;
+          }
         }
-      else
-        { // IO error occurred
-        readError = FAILURE;
+      else if (m == 0)
+        { // no characters read, must have timed out
+        readError = TIMEOUT;
+        break;
+        }
+      n -= m;  // n is number of chars left to read
+      i += m;  // i is the number of chars read
+
+      // done when ReadTerminationCharacter received
+      if ( useTerminationCharacter &&
+           data[i-1] == terminationCharacter )
+        {  
         break;
         }
       }
-    else if (m == 0)
-      { // no characters read, must have timed out
-      readError = TIMEOUT;
-      break;
-      }
-    n -= m;  // n is number of chars left to read
-    i += m;  // i is the number of chars read
-
-    // done when ReadTerminationCharacter received
-    if ( m_UseReadTerminationCharacter &&
-         m_InputData[i-1] == m_ReadTerminationCharacter )
-      {  
-      break;
-      }
     }
 
-  m_BytesRead = i;
-  m_InputData[i] = '\0';
+  bytesRead = i;
+  data[i] = '\0';
 
   return readError;
 }
@@ -333,6 +403,7 @@ void SerialCommunicationForWindows::PrintSelf( std::ostream& os,
   Superclass::PrintSelf(os, indent);
 
   os << indent << "PortHandle: " << m_PortHandle << std::endl;
+  os << indent << "OldTimeoutPeriod: " << m_OldTimeoutPeriod << std::endl;
 }
 
 } // end namespace igstk

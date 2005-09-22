@@ -76,25 +76,27 @@ protected:
 
   /** Set communication on the open port as per the communication
       parameters. */
-  virtual ResultType InternalSetTransferParameters( void );
+  virtual ResultType InternalUpdateParameters( void );
 
   /** Closes serial port  */
   virtual ResultType InternalClosePort( void );
 
   /** Send a serial break */
-  virtual void InternalSendBreak( void );
+  virtual ResultType InternalSendBreak( void );
 
-  /** Sleep for the amount of time stored in m_SleepPeriod */
-  virtual void InternalSleep( void );
+  /** Sleep for the specified number of milliseconds */
+  virtual void InternalSleep( unsigned int milliseconds );
 
   /** Purge the input and output buffers */
-  virtual void InternalPurgeBuffers( void );
+  virtual ResultType InternalPurgeBuffers( void );
 
   /** Write data */
-  virtual ResultType InternalWrite( void );
+  virtual ResultType InternalWrite( const char *message,
+                                    unsigned int numberOfBytes );
 
   /** Read data */
-  virtual ResultType InternalRead( void );
+  virtual ResultType InternalRead( char *data, unsigned int numberOfBytes,
+                                   unsigned int &bytesRead );
 
   /** Print object information. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -103,6 +105,9 @@ private:
 
   /** The serial port handle. */
   int             m_PortHandle;
+
+  /** The old timeout value */
+  unsigned int    m_OldTimeoutPeriod;
 
   /** Data structure to save the original serial port parameters. */
   termios         m_SaveTermIOs;
