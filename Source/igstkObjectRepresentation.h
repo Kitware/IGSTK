@@ -23,11 +23,12 @@
 #endif
 
 #include <vector>
-#include "igstkMacros.h"
 #include "itkObject.h"
-#include "igstkSpatialObject.h"
-#include "vtkProp3D.h"
 #include "itkCommand.h"
+#include "itkLogger.h"
+#include "vtkProp3D.h"
+#include "igstkMacros.h"
+#include "igstkSpatialObject.h"
 #include "igstkStateMachine.h"
 
 
@@ -64,6 +65,9 @@ public:
   typedef SpatialObject                      SpatialObjectType;
   typedef std::vector<vtkProp3D*>            ActorsListType; 
 
+  /** typedef for LoggerType */
+  typedef itk::Logger                    LoggerType;
+  
   igstkTypeMacro(ObjectRepresentation, itk::Object);
 
   igstkFriendClassMacro( View );
@@ -86,6 +90,9 @@ public:
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
+  /** Declarations needed for the Logging */
+  igstkLoggerMacro();
+  
 protected:
 
   ObjectRepresentation( void );

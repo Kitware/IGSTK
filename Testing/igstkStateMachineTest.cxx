@@ -23,6 +23,8 @@
 #pragma warning( disable : 4355 )
 #endif
 
+#include "itkLogger.h"
+#include "igstkMacros.h"
 #include "igstkStateMachine.h"
 
 #include <iostream>
@@ -42,6 +44,9 @@ public:
   typedef StateMachineType::InputType                     InputType;
   typedef StateMachineType::StateIdentifierType           StateIdentifierType;
 
+  /** typedef for LoggerType */
+  typedef itk::Logger                    LoggerType;
+  
   igstkFriendClassMacro(StateMachine< Tester >);
 
   igstkTypeMacro( Tester, None );
@@ -139,6 +144,9 @@ public:
     return m_StateMachine.GetCurrentStateIdentifier();
     }
 
+
+  /** Declarations needed for the Logging */
+  igstkLoggerMacro();
 
 
 protected:

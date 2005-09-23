@@ -20,6 +20,7 @@
 
 #include "igstkMacros.h"
 #include "itkObject.h"
+#include "itkLogger.h"
 #include "itkSpatialObject.h"
 #include "igstkTransform.h"
 #include "igstkStateMachine.h"
@@ -57,6 +58,9 @@ public:
   typedef itk::SmartPointer<const Self>  ConstPointer; 
   typedef itk::SpatialObject<3>          SpatialObjectType;
 
+  /** typedef for LoggerType */
+  typedef itk::Logger                    LoggerType;
+  
   /**  Run-time type information (and related methods). */
   igstkTypeMacro( SpatialObject, Object );
 
@@ -76,6 +80,9 @@ public:
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
+  
+  /** Declarations needed for the Logging */
+  igstkLoggerMacro();
 
 protected:
 
