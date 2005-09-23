@@ -56,6 +56,10 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
 
   reader->SetDirectory(argv[1]);
   reader->RequestImageRead();
+
+  const char * modality = reader->GetModality();
+  
+  std::cout<<"Modaltiy:"<<modality<<std::endl;
   
   typedef short      OutputPixelType;
   const   unsigned int        OutputDimension = 3;
