@@ -12,6 +12,7 @@ SET(IGSTK_HEADS
   igstkCylinderObjectRepresentation.h
   igstkEllipsoidObject.h  
   igstkEllipsoidObjectRepresentation.h  
+  igstkEvents.h
   igstkFLTKTextBufferLogOutput.h
   igstkFLTKTextLogOutput.h
   igstkMacros.h
