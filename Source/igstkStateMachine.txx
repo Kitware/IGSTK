@@ -241,8 +241,19 @@ StateMachine< TClass >
 
   StateActionPair transition = transitionItr->second;
 
+  StateIdentifierType previous, next;
+  
+  previous = m_State;
+
   // set the new state
   m_State = transition.GetStateIdentifier();
+  
+  next = m_State;
+  
+  igstkLogMacroStatic( m_This, DEBUG, "State transition is being made : " 
+    << m_States[previous] << "(" << previous << ") with " << m_Inputs[inputIdentifier] 
+    << "(" << inputIdentifier << ") ---> " << m_States[next] << "(" << next << ")." 
+    << std::endl );
 
   // call the transition function
   if( transition.GetAction() )
