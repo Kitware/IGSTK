@@ -22,7 +22,9 @@
 #include <map>
 #include <queue>
 #include <string>
+#include "itkLogger.h"
 
+#include "igstkMacros.h"
 #include "igstkStateMachineState.h"
 #include "igstkStateMachineInput.h"
 
