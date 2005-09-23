@@ -19,7 +19,6 @@
 #pragma warning( disable : 4786 )
 #endif
 
-#define IGSTK_TEST_POLARIS_ATTACHED
 #include <iostream>
 #include <fstream>
 #include <set>
