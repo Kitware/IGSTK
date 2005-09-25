@@ -237,7 +237,10 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
       std::cout << "  Landmark alignment using Rigid3D transform [PASSED]" << std::endl;
       }
 
-    return EXIT_SUCCESS;
+     delete  eventInvalidRequest;
+     delete  eventError;
+
+     return EXIT_SUCCESS;
 }
 
 
