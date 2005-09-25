@@ -577,15 +577,8 @@ StateMachine< TClass >
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
 
   os << indent << this->m_State << std::endl;
-  if( this->m_This )
-  {
-    os << indent << "the object pointed is set:" << this->m_This << std::endl;
-  }
-  else
-  {
-    os << indent << "the object pointed is null" << std::endl;
-  }
-
+  os << indent << "the object pointed is set:" << this->m_This << std::endl;
+  os << indent << " and has class name = " << m_This->GetNameOfClass() << std::endl;
   os << indent << "ReadyToRun: " << this->m_ReadyToRun << std::endl;
   os << indent << "InitialStateSelected: " << this->m_InitialStateSelected << std::endl;
   os << indent << "Number of States: " << this->m_States.size() << std::endl;
