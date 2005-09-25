@@ -51,11 +51,17 @@ public:
     TIMEOUT=2
   } ResultType;
 
+  /** Data type for the logger */
+  typedef itk::Logger   LoggerType;
+
   /** Method for defining the name of the class */ 
   igstkTypeMacro(Communication, Object); 
 
   /** Method for creation through the object factory */ 
   igstkNewMacro(Self); 
+
+  /** Define the Logger object for this class */
+  igstkLoggerMacro();
 
   /** The method OpenCommunication sets up communication as per the data
    *  provided. */

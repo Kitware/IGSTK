@@ -101,10 +101,10 @@ StateMachine< TClass >
     
   if( state == m_States.end() )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
-    std::cerr << "State selected as initial state has not been defined yet. " << std::endl;
-    std::cerr << "Attempted state = " << initialState.GetIdentifier() << std::endl;
-    std::cerr.flush();
+    igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+      << m_This->GetNameOfClass() 
+      << " State selected as initial state has not been defined yet. " 
+      << " Attempted state = " << initialState.GetIdentifier() << "\n" );
     return;
     } 
 
@@ -124,22 +124,23 @@ StateMachine< TClass >
 {
   if( m_ReadyToRun )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
-    std::cerr << "Error: attempt to invoke SetReadyToRun() " << std::endl;
-    std::cerr << "but the machine is ready to go " << std::endl;
-    std::cerr << "There is no reason for invoking SetReadyToRun() twice." << std::endl;
-    std::cerr << "Something should be wrong in the logic or your " << std::endl;
-    std::cerr << "state machine programming." << std::endl;
-    std::cerr.flush();
+    igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+      << m_This->GetNameOfClass() 
+      << " Error: attempt to invoke SetReadyToRun() " 
+      << " but the machine is ready to go " 
+      << " There is no reason for invoking SetReadyToRun() twice."
+      << " Something should be wrong in the logic or your " 
+      << " state machine programming.\n" );
     return;
     }
 
   if( !m_InitialStateSelected )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
-    std::cerr << "Error: No initial state has been selected. "   << std::endl;
-    std::cerr << "You must select an initial State out of the " << std::endl;
-    std::cerr << "set of states defined for the State Machine." << std::endl;
+    igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+      << m_This->GetNameOfClass() 
+      << " Error: No initial state has been selected. "
+      << " You must select an initial State out of the " 
+      << " set of states defined for the State Machine.\n" );
     return;
     }
 
@@ -202,11 +203,11 @@ StateMachine< TClass >
 {
   if( !m_ReadyToRun )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
-    std::cerr << "Error: attempt to invoke a StateTransition " << std::endl;
-    std::cerr << "but the machine is not ready to go" << std::endl;
-    std::cerr << "You must invoke the method SetReadyToRun() first." << std::endl;
-    std::cerr.flush();
+    igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+      << m_This->GetNameOfClass() 
+      << " Error: attempt to invoke a StateTransition " 
+      << " but the machine is not ready to go" 
+      << " You must invoke the method SetReadyToRun() first.\n" );
     return;
     }
 
@@ -216,11 +217,11 @@ StateMachine< TClass >
   
   if( transitionsFromThisState == m_Transitions.end() )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
-    std::cerr << "No transitions have been defined for current state ";
-    std::cerr << "State = " << m_State;
-    std::cerr << " [" << m_States[m_State] << "]" << std::endl;
-    std::cerr.flush();
+    igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+      << m_This->GetNameOfClass() 
+      << " No transitions have been defined for current state "
+      << " State = " << m_State
+      << " [" << m_States[m_State] << "]\n" );
     return;
     } 
 
@@ -229,31 +230,29 @@ StateMachine< TClass >
 
   if( transitionItr == transitionsFromThisState->second->end() )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
-    std::cerr << "No transitions have been defined for current state and input " << std::endl;
-    std::cerr << "State = " << m_State;
-    std::cerr << " [" << m_States[m_State] << "]" << std::endl;
-    std::cerr << "Input = " << inputIdentifier;
-    std::cerr << " [" << m_Inputs[inputIdentifier] << "]" << std::endl;
-    std::cerr.flush();
+    igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+      << m_This->GetNameOfClass() 
+      << " No transitions have been defined for current state and input " 
+      << " State = " << m_State
+      << " [" << m_States[m_State] << "]" 
+      << " Input = " << inputIdentifier
+      << " [" << m_Inputs[inputIdentifier] << "]\n" );
     return;
     } 
 
   StateActionPair transition = transitionItr->second;
 
-  StateIdentifierType previous, next;
-  
-  previous = m_State;
+  const StateIdentifierType previousState = m_State;
 
   // set the new state
   m_State = transition.GetStateIdentifier();
   
-  next = m_State;
+  const StateIdentifierType nextState = m_State;
   
   igstkLogMacroStatic( m_This, DEBUG, "State transition is being made : " 
-    << m_States[previous] << "(" << previous << ") with " << m_Inputs[inputIdentifier] 
-    << "(" << inputIdentifier << ") ---> " << m_States[next] << "(" << next << ")." 
-    << std::endl );
+    << m_States[previousState] << "(" << previousState << ") with "
+    << m_Inputs[inputIdentifier] << "(" << inputIdentifier << ") ---> "
+    << m_States[nextState] << "(" << nextState << ").\n" );
 
   // call the transition function
   if( transition.GetAction() )
@@ -279,15 +278,15 @@ StateMachine< TClass >
     
   if( stateItr == m_States.end() )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
-    std::cerr << "Attempt to add a Transition for a State that does not exist" << std::endl;
-    std::cerr << "Attempted state     = " << state.GetIdentifier();
-    std::cerr << " [" << m_States[state.GetIdentifier()] << "]" << std::endl;
-    std::cerr << "Attempted input     = " << input.GetIdentifier();
-    std::cerr << " [" << m_Inputs[input.GetIdentifier()] << "]" << std::endl;
-    std::cerr << "Attempted new state = " << newState.GetIdentifier();
-    std::cerr << " [" << m_States[newState.GetIdentifier()] << "]" << std::endl;
-    std::cerr.flush();
+    igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+      << m_This->GetNameOfClass() 
+      << " Attempt to add a Transition for a State that does not exist" 
+      << " Attempted state     = " << state.GetIdentifier()
+      << " [" << m_States[state.GetIdentifier()] << "]" 
+      << " Attempted input     = " << input.GetIdentifier()
+      << " [" << m_Inputs[input.GetIdentifier()] << "]"
+      << " Attempted new state = " << newState.GetIdentifier()
+      << " [" << m_States[newState.GetIdentifier()] << "] \n" );
     return;
     } 
 
@@ -296,15 +295,15 @@ StateMachine< TClass >
     
   if( inputItr == m_Inputs.end() )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
-    std::cerr << "Attempt to add a Transition for an Input that does not exist" << std::endl;
-    std::cerr << "Attempted state     = " << state.GetIdentifier();
-    std::cerr << " [" << m_States[state.GetIdentifier()] << "]" << std::endl;
-    std::cerr << "Attempted input     = " << input.GetIdentifier();
-    std::cerr << " [" << m_Inputs[input.GetIdentifier()] << "]" << std::endl;
-    std::cerr << "Attempted new state = " << newState.GetIdentifier();
-    std::cerr << " [" << m_States[newState.GetIdentifier()] << "]" << std::endl;
-    std::cerr.flush();
+    igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+      << m_This->GetNameOfClass() 
+      << " Attempt to add a Transition for an Input that does not exist" 
+      << " Attempted state     = " << state.GetIdentifier()
+      << " [" << m_States[state.GetIdentifier()] << "]" 
+      << " Attempted input     = " << input.GetIdentifier()
+      << " [" << m_Inputs[input.GetIdentifier()] << "]" 
+      << " Attempted new state = " << newState.GetIdentifier()
+      << " [" << m_States[newState.GetIdentifier()] << "] \n" );
     return;
     } 
 
@@ -314,15 +313,15 @@ StateMachine< TClass >
     
   if( newstateItr == m_States.end() )
     {
-    std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
-    std::cerr << "Attempt to add a Transition for a New State that does not exist" << std::endl;
-    std::cerr << "Attempted state     = " << state.GetIdentifier();
-    std::cerr << " [" << m_States[state.GetIdentifier()] << "]" << std::endl;
-    std::cerr << "Attempted input     = " << input.GetIdentifier();
-    std::cerr << " [" << m_Inputs[input.GetIdentifier()] << "]" << std::endl;
-    std::cerr << "Attempted new state = " << newState.GetIdentifier();
-    std::cerr << " [" << m_States[newState.GetIdentifier()] << "]" << std::endl;
-    std::cerr.flush();
+    igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+      << m_This->GetNameOfClass() 
+      << " Attempt to add a Transition for a New State that does not exist" 
+      << " Attempted state     = " << state.GetIdentifier()
+      << " [" << m_States[state.GetIdentifier()] << "]" 
+      << " Attempted input     = " << input.GetIdentifier()
+      << " [" << m_Inputs[input.GetIdentifier()] << "]" 
+      << " Attempted new state = " << newState.GetIdentifier()
+      << " [" << m_States[newState.GetIdentifier()] << "] \n" );
     return;
     } 
 
@@ -356,17 +355,17 @@ StateMachine< TClass >
       // accident. 
       StateIdentifierType newStateIdentifier = 
                       transitionsFromThisStateAndInput->second.GetStateIdentifier();
-      std::cerr << "In class " << m_This->GetNameOfClass() << std::endl;
-      std::cerr << "Attempt to override an existing transition. "
-                << "Please verify the programming of your state machine. "
-                << "There is already a transition defined for the combination: " << std::endl;
-      std::cerr << "State     = " << state.GetIdentifier();
-      std::cerr << " [" << m_States[state.GetIdentifier()] << "]" << std::endl;
-      std::cerr << "Input     = " << input.GetIdentifier();
-      std::cerr << " [" << m_Inputs[input.GetIdentifier()] << "]" << std::endl;
-      std::cerr << "New state = " << newStateIdentifier;
-      std::cerr << " [" << m_States[newStateIdentifier] << "]" << std::endl;
-      std::cerr.flush();
+      igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+        << m_This->GetNameOfClass() 
+        << " Attempt to override an existing transition. "
+        << " Please verify the programming of your state machine. "
+        << " There is already a transition defined for the combination: " 
+        << " State     = " << state.GetIdentifier()
+        << " [" << m_States[state.GetIdentifier()] << "] " 
+        << " Input     = " << input.GetIdentifier()
+        << " [" << m_Inputs[input.GetIdentifier()] << "] "
+        << " New state = " << newStateIdentifier
+        << " [" << m_States[newStateIdentifier] << "] \n" );
       }
     else
       {

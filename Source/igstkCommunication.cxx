@@ -16,8 +16,7 @@
 =========================================================================*/
 
 #include "igstkCommunication.h"
-
-#include <iostream>
+#include "igstkMacros.h"
 
 namespace igstk
 {
@@ -34,17 +33,17 @@ Communication::~Communication( void )
 }
 
 Communication::ResultType Communication::OpenCommunication( void )
-{
-  std::cerr << "Communication::OpenCommunication() method is"
-            << " not implemented yet" << std::endl;
+{ 
+  igstkLogMacro( FATAL, " Communication::OpenCommunication() "
+            << " method is not implemented yet.\n" );
 
   return SUCCESS;
 }
 
 Communication::ResultType Communication::CloseCommunication( void )
 {
-  std::cerr << "Communication::CloseCommunication() method is"
-            << " not implemented yet" << std::endl;
+  igstkLogMacro( FATAL, " Communication::CloseCommunication() "
+            << " method is not implemented yet.\n" );
  
  return SUCCESS;
 }

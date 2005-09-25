@@ -171,7 +171,8 @@ void SpatialObject::SetTransform()
     Transform::VersorType rotation = m_Transform.GetRotation();
     Transform::VersorType::MatrixType matrix = rotation.GetMatrix();
     m_SpatialObject->GetObjectToWorldTransform()->SetMatrix( matrix );
-    std::cout << " SpatialObject::SetTransform() T: " << translation << " R: " << rotation << std::endl;
+    igstkLogMacro( DEBUG, " SpatialObject::SetTransform() T: " 
+        << translation << " R: " << rotation << "\n" );
     }
 }
 

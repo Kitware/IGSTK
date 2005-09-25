@@ -30,7 +30,7 @@ namespace igstk
  *  \brief Report errors for the NDICommandInterpreter
  *
  *  The NDIErrorEvent is generated whenever NDICommandInterpreter
- *  encouters an error while communicating with an NDI tracking
+ *  encounters an error while communicating with an NDI tracking
  *  device.
  */
 

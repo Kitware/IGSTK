@@ -108,7 +108,7 @@ void TubeObjectRepresentation::CreateActors()
       
   if(m_TubeSpatialObject->GetNumberOfPoints() < 2)
     {
-    std::cout << "Not enough points to render a tube" << std::endl;
+    igstkLogMacro( CRITICAL, "Not enough points to render a tube.\n" );
     return;
     }
       

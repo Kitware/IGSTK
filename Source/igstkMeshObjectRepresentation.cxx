@@ -15,11 +15,11 @@
 
 =========================================================================*/
 #include "igstkMeshObjectRepresentation.h"
+#include "igstkEvents.h"
+
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
 #include <vtkProperty.h>
-#include "igstkEvents.h"
-
 #include <vtkPolyData.h>
 #include <vtkPoints.h>
 #include <vtkIdList.h>
@@ -133,7 +133,7 @@ void MeshObjectRepresentation::CreateActors()
     vtkIdList* pts = vtkIdList::New();     
     MeshObjectType::CellTraits::PointIdConstIterator itptids = (*it_cells)->Value()->GetPointIds();
     unsigned int id =0;
-    unsigned long ptsSize = (*it_cells)->Value()->GetNumberOfPoints();
+    const unsigned long ptsSize = (*it_cells)->Value()->GetNumberOfPoints();
     pts->SetNumberOfIds(ptsSize);
     while(itptids != (*it_cells)->Value()->PointIdsEnd())
       {
@@ -142,16 +142,21 @@ void MeshObjectRepresentation::CreateActors()
       id++;
       }
 
-    switch(ptsSize)
+    switch( ptsSize )
       {
-      case 2: polyData->InsertNextCell(VTK_LINE,pts);
-      break;
-      case 3: polyData->InsertNextCell(VTK_TRIANGLE,pts);
-      break;
-      case 4: polyData->InsertNextCell(VTK_TETRA,pts);
-      break;
+      case 2: 
+        polyData->InsertNextCell( VTK_LINE, pts );
+        break;
+      case 3: 
+        polyData->InsertNextCell( VTK_TRIANGLE, pts );
+        break;
+      case 4: 
+        polyData->InsertNextCell( VTK_TETRA, pts );
+        break;
       default:
-      std::cout << "MeshObjectRepresentation: Don't know how to represent cells of size " << ptsSize << std::endl;      
+        igstkLogMacro( CRITICAL, "MeshObjectRepresentation: "
+            << "Don't know how to represent cells of size "
+            << ptsSize << " \n" );
       }
     pts->Delete();
     }

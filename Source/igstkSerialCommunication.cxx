@@ -515,10 +515,10 @@ SerialCommunication::MapResultToInput( int condition )
     }
   else
     {
-    std::cerr << "WARNING : Default Input is pushed because the"
-              << " condition value didn't have a corresponding input."
-              << " Please make sure the condition value is correct."
-              << " Condition: "  << condition << std::endl;
+    igstkLogMacro( WARNING, " Default Input is pushed because the"
+      << " condition value didn't have a corresponding input."
+      << " Please make sure the condition value is correct."
+      << " Condition: \n" );
     }
 
   return *input;
