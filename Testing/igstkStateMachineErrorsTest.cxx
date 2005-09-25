@@ -44,6 +44,8 @@ public:
 
   Tester1():m_StateMachine(this)
     {
+    m_Logger = LoggerType::New();
+
     // Set the state descriptors
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.AddState( m_OneQuarterCredit, "OneQuarterCredit" );
@@ -117,6 +119,7 @@ public:
 
   Tester2():m_StateMachine(this)
     {
+    m_Logger = LoggerType::New();
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.SetReadyToRun();
@@ -168,6 +171,7 @@ public:
 
   Tester3():m_StateMachine(this)
     {
+    m_Logger = LoggerType::New();
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
@@ -220,6 +224,7 @@ public:
 
   Tester4():m_StateMachine(this)
     {
+    m_Logger = LoggerType::New();
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
@@ -274,6 +279,7 @@ public:
   
   Tester5():m_StateMachine(this)
     {
+    m_Logger = LoggerType::New();
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
@@ -327,6 +333,7 @@ public:
 
   Tester6():m_StateMachine(this)
     {
+    m_Logger = LoggerType::New();
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.AddState( m_ChangeMindState, "ChangeMindState" );
     m_StateMachine.SelectInitialState( m_IdleState );
@@ -401,6 +408,7 @@ public:
 
   Tester7():m_StateMachine(this)
     {
+    m_Logger = LoggerType::New();
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
     const ActionType NoAction = 0;
