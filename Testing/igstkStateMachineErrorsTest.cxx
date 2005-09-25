@@ -15,6 +15,8 @@
 #endif
 
 #include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
+
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
 
@@ -42,9 +44,9 @@ public:
 
   igstkTypeMacro( Tester1, None );
 
-  Tester1():m_StateMachine(this)
+  Tester1( LoggerType * logger ):m_StateMachine(this)
     {
-    m_Logger = LoggerType::New();
+    this->SetLogger( logger );
 
     // Set the state descriptors
     m_StateMachine.AddState( m_IdleState, "IdleState" );
@@ -117,9 +119,9 @@ public:
 
   igstkTypeMacro( Tester2, None );
 
-  Tester2():m_StateMachine(this)
+  Tester2( LoggerType * logger ):m_StateMachine(this)
     {
-    m_Logger = LoggerType::New();
+    this->SetLogger( logger );
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.SetReadyToRun();
@@ -169,9 +171,9 @@ public:
 
   igstkTypeMacro( Tester3, None );
 
-  Tester3():m_StateMachine(this)
+  Tester3( LoggerType * logger ):m_StateMachine(this)
     {
-    m_Logger = LoggerType::New();
+    this->SetLogger( logger );
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
@@ -222,9 +224,9 @@ public:
 
   igstkTypeMacro( Tester4, None );
 
-  Tester4():m_StateMachine(this)
+  Tester4( LoggerType * logger ):m_StateMachine(this)
     {
-    m_Logger = LoggerType::New();
+    this->SetLogger( logger );
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
@@ -277,9 +279,9 @@ public:
 
   igstkTypeMacro( Tester5, None );
   
-  Tester5():m_StateMachine(this)
+  Tester5( LoggerType * logger ):m_StateMachine(this)
     {
-    m_Logger = LoggerType::New();
+    this->SetLogger( logger );
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
@@ -331,14 +333,15 @@ public:
 
   igstkTypeMacro( Tester6, None );
 
-  Tester6():m_StateMachine(this)
+  Tester6( LoggerType * logger ):m_StateMachine(this)
     {
-    m_Logger = LoggerType::New();
+    this->SetLogger( logger );
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.AddState( m_ChangeMindState, "ChangeMindState" );
     m_StateMachine.SelectInitialState( m_IdleState );
 
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
+    m_StateMachine.AddInput( m_DimeInserted, "DimeInserted" );
     m_StateMachine.AddInput( m_Cancel, "Cancel");
     const ActionType NoAction = 0;
    
@@ -352,7 +355,7 @@ public:
     m_StateMachine.AddTransition( m_IdleState, m_NonRegisteredInput, m_IdleState, NoAction );
 
     std::cout << "TEST: On purpose Adding a Transition for a non existing new state " << std::endl;
-    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_NonRegisteredState, NoAction );
+    m_StateMachine.AddTransition( m_IdleState, m_DimeInserted, m_NonRegisteredState, NoAction );
 
     std::cout << "TEST: On purpose Adding a Transition for a {State,Input} pair " << std::endl;
     std::cout << "      for which a transition ALREADY exists " << std::endl;
@@ -383,6 +386,7 @@ private:
 
   /** List of Inputs */
   InputType m_QuarterInserted;
+  InputType m_DimeInserted;
   InputType m_Cancel;
   InputType m_NonRegisteredInput;
 
@@ -406,9 +410,9 @@ public:
 
   igstkTypeMacro( Tester7, None );
 
-  Tester7():m_StateMachine(this)
+  Tester7( LoggerType * logger ):m_StateMachine(this)
     {
-    m_Logger = LoggerType::New();
+    this->SetLogger( logger );
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
     const ActionType NoAction = 0;
@@ -448,9 +452,21 @@ private:
 int igstkStateMachineErrorsTest( int, char * [] )
 {
 
-  std::cout << "Construct the State Machine Tester" << std::endl;
-  igstk::Tester1  tester1;
+  itk::StdStreamLogOutput::Pointer coutput = itk::StdStreamLogOutput::New();
+  coutput->SetStream( std::cout );
+    
+  itk::Logger::Pointer logger = itk::Logger::New();
+  
+  // Setting the logger
+  logger->SetName("org.igstk.rootLogger");
+  logger->SetPriorityLevel( itk::Logger::CRITICAL);
+  logger->SetLevelForFlushing( itk::Logger::CRITICAL);
 
+  logger->AddLogOutput( coutput );
+
+  std::cout << "Construct the State Machine Tester" << std::endl;
+  igstk::Tester1  tester1( logger );
+    
   std::cout << std::endl << std::endl;
   std::cout << "Trigger error conditions on purpose" << std::endl;
 
@@ -461,30 +477,36 @@ int igstkStateMachineErrorsTest( int, char * [] )
   tester1.triggerError1();
 
   std::cout << "Invoking SetReadyToRun() (in constructor) without parent class connected." << std::endl;
-  igstk::Tester2 tester2;
+  igstk::Tester2 tester2( logger );
 
   std::cout << "Invoking ProcessInputs() without parent class connected." << std::endl;
   tester2.InsertChange();
 
   std::cout << "Invoking ProcessInputs() without having called SetReadyToRun() ." << std::endl;
-  igstk::Tester3 tester3;
+  igstk::Tester3 tester3( logger );
+
   tester3.InsertChange();
 
-  std::cout << "Invoking  SetReadyToRun() twice." << std::endl;
-  igstk::Tester4 tester4;
-  tester4.InsertChange();
 
+  std::cout << "Invoking  SetReadyToRun() twice." << std::endl;
+  igstk::Tester4 tester4( logger );
+
+  tester4.InsertChange();
   std::cout << "Invoking  ProcessInputs() in a state without transitions defined." << std::endl;
-  igstk::Tester5 tester5;
+  igstk::Tester5 tester5( logger );
+  
   tester5.InvokeUndefinedTransition();
 
   std::cout << "Invoking  ProcessInputs() in a state,input pair without transitions defined." << std::endl;
-  igstk::Tester6 tester6;
+  igstk::Tester6 tester6( logger );
+
   tester6.InvokeUndefinedStateInputTransition();
 
   std::cout << "Invoking  SetReadyToRun() without having called SetInitialState()" << std::endl;
-  igstk::Tester7 tester7;
+  igstk::Tester7 tester7( logger );
+
   tester7.InsertChange();
+
 
 
   // The following call 

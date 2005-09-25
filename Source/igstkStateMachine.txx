@@ -83,11 +83,52 @@ StateMachine< TClass >
 {
 
    /** The structure of the StateMachineToken guarantees that identifiers are
-    * unique. */
+    * unique. Here we create a new entry by invoking the bracket [] operator.
+    * NOTE: This is the *ONLY* place where the bracket operator can be used safely;
+    *       in any other case we risk to create a state entry by accident. */
    m_States[ state.GetIdentifier() ] = descriptor;
 
 }
 
+
+template<class TClass>
+std::string 
+StateMachine< TClass >
+::GetStateDescriptor( const StateIdentifierType & stateId )
+{
+  StatesConstIterator stateItr = m_States.find( stateId );
+    
+  if( stateItr != m_States.end() )
+    {
+    return stateItr->second;
+    }
+  else
+    {
+    std::string message = "This state has not been registered";
+    return message;
+    }
+
+}
+
+
+template<class TClass>
+std::string 
+StateMachine< TClass >
+::GetInputDescriptor( const InputIdentifierType & inputId )
+{
+  InputConstIterator inputItr = m_Inputs.find( inputId );
+    
+  if( inputItr != m_Inputs.end() )
+    {
+    return inputItr->second;
+    }
+  else
+    {
+    std::string message = "This input has not been registered";
+    return message;
+    }
+
+}
 
 
 template<class TClass>
@@ -221,7 +262,7 @@ StateMachine< TClass >
       << m_This->GetNameOfClass() 
       << " No transitions have been defined for current state "
       << " State = " << m_State
-      << " [" << m_States[m_State] << "]\n" );
+      << " [" << this->GetStateDescriptor( m_State ) << "]\n" );
     return;
     } 
 
@@ -234,9 +275,9 @@ StateMachine< TClass >
       << m_This->GetNameOfClass() 
       << " No transitions have been defined for current state and input " 
       << " State = " << m_State
-      << " [" << m_States[m_State] << "]" 
-      << " Input = " << inputIdentifier
-      << " [" << m_Inputs[inputIdentifier] << "]\n" );
+      << " [" << this->GetStateDescriptor( m_State ) << "]" 
+      << " Input = " << inputIdentifier 
+      << " [" << this->GetInputDescriptor( inputIdentifier ) << "]\n" );
     return;
     } 
 
@@ -250,9 +291,10 @@ StateMachine< TClass >
   const StateIdentifierType nextState = m_State;
   
   igstkLogMacroStatic( m_This, DEBUG, "State transition is being made : " 
-    << m_States[previousState] << "(" << previousState << ") with "
-    << m_Inputs[inputIdentifier] << "(" << inputIdentifier << ") ---> "
-    << m_States[nextState] << "(" << nextState << ").\n" );
+    << this->GetStateDescriptor( previousState ) << "(" << previousState << ") "
+    << " with " << this->GetInputDescriptor( inputIdentifier ) 
+    << "(" << inputIdentifier << ") ---> "
+    << this->GetStateDescriptor( nextState ) << "(" << nextState << ").\n" );
 
   // call the transition function
   if( transition.GetAction() )
@@ -282,11 +324,11 @@ StateMachine< TClass >
       << m_This->GetNameOfClass() 
       << " Attempt to add a Transition for a State that does not exist" 
       << " Attempted state     = " << state.GetIdentifier()
-      << " [" << m_States[state.GetIdentifier()] << "]" 
+      << " [" << this->GetStateDescriptor( state.GetIdentifier() ) << "]" 
       << " Attempted input     = " << input.GetIdentifier()
-      << " [" << m_Inputs[input.GetIdentifier()] << "]"
+      << " [" << this->GetInputDescriptor( input.GetIdentifier() ) << "]"
       << " Attempted new state = " << newState.GetIdentifier()
-      << " [" << m_States[newState.GetIdentifier()] << "] \n" );
+      << " [" << this->GetStateDescriptor( newState.GetIdentifier() ) << "] \n" );
     return;
     } 
 
@@ -299,29 +341,29 @@ StateMachine< TClass >
       << m_This->GetNameOfClass() 
       << " Attempt to add a Transition for an Input that does not exist" 
       << " Attempted state     = " << state.GetIdentifier()
-      << " [" << m_States[state.GetIdentifier()] << "]" 
+      << " [" << this->GetStateDescriptor( state.GetIdentifier() ) << "]" 
       << " Attempted input     = " << input.GetIdentifier()
-      << " [" << m_Inputs[input.GetIdentifier()] << "]" 
+      << " [" << this->GetInputDescriptor( input.GetIdentifier() ) << "]" 
       << " Attempted new state = " << newState.GetIdentifier()
-      << " [" << m_States[newState.GetIdentifier()] << "] \n" );
+      << " [" << this->GetStateDescriptor( newState.GetIdentifier() ) << "] \n" );
     return;
     } 
 
 
   // Check if the new State exists
   StatesConstIterator newstateItr = m_States.find( newState.GetIdentifier() );
-    
+
   if( newstateItr == m_States.end() )
     {
     igstkLogMacroStatic( m_This, CRITICAL, "In class " 
       << m_This->GetNameOfClass() 
       << " Attempt to add a Transition for a New State that does not exist" 
       << " Attempted state     = " << state.GetIdentifier()
-      << " [" << m_States[state.GetIdentifier()] << "]" 
+      << " [" << this->GetStateDescriptor( state.GetIdentifier() ) << "]" 
       << " Attempted input     = " << input.GetIdentifier()
-      << " [" << m_Inputs[input.GetIdentifier()] << "]" 
+      << " [" << this->GetInputDescriptor( input.GetIdentifier() ) << "]" 
       << " Attempted new state = " << newState.GetIdentifier()
-      << " [" << m_States[newState.GetIdentifier()] << "] \n" );
+      << " [" << this->GetStateDescriptor( newState.GetIdentifier() ) << "] \n" );
     return;
     } 
 
@@ -361,11 +403,12 @@ StateMachine< TClass >
         << " Please verify the programming of your state machine. "
         << " There is already a transition defined for the combination: " 
         << " State     = " << state.GetIdentifier()
-        << " [" << m_States[state.GetIdentifier()] << "] " 
+        << " [" << this->GetStateDescriptor( state.GetIdentifier() ) << "] " 
         << " Input     = " << input.GetIdentifier()
-        << " [" << m_Inputs[input.GetIdentifier()] << "] "
+        << " [" << this->GetInputDescriptor( input.GetIdentifier() ) << "] "
         << " New state = " << newStateIdentifier
-        << " [" << m_States[newStateIdentifier] << "] \n" );
+        << " [" << this->GetStateDescriptor( newStateIdentifier ) << "] \n" );
+        return;
       }
     else
       {

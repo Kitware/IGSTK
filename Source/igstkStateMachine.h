@@ -142,7 +142,6 @@ public:
    /** Set the descriptor of an input */
    void AddInput( const InputType & input, const InputDescriptorType & description );
 
-
   /** This extra typedef is necessary for preventing an Internal Compiler Error in 
     * Microsoft Visual C++ 6.0. This typedef is not needed for any other compiler. */
     typedef std::ostream               OutputStreamType;
@@ -215,6 +214,18 @@ private:
    /** Container for States */
    StatesContainer   m_States;
 
+
+   /** Get the Descriptor of a particular state. This method must be used instead
+    *  of the simple invokation to the m_States[] operator because the [] operator
+    *  creates an entry when the key is not found. */
+   StateDescriptorType GetStateDescriptor( const StateIdentifierType & stateId );
+
+
+   /** Get the Descriptor of a particular input. This method must be used instead
+    *  of the simple invokation to the m_Inputs[] operator because the [] operator
+    *  creates an entry when the key is not found. */
+   InputDescriptorType GetInputDescriptor( const InputIdentifierType & inputId );
+  
 
     /** Container type for Inputs */
    typedef std::map< InputIdentifierType, InputDescriptorType >  InputsContainer;
