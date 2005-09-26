@@ -41,6 +41,17 @@ int igstkTrackerToolTest( int, char * [] )
     TimePeriodType period = 10.0; // measures are valid for 10 milliseconds
     trackerTool->SetValidityPeriod( period );
 
+    TimePeriodType period2 = trackerTool->GetValidityPeriod();
+
+    if( fabs( period2 - period ) > 1e-6 )
+      {
+      std::cerr << "ERROR: inconsistency between ";
+      std::cerr << " SetValidityPeriod() and GetValidityPeriod() " <<  std::endl;
+      std::cerr << " set period = " << period  << std::endl;
+      std::cerr << " get period = " << period2 << std::endl;
+      return EXIT_FAILURE;
+      }
+
     std::cout << trackerTool << std::endl;
 
     return EXIT_SUCCESS;

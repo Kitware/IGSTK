@@ -48,6 +48,20 @@ namespace igstk
         m_Translation = translation;
         }
 
+      bool TestThreadingEnableMethods()
+        {
+        this->SetThreadingEnabled(true);
+        if( !this->GetThreadingEnabled() )
+          {
+          return false;
+          }
+        this->SetThreadingEnabled(false);
+        if( this->GetThreadingEnabled() )
+          {
+          return false;
+          }
+        return true; 
+        }
     protected:
 
       TestingTracker()
@@ -210,6 +224,15 @@ int igstkBasicTrackerTest( int, char * [] )
   tracker->SetLogger( logger );
 
   std::cout << tracker << std::endl;
+
+  // Exercise the "ThreadingEnabling" method"
+  bool status = tracker->TestThreadingEnableMethods();
+  if( status == false )
+    {
+    std::cerr << " ERROR: inconsitency between ";
+    std::cerr << "SetThreadingEnabled() and GetThreadingEnabled() " << std::endl; 
+    return EXIT_FAILURE;
+    }
 
   igstk::Transform::VectorType translation;
   igstk::Transform::VersorType rotation;

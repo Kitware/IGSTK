@@ -136,6 +136,11 @@ int igstkViewTest( int, char * [] )
     View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
     View3DType * view3D = new View3DType(310,10,280,280,"3D View");
 
+    // Exercise GetNameOfClass() method
+    std::cout << view2D->View2DType::Superclass::GetNameOfClass() << std::endl;
+    std::cout << view3D->GetNameOfClass() << std::endl;
+    std::cout << view3D->GetNameOfClass() << std::endl;
+      
     form->end();
     // End of the GUI creation
 
