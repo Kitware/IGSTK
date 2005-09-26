@@ -97,15 +97,15 @@ int igstkPolarisTrackerTest( int, char * [] )
   std::cout << tool->GetNameOfClass() << std::endl;
   std::cout << tool << std::endl;
 
-#ifdef IGSTK_TEST_POLARIS_ATTACHED
+#ifdef IGSTK_SIMULATOR_TEST
+    igstk::SerialCommunicationSimulator::Pointer serialComm = igstk::SerialCommunicationSimulator::New();
+#else  /* IGSTK_SIMULATOR_TEST */
 #ifdef WIN32
   igstk::SerialCommunicationForWindows::Pointer serialComm = igstk::SerialCommunicationForWindows::New();
 #else
   igstk::SerialCommunicationForPosix::Pointer serialComm = igstk::SerialCommunicationForPosix::New();
-#endif
-#else /* IGSTK_TEST_POLARIS_ATTACHED */
-    igstk::SerialCommunicationSimulator::Pointer serialComm = igstk::SerialCommunicationSimulator::New();
-#endif /* IGSTK_TEST_POLARIS_ATTACHED */
+#endif /* WIN32 */
+#endif /* IGSTK_SIMULATOR_TEST */
 
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
 
@@ -128,17 +128,17 @@ int igstkPolarisTrackerTest( int, char * [] )
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
-#ifdef IGSTK_TEST_POLARIS_ATTACHED
-  serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerTest.txt" );
-  serialComm->SetCapture( true );
-#else /* IGSTK_TEST_POLARIS_ATTACHED */
+#ifdef IGSTK_SIMULATOR_TEST
   // load a previously captured file
   char pathToCaptureFile[1024];
   joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTKSandbox_DATA_ROOT,
                   "polaris_stream_07_27_2005.txt" );
   serialComm->SetFileName( pathToCaptureFile );
-#endif /* IGSTK_TEST_POLARIS_ATTACHED */
+#else /* IGSTK_SIMULATOR_TEST */
+  serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerTest.txt" );
+  serialComm->SetCapture( true );
+#endif /* IGSTK_SIMULATOR_TEST */
 
   serialComm->OpenCommunication();
 

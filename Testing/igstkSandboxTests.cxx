@@ -6,11 +6,15 @@
 #include <iostream>
 #include "itkTestMain.h" 
 #include "igstkSandboxConfigure.h"
+#include "igstkSystemInformation.h"
 
 void RegisterTests()
 {
   REGISTER_TEST(igstkMouseTrackerTest);
+#ifdef IGSTK_TEST_POLARIS_ATTACHED
   REGISTER_TEST(igstkPolarisTrackerTest);
+#endif
+  REGISTER_TEST(igstkPolarisTrackerSimulatedTest);
   REGISTER_TEST(igstkLandmarkRegistrationTest);
   REGISTER_TEST(igstkDICOMImageReaderTest);
   REGISTER_TEST(igstkCTImageReaderTest);
