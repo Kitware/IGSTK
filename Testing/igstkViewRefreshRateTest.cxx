@@ -28,7 +28,9 @@
 #endif
 
 #include <iostream>
-#include "itkTimeProbe.h"
+
+#include "itkRealTimeClock.h"
+
 #include "igstkView2D.h"
 #include "igstkView3D.h"
 #include "igstkEvents.h"
@@ -169,8 +171,8 @@ int igstkViewRefreshRateTest( int, char * [] )
 
     const float refreshRate = 20;
     const float expectedNumberOfSeconds = 20;
-    const unsigned int numberOfPulsesToStop = 
-      static_cast<unsigned int>( refreshRate * expectedNumberOfSeconds );
+    const unsigned long numberOfPulsesToStop = 
+      static_cast< unsigned long >( refreshRate * expectedNumberOfSeconds );
 
     // Set the refresh rate for the view that we are validating
     view2D->RequestSetRefreshRate( refreshRate );
@@ -188,13 +190,15 @@ int igstkViewRefreshRateTest( int, char * [] )
     Fl::check();
 
     // Now go for the actual measurement of the refresh rate
-    itk::TimeProbe timeProbe;
-
-    timeProbe.Start();
+    itk::RealTimeClock::Pointer realTimeClock = itk::RealTimeClock::New();
+    
+    const double beginTime = realTimeClock->GetTimestamp();
+    
     Fl::run();
-    timeProbe.Stop();
 
-    const float secondsElapsed = timeProbe.GetMeanTime() * timeProbe.GetNumberOfStops();
+    const double endTime   = realTimeClock->GetTimestamp();
+
+    const double secondsElapsed = endTime - beginTime;
 
     const float actualRate = numberOfPulsesToStop / secondsElapsed;
 
