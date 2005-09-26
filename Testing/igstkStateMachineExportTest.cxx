@@ -29,8 +29,9 @@
 #include <fstream>
 #include <iostream>
 
-#include "igstkMacros.h"
 #include "itkExceptionObject.h"
+
+#include "igstkLandmarkRegistration.h"
 
 namespace igstk 
 {
@@ -38,42 +39,72 @@ namespace igstk
 template<class ClassType>
 void ExportStateMachineDescription( 
               const ClassType * instance, 
-              const std::string & outputDirectory )
+              const std::string & outputDirectory, bool skipLoops )
   {
   std::string filename = outputDirectory+"/";
   filename = filename + "igstk";
   filename = filename + instance->GetNameOfClass();
-  filename = filename + ".dot";
-  std::ofstream outputFile;
-  outputFile.open( filename.c_str() );
-  if( outputFile.fail() )
+
+
+  std::string dotfilename = filename + ".dot";
+  std::ofstream dotOutputFile;
+  dotOutputFile.open( dotfilename.c_str() );
+  if( dotOutputFile.fail() )
     {
     std::cerr << "Problem opening the file " << filename << std::endl;
     itk::ExceptionObject excp;
     excp.SetDescription("Problem opening file");
     throw excp;
     }
-  instance->ExportStateMachineDescription( outputFile );
-  outputFile.close();
+  instance->ExportStateMachineDescription( dotOutputFile, skipLoops );
+  dotOutputFile.close();
+
+
+  std::string ltsfilename = filename + ".lts";
+  std::ofstream ltsOutputFile;
+  ltsOutputFile.open( ltsfilename.c_str() );
+  if( ltsOutputFile.fail() )
+    {
+    std::cerr << "Problem opening the file " << filename << std::endl;
+    itk::ExceptionObject excp;
+    excp.SetDescription("Problem opening file");
+    throw excp;
+    }
+  instance->ExportStateMachineDescription( ltsOutputFile, skipLoops );
+  ltsOutputFile.close();
+
   }
+
 
 } // end namespace igstk
 
 
 // This is for classes that use SmartPointers
-#define igstkTestExportStateMachine1( type, outputDirectory ) \
+#define igstkTestExportStateMachine1( type, outputDirectory, skipLoops ) \
   { \
   type::Pointer instance = type::New(); \
-  igstk::ExportStateMachineDescription( instance.GetPointer(), outputDirectory ); \
+  igstk::ExportStateMachineDescription( instance.GetPointer(), outputDirectory, skipLoops ); \
   }
 
 // This is for classes that do not use SmartPointers and have a default constructor
-#define igstkTestExportStateMachine2( type, outputDirectory ) \
+#define igstkTestExportStateMachine2( type, outputDirectory, skipLoops ) \
   { \
   type * instance = new type; \
-  igstk::ExportStateMachineDescription( instance, outputDirectory ); \
+  igstk::ExportStateMachineDescription( instance, outputDirectory, skipLoops ); \
   delete instance; \
   }
+
+
+#define igstkDeclareSurrogateClass( surrogate, type ) \
+class surrogate : public type \
+  {  \
+public:      \
+    typedef surrogate                      Self;    \
+    typedef itk::Object                    Superclass;    \
+    typedef itk::SmartPointer<Self>        Pointer;       \
+    igstkTypeMacro( surrogate, type );   \
+    igstkNewMacro( Self );      \
+  };    \
 
 
 
@@ -88,7 +119,10 @@ int main( int argc, char * argv [] )
 
   std::cout << "Output directory = " << outputDirectory << std::endl;
   
+  const bool skipLoops = true;
+
   // This is for classes that use SmartPointers
+  igstkTestExportStateMachine1( igstk::LandmarkRegistration<3>, outputDirectory, skipLoops );
 
 
   return EXIT_SUCCESS;
