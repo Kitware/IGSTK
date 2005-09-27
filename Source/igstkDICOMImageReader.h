@@ -28,6 +28,7 @@
 #include "itkEventObject.h"
 
 #include "igstkEvents.h"
+#include "igstkStringEvents.h"
 
 #include "itkGDCMImageIO.h"
 #include "itkGDCMSeriesFileNames.h"
@@ -69,6 +70,7 @@ public:
   igstkNewMacro( Self );
 
   typedef std::string    DirectoryNameType;
+  typedef std::string    DICOMInfoType;
   
   /** Method to pass the directory name containing the DICOM image data */
   void RequestSetDirectory( const DirectoryNameType & directory );
@@ -76,11 +78,12 @@ public:
   /** This method request image read **/
   void RequestReadImage();
 
-  /* These Get functions should be converted to a get request inputs to
-* the state machine */
-  const char *             GetModality()     const ;
-  const char *             GetPatientName()  const;
+  /** This function should be used to request modality info*/
+  void RequestModalityInfo();
 
+  /** This function will be used to request patient name info */
+  void RequestPatientNameInfo();
+  
   /** Declarations needed for the State Machine */
   igstkStateMachineTemplatedMacro();
 
@@ -103,8 +106,17 @@ protected:
 
   itkEventMacro( DICOMImageReaderEvent,                    IGSTKEvent);
   itkEventMacro( DICOMInvalidRequestErrorEvent,            DICOMImageReaderEvent );
-  itkEventMacro( DICOMImageReadingErrorEvent,              DICOMImageReaderEvent );
+  itkEventMacro( DICOMModalityEvent,                       StringEvents);
+  itkEventMacro( DICOMPatientNameEvent,                    StringEvents);
+  
+  // Events to handle errors with the ImageDirectory name 
+  itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,DICOMImageReaderEvent );
+  itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,DICOMImageReaderEvent );
+  itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,DICOMImageReaderEvent );
+  itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent,DICOMImageReaderEvent );
 
+  //Image reading error
+  itkEventMacro( DICOMImageReadingErrorEvent,              DICOMImageReaderEvent );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -122,13 +134,20 @@ private:
 
   /** List of State Inputs */
   InputType                    m_ReadImageRequestInput;
-
   InputType                    m_ImageDirectoryNameValidInput; 
+
+  /** Error related state inputs */
+  InputType                    m_ImageReadingErrorInput;
   InputType                    m_ImageDirectoryNameIsEmptyInput;
   InputType                    m_ImageDirectoryNameDoesNotExistInput;
   InputType                    m_ImageDirectoryNameIsNotDirectoryInput;
-  InputType                    m_ImageDirectoryNameHasNotEnoughFilesInput;
+  InputType                    m_ImageDirectoryNameDoesNotHaveEnoughFilesInput;
+ 
+  /** DICOM tags request inputs */
 
+  InputType                    m_GetModalityInfoInput;
+  InputType                    m_GetPatientNameInfoInput;
+  
   void SetDirectoryName();
 
   void ReadDirectoryFileNames();
@@ -144,11 +163,36 @@ private:
  when invalid requests are made */
   void ReportInvalidRequest();
 
+  /** This function reports an when the image directory is empty */
+  void ReportImageDirectoryEmptyError();
+ 
+  /** This function reports an error when image directory is non-existing */
+  void ReportImageDirectoryDoesNotExistError();
 
-  char m_PatientName[2048 ];
-  char m_PatientID[2048 ];
-  char m_Modality[2048]; 
+ /* This function reports an error if the image directory doesn't have enough
+  files */
+  void ReportImageDirectoryDoesNotHaveEnoughFilesError();
+  
+  /** This function reports an error while image reading */
+  void ReportImageReadingError();
 
+  /** This function reports an error when the image directory name
+  provided is not a directory containing DICOM series */
+  void ReportImageDirectoryIsNotDirectoryError();
+
+  /** This function throws a string loaded event. The string is loaded
+  with DICOM  modality */
+  void GetModalityInfo();
+
+  /** This function throws a string loaded event. The string is loaded
+  with patient name */
+  void GetPatientNameInfo();
+
+  char tmp_string[2048];
+  
+  DICOMInfoType m_PatientID;
+  DICOMInfoType m_PatientName;
+  DICOMInfoType m_Modality;
 };
 
 } // end namespace igstk
