@@ -52,7 +52,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
   reader->SetLogger( logger );
 
   /* Read in a DICOM series */
-  std::cout<<"Reading CT image : "<<argv[1]<<std::endl;
+  std::cout << "Reading CT image : " << argv[1] << std::endl;
 
   ReaderType::DirectoryNameType directoryName = argv[1];
 
@@ -78,11 +78,11 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
   representation->RequestSetImageSpatialObject( reader->GetOutput() );
 
   // Create an FLTK minimal GUI
-  Fl_Window * form = new Fl_Window(601,301,"View3D Test");
+  Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
   typedef igstk::View2D  View2DType;
 
-  View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
+  View2DType * view2D = new View2DType( 10,10,512,512,"2D View");
 
   form->end();
   form->show();
@@ -90,11 +90,14 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
   view2D->RequestResetCamera();
   view2D->RequestEnableInteractions();
 
+  view2D->RequestAddObject( representation );
+    
   // Do manual redraws
-  for(unsigned int i=0; i<10; i++)
+  for(unsigned int i=0; i<500; i++)
     {
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
+    std::cout << "i= " << i << std::endl;
     }
 
   delete view2D;
