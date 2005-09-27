@@ -18,6 +18,7 @@ SET(IGSTKSandbox_HEADS
   igstkPolarisTracker.h
   igstkPolarisTrackerTool.h
   igstkLandmarkRegistration.h
+  igstkStringEvents.h
 )
 
 
