@@ -4,14 +4,16 @@
 
 # The header files
 SET(IGSTKSandbox_HEADS
-  igstkCTImageReader.h
-  igstkMRImageReader.h
-  igstkCTImageSpatialObject.h
-  igstkMRImageSpatialObject.h
   igstkImageReader.h
   igstkDICOMImageReader.h
+  igstkCTImageReader.h
+  igstkMRImageReader.h
   igstkImageSpatialObject.h
+  igstkCTImageSpatialObject.h
+  igstkMRImageSpatialObject.h
   igstkImageSpatialObjectRepresentation.h
+  igstkCTImageSpatialObjectRepresentation.h
+  igstkMRImageSpatialObjectRepresentation.h
   igstkMouseTracker.h
   igstkPolarisTracker.h
   igstkPolarisTrackerTool.h
@@ -21,14 +23,16 @@ SET(IGSTKSandbox_HEADS
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
-  igstkCTImageReader.cxx
-  igstkMRImageReader.cxx
-  igstkCTImageSpatialObject.cxx
-  igstkMRImageSpatialObject.cxx
   igstkImageReader.txx
   igstkDICOMImageReader.txx
+  igstkCTImageReader.cxx
+  igstkMRImageReader.cxx
   igstkImageSpatialObject.txx
+  igstkCTImageSpatialObject.cxx
+  igstkMRImageSpatialObject.cxx
   igstkImageSpatialObjectRepresentation.txx
+  igstkCTImageSpatialObjectRepresentation.cxx
+  igstkMRImageSpatialObjectRepresentation.cxx
   igstkMouseTracker.cxx
   igstkPolarisTracker.cxx
   igstkPolarisTrackerTool.cxx
