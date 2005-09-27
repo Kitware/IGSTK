@@ -47,7 +47,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this), m_Logge
   m_StateMachine.AddInput(m_ImageDirectoryNameIsNotDirectoryInput,"ImageDirectoryNameIsNotDirectoryInput");
   m_StateMachine.AddInput(m_ImageDirectoryNameHasNotEnoughFilesInput,"m_ImageDirectoryNameHasNotEnoughFilesInput");
 
-  m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameValidInput,m_ImageDirectoryNameReadState,&DICOMImageReader::ReadDirectoryFileNames);
+  m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameValidInput,m_ImageDirectoryNameReadState,&DICOMImageReader::SetDirectoryName);
   m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,m_ReadImageRequestInput,m_ImageReadState,&DICOMImageReader::AttemptReadImage);
   m_StateMachine.AddTransition(m_IdleState,m_ReadImageRequestInput,m_IdleState,&DICOMImageReader::ReportInvalidRequest);
 
@@ -74,7 +74,9 @@ template <class TImageSpatialObject>
 void DICOMImageReader<TImageSpatialObject>
 ::RequestSetDirectory( const DirectoryNameType & directory )
 {
-  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::SetDirectoryName called...\n");
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::RequestSetDirectory called...\n");
+
+  m_ImageDirectoryNameToBeSet = directory;
  
   if( directory.empty() )
     {
@@ -118,8 +120,9 @@ void
 DICOMImageReader<TImageSpatialObject>
 ::SetDirectoryName()
 {
-  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::SetDirectory called...\n");
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::SetDirectoryName called...\n");
   m_ImageDirectoryName = m_ImageDirectoryNameToBeSet;
+  this->ReadDirectoryFileNames();
 }
 
 
