@@ -40,16 +40,29 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this), m_Logge
  /** List of State Inputs */
 
   m_StateMachine.AddInput(m_ReadImageRequestInput,"ImageReadRequestInput");
-
+  m_StateMachine.AddInput(m_ImageReadingErrorInput,"ImageReadingErrorInput");
   m_StateMachine.AddInput(m_ImageDirectoryNameValidInput,"ImageDirectoryNameValidInput");
   m_StateMachine.AddInput(m_ImageDirectoryNameIsEmptyInput,"ImageDirectoryNameIsEmptyInput");
   m_StateMachine.AddInput(m_ImageDirectoryNameDoesNotExistInput,"ImageDirectoryNameDoesNotExistInput");
   m_StateMachine.AddInput(m_ImageDirectoryNameIsNotDirectoryInput,"ImageDirectoryNameIsNotDirectoryInput");
-  m_StateMachine.AddInput(m_ImageDirectoryNameHasNotEnoughFilesInput,"m_ImageDirectoryNameHasNotEnoughFilesInput");
+  m_StateMachine.AddInput(m_ImageDirectoryNameDoesNotHaveEnoughFilesInput,"m_ImageDirectoryNameDoesNotHaveEnoughFilesInput");
 
   m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameValidInput,m_ImageDirectoryNameReadState,&DICOMImageReader::SetDirectoryName);
   m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,m_ReadImageRequestInput,m_ImageReadState,&DICOMImageReader::AttemptReadImage);
   m_StateMachine.AddTransition(m_IdleState,m_ReadImageRequestInput,m_IdleState,&DICOMImageReader::ReportInvalidRequest);
+
+  //Transitions for DICOM info request input 
+  m_StateMachine.AddTransition(m_ImageReadState,m_GetModalityInfoInput,m_ImageReadState,&DICOMImageReader::GetModalityInfo);
+  m_StateMachine.AddTransition(m_ImageReadState,m_GetPatientNameInfoInput,m_ImageReadState,&DICOMImageReader::GetPatientNameInfo);
+
+  //Errors related to image directory name
+  m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameIsEmptyInput,m_IdleState,&DICOMImageReader::ReportImageDirectoryEmptyError);
+  m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameDoesNotExistInput,m_IdleState,&DICOMImageReader::ReportImageDirectoryDoesNotExistError);
+  m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameIsNotDirectoryInput,m_IdleState,&DICOMImageReader::ReportImageDirectoryIsNotDirectoryError);
+  m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameDoesNotHaveEnoughFilesInput,m_IdleState,&DICOMImageReader::ReportImageDirectoryDoesNotHaveEnoughFilesError);
+
+  //Errors related to  image reading 
+  m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,m_ImageReadingErrorInput,m_ImageDirectoryNameReadState,&DICOMImageReader::ReportImageReadingError);
 
    // Select the initial state of the state machine
   m_StateMachine.SelectInitialState( m_IdleState );
@@ -104,13 +117,15 @@ void DICOMImageReader<TImageSpatialObject>
   directoryClass.Load( directory.c_str() );
   if( directoryClass.GetNumberOfFiles() < 3 ) // To count for  "." and ".." 
     {
-    this->m_StateMachine.PushInput( this->m_ImageDirectoryNameHasNotEnoughFilesInput );
+    this->m_StateMachine.PushInput( this->m_ImageDirectoryNameDoesNotHaveEnoughFilesInput );
     this->m_StateMachine.ProcessInputs();
     return;
     }
 
   this->m_StateMachine.PushInput( this->m_ImageDirectoryNameValidInput );
   this->m_StateMachine.ProcessInputs();
+
+  m_ImageDirectoryNameToBeSet = directory;
 }
 
 
@@ -162,12 +177,17 @@ void DICOMImageReader<TPixelType>::AttemptReadImage()
     return;
     }
   
-  m_ImageIO->GetPatientName(  m_PatientName  );
-  m_ImageIO->GetPatientID(    m_PatientID    );
-  m_ImageIO->GetModality(     m_Modality     );
+  m_ImageIO->GetPatientName(  tmp_string  );
+  m_PatientName = tmp_string;
+  
+  m_ImageIO->GetPatientID(  tmp_string );
+  m_PatientID  = tmp_string;
+
+  m_ImageIO->GetModality(   tmp_string );
+  m_Modality  = tmp_string;
 }
 
-/* The ReportInvalidRequest function reports invalid requests */
+/* This function reports invalid requests */
 template <class TPixelType>
 void
 DICOMImageReader<TPixelType>::ReportInvalidRequest()
@@ -176,25 +196,85 @@ DICOMImageReader<TPixelType>::ReportInvalidRequest()
     this->InvokeEvent( DICOMInvalidRequestErrorEvent() );
 }
 
+template <class TPixelType>
+void
+DICOMImageReader<TPixelType>::ReportImageDirectoryEmptyError()
+{
+    igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryEmptyError called...\n");
+    this->InvokeEvent( DICOMImageDirectoryEmptyErrorEvent());
+}
 
+template <class TPixelType>
+void
+DICOMImageReader<TPixelType>::ReportImageDirectoryDoesNotExistError()
+{
+    igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryDoesNotExistError called...\n");
+    this->InvokeEvent( DICOMImageDirectoryDoesNotExistErrorEvent());
+}
+
+template <class TPixelType>
+void
+DICOMImageReader<TPixelType>::ReportImageDirectoryDoesNotHaveEnoughFilesError()
+{
+    igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryDoesNotHaveEnoughFilesError: called...\n");
+    this->InvokeEvent( DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent() );
+}
+
+template <class TPixelType>
+void
+DICOMImageReader<TPixelType>::ReportImageDirectoryIsNotDirectoryError()
+{
+    igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryIsNotDirectoryError: called...\n");
+    this->InvokeEvent( DICOMImageDirectoryIsNotDirectoryErrorEvent() );
+}
+
+
+template <class TPixelType>
+void
+DICOMImageReader<TPixelType>::ReportImageReadingError()
+{
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageReadingError: called...\n");
+  this->InvokeEvent( DICOMImageReadingErrorEvent() );
+}
+
+
+/** Request the DICOM modality info */
+template <class TPixelType>
+void
+DICOMImageReader<TPixelType>::RequestModalityInfo() 
+{
+  this->m_StateMachine.PushInput( this->m_GetModalityInfoInput);
+  this->m_StateMachine.ProcessInputs();
+}
+
+/** Request patient info */
+template <class TPixelType>
+void
+DICOMImageReader<TPixelType>::RequestPatientNameInfo() 
+{
+  this->m_StateMachine.PushInput( this->m_GetPatientNameInfoInput);
+  this->m_StateMachine.ProcessInputs();
+}
 
 /** Get the DICOM modality */
 template <class TPixelType>
-const char *
-DICOMImageReader<TPixelType>::GetModality() const
+void
+DICOMImageReader<TPixelType>::GetModalityInfo() 
 {
-  return( m_Modality);
+  DICOMModalityEvent event;
+  event.SetString(m_Modality);
+  this->InvokeEvent(event);
 }
-
 
 /** Get the patient name */
 template <class TPixelType>
-const char *
-DICOMImageReader<TPixelType>::GetPatientName() const
+void
+DICOMImageReader<TPixelType>::GetPatientNameInfo() 
 {
-  return( m_PatientName);
+  DICOMPatientNameEvent event;
+  event.SetString(m_PatientName);
+  this->InvokeEvent(event);
 }
-
 
 /** Get the image. This function MUST be private in order to  prevent unsafe
  * access to the ITK image level. */
