@@ -66,13 +66,6 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
 
   reader->RequestSetDirectory( directoryName );
   reader->RequestReadImage();
-
-  const char * modality    = reader->GetModality();
-  const char * patientName = reader->GetPatientName();
-  
-  std::cout << "Modaltiy:" << modality << std::endl;
-  std::cout << "Patient name:" << patientName << std::endl;
-  
  
   return EXIT_SUCCESS;
 }
