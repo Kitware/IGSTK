@@ -107,6 +107,7 @@ void DICOMImageReader<TImageSpatialObject>
     return;
     }
 
+  m_ImageDirectoryName = directory;
   this->m_StateMachine.PushInput( this->m_ImageDirectoryNameValidInput );
   this->m_StateMachine.ProcessInputs();
 }
