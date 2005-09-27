@@ -54,6 +54,12 @@ int main(int , char** )
   application.AddEllipsoid( ellipsoidRepresentation );
   application.AddCylinder(  cylinderRepresentation  );
 
+  // Reset the camera position
+  application.DisplayAxial->RequestResetCamera();
+  application.DisplayCoronal->RequestResetCamera();
+  application.DisplaySagittal->RequestResetCamera();
+  application.Display3D->RequestResetCamera();
+
   // Associate the Spatial Object to the tracker
   application.AttachObjectToTrack( cylinder );
 
