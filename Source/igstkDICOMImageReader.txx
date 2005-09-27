@@ -74,6 +74,8 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this), m_Logge
   m_FileNames = itk::GDCMSeriesFileNames::New();
   m_ImageIO = itk::GDCMImageIO::New();
   m_ImageSeriesReader = ImageSeriesReaderType::New();
+
+  m_ImageSeriesReader->SetImageIO( m_ImageIO );
 } 
 
 /** Destructor */
@@ -165,8 +167,6 @@ void DICOMImageReader<TPixelType>::AttemptReadImage()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::AttemptReadImage called...\n");
 
-  m_ImageSeriesReader->SetImageIO( m_ImageIO );
-  
   try
     {
     m_ImageSeriesReader->Update();
@@ -185,6 +185,13 @@ void DICOMImageReader<TPixelType>::AttemptReadImage()
 
   m_ImageIO->GetModality(   tmp_string );
   m_Modality  = tmp_string;
+
+
+  igstkLogMacro( DEBUG, "Patient Name = " << m_PatientName << "\n" );
+  igstkLogMacro( DEBUG, "Patient ID   = " << m_PatientID << "\n" );
+  igstkLogMacro( DEBUG, "Modality     = " << m_Modality << "\n" );
+
+  this->Superclass::ConnectImage();
 }
 
 /* This function reports invalid requests */
