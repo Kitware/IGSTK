@@ -88,7 +88,11 @@ public:
 };
 
 
+#ifdef IGSTK_SIMULATOR_TEST
+int igstkPolarisTrackerSimulatedTest( int, char * [] )
+#else  /* IGSTK_SIMULATOR_TEST */
 int igstkPolarisTrackerTest( int, char * [] )
+#endif
 {
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
