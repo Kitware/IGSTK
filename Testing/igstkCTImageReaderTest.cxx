@@ -53,23 +53,24 @@ int igstkCTImageReaderTest( int argc, char* argv[] )
   /* Read in a DICOM series */
   std::cout<<"Reading CT image : "<<argv[1]<<std::endl;
 
-  reader->SetDirectory(argv[1]);
+  ReaderType::DirectoryNameType directoryName = argv[1];
+
+  reader->RequestSetDirectory( directoryName );
   
-  typedef signed short        OutputPixelType;
-  const   unsigned int        OutputDimension = 3;
 
-  typedef itk::Image< OutputPixelType, OutputDimension >   ImageOutputType;
-  typedef itk::ImageFileWriter< ImageOutputType >  WriterType;
+  try
+    {
+    reader->RequestReadImage();
+    }
+  catch( ... )
+    {
+    std::cerr << "ERROR: An exception was thrown while reading the CT dataset" << std::endl;
+    std::cerr << "This should not have happened. The State Machine should have" << std::endl;
+    std::cerr << "catched that exception and converted it into a SM Input " << std::endl;
+    return EXIT_FAILURE;
+    }
 
-  /* Write the DICOM data as a 3D volume data */
-  WriterType::Pointer writer = WriterType::New();
-
-  writer->SetFileName(argv[2]);
-  writer->SetInput( reader->GetITKImageData() );
-  writer->DebugOn();
-
-  std::cout<<"Writing out the CT image as raw unsigned char format : "<<argv[2]<<std::endl;
-  writer->Update();
+  igstk::CTImageSpatialObject::ConstPointer ctImage = reader->GetOutput();
 
   return EXIT_SUCCESS;
 }

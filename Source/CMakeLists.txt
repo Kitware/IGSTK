@@ -6,6 +6,8 @@
 SET(IGSTKSandbox_HEADS
   igstkCTImageReader.h
   igstkMRImageReader.h
+  igstkCTImageSpatialObject.h
+  igstkMRImageSpatialObject.h
   igstkImageReader.h
   igstkDICOMImageReader.h
   igstkImageSpatialObject.h
@@ -21,10 +23,12 @@ SET(IGSTKSandbox_HEADS
 SET(IGSTKSandbox_SRCS  
   igstkCTImageReader.cxx
   igstkMRImageReader.cxx
+  igstkCTImageSpatialObject.cxx
+  igstkMRImageSpatialObject.cxx
   igstkImageReader.txx
   igstkDICOMImageReader.txx
-  igstkImageSpatialObject.cxx
-  igstkImageSpatialObjectRepresentation.cxx
+  igstkImageSpatialObject.txx
+  igstkImageSpatialObjectRepresentation.txx
   igstkMouseTracker.cxx
   igstkPolarisTracker.cxx
   igstkPolarisTrackerTool.cxx

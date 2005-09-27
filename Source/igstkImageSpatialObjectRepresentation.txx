@@ -1,8 +1,25 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkImageSpatialObjectRepresentation.txx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 
 #include "itkCommand.h"
 #include "itkImage.h"
 
 #include "igstkImageSpatialObjectRepresentation.h"
+
 #include "vtkPolyDataMapper.h"
 #include "vtkActor.h"
 #include "vtkProperty.h"
@@ -17,7 +34,10 @@ namespace igstk
 {
 
 /** Constructor */
-ImageSpatialObjectRepresentation::ImageSpatialObjectRepresentation():m_StateMachine(this)
+
+template < class TImageSpatialObject >
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::ImageSpatialObjectRepresentation():m_StateMachine(this)
 {
   // We create the image spatial object
   m_ImageSpatialObject = NULL;
@@ -25,8 +45,8 @@ ImageSpatialObjectRepresentation::ImageSpatialObjectRepresentation():m_StateMach
 
   // Create classes for displaying images
   m_ImageActor = vtkImageActor::New();
-  m_MapColors = vtkImageMapToColors::New();
-  m_LUT = vtkLookupTable::New();
+  m_MapColors  = vtkImageMapToColors::New();
+  m_LUT        = vtkLookupTable::New();
 
   // Set default values for window and level
   m_Level = 0;
@@ -51,7 +71,9 @@ ImageSpatialObjectRepresentation::ImageSpatialObjectRepresentation():m_StateMach
 } 
 
 /** Destructor */
-ImageSpatialObjectRepresentation::~ImageSpatialObjectRepresentation()  
+template < class TImageSpatialObject >
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::~ImageSpatialObjectRepresentation()  
 {
   if( m_ImageActor )
     {
@@ -73,7 +95,10 @@ ImageSpatialObjectRepresentation::~ImageSpatialObjectRepresentation()
 }
 
 /** Set the Image Spatial Object */
-void ImageSpatialObjectRepresentation::RequestSetImageSpatialObject( const ImageSpatialObjectType * image )
+template < class TImageSpatialObject >
+void 
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::RequestSetImageSpatialObject( const ImageSpatialObjectType * image )
 {
   m_ImageSpatialObjectToAdd = image;
   if( !m_ImageSpatialObjectToAdd )
@@ -88,7 +113,11 @@ void ImageSpatialObjectRepresentation::RequestSetImageSpatialObject( const Image
     }
 }
 
-void ImageSpatialObjectRepresentation::SetZSlice( int slice )
+
+template < class TImageSpatialObject >
+void 
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::SetZSlice( int slice )
 {
   int minz;
   int maxz;
@@ -105,7 +134,10 @@ void ImageSpatialObjectRepresentation::SetZSlice( int slice )
     }
 }
 
-void ImageSpatialObjectRepresentation::SetWindowLevel( double window, double level )
+template < class TImageSpatialObject >
+void 
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::SetWindowLevel( double window, double level )
 {
   m_Window = window;
   m_Level = level;
@@ -114,7 +146,10 @@ void ImageSpatialObjectRepresentation::SetWindowLevel( double window, double lev
 }
 
 /** Set the Image Spatial Object */
-void ImageSpatialObjectRepresentation::SetImageSpatialObject()
+template < class TImageSpatialObject >
+void 
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::SetImageSpatialObject()
 {
   // We create the image spatial object
   m_ImageSpatialObject = m_ImageSpatialObjectToAdd;
@@ -132,9 +167,13 @@ void ImageSpatialObjectRepresentation::SetImageSpatialObject()
 
     m_MapColors->SetLookupTable( m_LUT );
 
-    const vtkImageData *idata = m_ImageSpatialObject->GetVTKImageData();
+    // This method gets a VTK image data from the private method of the
+    // ImageSpatialObject and stores it in the representation by invoking the
+    // private SetImage method.
+    this->ConnectImage();
 
-    m_MapColors->SetInput( const_cast< vtkImageData * >( idata  ) );
+    m_MapColors->SetInput( m_ImageData );
+    
     m_ImageActor->SetInput( m_MapColors->GetOutput() );
 
     m_ImageActor->SetDisplayExtent( 0, 511, 0, 511, 0, 0 );
@@ -144,7 +183,10 @@ void ImageSpatialObjectRepresentation::SetImageSpatialObject()
 
 
 /** Print Self function */
-void ImageSpatialObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+template < class TImageSpatialObject >
+void
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
@@ -152,7 +194,10 @@ void ImageSpatialObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent 
 
 /** Update the visual representation in response to changes in the geometric
  * object */
-void ImageSpatialObjectRepresentation::UpdateRepresentation()
+template < class TImageSpatialObject >
+void
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::UpdateRepresentation()
 {
 //  m_PlaneSource->SetRadius(m_CylinderSpatialObject->GetRadius());
 //  m_PlaneSource->SetHeight(m_CylinderSpatialObject->GetHeight());
@@ -160,7 +205,10 @@ void ImageSpatialObjectRepresentation::UpdateRepresentation()
 
 
 /** Create the vtk Actors */
-void ImageSpatialObjectRepresentation::CreateActors()
+template < class TImageSpatialObject >
+void
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::CreateActors()
 {
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
@@ -172,8 +220,10 @@ void ImageSpatialObjectRepresentation::CreateActors()
 }
 
 /** Create a copy of the current object representation */
-ImageSpatialObjectRepresentation::Pointer
-ImageSpatialObjectRepresentation::Copy() const
+template < class TImageSpatialObject >
+typename ImageSpatialObjectRepresentation< TImageSpatialObject >::Pointer
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::Copy() const
 {
   Pointer newOR = ImageSpatialObjectRepresentation::New();
   newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
@@ -182,6 +232,28 @@ ImageSpatialObjectRepresentation::Copy() const
 
   return newOR;
 }
+
+  
+template < class TImageSpatialObject >
+void
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::SetImage( const vtkImageData * image )
+{
+  // This const_cast<> is needed here due to the lack of const-correctness in VTK 
+  m_ImageData = const_cast< vtkImageData *>( image );
+}
+
+
+
+template < class TImageSpatialObject >
+void
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::ConnectImage()
+{
+  typedef Friends::ImageSpatialObjectRepresentationToImageSpatialObject  HelperType;
+  HelperType::ConnectImage( m_ImageSpatialObject.GetPointer(), this );
+}
+
 
 
 } // end namespace igstk

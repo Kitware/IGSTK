@@ -20,7 +20,7 @@
 #endif
 
 #include "igstkDICOMImageReader.h"
-#include "itkImageSeriesWriter.h"
+#include "igstkImageSpatialObject.h"
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -44,39 +44,36 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
-  typedef short    PixelType;
-  typedef igstk::DICOMImageReader< PixelType >    ReaderType;
+  typedef short      PixelType;
+  const unsigned int Dimension = 3;
+
+  typedef igstk::ImageSpatialObject< 
+                                PixelType, 
+                                Dimension 
+                                       > ImageSpatialObjectType;
+  
+
+  typedef igstk::DICOMImageReader< ImageSpatialObjectType >    ReaderType;
 
   ReaderType::Pointer   reader = ReaderType::New();
 
   reader->SetLogger( logger );
 
   /* Read in a DICOM series */
-  std::cout<<"Reading the DICOM series : "<<argv[1]<<std::endl;
+  std::cout << "Reading the DICOM series : " << argv[1] <<std::endl;
 
-  reader->SetDirectory(argv[1]);
-  reader->RequestImageRead();
+  ReaderType::DirectoryNameType directoryName = argv[1];
 
-  const char * modality = reader->GetModality();
+  reader->RequestSetDirectory( directoryName );
+  reader->RequestReadImage();
+
+  const char * modality    = reader->GetModality();
+  const char * patientName = reader->GetPatientName();
   
-  std::cout<<"Modaltiy:"<<modality<<std::endl;
+  std::cout << "Modaltiy:" << modality << std::endl;
+  std::cout << "Patient name:" << patientName << std::endl;
   
-  typedef short      OutputPixelType;
-  const   unsigned int        OutputDimension = 3;
-
-  typedef itk::Image< OutputPixelType, OutputDimension >   ImageOutputType;
-  typedef itk::ImageFileWriter< ImageOutputType >  WriterType;
-
-  /* Write the DICOM data as a 3D volume data */
-  WriterType::Pointer writer = WriterType::New();
-
-  writer->SetFileName(argv[2]);
-  writer->SetInput( reader->GetITKImageData() );
-  writer->DebugOn();
-
-  std::cout<<"Writing out the DICOM image into another format : "<<argv[2]<<std::endl;
-  writer->Update();
-
+ 
   return EXIT_SUCCESS;
 }
 

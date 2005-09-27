@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkCTImageReader.h
+  Module:    igstkMRImageSpatialObject.h
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -14,44 +14,43 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __igstkCTImageReader_h
-#define __igstkCTImageReader_h
+#ifndef __igstkMRImageSpatialObject_h
+#define __igstkMRImageSpatialObject_h
 
-#include "igstkDICOMImageReader.h"
-#include "igstkCTImageSpatialObject.h"
+#include "igstkImageSpatialObject.h"
 
 namespace igstk
 {
 
-/** \class CTImageReader
- *  \brief This class implements a reader specific for CT modality.
+/** \class MRImageSpatialObject
+ * \brief  Represents a MR scan placed correctly in physical coordinates.
  *
- * \ingroup Readers
+ * \ingroup Object
  */
 
-class CTImageReader : 
-         public DICOMImageReader< CTImageSpatialObject >
+class MRImageSpatialObject : 
+      public ImageSpatialObject< unsigned short, 3 >
 {
 
 public:
 
   /** Typedefs */
-  typedef CTImageReader                               Self;
-  typedef DICOMImageReader< CTImageSpatialObject >    Superclass;
-  typedef itk::SmartPointer< Self >                   Pointer;
-  typedef itk::SmartPointer< const Self >             ConstPointer;
+  typedef MRImageSpatialObject                    Self;
+  typedef ImageSpatialObject< unsigned short, 3>  Superclass;
+  typedef itk::SmartPointer< Self >               Pointer;
+  typedef itk::SmartPointer< const Self >         ConstPointer;
 
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro( CTImageReader, DICOMImageReader );
+  igstkTypeMacro( MRImageSpatialObject, ImageSpatialObject );
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
 
 protected:
 
-  CTImageReader( void );
-  virtual ~CTImageReader( void ) {};
+  MRImageSpatialObject( void );
+  virtual ~MRImageSpatialObject( void );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -62,5 +61,5 @@ private:
 
 } // end namespace igstk
 
-#endif // __igstkCTImageReader_h
+#endif // __igstkMRImageSpatialObject_h
 

@@ -1,24 +1,55 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkImageSpatialObject.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 
 #ifndef __igstkImageSpatialObject_h
 #define __igstkImageSpatialObject_h
 
 #include "igstkMacros.h"
 #include "igstkSpatialObject.h"
-#include "igstkCTImageReader.h"
 
 #include "itkImageSpatialObject.h"
+
+#include "itkVTKImageExport.h"
+#include "vtkImageImport.h"
+#include "vtkImageData.h"
+
+
+
 
 namespace igstk
 {
 
+namespace Friends 
+{
+  
+class ImageReaderToImageSpatialObject;
+class ImageSpatialObjectRepresentationToImageSpatialObject;
+
+}
+
+
 /** \class ImageSpatialObject
  * 
- * \brief This class represents an image object. The parameters of the object
- * are the ... Default ...
+ * \brief This class represents an image object. 
  * 
  * \ingroup Object
  */
 
+template < class TPixelType, unsigned int VDimension >
 class ImageSpatialObject 
 : public SpatialObject
 {
@@ -30,9 +61,11 @@ public:
   typedef SpatialObject                                     Superclass;
   typedef itk::SmartPointer<Self>                           Pointer;
   typedef itk::SmartPointer<const Self>                     ConstPointer;
-  itkStaticConstMacro(ImageDimension, unsigned int, 3);
-  typedef signed short                                      PixelType;
-  typedef itk::ImageSpatialObject< ImageDimension, PixelType > ImageSpatialObjectType;
+
+  typedef itk::ImageSpatialObject< VDimension, TPixelType > ImageSpatialObjectType;
+
+  typedef typename ImageSpatialObjectType::ImageType        ImageType;
+  typedef typename ImageType::ConstPointer                  ImageConstPointer;
 
   /**  Run-time type information (and related methods). */
   igstkTypeMacro( ImageSpatialObject, SpatialObject );
@@ -40,11 +73,10 @@ public:
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
 
-  /** Set method for DICOM file name */
-  void SetDirectory( const char *directory );
-
-  /** Get the VTK image data (converted from the ITK pipeline) */
-  const vtkImageData * GetVTKImageData() const;
+  /** The ImageReaderToImageSpatialObject class is declared as a friend in
+   * order to be able to set the input image */
+  igstkFriendClassMacro( igstk::Friends::ImageReaderToImageSpatialObject );
+  igstkFriendClassMacro( igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
 
 protected:
 
@@ -56,13 +88,37 @@ protected:
 
 private:
 
-  /** Internal ImageReader */
-  CTImageReader::Pointer                m_CTImageReader;
-
   /** Internal itkImageSpatialObject */
-  ImageSpatialObjectType::Pointer       m_ImageSpatialObject;
+  typename ImageSpatialObjectType::Pointer       m_ImageSpatialObject;
+
+  /** Get the VTK image data (converted from the ITK pipeline) */
+  const vtkImageData * GetVTKImageData() const;
+
+  /** Set method to be invoked only by friends of this class */
+  void SetImage( const ImageType * image );
+
+private:
+
+  ImageConstPointer  m_Image;
+
+  typedef itk::VTKImageExport< ImageType >      ITKExportFilterType;
+  typedef vtkImageImport                        VTKImportFilterType;
+
+  typedef typename ITKExportFilterType::Pointer ITKExportFilterPointer;
+  typedef          VTKImportFilterType      *   VTKImportFilterPointer;
+
+  /** Classes to connect an ITK pipeline to a VTK pipeline */
+  ITKExportFilterPointer             m_itkExporter;
+  VTKImportFilterPointer             m_vtkImporter;
+
+
 };
 
 } // end namespace igstk
 
+#ifndef IGSTK_MANUAL_INSTANTIATION
+#include "igstkImageSpatialObject.txx"
+#endif
+
 #endif // __igstkImageSpatialObject_h
+

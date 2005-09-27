@@ -1,4 +1,19 @@
+/*=========================================================================
 
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkImageSpatialObjectRepresentation.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #ifndef __igstkImageSpatialObjectRepresentation_h
 #define __igstkImageSpatialObjectRepresentation_h
 
@@ -13,6 +28,37 @@
 
 namespace igstk
 {
+ 
+namespace Friends 
+{
+
+/** class ImageSpatialObjectRepresentationToImageSpatialObject 
+ *
+ * \brief This class is intended to make the connection between the
+ * ImageSpatialObjectRepresentation and its output, the ImageSpatialObject.
+ * With this class it is possible to enforce encapsulation of the
+ * SpatialObjectRepresentation and the ImageSpatialObject, and make their
+ * GetImage() and SetImage() methods private, so that developers cannot gain
+ * access to the ITK or VTK layers of these two classes.
+ *
+ */
+class ImageSpatialObjectRepresentationToImageSpatialObject
+{
+  public:
+    template < class TSpatialObjectRepresentation, class TImageSpatialObject >
+    static void 
+    ConnectImage( const TImageSpatialObject * imageSpatialObject,
+                  TSpatialObjectRepresentation * imageSpatialObjectRepresentation )
+    {
+       imageSpatialObjectRepresentation->SetImage( 
+                 imageSpatialObject->GetVTKImageData() );  
+    }
+
+}; // end of ImageSpatialObjectRepresentationToImageSpatialObject class
+
+} // end of Friend namespace
+
+
 
 /** \class ImageSpatialObjectRepresentation
  * 
@@ -23,8 +69,9 @@ namespace igstk
  * \ingroup ObjectRepresentation
  */
 
+  template < class TImageSpatialObject >
 class ImageSpatialObjectRepresentation 
-: public ObjectRepresentation
+                      : public ObjectRepresentation
 {
 
 public:
@@ -34,11 +81,11 @@ public:
   typedef ObjectRepresentation                     Superclass;
   typedef itk::SmartPointer<Self>                  Pointer;
   typedef itk::SmartPointer<const Self>            ConstPointer;
-  itkStaticConstMacro(ImageDimension, unsigned int, 3);
-  typedef signed short                             PixelType;
-  typedef itk::Image< PixelType, ImageDimension >  ImageType;
-  typedef itk::ImageSeriesReader< ImageType >      ReaderType;
-  typedef ImageSpatialObject                       ImageSpatialObjectType;
+
+  typedef TImageSpatialObject                      ImageSpatialObjectType;
+
+  typedef typename ImageSpatialObjectType::ConstPointer 
+                                                   ImageSpatialObjectConstPointer;
 
   /**  Run-time type information (and related methods). */
   igstkTypeMacro( ImageSpatialObjectRepresentation, ObjectRepresentation );
@@ -65,15 +112,27 @@ public:
   /** Create the VTK actors for displaying geometry */
   void CreateActors();
 
+  /** Declare the ImageReaderToImageSpatialObject class to be a friend 
+   *  in order to give it access to the private method GetITKImage(). */
+  igstkFriendClassMacro( igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
+
   /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
+  igstkStateMachineTemplatedMacro();
+
+protected:
+
+  /** Connect the VTK image from the ImageSpatialObject to the
+   * ImageSpatialObjectRepresentation*/
+  void ConnectImage();
 
 private:
 
   /** Internal itkSpatialObject */
-  ImageSpatialObjectType::ConstPointer   m_ImageSpatialObject;
+  ImageSpatialObjectConstPointer         m_ImageSpatialObject;
+  ImageSpatialObjectConstPointer         m_ImageSpatialObjectToAdd;
 
   /** VTK classes that support display of an image */
+  vtkImageData                         * m_ImageData;
   vtkImageActor                        * m_ImageActor;
   vtkLookupTable                       * m_LUT;
   vtkImageMapToColors                  * m_MapColors;
@@ -89,6 +148,10 @@ private:
    * called by the State Machine. */
   void SetImageSpatialObject();
 
+  /** Sets the vtkImageData from the spatial object. This method MUST be
+   * private in order to prevent unsafe access from the VTK image layer. */
+  void SetImage( const vtkImageData * image );
+  
 private:
 
   /** Inputs to the State Machine */
@@ -99,10 +162,14 @@ private:
   StateType            m_NullImageSpatialObjectState;
   StateType            m_ValidImageSpatialObjectState;
 
-  ImageSpatialObjectType::ConstPointer m_ImageSpatialObjectToAdd;
 };
-
 
 } // end namespace igstk
 
+#ifndef IGSTK_MANUAL_INSTANTIATION
+#include "igstkImageSpatialObjectRepresentation.txx"
+#endif
+
+
 #endif // __igstkImageSpatialObjectRepresentation_h
+

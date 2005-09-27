@@ -1,4 +1,19 @@
+/*=========================================================================
 
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkImageReader.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #ifndef __igstkImageReader_h
 #define __igstkImageReader_h
 
@@ -6,21 +21,41 @@
 
 #include "itkObject.h"
 #include "itkMacro.h"
-#include "itkImageFileReader.h"
 #include "itkLogger.h"
-
-#include "itkVTKImageExport.h"
-#include "itkVTKImageImport.h"
-
-#include "vtkImageImport.h"
-#include "vtkImageExport.h"
-#include "vtkImageData.h"
+#include "itkImageSpatialObject.h"
 
 
 
 namespace igstk
 {
+ 
+namespace Friends 
+{
 
+/** class ImageReaderToImageSpatialObject
+ * \brief This class is intended to make the connection between the ImageReader
+ * and its output, the ImageSpatialObject. With this class it is possible to
+ * enforce encapsulation of the Reader and the ImageSpatialObject, and make
+ * their GetImage() and SetImage() methods private, so that developers cannot
+ * gain access to the ITK or VTK layers of these two classes.
+ */
+class ImageReaderToImageSpatialObject
+{
+  public:
+    template < class TReader, class TImageSpatialObject >
+    static void 
+    ConnectImage( const TReader * reader, 
+                  TImageSpatialObject * imageSpatialObject )
+    {
+       imageSpatialObject->SetImage( reader->GetITKImage() );  
+    }
+
+}; // end of ImageReaderToImageSpatialObject class
+
+} // end of Friend namespace
+
+
+  
 /** \class ImageReader
  * 
  * \brief This class reads image data stored in files and provide
@@ -30,7 +65,7 @@ namespace igstk
  * \ingroup Object
  */
 
-template <class TPixelType, unsigned int Dimension>
+template < class TImageSpatialObject >
 class ImageReader : public itk::Object
 {
 
@@ -44,18 +79,12 @@ public:
   typedef itk::SmartPointer<Self>               Pointer;
   typedef itk::SmartPointer<const Self>         ConstPointer;
 
-  itkStaticConstMacro(ImageDimension, unsigned int, Dimension);
 
   /** Some convenient typedefs for input image */
-  typedef TPixelType                            PixelType;
-  typedef itk::Image<PixelType,ImageDimension>  ImageType;
-  typedef typename ImageType::ConstPointer      ImagePointer;
-  typedef typename ImageType::RegionType        ImageRegionType; 
-  typedef itk::ImageFileReader< ImageType >     ImageFileReaderType;
-  typedef itk::VTKImageExport< ImageType >      ExportFilterType;
-
- /** Method to get the VTK image data */
-  const vtkImageData * GetVTKImageData() const;
+  typedef TImageSpatialObject                         ImageSpatialObjectType;
+  typedef typename ImageSpatialObjectType::ImageType  ImageType;
+  typedef typename ImageType::ConstPointer            ImagePointer;
+  typedef typename ImageType::RegionType              ImageRegionType; 
 
   /**  Run-time type information (and related methods). */
   igstkTypeMacro( ImageReader, itk::Object );
@@ -63,14 +92,18 @@ public:
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
 
-  /** method to get the ITK Image data */
-//  virtual const ImageReader::ImageType::Pointer ImageReader::GetITKImageData() const
-
-  /** Set method for the DICOM file name */
-  void SetFileName( const char *filename );
 
   /** Returns true if the reader can open the file and the header is valid */
   bool CheckFileIsValid();
+
+
+  /** Return the output of the reader as a ImageSpatialObject */
+  const ImageSpatialObjectType * GetOutput() const;
+  
+
+  /** Declare the ImageReaderToImageSpatialObject class to be a friend 
+   *  in order to give it access to the private method GetITKImage(). */
+  igstkFriendClassMacro( igstk::Friends::ImageReaderToImageSpatialObject );
 
 protected:
 
@@ -80,18 +113,19 @@ protected:
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
-  /* Internal itkImageFileReader */
-  typename ImageFileReaderType::Pointer      m_ImageFileReader;
-
-  /** Classes to connect an ITK pipeline to a VTK pipeline */
-  vtkImageImport                               * m_vtkImporter;
-  typename ExportFilterType::Pointer             m_itkExporter;
-
   /** Declarations needed for the Logger */
   igstkLoggerMacro();
 
+  /** Connect the ITK image to the output ImageSpatialObject */
+  void ConnectImage();
+
 private:
   
+  typename ImageSpatialObjectType::Pointer   m_ImageSpatialObject;
+
+  // FIXME : This must be replaced with StateMachine logic
+  virtual const ImageType * GetITKImage() const { return NULL; }
+    
 };
 
 } // end namespace igstk
@@ -101,3 +135,4 @@ private:
 #endif
 
 #endif // __igstkImageReader_h
+

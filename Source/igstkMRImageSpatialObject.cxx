@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkCTImageReader.cxx
+  Module:    igstkMRImageSpatialObject.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -14,22 +14,36 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#include "igstkCTImageReader.h"
+
+#include "igstkMRImageSpatialObject.h"
 
 namespace igstk
 { 
 
 /** Constructor */
-CTImageReader::CTImageReader()
+MRImageSpatialObject
+::MRImageSpatialObject()
 {
 
 } 
 
+
+/** Destructor */
+MRImageSpatialObject
+::~MRImageSpatialObject()
+{
+
+} 
+
+
 /** Print Self function */
-void CTImageReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void 
+MRImageSpatialObject
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
 
 
 } // end namespace igstk
+

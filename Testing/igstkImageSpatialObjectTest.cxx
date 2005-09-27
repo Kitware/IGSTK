@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkCTImageReader.cxx
+  Module:    igstkImageSpatialObjectTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -14,22 +14,25 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#include "igstkCTImageReader.h"
 
-namespace igstk
-{ 
+#if defined(_MSC_VER)
+#pragma warning ( disable : 4786 )
+#endif
 
-/** Constructor */
-CTImageReader::CTImageReader()
+#include "igstkImageSpatialObject.h"
+
+
+int igstkImageSpatialObjectTest( int , char* [] )
 {
 
-} 
+ 
+  typedef signed short    PixelType;
+  const unsigned int      Dimension = 3;
 
-/** Print Self function */
-void CTImageReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
-{
-  Superclass::PrintSelf(os, indent);
+  typedef igstk::ImageSpatialObject< PixelType, Dimension > ImageSpatialObjectType;
+
+  ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New();
+
+  return EXIT_SUCCESS;
 }
 
-
-} // end namespace igstk

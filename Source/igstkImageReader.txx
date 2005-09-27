@@ -1,76 +1,73 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkImageReader.txx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #ifndef __igstkImageReader_txx
 #define __igstkImageReader_txx
 
 #include "igstkImageReader.h"
-#include "igstkEvents.h"
 
 namespace igstk
 { 
-
-/**
- * This function will connect the given itk::VTKImageExport filter to
- * the given vtkImageImport filter.
- */
-template <typename ITK_Exporter, typename VTK_Importer>
-void ConnectPipelines(ITK_Exporter exporter, VTK_Importer* importer)
-{
-  importer->SetUpdateInformationCallback(exporter->GetUpdateInformationCallback());
-  importer->SetPipelineModifiedCallback(exporter->GetPipelineModifiedCallback());
-  importer->SetWholeExtentCallback(exporter->GetWholeExtentCallback());
-  importer->SetSpacingCallback(exporter->GetSpacingCallback());
-  importer->SetOriginCallback(exporter->GetOriginCallback());
-  importer->SetScalarTypeCallback(exporter->GetScalarTypeCallback());
-  importer->SetNumberOfComponentsCallback(exporter->GetNumberOfComponentsCallback());
-  importer->SetPropagateUpdateExtentCallback(exporter->GetPropagateUpdateExtentCallback());
-  importer->SetUpdateDataCallback(exporter->GetUpdateDataCallback());
-  importer->SetDataExtentCallback(exporter->GetDataExtentCallback());
-  importer->SetBufferPointerCallback(exporter->GetBufferPointerCallback());
-  importer->SetCallbackUserData(exporter->GetCallbackUserData());
-}
-
 /** Constructor */
-template <class TPixelType, unsigned int TDimension>
-ImageReader<TPixelType,TDimension>::ImageReader()
+template < class TImageSpatialObject >
+ImageReader< TImageSpatialObject >
+::ImageReader()
 {
- // Create the ITK image file reader
-  m_ImageFileReader = ImageFileReaderType::New();
- 
- // Create the ITK export and VTK import filter
-  m_vtkImporter = vtkImageImport::New();
-  m_itkExporter = ExportFilterType::New(); 
+  // Create the Image spatial object that will be provided as output.
+  m_ImageSpatialObject = ImageSpatialObjectType::New();
 } 
 
 /** Destructor */
-template <class TPixelType, unsigned int TDimension>
-ImageReader<TPixelType,TDimension>::~ImageReader()  
+template < class TImageSpatialObject >
+ImageReader< TImageSpatialObject >
+::~ImageReader()  
 {
 
 }
 
 /** Print Self function */
-template <class TPixelType, unsigned int TDimension>
-void ImageReader<TPixelType,TDimension>::PrintSelf( std::ostream& os, itk::Indent indent ) const
+template < class TImageSpatialObject >
+void 
+ImageReader< TImageSpatialObject >
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
 
-template <class TPixelType, unsigned int TDimension>
-const vtkImageData * ImageReader<TPixelType,TDimension>::GetVTKImageData() const
+
+
+template < class TImageSpatialObject >
+const typename ImageReader< TImageSpatialObject >::ImageSpatialObjectType * 
+ImageReader< TImageSpatialObject >
+::GetOutput() const
 {
-  if( m_vtkImporter && m_itkExporter )
-    {
-    // Connect vtkImageImport to the vtkImageExport instance
-    ConnectPipelines( m_itkExporter, m_vtkImporter );
-
-    m_itkExporter->Update();
-
-    return( m_vtkImporter->GetOutput() );
-    }
-  else
-    {
-    return( NULL );
-    }
+  return m_ImageSpatialObject;
 }
+
+
+ 
+template < class TImageSpatialObject >
+void
+ImageReader< TImageSpatialObject >
+::ConnectImage()
+{
+  typedef Friends::ImageReaderToImageSpatialObject  HelperType;
+  HelperType::ConnectImage( this, m_ImageSpatialObject );
+}
+
 
 } // end namespace igstk
 

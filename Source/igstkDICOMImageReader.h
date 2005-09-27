@@ -1,4 +1,19 @@
+/*=========================================================================
 
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkDICOMImageReader.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #ifndef __igstkDICOMImageReader_h
 #define __igstkDICOMImageReader_h
 
@@ -23,28 +38,29 @@ namespace igstk
 
 /** \class DICOMImageReader
  * 
- * \brief This class reads DICOM files. The parameters of the object
- * are the ... Default ...
+ * \brief This class reads DICOM files. This class should not be instantiated
+ * directly, instead the derived classes that are specific to particular image
+ * modalities should be used.
  * 
- * \ingroup Object
+ * \ingroup Readers
  */
 
-template <class TPixelType>
-class DICOMImageReader : public ImageReader<TPixelType,3>
+template <class TImageSpatialObject>
+class DICOMImageReader : public ImageReader< TImageSpatialObject >
 {
 
 public:
 
   /** Typedefs */
   typedef DICOMImageReader                             Self;
-  typedef ImageReader<TPixelType,3>                    Superclass;
-  typedef itk::SmartPointer<Self>                      Pointer;
-  typedef itk::SmartPointer<const Self>                ConstPointer;
+  typedef ImageReader< TImageSpatialObject >           Superclass;
+  typedef itk::SmartPointer< Self >                    Pointer;
+  typedef itk::SmartPointer< const Self >              ConstPointer;
   typedef typename Superclass::ImageType               ImageType;
   typedef typename ImageType::ConstPointer             ImageConstPointer;
   typedef itk::Logger                                  LoggerType;
 
-  typedef itk::ImageSeriesReader<ImageType>     ImageSeriesReaderType;
+  typedef itk::ImageSeriesReader< ImageType >          ImageSeriesReaderType;
 
   /**  Run-time type information (and related methods). */
   igstkTypeMacro( DICOMImageReader, ImageReader );
@@ -52,21 +68,18 @@ public:
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
 
+  typedef std::string    DirectoryNameType;
+  
   /** Method to pass the directory name containing the DICOM image data */
-  void SetDirectory( const char *directory );
+  void RequestSetDirectory( const DirectoryNameType & directory );
 
   /** This method request image read **/
-  void RequestImageRead();
-
-  /** This method requests image buffer emptied */
-  void RequestEmptyImageBuffer();
+  void RequestReadImage();
 
   /* These Get functions should be converted to a get request inputs to
 * the state machine */
   const char *             GetModality()     const ;
   const char *             GetPatientName()  const;
-  vtkImageData   *   GetVTKImageData() const;
-  ImageConstPointer  GetITKImageData() const;
 
   /** Declarations needed for the State Machine */
   igstkStateMachineTemplatedMacro();
@@ -81,17 +94,16 @@ protected:
   ~DICOMImageReader( void );
 
   /** Helper classes for the image series reader */
-  itk::GDCMSeriesFileNames::Pointer     m_names;
-  itk::GDCMImageIO::Pointer             m_io;
+  itk::GDCMSeriesFileNames::Pointer     m_FileNames;
+  itk::GDCMImageIO::Pointer             m_ImageIO;
 
   /* Internal itkImageSeriesReader */
   typename ImageSeriesReaderType::Pointer        m_ImageSeriesReader;
 
 
   itkEventMacro( DICOMImageReaderEvent,                    IGSTKEvent);
-  itkEventMacro( InvalidRequestErrorEvent,                 DICOMImageReaderEvent );
-  itkEventMacro( ImageReadingErrorEvent,                   DICOMImageReaderEvent );
-
+  itkEventMacro( DICOMInvalidRequestErrorEvent,            DICOMImageReaderEvent );
+  itkEventMacro( DICOMImageReadingErrorEvent,              DICOMImageReaderEvent );
 
 
   /** Print the object information in a stream. */
@@ -99,7 +111,9 @@ protected:
 
 private:
 
-  std::string                  m_ImageDirectoryName;
+  DirectoryNameType            m_ImageDirectoryName;
+  DirectoryNameType            m_ImageDirectoryNameToBeSet;
+
   /** List of States */
   StateType                    m_IdleState;
   StateType                    m_ImageDirectoryNameReadState;
@@ -107,19 +121,29 @@ private:
 
 
   /** List of State Inputs */
-  InputType                     m_ImageDirectoryNameInput;
-  InputType                     m_ReadImageRequestInput;
-  
-  void ReadDirectoryName();
+  InputType                    m_ReadImageRequestInput;
+
+  InputType                    m_ImageDirectoryNameValidInput; 
+  InputType                    m_ImageDirectoryNameIsEmptyInput;
+  InputType                    m_ImageDirectoryNameDoesNotExistInput;
+  InputType                    m_ImageDirectoryNameIsNotDirectoryInput;
+  InputType                    m_ImageDirectoryNameHasNotEnoughFilesInput;
+
+  void SetDirectoryName();
+
+  void ReadDirectoryFileNames();
 
   /** This method request image read **/
-  void ReadImage();
+  void AttemptReadImage();
 
-/** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent
+  /** This method MUST be private in order to prevent unsafe access to the ITK
+   * image level */
+  virtual const ImageType * GetITKImage() const;
+  
+ /** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent
  when invalid requests are made */
   void ReportInvalidRequest();
 
-  igstkSetStringMacro(ImageDirectoryName);
 
   char m_PatientName[2048 ];
   char m_PatientID[2048 ];
