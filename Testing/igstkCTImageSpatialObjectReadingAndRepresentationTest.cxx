@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkCTImageReaderTest.cxx
+  Module:    igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -20,16 +20,18 @@
 #endif
 
 #include "igstkCTImageReader.h"
+#include "igstkCTImageSpatialObjectRepresentation.h"
+#include "igstkView2D.h"
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-int igstkCTImageReaderTest( int argc, char* argv[] )
+int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[] )
 {
 
   if( argc < 2 )
     {
-    std::cerr<<"Usage: "<<argv[0]<<"  CTImage "<<std::endl;
+    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  "<<std::endl;
     return EXIT_FAILURE;
     }
   
@@ -69,8 +71,35 @@ int igstkCTImageReaderTest( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  igstk::CTImageSpatialObject::ConstPointer ctImage = reader->GetOutput();
+  typedef igstk::CTImageSpatialObjectRepresentation RepresentationType;
 
+  RepresentationType::Pointer representation = RepresentationType::New();
+          
+  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+
+  // Create an FLTK minimal GUI
+  Fl_Window * form = new Fl_Window(601,301,"View3D Test");
+    
+  typedef igstk::View2D  View2DType;
+
+  View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
+
+  form->end();
+  form->show();
+ 
+  view2D->RequestResetCamera();
+  view2D->RequestEnableInteractions();
+
+  // Do manual redraws
+  for(unsigned int i=0; i<10; i++)
+    {
+    view2D->Update();  // schedule redraw of the view
+    Fl::check();       // trigger FLTK redraws
+    }
+
+  delete view2D;
+  delete form;
+ 
   return EXIT_SUCCESS;
 }
 
