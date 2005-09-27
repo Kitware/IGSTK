@@ -32,7 +32,11 @@ INCLUDE_DIRECTORIES (
   ${IGSTK_BINARY_DIR}/Testing
   )
 
+IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
 ADD_TEST(igstkAuroraTrackerTest ${IGSTK_TESTS} igstkAuroraTrackerTest)
+ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+
+ADD_TEST(igstkAuroraTrackerSimulatedTest ${IGSTK_TESTS} igstkAuroraTrackerSimulatedTest)
 
 ADD_TEST(igstkBasicTrackerTest ${IGSTK_TESTS} igstkBasicTrackerTest)
 
@@ -52,7 +56,11 @@ ADD_TEST(igstkMeshObjectTest ${IGSTK_TESTS} igstkMeshObjectTest)
 
 ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
 
+IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
 ADD_TEST(igstkNDICommandInterpreterTest ${IGSTK_TESTS} igstkNDICommandInterpreterTest)
+ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+
+ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS} igstkNDICommandInterpreterSimulatedTest)
 
 ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTK_TESTS} igstkNDICommandInterpreterStressTest)
 
@@ -86,7 +94,7 @@ ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 
 
 SET(BasicTests_SRCS
-  igstkAuroraTrackerTest
+  igstkAuroraTrackerSimulatedTest
   igstkBasicTrackerTest
   igstkBinaryDataTest
   igstkCommunicationTest
@@ -96,7 +104,7 @@ SET(BasicTests_SRCS
   igstkFLTKTextLogOutputTest
   igstkMeshObjectTest
   igstkMultipleOutputTest
-  igstkNDICommandInterpreterTest
+  igstkNDICommandInterpreterSimulatedTest  
   igstkNDICommandInterpreterStressTest
   igstkPulseGeneratorTest
   igstkSerialCommunicationTest
@@ -113,6 +121,18 @@ SET(BasicTests_SRCS
   igstkViewRefreshRateTest
   igstkVTKLoggerOutputTest
   )
+
+IF(IGSTK_TEST_AURORA_ATTACHED)
+  SET(BasicTests_SRCS ${BasicTests_SRCS}
+    igstkAuroraTrackerTest.cxx
+  )
+ENDIF(IGSTK_TEST_AURORA_ATTACHED)
+
+IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+  SET(BasicTests_SRCS ${BasicTests_SRCS}
+    igstkNDICommandInterpreterTest
+  )
+ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
 
 ADD_EXECUTABLE(igstkTests igstkTests.cxx ${BasicTests_SRCS})
 

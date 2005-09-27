@@ -65,7 +65,11 @@ static void joinDirAndFile(char *result, int maxLen,
 }
 
 
+#ifdef IGSTK_SIMULATOR_TEST
+int igstkAuroraTrackerSimulatedTest( int, char * [] )
+#else  /* IGSTK_SIMULATOR_TEST */
 int igstkAuroraTrackerTest( int, char * [] )
+#endif
 {
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
@@ -74,15 +78,15 @@ int igstkAuroraTrackerTest( int, char * [] )
   std::cout << tool->GetNameOfClass() << std::endl;
   std::cout << tool << std::endl;
 
-#ifdef IGSTK_TEST_AURORA_ATTACHED
+#ifdef IGSTK_SIMULATOR_TEST
+    igstk::SerialCommunicationSimulator::Pointer serialComm = igstk::SerialCommunicationSimulator::New();
+#else  /* IGSTK_SIMULATOR_TEST */
 #ifdef WIN32
   igstk::SerialCommunicationForWindows::Pointer serialComm = igstk::SerialCommunicationForWindows::New();
 #else
   igstk::SerialCommunicationForPosix::Pointer serialComm = igstk::SerialCommunicationForPosix::New();
-#endif
-#else /* IGSTK_TEST_AURORA_ATTACHED */
-    igstk::SerialCommunicationSimulator::Pointer serialComm = igstk::SerialCommunicationSimulator::New();
-#endif /* IGSTK_TEST_AURORA_ATTACHED */
+#endif /* WIN32 */
+#endif /* IGSTK_SIMULATOR_TEST */
 
   // logger object created for logging mouse activities
 
@@ -101,11 +105,7 @@ int igstkAuroraTrackerTest( int, char * [] )
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
-#ifdef IGSTK_TEST_AURORA_ATTACHED
-  serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
-  serialComm->SetCaptureFileName( "RecordedStreamByAuroraTrackerTest.txt" );
-  serialComm->SetCapture( true );
-#else /* IGSTK_TEST_AURORA_ATTACHED */
+#ifdef IGSTK_SIMULATOR_TEST
   // load a previously captured file
   // (it is a polaris file for now, but should be changed to aurora)
   char pathToCaptureFile[1024];
@@ -113,7 +113,11 @@ int igstkAuroraTrackerTest( int, char * [] )
                   IGSTK_DATA_ROOT,
                   "Input/polaris_stream_07_27_2005.txt" );
   serialComm->SetFileName( pathToCaptureFile );
-#endif /* IGSTK_TEST_AURORA_ATTACHED */
+#else /* IGSTK_SIMULATOR_TEST */
+  serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
+  serialComm->SetCaptureFileName( "RecordedStreamByAuroraTrackerTest.txt" );
+  serialComm->SetCapture( true );
+#endif /* IGSTK_SIMULATOR_TEST */
 
   serialComm->OpenCommunication();
 

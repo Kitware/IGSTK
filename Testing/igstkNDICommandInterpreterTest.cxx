@@ -20,7 +20,6 @@
 #pragma warning( disable : 4786 )
 #endif
 
-//#define IGSTK_TEST_POLARIS_ATTACHED
 #include <iostream>
 #include <fstream>
 #include <set>
@@ -101,17 +100,21 @@ public:
   }
 };
 
+#ifdef IGSTK_SIMULATOR_TEST
+int igstkNDICommandInterpreterSimulatedTest( int, char * [] )
+#else  /* IGSTK_SIMULATOR_TEST */
 int igstkNDICommandInterpreterTest( int, char * [] )
+#endif
 {
-#ifdef IGSTK_TEST_POLARIS_ATTACHED
+#ifdef IGSTK_SIMULATOR_TEST
+  typedef igstk::SerialCommunicationSimulator   CommunicationType;
+#else  /* IGSTK_SIMULATOR_TEST */
 #ifdef WIN32
   typedef igstk::SerialCommunicationForWindows  CommunicationType;
 #else
   typedef igstk::SerialCommunicationForPosix    CommunicationType;
-#endif
-#else /* IGSTK_TEST_POLARIS_ATTACHED */
-  typedef igstk::SerialCommunicationSimulator   CommunicationType;
-#endif /* IGSTK_TEST_POLARIS_ATTACHED */
+#endif /* WIN32 */
+#endif /* IGSTK_SIMULATOR_TEST */
 
   typedef igstk::NDICommandInterpreter  CommandInterpreterType;
   typedef itk::Logger                   LoggerType; 
@@ -139,18 +142,18 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   // set an observer for the interpreter
   interpreter->AddObserver( igstk::NDIErrorEvent(), errorCommand );
 
-#ifdef IGSTK_TEST_POLARIS_ATTACHED
-  // capture a fresh data file
-  serialComm->SetCaptureFileName( "PolarisCaptureForNDICommandInterpreterTest.txt" );
-  serialComm->SetCapture( true );
-#else /* IGSTK_TEST_POLARIS_ATTACHED */
+#ifdef IGSTK_SIMULATOR_TEST
   // load a previously captured file
   char pathToCaptureFile[1024];
   joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTK_DATA_ROOT,
                   "Input/polaris_stream_08_31_2005_NDICommandInterpreter.txt" );
   serialComm->SetFileName( pathToCaptureFile );
-#endif /* IGSTK_TEST_POLARIS_ATTACHED */
+#else /* IGSTK_SIMULATOR_TEST */
+  // capture a fresh data file
+  serialComm->SetCaptureFileName( "PolarisCaptureForNDICommandInterpreterTest.txt" );
+  serialComm->SetCapture( true );
+#endif /* IGSTK_SIMULATOR_TEST */
 
   serialComm->SetPortNumber(IGSTK_TEST_POLARIS_PORT_NUMBER);
 

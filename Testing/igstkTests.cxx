@@ -5,11 +5,15 @@
 #endif
 #include <iostream>
 #include "itkTestMain.h" 
+#include "igstkSystemInformation.h"
 
 
 void RegisterTests()
 {
+#ifdef IGSTK_TEST_AURORA_ATTACHED
   REGISTER_TEST(igstkAuroraTrackerTest);
+#endif
+  REGISTER_TEST(igstkAuroraTrackerSimulatedTest);
   REGISTER_TEST(igstkBasicTrackerTest);
   REGISTER_TEST(igstkBinaryDataTest);
   REGISTER_TEST(igstkCommunicationTest);
@@ -19,7 +23,12 @@ void RegisterTests()
   REGISTER_TEST(igstkFLTKTextLogOutputTest);
   REGISTER_TEST(igstkMeshObjectTest);
   REGISTER_TEST(igstkMultipleOutputTest);
+#if defined( IGSTK_TEST_AURORA_ATTACHED )
   REGISTER_TEST(igstkNDICommandInterpreterTest);
+#elif defined( IGSTK_TEST_POLARIS_ATTACHED )
+  REGISTER_TEST(igstkNDICommandInterpreterTest);
+#endif
+  REGISTER_TEST(igstkNDICommandInterpreterSimulatedTest);
   REGISTER_TEST(igstkNDICommandInterpreterStressTest);
   REGISTER_TEST(igstkPulseGeneratorTest);
   REGISTER_TEST(igstkSerialCommunicationTest);
