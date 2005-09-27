@@ -31,6 +31,7 @@ public:
   typedef LandmarkRegistration                            Self;
   typedef itk::SmartPointer<Self>                         Pointer;
   typedef itk::SmartPointer<const Self>                   ConstPointer;
+  typedef Object                                          Superclass;
 
   /** typedef for LoggerType */
   typedef itk::Logger                    LoggerType;
@@ -51,6 +52,9 @@ public:
   typedef typename TransformInitializerType::LandmarkPointType      LandmarkTrackerPointType;
   typedef typename TransformInitializerType::Pointer                TransformInitializerPointerType;
   typedef typename LandmarkPointContainerType::const_iterator       PointsContainerConstIterator;
+
+  /** Method for defining the name of the class */ 
+  igstkTypeMacro(LandmarkRegistration, Object); 
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
