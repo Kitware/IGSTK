@@ -6,6 +6,7 @@ SET(FourViewsTrackingWithCT_GUI_SRCS
   
 SET(FourViewsTrackingWithCT_SRCS
   main.cxx
+  FourViewsTrackingWithCTImplementation.cxx
   )
 
 INCLUDE_DIRECTORIES(

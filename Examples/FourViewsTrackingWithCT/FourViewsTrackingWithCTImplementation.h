@@ -1,17 +1,17 @@
 /*=========================================================================
 
-  Program:   Image Guided Surgery Software Toolkit
-  Module:    FourViewsTrackingWithCTImplementation.h
-  Language:  C++
-  Date:      $Date$
-  Version:   $Revision$
+Program:   Image Guided Surgery Software Toolkit
+Module:    FourViewsTrackingWithCTImplementation.h
+Language:  C++
+Date:      $Date$
+Version:   $Revision$
 
-  Copyright (c) ISIS Georgetown University. All rights reserved.
-  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+Copyright (c) ISIS Georgetown University. All rights reserved.
+See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 
@@ -19,7 +19,7 @@
 #define _FourViewsTrackingWithCTImplementation_h
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4284 )
 #endif
 
@@ -31,6 +31,7 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkAuroraTracker.h"
+
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
 #else
@@ -40,150 +41,60 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+
 namespace igstk
 {
 
 
 class FourViewsTrackingWithCTImplementation : public FourViewsTrackingWithCT
 {
-  public:
+public:
+  
+  /** typedefs for the logger */
+  typedef itk::Logger              LoggerType; 
+  
+  /** typedefs for the log output */
+  typedef itk::StdStreamLogOutput  LogOutputType;
+  
+  /** typedefs for the tracker */
+  typedef igstk::AuroraTracker     TrackerType;
 
-    typedef itk::Logger              LoggerType; 
-    typedef itk::StdStreamLogOutput  LogOutputType;
-
-    typedef igstk::AuroraTracker     TrackerType;
-
-#ifdef WIN32
+  /** typedefs for the communication */
+  #ifdef WIN32
     typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
+  #else
     typedef igstk::SerialCommunicationForPosix    CommunicationType;
-#endif
+  #endif
 
-  public:
+public:
 
-    FourViewsTrackingWithCTImplementation()
-      {
-      m_Tracker = TrackerType::New();
+  /** Enable the tracking */
+  void EnableTracking( void );
 
-      m_Logger = LoggerType::New();
-      m_LogOutput = LogOutputType::New();
-      m_LogFile.open("logFourViewsTrackingWithCT.txt");
-      if( !m_LogFile.fail() )
-        {
-        m_LogOutput->SetStream( m_LogFile );
-        }
-      else
-        {
-        std::cerr << "Problem opening Log file, using cerr instead " << std::endl;
-        m_LogOutput->SetStream( std::cerr );
-        }
-      m_Logger->AddLogOutput( m_LogOutput );
+  void DisableTracking( void );
 
-      // add stdout for debug purposes
-      LogOutputType::Pointer coutLogOutput = LogOutputType::New();
-      coutLogOutput->SetStream( std::cout );
-      m_Logger->AddLogOutput( coutLogOutput );
+  void AddCylinder( igstk::CylinderObjectRepresentation * cylinderRepresentation );
 
-      m_Logger->SetPriorityLevel( LoggerType::DEBUG );
-      m_Tracker->SetLogger( m_Logger );
+  void AddEllipsoid( igstk::EllipsoidObjectRepresentation * ellipsoidRepresentation );
 
-      m_Communication = CommunicationType::New();
-      m_Communication->SetLogger( m_Logger );
-      m_Communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
-      m_Communication->SetParity( igstk::SerialCommunication::NoParity );
-      m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
-      m_Communication->SetDataBits( igstk::SerialCommunication::DataBits8 );
-      m_Communication->SetStopBits( igstk::SerialCommunication::StopBits1 );
-      m_Communication->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
-      m_Tracker->SetCommunication(m_Communication);
+  void AttachObjectToTrack( igstk::SpatialObject * objectToTrack );
 
-      m_Communication->OpenCommunication();
+  void LoadImage( void );
 
-      m_Tracker->Open();
-      m_Tracker->Initialize();
+  FourViewsTrackingWithCTImplementation( void );
+  virtual ~FourViewsTrackingWithCTImplementation( void );
 
-      // Set up the four quadrant views
-      this->Display3D->RequestResetCamera();
-      this->Display3D->Update();
-      this->Display3D->RequestEnableInteractions();
-      this->Display3D->RequestSetRefreshRate( 60 ); // 60 Hz
-      this->Display3D->RequestStart();
+private:
 
-      this->DisplayAxial->RequestResetCamera();
-      this->DisplayAxial->Update();
-      this->DisplayAxial->RequestEnableInteractions();
-      this->DisplayAxial->RequestSetRefreshRate( 60 ); // 60 Hz
-      this->DisplayAxial->RequestStart();
+  LoggerType::Pointer     m_Logger;
+  LogOutputType::Pointer  m_LogOutput;
+  TrackerType::Pointer    m_Tracker;
 
-      this->DisplayCoronal->RequestResetCamera();
-      this->DisplayCoronal->Update();
-      this->DisplayCoronal->RequestEnableInteractions();
-      this->DisplayCoronal->RequestSetRefreshRate( 60 ); // 60 Hz
-      this->DisplayCoronal->RequestStart();
+  CommunicationType::Pointer m_Communication;
 
-      this->DisplaySagittal->RequestResetCamera();
-      this->DisplaySagittal->Update();
-      this->DisplaySagittal->RequestEnableInteractions();
-      this->DisplaySagittal->RequestSetRefreshRate( 60 ); // 60 Hz
-      this->DisplaySagittal->RequestStart();
-      
-      m_Tracking = false;
-      }
+  bool                    m_Tracking;
 
-    ~FourViewsTrackingWithCTImplementation()
-      {
-      m_Tracker->Reset();
-      m_Tracker->StopTracking();
-      m_Tracker->Close();
-      }
-    
-    void EnableTracking()
-      {
-      m_Tracking = true;
-      m_Tracker->StartTracking();
-      }
-    
-    void DisableTracking()
-      {
-      m_Tracker->Reset();
-      m_Tracker->StopTracking();
-      m_Tracking = false;
-      }
-    
-    void AddCylinder( igstk::CylinderObjectRepresentation * cylinderRepresentation )
-      {
-       this->Display3D->RequestAddObject(       cylinderRepresentation->Copy() );
-       this->DisplayAxial->RequestAddObject(    cylinderRepresentation->Copy() );
-       this->DisplayCoronal->RequestAddObject(  cylinderRepresentation->Copy() );
-       this->DisplaySagittal->RequestAddObject( cylinderRepresentation->Copy() );
-      }
-    
-    void AddEllipsoid( igstk::EllipsoidObjectRepresentation * ellipsoidRepresentation )
-      {
-      this->Display3D->RequestAddObject(       ellipsoidRepresentation->Copy() );
-      this->DisplayAxial->RequestAddObject(    ellipsoidRepresentation->Copy() );
-      this->DisplayCoronal->RequestAddObject(  ellipsoidRepresentation->Copy() );
-      this->DisplaySagittal->RequestAddObject( ellipsoidRepresentation->Copy() );
-      }
-
-    void AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
-      {
-      const unsigned int toolPort = 0;
-      const unsigned int toolNumber = 0;
-      m_Tracker->AttachObjectToTrackerTool( toolPort, toolNumber, objectToTrack );
-      }
-
-  private:
-
-    LoggerType::Pointer     m_Logger;
-    LogOutputType::Pointer  m_LogOutput;
-    TrackerType::Pointer    m_Tracker;
-
-    CommunicationType::Pointer m_Communication;
-
-    bool                    m_Tracking;
-    
-    std::ofstream           m_LogFile;
+  std::ofstream           m_LogFile;
 };
 
 
