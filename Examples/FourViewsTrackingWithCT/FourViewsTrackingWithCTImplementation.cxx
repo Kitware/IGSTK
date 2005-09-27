@@ -151,15 +151,15 @@ void FourViewsTrackingWithCTImplementation::LoadImage( void )
   if( directoryname != NULL )
     {
 
-    CTImageSpatialObject::Pointer imageObject = CTImageSpatialObject::New();
-
     CTImageReader::Pointer  reader = CTImageReader::New();
     reader->RequestSetDirectory(directoryname);
     reader->RequestReadImage();
 
-    Friends::ImageReaderToImageSpatialObject  *connector;
-    connector->ConnectImage(reader,imageObject);
-    }
+    CTImageSpatialObject::ConstPointer imageObject = reader->GetOutput();
+  
+    //CTImageReader::ImageSpatialObjectType::ConstPointer imageObject =  reader->GetOutput() ;
+
+   }
 }
 
 } // end of namespace
