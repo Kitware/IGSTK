@@ -65,7 +65,7 @@ ImageReader< TImageSpatialObject >
 ::ConnectImage()
 {
   typedef Friends::ImageReaderToImageSpatialObject  HelperType;
-  HelperType::ConnectImage( this, m_ImageSpatialObject );
+  HelperType::ConnectImage( this, m_ImageSpatialObject.GetPointer() );
 }
 
 
