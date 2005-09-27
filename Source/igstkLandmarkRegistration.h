@@ -31,7 +31,7 @@ public:
   typedef LandmarkRegistration                            Self;
   typedef itk::SmartPointer<Self>                         Pointer;
   typedef itk::SmartPointer<const Self>                   ConstPointer;
-  typedef Object                                          Superclass;
+  typedef itk::Object                                     Superclass;
 
   /** typedef for LoggerType */
   typedef itk::Logger                    LoggerType;
