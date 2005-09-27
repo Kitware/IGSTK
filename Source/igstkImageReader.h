@@ -87,14 +87,11 @@ public:
   typedef typename ImageType::RegionType              ImageRegionType; 
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro( ImageReader, itk::Object );
+  igstkTypeMacro( ImageReader, Object );
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
 
-
-  /** Returns true if the reader can open the file and the header is valid */
-  bool CheckFileIsValid();
 
 
   /** Return the output of the reader as a ImageSpatialObject */
