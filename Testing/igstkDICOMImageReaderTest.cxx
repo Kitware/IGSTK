@@ -40,7 +40,7 @@ public:
                                        > ImageSpatialObjectType;
   
  
-  typedef igstk::DICOMImageReader<ImageSpatialObjectType>::DICOMModalityEvent DICOMModalityEventType;
+  typedef igstk::DICOMModalityEvent DICOMModalityEventType;
   
   void Execute(const itk::Object *caller, const itk::EventObject & event)
   {
@@ -48,8 +48,11 @@ public:
   }
   void Execute(itk::Object *caller, const itk::EventObject & event)
   {
-    const DICOMModalityEventType * modalityEvent = dynamic_cast < const DICOMModalityEventType* > ( &event );    
-    std::cerr << "Modality= " << modalityEvent->GetString() << std::endl;
+    if( DICOMModalityEventType().CheckEvent( &event ) )
+      {
+      const DICOMModalityEventType * modalityEvent = dynamic_cast< const DICOMModalityEventType *>( &event );
+      std::cout << "Modality= " << modalityEvent->GetString() << std::endl;
+      }
       
   }
 protected:
@@ -72,7 +75,7 @@ public:
                                        > ImageSpatialObjectType;
   
  
-  typedef igstk::DICOMImageReader<ImageSpatialObjectType>::DICOMPatientNameEvent DICOMPatientNameEventType;
+  typedef igstk::DICOMPatientNameEvent DICOMPatientNameEventType;
   
   void Execute(const itk::Object *caller, const itk::EventObject & event)
   {
@@ -80,7 +83,8 @@ public:
   }
   void Execute(itk::Object *caller, const itk::EventObject & event)
   {
-    const DICOMPatientNameEventType * patientNameEvent = dynamic_cast < const DICOMPatientNameEventType* > ( &event );    
+    const DICOMPatientNameEventType * patientNameEvent = 
+          dynamic_cast < const DICOMPatientNameEventType* > ( &event );    
     std::cerr << "PatientName= " << patientNameEvent->GetString() << std::endl;
       
   }
@@ -137,16 +141,16 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
  /* Add observer to listen to modality info */
   
   DICOMImageModalityInfoCallback::Pointer dimcb = DICOMImageModalityInfoCallback::New();
-    ::itk::EventObject* eventModalityInfo=    new igstk::DICOMImageReader<ImageSpatialObjectType>::DICOMModalityEvent();
-    reader->AddObserver(*eventModalityInfo, dimcb );
+    
+  reader->AddObserver( igstk::DICOMModalityEvent(), dimcb );
 
   reader->RequestModalityInfo(); 
  
   /* Add observer to listen to patient name  info */
   
   DICOMImagePatientNameInfoCallback::Pointer dipncb = DICOMImagePatientNameInfoCallback::New();
-    ::itk::EventObject* eventPatientNameInfo=    new igstk::DICOMImageReader<ImageSpatialObjectType>::DICOMPatientNameEvent();
-    reader->AddObserver(*eventPatientNameInfo, dipncb );
+
+  reader->AddObserver( igstk::DICOMPatientNameEvent(), dipncb );
 
   reader->RequestPatientNameInfo(); 
  
