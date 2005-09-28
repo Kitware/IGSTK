@@ -38,9 +38,9 @@ namespace igstk
 {
 
 
-itkEventMacro( DICOMImageReaderEvent,                             IGSTKEvent);
 itkEventMacro( DICOMModalityEvent,                                StringEvents);
 itkEventMacro( DICOMPatientNameEvent,                             StringEvents);
+itkEventMacro( DICOMImageReaderEvent,                             StringEvents);
 
 // Invalid request error event 
 itkEventMacro( DICOMInvalidRequestErrorEvent,                      DICOMImageReaderEvent );

@@ -129,7 +129,6 @@ void DICOMImageReader<TImageSpatialObject>
   this->m_StateMachine.PushInput( this->m_ImageDirectoryNameValidInput );
   this->m_StateMachine.ProcessInputs();
 
-  m_ImageDirectoryNameToBeSet = directory;
 }
 
 
@@ -175,7 +174,9 @@ void DICOMImageReader<TPixelType>::AttemptReadImage()
     }
   catch( itk::ExceptionObject & excp )
     {
-    this->InvokeEvent( DICOMImageReadingErrorEvent() );
+    DICOMImageReadingErrorEvent event;
+    event.SetString( excp.GetDescription() );
+    this->InvokeEvent( event );
     return;
     }
   
@@ -201,40 +202,46 @@ template <class TPixelType>
 void
 DICOMImageReader<TPixelType>::ReportInvalidRequest()
 {
-    igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportInvalidRequest called...\n");
-    this->InvokeEvent( DICOMInvalidRequestErrorEvent() );
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportInvalidRequest called...\n");
+  this->InvokeEvent( DICOMInvalidRequestErrorEvent() );
 }
 
 template <class TPixelType>
 void
 DICOMImageReader<TPixelType>::ReportImageDirectoryEmptyError()
 {
-    igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryEmptyError called...\n");
-    this->InvokeEvent( DICOMImageDirectoryEmptyErrorEvent());
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryEmptyError called...\n");
+  this->InvokeEvent( DICOMImageDirectoryEmptyErrorEvent() );
 }
 
 template <class TPixelType>
 void
 DICOMImageReader<TPixelType>::ReportImageDirectoryDoesNotExistError()
 {
-    igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryDoesNotExistError called...\n");
-    this->InvokeEvent( DICOMImageDirectoryDoesNotExistErrorEvent());
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryDoesNotExistError called...\n");
+  DICOMImageDirectoryDoesNotExistErrorEvent event;
+  event.SetString( m_ImageDirectoryNameToBeSet );
+  this->InvokeEvent( event );
 }
 
 template <class TPixelType>
 void
 DICOMImageReader<TPixelType>::ReportImageDirectoryDoesNotHaveEnoughFilesError()
 {
-    igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryDoesNotHaveEnoughFilesError: called...\n");
-    this->InvokeEvent( DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent() );
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryDoesNotHaveEnoughFilesError: called...\n");
+  DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent event;
+  event.SetString( m_ImageDirectoryNameToBeSet );
+  this->InvokeEvent( event );
 }
 
 template <class TPixelType>
 void
 DICOMImageReader<TPixelType>::ReportImageDirectoryIsNotDirectoryError()
 {
-    igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryIsNotDirectoryError: called...\n");
-    this->InvokeEvent( DICOMImageDirectoryIsNotDirectoryErrorEvent() );
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryIsNotDirectoryError: called...\n");
+  DICOMImageDirectoryIsNotDirectoryErrorEvent event;
+  event.SetString( m_ImageDirectoryNameToBeSet );
+  this->InvokeEvent( event );
 }
 
 
@@ -253,7 +260,7 @@ void
 DICOMImageReader<TPixelType>::RequestModalityInfo() 
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::RequestModalityInfo called...\n");
-  this->m_StateMachine.PushInput( this->m_GetModalityInfoInput);
+  this->m_StateMachine.PushInput( this->m_GetModalityInfoInput );
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -273,8 +280,8 @@ void
 DICOMImageReader<TPixelType>::GetModalityInfo() 
 {
   DICOMModalityEvent event;
-  event.SetString(m_Modality);
-  this->InvokeEvent(event);
+  event.SetString( m_Modality );
+  this->InvokeEvent( event );
 }
 
 /** Get the patient name */
@@ -283,8 +290,8 @@ void
 DICOMImageReader<TPixelType>::GetPatientNameInfo() 
 {
   DICOMPatientNameEvent event;
-  event.SetString(m_PatientName);
-  this->InvokeEvent(event);
+  event.SetString( m_PatientName );
+  this->InvokeEvent( event );
 }
 
 /** Get the image. This function MUST be private in order to  prevent unsafe
@@ -301,7 +308,7 @@ DICOMImageReader<TPixelType>::GetITKImage() const
 template <class TPixelType>
 void DICOMImageReader<TPixelType>::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
-  Superclass::PrintSelf(os, indent);
+  Superclass::PrintSelf( os, indent );
 }
 
 } // end namespace igstk
