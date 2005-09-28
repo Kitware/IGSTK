@@ -90,6 +90,22 @@ public:
   /** Declarations needed for the Logger */
   igstkLoggerMacro();
 
+  itkEventMacro( DICOMImageReaderEvent,                             IGSTKEvent);
+  itkEventMacro( DICOMModalityEvent,                                StringEvents);
+  itkEventMacro( DICOMPatientNameEvent,                             StringEvents);
+ 
+
+  // Invalid request error event 
+  itkEventMacro( DICOMInvalidRequestErrorEvent,                      DICOMImageReaderEvent );
+  
+  // Events to handle errors with the ImageDirectory name
+  itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,                  DICOMImageReaderEvent );
+  itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,           DICOMImageReaderEvent );
+  itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,         DICOMImageReaderEvent );
+  itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent, DICOMImageReaderEvent );
+
+  //Image reading error
+  itkEventMacro( DICOMImageReadingErrorEvent,                        DICOMImageReaderEvent );
 
 protected:
 
@@ -102,21 +118,6 @@ protected:
 
   /* Internal itkImageSeriesReader */
   typename ImageSeriesReaderType::Pointer        m_ImageSeriesReader;
-
-
-  itkEventMacro( DICOMImageReaderEvent,                    IGSTKEvent);
-  itkEventMacro( DICOMInvalidRequestErrorEvent,            DICOMImageReaderEvent );
-  itkEventMacro( DICOMModalityEvent,                       StringEvents);
-  itkEventMacro( DICOMPatientNameEvent,                    StringEvents);
-  
-  // Events to handle errors with the ImageDirectory name 
-  itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,DICOMImageReaderEvent );
-  itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,DICOMImageReaderEvent );
-  itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,DICOMImageReaderEvent );
-  itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent,DICOMImageReaderEvent );
-
-  //Image reading error
-  itkEventMacro( DICOMImageReadingErrorEvent,              DICOMImageReaderEvent );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
