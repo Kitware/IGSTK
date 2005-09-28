@@ -23,7 +23,74 @@
 #include "igstkImageSpatialObject.h"
 
 #include "itkLogger.h"
+#include "itkCommand.h"
 #include "itkStdStreamLogOutput.h"
+
+class DICOMImageModalityInfoCallback: public itk::Command
+{
+public:
+  typedef DICOMImageModalityInfoCallback    Self;
+  typedef itk::SmartPointer<Self>           Pointer;
+  typedef itk::Command                      Superclass;
+  itkNewMacro(Self);
+
+  typedef igstk::ImageSpatialObject< 
+                                short, 
+                                3                                
+                                       > ImageSpatialObjectType;
+  
+ 
+  typedef igstk::DICOMImageReader<ImageSpatialObjectType>::DICOMModalityEvent DICOMModalityEventType;
+  
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  {
+
+  }
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+  {
+    const DICOMModalityEventType * modalityEvent = dynamic_cast < const DICOMModalityEventType* > ( &event );    
+    std::cerr << "Modality= " << modalityEvent->GetString() << std::endl;
+      
+  }
+protected:
+  DICOMImageModalityInfoCallback()   { };
+
+private:
+};
+
+class DICOMImagePatientNameInfoCallback: public itk::Command
+{
+public:
+  typedef DICOMImagePatientNameInfoCallback    Self;
+  typedef itk::SmartPointer<Self>           Pointer;
+  typedef itk::Command                      Superclass;
+  itkNewMacro(Self);
+
+  typedef igstk::ImageSpatialObject< 
+                                short, 
+                                3                                
+                                       > ImageSpatialObjectType;
+  
+ 
+  typedef igstk::DICOMImageReader<ImageSpatialObjectType>::DICOMPatientNameEvent DICOMPatientNameEventType;
+  
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  {
+
+  }
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+  {
+    const DICOMPatientNameEventType * patientNameEvent = dynamic_cast < const DICOMPatientNameEventType* > ( &event );    
+    std::cerr << "PatientName= " << patientNameEvent->GetString() << std::endl;
+      
+  }
+protected:
+  DICOMImagePatientNameInfoCallback()   { };
+
+private:
+};
+
+
 
 int igstkDICOMImageReaderTest( int argc, char* argv[] )
 {
@@ -66,6 +133,22 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
 
   reader->RequestSetDirectory( directoryName );
   reader->RequestReadImage();
+  
+ /* Add observer to listen to modality info */
+  
+  DICOMImageModalityInfoCallback::Pointer dimcb = DICOMImageModalityInfoCallback::New();
+    ::itk::EventObject* eventModalityInfo=    new igstk::DICOMImageReader<ImageSpatialObjectType>::DICOMModalityEvent();
+    reader->AddObserver(*eventModalityInfo, dimcb );
+
+  reader->RequestModalityInfo(); 
+ 
+  /* Add observer to listen to patient name  info */
+  
+  DICOMImagePatientNameInfoCallback::Pointer dipncb = DICOMImagePatientNameInfoCallback::New();
+    ::itk::EventObject* eventPatientNameInfo=    new igstk::DICOMImageReader<ImageSpatialObjectType>::DICOMPatientNameEvent();
+    reader->AddObserver(*eventPatientNameInfo, dipncb );
+
+  reader->RequestPatientNameInfo(); 
  
   return EXIT_SUCCESS;
 }
