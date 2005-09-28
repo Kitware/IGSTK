@@ -34,6 +34,7 @@ void RegisterTests()
 //  REGISTER_TEST(igstkPolarisTrackerSimulatedTest);
   REGISTER_TEST(igstkLandmarkRegistrationTest);
   REGISTER_TEST(igstkDICOMImageReaderTest);
+  REGISTER_TEST(igstkDICOMImageReaderErrorsTest);
   REGISTER_TEST(igstkImageReaderTest);
   REGISTER_TEST(igstkCTImageReaderTest);
   REGISTER_TEST(igstkCTImageSpatialObjectTest);
