@@ -39,6 +39,8 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this), m_Logge
 
  /** List of State Inputs */
 
+  m_StateMachine.AddInput(m_GetModalityInfoInput,"GetModalityInfoInput");
+  m_StateMachine.AddInput(m_GetPatientNameInfoInput,"GetPatientNameInfoInput");
   m_StateMachine.AddInput(m_ReadImageRequestInput,"ImageReadRequestInput");
   m_StateMachine.AddInput(m_ImageReadingErrorInput,"ImageReadingErrorInput");
   m_StateMachine.AddInput(m_ImageDirectoryNameValidInput,"ImageDirectoryNameValidInput");
@@ -250,6 +252,7 @@ template <class TPixelType>
 void
 DICOMImageReader<TPixelType>::RequestModalityInfo() 
 {
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::RequestModalityInfo called...\n");
   this->m_StateMachine.PushInput( this->m_GetModalityInfoInput);
   this->m_StateMachine.ProcessInputs();
 }
@@ -259,6 +262,7 @@ template <class TPixelType>
 void
 DICOMImageReader<TPixelType>::RequestPatientNameInfo() 
 {
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::RequestPatientNameInfo called...\n");
   this->m_StateMachine.PushInput( this->m_GetPatientNameInfoInput);
   this->m_StateMachine.ProcessInputs();
 }
