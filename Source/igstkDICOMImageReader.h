@@ -37,6 +37,25 @@
 namespace igstk
 {
 
+
+itkEventMacro( DICOMImageReaderEvent,                             IGSTKEvent);
+itkEventMacro( DICOMModalityEvent,                                StringEvents);
+itkEventMacro( DICOMPatientNameEvent,                             StringEvents);
+
+// Invalid request error event 
+itkEventMacro( DICOMInvalidRequestErrorEvent,                      DICOMImageReaderEvent );
+
+// Events to handle errors with the ImageDirectory name
+itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,                  DICOMImageReaderEvent );
+itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,           DICOMImageReaderEvent );
+itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,         DICOMImageReaderEvent );
+itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent, DICOMImageReaderEvent );
+
+//Image reading error
+itkEventMacro( DICOMImageReadingErrorEvent,                        DICOMImageReaderEvent );
+
+
+  
 /** \class DICOMImageReader
  * 
  * \brief This class reads DICOM files. This class should not be instantiated
@@ -89,23 +108,6 @@ public:
 
   /** Declarations needed for the Logger */
   igstkLoggerMacro();
-
-  itkEventMacro( DICOMImageReaderEvent,                             IGSTKEvent);
-  itkEventMacro( DICOMModalityEvent,                                StringEvents);
-  itkEventMacro( DICOMPatientNameEvent,                             StringEvents);
- 
-
-  // Invalid request error event 
-  itkEventMacro( DICOMInvalidRequestErrorEvent,                      DICOMImageReaderEvent );
-  
-  // Events to handle errors with the ImageDirectory name
-  itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,                  DICOMImageReaderEvent );
-  itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,           DICOMImageReaderEvent );
-  itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,         DICOMImageReaderEvent );
-  itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent, DICOMImageReaderEvent );
-
-  //Image reading error
-  itkEventMacro( DICOMImageReadingErrorEvent,                        DICOMImageReaderEvent );
 
 protected:
 
