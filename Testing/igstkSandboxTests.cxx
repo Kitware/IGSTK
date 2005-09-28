@@ -42,6 +42,8 @@ void RegisterTests()
   REGISTER_TEST(igstkMRImageSpatialObjectTest);
   REGISTER_TEST(igstkImageSpatialObjectTest);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
+  REGISTER_TEST(igstkCTImageSpatialObjectRepresentationTest);
+  REGISTER_TEST(igstkMRImageSpatialObjectRepresentationTest);
 
 #ifdef IGSTK_USE_ATAMAI
   REGISTER_TEST(igstkAtamaiNDITrackerTest);
