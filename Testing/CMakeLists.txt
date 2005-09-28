@@ -7,6 +7,9 @@ MAKE_DIRECTORY(${IGSTKSandbox_TEST_OUTPUT_DIR})
 SET(IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR "${IGSTKSandbox_TEST_OUTPUT_DIR}/StateMachineDiagrams")
 MAKE_DIRECTORY(${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
 
+SET(IGSTK_DICOM_TEST_OUTPUT_DIR "${IGSTKSandbox_TEST_OUTPUT_DIR}/DICOM")
+MAKE_DIRECTORY(${IGSTK_DICOM_TEST_OUTPUT_DIR})
+
 #-----------------------------------------------------------------------------
 # Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
 FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_DIR}/Testing/Data $ENV{IGSTKSandbox_DATA_ROOT})
@@ -81,6 +84,8 @@ IF (IGSTKSandbox_DATA_ROOT)
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
 ADD_TEST( igstkImageReaderTest ${IGSTKSandbox_TESTS} igstkImageReaderTest )
+ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTKSandbox_TESTS} igstkDICOMImageReaderErrorsTest 
+          ${IGSTK_DICOM_TEST_OUTPUT_DIR})
 ADD_TEST( igstkImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkImageSpatialObjectTest )
 ADD_TEST( igstkCTImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkCTImageSpatialObjectTest )
 ADD_TEST( igstkMRImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkMRImageSpatialObjectTest )
@@ -95,6 +100,7 @@ SET(BasicTests_SRCS
   igstkCTImageReaderTest.cxx
   igstkMRImageReaderTest.cxx
   igstkDICOMImageReaderTest.cxx
+  igstkDICOMImageReaderErrorsTest.cxx
   igstkCTImageSpatialObjectTest.cxx
   igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx 
   igstkMRImageSpatialObjectTest.cxx
