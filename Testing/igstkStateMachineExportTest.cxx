@@ -28,12 +28,11 @@
 
 #include <fstream>
 #include <iostream>
-
 #include "itkExceptionObject.h"
 
-#include "igstkLandmarkRegistration.h"
 #include "igstkCTImageReader.h"
 #include "igstkMRImageReader.h"
+#include "igstkLandmarkRegistration.h"
 
 namespace igstk 
 {
