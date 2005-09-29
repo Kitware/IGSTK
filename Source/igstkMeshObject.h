@@ -22,6 +22,7 @@
 #include "igstkSpatialObject.h"
 #include <itkMeshSpatialObject.h>
 #include <itkTetrahedronCell.h>
+#include <itkTriangleCell.h>
 #include <itkDefaultDynamicMeshTraits.h>
 
 namespace igstk
@@ -71,6 +72,7 @@ public:
   typedef MeshType::CellTraits                      CellTraits;
   typedef itk::CellInterface< float, CellTraits >   CellInterfaceType;
   typedef itk::TetrahedronCell<CellInterfaceType>   TetraCellType;
+  typedef itk::TriangleCell<CellInterfaceType>      TriangleCellType;
   typedef MeshType::CellType                        CellType;
   typedef CellType::CellAutoPointer                 CellAutoPointer;
 
@@ -91,6 +93,9 @@ public:
 
   /** Add a tetrahedron cell to the mesh */
   bool AddTetrahedronCell(unsigned int id,unsigned int vertex1,unsigned int vertex2,unsigned int vertex3,unsigned int vertex4);
+
+  /** Add a triangle cell to the mesh */
+  bool AddTriangleCell(unsigned int id,unsigned int vertex1,unsigned int vertex2,unsigned int vertex3);
 
   /** Return the points */
   const PointsContainerPointer GetPoints() const;

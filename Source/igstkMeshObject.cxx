@@ -48,6 +48,22 @@ bool MeshObject::AddPoint(unsigned int id,float x, float y,float z)
   return true;
 }
 
+/** Add a triangle cell to the mesh */
+bool MeshObject::AddTriangleCell(unsigned int id,unsigned int vertex1,unsigned int vertex2,unsigned int vertex3)
+{
+  CellAutoPointer cell; 
+  cell.TakeOwnership(  new TriangleCellType );
+
+  unsigned long trianglePoints[3];
+  trianglePoints[0]=vertex1;
+  trianglePoints[1]=vertex2;
+  trianglePoints[2]=vertex3;
+  cell->SetPointIds(trianglePoints);
+  m_Mesh->SetCell(id, cell );
+
+  return true;
+}
+
 /** Add a tetrahedron cell to the mesh */
 bool MeshObject::AddTetrahedronCell(unsigned int id,unsigned int vertex1,unsigned int vertex2,unsigned int vertex3,unsigned int vertex4)
 {
