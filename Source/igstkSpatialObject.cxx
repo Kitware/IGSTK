@@ -30,6 +30,8 @@ SpatialObject::SpatialObject():m_StateMachine(this)
 
   m_StateMachine.AddInput( m_SpatialObjectValidInput,  "SpatialObjectValidInput" );
   m_StateMachine.AddInput( m_SpatialObjectNullInput,  "SpatialObjectNullInput" );
+  m_StateMachine.AddInput( m_ObjectValidInput,  "ObjectValidInput" );
+  m_StateMachine.AddInput( m_ObjectNullInput,  "ObjectNullInput" );
   m_StateMachine.AddInput( m_TrackingEnabledInput,  "TrackingEnabledInput" );
   m_StateMachine.AddInput( m_TrackingLostInput,     "TrackingLostInput" );
   m_StateMachine.AddInput( m_TrackingRestoredInput, "TrackingRestoredInput" );
@@ -43,6 +45,11 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   m_StateMachine.AddState( m_TrackedLostState, "TrackedLostState" );
   
   const ActionType NoAction = 0;
+
+  m_StateMachine.AddTransition( m_InitialState, m_ObjectValidInput, m_InitialState,  & SpatialObject::AddObject );
+  m_StateMachine.AddTransition( m_InitialState, m_ObjectValidInput, m_NonTrackedState,  & SpatialObject::AddObject );
+  m_StateMachine.AddTransition( m_NonTrackedState, m_ObjectValidInput, m_NonTrackedState,  & SpatialObject::AddObject );
+  m_StateMachine.AddTransition( m_InitialState, m_ObjectNullInput, m_InitialState,  & SpatialObject::ReportInvalidRequest );
 
   m_StateMachine.AddTransition( m_InitialState, m_SpatialObjectValidInput, m_NonTrackedState,  & SpatialObject::SetSpatialObject );
   m_StateMachine.AddTransition( m_InitialState, m_SpatialObjectNullInput, m_InitialState,  & SpatialObject::ReportInvalidRequest );
@@ -114,8 +121,7 @@ void SpatialObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 
 /** Request setting the ITK spatial object that provide internal functionalities. */
 void SpatialObject::RequestSetSpatialObject( SpatialObjectType * spatialObject )
-{
-  
+{  
   m_SpatialObjectToBeSet = spatialObject;
 
   if( m_SpatialObjectToBeSet.IsNull() )
@@ -138,6 +144,47 @@ void SpatialObject::SetSpatialObject()
   m_SpatialObject = m_SpatialObjectToBeSet;
 }
 
+/** Request setting the ITK spatial object that provide internal functionalities. */
+void SpatialObject::RequestAddObject(Self * object )
+{
+  m_ObjectToBeAdded = object;
+
+  if( m_ObjectToBeAdded.IsNull() )
+    {
+    m_StateMachine.PushInput( m_ObjectNullInput );
+    m_StateMachine.ProcessInputs();
+    }
+  else 
+    {
+    m_StateMachine.PushInput( m_ObjectValidInput );
+    m_StateMachine.ProcessInputs();
+    }
+}
+
+/** Add an Object */
+void SpatialObject::AddObject()
+{
+  m_SpatialObject->AddSpatialObject(m_ObjectToBeAdded->GetSpatialObject());
+  m_InternalObjectList.push_back(m_ObjectToBeAdded);
+}
+
+/** Return a child object given the id */
+const SpatialObject::Self * SpatialObject::GetObject(unsigned long id) const
+{
+  if(id > m_InternalObjectList.size())
+    {
+    return NULL;
+    }
+
+  return m_InternalObjectList[id];
+}
+
+
+/** Return the internal pointer to the SpatialObject */
+SpatialObject::SpatialObjectType * SpatialObject::GetSpatialObject()
+{
+  return m_SpatialObject;
+}
 
 /** Set the full Transform by a direct call. The state machine will take care
  * of only accepting this transform if the object is not currently being

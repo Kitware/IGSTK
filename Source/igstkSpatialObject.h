@@ -68,9 +68,15 @@ public:
    * the SpatialObject. */
   void RequestSetTransform( const Transform & transform );
 
+  /** Set a new object. */
+  void RequestAddObject(Self * object);
+
   /** Return the Transform associated to the ObjectToWorld transformation
    * of the SpatialObject */
   const Transform & GetTransform() const;
+
+  /** Return a child object given the id */
+  const Self * GetObject(unsigned long id) const;
 
   /** Request the protocol for attaching to a tracker tool. This is a one-time
    * operation. Once a Spatial Object is attached to a tracker tool it is not
@@ -93,8 +99,9 @@ protected:
   void RequestSetSpatialObject( SpatialObjectType * );
 
   /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
+  SpatialObjectType * GetSpatialObject();
 
 private:
   
@@ -104,6 +111,12 @@ private:
   /** Internal itkSpatialObject */
   SpatialObjectType::Pointer   m_SpatialObject;
   SpatialObjectType::Pointer   m_SpatialObjectToBeSet;
+
+  /** Internal list of object */
+  std::vector<Pointer> m_InternalObjectList;
+
+  /** Internal Object */
+  Pointer m_ObjectToBeAdded;
 
   /** Internal Transform and temporary transform */
   Transform                    m_Transform;
@@ -127,6 +140,8 @@ private:
   /** Inputs to the State Machine */
   InputType            m_SpatialObjectNullInput;
   InputType            m_SpatialObjectValidInput;
+  InputType            m_ObjectNullInput;
+  InputType            m_ObjectValidInput;
   InputType            m_TrackingEnabledInput;
   InputType            m_TrackingLostInput;
   InputType            m_TrackingRestoredInput;
@@ -142,6 +157,7 @@ private:
 
   /** Action methods to be invoked only by the state machine */
   void SetSpatialObject();
+  void AddObject();
   void ReportTrackingRestored();
   void ReportTrackingDisabled();
   void ReportTrackingLost();
