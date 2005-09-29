@@ -57,10 +57,11 @@ class ImageReaderToImageSpatialObject
 
   
 /** \class ImageReader
+ * \brief Base class for all image reader classes
  * 
- * \brief This class reads image data stored in files and provide
- * pointers to the image data for use in either a VTK or an ITK
- * pipeline. This class has pixeltype and dimension template parameters
+ * \brief This class reads image data stored in files and outputs
+ * image spatial object. This class is templated over pixeltype and dimension 
+ * parameters
  *
  * \ingroup Object
  */
