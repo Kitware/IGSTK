@@ -1,0 +1,54 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0106 
+header_name {.h} 
+code_name {.cxx}
+class FourViews {selected
+} {
+  Function {FourViews()} {open
+  } {
+    Fl_Window mainWindow {
+      label {IGSTK: Four Quadrants Example} open
+      xywh {457 58 775 710} type Double resizable visible
+    } {
+      Fl_Box Display3D {
+        label {Display 3D}
+        xywh {5 5 380 330} box FLAT_BOX color 0 labelcolor 7
+        code0 {\#include <igstkView3D.h>}
+        class {igstk::View3D}
+      }
+      Fl_Box DisplayAxial {
+        label {Display Axial}
+        xywh {388 5 380 330} box FLAT_BOX color 0 labelcolor 7
+        code0 {\#include <igstkView2D.h>}
+        class {igstk::View2D}
+      }
+      Fl_Box DisplaySagittal {
+        label {Display Sagittal}
+        xywh {388 338 380 330} box FLAT_BOX color 0 labelcolor 7
+        code0 {\#include <igstkView2D.h>}
+        class {igstk::View2D}
+      }
+      Fl_Box DisplayCoronal {
+        label {Display Coronal}
+        xywh {5 338 380 330} box FLAT_BOX color 0 labelcolor 7
+        code0 {\#include <igstkView2D.h>}
+        class {igstk::View2D}
+      }
+      Fl_Button QuitButton {
+        label Quit
+        callback {this->Quit();}
+        xywh {670 675 85 25}
+      }
+    }
+  }
+  Function {~FourViews()} {return_type virtual
+  } {}
+  Function {Quit()} {open return_type {virtual void}
+  } {
+    code {mainWindow->hide();} {}
+  }
+  Function {Show()} {open return_type {virtual void}
+  } {
+    code {mainWindow->show();} {}
+  }
+} 
