@@ -50,7 +50,8 @@ public:
   {
     if( DICOMModalityEventType().CheckEvent( &event ) )
       {
-      const DICOMModalityEventType * modalityEvent = dynamic_cast< const DICOMModalityEventType *>( &event );
+      const DICOMModalityEventType * modalityEvent = 
+                   dynamic_cast< const DICOMModalityEventType *>( &event );
       std::cout << "Modality= " << modalityEvent->GetString() << std::endl;
       }
       
@@ -125,33 +126,23 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
   
 
   typedef igstk::DICOMImageReader< ImageSpatialObjectType >    ReaderType;
-
   ReaderType::Pointer   reader = ReaderType::New();
-
   reader->SetLogger( logger );
 
   /* Read in a DICOM series */
   std::cout << "Reading the DICOM series : " << argv[1] <<std::endl;
-
   ReaderType::DirectoryNameType directoryName = argv[1];
-
   reader->RequestSetDirectory( directoryName );
   reader->RequestReadImage();
   
  /* Add observer to listen to modality info */
-  
   DICOMImageModalityInfoCallback::Pointer dimcb = DICOMImageModalityInfoCallback::New();
-    
   reader->AddObserver( igstk::DICOMModalityEvent(), dimcb );
-
   reader->RequestModalityInfo(); 
  
   /* Add observer to listen to patient name  info */
-  
   DICOMImagePatientNameInfoCallback::Pointer dipncb = DICOMImagePatientNameInfoCallback::New();
-
   reader->AddObserver( igstk::DICOMPatientNameEvent(), dipncb );
-
   reader->RequestPatientNameInfo(); 
  
   return EXIT_SUCCESS;
