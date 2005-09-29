@@ -17,9 +17,16 @@ namespace igstk
 {
 
 /** \class LandmarkRegistration
- *This class is used to register the tracker coordinate system with
- *the image coordinate system. It is templated over the dimension of
- *the land mark coordinates
+ * \brief This class evaluates the transformation parameters between 
+ * the tracker and image coordinate systems.
+ *  
+ *The Landmark registration class is used to register the tracker coordinate system with
+ *the image coordinate system using rigid body transformation. Landmark points are used to
+ *solve for the transform parameters. A minimum of three pair of landmarks are
+ *required. The class is basically a wrapper around the itk::LandmarkBasedTransformInitializer.
+ *The class is templated over the dimension of the landmark coordinates.
+ *
+ * \ingroup Registration 
  */
 
 template <unsigned int Dimension>
@@ -33,25 +40,29 @@ public:
   typedef itk::SmartPointer<const Self>                   ConstPointer;
   typedef itk::Object                                     Superclass;
 
+  
   /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
-
+  typedef itk::Logger                                     LoggerType;
+  
+  /** typedefs for image and pixel type */
   typedef  unsigned char  PixelType;
-    
-  typedef itk::Image< PixelType, Dimension >    ImageType;
+  typedef itk::Image< PixelType, Dimension >              ImageType;
 
-  //typedef itk::Rigid3DTransform< double > TransformType;
+  /** typedefs for the transform types */ 
   typedef itk::VersorRigid3DTransform< double > TransformType;
   typedef typename TransformType::Pointer       TransformPointerType;
-
   typedef itk::LandmarkBasedTransformInitializer< TransformType, 
             ImageType, ImageType > TransformInitializerType;
-
-  typedef typename TransformInitializerType::LandmarkPointContainer LandmarkPointContainerType;
-  typedef typename TransformInitializerType::LandmarkPointType      LandmarkImagePointType;
-  typedef typename TransformInitializerType::LandmarkPointType      LandmarkTrackerPointType;
-  typedef typename TransformInitializerType::Pointer                TransformInitializerPointerType;
-  typedef typename LandmarkPointContainerType::const_iterator       PointsContainerConstIterator;
+  typedef typename TransformInitializerType::LandmarkPointContainer 
+                                                LandmarkPointContainerType;
+  typedef typename TransformInitializerType::LandmarkPointType      
+                                                LandmarkImagePointType;
+  typedef typename TransformInitializerType::LandmarkPointType    
+                                                LandmarkTrackerPointType;
+  typedef typename TransformInitializerType::Pointer  
+                                                TransformInitializerPointerType;
+  typedef typename LandmarkPointContainerType::const_iterator
+                                                 PointsContainerConstIterator;
 
   /** Method for defining the name of the class */ 
   igstkTypeMacro(LandmarkRegistration, Object); 
@@ -59,20 +70,21 @@ public:
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
 
-  /** The "RequestAddImageLandmarkPoint" should be used to add point to the image landmark point container */
+  /** The "RequestAddImageLandmarkPoint" will be used to add point 
+   * to the image landmark point container */
   void RequestAddImageLandmarkPoint(LandmarkImagePointType pt);
   
-  /** The "RequestAddTrackerLandmarkPoint" should be used to add a point
+  /** The "RequestAddTrackerLandmarkPoint" will be used to add a point
   to the tracker landmark point container */
   void RequestAddTrackerLandmarkPoint(LandmarkImagePointType pt);
 
-/** The "RequestResetRegistration" function should be used to start the
+/** The "RequestResetRegistration" function will be used to start the
 * registration process from the scratch. This method empties both the
 * image and tracker point containers  and reset the system to idle
 * state*/
   void RequestResetRegistration();
 
-/** The "RequestComputeTransform" method should be used to request
+/** The "RequestComputeTransform" method will be used to request
 * transform parameter calculation */
   void RequestComputeTransform();
   
