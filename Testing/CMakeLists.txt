@@ -60,7 +60,7 @@ INCLUDE_DIRECTORIES (
   )
 
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
-#ADD_TEST(igstkPolarisTrackerSimulatedTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerSimulatedTest)
+ADD_TEST(igstkPolarisTrackerSimulatedTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerSimulatedTest)
 ADD_TEST(igstkLandmarkRegistrationTest ${IGSTKSandbox_TESTS} igstkLandmarkRegistrationTest)
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
@@ -94,7 +94,7 @@ ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igst
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
-#  igstkPolarisTrackerSimulatedTest.cxx
+  igstkPolarisTrackerSimulatedTest.cxx
   igstkLandmarkRegistrationTest.cxx
   igstkImageReaderTest.cxx
   igstkCTImageReaderTest.cxx
