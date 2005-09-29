@@ -19,6 +19,11 @@ SET(IGSTKSandbox_HEADS
   igstkPolarisTrackerTool.h
   igstkLandmarkRegistration.h
   igstkStringEvents.h
+  igstkSpatialObjectReader.h
+  igstkTubeReader.h
+  igstkMeshReader.h
+  igstkGroupObject.h
+  igstkTubeGroupObject.h
 )
 
 
@@ -38,6 +43,10 @@ SET(IGSTKSandbox_SRCS
   igstkPolarisTracker.cxx
   igstkPolarisTrackerTool.cxx
   igstkLandmarkRegistration.txx
+  igstkTubeReader.cxx
+  igstkMeshReader.cxx
+  igstkGroupObject.cxx
+  igstkTubeGroupObject.cxx
 )
 
 # Variable for holding extra libraries
