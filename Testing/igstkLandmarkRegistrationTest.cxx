@@ -78,11 +78,16 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
     typedef itk::Logger                   LoggerType;
     typedef itk::StdStreamLogOutput       LogOutputType;
     
-    typedef igstk::LandmarkRegistration<3>                                 LandmarkRegistrationType;
-    typedef igstk::LandmarkRegistration<3>::LandmarkPointContainerType     LandmarkPointContainerType;
-    typedef igstk::LandmarkRegistration<3>::LandmarkImagePointType         LandmarkImagePointType;
-    typedef igstk::LandmarkRegistration<3>::LandmarkTrackerPointType         LandmarkTrackerPointType;
-    typedef LandmarkRegistrationType::TransformType::OutputVectorType      OutputVectorType;
+    typedef igstk::LandmarkRegistration<3>     
+                              LandmarkRegistrationType;
+    typedef igstk::LandmarkRegistration<3>::LandmarkPointContainerType
+                              LandmarkPointContainerType;
+    typedef igstk::LandmarkRegistration<3>::LandmarkImagePointType 
+                              LandmarkImagePointType;
+    typedef igstk::LandmarkRegistration<3>::LandmarkTrackerPointType
+                              LandmarkTrackerPointType;
+    typedef LandmarkRegistrationType::TransformType::OutputVectorType 
+                              OutputVectorType;
 
     LandmarkRegistrationType::Pointer landmarkRegister = LandmarkRegistrationType::New();    
     LandmarkPointContainerType  fpointcontainer;
@@ -91,13 +96,16 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
     LandmarkTrackerPointType movingPoint;
 
    //Add observer for invalid input request
-    LandmarkRegistrationInvalidRequestCallback::Pointer lrcb = LandmarkRegistrationInvalidRequestCallback::New();
-    ::itk::EventObject* eventInvalidRequest =    new igstk::LandmarkRegistration<3>::InvalidRequestErrorEvent();
+    LandmarkRegistrationInvalidRequestCallback::Pointer 
+                              lrcb = LandmarkRegistrationInvalidRequestCallback::New();
+    ::itk::EventObject* eventInvalidRequest =    
+                              new igstk::LandmarkRegistration<3>::InvalidRequestErrorEvent();
     landmarkRegister->AddObserver(*eventInvalidRequest, lrcb );
 
    //Add observer for erro in computation 
     LandmarkRegistrationErrorCallback::Pointer ecb = LandmarkRegistrationErrorCallback::New();
-    ::itk::EventObject* eventError =    new igstk::LandmarkRegistration<3>::TransformComputationFailureEvent();
+    ::itk::EventObject* eventError =    
+                              new igstk::LandmarkRegistration<3>::TransformComputationFailureEvent();
     landmarkRegister->AddObserver(*eventError, ecb );
 
 // logger object
