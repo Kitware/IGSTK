@@ -57,7 +57,7 @@ itkEventMacro( DICOMImageReadingErrorEvent,                        DICOMImageRea
 
   
 /** \class DICOMImageReader
- * 
+  * 
  * \brief This class reads DICOM files. This class should not be instantiated
  * directly, instead the derived classes that are specific to particular image
  * modalities should be used.
