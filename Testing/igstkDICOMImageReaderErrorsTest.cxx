@@ -42,7 +42,8 @@ public:
   }
   void Execute(itk::Object *caller, const itk::EventObject & event)
   {
-    std::cerr<<"Error event received b/c of a directory that does not have enough number of files "<<std::endl;
+    std::cerr<<"Error event received b/c of a directory that does not have" 
+              << " enough number of files "<<std::endl;
     m_EventReceived = true;
   } 
  bool GetEventReceived()
@@ -74,10 +75,10 @@ public:
     std::cerr<<"Error Event received for a non-Existing directory "<<std::endl;
     m_EventReceived = true;
   } 
- bool GetEventReceived()
-    { 
+  bool GetEventReceived()
+  {   
     return m_EventReceived; 
-    }
+  }
 protected:
   DICOMImageReaderNonExistingDirectoryErrorCallback()
   {
@@ -103,9 +104,9 @@ public:
     m_EventReceived = true;
   }
   bool GetEventReceived()
-    { 
+  {   
     return m_EventReceived; 
-    }
+  }
 protected:
   DICOMImageReaderEmptyDirectoryErrorCallback()
   {
@@ -135,9 +136,9 @@ public:
   }
   
  bool GetEventReceived()
-    { 
-    return m_EventReceived; 
-    }
+ { 
+  return m_EventReceived; 
+ }
 
 protected:
   DICOMImageReaderInvalidDirectoryNameErrorCallback()
@@ -227,7 +228,8 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
   std::ofstream outputFile;
   outputFile.open( filename.c_str() );
  
-  outputFile << "Dummy file created to test if the DICOMImageReader complain if the name specified is a regular file"<< std::endl;  
+  outputFile << "Dummy file created to test if the DICOMImageReader complain "
+             << "if the name specified is a regular file"<< std::endl;  
  
   outputFile.close();
   
