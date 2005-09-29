@@ -111,7 +111,7 @@ int igstkAuroraTrackerTest( int, char * [] )
   char pathToCaptureFile[1024];
   joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTK_DATA_ROOT,
-                  "Input/polaris_stream_07_27_2005.txt" );
+                  "Input/aurora_stream_09_28_2005.txt" );
   serialComm->SetFileName( pathToCaptureFile );
 #else /* IGSTK_SIMULATOR_TEST */
   serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
@@ -134,6 +134,14 @@ int igstkAuroraTrackerTest( int, char * [] )
   std::cout << "Exited SetCommunication ..." << std::endl;
 
   tracker->Open();
+
+#ifdef IGSTK_SIMULATOR_TEST
+  char pathToSROMFile[1024];
+  joinDirAndFile( pathToSROMFile, 1024,
+                  IGSTK_DATA_ROOT,
+                  "Input/5D.ROM" );
+  tracker->AttachSROMFileNameToPort( 0, pathToSROMFile );
+#endif /* IGSTK_SIMULATOR_TEST */
 
   std::cout << tracker << std::endl;
 
