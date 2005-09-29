@@ -24,7 +24,7 @@ namespace igstk
 {
 
 /** \class MRImageSpatialObjectRepresentation
- *  \brief This class implements a reader specific for CT modality.
+ *  \brief This class implements a spatial object represenation for MRI modality.
  *
  * \ingroup Spatial object representation
  */

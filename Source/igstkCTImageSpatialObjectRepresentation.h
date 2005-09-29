@@ -24,7 +24,7 @@ namespace igstk
 {
 
 /** \class CTImageSpatialObjectRepresentation
- *  \brief This class implements a reader specific for CT modality.
+ *  \brief This class implements a spatial object representation for CT images.
  *
  * \ingroup Spatial object representation
  */
