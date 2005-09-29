@@ -10,4 +10,5 @@ SUBDIRS(
   TwoViews
   FourViewsAndTracking
   FourViewsTrackingWithCT
+  FourViews
   )
