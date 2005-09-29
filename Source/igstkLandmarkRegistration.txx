@@ -26,67 +26,107 @@ namespace igstk
 
 /** Constructor */
 template <unsigned int TDimension>
-LandmarkRegistration<TDimension>::LandmarkRegistration():m_StateMachine( this ), m_Logger( NULL)
+LandmarkRegistration<TDimension>::LandmarkRegistration() :
+  m_StateMachine( this ), m_Logger( NULL)
 {
   // Set the state descriptors
-  m_StateMachine.AddState(m_IdleState,"IdleState");
-  m_StateMachine.AddState(m_ImageLandmark1AddedState,"ImageLandmark1AddedState");
-  m_StateMachine.AddState(m_TrackerLandmark1AddedState,"TrackerLandmark1AddedState");
-  m_StateMachine.AddState(m_ImageLandmark2AddedState,"ImageLandmark2AddedState");
-  m_StateMachine.AddState(m_TrackerLandmark2AddedState,"TrackerLandmark2AddedState");
-  m_StateMachine.AddState(m_ImageLandmark3AddedState,"ImageLandmark3AddedState");
-  m_StateMachine.AddState(m_TrackerLandmark3AddedState,"TrackerLandmark3AddedState");
+  m_StateMachine.AddState(m_IdleState,
+                          "IdleState");
+  m_StateMachine.AddState(m_ImageLandmark1AddedState,
+                          "ImageLandmark1AddedState");
+  m_StateMachine.AddState(m_TrackerLandmark1AddedState,
+                          "TrackerLandmark1AddedState");
+  m_StateMachine.AddState(m_ImageLandmark2AddedState,
+                          "ImageLandmark2AddedState");
+  m_StateMachine.AddState(m_TrackerLandmark2AddedState,
+                          "TrackerLandmark2AddedState");
+  m_StateMachine.AddState(m_ImageLandmark3AddedState,
+                          "ImageLandmark3AddedState");
+  m_StateMachine.AddState(m_TrackerLandmark3AddedState,
+                          "TrackerLandmark3AddedState");
 
 
     // Set the input descriptors 
-  m_StateMachine.AddInput(m_ImageLandmarkInput,"ImageLandmarkInput");
-  m_StateMachine.AddInput(m_TrackerLandmarkInput,"TrackerLandmarkInput");
-  m_StateMachine.AddInput(m_ComputeTransformInput,"ComputeTransformInput");
-  m_StateMachine.AddInput(m_ResetRegistrationInput,"ResetRegistrationInput");
+  m_StateMachine.AddInput(m_ImageLandmarkInput,
+                          "ImageLandmarkInput");
+  m_StateMachine.AddInput(m_TrackerLandmarkInput,
+                          "TrackerLandmarkInput");
+  m_StateMachine.AddInput(m_ComputeTransformInput,
+                          "ComputeTransformInput");
+  m_StateMachine.AddInput(m_ResetRegistrationInput,
+                          "ResetRegistrationInput");
 
   // Add transition  for landmark point adding
-  m_StateMachine.AddTransition(m_IdleState,m_ImageLandmarkInput,
-                    m_ImageLandmark1AddedState,&LandmarkRegistration::AddImageLandmarkPoint);
+  m_StateMachine.AddTransition(m_IdleState,
+                               m_ImageLandmarkInput,
+                               m_ImageLandmark1AddedState,
+                               &LandmarkRegistration::AddImageLandmarkPoint);
+
   m_StateMachine.AddTransition(m_ImageLandmark1AddedState,
-                    m_TrackerLandmarkInput,m_TrackerLandmark1AddedState,
-                    &LandmarkRegistration::AddTrackerLandmarkPoint);
+                               m_TrackerLandmarkInput,
+                               m_TrackerLandmark1AddedState,
+                               &LandmarkRegistration::AddTrackerLandmarkPoint);
+
   m_StateMachine.AddTransition(m_TrackerLandmark1AddedState,
-                    m_ImageLandmarkInput,m_ImageLandmark2AddedState,
-                    &LandmarkRegistration::AddImageLandmarkPoint);
+                               m_ImageLandmarkInput,
+                               m_ImageLandmark2AddedState,
+                               &LandmarkRegistration::AddImageLandmarkPoint);
+
   m_StateMachine.AddTransition(m_ImageLandmark2AddedState,
-                    m_TrackerLandmarkInput,m_TrackerLandmark2AddedState,
-                    &LandmarkRegistration::AddTrackerLandmarkPoint);
+                               m_TrackerLandmarkInput,
+                               m_TrackerLandmark2AddedState,
+                               &LandmarkRegistration::AddTrackerLandmarkPoint);
+
   m_StateMachine.AddTransition(m_TrackerLandmark2AddedState,
-                    m_ImageLandmarkInput,m_ImageLandmark3AddedState,
-                    &LandmarkRegistration::AddImageLandmarkPoint);
-  m_StateMachine.AddTransition(m_ImageLandmark3AddedState,m_TrackerLandmarkInput,
-                    m_TrackerLandmark3AddedState,
-                    &LandmarkRegistration::AddTrackerLandmarkPoint);
+                               m_ImageLandmarkInput,
+                               m_ImageLandmark3AddedState,
+                               &LandmarkRegistration::AddImageLandmarkPoint);
+
+  m_StateMachine.AddTransition(m_ImageLandmark3AddedState,
+                               m_TrackerLandmarkInput,
+                               m_TrackerLandmark3AddedState,
+                               &LandmarkRegistration::AddTrackerLandmarkPoint);
+
   m_StateMachine.AddTransition(m_TrackerLandmark3AddedState,
-                    m_ImageLandmarkInput,m_ImageLandmark3AddedState,
-                    &LandmarkRegistration::AddImageLandmarkPoint);
+                               m_ImageLandmarkInput,
+                               m_ImageLandmark3AddedState,
+                               &LandmarkRegistration::AddImageLandmarkPoint);
+
   m_StateMachine.AddTransition(m_TrackerLandmark3AddedState,
-                    m_ComputeTransformInput,m_ImageLandmark3AddedState,
-                    &LandmarkRegistration::ComputeTransform);
+                               m_ComputeTransformInput,
+                               m_ImageLandmark3AddedState,
+                               &LandmarkRegistration::ComputeTransform);
 
   // Add transitions for all invalid requests 
-  m_StateMachine.AddTransition(m_IdleState,m_ComputeTransformInput,
-                    m_IdleState,&LandmarkRegistration::ReportInvalidRequest);
+  m_StateMachine.AddTransition(m_IdleState,
+                               m_ComputeTransformInput,
+                               m_IdleState,
+                               &LandmarkRegistration::ReportInvalidRequest);
+
   m_StateMachine.AddTransition(m_ImageLandmark1AddedState,
-                    m_ComputeTransformInput,m_ImageLandmark1AddedState,
-                    &LandmarkRegistration::ReportInvalidRequest);
+                               m_ComputeTransformInput,
+                               m_ImageLandmark1AddedState,
+                               &LandmarkRegistration::ReportInvalidRequest);
+
   m_StateMachine.AddTransition(m_ImageLandmark2AddedState,
-                    m_ComputeTransformInput,m_ImageLandmark2AddedState,
-                    &LandmarkRegistration::ReportInvalidRequest);
+                               m_ComputeTransformInput,
+                               m_ImageLandmark2AddedState,
+                               &LandmarkRegistration::ReportInvalidRequest);
+
   m_StateMachine.AddTransition(m_ImageLandmark3AddedState,
-                    m_ComputeTransformInput,m_ImageLandmark3AddedState,
-                    &LandmarkRegistration::ReportInvalidRequest);
+                               m_ComputeTransformInput,
+                               m_ImageLandmark3AddedState,
+                               &LandmarkRegistration::ReportInvalidRequest);
+
   m_StateMachine.AddTransition(m_TrackerLandmark1AddedState,
-                    m_ComputeTransformInput,m_TrackerLandmark1AddedState,
-                    &LandmarkRegistration::ReportInvalidRequest);
+                               m_ComputeTransformInput,
+                               m_TrackerLandmark1AddedState,
+                               &LandmarkRegistration::ReportInvalidRequest);
+
   m_StateMachine.AddTransition(m_TrackerLandmark2AddedState,
-                    m_ComputeTransformInput,m_TrackerLandmark2AddedState,
-                    &LandmarkRegistration::ReportInvalidRequest);
+                               m_ComputeTransformInput,
+                               m_TrackerLandmark2AddedState,
+                               &LandmarkRegistration::ReportInvalidRequest);
  
 
    // Select the initial state of the state machine
@@ -113,7 +153,8 @@ template <unsigned int TDimension>
 void 
 LandmarkRegistration<TDimension>::AddImageLandmarkPoint() 
 {
-  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::AddImageLandmarkPoint called...\n");
+  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
+                 "AddImageLandmarkPoint called...\n");
   m_ImageLandmarks.push_back(m_ImageLandmarkPoint);
 }
 
@@ -124,7 +165,8 @@ template <unsigned int TDimension>
 void  
 LandmarkRegistration<TDimension>::AddTrackerLandmarkPoint()
 {
-  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::AddTrackerLandmarkPoint called...\n");
+  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
+                 "AddTrackerLandmarkPoint called...\n");
   m_TrackerLandmarks.push_back(m_TrackerLandmarkPoint);
 }
 
@@ -134,7 +176,8 @@ template <unsigned int TDimension>
 void 
 LandmarkRegistration<TDimension>::ResetRegistration()
 {
-  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::ResetRegistration called...\n");
+  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
+                 "ResetRegistration called...\n");
 
   //Empty the image and tracker landmark containers
   while( m_ImageLandmarks.size() > 0 )
@@ -155,7 +198,8 @@ template <unsigned int TDimension>
 void 
 LandmarkRegistration<TDimension>:: ComputeTransform()
 {
-  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::ComputeTransform called...\n");
+  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
+                 "ComputeTransform called...\n");
   m_TransformInitializer->SetFixedLandmarks(m_TrackerLandmarks);
   m_TransformInitializer->SetMovingLandmarks(m_ImageLandmarks);
   m_TransformInitializer->SetTransform( m_Transform );
@@ -177,14 +221,17 @@ template <unsigned int TDimension>
 void  
 LandmarkRegistration<TDimension>::ReportInvalidRequest()
 {
-    igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::ReportInvalidRequest called...\n");
+    igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
+                   "ReportInvalidRequest called...\n");
     this->InvokeEvent(InvalidRequestErrorEvent());
 }
 
 template <unsigned int TDimension>
-void LandmarkRegistration<TDimension>::RequestAddImageLandmarkPoint(LandmarkImagePointType pt)
+void LandmarkRegistration<TDimension>::RequestAddImageLandmarkPoint(
+                                           LandmarkImagePointType pt)
 {
-  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::RequestAddImageLandmarkPoint called...\n");
+  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
+                 "RequestAddImageLandmarkPoint called...\n");
   this->m_ImageLandmarkPoint = pt;
   this->m_StateMachine.PushInput( this->m_ImageLandmarkInput);
   this->m_StateMachine.ProcessInputs();
@@ -192,9 +239,11 @@ void LandmarkRegistration<TDimension>::RequestAddImageLandmarkPoint(LandmarkImag
 
 template <unsigned int TDimension>  
 void 
-LandmarkRegistration<TDimension>::RequestAddTrackerLandmarkPoint(LandmarkImagePointType pt)
+LandmarkRegistration<TDimension>::RequestAddTrackerLandmarkPoint(
+                                      LandmarkImagePointType pt)
 {
-  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::RequestAddTrackerLandmarkPoint called...\n");
+  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
+                 "RequestAddTrackerLandmarkPoint called...\n");
   this->m_TrackerLandmarkPoint = pt;
   this->m_StateMachine.PushInput( this->m_TrackerLandmarkInput);
   this->m_StateMachine.ProcessInputs();
@@ -204,7 +253,8 @@ template <unsigned int TDimension>
 void 
 LandmarkRegistration<TDimension>::RequestResetRegistration()
 {
-  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::RequestResetRegistration called...\n");
+  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
+                 "RequestResetRegistration called...\n");
   this->m_StateMachine.PushInput( this->m_ResetRegistrationInput);
   this->m_StateMachine.ProcessInputs();
 }
@@ -213,7 +263,8 @@ template <unsigned int TDimension>
 void 
 LandmarkRegistration<TDimension>::RequestComputeTransform()
 {
-  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::RequestComputeTransform called...\n");
+  igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
+                 "RequestComputeTransform called...\n");
   this->m_StateMachine.PushInput( this->m_ComputeTransformInput);
   this->m_StateMachine.ProcessInputs();
 }
@@ -221,7 +272,8 @@ LandmarkRegistration<TDimension>::RequestComputeTransform()
 /** Print Self function */
 template <unsigned int TDimension>
 void 
-LandmarkRegistration<TDimension>::PrintSelf( std::ostream& os, itk::Indent indent ) const
+LandmarkRegistration<TDimension>::PrintSelf( std::ostream& os,
+                                             itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
   os << indent << "Tracker Landmarks: " << std::endl;
