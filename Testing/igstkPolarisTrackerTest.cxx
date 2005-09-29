@@ -137,7 +137,7 @@ int igstkPolarisTrackerTest( int, char * [] )
   char pathToCaptureFile[1024];
   joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTKSandbox_DATA_ROOT,
-                  "polaris_stream_07_27_2005.txt" );
+                  "polaris_stream_09_28_2005.txt" );
   serialComm->SetFileName( pathToCaptureFile );
 #else /* IGSTK_SIMULATOR_TEST */
   serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerTest.txt" );
@@ -160,11 +160,13 @@ int igstkPolarisTrackerTest( int, char * [] )
 
   tracker->Open();
 
+#ifdef IGSTK_SIMULATOR_TEST
   char pathToSROMFile[1024];
   joinDirAndFile( pathToSROMFile, 1024,
                   IGSTKSandbox_DATA_ROOT,
                   "ta2p0003-3-120.rom" );
   tracker->AttachSROMFileNameToPort( 0, pathToSROMFile );
+#endif /* IGSTK_SIMULATOR_TEST */
 
   std::cout << tracker << std::endl;
 
