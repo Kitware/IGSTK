@@ -46,6 +46,8 @@ PolarisTracker::PolarisTracker(void)
     }
 
   this->SetThreadingEnabled( true );
+
+  m_BufferLock = itk::MutexLock::New();
 }
 
 /** Destructor */
@@ -233,7 +235,7 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
 
   int port;
   long flags; // flags for the device
-  m_TrackingThreadLock->Lock();
+  m_BufferLock->Lock();
   for (port = 0; port < NDI_NUMBER_OF_PORTS; port++) 
     {
     // convert m_StatusBuffer flags from NDI to vtkTracker format
@@ -258,13 +260,33 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
 
     typedef TransformType::VectorType TranslationType;
     TranslationType translation;
+
     translation[0] = m_TransformBuffer[port][4];
     translation[1] = m_TransformBuffer[port][5];
     translation[2] = m_TransformBuffer[port][6];
 
     typedef TransformType::VersorType RotationType;
     RotationType rotation;
-    rotation.Set(m_TransformBuffer[port][0],m_TransformBuffer[port][1],m_TransformBuffer[port][2],m_TransformBuffer[port][3]);
+    double normsquared = 
+      m_TransformBuffer[port][0]*m_TransformBuffer[port][0] +
+      m_TransformBuffer[port][1]*m_TransformBuffer[port][1] +
+      m_TransformBuffer[port][2]*m_TransformBuffer[port][2] +
+      m_TransformBuffer[port][3]*m_TransformBuffer[port][3];
+
+    // don't allow null quaternions
+    if (normsquared < 1e-6)
+      {
+      rotation.Set(1.0, 0.0, 0.0, 0.0);
+      igstkLogMacro( WARNING, "PolarisTracker::InternUpdateStatus: bad "
+                     "quaternion, norm=" << sqrt(normsquared) << "\n");
+      }
+    else
+      {
+      rotation.Set(m_TransformBuffer[port][0],
+                   m_TransformBuffer[port][1],
+                   m_TransformBuffer[port][2],
+                   m_TransformBuffer[port][3]);
+      }
 
     // report NDI error value
     typedef TransformType::ErrorType  ErrorType;
@@ -273,13 +295,14 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
     typedef TransformType::TimePeriodType TimePeriodType;
     TimePeriodType validityTime = 100.0;
 
+
     transform.SetToIdentity(validityTime);
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         validityTime);
 
     this->SetToolTransform(port,0,transform);
     }
-  m_TrackingThreadLock->Unlock();
+  m_BufferLock->Unlock();
 
   return SUCCESS;
 }
@@ -288,7 +311,8 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
     This function is called by a separate thread. */
 PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "PolarisTracker::InternalThreadedUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, "PolarisTracker::InternalThreadedUpdateStatus "
+                 "called ...\n");
 
   int errnum; // error value from device
   int port;   // physical port number
@@ -300,7 +324,7 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
   // the first 4 values are a quaternion
   // the next 3 values are an x,y,z position
   // the final value is an error estimate in the range [0,1]
-  m_TrackingThreadLock->Lock();
+  m_BufferLock->Lock();
   for (port = 0; port < NDI_NUMBER_OF_PORTS; port++)
     {
     m_TransformBuffer[port][0] = 1.0;
@@ -312,7 +336,7 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
     m_TransformBuffer[port][6] = 0.0;
     m_TransformBuffer[port][7] = 0.0;
     }
-  m_TrackingThreadLock->Unlock();
+  m_BufferLock->Unlock();
 
   // get the transforms for all tools from the NDI
   m_CommandInterpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
@@ -332,17 +356,12 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
     return FAILURE;
     }
 
-  // default to incrementing frame count by one (in case there are
-  // no transforms for any tools)
-  unsigned long nextcount = 0;
-
+  m_BufferLock->Lock();
   for (port = 0; port < NDI_NUMBER_OF_PORTS; port++)
     {
-    m_TrackingThreadLock->Lock();
     ph = this->m_PortHandle[port];
     m_AbsentBuffer[port] = 0;
     m_StatusBuffer[port] = 0;
-    m_TrackingThreadLock->Unlock();
 
     frame[port] = 0;
     if (ph == 0)
@@ -358,16 +377,16 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
     status = m_CommandInterpreter->GetTXPortStatus(ph);
     frame[port] = m_CommandInterpreter->GetTXFrame(ph);
 
-    m_TrackingThreadLock->Lock();
     int i;
     for( i = 0; i < 8; ++i )
       {
       m_TransformBuffer[port][i] = transform[i];
       }
+
     m_AbsentBuffer[port] = absent;
     m_StatusBuffer[port] = status;
-    m_TrackingThreadLock->Unlock();
   }
+  m_BufferLock->Unlock();
 
   // In the original vtkNDITracker code, there was a check at this
   // point in the code to see if any new tools had been plugged in

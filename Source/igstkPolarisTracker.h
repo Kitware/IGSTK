@@ -117,6 +117,9 @@ protected:
 
 private:
 
+  /** A mutex for multithreaded access to the buffer arrays */
+  itk::MutexLock::Pointer  m_BufferLock;
+
   /** A buffer for holding tool transforms */
   double m_TransformBuffer[NDI_NUMBER_OF_PORTS][8];
 
