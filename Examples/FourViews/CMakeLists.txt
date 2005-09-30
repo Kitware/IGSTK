@@ -10,12 +10,14 @@ SET(FourViews_SRCS
 
 INCLUDE_DIRECTORIES(
   ${FourViews_SOURCE_DIR}
-  ${FourViews_BINARY_DIR}
   )
 
-FLTK_WRAP_UI(FourViews ${FourViews_GUI_SRCS})
+FLTK_WRAP_UI(FourViewsLib ${FourViews_GUI_SRCS})
+ADD_LIBRARY(FourViewsLib ${FourViewsLib_FLTK_UI_SRCS})
+
 ADD_EXECUTABLE(FourViews ${FourViews_SRCS} ${FourViews_FLTK_UI_SRCS})
-TARGET_LINK_LIBRARIES(FourViews IGSTKSandbox)
+
+TARGET_LINK_LIBRARIES(FourViews FourViewsLib IGSTKSandbox)
 
 
 
