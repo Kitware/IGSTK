@@ -10,6 +10,7 @@ SET(FourViews_SRCS
 
 INCLUDE_DIRECTORIES(
   ${FourViews_SOURCE_DIR}
+  ${FourViews_BINARY_DIR}
   )
 
 FLTK_WRAP_UI(FourViews ${FourViews_GUI_SRCS})
