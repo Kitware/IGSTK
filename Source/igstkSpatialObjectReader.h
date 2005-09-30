@@ -47,7 +47,7 @@ public:
   typedef itk::SpatialObjectReader<TDimension,TPixelType,MeshTraitsType>  
                                                            SpatialObjectReaderType;
   typedef itk::SpatialObject<TDimension>                   SpatialObjectType;
-  typedef itk::SpatialObject<TDimension>                   GroupSpatialObjectType;
+  typedef itk::GroupSpatialObject<TDimension>              GroupSpatialObjectType;
 
   /**  Run-time type information (and related methods). */
   igstkTypeMacro( SpatialObjectReader, itk::Object );
