@@ -28,7 +28,9 @@ int igstkMRImageSpatialObjectTest( int , char* [] )
   typedef igstk::MRImageSpatialObject         ImageSpatialObjectType;
 
   /* Instantiate one MR image */
-  ImageSpatialObjectType::Pointer ctImage =  ImageSpatialObjectType::New();
+  ImageSpatialObjectType::Pointer mrImage =  ImageSpatialObjectType::New();
+
+  mrImage->Print( std::cout );
 
   return EXIT_SUCCESS;
 }

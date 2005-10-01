@@ -18,9 +18,8 @@
 #define __igstk_ImageSpatialObject_txx
 
 
-
 #include "igstkImageSpatialObject.h"
-#include "igstkEvents.h"
+
 
 namespace igstk
 { 
@@ -92,6 +91,12 @@ ImageSpatialObject< TPixelType, VDimension >
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << "Details of the image " << std::endl;
+  m_Image->Print( os );
+  os << "ITK Exporter filter " << std::endl;
+  m_itkExporter->Print( os );
+  os << "VTK Importer filter " << std::endl;
+  m_vtkImporter->Print( os );
 }
 
 

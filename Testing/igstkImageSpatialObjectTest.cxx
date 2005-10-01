@@ -33,6 +33,8 @@ int igstkImageSpatialObjectTest( int , char* [] )
 
   ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New();
 
+  imageSpatialObject->Print( std::cout );
+
   return EXIT_SUCCESS;
 }
 

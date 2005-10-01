@@ -25,6 +25,16 @@ namespace igstk
 /** \class MRImageSpatialObject
  * \brief  Represents a MR scan placed correctly in physical coordinates.
  *
+ *  This class is the data structure used for containing a volumetric MRI scan.
+ *  The scan is usually provided by a MRImageReader class, but can also be
+ *  provided by other sources. Due to the protection of the ITK layer, any
+ *  other potential source of ITK images must be included in the Friends
+ *  mechanism.
+ *
+ *  \sa CTImageSpatialObject
+ *  \sa MRImageReader
+ *  \sa MRImageSpatialObjectRepresentation
+
  * \ingroup Object
  */
 
@@ -56,6 +66,12 @@ protected:
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+ 
+  /** These two methods must be declared and note be implemented
+   *  in order to enforce the protocol of smart pointers. */
+  MRImageSpatialObject(const Self&);     //purposely not implemented
+  void operator=(const Self&);           //purposely not implemented
+
 
 };
 

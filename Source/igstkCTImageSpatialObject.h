@@ -25,7 +25,17 @@ namespace igstk
 /** \class CTImageSpatialObject
  * \brief  Represents a CT scan placed correctly in physical coordinates.
  *
- * \ingroup Object
+ *  This class is the data structure used for containing a volumetric CT scan.
+ *  The scan is usually provided by a CTImageReader class, but can also be
+ *  provided by other sources. Due to the protection of the ITK layer, any
+ *  other potential source of ITK images must be included in the Friends
+ *  mechanism.
+ *
+ *  \sa MRImageSpatialObject
+ *  \sa CTImageReader
+ *  \sa CTImageSpatialObjectRepresentation
+ *
+ *  \ingroup Object
  */
 
 class CTImageSpatialObject : 
@@ -56,6 +66,12 @@ protected:
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+ 
+  /** These two methods must be declared and note be implemented
+   *  in order to enforce the protocol of smart pointers. */
+  CTImageSpatialObject(const Self&);     //purposely not implemented
+  void operator=(const Self&);           //purposely not implemented
+
 
 };
 

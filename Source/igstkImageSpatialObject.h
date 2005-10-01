@@ -14,16 +14,14 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
 #ifndef __igstkImageSpatialObject_h
 #define __igstkImageSpatialObject_h
 
-#include "igstkMacros.h"
 #include "igstkSpatialObject.h"
 
 #include "itkImageSpatialObject.h"
-
 #include "itkVTKImageExport.h"
+
 #include "vtkImageImport.h"
 #include "vtkImageData.h"
 
@@ -46,6 +44,12 @@ class ImageSpatialObjectRepresentationToImageSpatialObject;
  * 
  * \brief This class represents an image object. 
  * 
+ * This class is the base for all the image data objects in the toolkit. I
+ * associates an internal ITK image and a VTK importer in such a way that
+ * internally it can make available both image format to ITK and VTK classes.
+ * The ITK and VTK layers are concealed in order to enforce the safety of the
+ * IGSTK layer.
+ *
  * \ingroup Object
  */
 
@@ -98,9 +102,19 @@ private:
   void SetImage( const ImageType * image );
 
 private:
+ 
+  /** These two methods must be declared and note be implemented
+   *  in order to enforce the protocol of smart pointers. */
+  ImageSpatialObject(const Self&);     //purposely not implemented
+  void operator=(const Self&);         //purposely not implemented
 
+
+  /** This is the variable holding the real data container in the form of an
+   * ITK image. This image should never be exposed at the IGSTK API. */
   ImageConstPointer  m_Image;
 
+  /** Filters for exporting the ITK image as a vtkImageData class. 
+   *  This VTK representation should never be exposed to the IGSTK API. */
   typedef itk::VTKImageExport< ImageType >      ITKExportFilterType;
   typedef vtkImageImport                        VTKImportFilterType;
 
