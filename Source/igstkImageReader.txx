@@ -24,7 +24,7 @@ namespace igstk
 /** Constructor */
 template < class TImageSpatialObject >
 ImageReader< TImageSpatialObject >
-::ImageReader()
+::ImageReader():m_StateMachine(this),m_Logger()
 {
   // Create the Image spatial object that will be provided as output.
   m_ImageSpatialObject = ImageSpatialObjectType::New();
@@ -62,7 +62,7 @@ ImageReader< TImageSpatialObject >
 template < class TImageSpatialObject >
 void
 ImageReader< TImageSpatialObject >
-::ConnectImage()
+::ConnectImage() 
 {
   typedef Friends::ImageReaderToImageSpatialObject  HelperType;
   HelperType::ConnectImage( this, m_ImageSpatialObject.GetPointer() );

@@ -14,12 +14,10 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
 #ifndef __igstkDICOMImageReader_txx
 #define __igstkDICOMImageReader_txx
 
 #include "igstkDICOMImageReader.h"
-#include "igstkEvents.h"
 
 #include "itksys/SystemTools.hxx"
 #include "itksys/Directory.hxx"
@@ -29,8 +27,9 @@ namespace igstk
 
 /** Constructor */
 template <class TPixelType>
-DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this), m_Logger(NULL)
+DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
 { 
+  m_Logger = LoggerType::New();
 
   //Set the state descriptors
   m_StateMachine.AddState(m_IdleState, "IdleState");

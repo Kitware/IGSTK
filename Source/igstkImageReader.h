@@ -18,9 +18,8 @@
 #define __igstkImageReader_h
 
 #include "igstkMacros.h"
+#include "igstkStateMachine.h"
 
-#include "itkObject.h"
-#include "itkMacro.h"
 #include "itkLogger.h"
 #include "itkImageSpatialObject.h"
 
@@ -34,10 +33,12 @@ namespace Friends
 
 /** class ImageReaderToImageSpatialObject
  * \brief This class is intended to make the connection between the ImageReader
- * and its output, the ImageSpatialObject. With this class it is possible to
- * enforce encapsulation of the Reader and the ImageSpatialObject, and make
- * their GetImage() and SetImage() methods private, so that developers cannot
- * gain access to the ITK or VTK layers of these two classes.
+ * and its output, the ImageSpatialObject. 
+ *
+ * With this class it is possible to enforce encapsulation of the Reader and
+ * the ImageSpatialObject, and make their GetImage() and SetImage() methods
+ * private, so that developers cannot gain access to the ITK or VTK layers of
+ * these two classes.
  */
 class ImageReaderToImageSpatialObject
 {
@@ -57,9 +58,9 @@ class ImageReaderToImageSpatialObject
 
   
 /** \class ImageReader
- * \brief Base class for all image reader classes
+ * \brief Base class for all image reader classes.
  * 
- * \brief This class reads image data stored in files and outputs
+ * This class reads image data stored in files and outputs
  * image spatial object. This class is templated over pixeltype and dimension 
  * parameters
  *
@@ -71,8 +72,6 @@ class ImageReader : public itk::Object
 {
 
 public:
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
 
   /** Typedefs */
   typedef ImageReader                           Self;
@@ -82,17 +81,11 @@ public:
 
 
   /** Some convenient typedefs for input image */
-  typedef TImageSpatialObject                         ImageSpatialObjectType;
-  typedef typename ImageSpatialObjectType::ImageType  ImageType;
-  typedef typename ImageType::ConstPointer            ImagePointer;
-  typedef typename ImageType::RegionType              ImageRegionType; 
+  typedef TImageSpatialObject                   ImageSpatialObjectType;
+
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro( ImageReader, Object );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );
-
+  igstkTypeMacro( ImageReader, ::itk::Object );
 
 
   /** Return the output of the reader as a ImageSpatialObject */
@@ -103,10 +96,17 @@ public:
    *  in order to give it access to the private method GetITKImage(). */
   igstkFriendClassMacro( igstk::Friends::ImageReaderToImageSpatialObject );
 
+  /** Logger class */
+  typedef itk::Logger                  LoggerType;
+
+  /** Declarations needed for the State Machine */
+  igstkStateMachineTemplatedMacro();
+
+
 protected:
 
-  ImageReader( void );
-  ~ImageReader( void ) ;
+  ImageReader();
+  ~ImageReader();
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
@@ -117,13 +117,26 @@ protected:
   /** Connect the ITK image to the output ImageSpatialObject */
   void ConnectImage();
 
+
+  /** Some convenient typedefs for internal ITK image. 
+   *  These types must not be exposed in the API of this class. */
+  typedef typename ImageSpatialObjectType::ImageType  ImageType;
+  typedef typename ImageType::ConstPointer            ImagePointer;
+  typedef typename ImageType::RegionType              ImageRegionType; 
+
 private:
   
+  /** These two methods must be declared and note be implemented
+   *  in order to enforce the protocol of smart pointers. */
+  ImageReader(const Self&);         //purposely not implemented
+  void operator=(const Self&);      //purposely not implemented
+
   typename ImageSpatialObjectType::Pointer   m_ImageSpatialObject;
 
+
   // FIXME : This must be replaced with StateMachine logic
-  virtual const ImageType * GetITKImage() const { return NULL; }
-    
+  virtual const ImageType * GetITKImage() const = 0;    
+
 };
 
 } // end namespace igstk

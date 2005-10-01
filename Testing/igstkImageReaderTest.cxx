@@ -37,10 +37,23 @@ int igstkImageReaderTest( int , char* [] )
                                 Dimension 
                                        > ImageSpatialObjectType;
   
-  typedef igstk::ImageReader< ImageSpatialObjectType >   ReaderType;
+  class myTestReader : 
+    public igstk::ImageReader< ImageSpatialObjectType >
+  {
+    public:
+       typedef myTestReader  Self;
+       typedef igstk::ImageReader< ImageSpatialObjectType > Superclass;
+       igstkNewMacro( Self );
+    private:
+      typedef Superclass::ImageType ImageType;
+      virtual const ImageType * GetITKImage() const { return NULL; }
+  };
+
+  typedef myTestReader   ReaderType;
 
   ReaderType::Pointer  reader = ReaderType::New();
 
+  reader->Print( std::cout );
 
   return EXIT_SUCCESS;
 }
