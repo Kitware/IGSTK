@@ -19,15 +19,11 @@
 #define __igstkLandmarkRegistration_h
 
 #include "igstkStateMachine.h"
+#include "igstkEvents.h"
 #include "igstkMacros.h"
+
 #include "itkImage.h"
 #include "itkLandmarkBasedTransformInitializer.h"
-#include "itkMacro.h"
-#include "igstkMacros.h"
-#include "itkObject.h"
-#include "itkLogger.h"
-#include "itkEventObject.h"
-#include "igstkEvents.h"
 
 namespace igstk
 {
@@ -51,7 +47,7 @@ namespace igstk
  */
 
 template <unsigned int Dimension>
-class LandmarkRegistration : public itk::Object
+class LandmarkRegistration : public ::itk::Object
 {
 
 public:
@@ -59,7 +55,7 @@ public:
   typedef LandmarkRegistration                Self;
   typedef itk::SmartPointer<Self>             Pointer;
   typedef itk::SmartPointer<const Self>       ConstPointer;
-  typedef itk::Object                         Superclass;
+  typedef ::itk::Object                       Superclass;
 
   
   /** typedef for LoggerType */
@@ -72,16 +68,22 @@ public:
   /** typedefs for the transform types */ 
   typedef itk::VersorRigid3DTransform< double > TransformType;
   typedef typename TransformType::Pointer     TransformPointerType;
+  
   typedef itk::LandmarkBasedTransformInitializer< TransformType, 
             ImageType, ImageType > TransformInitializerType;
+  
   typedef typename TransformInitializerType::LandmarkPointContainer 
                                               LandmarkPointContainerType;
+  
   typedef typename TransformInitializerType::LandmarkPointType      
                                               LandmarkImagePointType;
+  
   typedef typename TransformInitializerType::LandmarkPointType    
                                               LandmarkTrackerPointType;
+  
   typedef typename TransformInitializerType::Pointer  
                                               TransformInitializerPointerType;
+  
   typedef typename LandmarkPointContainerType::const_iterator
                                               PointsContainerConstIterator;
 
@@ -93,11 +95,11 @@ public:
 
   /** The "RequestAddImageLandmarkPoint" will be used to add point 
    * to the image landmark point container */
-  void RequestAddImageLandmarkPoint( LandmarkImagePointType pt );
+  void RequestAddImageLandmarkPoint( const LandmarkImagePointType & pt );
   
   /** The "RequestAddTrackerLandmarkPoint" will be used to add a point
    * to the tracker landmark point container */
-  void RequestAddTrackerLandmarkPoint( LandmarkImagePointType pt );
+  void RequestAddTrackerLandmarkPoint( const LandmarkImagePointType & pt );
 
   /** The "RequestResetRegistration" function will be used to start the
    * registration process from the scratch. This method empties both the
@@ -118,18 +120,6 @@ public:
   /** Declarations needed for the Logger */
   igstkLoggerMacro();
 
-  /** Set methods for the Tracker and Image landmarks */
-  igstkSetMacro( TrackerLandmarks,LandmarkPointContainerType );
-  igstkSetMacro( ImageLandmarks,LandmarkPointContainerType );
-
-  /** Get methods for the Tracker and Image landmarks */
-  igstkGetMacro( TrackerLandmarks,LandmarkPointContainerType );
-  igstkGetMacro( ImageLandmarks,LandmarkPointContainerType );
-
-  /** Get the Transform */
-  igstkGetMacro( TransformInitializer, TransformInitializerPointerType );
-  igstkGetMacro( Transform, TransformPointerType );
-
   /** Landmark registration events..they have to be eventually added
    * to the igstkEvents class */
   itkEventMacro( TransformInitializerEvent,        IGSTKEvent );
@@ -145,6 +135,13 @@ protected:
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
+  
+  /** These two methods must be declared and note be implemented
+   *  in order to enforce the protocol of smart pointers. */
+  LandmarkRegistration(const Self&);    //purposely not implemented
+  void operator=(const Self&);          //purposely not implemented
+
+
   TransformPointerType                     m_Transform;
   TransformInitializerPointerType          m_TransformInitializer;
   LandmarkPointContainerType               m_TrackerLandmarks;
@@ -198,3 +195,4 @@ private:
 #endif
 
 #endif // __igstkLandmarkRegistration_h
+

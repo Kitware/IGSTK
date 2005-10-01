@@ -57,6 +57,7 @@ int igstkMRImageReaderTest( int argc, char* argv[] )
 
   reader->RequestSetDirectory( directoryName );
   
+  reader->Print( std::cout );
 
   try
     {

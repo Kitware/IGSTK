@@ -26,6 +26,9 @@ namespace igstk
 /** \class MRImageReader
  *  \brief This class implements a reader specific for MR modality.
  *
+ *  This class derives from the DICOMImageReader. It is intended for loading
+ *  MRI datasets and verify their modality to be MRI.
+ *
  * \ingroup Readers
  */
 
@@ -57,6 +60,12 @@ protected:
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+  
+  /** These two methods must be declared and note be implemented
+   *  in order to enforce the protocol of smart pointers. */
+  MRImageReader(const Self&);         //purposely not implemented
+  void operator=(const Self&);        //purposely not implemented
+
 
 };
 

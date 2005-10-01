@@ -56,6 +56,7 @@ int igstkCTImageReaderTest( int argc, char* argv[] )
 
   reader->RequestSetDirectory( directoryName );
   
+  reader->Print( std::cout );
 
   try
     {
@@ -71,6 +72,9 @@ int igstkCTImageReaderTest( int argc, char* argv[] )
 
   igstk::CTImageSpatialObject::ConstPointer ctImage = reader->GetOutput();
 
+  // Details of the loaded image
+  ctImage->Print( std::cout );
+  
   return EXIT_SUCCESS;
 }
 

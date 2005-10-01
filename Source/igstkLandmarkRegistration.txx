@@ -14,12 +14,10 @@
      PURPOSE.  See the above copyright notices for more DEBUGrmation.
 
 =========================================================================*/
-
 #ifndef __igstkLandmarkRegistration_txx
 #define __igstkLandmarkRegistration_txx
 
 #include "igstkLandmarkRegistration.h"
-#include <igstkEvents.h>
 
 namespace igstk
 { 
@@ -228,7 +226,7 @@ LandmarkRegistration<TDimension>::ReportInvalidRequest()
 
 template <unsigned int TDimension>
 void LandmarkRegistration<TDimension>::RequestAddImageLandmarkPoint(
-                                           LandmarkImagePointType pt)
+                                           const LandmarkImagePointType & pt)
 {
   igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
                  "RequestAddImageLandmarkPoint called...\n");
@@ -240,12 +238,12 @@ void LandmarkRegistration<TDimension>::RequestAddImageLandmarkPoint(
 template <unsigned int TDimension>  
 void 
 LandmarkRegistration<TDimension>::RequestAddTrackerLandmarkPoint(
-                                      LandmarkImagePointType pt)
+                                      const LandmarkImagePointType & pt)
 {
   igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
                  "RequestAddTrackerLandmarkPoint called...\n");
   this->m_TrackerLandmarkPoint = pt;
-  this->m_StateMachine.PushInput( this->m_TrackerLandmarkInput);
+  this->m_StateMachine.PushInput( this->m_TrackerLandmarkInput );
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -255,7 +253,7 @@ LandmarkRegistration<TDimension>::RequestResetRegistration()
 {
   igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
                  "RequestResetRegistration called...\n");
-  this->m_StateMachine.PushInput( this->m_ResetRegistrationInput);
+  this->m_StateMachine.PushInput( this->m_ResetRegistrationInput );
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -265,7 +263,7 @@ LandmarkRegistration<TDimension>::RequestComputeTransform()
 {
   igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
                  "RequestComputeTransform called...\n");
-  this->m_StateMachine.PushInput( this->m_ComputeTransformInput);
+  this->m_StateMachine.PushInput( this->m_ComputeTransformInput );
   this->m_StateMachine.ProcessInputs();
 }
 

@@ -89,24 +89,28 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
     typedef LandmarkRegistrationType::TransformType::OutputVectorType 
                               OutputVectorType;
 
-    LandmarkRegistrationType::Pointer landmarkRegister = LandmarkRegistrationType::New();    
+    LandmarkRegistrationType::Pointer landmarkRegister = 
+                                        LandmarkRegistrationType::New();    
+
     LandmarkPointContainerType  fpointcontainer;
     LandmarkPointContainerType  mpointcontainer;
-    LandmarkImagePointType fixedPoint;
-    LandmarkTrackerPointType movingPoint;
+
+    LandmarkImagePointType      fixedPoint;
+    LandmarkTrackerPointType    movingPoint;
 
    //Add observer for invalid input request
     LandmarkRegistrationInvalidRequestCallback::Pointer 
                               lrcb = LandmarkRegistrationInvalidRequestCallback::New();
-    ::itk::EventObject* eventInvalidRequest =    
-                              new igstk::LandmarkRegistration<3>::InvalidRequestErrorEvent();
-    landmarkRegister->AddObserver(*eventInvalidRequest, lrcb );
+
+    typedef igstk::LandmarkRegistration<3>::InvalidRequestErrorEvent  InvalidRequestEvent;
+    landmarkRegister->AddObserver( InvalidRequestEvent(), lrcb );
 
    //Add observer for erro in computation 
     LandmarkRegistrationErrorCallback::Pointer ecb = LandmarkRegistrationErrorCallback::New();
-    ::itk::EventObject* eventError =    
-                              new igstk::LandmarkRegistration<3>::TransformComputationFailureEvent();
-    landmarkRegister->AddObserver(*eventError, ecb );
+
+    typedef igstk::LandmarkRegistration<3>::TransformComputationFailureEvent ComputationFailureEvent;
+
+    landmarkRegister->AddObserver( ComputationFailureEvent(), ecb );
 
 // logger object
     LoggerType::Pointer   logger = LoggerType::New();
@@ -115,6 +119,7 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
     logger->AddLogOutput( logOutput );
     logger->SetPriorityLevel( itk::Logger::DEBUG );
     landmarkRegister->SetLogger( logger );
+
 
     // Define the 3D rigid body transformation 
     typedef itk::Rigid3DTransform< double > Rigid3DTransformType;
@@ -151,11 +156,11 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
 
     landmarkRegister->RequestComputeTransform();
 
-    //fpointcontainer.push_back(fixedPoint);
+    fpointcontainer.push_back(fixedPoint);
     landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
   
     movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
-    //mpointcontainer.push_back(movingPoint);
+    mpointcontainer.push_back(movingPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
 
 
@@ -163,22 +168,22 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
     fixedPoint[1] =  21.0;
     fixedPoint[2] =  17.0;
 
-    //fpointcontainer.push_back(fixedPoint);
+    fpointcontainer.push_back(fixedPoint);
     landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
 
     movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
-    //mpointcontainer.push_back(movingPoint);
+    mpointcontainer.push_back(movingPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
 
     fixedPoint[0] =  14.0;
     fixedPoint[1] =  25.0;
     fixedPoint[2] =  11.0;
 
-    //fpointcontainer.push_back(fixedPoint);
+    fpointcontainer.push_back(fixedPoint);
     landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
 
     movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
-    //mpointcontainer.push_back(movingPoint);
+    mpointcontainer.push_back(movingPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
 
     fixedPoint[0] =  10.0;
@@ -192,12 +197,7 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
     // Calculate transform
     landmarkRegister->RequestComputeTransform();
 
-    //Get the tracker and image coordinates and compare with
-    LandmarkPointContainerType  trackerLandmarkPointcontainer;
-    LandmarkPointContainerType  imageLandmarkPointcontainer;
 
-    trackerLandmarkPointcontainer=landmarkRegister->GetTrackerLandmarks();
-    imageLandmarkPointcontainer=landmarkRegister->GetImageLandmarks();
 
     OutputVectorType error;
     OutputVectorType::RealValueType tolerance = 0.00001;
@@ -208,15 +208,15 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
 
     //Check if the transformation parameters were evaluated correctely
     LandmarkRegistrationType::PointsContainerConstIterator
-      fitr = trackerLandmarkPointcontainer.begin();
+      fitr = fpointcontainer.begin();
     LandmarkRegistrationType::PointsContainerConstIterator
-      mitr = imageLandmarkPointcontainer.begin();
+      mitr = mpointcontainer.begin();
 
     OutputVectorType errortr;
     tolerance = 0.1;
     failed = false;
 
-    while( mitr != imageLandmarkPointcontainer.end() )
+    while( mitr != mpointcontainer.end() )
       {
       std::cout << "  Tracker image Landmark: " << *fitr << " Image Image landmark " << *mitr
         << " Transformed trackerLandmark : " <<
@@ -245,10 +245,7 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
       std::cout << "  Landmark alignment using Rigid3D transform [PASSED]" << std::endl;
       }
 
-     delete  eventInvalidRequest;
-     delete  eventError;
-
-     return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 
 

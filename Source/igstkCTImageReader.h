@@ -25,6 +25,9 @@ namespace igstk
 
 /** \class CTImageReader
  *  \brief This class implements a reader specific for CT modality.
+
+ * This class derives from the DICOMImageReader. It expects to load a volume
+ * from a set of DICOM files. It will verify that the image modality is CT.
  *
  * \ingroup Readers
  */
@@ -57,6 +60,12 @@ protected:
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+  
+  /** These two methods must be declared and note be implemented
+   *  in order to enforce the protocol of smart pointers. */
+  CTImageReader(const Self&);         //purposely not implemented
+  void operator=(const Self&);        //purposely not implemented
+
 
 };
 
