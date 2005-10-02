@@ -93,7 +93,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
   view2D->RequestAddObject( representation );
     
   // Do manual redraws
-  for(unsigned int i=0; i<500; i++)
+  for(unsigned int i=0; i<50; i++)
     {
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
