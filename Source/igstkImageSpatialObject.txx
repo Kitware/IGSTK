@@ -51,6 +51,7 @@ ImageSpatialObject< TPixelType, VDimension >
   m_vtkImporter->SetDataExtentCallback(m_itkExporter->GetDataExtentCallback());
   m_vtkImporter->SetBufferPointerCallback(m_itkExporter->GetBufferPointerCallback());
   m_vtkImporter->SetCallbackUserData(m_itkExporter->GetCallbackUserData());
+
 }
 
 
@@ -78,6 +79,7 @@ ImageSpatialObject< TPixelType, VDimension >
 ::SetImage( const ImageType * image ) 
 {
   m_Image = image;
+  m_ImageSpatialObject->SetImage( m_Image );
   m_itkExporter->SetInput( m_Image );
 }
 
@@ -91,12 +93,9 @@ ImageSpatialObject< TPixelType, VDimension >
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  os << "Details of the image " << std::endl;
-  m_Image->Print( os );
-  os << "ITK Exporter filter " << std::endl;
-  m_itkExporter->Print( os );
-  os << "VTK Importer filter " << std::endl;
-  m_vtkImporter->Print( os );
+  os << "Details of the image " << m_Image.GetPointer() << std::endl;
+  os << "ITK Exporter filter " << m_itkExporter.GetPointer() << std::endl;
+  os << "VTK Importer filter " << m_vtkImporter << std::endl;
 }
 
 
