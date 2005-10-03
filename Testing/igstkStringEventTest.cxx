@@ -44,7 +44,7 @@ int igstkStringEventTest( int , char* [] )
 
   std::string eventName = event.GetEventName();
   std::string expectedName = "StringEvent";
-  if( eventName != expectedName );
+  if( eventName != expectedName )
     {
     std::cerr << "ERROR: in GetEventName() it returned " << eventName << std::endl;
     std::cerr << "The expected name is " << expectedName << std::endl;
