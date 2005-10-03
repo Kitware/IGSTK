@@ -187,7 +187,6 @@ int igstkPolarisTrackerTest( int, char * [] )
 
   for(int i=0; i<10; i++)
   {
-    tracker->WaitForNextTransform(1000);
     tracker->UpdateStatus();
     tracker->GetToolTransform( 0, 0, transitions );
     position = transitions.GetTranslation();
