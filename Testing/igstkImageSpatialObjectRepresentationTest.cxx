@@ -43,6 +43,8 @@ int igstkImageSpatialObjectRepresentationTest( int , char* [] )
 
   RepresentationType::Pointer  representation = RepresentationType::New();
 
+  // Test error case
+  representation->RequestSetImageSpatialObject( NULL );
 
   return EXIT_SUCCESS;
 }
