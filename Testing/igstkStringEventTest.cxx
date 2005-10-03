@@ -19,7 +19,8 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-#include "igstkStringEvent.h"
+#include "igstkMacros.h"
+#include "igstkStringEvents.h"
 
 
 int igstkStringEventTest( int , char* [] )
