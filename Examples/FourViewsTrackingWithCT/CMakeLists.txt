@@ -11,15 +11,11 @@ SET(FourViewsTrackingWithCT_SRCS
 
 INCLUDE_DIRECTORIES(
   ${FourViewsTrackingWithCT_SOURCE_DIR}
+  ${FourViewsTrackingWithCT_BINARY_DIR}
   )
 
-FLTK_WRAP_UI(FourViewsTrackingWithCTLib ${FourViewsTrackingWithCT_GUI_SRCS})
-ADD_LIBRARY(FourViewsTrackingWithCTLib ${FourViewsTrackingWithCTLib_FLTK_UI_SRCS})
-ADD_EXECUTABLE(FourViewsTrackingWithCT ${FourViewsTrackingWithCT_SRCS})
-
-TARGET_LINK_LIBRARIES(FourViewsTrackingWithCT 
-  FourViewsTrackingWithCTLib 
-  IGSTKSandbox
-  )
+FLTK_WRAP_UI(FourViewsTrackingWithCT ${FourViewsTrackingWithCT_GUI_SRCS})
+ADD_EXECUTABLE(FourViewsTrackingWithCT ${FourViewsTrackingWithCT_FLTK_UI_SRCS} ${FourViewsTrackingWithCT_SRCS})
+TARGET_LINK_LIBRARIES(FourViewsTrackingWithCT IGSTKSandbox)
 
 
