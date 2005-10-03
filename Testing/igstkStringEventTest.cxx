@@ -20,7 +20,7 @@
 #endif
 
 #include "igstkMacros.h"
-#include "igstkStringEvents.h"
+#include "igstkStringEvent.h"
 
 
 int igstkStringEventTest( int , char* [] )
@@ -36,7 +36,7 @@ int igstkStringEventTest( int , char* [] )
 
   if( message2 != message )
     {
-    std::cerr << "ERROR: inconsistency between SetString() and GetString()" << std::endl
+    std::cerr << "ERROR: inconsistency between SetString() and GetString()" << std::endl;
     std::cerr << "Set = " << message << std::endl;
     std::cerr << "Get = " << message2 << std::endl;
     return EXIT_FAILURE;
@@ -49,11 +49,24 @@ int igstkStringEventTest( int , char* [] )
     return EXIT_FAILURE;
     }
 
-  if( !event.CheckEvent( event ) )
+  if( !event.CheckEvent( &event ) )
     {
     std::cerr << "ERROR: in CheckEvent() it didn't recognized itself" << std::endl;
     return EXIT_FAILURE;
     }
+
+  igstk::StringEvent * newEvent = 
+      dynamic_cast< igstk::StringEvent *>( event.MakeObject() );
+
+  if( newEvent->CheckEvent( &event )   || 
+      event.CheckEvent( newEvent )     || 
+      newEvent->GetEventName() != event.GetEventName() )
+    {
+    std::cerr << "ERROR: MakeObject() did not returned an event of the expected type" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  delete newEvent;
 
   return EXIT_SUCCESS;
 }

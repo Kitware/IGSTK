@@ -28,7 +28,7 @@
 #include "itkEventObject.h"
 
 #include "igstkEvents.h"
-#include "igstkStringEvents.h"
+#include "igstkStringEvent.h"
 #include "igstkTubeObject.h"
 #include "itkTubeSpatialObject.h"
 #include "igstkTubeGroupObject.h"

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkStringEvents.h
+  Module:    igstkStringEvent.h
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -16,8 +16,8 @@
 =========================================================================*/
 
 
-#ifndef __igstkStringEvents_H
-#define __igstkStringEvents_H
+#ifndef __igstkStringEvent_H
+#define __igstkStringEvent_H
 
 
 #include "igstkEvents.h"
@@ -26,33 +26,33 @@
 namespace igstk
 {
 
-/** \class StringEvents
- *  \brief StringEvents is a base class for events with a string payload 
+/** \class StringEvent
+ *  \brief StringEvent is a base class for events with a string payload 
  *
  */
 
-class StringEvents : public IGSTKEvent 
+class StringEvent : public IGSTKEvent 
 {
 
 public: 
-  typedef StringEvents              Self; 
+  typedef StringEvent              Self; 
   typedef IGSTKEvent                Superclass;
   typedef std::string               StringType;
 
   /** Constructor */
-  StringEvents() {
+  StringEvent() {
     m_String = ""; };
 
   /** Constructor with error code */
-  StringEvents( StringType str ) {
+  StringEvent( StringType str ) {
     m_String = str; };
 
   /** Copy constructor */
-  StringEvents(const Self & s) : IGSTKEvent( s ) {
+  StringEvent(const Self & s) : IGSTKEvent( s ) {
     m_String = s.m_String; };
  
   /** Destructor */
-  virtual ~StringEvents() {};
+  virtual ~StringEvent() {};
 
   /** Get the name of this event */
   virtual const char * GetEventName() const {

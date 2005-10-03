@@ -9,7 +9,7 @@
 #include "itkSpatialObjectReader.h"
 #include "itkLogger.h"
 #include "igstkStateMachine.h"
-#include "igstkStringEvents.h"
+#include "igstkStringEvent.h"
 #include "itkDefaultDynamicMeshTraits.h"
 
 namespace igstk

@@ -20,7 +20,7 @@
 #include "igstkImageReader.h"
 
 #include "igstkEvents.h"
-#include "igstkStringEvents.h"
+#include "igstkStringEvent.h"
 
 #include "itkImageSeriesReader.h"
 #include "itkEventObject.h"
@@ -32,9 +32,9 @@ namespace igstk
 {
 
 
-itkEventMacro( DICOMModalityEvent,                                StringEvents);
-itkEventMacro( DICOMPatientNameEvent,                             StringEvents);
-itkEventMacro( DICOMImageReaderEvent,                             StringEvents);
+itkEventMacro( DICOMModalityEvent,                                StringEvent);
+itkEventMacro( DICOMPatientNameEvent,                             StringEvent);
+itkEventMacro( DICOMImageReaderEvent,                             StringEvent);
 
 // Invalid request error event 
 itkEventMacro( DICOMInvalidRequestErrorEvent,                      DICOMImageReaderEvent );
