@@ -56,33 +56,18 @@ Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
   m_StateMachine.AddState( m_TrackingState,
                            "TrackingState" );
 
+  m_StateMachine.AddState( m_AttemptingToUpdateState,
+                           "AttemptingToUpdateState" );
+
   // Set the input descriptors
   m_StateMachine.AddInput( m_EstablishCommunicationInput,
                            "EstablishCommunicationInput");
 
-  m_StateMachine.AddInput( m_CommunicationEstablishmentSuccessInput,
-                           "CommunicationEstablishmentSuccessInput");
-
-  m_StateMachine.AddInput( m_CommunicationEstablishmentFailureInput,
-                           "CommunicationEstablishmentFailureInput");
-
   m_StateMachine.AddInput( m_ActivateToolsInput,
                            "ActivateToolsInput");
 
-  m_StateMachine.AddInput( m_ToolsActivationSuccessInput,
-                           "ToolsActivationSuccessInput");
-
-  m_StateMachine.AddInput( m_ToolsActivationFailureInput,
-                           "ToolsActivationFailureInput");
-
   m_StateMachine.AddInput( m_StartTrackingInput,
                            "StartTrackingInput");
-
-  m_StateMachine.AddInput( m_StartTrackingSuccessInput,
-                           "StartTrackingSuccessInput");
-
-  m_StateMachine.AddInput( m_StartTrackingFailureInput,
-                           "StartTrackingFailureInput");
 
   m_StateMachine.AddInput( m_UpdateStatusInput,
                            "UpdateStatusInput");
@@ -90,24 +75,17 @@ Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
   m_StateMachine.AddInput( m_StopTrackingInput,
                            "StopTrackingInput");
 
-  m_StateMachine.AddInput( m_StopTrackingSuccessInput,
-                           "StopTrackingSuccessInput");
-
-  m_StateMachine.AddInput( m_StopTrackingFailureInput,
-                           "StopTrackingFailureInput");
-
   m_StateMachine.AddInput( m_ResetInput,
                            "ResetInput");
 
   m_StateMachine.AddInput( m_CloseCommunicationInput,
                            "CloseCommunicationInput");
 
-  m_StateMachine.AddInput( m_CloseCommunicationSuccessInput,
-                           "CloseCommunicationSuccessInput");
+  m_StateMachine.AddInput( m_SuccessInput,
+                           "SuccessInput");
 
-  m_StateMachine.AddInput( m_CloseCommunicationFailureInput,
-                           "CloseCommunicationFailureInput");
-
+  m_StateMachine.AddInput( m_FailureInput,
+                           "FailureInput");
 
   // Programming the state machine transitions:
 
@@ -119,12 +97,12 @@ Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
 
   // Transitions from the AttemptingToEstablishCommunicationState
   m_StateMachine.AddTransition( m_AttemptingToEstablishCommunicationState,
-                                m_CommunicationEstablishmentSuccessInput,
+                                m_SuccessInput,
                                 m_CommunicationEstablishedState,
                                 &Tracker::CommunicationEstablishmentSuccessProcessing );
 
   m_StateMachine.AddTransition( m_AttemptingToEstablishCommunicationState,
-                                m_CommunicationEstablishmentFailureInput,
+                                m_FailureInput,
                                 m_IdleState,
                                 &Tracker::CommunicationEstablishmentFailureProcessing);
 
@@ -146,12 +124,12 @@ Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
 
   // Transitions from AttemptingToActivateToolsState
   m_StateMachine.AddTransition( m_AttemptingToActivateToolsState,
-                                m_ToolsActivationSuccessInput,
+                                m_SuccessInput,
                                 m_ToolsActiveState,
                                 &Tracker::ToolsActivationSuccessProcessing );
 
   m_StateMachine.AddTransition( m_AttemptingToActivateToolsState,
-                                m_ToolsActivationFailureInput,
+                                m_FailureInput,
                                 m_CommunicationEstablishedState,
                                 &Tracker::ToolsActivationFailureProcessing );
 
@@ -173,19 +151,19 @@ Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
 
   // Transitions from AttemptingToTrackState
   m_StateMachine.AddTransition( m_AttemptingToTrackState,
-                                m_StartTrackingSuccessInput,
+                                m_SuccessInput,
                                 m_TrackingState,
                                 &Tracker::StartTrackingSuccessProcessing );
 
   m_StateMachine.AddTransition( m_AttemptingToTrackState,
-                                m_StartTrackingFailureInput,
+                                m_FailureInput,
                                 m_ToolsActiveState,
                                 &Tracker::StartTrackingFailureProcessing );
 
   // Transitions from TrackingState
   m_StateMachine.AddTransition( m_TrackingState,
                                 m_UpdateStatusInput,
-                                m_TrackingState,
+                                m_AttemptingToUpdateState,
                                 &Tracker::AttemptToUpdateStatus );
 
   m_StateMachine.AddTransition( m_TrackingState,
@@ -203,24 +181,35 @@ Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
                                 m_AttemptingToCloseCommunicationState,
                                 &Tracker::CloseFromTrackingStateProcessing );
 
+  // Transitions from AttemptingToUpdateState
+  m_StateMachine.AddTransition( m_AttemptingToUpdateState,
+                                m_SuccessInput,
+                                m_TrackingState,
+                                &Tracker::UpdateStatusSuccessProcessing );
+
+  m_StateMachine.AddTransition( m_AttemptingToUpdateState,
+                                m_FailureInput,
+                                m_TrackingState,
+                                &Tracker::UpdateStatusFailureProcessing );
+
   // Transitions from AttemptingToStopTrackingState
   m_StateMachine.AddTransition( m_AttemptingToStopTrackingState,
-                                m_StopTrackingSuccessInput,
+                                m_SuccessInput,
                                 m_ToolsActiveState,
                                 &Tracker::StopTrackingSuccessProcessing );
 
   m_StateMachine.AddTransition( m_AttemptingToStopTrackingState,
-                                m_StopTrackingFailureInput,
+                                m_FailureInput,
                                 m_TrackingState,
                                 &Tracker::StopTrackingFailureProcessing );
 
   m_StateMachine.AddTransition( m_AttemptingToCloseCommunicationState,
-                                m_CloseCommunicationSuccessInput,
+                                m_SuccessInput,
                                 m_IdleState,
                                 &Tracker::CloseCommunicationSuccessProcessing );
 
   m_StateMachine.AddTransition( m_AttemptingToCloseCommunicationState,
-                                m_CloseCommunicationFailureInput,
+                                m_FailureInput,
                                 m_CommunicationEstablishedState,
                                 &Tracker::CloseCommunicationFailureProcessing );
 
@@ -234,8 +223,7 @@ Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
   m_PulseGenerator = PulseGenerator::New();
 
   m_PulseObserver = ObserverType::New();
-  m_PulseObserver->SetCallbackFunction( this, & Tracker::AttemptToUpdateStatus );
-
+  m_PulseObserver->SetCallbackFunction( this, & Tracker::UpdateStatus );
   m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
 
   // This is update rate for sending tracking information to the
@@ -245,7 +233,6 @@ Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
   // By default, the reference is not used
   m_ApplyingReferenceTool = false;
 
-  m_TrackingThreadLock = itk::MutexLock::New();
   m_ConditionNextTransformReceived = itk::ConditionVariable::New();
   m_Threader = itk::MultiThreader::New();
   m_ThreadingEnabled = false;
@@ -259,7 +246,8 @@ Tracker::~Tracker(void)
 }
 
 
-/** The "Open" method attempts to open communication with the tracking device. */
+/** The "Open" method attempts to open communication with the
+ *  tracking device. */
 void Tracker::Open( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::Open called...\n");
@@ -325,15 +313,6 @@ void Tracker::UpdateStatus( void )
 }
 
 
-/** The "WaitForNextTransform" waits for the next transform received 
-  * Right now, timeout is ignored 
-  * because itk::ConditionVariable doesn't support */
-void Tracker::WaitForNextTransform( unsigned int timeout )
-{
-  m_ConditionNextTransformReceived->Wait(&m_LockForConditionNextTransformReceived);  
-}
-
-
 /** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
  * port numbered "portNumber" in the variable "position". Note that this
  * variable represents the position and orientation of the tool in 3D space.
@@ -361,8 +340,8 @@ void Tracker::GetToolTransform( unsigned int portNumber,
           where:
           " T " is the original tool transform reported by the device,
           " R^-1 " is the inverse of the transform for the reference tool,
-          " W " is the Patient transform (it specifies the position of the reference
-          with respect to patient coordinates), and
+          " W " is the Patient transform (it specifies the position of
+                the reference with respect to patient coordinates), and
           " T ' " is the transformation that is reported to the spatial objects
           " C " is the tool calibration transform.
         */
@@ -568,8 +547,8 @@ void Tracker::AttemptToOpen( void )
   ResultType result = this->InternalOpen();
   
   m_StateMachine.PushInputBoolean( (bool)result,
-                                   m_CommunicationEstablishmentSuccessInput,
-                                   m_CommunicationEstablishmentFailureInput );
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 
@@ -583,27 +562,31 @@ void Tracker::CommunicationEstablishmentSuccessProcessing( void )
 /** Post-processing after communication setup has failed. */ 
 void Tracker::CommunicationEstablishmentFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::CommunicationEstablishmentFailureProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::"
+                 "CommunicationEstablishmentFailureProcessing called ...\n");
 }
 
-
-/** The Reset methods force the tracker to the CommunicationEstablished state */
+/** The Reset methods force the tracker to the
+ *  CommunicationEstablished state */
 void Tracker::ResetFromTrackingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::ResetFromTrackingStateProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::"
+                 "ResetFromTrackingStateProcessing() called ...\n");
   // leaving TrackingState, going to CommunicationEstablishedState
   this->ExitTrackingStateProcessing();
   this->ResetFromToolsActiveStateProcessing();
 }
 
-/** The Reset methods force the tracker to the CommunicationEstablished state */
+/** The Reset methods force the tracker to the
+ *  CommunicationEstablished  state */
 void Tracker::ResetFromToolsActiveStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::ResetFromToolsActiveStateProcessing() called ...\n");
   this->ResetFromCommunicatingStateProcessing();
 }
 
-/** The Reset methods force the tracker to the CommunicationEstablished state */
+/** The Reset methods force the tracker to the
+ *  CommunicationEstablished state */
 void Tracker::ResetFromCommunicatingStateProcessing( void )
 {
   ResultType result = this->InternalReset();
@@ -626,21 +609,23 @@ void Tracker::AttemptToActivateTools( void )
   ResultType result = this->InternalActivateTools();
   
   m_StateMachine.PushInputBoolean( (bool)result,
-                                   m_ToolsActivationSuccessInput,
-                                   m_ToolsActivationFailureInput );
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
   
 
 /** Post-processing after ports and tools setup has been successful. */ 
 void Tracker::ToolsActivationSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::ToolsActivationSuccessProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::ToolsActivationSuccessProcessing "
+                 "called ...\n");
 }
 
 /** Post-processing after ports and tools setup has failed. */ 
 void Tracker::ToolsActivationFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::ToolsActivationFailureProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::ToolsActivationFailureProcessing "
+                 "called ...\n");
 }
 
 /** The "AttemptToStartTracking" method attempts to start tracking. */
@@ -651,14 +636,15 @@ void Tracker::AttemptToStartTracking( void )
   ResultType result = this->InternalStartTracking();
   
   m_StateMachine.PushInputBoolean( (bool)result,
-                                   m_StartTrackingSuccessInput,
-                                   m_StartTrackingFailureInput );
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 /** Post-processing after start tracking has been successful. */ 
 void Tracker::StartTrackingSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::StartTrackingSuccessProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::StartTrackingSuccessProcessing "
+                 "called ...\n");
   // going from AttemptingToTrackState to TrackingState
   this->EnterTrackingStateProcessing();
 }
@@ -666,7 +652,8 @@ void Tracker::StartTrackingSuccessProcessing( void )
 /** Post-processing after start tracking has failed. */ 
 void Tracker::StartTrackingFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::StartTrackingFailureProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::StartTrackingFailureProcessing "
+                 "called ...\n");
 }
 
 /** The "AttemptToStopTracking" method attempts to stop tracking. */
@@ -679,21 +666,23 @@ void Tracker::AttemptToStopTracking( void )
   ResultType result = this->InternalStopTracking();
   
   m_StateMachine.PushInputBoolean( (bool)result,
-                                   m_StopTrackingSuccessInput,
-                                   m_StopTrackingFailureInput );
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 
 /** Post-processing after stop tracking has been successful. */ 
 void Tracker::StopTrackingSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::StopTrackingSuccessProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::StopTrackingSuccessProcessing "
+                 "called ...\n");
 }
 
 /** Post-processing after start tracking has failed. */ 
 void Tracker::StopTrackingFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::StopTrackingFailureProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::StopTrackingFailureProcessing "
+                 "called ...\n");
   // going from AttemptingToStopTrackingState to TrackingState
   this->EnterTrackingStateProcessing();
 }
@@ -701,29 +690,29 @@ void Tracker::StopTrackingFailureProcessing( void )
 /** Needs to be called every time when entering tracking state. */ 
 void Tracker::EnterTrackingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::EnterTrackingStateProcessing called ...\n");
-  // start the tracking thread here
-  m_PulseGenerator->RequestStart();
-  if( this->GetThreadingEnabled() )
+  igstkLogMacro( DEBUG, "igstk::Tracker::EnterTrackingStateProcessing "
+                 "called ...\n");
+
+  if ( this->GetThreadingEnabled() )
     {
-    m_ThreadID = m_Threader->SpawnThread(TrackingThreadFunction, this);
+    m_ThreadID = m_Threader->SpawnThread( TrackingThreadFunction, this );
     }
+
+  m_PulseGenerator->RequestStart();
 }
 
 /** Needs to be called every time when exiting tracking state. */ 
 void Tracker::ExitTrackingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::ExitTrackingStateProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::ExitTrackingStateProcessing "
+                 "called ...\n");
   m_PulseGenerator->RequestStop();
-  // stop the tracking thread here
-  // Terminating the TrackingThread.
-//  m_TrackingThreadLock->Lock();
-  if( this->GetThreadingEnabled() )
-    {
-    m_Threader->TerminateThread(m_ThreadID);
-    }
 
-//  m_TrackingThreadLock->Unlock();
+  // Terminating the TrackingThread.
+  if ( this->GetThreadingEnabled() )
+    {
+    m_Threader->TerminateThread( m_ThreadID );
+    }
 }
 
 /** The "AttemptToUpdateStatus" method attempts to update status
@@ -731,24 +720,48 @@ void Tracker::ExitTrackingStateProcessing( void )
 void Tracker::AttemptToUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToUpdateStatus called ...\n");
-  
+
+  // wait for a new transform to be available, it would be nice if
+  // "Wait" had a time limit like pthread_cond_timedwait() on Unix or
+  // WaitForSingleObject() on Windows
+  if ( this->GetThreadingEnabled() )
+    {
+    m_ConditionNextTransformReceived->Wait( 
+      & m_LockForConditionNextTransformReceived );
+    }
+  else
+    {
+    this->InternalThreadedUpdateStatus();
+    }
+
   ResultType result = this->InternalUpdateStatus();
 
-  if( result == SUCCESS )
-    {
-    igstkLogMacro( DEBUG, "igstk::Tracker::InternalUpdateStatus succeeded ...\n");
-    }
-  else if( result == FAILURE )
-    {
-    igstkLogMacro( DEBUG, "igstk::Tracker::InternalUpdateStatus failed ...\n");
-    }
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
+
+/** This method is called when a call to UpdateStatus succeeded */
+void Tracker::UpdateStatusSuccessProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::UpdateStatusSuccessProcessing "
+                 "called ...\n");
+}
+
+/** This method is called when a call to UpdateStatus failed */
+void Tracker::UpdateStatusFailureProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::UpdateStatusFailureProcessing "
+                 "called ...\n");
+}
+
 
 /** The "CloseFromTrackingStateProcessing" method closes tracker in
     use, when the tracker is in tracking state. */
 void Tracker::CloseFromTrackingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromTrackingStateProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromTrackingStateProcessing "
+                 "called ...\n");
 
   // leaving TrackingState, going to AttemptingToCloseState
   this->ExitTrackingStateProcessing();
@@ -757,23 +770,24 @@ void Tracker::CloseFromTrackingStateProcessing( void )
 
   if( result == SUCCESS )
     {
-    result = InternalDeactivateTools();
+    result = this->InternalDeactivateTools();
     if ( result == SUCCESS )
       {
-      result = InternalClose();
+      result = this->InternalClose();
       }
     }
 
   m_StateMachine.PushInputBoolean( (bool)result,
-                                   m_CloseCommunicationSuccessInput,
-                                   m_CloseCommunicationFailureInput );
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 /** The "CloseFromToolsActiveStateProcessing" method closes tracker
     in use, when the tracker is in active tools state. */
 void Tracker::CloseFromToolsActiveStateProcessing( void)
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromToolsActiveStateProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::"
+                 "CloseFromToolsActiveStateProcessing called ...\n");
 
   ResultType result = this->InternalDeactivateTools();
 
@@ -783,36 +797,38 @@ void Tracker::CloseFromToolsActiveStateProcessing( void)
     }
 
   m_StateMachine.PushInputBoolean( (bool)result,
-                                   m_CloseCommunicationSuccessInput,
-                                   m_CloseCommunicationFailureInput );
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 /** The "CloseFromCommunicatingStateProcessing" method closes
     tracker in use, when the tracker is in communicating state. */
 void Tracker::CloseFromCommunicatingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromCommunicatingStateProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::"
+                 "CloseFromCommunicatingStateProcessing called ...\n");
 
   ResultType result = this->InternalClose();
 
   m_StateMachine.PushInputBoolean( (bool)result,
-                                   m_CloseCommunicationSuccessInput,
-                                   m_CloseCommunicationFailureInput );
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 
 /** Post-processing after close tracking has been successful. */ 
 void Tracker::CloseCommunicationSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::CloseCommunicationSuccessProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::"
+                 "CloseCommunicationSuccessProcessing called ...\n");
 }
 
 /** Post-processing after close tracking has failed. */ 
 void Tracker::CloseCommunicationFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::CloseCommunicationFailureProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::"
+                 "CloseCommunicationFailureProcessing called ...\n");
 }
-
 
 /** Print object information */
 void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
@@ -876,6 +892,7 @@ bool Tracker::GetReferenceTool( unsigned int &portNumber,
 {
   portNumber = m_ReferenceToolPortNumber;
   toolNumber = m_ReferenceToolNumber;
+
   return m_ApplyingReferenceTool;
 }
 
@@ -906,14 +923,16 @@ Tracker::PatientTransformType Tracker::GetPatientTransform() const
 
 
 /** The "SetToolCalibrationTransform" sets the tool calibration transform */
-void Tracker::SetToolCalibrationTransform( const Tracker::ToolCalibrationTransformType& _arg )
+void Tracker::SetToolCalibrationTransform(
+  const Tracker::ToolCalibrationTransformType& _arg )
 {
   m_ToolCalibrationTransform = _arg;
 }
 
 
 /** The "GetToolCalibrationTransform" gets the tool calibration transform */
-Tracker::ToolCalibrationTransformType Tracker::GetToolCalibrationTransform() const
+Tracker::ToolCalibrationTransformType
+Tracker::GetToolCalibrationTransform() const
 {
   return m_ToolCalibrationTransform;
 }
@@ -922,36 +941,47 @@ Tracker::ToolCalibrationTransformType Tracker::GetToolCalibrationTransform() con
 /** Thread function for tracking */
 ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
 {
-  struct itk::MultiThreader::ThreadInfoStruct * pInfo = (struct itk::MultiThreader::ThreadInfoStruct*)pInfoStruct;
+  struct itk::MultiThreader::ThreadInfoStruct * pInfo = 
+    (struct itk::MultiThreader::ThreadInfoStruct*)pInfoStruct;
 
   if( pInfo == NULL )
-  {
+    {
     return ITK_THREAD_RETURN_VALUE;
-  }
+    }
 
   if( pInfo->UserData == NULL )
-  {
+    {
     return ITK_THREAD_RETURN_VALUE;
-  }
+    }
 
   Tracker *pTracker = (Tracker*)pInfo->UserData;
 
-  while( 1 )
-  {
-    pTracker->InternalThreadedUpdateStatus();
-    pTracker->m_ConditionNextTransformReceived->Broadcast();
+  // counters for error rates
+  unsigned long errorCount = 0;
+  unsigned long totalCount = 0;
 
+  int activeFlag = 1;
+  while ( activeFlag )
+    {
+    ResultType result = pTracker->InternalThreadedUpdateStatus();
+    pTracker->m_ConditionNextTransformReceived->Signal();
+    
+    totalCount++;
+    if (result != SUCCESS)
+      {
+      errorCount++;
+      }
+      
     // check to see if we are being told to quit 
     pInfo->ActiveFlagLock->Lock();
-    int activeFlag = *pInfo->ActiveFlag;
+    activeFlag = *pInfo->ActiveFlag;
     pInfo->ActiveFlagLock->Unlock();
-    if( !activeFlag )
-      {
-      break;
-      }
-  }
+    }
+  
+  igstkLogMacroStatic(pTracker, DEBUG, "TrackingThreadFunction was "
+                      "terminated, " << errorCount << " errors "
+                      "out of " << totalCount << "updates." << std::endl );
 
-  igstkLogMacroStatic(pTracker, DEBUG, "TrackingThreadFunction was terminated." << std::endl );
   return ITK_THREAD_RETURN_VALUE;
 }
 

@@ -70,14 +70,14 @@ public:
   typedef igstk::TrackerTool             TrackerToolType;
 
   /** typedefs from igstk::TrackerTool class */
-  typedef Transform                TransformType;
-  typedef double                   ErrorType;
+  typedef Transform                      TransformType;
+  typedef double                         ErrorType;
 
   /** typedefs for PatientTransform */
   typedef Transform                      PatientTransformType;
 
   /** typedefs for ToolCalibrationTransform */
-  typedef Transform                               ToolCalibrationTransformType;
+  typedef Transform                      ToolCalibrationTransformType;
 
   /** Some required typedefs for itk::Object. */
   typedef Tracker                        Self;
@@ -119,11 +119,6 @@ public:
   /** The "StopTracking" stops tracker from tracking the tools. */
   void StopTracking( void );
   
-  /** The "WaitForNextTransform" waits for the next transform received 
-   * Right now, timeout is ignored 
-   * because itk::ConditionVariable doesn't support */
-  void WaitForNextTransform( unsigned int timeout );
-
   /** The "UpdateStatus" method is used for updating the status of 
   ports and tools when the tracker is in tracking state. */
   void UpdateStatus( void );
@@ -137,7 +132,8 @@ public:
 
   /** Associate a TrackerTool to an object to be tracked. This is a one-to-one
    * association and cannot be changed during the life of the application */
-  void AttachObjectToTrackerTool( unsigned int portNumber, unsigned int toolNumber,
+  void AttachObjectToTrackerTool( unsigned int portNumber,
+                                  unsigned int toolNumber,
                                   SpatialObject * objectToTrack );
 
   /** The "SetReferenceTool" sets the reference tool. */
@@ -147,7 +143,8 @@ public:
   /** The "GetReferenceTool" gets the reference tool.
    * If the reference tool is not applied, it returns false.
    * Otherwise, it returns true. */
-  bool GetReferenceTool( unsigned int &portNumber, unsigned int &toolNumber ) const;
+  bool GetReferenceTool( unsigned int &portNumber,
+                         unsigned int &toolNumber ) const;
 
   /** The "SetPatientTransform" sets PatientTransform.
 
@@ -184,15 +181,6 @@ protected:
     FAILURE=0, 
     SUCCESS
   } ResultType;
-
-  /** itk::MutexLock object pointer */
-  itk::MutexLock::Pointer         m_TrackingThreadLock;
-  
-  /** itk::ConditionVariable object pointer to signal for the next transform */
-  itk::ConditionVariable::Pointer m_ConditionNextTransformReceived;
-  
-  /** itk::SimpleMutexLock object to be used for m_ConditionNextTransformReceived */
-  itk::SimpleMutexLock            m_LockForConditionNextTransformReceived;
 
   Tracker(void);
 
@@ -260,7 +248,8 @@ protected:
    * port numbered "portNumber" by the content of variable "position". Note
    * that this variable represents the position and orientation of the tool in
    * 3D space.  */
-  void SetToolTransform( unsigned int portNumber, unsigned int toolNumber, const TransformType & position );
+  void SetToolTransform( unsigned int portNumber, unsigned int toolNumber,
+                         const TransformType & position );
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -289,8 +278,8 @@ private:
   /** ToolCalibration Transform */
   ToolCalibrationTransformType    m_ToolCalibrationTransform;
 
-  /** Multi-threading enabled flag : The decendent class will use multi-threading,
-      if this flag is set as true */
+  /** Multi-threading enabled flag : The decendent class will use
+      multi-threading, if this flag is set as true */
   bool                            m_ThreadingEnabled;
 
   /** itk::MultiThreader object pointer */
@@ -298,6 +287,14 @@ private:
 
   /** Tracking ThreadID */
   int                             m_ThreadID;
+
+  /** itk::ConditionVariable object pointer to signal for the next
+      transform */
+  itk::ConditionVariable::Pointer m_ConditionNextTransformReceived;
+  
+  /** itk::SimpleMutexLock object to be used for
+      m_ConditionNextTransformReceived */
+  itk::SimpleMutexLock            m_LockForConditionNextTransformReceived;
 
   /** List of States */
   StateType                m_IdleState;
@@ -308,32 +305,20 @@ private:
   StateType                m_ToolsActiveState;
   StateType                m_AttemptingToTrackState;
   StateType                m_TrackingState;
+  StateType                m_AttemptingToUpdateState;
   StateType                m_AttemptingToStopTrackingState;
 
   /** List of Inputs */
   InputType                m_EstablishCommunicationInput;
-  InputType                m_CommunicationEstablishmentSuccessInput;
-  InputType                m_CommunicationEstablishmentFailureInput;
-
   InputType                m_ActivateToolsInput;
-  InputType                m_ToolsActivationSuccessInput;
-  InputType                m_ToolsActivationFailureInput;
-
   InputType                m_StartTrackingInput;
-  InputType                m_StartTrackingSuccessInput;
-  InputType                m_StartTrackingFailureInput;
-
   InputType                m_UpdateStatusInput;
-
   InputType                m_StopTrackingInput;
-  InputType                m_StopTrackingSuccessInput;
-  InputType                m_StopTrackingFailureInput;
-
   InputType                m_ResetInput;
-
   InputType                m_CloseCommunicationInput;
-  InputType                m_CloseCommunicationSuccessInput;
-  InputType                m_CloseCommunicationFailureInput;
+
+  InputType                m_SuccessInput;
+  InputType                m_FailureInput;
 
   /** Thread function for tracking */
   static ITK_THREAD_RETURN_TYPE TrackingThreadFunction(void* pInfoStruct);
@@ -354,6 +339,14 @@ private:
   /** The "AttemptToUpdateStatus" method attempts to update status
       during tracking. */
   void AttemptToUpdateStatus( void );
+
+  /** The "UpdateStatusFailureProcessing" method is called when an
+      attempt to update failes. */
+  void UpdateStatusSuccessProcessing( void );
+
+  /** The "UpdateStatusFailureProcessing" method is called when an
+      attempt to update failes. */
+  void UpdateStatusFailureProcessing( void );
 
   /** The "CloseFromTrackingStateProcessing" method closes tracker in
       use, when the tracker is in tracking state. */
