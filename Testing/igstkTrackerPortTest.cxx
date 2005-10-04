@@ -42,6 +42,8 @@ int igstkTrackerPortTest( int, char * [] )
     std::cout << "Number of tools = " << nt << std::endl;
 
     TrackerToolType::Pointer trackerTool2 = trackerPort->GetTool(0);
+    
+    std::cout << "Tracker Tool : " << trackerTool2 << std::endl;
 
     // Exercise the const methods for GetTool()
     TrackerPortType::ConstPointer trackerPort2 = trackerPort.GetPointer();

@@ -75,7 +75,7 @@ int igstkAuroraTrackerTest( int, char * [] )
   typedef itk::StdStreamLogOutput       LogOutputType;
 
   igstk::AuroraTrackerTool::Pointer tool = igstk::AuroraTrackerTool::New();
-  std::cout << tool->GetNameOfClass() << std::endl;
+  std::cout << "AuroraTrackerTool class name : " << tool->GetNameOfClass() << std::endl;
   std::cout << tool << std::endl;
 
 #ifdef IGSTK_SIMULATOR_TEST
@@ -164,8 +164,7 @@ int igstkAuroraTrackerTest( int, char * [] )
   {
     tracker->UpdateStatus();
     tracker->GetToolTransform( 0, 0, transitions );
-    position = transitions.GetTranslation();
-    std::cout << "Position = (" << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
+    std::cout << transitions << std::endl;
   }
 
   tracker->Reset();

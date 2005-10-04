@@ -266,6 +266,7 @@ int igstkBasicTrackerTest( int, char * [] )
   unsigned int refPort;
   bool bApplyRefTool;
   bApplyRefTool = tracker->GetReferenceTool(refPort, refTool);
+  std::cout << "ReferenceTool flag : " << bApplyRefTool << "\t port: " << refPort << ", tool: " << refTool << std::endl;
   if( bApplyRefTool != true  ||  refTool != 0  ||  refPort != 1 )
     {
     std::cerr << "SetReferenceTool() or GetReferenceTool() doesn't work correctly!" << std::endl;

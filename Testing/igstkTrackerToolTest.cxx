@@ -35,6 +35,8 @@ int igstkTrackerToolTest( int, char * [] )
     TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
     TransformType   transform   = trackerTool->GetTransform();
+    
+    std::cout << "TrackerTool Transform : " << transform << std::endl;
 
     trackerTool->SetTransform( transform );
 
@@ -42,6 +44,8 @@ int igstkTrackerToolTest( int, char * [] )
     trackerTool->SetValidityPeriod( period );
 
     TimePeriodType period2 = trackerTool->GetValidityPeriod();
+    
+    std::cout << "Validity Period : " << period2 << std::endl;
 
     if( fabs( period2 - period ) > 1e-6 )
       {

@@ -170,7 +170,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   std::cout << interpreter << std::endl;
   //---------------------------------
   // send some commands to the device
-  int i, j, n, a, ph;
+  int i, j, k, n, a, ph;
   unsigned int l;
   double vals[8] = { 0, };
   int portHandles[256];
@@ -221,10 +221,13 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   std::cout << "Calling SSTAT" << std::endl;
   interpreter->SSTAT(CommandInterpreterType::NDI_CONTROL);
   a = interpreter->GetSSTATControl();
+  std::cout << "SSTATControl : " << a << std::endl;
   interpreter->SSTAT(CommandInterpreterType::NDI_SENSORS);
   a = interpreter->GetSSTATSensors();
+  std::cout << "SSTATSensors : " << a << std::endl;
   interpreter->SSTAT(CommandInterpreterType::NDI_TIU);
   a = interpreter->GetSSTATTIU();
+  std::cout << "SSTATTIU : " << a << std::endl;
 
   // -- diagnostic commands, POLARIS only --
   std::cout << "Calling DSTART" << std::endl;
@@ -239,6 +242,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     std::cout << interpreter->ErrorString(errorCode) << std::endl;
     }
   a = interpreter->GetIRCHKDetected();
+  std::cout << "IRCHKDetected : " << a << std::endl;
   std::cout << "Calling IRCHK" << std::endl;
   interpreter->IRCHK(CommandInterpreterType::NDI_SOURCES);
   if (errorCode != CommandInterpreterType::NDI_OKAY)
@@ -246,15 +250,18 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     std::cout << interpreter->ErrorString(errorCode) << std::endl;
     }
   n = interpreter->GetIRCHKNumberOfSources(CommandInterpreterType::NDI_LEFT);
+  std::cout << "IRCHK Number Of Sources : " << n << std::endl;
   for (i = 0; i < n; i++)
     {
-    interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_LEFT, i, vals);
+    std::cout << "IRCHK Source XY (LEFT) : " << interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_LEFT, i, vals);
+    std::cout << "\tX : " << vals[0] << "\tY : " << vals[1] << std::endl;
     }
   interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_LEFT, 0, vals);
   n = interpreter->GetIRCHKNumberOfSources(CommandInterpreterType::NDI_RIGHT);
   for (i = 0; i < n; i++)
     {
-    interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_RIGHT, i, vals);
+    std::cout << "IRCHK Source XY (LEFT) : " << interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_RIGHT, i, vals);
+    std::cout << "\tX : " << vals[0] << "\tY : " << vals[1] << std::endl;
     }
   interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_RIGHT, 0, vals);
   std::cout << "Calling DSTOP" << std::endl;
@@ -292,10 +299,12 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   std::cout << "Calling PHSR" << std::endl;
   interpreter->PHSR(CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
   numberOfHandles = interpreter->GetPHSRNumberOfHandles();
+  std::cout << "PHSR Number of Handles : " << numberOfHandles << std::endl;
   for (i = 0; i < numberOfHandles; i++)
     {
     portHandles[i] = interpreter->GetPHSRHandle(i);
     a = interpreter->GetPHSRInformation(i);
+    std::cout << "PHSR Handle : " << portHandles[i] << "    PHSRInformation : " << a << std::endl;
     }
 
   for (i = 0; i < numberOfHandles; i++)
@@ -309,10 +318,12 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   std::cout << "Calling PHSR" << std::endl;
   interpreter->PHSR(CommandInterpreterType::NDI_UNENABLED_HANDLES);
   numberOfHandles = interpreter->GetPHSRNumberOfHandles();
+  std::cout << "PHSR Number of Handles : " << numberOfHandles << std::endl;
   for (i = 0; i < numberOfHandles; i++)
     {
     portHandles[i] = interpreter->GetPHSRHandle(i);
     a = interpreter->GetPHSRInformation(i);
+    std::cout << "PHSR Handle : " << portHandles[i] << "    PHSRInformation : " << a << std::endl;
     }
 
   for (i = 0; i < numberOfHandles; i++)
@@ -330,10 +341,15 @@ int igstkNDICommandInterpreterTest( int, char * [] )
                        CommandInterpreterType::NDI_ACCESSORIES |
                        CommandInterpreterType::NDI_PORT_LOCATION);
     a = interpreter->GetPHINFPortStatus();
+    std::cout << "PHINF Port Status : " << a << std::endl;
     interpreter->GetPHINFToolInfo(toolInformation);
+    std::cout << "PHINF Tool Info : " << toolInformation << std::endl;
     interpreter->GetPHINFPartNumber(toolPartNumber);
+    std::cout << "PHINF Part Number : " << toolPartNumber << std::endl;
     a = interpreter->GetPHINFAccessories();
+    std::cout << "PHINF Accessories : " << a << std::endl;
     interpreter->GetPHINFPortLocation(portLocation);
+    std::cout << "PHINF Port Location : " << portLocation << std::endl;
 
     // check if this is a wired tool
     if (portLocation[9] == '0')
@@ -343,7 +359,9 @@ int igstkNDICommandInterpreterTest( int, char * [] )
                          CommandInterpreterType::NDI_TESTING |
                          CommandInterpreterType::NDI_MARKER_TYPE);
       a = interpreter->GetPHINFMarkerType();
+      std::cout << "PHINF MarkerType : " << a << std::endl;
       a = interpreter->GetPHINFCurrentTest();
+      std::cout << "PHINF CurrentTest : " << a << std::endl;
       }
 
     // enable tool according to type
@@ -376,7 +394,7 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     fout << "Calling BX #" << j << std::endl;
     interpreter->BX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
     a = interpreter->GetBXSystemStatus();      
-    fout << "  system status : " << std::hex << a << std::endl;
+    fout << " BX system status : " << std::hex << a << std::endl;
 
     for (i = 0; i < numberOfHandles; i++)
       {
@@ -523,13 +541,22 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     std::cout << "Calling TX" << std::endl;
     interpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
     a = interpreter->GetTXSystemStatus();      
+    std::cout << "TX System Status : " << a << std::endl;
 
     for (i = 0; i < numberOfHandles; i++)
       {
       ph = portHandles[i];
       a = interpreter->GetTXTransform(ph, vals);
+      std::cout << "TX Transform return value : " << a << std::endl;
+      for( k = 0; k < 8; ++k )
+        {
+        std::cout << vals[k] << "  ";
+        }
+      std::cout << std::endl;
       a = interpreter->GetTXPortStatus(ph);
+      std::cout << "TX Port Status : " << a << std::endl;
       l = interpreter->GetTXFrame(ph);
+      std::cout << "TX Frame : " << l << std::endl;
       }
     }
 
@@ -539,18 +566,27 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     {
     std::cout << "Calling TX wth NDI_PASSIVE_STRAY" << std::endl;
     interpreter->TX(CommandInterpreterType::NDI_PASSIVE_STRAY);
-    a = interpreter->GetTXSystemStatus();      
+    a = interpreter->GetTXSystemStatus();
+    std::cout << "TX System Status : " << a << std::endl;
 
     for (i = 0; i < numberOfHandles; i++)
       {
       ph = portHandles[i];
       a = interpreter->GetTXTransform(ph, vals);
+      std::cout << "TX Tranform return value : " << a << std::endl;
+      for( k = 0; k < 8; ++k )
+        {
+        std::cout << vals[k] << "  ";
+        }
+      std::cout << std::endl;
       a = interpreter->GetTXPortStatus(ph);
+      std::cout << "TX PortStatus : " << a << std::endl;
       l = interpreter->GetTXFrame(ph);
+      std::cout << "TX Frame : " << l << std::endl;
       }
 
     n = interpreter->GetTXNumberOfPassiveStrays();
-    std::cout << n << ": ";
+    std::cout << "TX NumberOfPassiveStrays : " << n << ": ";
     for (i = 0; i < n; i++)
       {
       double coord[3];
@@ -568,16 +604,31 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     std::cout << "Calling TX with NDI_SINGLE_STRAY" << std::endl;
     interpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS |
                     CommandInterpreterType::NDI_SINGLE_STRAY);
-    a = interpreter->GetTXSystemStatus();      
+    a = interpreter->GetTXSystemStatus();
+    std::cout << "TX System Status : " << a << std::endl;
 
     for (i = 0; i < numberOfHandles; i++)
       {
       double coord[3];
       ph = portHandles[i];
       a = interpreter->GetTXSingleStray(ph, coord);
+      std::cout << "TX Single Stray return value : " << a << std::endl;
+      for ( k = 0; k < 3; ++k )
+        {
+        std::cout << coord[k] << "  ";
+        }
+      std::cout << std::endl;
       a = interpreter->GetTXTransform(ph, vals);
+      std::cout << "TX Transform return value : " << a << std::endl;
+      for ( k = 0; k < 8; ++k )
+        {
+        std::cout << vals[k] << "  ";
+        }
+      std::cout << std::endl;
       a = interpreter->GetTXPortStatus(ph);
+      std::cout << "TX Port Status : " << a << std::endl;
       l = interpreter->GetTXFrame(ph);
+      std::cout << "TX Frame : " << l << std::endl;
       }
     }
 
@@ -590,13 +641,25 @@ int igstkNDICommandInterpreterTest( int, char * [] )
     {
     ph = portHandles[i];
     a = interpreter->GetTXTransform(ph, vals);
+    std::cout << "TX Transform return value : " << a << std::endl;
+    for ( k = 0; k < 8; ++k )
+      {
+      std::cout << vals[k] << "  ";
+      }
+    std::cout << std::endl;
     a = interpreter->GetTXPortStatus(ph);
+    std::cout << "TX Port Status : " << a << std::endl;
     l = interpreter->GetTXFrame(ph);
+    std::cout << "TX Frame : " << l << std::endl;
     a = interpreter->GetTXPortStatus(ph);
+    std::cout << "TX Port Status : " << a << std::endl;
     a = interpreter->GetTXToolInfo(ph);
+    std::cout << "TX Tool Info : " << a << std::endl;
     for (j = 0; j < 20; j++)
       {
       a = interpreter->GetTXMarkerInfo(ph, j);
+      std::cout << "TX Marker Info (" << j << ") : " << a << std::endl;
+      
       }
     }
 
@@ -620,10 +683,15 @@ int igstkNDICommandInterpreterTest( int, char * [] )
                        CommandInterpreterType::NDI_PORT_LOCATION);
     
     a = interpreter->GetPHINFPortStatus();
+    std::cout << "PHINF Port Status : " << a << std::endl;
     interpreter->GetPHINFToolInfo(toolInformation);
+    std::cout << "PHINF Tool Info : " << toolInformation << std::endl;
     interpreter->GetPHINFPartNumber(toolPartNumber);
+    std::cout << "PHINF Part Number : " << toolPartNumber << std::endl;
     a = interpreter->GetPHINFAccessories();
+    std::cout << "PHINF Accessories : " << a << std::endl;
     interpreter->GetPHINFPortLocation(portLocation);
+    std::cout << "PHINF Port Location : " << portLocation << std::endl;
 
     // check if this is a wired tool
     if (portLocation[9] == '0')
@@ -633,7 +701,9 @@ int igstkNDICommandInterpreterTest( int, char * [] )
                          CommandInterpreterType::NDI_TESTING |
                          CommandInterpreterType::NDI_MARKER_TYPE);
       a = interpreter->GetPHINFMarkerType();
+      std::cout << "PHINF Marker Type : " << a << std::endl;
       a = interpreter->GetPHINFCurrentTest();
+      std::cout << "PHINF Current Test : " << a << std::endl;
       }
     }
 
