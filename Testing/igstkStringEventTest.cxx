@@ -60,8 +60,8 @@ int igstkStringEventTest( int , char* [] )
   igstk::StringEvent * newEvent = 
       dynamic_cast< igstk::StringEvent *>( event.MakeObject() );
 
-  if( newEvent->CheckEvent( &event )   || 
-      event.CheckEvent( newEvent )     || 
+  if( !newEvent->CheckEvent( &event )   || 
+      !event.CheckEvent( newEvent )     || 
       newEvent->GetEventName() != event.GetEventName() )
     {
     std::cerr << "ERROR: MakeObject() did not returned an event of the expected type" << std::endl;
