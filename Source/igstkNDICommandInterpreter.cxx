@@ -2119,6 +2119,7 @@ void NDICommandInterpreter::HelperForBX(const char* cp, const char* crp)
       }
     }
 
+  m_BXNumberOfPassiveStrays = 0;
   /* get all the passive stray information */
   if (mode & NDI_PASSIVE_STRAY)
     {
