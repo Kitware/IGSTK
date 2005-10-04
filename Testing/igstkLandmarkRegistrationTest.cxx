@@ -71,6 +71,45 @@ protected:
 private:
 };
 
+class LandmarkRegistrationGetTransformCallback: public itk::Command
+{
+  public:
+    typedef LandmarkRegistrationGetTransformCallback    Self;
+    typedef itk::SmartPointer<Self>                     Pointer;
+    typedef itk::Command                                Superclass;
+    itkNewMacro(Self);
+
+    typedef igstk::TransformModifiedEvent TransformModifiedEventType;
+
+    void Execute( const itk::Object *caller, const itk::EventObject & event )
+    {
+    }
+    void Execute( itk::Object *caller, const itk::EventObject & event )
+    {
+      std::cout<< " TransformEvent is thrown" << std::endl;
+      const TransformModifiedEventType * transformEvent =
+                    dynamic_cast < const TransformModifiedEventType* > ( &event );
+      m_Transform = transformEvent->GetTransform();
+      m_EventReceived = true;
+    } 
+    bool GetEventReceived()
+    {
+      return m_EventReceived;
+    }
+    igstk::Transform GetTransform()
+    {
+      return m_Transform;
+    }  
+  protected:
+    LandmarkRegistrationGetTransformCallback()   
+    {
+      m_EventReceived = true;
+    };
+  private:
+      bool m_EventReceived;
+      igstk::Transform m_Transform;
+};
+
 int igstkLandmarkRegistrationTest( int argv, char * argc[] )
 {
     std::cout << "Testing igstk::LandmarkRegistration" << std::endl;
@@ -88,6 +127,7 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
                               LandmarkTrackerPointType;
     typedef LandmarkRegistrationType::TransformType::OutputVectorType 
                               OutputVectorType;
+    typedef igstk::Transform  TransformType;
 
     LandmarkRegistrationType::Pointer landmarkRegister = 
                                         LandmarkRegistrationType::New();    
@@ -145,72 +185,107 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
 
     // Apply translation
 
-    Rigid3DTransformType::OffsetType ioffset;
-    ioffset.Fill( 10.0f );
+    Rigid3DTransformType::TranslationType translation;
+    translation.Fill( 10.0f );
+    rigid3DTransform->SetTranslation(translation);
 
-    rigid3DTransform->SetOffset( ioffset );
 
+    // Simulate invalid request
+    landmarkRegister->RequestComputeTransform();
+
+    // Add 1st landmark
     fixedPoint[0] =  25.0;
     fixedPoint[1] =  1.0;
     fixedPoint[2] =  15.0;
-
-    landmarkRegister->RequestComputeTransform();
-
     fpointcontainer.push_back(fixedPoint);
     landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
-  
     movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
     mpointcontainer.push_back(movingPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
 
 
+    // Add 2nd landmark
     fixedPoint[0] =  15.0;
     fixedPoint[1] =  21.0;
     fixedPoint[2] =  17.0;
-
     fpointcontainer.push_back(fixedPoint);
     landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
-
     movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
     mpointcontainer.push_back(movingPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
 
+    // Add 3d landmark
     fixedPoint[0] =  14.0;
     fixedPoint[1] =  25.0;
     fixedPoint[2] =  11.0;
-
     fpointcontainer.push_back(fixedPoint);
     landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
-
     movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
     mpointcontainer.push_back(movingPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
 
+    // Add 4th landmark
     fixedPoint[0] =  10.0;
     fixedPoint[1] =  11.0;
     fixedPoint[2] =  8.0;
-
+    fpointcontainer.push_back(fixedPoint);
     landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
     movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
-
-    // Calculate transform
-    landmarkRegister->RequestComputeTransform();
-
-
 
     OutputVectorType error;
     OutputVectorType::RealValueType tolerance = 0.00001;
     bool failed = false;
-    //Print out the two sets of coordinates 
     landmarkRegister->Print(std::cout);
-    //landmarkRegister->GetTransform()->DebugOn();
+    
+     // Calculate transform
+    landmarkRegister->RequestComputeTransform();
+ 
+    typedef itk::VersorRigid3DTransform<double>                
+                                        VersorRigid3DTransformType;
+    typedef itk::VersorRigid3DTransform<double>::ParametersType 
+                                        ParametersType;
+    typedef itk::VersorRigid3DTransform<double>::CenterType 
+                                        CenterType;
 
-    //Check if the transformation parameters were evaluated correctely
-    LandmarkRegistrationType::PointsContainerConstIterator
-      fitr = fpointcontainer.begin();
+    TransformType      transform;
+    ParametersType     parameters(6);
+    CenterType         center;
+
+     // Setup an obsever to get the transform parameters
+    LandmarkRegistrationGetTransformCallback::Pointer lrtcb =
+                            LandmarkRegistrationGetTransformCallback::New();
+
+    landmarkRegister->AddObserver( igstk::TransformModifiedEvent(), lrtcb );
+    landmarkRegister->RequestGetTransform();
+
+    if( !lrtcb->GetEventReceived() )
+      {
+       std::cerr << "LandmarkRegsistration class failed to throw a modified "
+                 << "transform event" << std::endl;
+      return EXIT_FAILURE;
+     }
+        
+     transform = lrtcb->GetTransform();    
+     parameters[0] =    transform.GetRotation().GetX();
+     parameters[1] =    transform.GetRotation().GetY();
+     parameters[2] =    transform.GetRotation().GetZ();
+     parameters[3] =    transform.GetTranslation()[0];
+     parameters[4] =    transform.GetTranslation()[1];
+     parameters[5] =    transform.GetTranslation()[2];
+     center        =    transform.GetCenter();
+         
+     VersorRigid3DTransformType::Pointer versorRigid3DTransform    
+                               = VersorRigid3DTransformType::New();
+    
+     versorRigid3DTransform->SetParameters(parameters);     
+     versorRigid3DTransform->SetCenter(center);
+
+    //Check if the transformation parameters were evaluated correctly
     LandmarkRegistrationType::PointsContainerConstIterator
       mitr = mpointcontainer.begin();
+    LandmarkRegistrationType::PointsContainerConstIterator
+      fitr = fpointcontainer.begin();
 
     OutputVectorType errortr;
     tolerance = 0.1;
@@ -218,11 +293,12 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
 
     while( mitr != mpointcontainer.end() )
       {
-      std::cout << "  Tracker image Landmark: " << *fitr << " Image Image landmark " << *mitr
+      std::cout << "  Tracker Landmark: " << *mitr << " image landmark " << *fitr
         << " Transformed trackerLandmark : " <<
-        landmarkRegister->GetTransform()->TransformPoint( *fitr ) << std::endl;
+        versorRigid3DTransform->TransformPoint( *mitr )  << std::endl;
 
-      errortr = *mitr - landmarkRegister->GetTransform()->TransformPoint( *fitr);
+      errortr = *fitr - versorRigid3DTransform->TransformPoint( *mitr );
+
       if( errortr.GetNorm() > tolerance )
         {
         failed = true;
@@ -236,7 +312,7 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
       // Hang heads in shame
       std::cout << "  Tracker landmarks transformed by the transform did not match closely "
         << " enough with the image image landmarks.  The transform computed was: ";
-      landmarkRegister->GetTransform()->Print(std::cout);
+      versorRigid3DTransform->Print(std::cout);
       std::cout << "  [FAILED]" << std::endl;
       return EXIT_FAILURE;
       }
