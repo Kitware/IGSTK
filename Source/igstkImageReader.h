@@ -58,7 +58,7 @@ class ImageReaderToImageSpatialObject
 
   
 /** \class ImageReader
- * \brief Base class for all image reader classes.
+ * \brief This class is a base class for all image reader classes.
  * 
  * This class reads image data stored in files and outputs
  * image spatial object. This class is templated over pixeltype and dimension 
