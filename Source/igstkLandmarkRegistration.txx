@@ -18,6 +18,8 @@
 #define __igstkLandmarkRegistration_txx
 
 #include "igstkLandmarkRegistration.h"
+#include "igstkTransform.h"
+#include "igstkTransformModifiedEvent.h"
 
 namespace igstk
 { 
@@ -42,17 +44,26 @@ LandmarkRegistration<TDimension>::LandmarkRegistration() :
                           "ImageLandmark3AddedState");
   m_StateMachine.AddState(m_TrackerLandmark3AddedState,
                           "TrackerLandmark3AddedState");
+  m_StateMachine.AddState( m_TransformComputedState,
+                           "TransformComputedState" );
 
 
-    // Set the input descriptors 
+
+  // Set the input descriptors 
   m_StateMachine.AddInput(m_ImageLandmarkInput,
                           "ImageLandmarkInput");
   m_StateMachine.AddInput(m_TrackerLandmarkInput,
                           "TrackerLandmarkInput");
   m_StateMachine.AddInput(m_ComputeTransformInput,
                           "ComputeTransformInput");
+  m_StateMachine.AddInput( m_GetTransformInput,
+                          "GetTransformInput" );
   m_StateMachine.AddInput(m_ResetRegistrationInput,
                           "ResetRegistrationInput");
+  m_StateMachine.AddInput( m_TransformComputationSuccessInput,
+                          "TransformComputationSuccessInput" );
+  m_StateMachine.AddInput( m_TransformComputationFailureInput,
+                          "TransformComputationFailureInput" );
 
   // Add transition  for landmark point adding
   m_StateMachine.AddTransition(m_IdleState,
@@ -90,10 +101,25 @@ LandmarkRegistration<TDimension>::LandmarkRegistration() :
                                m_ImageLandmark3AddedState,
                                &LandmarkRegistration::AddImageLandmarkPoint);
 
-  m_StateMachine.AddTransition(m_TrackerLandmark3AddedState,
-                               m_ComputeTransformInput,
-                               m_ImageLandmark3AddedState,
-                               &LandmarkRegistration::ComputeTransform);
+  m_StateMachine.AddTransition( m_TrackerLandmark3AddedState,
+                                m_ComputeTransformInput,
+                                m_TrackerLandmark3AddedState,
+                                &LandmarkRegistration::ComputeTransform );
+
+  m_StateMachine.AddTransition( m_TrackerLandmark3AddedState,
+                                m_TransformComputationSuccessInput,
+                                m_TransformComputedState,
+                                &LandmarkRegistration::ReportSuccessInTransformComputation );
+
+  m_StateMachine.AddTransition( m_TrackerLandmark3AddedState,
+                                m_TransformComputationFailureInput,
+                                m_TrackerLandmark3AddedState,
+                                &LandmarkRegistration::ReportFailureInTransformComputation );
+
+  m_StateMachine.AddTransition( m_TransformComputedState,
+                                m_GetTransformInput,
+                                m_TransformComputedState,
+                                &LandmarkRegistration::GetTransform );
 
   // Add transitions for all invalid requests 
   m_StateMachine.AddTransition(m_IdleState,
@@ -201,17 +227,83 @@ LandmarkRegistration<TDimension>:: ComputeTransform()
   m_TransformInitializer->SetFixedLandmarks(m_TrackerLandmarks);
   m_TransformInitializer->SetMovingLandmarks(m_ImageLandmarks);
   m_TransformInitializer->SetTransform( m_Transform );
-  m_TransformInitializer->InitializeTransform(); 
+  bool failure = false;
+  try 
+    {
+    m_TransformInitializer->InitializeTransform(); 
+    }
+  catch ( itk::ExceptionObject & excp )
+    {
+      failure = true;
+    }
+
+  if( failure )
+  {
+    std::cout << "ComputationFailureInput getting pushed" << std::endl;
+    this->m_StateMachine.PushInput( this->m_TransformComputationFailureInput );
+  }
+  else
+  {
+    std::cout << "ComputationSuccessInput getting pushed" << std::endl;
+    this->m_StateMachine.PushInput( this->m_TransformComputationSuccessInput );
+  }    
+  
+  this->m_StateMachine.ProcessInputs();
 }
 
 
-/* The "GetTransformParameters()" method returns transformation
-* parameters */
+/* The "GetTransform()" method throws and event containing the transform */
 template <unsigned int TDimension>
-itk::VersorRigid3DTransform< double >::Pointer
-LandmarkRegistration<TDimension>::GetTransform()
+void
+LandmarkRegistration< TDimension >::GetTransform()
 {
-  return m_Transform;
+  igstkLogMacro( DEBUG,
+                  "igstk::LandmarkRegistration::GetTransform called...\n" );
+
+  igstk::Transform  transform;
+  igstk::Transform::ErrorType              error;
+  igstk::Transform::TimePeriodType         timePeriod;
+
+  error        = 0.1;
+  timePeriod   = 1000;  
+
+  typedef typename TransformType::TranslationType       TranslationType;
+  typedef typename TransformType::CenterType            CenterType;
+  typedef typename TransformType::VersorType            VersorType;
+  typedef typename TransformType::AxisType              AxisType;
+  typedef typename TransformType::ParametersType        ParametersType;
+  
+  ParametersType                                   parameters;
+  TranslationType                                  translation;
+  CenterType                                       center;
+  VersorType                                       versor;
+  AxisType                                         axis;
+  
+ 
+  parameters  = m_Transform->GetParameters();
+  
+  std::cout << "Calculated transform parameters: " << parameters << std::endl;
+
+  axis[0] = parameters[0];
+  axis[1] = parameters[1];
+  axis[2] = parameters[2];
+
+  translation[0] = parameters[3];
+  translation[1] = parameters[4];
+  translation[2] = parameters[5];
+
+  versor.Set(axis);
+
+  transform.SetTranslationAndRotation( translation,
+                     versor, error,timePeriod );
+
+  center   =  m_Transform->GetCenter();
+
+  transform.SetCenter( center, error,timePeriod );
+
+  TransformModifiedEvent event; 
+  event.SetTransform( transform );
+  this->InvokeEvent( event );
 }
 
 /* The ReportInvalidRequest function reports invalid requests */
@@ -222,6 +314,30 @@ LandmarkRegistration<TDimension>::ReportInvalidRequest()
     igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
                    "ReportInvalidRequest called...\n");
     this->InvokeEvent(InvalidRequestErrorEvent());
+}
+
+/* The ReportSuccessInTransformComputation function reports success in 
+  transform calculation */
+template < unsigned int TDimension >
+void  
+LandmarkRegistration< TDimension >::ReportSuccessInTransformComputation()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::LandmarkRegistration::"
+                  "ReportSuccessInTransformComputation called...\n");
+  this->InvokeEvent( TransformComputationSuccessEvent() );
+}
+
+/* The ReportFailureInTransformComputation function reports failure 
+   in transform calculation */
+template < unsigned int TDimension >
+void  
+LandmarkRegistration< TDimension >::ReportFailureInTransformComputation()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::LandmarkRegistration::"
+                  "ReportFailureInTransformComputation called...\n");
+  this->InvokeEvent( TransformComputationFailureEvent() );
 }
 
 template <unsigned int TDimension>
@@ -264,6 +380,16 @@ LandmarkRegistration<TDimension>::RequestComputeTransform()
   igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
                  "RequestComputeTransform called...\n");
   this->m_StateMachine.PushInput( this->m_ComputeTransformInput );
+  this->m_StateMachine.ProcessInputs();
+}
+
+template < unsigned int TDimension >
+void 
+LandmarkRegistration< TDimension >::RequestGetTransform()
+{
+  igstkLogMacro( DEBUG,
+             "igstk::LandmarkRegistration::RequestGetTransform called...\n" );
+  this->m_StateMachine.PushInput( this->m_GetTransformInput );
   this->m_StateMachine.ProcessInputs();
 }
 
