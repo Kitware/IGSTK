@@ -110,12 +110,13 @@ public:
   /** The "RequestComputeTransform" method will be used to request
   * transform parameter calculation */
   void RequestComputeTransform();
+
+  /** The "RequesteGetTransform" method will be used to request to get
+      transform */
+   void RequestGetTransform();
   
   /** Declarations needed for the State Machine */
   igstkStateMachineTemplatedMacro();
-
-  /** The "GetTransform()" method returns the transform  */
-  TransformPointerType GetTransform();
 
   /** Declarations needed for the Logger */
   igstkLoggerMacro();
@@ -124,6 +125,7 @@ public:
    * to the igstkEvents class */
   itkEventMacro( TransformInitializerEvent,        IGSTKEvent );
   itkEventMacro( TransformComputationFailureEvent, TransformInitializerEvent );
+  itkEventMacro( TransformComputationSuccessEvent,         TransformInitializerEvent);
   itkEventMacro( InvalidRequestErrorEvent,         TransformInitializerEvent );
 
 protected:
@@ -158,13 +160,17 @@ private:
   StateType                                m_TrackerLandmark2AddedState;
   StateType                                m_ImageLandmark3AddedState;
   StateType                                m_TrackerLandmark3AddedState;
-  
+  StateType                                m_TransformComputedState; 
+
 
   /** List of Inputs */
   InputType                                m_ImageLandmarkInput;
   InputType                                m_TrackerLandmarkInput;
   InputType                                m_ComputeTransformInput;
+  InputType                                m_GetTransformInput;
   InputType                                m_ResetRegistrationInput;
+  InputType                                m_TransformComputationFailureInput;
+  InputType                                m_TransformComputationSuccessInput;
 
   /** The "AddImageLandmark" method adds landmark points to the image
    * landmark point container */
@@ -183,9 +189,18 @@ private:
    * transformation parameters */
   void ComputeTransform();
 
+  /** The "GetTransform" method throws an event containing the transform parameters*/
+  void GetTransform();
+
   /** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent
    * when invalid requests are made */
   void ReportInvalidRequest();
+
+  /** The "ReportSuccessInTransformComputation" method throws TransformComputationSuccessEvent*/
+  void ReportSuccessInTransformComputation();
+
+  /** The "ReportFailureInTransformComputation" method throws TransformComputationFailureEvent*/
+  void ReportFailureInTransformComputation();
 };
 
 } // end namespace igstk
