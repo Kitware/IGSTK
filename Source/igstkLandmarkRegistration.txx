@@ -234,6 +234,8 @@ LandmarkRegistration<TDimension>:: ComputeTransform()
     }
   catch ( itk::ExceptionObject & excp )
     {
+      igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
+                     "Transform computation exception" << excp.GetDescription());
       failure = true;
     }
 
