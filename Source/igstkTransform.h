@@ -60,6 +60,7 @@ class Transform
 public:
 
   typedef ::itk::Vector<double, 3>    VectorType;
+  typedef ::itk::Point<double, 3>     PointType;
   typedef ::itk::Versor<double>       VersorType;
   typedef double                      ErrorType;
   typedef TimeStamp::TimePeriodType   TimePeriodType;
@@ -83,6 +84,15 @@ public:
                  ErrorType errorValue,
           TimePeriodType millisecondsToExpiration);
 
+  /** Set the center point the transform. The information will be
+   * considered valid from the time of invokation of the method until that time
+   * plus the millisecondsToExpiration value. */
+  void SetCenter( 
+          const  PointType & centerPoint,
+                 ErrorType errorValue,
+          TimePeriodType millisecondsToExpiration);
+
+
   /** Set only Rotation. This method should be used when the transform
    * represents only a rotation. Internally the translational part of the
    * transform will be set to zero. The assigned rotation will override any
@@ -105,13 +115,16 @@ public:
                  ErrorType errorValue,
           TimePeriodType millisecondsToExpiration);
 
-
   /** Returns the translational component. Users MUST check the validity time
    * of the transform before attempting to use this returned value. The content
    * of the transform may have expired. */
   const VectorType & GetTranslation() const; 
  
-  
+    /** Returns the center point. Users MUST check the validity time
+   * of the transform before attempting to use this returned value. The content
+   * of the transform may have expired. */
+  const PointType & GetCenter() const; 
+ 
   /** Returns the rotational component. Users MUST check the validity time
    * of the transform before attempting to use this returned value. The content
    * of the transform may have expired. */
@@ -187,6 +200,7 @@ private:
 
   TimeStamp       m_TimeStamp;
   VectorType      m_Translation;
+  PointType       m_Center;
   VersorType      m_Rotation;
   ErrorType       m_Error;
 

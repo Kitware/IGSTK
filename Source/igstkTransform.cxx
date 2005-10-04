@@ -27,7 +27,8 @@ Transform
   // Error is NEVER zero. In the best situation is on the range of the smaller
   // non-zero epsilon that can be represented with the ErrorType. 
   m_Error = itk::NumericTraits< ErrorType >::min();
-  m_Translation.Fill(0.0); 
+  m_Translation.Fill(0.0);
+  m_Center.Fill(0.0);
 }
 
 
@@ -42,6 +43,7 @@ Transform
 ::operator=( const Transform & inputTransform )
 {
   m_Translation = inputTransform.m_Translation; 
+  m_Center      = inputTransform.m_Center; 
   m_Rotation    = inputTransform.m_Rotation;
   m_Error       = inputTransform.m_Error;
   m_TimeStamp   = inputTransform.m_TimeStamp;
@@ -63,6 +65,17 @@ Transform
   m_Error       = errorValue;
 }
 
+void
+Transform
+::SetCenter( 
+           const  PointType & centerPoint,
+                 ErrorType errorValue,
+          TimePeriodType millisecondsToExpiration)
+{
+  m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
+  m_Center      = centerPoint;
+  m_Error       = errorValue;
+}
 
 void 
 Transform
@@ -104,6 +117,13 @@ Transform
 ::GetRotation() const
 {
   return m_Rotation;
+}
+
+const Transform::PointType &
+Transform
+::GetCenter() const
+{
+  return m_Center;
 }
 
 
@@ -191,6 +211,7 @@ Transform
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Translation.Fill( 0.0 );
+  m_Center.Fill( 0.0 );
   m_Rotation.SetIdentity();
   m_Error = itk::NumericTraits< ErrorType >::min();
 }
@@ -248,6 +269,7 @@ void Transform::PrintSelf( std::ostream& os, itk::Indent indent ) const
 
   os << indent << this->m_TimeStamp << std::endl;
   os << indent << this->m_Translation << std::endl;
+  os << indent << this->m_Center << std::endl;
   os << indent << this->m_Rotation << std::endl;
   os << indent << this->m_Error << std::endl;
 }
