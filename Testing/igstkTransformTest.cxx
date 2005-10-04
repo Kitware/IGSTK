@@ -31,6 +31,7 @@ int igstkTransformTest( int, char * [] )
     typedef igstk::Transform    TransformType;
     typedef TransformType::VectorType   VectorType;
     typedef TransformType::VersorType   VersorType;
+    typedef TransformType::PointType    PointType;
 
     TransformType t1;
     
@@ -46,6 +47,11 @@ int igstkTransformTest( int, char * [] )
     VersorType rotation;
     rotation.Set(0.0, 0.0, 1.0, 0.0); // 90 degrees around Z
 
+    PointType  center;
+    center[0] = 0.0;
+    center[1] = 0.0;
+    center[2] = 0.0;
+
     const double validityPeriod = 10.0; // milliseconds
     
     igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
@@ -57,8 +63,11 @@ int igstkTransformTest( int, char * [] )
 
     t1.SetTranslation( translation,  errorValue, validityPeriod );
 
+    t1.SetCenter( center, errorValue, validityPeriod );
+
     VectorType translationSet = t1.GetTranslation();
     VersorType rotationSet    = t1.GetRotation();
+    PointType  centerSet      = t1.GetCenter();
 
     std::cout << t1 << std::endl;
 
