@@ -32,53 +32,99 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   m_Logger = LoggerType::New();
 
   //Set the state descriptors
-  m_StateMachine.AddState(m_IdleState, "IdleState");
-  m_StateMachine.AddState(m_ImageDirectoryNameReadState, "ImageDirectoryNameReadState");
-  m_StateMachine.AddState(m_ImageReadState, "ImageReadState");
+  m_StateMachine.AddState(m_IdleState,
+                          "IdleState");
+
+  m_StateMachine.AddState(m_ImageDirectoryNameReadState, 
+                          "ImageDirectoryNameReadState");
+
+  m_StateMachine.AddState(m_ImageReadState, 
+                          "ImageReadState");
 
  /** List of State Inputs */
+  m_StateMachine.AddInput(m_GetModalityInfoInput,
+                          "GetModalityInfoInput");
 
-  m_StateMachine.AddInput(m_GetModalityInfoInput,"GetModalityInfoInput");
-  m_StateMachine.AddInput(m_GetPatientNameInfoInput,"GetPatientNameInfoInput");
-  m_StateMachine.AddInput(m_ReadImageRequestInput,"ImageReadRequestInput");
-  m_StateMachine.AddInput(m_ImageReadingErrorInput,"ImageReadingErrorInput");
+  m_StateMachine.AddInput(m_GetPatientNameInfoInput,
+                          "GetPatientNameInfoInput");
+
+  m_StateMachine.AddInput(m_ReadImageRequestInput,
+                          "ImageReadRequestInput");
+
+  m_StateMachine.AddInput(m_ImageReadingErrorInput,
+                          "ImageReadingErrorInput");
+
   m_StateMachine.AddInput(m_ImageDirectoryNameValidInput,
-                                              "ImageDirectoryNameValidInput");
+                          "ImageDirectoryNameValidInput");
+
   m_StateMachine.AddInput(m_ImageDirectoryNameIsEmptyInput,
-                                              "ImageDirectoryNameIsEmptyInput");
+                          "ImageDirectoryNameIsEmptyInput");
+
   m_StateMachine.AddInput(m_ImageDirectoryNameDoesNotExistInput,
-                                              "ImageDirectoryNameDoesNotExistInput");
+                          "ImageDirectoryNameDoesNotExistInput");
+
   m_StateMachine.AddInput(m_ImageDirectoryNameIsNotDirectoryInput,
-                                              "ImageDirectoryNameIsNotDirectoryInput");
+                          "ImageDirectoryNameIsNotDirectoryInput");
+
   m_StateMachine.AddInput(m_ImageDirectoryNameDoesNotHaveEnoughFilesInput,
-                                              "m_ImageDirectoryNameDoesNotHaveEnoughFilesInput");
+                          "m_ImageDirectoryNameDoesNotHaveEnoughFilesInput");
 
-  m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameValidInput,
-                              m_ImageDirectoryNameReadState,&DICOMImageReader::SetDirectoryName);
-  m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,m_ReadImageRequestInput,
-                              m_ImageReadState,&DICOMImageReader::AttemptReadImage);
-  m_StateMachine.AddTransition(m_IdleState,m_ReadImageRequestInput,m_IdleState,
-                              &DICOMImageReader::ReportInvalidRequest);
 
-  //Transitions for DICOM info request input 
-  m_StateMachine.AddTransition(m_ImageReadState,m_GetModalityInfoInput,
-                              m_ImageReadState,&DICOMImageReader::GetModalityInfo);
-  m_StateMachine.AddTransition(m_ImageReadState,m_GetPatientNameInfoInput,
-                              m_ImageReadState,&DICOMImageReader::GetPatientNameInfo);
+  //Transitions for valid directory name
+  m_StateMachine.AddTransition(m_IdleState,
+                               m_ImageDirectoryNameValidInput,
+                               m_ImageDirectoryNameReadState,
+                               &DICOMImageReader::SetDirectoryName);
+
+  //Transition for valid image read request
+  m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,
+                               m_ReadImageRequestInput,
+                               m_ImageReadState,
+                               &DICOMImageReader::AttemptReadImage);
+
+  //Transition for invalid image reqes request
+  m_StateMachine.AddTransition(m_IdleState,
+                               m_ReadImageRequestInput,
+                               m_IdleState,
+                               &DICOMImageReader::ReportInvalidRequest);
+
+  //Transitions for DICOM info request inputs
+  m_StateMachine.AddTransition(m_ImageReadState,
+                               m_GetModalityInfoInput,
+                               m_ImageReadState,
+                               &DICOMImageReader::GetModalityInfo);
+
+  m_StateMachine.AddTransition(m_ImageReadState,
+                               m_GetPatientNameInfoInput,
+                               m_ImageReadState,
+                               &DICOMImageReader::GetPatientNameInfo);
 
   //Errors related to image directory name
-  m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameIsEmptyInput,
-                              m_IdleState,&DICOMImageReader::ReportImageDirectoryEmptyError);
-  m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameDoesNotExistInput,
-                              m_IdleState,&DICOMImageReader::ReportImageDirectoryDoesNotExistError);
-  m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameIsNotDirectoryInput,
-                              m_IdleState,&DICOMImageReader::ReportImageDirectoryIsNotDirectoryError);
-  m_StateMachine.AddTransition(m_IdleState,m_ImageDirectoryNameDoesNotHaveEnoughFilesInput,
-                              m_IdleState,&DICOMImageReader::ReportImageDirectoryDoesNotHaveEnoughFilesError);
+  m_StateMachine.AddTransition(m_IdleState,
+                               m_ImageDirectoryNameIsEmptyInput,
+                               m_IdleState,
+                               &DICOMImageReader::ReportImageDirectoryEmptyError);
+
+  m_StateMachine.AddTransition(m_IdleState,
+                               m_ImageDirectoryNameDoesNotExistInput,
+                               m_IdleState,
+                               &DICOMImageReader::ReportImageDirectoryDoesNotExistError);
+
+  m_StateMachine.AddTransition(m_IdleState,
+                               m_ImageDirectoryNameIsNotDirectoryInput,
+                               m_IdleState,
+                               &DICOMImageReader::ReportImageDirectoryIsNotDirectoryError);
+
+  m_StateMachine.AddTransition(m_IdleState,
+                               m_ImageDirectoryNameDoesNotHaveEnoughFilesInput,
+                               m_IdleState,
+                               &DICOMImageReader::ReportImageDirectoryDoesNotHaveEnoughFilesError);
 
   //Errors related to  image reading 
-  m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,m_ImageReadingErrorInput,
-                              m_ImageDirectoryNameReadState,&DICOMImageReader::ReportImageReadingError);
+  m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,
+                               m_ImageReadingErrorInput,
+                               m_ImageDirectoryNameReadState,
+                               &DICOMImageReader::ReportImageReadingError);
 
    // Select the initial state of the state machine
   m_StateMachine.SelectInitialState( m_IdleState );
