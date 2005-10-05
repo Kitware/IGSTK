@@ -27,7 +27,7 @@ namespace igstk
 {
 
 /** \class StringEvent
- *  \brief StringEvent is a base class for events with a string payload 
+ *  \brief StringEvent is a base class for events with a string payload. 
  *
  */
 
@@ -71,13 +71,13 @@ public:
     return m_String; };
 
   /** Get the string */
-  void   SetString(StringType str) {
-         m_String = str; };
+  void  SetString( const StringType&  str) {
+        m_String = str; };
 
 private:
   void operator=(const Self&); 
 
-  // Payload of this event.
+  /** Payload of this event */
   StringType             m_String;
 };
 
