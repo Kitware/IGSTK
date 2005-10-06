@@ -318,8 +318,7 @@ public:
     NDI_PASSIVE_DISC     = 0x30,
   } PHINFMarkerType;
 
-  /** Tool type specifiers stored in the second byte returned by
-      GetPHINFToolInfo() */
+  /** Tool type specifiers returned by GetPHINFToolType() */
   typedef enum
   {
     NDI_TYPE_REFERENCE   = 0x01,
@@ -327,7 +326,9 @@ public:
     NDI_TYPE_BUTTON      = 0x03,
     NDI_TYPE_SOFTWARE    = 0x04,
     NDI_TYPE_MICROSCOPE  = 0x05,
+    NDI_TYPE_CALIBRATION = 0x07,
     NDI_TYPE_DOCK        = 0x08,
+    NDI_TYPE_ISOLATION   = 0x09,
     NDI_TYPE_CARM        = 0x0A,
     NDI_TYPE_CATHETER    = 0x0B,
   } PHINFToolInfoType;
@@ -580,7 +581,7 @@ public:
   <p>The use of the PHINF command with the appropriate reply format updates
   the information returned by the following commands:
   - int \ref GetPHINFPortStatus()
-  - int \ref GetPHINFToolInfo(char information[30])
+  - int \ref GetPHINFToolInfo(char information[32])
   - unsigned int \ref GetPHINFCurrentTest()
   - int \ref GetPHINFAccessories()
   - int \ref GetPHINFMarkerType()
@@ -872,15 +873,39 @@ public:
   - NDI_UNOCCUPIED - port is unoccupied or no information is available
   - NDI_VALID - information was returned
 
-  <p>The returned string will not be null-terminated by default.  You
-  must set information[31] to 0 in order to terminate the string.
-  If the port is unoccupied then the contents of the \em information
-  string are undefined.
+  <p>The returned string will contain 31 bytes of information followed
+  by a terminating null byte.  If the port is unoccupied then the
+  contents of the \em information string are undefined.
+
+  The first 8 bytes are a 32-bit hexidecimal number that provide a
+  generic tool description, and the following 23 bytes provide a
+  manufacturer-specific tool description.
   
   The information is updated only when a PHINF() command is sent with
   the NDI_BASIC (0x0001) bit set in the reply mode.
   */
-  int GetPHINFToolInfo(char information[31]) const;
+  int GetPHINFToolInfo(char information[32]) const;
+
+  /**
+  Get an integer that describes the tool type.
+
+  \return
+  - integer that describes the tool type (see NDI documentation)
+
+  <p>This method returns a value that describes the tool type, which
+  will be one of NDI_TYPE_REFERENCE, NDI_TYPE_POINTER,
+  NDI_TYPE_BUTTON (button box or foot pedal), NDI_TYPE_SOFTWARE
+  (custom tool), NDI_TYPE_MICROSCOPE, NDI_TYPE_CALIBRATION,
+  NDI_TYPE_DOCK, NDI_TYPE_ISOLATION, NDI_TYPE_CARM, or
+  NDI_TYPE_CATHETER.
+
+  A return value of 0 indicates that no tool type information is
+  available.
+  
+  The information is updated only when a PHINF() command is sent with
+  the NDI_BASIC (0x0001) bit set in the reply mode.
+  */
+  int GetPHINFToolType() const;
 
   /**
   Return the results of a current test on the IREDS on an active 
@@ -903,13 +928,13 @@ public:
   - NDI_UNOCCUPIED - port is unoccupied or no information is available
   - NDI_VALID - information was returned
 
-  <p>If a terminated string is required, then set part[20] to 0
-  before calling this function.
+  <p>The information will include 20 bytes of information followed by
+  a null byte.
 
   The information is updated only when a PHINF() command is sent with
   the NDI_PART_NUMBER (0x0004) bit set in the reply mode.
   */
-  int GetPHINFPartNumber(char part[20]) const;
+  int GetPHINFPartNumber(char part[21]) const;
 
   /**
   Get the 8-bit value specifying the tool accessories.
@@ -955,7 +980,8 @@ public:
 
   /**
   Get a 14-byte description of the physical location of the tool
-  on the system.
+  on the system. The 15th byte will be a null byte to terminate
+  the string.
 
   \return  see NDI documentation for more information:
   - 8 chars: device number
@@ -967,7 +993,7 @@ public:
   <p>The return value is updated only when a PHINF() command is sent with
   the NDI_PORT_LOCATION (0x0020) bit set in the reply mode.
   */
-  int GetPHINFPortLocation(char location[14]) const;
+  int GetPHINFPortLocation(char location[15]) const;
 
   /**
   Get the 8-bit GPIO status for this tool.

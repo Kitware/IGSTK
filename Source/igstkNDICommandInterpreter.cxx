@@ -908,7 +908,7 @@ int NDICommandInterpreter::GetPHINFPortStatus() const
 }
 
 /** Return data that was received from a PHINF command. */
-int NDICommandInterpreter::GetPHINFToolInfo(char information[31]) const
+int NDICommandInterpreter::GetPHINFToolInfo(char information[32]) const
 {
   const char* dp;
   int i;
@@ -919,8 +919,19 @@ int NDICommandInterpreter::GetPHINFToolInfo(char information[31]) const
     {
     information[i] = *dp++;
     }
+  information[31] = '\0';
 
   return m_PHINFOccupied;
+}
+
+/** Return data that was received from a PHINF command. */
+int NDICommandInterpreter::GetPHINFToolType() const
+{
+  const char* dp;
+  
+  dp = m_PHINFBasic;
+
+  return this->HexadecimalStringToInt(dp, 2);
 }
 
 /** Return data that was received from a PHINF command. */
@@ -934,7 +945,7 @@ unsigned int NDICommandInterpreter::GetPHINFCurrentTest() const
 }
 
 /** Return data that was received from a PHINF command. */
-int NDICommandInterpreter::GetPHINFPartNumber(char part[20]) const
+int NDICommandInterpreter::GetPHINFPartNumber(char part[21]) const
 {
   const char* dp;
   int i;
@@ -945,6 +956,7 @@ int NDICommandInterpreter::GetPHINFPartNumber(char part[20]) const
     {
     part[i] = *dp++;
     }
+  part[20] = '\0';
 
   return m_PHINFOccupied;
 }
@@ -970,7 +982,7 @@ int NDICommandInterpreter::GetPHINFMarkerType() const
 }
 
 /** Return data that was received from a PHINF command. */
-int NDICommandInterpreter::GetPHINFPortLocation(char location[14]) const
+int NDICommandInterpreter::GetPHINFPortLocation(char location[15]) const
 {
   const char* dp;
   int i;
@@ -981,6 +993,7 @@ int NDICommandInterpreter::GetPHINFPortLocation(char location[14]) const
     {
     location[i] = *dp++;
     }
+  location[14] = '\0';
 
   return m_PHINFOccupied;
 }
