@@ -199,8 +199,8 @@ int igstkNDICommandInterpreterTest( int, char * [] )
   if (interpreter->GetError())
     {
     std::cout << "Failed to init, device must not be attached" << std::endl;
-    // set a fast timeout so that the test won't take forever
-    serialComm->SetTimeoutPeriod(100);
+    std::cout << "Test FAILED !" << std::endl;
+    return EXIT_FAILURE;
     }
   std::cout << "Calling COMM" << std::endl;
   interpreter->COMM(CommandInterpreterType::NDI_38400,
