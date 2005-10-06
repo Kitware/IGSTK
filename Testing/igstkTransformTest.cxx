@@ -70,6 +70,9 @@ int igstkTransformTest( int, char * [] )
     PointType  centerSet      = t1.GetCenter();
 
     std::cout << t1 << std::endl;
+    std::cout << translationSet << std::endl;
+    std::cout << rotationSet << std::endl;
+    std::cout << centerSet << std::endl;
 
     double timeToCheck = t1.GetStartTime() + validityPeriod / 2.0;
 
