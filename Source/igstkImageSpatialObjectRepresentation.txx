@@ -78,7 +78,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   if( m_ImageActor )
     {
     m_ImageActor->Delete();
-    m_LUT = NULL;
+    m_ImageActor = NULL;
     }
 
   if( m_MapColors )
