@@ -138,6 +138,7 @@ private:
   /** List of State Inputs */
   InputType                    m_ReadImageRequestInput;
   InputType                    m_ImageDirectoryNameValidInput; 
+  InputType                    m_ImageReadingSuccessInput;
 
   /** Error related state inputs */
   InputType                    m_ImageReadingErrorInput;
@@ -158,14 +159,14 @@ private:
   void SetDirectoryName();
 
   /** Invokes a FileNameGenerator in order to get the names of all the DICOM
-   * files in a directory. To be invoked ONLY by the StateMachine */
+      files in a directory. To be invoked ONLY by the StateMachine */
   void ReadDirectoryFileNames();
 
   /** This method request image read. To be invoked ONLY by the StateMachine. */
   void AttemptReadImage();
 
  /** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent
- when invalid requests are made */
+     when invalid requests are made */
   void ReportInvalidRequest();
 
   /** This function reports an when the image directory is empty */
@@ -175,26 +176,29 @@ private:
   void ReportImageDirectoryDoesNotExistError();
 
  /* This function reports an error if the image directory doesn't have enough
-  files */
+     files */
   void ReportImageDirectoryDoesNotHaveEnoughFilesError();
   
   /** This function reports an error while image reading */
   void ReportImageReadingError();
 
+  /** This function reports success in image reading */
+  void ReportImageReadingSuccess();
+
   /** This function reports an error when the image directory name
-  provided is not a directory containing DICOM series */
+      provided is not a directory containing DICOM series */
   void ReportImageDirectoryIsNotDirectoryError();
 
   /** This function throws a string loaded event. The string is loaded
-  with DICOM  modality */
+      with DICOM  modality */
   void GetModalityInfo();
 
   /** This function throws a string loaded event. The string is loaded
-  with patient name */
+      with patient name */
   void GetPatientNameInfo();
 
   /** This method MUST be private in order to prevent 
-    * unsafe access to the ITK image level */
+      unsafe access to the ITK image level */
   virtual const ImageType * GetITKImage() const;
 
   char tmp_string[2048];

@@ -54,6 +54,9 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   m_StateMachine.AddInput(m_ImageReadingErrorInput,
                           "ImageReadingErrorInput");
 
+  m_StateMachine.AddInput(m_ImageReadingSuccessInput,
+                          "ImageReadingSuccessInput");
+
   m_StateMachine.AddInput(m_ImageDirectoryNameValidInput,
                           "ImageDirectoryNameValidInput");
 
@@ -79,8 +82,13 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   //Transition for valid image read request
   m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,
                                m_ReadImageRequestInput,
-                               m_ImageReadState,
+                               m_ImageDirectoryNameReadState,
                                &DICOMImageReader::AttemptReadImage);
+
+  m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,
+                               m_ImageReadingSuccessInput,
+                               m_ImageReadState,
+                               &DICOMImageReader::ReportImageReadingSuccess);
 
   //Transition for invalid image reqes request
   m_StateMachine.AddTransition(m_IdleState,
@@ -231,6 +239,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImage()
   try
     {
     m_ImageSeriesReader->Update();
+    this->m_StateMachine.PushInput( this->m_ImageReadingSuccessInput );    
     }
   catch( itk::ExceptionObject & excp )
     {
@@ -239,7 +248,8 @@ void DICOMImageReader<TPixelType>::AttemptReadImage()
     this->InvokeEvent( event );
     return;
     }
-  
+
+  this->m_StateMachine.ProcessInputs();
   m_ImageIO->GetPatientName(  tmp_string  );
   m_PatientName = tmp_string;
   
@@ -311,6 +321,13 @@ DICOMImageReader<TPixelType>::ReportImageReadingError()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageReadingError: called...\n");
   this->InvokeEvent( DICOMImageReadingErrorEvent() );
+}
+
+template <class TPixelType>
+void
+DICOMImageReader<TPixelType>::ReportImageReadingSuccess()
+{
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageReadingSuccess: called...\n");
 }
 
 
