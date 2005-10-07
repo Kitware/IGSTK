@@ -132,6 +132,7 @@ private:
   /** List of States */
   StateType                    m_IdleState;
   StateType                    m_ImageDirectoryNameReadState;
+  StateType                    m_AttemptingToReadImageState;
   StateType                    m_ImageReadState;
 
 

@@ -41,6 +41,10 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   m_StateMachine.AddState(m_ImageReadState, 
                           "ImageReadState");
 
+  m_StateMachine.AddState(m_AttemptingToReadImageState, 
+                          "AttemptingToReadImageState");
+
+
  /** List of State Inputs */
   m_StateMachine.AddInput(m_GetModalityInfoInput,
                           "GetModalityInfoInput");
@@ -82,10 +86,10 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   //Transition for valid image read request
   m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,
                                m_ReadImageRequestInput,
-                               m_ImageDirectoryNameReadState,
+                               m_AttemptingToReadImageState,
                                &DICOMImageReader::AttemptReadImage);
 
-  m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,
+  m_StateMachine.AddTransition(m_AttemptingToReadImageState,
                                m_ImageReadingSuccessInput,
                                m_ImageReadState,
                                &DICOMImageReader::ReportImageReadingSuccess);
@@ -129,9 +133,9 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
                                &DICOMImageReader::ReportImageDirectoryDoesNotHaveEnoughFilesError);
 
   //Errors related to  image reading 
-  m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,
+  m_StateMachine.AddTransition(m_AttemptingToReadImageState,
                                m_ImageReadingErrorInput,
-                               m_ImageDirectoryNameReadState,
+                               m_AttemptingToReadImageState,
                                &DICOMImageReader::ReportImageReadingError);
 
    // Select the initial state of the state machine
