@@ -149,6 +149,38 @@ private:
   bool m_EventReceived;
 };
 
+class DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback: public itk::Command
+{
+public:
+  typedef DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback Self;
+  typedef itk::SmartPointer<Self>      Pointer;
+  typedef itk::Command                 Superclass;
+  itkNewMacro(Self);
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  {
+ 
+  }
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+  {
+    std::cerr<<"Dicom image reading error event"<<std::endl;
+    m_EventReceived = true;
+  }
+  
+ bool GetEventReceived()
+ { 
+  return m_EventReceived; 
+ }
+
+protected:
+  DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback()
+  {
+  m_EventReceived = false;
+  }
+private:
+  bool m_EventReceived;
+};
+
+
 int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
 {
 
@@ -220,6 +252,12 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
   DICOMImageDirectoryNameDoesNotHaveEnoughFilesCallback::Pointer ddhefcb = 
                       DICOMImageDirectoryNameDoesNotHaveEnoughFilesCallback::New();
   reader->AddObserver( igstk::DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent(), ddhefcb );
+
+  //Add observer for a directory containing non-DICOM files 
+  DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback::Pointer dircb = 
+                      DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback::New();
+  reader->AddObserver( igstk::DICOMImageReadingErrorEvent(), dircb );
+
   
   std::cout  << "Testing the input directory with an empty string  " << std::endl;
   std::string emptyDirectoryName; // THIS IS EMPTY ON PURPOSE !!
@@ -271,6 +309,42 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
   nonExistingDirectory =    nonExistingDirectory + "/foo3";
   
   reader->RequestSetDirectory( nonExistingDirectory );
+
+  if( !didcb->GetEventReceived() )
+    {
+    std::cerr << "DICOMImageReader failed to complain about a non-existing directory  " << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  std::cout  << "Testing for directory containing non-dicom files " << std::endl;
+  std::string           directoryWithNonDicomFiles = argv[1];
+  
+  directoryWithNonDicomFiles = directoryWithNonDicomFiles + "/foo4";
+  itksys::SystemTools::MakeDirectory(directoryWithNonDicomFiles.c_str());
+  
+  // Add four dummy files
+  std::string filename1 = directoryWithNonDicomFiles + "/foo1.txt";
+  std::string filename2 = directoryWithNonDicomFiles + "/foo2.txt";
+  std::string filename3 = directoryWithNonDicomFiles + "/foo3.txt";
+  std::string filename4 = directoryWithNonDicomFiles + "/foo4.txt";
+  
+  outputFile.open( filename1.c_str() );
+  outputFile << "Dummy file created to test the DICOMImageReader " << std::endl;
+  outputFile.close();
+  
+  outputFile.open( filename2.c_str() );
+  outputFile << "Dummy file2 created to test the DICOMImageReader " << std::endl;
+  outputFile.close();
+    
+  outputFile.open( filename3.c_str() );
+  outputFile << "Dummy file3 created to test the DICOMImageReader " << std::endl;
+  outputFile.close();
+ 
+  outputFile.open( filename4.c_str() );
+  outputFile << "Dummy file4 created to test the DICOMImageReader " << std::endl;
+  outputFile.close();
+  
+  reader->RequestSetDirectory( directoryWithNonDicomFiles);
 
   if( !didcb->GetEventReceived() )
     {
