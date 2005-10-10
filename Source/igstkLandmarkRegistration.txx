@@ -44,6 +44,8 @@ LandmarkRegistration<TDimension>::LandmarkRegistration() :
                           "ImageLandmark3AddedState");
   m_StateMachine.AddState(m_TrackerLandmark3AddedState,
                           "TrackerLandmark3AddedState");
+  m_StateMachine.AddState( m_AttemptingToComputeTransformState,
+                           "AttemptingToComputeTransformState" );
   m_StateMachine.AddState( m_TransformComputedState,
                            "TransformComputedState" );
 
@@ -103,15 +105,15 @@ LandmarkRegistration<TDimension>::LandmarkRegistration() :
 
   m_StateMachine.AddTransition( m_TrackerLandmark3AddedState,
                                 m_ComputeTransformInput,
-                                m_TrackerLandmark3AddedState,
+                                m_AttemptingToComputeTransformState,
                                 &LandmarkRegistration::ComputeTransform );
 
-  m_StateMachine.AddTransition( m_TrackerLandmark3AddedState,
+  m_StateMachine.AddTransition( m_AttemptingToComputeTransformState,
                                 m_TransformComputationSuccessInput,
                                 m_TransformComputedState,
                                 &LandmarkRegistration::ReportSuccessInTransformComputation );
 
-  m_StateMachine.AddTransition( m_TrackerLandmark3AddedState,
+  m_StateMachine.AddTransition( m_AttemptingToComputeTransformState,
                                 m_TransformComputationFailureInput,
                                 m_TrackerLandmark3AddedState,
                                 &LandmarkRegistration::ReportFailureInTransformComputation );

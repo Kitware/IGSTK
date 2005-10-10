@@ -160,6 +160,7 @@ private:
   StateType                                m_TrackerLandmark2AddedState;
   StateType                                m_ImageLandmark3AddedState;
   StateType                                m_TrackerLandmark3AddedState;
+  StateType                                m_AttemptingToComputeTransformState; 
   StateType                                m_TransformComputedState; 
 
 
