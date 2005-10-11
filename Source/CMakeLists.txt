@@ -18,6 +18,7 @@ SET(IGSTKSandbox_HEADS
   igstkPolarisTracker.h
   igstkPolarisTrackerTool.h
   igstkLandmarkRegistration.h
+  igstkLandmark3DRegistration.h
   igstkStringEvent.h
   igstkSpatialObjectReader.h
   igstkTubeReader.h
@@ -43,6 +44,7 @@ SET(IGSTKSandbox_SRCS
   igstkPolarisTracker.cxx
   igstkPolarisTrackerTool.cxx
   igstkLandmarkRegistration.txx
+  igstkLandmark3DRegistration.cxx
   igstkTubeReader.cxx
   igstkMeshReader.cxx
   igstkGroupObject.cxx
