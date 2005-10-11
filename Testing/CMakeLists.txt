@@ -62,6 +62,7 @@ INCLUDE_DIRECTORIES (
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 ADD_TEST(igstkPolarisTrackerSimulatedTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerSimulatedTest)
 ADD_TEST(igstkLandmarkRegistrationTest ${IGSTKSandbox_TESTS} igstkLandmarkRegistrationTest)
+ADD_TEST(igstkLandmark3DRegistrationTest ${IGSTKSandbox_TESTS} igstkLandmark3DRegistrationTest)
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
 ADD_TEST(igstkPolarisTrackerTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerTest)
@@ -97,6 +98,7 @@ SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkPolarisTrackerSimulatedTest.cxx
   igstkLandmarkRegistrationTest.cxx
+  igstkLandmark3DRegistrationTest.cxx
   igstkImageReaderTest.cxx
   igstkCTImageReaderTest.cxx
   igstkMRImageReaderTest.cxx
@@ -110,6 +112,7 @@ SET(BasicTests_SRCS
   igstkCTImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkStringEventTest.cxx
+  igstkLandmark3DRegistrationTest.cxx
   )
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
