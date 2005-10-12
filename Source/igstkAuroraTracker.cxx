@@ -44,6 +44,10 @@ AuroraTracker::AuroraTracker(void)
     this->m_PortEnabled[i] = 0;
     this->m_PortHandle[i] = 0;
     }
+    
+  this->SetThreadingEnabled( true );
+
+  m_BufferLock = itk::MutexLock::New();
 }
 
 /** Destructor */
@@ -223,36 +227,116 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
 {
   igstkLogMacro( DEBUG, "AuroraTracker::InternalUpdateStatus called ...\n");
 
-  int errnum; // error value from device
-  int port;   // physical port number
-  int ph;     // port handle reported by device
-  int status[NDI_NUMBER_OF_PORTS];
-  int absent[NDI_NUMBER_OF_PORTS];
-  unsigned long frame[NDI_NUMBER_OF_PORTS];
-  double transform8[NDI_NUMBER_OF_PORTS][8];
-  long flags; // flags for the device
 
   // these flags are set for tools that can be used for tracking
   const unsigned long mflags = (CommandInterpreterType::NDI_TOOL_IN_PORT |
                                 CommandInterpreterType::NDI_INITIALIZED |
                                 CommandInterpreterType::NDI_ENABLED);
 
+  int port;
+  long flags; // flags for the device
+  m_BufferLock->Lock();
+  for (port = 0; port < NDI_NUMBER_OF_PORTS; port++) 
+    {
+    // convert m_StatusBuffer flags from NDI to vtkTracker format
+    int portStatus = m_StatusBuffer[port];
+    flags = 0;
+    if ((portStatus & mflags) != mflags) 
+      {
+      flags |= TR_MISSING;
+      }
+    else
+      {
+      if (m_AbsentBuffer[port]) { flags |= TR_OUT_OF_VIEW;  }
+      if (portStatus & CommandInterpreterType::NDI_OUT_OF_VOLUME)
+        {
+        flags |= TR_OUT_OF_VOLUME;
+        }
+      }
+    // Send the transform to the tool:
+
+    // create the transform
+    TransformType transform;
+
+    typedef TransformType::VectorType TranslationType;
+    TranslationType translation;
+
+    translation[0] = m_TransformBuffer[port][4];
+    translation[1] = m_TransformBuffer[port][5];
+    translation[2] = m_TransformBuffer[port][6];
+
+    typedef TransformType::VersorType RotationType;
+    RotationType rotation;
+    double normsquared = 
+      m_TransformBuffer[port][0]*m_TransformBuffer[port][0] +
+      m_TransformBuffer[port][1]*m_TransformBuffer[port][1] +
+      m_TransformBuffer[port][2]*m_TransformBuffer[port][2] +
+      m_TransformBuffer[port][3]*m_TransformBuffer[port][3];
+
+    // don't allow null quaternions
+    if (normsquared < 1e-6)
+      {
+      rotation.Set(1.0, 0.0, 0.0, 0.0);
+      igstkLogMacro( WARNING, "AuroraTracker::InternUpdateStatus: bad "
+                     "quaternion, norm=" << sqrt(normsquared) << "\n");
+      }
+    else
+      {
+      rotation.Set(m_TransformBuffer[port][0],
+                   m_TransformBuffer[port][1],
+                   m_TransformBuffer[port][2],
+                   m_TransformBuffer[port][3]);
+      }
+
+    // report NDI error value
+    typedef TransformType::ErrorType  ErrorType;
+    ErrorType errorValue = m_TransformBuffer[port][7];
+
+    typedef TransformType::TimePeriodType TimePeriodType;
+    TimePeriodType validityTime = 100.0;
+
+
+    transform.SetToIdentity(validityTime);
+    transform.SetTranslationAndRotation(translation, rotation, errorValue,
+                                        validityTime);
+
+    this->SetToolTransform(port,0,transform);
+    }
+  m_BufferLock->Unlock();
+
+  return SUCCESS;
+}
+
+/** Update the m_StatusBuffer and the transforms. 
+    This function is called by a separate thread. */
+AuroraTracker::ResultType AuroraTracker::InternalThreadedUpdateStatus( void )
+{
+  igstkLogMacro( DEBUG, "AuroraTracker::InternalThreadedUpdateStatus "
+                 "called ...\n");
+
+  int errnum; // error value from device
+  int port;   // physical port number
+  int ph;     // port handle reported by device
+  unsigned long frame[NDI_NUMBER_OF_PORTS];
+
   // Initialize transformations to identity.
   // The NDI transform is 8 values:
   // the first 4 values are a quaternion
   // the next 3 values are an x,y,z position
   // the final value is an error estimate in the range [0,1]
+  m_BufferLock->Lock();
   for (port = 0; port < NDI_NUMBER_OF_PORTS; port++)
     {
-    transform8[port][0] = 1.0;
-    transform8[port][1] = 0.0;
-    transform8[port][2] = 0.0;
-    transform8[port][3] = 0.0;
-    transform8[port][4] = 0.0;
-    transform8[port][5] = 0.0;
-    transform8[port][6] = 0.0;
-    transform8[port][7] = 0.0;
+    m_TransformBuffer[port][0] = 1.0;
+    m_TransformBuffer[port][1] = 0.0;
+    m_TransformBuffer[port][2] = 0.0;
+    m_TransformBuffer[port][3] = 0.0;
+    m_TransformBuffer[port][4] = 0.0;
+    m_TransformBuffer[port][5] = 0.0;
+    m_TransformBuffer[port][6] = 0.0;
+    m_TransformBuffer[port][7] = 0.0;
     }
+  m_BufferLock->Unlock();
 
   // get the transforms for all tools from the NDI
   m_CommandInterpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
@@ -272,78 +356,44 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
     return FAILURE;
     }
 
-  // default to incrementing frame count by one (in case there are
-  // no transforms for any tools)
-
+  m_BufferLock->Lock();
   for (port = 0; port < NDI_NUMBER_OF_PORTS; port++)
     {
     ph = this->m_PortHandle[port];
-    absent[port] = 0;
-    status[port] = 0;
+    m_AbsentBuffer[port] = 0;
+    m_StatusBuffer[port] = 0;
+
     frame[port] = 0;
     if (ph == 0)
       {
       continue;
       }
 
-    int tstat = m_CommandInterpreter->GetTXTransform(ph, transform8[port]);
-    absent[port] = (tstat != CommandInterpreterType::NDI_VALID);
-    status[port] = m_CommandInterpreter->GetTXPortStatus(ph);
+    double transform[8];
+    int status, absent;
+    int result = m_CommandInterpreter->GetTXTransform(ph, transform);
+    
+    absent = (result != CommandInterpreterType::NDI_VALID);
+    status = m_CommandInterpreter->GetTXPortStatus(ph);
     frame[port] = m_CommandInterpreter->GetTXFrame(ph);
+
+    int i;
+    for( i = 0; i < 8; ++i )
+      {
+      m_TransformBuffer[port][i] = transform[i];
+      }
+
+    m_AbsentBuffer[port] = absent;
+    m_StatusBuffer[port] = status;
   }
+  m_BufferLock->Unlock();
 
   // In the original vtkNDITracker code, there was a check at this
   // point in the code to see if any new tools had been plugged in
 
-  for (port = 0; port < NDI_NUMBER_OF_PORTS; port++) 
-    {
-    // convert status flags from NDI to vtkTracker format
-    int portStatus = status[port];
-    flags = 0;
-    if ((portStatus & mflags) != mflags) 
-      {
-      flags |= TR_MISSING;
-      }
-    else
-      {
-      if (absent[port]) { flags |= TR_OUT_OF_VIEW;  }
-      if (portStatus & CommandInterpreterType::NDI_OUT_OF_VOLUME)
-        {
-        flags |= TR_OUT_OF_VOLUME;
-        }
-      }
-
-    // Send the transform to the tool:
-
-    // create the transform
-    TransformType transform;
-
-    typedef TransformType::VectorType TranslationType;
-    TranslationType translation;
-    translation[0] = transform8[port][4];
-    translation[1] = transform8[port][5];
-    translation[2] = transform8[port][6];
-
-    typedef TransformType::VersorType RotationType;
-    RotationType rotation;
-    rotation.Set(transform8[port][0],transform8[port][1],transform8[port][2],transform8[port][3]);
-
-    // report NDI error value
-    typedef TransformType::ErrorType  ErrorType;
-    ErrorType errorValue = transform8[port][7];
-
-    typedef TransformType::TimePeriodType TimePeriodType;
-    TimePeriodType validityTime = 100.0;
-
-    transform.SetToIdentity(validityTime);
-    transform.SetTranslationAndRotation(translation, rotation, errorValue,
-                                        validityTime);
-
-    this->SetToolTransform(port,0,transform);
-    }
-
   return SUCCESS;
 }
+
 
 /** Specify an SROM file to be used with a passive or custom tool. */
 void AuroraTracker::AttachSROMFileNameToPort( const int portNum,

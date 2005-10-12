@@ -105,6 +105,10 @@ protected:
   /** Update the status and the transforms for all TrackerTools. */
   virtual ResultType InternalUpdateStatus( void );
 
+  /** Update the status and the transforms. 
+      This function is called by a separate thread. */
+  virtual ResultType InternalThreadedUpdateStatus( void );
+
   /** Reset the tracking device to put it back to its original state. */
   virtual ResultType InternalReset( void );
 
@@ -112,6 +116,18 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+
+  /** A mutex for multithreaded access to the buffer arrays */
+  itk::MutexLock::Pointer  m_BufferLock;
+
+  /** A buffer for holding tool transforms */
+  double m_TransformBuffer[NDI_NUMBER_OF_PORTS][8];
+
+  /** A buffer for holding status of tools */
+  int m_StatusBuffer[NDI_NUMBER_OF_PORTS];
+
+  /** A buffer for holding absent status of tools */
+  int m_AbsentBuffer[NDI_NUMBER_OF_PORTS];
 
   /** Load a virtual SROM, given the file name of the ROM file */
   bool LoadVirtualSROM( const int i, std::string SROMFileName) ;
