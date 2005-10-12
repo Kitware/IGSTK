@@ -143,7 +143,7 @@ private:
   void DisableToolPorts( void );
 
   /** Find the tool for a specific port handle (-1 if not found). */
-  int GetToolFromHandle( int handle );
+  int GetToolFromHandle( int handle ) const;
 
   /** Information about which tool ports are enabled. */
   int m_PortEnabled[NDI_NUMBER_OF_PORTS];
