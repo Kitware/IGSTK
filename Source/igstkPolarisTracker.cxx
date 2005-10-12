@@ -422,8 +422,8 @@ bool PolarisTracker::LoadVirtualSROM( const int tool, std::string SROMFileName)
   int errnum;          // NDI error code
   int ph;              // port handle
   int n, i;
-  char hexbuffer[128]; // holds hexidecimal data to be sent to device
-  char location[14];   // info about the location of a port
+  char hexbuffer[129]; // holds hexidecimal data to be sent to device
+  char location[15];   // info about the location of a port
 
   if (tool < 3) // wired tools
     {
@@ -507,7 +507,7 @@ void PolarisTracker::EnableToolPorts()
   int ntools;
   int status;
   char identity[34];
-  char location[14];
+  char location[15];
 
   // reset our information about the tool ports
   for (tool = 0; tool < NDI_NUMBER_OF_PORTS; tool++)
@@ -654,7 +654,7 @@ void PolarisTracker::DisableToolPorts( void )
 }
 
 /** Given an NDI tool handle, return the physical port number. */
-int PolarisTracker::GetToolFromHandle(int handle)
+int PolarisTracker::GetToolFromHandle(int handle) const
 {
   int tool;
 
