@@ -59,6 +59,18 @@ public:
   /** Method for creation of a reference counted object. */
   igstkNewMacro(Self);  
 
+  /** Tool types */
+  typedef enum
+  {
+    UnknownTool         = 0x00,             // unidentified tool type
+    TrackedReference    = 0x01,
+    TrackedPointer      = 0x02,
+    FootPedal           = 0x03,
+    SoftwareDefinedTool = 0x04,
+    TrackedMicroscope   = 0x05,
+    TrackedCArm         = 0x0A,
+    TrackedCatheter     = 0x0B,
+  } ToolType;
 
 public:
 
@@ -70,6 +82,8 @@ public:
   igstkGetMacro( ValidityPeriod, TimePeriodType );
 
   igstkSetMacro( ValidityPeriod, TimePeriodType );
+  
+  igstkGetMacro( ToolType, ToolType );
 
   void SetTransform( const TransformType & transform );
 
@@ -78,9 +92,11 @@ public:
 
 protected:
 
-    TrackerTool(void);
+  TrackerTool(void);
 
-    ~TrackerTool(void);
+  ~TrackerTool(void);
+
+  igstkSetMacro( ToolType, ToolType );
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -88,12 +104,15 @@ protected:
 
 private:
 
-    /** Position and Orientation of the tool */
-    TransformType      m_Transform;
+  /** Position and Orientation of the tool */
+  TransformType      m_Transform;
 
-    /** Time in milliseconds for which this tool will be reporting results */
-    TimePeriodType     m_ValidityPeriod;
-
+  /** Time in milliseconds for which this tool will be reporting results */
+  TimePeriodType     m_ValidityPeriod;
+  
+  /** The type of the tool reflecting the property of the tool */
+  ToolType           m_ToolType;
+  
 private:
 
   /** Inputs to the State Machine */

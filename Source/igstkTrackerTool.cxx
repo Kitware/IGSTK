@@ -27,6 +27,7 @@ TrackerTool::TrackerTool(void):m_StateMachine(this)
   // Initialize the variables
   m_ValidityPeriod = 0.0; // current values are alreay invalid
   m_Transform.SetToIdentity( m_ValidityPeriod ); 
+  m_ToolType = UnknownTool;
 
   m_StateMachine.AddInput( m_InitializeInput,  "InitializeInput" );
 
