@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more DEBUGrmation.
 
 =========================================================================*/
-#ifndef __igstkLandmark3DRegistration_txx
-#define __igstkLandmark3DRegistration_txx
+#ifndef __igstkLandmark3DRegistration_cxx
+#define __igstkLandmark3DRegistration_cxx
 
 #include "igstkLandmark3DRegistration.h"
 #include "igstkTransform.h"
