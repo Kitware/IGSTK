@@ -112,7 +112,6 @@ SET(BasicTests_SRCS
   igstkCTImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkStringEventTest.cxx
-  igstkLandmark3DRegistrationTest.cxx
   )
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
