@@ -17,6 +17,10 @@
 #ifndef __igstkLandmark3DRegistration_cxx
 #define __igstkLandmark3DRegistration_cxx
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4786 )
+#endif
+
 #include "igstkLandmark3DRegistration.h"
 #include "igstkTransform.h"
 #include "igstkTransformModifiedEvent.h"
