@@ -50,7 +50,7 @@ class Landmark3DRegistration : public ::itk::Object
 
 public:
   /** Typedefs */
-  const static int Dimension = 3;
+  itkStaticConstMacro(Dimension,unsigned int,3);
   typedef Landmark3DRegistration                Self;
   typedef itk::SmartPointer<Self>             Pointer;
   typedef itk::SmartPointer<const Self>       ConstPointer;
