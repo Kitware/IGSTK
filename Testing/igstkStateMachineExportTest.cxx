@@ -112,15 +112,26 @@ public:      \
 
 int main( int argc, char * argv [] )
 {
-  std::string outputDirectory;
-  if( argc > 1 )
+
+  if( argc < 2 )
     {
-    outputDirectory = argv[1];
+    std::cerr << "ERROR: Missing arguments" << std::endl;
+    std::cerr << "Usage: " << std::endl;
+    std::cerr << argv[0] << "  outputDirectory  skipLoopsBoolean" << std::endl;
+    return 1;
     }
+
+  std::string outputDirectory;
+  outputDirectory = argv[1];
 
   std::cout << "Output directory = " << outputDirectory << std::endl;
   
-  const bool skipLoops = true;
+  bool skipLoops = true;
+
+  if( argc > 2 )
+    {
+    skipLoops = atoi( argv[2] );
+    }
 
   // This is for classes that use SmartPointers
   igstkTestExportStateMachine1( igstk::LandmarkRegistration<3>, outputDirectory, skipLoops );
