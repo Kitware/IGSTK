@@ -1,0 +1,13 @@
+/* 
+ * here is where system comupted values get stored these values should only
+ * change when the target compile platform changes 
+ */
+
+#define IGSTK_VERSION_MAJOR @IGSTK_VERSION_MAJOR@
+#define IGSTK_VERSION_MINOR @IGSTK_VERSION_MINOR@
+#define IGSTK_VERSION_PATCH @IGSTK_VERSION_PATCH@
+#define IGSTK_VERSION_STRING "@IGSTK_VERSION_STRING@"
+
+/* define any platform-specific macros */
+#cmakedefine HAVE_TERMIOS_H
+#cmakedefine HAVE_TERMIO_H
