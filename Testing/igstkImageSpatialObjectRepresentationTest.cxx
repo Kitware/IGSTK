@@ -21,6 +21,7 @@
 
 #include "igstkImageSpatialObjectRepresentation.h"
 #include "igstkImageSpatialObject.h"
+#include "igstkView2D.h"
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -46,9 +47,36 @@ int igstkImageSpatialObjectRepresentationTest( int , char* [] )
   // Test error case
   representation->RequestSetImageSpatialObject( NULL );
 
+  // Test correct case
+  ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New();
+  representation->RequestSetImageSpatialObject( imageSpatialObject );
+
+  // Exercise the TypeMacro() which defines teh GetNameOfClass()
   std::string name = representation->GetNameOfClass();
 
   std::cout << "Name of class = " << name << std::endl;
+  
+  // Create an FLTK minimal GUI
+  Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
+    
+  typedef igstk::View2D  View2DType;
+
+  View2DType * view2D = new View2DType( 10,10,512,512,"2D View");
+
+  form->end();
+  form->show();
+   
+  // Do manual redraws
+  for(unsigned int i=0; i<10; i++)
+    {
+    view2D->Update();  // schedule redraw of the view
+    Fl::check();       // trigger FLTK redraws
+    std::cout << "i= " << i << std::endl;
+    }
+
+  delete view2D;
+  delete form;
+ 
 
   return EXIT_SUCCESS;
 }
