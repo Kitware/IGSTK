@@ -233,10 +233,7 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
   ReaderType::Pointer   reader = ReaderType::New();
   reader->SetLogger( logger );
 
-  // On purpose invoke read image before the directory has been set.
-  // This exercises the error condition of "InvalidRequestEvent"
-  reader->RequestReadImage();
-  
+ 
    //Add observer for invalid directory 
   DICOMImageReaderInvalidDirectoryNameErrorCallback::Pointer didcb = 
                     DICOMImageReaderInvalidDirectoryNameErrorCallback::New();
@@ -262,6 +259,10 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
                       DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback::New();
   reader->AddObserver( igstk::DICOMImageReadingErrorEvent(), dircb );
 
+  // On purpose invoke read image before the directory has been set.
+  // This exercises the error condition of "InvalidRequestEvent"
+  std::cout << "On purpose request the image before even giving the directory name" << std::endl;
+  reader->RequestReadImage();
   
   std::cout  << "Testing the input directory with an empty string  " << std::endl;
   std::string emptyDirectoryName; // THIS IS EMPTY ON PURPOSE !!
