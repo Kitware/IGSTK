@@ -1,5 +1,10 @@
 PROJECT( IGSTK )
 
+# version
+SET(IGSTK_VERSION_MAJOR "0")
+SET(IGSTK_VERSION_MINOR "0")
+SET(IGSTK_VERSION_PATCH "0")
+
 SET (LIBRARY_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries." FORCE)
 SET (EXECUTABLE_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables." FORCE)
 
@@ -90,6 +95,16 @@ INCLUDE_DIRECTORIES(
   ${IGSTK_INCLUDE_DIRS_SYSTEM}
 )
 
+#-----------------------------------------------------------------------------
+# check for header files that we need
+INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
+# for serial communication: termio.h or termios.h?
+CHECK_INCLUDE_FILE("termios.h"       HAVE_TERMIOS_H)
+CHECK_INCLUDE_FILE("termio.h"        HAVE_TERMIO_H)
+
+# Configure a header needed by igstkSystemInformation.
+CONFIGURE_FILE("${IGSTK_SOURCE_DIR}/igstkConfigure.h.in"
+               "${IGSTK_BINARY_DIR}/igstkConfigure.h")
 
 #-----------------------------------------------------------------------------
 # Help other projects use IGSTK.

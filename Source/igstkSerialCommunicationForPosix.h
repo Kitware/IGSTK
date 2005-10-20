@@ -18,11 +18,17 @@
 #ifndef __igstkSerialCommunicationForPosix_h
 #define __igstkSerialCommunicationForPosix_h
 
+#include "igstkConfigure.h"
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <termio.h> 
+#if defined (HAVE_TERMIOS_H)
+  #include <termios.h> 
+#elif defined (HAVE_TERMIO_H)
+  #include <termio.h>
+#endif
 #include <sys/time.h>
 
 #include "igstkSerialCommunication.h"
