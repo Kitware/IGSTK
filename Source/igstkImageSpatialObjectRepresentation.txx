@@ -154,11 +154,10 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   // We create the image spatial object
   m_ImageSpatialObject = m_ImageSpatialObjectToAdd;
 
-//  this->RequestSetSpatialObject( m_ImageSpatialObject );
+  this->RequestSetSpatialObject( m_ImageSpatialObject );
 
   if( m_ImageActor && m_MapColors && m_LUT )
     {
-//    m_LUT->SetTableRange (-1000, 1000);
     m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
     m_LUT->SetSaturationRange (0, 0);
     m_LUT->SetHueRange (0, 0);
@@ -198,9 +197,8 @@ template < class TImageSpatialObject >
 void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::UpdateRepresentation()
-{
-//  m_PlaneSource->SetRadius(m_CylinderSpatialObject->GetRadius());
-//  m_PlaneSource->SetHeight(m_CylinderSpatialObject->GetHeight());
+{    
+   m_MapColors->SetInput( m_ImageData );
 }
 
 
