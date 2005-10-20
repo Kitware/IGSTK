@@ -233,6 +233,10 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
   ReaderType::Pointer   reader = ReaderType::New();
   reader->SetLogger( logger );
 
+  // On purpose invoke read image before the directory has been set.
+  // This exercises the error condition of "InvalidRequestEvent"
+  reader->RequestReadImage();
+  
    //Add observer for invalid directory 
   DICOMImageReaderInvalidDirectoryNameErrorCallback::Pointer didcb = 
                     DICOMImageReaderInvalidDirectoryNameErrorCallback::New();

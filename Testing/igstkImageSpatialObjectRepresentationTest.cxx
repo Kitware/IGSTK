@@ -46,6 +46,10 @@ int igstkImageSpatialObjectRepresentationTest( int , char* [] )
   // Test error case
   representation->RequestSetImageSpatialObject( NULL );
 
+  std::string name = representation->GetNameOfClass();
+
+  std::cout << "Name of class = " << name << std::endl;
+
   return EXIT_SUCCESS;
 }
 

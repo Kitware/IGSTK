@@ -43,6 +43,10 @@ int igstkCTImageSpatialObjectRepresentationTest( int , char* [] )
 
   representation->SetLogger( logger );
 
+  std::string name = representation->GetNameOfClass();
+
+  std::cout << "Name of class = " << name << std::endl;
+
   representation->Print( std::cout );
 
   return EXIT_SUCCESS;
