@@ -62,6 +62,8 @@ TubeObjectRepresentation::TubeObjectRepresentation():m_StateMachine(this)
 /** Destructor */
 TubeObjectRepresentation::~TubeObjectRepresentation()  
 {
+  // This must be called in order to avoid Memory Leaks.
+  this->DeleteActors();
 }
 
 /** Set the Tubeal Spatial Object */

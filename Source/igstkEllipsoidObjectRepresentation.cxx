@@ -59,6 +59,7 @@ EllipsoidObjectRepresentation::~EllipsoidObjectRepresentation()
     m_EllipsoidSource->Delete();
     m_EllipsoidSource = NULL;
     }
+  this->DeleteActors();
 }
 
 

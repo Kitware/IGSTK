@@ -59,6 +59,8 @@ MeshObjectRepresentation::MeshObjectRepresentation():m_StateMachine(this)
 /** Destructor */
 MeshObjectRepresentation::~MeshObjectRepresentation()  
 {
+  // This must be called in order to avoid memory leaks.
+  this->DeleteActors();
 }
 
 

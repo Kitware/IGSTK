@@ -63,6 +63,8 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this)
 /** Destructor */
 ObjectRepresentation::~ObjectRepresentation()  
 { 
+  // This must be invoked in order to prevent Memory Leaks.
+  this->DeleteActors();
 }
 
 /** Add an actor to the actors list */

@@ -61,6 +61,7 @@ CylinderObjectRepresentation::~CylinderObjectRepresentation()
     m_CylinderSource->Delete();
     m_CylinderSource = NULL;
     }
+  this->DeleteActors();
 }
 
 
