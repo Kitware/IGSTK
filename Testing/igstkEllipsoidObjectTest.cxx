@@ -209,5 +209,8 @@ int igstkEllipsoidObjectTest( int, char * [] )
   std::cout << ellipsoidObjectA << std::endl;
 
   std::cout << "Test [DONE]" << std::endl;
+
+  delete view2D;
+  
   return EXIT_SUCCESS;
 }
