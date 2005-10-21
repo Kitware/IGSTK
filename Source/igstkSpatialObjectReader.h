@@ -50,7 +50,7 @@ public:
   typedef ::itk::Logger                    LoggerType;
 
   /** Typedefs */
-  typedef SpatialObjectReader                   Self;
+  typedef SpatialObjectReader                     Self;
   typedef ::itk::Object                           Superclass;
   typedef ::itk::SmartPointer<Self>               Pointer;
   typedef ::itk::SmartPointer<const Self>         ConstPointer;
@@ -59,11 +59,16 @@ public:
 
   /** Some convenient typedefs for input Object */
   typedef TPixelType                                       PixelType;
-  typedef ::itk::DefaultDynamicMeshTraits< TPixelType , TDimension, TDimension> MeshTraitsType;
-  typedef ::itk::SpatialObjectReader<TDimension,TPixelType,MeshTraitsType>  
-                                                           SpatialObjectReaderType;
-  typedef ::itk::SpatialObject<TDimension>                   SpatialObjectType;
-  typedef ::itk::GroupSpatialObject<TDimension>              GroupSpatialObjectType;
+  typedef ::itk::DefaultDynamicMeshTraits< TPixelType , 
+                                           TDimension, 
+                                           TDimension> MeshTraitsType;
+  
+  typedef ::itk::SpatialObjectReader< TDimension, 
+                                      TPixelType, 
+                                      MeshTraitsType >  SpatialObjectReaderType;
+
+  typedef ::itk::SpatialObject<TDimension>              SpatialObjectType;
+  typedef ::itk::GroupSpatialObject<TDimension>         GroupSpatialObjectType;
 
   /**  Run-time type information (and related methods). */
   igstkTypeMacro( SpatialObjectReader, ::itk::Object );
@@ -126,11 +131,16 @@ private:
   /** Error related state inputs */
   InputType                    m_ObjectReadingErrorInput;
 
+  /** Method to be invoked only by the StateMachine. Accepts the filename */
   void SetFileName();
 
+  /** Method to be invoked only by the StateMachine. Reports that an input was
+   * received during a State where that input is not a valid request. For
+   * example, asking to read the file before providing the filename */
   void ReportInvalidRequest();
 
-  /** This function reports an error while image reading */
+  /** Method to be invoked only by the StateMachine. This function reports an
+   * error while reading */
   void ReportObjectReadingError();
 
 };

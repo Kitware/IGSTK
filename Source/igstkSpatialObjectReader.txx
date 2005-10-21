@@ -26,7 +26,8 @@ namespace igstk
 
 /** Constructor */
 template <unsigned int TDimension, typename TPixelType>
-SpatialObjectReader<TDimension,TPixelType>::SpatialObjectReader() : m_StateMachine(this), m_Logger(NULL)
+SpatialObjectReader< TDimension, TPixelType >
+::SpatialObjectReader() : m_StateMachine(this), m_Logger(NULL)
 {
   // Create the ITK SpatialObject file reader
   m_SpatialObjectReader = SpatialObjectReaderType::New();
