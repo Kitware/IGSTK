@@ -93,6 +93,7 @@ ADD_TEST( igstkMRImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkMRImageSpatia
 ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igstkImageSpatialObjectRepresentationTest )
 ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igstkCTImageSpatialObjectRepresentationTest )
 ADD_TEST( igstkStringEventTest ${IGSTKSandbox_TESTS} igstkStringEventTest )
+ADD_TEST( igstkSpatialObjectReaderTest ${IGSTKSandbox_TESTS} igstkSpatialObjectReaderTest )
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
@@ -112,6 +113,7 @@ SET(BasicTests_SRCS
   igstkCTImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkStringEventTest.cxx
+  igstkSpatialObjectReaderTest.cxx
   )
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
