@@ -215,5 +215,8 @@ int igstkTubeObjectTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
   std::cout << "Test [DONE]" << std::endl;
+
+  delete view2D;
+  
   return EXIT_SUCCESS;
 }
