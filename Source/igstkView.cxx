@@ -41,7 +41,7 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   // Create a default render window
   m_RenderWindow = vtkRenderWindow::New();
   m_Renderer = vtkRenderer::New();
-  m_RenderWindow->AddRenderer(m_Renderer);
+  m_RenderWindow->AddRenderer( m_Renderer );
   m_Camera = m_Renderer->GetActiveCamera();
   m_RenderWindow->BordersOff();
   m_Renderer->SetBackground(0.5,0.5,0.5);
@@ -132,8 +132,14 @@ View::~View()
     {
     ((Fl_Group*)parent())->remove(*(Fl_Gl_Window*)this);
     }
+
   m_RenderWindow->Delete();
+
   m_Renderer->Delete();
+
+  // This must be invoked to prevent Memory Leaks because we call
+  // SetRenderWindow() in the Initialize() method.
+  this->SetRenderWindow(NULL); 
 }
 
 /** */
@@ -141,7 +147,7 @@ void View::Initialize()
 {
   igstkLogMacro( DEBUG, "Initialize() called ...\n");
 
-  this->SetRenderWindow(m_RenderWindow);
+  this->SetRenderWindow( m_RenderWindow );
   // if don't have render window then we can't do anything yet
   if (!RenderWindow)
     {
