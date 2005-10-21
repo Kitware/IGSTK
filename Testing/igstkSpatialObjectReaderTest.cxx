@@ -24,9 +24,17 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-int igstkSpatialObjectReaderTest( int , char* [] )
+int igstkSpatialObjectReaderTest( int argc, char * argv [] )
 {
 
+  if( argc < 2 )
+    {
+    std::cerr << "Error: Missing command line arguments" << std::endl;
+    std::cerr << "Usage : " << std::endl;
+    std::cerr << argv[0] << " inputFileName " << std::endl;
+    return 1;
+    }
+  
   typedef unsigned char  PixelType;
   const unsigned int     Dimension = 3;
 
@@ -57,12 +65,16 @@ int igstkSpatialObjectReaderTest( int , char* [] )
   reader->RequestSetFileName( emptyname );
   
   // Test file doesn't exist
-  std::string filenameThatDoesntExist="/This/FileName/Does/Not/Exist";
+  std::string filenameThatDoesntExist = "/This/FileName/Does/Not/Exist";
   reader->RequestSetFileName( filenameThatDoesntExist );
 
   // Test file that is a directory
-  std::string filenameIsADirectory=".";
+  std::string filenameIsADirectory = ".";
   reader->RequestSetFileName( filenameIsADirectory );
+  
+  // Test file that exists
+  std::string filenameThatExists = argv[1];
+  reader->RequestSetFileName( filenameThatExists );
   
   return EXIT_SUCCESS;
 }

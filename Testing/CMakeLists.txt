@@ -82,6 +82,9 @@ IF (IGSTKSandbox_DATA_ROOT)
    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTKSandbox_TESTS} igstkCTImageSpatialObjectReadingAndRepresentationTest 
        ${IGSTKSandbox_DATA_ROOT}/E000192 )
 
+   ADD_TEST( igstkSpatialObjectReaderTest ${IGSTKSandbox_TESTS} igstkSpatialObjectReaderTest 
+       ${IGSTKSandbox_DATA_ROOT}/vessel.tre )
+
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
 ADD_TEST( igstkImageReaderTest ${IGSTKSandbox_TESTS} igstkImageReaderTest )
@@ -93,7 +96,6 @@ ADD_TEST( igstkMRImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkMRImageSpatia
 ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igstkImageSpatialObjectRepresentationTest )
 ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igstkCTImageSpatialObjectRepresentationTest )
 ADD_TEST( igstkStringEventTest ${IGSTKSandbox_TESTS} igstkStringEventTest )
-ADD_TEST( igstkSpatialObjectReaderTest ${IGSTKSandbox_TESTS} igstkSpatialObjectReaderTest )
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
