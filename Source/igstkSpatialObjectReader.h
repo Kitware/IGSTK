@@ -21,9 +21,7 @@
 #include "igstkMacros.h"
 
 #include "itkObject.h"
-#include "itkMacro.h"
 #include "itkSpatialObjectReader.h"
-#include "itkLogger.h"
 #include "igstkStateMachine.h"
 #include "igstkStringEvent.h"
 #include "itkDefaultDynamicMeshTraits.h"
@@ -82,9 +80,6 @@ public:
   /** This method request Object read **/
   void RequestReadObject();
 
-  /** Returns true if the reader can open the file and the header is valid */
-  bool CheckFileIsValid();
-  
   /** Declarations needed for the State Machine */
   igstkStateMachineTemplatedMacro();
 
@@ -111,7 +106,10 @@ protected:
   virtual void AttemptReadObject();
 
 private:
- 
+
+  SpatialObjectReader(const Self&);   //purposely not implemented
+  void operator=(const Self&);        //purposely not implemented
+
   /** List of States */
   StateType                    m_IdleState;
   StateType                    m_ObjectFileNameReadState;
@@ -123,6 +121,7 @@ private:
   InputType                    m_ObjectFileNameIsEmptyInput; 
   InputType                    m_ObjectFileNameIsDirectoryInput; 
   InputType                    m_ObjectFileNameDoesNotExistInput; 
+  InputType                    m_ObjectFileNameCanNotBeOpenInput; 
 
   /** Error related state inputs */
   InputType                    m_ObjectReadingErrorInput;
