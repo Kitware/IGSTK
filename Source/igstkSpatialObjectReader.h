@@ -1,3 +1,19 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkSpatialObjectReader.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more DEBUGrmation.
+
+=========================================================================*/
 
 #ifndef __igstkSpatialObjectReader_h
 #define __igstkSpatialObjectReader_h
@@ -17,46 +33,51 @@ namespace igstk
 
 /** \class SpatialObjectReader
  * 
- * \brief This class reads spatial object data stored in files and provide
- * pointers to the spatial object data for use in an ITK
- * pipeline. This class is templated over the dimension of the object to read
+ * \brief This class reads spatial object data stored in files.
+ * 
+ * This class reads spatial object data stored in files and provide pointers to
+ * the spatial object data for use in an ITK pipeline. This class is templated
+ * over the dimension of the object to read
  *
- * \ingroup Object
+ * \ingroup Readers
  */
 
 template <unsigned int TDimension = 3, 
           typename TPixelType = unsigned char>
-class SpatialObjectReader : public itk::Object
+class SpatialObjectReader : public ::itk::Object
 {
 
 public:
   /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
+  typedef ::itk::Logger                    LoggerType;
 
   /** Typedefs */
   typedef SpatialObjectReader                   Self;
-  typedef itk::Object                           Superclass;
-  typedef itk::SmartPointer<Self>               Pointer;
-  typedef itk::SmartPointer<const Self>         ConstPointer;
+  typedef ::itk::Object                           Superclass;
+  typedef ::itk::SmartPointer<Self>               Pointer;
+  typedef ::itk::SmartPointer<const Self>         ConstPointer;
 
   itkStaticConstMacro(ObjectDimension, unsigned int, TDimension);
 
   /** Some convenient typedefs for input Object */
   typedef TPixelType                                       PixelType;
-  typedef itk::DefaultDynamicMeshTraits< TPixelType , TDimension, TDimension> MeshTraitsType;
-  typedef itk::SpatialObjectReader<TDimension,TPixelType,MeshTraitsType>  
+  typedef ::itk::DefaultDynamicMeshTraits< TPixelType , TDimension, TDimension> MeshTraitsType;
+  typedef ::itk::SpatialObjectReader<TDimension,TPixelType,MeshTraitsType>  
                                                            SpatialObjectReaderType;
-  typedef itk::SpatialObject<TDimension>                   SpatialObjectType;
-  typedef itk::GroupSpatialObject<TDimension>              GroupSpatialObjectType;
+  typedef ::itk::SpatialObject<TDimension>                   SpatialObjectType;
+  typedef ::itk::GroupSpatialObject<TDimension>              GroupSpatialObjectType;
 
   /**  Run-time type information (and related methods). */
-  igstkTypeMacro( SpatialObjectReader, itk::Object );
+  igstkTypeMacro( SpatialObjectReader, ::itk::Object );
+
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
 
+  /** Type for representing the string of the filename. */
+  typedef std::string    FileNameType;
 
   /** Method to pass the directory name containing the spatial object data */
-  void RequestSetFileName( const char *filename );
+  void RequestSetFileName( const FileNameType & filename );
 
   /** This method request Object read **/
   void RequestReadObject();
@@ -73,19 +94,19 @@ public:
 protected:
 
   SpatialObjectReader( void );
-  ~SpatialObjectReader( void );
+  virtual ~SpatialObjectReader( void );
 
   /** Print the object information in a stream. */
-  void PrintSelf( std::ostream& os, itk::Indent indent ) const;
+  void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
 
   /* Internal itkObjectFileReader */
   typename SpatialObjectReaderType::Pointer  m_SpatialObjectReader;
   std::string m_FileNameToBeSet;
   std::string m_FileName;
 
-  itkEventMacro( ObjectReaderEvent,             IGSTKEvent);
-  itkEventMacro( ObjectReadingErrorEvent,       ObjectReaderEvent );
-  itkEventMacro( ObjectInvalidRequestErrorEvent,ObjectReaderEvent );
+  itkEventMacro( ObjectReaderEvent,              IGSTKEvent        );
+  itkEventMacro( ObjectReadingErrorEvent,        ObjectReaderEvent );
+  itkEventMacro( ObjectInvalidRequestErrorEvent, ObjectReaderEvent );
 
   virtual void AttemptReadObject();
 
@@ -99,6 +120,9 @@ private:
   /** List of State Inputs */
   InputType                    m_ReadObjectRequestInput;
   InputType                    m_ObjectFileNameValidInput; 
+  InputType                    m_ObjectFileNameIsEmptyInput; 
+  InputType                    m_ObjectFileNameIsDirectoryInput; 
+  InputType                    m_ObjectFileNameDoesNotExistInput; 
 
   /** Error related state inputs */
   InputType                    m_ObjectReadingErrorInput;
