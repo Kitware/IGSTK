@@ -81,7 +81,10 @@ public:
    * could present this message differently. */
   virtual void DisplayDebugText(const char *t);
 
-  /** Overrides the default VTK log window. */
+  /** Overrides the default VTK log window.  Although this is a VTK class, do
+   * not call Delete() if you have called OverrideVTKWindow().  After you call
+   * OverrideVTKWindow(), the VTKLoggerOutput object will automatically be
+   * deleted when the program exits. */
   virtual void OverrideVTKWindow();
 
   /** Type definition for the standard output stream */ 
