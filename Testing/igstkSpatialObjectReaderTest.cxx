@@ -60,6 +60,10 @@ int igstkSpatialObjectReaderTest( int argc, char * argv [] )
 
   reader->Print( std::cout );
 
+  // Test error condition: on purpose request to read an object
+  // without having provided the filename 
+  reader->RequestReadObject();
+
   // Test empty name
   std::string emptyname;
   reader->RequestSetFileName( emptyname );
@@ -75,6 +79,9 @@ int igstkSpatialObjectReaderTest( int argc, char * argv [] )
   // Test file that exists
   std::string filenameThatExists = argv[1];
   reader->RequestSetFileName( filenameThatExists );
+
+  // Request to read the object from the file
+  reader->RequestReadObject();
   
   return EXIT_SUCCESS;
 }
