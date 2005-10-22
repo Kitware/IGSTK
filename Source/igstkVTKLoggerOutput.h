@@ -81,10 +81,8 @@ public:
    * could present this message differently. */
   virtual void DisplayDebugText(const char *t);
 
-  /** Overrides a VTK log window.  After you call OverrideVTKWindow(),
-   * the VTKLoggerOutput object will automatically be deleted when
-   * the program exits. */
-  virtual void OverrideVTKWindow()  {  vtkOutputWindow::SetInstance(this);  };
+  /** Overrides the default VTK log window. */
+  virtual void OverrideVTKWindow();
 
   /** Type definition for the standard output stream */ 
   typedef std::ostream StdOStreamType;
@@ -100,7 +98,7 @@ protected:
   VTKLoggerOutput();
 
   /** Destructor */
-  virtual ~VTKLoggerOutput() {};
+  virtual ~VTKLoggerOutput();
 
   /** Print information about this object */
   void PrintSelf(StdOStreamType& os, itk::Indent indent) const;

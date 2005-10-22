@@ -35,6 +35,26 @@ VTKLoggerOutput::VTKLoggerOutput()
 }
 
 
+/** Destructor. */
+VTKLoggerOutput::~VTKLoggerOutput()
+{
+  // If this is the default VTK window, then 
+  // remove itself from being the default VTK 
+  // output by passing a NULL pointer.
+  if( vtkOutputWindow::GetInstance() == this )
+    {
+    vtkOutputWindow::SetInstance( NULL );  
+    }
+}
+
+
+/** Override the default VTK Window */
+void VTKLoggerOutput::OverrideVTKWindow()
+{ 
+  vtkOutputWindow::SetInstance( this );  
+}
+
+
 /** Send a string to display. */
 void VTKLoggerOutput::DisplayText(const char* t)
 {
