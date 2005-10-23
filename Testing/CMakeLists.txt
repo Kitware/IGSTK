@@ -83,6 +83,11 @@ IF (IGSTKSandbox_DATA_ROOT)
        ${IGSTKSandbox_DATA_ROOT}/liver.msh  
        ${IGSTKSandbox_DATA_ROOT}/liverCorruptedOnPurpose.msh )
 
+   ADD_TEST( igstkTubeReaderTest ${IGSTKSandbox_TESTS} igstkTubeReaderTest 
+       ${IGSTKSandbox_DATA_ROOT}/vessel.tre 
+       ${IGSTKSandbox_DATA_ROOT}/vesselCorruptedOnPurpose.tre  
+       ${IGSTKSandbox_DATA_ROOT}/vesselWithoutReadPermissions.tre )
+
    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTKSandbox_TESTS} 
              igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTKSandbox_DATA_ROOT}/E000192 )
 
@@ -125,6 +130,7 @@ SET(BasicTests_SRCS
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkStringEventTest.cxx
   igstkSpatialObjectReaderTest.cxx
+  igstkTubeReaderTest.cxx 
   )
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
