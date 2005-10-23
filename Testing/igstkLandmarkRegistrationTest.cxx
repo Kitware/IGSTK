@@ -321,6 +321,11 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
       std::cout << "  Landmark alignment using Rigid3D transform [PASSED]" << std::endl;
       }
 
+
+    // Exercise the Reset method
+    landmarkRegister->RequestResetRegistration();
+
+
     return EXIT_SUCCESS;
 }
 
