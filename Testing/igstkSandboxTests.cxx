@@ -40,6 +40,7 @@ void RegisterTests()
   REGISTER_TEST(igstkCTImageReaderTest);
   REGISTER_TEST(igstkCTImageSpatialObjectTest);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
+  REGISTER_TEST(igstkMeshReaderTest);
   REGISTER_TEST(igstkMRImageReaderTest);
   REGISTER_TEST(igstkMRImageSpatialObjectTest);
   REGISTER_TEST(igstkImageSpatialObjectTest);

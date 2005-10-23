@@ -79,6 +79,10 @@ IF (IGSTKSandbox_DATA_ROOT)
    ADD_TEST( igstkMRImageReaderTest ${IGSTKSandbox_TESTS} igstkMRImageReaderTest 
        ${IGSTKSandbox_DATA_ROOT}/E000192 )
 
+   ADD_TEST( igstkMeshReaderTest ${IGSTKSandbox_TESTS} igstkMeshReaderTest 
+       ${IGSTKSandbox_DATA_ROOT}/liver.msh  
+       ${IGSTKSandbox_DATA_ROOT}/liverCorruptedOnPurpose.msh )
+
    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTKSandbox_TESTS} 
              igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTKSandbox_DATA_ROOT}/E000192 )
 
@@ -109,6 +113,7 @@ SET(BasicTests_SRCS
   igstkImageReaderTest.cxx
   igstkCTImageReaderTest.cxx
   igstkMRImageReaderTest.cxx
+  igstkMeshReaderTest.cxx 
   igstkDICOMImageReaderTest.cxx
   igstkDICOMImageReaderErrorsTest.cxx
   igstkCTImageSpatialObjectTest.cxx
