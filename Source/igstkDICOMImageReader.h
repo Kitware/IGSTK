@@ -31,6 +31,14 @@
 namespace igstk
 {
 
+#define igstkUnsafeGetMacro(name,type) \
+virtual bool Get##name ( DICOMInformationType & value ) const \
+{ \
+    igstkLogMacro( CRITICAL, "igstk::DICOMImageReader::Get" #name " unsafe method called...\n"); \
+    value = this->m_##name; \
+    return this->m_Is##name##Valid; \
+}
+
 
 itkEventMacro( DICOMModalityEvent,                                StringEvent);
 itkEventMacro( DICOMPatientNameEvent,                             StringEvent);
@@ -99,6 +107,33 @@ public:
   /** Declarations needed for the State Machine */
   igstkStateMachineTemplatedMacro();
 
+  /** Type used for returning string values from the DICOM header */
+  typedef std::string    DICOMInformationType;
+
+  /** Unsafe Get Macro for having access to the Patient Name.  This method is
+   * considered unsafe because it is not subject to the control of the internal
+   * state machine.  The method GetPatientName() should only be invoked if the
+   * precondition method IsPatientNameValid() has already been called and it
+   * has returned true. Calling GetPatientID() in any other situation will lead
+   * to unpredictable behavior. */
+  igstkUnsafeGetMacro( PatientName, DICOMInformationType );
+
+  /** Unsafe Get Macro for having access to the Patient unique Identifier.
+   * This method is considered unsafe because it is not subject to the control
+   * of the internal state machine.  The method GetPatientID() should only be
+   * invoked if the precondition method IsPatientIDValid() has already been
+   * called and it has returned true. Calling GetPatientID() in any other
+   * situation will lead to unpredictable behavior. */
+  igstkUnsafeGetMacro( PatientID, DICOMInformationType );
+
+  /** Unsafe Get Macro for having access to the image Modality.  This method is
+   * considered unsafe because it is not subject to the control of the internal
+   * state machine.  The method GetModality() should only be invoked if the
+   * precondition method IsModalityValid() has already been called and it has
+   * returned true. Calling GetModality() in any other situation will lead to
+   * unpredictable behavior. */
+  igstkUnsafeGetMacro( Modality, DICOMInformationType );
+  
 protected:
 
   DICOMImageReader( void );
@@ -202,13 +237,14 @@ private:
       unsafe access to the ITK image level */
   virtual const ImageType * GetITKImage() const;
 
-  char tmp_string[2048];
-  
-  typedef std::string    DICOMInfoType;
 
-  DICOMInfoType m_PatientID;
-  DICOMInfoType m_PatientName;
-  DICOMInfoType m_Modality;
+  bool             m_IsPatientIDValid;
+  bool             m_IsPatientNameValid;
+  bool             m_IsModalityValid;
+
+  DICOMInformationType    m_PatientID;
+  DICOMInformationType    m_PatientName;
+  DICOMInformationType    m_Modality;
 };
 
 } // end namespace igstk

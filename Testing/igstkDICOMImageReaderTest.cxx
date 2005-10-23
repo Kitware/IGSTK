@@ -174,6 +174,44 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
 
   reader->Print( std::cout );
 
+  /** Exercising the Unsafe GetPatientName() method */
+  ReaderType::DICOMInformationType  patientName;
+  if( reader->GetPatientName( patientName ) )
+    {
+    std::cout << "Patient Name = " << patientName << std::endl;
+    }
+  else
+    {
+    std::cout << "There is no valid PatientName at this point" << std::endl;
+    }
+
+
+  /** Exercising the Unsafe GetPatientID() method */
+  ReaderType::DICOMInformationType  patientID;
+  if( reader->GetPatientID( patientID ) )
+    {
+    std::cout << "Patient ID = " << patientID << std::endl;
+    }
+  else
+    {
+    std::cout << "There is no valid PatientID at this point" << std::endl;
+    }
+  
+ 
+
+  /** Exercising the Unsafe GetModality() method */
+  ReaderType::DICOMInformationType  modality;
+  if( reader->GetModality( modality ) )
+    {
+    std::cout << "Modality = " << modality << std::endl;
+    }
+  else
+    {
+    std::cout << "There is no valid modality at this point" << std::endl;
+    }
+  
+
+ 
   return EXIT_SUCCESS;
 }
 
