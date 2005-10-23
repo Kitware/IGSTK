@@ -98,6 +98,7 @@ ADD_TEST( igstkCTImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkCTImageSpatia
 ADD_TEST( igstkMRImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkMRImageSpatialObjectTest )
 ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igstkImageSpatialObjectRepresentationTest )
 ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igstkCTImageSpatialObjectRepresentationTest )
+ADD_TEST( igstkMRImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igstkMRImageSpatialObjectRepresentationTest )
 ADD_TEST( igstkStringEventTest ${IGSTKSandbox_TESTS} igstkStringEventTest )
 
 SET(BasicTests_SRCS
