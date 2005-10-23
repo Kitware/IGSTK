@@ -75,9 +75,13 @@ template < class TImageSpatialObject >
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::~ImageSpatialObjectRepresentation()  
 {
+  
+  this->DeleteActors();
+
   if( m_ImageActor )
     {
-    m_ImageActor->Delete();
+    // no need to delete it. It has been deleted as part of the action of
+    // DeleteActors()
     m_ImageActor = NULL;
     }
 
@@ -212,9 +216,9 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   this->DeleteActors();
 
   if( m_ImageActor )
-  {
-  this->AddActor( m_ImageActor );
-  }
+    {
+    this->AddActor( m_ImageActor );
+    }
 }
 
 /** Create a copy of the current object representation */
