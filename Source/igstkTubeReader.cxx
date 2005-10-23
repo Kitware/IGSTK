@@ -49,17 +49,23 @@ void TubeReader::AttemptReadObject()
       // Create a new TubeObject
       TubeType::Pointer tube = TubeType::New();
       
-      // Get the points from the tube spatialobject
-      TubeSpatialObjectType::PointListType::const_iterator ptIt;
-      ptIt = dynamic_cast<TubeSpatialObjectType*>((*it).GetPointer())->GetPoints().begin();
+      const TubeSpatialObjectType * tubes = 
+              dynamic_cast< TubeSpatialObjectType * >( it->GetPointer() );
 
-      while(ptIt != dynamic_cast<TubeSpatialObjectType*>((*it).GetPointer())->GetPoints().end())
+      // Get the points from the tube spatialobject
+      typedef TubeSpatialObjectType::PointListType    PointListType;
+      typedef PointListType::const_iterator           PointIterator;
+
+      PointIterator pointItr = tubes->GetPoints().begin();
+      PointIterator pointEnd = tubes->GetPoints().end();
+
+      while( pointItr != pointEnd )
         {
-        TubeType::PointType pt;
-        pt.SetPosition((*ptIt).GetPosition());
-        pt.SetRadius((*ptIt).GetRadius());
-        tube->AddPoint(pt);
-        ptIt++;
+        TubeType::PointType point;
+        point.SetPosition( pointItr->GetPosition() );
+        point.SetRadius( pointItr->GetRadius() );
+        tube->AddPoint( point );
+        pointItr++;
         }
 
       // For the moment no hierarchy
@@ -73,20 +79,26 @@ void TubeReader::AttemptReadObject()
       
       // Get the points from the tube spatialobject
       typedef itk::VesselTubeSpatialObject<3> VesselTubeSpatialObjectType;
-      VesselTubeSpatialObjectType::PointListType::const_iterator ptIt;
-      ptIt = dynamic_cast<VesselTubeSpatialObjectType*>((*it).GetPointer())->GetPoints().begin();
+      typedef VesselTubeSpatialObjectType::PointListType    PointListType;
+      typedef PointListType::const_iterator                 PointIterator;
+        
+      const VesselTubeSpatialObjectType * vessels =
+              dynamic_cast<VesselTubeSpatialObjectType*>( it->GetPointer() );
 
-      while(ptIt != dynamic_cast<VesselTubeSpatialObjectType*>((*it).GetPointer())->GetPoints().end())
+      PointIterator  pointItr = vessels->GetPoints().begin();
+      PointIterator  pointEnd = vessels->GetPoints().end();
+
+      while( pointItr != pointEnd )
         {
-        TubeType::PointType pt;
-        pt.SetPosition((*ptIt).GetPosition());
-        pt.SetRadius((*ptIt).GetRadius());
-        tube->AddPoint(pt);
-        ptIt++;
+        TubeType::PointType point;
+        point.SetPosition( pointItr->GetPosition() );
+        point.SetRadius( pointItr->GetRadius() );
+        tube->AddPoint( point );
+        ++pointItr;
         }
 
       // For the moment no hierarchy
-      m_Group->RequestAddObject(tube);
+      m_Group->RequestAddObject( tube );
 
       }
     it++;
@@ -105,6 +117,7 @@ TubeReader::GetOutput() const
 void TubeReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << "Group = " << m_Group.GetPointer() << std::endl;
 }
 
 } // end namespace igstk

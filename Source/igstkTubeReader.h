@@ -20,15 +20,10 @@
 #include "igstkMacros.h"
 #include "igstkSpatialObjectReader.h"
 
-#include "igstkStateMachine.h"
-#include "itkLogger.h"
-
 #include "itkSpatialObjectReader.h"
 #include "itkObject.h"
 #include "itkEventObject.h"
 
-#include "igstkEvents.h"
-#include "igstkStringEvent.h"
 #include "igstkTubeObject.h"
 #include "itkTubeSpatialObject.h"
 #include "igstkTubeGroupObject.h"
@@ -38,8 +33,15 @@ namespace igstk
 
 /** \class TubeReader
  * 
- * \brief This class reads 3D Tube in the metaIO format
+ * \brief This class reads 3D Tube in the metaIO format.
+ *
+ * Tubular structures are quite common in human anatomy. This class is intended
+ * to read groups of tubular structrures from files in metaIO format. Typical
+ * these structures are the result of a segmentation method applied on
+ * pre-operative images.
  * 
+ * \sa MeshReader
+ *
  * \ingroup Readers
  */
 class TubeReader : public SpatialObjectReader<3>
@@ -55,7 +57,6 @@ public:
   typedef Superclass::SpatialObjectType      SpatialObjectType;
   typedef Superclass::GroupSpatialObjectType GroupSpatialObjectType;
   typedef SpatialObjectType::ConstPointer    SpatialObjectTypeConstPointer;
-  typedef itk::Logger                        LoggerType;
   typedef igstk::TubeObject                  TubeType;
   typedef itk::TubeSpatialObject<3>          TubeSpatialObjectType;
   typedef igstk::TubeGroupObject             GroupObjectType;
@@ -66,17 +67,16 @@ public:
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
   
-  /** This method request Object read **/
-  void AttemptReadObject();
-
   /** Return the output as a group */
   const GroupObjectType * GetOutput() const;
 
 protected:
 
-  TubeReader( void );
-  ~TubeReader( void );
+  /** Constructor and Destructor */
+  TubeReader();
+  ~TubeReader();
 
+  // Generic event produced from this class
   itkEventMacro( TubeReaderEvent,IGSTKEvent);
   
   //SpatialObject reading error
@@ -85,7 +85,14 @@ protected:
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
+  /** This method request Object read. This method is intended to be
+   *  invoked ONLY by the State Machine of the superclass. **/
+  void AttemptReadObject();
+
 private:
+
+  TubeReader(const Self&);         //purposely not implemented
+  void operator=(const Self&);     //purposely not implemented
 
   GroupObjectType::Pointer m_Group;
 
