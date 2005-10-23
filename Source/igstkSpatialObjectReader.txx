@@ -46,19 +46,16 @@ SpatialObjectReader< TDimension, TPixelType >
   m_StateMachine.AddInput(m_ObjectFileNameIsEmptyInput,"ObjectFileNameIsEmptyInput");
   m_StateMachine.AddInput(m_ObjectFileNameIsDirectoryInput,"ObjectFileNameIsDirectoryInput");
   m_StateMachine.AddInput(m_ObjectFileNameDoesNotExistInput,"ObjectFileNameDoesNotExistInput");
-  m_StateMachine.AddInput(m_ObjectFileNameCanNotBeOpenInput,"ObjectFileNameCanNotBeOpenInput");
 
   m_StateMachine.AddTransition(m_IdleState,m_ObjectFileNameValidInput,m_ObjectFileNameReadState,&SpatialObjectReader::SetFileName);
   m_StateMachine.AddTransition(m_IdleState,m_ObjectFileNameIsEmptyInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
   m_StateMachine.AddTransition(m_IdleState,m_ObjectFileNameIsDirectoryInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
-  m_StateMachine.AddTransition(m_IdleState,m_ObjectFileNameCanNotBeOpenInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
   m_StateMachine.AddTransition(m_IdleState,m_ObjectFileNameDoesNotExistInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
   m_StateMachine.AddTransition(m_IdleState,m_ReadObjectRequestInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
   m_StateMachine.AddTransition(m_ObjectFileNameReadState,m_ReadObjectRequestInput,m_ObjectAttemptingReadState,&SpatialObjectReader::AttemptReadObject);
   m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameValidInput,m_ObjectFileNameReadState,&SpatialObjectReader::SetFileName);
   m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameIsEmptyInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
   m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameIsDirectoryInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
-  m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameCanNotBeOpenInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
   m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameDoesNotExistInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
 
 
@@ -132,20 +129,6 @@ void SpatialObjectReader<TDimension,TPixelType>
     this->m_StateMachine.PushInput( this->m_ObjectFileNameIsDirectoryInput );
     this->m_StateMachine.ProcessInputs();
     return;
-    }
-  
-  // try to open the file
-  std::ifstream inputfile;
-  inputfile.open( filename.c_str() );
-  if( inputfile.fail() )
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectFileNameCanNotBeOpenInput );
-    this->m_StateMachine.ProcessInputs();
-    return;
-    }
-  else
-    {
-    inputfile.close();
     }
   
   this->m_StateMachine.PushInput( this->m_ObjectFileNameValidInput );

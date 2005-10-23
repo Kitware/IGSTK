@@ -31,7 +31,8 @@ int igstkSpatialObjectReaderTest( int argc, char * argv [] )
     {
     std::cerr << "Error: Missing command line arguments" << std::endl;
     std::cerr << "Usage : " << std::endl;
-    std::cerr << argv[0] << " inputGoodFileName inputBadFileName " << std::endl;
+    std::cerr << argv[0] << " inputGoodFileName ";
+    std::cerr << " inputBadFileName " << std::endl;
     return 1;
     }
   
@@ -83,7 +84,7 @@ int igstkSpatialObjectReaderTest( int argc, char * argv [] )
   // Request to read the object from the file
   reader->RequestReadObject();
   
-  // Now reading a wrong file
+  // Now reading a corrupted file
   std::string filenameWithCorruptedContent = argv[2];
   reader->RequestSetFileName( filenameWithCorruptedContent );
   reader->RequestReadObject();

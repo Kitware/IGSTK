@@ -128,7 +128,6 @@ private:
   InputType                    m_ObjectFileNameIsEmptyInput; 
   InputType                    m_ObjectFileNameIsDirectoryInput; 
   InputType                    m_ObjectFileNameDoesNotExistInput; 
-  InputType                    m_ObjectFileNameCanNotBeOpenInput; 
 
   /** Error related state inputs */
   InputType                    m_ObjectReadingErrorInput;

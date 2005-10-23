@@ -83,7 +83,10 @@ IF (IGSTKSandbox_DATA_ROOT)
              igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTKSandbox_DATA_ROOT}/E000192 )
 
    ADD_TEST( igstkSpatialObjectReaderTest ${IGSTKSandbox_TESTS} igstkSpatialObjectReaderTest 
-       ${IGSTKSandbox_DATA_ROOT}/vessel.tre ${IGSTKSandbox_DATA_ROOT}/vesselCorruptedOnPurpose.tre )
+       ${IGSTKSandbox_DATA_ROOT}/vessel.tre 
+       ${IGSTKSandbox_DATA_ROOT}/vesselCorruptedOnPurpose.tre  
+       ${IGSTKSandbox_DATA_ROOT}/vesselWithoutReadPermissions.tre  
+       )
 
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
