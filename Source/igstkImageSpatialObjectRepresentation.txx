@@ -78,13 +78,11 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 
   if( m_ImageActor )
     {
-    // no need to delete it. It has been deleted as part of the action of
-    // DeleteActors()
     m_ImageActor->SetInput( NULL );
+    m_ImageActor->Delete();
     m_ImageActor = NULL;
     }
 
-  this->DeleteActors();
 
   if( m_MapColors )
     {
@@ -95,7 +93,6 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     }
 
     
-
   if( m_LUT )
     {
     m_LUT->Delete();
