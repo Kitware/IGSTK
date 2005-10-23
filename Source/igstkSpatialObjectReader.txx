@@ -36,10 +36,12 @@ SpatialObjectReader< TDimension, TPixelType >
   m_StateMachine.AddState(m_IdleState, "IdleState");
   m_StateMachine.AddState(m_ObjectFileNameReadState, "ObjectFileNameReadState");
   m_StateMachine.AddState(m_ObjectReadState, "ObjectReadState");
+  m_StateMachine.AddState(m_ObjectAttemptingReadState, "ObjectAttemptingReadState");
 
   /** List of State Inputs */
   m_StateMachine.AddInput(m_ReadObjectRequestInput,"ObjectReadRequestInput");
   m_StateMachine.AddInput(m_ObjectReadingErrorInput,"ObjectReadingErrorInput");
+  m_StateMachine.AddInput(m_ObjectReadingSuccessInput,"ObjectReadingSuccessInput");
   m_StateMachine.AddInput(m_ObjectFileNameValidInput,"ObjectFileNameValidInput");
   m_StateMachine.AddInput(m_ObjectFileNameIsEmptyInput,"ObjectFileNameIsEmptyInput");
   m_StateMachine.AddInput(m_ObjectFileNameIsDirectoryInput,"ObjectFileNameIsDirectoryInput");
@@ -51,11 +53,18 @@ SpatialObjectReader< TDimension, TPixelType >
   m_StateMachine.AddTransition(m_IdleState,m_ObjectFileNameIsDirectoryInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
   m_StateMachine.AddTransition(m_IdleState,m_ObjectFileNameCanNotBeOpenInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
   m_StateMachine.AddTransition(m_IdleState,m_ObjectFileNameDoesNotExistInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
-  m_StateMachine.AddTransition(m_ObjectFileNameReadState,m_ReadObjectRequestInput,m_ObjectReadState,&SpatialObjectReader::AttemptReadObject);
   m_StateMachine.AddTransition(m_IdleState,m_ReadObjectRequestInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
+  m_StateMachine.AddTransition(m_ObjectFileNameReadState,m_ReadObjectRequestInput,m_ObjectAttemptingReadState,&SpatialObjectReader::AttemptReadObject);
+  m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameValidInput,m_ObjectFileNameReadState,&SpatialObjectReader::SetFileName);
+  m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameIsEmptyInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
+  m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameIsDirectoryInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
+  m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameCanNotBeOpenInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
+  m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameDoesNotExistInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
+
 
   //Errors related to Object reading 
-  m_StateMachine.AddTransition(m_ObjectFileNameReadState,m_ObjectReadingErrorInput,m_ObjectFileNameReadState,&SpatialObjectReader::ReportObjectReadingError);
+  m_StateMachine.AddTransition(m_ObjectAttemptingReadState,m_ObjectReadingErrorInput,m_IdleState,&SpatialObjectReader::ReportObjectReadingError);
+  m_StateMachine.AddTransition(m_ObjectAttemptingReadState,m_ObjectReadingSuccessInput,m_ObjectReadState,&SpatialObjectReader::ReportObjectReadingSuccess);
 
   // Select the initial state of the state machine
   m_StateMachine.SelectInitialState( m_IdleState );
@@ -87,6 +96,14 @@ SpatialObjectReader<TDimension,TPixelType>::ReportObjectReadingError()
 {
   igstkLogMacro( DEBUG, "igstk::SpatialObjectReader::ReportObjectReadingError: called...\n");
   this->InvokeEvent( ObjectReadingErrorEvent() );
+}
+
+template <unsigned int TDimension, typename TPixelType>
+void
+SpatialObjectReader<TDimension,TPixelType>::ReportObjectReadingSuccess()
+{
+  igstkLogMacro( DEBUG, "igstk::SpatialObjectReader::ReportObjectReadingSuccess: called...\n");
+  this->InvokeEvent( ObjectReadingSuccessEvent() );
 }
 
 template <unsigned int TDimension, typename TPixelType>
@@ -149,7 +166,7 @@ template <unsigned int TDimension, typename TPixelType>
 void SpatialObjectReader<TDimension,TPixelType>::AttemptReadObject()
 {
   igstkLogMacro( DEBUG, "igstk::SpatialObjectReader::AttemptReadObject called...\n");
-  m_SpatialObjectReader->SetFileName(m_FileName.c_str());
+  m_SpatialObjectReader->SetFileName( m_FileName.c_str() );
 
   try
     {
@@ -157,9 +174,11 @@ void SpatialObjectReader<TDimension,TPixelType>::AttemptReadObject()
     }
   catch( itk::ExceptionObject & )
     {
-    this->InvokeEvent( ObjectReadingErrorEvent() );
+    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
     return;
     }
+
+  this->m_StateMachine.PushInput( this->m_ObjectReadingSuccessInput );
 }
 
 

@@ -106,6 +106,7 @@ protected:
 
   itkEventMacro( ObjectReaderEvent,              IGSTKEvent        );
   itkEventMacro( ObjectReadingErrorEvent,        ObjectReaderEvent );
+  itkEventMacro( ObjectReadingSuccessEvent,      ObjectReaderEvent );
   itkEventMacro( ObjectInvalidRequestErrorEvent, ObjectReaderEvent );
 
   virtual void AttemptReadObject();
@@ -119,6 +120,7 @@ private:
   StateType                    m_IdleState;
   StateType                    m_ObjectFileNameReadState;
   StateType                    m_ObjectReadState;
+  StateType                    m_ObjectAttemptingReadState;
 
   /** List of State Inputs */
   InputType                    m_ReadObjectRequestInput;
@@ -130,6 +132,7 @@ private:
 
   /** Error related state inputs */
   InputType                    m_ObjectReadingErrorInput;
+  InputType                    m_ObjectReadingSuccessInput;
 
   /** Method to be invoked only by the StateMachine. Accepts the filename */
   void SetFileName();
@@ -142,6 +145,11 @@ private:
   /** Method to be invoked only by the StateMachine. This function reports an
    * error while reading */
   void ReportObjectReadingError();
+
+  /** Method to be invoked only by the StateMachine. This function reports the
+   * success of the reading process. */
+  void ReportObjectReadingSuccess();
+
 
 };
 
