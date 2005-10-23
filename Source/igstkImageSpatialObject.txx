@@ -60,6 +60,11 @@ template< class TPixelType, unsigned int VDimension >
 ImageSpatialObject< TPixelType, VDimension >
 ::~ImageSpatialObject()  
 {
+  if( m_vtkImporter )
+    {
+    m_vtkImporter->Delete(); 
+    m_vtkImporter = NULL;
+    }
 }
 
 

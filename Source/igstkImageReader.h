@@ -97,7 +97,7 @@ public:
   igstkFriendClassMacro( igstk::Friends::ImageReaderToImageSpatialObject );
 
   /** Logger class */
-  typedef itk::Logger                  LoggerType;
+  typedef ::itk::Logger                  LoggerType;
 
   /** Declarations needed for the State Machine */
   igstkStateMachineTemplatedMacro();
@@ -109,7 +109,7 @@ protected:
   ~ImageReader();
 
   /** Print the object information in a stream. */
-  void PrintSelf( std::ostream& os, itk::Indent indent ) const;
+  void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
 
   /** Declarations needed for the Logger */
   igstkLoggerMacro();
