@@ -75,21 +75,26 @@ template < class TImageSpatialObject >
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::~ImageSpatialObjectRepresentation()  
 {
-  
-  this->DeleteActors();
 
   if( m_ImageActor )
     {
     // no need to delete it. It has been deleted as part of the action of
     // DeleteActors()
+    m_ImageActor->SetInput( NULL );
     m_ImageActor = NULL;
     }
 
+  this->DeleteActors();
+
   if( m_MapColors )
     {
+    m_MapColors->SetLookupTable( NULL );
+    m_MapColors->SetInput( NULL );
     m_MapColors->Delete();
     m_MapColors = NULL;
     }
+
+    
 
   if( m_LUT )
     {
