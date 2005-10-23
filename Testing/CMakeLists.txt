@@ -79,11 +79,11 @@ IF (IGSTKSandbox_DATA_ROOT)
    ADD_TEST( igstkMRImageReaderTest ${IGSTKSandbox_TESTS} igstkMRImageReaderTest 
        ${IGSTKSandbox_DATA_ROOT}/E000192 )
 
-   ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTKSandbox_TESTS} igstkCTImageSpatialObjectReadingAndRepresentationTest 
-       ${IGSTKSandbox_DATA_ROOT}/E000192 )
+   ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTKSandbox_TESTS} 
+             igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTKSandbox_DATA_ROOT}/E000192 )
 
    ADD_TEST( igstkSpatialObjectReaderTest ${IGSTKSandbox_TESTS} igstkSpatialObjectReaderTest 
-       ${IGSTKSandbox_DATA_ROOT}/vessel.tre )
+       ${IGSTKSandbox_DATA_ROOT}/vessel.tre ${IGSTKSandbox_DATA_ROOT}/vesselCorruptedOnPurpose.tre )
 
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
