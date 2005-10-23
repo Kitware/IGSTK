@@ -20,25 +20,26 @@
 #include "igstkMacros.h"
 #include "igstkSpatialObjectReader.h"
 
-#include "igstkStateMachine.h"
-#include "itkLogger.h"
-
 #include "itkSpatialObjectReader.h"
 #include "itkObject.h"
 #include "itkEventObject.h"
 
 #include "igstkEvents.h"
-#include "igstkStringEvent.h"
 #include "igstkMeshObject.h"
-#include "itkMeshSpatialObject.h"
 
 namespace igstk
 {
 
 /** \class MeshReader
  * 
- * \brief This class reads 3D Mesh in the metaIO format
+ * \brief This class reads 3D Mesh in the metaIO format.
  * 
+ * The file describes a list of points corresponding to the nodes in the Mesh,
+ * and a list of links between the nodes. The output of this reader is of type
+ * MeshSpatialObject.
+ *
+ * \sa MeshObject
+ *
  * \ingroup Readers
  */
 class MeshReader : public SpatialObjectReader<3,float>
@@ -54,7 +55,6 @@ public:
   typedef Superclass::SpatialObjectType      SpatialObjectType;
   typedef Superclass::GroupSpatialObjectType GroupSpatialObjectType;
   typedef SpatialObjectType::ConstPointer    SpatialObjectTypeConstPointer;
-  typedef itk::Logger                        LoggerType;
   typedef igstk::MeshObject                  MeshObjectType;
 
   /**  Run-time type information (and related methods). */
@@ -63,9 +63,6 @@ public:
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
   
-  /** This method request Object read **/
-  void AttemptReadObject();
-
   /** Return the output as a group */
   const MeshObjectType * GetOutput() const;
 
@@ -74,7 +71,7 @@ protected:
   MeshReader( void );
   ~MeshReader( void );
 
-  itkEventMacro( MeshReaderEvent,IGSTKEvent);
+  itkEventMacro( MeshReaderEvent,IGSTKEvent );
   
   //SpatialObject reading error
   itkEventMacro( MeshReadingErrorEvent, MeshReaderEvent );
@@ -82,9 +79,16 @@ protected:
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
+  /** This method tries to read the Object. This method is invoked by the State
+   * Machine of the superclass. */
+  void AttemptReadObject();
+
 private:
 
-  MeshObjectType::Pointer m_Mesh;
+  MeshReader(const Self&);         //purposely not implemented
+  void operator=(const Self&);     //purposely not implemented
+
+  MeshObjectType::Pointer   m_Mesh;
 
 };
 

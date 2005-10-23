@@ -47,7 +47,7 @@ void MeshReader::AttemptReadObject()
     if(!strcmp((*it)->GetTypeName(),"MeshSpatialObject"))
       {
       MeshObjectType::MeshSpatialObjectType* meshSO = dynamic_cast<MeshObjectType::MeshSpatialObjectType*>((*it).GetPointer());
-      if(meshSO)
+      if( meshSO )
         {
         typedef MeshObjectType::MeshType MeshType;
         MeshObjectType::MeshType::Pointer mesh = meshSO->GetMesh();
@@ -57,7 +57,10 @@ void MeshReader::AttemptReadObject()
 
         for(;it != points->end();it++)
           {
-          m_Mesh->AddPoint((*it).first,(*it).second[0],(*it).second[1],(*it).second[2]);
+          m_Mesh->AddPoint((*it).first,
+                           (*it).second[0],
+                           (*it).second[1],
+                           (*it).second[2]);
           }
 
         typedef MeshType::CellsContainer::ConstIterator  CellIterator;
@@ -68,7 +71,8 @@ void MeshReader::AttemptReadObject()
           {
           if((*cellItr).Value()->GetNumberOfPoints() == 3)
             {
-            MeshType::CellTraits::PointIdConstIterator itptids = (*cellItr)->Value()->GetPointIds();
+            typedef MeshType::CellTraits::PointIdConstIterator PointIterator;
+            PointIterator  itptids = (*cellItr)->Value()->GetPointIds();
             unsigned int i =0;
             MeshType::CellTraits::PointIdentifier ids[3];
             while(itptids != (*cellItr)->Value()->PointIdsEnd())
@@ -102,6 +106,7 @@ MeshReader::GetOutput() const
 void MeshReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << "Mesh = " << m_Mesh.GetPointer() << std::endl;
 }
 
 } // end namespace igstk
