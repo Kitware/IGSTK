@@ -78,6 +78,10 @@ int igstkMeshReaderTest( int argc, char * argv [] )
   std::string filenameThatExists = argv[1];
   reader->RequestSetFileName( filenameThatExists );
 
+  typedef ReaderType::MeshObjectType   MeshObjectType;
+  MeshObjectType::ConstPointer mesh = reader->GetOutput();
+  mesh->Print( std::cout );
+
   // Request to read the object from the file
   reader->RequestReadObject();
   
@@ -86,12 +90,6 @@ int igstkMeshReaderTest( int argc, char * argv [] )
   reader->RequestSetFileName( filenameWithCorruptedContent );
   reader->RequestReadObject();
   
-  typedef ReaderType::MeshObjectType   MeshObjectType;
-
-  MeshObjectType::ConstPointer mesh = reader->GetOutput();
-
-  mesh->Print( std::cout );
-
   return EXIT_SUCCESS;
 }
 
