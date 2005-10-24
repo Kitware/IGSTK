@@ -23,7 +23,7 @@
 namespace igstk
 {
 /** \class PolarisTrackerTool
-  * \brief An Polaris-specific TrackerTool class.
+  * \brief A Polaris-specific TrackerTool class.
   *
   * This class is a for providing Polaris-specific functionality
   * for TrackerTools, and also to allow compile-time type enforcement
@@ -35,10 +35,10 @@ class PolarisTrackerTool : public TrackerTool
 {
 public:
 
-  typedef PolarisTrackerTool                     Self;
-  typedef TrackerTool                            Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
+  typedef PolarisTrackerTool                  Self;
+  typedef TrackerTool                         Superclass;
+  typedef ::itk::SmartPointer<Self>           Pointer;
+  typedef ::itk::SmartPointer<const Self>     ConstPointer;
 
   /** Run-time type information (and related methods). */
   igstkTypeMacro(PolarisTrackerTool, TrackerTool);
@@ -52,9 +52,12 @@ protected:
   ~PolarisTrackerTool();
 
   /** Print object information */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
 
 private:
+
+  PolarisTrackerTool(const Self&);   //purposely not implemented
+  void operator=(const Self&);       //purposely not implemented
 
 };  
 
