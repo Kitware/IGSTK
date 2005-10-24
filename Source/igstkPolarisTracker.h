@@ -31,42 +31,37 @@ namespace igstk
   * The Polaris is an optical tracker from Northern Digital Inc.
   * in Waterloo, Ontario, Canada.  This class provides an
   * an interface to the Polaris.
-*/
-
-
-// the number of ports to allow
-#define NDI_NUMBER_OF_PORTS  4
-
+  *
+  * \ingroup Trackers
+  *
+  */
 
 class PolarisTracker : public Tracker
 {
 public:
+
+  /** Some required typedefs for itk::Object. */
+  typedef PolarisTracker                   Self;
+  typedef Tracker                          Superclass;
+  typedef ::itk::SmartPointer<Self>        Pointer;
+  typedef ::itk::SmartPointer<const Self>  ConstPointer;
+
+  /**  Run-time type information (and related methods). */
+  igstkTypeMacro( PolarisTracker, Tracker );
+
+  /** Method for creation of a reference counted object. */
+  igstkNewMacro( Self );  
 
   /** typedefs for the tool */
   typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;
   typedef PolarisTrackerToolType::Pointer        PolarisTrackerToolPointer;
   typedef PolarisTrackerToolType::ConstPointer   PolarisTrackerToolConstPointer;
 
-  /** typedef for command interpreter */
-  typedef igstk::NDICommandInterpreter   CommandInterpreterType;
+  /** number of ports to allow */
+  itkStaticConstMacro( NumberOfPorts, unsigned int, 4 );
 
   /** communication type */
   typedef igstk::SerialCommunication     CommunicationType;
-
-  /** typedef for internal boolean return type */
-  typedef Tracker::ResultType   ResultType;
-
-  /** Some required typedefs for itk::Object. */
-  typedef PolarisTracker                 Self;
-  typedef Tracker                        Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro(PolarisTracker, Tracker);
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro(Self);  
 
   /** The SetCommunication method is used to attach a communication
     * object to the tracker object. */
@@ -76,13 +71,20 @@ public:
   igstkGetMacro( NumberOfTools, unsigned int );
 
   /** Specify an SROM file to be used with a passive or custom tool. */
-  void AttachSROMFileNameToPort( const int portNum, std::string fileName );
+  void AttachSROMFileNameToPort( const unsigned int portNum, 
+                                 std::string  fileName );
 
 protected:
 
   PolarisTracker(void);
 
   virtual ~PolarisTracker(void);
+
+  /** typedef for command interpreter */
+  typedef igstk::NDICommandInterpreter   CommandInterpreterType;
+
+  /** typedef for internal boolean return type */
+  typedef Tracker::ResultType   ResultType;
 
   /** Open communication with the tracking device. */
   virtual ResultType InternalOpen( void );
@@ -113,21 +115,24 @@ protected:
   virtual ResultType InternalReset( void );
 
   /** Print object information */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
 
 private:
 
+  PolarisTracker(const Self&);   //purposely not implemented
+  void operator=(const Self&);   //purposely not implemented
+
   /** A mutex for multithreaded access to the buffer arrays */
-  itk::MutexLock::Pointer  m_BufferLock;
+  ::itk::MutexLock::Pointer  m_BufferLock;
 
   /** A buffer for holding tool transforms */
-  double m_TransformBuffer[NDI_NUMBER_OF_PORTS][8];
+  double m_TransformBuffer[NumberOfPorts][8];
 
   /** A buffer for holding status of tools */
-  int m_StatusBuffer[NDI_NUMBER_OF_PORTS];
+  int m_StatusBuffer[NumberOfPorts];
 
   /** A buffer for holding absent status of tools */
-  int m_AbsentBuffer[NDI_NUMBER_OF_PORTS];
+  int m_AbsentBuffer[NumberOfPorts];
 
   /** Load a virtual SROM, given the file name of the ROM file */
   bool LoadVirtualSROM( const int i, std::string SROMFileName) ;
@@ -146,16 +151,16 @@ private:
   int GetToolFromHandle( int handle ) const;
 
   /** Information about which tool ports are enabled. */
-  int m_PortEnabled[NDI_NUMBER_OF_PORTS];
+  int m_PortEnabled[NumberOfPorts];
 
   /** The tool handles that the device has provides us with. */
-  int m_PortHandle[NDI_NUMBER_OF_PORTS];
+  int m_PortHandle[NumberOfPorts];
 
   /** Total number of tools detected. */
   unsigned int   m_NumberOfTools;
 
   /** Names of the SROM files for passive tools and custom tools. */
-  std::string    m_SROMFileNames[NDI_NUMBER_OF_PORTS];
+  std::string    m_SROMFileNames[NumberOfPorts];
 
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;
