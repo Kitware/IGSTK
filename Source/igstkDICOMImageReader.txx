@@ -145,9 +145,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   m_StateMachine.SetReadyToRun();
 
   // Initialize the booleas for the preconditions of the unsafe Get macros 
-  m_IsModalityValid = false;
-  m_IsPatientIDValid = false;
-  m_IsPatientNameValid = false;
+  m_FileSuccessfullyRead = false;
 
   // Create the DICOM GDCM file reader
   m_FileNames = itk::GDCMSeriesFileNames::New();
@@ -269,26 +267,26 @@ void DICOMImageReader<TPixelType>::AttemptReadImage()
     return;
     }
 
-  char tmp_string[5120];
-  
   this->m_StateMachine.ProcessInputs();
+
+  char tmp_string[5120];
+
   m_ImageIO->GetPatientName(  tmp_string  );
   m_PatientName = tmp_string;
-  m_IsPatientNameValid = true;
   
   m_ImageIO->GetPatientID(  tmp_string );
   m_PatientID  = tmp_string;
-  m_IsPatientIDValid = true;
 
   m_ImageIO->GetModality(   tmp_string );
   m_Modality  = tmp_string;
-  m_IsModalityValid = true;
 
   igstkLogMacro( DEBUG, "Patient Name = " << m_PatientName << "\n" );
   igstkLogMacro( DEBUG, "Patient ID   = " << m_PatientID << "\n" );
   igstkLogMacro( DEBUG, "Modality     = " << m_Modality << "\n" );
 
   this->Superclass::ConnectImage();
+  
+  m_FileSuccessfullyRead = true;
 }
 
 /* This function reports invalid requests */

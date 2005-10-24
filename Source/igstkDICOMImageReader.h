@@ -32,11 +32,10 @@ namespace igstk
 {
 
 #define igstkUnsafeGetMacro(name,type) \
-virtual bool Get##name ( DICOMInformationType & value ) const \
+virtual const type & Get##name () const \
 { \
     igstkLogMacro( CRITICAL, "igstk::DICOMImageReader::Get" #name " unsafe method called...\n"); \
-    value = this->m_##name; \
-    return this->m_Is##name##Valid; \
+    return this->m_##name; \
 }
 
 
@@ -110,10 +109,16 @@ public:
   /** Type used for returning string values from the DICOM header */
   typedef std::string    DICOMInformationType;
 
+  /** Precondition that should be invoked and verified before attempting to
+   *  use the values of the methods GetPatientName(), GetPatientID() and
+   *  GetModality().
+   */
+  bool FileSuccessfullyRead() const { return m_FileSuccessfullyRead; }
+  
   /** Unsafe Get Macro for having access to the Patient Name.  This method is
    * considered unsafe because it is not subject to the control of the internal
    * state machine.  The method GetPatientName() should only be invoked if the
-   * precondition method IsPatientNameValid() has already been called and it
+   * precondition method FileSuccessfullyRead() has already been called and it
    * has returned true. Calling GetPatientID() in any other situation will lead
    * to unpredictable behavior. */
   igstkUnsafeGetMacro( PatientName, DICOMInformationType );
@@ -121,7 +126,7 @@ public:
   /** Unsafe Get Macro for having access to the Patient unique Identifier.
    * This method is considered unsafe because it is not subject to the control
    * of the internal state machine.  The method GetPatientID() should only be
-   * invoked if the precondition method IsPatientIDValid() has already been
+   * invoked if the precondition method FileSuccessfullyRead() has already been
    * called and it has returned true. Calling GetPatientID() in any other
    * situation will lead to unpredictable behavior. */
   igstkUnsafeGetMacro( PatientID, DICOMInformationType );
@@ -129,9 +134,9 @@ public:
   /** Unsafe Get Macro for having access to the image Modality.  This method is
    * considered unsafe because it is not subject to the control of the internal
    * state machine.  The method GetModality() should only be invoked if the
-   * precondition method IsModalityValid() has already been called and it has
-   * returned true. Calling GetModality() in any other situation will lead to
-   * unpredictable behavior. */
+   * precondition method FileSuccessfullyRead() has already been called and it
+   * has returned true. Calling GetModality() in any other situation will lead
+   * to unpredictable behavior. */
   igstkUnsafeGetMacro( Modality, DICOMInformationType );
   
 protected:
@@ -238,10 +243,10 @@ private:
   virtual const ImageType * GetITKImage() const;
 
 
-  bool             m_IsPatientIDValid;
-  bool             m_IsPatientNameValid;
-  bool             m_IsModalityValid;
+  /** Flag that indicates whether the file has been read successfully */
+  bool                    m_FileSuccessfullyRead;
 
+  /** Internal variables for holding patient and image specific information. */
   DICOMInformationType    m_PatientID;
   DICOMInformationType    m_PatientName;
   DICOMInformationType    m_Modality;

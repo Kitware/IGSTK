@@ -156,6 +156,13 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
   ReaderType::Pointer   reader = ReaderType::New();
   reader->SetLogger( logger );
 
+  if( reader->FileSuccessfullyRead() )
+    {
+    std::cerr << "FileSuccessfullyRead() is malfunctioning. It returned true ";
+    std::cerr << "when the image has not even been read" << std::endl;
+    return EXIT_FAILURE;
+    }
+      
   /* Read in a DICOM series */
   std::cout << "Reading the DICOM series : " << argv[1] <<std::endl;
   ReaderType::DirectoryNameType directoryName = argv[1];
@@ -175,43 +182,23 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
   reader->Print( std::cout );
 
   /** Exercising the Unsafe GetPatientName() method */
-  ReaderType::DICOMInformationType  patientName;
-  if( reader->GetPatientName( patientName ) )
+  if( reader->FileSuccessfullyRead() )
     {
+    ReaderType::DICOMInformationType  patientName = reader->GetPatientName();
+    ReaderType::DICOMInformationType  patientID   = reader->GetPatientID();
+    ReaderType::DICOMInformationType  modality    = reader->GetModality();
+    
     std::cout << "Patient Name = " << patientName << std::endl;
+    std::cout << "Patient ID = "   << patientID << std::endl;
+    std::cout << "Modality = "     << modality << std::endl;
     }
   else
     {
-    std::cout << "There is no valid PatientName at this point" << std::endl;
+    std::cout << "The file was not successfully read" << std::endl;
+    return EXIT_FAILURE;
     }
 
 
-  /** Exercising the Unsafe GetPatientID() method */
-  ReaderType::DICOMInformationType  patientID;
-  if( reader->GetPatientID( patientID ) )
-    {
-    std::cout << "Patient ID = " << patientID << std::endl;
-    }
-  else
-    {
-    std::cout << "There is no valid PatientID at this point" << std::endl;
-    }
-  
- 
-
-  /** Exercising the Unsafe GetModality() method */
-  ReaderType::DICOMInformationType  modality;
-  if( reader->GetModality( modality ) )
-    {
-    std::cout << "Modality = " << modality << std::endl;
-    }
-  else
-    {
-    std::cout << "There is no valid modality at this point" << std::endl;
-    }
-  
-
- 
   return EXIT_SUCCESS;
 }
 
