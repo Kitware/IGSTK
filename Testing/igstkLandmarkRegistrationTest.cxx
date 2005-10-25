@@ -245,12 +245,9 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
                                         VersorRigid3DTransformType;
     typedef itk::VersorRigid3DTransform<double>::ParametersType 
                                         ParametersType;
-    typedef itk::VersorRigid3DTransform<double>::CenterType 
-                                        CenterType;
 
     TransformType      transform;
     ParametersType     parameters(6);
-    CenterType         center;
 
      // Setup an obsever to get the transform parameters
     LandmarkRegistrationGetTransformCallback::Pointer lrtcb =
@@ -273,13 +270,11 @@ int igstkLandmarkRegistrationTest( int argv, char * argc[] )
      parameters[3] =    transform.GetTranslation()[0];
      parameters[4] =    transform.GetTranslation()[1];
      parameters[5] =    transform.GetTranslation()[2];
-     center        =    transform.GetCenter();
          
      VersorRigid3DTransformType::Pointer versorRigid3DTransform    
                                = VersorRigid3DTransformType::New();
     
      versorRigid3DTransform->SetParameters(parameters);     
-     versorRigid3DTransform->SetCenter(center);
 
     //Check if the transformation parameters were evaluated correctly
     LandmarkRegistrationType::PointsContainerConstIterator

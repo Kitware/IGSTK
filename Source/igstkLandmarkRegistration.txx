@@ -236,21 +236,21 @@ LandmarkRegistration<TDimension>:: ComputeTransform()
     }
   catch ( itk::ExceptionObject & excp )
     {
-      igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
+    igstkLogMacro( DEBUG, "igstk::LandmarkRegistration::"
                      "Transform computation exception" << excp.GetDescription());
-      failure = true;
+    failure = true;
     }
 
   if( failure )
-  {
+    {
     std::cout << "ComputationFailureInput getting pushed" << std::endl;
     this->m_StateMachine.PushInput( this->m_TransformComputationFailureInput );
-  }
+    }
   else
-  {
+    {
     std::cout << "ComputationSuccessInput getting pushed" << std::endl;
     this->m_StateMachine.PushInput( this->m_TransformComputationSuccessInput );
-  }    
+    }    
   
   this->m_StateMachine.ProcessInputs();
 }
@@ -265,45 +265,17 @@ LandmarkRegistration< TDimension >::GetTransform()
                   "igstk::LandmarkRegistration::GetTransform called...\n" );
 
   igstk::Transform  transform;
-  igstk::Transform::ErrorType              error;
-  igstk::Transform::TimePeriodType         timePeriod;
 
-  error        = 0.1;
-  timePeriod   = 1000;  
+  const igstk::Transform::ErrorType              error = 0.1;
+  const igstk::Transform::TimePeriodType         timePeriod = 1000;;
 
   typedef typename TransformType::TranslationType       TranslationType;
-  typedef typename TransformType::CenterType            CenterType;
   typedef typename TransformType::VersorType            VersorType;
-  typedef typename TransformType::AxisType              AxisType;
-  typedef typename TransformType::ParametersType        ParametersType;
   
-  ParametersType                                   parameters;
-  TranslationType                                  translation;
-  CenterType                                       center;
-  VersorType                                       versor;
-  AxisType                                         axis;
-  
- 
-  parameters  = m_Transform->GetParameters();
-  
-  std::cout << "Calculated transform parameters: " << parameters << std::endl;
+  VersorType       versor      = m_Transform->GetVersor();
+  TranslationType  translation = m_Transform->GetOffset();
 
-  axis[0] = parameters[0];
-  axis[1] = parameters[1];
-  axis[2] = parameters[2];
-
-  translation[0] = parameters[3];
-  translation[1] = parameters[4];
-  translation[2] = parameters[5];
-
-  versor.Set(axis);
-
-  transform.SetTranslationAndRotation( translation,
-                     versor, error,timePeriod );
-
-  center   =  m_Transform->GetCenter();
-
-  transform.SetCenter( center, error,timePeriod );
+  transform.SetTranslationAndRotation( translation, versor, error, timePeriod );
 
   TransformModifiedEvent event; 
   event.SetTransform( transform );
