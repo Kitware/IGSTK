@@ -101,7 +101,7 @@ ENDIF(IGSTKSandbox_DATA_ROOT)
 
 ADD_TEST( igstkImageReaderTest ${IGSTKSandbox_TESTS} igstkImageReaderTest )
 ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTKSandbox_TESTS} igstkDICOMImageReaderErrorsTest 
-          ${IGSTK_DICOM_TEST_OUTPUT_DIR})
+          ${IGSTKSandbox_DATA_ROOT}/E000192Mod ${IGSTK_DICOM_TEST_OUTPUT_DIR})
 ADD_TEST( igstkImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkImageSpatialObjectTest )
 ADD_TEST( igstkCTImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkCTImageSpatialObjectTest )
 ADD_TEST( igstkMRImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkMRImageSpatialObjectTest )

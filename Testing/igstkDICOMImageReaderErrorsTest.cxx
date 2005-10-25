@@ -183,7 +183,12 @@ private:
 
 int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
 {
-
+  if ( argc < 3 )
+  {
+    std::cerr << "Error missing argument " << std::endl;
+    std::cerr << "Usage:  " << argv[0] << "Bad DICOM image Output Directory" << std::endl; 
+    return EXIT_FAILURE;
+  } 
   typedef itk::Logger              LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   
@@ -275,7 +280,7 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
     }
 
   std::cout  << "Testing empty directory " << std::endl;
-  std::string           emptyDirectory = argv[1];
+  std::string           emptyDirectory = argv[2];
   emptyDirectory = emptyDirectory + "/foo";
   itksys::SystemTools::MakeDirectory(emptyDirectory.c_str());
   
@@ -287,7 +292,7 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
     return EXIT_FAILURE;
     }
   std::cout  << "Testing invalid directory (regular file) " << std::endl;
-  std::string           invalidDirectory = argv[1];
+  std::string           invalidDirectory = argv[2];
   invalidDirectory = invalidDirectory + "/foo2";
   itksys::SystemTools::MakeDirectory(invalidDirectory.c_str());
   
@@ -310,7 +315,7 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
     }
   
   std::cout  << "Testing for non-existing directory  " << std::endl;
-  std::string           nonExistingDirectory = argv[1];
+  std::string           nonExistingDirectory = argv[2];
   nonExistingDirectory =    nonExistingDirectory + "/foo3";
   
   reader->RequestSetDirectory( nonExistingDirectory );
@@ -322,7 +327,7 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
     }
 
   std::cout  << "Testing for directory containing non-dicom files " << std::endl;
-  std::string           directoryWithNonDicomFiles = argv[1];
+  std::string           directoryWithNonDicomFiles = argv[2];
   
   directoryWithNonDicomFiles = directoryWithNonDicomFiles + "/foo4";
   itksys::SystemTools::MakeDirectory(directoryWithNonDicomFiles.c_str());
@@ -356,6 +361,12 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
     std::cerr << "DICOMImageReader failed to complain about a non-existing directory  " << std::endl;
     return EXIT_FAILURE;
     }
+
+  std::cout << "Testing image reading error for a bad/corrupted/invalid dicom image" << std::endl;
+  std::string directorywithCorruptedDicomFiles = argv[1];
+  reader->RequestSetDirectory ( directorywithCorruptedDicomFiles ); 
+  reader->RequestReadImage( );  
+
   
   return EXIT_SUCCESS;
 }
