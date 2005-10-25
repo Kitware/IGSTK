@@ -4,6 +4,18 @@
 # The header files
 
 SET(IGSTK_HEADS
+  igstkImageReader.h
+  igstkDICOMImageReader.h
+  igstkCTImageReader.h
+  igstkMRImageReader.h
+  igstkImageSpatialObject.h
+  igstkCTImageSpatialObject.h
+  igstkMRImageSpatialObject.h
+  igstkImageSpatialObjectRepresentation.h
+  igstkCTImageSpatialObjectRepresentation.h
+  igstkMRImageSpatialObjectRepresentation.h
+  igstkLandmark3DRegistration.h
+  igstkStringEvent.h
   igstkAuroraTracker.h
   igstkAuroraTrackerTool.h
   igstkBinaryData.h
@@ -46,6 +58,17 @@ SET(IGSTK_HEADS
 # The implementation files
 
 SET(IGSTK_SRCS  
+  igstkImageReader.txx
+  igstkDICOMImageReader.txx
+  igstkCTImageReader.cxx
+  igstkMRImageReader.cxx
+  igstkImageSpatialObject.txx
+  igstkCTImageSpatialObject.cxx
+  igstkMRImageSpatialObject.cxx
+  igstkImageSpatialObjectRepresentation.txx
+  igstkCTImageSpatialObjectRepresentation.cxx
+  igstkMRImageSpatialObjectRepresentation.cxx
+  igstkLandmark3DRegistration.cxx
   igstkAuroraTracker.cxx
   igstkAuroraTrackerTool.cxx
   igstkBinaryData.cxx

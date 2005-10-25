@@ -38,6 +38,19 @@
 #include "igstkView2D.h"
 #include "igstkView3D.h"
 #include "igstkSpatialObject.h"
+#include "igstkCTImageReader.h"
+#include "igstkMRImageReader.h"
+#include "igstkLandmark3DRegistration.h"
+#include "igstkImageSpatialObject.h"
+#include "igstkImageSpatialObjectRepresentation.h"
+#include "igstkImageReader.h"
+#include "igstkDICOMImageReader.h"
+#include "igstkCTImageSpatialObject.h"
+#include "igstkCTImageSpatialObjectRepresentation.h"
+#include "igstkMRImageSpatialObject.h"
+#include "igstkMRImageSpatialObjectRepresentation.h"
+
+
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
 #else
@@ -120,21 +133,38 @@ public:      \
 
 namespace igstk
 {
+  typedef ImageSpatialObject<float,3>                    ImageSpatialObjectType;
+  typedef ImageReader< ImageSpatialObjectType >          ImageReaderType;
+  typedef DICOMImageReader< ImageSpatialObjectType >     DICOMImageReaderType;
+  typedef ImageSpatialObjectRepresentation< 
+                            ImageSpatialObjectType >     ImageSpatialObjectRepresentationType;
+
   igstkDeclareSurrogateClass( SpatialObjectSurrogate, SpatialObject );
+  igstkDeclareSurrogateClass( ImageSpatialObjectSurrogate, ImageSpatialObjectType );
+  igstkDeclareSurrogateClass( DICOMImageReaderSurrogate, DICOMImageReaderType );
 }
 
 
 int main( int argc, char * argv [] )
 {
+  
   std::string outputDirectory;
+
   if( argc > 1 )
     {
     outputDirectory = argv[1];
     }
 
+  bool skipLoops = true;
+
+  if( argc > 2 )
+    {
+    skipLoops = atoi( argv[2] );
+    }
+
   std::cout << "Output directory = " << outputDirectory << std::endl;
+  std::cout << "Skip Loops option = " << skipLoops << std::endl;
   
-  const bool skipLoops = true;
 
   // This is for classes that use SmartPointers
   igstkTestExportStateMachine1( igstk::CylinderObjectRepresentation, outputDirectory, skipLoops );
@@ -144,6 +174,15 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::PulseGenerator, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::Tracker, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::Landmark3DRegistration, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::CTImageReader, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::MRImageReader, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::MRImageSpatialObject, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::MRImageSpatialObjectRepresentation, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::CTImageSpatialObject, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::CTImageSpatialObjectRepresentation, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::ImageSpatialObjectRepresentationType, outputDirectory, skipLoops );
+
 
 
   // The View classes don't use SmartPointer and don't have a default constructor.
@@ -157,6 +196,8 @@ int main( int argc, char * argv [] )
 
   // Exporting Abstract classes by creating derived surrogates for them.
   igstkTestExportStateMachine1( igstk::SpatialObjectSurrogate, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::ImageSpatialObjectSurrogate , outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::DICOMImageReaderSurrogate, outputDirectory, skipLoops );
 
 
 

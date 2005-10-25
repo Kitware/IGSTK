@@ -7,6 +7,9 @@ MAKE_DIRECTORY(${IGSTK_TEST_OUTPUT_DIR})
 SET(IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR "${IGSTK_TEST_OUTPUT_DIR}/StateMachineDiagrams")
 MAKE_DIRECTORY(${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
 
+SET(IGSTK_DICOM_TEST_OUTPUT_DIR "${IGSTK_TEST_OUTPUT_DIR}/DICOM")
+MAKE_DIRECTORY(${IGSTK_DICOM_TEST_OUTPUT_DIR})
+
 # options for devices attached to serial port for testing
 OPTION(IGSTK_TEST_AURORA_ATTACHED "Aurora is attached to computer" OFF)
 SET( IGSTK_TEST_AURORA_PORT_NUMBER 0 CACHE STRING
@@ -92,6 +95,34 @@ ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
 
 ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 
+IF (IGSTK_DATA_ROOT) 
+
+   ADD_TEST( igstkDICOMImageReaderTest ${IGSTK_TESTS} igstkDICOMImageReaderTest 
+       ${IGSTK_DATA_ROOT}/Input/E000192 )
+
+   ADD_TEST( igstkCTImageReaderTest ${IGSTK_TESTS} igstkCTImageReaderTest 
+       ${IGSTK_DATA_ROOT}/Input/E000192 )
+
+   ADD_TEST( igstkMRImageReaderTest ${IGSTK_TESTS} igstkMRImageReaderTest 
+       ${IGSTK_DATA_ROOT}/Input/E000192 )
+
+   ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTK_TESTS} 
+             igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTK_DATA_ROOT}/Input/E000192 )
+
+ENDIF(IGSTK_DATA_ROOT)
+
+ADD_TEST( igstkImageReaderTest ${IGSTK_TESTS} igstkImageReaderTest )
+ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTK_TESTS} igstkDICOMImageReaderErrorsTest 
+          ${IGSTK_DATA_ROOT}/Input/E000192Mod ${IGSTK_DICOM_TEST_OUTPUT_DIR})
+ADD_TEST( igstkImageSpatialObjectTest ${IGSTK_TESTS} igstkImageSpatialObjectTest )
+ADD_TEST( igstkCTImageSpatialObjectTest ${IGSTK_TESTS} igstkCTImageSpatialObjectTest )
+ADD_TEST( igstkMRImageSpatialObjectTest ${IGSTK_TESTS} igstkMRImageSpatialObjectTest )
+ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} igstkImageSpatialObjectRepresentationTest )
+ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTK_TESTS} igstkCTImageSpatialObjectRepresentationTest )
+ADD_TEST( igstkMRImageSpatialObjectRepresentationTest ${IGSTK_TESTS} igstkMRImageSpatialObjectRepresentationTest )
+ADD_TEST( igstkStringEventTest ${IGSTK_TESTS} igstkStringEventTest )
+ADD_TEST( igstkLandmark3DRegistrationTest ${IGSTK_TESTS} igstkLandmark3DRegistrationTest)
+
 
 SET(BasicTests_SRCS
   igstkAuroraTrackerSimulatedTest
@@ -99,9 +130,23 @@ SET(BasicTests_SRCS
   igstkBinaryDataTest
   igstkCommunicationTest
   igstkCylinderObjectTest
+  igstkDICOMImageReaderTest.cxx
+  igstkDICOMImageReaderErrorsTest.cxx
+  igstkCTImageSpatialObjectTest.cxx
+  igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx 
+  igstkMRImageSpatialObjectTest.cxx
+  igstkImageSpatialObjectTest.cxx
+  igstkImageSpatialObjectRepresentationTest.cxx
+  igstkCTImageSpatialObjectRepresentationTest.cxx
+  igstkMRImageSpatialObjectRepresentationTest.cxx
+  igstkStringEventTest.cxx
   igstkEllipsoidObjectTest
   igstkFLTKTextBufferLogOutputTest
   igstkFLTKTextLogOutputTest
+  igstkLandmark3DRegistrationTest.cxx
+  igstkImageReaderTest.cxx
+  igstkCTImageReaderTest.cxx
+  igstkMRImageReaderTest.cxx
   igstkMeshObjectTest
   igstkMultipleOutputTest
   igstkNDICommandInterpreterSimulatedTest  

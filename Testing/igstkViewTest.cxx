@@ -71,7 +71,7 @@ namespace ViewTest
         {
         m_PulseCounter++;
 
-        if( m_PulseCounter > 100 )
+        if( m_PulseCounter > 10 )
           {
           if( m_View )
             {
@@ -160,7 +160,7 @@ int igstkViewTest( int, char * [] )
     view3D->RequestAddObject( cylinderRepresentation );
     
     // Do manual redraws
-    for(unsigned int i=0; i<100; i++)
+    for(unsigned int i=0; i<10; i++)
       {
       view2D->Update();  // schedule redraw of the view
       view3D->Update();  // schedule redraw of the view

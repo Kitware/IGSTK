@@ -20,11 +20,14 @@
 #define __igstkTransform_H
 
 
-#include "igstkTimeStamp.h"
 
 #include "itkVector.h"
 #include "itkVersor.h"
+
 #include "vtkMatrix4x4.h"
+
+#include "igstkTimeStamp.h"
+#include "igstkMacros.h"
 
 namespace igstk 
 {
@@ -118,23 +121,19 @@ public:
   /** Returns the translational component. Users MUST check the validity time
    * of the transform before attempting to use this returned value. The content
    * of the transform may have expired. */
-  const VectorType & GetTranslation() const; 
+  igstkGetMacro( Translation, VectorType );
  
-    /** Returns the center point. Users MUST check the validity time
-   * of the transform before attempting to use this returned value. The content
-   * of the transform may have expired. */
-  const PointType & GetCenter() const; 
  
   /** Returns the rotational component. Users MUST check the validity time
    * of the transform before attempting to use this returned value. The content
    * of the transform may have expired. */
-  const VersorType & GetRotation() const; 
+  igstkGetMacro( Rotation, VersorType ); 
        
 
   /** Returns the translational error of this transform. The correct
    * interpretation of this error my be tracker dependent and therefore must be
    * analyzed carefully. */
-  const ErrorType & GetError() const; 
+  igstkGetMacro( Error, ErrorType );
  
 
   /** Returns the time at which the validity of this information starts. The
@@ -200,7 +199,6 @@ private:
 
   TimeStamp       m_TimeStamp;
   VectorType      m_Translation;
-  PointType       m_Center;
   VersorType      m_Rotation;
   ErrorType       m_Error;
 
