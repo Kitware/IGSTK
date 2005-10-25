@@ -4,22 +4,10 @@
 
 # The header files
 SET(IGSTKSandbox_HEADS
-  igstkImageReader.h
-  igstkDICOMImageReader.h
-  igstkCTImageReader.h
-  igstkMRImageReader.h
-  igstkImageSpatialObject.h
-  igstkCTImageSpatialObject.h
-  igstkMRImageSpatialObject.h
-  igstkImageSpatialObjectRepresentation.h
-  igstkCTImageSpatialObjectRepresentation.h
-  igstkMRImageSpatialObjectRepresentation.h
   igstkMouseTracker.h
   igstkPolarisTracker.h
   igstkPolarisTrackerTool.h
   igstkLandmarkRegistration.h
-  igstkLandmark3DRegistration.h
-  igstkStringEvent.h
   igstkSpatialObjectReader.h
   igstkTubeReader.h
   igstkMeshReader.h
@@ -30,21 +18,10 @@ SET(IGSTKSandbox_HEADS
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
-  igstkImageReader.txx
-  igstkDICOMImageReader.txx
-  igstkCTImageReader.cxx
-  igstkMRImageReader.cxx
-  igstkImageSpatialObject.txx
-  igstkCTImageSpatialObject.cxx
-  igstkMRImageSpatialObject.cxx
-  igstkImageSpatialObjectRepresentation.txx
-  igstkCTImageSpatialObjectRepresentation.cxx
-  igstkMRImageSpatialObjectRepresentation.cxx
   igstkMouseTracker.cxx
   igstkPolarisTracker.cxx
   igstkPolarisTrackerTool.cxx
   igstkLandmarkRegistration.txx
-  igstkLandmark3DRegistration.cxx
   igstkTubeReader.cxx
   igstkMeshReader.cxx
   igstkGroupObject.cxx

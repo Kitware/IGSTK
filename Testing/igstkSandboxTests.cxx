@@ -33,21 +33,7 @@ void RegisterTests()
 #endif
   REGISTER_TEST(igstkPolarisTrackerSimulatedTest);
   REGISTER_TEST(igstkLandmarkRegistrationTest);
-  REGISTER_TEST(igstkLandmark3DRegistrationTest);
-  REGISTER_TEST(igstkDICOMImageReaderTest);
-  REGISTER_TEST(igstkDICOMImageReaderErrorsTest);
-  REGISTER_TEST(igstkImageReaderTest);
-  REGISTER_TEST(igstkCTImageReaderTest);
-  REGISTER_TEST(igstkCTImageSpatialObjectTest);
-  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
   REGISTER_TEST(igstkMeshReaderTest);
-  REGISTER_TEST(igstkMRImageReaderTest);
-  REGISTER_TEST(igstkMRImageSpatialObjectTest);
-  REGISTER_TEST(igstkImageSpatialObjectTest);
-  REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
-  REGISTER_TEST(igstkCTImageSpatialObjectRepresentationTest);
-  REGISTER_TEST(igstkMRImageSpatialObjectRepresentationTest);
-  REGISTER_TEST(igstkStringEventTest);
   REGISTER_TEST(igstkSpatialObjectReaderTest);
   REGISTER_TEST(igstkTubeReaderTest);
 

@@ -7,9 +7,6 @@ MAKE_DIRECTORY(${IGSTKSandbox_TEST_OUTPUT_DIR})
 SET(IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR "${IGSTKSandbox_TEST_OUTPUT_DIR}/StateMachineDiagrams")
 MAKE_DIRECTORY(${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
 
-SET(IGSTK_DICOM_TEST_OUTPUT_DIR "${IGSTKSandbox_TEST_OUTPUT_DIR}/DICOM")
-MAKE_DIRECTORY(${IGSTK_DICOM_TEST_OUTPUT_DIR})
-
 #-----------------------------------------------------------------------------
 # Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
 FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_DIR}/Testing/Data $ENV{IGSTKSandbox_DATA_ROOT})
@@ -62,7 +59,6 @@ INCLUDE_DIRECTORIES (
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 ADD_TEST(igstkPolarisTrackerSimulatedTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerSimulatedTest)
 ADD_TEST(igstkLandmarkRegistrationTest ${IGSTKSandbox_TESTS} igstkLandmarkRegistrationTest)
-ADD_TEST(igstkLandmark3DRegistrationTest ${IGSTKSandbox_TESTS} igstkLandmark3DRegistrationTest)
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
 ADD_TEST(igstkPolarisTrackerTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerTest)
@@ -70,14 +66,6 @@ ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
 
 IF (IGSTKSandbox_DATA_ROOT) 
-   ADD_TEST( igstkDICOMImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMImageReaderTest 
-       ${IGSTKSandbox_DATA_ROOT}/E000192 )
-
-   ADD_TEST( igstkCTImageReaderTest ${IGSTKSandbox_TESTS} igstkCTImageReaderTest 
-       ${IGSTKSandbox_DATA_ROOT}/E000192 )
-
-   ADD_TEST( igstkMRImageReaderTest ${IGSTKSandbox_TESTS} igstkMRImageReaderTest 
-       ${IGSTKSandbox_DATA_ROOT}/E000192 )
 
    ADD_TEST( igstkMeshReaderTest ${IGSTKSandbox_TESTS} igstkMeshReaderTest 
        ${IGSTKSandbox_DATA_ROOT}/liver.msh  
@@ -88,9 +76,6 @@ IF (IGSTKSandbox_DATA_ROOT)
        ${IGSTKSandbox_DATA_ROOT}/vesselCorruptedOnPurpose.tre  
        ${IGSTKSandbox_DATA_ROOT}/vesselWithoutReadPermissions.tre )
 
-   ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTKSandbox_TESTS} 
-             igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTKSandbox_DATA_ROOT}/E000192 )
-
    ADD_TEST( igstkSpatialObjectReaderTest ${IGSTKSandbox_TESTS} igstkSpatialObjectReaderTest 
        ${IGSTKSandbox_DATA_ROOT}/vessel.tre 
        ${IGSTKSandbox_DATA_ROOT}/vesselCorruptedOnPurpose.tre  
@@ -99,36 +84,11 @@ IF (IGSTKSandbox_DATA_ROOT)
 
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
-ADD_TEST( igstkImageReaderTest ${IGSTKSandbox_TESTS} igstkImageReaderTest )
-ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTKSandbox_TESTS} igstkDICOMImageReaderErrorsTest 
-          ${IGSTKSandbox_DATA_ROOT}/E000192Mod ${IGSTK_DICOM_TEST_OUTPUT_DIR})
-ADD_TEST( igstkImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkImageSpatialObjectTest )
-ADD_TEST( igstkCTImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkCTImageSpatialObjectTest )
-ADD_TEST( igstkMRImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkMRImageSpatialObjectTest )
-ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igstkImageSpatialObjectRepresentationTest )
-ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igstkCTImageSpatialObjectRepresentationTest )
-ADD_TEST( igstkMRImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igstkMRImageSpatialObjectRepresentationTest )
-ADD_TEST( igstkStringEventTest ${IGSTKSandbox_TESTS} igstkStringEventTest )
-
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkPolarisTrackerSimulatedTest.cxx
   igstkLandmarkRegistrationTest.cxx
-  igstkLandmark3DRegistrationTest.cxx
-  igstkImageReaderTest.cxx
-  igstkCTImageReaderTest.cxx
-  igstkMRImageReaderTest.cxx
   igstkMeshReaderTest.cxx 
-  igstkDICOMImageReaderTest.cxx
-  igstkDICOMImageReaderErrorsTest.cxx
-  igstkCTImageSpatialObjectTest.cxx
-  igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx 
-  igstkMRImageSpatialObjectTest.cxx
-  igstkImageSpatialObjectTest.cxx
-  igstkImageSpatialObjectRepresentationTest.cxx
-  igstkCTImageSpatialObjectRepresentationTest.cxx
-  igstkMRImageSpatialObjectRepresentationTest.cxx
-  igstkStringEventTest.cxx
   igstkSpatialObjectReaderTest.cxx
   igstkTubeReaderTest.cxx 
   )

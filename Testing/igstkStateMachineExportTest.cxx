@@ -30,10 +30,6 @@
 #include <iostream>
 #include "itkExceptionObject.h"
 
-#include "igstkCTImageReader.h"
-#include "igstkMRImageReader.h"
-#include "igstkLandmarkRegistration.h"
-
 namespace igstk 
 {
   
@@ -132,11 +128,6 @@ int main( int argc, char * argv [] )
     {
     skipLoops = atoi( argv[2] );
     }
-
-  // This is for classes that use SmartPointers
-  igstkTestExportStateMachine1( igstk::LandmarkRegistration<3>, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::CTImageReader, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::MRImageReader, outputDirectory, skipLoops );
 
 
   return EXIT_SUCCESS;
