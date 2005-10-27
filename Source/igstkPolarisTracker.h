@@ -58,7 +58,7 @@ public:
   typedef PolarisTrackerToolType::ConstPointer   PolarisTrackerToolConstPointer;
 
   /** number of ports to allow */
-  itkStaticConstMacro( NumberOfPorts, unsigned int, 4 );
+  itkStaticConstMacro( NumberOfPorts, unsigned int, 12 );
 
   /** communication type */
   typedef igstk::SerialCommunication     CommunicationType;
@@ -135,10 +135,11 @@ private:
   int m_AbsentBuffer[NumberOfPorts];
 
   /** Load a virtual SROM, given the file name of the ROM file */
-  bool LoadVirtualSROM( const int i, std::string SROMFileName) ;
+  bool LoadVirtualSROM( const unsigned int port, 
+                        const std::string SROMFileName) ;
 
   /** Clear the virtual SROM for a tool */
-  void ClearVirtualSROM( int tool );
+  void ClearVirtualSROM( const unsigned int port );
 
   /** Enable all tool ports that have tools plugged into them.
    * {The reference tool port is enabled as a static tool.} */
@@ -146,9 +147,6 @@ private:
 
   /** Disable all enabled tool ports. */
   void DisableToolPorts( void );
-
-  /** Find the tool for a specific port handle (-1 if not found). */
-  int GetToolFromHandle( int handle ) const;
 
   /** Information about which tool ports are enabled. */
   int m_PortEnabled[NumberOfPorts];
