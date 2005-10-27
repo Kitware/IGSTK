@@ -28,10 +28,6 @@
 void RegisterTests()
 {
   REGISTER_TEST(igstkMouseTrackerTest);
-#ifdef IGSTK_TEST_POLARIS_ATTACHED
-  REGISTER_TEST(igstkPolarisTrackerTest);
-#endif
-  REGISTER_TEST(igstkPolarisTrackerSimulatedTest);
   REGISTER_TEST(igstkLandmarkRegistrationTest);
   REGISTER_TEST(igstkMeshReaderTest);
   REGISTER_TEST(igstkSpatialObjectReaderTest);

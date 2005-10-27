@@ -5,8 +5,6 @@
 # The header files
 SET(IGSTKSandbox_HEADS
   igstkMouseTracker.h
-  igstkPolarisTracker.h
-  igstkPolarisTrackerTool.h
   igstkLandmarkRegistration.h
   igstkSpatialObjectReader.h
   igstkTubeReader.h
@@ -19,8 +17,6 @@ SET(IGSTKSandbox_HEADS
 # The implementation files
 SET(IGSTKSandbox_SRCS  
   igstkMouseTracker.cxx
-  igstkPolarisTracker.cxx
-  igstkPolarisTrackerTool.cxx
   igstkLandmarkRegistration.txx
   igstkTubeReader.cxx
   igstkMeshReader.cxx

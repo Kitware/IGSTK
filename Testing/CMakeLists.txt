@@ -57,13 +57,7 @@ INCLUDE_DIRECTORIES (
   )
 
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
-ADD_TEST(igstkPolarisTrackerSimulatedTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerSimulatedTest)
 ADD_TEST(igstkLandmarkRegistrationTest ${IGSTKSandbox_TESTS} igstkLandmarkRegistrationTest)
-
-IF(IGSTK_TEST_POLARIS_ATTACHED)
-ADD_TEST(igstkPolarisTrackerTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerTest)
-ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
-
 
 IF (IGSTKSandbox_DATA_ROOT) 
 
@@ -86,18 +80,11 @@ ENDIF(IGSTKSandbox_DATA_ROOT)
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
-  igstkPolarisTrackerSimulatedTest.cxx
   igstkLandmarkRegistrationTest.cxx
   igstkMeshReaderTest.cxx 
   igstkSpatialObjectReaderTest.cxx
   igstkTubeReaderTest.cxx 
   )
-
-IF(IGSTK_TEST_POLARIS_ATTACHED)
-  SET(BasicTests_SRCS ${BasicTests_SRCS}
-    igstkPolarisTrackerTest.cxx
-  )
-ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
 IF (IGSTK_USE_ATAMAI)
   ADD_TEST(igstkAtamaiNDITrackerTest ${IGSTKSandbox_TESTS} igstkAtamaiNDITrackerTest)
