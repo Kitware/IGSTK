@@ -34,6 +34,8 @@ SET(IGSTK_HEADS
   igstkNDICommandInterpreter.h
   igstkNDIErrorEvent.h
   igstkObjectRepresentation.h
+  igstkPolarisTracker.h
+  igstkPolarisTrackerTool.h
   igstkPulseGenerator.h
   igstkSerialCommunication.h
   igstkSerialCommunicationSimulator.h
@@ -84,6 +86,8 @@ SET(IGSTK_SRCS
   igstkMultipleOutput.cxx
   igstkNDICommandInterpreter.cxx
   igstkObjectRepresentation.cxx
+  igstkPolarisTracker.cxx
+  igstkPolarisTrackerTool.cxx
   igstkPulseGenerator.cxx
   igstkSerialCommunication.cxx
   igstkSerialCommunicationSimulator.cxx

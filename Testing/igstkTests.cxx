@@ -61,6 +61,10 @@ void RegisterTests()
 #endif
   REGISTER_TEST(igstkNDICommandInterpreterSimulatedTest);
   REGISTER_TEST(igstkNDICommandInterpreterStressTest);
+#ifdef IGSTK_TEST_POLARIS_ATTACHED
+  REGISTER_TEST(igstkPolarisTrackerTest);
+#endif
+  REGISTER_TEST(igstkPolarisTrackerSimulatedTest);
   REGISTER_TEST(igstkPulseGeneratorTest);
   REGISTER_TEST(igstkSerialCommunicationTest);
   REGISTER_TEST(igstkSerialCommunicationSimulatorTest);

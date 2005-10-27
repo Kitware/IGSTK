@@ -67,6 +67,12 @@ ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS} igstkNDICommandI
 
 ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTK_TESTS} igstkNDICommandInterpreterStressTest)
 
+ADD_TEST(igstkPolarisTrackerSimulatedTest ${IGSTK_TESTS} igstkPolarisTrackerSimulatedTest)
+
+IF(IGSTK_TEST_POLARIS_ATTACHED)
+ADD_TEST(igstkPolarisTrackerTest ${IGSTK_TESTS} igstkPolarisTrackerTest)
+ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
+
 ADD_TEST(igstkPulseGeneratorTest ${IGSTK_TESTS} igstkPulseGeneratorTest)
 
 ADD_TEST(igstkSerialCommunicationTest ${IGSTK_TESTS} igstkSerialCommunicationTest)
@@ -151,6 +157,7 @@ SET(BasicTests_SRCS
   igstkMultipleOutputTest
   igstkNDICommandInterpreterSimulatedTest  
   igstkNDICommandInterpreterStressTest
+  igstkPolarisTrackerSimulatedTest.cxx
   igstkPulseGeneratorTest
   igstkSerialCommunicationTest
   igstkSerialCommunicationSimulatorTest
@@ -178,6 +185,13 @@ IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
     igstkNDICommandInterpreterTest
   )
 ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+
+IF(IGSTK_TEST_POLARIS_ATTACHED)
+  SET(BasicTests_SRCS ${BasicTests_SRCS}
+    igstkPolarisTrackerTest.cxx
+  )
+ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
+
 
 ADD_EXECUTABLE(igstkTests igstkTests.cxx ${BasicTests_SRCS})
 
