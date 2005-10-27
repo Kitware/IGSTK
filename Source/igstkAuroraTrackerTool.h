@@ -35,8 +35,8 @@ class AuroraTrackerTool : public TrackerTool
 {
 public:
 
-  typedef AuroraTrackerTool                     Self;
-  typedef TrackerTool                           Superclass;
+  typedef AuroraTrackerTool              Self;
+  typedef TrackerTool                    Superclass;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
@@ -55,6 +55,9 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+
+  AuroraTrackerTool(const Self&);    //purposely not implemented
+  void operator=(const Self&);       //purposely not implemented
 
 };  
 

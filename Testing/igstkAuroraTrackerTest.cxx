@@ -135,14 +135,6 @@ int igstkAuroraTrackerTest( int, char * [] )
 
   tracker->Open();
 
-#ifdef IGSTK_SIMULATOR_TEST
-  char pathToSROMFile[1024];
-  joinDirAndFile( pathToSROMFile, 1024,
-                  IGSTK_DATA_ROOT,
-                  "Input/5D.ROM" );
-  tracker->AttachSROMFileNameToPort( 0, pathToSROMFile );
-#endif /* IGSTK_SIMULATOR_TEST */
-
   std::cout << tracker << std::endl;
 
   tracker->Initialize();

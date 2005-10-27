@@ -146,8 +146,6 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
 
   tracker->Open();
 
-  tracker->AttachSROMFileNameToPort( 0, "C:/Program Files/Northern Digital Inc/SROM Image Files/5D.ROM" );
-
   std::cout << tracker << std::endl;
 
   tracker->Initialize();
