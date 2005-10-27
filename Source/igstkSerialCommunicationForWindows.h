@@ -106,10 +106,6 @@ private:
   unsigned int    m_OldTimeoutPeriod;
 
   HandleType      m_PortHandle;     // com port handle
-
-  COMMTIMEOUTS    m_SaveTimeout;
-
-  DCB             m_SaveDCB;
 };
 
 } // end namespace igstk

@@ -11,3 +11,9 @@
 /* define any platform-specific macros */
 #cmakedefine HAVE_TERMIOS_H
 #cmakedefine HAVE_TERMIO_H
+
+/* define some cmake-configurable macros */
+#define IGSTK_SERIAL_PORT_0 "@IGSTK_SERIAL_PORT_0@"
+#define IGSTK_SERIAL_PORT_1 "@IGSTK_SERIAL_PORT_1@"
+#define IGSTK_SERIAL_PORT_2 "@IGSTK_SERIAL_PORT_2@"
+#define IGSTK_SERIAL_PORT_3 "@IGSTK_SERIAL_PORT_3@"

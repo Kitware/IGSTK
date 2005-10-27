@@ -15,6 +15,10 @@
 
 =========================================================================*/
 
+
+#include "igstkConfigure.h"
+#include "igstkSerialCommunicationForPosix.h"
+
 /* =========== standard includes */
 #include <errno.h>
 #include <time.h>
@@ -24,7 +28,17 @@
 #include <string.h>
 #include <iostream>
 
-#include "igstkSerialCommunicationForPosix.h"
+/* =========== includes for serial communication */
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#if defined (HAVE_TERMIOS_H)
+  #include <termios.h> 
+#elif defined (HAVE_TERMIO_H)
+  #include <termio.h>
+#endif
+#include <sys/time.h>
 
 
 namespace igstk
@@ -52,11 +66,18 @@ SerialCommunicationForPosix::InternalOpenPort( void )
   igstkLogMacro( DEBUG, "SerialCommunicationForPosix::InternalOpenPort"
                  " called ...\n" );
 
-  struct termios t;
+  unsigned int portNumber = this->GetPortNumber();
+  const char *device = "";  
 
-  char device[20];
-  // it would be really nice to support the devices for other OS
-  sprintf(device, "/dev/ttyS%.1d", this->GetPortNumber() );
+  if (portNumber >= 0 && portNumber < 4)
+    {
+    const char *deviceNames[] = { IGSTK_SERIAL_PORT_0,
+                                  IGSTK_SERIAL_PORT_1,
+                                  IGSTK_SERIAL_PORT_2,
+                                  IGSTK_SERIAL_PORT_3  };
+
+    device = deviceNames[portNumber];
+    }
 
   // port is readable/writable and is (for now) non-blocking
   m_PortHandle = open(device,O_RDWR|O_NOCTTY|O_NDELAY);
@@ -68,12 +89,9 @@ SerialCommunicationForPosix::InternalOpenPort( void )
     fcntl(m_PortHandle, F_SETFL, 0);
 
     // get I/O information
+    struct termios t;
     if (tcgetattr(m_PortHandle,&t) != -1)
       {
-      // save the serial port state so that it can be restored when
-      //   the serial port is closed in ndiSerialClose()
-      tcgetattr(m_PortHandle,&m_SaveTermIOs);
-
       // clear everything specific to terminals
       t.c_lflag = 0;
       t.c_iflag = 0;
@@ -109,8 +127,6 @@ SerialCommunicationForPosix::InternalOpenPort( void )
 SerialCommunicationForPosix::ResultType
 SerialCommunicationForPosix::InternalUpdateParameters( void )
 {
-  struct termios t;
-  int newbaud;
 
   igstkLogMacro( DEBUG, "SerialCommunicationForPosix::"
                  "InternalUpdateParameters called ...\n" );
@@ -121,6 +137,8 @@ SerialCommunicationForPosix::InternalUpdateParameters( void )
   ParityType parity = this->GetParity();
   StopBitsType stopBits = this->GetStopBits();
   HandshakeType handshake = this->GetHardwareHandshake();
+
+  int newbaud;
 
 #if defined(sgi) && defined(__NEW_MAX_BAUD)
   switch (baud)
@@ -142,6 +160,7 @@ SerialCommunicationForPosix::InternalUpdateParameters( void )
     }
 #endif
 
+  struct termios t;
   tcgetattr(m_PortHandle,&t);          // get I/O information
   t.c_cflag &= ~CSIZE;                // clear flags
 
@@ -227,8 +246,6 @@ SerialCommunicationForPosix::InternalClosePort( void )
 
   igstkLogMacro( DEBUG, "SerialCommunicationForPosix::"
                  "InternalClosePort called ...\n" );
-  // restore the comm port state to from before it was opened
-  tcsetattr(m_PortHandle,TCSANOW,&m_SaveTermIOs);
 
   ResultType result = FAILURE;
   if (close(m_PortHandle) != -1)

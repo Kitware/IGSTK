@@ -15,10 +15,11 @@
 
 =========================================================================*/
 
+/* standard include files */
 #include <iostream>
-
 #include <stdio.h>
 
+#include "igstkConfigure.h"
 #include "igstkSerialCommunicationForWindows.h"
 
 
@@ -48,67 +49,74 @@ SerialCommunicationForWindows::InternalOpenPort( void )
     2, 
     timeoutPeriod,
   };
-  HANDLE serial_port;
-  DCB comm_settings;
+  HANDLE portHandle;
+  DCB commSettings;
 
-  char device[20];
-  sprintf(device, "COM%.1d:", this->GetPortNumber()+1 );
+  unsigned int portNumber = this->GetPortNumber();
+  const char *device = "";  
 
-  serial_port = CreateFile(device,
-                           GENERIC_READ|GENERIC_WRITE,
-                           0,  /* not allowed to share ports */
-                           0,  /* child-processes don't inherit handle */
-                           OPEN_EXISTING, 
-                           FILE_ATTRIBUTE_NORMAL,
-                           NULL); /* no template file */
+  if (portNumber >= 0 && portNumber < 4)
+    {
+    const char *deviceNames[] = { IGSTK_SERIAL_PORT_0,
+                                  IGSTK_SERIAL_PORT_1,
+                                  IGSTK_SERIAL_PORT_2,
+                                  IGSTK_SERIAL_PORT_3  };
 
-  if (serial_port == INVALID_HANDLE_VALUE)
+    device = deviceNames[portNumber];
+    }
+
+  portHandle = CreateFile(device,
+                          GENERIC_READ|GENERIC_WRITE,
+                          0,  /* not allowed to share ports */
+                          0,  /* child-processes don't inherit handle */
+                          OPEN_EXISTING, 
+                          FILE_ATTRIBUTE_NORMAL,
+                          NULL); /* no template file */
+
+  if (portHandle == INVALID_HANDLE_VALUE)
     {
     return FAILURE;
     }
 
   /* save the serial port state so that it can be restored when
      the serial port is closed in ndiSerialClose() */
-  if (m_PortHandle == serial_port ||
+  if (m_PortHandle == portHandle ||
       m_PortHandle == INVALID_HANDLE_VALUE)
     {
-    m_PortHandle = serial_port;
-    GetCommTimeouts(serial_port,&m_SaveTimeout);
-    GetCommState(serial_port,&m_SaveDCB);
+    m_PortHandle = portHandle;
     }
 
-  if (SetupComm(serial_port, 1600, 1600) == FALSE)
+  if (SetupComm(portHandle, 1600, 1600) == FALSE)
     { /* set buffer size */
-    CloseHandle(serial_port);
+    CloseHandle(portHandle);
     m_PortHandle = INVALID_HANDLE_VALUE;
     return FAILURE;
     }
 
-  if (GetCommState(serial_port,&comm_settings) == FALSE)
+  if (GetCommState(portHandle,&commSettings) == FALSE)
     {
-    CloseHandle(serial_port);
+    CloseHandle(portHandle);
     m_PortHandle = INVALID_HANDLE_VALUE;
     return FAILURE;
     }
 
-  comm_settings.fOutX = FALSE;             /* no S/W handshake */
-  comm_settings.fInX = FALSE;
-  comm_settings.fAbortOnError = FALSE;     /* don't need to clear errors */
-  comm_settings.fOutxDsrFlow = FALSE;      /* no modem-style flow stuff*/
-  comm_settings.fDtrControl = DTR_CONTROL_ENABLE;  
+  commSettings.fOutX = FALSE;             /* no S/W handshake */
+  commSettings.fInX = FALSE;
+  commSettings.fAbortOnError = FALSE;     /* don't need to clear errors */
+  commSettings.fOutxDsrFlow = FALSE;      /* no modem-style flow stuff*/
+  commSettings.fDtrControl = DTR_CONTROL_ENABLE;  
 
-  if (SetCommState(serial_port,&comm_settings) == FALSE)
+  if (SetCommState(portHandle,&commSettings) == FALSE)
     {
-    CloseHandle(serial_port);
+    CloseHandle(portHandle);
     m_PortHandle = INVALID_HANDLE_VALUE;
     return FAILURE;
     }
   
-  if (SetCommTimeouts(serial_port,&default_ctmo) == FALSE)
+  if (SetCommTimeouts(portHandle,&default_ctmo) == FALSE)
     {
-    SetCommState(serial_port,&comm_settings);
-    SetCommState(serial_port,&m_SaveDCB); 
-    CloseHandle(serial_port);
+    SetCommState(portHandle,&commSettings);
+    CloseHandle(portHandle);
     m_PortHandle = INVALID_HANDLE_VALUE;
     return FAILURE;
     }
@@ -122,7 +130,7 @@ SerialCommunicationForWindows::InternalOpenPort( void )
 SerialCommunicationForWindows::ResultType
 SerialCommunicationForWindows::InternalUpdateParameters( void )
 {
-  DCB comm_settings;
+  DCB commSettings;
   COMMTIMEOUTS ctmo;
   
   unsigned int timeoutPeriod = this->GetTimeoutPeriod();
@@ -142,55 +150,55 @@ SerialCommunicationForWindows::InternalUpdateParameters( void )
     case 115200: newbaud = CBR_115200; break;
     }
 
-  GetCommState(m_PortHandle,&comm_settings);
+  GetCommState(m_PortHandle,&commSettings);
   GetCommTimeouts(m_PortHandle,&ctmo);
 
-  comm_settings.BaudRate = newbaud;     // speed
+  commSettings.BaudRate = newbaud;     // speed
 
   // set handshaking
   if (handshake == HandshakeOn)
     {
-    comm_settings.fOutxCtsFlow = TRUE;       // on
-    comm_settings.fRtsControl = RTS_CONTROL_HANDSHAKE;
+    commSettings.fOutxCtsFlow = TRUE;       // on
+    commSettings.fRtsControl = RTS_CONTROL_HANDSHAKE;
     }
   else
     {
-    comm_settings.fOutxCtsFlow = FALSE;       // off
-    comm_settings.fRtsControl = RTS_CONTROL_DISABLE;
+    commSettings.fOutxCtsFlow = FALSE;       // off
+    commSettings.fRtsControl = RTS_CONTROL_DISABLE;
     }    
 
   // set data bits
   if (dataBits == DataBits8)
     {
-    comm_settings.ByteSize = 8;
+    commSettings.ByteSize = 8;
     }
   else if (dataBits == DataBits7)
     {
-    comm_settings.ByteSize = 7;
+    commSettings.ByteSize = 7;
     }
 
   // set parity
   if (parity == NoParity)
     { // none                
-    comm_settings.Parity = NOPARITY;
+    commSettings.Parity = NOPARITY;
     }
   else if (parity == OddParity)
     { // odd
-    comm_settings.Parity = ODDPARITY;
+    commSettings.Parity = ODDPARITY;
     }
   else if (parity == EvenParity)
     { // even
-    comm_settings.Parity = EVENPARITY;
+    commSettings.Parity = EVENPARITY;
     }
 
   // set stop bits
   if (stopBits == StopBits1)
     {
-    comm_settings.StopBits = ONESTOPBIT;
+    commSettings.StopBits = ONESTOPBIT;
     }
   else if (stopBits == StopBits2)
     {
-    comm_settings.StopBits = TWOSTOPBITS;
+    commSettings.StopBits = TWOSTOPBITS;
     }
 
   // set timeout
@@ -199,7 +207,7 @@ SerialCommunicationForWindows::InternalUpdateParameters( void )
   ctmo.ReadTotalTimeoutConstant = timeoutPeriod;
   ctmo.WriteTotalTimeoutConstant = timeoutPeriod;
 
-  if (SetCommState(m_PortHandle,&comm_settings) == FALSE ||
+  if (SetCommState(m_PortHandle,&commSettings) == FALSE ||
       SetCommTimeouts(m_PortHandle,&ctmo) == FALSE)
     {
     return FAILURE;
@@ -216,10 +224,6 @@ SerialCommunicationForWindows::InternalUpdateParameters( void )
 SerialCommunicationForWindows::ResultType
 SerialCommunicationForWindows::InternalClosePort( void )
 {
-  // restore the comm port state to from before it was opened
-  SetCommTimeouts(m_PortHandle,&m_SaveTimeout);
-  SetCommState(m_PortHandle,&m_SaveDCB);
-
   CloseHandle(m_PortHandle);
   m_PortHandle = INVALID_HANDLE_VALUE;
 
@@ -334,7 +338,7 @@ SerialCommunicationForWindows::InternalWrite( const char *data,
         break;
         }
 
-      n -= m;  // bytesToWrite is number of chars left to write
+      n -= m;  // n is number of chars left to write
       i += m;  // i is the number of chars written
       }
     }

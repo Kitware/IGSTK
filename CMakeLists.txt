@@ -107,6 +107,29 @@ CONFIGURE_FILE("${IGSTK_SOURCE_DIR}/igstkConfigure.h.in"
                "${IGSTK_BINARY_DIR}/igstkConfigure.h")
 
 #-----------------------------------------------------------------------------
+# define the right names for the serial devices according to operating system
+
+IF(WIN32)
+  SET(IGSTK_SERIAL_PORT_0 "COM1:")
+  SET(IGSTK_SERIAL_PORT_1 "COM2:")
+  SET(IGSTK_SERIAL_PORT_2 "COM3:")
+  SET(IGSTK_SERIAL_PORT_3 "COM4:")
+ELSE(WIN32)
+  SET(IGSTK_SERIAL_PORT_0 "/dev/ttyS0" CACHE STRING
+      "Device name for serial port 0")
+  MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_0)
+  SET(IGSTK_SERIAL_PORT_1 "/dev/ttyS1" CACHE STRING
+      "Device name for serial port 1")
+  MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_1)
+  SET(IGSTK_SERIAL_PORT_2 "/dev/ttyUSB0" CACHE STRING
+      "Device name for serial port 2")
+  MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_2)
+  SET(IGSTK_SERIAL_PORT_3 "/dev/ttyUSB1" CACHE STRING
+      "Device name for serial port 3")
+  MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_3)
+ENDIF(WIN32)
+
+#-----------------------------------------------------------------------------
 # Help other projects use IGSTK.
 SET(IGSTK_LIBRARY_PATH ${LIBRARY_OUTPUT_PATH})
 
