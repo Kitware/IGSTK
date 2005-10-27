@@ -148,6 +148,9 @@ private:
   /** Disable all enabled tool ports. */
   void DisableToolPorts( void );
 
+  /** Helper function for reporting interpreter errors. */
+  ResultType CheckError( CommandInterpreterType * );
+
   /** Information about which tool ports are enabled. */
   int m_PortEnabled[NumberOfPorts];
 

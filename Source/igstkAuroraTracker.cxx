@@ -48,6 +48,20 @@ AuroraTracker::~AuroraTracker(void)
 {
 }
 
+/** Helper function for reporting interpreter errors. */
+AuroraTracker::ResultType
+AuroraTracker::CheckError(CommandInterpreterType *interpreter)
+{
+  const int errnum = interpreter->GetError();
+  if (errnum)
+    {
+    igstkLogMacro( DEBUG, interpreter->ErrorString(errnum) << "\n");
+    return FAILURE;
+    }
+
+  return SUCCESS;
+}
+
 /** Set the communication object, it will be initialized as necessary
   * for use with the Aurora */
 void AuroraTracker::SetCommunication( CommunicationType *communication )
@@ -75,41 +89,27 @@ AuroraTracker::ResultType AuroraTracker::InternalOpen( void )
   m_CommandInterpreter->INIT();
 
   // Reset and try again if error
-  if (m_CommandInterpreter->GetError())
+  if (this->CheckError(m_CommandInterpreter) == FAILURE)
     {
     m_CommandInterpreter->RESET();
     m_CommandInterpreter->INIT();
     }
 
   // If it still failed to initialize, fail
-  const int errnum = m_CommandInterpreter->GetError();
-  if (errnum)
-    {
-    igstkLogMacro( DEBUG, "AuroraTracker::InternalOpen: Error ...\n");
-    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
-    return FAILURE;
-    }
-  
-  return SUCCESS;
+  return this->CheckError(m_CommandInterpreter);
 }
 
 /** Close communication with the tracking device. */
 AuroraTracker::ResultType AuroraTracker::InternalClose( void )
 {
+  igstkLogMacro( DEBUG, "AuroraTracker::InternalClose called ...\n");
+
   // return the device back to its initial comm setttings
   m_CommandInterpreter->COMM(CommandInterpreterType::NDI_9600,
                              CommandInterpreterType::NDI_8N1,
                              CommandInterpreterType::NDI_NOHANDSHAKE);
 
-  const int errnum = m_CommandInterpreter->GetError();
-  if (errnum) 
-    {
-    igstkLogMacro( DEBUG, "AuroraTracker::InternalClose: Error ...\n");
-    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
-    return FAILURE;
-    }
-
-  return SUCCESS;
+  return this->CheckError(m_CommandInterpreter);
 }
 
 /** Activate the tools attached to the tracking device. */
@@ -153,15 +153,7 @@ AuroraTracker::ResultType AuroraTracker::InternalStartTracking( void )
 
   m_CommandInterpreter->TSTART();
 
-  const int errnum = m_CommandInterpreter->GetError();
-  if (errnum) 
-    {
-    igstkLogMacro( DEBUG, "AuroraTracker::InternalStartTracking: Error ...\n");
-    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
-    return FAILURE;
-    }
-
-  return SUCCESS;
+  return this->CheckError(m_CommandInterpreter);
 }
 
 /** Take the tracking device out of tracking mode. */
@@ -171,15 +163,7 @@ AuroraTracker::ResultType AuroraTracker::InternalStopTracking( void )
 
   m_CommandInterpreter->TSTOP();
 
-  const int errnum = m_CommandInterpreter->GetError();
-  if (errnum) 
-    {
-    igstkLogMacro( DEBUG, "AuroraTracker::InternalStopTracking: Error ...\n");
-    igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
-    return FAILURE;
-    }
-
-  return SUCCESS;
+  return this->CheckError(m_CommandInterpreter);
 }
 
 /** Reset the tracking device to put it back to its original state. */
@@ -188,13 +172,7 @@ AuroraTracker::ResultType AuroraTracker::InternalReset( void )
   m_CommandInterpreter->RESET();
   m_CommandInterpreter->INIT();
 
-  // If it still failed to initialize, fail
-  if (m_CommandInterpreter->GetError())
-    {
-    return FAILURE;
-    }
-
-  return SUCCESS;
+  return this->CheckError(m_CommandInterpreter);
 }
 
 /** Update the status and the transforms for all TrackerTools. */
@@ -310,58 +288,46 @@ AuroraTracker::ResultType AuroraTracker::InternalThreadedUpdateStatus( void )
 
   // get the transforms for all tools from the NDI
   m_CommandInterpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
-  const int errnum = m_CommandInterpreter->GetError();
 
-  if (errnum)
+  ResultType result = this->CheckError(m_CommandInterpreter);
+
+  if (result == SUCCESS)
     {
-    if (errnum == CommandInterpreterType::NDI_BAD_CRC ||
-        errnum == CommandInterpreterType::NDI_TIMEOUT) // common errors
+    m_BufferLock->Lock();
+    unsigned long frame[NumberOfPorts];
+    for (port = 0; port < NumberOfPorts; port++)
       {
-      igstkLogMacro( WARNING, m_CommandInterpreter->ErrorString(errnum)<<"\n");
+      const int ph = this->m_PortHandle[port];
+      m_AbsentBuffer[port] = 0;
+      m_StatusBuffer[port] = 0;
+
+      frame[port] = 0;
+      if (ph == 0)
+        {
+        continue;
+        }
+
+      double transform[8];
+      const int tstatus = m_CommandInterpreter->GetTXTransform(ph, transform);
+      const int absent = (tstatus != CommandInterpreterType::NDI_VALID);
+      const int status = m_CommandInterpreter->GetTXPortStatus(ph);
+      frame[port] = m_CommandInterpreter->GetTXFrame(ph);
+
+      for(unsigned int i = 0; i < 8; i++ )
+        {
+        m_TransformBuffer[port][i] = transform[i];
+        }
+
+      m_AbsentBuffer[port] = absent;
+      m_StatusBuffer[port] = status;
       }
-    else
-      {
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum)<<"\n");
-      }
-    return FAILURE;
+    m_BufferLock->Unlock();
     }
-
-  m_BufferLock->Lock();
-  unsigned long frame[NumberOfPorts];
-  for (port = 0; port < NumberOfPorts; port++)
-    {
-    const int ph = this->m_PortHandle[port];
-    m_AbsentBuffer[port] = 0;
-    m_StatusBuffer[port] = 0;
-
-    frame[port] = 0;
-    if (ph == 0)
-      {
-      continue;
-      }
-
-    double transform[8];
-    int status, absent;
-    int result = m_CommandInterpreter->GetTXTransform(ph, transform);
-    
-    absent = (result != CommandInterpreterType::NDI_VALID);
-    status = m_CommandInterpreter->GetTXPortStatus(ph);
-    frame[port] = m_CommandInterpreter->GetTXFrame(ph);
-
-    for(unsigned int i = 0; i < 8; i++ )
-      {
-      m_TransformBuffer[port][i] = transform[i];
-      }
-
-    m_AbsentBuffer[port] = absent;
-    m_StatusBuffer[port] = status;
-  }
-  m_BufferLock->Unlock();
 
   // In the original vtkNDITracker code, there was a check at this
   // point in the code to see if any new tools had been plugged in
 
-  return SUCCESS;
+  return result;
 }
 
 
@@ -369,25 +335,23 @@ AuroraTracker::ResultType AuroraTracker::InternalThreadedUpdateStatus( void )
 void AuroraTracker::EnableToolPorts()
 {
   // reset our information about the tool ports
-  for (unsigned int itool = 0; itool < NumberOfPorts; itool++)
+  for (unsigned int port = 0; port < NumberOfPorts; port++)
     {
-    this->m_PortHandle[itool] = 0;
-    this->m_PortEnabled[itool] = 0;
+    this->m_PortHandle[port] = 0;
+    this->m_PortEnabled[port] = 0;
     }
 
   // free ports that are waiting to be freed
   m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_STALE_HANDLES);
-  const unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
-  for (unsigned int tool = 0; tool < ntools; tool++)
+  unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+  unsigned int tool;
+  for (tool = 0; tool < ntools; tool++)
     {
     const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
     m_CommandInterpreter->PHF(ph);
-    const int errnum = m_CommandInterpreter->GetError();
-    if (errnum)
-      {
-      igstkLogMacro( DEBUG, "AuroraTracker::EnableToolPorts: Error ...\n");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
-      }
+
+    // if an error occurs, print the error but don't abort
+    this->CheckError(m_CommandInterpreter);
     }
 
   // initialize ports waiting to be initialized
@@ -396,16 +360,14 @@ void AuroraTracker::EnableToolPorts()
     m_CommandInterpreter->PHSR(
       CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
     
-    const unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
-    for (unsigned int tool = 0; tool < ntools; tool++)
+    ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+    for (tool = 0; tool < ntools; tool++)
       {
       const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
       m_CommandInterpreter->PINIT(ph);
-      const int errnum = m_CommandInterpreter->GetError();
-      if (errnum)
-        { 
-        igstkLogMacro( DEBUG, "AuroraTracker::EnableToolPorts: Error ...\n");
-        igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum)<<"\n");
+
+      if (this->CheckError(m_CommandInterpreter) == FAILURE)
+        {
         break;
         }
       }
@@ -415,14 +377,12 @@ void AuroraTracker::EnableToolPorts()
   // enable initialized tools
   m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_UNENABLED_HANDLES);
 
-  const unsigned int nunenabledtools = 
-    m_CommandInterpreter->GetPHSRNumberOfHandles();
+  ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
   
-  for (unsigned int tool = 0; tool < nunenabledtools; tool++)
+  for (tool = 0; tool < ntools; tool++)
     {
     const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
-    m_CommandInterpreter->PHINF(ph,
-                                CommandInterpreterType::NDI_BASIC);
+    m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
 
     // tool identity and type information
     char identity[512];
@@ -442,34 +402,28 @@ void AuroraTracker::EnableToolPorts()
 
     // enable the tool
     m_CommandInterpreter->PENA(ph, mode);
-    const int errnum = m_CommandInterpreter->GetError();
-    if (errnum)
-      {
-      igstkLogMacro( DEBUG, "AuroraTracker::EnableToolPorts: Error ...\n");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
-      }
+
+    // print any warnings
+    this->CheckError(m_CommandInterpreter);
     }
 
   // get information for all tools
   m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ALL_HANDLES);
 
-  const unsigned int nalltools = 
-    m_CommandInterpreter->GetPHSRNumberOfHandles();
+  ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
 
-  for (unsigned int tool = 0; tool < nalltools; tool++)
+  for (tool = 0; tool < ntools; tool++)
     {
     const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
     m_CommandInterpreter->PHINF(ph,
                                 CommandInterpreterType::NDI_PORT_LOCATION |
                                 CommandInterpreterType::NDI_PART_NUMBER |
                                 CommandInterpreterType::NDI_BASIC );
-    const int errnum = m_CommandInterpreter->GetError();
-    if (errnum)
-      { 
-      igstkLogMacro( DEBUG, "AuroraTracker::EnableToolPorts: Error ...\n");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
+
+    if (this->CheckError(m_CommandInterpreter) == FAILURE)
+      {
       continue;
-      }    
+      }
 
     // get the physical port identifier
     char location[512];
@@ -501,18 +455,14 @@ void AuroraTracker::DisableToolPorts( void )
     const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
     m_CommandInterpreter->PDIS( ph );
 
-    const int errnum = m_CommandInterpreter->GetError();
-    if (errnum)
-      { 
-      igstkLogMacro( DEBUG, "AuroraTracker::DisableToolPorts: Error ...\n");
-      igstkLogMacro( DEBUG, m_CommandInterpreter->ErrorString(errnum) << "\n");
-      }    
+    // print warning if failed to disable
+    this->CheckError(m_CommandInterpreter);
     }
 
   // disable the enabled ports
-  for (unsigned int itool = 0; itool < NumberOfPorts; itool++)
+  for (unsigned int port = 0; port < NumberOfPorts; port++)
     {
-    this->m_PortEnabled[itool] = 0;
+    this->m_PortEnabled[port] = 0;
     }
 }
 
@@ -534,5 +484,4 @@ void AuroraTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
   os << indent << "Number of tools: " << m_NumberOfTools << std::endl;
 }
 
-
-}
+} // end of namespace igstk
