@@ -156,7 +156,47 @@ Landmark3DRegistration::Landmark3DRegistration() :
                                m_ComputeTransformInput,
                                m_TrackerLandmark2AddedState,
                                &Landmark3DRegistration::ReportInvalidRequest);
- 
+
+  //Add transitions for registration reset state input 
+  m_StateMachine.AddTransition(m_TransformComputedState,
+                               m_ResetRegistrationInput,
+                               m_IdleState,
+                               &Landmark3DRegistration::ResetRegistration);
+  
+  m_StateMachine.AddTransition(m_ImageLandmark1AddedState,
+                               m_ResetRegistrationInput,
+                               m_IdleState,
+                               &Landmark3DRegistration::ResetRegistration);
+  
+  m_StateMachine.AddTransition(m_ImageLandmark2AddedState,
+                               m_ResetRegistrationInput,
+                               m_IdleState,
+                               &Landmark3DRegistration::ResetRegistration);
+
+  m_StateMachine.AddTransition(m_ImageLandmark3AddedState,
+                               m_ResetRegistrationInput,
+                               m_IdleState,
+                               &Landmark3DRegistration::ResetRegistration);
+  
+  m_StateMachine.AddTransition(m_TrackerLandmark1AddedState,
+                               m_ResetRegistrationInput,
+                               m_IdleState,
+                               &Landmark3DRegistration::ResetRegistration);
+
+  m_StateMachine.AddTransition(m_TrackerLandmark2AddedState,
+                               m_ResetRegistrationInput,
+                               m_IdleState,
+                               &Landmark3DRegistration::ResetRegistration);
+  
+  m_StateMachine.AddTransition(m_TrackerLandmark3AddedState,
+                               m_ResetRegistrationInput,
+                               m_IdleState,
+                               &Landmark3DRegistration::ResetRegistration);
+
+  m_StateMachine.AddTransition(m_AttemptingToComputeTransformState,
+                               m_ResetRegistrationInput,
+                               m_IdleState,
+                               &Landmark3DRegistration::ResetRegistration);
 
    // Select the initial state of the state machine
   m_StateMachine.SelectInitialState( m_IdleState );
