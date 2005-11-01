@@ -108,7 +108,7 @@ protected:
   igstkGetMacro( Actors, ActorsListType );
 
   /** Empty the list of actors */
-  void DeleteActors();
+  virtual void DeleteActors();
 
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;

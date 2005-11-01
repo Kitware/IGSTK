@@ -44,7 +44,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   this->RequestSetSpatialObject( m_ImageSpatialObject );
 
   // Create classes for displaying images
-  m_ImageActor = vtkImageActor::New();
+  m_ImageActor = NULL;
   m_MapColors  = vtkImageMapToColors::New();
   m_LUT        = vtkLookupTable::New();
 
@@ -76,6 +76,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::~ImageSpatialObjectRepresentation()  
 {
 
+  this->DeleteActors();
+
   if( m_ImageActor )
     {
     m_ImageActor->SetInput( NULL );
@@ -100,6 +102,16 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     }
 }
 
+/** Overloaded DeleteActor function*/
+template < class TImageSpatialObject >
+void 
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::DeleteActors( )
+{
+  this->Superclass::DeleteActors();
+  m_ImageActor = NULL;
+}
+ 
 /** Set the Image Spatial Object */
 template < class TImageSpatialObject >
 void 
@@ -216,6 +228,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 {
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
+
+  m_ImageActor = vtkImageActor::New();
 
   if( m_ImageActor )
     {

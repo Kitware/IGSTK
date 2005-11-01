@@ -109,6 +109,9 @@ public:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
+  /** Overloaded function to delete actors */
+  void DeleteActors();
+
   /** Create the VTK actors for displaying geometry */
   void CreateActors();
 
