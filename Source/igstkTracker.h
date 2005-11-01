@@ -68,6 +68,9 @@ public:
 
   /** typedefs from igstk::TrackerPort class */
   typedef igstk::TrackerTool             TrackerToolType;
+  typedef TrackerToolType::Pointer       TrackerToolPointer;
+  typedef TrackerToolType::ConstPointer  TrackerToolConstPointer;
+
 
   /** typedefs from igstk::TrackerTool class */
   typedef Transform                      TransformType;
@@ -89,11 +92,7 @@ public:
   typedef TrackerPortType::Pointer          TrackerPortPointer;
   typedef std::vector< TrackerPortPointer > TrackerPortVectorType;
 
-  typedef igstk::TrackerTool             TrackerToolType;
-  typedef TrackerToolType::Pointer       TrackerToolPointer;
-  typedef TrackerToolType::ConstPointer  TrackerToolConstPointer;
-
-  /**  Run-time type information (and related methods). */
+    /**  Run-time type information (and related methods). */
   igstkTypeMacro(Tracker, Object);
 
   /** Method for creation of a reference counted object. */
