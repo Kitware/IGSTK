@@ -47,22 +47,22 @@ else
         xywh {375 0 770 670} box DOWN_FRAME
       } {
         Fl_Box DisplayAxial {
-          label {Display 3D} selected
+          label {Display 3D}
           xywh {376 1 380 330} box FLAT_BOX color 0 labelcolor 7
           class {igstk::View2D}
         }
-        Fl_Box displaySagittal {
+        Fl_Box DisplaySagittal {
           label {Display Sagittal}
           xywh {765 1 380 330} box FLAT_BOX color 0 labelcolor 7
           class {igstk::View2D}
         }
-        Fl_Box display3D {
+        Fl_Box Display3D {
           label {Display 3D}
           xywh {765 339 380 330} box FLAT_BOX color 0 labelcolor 7
           class {igstk::View3D}
         }
-        Fl_Box displayCoronal {
-          label {Display Coronal}
+        Fl_Box DisplayCoronal {
+          label {Display Coronal} selected
           xywh {376 340 380 330} box FLAT_BOX color 0 labelcolor 7
           class {igstk::View2D}
         }

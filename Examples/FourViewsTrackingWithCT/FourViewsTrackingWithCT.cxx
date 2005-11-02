@@ -46,12 +46,13 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT( void ):m_StateMachine(this)
     igstkLogMacro( DEBUG, "Problem opening Log file, log output to cerr only " );
     }
 
-  
+  /*
   this->Display3D->RequestResetCamera();
   this->Display3D->Update();
   this->Display3D->RequestEnableInteractions();
   this->Display3D->RequestSetRefreshRate( 60 ); // 60 Hz
   this->Display3D->RequestStart();
+  */
 
   this->DisplayAxial->RequestResetCamera();
   this->DisplayAxial->Update();
@@ -110,13 +111,27 @@ void FourViewsTrackingWithCT::RequestLoadImage( void )
   if ( directoryname != NULL )
     {
     //State Machine
-    //this->LoadImage( directoryname ); // Temp call, for testing only
+    this->LoadImage( directoryname ); // Temp call, for testing only
     }
   else
     {
     //State Machine
     }
 }
+
+void FourViewsTrackingWithCT::LoadImage( const char * directoryname )
+{
+  m_ImageReader = ImageReaderType::New();
+  m_ImageReader->RequestSetDirectory( directoryname );
+  m_ImageReader->RequestReadImage();
+
+  CTImageSpatialObjectRepresentation::Pointer  imageOR = CTImageSpatialObjectRepresentation::New();
+  imageOR->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
+
+  DisplayAxial->RequestAddObject( imageOR->Copy() );
+  DisplayAxial->RequestResetCamera();
+}
+
 
 void FourViewsTrackingWithCT::RequestInitializeTracker()
 {
@@ -130,19 +145,5 @@ void FourViewsTrackingWithCT::RequestStopTracking()
 {
 }
 
-void FourViewsTrackingWithCT::LoadImage( const char * directoryname )
-{
-/*
-    m_ImageReader = ImageReaderType::New();
-    m_ImageReader->RequestSetDirectory( directoryname );
-    m_ImageReader->RequestReadImage();
-
-    CTImageSpatialObjectRepresentation::Pointer  imageOR = CTImageSpatialObjectRepresentation::New();
-    imageOR->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
-      
-    displayAxial->RequestAddObject( imageOR->Copy() );
-    displayAxial->RequestResetCamera();
-*/
-}
 
 } // end of namespace
