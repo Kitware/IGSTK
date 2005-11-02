@@ -1,12 +1,12 @@
 PROJECT(FourViewsTrackingWithCT)
   
 SET(FourViewsTrackingWithCT_GUI_SRCS
-  FourViewsTrackingWithCT.fl
+  FourViewsTrackingWithCTGUI.fl
   )
   
 SET(FourViewsTrackingWithCT_SRCS
   main.cxx
-  FourViewsTrackingWithCTImplementation.cxx
+  FourViewsTrackingWithCT.cxx
   )
 
 INCLUDE_DIRECTORIES(
