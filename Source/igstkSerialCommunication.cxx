@@ -402,9 +402,14 @@ void SerialCommunication::Sleep( unsigned int milliseconds )
 SerialCommunication::ResultType 
 SerialCommunication::Write( const char *data, unsigned int numberOfBytes )
 {
-  // this call to the log macro assumes data is null terminated
+  // In case the data contains nulls or non-graphical characters,
+  // encode it before logging it
+  std::string encodedString;
+  igstk::BinaryData::Encode(encodedString, (unsigned char *)data,
+                            m_BytesToWrite);
   igstkLogMacro( DEBUG, "SerialCommunication::Write(" 
-                 << data << ", " << numberOfBytes << ") called...\n" );
+                 << encodedString << ", " << numberOfBytes
+                 << ") called...\n" );
 
   m_OutputData = data;
   m_BytesToWrite = numberOfBytes;
@@ -413,12 +418,6 @@ SerialCommunication::Write( const char *data, unsigned int numberOfBytes )
   if( m_Capture && m_CaptureFileStream.is_open() )
     {
     m_CaptureMessageNumber++;
-
-    std::string encodedString;
-
-    BinaryData::Encode(encodedString,
-                       (const unsigned char*)m_OutputData,
-                       numberOfBytes);
 
     igstkLogMacro2( m_Recorder, INFO, m_CaptureMessageNumber
                     << ". command[" << numberOfBytes << "] "
@@ -448,17 +447,23 @@ SerialCommunication::Read( char *data, unsigned int numberOfBytes,
   // terminate the string
   data[bytesRead] = '\0';
 
+
+  // In case the data contains nulls or non-graphical characters,
+  // encode it before logging it
+  std::string encodedString;
+  BinaryData::Encode(encodedString, (unsigned char*)data, bytesRead);
+
   // Recording for data received
   if( m_Capture && m_CaptureFileStream.is_open() )
     {
-    std::string encodedString;
-    BinaryData::Encode(encodedString, (const unsigned char*)m_InputData, bytesRead);
     igstkLogMacro2( m_Recorder, INFO, m_CaptureMessageNumber
-                        << ". receive[" << bytesRead << "] " << encodedString << std::endl );
+                    << ". receive[" << bytesRead << "] "
+                    << encodedString << std::endl );
     }
 
-  igstkLogMacro( DEBUG, "SerialCommunication::Read(" << data << ", "
+  igstkLogMacro( DEBUG, "SerialCommunication::Read(" << encodedString << ", "
                  << numberOfBytes << ", " << bytesRead << ") called...\n" );
+
   return m_ReturnValue;
 }
 
