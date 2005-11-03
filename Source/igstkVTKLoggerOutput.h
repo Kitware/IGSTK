@@ -22,6 +22,7 @@
 #define __igstkVTKLoggerOutput_h
 
 #include <vtkOutputWindow.h>
+#include <vtkSmartPointer.h>
 #include <itkLogger.h>
 #include "igstkMacros.h"
 
@@ -46,8 +47,10 @@ class VTKLoggerOutput : public vtkOutputWindow
 {
 public:
   /** Standard class typedefs. */
-  typedef VTKLoggerOutput        Self;
-  typedef vtkOutputWindow  Superclass;
+  typedef VTKLoggerOutput              Self;
+  typedef vtkOutputWindow              Superclass;
+  typedef vtkSmartPointer<Self>        Pointer;
+  typedef vtkSmartPointer<const Self>  ConstPointer;
   
   /** Run-time type information (and related methods). */
   igstkTypeMacro(VTKLoggerOutput, vtkOutputWindow);
