@@ -63,9 +63,6 @@ public:
   /** Connect this representation class to the spatial object */
   void RequestSetTubeObject( const TubeObjectType * TubeObject );
 
-  /** Create the VTK actors */
-  void CreateActors();
-
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
@@ -79,6 +76,9 @@ protected:
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+  /** Create the VTK actors */
+  void CreateActors();
 
 private:
 

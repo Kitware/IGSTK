@@ -62,9 +62,6 @@ public:
   /** Connect this representation class to the spatial object */
   void RequestSetMeshObject( const MeshObjectType * MeshObject );
 
-  /** Create the VTK actors */
-  void CreateActors();
-
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
@@ -78,6 +75,9 @@ protected:
 
   /** Destructor */
   ~MeshObjectRepresentation( void );
+
+  /** Create the VTK actors */
+  void CreateActors();
 
 private:
 

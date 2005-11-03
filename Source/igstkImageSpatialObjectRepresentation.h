@@ -109,12 +109,6 @@ public:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
-  /** Overloaded function to delete actors */
-  void DeleteActors();
-
-  /** Create the VTK actors for displaying geometry */
-  void CreateActors();
-
   /** Declare the ImageReaderToImageSpatialObject class to be a friend 
    *  in order to give it access to the private method GetITKImage(). */
   igstkFriendClassMacro( igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
@@ -127,6 +121,12 @@ protected:
   /** Connect the VTK image from the ImageSpatialObject to the
    * ImageSpatialObjectRepresentation*/
   void ConnectImage();
+
+  /** Overloaded function to delete actors */
+  void DeleteActors();
+
+  /** Create the VTK actors for displaying geometry */
+  void CreateActors();
 
 private:
 
