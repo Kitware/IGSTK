@@ -47,7 +47,6 @@
 
 namespace igstk{
 
-class Scene;
 
 /** \class View
  * 
@@ -64,8 +63,6 @@ public:
     
   typedef View      Self;
   typedef vtkRenderWindowInteractor Superclass;
-
-  igstkFriendClassMacro( Scene );
 
   igstkTypeMacro( View, vtkRenderWindowInteractor );
   
@@ -181,7 +178,7 @@ private:
   ObserverType::Pointer     m_PulseObserver;
   ::itk::Object::Pointer    m_Reporter;
 
-  /** List of the children object plug to the Scene spatial object. */
+  /** List of the children object plug to the spatial object. */
   ObjectListType m_Objects; 
 
 private:

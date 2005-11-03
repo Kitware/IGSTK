@@ -36,7 +36,7 @@ namespace igstk
  *  \brief Transform representing relative positions and orientations in 3D space.
  * 
  * This class represents relative positions and orientations in 3D space. It is
- * intended to be used for positioning objects in the Scene and as a
+ * intended to be used for positioning objects in the scene and as a
  * communication vehicle between trackers and spatial objects. The class
  * contains a TimeStamp defining the validity period for the information in the
  * transform. 
