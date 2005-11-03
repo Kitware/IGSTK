@@ -152,7 +152,7 @@ int igstkSerialCommunicationTest( int argc, char * argv[] )
   serialComm->SendBreak();
   serialComm->CloseCommunication();
   // exit since a real test isn't possible without loopback device
-  return EXIT_SUCCESS;
+  return testStatus;
 #endif /* IGSTK_TEST_LOOPBACK_ATTACHED */
 
 #ifdef IGSTK_TEST_LOOPBACK_ATTACHED
