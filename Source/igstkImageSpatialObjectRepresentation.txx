@@ -173,29 +173,12 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageSpatialObject = m_ImageSpatialObjectToAdd;
 
   this->RequestSetSpatialObject( m_ImageSpatialObject );
+  
+  // This method gets a VTK image data from the private method of the
+  // ImageSpatialObject and stores it in the representation by invoking the
+  // private SetImage method.
+  this->ConnectImage();
 
-  if( m_ImageActor && m_MapColors && m_LUT )
-    {
-    m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
-    m_LUT->SetSaturationRange (0, 0);
-    m_LUT->SetHueRange (0, 0);
-    m_LUT->SetValueRange (0, 1);
-    m_LUT->SetRampToLinear();
-
-    m_MapColors->SetLookupTable( m_LUT );
-
-    // This method gets a VTK image data from the private method of the
-    // ImageSpatialObject and stores it in the representation by invoking the
-    // private SetImage method.
-    this->ConnectImage();
-
-    m_MapColors->SetInput( m_ImageData );
-    
-    m_ImageActor->SetInput( m_MapColors->GetOutput() );
-
-    m_ImageActor->SetDisplayExtent( 0, 511, 0, 511, 0, 0 );
-    m_ImageActor->InterpolateOn();
-    }
 }
 
 
@@ -235,6 +218,25 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     {
     this->AddActor( m_ImageActor );
     }
+
+  if( m_ImageActor && m_MapColors && m_LUT )
+    {
+    m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+    m_LUT->SetSaturationRange (0, 0);
+    m_LUT->SetHueRange (0, 0);
+    m_LUT->SetValueRange (0, 1);
+    m_LUT->SetRampToLinear();
+
+    m_MapColors->SetLookupTable( m_LUT );
+
+    m_MapColors->SetInput( m_ImageData );
+    
+    m_ImageActor->SetInput( m_MapColors->GetOutput() );
+
+    m_ImageActor->SetDisplayExtent( 0, 511, 0, 511, 0, 0 );
+    m_ImageActor->InterpolateOn();
+    }
+
 }
 
 /** Create a copy of the current object representation */
