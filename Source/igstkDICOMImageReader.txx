@@ -135,7 +135,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   //Errors related to  image reading 
   m_StateMachine.AddTransition(m_AttemptingToReadImageState,
                                m_ImageReadingErrorInput,
-                               m_AttemptingToReadImageState,
+                               m_IdleState,
                                &DICOMImageReader::ReportImageReadingError);
 
    // Select the initial state of the state machine
@@ -257,15 +257,17 @@ void DICOMImageReader<TPixelType>::AttemptReadImage()
   try
     {
     m_ImageSeriesReader->Update();
-    this->m_StateMachine.PushInput( this->m_ImageReadingSuccessInput );    
     }
   catch( itk::ExceptionObject & excp )
     {
+    this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );    
     DICOMImageReadingErrorEvent event;
     event.SetString( excp.GetDescription() );
     this->InvokeEvent( event );
     return;
     }
+
+  this->m_StateMachine.PushInput( this->m_ImageReadingSuccessInput );    
 
   this->m_StateMachine.ProcessInputs();
 
