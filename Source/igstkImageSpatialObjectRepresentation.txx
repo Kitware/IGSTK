@@ -21,7 +21,6 @@
 #include "igstkImageSpatialObjectRepresentation.h"
 
 #include "vtkPolyDataMapper.h"
-#include "vtkActor.h"
 #include "vtkProperty.h"
 #include "vtkImageData.h"
 
@@ -54,6 +53,9 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   
   m_StateMachine.AddInput( m_ValidImageSpatialObjectInput,  "ValidImageSpatialObjectInput" );
   m_StateMachine.AddInput( m_NullImageSpatialObjectInput,   "NullImageSpatialObjectInput"  );
+  m_StateMachine.AddInput( m_ValidSliceNumberInput,   "ValidSliceNumberInput"  );
+  m_StateMachine.AddInput( m_InvalidSliceNumberInput,   "InvalidSliceNumberInput"  );
+  m_StateMachine.AddInput( m_ValidOrientationInput,   "ValidOrientationInput"  );
 
   m_StateMachine.AddState( m_NullImageSpatialObjectState,  "NullImageSpatialObjectState"     );
   m_StateMachine.AddState( m_ValidImageSpatialObjectState, "ValidImageSpatialObjectState"     );
@@ -62,8 +64,14 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 
   m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetImageSpatialObject );
+  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_InvalidSliceNumberInput, m_NullImageSpatialObjectState,  NoAction );
+  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_ValidSliceNumberInput, m_NullImageSpatialObjectState,  NoAction );
   m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidSliceNumberInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetSliceNumber ); 
+  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_InvalidSliceNumberInput, m_ValidImageSpatialObjectState,  NoAction ); 
+
+  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidOrientationInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
 
   m_StateMachine.SelectInitialState( m_NullImageSpatialObjectState );
 
@@ -135,22 +143,93 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 template < class TImageSpatialObject >
 void 
 ImageSpatialObjectRepresentation< TImageSpatialObject >
-::SetZSlice( int slice )
+::RequestSetOrientation( OrientationType orientation )
 {
-  int minz;
-  int maxz;
+  m_OrientationToBeSet = orientation;
+  m_StateMachine.PushInput( m_ValidOrientationInput );
+}
+
+
+template < class TImageSpatialObject >
+void 
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::SetOrientation()
+{
+  m_Orientation = m_OrientationToBeSet;
+}
+  
+
+template < class TImageSpatialObject >
+void 
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::RequestSetSliceNumber( SliceNumberType slice )
+{
+
+  m_SliceNumberToBeSet = slice;
 
   if( m_ImageActor )
     {
-    minz = m_ImageActor->GetWholeZMin();
-    maxz = m_ImageActor->GetWholeZMax();
 
-    if( slice >= minz && slice <= maxz )
+    SliceNumberType minSlice = 0;
+    SliceNumberType maxSlice = 0;
+    
+    int ext[6];
+    m_ImageData->GetExtent( ext );
+
+    switch( m_Orientation )
       {
-      m_ImageActor->SetDisplayExtent( 0, 511, 0, 511, slice, slice );
+      case Axial:
+        minSlice = ext[0];
+        maxSlice = ext[1];
+        break;
+      case Sagittal:
+        minSlice = ext[4];
+        maxSlice = ext[5];
+        break;
+      case Coronal:
+        minSlice = ext[2];
+        maxSlice = ext[3];
+        break;
       }
+
+    if( slice >= minSlice && slice <= maxSlice )
+      {
+      m_StateMachine.PushInput( m_ValidSliceNumberInput );
+      }
+    else
+      {
+      m_StateMachine.PushInput( m_InvalidSliceNumberInput );
+      }
+
     }
 }
+
+template < class TImageSpatialObject >
+void 
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::SetSliceNumber()
+{
+  
+  m_SliceNumber = m_SliceNumberToBeSet;
+
+  int ext[6];
+  m_ImageData->GetExtent( ext );
+
+  switch( m_Orientation )
+    {
+    case Axial:
+      m_ImageActor->SetDisplayExtent( ext[0], ext[1], ext[2], ext[3], m_SliceNumber, m_SliceNumber );
+      break;
+    case Sagittal:
+      m_ImageActor->SetDisplayExtent( m_SliceNumber, m_SliceNumber, ext[2], ext[3], ext[4], ext[5] );
+      break;
+    case Coronal:
+      m_ImageActor->SetDisplayExtent( ext[0], ext[1], m_SliceNumber, m_SliceNumber, ext[4], ext[5] );
+      break;
+    }
+
+}
+
 
 template < class TImageSpatialObject >
 void 
@@ -233,8 +312,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     
     m_ImageActor->SetInput( m_MapColors->GetOutput() );
 
-    m_ImageActor->SetDisplayExtent( 0, 511, 0, 511, 0, 0 );
     m_ImageActor->InterpolateOn();
+    
     }
 
 }

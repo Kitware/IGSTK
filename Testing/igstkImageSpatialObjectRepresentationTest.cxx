@@ -56,6 +56,8 @@ int igstkImageSpatialObjectRepresentationTest( int , char* [] )
 
   std::cout << "Name of class = " << name << std::endl;
   
+  representation->RequestSetSliceNumber( 10 );
+
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
@@ -66,6 +68,13 @@ int igstkImageSpatialObjectRepresentationTest( int , char* [] )
   form->end();
   form->show();
    
+  // Test all possible orientations 
+  representation->RequestSetOrientation( RepresentationType::Sagittal );
+  representation->RequestSetOrientation( RepresentationType::Coronal );
+  representation->RequestSetOrientation( RepresentationType::Axial );
+
+  representation->RequestSetSliceNumber( 10 );
+
   // Do manual redraws
   for(unsigned int i=0; i<10; i++)
     {

@@ -96,14 +96,30 @@ public:
   /** Return a copy of the current object representation */
   Pointer Copy() const;
 
+  /** Orientation Type: Publically declared
+   * orientation types supported for slice viewing.
+  */
+  typedef enum
+    { 
+    Sagittal, 
+    Coronal, 
+    Axial 
+    } 
+  OrientationType;
+
   /** Connect this representation class to the spatial object */
   void RequestSetImageSpatialObject( const ImageSpatialObjectType * ImageSpatialObject );
 
-  ImageSpatialObjectRepresentation( void );
-  ~ImageSpatialObjectRepresentation( void );
+  /** Type used for representing the slice number */
+  typedef unsigned int SliceNumberType;
 
-  void SetZSlice( int slice );
+  /** Request the state machine to attempt to select a slice number */
+  void RequestSetSliceNumber( SliceNumberType slice );
 
+  /** Request the state machine to attempt to select a slice orientation */
+  void RequestSetOrientation( OrientationType orientation );
+
+  /** Set the Window Level for the representation */
   void SetWindowLevel( double window, double level );
 
   /** Print the object information in a stream. */
@@ -118,6 +134,12 @@ public:
 
 protected:
 
+  /** Constructor */
+  ImageSpatialObjectRepresentation();
+  
+  /** Destructor */
+  ~ImageSpatialObjectRepresentation();
+
   /** Connect the VTK image from the ImageSpatialObject to the
    * ImageSpatialObjectRepresentation*/
   void ConnectImage();
@@ -129,6 +151,9 @@ protected:
   void CreateActors();
 
 private:
+
+  ImageSpatialObjectRepresentation(const Self&);   //purposely not implemented
+  void operator=(const Self&);   //purposely not implemented
 
   /** Internal itkSpatialObject */
   ImageSpatialObjectConstPointer         m_ImageSpatialObject;
@@ -155,15 +180,32 @@ private:
    * private in order to prevent unsafe access from the VTK image layer. */
   void SetImage( const vtkImageData * image );
   
+  /** Actually set the Slice Number. */
+  void SetSliceNumber();
+
+  /** Actually set the Slice Orientation. */
+  void SetOrientation();
+      
 private:
 
   /** Inputs to the State Machine */
   InputType            m_ValidImageSpatialObjectInput;
   InputType            m_NullImageSpatialObjectInput;
+  InputType            m_ValidSliceNumberInput;
+  InputType            m_InvalidSliceNumberInput;
+  InputType            m_ValidOrientationInput;
   
   /** States for the State Machine */
   StateType            m_NullImageSpatialObjectState;
   StateType            m_ValidImageSpatialObjectState;
+
+  /** Variables for managing the Slice number through the StateMachine */
+  SliceNumberType      m_SliceNumberToBeSet;
+  SliceNumberType      m_SliceNumber;
+
+  /** Variables for managing the Orientation of the slices */
+  OrientationType      m_OrientationToBeSet;
+  OrientationType      m_Orientation;
 
 };
 
