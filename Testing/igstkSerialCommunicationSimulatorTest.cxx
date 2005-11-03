@@ -85,7 +85,7 @@ static void joinDirAndFile(char *result, int maxLen,
 }
 
 
-int igstkSerialCommunicationSimulatorTest( int, char * [] )
+int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 {
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
@@ -109,11 +109,24 @@ int igstkSerialCommunicationSimulatorTest( int, char * [] )
 
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
 
-  // logger object created for logging mouse activities
+  // logger object created 
+  std::string testName;
+  if (argc > 0)
+    {
+    testName = argv[0];
+    }
+  std::string outputDirectory = IGSTK_TEST_OUTPUT_DIR;
+  std::string filename = outputDirectory +"/";
+  filename = filename + testName;
+  filename = filename + "LoggerOutput.txt";
+  std::cout << "Logger output saved here:\n";
+  std::cout << filename << "\n"; 
 
+  std::ofstream loggerFile;
+  loggerFile.open( filename.c_str() );
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();  
-  logOutput->SetStream( std::cout );
+  logOutput->SetStream( loggerFile );
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG);
 

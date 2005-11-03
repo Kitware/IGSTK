@@ -102,7 +102,7 @@ public:
 };
 
 
-int igstkNDICommandInterpreterStressTest( int, char * [] )
+int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
 {
   typedef igstk::SerialCommunicationSimulator   CommunicationType;
 
@@ -113,10 +113,24 @@ int igstkNDICommandInterpreterStressTest( int, char * [] )
   NDICommandInterpreterTestCommand::Pointer errorCommand =
     NDICommandInterpreterTestCommand::New();
    
-  // create the logger object
+  // logger object created 
+  std::string testName;
+  if (argc > 0)
+    {
+    testName = argv[0];
+    }
+  std::string outputDirectory = IGSTK_TEST_OUTPUT_DIR;
+  std::string filename = outputDirectory +"/";
+  filename = filename + testName;
+  filename = filename + "LoggerOutput.txt";
+  std::cout << "Logger output saved here:\n";
+  std::cout << filename << "\n"; 
+
+  std::ofstream loggerFile;
+  loggerFile.open( filename.c_str() );
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();  
-  logOutput->SetStream( std::cout );
+  logOutput->SetStream( loggerFile );
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 

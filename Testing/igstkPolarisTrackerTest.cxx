@@ -40,6 +40,7 @@
 #include "igstkPolarisTracker.h"
 #include "igstkTransform.h"
 
+#ifdef IGSTK_SIMULATOR_TEST
 /** append a file name to a directory name and provide the result */
 static void joinDirAndFile(char *result, int maxLen,
                            const char *dirName, const char *fileName)
@@ -63,7 +64,7 @@ static void joinDirAndFile(char *result, int maxLen,
   // delete temporary string
   delete [] fullName;
 }
-
+#endif /* IGSTK_SIMULATOR_TEST */
 
 class SerialCommunicationTestCommand : public itk::Command 
 {
@@ -83,15 +84,19 @@ public:
 
   void Execute(const itk::Object * object, const itk::EventObject & event)
   {
-    std::cout << event.GetEventName() << std::endl;
+    // don't print "CompletedEvent", only print interesting events
+    if (!igstk::CompletedEvent().CheckEvent(&event))
+      {
+      std::cout << event.GetEventName() << std::endl;
+      }
   }
 };
 
 
 #ifdef IGSTK_SIMULATOR_TEST
-int igstkPolarisTrackerSimulatedTest( int, char * [] )
+int igstkPolarisTrackerSimulatedTest( int argc, char * argv[] )
 #else  /* IGSTK_SIMULATOR_TEST */
-int igstkPolarisTrackerTest( int, char * [] )
+int igstkPolarisTrackerTest( int argc, char * argv[] )
 #endif
 {
   typedef itk::Logger                   LoggerType; 
@@ -113,13 +118,26 @@ int igstkPolarisTrackerTest( int, char * [] )
 
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
 
-  // logger object created for logging mouse activities
+  // logger object created 
+  std::string testName;
+  if (argc > 0)
+    {
+    testName = argv[0];
+    }
+  std::string outputDirectory = IGSTK_TEST_OUTPUT_DIR;
+  std::string filename = outputDirectory +"/";
+  filename = filename + testName;
+  filename = filename + "LoggerOutput.txt";
+  std::cout << "Logger output saved here:\n";
+  std::cout << filename << "\n"; 
 
+  std::ofstream loggerFile;
+  loggerFile.open( filename.c_str() );
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();  
-  logOutput->SetStream( std::cout );
+  logOutput->SetStream( loggerFile );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG); //DEBUG );
+  logger->SetPriorityLevel( itk::Logger::DEBUG);
 
   serialComm->AddObserver( itk::AnyEvent(), my_command);
 
@@ -149,6 +167,9 @@ int igstkPolarisTrackerTest( int, char * [] )
   igstk::PolarisTracker::Pointer  tracker;
 
   tracker = igstk::PolarisTracker::New();
+
+
+
 
   tracker->SetLogger( logger );
 
