@@ -65,6 +65,8 @@ SerialCommunicationForWindows::InternalOpenPort( void )
     device = deviceNames[portNumber];
     }
 
+  igstkLogMacro( DEBUG, "InternalOpenPort on " << device << "\n" );
+
   portHandle = CreateFile(device,
                           GENERIC_READ|GENERIC_WRITE,
                           0,  /* not allowed to share ports */
@@ -75,21 +77,18 @@ SerialCommunicationForWindows::InternalOpenPort( void )
 
   if (portHandle == INVALID_HANDLE_VALUE)
     {
+    igstkLogMacro( WARNING, "InternalOpenPort: CreateFile() failed.\n" );
     return FAILURE;
     }
 
-  /* save the serial port state so that it can be restored when
-     the serial port is closed in ndiSerialClose() */
-  if (m_PortHandle == portHandle ||
-      m_PortHandle == INVALID_HANDLE_VALUE)
-    {
-    m_PortHandle = portHandle;
-    }
+  /* save the port handle. */
+  m_PortHandle = portHandle;
 
   if (SetupComm(portHandle, 1600, 1600) == FALSE)
     { /* set buffer size */
     CloseHandle(portHandle);
     m_PortHandle = INVALID_HANDLE_VALUE;
+    igstkLogMacro( WARNING, "InternalOpenPort: SetupComm() failed.\n" );
     return FAILURE;
     }
 
@@ -97,6 +96,7 @@ SerialCommunicationForWindows::InternalOpenPort( void )
     {
     CloseHandle(portHandle);
     m_PortHandle = INVALID_HANDLE_VALUE;
+    igstkLogMacro( WARNING, "InternalOpenPort: GetCommState() failed.\n" );
     return FAILURE;
     }
 
@@ -110,18 +110,21 @@ SerialCommunicationForWindows::InternalOpenPort( void )
     {
     CloseHandle(portHandle);
     m_PortHandle = INVALID_HANDLE_VALUE;
+    igstkLogMacro( WARNING, "InternalOpenPort: SetCommState() failed.\n" );
     return FAILURE;
     }
   
   if (SetCommTimeouts(portHandle,&default_ctmo) == FALSE)
     {
-    SetCommState(portHandle,&commSettings);
     CloseHandle(portHandle);
     m_PortHandle = INVALID_HANDLE_VALUE;
+    igstkLogMacro( WARNING, "InternalOpenPort: SetCommTimeouts() failed.\n" );
     return FAILURE;
     }
 
   m_OldTimeoutPeriod = timeoutPeriod;
+
+  igstkLogMacro( DEBUG, "InternalOpenPort succeeded...\n" );
 
   return SUCCESS;
 }
@@ -210,6 +213,8 @@ SerialCommunicationForWindows::InternalUpdateParameters( void )
   if (SetCommState(m_PortHandle,&commSettings) == FALSE ||
       SetCommTimeouts(m_PortHandle,&ctmo) == FALSE)
     {
+    igstkLogMacro( WARNING, "SetCommunicationParameters: SetCommState() "
+                   "or SetCommTimeouts() failed\n" );
     return FAILURE;
     }
 
