@@ -15,14 +15,14 @@
 
 =========================================================================*/
 #include "igstkView2D.h"
-
+#include "vtkInteractorStyleImage.h"
 
 namespace igstk {
 
 /** Constructor */
 View2D::View2D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
 {
-
+  vtkRenderWindowInteractor::SetInteractorStyle( vtkInteractorStyleImage::New() );
 }
 
 /** Destructor */
