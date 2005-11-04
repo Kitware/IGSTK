@@ -79,4 +79,7 @@ void RegisterTests()
   REGISTER_TEST(igstkViewTest);
   REGISTER_TEST(igstkViewRefreshRateTest);
   REGISTER_TEST(igstkVTKLoggerOutputTest);
+  REGISTER_TEST(igstkMeshReaderTest);
+  REGISTER_TEST(igstkSpatialObjectReaderTest);
+  REGISTER_TEST(igstkTubeReaderTest);
 }

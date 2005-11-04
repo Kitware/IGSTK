@@ -55,6 +55,11 @@ SET(IGSTK_HEADS
   igstkView2D.h
   igstkView3D.h
   igstkVTKLoggerOutput.h
+  igstkSpatialObjectReader.h
+  igstkTubeReader.h
+  igstkMeshReader.h
+  igstkGroupObject.h
+  igstkTubeGroupObject.h
 )
 
 # The implementation files
@@ -105,6 +110,10 @@ SET(IGSTK_SRCS
   igstkView2D.cxx
   igstkView3D.cxx
   igstkVTKLoggerOutput.cxx
+  igstkTubeReader.cxx
+  igstkMeshReader.cxx
+  igstkGroupObject.cxx
+  igstkTubeGroupObject.cxx
 )
 
 

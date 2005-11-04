@@ -115,6 +115,22 @@ IF (IGSTK_DATA_ROOT)
    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTK_TESTS} 
              igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTK_DATA_ROOT}/Input/E000192 )
 
+   ADD_TEST( igstkMeshReaderTest ${IGSTKSandbox_TESTS} igstkMeshReaderTest 
+       ${IGSTK_DATA_ROOT}/liver.msh  
+       ${IGSTK_DATA_ROOT}/liverCorruptedOnPurpose.msh )
+
+   ADD_TEST( igstkTubeReaderTest ${IGSTKSandbox_TESTS} igstkTubeReaderTest 
+       ${IGSTK_DATA_ROOT}/vessel.tre 
+       ${IGSTK_DATA_ROOT}/vesselCorruptedOnPurpose.tre  
+       ${IGSTK_DATA_ROOT}/vesselWithoutReadPermissions.tre )
+
+   ADD_TEST( igstkSpatialObjectReaderTest ${IGSTKSandbox_TESTS} igstkSpatialObjectReaderTest 
+       ${IGSTK_DATA_ROOT}/vessel.tre 
+       ${IGSTK_DATA_ROOT}/vesselCorruptedOnPurpose.tre  
+       ${IGSTK_DATA_ROOT}/vesselWithoutReadPermissions.tre  
+       )
+
+
 ENDIF(IGSTK_DATA_ROOT)
 
 ADD_TEST( igstkImageReaderTest ${IGSTK_TESTS} igstkImageReaderTest )
@@ -131,11 +147,11 @@ ADD_TEST( igstkLandmark3DRegistrationTest ${IGSTK_TESTS} igstkLandmark3DRegistra
 
 
 SET(BasicTests_SRCS
-  igstkAuroraTrackerSimulatedTest
-  igstkBasicTrackerTest
-  igstkBinaryDataTest
-  igstkCommunicationTest
-  igstkCylinderObjectTest
+  igstkAuroraTrackerSimulatedTest.cxx
+  igstkBasicTrackerTest.cxx
+  igstkBinaryDataTest.cxx
+  igstkCommunicationTest.cxx
+  igstkCylinderObjectTest.cxx
   igstkDICOMImageReaderTest.cxx
   igstkDICOMImageReaderErrorsTest.cxx
   igstkCTImageSpatialObjectTest.cxx
@@ -146,32 +162,35 @@ SET(BasicTests_SRCS
   igstkCTImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkStringEventTest.cxx
-  igstkEllipsoidObjectTest
-  igstkFLTKTextBufferLogOutputTest
-  igstkFLTKTextLogOutputTest
+  igstkEllipsoidObjectTest.cxx
+  igstkFLTKTextBufferLogOutputTest.cxx
+  igstkFLTKTextLogOutputTest.cxx
   igstkLandmark3DRegistrationTest.cxx
   igstkImageReaderTest.cxx
   igstkCTImageReaderTest.cxx
   igstkMRImageReaderTest.cxx
-  igstkMeshObjectTest
-  igstkMultipleOutputTest
-  igstkNDICommandInterpreterSimulatedTest  
-  igstkNDICommandInterpreterStressTest
+  igstkMeshObjectTest.cxx
+  igstkMultipleOutputTest.cxx
+  igstkNDICommandInterpreterSimulatedTest.cxx
+  igstkNDICommandInterpreterStressTest.cxx
   igstkPolarisTrackerSimulatedTest.cxx
-  igstkPulseGeneratorTest
-  igstkSerialCommunicationTest
-  igstkSerialCommunicationSimulatorTest
-  igstkStateMachineTest
-  igstkStateMachineErrorsTest
-  igstkTimeStampTest
-  igstkTokenTest
-  igstkTrackerPortTest
-  igstkTrackerToolTest
-  igstkTransformTest
-  igstkTubeObjectTest
-  igstkViewTest
-  igstkViewRefreshRateTest
-  igstkVTKLoggerOutputTest
+  igstkPulseGeneratorTest.cxx
+  igstkSerialCommunicationTest.cxx
+  igstkSerialCommunicationSimulatorTest.cxx
+  igstkStateMachineTest.cxx
+  igstkStateMachineErrorsTest.cxx
+  igstkTimeStampTest.cxx
+  igstkTokenTest.cxx
+  igstkTrackerPortTest.cxx
+  igstkTrackerToolTest.cxx
+  igstkTransformTest.cxx
+  igstkTubeObjectTest.cxx
+  igstkViewTest.cxx
+  igstkViewRefreshRateTest.cxx
+  igstkVTKLoggerOutputTest.cxx
+  igstkMeshReaderTest.cxx 
+  igstkSpatialObjectReaderTest.cxx
+  igstkTubeReaderTest.cxx 
   )
 
 IF(IGSTK_TEST_AURORA_ATTACHED)
