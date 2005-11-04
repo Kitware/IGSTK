@@ -55,11 +55,31 @@ public:
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, ::itk::Indent indent ); 
 
+  /** Orientation Type: Publically declared
+   * orientation types supported for slice viewing.  */
+  typedef enum
+    { 
+    Sagittal, 
+    Coronal, 
+    Axial 
+    } 
+  OrientationType;
+
+
+  /** Select a slice orientation */
+  void RequestSetOrientation( const OrientationType & orientation );
+
 protected:
 
   /** This method implements the user interactions with the view. It is an
    * overload of a virtual medthod defined for FLTK classes. */
   int  handle( int event );
+
+private:
+
+  /** Variables for managing the Orientation of the slices */
+  OrientationType      m_OrientationToBeSet;
+  OrientationType      m_Orientation;
 
 };
 

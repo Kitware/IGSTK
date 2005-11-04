@@ -15,6 +15,7 @@
 
 =========================================================================*/
 #include "igstkView2D.h"
+
 #include "vtkInteractorStyleImage.h"
 
 namespace igstk {
@@ -42,6 +43,52 @@ int View2D::handle( int event )
 void View2D::PrintSelf( std::ostream& os, ::itk::Indent indent )
 {
   this->Superclass::PrintSelf(os,indent);
+}
+
+
+/** Select the orientation of the View */
+void View2D::RequestSetOrientation( const OrientationType & orientation )
+{
+  
+  m_Orientation = orientation;
+
+  double focalPoint[3];
+  double position[3];
+
+  for ( unsigned int cc = 0; cc < 3; cc++)
+    {
+    focalPoint[cc] = 0.0;
+    position[cc]   = focalPoint[cc];
+    }
+
+  const double distanceToFocalPoint = 1000;
+
+  switch( m_Orientation )
+    {
+  case Sagittal:
+      {
+      position[0] += distanceToFocalPoint;
+      m_Camera->SetViewUp (     0,  0,  -1 );
+      break;
+      }
+  case Coronal:
+      {
+      position[1] += distanceToFocalPoint;
+      m_Camera->SetViewUp (     0,  0,  -1 );
+      break;
+      }
+  case Axial:
+      {
+      position[2] += distanceToFocalPoint;
+      m_Camera->SetViewUp (     0,  -1,  0 );
+      break;
+      }
+    }
+
+  m_Camera->SetPosition (   position );
+  m_Camera->SetFocalPoint ( focalPoint );
+  m_Camera->SetClippingRange( 0.1, 100000 );
+  m_Camera->ParallelProjectionOn();
 }
 
 

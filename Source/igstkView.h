@@ -158,12 +158,13 @@ protected:
   /** Get the vtk Renderer */
   vtkRenderer* GetRenderer() {return m_Renderer;}
     
+  /** Default Camera */
+  vtkCamera             * m_Camera;
  
 private:
   
   vtkRenderWindow       * m_RenderWindow;
   vtkRenderer           * m_Renderer;
-  vtkCamera             * m_Camera;
   bool                    m_InteractionHandling;
 
   /** Member variables for holding temptative arguments of functions.
