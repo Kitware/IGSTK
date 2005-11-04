@@ -6,11 +6,6 @@
 SET(IGSTKSandbox_HEADS
   igstkMouseTracker.h
   igstkLandmarkRegistration.h
-  igstkSpatialObjectReader.h
-  igstkTubeReader.h
-  igstkMeshReader.h
-  igstkGroupObject.h
-  igstkTubeGroupObject.h
 )
 
 
@@ -18,10 +13,6 @@ SET(IGSTKSandbox_HEADS
 SET(IGSTKSandbox_SRCS  
   igstkMouseTracker.cxx
   igstkLandmarkRegistration.txx
-  igstkTubeReader.cxx
-  igstkMeshReader.cxx
-  igstkGroupObject.cxx
-  igstkTubeGroupObject.cxx
 )
 
 # Variable for holding extra libraries

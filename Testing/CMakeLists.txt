@@ -61,29 +61,11 @@ ADD_TEST(igstkLandmarkRegistrationTest ${IGSTKSandbox_TESTS} igstkLandmarkRegist
 
 IF (IGSTKSandbox_DATA_ROOT) 
 
-   ADD_TEST( igstkMeshReaderTest ${IGSTKSandbox_TESTS} igstkMeshReaderTest 
-       ${IGSTKSandbox_DATA_ROOT}/liver.msh  
-       ${IGSTKSandbox_DATA_ROOT}/liverCorruptedOnPurpose.msh )
-
-   ADD_TEST( igstkTubeReaderTest ${IGSTKSandbox_TESTS} igstkTubeReaderTest 
-       ${IGSTKSandbox_DATA_ROOT}/vessel.tre 
-       ${IGSTKSandbox_DATA_ROOT}/vesselCorruptedOnPurpose.tre  
-       ${IGSTKSandbox_DATA_ROOT}/vesselWithoutReadPermissions.tre )
-
-   ADD_TEST( igstkSpatialObjectReaderTest ${IGSTKSandbox_TESTS} igstkSpatialObjectReaderTest 
-       ${IGSTKSandbox_DATA_ROOT}/vessel.tre 
-       ${IGSTKSandbox_DATA_ROOT}/vesselCorruptedOnPurpose.tre  
-       ${IGSTKSandbox_DATA_ROOT}/vesselWithoutReadPermissions.tre  
-       )
-
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkLandmarkRegistrationTest.cxx
-  igstkMeshReaderTest.cxx 
-  igstkSpatialObjectReaderTest.cxx
-  igstkTubeReaderTest.cxx 
   )
 
 IF (IGSTK_USE_ATAMAI)
