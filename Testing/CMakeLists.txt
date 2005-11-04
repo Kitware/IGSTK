@@ -57,7 +57,6 @@ INCLUDE_DIRECTORIES (
   )
 
 ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
-ADD_TEST(igstkLandmarkRegistrationTest ${IGSTKSandbox_TESTS} igstkLandmarkRegistrationTest)
 
 IF (IGSTKSandbox_DATA_ROOT) 
 
@@ -65,7 +64,6 @@ ENDIF(IGSTKSandbox_DATA_ROOT)
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
-  igstkLandmarkRegistrationTest.cxx
   )
 
 IF (IGSTK_USE_ATAMAI)

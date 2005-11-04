@@ -5,14 +5,12 @@
 # The header files
 SET(IGSTKSandbox_HEADS
   igstkMouseTracker.h
-  igstkLandmarkRegistration.h
 )
 
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
   igstkMouseTracker.cxx
-  igstkLandmarkRegistration.txx
 )
 
 # Variable for holding extra libraries
