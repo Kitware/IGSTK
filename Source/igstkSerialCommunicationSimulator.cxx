@@ -177,11 +177,18 @@ SerialCommunicationSimulator::InternalSendBreak( void )
   return SUCCESS;
 }
 
-
-void SerialCommunicationSimulator::InternalSleep( unsigned int  )
+void SerialCommunicationSimulator::InternalSleep( unsigned int milliseconds )
 {
-  // Sleep isn't really needed during simulation, since
-  //  responses are instantaneous
+#ifdef WIN32
+  // use Windows sleep function
+  ::Sleep(milliseconds);
+#else
+  // use posix sleep function
+  struct timespec sleep_time, dummy;
+  sleep_time.tv_sec = milliseconds/1000;
+  sleep_time.tv_nsec = (milliseconds - sleep_time.tv_sec*1000)*1000000;
+  nanosleep(&sleep_time,&dummy);
+#endif
 }
 
 
@@ -245,11 +252,16 @@ SerialCommunicationSimulator::InternalRead( char *data,
       (!useTerminationCharacter &&
        bytesRead < bytesToRead))
     {
+    // to be realistic, sleep for the timeout period before returning
+    this->InternalSleep(this->GetTimeoutPeriod());
     igstkLogMacro( DEBUG, "InternalRead failed with timeout...\n");
     return TIMEOUT;
     }
 
   igstkLogMacro( DEBUG, "Read number of bytes = " << bytesRead << "\n" );
+
+  // to be realistic, sleep for a short period before returning
+  this->InternalSleep(5 + bytesRead/10);
 
   return SUCCESS;
 }
