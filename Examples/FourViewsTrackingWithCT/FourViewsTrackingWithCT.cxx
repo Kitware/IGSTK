@@ -57,9 +57,6 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ImageReader = ImageReaderType::New();
   m_ImageReader->SetLogger( logger );
 
-  m_ImageRepresentation = ImageRepresentationType::New();
-  m_ImageRepresentation->SetLogger( logger );
-  
   m_LandmarkRegistrtion = RegistrationType::New();
   m_LandmarkRegistrtion->SetLogger( logger );
 
@@ -84,15 +81,17 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   */
 
   this->DisplayAxial->SetLogger( logger );
-  this->DisplayAxial->SetLogger( logger );
-  this->DisplayAxial->SetLogger( logger );
-  /*
-  this->Display3D->RequestResetCamera();
-  this->Display3D->Update();
-  this->Display3D->RequestEnableInteractions();
-  this->Display3D->RequestSetRefreshRate( 60 ); // 60 Hz
-  this->Display3D->RequestStart();
-  */
+  this->DisplaySagittal->SetLogger( logger );
+  this->DisplayCoronal->SetLogger( logger );
+
+  m_ImageRepresentationAxial    = ImageRepresentationType::New();
+  m_ImageRepresentationSagittal = ImageRepresentationType::New();
+  m_ImageRepresentationCoronal  = ImageRepresentationType::New();
+
+  m_ImageRepresentationAxial->SetLogger( logger );
+  m_ImageRepresentationSagittal->SetLogger( logger );
+  m_ImageRepresentationCoronal->SetLogger( logger );
+
 
   /** Initialize State Machine */
   m_StateMachine.AddState( m_InitialState,                "InitialState"              );
@@ -148,6 +147,13 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_StateMachine.SelectInitialState( m_InitialState );
   m_StateMachine.SetReadyToRun();
 
+  std::ofstream ofile;
+  ofile.open("DemoApplicationStateMachineDiagram.dot");
+ 
+  const bool skipLoops = false;
+  this->ExportStateMachineDescription( ofile, skipLoops );
+
+  ofile.close();
 }
 
 /** Destructor */
@@ -226,11 +232,15 @@ void FourViewsTrackingWithCT::VerifyPatientName()
       m_StateMachine.PushInput( m_OverwritePatientNameInput );
       }
   }
+  // THIS INVOKATION SHOULD NOT BE HERE... THIS IS TEMPORARY 
+  // THE METHOD SHOULD BE CALLED BY THE STATE MACHINE
+  this->ConnectImageRepresentation();
 }
 
 void FourViewsTrackingWithCT::RequestSetImageLandmarks()
 {
 }
+
 void FourViewsTrackingWithCT::RequestInitializeTracker()
 {
 }
@@ -251,5 +261,45 @@ void FourViewsTrackingWithCT::RequestResliceImage()
 }
 
 
+/** This method should be invoked by the State Machine 
+ *  only when the Image has been loaded and the Patient
+ *  name has been verified */
+void FourViewsTrackingWithCT::ConnectImageRepresentation()
+{
+
+  m_ImageRepresentationAxial->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
+  m_ImageRepresentationSagittal->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
+  m_ImageRepresentationCoronal->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
+
+  m_ImageRepresentationAxial->RequestSetOrientation( ImageRepresentationType::Axial );
+  m_ImageRepresentationSagittal->RequestSetOrientation( ImageRepresentationType::Sagittal );
+  m_ImageRepresentationCoronal->RequestSetOrientation( ImageRepresentationType::Coronal );
+
+  this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
+  this->DisplaySagittal->RequestAddObject( m_ImageRepresentationSagittal );
+  this->DisplayCoronal->RequestAddObject( m_ImageRepresentationCoronal );
+
+  this->DisplayAxial->RequestResetCamera();
+  this->DisplayAxial->Update();
+  this->DisplayAxial->RequestEnableInteractions();
+  this->DisplayAxial->RequestSetRefreshRate( 30 ); // 30 Hz
+  this->DisplayAxial->RequestStart();
+
+  this->DisplaySagittal->RequestResetCamera();
+  this->DisplaySagittal->Update();
+  this->DisplaySagittal->RequestEnableInteractions();
+  this->DisplaySagittal->RequestSetRefreshRate( 30 ); // 30 Hz
+  this->DisplaySagittal->RequestStart();
+
+  this->DisplayCoronal->RequestResetCamera();
+  this->DisplayCoronal->Update();
+  this->DisplayCoronal->RequestEnableInteractions();
+  this->DisplayCoronal->RequestSetRefreshRate( 30 ); // 30 Hz
+  this->DisplayCoronal->RequestStart();
+
+
+
+}
+  
 
 } // end of namespace

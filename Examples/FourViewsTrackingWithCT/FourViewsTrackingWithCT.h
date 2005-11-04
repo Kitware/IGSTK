@@ -171,7 +171,10 @@ private:
   //std::string                         m_DICOMDirectory;
   
   ImageReaderType::Pointer            m_ImageReader;
-  ImageRepresentationType::Pointer    m_ImageRepresentation;
+
+  ImageRepresentationType::Pointer    m_ImageRepresentationAxial;
+  ImageRepresentationType::Pointer    m_ImageRepresentationCoronal;
+  ImageRepresentationType::Pointer    m_ImageRepresentationSagittal;
 
   RegistrationType::Pointer           m_LandmarkRegistrtion;
   LandmarkPointContainerType          m_ImageLandmarks;
@@ -186,6 +189,7 @@ private:
   /** Action methods to be invoked only by the state machine */
   void SetPatientName();
   void VerifyPatientName(); 
+  void ConnectImageRepresentation();
 };
 
 } // end of namespace
