@@ -38,6 +38,7 @@
 #include "igstkView2D.h"
 #include "igstkView3D.h"
 #include "igstkSpatialObject.h"
+#include "igstkSpatialObjectReader.h"
 #include "igstkCTImageReader.h"
 #include "igstkMRImageReader.h"
 #include "igstkLandmark3DRegistration.h"
@@ -138,6 +139,7 @@ namespace igstk
   typedef DICOMImageReader< ImageSpatialObjectType >     DICOMImageReaderType;
   typedef ImageSpatialObjectRepresentation< 
                             ImageSpatialObjectType >     ImageSpatialObjectRepresentationType;
+  typedef SpatialObjectReader<3,float>                   SpatialObjectReaderType;
 
   igstkDeclareSurrogateClass( SpatialObjectSurrogate, SpatialObject );
   igstkDeclareSurrogateClass( ImageSpatialObjectSurrogate, ImageSpatialObjectType );
@@ -182,6 +184,7 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::CTImageSpatialObject, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::CTImageSpatialObjectRepresentation, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::ImageSpatialObjectRepresentationType, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::SpatialObjectReaderType, outputDirectory, skipLoops );
 
 
 
