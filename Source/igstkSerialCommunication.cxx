@@ -406,7 +406,7 @@ SerialCommunication::Write( const char *data, unsigned int numberOfBytes )
   // encode it before logging it
   std::string encodedString;
   igstk::BinaryData::Encode(encodedString, (unsigned char *)data,
-                            m_BytesToWrite);
+                            numberOfBytes);
   igstkLogMacro( DEBUG, "SerialCommunication::Write(" 
                  << encodedString << ", " << numberOfBytes
                  << ") called...\n" );
