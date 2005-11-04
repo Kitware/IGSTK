@@ -84,14 +84,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::~ImageSpatialObjectRepresentation()  
 {
 
+  // This deletes also the m_ImageActor
   this->DeleteActors();
-
-  if( m_ImageActor )
-    {
-    m_ImageActor->SetInput( NULL );
-    m_ImageActor->Delete();
-    m_ImageActor = NULL;
-    }
 
 
   if( m_MapColors )
@@ -116,8 +110,12 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::DeleteActors( )
 {
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::DeleteActors called...\n");
+  
   this->Superclass::DeleteActors();
+  
   m_ImageActor = NULL;
+
 }
  
 /** Set the Image Spatial Object */
@@ -126,7 +124,10 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::RequestSetImageSpatialObject( const ImageSpatialObjectType * image )
 {
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::RequestSetImageSpatialObject called...\n");
+  
   m_ImageSpatialObjectToAdd = image;
+
   if( !m_ImageSpatialObjectToAdd )
     {
     m_StateMachine.PushInput( m_NullImageSpatialObjectInput );
@@ -145,7 +146,10 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::RequestSetOrientation( OrientationType orientation )
 {
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::RequestSetOrientation called...\n");
+  
   m_OrientationToBeSet = orientation;
+
   m_StateMachine.PushInput( m_ValidOrientationInput );
 }
 
@@ -155,6 +159,7 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetOrientation()
 {
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::SetOrientation called...\n");
   m_Orientation = m_OrientationToBeSet;
 }
   
@@ -164,6 +169,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::RequestSetSliceNumber( SliceNumberType slice )
 {
+
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::RequestSetSliceNumber called...\n");
 
   m_SliceNumberToBeSet = slice;
 
@@ -210,6 +217,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetSliceNumber()
 {
   
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::SetSliceNumber called...\n");
+
   m_SliceNumber = m_SliceNumberToBeSet;
 
   int ext[6];
@@ -236,6 +245,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetWindowLevel( double window, double level )
 {
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::SetWindowLevel called...\n");
+
   m_Window = window;
   m_Level = level;
 
@@ -248,6 +259,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetImageSpatialObject()
 {
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::SetImageSpatialObject called...\n");
+
   // We create the image spatial object
   m_ImageSpatialObject = m_ImageSpatialObjectToAdd;
 
@@ -278,6 +291,7 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::UpdateRepresentation()
 {    
+   igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::UpdateRepresentation called...\n");
    m_MapColors->SetInput( m_ImageData );
 }
 
@@ -288,6 +302,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::CreateActors()
 {
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::CreateActors called...\n");
+
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
 
@@ -324,6 +340,8 @@ typename ImageSpatialObjectRepresentation< TImageSpatialObject >::Pointer
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::Copy() const
 {
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::Copy called...\n");
+
   Pointer newOR = ImageSpatialObjectRepresentation::New();
   newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
   newOR->SetOpacity(this->GetOpacity());
@@ -338,6 +356,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetImage( const vtkImageData * image )
 {
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::SetImage called...\n");
+
   // This const_cast<> is needed here due to the lack of const-correctness in VTK 
   m_ImageData = const_cast< vtkImageData *>( image );
 }
@@ -349,6 +369,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::ConnectImage()
 {
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::ConnectImage called...\n");
+
   typedef Friends::ImageSpatialObjectRepresentationToImageSpatialObject  HelperType;
   HelperType::ConnectImage( m_ImageSpatialObject.GetPointer(), this );
 }
