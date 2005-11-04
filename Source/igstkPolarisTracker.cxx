@@ -59,7 +59,7 @@ PolarisTracker::CheckError(CommandInterpreterType *interpreter)
   const int errnum = interpreter->GetError();
   if (errnum)
     {
-    igstkLogMacro( DEBUG, interpreter->ErrorString(errnum) << "\n");
+    igstkLogMacro( WARNING, interpreter->ErrorString(errnum) << "\n");
     return FAILURE;
     }
 
@@ -90,15 +90,8 @@ PolarisTracker::ResultType PolarisTracker::InternalOpen( void )
 {
   igstkLogMacro( DEBUG, "PolarisTracker::InternalOpen called ...\n");
 
-  // Initialize the device 
+  m_CommandInterpreter->RESET();
   m_CommandInterpreter->INIT();
-
-  // Reset and try again if error
-  if (this->CheckError(m_CommandInterpreter) == FAILURE)
-    {
-    m_CommandInterpreter->RESET();
-    m_CommandInterpreter->INIT();
-    }
 
   return this->CheckError(m_CommandInterpreter);
 }
