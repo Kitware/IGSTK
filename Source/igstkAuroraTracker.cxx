@@ -55,6 +55,15 @@ AuroraTracker::CheckError(CommandInterpreterType *interpreter)
   const int errnum = interpreter->GetError();
   if (errnum)
     {
+    // convert errnum to a hexidecimal string
+    itk::OStringStream os;
+    os << "0x";
+    os.width(2);
+    os.fill('0');
+    os << std::hex << std::uppercase << errnum;
+    igstkLogMacro( WARNING, "Aurora Error " << os.str() << ": " <<
+                   interpreter->ErrorString(errnum) << "\n");
+
     igstkLogMacro( WARNING, interpreter->ErrorString(errnum) << "\n");
     return FAILURE;
     }
@@ -193,10 +202,11 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
       }
 
     // only report tools that are in view
-    if (m_AbsentBuffer[port] ||
-        portStatus & CommandInterpreterType::NDI_OUT_OF_VOLUME)
+    if (m_AbsentBuffer[port])
       {
       // there should be a method to set that the tool is not in view
+      igstkLogMacro( DEBUG, "PolarisTracker::InternalUpdateStatus: " <<
+                     "tool " << port << " is not in view\n");
       continue;
       }
 
@@ -259,12 +269,19 @@ AuroraTracker::ResultType AuroraTracker::InternalThreadedUpdateStatus( void )
   igstkLogMacro( DEBUG, "AuroraTracker::InternalThreadedUpdateStatus "
                  "called ...\n");
 
+  // get the transforms for all tools from the NDI
+  m_CommandInterpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
+
+  ResultType result = this->CheckError(m_CommandInterpreter);
+
+  // lock the buffer
+  m_BufferLock->Lock();
+
   // Initialize transformations to identity.
   // The NDI transform is 8 values:
   // the first 4 values are a quaternion
   // the next 3 values are an x,y,z position
   // the final value is an error estimate in the range [0,1]
-  m_BufferLock->Lock();
   unsigned int port;   // physical port number
   for (port = 0; port < NumberOfPorts; port++)
     {
@@ -277,16 +294,9 @@ AuroraTracker::ResultType AuroraTracker::InternalThreadedUpdateStatus( void )
     m_TransformBuffer[port][6] = 0.0;
     m_TransformBuffer[port][7] = 0.0;
     }
-  m_BufferLock->Unlock();
-
-  // get the transforms for all tools from the NDI
-  m_CommandInterpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
-
-  ResultType result = this->CheckError(m_CommandInterpreter);
 
   if (result == SUCCESS)
     {
-    m_BufferLock->Lock();
     unsigned long frame[NumberOfPorts];
     for (port = 0; port < NumberOfPorts; port++)
       {
@@ -306,19 +316,24 @@ AuroraTracker::ResultType AuroraTracker::InternalThreadedUpdateStatus( void )
       const int status = m_CommandInterpreter->GetTXPortStatus(ph);
       frame[port] = m_CommandInterpreter->GetTXFrame(ph);
 
-      for(unsigned int i = 0; i < 8; i++ )
+      if (!absent)
         {
-        m_TransformBuffer[port][i] = transform[i];
+        for(unsigned int i = 0; i < 8; i++ )
+          {
+          m_TransformBuffer[port][i] = transform[i];
+          }
         }
 
       m_AbsentBuffer[port] = absent;
       m_StatusBuffer[port] = status;
       }
-    m_BufferLock->Unlock();
     }
 
   // In the original vtkNDITracker code, there was a check at this
   // point in the code to see if any new tools had been plugged in
+
+  // unlock the buffer
+  m_BufferLock->Unlock();
 
   return result;
 }

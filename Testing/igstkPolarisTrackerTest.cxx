@@ -155,7 +155,7 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   char pathToCaptureFile[1024];
   joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTK_DATA_ROOT,
-                  "polaris_stream_09_29_2005.txt" );
+                  "polaris_stream_11_04_2005.txt" );
   serialComm->SetFileName( pathToCaptureFile );
 #else /* IGSTK_SIMULATOR_TEST */
   serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerTest.txt" );
@@ -203,16 +203,21 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  TransformType             transitions;
-  VectorType                position;
-
-  for(int i=0; i<10; i++)
-  {
+  for(unsigned int i=0; i<10; i++)
+    {
     tracker->UpdateStatus();
-    tracker->GetToolTransform( 0, 0, transitions );
-    position = transitions.GetTranslation();
-    std::cout << "Position = (" << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
-  }
+    for (unsigned int port = 0; port < 4; port++)
+      {
+      TransformType             transform;
+      VectorType                position;
+
+      tracker->GetToolTransform( port, 0, transform );
+      position = transform.GetTranslation();
+      std::cout << "Port " << port << "  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+      }
+    }
   
   tracker->Reset();
   

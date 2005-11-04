@@ -484,10 +484,16 @@ int NDICommandInterpreter::WriteSerialBreak()
     m_Communication->Sleep(500);
 
     result = NDI_WRITE_ERROR;
-    /* send break, reset the comm parameters, and sleep for 2 seconds */
+    /* send break, reset the comm parameters */
     if (m_Communication->SendBreak() == Communication::SUCCESS)
       {
-      m_Communication->Sleep(2000);
+      /* sleep time plus timeout time must be > 10 seconds, or
+       * a timeout error might occur while waiting for reset */
+      int sleepTime = 11000 - NDI_NORMAL_TIMEOUT;
+      if (sleepTime > 0)
+        {
+        m_Communication->Sleep(sleepTime);
+        }
       
       result = 0;
       }

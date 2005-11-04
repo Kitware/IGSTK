@@ -57,9 +57,18 @@ PolarisTracker::ResultType
 PolarisTracker::CheckError(CommandInterpreterType *interpreter)
 {
   const int errnum = interpreter->GetError();
+
   if (errnum)
     {
-    igstkLogMacro( WARNING, interpreter->ErrorString(errnum) << "\n");
+    // convert errnum to a hexidecimal string
+    itk::OStringStream os;
+    os << "0x";
+    os.width(2);
+    os.fill('0');
+    os << std::hex << std::uppercase << errnum;
+    igstkLogMacro( WARNING, "Polaris Error " << os.str() << ": " <<
+                   interpreter->ErrorString(errnum) << "\n");
+
     return FAILURE;
     }
 
@@ -149,7 +158,8 @@ PolarisTracker::ResultType PolarisTracker::InternalDeactivateTools( void )
 {
   for (unsigned int i = 0; i < NumberOfPorts; i++)
     { 
-    if (!m_SROMFileNames[i].empty())
+    if (!m_SROMFileNames[i].empty() &&
+        this->m_PortHandle[i] != 0)
       {
       this->ClearVirtualSROM(i);
       }
@@ -214,12 +224,13 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
       }
 
     // only report tools that are in view
-    if (m_AbsentBuffer[port] ||
-        portStatus & CommandInterpreterType::NDI_OUT_OF_VOLUME)
+    if (m_AbsentBuffer[port])
       {
       // there should be a method to set that the tool is not in view
+      igstkLogMacro( DEBUG, "PolarisTracker::InternalUpdateStatus: " <<
+                     "tool " << port << " is not in view\n");
       continue;
-      }
+      }      
 
     // create the transform
     TransformType transform;
@@ -279,12 +290,19 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
   igstkLogMacro( DEBUG, "PolarisTracker::InternalThreadedUpdateStatus "
                  "called ...\n");
 
+  // get the transforms for all tools from the NDI
+  m_CommandInterpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
+
+  ResultType result = this->CheckError(m_CommandInterpreter);
+
+  // lock the buffer
+  m_BufferLock->Lock();
+
   // Initialize transformations to identity.
   // The NDI transform is 8 values:
   // the first 4 values are a quaternion
   // the next 3 values are an x,y,z position
   // the final value is an error estimate in the range [0,1]
-  m_BufferLock->Lock();
   for (unsigned int port = 0; port < NumberOfPorts; port++)
     {
     m_TransformBuffer[port][0] = 1.0;
@@ -296,16 +314,9 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
     m_TransformBuffer[port][6] = 0.0;
     m_TransformBuffer[port][7] = 0.0;
     }
-  m_BufferLock->Unlock();
-
-  // get the transforms for all tools from the NDI
-  m_CommandInterpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
-
-  ResultType result = this->CheckError(m_CommandInterpreter);
 
   if (result == SUCCESS)
     {
-    m_BufferLock->Lock();
     unsigned long frame[ NumberOfPorts ];
     for (unsigned int port = 0; port < NumberOfPorts; port++)
       { 
@@ -326,19 +337,24 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
       const int status = m_CommandInterpreter->GetTXPortStatus(ph);
       frame[port] = m_CommandInterpreter->GetTXFrame(ph);
 
-      for( unsigned int i = 0; i < 8; i++ )
+      if (!absent)
         {
-        m_TransformBuffer[port][i] = transform[i];
+        for( unsigned int i = 0; i < 8; i++ )
+          {
+          m_TransformBuffer[port][i] = transform[i];
+          }
         }
 
       m_AbsentBuffer[port] = absent;
       m_StatusBuffer[port] = status;
       }
-    m_BufferLock->Unlock();
     }
 
   // In the original vtkNDITracker code, there was a check at this
   // point in the code to see if any new tools had been plugged in
+
+  // unlock the buffer
+  m_BufferLock->Unlock();
 
   return result;
 }
@@ -347,6 +363,8 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
 void PolarisTracker::AttachSROMFileNameToPort( const unsigned int portNum,
                                                std::string fileName )
 {
+  igstkLogMacro( DEBUG, "PolarisTracker::AttachSROMFileNameToPort called..\n");
+
   // the first 3 ports are active, don't allow SROMS for them
   if ( (portNum >= 3) && (portNum <= NumberOfPorts) )
     {
@@ -358,12 +376,21 @@ void PolarisTracker::AttachSROMFileNameToPort( const unsigned int portNum,
 bool PolarisTracker::LoadVirtualSROM( const unsigned int tool,
                                       const std::string SROMFileName) 
 {
+  igstkLogMacro( DEBUG, "PolarisTracker::LoadVirtualSROM called...\n");
+
+  if (this->m_PortHandle[tool] != 0)
+    {
+    igstkLogMacro( WARNING, "An SROM has already been loaded for tool "
+                   << tool << "\n");
+    return false;
+    }
+
   std::ifstream sromFile;
   sromFile.open(SROMFileName.c_str(), std::ios::binary );
 
   if (!sromFile.is_open())
     {
-    igstkLogMacro( DEBUG, "PolarisTracker::LoadVirtualSROM: couldn't "
+    igstkLogMacro( WARNING, "PolarisTracker::LoadVirtualSROM: couldn't "
                    "find SROM file " << SROMFileName << " ...\n");
     return false;
     }
@@ -375,23 +402,19 @@ bool PolarisTracker::LoadVirtualSROM( const unsigned int tool,
   sromFile.read( data, 1024 );
   sromFile.close();
 
-  // passive tools are identified by the letters "A", "B", "C", etc,
-  // and correspond to IGSTK port numbers 3 to 11
-  char portIdentifier[3] = "00";
-  portIdentifier[1] = tool - 3 + 'A';
-
+  // the "port" must be set to "**" to support the Vicra
   m_CommandInterpreter->PHRQ("********", // device number
                              "*",        // TIU or SCU
                              "*",        // wired or wireless
-                             portIdentifier,      // port
+                             "**",       // port
                              "**");      // channel
- 
-  const int ph = m_CommandInterpreter->GetPHRQHandle();
 
   if (this->CheckError(m_CommandInterpreter) == FAILURE)
     {
     return false;
     }
+ 
+  const int ph = m_CommandInterpreter->GetPHRQHandle();
 
   for ( unsigned int i = 0; i < 1024; i += 64)
     {
@@ -404,14 +427,21 @@ bool PolarisTracker::LoadVirtualSROM( const unsigned int tool,
     m_CommandInterpreter->PVWR(ph, i, hexbuffer);
     }
 
+  // set the port handle for the tool
+  this->m_PortEnabled[tool] = 0;
+  this->m_PortHandle[tool] = ph;
+
   return true;
 }
 
 /** Clear a previously loaded SROM. */
 void PolarisTracker::ClearVirtualSROM(const unsigned int tool)
 {
+  igstkLogMacro( DEBUG, "PolarisTracker::ClearVirtualSROM called...\n");
+
   const int ph = this->m_PortHandle[tool];
   m_CommandInterpreter->PHF(ph);
+
   this->m_PortEnabled[tool] = 0;
   this->m_PortHandle[tool] = 0;
 }
@@ -419,10 +449,15 @@ void PolarisTracker::ClearVirtualSROM(const unsigned int tool)
 /** Enable all tool ports that are occupied. */
 void PolarisTracker::EnableToolPorts()
 {
-  // reset our information about the tool ports
-  for (unsigned int port = 0; port < NumberOfPorts; port++)
+  igstkLogMacro( DEBUG, "PolarisTracker::EnableToolPorts called...\n");
+
+  // reset our information about the wired ports
+  for (unsigned int port = 0; port < 3; port++)
     {
     this->m_PortHandle[port] = 0;
+    }
+  for (unsigned int port = 0; port < NumberOfPorts; port++)
+    {
     this->m_PortEnabled[port] = 0;
     }
 
@@ -515,19 +550,36 @@ void PolarisTracker::EnableToolPorts()
     char location[512];
     m_CommandInterpreter->GetPHINFPortLocation(location);
 
+    // physical port number
     unsigned int port = 0;
-    if (location[11] >= 'A')
+
+    // the value of m_PortHandle should only be set for wired,
+    // for wireless tools it is set in LoadVirtualSROM
+    if (location[10] >= '0' && location[10] <= '9' &&
+        location[11] >= '0' && location[11] <= '9')
       {
-      port = location[11] - 'A' + 3;
+      unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
+      if (ndiport > 0 && ndiport <= NumberOfPorts)
+        {
+        port = ndiport - 1;
+        this->m_PortHandle[port] = ph;
+        }
       }
     else
       {
-      port = (location[10]-'0')*10 + (location[11]-'0') - 1;
-      }
-
-    if (port < NumberOfPorts)
-      {
-      this->m_PortHandle[port] = ph;
+      for (port = 0; port < NumberOfPorts; port++)
+        {
+        if (this->m_PortHandle[port] == ph)
+          {
+          break;
+          }
+        }
+      if (port >= NumberOfPorts)
+        {
+        igstkLogMacro( WARNING, "PolarisTracker::EnableToolPorts: "
+                       "cant find port for port handle\n" );
+        continue;
+        }
       }
 
     const int status = m_CommandInterpreter->GetPHINFPortStatus();
@@ -540,6 +592,8 @@ void PolarisTracker::EnableToolPorts()
 /** Disable all tool ports. */
 void PolarisTracker::DisableToolPorts( void )
 {
+  igstkLogMacro( DEBUG, "PolarisTracker::DisableToolPorts called...\n");
+
   // disable all enabled tools
   m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ENABLED_HANDLES);
   unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
