@@ -26,4 +26,6 @@ int main(int , char** )
   igstk::FourViewsTrackingWithCT::Pointer application = igstk::FourViewsTrackingWithCT::New();
 
   Fl::run();
+
+  return 0;
 }

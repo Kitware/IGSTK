@@ -31,17 +31,17 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 
-#include "igstkLandmarkRegistration.h"
+#include "igstkLandmark3DRegistration.h"
 
-#include "igstkPolarisTracker.h"
-#include "igstkPolarisTrackerTool.h"
-
+//#include "igstkSystemInformation.h"
 #include "igstkSandboxConfigure.h"
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
 #else
 #include "igstkSerialCommunicationForPosix.h"
 #endif
+
+#include "igstkPolarisTracker.h"
 
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
@@ -70,73 +70,122 @@ public:
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
-  /** Declarations needed for the Logging */
+  /** Declarations needed for the Logging the application */
   igstkLoggerMacro();
 
-  /** typedefs for the tracker */
-  typedef igstk::PolarisTracker          TrackerType;
+  /** typedef for ImageReaderType */
+  typedef CTImageReader                                 ImageReaderType;
+
+  /** typedef for ImageRepresentationType */
+  typedef CTImageSpatialObjectRepresentation            ImageRepresentationType;
+
+  /** typedef for RegistrationType */
+  typedef Landmark3DRegistration                        RegistrationType;
+  typedef RegistrationType::LandmarkPointContainerType  LandmarkPointContainerType;
+  typedef RegistrationType::LandmarkImagePointType      LandmarkPointType;
 
   /** typedefs for the communication */
   #ifdef WIN32
-    typedef igstk::SerialCommunicationForWindows  CommunicationType;
+    typedef SerialCommunicationForWindows               CommunicationType;
   #else
-    typedef igstk::SerialCommunicationForPosix    CommunicationType;
+    typedef SerialCommunicationForPosix                 CommunicationType;
   #endif
 
-  /** typedef for ImageReaderType */
-  typedef CTImageReader                           ImageReaderType;
+  /** typedefs for the tracker */
+  typedef PolarisTracker                                TrackerType;
 
-  /** typedef for ImageSpatialObjectType */
-  typedef CTImageSpatialObject                    ImageSpatialObjectType;
-
-  /** typedef for ImageRepresentationType */
-  typedef CTImageSpatialObjectRepresentation      ImageRepresentationType;
-
-  virtual void RequestRegisterPatientInfo();
+  /** Public request methods for the GUI. */
+  virtual void RequestSetPatientName();
   virtual void RequestLoadImage();
+  virtual void RequestSetImageLandmarks();
   virtual void RequestInitializeTracker();
+  virtual void RequestSetTrackerLandmarks();
+  virtual void RequestRegistration();
   virtual void RequestStartTracking();
   virtual void RequestStopTracking();
+  virtual void RequestResliceImage();   // TEMP
   
 protected:
 
-  FourViewsTrackingWithCT( void );
-  virtual ~FourViewsTrackingWithCT( void );
+  FourViewsTrackingWithCT();
+  virtual ~FourViewsTrackingWithCT();
 
 private:
 
-  /** Inputs to the State Machine */
-  InputType            m_PatientNameValidInput;
+  FourViewsTrackingWithCT(const Self&); // purposely not implemented
+  void operator=(const Self&); // purposely not implemented
 
   /** States for the State Machine */
   StateType            m_InitialState;
-  StateType            m_PatientInfoRegisteredState;
-  StateType            m_ImageLoadedState;
-  StateType            m_PatientInfoValidState;
+  StateType            m_PatientNameReadyState;
+  StateType            m_ImageReadyState;
+  StateType            m_PatientNameVerifiedState;
+  StateType            m_ImageLandmarksReadyState;
   StateType            m_TrackerReadyState;
+  StateType            m_TrackerLandmarksReadyState;
+  StateType            m_LandmarkRegistrationReadyState;
   StateType            m_TrackingState;
-  StateType            m_TrackerLostState;
+  //StateType            m_TrackerLostState;
+
+  /** Inputs to the state machine and it's designed transitions */
+  // FROM                                                 //-> TO
+  // InitialState
+  InputType            m_PatientNameInput;                //-> PatientNameReadyState
+  InputType            m_PatientNameEmptyInput;           //-> InitialState
+  // PatientNameReadyState
+  InputType            m_LoadImageSuccessInput;           //-> ImageReadyState
+  InputType            m_LoadImageFailureInput;           //-> PatientNameReadeyState
+  // ImageReadyState
+  InputType            m_PatientNameMatchInput;           //-> PatientNameVerifiedState
+  InputType            m_OverwritePatientNameInput;       //-> PatientNameVerifiedState
+  InputType            m_ReloadImageInput;                //-> PatientNameReadyState
+  // PatientNameVerifiedState
+  InputType            m_AddImageLandmarksSuccessInput;   //-> ImageLandmarksReadyState
+  InputType            m_AddImageLandmarksFailureInput;   //-> PatientNameVerifiedState
+  // ImageLandmarksReadyState
+  InputType            m_InitializeTrackerSuccessInput;   //-> TrackerReadyState
+  InputType            m_InitializeTrackerFailureInput;   //-> ImageLandmarksReadyState
+  // TrackerReadyState
+  InputType            m_AddTrackerLandmarksSuccessInput; //-> TrackerLandmarksReadyState
+  InputType            m_AddTrackerLandmarksFailureInput; //-> TrackerReadyState
+  // TrackerLandmarksReadyState
+  InputType            m_RegistrationSuccessInput;        //-> LandmarkRegistrationReadyState
+  InputType            m_RegistrationFailureInput;        //-> TrackerLandmarksReadyState
+  // LandmarkRegistrationReadyState
+  InputType            m_StartTrackingSuccessInput;       //-> TrackingState
+  InputType            m_StartTrackingFailureInput;       //-> LandmarkRegistrationReadyState
+  // TrackingState
+  InputType            m_StopTrackingSuccessInput;        //-> LandmarkRegistrationReadyState
+  InputType            m_StopTrackingFailureInput;        //-> ??????
 
   /** Logger */
-  LogOutputType::Pointer  m_LogFileOutput;
-  LogOutputType::Pointer  m_LogCoutOutput;
-  std::ofstream           m_LogFile;
+  LogOutputType::Pointer              m_LogFileOutput;
+  LogOutputType::Pointer              m_LogCoutOutput;
+  std::ofstream                       m_LogFile;
+  LoggerType::Pointer                 logger; // Another logger for igstk components
 
-  /** Internal variables */
+  /** Internal variables. */
+  std::string                         m_PatientName;
+  std::string                         m_PatientNameToBeSet;
+
+  //std::string                         m_DICOMDirectory;
+  
   ImageReaderType::Pointer            m_ImageReader;
   ImageRepresentationType::Pointer    m_ImageRepresentation;
 
-  std::string             m_PatientName;
-  std::string             m_PatientNameToBeSet;
+  RegistrationType::Pointer           m_LandmarkRegistrtion;
+  LandmarkPointContainerType          m_ImageLandmarks;
+  LandmarkPointContainerType          m_ImageLandmarksToBeSet;
+  LandmarkPointContainerType          m_TrackerLandmarks;
+  LandmarkPointContainerType          m_TrackerLandmarksToBeSet;
+
+  CommunicationType::Pointer          m_SerialCommunication;
+  TrackerType::Pointer                m_Tracker;
+
 
   /** Action methods to be invoked only by the state machine */
-  void RegisterPatientInfo();
-  void LoadImage( const char *);
-  void InitializeTracker();
-  void StartTracking();
-  void StopTracking();
-
-  
+  void SetPatientName();
+  void VerifyPatientName(); 
 };
 
 } // end of namespace

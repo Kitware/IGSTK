@@ -25,27 +25,67 @@ namespace igstk
 {
 
 /** Constructor: Initializes all internal variables. */
-FourViewsTrackingWithCT::FourViewsTrackingWithCT( void ):m_StateMachine(this)
+FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 {  
-  /** Setup Logger */
+  /** Setup m_Logger, this logger is used to log the application class. */
   m_Logger = LoggerType::New();
 
+  /** Setup logger, for all other igstk components. */
+  logger   = LoggerType::New();
+
+  /** Direct the application log message to the std::cout. */
   m_LogCoutOutput = LogOutputType::New();
-  m_LogCoutOutput->SetStream( std::cerr );
+  m_LogCoutOutput->SetStream( std::cout );
   m_Logger->AddLogOutput( m_LogCoutOutput );
 
+  /** Direct the igstk components log message to the file. */
   m_LogFileOutput = LogOutputType::New();
-  m_LogFile.open("logFourViewsTrackingWithCT.txt");
+  std::string logFileName = "logFourViewsTrackingWithCT.txt";                   //FIXME. use a date/time file name
+  m_LogFile.open( logFileName.c_str() );
   if( !m_LogFile.fail() )
     {
     m_LogFileOutput->SetStream( m_LogFile );
-    m_Logger->AddLogOutput( m_LogFileOutput );
+    logger->AddLogOutput( m_LogFileOutput );
     }
   else
     {
-    igstkLogMacro( DEBUG, "Problem opening Log file, log output to cerr only " );
+    igstkLogMacro( DEBUG, "Problem opening Log file: " << logFileName << "\n" ); //FIXME. may not return
+    return;
     }
 
+  /** Initialize all member variables and set logger */
+  m_ImageReader = ImageReaderType::New();
+  m_ImageReader->SetLogger( logger );
+
+  m_ImageRepresentation = ImageRepresentationType::New();
+  m_ImageRepresentation->SetLogger( logger );
+  
+  m_LandmarkRegistrtion = RegistrationType::New();
+  m_LandmarkRegistrtion->SetLogger( logger );
+
+  m_SerialCommunication = CommunicationType::New();
+  m_SerialCommunication->SetLogger( logger );
+  m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber2 ); // FIXME. Should be configurable in CMake, GUI or ini file
+  m_SerialCommunication->SetParity( SerialCommunication::NoParity );
+  m_SerialCommunication->SetBaudRate( SerialCommunication::BaudRate9600 );
+  m_SerialCommunication->SetDataBits( SerialCommunication::DataBits8 );
+  m_SerialCommunication->SetStopBits( SerialCommunication::StopBits1 );
+  m_SerialCommunication->SetHardwareHandshake( SerialCommunication::HandshakeOff );
+
+  m_Tracker = TrackerType::New();
+  m_Tracker->SetLogger( logger );
+  /*
+  serialComm->OpenCommunication();
+  tracker->SetCommunication( serialComm );  
+  tracker->Open();
+  tracker->AttachSROMFileNameToPort( 3, "C:/Patrick/Vicra/Tookit/Tool Definition Files/8700339.rom" ); //FIXME
+  tracker->Initialize();
+  tracker->StartTracking();
+  */
+
+  this->DisplayAxial->SetLogger( logger );
+  this->DisplayAxial->SetLogger( logger );
+  this->DisplayAxial->SetLogger( logger );
   /*
   this->Display3D->RequestResetCamera();
   this->Display3D->Update();
@@ -54,96 +94,162 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT( void ):m_StateMachine(this)
   this->Display3D->RequestStart();
   */
 
-  this->DisplayAxial->RequestResetCamera();
-  this->DisplayAxial->Update();
-  this->DisplayAxial->RequestEnableInteractions();
-  this->DisplayAxial->RequestSetRefreshRate( 60 ); // 60 Hz
-  this->DisplayAxial->RequestStart();
-
-  this->DisplayCoronal->RequestResetCamera();
-  this->DisplayCoronal->Update();
-  this->DisplayCoronal->RequestEnableInteractions();
-  this->DisplayCoronal->RequestSetRefreshRate( 60 ); // 60 Hz
-  this->DisplayCoronal->RequestStart();
-
-  this->DisplaySagittal->RequestResetCamera();
-  this->DisplaySagittal->Update();
-  this->DisplaySagittal->RequestEnableInteractions();
-  this->DisplaySagittal->RequestSetRefreshRate( 60 ); // 60 Hz
-  this->DisplaySagittal->RequestStart();
-
   /** Initialize State Machine */
-  //
-  //m_StateMachine.SelectInitialState( m_InitialState );
-  //m_StateMachine.SetReadyToRun();
+  m_StateMachine.AddState( m_InitialState,                "InitialState"              );
+  m_StateMachine.AddState( m_PatientNameReadyState,       "PatientNameReadyState"     );
+  m_StateMachine.AddState( m_ImageReadyState,             "ImageReadyState"           );
+  m_StateMachine.AddState( m_PatientNameVerifiedState,    "PatientNameVerifiedState"  );
+  m_StateMachine.AddState( m_ImageLandmarksReadyState,    "ImageLandmarksReadyState"  );
+  m_StateMachine.AddState( m_TrackerReadyState,           "TrackerReadyState"         );
+  m_StateMachine.AddState( m_TrackerLandmarksReadyState,  "TrackerLandmarksReadyState");
+  m_StateMachine.AddState( m_LandmarkRegistrationReadyState, "LandmarkRegistrationReadyState" );
+  m_StateMachine.AddState( m_TrackingState,               "TrackingState"             );
+
+  m_StateMachine.AddInput( m_PatientNameInput,            "PatientNameInput"          );
+  m_StateMachine.AddInput( m_PatientNameEmptyInput,       "PatientNameEmptyInput"     );
+
+  m_StateMachine.AddInput( m_LoadImageSuccessInput,       "LoadImageSuccessInput"     );
+  m_StateMachine.AddInput( m_LoadImageFailureInput,       "LoadImageFailureInput"     );
+
+  m_StateMachine.AddInput( m_PatientNameMatchInput,       "PatientNameMatchInput"     );
+  m_StateMachine.AddInput( m_OverwritePatientNameInput,   "OverwritePatientNameInput" );
+  m_StateMachine.AddInput( m_ReloadImageInput,            "ReloadImageInput"          );
+
+  m_StateMachine.AddInput( m_AddImageLandmarksSuccessInput,"AddImageLandmarksSuccessInput");
+  m_StateMachine.AddInput( m_AddImageLandmarksFailureInput,"AddImageLandmarksFailureInput");
+
+  m_StateMachine.AddInput( m_InitializeTrackerSuccessInput,"InitializeTrackerSuccessInput");
+  m_StateMachine.AddInput( m_InitializeTrackerFailureInput,"InitializeTrackerFailureInput");
+
+  m_StateMachine.AddInput( m_AddTrackerLandmarksSuccessInput,"AddTrackerLandmarksSuccessInput");
+  m_StateMachine.AddInput( m_AddTrackerLandmarksFailureInput,"AddTrackerLandmarksFailureInput");
+
+  m_StateMachine.AddInput( m_RegistrationSuccessInput,"RegistrationSuccessInput");
+  m_StateMachine.AddInput( m_RegistrationFailureInput,"RegistrationFailureInput");
+
+  m_StateMachine.AddInput( m_StartTrackingSuccessInput,"StartTrackingSuccessInput");
+  m_StateMachine.AddInput( m_StartTrackingFailureInput,"StartTrackingFailureInput");
+
+  m_StateMachine.AddInput( m_StopTrackingSuccessInput,"StopTrackingSuccessInput");
+  m_StateMachine.AddInput( m_StopTrackingFailureInput,"StopTrackingFailureInput");
+
+  const ActionType NoAction = 0;
+
+  m_StateMachine.AddTransition( m_InitialState, m_PatientNameInput, m_PatientNameReadyState, 
+    &FourViewsTrackingWithCT::SetPatientName );
+  m_StateMachine.AddTransition( m_InitialState, m_PatientNameEmptyInput, m_InitialState, 
+    NoAction );
+  
+  m_StateMachine.AddTransition( m_PatientNameReadyState, m_LoadImageSuccessInput, m_ImageReadyState, 
+    &FourViewsTrackingWithCT::VerifyPatientName );
+  m_StateMachine.AddTransition( m_PatientNameReadyState, m_LoadImageFailureInput, m_PatientNameReadyState, 
+    NoAction );
+  
+  m_StateMachine.SelectInitialState( m_InitialState );
+  m_StateMachine.SetReadyToRun();
 
 }
 
 /** Destructor */
-FourViewsTrackingWithCT::~FourViewsTrackingWithCT( void )
+FourViewsTrackingWithCT::~FourViewsTrackingWithCT()
 {
  
 }
 
-void FourViewsTrackingWithCT::RequestRegisterPatientInfo( void )
+void FourViewsTrackingWithCT::RequestSetPatientName()
 {
+  igstkLogMacro(          DEBUG, "FourViewsTrackingWithCT::RequestRegisterPatientInfo called...\n" )
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestRegisterPatientInfo called...\n" )
+  
   const char *patientName = fl_input("Patient Name:", "");
-  m_PatientNameToBeSet = patientName;
-
-  if( patientName )
+  if( patientName != NULL )
     {
-    // State Machine not implemented yet
-    RegisterPatientInfo();
+    m_PatientNameToBeSet = patientName;
+    m_StateMachine.PushInput( m_PatientNameInput );
     }
   else
     {
+    m_StateMachine.PushInput( m_PatientNameEmptyInput );
     }
+  m_StateMachine.ProcessInputs();
 }
 
-void FourViewsTrackingWithCT::RegisterPatientInfo()
+void FourViewsTrackingWithCT::SetPatientName()
 {
-  m_PatientName = m_PatientNameToBeSet;
+ m_PatientName = m_PatientNameToBeSet;
+ igstkLogMacro(          DEBUG, "Patient name registered as: " << m_PatientName << "\n" )
+ igstkLogMacro2( logger, DEBUG, "Patient name registered as: " << m_PatientName << "\n" )
 }
 
-void FourViewsTrackingWithCT::RequestLoadImage( void )
+void FourViewsTrackingWithCT::RequestLoadImage()
 {
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
   if ( directoryname != NULL )
     {
-    //State Machine
-    this->LoadImage( directoryname ); // Temp call, for testing only
+    igstkLogMacro(          DEBUG, "m_ImageReader->RequestSetDirectory called...\n" ) //FIXME. log msg
+    igstkLogMacro2( logger, DEBUG, "m_ImageReader->RequestSetDirectory called...\n" )
+    m_ImageReader->RequestSetDirectory( directoryname ); //FIXME. Add observer and callbacks to catch errors?
+
+    igstkLogMacro(          DEBUG, "m_ImageReader->RequestReadImage called... \n")  //FIXME. log msg
+    igstkLogMacro2( logger, DEBUG, "m_ImageReader->RequestReadImage called... \n")
+    m_ImageReader->RequestReadImage();                   //FIXME. Add observer and callbacks to catch errors?
+
+    m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), m_LoadImageSuccessInput, m_LoadImageFailureInput);
+    m_StateMachine.ProcessInputs();
     }
   else
     {
-    //State Machine
+    igstkLogMacro(          DEBUG, "No directory is selected\n")
+    igstkLogMacro2( logger, DEBUG, "No directory is selected\n")
     }
 }
 
-void FourViewsTrackingWithCT::LoadImage( const char * directoryname )
+void FourViewsTrackingWithCT::VerifyPatientName()
 {
-  m_ImageReader = ImageReaderType::New();
-  m_ImageReader->RequestSetDirectory( directoryname );
-  m_ImageReader->RequestReadImage();
-
-  CTImageSpatialObjectRepresentation::Pointer  imageOR = CTImageSpatialObjectRepresentation::New();
-  imageOR->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
-
-  DisplayAxial->RequestAddObject( imageOR->Copy() );
-  DisplayAxial->RequestResetCamera();
+  if ( m_ImageReader->GetPatientName() == m_PatientName )
+    {
+    m_StateMachine.PushInput( m_PatientNameMatchInput );
+    }
+  else
+    {
+    igstkLogMacro( DEBUG, "Patient name mismatch")
+    std::string msg = "Patient Registered as: " + m_PatientName + "\n";
+    msg += "Image has the name of: " + m_ImageReader->GetPatientName() +"\n";
+    msg += "Name mismatch. Do you want to load another image? choose no will overwrite the name\n";
+    int i = fl_ask( msg.c_str() );
+    if ( i )
+      {
+      m_StateMachine.PushInput( m_ReloadImageInput );
+      }
+    else
+      {
+      m_StateMachine.PushInput( m_OverwritePatientNameInput );
+      }
+  }
 }
 
-
+void FourViewsTrackingWithCT::RequestSetImageLandmarks()
+{
+}
 void FourViewsTrackingWithCT::RequestInitializeTracker()
 {
 }
-
+void FourViewsTrackingWithCT::RequestSetTrackerLandmarks()
+{
+}
+void FourViewsTrackingWithCT::RequestRegistration()
+{
+}
 void FourViewsTrackingWithCT::RequestStartTracking()
 {
 }
-
 void FourViewsTrackingWithCT::RequestStopTracking()
 {
 }
+void FourViewsTrackingWithCT::RequestResliceImage()
+{
+}
+
 
 
 } // end of namespace

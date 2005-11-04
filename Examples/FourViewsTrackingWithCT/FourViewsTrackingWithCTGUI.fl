@@ -7,17 +7,17 @@ class FourViewsTrackingWithCTGUI {open
   Function {FourViewsTrackingWithCTGUI()} {open
   } {
     Fl_Window mainWindow {
-      label {IGSTK: Four Veiws Tracking With CT Images Example} open
-      xywh {77 107 1147 672} type Double box PLASTIC_UP_BOX color 103 resizable
+      label {IGSTK: Four Veiws Tracking With CT Images Example}
+      xywh {327 91 1147 672} type Double box PLASTIC_UP_BOX color 103 resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
     } {
       Fl_Group controlGroup {
         xywh {0 0 375 670} box DOWN_FRAME
       } {
-        Fl_Light_Button trackingButton {
+        Fl_Light_Button TrackingButton {
           label Tracking
-          callback {if(trackingButton->value())
+          callback {if(o->value())
 {
   RequestStartTracking();
 }
@@ -25,29 +25,44 @@ else
 {
     RequestStopTracking();
 }}
-          xywh {15 200 95 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {18 258 95 25} box PLASTIC_UP_FRAME labelsize 11
         }
-        Fl_Light_Button loadImageButton {
+        Fl_Light_Button LoadImageButton {
           label {Load Image}
           callback {RequestLoadImage();}
           xywh {15 50 95 25} box PLASTIC_UP_FRAME labelsize 11
         }
-        Fl_Light_Button registerPatientInfoButton {
-          label Register
-          callback {RequestRegisterPatientInfo();}
+        Fl_Light_Button SetPatientNameButton {
+          label {Register Patient}
+          callback {RequestSetPatientName();} selected
           xywh {15 10 95 25} box PLASTIC_UP_FRAME labelsize 11
         }
-        Fl_Light_Button initializeTrackerButton {
+        Fl_Light_Button InitializeTrackerButton {
           label {Initialize Tracker}
           callback {RequestInitializeTracker();}
-          xywh {15 145 95 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {15 135 95 25} box PLASTIC_UP_FRAME labelsize 11
+        }
+        Fl_Light_Button SetImageLandmarksButton {
+          label {Set Image Landmarks}
+          callback {RequestSetImageLandmarks();}
+          xywh {15 95 120 25} box PLASTIC_UP_FRAME labelsize 11
+        }
+        Fl_Light_Button SetTrackerLandmarksButton {
+          label {Set Tracker Landmarks}
+          callback {RequestSetTrackerLandmarks();}
+          xywh {17 180 130 25} box PLASTIC_UP_FRAME labelsize 11
+        }
+        Fl_Light_Button RegistrationButton {
+          label Registration
+          callback {RequestRegistration();}
+          xywh {17 220 95 25} box PLASTIC_UP_FRAME labelsize 11
         }
       }
       Fl_Group viewerGroup {open
         xywh {375 0 770 670} box DOWN_FRAME
       } {
         Fl_Box DisplayAxial {
-          label {Display 3D}
+          label {Display Axial}
           xywh {376 1 380 330} box FLAT_BOX color 0 labelcolor 7
           class {igstk::View2D}
         }
@@ -62,7 +77,7 @@ else
           class {igstk::View3D}
         }
         Fl_Box DisplayCoronal {
-          label {Display Coronal} selected
+          label {Display Coronal}
           xywh {376 340 380 330} box FLAT_BOX color 0 labelcolor 7
           class {igstk::View2D}
         }
@@ -72,11 +87,17 @@ else
   }
   Function {~FourViewsTrackingWithCTGUI()} {return_type virtual
   } {}
-  Function {RequestRegisterPatientInfo()} {open return_type {virtual void}
+  Function {RequestSetPatientName()} {open return_type {virtual void}
   } {}
   Function {RequestLoadImage()} {open return_type {virtual void}
   } {}
+  Function {RequestSetImageLandmarks()} {open return_type {virtual void}
+  } {}
   Function {RequestInitializeTracker()} {open return_type {virtual void}
+  } {}
+  Function {RequestSetTrackerLandmarks()} {open return_type {virtual void}
+  } {}
+  Function {RequestRegistration()} {open return_type {virtual void}
   } {}
   Function {RequestStartTracking()} {open return_type {virtual void}
   } {}
