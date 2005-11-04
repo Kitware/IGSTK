@@ -115,16 +115,16 @@ IF (IGSTK_DATA_ROOT)
    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTK_TESTS} 
              igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTK_DATA_ROOT}/Input/E000192 )
 
-   ADD_TEST( igstkMeshReaderTest ${IGSTKSandbox_TESTS} igstkMeshReaderTest 
+   ADD_TEST( igstkMeshReaderTest ${IGSTK_TESTS} igstkMeshReaderTest 
        ${IGSTK_DATA_ROOT}/liver.msh  
        ${IGSTK_DATA_ROOT}/liverCorruptedOnPurpose.msh )
 
-   ADD_TEST( igstkTubeReaderTest ${IGSTKSandbox_TESTS} igstkTubeReaderTest 
+   ADD_TEST( igstkTubeReaderTest ${IGSTK_TESTS} igstkTubeReaderTest 
        ${IGSTK_DATA_ROOT}/vessel.tre 
        ${IGSTK_DATA_ROOT}/vesselCorruptedOnPurpose.tre  
        ${IGSTK_DATA_ROOT}/vesselWithoutReadPermissions.tre )
 
-   ADD_TEST( igstkSpatialObjectReaderTest ${IGSTKSandbox_TESTS} igstkSpatialObjectReaderTest 
+   ADD_TEST( igstkSpatialObjectReaderTest ${IGSTK_TESTS} igstkSpatialObjectReaderTest 
        ${IGSTK_DATA_ROOT}/vessel.tre 
        ${IGSTK_DATA_ROOT}/vesselCorruptedOnPurpose.tre  
        ${IGSTK_DATA_ROOT}/vesselWithoutReadPermissions.tre  
