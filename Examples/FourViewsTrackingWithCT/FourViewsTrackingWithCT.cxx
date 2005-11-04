@@ -142,11 +142,18 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
     &FourViewsTrackingWithCT::SetPatientName );
   m_StateMachine.AddTransition( m_InitialState, m_PatientNameEmptyInput, m_InitialState, 
     NoAction );
-  
+
   m_StateMachine.AddTransition( m_PatientNameReadyState, m_LoadImageSuccessInput, m_ImageReadyState, 
     &FourViewsTrackingWithCT::VerifyPatientName );
   m_StateMachine.AddTransition( m_PatientNameReadyState, m_LoadImageFailureInput, m_PatientNameReadyState, 
     NoAction );
+
+  m_StateMachine.AddTransition( m_ImageReadyState, m_PatientNameMatchInput, m_PatientNameVerifiedState, 
+    &FourViewsTrackingWithCT::ConnectImageRepresentation );
+  m_StateMachine.AddTransition( m_ImageReadyState, m_OverwritePatientNameInput, m_PatientNameVerifiedState, 
+    &FourViewsTrackingWithCT::ConnectImageRepresentation );
+  m_StateMachine.AddTransition( m_ImageReadyState, m_ReloadImageInput, m_PatientNameReadyState, 
+    &FourViewsTrackingWithCT::RequestLoadImage );
   
   m_StateMachine.SelectInitialState( m_InitialState );
   m_StateMachine.SetReadyToRun();
@@ -222,8 +229,8 @@ void FourViewsTrackingWithCT::VerifyPatientName()
     }
   else
     {
-    igstkLogMacro( DEBUG, "Patient name mismatch")
-    std::string msg = "Patient Registered as: " + m_PatientName + "\n";
+    igstkLogMacro( DEBUG, "Patient name mismatch\n")
+      std::string msg = "Patient Registered as: " + m_PatientName + "\n";
     msg += "Image has the name of: " + m_ImageReader->GetPatientName() +"\n";
     msg += "Name mismatch. Do you want to load another image? choose no will overwrite the name\n";
     int i = fl_ask( msg.c_str() );
@@ -233,12 +240,11 @@ void FourViewsTrackingWithCT::VerifyPatientName()
       }
     else
       {
+      m_PatientName = m_ImageReader->GetPatientName();
       m_StateMachine.PushInput( m_OverwritePatientNameInput );
       }
-  }
-  // THIS INVOKATION SHOULD NOT BE HERE... THIS IS TEMPORARY 
-  // THE METHOD SHOULD BE CALLED BY THE STATE MACHINE
-  this->ConnectImageRepresentation();
+    }
+
 }
 
 void FourViewsTrackingWithCT::RequestSetImageLandmarks()
@@ -262,6 +268,18 @@ void FourViewsTrackingWithCT::RequestStopTracking()
 }
 void FourViewsTrackingWithCT::RequestResliceImage()
 {
+  m_SliceNumberToBeSet[0] = this->AxialSlider->value();
+  m_SliceNumberToBeSet[1] = this->SagittalSlider->value();
+  m_SliceNumberToBeSet[2] = this->CoronalSlider->value();
+
+  // FIXME.
+  m_SliceNumber[0] = m_SliceNumberToBeSet[0];
+  m_SliceNumber[1] = m_SliceNumberToBeSet[1];
+  m_SliceNumber[2] = m_SliceNumberToBeSet[2];
+
+  m_ImageRepresentationAxial->RequestSetSliceNumber( m_SliceNumber[0] );
+  m_ImageRepresentationSagittal->RequestSetSliceNumber( m_SliceNumber[1] );
+  m_ImageRepresentationCoronal->RequestSetSliceNumber( m_SliceNumber[2] );
 }
 
 
@@ -301,7 +319,12 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   this->DisplayCoronal->RequestSetRefreshRate( 30 ); // 30 Hz
   this->DisplayCoronal->RequestStart();
 
-
+  /** Initialize the slider */
+  //int ext[6];
+  //->GetExtent( ext );
+  //this->AxialSlider->maximum( ext[5] );
+  //this->AxialSlider->minimum( ext[4] );
+  //this->AxialSlider->value( (int) (ext[4]+ext[5])/2 );
 
 }
   
