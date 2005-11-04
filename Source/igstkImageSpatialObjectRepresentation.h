@@ -198,6 +198,8 @@ private:
   /** States for the State Machine */
   StateType            m_NullImageSpatialObjectState;
   StateType            m_ValidImageSpatialObjectState;
+  StateType            m_ValidImageOrientationState;
+  StateType            m_ValidSliceNumberState;
 
   /** Variables for managing the Slice number through the StateMachine */
   SliceNumberType      m_SliceNumberToBeSet;

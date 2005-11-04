@@ -75,7 +75,12 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
 
   RepresentationType::Pointer representation = RepresentationType::New();
           
+  representation->SetLogger( logger );
+
   representation->RequestSetImageSpatialObject( reader->GetOutput() );
+
+  representation->RequestSetOrientation( RepresentationType::Axial );
+  representation->RequestSetSliceNumber( 0 );
 
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");

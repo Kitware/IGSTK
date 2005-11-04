@@ -59,19 +59,34 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 
   m_StateMachine.AddState( m_NullImageSpatialObjectState,  "NullImageSpatialObjectState"     );
   m_StateMachine.AddState( m_ValidImageSpatialObjectState, "ValidImageSpatialObjectState"     );
+  m_StateMachine.AddState( m_ValidImageOrientationState, "ValidImageOrientationState"     );
+  m_StateMachine.AddState( m_ValidSliceNumberState, "ValidSliceNumberState"     );
 
   const ActionType NoAction = 0;
 
   m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetImageSpatialObject );
-  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_InvalidSliceNumberInput, m_NullImageSpatialObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_ValidSliceNumberInput, m_NullImageSpatialObjectState,  NoAction );
+  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_InvalidSliceNumberInput, m_NullImageSpatialObjectState,  NoAction );
+  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_ValidOrientationInput, m_NullImageSpatialObjectState,  NoAction );
+
   m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidSliceNumberInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetSliceNumber ); 
+  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidSliceNumberInput, m_ValidImageSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_InvalidSliceNumberInput, m_ValidImageSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidOrientationInput, m_ValidImageOrientationState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
 
-  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidOrientationInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
+  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetImageSpatialObject );
+  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_ValidSliceNumberInput, m_ValidSliceNumberState,  & ImageSpatialObjectRepresentation::SetSliceNumber ); 
+  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_InvalidSliceNumberInput, m_ValidImageSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_ValidOrientationInput, m_ValidImageOrientationState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
+
+  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetImageSpatialObject );
+  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_ValidSliceNumberInput, m_ValidSliceNumberState,  & ImageSpatialObjectRepresentation::SetSliceNumber ); 
+  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_InvalidSliceNumberInput, m_ValidImageSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_ValidOrientationInput, m_ValidImageOrientationState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
 
   m_StateMachine.SelectInitialState( m_NullImageSpatialObjectState );
 
