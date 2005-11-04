@@ -84,6 +84,10 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   this->DisplaySagittal->SetLogger( logger );
   this->DisplayCoronal->SetLogger( logger );
 
+  this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
+  this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
+  this->DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );
+
   m_ImageRepresentationAxial    = ImageRepresentationType::New();
   m_ImageRepresentationSagittal = ImageRepresentationType::New();
   m_ImageRepresentationCoronal  = ImageRepresentationType::New();
