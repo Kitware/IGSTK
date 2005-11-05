@@ -40,7 +40,7 @@
 #include "igstkPolarisTracker.h"
 #include "igstkTransform.h"
 
-#ifdef IGSTK_SIMULATOR_TEST
+//#ifdef IGSTK_SIMULATOR_TEST
 /** append a file name to a directory name and provide the result */
 static void joinDirAndFile(char *result, int maxLen,
                            const char *dirName, const char *fileName)
@@ -64,7 +64,7 @@ static void joinDirAndFile(char *result, int maxLen,
   // delete temporary string
   delete [] fullName;
 }
-#endif /* IGSTK_SIMULATOR_TEST */
+//#endif /* IGSTK_SIMULATOR_TEST */
 
 class SerialCommunicationTestCommand : public itk::Command 
 {
@@ -155,7 +155,7 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   char pathToCaptureFile[1024];
   joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTK_DATA_ROOT,
-                  "polaris_stream_11_04_2005.txt" );
+                  "polaris_stream_11_05_2005.txt" );
   serialComm->SetFileName( pathToCaptureFile );
 #else /* IGSTK_SIMULATOR_TEST */
   serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerTest.txt" );
@@ -168,9 +168,6 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
 
   tracker = igstk::PolarisTracker::New();
 
-
-
-
   tracker->SetLogger( logger );
 
   std::cout << "Entering  SetCommunication ..." << std::endl;
@@ -181,17 +178,17 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
 
   tracker->Open();
 
-#ifdef IGSTK_SIMULATOR_TEST
+  //#ifdef IGSTK_SIMULATOR_TEST
   char pathToSROMFile[1024];
   joinDirAndFile( pathToSROMFile, 1024,
                   IGSTK_DATA_ROOT,
                   "ta2p0003-3-120.rom" );
   tracker->AttachSROMFileNameToPort( 3, pathToSROMFile );
-#endif /* IGSTK_SIMULATOR_TEST */
-
-  std::cout << tracker << std::endl;
+  //#endif /* IGSTK_SIMULATOR_TEST */
 
   tracker->Initialize();
+
+  std::cout << tracker << std::endl;
 
   unsigned int ntools = tracker->GetNumberOfTools();
 
@@ -219,17 +216,23 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
       }
     }
   
-  tracker->Reset();
+  //tracker->Reset();
   
+  std::cerr << "INITIALIZE\n";
   tracker->Initialize();
   
+  std::cerr << "STARTTRACKING\n";
   tracker->StartTracking();
 
+  std::cerr << "STOPTRACKING\n";
   tracker->StopTracking();
 
+  std::cerr << "CLOSE\n";
   tracker->Close();
 
+  std::cerr << "CLOSECOMMUNICATION\n";
   serialComm->CloseCommunication();
 
+  std::cerr << "EXIT\n";
   return EXIT_SUCCESS;
 }

@@ -124,7 +124,7 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
   char pathToCaptureFile[1024];
   joinDirAndFile( pathToCaptureFile, 1024,
                   IGSTK_DATA_ROOT,
-                  "aurora_stream_11_04_2005.txt" );
+                  "aurora_stream_11_05_2005.txt" );
   serialComm->SetFileName( pathToCaptureFile );
 #else /* IGSTK_SIMULATOR_TEST */
   serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
