@@ -106,8 +106,17 @@ protected:
   /** Destructor */
   virtual ~VTKLoggerOutput();
 
+  /** Override UnRegister for special reference count handling */
+  void UnRegister(vtkObjectBase *o);
+
   /** Print information about this object */
   void PrintSelf(StdOStreamType& os, itk::Indent indent) const;
+
+private:
+
+  /** Special flag for safe reference counting */
+  int m_InUnRegister;
+
 };
   
 /** operator << for printing out through the output stream */
