@@ -205,7 +205,16 @@ PolarisTracker::ResultType PolarisTracker::InternalReset( void )
   m_CommandInterpreter->RESET();
   m_CommandInterpreter->INIT();
 
-  return this->CheckError(m_CommandInterpreter);
+  ResultType result = this->CheckError(m_CommandInterpreter);
+
+  if (result == SUCCESS)
+    {
+    // log information about the device
+    m_CommandInterpreter->VER(CommandInterpreterType::NDI_CONTROL_FIRMWARE);
+    result = this->CheckError(m_CommandInterpreter);
+    }
+
+  return result;
 }
 
 
@@ -590,8 +599,7 @@ void PolarisTracker::EnableToolPorts()
 
     // the value of m_PortHandle should only be set for wired,
     // for wireless tools it is set in LoadVirtualSROM
-    if (location[10] >= '0' && location[10] <= '9' &&
-        location[11] >= '0' && location[11] <= '9')
+    if (location[9] == '0') // wired tool
       {
       unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
       if (ndiport > 0 && ndiport <= NumberOfPorts)
@@ -600,7 +608,7 @@ void PolarisTracker::EnableToolPorts()
         this->m_PortHandle[port] = ph;
         }
       }
-    else
+    else // wireless tool
       {
       for (port = 0; port < NumberOfPorts; port++)
         {
