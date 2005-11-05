@@ -32,28 +32,49 @@ vtkStandardNewMacro(VTKLoggerOutput);
 /** Constructor */
 VTKLoggerOutput::VTKLoggerOutput()
 {
+  m_InUnRegister = 0;
 }
 
 
 /** Destructor. */
 VTKLoggerOutput::~VTKLoggerOutput()
 {
-  // If this is the default VTK window, then 
-  // remove itself from being the default VTK 
-  // output by passing a NULL pointer.
-  if( vtkOutputWindow::GetInstance() == this )
-    {
-    vtkOutputWindow::SetInstance( NULL );  
-    }
 }
-
 
 /** Override the default VTK Window */
 void VTKLoggerOutput::OverrideVTKWindow()
 { 
-  vtkOutputWindow::SetInstance( this );  
+  vtkOutputWindow::SetInstance( this );
+  this->Delete();
 }
 
+/** Special UnRegister handling since vtkOutputWindow holds a reference */
+void VTKLoggerOutput::UnRegister(vtkObjectBase *o)
+{
+  // because calling vtkOutputWindow::SetInstance(0) will cause
+  // vtkOutputWindow to try to destruct us, we need to make sure
+  // that vtkObject::UnRegister() is not called twice.
+  if (m_InUnRegister)
+    {
+    this->ReferenceCount--;
+    return;
+    }
+
+  if (this->ReferenceCount == 2 && vtkOutputWindow::GetInstance() == this)
+    {
+    m_InUnRegister = 1;
+
+    // tell vtkOutputWindow to forget us
+    vtkOutputWindow::SetInstance( 0 );
+
+    // tell vtkOutputWindow to recreate the default output window
+    vtkOutputWindow::GetInstance();
+
+    m_InUnRegister = 0;
+    }
+
+  this->vtkObject::UnRegister(o);
+}
 
 /** Send a string to display. */
 void VTKLoggerOutput::DisplayText(const char* t)
