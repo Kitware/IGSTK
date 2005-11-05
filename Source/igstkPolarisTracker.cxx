@@ -474,26 +474,53 @@ void PolarisTracker::EnableToolPorts()
     this->CheckError(m_CommandInterpreter);
     }
 
-  // initialize ports waiting to be initialized
-  do // repeat as necessary (in case multi-channel tools are used) 
+  // keep list of tools that fail to initialize, so we don't keep retrying,
+  // the largest port handle possible is 0xFF, or 256
+  int handleFailedInit[256];
+  for (int ph = 0; ph < 256; ph++)
+    {
+    handleFailedInit[ph] = 0;
+    }
+
+  // initialize ports waiting to be initialized,  
+  // repeat as necessary (in case multi-channel tools are used) 
+  for (;;)
     {
     m_CommandInterpreter->PHSR(
       CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
     
-    ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+    ntools = 0;
+    // for counting the number of handles that failed to initialize
+    unsigned int numberOfFailedHandles = 0;
 
-    for (tool = 0; tool < ntools; tool++)
+    if (this->CheckError(m_CommandInterpreter) == SUCCESS)
       {
-      const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
-      m_CommandInterpreter->PINIT(ph);
+      ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
 
-      if (this->CheckError(m_CommandInterpreter) == FAILURE)
+      // try to initialize all port handles
+      for (tool = 0; tool < ntools; tool++)
         {
-        break;
+        const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
+        // only call PINIT on tools that didn't fail last time
+        if (!handleFailedInit[ph])
+          {
+          handleFailedInit[ph] = 1;
+          m_CommandInterpreter->PINIT(ph);
+          if (this->CheckError(m_CommandInterpreter) == SUCCESS)
+            {
+            handleFailedInit[ph] = 0;
+            }
+          }
+        numberOfFailedHandles += handleFailedInit[ph];
         }
       }
+
+    // exit if no tools left to init, or if all remaining tools fail
+    if (ntools == 0 || numberOfFailedHandles == ntools)
+      {
+      break;
+      }
     }
-  while( ntools > 0 );
 
   // enable initialized tools
   m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_UNENABLED_HANDLES);
