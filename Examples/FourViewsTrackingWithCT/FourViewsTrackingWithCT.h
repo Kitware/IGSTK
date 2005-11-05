@@ -168,13 +168,14 @@ private:
   std::string                         m_PatientName;
   std::string                         m_PatientNameToBeSet;
 
-  //std::string                         m_DICOMDirectory;
-  
   ImageReaderType::Pointer            m_ImageReader;
 
   ImageRepresentationType::Pointer    m_ImageRepresentationAxial;
   ImageRepresentationType::Pointer    m_ImageRepresentationCoronal;
   ImageRepresentationType::Pointer    m_ImageRepresentationSagittal;
+
+  unsigned int                        m_SliceNumber[3];
+  unsigned int                        m_SliceNumberToBeSet[3];
 
   RegistrationType::Pointer           m_LandmarkRegistrtion;
   LandmarkPointContainerType          m_ImageLandmarks;
