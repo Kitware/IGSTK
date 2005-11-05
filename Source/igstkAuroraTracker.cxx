@@ -97,8 +97,16 @@ AuroraTracker::ResultType AuroraTracker::InternalOpen( void )
   m_CommandInterpreter->RESET();
   m_CommandInterpreter->INIT();
 
-  // If it still failed to initialize, fail
-  return this->CheckError(m_CommandInterpreter);
+  ResultType result = this->CheckError(m_CommandInterpreter);
+
+  if (result == SUCCESS)
+    {
+    // log information about the device
+    m_CommandInterpreter->VER(CommandInterpreterType::NDI_CONTROL_FIRMWARE);
+    result = this->CheckError(m_CommandInterpreter);
+    }
+
+  return result;
 }
 
 /** Close communication with the tracking device. */
@@ -174,7 +182,16 @@ AuroraTracker::ResultType AuroraTracker::InternalReset( void )
   m_CommandInterpreter->RESET();
   m_CommandInterpreter->INIT();
 
-  return this->CheckError(m_CommandInterpreter);
+  ResultType result = this->CheckError(m_CommandInterpreter);
+
+  if (result == SUCCESS)
+    {
+    // log information about the device
+    m_CommandInterpreter->VER(CommandInterpreterType::NDI_CONTROL_FIRMWARE);
+    result = this->CheckError(m_CommandInterpreter);
+    }
+
+  return result;
 }
 
 /** Update the status and the transforms for all TrackerTools. */
