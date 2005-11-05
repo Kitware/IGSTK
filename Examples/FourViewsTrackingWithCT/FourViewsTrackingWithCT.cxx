@@ -165,6 +165,21 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   this->ExportStateMachineDescription( ofile, skipLoops );
 
   ofile.close();
+
+  RequestToStateMapType rtsm;
+  for( unsigned int i = 0; i < NumberOfRequest; i++)
+    m_RequestValidationMap.push_back( rtsm );
+
+  rtsm.clear();
+  rtsm.push_back( m_InitialState.GetIdentifier() );
+  rtsm.push_back( m_PatientNameReadyState.GetIdentifier() );
+  m_RequestValidationMap[ SetPatientNameRequest ] = rtsm;
+  rtsm.clear();
+  rtsm.push_back( m_PatientNameReadyState.GetIdentifier() );
+  rtsm.push_back( m_ImageReadyState.GetIdentifier() );
+  rtsm.push_back( m_PatientNameVerifiedState.GetIdentifier() );
+  m_RequestValidationMap[ LoadImageRequest ] = rtsm;
+
 }
 
 /** Destructor */
@@ -175,6 +190,7 @@ FourViewsTrackingWithCT::~FourViewsTrackingWithCT()
 
 void FourViewsTrackingWithCT::RequestSetPatientName()
 {
+  if( !RequestValidation( SetPatientNameRequest ) ) return;
   igstkLogMacro(          DEBUG, "FourViewsTrackingWithCT::RequestRegisterPatientInfo called...\n" )
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestRegisterPatientInfo called...\n" )
   
@@ -200,6 +216,7 @@ void FourViewsTrackingWithCT::SetPatientName()
 
 void FourViewsTrackingWithCT::RequestLoadImage()
 {
+  if( !RequestValidation( LoadImageRequest ) ) return;
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
   if ( directoryname != NULL )
     {
@@ -327,6 +344,16 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   //this->AxialSlider->value( (int) (ext[4]+ext[5])/2 );
 
 }
-  
+
+bool FourViewsTrackingWithCT::RequestValidation( FourViewsTrackingWithCT::RequestType request)
+{
+  RequestToStateMapType::iterator it;
+  for ( it = m_RequestValidationMap[request].begin(); it !=m_RequestValidationMap[request].end(); it++ )
+  {
+    if ( *it == m_StateMachine.GetCurrentStateIdentifier() )
+      return true;
+  }
+  return false;
+}
 
 } // end of namespace

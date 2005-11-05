@@ -104,7 +104,7 @@ public:
   virtual void RequestStartTracking();
   virtual void RequestStopTracking();
   virtual void RequestResliceImage();   // TEMP
-  
+
 protected:
 
   FourViewsTrackingWithCT();
@@ -157,6 +157,20 @@ private:
   // TrackingState
   InputType            m_StopTrackingSuccessInput;        //-> LandmarkRegistrationReadyState
   InputType            m_StopTrackingFailureInput;        //-> ??????
+
+  typedef enum
+    {
+    SetPatientNameRequest,
+    LoadImageRequest
+    } RequestType;
+
+  const static int NumberOfRequest = 9;
+
+  typedef std::vector < StateMachineType::StateIdentifierType > RequestToStateMapType;
+
+  std::vector < RequestToStateMapType > m_RequestValidationMap;
+
+  bool RequestValidation( RequestType request );
 
   /** Logger */
   LogOutputType::Pointer              m_LogFileOutput;
