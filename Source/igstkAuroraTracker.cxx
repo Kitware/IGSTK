@@ -11,7 +11,7 @@
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more DEBUGrmation.
+     PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 
@@ -364,52 +364,50 @@ void AuroraTracker::EnableToolPorts()
 
   // keep list of tools that fail to initialize, so we don't keep retrying,
   // the largest port handle possible is 0xFF, or 256
-  int handleFailedInit[256];
+  int alreadyAttemptedPINIT[256];
   for (int ph = 0; ph < 256; ph++)
     {
-    handleFailedInit[ph] = 0;
+    alreadyAttemptedPINIT[ph] = 0;
     }
 
-  // initialize ports waiting to be initialized,
-  // repeat as necessary (in case multi-channel tools are used)
-  for (;;)
+  // initialize ports waiting to be initialized,  
+  // repeat as necessary (in case multi-channel tools are used) 
+  for (int safetyCount = 0; safetyCount < 256; safetyCount++)
     {
     m_CommandInterpreter->PHSR(
       CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
-
-    ntools = 0;
-    // for counting the number of handles that failed to initialize
-    unsigned int numberOfFailedHandles = 0;
-
-    if (this->CheckError(m_CommandInterpreter) == SUCCESS)
+    
+    if (this->CheckError(m_CommandInterpreter) == FAILURE)
       {
-      ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+      break;
+      }
 
-      // try to initialize all port handles
-      for (tool = 0; tool < ntools; tool++)
+    ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+    int foundNewTool = 0;
+
+    // try to initialize all port handles
+    for (tool = 0; tool < ntools; tool++)
+      {
+      const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
+      // only call PINIT on tools that didn't fail last time
+      // (the &0xFF makes sure index is < 256)
+      if (!alreadyAttemptedPINIT[(ph & 0xFF)])
         {
-        const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
-        // only call PINIT on tools that didn't fail last time
-        if (!handleFailedInit[ph])
+        alreadyAttemptedPINIT[(ph & 0xFF)] = 1;
+        m_CommandInterpreter->PINIT(ph);
+        if (this->CheckError(m_CommandInterpreter) == SUCCESS)
           {
-          handleFailedInit[ph] = 1;
-          m_CommandInterpreter->PINIT(ph);
-          if (this->CheckError(m_CommandInterpreter) == SUCCESS)
-            {
-            handleFailedInit[ph] = 0;
-            }
+          foundNewTool = 1;
           }
-        numberOfFailedHandles += handleFailedInit[ph];
         }
       }
 
-    // exit if no tools left to init, or if all remaining tools fail
-    if (ntools == 0 || numberOfFailedHandles == ntools)
+    // exit if no new tools were initialized this round
+    if (!foundNewTool)
       {
       break;
       }
     }
-
 
   // enable initialized tools
   m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_UNENABLED_HANDLES);
