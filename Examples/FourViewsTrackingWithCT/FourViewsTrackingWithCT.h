@@ -128,6 +128,15 @@ private:
   //StateType            m_TrackerLostState;
 
   /** Inputs to the state machine and it's designed transitions */
+  InputType            m_RequestSetPatientNameInput;
+  InputType            m_RequestLoadImageInput;
+  InputType            m_RequestSetImageLandmarksInput;
+  InputType            m_RequestInitializeTrackerInput;
+  InputType            m_RequestSetTrackerLandmarksInput;
+  InputType            m_RequestRegistrationInput;
+  InputType            m_RequestStartTrackingInput;
+  InputType            m_RequestStopTrackingInput;
+
   // FROM                                                 //-> TO
   // InitialState
   InputType            m_PatientNameInput;                //-> PatientNameReadyState
@@ -158,20 +167,7 @@ private:
   InputType            m_StopTrackingSuccessInput;        //-> LandmarkRegistrationReadyState
   InputType            m_StopTrackingFailureInput;        //-> ??????
 
-  typedef enum
-    {
-    SetPatientNameRequest,
-    LoadImageRequest
-    } RequestType;
-
-  const static int NumberOfRequest = 9;
-
-  typedef std::vector < StateMachineType::StateIdentifierType > RequestToStateMapType;
-
-  std::vector < RequestToStateMapType > m_RequestValidationMap;
-
-  bool RequestValidation( RequestType request );
-
+  
   /** Logger */
   LogOutputType::Pointer              m_LogFileOutput;
   LogOutputType::Pointer              m_LogCoutOutput;
@@ -180,8 +176,7 @@ private:
 
   /** Internal variables. */
   std::string                         m_PatientName;
-  std::string                         m_PatientNameToBeSet;
-
+  
   ImageReaderType::Pointer            m_ImageReader;
 
   ImageRepresentationType::Pointer    m_ImageRepresentationAxial;
@@ -200,11 +195,24 @@ private:
   CommunicationType::Pointer          m_SerialCommunication;
   TrackerType::Pointer                m_Tracker;
 
+  typedef itk::SimpleMemberCommand< Self >   ObserverType;
+  PulseGenerator::Pointer             m_PulseGenerator;
+  ObserverType::Pointer               m_PulseObserver;
+
 
   /** Action methods to be invoked only by the state machine */
   void SetPatientName();
+  void LoadImage();
+  void SetImageLandmarks();
+  void InitializeTracker();
+  void SetTrackerLandmarks();
+  void Registration();
+  void StartTracking();
+  void StopTracking();
+  void ResliceImage();
   void VerifyPatientName(); 
   void ConnectImageRepresentation();
+  void GetTrackerTransform();
 };
 
 } // end of namespace

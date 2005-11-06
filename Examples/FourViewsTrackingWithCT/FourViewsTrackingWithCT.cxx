@@ -19,7 +19,21 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "FL/Fl_File_Chooser.H"
 #include "FL/Fl_Input.H"
+#include "vtkWorldPointPicker.h"
+#include "vtkCommand.h"
 
+class vtkMyCallback : public vtkCommand
+  {
+  public:
+    static vtkMyCallback *New() 
+      { return new vtkMyCallback; }
+    void Delete()
+      { delete this; }
+    virtual void Execute(vtkObject *caller, unsigned long, void*)
+      {
+      vtkWorldPointPicker * picker = vtkWorldPointPicker::SafeDownCast(caller);
+      }
+  };
 
 namespace igstk
 {
@@ -68,17 +82,17 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_SerialCommunication->SetDataBits( SerialCommunication::DataBits8 );
   m_SerialCommunication->SetStopBits( SerialCommunication::StopBits1 );
   m_SerialCommunication->SetHardwareHandshake( SerialCommunication::HandshakeOff );
-
+  m_SerialCommunication->OpenCommunication();
+  
   m_Tracker = TrackerType::New();
   m_Tracker->SetLogger( logger );
-  /*
-  serialComm->OpenCommunication();
-  tracker->SetCommunication( serialComm );  
-  tracker->Open();
-  tracker->AttachSROMFileNameToPort( 3, "C:/Patrick/Vicra/Tookit/Tool Definition Files/8700339.rom" ); //FIXME
-  tracker->Initialize();
-  tracker->StartTracking();
-  */
+  m_Tracker->SetCommunication( m_SerialCommunication );
+
+  m_PulseGenerator = PulseGenerator::New();
+  m_PulseObserver = ObserverType::New();
+  m_PulseObserver->SetCallbackFunction( this, & FourViewsTrackingWithCT::GetTrackerTransform );
+  m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
+  m_PulseGenerator->RequestSetFrequency( 20 ); //FIXME, move to request start tracking??
 
   this->DisplayAxial->SetLogger( logger );
   this->DisplaySagittal->SetLogger( logger );
@@ -108,41 +122,58 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_StateMachine.AddState( m_LandmarkRegistrationReadyState, "LandmarkRegistrationReadyState" );
   m_StateMachine.AddState( m_TrackingState,               "TrackingState"             );
 
-  m_StateMachine.AddInput( m_PatientNameInput,            "PatientNameInput"          );
-  m_StateMachine.AddInput( m_PatientNameEmptyInput,       "PatientNameEmptyInput"     );
+  m_StateMachine.AddInput( m_RequestSetPatientNameInput,        "RequestSetPatientNameInput"      );
+  m_StateMachine.AddInput( m_RequestLoadImageInput,             "RequestLoadImageInput"           );
+  m_StateMachine.AddInput( m_RequestSetImageLandmarksInput,     "RequestSetImageLandmarksInput"   );
+  m_StateMachine.AddInput( m_RequestInitializeTrackerInput,     "RequestInitializeTrackerInput"   );
+  m_StateMachine.AddInput( m_RequestSetTrackerLandmarksInput,   "RequestSetTrackerLandmarksInput" );
+  m_StateMachine.AddInput( m_RequestRegistrationInput,          "RequestRegistrationInput"        );
+  m_StateMachine.AddInput( m_RequestStartTrackingInput,         "RequestStartTrackingInput"       );
+  m_StateMachine.AddInput( m_RequestStopTrackingInput,          "RequestStopTrackingInput"        );
 
-  m_StateMachine.AddInput( m_LoadImageSuccessInput,       "LoadImageSuccessInput"     );
-  m_StateMachine.AddInput( m_LoadImageFailureInput,       "LoadImageFailureInput"     );
+  m_StateMachine.AddInput( m_PatientNameInput,                  "PatientNameInput"          );
+  m_StateMachine.AddInput( m_PatientNameEmptyInput,             "PatientNameEmptyInput"     );
 
-  m_StateMachine.AddInput( m_PatientNameMatchInput,       "PatientNameMatchInput"     );
-  m_StateMachine.AddInput( m_OverwritePatientNameInput,   "OverwritePatientNameInput" );
-  m_StateMachine.AddInput( m_ReloadImageInput,            "ReloadImageInput"          );
+  m_StateMachine.AddInput( m_LoadImageSuccessInput,             "LoadImageSuccessInput"     );
+  m_StateMachine.AddInput( m_LoadImageFailureInput,             "LoadImageFailureInput"     );
 
-  m_StateMachine.AddInput( m_AddImageLandmarksSuccessInput,"AddImageLandmarksSuccessInput");
-  m_StateMachine.AddInput( m_AddImageLandmarksFailureInput,"AddImageLandmarksFailureInput");
+  m_StateMachine.AddInput( m_PatientNameMatchInput,             "PatientNameMatchInput"     );
+  m_StateMachine.AddInput( m_OverwritePatientNameInput,         "OverwritePatientNameInput" );
+  m_StateMachine.AddInput( m_ReloadImageInput,                  "ReloadImageInput"          );
 
-  m_StateMachine.AddInput( m_InitializeTrackerSuccessInput,"InitializeTrackerSuccessInput");
-  m_StateMachine.AddInput( m_InitializeTrackerFailureInput,"InitializeTrackerFailureInput");
+  m_StateMachine.AddInput( m_AddImageLandmarksSuccessInput,     "AddImageLandmarksSuccessInput");
+  m_StateMachine.AddInput( m_AddImageLandmarksFailureInput,     "AddImageLandmarksFailureInput");
 
-  m_StateMachine.AddInput( m_AddTrackerLandmarksSuccessInput,"AddTrackerLandmarksSuccessInput");
-  m_StateMachine.AddInput( m_AddTrackerLandmarksFailureInput,"AddTrackerLandmarksFailureInput");
+  m_StateMachine.AddInput( m_InitializeTrackerSuccessInput,     "InitializeTrackerSuccessInput");
+  m_StateMachine.AddInput( m_InitializeTrackerFailureInput,     "InitializeTrackerFailureInput");
 
-  m_StateMachine.AddInput( m_RegistrationSuccessInput,"RegistrationSuccessInput");
-  m_StateMachine.AddInput( m_RegistrationFailureInput,"RegistrationFailureInput");
+  m_StateMachine.AddInput( m_AddTrackerLandmarksSuccessInput,   "AddTrackerLandmarksSuccessInput");
+  m_StateMachine.AddInput( m_AddTrackerLandmarksFailureInput,   "AddTrackerLandmarksFailureInput");
 
-  m_StateMachine.AddInput( m_StartTrackingSuccessInput,"StartTrackingSuccessInput");
-  m_StateMachine.AddInput( m_StartTrackingFailureInput,"StartTrackingFailureInput");
+  m_StateMachine.AddInput( m_RegistrationSuccessInput,          "RegistrationSuccessInput");
+  m_StateMachine.AddInput( m_RegistrationFailureInput,          "RegistrationFailureInput");
 
-  m_StateMachine.AddInput( m_StopTrackingSuccessInput,"StopTrackingSuccessInput");
-  m_StateMachine.AddInput( m_StopTrackingFailureInput,"StopTrackingFailureInput");
+  m_StateMachine.AddInput( m_StartTrackingSuccessInput,         "StartTrackingSuccessInput");
+  m_StateMachine.AddInput( m_StartTrackingFailureInput,         "StartTrackingFailureInput");
+
+  m_StateMachine.AddInput( m_StopTrackingSuccessInput,          "StopTrackingSuccessInput");
+  m_StateMachine.AddInput( m_StopTrackingFailureInput,          "StopTrackingFailureInput");
 
   const ActionType NoAction = 0;
-
-  m_StateMachine.AddTransition( m_InitialState, m_PatientNameInput, m_PatientNameReadyState, 
+  
+  m_StateMachine.AddTransition( m_InitialState, m_RequestSetPatientNameInput, m_InitialState, 
     &FourViewsTrackingWithCT::SetPatientName );
+  m_StateMachine.AddTransition( m_PatientNameReadyState, m_RequestSetPatientNameInput, m_InitialState, 
+    &FourViewsTrackingWithCT::SetPatientName );
+  m_StateMachine.AddTransition( m_InitialState, m_PatientNameInput, m_PatientNameReadyState, 
+    NoAction );
   m_StateMachine.AddTransition( m_InitialState, m_PatientNameEmptyInput, m_InitialState, 
     NoAction );
 
+  m_StateMachine.AddTransition( m_PatientNameReadyState, m_RequestLoadImageInput, m_PatientNameReadyState, 
+    &FourViewsTrackingWithCT::LoadImage );
+  m_StateMachine.AddTransition( m_ImageReadyState, m_RequestLoadImageInput, m_PatientNameReadyState, 
+    &FourViewsTrackingWithCT::LoadImage );
   m_StateMachine.AddTransition( m_PatientNameReadyState, m_LoadImageSuccessInput, m_ImageReadyState, 
     &FourViewsTrackingWithCT::VerifyPatientName );
   m_StateMachine.AddTransition( m_PatientNameReadyState, m_LoadImageFailureInput, m_PatientNameReadyState, 
@@ -154,6 +185,22 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
     &FourViewsTrackingWithCT::ConnectImageRepresentation );
   m_StateMachine.AddTransition( m_ImageReadyState, m_ReloadImageInput, m_PatientNameReadyState, 
     &FourViewsTrackingWithCT::RequestLoadImage );
+
+  m_StateMachine.AddTransition( m_PatientNameVerifiedState, m_RequestInitializeTrackerInput, m_PatientNameVerifiedState, 
+    &FourViewsTrackingWithCT::InitializeTracker );
+  m_StateMachine.AddTransition( m_PatientNameVerifiedState, m_InitializeTrackerSuccessInput, m_TrackerReadyState, 
+   NoAction );
+  m_StateMachine.AddTransition( m_PatientNameVerifiedState, m_InitializeTrackerFailureInput, m_PatientNameVerifiedState, 
+   NoAction );
+
+  m_StateMachine.AddTransition( m_TrackerReadyState, m_RequestSetImageLandmarksInput, m_TrackerReadyState, 
+    &FourViewsTrackingWithCT::SetImageLandmarks );
+  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_RequestSetImageLandmarksInput, m_TrackerReadyState, 
+    &FourViewsTrackingWithCT::SetImageLandmarks );
+  m_StateMachine.AddTransition( m_TrackerReadyState, m_AddImageLandmarksSuccessInput, m_ImageLandmarksReadyState, 
+    NoAction );
+  m_StateMachine.AddTransition( m_TrackerReadyState, m_AddImageLandmarksFailureInput, m_TrackerReadyState, 
+    NoAction );
   
   m_StateMachine.SelectInitialState( m_InitialState );
   m_StateMachine.SetReadyToRun();
@@ -166,20 +213,6 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 
   ofile.close();
 
-  RequestToStateMapType rtsm;
-  for( unsigned int i = 0; i < NumberOfRequest; i++)
-    m_RequestValidationMap.push_back( rtsm );
-
-  rtsm.clear();
-  rtsm.push_back( m_InitialState.GetIdentifier() );
-  rtsm.push_back( m_PatientNameReadyState.GetIdentifier() );
-  m_RequestValidationMap[ SetPatientNameRequest ] = rtsm;
-  rtsm.clear();
-  rtsm.push_back( m_PatientNameReadyState.GetIdentifier() );
-  rtsm.push_back( m_ImageReadyState.GetIdentifier() );
-  rtsm.push_back( m_PatientNameVerifiedState.GetIdentifier() );
-  m_RequestValidationMap[ LoadImageRequest ] = rtsm;
-
 }
 
 /** Destructor */
@@ -190,56 +223,60 @@ FourViewsTrackingWithCT::~FourViewsTrackingWithCT()
 
 void FourViewsTrackingWithCT::RequestSetPatientName()
 {
-  if( !RequestValidation( SetPatientNameRequest ) ) return;
-  igstkLogMacro(          DEBUG, "FourViewsTrackingWithCT::RequestRegisterPatientInfo called...\n" )
-  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestRegisterPatientInfo called...\n" )
-  
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestSetPatientName called...\n" )
+  m_StateMachine.PushInput( m_RequestSetPatientNameInput );
+  m_StateMachine.ProcessInputs();
+}
+
+void FourViewsTrackingWithCT::SetPatientName()
+{
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::GetPatientName called...\n" )
   const char *patientName = fl_input("Patient Name:", "");
   if( patientName != NULL )
     {
-    m_PatientNameToBeSet = patientName;
+    m_PatientName = patientName;
+    igstkLogMacro(          DEBUG, "Patient registered as: "<< m_PatientName <<"\n" )
+    igstkLogMacro2( logger, DEBUG, "Patient registered as: "<< m_PatientName <<"\n" )
     m_StateMachine.PushInput( m_PatientNameInput );
     }
   else
     {
     m_StateMachine.PushInput( m_PatientNameEmptyInput );
     }
-  m_StateMachine.ProcessInputs();
 }
 
-void FourViewsTrackingWithCT::SetPatientName()
-{
- m_PatientName = m_PatientNameToBeSet;
- igstkLogMacro(          DEBUG, "Patient name registered as: " << m_PatientName << "\n" )
- igstkLogMacro2( logger, DEBUG, "Patient name registered as: " << m_PatientName << "\n" )
-}
 
 void FourViewsTrackingWithCT::RequestLoadImage()
 {
-  if( !RequestValidation( LoadImageRequest ) ) return;
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestLoadImage called...\n" )
+  m_StateMachine.PushInput( m_RequestLoadImageInput );
+  m_StateMachine.ProcessInputs();
+}
+
+void FourViewsTrackingWithCT::LoadImage()
+{
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::LoadImage called...\n" )
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
   if ( directoryname != NULL )
     {
-    igstkLogMacro(          DEBUG, "m_ImageReader->RequestSetDirectory called...\n" ) //FIXME. log msg
-    igstkLogMacro2( logger, DEBUG, "m_ImageReader->RequestSetDirectory called...\n" )
-    m_ImageReader->RequestSetDirectory( directoryname ); //FIXME. Add observer and callbacks to catch errors?
+      igstkLogMacro2( logger, DEBUG, "m_ImageReader->RequestSetDirectory called...\n" )
+      m_ImageReader->RequestSetDirectory( directoryname ); //FIXME. Add observer and callbacks to catch errors?
 
-    igstkLogMacro(          DEBUG, "m_ImageReader->RequestReadImage called... \n")  //FIXME. log msg
-    igstkLogMacro2( logger, DEBUG, "m_ImageReader->RequestReadImage called... \n")
-    m_ImageReader->RequestReadImage();                   //FIXME. Add observer and callbacks to catch errors?
+      igstkLogMacro2( logger, DEBUG, "m_ImageReader->RequestReadImage called... \n")
+      m_ImageReader->RequestReadImage();                   //FIXME. Add observer and callbacks to catch errors?
 
-    m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), m_LoadImageSuccessInput, m_LoadImageFailureInput);
-    m_StateMachine.ProcessInputs();
+      m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), m_LoadImageSuccessInput, m_LoadImageFailureInput);
     }
   else
     {
-    igstkLogMacro(          DEBUG, "No directory is selected\n")
-    igstkLogMacro2( logger, DEBUG, "No directory is selected\n")
+      igstkLogMacro(          DEBUG, "No directory is selected\n")
+      igstkLogMacro2( logger, DEBUG, "No directory is selected\n")
     }
 }
 
 void FourViewsTrackingWithCT::VerifyPatientName()
 {
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::VerifyPatientName called ... \n")
   if ( m_ImageReader->GetPatientName() == m_PatientName )
     {
     m_StateMachine.PushInput( m_PatientNameMatchInput );
@@ -249,7 +286,8 @@ void FourViewsTrackingWithCT::VerifyPatientName()
     igstkLogMacro( DEBUG, "Patient name mismatch\n")
       std::string msg = "Patient Registered as: " + m_PatientName + "\n";
     msg += "Image has the name of: " + m_ImageReader->GetPatientName() +"\n";
-    msg += "Name mismatch. Do you want to load another image? choose no will overwrite the name\n";
+    msg += "Name mismatch!!!!\n";
+    msg += "Do you want to load another image? choose \'no\' will overwrite the name\n";
     int i = fl_ask( msg.c_str() );
     if ( i )
       {
@@ -258,19 +296,44 @@ void FourViewsTrackingWithCT::VerifyPatientName()
     else
       {
       m_PatientName = m_ImageReader->GetPatientName();
+      igstkLogMacro( DEBUG, "Patient name is overwritten to:" << m_PatientName << "\n")
       m_StateMachine.PushInput( m_OverwritePatientNameInput );
       }
     }
 
 }
 
-void FourViewsTrackingWithCT::RequestSetImageLandmarks()
-{
-}
-
 void FourViewsTrackingWithCT::RequestInitializeTracker()
 {
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestInitializeTracker called ... \n")
+  m_StateMachine.PushInput( m_RequestInitializeTrackerInput );
+  m_StateMachine.ProcessInputs();
 }
+
+void FourViewsTrackingWithCT::InitializeTracker()
+{
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::InitializeTracker called ... \n")    
+  m_Tracker->Open();
+  m_Tracker->AttachSROMFileNameToPort( 3, "C:/Patrick/Vicra/Tookit/Tool Definition Files/8700339.rom" ); //FIXME
+  m_Tracker->Initialize();  //FIXME, how to check if this is success???
+
+  m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(), m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
+}
+
+void FourViewsTrackingWithCT::RequestSetImageLandmarks()
+{
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestSetImageLandmarks called ... \n")
+  m_StateMachine.PushInput( m_RequestSetImageLandmarksInput );
+  m_StateMachine.ProcessInputs();
+}
+
+void FourViewsTrackingWithCT::SetImageLandmarks()
+{
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestSetImageLandmarks called ... \n")
+  m_StateMachine.PushInput( m_RequestSetImageLandmarksInput );
+  m_StateMachine.ProcessInputs();
+}
+
 void FourViewsTrackingWithCT::RequestSetTrackerLandmarks()
 {
 }
@@ -279,10 +342,22 @@ void FourViewsTrackingWithCT::RequestRegistration()
 }
 void FourViewsTrackingWithCT::RequestStartTracking()
 {
+  m_Tracker->StartTracking();
+  m_PulseGenerator->RequestStart();
 }
 void FourViewsTrackingWithCT::RequestStopTracking()
 {
+  m_PulseGenerator->RequestStop();
+  m_Tracker->StopTracking();
 }
+void FourViewsTrackingWithCT::GetTrackerTransform()
+{
+  Transform             transitions;
+  m_Tracker->UpdateStatus();
+  m_Tracker->GetToolTransform( 3, 0, transitions ); //FIXME, Port Number
+  igstkLogMacro( DEBUG, transitions.GetTranslation() << "\n" )
+}
+
 void FourViewsTrackingWithCT::RequestResliceImage()
 {
   m_SliceNumberToBeSet[0] = this->AxialSlider->value();
@@ -345,15 +420,5 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
 
 }
 
-bool FourViewsTrackingWithCT::RequestValidation( FourViewsTrackingWithCT::RequestType request)
-{
-  RequestToStateMapType::iterator it;
-  for ( it = m_RequestValidationMap[request].begin(); it !=m_RequestValidationMap[request].end(); it++ )
-  {
-    if ( *it == m_StateMachine.GetCurrentStateIdentifier() )
-      return true;
-  }
-  return false;
-}
 
 } // end of namespace

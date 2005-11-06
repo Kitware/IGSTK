@@ -21,8 +21,8 @@ class FourViewsTrackingWithCTGUI {open
   Function {FourViewsTrackingWithCTGUI()} {open
   } {
     Fl_Window mainWindow {
-      label {IGSTK: Four Veiws Tracking With CT Images Example}
-      xywh {61 68 1147 718} type Double box PLASTIC_UP_BOX color 103 resizable
+      label {IGSTK: Four Veiws Tracking With CT Images Example} open
+      xywh {50 21 1147 718} type Double box PLASTIC_UP_BOX color 103 resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
     } {
@@ -54,17 +54,17 @@ else
         Fl_Light_Button InitializeTrackerButton {
           label {Initialize Tracker}
           callback {RequestInitializeTracker();}
-          xywh {15 135 95 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {15 93 95 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Light_Button SetImageLandmarksButton {
           label {Set Image Landmarks}
           callback {RequestSetImageLandmarks();}
-          xywh {15 95 120 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {15 133 120 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Light_Button SetTrackerLandmarksButton {
           label {Set Tracker Landmarks}
           callback {RequestSetTrackerLandmarks();}
-          xywh {17 180 130 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {17 177 130 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Light_Button RegistrationButton {
           label Registration
@@ -76,7 +76,7 @@ else
           xywh {20 295 95 25} type Normal box PLASTIC_UP_FRAME labelsize 11
         }
       }
-      Fl_Group viewerGroup {
+      Fl_Group viewerGroup {open
         xywh {375 0 770 692} box DOWN_FRAME
       } {
         Fl_Box DisplayAxial {
@@ -99,17 +99,14 @@ else
           xywh {376 346 380 330} box FLAT_BOX color 0 labelcolor 7
           class {igstk::View2D}
         }
-        Fl_Slider AxialSlider {
-          callback {RequestResliceImage();}
-          xywh {376 331 380 15} type {Horz Knob} box PLASTIC_UP_FRAME align 6 maximum 127 step 1 value 64
+        Fl_Value_Slider AxialSlider {
+          xywh {377 331 378 15} type {Horz Knob} box DOWN_FRAME maximum 127 step 1 value 64
         }
-        Fl_Slider SagittalSlider {
-          callback {RequestResliceImage();}
-          xywh {765 331 380 15} type {Horz Knob} box PLASTIC_UP_FRAME maximum 127 step 1 value 64
+        Fl_Value_Slider SagittalSlider {
+          xywh {765 330 378 15} type {Horz Knob} box DOWN_FRAME maximum 127 step 1 value 64
         }
-        Fl_Slider CoronalSlider {
-          callback {RequestResliceImage();}
-          xywh {375 676 380 15} type {Horz Knob} box PLASTIC_UP_FRAME maximum 127 step 1 value 64
+        Fl_Value_Slider CoronalSlider {selected
+          xywh {375 675 378 15} type {Horz Knob} box DOWN_FRAME maximum 127 step 1 value 64
         }
       }
       Fl_Text_Display StatusBar {
