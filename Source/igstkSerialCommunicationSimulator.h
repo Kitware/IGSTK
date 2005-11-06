@@ -104,7 +104,11 @@ private:
   /** The mapping table type definition for the request and response */
   typedef std::map<BinaryData, std::vector<BinaryData> > ResponseTableType;
 
-  /** The response counter type definition : counter is used to respond sequentially */
+  /** The response time type definition : used for response timing */
+  typedef std::map<BinaryData, std::vector<double> > ResponseTimeType;
+
+  /** The response counter type definition : counter is used to respond
+   *  sequentially */
   typedef std::map<BinaryData, unsigned> ResponseCounterType;
 
   /** The file that holds the simulation data. */
@@ -115,6 +119,9 @@ private:
 
   /** A table that maps commands to responses. */
   ResponseTableType  m_ResponseTable;
+
+  /** A table that maps commands to response times. */
+  ResponseTimeType m_TimeTable;
 
   /** A table that maps commands to index number of responses. */
   ResponseCounterType m_CounterTable;

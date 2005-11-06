@@ -26,6 +26,13 @@
 #include <string>
 #include <string.h>
 
+// includes for Sleep
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <time.h>
+#endif
+
 #include "igstkSerialCommunicationSimulator.h"
 
 
@@ -36,6 +43,7 @@ SerialCommunicationSimulator::SerialCommunicationSimulator()
 {
   m_ResponseTable.clear();
   m_CounterTable.clear();
+  m_TimeTable.clear();
 } 
 
 
@@ -71,11 +79,16 @@ SerialCommunicationSimulator::InternalOpenPort( void )
   BinaryData recvmsg, sentmsg;
   unsigned char buf[64*1024];
   char numberString[20], temp[20], byte;
-  int sent, recv, len, numberLength, number;
-  double timestamp;
-  sent = recv = 0;
+  unsigned int len, numberLength, number;
+  std::string encodedString = "";
+  std::string encodedString0;
+  double timestamp0;
+  double timestamp = 0.0;
+  int sent = -1;
+  int recv = 0;
   while( !m_File.eof() )
     {
+    timestamp0 = timestamp; // save previous timestamp
     m_File >> timestamp;
     m_File >> byte;       // consuming #
     m_File >> temp;
@@ -122,7 +135,7 @@ SerialCommunicationSimulator::InternalOpenPort( void )
       buf[len-1] = '\0';
       }
     len = strlen((const char*)buf);
-    std::string encodedString;
+    encodedString0 = encodedString; // save the previous string
     encodedString.assign((const char*)buf);
 
     if( strncmp("command", temp, 7) == 0 )
@@ -137,13 +150,24 @@ SerialCommunicationSimulator::InternalOpenPort( void )
       if( sent < recv )
         {
         m_ResponseTable[BinaryData()].push_back(recvmsg);
-        igstkLogMacro( DEBUG, "SERIAL BREAK ::: " << recvmsg << "\n" );
+        m_TimeTable[BinaryData()].push_back(timestamp - timestamp0);
+        igstkLogMacro( DEBUG, "Sim File: sent " << " : "
+                       << " <<SERIAL BREAK>>\n");
+        igstkLogMacro( DEBUG, "Sim File: recv " << recv << " : "
+                       << encodedString << "\n" );
+        igstkLogMacro( DEBUG, "Sim File: time " << recv << " : "
+                       << (timestamp - timestamp0) << " seconds\n" );
         }
       else if( sent == recv )
         {
         m_ResponseTable[sentmsg].push_back(recvmsg);
-        igstkLogMacro( DEBUG, "sent " << sent << " : " << sentmsg << "\n" );
-        igstkLogMacro( DEBUG, "recv " << recv << " : " << recvmsg << "\n" );
+        m_TimeTable[sentmsg].push_back(timestamp - timestamp0);
+        igstkLogMacro( DEBUG, "Sim File: sent " << sent << " : "
+                       << encodedString0 << "\n" );
+        igstkLogMacro( DEBUG, "Sim File: recv " << recv << " : "
+                       << encodedString << "\n" );
+        igstkLogMacro( DEBUG, "Sim File: time " << recv << " : "
+                       << (timestamp - timestamp0) << " seconds\n" );
         }
       }
     }
@@ -229,6 +253,7 @@ SerialCommunicationSimulator::InternalRead( char *data,
     return TIMEOUT;
     }
   const BinaryData& response = m_ResponseTable[m_Command][index];
+  double responseTime = m_TimeTable[m_Command][index];
   bytesRead = response.GetSize();
 
   if( index+1 >= m_ResponseTable[m_Command].size() )
@@ -258,10 +283,16 @@ SerialCommunicationSimulator::InternalRead( char *data,
     return TIMEOUT;
     }
 
-  igstkLogMacro( DEBUG, "Read number of bytes = " << bytesRead << "\n" );
+  // to be realistic, sleep according to the response times in the file
+  unsigned int sleepTime = 1 + bytesRead/10; // default value
+  if (responseTime > 0.0 && responseTime < 10.0) // 10 secs max
+    {
+    // convert responseTime to milliseconds, and add 1 millisecond
+    sleepTime = (unsigned int)(responseTime * 1000) + 1;
+    }
+  this->InternalSleep(sleepTime);
 
-  // to be realistic, sleep for a short period before returning
-  this->InternalSleep(5 + bytesRead/10);
+  igstkLogMacro( DEBUG, "Read number of bytes = " << bytesRead << "\n" );
 
   return SUCCESS;
 }

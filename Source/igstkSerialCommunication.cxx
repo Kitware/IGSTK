@@ -307,7 +307,8 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
 // Destructor 
 SerialCommunication::~SerialCommunication()  
 {
-  // Close communication, if any 
+  // Close communication, if any
+  this->SetLogger(0); 
   this->CloseCommunication();
 }
 
@@ -503,7 +504,7 @@ void SerialCommunication::OpenPortSuccessProcessing( void )
       m_CaptureFileOutput->SetStream( m_CaptureFileStream );
       m_Recorder->AddLogOutput( m_CaptureFileOutput );
       igstkLogMacro2( m_Recorder, DEBUG, "# recorded " << asctime(localtime(&ti))
-                          << "\r\n" );
+                          << "\n" );
       }
     }
 

@@ -39,31 +39,32 @@
 #include "igstkAuroraTracker.h"
 #include "igstkTransform.h"
 
-
-/** append a file name to a directory name and provide the result */
-static void joinDirAndFile(char *result, int maxLen,
-                           const char *dirName, const char *fileName)
+class AuroraTrackerTestCommand : public itk::Command 
 {
-  int dirNameLen = strlen( dirName );
-  int fileNameLen = strlen( fileName );
-  const char* slash = ( (dirName[dirNameLen-1] == '/') ? "" : "/" );
-  int slashLen = strlen( slash );
+public:
+  typedef  AuroraTrackerTestCommand   Self;
+  typedef  itk::Command               Superclass;
+  typedef itk::SmartPointer<Self>     Pointer;
+  itkNewMacro( Self );
+protected:
+  AuroraTrackerTestCommand() {};
 
-  // allocate temporary string, concatenate
-  char* fullName = new char[dirNameLen + slashLen + fileNameLen + 1];
-  strncpy(&fullName[0], dirName, dirNameLen);
-  strncpy(&fullName[dirNameLen], slash, slashLen);
-  strncpy(&fullName[dirNameLen + slashLen], fileName, fileNameLen);
-  fullName[dirNameLen + slashLen + fileNameLen] = '\0';
+public:
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+  {
+    Execute( (const itk::Object *)caller, event);
+  }
 
-  // copy to the result
-  strncpy(result, fullName, maxLen);
-  result[maxLen-1] = '\0';
-
-  // delete temporary string
-  delete [] fullName;
-}
-
+  void Execute(const itk::Object * object, const itk::EventObject & event)
+  {
+    // don't print "CompletedEvent", only print interesting events
+    if (!igstk::CompletedEvent().CheckEvent(&event) &&
+        !itk::DeleteEvent().CheckEvent(&event) )
+      {
+      std::cout << event.GetEventName() << std::endl;
+      }
+  }
+};
 
 #ifdef IGSTK_SIMULATOR_TEST
 int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
@@ -88,6 +89,8 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
 #endif /* WIN32 */
 #endif /* IGSTK_SIMULATOR_TEST */
 
+  AuroraTrackerTestCommand::Pointer my_command = AuroraTrackerTestCommand::New();
+
   // logger object created 
   std::string testName;
   if (argc > 0)
@@ -109,6 +112,8 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG);
 
+  serialComm->AddObserver( itk::AnyEvent(), my_command);
+
   serialComm->SetLogger( logger );
 
   serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
@@ -120,12 +125,10 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
 
 #ifdef IGSTK_SIMULATOR_TEST
   // load a previously captured file
-  // (it is a polaris file for now, but should be changed to aurora)
-  char pathToCaptureFile[1024];
-  joinDirAndFile( pathToCaptureFile, 1024,
-                  IGSTK_DATA_ROOT,
-                  "aurora_stream_11_05_2005.txt" );
-  serialComm->SetFileName( pathToCaptureFile );
+  std::string igstkDataDirectory = IGSTK_DATA_ROOT;
+  std::string simulationFile = igstkDataDirectory + "/";
+  simulationFile = simulationFile + "aurora_stream_11_05_2005.txt";
+  serialComm->SetFileName( simulationFile.c_str() );
 #else /* IGSTK_SIMULATOR_TEST */
   serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
   serialComm->SetCaptureFileName( "RecordedStreamByAuroraTrackerTest.txt" );
@@ -138,24 +141,27 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
 
   tracker = igstk::AuroraTracker::New();
 
+  tracker->AddObserver( itk::AnyEvent(), my_command);
+
   tracker->SetLogger( logger );
 
-  std::cout << "Entering  SetCommunication ..." << std::endl;
-
+  std::cout << "SetCommunication()" << std::endl;
   tracker->SetCommunication( serialComm );
 
-  std::cout << "Exited SetCommunication ..." << std::endl;
-
+  std::cout << "Open()" << std::endl;
   tracker->Open();
+
+  std::cout << "Initialize()" << std::endl;
+  tracker->Initialize();
 
   std::cout << tracker << std::endl;
 
-  tracker->Initialize();
-
+  std::cout << "GetNumberOfTools()" << std::endl;
   unsigned int ntools = tracker->GetNumberOfTools();
 
-  std::cout << "number of tools : " << ntools << std::endl;
+  std::cout << "NumberOfTools : " << ntools << std::endl;
 
+  std::cout << "StartTracking()" << std::endl;
   tracker->StartTracking();
 
   typedef igstk::Transform            TransformType;
@@ -177,18 +183,26 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
                 << ")" << std::endl;
       }
     }
-
+  
+  std::cout << "Reset()" << std::endl;
   tracker->Reset();
-
+  
+  std::cout << "Initialize()" << std::endl;
   tracker->Initialize();
   
+  std::cout << "StartTracking()" << std::endl;
   tracker->StartTracking();
 
+  std::cout << "StopTracking()" << std::endl;
   tracker->StopTracking();
 
+  std::cout << "Close()" << std::endl;
   tracker->Close();
 
+  std::cout << "CloseCommunication()" << std::endl;
   serialComm->CloseCommunication();
+
+  std::cout << "[PASSED]" << std::endl;
 
   return EXIT_SUCCESS;
 }
