@@ -87,14 +87,6 @@ public:
                  ErrorType errorValue,
           TimePeriodType millisecondsToExpiration);
 
-  /** Set the center point the transform. The information will be
-   * considered valid from the time of invokation of the method until that time
-   * plus the millisecondsToExpiration value. */
-  void SetCenter( 
-          const  PointType & centerPoint,
-                 ErrorType errorValue,
-          TimePeriodType millisecondsToExpiration);
-
 
   /** Set only Rotation. This method should be used when the transform
    * represents only a rotation. Internally the translational part of the
