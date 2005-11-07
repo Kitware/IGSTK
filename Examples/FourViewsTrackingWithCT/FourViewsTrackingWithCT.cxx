@@ -85,6 +85,18 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_Tracker->SetLogger( logger );
   m_Tracker->SetCommunication( m_SerialCommunication );
 
+  igstk::Transform toolCalibrationTransform;
+  igstk::Transform::VectorType translation;
+  igstk::Transform::VersorType rotation;
+  translation[0] = -18.0;   // Tip offset
+  translation[1] = 0.0;
+  translation[2] = -158.0;
+  rotation.SetIdentity();
+  //rotation.SetRotationAroundX(-1.0);
+  toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
+  m_Tracker->SetToolCalibrationTransform(toolCalibrationTransform);
+  //toolCalibrationTransform.SetToIdentity(10000);
+
   m_PulseGenerator = PulseGenerator::New();
   m_PulseObserver = ObserverType::New();
   m_PulseObserver->SetCallbackFunction( this, & FourViewsTrackingWithCT::GetTrackerTransform );
@@ -406,7 +418,7 @@ void FourViewsTrackingWithCT::InitializeTracker()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::InitializeTracker called ... \n")    
   m_Tracker->Open();
-  m_Tracker->AttachSROMFileNameToPort( 3, "C:/Patrick/Vicra/Tookit/Tool Definition Files/8700339.rom" ); //FIXME use ini file
+  m_Tracker->AttachSROMFileNameToPort( 3, "C:/Patrick/Vicra/Tookit/Tool Definition Files/8700340.rom" ); //FIXME use ini file
   m_Tracker->Initialize();            //FIXME, how to check if this is success???
   m_Tracker->StartTracking();
 
@@ -457,6 +469,8 @@ void FourViewsTrackingWithCT::AddTrackerLandmark()
   p[2] = transitions.GetTranslation()[2];
   m_TrackerLandmarksContainer.push_back( p );                       // Need testing
 
+  igstkLogMacro2( logger, DEBUG,  p << "\n")
+
   m_StateMachine.PushInputBoolean( (m_TrackerLandmarksContainer.size()>=3), m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
 }
 
@@ -500,8 +514,9 @@ void FourViewsTrackingWithCT::RequestStartTracking()
 void FourViewsTrackingWithCT::StartTracking()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::StartTracking called ... \n")
-  //m_Tracker->StartTracking();
-  m_PulseGenerator->RequestStart();
+  m_Tracker->StartTracking();
+  // We don't have observer for tracker, we are actively reading the transform right now
+  m_PulseGenerator->RequestStart(); 
   m_StateMachine.PushInput( m_StartTrackingSuccessInput ); // FIXME, How to get the failure condition
 }
 
@@ -515,9 +530,10 @@ void FourViewsTrackingWithCT::RequestStopTracking()
 void FourViewsTrackingWithCT::StopTracking()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::StopTracking called ... \n")
+  // We don't have observer for tracker, we are actively reading the transform right now
   m_PulseGenerator->RequestStop();
-  //m_Tracker->StopTracking();
-   m_StateMachine.PushInput( m_StopTrackingSuccessInput ); // FIXME, How to get the failure condition
+  m_Tracker->StopTracking();
+  m_StateMachine.PushInput( m_StopTrackingSuccessInput ); // FIXME, How to get the failure condition
 }
 
 void FourViewsTrackingWithCT::RequestResliceImage()
@@ -525,7 +541,7 @@ void FourViewsTrackingWithCT::RequestResliceImage()
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestResliceImage called ... \n")
   m_StateMachine.PushInput( m_RequestResliceImageInput );
   m_StateMachine.ProcessInputs();
-  Fl::check();
+  //Fl::check();
 }
 
 void FourViewsTrackingWithCT::ResliceImage()
@@ -603,9 +619,13 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
 void FourViewsTrackingWithCT::GetTrackerTransform()
 {
   igstk::Transform             transitions;
-  m_Tracker->UpdateStatus();
+  //m_Tracker->UpdateStatus();
+  // Tracker should have an AddObserver method to observe the TransformModifiedEvents
+  // We don't need
   m_Tracker->GetToolTransform( 3, 0, transitions ); //FIXME, Port Number
   igstkLogMacro( DEBUG, transitions.GetTranslation() << "\n" )
+  // Translate this into index, and do reslcing. ...
+  // FillMe
 }
 
 void FourViewsTrackingWithCT::GetLandmarkRegistrationTransform( const itk::EventObject & event )
