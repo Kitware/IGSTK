@@ -107,6 +107,16 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ImageRepresentationSagittal->SetLogger( logger );
   m_ImageRepresentationCoronal->SetLogger( logger );
 
+
+  m_Ellipsoid               = EllipsoidType::New();
+  m_EllipsoidRepresentation = EllipsoidRepresentationType::New();
+  
+  m_Ellipsoid->SetRadius( 10, 10, 10 );
+  
+  m_EllipsoidRepresentation->RequestSetEllipsoidObject( m_Ellipsoid );
+  m_EllipsoidRepresentation->SetColor(0.0,1.0,0.0);
+  m_EllipsoidRepresentation->SetOpacity(1.0);
+
   /** Initialize State Machine */
   m_StateMachine.AddState( m_InitialState,                "InitialState"              );
   m_StateMachine.AddState( m_PatientNameReadyState,       "PatientNameReadyState"     );
@@ -505,9 +515,9 @@ void FourViewsTrackingWithCT::RequestResliceImage()
 void FourViewsTrackingWithCT::ResliceImage()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::ResliceImage called ... \n")
-  m_SliceNumberToBeSet[0] = this->AxialSlider->value();
-  m_SliceNumberToBeSet[1] = this->SagittalSlider->value();
-  m_SliceNumberToBeSet[2] = this->CoronalSlider->value();
+  m_SliceNumberToBeSet[0] = static_cast<unsigned int>( this->AxialSlider->value() );
+  m_SliceNumberToBeSet[1] = static_cast<unsigned int>( this->SagittalSlider->value() );
+  m_SliceNumberToBeSet[2] = static_cast<unsigned int>( this->CoronalSlider->value() );
 
   // FIXME.
   m_SliceNumber[0] = m_SliceNumberToBeSet[0];

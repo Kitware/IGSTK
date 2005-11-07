@@ -214,6 +214,15 @@ private:
   typedef itk::ReceptorMemberCommand < Self > ObserverType2;
   ObserverType2::Pointer               m_LandmarkRegistrtionObserver;
 
+  typedef igstk::EllipsoidObject                  EllipsoidType;
+  typedef EllipsoidType::Pointer                  EllipsoidPointer;
+  
+  typedef igstk::EllipsoidObjectRepresentation    EllipsoidRepresentationType;
+  typedef EllipsoidRepresentationType::Pointer    EllipsoidRepresentationPointer;
+
+
+  EllipsoidPointer                            m_Ellipsoid;
+  EllipsoidRepresentationPointer              m_EllipsoidRepresentation;
 
   /** Action methods to be invoked only by the state machine */
   void SetPatientName();
