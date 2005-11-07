@@ -20,7 +20,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "FL/Fl_File_Chooser.H"
 #include "FL/Fl_Input.H"
 #include "vtkCommand.h"
-#include "igstkTransformModifiedEvent.h"
+#include "igstkEvents.h"
 
 namespace igstk
 {
@@ -632,7 +632,7 @@ void FourViewsTrackingWithCT::GetLandmarkRegistrationTransform( const itk::Event
   if ( TransformModifiedEvent().CheckEvent( &event ) )
     {
     TransformModifiedEvent *tmevent = ( TransformModifiedEvent *) & event;
-    m_Transform = tmevent->GetTransform();
+    m_Transform = tmevent->Get();
     m_StateMachine.PushInput( m_RegistrationSuccessInput );
     }
   else
