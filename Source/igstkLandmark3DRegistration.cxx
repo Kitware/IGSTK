@@ -23,7 +23,7 @@
 
 #include "igstkLandmark3DRegistration.h"
 #include "igstkTransform.h"
-#include "igstkTransformModifiedEvent.h"
+#include "igstkEvents.h"
 
 namespace igstk
 { 
@@ -315,7 +315,7 @@ Landmark3DRegistration::GetTransform()
   transform.SetTranslationAndRotation( translation, versor, error, timePeriod );
 
   TransformModifiedEvent event; 
-  event.SetTransform( transform );
+  event.Set( transform );
   this->InvokeEvent( event );
 }
 

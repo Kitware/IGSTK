@@ -23,7 +23,7 @@
 #include "itkObject.h"
 #include "itkSpatialObjectReader.h"
 #include "igstkStateMachine.h"
-#include "igstkStringEvent.h"
+#include "igstkEvents.h"
 #include "itkDefaultDynamicMeshTraits.h"
 
 namespace igstk

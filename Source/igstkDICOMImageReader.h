@@ -20,7 +20,6 @@
 #include "igstkImageReader.h"
 
 #include "igstkEvents.h"
-#include "igstkStringEvent.h"
 
 #include "itkImageSeriesReader.h"
 #include "itkEventObject.h"

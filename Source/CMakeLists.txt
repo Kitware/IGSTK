@@ -15,7 +15,6 @@ SET(IGSTK_HEADS
   igstkCTImageSpatialObjectRepresentation.h
   igstkMRImageSpatialObjectRepresentation.h
   igstkLandmark3DRegistration.h
-  igstkStringEvent.h
   igstkAuroraTracker.h
   igstkAuroraTrackerTool.h
   igstkBinaryData.h

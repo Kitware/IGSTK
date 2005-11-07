@@ -262,7 +262,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImage()
     {
     this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );    
     DICOMImageReadingErrorEvent event;
-    event.SetString( excp.GetDescription() );
+    event.Set( excp.GetDescription() );
     this->InvokeEvent( event );
     return;
     }
@@ -314,7 +314,7 @@ DICOMImageReader<TPixelType>::ReportImageDirectoryDoesNotExistError()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryDoesNotExistError called...\n");
   DICOMImageDirectoryDoesNotExistErrorEvent event;
-  event.SetString( m_ImageDirectoryNameToBeSet );
+  event.Set( m_ImageDirectoryNameToBeSet );
   this->InvokeEvent( event );
 }
 
@@ -324,7 +324,7 @@ DICOMImageReader<TPixelType>::ReportImageDirectoryDoesNotHaveEnoughFilesError()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryDoesNotHaveEnoughFilesError: called...\n");
   DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent event;
-  event.SetString( m_ImageDirectoryNameToBeSet );
+  event.Set( m_ImageDirectoryNameToBeSet );
   this->InvokeEvent( event );
 }
 
@@ -334,7 +334,7 @@ DICOMImageReader<TPixelType>::ReportImageDirectoryIsNotDirectoryError()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryIsNotDirectoryError: called...\n");
   DICOMImageDirectoryIsNotDirectoryErrorEvent event;
-  event.SetString( m_ImageDirectoryNameToBeSet );
+  event.Set( m_ImageDirectoryNameToBeSet );
   this->InvokeEvent( event );
 }
 
@@ -381,7 +381,7 @@ void
 DICOMImageReader<TPixelType>::GetModalityInfo() 
 {
   DICOMModalityEvent event;
-  event.SetString( m_Modality );
+  event.Set( m_Modality );
   this->InvokeEvent( event );
 }
 
@@ -391,7 +391,7 @@ void
 DICOMImageReader<TPixelType>::GetPatientNameInfo() 
 {
   DICOMPatientNameEvent event;
-  event.SetString( m_PatientName );
+  event.Set( m_PatientName );
   this->InvokeEvent( event );
 }
 

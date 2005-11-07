@@ -40,6 +40,13 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   // Create a default render window
   m_RenderWindow = vtkRenderWindow::New();
   m_Renderer = vtkRenderer::New();
+  m_PointPicker = vtkPointPicker::New();
+  m_PickObserver = PickerObserver::New();
+
+  m_PickObserver->SetView( this );
+
+  m_PointPicker->AddObserver( vtkCommand::EndPickEvent, m_PickObserver );
+  
   m_RenderWindow->AddRenderer( m_Renderer );
   m_Camera = m_Renderer->GetActiveCamera();
   m_RenderWindow->BordersOff();
@@ -132,9 +139,15 @@ View::~View()
     ((Fl_Group*)parent())->remove(*(Fl_Gl_Window*)this);
     }
 
+  vtkRenderWindowInteractor::SetPicker( NULL );
+
   m_RenderWindow->Delete();
 
   m_Renderer->Delete();
+
+  m_PointPicker->Delete();
+
+  m_PickObserver->Delete();
 
   // This must be invoked to prevent Memory Leaks because we call
   // SetRenderWindow() in the Initialize() method.
@@ -209,6 +222,7 @@ void View::AddActor()
 {
   igstkLogMacro( DEBUG, "AddActor() called ...\n");
   m_Renderer->AddActor( m_ActorToBeAdded );
+  m_PointPicker->AddPickList( m_ActorToBeAdded );
 }
 
 
@@ -344,9 +358,10 @@ void View::SetRenderWindow(vtkRenderWindow *aren)
   // re-sets the RenderWindow, neither UpdateSize nor draw is called,
   // so we have to force the dimensions of the NEW RenderWindow to match
   // the our (vtkFlRWI) dimensions
-  if (RenderWindow)
+  if ( RenderWindow )
     {
     RenderWindow->SetSize(this->w(), this->h());
+    vtkRenderWindowInteractor::SetPicker( m_PointPicker );
     }
 }
 
@@ -715,6 +730,7 @@ int View::handle( int event )
         {
         case FL_LEFT_MOUSE:
           this->InvokeEvent(vtkCommand::LeftButtonReleaseEvent,NULL);
+          m_PointPicker->Pick( Fl::x(), Fl::y(), 0, m_Renderer );
         break;
         case FL_MIDDLE_MOUSE:
           this->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent,NULL);

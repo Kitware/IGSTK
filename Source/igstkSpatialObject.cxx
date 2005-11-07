@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #include "igstkSpatialObject.h"
-#include "igstkTransformModifiedEvent.h"
+#include "igstkEvents.h"
 
 namespace igstk
 { 
@@ -286,7 +286,7 @@ SpatialObject::TransformUpdateFromTrackerTool( const ::itk::EventObject & event 
 
   if( transformEvent )
     {
-    this->RequestSetTrackedTransform( transformEvent->GetTransform() );
+    this->RequestSetTrackedTransform( transformEvent->Get() );
     }
 }
 
