@@ -22,11 +22,11 @@ class FourViewsTrackingWithCTGUI {open
   } {
     Fl_Window mainWindow {
       label {IGSTK: Four Veiws Tracking With CT Images Example} open
-      xywh {115 30 1147 736} type Double box PLASTIC_UP_BOX color 103 resizable
+      xywh {115 30 1145 735} type Double box PLASTIC_UP_BOX color 103 resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
     } {
-      Fl_Group controlGroup {
+      Fl_Group controlGroup {selected
         xywh {0 0 375 690} box DOWN_FRAME
       } {
         Fl_Light_Button TrackingButton {
@@ -110,14 +110,15 @@ else
           class {igstk::View2D}
         }
         Fl_Value_Slider AxialSlider {
-          callback {RequestResliceImage();
-o->redraw();}
+          callback {this->RequestResliceImage();}
           xywh {377 331 378 15} type {Horz Knob} box DOWN_FRAME maximum 127 step 1 value 64
         }
         Fl_Value_Slider SagittalSlider {
+          callback {this->RequestResliceImage();}
           xywh {765 330 378 15} type {Horz Knob} box DOWN_FRAME maximum 127 step 1 value 64
         }
         Fl_Value_Slider CoronalSlider {
+          callback {this->RequestResliceImage();}
           xywh {375 675 378 15} type {Horz Knob} box DOWN_FRAME maximum 127 step 1 value 64
         }
       }
@@ -145,12 +146,12 @@ QuitButton->callback( Quit );} {}
   } {}
   Function {RequestClearTrackerLandmarks()} {open return_type {virtual void}
   } {}
-  Function {RequestRegistration()} {open selected return_type {virtual void}
+  Function {RequestRegistration()} {open return_type {virtual void}
   } {}
-  Function {RequestStartTracking()} {open selected return_type {virtual void}
+  Function {RequestStartTracking()} {open return_type {virtual void}
   } {}
-  Function {RequestStopTracking()} {open selected return_type {virtual void}
+  Function {RequestStopTracking()} {open return_type {virtual void}
   } {}
-  Function {RequestResliceImage()} {selected return_type {virtual void}
+  Function {RequestResliceImage()} {return_type {virtual void}
   } {}
 } 
