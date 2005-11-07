@@ -96,6 +96,13 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   //this->DisplaySagittal->SetLogger( logger );
   //this->DisplayCoronal->SetLogger( logger );
 
+  m_ViewPickerObserver = ObserverType2::New();
+  m_ViewPickerObserver->SetCallbackFunction( this, &FourViewsTrackingWithCT::DrawPickedPoint );
+
+  this->DisplayAxial->AddObserver( TransformModifiedEvent(), m_ViewPickerObserver );
+  this->DisplaySagittal->AddObserver( TransformModifiedEvent(), m_ViewPickerObserver );
+  this->DisplayCoronal->AddObserver( TransformModifiedEvent(), m_ViewPickerObserver );
+
   this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
   this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
   this->DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );
@@ -109,47 +116,20 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ImageRepresentationCoronal->SetLogger( logger );
 
 
-  m_Ellipsoid               = EllipsoidType::New();
-  m_EllipsoidRepresentationAxial    = EllipsoidRepresentationType::New();
-  m_EllipsoidRepresentationSagittal = EllipsoidRepresentationType::New();
-  m_EllipsoidRepresentationCoronal  = EllipsoidRepresentationType::New();
-  
-  m_Ellipsoid->SetRadius( 10, 10, 10 );
-  
-  m_EllipsoidRepresentationAxial->RequestSetEllipsoidObject( m_Ellipsoid );
-  m_EllipsoidRepresentationSagittal->RequestSetEllipsoidObject( m_Ellipsoid );
-  m_EllipsoidRepresentationCoronal->RequestSetEllipsoidObject( m_Ellipsoid );
+  m_Ellipsoid                   = EllipsoidType::New();
+  m_EllipsoidRepresentation     = EllipsoidRepresentationType::New();
+  m_Ellipsoid->SetRadius( 10, 10, 10 );  
+  m_EllipsoidRepresentation->RequestSetEllipsoidObject( m_Ellipsoid );
+  m_EllipsoidRepresentation->SetColor(1.0,0.0,0.0);
+  m_EllipsoidRepresentation->SetOpacity(1.0);
 
-  m_EllipsoidRepresentationAxial->SetColor(1.0,0.0,0.0);
-  m_EllipsoidRepresentationAxial->SetOpacity(1.0);
-
-  m_EllipsoidRepresentationSagittal->SetColor(1.0,0.0,0.0);
-  m_EllipsoidRepresentationSagittal->SetOpacity(1.0);
-
-  m_EllipsoidRepresentationCoronal->SetColor(1.0,0.0,0.0);
-  m_EllipsoidRepresentationCoronal->SetOpacity(1.0);
-
-  m_Cylinder                       = CylinderType::New();
-  m_CylinderRepresentationAxial    = CylinderRepresentationType::New();
-  m_CylinderRepresentationSagittal = CylinderRepresentationType::New();
-  m_CylinderRepresentationCoronal  = CylinderRepresentationType::New();
-  
+  m_Cylinder                    = CylinderType::New();
+  m_CylinderRepresentation      = CylinderRepresentationType::New();
   m_Cylinder->SetRadius( 1.5 );   //   1.5 mm
   m_Cylinder->SetHeight( 200 );   // 200.0 mm
-
-  m_CylinderRepresentationAxial->RequestSetCylinderObject( m_Cylinder );
-  m_CylinderRepresentationSagittal->RequestSetCylinderObject( m_Cylinder );
-  m_CylinderRepresentationCoronal->RequestSetCylinderObject( m_Cylinder );
-
-  m_CylinderRepresentationAxial->SetColor(0.0,1.0,0.0);
-  m_CylinderRepresentationAxial->SetOpacity(1.0);
-
-  m_CylinderRepresentationSagittal->SetColor(0.0,1.0,0.0);
-  m_CylinderRepresentationSagittal->SetOpacity(1.0);
-
-  m_CylinderRepresentationCoronal->SetColor(0.0,1.0,0.0);
-  m_CylinderRepresentationCoronal->SetOpacity(1.0);
-
+  m_CylinderRepresentation->RequestSetCylinderObject( m_Cylinder );
+  m_CylinderRepresentation->SetColor(0.0,1.0,0.0);
+  m_CylinderRepresentation->SetOpacity(1.0);
 
   /** Initialize State Machine */
   m_StateMachine.AddState( m_InitialState,                "InitialState"              );
@@ -545,6 +525,7 @@ void FourViewsTrackingWithCT::RequestResliceImage()
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestResliceImage called ... \n")
   m_StateMachine.PushInput( m_RequestResliceImageInput );
   m_StateMachine.ProcessInputs();
+  Fl::check();
 }
 
 void FourViewsTrackingWithCT::ResliceImage()
@@ -580,16 +561,16 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   m_ImageRepresentationCoronal->RequestSetOrientation( ImageRepresentationType::Coronal );
 
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
-  this->DisplayAxial->RequestAddObject( m_EllipsoidRepresentationAxial );
-  this->DisplayAxial->RequestAddObject( m_CylinderRepresentationAxial );
+  this->DisplayAxial->RequestAddObject( m_EllipsoidRepresentation->Copy() );
+  this->DisplayAxial->RequestAddObject( m_CylinderRepresentation->Copy() );
 
   this->DisplaySagittal->RequestAddObject( m_ImageRepresentationSagittal );
-  this->DisplaySagittal->RequestAddObject( m_EllipsoidRepresentationSagittal );
-  this->DisplaySagittal->RequestAddObject( m_CylinderRepresentationSagittal );
+  this->DisplaySagittal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
+  this->DisplaySagittal->RequestAddObject( m_CylinderRepresentation->Copy() );
 
   this->DisplayCoronal->RequestAddObject( m_ImageRepresentationCoronal );
-  this->DisplayCoronal->RequestAddObject( m_EllipsoidRepresentationCoronal );
-  this->DisplayCoronal->RequestAddObject( m_CylinderRepresentationCoronal );
+  this->DisplayCoronal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
+  this->DisplayCoronal->RequestAddObject( m_CylinderRepresentation->Copy() );
 
 
   this->DisplayAxial->RequestResetCamera();
@@ -641,4 +622,18 @@ void FourViewsTrackingWithCT::GetLandmarkRegistrationTransform( const itk::Event
     }
 }
 
+void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
+{
+  if ( TransformModifiedEvent().CheckEvent( &event ) )
+    {
+    TransformModifiedEvent *tmevent = ( TransformModifiedEvent *) & event;
+    m_Transform = tmevent->Get();
+    std::cout<< " I Picked!!\n";
+    //m_StateMachine.PushInput( m_RegistrationSuccessInput );
+    }
+  else
+    {
+    //m_StateMachine.PushInput( m_RegistrationFailureInput );   // FIXME.. how to get the failure condition
+    }
+}
 } // end of namespace

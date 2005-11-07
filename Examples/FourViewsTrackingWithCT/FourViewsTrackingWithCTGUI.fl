@@ -22,7 +22,7 @@ class FourViewsTrackingWithCTGUI {open
   } {
     Fl_Window mainWindow {
       label {IGSTK: Four Veiws Tracking With CT Images Example} open
-      xywh {115 30 1145 735} type Double box PLASTIC_UP_BOX color 103 resizable
+      xywh {86 101 1145 735} type Double box PLASTIC_UP_BOX color 103 resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
     } {
@@ -119,7 +119,7 @@ else
         }
         Fl_Value_Slider CoronalSlider {
           callback {this->RequestResliceImage();}
-          xywh {375 675 378 15} type {Horz Knob} box DOWN_FRAME maximum 127 step 1 value 64
+          xywh {376 676 380 15} type {Horz Knob} box DOWN_FRAME maximum 127 step 1 value 64
         }
       }
       Fl_Text_Display m_LogWindow {

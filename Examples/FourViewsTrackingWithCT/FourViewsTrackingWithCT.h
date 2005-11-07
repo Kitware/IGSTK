@@ -216,6 +216,7 @@ private:
 
   typedef itk::ReceptorMemberCommand < Self > ObserverType2;
   ObserverType2::Pointer               m_LandmarkRegistrationObserver;
+  ObserverType2::Pointer               m_ViewPickerObserver;
 
   typedef igstk::EllipsoidObject                  EllipsoidType;
   typedef EllipsoidType::Pointer                  EllipsoidPointer;
@@ -225,9 +226,7 @@ private:
 
 
   EllipsoidPointer                                m_Ellipsoid;
-  EllipsoidRepresentationPointer                  m_EllipsoidRepresentationAxial;
-  EllipsoidRepresentationPointer                  m_EllipsoidRepresentationSagittal;
-  EllipsoidRepresentationPointer                  m_EllipsoidRepresentationCoronal;
+  EllipsoidRepresentationPointer                  m_EllipsoidRepresentation;
 
   typedef igstk::CylinderObject                   CylinderType;
   typedef CylinderType::Pointer                   CylinderPointer;
@@ -237,9 +236,7 @@ private:
 
 
   CylinderPointer                                 m_Cylinder;
-  CylinderRepresentationPointer                   m_CylinderRepresentationAxial;
-  CylinderRepresentationPointer                   m_CylinderRepresentationSagittal;
-  CylinderRepresentationPointer                   m_CylinderRepresentationCoronal;
+  CylinderRepresentationPointer                   m_CylinderRepresentation;
 
 
   /** Action methods to be invoked only by the state machine */
@@ -254,8 +251,9 @@ private:
   void ResliceImage();
   void VerifyPatientName(); 
   void ConnectImageRepresentation();
-  void GetTrackerTransform();
+  void GetTrackerTransform();         // Should be able to catch the events from tracker/tracker tool in the future
   void GetLandmarkRegistrationTransform( const itk::EventObject & event);
+  void DrawPickedPoint( const itk::EventObject & event );
 };
 
 } // end of namespace
