@@ -91,9 +91,10 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
   m_PulseGenerator->RequestSetFrequency( 20 ); //FIXME, move to request start tracking??
 
-  this->DisplayAxial->SetLogger( logger );
-  this->DisplaySagittal->SetLogger( logger );
-  this->DisplayCoronal->SetLogger( logger );
+  /** Temporary disable this logger */
+  //this->DisplayAxial->SetLogger( logger );
+  //this->DisplaySagittal->SetLogger( logger );
+  //this->DisplayCoronal->SetLogger( logger );
 
   this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
   this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
@@ -173,6 +174,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_StateMachine.AddInput( m_RequestRegistrationInput,          "RequestRegistrationInput"        );
   m_StateMachine.AddInput( m_RequestStartTrackingInput,         "RequestStartTrackingInput"       );
   m_StateMachine.AddInput( m_RequestStopTrackingInput,          "RequestStopTrackingInput"        );
+  m_StateMachine.AddInput( m_RequestResliceImageInput,          "RequestResliceImageInput");
 
   m_StateMachine.AddInput( m_PatientNameInput,                  "PatientNameInput"          );
   m_StateMachine.AddInput( m_PatientNameEmptyInput,             "PatientNameEmptyInput"     );
