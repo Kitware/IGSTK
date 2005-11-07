@@ -22,7 +22,7 @@ class FourViewsTrackingWithCTGUI {open
   } {
     Fl_Window mainWindow {
       label {IGSTK: Four Veiws Tracking With CT Images Example} open
-      xywh {50 21 1147 718} type Double box PLASTIC_UP_BOX color 103 resizable
+      xywh {115 30 1147 736} type Double box PLASTIC_UP_BOX color 103 resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
     } {
@@ -56,14 +56,14 @@ else
           callback {RequestInitializeTracker();}
           xywh {15 93 95 25} box PLASTIC_UP_FRAME labelsize 11
         }
-        Fl_Light_Button SetImageLandmarksButton {
-          label {Set Image Landmarks}
-          callback {RequestSetImageLandmarks();}
+        Fl_Light_Button AddImageLandmarkButton {
+          label {Add Image Landmark}
+          callback {RequestAddImageLandmark();}
           xywh {15 133 120 25} box PLASTIC_UP_FRAME labelsize 11
         }
-        Fl_Light_Button SetTrackerLandmarksButton {
-          label {Set Tracker Landmarks}
-          callback {RequestSetTrackerLandmarks();}
+        Fl_Light_Button AddTrackerLandmarkButton {
+          label {Add Tracker Landmark}
+          callback {RequestAddTrackerLandmark();}
           xywh {17 177 130 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Light_Button RegistrationButton {
@@ -74,6 +74,16 @@ else
         Fl_Light_Button QuitButton {
           label Quit
           xywh {20 295 95 25} type Normal box PLASTIC_UP_FRAME labelsize 11
+        }
+        Fl_Button ClearImageLandmarks {
+          label Clear
+          callback {RequestClearImageLandmarks();}
+          xywh {165 130 45 25} box PLASTIC_UP_FRAME
+        }
+        Fl_Button ClearTrackerLandmarks {
+          label Clear
+          callback {RequestClearTrackerLandmarks();}
+          xywh {165 175 45 25} box PLASTIC_UP_FRAME
         }
       }
       Fl_Group viewerGroup {open
@@ -100,17 +110,19 @@ else
           class {igstk::View2D}
         }
         Fl_Value_Slider AxialSlider {
+          callback {RequestResliceImage();
+o->redraw();}
           xywh {377 331 378 15} type {Horz Knob} box DOWN_FRAME maximum 127 step 1 value 64
         }
         Fl_Value_Slider SagittalSlider {
           xywh {765 330 378 15} type {Horz Knob} box DOWN_FRAME maximum 127 step 1 value 64
         }
-        Fl_Value_Slider CoronalSlider {selected
+        Fl_Value_Slider CoronalSlider {
           xywh {375 675 378 15} type {Horz Knob} box DOWN_FRAME maximum 127 step 1 value 64
         }
       }
-      Fl_Text_Display StatusBar {
-        xywh {0 690 1145 30}
+      Fl_Text_Display m_LogWindow {
+        xywh {0 690 1145 60} box DOWN_BOX
       }
     }
     code {mainWindow->show();
@@ -123,18 +135,22 @@ QuitButton->callback( Quit );} {}
   } {}
   Function {RequestLoadImage()} {open return_type {virtual void}
   } {}
-  Function {RequestSetImageLandmarks()} {open return_type {virtual void}
-  } {}
   Function {RequestInitializeTracker()} {open return_type {virtual void}
   } {}
-  Function {RequestSetTrackerLandmarks()} {open return_type {virtual void}
+  Function {RequestAddImageLandmark()} {open return_type {virtual void}
   } {}
-  Function {RequestRegistration()} {open return_type {virtual void}
+  Function {RequestAddTrackerLandmark()} {open return_type {virtual void}
   } {}
-  Function {RequestStartTracking()} {open return_type {virtual void}
+  Function {RequestClearImageLandmarks()} {open return_type {virtual void}
   } {}
-  Function {RequestStopTracking()} {open return_type {virtual void}
+  Function {RequestClearTrackerLandmarks()} {open return_type {virtual void}
   } {}
-  Function {RequestResliceImage()} {return_type {virtual void}
+  Function {RequestRegistration()} {open selected return_type {virtual void}
+  } {}
+  Function {RequestStartTracking()} {open selected return_type {virtual void}
+  } {}
+  Function {RequestStopTracking()} {open selected return_type {virtual void}
+  } {}
+  Function {RequestResliceImage()} {selected return_type {virtual void}
   } {}
 } 

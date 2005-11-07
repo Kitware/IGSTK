@@ -19,21 +19,8 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "FL/Fl_File_Chooser.H"
 #include "FL/Fl_Input.H"
-#include "vtkWorldPointPicker.h"
 #include "vtkCommand.h"
-
-class vtkMyCallback : public vtkCommand
-  {
-  public:
-    static vtkMyCallback *New() 
-      { return new vtkMyCallback; }
-    void Delete()
-      { delete this; }
-    virtual void Execute(vtkObject *caller, unsigned long, void*)
-      {
-      vtkWorldPointPicker * picker = vtkWorldPointPicker::SafeDownCast(caller);
-      }
-  };
+#include "igstkTransformModifiedEvent.h"
 
 namespace igstk
 {
@@ -47,10 +34,16 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   /** Setup logger, for all other igstk components. */
   logger   = LoggerType::New();
 
-  /** Direct the application log message to the std::cout. */
+  /** Direct the application log message to the std::cout and FLTK text display. */
   m_LogCoutOutput = LogOutputType::New();
   m_LogCoutOutput->SetStream( std::cout );
   m_Logger->AddLogOutput( m_LogCoutOutput );
+
+  Fl_Text_Buffer * textBuffer = new Fl_Text_Buffer();                    //FIXME
+  this->m_LogWindow->buffer( textBuffer );
+  m_LogFLTKOutput = FLTKTextLogOutput::New();
+  m_LogFLTKOutput->SetStream( *m_LogWindow );
+  m_Logger->AddLogOutput( m_LogFLTKOutput );
 
   /** Direct the igstk components log message to the file. */
   m_LogFileOutput = LogOutputType::New();
@@ -59,6 +52,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   if( !m_LogFile.fail() )
     {
     m_LogFileOutput->SetStream( m_LogFile );
+    m_Logger->AddLogOutput( m_LogFileOutput );
     logger->AddLogOutput( m_LogFileOutput );
     }
   else
@@ -71,8 +65,11 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ImageReader = ImageReaderType::New();
   m_ImageReader->SetLogger( logger );
 
-  m_LandmarkRegistrtion = RegistrationType::New();
-  m_LandmarkRegistrtion->SetLogger( logger );
+  m_LandmarkRegistration = RegistrationType::New();
+  m_LandmarkRegistration->SetLogger( logger );
+  m_LandmarkRegistrtionObserver = ObserverType2::New();
+  m_LandmarkRegistrtionObserver->SetCallbackFunction( this, &FourViewsTrackingWithCT::GetLandmarkRegistrationTransform );
+  m_LandmarkRegistration->AddObserver( TransformModifiedEvent(), m_LandmarkRegistrtionObserver );
 
   m_SerialCommunication = CommunicationType::New();
   m_SerialCommunication->SetLogger( logger );
@@ -110,23 +107,26 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ImageRepresentationSagittal->SetLogger( logger );
   m_ImageRepresentationCoronal->SetLogger( logger );
 
-
   /** Initialize State Machine */
   m_StateMachine.AddState( m_InitialState,                "InitialState"              );
   m_StateMachine.AddState( m_PatientNameReadyState,       "PatientNameReadyState"     );
   m_StateMachine.AddState( m_ImageReadyState,             "ImageReadyState"           );
   m_StateMachine.AddState( m_PatientNameVerifiedState,    "PatientNameVerifiedState"  );
-  m_StateMachine.AddState( m_ImageLandmarksReadyState,    "ImageLandmarksReadyState"  );
   m_StateMachine.AddState( m_TrackerReadyState,           "TrackerReadyState"         );
+  m_StateMachine.AddState( m_AddingImageLandmarkState,    "AddingImageLandmarkState"  );
+  m_StateMachine.AddState( m_ImageLandmarksReadyState,    "ImageLandmarksReadyState"  );
+  m_StateMachine.AddState( m_AddingTrackerLandmarkState,  "AddingTrackerLandmarkState"  );
   m_StateMachine.AddState( m_TrackerLandmarksReadyState,  "TrackerLandmarksReadyState");
   m_StateMachine.AddState( m_LandmarkRegistrationReadyState, "LandmarkRegistrationReadyState" );
   m_StateMachine.AddState( m_TrackingState,               "TrackingState"             );
 
   m_StateMachine.AddInput( m_RequestSetPatientNameInput,        "RequestSetPatientNameInput"      );
   m_StateMachine.AddInput( m_RequestLoadImageInput,             "RequestLoadImageInput"           );
-  m_StateMachine.AddInput( m_RequestSetImageLandmarksInput,     "RequestSetImageLandmarksInput"   );
   m_StateMachine.AddInput( m_RequestInitializeTrackerInput,     "RequestInitializeTrackerInput"   );
-  m_StateMachine.AddInput( m_RequestSetTrackerLandmarksInput,   "RequestSetTrackerLandmarksInput" );
+  m_StateMachine.AddInput( m_RequestAddImageLandmarkInput,      "RequestAddImageLandmarkInput"   );
+  m_StateMachine.AddInput( m_RequestClearImageLandmarksInput,   "RequestClearImageLandmarksInput"   );
+  m_StateMachine.AddInput( m_RequestAddTrackerLandmarkInput,    "RequestAddTrackerLandmarkInput" );
+  m_StateMachine.AddInput( m_RequestClearTrackerLandmarksInput, "RequestClearTrackerLandmarksInput" );
   m_StateMachine.AddInput( m_RequestRegistrationInput,          "RequestRegistrationInput"        );
   m_StateMachine.AddInput( m_RequestStartTrackingInput,         "RequestStartTrackingInput"       );
   m_StateMachine.AddInput( m_RequestStopTrackingInput,          "RequestStopTrackingInput"        );
@@ -141,14 +141,11 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_StateMachine.AddInput( m_OverwritePatientNameInput,         "OverwritePatientNameInput" );
   m_StateMachine.AddInput( m_ReloadImageInput,                  "ReloadImageInput"          );
 
-  m_StateMachine.AddInput( m_AddImageLandmarksSuccessInput,     "AddImageLandmarksSuccessInput");
-  m_StateMachine.AddInput( m_AddImageLandmarksFailureInput,     "AddImageLandmarksFailureInput");
-
   m_StateMachine.AddInput( m_InitializeTrackerSuccessInput,     "InitializeTrackerSuccessInput");
   m_StateMachine.AddInput( m_InitializeTrackerFailureInput,     "InitializeTrackerFailureInput");
 
-  m_StateMachine.AddInput( m_AddTrackerLandmarksSuccessInput,   "AddTrackerLandmarksSuccessInput");
-  m_StateMachine.AddInput( m_AddTrackerLandmarksFailureInput,   "AddTrackerLandmarksFailureInput");
+  m_StateMachine.AddInput( m_NeedMoreLandmarkPointsInput,       "NeedMoreLandmarkPointsInput"   );
+  m_StateMachine.AddInput( m_EnoughLandmarkPointsInput,         "EnoughLandmarkPointsInput"   );
 
   m_StateMachine.AddInput( m_RegistrationSuccessInput,          "RegistrationSuccessInput");
   m_StateMachine.AddInput( m_RegistrationFailureInput,          "RegistrationFailureInput");
@@ -161,6 +158,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 
   const ActionType NoAction = 0;
   
+  /** Register patient name */
   m_StateMachine.AddTransition( m_InitialState, m_RequestSetPatientNameInput, m_InitialState, 
     &FourViewsTrackingWithCT::SetPatientName );
   m_StateMachine.AddTransition( m_PatientNameReadyState, m_RequestSetPatientNameInput, m_InitialState, 
@@ -169,7 +167,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
     NoAction );
   m_StateMachine.AddTransition( m_InitialState, m_PatientNameEmptyInput, m_InitialState, 
     NoAction );
-
+  /** Load image and verify patient name */
   m_StateMachine.AddTransition( m_PatientNameReadyState, m_RequestLoadImageInput, m_PatientNameReadyState, 
     &FourViewsTrackingWithCT::LoadImage );
   m_StateMachine.AddTransition( m_ImageReadyState, m_RequestLoadImageInput, m_PatientNameReadyState, 
@@ -178,29 +176,98 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
     &FourViewsTrackingWithCT::VerifyPatientName );
   m_StateMachine.AddTransition( m_PatientNameReadyState, m_LoadImageFailureInput, m_PatientNameReadyState, 
     NoAction );
-
+  /** Display image */
   m_StateMachine.AddTransition( m_ImageReadyState, m_PatientNameMatchInput, m_PatientNameVerifiedState, 
     &FourViewsTrackingWithCT::ConnectImageRepresentation );
   m_StateMachine.AddTransition( m_ImageReadyState, m_OverwritePatientNameInput, m_PatientNameVerifiedState, 
     &FourViewsTrackingWithCT::ConnectImageRepresentation );
   m_StateMachine.AddTransition( m_ImageReadyState, m_ReloadImageInput, m_PatientNameReadyState, 
     &FourViewsTrackingWithCT::RequestLoadImage );
-
+  /** Initialize tracker */
   m_StateMachine.AddTransition( m_PatientNameVerifiedState, m_RequestInitializeTrackerInput, m_PatientNameVerifiedState, 
     &FourViewsTrackingWithCT::InitializeTracker );
   m_StateMachine.AddTransition( m_PatientNameVerifiedState, m_InitializeTrackerSuccessInput, m_TrackerReadyState, 
    NoAction );
   m_StateMachine.AddTransition( m_PatientNameVerifiedState, m_InitializeTrackerFailureInput, m_PatientNameVerifiedState, 
    NoAction );
+  /** Set image landmarks */
+  m_StateMachine.AddTransition( m_TrackerReadyState, m_RequestAddImageLandmarkInput, m_TrackerReadyState, 
+    &FourViewsTrackingWithCT::AddImageLandmark );
+  m_StateMachine.AddTransition( m_AddingImageLandmarkState, m_RequestAddImageLandmarkInput, m_AddingImageLandmarkState, 
+    &FourViewsTrackingWithCT::AddImageLandmark );
+  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_RequestAddImageLandmarkInput, m_ImageLandmarksReadyState, 
+    &FourViewsTrackingWithCT::AddImageLandmark );
+  m_StateMachine.AddTransition( m_TrackerReadyState, m_NeedMoreLandmarkPointsInput, m_AddingImageLandmarkState, 
+    NoAction );
+  m_StateMachine.AddTransition( m_AddingImageLandmarkState, m_NeedMoreLandmarkPointsInput, m_AddingImageLandmarkState, 
+    NoAction );
+  m_StateMachine.AddTransition( m_AddingImageLandmarkState, m_EnoughLandmarkPointsInput, m_ImageLandmarksReadyState, 
+    NoAction );
+  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_EnoughLandmarkPointsInput, m_ImageLandmarksReadyState, 
+    NoAction );
+  /** Clear image landmarks */
+  m_StateMachine.AddTransition( m_AddingImageLandmarkState, m_RequestClearImageLandmarksInput, m_TrackerReadyState, 
+    NoAction );
+  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_RequestClearImageLandmarksInput, m_TrackerReadyState, 
+    NoAction );
 
-  m_StateMachine.AddTransition( m_TrackerReadyState, m_RequestSetImageLandmarksInput, m_TrackerReadyState, 
-    &FourViewsTrackingWithCT::SetImageLandmarks );
-  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_RequestSetImageLandmarksInput, m_TrackerReadyState, 
-    &FourViewsTrackingWithCT::SetImageLandmarks );
-  m_StateMachine.AddTransition( m_TrackerReadyState, m_AddImageLandmarksSuccessInput, m_ImageLandmarksReadyState, 
+  /** Set tracker landmarks */
+  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_RequestAddTrackerLandmarkInput, m_ImageLandmarksReadyState, 
+    &FourViewsTrackingWithCT::AddTrackerLandmark );
+  m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_RequestAddTrackerLandmarkInput, m_AddingTrackerLandmarkState, 
+    &FourViewsTrackingWithCT::AddTrackerLandmark );
+  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RequestAddTrackerLandmarkInput, m_TrackerLandmarksReadyState, 
+    &FourViewsTrackingWithCT::AddTrackerLandmark );
+  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_NeedMoreLandmarkPointsInput, m_AddingTrackerLandmarkState, 
     NoAction );
-  m_StateMachine.AddTransition( m_TrackerReadyState, m_AddImageLandmarksFailureInput, m_TrackerReadyState, 
+  m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_NeedMoreLandmarkPointsInput, m_AddingTrackerLandmarkState, 
     NoAction );
+  m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_EnoughLandmarkPointsInput, m_TrackerLandmarksReadyState, 
+    NoAction );
+  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_EnoughLandmarkPointsInput, m_TrackerLandmarksReadyState, 
+    NoAction );
+  /** Clear tracker landmarks */
+  m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_RequestClearTrackerLandmarksInput, m_ImageLandmarksReadyState, 
+    NoAction );
+  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RequestClearTrackerLandmarksInput, m_ImageLandmarksReadyState, 
+    NoAction );
+
+  /** Registration */
+  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RequestRegistrationInput, m_TrackerLandmarksReadyState,
+    & FourViewsTrackingWithCT::Registration );
+  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RegistrationSuccessInput, m_LandmarkRegistrationReadyState,
+    NoAction );
+  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RegistrationFailureInput, m_TrackerLandmarksReadyState,
+    NoAction );
+
+  /** Tracking */
+  m_StateMachine.AddTransition( m_LandmarkRegistrationReadyState, m_RequestStartTrackingInput, m_LandmarkRegistrationReadyState,
+    & FourViewsTrackingWithCT::StartTracking );
+  m_StateMachine.AddTransition( m_LandmarkRegistrationReadyState, m_StartTrackingSuccessInput, m_TrackingState,
+    NoAction);
+  m_StateMachine.AddTransition( m_LandmarkRegistrationReadyState, m_StartTrackingFailureInput, m_LandmarkRegistrationReadyState,
+    NoAction );
+
+  m_StateMachine.AddTransition( m_TrackingState, m_RequestStopTrackingInput, m_TrackingState,
+    & FourViewsTrackingWithCT::StopTracking );
+  m_StateMachine.AddTransition( m_TrackingState, m_StopTrackingSuccessInput, m_LandmarkRegistrationReadyState,
+    NoAction);
+  m_StateMachine.AddTransition( m_TrackingState, m_StopTrackingFailureInput, m_TrackingState,
+    NoAction );
+
+  /** Reslicing image does not change any state*/
+  m_StateMachine.AddTransition( m_PatientNameVerifiedState, m_RequestResliceImageInput, m_PatientNameVerifiedState,
+    & FourViewsTrackingWithCT::ResliceImage );
+  m_StateMachine.AddTransition( m_TrackerReadyState, m_RequestResliceImageInput, m_TrackerReadyState,
+    & FourViewsTrackingWithCT::ResliceImage );
+  m_StateMachine.AddTransition( m_AddingImageLandmarkState, m_RequestResliceImageInput, m_AddingImageLandmarkState,
+    & FourViewsTrackingWithCT::ResliceImage );
+  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_RequestResliceImageInput, m_ImageLandmarksReadyState,
+    & FourViewsTrackingWithCT::ResliceImage );
+  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RequestResliceImageInput, m_TrackerLandmarksReadyState,
+    & FourViewsTrackingWithCT::ResliceImage );
+  m_StateMachine.AddTransition( m_TrackingState, m_RequestResliceImageInput, m_TrackingState,
+    & FourViewsTrackingWithCT::ResliceImage );
   
   m_StateMachine.SelectInitialState( m_InitialState );
   m_StateMachine.SetReadyToRun();
@@ -314,52 +381,130 @@ void FourViewsTrackingWithCT::InitializeTracker()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::InitializeTracker called ... \n")    
   m_Tracker->Open();
-  m_Tracker->AttachSROMFileNameToPort( 3, "C:/Patrick/Vicra/Tookit/Tool Definition Files/8700339.rom" ); //FIXME
-  m_Tracker->Initialize();  //FIXME, how to check if this is success???
+  m_Tracker->AttachSROMFileNameToPort( 3, "C:/Patrick/Vicra/Tookit/Tool Definition Files/8700339.rom" ); //FIXME use ini file
+  m_Tracker->Initialize();            //FIXME, how to check if this is success???
+  m_Tracker->StartTracking();
 
   m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(), m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
 }
 
-void FourViewsTrackingWithCT::RequestSetImageLandmarks()
+void FourViewsTrackingWithCT::RequestAddImageLandmark()
 {
-  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestSetImageLandmarks called ... \n")
-  m_StateMachine.PushInput( m_RequestSetImageLandmarksInput );
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestAddImageLandmark called ... \n")
+  m_StateMachine.PushInput( m_RequestAddImageLandmarkInput );
   m_StateMachine.ProcessInputs();
 }
 
-void FourViewsTrackingWithCT::SetImageLandmarks()
+void FourViewsTrackingWithCT::AddImageLandmark()
 {
-  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestSetImageLandmarks called ... \n")
-  m_StateMachine.PushInput( m_RequestSetImageLandmarksInput );
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::AddImageLandmark called ... \n")
+  LandmarkPointType  p;
+  m_ImageLandmarksContainer.push_back( p );                       // FIXME, Need real point from user
+  m_StateMachine.PushInputBoolean( (m_ImageLandmarksContainer.size()>=3), m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
+}
+
+void FourViewsTrackingWithCT::RequestClearImageLandmarks()
+{
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestClearImageLandmarks called ... \n")
+  m_ImageLandmarksContainer.clear();
+  m_StateMachine.PushInput( m_RequestClearImageLandmarksInput );
   m_StateMachine.ProcessInputs();
 }
 
-void FourViewsTrackingWithCT::RequestSetTrackerLandmarks()
+void FourViewsTrackingWithCT::RequestAddTrackerLandmark()
 {
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestAddTrackerLandmark called ... \n")
+  m_StateMachine.PushInput( m_RequestAddTrackerLandmarkInput );
+  m_StateMachine.ProcessInputs();
 }
+
+void FourViewsTrackingWithCT::AddTrackerLandmark()
+{
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::AddTrackerLandmark called ... \n")
+  
+  TrackerType::TransformType    transitions;
+  m_Tracker->UpdateStatus();
+  m_Tracker->GetToolTransform( 3, 0, transitions );                 //FIXME, port number
+  
+  LandmarkPointType  p;
+  p[0] = transitions.GetTranslation()[0];
+  p[1] = transitions.GetTranslation()[1];
+  p[2] = transitions.GetTranslation()[2];
+  m_TrackerLandmarksContainer.push_back( p );                       // Need testing
+
+  m_StateMachine.PushInputBoolean( (m_TrackerLandmarksContainer.size()>=3), m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
+}
+
+void FourViewsTrackingWithCT::RequestClearTrackerLandmarks()
+{
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestClearTrackerLandmarks called ... \n")
+  m_TrackerLandmarksContainer.clear();
+  m_StateMachine.PushInput( m_RequestClearTrackerLandmarksInput );
+  m_StateMachine.ProcessInputs();
+}
+
 void FourViewsTrackingWithCT::RequestRegistration()
 {
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestRegistration called ... \n")
+  m_StateMachine.PushInput( m_RequestRegistrationInput );
+  m_StateMachine.ProcessInputs();
 }
+
+void FourViewsTrackingWithCT::Registration()
+{
+  LandmarkPointContainerType::iterator it1, it2;
+  for( it1 = m_ImageLandmarksContainer.begin(), it2 = m_TrackerLandmarksContainer.begin(); 
+    it1!=m_ImageLandmarksContainer.end(), it2!=m_TrackerLandmarksContainer.end(); it1++, it2++)
+    {
+    m_LandmarkRegistration->RequestAddImageLandmarkPoint( *it1 );
+    m_LandmarkRegistration->RequestAddTrackerLandmarkPoint( *it2 );
+    }
+
+  // Calculate transform
+  m_LandmarkRegistration->RequestComputeTransform();
+  m_LandmarkRegistration->RequestGetTransform();
+
+}
+
 void FourViewsTrackingWithCT::RequestStartTracking()
 {
-  m_Tracker->StartTracking();
-  m_PulseGenerator->RequestStart();
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestStartTracking called ... \n")
+  m_StateMachine.PushInput( m_RequestStartTrackingInput );
+  m_StateMachine.ProcessInputs();
 }
+void FourViewsTrackingWithCT::StartTracking()
+{
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::StartTracking called ... \n")
+  //m_Tracker->StartTracking();
+  m_PulseGenerator->RequestStart();
+  m_StateMachine.PushInput( m_StartTrackingSuccessInput ); // FIXME, How to get the failure condition
+}
+
 void FourViewsTrackingWithCT::RequestStopTracking()
 {
-  m_PulseGenerator->RequestStop();
-  m_Tracker->StopTracking();
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestStopTracking called ... \n")
+  m_StateMachine.PushInput( m_RequestStopTrackingInput );
+  m_StateMachine.ProcessInputs();
 }
-void FourViewsTrackingWithCT::GetTrackerTransform()
+
+void FourViewsTrackingWithCT::StopTracking()
 {
-  Transform             transitions;
-  m_Tracker->UpdateStatus();
-  m_Tracker->GetToolTransform( 3, 0, transitions ); //FIXME, Port Number
-  igstkLogMacro( DEBUG, transitions.GetTranslation() << "\n" )
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::StopTracking called ... \n")
+  m_PulseGenerator->RequestStop();
+  //m_Tracker->StopTracking();
+   m_StateMachine.PushInput( m_StopTrackingSuccessInput ); // FIXME, How to get the failure condition
 }
 
 void FourViewsTrackingWithCT::RequestResliceImage()
 {
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestResliceImage called ... \n")
+  m_StateMachine.PushInput( m_RequestResliceImageInput );
+  m_StateMachine.ProcessInputs();
+}
+
+void FourViewsTrackingWithCT::ResliceImage()
+{
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::ResliceImage called ... \n")
   m_SliceNumberToBeSet[0] = this->AxialSlider->value();
   m_SliceNumberToBeSet[1] = this->SagittalSlider->value();
   m_SliceNumberToBeSet[2] = this->CoronalSlider->value();
@@ -420,5 +565,26 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
 
 }
 
+void FourViewsTrackingWithCT::GetTrackerTransform()
+{
+  igstk::Transform             transitions;
+  m_Tracker->UpdateStatus();
+  m_Tracker->GetToolTransform( 3, 0, transitions ); //FIXME, Port Number
+  igstkLogMacro( DEBUG, transitions.GetTranslation() << "\n" )
+}
+
+void FourViewsTrackingWithCT::GetLandmarkRegistrationTransform( const itk::EventObject & event )
+{
+  if ( TransformModifiedEvent().CheckEvent( &event ) )
+    {
+    TransformModifiedEvent *tmevent = ( TransformModifiedEvent *) & event;
+    m_Transform = tmevent->GetTransform();
+    m_StateMachine.PushInput( m_RegistrationSuccessInput );
+    }
+  else
+    {
+    m_StateMachine.PushInput( m_RegistrationFailureInput );   // FIXME.. how to get the failure condition
+    }
+}
 
 } // end of namespace

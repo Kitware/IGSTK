@@ -27,6 +27,7 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "igstkStateMachine.h"
 #include "itkStdStreamLogOutput.h"
+#include "igstkFLTKTextLogOutput.h"
 
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
@@ -83,6 +84,9 @@ public:
   typedef Landmark3DRegistration                        RegistrationType;
   typedef RegistrationType::LandmarkPointContainerType  LandmarkPointContainerType;
   typedef RegistrationType::LandmarkImagePointType      LandmarkPointType;
+  
+  /** typedef for TransformType */
+  typedef RegistrationType::TransformType               TransformType;
 
   /** typedefs for the communication */
   #ifdef WIN32
@@ -97,9 +101,11 @@ public:
   /** Public request methods for the GUI. */
   virtual void RequestSetPatientName();
   virtual void RequestLoadImage();
-  virtual void RequestSetImageLandmarks();
   virtual void RequestInitializeTracker();
-  virtual void RequestSetTrackerLandmarks();
+  virtual void RequestAddImageLandmark();
+  virtual void RequestAddTrackerLandmark();
+  virtual void RequestClearImageLandmarks();
+  virtual void RequestClearTrackerLandmarks();
   virtual void RequestRegistration();
   virtual void RequestStartTracking();
   virtual void RequestStopTracking();
@@ -120,8 +126,10 @@ private:
   StateType            m_PatientNameReadyState;
   StateType            m_ImageReadyState;
   StateType            m_PatientNameVerifiedState;
-  StateType            m_ImageLandmarksReadyState;
   StateType            m_TrackerReadyState;
+  StateType            m_AddingImageLandmarkState;
+  StateType            m_ImageLandmarksReadyState;
+  StateType            m_AddingTrackerLandmarkState;
   StateType            m_TrackerLandmarksReadyState;
   StateType            m_LandmarkRegistrationReadyState;
   StateType            m_TrackingState;
@@ -130,12 +138,15 @@ private:
   /** Inputs to the state machine and it's designed transitions */
   InputType            m_RequestSetPatientNameInput;
   InputType            m_RequestLoadImageInput;
-  InputType            m_RequestSetImageLandmarksInput;
   InputType            m_RequestInitializeTrackerInput;
-  InputType            m_RequestSetTrackerLandmarksInput;
+  InputType            m_RequestAddImageLandmarkInput;
+  InputType            m_RequestClearImageLandmarksInput;
+  InputType            m_RequestAddTrackerLandmarkInput;
+  InputType            m_RequestClearTrackerLandmarksInput;
   InputType            m_RequestRegistrationInput;
   InputType            m_RequestStartTrackingInput;
   InputType            m_RequestStopTrackingInput;
+  InputType            m_RequestResliceImageInput;
 
   // FROM                                                 //-> TO
   // InitialState
@@ -148,15 +159,15 @@ private:
   InputType            m_PatientNameMatchInput;           //-> PatientNameVerifiedState
   InputType            m_OverwritePatientNameInput;       //-> PatientNameVerifiedState
   InputType            m_ReloadImageInput;                //-> PatientNameReadyState
-  // PatientNameVerifiedState
-  InputType            m_AddImageLandmarksSuccessInput;   //-> ImageLandmarksReadyState
-  InputType            m_AddImageLandmarksFailureInput;   //-> PatientNameVerifiedState
   // ImageLandmarksReadyState
   InputType            m_InitializeTrackerSuccessInput;   //-> TrackerReadyState
   InputType            m_InitializeTrackerFailureInput;   //-> ImageLandmarksReadyState
+  // PatientNameVerifiedState
+  InputType            m_NeedMoreLandmarkPointsInput;      //-> ImageLandmarksReadyState
+  InputType            m_EnoughLandmarkPointsInput;        //-> PatientNameVerifiedState
   // TrackerReadyState
-  InputType            m_AddTrackerLandmarksSuccessInput; //-> TrackerLandmarksReadyState
-  InputType            m_AddTrackerLandmarksFailureInput; //-> TrackerReadyState
+  //InputType            m_AddTrackerLandmarksSuccessInput; //-> TrackerLandmarksReadyState
+  //InputType            m_AddTrackerLandmarksFailureInput; //-> TrackerReadyState
   // TrackerLandmarksReadyState
   InputType            m_RegistrationSuccessInput;        //-> LandmarkRegistrationReadyState
   InputType            m_RegistrationFailureInput;        //-> TrackerLandmarksReadyState
@@ -172,6 +183,7 @@ private:
   LogOutputType::Pointer              m_LogFileOutput;
   LogOutputType::Pointer              m_LogCoutOutput;
   std::ofstream                       m_LogFile;
+  FLTKTextLogOutput::Pointer          m_LogFLTKOutput;
   LoggerType::Pointer                 logger; // Another logger for igstk components
 
   /** Internal variables. */
@@ -186,12 +198,12 @@ private:
   unsigned int                        m_SliceNumber[3];
   unsigned int                        m_SliceNumberToBeSet[3];
 
-  RegistrationType::Pointer           m_LandmarkRegistrtion;
-  LandmarkPointContainerType          m_ImageLandmarks;
-  LandmarkPointContainerType          m_ImageLandmarksToBeSet;
-  LandmarkPointContainerType          m_TrackerLandmarks;
-  LandmarkPointContainerType          m_TrackerLandmarksToBeSet;
+  RegistrationType::Pointer           m_LandmarkRegistration;
+  LandmarkPointContainerType          m_ImageLandmarksContainer;
+  LandmarkPointContainerType          m_TrackerLandmarksContainer;
 
+  Transform                           m_Transform;  //WHY igstk::Transform has no smart pointer
+  
   CommunicationType::Pointer          m_SerialCommunication;
   TrackerType::Pointer                m_Tracker;
 
@@ -199,13 +211,16 @@ private:
   PulseGenerator::Pointer             m_PulseGenerator;
   ObserverType::Pointer               m_PulseObserver;
 
+  typedef itk::ReceptorMemberCommand < Self > ObserverType2;
+  ObserverType2::Pointer               m_LandmarkRegistrtionObserver;
+
 
   /** Action methods to be invoked only by the state machine */
   void SetPatientName();
   void LoadImage();
-  void SetImageLandmarks();
   void InitializeTracker();
-  void SetTrackerLandmarks();
+  void AddImageLandmark();
+  void AddTrackerLandmark();
   void Registration();
   void StartTracking();
   void StopTracking();
@@ -213,6 +228,7 @@ private:
   void VerifyPatientName(); 
   void ConnectImageRepresentation();
   void GetTrackerTransform();
+  void GetLandmarkRegistrationTransform( const itk::EventObject & event);
 };
 
 } // end of namespace
