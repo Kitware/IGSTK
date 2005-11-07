@@ -215,7 +215,7 @@ private:
   ObserverType::Pointer               m_PulseObserver;
 
   typedef itk::ReceptorMemberCommand < Self > ObserverType2;
-  ObserverType2::Pointer               m_LandmarkRegistrtionObserver;
+  ObserverType2::Pointer               m_LandmarkRegistrationObserver;
 
   typedef igstk::EllipsoidObject                  EllipsoidType;
   typedef EllipsoidType::Pointer                  EllipsoidPointer;

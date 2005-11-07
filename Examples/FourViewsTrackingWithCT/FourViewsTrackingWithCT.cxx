@@ -67,9 +67,9 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 
   m_LandmarkRegistration = RegistrationType::New();
   m_LandmarkRegistration->SetLogger( logger );
-  m_LandmarkRegistrtionObserver = ObserverType2::New();
-  m_LandmarkRegistrtionObserver->SetCallbackFunction( this, &FourViewsTrackingWithCT::GetLandmarkRegistrationTransform );
-  m_LandmarkRegistration->AddObserver( TransformModifiedEvent(), m_LandmarkRegistrtionObserver );
+  m_LandmarkRegistrationObserver = ObserverType2::New();
+  m_LandmarkRegistrationObserver->SetCallbackFunction( this, &FourViewsTrackingWithCT::GetLandmarkRegistrationTransform );
+  m_LandmarkRegistration->AddObserver( TransformModifiedEvent(), m_LandmarkRegistrationObserver );
 
   m_SerialCommunication = CommunicationType::New();
   m_SerialCommunication->SetLogger( logger );
