@@ -41,12 +41,7 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   m_RenderWindow = vtkRenderWindow::New();
   m_Renderer = vtkRenderer::New();
   m_PointPicker = vtkPointPicker::New();
-  m_PickObserver = PickerObserver::New();
 
-  m_PickObserver->SetView( this );
-
-  m_PointPicker->AddObserver( vtkCommand::EndPickEvent, m_PickObserver );
-  
   m_RenderWindow->AddRenderer( m_Renderer );
   m_Camera = m_Renderer->GetActiveCamera();
   m_RenderWindow->BordersOff();
@@ -146,8 +141,6 @@ View::~View()
   m_Renderer->Delete();
 
   m_PointPicker->Delete();
-
-  m_PickObserver->Delete();
 
   // This must be invoked to prevent Memory Leaks because we call
   // SetRenderWindow() in the Initialize() method.
@@ -729,8 +722,30 @@ int View::handle( int event )
       switch( Fl::event_button() ) 
         {
         case FL_LEFT_MOUSE:
+          {
           this->InvokeEvent(vtkCommand::LeftButtonReleaseEvent,NULL);
-          m_PointPicker->Pick( Fl::x(), Fl::y(), 0, m_Renderer );
+          
+          m_PointPicker->Pick( Fl::event_x(), 
+                               this->h()-Fl::event_y()-1, 
+                               0, m_Renderer );
+          double data[3];
+          m_PointPicker->GetPickPosition( data );
+          Transform::VectorType pickedPoint;
+          pickedPoint[0] = data[0];
+          pickedPoint[1] = data[1];
+          pickedPoint[2] = data[2];
+          
+          double validityTime = 100000.0; // 100 seconds
+          double errorValue = 1.0; // this should be obtained from the picked object.
+
+          igstk::Transform transform;
+          transform.SetTranslation( pickedPoint, errorValue, validityTime );
+
+          igstk::TransformModifiedEvent transformEvent;
+          transformEvent.Set( transform );
+
+          m_Reporter->InvokeEvent( transformEvent );
+          }
         break;
         case FL_MIDDLE_MOUSE:
           this->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent,NULL);

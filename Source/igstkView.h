@@ -172,39 +172,6 @@ private:
   
   bool                    m_InteractionHandling;
 
-  class PickerObserver : public vtkCommand
-  {
-  public:
-    static PickerObserver * New() { return new PickerObserver; }
-    virtual void Execute( vtkObject * caller, unsigned long, void *)
-    {
-      vtkPointPicker * picker = vtkPointPicker::SafeDownCast( caller );
-      igstk::Transform::VectorType pickedPoint;
-
-      double data[3];
-      picker->GetPickPosition( data );
-      pickedPoint[0] = data[0];
-      pickedPoint[1] = data[1];
-      pickedPoint[2] = data[2];
-      
-      double validityTime = 100000.0; // 100 seconds
-      double errorValue = 1.0; // this should be obtained from the picked object.
-
-      igstk::Transform transform;
-      transform.SetTranslation( pickedPoint, errorValue, validityTime );
-
-      igstk::TransformModifiedEvent transformEvent;
-      transformEvent.Set( transform );
-
-      m_View->m_Reporter->InvokeEvent( transformEvent );
-    }
-    void SetView( View * view )
-    {
-      m_View = view;
-    }
-  private:
-    View * m_View;
-  };
   
   /** Member variables for holding temptative arguments of functions.
    *  This is needed for implementing a layer of security that decouples
@@ -217,8 +184,6 @@ private:
   PulseGenerator::Pointer   m_PulseGenerator;
   ObserverType::Pointer     m_PulseObserver;
   ::itk::Object::Pointer    m_Reporter;
-
-  PickerObserver *          m_PickObserver;
 
   /** List of the children object plug to the spatial object. */
   ObjectListType m_Objects; 
