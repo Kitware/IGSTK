@@ -47,6 +47,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 
+#include "igstkCylinderObject.h"
+#include "igstkCylinderObjectRepresentation.h"
+
 namespace igstk
 {
 
@@ -221,8 +224,23 @@ private:
   typedef EllipsoidRepresentationType::Pointer    EllipsoidRepresentationPointer;
 
 
-  EllipsoidPointer                            m_Ellipsoid;
-  EllipsoidRepresentationPointer              m_EllipsoidRepresentation;
+  EllipsoidPointer                                m_Ellipsoid;
+  EllipsoidRepresentationPointer                  m_EllipsoidRepresentationAxial;
+  EllipsoidRepresentationPointer                  m_EllipsoidRepresentationSagittal;
+  EllipsoidRepresentationPointer                  m_EllipsoidRepresentationCoronal;
+
+  typedef igstk::CylinderObject                   CylinderType;
+  typedef CylinderType::Pointer                   CylinderPointer;
+  
+  typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;
+  typedef CylinderRepresentationType::Pointer     CylinderRepresentationPointer;
+
+
+  CylinderPointer                                 m_Cylinder;
+  CylinderRepresentationPointer                   m_CylinderRepresentationAxial;
+  CylinderRepresentationPointer                   m_CylinderRepresentationSagittal;
+  CylinderRepresentationPointer                   m_CylinderRepresentationCoronal;
+
 
   /** Action methods to be invoked only by the state machine */
   void SetPatientName();

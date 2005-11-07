@@ -109,13 +109,46 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 
 
   m_Ellipsoid               = EllipsoidType::New();
-  m_EllipsoidRepresentation = EllipsoidRepresentationType::New();
+  m_EllipsoidRepresentationAxial    = EllipsoidRepresentationType::New();
+  m_EllipsoidRepresentationSagittal = EllipsoidRepresentationType::New();
+  m_EllipsoidRepresentationCoronal  = EllipsoidRepresentationType::New();
   
   m_Ellipsoid->SetRadius( 10, 10, 10 );
   
-  m_EllipsoidRepresentation->RequestSetEllipsoidObject( m_Ellipsoid );
-  m_EllipsoidRepresentation->SetColor(0.0,1.0,0.0);
-  m_EllipsoidRepresentation->SetOpacity(1.0);
+  m_EllipsoidRepresentationAxial->RequestSetEllipsoidObject( m_Ellipsoid );
+  m_EllipsoidRepresentationSagittal->RequestSetEllipsoidObject( m_Ellipsoid );
+  m_EllipsoidRepresentationCoronal->RequestSetEllipsoidObject( m_Ellipsoid );
+
+  m_EllipsoidRepresentationAxial->SetColor(1.0,0.0,0.0);
+  m_EllipsoidRepresentationAxial->SetOpacity(1.0);
+
+  m_EllipsoidRepresentationSagittal->SetColor(1.0,0.0,0.0);
+  m_EllipsoidRepresentationSagittal->SetOpacity(1.0);
+
+  m_EllipsoidRepresentationCoronal->SetColor(1.0,0.0,0.0);
+  m_EllipsoidRepresentationCoronal->SetOpacity(1.0);
+
+  m_Cylinder                       = CylinderType::New();
+  m_CylinderRepresentationAxial    = CylinderRepresentationType::New();
+  m_CylinderRepresentationSagittal = CylinderRepresentationType::New();
+  m_CylinderRepresentationCoronal  = CylinderRepresentationType::New();
+  
+  m_Cylinder->SetRadius( 1.5 );   //   1.5 mm
+  m_Cylinder->SetHeight( 200 );   // 200.0 mm
+
+  m_CylinderRepresentationAxial->RequestSetCylinderObject( m_Cylinder );
+  m_CylinderRepresentationSagittal->RequestSetCylinderObject( m_Cylinder );
+  m_CylinderRepresentationCoronal->RequestSetCylinderObject( m_Cylinder );
+
+  m_CylinderRepresentationAxial->SetColor(0.0,1.0,0.0);
+  m_CylinderRepresentationAxial->SetOpacity(1.0);
+
+  m_CylinderRepresentationSagittal->SetColor(0.0,1.0,0.0);
+  m_CylinderRepresentationSagittal->SetOpacity(1.0);
+
+  m_CylinderRepresentationCoronal->SetColor(0.0,1.0,0.0);
+  m_CylinderRepresentationCoronal->SetOpacity(1.0);
+
 
   /** Initialize State Machine */
   m_StateMachine.AddState( m_InitialState,                "InitialState"              );
@@ -545,8 +578,17 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   m_ImageRepresentationCoronal->RequestSetOrientation( ImageRepresentationType::Coronal );
 
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
+  this->DisplayAxial->RequestAddObject( m_EllipsoidRepresentationAxial );
+  this->DisplayAxial->RequestAddObject( m_CylinderRepresentationAxial );
+
   this->DisplaySagittal->RequestAddObject( m_ImageRepresentationSagittal );
+  this->DisplaySagittal->RequestAddObject( m_EllipsoidRepresentationSagittal );
+  this->DisplaySagittal->RequestAddObject( m_CylinderRepresentationSagittal );
+
   this->DisplayCoronal->RequestAddObject( m_ImageRepresentationCoronal );
+  this->DisplayCoronal->RequestAddObject( m_EllipsoidRepresentationCoronal );
+  this->DisplayCoronal->RequestAddObject( m_CylinderRepresentationCoronal );
+
 
   this->DisplayAxial->RequestResetCamera();
   this->DisplayAxial->Update();
