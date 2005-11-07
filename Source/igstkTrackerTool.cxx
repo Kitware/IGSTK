@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #include "igstkTrackerTool.h"
-#include "igstkTransformModifiedEvent.h"
+#include "igstkEvents.h"
 
 
 namespace igstk
@@ -50,7 +50,7 @@ TrackerTool::SetTransform( const TransformType & transform )
   m_Transform = transform;
 
   TransformModifiedEvent event;
-  event.SetTransform( transform );
+  event.Set( transform );
   this->InvokeEvent( event );
 }
 

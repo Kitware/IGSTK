@@ -27,7 +27,7 @@
 #include "itkObject.h"
 #include "itkCommand.h"
 #include "itkMacro.h"
-#include "igstkTransformModifiedEvent.h"
+#include "igstkEvents.h"
 #include "igstkTransform.h"
 
 
@@ -91,7 +91,7 @@ class Landmark3DRegistrationGetTransformCallback: public itk::Command
       std::cout<< " TransformEvent is thrown" << std::endl;
       const TransformModifiedEventType * transformEvent =
                     dynamic_cast < const TransformModifiedEventType* > ( &event );
-      m_Transform = transformEvent->GetTransform();
+      m_Transform = transformEvent->Get();
       m_EventReceived = true;
     } 
     bool GetEventReceived()

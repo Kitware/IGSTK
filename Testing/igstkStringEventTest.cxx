@@ -20,7 +20,7 @@
 #endif
 
 #include "igstkMacros.h"
-#include "igstkStringEvent.h"
+#include "igstkEvents.h"
 
 
 int igstkStringEventTest( int , char* [] )
@@ -30,9 +30,9 @@ int igstkStringEventTest( int , char* [] )
 
   std::string message = "if it is not tested, it is broken !";
 
-  event.SetString( message );
+  event.Set( message );
 
-  std::string message2 = event.GetString();
+  std::string message2 = event.Get();
 
   if( message2 != message )
     {

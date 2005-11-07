@@ -52,7 +52,7 @@ public:
       {
       const DICOMModalityEventType * modalityEvent = 
                    dynamic_cast< const DICOMModalityEventType *>( &event );
-      std::cout << "Modality= " << modalityEvent->GetString() << std::endl;
+      std::cout << "Modality= " << modalityEvent->Get() << std::endl;
       }
       
   }
@@ -86,7 +86,7 @@ public:
   {
     const DICOMPatientNameEventType * patientNameEvent = 
           dynamic_cast < const DICOMPatientNameEventType* > ( &event );    
-    std::cerr << "PatientName= " << patientNameEvent->GetString() << std::endl;
+    std::cerr << "PatientName= " << patientNameEvent->Get() << std::endl;
       
   }
 protected:
