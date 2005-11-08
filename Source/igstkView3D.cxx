@@ -16,16 +16,22 @@
 =========================================================================*/
 #include "igstkView3D.h"
 
+#include "vtkInteractorStyleTrackballCamera.h"
+
 namespace igstk{
 
 /** Constructor */
 View3D::View3D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
 {
+  vtkInteractorStyleTrackballCamera * interactorStyle = vtkInteractorStyleTrackballCamera::New();
+  vtkRenderWindowInteractor::SetInteractorStyle( interactorStyle );
+  interactorStyle->Delete();
 }
 
 /** Destructor */
 View3D::~View3D()
 {
+  vtkRenderWindowInteractor::SetInteractorStyle( NULL );
 }
 
 /** Main FLTK event handler */
