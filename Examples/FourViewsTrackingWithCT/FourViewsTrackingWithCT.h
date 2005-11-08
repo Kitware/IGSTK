@@ -80,6 +80,10 @@ public:
   /** typedef for ImageReaderType */
   typedef CTImageReader                                 ImageReaderType;
 
+  typedef ImageReaderType::ImageSpatialObjectType       ImageSpatialObjectType;
+
+  typedef ImageSpatialObjectType::IndexType             IndexType;
+
   /** typedef for ImageRepresentationType */
   typedef CTImageSpatialObjectRepresentation            ImageRepresentationType;
 
@@ -203,9 +207,6 @@ private:
   ImageRepresentationType::Pointer    m_ImageRepresentationCoronal3D;
   ImageRepresentationType::Pointer    m_ImageRepresentationSagittal3D;
 
-  unsigned int                        m_SliceNumber[3];
-  unsigned int                        m_SliceNumberToBeSet[3];
-
   RegistrationType::Pointer           m_LandmarkRegistration;
   LandmarkPointContainerType          m_ImageLandmarksContainer;
   LandmarkPointContainerType          m_TrackerLandmarksContainer;
@@ -255,12 +256,14 @@ private:
   void InitializeTracker();
   void AddImageLandmark();
   void AddTrackerLandmark();
+  void Tracking();
   void ClearImageLandmarks();
   void ClearTrackerLandmarks();
   void Registration();
   void StartTracking();
   void StopTracking();
   void ResliceImage();
+  void ResliceImage( IndexType index );
   void VerifyPatientName(); 
   void ConnectImageRepresentation();
   void GetTrackerTransform();         // Should be able to catch the events from tracker/tracker tool in the future

@@ -96,11 +96,15 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   //rotation.SetRotationAroundX(-1.0);
   toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
   m_Tracker->SetToolCalibrationTransform(toolCalibrationTransform);
-  //toolCalibrationTransform.SetToIdentity(10000);
+  
+
+  m_ImageToTrackerTransform.SetToIdentity( 10000 );
+  m_ImageLandmarkTransform.SetToIdentity( 10000 );
+  m_TrackerLandmarkTransform.SetToIdentity( 10000 );
 
   m_PulseGenerator = PulseGenerator::New();
   m_PulseObserver = ObserverType::New();
-  m_PulseObserver->SetCallbackFunction( this, & FourViewsTrackingWithCT::GetTrackerTransform );
+  m_PulseObserver->SetCallbackFunction( this, & FourViewsTrackingWithCT::Tracking );
   m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
   m_PulseGenerator->RequestSetFrequency( 20 ); //FIXME, move to request start tracking??
 
@@ -641,27 +645,38 @@ void FourViewsTrackingWithCT::RequestResliceImage()
 void FourViewsTrackingWithCT::ResliceImage()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::ResliceImage called ... \n")
-  m_SliceNumberToBeSet[0] = static_cast<unsigned int>( this->AxialSlider->value() );
-  m_SliceNumberToBeSet[1] = static_cast<unsigned int>( this->SagittalSlider->value() );
-  m_SliceNumberToBeSet[2] = static_cast<unsigned int>( this->CoronalSlider->value() );
 
-  // FIXME.
-  m_SliceNumber[0] = m_SliceNumberToBeSet[0];
-  m_SliceNumber[1] = m_SliceNumberToBeSet[1];
-  m_SliceNumber[2] = m_SliceNumberToBeSet[2];
+  m_ImageRepresentationAxial->RequestSetSliceNumber( this->AxialSlider->value() );
+  m_ImageRepresentationSagittal->RequestSetSliceNumber( this->SagittalSlider->value() );
+  m_ImageRepresentationCoronal->RequestSetSliceNumber( this->CoronalSlider->value() );
 
-  m_ImageRepresentationAxial->RequestSetSliceNumber( m_SliceNumber[0] );
-  m_ImageRepresentationSagittal->RequestSetSliceNumber( m_SliceNumber[1] );
-  m_ImageRepresentationCoronal->RequestSetSliceNumber( m_SliceNumber[2] );
-
-  m_ImageRepresentationAxial3D->RequestSetSliceNumber( m_SliceNumber[0] );
-  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( m_SliceNumber[1] );
-  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( m_SliceNumber[2] );
+  m_ImageRepresentationAxial3D->RequestSetSliceNumber( this->AxialSlider->value() );
+  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( this->SagittalSlider->value() );
+  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( this->CoronalSlider->value() );
 
   this->ViewerGroup->redraw();
   Fl::check();
 }
 
+void FourViewsTrackingWithCT::ResliceImage ( IndexType index )
+{
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::ResliceImage called ... \n")
+
+  m_ImageRepresentationAxial->RequestSetSliceNumber( index[2] );
+  m_ImageRepresentationSagittal->RequestSetSliceNumber( index[0] );
+  m_ImageRepresentationCoronal->RequestSetSliceNumber( index[1] );
+
+  m_ImageRepresentationAxial3D->RequestSetSliceNumber( index[2] );
+  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( index[0] );
+  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( index[1] );
+
+  this->AxialSlider->value( index[2] );
+  this->SagittalSlider->value( index[0] );
+  this->CoronalSlider->value( index[1] ) ;
+
+  this->ViewerGroup->redraw();
+  Fl::check();
+}
 
 /** This method should be invoked by the State Machine 
  *  only when the Image has been loaded and the Patient
@@ -715,6 +730,19 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   this->CoronalSlider->maximum( max );
   this->CoronalSlider->value( slice );  
   this->CoronalSlider->activate();
+
+  /** Tool calibration transform */
+  igstk::Transform toolCalibrationTransform;
+  igstk::Transform::VectorType translation;
+  igstk::Transform::VersorType rotation;
+  translation[0] = -189.0;   // Tip offset
+  translation[1] = -353;
+  translation[2] = 807;
+  rotation.SetIdentity();
+  //rotation.SetRotationAroundX(-1.0);
+  toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
+
+  m_Ellipsoid->RequestSetTransform( toolCalibrationTransform );
   
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
   this->DisplayAxial->RequestAddObject( m_EllipsoidRepresentation->Copy() );
@@ -769,10 +797,33 @@ void FourViewsTrackingWithCT::GetTrackerTransform()
   m_Tracker->UpdateStatus();
   // Tracker should have an AddObserver method to observe the TransformModifiedEvents
   // We don't need
-  m_Tracker->GetToolTransform( 3, 0, m_TrackerLandmarkTransformToBeSet ); //FIXME, Port Number
-  igstkLogMacro( DEBUG, m_TrackerLandmarkTransformToBeSet.GetTranslation() << "\n" )
-  // Translate this into index, and do reslcing. ...
-  // FillMe
+  m_Tracker->GetToolTransform( 3, 0, m_ImageLandmarkTransformToBeSet ); //FIXME, Port Number
+}
+
+void FourViewsTrackingWithCT::Tracking()
+{
+  m_Tracker->UpdateStatus();
+  // Tracker should have an AddObserver method to observe the TransformModifiedEvents
+  // We don't need
+  Transform transform;
+  m_Tracker->GetToolTransform( 3, 0, transform ); //FIXME, Port Number
+
+  ImageSpatialObjectType::PointType    p;
+  p[0] = transform.GetTranslation()[0];
+  p[1] = transform.GetTranslation()[1];
+  p[2] = transform.GetTranslation()[2];
+
+  if( m_ImageReader->GetOutput()->IsInside( p ) )
+    {
+    m_Ellipsoid->RequestSetTransform( transform );
+    ImageSpatialObjectType::IndexType index;
+    m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index);
+    ResliceImage( index );
+    }
+  else
+    {
+    igstkLogMacro( DEBUG,  "Tracker tool outside of image...\n" )
+    }
 }
 
 void FourViewsTrackingWithCT::GetLandmarkRegistrationTransform( const itk::EventObject & event )
@@ -795,13 +846,24 @@ void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
   if ( TransformModifiedEvent().CheckEvent( &event ) )
     {
     TransformModifiedEvent *tmevent = ( TransformModifiedEvent *) & event;
-    m_ImageLandmarkTransformToBeSet = tmevent->Get();
-    m_Ellipsoid->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
-    //m_StateMachine.PushInput( m_RegistrationSuccessInput );
-    }
-  else
-    {
-    //m_StateMachine.PushInput( m_RegistrationFailureInput );   // FIXME.. how to get the failure condition
+    
+    ImageSpatialObjectType::PointType    p;
+    p[0] = tmevent->Get().GetTranslation()[0];
+    p[1] = tmevent->Get().GetTranslation()[1];
+    p[2] = tmevent->Get().GetTranslation()[2];
+    
+    if( m_ImageReader->GetOutput()->IsInside( p ) )
+      {
+      m_ImageLandmarkTransformToBeSet = tmevent->Get();     
+      m_Ellipsoid->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
+      ImageSpatialObjectType::IndexType index;
+      m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index);
+      ResliceImage( index );
+      }
+    else
+      {
+      igstkLogMacro( DEBUG,  "Picked point outside image...\n" )
+      }
     }
 }
 
