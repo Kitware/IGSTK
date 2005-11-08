@@ -178,6 +178,10 @@ public:
   /** Method for printing the member variables of this class to an ostream */
   void Print(std::ostream& os, itk::Indent indent) const;
 
+  /** Returns the Inverse Transform of the current one */
+  Transform GetInverse() const;
+
+
 protected:
 
   void PrintHeader(std::ostream& os, itk::Indent indent) const;

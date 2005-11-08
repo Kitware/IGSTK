@@ -103,6 +103,11 @@ int igstkTransformTest( int, char * [] )
       return EXIT_FAILURE;
       }
 
+    igstk::Transform tinv = t1.GetInverse();
+
+    std::cout << "Direct  = " << t1   << std::endl;
+    std::cout << "Inverse = " << tinv << std::endl;
+
     }
   catch(...)
     {
