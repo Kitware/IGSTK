@@ -331,54 +331,50 @@ void Tracker::GetToolTransform( unsigned int portNumber,
         TrackerToolConstPointer tool = port->GetTool( toolNumber );
         TransformType toolTransform = tool->GetTransform();
 
-
-        transitions = toolTransform;
-
         /*
-          T ' = W * R^-1 * T * C
+          T ' = P * R^-1 * T * C
 
           where:
           " T " is the original tool transform reported by the device,
           " R^-1 " is the inverse of the transform for the reference tool,
-          " W " is the Patient transform (it specifies the position of
+          " P " is the Patient transform (it specifies the position of
                 the reference with respect to patient coordinates), and
           " T ' " is the transformation that is reported to the spatial objects
           " C " is the tool calibration transform.
         */
 
-        TransformType tempT;
         TransformType::VersorType rotation;
         TransformType::VectorType translation;
-        tempT = toolTransform;
+
+        // start with ToolCalibrationTransform
+        rotation = m_ToolCalibrationTransform.GetRotation();
+        translation = m_ToolCalibrationTransform.GetTranslation();
+
+        // transform by the tracker's tool transform
+        rotation *= toolTransform.GetRotation();
+        translation = toolTransform.GetRotation().Transform(translation);
+        translation += toolTransform.GetTranslation();
 
         // applying ReferenceTool
         if( m_ApplyingReferenceTool )
           {
-          rotation = tempT.GetRotation();
-          rotation /= m_ReferenceTool->GetTransform().GetRotation();
-          translation = tempT.GetTranslation();
+          // since this is an inverse transform, apply translation first
+          TransformType::VersorType inverseRotation =
+            m_ReferenceTool->GetTransform().GetRotation().GetReciprocal();
+
           translation -= m_ReferenceTool->GetTransform().GetTranslation();
-          tempT.SetTranslationAndRotation(translation, rotation, 
-            toolTransform.GetError(), toolTransform.GetExpirationTime());
+          translation = inverseRotation.Transform(translation);
+          rotation *= inverseRotation;
           }
 
         // applying PatientTransform
-        rotation = m_PatientTransform.GetRotation();
-        translation = m_PatientTransform.GetTranslation();
-        rotation *= tempT.GetRotation();
-        translation += tempT.GetTranslation();
-        tempT.SetTranslationAndRotation(translation, rotation,
-          toolTransform.GetError(), toolTransform.GetExpirationTime());
+        rotation *= m_PatientTransform.GetRotation();
+        translation = m_PatientTransform.GetRotation().Transform(translation);
+        translation += m_PatientTransform.GetTranslation();
 
-        // applying ToolCalibrationTransform
-        rotation = tempT.GetRotation();
-        translation = tempT.GetTranslation();
-        rotation *= m_ToolCalibrationTransform.GetRotation();
-        translation += m_ToolCalibrationTransform.GetTranslation();
-        tempT.SetTranslationAndRotation(translation, rotation,
-          toolTransform.GetError(), toolTransform.GetExpirationTime());
-
-        transitions = tempT;
+        transitions.SetTranslationAndRotation(translation, rotation,
+                          toolTransform.GetError(),
+                          toolTransform.GetExpirationTime());
         }
       }
     }
