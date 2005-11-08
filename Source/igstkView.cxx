@@ -40,7 +40,7 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   // Create a default render window
   m_RenderWindow = vtkRenderWindow::New();
   m_Renderer = vtkRenderer::New();
-  m_PointPicker = vtkPointPicker::New();
+  m_PointPicker = PickerType::New();
 
   m_RenderWindow->AddRenderer( m_Renderer );
   m_Camera = m_Renderer->GetActiveCamera();

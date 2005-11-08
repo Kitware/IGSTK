@@ -34,7 +34,7 @@
 #include "vtkRenderer.h"
 #include "vtkCamera.h"
 #include "vtkIndent.h"
-#include "vtkPointPicker.h"
+#include "vtkWorldPointPicker.h"
 #include "vtkCommand.h"
 
 // ITK headers
@@ -168,7 +168,9 @@ private:
   
   vtkRenderWindow       * m_RenderWindow;
   vtkRenderer           * m_Renderer;
-  vtkPointPicker        * m_PointPicker;
+
+  typedef vtkWorldPointPicker  PickerType;
+  PickerType            * m_PointPicker;
   
   bool                    m_InteractionHandling;
 
