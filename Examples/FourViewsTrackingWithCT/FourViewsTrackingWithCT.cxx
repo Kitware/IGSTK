@@ -123,10 +123,16 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ImageRepresentationAxial    = ImageRepresentationType::New();
   m_ImageRepresentationSagittal = ImageRepresentationType::New();
   m_ImageRepresentationCoronal  = ImageRepresentationType::New();
+  m_ImageRepresentationAxial3D    = ImageRepresentationType::New();
+  m_ImageRepresentationSagittal3D = ImageRepresentationType::New();
+  m_ImageRepresentationCoronal3D  = ImageRepresentationType::New();
 
   m_ImageRepresentationAxial->SetLogger( logger );
   m_ImageRepresentationSagittal->SetLogger( logger );
   m_ImageRepresentationCoronal->SetLogger( logger );
+  m_ImageRepresentationAxial3D->SetLogger( logger );
+  m_ImageRepresentationSagittal3D->SetLogger( logger );
+  m_ImageRepresentationCoronal3D->SetLogger( logger );
 
 
   m_Ellipsoid                   = EllipsoidType::New();
@@ -563,10 +569,12 @@ void FourViewsTrackingWithCT::ResliceImage()
   m_ImageRepresentationSagittal->RequestSetSliceNumber( m_SliceNumber[1] );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( m_SliceNumber[2] );
 
+  m_ImageRepresentationAxial3D->RequestSetSliceNumber( m_SliceNumber[0] );
+  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( m_SliceNumber[1] );
+  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( m_SliceNumber[2] );
+
   this->ViewerGroup->redraw();
   Fl::check();
-
-  std::cout<< m_SliceNumber[0] << ";" << m_SliceNumber[1]<< ";" << m_SliceNumber[2] <<"\n";
 }
 
 
@@ -578,10 +586,18 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   m_ImageRepresentationAxial->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
   m_ImageRepresentationSagittal->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
   m_ImageRepresentationCoronal->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
+
+  m_ImageRepresentationAxial3D->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
+  m_ImageRepresentationSagittal3D->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
+  m_ImageRepresentationCoronal3D->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
  
   m_ImageRepresentationAxial->RequestSetOrientation( ImageRepresentationType::Axial );
   m_ImageRepresentationSagittal->RequestSetOrientation( ImageRepresentationType::Sagittal );
   m_ImageRepresentationCoronal->RequestSetOrientation( ImageRepresentationType::Coronal );
+
+  m_ImageRepresentationAxial3D->RequestSetOrientation( ImageRepresentationType::Axial );
+  m_ImageRepresentationSagittal3D->RequestSetOrientation( ImageRepresentationType::Sagittal );
+  m_ImageRepresentationCoronal3D->RequestSetOrientation( ImageRepresentationType::Coronal );
 
   
   /** Initialize the slider */
@@ -589,32 +605,32 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   unsigned int max = m_ImageRepresentationAxial->GetMaximumSliceNumber();
   unsigned int slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
   m_ImageRepresentationAxial->RequestSetSliceNumber( slice );
+  m_ImageRepresentationAxial3D->RequestSetSliceNumber( slice );
   this->AxialSlider->minimum( min );
   this->AxialSlider->maximum( max );
   this->AxialSlider->value( slice );  
   this->AxialSlider->activate();
-  std::cerr << min << ";" << max << "\n";
-  
+    
   min = m_ImageRepresentationSagittal->GetMinimumSliceNumber();
   max = m_ImageRepresentationSagittal->GetMaximumSliceNumber();
   slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( slice );
+  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( slice );
   this->SagittalSlider->minimum( min );
   this->SagittalSlider->maximum( max );
   this->SagittalSlider->value( slice );  
   this->SagittalSlider->activate();
-  std::cerr << min << ";" << max << "\n";
-  
+    
   min = m_ImageRepresentationCoronal->GetMinimumSliceNumber();
   max = m_ImageRepresentationCoronal->GetMaximumSliceNumber();
   slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( slice );
+  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( slice );
   this->CoronalSlider->minimum( min );
   this->CoronalSlider->maximum( max );
   this->CoronalSlider->value( slice );  
   this->CoronalSlider->activate();
-  std::cerr << min << ";" << max << "\n";
-
+  
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
   this->DisplayAxial->RequestAddObject( m_EllipsoidRepresentation->Copy() );
   this->DisplayAxial->RequestAddObject( m_CylinderRepresentation->Copy() );
@@ -627,9 +643,10 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   this->DisplayCoronal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
   this->DisplayCoronal->RequestAddObject( m_CylinderRepresentation->Copy() );
 
-  this->Display3D->RequestAddObject( m_ImageRepresentationAxial->Copy() );
-  this->Display3D->RequestAddObject( m_ImageRepresentationSagittal->Copy() );
-  this->Display3D->RequestAddObject( m_ImageRepresentationCoronal->Copy() );
+
+  this->Display3D->RequestAddObject( m_ImageRepresentationAxial3D );
+  this->Display3D->RequestAddObject( m_ImageRepresentationSagittal3D );
+  this->Display3D->RequestAddObject( m_ImageRepresentationCoronal3D );
   this->Display3D->RequestAddObject( m_EllipsoidRepresentation->Copy() );
   this->Display3D->RequestAddObject( m_CylinderRepresentation->Copy() );
 
@@ -638,13 +655,7 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   this->Display3D->RequestEnableInteractions();
   this->Display3D->RequestSetRefreshRate( 30 ); // 30 Hz
   this->Display3D->RequestStart();
-
-  this->DisplayAxial->RequestResetCamera();
-  this->DisplayAxial->Update();
-  this->DisplayAxial->RequestEnableInteractions();
-  this->DisplayAxial->RequestSetRefreshRate( 30 ); // 30 Hz
-  this->DisplayAxial->RequestStart();
-
+  
   this->DisplaySagittal->RequestResetCamera();
   this->DisplaySagittal->Update();
   this->DisplaySagittal->RequestEnableInteractions();
@@ -656,6 +667,14 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   this->DisplayCoronal->RequestEnableInteractions();
   this->DisplayCoronal->RequestSetRefreshRate( 30 ); // 30 Hz
   this->DisplayCoronal->RequestStart();  
+
+  this->DisplayAxial->RequestResetCamera();
+  this->DisplayAxial->Update();
+  this->DisplayAxial->RequestEnableInteractions();
+  this->DisplayAxial->RequestSetRefreshRate( 30 ); // 30 Hz
+  this->DisplayAxial->RequestStart();
+
+  this->ResliceImage();  //FIXME: This is not right
 
 }
 

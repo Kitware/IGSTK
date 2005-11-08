@@ -197,6 +197,9 @@ private:
   ImageRepresentationType::Pointer    m_ImageRepresentationAxial;
   ImageRepresentationType::Pointer    m_ImageRepresentationCoronal;
   ImageRepresentationType::Pointer    m_ImageRepresentationSagittal;
+  ImageRepresentationType::Pointer    m_ImageRepresentationAxial3D;
+  ImageRepresentationType::Pointer    m_ImageRepresentationCoronal3D;
+  ImageRepresentationType::Pointer    m_ImageRepresentationSagittal3D;
 
   unsigned int                        m_SliceNumber[3];
   unsigned int                        m_SliceNumberToBeSet[3];
