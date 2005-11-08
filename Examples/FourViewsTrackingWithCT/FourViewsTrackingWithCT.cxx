@@ -95,7 +95,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   rotation.SetIdentity();
   //rotation.SetRotationAroundX(-1.0);
   toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
-  m_Tracker->SetToolCalibrationTransform(toolCalibrationTransform);
+  m_Tracker->SetToolCalibrationTransform(3, 0, toolCalibrationTransform);
   
 
   m_ImageToTrackerTransform.SetToIdentity( 10000 );
