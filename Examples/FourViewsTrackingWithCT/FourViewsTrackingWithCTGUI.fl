@@ -21,10 +21,10 @@ class FourViewsTrackingWithCTGUI {open
   Function {FourViewsTrackingWithCTGUI()} {open
   } {
     Fl_Window mainWindow {
-      label {IGSTK: Four Veiws Tracking With CT Images Example} open selected
-      xywh {133 154 1145 735} type Double box PLASTIC_UP_BOX resizable
+      label {IGSTK: Four Veiws Tracking With CT Images Example} open
+      xywh {-32000 -32000 1145 735} type Double box PLASTIC_UP_BOX hide resizable
       code0 {\#include "igstkView2D.h"}
-      code1 {\#include "igstkView3D.h"} visible
+      code1 {\#include "igstkView3D.h"}
     } {
       Fl_Group ControlGroup {
         xywh {0 0 375 690} box DOWN_BOX
@@ -78,12 +78,20 @@ else
         Fl_Button ClearImageLandmarks {
           label Clear
           callback {RequestClearImageLandmarks();}
-          xywh {165 130 45 25} box PLASTIC_UP_FRAME
+          xywh {250 130 45 25} box PLASTIC_UP_FRAME
         }
         Fl_Button ClearTrackerLandmarks {
           label Clear
-          callback {RequestClearTrackerLandmarks();}
-          xywh {165 175 45 25} box PLASTIC_UP_FRAME
+          callback {RequestClearTrackerLandmarks();} selected
+          xywh {250 171 45 25} box PLASTIC_UP_FRAME
+        }
+        Fl_Value_Output NumberOfImageLandmarks {
+          label {No.}
+          xywh {185 130 32 25} box DOWN_BOX maximum 100 step 1 textfont 1 textcolor 0
+        }
+        Fl_Value_Output NumberOfTrackerLandmarks {
+          label {No.}
+          xywh {185 173 32 25} box DOWN_BOX maximum 100 step 1 textfont 1
         }
       }
       Fl_Group ViewerGroup {

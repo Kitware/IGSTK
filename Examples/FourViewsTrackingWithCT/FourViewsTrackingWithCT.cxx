@@ -426,7 +426,7 @@ void FourViewsTrackingWithCT::InitializeTracker()
   m_Tracker->Open();
   m_Tracker->AttachSROMFileNameToPort( 3, "C:/Patrick/Vicra/Tookit/Tool Definition Files/8700340.rom" ); //FIXME use ini file
   m_Tracker->Initialize();            //FIXME, how to check if this is success???
-  //m_Tracker->StartTracking();       //FIXME: Should we start tracking now?
+  m_Tracker->StartTracking();       //FIXME: Should we start tracking now?
 
   m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(), m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
 }
@@ -449,6 +449,15 @@ void FourViewsTrackingWithCT::AddImageLandmark()
       p[1] = m_ImageLandmarkTransformToBeSet.GetTranslation()[1];
       p[2] = m_ImageLandmarkTransformToBeSet.GetTranslation()[2];
       m_ImageLandmarksContainer.push_back( p );                       // Need testing
+      this->NumberOfImageLandmarks->value( m_ImageLandmarksContainer.size() );
+      if ( m_ImageLandmarksContainer.size() < 3 )
+        {
+        this->NumberOfImageLandmarks->textcolor( FL_BLACK );
+        }
+      else
+        {
+        this->NumberOfImageLandmarks->textcolor( FL_BLUE );
+        }
       m_ImageLandmarkTransform.SetTranslation( m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
       igstkLogMacro( DEBUG, "Image landmark point added: "<< p <<"\n")
       }
@@ -464,6 +473,8 @@ void FourViewsTrackingWithCT::RequestClearImageLandmarks()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestClearImageLandmarks called ... \n")
   m_ImageLandmarksContainer.clear();
+  this->NumberOfImageLandmarks->value( 0 );
+  this->NumberOfImageLandmarks->textcolor( FL_BLACK );
   m_ImageLandmarkTransform.SetTranslation( m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 ); 
   m_StateMachine.PushInput( m_RequestClearImageLandmarksInput );
   m_StateMachine.ProcessInputs();
@@ -489,6 +500,15 @@ void FourViewsTrackingWithCT::AddTrackerLandmark()
     p[1] = m_TrackerLandmarkTransformToBeSet.GetTranslation()[1];
     p[2] = m_TrackerLandmarkTransformToBeSet.GetTranslation()[2];
     m_TrackerLandmarksContainer.push_back( p );                       // Need testing
+    this->NumberOfTrackerLandmarks->value( m_TrackerLandmarksContainer.size() );
+    if ( m_TrackerLandmarksContainer.size() < 3 )
+      {
+      this->NumberOfTrackerLandmarks->textcolor( FL_BLACK );
+      }
+    else
+      {
+      this->NumberOfTrackerLandmarks->textcolor( FL_BLUE );
+      }
     m_TrackerLandmarkTransform.SetTranslation( m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
     igstkLogMacro( DEBUG, "Tracker landmark point added: "<< p <<"\n")
     }
@@ -504,6 +524,8 @@ void FourViewsTrackingWithCT::RequestClearTrackerLandmarks()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestClearTrackerLandmarks called ... \n")
   m_TrackerLandmarksContainer.clear();
+  this->NumberOfTrackerLandmarks->value( 0 );
+  this->NumberOfTrackerLandmarks->textcolor( FL_BLACK );
   m_TrackerLandmarkTransform.SetTranslation( m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
   m_StateMachine.PushInput( m_RequestClearTrackerLandmarksInput );
   m_StateMachine.ProcessInputs();
