@@ -16,15 +16,14 @@ else
   }} {}
 } 
 
-class FourViewsTrackingWithCTGUI {open
-} {
+class FourViewsTrackingWithCTGUI {} {
   Function {FourViewsTrackingWithCTGUI()} {open
   } {
     Fl_Window mainWindow {
       label {IGSTK: Four Veiws Tracking With CT Images Example} open
-      xywh {-32000 -32000 1145 735} type Double box PLASTIC_UP_BOX hide resizable
+      xywh {131 31 1145 735} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkView2D.h"}
-      code1 {\#include "igstkView3D.h"}
+      code1 {\#include "igstkView3D.h"} visible
     } {
       Fl_Group ControlGroup {
         xywh {0 0 375 690} box DOWN_BOX
@@ -82,7 +81,7 @@ else
         }
         Fl_Button ClearTrackerLandmarks {
           label Clear
-          callback {RequestClearTrackerLandmarks();} selected
+          callback {RequestClearTrackerLandmarks();}
           xywh {250 171 45 25} box PLASTIC_UP_FRAME
         }
         Fl_Value_Output NumberOfImageLandmarks {
@@ -92,6 +91,11 @@ else
         Fl_Value_Output NumberOfTrackerLandmarks {
           label {No.}
           xywh {185 173 32 25} box DOWN_BOX maximum 100 step 1 textfont 1
+        }
+        Fl_Button Reset {
+          label Reset
+          callback {RequestReset();}
+          xywh {245 290 45 25} box PLASTIC_UP_FRAME
         }
       }
       Fl_Group ViewerGroup {
@@ -161,5 +165,7 @@ QuitButton->callback( Quit );} {}
   Function {RequestStopTracking()} {open return_type {virtual void}
   } {}
   Function {RequestResliceImage()} {return_type {virtual void}
+  } {}
+  Function {RequestReset()} {open selected return_type {virtual void}
   } {}
 } 

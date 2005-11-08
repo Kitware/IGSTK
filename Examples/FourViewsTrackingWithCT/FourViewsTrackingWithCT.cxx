@@ -199,6 +199,8 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_StateMachine.AddInput( m_StopTrackingSuccessInput,          "StopTrackingSuccessInput");
   m_StateMachine.AddInput( m_StopTrackingFailureInput,          "StopTrackingFailureInput");
 
+  m_StateMachine.AddInput( m_RequestResetInput,                 "RequestResetInput"       );
+
   const ActionType NoAction = 0;
   
   /** Register patient name */
@@ -250,30 +252,30 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
     NoAction );
   /** Clear image landmarks */
   m_StateMachine.AddTransition( m_AddingImageLandmarkState, m_RequestClearImageLandmarksInput, m_TrackerReadyState, 
-    NoAction );
+    &FourViewsTrackingWithCT::ClearImageLandmarks );
   m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_RequestClearImageLandmarksInput, m_TrackerReadyState, 
-    NoAction );
+    &FourViewsTrackingWithCT::ClearImageLandmarks );
 
   /** Set tracker landmarks */
   m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_RequestAddTrackerLandmarkInput, m_ImageLandmarksReadyState, 
     &FourViewsTrackingWithCT::AddTrackerLandmark );
   m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_RequestAddTrackerLandmarkInput, m_AddingTrackerLandmarkState, 
     &FourViewsTrackingWithCT::AddTrackerLandmark );
-  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RequestAddTrackerLandmarkInput, m_TrackerLandmarksReadyState, 
-    &FourViewsTrackingWithCT::AddTrackerLandmark );
+ // m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RequestAddTrackerLandmarkInput, m_TrackerLandmarksReadyState, 
+ //   &FourViewsTrackingWithCT::AddTrackerLandmark );
   m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_NeedMoreLandmarkPointsInput, m_AddingTrackerLandmarkState, 
     NoAction );
   m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_NeedMoreLandmarkPointsInput, m_AddingTrackerLandmarkState, 
     NoAction );
   m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_EnoughLandmarkPointsInput, m_TrackerLandmarksReadyState, 
     NoAction );
-  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_EnoughLandmarkPointsInput, m_TrackerLandmarksReadyState, 
-    NoAction );
+ // m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_EnoughLandmarkPointsInput, m_TrackerLandmarksReadyState, 
+ //   NoAction );
   /** Clear tracker landmarks */
   m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_RequestClearTrackerLandmarksInput, m_ImageLandmarksReadyState, 
-    NoAction );
+    &FourViewsTrackingWithCT::ClearTrackerLandmarks );
   m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RequestClearTrackerLandmarksInput, m_ImageLandmarksReadyState, 
-    NoAction );
+    &FourViewsTrackingWithCT::ClearTrackerLandmarks );
 
   /** Registration */
   m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RequestRegistrationInput, m_TrackerLandmarksReadyState,
@@ -311,6 +313,40 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
     & FourViewsTrackingWithCT::ResliceImage );
   m_StateMachine.AddTransition( m_TrackingState, m_RequestResliceImageInput, m_TrackingState,
     & FourViewsTrackingWithCT::ResliceImage );
+
+  /** Reset bring any states back to initial state */
+  m_StateMachine.AddState( m_InitialState,                "InitialState"              );
+  m_StateMachine.AddState( m_PatientNameReadyState,       "PatientNameReadyState"     );
+  m_StateMachine.AddState( m_ImageReadyState,             "ImageReadyState"           );
+  m_StateMachine.AddState( m_PatientNameVerifiedState,    "PatientNameVerifiedState"  );
+  m_StateMachine.AddState( m_TrackerReadyState,           "TrackerReadyState"         );
+  m_StateMachine.AddState( m_AddingImageLandmarkState,    "AddingImageLandmarkState"  );
+  m_StateMachine.AddState( m_ImageLandmarksReadyState,    "ImageLandmarksReadyState"  );
+  m_StateMachine.AddState( m_AddingTrackerLandmarkState,  "AddingTrackerLandmarkState"  );
+  m_StateMachine.AddState( m_TrackerLandmarksReadyState,  "TrackerLandmarksReadyState");
+  m_StateMachine.AddState( m_LandmarkRegistrationReadyState, "LandmarkRegistrationReadyState" );
+  m_StateMachine.AddState( m_TrackingState,               "TrackingState"             );
+
+  m_StateMachine.AddTransition( m_PatientNameReadyState, m_RequestResetInput, m_InitialState,
+    & FourViewsTrackingWithCT::Reset );
+  m_StateMachine.AddTransition( m_ImageReadyState, m_RequestResetInput, m_InitialState,
+    & FourViewsTrackingWithCT::Reset );
+  m_StateMachine.AddTransition( m_PatientNameVerifiedState, m_RequestResetInput, m_InitialState,
+    & FourViewsTrackingWithCT::Reset );
+  m_StateMachine.AddTransition( m_TrackerReadyState, m_RequestResetInput, m_InitialState,
+    & FourViewsTrackingWithCT::Reset );
+  m_StateMachine.AddTransition( m_AddingImageLandmarkState, m_RequestResetInput, m_InitialState,
+    & FourViewsTrackingWithCT::Reset );
+  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_RequestResetInput, m_InitialState,
+    & FourViewsTrackingWithCT::Reset );
+  m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_RequestResetInput, m_InitialState,
+    & FourViewsTrackingWithCT::Reset );
+  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RequestResetInput, m_InitialState,
+    & FourViewsTrackingWithCT::Reset );
+  m_StateMachine.AddTransition( m_LandmarkRegistrationReadyState, m_RequestResetInput, m_InitialState,
+    & FourViewsTrackingWithCT::Reset );
+  m_StateMachine.AddTransition( m_TrackingState, m_RequestResetInput, m_InitialState,
+    & FourViewsTrackingWithCT::Reset );
   
   m_StateMachine.SelectInitialState( m_InitialState );
   m_StateMachine.SetReadyToRun();
@@ -471,13 +507,17 @@ void FourViewsTrackingWithCT::AddImageLandmark()
 
 void FourViewsTrackingWithCT::RequestClearImageLandmarks()
 {
-  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestClearImageLandmarks called ... \n")
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestClearImageLandmarks called ... \n") 
+  m_StateMachine.PushInput( m_RequestClearImageLandmarksInput );
+  m_StateMachine.ProcessInputs();
+}
+
+void FourViewsTrackingWithCT::ClearImageLandmarks()
+{
   m_ImageLandmarksContainer.clear();
   this->NumberOfImageLandmarks->value( 0 );
   this->NumberOfImageLandmarks->textcolor( FL_BLACK );
-  m_ImageLandmarkTransform.SetTranslation( m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 ); 
-  m_StateMachine.PushInput( m_RequestClearImageLandmarksInput );
-  m_StateMachine.ProcessInputs();
+  m_ImageLandmarkTransform.SetTranslation( m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
 }
 
 void FourViewsTrackingWithCT::RequestAddTrackerLandmark()
@@ -501,7 +541,7 @@ void FourViewsTrackingWithCT::AddTrackerLandmark()
     p[2] = m_TrackerLandmarkTransformToBeSet.GetTranslation()[2];
     m_TrackerLandmarksContainer.push_back( p );                       // Need testing
     this->NumberOfTrackerLandmarks->value( m_TrackerLandmarksContainer.size() );
-    if ( m_TrackerLandmarksContainer.size() < 3 )
+    if ( m_TrackerLandmarksContainer.size() < m_ImageLandmarksContainer.size() )
       {
       this->NumberOfTrackerLandmarks->textcolor( FL_BLACK );
       }
@@ -517,18 +557,23 @@ void FourViewsTrackingWithCT::AddTrackerLandmark()
     igstkLogMacro( DEBUG, "No new tracker landmark point reading.\n")
     }  
 
-  m_StateMachine.PushInputBoolean( (m_TrackerLandmarksContainer.size()>=3), m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
+  m_StateMachine.PushInputBoolean( ( m_TrackerLandmarksContainer.size() < m_ImageLandmarksContainer.size() ),
+                                     m_NeedMoreLandmarkPointsInput, m_EnoughLandmarkPointsInput );
 }
 
 void FourViewsTrackingWithCT::RequestClearTrackerLandmarks()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestClearTrackerLandmarks called ... \n")
+  m_StateMachine.PushInput( m_RequestClearTrackerLandmarksInput );
+  m_StateMachine.ProcessInputs();
+}
+
+void FourViewsTrackingWithCT::ClearTrackerLandmarks()
+{
   m_TrackerLandmarksContainer.clear();
   this->NumberOfTrackerLandmarks->value( 0 );
   this->NumberOfTrackerLandmarks->textcolor( FL_BLACK );
   m_TrackerLandmarkTransform.SetTranslation( m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
-  m_StateMachine.PushInput( m_RequestClearTrackerLandmarksInput );
-  m_StateMachine.ProcessInputs();
 }
 
 void FourViewsTrackingWithCT::RequestRegistration()
@@ -759,4 +804,47 @@ void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
     //m_StateMachine.PushInput( m_RegistrationFailureInput );   // FIXME.. how to get the failure condition
     }
 }
+
+void FourViewsTrackingWithCT::RequestReset()
+{
+  igstkLogMacro( DEBUG, "FourViewsTrackingWithCT::RequestReset is called... \n" )
+  m_StateMachine.PushInput( m_RequestResetInput );
+  m_StateMachine.ProcessInputs();
+}
+void FourViewsTrackingWithCT::Reset()
+{
+  //FILLME!!!!!!!!
+
+  m_Tracker->StopTracking();
+  m_Tracker->Close();
+
+  this->ClearImageLandmarks();
+  this->ClearTrackerLandmarks();
+
+  this->DisplayAxial->RequestRemoveObject( m_ImageRepresentationAxial );
+  //this->DisplayAxial->RequestRemoveObject( m_EllipsoidRepresentation->Copy() );
+  //this->DisplayAxial->RequestRemoveObject( m_CylinderRepresentation->Copy() );
+
+  this->DisplaySagittal->RequestRemoveObject( m_ImageRepresentationSagittal );
+  //this->DisplaySagittal->RequestRemoveObject( m_EllipsoidRepresentation->Copy() );
+  //this->DisplaySagittal->RequestRemoveObject( m_CylinderRepresentation->Copy() );
+
+  this->DisplayCoronal->RequestRemoveObject( m_ImageRepresentationCoronal );
+  //this->DisplayCoronal->RequestRemoveObject( m_EllipsoidRepresentation->Copy() );
+  //this->DisplayCoronal->RequestRemoveObject( m_CylinderRepresentation->Copy() );
+
+  this->Display3D->RequestRemoveObject( m_ImageRepresentationAxial3D );
+  this->Display3D->RequestRemoveObject( m_ImageRepresentationSagittal3D );
+  this->Display3D->RequestRemoveObject( m_ImageRepresentationCoronal3D );
+  //this->Display3D->RequestRemoveObject( m_EllipsoidRepresentation->Copy() );
+  //this->Display3D->RequestRemoveObject( m_CylinderRepresentation->Copy() );
+
+  this->DisplayAxial->RequestStop();
+  this->DisplaySagittal->RequestStop();
+  this->DisplayCoronal->RequestStop();
+  this->Display3D->RequestStop();
+
+}
+
+
 } // end of namespace

@@ -113,6 +113,7 @@ public:
   virtual void RequestStartTracking();
   virtual void RequestStopTracking();
   virtual void RequestResliceImage();   // TEMP
+  virtual void RequestReset();
 
 protected:
 
@@ -150,6 +151,7 @@ private:
   InputType            m_RequestStartTrackingInput;
   InputType            m_RequestStopTrackingInput;
   InputType            m_RequestResliceImageInput;
+  InputType            m_RequestResetInput;
 
   // FROM                                                 //-> TO
   // InitialState
@@ -253,6 +255,8 @@ private:
   void InitializeTracker();
   void AddImageLandmark();
   void AddTrackerLandmark();
+  void ClearImageLandmarks();
+  void ClearTrackerLandmarks();
   void Registration();
   void StartTracking();
   void StopTracking();
@@ -262,6 +266,7 @@ private:
   void GetTrackerTransform();         // Should be able to catch the events from tracker/tracker tool in the future
   void GetLandmarkRegistrationTransform( const itk::EventObject & event);
   void DrawPickedPoint( const itk::EventObject & event );
+  void Reset();
 };
 
 } // end of namespace
