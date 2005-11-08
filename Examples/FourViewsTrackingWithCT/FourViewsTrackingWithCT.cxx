@@ -134,7 +134,6 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ImageRepresentationSagittal3D->SetLogger( logger );
   m_ImageRepresentationCoronal3D->SetLogger( logger );
 
-
   m_Ellipsoid                   = EllipsoidType::New();
   m_EllipsoidRepresentation     = EllipsoidRepresentationType::New();
   m_Ellipsoid->SetRadius( 10, 10, 10 );  
@@ -427,7 +426,7 @@ void FourViewsTrackingWithCT::InitializeTracker()
   m_Tracker->Open();
   m_Tracker->AttachSROMFileNameToPort( 3, "C:/Patrick/Vicra/Tookit/Tool Definition Files/8700340.rom" ); //FIXME use ini file
   m_Tracker->Initialize();            //FIXME, how to check if this is success???
-  m_Tracker->StartTracking();
+  //m_Tracker->StartTracking();       //FIXME: Should we start tracking now?
 
   m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(), m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
 }
@@ -442,8 +441,22 @@ void FourViewsTrackingWithCT::RequestAddImageLandmark()
 void FourViewsTrackingWithCT::AddImageLandmark()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::AddImageLandmark called ... \n")
-  LandmarkPointType  p;
-  m_ImageLandmarksContainer.push_back( p );                       // FIXME, Need real point from user
+  
+    if ( m_ImageLandmarkTransform.GetTranslation() != m_ImageLandmarkTransformToBeSet.GetTranslation() ) // When there is a new transform reading
+      {
+      LandmarkPointType  p;
+      p[0] = m_ImageLandmarkTransformToBeSet.GetTranslation()[0];
+      p[1] = m_ImageLandmarkTransformToBeSet.GetTranslation()[1];
+      p[2] = m_ImageLandmarkTransformToBeSet.GetTranslation()[2];
+      m_ImageLandmarksContainer.push_back( p );                       // Need testing
+      m_ImageLandmarkTransform.SetTranslation( m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
+      igstkLogMacro( DEBUG, "Image landmark point added: "<< p <<"\n")
+      }
+    else
+      {
+      igstkLogMacro( DEBUG, "No new image landmark point reading.\n")
+      }
+
   m_StateMachine.PushInputBoolean( (m_ImageLandmarksContainer.size()>=3), m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
 }
 
@@ -451,6 +464,7 @@ void FourViewsTrackingWithCT::RequestClearImageLandmarks()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestClearImageLandmarks called ... \n")
   m_ImageLandmarksContainer.clear();
+  m_ImageLandmarkTransform.SetTranslation( m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 ); 
   m_StateMachine.PushInput( m_RequestClearImageLandmarksInput );
   m_StateMachine.ProcessInputs();
 }
@@ -466,19 +480,22 @@ void FourViewsTrackingWithCT::AddTrackerLandmark()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::AddTrackerLandmark called ... \n")
   
-  TrackerType::TransformType    transitions;
-  m_Tracker->UpdateStatus();
-  m_Tracker->GetToolTransform( 3, 0, transitions );                 //FIXME, port number
+  this->GetTrackerTransform();   //FIXME: Whether the m_TrackerPositionTransform is being updated. 
   
-  LandmarkPointType  p;
-  p[0] = transitions.GetTranslation()[0];
-  p[1] = transitions.GetTranslation()[1];
-  p[2] = transitions.GetTranslation()[2];
-  m_TrackerLandmarksContainer.push_back( p );                       // Need testing
-
-  std::cout<< p << "\n";
-
-  //igstkLogMacro2( logger, DEBUG,  p << "\n")
+  if ( m_TrackerLandmarkTransform.GetTranslation() != m_TrackerLandmarkTransformToBeSet.GetTranslation()) // When there is a new transform reading
+    {
+    LandmarkPointType  p;
+    p[0] = m_TrackerLandmarkTransformToBeSet.GetTranslation()[0];
+    p[1] = m_TrackerLandmarkTransformToBeSet.GetTranslation()[1];
+    p[2] = m_TrackerLandmarkTransformToBeSet.GetTranslation()[2];
+    m_TrackerLandmarksContainer.push_back( p );                       // Need testing
+    m_TrackerLandmarkTransform.SetTranslation( m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
+    igstkLogMacro( DEBUG, "Tracker landmark point added: "<< p <<"\n")
+    }
+  else
+    {
+    igstkLogMacro( DEBUG, "No new tracker landmark point reading.\n")
+    }  
 
   m_StateMachine.PushInputBoolean( (m_TrackerLandmarksContainer.size()>=3), m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
 }
@@ -487,6 +504,7 @@ void FourViewsTrackingWithCT::RequestClearTrackerLandmarks()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestClearTrackerLandmarks called ... \n")
   m_TrackerLandmarksContainer.clear();
+  m_TrackerLandmarkTransform.SetTranslation( m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
   m_StateMachine.PushInput( m_RequestClearTrackerLandmarksInput );
   m_StateMachine.ProcessInputs();
 }
@@ -680,12 +698,12 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
 
 void FourViewsTrackingWithCT::GetTrackerTransform()
 {
-  igstk::Transform             transitions;
-  //m_Tracker->UpdateStatus();
+  
+  m_Tracker->UpdateStatus();
   // Tracker should have an AddObserver method to observe the TransformModifiedEvents
   // We don't need
-  m_Tracker->GetToolTransform( 3, 0, transitions ); //FIXME, Port Number
-  igstkLogMacro( DEBUG, transitions.GetTranslation() << "\n" )
+  m_Tracker->GetToolTransform( 3, 0, m_TrackerLandmarkTransformToBeSet ); //FIXME, Port Number
+  igstkLogMacro( DEBUG, m_TrackerLandmarkTransformToBeSet.GetTranslation() << "\n" )
   // Translate this into index, and do reslcing. ...
   // FillMe
 }
@@ -695,8 +713,8 @@ void FourViewsTrackingWithCT::GetLandmarkRegistrationTransform( const itk::Event
   if ( TransformModifiedEvent().CheckEvent( &event ) )
     {
     TransformModifiedEvent *tmevent = ( TransformModifiedEvent *) & event;
-    m_Transform = tmevent->Get();
-    m_Tracker->SetPatientTransform( m_Transform );
+    m_ImageToTrackerTransform = tmevent->Get();
+    m_Tracker->SetPatientTransform( m_ImageToTrackerTransform );
     m_StateMachine.PushInput( m_RegistrationSuccessInput );
     }
   else
@@ -710,8 +728,8 @@ void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
   if ( TransformModifiedEvent().CheckEvent( &event ) )
     {
     TransformModifiedEvent *tmevent = ( TransformModifiedEvent *) & event;
-    m_Transform = tmevent->Get();
-    std::cout<< " I Picked!!\n";
+    m_ImageLandmarkTransformToBeSet = tmevent->Get();
+    m_Ellipsoid->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
     //m_StateMachine.PushInput( m_RegistrationSuccessInput );
     }
   else

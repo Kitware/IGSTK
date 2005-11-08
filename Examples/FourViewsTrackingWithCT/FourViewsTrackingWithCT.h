@@ -208,7 +208,12 @@ private:
   LandmarkPointContainerType          m_ImageLandmarksContainer;
   LandmarkPointContainerType          m_TrackerLandmarksContainer;
 
-  Transform                           m_Transform;  //WHY igstk::Transform has no smart pointer
+  Transform                           m_ImageToTrackerTransform;  //WHY igstk::Transform has no smart pointer
+
+  Transform                           m_TrackerLandmarkTransform; 
+  Transform                           m_ImageLandmarkTransform;    
+  Transform                           m_TrackerLandmarkTransformToBeSet; 
+  Transform                           m_ImageLandmarkTransformToBeSet;  
   
   CommunicationType::Pointer          m_SerialCommunication;
   TrackerType::Pointer                m_Tracker;
