@@ -248,16 +248,16 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
     // don't allow null quaternions
     if (normsquared < 1e-6)
       {
-      rotation.Set(1.0, 0.0, 0.0, 0.0);
+      rotation.Set(0.0, 0.0, 0.0, 1.0);
       igstkLogMacro( WARNING, "AuroraTracker::InternUpdateStatus: bad "
                      "quaternion, norm=" << sqrt(normsquared) << "\n");
       }
     else
       {
-      rotation.Set(m_TransformBuffer[port][0],
-                   m_TransformBuffer[port][1],
+      rotation.Set(m_TransformBuffer[port][1],
                    m_TransformBuffer[port][2],
-                   m_TransformBuffer[port][3]);
+                   m_TransformBuffer[port][3],
+                   m_TransformBuffer[port][0]);
       }
 
     // report NDI error value
