@@ -85,12 +85,13 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_Tracker->SetLogger( logger );
   m_Tracker->SetCommunication( m_SerialCommunication );
 
+  /** Tool calibration transform */
   igstk::Transform toolCalibrationTransform;
   igstk::Transform::VectorType translation;
   igstk::Transform::VersorType rotation;
   translation[0] = -18.0;   // Tip offset
-  translation[1] = 0.0;
-  translation[2] = -158.0;
+  translation[1] = 0.5;
+  translation[2] = -157.5;
   rotation.SetIdentity();
   //rotation.SetRotationAroundX(-1.0);
   toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
@@ -469,7 +470,9 @@ void FourViewsTrackingWithCT::AddTrackerLandmark()
   p[2] = transitions.GetTranslation()[2];
   m_TrackerLandmarksContainer.push_back( p );                       // Need testing
 
-  igstkLogMacro2( logger, DEBUG,  p << "\n")
+  std::cout<< p << "\n";
+
+  //igstkLogMacro2( logger, DEBUG,  p << "\n")
 
   m_StateMachine.PushInputBoolean( (m_TrackerLandmarksContainer.size()>=3), m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
 }
@@ -559,6 +562,8 @@ void FourViewsTrackingWithCT::ResliceImage()
   m_ImageRepresentationAxial->RequestSetSliceNumber( m_SliceNumber[0] );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( m_SliceNumber[1] );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( m_SliceNumber[2] );
+
+  std::cout<< m_SliceNumber[0] << ";" << m_SliceNumber[1]<< ";" << m_SliceNumber[2] <<"\n";
 }
 
 
@@ -571,6 +576,16 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   m_ImageRepresentationAxial->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
   m_ImageRepresentationSagittal->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
   m_ImageRepresentationCoronal->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
+  
+  /** Initialize the slider */
+  this->AxialSlider->minimum( m_ImageRepresentationAxial->GetMinimumSliceNumber() );
+  this->AxialSlider->maximum( m_ImageRepresentationAxial->GetMaximumSliceNumber() );
+
+  this->SagittalSlider->minimum( m_ImageRepresentationSagittal->GetMinimumSliceNumber() );
+  this->SagittalSlider->maximum( m_ImageRepresentationSagittal->GetMaximumSliceNumber() );
+
+  this->CoronalSlider->minimum( m_ImageRepresentationCoronal->GetMinimumSliceNumber() );
+  this->CoronalSlider->maximum( m_ImageRepresentationCoronal->GetMaximumSliceNumber() );
 
   m_ImageRepresentationAxial->RequestSetOrientation( ImageRepresentationType::Axial );
   m_ImageRepresentationSagittal->RequestSetOrientation( ImageRepresentationType::Sagittal );
@@ -605,14 +620,7 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   this->DisplayCoronal->Update();
   this->DisplayCoronal->RequestEnableInteractions();
   this->DisplayCoronal->RequestSetRefreshRate( 30 ); // 30 Hz
-  this->DisplayCoronal->RequestStart();
-
-  /** Initialize the slider */
-  //int ext[6];
-  //->GetExtent( ext );
-  //this->AxialSlider->maximum( ext[5] );
-  //this->AxialSlider->minimum( ext[4] );
-  //this->AxialSlider->value( (int) (ext[4]+ext[5])/2 );
+  this->DisplayCoronal->RequestStart();  
 
 }
 
@@ -634,6 +642,8 @@ void FourViewsTrackingWithCT::GetLandmarkRegistrationTransform( const itk::Event
     {
     TransformModifiedEvent *tmevent = ( TransformModifiedEvent *) & event;
     m_Transform = tmevent->Get();
+    m_Tracker->SetPatientTransform( m_Transform );
+    m_Tracker->AttachObjectToTrackerTool( 3, 0, m_Cylinder );
     m_StateMachine.PushInput( m_RegistrationSuccessInput );
     }
   else
