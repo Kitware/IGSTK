@@ -146,13 +146,12 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   if( !m_ImageSpatialObjectToAdd )
     {
     m_StateMachine.PushInput( m_NullImageSpatialObjectInput );
-    m_StateMachine.ProcessInputs();
     }
   else
     {
     m_StateMachine.PushInput( m_ValidImageSpatialObjectInput );
-    m_StateMachine.ProcessInputs();
     }
+  m_StateMachine.ProcessInputs();
 }
 
 
@@ -166,6 +165,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_OrientationToBeSet = orientation;
 
   m_StateMachine.PushInput( m_ValidOrientationInput );
+  m_StateMachine.ProcessInputs();
 }
 
 
@@ -201,12 +201,12 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     switch( m_Orientation )
       {
       case Axial:
-        minSlice = ext[0];
-        maxSlice = ext[1];
-        break;
-      case Sagittal:
         minSlice = ext[4];
         maxSlice = ext[5];
+        break;
+      case Sagittal:
+        minSlice = ext[0];
+        maxSlice = ext[1];
         break;
       case Coronal:
         minSlice = ext[2];
@@ -223,6 +223,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
       m_StateMachine.PushInput( m_InvalidSliceNumberInput );
       }
 
+    m_StateMachine.ProcessInputs();
     }
 }
 
@@ -406,10 +407,10 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     switch( m_Orientation )
       {
       case Axial:
-        minimum = ext[0];
+        minimum = ext[4];
         break;
       case Sagittal:
-        minimum = ext[4];
+        minimum = ext[0];
         break;
       case Coronal:
         minimum = ext[2];
@@ -434,10 +435,10 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     switch( m_Orientation )
       {
       case Axial:
-        maximum = ext[1];
+        maximum = ext[5];
         break;
       case Sagittal:
-        maximum = ext[5];
+        maximum = ext[1];
         break;
       case Coronal:
         maximum = ext[3];
