@@ -178,8 +178,8 @@ Transform
 {
   Transform inverse;
   inverse.m_TimeStamp = this->m_TimeStamp;
-  inverse.m_Translation = -(this->m_Translation);
   inverse.m_Rotation = this->m_Rotation.GetConjugate();
+  inverse.m_Translation = inverse.m_Rotation.Transform( -(this->m_Translation) );
   inverse.m_Error = this->m_Error;
   return inverse;
 }
