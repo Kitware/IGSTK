@@ -70,12 +70,22 @@ public:
 
   typedef typename ImageSpatialObjectType::ImageType        ImageType;
   typedef typename ImageType::ConstPointer                  ImageConstPointer;
+  typedef typename ImageSpatialObjectType::PointType        PointType;
+  typedef typename ImageType::IndexType                     IndexType;
 
   /**  Run-time type information (and related methods). */
   igstkTypeMacro( ImageSpatialObject, SpatialObject );
 
   /** Method for creation of a reference counted object. */
   igstkNewMacro( Self );
+
+  /** Test whether a point is inside or outside the object. */
+  bool IsInside( const PointType & point ) const { return m_ImageSpatialObject->IsInside( point ); } ;
+
+  /** Transform physical point to index. */
+  bool TransformPhysicalPointToIndex (const PointType & point, IndexType & index) const { return m_Image->TransformPhysicalPointToIndex( point, index);  };
+
+
 
   /** The ImageReaderToImageSpatialObject class is declared as a friend in
    * order to be able to set the input image */

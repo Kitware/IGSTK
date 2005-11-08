@@ -86,7 +86,7 @@ ImageSpatialObject< TPixelType, VDimension >
   m_Image = image;
   // This line should be added once a StateMachine in this class
   // guarrantees that the m_Image pointer is not null.
-  // m_ImageSpatialObject->SetImage( m_Image );
+  m_ImageSpatialObject->SetImage( m_Image );
   m_itkExporter->SetInput( m_Image );
 }
 
