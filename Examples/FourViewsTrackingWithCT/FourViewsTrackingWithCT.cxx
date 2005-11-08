@@ -517,6 +517,7 @@ void FourViewsTrackingWithCT::RequestStartTracking()
 void FourViewsTrackingWithCT::StartTracking()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::StartTracking called ... \n")
+  m_Tracker->AttachObjectToTrackerTool( 3, 0, m_Cylinder );
   m_Tracker->StartTracking();
   // We don't have observer for tracker, we are actively reading the transform right now
   m_PulseGenerator->RequestStart(); 
@@ -544,7 +545,6 @@ void FourViewsTrackingWithCT::RequestResliceImage()
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestResliceImage called ... \n")
   m_StateMachine.PushInput( m_RequestResliceImageInput );
   m_StateMachine.ProcessInputs();
-  //Fl::check();
 }
 
 void FourViewsTrackingWithCT::ResliceImage()
@@ -563,6 +563,9 @@ void FourViewsTrackingWithCT::ResliceImage()
   m_ImageRepresentationSagittal->RequestSetSliceNumber( m_SliceNumber[1] );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( m_SliceNumber[2] );
 
+  this->ViewerGroup->redraw();
+  Fl::check();
+
   std::cout<< m_SliceNumber[0] << ";" << m_SliceNumber[1]<< ";" << m_SliceNumber[2] <<"\n";
 }
 
@@ -572,24 +575,45 @@ void FourViewsTrackingWithCT::ResliceImage()
  *  name has been verified */
 void FourViewsTrackingWithCT::ConnectImageRepresentation()
 {
-
   m_ImageRepresentationAxial->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
   m_ImageRepresentationSagittal->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
   m_ImageRepresentationCoronal->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
-  
-  /** Initialize the slider */
-  this->AxialSlider->minimum( m_ImageRepresentationAxial->GetMinimumSliceNumber() );
-  this->AxialSlider->maximum( m_ImageRepresentationAxial->GetMaximumSliceNumber() );
-
-  this->SagittalSlider->minimum( m_ImageRepresentationSagittal->GetMinimumSliceNumber() );
-  this->SagittalSlider->maximum( m_ImageRepresentationSagittal->GetMaximumSliceNumber() );
-
-  this->CoronalSlider->minimum( m_ImageRepresentationCoronal->GetMinimumSliceNumber() );
-  this->CoronalSlider->maximum( m_ImageRepresentationCoronal->GetMaximumSliceNumber() );
-
+ 
   m_ImageRepresentationAxial->RequestSetOrientation( ImageRepresentationType::Axial );
   m_ImageRepresentationSagittal->RequestSetOrientation( ImageRepresentationType::Sagittal );
   m_ImageRepresentationCoronal->RequestSetOrientation( ImageRepresentationType::Coronal );
+
+  
+  /** Initialize the slider */
+  unsigned int min = m_ImageRepresentationAxial->GetMinimumSliceNumber();
+  unsigned int max = m_ImageRepresentationAxial->GetMaximumSliceNumber();
+  unsigned int slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
+  m_ImageRepresentationAxial->RequestSetSliceNumber( slice );
+  this->AxialSlider->minimum( min );
+  this->AxialSlider->maximum( max );
+  this->AxialSlider->value( slice );  
+  this->AxialSlider->activate();
+  std::cerr << min << ";" << max << "\n";
+  
+  min = m_ImageRepresentationSagittal->GetMinimumSliceNumber();
+  max = m_ImageRepresentationSagittal->GetMaximumSliceNumber();
+  slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
+  m_ImageRepresentationSagittal->RequestSetSliceNumber( slice );
+  this->SagittalSlider->minimum( min );
+  this->SagittalSlider->maximum( max );
+  this->SagittalSlider->value( slice );  
+  this->SagittalSlider->activate();
+  std::cerr << min << ";" << max << "\n";
+  
+  min = m_ImageRepresentationCoronal->GetMinimumSliceNumber();
+  max = m_ImageRepresentationCoronal->GetMaximumSliceNumber();
+  slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
+  m_ImageRepresentationCoronal->RequestSetSliceNumber( slice );
+  this->CoronalSlider->minimum( min );
+  this->CoronalSlider->maximum( max );
+  this->CoronalSlider->value( slice );  
+  this->CoronalSlider->activate();
+  std::cerr << min << ";" << max << "\n";
 
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
   this->DisplayAxial->RequestAddObject( m_EllipsoidRepresentation->Copy() );
@@ -603,6 +627,17 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   this->DisplayCoronal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
   this->DisplayCoronal->RequestAddObject( m_CylinderRepresentation->Copy() );
 
+  this->Display3D->RequestAddObject( m_ImageRepresentationAxial->Copy() );
+  this->Display3D->RequestAddObject( m_ImageRepresentationSagittal->Copy() );
+  this->Display3D->RequestAddObject( m_ImageRepresentationCoronal->Copy() );
+  this->Display3D->RequestAddObject( m_EllipsoidRepresentation->Copy() );
+  this->Display3D->RequestAddObject( m_CylinderRepresentation->Copy() );
+
+  this->Display3D->RequestResetCamera();
+  this->Display3D->Update();
+  this->Display3D->RequestEnableInteractions();
+  this->Display3D->RequestSetRefreshRate( 30 ); // 30 Hz
+  this->Display3D->RequestStart();
 
   this->DisplayAxial->RequestResetCamera();
   this->DisplayAxial->Update();
@@ -643,7 +678,6 @@ void FourViewsTrackingWithCT::GetLandmarkRegistrationTransform( const itk::Event
     TransformModifiedEvent *tmevent = ( TransformModifiedEvent *) & event;
     m_Transform = tmevent->Get();
     m_Tracker->SetPatientTransform( m_Transform );
-    m_Tracker->AttachObjectToTrackerTool( 3, 0, m_Cylinder );
     m_StateMachine.PushInput( m_RegistrationSuccessInput );
     }
   else

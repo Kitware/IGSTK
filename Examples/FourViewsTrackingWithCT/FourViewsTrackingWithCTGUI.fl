@@ -21,13 +21,13 @@ class FourViewsTrackingWithCTGUI {open
   Function {FourViewsTrackingWithCTGUI()} {open
   } {
     Fl_Window mainWindow {
-      label {IGSTK: Four Veiws Tracking With CT Images Example} open
-      xywh {86 101 1145 735} type Double box PLASTIC_UP_BOX color 103 resizable
+      label {IGSTK: Four Veiws Tracking With CT Images Example} open selected
+      xywh {133 154 1145 735} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
     } {
-      Fl_Group controlGroup {
-        xywh {0 0 375 690} box DOWN_FRAME
+      Fl_Group ControlGroup {
+        xywh {0 0 375 690} box DOWN_BOX
       } {
         Fl_Light_Button TrackingButton {
           label Tracking
@@ -86,8 +86,8 @@ else
           xywh {165 175 45 25} box PLASTIC_UP_FRAME
         }
       }
-      Fl_Group viewerGroup {open
-        xywh {375 0 770 692} box DOWN_FRAME
+      Fl_Group ViewerGroup {
+        xywh {375 0 770 692} box DOWN_BOX
       } {
         Fl_Box DisplayAxial {
           label {Display Axial}
@@ -111,15 +111,15 @@ else
         }
         Fl_Value_Slider AxialSlider {
           callback {this->RequestResliceImage();}
-          xywh {377 331 378 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 value 64
+          xywh {377 331 378 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
         }
         Fl_Value_Slider SagittalSlider {
           callback {this->RequestResliceImage();}
-          xywh {765 330 378 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 value 64
+          xywh {765 330 378 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
         }
         Fl_Value_Slider CoronalSlider {
-          callback {this->RequestResliceImage();} selected
-          xywh {376 676 380 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 value 64
+          callback {this->RequestResliceImage();}
+          xywh {376 676 380 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
         }
       }
       Fl_Text_Display m_LogWindow {
