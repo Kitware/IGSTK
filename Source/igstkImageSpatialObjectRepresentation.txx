@@ -392,5 +392,62 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 
 
 
+
+template < class TImageSpatialObject >
+typename ImageSpatialObjectRepresentation< TImageSpatialObject >::SliceNumberType
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::GetMinimumSliceNumber() const
+{
+    int ext[6];
+    m_ImageData->GetExtent( ext );
+
+    SliceNumberType minimum = 0;
+    
+    switch( m_Orientation )
+      {
+      case Axial:
+        minimum = ext[0];
+        break;
+      case Sagittal:
+        minimum = ext[4];
+        break;
+      case Coronal:
+        minimum = ext[2];
+        break;
+      }
+   return minimum;
+}
+
+
+
+template < class TImageSpatialObject >
+typename ImageSpatialObjectRepresentation< TImageSpatialObject >::SliceNumberType
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::GetMaximumSliceNumber() const
+{
+
+    int ext[6];
+    m_ImageData->GetExtent( ext );
+
+    SliceNumberType maximum = 0;
+    
+    switch( m_Orientation )
+      {
+      case Axial:
+        maximum = ext[1];
+        break;
+      case Sagittal:
+        maximum = ext[5];
+        break;
+      case Coronal:
+        maximum = ext[3];
+        break;
+      }
+   return maximum;   
+}
+
+
+
+
 } // end namespace igstk
 

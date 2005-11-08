@@ -87,6 +87,9 @@ int igstkImageSpatialObjectRepresentationTest( int , char* [] )
 
   representation->RequestSetSliceNumber( 10 );
 
+  std::cout << "Minimum slice Number " << representation->GetMinimumSliceNumber() << std::endl;
+  std::cout << "Maximum slice Number " << representation->GetMaximumSliceNumber() << std::endl;
+
   // Do manual redraws
   for(unsigned int i=0; i<10; i++)
     {

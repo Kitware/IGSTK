@@ -132,6 +132,14 @@ public:
   /** Declarations needed for the State Machine */
   igstkStateMachineTemplatedMacro();
 
+  /** Returns the Minimum number of slice available in the current orientation.
+      This method should only be called AFTER the orientation has been set. */
+  SliceNumberType GetMinimumSliceNumber() const;
+
+  /** Returns the Maximum number of slice available in the current orientation.
+      This method should only be called AFTER the orientation has been set. */
+  SliceNumberType GetMaximumSliceNumber() const;
+
 protected:
 
   /** Constructor */
