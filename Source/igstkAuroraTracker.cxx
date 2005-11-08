@@ -38,6 +38,16 @@ AuroraTracker::AuroraTracker(void)
     this->m_PortHandle[i] = 0;
     }
     
+  for (unsigned int j = 0; j < NumberOfPorts; j++)
+    { 
+    AuroraTrackerToolPointer tool1 = AuroraTrackerToolType::New();
+    AuroraTrackerToolPointer tool2 = AuroraTrackerToolType::New();
+    TrackerPortPointer port = TrackerPortType::New();
+    port->AddTool(tool1);
+    port->AddTool(tool2);
+    this->AddPort(port);
+    }
+
   this->SetThreadingEnabled( true );
 
   m_BufferLock = itk::MutexLock::New();
@@ -129,8 +139,6 @@ AuroraTracker::ResultType AuroraTracker::InternalActivateTools( void )
 
   this->EnableToolPorts();
 
-  this->ClearPorts();
-
   m_NumberOfTools = 0;
 
   for(unsigned int i = 0; i < NumberOfPorts; i++)
@@ -139,10 +147,6 @@ AuroraTracker::ResultType AuroraTracker::InternalActivateTools( void )
       {
       m_NumberOfTools++;
       }
-    AuroraTrackerToolPointer tool = AuroraTrackerToolType::New();
-    TrackerPortPointer port = TrackerPortType::New();
-    port->AddTool(tool);
-    this->AddPort(port);
     }
 
   return SUCCESS;

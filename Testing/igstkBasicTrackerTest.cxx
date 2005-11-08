@@ -255,9 +255,9 @@ int igstkBasicTrackerTest( int, char * [] )
   translation[2] = -6;
   rotation.SetRotationAroundX(-1.0);
   toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
-  tracker->SetToolCalibrationTransform(toolCalibrationTransform);
+  tracker->SetToolCalibrationTransform(0, 0, toolCalibrationTransform);
   toolCalibrationTransform.SetToIdentity(10000);
-  toolCalibrationTransform = tracker->GetToolCalibrationTransform();
+  toolCalibrationTransform = tracker->GetToolCalibrationTransform(0, 0);
   std::cout << toolCalibrationTransform << std::endl;
 
   tracker->SetReferenceTool(false, 1, 0);

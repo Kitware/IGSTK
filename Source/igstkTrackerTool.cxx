@@ -61,6 +61,7 @@ void TrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   os << indent << this->m_Transform << std::endl;
+  os << indent << this->m_ToolCalibrationTransform << std::endl;
   os << indent << this->m_ValidityPeriod << std::endl;
 }
 

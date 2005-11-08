@@ -75,17 +75,30 @@ public:
 public:
 
   typedef Transform         TransformType;
+  typedef Transform         ToolCalibrationTransformType;
   typedef double            ErrorType;
   typedef double            TimePeriodType;
 
+  /** Get the tool transform. */
   igstkGetMacro( Transform, TransformType );
+
+  /** Set the tool transform (called by Tracker). */
+  void SetTransform( const TransformType & transform );
+
+  /** Get the validity period for this tool. */
   igstkGetMacro( ValidityPeriod, TimePeriodType );
 
+  /** Set the validity period for this tool. */
   igstkSetMacro( ValidityPeriod, TimePeriodType );
   
+  /** Get the ToolType (set by subclasses of this class) */
   igstkGetMacro( ToolType, ToolType );
 
-  void SetTransform( const TransformType & transform );
+  /** Get the calibration transform for this tool. */
+  igstkGetMacro( ToolCalibrationTransform, ToolCalibrationTransformType );
+
+  /** Set the calibration transform for this tool. */
+  igstkSetMacro( ToolCalibrationTransform, ToolCalibrationTransformType );
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
@@ -113,6 +126,9 @@ private:
   /** The type of the tool reflecting the property of the tool */
   ToolType           m_ToolType;
   
+  /** Calibration transform for the tool */
+  ToolCalibrationTransformType      m_ToolCalibrationTransform;
+
 private:
 
   /** Inputs to the State Machine */

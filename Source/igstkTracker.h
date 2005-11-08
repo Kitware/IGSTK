@@ -147,12 +147,12 @@ public:
 
   /** The "SetPatientTransform" sets PatientTransform.
 
-    T ' = W * R^-1 * T * C
+    T ' = P * R^-1 * T * C
 
     where:
     " T " is the original tool transform reported by the device,
     " R^-1 " is the inverse of the transform for the reference tool,
-    " W " is the Patient transform (it specifies the position of the reference
+    " P " is the Patient transform (it specifies the position of the reference
     with respect to patient coordinates), and
     " T ' " is the transformation that is reported to the spatial objects
     " C " is the tool calibration transform.
@@ -163,10 +163,14 @@ public:
   PatientTransformType GetPatientTransform() const; 
 
   /** The "SetToolCalibrationTransform" sets the tool calibration transform */
-  void SetToolCalibrationTransform( const ToolCalibrationTransformType& _arg );
+  void SetToolCalibrationTransform( unsigned int portNumber,
+                                    unsigned int toolNumber,
+                                    const ToolCalibrationTransformType& t );
 
-  /** The "GetToolCalibrationTransform" gets the tool calibration transform */
-  ToolCalibrationTransformType GetToolCalibrationTransform() const;
+  /** Get the tool calibration transform. */
+  ToolCalibrationTransformType GetToolCalibrationTransform(
+                             unsigned int portNumber,
+                             unsigned int toolNumber) const;
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
@@ -273,9 +277,6 @@ private:
 
   /** Patient Transform */
   PatientTransformType      m_PatientTransform;
-
-  /** ToolCalibration Transform */
-  ToolCalibrationTransformType    m_ToolCalibrationTransform;
 
   /** Multi-threading enabled flag : The decendent class will use
       multi-threading, if this flag is set as true */

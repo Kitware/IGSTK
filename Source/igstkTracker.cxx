@@ -330,6 +330,8 @@ void Tracker::GetToolTransform( unsigned int portNumber,
         {
         TrackerToolConstPointer tool = port->GetTool( toolNumber );
         TransformType toolTransform = tool->GetTransform();
+        ToolCalibrationTransformType toolCalibrationTransform
+                                    = tool->GetToolCalibrationTransform();
 
         /*
           T ' = P * R^-1 * T * C
@@ -347,8 +349,8 @@ void Tracker::GetToolTransform( unsigned int portNumber,
         TransformType::VectorType translation;
 
         // start with ToolCalibrationTransform
-        rotation = m_ToolCalibrationTransform.GetRotation();
-        translation = m_ToolCalibrationTransform.GetTranslation();
+        rotation = toolCalibrationTransform.GetRotation();
+        translation = toolCalibrationTransform.GetTranslation();
 
         // transform by the tracker's tool transform
         rotation *= toolTransform.GetRotation();
@@ -404,6 +406,7 @@ void Tracker::SetToolTransform( unsigned int portNumber,
     }
 
 }
+
 
 /** Associate a TrackerTool to an object to be tracked. This is a one-to-one
  * association and cannot be changed during the life of the application */
@@ -905,9 +908,9 @@ bool Tracker::GetReferenceTool( unsigned int &portNumber,
   " T ' " is the transformation that is reported to the spatial objects
   " C " is the tool calibration transform.
 */
-void Tracker::SetPatientTransform( const PatientTransformType& _arg )
+void Tracker::SetPatientTransform( const PatientTransformType& transform )
 {
-  m_PatientTransform = _arg;
+  m_PatientTransform = transform;
 }
 
 
@@ -919,18 +922,46 @@ Tracker::PatientTransformType Tracker::GetPatientTransform() const
 
 
 /** The "SetToolCalibrationTransform" sets the tool calibration transform */
-void Tracker::SetToolCalibrationTransform(
-  const Tracker::ToolCalibrationTransformType& _arg )
+void Tracker::SetToolCalibrationTransform( unsigned int portNumber,
+                                           unsigned int toolNumber,
+                           const ToolCalibrationTransformType& transform )
 {
-  m_ToolCalibrationTransform = _arg;
+  if ( portNumber < this->m_Ports.size()  )
+    {
+    TrackerPortPointer port = this->m_Ports[ portNumber ];
+    if ( port.IsNotNull() )
+      {
+      if( toolNumber < port->GetNumberOfTools() )
+        {
+        TrackerToolPointer tool = port->GetTool( toolNumber );
+        tool->SetToolCalibrationTransform( transform );
+        }
+      }
+    }
 }
 
 
 /** The "GetToolCalibrationTransform" gets the tool calibration transform */
 Tracker::ToolCalibrationTransformType
-Tracker::GetToolCalibrationTransform() const
+Tracker::GetToolCalibrationTransform(unsigned int portNumber,
+                                     unsigned int toolNumber) const
 {
-  return m_ToolCalibrationTransform;
+  ToolCalibrationTransformType transform;
+
+  if ( portNumber < this->m_Ports.size()  )
+    {
+    TrackerPortPointer port = this->m_Ports[ portNumber ];
+    if ( port.IsNotNull() )
+      {
+      if( toolNumber < port->GetNumberOfTools() )
+        {
+        TrackerToolPointer tool = port->GetTool( toolNumber );
+        transform = tool->GetToolCalibrationTransform();
+        }
+      }
+    }
+
+  return transform;
 }
 
 

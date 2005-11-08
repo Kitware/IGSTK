@@ -41,6 +41,14 @@ PolarisTracker::PolarisTracker(void)
     this->m_PortHandle[i] = 0;
     }
 
+  for (unsigned int j = 0; j < NumberOfPorts; j++)
+    { 
+    PolarisTrackerToolPointer tool = PolarisTrackerToolType::New();
+    TrackerPortPointer port = TrackerPortType::New();
+    port->AddTool(tool);
+    this->AddPort(port);
+    }
+
   this->SetThreadingEnabled( true );
 
   m_BufferLock = itk::MutexLock::New();
@@ -143,8 +151,6 @@ PolarisTracker::ResultType PolarisTracker::InternalActivateTools( void )
 
   this->EnableToolPorts();
 
-  this->ClearPorts();
-
   m_NumberOfTools = 0;
 
   for(unsigned int i = 0; i < NumberOfPorts; i++)
@@ -153,10 +159,6 @@ PolarisTracker::ResultType PolarisTracker::InternalActivateTools( void )
       {
       m_NumberOfTools++;
       }
-    PolarisTrackerToolPointer tool = PolarisTrackerToolType::New();
-    TrackerPortPointer port = TrackerPortType::New();
-    port->AddTool(tool);
-    this->AddPort(port);
     }
 
   return SUCCESS;
