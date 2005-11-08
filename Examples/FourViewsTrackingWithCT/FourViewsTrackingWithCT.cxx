@@ -821,6 +821,16 @@ void FourViewsTrackingWithCT::Reset()
   this->ClearImageLandmarks();
   this->ClearTrackerLandmarks();
 
+  this->DisplayAxial->RequestStop();
+  this->DisplaySagittal->RequestStop();
+  this->DisplayCoronal->RequestStop();
+  this->Display3D->RequestStop();
+
+  this->DisplayAxial->RequestDisableInteractions();
+  this->DisplaySagittal->RequestDisableInteractions();
+  this->DisplayCoronal->RequestDisableInteractions();
+  this->Display3D->RequestDisableInteractions();
+
   this->DisplayAxial->RequestRemoveObject( m_ImageRepresentationAxial );
   //this->DisplayAxial->RequestRemoveObject( m_EllipsoidRepresentation->Copy() );
   //this->DisplayAxial->RequestRemoveObject( m_CylinderRepresentation->Copy() );
@@ -839,10 +849,17 @@ void FourViewsTrackingWithCT::Reset()
   //this->Display3D->RequestRemoveObject( m_EllipsoidRepresentation->Copy() );
   //this->Display3D->RequestRemoveObject( m_CylinderRepresentation->Copy() );
 
-  this->DisplayAxial->RequestStop();
-  this->DisplaySagittal->RequestStop();
-  this->DisplayCoronal->RequestStop();
-  this->Display3D->RequestStop();
+  this->DisplayAxial->Update();
+  this->DisplaySagittal->Update();
+  this->DisplayCoronal->Update();
+  this->Display3D->Update();
+  
+  this->AxialSlider->deactivate();
+  this->SagittalSlider->deactivate();
+  this->CoronalSlider->deactivate();
+
+  this->ViewerGroup->redraw();
+  Fl::check();
 
 }
 
