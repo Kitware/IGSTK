@@ -389,6 +389,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 
   typedef Friends::ImageSpatialObjectRepresentationToImageSpatialObject  HelperType;
   HelperType::ConnectImage( m_ImageSpatialObject.GetPointer(), this );
+  m_ImageData->Update();
 }
 
 
