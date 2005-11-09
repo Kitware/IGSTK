@@ -319,9 +319,13 @@ int igstkLandmark3DRegistrationTest( int argv, char * argc[] )
       }
 
 
-    // Exercise the Reset method
+    // Get the RMSError
+    double rms = landmarkRegister->ComputeRMSError();
+    std::cout << "RMS error="<< rms << std::endl;
+    // Test the Reset method
     landmarkRegister->RequestResetRegistration();
 
+    
     return EXIT_SUCCESS;
 }
 
