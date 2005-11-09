@@ -21,7 +21,7 @@ class FourViewsTrackingWithCTGUI {} {
   } {
     Fl_Window mainWindow {
       label {IGSTK: Four Veiws Tracking With CT Images Example} open
-      xywh {131 31 1145 735} type Double box PLASTIC_UP_BOX resizable
+      xywh {97 31 1145 735} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
     } {
@@ -38,64 +38,64 @@ else
 {
     RequestStopTracking();
 }}
-          xywh {18 258 95 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {18 260 130 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Light_Button LoadImageButton {
           label {Load Image}
           callback {RequestLoadImage();}
-          xywh {15 50 95 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {15 60 130 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Light_Button SetPatientNameButton {
           label {Register Patient}
           callback {RequestSetPatientName();}
-          xywh {15 10 95 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {15 20 130 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Light_Button InitializeTrackerButton {
           label {Initialize Tracker}
           callback {RequestInitializeTracker();}
-          xywh {15 93 95 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {15 140 130 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Light_Button AddImageLandmarkButton {
           label {Add Image Landmark}
           callback {RequestAddImageLandmark();}
-          xywh {15 133 120 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {15 100 130 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Light_Button AddTrackerLandmarkButton {
           label {Add Tracker Landmark}
           callback {RequestAddTrackerLandmark();}
-          xywh {17 177 130 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {17 180 130 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Light_Button RegistrationButton {
-          label Registration
+          label {Landmark Registration}
           callback {RequestRegistration();}
-          xywh {17 220 95 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {17 220 130 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Light_Button QuitButton {
           label Quit
-          xywh {20 295 95 25} type Normal box PLASTIC_UP_FRAME labelsize 11
+          xywh {20 300 130 25} type Normal box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Button ClearImageLandmarks {
           label Clear
           callback {RequestClearImageLandmarks();}
-          xywh {250 130 45 25} box PLASTIC_UP_FRAME
+          xywh {250 100 50 25} box PLASTIC_UP_FRAME
         }
         Fl_Button ClearTrackerLandmarks {
           label Clear
-          callback {RequestClearTrackerLandmarks();}
-          xywh {250 171 45 25} box PLASTIC_UP_FRAME
+          callback {RequestClearTrackerLandmarks();} selected
+          xywh {250 180 50 25} box PLASTIC_UP_FRAME
         }
         Fl_Value_Output NumberOfImageLandmarks {
           label {No.}
-          xywh {185 130 32 25} box DOWN_BOX maximum 100 step 1 textfont 1 textcolor 0
+          xywh {175 100 32 25} box DOWN_BOX maximum 100 step 1 textfont 1 textcolor 0
         }
         Fl_Value_Output NumberOfTrackerLandmarks {
           label {No.}
-          xywh {185 173 32 25} box DOWN_BOX maximum 100 step 1 textfont 1
+          xywh {185 180 32 25} box DOWN_BOX maximum 100 step 1 textfont 1
         }
         Fl_Button Reset {
           label Reset
           callback {RequestReset();}
-          xywh {245 290 45 25} box PLASTIC_UP_FRAME
+          xywh {250 300 50 25} box PLASTIC_UP_FRAME
         }
       }
       Fl_Group ViewerGroup {
@@ -166,6 +166,6 @@ QuitButton->callback( Quit );} {}
   } {}
   Function {RequestResliceImage()} {return_type {virtual void}
   } {}
-  Function {RequestReset()} {open selected return_type {virtual void}
+  Function {RequestReset()} {open return_type {virtual void}
   } {}
 } 

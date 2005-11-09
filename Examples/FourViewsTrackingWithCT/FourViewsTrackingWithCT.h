@@ -50,6 +50,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkCylinderObject.h"
 #include "igstkCylinderObjectRepresentation.h"
 
+#define TRACKER_TOOL_PORT 3
+#define TRACKER_TOOL_SROM_FILE "C:/Patrick/Vicra/Tookit/Tool Definition Files/8700340.rom"
+
 namespace igstk
 {
 
@@ -81,7 +84,6 @@ public:
   typedef CTImageReader                                 ImageReaderType;
 
   typedef ImageReaderType::ImageSpatialObjectType       ImageSpatialObjectType;
-
   typedef ImageSpatialObjectType::IndexType             IndexType;
 
   /** typedef for ImageRepresentationType */
@@ -105,7 +107,7 @@ public:
   /** typedefs for the tracker */
   typedef PolarisTracker                                TrackerType;
 
-  /** Public request methods for the GUI. */
+  /** Public request methods from the GUI. */
   virtual void RequestSetPatientName();
   virtual void RequestLoadImage();
   virtual void RequestInitializeTracker();
@@ -116,8 +118,9 @@ public:
   virtual void RequestRegistration();
   virtual void RequestStartTracking();
   virtual void RequestStopTracking();
-  virtual void RequestResliceImage();   // TEMP
-  virtual void RequestReset();
+  
+  virtual void RequestReset();         // Do we need to offer this method?
+  virtual void RequestResliceImage();  // Do we need state machine for this one?
 
 protected:
 
@@ -131,75 +134,76 @@ private:
 
   /** States for the State Machine */
   StateType            m_InitialState;
+  StateType            m_WaitingForPatientNameState;
   StateType            m_PatientNameReadyState;
+  StateType            m_WaitingForDICOMDirectoryState;
   StateType            m_ImageReadyState;
   StateType            m_PatientNameVerifiedState;
-  StateType            m_TrackerReadyState;
   StateType            m_AddingImageLandmarkState;
   StateType            m_ImageLandmarksReadyState;
+  StateType            m_InitializingTrackerState;
+  StateType            m_TrackerReadyState;
   StateType            m_AddingTrackerLandmarkState;
   StateType            m_TrackerLandmarksReadyState;
   StateType            m_LandmarkRegistrationReadyState;
   StateType            m_TrackingState;
-  //StateType            m_TrackerLostState;
 
   /** Inputs to the state machine and it's designed transitions */
-  InputType            m_RequestSetPatientNameInput;
-  InputType            m_RequestLoadImageInput;
-  InputType            m_RequestInitializeTrackerInput;
-  InputType            m_RequestAddImageLandmarkInput;
-  InputType            m_RequestClearImageLandmarksInput;
-  InputType            m_RequestAddTrackerLandmarkInput;
-  InputType            m_RequestClearTrackerLandmarksInput;
-  InputType            m_RequestRegistrationInput;
-  InputType            m_RequestStartTrackingInput;
-  InputType            m_RequestStopTrackingInput;
-  InputType            m_RequestResliceImageInput;
-  InputType            m_RequestResetInput;
+  InputType            m_RequestSetPatientNameInput;      //->m_WaitingForPatientNameState
+  InputType            m_PatientNameInput;                //->m_PatientNameReadyState
+  InputType            m_PatientNameEmptyInput;           //->m_InitialState
 
-  // FROM                                                 //-> TO
-  // InitialState
-  InputType            m_PatientNameInput;                //-> PatientNameReadyState
-  InputType            m_PatientNameEmptyInput;           //-> InitialState
-  // PatientNameReadyState
-  InputType            m_LoadImageSuccessInput;           //-> ImageReadyState
-  InputType            m_LoadImageFailureInput;           //-> PatientNameReadeyState
-  // ImageReadyState
-  InputType            m_PatientNameMatchInput;           //-> PatientNameVerifiedState
-  InputType            m_OverwritePatientNameInput;       //-> PatientNameVerifiedState
-  InputType            m_ReloadImageInput;                //-> PatientNameReadyState
-  // ImageLandmarksReadyState
+  InputType            m_RequestLoadImageInput;           //->m_WaitingForDICOMDirectoryState
+  InputType            m_LoadImageSuccessInput;           //->m_ImageReady
+  InputType            m_LoadImageFailureInput;           //->m_PatientNameReadeyState
+  InputType            m_PatientNameMatchInput;           //->m_PatientNameVerifiedState
+  InputType            m_OverwritePatientNameInput;       //->m_PatientNameVerifiedState
+  InputType            m_ReloadImageInput;                //->m_PatientNameReadyState
+  
+  InputType            m_RequestAddImageLandmarkInput;    //->m_AddingImageLandmarkState
+  InputType            m_NeedMoreLandmarkPointsInput;     //->m_AddingImageLandmarkState
+  InputType            m_EnoughLandmarkPointsInput;       //->m_ImageLandmarksReadyState
+  InputType            m_RequestClearImageLandmarksInput; //->m_PatientNameVerifiedState  
+
+  InputType            m_RequestInitializeTrackerInput;   //
   InputType            m_InitializeTrackerSuccessInput;   //-> TrackerReadyState
   InputType            m_InitializeTrackerFailureInput;   //-> ImageLandmarksReadyState
-  // PatientNameVerifiedState
-  InputType            m_NeedMoreLandmarkPointsInput;      //-> ImageLandmarksReadyState
-  InputType            m_EnoughLandmarkPointsInput;        //-> PatientNameVerifiedState
-  // TrackerReadyState
-  //InputType            m_AddTrackerLandmarksSuccessInput; //-> TrackerLandmarksReadyState
-  //InputType            m_AddTrackerLandmarksFailureInput; //-> TrackerReadyState
-  // TrackerLandmarksReadyState
-  InputType            m_RegistrationSuccessInput;        //-> LandmarkRegistrationReadyState
-  InputType            m_RegistrationFailureInput;        //-> TrackerLandmarksReadyState
-  // LandmarkRegistrationReadyState
-  InputType            m_StartTrackingSuccessInput;       //-> TrackingState
-  InputType            m_StartTrackingFailureInput;       //-> LandmarkRegistrationReadyState
-  // TrackingState
-  InputType            m_StopTrackingSuccessInput;        //-> LandmarkRegistrationReadyState
-  InputType            m_StopTrackingFailureInput;        //-> ??????
 
-  
+  InputType            m_RequestAddTrackerLandmarkInput;    //->m_AddingTrackerLandmarkState
+  //InputType          m_NeedMoreLandmarkPointsInput;       //->m_AddingTrackerLandmarkState
+  //InputType          m_EnoughLandmarkPointsInput;         //->m_TrackerLandmarksReadyState
+  InputType            m_RequestClearTrackerLandmarksInput; //->m_TrackerReadyState
+
+  InputType            m_RequestRegistrationInput;
+  InputType            m_RegistrationSuccessInput;        //->m_LandmarkRegistrationReadyState
+  InputType            m_RegistrationFailureInput;        //->m_TrackerLandmarksReadyState
+
+  InputType            m_RequestStartTrackingInput;
+  InputType            m_StartTrackingSuccessInput;       //->m_TrackingState                   //FIXME, how to check if it succeed
+  InputType            m_StartTrackingFailureInput;       //->m_LandmarkRegistrationReadyState
+
+  InputType            m_RequestStopTrackingInput;
+  InputType            m_StopTrackingSuccessInput;        //->m_LandmarkRegistrationReadyState  //FIXME, how to check if it succeed
+  InputType            m_StopTrackingFailureInput;        //->m_TrackingState
+
   /** Logger */
-  LogOutputType::Pointer              m_LogFileOutput;
-  LogOutputType::Pointer              m_LogCoutOutput;
-  std::ofstream                       m_LogFile;
-  FLTKTextLogOutput::Pointer          m_LogFLTKOutput;
+  LogOutputType::Pointer              m_LogFileOutput;  // log output to file
+  LogOutputType::Pointer              m_LogCoutOutput;  // log output to console
+  std::ofstream                       m_LogFile;        // file stream
+  FLTKTextLogOutput::Pointer          m_LogFLTKOutput;  // log output to FLTK text display
+
+  /** igstkLoggerMacro create a m_Logger,igstkLogMacro(x,y) will write to m_Logger.
+      This logger is for the logging of internal igstk components, eg. m_ImageReader->SetLogger( logger ).
+      You can also use igstkLogMacro( logger, x, y ) to log your message in to this logger. */
   LoggerType::Pointer                 logger; // Another logger for igstk components
 
-  /** Internal variables. */
+  /** Registered patient name */
   std::string                         m_PatientName;
   
+  /** DICOM image reader */
   ImageReaderType::Pointer            m_ImageReader;
 
+  /** Slice representations of the image in View2D and View3D */
   ImageRepresentationType::Pointer    m_ImageRepresentationAxial;
   ImageRepresentationType::Pointer    m_ImageRepresentationCoronal;
   ImageRepresentationType::Pointer    m_ImageRepresentationSagittal;
@@ -207,69 +211,72 @@ private:
   ImageRepresentationType::Pointer    m_ImageRepresentationCoronal3D;
   ImageRepresentationType::Pointer    m_ImageRepresentationSagittal3D;
 
+  /** Landmark registration and its landmark points container */
   RegistrationType::Pointer           m_LandmarkRegistration;
   LandmarkPointContainerType          m_ImageLandmarksContainer;
   LandmarkPointContainerType          m_TrackerLandmarksContainer;
 
-  Transform                           m_ImageToTrackerTransform;  //WHY igstk::Transform has no smart pointer
-
+  /** To store the landmark registration result transform*/
+  Transform                           m_ImageToTrackerTransform;  
+  
+  /** To store the transform of the image and tracker landmark points */
   Transform                           m_TrackerLandmarkTransform; 
   Transform                           m_ImageLandmarkTransform;    
   Transform                           m_TrackerLandmarkTransformToBeSet; 
   Transform                           m_ImageLandmarkTransformToBeSet;  
   
+  /** Serial communication and tracker */
   CommunicationType::Pointer          m_SerialCommunication;
   TrackerType::Pointer                m_Tracker;
 
-  typedef itk::SimpleMemberCommand< Self >   ObserverType;
+  /** A pulse generator which can generate PulseEvent. */
   PulseGenerator::Pointer             m_PulseGenerator;
+
+  /** Observer type for simple event, the callback can be set to a member function. */
+  typedef itk::SimpleMemberCommand< Self >   ObserverType;
   ObserverType::Pointer               m_PulseObserver;
 
+  /** Observer type for loaded event, the callback can be set to a member function. */
   typedef itk::ReceptorMemberCommand < Self > ObserverType2;
   ObserverType2::Pointer               m_LandmarkRegistrationObserver;
   ObserverType2::Pointer               m_ViewPickerObserver;
 
+  /** Ellipsoid spatial object, used to represent the landmark point, tip of the probe. */
   typedef igstk::EllipsoidObject                  EllipsoidType;
-  typedef EllipsoidType::Pointer                  EllipsoidPointer;
-  
   typedef igstk::EllipsoidObjectRepresentation    EllipsoidRepresentationType;
-  typedef EllipsoidRepresentationType::Pointer    EllipsoidRepresentationPointer;
+  EllipsoidType::Pointer                          m_Ellipsoid;
+  EllipsoidRepresentationType::Pointer            m_EllipsoidRepresentation;
 
-
-  EllipsoidPointer                                m_Ellipsoid;
-  EllipsoidRepresentationPointer                  m_EllipsoidRepresentation;
-
-  typedef igstk::CylinderObject                   CylinderType;
-  typedef CylinderType::Pointer                   CylinderPointer;
-  
-  typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;
-  typedef CylinderRepresentationType::Pointer     CylinderRepresentationPointer;
-
-
-  CylinderPointer                                 m_Cylinder;
-  CylinderRepresentationPointer                   m_CylinderRepresentation;
+  /** Cylinder spatial object, used to represent the probe */
+  typedef igstk::CylinderObject                   CylinderType;    
+  typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;  
+  CylinderType::Pointer                            m_Cylinder;
+  CylinderRepresentationType::Pointer              m_CylinderRepresentation;
 
 
   /** Action methods to be invoked only by the state machine */
   void SetPatientName();
   void LoadImage();
-  void InitializeTracker();
-  void AddImageLandmark();
-  void AddTrackerLandmark();
-  void Tracking();
-  void ClearImageLandmarks();
-  void ClearTrackerLandmarks();
-  void Registration();
-  void StartTracking();
-  void StopTracking();
-  void ResliceImage();
-  void ResliceImage( IndexType index );
   void VerifyPatientName(); 
   void ConnectImageRepresentation();
-  void GetTrackerTransform();         // Should be able to catch the events from tracker/tracker tool in the future
+  void AddImageLandmark();
+  void ClearImageLandmarks();
+  void InitializeTracker();
+  void GetTrackerTransform();
+  void AddTrackerLandmark();
+  void ClearTrackerLandmarks();  
+  void Registration();
+  void StartTracking();
+  void Tracking();
+  void StopTracking();
+  void ResliceImage();
+  void ResliceImage( IndexType index );  
+  void Reset();
+
+  /** Callback functions for picking and registration success events. */
   void GetLandmarkRegistrationTransform( const itk::EventObject & event);
   void DrawPickedPoint( const itk::EventObject & event );
-  void Reset();
+  
 };
 
 } // end of namespace
