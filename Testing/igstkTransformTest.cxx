@@ -20,6 +20,7 @@
 #pragma warning( disable : 4786 )
 #endif
 
+#include <math.h>
 #include <iostream>
 #include "igstkTransform.h"
 
@@ -103,10 +104,50 @@ int igstkTransformTest( int, char * [] )
       return EXIT_FAILURE;
       }
 
+    // use a non-orthogonal rotation
+    VersorType::VectorType axis;
+    axis[0] =  1;
+    axis[1] =  6;
+    axis[2] = -5;
+    double angle = 10.0;
+    rotation.Set(axis, angle);
+
+    translation[0] = -1000.0;
+    translation[1] = 5.0;
+    translation[2] = 9.0;
+
+    t1.SetTranslationAndRotation( 
+        translation, rotation, errorValue, validityPeriod );
+
+    std::cout << "Testing the inverse" << std::endl;
     igstk::Transform tinv = t1.GetInverse();
 
     std::cout << "Direct  = " << t1   << std::endl;
     std::cout << "Inverse = " << tinv << std::endl;
+
+    // multiply to test inverse
+    rotation = t1.GetRotation() * tinv.GetRotation();
+    translation = (tinv.GetRotation().Transform(t1.GetTranslation())
+                   + tinv.GetTranslation());
+
+    t1.SetTranslationAndRotation( 
+        translation, rotation, errorValue, validityPeriod );
+
+    std::cout << "Direct * Inverse = " << t1 << std::endl;
+
+    // verify that result to within 2 bits of double precision
+    const double epsilon = 4e-16;
+    if (fabs(translation[0]) > epsilon ||
+        fabs(translation[1]) > epsilon ||
+        fabs(translation[2]) > epsilon ||
+        fabs(rotation.GetX()) > epsilon ||
+        fabs(rotation.GetY()) > epsilon ||
+        fabs(rotation.GetZ()) > epsilon ||
+        fabs(rotation.GetW() - 1) > epsilon)
+      {      
+      std::cerr << "Error in inverse" << std::endl;
+      return EXIT_FAILURE;
+      }
 
     }
   catch(...)
