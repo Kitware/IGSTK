@@ -24,6 +24,7 @@
 #include "igstkLandmark3DRegistration.h"
 #include "igstkTransform.h"
 #include "igstkEvents.h"
+#include "itkNumericTraits.h"
 
 namespace igstk
 { 
@@ -51,7 +52,6 @@ Landmark3DRegistration::Landmark3DRegistration() :
                            "AttemptingToComputeTransformState" );
   m_StateMachine.AddState( m_TransformComputedState,
                            "TransformComputedState" );
-
 
 
   // Set the input descriptors 
@@ -293,6 +293,40 @@ Landmark3DRegistration:: ComputeTransform()
   this->m_StateMachine.ProcessInputs();
 }
 
+/* The "ComputeRMSError" method calculates and returns RMS Error of the transformation */
+double 
+Landmark3DRegistration:: ComputeRMSError()
+{
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
+                 "ComputeRMSError called..\n");
+
+  //Check if the transformation parameters were evaluated correctly
+
+  PointsContainerConstIterator
+      mitr = m_TrackerLandmarks.begin();
+  PointsContainerConstIterator
+      fitr = m_ImageLandmarks.begin();
+
+  TransformType::OutputVectorType   errortr;
+  TransformType::OutputVectorType::RealValueType sum;
+
+  sum = itk::NumericTraits< TransformType::OutputVectorType::RealValueType >::ZeroValue();
+  
+  int counter = itk::NumericTraits< int >::ZeroValue();
+ 
+  while( mitr != m_TrackerLandmarks.end() ) 
+    {
+      errortr = *fitr - m_Transform->TransformPoint( *mitr );
+      sum = sum + errortr.GetSquaredNorm();
+      ++mitr;
+      ++fitr;
+      counter++;
+    }
+
+  double rms = sqrt( sum / counter );
+  return rms;  
+}
+  
 
 /* The "GetTransform()" method throws and event containing the transform */
 void
