@@ -234,7 +234,7 @@ private:
 
   /** Observer type for simple event, the callback can be set to a member function. */
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
-  ObserverType::Pointer               m_PulseObserver;
+  ObserverType::Pointer               m_Observer;
 
   /** Observer type for loaded event, the callback can be set to a member function. */
   typedef itk::ReceptorMemberCommand < Self > ObserverType2;
@@ -272,7 +272,7 @@ private:
   void ResliceImage();
   void ResliceImage( IndexType index );  
   void Reset();
-
+  
   /** Callback functions for picking and registration success events. */
   void GetLandmarkRegistrationTransform( const itk::EventObject & event);
   void DrawPickedPoint( const itk::EventObject & event );

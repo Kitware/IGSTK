@@ -84,6 +84,26 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_Tracker->SetLogger( logger );
   m_Tracker->SetCommunication( m_SerialCommunication );
 
+  m_Ellipsoid                   = EllipsoidType::New();
+  m_EllipsoidRepresentation     = EllipsoidRepresentationType::New();
+  m_Ellipsoid->SetRadius( 5, 5, 5 );  
+  m_EllipsoidRepresentation->RequestSetEllipsoidObject( m_Ellipsoid );
+  m_EllipsoidRepresentation->SetColor(1.0,0.0,0.0);
+  m_EllipsoidRepresentation->SetOpacity(1.0);
+
+  m_Cylinder                    = CylinderType::New();
+  m_CylinderRepresentation      = CylinderRepresentationType::New();
+  m_Cylinder->SetRadius( 1.5 );   //   1.5 mm
+  m_Cylinder->SetHeight( 200 );   // 200.0 mm
+  m_CylinderRepresentation->RequestSetCylinderObject( m_Cylinder );
+  m_CylinderRepresentation->SetColor(0.0,1.0,0.0);
+  m_CylinderRepresentation->SetOpacity(1.0);
+  
+  igstk::Transform::VectorType CylinderTipOffset;     //FIXME, SpatialObject should have an tip to origin offet
+  CylinderTipOffset[0] = 0;   // Tip offset
+  CylinderTipOffset[1] = 0;
+  CylinderTipOffset[2] = -100;
+  
   /** Tool calibration transform */
   igstk::Transform toolCalibrationTransform;
   igstk::Transform::VectorType translation;
@@ -95,17 +115,15 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
   m_Tracker->SetToolCalibrationTransform( TRACKER_TOOL_PORT, 0, toolCalibrationTransform);
 
-  
-
   m_ImageToTrackerTransform.SetToIdentity( 10000 );
   m_ImageLandmarkTransform.SetToIdentity( 10000 );
   m_TrackerLandmarkTransform.SetToIdentity( 10000 );
 
   m_PulseGenerator = PulseGenerator::New();
-  m_PulseObserver = ObserverType::New();
-  m_PulseObserver->SetCallbackFunction( this, & FourViewsTrackingWithCT::Tracking );
-  m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
-  m_PulseGenerator->RequestSetFrequency( 20 ); //FIXME, move to request start tracking??
+  m_Observer = ObserverType::New();
+  m_Observer->SetCallbackFunction( this, & FourViewsTrackingWithCT::Tracking );
+  m_PulseGenerator->AddObserver( PulseEvent(), m_Observer );
+  m_PulseGenerator->RequestSetFrequency( 3 ); //FIXME, move to request start tracking??
 
   /** Temporary disable this logger */
   //this->DisplayAxial->SetLogger( logger );
@@ -136,21 +154,6 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ImageRepresentationAxial3D->SetLogger( logger );
   m_ImageRepresentationSagittal3D->SetLogger( logger );
   m_ImageRepresentationCoronal3D->SetLogger( logger );
-
-  m_Ellipsoid                   = EllipsoidType::New();
-  m_EllipsoidRepresentation     = EllipsoidRepresentationType::New();
-  m_Ellipsoid->SetRadius( 5, 5, 5 );  
-  m_EllipsoidRepresentation->RequestSetEllipsoidObject( m_Ellipsoid );
-  m_EllipsoidRepresentation->SetColor(1.0,0.0,0.0);
-  m_EllipsoidRepresentation->SetOpacity(1.0);
-
-  m_Cylinder                    = CylinderType::New();
-  m_CylinderRepresentation      = CylinderRepresentationType::New();
-  m_Cylinder->SetRadius( 1.5 );   //   1.5 mm
-  m_Cylinder->SetHeight( 200 );   // 200.0 mm
-  m_CylinderRepresentation->RequestSetCylinderObject( m_Cylinder );
-  m_CylinderRepresentation->SetColor(0.0,1.0,0.0);
-  m_CylinderRepresentation->SetOpacity(1.0);
 
   /** Initialize State Machine */
   m_StateMachine.AddState( m_InitialState,                  "InitialState" );
@@ -219,7 +222,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   /** Load image and verify patient name */
   m_StateMachine.AddTransition( m_PatientNameReadyState, m_RequestLoadImageInput, m_WaitingForDICOMDirectoryState, 
     &FourViewsTrackingWithCT::LoadImage );
-  m_StateMachine.AddTransition( m_ImageReadyState, m_RequestLoadImageInput, m_WaitingForDICOMDirectoryState, 
+  m_StateMachine.AddTransition( m_PatientNameVerifiedState, m_RequestLoadImageInput, m_WaitingForDICOMDirectoryState, 
     &FourViewsTrackingWithCT::LoadImage );
   m_StateMachine.AddTransition( m_WaitingForDICOMDirectoryState, m_LoadImageSuccessInput, m_ImageReadyState, 
     &FourViewsTrackingWithCT::VerifyPatientName );
@@ -355,6 +358,7 @@ void FourViewsTrackingWithCT::LoadImage()
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
   if ( directoryname != NULL )
     {
+      m_ImageReader->RequestResetReader();
       igstkLogMacro(          DEBUG, "Set ImageReader directory: " << directoryname << "\n" )
       igstkLogMacro2( logger, DEBUG, "m_ImageReader->RequestSetDirectory called...\n" )
       m_ImageReader->RequestSetDirectory( directoryname ); //FIXME. Add observer and callbacks to catch errors?
@@ -589,9 +593,50 @@ void FourViewsTrackingWithCT::StartTracking()
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Cylinder );
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Ellipsoid );
   m_Tracker->StartTracking();
+  m_PulseGenerator->SetLogger( m_Logger );
+  m_PulseGenerator->RequestStart();   
   // We don't have observer for tracker, we are actively reading the transform right now
-  //m_PulseGenerator->RequestStart(); 
   m_StateMachine.PushInput( m_StartTrackingSuccessInput ); // FIXME, How to get the failure condition
+  
+}
+/** Callback function for PulseEvent(), intend to actively read tracker tool transform */
+void FourViewsTrackingWithCT::Tracking()
+{
+  igstkLogMacro( DEBUG,  "Pulse Events...\n" )
+    //m_Tracker->UpdateStatus();
+    Transform transform;
+  //transform = m_Ellipsoid->GetTransform();
+  m_Tracker->GetToolTransform( TRACKER_TOOL_PORT, 0, transform );
+  //m_Ellipsoid->RequestSetTransform( transform );
+
+  ImageSpatialObjectType::PointType    p;
+  p[0] = transform.GetTranslation()[0];
+  p[1] = transform.GetTranslation()[1];
+  p[2] = transform.GetTranslation()[2];
+
+  igstkLogMacro( DEBUG,  "Tracker tool translation:" << p << "\n" )
+    if( m_ImageReader->GetOutput()->IsInside( p ) )
+      {
+      ImageSpatialObjectType::IndexType index;
+      m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index);
+      igstkLogMacro( DEBUG,  "Tracker tool index:" << index << "\n" )
+      //ResliceImage( index );
+      m_ImageRepresentationAxial->RequestSetSliceNumber( index[2] );
+      m_ImageRepresentationSagittal->RequestSetSliceNumber( index[0] );
+      m_ImageRepresentationCoronal->RequestSetSliceNumber( index[1] );
+
+      m_ImageRepresentationAxial3D->RequestSetSliceNumber( index[2] );
+      m_ImageRepresentationSagittal3D->RequestSetSliceNumber( index[0] );
+      m_ImageRepresentationCoronal3D->RequestSetSliceNumber( index[1] );
+
+      this->AxialSlider->value( index[2] );
+      this->SagittalSlider->value( index[0] );
+      this->CoronalSlider->value( index[1] ) ;
+      }
+    else
+      {
+      igstkLogMacro( DEBUG,  "Tracker tool outside of image...\n" )
+      }
 }
 
 void FourViewsTrackingWithCT::RequestStopTracking()
@@ -632,6 +677,8 @@ void FourViewsTrackingWithCT::ResliceImage()
 
 void FourViewsTrackingWithCT::ResliceImage ( IndexType index )
 {
+  
+  igstkLogMacro( DEBUG, "ResliceImage( IndexType index ) called... \n" )
   m_ImageRepresentationAxial->RequestSetSliceNumber( index[2] );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( index[0] );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( index[1] );
@@ -643,6 +690,8 @@ void FourViewsTrackingWithCT::ResliceImage ( IndexType index )
   this->AxialSlider->value( index[2] );
   this->SagittalSlider->value( index[0] );
   this->CoronalSlider->value( index[1] ) ;
+  
+  igstkLogMacro( DEBUG, "Index:" << index << "\n" )
 
   this->ViewerGroup->redraw();
   Fl::check();
@@ -748,34 +797,6 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
 
 }
 
-
-/** Callback function for PulseEvent(), intend to actively read tracker tool transform */
-void FourViewsTrackingWithCT::Tracking()
-{
-  //m_Tracker->UpdateStatus();
-  
-  Transform transform;
-  m_Tracker->GetToolTransform( TRACKER_TOOL_PORT, 0, transform ); //FIXME, Port Number
-  m_Ellipsoid->RequestSetTransform( transform );
-
-  ImageSpatialObjectType::PointType    p;
-  p[0] = transform.GetTranslation()[0];
-  p[1] = transform.GetTranslation()[1];
-  p[2] = transform.GetTranslation()[2];
-  
-  if( m_ImageReader->GetOutput()->IsInside( p ) )
-    {
-    m_Ellipsoid->RequestSetTransform( transform );
-    ImageSpatialObjectType::IndexType index;
-    m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index);
-    ResliceImage( index );
-    }
-  else
-    {
-    //igstkLogMacro( DEBUG,  "Tracker tool outside of image...\n" )
-    }
-}
-
 void FourViewsTrackingWithCT::GetLandmarkRegistrationTransform( const itk::EventObject & event )
 {
   if ( TransformModifiedEvent().CheckEvent( &event ) )
@@ -787,6 +808,7 @@ void FourViewsTrackingWithCT::GetLandmarkRegistrationTransform( const itk::Event
     
     igstkLogMacro( DEBUG, "Registration Transform" << m_ImageToTrackerTransform << "\n");
     igstkLogMacro( DEBUG, "Registration Transform Inverse" << m_ImageToTrackerTransform.GetInverse() << "\n");
+    igstkLogMacro( DEBUG, "Registration Transform Inverse" << m_LandmarkRegistration->ComputeRMSError() << "\n");
     m_StateMachine.PushInput( m_RegistrationSuccessInput );
     }
   else
