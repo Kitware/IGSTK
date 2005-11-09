@@ -100,6 +100,18 @@ public:
   /** Set the calibration transform for this tool. */
   igstkSetMacro( ToolCalibrationTransform, ToolCalibrationTransformType );
 
+  /** Get the raw, uncalibrated transform for this tool. */
+  igstkGetMacro( RawTransform, TransformType );
+
+  /** Set the raw, uncalibrated transform for this tool. */
+  igstkSetMacro( RawTransform, TransformType );
+
+  /** Get whether the tool was updated during tracker UpdateStatus() */
+  igstkGetMacro( Updated, bool );
+
+  /** Get whether the tool was updated during tracker UpdateStatus() */
+  igstkSetMacro( Updated, bool );
+
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
@@ -126,8 +138,14 @@ private:
   /** The type of the tool reflecting the property of the tool */
   ToolType           m_ToolType;
   
+  /** Raw transform for the tool */
+  TransformType      m_RawTransform;
+
   /** Calibration transform for the tool */
   ToolCalibrationTransformType      m_ToolCalibrationTransform;
+
+  /** Updated flag */
+  bool               m_Updated;
 
 private:
 

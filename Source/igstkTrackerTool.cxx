@@ -27,7 +27,10 @@ TrackerTool::TrackerTool(void):m_StateMachine(this)
   // Initialize the variables
   m_ValidityPeriod = 0.0; // current values are alreay invalid
   m_Transform.SetToIdentity( m_ValidityPeriod ); 
+  m_RawTransform.SetToIdentity( m_ValidityPeriod ); 
+  m_ToolCalibrationTransform.SetToIdentity( 1e300 ); 
   m_ToolType = UnknownTool;
+  m_Updated = false; // not yet updated
 
   m_StateMachine.AddInput( m_InitializeInput,  "InitializeInput" );
 
@@ -60,9 +63,11 @@ void TrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << this->m_Transform << std::endl;
-  os << indent << this->m_ToolCalibrationTransform << std::endl;
-  os << indent << this->m_ValidityPeriod << std::endl;
+  os << indent << "Transform: " << this->m_Transform << std::endl;
+  os << indent << "RawTransform: " << this->m_RawTransform << std::endl;
+  os << indent << "ToolCalibrationTransform: "
+               << this->m_ToolCalibrationTransform << std::endl;
+  os << indent << "ValidityPeriod: " << this->m_ValidityPeriod << std::endl;
 }
 
 
