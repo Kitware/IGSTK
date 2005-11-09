@@ -55,6 +55,9 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   m_StateMachine.AddInput(m_ReadImageRequestInput,
                           "ImageReadRequestInput");
 
+  m_StateMachine.AddInput(m_ResetReaderInput,
+                          "ResetReaderInput");
+
   m_StateMachine.AddInput(m_ImageReadingErrorInput,
                           "ImageReadingErrorInput");
 
@@ -110,6 +113,24 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
                                m_GetPatientNameInfoInput,
                                m_ImageReadState,
                                &DICOMImageReader::GetPatientNameInfo);
+
+  //Transitions for reset reader input 
+
+  m_StateMachine.AddTransition(m_ImageReadState,
+                               m_ResetReaderInput,
+                               m_IdleState,
+                               &DICOMImageReader::ResetReader);
+
+  m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,
+                               m_ResetReaderInput,
+                               m_IdleState,
+                               &DICOMImageReader::ResetReader);
+
+  m_StateMachine.AddTransition(m_AttemptingToReadImageState,
+                               m_ResetReaderInput,
+                               m_IdleState,
+                               &DICOMImageReader::ResetReader);
+
 
   //Errors related to image directory name
   m_StateMachine.AddTransition(m_IdleState,
@@ -226,6 +247,13 @@ void DICOMImageReader<TPixelType>::RequestReadImage()
   this->m_StateMachine.ProcessInputs();
 }
 
+template <class TPixelType>
+void DICOMImageReader<TPixelType>::RequestResetReader()
+{
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::RequestResetReader called...\n");
+  this->m_StateMachine.PushInput( this->m_ResetReaderInput);
+  this->m_StateMachine.ProcessInputs();
+}
 
 /** Read in the DICOM series image */
 template <class TPixelType>
@@ -298,6 +326,14 @@ DICOMImageReader<TPixelType>::ReportInvalidRequest()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportInvalidRequest called...\n");
   this->InvokeEvent( DICOMInvalidRequestErrorEvent() );
+}
+
+/* This function resets the reader */
+template <class TPixelType>
+void
+DICOMImageReader<TPixelType>::ResetReader()
+{
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ResetReader called...\n");
 }
 
 template <class TPixelType>

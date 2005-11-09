@@ -99,6 +99,11 @@ public:
   /** This function will be used to request patient name info */
   void RequestPatientNameInfo();
   
+
+  /** This function will be used to reset the reader */
+  void RequestResetReader();
+
+  
   /** Logger class */
   typedef itk::Logger                  LoggerType;
 
@@ -179,7 +184,8 @@ private:
   InputType                    m_ReadImageRequestInput;
   InputType                    m_ImageDirectoryNameValidInput; 
   InputType                    m_ImageReadingSuccessInput;
-
+  InputType                    m_ResetReaderInput;
+  
   /** Error related state inputs */
   InputType                    m_ImageReadingErrorInput;
   InputType                    m_ImageDirectoryNameIsEmptyInput;
@@ -205,10 +211,10 @@ private:
   /** This method request image read. To be invoked ONLY by the StateMachine. */
   void AttemptReadImage();
 
- /** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent
+  /** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent
      when invalid requests are made */
   void ReportInvalidRequest();
-
+  
   /** This function reports an when the image directory is empty */
   void ReportImageDirectoryEmptyError();
  
@@ -224,6 +230,9 @@ private:
 
   /** This function reports success in image reading */
   void ReportImageReadingSuccess();
+
+  /** This function resets the reader */
+  void ResetReader();
 
   /** This function reports an error when the image directory name
       provided is not a directory containing DICOM series */
