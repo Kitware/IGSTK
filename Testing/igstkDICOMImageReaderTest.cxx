@@ -198,7 +198,13 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
+  // Test Reader resetting function
+  reader->RequestResetReader();
 
+  // Purposely call RequestReadImage to check if the image can be read after reseting the reader..
+  reader->RequestReadImage();
+
+  
   return EXIT_SUCCESS;
 }
 
