@@ -25,9 +25,9 @@
 #include "itkImage.h"
 #include "itkLandmarkBasedTransformInitializer.h"
 
+
 namespace igstk
 {
-
 /** \class Landmark3DRegistration
  * \brief This class evaluates the transformation parameters between 
  * the tracker and image coordinate systems.
@@ -117,6 +117,11 @@ public:
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
+   /** The "ComputeRMSError" method calculates and returns RMS error of
+        the transformation. This function should be moved into the 
+       state machine: FIXME */
+  double ComputeRMSError();
+
   /** Declarations needed for the Logger */
   igstkLoggerMacro();
 
@@ -136,7 +141,7 @@ protected:
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
-  
+ 
   /** These two methods must be declared and note be implemented
    *  in order to enforce the protocol of smart pointers. */
   Landmark3DRegistration(const Self&);    //purposely not implemented
@@ -149,7 +154,7 @@ private:
   LandmarkPointContainerType               m_ImageLandmarks;
   LandmarkImagePointType                   m_ImageLandmarkPoint;
   LandmarkTrackerPointType                 m_TrackerLandmarkPoint;
-  
+   
   
   /** List of States */
   StateType                                m_IdleState;
@@ -189,6 +194,7 @@ private:
    * transformation parameters */
   void ComputeTransform();
 
+ 
   /** The "GetTransform" method throws an event containing the transform parameters*/
   void GetTransform();
 
