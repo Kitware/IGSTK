@@ -380,22 +380,30 @@ void Tracker::SetToolTransform( unsigned int portNumber,
         translation = transform.GetRotation().Transform(translation);
         translation += transform.GetTranslation();
 
-        // applying ReferenceTool
-        if( m_ApplyingReferenceTool )
+        // don't apply PatientTransform to ReferenceTool, and
+        // don't apply the ReferenceTool to itself
+        if ( !m_ApplyingReferenceTool ||
+             (m_ReferenceToolPortNumber != portNumber ||
+              m_ReferenceToolNumber != toolNumber) )
           {
-          // since this is an inverse transform, apply translation first
-          TransformType::VersorType inverseRotation =
-            m_ReferenceTool->GetTransform().GetRotation().GetReciprocal();
+          // applying ReferenceTool
+          if( m_ApplyingReferenceTool )
+            {
+            // since this is an inverse transform, apply translation first
+            TransformType::VersorType inverseRotation =
+              m_ReferenceTool->GetTransform().GetRotation().GetReciprocal();
 
-          translation -= m_ReferenceTool->GetTransform().GetTranslation();
-          translation = inverseRotation.Transform(translation);
-          rotation *= inverseRotation;
+            translation -= m_ReferenceTool->GetTransform().GetTranslation();
+            translation = inverseRotation.Transform(translation);
+            rotation *= inverseRotation;
+            }
+
+          // applying PatientTransform
+          rotation *= m_PatientTransform.GetRotation();
+          translation =
+            m_PatientTransform.GetRotation().Transform(translation);
+          translation += m_PatientTransform.GetTranslation();
           }
-
-        // applying PatientTransform
-        rotation *= m_PatientTransform.GetRotation();
-        translation = m_PatientTransform.GetRotation().Transform(translation);
-        translation += m_PatientTransform.GetTranslation();
 
         TransformType toolTransform;
         toolTransform.SetTranslationAndRotation(translation, rotation,
