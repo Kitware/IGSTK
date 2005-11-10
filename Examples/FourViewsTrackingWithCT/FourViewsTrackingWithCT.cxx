@@ -123,7 +123,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_Observer = ObserverType::New();
   m_Observer->SetCallbackFunction( this, & FourViewsTrackingWithCT::Tracking );
   m_PulseGenerator->AddObserver( PulseEvent(), m_Observer );
-  m_PulseGenerator->RequestSetFrequency( 3 ); //FIXME, move to request start tracking??
+  m_PulseGenerator->RequestSetFrequency( 30 ); //FIXME, move to request start tracking??
 
   /** Temporary disable this logger */
   //this->DisplayAxial->SetLogger( logger );
@@ -593,7 +593,6 @@ void FourViewsTrackingWithCT::StartTracking()
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Cylinder );
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Ellipsoid );
   m_Tracker->StartTracking();
-  m_PulseGenerator->SetLogger( m_Logger );
   m_PulseGenerator->RequestStart();   
   // We don't have observer for tracker, we are actively reading the transform right now
   m_StateMachine.PushInput( m_StartTrackingSuccessInput ); // FIXME, How to get the failure condition
@@ -620,18 +619,7 @@ void FourViewsTrackingWithCT::Tracking()
       ImageSpatialObjectType::IndexType index;
       m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index);
       igstkLogMacro( DEBUG,  "Tracker tool index:" << index << "\n" )
-      //ResliceImage( index );
-      m_ImageRepresentationAxial->RequestSetSliceNumber( index[2] );
-      m_ImageRepresentationSagittal->RequestSetSliceNumber( index[0] );
-      m_ImageRepresentationCoronal->RequestSetSliceNumber( index[1] );
-
-      m_ImageRepresentationAxial3D->RequestSetSliceNumber( index[2] );
-      m_ImageRepresentationSagittal3D->RequestSetSliceNumber( index[0] );
-      m_ImageRepresentationCoronal3D->RequestSetSliceNumber( index[1] );
-
-      this->AxialSlider->value( index[2] );
-      this->SagittalSlider->value( index[0] );
-      this->CoronalSlider->value( index[1] ) ;
+      ResliceImage( index );      
       }
     else
       {
@@ -650,8 +638,8 @@ void FourViewsTrackingWithCT::StopTracking()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::StopTracking called ... \n" )
   // We don't have observer for tracker, we are actively reading the transform right now
+  m_Tracker->StopTracking();
   m_PulseGenerator->RequestStop();
-  m_Tracker->StopTracking();   //FIXME. Need to dettach the spatial object
   m_StateMachine.PushInput( m_StopTrackingSuccessInput ); // FIXME, How to get the failure condition
 }
 
