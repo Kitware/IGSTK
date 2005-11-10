@@ -183,9 +183,6 @@ PulseGenerator::CallbackTimer()
   
   igstkLogMacro( DEBUG, "CallbackTimer() called ...\n");
 
-  // Set the timer for the next pulse
-  Fl::repeat_timeout( m_Period, 
-            ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
   // Process this pulse
   m_StateMachine.PushInput( m_PulseInput );
   m_StateMachine.ProcessInputs();
@@ -196,6 +193,12 @@ PulseGenerator::CallbackTimer()
   // Execute methods that take longer than the m_Period time.
   m_StateMachine.PushInput( m_EventReturnInput );
   m_StateMachine.ProcessInputs();
+
+  // Set the timer for the next pulse. It is rescheduled at the end of the CallbackTimer()
+  // just in case the previous two ProcessInputs() calls takes a significant amount of time
+  // and risk to make the PulseGenerator to miss a timer pulse.
+  Fl::repeat_timeout( m_Period, 
+            ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
 }
 
 
