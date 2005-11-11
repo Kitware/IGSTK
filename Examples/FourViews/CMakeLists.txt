@@ -6,6 +6,7 @@ SET(FourViews_GUI_SRCS
   
 SET(FourViews_SRCS
   main.cxx
+  FourViewsImplementation.h
   )
 
 INCLUDE_DIRECTORIES(

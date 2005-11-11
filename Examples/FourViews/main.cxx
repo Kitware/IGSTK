@@ -20,11 +20,7 @@
 #endif
 
 #include "FourViewsImplementation.h"
-#include "igstkTubeReader.h"
-#include "igstkMeshReader.h"
 #include <itkStdStreamLogOutput.h>
-#include <igstkTubeObjectRepresentation.h>
-#include <igstkMeshObjectRepresentation.h>
 
 int main(int , char** )
 { 
@@ -41,8 +37,10 @@ int main(int , char** )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
+  application.SetLogger(logger);
+
   // Try to read a tube
-  igstk::TubeReader::Pointer tubeReader =  igstk::TubeReader::New();
+  /*igstk::TubeReader::Pointer tubeReader =  igstk::TubeReader::New();
   tubeReader->SetLogger( logger );
   tubeReader->RequestSetFileName("E:/Vessel.tre");
   tubeReader->RequestReadObject();
@@ -75,7 +73,7 @@ int main(int , char** )
   application.AddMesh( meshRepresentation );
 
   application.ResetCameras();
-
+*/
   Fl::run();
 
   return EXIT_SUCCESS;

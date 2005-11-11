@@ -2,13 +2,12 @@
 version 1.0106 
 header_name {.h} 
 code_name {.cxx}
-class FourViews {selected
+class FourViews {open
 } {
-  Function {FourViews()} {open
-  } {
+  Function {FourViews()} {} {
     Fl_Window mainWindow {
       label {IGSTK: Four Quadrants Example} open
-      xywh {457 58 775 710} type Double resizable visible
+      xywh {573 292 775 710} type Double resizable visible
     } {
       Fl_Box Display3D {
         label {Display 3D}
@@ -39,16 +38,37 @@ class FourViews {selected
         callback {this->Quit();}
         xywh {670 675 85 25}
       }
+      Fl_Button {} {
+        label {Load Vessels}
+        callback {this->LoadVessels();}
+        xywh {15 680 105 25}
+      }
+      Fl_Button {} {
+        label {Load Liver}
+        callback {this->LoadLiver();}
+        xywh {130 680 105 25}
+      }
+      Fl_Button {} {
+        label {Move Vessels}
+        callback {this->MoveVessels();}
+        xywh {250 680 105 25}
+      }
     }
   }
   Function {~FourViews()} {return_type virtual
   } {}
-  Function {Quit()} {open return_type {virtual void}
+  Function {Quit()} {return_type {virtual void}
   } {
     code {mainWindow->hide();} {}
   }
-  Function {Show()} {open return_type {virtual void}
+  Function {Show()} {return_type {virtual void}
   } {
     code {mainWindow->show();} {}
   }
+  Function {LoadVessels()} {open return_type {virtual void}
+  } {}
+  Function {LoadLiver()} {open return_type {virtual void}
+  } {}
+  Function {MoveVessels()} {open selected return_type {virtual void}
+  } {}
 } 
