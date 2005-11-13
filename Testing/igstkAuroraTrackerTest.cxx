@@ -126,8 +126,9 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
 #ifdef IGSTK_SIMULATOR_TEST
   // load a previously captured file
   std::string igstkDataDirectory = IGSTK_DATA_ROOT;
-  std::string simulationFile = igstkDataDirectory + "/";
-  simulationFile = simulationFile + "aurora_stream_11_05_2005.txt";
+  std::string inputDirectory = igstkDataDirectory + "/Input";
+  std::string simulationFile = (inputDirectory + "/" +
+                                "aurora_stream_multichan_11_11_2005.txt");
   serialComm->SetFileName( simulationFile.c_str() );
 #else /* IGSTK_SIMULATOR_TEST */
   serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
@@ -144,6 +145,12 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
   tracker->AddObserver( itk::AnyEvent(), my_command);
 
   tracker->SetLogger( logger );
+
+#ifdef IGSTK_SIMULATOR_TEST
+  std::string romFile = inputDirectory + "/" + "aurora_multichan.rom";
+  std::cout << "AttachSROMFileNameToPort()" << std::endl;
+  tracker->AttachSROMFileNameToPort( 0, romFile.c_str() );
+#endif /* IGSTK_SIMULATOR_TEST */
 
   std::cout << "SetCommunication()" << std::endl;
   tracker->SetCommunication( serialComm );
@@ -173,14 +180,18 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
     tracker->UpdateStatus();
     for (unsigned int port = 0; port < 4; port++)
       {
-      TransformType             transform;
-      VectorType                position;
+      for (unsigned int channel = 0; channel < 2; channel++)
+        {
+        TransformType             transform;
+        VectorType                position;
 
-      tracker->GetToolTransform( port, 0, transform );
-      position = transform.GetTranslation();
-      std::cout << "Port " << port << "  Position = (" << position[0]
-                << "," << position[1] << "," << position[2]
-                << ")" << std::endl;
+        tracker->GetToolTransform( port, channel, transform );
+        position = transform.GetTranslation();
+        std::cout << "Port, Channel (" << port << "," << channel
+                  << ") Position = (" << position[0]
+                  << "," << position[1] << "," << position[2]
+                  << ")" << std::endl;
+        }
       }
     }
   

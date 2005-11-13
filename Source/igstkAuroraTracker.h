@@ -45,6 +45,7 @@ public:
 
   /** number of ports to allow */
   itkStaticConstMacro( NumberOfPorts, unsigned int, 4 );
+  itkStaticConstMacro( NumberOfChannels, unsigned int, 2 );
 
   /** typedef for command interpreter */
   typedef igstk::NDICommandInterpreter   CommandInterpreterType;
@@ -74,6 +75,9 @@ public:
   /** Get the number of tools that have been detected. */
   igstkGetMacro( NumberOfTools, unsigned int );
 
+    /** Specify an SROM file to be used with a passive or custom tool. */
+  void AttachSROMFileNameToPort( const unsigned int portNum, 
+                                 std::string  fileName );
 protected:
 
   AuroraTracker(void);
@@ -117,13 +121,17 @@ private:
   itk::MutexLock::Pointer  m_BufferLock;
 
   /** A buffer for holding tool transforms */
-  double m_TransformBuffer[NumberOfPorts][8];
+  double m_TransformBuffer[NumberOfPorts][NumberOfChannels][8];
 
   /** A buffer for holding status of tools */
-  int m_StatusBuffer[NumberOfPorts];
+  int m_StatusBuffer[NumberOfPorts][NumberOfChannels];
 
   /** A buffer for holding absent status of tools */
-  int m_AbsentBuffer[NumberOfPorts];
+  int m_AbsentBuffer[NumberOfPorts][NumberOfChannels];
+
+  /** Load a virtual SROM, given the file name of the ROM file */
+  bool LoadVirtualSROM( const unsigned int port, 
+                        const std::string SROMFileName) ;
 
   /** Enable all tool ports that have tools plugged into them.
    * {The reference tool port is enabled as a static tool.} */
@@ -136,13 +144,16 @@ private:
   ResultType CheckError( CommandInterpreterType * );
 
   /** Information about which tool ports are enabled. */
-  int m_PortEnabled[NumberOfPorts];
+  int m_PortEnabled[NumberOfPorts][NumberOfChannels];
 
   /** The tool handles that the device has provides us with. */
-  int m_PortHandle[NumberOfPorts];
+  int m_PortHandle[NumberOfPorts][NumberOfChannels];
 
   /** Total number of tools detected. */
   unsigned int   m_NumberOfTools;
+
+  /** Names of the SROM files for special tools. */
+  std::string    m_SROMFileNames[NumberOfPorts];
 
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;

@@ -32,20 +32,17 @@ AuroraTracker::AuroraTracker(void)
 {
   m_CommandInterpreter = CommandInterpreterType::New();
   m_NumberOfTools = 0;
-  for (unsigned int i = 0; i < NumberOfPorts; i++)
+  for (unsigned int port = 0; port < NumberOfPorts; port++)
     {
-    this->m_PortEnabled[i] = 0;
-    this->m_PortHandle[i] = 0;
-    }
-    
-  for (unsigned int j = 0; j < NumberOfPorts; j++)
-    { 
-    AuroraTrackerToolPointer tool1 = AuroraTrackerToolType::New();
-    AuroraTrackerToolPointer tool2 = AuroraTrackerToolType::New();
-    TrackerPortPointer port = TrackerPortType::New();
-    port->AddTool(tool1);
-    port->AddTool(tool2);
-    this->AddPort(port);
+    TrackerPortPointer tport = TrackerPortType::New();
+    for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
+      {
+      AuroraTrackerToolPointer tool = AuroraTrackerToolType::New();
+      tport->AddTool(tool);
+      this->m_PortEnabled[port][channel] = 0;
+      this->m_PortHandle[port][channel] = 0;
+      }
+    this->AddPort(tport);
     }
 
   this->SetThreadingEnabled( true );
@@ -137,15 +134,27 @@ AuroraTracker::ResultType AuroraTracker::InternalActivateTools( void )
 {
   igstkLogMacro( DEBUG, "AuroraTracker::InternalActivateTools called ...\n");
 
+  // load any SROMS that are needed
+  for (unsigned int i = 0; i < NumberOfPorts; i++)
+    { 
+    if (!m_SROMFileNames[i].empty())
+      {
+      this->LoadVirtualSROM(i, m_SROMFileNames[i]);
+      }
+    }
+
   this->EnableToolPorts();
 
   m_NumberOfTools = 0;
 
-  for(unsigned int i = 0; i < NumberOfPorts; i++)
-    { 
-    if( this->m_PortEnabled[i] )
+  for(unsigned int port = 0; port < NumberOfPorts; port++)
+    {
+    for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
       {
-      m_NumberOfTools++;
+      if( this->m_PortEnabled[port][channel] )
+        {
+        m_NumberOfTools++;
+        }
       }
     }
 
@@ -213,71 +222,72 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
 
   for (unsigned int port = 0; port < NumberOfPorts; port++) 
     {
-    // convert m_StatusBuffer flags from NDI to vtkTracker format
-    const int portStatus = m_StatusBuffer[port];
-
-    // only report tools that are enabled
-    if ((portStatus & mflags) != mflags) 
+    for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
       {
-      continue;
+      // convert m_StatusBuffer flags from NDI to vtkTracker format
+      const int portStatus = m_StatusBuffer[port][channel];
+
+      // only report tools that are enabled
+      if ((portStatus & mflags) != mflags) 
+        {
+        continue;
+        }
+
+      // only report tools that are in view
+      if (m_AbsentBuffer[port][channel])
+        {
+        // there should be a method to set that the tool is not in view
+        igstkLogMacro( DEBUG, "PolarisTracker::InternalUpdateStatus: " <<
+                       "tool " << port << " is not in view\n");
+        continue;
+        }
+
+      // create the transform
+      TransformType transform;
+      const double *ndiTransform = m_TransformBuffer[port][channel];
+
+      typedef TransformType::VectorType TranslationType;
+      TranslationType translation;
+
+      translation[0] = ndiTransform[4];
+      translation[1] = ndiTransform[5];
+      translation[2] = ndiTransform[6];
+
+      typedef TransformType::VersorType RotationType;
+      RotationType rotation;
+      const double normsquared = (ndiTransform[0]*ndiTransform[0] +
+                                  ndiTransform[1]*ndiTransform[1] +
+                                  ndiTransform[2]*ndiTransform[2] +
+                                  ndiTransform[3]*ndiTransform[3]);
+
+      // don't allow null quaternions
+      if (normsquared < 1e-6)
+        {
+        rotation.Set(0.0, 0.0, 0.0, 1.0);
+        igstkLogMacro( WARNING, "AuroraTracker::InternUpdateStatus: bad "
+                       "quaternion, norm=" << sqrt(normsquared) << "\n");
+        }
+      else
+        {
+        rotation.Set(ndiTransform[1], ndiTransform[2], ndiTransform[3],
+                     ndiTransform[0]);
+        }
+
+      // report NDI error value
+      typedef TransformType::ErrorType  ErrorType;
+      ErrorType errorValue = ndiTransform[7];
+
+      typedef TransformType::TimePeriodType TimePeriodType;
+      const TimePeriodType validityTime = 100.0;
+
+      transform.SetToIdentity(validityTime);
+      transform.SetTranslationAndRotation(translation, rotation, errorValue,
+                                          validityTime);
+
+      this->SetToolTransform(port, channel, transform);
       }
-
-    // only report tools that are in view
-    if (m_AbsentBuffer[port])
-      {
-      // there should be a method to set that the tool is not in view
-      igstkLogMacro( DEBUG, "PolarisTracker::InternalUpdateStatus: " <<
-                     "tool " << port << " is not in view\n");
-      continue;
-      }
-
-    // create the transform
-    TransformType transform;
-
-    typedef TransformType::VectorType TranslationType;
-    TranslationType translation;
-
-    translation[0] = m_TransformBuffer[port][4];
-    translation[1] = m_TransformBuffer[port][5];
-    translation[2] = m_TransformBuffer[port][6];
-
-    typedef TransformType::VersorType RotationType;
-    RotationType rotation;
-    const double normsquared = 
-      m_TransformBuffer[port][0]*m_TransformBuffer[port][0] +
-      m_TransformBuffer[port][1]*m_TransformBuffer[port][1] +
-      m_TransformBuffer[port][2]*m_TransformBuffer[port][2] +
-      m_TransformBuffer[port][3]*m_TransformBuffer[port][3];
-
-    // don't allow null quaternions
-    if (normsquared < 1e-6)
-      {
-      rotation.Set(0.0, 0.0, 0.0, 1.0);
-      igstkLogMacro( WARNING, "AuroraTracker::InternUpdateStatus: bad "
-                     "quaternion, norm=" << sqrt(normsquared) << "\n");
-      }
-    else
-      {
-      rotation.Set(m_TransformBuffer[port][1],
-                   m_TransformBuffer[port][2],
-                   m_TransformBuffer[port][3],
-                   m_TransformBuffer[port][0]);
-      }
-
-    // report NDI error value
-    typedef TransformType::ErrorType  ErrorType;
-    ErrorType errorValue = m_TransformBuffer[port][7];
-
-    typedef TransformType::TimePeriodType TimePeriodType;
-    const TimePeriodType validityTime = 100.0;
-
-
-    transform.SetToIdentity(validityTime);
-    transform.SetTranslationAndRotation(translation, rotation, errorValue,
-                                        validityTime);
-
-    this->SetToolTransform(port, 0, transform);
     }
+
   m_BufferLock->Unlock();
 
   return SUCCESS;
@@ -304,49 +314,56 @@ AuroraTracker::ResultType AuroraTracker::InternalThreadedUpdateStatus( void )
   // the next 3 values are an x,y,z position
   // the final value is an error estimate in the range [0,1]
   unsigned int port;   // physical port number
+  unsigned int channel; // channel on port
   for (port = 0; port < NumberOfPorts; port++)
     {
-    m_TransformBuffer[port][0] = 1.0;
-    m_TransformBuffer[port][1] = 0.0;
-    m_TransformBuffer[port][2] = 0.0;
-    m_TransformBuffer[port][3] = 0.0;
-    m_TransformBuffer[port][4] = 0.0;
-    m_TransformBuffer[port][5] = 0.0;
-    m_TransformBuffer[port][6] = 0.0;
-    m_TransformBuffer[port][7] = 0.0;
+    for (channel = 0; channel < NumberOfChannels; channel++)
+      {
+      m_TransformBuffer[port][channel][0] = 1.0;
+      m_TransformBuffer[port][channel][1] = 0.0;
+      m_TransformBuffer[port][channel][2] = 0.0;
+      m_TransformBuffer[port][channel][3] = 0.0;
+      m_TransformBuffer[port][channel][4] = 0.0;
+      m_TransformBuffer[port][channel][5] = 0.0;
+      m_TransformBuffer[port][channel][6] = 0.0;
+      m_TransformBuffer[port][channel][7] = 0.0;
+      }
     }
 
   if (result == SUCCESS)
     {
-    unsigned long frame[NumberOfPorts];
+    unsigned long frame[NumberOfPorts][NumberOfChannels];
     for (port = 0; port < NumberOfPorts; port++)
       {
-      const int ph = this->m_PortHandle[port];
-      m_AbsentBuffer[port] = 0;
-      m_StatusBuffer[port] = 0;
-
-      frame[port] = 0;
-      if (ph == 0)
+      for (channel = 0; channel < NumberOfChannels; channel++)
         {
-        continue;
-        }
+        const int ph = this->m_PortHandle[port][channel];
+        m_AbsentBuffer[port][channel] = 0;
+        m_StatusBuffer[port][channel] = 0;
 
-      double transform[8];
-      const int tstatus = m_CommandInterpreter->GetTXTransform(ph, transform);
-      const int absent = (tstatus != CommandInterpreterType::NDI_VALID);
-      const int status = m_CommandInterpreter->GetTXPortStatus(ph);
-      frame[port] = m_CommandInterpreter->GetTXFrame(ph);
-
-      if (!absent)
-        {
-        for(unsigned int i = 0; i < 8; i++ )
+        frame[port][channel] = 0;
+        if (ph == 0)
           {
-          m_TransformBuffer[port][i] = transform[i];
+          continue;
           }
-        }
 
-      m_AbsentBuffer[port] = absent;
-      m_StatusBuffer[port] = status;
+        double transform[8];
+        const int tstatus = m_CommandInterpreter->GetTXTransform(ph,transform);
+        const int absent = (tstatus != CommandInterpreterType::NDI_VALID);
+        const int status = m_CommandInterpreter->GetTXPortStatus(ph);
+        frame[port][channel] = m_CommandInterpreter->GetTXFrame(ph);
+
+        if (!absent)
+          {
+          for(unsigned int i = 0; i < 8; i++ )
+            {
+            m_TransformBuffer[port][channel][i] = transform[i];
+            }
+          }
+
+        m_AbsentBuffer[port][channel] = absent;
+        m_StatusBuffer[port][channel] = status;
+        }
       }
     }
 
@@ -359,6 +376,99 @@ AuroraTracker::ResultType AuroraTracker::InternalThreadedUpdateStatus( void )
   return result;
 }
 
+/** Specify an SROM file to be used with a passive or custom tool. */
+void AuroraTracker::AttachSROMFileNameToPort( const unsigned int portNum,
+                                               std::string fileName )
+{
+  igstkLogMacro( DEBUG, "AuroraTracker::AttachSROMFileNameToPort called..\n");
+
+  if ( portNum <= NumberOfPorts )
+    {
+    m_SROMFileNames[portNum] = fileName;
+    }
+}
+
+/** Load a virtual SROM, given the file name of the ROM file */
+bool AuroraTracker::LoadVirtualSROM( const unsigned int port,
+                                     const std::string SROMFileName) 
+{
+  igstkLogMacro( DEBUG, "PolarisTracker::LoadVirtualSROM called...\n");
+
+  std::ifstream sromFile;
+  sromFile.open(SROMFileName.c_str(), std::ios::binary );
+
+  if (!sromFile.is_open())
+    {
+    igstkLogMacro( WARNING, "AuroraTracker::LoadVirtualSROM: couldn't "
+                   "find SROM file " << SROMFileName << " ...\n");
+    return false;
+    }
+
+  // most SROM files don't contain the whole 1024 bytes, they only
+  // contain whatever is necessary, so the rest should be filled with zero
+  char data[1024]; 
+  memset( data, 0, 1024 );
+  sromFile.read( data, 1024 );
+  sromFile.close();
+
+  // unless SROM is successfully written, this method returns "false"
+  bool returnValue = false;
+
+  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ALL_HANDLES);
+  if (this->CheckError(m_CommandInterpreter) == SUCCESS)
+    {
+    unsigned int numHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
+    bool foundPort = false;
+    for (unsigned int handleIndex = 0;
+         handleIndex < numHandles && !foundPort;
+         handleIndex++)
+      {
+      int handleInfo = m_CommandInterpreter->GetPHSRInformation(handleIndex);
+
+      if (handleInfo & CommandInterpreterType::NDI_TOOL_IN_PORT)
+        {
+        int ph = m_CommandInterpreter->GetPHSRHandle(handleIndex);
+        m_CommandInterpreter->PHINF(ph,
+                                    CommandInterpreterType::NDI_BASIC |
+                                    CommandInterpreterType::NDI_PORT_LOCATION);
+
+        if (this->CheckError(m_CommandInterpreter) == SUCCESS)
+          {
+          char location[256];
+          m_CommandInterpreter->GetPHINFPortLocation(location);
+          unsigned int auroraPort = (location[10]-'0')*10 + (location[11]-'0');
+          if (port + 1 == auroraPort)
+            {
+            foundPort = 1;
+            int successfulWrite = 1;
+            for (unsigned int address = 0;
+                 address < 1024 && successfulWrite;
+                 address += 64)
+              {
+              // holds hexidecimal data to be sent to device
+              char hexbuffer[129];
+    
+              // convert data to hexidecimal and write to virtual SROM in
+              // 64-byte chunks
+              m_CommandInterpreter->HexEncode(hexbuffer, &data[address], 64);
+              m_CommandInterpreter->PVWR(ph, address, hexbuffer);
+              // check for successful write
+              successfulWrite =
+                (this->CheckError(m_CommandInterpreter) == SUCCESS);
+              }
+            // return true if all chunks successfully written
+            if (successfulWrite)
+              {
+              returnValue = true;
+              }
+            }
+          }
+        }
+      }
+    }
+
+  return returnValue;
+}
 
 /** Enable all tool ports that are occupied. */
 void AuroraTracker::EnableToolPorts()
@@ -366,17 +476,20 @@ void AuroraTracker::EnableToolPorts()
   // reset our information about the tool ports
   for (unsigned int port = 0; port < NumberOfPorts; port++)
     {
-    this->m_PortHandle[port] = 0;
-    this->m_PortEnabled[port] = 0;
+    for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
+      {
+      this->m_PortHandle[port][channel] = 0;
+      this->m_PortEnabled[port][channel] = 0;
+      }
     }
 
   // free ports that are waiting to be freed
   m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_STALE_HANDLES);
-  unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
-  unsigned int tool;
-  for (tool = 0; tool < ntools; tool++)
+  unsigned int nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
+  unsigned int iHandle;
+  for (iHandle = 0; iHandle < nHandles; iHandle++)
     {
-    const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
+    const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
     m_CommandInterpreter->PHF(ph);
 
     // if an error occurs, print the error but don't abort
@@ -403,13 +516,13 @@ void AuroraTracker::EnableToolPorts()
       break;
       }
 
-    ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+    nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
     int foundNewTool = 0;
 
     // try to initialize all port handles
-    for (tool = 0; tool < ntools; tool++)
+    for (iHandle = 0; iHandle < nHandles; iHandle++)
       {
-      const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
+      const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
       // only call PINIT on tools that didn't fail last time
       // (the &0xFF makes sure index is < 256)
       if (!alreadyAttemptedPINIT[(ph & 0xFF)])
@@ -433,11 +546,11 @@ void AuroraTracker::EnableToolPorts()
   // enable initialized tools
   m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_UNENABLED_HANDLES);
 
-  ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+  nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
   
-  for (tool = 0; tool < ntools; tool++)
+  for (iHandle = 0; iHandle < nHandles; iHandle++)
     {
-    const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
+    const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
     m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
 
     // tool identity and type information
@@ -466,11 +579,11 @@ void AuroraTracker::EnableToolPorts()
   // get information for all tools
   m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ALL_HANDLES);
 
-  ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+  nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
 
-  for (tool = 0; tool < ntools; tool++)
+  for (iHandle = 0; iHandle < nHandles; iHandle++)
     {
-    const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
+    const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
     m_CommandInterpreter->PHINF(ph,
                                 CommandInterpreterType::NDI_PORT_LOCATION |
                                 CommandInterpreterType::NDI_PART_NUMBER |
@@ -486,16 +599,28 @@ void AuroraTracker::EnableToolPorts()
     m_CommandInterpreter->GetPHINFPortLocation(location);
 
     unsigned int port = (location[10]-'0')*10 + (location[11]-'0') - 1;
+    unsigned int channel = 0;
 
     if (port < NumberOfPorts)
       {
-      this->m_PortHandle[port] = ph;
+      // assign handle to the next available channel
+      for (channel = 0; channel < NumberOfChannels; channel++)
+        {
+        if (this->m_PortHandle[port][channel] == 0)
+          {
+          this->m_PortHandle[port][channel] = ph;
+          break;
+          }
+        }
       }
 
     const int status = m_CommandInterpreter->GetPHINFPortStatus();
 
-    this->m_PortEnabled[port] = 
-      ((status & CommandInterpreterType::NDI_ENABLED) != 0);
+    if (port < NumberOfPorts && channel < NumberOfChannels)
+      {
+      this->m_PortEnabled[port][channel] = 
+        ((status & CommandInterpreterType::NDI_ENABLED) != 0);
+      }
     }
 }
 
@@ -518,7 +643,10 @@ void AuroraTracker::DisableToolPorts( void )
   // disable the enabled ports
   for (unsigned int port = 0; port < NumberOfPorts; port++)
     {
-    this->m_PortEnabled[port] = 0;
+    for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
+      {
+      this->m_PortEnabled[port][channel] = 0;
+      }
     }
 }
 
@@ -528,14 +656,18 @@ void AuroraTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  unsigned int i;
-  for( i = 0; i < NumberOfPorts; ++i )
+  for( unsigned int i = 0; i < NumberOfPorts; i++ )
     {
-    os << indent << "Port " << i << " Enabled: " << m_PortEnabled[i] << std::endl;
-    }
-  for( i = 0; i < NumberOfPorts; ++i )
-    {
-    os << indent << "Port " << i << " Handle: " << m_PortHandle[i] << std::endl;
+    for ( unsigned int j = 0; j < NumberOfChannels; j++)
+      {
+      if (m_PortHandle[i][j] != 0 || j == 0)
+        {
+        os << indent << "Port " << i << " Channel " << j
+           << " PortHandle: " << m_PortHandle[i][j] << std::endl;
+        os << indent << "Port " << i << " Channel " << j
+           << " PortEnabled: " << m_PortEnabled[i][j] << std::endl;
+        }
+      }
     }
   os << indent << "Number of tools: " << m_NumberOfTools << std::endl;
 }
