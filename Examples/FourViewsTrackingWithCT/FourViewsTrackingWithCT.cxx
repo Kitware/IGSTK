@@ -155,151 +155,128 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ImageRepresentationSagittal3D->SetLogger( logger );
   m_ImageRepresentationCoronal3D->SetLogger( logger );
 
+  this->ObserveAxialSliceBoundsEvent(    m_ImageRepresentationAxial    );
+  this->ObserveSagittalSliceBoundsEvent( m_ImageRepresentationSagittal );
+  this->ObserveCoronalSliceBoundsEvent(  m_ImageRepresentationCoronal  );
+
   /** Initialize State Machine */
-  m_StateMachine.AddState( m_InitialState,                  "InitialState" );
-  m_StateMachine.AddState( m_WaitingForPatientNameState,    "WaitingForPatientNameState" );
-  m_StateMachine.AddState( m_PatientNameReadyState,         "PatientNameReadyState" );
-  m_StateMachine.AddState( m_WaitingForDICOMDirectoryState, "WaitingForDICOMDirectoryState" );
-  m_StateMachine.AddState( m_ImageReadyState,               "ImageReadyState" );
-  m_StateMachine.AddState( m_PatientNameVerifiedState,      "PatientNameVerifiedState" );
-  m_StateMachine.AddState( m_AddingImageLandmarkState,      "AddingImageLandmarkState" );
-  m_StateMachine.AddState( m_ImageLandmarksReadyState,      "ImageLandmarksReadyState" );
-  m_StateMachine.AddState( m_InitializingTrackerState,      "InitializingTrackerState" );
-  m_StateMachine.AddState( m_TrackerReadyState,             "TrackerReadyState" );  
-  m_StateMachine.AddState( m_AddingTrackerLandmarkState,    "AddingTrackerLandmarkState" );
-  m_StateMachine.AddState( m_TrackerLandmarksReadyState,    "TrackerLandmarksReadyState" );
-  m_StateMachine.AddState( m_LandmarkRegistrationReadyState,"LandmarkRegistrationReadyState" );
-  m_StateMachine.AddState( m_TrackingState,                 "TrackingState" );
+  igstkAddStateMacro( InitialState );
+  igstkAddStateMacro( WaitingForPatientNameState      );
+  igstkAddStateMacro( PatientNameReadyState           );
+  igstkAddStateMacro( WaitingForDICOMDirectoryState   );
+  igstkAddStateMacro( ImageReadyState                 );
+  igstkAddStateMacro( PatientNameVerifiedState        );
+  igstkAddStateMacro( AddingImageLandmarkState        );
+  igstkAddStateMacro( ImageLandmarksReadyState        );
+  igstkAddStateMacro( InitializingTrackerState        );
+  igstkAddStateMacro( TrackerReadyState               );  
+  igstkAddStateMacro( AddingTrackerLandmarkState      );
+  igstkAddStateMacro( TrackerLandmarksReadyState      );
+  igstkAddStateMacro( LandmarkRegistrationReadyState  );
+  igstkAddStateMacro( TrackingState                   );
 
 
-  m_StateMachine.AddInput( m_RequestSetPatientNameInput,        "RequestSetPatientNameInput" );
-  m_StateMachine.AddInput( m_PatientNameInput,                  "PatientNameInput" );
-  m_StateMachine.AddInput( m_PatientNameEmptyInput,             "PatientNameEmptyInput" );
+  igstkAddInputMacro( RequestSetPatientNameInput        );
+  igstkAddInputMacro( PatientNameInput                  );
+  igstkAddInputMacro( PatientNameEmptyInput             );
 
-  m_StateMachine.AddInput( m_RequestLoadImageInput,             "RequestLoadImageInput" );
-  m_StateMachine.AddInput( m_LoadImageSuccessInput,             "LoadImageSuccessInput" );
-  m_StateMachine.AddInput( m_LoadImageFailureInput,             "LoadImageFailureInput" );
-  m_StateMachine.AddInput( m_PatientNameMatchInput,             "PatientNameMatchInput" );
-  m_StateMachine.AddInput( m_OverwritePatientNameInput,         "OverwritePatientNameInput" );
-  m_StateMachine.AddInput( m_ReloadImageInput,                  "ReloadImageInput" );
+  igstkAddInputMacro( RequestLoadImageInput             );
+  igstkAddInputMacro( LoadImageSuccessInput             );
+  igstkAddInputMacro( LoadImageFailureInput             );
+  igstkAddInputMacro( PatientNameMatchInput             );
+  igstkAddInputMacro( OverwritePatientNameInput         );
+  igstkAddInputMacro( ReloadImageInput                  );
 
-  m_StateMachine.AddInput( m_RequestAddImageLandmarkInput,      "RequestAddImageLandmarkInput" );
-  m_StateMachine.AddInput( m_NeedMoreLandmarkPointsInput,       "NeedMoreLandmarkPointsInput" );
-  m_StateMachine.AddInput( m_EnoughLandmarkPointsInput,         "EnoughLandmarkPointsInput" );
-  m_StateMachine.AddInput( m_RequestClearImageLandmarksInput,   "RequestClearImageLandmarksInput" );
+  igstkAddInputMacro( RequestAddImageLandmarkInput      );
+  igstkAddInputMacro( NeedMoreLandmarkPointsInput       );
+  igstkAddInputMacro( EnoughLandmarkPointsInput         );
+  igstkAddInputMacro( RequestClearImageLandmarksInput   );
   
-  m_StateMachine.AddInput( m_RequestInitializeTrackerInput,     "RequestInitializeTrackerInput" );
-  m_StateMachine.AddInput( m_InitializeTrackerSuccessInput,     "InitializeTrackerSuccessInput" );
-  m_StateMachine.AddInput( m_InitializeTrackerFailureInput,     "InitializeTrackerFailureInput" );
+  igstkAddInputMacro( RequestInitializeTrackerInput     );
+  igstkAddInputMacro( InitializeTrackerSuccessInput     );
+  igstkAddInputMacro( InitializeTrackerFailureInput     );
   
-  m_StateMachine.AddInput( m_RequestAddTrackerLandmarkInput,    "RequestAddTrackerLandmarkInput" );
-  m_StateMachine.AddInput( m_RequestClearTrackerLandmarksInput, "RequestClearTrackerLandmarksInput" );
+  igstkAddInputMacro( RequestAddTrackerLandmarkInput    );
+  igstkAddInputMacro( RequestClearTrackerLandmarksInput );
 
-  m_StateMachine.AddInput( m_RequestRegistrationInput,          "RequestRegistrationInput" );
-  m_StateMachine.AddInput( m_RegistrationSuccessInput,          "RegistrationSuccessInput" );
-  m_StateMachine.AddInput( m_RegistrationFailureInput,          "RegistrationFailureInput" );
+  igstkAddInputMacro( RequestRegistrationInput          );
+  igstkAddInputMacro( RegistrationSuccessInput          );
+  igstkAddInputMacro( RegistrationFailureInput          );
   
-  m_StateMachine.AddInput( m_RequestStartTrackingInput,         "RequestStartTrackingInput" );
-  m_StateMachine.AddInput( m_StartTrackingSuccessInput,         "StartTrackingSuccessInput" );
-  m_StateMachine.AddInput( m_StartTrackingFailureInput,         "StartTrackingFailureInput" );
+  igstkAddInputMacro( RequestStartTrackingInput         );
+  igstkAddInputMacro( StartTrackingSuccessInput         );
+  igstkAddInputMacro( StartTrackingFailureInput         );
 
-  m_StateMachine.AddInput( m_RequestStopTrackingInput,          "RequestStopTrackingInput" );
-  m_StateMachine.AddInput( m_StopTrackingSuccessInput,          "StopTrackingSuccessInput" );
-  m_StateMachine.AddInput( m_StopTrackingFailureInput,          "StopTrackingFailureInput" );
+  igstkAddInputMacro( RequestStopTrackingInput          );
+  igstkAddInputMacro( StopTrackingSuccessInput          );
+  igstkAddInputMacro( StopTrackingFailureInput          );
 
-  const ActionType NoAction = 0;
+  igstkAddInputMacro( AxialBoundsInput                  );
+  igstkAddInputMacro( SagittalBoundsInput               );
+  igstkAddInputMacro( CoronalBoundsInput                );
+
   
   /** Register patient name */
-  m_StateMachine.AddTransition( m_InitialState, m_RequestSetPatientNameInput, m_WaitingForPatientNameState, 
-    &FourViewsTrackingWithCT::SetPatientName );
-  m_StateMachine.AddTransition( m_PatientNameReadyState, m_RequestSetPatientNameInput, m_WaitingForPatientNameState, 
-    &FourViewsTrackingWithCT::SetPatientName );
-  m_StateMachine.AddTransition( m_WaitingForPatientNameState, m_PatientNameInput, m_PatientNameReadyState, 
-    NoAction );
-  m_StateMachine.AddTransition( m_WaitingForPatientNameState, m_PatientNameEmptyInput, m_InitialState, 
-    NoAction );
+  igstkAddTransitionMacro( InitialState, RequestSetPatientNameInput, WaitingForPatientNameState, SetPatientName );
+  igstkAddTransitionMacro( PatientNameReadyState, RequestSetPatientNameInput, WaitingForPatientNameState, SetPatientName );
+  igstkAddTransitionMacro( WaitingForPatientNameState, PatientNameInput, PatientNameReadyState, NoAction );
+  igstkAddTransitionMacro( WaitingForPatientNameState, PatientNameEmptyInput, InitialState, NoAction );
 
   /** Load image and verify patient name */
-  m_StateMachine.AddTransition( m_PatientNameReadyState, m_RequestLoadImageInput, m_WaitingForDICOMDirectoryState, 
-    &FourViewsTrackingWithCT::LoadImage );
-  m_StateMachine.AddTransition( m_PatientNameVerifiedState, m_RequestLoadImageInput, m_WaitingForDICOMDirectoryState, 
-    &FourViewsTrackingWithCT::LoadImage );
-  m_StateMachine.AddTransition( m_WaitingForDICOMDirectoryState, m_LoadImageSuccessInput, m_ImageReadyState, 
-    &FourViewsTrackingWithCT::VerifyPatientName );
-  m_StateMachine.AddTransition( m_WaitingForDICOMDirectoryState, m_LoadImageFailureInput, m_PatientNameReadyState, 
-    NoAction );
-  /** Display image */
-  m_StateMachine.AddTransition( m_ImageReadyState, m_PatientNameMatchInput, m_PatientNameVerifiedState, 
-    &FourViewsTrackingWithCT::ConnectImageRepresentation );
-  m_StateMachine.AddTransition( m_ImageReadyState, m_OverwritePatientNameInput, m_PatientNameVerifiedState, 
-    &FourViewsTrackingWithCT::ConnectImageRepresentation );
-  m_StateMachine.AddTransition( m_ImageReadyState, m_ReloadImageInput, m_PatientNameReadyState, 
-    &FourViewsTrackingWithCT::RequestLoadImage );
+  igstkAddTransitionMacro( PatientNameReadyState, RequestLoadImageInput, WaitingForDICOMDirectoryState, LoadImage );
+  igstkAddTransitionMacro( PatientNameVerifiedState, RequestLoadImageInput, WaitingForDICOMDirectoryState, LoadImage );
+  igstkAddTransitionMacro( WaitingForDICOMDirectoryState, LoadImageSuccessInput, ImageReadyState, VerifyPatientName );
+  igstkAddTransitionMacro( WaitingForDICOMDirectoryState, LoadImageFailureInput, PatientNameReadyState, NoAction );
 
+  /** Display image */
+  igstkAddTransitionMacro( ImageReadyState, PatientNameMatchInput, PatientNameVerifiedState, ConnectImageRepresentation );
+  igstkAddTransitionMacro( ImageReadyState, OverwritePatientNameInput, PatientNameVerifiedState, ConnectImageRepresentation );
+  igstkAddTransitionMacro( ImageReadyState, ReloadImageInput, PatientNameReadyState, RequestLoadImage );
+
+  /** Receive Slice Information from the Image Representation */
+  igstkAddTransitionMacro( PatientNameVerifiedState, AxialBoundsInput, PatientNameVerifiedState, SetAxialSliderBounds );
+  igstkAddTransitionMacro( PatientNameVerifiedState, SagittalBoundsInput, PatientNameVerifiedState, SetSagittalSliderBounds );
+  igstkAddTransitionMacro( PatientNameVerifiedState, CoronalBoundsInput, PatientNameVerifiedState, SetCoronalSliderBounds );
+  
   /** Set image landmarks, any number of landmarks >= 3 */
-  m_StateMachine.AddTransition( m_PatientNameVerifiedState, m_RequestAddImageLandmarkInput, m_AddingImageLandmarkState, 
-    &FourViewsTrackingWithCT::AddImageLandmark );
-  m_StateMachine.AddTransition( m_AddingImageLandmarkState, m_RequestAddImageLandmarkInput, m_AddingImageLandmarkState, 
-    &FourViewsTrackingWithCT::AddImageLandmark );
-  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_RequestAddImageLandmarkInput, m_ImageLandmarksReadyState, 
-    &FourViewsTrackingWithCT::AddImageLandmark );
-  m_StateMachine.AddTransition( m_AddingImageLandmarkState, m_NeedMoreLandmarkPointsInput, m_AddingImageLandmarkState, 
-    NoAction );
-  m_StateMachine.AddTransition( m_AddingImageLandmarkState, m_EnoughLandmarkPointsInput, m_ImageLandmarksReadyState, 
-    NoAction );
-  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_EnoughLandmarkPointsInput, m_ImageLandmarksReadyState, 
-    NoAction );
+  igstkAddTransitionMacro( PatientNameVerifiedState, RequestAddImageLandmarkInput, AddingImageLandmarkState, AddImageLandmark );
+  igstkAddTransitionMacro( AddingImageLandmarkState, RequestAddImageLandmarkInput, AddingImageLandmarkState, AddImageLandmark );
+  igstkAddTransitionMacro( ImageLandmarksReadyState, RequestAddImageLandmarkInput, ImageLandmarksReadyState, AddImageLandmark );
+  igstkAddTransitionMacro( AddingImageLandmarkState, NeedMoreLandmarkPointsInput, AddingImageLandmarkState, NoAction );
+  igstkAddTransitionMacro( AddingImageLandmarkState, EnoughLandmarkPointsInput, ImageLandmarksReadyState, NoAction );
+  igstkAddTransitionMacro( ImageLandmarksReadyState, EnoughLandmarkPointsInput, ImageLandmarksReadyState, NoAction );
+
   /** Clear image landmarks */
-  m_StateMachine.AddTransition( m_AddingImageLandmarkState, m_RequestClearImageLandmarksInput, m_PatientNameVerifiedState, 
-    &FourViewsTrackingWithCT::ClearImageLandmarks );
-  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_RequestClearImageLandmarksInput, m_PatientNameVerifiedState, 
-    &FourViewsTrackingWithCT::ClearImageLandmarks );
+  igstkAddTransitionMacro( AddingImageLandmarkState, RequestClearImageLandmarksInput, PatientNameVerifiedState, ClearImageLandmarks );
+  igstkAddTransitionMacro( ImageLandmarksReadyState, RequestClearImageLandmarksInput, PatientNameVerifiedState, ClearImageLandmarks );
 
   /** Initialize tracker */
-  m_StateMachine.AddTransition( m_ImageLandmarksReadyState, m_RequestInitializeTrackerInput, m_InitializingTrackerState, 
-    &FourViewsTrackingWithCT::InitializeTracker );
-  m_StateMachine.AddTransition( m_InitializingTrackerState, m_InitializeTrackerSuccessInput, m_TrackerReadyState, 
-   NoAction );
-  m_StateMachine.AddTransition( m_InitializingTrackerState, m_InitializeTrackerFailureInput, m_ImageLandmarksReadyState, 
-   NoAction );
+  igstkAddTransitionMacro( ImageLandmarksReadyState, RequestInitializeTrackerInput, InitializingTrackerState, InitializeTracker );
+  igstkAddTransitionMacro( InitializingTrackerState, InitializeTrackerSuccessInput, TrackerReadyState, NoAction );
+  igstkAddTransitionMacro( InitializingTrackerState, InitializeTrackerFailureInput, ImageLandmarksReadyState, NoAction );
 
   /** Set tracker landmarks, require same number of landmarks as in image landmark */
-  m_StateMachine.AddTransition( m_TrackerReadyState, m_RequestAddTrackerLandmarkInput, m_AddingTrackerLandmarkState, 
-    &FourViewsTrackingWithCT::AddTrackerLandmark );
-  m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_RequestAddTrackerLandmarkInput, m_AddingTrackerLandmarkState, 
-    &FourViewsTrackingWithCT::AddTrackerLandmark );
-  m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_NeedMoreLandmarkPointsInput, m_AddingTrackerLandmarkState, 
-    NoAction );
-  m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_EnoughLandmarkPointsInput, m_TrackerLandmarksReadyState, 
-    NoAction );
+  igstkAddTransitionMacro( TrackerReadyState, RequestAddTrackerLandmarkInput, AddingTrackerLandmarkState, AddTrackerLandmark );
+  igstkAddTransitionMacro( AddingTrackerLandmarkState, RequestAddTrackerLandmarkInput, AddingTrackerLandmarkState, AddTrackerLandmark );
+  igstkAddTransitionMacro( AddingTrackerLandmarkState, NeedMoreLandmarkPointsInput, AddingTrackerLandmarkState, NoAction );
+  igstkAddTransitionMacro( AddingTrackerLandmarkState, EnoughLandmarkPointsInput, TrackerLandmarksReadyState, NoAction );
   /** Clear tracker landmarks */
-  m_StateMachine.AddTransition( m_AddingTrackerLandmarkState, m_RequestClearTrackerLandmarksInput, m_TrackerReadyState, 
-    &FourViewsTrackingWithCT::ClearTrackerLandmarks );
-  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RequestClearTrackerLandmarksInput, m_TrackerReadyState, 
-    &FourViewsTrackingWithCT::ClearTrackerLandmarks );
+  igstkAddTransitionMacro( AddingTrackerLandmarkState, RequestClearTrackerLandmarksInput, TrackerReadyState, ClearTrackerLandmarks );
+  igstkAddTransitionMacro( TrackerLandmarksReadyState, RequestClearTrackerLandmarksInput, TrackerReadyState, ClearTrackerLandmarks );
 
   /** Registration */
-  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RequestRegistrationInput, m_TrackerLandmarksReadyState,
-    & FourViewsTrackingWithCT::Registration );
-  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RegistrationSuccessInput, m_LandmarkRegistrationReadyState,
-    NoAction );
-  m_StateMachine.AddTransition( m_TrackerLandmarksReadyState, m_RegistrationFailureInput, m_TrackerLandmarksReadyState,
-    NoAction );
+  igstkAddTransitionMacro( TrackerLandmarksReadyState, RequestRegistrationInput, TrackerLandmarksReadyState, Registration );
+  igstkAddTransitionMacro( TrackerLandmarksReadyState, RegistrationSuccessInput, LandmarkRegistrationReadyState, NoAction );
+  igstkAddTransitionMacro( TrackerLandmarksReadyState, RegistrationFailureInput, TrackerLandmarksReadyState, NoAction );
 
   /** Tracking */
-  m_StateMachine.AddTransition( m_LandmarkRegistrationReadyState, m_RequestStartTrackingInput, m_LandmarkRegistrationReadyState,
-    & FourViewsTrackingWithCT::StartTracking );
-  m_StateMachine.AddTransition( m_LandmarkRegistrationReadyState, m_StartTrackingSuccessInput, m_TrackingState,
-    NoAction);
-  m_StateMachine.AddTransition( m_LandmarkRegistrationReadyState, m_StartTrackingFailureInput, m_LandmarkRegistrationReadyState,
-    NoAction );
+  igstkAddTransitionMacro( LandmarkRegistrationReadyState, RequestStartTrackingInput, LandmarkRegistrationReadyState, StartTracking );
+  igstkAddTransitionMacro( LandmarkRegistrationReadyState, StartTrackingSuccessInput, TrackingState, NoAction);
+  igstkAddTransitionMacro( LandmarkRegistrationReadyState, StartTrackingFailureInput, LandmarkRegistrationReadyState, NoAction );
 
-  m_StateMachine.AddTransition( m_TrackingState, m_RequestStopTrackingInput, m_TrackingState,
-    & FourViewsTrackingWithCT::StopTracking );
-  m_StateMachine.AddTransition( m_TrackingState, m_StopTrackingSuccessInput, m_LandmarkRegistrationReadyState,
-    NoAction);
-  m_StateMachine.AddTransition( m_TrackingState, m_StopTrackingFailureInput, m_TrackingState,
-    NoAction );
+  igstkAddTransitionMacro( TrackingState, RequestStopTrackingInput, TrackingState, StopTracking );
+  igstkAddTransitionMacro( TrackingState, StopTrackingSuccessInput, LandmarkRegistrationReadyState, NoAction);
+  igstkAddTransitionMacro( TrackingState, StopTrackingFailureInput, TrackingState, NoAction );
   
   m_StateMachine.SelectInitialState( m_InitialState );
   m_StateMachine.SetReadyToRun();
@@ -319,6 +296,12 @@ FourViewsTrackingWithCT::~FourViewsTrackingWithCT()
 {
  
 }
+
+/** Method to be invoked when no operation is required */
+void FourViewsTrackingWithCT::NoAction()
+{
+}
+
 
 void FourViewsTrackingWithCT::RequestSetPatientName()
 {
@@ -651,13 +634,13 @@ void FourViewsTrackingWithCT::RequestResliceImage()
 
 void FourViewsTrackingWithCT::ResliceImage()
 {
-  m_ImageRepresentationAxial->RequestSetSliceNumber( this->AxialSlider->value() );
-  m_ImageRepresentationSagittal->RequestSetSliceNumber( this->SagittalSlider->value() );
-  m_ImageRepresentationCoronal->RequestSetSliceNumber( this->CoronalSlider->value() );
+  m_ImageRepresentationAxial->RequestSetSliceNumber( static_cast< unsigned int >( this->AxialSlider->value() ) );
+  m_ImageRepresentationSagittal->RequestSetSliceNumber( static_cast< unsigned int >( this->SagittalSlider->value() ) );
+  m_ImageRepresentationCoronal->RequestSetSliceNumber( static_cast< unsigned int >( this->CoronalSlider->value() ) );
 
-  m_ImageRepresentationAxial3D->RequestSetSliceNumber( this->AxialSlider->value() );
-  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( this->SagittalSlider->value() );
-  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( this->CoronalSlider->value() );
+  m_ImageRepresentationAxial3D->RequestSetSliceNumber( static_cast< unsigned int >( this->AxialSlider->value() ) );
+  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( static_cast< unsigned int >( this->SagittalSlider->value() ) );
+  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( static_cast< unsigned int >( this->CoronalSlider->value() ) );
 
   this->ViewerGroup->redraw();
   Fl::check();
@@ -706,38 +689,6 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
   m_ImageRepresentationSagittal3D->RequestSetOrientation( ImageRepresentationType::Sagittal );
   m_ImageRepresentationCoronal3D->RequestSetOrientation( ImageRepresentationType::Coronal );
 
-  
-  /** Initialize the slider */
-  unsigned int min = m_ImageRepresentationAxial->GetMinimumSliceNumber();
-  unsigned int max = m_ImageRepresentationAxial->GetMaximumSliceNumber();
-  unsigned int slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
-  m_ImageRepresentationAxial->RequestSetSliceNumber( slice );
-  m_ImageRepresentationAxial3D->RequestSetSliceNumber( slice );
-  this->AxialSlider->minimum( min );
-  this->AxialSlider->maximum( max );
-  this->AxialSlider->value( slice );  
-  this->AxialSlider->activate();
-    
-  min = m_ImageRepresentationSagittal->GetMinimumSliceNumber();
-  max = m_ImageRepresentationSagittal->GetMaximumSliceNumber();
-  slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
-  m_ImageRepresentationSagittal->RequestSetSliceNumber( slice );
-  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( slice );
-  this->SagittalSlider->minimum( min );
-  this->SagittalSlider->maximum( max );
-  this->SagittalSlider->value( slice );  
-  this->SagittalSlider->activate();
-    
-  min = m_ImageRepresentationCoronal->GetMinimumSliceNumber();
-  max = m_ImageRepresentationCoronal->GetMaximumSliceNumber();
-  slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
-  m_ImageRepresentationCoronal->RequestSetSliceNumber( slice );
-  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( slice );
-  this->CoronalSlider->minimum( min );
-  this->CoronalSlider->maximum( max );
-  this->CoronalSlider->value( slice );  
-  this->CoronalSlider->activate();
-
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
   this->DisplayAxial->RequestAddObject( m_EllipsoidRepresentation->Copy() );
   this->DisplayAxial->RequestAddObject( m_CylinderRepresentation->Copy() );
@@ -783,7 +734,60 @@ void FourViewsTrackingWithCT::ConnectImageRepresentation()
 
   this->ResliceImage();  //FIXME: This is not right
 
+  // Request information about the slices. The answers will be 
+  // received in the form of events.
+  this->m_ImageRepresentationAxial->RequestGetSliceNumberBounds();
+  this->m_ImageRepresentationSagittal->RequestGetSliceNumberBounds();
+  this->m_ImageRepresentationCoronal->RequestGetSliceNumberBounds();
 }
+
+  
+void FourViewsTrackingWithCT::SetAxialSliderBounds()
+{
+  igstkLogMacro( DEBUG, "SetAxialSliderBounds() " << "\n");
+  /** Initialize the slider */
+  const unsigned int min = m_AxialBoundsToBeSet.minimum;
+  const unsigned int max = m_AxialBoundsToBeSet.maximum; 
+  const unsigned int slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
+  m_ImageRepresentationAxial->RequestSetSliceNumber( slice );
+  m_ImageRepresentationAxial3D->RequestSetSliceNumber( slice );
+  this->AxialSlider->minimum( min );
+  this->AxialSlider->maximum( max );
+  this->AxialSlider->value( slice );  
+  this->AxialSlider->activate();
+}
+    
+
+void FourViewsTrackingWithCT::SetSagittalSliderBounds()
+{
+  igstkLogMacro( DEBUG, "SetSagittalSliderBounds() " << "\n");
+  /** Initialize the slider */
+  const unsigned int min = m_SagittalBoundsToBeSet.minimum;
+  const unsigned int max = m_SagittalBoundsToBeSet.maximum; 
+  const unsigned int slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
+  m_ImageRepresentationSagittal->RequestSetSliceNumber( slice );
+  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( slice );
+  this->SagittalSlider->minimum( min );
+  this->SagittalSlider->maximum( max );
+  this->SagittalSlider->value( slice );  
+  this->SagittalSlider->activate();
+}
+    
+
+void FourViewsTrackingWithCT::SetCoronalSliderBounds()
+{
+  igstkLogMacro( DEBUG, "SetCoronalSliderBounds() " << "\n");
+  const unsigned int min = m_CoronalBoundsToBeSet.minimum;
+  const unsigned int max = m_CoronalBoundsToBeSet.maximum; 
+  const unsigned int slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
+  m_ImageRepresentationCoronal->RequestSetSliceNumber( slice );
+  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( slice );
+  this->CoronalSlider->minimum( min );
+  this->CoronalSlider->maximum( max );
+  this->CoronalSlider->value( slice );  
+  this->CoronalSlider->activate();
+}
+
 
 void FourViewsTrackingWithCT::GetLandmarkRegistrationTransform( const itk::EventObject & event )
 {

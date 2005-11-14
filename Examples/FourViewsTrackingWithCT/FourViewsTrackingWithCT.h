@@ -122,6 +122,13 @@ public:
   virtual void RequestReset();         // Do we need to offer this method?
   virtual void RequestResliceImage();  // Do we need state machine for this one?
 
+
+  /** Methods for Converting Events into State Machine Inputs */
+  igstkEventTransductionMacro( AxialSliceBoundsEvent,    AxialBoundsInput    );
+  igstkEventTransductionMacro( SagittalSliceBoundsEvent, SagittalBoundsInput );
+  igstkEventTransductionMacro( CoronalSliceBoundsEvent,  CoronalBoundsInput  );
+
+
 protected:
 
   FourViewsTrackingWithCT();
@@ -186,6 +193,10 @@ private:
   InputType            m_StopTrackingSuccessInput;        //->m_LandmarkRegistrationReadyState  //FIXME, how to check if it succeed
   InputType            m_StopTrackingFailureInput;        //->m_TrackingState
 
+  InputType            m_AxialBoundsInput;                
+  InputType            m_SagittalBoundsInput;
+  InputType            m_CoronalBoundsInput;
+
   /** Logger */
   LogOutputType::Pointer              m_LogFileOutput;  // log output to file
   LogOutputType::Pointer              m_LogCoutOutput;  // log output to console
@@ -225,6 +236,16 @@ private:
   Transform                           m_TrackerLandmarkTransformToBeSet; 
   Transform                           m_ImageLandmarkTransformToBeSet;  
   
+  /** Type used for storing the bound values of minimum and maximum slices
+   * along a particular orientation in a dataset */
+  typedef igstk::EventHelperType::IntegerBoundsType    IntegerBoundsType;
+
+  /** Intermediate memory values for storing the minimum and maximum slice
+   *  number of the dataset along a particular orientation. */
+  IntegerBoundsType                   m_AxialBoundsToBeSet;
+  IntegerBoundsType                   m_SagittalBoundsToBeSet;
+  IntegerBoundsType                   m_CoronalBoundsToBeSet;
+
   /** Serial communication and tracker */
   CommunicationType::Pointer          m_SerialCommunication;
   TrackerType::Pointer                m_Tracker;
@@ -255,6 +276,7 @@ private:
 
 
   /** Action methods to be invoked only by the state machine */
+  void NoAction();
   void SetPatientName();
   void LoadImage();
   void VerifyPatientName(); 
@@ -269,6 +291,9 @@ private:
   void StartTracking();
   void Tracking();
   void StopTracking();
+  void SetAxialSliderBounds();
+  void SetSagittalSliderBounds();
+  void SetCoronalSliderBounds();
   void ResliceImage();
   void ResliceImage( IndexType index );  
   void Reset();
