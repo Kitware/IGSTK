@@ -92,6 +92,39 @@ ImageSpatialObject< TPixelType, VDimension >
 
 
 
+template< class TPixelType, unsigned int VDimension >
+bool
+ImageSpatialObject< TPixelType, VDimension >
+::IsInside( const PointType & point ) const 
+{ 
+  return m_ImageSpatialObject->IsInside( point ); 
+}
+
+
+
+template< class TPixelType, unsigned int VDimension >
+bool
+ImageSpatialObject< TPixelType, VDimension >
+::IsEmpty() const 
+{ 
+  const unsigned int numberOfPixels = 
+    m_ImageSpatialObject->GetLargestPossibleRegion().GetNumberOfPixels();
+  const bool isEmpty = ( numberOfPixels == 0 );
+  return isEmpty;
+}
+
+
+
+template< class TPixelType, unsigned int VDimension >
+bool
+ImageSpatialObject< TPixelType, VDimension >
+::TransformPhysicalPointToIndex ( const PointType & point, 
+                                        IndexType & index ) const 
+{ 
+  return m_Image->TransformPhysicalPointToIndex( point, index);  
+}
+
+
 
 /** Print Self function */
 template< class TPixelType, unsigned int VDimension >

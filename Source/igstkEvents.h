@@ -64,11 +64,26 @@ namespace EventHelperType
 {
 typedef itk::Point< double, 3 >    PointType;
 typedef std::string                StringType;
+typedef unsigned int               UnsignedIntType;
+typedef signed int                 SignedIntType;
+typedef float                      FloatType;
+typedef double                     DoubleType;
+typedef struct {
+  unsigned int minimum;
+  unsigned int maximum;
+}                                  IntegerBoundsType;
 }
 
 igstkLoadedEventMacro( PointEvent, IGSTKEvent, EventHelperType::PointType );
 igstkLoadedEventMacro( TransformModifiedEvent, IGSTKEvent, Transform );
 igstkLoadedEventMacro( StringEvent, IGSTKEvent, EventHelperType::StringType );
+igstkLoadedEventMacro( UnsignedIntEvent, IGSTKEvent, EventHelperType::UnsignedIntType );
+igstkLoadedEventMacro( IntegerBoundsEvent, IGSTKEvent, EventHelperType::IntegerBoundsType );
+
+igstkEventMacro( AxialSliceBoundsEvent,      IntegerBoundsEvent );
+igstkEventMacro( SagittalSliceBoundsEvent,   IntegerBoundsEvent );
+igstkEventMacro( CoronalSliceBoundsEvent,    IntegerBoundsEvent );
+
 }
 
 

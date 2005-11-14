@@ -53,6 +53,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   
   m_StateMachine.AddInput( m_ValidImageSpatialObjectInput,  "ValidImageSpatialObjectInput" );
   m_StateMachine.AddInput( m_NullImageSpatialObjectInput,   "NullImageSpatialObjectInput"  );
+  m_StateMachine.AddInput( m_EmptyImageSpatialObjectInput,   "EmptyImageSpatialObjectInput"  );
+  m_StateMachine.AddInput( m_SetSliceNumberInput,   "SetSliceNumberInput"  );
   m_StateMachine.AddInput( m_ValidSliceNumberInput,   "ValidSliceNumberInput"  );
   m_StateMachine.AddInput( m_InvalidSliceNumberInput,   "InvalidSliceNumberInput"  );
   m_StateMachine.AddInput( m_ValidOrientationInput,   "ValidOrientationInput"  );
@@ -61,32 +63,50 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_StateMachine.AddState( m_ValidImageSpatialObjectState, "ValidImageSpatialObjectState"     );
   m_StateMachine.AddState( m_ValidImageOrientationState, "ValidImageOrientationState"     );
   m_StateMachine.AddState( m_ValidSliceNumberState, "ValidSliceNumberState"     );
+  m_StateMachine.AddState( m_AttemptingToSetSliceNumberState, "AttemptingToSetSliceNumberState"     );
 
   const ActionType NoAction = 0;
 
   m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction );
+  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_EmptyImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetImageSpatialObject );
+  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_SetSliceNumberInput, m_NullImageSpatialObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_ValidSliceNumberInput, m_NullImageSpatialObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_InvalidSliceNumberInput, m_NullImageSpatialObjectState,  NoAction );
   m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_ValidOrientationInput, m_NullImageSpatialObjectState,  NoAction );
 
   m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_EmptyImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_SetSliceNumberInput, m_ValidImageSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidSliceNumberInput, m_ValidImageSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_InvalidSliceNumberInput, m_ValidImageSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidOrientationInput, m_ValidImageOrientationState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
 
   m_StateMachine.AddTransition( m_ValidImageOrientationState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_EmptyImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidImageOrientationState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetImageSpatialObject );
+  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_SetSliceNumberInput, m_AttemptingToSetSliceNumberState,  & ImageSpatialObjectRepresentation::AttemptSetSliceNumber ); 
   m_StateMachine.AddTransition( m_ValidImageOrientationState, m_ValidSliceNumberInput, m_ValidSliceNumberState,  & ImageSpatialObjectRepresentation::SetSliceNumber ); 
   m_StateMachine.AddTransition( m_ValidImageOrientationState, m_InvalidSliceNumberInput, m_ValidImageOrientationState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidImageOrientationState, m_ValidOrientationInput, m_ValidImageOrientationState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
 
   m_StateMachine.AddTransition( m_ValidSliceNumberState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_EmptyImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidSliceNumberState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetImageSpatialObject );
+  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_SetSliceNumberInput, m_AttemptingToSetSliceNumberState,  & ImageSpatialObjectRepresentation::AttemptSetSliceNumber ); 
   m_StateMachine.AddTransition( m_ValidSliceNumberState, m_ValidSliceNumberInput, m_ValidSliceNumberState,  & ImageSpatialObjectRepresentation::SetSliceNumber ); 
   m_StateMachine.AddTransition( m_ValidSliceNumberState, m_InvalidSliceNumberInput, m_ValidImageOrientationState,  NoAction ); 
   m_StateMachine.AddTransition( m_ValidSliceNumberState, m_ValidOrientationInput, m_ValidImageOrientationState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
+
+  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_EmptyImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
+  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetImageSpatialObject );
+  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_SetSliceNumberInput, m_AttemptingToSetSliceNumberState,  & ImageSpatialObjectRepresentation::AttemptSetSliceNumber ); 
+  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_ValidSliceNumberInput, m_ValidSliceNumberState,  & ImageSpatialObjectRepresentation::SetSliceNumber ); 
+  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_InvalidSliceNumberInput, m_ValidImageOrientationState,  NoAction ); 
+  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_ValidOrientationInput, m_ValidImageOrientationState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
+
 
   m_StateMachine.SelectInitialState( m_NullImageSpatialObjectState );
 
@@ -147,10 +167,18 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     {
     m_StateMachine.PushInput( m_NullImageSpatialObjectInput );
     }
-  else
+  else 
     {
-    m_StateMachine.PushInput( m_ValidImageSpatialObjectInput );
+    if( m_ImageSpatialObjectToAdd->IsEmpty() )
+      {
+      m_StateMachine.PushInput( m_EmptyImageSpatialObjectInput );
+      }
+    else
+      {
+      m_StateMachine.PushInput( m_ValidImageSpatialObjectInput );
+      }
     }
+  
   m_StateMachine.ProcessInputs();
 }
 
@@ -189,6 +217,19 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 
   m_SliceNumberToBeSet = slice;
 
+  m_StateMachine.PushInput( m_SetSliceNumberInput );
+  m_StateMachine.ProcessInputs();
+
+}
+
+
+template < class TImageSpatialObject >
+void 
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::AttemptSetSliceNumber()
+{
+
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::AttemptSetSliceNumber called...\n");
   if( m_ImageActor )
     {
 
@@ -196,6 +237,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     SliceNumberType maxSlice = 0;
     
     int ext[6];
+    m_ImageData->Update();
     m_ImageData->GetExtent( ext );
 
     switch( m_Orientation )
@@ -214,7 +256,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
         break;
       }
 
-    if( slice >= minSlice && slice <= maxSlice )
+    if( m_SliceNumberToBeSet >= minSlice && m_SliceNumberToBeSet <= maxSlice )
       {
       m_StateMachine.PushInput( m_ValidSliceNumberInput );
       }
@@ -396,56 +438,59 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 
 
 template < class TImageSpatialObject >
-typename ImageSpatialObjectRepresentation< TImageSpatialObject >::SliceNumberType
+void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
-::GetMinimumSliceNumber() const
+::ReportSliceNumberBounds() const
 {
     int ext[6];
+
+    m_ImageData->Update();
     m_ImageData->GetExtent( ext );
 
-    SliceNumberType minimum = 0;
-    
+    EventHelperType::IntegerBoundsType bounds;
+
     switch( m_Orientation )
       {
       case Axial:
-        minimum = ext[4];
+        {
+        bounds.minimum = ext[4];
+        bounds.maximum = ext[5];
+        AxialSliceBoundsEvent event;
+        event.Set( bounds );
+        this->InvokeEvent( event );
         break;
+        }
       case Sagittal:
-        minimum = ext[0];
+        {
+        bounds.minimum = ext[0];
+        bounds.maximum = ext[1];
+        SagittalSliceBoundsEvent event;
+        event.Set( bounds );
+        this->InvokeEvent( event );
         break;
+        }
       case Coronal:
-        minimum = ext[2];
+        {
+        bounds.minimum = ext[2];
+        bounds.maximum = ext[3];
+        CoronalSliceBoundsEvent event;
+        event.Set( bounds );
+        this->InvokeEvent( event );
         break;
+        }
       }
-   return minimum;
+
 }
 
 
 
 template < class TImageSpatialObject >
-typename ImageSpatialObjectRepresentation< TImageSpatialObject >::SliceNumberType
+void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
-::GetMaximumSliceNumber() const
+::RequestGetSliceNumberBounds() 
 {
-
-    int ext[6];
-    m_ImageData->GetExtent( ext );
-
-    SliceNumberType maximum = 0;
-    
-    switch( m_Orientation )
-      {
-      case Axial:
-        maximum = ext[5];
-        break;
-      case Sagittal:
-        maximum = ext[1];
-        break;
-      case Coronal:
-        maximum = ext[3];
-        break;
-      }
-   return maximum;   
+  m_StateMachine.PushInput( m_RequestSliceNumberBoundsInput );
+  m_StateMachine.ProcessInputs();
 }
 
 

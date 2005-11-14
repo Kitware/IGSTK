@@ -25,6 +25,54 @@
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+#include "igstkEvents.h"
+
+namespace igstk
+{
+
+  namespace ImageSpatialObjectRepresentationTest
+  {
+    class ImageRepresentationObserver : public ::itk::Command
+    {
+    public:
+      typedef ImageRepresentationObserver  Self;
+      typedef itk::SmartPointer<Self>      Pointer;
+      typedef itk::Command                 Superclass;
+      itkNewMacro(Self);
+      void Execute(const itk::Object *caller, const itk::EventObject & event)
+      {
+
+      }
+      void Execute(itk::Object *caller, const itk::EventObject & event)
+      {
+        const AxialSliceBoundsEvent * axialEvent = 
+          dynamic_cast< const AxialSliceBoundsEvent * >( &event );
+        if( axialEvent )
+          {
+          m_EventReceived = true;
+          EventHelperType::IntegerBoundsType bounds = axialEvent->Get();
+          std::cout << "Minimum Slice = " << bounds.minimum << std::endl;
+          std::cout << "Maximum Slice = " << bounds.maximum << std::endl;
+          }
+      } 
+     bool GetEventReceived()
+        { 
+        return m_EventReceived; 
+        }
+    protected:
+      ImageRepresentationObserver()
+      {
+      m_EventReceived = false;
+      }
+    private:
+      bool m_EventReceived;
+      
+    };  // end of ImageRepresentationObserver class 
+
+  }
+}
+
+
 
 int igstkImageSpatialObjectRepresentationTest( int , char* [] )
 {
@@ -63,7 +111,7 @@ int igstkImageSpatialObjectRepresentationTest( int , char* [] )
   ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New();
   representation->RequestSetImageSpatialObject( imageSpatialObject );
 
-  // Exercise the TypeMacro() which defines teh GetNameOfClass()
+  // Exercise the TypeMacro() which defines the GetNameOfClass()
   std::string name = representation->GetNameOfClass();
 
   std::cout << "Name of class = " << name << std::endl;
@@ -87,9 +135,25 @@ int igstkImageSpatialObjectRepresentationTest( int , char* [] )
 
   representation->RequestSetSliceNumber( 10 );
 
-  std::cout << "Minimum slice Number " << representation->GetMinimumSliceNumber() << std::endl;
-  std::cout << "Maximum slice Number " << representation->GetMaximumSliceNumber() << std::endl;
+  typedef igstk::ImageSpatialObjectRepresentationTest::ImageRepresentationObserver 
+                                                                        ObserverType;
 
+  ObserverType::Pointer observer = ObserverType::New();
+
+  representation->AddObserver( igstk::AxialSliceBoundsEvent(), observer );
+
+  representation->RequestGetSliceNumberBounds();
+  
+  if( observer->GetEventReceived() )
+    {
+    std::cout << "Event Received successfuly" << std::endl;
+    }
+  else
+    {
+    std::cerr << "Error AxialSliceBoundsEvent() was not received ";
+    std::cerr << "after invoking RequestGetSliceNumberBounds()." << std::endl;
+    }
+    
   // Do manual redraws
   for(unsigned int i=0; i<10; i++)
     {

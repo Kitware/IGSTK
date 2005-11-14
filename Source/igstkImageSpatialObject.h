@@ -80,12 +80,14 @@ public:
   igstkNewMacro( Self );
 
   /** Test whether a point is inside or outside the object. */
-  bool IsInside( const PointType & point ) const { return m_ImageSpatialObject->IsInside( point ); } ;
+  virtual bool IsInside( const PointType & point ) const;
 
   /** Transform physical point to index. */
-  bool TransformPhysicalPointToIndex (const PointType & point, IndexType & index) const { return m_Image->TransformPhysicalPointToIndex( point, index);  };
+  virtual bool TransformPhysicalPointToIndex ( const PointType & point, 
+                                             IndexType & index ) const;
 
-
+  /** Returns wheter the image have any pixels allocated or not */
+  virtual bool IsEmpty() const;
 
   /** The ImageReaderToImageSpatialObject class is declared as a friend in
    * order to be able to set the input image */

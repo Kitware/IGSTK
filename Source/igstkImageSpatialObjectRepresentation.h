@@ -132,13 +132,9 @@ public:
   /** Declarations needed for the State Machine */
   igstkStateMachineTemplatedMacro();
 
-  /** Returns the Minimum number of slice available in the current orientation.
-      This method should only be called AFTER the orientation has been set. */
-  SliceNumberType GetMinimumSliceNumber() const;
-
-  /** Returns the Maximum number of slice available in the current orientation.
-      This method should only be called AFTER the orientation has been set. */
-  SliceNumberType GetMaximumSliceNumber() const;
+  /** Returns the Minimum and Maximum number of slice available in the current
+   * orientation.  */
+  void RequestGetSliceNumberBounds();
 
 protected:
 
@@ -188,26 +184,36 @@ private:
    * private in order to prevent unsafe access from the VTK image layer. */
   void SetImage( const vtkImageData * image );
   
+  /** Attempt to set the Slice Number. */
+  void AttemptSetSliceNumber();
+
   /** Actually set the Slice Number. */
   void SetSliceNumber();
 
   /** Actually set the Slice Orientation. */
   void SetOrientation();
       
+  /** Reports the minimum and maximum slice numbers on the current orientation */
+  void ReportSliceNumberBounds() const;
+    
 private:
 
   /** Inputs to the State Machine */
   InputType            m_ValidImageSpatialObjectInput;
   InputType            m_NullImageSpatialObjectInput;
+  InputType            m_EmptyImageSpatialObjectInput;
+  InputType            m_SetSliceNumberInput;
   InputType            m_ValidSliceNumberInput;
   InputType            m_InvalidSliceNumberInput;
   InputType            m_ValidOrientationInput;
+  InputType            m_RequestSliceNumberBoundsInput; 
   
   /** States for the State Machine */
   StateType            m_NullImageSpatialObjectState;
   StateType            m_ValidImageSpatialObjectState;
   StateType            m_ValidImageOrientationState;
   StateType            m_ValidSliceNumberState;
+  StateType            m_AttemptingToSetSliceNumberState;
 
   /** Variables for managing the Slice number through the StateMachine */
   SliceNumberType      m_SliceNumberToBeSet;

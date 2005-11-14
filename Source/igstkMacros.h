@@ -18,6 +18,7 @@
 #define __igstk_Macros_h_
 
 #include "itkLogger.h"
+#include "itkCommand.h"
 
 /**
   \file igstkMacros.h defines standard system-wide macros, constants, and other 
@@ -167,6 +168,8 @@ private: \
   typedef igstktypename StateMachineType::OutputStreamType OutputStreamType; \
   igstkFriendClassMacro( StateMachine< Self > ); \
   StateMachineType     m_StateMachine; \
+  typedef ::itk::ReceptorMemberCommand< Self >   ReceptorObserverType; \
+  typedef igstktypename ReceptorObserverType::Pointer          ReceptorObserverPointer;  \
 public:  \
   void ExportStateMachineDescription( OutputStreamType & ostr, bool skipLoops=false ) const \
    { m_StateMachine.ExportDescription( ostr, skipLoops ); }
@@ -178,6 +181,76 @@ public:  \
 
 /** This is the StateMachine Macro to be used with templated classes */
 #define igstkStateMachineTemplatedMacro() igstkStateMachineMacroBase( typename )
+
+
+/** Convenience macro for adding Inputs to the State Machine */
+#define igstkAddInputMacro( inputname ) \
+    m_StateMachine.AddInput( m_##inputname,  #inputname );
+
+
+/** Convenience macro for adding States to the State Machine */
+#define igstkAddStateMacro( inputname ) \
+    m_StateMachine.AddState( m_##inputname,  #inputname );
+
+
+/** Convenience macro for adding Transitions to the State Machine */
+#define igstkAddTransitionMacro( state1, input, state2, action ) \
+    m_StateMachine.AddTransition( m_##state1, m_##input, m_##state2,  & Self::action );
+
+
+/** Convenience macro for the initial standard traits of an class */
+#define igstkStandardClassTraitsMacro( classname, superclassname ) \
+  typedef classname Self;  \
+  typedef superclassname Superclass; \
+  typedef ::itk::SmartPointer< Self > Pointer; \
+  typedef ::itk::SmartPointer< const Self > ConstPointer; \
+  igstkTypeMacro( classname, superclassname);  \
+  igstkNewMacro( Self );  \
+  typedef ::itk::Logger                  LoggerType; \
+  igstkStateMachineMacro(); \
+  igstkLoggerMacro(); 
+
+
+/** Convenience macro for creating an Observer for an Event, its callback
+ *  and transducing it into a specified input to the state machine */
+#define igstkEventTransductionMacro( event, input ) \
+private: \
+  ReceptorObserverPointer m_Observer##event##input;  \
+  void Callback##event##input( const ::itk::EventObject & ) \
+  { \
+    m_StateMachine.PushInput( m_##input ); \
+  } \
+public: \
+  void Observe##event(::itk::Object * object ) \
+    { \
+    m_Observer##event##input = ReceptorObserverType::New(); \
+    m_Observer##event##input->SetCallbackFunction( this, & Self::Callback##event##input ); \
+    object->AddObserver( event(),m_Observer##event##input ); \
+    } 
+
+
+/** Convenience macro for creating an Observer for an Event with payload, its callback
+ *  and transducing it into a specified input to the state machine that takes its value */
+#define igstkLoadedEventTransductionMacro( event, input, payload ) \
+private: \
+  ReceptorObserverPointer m_Observer##event##input;  \
+  payload                 m_##payload##ToBeSet; \
+  void Callback##event##input( const ::itk::EventObject & eventvar ) \
+  { \
+    const event * realevent = dynamic_cast < const event * > ( &eventvar ); \
+    if( realevent ) \
+      { \
+      m_##payload##ToBeSet = realevent->Get(); \
+      m_StateMachine.PushInput( m_##input ); \
+      } \
+  } \
+public: \
+  void Observe##event(::itk::Object * object ) \
+    { \
+    m_Observer##event##input = ReceptorObserverType::New(); \
+    m_Observer##event##input->SetCallbackFunction( this, & Self::Callback##event##input ); \
+    object->AddObserver( event(),m_Observer##event##input ); \
+    } 
 
 
 }
