@@ -29,6 +29,8 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 
+#include "vtkGarbageCollector.h"
+
 namespace ViewTest
 {
   class ViewObserver : public ::itk::Command 
@@ -133,8 +135,8 @@ int igstkViewTest( int, char * [] )
     // Create an FLTK minimal GUI
     Fl_Window * form = new Fl_Window(601,301,"View3D Test");
     
-    View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
-    View3DType * view3D = new View3DType(310,10,280,280,"3D View");
+    View2DType* view2D = new View2DType( 10,10,280,280,"2D View");
+    View3DType* view3D = new View3DType(310,10,280,280,"3D View");
 
     // Exercise GetNameOfClass() method
     std::cout << view2D->View2DType::Superclass::GetNameOfClass() << std::endl;
@@ -228,7 +230,7 @@ int igstkViewTest( int, char * [] )
     }
 
 
-
+  vtkGarbageCollector::Collect();
 
 
   return EXIT_SUCCESS;
