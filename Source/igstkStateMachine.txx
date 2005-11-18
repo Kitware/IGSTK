@@ -291,6 +291,7 @@ StateMachine< TClass >
   const StateIdentifierType nextState = m_State;
   
   igstkLogMacroStatic( m_This, DEBUG, "State transition is being made : " 
+    << m_This->GetNameOfClass() << " "
     << this->GetStateDescriptor( previousState ) << "(" << previousState << ") "
     << " with " << this->GetInputDescriptor( inputIdentifier ) 
     << "(" << inputIdentifier << ") ---> "

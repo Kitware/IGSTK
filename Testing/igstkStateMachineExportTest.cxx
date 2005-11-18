@@ -95,7 +95,7 @@ void ExportStateMachineDescription(
     excp.SetDescription("Problem opening file");
     throw excp;
     }
-  instance->ExportStateMachineDescription( ltsOutputFile, skipLoops );
+  instance->ExportStateMachineDescriptionToLTS( ltsOutputFile, skipLoops );
   ltsOutputFile.close();
 
   }

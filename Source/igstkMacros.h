@@ -172,7 +172,9 @@ private: \
   typedef igstktypename ReceptorObserverType::Pointer          ReceptorObserverPointer;  \
 public:  \
   void ExportStateMachineDescription( OutputStreamType & ostr, bool skipLoops=false ) const \
-   { m_StateMachine.ExportDescription( ostr, skipLoops ); }
+   { m_StateMachine.ExportDescription( ostr, skipLoops ); } \
+  void ExportStateMachineDescriptionToLTS( OutputStreamType & ostr, bool skipLoops=false ) const \
+   { m_StateMachine.ExportDescriptionToLTS( ostr, skipLoops ); }
 
 #define EMPTYPARAMETER
 
