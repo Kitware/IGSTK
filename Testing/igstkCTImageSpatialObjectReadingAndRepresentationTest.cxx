@@ -58,29 +58,20 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
 
   reader->RequestSetDirectory( directoryName );
   
-
-  try
-    {
-    reader->RequestReadImage();
-    }
-  catch( ... )
-    {
-    std::cerr << "ERROR: An exception was thrown while reading the CT dataset" << std::endl;
-    std::cerr << "This should not have happened. The State Machine should have" << std::endl;
-    std::cerr << "catched that exception and converted it into a SM Input " << std::endl;
-    return EXIT_FAILURE;
-    }
-
  
   typedef igstk::CTImageSpatialObject  CTImageType;
   typedef CTImageType::ConstPointer    CTImagePointer;
 
+  // First, on purpose attempt to use an Empty image, 
+  // in order to test error conditions.
+  //
   CTImagePointer ctImage = reader->GetOutput();
 
-  bool emptyness = ctImage->IsEmpty();
-
-  std::cout << "input image was empty = " << emptyness << std::endl;
-
+  if( !ctImage->IsEmpty() )
+    {
+    std::cerr << "The image was expected to be empty, but it is not..." << std::endl;
+    return EXIT_FAILURE;
+    }
 
   
   typedef igstk::CTImageSpatialObjectRepresentation RepresentationType;
@@ -110,12 +101,49 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
   view2D->RequestAddObject( representation );
     
   // Do manual redraws
-  for(unsigned int i=0; i<50; i++)
+  for( unsigned int i=0; i < 10; i++)
     {
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
     std::cout << "i= " << i << std::endl;
     }
+
+
+  //
+  // Now read the image, so we can test the normal case
+  //
+  try
+    {
+    reader->RequestReadImage();
+    }
+  catch( ... )
+    {
+    std::cerr << "ERROR: An exception was thrown while reading the CT dataset" << std::endl;
+    std::cerr << "This should not have happened. The State Machine should have" << std::endl;
+    std::cerr << "catched that exception and converted it into a SM Input " << std::endl;
+    return EXIT_FAILURE;
+    }
+  
+  ctImage = reader->GetOutput();
+
+  if( ctImage->IsEmpty() )
+    {
+    std::cerr << "The image was expected to be Non-Empty, but it was empty." << std::endl;
+    return EXIT_FAILURE;
+    }
+ 
+  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+
+  view2D->RequestAddObject( representation );
+
+  // Do manual redraws
+  for( unsigned int i=0; i < 20; i++)
+    {
+    view2D->Update();  // schedule redraw of the view
+    Fl::check();       // trigger FLTK redraws
+    std::cout << "i= " << i << std::endl;
+    }
+
 
   delete view2D;
   delete form;

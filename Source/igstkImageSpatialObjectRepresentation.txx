@@ -46,6 +46,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageActor = NULL;
   m_MapColors  = vtkImageMapToColors::New();
   m_LUT        = vtkLookupTable::New();
+  m_ImageData  = NULL;
 
   // Set default values for window and level
   m_Level = 0;
@@ -329,6 +330,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   // private SetImage method.
   this->ConnectImage();
 
+  m_MapColors->SetInput( m_ImageData );
 }
 
 
@@ -350,7 +352,10 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::UpdateRepresentation()
 {    
    igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::UpdateRepresentation called...\n");
-   m_MapColors->SetInput( m_ImageData );
+   if( m_ImageData )
+     {
+     m_MapColors->SetInput( m_ImageData );
+     }
 }
 
 
@@ -367,13 +372,11 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ImageActor = vtkImageActor::New();
 
-  if( m_ImageActor )
+  if( m_ImageActor && m_MapColors && m_LUT  )
     {
-    this->AddActor( m_ImageActor );
-    }
 
-  if( m_ImageActor && m_MapColors && m_LUT )
-    {
+    this->AddActor( m_ImageActor );
+    
     m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
     m_LUT->SetSaturationRange (0, 0);
     m_LUT->SetHueRange (0, 0);
@@ -381,13 +384,16 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     m_LUT->SetRampToLinear();
 
     m_MapColors->SetLookupTable( m_LUT );
-
     m_MapColors->SetInput( m_ImageData );
     
     m_ImageActor->SetInput( m_MapColors->GetOutput() );
 
     m_ImageActor->InterpolateOn();
     
+    }
+  else
+    {
+    igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::CreateActors called with missing components\n");
     }
 
 }
@@ -431,7 +437,10 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 
   typedef Friends::ImageSpatialObjectRepresentationToImageSpatialObject  HelperType;
   HelperType::ConnectImage( m_ImageSpatialObject.GetPointer(), this );
-  m_ImageData->Update();
+  if( m_ImageData )
+    {
+    m_ImageData->Update();
+    }
 }
 
 
