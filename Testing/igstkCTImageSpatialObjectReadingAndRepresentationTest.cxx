@@ -71,6 +71,18 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
     return EXIT_FAILURE;
     }
 
+ 
+  typedef igstk::CTImageSpatialObject  CTImageType;
+  typedef CTImageType::ConstPointer    CTImagePointer;
+
+  CTImagePointer ctImage = reader->GetOutput();
+
+  bool emptyness = ctImage->IsEmpty();
+
+  std::cout << "input image was empty = " << emptyness << std::endl;
+
+
+  
   typedef igstk::CTImageSpatialObjectRepresentation RepresentationType;
 
   RepresentationType::Pointer representation = RepresentationType::New();

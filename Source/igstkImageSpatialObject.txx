@@ -107,8 +107,10 @@ bool
 ImageSpatialObject< TPixelType, VDimension >
 ::IsEmpty() const 
 { 
-  const unsigned int numberOfPixels = 
-    m_ImageSpatialObject->GetLargestPossibleRegion().GetNumberOfPixels();
+  typedef ::itk::ImageRegion< VDimension > RegionType;
+  RegionType region = 
+    m_ImageSpatialObject->GetImage()->GetLargestPossibleRegion();
+  const unsigned int numberOfPixels = region.GetNumberOfPixels();
   const bool isEmpty = ( numberOfPixels == 0 );
   return isEmpty;
 }
