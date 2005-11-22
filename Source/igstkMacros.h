@@ -161,12 +161,12 @@ public: \
  * This macro factorizes code that should always be present when using the StateMachine. */
 #define  igstkStateMachineMacroBase( igstktypename ) \
 private: \
-  typedef StateMachine< Self > StateMachineType; \
+  typedef ::igstk::StateMachine< Self > StateMachineType; \
   typedef igstktypename StateMachineType::TMemberFunctionPointer   ActionType; \
   typedef igstktypename StateMachineType::StateType                StateType;  \
   typedef igstktypename StateMachineType::InputType                InputType;  \
   typedef igstktypename StateMachineType::OutputStreamType OutputStreamType; \
-  igstkFriendClassMacro( StateMachine< Self > ); \
+  igstkFriendClassMacro( ::igstk::StateMachine< Self > ); \
   StateMachineType     m_StateMachine; \
   typedef ::itk::ReceptorMemberCommand< Self >   ReceptorObserverType; \
   typedef igstktypename ReceptorObserverType::Pointer          ReceptorObserverPointer;  \
