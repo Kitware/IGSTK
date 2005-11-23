@@ -64,6 +64,7 @@ ENDIF(IGSTKSandbox_DATA_ROOT)
 
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
+  igstkPivotCalibrationTest.cxx
   )
 
 IF (IGSTK_USE_ATAMAI)
