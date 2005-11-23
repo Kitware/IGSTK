@@ -1,0 +1,326 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkPivotCalibration.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more DEBUGrmation.
+
+=========================================================================*/
+
+#ifndef __igstkPivtoCalibration_cxx
+#define __igstkPivtoCalibration_cxx
+
+
+#include "igstkPivotCalibration.h"
+
+namespace igstk
+{
+
+/** Constructor */
+PivotCalibration::PivotCalibration() :
+  m_StateMachine( this ), m_Logger( NULL)
+{
+  // Set the state descriptors
+  m_StateMachine.AddState( m_IdleState, 
+                            "IdleState");
+  m_StateMachine.AddState( m_RotationTranslationAddState, 
+                            "RotationTranslationAddState");
+  m_StateMachine.AddState( m_CalibrationCalculatedState, 
+                            "CalibrationCalculatedState");
+
+  // Set the input descriptors 
+  m_StateMachine.AddInput( m_ResetCalibrationInput, 
+                            "m_ResetCalibrationInput");
+  m_StateMachine.AddInput( m_RotationTranslationInput, 
+                            "m_RotationTranslationInput");
+  m_StateMachine.AddInput( m_CalculateCalibrationInput, 
+                            "m_CalculateCalibrationInput");
+
+  // Add transition  for idle state
+  m_StateMachine.AddTransition( m_IdleState,
+                                m_ResetCalibrationInput,
+                                m_IdleState,
+                                &PivotCalibration::Reset );
+
+  m_StateMachine.AddTransition( m_IdleState,
+                                m_RotationTranslationInput,
+                                m_RotationTranslationAddState,
+                                &PivotCalibration::AddRotationTranslation );
+
+  m_StateMachine.AddTransition( m_IdleState,
+                                m_CalculateCalibrationInput,
+                                m_IdleState,
+                                NULL );
+
+  // Add transition  for RotationTranslationAdd state
+  m_StateMachine.AddTransition( m_RotationTranslationAddState,
+                                m_ResetCalibrationInput,
+                                m_IdleState,
+                                &PivotCalibration::Reset );
+
+  m_StateMachine.AddTransition( m_RotationTranslationAddState,
+                                m_RotationTranslationInput,
+                                m_RotationTranslationAddState,
+                                &PivotCalibration::AddRotationTranslation );
+
+  m_StateMachine.AddTransition( m_RotationTranslationAddState,
+                                m_CalculateCalibrationInput,
+                                m_CalibrationCalculatedState,
+                                &PivotCalibration::CalculateCalibration );
+
+  // Add transition  for CalibrationCalculated state
+  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
+                                m_ResetCalibrationInput,
+                                m_IdleState,
+                                &PivotCalibration::Reset );
+
+  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
+                                m_RotationTranslationInput,
+                                m_RotationTranslationAddState,
+                                &PivotCalibration::AddRotationTranslation );
+
+  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
+                                m_CalculateCalibrationInput,
+                                m_CalibrationCalculatedState,
+                                NULL );
+
+  // Select the initial state of the state machine
+  m_StateMachine.SelectInitialState( m_IdleState );
+
+  // Finish the programming and get ready to run
+  m_StateMachine.SetReadyToRun();
+
+  // Reset the initial state and variables
+  this->Reset();
+}
+
+/** Destructor */
+PivotCalibration::~PivotCalibration()
+{
+
+}
+
+/** Print Self function */
+void PivotCalibration::PrintSelf( std::ostream& os, itk::Indent indent )
+{
+  Superclass::PrintSelf(os, indent);
+
+  // Dump the calibration class information
+  os << indent << "PivotCalibration: " << std::endl;
+
+  os << indent << "NumberOfFrame: " << this->GetNumberOfFrame() << std::endl;
+
+  os << indent << "Translation: " << this->m_CalibrationTransform.GetTranslation() << std::endl;
+  
+  os << indent << "Pivot Position: " << this->m_PivotPosition << std::endl;
+  
+  os << indent << "Calibration RMS: " << this->m_RMS << std::endl;
+
+}
+
+/** Method to return the number of samples */
+int PivotCalibration::GetNumberOfFrame()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetNumberOfFrame called...\n" );
+
+  return this->m_Quaternion[0].size();
+}
+
+/** Method to reset the calibration */
+void PivotCalibration::Reset()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::Reset called...\n" );
+  unsigned int i;
+  VersorType quaternion;
+  VectorType translation;
+
+  // Clear the input container for quaternion and translation
+  for ( i = 0; i < 4; i++)
+    {
+    this->m_Quaternion[i].clear();
+    }
+
+  for ( i = 0; i < 3; i++)
+    {
+    this->m_Translation[i].clear();
+    }
+
+  // Reset the calibration transform
+  quaternion.SetIdentity();
+  translation.Fill( 0.0);
+  this->m_CalibrationTransform.SetTranslationAndRotation( translation, quaternion, 0.1, 1000);
+
+  // Reset the pivot position 
+  this->m_PivotPosition.Fill( 0.0);
+
+  // Reset the RMS calibration error
+  this->m_RMS = 0.0;
+
+  // Reset the validation indicator
+  this->m_ValidCalibration = false;
+}
+
+/** Method to add the sample information */
+void PivotCalibration::AddRotationTranslation()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::AddRotationTranslation called...\n" );
+  
+  this->InternalAddRotationTranslation( m_QuaternionToBeAdded, m_TranslationToBeAdded);
+}
+
+/** Internal method to add the sample information */
+void PivotCalibration::InternalAddRotationTranslation( VersorType quaternion, VectorType translation )
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalAddRotationTranslation called...\n" );
+
+  unsigned int i;
+
+  // Push the quaternion sample into the input container
+  this->m_Quaternion[0].push_back( quaternion.GetW() );
+  this->m_Quaternion[1].push_back( quaternion.GetX() );
+  this->m_Quaternion[2].push_back( quaternion.GetY() );
+  this->m_Quaternion[3].push_back( quaternion.GetZ() );
+
+  // Push the translation sample into the input container
+  for ( i = 0; i < 3; i++)
+    {
+    this->m_Translation[i].push_back( translation[i] );
+    }
+
+  // Unvalid the calibration
+  this->m_ValidCalibration = false;
+}
+
+/** Method to calculate the calibration */
+void PivotCalibration::CalculateCalibration()
+{
+  /** Use the Moore-Penrose inverse to calculate the calibration matrix
+   *  The algorithm used is from the paper "Freehand Ultrasound Calibration using
+   *  an Electromagnetic Needle" by Hui Zhang, Filip Banovac, Kevin Cleary to be 
+   *  published in SPIE MI 2006. 
+   * 
+   *  [ r00 r01 r02 tx][ Offset0 ]   [ x0 ]
+   *  [ r10 r11 r12 ty][ Offset1 ]   [ y0 ]
+   *  [ r20 r21 r22 tz][ Offset2 ] = [ z0 ]
+   *  [  0   0   0   1][    1    ]   [  1 ]
+   *
+   *  After the transformation, the unknowns of [ Offset0 Offset1 Offset2 x0 y0 z0 ]' 
+   *  can be calculated by 
+   *  
+   *  M * [ Offset0 Offset1 Offset2 x0 y0 z0]' = N
+   *  [ Offset0 Offset1 Offset2 x0 y0 z0]' = (M' * M)^-1 * M' * N
+   *  RMS = sqrt( |M * [ Offset0 Offset1 Offset2 x0 y0 z0 ]' - N|^2 / num ) */
+   
+
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::CalculateCalibration called...\n" );
+
+  unsigned int i, j, k;
+  unsigned int r, c, num;
+
+  // Set the number of sample, tow and column number of matrix
+  num = this->GetNumberOfFrame();
+  r = num * 3;
+  c = 6;
+
+  // Define the Vnl matrix and intermediate variables
+  VnlMatrixType matrix(r, c), m(c, c), minv;
+  VnlVectorType x(c), b(r), br(r);
+  VersorType quat;
+  VectorType translation;
+  MatrixType rotMatrix;
+
+  // Fill the matrix of M
+  for (k = 0; k < num; k++)
+    {
+    quat.Set( this->m_Quaternion[1][k], this->m_Quaternion[2][k], this->m_Quaternion[3][k], this->m_Quaternion[0][k]);
+    rotMatrix = quat.GetMatrix();
+
+    for ( j = 0; j < 3; j++)
+      {
+      for ( i = 0; i < 3; i++)
+        {
+        matrix[3 * k + j][i] = rotMatrix[j][i];
+        matrix[3 * k + j][i + 3] = 0.0;
+        }
+
+      matrix[3 * k + j][j + 3] = -1.0;
+      }
+
+    for ( j = 0; j < 3; j++)
+      {
+      b[3 * k + j] = -this->m_Translation[j][k];
+      }
+    }
+
+  // Calculate the M' * M
+  m = matrix.transpose() * matrix;
+
+  // Calculate (M' * M)^-1
+  minv = vnl_matrix_inverse< double >( m );
+  
+  // Calculate (M' * M)^-1 * M' * N
+  x = minv * matrix.transpose() * b;
+
+  // Extract the offset and translation components
+  for ( i = 0; i < 3; i++)
+    {
+    translation[i] = x[i];
+    this->m_PivotPosition[i] = x[i + 3];
+    }
+
+  // Set the calibration matrix
+  this->m_CalibrationTransform.SetTranslation(translation, 0.1, 1000);
+
+  // Calculate the RMS error
+  br = matrix * x - b;
+  
+  this->m_RMS = sqrt( br.squared_magnitude() / num );
+
+  // Set valid indicator
+  this->m_ValidCalibration = true;
+
+}
+
+/** Method to invoke the reset function */
+void PivotCalibration::RequestReset()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestReset called...\n" );
+
+  this->m_StateMachine.PushInput( this->m_ResetCalibrationInput );
+  this->m_StateMachine.ProcessInputs();
+}
+
+/** Method to invoke adding the sample */
+void PivotCalibration::RequestAddRotationTranslation( VersorType quat, VectorType trans )
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestAddRotationTranslation called...\n" );
+  
+  this->m_QuaternionToBeAdded = quat;
+  this->m_TranslationToBeAdded = trans;
+  this->m_StateMachine.PushInput( this->m_RotationTranslationInput );
+  this->m_StateMachine.ProcessInputs();
+
+}
+
+/** Method to invoke the calculation */
+void PivotCalibration::RequestCalculateCalibration()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestCalculateCalibration called...\n" );
+
+  this->m_StateMachine.PushInput( this->m_CalculateCalibrationInput );
+  this->m_StateMachine.ProcessInputs();
+
+}
+
+}
+
+#endif
+
