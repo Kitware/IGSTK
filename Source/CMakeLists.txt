@@ -5,12 +5,14 @@
 # The header files
 SET(IGSTKSandbox_HEADS
   igstkMouseTracker.h
+  igstkPivotCalibration.h
 )
 
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
   igstkMouseTracker.cxx
+  igstkPivotCalibration.cxx
 )
 
 # Variable for holding extra libraries
