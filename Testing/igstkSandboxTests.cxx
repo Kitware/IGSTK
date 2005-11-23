@@ -28,6 +28,7 @@
 void RegisterTests()
 {
   REGISTER_TEST(igstkMouseTrackerTest);
+  REGISTER_TEST(igstkPivotCalibrationTest);
 
 #ifdef IGSTK_USE_ATAMAI
   REGISTER_TEST(igstkAtamaiNDITrackerTest);
