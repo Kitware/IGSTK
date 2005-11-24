@@ -177,5 +177,4 @@ private:
 
 }
 
-#endif _igstkPivotCalibration_h
-
+#endif // _igstkPivotCalibration_h

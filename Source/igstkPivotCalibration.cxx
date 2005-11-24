@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstkPivtoCalibration_cxx
-#define __igstkPivtoCalibration_cxx
+#ifndef _igstkPivtoCalibration_cxx
+#define _igstkPivtoCalibration_cxx
 
 
 #include "igstkPivotCalibration.h"
@@ -320,7 +320,6 @@ void PivotCalibration::RequestCalculateCalibration()
 
 }
 
-}
+} // end namespace igstk
 
 #endif
-
