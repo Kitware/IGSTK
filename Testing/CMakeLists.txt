@@ -56,7 +56,7 @@ INCLUDE_DIRECTORIES (
   ${IGSTKSandbox_BINARY_DIR}/Testing
   )
 
-ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
+ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest igstkPivotCalibrationTest)
 
 IF (IGSTKSandbox_DATA_ROOT) 
 
