@@ -30,6 +30,8 @@
 #include <iostream>
 #include "itkExceptionObject.h"
 
+#include "igstkPivotCalibration.h"
+
 namespace igstk 
 {
   
@@ -129,6 +131,9 @@ int main( int argc, char * argv [] )
     skipLoops = atoi( argv[2] );
     }
 
+  std::cout << "Skip Loops option = " << skipLoops << std::endl;
+
+  igstkTestExportStateMachine1( igstk::PivotCalibration, outputDirectory, skipLoops );
 
   return EXIT_SUCCESS;
 }
