@@ -35,12 +35,14 @@ namespace igstk
 
 /** \class PivotCalibration
  * 
- * \brief This class calibrates the tracker tools and get the transform from
- * the tracked sensor or marker to the pivot point of the surgical tool. The result 
- * will include the transform, the pivot position and also the RMS error of the
- * calibration, which is used to evaluate the calibration accuracy. Generally, more
- * samples will give more stable result. The prefered samples number is greater than
- * 100.
+ * \brief Create a calibration transform for tracker tools.
+ * 
+ * This class calibrates the tracker tools and get the transform
+ * from the tracked sensor or marker to the pivot point of the surgical
+ * tool. The result will include the transform, the pivot position and
+ * also the RMS error of the calibration, which is used to evaluate
+ * the calibration accuracy. Generally, more samples will give more
+ * stable result. The prefered samples number is greater than 100.
  *
  *  \image html  igstkPivotCalibration.png  "PivotCalibration State Machine Diagram"
  *  \image latex igstkPivotCalibration.eps  "PivotCalibration State Machine Diagram" 
@@ -67,11 +69,11 @@ public:
   /** Method for creation through the object factory */ 
   igstkNewMacro(Self); 
 
-  /** Define the Logger object for this class */
-  igstkLoggerMacro();
-
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
+
+  /** Define the Logger object for this class */
+  igstkLoggerMacro();
 
   /** Typedefs for the internal computation */
   typedef Transform                       TransformType;
