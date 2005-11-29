@@ -382,6 +382,8 @@ void PivotCalibration::GetInputRotationTranslation()
 /** Internal method to get the rotation and translation inputed */
 void PivotCalibration::InternalGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans )
 {
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalGetInputRotationTranslation called...\n" );
+
   unsigned int i;
 
   if (index >= 0 && index < this->GetNumberOfFrame())
