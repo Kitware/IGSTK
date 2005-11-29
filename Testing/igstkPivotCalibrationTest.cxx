@@ -121,9 +121,7 @@ int igstkPivotCalibrationTest( int, char * [] )
     // Test the simulated pivot position
     for ( i = 0; i < pivot->GetNumberOfFrame(); i++)
       {
-      pivot->RequestGetInputRotationTranslation( i, quaternion, pos);
-      
-      if (pivot->GetValidInputSample())
+      if (pivot->RequestGetInputRotationTranslation( i, quaternion, pos))
         {
         std::cout << "Input Sample: " << i << " " << quaternion << pos << std::endl;
   
@@ -138,8 +136,7 @@ int igstkPivotCalibrationTest( int, char * [] )
 
     // Simulate for bad index
     i = -1;
-    pivot->RequestGetInputRotationTranslation( i, quaternion, pos);
-    if (pivot->GetValidInputSample())
+    if (pivot->RequestGetInputRotationTranslation( i, quaternion, pos))
       {
       std::cout << "Input Sample: " << i << " " << quaternion << pos << std::endl;
       }
@@ -149,8 +146,7 @@ int igstkPivotCalibrationTest( int, char * [] )
       }
 
     i = pivot->GetNumberOfFrame();
-    pivot->RequestGetInputRotationTranslation( i, quaternion, pos);
-    if (pivot->GetValidInputSample())
+    if (pivot->RequestGetInputRotationTranslation( i, quaternion, pos))
       {
       std::cout << "Input Sample: " << i << " " << quaternion << pos << std::endl;
       }
