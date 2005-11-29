@@ -95,9 +95,6 @@ public:
   /** Method to check whether a valid calibration is calculated */
   igstkGetMacro( ValidCalibration, bool );
 
-  /** Method to check whether a valid input sample is retrieved */
-  igstkGetMacro( ValidInputSample, bool );
-
   /** Method to get the final calibration transform */
   igstkGetMacro( CalibrationTransform, TransformType );
 
@@ -123,7 +120,7 @@ public:
   VectorType RequestSimulatePivotPosition( VersorType quat, VectorType trans );
 
   /** Method invoked by the user to get the rotation and translation in the input container */
-  void RequestGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans );
+  bool RequestGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans );
 
 protected:
 
@@ -158,7 +155,7 @@ protected:
   void GetInputRotationTranslation();
 
   /** Internal method to get the rotation and translation inputed */
-  void InternalGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans );
+  bool InternalGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans );
 
 private:
 

@@ -378,12 +378,12 @@ void PivotCalibration::GetInputRotationTranslation()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetInputRotationTranslation called...\n" );
 
-  this->InternalGetInputRotationTranslation( this->m_InputIndexToSet, this->m_QuaternionToBeReceived, this->m_TranslationToBeReceived);
+  this->m_ValidInputSample = this->InternalGetInputRotationTranslation( this->m_InputIndexToSet, this->m_QuaternionToBeReceived, this->m_TranslationToBeReceived);
 
 }
 
 /** Internal method to get the rotation and translation inputed */
-void PivotCalibration::InternalGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans )
+bool PivotCalibration::InternalGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalGetInputRotationTranslation called...\n" );
 
@@ -397,14 +397,14 @@ void PivotCalibration::InternalGetInputRotationTranslation( int index, VersorTyp
       trans[i] = this->m_Translation[i][index];
     }
 
-    this->m_ValidInputSample = true;
+    return true;
   }
   else
   {
     quat.SetIdentity();
     trans.Fill( 0.0);
 
-    this->m_ValidInputSample = false;
+    return false;
   }
 }
 
@@ -453,7 +453,7 @@ PivotCalibration::VectorType PivotCalibration::RequestSimulatePivotPosition( Ver
 }
 
 /** Method to invoke to get the rotation and translation in the input container */
-void PivotCalibration::RequestGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans )
+bool PivotCalibration::RequestGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestGetInputRotationTranslation called...\n" );
 
@@ -464,6 +464,8 @@ void PivotCalibration::RequestGetInputRotationTranslation( int index, VersorType
 
   quat = this->m_QuaternionToBeReceived;
   trans = this->m_TranslationToBeReceived;
+
+  return this->m_ValidInputSample;
 
 }
 
