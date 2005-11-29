@@ -38,11 +38,15 @@ PivotCalibration::PivotCalibration() :
 
   // Set the input descriptors 
   m_StateMachine.AddInput( m_ResetCalibrationInput, 
-                            "m_ResetCalibrationInput");
+                            "ResetCalibrationInput");
   m_StateMachine.AddInput( m_RotationTranslationInput, 
-                            "m_RotationTranslationInput");
+                            "RotationTranslationInput");
   m_StateMachine.AddInput( m_CalculateCalibrationInput, 
-                            "m_CalculateCalibrationInput");
+                            "CalculateCalibrationInput");
+  m_StateMachine.AddInput( m_SimulatePivotPositionInput, 
+                            "SimulatePivotPositionInput");
+  m_StateMachine.AddInput( m_GetInputRotationTranslationInput, 
+                            "GetInputRotationTranslationInput");
 
   // Add transition  for idle state
   m_StateMachine.AddTransition( m_IdleState,
@@ -57,6 +61,16 @@ PivotCalibration::PivotCalibration() :
 
   m_StateMachine.AddTransition( m_IdleState,
                                 m_CalculateCalibrationInput,
+                                m_IdleState,
+                                NULL );
+
+  m_StateMachine.AddTransition( m_IdleState,
+                                m_SimulatePivotPositionInput,
+                                m_IdleState,
+                                NULL );
+
+  m_StateMachine.AddTransition( m_IdleState,
+                                m_GetInputRotationTranslationInput,
                                 m_IdleState,
                                 NULL );
 
@@ -76,6 +90,16 @@ PivotCalibration::PivotCalibration() :
                                 m_CalibrationCalculatedState,
                                 &PivotCalibration::CalculateCalibration );
 
+  m_StateMachine.AddTransition( m_RotationTranslationAddState,
+                                m_SimulatePivotPositionInput,
+                                m_RotationTranslationAddState,
+                                NULL );
+
+  m_StateMachine.AddTransition( m_RotationTranslationAddState,
+                                m_GetInputRotationTranslationInput,
+                                m_RotationTranslationAddState,
+                                &PivotCalibration::GetInputRotationTranslation );
+
   // Add transition  for CalibrationCalculated state
   m_StateMachine.AddTransition( m_CalibrationCalculatedState,
                                 m_ResetCalibrationInput,
@@ -91,6 +115,16 @@ PivotCalibration::PivotCalibration() :
                                 m_CalculateCalibrationInput,
                                 m_CalibrationCalculatedState,
                                 NULL );
+
+  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
+                                m_SimulatePivotPositionInput,
+                                m_CalibrationCalculatedState,
+                                &PivotCalibration::SimulatePivotPosition );
+
+  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
+                                m_GetInputRotationTranslationInput,
+                                m_CalibrationCalculatedState,
+                                &PivotCalibration::GetInputRotationTranslation );
 
   // Select the initial state of the state machine
   m_StateMachine.SelectInitialState( m_IdleState );
@@ -109,7 +143,7 @@ PivotCalibration::~PivotCalibration()
 }
 
 /** Print Self function */
-void PivotCalibration::PrintSelf( std::ostream& os, itk::Indent indent )
+void PivotCalibration::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
@@ -127,7 +161,7 @@ void PivotCalibration::PrintSelf( std::ostream& os, itk::Indent indent )
 }
 
 /** Method to return the number of samples */
-int PivotCalibration::GetNumberOfFrame()
+int PivotCalibration::GetNumberOfFrame() const
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetNumberOfFrame called...\n" );
 
@@ -217,8 +251,7 @@ void PivotCalibration::CalculateCalibration()
    *  
    *  M * [ Offset0 Offset1 Offset2 x0 y0 z0]' = N
    *  [ Offset0 Offset1 Offset2 x0 y0 z0]' = (M' * M)^-1 * M' * N
-   *  RMS = sqrt( |M * [ Offset0 Offset1 Offset2 x0 y0 z0 ]' - N|^2 / num ) */
-   
+   *  RMS = sqrt( |M * [ Offset0 Offset1 Offset2 x0 y0 z0 ]' - N|^2 / num ) */   
 
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::CalculateCalibration called...\n" );
 
@@ -289,6 +322,83 @@ void PivotCalibration::CalculateCalibration()
 
 }
 
+/** Calculate the simulated pivot position */
+void PivotCalibration::SimulatePivotPosition()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::SimulatePivotPosition called...\n" );
+  
+  this->m_SimulatedPivotPosition = this->InternalSimulatePivotPosition( m_QuaternionToBeAdded, m_TranslationToBeAdded);
+}
+
+/** Internal function to calculate the simulated pivot position */
+PivotCalibration::VectorType PivotCalibration::InternalSimulatePivotPosition( VersorType quat, VectorType trans )
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalSimulatePivotPosition called...\n" );
+
+  /** reconstruct the pivot position from any input translation and rotation
+   * 
+   *  Pos = Rotation * Offset + Translation
+   *
+   */
+
+  unsigned int i, j;
+  MatrixType rotMatrix;
+  VectorType pivotPosition;
+  VnlMatrixType matrix(3, 3);
+  VnlVectorType translation(3), pos(3), offset(3);
+
+  rotMatrix = quat.GetMatrix();
+  
+  for ( j = 0; j < 3; j++)
+    {
+    for ( i = 0; i < 3; i++)
+      {
+      matrix[j][i] = rotMatrix[j][i];
+      }
+    translation[j] = trans[j];
+    offset[j] = this->GetCalibrationTransform().GetTranslation()[j];
+    }
+
+  pos = matrix * offset + translation;
+
+  for ( i = 0; i < 3; i++)
+    {
+    pivotPosition[i] = pos[i];
+    }
+
+  return pivotPosition;
+
+}
+
+/** Get the rotation and translation inputed */
+void PivotCalibration::GetInputRotationTranslation()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetInputRotationTranslation called...\n" );
+
+  this->InternalGetInputRotationTranslation( this->m_InputIndexToSet, this->m_QuaternionToBeReceived, this->m_TranslationToBeReceived);
+
+}
+
+/** Internal method to get the rotation and translation inputed */
+void PivotCalibration::InternalGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans )
+{
+  unsigned int i;
+
+  if (index >= 0 && index < this->GetNumberOfFrame())
+  {
+    quat.Set( this->m_Quaternion[1][index], this->m_Quaternion[2][index], this->m_Quaternion[3][index], this->m_Quaternion[0][index]);
+    for ( i = 0; i < 3; i++)
+    {
+      trans[i] = this->m_Translation[i][index];
+    }
+  }
+  else
+  {
+    quat.SetIdentity();
+    trans.Fill( 0.0);
+  }
+}
+
 /** Method to invoke the reset function */
 void PivotCalibration::RequestReset()
 {
@@ -317,6 +427,33 @@ void PivotCalibration::RequestCalculateCalibration()
 
   this->m_StateMachine.PushInput( this->m_CalculateCalibrationInput );
   this->m_StateMachine.ProcessInputs();
+
+}
+
+/** Method to invoke to simulate the pivot position */
+PivotCalibration::VectorType PivotCalibration::RequestSimulatePivotPosition( VersorType quat, VectorType trans )
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestSimulatePivotPosition called...\n" );
+
+  this->m_QuaternionToBeAdded = quat;
+  this->m_TranslationToBeAdded = trans;
+  this->m_StateMachine.PushInput( this->m_SimulatePivotPositionInput );
+  this->m_StateMachine.ProcessInputs();
+
+  return this->m_SimulatedPivotPosition;
+}
+
+/** Method to invoke to get the rotation and translation in the input container */
+void PivotCalibration::RequestGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans )
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestGetInputRotationTranslation called...\n" );
+
+  this->m_InputIndexToSet = index;
+  this->m_StateMachine.PushInput( this->m_GetInputRotationTranslationInput );
+  this->m_StateMachine.ProcessInputs();
+
+  quat = this->m_QuaternionToBeReceived;
+  trans = this->m_TranslationToBeReceived;
 
 }
 

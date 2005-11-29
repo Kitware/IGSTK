@@ -42,7 +42,7 @@ namespace igstk
  * tool. The result will include the transform, the pivot position and
  * also the RMS error of the calibration, which is used to evaluate
  * the calibration accuracy. Generally, more samples will give more
- * stable result. The prefered samples number is greater than 100.
+ * stable result. 
  *
  *  \image html  igstkPivotCalibration.png  "PivotCalibration State Machine Diagram"
  *  \image latex igstkPivotCalibration.eps  "PivotCalibration State Machine Diagram" 
@@ -105,7 +105,7 @@ public:
   igstkGetMacro( RMS, ErrorType );
 
   /** Method to get the number of samples used to calibrate */
-  int GetNumberOfFrame();
+  int GetNumberOfFrame() const;
 
   /** Method invoked by the user to reset the calibration process */
   void RequestReset();
@@ -114,7 +114,13 @@ public:
   void RequestAddRotationTranslation( VersorType quat, VectorType trans );
 
   /** Method invoked by the user to calculate the calibration matrix */
-  void RequestCalculateCalibration();  
+  void RequestCalculateCalibration(); 
+
+  /** Method invoked by the user to calculate simulated pivot position of any input */
+  VectorType RequestSimulatePivotPosition( VersorType quat, VectorType trans );
+
+  /** Method invoked by the user to get the rotation and translation in the input container */
+  void RequestGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans );
 
 protected:
 
@@ -125,7 +131,7 @@ protected:
   virtual ~PivotCalibration();
 
   /** Print the object information in a stream */
-  void PrintSelf( std::ostream& os, itk::Indent indent );
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
   /** Reset the calibration matrix */
   void Reset();
@@ -139,6 +145,18 @@ protected:
   /** Calculate the calibration */
   void CalculateCalibration();
 
+  /** Calculate the simulated pivot position */
+  void SimulatePivotPosition();
+
+  /** Internal function to calculate the simulated pivot position */
+  VectorType InternalSimulatePivotPosition( VersorType quat, VectorType trans );
+
+  /** Get the rotation and translation inputed */
+  void GetInputRotationTranslation();
+
+  /** Internal method to get the rotation and translation inputed */
+  void InternalGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans );
+
 private:
 
   /** List of States */
@@ -151,14 +169,23 @@ private:
   InputType                                m_ResetCalibrationInput;
   InputType                                m_RotationTranslationInput;
   InputType                                m_CalculateCalibrationInput;
+  InputType                                m_SimulatePivotPositionInput;
+  InputType                                m_GetInputRotationTranslationInput;
 
   /** Temporary input variables for state machine */
   VersorType            m_QuaternionToBeAdded;
 
   VectorType            m_TranslationToBeAdded;
 
-  /** Container to save the samples */
+  VectorType            m_SimulatedPivotPosition;
 
+  int                   m_InputIndexToSet;
+
+  VersorType            m_QuaternionToBeReceived;
+
+  VectorType            m_TranslationToBeReceived;
+
+  /** Container to save the samples */
   InputContainerType    m_Quaternion[4];
   
   InputContainerType    m_Translation[3];
