@@ -53,7 +53,7 @@ int igstkPivotCalibrationTest( int, char * [] )
 
   // Define the input file and the variables to extract the rotation and translation information
   std::ifstream input;
-  unsigned int i;
+  int i;
   int frame;
   std::string temp;
   double time;
@@ -120,11 +120,44 @@ int igstkPivotCalibrationTest( int, char * [] )
 
     // Test the simulated pivot position
     for ( i = 0; i < pivot->GetNumberOfFrame(); i++)
-    {
+      {
       pivot->RequestGetInputRotationTranslation( i, quaternion, pos);
-      pivotpos = pivot->RequestSimulatePivotPosition( quaternion, pos);
-      std::cout << "SimulatedPivotPosition: " << i << " " << pivotpos << std::endl;
-    }
+      
+      if (pivot->GetValidInputSample())
+        {
+        std::cout << "Input Sample: " << i << " " << quaternion << pos << std::endl;
+  
+        pivotpos = pivot->RequestSimulatePivotPosition( quaternion, pos);
+        std::cout << "SimulatedPivotPosition: " << pivotpos << std::endl;
+        }
+      else
+        {
+        std::cout << "Invalid input Sample: " << i << std::endl;
+        }
+      }
+
+    // Simulate for bad index
+    i = -1;
+    pivot->RequestGetInputRotationTranslation( i, quaternion, pos);
+    if (pivot->GetValidInputSample())
+      {
+      std::cout << "Input Sample: " << i << " " << quaternion << pos << std::endl;
+      }
+    else
+      {
+      std::cout << "Invalid input Sample: " << i << std::endl;
+      }
+
+    i = pivot->GetNumberOfFrame();
+    pivot->RequestGetInputRotationTranslation( i, quaternion, pos);
+    if (pivot->GetValidInputSample())
+      {
+      std::cout << "Input Sample: " << i << " " << quaternion << pos << std::endl;
+      }
+    else
+      {
+      std::cout << "Invalid input Sample: " << i << std::endl;
+      }
 
     // Dump the self class information
     pivot->Print( std::cout);
