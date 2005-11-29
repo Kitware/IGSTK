@@ -35,7 +35,7 @@ int igstkPivotCalibrationTest( int, char * [] )
   typedef igstk::PivotCalibration           PivotCalibrationType;
   typedef PivotCalibrationType::VersorType  VersorType;
   typedef PivotCalibrationType::VectorType  VectorType;
-  typedef PivotCalibrationType::ErrorType  ErrorType;
+  typedef PivotCalibrationType::ErrorType   ErrorType;
   typedef itk::Logger                       LoggerType; 
   typedef itk::StdStreamLogOutput           LogOutputType;
 
@@ -53,11 +53,12 @@ int igstkPivotCalibrationTest( int, char * [] )
 
   // Define the input file and the variables to extract the rotation and translation information
   std::ifstream input;
+  unsigned int i;
   int frame;
   std::string temp;
   double time;
   double quat[4];
-  VectorType pos;
+  VectorType pos, pivotpos;
   VersorType quaternion;
 
   // Open the calibration data file, which recorded the traker information
@@ -112,14 +113,21 @@ int igstkPivotCalibrationTest( int, char * [] )
 
     // Dump the calibration class information
     std::cout << "PivotCalibration: " << std::endl;
-  
     std::cout << "NumberOfFrame: " << pivot->GetNumberOfFrame() << std::endl;
-    
     std::cout << "Translation: " << translation << std::endl;
-  
     std::cout << "Pivot Position: " << position << std::endl;
-  
     std::cout << "Calibration RMS: " << error << std::endl;
+
+    // Test the simulated pivot position
+    for ( i = 0; i < pivot->GetNumberOfFrame(); i++)
+    {
+      pivot->RequestGetInputRotationTranslation( i, quaternion, pos);
+      pivotpos = pivot->RequestSimulatePivotPosition( quaternion, pos);
+      std::cout << "SimulatedPivotPosition: " << i << " " << pivotpos << std::endl;
+    }
+
+    // Dump the self class information
+    pivot->Print( std::cout);
 
     return EXIT_SUCCESS;
     }
