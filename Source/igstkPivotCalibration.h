@@ -95,6 +95,9 @@ public:
   /** Method to check whether a valid calibration is calculated */
   igstkGetMacro( ValidCalibration, bool );
 
+  /** Method to check whether a valid input sample is retrieved */
+  igstkGetMacro( ValidInputSample, bool );
+
   /** Method to get the final calibration transform */
   igstkGetMacro( CalibrationTransform, TransformType );
 
@@ -192,6 +195,9 @@ private:
 
   /** Variable to indicate the valid calibration */
   bool                  m_ValidCalibration;
+
+  /** Variable to indicate the valid input sample */
+  bool                  m_ValidInputSample;
 
   /** Variable to save the calibration transform */
   TransformType         m_CalibrationTransform;

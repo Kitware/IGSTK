@@ -200,6 +200,9 @@ void PivotCalibration::Reset()
 
   // Reset the validation indicator
   this->m_ValidCalibration = false;
+
+  // Reset the validation indicator
+  this->m_ValidInputSample = false;
 }
 
 /** Method to add the sample information */
@@ -393,11 +396,15 @@ void PivotCalibration::InternalGetInputRotationTranslation( int index, VersorTyp
     {
       trans[i] = this->m_Translation[i][index];
     }
+
+    this->m_ValidInputSample = true;
   }
   else
   {
     quat.SetIdentity();
     trans.Fill( 0.0);
+
+    this->m_ValidInputSample = false;
   }
 }
 
@@ -451,6 +458,7 @@ void PivotCalibration::RequestGetInputRotationTranslation( int index, VersorType
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestGetInputRotationTranslation called...\n" );
 
   this->m_InputIndexToSet = index;
+  this->m_ValidInputSample = false;
   this->m_StateMachine.PushInput( this->m_GetInputRotationTranslationInput );
   this->m_StateMachine.ProcessInputs();
 
