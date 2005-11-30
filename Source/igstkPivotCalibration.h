@@ -172,6 +172,7 @@ private:
   StateType                                m_IdleState;
   StateType                                m_RotationTranslationAddState;
   StateType                                m_CalibrationCalculatedState; 
+  StateType                                m_CalibrationZCalculatedState; 
 
 
   /** List of Inputs */
