@@ -91,7 +91,7 @@ int igstkPivotCalibrationTest( int, char * [] )
     pivot->RequestAddRotationTranslation( quaternion, pos );
     }
 
-  // Calculate the calibration matrix
+  // Calculate the calibration matrix along three axis
   pivot->RequestCalculateCalibration();
 
   if ( !pivot->GetValidCalibration())
@@ -102,29 +102,13 @@ int igstkPivotCalibrationTest( int, char * [] )
     }
   else
     {
-    // Get the calibration transformation
-    VectorType translation = pivot->GetCalibrationTransform().GetTranslation();
-
-    // Get the pivot focus position
-    VectorType position = pivot->GetPivotPosition();
-
-    // Get the calibration RMS error
-    ErrorType error = pivot->GetRMS();
-
-    // Dump the calibration class information
-    std::cout << "PivotCalibration: " << std::endl;
-    std::cout << "NumberOfFrame: " << pivot->GetNumberOfFrame() << std::endl;
-    std::cout << "Translation: " << translation << std::endl;
-    std::cout << "Pivot Position: " << position << std::endl;
-    std::cout << "Calibration RMS: " << error << std::endl;
-
     // Test the simulated pivot position
     for ( i = 0; i < pivot->GetNumberOfFrame(); i++)
       {
       if (pivot->RequestGetInputRotationTranslation( i, quaternion, pos))
         {
         std::cout << "Input Sample: " << i << " " << quaternion << pos << std::endl;
-  
+
         pivotpos = pivot->RequestSimulatePivotPosition( quaternion, pos);
         std::cout << "SimulatedPivotPosition: " << pivotpos << std::endl;
         }
@@ -154,6 +138,54 @@ int igstkPivotCalibrationTest( int, char * [] )
       {
       std::cout << "Invalid input Sample: " << i << std::endl;
       }
+
+    // Get the calibration transformation
+    VectorType translation = pivot->GetCalibrationTransform().GetTranslation();
+
+    // Get the pivot focus position
+    VectorType position = pivot->GetPivotPosition();
+
+    // Get the calibration RMS error
+    ErrorType error = pivot->GetRMS();
+
+    // Dump the calibration class information
+    std::cout << "PivotCalibration: " << std::endl;
+    std::cout << "NumberOfFrame: " << pivot->GetNumberOfFrame() << std::endl;
+    std::cout << "Translation: " << translation << std::endl;
+    std::cout << "Pivot Position: " << position << std::endl;
+    std::cout << "Calibration RMS: " << error << std::endl;
+
+    // Dump the self class information
+    pivot->Print( std::cout);
+
+    }
+
+  // Calculate the calibration matrix along z-axis
+  pivot->RequestCalculateCalibrationZ();
+
+  if ( !pivot->GetValidCalibration())
+    {
+    std::cout << "No valid calibration!" << std::endl;
+
+    return EXIT_FAILURE;
+    }
+  else
+    {
+    // Get the calibration transformation
+    VectorType translation = pivot->GetCalibrationTransform().GetTranslation();
+
+    // Get the pivot focus position
+    VectorType position = pivot->GetPivotPosition();
+
+    // Get the calibration RMS error
+    ErrorType error = pivot->GetRMS();
+
+    // Dump the calibration class information
+    std::cout << "PivotCalibration: " << std::endl;
+    std::cout << "NumberOfFrame: " << pivot->GetNumberOfFrame() << std::endl;
+    std::cout << "Translation: " << translation << std::endl;
+    std::cout << "Pivot Position: " << position << std::endl;
+    std::cout << "Calibration RMS: " << error << std::endl;
 
     // Dump the self class information
     pivot->Print( std::cout);
