@@ -116,6 +116,9 @@ public:
   /** Method invoked by the user to calculate the calibration matrix */
   void RequestCalculateCalibration(); 
 
+  /** Method invoked by the user to calculate the calibration matrix along z-axis */
+  void RequestCalculateCalibrationZ(); 
+
   /** Method invoked by the user to calculate simulated pivot position of any input */
   VectorType RequestSimulatePivotPosition( VersorType quat, VectorType trans );
 
@@ -145,6 +148,12 @@ protected:
   /** Calculate the calibration */
   void CalculateCalibration();
 
+  /** Calculate the calibration along z-axis */
+  void CalculateCalibrationZ();
+
+  /** Internal function to calculate the calibration */
+  void InternalCalculateCalibration( int axis );
+
   /** Calculate the simulated pivot position */
   void SimulatePivotPosition();
 
@@ -169,6 +178,7 @@ private:
   InputType                                m_ResetCalibrationInput;
   InputType                                m_RotationTranslationInput;
   InputType                                m_CalculateCalibrationInput;
+  InputType                                m_CalculateCalibrationZInput;
   InputType                                m_SimulatePivotPositionInput;
   InputType                                m_GetInputRotationTranslationInput;
 

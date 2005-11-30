@@ -43,6 +43,8 @@ PivotCalibration::PivotCalibration() :
                             "RotationTranslationInput");
   m_StateMachine.AddInput( m_CalculateCalibrationInput, 
                             "CalculateCalibrationInput");
+  m_StateMachine.AddInput( m_CalculateCalibrationZInput, 
+                            "CalculateCalibrationZInput");
   m_StateMachine.AddInput( m_SimulatePivotPositionInput, 
                             "SimulatePivotPositionInput");
   m_StateMachine.AddInput( m_GetInputRotationTranslationInput, 
@@ -61,6 +63,11 @@ PivotCalibration::PivotCalibration() :
 
   m_StateMachine.AddTransition( m_IdleState,
                                 m_CalculateCalibrationInput,
+                                m_IdleState,
+                                NULL );
+
+  m_StateMachine.AddTransition( m_IdleState,
+                                m_CalculateCalibrationZInput,
                                 m_IdleState,
                                 NULL );
 
@@ -91,6 +98,11 @@ PivotCalibration::PivotCalibration() :
                                 &PivotCalibration::CalculateCalibration );
 
   m_StateMachine.AddTransition( m_RotationTranslationAddState,
+                                m_CalculateCalibrationZInput,
+                                m_CalibrationCalculatedState,
+                                &PivotCalibration::CalculateCalibrationZ );
+
+  m_StateMachine.AddTransition( m_RotationTranslationAddState,
                                 m_SimulatePivotPositionInput,
                                 m_RotationTranslationAddState,
                                 NULL );
@@ -114,7 +126,12 @@ PivotCalibration::PivotCalibration() :
   m_StateMachine.AddTransition( m_CalibrationCalculatedState,
                                 m_CalculateCalibrationInput,
                                 m_CalibrationCalculatedState,
-                                NULL );
+                                &PivotCalibration::CalculateCalibration );
+
+  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
+                                m_CalculateCalibrationZInput,
+                                m_CalibrationCalculatedState,
+                                &PivotCalibration::CalculateCalibrationZ );
 
   m_StateMachine.AddTransition( m_CalibrationCalculatedState,
                                 m_SimulatePivotPositionInput,
@@ -239,8 +256,8 @@ int PivotCalibration::InternalAddRotationTranslation( VersorType quaternion, Vec
   return this->GetNumberOfFrame();
 }
 
-/** Method to calculate the calibration */
-void PivotCalibration::CalculateCalibration()
+/** Internal method to calculate the calibration */
+void PivotCalibration::InternalCalculateCalibration( int axis )
 {
   /** Use the Moore-Penrose inverse to calculate the calibration matrix
    *  The algorithm used is from the paper "Freehand Ultrasound Calibration using
@@ -259,7 +276,7 @@ void PivotCalibration::CalculateCalibration()
    *  [ Offset0 Offset1 Offset2 x0 y0 z0]' = (M' * M)^-1 * M' * N
    *  RMS = sqrt( |M * [ Offset0 Offset1 Offset2 x0 y0 z0 ]' - N|^2 / num ) */   
 
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::CalculateCalibration called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalCalculateCalibration called...\n" );
 
   unsigned int i, j, k;
   unsigned int r, c, num;
@@ -267,7 +284,7 @@ void PivotCalibration::CalculateCalibration()
   // Set the number of sample, tow and column number of matrix
   num = this->GetNumberOfFrame();
   r = num * 3;
-  c = 6;
+  c = 3 + axis;
 
   // Define the Vnl matrix and intermediate variables
   VnlMatrixType matrix(r, c), m(c, c), minv;
@@ -284,13 +301,17 @@ void PivotCalibration::CalculateCalibration()
 
     for ( j = 0; j < 3; j++)
       {
+      for ( i = 0; i < axis; i++)
+        {
+        matrix[3 * k + j][i] = rotMatrix[j][2 - i];
+        }
       for ( i = 0; i < 3; i++)
         {
-        matrix[3 * k + j][i] = rotMatrix[j][i];
-        matrix[3 * k + j][i + 3] = 0.0;
+        
+        matrix[3 * k + j][i + axis] = 0.0;
         }
 
-      matrix[3 * k + j][j + 3] = -1.0;
+      matrix[3 * k + j][j + axis] = -1.0;
       }
 
     for ( j = 0; j < 3; j++)
@@ -308,11 +329,17 @@ void PivotCalibration::CalculateCalibration()
   // Calculate (M' * M)^-1 * M' * N
   x = minv * matrix.transpose() * b;
 
-  // Extract the offset and translation components
+  // Extract the offset components
+  translation.Fill( 0.0);
+  for ( i = 0; i < axis; i++)
+    {
+    translation[2 - i] = x[i];
+    }
+  
+  // Extract the pivot position
   for ( i = 0; i < 3; i++)
     {
-    translation[i] = x[i];
-    this->m_PivotPosition[i] = x[i + 3];
+    this->m_PivotPosition[i] = x[i + axis];
     }
 
   // Set the calibration matrix
@@ -325,6 +352,23 @@ void PivotCalibration::CalculateCalibration()
 
   // Set valid indicator
   this->m_ValidCalibration = true;
+
+}
+
+/** Method to calculate the calibration */
+void PivotCalibration::CalculateCalibration()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::CalculateCalibration called...\n" );
+
+  this->InternalCalculateCalibration( 3);
+}
+
+/** Method to calculate the calibration along z-axis */
+void PivotCalibration::CalculateCalibrationZ()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::CalculateCalibrationZ called...\n" );
+
+  this->InternalCalculateCalibration( 1);
 
 }
 
@@ -439,6 +483,16 @@ void PivotCalibration::RequestCalculateCalibration()
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestCalculateCalibration called...\n" );
 
   this->m_StateMachine.PushInput( this->m_CalculateCalibrationInput );
+  this->m_StateMachine.ProcessInputs();
+
+}
+
+/** Method to invoke the calculation only along z-axis */
+void PivotCalibration::RequestCalculateCalibrationZ()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestCalculateCalibrationZ called...\n" );
+
+  this->m_StateMachine.PushInput( this->m_CalculateCalibrationZInput );
   this->m_StateMachine.ProcessInputs();
 
 }
