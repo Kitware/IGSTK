@@ -111,7 +111,7 @@ public:
   void RequestReset();
 
   /** Method invoked by the user to add a new sample */
-  void RequestAddRotationTranslation( VersorType quat, VectorType trans );
+  int RequestAddRotationTranslation( VersorType quat, VectorType trans );
 
   /** Method invoked by the user to calculate the calibration matrix */
   void RequestCalculateCalibration(); 
@@ -140,7 +140,7 @@ protected:
   void AddRotationTranslation();
 
   /** Internal function to add a new sample */
-  void InternalAddRotationTranslation( VersorType quat, VectorType trans );
+  int InternalAddRotationTranslation( VersorType quat, VectorType trans );
 
   /** Calculate the calibration */
   void CalculateCalibration();
@@ -184,6 +184,8 @@ private:
   VersorType            m_QuaternionToBeReceived;
 
   VectorType            m_TranslationToBeReceived;
+
+  int                   m_NumberOfFrameToBeReceived;
 
   /** Container to save the samples */
   InputContainerType    m_Quaternion[4];

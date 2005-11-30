@@ -210,11 +210,11 @@ void PivotCalibration::AddRotationTranslation()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::AddRotationTranslation called...\n" );
   
-  this->InternalAddRotationTranslation( m_QuaternionToBeAdded, m_TranslationToBeAdded);
+  this->m_NumberOfFrameToBeReceived = this->InternalAddRotationTranslation( m_QuaternionToBeAdded, m_TranslationToBeAdded);
 }
 
 /** Internal method to add the sample information */
-void PivotCalibration::InternalAddRotationTranslation( VersorType quaternion, VectorType translation )
+int PivotCalibration::InternalAddRotationTranslation( VersorType quaternion, VectorType translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalAddRotationTranslation called...\n" );
 
@@ -234,6 +234,9 @@ void PivotCalibration::InternalAddRotationTranslation( VersorType quaternion, Ve
 
   // Unvalid the calibration
   this->m_ValidCalibration = false;
+
+  // Return the number of current frame;
+  return this->GetNumberOfFrame();
 }
 
 /** Method to calculate the calibration */
@@ -418,7 +421,7 @@ void PivotCalibration::RequestReset()
 }
 
 /** Method to invoke adding the sample */
-void PivotCalibration::RequestAddRotationTranslation( VersorType quat, VectorType trans )
+int PivotCalibration::RequestAddRotationTranslation( VersorType quat, VectorType trans )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestAddRotationTranslation called...\n" );
   
@@ -427,6 +430,7 @@ void PivotCalibration::RequestAddRotationTranslation( VersorType quat, VectorTyp
   this->m_StateMachine.PushInput( this->m_RotationTranslationInput );
   this->m_StateMachine.ProcessInputs();
 
+  return this->m_NumberOfFrameToBeReceived;
 }
 
 /** Method to invoke the calculation */
