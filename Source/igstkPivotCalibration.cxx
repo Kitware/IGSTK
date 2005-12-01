@@ -132,7 +132,7 @@ PivotCalibration::PivotCalibration() :
 
   m_StateMachine.AddTransition( m_CalibrationCalculatedState,
                                 m_CalculateCalibrationZInput,
-                                m_CalibrationCalculatedState,
+                                m_CalibrationZCalculatedState,
                                 &PivotCalibration::CalculateCalibrationZ );
 
   m_StateMachine.AddTransition( m_CalibrationCalculatedState,
@@ -163,17 +163,17 @@ PivotCalibration::PivotCalibration() :
 
   m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
                                 m_CalculateCalibrationZInput,
-                                m_CalibrationCalculatedState,
+                                m_CalibrationZCalculatedState,
                                 NULL );
 
   m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
                                 m_SimulatePivotPositionInput,
-                                m_CalibrationCalculatedState,
+                                m_CalibrationZCalculatedState,
                                 &PivotCalibration::SimulatePivotPosition );
 
   m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
                                 m_GetInputRotationTranslationInput,
-                                m_CalibrationCalculatedState,
+                                m_CalibrationZCalculatedState,
                                 &PivotCalibration::GetInputRotationTranslation );
 
   // Select the initial state of the state machine
@@ -339,11 +339,9 @@ void PivotCalibration::InternalCalculateCalibration( int axis )
         matrix[3 * k + j][i] = rotMatrix[j][2 - i];
         }
       for ( i = 0; i < 3; i++)
-        {
-        
+        {        
         matrix[3 * k + j][i + axis] = 0.0;
         }
-
       matrix[3 * k + j][j + axis] = -1.0;
       }
 
