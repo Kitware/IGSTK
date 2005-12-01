@@ -152,7 +152,7 @@ protected:
   void CalculateCalibrationZ();
 
   /** Internal function to calculate the calibration */
-  void InternalCalculateCalibration( int axis );
+  void InternalCalculateCalibration( unsigned int axis );
 
   /** Calculate the simulated pivot position */
   void SimulatePivotPosition();

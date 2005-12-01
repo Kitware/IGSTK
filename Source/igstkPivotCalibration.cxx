@@ -290,7 +290,7 @@ int PivotCalibration::InternalAddRotationTranslation( VersorType quaternion, Vec
 }
 
 /** Internal method to calculate the calibration */
-void PivotCalibration::InternalCalculateCalibration( int axis )
+void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
 {
   /** Use the Moore-Penrose inverse to calculate the calibration matrix
    *  The algorithm used is from the paper "Freehand Ultrasound Calibration using
