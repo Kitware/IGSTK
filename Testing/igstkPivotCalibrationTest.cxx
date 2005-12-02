@@ -53,11 +53,12 @@ int igstkPivotCalibrationTest( int, char * [] )
 
   // Define the input file and the variables to extract the rotation and translation information
   std::ifstream input;
-  int i;
+  int i, j;
   int frame;
   std::string temp;
   double time;
   double quat[4];
+  double matrix[3][3];
   VectorType pos, pivotpos;
   VersorType quaternion;
 
@@ -94,7 +95,7 @@ int igstkPivotCalibrationTest( int, char * [] )
   // Calculate the calibration matrix along three axis
   pivot->RequestCalculateCalibration();
 
-  if ( !pivot->GetValidCalibration())
+  if ( !pivot->GetValidPivotCalibration())
     {
     std::cout << "No valid calibration!" << std::endl;
 
@@ -163,7 +164,7 @@ int igstkPivotCalibrationTest( int, char * [] )
   // Calculate the calibration matrix along z-axis
   pivot->RequestCalculateCalibrationZ();
 
-  if ( !pivot->GetValidCalibration())
+  if ( !pivot->GetValidPivotCalibration())
     {
     std::cout << "No valid calibration!" << std::endl;
 
@@ -190,8 +191,31 @@ int igstkPivotCalibrationTest( int, char * [] )
     // Dump the self class information
     pivot->Print( std::cout);
 
-    return EXIT_SUCCESS;
     }
+
+  // Simulate the manually setting calibration matrix
+  pivot->RequestSetTranslation( 1.0, 2.0, 10.0);
+  pivot->RequestSetQuaternion( 1.0, 0.0, 0.0, 1.0);
+  pivot->Print( std::cout);
+
+  // Simulate the manually setting rotation matrix
+  for (j = 0; j < 3; j++)
+    {
+    for ( i = 0; i < 3; i++)
+      {
+      matrix[j][i] = (rand() % 1000) / 1000.0;
+      }
+    }
+  pivot->RequestSetRotationMatrix( matrix);
+  pivot->Print( std::cout);
+
+  // Simulate the manually setting principal axis and normal
+  pivot->RequestSetToolPrincipalAxis( 0.0, 0.0, 1.0);
+  pivot->RequestSetToolPlaneNormal( 0.0, 1.0, 1.0);
+  pivot->Print( std::cout);
+
+  return EXIT_SUCCESS;
+
 }
 
 
