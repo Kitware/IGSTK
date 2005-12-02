@@ -23,6 +23,7 @@
 #include "vnl/algo/vnl_matrix_inverse.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector.h"
+#include "vnl/vnl_double_3.h"
 
 #include "itkObject.h"
 
@@ -93,7 +94,7 @@ public:
   typedef double                          ErrorType;
 
   /** Method to check whether a valid calibration is calculated */
-  igstkGetMacro( ValidCalibration, bool );
+  igstkGetMacro( ValidPivotCalibration, bool );
 
   /** Method to get the final calibration transform */
   igstkGetMacro( CalibrationTransform, TransformType );
@@ -124,6 +125,21 @@ public:
 
   /** Method invoked by the user to get the rotation and translation in the input container */
   bool RequestGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans );
+
+  /** Method invoked by the user to set the principal axis of the tool */
+  void RequestSetToolPrincipalAxis( double vx, double vy, double vz );
+
+  /** Method invoked by the user to set the normal of the tool plane */
+  void RequestSetToolPlaneNormal( double nx, double ny, double nz );
+
+  /** Method invoked by the user to set the translation directly */
+  void RequestSetTranslation( double tx, double ty, double tz );
+
+  /** Method invoked by the user to set the rotation quaternion directly */
+  void RequestSetQuaternion( double qx, double qy, double qz, double q0 );
+
+  /** Method invoked by the user to set the rotation matrix directly */
+  void RequestSetRotationMatrix( double matrix[3][3] );
 
 protected:
 
@@ -163,8 +179,47 @@ protected:
   /** Get the rotation and translation inputed */
   void GetInputRotationTranslation();
 
-  /** Internal method to get the rotation and translation inputed */
+  /** Internal function to get the rotation and translation inputed */
   bool InternalGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans );
+
+  /** Set the principal axis of the tool */
+  void SetToolPrincipalAxis();
+
+  /** Internal function to set the principal axis of the tool */
+  void InternalSetToolPrincipalAxis( double vx, double vy, double vz );
+
+  /** Set the normal of the tool plane */
+  void SetToolPlaneNormal();
+
+  /** Internal function to set the normal of the tool plane */
+  void InternalSetToolPlaneNormal( double nx, double ny, double nz );
+
+  /** Internal function to calculate rotation */
+  void InternalCalculateRotation();
+
+  /** Internal function to adjust plane normal */
+  void InternalAdjustPlaneNormal();
+
+  /** Internal function to build the rotation */
+  void InternalBuildRotation();
+
+  /** Set the translation directly */
+  void SetTranslation();
+
+  /** Internal function to set the translation directly */
+  void InternalSetTranslation( double tx, double ty, double tz );
+
+  /** Set the rotation quaternion directly */
+  void SetQuaternion();
+
+  /** Internal function to set the rotation quaternion directly */
+  void InternalSetQuaternion( double qx, double qy, double qz, double q0 );
+
+  /** Set the rotation matrix directly */
+  void SetRotationMatrix();
+
+  /** Internal function to set the rotation matrix directly */
+  void InternalSetRotationMatrix( MatrixType matrix );
 
 private:
 
@@ -182,15 +237,24 @@ private:
   InputType                                m_CalculateCalibrationZInput;
   InputType                                m_SimulatePivotPositionInput;
   InputType                                m_GetInputRotationTranslationInput;
+  InputType                                m_PrincipalAxisInput;
+  InputType                                m_PlaneNormalInput;
+  InputType                                m_TranslationInput;
+  InputType                                m_QuaternionInput;
+  InputType                                m_RotationMatrixInput;
 
   /** Temporary input variables for state machine */
-  VersorType            m_QuaternionToBeAdded;
+  VersorType            m_QuaternionToBeSent;
 
-  VectorType            m_TranslationToBeAdded;
+  VectorType            m_TranslationToBeSent;
 
-  VectorType            m_SimulatedPivotPosition;
+  int                   m_InputIndexToBeSent;
 
-  int                   m_InputIndexToSet;
+  VectorType            m_VectorToBeSent;
+
+  MatrixType            m_MatrixToBeSent;
+
+  VectorType            m_SimulatedPivotPositionToBeReceived;
 
   VersorType            m_QuaternionToBeReceived;
 
@@ -204,7 +268,7 @@ private:
   InputContainerType    m_Translation[3];
 
   /** Variable to indicate the valid calibration */
-  bool                  m_ValidCalibration;
+  bool                  m_ValidPivotCalibration;
 
   /** Variable to indicate the valid input sample */
   bool                  m_ValidInputSample;
@@ -217,6 +281,15 @@ private:
 
   /** Variable to indicate the RMS error */
   ErrorType             m_RMS;
+
+  /** Variable to save the principal axis */
+  VectorType            m_PrincipalAxis;
+
+  /** Variable to save the plane normal */
+  VectorType            m_PlaneNormal;
+
+  /** Variable to save the adjusted plane normal */
+  VectorType            m_AdjustedPlaneNormal;
 
 };
 
