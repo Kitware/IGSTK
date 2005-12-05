@@ -236,7 +236,7 @@ public: \
 #define igstkLoadedEventTransductionMacro( event, input, payload ) \
 private: \
   ReceptorObserverPointer m_Observer##event##input;  \
-  payload                 m_##payload##ToBeSet; \
+  ##event##::PayloadType                 m_##payload##ToBeSet; \
   void Callback##event##input( const ::itk::EventObject & eventvar ) \
   { \
     const event * realevent = dynamic_cast < const event * > ( &eventvar ); \
