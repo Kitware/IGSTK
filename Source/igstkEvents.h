@@ -34,6 +34,7 @@ class  name : public superclass \
 public:  \
   typedef name Self; \
   typedef superclass Superclass; \
+  typedef payloadtype PayloadType; \
   name() {} \
   virtual ~name() {} \
   virtual const char * GetEventName() const { return #name; } \
@@ -42,13 +43,13 @@ public:  \
   virtual ::itk::EventObject* MakeObject() const \
     { return new Self; } \
   name(const Self&s) :superclass(s){}; \
-  const payloadtype & Get() const \
+  const PayloadType & Get() const \
     { return m_Payload; }  \
   void Set( const payloadtype & _var ) \
     { m_Payload = _var; }  \
 private: \
   void operator=(const Self&);  \
-  payloadtype  m_Payload; \
+  PayloadType  m_Payload; \
 };
 
 igstkEventMacro( IGSTKEvent,               itk::UserEvent );
