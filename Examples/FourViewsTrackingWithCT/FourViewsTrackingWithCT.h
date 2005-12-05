@@ -53,9 +53,10 @@ PURPOSE.  See the above copyright notices for more information.
 #define TRACKER_TOOL_PORT 3
 #define TRACKER_TOOL_SROM_FILE "C:/Patrick/Vicra/Tookit/Tool Definition Files/8700340.rom"
 
+#include "igstkPivotCalibration.h"
+
 namespace igstk
 {
-
 
 class FourViewsTrackingWithCT : public FourViewsTrackingWithCTGUI, public itk::Object
 {
@@ -124,9 +125,9 @@ public:
 
 
   /** Methods for Converting Events into State Machine Inputs */
-  igstkEventTransductionMacro( AxialSliceBoundsEvent,    AxialBoundsInput    );
-  igstkEventTransductionMacro( SagittalSliceBoundsEvent, SagittalBoundsInput );
-  igstkEventTransductionMacro( CoronalSliceBoundsEvent,  CoronalBoundsInput  );
+  igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,    AxialBoundsInput, AxialBounds    );
+  igstkLoadedEventTransductionMacro( SagittalSliceBoundsEvent, SagittalBoundsInput, SagittalBounds );
+  igstkLoadedEventTransductionMacro( CoronalSliceBoundsEvent,  CoronalBoundsInput, CoronalBounds  );
 
 
 protected:
@@ -235,16 +236,6 @@ private:
   Transform                           m_ImageLandmarkTransform;    
   Transform                           m_TrackerLandmarkTransformToBeSet; 
   Transform                           m_ImageLandmarkTransformToBeSet;  
-  
-  /** Type used for storing the bound values of minimum and maximum slices
-   * along a particular orientation in a dataset */
-  typedef igstk::EventHelperType::IntegerBoundsType    IntegerBoundsType;
-
-  /** Intermediate memory values for storing the minimum and maximum slice
-   *  number of the dataset along a particular orientation. */
-  IntegerBoundsType                   m_AxialBoundsToBeSet;
-  IntegerBoundsType                   m_SagittalBoundsToBeSet;
-  IntegerBoundsType                   m_CoronalBoundsToBeSet;
 
   /** Serial communication and tracker */
   CommunicationType::Pointer          m_SerialCommunication;
