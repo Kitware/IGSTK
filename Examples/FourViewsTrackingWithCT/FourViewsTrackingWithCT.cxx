@@ -99,6 +99,10 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_CylinderRepresentation->SetColor(0.0,1.0,0.0);
   m_CylinderRepresentation->SetOpacity(1.0);
   
+  igstk::PivotCalibration::Pointer pivot = igstk::PivotCalibration::New();
+  pivot->RequestSetToolPrincipalAxis( 0.0, 1.0, 0.0);
+  pivot->RequestSetToolPlaneNormal( 1.0, 0.0, 0.0);
+
   igstk::Transform::VectorType CylinderTipOffset;     //FIXME, SpatialObject should have an tip to origin offet
   CylinderTipOffset[0] = 0;   // Tip offset
   CylinderTipOffset[1] = 0;
@@ -107,11 +111,11 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   /** Tool calibration transform */
   igstk::Transform toolCalibrationTransform;
   igstk::Transform::VectorType translation;
-  igstk::Transform::VersorType rotation;
+  igstk::Transform::VersorType rotation = pivot->GetCalibrationTransform().GetRotation();
   translation[0] = -18.0;   // Tip offset
   translation[1] = 0.5;
   translation[2] = -157.5;
-  rotation.SetIdentity();
+  
   toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
   m_Tracker->SetToolCalibrationTransform( TRACKER_TOOL_PORT, 0, toolCalibrationTransform);
 
