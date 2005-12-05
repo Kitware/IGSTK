@@ -262,7 +262,6 @@ void DICOMImageReader<TPixelType>::ReadDirectoryFileNames()
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReadDirectoryFileNames called...\n");
   
   m_FileNames->SetInputDirectory( m_ImageDirectoryName );
-  m_FileNames->SetDirectory( m_ImageDirectoryName );
  
   const std::vector< std:: string > & seriesUID = m_FileNames -> GetSeriesUIDs();
   if ( seriesUID.empty() ) 
@@ -271,7 +270,7 @@ void DICOMImageReader<TPixelType>::ReadDirectoryFileNames()
     this->InvokeEvent ( event );
     return;
   } 
-  
+ 
   m_ImageSeriesReader->SetFileNames( m_FileNames->GetInputFileNames() );
 }
 
