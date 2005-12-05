@@ -59,6 +59,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_StateMachine.AddInput( m_ValidSliceNumberInput,   "ValidSliceNumberInput"  );
   m_StateMachine.AddInput( m_InvalidSliceNumberInput,   "InvalidSliceNumberInput"  );
   m_StateMachine.AddInput( m_ValidOrientationInput,   "ValidOrientationInput"  );
+  m_StateMachine.AddInput( m_RequestSliceNumberBoundsInput, "RequestSliceNumberBoundsInput");
 
   m_StateMachine.AddState( m_NullImageSpatialObjectState,  "NullImageSpatialObjectState"     );
   m_StateMachine.AddState( m_ValidImageSpatialObjectState, "ValidImageSpatialObjectState"     );
@@ -108,6 +109,9 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_InvalidSliceNumberInput, m_ValidImageOrientationState,  NoAction ); 
   m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_ValidOrientationInput, m_ValidImageOrientationState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
 
+  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_RequestSliceNumberBoundsInput, m_ValidImageSpatialObjectState, & ImageSpatialObjectRepresentation::ReportSliceNumberBounds );
+  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_RequestSliceNumberBoundsInput, m_ValidSliceNumberState, & ImageSpatialObjectRepresentation::ReportSliceNumberBounds );
+  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_RequestSliceNumberBoundsInput, m_ValidImageOrientationState, & ImageSpatialObjectRepresentation::ReportSliceNumberBounds );
 
   m_StateMachine.SelectInitialState( m_NullImageSpatialObjectState );
 
@@ -449,7 +453,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 template < class TImageSpatialObject >
 void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
-::ReportSliceNumberBounds() const
+::ReportSliceNumberBounds() 
 {
     int ext[6];
 

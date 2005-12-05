@@ -194,7 +194,7 @@ private:
   void SetOrientation();
       
   /** Reports the minimum and maximum slice numbers on the current orientation */
-  void ReportSliceNumberBounds() const;
+  void ReportSliceNumberBounds() ;
     
 private:
 
