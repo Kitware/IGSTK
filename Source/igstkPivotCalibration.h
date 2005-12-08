@@ -106,7 +106,7 @@ public:
   igstkGetMacro( RMS, ErrorType );
 
   /** Method to get the number of samples used to calibrate */
-  int GetNumberOfFrame() const;
+  int GetNumberOfSamples() const;
 
   /** Method invoked by the user to reset the calibration process */
   void RequestReset();

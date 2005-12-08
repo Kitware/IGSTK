@@ -104,7 +104,7 @@ int igstkPivotCalibrationTest( int, char * [] )
   else
     {
     // Test the simulated pivot position
-    for ( i = 0; i < pivot->GetNumberOfFrame(); i++)
+    for ( i = 0; i < pivot->GetNumberOfSamples(); i++)
       {
       if (pivot->RequestGetInputRotationTranslation( i, quaternion, pos))
         {
@@ -130,7 +130,7 @@ int igstkPivotCalibrationTest( int, char * [] )
       std::cout << "Invalid input Sample: " << i << std::endl;
       }
 
-    i = pivot->GetNumberOfFrame();
+    i = pivot->GetNumberOfSamples();
     if (pivot->RequestGetInputRotationTranslation( i, quaternion, pos))
       {
       std::cout << "Input Sample: " << i << " " << quaternion << pos << std::endl;
@@ -151,7 +151,7 @@ int igstkPivotCalibrationTest( int, char * [] )
 
     // Dump the calibration class information
     std::cout << "PivotCalibration: " << std::endl;
-    std::cout << "NumberOfFrame: " << pivot->GetNumberOfFrame() << std::endl;
+    std::cout << "NumberOfSamples: " << pivot->GetNumberOfSamples() << std::endl;
     std::cout << "Translation: " << translation << std::endl;
     std::cout << "Pivot Position: " << position << std::endl;
     std::cout << "Calibration RMS: " << error << std::endl;
@@ -183,7 +183,7 @@ int igstkPivotCalibrationTest( int, char * [] )
 
     // Dump the calibration class information
     std::cout << "PivotCalibration: " << std::endl;
-    std::cout << "NumberOfFrame: " << pivot->GetNumberOfFrame() << std::endl;
+    std::cout << "NumberOfSamples: " << pivot->GetNumberOfSamples() << std::endl;
     std::cout << "Translation: " << translation << std::endl;
     std::cout << "Pivot Position: " << position << std::endl;
     std::cout << "Calibration RMS: " << error << std::endl;

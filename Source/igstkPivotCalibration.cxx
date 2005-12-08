@@ -310,7 +310,7 @@ void PivotCalibration::PrintSelf( std::ostream& os, itk::Indent indent ) const
   // Dump the calibration class information
   os << indent << "PivotCalibration: " << std::endl;
 
-  os << indent << "NumberOfFrame: " << this->GetNumberOfFrame() << std::endl;
+  os << indent << "NumberOfSamples: " << this->GetNumberOfSamples() << std::endl;
 
   os << indent << "Calibration Transform: " << this->m_CalibrationTransform << std::endl;
   
@@ -321,9 +321,9 @@ void PivotCalibration::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 /** Method to return the number of samples */
-int PivotCalibration::GetNumberOfFrame() const
+int PivotCalibration::GetNumberOfSamples() const
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetNumberOfFrame called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetNumberOfSamples called...\n" );
 
   return this->m_Quaternion[0].size();
 }
@@ -408,8 +408,8 @@ int PivotCalibration::InternalAddRotationTranslation( VersorType quaternion, Vec
   // Unvalid the calibration
   this->m_ValidPivotCalibration = false;
 
-  // Return the number of current frame;
-  return this->GetNumberOfFrame();
+  // Return the number of current samples;
+  return this->GetNumberOfSamples();
 }
 
 /** Internal method to calculate the calibration */
@@ -438,7 +438,7 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
   unsigned int r, c, num;
 
   // Set the number of sample, tow and column number of matrix
-  num = this->GetNumberOfFrame();
+  num = this->GetNumberOfSamples();
   r = num * 3;
   c = 3 + axis;
 
@@ -660,7 +660,7 @@ bool PivotCalibration::InternalGetInputRotationTranslation( int index, VersorTyp
 
   unsigned int i;
 
-  if (index >= 0 && index < this->GetNumberOfFrame())
+  if (index >= 0 && index < this->GetNumberOfSamples())
   {
     quat.Set( this->m_Quaternion[1][index], this->m_Quaternion[2][index], this->m_Quaternion[3][index], this->m_Quaternion[0][index]);
     for ( i = 0; i < 3; i++)
