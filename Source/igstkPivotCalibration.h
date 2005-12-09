@@ -18,7 +18,7 @@
 #ifndef _igstkPivotCalibration_h
 #define _igstkPivotCalibration_h
 
-#include "vnl/algo/vnl_matrix_inverse.h"
+#include "vnl/algo/vnl_svd.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector.h"
 
@@ -87,6 +87,8 @@ public:
   typedef vnl_matrix< double >            VnlMatrixType;
 
   typedef vnl_vector< double >            VnlVectorType;
+
+  typedef vnl_svd< double >               VnlSVDType;
 
   typedef itk::VectorContainer< int, VersorType >
                                           InputVersorContainerType;

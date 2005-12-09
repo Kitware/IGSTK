@@ -421,6 +421,7 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
    *  
    *  M * [ Offset0 Offset1 Offset2 x0 y0 z0]' = N
    *  [ Offset0 Offset1 Offset2 x0 y0 z0]' = (M' * M)^-1 * M' * N
+   *  or [ Offset0 Offset1 Offset2 x0 y0 z0]' = SVD( M, N )
    *  RMS = sqrt( |M * [ Offset0 Offset1 Offset2 x0 y0 z0 ]' - N|^2 / num ) */   
 
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalCalculateCalibration called...\n" );
@@ -434,8 +435,8 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
   c = 3 + axis;
 
   // Define the Vnl matrix and intermediate variables
-  VnlMatrixType matrix(r, c), m(c, c), m_inv;
-  VnlVectorType x(c), b(r), br(r);
+  VnlMatrixType matrix(r, c);
+  VnlVectorType x(c), b(r), br(r);  
   VersorType quat;
   VectorType translation;
   MatrixType rotMatrix;
@@ -444,7 +445,6 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
   for (k = 0; k < num; k++)
     {
     quat = this->m_QuaternionContainer->GetElement(k);
-
     rotMatrix = quat.GetMatrix();
 
     for ( j = 0; j < 3; j++)
@@ -466,14 +466,9 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
       }
     }
 
-  // Calculate the M' * M
-  m = matrix.transpose() * matrix;
-
-  // Calculate (M' * M)^-1
-  m_inv = vnl_matrix_inverse< double >( m );
-  
-  // Calculate (M' * M)^-1 * M' * N
-  x = m_inv * matrix.transpose() * b;
+  // Use SVD to solve the vector M * x = y
+  VnlSVDType svd( matrix);
+  x = svd.solve( b);
 
   // Extract the offset components
   translation.Fill( 0.0);
@@ -492,8 +487,7 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
   this->m_CalibrationTransform.SetTranslation(translation, 0.1, 1000);
 
   // Calculate the RMS error
-  br = matrix * x - b;
-  
+  br = matrix * x - b;  
   this->m_RMS = sqrt( br.squared_magnitude() / num );
 
   // Set valid indicator
@@ -539,25 +533,26 @@ void PivotCalibration::InternalBuildRotation()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalBuildRotation called...\n" );
 
-  unsigned int i;
-  VectorType xvec, yvec, zvec;
+  unsigned int i, j;
+  VectorType vec[3];
   VersorType::MatrixType orthomatrix;
   VersorType quaternion;
 
   // Set three axis
-  yvec.SetVnlVector( this->m_AdjustedPlaneNormal.GetVnlVector());
-  yvec.Normalize();
-  zvec.SetVnlVector( this->m_PrincipalAxis.GetVnlVector());
-  zvec.Normalize();
-  xvec = CrossProduct( yvec, zvec);
+  vec[1].SetVnlVector( this->m_AdjustedPlaneNormal.GetVnlVector());
+  vec[1].Normalize();
+  vec[2].SetVnlVector( this->m_PrincipalAxis.GetVnlVector());
+  vec[2].Normalize();
+  vec[0] = CrossProduct( vec[1], vec[2]);
 
   // Fill the orthogonal matrix
-  for ( i = 0; i < 3; i++)
-    {
-    orthomatrix[0][i] = xvec[i];
-    orthomatrix[1][i] = yvec[i];
-    orthomatrix[2][i] = zvec[i];
-    }
+  for ( j = 0; j < 3; j++)
+  {
+    for ( i = 0; i < 3; i++)
+      {
+      orthomatrix[j][i] = vec[j][i];
+      }
+  }
  
   quaternion.Set( orthomatrix);
   this->m_CalibrationTransform.SetRotation( quaternion, 0.1, 1000);
@@ -599,30 +594,17 @@ PivotCalibration::VectorType PivotCalibration::InternalSimulatePivotPosition( Ve
    *
    */
 
-  unsigned int i, j;
   MatrixType rotMatrix;
   VectorType pivotPosition;
   VnlMatrixType matrix(3, 3);
   VnlVectorType translation(3), pos(3), offset(3);
 
   rotMatrix = quat.GetMatrix();
-  
-  for ( j = 0; j < 3; j++)
-    {
-    for ( i = 0; i < 3; i++)
-      {
-      matrix[j][i] = rotMatrix[j][i];
-      }
-    translation[j] = trans[j];
-    offset[j] = this->GetCalibrationTransform().GetTranslation()[j];
-    }
-
+  matrix = rotMatrix.GetVnlMatrix();
+  translation = trans.GetVnlVector();
+  offset = this->GetCalibrationTransform().GetTranslation().GetVnlVector();
   pos = matrix * offset + translation;
-
-  for ( i = 0; i < 3; i++)
-    {
-    pivotPosition[i] = pos[i];
-    }
+  pivotPosition.SetVnlVector( pos);
 
   return pivotPosition;
 
@@ -888,6 +870,7 @@ void PivotCalibration::RequestSetRotationMatrix( double matrix[3][3] )
       this->m_MatrixToBeSent[j][i] = matrix[j][i];
       }
     }
+
   this->m_StateMachine.PushInput( this->m_RotationMatrixInput );
   this->m_StateMachine.ProcessInputs();
 }
