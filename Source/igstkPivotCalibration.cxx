@@ -509,23 +509,22 @@ void PivotCalibration::InternalAdjustPlaneNormal()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalAdjustPlaneNormal called...\n" );
 
-  VectorType xvec, yvec, zvec;
+  VectorType vec[3];
 
   // Assign and normalize the vectors
-  yvec.SetVnlVector( this->m_PlaneNormal.GetVnlVector());
-  yvec.Normalize();
-
-  zvec.SetVnlVector( this->m_PrincipalAxis.GetVnlVector());
-  zvec.Normalize();
+  vec[1].SetVnlVector( this->m_PlaneNormal.GetVnlVector());
+  vec[1].Normalize();
+  vec[2].SetVnlVector( this->m_PrincipalAxis.GetVnlVector());
+  vec[2].Normalize();
 
   // Compute the x axis
-  xvec = CrossProduct( yvec, zvec);
+  vec[0] = CrossProduct( vec[1], vec[2]);
 
   // Compute the perpendicular yvec
-  yvec = CrossProduct( zvec, xvec);
+  vec[1] = CrossProduct( vec[2], vec[0]);
 
   // No direct conversion from itk::Vector to itk::ConvariantVector
-  this->m_AdjustedPlaneNormal.SetVnlVector( yvec.GetVnlVector());
+  this->m_AdjustedPlaneNormal.SetVnlVector( vec[1].GetVnlVector());
 }
 
 /** Internal method to build the rotation */
