@@ -515,28 +515,23 @@ void PivotCalibration::InternalAdjustPlaneNormal()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalAdjustPlaneNormal called...\n" );
 
-  unsigned int i;
-  VnlVectorType xvec(3), yvec(3), zvec(3);
+  VectorType xvec, yvec, zvec;
 
-  // Normalize the vectors
-  for ( i = 0; i < 3; i++)
-    {
-    yvec[i] = this->m_PlaneNormal[i];
-    zvec[i] = this->m_PrincipalAxis[i];
-    }
-  yvec = yvec.normalize();
-  zvec = zvec.normalize();
-  
+  // Assign and normalize the vectors
+  yvec.SetVnlVector( this->m_PlaneNormal.GetVnlVector());
+  yvec.Normalize();
+
+  zvec.SetVnlVector( this->m_PrincipalAxis.GetVnlVector());
+  zvec.Normalize();
+
   // Compute the x axis
-  xvec = cross_3d( yvec, zvec);
+  xvec = CrossProduct( yvec, zvec);
 
   // Compute the perpendicular yvec
-  yvec = cross_3d( zvec, xvec);
-  for ( i = 0; i < 3; i++)
-    {
-    this->m_AdjustedPlaneNormal[i] = yvec[i]; 
-    }
+  yvec = CrossProduct( zvec, xvec);
 
+  // No direct conversion from itk::Vector to itk::ConvariantVector
+  this->m_AdjustedPlaneNormal.SetVnlVector( yvec.GetVnlVector());
 }
 
 /** Internal method to build the rotation */
@@ -545,19 +540,16 @@ void PivotCalibration::InternalBuildRotation()
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalBuildRotation called...\n" );
 
   unsigned int i;
-  VnlVectorType xvec(3), yvec(3), zvec(3);
+  VectorType xvec, yvec, zvec;
   VersorType::MatrixType orthomatrix;
   VersorType quaternion;
 
   // Set three axis
-  for ( i = 0; i < 3; i++)
-    {
-    yvec[i] = this->m_AdjustedPlaneNormal[i];
-    zvec[i] = this->m_PrincipalAxis[i];
-    }
-  yvec = yvec.normalize();
-  zvec = zvec.normalize();
-  xvec = cross_3d( yvec, zvec);
+  yvec.SetVnlVector( this->m_AdjustedPlaneNormal.GetVnlVector());
+  yvec.Normalize();
+  zvec.SetVnlVector( this->m_PrincipalAxis.GetVnlVector());
+  zvec.Normalize();
+  xvec = CrossProduct( yvec, zvec);
 
   // Fill the orthogonal matrix
   for ( i = 0; i < 3; i++)
@@ -566,7 +558,7 @@ void PivotCalibration::InternalBuildRotation()
     orthomatrix[1][i] = yvec[i];
     orthomatrix[2][i] = zvec[i];
     }
-  
+ 
   quaternion.Set( orthomatrix);
   this->m_CalibrationTransform.SetRotation( quaternion, 0.1, 1000);
 

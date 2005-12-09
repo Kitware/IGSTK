@@ -21,8 +21,8 @@
 #include "vnl/algo/vnl_matrix_inverse.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector.h"
-#include "vnl/vnl_double_3.h"
 
+#include "itkCovariantVector.h"
 #include "itkObject.h"
 #include "itkVectorContainer.h"
 
@@ -99,6 +99,8 @@ public:
 
   typedef InputVectorContainerType::Pointer
                                           InputVectorContainerPointerType;
+
+  typedef itk::CovariantVector< double >  CovariantVectorType;        
 
   typedef double                          ErrorType;
 
@@ -291,13 +293,13 @@ private:
   ErrorType                         m_RMS;
 
   /** Variable to save the principal axis */
-  VectorType                        m_PrincipalAxis;
+  CovariantVectorType               m_PrincipalAxis;
 
   /** Variable to save the plane normal */
-  VectorType                        m_PlaneNormal;
+  CovariantVectorType               m_PlaneNormal;
 
   /** Variable to save the adjusted plane normal */
-  VectorType                        m_AdjustedPlaneNormal;
+  CovariantVectorType               m_AdjustedPlaneNormal;
 
 };
 
