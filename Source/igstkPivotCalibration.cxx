@@ -29,271 +29,276 @@ PivotCalibration::PivotCalibration() :
   m_StateMachine( this ), m_Logger( NULL)
 {
   // Set the state descriptors
-  m_StateMachine.AddState( m_IdleState, 
+  this->m_StateMachine.AddState( this->m_IdleState, 
                             "IdleState");
-  m_StateMachine.AddState( m_RotationTranslationAddState, 
+  this->m_StateMachine.AddState( this->m_RotationTranslationAddState, 
                             "RotationTranslationAddState");
-  m_StateMachine.AddState( m_CalibrationCalculatedState, 
+  this->m_StateMachine.AddState( this->m_CalibrationCalculatedState, 
                             "CalibrationCalculatedState");
-  m_StateMachine.AddState( m_CalibrationZCalculatedState, 
+  this->m_StateMachine.AddState( this->m_CalibrationZCalculatedState, 
                             "CalibrationZCalculatedState");
 
   // Set the input descriptors 
-  m_StateMachine.AddInput( m_ResetCalibrationInput, 
+  this->m_StateMachine.AddInput( this->m_ResetCalibrationInput, 
                             "ResetCalibrationInput");
-  m_StateMachine.AddInput( m_RotationTranslationInput, 
+  this->m_StateMachine.AddInput( this->m_RotationTranslationInput, 
                             "RotationTranslationInput");
-  m_StateMachine.AddInput( m_CalculateCalibrationInput, 
+  this->m_StateMachine.AddInput( this->m_CalculateCalibrationInput, 
                             "CalculateCalibrationInput");
-  m_StateMachine.AddInput( m_CalculateCalibrationZInput, 
+  this->m_StateMachine.AddInput( this->m_CalculateCalibrationZInput, 
                             "CalculateCalibrationZInput");
-  m_StateMachine.AddInput( m_SimulatePivotPositionInput, 
+  this->m_StateMachine.AddInput( this->m_SimulatePivotPositionInput, 
                             "SimulatePivotPositionInput");
-  m_StateMachine.AddInput( m_GetInputRotationTranslationInput, 
+  this->m_StateMachine.AddInput( this->m_GetInputRotationTranslationInput, 
                             "GetInputRotationTranslationInput");
-  m_StateMachine.AddInput( m_PrincipalAxisInput, 
+  this->m_StateMachine.AddInput( this->m_PrincipalAxisInput, 
                             "PrincipalAxisInput");
-  m_StateMachine.AddInput( m_PlaneNormalInput, 
+  this->m_StateMachine.AddInput( this->m_PlaneNormalInput, 
                             "PlaneNormalInput");
-  m_StateMachine.AddInput( m_TranslationInput, 
+  this->m_StateMachine.AddInput( this->m_TranslationInput, 
                             "TranslationInput");
-  m_StateMachine.AddInput( m_QuaternionInput, 
+  this->m_StateMachine.AddInput( this->m_QuaternionInput, 
                             "QuaternionInput");
-  m_StateMachine.AddInput( m_RotationMatrixInput, 
+  this->m_StateMachine.AddInput( this->m_RotationMatrixInput, 
                             "RotationMatrixInput");
 
   // Add transition  for idle state
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_ResetCalibrationInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_IdleState,
+                                this->m_ResetCalibrationInput,
+                                this->m_IdleState,
                                 &PivotCalibration::Reset );
 
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_RotationTranslationInput,
-                                m_RotationTranslationAddState,
+  this->m_StateMachine.AddTransition( this->m_IdleState,
+                                this->m_RotationTranslationInput,
+                                this->m_RotationTranslationAddState,
                                 &PivotCalibration::AddRotationTranslation );
 
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_CalculateCalibrationInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_IdleState,
+                                this->m_CalculateCalibrationInput,
+                                this->m_IdleState,
                                 NULL );
 
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_CalculateCalibrationZInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_IdleState,
+                                this->m_CalculateCalibrationZInput,
+                                this->m_IdleState,
                                 NULL );
 
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_SimulatePivotPositionInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_IdleState,
+                                this->m_SimulatePivotPositionInput,
+                                this->m_IdleState,
                                 NULL );
 
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_GetInputRotationTranslationInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_IdleState,
+                                this->m_GetInputRotationTranslationInput,
+                                this->m_IdleState,
                                 NULL );
 
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_PrincipalAxisInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_IdleState,
+                                this->m_PrincipalAxisInput,
+                                this->m_IdleState,
                                 &PivotCalibration::SetToolPrincipalAxis );
 
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_PlaneNormalInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_IdleState,
+                                this->m_PlaneNormalInput,
+                                this->m_IdleState,
                                 &PivotCalibration::SetToolPlaneNormal );
 
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_TranslationInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_IdleState,
+                                this->m_TranslationInput,
+                                this->m_IdleState,
                                 &PivotCalibration::SetTranslation );
 
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_QuaternionInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_IdleState,
+                                this->m_QuaternionInput,
+                                this->m_IdleState,
                                 &PivotCalibration::SetQuaternion );
 
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_RotationMatrixInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_IdleState,
+                                this->m_RotationMatrixInput,
+                                this->m_IdleState,
                                 &PivotCalibration::SetRotationMatrix );
 
   // Add transition  for RotationTranslationAdd state
-  m_StateMachine.AddTransition( m_RotationTranslationAddState,
-                                m_ResetCalibrationInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_RotationTranslationAddState,
+                                this->m_ResetCalibrationInput,
+                                this->m_IdleState,
                                 &PivotCalibration::Reset );
 
-  m_StateMachine.AddTransition( m_RotationTranslationAddState,
-                                m_RotationTranslationInput,
-                                m_RotationTranslationAddState,
+  this->m_StateMachine.AddTransition( this->m_RotationTranslationAddState,
+                                this->m_RotationTranslationInput,
+                                this->m_RotationTranslationAddState,
                                 &PivotCalibration::AddRotationTranslation );
 
-  m_StateMachine.AddTransition( m_RotationTranslationAddState,
-                                m_CalculateCalibrationInput,
-                                m_CalibrationCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_RotationTranslationAddState,
+                                this->m_CalculateCalibrationInput,
+                                this->m_CalibrationCalculatedState,
                                 &PivotCalibration::CalculateCalibration );
 
-  m_StateMachine.AddTransition( m_RotationTranslationAddState,
-                                m_CalculateCalibrationZInput,
-                                m_CalibrationZCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_RotationTranslationAddState,
+                                this->m_CalculateCalibrationZInput,
+                                this->m_CalibrationZCalculatedState,
                                 &PivotCalibration::CalculateCalibrationZ );
 
-  m_StateMachine.AddTransition( m_RotationTranslationAddState,
-                                m_SimulatePivotPositionInput,
-                                m_RotationTranslationAddState,
+  this->m_StateMachine.AddTransition( this->m_RotationTranslationAddState,
+                                this->m_SimulatePivotPositionInput,
+                                this->m_RotationTranslationAddState,
                                 NULL );
 
-  m_StateMachine.AddTransition( m_RotationTranslationAddState,
-                                m_GetInputRotationTranslationInput,
-                                m_RotationTranslationAddState,
+  this->m_StateMachine.AddTransition( this->m_RotationTranslationAddState,
+                                this->m_GetInputRotationTranslationInput,
+                                this->m_RotationTranslationAddState,
                                 &PivotCalibration::GetInputRotationTranslation );
 
-  m_StateMachine.AddTransition( m_RotationTranslationAddState,
-                                m_PrincipalAxisInput,
-                                m_RotationTranslationAddState,
+  this->m_StateMachine.AddTransition( this->m_RotationTranslationAddState,
+                                this->m_PrincipalAxisInput,
+                                this->m_RotationTranslationAddState,
                                 &PivotCalibration::SetToolPrincipalAxis );
 
-  m_StateMachine.AddTransition( m_RotationTranslationAddState,
-                                m_PlaneNormalInput,
-                                m_RotationTranslationAddState,
+  this->m_StateMachine.AddTransition( this->m_RotationTranslationAddState,
+                                this->m_PlaneNormalInput,
+                                this->m_RotationTranslationAddState,
                                 &PivotCalibration::SetToolPlaneNormal );
 
-  m_StateMachine.AddTransition( m_RotationTranslationAddState,
-                                m_TranslationInput,
-                                m_RotationTranslationAddState,
+  this->m_StateMachine.AddTransition( this->m_RotationTranslationAddState,
+                                this->m_TranslationInput,
+                                this->m_RotationTranslationAddState,
                                 &PivotCalibration::SetTranslation );
 
-  m_StateMachine.AddTransition( m_RotationTranslationAddState,
-                                m_QuaternionInput,
-                                m_RotationTranslationAddState,
+  this->m_StateMachine.AddTransition( this->m_RotationTranslationAddState,
+                                this->m_QuaternionInput,
+                                this->m_RotationTranslationAddState,
                                 &PivotCalibration::SetQuaternion );
 
-  m_StateMachine.AddTransition( m_RotationTranslationAddState,
-                                m_RotationMatrixInput,
-                                m_RotationTranslationAddState,
+  this->m_StateMachine.AddTransition( this->m_RotationTranslationAddState,
+                                this->m_RotationMatrixInput,
+                                this->m_RotationTranslationAddState,
                                 &PivotCalibration::SetRotationMatrix );
 
   // Add transition  for CalibrationCalculated state
-  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
-                                m_ResetCalibrationInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationCalculatedState,
+                                this->m_ResetCalibrationInput,
+                                this->m_IdleState,
                                 &PivotCalibration::Reset );
 
-  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
-                                m_RotationTranslationInput,
-                                m_RotationTranslationAddState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationCalculatedState,
+                                this->m_RotationTranslationInput,
+                                this->m_RotationTranslationAddState,
                                 &PivotCalibration::AddRotationTranslation );
 
-  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
-                                m_CalculateCalibrationInput,
-                                m_CalibrationCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationCalculatedState,
+                                this->m_CalculateCalibrationInput,
+                                this->m_CalibrationCalculatedState,
                                 NULL );
 
-  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
-                                m_CalculateCalibrationZInput,
-                                m_CalibrationZCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationCalculatedState,
+                                this->m_CalculateCalibrationZInput,
+                                this->m_CalibrationZCalculatedState,
                                 &PivotCalibration::CalculateCalibrationZ );
 
-  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
-                                m_SimulatePivotPositionInput,
-                                m_CalibrationCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationCalculatedState,
+                                this->m_SimulatePivotPositionInput,
+                                this->m_CalibrationCalculatedState,
                                 &PivotCalibration::SimulatePivotPosition );
 
-  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
-                                m_GetInputRotationTranslationInput,
-                                m_CalibrationCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationCalculatedState,
+                                this->m_GetInputRotationTranslationInput,
+                                this->m_CalibrationCalculatedState,
                                 &PivotCalibration::GetInputRotationTranslation );
 
-  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
-                                m_PrincipalAxisInput,
-                                m_CalibrationCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationCalculatedState,
+                                this->m_PrincipalAxisInput,
+                                this->m_CalibrationCalculatedState,
                                 &PivotCalibration::SetToolPrincipalAxis );
 
-  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
-                                m_PlaneNormalInput,
-                                m_CalibrationCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationCalculatedState,
+                                this->m_PlaneNormalInput,
+                                this->m_CalibrationCalculatedState,
                                 &PivotCalibration::SetToolPlaneNormal );
 
-  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
-                                m_TranslationInput,
-                                m_CalibrationCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationCalculatedState,
+                                this->m_TranslationInput,
+                                this->m_CalibrationCalculatedState,
                                 &PivotCalibration::SetTranslation );
 
-  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
-                                m_QuaternionInput,
-                                m_CalibrationCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationCalculatedState,
+                                this->m_QuaternionInput,
+                                this->m_CalibrationCalculatedState,
                                 &PivotCalibration::SetQuaternion );
 
-  m_StateMachine.AddTransition( m_CalibrationCalculatedState,
-                                m_RotationMatrixInput,
-                                m_CalibrationCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationCalculatedState,
+                                this->m_RotationMatrixInput,
+                                this->m_CalibrationCalculatedState,
                                 &PivotCalibration::SetRotationMatrix );
 
   // Add transition  for CalibrationZCalculated state
-  m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
-                                m_ResetCalibrationInput,
-                                m_IdleState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationZCalculatedState,
+                                this->m_ResetCalibrationInput,
+                                this->m_IdleState,
                                 &PivotCalibration::Reset );
 
-  m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
-                                m_RotationTranslationInput,
-                                m_RotationTranslationAddState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationZCalculatedState,
+                                this->m_RotationTranslationInput,
+                                this->m_RotationTranslationAddState,
                                 &PivotCalibration::AddRotationTranslation );
 
-  m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
-                                m_CalculateCalibrationInput,
-                                m_CalibrationCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationZCalculatedState,
+                                this->m_CalculateCalibrationInput,
+                                this->m_CalibrationCalculatedState,
                                 &PivotCalibration::CalculateCalibration );
 
-  m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
-                                m_CalculateCalibrationZInput,
-                                m_CalibrationZCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationZCalculatedState,
+                                this->m_CalculateCalibrationZInput,
+                                this->m_CalibrationZCalculatedState,
                                 NULL );
 
-  m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
-                                m_SimulatePivotPositionInput,
-                                m_CalibrationZCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationZCalculatedState,
+                                this->m_SimulatePivotPositionInput,
+                                this->m_CalibrationZCalculatedState,
                                 &PivotCalibration::SimulatePivotPosition );
 
-  m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
-                                m_GetInputRotationTranslationInput,
-                                m_CalibrationZCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationZCalculatedState,
+                                this->m_GetInputRotationTranslationInput,
+                                this->m_CalibrationZCalculatedState,
                                 &PivotCalibration::GetInputRotationTranslation );
 
-  m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
-                                m_PrincipalAxisInput,
-                                m_CalibrationZCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationZCalculatedState,
+                                this->m_PrincipalAxisInput,
+                                this->m_CalibrationZCalculatedState,
                                 &PivotCalibration::SetToolPrincipalAxis );
 
-  m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
-                                m_PlaneNormalInput,
-                                m_CalibrationZCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationZCalculatedState,
+                                this->m_PlaneNormalInput,
+                                this->m_CalibrationZCalculatedState,
                                 &PivotCalibration::SetToolPlaneNormal );
 
-  m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
-                                m_TranslationInput,
-                                m_CalibrationZCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationZCalculatedState,
+                                this->m_TranslationInput,
+                                this->m_CalibrationZCalculatedState,
                                 &PivotCalibration::SetTranslation );
 
-  m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
-                                m_QuaternionInput,
-                                m_CalibrationZCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationZCalculatedState,
+                                this->m_QuaternionInput,
+                                this->m_CalibrationZCalculatedState,
                                 &PivotCalibration::SetQuaternion );
 
-  m_StateMachine.AddTransition( m_CalibrationZCalculatedState,
-                                m_RotationMatrixInput,
-                                m_CalibrationZCalculatedState,
+  this->m_StateMachine.AddTransition( this->m_CalibrationZCalculatedState,
+                                this->m_RotationMatrixInput,
+                                this->m_CalibrationZCalculatedState,
                                 &PivotCalibration::SetRotationMatrix );
 
   // Select the initial state of the state machine
-  m_StateMachine.SelectInitialState( m_IdleState );
+  this->m_StateMachine.SelectInitialState( this->m_IdleState );
 
   // Finish the programming and get ready to run
-  m_StateMachine.SetReadyToRun();
+  this->m_StateMachine.SetReadyToRun();
+
+  // Allocte the container pointer for input samples
+  this->m_QuaternionContainer = InputVersorContainerType::New();
+  this->m_TranslationContainer = InputVectorContainerType::New();
 
   // Reset the initial state and variables
   this->Reset();
+
 }
 
 /** Destructor */
@@ -308,9 +313,9 @@ void PivotCalibration::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   // Dump the calibration class information
-  os << indent << "PivotCalibration: " << std::endl;
+  os << indent << "Pivot Calibration: " << std::endl;
 
-  os << indent << "NumberOfSamples: " << this->GetNumberOfSamples() << std::endl;
+  os << indent << "Number Of Samples: " << this->GetNumberOfSamples() << std::endl;
 
   os << indent << "Calibration Transform: " << this->m_CalibrationTransform << std::endl;
   
@@ -325,27 +330,21 @@ int PivotCalibration::GetNumberOfSamples() const
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetNumberOfSamples called...\n" );
 
-  return this->m_Quaternion[0].size();
+  return this->m_QuaternionContainer->Size();
+
 }
 
 /** Method to reset the calibration */
 void PivotCalibration::Reset()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::Reset called...\n" );
-  unsigned int i;
+
   VersorType quaternion;
   VectorType translation;
 
   // Clear the input container for quaternion and translation
-  for ( i = 0; i < 4; i++)
-    {
-    this->m_Quaternion[i].clear();
-    }
-
-  for ( i = 0; i < 3; i++)
-    {
-    this->m_Translation[i].clear();
-    }
+  this->m_QuaternionContainer->Initialize();
+  this->m_TranslationContainer->Initialize();
 
   // Reset the calibration transform
   quaternion.SetIdentity();
@@ -383,7 +382,7 @@ void PivotCalibration::AddRotationTranslation()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::AddRotationTranslation called...\n" );
   
-  this->m_NumberOfFrameToBeReceived = this->InternalAddRotationTranslation( m_QuaternionToBeSent, m_TranslationToBeSent);
+  this->m_NumberOfSamplesToBeReceived = this->InternalAddRotationTranslation( this->m_QuaternionToBeSent, this->m_TranslationToBeSent);
 }
 
 /** Internal method to add the sample information */
@@ -391,19 +390,11 @@ int PivotCalibration::InternalAddRotationTranslation( VersorType quaternion, Vec
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalAddRotationTranslation called...\n" );
 
-  unsigned int i;
-
   // Push the quaternion sample into the input container
-  this->m_Quaternion[0].push_back( quaternion.GetW() );
-  this->m_Quaternion[1].push_back( quaternion.GetX() );
-  this->m_Quaternion[2].push_back( quaternion.GetY() );
-  this->m_Quaternion[3].push_back( quaternion.GetZ() );
+  this->m_QuaternionContainer->push_back( quaternion );
 
   // Push the translation sample into the input container
-  for ( i = 0; i < 3; i++)
-    {
-    this->m_Translation[i].push_back( translation[i] );
-    }
+  this->m_TranslationContainer->push_back( translation );
 
   // Unvalid the calibration
   this->m_ValidPivotCalibration = false;
@@ -452,7 +443,8 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
   // Fill the matrix of M
   for (k = 0; k < num; k++)
     {
-    quat.Set( this->m_Quaternion[1][k], this->m_Quaternion[2][k], this->m_Quaternion[3][k], this->m_Quaternion[0][k]);
+    quat = this->m_QuaternionContainer->GetElement(k);
+
     rotMatrix = quat.GetMatrix();
 
     for ( j = 0; j < 3; j++)
@@ -470,7 +462,7 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
 
     for ( j = 0; j < 3; j++)
       {
-      b[3 * k + j] = -this->m_Translation[j][k];
+        b[3 * k + j] = -this->m_TranslationContainer->GetElement(k)[j];
       }
     }
 
@@ -601,7 +593,7 @@ void PivotCalibration::SimulatePivotPosition()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::SimulatePivotPosition called...\n" );
   
-  this->m_SimulatedPivotPositionToBeReceived = this->InternalSimulatePivotPosition( m_QuaternionToBeSent, m_TranslationToBeSent);
+  this->m_SimulatedPivotPositionToBeReceived = this->InternalSimulatePivotPosition( this->m_QuaternionToBeSent, this->m_TranslationToBeSent);
 }
 
 /** Internal function to calculate the simulated pivot position */
@@ -658,25 +650,20 @@ bool PivotCalibration::InternalGetInputRotationTranslation( int index, VersorTyp
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalGetInputRotationTranslation called...\n" );
 
-  unsigned int i;
-
   if (index >= 0 && index < this->GetNumberOfSamples())
-  {
-    quat.Set( this->m_Quaternion[1][index], this->m_Quaternion[2][index], this->m_Quaternion[3][index], this->m_Quaternion[0][index]);
-    for ( i = 0; i < 3; i++)
     {
-      trans[i] = this->m_Translation[i][index];
-    }
+    quat = this->m_QuaternionContainer->GetElement( index);
+    trans = this->m_TranslationContainer->GetElement( index);
 
     return true;
-  }
+    }
   else
-  {
+    {
     quat.SetIdentity();
     trans.Fill( 0.0);
 
     return false;
-  }
+    }
 }
 
 /** Set the principal axis of the tool */
@@ -795,7 +782,7 @@ int PivotCalibration::RequestAddRotationTranslation( VersorType quat, VectorType
   this->m_StateMachine.PushInput( this->m_RotationTranslationInput );
   this->m_StateMachine.ProcessInputs();
 
-  return this->m_NumberOfFrameToBeReceived;
+  return this->m_NumberOfSamplesToBeReceived;
 }
 
 /** Method to invoke the calculation */

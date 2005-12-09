@@ -18,14 +18,13 @@
 #ifndef _igstkPivotCalibration_h
 #define _igstkPivotCalibration_h
 
-#include <vector>
-
 #include "vnl/algo/vnl_matrix_inverse.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector.h"
 #include "vnl/vnl_double_3.h"
 
 #include "itkObject.h"
+#include "itkVectorContainer.h"
 
 #include "igstkStateMachine.h"
 #include "igstkEvents.h"
@@ -89,7 +88,17 @@ public:
 
   typedef vnl_vector< double >            VnlVectorType;
 
-  typedef std::vector< double >           InputContainerType;
+  typedef itk::VectorContainer< int, VersorType >
+                                          InputVersorContainerType;
+
+  typedef InputVersorContainerType::Pointer
+                                          InputVersorContainerPointerType;
+
+  typedef itk::VectorContainer< int, VectorType >
+                                          InputVectorContainerType;
+
+  typedef InputVectorContainerType::Pointer
+                                          InputVectorContainerPointerType;
 
   typedef double                          ErrorType;
 
@@ -224,72 +233,71 @@ protected:
 private:
 
   /** List of States */
-  StateType                                m_IdleState;
-  StateType                                m_RotationTranslationAddState;
-  StateType                                m_CalibrationCalculatedState; 
-  StateType                                m_CalibrationZCalculatedState; 
-
+  StateType                         m_IdleState;
+  StateType                         m_RotationTranslationAddState;
+  StateType                         m_CalibrationCalculatedState; 
+  StateType                         m_CalibrationZCalculatedState; 
 
   /** List of Inputs */
-  InputType                                m_ResetCalibrationInput;
-  InputType                                m_RotationTranslationInput;
-  InputType                                m_CalculateCalibrationInput;
-  InputType                                m_CalculateCalibrationZInput;
-  InputType                                m_SimulatePivotPositionInput;
-  InputType                                m_GetInputRotationTranslationInput;
-  InputType                                m_PrincipalAxisInput;
-  InputType                                m_PlaneNormalInput;
-  InputType                                m_TranslationInput;
-  InputType                                m_QuaternionInput;
-  InputType                                m_RotationMatrixInput;
+  InputType                         m_ResetCalibrationInput;
+  InputType                         m_RotationTranslationInput;
+  InputType                         m_CalculateCalibrationInput;
+  InputType                         m_CalculateCalibrationZInput;
+  InputType                         m_SimulatePivotPositionInput;
+  InputType                         m_GetInputRotationTranslationInput;
+  InputType                         m_PrincipalAxisInput;
+  InputType                         m_PlaneNormalInput;
+  InputType                         m_TranslationInput;
+  InputType                         m_QuaternionInput;
+  InputType                         m_RotationMatrixInput;
 
   /** Temporary input variables for state machine */
-  VersorType            m_QuaternionToBeSent;
+  VersorType                        m_QuaternionToBeSent;
 
-  VectorType            m_TranslationToBeSent;
+  VectorType                        m_TranslationToBeSent;
 
-  int                   m_InputIndexToBeSent;
+  int                               m_InputIndexToBeSent;
 
-  VectorType            m_VectorToBeSent;
+  VectorType                        m_VectorToBeSent;
 
-  MatrixType            m_MatrixToBeSent;
+  MatrixType                        m_MatrixToBeSent;
 
-  VectorType            m_SimulatedPivotPositionToBeReceived;
+  VectorType                        m_SimulatedPivotPositionToBeReceived;
 
-  VersorType            m_QuaternionToBeReceived;
+  VersorType                        m_QuaternionToBeReceived;
 
-  VectorType            m_TranslationToBeReceived;
+  VectorType                        m_TranslationToBeReceived;
 
-  int                   m_NumberOfFrameToBeReceived;
+  int                               m_NumberOfSamplesToBeReceived;
 
   /** Container to save the samples */
-  InputContainerType    m_Quaternion[4];
+  InputVersorContainerPointerType   m_QuaternionContainer;
   
-  InputContainerType    m_Translation[3];
+  InputVectorContainerPointerType   m_TranslationContainer;
 
   /** Variable to indicate the valid calibration */
-  bool                  m_ValidPivotCalibration;
+  bool                              m_ValidPivotCalibration;
 
   /** Variable to indicate the valid input sample */
-  bool                  m_ValidInputSample;
+  bool                              m_ValidInputSample;
 
   /** Variable to save the calibration transform */
-  TransformType         m_CalibrationTransform;
+  TransformType                     m_CalibrationTransform;
 
   /** Variable to save the pivot position */
-  VectorType            m_PivotPosition;
+  VectorType                        m_PivotPosition;
 
   /** Variable to indicate the RMS error */
-  ErrorType             m_RMS;
+  ErrorType                         m_RMS;
 
   /** Variable to save the principal axis */
-  VectorType            m_PrincipalAxis;
+  VectorType                        m_PrincipalAxis;
 
   /** Variable to save the plane normal */
-  VectorType            m_PlaneNormal;
+  VectorType                        m_PlaneNormal;
 
   /** Variable to save the adjusted plane normal */
-  VectorType            m_AdjustedPlaneNormal;
+  VectorType                        m_AdjustedPlaneNormal;
 
 };
 
