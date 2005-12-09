@@ -434,7 +434,7 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
   c = 3 + axis;
 
   // Define the Vnl matrix and intermediate variables
-  VnlMatrixType matrix(r, c), m(c, c), minv;
+  VnlMatrixType matrix(r, c), m(c, c), m_inv;
   VnlVectorType x(c), b(r), br(r);
   VersorType quat;
   VectorType translation;
@@ -470,10 +470,10 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
   m = matrix.transpose() * matrix;
 
   // Calculate (M' * M)^-1
-  minv = vnl_matrix_inverse< double >( m );
+  m_inv = vnl_matrix_inverse< double >( m );
   
   // Calculate (M' * M)^-1 * M' * N
-  x = minv * matrix.transpose() * b;
+  x = m_inv * matrix.transpose() * b;
 
   // Extract the offset components
   translation.Fill( 0.0);
