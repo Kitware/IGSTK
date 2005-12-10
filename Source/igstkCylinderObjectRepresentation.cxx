@@ -33,18 +33,18 @@ CylinderObjectRepresentation::CylinderObjectRepresentation():m_StateMachine(this
   this->RequestSetSpatialObject( m_CylinderSpatialObject );
   m_CylinderSource = vtkCylinderSource::New();
   
-  m_StateMachine.AddInput( m_ValidCylinderObjectInput,  "ValidCylinderObjectInput" );
-  m_StateMachine.AddInput( m_NullCylinderObjectInput,   "NullCylinderObjectInput"  );
+  igstkAddInputMacro( ValidCylinderObjectInput );
+  igstkAddInputMacro( NullCylinderObjectInput  );
 
-  m_StateMachine.AddState( m_NullCylinderObjectState,  "NullCylinderObjectState"     );
-  m_StateMachine.AddState( m_ValidCylinderObjectState, "ValidCylinderObjectState"     );
+  igstkAddStateMacro( NullCylinderObjectState   );
+  igstkAddStateMacro( ValidCylinderObjectState  );
 
   const ActionType NoAction = 0;
 
-  m_StateMachine.AddTransition( m_NullCylinderObjectState, m_NullCylinderObjectInput, m_NullCylinderObjectState,  NoAction );
-  m_StateMachine.AddTransition( m_NullCylinderObjectState, m_ValidCylinderObjectInput, m_ValidCylinderObjectState,  & CylinderObjectRepresentation::SetCylinderObject );
-  m_StateMachine.AddTransition( m_ValidCylinderObjectState, m_NullCylinderObjectInput, m_NullCylinderObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidCylinderObjectState, m_ValidCylinderObjectInput, m_ValidCylinderObjectState,  NoAction ); 
+  igstkAddTransitionMacro( NullCylinderObjectState, NullCylinderObjectInput, NullCylinderObjectState,  NoAction );
+  igstkAddTransitionMacro( NullCylinderObjectState, ValidCylinderObjectInput, ValidCylinderObjectState,  SetCylinderObject );
+  igstkAddTransitionMacro( ValidCylinderObjectState, NullCylinderObjectInput, NullCylinderObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidCylinderObjectState, ValidCylinderObjectInput, ValidCylinderObjectState,  NoAction ); 
 
   m_StateMachine.SelectInitialState( m_NullCylinderObjectState );
 
@@ -86,6 +86,11 @@ void CylinderObjectRepresentation::RequestSetCylinderObject( const CylinderSpati
 }
 
 
+
+/** Set the Cylindrical Spatial Object */
+void CylinderObjectRepresentation::NoAction()
+{
+}
 
 
 /** Set the Cylindrical Spatial Object */

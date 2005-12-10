@@ -87,6 +87,9 @@ private:
    * called by the State Machine. */
   void SetCylinderObject(); 
 
+  /** Method for performing a null operation during a State Machine transition */
+  void NoAction();
+
 private:
 
   /** Inputs to the State Machine */
