@@ -29,189 +29,153 @@ namespace igstk
 Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
 {
   // Set the state descriptors
-  m_StateMachine.AddState( m_IdleState,
-                           "IdleState" );
-
-  m_StateMachine.AddState( m_AttemptingToEstablishCommunicationState,
-                           "AttemptingToEstablishCommunicationState" );
-
-  m_StateMachine.AddState( m_AttemptingToCloseCommunicationState,
-                           "AttemptingToCloseCommunicationState");
-
-  m_StateMachine.AddState( m_CommunicationEstablishedState,
-                           "CommunicationEstablishedState" );
-
-  m_StateMachine.AddState( m_AttemptingToActivateToolsState,
-                           "AttemptingToActivateToolsState" );
-
-  m_StateMachine.AddState( m_ToolsActiveState,
-                           "ToolsActiveState" );
-
-  m_StateMachine.AddState( m_AttemptingToTrackState,
-                           "AttemptingToTrackState" );
-
-  m_StateMachine.AddState( m_AttemptingToStopTrackingState,
-                           "AttemptingToStopTrackingState");
-
-  m_StateMachine.AddState( m_TrackingState,
-                           "TrackingState" );
-
-  m_StateMachine.AddState( m_AttemptingToUpdateState,
-                           "AttemptingToUpdateState" );
-
+  igstkAddStateMacro( IdleState ); 
+  igstkAddStateMacro( AttemptingToEstablishCommunicationState ); 
+  igstkAddStateMacro( AttemptingToCloseCommunicationState); 
+  igstkAddStateMacro( CommunicationEstablishedState );
+  igstkAddStateMacro( AttemptingToActivateToolsState ); 
+  igstkAddStateMacro( ToolsActiveState ); 
+  igstkAddStateMacro( AttemptingToTrackState ); 
+  igstkAddStateMacro( AttemptingToStopTrackingState); 
+  igstkAddStateMacro( TrackingState ); 
+  igstkAddStateMacro( AttemptingToUpdateState ); 
+  
   // Set the input descriptors
-  m_StateMachine.AddInput( m_EstablishCommunicationInput,
-                           "EstablishCommunicationInput");
-
-  m_StateMachine.AddInput( m_ActivateToolsInput,
-                           "ActivateToolsInput");
-
-  m_StateMachine.AddInput( m_StartTrackingInput,
-                           "StartTrackingInput");
-
-  m_StateMachine.AddInput( m_UpdateStatusInput,
-                           "UpdateStatusInput");
-
-  m_StateMachine.AddInput( m_StopTrackingInput,
-                           "StopTrackingInput");
-
-  m_StateMachine.AddInput( m_ResetInput,
-                           "ResetInput");
-
-  m_StateMachine.AddInput( m_CloseCommunicationInput,
-                           "CloseCommunicationInput");
-
-  m_StateMachine.AddInput( m_SuccessInput,
-                           "SuccessInput");
-
-  m_StateMachine.AddInput( m_FailureInput,
-                           "FailureInput");
+  igstkAddInputMacro( EstablishCommunicationInput);
+  igstkAddInputMacro( ActivateToolsInput); 
+  igstkAddInputMacro( StartTrackingInput); 
+  igstkAddInputMacro( UpdateStatusInput); 
+  igstkAddInputMacro( StopTrackingInput); 
+  igstkAddInputMacro( ResetInput); 
+  igstkAddInputMacro( CloseCommunicationInput); 
+  igstkAddInputMacro( SuccessInput); 
+  igstkAddInputMacro( FailureInput); 
 
   // Programming the state machine transitions:
 
   // Transitions from the IdleState
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_EstablishCommunicationInput,
-                                m_AttemptingToEstablishCommunicationState,
-                                &Tracker::AttemptToOpen );
+  igstkAddTransitionMacro( IdleState,
+                           EstablishCommunicationInput,
+                           AttemptingToEstablishCommunicationState,
+                           AttemptToOpen );
 
   // Transitions from the AttemptingToEstablishCommunicationState
-  m_StateMachine.AddTransition( m_AttemptingToEstablishCommunicationState,
-                                m_SuccessInput,
-                                m_CommunicationEstablishedState,
-                                &Tracker::CommunicationEstablishmentSuccessProcessing );
+  igstkAddTransitionMacro( AttemptingToEstablishCommunicationState,
+                           SuccessInput,
+                           CommunicationEstablishedState,
+                           CommunicationEstablishmentSuccessProcessing );
 
-  m_StateMachine.AddTransition( m_AttemptingToEstablishCommunicationState,
-                                m_FailureInput,
-                                m_IdleState,
-                                &Tracker::CommunicationEstablishmentFailureProcessing);
+  igstkAddTransitionMacro( AttemptingToEstablishCommunicationState,
+                           FailureInput,
+                           IdleState,
+                           CommunicationEstablishmentFailureProcessing);
 
   // Transitions from CommunicationEstablishedState
-  m_StateMachine.AddTransition( m_CommunicationEstablishedState,
-                                m_ActivateToolsInput,
-                                m_AttemptingToActivateToolsState,
-                                &Tracker::AttemptToActivateTools );
+  igstkAddTransitionMacro( CommunicationEstablishedState,
+                           ActivateToolsInput,
+                           AttemptingToActivateToolsState,
+                           AttemptToActivateTools );
 
-  m_StateMachine.AddTransition( m_CommunicationEstablishedState,
-                                m_CloseCommunicationInput,
-                                m_AttemptingToCloseCommunicationState,
-                                &Tracker::CloseFromCommunicatingStateProcessing );
+  igstkAddTransitionMacro( CommunicationEstablishedState,
+                           CloseCommunicationInput,
+                           AttemptingToCloseCommunicationState,
+                           CloseFromCommunicatingStateProcessing );
 
-  m_StateMachine.AddTransition( m_CommunicationEstablishedState,
-                                m_ResetInput,
-                                m_CommunicationEstablishedState,
-                                &Tracker::ResetFromCommunicatingStateProcessing );
+  igstkAddTransitionMacro( CommunicationEstablishedState,
+                           ResetInput,
+                           CommunicationEstablishedState,
+                           ResetFromCommunicatingStateProcessing );
 
   // Transitions from AttemptingToActivateToolsState
-  m_StateMachine.AddTransition( m_AttemptingToActivateToolsState,
-                                m_SuccessInput,
-                                m_ToolsActiveState,
-                                &Tracker::ToolsActivationSuccessProcessing );
+  igstkAddTransitionMacro( AttemptingToActivateToolsState,
+                           SuccessInput,
+                           ToolsActiveState,
+                           ToolsActivationSuccessProcessing );
 
-  m_StateMachine.AddTransition( m_AttemptingToActivateToolsState,
-                                m_FailureInput,
-                                m_CommunicationEstablishedState,
-                                &Tracker::ToolsActivationFailureProcessing );
+  igstkAddTransitionMacro( AttemptingToActivateToolsState,
+                           FailureInput,
+                           CommunicationEstablishedState,
+                           ToolsActivationFailureProcessing );
 
   // Transitions from ToolsActiveState
-  m_StateMachine.AddTransition( m_ToolsActiveState,
-                                m_StartTrackingInput,
-                                m_AttemptingToTrackState,
-                                &Tracker::AttemptToStartTracking );
+  igstkAddTransitionMacro( ToolsActiveState,
+                           StartTrackingInput,
+                           AttemptingToTrackState,
+                           AttemptToStartTracking );
 
-  m_StateMachine.AddTransition( m_ToolsActiveState,
-                                m_CloseCommunicationInput,
-                                m_AttemptingToCloseCommunicationState,
-                                &Tracker::CloseFromToolsActiveStateProcessing );
+  igstkAddTransitionMacro( ToolsActiveState,
+                           CloseCommunicationInput,
+                           AttemptingToCloseCommunicationState,
+                           CloseFromToolsActiveStateProcessing );
 
-  m_StateMachine.AddTransition( m_ToolsActiveState,
-                                m_ResetInput,
-                                m_CommunicationEstablishedState,
-                                &Tracker::ResetFromToolsActiveStateProcessing );
+  igstkAddTransitionMacro( ToolsActiveState,
+                           ResetInput,
+                           CommunicationEstablishedState,
+                           ResetFromToolsActiveStateProcessing );
 
   // Transitions from AttemptingToTrackState
-  m_StateMachine.AddTransition( m_AttemptingToTrackState,
-                                m_SuccessInput,
-                                m_TrackingState,
-                                &Tracker::StartTrackingSuccessProcessing );
+  igstkAddTransitionMacro( AttemptingToTrackState,
+                           SuccessInput,
+                           TrackingState,
+                           StartTrackingSuccessProcessing );
 
-  m_StateMachine.AddTransition( m_AttemptingToTrackState,
-                                m_FailureInput,
-                                m_ToolsActiveState,
-                                &Tracker::StartTrackingFailureProcessing );
+  igstkAddTransitionMacro( AttemptingToTrackState,
+                           FailureInput,
+                           ToolsActiveState,
+                           StartTrackingFailureProcessing );
 
   // Transitions from TrackingState
-  m_StateMachine.AddTransition( m_TrackingState,
-                                m_UpdateStatusInput,
-                                m_AttemptingToUpdateState,
-                                &Tracker::AttemptToUpdateStatus );
+  igstkAddTransitionMacro( TrackingState,
+                           UpdateStatusInput,
+                           AttemptingToUpdateState,
+                           AttemptToUpdateStatus );
 
-  m_StateMachine.AddTransition( m_TrackingState,
-                                m_StopTrackingInput,
-                                m_AttemptingToStopTrackingState,
-                                &Tracker::AttemptToStopTracking );
+  igstkAddTransitionMacro( TrackingState,
+                           StopTrackingInput,
+                           AttemptingToStopTrackingState,
+                           AttemptToStopTracking );
 
-  m_StateMachine.AddTransition( m_TrackingState,
-                                m_ResetInput,
-                                m_CommunicationEstablishedState,
-                                &Tracker::ResetFromTrackingStateProcessing );
+  igstkAddTransitionMacro( TrackingState,
+                           ResetInput,
+                           CommunicationEstablishedState,
+                           ResetFromTrackingStateProcessing );
 
-  m_StateMachine.AddTransition( m_TrackingState,
-                                m_CloseCommunicationInput,
-                                m_AttemptingToCloseCommunicationState,
-                                &Tracker::CloseFromTrackingStateProcessing );
+  igstkAddTransitionMacro( TrackingState,
+                           CloseCommunicationInput,
+                           AttemptingToCloseCommunicationState,
+                           CloseFromTrackingStateProcessing );
 
   // Transitions from AttemptingToUpdateState
-  m_StateMachine.AddTransition( m_AttemptingToUpdateState,
-                                m_SuccessInput,
-                                m_TrackingState,
-                                &Tracker::UpdateStatusSuccessProcessing );
+  igstkAddTransitionMacro( AttemptingToUpdateState,
+                           SuccessInput,
+                           TrackingState,
+                           UpdateStatusSuccessProcessing );
 
-  m_StateMachine.AddTransition( m_AttemptingToUpdateState,
-                                m_FailureInput,
-                                m_TrackingState,
-                                &Tracker::UpdateStatusFailureProcessing );
+  igstkAddTransitionMacro( AttemptingToUpdateState,
+                           FailureInput,
+                           TrackingState,
+                           UpdateStatusFailureProcessing );
 
   // Transitions from AttemptingToStopTrackingState
-  m_StateMachine.AddTransition( m_AttemptingToStopTrackingState,
-                                m_SuccessInput,
-                                m_ToolsActiveState,
-                                &Tracker::StopTrackingSuccessProcessing );
+  igstkAddTransitionMacro( AttemptingToStopTrackingState,
+                           SuccessInput,
+                           ToolsActiveState,
+                           StopTrackingSuccessProcessing );
 
-  m_StateMachine.AddTransition( m_AttemptingToStopTrackingState,
-                                m_FailureInput,
-                                m_TrackingState,
-                                &Tracker::StopTrackingFailureProcessing );
+  igstkAddTransitionMacro( AttemptingToStopTrackingState,
+                           FailureInput,
+                           TrackingState,
+                           StopTrackingFailureProcessing );
 
-  m_StateMachine.AddTransition( m_AttemptingToCloseCommunicationState,
-                                m_SuccessInput,
-                                m_IdleState,
-                                &Tracker::CloseCommunicationSuccessProcessing );
+  igstkAddTransitionMacro( AttemptingToCloseCommunicationState,
+                           SuccessInput,
+                           IdleState,
+                           CloseCommunicationSuccessProcessing );
 
-  m_StateMachine.AddTransition( m_AttemptingToCloseCommunicationState,
-                                m_FailureInput,
-                                m_CommunicationEstablishedState,
-                                &Tracker::CloseCommunicationFailureProcessing );
+  igstkAddTransitionMacro( AttemptingToCloseCommunicationState,
+                           FailureInput,
+                           CommunicationEstablishedState,
+                           CloseCommunicationFailureProcessing );
 
   // Select the initial state of the state machine
   m_StateMachine.SelectInitialState( m_IdleState );
