@@ -21,7 +21,7 @@
 namespace igstk
 {
 
-Communication::Communication( void )
+Communication::Communication( void ):m_StateMachine(this)
 {
   m_TimeoutPeriod = 5000;
   m_ReadTerminationCharacter = 255;

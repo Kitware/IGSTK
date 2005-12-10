@@ -47,11 +47,10 @@ class MeshObject
 
 public:
 
-  /** Typedefs */
-  typedef MeshObject                                Self;
-  typedef SpatialObject                             Superclass;
-  typedef itk::SmartPointer<Self>                   Pointer;
-  typedef itk::SmartPointer<const Self>             ConstPointer;
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( MeshObject, SpatialObject );
+
+public:
 
   /** Unlike DefaultStaticMeshTraits, the DefaultDynamicMeshTraits structure
    * is designed to create Mesh instances that will have many insert and delete
@@ -82,20 +81,17 @@ public:
   typedef MeshType::CellsContainer                  CellsContainer;
   typedef MeshType::CellsContainerPointer           CellsContainerPointer;
 
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( MeshObject, SpatialObject );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( MeshObject );
-  
   /** Add a point to the mesh */
   bool AddPoint(unsigned int id,float x, float y,float z);
 
   /** Add a tetrahedron cell to the mesh */
-  bool AddTetrahedronCell(unsigned int id,unsigned int vertex1,unsigned int vertex2,unsigned int vertex3,unsigned int vertex4);
+  bool AddTetrahedronCell(unsigned int id,
+                          unsigned int vertex1,unsigned int vertex2,
+                          unsigned int vertex3,unsigned int vertex4);
 
   /** Add a triangle cell to the mesh */
-  bool AddTriangleCell(unsigned int id,unsigned int vertex1,unsigned int vertex2,unsigned int vertex3);
+  bool AddTriangleCell(unsigned int id,
+                       unsigned int vertex1,unsigned int vertex2,unsigned int vertex3);
 
   /** Return the points */
   const PointsContainerPointer GetPoints() const;

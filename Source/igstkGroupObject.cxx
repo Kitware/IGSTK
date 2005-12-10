@@ -21,7 +21,7 @@ namespace igstk
 { 
 
 /** Constructor */
-GroupObject::GroupObject()
+GroupObject::GroupObject():m_StateMachine(this)
 {
   // Create the Group Spatial Object
   m_GroupSpatialObject = GroupSpatialObjectType::New();

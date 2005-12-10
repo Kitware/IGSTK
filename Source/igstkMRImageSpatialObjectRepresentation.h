@@ -35,18 +35,9 @@ class MRImageSpatialObjectRepresentation :
 
 public:
 
-  /** Typedefs */
-  typedef MRImageSpatialObjectRepresentation                               Self;
-  typedef ImageSpatialObjectRepresentation< MRImageSpatialObject >         Superclass;
-  typedef itk::SmartPointer< Self >                                        Pointer;
-  typedef itk::SmartPointer< const Self >                                  ConstPointer;
-
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( MRImageSpatialObjectRepresentation, ImageSpatialObjectRepresentation );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( MRImageSpatialObjectRepresentation, \
+                        ImageSpatialObjectRepresentation< MRImageSpatialObject > );
 
 protected:
 

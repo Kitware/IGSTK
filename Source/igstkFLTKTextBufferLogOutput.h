@@ -20,12 +20,16 @@
 
 #include <iostream>
 #include <string>
-#include <itkObject.h>
-#include <itkObjectFactory.h>
-#include <itkSimpleFastMutexLock.h>
-#include <itkLogOutput.h>
+
+#include "itkObject.h"
+#include "itkObjectFactory.h"
+#include "itkSimpleFastMutexLock.h"
+#include "itkLogOutput.h"
+
 #include <FL/Fl_Text_Buffer.H>
-#include <igstkMacros.h>
+
+#include "igstkMacros.h"
+#include "igstkStateMachine.h"
 
 
 namespace igstk
@@ -38,26 +42,19 @@ namespace igstk
  * \ingroup Logging
  */
 
-class FLTKTextBufferLogOutput : public itk::LogOutput
+class FLTKTextBufferLogOutput : public ::itk::LogOutput
 {
 
 public:
 
-  /** Typedefs */
-  typedef FLTKTextBufferLogOutput Self;
-  typedef itk::LogOutput  Superclass;
-  typedef itk::SmartPointer<Self>  Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( FLTKTextBufferLogOutput, ::itk::LogOutput );
+
+public:
 
   typedef Fl_Text_Buffer  StreamType;
   typedef StreamType*     StreamPointerType;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro(FLTKTextBufferLogOutput, itk::LogOutput);
   
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro(FLTKTextBufferLogOutput);
-
   /** Get an output stream pointer */
   igstkGetMacro(Stream, StreamPointerType);
 

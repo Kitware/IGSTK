@@ -20,7 +20,7 @@ namespace igstk
 { 
 
 /** Constructor */
-CTImageReader::CTImageReader()
+CTImageReader::CTImageReader():m_StateMachine(this)
 {
 
 } 

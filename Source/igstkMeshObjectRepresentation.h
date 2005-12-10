@@ -43,27 +43,19 @@ class MeshObjectRepresentation
 
 public:
 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( MeshObjectRepresentation, ObjectRepresentation );
+
+public:
+    
   /** Typedefs */
-  typedef MeshObjectRepresentation       Self;
-  typedef ObjectRepresentation           Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer; 
   typedef MeshObject                     MeshObjectType;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( MeshObjectRepresentation, ObjectRepresentation );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( MeshObjectRepresentation );
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
   void RequestSetMeshObject( const MeshObjectType * MeshObject );
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
 
 protected:
 

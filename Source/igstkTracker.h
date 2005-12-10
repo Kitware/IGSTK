@@ -58,19 +58,15 @@ namespace igstk
  *
  */
 
-class Tracker : public itk::Object
+class Tracker : public ::itk::Object
 {
 
 public:
   
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( Tracker, ::itk::Object );
 
-  /** typedefs from igstk::TrackerPort class */
-  typedef igstk::TrackerTool             TrackerToolType;
-  typedef TrackerToolType::Pointer       TrackerToolPointer;
-  typedef TrackerToolType::ConstPointer  TrackerToolConstPointer;
-
+public:
 
   /** typedefs from igstk::TrackerTool class */
   typedef Transform                      TransformType;
@@ -82,21 +78,15 @@ public:
   /** typedefs for ToolCalibrationTransform */
   typedef Transform                      ToolCalibrationTransformType;
 
-  /** Some required typedefs for itk::Object. */
-  typedef Tracker                        Self;
-  typedef itk::Object                    Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
+  /** typedefs from igstk::TrackerTool class */
+  typedef igstk::TrackerTool             TrackerToolType;
+  typedef TrackerToolType::Pointer       TrackerToolPointer;
+  typedef TrackerToolType::ConstPointer  TrackerToolConstPointer;
 
+  /** typedefs for the TrackerPort class */
   typedef igstk::TrackerPort                TrackerPortType;
   typedef TrackerPortType::Pointer          TrackerPortPointer;
   typedef std::vector< TrackerPortPointer > TrackerPortVectorType;
-
-    /**  Run-time type information (and related methods). */
-  igstkTypeMacro(Tracker, Object);
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro(Self);  
 
   /** The "Open" method attempts to open communication with the tracking device. */
   void Open( void );
@@ -171,11 +161,6 @@ public:
   ToolCalibrationTransformType GetToolCalibrationTransform(
                              unsigned int portNumber,
                              unsigned int toolNumber) const;
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
-  /** Declarations needed for the Logger */
-  igstkLoggerMacro();
 
 protected:
 

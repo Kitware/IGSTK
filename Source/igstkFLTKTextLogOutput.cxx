@@ -25,7 +25,7 @@ namespace igstk
 {
 
 /** Constructor */
-FLTKTextLogOutput::FLTKTextLogOutput()
+FLTKTextLogOutput::FLTKTextLogOutput():m_StateMachine(this)
 {
   this->m_Stream = 0;
 }

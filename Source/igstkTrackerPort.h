@@ -36,26 +36,15 @@ class TrackerPort : public ::itk::Object
 {
 
 public:
-  /** Some required typedefs for itk::Object. */
 
-  typedef TrackerPort                    Self;
-  typedef itk::Object                    Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro(TrackerPort, ::itk::Object);
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro(Self);  
-
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( TrackerPort, ::itk::Object );
 
   /** Internal types */
   typedef igstk::TrackerTool                TrackerToolType;
   typedef TrackerToolType::Pointer          TrackerToolPointer;
   typedef TrackerToolType::ConstPointer     TrackerToolConstPointer;
   typedef std::vector< TrackerToolPointer > TrackerToolVectorType;
-
 
   /** The "AddTool" method adds a tool to the port. */
   void AddTool( TrackerToolType * tool );

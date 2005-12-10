@@ -41,20 +41,13 @@ class GroupObject
 
 public:
 
-  /** Typedefs */
-  typedef GroupObject                               Self;
-  typedef SpatialObject                             Superclass;
-  typedef itk::SmartPointer<Self>                   Pointer;
-  typedef itk::SmartPointer<const Self>             ConstPointer;
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( GroupObject, SpatialObject );
+
+public:
 
   /** Type of the internal GroupSpatialObject. */
   typedef itk::GroupSpatialObject<3>          GroupSpatialObjectType;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( GroupObject, SpatialObject );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( GroupObject );
 
   /** Return the number of objects in the group */
   unsigned long GetNumberOfObjects() const;

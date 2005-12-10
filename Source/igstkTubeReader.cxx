@@ -21,7 +21,7 @@ namespace igstk
 { 
 
 /** Constructor */
-TubeReader::TubeReader()
+TubeReader::TubeReader():m_StateMachine(this)
 { 
   m_Group = GroupObjectType::New();
 } 

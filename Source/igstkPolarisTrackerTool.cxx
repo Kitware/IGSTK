@@ -26,7 +26,7 @@ namespace igstk
 {
 
 /** Constructor (initializes Polaris-specific tool values) */
-PolarisTrackerTool::PolarisTrackerTool()
+PolarisTrackerTool::PolarisTrackerTool():m_StateMachine(this)
 {
 }
 

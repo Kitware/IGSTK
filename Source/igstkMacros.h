@@ -200,7 +200,7 @@ public:  \
     m_StateMachine.AddTransition( m_##state1, m_##input, m_##state2,  & Self::action );
 
 
-/** Convenience macro for the initial standard traits of an class */
+/** Convenience macro for the initial standard traits of a class */
 #define igstkStandardClassTraitsMacro( classname, superclassname ) \
   typedef classname Self;  \
   typedef superclassname Superclass; \
@@ -210,6 +210,19 @@ public:  \
   igstkNewMacro( Self );  \
   typedef ::itk::Logger                  LoggerType; \
   igstkStateMachineMacro(); \
+  igstkLoggerMacro(); 
+
+
+/** Convenience macro for the initial standard traits of a templated class */
+#define igstkStandardTemplatedClassTraitsMacro( classname, superclassname ) \
+  typedef classname Self;  \
+  typedef superclassname Superclass; \
+  typedef ::itk::SmartPointer< Self > Pointer; \
+  typedef ::itk::SmartPointer< const Self > ConstPointer; \
+  igstkTypeMacro( classname, superclassname);  \
+  igstkNewMacro( Self );  \
+  typedef ::itk::Logger                  LoggerType; \
+  igstkStateMachineTemplatedMacro(); \
   igstkLoggerMacro(); 
 
 

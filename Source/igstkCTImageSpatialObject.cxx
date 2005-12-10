@@ -22,7 +22,7 @@ namespace igstk
 
 /** Constructor */
 CTImageSpatialObject
-::CTImageSpatialObject()
+::CTImageSpatialObject():m_StateMachine((Self *)this)
 {
 
 } 

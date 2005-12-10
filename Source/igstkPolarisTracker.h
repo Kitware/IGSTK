@@ -40,17 +40,10 @@ class PolarisTracker : public Tracker
 {
 public:
 
-  /** Some required typedefs for itk::Object. */
-  typedef PolarisTracker                   Self;
-  typedef Tracker                          Superclass;
-  typedef ::itk::SmartPointer<Self>        Pointer;
-  typedef ::itk::SmartPointer<const Self>  ConstPointer;
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( PolarisTracker, Tracker );
 
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( PolarisTracker, Tracker );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );  
+public:
 
   /** typedefs for the tool */
   typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;

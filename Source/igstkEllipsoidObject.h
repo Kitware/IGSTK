@@ -40,19 +40,14 @@ class EllipsoidObject
 
 public:
 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( EllipsoidObject, SpatialObject );
+
+public:
+
   /** Typedefs */
-  typedef EllipsoidObject                Self;
-  typedef SpatialObject                  Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer; 
   typedef itk::EllipseSpatialObject<3>   EllipseSpatialObjectType;
   typedef EllipseSpatialObjectType::ArrayType         ArrayType;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( EllipsoidObject, SpatialObject );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( EllipsoidObject );
 
   /** Set the radius of the underlying ITK Spatial object */
   void SetRadius( double rx, double ry, double rz );

@@ -46,18 +46,11 @@ namespace igstk
 class TrackerTool : public ::itk::Object
 {
 public:
-  /** Some required typedefs for itk::Object. */
 
-  typedef TrackerTool                    Self;
-  typedef itk::Object                    Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( TrackerTool, ::itk::Object );
 
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro(TrackerTool, ::itk::Object);
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro(Self);  
+public:
 
   /** Tool types */
   typedef enum
@@ -111,9 +104,6 @@ public:
 
   /** Get whether the tool was updated during tracker UpdateStatus() */
   igstkSetMacro( Updated, bool );
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
 
 protected:
 

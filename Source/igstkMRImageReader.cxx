@@ -20,7 +20,7 @@ namespace igstk
 { 
 
 /** Constructor */
-MRImageReader::MRImageReader()
+MRImageReader::MRImageReader():m_StateMachine(this)
 {
 
 } 

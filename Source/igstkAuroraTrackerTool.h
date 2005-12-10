@@ -35,16 +35,8 @@ class AuroraTrackerTool : public TrackerTool
 {
 public:
 
-  typedef AuroraTrackerTool              Self;
-  typedef TrackerTool                    Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
-
-  /** Run-time type information (and related methods). */
-  igstkTypeMacro(AuroraTrackerTool, TrackerTool);
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro(Self);  
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( AuroraTrackerTool, TrackerTool );
 
 protected:
 

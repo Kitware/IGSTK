@@ -30,7 +30,8 @@ namespace igstk
 { 
 
 /** Constructor */
-MeshObjectRepresentation::MeshObjectRepresentation():m_StateMachine(this)
+MeshObjectRepresentation
+::MeshObjectRepresentation():m_StateMachine(this)
 {
   // We create the ellipse spatial object
   m_MeshObject = NULL;

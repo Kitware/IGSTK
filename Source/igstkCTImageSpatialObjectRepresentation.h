@@ -19,6 +19,7 @@
 
 #include "igstkImageSpatialObjectRepresentation.h"
 #include "igstkCTImageSpatialObject.h"
+#include "igstkStateMachine.h"
 
 namespace igstk
 {
@@ -35,18 +36,9 @@ class CTImageSpatialObjectRepresentation :
 
 public:
 
-  /** Typedefs */
-  typedef CTImageSpatialObjectRepresentation                               Self;
-  typedef ImageSpatialObjectRepresentation< CTImageSpatialObject >         Superclass;
-  typedef itk::SmartPointer< Self >                                        Pointer;
-  typedef itk::SmartPointer< const Self >                                  ConstPointer;
-
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( CTImageSpatialObjectRepresentation, ImageSpatialObjectRepresentation );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( CTImageSpatialObjectRepresentation, \
+                    ImageSpatialObjectRepresentation< CTImageSpatialObject > );
 
 protected:
 

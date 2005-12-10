@@ -20,7 +20,8 @@ namespace igstk
 { 
 
 /** Constructor */
-CTImageSpatialObjectRepresentation::CTImageSpatialObjectRepresentation()
+CTImageSpatialObjectRepresentation
+::CTImageSpatialObjectRepresentation():m_StateMachine(this)
 {
 
 } 

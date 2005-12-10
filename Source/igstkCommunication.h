@@ -21,6 +21,7 @@
 
 #include "itkObject.h"
 #include "igstkMacros.h"
+#include "igstkStateMachine.h"
 
 
 namespace igstk
@@ -34,34 +35,22 @@ namespace igstk
     base Communication class.
 */
 
-class Communication  : public itk::Object
+class Communication  : public ::itk::Object
 {
  
 public: 
 
-  typedef Communication Self; 
-  typedef itk::Object Superclass; 
-  typedef itk::SmartPointer< Self > Pointer; 
-  typedef itk::SmartPointer< const Self > ConstPointer; 
-  
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( Communication, ::itk::Object );
+
+public:
+
   typedef enum 
   { 
     FAILURE=0, 
     SUCCESS=1,
     TIMEOUT=2
   } ResultType;
-
-  /** Data type for the logger */
-  typedef itk::Logger   LoggerType;
-
-  /** Method for defining the name of the class */ 
-  igstkTypeMacro(Communication, Object); 
-
-  /** Method for creation through the object factory */ 
-  igstkNewMacro(Self); 
-
-  /** Define the Logger object for this class */
-  igstkLoggerMacro();
 
   /** The method OpenCommunication sets up communication as per the data
    *  provided. */

@@ -44,18 +44,13 @@ class MRImageSpatialObject :
 
 public:
 
-  /** Typedefs */
-  typedef MRImageSpatialObject                    Self;
-  typedef ImageSpatialObject< unsigned short, 3>  Superclass;
-  typedef itk::SmartPointer< Self >               Pointer;
-  typedef itk::SmartPointer< const Self >         ConstPointer;
+  /** Typedef for the superclass. This is needed because the 
+   *  igstkStandardClassTraitsMacro gets confused with the commas
+   *  in the template declaration. */
+  typedef ImageSpatialObject< unsigned short, 3 >  SuperclassType;
 
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( MRImageSpatialObject, ImageSpatialObject );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( MRImageSpatialObject, SuperclassType );
 
 protected:
 

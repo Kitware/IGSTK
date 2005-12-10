@@ -48,27 +48,19 @@ class EllipsoidObjectRepresentation
 
 public:
 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( EllipsoidObjectRepresentation, ObjectRepresentation );
+
+public:
+
   /** Typedefs */
-  typedef EllipsoidObjectRepresentation  Self;
-  typedef ObjectRepresentation           Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer; 
   typedef EllipsoidObject                EllipsoidObjectType;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( EllipsoidObjectRepresentation, ObjectRepresentation );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( EllipsoidObjectRepresentation );
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
   void RequestSetEllipsoidObject( const EllipsoidObjectType * ellipsoidObject );
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
 
 protected:
 

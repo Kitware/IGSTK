@@ -28,7 +28,7 @@ namespace igstk
 {
 
 /** Constructor: Initializes all internal variables. */
-AuroraTracker::AuroraTracker(void)
+AuroraTracker::AuroraTracker(void):m_StateMachine(this)
 {
   m_CommandInterpreter = CommandInterpreterType::New();
   m_NumberOfTools = 0;

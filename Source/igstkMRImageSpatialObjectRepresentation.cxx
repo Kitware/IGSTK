@@ -20,7 +20,8 @@ namespace igstk
 { 
 
 /** Constructor */
-MRImageSpatialObjectRepresentation::MRImageSpatialObjectRepresentation()
+MRImageSpatialObjectRepresentation
+::MRImageSpatialObjectRepresentation():m_StateMachine(this)
 {
 
 } 

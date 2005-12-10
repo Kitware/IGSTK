@@ -47,27 +47,19 @@ class CylinderObjectRepresentation
 
 public:
 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( CylinderObjectRepresentation, ObjectRepresentation );
+
+public:
+
   /** Typedefs */
-  typedef CylinderObjectRepresentation   Self;
-  typedef ObjectRepresentation           Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer; 
   typedef CylinderObject                 CylinderSpatialObjectType;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( CylinderObjectRepresentation, ObjectRepresentation );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( CylinderObjectRepresentation );
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
   void RequestSetCylinderObject( const CylinderSpatialObjectType * cylinderObject );
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
 
 protected:
 

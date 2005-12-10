@@ -44,18 +44,14 @@ class CTImageSpatialObject :
 
 public:
 
-  /** Typedefs */
-  typedef CTImageSpatialObject                  Self;
-  typedef ImageSpatialObject< signed short, 3>  Superclass;
-  typedef itk::SmartPointer< Self >             Pointer;
-  typedef itk::SmartPointer< const Self >       ConstPointer;
+  /** Type of the superclass. 
+   *  This must be declared first because the StandardClassTraitsMacro
+   *  will otherwise get confused with the commas of the template */
+  typedef ImageSpatialObject< signed short, 3>     SuperclassType;
+  
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( CTImageSpatialObject, SuperclassType );
 
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( CTImageSpatialObject, ImageSpatialObject );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );
 
 protected:
 

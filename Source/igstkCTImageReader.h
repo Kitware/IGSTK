@@ -38,18 +38,8 @@ class CTImageReader :
 
 public:
 
-  /** Typedefs */
-  typedef CTImageReader                               Self;
-  typedef DICOMImageReader< CTImageSpatialObject >    Superclass;
-  typedef itk::SmartPointer< Self >                   Pointer;
-  typedef itk::SmartPointer< const Self >             ConstPointer;
-
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( CTImageReader, DICOMImageReader );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( CTImageReader, DICOMImageReader< CTImageSpatialObject > );
 
 protected:
 

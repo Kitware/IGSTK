@@ -49,11 +49,12 @@ class TubeReader : public SpatialObjectReader<3>
 
 public:
 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( TubeReader, SpatialObjectReader<3> );
+
+public:
+
   /** Typedefs */
-  typedef TubeReader                         Self;
-  typedef SpatialObjectReader<3>             Superclass;
-  typedef itk::SmartPointer< Self >          Pointer;
-  typedef itk::SmartPointer< const Self >    ConstPointer;
   typedef Superclass::SpatialObjectType      SpatialObjectType;
   typedef Superclass::GroupSpatialObjectType GroupSpatialObjectType;
   typedef SpatialObjectType::ConstPointer    SpatialObjectTypeConstPointer;
@@ -61,12 +62,7 @@ public:
   typedef itk::TubeSpatialObject<3>          TubeSpatialObjectType;
   typedef igstk::TubeGroupObject             GroupObjectType;
 
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( TubeReader, SpatialObjectReader );
 
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );
-  
   /** Return the output as a group */
   const GroupObjectType * GetOutput() const;
 

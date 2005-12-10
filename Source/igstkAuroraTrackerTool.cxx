@@ -26,7 +26,7 @@ namespace igstk
 {
 
 /** Constructor (initializes Aurora-specific tool values) */
-AuroraTrackerTool::AuroraTrackerTool()
+AuroraTrackerTool::AuroraTrackerTool():m_StateMachine(this)
 {
 }
 

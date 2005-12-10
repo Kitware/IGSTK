@@ -31,7 +31,7 @@ namespace igstk
 {
 
 /** Constructor: Initializes all internal variables. */
-PolarisTracker::PolarisTracker(void)
+PolarisTracker::PolarisTracker(void):m_StateMachine(this)
 {
   m_CommandInterpreter = CommandInterpreterType::New();
   m_NumberOfTools = 0;

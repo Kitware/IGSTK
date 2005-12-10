@@ -46,23 +46,18 @@ namespace igstk
  * \ingroup Object
  */
 
-class SpatialObject : public itk::Object
+class SpatialObject : public ::itk::Object
 {
 
 public:
 
-  /** Typedefs */
-  typedef SpatialObject                  Self;
-  typedef itk::Object                    Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer; 
-  typedef itk::SpatialObject<3>          SpatialObjectType;
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( SpatialObject, ::itk::Object );
 
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
-  
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( SpatialObject, Object );
+public:
+
+  /** Typedefs */
+  typedef itk::SpatialObject<3>          SpatialObjectType;
 
   /** Set the Transform corresponding to the ObjectToWorld transformation of
    * the SpatialObject. */
@@ -83,12 +78,6 @@ public:
    * expected to get back to manual nor to be re-attached to a second tracker
    * tool. */
   void RequestAttachToTrackerTool( const TrackerTool * trackerTool );
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
-  
-  /** Declarations needed for the Logging */
-  igstkLoggerMacro();
 
 protected:
 

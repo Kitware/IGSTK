@@ -20,7 +20,7 @@
 namespace igstk
 {
 
-TrackerPort::TrackerPort(void)
+TrackerPort::TrackerPort(void):m_StateMachine(this)
 {
   this->ClearTools();
 }

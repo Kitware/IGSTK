@@ -21,7 +21,7 @@ namespace igstk
 { 
 
 /** Constructor */
-MeshObject::MeshObject()
+MeshObject::MeshObject():m_StateMachine(this)
 {
   m_Mesh = MeshType::New();
   m_Mesh->SetCellsAllocationMethod( MeshType::CellsAllocatedDynamicallyCellByCell );

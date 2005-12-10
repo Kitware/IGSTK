@@ -46,21 +46,15 @@ namespace igstk
  *
  */
 
-class PulseGenerator  : public itk::Object
+class PulseGenerator  : public ::itk::Object
 {
  
 public: 
 
-  typedef PulseGenerator Self; 
-  typedef itk::Object Superclass; 
-  typedef itk::SmartPointer< Self > Pointer; 
-  typedef itk::SmartPointer< const Self > ConstPointer; 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( PulseGenerator, ::itk::Object );
 
-  /** Method for defining the name of the class */ 
-  igstkTypeMacro(PulseGenerator, Object); 
-
-  /** Method for creation through the object factory */ 
-  igstkNewMacro(Self); 
+public:
 
   /** Frequency at which the pulses will be generated. This frequency cannot be
    * guarranted. Users should verify experimentally whether the pulse generator
@@ -79,15 +73,6 @@ public:
   /** Return the value set for the frequency of this pulse generator */
   igstkGetMacro( Frequency, double );
       
-  /** Logger class */
-  typedef itk::Logger                  LoggerType;
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
-
-  /** Declarations needed for the Logger */
-  igstkLoggerMacro();
-
 protected:
 
   /** Constructor is protected in order to enforce 

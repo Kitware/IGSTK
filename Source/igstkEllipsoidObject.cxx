@@ -22,7 +22,7 @@ namespace igstk
 { 
 
 /** Constructor */
-EllipsoidObject::EllipsoidObject()
+EllipsoidObject::EllipsoidObject():m_StateMachine(this)
 {
   // We create the ellipse spatial object
   m_EllipseSpatialObject = EllipseSpatialObjectType::New();

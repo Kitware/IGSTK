@@ -39,19 +39,13 @@ class CylinderObject
 
 public:
 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( CylinderObject, SpatialObject );
+
+public:
+
   /** Typedefs */
-  typedef CylinderObject                 Self;
-  typedef SpatialObject                  Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer; 
   typedef itk::CylinderSpatialObject     CylinderSpatialObjectType;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( CylinderObject, SpatialObject );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( CylinderObject );
-
 
   /** Set the radius of the Cylinder */
   void SetRadius( double radius );
