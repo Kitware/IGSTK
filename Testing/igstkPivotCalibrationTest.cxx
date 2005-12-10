@@ -35,6 +35,7 @@ int igstkPivotCalibrationTest( int, char * [] )
   typedef igstk::PivotCalibration           PivotCalibrationType;
   typedef PivotCalibrationType::VersorType  VersorType;
   typedef PivotCalibrationType::VectorType  VectorType;
+  typedef PivotCalibrationType::MatrixType  MatrixType;
   typedef PivotCalibrationType::ErrorType   ErrorType;
   typedef itk::Logger                       LoggerType; 
   typedef itk::StdStreamLogOutput           LogOutputType;
@@ -57,10 +58,11 @@ int igstkPivotCalibrationTest( int, char * [] )
   int frame;
   std::string temp;
   double time;
-  double quat[4];
-  double matrix[3][3];
-  VectorType pos, pivotpos;
-  VersorType quaternion;
+
+  MatrixType matrix;
+  VectorType pos;
+  VectorType pivotpos;
+  VersorType versor;
 
   // Open the calibration data file, which recorded the traker information
   std::string igstkDataDirectory = IGSTKSandbox_DATA_ROOT;
@@ -84,12 +86,17 @@ int igstkPivotCalibrationTest( int, char * [] )
   // Input the frame data into the calibration class
   while ( !input.eof())
     {
+    double vx;
+    double vy;
+    double vz;
+    double vw;
+
     input >> frame >> temp >> time;
     input >> pos[0] >> pos[1] >> pos[2];
-    input >> quat[0] >> quat[1] >> quat[2] >> quat[3];
+    input >> vx >> vy >> vz >> vw;
 
-    quaternion.Set( quat[1], quat[2], quat[3], quat[0]);
-    pivot->RequestAddRotationTranslation( quaternion, pos );
+    versor.Set( vx, vy, vz, vw );
+    pivot->RequestAddRotationTranslation( versor, pos );
     }
 
   // Calculate the calibration matrix along three axis
@@ -106,11 +113,11 @@ int igstkPivotCalibrationTest( int, char * [] )
     // Test the simulated pivot position
     for ( i = 0; i < pivot->GetNumberOfSamples(); i++)
       {
-      if (pivot->RequestGetInputRotationTranslation( i, quaternion, pos))
+      if (pivot->RequestGetInputRotationTranslation( i, versor, pos))
         {
-        std::cout << "Input Sample: " << i << " " << quaternion << pos << std::endl;
+        std::cout << "Input Sample: " << i << " " << versor << pos << std::endl;
 
-        pivotpos = pivot->RequestSimulatePivotPosition( quaternion, pos);
+        pivotpos = pivot->RequestSimulatePivotPosition( versor, pos);
         std::cout << "SimulatedPivotPosition: " << pivotpos << std::endl;
         }
       else
@@ -121,9 +128,9 @@ int igstkPivotCalibrationTest( int, char * [] )
 
     // Simulate for bad index
     i = -1;
-    if (pivot->RequestGetInputRotationTranslation( i, quaternion, pos))
+    if (pivot->RequestGetInputRotationTranslation( i, versor, pos))
       {
-      std::cout << "Input Sample: " << i << " " << quaternion << pos << std::endl;
+      std::cout << "Input Sample: " << i << " " << versor << pos << std::endl;
       }
     else
       {
@@ -131,9 +138,9 @@ int igstkPivotCalibrationTest( int, char * [] )
       }
 
     i = pivot->GetNumberOfSamples();
-    if (pivot->RequestGetInputRotationTranslation( i, quaternion, pos))
+    if (pivot->RequestGetInputRotationTranslation( i, versor, pos))
       {
-      std::cout << "Input Sample: " << i << " " << quaternion << pos << std::endl;
+      std::cout << "Input Sample: " << i << " " << versor << pos << std::endl;
       }
     else
       {
@@ -194,8 +201,18 @@ int igstkPivotCalibrationTest( int, char * [] )
     }
 
   // Simulate the manually setting calibration matrix
-  pivot->RequestSetTranslation( 1.0, 2.0, 10.0);
-  pivot->RequestSetQuaternion( 1.0, 0.0, 0.0, 1.0);
+  VectorType translation1;
+  translation1[0] =  1.0;
+  translation1[1] =  2.0;
+  translation1[2] = 10.0;
+  
+  pivot->RequestSetTranslation( translation1 );
+
+  VersorType rotation1;
+  rotation1.Set( 1.0, 0.0, 0.0, 1.0 );
+  
+  pivot->RequestSetVersor( rotation1 );
+
   pivot->Print( std::cout);
 
   // Simulate the manually setting rotation matrix

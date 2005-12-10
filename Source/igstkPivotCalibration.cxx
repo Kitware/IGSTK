@@ -20,6 +20,7 @@
 
 
 #include "igstkPivotCalibration.h"
+#include "itkVersorRigid3DTransform.h"
 
 namespace igstk
 {
@@ -44,7 +45,7 @@ PivotCalibration::PivotCalibration() :
   igstkAddInputMacro( PrincipalAxisInput );
   igstkAddInputMacro( PlaneNormalInput );
   igstkAddInputMacro( TranslationInput );
-  igstkAddInputMacro( QuaternionInput );
+  igstkAddInputMacro( VersorInput );
   igstkAddInputMacro( RotationMatrixInput );
 
   // Add transition  for idle state
@@ -57,7 +58,7 @@ PivotCalibration::PivotCalibration() :
   igstkAddTransitionMacro( IdleState, PrincipalAxisInput, IdleState, SetToolPrincipalAxis );
   igstkAddTransitionMacro( IdleState, PlaneNormalInput, IdleState, SetToolPlaneNormal );
   igstkAddTransitionMacro( IdleState, TranslationInput, IdleState, SetTranslation );
-  igstkAddTransitionMacro( IdleState, QuaternionInput, IdleState, SetQuaternion );
+  igstkAddTransitionMacro( IdleState, VersorInput, IdleState, SetVersor );
   igstkAddTransitionMacro( IdleState, RotationMatrixInput, IdleState, SetRotationMatrix );
   
   // Add transition  for RotationTranslationAdd state
@@ -70,7 +71,7 @@ PivotCalibration::PivotCalibration() :
   igstkAddTransitionMacro( RotationTranslationAddState, PrincipalAxisInput, RotationTranslationAddState, SetToolPrincipalAxis );
   igstkAddTransitionMacro( RotationTranslationAddState, PlaneNormalInput, RotationTranslationAddState, SetToolPlaneNormal );
   igstkAddTransitionMacro( RotationTranslationAddState, TranslationInput, RotationTranslationAddState, SetTranslation );
-  igstkAddTransitionMacro( RotationTranslationAddState, QuaternionInput, RotationTranslationAddState, SetQuaternion );
+  igstkAddTransitionMacro( RotationTranslationAddState, VersorInput, RotationTranslationAddState, SetVersor );
   igstkAddTransitionMacro( RotationTranslationAddState, RotationMatrixInput, RotationTranslationAddState, SetRotationMatrix );
   
   // Add transition  for CalibrationCalculated state
@@ -83,7 +84,7 @@ PivotCalibration::PivotCalibration() :
   igstkAddTransitionMacro( CalibrationCalculatedState, PrincipalAxisInput, CalibrationCalculatedState, SetToolPrincipalAxis );
   igstkAddTransitionMacro( CalibrationCalculatedState, PlaneNormalInput, CalibrationCalculatedState, SetToolPlaneNormal );
   igstkAddTransitionMacro( CalibrationCalculatedState, TranslationInput, CalibrationCalculatedState, SetTranslation );
-  igstkAddTransitionMacro( CalibrationCalculatedState, QuaternionInput, CalibrationCalculatedState, SetQuaternion );
+  igstkAddTransitionMacro( CalibrationCalculatedState, VersorInput, CalibrationCalculatedState, SetVersor );
   igstkAddTransitionMacro( CalibrationCalculatedState, RotationMatrixInput, CalibrationCalculatedState, SetRotationMatrix );
 
   // Add transition  for CalibrationZCalculated state
@@ -96,7 +97,7 @@ PivotCalibration::PivotCalibration() :
   igstkAddTransitionMacro( CalibrationZCalculatedState, PrincipalAxisInput, CalibrationZCalculatedState, SetToolPrincipalAxis );
   igstkAddTransitionMacro( CalibrationZCalculatedState, PlaneNormalInput, CalibrationZCalculatedState, SetToolPlaneNormal );
   igstkAddTransitionMacro( CalibrationZCalculatedState, TranslationInput, CalibrationZCalculatedState, SetTranslation );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, QuaternionInput, CalibrationZCalculatedState, SetQuaternion );
+  igstkAddTransitionMacro( CalibrationZCalculatedState, VersorInput, CalibrationZCalculatedState, SetVersor );
   igstkAddTransitionMacro( CalibrationZCalculatedState, RotationMatrixInput, CalibrationZCalculatedState, SetRotationMatrix );
 
   // Select the initial state of the state machine
@@ -106,7 +107,7 @@ PivotCalibration::PivotCalibration() :
   this->m_StateMachine.SetReadyToRun();
 
   // Allocte the container pointer for input samples
-  this->m_QuaternionContainer = InputVersorContainerType::New();
+  this->m_VersorContainer = InputVersorContainerType::New();
   this->m_TranslationContainer = InputVectorContainerType::New();
 
   // Reset the initial state and variables
@@ -139,11 +140,12 @@ void PivotCalibration::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 /** Method to return the number of samples */
-int PivotCalibration::GetNumberOfSamples() const
+unsigned int PivotCalibration
+::GetNumberOfSamples() const
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetNumberOfSamples called...\n" );
 
-  return this->m_QuaternionContainer->Size();
+  return this->m_VersorContainer->Size();
 
 }
 
@@ -161,7 +163,7 @@ void PivotCalibration::Reset()
   VectorType translation;
 
   // Clear the input container for quaternion and translation
-  this->m_QuaternionContainer->Initialize();
+  this->m_VersorContainer->Initialize();
   this->m_TranslationContainer->Initialize();
 
   // Reset the calibration transform
@@ -200,16 +202,21 @@ void PivotCalibration::AddRotationTranslation()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::AddRotationTranslation called...\n" );
   
-  this->m_NumberOfSamplesToBeReceived = this->InternalAddRotationTranslation( this->m_QuaternionToBeSent, this->m_TranslationToBeSent);
+  this->InternalAddRotationTranslation( 
+                       this->m_VersorToBeSent, 
+                       this->m_TranslationToBeSent );
 }
 
+
 /** Internal method to add the sample information */
-int PivotCalibration::InternalAddRotationTranslation( VersorType quaternion, VectorType translation )
+void PivotCalibration
+::InternalAddRotationTranslation( const VersorType & quaternion, 
+                                  const VectorType & translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalAddRotationTranslation called...\n" );
 
   // Push the quaternion sample into the input container
-  this->m_QuaternionContainer->push_back( quaternion );
+  this->m_VersorContainer->push_back( quaternion );
 
   // Push the translation sample into the input container
   this->m_TranslationContainer->push_back( translation );
@@ -217,8 +224,6 @@ int PivotCalibration::InternalAddRotationTranslation( VersorType quaternion, Vec
   // Unvalid the calibration
   this->m_ValidPivotCalibration = false;
 
-  // Return the number of current samples;
-  return this->GetNumberOfSamples();
 }
 
 /** Internal method to calculate the calibration */
@@ -262,7 +267,7 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
   // Fill the matrix of M
   for (k = 0; k < num; k++)
     {
-    quat = this->m_QuaternionContainer->GetElement(k);
+    quat = this->m_VersorContainer->GetElement(k);
     rotMatrix = quat.GetMatrix();
 
     for ( j = 0; j < 3; j++)
@@ -397,11 +402,13 @@ void PivotCalibration::SimulatePivotPosition()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::SimulatePivotPosition called...\n" );
   
-  this->m_SimulatedPivotPositionToBeReceived = this->InternalSimulatePivotPosition( this->m_QuaternionToBeSent, this->m_TranslationToBeSent);
+  this->m_SimulatedPivotPositionToBeReceived = this->InternalSimulatePivotPosition( this->m_VersorToBeSent, this->m_TranslationToBeSent);
 }
 
 /** Internal function to calculate the simulated pivot position */
-PivotCalibration::VectorType PivotCalibration::InternalSimulatePivotPosition( VersorType quat, VectorType trans )
+PivotCalibration::VectorType 
+PivotCalibration::InternalSimulatePivotPosition( const VersorType & rotation, 
+                                                 const VectorType & translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalSimulatePivotPosition called...\n" );
 
@@ -411,17 +418,23 @@ PivotCalibration::VectorType PivotCalibration::InternalSimulatePivotPosition( Ve
    *
    */
 
-  MatrixType rotMatrix;
-  VectorType pivotPosition;
-  VnlMatrixType matrix(3, 3);
-  VnlVectorType translation(3), pos(3), offset(3);
+  typedef itk::VersorRigid3DTransform<double> RigidTransformType;
 
-  rotMatrix = quat.GetMatrix();
-  matrix = rotMatrix.GetVnlMatrix();
-  translation = trans.GetVnlVector();
-  offset = this->GetCalibrationTransform().GetTranslation().GetVnlVector();
-  pos = matrix * offset + translation;
-  pivotPosition.SetVnlVector( pos);
+  RigidTransformType::Pointer rigidTransform = RigidTransformType::New();
+
+  rigidTransform->SetRotation( rotation );
+  rigidTransform->SetTranslation( translation );
+
+  VectorType offset = this->GetCalibrationTransform().GetTranslation();
+
+  VectorType rotatedOffset = rigidTransform->TransformVector( offset );
+
+  rotatedOffset += translation;
+
+  VectorType pivotPosition;
+  pivotPosition.Fill( 0.0 );
+  
+  pivotPosition += rotatedOffset;
 
   return pivotPosition;
 
@@ -432,26 +445,31 @@ void PivotCalibration::GetInputRotationTranslation()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetInputRotationTranslation called...\n" );
 
-  this->m_ValidInputSample = this->InternalGetInputRotationTranslation( this->m_InputIndexToBeSent, this->m_QuaternionToBeReceived, this->m_TranslationToBeReceived);
-
+  this->m_ValidInputSample = this->InternalGetInputRotationTranslation( 
+                                               this->m_InputIndexToBeSent, 
+                                               this->m_VersorToBeReceived, 
+                                               this->m_TranslationToBeReceived);
 }
 
 /** Internal method to get the rotation and translation inputed */
-bool PivotCalibration::InternalGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans )
+bool PivotCalibration
+::InternalGetInputRotationTranslation( unsigned int index, 
+                                       VersorType & versor, 
+                                       VectorType & translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalGetInputRotationTranslation called...\n" );
 
-  if (index >= 0 && index < this->GetNumberOfSamples())
+  if ( index >= 0 && index < this->GetNumberOfSamples() )
     {
-    quat = this->m_QuaternionContainer->GetElement( index);
-    trans = this->m_TranslationContainer->GetElement( index);
+    versor      = this->m_VersorContainer->GetElement( index);
+    translation = this->m_TranslationContainer->GetElement( index);
 
     return true;
     }
   else
     {
-    quat.SetIdentity();
-    trans.Fill( 0.0);
+    versor.SetIdentity();
+    translation.Fill( 0.0);
 
     return false;
     }
@@ -517,22 +535,11 @@ void PivotCalibration::InternalSetTranslation( double tx, double ty, double tz )
 }
 
 /** Set the rotation quaternion directly */
-void PivotCalibration::SetQuaternion()
+void PivotCalibration::SetVersor()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::SetQuaternion called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::SetVersor called...\n" );
 
-  this->InternalSetQuaternion( this->m_QuaternionToBeSent.GetX(), this->m_QuaternionToBeSent.GetY(), this->m_QuaternionToBeSent.GetZ(), this->m_QuaternionToBeSent.GetW() );
-}
-
-/** Internal function to set the rotation quaternion directly */
-void PivotCalibration::InternalSetQuaternion( double qx, double qy, double qz, double q0 )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalSetQuaternion called...\n" );
-
-  VersorType quaternion;
-
-  quaternion.Set( qx, qy, qz, q0);
-  this->m_CalibrationTransform.SetRotation( quaternion, 0.1, 1000);
+  this->m_CalibrationTransform.SetRotation( this->m_VersorToBeSent, 0.1, 1000);
 }
 
 /** Set the rotation matrix directly */
@@ -544,14 +551,15 @@ void PivotCalibration::SetRotationMatrix()
 }
 
 /** Internal function to set the rotation matrix directly */
-void PivotCalibration::InternalSetRotationMatrix( MatrixType matrix )
+void PivotCalibration
+::InternalSetRotationMatrix( const MatrixType & matrix )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalSetRotationMatrix called...\n" );
 
-  VersorType quaternion;
+  VersorType versor;
 
-  quaternion.Set( matrix);
-  this->m_CalibrationTransform.SetRotation( quaternion, 0.1, 1000 );
+  versor.Set( matrix);
+  this->m_CalibrationTransform.SetRotation( versor, 0.1, 1000 );
 }
 
 /** Method to invoke the reset function */
@@ -564,16 +572,17 @@ void PivotCalibration::RequestReset()
 }
 
 /** Method to invoke adding the sample */
-int PivotCalibration::RequestAddRotationTranslation( VersorType quat, VectorType trans )
+void PivotCalibration
+::RequestAddRotationTranslation( const VersorType & versor, 
+                                 const VectorType & translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestAddRotationTranslation called...\n" );
   
-  this->m_QuaternionToBeSent = quat;
-  this->m_TranslationToBeSent = trans;
+  this->m_VersorToBeSent = versor;
+  this->m_TranslationToBeSent = translation;
+
   this->m_StateMachine.PushInput( this->m_RotationTranslationInput );
   this->m_StateMachine.ProcessInputs();
-
-  return this->m_NumberOfSamplesToBeReceived;
 }
 
 /** Method to invoke the calculation */
@@ -597,12 +606,15 @@ void PivotCalibration::RequestCalculateCalibrationZ()
 }
 
 /** Method to invoke to simulate the pivot position */
-PivotCalibration::VectorType PivotCalibration::RequestSimulatePivotPosition( VersorType quat, VectorType trans )
+PivotCalibration::VectorType 
+PivotCalibration::RequestSimulatePivotPosition( const VersorType & versor, 
+                                                const VectorType & translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestSimulatePivotPosition called...\n" );
 
-  this->m_QuaternionToBeSent = quat;
-  this->m_TranslationToBeSent = trans;
+  this->m_VersorToBeSent = versor;
+  this->m_TranslationToBeSent = translation;
+
   this->m_StateMachine.PushInput( this->m_SimulatePivotPositionInput );
   this->m_StateMachine.ProcessInputs();
 
@@ -610,17 +622,21 @@ PivotCalibration::VectorType PivotCalibration::RequestSimulatePivotPosition( Ver
 }
 
 /** Method to invoke to get the rotation and translation in the input container */
-bool PivotCalibration::RequestGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans )
+bool PivotCalibration
+::RequestGetInputRotationTranslation( unsigned int index, 
+                                      VersorType & versor, 
+                                      VectorType& translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestGetInputRotationTranslation called...\n" );
 
   this->m_InputIndexToBeSent = index;
   this->m_ValidInputSample = false;
+
   this->m_StateMachine.PushInput( this->m_GetInputRotationTranslationInput );
   this->m_StateMachine.ProcessInputs();
 
-  quat = this->m_QuaternionToBeReceived;
-  trans = this->m_TranslationToBeReceived;
+  versor = this->m_VersorToBeReceived;
+  translation = this->m_TranslationToBeReceived;
 
   return this->m_ValidInputSample;
 
@@ -647,46 +663,40 @@ void PivotCalibration::RequestSetToolPlaneNormal( double nx, double ny, double n
   this->m_VectorToBeSent[0] = nx;
   this->m_VectorToBeSent[1] = ny;
   this->m_VectorToBeSent[2] = nz;
+
   this->m_StateMachine.PushInput( this->m_PlaneNormalInput );
   this->m_StateMachine.ProcessInputs();
 }
 
 /** Method to invoke to set the translation directly */
-void PivotCalibration::RequestSetTranslation( double tx, double ty, double tz )
+void PivotCalibration::RequestSetTranslation( const VectorType & translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestSetTranslation called...\n" );
 
-  this->m_TranslationToBeSent[0] = tx;
-  this->m_TranslationToBeSent[1] = ty;
-  this->m_TranslationToBeSent[2] = tz;
+  this->m_TranslationToBeSent = translation;
+
   this->m_StateMachine.PushInput( this->m_TranslationInput );
   this->m_StateMachine.ProcessInputs();
 }
 
 /** Method to invoke to set the rotation quaternion directly */
-void PivotCalibration::RequestSetQuaternion( double qx, double qy, double qz, double q0 )
+void PivotCalibration::RequestSetVersor( const VersorType & versor )
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestSetQuaternion called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestSetVersor called...\n" );
 
-  this->m_QuaternionToBeSent.Set( qx, qy, qz, q0 );
-  this->m_StateMachine.PushInput( this->m_QuaternionInput );
+  this->m_VersorToBeSent = versor;
+
+  this->m_StateMachine.PushInput( this->m_VersorInput );
   this->m_StateMachine.ProcessInputs();
 }
 
 /** Method to invoke to set the rotation matrix directly */
-void PivotCalibration::RequestSetRotationMatrix( double matrix[3][3] )
+void PivotCalibration
+::RequestSetRotationMatrix( const MatrixType & matrix )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestSetRotationMatrix called...\n" );
 
-  unsigned int i, j;
-
-  for ( j = 0; j < 3; j++)
-    { 
-    for ( i = 0; i < 3; i++)
-      {
-      this->m_MatrixToBeSent[j][i] = matrix[j][i];
-      }
-    }
+  this->m_MatrixToBeSent = matrix;
 
   this->m_StateMachine.PushInput( this->m_RotationMatrixInput );
   this->m_StateMachine.ProcessInputs();

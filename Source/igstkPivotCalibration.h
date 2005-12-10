@@ -68,6 +68,10 @@ public:
 
   typedef VersorType::MatrixType          MatrixType;
 
+  typedef double                          ErrorType;
+
+private:
+
   typedef vnl_matrix< double >            VnlMatrixType;
 
   typedef vnl_vector< double >            VnlVectorType;
@@ -88,7 +92,7 @@ public:
 
   typedef itk::CovariantVector< double >  CovariantVectorType;        
 
-  typedef double                          ErrorType;
+public:
 
   /** Method to check whether a valid calibration is calculated */
   igstkGetMacro( ValidPivotCalibration, bool );
@@ -103,13 +107,14 @@ public:
   igstkGetMacro( RMS, ErrorType );
 
   /** Method to get the number of samples used to calibrate */
-  int GetNumberOfSamples() const;
+  unsigned int GetNumberOfSamples() const;
 
   /** Method invoked by the user to reset the calibration process */
   void RequestReset();
 
   /** Method invoked by the user to add a new sample */
-  int RequestAddRotationTranslation( VersorType quat, VectorType trans );
+  void RequestAddRotationTranslation( const VersorType & versor,
+                                      const VectorType & translation );
 
   /** Method invoked by the user to calculate the calibration matrix */
   void RequestCalculateCalibration(); 
@@ -118,10 +123,13 @@ public:
   void RequestCalculateCalibrationZ(); 
 
   /** Method invoked by the user to calculate simulated pivot position of any input */
-  VectorType RequestSimulatePivotPosition( VersorType quat, VectorType trans );
+  VectorType RequestSimulatePivotPosition( const VersorType & versor, 
+                                           const VectorType & translation );
 
   /** Method invoked by the user to get the rotation and translation in the input container */
-  bool RequestGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans );
+  bool RequestGetInputRotationTranslation( unsigned int index, 
+                                           VersorType & versor, 
+                                           VectorType & translation );
 
   /** Method invoked by the user to set the principal axis of the tool */
   void RequestSetToolPrincipalAxis( double vx, double vy, double vz );
@@ -130,13 +138,13 @@ public:
   void RequestSetToolPlaneNormal( double nx, double ny, double nz );
 
   /** Method invoked by the user to set the translation directly */
-  void RequestSetTranslation( double tx, double ty, double tz );
+  void RequestSetTranslation( const VectorType & translation );
 
   /** Method invoked by the user to set the rotation quaternion directly */
-  void RequestSetQuaternion( double qx, double qy, double qz, double q0 );
+  void RequestSetVersor( const VersorType & versor );
 
   /** Method invoked by the user to set the rotation matrix directly */
-  void RequestSetRotationMatrix( double matrix[3][3] );
+  void RequestSetRotationMatrix( const MatrixType & matrix );
 
 protected:
 
@@ -155,11 +163,12 @@ protected:
   /** Reset the calibration matrix */
   void Reset();
 
-  /** Add a new sample, remove paramters to make it work with state machine input  */
+  /** Add a new sample, remove parameters to make it work with state machine input  */
   void AddRotationTranslation();
 
   /** Internal function to add a new sample */
-  int InternalAddRotationTranslation( VersorType quat, VectorType trans );
+  void InternalAddRotationTranslation( const VersorType & versor, 
+                                       const VectorType & translation );
 
   /** Calculate the calibration */
   void CalculateCalibration();
@@ -174,13 +183,16 @@ protected:
   void SimulatePivotPosition();
 
   /** Internal function to calculate the simulated pivot position */
-  VectorType InternalSimulatePivotPosition( VersorType quat, VectorType trans );
+  VectorType InternalSimulatePivotPosition( const VersorType & versor, 
+                                            const VectorType & translation );
 
   /** Get the rotation and translation inputed */
   void GetInputRotationTranslation();
 
   /** Internal function to get the rotation and translation inputed */
-  bool InternalGetInputRotationTranslation( int index, VersorType& quat, VectorType& trans );
+  bool InternalGetInputRotationTranslation( unsigned int index, 
+                                            VersorType & versor, 
+                                            VectorType & translation );
 
   /** Set the principal axis of the tool */
   void SetToolPrincipalAxis();
@@ -210,16 +222,13 @@ protected:
   void InternalSetTranslation( double tx, double ty, double tz );
 
   /** Set the rotation quaternion directly */
-  void SetQuaternion();
-
-  /** Internal function to set the rotation quaternion directly */
-  void InternalSetQuaternion( double qx, double qy, double qz, double q0 );
+  void SetVersor();
 
   /** Set the rotation matrix directly */
   void SetRotationMatrix();
 
   /** Internal function to set the rotation matrix directly */
-  void InternalSetRotationMatrix( MatrixType matrix );
+  void InternalSetRotationMatrix( const MatrixType & matrix );
 
 private:
 
@@ -239,11 +248,11 @@ private:
   InputType                         m_PrincipalAxisInput;
   InputType                         m_PlaneNormalInput;
   InputType                         m_TranslationInput;
-  InputType                         m_QuaternionInput;
+  InputType                         m_VersorInput;
   InputType                         m_RotationMatrixInput;
 
   /** Temporary input variables for state machine */
-  VersorType                        m_QuaternionToBeSent;
+  VersorType                        m_VersorToBeSent;
 
   VectorType                        m_TranslationToBeSent;
 
@@ -255,14 +264,14 @@ private:
 
   VectorType                        m_SimulatedPivotPositionToBeReceived;
 
-  VersorType                        m_QuaternionToBeReceived;
+  VersorType                        m_VersorToBeReceived;
 
   VectorType                        m_TranslationToBeReceived;
 
   int                               m_NumberOfSamplesToBeReceived;
 
   /** Container to save the samples */
-  InputVersorContainerPointerType   m_QuaternionContainer;
+  InputVersorContainerPointerType   m_VersorContainer;
   
   InputVectorContainerPointerType   m_TranslationContainer;
 
@@ -282,7 +291,7 @@ private:
   ErrorType                         m_RMS;
 
   /** Variable to save the principal axis */
-  CovariantVectorType               m_PrincipalAxis;
+  VectorType                        m_PrincipalAxis;
 
   /** Variable to save the plane normal */
   CovariantVectorType               m_PlaneNormal;
