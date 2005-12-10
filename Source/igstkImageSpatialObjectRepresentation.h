@@ -76,22 +76,16 @@ class ImageSpatialObjectRepresentation
 
 public:
 
-  /** Typedefs */
-  typedef ImageSpatialObjectRepresentation         Self;
-  typedef ObjectRepresentation                     Superclass;
-  typedef itk::SmartPointer<Self>                  Pointer;
-  typedef itk::SmartPointer<const Self>            ConstPointer;
+  /** Macro with standard traits declarations. */
+  igstkStandardTemplatedClassTraitsMacro( ImageSpatialObjectRepresentation, \
+                                          ObjectRepresentation );
+
+public:
 
   typedef TImageSpatialObject                      ImageSpatialObjectType;
 
   typedef typename ImageSpatialObjectType::ConstPointer 
                                                    ImageSpatialObjectConstPointer;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( ImageSpatialObjectRepresentation, ObjectRepresentation );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
@@ -128,9 +122,6 @@ public:
   /** Declare the ImageReaderToImageSpatialObject class to be a friend 
    *  in order to give it access to the private method GetITKImage(). */
   igstkFriendClassMacro( igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineTemplatedMacro();
 
   /** Returns the Minimum and Maximum number of slice available in the current
    * orientation.  */

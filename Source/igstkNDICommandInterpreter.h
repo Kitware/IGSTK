@@ -25,11 +25,8 @@
 namespace igstk
 {
 
-/** Maximum number of handles that will ever be in use simultaneously */
-const int NDI_MAX_HANDLES = 24;
 
-
-class NDICommandInterpreter : public itk::Object
+class NDICommandInterpreter : public ::itk::Object
 {
 /** \class NDICommandInterpreter
     \brief Mediate between a Tracker and its Communication object.
@@ -45,6 +42,11 @@ class NDICommandInterpreter : public itk::Object
 
     \ingroup Tracking
 */
+
+public:
+
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( NDICommandInterpreter, ::itk::Object );
 
 public:
 
@@ -403,20 +405,8 @@ public:
     NDI_SUPPORTS_SENSING = 0x0008, /**< tool-in-port sensing is available */
   } SFLISTSummaryType;
 
-  /** Some required typedefs for itk::Object. */
-
-  typedef NDICommandInterpreter          Self;
-  typedef itk::Object                    Superclass; 
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
-
+  /** Some required typedefs. */
   typedef SerialCommunication            CommunicationType;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro(NDICommandInterpreter, Object);
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro(Self);  
 
   /** Set the communication object that commands will be sent to */
   void SetCommunication(CommunicationType* communication);
@@ -1483,6 +1473,9 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+
+  /** Maximum number of handles that will ever be in use simultaneously */
+  itkStaticConstMacro( NDI_MAX_HANDLES, int, 24 );
 
   /** the communication object */
   CommunicationType::Pointer m_Communication;

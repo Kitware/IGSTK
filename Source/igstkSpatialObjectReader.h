@@ -46,14 +46,11 @@ class SpatialObjectReader : public ::itk::Object
 {
 
 public:
-  /** typedef for LoggerType */
-  typedef ::itk::Logger                    LoggerType;
+  
+  /** Macro with standard traits declarations. */
+  igstkStandardTemplatedClassTraitsMacro( SpatialObjectReader, ::itk::Object );
 
-  /** Typedefs */
-  typedef SpatialObjectReader                     Self;
-  typedef ::itk::Object                           Superclass;
-  typedef ::itk::SmartPointer<Self>               Pointer;
-  typedef ::itk::SmartPointer<const Self>         ConstPointer;
+public:
 
   itkStaticConstMacro(ObjectDimension, unsigned int, TDimension);
 
@@ -70,12 +67,6 @@ public:
   typedef ::itk::SpatialObject<TDimension>              SpatialObjectType;
   typedef ::itk::GroupSpatialObject<TDimension>         GroupSpatialObjectType;
 
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( SpatialObjectReader, ::itk::Object );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );
-
   /** Type for representing the string of the filename. */
   typedef std::string    FileNameType;
 
@@ -84,12 +75,6 @@ public:
 
   /** This method request Object read **/
   void RequestReadObject();
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineTemplatedMacro();
-
-  /** Declarations needed for the Logger */
-  igstkLoggerMacro();
 
 protected:
 

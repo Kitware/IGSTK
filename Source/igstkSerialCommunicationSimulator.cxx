@@ -39,7 +39,7 @@
 namespace igstk
 { 
 
-SerialCommunicationSimulator::SerialCommunicationSimulator()
+SerialCommunicationSimulator::SerialCommunicationSimulator():m_StateMachine(this)
 {
   m_ResponseTable.clear();
   m_CounterTable.clear();

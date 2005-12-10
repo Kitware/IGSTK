@@ -21,7 +21,7 @@ namespace igstk
 { 
 
 /** Constructor */
-MeshReader::MeshReader()
+MeshReader::MeshReader():m_StateMachine(this)
 { 
   m_Mesh = MeshObjectType::New();
 } 

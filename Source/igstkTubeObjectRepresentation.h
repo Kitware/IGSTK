@@ -44,27 +44,18 @@ class TubeObjectRepresentation
 
 public:
 
-  /** Typedefs */
-  typedef TubeObjectRepresentation       Self;
-  typedef ObjectRepresentation           Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer; 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( TubeObjectRepresentation, ObjectRepresentation );
+
+public:
+
   typedef TubeObject                     TubeObjectType;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( TubeObjectRepresentation, ObjectRepresentation );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( TubeObjectRepresentation );
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
   void RequestSetTubeObject( const TubeObjectType * TubeObject );
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
 
 protected:
   

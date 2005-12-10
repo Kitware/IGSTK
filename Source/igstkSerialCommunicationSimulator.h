@@ -40,22 +40,17 @@ class SerialCommunicationSimulator : public SerialCommunication
 {
 public:
 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( SerialCommunicationSimulator, SerialCommunication );
+
+public:
+
   /** The type for the file that holds simulation data. */
   typedef std::ifstream   FileType;
 
-  typedef SerialCommunicationSimulator   Self;
-  typedef SerialCommunication            Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro(SerialCommunicationSimulator, SerialCommunication);
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro(Self);
-
   /** Set a file name of the input file recorded serial communication stream */
   void SetFileName(const char* filename);
+
   /** Get the file name for the recorded data */
   const char *GetFileName() const;
 

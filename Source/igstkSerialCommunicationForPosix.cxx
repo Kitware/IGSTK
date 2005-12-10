@@ -44,18 +44,17 @@
 namespace igstk
 { 
 
-// value for invalid handle
-const int INVALID_HANDLE = -1;
 
-
-SerialCommunicationForPosix::SerialCommunicationForPosix()
+SerialCommunicationForPosix
+::SerialCommunicationForPosix():m_StateMachine(this)
 {
   m_OldTimeoutPeriod = 0;
   m_PortHandle = INVALID_HANDLE;
 } 
 
 
-SerialCommunicationForPosix::~SerialCommunicationForPosix()
+SerialCommunicationForPosix
+::~SerialCommunicationForPosix()
 {
 } 
 

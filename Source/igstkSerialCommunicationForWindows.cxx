@@ -26,7 +26,7 @@
 namespace igstk
 { 
 
-SerialCommunicationForWindows::SerialCommunicationForWindows()
+SerialCommunicationForWindows::SerialCommunicationForWindows():m_StateMachine(this)
 {
   m_PortHandle = INVALID_HANDLE_VALUE;
   m_OldTimeoutPeriod = 0;

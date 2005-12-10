@@ -21,7 +21,7 @@ namespace igstk
 { 
 
 /** Constructor */
-TubeObject::TubeObject()
+TubeObject::TubeObject():m_StateMachine(this)
 {
   // We create the ellipse spatial object
   m_TubeSpatialObject = TubeSpatialObjectType::New();

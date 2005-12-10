@@ -42,19 +42,14 @@ class SerialCommunicationForPosix : public SerialCommunication
 {
 public:
 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( SerialCommunicationForPosix, \
+                                 SerialCommunication );
+
+public:
+
   /** Return value type for interface functions */ 
   typedef SerialCommunication::ResultType ResultType;
-
-  typedef SerialCommunicationForPosix    Self;
-  typedef SerialCommunication            Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro(SerialCommunicationForPosix, SerialCommunication);
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro(Self);  
 
 protected:
 
@@ -95,6 +90,9 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+
+  /** value for invalid handle */
+  itkStaticConstMacro( INVALID_HANDLE ,int, -1 );
 
   /** The serial port handle. */
   int             m_PortHandle;

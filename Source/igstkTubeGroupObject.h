@@ -41,18 +41,13 @@ class TubeGroupObject
 
 public:
 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( TubeGroupObject, GroupObject );
+
+public:
+    
   /** Typedefs */
-  typedef TubeGroupObject                           Self;
-  typedef GroupObject                               Superclass;
-  typedef itk::SmartPointer<Self>                   Pointer;
-  typedef itk::SmartPointer<const Self>             ConstPointer;
   typedef TubeObject                                TubeObjectType;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( TubeGroupObject, SpatialObject );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( TubeGroupObject );
 
   /** Get the object */
   const TubeObjectType * GetTube(unsigned long id) const;

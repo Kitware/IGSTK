@@ -21,7 +21,7 @@ namespace igstk
 { 
 
 /** Constructor */
-TubeGroupObject::TubeGroupObject()
+TubeGroupObject::TubeGroupObject():m_StateMachine(this)
 {
 }
 

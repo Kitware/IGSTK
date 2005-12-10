@@ -49,17 +49,15 @@ class Landmark3DRegistration : public ::itk::Object
 {
 
 public:
+  
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( Landmark3DRegistration, ::itk::Object );
+
+public:
+
   /** Typedefs */
   itkStaticConstMacro(Dimension,unsigned int,3);
-  typedef Landmark3DRegistration                Self;
-  typedef itk::SmartPointer<Self>             Pointer;
-  typedef itk::SmartPointer<const Self>       ConstPointer;
-  typedef ::itk::Object                       Superclass;
 
-  
-  /** typedef for LoggerType */
-  typedef itk::Logger                         LoggerType;
-  
   /** typedefs for image and pixel type */
   typedef  unsigned char  PixelType;
   typedef itk::Image< PixelType, Dimension >  ImageType;
@@ -86,12 +84,6 @@ public:
   typedef LandmarkPointContainerType::const_iterator
                                               PointsContainerConstIterator;
 
-  /** Method for defining the name of the class */ 
-  igstkTypeMacro( Landmark3DRegistration, Object ); 
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );
-
   /** The "RequestAddImageLandmarkPoint" will be used to add point 
    * to the image landmark point container */
   void RequestAddImageLandmarkPoint( const LandmarkImagePointType & pt );
@@ -114,16 +106,10 @@ public:
       transform */
    void RequestGetTransform();
   
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
-
    /** The "ComputeRMSError" method calculates and returns RMS error of
         the transformation. This function should be moved into the 
        state machine: FIXME */
   double ComputeRMSError();
-
-  /** Declarations needed for the Logger */
-  igstkLoggerMacro();
 
   /** Landmark registration events..they have to be eventually added
    * to the igstkEvents class */

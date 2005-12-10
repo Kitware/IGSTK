@@ -40,22 +40,15 @@ class TubeObject
 
 public:
 
-  /** Typedefs */
-  typedef TubeObject                            Self;
-  typedef SpatialObject                         Superclass;
-  typedef itk::SmartPointer<Self>               Pointer;
-  typedef itk::SmartPointer<const Self>         ConstPointer; 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( TubeObject, SpatialObject );
+
+public:
 
   /** Internal typedef */
   typedef itk::TubeSpatialObject<3>             TubeSpatialObjectType;
   typedef TubeSpatialObjectType::TubePointType  PointType;
   typedef TubeSpatialObjectType::PointListType  PointListType;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( TubeObject, SpatialObject );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( TubeObject );
 
   /** Add a point to the tube */
   void AddPoint(PointType & point);

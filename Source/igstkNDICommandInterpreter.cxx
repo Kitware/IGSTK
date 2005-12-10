@@ -19,19 +19,20 @@
 #include <stdio.h>
 #include <string.h>
 
+namespace igstk
+{
+
 // maximum allowed size for a command to the device
 const int NDI_MAX_COMMAND_SIZE = 2047;
 const int NDI_MAX_REPLY_SIZE = 2047;
+
 // timeouts for tracking and non-tracking modes
 const int NDI_NORMAL_TIMEOUT = 5000;
 const int NDI_TRACKING_TIMEOUT = 100;
 
-namespace igstk
-{
-
 
 /** Constructor: initialize internal variables. */
-NDICommandInterpreter::NDICommandInterpreter()
+NDICommandInterpreter::NDICommandInterpreter():m_StateMachine(this)
 {
   m_Communication = 0;
 

@@ -47,22 +47,21 @@ class MeshReader : public SpatialObjectReader<3,float>
 
 public:
 
+  /** Typedef for the superclass is needed because the StandardClassTraitsMacro
+   * would get confused with the commas in the template. */
+  typedef SpatialObjectReader<3,float>       SuperclassType;
+
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( MeshReader, SuperclassType );
+
+public:
+
   /** Typedefs */
-  typedef MeshReader                         Self;
-  typedef SpatialObjectReader<3,float>       Superclass;
-  typedef itk::SmartPointer< Self >          Pointer;
-  typedef itk::SmartPointer< const Self >    ConstPointer;
   typedef Superclass::SpatialObjectType      SpatialObjectType;
   typedef Superclass::GroupSpatialObjectType GroupSpatialObjectType;
   typedef SpatialObjectType::ConstPointer    SpatialObjectTypeConstPointer;
   typedef igstk::MeshObject                  MeshObjectType;
 
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( MeshReader, SpatialObjectReader );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );
-  
   /** Return the output as a group */
   const MeshObjectType * GetOutput() const;
 
