@@ -27,7 +27,7 @@ namespace igstk
 /** Constructor */
 template< class TPixelType, unsigned int VDimension >
 ImageSpatialObject< TPixelType, VDimension >
-::ImageSpatialObject()
+::ImageSpatialObject():m_StateMachine(this)
 {
   // Create the image spatial object
   m_ImageSpatialObject = ImageSpatialObjectType::New();

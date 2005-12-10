@@ -60,11 +60,10 @@ class ImageSpatialObject
 
 public:
 
-  /** Typedefs */
-  typedef ImageSpatialObject                                Self;
-  typedef SpatialObject                                     Superclass;
-  typedef itk::SmartPointer<Self>                           Pointer;
-  typedef itk::SmartPointer<const Self>                     ConstPointer;
+  /** Macro with standard traits declarations. */
+  igstkStandardTemplatedClassTraitsMacro( ImageSpatialObject, SpatialObject );
+
+public:
 
   typedef itk::ImageSpatialObject< VDimension, TPixelType > ImageSpatialObjectType;
 
@@ -72,12 +71,6 @@ public:
   typedef typename ImageType::ConstPointer                  ImageConstPointer;
   typedef typename ImageSpatialObjectType::PointType        PointType;
   typedef typename ImageType::IndexType                     IndexType;
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( ImageSpatialObject, SpatialObject );
-
-  /** Method for creation of a reference counted object. */
-  igstkNewMacro( Self );
 
   /** Test whether a point is inside or outside the object. */
   virtual bool IsInside( const PointType & point ) const;
