@@ -21,6 +21,9 @@
 #include "igstkFLTKTextLogOutput.h"
 
 
+// Disabling warning C4355: 'this' : used in base member initializer list
+#pragma warning ( disable : 4355 )
+
 namespace igstk
 {
 
