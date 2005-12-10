@@ -570,6 +570,9 @@ StateMachine< TClass >
             }
           }
 
+        // LTSA requires the descriptor to start with a lowercase
+        label[0] = tolower( label[0] );
+
         ostr << label << " -> ";
         
         stateId = m_States.begin();
