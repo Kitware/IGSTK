@@ -50,30 +50,14 @@ namespace igstk
  * \ingroup Calibration
  */
 
-class PivotCalibration : public itk::Object
+class PivotCalibration : public ::itk::Object
 {
 public:
 
-  /** Typedefs */
-  typedef PivotCalibration               Self;
-  typedef itk::Object                    Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer; 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( PivotCalibration, ::itk::Object );
 
-  /** Data type for the logger */
-  typedef itk::Logger   LoggerType;
-
-  /** Method for defining the name of the class */ 
-  igstkTypeMacro(PivotCalibration, Object); 
-
-  /** Method for creation through the object factory */ 
-  igstkNewMacro(Self); 
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
-
-  /** Define the Logger object for this class */
-  igstkLoggerMacro();
+public:
 
   /** Typedefs for the internal computation */
   typedef Transform                       TransformType;
@@ -164,6 +148,9 @@ protected:
 
   /** Print the object information in a stream */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
+
+  /** Null operation for a transition in the State Machine */
+  void NoAction();
 
   /** Reset the calibration matrix */
   void Reset();
