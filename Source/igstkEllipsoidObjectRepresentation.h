@@ -88,6 +88,9 @@ private:
    * called by the State Machine. */
   void SetEllipsoidObject(); 
 
+  /** Null operation for a State Machine transition */
+  void NoAction();
+
 private:
 
   /** Inputs to the State Machine */

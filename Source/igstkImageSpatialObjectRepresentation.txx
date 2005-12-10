@@ -52,66 +52,64 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_Level = 0;
   m_Window = 2000;
   
-  m_StateMachine.AddInput( m_ValidImageSpatialObjectInput,  "ValidImageSpatialObjectInput" );
-  m_StateMachine.AddInput( m_NullImageSpatialObjectInput,   "NullImageSpatialObjectInput"  );
-  m_StateMachine.AddInput( m_EmptyImageSpatialObjectInput,   "EmptyImageSpatialObjectInput"  );
-  m_StateMachine.AddInput( m_SetSliceNumberInput,   "SetSliceNumberInput"  );
-  m_StateMachine.AddInput( m_ValidSliceNumberInput,   "ValidSliceNumberInput"  );
-  m_StateMachine.AddInput( m_InvalidSliceNumberInput,   "InvalidSliceNumberInput"  );
-  m_StateMachine.AddInput( m_ValidOrientationInput,   "ValidOrientationInput"  );
-  m_StateMachine.AddInput( m_RequestSliceNumberBoundsInput, "RequestSliceNumberBoundsInput");
+  igstkAddInputMacro( ValidImageSpatialObjectInput );
+  igstkAddInputMacro( NullImageSpatialObjectInput  );
+  igstkAddInputMacro( EmptyImageSpatialObjectInput  );
+  igstkAddInputMacro( SetSliceNumberInput  );
+  igstkAddInputMacro( ValidSliceNumberInput  );
+  igstkAddInputMacro( InvalidSliceNumberInput  );
+  igstkAddInputMacro( ValidOrientationInput  );
+  igstkAddInputMacro( RequestSliceNumberBoundsInput);
 
-  m_StateMachine.AddState( m_NullImageSpatialObjectState,  "NullImageSpatialObjectState"     );
-  m_StateMachine.AddState( m_ValidImageSpatialObjectState, "ValidImageSpatialObjectState"     );
-  m_StateMachine.AddState( m_ValidImageOrientationState, "ValidImageOrientationState"     );
-  m_StateMachine.AddState( m_ValidSliceNumberState, "ValidSliceNumberState"     );
-  m_StateMachine.AddState( m_AttemptingToSetSliceNumberState, "AttemptingToSetSliceNumberState"     );
+  igstkAddStateMacro( NullImageSpatialObjectState );
+  igstkAddStateMacro( ValidImageSpatialObjectState );
+  igstkAddStateMacro( ValidImageOrientationState );
+  igstkAddStateMacro( ValidSliceNumberState );
+  igstkAddStateMacro( AttemptingToSetSliceNumberState );
 
-  const ActionType NoAction = 0;
+  igstkAddTransitionMacro( NullImageSpatialObjectState, NullImageSpatialObjectInput, NullImageSpatialObjectState,  NoAction );
+  igstkAddTransitionMacro( NullImageSpatialObjectState, EmptyImageSpatialObjectInput, NullImageSpatialObjectState,  NoAction );
+  igstkAddTransitionMacro( NullImageSpatialObjectState, ValidImageSpatialObjectInput, ValidImageSpatialObjectState,  SetImageSpatialObject );
+  igstkAddTransitionMacro( NullImageSpatialObjectState, SetSliceNumberInput, NullImageSpatialObjectState,  NoAction );
+  igstkAddTransitionMacro( NullImageSpatialObjectState, ValidSliceNumberInput, NullImageSpatialObjectState,  NoAction );
+  igstkAddTransitionMacro( NullImageSpatialObjectState, InvalidSliceNumberInput, NullImageSpatialObjectState,  NoAction );
+  igstkAddTransitionMacro( NullImageSpatialObjectState, ValidOrientationInput, NullImageSpatialObjectState,  NoAction );
 
-  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction );
-  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_EmptyImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction );
-  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetImageSpatialObject );
-  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_SetSliceNumberInput, m_NullImageSpatialObjectState,  NoAction );
-  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_ValidSliceNumberInput, m_NullImageSpatialObjectState,  NoAction );
-  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_InvalidSliceNumberInput, m_NullImageSpatialObjectState,  NoAction );
-  m_StateMachine.AddTransition( m_NullImageSpatialObjectState, m_ValidOrientationInput, m_NullImageSpatialObjectState,  NoAction );
+  igstkAddTransitionMacro( ValidImageSpatialObjectState, NullImageSpatialObjectInput, NullImageSpatialObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidImageSpatialObjectState, EmptyImageSpatialObjectInput, NullImageSpatialObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidImageSpatialObjectState, ValidImageSpatialObjectInput, ValidImageSpatialObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidImageSpatialObjectState, SetSliceNumberInput, ValidImageSpatialObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidImageSpatialObjectState, ValidSliceNumberInput, ValidImageSpatialObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidImageSpatialObjectState, InvalidSliceNumberInput, ValidImageSpatialObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidImageSpatialObjectState, ValidOrientationInput, ValidImageOrientationState,  SetOrientation ); 
 
-  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_EmptyImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_SetSliceNumberInput, m_ValidImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidSliceNumberInput, m_ValidImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_InvalidSliceNumberInput, m_ValidImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_ValidOrientationInput, m_ValidImageOrientationState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
+  igstkAddTransitionMacro( ValidImageOrientationState, NullImageSpatialObjectInput, NullImageSpatialObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidImageOrientationState, EmptyImageSpatialObjectInput, NullImageSpatialObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidImageOrientationState, ValidImageSpatialObjectInput, ValidImageSpatialObjectState,  SetImageSpatialObject );
+  igstkAddTransitionMacro( ValidImageOrientationState, SetSliceNumberInput, AttemptingToSetSliceNumberState,  AttemptSetSliceNumber ); 
+  igstkAddTransitionMacro( ValidImageOrientationState, ValidSliceNumberInput, ValidSliceNumberState,  SetSliceNumber ); 
+  igstkAddTransitionMacro( ValidImageOrientationState, InvalidSliceNumberInput, ValidImageOrientationState,  NoAction ); 
+  igstkAddTransitionMacro( ValidImageOrientationState, ValidOrientationInput, ValidImageOrientationState,  SetOrientation ); 
 
-  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_EmptyImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetImageSpatialObject );
-  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_SetSliceNumberInput, m_AttemptingToSetSliceNumberState,  & ImageSpatialObjectRepresentation::AttemptSetSliceNumber ); 
-  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_ValidSliceNumberInput, m_ValidSliceNumberState,  & ImageSpatialObjectRepresentation::SetSliceNumber ); 
-  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_InvalidSliceNumberInput, m_ValidImageOrientationState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_ValidOrientationInput, m_ValidImageOrientationState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
+  igstkAddTransitionMacro( ValidSliceNumberState, NullImageSpatialObjectInput, NullImageSpatialObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidSliceNumberState, EmptyImageSpatialObjectInput, NullImageSpatialObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidSliceNumberState, ValidImageSpatialObjectInput, ValidImageSpatialObjectState,  SetImageSpatialObject );
+  igstkAddTransitionMacro( ValidSliceNumberState, SetSliceNumberInput, AttemptingToSetSliceNumberState,  AttemptSetSliceNumber ); 
+  igstkAddTransitionMacro( ValidSliceNumberState, ValidSliceNumberInput, ValidSliceNumberState,  SetSliceNumber ); 
+  igstkAddTransitionMacro( ValidSliceNumberState, InvalidSliceNumberInput, ValidImageOrientationState,  NoAction ); 
+  igstkAddTransitionMacro( ValidSliceNumberState, ValidOrientationInput, ValidImageOrientationState,  SetOrientation ); 
 
-  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_EmptyImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetImageSpatialObject );
-  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_SetSliceNumberInput, m_AttemptingToSetSliceNumberState,  & ImageSpatialObjectRepresentation::AttemptSetSliceNumber ); 
-  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_ValidSliceNumberInput, m_ValidSliceNumberState,  & ImageSpatialObjectRepresentation::SetSliceNumber ); 
-  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_InvalidSliceNumberInput, m_ValidImageOrientationState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_ValidOrientationInput, m_ValidImageOrientationState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
+  igstkAddTransitionMacro( AttemptingToSetSliceNumberState, NullImageSpatialObjectInput, NullImageSpatialObjectState,  NoAction ); 
+  igstkAddTransitionMacro( AttemptingToSetSliceNumberState, EmptyImageSpatialObjectInput, NullImageSpatialObjectState,  NoAction ); 
+  igstkAddTransitionMacro( AttemptingToSetSliceNumberState, ValidImageSpatialObjectInput, ValidImageSpatialObjectState,  SetImageSpatialObject );
+  igstkAddTransitionMacro( AttemptingToSetSliceNumberState, SetSliceNumberInput, AttemptingToSetSliceNumberState,  AttemptSetSliceNumber ); 
+  igstkAddTransitionMacro( AttemptingToSetSliceNumberState, ValidSliceNumberInput, ValidSliceNumberState,  SetSliceNumber ); 
+  igstkAddTransitionMacro( AttemptingToSetSliceNumberState, InvalidSliceNumberInput, ValidImageOrientationState,  NoAction ); 
+  igstkAddTransitionMacro( AttemptingToSetSliceNumberState, ValidOrientationInput, ValidImageOrientationState,  SetOrientation ); 
 
-  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_NullImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_EmptyImageSpatialObjectInput, m_NullImageSpatialObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_ValidImageSpatialObjectInput, m_ValidImageSpatialObjectState,  & ImageSpatialObjectRepresentation::SetImageSpatialObject );
-  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_SetSliceNumberInput, m_AttemptingToSetSliceNumberState,  & ImageSpatialObjectRepresentation::AttemptSetSliceNumber ); 
-  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_ValidSliceNumberInput, m_ValidSliceNumberState,  & ImageSpatialObjectRepresentation::SetSliceNumber ); 
-  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_InvalidSliceNumberInput, m_ValidImageOrientationState,  NoAction ); 
-  m_StateMachine.AddTransition( m_AttemptingToSetSliceNumberState, m_ValidOrientationInput, m_ValidImageOrientationState,  & ImageSpatialObjectRepresentation::SetOrientation ); 
-
-  m_StateMachine.AddTransition( m_ValidImageSpatialObjectState, m_RequestSliceNumberBoundsInput, m_ValidImageSpatialObjectState, & ImageSpatialObjectRepresentation::ReportSliceNumberBounds );
-  m_StateMachine.AddTransition( m_ValidSliceNumberState, m_RequestSliceNumberBoundsInput, m_ValidSliceNumberState, & ImageSpatialObjectRepresentation::ReportSliceNumberBounds );
-  m_StateMachine.AddTransition( m_ValidImageOrientationState, m_RequestSliceNumberBoundsInput, m_ValidImageOrientationState, & ImageSpatialObjectRepresentation::ReportSliceNumberBounds );
+  igstkAddTransitionMacro( ValidImageSpatialObjectState, RequestSliceNumberBoundsInput, ValidImageSpatialObjectState, ReportSliceNumberBounds );
+  igstkAddTransitionMacro( ValidSliceNumberState, RequestSliceNumberBoundsInput, ValidSliceNumberState, ReportSliceNumberBounds );
+  igstkAddTransitionMacro( ValidImageOrientationState, RequestSliceNumberBoundsInput, ValidImageOrientationState, ReportSliceNumberBounds );
 
   m_StateMachine.SelectInitialState( m_NullImageSpatialObjectState );
 
@@ -314,6 +312,14 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_Level = level;
 
   m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+}
+
+/** Null Operation for a State Machine Transition */
+template < class TImageSpatialObject >
+void 
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::NoAction()
+{
 }
 
 /** Set the Image Spatial Object */

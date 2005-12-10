@@ -32,18 +32,16 @@ EllipsoidObjectRepresentation::EllipsoidObjectRepresentation():m_StateMachine(th
   this->RequestSetSpatialObject( m_EllipsoidObject );
   m_EllipsoidSource = vtkSuperquadricSource::New();
   
-  m_StateMachine.AddInput( m_ValidEllipsoidObjectInput,  "ValidEllipsoidObjectInput" );
-  m_StateMachine.AddInput( m_NullEllipsoidObjectInput,   "NullEllipsoidObjectInput"  );
+  igstkAddInputMacro( ValidEllipsoidObjectInput );
+  igstkAddInputMacro( NullEllipsoidObjectInput  );
 
-  m_StateMachine.AddState( m_NullEllipsoidObjectState,  "NullEllipsoidObjectState"     );
-  m_StateMachine.AddState( m_ValidEllipsoidObjectState, "ValidEllipsoidObjectState"     );
+  igstkAddStateMacro( NullEllipsoidObjectState  );
+  igstkAddStateMacro( ValidEllipsoidObjectState );
 
-  const ActionType NoAction = 0;
-
-  m_StateMachine.AddTransition( m_NullEllipsoidObjectState, m_NullEllipsoidObjectInput, m_NullEllipsoidObjectState,  NoAction );
-  m_StateMachine.AddTransition( m_NullEllipsoidObjectState, m_ValidEllipsoidObjectInput, m_ValidEllipsoidObjectState,  & EllipsoidObjectRepresentation::SetEllipsoidObject );
-  m_StateMachine.AddTransition( m_ValidEllipsoidObjectState, m_NullEllipsoidObjectInput, m_NullEllipsoidObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidEllipsoidObjectState, m_ValidEllipsoidObjectInput, m_ValidEllipsoidObjectState,  NoAction ); 
+  igstkAddTransitionMacro( NullEllipsoidObjectState, NullEllipsoidObjectInput, NullEllipsoidObjectState,  NoAction );
+  igstkAddTransitionMacro( NullEllipsoidObjectState, ValidEllipsoidObjectInput, ValidEllipsoidObjectState,  SetEllipsoidObject );
+  igstkAddTransitionMacro( ValidEllipsoidObjectState, NullEllipsoidObjectInput, NullEllipsoidObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidEllipsoidObjectState, ValidEllipsoidObjectInput, ValidEllipsoidObjectState,  NoAction ); 
 
   m_StateMachine.SelectInitialState( m_NullEllipsoidObjectState );
 
@@ -91,6 +89,12 @@ void EllipsoidObjectRepresentation::RequestSetEllipsoidObject( const EllipsoidOb
     }
 
 
+}
+
+
+/** Null operation for a State Machine transition */
+void EllipsoidObjectRepresentation::NoAction()
+{
 }
 
 

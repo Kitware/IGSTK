@@ -32,132 +32,102 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   m_Logger = LoggerType::New();
 
   //Set the state descriptors
-  m_StateMachine.AddState(m_IdleState,
-                          "IdleState");
-
-  m_StateMachine.AddState(m_ImageDirectoryNameReadState, 
-                          "ImageDirectoryNameReadState");
-
-  m_StateMachine.AddState(m_ImageReadState, 
-                          "ImageReadState");
-
-  m_StateMachine.AddState(m_AttemptingToReadImageState, 
-                          "AttemptingToReadImageState");
-
+  igstkAddStateMacro( IdleState );
+  igstkAddStateMacro( ImageDirectoryNameReadState ); 
+  igstkAddStateMacro( ImageReadState ); 
+  igstkAddStateMacro( AttemptingToReadImageState ); 
 
  /** List of State Inputs */
-  m_StateMachine.AddInput(m_GetModalityInfoInput,
-                          "GetModalityInfoInput");
-
-  m_StateMachine.AddInput(m_GetPatientNameInfoInput,
-                          "GetPatientNameInfoInput");
-
-  m_StateMachine.AddInput(m_ReadImageRequestInput,
-                          "ImageReadRequestInput");
-
-  m_StateMachine.AddInput(m_ResetReaderInput,
-                          "ResetReaderInput");
-
-  m_StateMachine.AddInput(m_ImageReadingErrorInput,
-                          "ImageReadingErrorInput");
-
-  m_StateMachine.AddInput(m_ImageReadingSuccessInput,
-                          "ImageReadingSuccessInput");
-
-  m_StateMachine.AddInput(m_ImageDirectoryNameValidInput,
-                          "ImageDirectoryNameValidInput");
-
-  m_StateMachine.AddInput(m_ImageDirectoryNameIsEmptyInput,
-                          "ImageDirectoryNameIsEmptyInput");
-
-  m_StateMachine.AddInput(m_ImageDirectoryNameDoesNotExistInput,
-                          "ImageDirectoryNameDoesNotExistInput");
-
-  m_StateMachine.AddInput(m_ImageDirectoryNameIsNotDirectoryInput,
-                          "ImageDirectoryNameIsNotDirectoryInput");
-
-  m_StateMachine.AddInput(m_ImageDirectoryNameDoesNotHaveEnoughFilesInput,
-                          "m_ImageDirectoryNameDoesNotHaveEnoughFilesInput");
-
+  igstkAddInputMacro( GetModalityInfoInput );
+  igstkAddInputMacro( GetPatientNameInfoInput );
+  igstkAddInputMacro( ReadImageRequestInput );
+  igstkAddInputMacro( ResetReaderInput );
+  igstkAddInputMacro( ImageReadingErrorInput );
+  igstkAddInputMacro( ImageReadingSuccessInput );
+  igstkAddInputMacro( ImageDirectoryNameValidInput );
+  igstkAddInputMacro( ImageDirectoryNameIsEmptyInput );
+  igstkAddInputMacro( ImageDirectoryNameDoesNotExistInput );
+  igstkAddInputMacro( ImageDirectoryNameIsNotDirectoryInput );
+  igstkAddInputMacro( ImageDirectoryNameDoesNotHaveEnoughFilesInput );
 
   //Transitions for valid directory name
-  m_StateMachine.AddTransition(m_IdleState,
-                               m_ImageDirectoryNameValidInput,
-                               m_ImageDirectoryNameReadState,
-                               &DICOMImageReader::SetDirectoryName);
+  igstkAddTransitionMacro( IdleState,
+                           ImageDirectoryNameValidInput,
+                           ImageDirectoryNameReadState,
+                           SetDirectoryName );
 
   //Transition for valid image read request
-  m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,
-                               m_ReadImageRequestInput,
-                               m_AttemptingToReadImageState,
-                               &DICOMImageReader::AttemptReadImage);
+  igstkAddTransitionMacro( ImageDirectoryNameReadState,
+                           ReadImageRequestInput,
+                           AttemptingToReadImageState,
+                           AttemptReadImage );
 
-  m_StateMachine.AddTransition(m_AttemptingToReadImageState,
-                               m_ImageReadingSuccessInput,
-                               m_ImageReadState,
-                               &DICOMImageReader::ReportImageReadingSuccess);
+  igstkAddTransitionMacro( AttemptingToReadImageState,
+                           ImageReadingSuccessInput,
+                           ImageReadState,
+                           ReportImageReadingSuccess );
 
   //Transition for invalid image reqes request
-  m_StateMachine.AddTransition(m_IdleState,
-                               m_ReadImageRequestInput,
-                               m_IdleState,
-                               &DICOMImageReader::ReportInvalidRequest);
+  igstkAddTransitionMacro( IdleState,
+                           ReadImageRequestInput,
+                           IdleState,
+                           ReportInvalidRequest );
 
   //Transitions for DICOM info request inputs
-  m_StateMachine.AddTransition(m_ImageReadState,
-                               m_GetModalityInfoInput,
-                               m_ImageReadState,
-                               &DICOMImageReader::GetModalityInfo);
+  igstkAddTransitionMacro( ImageReadState,
+                           GetModalityInfoInput,
+                           ImageReadState,
+                           GetModalityInfo );
 
-  m_StateMachine.AddTransition(m_ImageReadState,
-                               m_GetPatientNameInfoInput,
-                               m_ImageReadState,
-                               &DICOMImageReader::GetPatientNameInfo);
+  igstkAddTransitionMacro( ImageReadState,
+                           GetPatientNameInfoInput,
+                           ImageReadState,
+                           GetPatientNameInfo );
 
   //Transitions for reset reader input 
 
-  m_StateMachine.AddTransition(m_ImageReadState,
-                               m_ResetReaderInput,
-                               m_IdleState,
-                               &DICOMImageReader::ResetReader);
+  igstkAddTransitionMacro( ImageReadState,
+                           ResetReaderInput,
+                           IdleState,
+                           ResetReader );
 
-  m_StateMachine.AddTransition(m_ImageDirectoryNameReadState,
-                               m_ResetReaderInput,
-                               m_IdleState,
-                               &DICOMImageReader::ResetReader);
+  igstkAddTransitionMacro( ImageDirectoryNameReadState,
+                           ResetReaderInput,
+                           IdleState,
+                           ResetReader );
 
-  m_StateMachine.AddTransition(m_AttemptingToReadImageState,
-                               m_ResetReaderInput,
-                               m_IdleState,
-                               &DICOMImageReader::ResetReader);
+  igstkAddTransitionMacro( AttemptingToReadImageState,
+                           ResetReaderInput,
+                           IdleState,
+                           ResetReader );
 
 
   //Errors related to image directory name
-  m_StateMachine.AddTransition(m_IdleState,
-                               m_ImageDirectoryNameIsEmptyInput,
-                               m_IdleState,
-                               &DICOMImageReader::ReportImageDirectoryEmptyError);
+  igstkAddTransitionMacro( IdleState,
+                           ImageDirectoryNameIsEmptyInput,
+                           IdleState,
+                           ReportImageDirectoryEmptyError );
 
-  m_StateMachine.AddTransition(m_IdleState,
-                               m_ImageDirectoryNameDoesNotExistInput,
-                               m_IdleState,
-                               &DICOMImageReader::ReportImageDirectoryDoesNotExistError);
+  igstkAddTransitionMacro( IdleState,
+                           ImageDirectoryNameDoesNotExistInput,
+                           IdleState,
+                           ReportImageDirectoryDoesNotExistError );
 
-  m_StateMachine.AddTransition(m_IdleState,
-                               m_ImageDirectoryNameIsNotDirectoryInput,
-                               m_IdleState,
-                               &DICOMImageReader::ReportImageDirectoryIsNotDirectoryError);
+  igstkAddTransitionMacro( IdleState,
+                           ImageDirectoryNameIsNotDirectoryInput,
+                           IdleState,
+                           ReportImageDirectoryIsNotDirectoryError );
 
-  m_StateMachine.AddTransition(m_IdleState,
-                               m_ImageDirectoryNameDoesNotHaveEnoughFilesInput,
-                               m_IdleState,
-                               &DICOMImageReader::ReportImageDirectoryDoesNotHaveEnoughFilesError);
+  igstkAddTransitionMacro( IdleState,
+                           ImageDirectoryNameDoesNotHaveEnoughFilesInput,
+                           IdleState,
+                           ReportImageDirectoryDoesNotHaveEnoughFilesError );
 
   //Errors related to  image reading 
-  m_StateMachine.AddTransition(m_AttemptingToReadImageState,
-                               m_ImageReadingErrorInput,
-                               m_IdleState,
-                               &DICOMImageReader::ReportImageReadingError);
+  igstkAddTransitionMacro( AttemptingToReadImageState,
+                           ImageReadingErrorInput,
+                           IdleState,
+                           ReportImageReadingError );
 
    // Select the initial state of the state machine
   m_StateMachine.SelectInitialState( m_IdleState );

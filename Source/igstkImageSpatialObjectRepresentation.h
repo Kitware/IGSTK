@@ -167,6 +167,9 @@ private:
   /** Update the visual representation with changes in the geometry */
   virtual void UpdateRepresentation();
 
+  /** Null operation for State Machine transition */
+  void NoAction();
+
   /** Connect this representation class to the spatial object. Only to be
    * called by the State Machine. */
   void SetImageSpatialObject();
