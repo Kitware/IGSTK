@@ -153,7 +153,10 @@ private:
   void ReportInvalidRequest();
   void AttachToTrackerTool();
   void SetTransform();
-  
+
+  /** Null operation for a State Machine transition */
+  void NoAction();
+
 };
 
 } // end namespace igstk

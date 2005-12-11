@@ -139,6 +139,9 @@ private:
   /** Stop the generation of pulses by purging the timer. */
   void StopPulses();
 
+  /** Null operation for a State Machine transition */
+  void NoAction();
+
 };
 
 } // end of namespace igstk

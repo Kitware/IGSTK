@@ -144,12 +144,13 @@ private:
   
 
   /** States for the State Machine */
-  StateType            m_Invalid;
-  StateType            m_NotAvailable;
-  StateType            m_Available;
-  StateType            m_Initialized;
-  StateType            m_Tracking;
-  StateType            m_Visible;
+  StateType            m_InitialState;
+  StateType            m_InvalidState;
+  StateType            m_NotAvailableState;
+  StateType            m_AvailableState;
+  StateType            m_InitializedState;
+  StateType            m_TrackingState;
+  StateType            m_VisibleState;
 
 
 };

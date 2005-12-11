@@ -33,35 +33,35 @@ SpatialObjectReader< TDimension, TPixelType >
   m_SpatialObjectReader = SpatialObjectReaderType::New();
 
   //Set the state descriptors
-  m_StateMachine.AddState(m_IdleState, "IdleState");
-  m_StateMachine.AddState(m_ObjectFileNameReadState, "ObjectFileNameReadState");
-  m_StateMachine.AddState(m_ObjectReadState, "ObjectReadState");
-  m_StateMachine.AddState(m_ObjectAttemptingReadState, "ObjectAttemptingReadState");
+  igstkAddStateMacro( IdleState );
+  igstkAddStateMacro( ObjectFileNameReadState );
+  igstkAddStateMacro( ObjectReadState );
+  igstkAddStateMacro( ObjectAttemptingReadState );
 
   /** List of State Inputs */
-  m_StateMachine.AddInput(m_ReadObjectRequestInput,"ObjectReadRequestInput");
-  m_StateMachine.AddInput(m_ObjectReadingErrorInput,"ObjectReadingErrorInput");
-  m_StateMachine.AddInput(m_ObjectReadingSuccessInput,"ObjectReadingSuccessInput");
-  m_StateMachine.AddInput(m_ObjectFileNameValidInput,"ObjectFileNameValidInput");
-  m_StateMachine.AddInput(m_ObjectFileNameIsEmptyInput,"ObjectFileNameIsEmptyInput");
-  m_StateMachine.AddInput(m_ObjectFileNameIsDirectoryInput,"ObjectFileNameIsDirectoryInput");
-  m_StateMachine.AddInput(m_ObjectFileNameDoesNotExistInput,"ObjectFileNameDoesNotExistInput");
+  igstkAddInputMacro( ReadObjectRequestInput );
+  igstkAddInputMacro( ObjectReadingErrorInput );
+  igstkAddInputMacro( ObjectReadingSuccessInput );
+  igstkAddInputMacro( ObjectFileNameValidInput );
+  igstkAddInputMacro( ObjectFileNameIsEmptyInput );
+  igstkAddInputMacro( ObjectFileNameIsDirectoryInput );
+  igstkAddInputMacro( ObjectFileNameDoesNotExistInput );
 
-  m_StateMachine.AddTransition(m_IdleState,m_ObjectFileNameValidInput,m_ObjectFileNameReadState,&SpatialObjectReader::SetFileName);
-  m_StateMachine.AddTransition(m_IdleState,m_ObjectFileNameIsEmptyInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
-  m_StateMachine.AddTransition(m_IdleState,m_ObjectFileNameIsDirectoryInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
-  m_StateMachine.AddTransition(m_IdleState,m_ObjectFileNameDoesNotExistInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
-  m_StateMachine.AddTransition(m_IdleState,m_ReadObjectRequestInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
-  m_StateMachine.AddTransition(m_ObjectFileNameReadState,m_ReadObjectRequestInput,m_ObjectAttemptingReadState,&SpatialObjectReader::AttemptReadObject);
-  m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameValidInput,m_ObjectFileNameReadState,&SpatialObjectReader::SetFileName);
-  m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameIsEmptyInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
-  m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameIsDirectoryInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
-  m_StateMachine.AddTransition(m_ObjectReadState,m_ObjectFileNameDoesNotExistInput,m_IdleState,&SpatialObjectReader::ReportInvalidRequest);
+  igstkAddTransitionMacro( IdleState, ObjectFileNameValidInput, ObjectFileNameReadState, SetFileName );
+  igstkAddTransitionMacro( IdleState, ObjectFileNameIsEmptyInput, IdleState, ReportInvalidRequest );
+  igstkAddTransitionMacro( IdleState, ObjectFileNameIsDirectoryInput, IdleState, ReportInvalidRequest );
+  igstkAddTransitionMacro( IdleState, ObjectFileNameDoesNotExistInput, IdleState, ReportInvalidRequest );
+  igstkAddTransitionMacro( IdleState, ReadObjectRequestInput, IdleState, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectFileNameReadState, ReadObjectRequestInput, ObjectAttemptingReadState, AttemptReadObject );
+  igstkAddTransitionMacro( ObjectReadState, ObjectFileNameValidInput, ObjectFileNameReadState, SetFileName );
+  igstkAddTransitionMacro( ObjectReadState, ObjectFileNameIsEmptyInput, IdleState, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectReadState, ObjectFileNameIsDirectoryInput, IdleState, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectReadState, ObjectFileNameDoesNotExistInput, IdleState, ReportInvalidRequest );
 
 
   //Errors related to Object reading 
-  m_StateMachine.AddTransition(m_ObjectAttemptingReadState,m_ObjectReadingErrorInput,m_IdleState,&SpatialObjectReader::ReportObjectReadingError);
-  m_StateMachine.AddTransition(m_ObjectAttemptingReadState,m_ObjectReadingSuccessInput,m_ObjectReadState,&SpatialObjectReader::ReportObjectReadingSuccess);
+  igstkAddTransitionMacro( ObjectAttemptingReadState, ObjectReadingErrorInput, IdleState, ReportObjectReadingError );
+  igstkAddTransitionMacro( ObjectAttemptingReadState, ObjectReadingSuccessInput, ObjectReadState, ReportObjectReadingSuccess );
 
   // Select the initial state of the state machine
   m_StateMachine.SelectInitialState( m_IdleState );

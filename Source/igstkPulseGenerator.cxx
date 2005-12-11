@@ -35,52 +35,51 @@ PulseGenerator::PulseGenerator():m_StateMachine(this)
 
   m_Logger = NULL;
   
-  m_StateMachine.AddInput( m_ValidFrequencyInput,  "FrequencyInput" );
-  m_StateMachine.AddInput( m_InvalidLowFrequencyInput,  "InvalidLowFrequencyInput" );
-  m_StateMachine.AddInput( m_InvalidHighFrequencyInput,  "InvalidHighFrequencyInput" );
-  m_StateMachine.AddInput( m_StopInput,  "StopInput" );
-  m_StateMachine.AddInput( m_StartInput,  "StartInput" );
-  m_StateMachine.AddInput( m_PulseInput,  "PulseInput" );
-  m_StateMachine.AddInput( m_EventReturnInput,  "EventReturnInput" );
+  igstkAddInputMacro( ValidFrequencyInput );
+  igstkAddInputMacro( InvalidLowFrequencyInput );
+  igstkAddInputMacro( InvalidHighFrequencyInput );
+  igstkAddInputMacro( StopInput );
+  igstkAddInputMacro( StartInput );
+  igstkAddInputMacro( PulseInput );
+  igstkAddInputMacro( EventReturnInput );
 
-  m_StateMachine.AddState( m_InitialState,  "InitialState"  );
-  m_StateMachine.AddState( m_StoppedState,  "StoppedState"  );
-  m_StateMachine.AddState( m_PulsingState,  "PulsingState"  );
-  m_StateMachine.AddState( m_WaitingEventReturnState,  "WaitingEventReturnState"  );
+  igstkAddStateMacro( InitialState  );
+  igstkAddStateMacro( StoppedState  );
+  igstkAddStateMacro( PulsingState  );
+  igstkAddStateMacro( WaitingEventReturnState  );
 
-  const ActionType NoAction = 0;
 
-  m_StateMachine.AddTransition( m_InitialState, m_ValidFrequencyInput, m_StoppedState,  & PulseGenerator::SetFrequency );
-  m_StateMachine.AddTransition( m_InitialState, m_InvalidLowFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_InitialState, m_InvalidHighFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_InitialState, m_StopInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_InitialState, m_StartInput, m_InitialState, & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_InitialState, m_PulseInput, m_InitialState, & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_InitialState, m_EventReturnInput, m_InitialState, & PulseGenerator::ReportErrorCondition );
+  igstkAddTransitionMacro( InitialState, ValidFrequencyInput, StoppedState,  SetFrequency );
+  igstkAddTransitionMacro( InitialState, InvalidLowFrequencyInput, InitialState,  ReportErrorCondition );
+  igstkAddTransitionMacro( InitialState, InvalidHighFrequencyInput, InitialState,  ReportErrorCondition );
+  igstkAddTransitionMacro( InitialState, StopInput, InitialState,  ReportErrorCondition );
+  igstkAddTransitionMacro( InitialState, StartInput, InitialState, ReportErrorCondition );
+  igstkAddTransitionMacro( InitialState, PulseInput, InitialState, ReportErrorCondition );
+  igstkAddTransitionMacro( InitialState, EventReturnInput, InitialState, ReportErrorCondition );
   
-  m_StateMachine.AddTransition( m_StoppedState, m_ValidFrequencyInput, m_StoppedState,  & PulseGenerator::SetFrequency );
-  m_StateMachine.AddTransition( m_StoppedState, m_InvalidLowFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_StoppedState, m_InvalidHighFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_StoppedState, m_StopInput, m_StoppedState,   & PulseGenerator::StopPulses );
-  m_StateMachine.AddTransition( m_StoppedState, m_StartInput, m_PulsingState, & PulseGenerator::SetTimer );
-  m_StateMachine.AddTransition( m_StoppedState, m_PulseInput, m_StoppedState, & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_StoppedState, m_EventReturnInput, m_StoppedState, & PulseGenerator::ReportErrorCondition );
+  igstkAddTransitionMacro( StoppedState, ValidFrequencyInput, StoppedState,  SetFrequency );
+  igstkAddTransitionMacro( StoppedState, InvalidLowFrequencyInput, InitialState,  ReportErrorCondition );
+  igstkAddTransitionMacro( StoppedState, InvalidHighFrequencyInput, InitialState,  ReportErrorCondition );
+  igstkAddTransitionMacro( StoppedState, StopInput, StoppedState,   StopPulses );
+  igstkAddTransitionMacro( StoppedState, StartInput, PulsingState, SetTimer );
+  igstkAddTransitionMacro( StoppedState, PulseInput, StoppedState, ReportErrorCondition );
+  igstkAddTransitionMacro( StoppedState, EventReturnInput, StoppedState, ReportErrorCondition );
  
-  m_StateMachine.AddTransition( m_PulsingState, m_ValidFrequencyInput, m_PulsingState,  & PulseGenerator::SetFrequency );
-  m_StateMachine.AddTransition( m_PulsingState, m_InvalidLowFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_PulsingState, m_InvalidHighFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_PulsingState, m_StopInput, m_StoppedState,  & PulseGenerator::StopPulses );
-  m_StateMachine.AddTransition( m_PulsingState, m_StartInput, m_PulsingState, & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_PulsingState, m_PulseInput, m_WaitingEventReturnState, & PulseGenerator::EmitPulse );
-  m_StateMachine.AddTransition( m_PulsingState, m_EventReturnInput, m_StoppedState, & PulseGenerator::ReportErrorCondition );
+  igstkAddTransitionMacro( PulsingState, ValidFrequencyInput, PulsingState,  SetFrequency );
+  igstkAddTransitionMacro( PulsingState, InvalidLowFrequencyInput, InitialState,  ReportErrorCondition );
+  igstkAddTransitionMacro( PulsingState, InvalidHighFrequencyInput, InitialState,  ReportErrorCondition );
+  igstkAddTransitionMacro( PulsingState, StopInput, StoppedState,  StopPulses );
+  igstkAddTransitionMacro( PulsingState, StartInput, PulsingState, ReportErrorCondition );
+  igstkAddTransitionMacro( PulsingState, PulseInput, WaitingEventReturnState, EmitPulse );
+  igstkAddTransitionMacro( PulsingState, EventReturnInput, StoppedState, ReportErrorCondition );
 
-  m_StateMachine.AddTransition( m_WaitingEventReturnState, m_ValidFrequencyInput, m_WaitingEventReturnState,  & PulseGenerator::SetFrequency );
-  m_StateMachine.AddTransition( m_WaitingEventReturnState, m_InvalidLowFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_WaitingEventReturnState, m_InvalidHighFrequencyInput, m_InitialState,  & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_WaitingEventReturnState, m_StopInput, m_StoppedState,  & PulseGenerator::StopPulses );
-  m_StateMachine.AddTransition( m_WaitingEventReturnState, m_StartInput, m_WaitingEventReturnState, & PulseGenerator::ReportErrorCondition );
-  m_StateMachine.AddTransition( m_WaitingEventReturnState, m_PulseInput, m_WaitingEventReturnState, & PulseGenerator::ReportMissedPulse );
-  m_StateMachine.AddTransition( m_WaitingEventReturnState, m_EventReturnInput, m_PulsingState, NoAction );
+  igstkAddTransitionMacro( WaitingEventReturnState, ValidFrequencyInput, WaitingEventReturnState,  SetFrequency );
+  igstkAddTransitionMacro( WaitingEventReturnState, InvalidLowFrequencyInput, InitialState,  ReportErrorCondition );
+  igstkAddTransitionMacro( WaitingEventReturnState, InvalidHighFrequencyInput, InitialState,  ReportErrorCondition );
+  igstkAddTransitionMacro( WaitingEventReturnState, StopInput, StoppedState,  StopPulses );
+  igstkAddTransitionMacro( WaitingEventReturnState, StartInput, WaitingEventReturnState, ReportErrorCondition );
+  igstkAddTransitionMacro( WaitingEventReturnState, PulseInput, WaitingEventReturnState, ReportMissedPulse );
+  igstkAddTransitionMacro( WaitingEventReturnState, EventReturnInput, PulsingState, NoAction );
  
   m_StateMachine.SelectInitialState( m_InitialState );
 
@@ -136,6 +135,13 @@ PulseGenerator::RequestStop()
   m_StateMachine.ProcessInputs();
 }
  
+
+/** Null operation for a State Machine transition */
+void 
+PulseGenerator::NoAction()
+{
+}
+
 
 void
 PulseGenerator::SetFrequency()

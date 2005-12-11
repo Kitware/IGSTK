@@ -41,18 +41,16 @@ TubeObjectRepresentation::TubeObjectRepresentation():m_StateMachine(this)
   m_TubeSpatialObject = NULL;
   this->RequestSetSpatialObject( m_TubeSpatialObject );
   
-  m_StateMachine.AddInput( m_ValidTubeObjectInput,  "ValidTubeObjectInput" );
-  m_StateMachine.AddInput( m_NullTubeObjectInput,   "NullTubeObjectInput"  );
+  igstkAddInputMacro( ValidTubeObjectInput );
+  igstkAddInputMacro( NullTubeObjectInput  );
 
-  m_StateMachine.AddState( m_NullTubeObjectState,  "NullTubeObjectState"     );
-  m_StateMachine.AddState( m_ValidTubeObjectState, "ValidTubeObjectState"     );
+  igstkAddStateMacro( NullTubeObjectState     );
+  igstkAddStateMacro( ValidTubeObjectState     );
 
-  const ActionType NoAction = 0;
-
-  m_StateMachine.AddTransition( m_NullTubeObjectState, m_NullTubeObjectInput, m_NullTubeObjectState,  NoAction );
-  m_StateMachine.AddTransition( m_NullTubeObjectState, m_ValidTubeObjectInput, m_ValidTubeObjectState,  & TubeObjectRepresentation::SetTubeObject );
-  m_StateMachine.AddTransition( m_ValidTubeObjectState, m_NullTubeObjectInput, m_NullTubeObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidTubeObjectState, m_ValidTubeObjectInput, m_ValidTubeObjectState,  NoAction ); 
+  igstkAddTransitionMacro( NullTubeObjectState, NullTubeObjectInput, NullTubeObjectState,  NoAction );
+  igstkAddTransitionMacro( NullTubeObjectState, ValidTubeObjectInput, ValidTubeObjectState,  SetTubeObject );
+  igstkAddTransitionMacro( ValidTubeObjectState, NullTubeObjectInput, NullTubeObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidTubeObjectState, ValidTubeObjectInput, ValidTubeObjectState,  NoAction ); 
 
   m_StateMachine.SelectInitialState( m_NullTubeObjectState );
 
@@ -80,6 +78,11 @@ void TubeObjectRepresentation::RequestSetTubeObject( const TubeObjectType * Tube
     m_StateMachine.PushInput( m_ValidTubeObjectInput );
     m_StateMachine.ProcessInputs();
     }
+}
+
+/** Null operation for a State Machine transition */
+void TubeObjectRepresentation::NoAction()
+{
 }
 
 /** Set the Cylindrical Spatial Object */

@@ -337,6 +337,9 @@ private:
   /** called by state machine when writing was timed out */
   void TimeoutProcessing( void );
   
+  /** Null operation for a state machine transition */
+  void NoAction();
+
   /** Called by the state machine when communication is to be opened */
   void AttemptToOpenPort( void );
 

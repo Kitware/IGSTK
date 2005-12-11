@@ -62,238 +62,195 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
   m_ResultInputMap[TIMEOUT] = m_TimeoutInput;
 
   // Set the state descriptors
-  m_StateMachine.AddState( m_IdleState,
-                           "IdleState" );
-
-  m_StateMachine.AddState( m_AttemptingToOpenPortState,
-                           "AttemptingToOpenPortState" );
-
-  m_StateMachine.AddState( m_PortOpenState,
-                           "PortOpenState" );
-
-  m_StateMachine.AddState( m_AttemptingToUpdateParametersState,
-                           "AttemptingToUpdateParametersState" );
-
-  m_StateMachine.AddState( m_ReadyForCommunicationState,
-                           "ReadyForCommunicationState" );
-
-  m_StateMachine.AddState( m_AttemptingToClosePortState,
-                           "AttemptingToClosePortState" );
-                           
-  m_StateMachine.AddState( m_AttemptingToReadState,
-                           "AttemptingToReadState" );
-                           
-  m_StateMachine.AddState( m_AttemptingToWriteState,
-                           "AttemptingToWriteState" );
-
-  m_StateMachine.AddState( m_AttemptingToPurgeBuffersState,
-                           "AttemptingToPurgeBuffersState" );
-
-  m_StateMachine.AddState( m_AttemptingToSendBreakState,
-                           "AttemptingToSendBreakState" );
-
-  m_StateMachine.AddState( m_SleepState,
-                           "SleepState" );
+  igstkAddStateMacro( IdleState ); 
+  igstkAddStateMacro( AttemptingToOpenPortState ); 
+  igstkAddStateMacro( PortOpenState ); 
+  igstkAddStateMacro( AttemptingToUpdateParametersState ); 
+  igstkAddStateMacro( ReadyForCommunicationState ); 
+  igstkAddStateMacro( AttemptingToClosePortState ); 
+  igstkAddStateMacro( AttemptingToReadState ); 
+  igstkAddStateMacro( AttemptingToWriteState ); 
+  igstkAddStateMacro( AttemptingToPurgeBuffersState ); 
+  igstkAddStateMacro( AttemptingToSendBreakState ); 
+  igstkAddStateMacro( SleepState );
 
   // Set the input descriptors
-  m_StateMachine.AddInput( m_SuccessInput,
-                           "SuccessInput");
+  igstkAddInputMacro( SuccessInput ); 
+  igstkAddInputMacro( FailureInput ); 
+  igstkAddInputMacro( TimeoutInput ); 
+  igstkAddInputMacro( OpenPortInput ); 
+  igstkAddInputMacro( UpdateParametersInput ); 
+  igstkAddInputMacro( ClosePortInput ); 
+  igstkAddInputMacro( SendBreakInput ); 
+  igstkAddInputMacro( PurgeBuffersInput ); 
+  igstkAddInputMacro( SleepInput ); 
+  igstkAddInputMacro( WriteInput ); 
+  igstkAddInputMacro( ReadInput ); 
 
-  m_StateMachine.AddInput( m_FailureInput,
-                           "FailureInput");
-
-  m_StateMachine.AddInput( m_TimeoutInput,
-                           "TimeoutInput");
-
-  m_StateMachine.AddInput( m_OpenPortInput,
-                           "OpenPortInput");
-
-  m_StateMachine.AddInput( m_UpdateParametersInput,
-                           "UpdateParametersInput");
-
-  m_StateMachine.AddInput( m_ClosePortInput,
-                           "ClosePortInput");
-
-  m_StateMachine.AddInput( m_SendBreakInput,
-                           "SendBreakInput");
-
-  m_StateMachine.AddInput( m_PurgeBuffersInput,
-                           "PurgeBuffersInput");
-  
-  m_StateMachine.AddInput( m_SleepInput,
-                           "SleepInput");
-
-  m_StateMachine.AddInput( m_WriteInput,
-                           "WriteInput");
-
-  m_StateMachine.AddInput( m_ReadInput,
-                           "ReadInput");
-                           
   // ----------------------------------------
   // Programming the state machine transitions
 
-  const ActionType NoAction = 0;
 
   // IdleState
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_OpenPortInput,
-                                m_AttemptingToOpenPortState,
-                                &SerialCommunication::AttemptToOpenPort);
+  igstkAddTransitionMacro( IdleState,
+                           OpenPortInput,
+                           AttemptingToOpenPortState,
+                           AttemptToOpenPort);
 
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_ClosePortInput,
-                                m_IdleState,
-                                NoAction);
+  igstkAddTransitionMacro( IdleState,
+                           ClosePortInput,
+                           IdleState,
+                           NoAction);
 
-  m_StateMachine.AddTransition( m_IdleState,
-                                m_UpdateParametersInput,
-                                m_IdleState,
-                                NoAction);
+  igstkAddTransitionMacro( IdleState,
+                           UpdateParametersInput,
+                           IdleState,
+                           NoAction);
 
   // AttemptingToOpenPortState
-  m_StateMachine.AddTransition( m_AttemptingToOpenPortState,
-                                m_SuccessInput,
-                                m_PortOpenState,
-                                &SerialCommunication::OpenPortSuccessProcessing);
+  igstkAddTransitionMacro( AttemptingToOpenPortState,
+                           SuccessInput,
+                           PortOpenState,
+                           OpenPortSuccessProcessing);
 
-  m_StateMachine.AddTransition( m_AttemptingToOpenPortState,
-                                m_FailureInput,
-                                m_IdleState,
-                                &SerialCommunication::OpenPortFailureProcessing);
+  igstkAddTransitionMacro( AttemptingToOpenPortState,
+                           FailureInput,
+                           IdleState,
+                           OpenPortFailureProcessing);
 
   // PortOpenState
-  m_StateMachine.AddTransition( m_PortOpenState,
-                                m_UpdateParametersInput,
-                                m_AttemptingToUpdateParametersState,
-                                &SerialCommunication::AttemptToUpdateParameters);
+  igstkAddTransitionMacro( PortOpenState,
+                           UpdateParametersInput,
+                           AttemptingToUpdateParametersState,
+                           AttemptToUpdateParameters);
 
-  m_StateMachine.AddTransition( m_PortOpenState,
-                                m_PurgeBuffersInput,
-                                m_PortOpenState,
-                                &SerialCommunication::AttemptToPurgeBuffers);
+  igstkAddTransitionMacro( PortOpenState,
+                           PurgeBuffersInput,
+                           PortOpenState,
+                           AttemptToPurgeBuffers);
 
-  m_StateMachine.AddTransition( m_PortOpenState,
-                                m_ClosePortInput,
-                                m_AttemptingToClosePortState,
-                                &SerialCommunication::AttemptToClosePort);
+  igstkAddTransitionMacro( PortOpenState,
+                           ClosePortInput,
+                           AttemptingToClosePortState,
+                           AttemptToClosePort);
 
   // AttemptingToUpdateParametersState
-  m_StateMachine.AddTransition( m_AttemptingToUpdateParametersState,
-                                m_SuccessInput,
-                                m_ReadyForCommunicationState,
-                                NoAction);
+  igstkAddTransitionMacro( AttemptingToUpdateParametersState,
+                           SuccessInput,
+                           ReadyForCommunicationState,
+                           NoAction);
 
-  m_StateMachine.AddTransition( m_AttemptingToUpdateParametersState,
-                                m_FailureInput,
-                                m_PortOpenState,
-                                NoAction);
+  igstkAddTransitionMacro( AttemptingToUpdateParametersState,
+                           FailureInput,
+                           PortOpenState,
+                           NoAction);
 
   // ReadyForCommunicationState
-  m_StateMachine.AddTransition( m_ReadyForCommunicationState,
-                                m_SendBreakInput,
-                                m_AttemptingToSendBreakState,
-                                &SerialCommunication::AttemptToSendBreak);
+  igstkAddTransitionMacro( ReadyForCommunicationState,
+                           SendBreakInput,
+                           AttemptingToSendBreakState,
+                           AttemptToSendBreak);
 
-  m_StateMachine.AddTransition( m_ReadyForCommunicationState,
-                                m_PurgeBuffersInput,
-                                m_AttemptingToPurgeBuffersState,
-                                &SerialCommunication::AttemptToPurgeBuffers);
+  igstkAddTransitionMacro( ReadyForCommunicationState,
+                           PurgeBuffersInput,
+                           AttemptingToPurgeBuffersState,
+                           AttemptToPurgeBuffers);
 
-  m_StateMachine.AddTransition( m_ReadyForCommunicationState,
-                                m_SleepInput,
-                                m_SleepState,
-                                &SerialCommunication::SleepProcessing);
+  igstkAddTransitionMacro( ReadyForCommunicationState,
+                           SleepInput,
+                           SleepState,
+                           SleepProcessing);
 
-  m_StateMachine.AddTransition( m_ReadyForCommunicationState,
-                                m_WriteInput,
-                                m_AttemptingToWriteState,
-                                &SerialCommunication::AttemptToWrite);
+  igstkAddTransitionMacro( ReadyForCommunicationState,
+                           WriteInput,
+                           AttemptingToWriteState,
+                           AttemptToWrite);
                                 
-  m_StateMachine.AddTransition( m_ReadyForCommunicationState,
-                                m_ReadInput,
-                                m_AttemptingToReadState,
-                                &SerialCommunication::AttemptToRead);
+  igstkAddTransitionMacro( ReadyForCommunicationState,
+                           ReadInput,
+                           AttemptingToReadState,
+                           AttemptToRead);
 
-  m_StateMachine.AddTransition( m_ReadyForCommunicationState,
-                                m_ClosePortInput,
-                                m_AttemptingToClosePortState,
-                                &SerialCommunication::AttemptToClosePort);
+  igstkAddTransitionMacro( ReadyForCommunicationState,
+                           ClosePortInput,
+                           AttemptingToClosePortState,
+                           AttemptToClosePort);
 
-  m_StateMachine.AddTransition( m_ReadyForCommunicationState,
-                                m_UpdateParametersInput,
-                                m_AttemptingToUpdateParametersState,
-                                &SerialCommunication::AttemptToUpdateParameters);
+  igstkAddTransitionMacro( ReadyForCommunicationState,
+                           UpdateParametersInput,
+                           AttemptingToUpdateParametersState,
+                           AttemptToUpdateParameters);
 
   // AttemptingToReadState
-  m_StateMachine.AddTransition( m_AttemptingToReadState,
-                                m_SuccessInput,
-                                m_ReadyForCommunicationState,
-                                &SerialCommunication::SuccessProcessing);
+  igstkAddTransitionMacro( AttemptingToReadState,
+                           SuccessInput,
+                           ReadyForCommunicationState,
+                           SuccessProcessing);
                                 
-  m_StateMachine.AddTransition( m_AttemptingToReadState,
-                                m_FailureInput,
-                                m_ReadyForCommunicationState,
-                                &SerialCommunication::FailureProcessing);
+  igstkAddTransitionMacro( AttemptingToReadState,
+                           FailureInput,
+                           ReadyForCommunicationState,
+                           FailureProcessing);
                                 
-  m_StateMachine.AddTransition( m_AttemptingToReadState,
-                                m_TimeoutInput,
-                                m_ReadyForCommunicationState,
-                                &SerialCommunication::TimeoutProcessing);
+  igstkAddTransitionMacro( AttemptingToReadState,
+                           TimeoutInput,
+                           ReadyForCommunicationState,
+                           TimeoutProcessing);
 
   // AttemptingToWriteState
-  m_StateMachine.AddTransition( m_AttemptingToWriteState,
-                                m_SuccessInput,
-                                m_ReadyForCommunicationState,
-                                &SerialCommunication::SuccessProcessing);
+  igstkAddTransitionMacro( AttemptingToWriteState,
+                           SuccessInput,
+                           ReadyForCommunicationState,
+                           SuccessProcessing);
                                 
-  m_StateMachine.AddTransition( m_AttemptingToWriteState,
-                                m_FailureInput,
-                                m_ReadyForCommunicationState,
-                                &SerialCommunication::FailureProcessing);
+  igstkAddTransitionMacro( AttemptingToWriteState,
+                           FailureInput,
+                           ReadyForCommunicationState,
+                           FailureProcessing);
                                 
-  m_StateMachine.AddTransition( m_AttemptingToWriteState,
-                                m_TimeoutInput,
-                                m_ReadyForCommunicationState,
-                                &SerialCommunication::TimeoutProcessing);
+  igstkAddTransitionMacro( AttemptingToWriteState,
+                           TimeoutInput,
+                           ReadyForCommunicationState,
+                           TimeoutProcessing);
 
   // AttemptingToSendBreakState
-  m_StateMachine.AddTransition( m_AttemptingToSendBreakState,
-                                m_SuccessInput,
-                                m_ReadyForCommunicationState,
-                                &SerialCommunication::SuccessProcessing);
+  igstkAddTransitionMacro( AttemptingToSendBreakState,
+                           SuccessInput,
+                           ReadyForCommunicationState,
+                           SuccessProcessing);
                                 
-  m_StateMachine.AddTransition( m_AttemptingToSendBreakState,
-                                m_FailureInput,
-                                m_ReadyForCommunicationState,
-                                &SerialCommunication::FailureProcessing);
+  igstkAddTransitionMacro( AttemptingToSendBreakState,
+                           FailureInput,
+                           ReadyForCommunicationState,
+                           FailureProcessing);
                                 
   // AttemptingToPurgeBuffersState
-  m_StateMachine.AddTransition( m_AttemptingToPurgeBuffersState,
-                                m_SuccessInput,
-                                m_ReadyForCommunicationState,
-                                &SerialCommunication::SuccessProcessing);
+  igstkAddTransitionMacro( AttemptingToPurgeBuffersState,
+                           SuccessInput,
+                           ReadyForCommunicationState,
+                           SuccessProcessing);
                                 
-  m_StateMachine.AddTransition( m_AttemptingToPurgeBuffersState,
-                                m_FailureInput,
-                                m_ReadyForCommunicationState,
-                                &SerialCommunication::FailureProcessing);
+  igstkAddTransitionMacro( AttemptingToPurgeBuffersState,
+                           FailureInput,
+                           ReadyForCommunicationState,
+                           FailureProcessing);
 
   // AttemptingToClosePortState
-  m_StateMachine.AddTransition( m_AttemptingToClosePortState,
-                                m_SuccessInput,
-                                m_IdleState,
-                                NoAction);
+  igstkAddTransitionMacro( AttemptingToClosePortState,
+                           SuccessInput,
+                           IdleState,
+                           NoAction);
 
-  m_StateMachine.AddTransition( m_AttemptingToClosePortState,
-                                m_FailureInput,
-                                m_PortOpenState,
-                                &SerialCommunication::ClosePortFailureProcessing);
+  igstkAddTransitionMacro( AttemptingToClosePortState,
+                           FailureInput,
+                           PortOpenState,
+                           ClosePortFailureProcessing);
 
   // SleepState
-  m_StateMachine.AddTransition( m_SleepState,
-                                m_SuccessInput,
-                                m_ReadyForCommunicationState,
-                                NoAction);
+  igstkAddTransitionMacro( SleepState,
+                           SuccessInput,
+                           ReadyForCommunicationState,
+                           NoAction);
 
   // Set the initial state of the state machine
   m_StateMachine.SelectInitialState( m_IdleState );
@@ -552,6 +509,11 @@ void SerialCommunication::AttemptToRead()
                                       m_BytesRead );
 
   m_StateMachine.PushInput( this->MapResultToInput(condition) );
+}
+
+
+void SerialCommunication::NoAction()
+{
 }
 
 

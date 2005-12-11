@@ -37,18 +37,16 @@ MeshObjectRepresentation
   m_MeshObject = NULL;
   this->RequestSetSpatialObject( m_MeshObject );
   
-  m_StateMachine.AddInput( m_ValidMeshObjectInput,  "ValidMeshObjectInput" );
-  m_StateMachine.AddInput( m_NullMeshObjectInput,   "NullMeshObjectInput"  );
+  igstkAddInputMacro( ValidMeshObjectInput );
+  igstkAddInputMacro( NullMeshObjectInput );
 
-  m_StateMachine.AddState( m_NullMeshObjectState,  "NullMeshObjectState"     );
-  m_StateMachine.AddState( m_ValidMeshObjectState, "ValidMeshObjectState"     );
+  igstkAddStateMacro( NullMeshObjectState );
+  igstkAddStateMacro( ValidMeshObjectState );
 
-  const ActionType NoAction = 0;
-
-  m_StateMachine.AddTransition( m_NullMeshObjectState, m_NullMeshObjectInput, m_NullMeshObjectState,  NoAction );
-  m_StateMachine.AddTransition( m_NullMeshObjectState, m_ValidMeshObjectInput, m_ValidMeshObjectState,  & MeshObjectRepresentation::SetMeshObject );
-  m_StateMachine.AddTransition( m_ValidMeshObjectState, m_NullMeshObjectInput, m_NullMeshObjectState,  NoAction ); 
-  m_StateMachine.AddTransition( m_ValidMeshObjectState, m_ValidMeshObjectInput, m_ValidMeshObjectState,  NoAction ); 
+  igstkAddTransitionMacro( NullMeshObjectState, NullMeshObjectInput, NullMeshObjectState,  NoAction );
+  igstkAddTransitionMacro( NullMeshObjectState, ValidMeshObjectInput, ValidMeshObjectState,  SetMeshObject );
+  igstkAddTransitionMacro( ValidMeshObjectState, NullMeshObjectInput, NullMeshObjectState,  NoAction ); 
+  igstkAddTransitionMacro( ValidMeshObjectState, ValidMeshObjectInput, ValidMeshObjectState,  NoAction ); 
 
   m_StateMachine.SelectInitialState( m_NullMeshObjectState );
 
@@ -79,6 +77,12 @@ void MeshObjectRepresentation::RequestSetMeshObject( const MeshObjectType * Mesh
     m_StateMachine.PushInput( m_ValidMeshObjectInput );
     m_StateMachine.ProcessInputs();
     }
+}
+
+
+/** Null operation for a State Machine transition */
+void MeshObjectRepresentation::NoAction()
+{
 }
 
 

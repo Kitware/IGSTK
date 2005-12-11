@@ -34,169 +34,153 @@ Landmark3DRegistration::Landmark3DRegistration() :
   m_StateMachine( this ), m_Logger( NULL)
 {
   // Set the state descriptors
-  m_StateMachine.AddState(m_IdleState,
-                          "IdleState");
-  m_StateMachine.AddState(m_ImageLandmark1AddedState,
-                          "ImageLandmark1AddedState");
-  m_StateMachine.AddState(m_TrackerLandmark1AddedState,
-                          "TrackerLandmark1AddedState");
-  m_StateMachine.AddState(m_ImageLandmark2AddedState,
-                          "ImageLandmark2AddedState");
-  m_StateMachine.AddState(m_TrackerLandmark2AddedState,
-                          "TrackerLandmark2AddedState");
-  m_StateMachine.AddState(m_ImageLandmark3AddedState,
-                          "ImageLandmark3AddedState");
-  m_StateMachine.AddState(m_TrackerLandmark3AddedState,
-                          "TrackerLandmark3AddedState");
-  m_StateMachine.AddState( m_AttemptingToComputeTransformState,
-                           "AttemptingToComputeTransformState" );
-  m_StateMachine.AddState( m_TransformComputedState,
-                           "TransformComputedState" );
+  igstkAddStateMacro( IdleState );
+  igstkAddStateMacro( ImageLandmark1AddedState );
+  igstkAddStateMacro( TrackerLandmark1AddedState );
+  igstkAddStateMacro( ImageLandmark2AddedState );
+  igstkAddStateMacro( TrackerLandmark2AddedState );
+  igstkAddStateMacro( ImageLandmark3AddedState );
+  igstkAddStateMacro( TrackerLandmark3AddedState );
+  igstkAddStateMacro( AttemptingToComputeTransformState  );
+  igstkAddStateMacro( TransformComputedState  );
 
 
   // Set the input descriptors 
-  m_StateMachine.AddInput(m_ImageLandmarkInput,
-                          "ImageLandmarkInput");
-  m_StateMachine.AddInput(m_TrackerLandmarkInput,
-                          "TrackerLandmarkInput");
-  m_StateMachine.AddInput(m_ComputeTransformInput,
-                          "ComputeTransformInput");
-  m_StateMachine.AddInput( m_GetTransformInput,
-                          "GetTransformInput" );
-  m_StateMachine.AddInput(m_ResetRegistrationInput,
-                          "ResetRegistrationInput");
-  m_StateMachine.AddInput( m_TransformComputationSuccessInput,
-                          "TransformComputationSuccessInput" );
-  m_StateMachine.AddInput( m_TransformComputationFailureInput,
-                          "TransformComputationFailureInput" );
+  igstkAddInputMacro( ImageLandmarkInput );
+  igstkAddInputMacro( TrackerLandmarkInput );
+  igstkAddInputMacro( ComputeTransformInput );
+  igstkAddInputMacro( GetTransformInput  );
+  igstkAddInputMacro( ResetRegistrationInput );
+  igstkAddInputMacro( TransformComputationSuccessInput  );
+  igstkAddInputMacro( TransformComputationFailureInput  );
 
   // Add transition  for landmark point adding
-  m_StateMachine.AddTransition(m_IdleState,
-                               m_ImageLandmarkInput,
-                               m_ImageLandmark1AddedState,
-                               &Landmark3DRegistration::AddImageLandmarkPoint);
+  igstkAddTransitionMacro(IdleState,
+                          ImageLandmarkInput,
+                          ImageLandmark1AddedState,
+                          AddImageLandmarkPoint);
 
-  m_StateMachine.AddTransition(m_ImageLandmark1AddedState,
-                               m_TrackerLandmarkInput,
-                               m_TrackerLandmark1AddedState,
-                               &Landmark3DRegistration::AddTrackerLandmarkPoint);
+  igstkAddTransitionMacro(ImageLandmark1AddedState,
+                          TrackerLandmarkInput,
+                          TrackerLandmark1AddedState,
+                          AddTrackerLandmarkPoint);
 
-  m_StateMachine.AddTransition(m_TrackerLandmark1AddedState,
-                               m_ImageLandmarkInput,
-                               m_ImageLandmark2AddedState,
-                               &Landmark3DRegistration::AddImageLandmarkPoint);
+  igstkAddTransitionMacro(TrackerLandmark1AddedState,
+                          ImageLandmarkInput,
+                          ImageLandmark2AddedState,
+                          AddImageLandmarkPoint);
 
-  m_StateMachine.AddTransition(m_ImageLandmark2AddedState,
-                               m_TrackerLandmarkInput,
-                               m_TrackerLandmark2AddedState,
-                               &Landmark3DRegistration::AddTrackerLandmarkPoint);
+  igstkAddTransitionMacro(ImageLandmark2AddedState,
+                          TrackerLandmarkInput,
+                          TrackerLandmark2AddedState,
+                          AddTrackerLandmarkPoint);
 
-  m_StateMachine.AddTransition(m_TrackerLandmark2AddedState,
-                               m_ImageLandmarkInput,
-                               m_ImageLandmark3AddedState,
-                               &Landmark3DRegistration::AddImageLandmarkPoint);
+  igstkAddTransitionMacro(TrackerLandmark2AddedState,
+                          ImageLandmarkInput,
+                          ImageLandmark3AddedState,
+                          AddImageLandmarkPoint);
 
-  m_StateMachine.AddTransition(m_ImageLandmark3AddedState,
-                               m_TrackerLandmarkInput,
-                               m_TrackerLandmark3AddedState,
-                               &Landmark3DRegistration::AddTrackerLandmarkPoint);
+  igstkAddTransitionMacro(ImageLandmark3AddedState,
+                          TrackerLandmarkInput,
+                          TrackerLandmark3AddedState,
+                          AddTrackerLandmarkPoint);
 
-  m_StateMachine.AddTransition(m_TrackerLandmark3AddedState,
-                               m_ImageLandmarkInput,
-                               m_ImageLandmark3AddedState,
-                               &Landmark3DRegistration::AddImageLandmarkPoint);
+  igstkAddTransitionMacro(TrackerLandmark3AddedState,
+                          ImageLandmarkInput,
+                          ImageLandmark3AddedState,
+                          AddImageLandmarkPoint);
 
-  m_StateMachine.AddTransition( m_TrackerLandmark3AddedState,
-                                m_ComputeTransformInput,
-                                m_AttemptingToComputeTransformState,
-                                &Landmark3DRegistration::ComputeTransform );
+  igstkAddTransitionMacro( TrackerLandmark3AddedState,
+                           ComputeTransformInput,
+                           AttemptingToComputeTransformState,
+                           ComputeTransform );
 
-  m_StateMachine.AddTransition( m_AttemptingToComputeTransformState,
-                                m_TransformComputationSuccessInput,
-                                m_TransformComputedState,
-                                &Landmark3DRegistration::ReportSuccessInTransformComputation );
+  igstkAddTransitionMacro( AttemptingToComputeTransformState,
+                           TransformComputationSuccessInput,
+                           TransformComputedState,
+                           ReportSuccessInTransformComputation );
 
-  m_StateMachine.AddTransition( m_AttemptingToComputeTransformState,
-                                m_TransformComputationFailureInput,
-                                m_TrackerLandmark3AddedState,
-                                &Landmark3DRegistration::ReportFailureInTransformComputation );
+  igstkAddTransitionMacro( AttemptingToComputeTransformState,
+                           TransformComputationFailureInput,
+                           TrackerLandmark3AddedState,
+                           ReportFailureInTransformComputation );
 
-  m_StateMachine.AddTransition( m_TransformComputedState,
-                                m_GetTransformInput,
-                                m_TransformComputedState,
-                                &Landmark3DRegistration::GetTransform );
+  igstkAddTransitionMacro( TransformComputedState,
+                           GetTransformInput,
+                           TransformComputedState,
+                           GetTransform );
 
   // Add transitions for all invalid requests 
-  m_StateMachine.AddTransition(m_IdleState,
-                               m_ComputeTransformInput,
-                               m_IdleState,
-                               &Landmark3DRegistration::ReportInvalidRequest);
+  igstkAddTransitionMacro( IdleState,
+                           ComputeTransformInput,
+                           IdleState,
+                           ReportInvalidRequest );
 
-  m_StateMachine.AddTransition(m_ImageLandmark1AddedState,
-                               m_ComputeTransformInput,
-                               m_ImageLandmark1AddedState,
-                               &Landmark3DRegistration::ReportInvalidRequest);
+  igstkAddTransitionMacro( ImageLandmark1AddedState,
+                           ComputeTransformInput,
+                           ImageLandmark1AddedState,
+                           ReportInvalidRequest );
 
-  m_StateMachine.AddTransition(m_ImageLandmark2AddedState,
-                               m_ComputeTransformInput,
-                               m_ImageLandmark2AddedState,
-                               &Landmark3DRegistration::ReportInvalidRequest);
+  igstkAddTransitionMacro( ImageLandmark2AddedState,
+                           ComputeTransformInput,
+                           ImageLandmark2AddedState,
+                           ReportInvalidRequest);
 
-  m_StateMachine.AddTransition(m_ImageLandmark3AddedState,
-                               m_ComputeTransformInput,
-                               m_ImageLandmark3AddedState,
-                               &Landmark3DRegistration::ReportInvalidRequest);
+  igstkAddTransitionMacro( ImageLandmark3AddedState,
+                           ComputeTransformInput,
+                           ImageLandmark3AddedState,
+                           ReportInvalidRequest);
 
-  m_StateMachine.AddTransition(m_TrackerLandmark1AddedState,
-                               m_ComputeTransformInput,
-                               m_TrackerLandmark1AddedState,
-                               &Landmark3DRegistration::ReportInvalidRequest);
+  igstkAddTransitionMacro( TrackerLandmark1AddedState,
+                           ComputeTransformInput,
+                           TrackerLandmark1AddedState,
+                           ReportInvalidRequest);
 
-  m_StateMachine.AddTransition(m_TrackerLandmark2AddedState,
-                               m_ComputeTransformInput,
-                               m_TrackerLandmark2AddedState,
-                               &Landmark3DRegistration::ReportInvalidRequest);
+  igstkAddTransitionMacro( TrackerLandmark2AddedState,
+                           ComputeTransformInput,
+                           TrackerLandmark2AddedState,
+                           ReportInvalidRequest);
 
   //Add transitions for registration reset state input 
-  m_StateMachine.AddTransition(m_TransformComputedState,
-                               m_ResetRegistrationInput,
-                               m_IdleState,
-                               &Landmark3DRegistration::ResetRegistration);
+  igstkAddTransitionMacro( TransformComputedState,
+                           ResetRegistrationInput,
+                           IdleState,
+                           ResetRegistration);
   
-  m_StateMachine.AddTransition(m_ImageLandmark1AddedState,
-                               m_ResetRegistrationInput,
-                               m_IdleState,
-                               &Landmark3DRegistration::ResetRegistration);
+  igstkAddTransitionMacro( ImageLandmark1AddedState,
+                           ResetRegistrationInput,
+                           IdleState,
+                           ResetRegistration);
   
-  m_StateMachine.AddTransition(m_ImageLandmark2AddedState,
-                               m_ResetRegistrationInput,
-                               m_IdleState,
-                               &Landmark3DRegistration::ResetRegistration);
+  igstkAddTransitionMacro( ImageLandmark2AddedState,
+                           ResetRegistrationInput,
+                           IdleState,
+                           ResetRegistration);
 
-  m_StateMachine.AddTransition(m_ImageLandmark3AddedState,
-                               m_ResetRegistrationInput,
-                               m_IdleState,
-                               &Landmark3DRegistration::ResetRegistration);
+  igstkAddTransitionMacro( ImageLandmark3AddedState,
+                           ResetRegistrationInput,
+                           IdleState,
+                           ResetRegistration);
   
-  m_StateMachine.AddTransition(m_TrackerLandmark1AddedState,
-                               m_ResetRegistrationInput,
-                               m_IdleState,
-                               &Landmark3DRegistration::ResetRegistration);
+  igstkAddTransitionMacro( TrackerLandmark1AddedState,
+                           ResetRegistrationInput,
+                           IdleState,
+                           ResetRegistration);
 
-  m_StateMachine.AddTransition(m_TrackerLandmark2AddedState,
-                               m_ResetRegistrationInput,
-                               m_IdleState,
-                               &Landmark3DRegistration::ResetRegistration);
+  igstkAddTransitionMacro( TrackerLandmark2AddedState,
+                           ResetRegistrationInput,
+                           IdleState,
+                           ResetRegistration);
   
-  m_StateMachine.AddTransition(m_TrackerLandmark3AddedState,
-                               m_ResetRegistrationInput,
-                               m_IdleState,
-                               &Landmark3DRegistration::ResetRegistration);
+  igstkAddTransitionMacro( TrackerLandmark3AddedState,
+                           ResetRegistrationInput,
+                           IdleState,
+                           ResetRegistration);
 
-  m_StateMachine.AddTransition(m_AttemptingToComputeTransformState,
-                               m_ResetRegistrationInput,
-                               m_IdleState,
-                               &Landmark3DRegistration::ResetRegistration);
+  igstkAddTransitionMacro( AttemptingToComputeTransformState,
+                           ResetRegistrationInput,
+                           IdleState,
+                           ResetRegistration);
 
    // Select the initial state of the state machine
   m_StateMachine.SelectInitialState( m_IdleState );

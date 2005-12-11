@@ -136,6 +136,9 @@ private:
   /** update the visual representation position */
   virtual void RequestUpdatePosition( const TimeStamp & time );
 
+  /** Null operation for a State Machine transition */
+  void NoAction();
+
   /** update the position of the object. This should not be overloaded by other classes */
   void UpdatePosition();
 
