@@ -39,8 +39,6 @@ CylinderObjectRepresentation::CylinderObjectRepresentation():m_StateMachine(this
   igstkAddStateMacro( NullCylinderObjectState   );
   igstkAddStateMacro( ValidCylinderObjectState  );
 
-  const ActionType NoAction = 0;
-
   igstkAddTransitionMacro( NullCylinderObjectState, NullCylinderObjectInput, NullCylinderObjectState,  NoAction );
   igstkAddTransitionMacro( NullCylinderObjectState, ValidCylinderObjectInput, ValidCylinderObjectState,  SetCylinderObject );
   igstkAddTransitionMacro( ValidCylinderObjectState, NullCylinderObjectInput, NullCylinderObjectState,  NoAction ); 
