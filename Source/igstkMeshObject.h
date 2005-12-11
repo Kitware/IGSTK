@@ -48,7 +48,7 @@ class MeshObject
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( MeshObject, SpatialObject );
+  igstkStandardClassTraitsMacro( MeshObject, SpatialObject )
 
 public:
 

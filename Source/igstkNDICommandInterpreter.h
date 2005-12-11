@@ -46,7 +46,7 @@ class NDICommandInterpreter : public ::itk::Object
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( NDICommandInterpreter, ::itk::Object );
+  igstkStandardClassTraitsMacro( NDICommandInterpreter, ::itk::Object )
 
 public:
 

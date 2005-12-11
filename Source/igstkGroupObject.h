@@ -42,7 +42,7 @@ class GroupObject
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( GroupObject, SpatialObject );
+  igstkStandardClassTraitsMacro( GroupObject, SpatialObject )
 
 public:
 

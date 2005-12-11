@@ -44,7 +44,7 @@ class MeshObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( MeshObjectRepresentation, ObjectRepresentation );
+  igstkStandardClassTraitsMacro( MeshObjectRepresentation, ObjectRepresentation )
 
 public:
     

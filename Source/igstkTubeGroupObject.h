@@ -42,7 +42,7 @@ class TubeGroupObject
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( TubeGroupObject, GroupObject );
+  igstkStandardClassTraitsMacro( TubeGroupObject, GroupObject )
 
 public:
     

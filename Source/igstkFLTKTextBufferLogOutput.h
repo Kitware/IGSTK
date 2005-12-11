@@ -48,7 +48,7 @@ class FLTKTextBufferLogOutput : public ::itk::LogOutput
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( FLTKTextBufferLogOutput, ::itk::LogOutput );
+  igstkStandardClassTraitsMacro( FLTKTextBufferLogOutput, ::itk::LogOutput )
 
 public:
 

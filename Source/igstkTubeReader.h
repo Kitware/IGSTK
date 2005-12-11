@@ -50,7 +50,7 @@ class TubeReader : public SpatialObjectReader<3>
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( TubeReader, SpatialObjectReader<3> );
+  igstkStandardClassTraitsMacro( TubeReader, SpatialObjectReader<3> )
 
 public:
 

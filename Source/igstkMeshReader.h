@@ -52,7 +52,7 @@ public:
   typedef SpatialObjectReader<3,float>       SuperclassType;
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( MeshReader, SuperclassType );
+  igstkStandardClassTraitsMacro( MeshReader, SuperclassType )
 
 public:
 

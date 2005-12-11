@@ -39,7 +39,7 @@ class MRImageReader :
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( MRImageReader, DICOMImageReader< MRImageSpatialObject > );
+  igstkStandardClassTraitsMacro( MRImageReader, DICOMImageReader< MRImageSpatialObject > )
 
 protected:
 

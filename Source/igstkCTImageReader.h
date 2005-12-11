@@ -39,7 +39,7 @@ class CTImageReader :
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( CTImageReader, DICOMImageReader< CTImageSpatialObject > );
+  igstkStandardClassTraitsMacro( CTImageReader, DICOMImageReader< CTImageSpatialObject > )
 
 protected:
 

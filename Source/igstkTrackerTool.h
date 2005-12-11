@@ -48,7 +48,7 @@ class TrackerTool : public ::itk::Object
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( TrackerTool, ::itk::Object );
+  igstkStandardClassTraitsMacro( TrackerTool, ::itk::Object )
 
 public:
 

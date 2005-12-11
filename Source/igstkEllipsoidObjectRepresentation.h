@@ -49,7 +49,7 @@ class EllipsoidObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( EllipsoidObjectRepresentation, ObjectRepresentation );
+  igstkStandardClassTraitsMacro( EllipsoidObjectRepresentation, ObjectRepresentation )
 
 public:
 

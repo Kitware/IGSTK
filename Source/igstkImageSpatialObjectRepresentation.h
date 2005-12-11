@@ -78,7 +78,7 @@ public:
 
   /** Macro with standard traits declarations. */
   igstkStandardTemplatedClassTraitsMacro( ImageSpatialObjectRepresentation, \
-                                          ObjectRepresentation );
+                                          ObjectRepresentation )
 
 public:
 

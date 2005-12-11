@@ -61,7 +61,7 @@ class ImageSpatialObject
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardTemplatedClassTraitsMacro( ImageSpatialObject, SpatialObject );
+  igstkStandardTemplatedClassTraitsMacro( ImageSpatialObject, SpatialObject )
 
 public:
 

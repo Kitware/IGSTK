@@ -48,7 +48,7 @@ class SpatialObjectReader : public ::itk::Object
 public:
   
   /** Macro with standard traits declarations. */
-  igstkStandardTemplatedClassTraitsMacro( SpatialObjectReader, ::itk::Object );
+  igstkStandardTemplatedClassTraitsMacro( SpatialObjectReader, ::itk::Object )
 
 public:
 

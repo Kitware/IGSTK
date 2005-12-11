@@ -57,7 +57,7 @@ public:
   typedef Tracker::ResultType   ResultType;
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( AuroraTracker, Tracker );
+  igstkStandardClassTraitsMacro( AuroraTracker, Tracker )
 
   /** The SetCommunication method is used to attach a communication
     * object to the tracker object. */

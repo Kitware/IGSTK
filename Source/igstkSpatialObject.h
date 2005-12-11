@@ -52,7 +52,7 @@ class SpatialObject : public ::itk::Object
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( SpatialObject, ::itk::Object );
+  igstkStandardClassTraitsMacro( SpatialObject, ::itk::Object )
 
 public:
 

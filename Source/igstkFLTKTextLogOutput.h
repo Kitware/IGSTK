@@ -49,7 +49,7 @@ class FLTKTextLogOutput : public ::itk::LogOutput
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( FLTKTextLogOutput, ::itk::LogOutput );
+  igstkStandardClassTraitsMacro( FLTKTextLogOutput, ::itk::LogOutput )
 
 public:
 

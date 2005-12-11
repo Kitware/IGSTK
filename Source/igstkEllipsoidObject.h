@@ -41,7 +41,7 @@ class EllipsoidObject
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( EllipsoidObject, SpatialObject );
+  igstkStandardClassTraitsMacro( EllipsoidObject, SpatialObject )
 
 public:
 

@@ -36,7 +36,7 @@ class PolarisTrackerTool : public TrackerTool
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( PolarisTrackerTool, TrackerTool );
+  igstkStandardClassTraitsMacro( PolarisTrackerTool, TrackerTool )
 
 protected:
 

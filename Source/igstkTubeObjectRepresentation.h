@@ -45,7 +45,7 @@ class TubeObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( TubeObjectRepresentation, ObjectRepresentation );
+  igstkStandardClassTraitsMacro( TubeObjectRepresentation, ObjectRepresentation )
 
 public:
 

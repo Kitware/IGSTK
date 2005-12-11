@@ -38,7 +38,7 @@ public:
 
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( CTImageSpatialObjectRepresentation, \
-                    ImageSpatialObjectRepresentation< CTImageSpatialObject > );
+                    ImageSpatialObjectRepresentation< CTImageSpatialObject > )
 
 protected:
 

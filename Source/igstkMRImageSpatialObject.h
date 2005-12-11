@@ -50,7 +50,7 @@ public:
   typedef ImageSpatialObject< unsigned short, 3 >  SuperclassType;
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( MRImageSpatialObject, SuperclassType );
+  igstkStandardClassTraitsMacro( MRImageSpatialObject, SuperclassType )
 
 protected:
 

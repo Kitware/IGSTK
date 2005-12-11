@@ -51,7 +51,7 @@ class Landmark3DRegistration : public ::itk::Object
 public:
   
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( Landmark3DRegistration, ::itk::Object );
+  igstkStandardClassTraitsMacro( Landmark3DRegistration, ::itk::Object )
 
 public:
 

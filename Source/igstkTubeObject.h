@@ -41,7 +41,7 @@ class TubeObject
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( TubeObject, SpatialObject );
+  igstkStandardClassTraitsMacro( TubeObject, SpatialObject )
 
 public:
 

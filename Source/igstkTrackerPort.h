@@ -38,7 +38,9 @@ class TrackerPort : public ::itk::Object
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( TrackerPort, ::itk::Object );
+  igstkStandardClassTraitsMacro( TrackerPort, ::itk::Object )
+
+public:
 
   /** Internal types */
   typedef igstk::TrackerTool                TrackerToolType;

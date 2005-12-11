@@ -41,7 +41,7 @@ class SerialCommunicationSimulator : public SerialCommunication
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( SerialCommunicationSimulator, SerialCommunication );
+  igstkStandardClassTraitsMacro( SerialCommunicationSimulator, SerialCommunication )
 
 public:
 

@@ -37,7 +37,7 @@ public:
 
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( MRImageSpatialObjectRepresentation, \
-                        ImageSpatialObjectRepresentation< MRImageSpatialObject > );
+                        ImageSpatialObjectRepresentation< MRImageSpatialObject > )
 
 protected:
 

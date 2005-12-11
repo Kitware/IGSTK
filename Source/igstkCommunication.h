@@ -41,7 +41,7 @@ class Communication  : public ::itk::Object
 public: 
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( Communication, ::itk::Object );
+  igstkStandardClassTraitsMacro( Communication, ::itk::Object )
 
 public:
 

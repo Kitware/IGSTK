@@ -45,7 +45,7 @@ public:
 
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( SerialCommunicationForWindows, 
-                                 SerialCommunication );
+                                 SerialCommunication )
 
 public:
 

@@ -48,7 +48,7 @@ class CylinderObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( CylinderObjectRepresentation, ObjectRepresentation );
+  igstkStandardClassTraitsMacro( CylinderObjectRepresentation, ObjectRepresentation )
 
 public:
 

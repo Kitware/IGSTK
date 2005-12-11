@@ -36,7 +36,7 @@ class AuroraTrackerTool : public TrackerTool
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( AuroraTrackerTool, TrackerTool );
+  igstkStandardClassTraitsMacro( AuroraTrackerTool, TrackerTool )
 
 protected:
 

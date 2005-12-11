@@ -40,7 +40,7 @@ class CylinderObject
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( CylinderObject, SpatialObject );
+  igstkStandardClassTraitsMacro( CylinderObject, SpatialObject )
 
 public:
 

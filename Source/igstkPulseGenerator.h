@@ -52,7 +52,7 @@ class PulseGenerator  : public ::itk::Object
 public: 
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( PulseGenerator, ::itk::Object );
+  igstkStandardClassTraitsMacro( PulseGenerator, ::itk::Object )
 
 public:
 
