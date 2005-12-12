@@ -341,6 +341,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   this->ConnectImage();
 
   m_MapColors->SetInput( m_ImageData );
+
+  m_ImageActor->SetInput( m_MapColors->GetOutput() );
 }
 
 
@@ -394,12 +396,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     m_LUT->SetRampToLinear();
 
     m_MapColors->SetLookupTable( m_LUT );
-    m_MapColors->SetInput( m_ImageData );
     
-    m_ImageActor->SetInput( m_MapColors->GetOutput() );
-
     m_ImageActor->InterpolateOn();
-    
     }
   else
     {
