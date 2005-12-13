@@ -55,7 +55,7 @@ int igstkPivotCalibrationTest( int, char * [] )
   // Define the input file and the variables to extract the rotation and translation information
   std::ifstream input;
   unsigned int i, j;
-  int frame;
+  int frame, index;
   std::string temp;
   double time;
 
@@ -127,24 +127,24 @@ int igstkPivotCalibrationTest( int, char * [] )
       }
 
     // Simulate for bad index
-    i = -1;
-    if (pivot->RequestGetInputRotationTranslation( i, versor, pos))
+    index = -1;
+    if (pivot->RequestGetInputRotationTranslation( index, versor, pos))
       {
-      std::cout << "Input Sample: " << i << " " << versor << pos << std::endl;
+      std::cout << "Input Sample: " << index << " " << versor << pos << std::endl;
       }
     else
       {
-      std::cout << "Invalid input Sample: " << i << std::endl;
+      std::cout << "Invalid input Sample: " << index << std::endl;
       }
 
-    i = pivot->GetNumberOfSamples();
-    if (pivot->RequestGetInputRotationTranslation( i, versor, pos))
+    index = pivot->GetNumberOfSamples();
+    if (pivot->RequestGetInputRotationTranslation( index, versor, pos))
       {
-      std::cout << "Input Sample: " << i << " " << versor << pos << std::endl;
+      std::cout << "Input Sample: " << index << " " << versor << pos << std::endl;
       }
     else
       {
-      std::cout << "Invalid input Sample: " << i << std::endl;
+      std::cout << "Invalid input Sample: " << index << std::endl;
       }
 
     // Get the calibration transformation
