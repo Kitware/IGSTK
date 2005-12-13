@@ -19,7 +19,7 @@
 #define __igstk_Communication_h_
 
 
-#include "itkObject.h"
+#include "igstkObject.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
 
@@ -35,13 +35,13 @@ namespace igstk
     base Communication class.
 */
 
-class Communication  : public ::itk::Object
+class Communication  : public Object
 {
  
 public: 
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( Communication, ::itk::Object )
+  igstkStandardClassTraitsMacro( Communication, Object )
 
 public:
 

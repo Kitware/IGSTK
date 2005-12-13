@@ -18,7 +18,7 @@
 #ifndef __NDICommandInterpreter_h__
 #define __NDICommandInterpreter_h__
 
-#include "itkObject.h"
+#include "igstkObject.h"
 #include "igstkSerialCommunication.h"
 #include "igstkNDIErrorEvent.h"
 
@@ -26,7 +26,7 @@ namespace igstk
 {
 
 
-class NDICommandInterpreter : public ::itk::Object
+class NDICommandInterpreter : public Object
 {
 /** \class NDICommandInterpreter
     \brief Mediate between a Tracker and its Communication object.
@@ -46,7 +46,7 @@ class NDICommandInterpreter : public ::itk::Object
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( NDICommandInterpreter, ::itk::Object )
+  igstkStandardClassTraitsMacro( NDICommandInterpreter, Object )
 
 public:
 

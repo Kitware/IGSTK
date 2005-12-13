@@ -50,6 +50,10 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( FLTKTextBufferLogOutput, ::itk::LogOutput )
 
+  /** Set up definitions for the Logger */
+  igstkLoggerMacro()
+
+
 public:
 
   typedef Fl_Text_Buffer  StreamType;

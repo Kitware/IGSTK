@@ -131,12 +131,15 @@ static Pointer New(void) \
 /** Macro that defines all the standard elements related to the Logger.
  * LoggerType must be defined before this macro is used. */
 #define  igstkLoggerMacro() \
+public: \
+  typedef ::itk::Logger                  LoggerType; \
 protected: \
   LoggerType* GetLogger() const { return m_Logger; } \
 private: \
   mutable LoggerType::Pointer   m_Logger; \
 public: \
   void SetLogger(LoggerType* logger) { m_Logger = logger; }
+
 
 /** Set character string.  Creates member Set"name"()
  * (e.g., SetFilename(char *)). The macro assumes that
@@ -199,31 +202,33 @@ public:  \
 #define igstkAddTransitionMacro( state1, input, state2, action ) \
     m_StateMachine.AddTransition( m_##state1, m_##input, m_##state2,  & Self::action );
 
-
 /** Convenience macro for the initial standard traits of a class */
+#define igstkStandardClassBasicTraitsMacro( classname, superclassname ) \
+  typedef classname Self;  \
+  typedef superclassname Superclass; \
+  typedef ::itk::SmartPointer< Self > Pointer; \
+  typedef ::itk::SmartPointer< const Self > ConstPointer; \
+  igstkTypeMacro( classname, superclassname);  
+
+/** Convenience macro for traits of an abstract non-templated class */
+#define igstkStandardAbstractClassTraitsMacro( classname, superclassname ) \
+  igstkStandardClassBasicTraitsMacro( classname, superclassname ) \
+  igstkStateMachineMacro(); 
+
+/** Convenience macro for traits of a non-templated class */
 #define igstkStandardClassTraitsMacro( classname, superclassname ) \
-  typedef classname Self;  \
-  typedef superclassname Superclass; \
-  typedef ::itk::SmartPointer< Self > Pointer; \
-  typedef ::itk::SmartPointer< const Self > ConstPointer; \
-  igstkTypeMacro( classname, superclassname);  \
-  igstkNewMacro( Self );  \
-  typedef ::itk::Logger                  LoggerType; \
-  igstkStateMachineMacro(); \
-  igstkLoggerMacro(); 
+  igstkStandardAbstractClassTraitsMacro( classname, superclassname ) \
+  igstkNewMacro( Self );  
 
+/** Convenience macro for the traits of an abstract templated class */
+#define igstkStandardTemplatedAbstractClassTraitsMacro( classname, superclassname ) \
+  igstkStandardClassBasicTraitsMacro( classname, superclassname ) \
+  igstkStateMachineTemplatedMacro(); 
 
-/** Convenience macro for the initial standard traits of a templated class */
+/** Convenience macro for the traits of a templated class */
 #define igstkStandardTemplatedClassTraitsMacro( classname, superclassname ) \
-  typedef classname Self;  \
-  typedef superclassname Superclass; \
-  typedef ::itk::SmartPointer< Self > Pointer; \
-  typedef ::itk::SmartPointer< const Self > ConstPointer; \
-  igstkTypeMacro( classname, superclassname);  \
-  igstkNewMacro( Self );  \
-  typedef ::itk::Logger                  LoggerType; \
-  igstkStateMachineTemplatedMacro(); \
-  igstkLoggerMacro(); 
+  igstkStandardTemplatedAbstractClassTraitsMacro( classname, superclassname ) \
+  igstkNewMacro( Self );  
 
 
 /** Convenience macro for creating an Observer for an Event, its callback

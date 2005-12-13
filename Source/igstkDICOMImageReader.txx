@@ -29,8 +29,8 @@ namespace igstk
 template <class TPixelType>
 DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
 { 
-  m_Logger = LoggerType::New();
-
+  m_Logger = NULL;
+ 
   //Set the state descriptors
   igstkAddStateMacro( IdleState );
   igstkAddStateMacro( ImageDirectoryNameReadState ); 

@@ -72,16 +72,11 @@ class DICOMImageReader : public ImageReader< TImageSpatialObject >
 
 public:
 
-  /** Typedefs */
-  typedef DICOMImageReader                             Self;
-  typedef ImageReader< TImageSpatialObject >           Superclass;
-  typedef itk::SmartPointer< Self >                    Pointer;
-  typedef itk::SmartPointer< const Self >              ConstPointer;
+  /** Macro with standard traits declarations. */
+  igstkStandardTemplatedAbstractClassTraitsMacro( DICOMImageReader, \
+                                                  ImageReader< TImageSpatialObject> )
 
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( DICOMImageReader, ImageReader );
-
+public:
 
   /** Type for representing the string of the directory 
    *  from which the DICOM files will be read. */
@@ -104,12 +99,6 @@ public:
   void RequestResetReader();
 
   
-  /** Logger class */
-  typedef itk::Logger                  LoggerType;
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineTemplatedMacro();
-
   /** Type used for returning string values from the DICOM header */
   typedef std::string    DICOMInformationType;
 

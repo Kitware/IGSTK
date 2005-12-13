@@ -23,7 +23,10 @@
 #include <FL/x.H>
 #include <vtkVersion.h>
 #include <vtkCommand.h>
+#include <vtkWindowToImageFilter.h>
+#include <vtkPNGWriter.h>
 #include <igstkEvents.h>
+#include "itksys/SystemTools.hxx"
 
 
 namespace igstk{
@@ -549,12 +552,70 @@ void View::RequestStop()
 }
 
 
+/** Request to save the screenshot of the current scene into a file.
+ *  The fileformat must be PNG. */
+void View::RequestSaveScreenShot( const std::string & filename )
+{
+  igstkLogMacro( DEBUG, "RequestSaveScreenShot() called ...\n");
+
+  std::string fileNameExtension =
+        ::itksys::SystemTools::GetFilenameLastExtension( filename );
+
+  if( fileNameExtension == "png" )
+    {
+    m_ScreenShotFileName = filename;
+    m_StateMachine.PushInput( m_ValidScreenShotFileNameInput );
+    m_StateMachine.ProcessInputs();
+    }
+  else
+    {
+    m_StateMachine.PushInput( m_InvalidScreenShotFileNameInput );
+    m_StateMachine.ProcessInputs();
+    }
+}
+
+
 /** Report that an invalid or suspicious operation has been requested. This may
  * mean that an error condition has arised in one of the componenta that
  * interact with this class. */
 void View::ReportInvalidRequest()
 {
   igstkLogMacro( WARNING, "ReportInvalidRequest() called ...\n");
+}
+
+
+/** Report that an invalid filename for saving the screen shot */
+void View::ReportInvalidScreenShotFileName()
+{
+  igstkLogMacro( WARNING, "ReportInvalidScreenShotFileName() called ...\n");
+}
+
+
+/** Save current screenshot */
+void View::SaveScreenShot()
+{
+  vtkWindowToImageFilter * windowToImageFilter = 
+                                  vtkWindowToImageFilter::New();
+
+  vtkPNGWriter * writer = vtkPNGWriter::New();
+
+  windowToImageFilter->SetInput( m_RenderWindow );
+
+  windowToImageFilter->Update();
+
+  writer->SetInputConnection( windowToImageFilter->GetOutputPort() );
+  
+  writer->SetFileName( m_ScreenShotFileName.c_str() );
+  
+  m_RenderWindow->Render();
+  
+  writer->Write();
+
+  writer->SetInputConnection( NULL );
+  windowToImageFilter->SetInput( NULL );
+
+  windowToImageFilter->Delete();
+  writer->Delete();
 }
 
 
@@ -761,21 +822,6 @@ int View::handle( int event )
     } // switch(event)...
 
   return 1; // we handled the event if we didn't return earlier
-}
-
-
-void 
-View::SetLogger( LoggerType * logger )
-{
-  m_Logger = logger;
-  m_PulseGenerator->SetLogger( logger );
-}
-
-
-View::LoggerType* 
-View::GetLogger() const
-{
-  return m_Logger;
 }
 
 

@@ -92,9 +92,6 @@ public:
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
-  /** Data type for the logger */
-  typedef itk::Logger   LoggerType;
-
   /**  Run-time type information (and related methods). */
   igstkTypeMacro( SerialCommunication, Communication );
 

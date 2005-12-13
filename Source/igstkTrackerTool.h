@@ -18,7 +18,7 @@
 #ifndef __igstk_TrackerTool_h_
 #define __igstk_TrackerTool_h_
 
-#include "itkObject.h"
+#include "igstkObject.h"
 #include "igstkTransform.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
@@ -43,12 +43,12 @@ namespace igstk
   *
   */
 
-class TrackerTool : public ::itk::Object
+class TrackerTool : public Object
 {
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( TrackerTool, ::itk::Object )
+  igstkStandardClassTraitsMacro( TrackerTool, Object )
 
 public:
 

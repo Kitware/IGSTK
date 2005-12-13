@@ -18,15 +18,16 @@
 #ifndef __igstkSpatialObject_h
 #define __igstkSpatialObject_h
 
-#include "igstkMacros.h"
-#include "itkObject.h"
 #include "itkLogger.h"
+#include "itkCommand.h"
 #include "itkSpatialObject.h"
+
+#include "igstkMacros.h"
+#include "igstkObject.h"
 #include "igstkTransform.h"
 #include "igstkStateMachine.h"
 #include "igstkTrackerTool.h"
 #include "igstkEvents.h"
-#include "itkCommand.h"
 
 namespace igstk
 {
@@ -46,13 +47,13 @@ namespace igstk
  * \ingroup Object
  */
 
-class SpatialObject : public ::itk::Object
+class SpatialObject : public Object
 {
 
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( SpatialObject, ::itk::Object )
+  igstkStandardClassTraitsMacro( SpatialObject, Object )
 
 public:
 

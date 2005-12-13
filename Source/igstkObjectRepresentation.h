@@ -23,10 +23,10 @@
 #endif
 
 #include <vector>
-#include "itkObject.h"
 #include "itkCommand.h"
 #include "itkLogger.h"
 #include "vtkProp3D.h"
+#include "igstkObject.h"
 #include "igstkMacros.h"
 #include "igstkSpatialObject.h"
 #include "igstkStateMachine.h"
@@ -52,7 +52,7 @@ class View;
  * \ingroup Object
  */
 class ObjectRepresentation 
-  : public itk::Object
+  : public Object
 {
 
 public:
@@ -61,14 +61,11 @@ public:
   typedef double                             ScalarType;
   typedef itk::SmartPointer < Self >         Pointer;
   typedef itk::SmartPointer < const Self >   ConstPointer;
-  typedef itk::Object                        Superclass;
+  typedef Object                             Superclass;
   typedef SpatialObject                      SpatialObjectType;
   typedef std::vector<vtkProp3D*>            ActorsListType; 
 
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
-  
-  igstkTypeMacro(ObjectRepresentation, itk::Object);
+  igstkTypeMacro(ObjectRepresentation, Object);
 
   igstkFriendClassMacro( View );
 

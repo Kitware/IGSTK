@@ -19,9 +19,7 @@
 #define __igstk_PulseGenerator_h_
 
 
-#include "itkObject.h"
-#include "itkLogger.h"
-
+#include "igstkObject.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
 
@@ -46,13 +44,13 @@ namespace igstk
  *
  */
 
-class PulseGenerator  : public ::itk::Object
+class PulseGenerator  : public Object
 {
  
 public: 
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( PulseGenerator, ::itk::Object )
+  igstkStandardClassTraitsMacro( PulseGenerator, Object )
 
 public:
 

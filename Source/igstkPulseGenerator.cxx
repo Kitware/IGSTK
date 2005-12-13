@@ -33,8 +33,6 @@ double PulseGenerator::m_MaximumFrequency = 10000; // 10 KHz
 PulseGenerator::PulseGenerator():m_StateMachine(this)
 {
 
-  m_Logger = NULL;
-  
   igstkAddInputMacro( ValidFrequencyInput );
   igstkAddInputMacro( InvalidLowFrequencyInput );
   igstkAddInputMacro( InvalidHighFrequencyInput );

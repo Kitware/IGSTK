@@ -20,13 +20,12 @@
 
 #include <vector>
 
-#include "itkObject.h"
-#include "itkLogger.h"
 #include "itkMutexLock.h"
 #include "itkConditionVariable.h"
 #include "itkMultiThreader.h"
 #include "itkVersorTransform.h"
 
+#include "igstkObject.h"
 #include "igstkStateMachine.h"
 #include "igstkTrackerPort.h"
 #include "igstkTransform.h"
@@ -58,13 +57,13 @@ namespace igstk
  *
  */
 
-class Tracker : public ::itk::Object
+class Tracker : public Object
 {
 
 public:
   
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( Tracker, ::itk::Object )
+  igstkStandardClassTraitsMacro( Tracker, Object )
 
 public:
 

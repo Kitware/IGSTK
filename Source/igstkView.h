@@ -91,12 +91,11 @@ public:
    * it is associated to a particular view. */ 
   void RequestRemoveObject( ObjectRepresentation* object ); 
 
-  /** Logger class */
-  typedef itk::Logger                  LoggerType;
-
-  /** The SetLogger method is used to attach a logger to this object for
-   * debugging and retrospective analysis purposes. */
-  void SetLogger( LoggerType * logger );
+  /** Request to save a screen shot into a file. The file format MUST be PNG
+   * in order to have lossless compression. This method will trigger an extra
+   * rendering of the scene in order to ensure that the image is fresh.
+   * */
+  void RequestSaveScreenShot( const std::string & filename );
 
    /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
@@ -105,6 +104,9 @@ public:
   void PrintSelf( std::ostream& os, itk::Indent indent ); 
  
   void Print(std::ostream& os);
+
+  /** Set up variables, types and methods related to the Logger */
+  igstkLoggerMacro()
 
 protected:
 
@@ -212,6 +214,12 @@ private:
   /** Report any invalid request to the logger */
   void ReportInvalidRequest();
 
+  /** Save a screenshot of the current rendered scene */
+  void SaveScreenShot();
+  
+  /** Reports when a filename for the screen shot is not valid */
+  void ReportInvalidScreenShotFileName();
+
   /** This should be called by the state machine */
   void Start();
   void Stop();
@@ -224,6 +232,7 @@ private:
   ObjectRepresentation::Pointer m_ObjectToBeAdded;
   ObjectRepresentation::Pointer m_ObjectToBeRemoved;
   ObjectListType::iterator      m_IteratorToObjectToBeRemoved;
+  std::string                   m_ScreenShotFileName;
 
   /** Inputs to the State Machine */
   InputType            m_ValidAddActor;
@@ -241,16 +250,12 @@ private:
   InputType            m_DisableInteractionsInput;
   InputType            m_StartRefreshingInput;
   InputType            m_StopRefreshingInput;
+  InputType            m_ValidScreenShotFileNameInput;
+  InputType            m_InvalidScreenShotFileNameInput;
 
   /** States for the State Machine */
   StateType            m_IdleState;
   StateType            m_RefreshingState;
-
-  /** The Logger instance */
-  mutable LoggerType::Pointer      m_Logger;
-
-  /** Get pointer to the Logger */
-  LoggerType * GetLogger() const;
 
 };
 

@@ -20,8 +20,8 @@
 
 #include "igstkMacros.h"
 
-#include "itkObject.h"
 #include "itkSpatialObjectReader.h"
+#include "igstkObject.h"
 #include "igstkStateMachine.h"
 #include "igstkEvents.h"
 #include "itkDefaultDynamicMeshTraits.h"
@@ -42,13 +42,13 @@ namespace igstk
 
 template <unsigned int TDimension = 3, 
           typename TPixelType = unsigned char>
-class SpatialObjectReader : public ::itk::Object
+class SpatialObjectReader : public Object
 {
 
 public:
   
   /** Macro with standard traits declarations. */
-  igstkStandardTemplatedClassTraitsMacro( SpatialObjectReader, ::itk::Object )
+  igstkStandardTemplatedClassTraitsMacro( SpatialObjectReader, Object )
 
 public:
 

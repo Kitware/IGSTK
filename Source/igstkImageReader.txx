@@ -24,7 +24,7 @@ namespace igstk
 /** Constructor */
 template < class TImageSpatialObject >
 ImageReader< TImageSpatialObject >
-::ImageReader():m_StateMachine(this),m_Logger()
+::ImageReader():m_StateMachine(this)
 {
   // Create the Image spatial object that will be provided as output.
   m_ImageSpatialObject = ImageSpatialObjectType::New();

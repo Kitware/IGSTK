@@ -33,6 +33,7 @@ SET(IGSTK_HEADS
   igstkNDICommandInterpreter.h
   igstkNDIErrorEvent.h
   igstkObjectRepresentation.h
+  igstkObject.h
   igstkPolarisTracker.h
   igstkPolarisTrackerTool.h
   igstkPulseGenerator.h
@@ -89,6 +90,7 @@ SET(IGSTK_SRCS
   igstkFLTKTextLogOutput.cxx
   igstkMultipleOutput.cxx
   igstkNDICommandInterpreter.cxx
+  igstkObject.cxx
   igstkObjectRepresentation.cxx
   igstkPolarisTracker.cxx
   igstkPolarisTrackerTool.cxx

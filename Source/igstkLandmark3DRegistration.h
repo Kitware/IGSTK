@@ -21,6 +21,7 @@
 #include "igstkStateMachine.h"
 #include "igstkEvents.h"
 #include "igstkMacros.h"
+#include "igstkObject.h"
 
 #include "itkImage.h"
 #include "itkLandmarkBasedTransformInitializer.h"
@@ -45,13 +46,13 @@ namespace igstk
  * \ingroup Registration 
  */
 
-class Landmark3DRegistration : public ::itk::Object
+class Landmark3DRegistration : public Object
 {
 
 public:
   
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( Landmark3DRegistration, ::itk::Object )
+  igstkStandardClassTraitsMacro( Landmark3DRegistration, Object )
 
 public:
 

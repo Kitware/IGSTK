@@ -31,7 +31,7 @@ namespace igstk
 
 /** Constructor */
 Landmark3DRegistration::Landmark3DRegistration() :
-  m_StateMachine( this ), m_Logger( NULL)
+  m_StateMachine( this )
 {
   // Set the state descriptors
   igstkAddStateMacro( IdleState );

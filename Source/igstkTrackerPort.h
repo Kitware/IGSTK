@@ -32,13 +32,13 @@ namespace igstk
     the tracker port, and a vector of all tracker tools
     connected to the port.
 */
-class TrackerPort : public ::itk::Object
+class TrackerPort : public Object
 {
 
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( TrackerPort, ::itk::Object )
+  igstkStandardClassTraitsMacro( TrackerPort, Object )
 
 public:
 

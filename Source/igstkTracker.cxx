@@ -26,7 +26,7 @@ namespace igstk
 {
 
 /** Constructor */
-Tracker::Tracker(void) :  m_StateMachine( this ), m_Logger( NULL)
+Tracker::Tracker(void) :  m_StateMachine( this ) 
 {
   // Set the state descriptors
   igstkAddStateMacro( IdleState ); 

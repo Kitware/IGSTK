@@ -19,8 +19,8 @@
 
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
+#include "igstkObject.h"
 
-#include "itkLogger.h"
 #include "itkImageSpatialObject.h"
 
 
@@ -68,24 +68,18 @@ class ImageReaderToImageSpatialObject
  */
 
 template < class TImageSpatialObject >
-class ImageReader : public itk::Object
+class ImageReader : public Object
 {
 
 public:
 
-  /** Typedefs */
-  typedef ImageReader                           Self;
-  typedef itk::Object                           Superclass;
-  typedef itk::SmartPointer<Self>               Pointer;
-  typedef itk::SmartPointer<const Self>         ConstPointer;
+  /** Macro with standard traits declarations. */
+  igstkStandardTemplatedAbstractClassTraitsMacro( ImageReader, Object )
 
+public:
 
   /** Some convenient typedefs for input image */
   typedef TImageSpatialObject                   ImageSpatialObjectType;
-
-
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( ImageReader, ::itk::Object );
 
 
   /** Return the output of the reader as a ImageSpatialObject */
@@ -96,12 +90,6 @@ public:
    *  in order to give it access to the private method GetITKImage(). */
   igstkFriendClassMacro( igstk::Friends::ImageReaderToImageSpatialObject );
 
-  /** Logger class */
-  typedef ::itk::Logger                  LoggerType;
-
-  /** Declarations needed for the State Machine */
-  igstkStateMachineTemplatedMacro();
-
 
 protected:
 
@@ -111,8 +99,6 @@ protected:
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
 
-  /** Declarations needed for the Logger */
-  igstkLoggerMacro();
 
   /** Connect the ITK image to the output ImageSpatialObject */
   void ConnectImage();
