@@ -23,9 +23,9 @@
 #include "vnl/vnl_vector.h"
 
 #include "itkCovariantVector.h"
-#include "itkObject.h"
 #include "itkVectorContainer.h"
 
+#include "igstkObject.h"
 #include "igstkStateMachine.h"
 #include "igstkEvents.h"
 #include "igstkMacros.h"
@@ -50,12 +50,12 @@ namespace igstk
  * \ingroup Calibration
  */
 
-class PivotCalibration : public ::itk::Object
+class PivotCalibration : public Object
 {
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( PivotCalibration, ::itk::Object );
+  igstkStandardClassTraitsMacro( PivotCalibration, Object );
 
 public:
 
