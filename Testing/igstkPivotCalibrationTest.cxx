@@ -54,7 +54,7 @@ int igstkPivotCalibrationTest( int, char * [] )
 
   // Define the input file and the variables to extract the rotation and translation information
   std::ifstream input;
-  int i, j;
+  unsigned int i, j;
   int frame;
   std::string temp;
   double time;
