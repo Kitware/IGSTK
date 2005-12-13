@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef _igstkPivtoCalibration_cxx
-#define _igstkPivtoCalibration_cxx
+#ifndef _igstkPivotCalibration_cxx
+#define _igstkPivotCalibration_cxx
 
 
 #include "igstkPivotCalibration.h"
