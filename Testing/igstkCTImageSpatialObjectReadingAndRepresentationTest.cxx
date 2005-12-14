@@ -22,16 +22,15 @@
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkView2D.h"
-
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[] )
 {
 
-  if( argc < 2 )
+  if( argc < 3 )
     {
-    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  "<<std::endl;
+    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  "<< "Output image file for a screenshot" << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -94,7 +93,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
 
   form->end();
   form->show();
- 
+
+  view2D->SetLogger( logger ); 
   view2D->RequestResetCamera();
   view2D->RequestEnableInteractions();
 
@@ -105,7 +105,6 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
     {
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
-    std::cout << "i= " << i << std::endl;
     }
 
 
@@ -141,9 +140,12 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
     {
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
-    std::cout << "i= " << i << std::endl;
     }
 
+  /* Save screenshots in a file */
+  std::string filename;
+  filename = argv[2]; 
+  view2D->RequestSaveScreenShot( filename ); 
 
   delete view2D;
   delete form;
