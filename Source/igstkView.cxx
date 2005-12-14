@@ -68,6 +68,9 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   igstkAddInputMacro( DisableInteractionsInput  );
   igstkAddInputMacro( StartRefreshingInput  );
   igstkAddInputMacro( StopRefreshingInput  );
+  igstkAddInputMacro( ValidScreenShotFileNameInput  );
+  igstkAddInputMacro( InvalidScreenShotFileNameInput  );
+
 
   igstkAddStateMacro( IdleState       );
   igstkAddStateMacro( RefreshingState );
@@ -104,6 +107,11 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   igstkAddTransitionMacro( RefreshingState, DisableInteractionsInput,  RefreshingState,  DisableInteractions );
   igstkAddTransitionMacro( RefreshingState, StartRefreshingInput,  RefreshingState,  ReportInvalidRequest );
   igstkAddTransitionMacro( RefreshingState, StopRefreshingInput,  IdleState,  Stop );
+  
+  igstkAddTransitionMacro( IdleState, ValidScreenShotFileNameInput,  IdleState, SaveScreenShot )
+  igstkAddTransitionMacro( IdleState, InvalidScreenShotFileNameInput, 
+                                                          IdleState, ReportInvalidScreenShotFileName );
+
 
 
   m_StateMachine.SelectInitialState( m_IdleState );
@@ -196,7 +204,7 @@ void View::AddObserver( const ::itk::EventObject & event,
 
 
 /** */
-void View::RequestAddActor( vtkProp3D * actor )
+void View::RequestAddActor( vtkProp * actor )
 {
   igstkLogMacro( DEBUG, "RequestAddActor() called ...\n");
   m_ActorToBeAdded = actor;
@@ -223,7 +231,7 @@ void View::AddActor()
 
 
 /** */
-void View::RequestRemoveActor( vtkProp3D * actor )
+void View::RequestRemoveActor( vtkProp * actor )
 {
   igstkLogMacro( DEBUG, "RequestRemoveActor() called ...\n");
   m_ActorToBeRemoved = actor;
@@ -561,7 +569,7 @@ void View::RequestSaveScreenShot( const std::string & filename )
   std::string fileNameExtension =
         ::itksys::SystemTools::GetFilenameLastExtension( filename );
 
-  if( fileNameExtension == "png" )
+  if( fileNameExtension == ".png" )
     {
     m_ScreenShotFileName = filename;
     m_StateMachine.PushInput( m_ValidScreenShotFileNameInput );
