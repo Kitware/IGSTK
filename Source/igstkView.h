@@ -101,7 +101,7 @@ public:
   igstkStateMachineMacro();
 
   /** Print the object information in a stream. */
-  void PrintSelf( std::ostream& os, itk::Indent indent ); 
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
  
   void Print(std::ostream& os);
 

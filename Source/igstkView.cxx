@@ -849,7 +849,7 @@ std::ostream& operator<<(std::ostream& os, View& o)
 
 
 /** Print object information */
-void View::PrintSelf( std::ostream& os, itk::Indent indent )
+void View::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
   os << indent << "RenderWindow Pointer: " << this->m_RenderWindow << std::endl;
