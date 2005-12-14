@@ -19,6 +19,7 @@
 #include "vtkMatrix4x4.h"
 #include "igstkEvents.h"
 #include "vtkActor.h"
+#include "vtkProp3D.h"
 #include "vtkProperty.h"
 
 namespace igstk 
@@ -66,7 +67,7 @@ ObjectRepresentation::~ObjectRepresentation()
 }
 
 /** Add an actor to the actors list */
-void ObjectRepresentation::AddActor( vtkProp3D * actor )
+void ObjectRepresentation::AddActor( vtkProp * actor )
 {
   m_Actors.push_back( actor );
 }
@@ -181,10 +182,10 @@ void ObjectRepresentation::UpdatePosition()
 
   // Update all the actors
   ActorsListType::iterator it = m_Actors.begin();
-  while(it != m_Actors.end())
+  while( it != m_Actors.end() )
     {  
-    (*it)->SetUserMatrix(vtkMatrix);
-    it++;
+      vtkProp3D::SafeDownCast(*it)->SetUserMatrix(vtkMatrix);
+     it++;
     }
 
   vtkMatrix->Delete();
