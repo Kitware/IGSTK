@@ -180,8 +180,8 @@ private:
   /** Member variables for holding temptative arguments of functions.
    *  This is needed for implementing a layer of security that decouples
    *  user invokations from the actual state of this class */
-  vtkProp3D            * m_ActorToBeAdded;
-  vtkProp3D            * m_ActorToBeRemoved;
+  vtkProp            * m_ActorToBeAdded;
+  vtkProp            * m_ActorToBeRemoved;
   
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
 
@@ -208,8 +208,8 @@ private:
   /** Method that will refresh the view.. and the GUI */
   void RefreshRender();
 
-  void RequestAddActor( vtkProp3D * actor );
-  void RequestRemoveActor( vtkProp3D * actor );
+  void RequestAddActor( vtkProp * actor );
+  void RequestRemoveActor( vtkProp * actor );
   
   /** Report any invalid request to the logger */
   void ReportInvalidRequest();
