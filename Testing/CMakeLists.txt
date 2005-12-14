@@ -25,7 +25,7 @@ SET( IGSTK_TEST_LOOPBACK_PORT_NUMBER 1 CACHE STRING
 # Configure the default IGSTK_DATA_ROOT for the location of IGSTK Data.
 FIND_PATH(IGSTK_DATA_ROOT IGSTKData.readme ${IGSTK_SOURCE_DIR}/Testing/Data $ENV{IGSTK_DATA_ROOT})
 MARK_AS_ADVANCED(IGSTK_DATA_ROOT)
-
+SET(BASELINE ${IGSTK_DATA_ROOT}/Baseline)
 INCLUDE_DIRECTORIES (
   ${IGSTK_SOURCE_DIR}
   ${IGSTK_BINARY_DIR}
@@ -112,8 +112,12 @@ IF (IGSTK_DATA_ROOT)
    ADD_TEST( igstkMRImageReaderTest ${IGSTK_TESTS} igstkMRImageReaderTest 
        ${IGSTK_DATA_ROOT}/Input/E000192 )
 
-   ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTK_TESTS} 
-             igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTK_DATA_ROOT}/Input/E000192 )
+   ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTK_TESTS}
+            --compare ${BASELINE}/igstkViewScreenShot.png
+            ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
+            igstkCTImageSpatialObjectReadingAndRepresentationTest
+            ${IGSTK_DATA_ROOT}/Input/E000192
+            ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png)
 
    ADD_TEST( igstkMeshReaderTest ${IGSTK_TESTS} igstkMeshReaderTest 
        ${IGSTK_DATA_ROOT}/Input/liver.msh  
