@@ -25,7 +25,7 @@
 #include <vector>
 #include "itkCommand.h"
 #include "itkLogger.h"
-#include "vtkProp3D.h"
+#include "vtkProp.h"
 #include "igstkObject.h"
 #include "igstkMacros.h"
 #include "igstkSpatialObject.h"
@@ -63,7 +63,7 @@ public:
   typedef itk::SmartPointer < const Self >   ConstPointer;
   typedef Object                             Superclass;
   typedef SpatialObject                      SpatialObjectType;
-  typedef std::vector<vtkProp3D*>            ActorsListType; 
+  typedef std::vector<vtkProp*>            ActorsListType; 
 
   igstkTypeMacro(ObjectRepresentation, Object);
 
@@ -96,7 +96,7 @@ protected:
   ~ObjectRepresentation( void );
 
   /** Add an actor to the list */
-  void AddActor( vtkProp3D * );
+  void AddActor( vtkProp * );
 
   /** Create the vtkActors */
   virtual void CreateActors()= 0;
