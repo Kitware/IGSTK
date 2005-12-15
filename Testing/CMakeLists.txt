@@ -143,8 +143,15 @@ ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTK_TESTS} igstkDICOMImageReaderEr
 ADD_TEST( igstkImageSpatialObjectTest ${IGSTK_TESTS} igstkImageSpatialObjectTest )
 ADD_TEST( igstkCTImageSpatialObjectTest ${IGSTK_TESTS} igstkCTImageSpatialObjectTest )
 ADD_TEST( igstkMRImageSpatialObjectTest ${IGSTK_TESTS} igstkMRImageSpatialObjectTest )
-ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} igstkImageSpatialObjectRepresentationTest )
-ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTK_TESTS} igstkCTImageSpatialObjectRepresentationTest )
+
+ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
+          igstkImageSpatialObjectRepresentationTest 
+          ${IGSTK_DATA_ROOT}/Input/E000192)
+
+ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
+          igstkCTImageSpatialObjectRepresentationTest
+          ${IGSTK_DATA_ROOT}/Input/E000192)
+          
 ADD_TEST( igstkMRImageSpatialObjectRepresentationTest ${IGSTK_TESTS} igstkMRImageSpatialObjectRepresentationTest )
 ADD_TEST( igstkStringEventTest ${IGSTK_TESTS} igstkStringEventTest )
 ADD_TEST( igstkLandmark3DRegistrationTest ${IGSTK_TESTS} igstkLandmark3DRegistrationTest)

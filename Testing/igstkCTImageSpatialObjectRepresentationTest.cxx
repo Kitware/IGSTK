@@ -20,11 +20,12 @@
 #endif
 
 #include "igstkCTImageSpatialObjectRepresentation.h"
+#include "igstkCTImageReader.h"
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-int igstkCTImageSpatialObjectRepresentationTest( int , char* [] )
+int igstkCTImageSpatialObjectRepresentationTest( int argc, char * argv [] )
 {
 
   typedef igstk::CTImageSpatialObjectRepresentation    RepresentationType;
@@ -43,11 +44,54 @@ int igstkCTImageSpatialObjectRepresentationTest( int , char* [] )
 
   representation->SetLogger( logger );
 
+  // Instantiate a reader
+  //
+  typedef igstk::CTImageReader         ReaderType;
+
+  ReaderType::Pointer   reader = ReaderType::New();
+
+  reader->SetLogger( logger );
+
+  /* Read in a DICOM series */
+  std::cout << "Reading CT image : " << argv[1] << std::endl;
+
+  ReaderType::DirectoryNameType directoryName = argv[1];
+
+  reader->RequestSetDirectory( directoryName );
+ 
   std::string name = representation->GetNameOfClass();
+
+  representation->RequestSetImageSpatialObject( reader->GetOutput() );
 
   std::cout << "Name of class = " << name << std::endl;
 
   representation->Print( std::cout );
+
+  // Do manual selections of slice number for each orientation 
+  {
+  representation->RequestSetOrientation( RepresentationType::Axial );
+  for(unsigned int i=0; i<5; i++)
+    {
+    representation->RequestSetSliceNumber( i );
+    }
+  }
+
+  {
+  representation->RequestSetOrientation( RepresentationType::Sagittal );
+  for(unsigned int i=0; i<10; i++)
+    {
+    representation->RequestSetSliceNumber( i );
+    }
+  }
+
+  {
+  representation->RequestSetOrientation( RepresentationType::Coronal );
+  for(unsigned int i=0; i<10; i++)
+    {
+    representation->RequestSetSliceNumber( i );
+    }
+  }
+
 
   return EXIT_SUCCESS;
 }

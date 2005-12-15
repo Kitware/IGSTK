@@ -147,6 +147,42 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
   filename = argv[2]; 
   view2D->RequestSaveScreenShot( filename ); 
 
+  // Do manual redraws for each orientation while changing slice numbers
+  {
+  representation->RequestSetOrientation( RepresentationType::Axial );
+  for(unsigned int i=0; i<10; i++)
+    {
+    representation->RequestSetSliceNumber( i );
+    view2D->Update();  // schedule redraw of the view
+    Fl::check();       // trigger FLTK redraws
+    std::cout << "i= " << i << std::endl;
+    }
+  }
+
+  {
+  representation->RequestSetOrientation( RepresentationType::Sagittal );
+  for(unsigned int i=0; i<10; i++)
+    {
+    representation->RequestSetSliceNumber( i );
+    view2D->Update();  // schedule redraw of the view
+    Fl::check();       // trigger FLTK redraws
+    std::cout << "i= " << i << std::endl;
+    }
+  }
+
+  {
+  representation->RequestSetOrientation( RepresentationType::Coronal );
+  for(unsigned int i=0; i<10; i++)
+    {
+    representation->RequestSetSliceNumber( i );
+    view2D->Update();  // schedule redraw of the view
+    Fl::check();       // trigger FLTK redraws
+    std::cout << "i= " << i << std::endl;
+    }
+  }
+
+
+
   delete view2D;
   delete form;
  

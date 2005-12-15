@@ -22,6 +22,7 @@
 #include "igstkImageSpatialObjectRepresentation.h"
 #include "igstkImageSpatialObject.h"
 #include "igstkView2D.h"
+#include "igstkCTImageReader.h"
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -74,7 +75,7 @@ namespace igstk
 
 
 
-int igstkImageSpatialObjectRepresentationTest( int , char* [] )
+int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 {
 
 
@@ -102,6 +103,21 @@ int igstkImageSpatialObjectRepresentationTest( int , char* [] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
+  // Instantiate a reader
+  //
+  typedef igstk::CTImageReader         ReaderType;
+
+  ReaderType::Pointer   reader = ReaderType::New();
+
+  reader->SetLogger( logger );
+
+  /* Read in a DICOM series */
+  std::cout << "Reading CT image : " << argv[1] << std::endl;
+
+  ReaderType::DirectoryNameType directoryName = argv[1];
+
+  reader->RequestSetDirectory( directoryName );
+ 
   representation->SetLogger( logger );
 
   // Test error case
@@ -142,6 +158,8 @@ int igstkImageSpatialObjectRepresentationTest( int , char* [] )
 
   representation->AddObserver( igstk::AxialSliceBoundsEvent(), observer );
 
+  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+
   representation->RequestGetSliceNumberBounds();
   
   if( observer->GetEventReceived() )
@@ -155,12 +173,61 @@ int igstkImageSpatialObjectRepresentationTest( int , char* [] )
     }
     
   // Do manual redraws
-  for(unsigned int i=0; i<10; i++)
+  for(unsigned int i=0; i<5; i++)
     {
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
     std::cout << "i= " << i << std::endl;
     }
+
+  // Do manual redraws for each orientation while changing slice numbers
+  {
+  representation->RequestSetOrientation( RepresentationType::Axial );
+  for(unsigned int i=0; i<5; i++)
+    {
+    representation->RequestSetSliceNumber( i );
+    view2D->Update();  // schedule redraw of the view
+    Fl::check();       // trigger FLTK redraws
+    std::cout << "i= " << i << std::endl;
+    }
+  }
+
+  {
+  representation->RequestSetOrientation( RepresentationType::Sagittal );
+  for(unsigned int i=0; i<10; i++)
+    {
+    representation->RequestSetSliceNumber( i );
+    view2D->Update();  // schedule redraw of the view
+    Fl::check();       // trigger FLTK redraws
+    std::cout << "i= " << i << std::endl;
+    }
+  }
+
+  {
+  representation->RequestSetOrientation( RepresentationType::Coronal );
+  for(unsigned int i=0; i<10; i++)
+    {
+    representation->RequestSetSliceNumber( i );
+    view2D->Update();  // schedule redraw of the view
+    Fl::check();       // trigger FLTK redraws
+    std::cout << "i= " << i << std::endl;
+    }
+  }
+
+
+  // On purpose request non-existing slices. 
+  // The requests should be ignored by the state machine.
+  {
+  representation->RequestSetOrientation( RepresentationType::Axial );
+  for(unsigned int i=5; i<10; i++)
+    {
+    representation->RequestSetSliceNumber( i );
+    view2D->Update();  // schedule redraw of the view
+    Fl::check();       // trigger FLTK redraws
+    std::cout << "i= " << i << std::endl;
+    }
+  }
+
 
   delete view2D;
   delete form;
