@@ -37,12 +37,12 @@ public:
   typedef StateMachineType::InputType                     InputType;
   typedef StateMachineType::StateIdentifierType           StateIdentifierType;
 
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
-  
   igstkFriendClassMacro( StateMachine< Tester1 > );
 
   igstkTypeMacro( Tester1, None );
+
+  /** Declarations needed for the Logging */
+  igstkLoggerMacro();
 
   Tester1( LoggerType * logger ):m_StateMachine(this)
     {
@@ -79,9 +79,6 @@ public:
     m_StateMachine.SelectInitialState( m_ThisStateDoesntExist );
   }
 
-  /** Declarations needed for the Logging */
-  igstkLoggerMacro();
-
 private:
 
   StateMachineType   m_StateMachine;
@@ -112,12 +109,13 @@ public:
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
-  
+
   igstkFriendClassMacro( StateMachine< Tester2 > );
 
   igstkTypeMacro( Tester2, None );
+
+  /** Declarations needed for the Logging */
+  igstkLoggerMacro();
 
   Tester2( LoggerType * logger ):m_StateMachine(this)
     {
@@ -137,8 +135,6 @@ public:
     m_StateMachine.ProcessInputs();
     }
  
-  /** Declarations needed for the Logging */
-  igstkLoggerMacro();
 
 private:
   StateMachineType   m_StateMachine;
@@ -164,12 +160,13 @@ public:
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
   
   igstkFriendClassMacro( StateMachine< Tester3 > );
 
   igstkTypeMacro( Tester3, None );
+
+  /** Declarations needed for the Logging */
+  igstkLoggerMacro();
 
   Tester3( LoggerType * logger ):m_StateMachine(this)
     {
@@ -191,8 +188,6 @@ public:
     m_StateMachine.ProcessInputs();
     }
  
-  /** Declarations needed for the Logging */
-  igstkLoggerMacro();
 
 private:
   StateMachineType   m_StateMachine;
@@ -217,12 +212,13 @@ public:
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
   
   igstkFriendClassMacro( StateMachine< Tester4 > );
 
   igstkTypeMacro( Tester4, None );
+
+  /** Declarations needed for the Logging */
+  igstkLoggerMacro();
 
   Tester4( LoggerType * logger ):m_StateMachine(this)
     {
@@ -247,8 +243,6 @@ public:
     m_StateMachine.ProcessInputs();
     }
  
-  /** Declarations needed for the Logging */
-  igstkLoggerMacro();
 
 private:
   StateMachineType   m_StateMachine;
@@ -272,13 +266,14 @@ public:
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
   
   igstkFriendClassMacro( StateMachine< Tester5 > );
 
   igstkTypeMacro( Tester5, None );
   
+  /** Declarations needed for the Logging */
+  igstkLoggerMacro();
+
   Tester5( LoggerType * logger ):m_StateMachine(this)
     {
     this->SetLogger( logger );
@@ -301,8 +296,6 @@ public:
     m_StateMachine.ProcessInputs();
     }
  
-  /** Declarations needed for the Logging */
-  igstkLoggerMacro();
 
 private:
   StateMachineType   m_StateMachine;
@@ -326,12 +319,13 @@ public:
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
   
   igstkFriendClassMacro( StateMachine< Tester6 > );
 
   igstkTypeMacro( Tester6, None );
+
+  /** Declarations needed for the Logging */
+  igstkLoggerMacro();
 
   Tester6( LoggerType * logger ):m_StateMachine(this)
     {
@@ -373,8 +367,6 @@ public:
     m_StateMachine.ProcessInputs();
     }
  
-  /** Declarations needed for the Logging */
-  igstkLoggerMacro();
 
 private:
   StateMachineType   m_StateMachine;
@@ -403,12 +395,13 @@ public:
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
   
   igstkFriendClassMacro( StateMachine< Tester7 > );
 
   igstkTypeMacro( Tester7, None );
+
+  /** Declarations needed for the Logging */
+  igstkLoggerMacro();
 
   Tester7( LoggerType * logger ):m_StateMachine(this)
     {
@@ -431,8 +424,6 @@ public:
     m_StateMachine.ProcessInputs();
     }
  
-  /** Declarations needed for the Logging */
-  igstkLoggerMacro();
 
 private:
   StateMachineType   m_StateMachine;
