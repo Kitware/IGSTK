@@ -93,7 +93,7 @@ int igstkPivotCalibrationTest( int, char * [] )
 
     input >> frame >> temp >> time;
     input >> pos[0] >> pos[1] >> pos[2];
-    input >> vx >> vy >> vz >> vw;
+    input >> vw >> vx >> vy >> vz;
 
     versor.Set( vx, vy, vz, vw );
     pivot->RequestAddRotationTranslation( versor, pos );
