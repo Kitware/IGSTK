@@ -305,7 +305,7 @@ void PivotCalibration::SimulatePivotPosition()
 }
 
 /** Internal function to calculate the simulated pivot position */
-PivotCalibration::VectorType 
+PivotCalibration::PointType 
 PivotCalibration::InternalSimulatePivotPosition( const VersorType & rotation, 
                                                  const VectorType & translation )
 {
@@ -330,7 +330,7 @@ PivotCalibration::InternalSimulatePivotPosition( const VersorType & rotation,
 
   rotatedOffset += translation;
 
-  VectorType pivotPosition;
+  PointType pivotPosition;
   pivotPosition.Fill( 0.0 );
   
   pivotPosition += rotatedOffset;
@@ -419,7 +419,7 @@ void PivotCalibration::RequestCalculateCalibrationZ()
 }
 
 /** Method to invoke to simulate the pivot position */
-PivotCalibration::VectorType 
+PivotCalibration::PointType 
 PivotCalibration::RequestSimulatePivotPosition( const VersorType & versor, 
                                                 const VectorType & translation )
 {

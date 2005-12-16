@@ -35,6 +35,7 @@ int igstkPivotCalibrationTest( int, char * [] )
   typedef igstk::PivotCalibration           PivotCalibrationType;
   typedef PivotCalibrationType::VersorType  VersorType;
   typedef PivotCalibrationType::VectorType  VectorType;
+  typedef PivotCalibrationType::PointType   PointType;
   typedef PivotCalibrationType::MatrixType  MatrixType;
   typedef PivotCalibrationType::ErrorType   ErrorType;
   typedef itk::Logger                       LoggerType; 
@@ -61,7 +62,7 @@ int igstkPivotCalibrationTest( int, char * [] )
 
   MatrixType matrix;
   VectorType pos;
-  VectorType pivotpos;
+  PointType pivotpos;
   VersorType versor;
 
   // Open the calibration data file, which recorded the traker information

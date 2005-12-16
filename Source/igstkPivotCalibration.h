@@ -73,6 +73,8 @@ public:
 
   typedef TransformType::VectorType       VectorType;
 
+  typedef TransformType::PointType        PointType;
+
   typedef VersorType::MatrixType          MatrixType;
 
   typedef double                          ErrorType;
@@ -130,8 +132,8 @@ public:
   void RequestCalculateCalibrationZ(); 
 
   /** Method invoked by the user to calculate simulated pivot position of any input */
-  VectorType RequestSimulatePivotPosition( const VersorType & versor, 
-                                           const VectorType & translation );
+  PointType RequestSimulatePivotPosition( const VersorType & versor, 
+                                          const VectorType & translation );
 
   /** Method invoked by the user to get the rotation and translation in the input container */
   bool RequestGetInputSample( unsigned int index, 
@@ -175,8 +177,8 @@ protected:
   void SimulatePivotPosition();
 
   /** Internal function to calculate the simulated pivot position */
-  VectorType InternalSimulatePivotPosition( const VersorType & versor, 
-                                            const VectorType & translation );
+  PointType InternalSimulatePivotPosition( const VersorType & versor, 
+                                           const VectorType & translation );
 
   /** Get the rotation and translation inputed */
   void GetInputSample();
@@ -213,7 +215,7 @@ private:
 
   MatrixType                        m_MatrixToBeSent;
 
-  VectorType                        m_SimulatedPivotPositionToBeReceived;
+  PointType                         m_SimulatedPivotPositionToBeReceived;
 
   VersorType                        m_VersorToBeReceived;
 
