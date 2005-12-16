@@ -44,8 +44,6 @@ public:
   typedef StateMachineType::InputType                     InputType;
   typedef StateMachineType::StateIdentifierType           StateIdentifierType;
 
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
   
   igstkFriendClassMacro(StateMachine< Tester >);
 
