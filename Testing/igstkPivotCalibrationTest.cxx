@@ -54,7 +54,7 @@ int igstkPivotCalibrationTest( int, char * [] )
 
   // Define the input file and the variables to extract the rotation and translation information
   std::ifstream input;
-  unsigned int i, j;
+  unsigned int i;
   int frame, index;
   std::string temp;
   double time;
@@ -199,37 +199,6 @@ int igstkPivotCalibrationTest( int, char * [] )
     pivot->Print( std::cout);
 
     }
-
-  // Simulate the manually setting calibration matrix
-  VectorType translation1;
-  translation1[0] =  1.0;
-  translation1[1] =  2.0;
-  translation1[2] = 10.0;
-  
-  pivot->RequestSetTranslation( translation1 );
-
-  VersorType rotation1;
-  rotation1.Set( 1.0, 0.0, 0.0, 1.0 );
-  
-  pivot->RequestSetVersor( rotation1 );
-
-  pivot->Print( std::cout);
-
-  // Simulate the manually setting rotation matrix
-  for (j = 0; j < 3; j++)
-    {
-    for ( i = 0; i < 3; i++)
-      {
-      matrix[j][i] = (rand() % 1000) / 1000.0;
-      }
-    }
-  pivot->RequestSetRotationMatrix( matrix);
-  pivot->Print( std::cout);
-
-  // Simulate the manually setting principal axis and normal
-  pivot->RequestSetToolPrincipalAxis( 0.0, 0.0, 1.0);
-  pivot->RequestSetToolPlaneNormal( 0.0, 1.0, 1.0);
-  pivot->Print( std::cout);
 
   return EXIT_SUCCESS;
 

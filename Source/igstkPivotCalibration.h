@@ -138,21 +138,6 @@ public:
                                            VersorType & versor, 
                                            VectorType & translation );
 
-  /** Method invoked by the user to set the principal axis of the tool */
-  void RequestSetToolPrincipalAxis( double vx, double vy, double vz );
-
-  /** Method invoked by the user to set the normal of the tool plane */
-  void RequestSetToolPlaneNormal( double nx, double ny, double nz );
-
-  /** Method invoked by the user to set the translation directly */
-  void RequestSetTranslation( const VectorType & translation );
-
-  /** Method invoked by the user to set the rotation quaternion directly */
-  void RequestSetVersor( const VersorType & versor );
-
-  /** Method invoked by the user to set the rotation matrix directly */
-  void RequestSetRotationMatrix( const MatrixType & matrix );
-
 protected:
 
   /** Constructor */
@@ -201,42 +186,6 @@ protected:
                                             VersorType & versor, 
                                             VectorType & translation );
 
-  /** Set the principal axis of the tool */
-  void SetToolPrincipalAxis();
-
-  /** Internal function to set the principal axis of the tool */
-  void InternalSetToolPrincipalAxis( double vx, double vy, double vz );
-
-  /** Set the normal of the tool plane */
-  void SetToolPlaneNormal();
-
-  /** Internal function to set the normal of the tool plane */
-  void InternalSetToolPlaneNormal( double nx, double ny, double nz );
-
-  /** Internal function to calculate rotation */
-  void InternalCalculateRotation();
-
-  /** Internal function to adjust plane normal */
-  void InternalAdjustPlaneNormal();
-
-  /** Internal function to build the rotation */
-  void InternalBuildRotation();
-
-  /** Set the translation directly */
-  void SetTranslation();
-
-  /** Internal function to set the translation directly */
-  void InternalSetTranslation( double tx, double ty, double tz );
-
-  /** Set the rotation quaternion directly */
-  void SetVersor();
-
-  /** Set the rotation matrix directly */
-  void SetRotationMatrix();
-
-  /** Internal function to set the rotation matrix directly */
-  void InternalSetRotationMatrix( const MatrixType & matrix );
-
 private:
 
   /** List of States */
@@ -252,11 +201,6 @@ private:
   InputType                         m_CalculateCalibrationZInput;
   InputType                         m_SimulatePivotPositionInput;
   InputType                         m_GetInputRotationTranslationInput;
-  InputType                         m_PrincipalAxisInput;
-  InputType                         m_PlaneNormalInput;
-  InputType                         m_TranslationInput;
-  InputType                         m_VersorInput;
-  InputType                         m_RotationMatrixInput;
 
   /** Temporary input variables for state machine */
   VersorType                        m_VersorToBeSent;
@@ -296,15 +240,6 @@ private:
 
   /** Variable to indicate the RMS error */
   ErrorType                         m_RMS;
-
-  /** Variable to save the principal axis */
-  VectorType                        m_PrincipalAxis;
-
-  /** Variable to save the plane normal */
-  CovariantVectorType               m_PlaneNormal;
-
-  /** Variable to save the adjusted plane normal */
-  CovariantVectorType               m_AdjustedPlaneNormal;
 
 };
 

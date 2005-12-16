@@ -42,11 +42,6 @@ PivotCalibration::PivotCalibration() :
   igstkAddInputMacro( CalculateCalibrationZInput );
   igstkAddInputMacro( SimulatePivotPositionInput );
   igstkAddInputMacro( GetInputRotationTranslationInput );
-  igstkAddInputMacro( PrincipalAxisInput );
-  igstkAddInputMacro( PlaneNormalInput );
-  igstkAddInputMacro( TranslationInput );
-  igstkAddInputMacro( VersorInput );
-  igstkAddInputMacro( RotationMatrixInput );
 
   // Add transition  for idle state
   igstkAddTransitionMacro( IdleState, ResetCalibrationInput, IdleState, Reset );
@@ -55,11 +50,6 @@ PivotCalibration::PivotCalibration() :
   igstkAddTransitionMacro( IdleState, CalculateCalibrationZInput, IdleState, NoAction );
   igstkAddTransitionMacro( IdleState, SimulatePivotPositionInput, IdleState, NoAction );
   igstkAddTransitionMacro( IdleState, GetInputRotationTranslationInput, IdleState, NoAction );
-  igstkAddTransitionMacro( IdleState, PrincipalAxisInput, IdleState, SetToolPrincipalAxis );
-  igstkAddTransitionMacro( IdleState, PlaneNormalInput, IdleState, SetToolPlaneNormal );
-  igstkAddTransitionMacro( IdleState, TranslationInput, IdleState, SetTranslation );
-  igstkAddTransitionMacro( IdleState, VersorInput, IdleState, SetVersor );
-  igstkAddTransitionMacro( IdleState, RotationMatrixInput, IdleState, SetRotationMatrix );
   
   // Add transition  for RotationTranslationAdd state
   igstkAddTransitionMacro( RotationTranslationAddState, ResetCalibrationInput, IdleState, Reset );
@@ -68,11 +58,6 @@ PivotCalibration::PivotCalibration() :
   igstkAddTransitionMacro( RotationTranslationAddState, CalculateCalibrationZInput, CalibrationZCalculatedState, CalculateCalibrationZ );
   igstkAddTransitionMacro( RotationTranslationAddState, SimulatePivotPositionInput, RotationTranslationAddState, NoAction );
   igstkAddTransitionMacro( RotationTranslationAddState, GetInputRotationTranslationInput, RotationTranslationAddState, GetInputRotationTranslation );
-  igstkAddTransitionMacro( RotationTranslationAddState, PrincipalAxisInput, RotationTranslationAddState, SetToolPrincipalAxis );
-  igstkAddTransitionMacro( RotationTranslationAddState, PlaneNormalInput, RotationTranslationAddState, SetToolPlaneNormal );
-  igstkAddTransitionMacro( RotationTranslationAddState, TranslationInput, RotationTranslationAddState, SetTranslation );
-  igstkAddTransitionMacro( RotationTranslationAddState, VersorInput, RotationTranslationAddState, SetVersor );
-  igstkAddTransitionMacro( RotationTranslationAddState, RotationMatrixInput, RotationTranslationAddState, SetRotationMatrix );
   
   // Add transition  for CalibrationCalculated state
   igstkAddTransitionMacro( CalibrationCalculatedState, ResetCalibrationInput, IdleState, Reset );
@@ -81,11 +66,6 @@ PivotCalibration::PivotCalibration() :
   igstkAddTransitionMacro( CalibrationCalculatedState, CalculateCalibrationZInput, CalibrationZCalculatedState, CalculateCalibrationZ );
   igstkAddTransitionMacro( CalibrationCalculatedState, SimulatePivotPositionInput, CalibrationCalculatedState, SimulatePivotPosition );
   igstkAddTransitionMacro( CalibrationCalculatedState, GetInputRotationTranslationInput, CalibrationCalculatedState, GetInputRotationTranslation );
-  igstkAddTransitionMacro( CalibrationCalculatedState, PrincipalAxisInput, CalibrationCalculatedState, SetToolPrincipalAxis );
-  igstkAddTransitionMacro( CalibrationCalculatedState, PlaneNormalInput, CalibrationCalculatedState, SetToolPlaneNormal );
-  igstkAddTransitionMacro( CalibrationCalculatedState, TranslationInput, CalibrationCalculatedState, SetTranslation );
-  igstkAddTransitionMacro( CalibrationCalculatedState, VersorInput, CalibrationCalculatedState, SetVersor );
-  igstkAddTransitionMacro( CalibrationCalculatedState, RotationMatrixInput, CalibrationCalculatedState, SetRotationMatrix );
 
   // Add transition  for CalibrationZCalculated state
   igstkAddTransitionMacro( CalibrationZCalculatedState, ResetCalibrationInput, IdleState, Reset );
@@ -94,11 +74,6 @@ PivotCalibration::PivotCalibration() :
   igstkAddTransitionMacro( CalibrationZCalculatedState, CalculateCalibrationZInput, CalibrationZCalculatedState, NoAction );
   igstkAddTransitionMacro( CalibrationZCalculatedState, SimulatePivotPositionInput, CalibrationZCalculatedState, SimulatePivotPosition );
   igstkAddTransitionMacro( CalibrationZCalculatedState, GetInputRotationTranslationInput, CalibrationZCalculatedState, GetInputRotationTranslation );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, PrincipalAxisInput, CalibrationZCalculatedState, SetToolPrincipalAxis );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, PlaneNormalInput, CalibrationZCalculatedState, SetToolPlaneNormal );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, TranslationInput, CalibrationZCalculatedState, SetTranslation );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, VersorInput, CalibrationZCalculatedState, SetVersor );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, RotationMatrixInput, CalibrationZCalculatedState, SetRotationMatrix );
 
   // Select the initial state of the state machine
   this->m_StateMachine.SelectInitialState( this->m_IdleState );
@@ -176,19 +151,6 @@ void PivotCalibration::Reset()
 
   // Reset the RMS calibration error
   this->m_RMS = 0.0;
-
-  // Reset the principal axis
-  this->m_PrincipalAxis[0] = 0.0;
-  this->m_PrincipalAxis[1] = 0.0;
-  this->m_PrincipalAxis[2] = 1.0;
-
-  // Reset the plane normal
-  this->m_PlaneNormal[0] = 0.0;
-  this->m_PlaneNormal[1] = 1.0;
-  this->m_PlaneNormal[2] = 0.0;
-
-  // Reset the adjusted plane normal
-  this->m_AdjustedPlaneNormal = this->m_PlaneNormal;
 
   // Reset the validation indicator
   this->m_ValidPivotCalibration = false;
@@ -318,69 +280,6 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
 
 }
 
-/** Internal method to calculate the rotation from the input */
-void PivotCalibration::InternalCalculateRotation()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalCalculateRotation called...\n" );
-
-  this->InternalAdjustPlaneNormal();
-  this->InternalBuildRotation();
-}
-
-/** Internal method to adjust the plane normal */
-void PivotCalibration::InternalAdjustPlaneNormal()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalAdjustPlaneNormal called...\n" );
-
-  VectorType vec[3];
-
-  // Assign and normalize the vectors
-  vec[1].SetVnlVector( this->m_PlaneNormal.GetVnlVector());
-  vec[1].Normalize();
-  vec[2].SetVnlVector( this->m_PrincipalAxis.GetVnlVector());
-  vec[2].Normalize();
-
-  // Compute the x axis
-  vec[0] = itk::CrossProduct( vec[1], vec[2]);
-
-  // Compute the perpendicular yvec
-  vec[1] = itk::CrossProduct( vec[2], vec[0]);
-
-  // No direct conversion from itk::Vector to itk::ConvariantVector
-  this->m_AdjustedPlaneNormal.SetVnlVector( vec[1].GetVnlVector());
-}
-
-/** Internal method to build the rotation */
-void PivotCalibration::InternalBuildRotation()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalBuildRotation called...\n" );
-
-  unsigned int i, j;
-  VectorType vec[3];
-  VersorType::MatrixType orthomatrix;
-  VersorType quaternion;
-
-  // Set three axis
-  vec[1].SetVnlVector( this->m_AdjustedPlaneNormal.GetVnlVector());
-  vec[1].Normalize();
-  vec[2].SetVnlVector( this->m_PrincipalAxis.GetVnlVector());
-  vec[2].Normalize();
-  vec[0] = itk::CrossProduct( vec[1], vec[2]);
-
-  // Fill the orthogonal matrix
-  for ( j = 0; j < 3; j++)
-  {
-    for ( i = 0; i < 3; i++)
-      {
-      orthomatrix[j][i] = vec[j][i];
-      }
-  }
- 
-  quaternion.Set( orthomatrix);
-  this->m_CalibrationTransform.SetRotation( quaternion, 0.1, 1000);
-
-}
-
 /** Method to calculate the calibration */
 void PivotCalibration::CalculateCalibration()
 {
@@ -475,92 +374,6 @@ bool PivotCalibration
     }
 }
 
-/** Set the principal axis of the tool */
-void PivotCalibration::SetToolPrincipalAxis()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::SetToolPrincipalAxis called...\n" );
-
-  this->InternalSetToolPrincipalAxis( this->m_VectorToBeSent[0], this->m_VectorToBeSent[1], this->m_VectorToBeSent[2] );
-  this->InternalCalculateRotation();
-}
-
-/** Internal function to set the principal axis of the tool */
-void PivotCalibration::InternalSetToolPrincipalAxis( double vx, double vy, double vz )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalSetToolPrincipalAxis called...\n" );
-
-  this->m_PrincipalAxis[0] = vx;
-  this->m_PrincipalAxis[1] = vy;
-  this->m_PrincipalAxis[2] = vz;
-}
-
-/** Set the normal of the tool plane */
-void PivotCalibration::SetToolPlaneNormal()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::SetToolPlaneNormal called...\n" );
-
-  this->InternalSetToolPlaneNormal( this->m_VectorToBeSent[0], this->m_VectorToBeSent[1], this->m_VectorToBeSent[2] );
-  this->InternalCalculateRotation();
-}
-
-/** Internal function to set the normal of the tool plane */
-void PivotCalibration::InternalSetToolPlaneNormal( double nx, double ny, double nz )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalSetToolPrincipalAxis called...\n" );
-
-  this->m_PlaneNormal[0] = nx;
-  this->m_PlaneNormal[1] = ny;
-  this->m_PlaneNormal[2] = nz;
-}
-
-/** Set the translation directly */
-void PivotCalibration::SetTranslation()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::SetTranslation called...\n" );
-
-  this->InternalSetTranslation( this->m_TranslationToBeSent[0], this->m_TranslationToBeSent[1], this->m_TranslationToBeSent[2] );
-}
-
-/** Internal function to set the translation directly */
-void PivotCalibration::InternalSetTranslation( double tx, double ty, double tz )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalSetTranslation called...\n" );
-
-  VectorType translation;
-
-  translation[0] = tx;
-  translation[1] = ty;
-  translation[2] = tz;
-  this->m_CalibrationTransform.SetTranslation( translation, 0.1, 1000 );
-}
-
-/** Set the rotation quaternion directly */
-void PivotCalibration::SetVersor()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::SetVersor called...\n" );
-
-  this->m_CalibrationTransform.SetRotation( this->m_VersorToBeSent, 0.1, 1000);
-}
-
-/** Set the rotation matrix directly */
-void PivotCalibration::SetRotationMatrix()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::SetRotationMatrix called...\n" );
-
-  this->InternalSetRotationMatrix( this->m_MatrixToBeSent );
-}
-
-/** Internal function to set the rotation matrix directly */
-void PivotCalibration
-::InternalSetRotationMatrix( const MatrixType & matrix )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalSetRotationMatrix called...\n" );
-
-  VersorType versor;
-
-  versor.Set( matrix);
-  this->m_CalibrationTransform.SetRotation( versor, 0.1, 1000 );
-}
 
 /** Method to invoke the reset function */
 void PivotCalibration::RequestReset()
@@ -640,66 +453,6 @@ bool PivotCalibration
 
   return this->m_ValidInputSample;
 
-}
-
-/** Method to invoke to set the principal axis of the tool */
-void PivotCalibration::RequestSetToolPrincipalAxis( double vx, double vy, double vz )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestSetToolPrincipalAxis called...\n" );
-
-  this->m_VectorToBeSent[0] = vx;
-  this->m_VectorToBeSent[1] = vy;
-  this->m_VectorToBeSent[2] = vz;
-  this->m_StateMachine.PushInput( this->m_PrincipalAxisInput );
-  this->m_StateMachine.ProcessInputs();
-
-}
-
-/** Method to invoke to set the normal of the tool plane */
-void PivotCalibration::RequestSetToolPlaneNormal( double nx, double ny, double nz )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestSetToolPlaneNormal called...\n" );
-
-  this->m_VectorToBeSent[0] = nx;
-  this->m_VectorToBeSent[1] = ny;
-  this->m_VectorToBeSent[2] = nz;
-
-  this->m_StateMachine.PushInput( this->m_PlaneNormalInput );
-  this->m_StateMachine.ProcessInputs();
-}
-
-/** Method to invoke to set the translation directly */
-void PivotCalibration::RequestSetTranslation( const VectorType & translation )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestSetTranslation called...\n" );
-
-  this->m_TranslationToBeSent = translation;
-
-  this->m_StateMachine.PushInput( this->m_TranslationInput );
-  this->m_StateMachine.ProcessInputs();
-}
-
-/** Method to invoke to set the rotation quaternion directly */
-void PivotCalibration::RequestSetVersor( const VersorType & versor )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestSetVersor called...\n" );
-
-  this->m_VersorToBeSent = versor;
-
-  this->m_StateMachine.PushInput( this->m_VersorInput );
-  this->m_StateMachine.ProcessInputs();
-}
-
-/** Method to invoke to set the rotation matrix directly */
-void PivotCalibration
-::RequestSetRotationMatrix( const MatrixType & matrix )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestSetRotationMatrix called...\n" );
-
-  this->m_MatrixToBeSent = matrix;
-
-  this->m_StateMachine.PushInput( this->m_RotationMatrixInput );
-  this->m_StateMachine.ProcessInputs();
 }
 
 } // end namespace igstk
