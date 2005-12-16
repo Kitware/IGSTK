@@ -158,35 +158,35 @@ protected:
   void Reset();
 
   /** Add a new sample, remove parameters to make it work with state machine input  */
-  void AddSample();
+  void AddSampleProcessing();
 
   /** Internal function to add a new sample */
-  void InternalAddSample( const VersorType & versor, 
+  void InternalAddSampleProcessing( const VersorType & versor, 
                                        const VectorType & translation );
 
   /** Calculate the calibration */
-  void CalculateCalibration();
+  void CalculateCalibrationProcessing();
 
   /** Calculate the calibration along z-axis */
-  void CalculateCalibrationZ();
+  void CalculateCalibrationZProcessing();
 
   /** Internal function to calculate the calibration */
-  void InternalCalculateCalibration( unsigned int axis );
+  void InternalCalculateCalibrationProcessing( unsigned int axis );
 
   /** Calculate the simulated pivot position */
-  void SimulatePivotPosition();
+  void SimulatePivotPositionProcessing();
 
   /** Internal function to calculate the simulated pivot position */
-  PointType InternalSimulatePivotPosition( const VersorType & versor, 
-                                           const VectorType & translation );
+  PointType InternalSimulatePivotPositionProcessing( const VersorType & versor, 
+                                                     const VectorType & translation );
 
   /** Get the rotation and translation inputed */
-  void GetInputSample();
+  void GetInputSampleProcessing();
 
   /** Internal function to get the rotation and translation inputed */
-  bool InternalGetInputSample( unsigned int index, 
-                               VersorType & versor, 
-                               VectorType & translation );
+  bool InternalGetInputSampleProcessing( unsigned int index, 
+                                         VersorType & versor, 
+                                         VectorType & translation );
 
 private:
 

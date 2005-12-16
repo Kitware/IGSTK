@@ -45,7 +45,7 @@ PivotCalibration::PivotCalibration() :
 
   // Add transition  for idle state
   igstkAddTransitionMacro( IdleState, ResetCalibrationInput, IdleState, Reset );
-  igstkAddTransitionMacro( IdleState, SampleInput, SampleAddState, AddSample );
+  igstkAddTransitionMacro( IdleState, SampleInput, SampleAddState, AddSampleProcessing );
   igstkAddTransitionMacro( IdleState, CalculateCalibrationInput, IdleState, NoAction );
   igstkAddTransitionMacro( IdleState, CalculateCalibrationZInput, IdleState, NoAction );
   igstkAddTransitionMacro( IdleState, SimulatePivotPositionInput, IdleState, NoAction );
@@ -53,27 +53,27 @@ PivotCalibration::PivotCalibration() :
   
   // Add transition  for RotationTranslationAdd state
   igstkAddTransitionMacro( SampleAddState, ResetCalibrationInput, IdleState, Reset );
-  igstkAddTransitionMacro( SampleAddState, SampleInput, SampleAddState, AddSample );
-  igstkAddTransitionMacro( SampleAddState, CalculateCalibrationInput, CalibrationCalculatedState, CalculateCalibration );
-  igstkAddTransitionMacro( SampleAddState, CalculateCalibrationZInput, CalibrationZCalculatedState, CalculateCalibrationZ );
+  igstkAddTransitionMacro( SampleAddState, SampleInput, SampleAddState, AddSampleProcessing );
+  igstkAddTransitionMacro( SampleAddState, CalculateCalibrationInput, CalibrationCalculatedState, CalculateCalibrationProcessing );
+  igstkAddTransitionMacro( SampleAddState, CalculateCalibrationZInput, CalibrationZCalculatedState, CalculateCalibrationZProcessing );
   igstkAddTransitionMacro( SampleAddState, SimulatePivotPositionInput, SampleAddState, NoAction );
-  igstkAddTransitionMacro( SampleAddState, GetInputSampleInput, SampleAddState, GetInputSample );
+  igstkAddTransitionMacro( SampleAddState, GetInputSampleInput, SampleAddState, GetInputSampleProcessing );
   
   // Add transition  for CalibrationCalculated state
   igstkAddTransitionMacro( CalibrationCalculatedState, ResetCalibrationInput, IdleState, Reset );
-  igstkAddTransitionMacro( CalibrationCalculatedState, SampleInput, SampleAddState, AddSample );
+  igstkAddTransitionMacro( CalibrationCalculatedState, SampleInput, SampleAddState, AddSampleProcessing );
   igstkAddTransitionMacro( CalibrationCalculatedState, CalculateCalibrationInput, CalibrationCalculatedState, NoAction );
-  igstkAddTransitionMacro( CalibrationCalculatedState, CalculateCalibrationZInput, CalibrationZCalculatedState, CalculateCalibrationZ );
-  igstkAddTransitionMacro( CalibrationCalculatedState, SimulatePivotPositionInput, CalibrationCalculatedState, SimulatePivotPosition );
-  igstkAddTransitionMacro( CalibrationCalculatedState, GetInputSampleInput, CalibrationCalculatedState, GetInputSample );
+  igstkAddTransitionMacro( CalibrationCalculatedState, CalculateCalibrationZInput, CalibrationZCalculatedState, CalculateCalibrationZProcessing );
+  igstkAddTransitionMacro( CalibrationCalculatedState, SimulatePivotPositionInput, CalibrationCalculatedState, SimulatePivotPositionProcessing );
+  igstkAddTransitionMacro( CalibrationCalculatedState, GetInputSampleInput, CalibrationCalculatedState, GetInputSampleProcessing );
 
   // Add transition  for CalibrationZCalculated state
   igstkAddTransitionMacro( CalibrationZCalculatedState, ResetCalibrationInput, IdleState, Reset );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, SampleInput, SampleAddState, AddSample );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, CalculateCalibrationInput, CalibrationCalculatedState, CalculateCalibration );
+  igstkAddTransitionMacro( CalibrationZCalculatedState, SampleInput, SampleAddState, AddSampleProcessing );
+  igstkAddTransitionMacro( CalibrationZCalculatedState, CalculateCalibrationInput, CalibrationCalculatedState, CalculateCalibrationProcessing );
   igstkAddTransitionMacro( CalibrationZCalculatedState, CalculateCalibrationZInput, CalibrationZCalculatedState, NoAction );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, SimulatePivotPositionInput, CalibrationZCalculatedState, SimulatePivotPosition );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, GetInputSampleInput, CalibrationZCalculatedState, GetInputSample );
+  igstkAddTransitionMacro( CalibrationZCalculatedState, SimulatePivotPositionInput, CalibrationZCalculatedState, SimulatePivotPositionProcessing );
+  igstkAddTransitionMacro( CalibrationZCalculatedState, GetInputSampleInput, CalibrationZCalculatedState, GetInputSampleProcessing );
 
   // Select the initial state of the state machine
   this->m_StateMachine.SelectInitialState( this->m_IdleState );
@@ -160,11 +160,11 @@ void PivotCalibration::Reset()
 }
 
 /** Method to add the sample information */
-void PivotCalibration::AddSample()
+void PivotCalibration::AddSampleProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::AddSample called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::AddSampleProcessing called...\n" );
   
-  this->InternalAddSample( 
+  this->InternalAddSampleProcessing( 
                        this->m_VersorToBeSent, 
                        this->m_TranslationToBeSent );
 }
@@ -172,10 +172,10 @@ void PivotCalibration::AddSample()
 
 /** Internal method to add the sample information */
 void PivotCalibration
-::InternalAddSample( const VersorType & quaternion, 
+::InternalAddSampleProcessing( const VersorType & quaternion, 
                                   const VectorType & translation )
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalAddSample called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalAddSampleProcessing called...\n" );
 
   // Push the quaternion sample into the input container
   this->m_VersorContainer->push_back( quaternion );
@@ -189,7 +189,7 @@ void PivotCalibration
 }
 
 /** Internal method to calculate the calibration */
-void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
+void PivotCalibration::InternalCalculateCalibrationProcessing( unsigned int axis )
 {
   /** Use the Moore-Penrose inverse to calculate the calibration matrix
    *  The algorithm used is from the paper "Freehand Ultrasound Calibration using
@@ -209,7 +209,7 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
    *  or [ Offset0 Offset1 Offset2 x0 y0 z0]' = SVD( M, N )
    *  RMS = sqrt( |M * [ Offset0 Offset1 Offset2 x0 y0 z0 ]' - N|^2 / num ) */   
 
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalCalculateCalibration called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalCalculateCalibrationProcessing called...\n" );
 
   unsigned int i, j, k;
   unsigned int r, c, num;
@@ -281,35 +281,35 @@ void PivotCalibration::InternalCalculateCalibration( unsigned int axis )
 }
 
 /** Method to calculate the calibration */
-void PivotCalibration::CalculateCalibration()
+void PivotCalibration::CalculateCalibrationProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::CalculateCalibration called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::CalculateCalibrationProcessing called...\n" );
 
-  this->InternalCalculateCalibration( 3);
+  this->InternalCalculateCalibrationProcessing( 3);
 }
 
 /** Method to calculate the calibration along z-axis */
-void PivotCalibration::CalculateCalibrationZ()
+void PivotCalibration::CalculateCalibrationZProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::CalculateCalibrationZ called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::CalculateCalibrationZProcessing called...\n" );
 
-  this->InternalCalculateCalibration( 1);
+  this->InternalCalculateCalibrationProcessing( 1);
 }
 
 /** Calculate the simulated pivot position */
-void PivotCalibration::SimulatePivotPosition()
+void PivotCalibration::SimulatePivotPositionProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::SimulatePivotPosition called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::SimulatePivotPositionProcessing called...\n" );
   
-  this->m_SimulatedPivotPositionToBeReceived = this->InternalSimulatePivotPosition( this->m_VersorToBeSent, this->m_TranslationToBeSent);
+  this->m_SimulatedPivotPositionToBeReceived = this->InternalSimulatePivotPositionProcessing( this->m_VersorToBeSent, this->m_TranslationToBeSent);
 }
 
 /** Internal function to calculate the simulated pivot position */
 PivotCalibration::PointType 
-PivotCalibration::InternalSimulatePivotPosition( const VersorType & rotation, 
+PivotCalibration::InternalSimulatePivotPositionProcessing( const VersorType & rotation, 
                                                  const VectorType & translation )
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalSimulatePivotPosition called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalSimulatePivotPositionProcessing called...\n" );
 
   /** reconstruct the pivot position from any input translation and rotation
    * 
@@ -340,11 +340,11 @@ PivotCalibration::InternalSimulatePivotPosition( const VersorType & rotation,
 }
 
 /** Get the rotation and translation inputed */
-void PivotCalibration::GetInputSample()
+void PivotCalibration::GetInputSampleProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetInputSample called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetInputSampleProcessing called...\n" );
 
-  this->m_ValidInputSample = this->InternalGetInputSample( 
+  this->m_ValidInputSample = this->InternalGetInputSampleProcessing( 
                                                this->m_InputIndexToBeSent, 
                                                this->m_VersorToBeReceived, 
                                                this->m_TranslationToBeReceived);
@@ -352,11 +352,11 @@ void PivotCalibration::GetInputSample()
 
 /** Internal method to get the rotation and translation inputed */
 bool PivotCalibration
-::InternalGetInputSample( unsigned int index, 
+::InternalGetInputSampleProcessing( unsigned int index, 
                                        VersorType & versor, 
                                        VectorType & translation )
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalGetInputSample called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalGetInputSampleProcessing called...\n" );
 
   if ( index >= 0 && index < this->GetNumberOfSamples() )
     {
@@ -387,7 +387,7 @@ void PivotCalibration::RequestReset()
 /** Method to invoke adding the sample */
 void PivotCalibration
 ::RequestAddSample( const VersorType & versor, 
-                                 const VectorType & translation )
+                              const VectorType & translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestAddSample called...\n" );
   
