@@ -611,7 +611,7 @@ void View::SaveScreenShot()
 
   windowToImageFilter->Update();
 
-  writer->SetInputConnection( windowToImageFilter->GetOutputPort() );
+  writer->SetInput( windowToImageFilter->GetOutput() );
   
   writer->SetFileName( m_ScreenShotFileName.c_str() );
   
@@ -619,7 +619,7 @@ void View::SaveScreenShot()
   
   writer->Write();
 
-  writer->SetInputConnection( NULL );
+  writer->SetInput( NULL );
   windowToImageFilter->SetInput( NULL );
 
   windowToImageFilter->Delete();
