@@ -109,16 +109,12 @@ int main(int ac, char* av[] )
       }
     else if (strcmp(av[1], "--compare") == 0)
       {
-      std::cout << "Found --compare !!" << std::endl;
-      std::cout << "AC = " << ac << std::endl;
       baselineFilename = av[2];
       testFilename = av[3];
       av += 3;
       ac -= 3;
       if (strcmp(av[1], "--tolerance") == 0)
         {
-        std::cout << "Found --tolerance !!" << std::endl;
-        std::cout << "AC = " << ac << std::endl;
         tolerance = atof( av[2] );
         av += 2;
         ac -= 2;
