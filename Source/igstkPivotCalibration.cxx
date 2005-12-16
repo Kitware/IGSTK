@@ -44,7 +44,7 @@ PivotCalibration::PivotCalibration() :
   igstkAddInputMacro( GetInputSampleInput );
 
   // Add transition  for idle state
-  igstkAddTransitionMacro( IdleState, ResetCalibrationInput, IdleState, Reset );
+  igstkAddTransitionMacro( IdleState, ResetCalibrationInput, IdleState, ResetProcessing );
   igstkAddTransitionMacro( IdleState, SampleInput, SampleAddState, AddSampleProcessing );
   igstkAddTransitionMacro( IdleState, CalculateCalibrationInput, IdleState, NoAction );
   igstkAddTransitionMacro( IdleState, CalculateCalibrationZInput, IdleState, NoAction );
@@ -52,7 +52,7 @@ PivotCalibration::PivotCalibration() :
   igstkAddTransitionMacro( IdleState, GetInputSampleInput, IdleState, NoAction );
   
   // Add transition  for RotationTranslationAdd state
-  igstkAddTransitionMacro( SampleAddState, ResetCalibrationInput, IdleState, Reset );
+  igstkAddTransitionMacro( SampleAddState, ResetCalibrationInput, IdleState, ResetProcessing );
   igstkAddTransitionMacro( SampleAddState, SampleInput, SampleAddState, AddSampleProcessing );
   igstkAddTransitionMacro( SampleAddState, CalculateCalibrationInput, CalibrationCalculatedState, CalculateCalibrationProcessing );
   igstkAddTransitionMacro( SampleAddState, CalculateCalibrationZInput, CalibrationZCalculatedState, CalculateCalibrationZProcessing );
@@ -60,7 +60,7 @@ PivotCalibration::PivotCalibration() :
   igstkAddTransitionMacro( SampleAddState, GetInputSampleInput, SampleAddState, GetInputSampleProcessing );
   
   // Add transition  for CalibrationCalculated state
-  igstkAddTransitionMacro( CalibrationCalculatedState, ResetCalibrationInput, IdleState, Reset );
+  igstkAddTransitionMacro( CalibrationCalculatedState, ResetCalibrationInput, IdleState, ResetProcessing );
   igstkAddTransitionMacro( CalibrationCalculatedState, SampleInput, SampleAddState, AddSampleProcessing );
   igstkAddTransitionMacro( CalibrationCalculatedState, CalculateCalibrationInput, CalibrationCalculatedState, NoAction );
   igstkAddTransitionMacro( CalibrationCalculatedState, CalculateCalibrationZInput, CalibrationZCalculatedState, CalculateCalibrationZProcessing );
@@ -68,7 +68,7 @@ PivotCalibration::PivotCalibration() :
   igstkAddTransitionMacro( CalibrationCalculatedState, GetInputSampleInput, CalibrationCalculatedState, GetInputSampleProcessing );
 
   // Add transition  for CalibrationZCalculated state
-  igstkAddTransitionMacro( CalibrationZCalculatedState, ResetCalibrationInput, IdleState, Reset );
+  igstkAddTransitionMacro( CalibrationZCalculatedState, ResetCalibrationInput, IdleState, ResetProcessing );
   igstkAddTransitionMacro( CalibrationZCalculatedState, SampleInput, SampleAddState, AddSampleProcessing );
   igstkAddTransitionMacro( CalibrationZCalculatedState, CalculateCalibrationInput, CalibrationCalculatedState, CalculateCalibrationProcessing );
   igstkAddTransitionMacro( CalibrationZCalculatedState, CalculateCalibrationZInput, CalibrationZCalculatedState, NoAction );
@@ -85,8 +85,8 @@ PivotCalibration::PivotCalibration() :
   this->m_VersorContainer = InputVersorContainerType::New();
   this->m_TranslationContainer = InputVectorContainerType::New();
 
-  // Reset the initial state and variables
-  this->Reset();
+  // ResetProcessing the initial state and variables
+  this->ResetProcessing();
 
 }
 
@@ -124,15 +124,15 @@ unsigned int PivotCalibration
 
 }
 
-/** Method to reset the calibration */
+/** Method to ResetProcessing the calibration */
 void PivotCalibration::NoAction()
 {
 }
 
-/** Method to reset the calibration */
-void PivotCalibration::Reset()
+/** Method to ResetProcessing the calibration */
+void PivotCalibration::ResetProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::Reset called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::ResetProcessing called...\n" );
 
   VersorType quaternion;
   VectorType translation;
@@ -141,21 +141,21 @@ void PivotCalibration::Reset()
   this->m_VersorContainer->Initialize();
   this->m_TranslationContainer->Initialize();
 
-  // Reset the calibration transform
+  // ResetProcessing the calibration transform
   quaternion.SetIdentity();
   translation.Fill( 0.0);
   this->m_CalibrationTransform.SetTranslationAndRotation( translation, quaternion, 0.1, 1000);
 
-  // Reset the pivot position 
+  // ResetProcessing the pivot position 
   this->m_PivotPosition.Fill( 0.0);
 
-  // Reset the RMS calibration error
+  // ResetProcessing the RMS calibration error
   this->m_RMS = 0.0;
 
-  // Reset the validation indicator
+  // ResetProcessing the validation indicator
   this->m_ValidPivotCalibration = false;
 
-  // Reset the validation indicator
+  // ResetProcessing the validation indicator
   this->m_ValidInputSample = false;
 }
 
@@ -375,7 +375,7 @@ bool PivotCalibration
 }
 
 
-/** Method to invoke the reset function */
+/** Method to invoke the ResetProcessing function */
 void PivotCalibration::RequestReset()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestReset called...\n" );

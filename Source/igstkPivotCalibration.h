@@ -155,7 +155,7 @@ protected:
   void NoAction();
 
   /** Reset the calibration matrix */
-  void Reset();
+  void ResetProcessing();
 
   /** Add a new sample, remove parameters to make it work with state machine input  */
   void AddSampleProcessing();
