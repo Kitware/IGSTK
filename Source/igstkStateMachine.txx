@@ -185,6 +185,59 @@ StateMachine< TClass >
     return;
     }
 
+
+  // Verify the completeness of the Transition table
+  {
+
+    // First, verify that the Transition Table has an entry for every State
+    StatesConstIterator stateItr = m_States.begin();
+    StatesConstIterator stateEnd = m_States.end();
+
+    while( stateItr != stateEnd )
+      {
+      TransitionConstIterator transitionsFromThisState =
+                                       m_Transitions.find( stateItr->first );
+
+      if( transitionsFromThisState == m_Transitions.end() )
+        {
+        igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+          << m_This->GetNameOfClass() 
+          << " Error: The Transition Table is Not Complete.\n"
+          << " There are no transitions for \n"
+          << " State:  " << stateItr->second << "\n" );
+        ++stateItr;
+        continue;
+        }
+
+      // Second, verify that the State row has entries for every Input.
+      InputConstIterator inputItr = m_Inputs.begin();
+      InputConstIterator inputEnd = m_Inputs.end();
+
+      TransitionsPerInputConstIterator  transitionEnd = 
+                        transitionsFromThisState->second->end();
+
+      while( inputItr != inputEnd )
+        {
+        TransitionsPerInputConstIterator  transitionItr = 
+             transitionsFromThisState->second->find( transitionItr->first );
+
+        if( transitionItr == transitionEnd )
+          { 
+          igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+            << m_This->GetNameOfClass() 
+            << " Error: The Transition Table is Not Complete.\n"
+            << " There is no transition for \n"
+            << " State:  " << stateItr->second 
+            << " Input:  " << inputItr->second << "\n" );
+          }
+        ++inputItr;
+        }
+
+      ++stateItr;
+      }
+
+  }
+
   m_ReadyToRun = true;
 }
 
