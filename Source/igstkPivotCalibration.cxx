@@ -341,10 +341,10 @@ void PivotCalibration::InternalAdjustPlaneNormal()
   vec[2].Normalize();
 
   // Compute the x axis
-  vec[0] = CrossProduct( vec[1], vec[2]);
+  vec[0] = itk::CrossProduct( vec[1], vec[2]);
 
   // Compute the perpendicular yvec
-  vec[1] = CrossProduct( vec[2], vec[0]);
+  vec[1] = itk::CrossProduct( vec[2], vec[0]);
 
   // No direct conversion from itk::Vector to itk::ConvariantVector
   this->m_AdjustedPlaneNormal.SetVnlVector( vec[1].GetVnlVector());
@@ -365,7 +365,7 @@ void PivotCalibration::InternalBuildRotation()
   vec[1].Normalize();
   vec[2].SetVnlVector( this->m_PrincipalAxis.GetVnlVector());
   vec[2].Normalize();
-  vec[0] = CrossProduct( vec[1], vec[2]);
+  vec[0] = itk::CrossProduct( vec[1], vec[2]);
 
   // Fill the orthogonal matrix
   for ( j = 0; j < 3; j++)
