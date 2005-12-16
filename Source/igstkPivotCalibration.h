@@ -120,8 +120,8 @@ public:
   void RequestReset();
 
   /** Method invoked by the user to add a new sample */
-  void RequestAddRotationTranslation( const VersorType & versor,
-                                      const VectorType & translation );
+  void RequestAddSample( const VersorType & versor, 
+                         const VectorType & translation );
 
   /** Method invoked by the user to calculate the calibration matrix */
   void RequestCalculateCalibration(); 
@@ -134,9 +134,9 @@ public:
                                            const VectorType & translation );
 
   /** Method invoked by the user to get the rotation and translation in the input container */
-  bool RequestGetInputRotationTranslation( unsigned int index, 
-                                           VersorType & versor, 
-                                           VectorType & translation );
+  bool RequestGetInputSample( unsigned int index, 
+                              VersorType & versor, 
+                              VectorType & translation );
 
 protected:
 
@@ -156,10 +156,10 @@ protected:
   void Reset();
 
   /** Add a new sample, remove parameters to make it work with state machine input  */
-  void AddRotationTranslation();
+  void AddSample();
 
   /** Internal function to add a new sample */
-  void InternalAddRotationTranslation( const VersorType & versor, 
+  void InternalAddSample( const VersorType & versor, 
                                        const VectorType & translation );
 
   /** Calculate the calibration */
@@ -179,28 +179,28 @@ protected:
                                             const VectorType & translation );
 
   /** Get the rotation and translation inputed */
-  void GetInputRotationTranslation();
+  void GetInputSample();
 
   /** Internal function to get the rotation and translation inputed */
-  bool InternalGetInputRotationTranslation( unsigned int index, 
-                                            VersorType & versor, 
-                                            VectorType & translation );
+  bool InternalGetInputSample( unsigned int index, 
+                               VersorType & versor, 
+                               VectorType & translation );
 
 private:
 
   /** List of States */
   StateType                         m_IdleState;
-  StateType                         m_RotationTranslationAddState;
+  StateType                         m_SampleAddState;
   StateType                         m_CalibrationCalculatedState; 
   StateType                         m_CalibrationZCalculatedState; 
 
   /** List of Inputs */
   InputType                         m_ResetCalibrationInput;
-  InputType                         m_RotationTranslationInput;
+  InputType                         m_SampleInput;
   InputType                         m_CalculateCalibrationInput;
   InputType                         m_CalculateCalibrationZInput;
   InputType                         m_SimulatePivotPositionInput;
-  InputType                         m_GetInputRotationTranslationInput;
+  InputType                         m_GetInputSampleInput;
 
   /** Temporary input variables for state machine */
   VersorType                        m_VersorToBeSent;

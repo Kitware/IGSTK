@@ -96,7 +96,7 @@ int igstkPivotCalibrationTest( int, char * [] )
     input >> vw >> vx >> vy >> vz;
 
     versor.Set( vx, vy, vz, vw );
-    pivot->RequestAddRotationTranslation( versor, pos );
+    pivot->RequestAddSample( versor, pos );
     }
 
   // Calculate the calibration matrix along three axis
@@ -113,7 +113,7 @@ int igstkPivotCalibrationTest( int, char * [] )
     // Test the simulated pivot position
     for ( i = 0; i < pivot->GetNumberOfSamples(); i++)
       {
-      if (pivot->RequestGetInputRotationTranslation( i, versor, pos))
+      if (pivot->RequestGetInputSample( i, versor, pos))
         {
         std::cout << "Input Sample: " << i << " " << versor << pos << std::endl;
 
@@ -128,7 +128,7 @@ int igstkPivotCalibrationTest( int, char * [] )
 
     // Simulate for bad index
     index = -1;
-    if (pivot->RequestGetInputRotationTranslation( index, versor, pos))
+    if (pivot->RequestGetInputSample( index, versor, pos))
       {
       std::cout << "Input Sample: " << index << " " << versor << pos << std::endl;
       }
@@ -138,7 +138,7 @@ int igstkPivotCalibrationTest( int, char * [] )
       }
 
     index = pivot->GetNumberOfSamples();
-    if (pivot->RequestGetInputRotationTranslation( index, versor, pos))
+    if (pivot->RequestGetInputSample( index, versor, pos))
       {
       std::cout << "Input Sample: " << index << " " << versor << pos << std::endl;
       }
