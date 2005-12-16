@@ -165,15 +165,15 @@ void PivotCalibration::AddSampleProcessing()
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::AddSampleProcessing called...\n" );
   
   this->InternalAddSampleProcessing( 
-                       this->m_VersorToBeSent, 
-                       this->m_TranslationToBeSent );
+                      this->m_VersorToBeSent, 
+                      this->m_TranslationToBeSent );
 }
 
 
 /** Internal method to add the sample information */
 void PivotCalibration
 ::InternalAddSampleProcessing( const VersorType & quaternion, 
-                                  const VectorType & translation )
+                               const VectorType & translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalAddSampleProcessing called...\n" );
 
@@ -307,7 +307,7 @@ void PivotCalibration::SimulatePivotPositionProcessing()
 /** Internal function to calculate the simulated pivot position */
 PivotCalibration::PointType 
 PivotCalibration::InternalSimulatePivotPositionProcessing( const VersorType & rotation, 
-                                                 const VectorType & translation )
+                                                           const VectorType & translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalSimulatePivotPositionProcessing called...\n" );
 
@@ -353,8 +353,8 @@ void PivotCalibration::GetInputSampleProcessing()
 /** Internal method to get the rotation and translation inputed */
 bool PivotCalibration
 ::InternalGetInputSampleProcessing( unsigned int index, 
-                                       VersorType & versor, 
-                                       VectorType & translation )
+                                    VersorType & versor, 
+                                    VectorType & translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalGetInputSampleProcessing called...\n" );
 
@@ -387,7 +387,7 @@ void PivotCalibration::RequestReset()
 /** Method to invoke adding the sample */
 void PivotCalibration
 ::RequestAddSample( const VersorType & versor, 
-                              const VectorType & translation )
+                    const VectorType & translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestAddSample called...\n" );
   
@@ -437,8 +437,8 @@ PivotCalibration::RequestSimulatePivotPosition( const VersorType & versor,
 /** Method to invoke to get the rotation and translation in the input container */
 bool PivotCalibration
 ::RequestGetInputSample( unsigned int index, 
-                                      VersorType & versor, 
-                                      VectorType& translation )
+                         VersorType & versor, 
+                         VectorType& translation )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestGetInputSample called...\n" );
 
