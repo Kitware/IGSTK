@@ -100,8 +100,8 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_CylinderRepresentation->SetOpacity(1.0);
   
   igstk::PivotCalibration::Pointer pivot = igstk::PivotCalibration::New();
-  pivot->RequestSetToolPrincipalAxis( 0.0, 1.0, 0.0);
-  pivot->RequestSetToolPlaneNormal( 1.0, 0.0, 0.0);
+//  pivot->RequestSetToolPrincipalAxis( 0.0, 1.0, 0.0);
+//  pivot->RequestSetToolPlaneNormal( 1.0, 0.0, 0.0);
 
   igstk::Transform::VectorType CylinderTipOffset;     //FIXME, SpatialObject should have an tip to origin offet
   CylinderTipOffset[0] = 0;   // Tip offset
