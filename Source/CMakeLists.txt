@@ -6,6 +6,7 @@
 SET(IGSTKSandbox_HEADS
   igstkMouseTracker.h
   igstkPivotCalibration.h
+  igstkPrincipalAxisCalibration.h
 )
 
 
@@ -13,6 +14,7 @@ SET(IGSTKSandbox_HEADS
 SET(IGSTKSandbox_SRCS  
   igstkMouseTracker.cxx
   igstkPivotCalibration.cxx
+  igstkPrincipalAxisCalibration.cxx
 )
 
 # Variable for holding extra libraries
