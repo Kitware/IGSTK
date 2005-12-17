@@ -96,10 +96,10 @@ public:
   void RequestReset();
 
   /** Method invoked by the user to set the initial orientation of the tool */
-  void RequestSetInitialOrientation( VectorType axis, CovariantVectorType normal );
+  void RequestSetInitialOrientation( const VectorType axis, const CovariantVectorType normal );
 
   /** Method invoked by the user to set the desired orientation of the tool */
-  void RequestSetDesiredOrientation( VectorType axis, CovariantVectorType normal );
+  void RequestSetDesiredOrientation( const VectorType axis, const CovariantVectorType normal );
 
   /** Method invoked by the user to calculate the rotation */
   void RequestCalculateRotation();
@@ -125,13 +125,13 @@ protected:
   void SetInitialOrientationProcessing();
 
   /** Internal function to set initial orientation of the tool */
-  void InternalSetInitialOrientationProcessing( VectorType axis, CovariantVectorType normal );
+  void InternalSetInitialOrientationProcessing( const VectorType axis, const CovariantVectorType normal );
 
   /** Set the desired orientation of the tool */
   void SetDesiredOrientationProcessing();
 
   /** Internal function to set the desired orientation of the tool */
-  void InternalSetDesiredOrientationProcessing( VectorType axis, CovariantVectorType normal );
+  void InternalSetDesiredOrientationProcessing( const VectorType axis, const CovariantVectorType normal );
 
   /** Calculate the rotation */
   void CalculateRotationProcessing();
@@ -140,10 +140,10 @@ protected:
   void InternalAdjustPlaneNormalProcessing();
 
   /** Internal function to adjust plane normal */
-  CovariantVectorType InternalAdjustPlaneNormalProcessing( VectorType axis, CovariantVectorType normal );
+  CovariantVectorType InternalAdjustPlaneNormalProcessing( const VectorType axis, const CovariantVectorType normal );
 
   /** Internal function to construct the orthogonal matrix */
-  MatrixType InternalBuildOrthogonalMatrix( VectorType axis, CovariantVectorType normal );
+  MatrixType InternalBuildOrthogonalMatrix( const VectorType axis, const CovariantVectorType normal );
 
 private:
 
