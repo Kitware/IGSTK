@@ -60,6 +60,8 @@ ADD_TEST(igstkMouseTrackerTest ${IGSTKSandbox_TESTS} igstkMouseTrackerTest)
 
 ADD_TEST(igstkPivotCalibrationTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationTest)
 
+ADD_TEST(igstkPrincipalAxisCalibrationTest ${IGSTKSandbox_TESTS} igstkPrincipalAxisCalibrationTest)
+
 IF (IGSTKSandbox_DATA_ROOT) 
 
 ENDIF(IGSTKSandbox_DATA_ROOT)
@@ -67,6 +69,7 @@ ENDIF(IGSTKSandbox_DATA_ROOT)
 SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkPivotCalibrationTest.cxx
+  igstkPrincipalAxisCalibrationTest.cxx
   )
 
 IF (IGSTK_USE_ATAMAI)
