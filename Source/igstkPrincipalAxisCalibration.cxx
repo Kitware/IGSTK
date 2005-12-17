@@ -52,13 +52,13 @@ PrincipalAxisCalibration::PrincipalAxisCalibration() :
   igstkAddTransitionMacro( InitialOrientationSetState, ResetCalibrationInput, IdleState, ResetProcessing );
   igstkAddTransitionMacro( InitialOrientationSetState, InitialOrientationInput, InitialOrientationSetState, SetInitialOrientationProcessing );
   igstkAddTransitionMacro( InitialOrientationSetState, DesiredOrientationInput, OrientationAllSetState, SetDesiredOrientationProcessing );
-  igstkAddTransitionMacro( InitialOrientationSetState, CalculateRotationInput, IdleState, NoAction );
+  igstkAddTransitionMacro( InitialOrientationSetState, CalculateRotationInput, InitialOrientationSetState, NoAction );
 
   // Add transition  for DesiredOrientationSet state
   igstkAddTransitionMacro( DesiredOrientationSetState, ResetCalibrationInput, IdleState, ResetProcessing );
   igstkAddTransitionMacro( DesiredOrientationSetState, InitialOrientationInput, OrientationAllSetState, SetInitialOrientationProcessing );
   igstkAddTransitionMacro( DesiredOrientationSetState, DesiredOrientationInput, DesiredOrientationSetState, SetDesiredOrientationProcessing );
-  igstkAddTransitionMacro( DesiredOrientationSetState, CalculateRotationInput, IdleState, NoAction );
+  igstkAddTransitionMacro( DesiredOrientationSetState, CalculateRotationInput, DesiredOrientationSetState, NoAction );
 
   // Add transition  for OrientationAllSet state
   igstkAddTransitionMacro( OrientationAllSetState, ResetCalibrationInput, IdleState, ResetProcessing );
