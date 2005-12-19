@@ -68,8 +68,6 @@ public:
 
   typedef VersorType::MatrixType          MatrixType;
 
-  typedef double                          ErrorType;
-
   typedef itk::CovariantVector< double >  CovariantVectorType;        
 
 public:
