@@ -219,7 +219,7 @@ StateMachine< TClass >
       while( inputItr != inputEnd )
         {
         TransitionsPerInputConstIterator  transitionItr = 
-             transitionsFromThisState->second->find( transitionItr->first );
+             transitionsFromThisState->second->find( inputItr->first );
 
         if( transitionItr == transitionEnd )
           { 
