@@ -121,9 +121,6 @@ void PrincipalAxisCalibration::ResetProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::ResetProcessing called...\n" );
 
-  VersorType quaternion;
-  VectorType translation;
-
   // Reset the initial principal axis
   this->m_InitialPrincipalAxis[0] = 0.0;
   this->m_InitialPrincipalAxis[1] = 1.0;
