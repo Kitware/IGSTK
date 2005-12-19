@@ -89,10 +89,10 @@ public:
   void RequestReadImage();
 
   /** This function should be used to request modality info*/
-  void RequestModalityInfo();
+  void RequestModalityInformation();
 
   /** This function will be used to request patient name info */
-  void RequestPatientNameInfo();
+  void RequestPatientNameInformation();
   
 
   /** This function will be used to reset the reader */
@@ -163,77 +163,77 @@ private:
   DirectoryNameType            m_ImageDirectoryNameToBeSet;
 
   /** List of States */
-  StateType                    m_IdleState;
-  StateType                    m_ImageDirectoryNameReadState;
-  StateType                    m_AttemptingToReadImageState;
-  StateType                    m_ImageReadState;
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( ImageDirectoryNameRead );
+  igstkDeclareStateMacro( AttemptingToReadImage );
+  igstkDeclareStateMacro( ImageRead );
 
 
   /** List of State Inputs */
-  InputType                    m_ReadImageRequestInput;
-  InputType                    m_ImageDirectoryNameValidInput; 
-  InputType                    m_ImageReadingSuccessInput;
-  InputType                    m_ResetReaderInput;
+  igstkDeclareInputMacro( ReadImageRequest );
+  igstkDeclareInputMacro( ImageDirectoryNameValid ); 
+  igstkDeclareInputMacro( ImageReadingSuccess );
+  igstkDeclareInputMacro( ResetReader );
   
   /** Error related state inputs */
-  InputType                    m_ImageReadingErrorInput;
-  InputType                    m_ImageDirectoryNameIsEmptyInput;
-  InputType                    m_ImageDirectoryNameDoesNotExistInput;
-  InputType                    m_ImageDirectoryNameIsNotDirectoryInput;
-  InputType                    m_ImageDirectoryNameDoesNotHaveEnoughFilesInput;
+  igstkDeclareInputMacro( ImageReadingError );
+  igstkDeclareInputMacro( ImageDirectoryNameIsEmpty );
+  igstkDeclareInputMacro( ImageDirectoryNameDoesNotExist );
+  igstkDeclareInputMacro( ImageDirectoryNameIsNotDirectory );
+  igstkDeclareInputMacro( ImageDirectoryNameDoesNotHaveEnoughFiles );
  
   /** DICOM tags request inputs */
 
-  InputType                    m_GetModalityInfoInput;
-  InputType                    m_GetPatientNameInfoInput;
+  igstkDeclareInputMacro( GetModalityInformation );
+  igstkDeclareInputMacro( GetPatientNameInformation );
   
   /** Declarations needed for the Logger */
   igstkLoggerMacro();
 
   /** Set the name of the directory. To be invoked ONLY by the StateMachine */
-  void SetDirectoryName();
+  void SetDirectoryNameProcessing();
 
   /** Invokes a FileNameGenerator in order to get the names of all the DICOM
       files in a directory. To be invoked ONLY by the StateMachine */
-  void ReadDirectoryFileNames();
+  void ReadDirectoryFileNamesProcessing();
 
   /** This method request image read. To be invoked ONLY by the StateMachine. */
-  void AttemptReadImage();
+  void AttemptReadImageProcessing();
 
   /** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent
      when invalid requests are made */
-  void ReportInvalidRequest();
+  void ReportInvalidRequestProcessing();
   
   /** This function reports an when the image directory is empty */
-  void ReportImageDirectoryEmptyError();
+  void ReportImageDirectoryEmptyErrorProcessing();
  
   /** This function reports an error when image directory is non-existing */
-  void ReportImageDirectoryDoesNotExistError();
+  void ReportImageDirectoryDoesNotExistErrorProcessing();
 
  /* This function reports an error if the image directory doesn't have enough
      files */
-  void ReportImageDirectoryDoesNotHaveEnoughFilesError();
+  void ReportImageDirectoryDoesNotHaveEnoughFilesErrorProcessing();
   
   /** This function reports an error while image reading */
-  void ReportImageReadingError();
+  void ReportImageReadingErrorProcessing();
 
   /** This function reports success in image reading */
-  void ReportImageReadingSuccess();
+  void ReportImageReadingSuccessProcessing();
 
   /** This function resets the reader */
-  void ResetReader();
+  void ResetReaderProcessing();
 
   /** This function reports an error when the image directory name
       provided is not a directory containing DICOM series */
-  void ReportImageDirectoryIsNotDirectoryError();
+  void ReportImageDirectoryIsNotDirectoryErrorProcessing();
 
   /** This function throws a string loaded event. The string is loaded
       with DICOM  modality */
-  void GetModalityInfo();
+  void GetModalityInformationProcessing();
 
   /** This function throws a string loaded event. The string is loaded
       with patient name */
-  void GetPatientNameInfo();
+  void GetPatientNameInformationProcessing();
 
   /** This method MUST be private in order to prevent 
       unsafe access to the ITK image level */

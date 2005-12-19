@@ -33,18 +33,18 @@ CylinderObjectRepresentation::CylinderObjectRepresentation():m_StateMachine(this
   this->RequestSetSpatialObject( m_CylinderSpatialObject );
   m_CylinderSource = vtkCylinderSource::New();
   
-  igstkAddInputMacro( ValidCylinderObjectInput );
-  igstkAddInputMacro( NullCylinderObjectInput  );
+  igstkAddInputMacro( ValidCylinderObject );
+  igstkAddInputMacro( NullCylinderObject  );
 
-  igstkAddStateMacro( NullCylinderObjectState   );
-  igstkAddStateMacro( ValidCylinderObjectState  );
+  igstkAddStateMacro( NullCylinderObject  );
+  igstkAddStateMacro( ValidCylinderObject );
 
-  igstkAddTransitionMacro( NullCylinderObjectState, NullCylinderObjectInput, NullCylinderObjectState,  NoAction );
-  igstkAddTransitionMacro( NullCylinderObjectState, ValidCylinderObjectInput, ValidCylinderObjectState,  SetCylinderObject );
-  igstkAddTransitionMacro( ValidCylinderObjectState, NullCylinderObjectInput, NullCylinderObjectState,  NoAction ); 
-  igstkAddTransitionMacro( ValidCylinderObjectState, ValidCylinderObjectInput, ValidCylinderObjectState,  NoAction ); 
+  igstkAddTransitionMacro( NullCylinderObject, NullCylinderObject, NullCylinderObject,  No );
+  igstkAddTransitionMacro( NullCylinderObject, ValidCylinderObject, ValidCylinderObject,  SetCylinderObject );
+  igstkAddTransitionMacro( ValidCylinderObject, NullCylinderObject, NullCylinderObject,  No ); 
+  igstkAddTransitionMacro( ValidCylinderObject, ValidCylinderObject, ValidCylinderObject,  No ); 
 
-  m_StateMachine.SelectInitialState( m_NullCylinderObjectState );
+  igstkSetInitialStateMacro( NullCylinderObject );
 
   m_StateMachine.SetReadyToRun();
 
@@ -71,12 +71,12 @@ void CylinderObjectRepresentation::RequestSetCylinderObject( const CylinderSpati
   m_CylinderObjectToAdd = cylinder;
   if( !m_CylinderObjectToAdd )
     {
-    m_StateMachine.PushInput( m_NullCylinderObjectInput );
+    igstkPushInputMacro( NullCylinderObject );
     m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.PushInput( m_ValidCylinderObjectInput );
+    igstkPushInputMacro( ValidCylinderObject );
     m_StateMachine.ProcessInputs();
     }
 
@@ -86,13 +86,13 @@ void CylinderObjectRepresentation::RequestSetCylinderObject( const CylinderSpati
 
 
 /** Set the Cylindrical Spatial Object */
-void CylinderObjectRepresentation::NoAction()
+void CylinderObjectRepresentation::NoProcessing()
 {
 }
 
 
 /** Set the Cylindrical Spatial Object */
-void CylinderObjectRepresentation::SetCylinderObject()
+void CylinderObjectRepresentation::SetCylinderObjectProcessing()
 {
   // We create the ellipse spatial object
   m_CylinderSpatialObject = m_CylinderObjectToAdd;
@@ -122,7 +122,7 @@ void CylinderObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent inde
 
 /** Update the visual representation in response to changes in the geometric
  * object */
-void CylinderObjectRepresentation::UpdateRepresentation()
+void CylinderObjectRepresentation::UpdateRepresentationProcessing()
 {
   m_CylinderSource->SetRadius(m_CylinderSpatialObject->GetRadius());
   m_CylinderSource->SetHeight(m_CylinderSpatialObject->GetHeight());

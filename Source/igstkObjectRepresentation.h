@@ -128,31 +128,31 @@ private:
   /** update the visual representation with changes in the geometry. Only to be
    * called by the State Machine. This is an abstract method that MUST be
    * overloaded in every derived class. */
-  virtual void UpdateRepresentation() = 0;
+  virtual void UpdateRepresentationProcessing() = 0;
  
   /** update the visual representation position */
   virtual void RequestUpdatePosition( const TimeStamp & time );
 
   /** Null operation for a State Machine transition */
-  void NoAction();
+  void NoProcessing();
 
   /** update the position of the object. This should not be overloaded by other classes */
-  void UpdatePosition();
+  void UpdatePositionProcessing();
 
   /** Set the spatial object for this class */
-  void SetSpatialObject(); 
+  void SetSpatialObjectProcessing(); 
 
 private:
 
   /** Inputs to the State Machine */
-  InputType            m_ValidSpatialObjectInput;
-  InputType            m_NullSpatialObjectInput;
-  InputType            m_UpdatePositionInput;
-  InputType            m_UpdateRepresentationInput;
+  igstkDeclareInputMacro( ValidSpatialObject );
+  igstkDeclareInputMacro( NullSpatialObject );
+  igstkDeclareInputMacro( UpdatePosition );
+  igstkDeclareInputMacro( UpdateRepresentation );
   
   /** States for the State Machine */
-  StateType            m_NullSpatialObjectState;
-  StateType            m_ValidSpatialObjectState;
+  igstkDeclareStateMacro( NullSpatialObject );
+  igstkDeclareStateMacro( ValidSpatialObject );
 
   SpatialObjectType::ConstPointer m_SpatialObjectToAdd;
 

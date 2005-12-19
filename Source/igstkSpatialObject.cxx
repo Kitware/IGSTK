@@ -28,64 +28,64 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   m_SpatialObject = NULL;
   m_TrackerTool = NULL;
 
-  igstkAddInputMacro( SpatialObjectValidInput );
-  igstkAddInputMacro( SpatialObjectNullInput );
-  igstkAddInputMacro( ObjectValidInput );
-  igstkAddInputMacro( ObjectNullInput );
-  igstkAddInputMacro( TrackingEnabledInput );
-  igstkAddInputMacro( TrackingLostInput );
-  igstkAddInputMacro( TrackingRestoredInput );
-  igstkAddInputMacro( TrackingDisabledInput );
-  igstkAddInputMacro( ManualTransformInput );
-  igstkAddInputMacro( TrackerTransformInput );
+  igstkAddInputMacro( SpatialObjectValid );
+  igstkAddInputMacro( SpatialObjectNull );
+  igstkAddInputMacro( ObjectValid );
+  igstkAddInputMacro( ObjectNull );
+  igstkAddInputMacro( TrackingEnabled );
+  igstkAddInputMacro( TrackingLost );
+  igstkAddInputMacro( TrackingRestored );
+  igstkAddInputMacro( TrackingDisabled );
+  igstkAddInputMacro( ManualTransform );
+  igstkAddInputMacro( TrackerTransform );
 
-  igstkAddStateMacro( InitialState  );
-  igstkAddStateMacro( NonTrackedState  );
-  igstkAddStateMacro( TrackedState     );
-  igstkAddStateMacro( TrackedLostState );
+  igstkAddStateMacro( Initial  );
+  igstkAddStateMacro( NonTracked  );
+  igstkAddStateMacro( Tracked     );
+  igstkAddStateMacro( TrackedLost );
   
-  igstkAddTransitionMacro( InitialState, ObjectValidInput, InitialState,  AddObject );
-  igstkAddTransitionMacro( InitialState, ObjectValidInput, NonTrackedState,  AddObject );
-  igstkAddTransitionMacro( NonTrackedState, ObjectValidInput, NonTrackedState,  AddObject );
-  igstkAddTransitionMacro( InitialState, ObjectNullInput, InitialState,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, ObjectValid, Initial,  AddObject );
+  igstkAddTransitionMacro( Initial, ObjectValid, NonTracked,  AddObject );
+  igstkAddTransitionMacro( NonTracked, ObjectValid, NonTracked,  AddObject );
+  igstkAddTransitionMacro( Initial, ObjectNull, Initial,  ReportInvalidRequest );
 
-  igstkAddTransitionMacro( InitialState, SpatialObjectValidInput, NonTrackedState,  SetSpatialObject );
-  igstkAddTransitionMacro( InitialState, SpatialObjectNullInput, InitialState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( InitialState, TrackingEnabledInput, InitialState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( InitialState, TrackingLostInput, InitialState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( InitialState, TrackingRestoredInput, InitialState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( InitialState, TrackingDisabledInput, InitialState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( InitialState, ManualTransformInput, InitialState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( InitialState, TrackerTransformInput, InitialState,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, SpatialObjectValid, NonTracked,  SetSpatialObject );
+  igstkAddTransitionMacro( Initial, SpatialObjectNull, Initial,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, TrackingEnabled, Initial,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, TrackingLost, Initial,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, TrackingRestored, Initial,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, TrackingDisabled, Initial,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, ManualTransform, Initial,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, TrackerTransform, Initial,  ReportInvalidRequest );
 
-  igstkAddTransitionMacro( NonTrackedState, SpatialObjectValidInput, NonTrackedState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( NonTrackedState, SpatialObjectNullInput, NonTrackedState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( NonTrackedState, TrackingEnabledInput, TrackedState,  AttachToTrackerTool );
-  igstkAddTransitionMacro( NonTrackedState, TrackingLostInput, NonTrackedState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( NonTrackedState, TrackingRestoredInput, NonTrackedState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( NonTrackedState, TrackingDisabledInput, NonTrackedState,  ReportTrackingDisabled );
-  igstkAddTransitionMacro( NonTrackedState, ManualTransformInput, NonTrackedState,  SetTransform );
-  igstkAddTransitionMacro( NonTrackedState, TrackerTransformInput, NonTrackedState,  ReportInvalidRequest );
+  igstkAddTransitionMacro( NonTracked, SpatialObjectValid, NonTracked,  ReportInvalidRequest );
+  igstkAddTransitionMacro( NonTracked, SpatialObjectNull, NonTracked,  ReportInvalidRequest );
+  igstkAddTransitionMacro( NonTracked, TrackingEnabled, Tracked,  AttachToTrackerTool );
+  igstkAddTransitionMacro( NonTracked, TrackingLost, NonTracked,  ReportInvalidRequest );
+  igstkAddTransitionMacro( NonTracked, TrackingRestored, NonTracked,  ReportInvalidRequest );
+  igstkAddTransitionMacro( NonTracked, TrackingDisabled, NonTracked,  ReportTrackingDisabled );
+  igstkAddTransitionMacro( NonTracked, ManualTransform, NonTracked,  SetTransform );
+  igstkAddTransitionMacro( NonTracked, TrackerTransform, NonTracked,  ReportInvalidRequest );
 
-  igstkAddTransitionMacro( TrackedState, SpatialObjectValidInput, TrackedState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackedState, SpatialObjectNullInput, TrackedState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackedState, TrackingEnabledInput, TrackedState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackedState, TrackingLostInput, TrackedLostState,  ReportTrackingLost );
-  igstkAddTransitionMacro( TrackedState, TrackingRestoredInput, TrackedState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackedState, TrackingDisabledInput, NonTrackedState, ReportTrackingDisabled  );
-  igstkAddTransitionMacro( TrackedState, ManualTransformInput, TrackedState, ReportInvalidRequest  );
-  igstkAddTransitionMacro( TrackedState, TrackerTransformInput, TrackedState, SetTransform  );
+  igstkAddTransitionMacro( Tracked, SpatialObjectValid, Tracked,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracked, SpatialObjectNull, Tracked,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracked, TrackingEnabled, Tracked,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracked, TrackingLost, TrackedLost,  ReportTrackingLost );
+  igstkAddTransitionMacro( Tracked, TrackingRestored, Tracked,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracked, TrackingDisabled, NonTracked, ReportTrackingDisabled  );
+  igstkAddTransitionMacro( Tracked, ManualTransform, Tracked, ReportInvalidRequest  );
+  igstkAddTransitionMacro( Tracked, TrackerTransform, Tracked, SetTransform  );
 
-  igstkAddTransitionMacro( TrackedLostState, SpatialObjectValidInput, TrackedLostState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackedLostState, SpatialObjectNullInput, TrackedLostState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackedLostState, TrackingEnabledInput, TrackedLostState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackedLostState, TrackingLostInput, TrackedLostState,  NoAction );
-  igstkAddTransitionMacro( TrackedLostState, TrackingRestoredInput, TrackedState,  ReportTrackingRestored );
-  igstkAddTransitionMacro( TrackedLostState, TrackingDisabledInput, NonTrackedState,  ReportTrackingDisabled );
-  igstkAddTransitionMacro( TrackedLostState, ManualTransformInput, TrackedLostState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackedLostState, TrackerTransformInput, TrackedLostState,  ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackedLost, SpatialObjectValid, TrackedLost,  ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackedLost, SpatialObjectNull, TrackedLost,  ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackedLost, TrackingEnabled, TrackedLost,  ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackedLost, TrackingLost, TrackedLost,  No );
+  igstkAddTransitionMacro( TrackedLost, TrackingRestored, Tracked,  ReportTrackingRestored );
+  igstkAddTransitionMacro( TrackedLost, TrackingDisabled, NonTracked,  ReportTrackingDisabled );
+  igstkAddTransitionMacro( TrackedLost, ManualTransform, TrackedLost,  ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackedLost, TrackerTransform, TrackedLost,  ReportInvalidRequest );
 
-  m_StateMachine.SelectInitialState( m_InitialState );
+  igstkSetInitialStateMacro( Initial );
 
   m_StateMachine.SetReadyToRun();
 
@@ -136,14 +136,14 @@ void SpatialObject::RequestSetSpatialObject( SpatialObjectType * spatialObject )
   
  
 /** Null operation for a State Machine transition */
-void SpatialObject::NoAction()
+void SpatialObject::NoProcessing()
 {
 }
 
 
 /** Set the ITK spatial object that provide internal functionalities. This
  * method should only be called from the StateMachine */
-void SpatialObject::SetSpatialObject()
+void SpatialObject::SetSpatialObjectProcessing()
 {
   m_SpatialObject = m_SpatialObjectToBeSet;
 }
@@ -166,7 +166,7 @@ void SpatialObject::RequestAddObject(Self * object )
 }
 
 /** Add an Object */
-void SpatialObject::AddObject()
+void SpatialObject::AddObjectProcessing()
 {
   m_SpatialObject->AddSpatialObject(m_ObjectToBeAdded->GetSpatialObject());
   m_InternalObjectList.push_back(m_ObjectToBeAdded);
@@ -212,7 +212,7 @@ void SpatialObject::RequestSetTrackedTransform(const Transform & transform )
 
 
 /** Set the full Transform. Only to be called by the State Machine. */
-void SpatialObject::SetTransform()
+void SpatialObject::SetTransformProcessing()
 {
   m_Transform = m_TransformToBeSet;
   if( m_SpatialObject.IsNotNull() )
@@ -248,7 +248,7 @@ void SpatialObject::RequestAttachToTrackerTool(const TrackerTool * tool )
 
 /** Make necessary connections to the TrackerTool */
 void
-SpatialObject::AttachToTrackerTool()
+SpatialObject::AttachToTrackerToolProcessing()
 {
    m_TrackerTool = m_TrackerToolToAttachTo;
    m_TrackerTool->AddObserver( TransformModifiedEvent(), m_TrackerToolObserver ); 
@@ -256,19 +256,19 @@ SpatialObject::AttachToTrackerTool()
 
 /** Report that tracking is now enabled */
 void
-SpatialObject::ReportTrackingDisabled()
+SpatialObject::ReportTrackingDisabledProcessing()
 {
 }
 
 /** Report that tracking has been lost */
 void
-SpatialObject::ReportTrackingLost()
+SpatialObject::ReportTrackingLostProcessing()
 {
 }
 
 /** Report that tracking has been restored */
 void
-SpatialObject::ReportTrackingRestored()
+SpatialObject::ReportTrackingRestoredProcessing()
 {
 }
 
@@ -276,7 +276,7 @@ SpatialObject::ReportTrackingRestored()
  * mean that an error condition has arised in one of the componenta that
  * interact with this SpatialObject. */
 void
-SpatialObject::ReportInvalidRequest()
+SpatialObject::ReportInvalidRequestProcessing()
 {
 }
 

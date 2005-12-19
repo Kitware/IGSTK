@@ -32,10 +32,10 @@ MeshReader::~MeshReader()
 }
 
 /** Read the spatialobject file */
-void MeshReader::AttemptReadObject()
+void MeshReader::AttemptReadObjectProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::MeshReader::AttemptReadObject called...\n");
-  Superclass::AttemptReadObject();
+  Superclass::AttemptReadObjectProcessing();
 
   // Do the conversion
   GroupSpatialObjectType::Pointer m_GroupSpatialObject = m_SpatialObjectReader->GetGroup();

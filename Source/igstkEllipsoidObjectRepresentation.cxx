@@ -32,18 +32,18 @@ EllipsoidObjectRepresentation::EllipsoidObjectRepresentation():m_StateMachine(th
   this->RequestSetSpatialObject( m_EllipsoidObject );
   m_EllipsoidSource = vtkSuperquadricSource::New();
   
-  igstkAddInputMacro( ValidEllipsoidObjectInput );
-  igstkAddInputMacro( NullEllipsoidObjectInput  );
+  igstkAddInputMacro( ValidEllipsoidObject );
+  igstkAddInputMacro( NullEllipsoidObject  );
 
-  igstkAddStateMacro( NullEllipsoidObjectState  );
-  igstkAddStateMacro( ValidEllipsoidObjectState );
+  igstkAddStateMacro( NullEllipsoidObject  );
+  igstkAddStateMacro( ValidEllipsoidObject );
 
-  igstkAddTransitionMacro( NullEllipsoidObjectState, NullEllipsoidObjectInput, NullEllipsoidObjectState,  NoAction );
-  igstkAddTransitionMacro( NullEllipsoidObjectState, ValidEllipsoidObjectInput, ValidEllipsoidObjectState,  SetEllipsoidObject );
-  igstkAddTransitionMacro( ValidEllipsoidObjectState, NullEllipsoidObjectInput, NullEllipsoidObjectState,  NoAction ); 
-  igstkAddTransitionMacro( ValidEllipsoidObjectState, ValidEllipsoidObjectInput, ValidEllipsoidObjectState,  NoAction ); 
+  igstkAddTransitionMacro( NullEllipsoidObject, NullEllipsoidObject, NullEllipsoidObject,  No );
+  igstkAddTransitionMacro( NullEllipsoidObject, ValidEllipsoidObject, ValidEllipsoidObject,  SetEllipsoidObject );
+  igstkAddTransitionMacro( ValidEllipsoidObject, NullEllipsoidObject, NullEllipsoidObject,  No ); 
+  igstkAddTransitionMacro( ValidEllipsoidObject, ValidEllipsoidObject, ValidEllipsoidObject,  No ); 
 
-  m_StateMachine.SelectInitialState( m_NullEllipsoidObjectState );
+  igstkSetInitialStateMacro( NullEllipsoidObject );
 
   m_StateMachine.SetReadyToRun();
 
@@ -79,12 +79,12 @@ void EllipsoidObjectRepresentation::RequestSetEllipsoidObject( const EllipsoidOb
   m_EllipsoidObjectToAdd = ellipsoid;
   if( !m_EllipsoidObjectToAdd )
     {
-    m_StateMachine.PushInput( m_NullEllipsoidObjectInput );
+    igstkPushInputMacro( NullEllipsoidObject );
     m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.PushInput( m_ValidEllipsoidObjectInput );
+    igstkPushInputMacro( ValidEllipsoidObject );
     m_StateMachine.ProcessInputs();
     }
 
@@ -93,13 +93,13 @@ void EllipsoidObjectRepresentation::RequestSetEllipsoidObject( const EllipsoidOb
 
 
 /** Null operation for a State Machine transition */
-void EllipsoidObjectRepresentation::NoAction()
+void EllipsoidObjectRepresentation::NoProcessing()
 {
 }
 
 
 /** Set the Ellipsoidal Spatial Object */
-void EllipsoidObjectRepresentation::SetEllipsoidObject()
+void EllipsoidObjectRepresentation::SetEllipsoidObjectProcessing()
 {
   // We create the ellipse spatial object
   m_EllipsoidObject = m_EllipsoidObjectToAdd;
@@ -119,7 +119,7 @@ void EllipsoidObjectRepresentation::SetEllipsoidObject()
 
 /** Update the visual representation in response to changes in the geometric
  * object */
-void EllipsoidObjectRepresentation::UpdateRepresentation()
+void EllipsoidObjectRepresentation::UpdateRepresentationProcessing()
 {
   EllipsoidObjectType::ArrayType radius = m_EllipsoidObject->GetRadius();
   m_EllipsoidSource->SetScale( radius[0], radius[1], radius[2] );

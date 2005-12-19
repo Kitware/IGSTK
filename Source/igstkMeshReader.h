@@ -80,7 +80,7 @@ protected:
 
   /** This method tries to read the Object. This method is invoked by the State
    * Machine of the superclass. */
-  void AttemptReadObject();
+  void AttemptReadObjectProcessing();
 
 private:
 

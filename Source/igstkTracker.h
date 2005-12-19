@@ -281,48 +281,48 @@ private:
   itk::SimpleMutexLock            m_LockForConditionNextTransformReceived;
 
   /** List of States */
-  StateType                m_IdleState;
-  StateType                m_AttemptingToEstablishCommunicationState;
-  StateType                m_AttemptingToCloseCommunicationState;
-  StateType                m_CommunicationEstablishedState;
-  StateType                m_AttemptingToActivateToolsState;
-  StateType                m_ToolsActiveState;
-  StateType                m_AttemptingToTrackState;
-  StateType                m_TrackingState;
-  StateType                m_AttemptingToUpdateState;
-  StateType                m_AttemptingToStopTrackingState;
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( AttemptingToEstablishCommunication );
+  igstkDeclareStateMacro( AttemptingToCloseCommunication );
+  igstkDeclareStateMacro( CommunicationEstablished );
+  igstkDeclareStateMacro( AttemptingToActivateTools );
+  igstkDeclareStateMacro( ToolsActive );
+  igstkDeclareStateMacro( AttemptingToTrack );
+  igstkDeclareStateMacro( Tracking );
+  igstkDeclareStateMacro( AttemptingToUpdate );
+  igstkDeclareStateMacro( AttemptingToStopTracking );
 
   /** List of Inputs */
-  InputType                m_EstablishCommunicationInput;
-  InputType                m_ActivateToolsInput;
-  InputType                m_StartTrackingInput;
-  InputType                m_UpdateStatusInput;
-  InputType                m_StopTrackingInput;
-  InputType                m_ResetInput;
-  InputType                m_CloseCommunicationInput;
+  igstkDeclareInputMacro( EstablishCommunication );
+  igstkDeclareInputMacro( ActivateTools );
+  igstkDeclareInputMacro( StartTracking );
+  igstkDeclareInputMacro( UpdateStatus );
+  igstkDeclareInputMacro( StopTracking );
+  igstkDeclareInputMacro( Reset );
+  igstkDeclareInputMacro( CloseCommunication );
 
-  InputType                m_SuccessInput;
-  InputType                m_FailureInput;
+  igstkDeclareInputMacro( Success );
+  igstkDeclareInputMacro( Failure );
 
   /** Thread function for tracking */
   static ITK_THREAD_RETURN_TYPE TrackingThreadFunction(void* pInfoStruct);
 
-  /** The "AttemptToOpen" method attempts to open communication with a
+  /** The "AttemptToOpenProcessing" method attempts to open communication with a
       tracking device. */
-  void AttemptToOpen( void );
+  void AttemptToOpenProcessing( void );
   
-  /** The "AttemptToActivateTools" method attempts to activate tools. */
-  void AttemptToActivateTools( void );
+  /** The "AttemptToActivateToolsProcessing" method attempts to activate tools. */
+  void AttemptToActivateToolsProcessing( void );
 
-  /** The "AttemptToStartTracking" method attempts to start tracking. */
-  void AttemptToStartTracking( void );
+  /** The "AttemptToStartTrackingProcessing" method attempts to start tracking. */
+  void AttemptToStartTrackingProcessing( void );
 
-  /** The "AttemptToStopTracking" method attempts to stop tracking. */
-  void AttemptToStopTracking( void );
+  /** The "AttemptToStopTrackingProcessing" method attempts to stop tracking. */
+  void AttemptToStopTrackingProcessing( void );
 
-  /** The "AttemptToUpdateStatus" method attempts to update status
+  /** The "AttemptToUpdateStatusProcessing" method attempts to update status
       during tracking. */
-  void AttemptToUpdateStatus( void );
+  void AttemptToUpdateStatusProcessing( void );
 
   /** The "UpdateStatusFailureProcessing" method is called when an
       attempt to update failes. */

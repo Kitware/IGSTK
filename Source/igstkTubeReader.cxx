@@ -32,10 +32,10 @@ TubeReader::~TubeReader()
 }
 
 /** Read the spatialobject file */
-void TubeReader::AttemptReadObject()
+void TubeReader::AttemptReadObjectProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::TubeReader::AttemptReadObject called...\n");
-  Superclass::AttemptReadObject();
+  Superclass::AttemptReadObjectProcessing();
 
   // Do the conversion
   GroupSpatialObjectType::Pointer m_GroupSpatialObject = m_SpatialObjectReader->GetGroup();

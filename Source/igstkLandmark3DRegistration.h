@@ -144,56 +144,56 @@ private:
    
   
   /** List of States */
-  StateType                                m_IdleState;
-  StateType                                m_ImageLandmark1AddedState;
-  StateType                                m_TrackerLandmark1AddedState;
-  StateType                                m_ImageLandmark2AddedState;
-  StateType                                m_TrackerLandmark2AddedState;
-  StateType                                m_ImageLandmark3AddedState;
-  StateType                                m_TrackerLandmark3AddedState;
-  StateType                                m_AttemptingToComputeTransformState; 
-  StateType                                m_TransformComputedState; 
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( ImageLandmark1Added );
+  igstkDeclareStateMacro( TrackerLandmark1Added );
+  igstkDeclareStateMacro( ImageLandmark2Added );
+  igstkDeclareStateMacro( TrackerLandmark2Added );
+  igstkDeclareStateMacro( ImageLandmark3Added );
+  igstkDeclareStateMacro( TrackerLandmark3Added );
+  igstkDeclareStateMacro( AttemptingToComputeTransform ); 
+  igstkDeclareStateMacro( TransformComputed ); 
 
 
   /** List of Inputs */
-  InputType                                m_ImageLandmarkInput;
-  InputType                                m_TrackerLandmarkInput;
-  InputType                                m_ComputeTransformInput;
-  InputType                                m_GetTransformInput;
-  InputType                                m_ResetRegistrationInput;
-  InputType                                m_TransformComputationFailureInput;
-  InputType                                m_TransformComputationSuccessInput;
+  igstkDeclareInputMacro( ImageLandmark );
+  igstkDeclareInputMacro( TrackerLandmark );
+  igstkDeclareInputMacro( ComputeTransform );
+  igstkDeclareInputMacro( GetTransform );
+  igstkDeclareInputMacro( ResetRegistration );
+  igstkDeclareInputMacro( TransformComputationFailure );
+  igstkDeclareInputMacro( TransformComputationSuccess );
 
   /** The "AddImageLandmark" method adds landmark points to the image
    * landmark point container */
 
-  void AddImageLandmarkPoint();
+  void AddImageLandmarkPointProcessing();
   
   /** The "AddTrackerLandmark" method adds landmark points to the
    * tracker landmark point container */
-  void AddTrackerLandmarkPoint();
+  void AddTrackerLandmarkPointProcessing();
 
   /** The "ResetRegsitration" method empties the landmark point
    * containers to start the process again */
-  void ResetRegistration();
+  void ResetRegistrationProcessing();
 
   /** The "ComputeTransform" method calculates the rigid body
    * transformation parameters */
-  void ComputeTransform();
+  void ComputeTransformProcessing();
 
  
   /** The "GetTransform" method throws an event containing the transform parameters*/
-  void GetTransform();
+  void GetTransformProcessing();
 
   /** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent
    * when invalid requests are made */
-  void ReportInvalidRequest();
+  void ReportInvalidRequestProcessing();
 
   /** The "ReportSuccessInTransformComputation" method throws TransformComputationSuccessEvent*/
-  void ReportSuccessInTransformComputation();
+  void ReportSuccessInTransformComputationProcessing();
 
   /** The "ReportFailureInTransformComputation" method throws TransformComputationFailureEvent*/
-  void ReportFailureInTransformComputation();
+  void ReportFailureInTransformComputationProcessing();
 };
 
 } // end namespace igstk

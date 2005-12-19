@@ -92,30 +92,30 @@ private:
   double          m_Period; // helper varable = 1 / frequency
 
   /** Inputs to the State Machine */
-  InputType       m_ValidFrequencyInput;
-  InputType       m_InvalidLowFrequencyInput;
-  InputType       m_InvalidHighFrequencyInput;
-  InputType       m_StopInput;
-  InputType       m_StartInput;
-  InputType       m_PulseInput;
-  InputType       m_EventReturnInput;
+  igstkDeclareInputMacro( ValidFrequency );
+  igstkDeclareInputMacro( InvalidLowFrequency );
+  igstkDeclareInputMacro( InvalidHighFrequency );
+  igstkDeclareInputMacro( Stop );
+  igstkDeclareInputMacro( Start );
+  igstkDeclareInputMacro( Pulse );
+  igstkDeclareInputMacro( EventReturn );
 
   /** States for the State Machine */
-  StateType       m_InitialState;
-  StateType       m_StoppedState;
-  StateType       m_PulsingState;
-  StateType       m_WaitingEventReturnState;
+  igstkDeclareStateMacro( Initial );
+  igstkDeclareStateMacro( Stopped );
+  igstkDeclareStateMacro( Pulsing );
+  igstkDeclareStateMacro( WaitingEventReturn );
 
   /** Methods to be called only by the State Machine */
-  void SetFrequency();
+  void SetFrequencyProcessing();
   
   /** Report an error condition. For example unexpected inputs */
-  void ReportErrorCondition();
+  void ReportErrorConditionProcessing();
 
   /** Report a missed pulse. This happens when the frequency of the pulse
    * generator is too high for the time required by the Observers to complete
    * their Execute method.  */
-  void ReportMissedPulse();
+  void ReportMissedPulseProcessing();
 
   /** Value of the frequency above which it is known that the pulses will not
    * be generated correctly */
@@ -129,16 +129,16 @@ private:
 
   /** Program the timer for triggering a callback. At m_Period seconds from
    * now. */
-  void SetTimer();
+  void SetTimerProcessing();
 
   /** Send a pulse. This method will notify observers. */
-  void EmitPulse();
+  void EmitPulseProcessing();
 
   /** Stop the generation of pulses by purging the timer. */
-  void StopPulses();
+  void StopPulsesProcessing();
 
   /** Null operation for a State Machine transition */
-  void NoAction();
+  void NoProcessing();
 
 };
 

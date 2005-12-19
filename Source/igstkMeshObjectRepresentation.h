@@ -77,24 +77,24 @@ private:
   MeshObjectType::ConstPointer   m_MeshObject;
 
   /** update the visual representation with changes in the geometry */
-  virtual void UpdateRepresentation();
+  virtual void UpdateRepresentationProcessing();
 
   /** Connect this representation class to the spatial object. Only to be
    * called by the State Machine. */
-  void SetMeshObject(); 
+  void SetMeshObjectProcessing(); 
 
   /** Null operation for a State Machine transition */
-  void NoAction();
+  void NoProcessing();
 
 private:
 
   /** Inputs to the State Machine */
-  InputType            m_ValidMeshObjectInput;
-  InputType            m_NullMeshObjectInput;
+  igstkDeclareInputMacro( ValidMeshObject );
+  igstkDeclareInputMacro( NullMeshObject );
   
   /** States for the State Machine */
-  StateType            m_NullMeshObjectState;
-  StateType            m_ValidMeshObjectState;
+  igstkDeclareStateMacro( NullMeshObject );
+  igstkDeclareStateMacro( ValidMeshObject );
 
   MeshObjectType::ConstPointer m_MeshObjectToAdd;
 

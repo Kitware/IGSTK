@@ -63,58 +63,57 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   igstkAddInputMacro( NullAddActor  );
   igstkAddInputMacro( ValidRemoveActor );
   igstkAddInputMacro( NullRemoveActor  );
-  igstkAddInputMacro( ResetCameraInput  );
-  igstkAddInputMacro( EnableInteractionsInput  );
-  igstkAddInputMacro( DisableInteractionsInput  );
-  igstkAddInputMacro( StartRefreshingInput  );
-  igstkAddInputMacro( StopRefreshingInput  );
-  igstkAddInputMacro( ValidScreenShotFileNameInput  );
-  igstkAddInputMacro( InvalidScreenShotFileNameInput  );
+  igstkAddInputMacro( ResetCamera  );
+  igstkAddInputMacro( EnableInteractions  );
+  igstkAddInputMacro( DisableInteractions  );
+  igstkAddInputMacro( StartRefreshing  );
+  igstkAddInputMacro( StopRefreshing  );
+  igstkAddInputMacro( ValidScreenShotFileName  );
+  igstkAddInputMacro( InvalidScreenShotFileName  );
 
 
-  igstkAddStateMacro( IdleState       );
-  igstkAddStateMacro( RefreshingState );
+  igstkAddStateMacro( Idle       );
+  igstkAddStateMacro( Refreshing );
 
 
-  igstkAddTransitionMacro( IdleState, ValidAddObject, IdleState,  AddObject );
-  igstkAddTransitionMacro( IdleState, NullAddObject,  IdleState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( IdleState, ExistingAddObject,  IdleState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( IdleState, ValidRemoveObject, IdleState,  RemoveObject );
-  igstkAddTransitionMacro( IdleState, NullRemoveObject,  IdleState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( IdleState, InexistingRemoveObject,  IdleState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( IdleState, ValidAddActor, IdleState,  AddActor );
-  igstkAddTransitionMacro( IdleState, NullAddActor,  IdleState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( IdleState, ValidRemoveActor, IdleState,  RemoveActor );
-  igstkAddTransitionMacro( IdleState, NullRemoveActor,  IdleState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( IdleState, ResetCameraInput,  IdleState,  ResetCamera );
-  igstkAddTransitionMacro( IdleState, EnableInteractionsInput,  IdleState,  EnableInteractions );
-  igstkAddTransitionMacro( IdleState, DisableInteractionsInput,  IdleState,  DisableInteractions );
-  igstkAddTransitionMacro( IdleState, StartRefreshingInput,  RefreshingState,  Start );
-  igstkAddTransitionMacro( IdleState, StopRefreshingInput,  IdleState,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidAddObject, Idle,  AddObject );
+  igstkAddTransitionMacro( Idle, NullAddObject,  Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ExistingAddObject,  Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidRemoveObject, Idle,  RemoveObject );
+  igstkAddTransitionMacro( Idle, NullRemoveObject,  Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, InexistingRemoveObject,  Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidAddActor, Idle,  AddActor );
+  igstkAddTransitionMacro( Idle, NullAddActor,  Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidRemoveActor, Idle,  RemoveActor );
+  igstkAddTransitionMacro( Idle, NullRemoveActor,  Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ResetCamera,  Idle,  ResetCamera );
+  igstkAddTransitionMacro( Idle, EnableInteractions,  Idle,  EnableInteractions );
+  igstkAddTransitionMacro( Idle, DisableInteractions,  Idle,  DisableInteractions );
+  igstkAddTransitionMacro( Idle, StartRefreshing,  Refreshing,  Start );
+  igstkAddTransitionMacro( Idle, StopRefreshing,  Idle,  ReportInvalidRequest );
 
-  igstkAddTransitionMacro( RefreshingState, ValidAddObject, RefreshingState,  AddObject );
-  igstkAddTransitionMacro( RefreshingState, NullAddObject,  RefreshingState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( RefreshingState, ExistingAddObject,  RefreshingState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( RefreshingState, ValidRemoveObject, RefreshingState,  RemoveObject );
-  igstkAddTransitionMacro( RefreshingState, NullRemoveObject,  RefreshingState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( RefreshingState, InexistingRemoveObject,  RefreshingState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( RefreshingState, ValidAddActor, RefreshingState,  AddActor );
-  igstkAddTransitionMacro( RefreshingState, NullAddActor,  RefreshingState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( RefreshingState, ValidRemoveActor, RefreshingState,  RemoveActor );
-  igstkAddTransitionMacro( RefreshingState, NullRemoveActor,  RefreshingState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( RefreshingState, ResetCameraInput,  RefreshingState,  ResetCamera );
-  igstkAddTransitionMacro( RefreshingState, EnableInteractionsInput,  RefreshingState,  EnableInteractions );
-  igstkAddTransitionMacro( RefreshingState, DisableInteractionsInput,  RefreshingState,  DisableInteractions );
-  igstkAddTransitionMacro( RefreshingState, StartRefreshingInput,  RefreshingState,  ReportInvalidRequest );
-  igstkAddTransitionMacro( RefreshingState, StopRefreshingInput,  IdleState,  Stop );
+  igstkAddTransitionMacro( Refreshing, ValidAddObject, Refreshing,  AddObject );
+  igstkAddTransitionMacro( Refreshing, NullAddObject,  Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ExistingAddObject,  Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidRemoveObject, Refreshing,  RemoveObject );
+  igstkAddTransitionMacro( Refreshing, NullRemoveObject,  Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, InexistingRemoveObject,  Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidAddActor, Refreshing,  AddActor );
+  igstkAddTransitionMacro( Refreshing, NullAddActor,  Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidRemoveActor, Refreshing,  RemoveActor );
+  igstkAddTransitionMacro( Refreshing, NullRemoveActor,  Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ResetCamera,  Refreshing,  ResetCamera );
+  igstkAddTransitionMacro( Refreshing, EnableInteractions,  Refreshing,  EnableInteractions );
+  igstkAddTransitionMacro( Refreshing, DisableInteractions,  Refreshing,  DisableInteractions );
+  igstkAddTransitionMacro( Refreshing, StartRefreshing,  Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, StopRefreshing,  Idle,  Stop );
   
-  igstkAddTransitionMacro( IdleState, ValidScreenShotFileNameInput,  IdleState, SaveScreenShot )
-  igstkAddTransitionMacro( IdleState, InvalidScreenShotFileNameInput, 
-                                                          IdleState, ReportInvalidScreenShotFileName );
+  igstkAddTransitionMacro( Idle, ValidScreenShotFileName,  Idle, SaveScreenShot )
+  igstkAddTransitionMacro( Idle, InvalidScreenShotFileName, Idle, ReportInvalidScreenShotFileName );
 
 
 
-  m_StateMachine.SelectInitialState( m_IdleState );
+  igstkSetInitialStateMacro( Idle );
 
   m_StateMachine.SetReadyToRun();
 
@@ -210,21 +209,21 @@ void View::RequestAddActor( vtkProp * actor )
   m_ActorToBeAdded = actor;
   if( !actor )
     {
-    m_StateMachine.PushInput( m_NullAddActor );
+    igstkPushInputMacro( NullAddActor );
     m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.PushInput( m_ValidAddActor );
+    igstkPushInputMacro( ValidAddActor );
     m_StateMachine.ProcessInputs();
     }
 }
 
 
 /** */
-void View::AddActor()
+void View::AddActorProcessing()
 {
-  igstkLogMacro( DEBUG, "AddActor() called ...\n");
+  igstkLogMacro( DEBUG, "AddActorProcessing() called ...\n");
   m_Renderer->AddActor( m_ActorToBeAdded );
   m_PointPicker->AddPickList( m_ActorToBeAdded );
 }
@@ -237,21 +236,21 @@ void View::RequestRemoveActor( vtkProp * actor )
   m_ActorToBeRemoved = actor;
   if( !actor )
     {
-    m_StateMachine.PushInput( m_NullRemoveActor );
+    igstkPushInputMacro( NullRemoveActor );
     m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.PushInput( m_ValidRemoveActor );
+    igstkPushInputMacro( ValidRemoveActor );
     m_StateMachine.ProcessInputs();
     }
 }
 
 
 /** */
-void View::RemoveActor()
+void View::RemoveActorProcessing()
 {
-  igstkLogMacro( DEBUG, "RemoveActor() called ...\n");
+  igstkLogMacro( DEBUG, "RemoveActorProcessing() called ...\n");
   m_Renderer->RemoveActor( m_ActorToBeRemoved );
 }
 
@@ -260,7 +259,7 @@ void View::RemoveActor()
 void View::RequestEnableInteractions()
 {
   igstkLogMacro( DEBUG, "RequestEnableInteractions() called ...\n");
-  m_StateMachine.PushInput( m_EnableInteractionsInput );
+  igstkPushInputMacro( EnableInteractions );
   m_StateMachine.ProcessInputs();
 }
 
@@ -269,22 +268,22 @@ void View::RequestEnableInteractions()
 void View::RequestDisableInteractions()
 {
   igstkLogMacro( DEBUG, "RequestDisableInteractions() called ...\n");
-  m_StateMachine.PushInput( m_DisableInteractionsInput );
+  igstkPushInputMacro( DisableInteractions );
   m_StateMachine.ProcessInputs();
 }
 
 
 /** */
-void View::EnableInteractions()
+void View::EnableInteractionsProcessing()
 {
-  igstkLogMacro( DEBUG, "EnableInteractions() called ...\n");
+  igstkLogMacro( DEBUG, "EnableInteractionsProcessing() called ...\n");
   m_InteractionHandling = true;
 }
 
 /** */
-void View::DisableInteractions()
+void View::DisableInteractionsProcessing()
 {
-  igstkLogMacro( DEBUG, "DisableInteractions() called ...\n");
+  igstkLogMacro( DEBUG, "DisableInteractionsProcessing() called ...\n");
   m_InteractionHandling = false;
 }
 
@@ -294,15 +293,15 @@ void View::DisableInteractions()
 void View::RequestResetCamera()
 {
   igstkLogMacro( DEBUG, "RequestResetCamera() called ...\n");
-  m_StateMachine.PushInput( m_ResetCameraInput );
+  igstkPushInputMacro( ResetCamera );
   m_StateMachine.ProcessInputs();
 }
 
 
 /** */
-void View::ResetCamera()
+void View::ResetCameraProcessing()
 {
-  igstkLogMacro( DEBUG, "ResetCamera() called ...\n");
+  igstkLogMacro( DEBUG, "ResetCameraProcessing() called ...\n");
   m_Renderer->ResetCamera();
 }
 
@@ -337,17 +336,17 @@ void View::Disable()
 }
 
 /** */
-void View::Start()
+void View::StartProcessing()
 {
-  igstkLogMacro( DEBUG, "Start() called ...\n");
+  igstkLogMacro( DEBUG, "StartProcessing() called ...\n");
   // the internal pulse generator will control the redraws
   m_PulseGenerator->RequestStart();
 }
 
 /** */
-void View::Stop()
+void View::StopProcessing()
 {
-  igstkLogMacro( DEBUG, "Stop() called ...\n");
+  igstkLogMacro( DEBUG, "StopProcessing() called ...\n");
   // the internal pulse generator will control the redraws
   m_PulseGenerator->RequestStop();
 }
@@ -445,7 +444,7 @@ void View::RequestAddObject( ObjectRepresentation* pointer )
 
   if( !pointer )
     {
-    m_StateMachine.PushInput( m_NullAddObject );
+    igstkPushInputMacro( NullAddObject );
     m_StateMachine.ProcessInputs();
     return;
     }
@@ -454,12 +453,12 @@ void View::RequestAddObject( ObjectRepresentation* pointer )
     std::find(m_Objects.begin(),m_Objects.end(),pointer);
   if( it != m_Objects.end() )
     {
-    m_StateMachine.PushInput( m_ExistingAddObject );
+    igstkPushInputMacro( ExistingAddObject );
     m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.PushInput( m_ValidAddObject );
+    igstkPushInputMacro( ValidAddObject );
     m_StateMachine.ProcessInputs();
     }
 }
@@ -468,9 +467,9 @@ void View::RequestAddObject( ObjectRepresentation* pointer )
 /** Add an object to the View. This method should only be called by the state
  * machine. The state machine makes sure that this method is called with a valid
  * value in the ObjectToBeAdded. */
-void View::AddObject()
+void View::AddObjectProcessing()
 {
-  igstkLogMacro( DEBUG, "AddObject() called ...\n");
+  igstkLogMacro( DEBUG, "AddObjectProcessing() called ...\n");
   
   m_Objects.push_back( m_ObjectToBeAdded );
   this->Modified();
@@ -497,7 +496,7 @@ void View::RequestRemoveObject( ObjectRepresentation* pointer )
   
   if( !pointer )
     {
-    m_StateMachine.PushInput( m_NullRemoveObject );
+    igstkPushInputMacro( NullRemoveObject );
     m_StateMachine.ProcessInputs();
     return;
     }
@@ -506,12 +505,12 @@ void View::RequestRemoveObject( ObjectRepresentation* pointer )
     std::find(m_Objects.begin(),m_Objects.end(),pointer);
   if( m_IteratorToObjectToBeRemoved == m_Objects.end() )
     {
-    m_StateMachine.PushInput( m_InexistingRemoveObject );
+    igstkPushInputMacro( InexistingRemoveObject );
     m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.PushInput( m_ValidRemoveObject );
+    igstkPushInputMacro( ValidRemoveObject );
     m_StateMachine.ProcessInputs();
     }
 }
@@ -520,9 +519,9 @@ void View::RequestRemoveObject( ObjectRepresentation* pointer )
 /** Remove a spatial object from the View. This method can only be invoked by
  * the State Machine who will make sure that the content of
  * m_IteratorToObjectToBeRemoved is valid. */
-void View::RemoveObject()
+void View::RemoveObjectProcessing()
 {
-  igstkLogMacro( DEBUG, "RemoveObject() called ...\n");
+  igstkLogMacro( DEBUG, "RemoveObjectProcessing() called ...\n");
 
   m_Objects.erase( m_IteratorToObjectToBeRemoved );
   this->Modified();
@@ -544,7 +543,7 @@ void View::RequestStart()
 {
   igstkLogMacro( DEBUG, "RequestStart() called ...\n");
 
-  m_StateMachine.PushInput( m_StartRefreshingInput );
+  igstkPushInputMacro( StartRefreshing );
   m_StateMachine.ProcessInputs();
 }
 
@@ -555,7 +554,7 @@ void View::RequestStop()
 {
   igstkLogMacro( DEBUG, "RequestStop() called ...\n");
 
-  m_StateMachine.PushInput( m_StopRefreshingInput );
+  igstkPushInputMacro( StopRefreshing );
   m_StateMachine.ProcessInputs();
 }
 
@@ -572,12 +571,12 @@ void View::RequestSaveScreenShot( const std::string & filename )
   if( fileNameExtension == ".png" )
     {
     m_ScreenShotFileName = filename;
-    m_StateMachine.PushInput( m_ValidScreenShotFileNameInput );
+    igstkPushInputMacro( ValidScreenShotFileName );
     m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.PushInput( m_InvalidScreenShotFileNameInput );
+    igstkPushInputMacro( InvalidScreenShotFileName );
     m_StateMachine.ProcessInputs();
     }
 }
@@ -586,22 +585,24 @@ void View::RequestSaveScreenShot( const std::string & filename )
 /** Report that an invalid or suspicious operation has been requested. This may
  * mean that an error condition has arised in one of the componenta that
  * interact with this class. */
-void View::ReportInvalidRequest()
+void View::ReportInvalidRequestProcessing()
 {
-  igstkLogMacro( WARNING, "ReportInvalidRequest() called ...\n");
+  igstkLogMacro( WARNING, "ReportInvalidRequestProcessing() called ...\n");
 }
 
 
 /** Report that an invalid filename for saving the screen shot */
-void View::ReportInvalidScreenShotFileName()
+void View::ReportInvalidScreenShotFileNameProcessing()
 {
-  igstkLogMacro( WARNING, "ReportInvalidScreenShotFileName() called ...\n");
+  igstkLogMacro( WARNING, "ReportInvalidScreenShotFileNameProcessing() called ...\n");
 }
 
 
 /** Save current screenshot */
-void View::SaveScreenShot()
+void View::SaveScreenShotProcessing()
 {
+  igstkLogMacro( DEBUG, "SaveScreenShotProcessing() called ...\n");
+
   vtkWindowToImageFilter * windowToImageFilter = 
                                   vtkWindowToImageFilter::New();
 

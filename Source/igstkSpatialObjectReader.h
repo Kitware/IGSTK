@@ -94,7 +94,7 @@ protected:
   itkEventMacro( ObjectReadingSuccessEvent,      ObjectReaderEvent );
   itkEventMacro( ObjectInvalidRequestErrorEvent, ObjectReaderEvent );
 
-  virtual void AttemptReadObject();
+  virtual void AttemptReadObjectProcessing();
 
 private:
 
@@ -102,37 +102,37 @@ private:
   void operator=(const Self&);        //purposely not implemented
 
   /** List of States */
-  StateType                    m_IdleState;
-  StateType                    m_ObjectFileNameReadState;
-  StateType                    m_ObjectReadState;
-  StateType                    m_ObjectAttemptingReadState;
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( ObjectFileNameRead );
+  igstkDeclareStateMacro( ObjectRead );
+  igstkDeclareStateMacro( ObjectAttemptingRead );
 
   /** List of State Inputs */
-  InputType                    m_ReadObjectRequestInput;
-  InputType                    m_ObjectFileNameValidInput; 
-  InputType                    m_ObjectFileNameIsEmptyInput; 
-  InputType                    m_ObjectFileNameIsDirectoryInput; 
-  InputType                    m_ObjectFileNameDoesNotExistInput; 
+  igstkDeclareInputMacro( ReadObjectRequest );
+  igstkDeclareInputMacro( ObjectFileNameValid ); 
+  igstkDeclareInputMacro( ObjectFileNameIsEmpty ); 
+  igstkDeclareInputMacro( ObjectFileNameIsDirectory ); 
+  igstkDeclareInputMacro( ObjectFileNameDoesNotExist ); 
 
   /** Error related state inputs */
-  InputType                    m_ObjectReadingErrorInput;
-  InputType                    m_ObjectReadingSuccessInput;
+  igstkDeclareInputMacro( ObjectReadingError );
+  igstkDeclareInputMacro( ObjectReadingSuccess );
 
   /** Method to be invoked only by the StateMachine. Accepts the filename */
-  void SetFileName();
+  void SetFileNameProcessing();
 
   /** Method to be invoked only by the StateMachine. Reports that an input was
    * received during a State where that input is not a valid request. For
    * example, asking to read the file before providing the filename */
-  void ReportInvalidRequest();
+  void ReportInvalidRequestProcessing();
 
   /** Method to be invoked only by the StateMachine. This function reports an
    * error while reading */
-  void ReportObjectReadingError();
+  void ReportObjectReadingErrorProcessing();
 
   /** Method to be invoked only by the StateMachine. This function reports the
    * success of the reading process. */
-  void ReportObjectReadingSuccess();
+  void ReportObjectReadingSuccessProcessing();
 
 
 };

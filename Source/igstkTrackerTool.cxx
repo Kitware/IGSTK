@@ -32,17 +32,17 @@ TrackerTool::TrackerTool(void):m_StateMachine(this)
   m_ToolType = UnknownTool;
   m_Updated = false; // not yet updated
 
-  igstkAddInputMacro( InitializeInput );
+  igstkAddInputMacro( Initialize );
 
-  igstkAddStateMacro( InitialState );
-  igstkAddStateMacro( InvalidState );
-  igstkAddStateMacro( NotAvailableState );
-  igstkAddStateMacro( AvailableState );
-  igstkAddStateMacro( InitializedState );
-  igstkAddStateMacro( TrackingState );
-  igstkAddStateMacro( VisibleState );
+  igstkAddStateMacro( Initial );
+  igstkAddStateMacro( Invalid );
+  igstkAddStateMacro( NotAvailable );
+  igstkAddStateMacro( Available );
+  igstkAddStateMacro( Initialized );
+  igstkAddStateMacro( Tracking );
+  igstkAddStateMacro( Visible );
 
-  m_StateMachine.SelectInitialState( m_InitialState );
+  igstkSetInitialStateMacro( Initial );
 
   m_StateMachine.SetReadyToRun();
 

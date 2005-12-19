@@ -188,19 +188,43 @@ public:  \
 #define igstkStateMachineTemplatedMacro() igstkStateMachineMacroBase( typename )
 
 
+/** Convenience macro for declaring Inputs to the State Machine */
+#define igstkDeclareInputMacro( inputname ) \
+    InputType      m_##inputname##Input 
+
+
+/** Convenience macro for declaring States of the State Machine */
+#define igstkDeclareStateMacro( inputname ) \
+    StateType      m_##inputname##State 
+
+
 /** Convenience macro for adding Inputs to the State Machine */
 #define igstkAddInputMacro( inputname ) \
-    m_StateMachine.AddInput( m_##inputname,  #inputname );
+    this->m_StateMachine.AddInput( this->m_##inputname##Input,  "inputname##Input" );
 
 
 /** Convenience macro for adding States to the State Machine */
-#define igstkAddStateMacro( inputname ) \
-    m_StateMachine.AddState( m_##inputname,  #inputname );
+#define igstkAddStateMacro( statename ) \
+    this->m_StateMachine.AddState( this->m_##statename##State,  "statename##State" );
 
 
 /** Convenience macro for adding Transitions to the State Machine */
-#define igstkAddTransitionMacro( state1, input, state2, action ) \
-    m_StateMachine.AddTransition( m_##state1, m_##input, m_##state2,  & Self::action );
+#define igstkAddTransitionMacro( state1, input, state2, action )   \
+    this->m_StateMachine.AddTransition( this->m_##state1##State,   \
+                                        this->m_##input##Input,    \
+                                        this->m_##state2##State,   \
+                                      & Self::action##Processing );
+
+
+/** Convenience macro for selecting the initial States of the State Machine */
+#define igstkSetInitialStateMacro( inputname ) \
+    this->m_StateMachine.SelectInitialState( this->m_##inputname##State );
+
+
+/** Convenience macro for pushing an input in the queue of the State Machine */
+#define igstkPushInputMacro( inputname ) \
+    this->m_StateMachine.PushInput( this->m_##inputname##Input );
+
 
 /** Convenience macro for the initial standard traits of a class */
 #define igstkStandardClassBasicTraitsMacro( classname, superclassname ) \

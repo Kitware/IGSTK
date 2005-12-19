@@ -140,17 +140,17 @@ private:
 private:
 
   /** Inputs to the State Machine */
-  InputType            m_InitializeInput;
+  igstkDeclareInputMacro( Initialize );
   
 
   /** States for the State Machine */
-  StateType            m_InitialState;
-  StateType            m_InvalidState;
-  StateType            m_NotAvailableState;
-  StateType            m_AvailableState;
-  StateType            m_InitializedState;
-  StateType            m_TrackingState;
-  StateType            m_VisibleState;
+  igstkDeclareStateMacro( Initial );
+  igstkDeclareStateMacro( Invalid );
+  igstkDeclareStateMacro( NotAvailable );
+  igstkDeclareStateMacro( Available );
+  igstkDeclareStateMacro( Initialized );
+  igstkDeclareStateMacro( Tracking );
+  igstkDeclareStateMacro( Visible );
 
 
 };

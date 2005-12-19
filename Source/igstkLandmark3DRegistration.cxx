@@ -34,156 +34,156 @@ Landmark3DRegistration::Landmark3DRegistration() :
   m_StateMachine( this )
 {
   // Set the state descriptors
-  igstkAddStateMacro( IdleState );
-  igstkAddStateMacro( ImageLandmark1AddedState );
-  igstkAddStateMacro( TrackerLandmark1AddedState );
-  igstkAddStateMacro( ImageLandmark2AddedState );
-  igstkAddStateMacro( TrackerLandmark2AddedState );
-  igstkAddStateMacro( ImageLandmark3AddedState );
-  igstkAddStateMacro( TrackerLandmark3AddedState );
-  igstkAddStateMacro( AttemptingToComputeTransformState  );
-  igstkAddStateMacro( TransformComputedState  );
+  igstkAddStateMacro( Idle );
+  igstkAddStateMacro( ImageLandmark1Added );
+  igstkAddStateMacro( TrackerLandmark1Added );
+  igstkAddStateMacro( ImageLandmark2Added );
+  igstkAddStateMacro( TrackerLandmark2Added );
+  igstkAddStateMacro( ImageLandmark3Added );
+  igstkAddStateMacro( TrackerLandmark3Added );
+  igstkAddStateMacro( AttemptingToComputeTransform  );
+  igstkAddStateMacro( TransformComputed  );
 
 
   // Set the input descriptors 
-  igstkAddInputMacro( ImageLandmarkInput );
-  igstkAddInputMacro( TrackerLandmarkInput );
-  igstkAddInputMacro( ComputeTransformInput );
-  igstkAddInputMacro( GetTransformInput  );
-  igstkAddInputMacro( ResetRegistrationInput );
-  igstkAddInputMacro( TransformComputationSuccessInput  );
-  igstkAddInputMacro( TransformComputationFailureInput  );
+  igstkAddInputMacro( ImageLandmark );
+  igstkAddInputMacro( TrackerLandmark );
+  igstkAddInputMacro( ComputeTransform );
+  igstkAddInputMacro( GetTransform  );
+  igstkAddInputMacro( ResetRegistration );
+  igstkAddInputMacro( TransformComputationSuccess  );
+  igstkAddInputMacro( TransformComputationFailure  );
 
   // Add transition  for landmark point adding
-  igstkAddTransitionMacro(IdleState,
-                          ImageLandmarkInput,
-                          ImageLandmark1AddedState,
+  igstkAddTransitionMacro(Idle,
+                          ImageLandmark,
+                          ImageLandmark1Added,
                           AddImageLandmarkPoint);
 
-  igstkAddTransitionMacro(ImageLandmark1AddedState,
-                          TrackerLandmarkInput,
-                          TrackerLandmark1AddedState,
+  igstkAddTransitionMacro(ImageLandmark1Added,
+                          TrackerLandmark,
+                          TrackerLandmark1Added,
                           AddTrackerLandmarkPoint);
 
-  igstkAddTransitionMacro(TrackerLandmark1AddedState,
-                          ImageLandmarkInput,
-                          ImageLandmark2AddedState,
+  igstkAddTransitionMacro(TrackerLandmark1Added,
+                          ImageLandmark,
+                          ImageLandmark2Added,
                           AddImageLandmarkPoint);
 
-  igstkAddTransitionMacro(ImageLandmark2AddedState,
-                          TrackerLandmarkInput,
-                          TrackerLandmark2AddedState,
+  igstkAddTransitionMacro(ImageLandmark2Added,
+                          TrackerLandmark,
+                          TrackerLandmark2Added,
                           AddTrackerLandmarkPoint);
 
-  igstkAddTransitionMacro(TrackerLandmark2AddedState,
-                          ImageLandmarkInput,
-                          ImageLandmark3AddedState,
+  igstkAddTransitionMacro(TrackerLandmark2Added,
+                          ImageLandmark,
+                          ImageLandmark3Added,
                           AddImageLandmarkPoint);
 
-  igstkAddTransitionMacro(ImageLandmark3AddedState,
-                          TrackerLandmarkInput,
-                          TrackerLandmark3AddedState,
+  igstkAddTransitionMacro(ImageLandmark3Added,
+                          TrackerLandmark,
+                          TrackerLandmark3Added,
                           AddTrackerLandmarkPoint);
 
-  igstkAddTransitionMacro(TrackerLandmark3AddedState,
-                          ImageLandmarkInput,
-                          ImageLandmark3AddedState,
+  igstkAddTransitionMacro(TrackerLandmark3Added,
+                          ImageLandmark,
+                          ImageLandmark3Added,
                           AddImageLandmarkPoint);
 
-  igstkAddTransitionMacro( TrackerLandmark3AddedState,
-                           ComputeTransformInput,
-                           AttemptingToComputeTransformState,
+  igstkAddTransitionMacro( TrackerLandmark3Added,
+                           ComputeTransform,
+                           AttemptingToComputeTransform,
                            ComputeTransform );
 
-  igstkAddTransitionMacro( AttemptingToComputeTransformState,
-                           TransformComputationSuccessInput,
-                           TransformComputedState,
+  igstkAddTransitionMacro( AttemptingToComputeTransform,
+                           TransformComputationSuccess,
+                           TransformComputed,
                            ReportSuccessInTransformComputation );
 
-  igstkAddTransitionMacro( AttemptingToComputeTransformState,
-                           TransformComputationFailureInput,
-                           TrackerLandmark3AddedState,
+  igstkAddTransitionMacro( AttemptingToComputeTransform,
+                           TransformComputationFailure,
+                           TrackerLandmark3Added,
                            ReportFailureInTransformComputation );
 
-  igstkAddTransitionMacro( TransformComputedState,
-                           GetTransformInput,
-                           TransformComputedState,
+  igstkAddTransitionMacro( TransformComputed,
+                           GetTransform,
+                           TransformComputed,
                            GetTransform );
 
   // Add transitions for all invalid requests 
-  igstkAddTransitionMacro( IdleState,
-                           ComputeTransformInput,
-                           IdleState,
+  igstkAddTransitionMacro( Idle,
+                           ComputeTransform,
+                           Idle,
                            ReportInvalidRequest );
 
-  igstkAddTransitionMacro( ImageLandmark1AddedState,
-                           ComputeTransformInput,
-                           ImageLandmark1AddedState,
+  igstkAddTransitionMacro( ImageLandmark1Added,
+                           ComputeTransform,
+                           ImageLandmark1Added,
                            ReportInvalidRequest );
 
-  igstkAddTransitionMacro( ImageLandmark2AddedState,
-                           ComputeTransformInput,
-                           ImageLandmark2AddedState,
+  igstkAddTransitionMacro( ImageLandmark2Added,
+                           ComputeTransform,
+                           ImageLandmark2Added,
                            ReportInvalidRequest);
 
-  igstkAddTransitionMacro( ImageLandmark3AddedState,
-                           ComputeTransformInput,
-                           ImageLandmark3AddedState,
+  igstkAddTransitionMacro( ImageLandmark3Added,
+                           ComputeTransform,
+                           ImageLandmark3Added,
                            ReportInvalidRequest);
 
-  igstkAddTransitionMacro( TrackerLandmark1AddedState,
-                           ComputeTransformInput,
-                           TrackerLandmark1AddedState,
+  igstkAddTransitionMacro( TrackerLandmark1Added,
+                           ComputeTransform,
+                           TrackerLandmark1Added,
                            ReportInvalidRequest);
 
-  igstkAddTransitionMacro( TrackerLandmark2AddedState,
-                           ComputeTransformInput,
-                           TrackerLandmark2AddedState,
+  igstkAddTransitionMacro( TrackerLandmark2Added,
+                           ComputeTransform,
+                           TrackerLandmark2Added,
                            ReportInvalidRequest);
 
   //Add transitions for registration reset state input 
-  igstkAddTransitionMacro( TransformComputedState,
-                           ResetRegistrationInput,
-                           IdleState,
+  igstkAddTransitionMacro( TransformComputed,
+                           ResetRegistration,
+                           Idle,
                            ResetRegistration);
   
-  igstkAddTransitionMacro( ImageLandmark1AddedState,
-                           ResetRegistrationInput,
-                           IdleState,
+  igstkAddTransitionMacro( ImageLandmark1Added,
+                           ResetRegistration,
+                           Idle,
                            ResetRegistration);
   
-  igstkAddTransitionMacro( ImageLandmark2AddedState,
-                           ResetRegistrationInput,
-                           IdleState,
+  igstkAddTransitionMacro( ImageLandmark2Added,
+                           ResetRegistration,
+                           Idle,
                            ResetRegistration);
 
-  igstkAddTransitionMacro( ImageLandmark3AddedState,
-                           ResetRegistrationInput,
-                           IdleState,
+  igstkAddTransitionMacro( ImageLandmark3Added,
+                           ResetRegistration,
+                           Idle,
                            ResetRegistration);
   
-  igstkAddTransitionMacro( TrackerLandmark1AddedState,
-                           ResetRegistrationInput,
-                           IdleState,
+  igstkAddTransitionMacro( TrackerLandmark1Added,
+                           ResetRegistration,
+                           Idle,
                            ResetRegistration);
 
-  igstkAddTransitionMacro( TrackerLandmark2AddedState,
-                           ResetRegistrationInput,
-                           IdleState,
+  igstkAddTransitionMacro( TrackerLandmark2Added,
+                           ResetRegistration,
+                           Idle,
                            ResetRegistration);
   
-  igstkAddTransitionMacro( TrackerLandmark3AddedState,
-                           ResetRegistrationInput,
-                           IdleState,
+  igstkAddTransitionMacro( TrackerLandmark3Added,
+                           ResetRegistration,
+                           Idle,
                            ResetRegistration);
 
-  igstkAddTransitionMacro( AttemptingToComputeTransformState,
-                           ResetRegistrationInput,
-                           IdleState,
+  igstkAddTransitionMacro( AttemptingToComputeTransform,
+                           ResetRegistration,
+                           Idle,
                            ResetRegistration);
 
    // Select the initial state of the state machine
-  m_StateMachine.SelectInitialState( m_IdleState );
+  igstkSetInitialStateMacro( Idle );
 
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
@@ -202,10 +202,10 @@ Landmark3DRegistration::~Landmark3DRegistration()
 /* The "AddImageLandmark" method adds landmark points to the image
 * landmark point container */
 void 
-Landmark3DRegistration::AddImageLandmarkPoint() 
+Landmark3DRegistration::AddImageLandmarkPointProcessing() 
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "AddImageLandmarkPoint called...\n");
+                 "AddImageLandmarkPointProcessing called...\n");
   m_ImageLandmarks.push_back(m_ImageLandmarkPoint);
 }
 
@@ -213,20 +213,20 @@ Landmark3DRegistration::AddImageLandmarkPoint()
 /* The "AddTrackerLandmark" method adds landmark points to the
 * tracker landmark point container */
 void  
-Landmark3DRegistration::AddTrackerLandmarkPoint()
+Landmark3DRegistration::AddTrackerLandmarkPointProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "AddTrackerLandmarkPoint called...\n");
+                 "AddTrackerLandmarkPointProcessing called...\n");
   m_TrackerLandmarks.push_back(m_TrackerLandmarkPoint);
 }
 
 /* The "ResetRegsitration" method empties the landmark point
 containers to start the process again */
 void 
-Landmark3DRegistration::ResetRegistration()
+Landmark3DRegistration::ResetRegistrationProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "ResetRegistration called...\n");
+                 "ResetRegistrationProcessing called...\n");
 
   //Empty the image and tracker landmark containers
   while( m_ImageLandmarks.size() > 0 )
@@ -244,10 +244,10 @@ Landmark3DRegistration::ResetRegistration()
 /* The "ComputeTransform" method calculates the rigid body
   transformation parameters */
 void 
-Landmark3DRegistration:: ComputeTransform()
+Landmark3DRegistration:: ComputeTransformProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "ComputeTransform called...\n");
+                 "ComputeTransformProcessing called...\n");
   m_TransformInitializer->SetFixedLandmarks(m_TrackerLandmarks);
   m_TransformInitializer->SetMovingLandmarks(m_ImageLandmarks);
   m_TransformInitializer->SetTransform( m_Transform );
@@ -266,12 +266,12 @@ Landmark3DRegistration:: ComputeTransform()
   if( failure )
   {
     std::cout << "ComputationFailureInput getting pushed" << std::endl;
-    this->m_StateMachine.PushInput( this->m_TransformComputationFailureInput );
+    igstkPushInputMacro( TransformComputationFailure );
   }
   else
   {
     std::cout << "ComputationSuccessInput getting pushed" << std::endl;
-    this->m_StateMachine.PushInput( this->m_TransformComputationSuccessInput );
+    igstkPushInputMacro( TransformComputationSuccess );
   }    
   
   this->m_StateMachine.ProcessInputs();
@@ -279,7 +279,7 @@ Landmark3DRegistration:: ComputeTransform()
 
 /* The "ComputeRMSError" method calculates and returns RMS Error of the transformation */
 double 
-Landmark3DRegistration:: ComputeRMSError()
+Landmark3DRegistration::ComputeRMSError()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
                  "ComputeRMSError called..\n");
@@ -314,10 +314,10 @@ Landmark3DRegistration:: ComputeRMSError()
 
 /* The "GetTransform()" method throws and event containing the transform */
 void
-Landmark3DRegistration::GetTransform()
+Landmark3DRegistration::GetTransformProcessing()
 {
   igstkLogMacro( DEBUG,
-                  "igstk::Landmark3DRegistration::GetTransform called...\n" );
+                  "igstk::Landmark3DRegistration::GetTransformProcessing called...\n" );
 
   igstk::Transform  transform;
 
@@ -339,32 +339,32 @@ Landmark3DRegistration::GetTransform()
 
 /* The ReportInvalidRequest function reports invalid requests */
 void  
-Landmark3DRegistration::ReportInvalidRequest()
+Landmark3DRegistration::ReportInvalidRequestProcessing()
 {
     igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                   "ReportInvalidRequest called...\n");
+                   "ReportInvalidRequestProcessing called...\n");
     this->InvokeEvent(InvalidRequestErrorEvent());
 }
 
 /* The ReportSuccessInTransformComputation function reports success in 
   transform calculation */
 void  
-Landmark3DRegistration::ReportSuccessInTransformComputation()
+Landmark3DRegistration::ReportSuccessInTransformComputationProcessing()
 {
   igstkLogMacro( DEBUG,
                   "igstk::Landmark3DRegistration::"
-                  "ReportSuccessInTransformComputation called...\n");
+                  "ReportSuccessInTransformComputationProcessing called...\n");
   this->InvokeEvent( TransformComputationSuccessEvent() );
 }
 
-/* The ReportFailureInTransformComputation function reports failure 
+/* The ReportFailureInTransformComputationProcessing function reports failure 
    in transform calculation */
 void  
-Landmark3DRegistration::ReportFailureInTransformComputation()
+Landmark3DRegistration::ReportFailureInTransformComputationProcessing()
 {
   igstkLogMacro( DEBUG,
                   "igstk::Landmark3DRegistration::"
-                  "ReportFailureInTransformComputation called...\n");
+                  "ReportFailureInTransformComputationProcessing called...\n");
   this->InvokeEvent( TransformComputationFailureEvent() );
 }
 
@@ -374,7 +374,7 @@ void Landmark3DRegistration::RequestAddImageLandmarkPoint(
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
                  "RequestAddImageLandmarkPoint called...\n");
   this->m_ImageLandmarkPoint = pt;
-  this->m_StateMachine.PushInput( this->m_ImageLandmarkInput);
+  igstkPushInputMacro( ImageLandmark );
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -385,7 +385,7 @@ Landmark3DRegistration::RequestAddTrackerLandmarkPoint(
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
                  "RequestAddTrackerLandmarkPoint called...\n");
   this->m_TrackerLandmarkPoint = pt;
-  this->m_StateMachine.PushInput( this->m_TrackerLandmarkInput );
+  igstkPushInputMacro( TrackerLandmark );
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -394,7 +394,7 @@ Landmark3DRegistration::RequestResetRegistration()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
                  "RequestResetRegistration called...\n");
-  this->m_StateMachine.PushInput( this->m_ResetRegistrationInput );
+  igstkPushInputMacro( ResetRegistration );
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -403,7 +403,7 @@ Landmark3DRegistration::RequestComputeTransform()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
                  "RequestComputeTransform called...\n");
-  this->m_StateMachine.PushInput( this->m_ComputeTransformInput );
+  igstkPushInputMacro( ComputeTransform );
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -412,7 +412,7 @@ Landmark3DRegistration::RequestGetTransform()
 {
   igstkLogMacro( DEBUG,
              "igstk::Landmark3DRegistration::RequestGetTransform called...\n" );
-  this->m_StateMachine.PushInput( this->m_GetTransformInput );
+  igstkPushInputMacro( GetTransform );
   this->m_StateMachine.ProcessInputs();
 }
 

@@ -29,156 +29,156 @@ namespace igstk
 Tracker::Tracker(void) :  m_StateMachine( this ) 
 {
   // Set the state descriptors
-  igstkAddStateMacro( IdleState ); 
-  igstkAddStateMacro( AttemptingToEstablishCommunicationState ); 
-  igstkAddStateMacro( AttemptingToCloseCommunicationState); 
-  igstkAddStateMacro( CommunicationEstablishedState );
-  igstkAddStateMacro( AttemptingToActivateToolsState ); 
-  igstkAddStateMacro( ToolsActiveState ); 
-  igstkAddStateMacro( AttemptingToTrackState ); 
-  igstkAddStateMacro( AttemptingToStopTrackingState); 
-  igstkAddStateMacro( TrackingState ); 
-  igstkAddStateMacro( AttemptingToUpdateState ); 
+  igstkAddStateMacro( Idle ); 
+  igstkAddStateMacro( AttemptingToEstablishCommunication ); 
+  igstkAddStateMacro( AttemptingToCloseCommunication); 
+  igstkAddStateMacro( CommunicationEstablished );
+  igstkAddStateMacro( AttemptingToActivateTools ); 
+  igstkAddStateMacro( ToolsActive ); 
+  igstkAddStateMacro( AttemptingToTrack ); 
+  igstkAddStateMacro( AttemptingToStopTracking); 
+  igstkAddStateMacro( Tracking ); 
+  igstkAddStateMacro( AttemptingToUpdate ); 
   
   // Set the input descriptors
-  igstkAddInputMacro( EstablishCommunicationInput);
-  igstkAddInputMacro( ActivateToolsInput); 
-  igstkAddInputMacro( StartTrackingInput); 
-  igstkAddInputMacro( UpdateStatusInput); 
-  igstkAddInputMacro( StopTrackingInput); 
-  igstkAddInputMacro( ResetInput); 
-  igstkAddInputMacro( CloseCommunicationInput); 
-  igstkAddInputMacro( SuccessInput); 
-  igstkAddInputMacro( FailureInput); 
+  igstkAddInputMacro( EstablishCommunication);
+  igstkAddInputMacro( ActivateTools); 
+  igstkAddInputMacro( StartTracking); 
+  igstkAddInputMacro( UpdateStatus); 
+  igstkAddInputMacro( StopTracking); 
+  igstkAddInputMacro( Reset); 
+  igstkAddInputMacro( CloseCommunication); 
+  igstkAddInputMacro( Success); 
+  igstkAddInputMacro( Failure); 
 
   // Programming the state machine transitions:
 
-  // Transitions from the IdleState
-  igstkAddTransitionMacro( IdleState,
-                           EstablishCommunicationInput,
-                           AttemptingToEstablishCommunicationState,
+  // Transitions from the Idle
+  igstkAddTransitionMacro( Idle,
+                           EstablishCommunication,
+                           AttemptingToEstablishCommunication,
                            AttemptToOpen );
 
-  // Transitions from the AttemptingToEstablishCommunicationState
-  igstkAddTransitionMacro( AttemptingToEstablishCommunicationState,
-                           SuccessInput,
-                           CommunicationEstablishedState,
-                           CommunicationEstablishmentSuccessProcessing );
+  // Transitions from the AttemptingToEstablishCommunication
+  igstkAddTransitionMacro( AttemptingToEstablishCommunication,
+                           Success,
+                           CommunicationEstablished,
+                           CommunicationEstablishmentSuccess );
 
-  igstkAddTransitionMacro( AttemptingToEstablishCommunicationState,
-                           FailureInput,
-                           IdleState,
-                           CommunicationEstablishmentFailureProcessing);
+  igstkAddTransitionMacro( AttemptingToEstablishCommunication,
+                           Failure,
+                           Idle,
+                           CommunicationEstablishmentFailure );
 
-  // Transitions from CommunicationEstablishedState
-  igstkAddTransitionMacro( CommunicationEstablishedState,
-                           ActivateToolsInput,
-                           AttemptingToActivateToolsState,
+  // Transitions from CommunicationEstablished
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           ActivateTools,
+                           AttemptingToActivateTools,
                            AttemptToActivateTools );
 
-  igstkAddTransitionMacro( CommunicationEstablishedState,
-                           CloseCommunicationInput,
-                           AttemptingToCloseCommunicationState,
-                           CloseFromCommunicatingStateProcessing );
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           CloseCommunication,
+                           AttemptingToCloseCommunication,
+                           CloseFromCommunicatingState );
 
-  igstkAddTransitionMacro( CommunicationEstablishedState,
-                           ResetInput,
-                           CommunicationEstablishedState,
-                           ResetFromCommunicatingStateProcessing );
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           Reset,
+                           CommunicationEstablished,
+                           ResetFromCommunicatingState );
 
-  // Transitions from AttemptingToActivateToolsState
-  igstkAddTransitionMacro( AttemptingToActivateToolsState,
-                           SuccessInput,
-                           ToolsActiveState,
-                           ToolsActivationSuccessProcessing );
+  // Transitions from AttemptingToActivateTools
+  igstkAddTransitionMacro( AttemptingToActivateTools,
+                           Success,
+                           ToolsActive,
+                           ToolsActivationSuccess );
 
-  igstkAddTransitionMacro( AttemptingToActivateToolsState,
-                           FailureInput,
-                           CommunicationEstablishedState,
-                           ToolsActivationFailureProcessing );
+  igstkAddTransitionMacro( AttemptingToActivateTools,
+                           Failure,
+                           CommunicationEstablished,
+                           ToolsActivationFailure );
 
-  // Transitions from ToolsActiveState
-  igstkAddTransitionMacro( ToolsActiveState,
-                           StartTrackingInput,
-                           AttemptingToTrackState,
+  // Transitions from ToolsActive
+  igstkAddTransitionMacro( ToolsActive,
+                           StartTracking,
+                           AttemptingToTrack,
                            AttemptToStartTracking );
 
-  igstkAddTransitionMacro( ToolsActiveState,
-                           CloseCommunicationInput,
-                           AttemptingToCloseCommunicationState,
-                           CloseFromToolsActiveStateProcessing );
+  igstkAddTransitionMacro( ToolsActive,
+                           CloseCommunication,
+                           AttemptingToCloseCommunication,
+                           CloseFromToolsActiveState );
 
-  igstkAddTransitionMacro( ToolsActiveState,
-                           ResetInput,
-                           CommunicationEstablishedState,
-                           ResetFromToolsActiveStateProcessing );
+  igstkAddTransitionMacro( ToolsActive,
+                           Reset,
+                           CommunicationEstablished,
+                           ResetFromToolsActiveState );
 
-  // Transitions from AttemptingToTrackState
-  igstkAddTransitionMacro( AttemptingToTrackState,
-                           SuccessInput,
-                           TrackingState,
-                           StartTrackingSuccessProcessing );
+  // Transitions from AttemptingToTrack
+  igstkAddTransitionMacro( AttemptingToTrack,
+                           Success,
+                           Tracking,
+                           StartTrackingSuccess );
 
-  igstkAddTransitionMacro( AttemptingToTrackState,
-                           FailureInput,
-                           ToolsActiveState,
-                           StartTrackingFailureProcessing );
+  igstkAddTransitionMacro( AttemptingToTrack,
+                           Failure,
+                           ToolsActive,
+                           StartTrackingFailure );
 
-  // Transitions from TrackingState
-  igstkAddTransitionMacro( TrackingState,
-                           UpdateStatusInput,
-                           AttemptingToUpdateState,
+  // Transitions from Tracking
+  igstkAddTransitionMacro( Tracking,
+                           UpdateStatus,
+                           AttemptingToUpdate,
                            AttemptToUpdateStatus );
 
-  igstkAddTransitionMacro( TrackingState,
-                           StopTrackingInput,
-                           AttemptingToStopTrackingState,
+  igstkAddTransitionMacro( Tracking,
+                           StopTracking,
+                           AttemptingToStopTracking,
                            AttemptToStopTracking );
 
-  igstkAddTransitionMacro( TrackingState,
-                           ResetInput,
-                           CommunicationEstablishedState,
-                           ResetFromTrackingStateProcessing );
+  igstkAddTransitionMacro( Tracking,
+                           Reset,
+                           CommunicationEstablished,
+                           ResetFromTrackingState );
 
-  igstkAddTransitionMacro( TrackingState,
-                           CloseCommunicationInput,
-                           AttemptingToCloseCommunicationState,
-                           CloseFromTrackingStateProcessing );
+  igstkAddTransitionMacro( Tracking,
+                           CloseCommunication,
+                           AttemptingToCloseCommunication,
+                           CloseFromTrackingState );
 
-  // Transitions from AttemptingToUpdateState
-  igstkAddTransitionMacro( AttemptingToUpdateState,
-                           SuccessInput,
-                           TrackingState,
-                           UpdateStatusSuccessProcessing );
+  // Transitions from AttemptingToUpdate
+  igstkAddTransitionMacro( AttemptingToUpdate,
+                           Success,
+                           Tracking,
+                           UpdateStatusSuccess );
 
-  igstkAddTransitionMacro( AttemptingToUpdateState,
-                           FailureInput,
-                           TrackingState,
-                           UpdateStatusFailureProcessing );
+  igstkAddTransitionMacro( AttemptingToUpdate,
+                           Failure,
+                           Tracking,
+                           UpdateStatusFailure );
 
-  // Transitions from AttemptingToStopTrackingState
-  igstkAddTransitionMacro( AttemptingToStopTrackingState,
-                           SuccessInput,
-                           ToolsActiveState,
-                           StopTrackingSuccessProcessing );
+  // Transitions from AttemptingToStopTracking
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           Success,
+                           ToolsActive,
+                           StopTrackingSuccess );
 
-  igstkAddTransitionMacro( AttemptingToStopTrackingState,
-                           FailureInput,
-                           TrackingState,
-                           StopTrackingFailureProcessing );
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           Failure,
+                           Tracking,
+                           StopTrackingFailure );
 
-  igstkAddTransitionMacro( AttemptingToCloseCommunicationState,
-                           SuccessInput,
-                           IdleState,
-                           CloseCommunicationSuccessProcessing );
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           Success,
+                           Idle,
+                           CloseCommunicationSuccess );
 
-  igstkAddTransitionMacro( AttemptingToCloseCommunicationState,
-                           FailureInput,
-                           CommunicationEstablishedState,
-                           CloseCommunicationFailureProcessing );
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           Failure,
+                           CommunicationEstablished,
+                           CloseCommunicationFailure );
 
   // Select the initial state of the state machine
-  m_StateMachine.SelectInitialState( m_IdleState );
+  igstkSetInitialStateMacro( Idle );
 
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
@@ -215,7 +215,7 @@ Tracker::~Tracker(void)
 void Tracker::Open( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::Open called...\n");
-  this->m_StateMachine.PushInput( this->m_EstablishCommunicationInput );
+  igstkPushInputMacro( EstablishCommunication );
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -224,7 +224,7 @@ void Tracker::Open( void )
 void Tracker::Close( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::Close called ...\n");
-  m_StateMachine.PushInput( m_CloseCommunicationInput );
+  igstkPushInputMacro( CloseCommunication );
   m_StateMachine.ProcessInputs();
 }
 
@@ -233,7 +233,7 @@ void Tracker::Close( void )
 void Tracker::Initialize( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::Initialize called ...\n");
-  this->m_StateMachine.PushInput( this->m_ActivateToolsInput );
+  igstkPushInputMacro( ActivateTools );
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -243,7 +243,7 @@ void Tracker::Initialize( void )
 void Tracker::Reset( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::Reset called ...\n");
-  m_StateMachine.PushInput( m_ResetInput );
+  igstkPushInputMacro( Reset );
   m_StateMachine.ProcessInputs();
 }
 
@@ -253,7 +253,7 @@ void Tracker::Reset( void )
 void Tracker::StartTracking( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StartTracking called ...\n");
-  m_StateMachine.PushInput( m_StartTrackingInput );
+  igstkPushInputMacro( StartTracking );
   m_StateMachine.ProcessInputs();
 }
 
@@ -262,7 +262,7 @@ void Tracker::StartTracking( void )
 void Tracker::StopTracking( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StopTracking called ...\n");
-  m_StateMachine.PushInput( m_StopTrackingInput );
+  igstkPushInputMacro( StopTracking );
   m_StateMachine.ProcessInputs();
 }
 
@@ -272,7 +272,7 @@ void Tracker::StopTracking( void )
 void Tracker::UpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::UpdateStatus called ...\n");
-  m_StateMachine.PushInput( m_UpdateStatusInput );
+  igstkPushInputMacro( UpdateStatus );
   m_StateMachine.ProcessInputs();
 }
 
@@ -456,9 +456,9 @@ Tracker::ResultType Tracker::InternalThreadedUpdateStatus( void )
 
 /** The "AttemptToOpen" method attempts to open communication with a
     tracking device. */
-void Tracker::AttemptToOpen( void )
+void Tracker::AttemptToOpenProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToOpen called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToOpenProcessing called ...\n");
 
   ResultType result = this->InternalOpen();
   
@@ -518,9 +518,9 @@ void Tracker::ResetFromCommunicatingStateProcessing( void )
 }
 
 /** The "AttemptToActivateTools" method attempts to activate tools. */
-void Tracker::AttemptToActivateTools( void )
+void Tracker::AttemptToActivateToolsProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToActivateTools called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToActivateToolsProcessing called ...\n");
 
   ResultType result = this->InternalActivateTools();
   
@@ -545,9 +545,9 @@ void Tracker::ToolsActivationFailureProcessing( void )
 }
 
 /** The "AttemptToStartTracking" method attempts to start tracking. */
-void Tracker::AttemptToStartTracking( void )
+void Tracker::AttemptToStartTrackingProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStartTracking called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStartTrackingProcessing called ...\n");
 
   ResultType result = this->InternalStartTracking();
   
@@ -573,9 +573,9 @@ void Tracker::StartTrackingFailureProcessing( void )
 }
 
 /** The "AttemptToStopTracking" method attempts to stop tracking. */
-void Tracker::AttemptToStopTracking( void )
+void Tracker::AttemptToStopTrackingProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStopTracking called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStopTrackingProcessing called ...\n");
   // leaving TrackingState, going to AttemptingToStopTrackingState
   this->ExitTrackingStateProcessing();
 
@@ -633,9 +633,9 @@ void Tracker::ExitTrackingStateProcessing( void )
 
 /** The "AttemptToUpdateStatus" method attempts to update status
     during tracking. */
-void Tracker::AttemptToUpdateStatus( void )
+void Tracker::AttemptToUpdateStatusProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToUpdateStatusProcessing called ...\n");
 
   // Set all tools to "not updated"
   unsigned int numPorts = m_Ports.size();

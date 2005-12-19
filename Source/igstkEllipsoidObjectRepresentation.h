@@ -82,24 +82,24 @@ private:
   vtkSuperquadricSource * m_EllipsoidSource;
 
   /** update the visual representation with changes in the geometry */
-  virtual void UpdateRepresentation();
+  virtual void UpdateRepresentationProcessing();
 
   /** Connect this representation class to the spatial object. Only to be
    * called by the State Machine. */
-  void SetEllipsoidObject(); 
+  void SetEllipsoidObjectProcessing(); 
 
   /** Null operation for a State Machine transition */
-  void NoAction();
+  void NoProcessing();
 
 private:
 
   /** Inputs to the State Machine */
-  InputType            m_ValidEllipsoidObjectInput;
-  InputType            m_NullEllipsoidObjectInput;
+  igstkDeclareInputMacro( ValidEllipsoidObject );
+  igstkDeclareInputMacro( NullEllipsoidObject );
   
   /** States for the State Machine */
-  StateType            m_NullEllipsoidObjectState;
-  StateType            m_ValidEllipsoidObjectState;
+  igstkDeclareStateMacro( NullEllipsoidObject );
+  igstkDeclareStateMacro( ValidEllipsoidObject );
 
   EllipsoidObjectType::ConstPointer m_EllipsoidObjectToAdd;
 

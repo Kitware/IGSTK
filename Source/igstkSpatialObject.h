@@ -128,35 +128,35 @@ private:
   void RequestSetTrackedTransform(const Transform & transform );
 
   /** Inputs to the State Machine */
-  InputType            m_SpatialObjectNullInput;
-  InputType            m_SpatialObjectValidInput;
-  InputType            m_ObjectNullInput;
-  InputType            m_ObjectValidInput;
-  InputType            m_TrackingEnabledInput;
-  InputType            m_TrackingLostInput;
-  InputType            m_TrackingRestoredInput;
-  InputType            m_TrackingDisabledInput;
-  InputType            m_ManualTransformInput;
-  InputType            m_TrackerTransformInput;
+  igstkDeclareInputMacro( SpatialObjectNull );
+  igstkDeclareInputMacro( SpatialObjectValid );
+  igstkDeclareInputMacro( ObjectNull );
+  igstkDeclareInputMacro( ObjectValid );
+  igstkDeclareInputMacro( TrackingEnabled );
+  igstkDeclareInputMacro( TrackingLost );
+  igstkDeclareInputMacro( TrackingRestored );
+  igstkDeclareInputMacro( TrackingDisabled );
+  igstkDeclareInputMacro( ManualTransform );
+  igstkDeclareInputMacro( TrackerTransform );
 
   /** States for the State Machine */
-  StateType            m_InitialState;
-  StateType            m_NonTrackedState;
-  StateType            m_TrackedState;
-  StateType            m_TrackedLostState;
+  igstkDeclareStateMacro( Initial );
+  igstkDeclareStateMacro( NonTracked );
+  igstkDeclareStateMacro( Tracked );
+  igstkDeclareStateMacro( TrackedLost );
 
   /** Action methods to be invoked only by the state machine */
-  void SetSpatialObject();
-  void AddObject();
-  void ReportTrackingRestored();
-  void ReportTrackingDisabled();
-  void ReportTrackingLost();
-  void ReportInvalidRequest();
-  void AttachToTrackerTool();
-  void SetTransform();
+  void SetSpatialObjectProcessing();
+  void AddObjectProcessing();
+  void ReportTrackingRestoredProcessing();
+  void ReportTrackingDisabledProcessing();
+  void ReportTrackingLostProcessing();
+  void ReportInvalidRequestProcessing();
+  void AttachToTrackerToolProcessing();
+  void SetTransformProcessing();
 
   /** Null operation for a State Machine transition */
-  void NoAction();
+  void NoProcessing();
 
 };
 

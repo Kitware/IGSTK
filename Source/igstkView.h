@@ -123,9 +123,9 @@ protected:
   int CreateTimer(int timertype);
   int DestroyTimer();
   void OnTimer(void);
-  void ResetCamera();
-  void DisableInteractions();
-  void EnableInteractions();
+  void ResetCameraProcessing();
+  void DisableInteractionsProcessing();
+  void EnableInteractionsProcessing();
 
   static void OnTimerGlobal(void *p);
 
@@ -198,12 +198,12 @@ private:
 
   /** Add and remove vtk Actors. Intended to be called only by the state
    * machine */
-  void AddActor();
-  void RemoveActor();
+  void AddActorProcessing();
+  void RemoveActorProcessing();
 
   /** Add and remove RepresentationObject classes */
-  void AddObject();
-  void RemoveObject();
+  void AddObjectProcessing();
+  void RemoveObjectProcessing();
 
   /** Method that will refresh the view.. and the GUI */
   void RefreshRender();
@@ -212,17 +212,17 @@ private:
   void RequestRemoveActor( vtkProp * actor );
   
   /** Report any invalid request to the logger */
-  void ReportInvalidRequest();
+  void ReportInvalidRequestProcessing();
 
   /** Save a screenshot of the current rendered scene */
-  void SaveScreenShot();
+  void SaveScreenShotProcessing();
   
   /** Reports when a filename for the screen shot is not valid */
-  void ReportInvalidScreenShotFileName();
+  void ReportInvalidScreenShotFileNameProcessing();
 
   /** This should be called by the state machine */
-  void Start();
-  void Stop();
+  void StartProcessing();
+  void StopProcessing();
   
 
 private:
@@ -235,27 +235,27 @@ private:
   std::string                   m_ScreenShotFileName;
 
   /** Inputs to the State Machine */
-  InputType            m_ValidAddActor;
-  InputType            m_NullAddActor;
-  InputType            m_ValidRemoveActor;
-  InputType            m_NullRemoveActor;
-  InputType            m_ValidAddObject;
-  InputType            m_NullAddObject;
-  InputType            m_ExistingAddObject;
-  InputType            m_ValidRemoveObject;
-  InputType            m_InexistingRemoveObject;
-  InputType            m_NullRemoveObject;
-  InputType            m_ResetCameraInput;
-  InputType            m_EnableInteractionsInput;
-  InputType            m_DisableInteractionsInput;
-  InputType            m_StartRefreshingInput;
-  InputType            m_StopRefreshingInput;
-  InputType            m_ValidScreenShotFileNameInput;
-  InputType            m_InvalidScreenShotFileNameInput;
+  igstkDeclareInputMacro( ValidAddActor );
+  igstkDeclareInputMacro( NullAddActor );
+  igstkDeclareInputMacro( ValidRemoveActor );
+  igstkDeclareInputMacro( NullRemoveActor );
+  igstkDeclareInputMacro( ValidAddObject );
+  igstkDeclareInputMacro( NullAddObject );
+  igstkDeclareInputMacro( ExistingAddObject );
+  igstkDeclareInputMacro( ValidRemoveObject );
+  igstkDeclareInputMacro( InexistingRemoveObject );
+  igstkDeclareInputMacro( NullRemoveObject );
+  igstkDeclareInputMacro( ResetCamera );
+  igstkDeclareInputMacro( EnableInteractions );
+  igstkDeclareInputMacro( DisableInteractions );
+  igstkDeclareInputMacro( StartRefreshing );
+  igstkDeclareInputMacro( StopRefreshing );
+  igstkDeclareInputMacro( ValidScreenShotFileName );
+  igstkDeclareInputMacro( InvalidScreenShotFileName );
 
   /** States for the State Machine */
-  StateType            m_IdleState;
-  StateType            m_RefreshingState;
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( Refreshing );
 
 };
 

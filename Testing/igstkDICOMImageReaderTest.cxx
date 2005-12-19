@@ -26,10 +26,10 @@
 #include "itkCommand.h"
 #include "itkStdStreamLogOutput.h"
 
-class DICOMImageModalityInfoCallback: public itk::Command
+class DICOMImageModalityInformationCallback: public itk::Command
 {
 public:
-  typedef DICOMImageModalityInfoCallback    Self;
+  typedef DICOMImageModalityInformationCallback    Self;
   typedef itk::SmartPointer<Self>           Pointer;
   typedef itk::Command                      Superclass;
   itkNewMacro(Self);
@@ -57,15 +57,15 @@ public:
       
   }
 protected:
-  DICOMImageModalityInfoCallback()   { };
+  DICOMImageModalityInformationCallback()   { };
 
 private:
 };
 
-class DICOMImagePatientNameInfoCallback: public itk::Command
+class DICOMImagePatientNameInformationCallback: public itk::Command
 {
 public:
-  typedef DICOMImagePatientNameInfoCallback    Self;
+  typedef DICOMImagePatientNameInformationCallback    Self;
   typedef itk::SmartPointer<Self>           Pointer;
   typedef itk::Command                      Superclass;
   itkNewMacro(Self);
@@ -90,7 +90,7 @@ public:
       
   }
 protected:
-  DICOMImagePatientNameInfoCallback()   { };
+  DICOMImagePatientNameInformationCallback()   { };
 
 private:
 };
@@ -170,14 +170,14 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
   reader->RequestReadImage();
   
  /* Add observer to listen to modality info */
-  DICOMImageModalityInfoCallback::Pointer dimcb = DICOMImageModalityInfoCallback::New();
+  DICOMImageModalityInformationCallback::Pointer dimcb = DICOMImageModalityInformationCallback::New();
   reader->AddObserver( igstk::DICOMModalityEvent(), dimcb );
-  reader->RequestModalityInfo(); 
+  reader->RequestModalityInformation(); 
  
   /* Add observer to listen to patient name  info */
-  DICOMImagePatientNameInfoCallback::Pointer dipncb = DICOMImagePatientNameInfoCallback::New();
+  DICOMImagePatientNameInformationCallback::Pointer dipncb = DICOMImagePatientNameInformationCallback::New();
   reader->AddObserver( igstk::DICOMPatientNameEvent(), dipncb );
-  reader->RequestPatientNameInfo(); 
+  reader->RequestPatientNameInformation(); 
 
   reader->Print( std::cout );
 

@@ -77,24 +77,24 @@ private:
   TubeObjectType::ConstPointer   m_TubeSpatialObject;
 
   /** update the visual representation with changes in the geometry */
-  virtual void UpdateRepresentation();
+  virtual void UpdateRepresentationProcessing();
 
   /** Connect this representation class to the spatial object. Only to be
    * called by the State Machine. */
-  void SetTubeObject(); 
+  void SetTubeObjectProcessing(); 
 
   /** Null operation for a State Machine transition */
-  void NoAction();
+  void NoProcessing();
 
 private:
 
   /** Inputs to the State Machine */
-  InputType            m_ValidTubeObjectInput;
-  InputType            m_NullTubeObjectInput;
+  igstkDeclareInputMacro( ValidTubeObject );
+  igstkDeclareInputMacro( NullTubeObject );
   
   /** States for the State Machine */
-  StateType            m_NullTubeObjectState;
-  StateType            m_ValidTubeObjectState;
+  igstkDeclareStateMacro( NullTubeObject );
+  igstkDeclareStateMacro( ValidTubeObject );
 
   TubeObjectType::ConstPointer m_TubeObjectToAdd;
 

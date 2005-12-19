@@ -288,30 +288,30 @@ private:
   IntegerInputMapType       m_ResultInputMap;
   
   // List of States 
-  StateType                m_IdleState;
-  StateType                m_AttemptingToOpenPortState;
-  StateType                m_PortOpenState;
-  StateType                m_AttemptingToUpdateParametersState;
-  StateType                m_ReadyForCommunicationState;
-  StateType                m_AttemptingToClosePortState;
-  StateType                m_AttemptingToReadState;
-  StateType                m_AttemptingToWriteState;
-  StateType                m_AttemptingToSendBreakState;
-  StateType                m_AttemptingToPurgeBuffersState;
-  StateType                m_SleepState;
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( AttemptingToOpenPort );
+  igstkDeclareStateMacro( PortOpen );
+  igstkDeclareStateMacro( AttemptingToUpdateParameters );
+  igstkDeclareStateMacro( ReadyForCommunication );
+  igstkDeclareStateMacro( AttemptingToClosePort );
+  igstkDeclareStateMacro( AttemptingToRead );
+  igstkDeclareStateMacro( AttemptingToWrite );
+  igstkDeclareStateMacro( AttemptingToSendBreak );
+  igstkDeclareStateMacro( AttemptingToPurgeBuffers );
+  igstkDeclareStateMacro( Sleep );
 
   // List of Inputs
-  InputType                m_SuccessInput;
-  InputType                m_FailureInput;
-  InputType                m_TimeoutInput;
-  InputType                m_OpenPortInput;
-  InputType                m_ClosePortInput;
-  InputType                m_UpdateParametersInput;
-  InputType                m_ReadInput;
-  InputType                m_WriteInput;
-  InputType                m_SendBreakInput;
-  InputType                m_PurgeBuffersInput;
-  InputType                m_SleepInput;
+  igstkDeclareInputMacro( Success );
+  igstkDeclareInputMacro( Failure );
+  igstkDeclareInputMacro( Timeout );
+  igstkDeclareInputMacro( OpenPort );
+  igstkDeclareInputMacro( ClosePort );
+  igstkDeclareInputMacro( UpdateParameters );
+  igstkDeclareInputMacro( Read );
+  igstkDeclareInputMacro( Write );
+  igstkDeclareInputMacro( SendBreak );
+  igstkDeclareInputMacro( PurgeBuffers );
+  igstkDeclareInputMacro( Sleep );
 
   /** called by state machine serial port is successfully opened */
   void OpenPortSuccessProcessing( void );
@@ -335,28 +335,28 @@ private:
   void TimeoutProcessing( void );
   
   /** Null operation for a state machine transition */
-  void NoAction();
+  void NoProcessing();
 
   /** Called by the state machine when communication is to be opened */
-  void AttemptToOpenPort( void );
+  void AttemptToOpenPortProcessing( void );
 
   /** Called by the state machine when transfer parameters are to be set */
-  void AttemptToUpdateParameters( void );
+  void AttemptToUpdateParametersProcessing( void );
 
   /** Called by the state machine when communication is to be closed */
-  void AttemptToClosePort( void );
+  void AttemptToClosePortProcessing( void );
   
   /** Called by the state machine when writing is to be done */
-  void AttemptToWrite( void );
+  void AttemptToWriteProcessing( void );
   
   /** Called by the state machine when reading is to be done */
-  void AttemptToRead( void );
+  void AttemptToReadProcessing( void );
 
   /** Called by the state machine to send a break */
-  void AttemptToSendBreak( void );
+  void AttemptToSendBreakProcessing( void );
 
   /** Called by the state machine to purge the buffers */
-  void AttemptToPurgeBuffers( void );
+  void AttemptToPurgeBuffersProcessing( void );
 
   /** Called by the state machine to purge the buffers */
   void SleepProcessing( void );

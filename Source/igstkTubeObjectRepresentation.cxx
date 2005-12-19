@@ -41,18 +41,18 @@ TubeObjectRepresentation::TubeObjectRepresentation():m_StateMachine(this)
   m_TubeSpatialObject = NULL;
   this->RequestSetSpatialObject( m_TubeSpatialObject );
   
-  igstkAddInputMacro( ValidTubeObjectInput );
-  igstkAddInputMacro( NullTubeObjectInput  );
+  igstkAddInputMacro( ValidTubeObject );
+  igstkAddInputMacro( NullTubeObject  );
 
-  igstkAddStateMacro( NullTubeObjectState     );
-  igstkAddStateMacro( ValidTubeObjectState     );
+  igstkAddStateMacro( NullTubeObject     );
+  igstkAddStateMacro( ValidTubeObject     );
 
-  igstkAddTransitionMacro( NullTubeObjectState, NullTubeObjectInput, NullTubeObjectState,  NoAction );
-  igstkAddTransitionMacro( NullTubeObjectState, ValidTubeObjectInput, ValidTubeObjectState,  SetTubeObject );
-  igstkAddTransitionMacro( ValidTubeObjectState, NullTubeObjectInput, NullTubeObjectState,  NoAction ); 
-  igstkAddTransitionMacro( ValidTubeObjectState, ValidTubeObjectInput, ValidTubeObjectState,  NoAction ); 
+  igstkAddTransitionMacro( NullTubeObject, NullTubeObject, NullTubeObject,  No );
+  igstkAddTransitionMacro( NullTubeObject, ValidTubeObject, ValidTubeObject,  SetTubeObject );
+  igstkAddTransitionMacro( ValidTubeObject, NullTubeObject, NullTubeObject,  No ); 
+  igstkAddTransitionMacro( ValidTubeObject, ValidTubeObject, ValidTubeObject,  No ); 
 
-  m_StateMachine.SelectInitialState( m_NullTubeObjectState );
+  igstkSetInitialStateMacro( NullTubeObject );
 
   m_StateMachine.SetReadyToRun();
 } 
@@ -70,23 +70,23 @@ void TubeObjectRepresentation::RequestSetTubeObject( const TubeObjectType * Tube
   m_TubeObjectToAdd = Tube;
   if( !m_TubeObjectToAdd )
     {
-    m_StateMachine.PushInput( m_NullTubeObjectInput );
+    igstkPushInputMacro( NullTubeObject );
     m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.PushInput( m_ValidTubeObjectInput );
+    igstkPushInputMacro( ValidTubeObject );
     m_StateMachine.ProcessInputs();
     }
 }
 
 /** Null operation for a State Machine transition */
-void TubeObjectRepresentation::NoAction()
+void TubeObjectRepresentation::NoProcessing()
 {
 }
 
 /** Set the Cylindrical Spatial Object */
-void TubeObjectRepresentation::SetTubeObject()
+void TubeObjectRepresentation::SetTubeObjectProcessing()
 {
   // We create the ellipse spatial object
   m_TubeSpatialObject = m_TubeObjectToAdd;
@@ -101,7 +101,7 @@ void TubeObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent )
 
 /** Update the visual representation in response to changes in the geometric
  * object */
-void TubeObjectRepresentation::UpdateRepresentation()
+void TubeObjectRepresentation::UpdateRepresentationProcessing()
 {
 }
 

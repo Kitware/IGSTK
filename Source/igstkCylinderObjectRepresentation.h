@@ -81,24 +81,24 @@ private:
   vtkCylinderSource * m_CylinderSource;
 
   /** update the visual representation with changes in the geometry */
-  virtual void UpdateRepresentation();
+  virtual void UpdateRepresentationProcessing();
 
   /** Connect this representation class to the spatial object. Only to be
    * called by the State Machine. */
-  void SetCylinderObject(); 
+  void SetCylinderObjectProcessing(); 
 
   /** Method for performing a null operation during a State Machine transition */
-  void NoAction();
+  void NoProcessing();
 
 private:
 
   /** Inputs to the State Machine */
-  InputType            m_ValidCylinderObjectInput;
-  InputType            m_NullCylinderObjectInput;
+  igstkDeclareInputMacro( ValidCylinderObject );
+  igstkDeclareInputMacro( NullCylinderObject );
   
   /** States for the State Machine */
-  StateType            m_NullCylinderObjectState;
-  StateType            m_ValidCylinderObjectState;
+  igstkDeclareStateMacro( NullCylinderObject );
+  igstkDeclareStateMacro( ValidCylinderObject );
 
   CylinderSpatialObjectType::ConstPointer m_CylinderObjectToAdd;
 

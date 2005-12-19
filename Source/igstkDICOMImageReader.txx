@@ -32,105 +32,105 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   m_Logger = NULL;
  
   //Set the state descriptors
-  igstkAddStateMacro( IdleState );
-  igstkAddStateMacro( ImageDirectoryNameReadState ); 
-  igstkAddStateMacro( ImageReadState ); 
-  igstkAddStateMacro( AttemptingToReadImageState ); 
+  igstkAddStateMacro( Idle );
+  igstkAddStateMacro( ImageDirectoryNameRead ); 
+  igstkAddStateMacro( ImageRead ); 
+  igstkAddStateMacro( AttemptingToReadImage ); 
 
- /** List of State Inputs */
-  igstkAddInputMacro( GetModalityInfoInput );
-  igstkAddInputMacro( GetPatientNameInfoInput );
-  igstkAddInputMacro( ReadImageRequestInput );
-  igstkAddInputMacro( ResetReaderInput );
-  igstkAddInputMacro( ImageReadingErrorInput );
-  igstkAddInputMacro( ImageReadingSuccessInput );
-  igstkAddInputMacro( ImageDirectoryNameValidInput );
-  igstkAddInputMacro( ImageDirectoryNameIsEmptyInput );
-  igstkAddInputMacro( ImageDirectoryNameDoesNotExistInput );
-  igstkAddInputMacro( ImageDirectoryNameIsNotDirectoryInput );
-  igstkAddInputMacro( ImageDirectoryNameDoesNotHaveEnoughFilesInput );
+ /** List of  Inputs */
+  igstkAddInputMacro( GetModalityInformation );
+  igstkAddInputMacro( GetPatientNameInformation );
+  igstkAddInputMacro( ReadImageRequest );
+  igstkAddInputMacro( ResetReader );
+  igstkAddInputMacro( ImageReadingError );
+  igstkAddInputMacro( ImageReadingSuccess );
+  igstkAddInputMacro( ImageDirectoryNameValid );
+  igstkAddInputMacro( ImageDirectoryNameIsEmpty );
+  igstkAddInputMacro( ImageDirectoryNameDoesNotExist );
+  igstkAddInputMacro( ImageDirectoryNameIsNotDirectory );
+  igstkAddInputMacro( ImageDirectoryNameDoesNotHaveEnoughFiles );
 
   //Transitions for valid directory name
-  igstkAddTransitionMacro( IdleState,
-                           ImageDirectoryNameValidInput,
-                           ImageDirectoryNameReadState,
+  igstkAddTransitionMacro( Idle,
+                           ImageDirectoryNameValid,
+                           ImageDirectoryNameRead,
                            SetDirectoryName );
 
   //Transition for valid image read request
-  igstkAddTransitionMacro( ImageDirectoryNameReadState,
-                           ReadImageRequestInput,
-                           AttemptingToReadImageState,
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           ReadImageRequest,
+                           AttemptingToReadImage,
                            AttemptReadImage );
 
-  igstkAddTransitionMacro( AttemptingToReadImageState,
-                           ImageReadingSuccessInput,
-                           ImageReadState,
+  igstkAddTransitionMacro( AttemptingToReadImage,
+                           ImageReadingSuccess,
+                           ImageRead,
                            ReportImageReadingSuccess );
 
   //Transition for invalid image reqes request
-  igstkAddTransitionMacro( IdleState,
-                           ReadImageRequestInput,
-                           IdleState,
+  igstkAddTransitionMacro( Idle,
+                           ReadImageRequest,
+                           Idle,
                            ReportInvalidRequest );
 
   //Transitions for DICOM info request inputs
-  igstkAddTransitionMacro( ImageReadState,
-                           GetModalityInfoInput,
-                           ImageReadState,
-                           GetModalityInfo );
+  igstkAddTransitionMacro( ImageRead,
+                           GetModalityInformation,
+                           ImageRead,
+                           GetModalityInformation );
 
-  igstkAddTransitionMacro( ImageReadState,
-                           GetPatientNameInfoInput,
-                           ImageReadState,
-                           GetPatientNameInfo );
+  igstkAddTransitionMacro( ImageRead,
+                           GetPatientNameInformation,
+                           ImageRead,
+                           GetPatientNameInformation );
 
   //Transitions for reset reader input 
 
-  igstkAddTransitionMacro( ImageReadState,
-                           ResetReaderInput,
-                           IdleState,
+  igstkAddTransitionMacro( ImageRead,
+                           ResetReader,
+                           Idle,
                            ResetReader );
 
-  igstkAddTransitionMacro( ImageDirectoryNameReadState,
-                           ResetReaderInput,
-                           IdleState,
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           ResetReader,
+                           Idle,
                            ResetReader );
 
-  igstkAddTransitionMacro( AttemptingToReadImageState,
-                           ResetReaderInput,
-                           IdleState,
+  igstkAddTransitionMacro( AttemptingToReadImage,
+                           ResetReader,
+                           Idle,
                            ResetReader );
 
 
   //Errors related to image directory name
-  igstkAddTransitionMacro( IdleState,
-                           ImageDirectoryNameIsEmptyInput,
-                           IdleState,
+  igstkAddTransitionMacro( Idle,
+                           ImageDirectoryNameIsEmpty,
+                           Idle,
                            ReportImageDirectoryEmptyError );
 
-  igstkAddTransitionMacro( IdleState,
-                           ImageDirectoryNameDoesNotExistInput,
-                           IdleState,
+  igstkAddTransitionMacro( Idle,
+                           ImageDirectoryNameDoesNotExist,
+                           Idle,
                            ReportImageDirectoryDoesNotExistError );
 
-  igstkAddTransitionMacro( IdleState,
-                           ImageDirectoryNameIsNotDirectoryInput,
-                           IdleState,
+  igstkAddTransitionMacro( Idle,
+                           ImageDirectoryNameIsNotDirectory,
+                           Idle,
                            ReportImageDirectoryIsNotDirectoryError );
 
-  igstkAddTransitionMacro( IdleState,
-                           ImageDirectoryNameDoesNotHaveEnoughFilesInput,
-                           IdleState,
+  igstkAddTransitionMacro( Idle,
+                           ImageDirectoryNameDoesNotHaveEnoughFiles,
+                           Idle,
                            ReportImageDirectoryDoesNotHaveEnoughFilesError );
 
   //Errors related to  image reading 
-  igstkAddTransitionMacro( AttemptingToReadImageState,
-                           ImageReadingErrorInput,
-                           IdleState,
+  igstkAddTransitionMacro( AttemptingToReadImage,
+                           ImageReadingError,
+                           Idle,
                            ReportImageReadingError );
 
    // Select the initial state of the state machine
-  m_StateMachine.SelectInitialState( m_IdleState );
+  igstkSetInitialStateMacro( Idle );
 
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
@@ -201,11 +201,11 @@ void DICOMImageReader<TImageSpatialObject>
 template <class TImageSpatialObject>
 void 
 DICOMImageReader<TImageSpatialObject>
-::SetDirectoryName()
+::SetDirectoryNameProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::SetDirectoryName called...\n");
   m_ImageDirectoryName = m_ImageDirectoryNameToBeSet;
-  this->ReadDirectoryFileNames();
+  this->ReadDirectoryFileNamesProcessing();
 }
 
 
@@ -227,7 +227,7 @@ void DICOMImageReader<TPixelType>::RequestResetReader()
 
 /** Read in the DICOM series image */
 template <class TPixelType>
-void DICOMImageReader<TPixelType>::ReadDirectoryFileNames()
+void DICOMImageReader<TPixelType>::ReadDirectoryFileNamesProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReadDirectoryFileNames called...\n");
   
@@ -247,7 +247,7 @@ void DICOMImageReader<TPixelType>::ReadDirectoryFileNames()
 
 /** Read in the DICOM series image */
 template <class TPixelType>
-void DICOMImageReader<TPixelType>::AttemptReadImage()
+void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::AttemptReadImage called...\n");
 
@@ -291,23 +291,23 @@ void DICOMImageReader<TPixelType>::AttemptReadImage()
 /* This function reports invalid requests */
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::ReportInvalidRequest()
+DICOMImageReader<TPixelType>::ReportInvalidRequestProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportInvalidRequest called...\n");
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportInvalidRequestProcessing called...\n");
   this->InvokeEvent( DICOMInvalidRequestErrorEvent() );
 }
 
 /* This function resets the reader */
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::ResetReader()
+DICOMImageReader<TPixelType>::ResetReaderProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ResetReader called...\n");
 }
 
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::ReportImageDirectoryEmptyError()
+DICOMImageReader<TPixelType>::ReportImageDirectoryEmptyErrorProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryEmptyError called...\n");
   this->InvokeEvent( DICOMImageDirectoryEmptyErrorEvent() );
@@ -315,7 +315,7 @@ DICOMImageReader<TPixelType>::ReportImageDirectoryEmptyError()
 
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::ReportImageDirectoryDoesNotExistError()
+DICOMImageReader<TPixelType>::ReportImageDirectoryDoesNotExistErrorProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryDoesNotExistError called...\n");
   DICOMImageDirectoryDoesNotExistErrorEvent event;
@@ -325,7 +325,7 @@ DICOMImageReader<TPixelType>::ReportImageDirectoryDoesNotExistError()
 
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::ReportImageDirectoryDoesNotHaveEnoughFilesError()
+DICOMImageReader<TPixelType>::ReportImageDirectoryDoesNotHaveEnoughFilesErrorProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryDoesNotHaveEnoughFilesError: called...\n");
   DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent event;
@@ -335,7 +335,7 @@ DICOMImageReader<TPixelType>::ReportImageDirectoryDoesNotHaveEnoughFilesError()
 
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::ReportImageDirectoryIsNotDirectoryError()
+DICOMImageReader<TPixelType>::ReportImageDirectoryIsNotDirectoryErrorProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageDirectoryIsNotDirectoryError: called...\n");
   DICOMImageDirectoryIsNotDirectoryErrorEvent event;
@@ -346,7 +346,7 @@ DICOMImageReader<TPixelType>::ReportImageDirectoryIsNotDirectoryError()
 
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::ReportImageReadingError()
+DICOMImageReader<TPixelType>::ReportImageReadingErrorProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageReadingError: called...\n");
   this->InvokeEvent( DICOMImageReadingErrorEvent() );
@@ -354,36 +354,36 @@ DICOMImageReader<TPixelType>::ReportImageReadingError()
 
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::ReportImageReadingSuccess()
+DICOMImageReader<TPixelType>::ReportImageReadingSuccessProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageReadingSuccess: called...\n");
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ReportImageReadingSuccessProcessing: called...\n");
 }
 
 
 /** Request the DICOM modality info */
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::RequestModalityInfo() 
+DICOMImageReader<TPixelType>::RequestModalityInformation() 
 {
-  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::RequestModalityInfo called...\n");
-  this->m_StateMachine.PushInput( this->m_GetModalityInfoInput );
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::RequestModalityInformation called...\n");
+  this->m_StateMachine.PushInput( this->m_GetModalityInformationInput );
   this->m_StateMachine.ProcessInputs();
 }
 
 /** Request patient info */
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::RequestPatientNameInfo() 
+DICOMImageReader<TPixelType>::RequestPatientNameInformation() 
 {
-  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::RequestPatientNameInfo called...\n");
-  this->m_StateMachine.PushInput( this->m_GetPatientNameInfoInput);
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::RequestPatientNameInformation called...\n");
+  this->m_StateMachine.PushInput( this->m_GetPatientNameInformationInput);
   this->m_StateMachine.ProcessInputs();
 }
 
 /** Get the DICOM modality */
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::GetModalityInfo() 
+DICOMImageReader<TPixelType>::GetModalityInformationProcessing() 
 {
   DICOMModalityEvent event;
   event.Set( m_Modality );
@@ -393,7 +393,7 @@ DICOMImageReader<TPixelType>::GetModalityInfo()
 /** Get the patient name */
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::GetPatientNameInfo() 
+DICOMImageReader<TPixelType>::GetPatientNameInformationProcessing() 
 {
   DICOMPatientNameEvent event;
   event.Set( m_PatientName );

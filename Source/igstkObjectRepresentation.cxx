@@ -35,25 +35,25 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_Logger(NULL)
   m_SpatialObject = NULL;
   m_LastMTime = 0;
 
-  igstkAddInputMacro( ValidSpatialObjectInput );
-  igstkAddInputMacro( NullSpatialObjectInput  );
-  igstkAddInputMacro( UpdatePositionInput  );
-  igstkAddInputMacro( UpdateRepresentationInput );
+  igstkAddInputMacro( ValidSpatialObject );
+  igstkAddInputMacro( NullSpatialObject  );
+  igstkAddInputMacro( UpdatePosition  );
+  igstkAddInputMacro( UpdateRepresentation );
 
-  igstkAddStateMacro( NullSpatialObjectState );
-  igstkAddStateMacro( ValidSpatialObjectState );
+  igstkAddStateMacro( NullSpatialObject );
+  igstkAddStateMacro( ValidSpatialObject );
 
-  igstkAddTransitionMacro( NullSpatialObjectState, NullSpatialObjectInput, NullSpatialObjectState,  NoAction );
-  igstkAddTransitionMacro( NullSpatialObjectState, ValidSpatialObjectInput, ValidSpatialObjectState,  SetSpatialObject );
-  igstkAddTransitionMacro( NullSpatialObjectState, UpdatePositionInput, NullSpatialObjectState,  NoAction );
-  igstkAddTransitionMacro( NullSpatialObjectState, UpdateRepresentationInput, NullSpatialObjectState,  NoAction );
+  igstkAddTransitionMacro( NullSpatialObject, NullSpatialObject, NullSpatialObject,  No );
+  igstkAddTransitionMacro( NullSpatialObject, ValidSpatialObject, ValidSpatialObject,  SetSpatialObject );
+  igstkAddTransitionMacro( NullSpatialObject, UpdatePosition, NullSpatialObject,  No );
+  igstkAddTransitionMacro( NullSpatialObject, UpdateRepresentation, NullSpatialObject,  No );
  
-  igstkAddTransitionMacro( ValidSpatialObjectState, UpdatePositionInput, ValidSpatialObjectState,  UpdatePosition );
-  igstkAddTransitionMacro( ValidSpatialObjectState, NullSpatialObjectInput, NullSpatialObjectState,  NoAction ); 
-  igstkAddTransitionMacro( ValidSpatialObjectState, ValidSpatialObjectInput, ValidSpatialObjectState,  NoAction ); 
-  igstkAddTransitionMacro( ValidSpatialObjectState, UpdateRepresentationInput, ValidSpatialObjectState,  UpdateRepresentation );
+  igstkAddTransitionMacro( ValidSpatialObject, UpdatePosition, ValidSpatialObject,  UpdatePosition );
+  igstkAddTransitionMacro( ValidSpatialObject, NullSpatialObject, NullSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidSpatialObject, ValidSpatialObject, ValidSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidSpatialObject, UpdateRepresentation, ValidSpatialObject,  UpdateRepresentation );
 
-  m_StateMachine.SelectInitialState( m_NullSpatialObjectState );
+  igstkSetInitialStateMacro( NullSpatialObject );
 
   m_StateMachine.SetReadyToRun();
 
@@ -103,12 +103,12 @@ void ObjectRepresentation::RequestSetSpatialObject( const SpatialObjectType * sp
   m_SpatialObjectToAdd = spatialObject;
   if( !m_SpatialObjectToAdd )
     {
-    m_StateMachine.PushInput( m_NullSpatialObjectInput );
+    igstkPushInputMacro( NullSpatialObject );
     m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.PushInput( m_ValidSpatialObjectInput );
+    igstkPushInputMacro( ValidSpatialObject );
     m_StateMachine.ProcessInputs();
     }
 
@@ -116,7 +116,7 @@ void ObjectRepresentation::RequestSetSpatialObject( const SpatialObjectType * sp
 
 
 /** Set the Spatial Object */
-void ObjectRepresentation::SetSpatialObject()
+void ObjectRepresentation::SetSpatialObjectProcessing()
 {
   m_SpatialObject = m_SpatialObjectToAdd;
 }
@@ -151,7 +151,7 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
 void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 {
   m_TimeToRender = time; 
-  m_StateMachine.PushInput( m_UpdateRepresentationInput );
+  igstkPushInputMacro( UpdateRepresentation );
   m_StateMachine.ProcessInputs();
 }
 
@@ -161,18 +161,18 @@ void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 void ObjectRepresentation::RequestUpdatePosition( const TimeStamp & time )
 {
   m_TimeToRender = time; 
-  m_StateMachine.PushInput( m_UpdatePositionInput );
+  igstkPushInputMacro( UpdatePosition );
   m_StateMachine.ProcessInputs();
 }
 
 /** Null operation for a State Machine transition */
-void ObjectRepresentation::NoAction()
+void ObjectRepresentation::NoProcessing()
 {
 }
 
 /** Update the object representation (i.e vtkActors). Maybe we should check also the transform
  *  modified time. */
-void ObjectRepresentation::UpdatePosition()
+void ObjectRepresentation::UpdatePositionProcessing()
 {
   Transform transform = m_SpatialObject->GetTransform();
 

@@ -165,49 +165,49 @@ private:
   double                                 m_Window;
 
   /** Update the visual representation with changes in the geometry */
-  virtual void UpdateRepresentation();
+  virtual void UpdateRepresentationProcessing();
 
   /** Null operation for State Machine transition */
-  void NoAction();
+  void NoProcessing();
 
   /** Connect this representation class to the spatial object. Only to be
    * called by the State Machine. */
-  void SetImageSpatialObject();
+  void SetImageSpatialObjectProcessing();
 
   /** Sets the vtkImageData from the spatial object. This method MUST be
    * private in order to prevent unsafe access from the VTK image layer. */
   void SetImage( const vtkImageData * image );
   
   /** Attempt to set the Slice Number. */
-  void AttemptSetSliceNumber();
+  void AttemptSetSliceNumberProcessing();
 
   /** Actually set the Slice Number. */
-  void SetSliceNumber();
+  void SetSliceNumberProcessing();
 
   /** Actually set the Slice Orientation. */
-  void SetOrientation();
+  void SetOrientationProcessing();
       
   /** Reports the minimum and maximum slice numbers on the current orientation */
-  void ReportSliceNumberBounds() ;
+  void ReportSliceNumberBoundsProcessing() ;
     
 private:
 
   /** Inputs to the State Machine */
-  InputType            m_ValidImageSpatialObjectInput;
-  InputType            m_NullImageSpatialObjectInput;
-  InputType            m_EmptyImageSpatialObjectInput;
-  InputType            m_SetSliceNumberInput;
-  InputType            m_ValidSliceNumberInput;
-  InputType            m_InvalidSliceNumberInput;
-  InputType            m_ValidOrientationInput;
-  InputType            m_RequestSliceNumberBoundsInput; 
+  igstkDeclareInputMacro( ValidImageSpatialObject );
+  igstkDeclareInputMacro( NullImageSpatialObject );
+  igstkDeclareInputMacro( EmptyImageSpatialObject );
+  igstkDeclareInputMacro( SetSliceNumber );
+  igstkDeclareInputMacro( ValidSliceNumber );
+  igstkDeclareInputMacro( InvalidSliceNumber );
+  igstkDeclareInputMacro( ValidOrientation );
+  igstkDeclareInputMacro( RequestSliceNumberBounds ); 
   
   /** States for the State Machine */
-  StateType            m_NullImageSpatialObjectState;
-  StateType            m_ValidImageSpatialObjectState;
-  StateType            m_ValidImageOrientationState;
-  StateType            m_ValidSliceNumberState;
-  StateType            m_AttemptingToSetSliceNumberState;
+  igstkDeclareStateMacro( NullImageSpatialObject );
+  igstkDeclareStateMacro( ValidImageSpatialObject );
+  igstkDeclareStateMacro( ValidImageOrientation );
+  igstkDeclareStateMacro( ValidSliceNumber );
+  igstkDeclareStateMacro( AttemptingToSetSliceNumber );
 
   /** Variables for managing the Slice number through the StateMachine */
   SliceNumberType      m_SliceNumberToBeSet;

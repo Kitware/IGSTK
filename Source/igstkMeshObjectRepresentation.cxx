@@ -37,18 +37,18 @@ MeshObjectRepresentation
   m_MeshObject = NULL;
   this->RequestSetSpatialObject( m_MeshObject );
   
-  igstkAddInputMacro( ValidMeshObjectInput );
-  igstkAddInputMacro( NullMeshObjectInput );
+  igstkAddInputMacro( ValidMeshObject );
+  igstkAddInputMacro( NullMeshObject );
 
-  igstkAddStateMacro( NullMeshObjectState );
-  igstkAddStateMacro( ValidMeshObjectState );
+  igstkAddStateMacro( NullMeshObject );
+  igstkAddStateMacro( ValidMeshObject );
 
-  igstkAddTransitionMacro( NullMeshObjectState, NullMeshObjectInput, NullMeshObjectState,  NoAction );
-  igstkAddTransitionMacro( NullMeshObjectState, ValidMeshObjectInput, ValidMeshObjectState,  SetMeshObject );
-  igstkAddTransitionMacro( ValidMeshObjectState, NullMeshObjectInput, NullMeshObjectState,  NoAction ); 
-  igstkAddTransitionMacro( ValidMeshObjectState, ValidMeshObjectInput, ValidMeshObjectState,  NoAction ); 
+  igstkAddTransitionMacro( NullMeshObject, NullMeshObject, NullMeshObject,  No );
+  igstkAddTransitionMacro( NullMeshObject, ValidMeshObject, ValidMeshObject,  SetMeshObject );
+  igstkAddTransitionMacro( ValidMeshObject, NullMeshObject, NullMeshObject,  No ); 
+  igstkAddTransitionMacro( ValidMeshObject, ValidMeshObject, ValidMeshObject,  No ); 
 
-  m_StateMachine.SelectInitialState( m_NullMeshObjectState );
+  igstkSetInitialStateMacro( NullMeshObject );
 
   m_StateMachine.SetReadyToRun();
 
@@ -69,25 +69,25 @@ void MeshObjectRepresentation::RequestSetMeshObject( const MeshObjectType * Mesh
   m_MeshObjectToAdd = Mesh;
   if( !m_MeshObjectToAdd )
     {
-    m_StateMachine.PushInput( m_NullMeshObjectInput );
+    igstkPushInputMacro( NullMeshObject );
     m_StateMachine.ProcessInputs();
     }
   else
     {
-    m_StateMachine.PushInput( m_ValidMeshObjectInput );
+    igstkPushInputMacro( ValidMeshObject );
     m_StateMachine.ProcessInputs();
     }
 }
 
 
 /** Null operation for a State Machine transition */
-void MeshObjectRepresentation::NoAction()
+void MeshObjectRepresentation::NoProcessing()
 {
 }
 
 
 /** Set the Cylindrical Spatial Object */
-void MeshObjectRepresentation::SetMeshObject()
+void MeshObjectRepresentation::SetMeshObjectProcessing()
 {
   // We create the ellipse spatial object
   m_MeshObject = m_MeshObjectToAdd;
@@ -104,7 +104,7 @@ void MeshObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent )
 
 /** Update the visual representation in response to changes in the geometric
  *  object */
-void MeshObjectRepresentation::UpdateRepresentation()
+void MeshObjectRepresentation::UpdateRepresentationProcessing()
 {
 }
 

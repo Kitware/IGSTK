@@ -83,7 +83,7 @@ protected:
 
   /** This method request Object read. This method is intended to be
    *  invoked ONLY by the State Machine of the superclass. **/
-  void AttemptReadObject();
+  void AttemptReadObjectProcessing();
 
 private:
 
