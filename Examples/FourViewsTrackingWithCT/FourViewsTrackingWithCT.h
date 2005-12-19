@@ -110,7 +110,7 @@ public:
 
   /** Public request methods from the GUI. */
   virtual void RequestSetPatientName();
-  virtual void RequestLoadImage();
+  virtual void RequestLoadImageProcessing();
   virtual void RequestInitializeTracker();
   virtual void RequestAddImageLandmark();
   virtual void RequestAddTrackerLandmark();
@@ -141,62 +141,62 @@ private:
   void operator=(const Self&); // purposely not implemented
 
   /** States for the State Machine */
-  StateType            m_InitialState;
-  StateType            m_WaitingForPatientNameState;
-  StateType            m_PatientNameReadyState;
-  StateType            m_WaitingForDICOMDirectoryState;
-  StateType            m_ImageReadyState;
-  StateType            m_PatientNameVerifiedState;
-  StateType            m_AddingImageLandmarkState;
-  StateType            m_ImageLandmarksReadyState;
-  StateType            m_InitializingTrackerState;
-  StateType            m_TrackerReadyState;
-  StateType            m_AddingTrackerLandmarkState;
-  StateType            m_TrackerLandmarksReadyState;
-  StateType            m_LandmarkRegistrationReadyState;
-  StateType            m_TrackingState;
+  igstkDeclareStateMacro( Initial );
+  igstkDeclareStateMacro( WaitingForPatientName );
+  igstkDeclareStateMacro( PatientNameReady );
+  igstkDeclareStateMacro( WaitingForDICOMDirectory );
+  igstkDeclareStateMacro( ImageReady );
+  igstkDeclareStateMacro( PatientNameVerified );
+  igstkDeclareStateMacro( AddingImageLandmark );
+  igstkDeclareStateMacro( ImageLandmarksReady );
+  igstkDeclareStateMacro( InitializingTracker );
+  igstkDeclareStateMacro( TrackerReady );
+  igstkDeclareStateMacro( AddingTrackerLandmark );
+  igstkDeclareStateMacro( TrackerLandmarksReady );
+  igstkDeclareStateMacro( LandmarkRegistrationReady );
+  igstkDeclareStateMacro( Tracking );
 
   /** Inputs to the state machine and it's designed transitions */
-  InputType            m_RequestSetPatientNameInput;      //->m_WaitingForPatientNameState
-  InputType            m_PatientNameInput;                //->m_PatientNameReadyState
-  InputType            m_PatientNameEmptyInput;           //->m_InitialState
+  igstkDeclareInputMacro( RequestSetPatientName );      //->m_WaitingForPatientNameState
+  igstkDeclareInputMacro( PatientName );                //->m_PatientNameReadyState
+  igstkDeclareInputMacro( PatientNameEmpty );           //->m_InitialState
 
-  InputType            m_RequestLoadImageInput;           //->m_WaitingForDICOMDirectoryState
-  InputType            m_LoadImageSuccessInput;           //->m_ImageReady
-  InputType            m_LoadImageFailureInput;           //->m_PatientNameReadeyState
-  InputType            m_PatientNameMatchInput;           //->m_PatientNameVerifiedState
-  InputType            m_OverwritePatientNameInput;       //->m_PatientNameVerifiedState
-  InputType            m_ReloadImageInput;                //->m_PatientNameReadyState
+  igstkDeclareInputMacro( RequestLoadImage );           //->m_WaitingForDICOMDirectoryState
+  igstkDeclareInputMacro( LoadImageSuccess );           //->m_ImageReady
+  igstkDeclareInputMacro( LoadImageFailure );           //->m_PatientNameReadeyState
+  igstkDeclareInputMacro( PatientNameMatch );           //->m_PatientNameVerifiedState
+  igstkDeclareInputMacro( OverwritePatientName );       //->m_PatientNameVerifiedState
+  igstkDeclareInputMacro( ReloadImage );                //->m_PatientNameReadyState
   
-  InputType            m_RequestAddImageLandmarkInput;    //->m_AddingImageLandmarkState
-  InputType            m_NeedMoreLandmarkPointsInput;     //->m_AddingImageLandmarkState
-  InputType            m_EnoughLandmarkPointsInput;       //->m_ImageLandmarksReadyState
-  InputType            m_RequestClearImageLandmarksInput; //->m_PatientNameVerifiedState  
+  igstkDeclareInputMacro( RequestAddImageLandmark );    //->m_AddingImageLandmarkState
+  igstkDeclareInputMacro( NeedMoreLandmarkPoints );     //->m_AddingImageLandmarkState
+  igstkDeclareInputMacro( EnoughLandmarkPoints );       //->m_ImageLandmarksReadyState
+  igstkDeclareInputMacro( RequestClearImageLandmarks ); //->m_PatientNameVerifiedState  
 
-  InputType            m_RequestInitializeTrackerInput;   //
-  InputType            m_InitializeTrackerSuccessInput;   //-> TrackerReadyState
-  InputType            m_InitializeTrackerFailureInput;   //-> ImageLandmarksReadyState
+  igstkDeclareInputMacro( RequestInitializeTracker );   //
+  igstkDeclareInputMacro( InitializeTrackerSuccess );   //-> TrackerReadyState
+  igstkDeclareInputMacro( InitializeTrackerFailure );   //-> ImageLandmarksReadyState
 
-  InputType            m_RequestAddTrackerLandmarkInput;    //->m_AddingTrackerLandmarkState
-  //InputType          m_NeedMoreLandmarkPointsInput;       //->m_AddingTrackerLandmarkState
-  //InputType          m_EnoughLandmarkPointsInput;         //->m_TrackerLandmarksReadyState
-  InputType            m_RequestClearTrackerLandmarksInput; //->m_TrackerReadyState
+  igstkDeclareInputMacro( RequestAddTrackerLandmark );    //->m_AddingTrackerLandmarkState
+  //igstkDeclareInputMacro( NeedMoreLandmarkPoints );       //->m_AddingTrackerLandmarkState
+  //igstkDeclareInputMacro( EnoughLandmarkPoints );         //->m_TrackerLandmarksReadyState
+  igstkDeclareInputMacro( RequestClearTrackerLandmarks ); //->m_TrackerReadyState
 
-  InputType            m_RequestRegistrationInput;
-  InputType            m_RegistrationSuccessInput;        //->m_LandmarkRegistrationReadyState
-  InputType            m_RegistrationFailureInput;        //->m_TrackerLandmarksReadyState
+  igstkDeclareInputMacro( RequestRegistration );
+  igstkDeclareInputMacro( RegistrationSuccess );        //->m_LandmarkRegistrationReadyState
+  igstkDeclareInputMacro( RegistrationFailure );        //->m_TrackerLandmarksReadyState
 
-  InputType            m_RequestStartTrackingInput;
-  InputType            m_StartTrackingSuccessInput;       //->m_TrackingState                   //FIXME, how to check if it succeed
-  InputType            m_StartTrackingFailureInput;       //->m_LandmarkRegistrationReadyState
+  igstkDeclareInputMacro( RequestStartTracking );
+  igstkDeclareInputMacro( StartTrackingSuccess );       //->m_TrackingState                   //FIXME, how to check if it succeed
+  igstkDeclareInputMacro( StartTrackingFailure );       //->m_LandmarkRegistrationReadyState
 
-  InputType            m_RequestStopTrackingInput;
-  InputType            m_StopTrackingSuccessInput;        //->m_LandmarkRegistrationReadyState  //FIXME, how to check if it succeed
-  InputType            m_StopTrackingFailureInput;        //->m_TrackingState
+  igstkDeclareInputMacro( RequestStopTracking );
+  igstkDeclareInputMacro( StopTrackingSuccess );        //->m_LandmarkRegistrationReadyState  //FIXME, how to check if it succeed
+  igstkDeclareInputMacro( StopTrackingFailure );        //->m_TrackingState
 
-  InputType            m_AxialBoundsInput;                
-  InputType            m_SagittalBoundsInput;
-  InputType            m_CoronalBoundsInput;
+  igstkDeclareInputMacro( AxialBounds );                
+  igstkDeclareInputMacro( SagittalBounds );
+  igstkDeclareInputMacro( CoronalBounds );
 
   /** Logger */
   LogOutputType::Pointer              m_LogFileOutput;  // log output to file
@@ -267,32 +267,41 @@ private:
 
 
   /** Action methods to be invoked only by the state machine */
-  void NoAction();
-  void SetPatientName();
-  void LoadImage();
-  void VerifyPatientName(); 
-  void ConnectImageRepresentation();
-  void AddImageLandmark();
-  void ClearImageLandmarks();
-  void InitializeTracker();
-  void GetTrackerTransform();
-  void AddTrackerLandmark();
-  void ClearTrackerLandmarks();  
-  void Registration();
-  void StartTracking();
-  void Tracking();
-  void StopTracking();
-  void SetAxialSliderBounds();
-  void SetSagittalSliderBounds();
-  void SetCoronalSliderBounds();
-  void ResliceImage();
-  void ResliceImage( IndexType index );  
-  void Reset();
+  void NoProcessing();
+  void SetPatientNameProcessing();
+  void LoadImageProcessing();
+  void VerifyPatientNameProcessing(); 
+  void ConnectImageRepresentationProcessing();
+  void AddImageLandmarkProcessing();
+  void ClearImageLandmarksProcessing();
+  void InitializeTrackerProcessing();
+  void AddTrackerLandmarkProcessing();
+  void ClearTrackerLandmarksProcessing();  
+  void RegistrationProcessing();
+  void StartTrackingProcessing();
+  void StopTrackingProcessing();
+  void SetAxialSliderBoundsProcessing();
+  void SetSagittalSliderBoundsProcessing();
+  void SetCoronalSliderBoundsProcessing();
   
   /** Callback functions for picking and registration success events. */
   void GetLandmarkRegistrationTransform( const itk::EventObject & event);
   void DrawPickedPoint( const itk::EventObject & event );
+
+  /** Callback function for Events */
+  void Tracking();
   
+  /** Obtain the transform from the tracker */
+  void GetTrackerTransform();
+
+
+  /** Methods for reslicing the image */
+  void ResliceImage();
+  void ResliceImage( IndexType index );  
+
+  /** Resetting the state of the application */
+  void Reset();
+
 };
 
 } // end of namespace

@@ -114,7 +114,7 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
   /** Null operation for a transition in the State Machine */
-  void NoAction();
+  void NoProcessing();
 
   /** Reset the calibration matrix */
   void ResetProcessing();
@@ -146,17 +146,17 @@ protected:
 private:
 
   /** List of States */
-  StateType                         m_IdleState;
-  StateType                         m_InitialOrientationSetState;
-  StateType                         m_DesiredOrientationSetState;
-  StateType                         m_OrientationAllSetState;
-  StateType                         m_RotationCalculatedState;
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( InitialOrientationSet );
+  igstkDeclareStateMacro( DesiredOrientationSet );
+  igstkDeclareStateMacro( OrientationAllSet );
+  igstkDeclareStateMacro( RotationCalculated );
 
   /** List of Inputs */
-  InputType                         m_ResetCalibrationInput;
-  InputType                         m_InitialOrientationInput;
-  InputType                         m_DesiredOrientationInput;
-  InputType                         m_CalculateRotationInput;
+  igstkDeclareInputMacro( ResetCalibration );
+  igstkDeclareInputMacro( InitialOrientation );
+  igstkDeclareInputMacro( DesiredOrientation );
+  igstkDeclareInputMacro( CalculateRotation );
 
   /** Temporary input variables for state machine */
   VectorType                        m_VectorToBeSent;

@@ -152,7 +152,7 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
   /** Null operation for a transition in the State Machine */
-  void NoAction();
+  void NoProcessing();
 
   /** Reset the calibration matrix */
   void ResetProcessing();
@@ -191,18 +191,18 @@ protected:
 private:
 
   /** List of States */
-  StateType                         m_IdleState;
-  StateType                         m_SampleAddState;
-  StateType                         m_CalibrationCalculatedState; 
-  StateType                         m_CalibrationZCalculatedState; 
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( SampleAdd );
+  igstkDeclareStateMacro( CalibrationCalculated ); 
+  igstkDeclareStateMacro( CalibrationZCalculated ); 
 
   /** List of Inputs */
-  InputType                         m_ResetCalibrationInput;
-  InputType                         m_SampleInput;
-  InputType                         m_CalculateCalibrationInput;
-  InputType                         m_CalculateCalibrationZInput;
-  InputType                         m_SimulatePivotPositionInput;
-  InputType                         m_GetInputSampleInput;
+  igstkDeclareInputMacro( ResetCalibration );
+  igstkDeclareInputMacro( Sample );
+  igstkDeclareInputMacro( CalculateCalibration );
+  igstkDeclareInputMacro( CalculateCalibrationZ );
+  igstkDeclareInputMacro( SimulatePivotPosition );
+  igstkDeclareInputMacro( GetInputSample );
 
   /** Temporary input variables for state machine */
   VersorType                        m_VersorToBeSent;

@@ -30,53 +30,53 @@ PivotCalibration::PivotCalibration() :
   m_StateMachine( this )
 {
   // Set the state descriptors
-  igstkAddStateMacro( IdleState );
-  igstkAddStateMacro( SampleAddState );
-  igstkAddStateMacro( CalibrationCalculatedState );
-  igstkAddStateMacro( CalibrationZCalculatedState );
+  igstkAddStateMacro( Idle );
+  igstkAddStateMacro( SampleAdd );
+  igstkAddStateMacro( CalibrationCalculated );
+  igstkAddStateMacro( CalibrationZCalculated );
 
   // Set the input descriptors 
-  igstkAddInputMacro( ResetCalibrationInput );
-  igstkAddInputMacro( SampleInput );
-  igstkAddInputMacro( CalculateCalibrationInput );
-  igstkAddInputMacro( CalculateCalibrationZInput );
-  igstkAddInputMacro( SimulatePivotPositionInput );
-  igstkAddInputMacro( GetInputSampleInput );
+  igstkAddInputMacro( ResetCalibration );
+  igstkAddInputMacro( Sample );
+  igstkAddInputMacro( CalculateCalibration );
+  igstkAddInputMacro( CalculateCalibrationZ );
+  igstkAddInputMacro( SimulatePivotPosition );
+  igstkAddInputMacro( GetInputSample );
 
   // Add transition  for idle state
-  igstkAddTransitionMacro( IdleState, ResetCalibrationInput, IdleState, ResetProcessing );
-  igstkAddTransitionMacro( IdleState, SampleInput, SampleAddState, AddSampleProcessing );
-  igstkAddTransitionMacro( IdleState, CalculateCalibrationInput, IdleState, NoAction );
-  igstkAddTransitionMacro( IdleState, CalculateCalibrationZInput, IdleState, NoAction );
-  igstkAddTransitionMacro( IdleState, SimulatePivotPositionInput, IdleState, NoAction );
-  igstkAddTransitionMacro( IdleState, GetInputSampleInput, IdleState, NoAction );
+  igstkAddTransitionMacro( Idle, ResetCalibration, Idle, Reset );
+  igstkAddTransitionMacro( Idle, Sample, SampleAdd, AddSample );
+  igstkAddTransitionMacro( Idle, CalculateCalibration, Idle, No );
+  igstkAddTransitionMacro( Idle, CalculateCalibrationZ, Idle, No );
+  igstkAddTransitionMacro( Idle, SimulatePivotPosition, Idle, No );
+  igstkAddTransitionMacro( Idle, GetInputSample, Idle, No );
   
   // Add transition  for RotationTranslationAdd state
-  igstkAddTransitionMacro( SampleAddState, ResetCalibrationInput, IdleState, ResetProcessing );
-  igstkAddTransitionMacro( SampleAddState, SampleInput, SampleAddState, AddSampleProcessing );
-  igstkAddTransitionMacro( SampleAddState, CalculateCalibrationInput, CalibrationCalculatedState, CalculateCalibrationProcessing );
-  igstkAddTransitionMacro( SampleAddState, CalculateCalibrationZInput, CalibrationZCalculatedState, CalculateCalibrationZProcessing );
-  igstkAddTransitionMacro( SampleAddState, SimulatePivotPositionInput, SampleAddState, NoAction );
-  igstkAddTransitionMacro( SampleAddState, GetInputSampleInput, SampleAddState, GetInputSampleProcessing );
+  igstkAddTransitionMacro( SampleAdd, ResetCalibration, Idle, Reset );
+  igstkAddTransitionMacro( SampleAdd, Sample, SampleAdd, AddSample );
+  igstkAddTransitionMacro( SampleAdd, CalculateCalibration, CalibrationCalculated, CalculateCalibration );
+  igstkAddTransitionMacro( SampleAdd, CalculateCalibrationZ, CalibrationZCalculated, CalculateCalibrationZ );
+  igstkAddTransitionMacro( SampleAdd, SimulatePivotPosition, SampleAdd, No );
+  igstkAddTransitionMacro( SampleAdd, GetInputSample, SampleAdd, GetInputSample );
   
   // Add transition  for CalibrationCalculated state
-  igstkAddTransitionMacro( CalibrationCalculatedState, ResetCalibrationInput, IdleState, ResetProcessing );
-  igstkAddTransitionMacro( CalibrationCalculatedState, SampleInput, SampleAddState, AddSampleProcessing );
-  igstkAddTransitionMacro( CalibrationCalculatedState, CalculateCalibrationInput, CalibrationCalculatedState, NoAction );
-  igstkAddTransitionMacro( CalibrationCalculatedState, CalculateCalibrationZInput, CalibrationZCalculatedState, CalculateCalibrationZProcessing );
-  igstkAddTransitionMacro( CalibrationCalculatedState, SimulatePivotPositionInput, CalibrationCalculatedState, SimulatePivotPositionProcessing );
-  igstkAddTransitionMacro( CalibrationCalculatedState, GetInputSampleInput, CalibrationCalculatedState, GetInputSampleProcessing );
+  igstkAddTransitionMacro( CalibrationCalculated, ResetCalibration, Idle, Reset );
+  igstkAddTransitionMacro( CalibrationCalculated, Sample, SampleAdd, AddSample );
+  igstkAddTransitionMacro( CalibrationCalculated, CalculateCalibration, CalibrationCalculated, No );
+  igstkAddTransitionMacro( CalibrationCalculated, CalculateCalibrationZ, CalibrationZCalculated, CalculateCalibrationZ );
+  igstkAddTransitionMacro( CalibrationCalculated, SimulatePivotPosition, CalibrationCalculated, SimulatePivotPosition );
+  igstkAddTransitionMacro( CalibrationCalculated, GetInputSample, CalibrationCalculated, GetInputSample );
 
   // Add transition  for CalibrationZCalculated state
-  igstkAddTransitionMacro( CalibrationZCalculatedState, ResetCalibrationInput, IdleState, ResetProcessing );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, SampleInput, SampleAddState, AddSampleProcessing );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, CalculateCalibrationInput, CalibrationCalculatedState, CalculateCalibrationProcessing );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, CalculateCalibrationZInput, CalibrationZCalculatedState, NoAction );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, SimulatePivotPositionInput, CalibrationZCalculatedState, SimulatePivotPositionProcessing );
-  igstkAddTransitionMacro( CalibrationZCalculatedState, GetInputSampleInput, CalibrationZCalculatedState, GetInputSampleProcessing );
+  igstkAddTransitionMacro( CalibrationZCalculated, ResetCalibration, Idle, Reset );
+  igstkAddTransitionMacro( CalibrationZCalculated, Sample, SampleAdd, AddSample );
+  igstkAddTransitionMacro( CalibrationZCalculated, CalculateCalibration, CalibrationCalculated, CalculateCalibration );
+  igstkAddTransitionMacro( CalibrationZCalculated, CalculateCalibrationZ, CalibrationZCalculated, No );
+  igstkAddTransitionMacro( CalibrationZCalculated, SimulatePivotPosition, CalibrationZCalculated, SimulatePivotPosition );
+  igstkAddTransitionMacro( CalibrationZCalculated, GetInputSample, CalibrationZCalculated, GetInputSample );
 
   // Select the initial state of the state machine
-  this->m_StateMachine.SelectInitialState( this->m_IdleState );
+  igstkSetInitialStateMacro( Idle );
 
   // Finish the programming and get ready to run
   this->m_StateMachine.SetReadyToRun();
@@ -125,7 +125,7 @@ unsigned int PivotCalibration
 }
 
 /** Method to ResetProcessing the calibration */
-void PivotCalibration::NoAction()
+void PivotCalibration::NoProcessing()
 {
 }
 
