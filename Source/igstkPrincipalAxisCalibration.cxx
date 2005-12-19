@@ -191,8 +191,8 @@ void PrincipalAxisCalibration::CalculateRotationProcessing()
   VersorType quaternion;
 
   // Build the orthogonal matrix from the principal axis and plane normal
-  initialorthomatrix = InternalBuildOrthogonalMatrix( this->m_InitialPrincipalAxis, this->m_InitialAdjustedPlaneNormal );
-  desiredorthomatrix = InternalBuildOrthogonalMatrix( this->m_DesiredPrincipalAxis, this->m_DesiredAdjustedPlaneNormal );
+  initialorthomatrix = InternalBuildOrthogonalMatrixProcessing( this->m_InitialPrincipalAxis, this->m_InitialAdjustedPlaneNormal );
+  desiredorthomatrix = InternalBuildOrthogonalMatrixProcessing( this->m_DesiredPrincipalAxis, this->m_DesiredAdjustedPlaneNormal );
 
   // Find the rotation by M = A / B
   matrix = desiredorthomatrix * initialorthomatrix.GetInverse();
@@ -208,9 +208,9 @@ void PrincipalAxisCalibration::CalculateRotationProcessing()
 
 /** Internal method to construct the orthogonal matrix */
 PrincipalAxisCalibration::MatrixType 
-PrincipalAxisCalibration::InternalBuildOrthogonalMatrix( VectorType axis, CovariantVectorType normal )
+PrincipalAxisCalibration::InternalBuildOrthogonalMatrixProcessing( VectorType axis, CovariantVectorType normal )
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::InternalBuildOrthogonalMatrix called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::InternalBuildOrthogonalMatrixProcessing called...\n" );
 
   unsigned int i, j;
   VectorType vec[3];

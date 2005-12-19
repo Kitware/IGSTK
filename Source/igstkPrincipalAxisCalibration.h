@@ -143,7 +143,7 @@ protected:
   CovariantVectorType InternalAdjustPlaneNormalProcessing( const VectorType axis, const CovariantVectorType normal );
 
   /** Internal function to construct the orthogonal matrix */
-  MatrixType InternalBuildOrthogonalMatrix( const VectorType axis, const CovariantVectorType normal );
+  MatrixType InternalBuildOrthogonalMatrixProcessing( const VectorType axis, const CovariantVectorType normal );
 
 private:
 
