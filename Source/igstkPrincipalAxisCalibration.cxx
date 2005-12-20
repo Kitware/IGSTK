@@ -175,6 +175,7 @@ PrincipalAxisCalibration::InternalAdjustPlaneNormalProcessing( VectorType axis, 
 
   // Compute the perpendicular y axis
   vec[1] = itk::CrossProduct( vec[2], vec[0]);
+  vec[1].Normalize();
 
   // No direct conversion from itk::Vector to itk::ConvariantVector
   adjustednormal.SetVnlVector( vec[1].GetVnlVector());
@@ -228,7 +229,7 @@ PrincipalAxisCalibration::InternalBuildOrthogonalMatrixProcessing( VectorType ax
     {
     for ( i = 0; i < 3; i++)
       {
-      orthomatrix[j][i] = vec[j][i];
+      orthomatrix[i][j] = vec[j][i];
       }
     }
 
