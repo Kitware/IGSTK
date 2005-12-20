@@ -135,7 +135,7 @@ void UltrasoundProbeObjectRepresentation::CreateActors()
   sample->CappingOn();
    
   vtkMarchingContourFilter* surface = vtkMarchingContourFilter::New();
-  surface->SetInput(sample->GetOutput());
+  surface->SetInput((vtkDataObject*)(sample->GetOutput()));
   surface->SetValue(0,0.0);
   surface->ComputeScalarsOff();
 
@@ -176,7 +176,7 @@ void UltrasoundProbeObjectRepresentation::CreateActors()
   sampleBlack->ComputeNormalsOff();
    
   vtkMarchingContourFilter* surfaceBlack = vtkMarchingContourFilter::New();
-  surfaceBlack->SetInput(sampleBlack->GetOutput());
+  surfaceBlack->SetInput((vtkDataObject*)(sampleBlack->GetOutput()));
   surfaceBlack->SetValue(0,0.0);
   surfaceBlack->ComputeScalarsOff();
 
@@ -223,7 +223,7 @@ void UltrasoundProbeObjectRepresentation::CreateActors()
   sampleHandle->CappingOn();
    
   vtkMarchingContourFilter* surfaceHandle = vtkMarchingContourFilter::New();
-  surfaceHandle->SetInput(sampleHandle->GetOutput());
+  surfaceHandle->SetInput((vtkDataObject*)(sampleHandle->GetOutput()));
   surfaceHandle->SetValue(0,0.0);
   surfaceHandle->ComputeScalarsOff();
 

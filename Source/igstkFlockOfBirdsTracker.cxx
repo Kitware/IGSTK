@@ -187,7 +187,7 @@ FlockOfBirdsTracker::SetType(const FoBType type)
      return FAILURE;
     }
 
-  if(m_Communication->Write(&cmd,sizeof(char)) != SUCCESS)
+  if(m_Communication->Write(&cmd,sizeof(char)) != igstk::Communication::SUCCESS)
     {
     return FAILURE;
     }
@@ -212,7 +212,7 @@ FlockOfBirdsTracker::SetMode(const FoBMode mode)
       break;
     }
 
-  if(m_Communication->Write(&cmd,sizeof(char)) != SUCCESS)
+  if(m_Communication->Write(&cmd,sizeof(char)) != igstk::Communication::SUCCESS)
     {
     return FAILURE;
     }
@@ -242,7 +242,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
 
   if (m_Mode != STREAM) 
     {
-    if(m_Communication->Write(&command,sizeof(char)) != SUCCESS)
+    if(m_Communication->Write(&command,sizeof(char)) != igstk::Communication::SUCCESS)
       {
       igstkLogMacro( CRITICAL,
                     "Cannot write command to serial port.\n" );
@@ -252,7 +252,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
 
   unsigned int bytesRead;
 
-  if (m_Communication->Read((char*)data,recordSize,bytesRead) != SUCCESS) 
+  if (m_Communication->Read((char*)data,recordSize,bytesRead) != igstk::Communication::SUCCESS) 
     {
     igstkLogMacro( CRITICAL,
                   "Cannot read command from serial port.\n" );
