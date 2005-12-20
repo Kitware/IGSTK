@@ -200,12 +200,12 @@ public:  \
 
 /** Convenience macro for adding Inputs to the State Machine */
 #define igstkAddInputMacro( inputname ) \
-    this->m_StateMachine.AddInput( this->m_##inputname##Input,  "inputname##Input" );
+    this->m_StateMachine.AddInput( this->m_##inputname##Input,  #inputname"Input" );
 
 
 /** Convenience macro for adding States to the State Machine */
 #define igstkAddStateMacro( statename ) \
-    this->m_StateMachine.AddState( this->m_##statename##State,  "statename##State" );
+    this->m_StateMachine.AddState( this->m_##statename##State,  #statename"State" );
 
 
 /** Convenience macro for adding Transitions to the State Machine */
