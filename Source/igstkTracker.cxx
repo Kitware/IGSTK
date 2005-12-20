@@ -689,6 +689,7 @@ void Tracker::UpdateStatusSuccessProcessing( void )
            ( !m_ApplyingReferenceTool || m_ReferenceTool->GetUpdated() ) )
         {
         TransformType transform = tool->GetRawTransform();
+
         ToolCalibrationTransformType toolCalibrationTransform
                                     = tool->GetToolCalibrationTransform();
 
@@ -712,7 +713,7 @@ void Tracker::UpdateStatusSuccessProcessing( void )
         translation = toolCalibrationTransform.GetTranslation();
 
         // transform by the tracker's tool transform
-        rotation *= transform.GetRotation();
+        rotation = transform.GetRotation()*rotation;
         translation = transform.GetRotation().Transform(translation);
         translation += transform.GetTranslation();
 
@@ -737,7 +738,7 @@ void Tracker::UpdateStatusSuccessProcessing( void )
           }
 
         // applying PatientTransform
-        rotation *= m_PatientTransform.GetRotation();
+        rotation = m_PatientTransform.GetRotation()*rotation;
         translation = m_PatientTransform.GetRotation().Transform(translation);
         translation += m_PatientTransform.GetTranslation();
 
