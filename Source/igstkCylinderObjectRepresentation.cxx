@@ -146,6 +146,11 @@ void CylinderObjectRepresentation::CreateActors()
   cylinderMapper->SetInput(m_CylinderSource->GetOutput());
   cylinderActor->SetMapper( cylinderMapper );
 
+  // We align the actor in the Z direction such that the top of
+  // the cylinder is at (0,0,-m_Height) and the tip at (0,0,0)
+  cylinderActor->SetOrientation(90,0,0);
+  cylinderActor->SetPosition(0,0,-m_CylinderSpatialObject->GetHeight()/2.0);
+
   // We should check if the actor doesn't exist
   this->AddActor( cylinderActor );
   cylinderMapper->Delete();
