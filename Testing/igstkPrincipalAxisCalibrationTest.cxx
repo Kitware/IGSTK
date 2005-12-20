@@ -87,6 +87,12 @@ int igstkPrincipalAxisCalibrationTest( int, char * [] )
   else
     {
     // Dump the self class information
+    std::cout << "Initial Principal Axis:" << principal->GetInitialPrincipalAxis() << std::endl;
+    std::cout << "Initial Plane Normal:" << principal->GetInitialPlaneNormal() << std::endl;
+    std::cout << "Desired Principal Axis:" << principal->GetDesiredPrincipalAxis() << std::endl;
+    std::cout << "Desired Plane Normal:" << principal->GetDesiredPlaneNormal() << std::endl;      
+    std::cout << "Calibration Transform:" << principal->GetCalibrationTransform() << std::endl;
+
     principal->Print( std::cout);
 
     } 
