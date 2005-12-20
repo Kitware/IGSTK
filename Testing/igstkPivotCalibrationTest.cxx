@@ -201,6 +201,9 @@ int igstkPivotCalibrationTest( int, char * [] )
 
     }
 
+  // Test the NoProcessing function
+  pivot->RequestCalculateCalibrationZ();
+
   return EXIT_SUCCESS;
 
 }
