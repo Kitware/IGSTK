@@ -7,6 +7,12 @@ SET(IGSTKSandbox_HEADS
   igstkMouseTracker.h
   igstkPivotCalibration.h
   igstkPrincipalAxisCalibration.h
+  igstkFlockOfBirdsTracker.h
+  igstkFlockOfBirdsTrackerTool.h
+  igstkUltrasoundProbeObject.h
+  igstkUltrasoundProbeObjectRepresentation.h
+  igstkAxesObject.h
+  igstkAxesObjectRepresentation.h
 )
 
 
@@ -15,6 +21,12 @@ SET(IGSTKSandbox_SRCS
   igstkMouseTracker.cxx
   igstkPivotCalibration.cxx
   igstkPrincipalAxisCalibration.cxx
+  igstkFlockOfBirdsTracker.cxx
+  igstkFlockOfBirdsTrackerTool.cxx
+  igstkUltrasoundProbeObject.cxx
+  igstkUltrasoundProbeObjectRepresentation.cxx
+  igstkAxesObject.cxx
+  igstkAxesObjectRepresentation.cxx
 )
 
 # Variable for holding extra libraries
