@@ -726,7 +726,7 @@ void Tracker::UpdateStatusSuccessProcessing( void )
 
           translation -= m_ReferenceTool->GetRawTransform().GetTranslation();
           translation = inverseRotation.Transform(translation);
-          rotation *= inverseRotation;
+          rotation = inverseRotation*rotation;
 
           // also include the reference tool's ToolCalibrationTransform
           inverseRotation = m_ReferenceTool->GetToolCalibrationTransform().
@@ -734,7 +734,7 @@ void Tracker::UpdateStatusSuccessProcessing( void )
           translation -= m_ReferenceTool->GetToolCalibrationTransform().
                                              GetTranslation();
           translation = inverseRotation.Transform(translation);
-          rotation *= inverseRotation;
+          rotation = inverseRotation*rotation;
           }
 
         // applying PatientTransform
