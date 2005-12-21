@@ -11,4 +11,5 @@ SUBDIRS(
   FourViewsAndTracking
   FourViewsTrackingWithCT
   FourViews
+  UltrasoundGuidedRFA
   )
