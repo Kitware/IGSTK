@@ -97,6 +97,9 @@ int igstkPrincipalAxisCalibrationTest( int, char * [] )
 
     } 
 
+  // Simulate NoProcessing test
+  principal->RequestCalculateRotation();
+
   return EXIT_SUCCESS;
 
 }
