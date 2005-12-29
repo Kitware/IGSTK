@@ -24,8 +24,6 @@ SET(IGSTK_HEADS
   igstkEllipsoidObject.h  
   igstkEllipsoidObjectRepresentation.h  
   igstkEvents.h
-  igstkFLTKTextBufferLogOutput.h
-  igstkFLTKTextLogOutput.h
   igstkMacros.h
   igstkMeshObject.h
   igstkMeshObjectRepresentation.h
@@ -51,9 +49,6 @@ SET(IGSTK_HEADS
   igstkTrackerTool.h
   igstkTubeObject.h
   igstkTubeObjectRepresentation.h
-  igstkView.h
-  igstkView2D.h
-  igstkView3D.h
   igstkVTKLoggerOutput.h
   igstkSpatialObjectReader.h
   igstkTubeReader.h
@@ -61,6 +56,17 @@ SET(IGSTK_HEADS
   igstkGroupObject.h
   igstkTubeGroupObject.h
 )
+
+IF(FLTK_FOUND)
+  SET(IGSTK_HEADS
+    ${IGSTK_HEADS}
+    igstkFLTKTextBufferLogOutput.h
+    igstkFLTKTextLogOutput.h
+    igstkView.h
+    igstkView2D.h
+    igstkView3D.h
+    )
+ENDIF(FLTK_FOUND)
 
 # The implementation files
 
@@ -86,8 +92,6 @@ SET(IGSTK_SRCS
   igstkEllipsoidObjectRepresentation.cxx
   igstkMeshObject.cxx
   igstkMeshObjectRepresentation.cxx
-  igstkFLTKTextBufferLogOutput.cxx
-  igstkFLTKTextLogOutput.cxx
   igstkMultipleOutput.cxx
   igstkNDICommandInterpreter.cxx
   igstkObject.cxx
@@ -116,6 +120,16 @@ SET(IGSTK_SRCS
   igstkGroupObject.cxx
   igstkTubeGroupObject.cxx
 )
+
+IF(FLTK_FOUND)
+  SET(IGSTK_SRCS  
+    ${IGSTK_SRCS}
+    igstkFLTKTextBufferLogOutput.cxx
+    igstkFLTKTextLogOutput.cxx
+    )
+ENDIF(FLTK_FOUND)
+
+
 
 
 IF( WIN32 )

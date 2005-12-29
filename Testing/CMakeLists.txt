@@ -51,9 +51,12 @@ ADD_TEST(igstkCylinderObjectTest ${IGSTK_TESTS} igstkCylinderObjectTest)
 
 ADD_TEST(igstkEllipsoidObjectTest ${IGSTK_TESTS} igstkEllipsoidObjectTest)
 
-ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTK_TESTS} igstkFLTKTextBufferLogOutputTest)
-
-ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTK_TESTS} igstkFLTKTextLogOutputTest)
+IF(FLTK_FOUND)
+  ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTK_TESTS} igstkFLTKTextBufferLogOutputTest)
+  ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTK_TESTS} igstkFLTKTextLogOutputTest)
+  ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
+  ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
+ENDIF(FLTK_FOUND)
 
 ADD_TEST(igstkMeshObjectTest ${IGSTK_TESTS} igstkMeshObjectTest)
 
@@ -95,10 +98,6 @@ ADD_TEST(igstkTransformTest ${IGSTK_TESTS} igstkTransformTest)
 
 ADD_TEST(igstkTubeObjectTest ${IGSTK_TESTS} igstkTubeObjectTest)
 
-ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
-
-ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
-
 ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 
 IF (IGSTK_DATA_ROOT) 
@@ -112,13 +111,16 @@ IF (IGSTK_DATA_ROOT)
    ADD_TEST( igstkMRImageReaderTest ${IGSTK_TESTS} igstkMRImageReaderTest 
        ${IGSTK_DATA_ROOT}/Input/E000192 )
 
-   ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest ${IGSTK_TESTS}
+   IF(FLTK_FOUND)
+     ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest 
+            ${IGSTK_TESTS}
             --compare ${BASELINE}/igstkViewScreenShot.png 
                       ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
             --tolerance 5
             igstkCTImageSpatialObjectReadingAndRepresentationTest
             ${IGSTK_DATA_ROOT}/Input/E000192
             ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png)
+   ENDIF(FLTK_FOUND)
 
    ADD_TEST( igstkMeshReaderTest ${IGSTK_TESTS} igstkMeshReaderTest 
        ${IGSTK_DATA_ROOT}/Input/liver.msh  
@@ -175,8 +177,6 @@ SET(BasicTests_SRCS
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkStringEventTest.cxx
   igstkEllipsoidObjectTest.cxx
-  igstkFLTKTextBufferLogOutputTest.cxx
-  igstkFLTKTextLogOutputTest.cxx
   igstkLandmark3DRegistrationTest.cxx
   igstkImageReaderTest.cxx
   igstkCTImageReaderTest.cxx
@@ -204,6 +204,16 @@ SET(BasicTests_SRCS
   igstkSpatialObjectReaderTest.cxx
   igstkTubeReaderTest.cxx 
   )
+
+
+IF(FLTK_FOUND)
+  SET(BasicTests_SRCS
+    ${BasicTests_SRCS}
+    igstkFLTKTextBufferLogOutputTest.cxx
+    igstkFLTKTextLogOutputTest.cxx
+    )
+ENDIF(FLTK_FOUND)
+
 
 IF(IGSTK_TEST_AURORA_ATTACHED)
   SET(BasicTests_SRCS ${BasicTests_SRCS}
