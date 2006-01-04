@@ -264,15 +264,15 @@ Landmark3DRegistration:: ComputeTransformProcessing()
     }
 
   if( failure )
-  {
+    {
     std::cout << "ComputationFailureInput getting pushed" << std::endl;
     igstkPushInputMacro( TransformComputationFailure );
-  }
+    }
   else
-  {
+    {
     std::cout << "ComputationSuccessInput getting pushed" << std::endl;
     igstkPushInputMacro( TransformComputationSuccess );
-  }    
+    }    
   
   this->m_StateMachine.ProcessInputs();
 }

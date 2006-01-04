@@ -152,10 +152,10 @@ int igstkPulseGeneratorTest( int, char * [] )
     observer->SetCounter( counter );
     observer->SetEndFlag( &bEnd );
 
-//    Fl::run();
     while(1)
       {
       Fl::wait(0.1);
+      igstk::PulseGenerator::CheckTimeouts();
       if( bEnd )
         {
         break;

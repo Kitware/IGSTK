@@ -60,6 +60,12 @@ namespace ViewRefreshRateTest
       {
       m_Form = form;
       }
+
+    void SetEndFlag( bool * end )
+      {
+      m_End = end;
+      }
+
     void Execute(const itk::Object *caller, const itk::EventObject & event)
       {
       std::cerr << "Execute( const * ) should not be called" << std::endl;         
@@ -99,6 +105,7 @@ namespace ViewRefreshRateTest
             {
             m_Form->hide();
             }
+          *m_End = true;
           return;
           }
         }
@@ -108,6 +115,7 @@ namespace ViewRefreshRateTest
     unsigned long       m_NumberOfPulsesToStop;
     Fl_Window          *m_Form;
     ::igstk::View      *m_View;
+    bool *              m_End;
   };
 
 
@@ -160,11 +168,14 @@ int igstkViewRefreshRateTest( int, char * [] )
     view2D->RequestDisableInteractions();
     view3D->RequestDisableInteractions();
 
+    bool bEnd = false;
+
     typedef ViewRefreshRateTest::ViewObserver ObserverType;
     ObserverType::Pointer viewObserver = ObserverType::New();
     
     viewObserver->SetView( view2D );
     viewObserver->SetForm( form );
+    viewObserver->SetEndFlag( &bEnd );
 
     // Exercise the code for resizing the window
     form->resize(100, 100, 600, 300);
@@ -192,11 +203,20 @@ int igstkViewRefreshRateTest( int, char * [] )
     // Now go for the actual measurement of the refresh rate
     itk::RealTimeClock::Pointer realTimeClock = itk::RealTimeClock::New();
     
-    const double beginTime = realTimeClock->GetTimestamp();
+    const double beginTime = realTimeClock->GetTimeStamp();
     
-    Fl::run();
+    while(1)
+      {
+      Fl::wait(0.1);
+      igstk::PulseGenerator::CheckTimeouts();
+      if( bEnd )
+        {
+        break;
+        }
+      }
 
-    const double endTime   = realTimeClock->GetTimestamp();
+
+    const double endTime   = realTimeClock->GetTimeStamp();
 
     const double secondsElapsed = endTime - beginTime;
 

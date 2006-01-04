@@ -22,16 +22,42 @@
 #include "igstkPulseGenerator.h"
 
 #include <iostream>
-#include <FL/Fl.H>
 #include "igstkEvents.h"
+
+
 
 namespace igstk
 {
 
-double PulseGenerator::m_MaximumFrequency = 10000; // 10 KHz
+// Initialize Static Variables.
+//
+double PulseGenerator::m_MaximumFrequency = 10000.0; // 10 KHz
 
+itk::RealTimeClock::Pointer PulseGenerator::m_RealTimeClock = 0;
+
+PulseGenerator::Timeout * PulseGenerator::m_FirstTimeout = 0;
+
+PulseGenerator::Timeout * PulseGenerator::m_FreeTimeout  = 0;
+
+int PulseGenerator::m_FreeTimeoutCount = 0;
+
+char PulseGenerator::m_ResetClock = 1;
+
+double PulseGenerator::m_MissedTimeoutBy = 0.0;
+
+double PulseGenerator::m_PreviousClock = 0.0;
+
+
+
+
+/** Constructor */
 PulseGenerator::PulseGenerator():m_StateMachine(this)
 {
+
+  if( !m_RealTimeClock )
+    {
+    m_RealTimeClock = itk::RealTimeClock::New();
+    }
 
   igstkAddInputMacro( ValidFrequency );
   igstkAddInputMacro( InvalidLowFrequency );
@@ -154,8 +180,8 @@ void
 PulseGenerator::SetTimerProcessing()
 {
   igstkLogMacro( DEBUG, "SetTimerProcessing() called ...\n");
-  Fl::add_timeout( m_Period, 
-            ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
+  this->AddTimeout( m_Period, 
+     ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
 }
 
 
@@ -163,8 +189,8 @@ void
 PulseGenerator::StopPulsesProcessing()
 {
   igstkLogMacro( DEBUG, "StopPulsesProcessing() called ...\n");
-  Fl::remove_timeout( 
-            ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
+  this->RemoveTimeout( 
+    ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
 }
 
 
@@ -201,7 +227,7 @@ PulseGenerator::CallbackTimer()
   // Set the timer for the next pulse. It is rescheduled at the end of the CallbackTimer()
   // just in case the previous two ProcessInputs() calls takes a significant amount of time
   // and risk to make the PulseGenerator to miss a timer pulse.
-  Fl::repeat_timeout( m_Period, 
+  RepeatTimeout( m_Period, 
             ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
 }
 
@@ -228,6 +254,140 @@ PulseGenerator::ReportMissedPulseProcessing()
   igstkLogMacro( WARNING, "ReportMissedPulseProcessing() called ...Pulse Missed !!!. It means that the frequency of the pulse generator is to high for the time needed by Observers to complete their execute method. Please reduce the frequency, of use faster Execute methjods.");
 }
 
+
+
+
+void 
+PulseGenerator
+::AddTimeout(double time, TimeoutHandler cb, void* data)
+{
+  ElapseTimeouts();
+  RepeatTimeout(time, cb, data);
+}
+
+
+
+void PulseGenerator
+::RepeatTimeout(double time, TimeoutHandler cb, void *argp) 
+{
+
+  time += m_MissedTimeoutBy; 
+  
+  if (time < -0.05)
+    {
+    time = 0;
+    }
+
+  Timeout * t = m_FreeTimeout ;
+
+  if( t ) 
+    {
+    m_FreeTimeout  = t->next;
+    --m_FreeTimeoutCount;
+    }
+  else 
+    {
+    t = new Timeout;
+    }
+  
+  t->time = time;
+  t->cb = cb;
+  t->arg = argp;
+  
+  // insert-sort the new timeout:
+  Timeout ** p = &m_FirstTimeout; 
+
+  while( *p && (*p)->time <= time ) 
+    {
+    p = &((*p)->next);
+    }
+
+  t->next = *p;
+  *p = t;
+}
+
+void PulseGenerator
+::RemoveTimeout( TimeoutHandler cb, void *argp) 
+{
+  // This version removes all matching timeouts, not just the first one.
+  for( Timeout ** p = & m_FirstTimeout; *p; ) 
+    {
+    Timeout * t = *p;
+    if(t->cb == cb && (t->arg == argp || !argp))
+      {
+      *p = t->next;
+      t->next = m_FreeTimeout ;
+      m_FreeTimeout  = t;
+      } 
+    else 
+      {
+      p = &(t->next);
+      }
+    }
+}
+
+void PulseGenerator
+::CheckTimeouts() 
+{
+  ElapseTimeouts();
+  InvokeTimeoutActions();
+}
+
+
+void PulseGenerator
+::ElapseTimeouts() 
+{
+
+  const double newclock = m_RealTimeClock->GetTimeStamp();
+  
+  const double elapsed = newclock - m_PreviousClock;
+  
+  m_PreviousClock = newclock;
+  
+  if( m_ResetClock ) 
+    {
+    m_ResetClock = 0;
+    } 
+  else 
+    {
+    if( elapsed > 0.0 ) 
+      {
+      for( Timeout * t = m_FirstTimeout; t; t = t->next ) 
+        {
+        t->time -= elapsed;
+        }
+      }
+    }
+}
+
+
+void PulseGenerator
+::InvokeTimeoutActions() 
+{
+  // flag for preventing this method from being 
+  // invoked from any of the timeout callbacks.
+  static bool isReentrant = false;
+
+  if( isReentrant )
+    {
+    return;
+    }
+
+  isReentrant = true;
+
+  Timeout * t = m_FirstTimeout;
+
+  while( t && t->time < 0.0 ) 
+    {
+    (t->cb)(t->arg);
+    m_FirstTimeout = t->next;
+    Timeout * tt = t;
+    t = t->next;
+    delete tt;
+    }
+
+  isReentrant = false;
+}
 
 /** Print Self function */
 void PulseGenerator::PrintSelf( std::ostream& os, itk::Indent indent ) const

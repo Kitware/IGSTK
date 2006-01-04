@@ -64,6 +64,10 @@ namespace ViewTest
       m_View->AddObserver( ::igstk::RefreshEvent(), this );
       }
     }
+    void SetEndFlag( bool * end )
+      {
+      m_End = end;
+      }
 
     void Execute(itk::Object *caller, const itk::EventObject & event)
       {
@@ -85,6 +89,7 @@ namespace ViewTest
             {
             m_Form->hide();
             }
+          *m_End = true;
           return;
           }
         }
@@ -93,6 +98,7 @@ namespace ViewTest
     unsigned long       m_PulseCounter;
     Fl_Window          *m_Form;
     ::igstk::View      *m_View;
+    bool *              m_End;
   };
 
 
@@ -105,6 +111,8 @@ int igstkViewTest( int, char * [] )
 
   typedef igstk::View2D  View2DType;
   typedef igstk::View3D  View3DType;
+
+  bool bEnd = false;
 
   try
     {
@@ -196,6 +204,7 @@ int igstkViewTest( int, char * [] )
     
     viewObserver->SetView( view3D );
     viewObserver->SetForm( form );
+    viewObserver->SetEndFlag( &bEnd );
 
     // Exercise the code for resizing the window
     form->resize(100, 100, 600, 300);
@@ -213,7 +222,17 @@ int igstkViewTest( int, char * [] )
     view2D->RequestSetRefreshRate( 30 );
     view3D->RequestSetRefreshRate( 10 );
 
-    Fl::run();
+
+    while(1)
+      {
+      Fl::wait(0.1);
+      igstk::PulseGenerator::CheckTimeouts();
+      if( bEnd )
+        {
+        break;
+        }
+      }
+
 
     // at this point the observer should have hid the form
 

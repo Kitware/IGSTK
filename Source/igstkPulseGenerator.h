@@ -22,6 +22,7 @@
 #include "igstkObject.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
+#include "itkRealTimeClock.h"
 
 
 namespace igstk
@@ -71,6 +72,10 @@ public:
   /** Return the value set for the frequency of this pulse generator */
   igstkGetMacro( Frequency, double );
       
+  /** Method to be called from the main event loop in order to keep the timers
+   * counting */
+  static void CheckTimeouts();
+
 protected:
 
   /** Constructor is protected in order to enforce 
@@ -139,6 +144,46 @@ private:
 
   /** Null operation for a State Machine transition */
   void NoProcessing();
+
+
+private:
+
+  /** Types and methods needed for supporting timers */
+
+  struct Timeout 
+    {
+    double time;
+    void (*cb)(void*);
+    void* arg;
+    Timeout* next;
+    };
+
+  typedef void (*TimeoutHandler)(void*);
+
+  static void AddTimeout(double time, TimeoutHandler cb, void* data);
+
+  static void RepeatTimeout(double time, TimeoutHandler cb, void *argp);
+
+  static void RemoveTimeout( TimeoutHandler cb, void *argp);
+
+  static void ElapseTimeouts();
+
+  static void InvokeTimeoutActions();
+
+
+  static itk::RealTimeClock::Pointer   m_RealTimeClock;
+
+  static double       m_PreviousClock;
+
+  static Timeout *    m_FirstTimeout;
+
+  static Timeout *    m_FreeTimeout;
+
+  static int          m_FreeTimeoutCount;
+
+  static char         m_ResetClock;
+  
+  static double       m_MissedTimeoutBy;
 
 };
 
