@@ -1,0 +1,109 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkAnnotation2D.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
+#include "igstkAnnotation2D.h" 
+#include "vtkActor2D.h"
+#include "vtkTextProperty.h"
+#include "vtkTextMapper.h"
+
+
+namespace igstk 
+{ 
+
+/** Constructor */
+Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
+{
+  m_LastMTime = 0;
+
+  for (int i = 0; i < 4; i++)
+  {
+    this->m_AnnotationText[i] = "";
+    this->m_AnnotationMapper[i] = vtkTextMapper::New();
+    this->m_AnnotationActor[i]  = vtkActor2D::New();
+    this->m_AnnotationActor[i]->SetMapper(this->m_AnnotationMapper[i]);
+    this->AddActors( m_AnnotationActor[i] );
+  }
+} 
+
+/** Destructor */
+Annotation2D::~Annotation2D()  
+{ 
+  // This must be invoked in order to prevent Memory Leaks.
+  this->DeleteActors();
+}
+
+/** Add actor */
+void Annotation2D::AddActors( vtkActor2D * actor )
+{
+  m_Actors.push_back( actor );
+}
+
+
+/** Add annotation */
+void Annotation2D::AddAnnotationText( int i, const std::string text )
+{
+  if ( i < 0 && i > 3 ) 
+  {
+    return;
+  }
+  
+  m_AnnotationText[i] = text; 
+}
+
+void Annotation2D::AddAnnotations( vtkViewport * viewport )
+{
+  int *vSize = viewport->GetSize();  
+  this->m_AnnotationActor[0]->SetPosition(5,5);
+  this->m_AnnotationActor[1]->SetPosition(vSize[0] - 5,5);
+  this->m_AnnotationActor[2]->SetPosition(5, vSize[1] - 5);
+  this->m_AnnotationActor[3]->SetPosition(vSize[0] - 5, vSize[1] - 5);
+}
+
+/** Has the object been modified */
+bool Annotation2D::IsModified() const
+{
+  if( m_LastMTime < this->GetMTime() )
+  {
+    return true;
+  }
+  
+  return false;
+}
+
+
+/** Empty the list of actors */
+void Annotation2D::DeleteActors()
+{
+  ActorsListType::iterator it = m_Actors.begin();
+  while(it != m_Actors.end())
+    {
+    (*it)->Delete();
+    it++;
+    }
+
+  // Reset the list of actors
+  m_Actors.clear();
+}
+
+/** Print Self function */
+void Annotation2D::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+} // end namespace igstk
+
