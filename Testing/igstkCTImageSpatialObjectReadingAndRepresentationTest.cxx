@@ -28,9 +28,9 @@
 int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[] )
 {
 
-  if( argc < 3 )
+  if( argc < 4 )
     {
-    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  "<< "Output image file for a screenshot" << std::endl;
+    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  "<< "Output image file for a screenshot" <<" CTImageExcerpt "<< std::endl;
     return EXIT_FAILURE;
     }
   
@@ -150,6 +150,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
   // Do manual redraws for each orientation while changing slice numbers
   {
   representation->RequestSetOrientation( RepresentationType::Axial );
+  view2D->RequestSetOrientation( igstk::View2D::Axial );
+  view2D->RequestResetCamera();
   for(unsigned int i=0; i<10; i++)
     {
     representation->RequestSetSliceNumber( i );
@@ -161,6 +163,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
 
   {
   representation->RequestSetOrientation( RepresentationType::Sagittal );
+  view2D->RequestSetOrientation( igstk::View2D::Sagittal );
+  view2D->RequestResetCamera();
   for(unsigned int i=0; i<10; i++)
     {
     representation->RequestSetSliceNumber( i );
@@ -172,6 +176,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
 
   {
   representation->RequestSetOrientation( RepresentationType::Coronal );
+  view2D->RequestSetOrientation( igstk::View2D::Coronal );
+  view2D->RequestResetCamera();
   for(unsigned int i=0; i<10; i++)
     {
     representation->RequestSetSliceNumber( i );
@@ -181,7 +187,55 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
     }
   }
 
+  view2D->RequestRemoveObject( representation );
+  representation = NULL;
+  view2D->RequestRemoveObject( representation );
 
+  /** Testing the reuse of the reader by reading a image with different size
+   *  Testing the ITK image to VTK image filter pipeline 
+   */
+  {
+  igstk::CTImageReader::Pointer reader = igstk::CTImageReader::New();
+  igstk::CTImageSpatialObjectRepresentation::Pointer representation = igstk::CTImageSpatialObjectRepresentation::New();
+  igstk::CTImageReader::DirectoryNameType directoryName;
+
+  view2D->RequestAddObject( representation );
+  view2D->RequestSetOrientation( igstk::View2D::Axial );
+
+  std::cout << "Reading the first DICOM series : " << argv[1] <<std::endl;
+  directoryName = argv[1];
+  reader->RequestSetDirectory( directoryName );
+  reader->RequestReadImage();    
+  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+  representation->RequestSetOrientation( RepresentationType::Axial );
+
+  for(unsigned int i=0; i<10; i++)
+    {
+    representation->RequestSetSliceNumber( i );
+    view2D->Update();
+    Fl::check();
+    std::cout << "i= " << i << std::endl;
+    }
+
+  std::cout << "Reset the reader...." << std::endl;
+  reader->RequestResetReader();
+
+  std::cout << "Reading the second DICOM series : " << argv[3] <<std::endl;
+  directoryName = argv[3];
+  reader->RequestSetDirectory( directoryName );
+  reader->RequestReadImage();    
+  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+  representation->RequestSetOrientation( RepresentationType::Axial );
+
+  for(unsigned int i=0; i<10; i++)
+    {
+    representation->RequestSetSliceNumber( i );
+    view2D->Update();
+    Fl::check();
+    std::cout << "i= " << i << std::endl;
+    }
+
+  }
 
   delete view2D;
   delete form;
