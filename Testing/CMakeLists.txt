@@ -119,8 +119,8 @@ IF (IGSTK_DATA_ROOT)
             --tolerance 5
             igstkCTImageSpatialObjectReadingAndRepresentationTest
             ${IGSTK_DATA_ROOT}/Input/E000192
-            ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png)
-            ${IGSTK_DATA_ROOT}/Input/E000192Excerpt
+            ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
+            ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
    ENDIF(FLTK_FOUND)
 
    ADD_TEST( igstkMeshReaderTest ${IGSTK_TESTS} igstkMeshReaderTest 
