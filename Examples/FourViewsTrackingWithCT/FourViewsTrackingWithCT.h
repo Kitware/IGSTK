@@ -58,28 +58,18 @@ PURPOSE.  See the above copyright notices for more information.
 namespace igstk
 {
 
-class FourViewsTrackingWithCT : public FourViewsTrackingWithCTGUI, public itk::Object
+class FourViewsTrackingWithCT : public FourViewsTrackingWithCTGUI, public igstk::Object
 {
 public:
   /** Typedefs */
-  typedef FourViewsTrackingWithCT        Self;
-  typedef FourViewsTrackingWithCTGUI     Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer; 
-  igstkTypeMacro( FourViewsTrackingWithCT, FourViewsTrackingWithCTGUI );
+  igstkStandardClassBasicTraitsMacro( FourViewsTrackingWithCT, FourViewsTrackingWithCTGUI );
   igstkNewMacro( Self );
-
-  /** typedef for LoggerType */
-  typedef itk::Logger                    LoggerType;
 
   /** typedefs for the log output */
   typedef itk::StdStreamLogOutput        LogOutputType;
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
-
-  /** Declarations needed for the Logging the application */
-  igstkLoggerMacro();
 
   /** typedef for ImageReaderType */
   typedef CTImageReader                                 ImageReaderType;
@@ -110,7 +100,7 @@ public:
 
   /** Public request methods from the GUI. */
   virtual void RequestSetPatientName();
-  virtual void RequestLoadImageProcessing();
+  virtual void RequestLoadImage();
   virtual void RequestInitializeTracker();
   virtual void RequestAddImageLandmark();
   virtual void RequestAddTrackerLandmark();

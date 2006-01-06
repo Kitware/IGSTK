@@ -28,7 +28,7 @@ namespace igstk
 FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 {  
   /** Setup m_Logger, this logger is used to log the application class. */
-  m_Logger = LoggerType::New();
+  //m_Logger = LoggerType::New();
 
   /** Setup logger, for all other igstk components. */
   logger   = LoggerType::New();
@@ -36,13 +36,13 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   /** Direct the application log message to the std::cout and FLTK text display. */
   m_LogCoutOutput = LogOutputType::New();
   m_LogCoutOutput->SetStream( std::cout );
-  m_Logger->AddLogOutput( m_LogCoutOutput );
+  this->GetLogger()->AddLogOutput( m_LogCoutOutput );
 
   Fl_Text_Buffer * textBuffer = new Fl_Text_Buffer();                    
   this->m_LogWindow->buffer( textBuffer );
   m_LogFLTKOutput = FLTKTextLogOutput::New();
   m_LogFLTKOutput->SetStream( *m_LogWindow );
-  m_Logger->AddLogOutput( m_LogFLTKOutput );
+  this->GetLogger()->AddLogOutput( m_LogFLTKOutput );
 
   /** Direct the igstk components log message to the file. */
   m_LogFileOutput = LogOutputType::New();
@@ -51,7 +51,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   if( !m_LogFile.fail() )
     {
     m_LogFileOutput->SetStream( m_LogFile );
-    m_Logger->AddLogOutput( m_LogFileOutput );
+    this->GetLogger()->AddLogOutput( m_LogFileOutput );
     logger->AddLogOutput( m_LogFileOutput );
     }
   else
@@ -105,17 +105,22 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 
   igstk::Transform::VectorType CylinderTipOffset;     //FIXME, SpatialObject should have an tip to origin offet
   CylinderTipOffset[0] = 0;   // Tip offset
-  CylinderTipOffset[1] = 0;
-  CylinderTipOffset[2] = -100;
+  CylinderTipOffset[1] = -200;
+  CylinderTipOffset[2] = 0;
   
   /** Tool calibration transform */
   igstk::Transform toolCalibrationTransform;
   igstk::Transform::VectorType translation;
-  igstk::Transform::VersorType rotation = pivot->GetCalibrationTransform().GetRotation();
+  igstk::Transform::VersorType rotation;
+ 
+  rotation.SetRotationAroundX( 3.1415926/2 );
+  rotation = rotation.GetConjugate() ;  
+  rotation.SetIdentity();
+  
   translation[0] = -18.0;   // Tip offset
   translation[1] = 0.5;
   translation[2] = -157.5;
-  
+
   toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
   m_Tracker->SetToolCalibrationTransform( TRACKER_TOOL_PORT, 0, toolCalibrationTransform);
 
@@ -235,7 +240,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   /** Display image */
   igstkAddTransitionMacro( ImageReady, PatientNameMatch, PatientNameVerified, ConnectImageRepresentation );
   igstkAddTransitionMacro( ImageReady, OverwritePatientName, PatientNameVerified, ConnectImageRepresentation );
-  igstkAddTransitionMacro( ImageReady, ReloadImage, PatientNameReady, RequestLoadImage );
+  igstkAddTransitionMacro( ImageReady, ReloadImage, WaitingForDICOMDirectory, LoadImage );
 
   /** Receive Slice Information from the Image Representation */
   igstkAddTransitionMacro( PatientNameVerified, AxialBounds, PatientNameVerified, SetAxialSliderBounds );
@@ -333,7 +338,7 @@ void FourViewsTrackingWithCT::SetPatientNameProcessing()
 }
 
 
-void FourViewsTrackingWithCT::RequestLoadImageProcessing()
+void FourViewsTrackingWithCT::RequestLoadImage()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestLoadImageProcessing called...\n" )
   m_StateMachine.PushInput( m_RequestLoadImageInput );
@@ -578,6 +583,7 @@ void FourViewsTrackingWithCT::RequestStartTracking()
 void FourViewsTrackingWithCT::StartTrackingProcessing()
 {
   igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::StartTrackingProcessing called ... \n" )
+
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Cylinder );
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Ellipsoid );
   m_Tracker->StartTracking();
@@ -647,6 +653,7 @@ void FourViewsTrackingWithCT::ResliceImage()
   m_ImageRepresentationSagittal3D->RequestSetSliceNumber( static_cast< unsigned int >( this->SagittalSlider->value() ) );
   m_ImageRepresentationCoronal3D->RequestSetSliceNumber( static_cast< unsigned int >( this->CoronalSlider->value() ) );
 
+  igstk::PulseGenerator::CheckTimeouts();
   this->ViewerGroup->redraw();
   Fl::check();
 }
@@ -663,11 +670,11 @@ void FourViewsTrackingWithCT::ResliceImage ( IndexType index )
   m_ImageRepresentationSagittal3D->RequestSetSliceNumber( index[0] );
   m_ImageRepresentationCoronal3D->RequestSetSliceNumber( index[1] );
 
+  igstk::PulseGenerator::CheckTimeouts();
+
   this->AxialSlider->value( index[2] );
   this->SagittalSlider->value( index[0] );
   this->CoronalSlider->value( index[1] ) ;
-  
-  igstkLogMacro( DEBUG, "Index:" << index << "\n" )
 
   this->ViewerGroup->redraw();
   Fl::check();
@@ -706,7 +713,6 @@ void FourViewsTrackingWithCT::ConnectImageRepresentationProcessing()
   this->DisplayCoronal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
   this->DisplayCoronal->RequestAddObject( m_CylinderRepresentation->Copy() );
 
-
   this->Display3D->RequestAddObject( m_ImageRepresentationAxial3D );
   this->Display3D->RequestAddObject( m_ImageRepresentationSagittal3D );
   this->Display3D->RequestAddObject( m_ImageRepresentationCoronal3D );
@@ -736,14 +742,13 @@ void FourViewsTrackingWithCT::ConnectImageRepresentationProcessing()
   this->DisplayAxial->RequestEnableInteractions();
   this->DisplayAxial->RequestSetRefreshRate( 30 ); // 30 Hz
   this->DisplayAxial->RequestStart();
-
-  this->ResliceImage();  //FIXME: This is not right
-
+  
   // Request information about the slices. The answers will be 
   // received in the form of events.
   this->m_ImageRepresentationAxial->RequestGetSliceNumberBounds();
   this->m_ImageRepresentationSagittal->RequestGetSliceNumberBounds();
   this->m_ImageRepresentationCoronal->RequestGetSliceNumberBounds();
+
 }
 
   
@@ -760,6 +765,9 @@ void FourViewsTrackingWithCT::SetAxialSliderBoundsProcessing()
   this->AxialSlider->maximum( max );
   this->AxialSlider->value( slice );  
   this->AxialSlider->activate();
+
+  this->ViewerGroup->redraw();
+  Fl::check();
 }
     
 
@@ -776,6 +784,9 @@ void FourViewsTrackingWithCT::SetSagittalSliderBoundsProcessing()
   this->SagittalSlider->maximum( max );
   this->SagittalSlider->value( slice );  
   this->SagittalSlider->activate();
+
+  this->ViewerGroup->redraw();
+  Fl::check();
 }
     
 
@@ -791,6 +802,9 @@ void FourViewsTrackingWithCT::SetCoronalSliderBoundsProcessing()
   this->CoronalSlider->maximum( max );
   this->CoronalSlider->value( slice );  
   this->CoronalSlider->activate();
+
+  this->ViewerGroup->redraw();
+  Fl::check();
 }
 
 
