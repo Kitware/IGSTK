@@ -43,7 +43,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   this->RequestSetSpatialObject( m_ImageSpatialObject );
 
   // Create classes for displaying images
-  m_ImageActor = NULL;
+  m_ImageActor = vtkImageActor::New();
+  this->AddActor( m_ImageActor );
   m_MapColors  = vtkImageMapToColors::New();
   m_LUT        = vtkLookupTable::New();
   m_ImageData  = NULL;
@@ -60,6 +61,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   igstkAddInputMacro( InvalidSliceNumber  );
   igstkAddInputMacro( ValidOrientation  );
   igstkAddInputMacro( RequestSliceNumberBounds);
+  igstkAddInputMacro( ConnectVTKPipeline );
 
   igstkAddStateMacro( NullImageSpatialObject );
   igstkAddStateMacro( ValidImageSpatialObject );
@@ -110,6 +112,11 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   igstkAddTransitionMacro( ValidImageSpatialObject, RequestSliceNumberBounds, ValidImageSpatialObject, ReportSliceNumberBounds );
   igstkAddTransitionMacro( ValidSliceNumber, RequestSliceNumberBounds, ValidSliceNumber, ReportSliceNumberBounds );
   igstkAddTransitionMacro( ValidImageOrientation, RequestSliceNumberBounds, ValidImageOrientation, ReportSliceNumberBounds );
+
+  igstkAddTransitionMacro( NullImageSpatialObject, ConnectVTKPipeline, NullImageSpatialObject, No );
+  igstkAddTransitionMacro( ValidImageSpatialObject, ConnectVTKPipeline, ValidImageSpatialObject, ConnectVTKPipeline );
+  igstkAddTransitionMacro( ValidImageOrientation, ConnectVTKPipeline, ValidImageOrientation, ConnectVTKPipeline );
+  igstkAddTransitionMacro( ValidSliceNumber, ConnectVTKPipeline, ValidSliceNumber, ConnectVTKPipeline );
 
   igstkSetInitialStateMacro( NullImageSpatialObject );
 
@@ -383,26 +390,18 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   this->DeleteActors();
 
   m_ImageActor = vtkImageActor::New();
-
-  if( m_ImageActor && m_MapColors && m_LUT  )
-    {
-
-    this->AddActor( m_ImageActor );
+  this->AddActor( m_ImageActor );
     
-    m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
-    m_LUT->SetSaturationRange (0, 0);
-    m_LUT->SetHueRange (0, 0);
-    m_LUT->SetValueRange (0, 1);
-    m_LUT->SetRampToLinear();
+  m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+  m_LUT->SetSaturationRange (0, 0);
+  m_LUT->SetHueRange (0, 0);
+  m_LUT->SetValueRange (0, 1);
+  m_LUT->SetRampToLinear();
 
-    m_MapColors->SetLookupTable( m_LUT );
-    
-    m_ImageActor->InterpolateOn();
-    }
-  else
-    {
-    igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::CreateActors called with missing components\n");
-    }
+  m_MapColors->SetLookupTable( m_LUT );
+
+  igstkPushInputMacro( ConnectVTKPipeline );
+  m_StateMachine.ProcessInputs(); 
 
 }
 
@@ -511,6 +510,15 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 }
 
 
+template < class TImageSpatialObject >
+void
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::ConnectVTKPipelineProcessing() 
+{
+  m_MapColors->SetInput( m_ImageData );
+  m_ImageActor->SetInput( m_MapColors->GetOutput() );
+  m_ImageActor->InterpolateOn();
+}
 
 
 } // end namespace igstk

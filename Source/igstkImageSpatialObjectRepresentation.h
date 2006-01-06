@@ -189,6 +189,9 @@ private:
       
   /** Reports the minimum and maximum slice numbers on the current orientation */
   void ReportSliceNumberBoundsProcessing() ;
+
+  /** Connect VTK pipeline */
+  void ConnectVTKPipelineProcessing();
     
 private:
 
@@ -201,6 +204,7 @@ private:
   igstkDeclareInputMacro( InvalidSliceNumber );
   igstkDeclareInputMacro( ValidOrientation );
   igstkDeclareInputMacro( RequestSliceNumberBounds ); 
+  igstkDeclareInputMacro( ConnectVTKPipeline );
   
   /** States for the State Machine */
   igstkDeclareStateMacro( NullImageSpatialObject );
