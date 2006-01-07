@@ -81,7 +81,6 @@ ENDIF(IGSTK_BUILD_EXAMPLES)
 FIND_PATH(IGSTK_DATA_ROOT igstkDataReadMe.txt ${IGSTK_SOURCE_DIR}/Testing/Data $ENV{IGSTK_DATA_ROOT})
 MARK_AS_ADVANCED(IGSTK_DATA_ROOT)
 
-
 #-----------------------------------------------------------------------------
 # The entire IGSTK tree should use the same include path, except for the
 # Wrapping directory.

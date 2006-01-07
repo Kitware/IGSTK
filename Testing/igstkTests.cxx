@@ -27,59 +27,78 @@
 
 void RegisterTests()
 {
-#ifdef IGSTK_TEST_AURORA_ATTACHED
-  REGISTER_TEST(igstkAuroraTrackerTest);
-#endif
-  REGISTER_TEST(igstkAuroraTrackerSimulatedTest);
+
+// Register test  
   REGISTER_TEST(igstkBasicTrackerTest);
   REGISTER_TEST(igstkBinaryDataTest);
   REGISTER_TEST(igstkCommunicationTest);
-  REGISTER_TEST(igstkCylinderObjectTest);
-  REGISTER_TEST(igstkLandmark3DRegistrationTest);
-  REGISTER_TEST(igstkDICOMImageReaderTest);
-  REGISTER_TEST(igstkDICOMImageReaderErrorsTest);
-  REGISTER_TEST(igstkImageReaderTest);
-  REGISTER_TEST(igstkCTImageReaderTest);
   REGISTER_TEST(igstkCTImageSpatialObjectTest);
-  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
-  REGISTER_TEST(igstkMRImageReaderTest);
-  REGISTER_TEST(igstkMRImageSpatialObjectTest);
+  REGISTER_TEST(igstkImageReaderTest);
   REGISTER_TEST(igstkImageSpatialObjectTest);
-  REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
-  REGISTER_TEST(igstkCTImageSpatialObjectRepresentationTest);
+  REGISTER_TEST(igstkLandmark3DRegistrationTest);
   REGISTER_TEST(igstkMRImageSpatialObjectRepresentationTest);
+  REGISTER_TEST(igstkMRImageSpatialObjectTest);
+  REGISTER_TEST(igstkMultipleOutputTest);  
+  REGISTER_TEST(igstkSerialCommunicationTest);
+  REGISTER_TEST(igstkStateMachineErrorsTest);
+  REGISTER_TEST(igstkStateMachineTest);
   REGISTER_TEST(igstkStringEventTest);
-  REGISTER_TEST(igstkEllipsoidObjectTest);
-  REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
-  REGISTER_TEST(igstkFLTKTextLogOutputTest);
-  REGISTER_TEST(igstkMeshObjectTest);
-  REGISTER_TEST(igstkMultipleOutputTest);
-#if defined( IGSTK_TEST_AURORA_ATTACHED )
+  REGISTER_TEST(igstkTimeStampTest);
+  REGISTER_TEST(igstkTokenTest);
+  REGISTER_TEST(igstkTrackerPortTest);
+  REGISTER_TEST(igstkTrackerToolTest);
+  REGISTER_TEST(igstkTransformTest);  
+  REGISTER_TEST(igstkVTKLoggerOutputTest);
+
+// Tests depend on device 
+#ifdef IGSTK_TEST_AURORA_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
-#elif defined( IGSTK_TEST_POLARIS_ATTACHED )
+#elif IGSTK_TEST_POLARIS_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
 #endif
-  REGISTER_TEST(igstkNDICommandInterpreterSimulatedTest);
-  REGISTER_TEST(igstkNDICommandInterpreterStressTest);
+
+#ifdef IGSTK_TEST_AURORA_ATTACHED
+  REGISTER_TEST(igstkAuroraTrackerTest);
+#endif
+
 #ifdef IGSTK_TEST_POLARIS_ATTACHED
   REGISTER_TEST(igstkPolarisTrackerTest);
 #endif
-  REGISTER_TEST(igstkPolarisTrackerSimulatedTest);
-  REGISTER_TEST(igstkPulseGeneratorTest);
-  REGISTER_TEST(igstkSerialCommunicationTest);
-  REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
-  REGISTER_TEST(igstkStateMachineTest);
-  REGISTER_TEST(igstkStateMachineErrorsTest);
-  REGISTER_TEST(igstkTimeStampTest);
-  REGISTER_TEST(igstkTokenTest);
-  REGISTER_TEST(igstkTubeObjectTest);
-  REGISTER_TEST(igstkTrackerPortTest);
-  REGISTER_TEST(igstkTrackerToolTest);
-  REGISTER_TEST(igstkTransformTest);
-  REGISTER_TEST(igstkViewTest);
-  REGISTER_TEST(igstkViewRefreshRateTest);
-  REGISTER_TEST(igstkVTKLoggerOutputTest);
+
+// Tests depend on data
+#ifdef IGSTK_DATA_ROOT
+  REGISTER_TEST(igstkAuroraTrackerSimulatedTest);
+  REGISTER_TEST(igstkCTImageReaderTest);
+  REGISTER_TEST(igstkCTImageSpatialObjectRepresentationTest);
+  REGISTER_TEST(igstkDICOMImageReaderErrorsTest);
+  REGISTER_TEST(igstkDICOMImageReaderTest);
   REGISTER_TEST(igstkMeshReaderTest);
+  REGISTER_TEST(igstkMRImageReaderTest);
+  REGISTER_TEST(igstkNDICommandInterpreterSimulatedTest);
+  REGISTER_TEST(igstkNDICommandInterpreterStressTest);
+  REGISTER_TEST(igstkPolarisTrackerSimulatedTest);
+  REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
   REGISTER_TEST(igstkSpatialObjectReaderTest);
   REGISTER_TEST(igstkTubeReaderTest);
+#endif
+
+// Tests depend on FLTK
+#ifdef IGSTK_USE_FLTK
+  REGISTER_TEST(igstkCylinderObjectTest);
+  REGISTER_TEST(igstkEllipsoidObjectTest);
+  REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
+  REGISTER_TEST(igstkFLTKTextLogOutputTest);
+  REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
+  REGISTER_TEST(igstkMeshObjectTest);
+  REGISTER_TEST(igstkPulseGeneratorTest);
+  REGISTER_TEST(igstkTubeObjectTest);
+  REGISTER_TEST(igstkViewTest);
+  REGISTER_TEST(igstkViewRefreshRateTest);
+
+  #ifdef IGSTK_DATA_ROOT
+    REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
+  #endif IGSTK_DATA_ROOT 
+  
+#endif
+  
 }

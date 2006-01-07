@@ -57,7 +57,7 @@ SET(IGSTK_HEADS
   igstkTubeGroupObject.h
 )
 
-IF(FLTK_FOUND)
+IF(IGSTK_USE_FLTK)
   SET(IGSTK_HEADS
     ${IGSTK_HEADS}
     igstkFLTKTextBufferLogOutput.h
@@ -66,7 +66,7 @@ IF(FLTK_FOUND)
     igstkView2D.h
     igstkView3D.h
     )
-ENDIF(FLTK_FOUND)
+ENDIF(IGSTK_USE_FLTK)
 
 # The implementation files
 
@@ -111,9 +111,6 @@ SET(IGSTK_SRCS
   igstkTransform.cxx
   igstkTubeObject.cxx
   igstkTubeObjectRepresentation.cxx
-  igstkView.cxx
-  igstkView2D.cxx
-  igstkView3D.cxx
   igstkVTKLoggerOutput.cxx
   igstkTubeReader.cxx
   igstkMeshReader.cxx
@@ -121,13 +118,16 @@ SET(IGSTK_SRCS
   igstkTubeGroupObject.cxx
 )
 
-IF(FLTK_FOUND)
+IF(IGSTK_USE_FLTK)
   SET(IGSTK_SRCS  
     ${IGSTK_SRCS}
     igstkFLTKTextBufferLogOutput.cxx
     igstkFLTKTextLogOutput.cxx
+    igstkView.cxx
+    igstkView2D.cxx
+    igstkView3D.cxx
     )
-ENDIF(FLTK_FOUND)
+ENDIF(IGSTK_USE_FLTK)
 
 
 

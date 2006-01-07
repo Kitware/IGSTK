@@ -35,8 +35,6 @@
 #include "igstkPulseGenerator.h"
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
-#include "igstkView2D.h"
-#include "igstkView3D.h"
 #include "igstkSpatialObject.h"
 #include "igstkSpatialObjectReader.h"
 #include "igstkCTImageReader.h"
@@ -51,6 +49,10 @@
 #include "igstkMRImageSpatialObject.h"
 #include "igstkMRImageSpatialObjectRepresentation.h"
 
+#if IGSTK_USE_FLTK
+#include "igstkView2D.h"
+#include "igstkView3D.h"
+#endif
 
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
@@ -187,14 +189,14 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::SpatialObjectReaderType, outputDirectory, skipLoops );
 
 
-
+#if IGSTK_USE_FLTK
   // The View classes don't use SmartPointer and don't have a default constructor.
   igstk::View2D view2D(0,0, 100, 100, "dummy view for testing");
   igstk::ExportStateMachineDescription( &view2D, outputDirectory, skipLoops ); 
 
   igstk::View3D view3D(0,0, 100, 100, "dummy view for testing");
   igstk::ExportStateMachineDescription( &view3D, outputDirectory, skipLoops ); 
-
+#endif
 
 
   // Exporting Abstract classes by creating derived surrogates for them.
