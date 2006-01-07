@@ -88,7 +88,6 @@ void RegisterTests()
   REGISTER_TEST(igstkEllipsoidObjectTest);
   REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
   REGISTER_TEST(igstkFLTKTextLogOutputTest);
-  REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkMeshObjectTest);
   REGISTER_TEST(igstkPulseGeneratorTest);
   REGISTER_TEST(igstkTubeObjectTest);
@@ -97,6 +96,7 @@ void RegisterTests()
 
   #ifdef IGSTK_DATA_ROOT
     REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
+    REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
   #endif IGSTK_DATA_ROOT 
   
 #endif

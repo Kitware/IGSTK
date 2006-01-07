@@ -92,9 +92,6 @@ IF (IGSTK_DATA_ROOT)
        ${IGSTK_DATA_ROOT}/Input/vessel.tre 
        ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre  
        ${IGSTK_DATA_ROOT}/Input/vesselWithoutReadPermissions.tre )       
-  ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
-       igstkImageSpatialObjectRepresentationTest 
-       ${IGSTK_DATA_ROOT}/Input/E000192)
   ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
        igstkCTImageSpatialObjectRepresentationTest
        ${IGSTK_DATA_ROOT}/Input/E000192)          
@@ -138,7 +135,10 @@ IF(IGSTK_USE_FLTK)
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
-   ENDIF (IGSTK_DATA_ROOT)
+    ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
+              igstkImageSpatialObjectRepresentationTest 
+              ${IGSTK_DATA_ROOT}/Input/E000192)   
+  ENDIF (IGSTK_DATA_ROOT)
             
 ENDIF(IGSTK_USE_FLTK)
 
@@ -217,7 +217,6 @@ IF(IGSTK_USE_FLTK)
     igstkEllipsoidObjectTest.cxx
     igstkFLTKTextBufferLogOutputTest.cxx
     igstkFLTKTextLogOutputTest.cxx
-    igstkImageSpatialObjectRepresentationTest.cxx
     igstkMeshObjectTest.cxx
     igstkPulseGeneratorTest.cxx
     igstkTubeObjectTest.cxx
@@ -228,6 +227,7 @@ IF(IGSTK_USE_FLTK)
     SET(BasicTests_SRCS
       ${BasicTests_SRCS}
       igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx
+      igstkImageSpatialObjectRepresentationTest.cxx
     ) 
   ENDIF(IGSTK_DATA_ROOT)  
 ENDIF(IGSTK_USE_FLTK)
