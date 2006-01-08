@@ -97,7 +97,7 @@ void RegisterTests()
   #ifdef IGSTK_DATA_ROOT
     REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
     REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
-  #endif IGSTK_DATA_ROOT 
+  #endif 
   
 #endif
   
