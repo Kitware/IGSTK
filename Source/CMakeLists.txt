@@ -13,6 +13,7 @@ SET(IGSTKSandbox_HEADS
   igstkUltrasoundProbeObjectRepresentation.h
   igstkAxesObject.h
   igstkAxesObjectRepresentation.h
+  igstkAnnotation2D.h
 )
 
 
@@ -27,6 +28,7 @@ SET(IGSTKSandbox_SRCS
   igstkUltrasoundProbeObjectRepresentation.cxx
   igstkAxesObject.cxx
   igstkAxesObjectRepresentation.cxx
+  igstkAnnotation2D.cxx
 )
 
 # Variable for holding extra libraries
