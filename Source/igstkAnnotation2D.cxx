@@ -42,8 +42,13 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
 /** Destructor */
 Annotation2D::~Annotation2D()  
 { 
-  // This must be invoked in order to prevent Memory Leaks.
+  // Delete the actors
   this->DeleteActors();
+
+  for (int i = 0; i < 4; i++)
+  {
+    this->m_AnnotationMapper[i]->Delete();
+  }
 }
 
 /** Add actor */
@@ -61,29 +66,18 @@ void Annotation2D::AddAnnotationText( int i, const std::string text )
     return;
   }
   
-  m_AnnotationText[i] = text; 
+  m_AnnotationText[i] = text;
+  m_AnnotationMapper[i]->SetInput( m_AnnotationText[i].c_str() );
+  this->m_AnnotationActor[i]->SetMapper(this->m_AnnotationMapper[i]);
 }
 
-void Annotation2D::AddAnnotations( vtkViewport * viewport )
+void Annotation2D::AddAnnotations( int  * vSize )
 {
-  int *vSize = viewport->GetSize();  
-  this->m_AnnotationActor[0]->SetPosition(5,5);
-  this->m_AnnotationActor[1]->SetPosition(vSize[0] - 5,5);
-  this->m_AnnotationActor[2]->SetPosition(5, vSize[1] - 5);
-  this->m_AnnotationActor[3]->SetPosition(vSize[0] - 5, vSize[1] - 5);
+  this->m_AnnotationActor[0]->SetPosition(10,10);
+  this->m_AnnotationActor[1]->SetPosition(vSize[0] -60 ,10);
+  this->m_AnnotationActor[2]->SetPosition(10, vSize[1] - 10);
+  this->m_AnnotationActor[3]->SetPosition(vSize[0] - 60, vSize[1] - 10);
 }
-
-/** Has the object been modified */
-bool Annotation2D::IsModified() const
-{
-  if( m_LastMTime < this->GetMTime() )
-  {
-    return true;
-  }
-  
-  return false;
-}
-
 
 /** Empty the list of actors */
 void Annotation2D::DeleteActors()
