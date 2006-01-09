@@ -41,7 +41,7 @@ class View;
 
 /** \class Annotation2D
  * 
- * \brief .
+ * \brief Add 2D annotations to the viewport.
  *
  * This class is used to add 2D annotations to the viewport. Annotations can be added to 
  * any of the four corners of the viewport.
@@ -56,26 +56,24 @@ class Annotation2D
 {
 
 public:
-
-  typedef Annotation2D               Self;
-  typedef double                             ScalarType;
-  typedef itk::SmartPointer < Self >         Pointer;
-  typedef itk::SmartPointer < const Self >   ConstPointer;
-  typedef Object                             Superclass;
+  
   typedef std::vector< vtkActor2D* >         ActorsListType; 
-   
-
-  igstkTypeMacro(Annotation2D, Object);
-
-  /** Has the object been modified */
-    bool IsModified() const;
-    
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
+  
+  /* Macro with standard traits declarations. */  
+  igstkStandardClassTraitsMacro( Annotation2D, Object )
 
   /** Declarations needed for the Logging */
   igstkLoggerMacro();
-  
+ 
+  /** Add annotations */
+  void AddAnnotations( int * );
+
+  /** Get the VTK actors */
+  igstkGetMacro( Actors, ActorsListType );
+
+  /** Add annotation text */
+  void AddAnnotationText( int , const std::string );
+ 
 protected:
 
   Annotation2D( void );
@@ -84,23 +82,15 @@ protected:
   /** Add an actor */
   void AddActors( vtkActor2D* );
 
-  /** Add annotations */
-  void AddAnnotations( vtkViewport* );
- 
-  /** Add annotation text */
-  void AddAnnotationText( int , const std::string );
-      
-  /** Empty the list of actors */
-  void DeleteActors();
+  /** Delete Actors */
+  void DeleteActors( );
 
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
-
+  
 private:
 
   ActorsListType                   m_Actors;
-  unsigned long                    m_LastMTime;
-  int                              LastSize;
 
   std::string                      m_AnnotationText[4];
   vtkTextMapper *                  m_AnnotationMapper[4]; 
