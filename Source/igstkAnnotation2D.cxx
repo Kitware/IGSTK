@@ -27,8 +27,6 @@ namespace igstk
 /** Constructor */
 Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
 {
-  m_LastMTime = 0;
-
   for (int i = 0; i < 4; i++)
   {
     this->m_AnnotationText[i] = "";
