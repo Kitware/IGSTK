@@ -62,6 +62,8 @@ ADD_TEST(igstkPivotCalibrationTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationTe
 
 ADD_TEST(igstkPrincipalAxisCalibrationTest ${IGSTKSandbox_TESTS} igstkPrincipalAxisCalibrationTest)
 
+ADD_TEST(igstkLandmark3DRegistrationErrorTest ${IGSTKSandbox_TESTS} igstkLandmark3DRegistrationErrorTest)
+
 IF (IGSTKSandbox_DATA_ROOT) 
 
 ENDIF(IGSTKSandbox_DATA_ROOT)
@@ -70,6 +72,7 @@ SET(BasicTests_SRCS
   igstkMouseTrackerTest.cxx
   igstkPivotCalibrationTest.cxx
   igstkPrincipalAxisCalibrationTest.cxx
+  igstkLandmark3DRegistrationErrorTest.cxx
   )
 
 IF (IGSTK_USE_ATAMAI)
