@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkLandmark3DRegistrationError.h
+  Module:    igstkLandmark3DRegistrationErrorEstimator.h
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
