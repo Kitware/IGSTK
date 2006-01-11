@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstkLandmark3DRegistrationError_h
-#define __igstkLandmark3DRegistrationError_h
+#ifndef __igstkLandmark3DRegistrationErrorEstimator_h
+#define __igstkLandmark3DRegistrationErrorEstimator_h
 
 #include "igstkStateMachine.h"
 #include "igstkMacros.h"
@@ -27,7 +27,7 @@
 
 namespace igstk
 {
-/** \class Landmark3DRegistrationError
+/** \class Landmark3DRegistrationErrorEstimator
  * \brief This class computes landmark registration error.
  * 
  * The error computation is based on the work by West et al.
@@ -40,13 +40,13 @@ namespace igstk
  * \ingroup Registration 
  */
 
-class Landmark3DRegistrationError : public Object
+class Landmark3DRegistrationErrorEstimator : public Object
 {
 
 public:
   
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( Landmark3DRegistrationError, Object )
+  igstkStandardClassTraitsMacro( Landmark3DRegistrationErrorEstimator, Object )
 
 public:
 
@@ -80,8 +80,8 @@ public:
 
 protected:
 
-  Landmark3DRegistrationError  ( void );
-  ~Landmark3DRegistrationError ( void ) ;
+  Landmark3DRegistrationErrorEstimator  ( void );
+  ~Landmark3DRegistrationErrorEstimator ( void ) ;
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
@@ -90,7 +90,7 @@ private:
  
   /** These two methods must be declared and note be implemented
    *  in order to enforce the protocol of smart pointers. */
-  Landmark3DRegistrationError(const Self&);    //purposely not implemented
+  Landmark3DRegistrationErrorEstimator(const Self&);    //purposely not implemented
   void operator=(const Self&);          //purposely not implemented
 
   LandmarkPointContainerType               m_TrackerLandmarks;
@@ -108,7 +108,7 @@ private:
   LandmarkPointType                        m_LandmarkCenterPoint;
 
   /** Normalized landmark registration error */
-  ErrorType                                m_NormalizedLandmarkRegistrationError;
+  ErrorType                                m_NormalizedLandmarkRegistrationErrorEstimator;
 
 
   /** List of States */
@@ -118,5 +118,5 @@ private:
 };
 } // end namespace igstk
 
-#endif // __igstkLandmark3DRegistrationError_h
+#endif // __igstkLandmark3DRegistrationErrorEstimator_h
 

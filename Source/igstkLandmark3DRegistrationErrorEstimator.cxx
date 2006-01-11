@@ -13,55 +13,54 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more DEBUGrmation.
 =========================================================================*/
-#ifndef __igstkLandmark3DRegistrationError_cxx
-#define __igstkLandmark3DRegistrationError_cxx
+#ifndef __igstkLandmark3DRegistrationErrorEstimator_cxx
+#define __igstkLandmark3DRegistrationErrorEstimator_cxx
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4786 )
 #endif
 
-#include "igstkLandmark3DRegistrationError.h"
+#include "igstkLandmark3DRegistrationErrorEstimator.h"
 
 namespace igstk
 { 
 
 /** Constructor */
-Landmark3DRegistrationError::Landmark3DRegistrationError() :
+Landmark3DRegistrationErrorEstimator::Landmark3DRegistrationErrorEstimator() :
   m_StateMachine( this )
 {
 } 
 
 /** Destructor */
-Landmark3DRegistrationError::~Landmark3DRegistrationError()  
+Landmark3DRegistrationErrorEstimator::~Landmark3DRegistrationErrorEstimator()  
 {
 
 }
 
 /** Compute and set landmark principal axes */
-void Landmark3DRegistrationError::ComputeLandmarkPrincipalAxes()
+void Landmark3DRegistrationErrorEstimator::ComputeLandmarkPrincipalAxes()
 {
 
 }
 
 /** Compute and set RMS distance of landmarks from the principal axes */
-void Landmark3DRegistrationError::ComputeRMSDistanceLandmarksFromPrincipalAxes()
+void Landmark3DRegistrationErrorEstimator::ComputeRMSDistanceLandmarksFromPrincipalAxes()
 {
 
 }
 
 /** Compute Normalized landmark registration error */
-void Landmark3DRegistrationError::ComputeNormalizedLandmarkRegistrationError()
+void Landmark3DRegistrationErrorEstimator::ComputeNormalizedLandmarkRegistrationError()
 {
-
 
 }
 
 /* The "ComputeErrorParameters" method calculates the rigid body
   registration error parameters */
 void 
-Landmark3DRegistrationError:: ComputeErrorParameters()
+Landmark3DRegistrationErrorEstimator:: ComputeErrorParameters()
 {
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationError::"
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "ComputeErrorParameters called...\n");
   this->ComputeLandmarkPrincipalAxes();
   this->ComputeRMSDistanceLandmarksFromPrincipalAxes();
@@ -70,7 +69,7 @@ Landmark3DRegistrationError:: ComputeErrorParameters()
 
 /** Print Self function */
 void 
-Landmark3DRegistrationError::PrintSelf( std::ostream& os,
+Landmark3DRegistrationErrorEstimator::PrintSelf( std::ostream& os,
                                              itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
