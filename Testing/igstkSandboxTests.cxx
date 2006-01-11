@@ -30,7 +30,7 @@ void RegisterTests()
   REGISTER_TEST(igstkMouseTrackerTest);
   REGISTER_TEST(igstkPivotCalibrationTest);
   REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
-  REGISTER_TEST(igstkLandmark3DRegistrationErrorTest);
+  REGISTER_TEST(igstkLandmark3DRegistrationErrorEstimatorTest);
 
 #ifdef IGSTK_USE_ATAMAI
   REGISTER_TEST(igstkAtamaiNDITrackerTest);
