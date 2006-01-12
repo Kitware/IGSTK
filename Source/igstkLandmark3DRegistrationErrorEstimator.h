@@ -51,7 +51,9 @@ public:
 public:
 
   /** Typedefs */
+  typedef itk::Point<double, 3>                           PointType;
   typedef itk::Point<double, 3>                           LandmarkPointType;
+  typedef itk::Vector<double, 3>                          VectorType;
   typedef std::vector< LandmarkPointType >                LandmarkPointContainerType;
   typedef LandmarkPointContainerType::const_iterator      PointsContainerConstIterator;
 
@@ -66,17 +68,24 @@ public:
   /** Set tracker landmark points*/
   igstkSetMacro ( TrackerLandmarks , LandmarkPointContainerType );
 
+  /** Set the normalized landmark registration error. This is computed by 
+   *  the landmarkRegistration class */
+  igstkSetMacro ( LandmarkRegistrationError, double );
+
+  /** Compute Landmarks centroid */
+  void ComputeLandmarksCentroid();
+
   /** Compute and set landmark principal axes */
   void ComputeLandmarkPrincipalAxes();
 
   /** Compute and set RMS distance of landmarks from the principal axes */
   void ComputeRMSDistanceLandmarksFromPrincipalAxes();
 
-  /** Compute Normalized landmark registration error */
-  void ComputeNormalizedLandmarkRegistrationError();
-
   /** Compute all error parameters in rigid-body landmark registration */
   void ComputeErrorParameters();
+
+  /** Estimate target registration error */
+  ErrorType  EstimateTargetRegistrationError( PointType );
 
 protected:
 
@@ -100,15 +109,13 @@ private:
   VersorType                               m_LandmarkPrincipalAxes;
 
   /** RMS distance from the landmarks to the principal axes of the landmark configuration */
-  DistanceType                             m_RMSDistanceFromLandmarkToPrincipalAxes1;
-  DistanceType                             m_RMSDistanceFromLandmarkToPrincipalAxes2;
-  DistanceType                             m_RMSDistanceFromLandmarkToPrincipalAxes3;
- 
-  /** Landmarks center point */ 
-  LandmarkPointType                        m_LandmarkCenterPoint;
+  VectorType                               m_RMSDistanceFromLandmarkToPrincipalAxes;
 
-  /** Normalized landmark registration error */
-  ErrorType                                m_NormalizedLandmarkRegistrationErrorEstimator;
+  /** Landmarks centroid */ 
+  LandmarkPointType                        m_LandmarkCentroid;
+
+  /** landmark registration error */
+  ErrorType                                m_LandmarkRegistrationError;
 
 
   /** List of States */
