@@ -1,2 +1,7 @@
 .git*            export-ignore
 
+*.dsp           -crlf
+*.dsw           -crlf
+*.png           -crlf
+configure        crlf=input
+install-sh       crlf=input

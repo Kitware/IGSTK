@@ -3,10 +3,11 @@ PROJECT(ATAMAITRACKING)
 INCLUDE_REGULAR_EXPRESSION("^(vtk).*$")
 
 SET(KIT AtamaiTracking)
-SET(KIT_LIBS vtkHybrid ndicapi)
+SET(KIT_LIBS vtkHybrid ndicapi flock)
 
 SET ( Kit_SRCS
   vtkTracker.cxx
+  vtkFlockTracker.cxx
   vtkPOLARISTracker.cxx
   vtkNDITracker.cxx
   vtkTrackerTool.cxx
@@ -22,6 +23,7 @@ SET_SOURCE_FILES_PROPERTIES(
 INCLUDE_DIRECTORIES(
   ${ATAMAITRACKING_SOURCE_DIR}
   ${NDICAPI_SOURCE_DIR}
+  ${FLOCK_SOURCE_DIR}
 )
 
 SET(Kit_EXTRA_SRCS)

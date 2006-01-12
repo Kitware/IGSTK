@@ -1,3 +1,3 @@
-SUBDIRS( ndicapi AtamaiTracking )
+SUBDIRS( ndicapi flock AtamaiTracking )
 
 
