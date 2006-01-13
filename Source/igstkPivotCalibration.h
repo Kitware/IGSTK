@@ -211,10 +211,6 @@ private:
 
   int                               m_InputIndexToBeSent;
 
-  VectorType                        m_VectorToBeSent;
-
-  MatrixType                        m_MatrixToBeSent;
-
   PointType                         m_SimulatedPivotPositionToBeReceived;
 
   VersorType                        m_VersorToBeReceived;
