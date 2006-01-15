@@ -15,6 +15,10 @@ SET(IGSTKSandbox_HEADS
   igstkAxesObjectRepresentation.h
   igstkAnnotation2D.h
   igstkLandmark3DRegistrationErrorEstimator.h
+  igstkBoxObject.h
+  igstkBoxObjectRepresentation.h
+  igstkConeObject.h
+  igstkConeObjectRepresentation.h
 )
 
 
@@ -31,6 +35,10 @@ SET(IGSTKSandbox_SRCS
   igstkAxesObjectRepresentation.cxx
   igstkAnnotation2D.cxx
   igstkLandmark3DRegistrationErrorEstimator.cxx
+  igstkBoxObject.cxx
+  igstkBoxObjectRepresentation.cxx
+  igstkConeObject.cxx
+  igstkConeObjectRepresentation.cxx
 )
 
 # Variable for holding extra libraries
