@@ -66,6 +66,9 @@ ADD_TEST(igstkPrincipalAxisCalibrationTest ${IGSTKSandbox_TESTS}
 ADD_TEST(igstkLandmark3DRegistrationErrorEstimatorTest ${IGSTKSandbox_TESTS} 
                                            igstkLandmark3DRegistrationErrorEstimatorTest)
 
+ADD_TEST(igstkBoxObjectTest ${IGSTKSandbox_TESTS} igstkBoxObjectTestt)
+ADD_TEST(igstkConeObjectTest ${IGSTKSandbox_TESTS} igstkConeObjectTestt)
+
 IF (IGSTKSandbox_DATA_ROOT) 
 
 ENDIF(IGSTKSandbox_DATA_ROOT)
@@ -75,6 +78,8 @@ SET(BasicTests_SRCS
   igstkPivotCalibrationTest.cxx
   igstkPrincipalAxisCalibrationTest.cxx
   igstkLandmark3DRegistrationErrorEstimatorTest.cxx
+  igstkBoxObjectTest.cxx
+  igstkConeObjectTest.cxx
   )
 
 IF (IGSTK_USE_ATAMAI)

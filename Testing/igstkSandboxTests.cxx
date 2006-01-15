@@ -31,6 +31,8 @@ void RegisterTests()
   REGISTER_TEST(igstkPivotCalibrationTest);
   REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
   REGISTER_TEST(igstkLandmark3DRegistrationErrorEstimatorTest);
+  REGISTER_TEST(igstkBoxObjectTest);
+  REGISTER_TEST(igstkConeObjectTest);
 
 #ifdef IGSTK_USE_ATAMAI
   REGISTER_TEST(igstkAtamaiNDITrackerTest);
