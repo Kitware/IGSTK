@@ -20,7 +20,8 @@
 
 #include "igstkMacros.h"
 #include "igstkSpatialObject.h"
-#include "itkGroupSpatialObject.h"
+#include <itkGroupSpatialObject.h>
+#include <itkFixedArray.h>
 
 namespace igstk
 {
@@ -46,9 +47,16 @@ public:
   
   /** Typedefs */
   typedef itk::GroupSpatialObject<3>     BoxSpatialObjectType;
+  typedef itk::FixedArray<double,3> ArrayType;
 
   /** Set the size of each axis */
   void SetSize(double x, double y, double z);
+
+  /** Set the size given an array */
+  void SetSize(const ArrayType & size);
+
+  /** Get the size as an array */
+  const ArrayType GetSize() const;
   
   /** Get size of the X axis */
   double GetSizeX() const;
@@ -70,7 +78,7 @@ protected:
 private:
   
   BoxSpatialObjectType::Pointer m_BoxSpatialObject;
-  double                         m_Size[3];
+  ArrayType                     m_Size;
 
 };
 
