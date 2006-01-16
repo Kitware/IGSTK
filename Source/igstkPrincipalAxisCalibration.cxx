@@ -80,7 +80,6 @@ PrincipalAxisCalibration::PrincipalAxisCalibration() :
 
   // Reset the initial state and variables
   this->ResetProcessing();
-
 }
 
 /** Destructor */
@@ -108,7 +107,6 @@ void PrincipalAxisCalibration::PrintSelf( std::ostream& os, itk::Indent indent )
   os << indent << "Desired Adjusted Plane Normal: " << this->m_DesiredAdjustedPlaneNormal << std::endl;
 
   os << indent << "Calibration Transform: " << this->m_CalibrationTransform << std::endl;
-
 }
 
 /** Method to reset the calibration */
@@ -149,7 +147,6 @@ void PrincipalAxisCalibration::ResetProcessing()
 
   // Reset the validation indicator
   this->m_ValidRotation = false;
-
 }
 
 
@@ -204,7 +201,6 @@ void PrincipalAxisCalibration::CalculateRotationProcessing()
 
   // Valid the rotation
   this->m_ValidRotation = true;
-
 }
 
 /** Internal method to construct the orthogonal matrix */
@@ -234,7 +230,6 @@ PrincipalAxisCalibration::InternalBuildOrthogonalMatrixProcessing( VectorType ax
     }
 
   return orthomatrix;
-
 }
 
 /** Set the initial orientation */
@@ -301,7 +296,6 @@ void PrincipalAxisCalibration::RequestSetInitialOrientation( VectorType axis, Co
   this->m_CovariantVectorToBeSent = normal;
   this->m_StateMachine.PushInput( this->m_InitialOrientationInput );
   this->m_StateMachine.ProcessInputs();
-
 }
 
 /** Method to invoke to set the desired orientation */
@@ -322,7 +316,6 @@ void PrincipalAxisCalibration::RequestCalculateRotation()
 
   this->m_StateMachine.PushInput( this->m_CalculateRotationInput );
   this->m_StateMachine.ProcessInputs();
-
 }
 
 } // end namespace igstk

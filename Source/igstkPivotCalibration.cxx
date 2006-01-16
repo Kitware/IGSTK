@@ -111,7 +111,6 @@ void PivotCalibration::PrintSelf( std::ostream& os, itk::Indent indent ) const
   os << indent << "Pivot Position: " << this->m_PivotPosition << std::endl;
   
   os << indent << "Calibration RMS: " << this->m_RMS << std::endl;
-
 }
 
 /** Method to return the number of samples */
@@ -121,7 +120,6 @@ unsigned int PivotCalibration
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetNumberOfSamples called...\n" );
 
   return this->m_VersorContainer->Size();
-
 }
 
 /** Method to ResetProcessing the calibration */
@@ -185,7 +183,6 @@ void PivotCalibration
 
   // Unvalid the calibration
   this->m_ValidPivotCalibration = false;
-
 }
 
 /** Internal method to calculate the calibration */
@@ -277,7 +274,6 @@ void PivotCalibration::InternalCalculateCalibrationProcessing( unsigned int axis
 
   // Set valid indicator
   this->m_ValidPivotCalibration = true;
-
 }
 
 /** Method to calculate the calibration */
@@ -311,12 +307,8 @@ PivotCalibration::InternalSimulatePivotPositionProcessing( const VersorType & ro
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalSimulatePivotPositionProcessing called...\n" );
 
-  /** reconstruct the pivot position from any input translation and rotation
-   * 
-   *  Pos = Rotation * Offset + Translation
-   *
-   */
-
+  // Reconstruct the pivot position from any input translation and rotation
+  // Pos = Rotation * Offset + Translation
   typedef itk::VersorRigid3DTransform<double> RigidTransformType;
 
   RigidTransformType::Pointer rigidTransform = RigidTransformType::New();
@@ -336,7 +328,6 @@ PivotCalibration::InternalSimulatePivotPositionProcessing( const VersorType & ro
   pivotPosition += rotatedOffset;
 
   return pivotPosition;
-
 }
 
 /** Get the rotation and translation inputed */
@@ -374,7 +365,6 @@ bool PivotCalibration
     }
 }
 
-
 /** Method to invoke the ResetProcessing function */
 void PivotCalibration::RequestReset()
 {
@@ -405,7 +395,6 @@ void PivotCalibration::RequestCalculateCalibration()
 
   this->m_StateMachine.PushInput( this->m_CalculateCalibrationInput );
   this->m_StateMachine.ProcessInputs();
-
 }
 
 /** Method to invoke the calculation only along z-axis */
@@ -415,7 +404,6 @@ void PivotCalibration::RequestCalculateCalibrationZ()
 
   this->m_StateMachine.PushInput( this->m_CalculateCalibrationZInput );
   this->m_StateMachine.ProcessInputs();
-
 }
 
 /** Method to invoke to simulate the pivot position */
@@ -452,7 +440,6 @@ bool PivotCalibration
   translation = this->m_TranslationToBeReceived;
 
   return this->m_ValidInputSample;
-
 }
 
 } // end namespace igstk
