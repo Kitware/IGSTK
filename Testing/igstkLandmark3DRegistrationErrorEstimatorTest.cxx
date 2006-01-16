@@ -144,7 +144,7 @@ int igstkLandmark3DRegistrationErrorEstimatorTest( int argv, char * argc[] )
                               LandmarkPointContainerType;
     typedef igstk::Landmark3DRegistrationErrorEstimator::LandmarkPointType 
                               LandmarkPointType;
-    typedef igstk::Landmark3DRegistrationErrorEstimator::PointType         PointType;
+    typedef igstk::Landmark3DRegistrationErrorEstimator::TargetPointType   TargetPointType;
     typedef igstk::Landmark3DRegistrationErrorEstimator::ErrorType         ErrorType;
      
     Landmark3DRegistrationErrorEstimatorType::Pointer landmarkRegistrationErrorEstimator = 
@@ -162,7 +162,7 @@ int igstkLandmark3DRegistrationErrorEstimatorTest( int argv, char * argc[] )
     landmarkRegistrationErrorEstimator->ComputeErrorParameters();
 
     //Estimate target regsitration error 
-    PointType       targetPoint;
+    TargetPointType       targetPoint;
     targetPoint[0] =  10.0;
     targetPoint[1] =  20.0;
     targetPoint[2] =  8.0;
