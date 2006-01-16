@@ -66,8 +66,8 @@ ADD_TEST(igstkPrincipalAxisCalibrationTest ${IGSTKSandbox_TESTS}
 ADD_TEST(igstkLandmark3DRegistrationErrorEstimatorTest ${IGSTKSandbox_TESTS} 
                                            igstkLandmark3DRegistrationErrorEstimatorTest)
 
-ADD_TEST(igstkBoxObjectTest ${IGSTKSandbox_TESTS} igstkBoxObjectTestt)
-ADD_TEST(igstkConeObjectTest ${IGSTKSandbox_TESTS} igstkConeObjectTestt)
+ADD_TEST(igstkBoxObjectTest ${IGSTKSandbox_TESTS} igstkBoxObjectTest)
+ADD_TEST(igstkConeObjectTest ${IGSTKSandbox_TESTS} igstkConeObjectTest)
 
 IF (IGSTKSandbox_DATA_ROOT) 
 
