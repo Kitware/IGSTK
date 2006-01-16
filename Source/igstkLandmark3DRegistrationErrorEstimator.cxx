@@ -30,7 +30,8 @@
 namespace igstk
 { 
 /** Constructor */
-Landmark3DRegistrationErrorEstimator::Landmark3DRegistrationErrorEstimator() :  m_StateMachine( this )
+Landmark3DRegistrationErrorEstimator::
+  Landmark3DRegistrationErrorEstimator() :  m_StateMachine( this )
 {
 
 } 
@@ -44,6 +45,9 @@ Landmark3DRegistrationErrorEstimator::~Landmark3DRegistrationErrorEstimator()
 /** Compute and set landmark principal axes */
 void Landmark3DRegistrationErrorEstimator::ComputeLandmarkPrincipalAxes()
 {
+   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
+                 "ComputeLandmarkPrincipalAxes called...\n");
+
    typedef itk::Matrix<double,3,3>                         MatrixType;
    typedef itk::Matrix<double,4,4>                         AugmentedMatrixType;
    typedef itk::Vector<double,3>                           VectorType;
@@ -98,25 +102,21 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarkPrincipalAxes()
         
    // off-diagonal elements
    augmentedCovarianceMatrix[0][1] = augmentedCovarianceMatrix[1][0] = 
-                                          covarianceMatrix[1][2] -covarianceMatrix[2][1];
+                                     covarianceMatrix[1][2] -covarianceMatrix[2][1];
    augmentedCovarianceMatrix[0][2] = augmentedCovarianceMatrix[2][0] = 
-                                          covarianceMatrix[2][0] -covarianceMatrix[0][2];
+                                     covarianceMatrix[2][0] -covarianceMatrix[0][2];
    augmentedCovarianceMatrix[0][3] = augmentedCovarianceMatrix[3][0] = 
-                                           covarianceMatrix[0][1] -covarianceMatrix[1][0];
+                                     covarianceMatrix[0][1] -covarianceMatrix[1][0];
 
    augmentedCovarianceMatrix[1][2] = augmentedCovarianceMatrix[2][1] = 
-                                           covarianceMatrix[0][1] +covarianceMatrix[1][0];
+                                     covarianceMatrix[0][1] +covarianceMatrix[1][0];
    augmentedCovarianceMatrix[1][3] = augmentedCovarianceMatrix[3][1] = 
-                                           covarianceMatrix[2][0] +covarianceMatrix[0][2];
+                                     covarianceMatrix[2][0] +covarianceMatrix[0][2];
    augmentedCovarianceMatrix[2][3] = augmentedCovarianceMatrix[3][2] = 
-                                           covarianceMatrix[1][2] +covarianceMatrix[2][1];
-
-   //vnl_matrix<double> eigenVectors(4,4);
-   //vnl_vector<double> eigenValues(4);
+                                     covarianceMatrix[1][2] +covarianceMatrix[2][1];
    
    AugmentedMatrixType                    eigenVectors;
    AugmentedVectorType                    eigenValues;
-   
 
    typedef itk::SymmetricEigenAnalysis< 
            itk::Matrix< double,4,4 >,  
@@ -137,6 +137,9 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarkPrincipalAxes()
 /** Compute landmark centroid */
 void Landmark3DRegistrationErrorEstimator::ComputeLandmarksCentroid()
 {
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
+                 "ComputeLandmarksCentroid called...\n");
+
   typedef itk::Vector< double, 3 >                      VectorType;
 
   PointsContainerConstIterator                          pointItr;
@@ -156,8 +159,9 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarksCentroid()
     } 
 }
 
-/** Compute and set RMS distance of landmarks from the principal axes */
-void Landmark3DRegistrationErrorEstimator::ComputeRMSDistanceLandmarksFromPrincipalAxes()
+/** Compute RMS distance of landmarks from the principal axes */
+void Landmark3DRegistrationErrorEstimator::
+     ComputeRMSDistanceLandmarksFromPrincipalAxes()
 {
   typedef itk::Vector< double, 3 >                        VectorType;
   typedef itk::Matrix< double, 3, 3 >                     MatrixType; 
@@ -194,9 +198,8 @@ void Landmark3DRegistrationErrorEstimator::ComputeRMSDistanceLandmarksFromPrinci
   normalizedPrincipalAxes3.Normalize();
 
   landmarkVector.Fill(0.0);
-   
  
-  // Vector from the landmark point to landmark centroid  
+  // Vector from landmark point to landmark centroid  
   VectorType                                       differenceVector;
  
   //  Distance from the landmark point to the principal axes
@@ -206,7 +209,6 @@ void Landmark3DRegistrationErrorEstimator::ComputeRMSDistanceLandmarksFromPrinci
                    distanceFromLandmarkPointToPrinciaplAxes2 = 0.0;
   DistanceType                                     
                    distanceFromLandmarkPointToPrinciaplAxes3 = 0.0;
-
   
   pointItr  = m_ImageLandmarks.begin();
   while( pointItr != m_ImageLandmarks.end() )
@@ -216,13 +218,12 @@ void Landmark3DRegistrationErrorEstimator::ComputeRMSDistanceLandmarksFromPrinci
      differenceVector[1] = (*pointItr)[1] - this->m_LandmarkCentroid[1];
      differenceVector[2] = (*pointItr)[2] - this->m_LandmarkCentroid[2];
    
-      
      distanceFromLandmarkPointToPrinciaplAxes1 += 
-               vnl_math_sqr( CrossProduct ( normalizedPrincipalAxes1, differenceVector ).GetNorm() ) ; 
+        vnl_math_sqr( CrossProduct ( normalizedPrincipalAxes1, differenceVector ).GetNorm() ) ; 
      distanceFromLandmarkPointToPrinciaplAxes2 += 
-               vnl_math_sqr( CrossProduct ( normalizedPrincipalAxes2, differenceVector ).GetNorm() ); 
+        vnl_math_sqr( CrossProduct ( normalizedPrincipalAxes2, differenceVector ).GetNorm() ); 
      distanceFromLandmarkPointToPrinciaplAxes3 += 
-               vnl_math_sqr( CrossProduct ( normalizedPrincipalAxes3, differenceVector ).GetNorm() ); 
+        vnl_math_sqr( CrossProduct ( normalizedPrincipalAxes3, differenceVector ).GetNorm() ); 
      ++pointItr;
    }
 
@@ -251,7 +252,7 @@ Landmark3DRegistrationErrorEstimator:: ComputeErrorParameters()
  * registration error */
 Landmark3DRegistrationErrorEstimator::ErrorType 
 Landmark3DRegistrationErrorEstimator:: EstimateTargetRegistrationError( 
-Landmark3DRegistrationErrorEstimator::PointType targetPoint )
+Landmark3DRegistrationErrorEstimator::TargetPointType targetPoint )
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "EstimateTargetRegistrationError called...\n");
@@ -310,7 +311,8 @@ Landmark3DRegistrationErrorEstimator::PointType targetPoint )
  
  for( unsigned int i; i < 3 ; i++ ) 
    {
-       targetRegistrationError += vnl_math_sqr( distanceFromTargetPointToPrincipalAxes[i] ) / 
+       targetRegistrationError += 
+                   vnl_math_sqr( distanceFromTargetPointToPrincipalAxes[i] ) / 
                    vnl_math_sqr( this->m_RMSDistanceFromLandmarkToPrincipalAxes[i] ); 
    }
 
@@ -329,13 +331,6 @@ Landmark3DRegistrationErrorEstimator::PrintSelf( std::ostream& os,
                                              itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << "Tracker Landmarks: " << std::endl;
-  PointsContainerConstIterator fitr = m_TrackerLandmarks.begin();
-  while( fitr != m_TrackerLandmarks.end() )
-    {
-    os << indent << *fitr << std::endl;
-    ++fitr;
-    }
   os << indent << "Image Landmarks: " << std::endl;
   PointsContainerConstIterator mitr = m_ImageLandmarks.begin();
   while( mitr != m_ImageLandmarks.end() )
@@ -343,6 +338,9 @@ Landmark3DRegistrationErrorEstimator::PrintSelf( std::ostream& os,
     os << indent << *mitr << std::endl;
     ++mitr;
     }
+
+  os << indent << "Landmark Principal Axes: " << std::endl;
+  os << indent << this->m_LandmarkPrincipalAxes << std::endl;
 }
 
 } // end namespace igstk

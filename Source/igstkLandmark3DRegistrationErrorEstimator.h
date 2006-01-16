@@ -28,13 +28,14 @@
 namespace igstk
 {
 /** \class Landmark3DRegistrationErrorEstimator
- * \brief This class computes landmark registration error.
  * 
- * The error computation is based on the work by West et al.
+ * \brief This class estimates error in point-based 
+ *   rigid-body landmark registration .
+ * 
+ *  The error estimation is based on the work by West et al.
  *
  * J.B West et al, "Fiducial Point Placement and the Accuracy of Point-based,
  * Rigid Body Registration", Neurosurgery, pp 810-816, Vol.48, No.4, April 2001.  
- *
  *
  *
  * \ingroup Registration 
@@ -51,13 +52,13 @@ public:
 public:
 
   /** Typedefs */
-  typedef itk::Point<double, 3>                           PointType;
+  typedef itk::Point<double, 3>                           TargetPointType;
   typedef itk::Point<double, 3>                           LandmarkPointType;
   typedef itk::Vector<double, 3>                          VectorType;
   typedef std::vector< LandmarkPointType >                LandmarkPointContainerType;
   typedef LandmarkPointContainerType::const_iterator      PointsContainerConstIterator;
 
-  /** Error parameter typedefs */
+  /** Error parameter Typedefs */
   typedef double                                          ErrorType;
   typedef double                                          DistanceType;
   typedef itk::Versor<double>                             VersorType;
@@ -65,27 +66,24 @@ public:
   /** Set image landmark points */
   igstkSetMacro ( ImageLandmarks , LandmarkPointContainerType );
 
-  /** Set tracker landmark points*/
-  igstkSetMacro ( TrackerLandmarks , LandmarkPointContainerType );
-
-  /** Set the normalized landmark registration error. This is computed by 
+  /** Set the landmark registration error. This is computed by 
    *  the landmarkRegistration class */
   igstkSetMacro ( LandmarkRegistrationError, double );
 
   /** Compute Landmarks centroid */
   void ComputeLandmarksCentroid();
 
-  /** Compute and set landmark principal axes */
+  /** Compute landmark principal axes */
   void ComputeLandmarkPrincipalAxes();
 
-  /** Compute and set RMS distance of landmarks from the principal axes */
+  /** Compute RMS distance of landmarks from the principal axes */
   void ComputeRMSDistanceLandmarksFromPrincipalAxes();
 
-  /** Compute all error parameters in rigid-body landmark registration */
+  /** Compute error parameters used to estiamte target registration error*/
   void ComputeErrorParameters();
 
   /** Estimate target registration error */
-  ErrorType  EstimateTargetRegistrationError( PointType );
+  ErrorType  EstimateTargetRegistrationError( TargetPointType );
 
 protected:
 
@@ -102,7 +100,6 @@ private:
   Landmark3DRegistrationErrorEstimator(const Self&);    //purposely not implemented
   void operator=(const Self&);          //purposely not implemented
 
-  LandmarkPointContainerType               m_TrackerLandmarks;
   LandmarkPointContainerType               m_ImageLandmarks;
  
   /** Landmark configuration */
@@ -116,12 +113,6 @@ private:
 
   /** landmark registration error */
   ErrorType                                m_LandmarkRegistrationError;
-
-
-  /** List of States */
-
-  /** List of Inputs */
-
 };
 } // end namespace igstk
 
