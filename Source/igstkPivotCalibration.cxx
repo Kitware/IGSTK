@@ -51,7 +51,7 @@ PivotCalibration::PivotCalibration() :
   igstkAddTransitionMacro( Idle, SimulatePivotPosition, Idle, No );
   igstkAddTransitionMacro( Idle, GetInputSample, Idle, No );
   
-  // Add transition  for RotationTranslationAdd state
+  // Add transition  for SampleAdd state
   igstkAddTransitionMacro( SampleAdd, ResetCalibration, Idle, Reset );
   igstkAddTransitionMacro( SampleAdd, Sample, SampleAdd, AddSample );
   igstkAddTransitionMacro( SampleAdd, CalculateCalibration, CalibrationCalculated, CalculateCalibration );
