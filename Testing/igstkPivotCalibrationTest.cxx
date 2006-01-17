@@ -36,7 +36,6 @@ int igstkPivotCalibrationTest( int, char * [] )
   typedef PivotCalibrationType::VersorType  VersorType;
   typedef PivotCalibrationType::VectorType  VectorType;
   typedef PivotCalibrationType::PointType   PointType;
-  typedef PivotCalibrationType::MatrixType  MatrixType;
   typedef PivotCalibrationType::ErrorType   ErrorType;
   typedef itk::Logger                       LoggerType; 
   typedef itk::StdStreamLogOutput           LogOutputType;
@@ -60,7 +59,6 @@ int igstkPivotCalibrationTest( int, char * [] )
   std::string temp;
   double time;
 
-  MatrixType matrix;
   VectorType pos;
   PointType pivotpos;
   VersorType versor;
