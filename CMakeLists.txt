@@ -74,15 +74,15 @@ ENDIF (USE_VTK_FILE)
 #
 # FIND FLTK
 #
-OPTION(IGSTK_USE_FLTK "Use FLTK (The Fast Light Toolkit) for GUI" ON)
-IF(IGSTK_USE_FLTK)
+OPTION(IGSTKSandbox_USE_FLTK "Use FLTK (The Fast Light Toolkit) for GUI" ON)
+IF(IGSTKSandbox_USE_FLTK)
  FIND_PACKAGE(FLTK)
  IF (FLTK_FOUND)
   INCLUDE_DIRECTORIES (${FLTK_INCLUDE_DIR})
 ELSE (FLTK_FOUND)
   MESSAGE( FATAL_ERROR "This application requires FLTK. One of these components is missing. Please verify configuration")
 ENDIF (FLTK_FOUND)
-ENDIF(IGSTK_USE_FLTK)
+ENDIF(IGSTKSandbox_USE_FLTK)
 
 # The IGSTKSandbox Library and any Utilities that it requires
 SUBDIRS(Utilities Source)
