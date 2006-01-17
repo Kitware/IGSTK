@@ -72,11 +72,11 @@ int igstkPivotCalibrationTest( int, char * [] )
 
   if (input.is_open() == 1)
     {
-    std::cout << "PivtoCalibration data open sucessully!" << std::endl;
+    std::cout << "PivotCalibration data open sucessully!" << std::endl;
     }
   else
     {
-    std::cout << "PivtoCalibration data open error!" << std::endl;
+    std::cout << "PivotCalibration data open error!" << std::endl;
 
     return EXIT_FAILURE;
     }
