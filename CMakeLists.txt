@@ -19,7 +19,6 @@ SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
 IF(NOT IGSTKSandbox_SETUP_DASHBOARD)
 
-
 #
 #  FIND IGSTK
 #
@@ -75,12 +74,15 @@ ENDIF (USE_VTK_FILE)
 #
 # FIND FLTK
 #
-FIND_PACKAGE(FLTK)
-IF (FLTK_FOUND)
+OPTION(IGSTK_USE_FLTK "Use FLTK (The Fast Light Toolkit) for GUI" ON)
+IF(IGSTK_USE_FLTK)
+ FIND_PACKAGE(FLTK)
+ IF (FLTK_FOUND)
   INCLUDE_DIRECTORIES (${FLTK_INCLUDE_DIR})
 ELSE (FLTK_FOUND)
   MESSAGE( FATAL_ERROR "This application requires FLTK. One of these components is missing. Please verify configuration")
 ENDIF (FLTK_FOUND)
+ENDIF(IGSTK_USE_FLTK)
 
 # The IGSTKSandbox Library and any Utilities that it requires
 SUBDIRS(Utilities Source)
@@ -96,13 +98,14 @@ IF(IGSTKSandbox_BUILD_EXAMPLES)
     SUBDIRS(Examples)
 ENDIF(IGSTKSandbox_BUILD_EXAMPLES)
 
+# include Sandbox header files before the main library IGSTK
+INCLUDE_DIRECTORIES(BEFORE
+${IGSTKSandbox_SOURCE_DIR}/Source
+)
+
 #-----------------------------------------------------------------------------
 # Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
 #FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_DIR}/Testing/Data $ENV{IGSTKSandbox_DATA_ROOT})
 #MARK_AS_ADVANCED(IGSTKSandbox_DATA_ROOT)
-
-INCLUDE_DIRECTORIES(
-${IGSTKSandbox_SOURCE_DIR}/Source
-)
 
 ENDIF(NOT IGSTKSandbox_SETUP_DASHBOARD)
