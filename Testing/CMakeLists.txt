@@ -48,9 +48,9 @@ FILE(GLOB STATE_MACHINE_DOT_FILES "${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR}/*.
 MARK_AS_ADVANCED(IGSTKSandbox_DATA_ROOT)
 
 INCLUDE_DIRECTORIES (
-  ${IGSTKSandbox_SOURCE_DIR}
+#  ${IGSTKSandbox_SOURCE_DIR}
   ${IGSTKSandbox_BINARY_DIR}
-  ${IGSTKSandbox_SOURCE_DIR}/Source
+#  ${IGSTKSandbox_SOURCE_DIR}/Source
   ${IGSTKSandbox_BINARY_DIR}/Source
   ${IGSTKSandbox_SOURCE_DIR}/Testing
   ${IGSTKSandbox_BINARY_DIR}/Testing
@@ -70,7 +70,8 @@ ADD_TEST(igstkBoxObjectTest ${IGSTKSandbox_TESTS} igstkBoxObjectTest)
 ADD_TEST(igstkConeObjectTest ${IGSTKSandbox_TESTS} igstkConeObjectTest)
 
 IF (IGSTKSandbox_DATA_ROOT) 
-
+ADD_TEST( igstkAnnotation2DTest ${IGSTKSandbox_TESTS} igstkAnnotation2DTest
+       ${IGSTKSandbox_DATA_ROOT}/Input/E000192 )
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
 SET(BasicTests_SRCS
@@ -80,6 +81,7 @@ SET(BasicTests_SRCS
   igstkLandmark3DRegistrationErrorEstimatorTest.cxx
   igstkBoxObjectTest.cxx
   igstkConeObjectTest.cxx
+  igstkAnnotation2DTest.cxx
   )
 
 IF (IGSTK_USE_ATAMAI)

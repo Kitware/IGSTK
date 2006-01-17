@@ -33,6 +33,7 @@ void RegisterTests()
   REGISTER_TEST(igstkLandmark3DRegistrationErrorEstimatorTest);
   REGISTER_TEST(igstkBoxObjectTest);
   REGISTER_TEST(igstkConeObjectTest);
+  REGISTER_TEST(igstkAnnotation2DTest);
 
 #ifdef IGSTK_USE_ATAMAI
   REGISTER_TEST(igstkAtamaiNDITrackerTest);
