@@ -122,12 +122,12 @@ unsigned int PivotCalibration
   return this->m_VersorContainer->Size();
 }
 
-/** Method to ResetProcessing the calibration */
+/** Method to NoProcessing */
 void PivotCalibration::NoProcessing()
 {
 }
 
-/** Method to ResetProcessing the calibration */
+/** Method to reset the calibration */
 void PivotCalibration::ResetProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::ResetProcessing called...\n" );
@@ -139,21 +139,21 @@ void PivotCalibration::ResetProcessing()
   this->m_VersorContainer->Initialize();
   this->m_TranslationContainer->Initialize();
 
-  // ResetProcessing the calibration transform
+  // Reset the calibration transform
   quaternion.SetIdentity();
   translation.Fill( 0.0);
   this->m_CalibrationTransform.SetTranslationAndRotation( translation, quaternion, 0.1, 1000);
 
-  // ResetProcessing the pivot position 
+  // Reset the pivot position 
   this->m_PivotPosition.Fill( 0.0);
 
-  // ResetProcessing the RMS calibration error
+  // Reset the RMS calibration error
   this->m_RMS = 0.0;
 
-  // ResetProcessing the validation indicator
+  // Reset the validation indicator
   this->m_ValidPivotCalibration = false;
 
-  // ResetProcessing the validation indicator
+  // Reset the validation indicator
   this->m_ValidInputSample = false;
 }
 
