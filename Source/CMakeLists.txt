@@ -72,7 +72,7 @@ SET(IGSTK_HEADS
   igstkConeObjectRepresentation.h
 )
     
-IF(IGSTK_USE_FLTK)
+IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTK_HEADS
     ${IGSTK_HEADS}
     igstkFLTKTextBufferLogOutput.h
@@ -81,7 +81,7 @@ IF(IGSTK_USE_FLTK)
     igstkView2D.h
     igstkView3D.h
     )
-ENDIF(IGSTK_USE_FLTK)
+ENDIF(IGSTKSandbox_USE_FLTK)
 
 
 
@@ -164,7 +164,7 @@ SET(IGSTK_SRCS
   igstkConeObjectRepresentation.cxx
 )
 
-IF(IGSTK_USE_FLTK)
+IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTK_SRCS
     ${IGSTK_SRCS}
     igstkFLTKTextBufferLogOutput.cxx
@@ -173,7 +173,7 @@ IF(IGSTK_USE_FLTK)
     igstkView2D.cxx
     igstkView3D.cxx
     )
-ENDIF(IGSTK_USE_FLTK)
+ENDIF(IGSTKSandbox_USE_FLTK)
 
 SET(IGSTKSandbox_SRCS)
 FOREACH(SourceFile ${IGSTK_SRCS})
