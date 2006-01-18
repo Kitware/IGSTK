@@ -59,7 +59,7 @@ AxesObjectRepresentation::~AxesObjectRepresentation()
 
 
 
-/** Set the Axesal Spatial Object */
+/** Request to Set the AxesSpatial Object */
 void AxesObjectRepresentation::RequestSetAxesObject( const AxesSpatialObjectType * Axes )
 {
   m_AxesObjectToAdd = Axes;
