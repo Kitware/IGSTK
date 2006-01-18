@@ -15,7 +15,6 @@
 
 =========================================================================*/
 #include "igstkAxesObject.h"
-#include "igstkEvents.h"
 
 namespace igstk
 { 
@@ -65,6 +64,8 @@ double AxesObject::GetSizeZ() const
 void AxesObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << "Size = " << m_Size[0] << " , ";
+  os << m_Size[1] << "," << m_Size[2] << std::endl;
 }
 
 

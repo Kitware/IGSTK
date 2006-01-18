@@ -27,8 +27,12 @@ namespace igstk
 
 /** \class AxesObject
  * 
- * \brief This class represents a Axes object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is Z.
+ * \brief This class represents a Axes object. 
+ *
+ * This class display a coordinate axis in a View. It is intended for providing
+ * a visual reference of the orientation of space in the context of the scene.
+ * The parameters of the object are the height of the object, and the radius.
+ * Default representation axis is Z.
  * 
  * \ingroup Object
  */
@@ -44,9 +48,6 @@ public:
 
 public:
   
-  /** Typedefs */
-  typedef itk::GroupSpatialObject<3>     AxesSpatialObjectType;
-
   /** Set the size of each axis */
   void SetSize(double x, double y, double z);
   
@@ -68,9 +69,16 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
-  
-  AxesSpatialObjectType::Pointer m_AxesSpatialObject;
-  double                         m_Size[3];
+
+  /** Typedefs */
+  typedef itk::GroupSpatialObject<3>     AxesSpatialObjectType;
+
+  AxesObject(const Self&);         //purposely not implemented
+  void operator=(const Self&);     //purposely not implemented
+
+  AxesSpatialObjectType::Pointer     m_AxesSpatialObject;
+
+  double                             m_Size[3];
 
 };
 
