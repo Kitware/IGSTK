@@ -16,12 +16,11 @@
 =========================================================================*/
 
 #include "igstkAxesObjectRepresentation.h"
-#include <vtkPolyDataMapper.h>
-#include <vtkActor.h>
-#include <vtkProperty.h>
 #include "igstkEvents.h"
+
+#include <vtkActor.h>
 #include <vtkAxesActor.h>
-#include <vtkCaptionActor2D.h>
+
 
 namespace igstk
 { 
@@ -74,8 +73,6 @@ void AxesObjectRepresentation::RequestSetAxesObject( const AxesSpatialObjectType
     m_StateMachine.PushInput( m_ValidAxesObjectInput );
     m_StateMachine.ProcessInputs();
     }
-
-
 }
 
 

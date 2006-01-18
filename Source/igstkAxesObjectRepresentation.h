@@ -28,14 +28,16 @@ namespace igstk
 
 /** \class AxesObjectRepresentation
  * 
- * \brief This class represents a Axes object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is
- * X.  The cylindrical object is rendered in a VTK scene using the
- * vtkAxesSource object.
- * 
+ * \brief This class provides a visual representation of an Axes object. 
+ *
+ * The parameters of the object are the height of the object, and the radius.
+ * Default representation axis is X.  The cylindrical object is rendered in a
+ * VTK scene using the vtkAxesSource object.
  *
  *  \image html  igstkAxesObjectRepresentation.png  "AxesObjectRepresentation State Machine Diagram"
  *  \image latex igstkAxesObjectRepresentation.eps  "AxesObjectRepresentation State Machine Diagram" 
+ *
+ * \sa AxesObject
  *
  * \ingroup ObjectRepresentation
  */
@@ -72,6 +74,9 @@ protected:
   void CreateActors();
 
 private:
+
+  AxesObjectRepresentation(const Self&); //purposely not implemented
+  void operator=(const Self&);     //purposely not implemented
 
   /** Internal itkSpatialObject */
   AxesSpatialObjectType::ConstPointer   m_AxesSpatialObject;
