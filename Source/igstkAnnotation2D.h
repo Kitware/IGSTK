@@ -22,14 +22,10 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-#include <vector>
 #include <string>
-#include "itkCommand.h"
-#include "itkLogger.h"
 #include "vtkActor2D.h"
 #include "vtkTextMapper.h"
 #include "igstkObject.h"
-#include "igstkMacros.h"
 #include "igstkStateMachine.h"
 #include "vtkViewport.h"
 
@@ -62,12 +58,12 @@ public:
   /* Macro with standard traits declarations. */  
   igstkStandardClassTraitsMacro( Annotation2D, Object )
 
-  /** Declarations needed for the Logging */
-  igstkLoggerMacro();
- 
   /** Add annotations */
   void AddAnnotations( int * );
 
+  /** Declarations needed for the Logging */
+  igstkLoggerMacro();
+  
   /** Get the VTK actors */
   igstkGetMacro( Actors, ActorsListType );
 
