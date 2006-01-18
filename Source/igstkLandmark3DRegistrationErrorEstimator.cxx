@@ -309,7 +309,7 @@ Landmark3DRegistrationErrorEstimator::TargetPointType targetPoint )
   // target error parameter 
   ErrorType                      targetRegistrationError = 0.0;
  
- for( unsigned int i; i < 3 ; i++ ) 
+ for( unsigned int i=0; i < 3 ; i++ ) 
    {
        targetRegistrationError += 
                    vnl_math_sqr( distanceFromTargetPointToPrincipalAxes[i] ) / 
