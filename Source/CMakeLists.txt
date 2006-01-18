@@ -95,8 +95,8 @@ FOREACH(HeaderFile ${IGSTK_HEADS})
   ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${HeaderFile})
 
 # Copy the files
-  CONFIGURE_FILE( ${HeaderFileFullPath} ${IGSTK_LATEST_FILES}/${HeaderFile} )
-  SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} ${IGSTK_LATEST_FILES}/${HeaderFile})
+  CONFIGURE_FILE( ${HeaderFileFullPath} ${IGSTK_LATEST_FILES}/${HeaderFile} COPYONLY)
+  SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} ${IGSTK_LATEST_FILES}/${HeaderFile} )
 
 ENDFOREACH( HeaderFile )
 
@@ -183,7 +183,7 @@ FOREACH(SourceFile ${IGSTK_SRCS})
     SET(SourceFileFullPath ${IGSTK_SOURCE_DIR}/Source/${SourceFile})
   ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${SourceFile})
 
-  CONFIGURE_FILE( ${SourceFileFullPath} ${IGSTK_LATEST_FILES}/${SourceFile} )
+  CONFIGURE_FILE( ${SourceFileFullPath} ${IGSTK_LATEST_FILES}/${SourceFile} COPYONLY )
   SET(IGSTKSandbox_SRCS ${IGSTKSandbox_SRCS} ${IGSTK_LATEST_FILES}/${SourceFile})
 ENDFOREACH( SourceFile )
 
@@ -202,7 +202,7 @@ ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${HeaderFile})
     SET(HeaderFileFullPath ${IGSTK_SOURCE_DIR}/Source/${HeaderFile})
 ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${HeaderFile})
 
-CONFIGURE_FILE( ${HeaderFileFullPath} ${IGSTK_LATEST_FILES}/${HeaderFile} )
+CONFIGURE_FILE( ${HeaderFileFullPath} ${IGSTK_LATEST_FILES}/${HeaderFile} COPYONLY)
 SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} ${IGSTK_LATEST_FILES}/${HeaderFile})
 
 
@@ -212,7 +212,7 @@ ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${SourceFile})
    SET(SourceFileFullPath ${IGSTK_SOURCE_DIR}/Source/${SourceFile})
 ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${SourceFile})
   
-CONFIGURE_FILE( ${SourceFileFullPath} ${IGSTK_LATEST_FILES}/${SourceFile} )
+CONFIGURE_FILE( ${SourceFileFullPath} ${IGSTK_LATEST_FILES}/${SourceFile} COPYONLY )
 SET(IGSTKSandbox_SRCS ${IGSTKSandbox_SRCS} ${IGSTK_LATEST_FILES}/${SourceFile})
 
 SET(EXTRA_LIBS)
