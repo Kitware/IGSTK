@@ -29,10 +29,11 @@ namespace igstk
 
 /** \class ConeObjectRepresentation
  * 
- * \brief This class represents a cone object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is
- * X.  The cylindrical object is rendered in a VTK scene using the
- * vtkConeSource object.
+ * \brief This class represents a cone object. 
+ *
+ * The parameters of the object are the height of the object, and the radius.
+ * Default representation axis is X.  The cylindrical object is rendered in a
+ * VTK scene using the vtkConeSource object.
  * 
  *
  *  \image html  igstkConeObjectRepresentation.png  "ConeObjectRepresentation State Machine Diagram"

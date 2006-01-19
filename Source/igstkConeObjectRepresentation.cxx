@@ -19,7 +19,6 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
 #include <vtkProperty.h>
-#include "igstkEvents.h"
 
 
 namespace igstk
