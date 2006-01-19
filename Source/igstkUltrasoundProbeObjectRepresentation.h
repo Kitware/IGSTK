@@ -28,10 +28,11 @@ namespace igstk
 
 /** \class UltrasoundProbeObjectRepresentation
  * 
- * \brief This class represents a UltrasoundProbe object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is
- * X.  The cylindrical object is rendered in a VTK scene using the
- * vtkUltrasoundProbeSource object.
+ * \brief This class represents a UltrasoundProbe object. 
+ *
+ * The parameters of the object are the height of the object, and the radius.
+ * Default representation axis is X.  The cylindrical object is rendered in a
+ * VTK scene using the vtkUltrasoundProbeSource object.
  * 
  *
  *  \image html  igstkUltrasoundProbeObjectRepresentation.png  "UltrasoundProbeObjectRepresentation State Machine Diagram"

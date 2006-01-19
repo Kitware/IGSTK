@@ -16,10 +16,10 @@
 =========================================================================*/
 
 #include "igstkUltrasoundProbeObjectRepresentation.h"
+
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
 #include <vtkProperty.h>
-#include "igstkEvents.h"
 #include <vtkSphere.h>
 #include <vtkImplicitBoolean.h>
 #include <vtkSampleFunction.h>
