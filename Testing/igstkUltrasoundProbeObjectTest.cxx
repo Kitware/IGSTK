@@ -22,27 +22,27 @@
 
 #include <iostream>
 
-#include "igstkBoxObject.h"
-#include "igstkBoxObjectRepresentation.h"
+#include "igstkUltrasoundProbeObject.h"
+#include "igstkUltrasoundProbeObjectRepresentation.h"
 #include "igstkView2D.h"
 
-int igstkBoxObjectTest( int, char * [] )
+int igstkUltrasoundProbeObjectTest( int, char * [] )
 {
-  typedef igstk::BoxObjectRepresentation  ObjectRepresentationType;
-  ObjectRepresentationType::Pointer BoxRepresentation = ObjectRepresentationType::New();
+  typedef igstk::UltrasoundProbeObjectRepresentation  ObjectRepresentationType;
+  ObjectRepresentationType::Pointer UltrasoundProbeRepresentation = ObjectRepresentationType::New();
 
-  typedef igstk::BoxObject  ObjectType;
-  ObjectType::Pointer BoxObject = ObjectType::New();
+  typedef igstk::UltrasoundProbeObject  ObjectType;
+  ObjectType::Pointer UltrasoundProbeObject = ObjectType::New();
     
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetSize() : ";
-  igstk::BoxObject::ArrayType size;
+  igstk::UltrasoundProbeObject::ArrayType size;
   size[0] = 10;
   size[1] = 20;
   size[2] = 30;
-  BoxObject->SetSize(size);
+  UltrasoundProbeObject->SetSize(size);
 
-  igstk::BoxObject::ArrayType sizeRead = BoxObject->GetSize();
+  igstk::UltrasoundProbeObject::ArrayType sizeRead = UltrasoundProbeObject->GetSize();
   for(unsigned int i=0;i<3;i++)
     {
     if(sizeRead[i] != size[i])
@@ -55,8 +55,8 @@ int igstkBoxObjectTest( int, char * [] )
   size[0] = 11;
   size[1] = 22;
   size[2] = 33;
-  BoxObject->SetSize(size[0],size[1],size[2]);
-  sizeRead = BoxObject->GetSize();
+  UltrasoundProbeObject->SetSize(size[0],size[1],size[2]);
+  sizeRead = UltrasoundProbeObject->GetSize();
   for(unsigned int i=0;i<3;i++)
     {
     if(sizeRead[i] != size[i])
@@ -69,24 +69,24 @@ int igstkBoxObjectTest( int, char * [] )
 
   // Test Property
   std::cout << "Testing Property : ";
-  BoxRepresentation->SetColor(0.1,0.2,0.3);
-  BoxRepresentation->SetOpacity(0.4);
-  if(fabs(BoxRepresentation->GetRed()-0.1)>0.00001)
+  UltrasoundProbeRepresentation->SetColor(0.1,0.2,0.3);
+  UltrasoundProbeRepresentation->SetOpacity(0.4);
+  if(fabs(UltrasoundProbeRepresentation->GetRed()-0.1)>0.00001)
     {
     std::cerr << "GetRed() [FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
-  if(fabs(BoxRepresentation->GetGreen()-0.2)>0.00001)
+  if(fabs(UltrasoundProbeRepresentation->GetGreen()-0.2)>0.00001)
     {
     std::cerr << "GetGreen()[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
-  if(fabs(BoxRepresentation->GetBlue()-0.3)>0.00001)
+  if(fabs(UltrasoundProbeRepresentation->GetBlue()-0.3)>0.00001)
     {
     std::cerr << "GetBlue() [FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
-  if(fabs(BoxRepresentation->GetOpacity()-0.4)>0.00001)
+  if(fabs(UltrasoundProbeRepresentation->GetOpacity()-0.4)>0.00001)
     {
     std::cerr << "GetOpacity() [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -94,11 +94,11 @@ int igstkBoxObjectTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
   // Testing PrintSelf()
-  BoxRepresentation->RequestSetBoxObject(BoxObject);
-  BoxRepresentation->Print(std::cout);
-  BoxObject->Print(std::cout);
-  BoxObject->GetNameOfClass();
-  BoxRepresentation->GetNameOfClass();
+  UltrasoundProbeRepresentation->RequestSetUltrasoundProbeObject(UltrasoundProbeObject);
+  UltrasoundProbeRepresentation->Print(std::cout);
+  UltrasoundProbeObject->Print(std::cout);
+  UltrasoundProbeObject->GetNameOfClass();
+  UltrasoundProbeRepresentation->GetNameOfClass();
 
   // testing actors
   std::cout << "Testing actors : ";
@@ -107,7 +107,7 @@ int igstkBoxObjectTest( int, char * [] )
   View2DType * view2D = new View2DType(0,0,200,200,"View 2D");
   
   // this will indirectly call CreateActors() 
-  view2D->RequestAddObject( BoxRepresentation );
+  view2D->RequestAddObject( UltrasoundProbeRepresentation );
     
   std::cout << "[PASSED]" << std::endl;
 
@@ -115,15 +115,15 @@ int igstkBoxObjectTest( int, char * [] )
   // geometrical parameters should trigger an update in the representation
   // class.
   std::cout << "Testing UpdateRepresentationFromGeometry() : ";
-  BoxObject->SetSize( 20.0, 30.0, 40.0 );
+  UltrasoundProbeObject->SetSize( 20.0, 30.0, 40.0 );
   
   // Testing Update
-  BoxRepresentation->IsModified();
+  UltrasoundProbeRepresentation->IsModified();
 
   // Testing again in order to exercise the other half of an if().
-  BoxRepresentation->IsModified();
-  BoxRepresentation->SetColor(0.3,0.7,0.2);
-  if( !BoxRepresentation->IsModified() )
+  UltrasoundProbeRepresentation->IsModified();
+  UltrasoundProbeRepresentation->SetColor(0.3,0.7,0.2);
+  if( !UltrasoundProbeRepresentation->IsModified() )
     {
     std::cerr << "IsModified() failed to be true after a SetColor()" << std::endl;
     return EXIT_FAILURE;
@@ -147,8 +147,8 @@ int igstkBoxObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  BoxObject->RequestSetTransform( transform );
-  igstk::Transform  transform2 = BoxObject->GetTransform();
+  UltrasoundProbeObject->RequestSetTransform( transform );
+  igstk::Transform  transform2 = UltrasoundProbeObject->GetTransform();
   igstk::Transform::VectorType translation2 = transform2.GetTranslation();
   for( unsigned int i=0; i<3; i++ )
     {
@@ -180,35 +180,35 @@ int igstkBoxObjectTest( int, char * [] )
 
   // Testing the Copy() function
   std::cout << "Testing Copy(): ";
-  ObjectRepresentationType::Pointer copy = BoxRepresentation->Copy();
-  if(copy->GetOpacity() != BoxRepresentation->GetOpacity())
+  ObjectRepresentationType::Pointer copy = UltrasoundProbeRepresentation->Copy();
+  if(copy->GetOpacity() != UltrasoundProbeRepresentation->GetOpacity())
     {
     std::cerr << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
   std::cout << "[PASSED]" << std::endl;
 
-  // Exercise RequestSetBoxObject() with a null pointer as argument
-  std::cout << "Testing RequestSetBoxObject() with NULL argument: ";
-  ObjectRepresentationType::Pointer BoxRepresentation3 = ObjectRepresentationType::New();
-  BoxRepresentation3->RequestSetBoxObject( 0 );
+  // Exercise RequestSetUltrasoundProbeObject() with a null pointer as argument
+  std::cout << "Testing RequestSetUltrasoundProbeObject() with NULL argument: ";
+  ObjectRepresentationType::Pointer UltrasoundProbeRepresentation3 = ObjectRepresentationType::New();
+  UltrasoundProbeRepresentation3->RequestSetUltrasoundProbeObject( 0 );
 
-  // Exercise RequestSetBoxObject() called twice. The second call should be ignored.
-  std::cout << "Testing RequestSetBoxObject() called twice: ";
-  ObjectRepresentationType::Pointer BoxRepresentation4 = ObjectRepresentationType::New();
-  ObjectType::Pointer BoxObjectA = ObjectType::New();
-  ObjectType::Pointer BoxObjectB = ObjectType::New();
-  BoxRepresentation4->RequestSetBoxObject( BoxObjectA );
-  BoxRepresentation4->RequestSetBoxObject( BoxObjectB );
+  // Exercise RequestSetUltrasoundProbeObject() called twice. The second call should be ignored.
+  std::cout << "Testing RequestSetUltrasoundProbeObject() called twice: ";
+  ObjectRepresentationType::Pointer UltrasoundProbeRepresentation4 = ObjectRepresentationType::New();
+  ObjectType::Pointer UltrasoundProbeObjectA = ObjectType::New();
+  ObjectType::Pointer UltrasoundProbeObjectB = ObjectType::New();
+  UltrasoundProbeRepresentation4->RequestSetUltrasoundProbeObject( UltrasoundProbeObjectA );
+  UltrasoundProbeRepresentation4->RequestSetUltrasoundProbeObject( UltrasoundProbeObjectB );
 
   // Set properties again in order to exercise the loop that goes through
   // Actors
   std::cout << "Testing set properties : ";
-  BoxRepresentation->SetColor(0.9,0.7,0.1);
-  BoxRepresentation->SetOpacity(0.8);
+  UltrasoundProbeRepresentation->SetColor(0.9,0.7,0.1);
+  UltrasoundProbeRepresentation->SetOpacity(0.8);
 
-  std::cout << BoxRepresentation << std::endl;
-  std::cout << BoxObjectA << std::endl;
+  std::cout << UltrasoundProbeRepresentation << std::endl;
+  std::cout << UltrasoundProbeObjectA << std::endl;
 
   std::cout << "Test [DONE]" << std::endl;
 
