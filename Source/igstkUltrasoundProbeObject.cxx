@@ -15,7 +15,6 @@
 
 =========================================================================*/
 #include "igstkUltrasoundProbeObject.h"
-#include "igstkEvents.h"
 
 namespace igstk
 { 
