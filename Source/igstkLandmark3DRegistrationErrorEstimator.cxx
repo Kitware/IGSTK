@@ -22,7 +22,6 @@
 
 #include "igstkLandmark3DRegistrationErrorEstimator.h"
 
-#include "itkVector.h"
 #include "itkMatrix.h"
 #include "itkSymmetricEigenAnalysis.h"
 #include "vnl/vnl_math.h"
@@ -64,29 +63,29 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarkPrincipalAxes()
    
    pointItr  = m_ImageLandmarks.begin();
    while( pointItr != m_ImageLandmarks.end() )
-   {
+     {
      landmarkVector[0] += (*pointItr)[0] ;
      landmarkVector[1] += (*pointItr)[1] ;
      landmarkVector[2] += (*pointItr)[2] ;
      ++pointItr;
-   }
+     }
 
    while( pointItr != m_ImageLandmarks.end() )
-   {
+     {
      for(unsigned int i=0; i<3; i++)
-     {     
+       {     
        landmarkCentered[i]  = (*pointItr)[i]  - this->m_LandmarkCentroid[i];
-     }
+       }
 
      for(unsigned int i=0; i<3; i++)
-     {
-       for(unsigned int j=0; j<3; j++)
        {
+       for(unsigned int j=0; j<3; j++)
+         {
          covarianceMatrix[i][j] += landmarkCentered[i] * landmarkCentered[j];
+         }
        }
-     }
      ++pointItr;
-   }
+     }
 
    // Expand the matrix 
    AugmentedMatrixType                                      augmentedCovarianceMatrix;
