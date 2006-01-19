@@ -19,7 +19,6 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
 #include <vtkProperty.h>
-#include "igstkEvents.h"
 
 
 namespace igstk
@@ -114,9 +113,9 @@ void BoxObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) 
   Superclass::PrintSelf(os, indent);
 
   if( this->m_BoxSource )
-  {
+    {
     os << indent << this->m_BoxSource << std::endl;
-  }
+    }
 }
 
 

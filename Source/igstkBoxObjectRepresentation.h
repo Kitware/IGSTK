@@ -29,10 +29,11 @@ namespace igstk
 
 /** \class BoxObjectRepresentation
  * 
- * \brief This class represents a box object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is
- * X.  The cylindrical object is rendered in a VTK scene using the
- * vtkBoxSource object.
+ * \brief This class represents a box object. 
+ *
+ * The parameters of the object are the height of the object, and the radius.
+ * Default representation axis is X.  The cylindrical object is rendered in a
+ * VTK scene using the vtkCubeSource object.
  * 
  *
  *  \image html  igstkBoxObjectRepresentation.png  "BoxObjectRepresentation State Machine Diagram"
