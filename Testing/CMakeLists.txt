@@ -101,6 +101,7 @@ SET(IGSTK_TEST_PROGAMS
   igstkBoxObjectTest 
   igstkConeObjectTest
   igstkAxesObjectTest
+  igstkUltrasoundProbeObjectTest
 )
 
 FOREACH(TestProgram ${IGSTK_TEST_PROGAMS})
@@ -175,6 +176,7 @@ SET(IGSTK_TEST_SRCS
   igstkConeObjectTest.cxx
   igstkBoxObjectTest.cxx
   igstkAnnotation2DTest.cxx
+  igstkUltrasoundProbeObjectTest.cxx
   )  
 
 # Testing source file need data input

@@ -36,6 +36,7 @@ void RegisterTests()
   REGISTER_TEST(igstkConeObjectTest);
   REGISTER_TEST(igstkAnnotation2DTest);
   REGISTER_TEST(igstkAxesObjectTest);
+  REGISTER_TEST(igstkUltrasoundProbeObjectTest);
 
   // Register main library tests  
   REGISTER_TEST(igstkBasicTrackerTest);
