@@ -22,10 +22,7 @@
 #endif
 
 #include "igstkFlockOfBirdsTracker.h"
-#include "igstkTrackerPort.h"
 
-#include <iostream>
-#include <fstream>
 
 namespace igstk
 {
@@ -296,34 +293,64 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
   switch (m_Type) 
     {
     case POS:
-      for (i = 0; i < 3; i++) converted[i] = (float)((float)data[i] * posk);
+      for( i = 0; i < 3; i++ ) 
+        {
+        converted[i] = (float)((float)data[i] * posk);
+        }
       break;
     
     case POSANGLE:
-      for (i = 0; i < 3; i++) converted[i] = (float)((float)data[i] * posk);
-      for (i = 3; i < 6; i++) converted[i] = (float)((float)data[i] * ANGK);
+      for( i = 0; i < 3; i++ ) 
+        {
+        converted[i] = (float)((float)data[i] * posk);
+        }
+      for( i = 3; i < 6; i++ ) 
+        {
+        converted[i] = (float)((float)data[i] * ANGK);
+        }
       break;
     
     case ANGLE:
-      for (i = 0; i < 3; i++) converted[i] = (float)((float)data[i] * ANGK);
+      for( i = 0; i < 3; i++ ) 
+        {
+        converted[i] = (float)((float)data[i] * ANGK);
+        }
       break;
     
     case MATRIX:
-      for (i = 0; i < 9; i++) converted[i] = (float)((float)data[i] / FTW);
+      for( i = 0; i < 9; i++ ) 
+        {
+        converted[i] = (float)((float)data[i] / FTW);
+        }
       break;
 
     case POSMATRIX:
-      for (i = 0; i < 3; i++) converted[i] = (float)((float)data[i] * posk);
-      for (i = 3; i < 12; i++) converted[i] = (float)((float)data[i] / FTW);
+      for( i = 0; i < 3; i++ )
+        {
+        converted[i] = (float)((float)data[i] * posk);
+        }
+      for( i = 3; i < 12; i++ ) 
+        {
+        converted[i] = (float)((float)data[i] / FTW);
+        }
       break;
 
     case QUATER:
-      for (i = 0; i < 4; i++) converted[i] = (float)((float)data[i] / FTW);
+      for( i = 0; i < 4; i++ )
+        {
+        converted[i] = (float)((float)data[i] / FTW);
+        }
       break;
 
     case POSQUATER:
-      for (i = 0; i < 3; i++) converted[i] = (float)((float)data[i] * posk);
-      for (i = 3; i < 7; i++) converted[i] = (float)((float)data[i] / FTW);
+      for( i = 0; i < 3; i++ )
+        {
+        converted[i] = (float)((float)data[i] * posk);
+        }
+      for( i = 3; i < 7; i++ )
+        {
+        converted[i] = (float)((float)data[i] / FTW);
+        }
       break;
 
     default:

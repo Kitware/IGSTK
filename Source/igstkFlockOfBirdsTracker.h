@@ -60,56 +60,6 @@ public:
 
 public:
 
-  typedef enum 
-    {
-    POINTM=0,
-    CONTINUOUS=1, 
-    STREAM=2
-    } FoBMode;
-
-  typedef enum 
-    {
-    POS=0, 
-    ANGLE=1, 
-    MATRIX=2, 
-    POSANGLE=3, 
-    POSMATRIX=4, 
-    FACTORY_USE_ONLY=5,  
-    QUATER=6, 
-    POSQUATER=7
-    } FoBType;
-
-  typedef enum 
-    {
-    F_UP_RIGHT=0, 
-    F_UP_LEFT=1, 
-    F_DOWN_LEFT=2, 
-    F_DOWN_RIGHT=3, 
-    B_UP_RIGHT=4, 
-    B_UP_LEFT=5, 
-    B_DOWN_LEFT=6, 
-    B_DOWN_RIGHT=7
-    } FoBHemisphere;
-
-  typedef enum 
-    {
-    _36_INCHES, 
-    _72_INCHES, 
-    _144_INCHES = 1
-    } FoBPositionScaling;
-
-  typedef enum 
-    {
-    INCHES=0, 
-    CM=1, 
-    MM=2
-    } FoBUnit;
-
-  /** typedefs for the tool */
-  typedef igstk::FlockOfBirdsTrackerTool              FlockOfBirdsTrackerToolType;
-  typedef FlockOfBirdsTrackerToolType::Pointer        FlockOfBirdsTrackerToolPointer;
-  typedef FlockOfBirdsTrackerToolType::ConstPointer   FlockOfBirdsTrackerToolConstPointer;
-
   /** number of ports to allow */
   itkStaticConstMacro( NumberOfPorts, unsigned int, 1 );
 
@@ -175,6 +125,56 @@ private:
   /** A mutex for multithreaded access to the buffer arrays */
   ::itk::MutexLock::Pointer  m_BufferLock;
 
+  typedef enum 
+    {
+    POINTM=0,
+    CONTINUOUS=1, 
+    STREAM=2
+    } FoBMode;
+
+  typedef enum 
+    {
+    POS=0, 
+    ANGLE=1, 
+    MATRIX=2, 
+    POSANGLE=3, 
+    POSMATRIX=4, 
+    FACTORY_USE_ONLY=5,  
+    QUATER=6, 
+    POSQUATER=7
+    } FoBType;
+
+  typedef enum 
+    {
+    F_UP_RIGHT=0, 
+    F_UP_LEFT=1, 
+    F_DOWN_LEFT=2, 
+    F_DOWN_RIGHT=3, 
+    B_UP_RIGHT=4, 
+    B_UP_LEFT=5, 
+    B_DOWN_LEFT=6, 
+    B_DOWN_RIGHT=7
+    } FoBHemisphere;
+
+  typedef enum 
+    {
+    _36_INCHES, 
+    _72_INCHES, 
+    _144_INCHES = 1
+    } FoBPositionScaling;
+
+  typedef enum 
+    {
+    INCHES=0, 
+    CM=1, 
+    MM=2
+    } FoBUnit;
+
+  /** typedefs for the tool */
+  typedef igstk::FlockOfBirdsTrackerTool              FlockOfBirdsTrackerToolType;
+  typedef FlockOfBirdsTrackerToolType::Pointer        FlockOfBirdsTrackerToolPointer;
+  typedef FlockOfBirdsTrackerToolType::ConstPointer   FlockOfBirdsTrackerToolConstPointer;
+
   /** A buffer for holding tool transforms */
   double m_TransformBuffer[NumberOfPorts][8];
 
@@ -236,3 +236,4 @@ private:
 }
 
 #endif //__igstk_FlockOfBirdsTracker_h_
+

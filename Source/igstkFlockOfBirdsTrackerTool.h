@@ -29,6 +29,7 @@ namespace igstk
   * for TrackerTools, and also to allow compile-time type enforcement
   * for other classes and functions that specifically require
   * an FlockOfBirds tool.
+  *
 */
 
 class FlockOfBirdsTrackerTool : public TrackerTool
