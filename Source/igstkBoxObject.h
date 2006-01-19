@@ -28,8 +28,10 @@ namespace igstk
 
 /** \class BoxObject
  * 
- * \brief This class represents a Box object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is Z.
+ * \brief This class represents a Box object. 
+ *
+ * The parameters of the object are the height of the object, and the radius.
+ * Default representation axis is Z.
  * 
  * \ingroup Object
  */
@@ -46,7 +48,6 @@ public:
 public:
   
   /** Typedefs */
-  typedef itk::GroupSpatialObject<3>     BoxSpatialObjectType;
   typedef itk::FixedArray<double,3> ArrayType;
 
   /** Set the size of each axis */
@@ -77,6 +78,9 @@ protected:
 
 private:
   
+  /** Typedefs */
+  typedef itk::GroupSpatialObject<3>     BoxSpatialObjectType;
+
   BoxSpatialObjectType::Pointer m_BoxSpatialObject;
   ArrayType                     m_Size;
 
