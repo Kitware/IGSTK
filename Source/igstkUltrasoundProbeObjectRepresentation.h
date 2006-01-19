@@ -29,14 +29,10 @@ namespace igstk
 /** \class UltrasoundProbeObjectRepresentation
  * 
  * \brief This class represents a UltrasoundProbe object. 
- *
- * The parameters of the object are the height of the object, and the radius.
- * Default representation axis is X.  The cylindrical object is rendered in a
- * VTK scene using the vtkUltrasoundProbeSource object.
- * 
- *
- *  \image html  igstkUltrasoundProbeObjectRepresentation.png  "UltrasoundProbeObjectRepresentation State Machine Diagram"
- *  \image latex igstkUltrasoundProbeObjectRepresentation.eps  "UltrasoundProbeObjectRepresentation State Machine Diagram" 
+ * The representation of the geometric model of the probe is done using
+ * VTK implicit functions combined with the Marching Cube algorithm.
+ * Boolean operators are also used on the implicit functions to obtain
+ * a nice looking shape.
  *
  * \ingroup ObjectRepresentation
  */
@@ -65,6 +61,10 @@ protected:
 
   UltrasoundProbeObjectRepresentation( void );
   virtual ~UltrasoundProbeObjectRepresentation( void );
+  
+  UltrasoundProbeObjectRepresentation(const Self&); //purposely not implemented
+  void operator=(const Self&);                      //purposely not implemented
+
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

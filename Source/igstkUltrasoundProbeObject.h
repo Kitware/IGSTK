@@ -28,10 +28,12 @@ namespace igstk
 /** \class UltrasoundProbeObject
  * 
  * \brief This class represents a UltrasoundProbe object. 
+ * \warning For the moment this class does not offer any parameter tuning
+ * such as height and width.
+ * The actual representation of the class is done via the itkGroupSpatialObject 
  *
- * The parameters of the object are the height of the object, and the radius.
  * Default representation axis is Z.
- * 
+ *
  * \ingroup Object
  */
 
@@ -44,7 +46,6 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( UltrasoundProbeObject, SpatialObject )
 
-  
 protected:
 
   UltrasoundProbeObject( void );
@@ -57,7 +58,6 @@ private:
  
   /** Typedefs */
   typedef itk::GroupSpatialObject<3>     UltrasoundProbeSpatialObjectType;
-
 
   UltrasoundProbeObject(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented

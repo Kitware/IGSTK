@@ -61,9 +61,6 @@ UltrasoundProbeObjectRepresentation::~UltrasoundProbeObjectRepresentation()
   this->DeleteActors();
 }
 
-
-
-
 /** Set the UltrasoundProbeal Spatial Object */
 void UltrasoundProbeObjectRepresentation::RequestSetUltrasoundProbeObject( const UltrasoundProbeSpatialObjectType * UltrasoundProbe )
 {
@@ -110,7 +107,7 @@ void UltrasoundProbeObjectRepresentation::CreateActors()
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
    
- vtkPolyDataMapper *tipMapper = vtkPolyDataMapper::New();
+  vtkPolyDataMapper *tipMapper = vtkPolyDataMapper::New();
   vtkActor* tipActor = vtkActor::New();
 
   // Create the tip
