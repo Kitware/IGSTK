@@ -47,21 +47,24 @@ public:
 public:
 
   /** Set the radius of the Cone */
-  void SetRadius( double radius );
+  igstkSetMacro(Radius,double);
   
   /** Get the radius of the Cone */
-  double GetRadius() const;
+   igstkGetMacro(Radius,double);
   
   /** Set the height of the Cone */
-  void SetHeight( double height );
-  
+  igstkSetMacro(Height,double); 
+
   /** Get the height of the Cone */
-  double GetHeight() const;
+  igstkGetMacro(Height,double);
   
 protected:
 
   ConeObject( void );
   ~ConeObject( void );
+
+  ConeObject(const Self&);            //purposely not implemented
+  void operator=(const Self&);       //purposely not implemented
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

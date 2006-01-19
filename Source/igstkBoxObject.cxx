@@ -15,7 +15,6 @@
 
 =========================================================================*/
 #include "igstkBoxObject.h"
-#include "igstkEvents.h"
 
 namespace igstk
 { 
@@ -43,18 +42,6 @@ void BoxObject::SetSize(double x, double y, double z)
   m_Size[2] = z;
 }
 
-/** Set the size given an array */
-void BoxObject::SetSize(const BoxObject::ArrayType & size)
-{
-  m_Size = size;
-}
-
-/** Get the size as an array */
-const BoxObject::ArrayType BoxObject::GetSize() const
-{
-  return m_Size;
-}
-
 /** Get size of the X axis */
 double BoxObject::GetSizeX() const
 {
@@ -77,6 +64,7 @@ double BoxObject::GetSizeZ() const
 void BoxObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << "Size = " << m_Size << std::endl;
 }
 
 

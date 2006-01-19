@@ -54,10 +54,10 @@ public:
   void SetSize(double x, double y, double z);
 
   /** Set the size given an array */
-  void SetSize(const ArrayType & size);
+  igstkSetMacro( Size , ArrayType );
 
   /** Get the size as an array */
-  const ArrayType GetSize() const;
+  igstkGetMacro( Size , ArrayType );
   
   /** Get size of the X axis */
   double GetSizeX() const;
@@ -72,6 +72,9 @@ protected:
 
   BoxObject( void );
   ~BoxObject( void );
+
+  BoxObject(const Self&);            //purposely not implemented
+  void operator=(const Self&);       //purposely not implemented
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

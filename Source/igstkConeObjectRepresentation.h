@@ -67,6 +67,9 @@ protected:
   ConeObjectRepresentation( void );
   virtual ~ConeObjectRepresentation( void );
 
+  ConeObjectRepresentation(const Self&); //purposely not implemented
+  void operator=(const Self&);           //purposely not implemented
+
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 

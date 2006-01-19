@@ -15,7 +15,6 @@
 
 =========================================================================*/
 #include "igstkConeObject.h"
-#include "igstkEvents.h"
 
 namespace igstk
 { 
@@ -35,43 +34,15 @@ ConeObject::~ConeObject()
 {
 }
 
-
-void ConeObject::SetRadius( double radius )
-{
-  //m_ConeSpatialObject->SetRadius( radius );
-  m_Radius = radius;
-}
-
-
-void ConeObject::SetHeight( double height ) 
-{
-  //m_ConeSpatialObject->SetHeight( height );
-  m_Height = height;
-}
-
-double ConeObject::GetRadius() const
-{
-  //return m_ConeSpatialObject->GetRadius();
-  return m_Radius;
-}
-
-
-double ConeObject::GetHeight() const
-{
-  //return m_ConeSpatialObject->GetHeight();
-  return m_Height;
-}
-
-
 /** Print object information */
 void ConeObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
   if( this->m_ConeSpatialObject )
-  {
+    {
     os << indent << this->m_ConeSpatialObject << std::endl;
-  }
+    }
   os << indent << "Radius = " << m_Radius << std::endl;
   os << indent << "Height = " << m_Height << std::endl;
 }

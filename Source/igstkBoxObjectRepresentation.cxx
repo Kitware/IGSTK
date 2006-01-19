@@ -46,8 +46,6 @@ BoxObjectRepresentation::BoxObjectRepresentation():m_StateMachine(this)
   igstkSetInitialStateMacro( NullBoxObject );
 
   m_StateMachine.SetReadyToRun();
-
-
 } 
 
 /** Destructor */
@@ -61,10 +59,7 @@ BoxObjectRepresentation::~BoxObjectRepresentation()
   this->DeleteActors();
 }
 
-
-
-
-/** Set the Boxal Spatial Object */
+/** Set the Box Spatial Object */
 void BoxObjectRepresentation::RequestSetBoxObject( const BoxSpatialObjectType * box )
 {
   m_BoxObjectToAdd = box;
@@ -78,19 +73,16 @@ void BoxObjectRepresentation::RequestSetBoxObject( const BoxSpatialObjectType * 
     igstkPushInputMacro( ValidBoxObject );
     m_StateMachine.ProcessInputs();
     }
-
-
 }
 
 
-
-/** Set the Cylindrical Spatial Object */
+/** No Processing */
 void BoxObjectRepresentation::NoProcessing()
 {
 }
 
 
-/** Set the Cylindrical Spatial Object */
+/** Set the Box Spatial Object */
 void BoxObjectRepresentation::SetBoxObjectProcessing()
 {
   // We create the ellipse spatial object
@@ -105,7 +97,6 @@ void BoxObjectRepresentation::SetBoxObjectProcessing()
     m_BoxSource->SetZLength(m_BoxSpatialObject->GetSizeZ());
     }
 } 
-
 
 /** Print Self function */
 void BoxObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
@@ -162,7 +153,6 @@ BoxObjectRepresentation::Copy() const
 
   return newOR;
 }
-
 
 } // end namespace igstk
 

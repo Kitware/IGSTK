@@ -46,8 +46,6 @@ AxesObjectRepresentation::AxesObjectRepresentation():m_StateMachine(this)
   m_StateMachine.SelectInitialState( m_NullAxesObjectState );
 
   m_StateMachine.SetReadyToRun();
-
-
 } 
 
 /** Destructor */
@@ -55,9 +53,6 @@ AxesObjectRepresentation::~AxesObjectRepresentation()
 {
   this->DeleteActors();
 }
-
-
-
 
 /** Request to Set the AxesSpatial Object */
 void AxesObjectRepresentation::RequestSetAxesObject( const AxesSpatialObjectType * Axes )
@@ -75,13 +70,10 @@ void AxesObjectRepresentation::RequestSetAxesObject( const AxesSpatialObjectType
     }
 }
 
-
-
 /** Set the Axes Spatial Object */
 void AxesObjectRepresentation::NoProcessing()
 {
 }
-
 
 /** Set the Axes Spatial Object */
 void AxesObjectRepresentation::SetAxesObjectProcessing()
@@ -90,20 +82,17 @@ void AxesObjectRepresentation::SetAxesObjectProcessing()
   this->RequestSetSpatialObject( m_AxesSpatialObject );
 } 
 
-
 /** Print Self function */
 void AxesObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
 
-
 /** Update the visual representation in response to changes in the geometric
  * object */
 void AxesObjectRepresentation::UpdateRepresentationProcessing()
 {
 }
-
 
 /** Create the vtk Actors */
 void AxesObjectRepresentation::CreateActors()
@@ -131,7 +120,6 @@ AxesObjectRepresentation::Copy() const
 
   return newOR;
 }
-
 
 } // end namespace igstk
 
