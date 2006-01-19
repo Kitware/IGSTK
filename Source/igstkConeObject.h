@@ -27,8 +27,10 @@ namespace igstk
 
 /** \class ConeObject
  * 
- * \brief This class represents a cone object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is X.
+ * \brief This class represents a cone object.
+ *
+ * The parameters of the object are the height of the object, and the radius.
+ * Default representation axis is X.
  * 
  * \ingroup Object
  */
@@ -43,9 +45,6 @@ public:
   igstkStandardClassTraitsMacro( ConeObject, SpatialObject )
 
 public:
-
-  /** Typedefs */
-  typedef itk::GroupSpatialObject<3>     ConeSpatialObjectType;
 
   /** Set the radius of the Cone */
   void SetRadius( double radius );
@@ -68,6 +67,9 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+
+  /** Typedefs */
+  typedef itk::GroupSpatialObject<3>     ConeSpatialObjectType;
 
   /** Internal itkSpatialObject */
   ConeSpatialObjectType::Pointer   m_ConeSpatialObject;
