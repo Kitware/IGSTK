@@ -100,6 +100,7 @@ SET(IGSTK_TEST_PROGAMS
   igstkLandmark3DRegistrationErrorEstimatorTest 
   igstkBoxObjectTest 
   igstkConeObjectTest
+  igstkAxesObjectTest
 )
 
 FOREACH(TestProgram ${IGSTK_TEST_PROGAMS})
@@ -170,8 +171,9 @@ SET(IGSTK_TEST_SRCS
   igstkPivotCalibrationTest.cxx
   igstkPrincipalAxisCalibrationTest.cxx
   igstkLandmark3DRegistrationErrorEstimatorTest.cxx
-  igstkBoxObjectTest.cxx
+  igstkAxesObjectTest.cxx
   igstkConeObjectTest.cxx
+  igstkBoxObjectTest.cxx
   igstkAnnotation2DTest.cxx
   )  
 

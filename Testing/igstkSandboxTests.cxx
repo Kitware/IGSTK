@@ -35,6 +35,7 @@ void RegisterTests()
   REGISTER_TEST(igstkBoxObjectTest);
   REGISTER_TEST(igstkConeObjectTest);
   REGISTER_TEST(igstkAnnotation2DTest);
+  REGISTER_TEST(igstkAxesObjectTest);
 
   // Register main library tests  
   REGISTER_TEST(igstkBasicTrackerTest);
