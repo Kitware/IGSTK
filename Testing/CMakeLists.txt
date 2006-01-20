@@ -47,16 +47,15 @@ FILE(GLOB STATE_MACHINE_DOT_FILES "${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR}/*.
 MARK_AS_ADVANCED(IGSTKSandbox_DATA_ROOT)
 
 INCLUDE_DIRECTORIES (
-  ${IGSTKSandbox_SOURCE_DIR}/SourceLatest
-  ${IGSTKSandbox_SOURCE_DIR}/TestingLatest
-  ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source
-  ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing
-  ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing
-  ${IGSTKSandbox_SOURCE_DIR}/Source  
   ${IGSTKSandbox_BINARY_DIR}
-  ${IGSTKSandbox_BINARY_DIR}/Source
+  ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source
+  ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing 
+  ${IGSTKSandbox_SOURCE_DIR}/Source
+  ${IGSTKSandbox_BINARY_DIR}/Source  
   ${IGSTKSandbox_SOURCE_DIR}/Testing
   ${IGSTKSandbox_BINARY_DIR}/Testing
+  ${IGSTKSandbox_SOURCE_DIR}/SourceLatest
+  ${IGSTKSandbox_SOURCE_DIR}/TestingLatest
   )
 
 # Add your new tests here
