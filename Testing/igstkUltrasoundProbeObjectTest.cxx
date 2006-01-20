@@ -33,39 +33,6 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
 
   typedef igstk::UltrasoundProbeObject  ObjectType;
   ObjectType::Pointer UltrasoundProbeObject = ObjectType::New();
-    
-  // Test Set/GetRadius()
-  std::cout << "Testing Set/GetSize() : ";
-  igstk::UltrasoundProbeObject::ArrayType size;
-  size[0] = 10;
-  size[1] = 20;
-  size[2] = 30;
-  UltrasoundProbeObject->SetSize(size);
-
-  igstk::UltrasoundProbeObject::ArrayType sizeRead = UltrasoundProbeObject->GetSize();
-  for(unsigned int i=0;i<3;i++)
-    {
-    if(sizeRead[i] != size[i])
-      {
-      std::cerr << "Size error : " << sizeRead[i] << " v.s " << size << std::endl; 
-      return EXIT_FAILURE;
-      }
-    }
-
-  size[0] = 11;
-  size[1] = 22;
-  size[2] = 33;
-  UltrasoundProbeObject->SetSize(size[0],size[1],size[2]);
-  sizeRead = UltrasoundProbeObject->GetSize();
-  for(unsigned int i=0;i<3;i++)
-    {
-    if(sizeRead[i] != size[i])
-      {
-      std::cerr << "Size error : " << sizeRead[i] << " v.s " << size << std::endl; 
-      return EXIT_FAILURE;
-      }
-    }
-  std::cout << "[PASSED]" << std::endl;
 
   // Test Property
   std::cout << "Testing Property : ";
@@ -108,17 +75,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( UltrasoundProbeRepresentation );
-    
   std::cout << "[PASSED]" << std::endl;
-
-  // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
-  // geometrical parameters should trigger an update in the representation
-  // class.
-  std::cout << "Testing UpdateRepresentationFromGeometry() : ";
-  UltrasoundProbeObject->SetSize( 20.0, 30.0, 40.0 );
-  
-  // Testing Update
-  UltrasoundProbeRepresentation->IsModified();
 
   // Testing again in order to exercise the other half of an if().
   UltrasoundProbeRepresentation->IsModified();
