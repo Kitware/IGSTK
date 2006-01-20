@@ -302,7 +302,7 @@ ENDFOREACH( SourceFile )
 #-----------------------------------------------------------------------------
 # Add testing executables
 ADD_EXECUTABLE(igstkLatestTests ${IGSTK_SOURCE_DIR}/Testing/igstkTests.cxx ${IGSTKLatestTests_SRCS})
-TARGET_LINK_LIBRARIES(igstkLatestTests IGSTKLatest)
+TARGET_LINK_LIBRARIES(igstkLatestTests IGSTKLatest IGSTKSandbox)
 
 #ADD_EXECUTABLE(igstkSystemInformation igstkSystemInformation.cxx)
 #ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation)
