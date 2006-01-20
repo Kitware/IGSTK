@@ -55,24 +55,10 @@ SET(IGSTK_HEADS
   igstkMeshReader.h
   igstkGroupObject.h
   igstkTubeGroupObject.h
-  igstkMouseTracker.h
-  igstkPivotCalibration.h
-  igstkPrincipalAxisCalibration.h
-  igstkFlockOfBirdsTracker.h
-  igstkFlockOfBirdsTrackerTool.h
-  igstkUltrasoundProbeObject.h
-  igstkUltrasoundProbeObjectRepresentation.h
-  igstkAxesObject.h
-  igstkAxesObjectRepresentation.h
-  igstkAnnotation2D.h
-  igstkLandmark3DRegistrationErrorEstimator.h
-  igstkBoxObject.h
-  igstkBoxObjectRepresentation.h
-  igstkConeObject.h
-  igstkConeObjectRepresentation.h
+  igstkTestMain.h
 )
-    
-IF(IGSTKSandbox_USE_FLTK)
+
+IF(IGSTK_USE_FLTK)
   SET(IGSTK_HEADS
     ${IGSTK_HEADS}
     igstkFLTKTextBufferLogOutput.h
@@ -81,27 +67,11 @@ IF(IGSTKSandbox_USE_FLTK)
     igstkView2D.h
     igstkView3D.h
     )
-ENDIF(IGSTKSandbox_USE_FLTK)
+ENDIF(IGSTK_USE_FLTK)
 
+# The implementation files
 
-
-SET(IGSTKSandbox_HEADS)
-
-FOREACH(HeaderFile ${IGSTK_HEADS})
-  IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${HeaderFile})
-    SET(HeaderFileFullPath ${IGSTKSandbox_SOURCE_DIR}/Source/${HeaderFile})
-  ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${HeaderFile})
-    SET(HeaderFileFullPath ${IGSTK_SOURCE_DIR}/Source/${HeaderFile})
-  ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${HeaderFile})
-
-# Copy the files
-  CONFIGURE_FILE( ${HeaderFileFullPath} ${IGSTK_LATEST_FILES}/${HeaderFile} COPYONLY)
-  SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} ${IGSTK_LATEST_FILES}/${HeaderFile} )
-
-ENDFOREACH( HeaderFile )
-
- 
-SET(IGSTK_SRCS
+SET(IGSTK_SRCS  
   igstkImageReader.txx
   igstkDICOMImageReader.txx
   igstkCTImageReader.cxx
@@ -147,6 +117,110 @@ SET(IGSTK_SRCS
   igstkMeshReader.cxx
   igstkGroupObject.cxx
   igstkTubeGroupObject.cxx
+)
+
+IF(IGSTK_USE_FLTK)
+  SET(IGSTK_SRCS  
+    ${IGSTK_SRCS}
+    igstkFLTKTextBufferLogOutput.cxx
+    igstkFLTKTextLogOutput.cxx
+    igstkView.cxx
+    igstkView2D.cxx
+    igstkView3D.cxx
+    )
+ENDIF(IGSTK_USE_FLTK)
+
+IF( WIN32 )
+  SET(IGSTK_HEADS ${IGSTK_HEADS} 
+    igstkSerialCommunicationForWindows.h
+  )
+  SET(IGSTK_SRCS ${IGSTK_SRCS} 
+    igstkSerialCommunicationForWindows.cxx
+  )
+ELSE( WIN32 )
+  SET(IGSTK_HEADS ${IGSTK_HEADS} 
+    igstkSerialCommunicationForPosix.h
+  )
+  SET(IGSTK_SRCS ${IGSTK_SRCS} 
+    igstkSerialCommunicationForPosix.cxx
+  )
+ENDIF( WIN32 )
+
+# Copy igstkConfigure.h into latest
+CONFIGURE_FILE( ${IGSTK_BINARY_DIR}/igstkConfigure.h ${IGSTK_LATEST_FILES}/igstkConfigure.h COPYONLY)
+
+# Copy all the .txx files
+FILE(GLOB TemplateFiles ${IGSTK_SOURCE_DIR}/Source/*.txx)
+FOREACH(TemplateFile ${TemplateFiles})
+  GET_FILENAME_COMPONENT(tfile ${TemplateFile} NAME)
+  CONFIGURE_FILE( ${TemplateFile} ${IGSTK_LATEST_FILES}/${tfile} COPYONLY)
+ENDFOREACH(TemplateFile ${TemplateFiles})
+
+
+# Copy the header files if they are not a duplicated in the Sandbox
+FOREACH(HeaderFile ${IGSTK_HEADS})
+
+  IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${HeaderFile})
+     SET(IGSTKLatest_HEADS ${IGSTKLatest_HEADS} ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${HeaderFile})
+  ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${HeaderFile})
+    # Copy the files from IGSTK
+    CONFIGURE_FILE( ${IGSTK_SOURCE_DIR}/Source/${HeaderFile} ${IGSTK_LATEST_FILES}/${HeaderFile} COPYONLY)
+    SET(IGSTKLatest_HEADS ${IGSTKLatest_HEADS} ${IGSTK_LATEST_FILES}/${HeaderFile})
+  ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${HeaderFile})
+
+ENDFOREACH( HeaderFile )
+
+# Copy the source files if they are not a duplicated in the Sandbox
+FOREACH(SourceFile ${IGSTK_SRCS})
+
+  IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${SourceFile})
+     SET(IGSTKLatest_SRCS ${IGSTKLatest_SRCS} ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${SourceFile})
+  ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${SourceFile})
+    # Copy the files from IGSTK
+    CONFIGURE_FILE( ${IGSTK_SOURCE_DIR}/Source/${SourceFile} ${IGSTK_LATEST_FILES}/${SourceFile} COPYONLY)
+    SET(IGSTKLatest_SRCS ${IGSTKLatest_SRCS} ${IGSTK_LATEST_FILES}/${SourceFile})
+  ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${SourceFile})
+
+ENDFOREACH( SourceFile )
+
+
+# Adding the IGSTK library
+ADD_LIBRARY(IGSTKLatest ${IGSTKLatest_HEADS} ${IGSTKLatest_SRCS})
+
+# Linking with the FLTK, ITK and VTK libraries
+TARGET_LINK_LIBRARIES(IGSTKLatest
+    ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject
+    vtkRendering vtkGraphics vtkHybrid vtkImaging 
+    vtkIO vtkFiltering vtkCommon
+    ${FLTK_LIBRARIES}
+)
+
+#
+#  Define the list of source files forming the IGSTKSandbox Library
+#
+
+# The header files
+SET(IGSTKSandbox_HEADS
+  igstkMouseTracker.h
+  igstkPivotCalibration.h
+  igstkPrincipalAxisCalibration.h
+  igstkFlockOfBirdsTracker.h
+  igstkFlockOfBirdsTrackerTool.h
+  igstkUltrasoundProbeObject.h
+  igstkUltrasoundProbeObjectRepresentation.h
+  igstkAxesObject.h
+  igstkAxesObjectRepresentation.h
+  igstkAnnotation2D.h
+  igstkLandmark3DRegistrationErrorEstimator.h
+  igstkBoxObject.h
+  igstkBoxObjectRepresentation.h
+  igstkConeObject.h
+  igstkConeObjectRepresentation.h
+)
+
+
+# The implementation files
+SET(IGSTKSandbox_SRCS  
   igstkMouseTracker.cxx
   igstkPivotCalibration.cxx
   igstkPrincipalAxisCalibration.cxx
@@ -164,58 +238,9 @@ SET(IGSTK_SRCS
   igstkConeObjectRepresentation.cxx
 )
 
-IF(IGSTKSandbox_USE_FLTK)
-  SET(IGSTK_SRCS
-    ${IGSTK_SRCS}
-    igstkFLTKTextBufferLogOutput.cxx
-    igstkFLTKTextLogOutput.cxx
-    igstkView.cxx
-    igstkView2D.cxx
-    igstkView3D.cxx
-    )
-ENDIF(IGSTKSandbox_USE_FLTK)
-
-SET(IGSTKSandbox_SRCS)
-FOREACH(SourceFile ${IGSTK_SRCS})
-  IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${SourceFile})
-    SET(SourceFileFullPath ${IGSTKSandbox_SOURCE_DIR}/Source/${SourceFile})
-  ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${SourceFile})
-    SET(SourceFileFullPath ${IGSTK_SOURCE_DIR}/Source/${SourceFile})
-  ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${SourceFile})
-
-  CONFIGURE_FILE( ${SourceFileFullPath} ${IGSTK_LATEST_FILES}/${SourceFile} COPYONLY )
-  SET(IGSTKSandbox_SRCS ${IGSTKSandbox_SRCS} ${IGSTK_LATEST_FILES}/${SourceFile})
-ENDFOREACH( SourceFile )
-
-IF( WIN32 )
-  SET(SourceFile  igstkSerialCommunicationForWindows.cxx)
-  SET(HeaderFile  igstkSerialCommunicationForWindows.h)
-ELSE( WIN32 )
-  SET(SourceFile  igstkSerialCommunicationForPosix.cxx)
-  SET(HeaderFile  igstkSerialCommunicationForPosix.h)
-ENDIF( WIN32 )
-
-# add the SerialCommunication files
-IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${HeaderFile})
-    SET(HeaderFileFullPath ${IGSTKSandbox_SOURCE_DIR}/Source/${HeaderFile})
-ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${HeaderFile})
-    SET(HeaderFileFullPath ${IGSTK_SOURCE_DIR}/Source/${HeaderFile})
-ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${HeaderFile})
-
-CONFIGURE_FILE( ${HeaderFileFullPath} ${IGSTK_LATEST_FILES}/${HeaderFile} COPYONLY)
-SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS} ${IGSTK_LATEST_FILES}/${HeaderFile})
-
-
-IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${SourceFile})
-   SET(SourceFileFullPath ${IGSTKSandbox_SOURCE_DIR}/Source/${SourceFile})
-ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${SourceFile})
-   SET(SourceFileFullPath ${IGSTK_SOURCE_DIR}/Source/${SourceFile})
-ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Source/${SourceFile})
-  
-CONFIGURE_FILE( ${SourceFileFullPath} ${IGSTK_LATEST_FILES}/${SourceFile} COPYONLY )
-SET(IGSTKSandbox_SRCS ${IGSTKSandbox_SRCS} ${IGSTK_LATEST_FILES}/${SourceFile})
-
+# Variable for holding extra libraries
 SET(EXTRA_LIBS)
+
 # executed if Atamai classes in Utilities are used
 IF( IGSTK_USE_ATAMAI )
   SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS}
@@ -234,11 +259,6 @@ ENDIF( IGSTK_USE_ATAMAI )
 # Adding the IGSTKSandbox library
 ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS})
 
-# Linking with the FLTK, ITK and VTK libraries
-TARGET_LINK_LIBRARIES( IGSTKSandbox ${EXTRA_LIBS}
-    ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject
-    vtkRendering vtkGraphics vtkHybrid vtkImaging 
-    vtkIO vtkFiltering vtkCommon
-    ${FLTK_LIBRARIES}
-)
-
+# Linking with the IGSTK libraries should bring up all the other dependent
+# libraries such as ITK, VTK and FLTK
+TARGET_LINK_LIBRARIES( IGSTKSandbox IGSTKLatest ${EXTRA_LIBS} )
