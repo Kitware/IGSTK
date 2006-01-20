@@ -2,6 +2,11 @@
 SET(IGSTK_LATEST_FILES  ${IGSTKSandbox_BINARY_DIR}/SourceLatest )
 MAKE_DIRECTORY( ${IGSTK_LATEST_FILES} )
 
+INCLUDE_DIRECTORIES(
+  ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source
+  ${IGSTKSandbox_SOURCE_DIR}/Source
+  ${IGSTKSandbox_BINARY_DIR}/SourceLatest
+)
 
 SET(IGSTK_HEADS
   igstkImageReader.h
