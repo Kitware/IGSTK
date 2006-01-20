@@ -148,6 +148,7 @@ void UltrasoundProbeObjectRepresentation::CreateActors()
   cylinder->Delete();
   sample->Delete();
   plane->Delete();
+  surface->Delete();
 
   // Create the black band
   vtkPolyDataMapper *tipBlackMapper = vtkPolyDataMapper::New();
@@ -185,10 +186,11 @@ void UltrasoundProbeObjectRepresentation::CreateActors()
 
   this->AddActor( tipBlackActor );
   tipBlackMapper->Delete();
-  tipBlack->Delete();
   cylinderTip->Delete();
-  sampleBlack->Delete();
   planeBlack->Delete();
+  tipBlack->Delete();
+  sampleBlack->Delete();
+  surfaceBlack->Delete();
 
   // Now creates the handle
   vtkPolyDataMapper *handleMapper = vtkPolyDataMapper::New();
@@ -232,10 +234,10 @@ void UltrasoundProbeObjectRepresentation::CreateActors()
 
   this->AddActor( handleActor );
   handleMapper->Delete();
-  handle->Delete();
   boxHandle->Delete();
   cylinderHandle1->Delete();
   cylinderHandle2->Delete();
+  handle->Delete();
   sampleHandle->Delete();
   surfaceHandle->Delete();
 }
