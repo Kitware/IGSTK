@@ -1,22 +1,10 @@
-
 SET(IGSTKSandbox_TESTS ${CXX_TEST_PATH}/igstkSandboxTests)
-
 
 SET(IGSTKSandbox_TEST_OUTPUT_DIR "${IGSTKSandbox_BINARY_DIR}/Testing/Temporary")
 MAKE_DIRECTORY(${IGSTKSandbox_TEST_OUTPUT_DIR})
 
-SET(IGSTK_TEST_FILES_COMBINED ${IGSTKSandbox_BINARY_DIR}/TestingCombined)
-MAKE_DIRECTORY( ${IGSTK_TEST_FILES_COMBINED} )
-
-# set the IGSTK output directory to sandbox test directory
-SET(IGSTK_TEST_OUTPUT_DIR ${IGSTKSandbox_TEST_OUTPUT_DIR})
-
 SET(IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR "${IGSTKSandbox_TEST_OUTPUT_DIR}/StateMachineDiagrams")
 MAKE_DIRECTORY(${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
-
-SET(IGSTK_DICOM_TEST_OUTPUT_DIR "${IGSTKSandbox_TEST_OUTPUT_DIR}/DICOM")
-MAKE_DIRECTORY(${IGSTK_DICOM_TEST_OUTPUT_DIR})
-
 
 #-----------------------------------------------------------------------------
 # Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
@@ -58,96 +46,75 @@ FILE(GLOB STATE_MACHINE_DOT_FILES "${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR}/*.
 #-----------------------------------------------------------------------------
 MARK_AS_ADVANCED(IGSTKSandbox_DATA_ROOT)
 
-IF(IGSTKSandbox_DATA_ROOT)
-  SET(BASELINE ${IGSTKSandbox_DATA_ROOT}/Baseline)
-ENDIF(IGSTKSandbox_DATA_ROOT)
-
-
 INCLUDE_DIRECTORIES (
   ${IGSTKSandbox_SOURCE_DIR}/SourceLatest
-  ${IGSTKSandbox_SOURCE_DIR}
+  ${IGSTKSandbox_SOURCE_DIR}/TestingLatest
+  ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source
+  ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing
+  ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing
+  ${IGSTKSandbox_SOURCE_DIR}/Source  
   ${IGSTKSandbox_BINARY_DIR}
-  ${IGSTKSandbox_SOURCE_DIR}/Source
   ${IGSTKSandbox_BINARY_DIR}/Source
   ${IGSTKSandbox_SOURCE_DIR}/Testing
   ${IGSTKSandbox_BINARY_DIR}/Testing
- )
+  )
 
-SET(IGSTK_TEST_PROGAMS
-  igstkBasicTrackerTest 
-  igstkBinaryDataTest 
-  igstkCommunicationTest 
-  igstkCTImageSpatialObjectTest 
-  igstkImageReaderTest 
-  igstkImageSpatialObjectTest 
-  igstkLandmark3DRegistrationTest 
-  igstkMRImageSpatialObjectRepresentationTest 
-  igstkMRImageSpatialObjectTest 
-  igstkMultipleOutputTest 
-  igstkSerialCommunicationTest 
-  igstkStateMachineErrorsTest 
-  igstkStateMachineTest 
-  igstkStringEventTest 
-  igstkTimeStampTest 
-  igstkTokenTest 
-  igstkTrackerPortTest 
-  igstkTrackerToolTest
-  igstkTransformTest 
-  igstkVTKLoggerOutputTest 
-  igstkMouseTrackerTest 
-  igstkPivotCalibrationTest 
-  igstkPrincipalAxisCalibrationTest 
-  igstkLandmark3DRegistrationErrorEstimatorTest 
-  igstkBoxObjectTest 
-  igstkConeObjectTest
-  igstkAxesObjectTest
-  igstkUltrasoundProbeObjectTest
-)
+# Add your new tests here
+SET(SandboxTests_SRCS
+  igstkMouseTrackerTest.cxx
+  igstkPivotCalibrationTest.cxx
+  igstkPrincipalAxisCalibrationTest.cxx
+  igstkLandmark3DRegistrationErrorEstimatorTest.cxx
+  igstkBoxObjectTest.cxx
+  igstkConeObjectTest.cxx
+  igstkAxesObjectTest.cxx
+  igstkUltrasoundProbeObjectTest.cxx
+  )
 
-FOREACH(TestProgram ${IGSTK_TEST_PROGAMS})
+FOREACH(TestFiles ${SandboxTests_SRCS})
+  GET_FILENAME_COMPONENT(TestProgram ${TestFiles} NAME_WE)
   ADD_TEST(${TestProgram} ${IGSTKSandbox_TESTS} ${TestProgram})
-ENDFOREACH(TestProgram)
-
+ENDFOREACH(TestFiles)
 
 IF (IGSTKSandbox_DATA_ROOT) 
-  ADD_TEST(igstkAuroraTrackerSimulatedTest ${IGSTKSandbox_TESTS} 
-           igstkAuroraTrackerSimulatedTest)
-  ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTKSandbox_TESTS} 
-           igstkNDICommandInterpreterSimulatedTest)
-  ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTKSandbox_TESTS} 
-           igstkNDICommandInterpreterStressTest)
-  ADD_TEST(igstkPolarisTrackerSimulatedTest ${IGSTKSandbox_TESTS} 
-           igstkPolarisTrackerSimulatedTest)
-  ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTKSandbox_TESTS} 
-           igstkSerialCommunicationSimulatorTest)
-  ADD_TEST( igstkDICOMImageReaderTest ${IGSTKSandbox_TESTS} 
-           igstkDICOMImageReaderTest  ${IGSTK_DATA_ROOT}/Input/E000192 )
-  ADD_TEST( igstkCTImageReaderTest ${IGSTKSandbox_TESTS} igstkCTImageReaderTest 
-           ${IGSTK_DATA_ROOT}/Input/E000192 )
-  ADD_TEST( igstkMRImageReaderTest ${IGSTKSandbox_TESTS} igstkMRImageReaderTest 
-           ${IGSTK_DATA_ROOT}/Input/E000192 )
-  ADD_TEST( igstkMeshReaderTest ${IGSTKSandbox_TESTS} igstkMeshReaderTest 
-           ${IGSTK_DATA_ROOT}/Input/liver.msh  
-           ${IGSTK_DATA_ROOT}/Input/liverCorruptedOnPurpose.msh )
-  ADD_TEST( igstkTubeReaderTest ${IGSTKSandbox_TESTS} igstkTubeReaderTest 
-           ${IGSTK_DATA_ROOT}/Input/vessel.tre 
-           ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre  
-           ${IGSTK_DATA_ROOT}/Input/vesselWithoutReadPermissions.tre )
-  ADD_TEST( igstkSpatialObjectReaderTest ${IGSTKSandbox_TESTS} igstkSpatialObjectReaderTest 
-          ${IGSTK_DATA_ROOT}/Input/vessel.tre 
-          ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre  
-          ${IGSTK_DATA_ROOT}/Input/vesselWithoutReadPermissions.tre )       
-  ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} 
-       igstkCTImageSpatialObjectRepresentationTest
-          ${IGSTK_DATA_ROOT}/Input/E000192)          
-  ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTKSandbox_TESTS} igstkDICOMImageReaderErrorsTest 
-          ${IGSTK_DATA_ROOT}/Input/E000192Mod ${IGSTK_DICOM_TEST_OUTPUT_DIR})          
-  ADD_TEST( igstkAnnotation2DTest ${IGSTKSandbox_TESTS} igstkAnnotation2DTest
-          ${IGSTKSandbox_DATA_ROOT}/Input/E000192 )
+  SET(SandboxTests_SRCS ${SandboxTests_SRCS}   igstkAnnotation2DTest.cxx)
+ADD_TEST( igstkAnnotation2DTest ${IGSTKSandbox_TESTS} igstkAnnotation2DTest
+       ${IGSTKSandbox_DATA_ROOT}/Input/E000192 )
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
-# Set the source file
-SET(IGSTK_TEST_SRCS
+
+IF (IGSTK_USE_ATAMAI)
+  ADD_TEST(igstkAtamaiNDITrackerTest ${IGSTKSandbox_TESTS} igstkAtamaiNDITrackerTest)
+  SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkAtamaiNDITrackerTest)
+ENDIF (IGSTK_USE_ATAMAI)
+
+
+ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${SandboxTests_SRCS})
+
+TARGET_LINK_LIBRARIES(igstkSandboxTests IGSTKSandbox)
+
+ADD_EXECUTABLE(igstkSystemInformation igstkSystemInformation.cxx)
+ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation)
+TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon)
+
+
+ADD_EXECUTABLE(igstkStateMachineExportTest igstkStateMachineExportTest.cxx)
+ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
+TARGET_LINK_LIBRARIES(igstkStateMachineExportTest IGSTKSandbox)
+
+# Configure a header needed by SystemInformation.
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/igstkSystemInformation.h"
+               @ONLY IMMEDIATE)
+
+
+#-----------------------------------------------------------------------------
+# Now running IGSTK tests with the latest main library
+#SET(IGSTK_TEST_FILES ${IGSTKSandbox_BINARY_DIR}/TestingLatest)
+#MAKE_DIRECTORY( ${IGSTK_TEST_FILES} )
+
+# You just need to add your new tests here
+SET(IGSTKTests_SRCS
   igstkBasicTrackerTest.cxx
   igstkBinaryDataTest.cxx
   igstkCommunicationTest.cxx
@@ -168,21 +135,116 @@ SET(IGSTK_TEST_SRCS
   igstkTrackerToolTest.cxx
   igstkTransformTest.cxx  
   igstkVTKLoggerOutputTest.cxx
-  igstkMouseTrackerTest.cxx
-  igstkPivotCalibrationTest.cxx
-  igstkPrincipalAxisCalibrationTest.cxx
-  igstkLandmark3DRegistrationErrorEstimatorTest.cxx
-  igstkAxesObjectTest.cxx
-  igstkConeObjectTest.cxx
-  igstkBoxObjectTest.cxx
-  igstkAnnotation2DTest.cxx
-  igstkUltrasoundProbeObjectTest.cxx
-  )  
+  )
+  
+# Add testing command
+FOREACH(TestFiles ${IGSTKTests_SRCS})
+  GET_FILENAME_COMPONENT(TestProgram ${TestFiles} NAME_WE)
+  ADD_TEST(${TestProgram} ${IGSTK_TESTS} ${TestProgram})
+ENDFOREACH(TestFiles)
 
+#-----------------------------------------------------------------------------
+# Tests need data input
+IF (IGSTK_DATA_ROOT) 
+
+  ADD_TEST(igstkAuroraTrackerSimulatedTest ${IGSTK_TESTS} igstkAuroraTrackerSimulatedTest)
+  ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS} igstkNDICommandInterpreterSimulatedTest)
+  ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTK_TESTS} igstkNDICommandInterpreterStressTest)
+  ADD_TEST(igstkPolarisTrackerSimulatedTest ${IGSTK_TESTS} igstkPolarisTrackerSimulatedTest)
+  ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS} igstkSerialCommunicationSimulatorTest)
+  
+  ADD_TEST( igstkDICOMImageReaderTest ${IGSTK_TESTS} igstkDICOMImageReaderTest 
+       ${IGSTK_DATA_ROOT}/Input/E000192 )
+  ADD_TEST( igstkCTImageReaderTest ${IGSTK_TESTS} igstkCTImageReaderTest 
+       ${IGSTK_DATA_ROOT}/Input/E000192 )
+  ADD_TEST( igstkMRImageReaderTest ${IGSTK_TESTS} igstkMRImageReaderTest 
+       ${IGSTK_DATA_ROOT}/Input/E000192 )
+  ADD_TEST( igstkMeshReaderTest ${IGSTK_TESTS} igstkMeshReaderTest 
+       ${IGSTK_DATA_ROOT}/Input/liver.msh  
+       ${IGSTK_DATA_ROOT}/Input/liverCorruptedOnPurpose.msh )
+  ADD_TEST( igstkTubeReaderTest ${IGSTK_TESTS} igstkTubeReaderTest 
+       ${IGSTK_DATA_ROOT}/Input/vessel.tre 
+       ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre  
+       ${IGSTK_DATA_ROOT}/Input/vesselWithoutReadPermissions.tre )
+  ADD_TEST( igstkSpatialObjectReaderTest ${IGSTK_TESTS} igstkSpatialObjectReaderTest 
+       ${IGSTK_DATA_ROOT}/Input/vessel.tre 
+       ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre  
+       ${IGSTK_DATA_ROOT}/Input/vesselWithoutReadPermissions.tre )       
+  ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
+       igstkCTImageSpatialObjectRepresentationTest
+       ${IGSTK_DATA_ROOT}/Input/E000192)          
+  ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTK_TESTS} igstkDICOMImageReaderErrorsTest 
+       ${IGSTK_DATA_ROOT}/Input/E000192Mod ${IGSTK_DICOM_TEST_OUTPUT_DIR})          
+ENDIF(IGSTK_DATA_ROOT)
+
+#-----------------------------------------------------------------------------
+# Tests depend on external device
+IF(IGSTK_TEST_AURORA_ATTACHED)
+  ADD_TEST(igstkAuroraTrackerTest ${IGSTK_TESTS} igstkAuroraTrackerTest)
+ENDIF(IGSTK_TEST_AURORA_ATTACHED)
+
+IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+  ADD_TEST(igstkNDICommandInterpreterTest ${IGSTK_TESTS} igstkNDICommandInterpreterTest)
+ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+
+IF(IGSTK_TEST_POLARIS_ATTACHED)
+  ADD_TEST(igstkPolarisTrackerTest ${IGSTK_TESTS} igstkPolarisTrackerTest)
+ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
+
+#-----------------------------------------------------------------------------
+# Tests depend on FLTK
+IF(IGSTK_USE_FLTK)
+  ADD_TEST(igstkCylinderObjectTest ${IGSTK_TESTS} igstkCylinderObjectTest)
+  ADD_TEST(igstkEllipsoidObjectTest ${IGSTK_TESTS} igstkEllipsoidObjectTest)
+  ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTK_TESTS} igstkFLTKTextBufferLogOutputTest)
+  ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTK_TESTS} igstkFLTKTextLogOutputTest)
+  ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
+  ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
+  ADD_TEST(igstkPulseGeneratorTest ${IGSTK_TESTS} igstkPulseGeneratorTest)
+  ADD_TEST(igstkTubeObjectTest ${IGSTK_TESTS} igstkTubeObjectTest)
+  
+  IF (IGSTK_DATA_ROOT)
+    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest 
+              ${IGSTK_TESTS}
+              --compare ${BASELINE}/igstkViewScreenShot.png 
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
+              --tolerance 5
+              igstkCTImageSpatialObjectReadingAndRepresentationTest
+              ${IGSTK_DATA_ROOT}/Input/E000192
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
+              ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
+    ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
+              igstkImageSpatialObjectRepresentationTest 
+              ${IGSTK_DATA_ROOT}/Input/E000192)   
+  ENDIF (IGSTK_DATA_ROOT)
+            
+ENDIF(IGSTK_USE_FLTK)
+
+#-----------------------------------------------------------------------------
+# Testing source file depend on external device
+IF(IGSTK_TEST_AURORA_ATTACHED)
+  SET(BasicTests_SRCS ${BasicTests_SRCS}
+    igstkAuroraTrackerTest.cxx
+  )
+ENDIF(IGSTK_TEST_AURORA_ATTACHED)
+
+IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+  SET(BasicTests_SRCS ${BasicTests_SRCS}
+    igstkNDICommandInterpreterTest
+  )
+ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+
+IF(IGSTK_TEST_POLARIS_ATTACHED)
+  SET(BasicTests_SRCS ${BasicTests_SRCS}
+    igstkPolarisTrackerTest.cxx
+  )
+ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
+
+#-----------------------------------------------------------------------------
 # Testing source file need data input
 IF(IGSTK_DATA_ROOT)
-  SET(IGSTK_TEST_SRCS
-    ${IGSTK_TEST_SRCS}
+  SET(IGSTKTests_SRCS
+    ${IGSTKTests_SRCS}
     igstkCTImageReaderTest.cxx
     igstkCTImageSpatialObjectRepresentationTest.cxx
     igstkDICOMImageReaderErrorsTest.cxx
@@ -191,7 +253,7 @@ IF(IGSTK_DATA_ROOT)
     igstkMRImageReaderTest.cxx
     igstkSpatialObjectReaderTest.cxx
     igstkTubeReaderTest.cxx
-    igstkAuroraTrackerSimulatedTest.cxx    
+    igstkAuroraTrackerSimulatedTest.cxx
     igstkNDICommandInterpreterSimulatedTest.cxx
     igstkNDICommandInterpreterStressTest.cxx   
     igstkPolarisTrackerSimulatedTest.cxx 
@@ -199,9 +261,11 @@ IF(IGSTK_DATA_ROOT)
   )  
 ENDIF(IGSTK_DATA_ROOT)
 
+#-----------------------------------------------------------------------------
+# Testing source file depend on FLTK
 IF(IGSTK_USE_FLTK)  
-  SET(IGSTK_TEST_SRCS
-    ${IGSTK_TEST_SRCS}
+  SET(IGSTKTests_SRCS
+    ${IGSTKTests_SRCS}
     igstkCylinderObjectTest.cxx
     igstkEllipsoidObjectTest.cxx
     igstkFLTKTextBufferLogOutputTest.cxx
@@ -213,92 +277,38 @@ IF(IGSTK_USE_FLTK)
     igstkViewRefreshRateTest.cxx
   )    
   IF(IGSTK_DATA_ROOT)
-    SET(IGSTK_TEST_SRCS
-      ${IGSTK_TEST_SRCS}
+    SET(IGSTKTests_SRCS
+      ${IGSTKTests_SRCS}
       igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx
       igstkImageSpatialObjectRepresentationTest.cxx
     ) 
   ENDIF(IGSTK_DATA_ROOT)  
 ENDIF(IGSTK_USE_FLTK)
 
-SET(BasicTests_SRCS)
-FOREACH(SourceFile ${IGSTK_TEST_SRCS})
-  IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Testing/${SourceFile})
-    SET(TestFullPath ${IGSTKSandbox_SOURCE_DIR}/Testing/${SourceFile})
-  ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Testing/${SourceFile})
-    SET(TestFullPath ${IGSTK_SOURCE_DIR}/Testing/${SourceFile})
-  ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Testing/${SourceFile})
+#-----------------------------------------------------------------------------
+# Copy the source files if they are not a duplicated in the Sandbox
+FOREACH(SourceFile ${IGSTKTests_SRCS})
 
-  CONFIGURE_FILE( ${TestFullPath} ${IGSTK_TEST_FILES_COMBINED} COPYONLY )
-  SET(BasicTests_SRCS ${BasicTests_SRCS} ${IGSTK_TEST_FILES_COMBINED}/${SourceFile})
+  IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/${SourceFile})
+     SET(IGSTKLatestTests_SRCS ${IGSTKLatestTests_SRCS} ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/${SourceFile})
+  ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/${SourceFile})
+    # Copy the files from IGSTK
+    #CONFIGURE_FILE( ${IGSTK_SOURCE_DIR}/Testing/${SourceFile} ${IGSTK_LATEST_FILES}/${SourceFile} COPYONLY)
+    SET(IGSTKLatestTests_SRCS ${IGSTKLatestTests_SRCS} ${IGSTK_SOURCE_DIR}/Testing/${SourceFile})
+  ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/${SourceFile})
+
 ENDFOREACH( SourceFile )
 
 
 #-----------------------------------------------------------------------------
-# Testing source file depend on external device
+# Add testing executables
+ADD_EXECUTABLE(igstkLatestTests ${IGSTK_SOURCE_DIR}/Testing/igstkTests.cxx ${IGSTKLatestTests_SRCS})
+TARGET_LINK_LIBRARIES(igstkLatestTests IGSTKLatest)
 
-SET( IGSTK_TEST_DEPEND_ON_DEVICES_SRCS 
-     igstkAuroraTrackerTest.cxx
-     igstkNDICommandInterpreterTest.cxx
-     igstkPolarisTrackerTest.cxx
-     igstkAtamaiNDITrackerTest.cxx
-   ) 
+#ADD_EXECUTABLE(igstkSystemInformation igstkSystemInformation.cxx)
+#ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation)
+#TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon)
 
-#copy them to bin directory
-FOREACH(SourceFile ${IGSTK_TEST_DEPEND_ON_DEVICES_SRCS})
-  IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Testing/${SourceFile})
-    SET(TestFullPath ${IGSTKSandbox_SOURCE_DIR}/Testing/${SourceFile})
-  ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Testing/${SourceFile})
-    SET(TestFullPath ${IGSTK_SOURCE_DIR}/Testing/${SourceFile})
-  ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/Testing/${SourceFile})
-
-  CONFIGURE_FILE( ${TestFullPath} ${IGSTK_TEST_FILES_COMBINED} COPYONLY )
-ENDFOREACH( SourceFile )
-
-
-IF(IGSTK_TEST_AURORA_ATTACHED)
-  ADD_TEST(igstkAuroraTrackerTest ${IGSTKSandbox_TESTS} igstkAuroraTrackerTest)
-  SET(BasicTests_SRCS ${BasicTests_SRCS} 
-              ${IGSTK_TEST_FILES_COMBINED}/igstkAuroraTrackerTest.cxx)
-ENDIF(IGSTK_TEST_AURORA_ATTACHED)
-
-IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
-  ADD_TEST(igstkNDICommandInterpreterTest ${IGSTKSandbox_TESTS} igstkNDICommandInterpreterTest)
-  SET(BasicTests_SRCS ${BasicTests_SRCS} 
-              ${IGSTK_TEST_FILES_COMBINED}/igstkNDICommandInterpreterTest.cxx)
-ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
-
-IF(IGSTK_TEST_POLARIS_ATTACHED)  
-  ADD_TEST(igstkPolarisTrackerTest ${IGSTKSandbox_TESTS} igstkPolarisTrackerTest)
-  SET(BasicTests_SRCS ${BasicTests_SRCS} 
-              ${IGSTK_TEST_FILES_COMBINED}/igstkPolarisTrackerTest.cxx)
-ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
-
-IF (IGSTK_USE_ATAMAI)
-  ADD_TEST(igstkAtamaiNDITrackerTest ${IGSTKSandbox_TESTS} igstkAtamaiNDITrackerTest)
-  SET(BasicTests_SRCS ${BasicTests_SRCS} 
-              ${IGSTK_TEST_FILES_COMBINED}/igstkAtamaiNDITrackerTest.cxx)
-ENDIF (IGSTK_USE_ATAMAI)
-
-#Copy also the test driver to TEST_COMBINED directory
-CONFIGURE_FILE(${IGSTKSandbox_SOURCE_DIR}/Testing/igstkSandboxTests.cxx 
-               ${IGSTK_TEST_FILES_COMBINED} COPYONLY )
-ADD_EXECUTABLE(igstkSandboxTests 
-               ${IGSTK_TEST_FILES_COMBINED}/igstkSandboxTests.cxx 
-               ${BasicTests_SRCS})
-TARGET_LINK_LIBRARIES(igstkSandboxTests IGSTKSandbox)
-
-ADD_EXECUTABLE(igstkSystemInformation igstkSystemInformation.cxx)
-ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation)
-TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon)
-
-
-ADD_EXECUTABLE(igstkStateMachineExportTest igstkStateMachineExportTest.cxx)
-ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
-TARGET_LINK_LIBRARIES(igstkStateMachineExportTest IGSTKSandbox)
-
-# Configure a header needed by SystemInformation.
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/igstkSystemInformation.h"
-               @ONLY IMMEDIATE)
-
+#ADD_EXECUTABLE(igstkStateMachineExportTest igstkStateMachineExportTest.cxx)
+#ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
+#TARGET_LINK_LIBRARIES(igstkStateMachineExportTest IGSTK)
