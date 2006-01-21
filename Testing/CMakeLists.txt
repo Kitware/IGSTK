@@ -87,7 +87,6 @@ IF (IGSTK_USE_ATAMAI)
   SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkAtamaiNDITrackerTest)
 ENDIF (IGSTK_USE_ATAMAI)
 
-
 ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${SandboxTests_SRCS})
 
 TARGET_LINK_LIBRARIES(igstkSandboxTests IGSTKSandbox)
@@ -109,8 +108,7 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
 
 #-----------------------------------------------------------------------------
 # Now running IGSTK tests with the latest main library
-#SET(IGSTK_TEST_FILES ${IGSTKSandbox_BINARY_DIR}/TestingLatest)
-#MAKE_DIRECTORY( ${IGSTK_TEST_FILES} )
+SET(IGSTK_TESTS ${CXX_TEST_PATH}/igstkLatestTests)
 
 # You just need to add your new tests here
 SET(IGSTKTests_SRCS
@@ -135,6 +133,7 @@ SET(IGSTKTests_SRCS
   igstkTransformTest.cxx  
   igstkVTKLoggerOutputTest.cxx
   )
+
   
 # Add testing command
 FOREACH(TestFiles ${IGSTKTests_SRCS})
