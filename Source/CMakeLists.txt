@@ -188,18 +188,6 @@ FOREACH(SourceFile ${IGSTK_SRCS})
 
 ENDFOREACH( SourceFile )
 
-
-# Adding the IGSTK library
-ADD_LIBRARY(IGSTKLatest ${IGSTKLatest_HEADS} ${IGSTKLatest_SRCS})
-
-# Linking with the FLTK, ITK and VTK libraries
-TARGET_LINK_LIBRARIES(IGSTKLatest
-    ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject
-    vtkRendering vtkGraphics vtkHybrid vtkImaging 
-    vtkIO vtkFiltering vtkCommon
-    ${FLTK_LIBRARIES}
-)
-
 #
 #  Define the list of source files forming the IGSTKSandbox Library
 #
@@ -262,8 +250,14 @@ IF( IGSTK_USE_ATAMAI )
 ENDIF( IGSTK_USE_ATAMAI )
 
 # Adding the IGSTKSandbox library
-ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS})
+ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS} ${IGSTKLatest_HEADS} ${IGSTKLatest_SRCS})
 
 # Linking with the IGSTK libraries should bring up all the other dependent
 # libraries such as ITK, VTK and FLTK
-TARGET_LINK_LIBRARIES( IGSTKSandbox IGSTKLatest ${EXTRA_LIBS} )
+# Linking with the FLTK, ITK and VTK libraries
+TARGET_LINK_LIBRARIES(IGSTKSandbox
+    ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject
+    vtkRendering vtkGraphics vtkHybrid vtkImaging 
+    vtkIO vtkFiltering vtkCommon
+    ${FLTK_LIBRARIES} ${EXTRA_LIBS}
+)
