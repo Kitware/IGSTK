@@ -28,7 +28,7 @@ namespace igstk
 {
 
 
-MouseTracker::MouseTracker()
+MouseTracker::MouseTracker():m_StateMachine(this)
 {
   m_ScaleFactor = 1.0;
 }
@@ -133,3 +133,4 @@ void MouseTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 }
+

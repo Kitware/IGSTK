@@ -23,31 +23,28 @@
 namespace igstk
 {
 /** \class MouseTracker
-    \brief Implementation of the Mouse TrackerTool class.
-
+ *   \brief Implementation of the Mouse TrackerTool class.
+ *
+ *   The purpose of this class is to provide a minimal 
+ *   implementation of a Tracker. This class is intended 
+ *   only for minimal demos and for debugging applications.
+ *   It is not intended to be used in a real application to
+ *   be deployed in a surgery room. 
+ *
+ *   \ingroup Trackers
 */
-class MouseTracker : public igstk::Tracker
+class MouseTracker : public Tracker
 {
 public:
-    typedef MouseTracker                        Self;
-    typedef itk::SmartPointer<Self>             Pointer;
-    typedef itk::SmartPointer<const Self>       ConstPointer;
-    typedef Tracker                             Superclass;
+
+    /** Macro with standard traits declarations. */
+    igstkStandardClassTraitsMacro( MouseTracker, Tracker )
+
     typedef Superclass::TransformType           TransformType;
-
-    /** Method for creation of a reference counted object. */
-    igstkNewMacro( MouseTracker );  
-
-    igstkTypeMacro( MouseTracker, Tracker );
 
     void Initialize();
 
     void GetTransform(TransformType & transform);
-
-    typedef igstk::TrackerTool                  TrackerToolType;
-    typedef igstk::TrackerPort                  TrackerPortType;
-
-    typedef Tracker::ResultType                 ResultType;
 
     igstkSetMacro( ScaleFactor, double );
     igstkGetMacro( ScaleFactor, double );
@@ -57,6 +54,8 @@ protected:
     MouseTracker();
 
     virtual ~MouseTracker();
+
+    typedef Tracker::ResultType                 ResultType;
 
     virtual ResultType InternalOpen( void );
 
@@ -79,13 +78,19 @@ protected:
 
 private:
 
+    MouseTracker(const Self&);  //purposely not implemented
+    void operator=(const Self&); //purposely not implemented
+
+    typedef TrackerTool                 TrackerToolType;
+    typedef TrackerPort                 TrackerPortType;
+
     typedef Transform::TimePeriodType   TimePeriodType;
 
     TimePeriodType                      m_ValidityTime;
 
-    igstk::TrackerTool::Pointer         m_Tool;
+    TrackerToolType::Pointer            m_Tool;
 
-    igstk::TrackerPort::Pointer         m_Port;
+    TrackerPortType::Pointer            m_Port;
 
     double                              m_ScaleFactor;
 };
@@ -93,3 +98,4 @@ private:
 }
 
 #endif //__igstk_MouseTracker_h_
+
