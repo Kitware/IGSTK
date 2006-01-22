@@ -668,60 +668,6 @@ void View::SaveScreenShotProcessing()
 }
 
 
-/** FLTK needs global timer callbacks, but we set it up so that this global
- *  callback knows which instance OnTimer() to call */
-void View::OnTimerGlobal(void *p)
-{
-  if (p)
-    {
-    ((View *)p)->OnTimer();
-    }
-}
-
-/** */
-int View::CreateTimer(int timertype)
-{
-  igstkLogMacro( DEBUG, "CreateTimer() called ...\n");
-  
-  // to be called every 10 milliseconds, one shot timer
-  // we pass "this" so that the correct OnTimer instance will be called
-  if (timertype == VTKI_TIMER_FIRST)
-    {
-    Fl::add_timeout(0.01, OnTimerGlobal, (void *)this);
-    }
-  else
-    {
-    Fl::repeat_timeout(0.01, OnTimerGlobal, (void *)this);
-    }
-  return 1;
-  // Fl::repeat_timer() is more correct, it doesn't measure the timeout
-  // from now, but from when the system call that caused this timeout
-  // elapsed.
-}
-
-/** */
-int View::DestroyTimer()
-{
-  igstkLogMacro( DEBUG, "DestroyTimer() called ...\n");
-
-  // do nothing
-  return 1;
-}
-
-/** */
-void View::OnTimer(void)
-{
-  igstkLogMacro( DEBUG, "OnTimer() called ...\n");
-
-  if (!Enabled)
-    {
-    return;
-    }
-  // this is all we need to do, InteractorStyle is stateful and will
-  // continue with whatever it's busy
-  this->InvokeEvent(vtkCommand::TimerEvent, NULL);    
-}
-
 /** FLTK event handlers */
 void View::flush(void)
 {

@@ -124,14 +124,9 @@ protected:
   void Disable();
   void SetRenderWindow(vtkRenderWindow *aren);
   void UpdateSize(int x, int y);
-  int CreateTimer(int timertype);
-  int DestroyTimer();
-  void OnTimer(void);
   void ResetCameraProcessing();
   void DisableInteractionsProcessing();
   void EnableInteractionsProcessing();
-
-  static void OnTimerGlobal(void *p);
 
 public:
   
