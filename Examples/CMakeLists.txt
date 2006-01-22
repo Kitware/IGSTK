@@ -12,4 +12,5 @@ SUBDIRS(
   FourViewsTrackingWithCT
   FourViews
   UltrasoundGuidedRFA
+  NeedleBiopsy
   )
