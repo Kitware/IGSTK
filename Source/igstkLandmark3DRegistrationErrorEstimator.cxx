@@ -70,6 +70,7 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarkPrincipalAxes()
      ++pointItr;
      }
 
+   pointItr  = m_ImageLandmarks.begin();
    while( pointItr != m_ImageLandmarks.end() )
      {
      for(unsigned int i=0; i<3; i++)
@@ -118,9 +119,9 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarkPrincipalAxes()
    AugmentedVectorType                    eigenValues;
 
    typedef itk::SymmetricEigenAnalysis< 
-           itk::Matrix< double,4,4 >,  
-           itk::Vector< double,4 >,
-           itk::Matrix< double,4,4 > > SymmetricEigenAnalysisType;
+           AugmentedMatrixType,  
+           AugmentedVectorType,
+           AugmentedMatrixType > SymmetricEigenAnalysisType;
 
    SymmetricEigenAnalysisType symmetricEigenSystem(4);
         
@@ -310,15 +311,15 @@ Landmark3DRegistrationErrorEstimator::TargetPointType targetPoint )
  
  for( unsigned int i=0; i < 3 ; i++ ) 
    {
-       targetRegistrationError += 
-                   vnl_math_sqr( distanceFromTargetPointToPrincipalAxes[i] ) / 
-                   vnl_math_sqr( this->m_RMSDistanceFromLandmarkToPrincipalAxes[i] ); 
+   targetRegistrationError += 
+           vnl_math_sqr( distanceFromTargetPointToPrincipalAxes[i] ) / 
+           vnl_math_sqr( this->m_RMSDistanceFromLandmarkToPrincipalAxes[i] ); 
    }
 
  targetRegistrationError *= (1.0/3.0);
  targetRegistrationError += 1.0;
  targetRegistrationError *= ( vnl_math_sqr( this->m_LandmarkRegistrationError ) ) / 
-                              this->m_ImageLandmarks.size();
+                              ( this->m_ImageLandmarks.size() - 2 );
 
  return targetRegistrationError;
 }

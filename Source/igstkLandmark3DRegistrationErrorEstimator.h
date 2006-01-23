@@ -54,15 +54,11 @@ public:
   /** Typedefs */
   typedef itk::Point<double, 3>                           TargetPointType;
   typedef itk::Point<double, 3>                           LandmarkPointType;
-  typedef itk::Vector<double, 3>                          VectorType;
   typedef std::vector< LandmarkPointType >                LandmarkPointContainerType;
-  typedef LandmarkPointContainerType::const_iterator      PointsContainerConstIterator;
 
   /** Error parameter Typedefs */
   typedef double                                          ErrorType;
-  typedef double                                          DistanceType;
-  typedef itk::Versor<double>                             VersorType;
-
+  
   /** Set image landmark points */
   igstkSetMacro ( ImageLandmarks , LandmarkPointContainerType );
 
@@ -95,6 +91,13 @@ protected:
 
 private:
  
+  typedef itk::Vector<double, 3>                          VectorType;
+  typedef LandmarkPointContainerType::const_iterator      PointsContainerConstIterator;
+  typedef double                                          DistanceType;
+  typedef itk::Versor<double>                             VersorType;
+
+
+  
   /** These two methods must be declared and note be implemented
    *  in order to enforce the protocol of smart pointers. */
   Landmark3DRegistrationErrorEstimator(const Self&);    //purposely not implemented
