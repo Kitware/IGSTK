@@ -23,6 +23,13 @@ PURPOSE.  See the above copyright notices for more information.
 #pragma warning( disable : 4284 )
 #endif
 
+#define TRACKER_TOOL_PORT 3
+#define TRACKER_TOOL_SROM_FILE "D:/Research/IGSTK/Vicra/Tool Definition Files/8700340.rom"
+
+#define USE_REFERENCE_TOOL 1
+#define REFERENCE_TOOL_PORT 4
+#define REFERENCE_TOOL_SROM_FILE "D:/Research/IGSTK/Vicra/Tool Definition Files/8700338.rom"
+
 #include "NeedleBiopsyGUI.h"
 
 #include "igstkStateMachine.h"
@@ -49,9 +56,6 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "igstkCylinderObject.h"
 #include "igstkCylinderObjectRepresentation.h"
-
-#define TRACKER_TOOL_PORT 3
-#define TRACKER_TOOL_SROM_FILE "D:/Research/IGSTK/Vicra/Tool Definition Files/8700340.rom"
 
 #include "igstkPivotCalibration.h"
 
@@ -139,12 +143,18 @@ private:
   igstkDeclareStateMacro( PatientNameVerified );
   igstkDeclareStateMacro( AddingImageLandmark );
   igstkDeclareStateMacro( ImageLandmarksReady );
-  igstkDeclareStateMacro( InitializingTracker );
+  igstkDeclareStateMacro( AttemptingInitializeTracker );
   igstkDeclareStateMacro( TrackerReady );
   igstkDeclareStateMacro( AddingTrackerLandmark );
   igstkDeclareStateMacro( TrackerLandmarksReady );
+  igstkDeclareStateMacro( AttemptingRegistration );
+  igstkDeclareStateMacro( EvaluatingRegistrationError );
   igstkDeclareStateMacro( LandmarkRegistrationReady );
+  igstkDeclareStateMacro( TargetPointReady );
+  igstkDeclareStateMacro( PathReady );
+  igstkDeclareStateMacro( AttemptingStartTracking );
   igstkDeclareStateMacro( Tracking );
+  igstkDeclareStateMacro( AttemptingStopTracking );
 
   /** Inputs to the state machine and it's designed transitions */
   igstkDeclareInputMacro( RequestSetPatientName );      //->m_WaitingForPatientNameState
@@ -175,6 +185,11 @@ private:
   igstkDeclareInputMacro( RequestRegistration );
   igstkDeclareInputMacro( RegistrationSuccess );        //->m_LandmarkRegistrationReadyState
   igstkDeclareInputMacro( RegistrationFailure );        //->m_TrackerLandmarksReadyState
+  igstkDeclareInputMacro( RegistrationErrorAccepted );
+  igstkDeclareInputMacro( RegistrationErrorRejected );
+
+  igstkDeclareInputMacro( RequestSetTargetPoint );
+  igstkDeclareInputMacro( RequestSetEntryPoint  );
 
   igstkDeclareInputMacro( RequestStartTracking );
   igstkDeclareInputMacro( StartTrackingSuccess );       //->m_TrackingState                   //FIXME, how to check if it succeed
@@ -273,7 +288,13 @@ private:
   void SetAxialSliderBoundsProcessing();
   void SetSagittalSliderBoundsProcessing();
   void SetCoronalSliderBoundsProcessing();
+
+  void EvaluatingRegistrationErrorProcessing();
+  void ResetRegistrationProcessing();
   
+  void DrawTargetPointProcessing();
+  void DrawPathProcessing();
+
   /** Callback functions for picking and registration success events. */
   void GetLandmarkRegistrationTransform( const itk::EventObject & event);
   void DrawPickedPoint( const itk::EventObject & event );

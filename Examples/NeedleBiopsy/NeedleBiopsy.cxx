@@ -177,12 +177,18 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   igstkAddStateMacro( PatientNameVerified        );
   igstkAddStateMacro( AddingImageLandmark        );
   igstkAddStateMacro( ImageLandmarksReady        );
-  igstkAddStateMacro( InitializingTracker        );
+  igstkAddStateMacro( AttemptingInitializeTracker);
   igstkAddStateMacro( TrackerReady               );  
   igstkAddStateMacro( AddingTrackerLandmark      );
   igstkAddStateMacro( TrackerLandmarksReady      );
+  igstkAddStateMacro( AttemptingRegistration     );
+  igstkAddStateMacro( EvaluatingRegistrationError);
   igstkAddStateMacro( LandmarkRegistrationReady  );
+  igstkAddStateMacro( TargetPointReady           );
+  igstkAddStateMacro( PathReady                  );
+  igstkAddStateMacro( AttemptingStartTracking    );
   igstkAddStateMacro( Tracking                   );
+  igstkAddStateMacro( AttemptingStopTracking     );
 
 
   igstkAddInputMacro( RequestSetPatientName        );
@@ -211,6 +217,11 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   igstkAddInputMacro( RequestRegistration          );
   igstkAddInputMacro( RegistrationSuccess          );
   igstkAddInputMacro( RegistrationFailure          );
+  igstkAddInputMacro( RegistrationErrorAccepted    );
+  igstkAddInputMacro( RegistrationErrorRejected    );
+
+  igstkAddInputMacro( RequestSetTargetPoint        );
+  igstkAddInputMacro( RequestSetEntryPoint         );
   
   igstkAddInputMacro( RequestStartTracking         );
   igstkAddInputMacro( StartTrackingSuccess         );
@@ -260,9 +271,9 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   igstkAddTransitionMacro( ImageLandmarksReady, RequestClearImageLandmarks, PatientNameVerified, ClearImageLandmarks );
 
   /** Initialize tracker */
-  igstkAddTransitionMacro( ImageLandmarksReady, RequestInitializeTracker, InitializingTracker, InitializeTracker );
-  igstkAddTransitionMacro( InitializingTracker, InitializeTrackerSuccess, TrackerReady, No );
-  igstkAddTransitionMacro( InitializingTracker, InitializeTrackerFailure, ImageLandmarksReady, No );
+  igstkAddTransitionMacro( ImageLandmarksReady, RequestInitializeTracker, AttemptingInitializeTracker, InitializeTracker );
+  igstkAddTransitionMacro( AttemptingInitializeTracker, InitializeTrackerSuccess, TrackerReady, No );
+  igstkAddTransitionMacro( AttemptingInitializeTracker, InitializeTrackerFailure, ImageLandmarksReady, No );
 
   /** Set tracker landmarks, require same number of landmarks as in image landmark */
   igstkAddTransitionMacro( TrackerReady, RequestAddTrackerLandmark, AddingTrackerLandmark, AddTrackerLandmark );
@@ -274,18 +285,29 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   igstkAddTransitionMacro( TrackerLandmarksReady, RequestClearTrackerLandmarks, TrackerReady, ClearTrackerLandmarks );
 
   /** Registration */
-  igstkAddTransitionMacro( TrackerLandmarksReady, RequestRegistration, TrackerLandmarksReady, Registration );
-  igstkAddTransitionMacro( TrackerLandmarksReady, RegistrationSuccess, LandmarkRegistrationReady, No );
-  igstkAddTransitionMacro( TrackerLandmarksReady, RegistrationFailure, TrackerLandmarksReady, No );
+  igstkAddTransitionMacro( TrackerLandmarksReady, RequestRegistration, AttemptingRegistration, Registration );
+  igstkAddTransitionMacro( AttemptingRegistration, RegistrationSuccess, EvaluatingRegistrationError, EvaluatingRegistrationError );
+  igstkAddTransitionMacro( AttemptingRegistration, RegistrationFailure, TrackerLandmarksReady, No );
+
+  igstkAddTransitionMacro( EvaluatingRegistrationError, RegistrationErrorAccepted, LandmarkRegistrationReady, No );
+  igstkAddTransitionMacro( EvaluatingRegistrationError, RegistrationErrorRejected, TrackerLandmarksReady, ResetRegistration );
+
+  /** Path Planning */
+  igstkAddTransitionMacro( LandmarkRegistrationReady, RequestSetTargetPoint, TargetPointReady, DrawTargetPoint );
+  igstkAddTransitionMacro( TargetPointReady, RequestSetTargetPoint, TargetPointReady, DrawTargetPoint );
+  
+  igstkAddTransitionMacro( TargetPointReady, RequestSetEntryPoint, PathReady, DrawPath );
+  igstkAddTransitionMacro( PathReady, RequestSetTargetPoint, PathReady, DrawPath );
+  igstkAddTransitionMacro( PathReady, RequestSetEntryPoint, PathReady, DrawPath );
 
   /** Tracking */
-  igstkAddTransitionMacro( LandmarkRegistrationReady, RequestStartTracking, LandmarkRegistrationReady, StartTracking );
-  igstkAddTransitionMacro( LandmarkRegistrationReady, StartTrackingSuccess, Tracking, No);
-  igstkAddTransitionMacro( LandmarkRegistrationReady, StartTrackingFailure, LandmarkRegistrationReady, No );
+  igstkAddTransitionMacro( PathReady, RequestStartTracking, AttemptingStartTracking, StartTracking );
+  igstkAddTransitionMacro( AttemptingStartTracking, StartTrackingSuccess, Tracking, No);
+  igstkAddTransitionMacro( AttemptingStartTracking, StartTrackingFailure, PathReady, No );
 
-  igstkAddTransitionMacro( Tracking, RequestStopTracking, Tracking, StopTracking );
-  igstkAddTransitionMacro( Tracking, StopTrackingSuccess, LandmarkRegistrationReady, No);
-  igstkAddTransitionMacro( Tracking, StopTrackingFailure, Tracking, No );
+  igstkAddTransitionMacro( Tracking, RequestStopTracking, AttemptingStopTracking, StopTracking );
+  igstkAddTransitionMacro( AttemptingStopTracking, StopTrackingSuccess, PathReady, No);
+  igstkAddTransitionMacro( AttemptingStopTracking, StopTrackingFailure, Tracking, No );
   
   igstkSetInitialStateMacro( Initial );
 
@@ -416,6 +438,8 @@ void NeedleBiopsy::InitializeTrackerProcessing()
   igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::InitializeTrackerProcessing called ... \n" )    
   m_Tracker->Open();
   m_Tracker->AttachSROMFileNameToPort( TRACKER_TOOL_PORT, TRACKER_TOOL_SROM_FILE ); //FIXME use ini file
+  m_Tracker->AttachSROMFileNameToPort( REFERENCE_TOOL_PORT, REFERENCE_TOOL_SROM_FILE ); //FIXME use ini file
+  m_Tracker->SetReferenceTool( USE_REFERENCE_TOOL, REFERENCE_TOOL_PORT, 0);  
   m_Tracker->Initialize();                                                          //FIXME, how to check if this is success???
   m_Tracker->StartTracking();                                                       //FIXME: Should we start tracking now?
   m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(), m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
@@ -854,6 +878,31 @@ void NeedleBiopsy::DrawPickedPoint( const itk::EventObject & event)
       igstkLogMacro( DEBUG,  "Picked point outside image...\n" )
       }
     }
+}
+
+void NeedleBiopsy::EvaluatingRegistrationErrorProcessing()
+{
+  igstkLogMacro (         DEBUG, "Evaluating registration error....\n" )
+  igstkLogMacro2( logger, DEBUG, "Evaluating registration error....\n" )
+  std::string msg = "Registration error (RMS) = Some Error Value \n";
+  msg += "Accept this registration result?";
+  int i = fl_ask( msg.c_str() );
+  m_StateMachine.PushInputBoolean( i, m_RegistrationErrorAcceptedInput, m_RegistrationErrorRejectedInput );
+}
+
+void NeedleBiopsy::ResetRegistrationProcessing()
+{
+  // code for reseting registor
+  
+}
+
+void NeedleBiopsy::DrawTargetPointProcessing()
+{
+
+}
+
+void NeedleBiopsy::DrawPathProcessing()
+{
 }
 
 void NeedleBiopsy::RequestReset()
