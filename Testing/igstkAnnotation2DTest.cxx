@@ -88,10 +88,10 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
           
   annotation->SetLogger( logger );
 
-  annotation->AddAnnotationText ( 0, "Corner 0");
-  annotation->AddAnnotationText ( 1, "Corner 1");
-  annotation->AddAnnotationText ( 2, "Corner 2");
-  annotation->AddAnnotationText ( 3, "Corner 3");
+  annotation->RequestAddAnnotationText ( 0, "Corner 0");
+  annotation->RequestAddAnnotationText ( 1, "Corner 1");
+  annotation->RequestAddAnnotationText ( 2, "Corner 2");
+  annotation->RequestAddAnnotationText ( 3, "Corner 3");
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
