@@ -78,7 +78,7 @@ ENDFOREACH(TestFiles)
 IF (IGSTKSandbox_DATA_ROOT) 
   SET(SandboxTests_SRCS ${SandboxTests_SRCS}   igstkAnnotation2DTest.cxx)
 ADD_TEST( igstkAnnotation2DTest ${IGSTKSandbox_TESTS} igstkAnnotation2DTest
-       ${IGSTKSandbox_DATA_ROOT}/Input/E000192 )
+       ${IGSTKSandbox_DATA_ROOT}/E000192 )
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
 
