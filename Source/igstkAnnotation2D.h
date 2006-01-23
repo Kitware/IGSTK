@@ -60,8 +60,11 @@ public:
   /* Macro with standard traits declarations. */  
   igstkStandardClassTraitsMacro( Annotation2D, Object )
 
+  /* Add annotation text */
+  void RequestAddAnnotationText( int , const std::string );
+
   /** Add annotations */
-  void AddAnnotations( int * );
+  void RequestAddAnnotations( int * );
 
   /** Declarations needed for the Logging */
   igstkLoggerMacro();
@@ -69,9 +72,6 @@ public:
   /** Get the VTK actors */
   igstkGetMacro( Actors, ActorsListType );
 
-  /** Add annotation text */
-  void AddAnnotationText( int , const std::string );
- 
 protected:
 
   Annotation2D( void );
@@ -91,12 +91,31 @@ private:
   ActorsListType                   m_Actors;
 
   std::string                      m_AnnotationText[4];
+  std::string                      m_AnnotationTextToBeAdded;
   vtkTextMapper *                  m_AnnotationMapper[4]; 
   vtkActor2D    *                  m_AnnotationActor[4];
+  vtkActor2D    *                  m_ActorToBeAdded;
+
+  int           *                  m_ViewPortSize;
+
+  /** Private functions that only be invoked through the state machine */
+  void AddActorProcessing();
+  void AddAnnotationTextProcessing();
+  void AddAnnotationsProcessing();
+  void ReportInvalidAnnotationIndexProcessing();
+  
+  /** Annotation index */
+  int                              m_IndexForAnnotationToBeAdded;
 
   /** Inputs to the State Machine */
-  
+  igstkDeclareInputMacro( ValidAnnotations );
+  igstkDeclareInputMacro( InvalidAnnotations );
+  igstkDeclareInputMacro( ValidAnnotationIndex );
+  igstkDeclareInputMacro( InvalidAnnotationIndex );
+
   /** States for the State Machine */
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( AnnotationsAdded );
 };
 
 } // end namespace igstk

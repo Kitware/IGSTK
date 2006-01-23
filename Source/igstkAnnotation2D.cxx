@@ -27,20 +27,41 @@ namespace igstk
 /** Constructor */
 Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
 {
+  igstkLogMacro( DEBUG, "Constructor() called ...\n");
   for (int i = 0; i < 4; i++)
   {
     this->m_AnnotationText[i] = "";
     this->m_AnnotationMapper[i] = vtkTextMapper::New();
     this->m_AnnotationActor[i]  = vtkActor2D::New();
     this->m_AnnotationActor[i]->SetMapper(this->m_AnnotationMapper[i]);
-    this->AddActors( m_AnnotationActor[i] );
+    m_ActorToBeAdded = m_AnnotationActor[i];
+    this->AddActorProcessing( );
   }
+  
+  igstkAddInputMacro( ValidAnnotationIndex );
+  igstkAddInputMacro( InvalidAnnotationIndex );
+  igstkAddInputMacro( ValidAnnotations );
+  igstkAddInputMacro( InvalidAnnotations );
+  
+  igstkAddStateMacro( Idle );
+  igstkAddStateMacro( AnnotationsAdded ); 
+
+  igstkAddTransitionMacro ( Idle, ValidAnnotationIndex , Idle, AddAnnotationText );  
+  igstkAddTransitionMacro ( Idle, InvalidAnnotationIndex , Idle, ReportInvalidAnnotationIndex );  
+  igstkAddTransitionMacro ( Idle, ValidAnnotations , AnnotationsAdded , AddAnnotations );  
+
+  // Select the initial state of the state machine
+  igstkSetInitialStateMacro( Idle );
+
+  // Finish the programming and get ready to run
+  m_StateMachine.SetReadyToRun();
 } 
 
 /** Destructor */
 Annotation2D::~Annotation2D()  
 { 
-  // Delete the actors
+  igstkLogMacro( DEBUG, "Destructor() called ...\n");
+  
   this->DeleteActors();
 
   for (int i = 0; i < 4; i++)
@@ -50,36 +71,70 @@ Annotation2D::~Annotation2D()
 }
 
 /** Add actor */
-void Annotation2D::AddActors( vtkActor2D * actor )
+void Annotation2D::AddActorProcessing( )
 {
-  m_Actors.push_back( actor );
+  igstkLogMacro( DEBUG, "AddActorProcessing called ...\n");
+  m_Actors.push_back( m_ActorToBeAdded );
+}
+
+/** */
+void Annotation2D::RequestAddAnnotationText( int i, const std::string text )
+{
+  igstkLogMacro( DEBUG, "RequestAddAnnotationText called ...\n");  
+
+  m_IndexForAnnotationToBeAdded = i;
+  m_AnnotationTextToBeAdded = text;
+ 
+  if ( m_IndexForAnnotationToBeAdded < 0 && m_IndexForAnnotationToBeAdded > 3 ) 
+    {
+      igstkPushInputMacro( InvalidAnnotationIndex );
+      m_StateMachine.ProcessInputs();
+    }
+  else
+    {
+      igstkPushInputMacro ( ValidAnnotationIndex );
+      m_StateMachine.ProcessInputs();
+    }
 }
 
 
-/** Add annotation */
-void Annotation2D::AddAnnotationText( int i, const std::string text )
+
+/** Add annotation text processing */
+void Annotation2D::AddAnnotationTextProcessing( )
 {
-  if ( i < 0 && i > 3 ) 
-  {
-    return;
-  }
+  igstkLogMacro( DEBUG, "AddAnnotationTextProcessing called ...\n");
+
+  m_AnnotationText[m_IndexForAnnotationToBeAdded] = m_AnnotationTextToBeAdded;
+  m_AnnotationMapper[m_IndexForAnnotationToBeAdded]->
+                  SetInput( m_AnnotationText[m_IndexForAnnotationToBeAdded].c_str() );
+  this->m_AnnotationActor[m_IndexForAnnotationToBeAdded]->
+                  SetMapper(this->m_AnnotationMapper[m_IndexForAnnotationToBeAdded]);
+}
+
+/** */
+void Annotation2D::RequestAddAnnotations( int * vSize )
+{
+  igstkLogMacro( DEBUG, "RequestAddAnnotations called ....\n"  );
   
-  m_AnnotationText[i] = text;
-  m_AnnotationMapper[i]->SetInput( m_AnnotationText[i].c_str() );
-  this->m_AnnotationActor[i]->SetMapper(this->m_AnnotationMapper[i]);
+  m_ViewPortSize = vSize;
+  igstkPushInputMacro( ValidAnnotations );
+  m_StateMachine.ProcessInputs();
 }
-
-void Annotation2D::AddAnnotations( int  * vSize )
+void Annotation2D::AddAnnotationsProcessing(  )
 {
+  igstkLogMacro( DEBUG, "AddAnnotationsProcessing called ...\n");
+
   this->m_AnnotationActor[0]->SetPosition(10,10);
-  this->m_AnnotationActor[1]->SetPosition(vSize[0] -60 ,10);
-  this->m_AnnotationActor[2]->SetPosition(10, vSize[1] - 10);
-  this->m_AnnotationActor[3]->SetPosition(vSize[0] - 60, vSize[1] - 10);
+  this->m_AnnotationActor[1]->SetPosition(m_ViewPortSize[0] -60 ,10);
+  this->m_AnnotationActor[2]->SetPosition(10, m_ViewPortSize[1] - 10);
+  this->m_AnnotationActor[3]->SetPosition(m_ViewPortSize[0] - 60, m_ViewPortSize[1] - 10);
 }
 
 /** Empty the list of actors */
 void Annotation2D::DeleteActors()
 {
+  igstkLogMacro( DEBUG, "DeleteActors called....\n" );
+
   ActorsListType::iterator it = m_Actors.begin();
   while(it != m_Actors.end())
     {
@@ -91,7 +146,14 @@ void Annotation2D::DeleteActors()
   m_Actors.clear();
 }
 
-/** Print Self function */
+/** */
+void Annotation2D::ReportInvalidAnnotationIndexProcessing()
+{
+  igstkLogMacro( WARNING, "ReportInvalidAnnotationIndexProcessing" );
+}
+
+
+/** Print Self tion */
 void Annotation2D::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
