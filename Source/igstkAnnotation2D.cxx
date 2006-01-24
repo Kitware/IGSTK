@@ -78,7 +78,7 @@ void Annotation2D::AddActorProcessing( )
 }
 
 /** */
-void Annotation2D::RequestAddAnnotationText( int i, const std::string text )
+void Annotation2D::RequestAddAnnotationText( int i, const std::string  & text )
 {
   igstkLogMacro( DEBUG, "RequestAddAnnotationText called ...\n");  
 
@@ -112,22 +112,25 @@ void Annotation2D::AddAnnotationTextProcessing( )
 }
 
 /** */
-void Annotation2D::RequestAddAnnotations( int * vSize )
+void Annotation2D::RequestAddAnnotations( int horizontalSize, int verticalSize )
 {
   igstkLogMacro( DEBUG, "RequestAddAnnotations called ....\n"  );
   
-  m_ViewPortSize = vSize;
+  this->m_ViewPortHorizontalSize = horizontalSize;
+  this->m_ViewPortVerticalSize = verticalSize;
   igstkPushInputMacro( ValidAnnotations );
   m_StateMachine.ProcessInputs();
 }
+
+
 void Annotation2D::AddAnnotationsProcessing(  )
 {
   igstkLogMacro( DEBUG, "AddAnnotationsProcessing called ...\n");
 
   this->m_AnnotationActor[0]->SetPosition(10,10);
-  this->m_AnnotationActor[1]->SetPosition(m_ViewPortSize[0] -60 ,10);
-  this->m_AnnotationActor[2]->SetPosition(10, m_ViewPortSize[1] - 10);
-  this->m_AnnotationActor[3]->SetPosition(m_ViewPortSize[0] - 60, m_ViewPortSize[1] - 10);
+  this->m_AnnotationActor[1]->SetPosition( this->m_ViewPortHorizontalSize-60 ,10);
+  this->m_AnnotationActor[2]->SetPosition(10, this->m_ViewPortVerticalSize - 10);
+  this->m_AnnotationActor[3]->SetPosition( this->m_ViewPortHorizontalSize - 60, this->m_ViewPortVerticalSize - 10);
 }
 
 /** Empty the list of actors */

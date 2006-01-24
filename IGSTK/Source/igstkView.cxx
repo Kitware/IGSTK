@@ -513,7 +513,8 @@ void View::AddAnnotation2DProcessing( )
 {
   igstkLogMacro( DEBUG, "AddAnnotation2DProcessing called ...\n");
   
-  m_Annotation2DToBeAdded->RequestAddAnnotations( this->GetSize() );
+  const int * size = this->GetSize();
+  m_Annotation2DToBeAdded->RequestAddAnnotations( size[0], size[1] );
   Annotation2D::ActorsListType actors = m_Annotation2DToBeAdded->GetActors();
   Annotation2D::ActorsListType::iterator actorIt = actors.begin();
 

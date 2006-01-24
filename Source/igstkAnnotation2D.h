@@ -55,20 +55,22 @@ class Annotation2D
 
 public:
   
-  typedef std::vector< vtkActor2D* >         ActorsListType; 
   
   /* Macro with standard traits declarations. */  
   igstkStandardClassTraitsMacro( Annotation2D, Object )
 
   /* Add annotation text */
-  void RequestAddAnnotationText( int , const std::string );
+  void RequestAddAnnotationText( int , const std::string & );
 
   /** Add annotations */
-  void RequestAddAnnotations( int * );
+  void RequestAddAnnotations( int horizontal, int vertical );
 
   /** Declarations needed for the Logging */
   igstkLoggerMacro();
   
+  /** Type defining the container of actors */
+  typedef std::vector< vtkActor2D* >         ActorsListType; 
+
   /** Get the VTK actors */
   igstkGetMacro( Actors, ActorsListType );
 
@@ -76,6 +78,7 @@ protected:
 
   Annotation2D( void );
   ~Annotation2D( void );
+
 
   /** Add an actor */
   void AddActors( vtkActor2D* );
@@ -88,6 +91,9 @@ protected:
   
 private:
 
+  Annotation2D( const Self & ); //purposely not implemented
+  void operator=(const Self&);  //purposely not implemented
+  
   ActorsListType                   m_Actors;
 
   std::string                      m_AnnotationText[4];
@@ -96,7 +102,8 @@ private:
   vtkActor2D    *                  m_AnnotationActor[4];
   vtkActor2D    *                  m_ActorToBeAdded;
 
-  int           *                  m_ViewPortSize;
+  int                              m_ViewPortHorizontalSize;
+  int                              m_ViewPortVerticalSize;
 
   /** Private functions that only be invoked through the state machine */
   void AddActorProcessing();

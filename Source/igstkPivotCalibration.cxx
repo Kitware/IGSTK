@@ -208,17 +208,23 @@ void PivotCalibration::InternalCalculateCalibrationProcessing( unsigned int axis
 
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalCalculateCalibrationProcessing called...\n" );
 
-  unsigned int i, j, k;
-  unsigned int r, c, num;
+  unsigned int i;
+  unsigned int j;
+  unsigned int k;
+  unsigned int r;
+  unsigned int c;
+  unsigned int num;
 
-  // Set the number of sample, tow and column number of matrix
+  // Set the number of sample, row and column number of matrix
   num = this->GetNumberOfSamples();
   r = num * 3;
   c = 3 + axis;
 
   // Define the Vnl matrix and intermediate variables
   VnlMatrixType matrix(r, c);
-  VnlVectorType x(c), b(r), br(r);  
+  VnlVectorType x(c);
+  VnlVectorType b(r);
+  VnlVectorType br(r);  
   VersorType quat;
   VectorType translation;
   MatrixType rotMatrix;
@@ -244,7 +250,7 @@ void PivotCalibration::InternalCalculateCalibrationProcessing( unsigned int axis
 
     for ( j = 0; j < 3; j++)
       {
-        b[3 * k + j] = -this->m_TranslationContainer->GetElement(k)[j];
+      b[3 * k + j] = -this->m_TranslationContainer->GetElement(k)[j];
       }
     }
 
