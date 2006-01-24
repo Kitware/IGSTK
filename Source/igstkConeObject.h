@@ -57,7 +57,7 @@ public:
 
   /** Get the height of the Cone */
   igstkGetMacro(Height,double);
-  
+ 
 protected:
 
   ConeObject( void );

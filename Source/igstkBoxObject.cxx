@@ -22,6 +22,8 @@ namespace igstk
 /** Constructor */
 BoxObject::BoxObject():m_StateMachine(this)
 {
+  igstkLogMacro( DEBUG, "Constructor called ....\n" );
+
   m_BoxSpatialObject = BoxSpatialObjectType::New();
   this->RequestSetSpatialObject( m_BoxSpatialObject );
   m_Size[0] = 1.0;
@@ -32,11 +34,14 @@ BoxObject::BoxObject():m_StateMachine(this)
 /** Destructor */
 BoxObject::~BoxObject()  
 {
+  igstkLogMacro( DEBUG, "Destructor called ....\n" );
 }
 
 /** Set the size of each axis */
 void BoxObject::SetSize(double x, double y, double z)
 {
+  igstkLogMacro( DEBUG, "SetSize() called ....\n" );
+
   m_Size[0] = x;
   m_Size[1] = y;
   m_Size[2] = z;
@@ -45,18 +50,24 @@ void BoxObject::SetSize(double x, double y, double z)
 /** Get size of the X axis */
 double BoxObject::GetSizeX() const
 {
+  igstkLogMacro( DEBUG, "GetSizeX() called ....\n" );
+  
   return m_Size[0];
 }
 
 /** Get size of the Y axis */
 double BoxObject::GetSizeY() const
 {
+  igstkLogMacro( DEBUG, "GetSizeY() called ....\n" );
+
   return m_Size[1];
 }
 
 /** Get size of the Z axis */
 double BoxObject::GetSizeZ() const
 {
+  igstkLogMacro( DEBUG, "GetSizeZ() called ....\n" );
+  
   return m_Size[2];
 }
 

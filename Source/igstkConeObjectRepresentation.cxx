@@ -27,6 +27,8 @@ namespace igstk
 /** Constructor */
 ConeObjectRepresentation::ConeObjectRepresentation():m_StateMachine(this)
 {
+  igstkLogMacro( DEBUG,  "Constructor called ....\n" );
+
   // We create the ellipse spatial object
   m_ConeSpatialObject = NULL;
   this->RequestSetSpatialObject( m_ConeSpatialObject );
@@ -53,6 +55,8 @@ ConeObjectRepresentation::ConeObjectRepresentation():m_StateMachine(this)
 /** Destructor */
 ConeObjectRepresentation::~ConeObjectRepresentation()  
 {
+  igstkLogMacro( DEBUG,  "Destructor called ....\n" );
+  
   if( m_ConeSource )
     {
     m_ConeSource->Delete();
@@ -67,6 +71,8 @@ ConeObjectRepresentation::~ConeObjectRepresentation()
 /** Set the Coneal Spatial Object */
 void ConeObjectRepresentation::RequestSetConeObject( const ConeSpatialObjectType * cone )
 {
+  igstkLogMacro( DEBUG,  "RequestSetConeObject called ....\n" );
+
   m_ConeObjectToAdd = cone;
   if( !m_ConeObjectToAdd )
     {
@@ -85,12 +91,15 @@ void ConeObjectRepresentation::RequestSetConeObject( const ConeSpatialObjectType
 /** Set the Cylindrical Spatial Object */
 void ConeObjectRepresentation::NoProcessing()
 {
+  igstkLogMacro( DEBUG,  "NoProcessing called ....\n" );
 }
 
 
 /** Set the Cylindrical Spatial Object */
 void ConeObjectRepresentation::SetConeObjectProcessing()
 {
+  igstkLogMacro( DEBUG,  "SetConeObjectProcessing called ....\n" );
+
   // We create the ellipse spatial object
   m_ConeSpatialObject = m_ConeObjectToAdd;
   this->RequestSetSpatialObject( m_ConeSpatialObject );
@@ -121,6 +130,8 @@ void ConeObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent )
  * object */
 void ConeObjectRepresentation::UpdateRepresentationProcessing()
 {
+  igstkLogMacro( DEBUG,  "UpdateRepresentationProcessing called ....\n" );
+
   m_ConeSource->SetRadius(m_ConeSpatialObject->GetRadius());
   m_ConeSource->SetHeight(m_ConeSpatialObject->GetHeight());
 }
@@ -129,6 +140,8 @@ void ConeObjectRepresentation::UpdateRepresentationProcessing()
 /** Create the vtk Actors */
 void ConeObjectRepresentation::CreateActors()
 {
+  igstkLogMacro( DEBUG,  "CreateActors called ....\n" );
+  
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
    
@@ -157,6 +170,8 @@ void ConeObjectRepresentation::CreateActors()
 ConeObjectRepresentation::Pointer
 ConeObjectRepresentation::Copy() const
 {
+  igstkLogMacro( DEBUG,  "Copy called ....\n" );
+  
   Pointer newOR = ConeObjectRepresentation::New();
   newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
   newOR->SetOpacity(this->GetOpacity());

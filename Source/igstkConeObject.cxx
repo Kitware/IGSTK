@@ -22,6 +22,8 @@ namespace igstk
 /** Constructor */
 ConeObject::ConeObject():m_StateMachine(this)
 {
+  igstkLogMacro( DEBUG, "Constructor called ....\n" );
+
   // We create the ellipse spatial object
   m_ConeSpatialObject = ConeSpatialObjectType::New();
   this->RequestSetSpatialObject( m_ConeSpatialObject );
@@ -32,6 +34,7 @@ ConeObject::ConeObject():m_StateMachine(this)
 /** Destructor */
 ConeObject::~ConeObject()  
 {
+  igstkLogMacro( DEBUG, "Destructor called ....\n" );
 }
 
 /** Print object information */

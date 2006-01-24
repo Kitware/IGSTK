@@ -27,6 +27,8 @@ namespace igstk
 /** Constructor */
 BoxObjectRepresentation::BoxObjectRepresentation():m_StateMachine(this)
 {
+  igstkLogMacro( DEBUG, "Constructor called ....\n");
+
   // We create the ellipse spatial object
   m_BoxSpatialObject = NULL;
   this->RequestSetSpatialObject( m_BoxSpatialObject );
@@ -51,6 +53,8 @@ BoxObjectRepresentation::BoxObjectRepresentation():m_StateMachine(this)
 /** Destructor */
 BoxObjectRepresentation::~BoxObjectRepresentation()  
 {
+  igstkLogMacro( DEBUG, "Destructor called ....\n");
+
   if( m_BoxSource )
     {
     m_BoxSource->Delete();
@@ -62,6 +66,8 @@ BoxObjectRepresentation::~BoxObjectRepresentation()
 /** Set the Box Spatial Object */
 void BoxObjectRepresentation::RequestSetBoxObject( const BoxSpatialObjectType * box )
 {
+  igstkLogMacro( DEBUG, "RequestSetBoxObject called ....\n");
+
   m_BoxObjectToAdd = box;
   if( !m_BoxObjectToAdd )
     {
@@ -79,12 +85,15 @@ void BoxObjectRepresentation::RequestSetBoxObject( const BoxSpatialObjectType * 
 /** No Processing */
 void BoxObjectRepresentation::NoProcessing()
 {
+  igstkLogMacro( DEBUG, "NoProcessing called ....\n");
 }
 
 
 /** Set the Box Spatial Object */
 void BoxObjectRepresentation::SetBoxObjectProcessing()
 {
+  igstkLogMacro( DEBUG, "SetBoxObjectProcessing called ....\n");
+
   // We create the ellipse spatial object
   m_BoxSpatialObject = m_BoxObjectToAdd;
   this->RequestSetSpatialObject( m_BoxSpatialObject );
@@ -114,6 +123,8 @@ void BoxObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) 
  * object */
 void BoxObjectRepresentation::UpdateRepresentationProcessing()
 {
+  igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
+
   m_BoxSource->SetXLength(m_BoxSpatialObject->GetSizeX());
   m_BoxSource->SetYLength(m_BoxSpatialObject->GetSizeY());
   m_BoxSource->SetZLength(m_BoxSpatialObject->GetSizeZ());
@@ -123,6 +134,8 @@ void BoxObjectRepresentation::UpdateRepresentationProcessing()
 /** Create the vtk Actors */
 void BoxObjectRepresentation::CreateActors()
 {
+  igstkLogMacro( DEBUG, "CreateActors called ....\n");
+
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
    
@@ -146,6 +159,8 @@ void BoxObjectRepresentation::CreateActors()
 BoxObjectRepresentation::Pointer
 BoxObjectRepresentation::Copy() const
 {
+  igstkLogMacro( DEBUG, "Copy() called ....\n");
+
   Pointer newOR = BoxObjectRepresentation::New();
   newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
   newOR->SetOpacity(this->GetOpacity());
