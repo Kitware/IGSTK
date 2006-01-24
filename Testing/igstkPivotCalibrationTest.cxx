@@ -153,7 +153,7 @@ int igstkPivotCalibrationTest( int, char * [] )
     VectorType position = pivot->GetPivotPosition();
 
     // Get the calibration RMS error
-    ErrorType error = pivot->GetRMS();
+    ErrorType error = pivot->GetRootMeanSquareError();
 
     // Dump the calibration class information
     std::cout << "PivotCalibration: " << std::endl;
@@ -185,7 +185,7 @@ int igstkPivotCalibrationTest( int, char * [] )
     VectorType position = pivot->GetPivotPosition();
 
     // Get the calibration RMS error
-    ErrorType error = pivot->GetRMS();
+    ErrorType error = pivot->GetRootMeanSquareError();
 
     // Dump the calibration class information
     std::cout << "PivotCalibration: " << std::endl;

@@ -22,6 +22,10 @@
 #include "igstkPivotCalibration.h"
 #include "itkVersorRigid3DTransform.h"
 
+#include "vnl/algo/vnl_svd.h"
+#include "vnl/vnl_matrix.h"
+#include "vnl/vnl_vector.h"
+
 namespace igstk
 {
 
@@ -110,7 +114,7 @@ void PivotCalibration::PrintSelf( std::ostream& os, itk::Indent indent ) const
   
   os << indent << "Pivot Position: " << this->m_PivotPosition << std::endl;
   
-  os << indent << "Calibration RMS: " << this->m_RMS << std::endl;
+  os << indent << "Calibration RootMeanSquareError: " << this->m_RootMeanSquareError << std::endl;
 }
 
 /** Method to return the number of samples */
@@ -147,8 +151,8 @@ void PivotCalibration::ResetProcessing()
   // Reset the pivot position 
   this->m_PivotPosition.Fill( 0.0);
 
-  // Reset the RMS calibration error
-  this->m_RMS = 0.0;
+  // Reset the RootMeanSquareError calibration error
+  this->m_RootMeanSquareError = 0.0;
 
   // Reset the validation indicator
   this->m_ValidPivotCalibration = false;
@@ -204,7 +208,7 @@ void PivotCalibration::InternalCalculateCalibrationProcessing( unsigned int axis
    *  M * [ Offset0 Offset1 Offset2 x0 y0 z0]' = N
    *  [ Offset0 Offset1 Offset2 x0 y0 z0]' = (M' * M)^-1 * M' * N
    *  or [ Offset0 Offset1 Offset2 x0 y0 z0]' = SVD( M, N )
-   *  RMS = sqrt( |M * [ Offset0 Offset1 Offset2 x0 y0 z0 ]' - N|^2 / num ) */   
+   *  RootMeanSquareError = sqrt( |M * [ Offset0 Offset1 Offset2 x0 y0 z0 ]' - N|^2 / num ) */   
 
   igstkLogMacro( DEBUG, "igstk::PivotCalibration::InternalCalculateCalibrationProcessing called...\n" );
 
@@ -219,6 +223,13 @@ void PivotCalibration::InternalCalculateCalibrationProcessing( unsigned int axis
   num = this->GetNumberOfSamples();
   r = num * 3;
   c = 3 + axis;
+
+  typedef vnl_matrix< double >            VnlMatrixType;
+
+  typedef vnl_vector< double >            VnlVectorType;
+
+  typedef vnl_svd< double >               VnlSVDType;
+
 
   // Define the Vnl matrix and intermediate variables
   VnlMatrixType matrix(r, c);
@@ -274,9 +285,9 @@ void PivotCalibration::InternalCalculateCalibrationProcessing( unsigned int axis
   // Set the calibration matrix
   this->m_CalibrationTransform.SetTranslation(translation, 0.1, 1000);
 
-  // Calculate the RMS error
+  // Calculate the RootMeanSquareError error
   br = matrix * x - b;  
-  this->m_RMS = sqrt( br.squared_magnitude() / num );
+  this->m_RootMeanSquareError = sqrt( br.squared_magnitude() / num );
 
   // Set valid indicator
   this->m_ValidPivotCalibration = true;

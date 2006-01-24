@@ -25,10 +25,6 @@
 #pragma warning( disable : 4284 )
 #endif
 
-#include "vnl/algo/vnl_svd.h"
-#include "vnl/vnl_matrix.h"
-#include "vnl/vnl_vector.h"
-
 #include "itkCovariantVector.h"
 #include "itkVectorContainer.h"
 
@@ -44,12 +40,11 @@ namespace igstk
  * 
  * \brief Create a calibration transform for tracker tools.
  * 
- * This class calibrates the tracker tools and get the transform
- * from the tracked sensor or marker to the pivot point of the surgical
- * tool. The result will include the transform, the pivot position and
- * also the RMS error of the calibration, which is used to evaluate
- * the calibration accuracy. Generally, more samples will give more
- * stable result. 
+ * This class calibrates the tracker tools and get the transform from the
+ * tracked sensor or marker to the pivot point of the surgical tool. The result
+ * will include the transform, the pivot position and also the root mean square
+ * error (RMSE) of the calibration, which is used to evaluate the calibration
+ * accuracy. Generally, more samples will give more stable result. 
  *
  *  \image html  igstkPivotCalibration.png  "PivotCalibration State Machine Diagram"
  *  \image latex igstkPivotCalibration.eps  "PivotCalibration State Machine Diagram" 
@@ -81,12 +76,6 @@ public:
 
 private:
 
-  typedef vnl_matrix< double >            VnlMatrixType;
-
-  typedef vnl_vector< double >            VnlVectorType;
-
-  typedef vnl_svd< double >               VnlSVDType;
-
   typedef itk::VectorContainer< int, VersorType >
                                           InputVersorContainerType;
 
@@ -112,8 +101,8 @@ public:
   /** Method to get the pivot position used to calibrate */
   igstkGetMacro( PivotPosition, VectorType );
 
-  /** Method to retrieve the RMS calibration error */
-  igstkGetMacro( RMS, ErrorType );
+  /** Method to retrieve the RootMeanSquareError (RMS) calibration error */
+  igstkGetMacro( RootMeanSquareError, ErrorType );
 
   /** Method to get the number of samples used to calibrate */
   unsigned int GetNumberOfSamples() const;
@@ -190,6 +179,9 @@ protected:
 
 private:
 
+  PivotCalibration( const Self & ); //purposely not implemented
+  void operator=(const Self&);  //purposely not implemented
+  
   /** List of States */
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( SampleAdd );
@@ -236,8 +228,8 @@ private:
   /** Variable to save the pivot position */
   VectorType                        m_PivotPosition;
 
-  /** Variable to indicate the RMS error */
-  ErrorType                         m_RMS;
+  /** Variable to indicate the RootMeanSquareError error */
+  ErrorType                         m_RootMeanSquareError;
 
 };
 
