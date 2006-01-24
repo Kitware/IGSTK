@@ -3,6 +3,10 @@ SET(IGSTKSandbox_TESTS ${CXX_TEST_PATH}/igstkSandboxTests)
 SET(IGSTKSandbox_TEST_OUTPUT_DIR "${IGSTKSandbox_BINARY_DIR}/Testing/Temporary")
 MAKE_DIRECTORY(${IGSTKSandbox_TEST_OUTPUT_DIR})
 
+SET(IGSTKSandbox_DICOM_TEST_OUTPUT_DIR "${IGSTKSandbox_TEST_OUTPUT_DIR}/DICOM")
+MAKE_DIRECTORY(${IGSTKSandbox_DICOM_TEST_OUTPUT_DIR})
+
+
 SET(IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR "${IGSTKSandbox_TEST_OUTPUT_DIR}/StateMachineDiagrams")
 MAKE_DIRECTORY(${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
 
@@ -172,7 +176,7 @@ IF (IGSTK_DATA_ROOT)
        igstkCTImageSpatialObjectRepresentationTest
        ${IGSTK_DATA_ROOT}/Input/E000192)          
   ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTK_TESTS} igstkDICOMImageReaderErrorsTest 
-       ${IGSTK_DATA_ROOT}/Input/E000192Mod ${IGSTK_DICOM_TEST_OUTPUT_DIR})          
+       ${IGSTK_DATA_ROOT}/Input/E000192Mod ${IGSTKSandbox_DICOM_TEST_OUTPUT_DIR})          
 ENDIF(IGSTK_DATA_ROOT)
 
 #-----------------------------------------------------------------------------
