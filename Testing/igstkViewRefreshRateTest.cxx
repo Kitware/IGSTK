@@ -207,7 +207,7 @@ int igstkViewRefreshRateTest( int, char * [] )
     
     while(1)
       {
-      Fl::wait(0.1);
+      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
       if( bEnd )
         {
