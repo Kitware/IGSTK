@@ -53,7 +53,7 @@ void RegisterTests()
 // Tests depend on device 
 #ifdef IGSTK_TEST_AURORA_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
-#elif IGSTK_TEST_POLARIS_ATTACHED 
+#elif defined IGSTK_TEST_POLARIS_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
 #endif
 
