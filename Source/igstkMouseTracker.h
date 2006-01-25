@@ -22,6 +22,7 @@
 
 namespace igstk
 {
+
 /** \class MouseTracker
  *   \brief Implementation of the Mouse TrackerTool class.
  *
@@ -32,7 +33,7 @@ namespace igstk
  *   be deployed in a surgery room. 
  *
  *   \ingroup Trackers
-*/
+ */
 class MouseTracker : public Tracker
 {
 public:
@@ -42,10 +43,13 @@ public:
 
     typedef Superclass::TransformType           TransformType;
 
+    /** Initialize the tracker */
     void Initialize();
 
+    /** Get the transform */ 
     void GetTransform(TransformType & transform);
 
+    /** Scaling factor */
     igstkSetMacro( ScaleFactor, double );
     igstkGetMacro( ScaleFactor, double );
 
@@ -98,4 +102,3 @@ private:
 }
 
 #endif //__igstk_MouseTracker_h_
-
