@@ -89,7 +89,7 @@ public:
   void RequestAddObject( ObjectRepresentation* object ); 
 
   /** Add annotation to the view */
-  void RequestAddAnnotation2D( Annotation2D* annotation ); 
+  void RequestAddAnnotation2D( Annotation2D *  annotation ); 
 
   /** Remove the object passed as arguments from the list of children, only if
    * it is associated to a particular view. */ 

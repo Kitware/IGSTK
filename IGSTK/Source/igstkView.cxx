@@ -470,13 +470,13 @@ void View::RequestAddObject( ObjectRepresentation* pointer )
 }
 
 /** Request for adding annotation */
-void View::RequestAddAnnotation2D ( Annotation2D * pointer )
+void View::RequestAddAnnotation2D ( Annotation2D * annotation )
 {
   igstkLogMacro( DEBUG, "RequestAddAnnotation2D() called ...\n");
 
-  m_Annotation2DToBeAdded = pointer;
+  m_Annotation2DToBeAdded = annotation ;
 
-  if( !pointer )
+  if( !annotation )
     {
     igstkPushInputMacro( NullAddAnnotation2D );
     m_StateMachine.ProcessInputs();
@@ -514,7 +514,8 @@ void View::AddAnnotation2DProcessing( )
   igstkLogMacro( DEBUG, "AddAnnotation2DProcessing called ...\n");
   
   const int * size = this->GetSize();
-  m_Annotation2DToBeAdded->RequestAddAnnotations( size[0], size[1] );
+  m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( size[0], size[1] );
+  m_Annotation2DToBeAdded->RequestAddAnnotations( );
   Annotation2D::ActorsListType actors = m_Annotation2DToBeAdded->GetActors();
   Annotation2D::ActorsListType::iterator actorIt = actors.begin();
 
