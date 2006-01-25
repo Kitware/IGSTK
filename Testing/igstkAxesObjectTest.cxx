@@ -179,12 +179,6 @@ int igstkAxesObjectTest( int, char * [] )
   AxesRepresentation4->RequestSetAxesObject( AxesObjectA );
   AxesRepresentation4->RequestSetAxesObject( AxesObjectB );
 
-  // Set properties again in order to exercise the loop that goes through
-  // Actors
-  std::cout << "Testing set properties : ";
-  AxesRepresentation->SetColor(0.9,0.7,0.1);
-  AxesRepresentation->SetOpacity(0.8);
-
   std::cout << AxesRepresentation << std::endl;
   std::cout << AxesObjectA << std::endl;
 
