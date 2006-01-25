@@ -62,8 +62,11 @@ public:
   /* Add annotation text */
   void RequestAddAnnotationText( int , const std::string & );
 
-  /** Add annotations */
-  void RequestAddAnnotations( int horizontal, int vertical );
+  /** Request to Set viewport*/
+  void RequestSetAnnotationsViewPort( int horizontal, int vertical );
+
+  /** Request add annotations */
+  void RequestAddAnnotations();
 
   /** Declarations needed for the Logging */
   igstkLoggerMacro();
@@ -104,12 +107,16 @@ private:
 
   int                              m_ViewPortHorizontalSize;
   int                              m_ViewPortVerticalSize;
-
+  int                              m_ViewPortHorizontalSizeToBeSet;
+  int                              m_ViewPortVerticalSizeToBeSet;
+ 
   /** Private functions that only be invoked through the state machine */
   void AddActorProcessing();
   void AddAnnotationTextProcessing();
+  void SetViewPortProcessing();
   void AddAnnotationsProcessing();
   void ReportInvalidAnnotationIndexProcessing();
+  void ReportInvalidRequestProcessing();
   
   /** Annotation index */
   int                              m_IndexForAnnotationToBeAdded;
@@ -117,11 +124,13 @@ private:
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidAnnotations );
   igstkDeclareInputMacro( InvalidAnnotations );
+  igstkDeclareInputMacro( ValidViewPort );
   igstkDeclareInputMacro( ValidAnnotationIndex );
   igstkDeclareInputMacro( InvalidAnnotationIndex );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( ViewPortSet );
   igstkDeclareStateMacro( AnnotationsAdded );
 };
 

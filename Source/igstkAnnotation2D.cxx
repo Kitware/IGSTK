@@ -40,16 +40,22 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
   
   igstkAddInputMacro( ValidAnnotationIndex );
   igstkAddInputMacro( InvalidAnnotationIndex );
+  igstkAddInputMacro( ValidViewPort );
   igstkAddInputMacro( ValidAnnotations );
   igstkAddInputMacro( InvalidAnnotations );
   
   igstkAddStateMacro( Idle );
+  igstkAddStateMacro( ViewPortSet );
   igstkAddStateMacro( AnnotationsAdded ); 
 
   igstkAddTransitionMacro ( Idle, ValidAnnotationIndex , Idle, AddAnnotationText );  
   igstkAddTransitionMacro ( Idle, InvalidAnnotationIndex , Idle, ReportInvalidAnnotationIndex );  
-  igstkAddTransitionMacro ( Idle, ValidAnnotations , AnnotationsAdded , AddAnnotations );  
+  igstkAddTransitionMacro ( Idle, ValidViewPort, ViewPortSet, SetViewPort );
+  igstkAddTransitionMacro ( ViewPortSet, ValidAnnotations , AnnotationsAdded , AddAnnotations );  
 
+  //Invalid requests
+  igstkAddTransitionMacro ( Idle, ValidAnnotations, Idle, ReportInvalidRequest);
+  
   // Select the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
 
@@ -112,14 +118,31 @@ void Annotation2D::AddAnnotationTextProcessing( )
 }
 
 /** */
-void Annotation2D::RequestAddAnnotations( int horizontalSize, int verticalSize )
+void Annotation2D::RequestSetAnnotationsViewPort( int horizontalSize, int verticalSize )
 {
-  igstkLogMacro( DEBUG, "RequestAddAnnotations called ....\n"  );
-  
-  this->m_ViewPortHorizontalSize = horizontalSize;
-  this->m_ViewPortVerticalSize = verticalSize;
+  igstkLogMacro( DEBUG, "RequestSetAnnotationsViewPort called ....\n"  );
+ 
+  m_ViewPortHorizontalSizeToBeSet = horizontalSize;
+  m_ViewPortVerticalSizeToBeSet   = verticalSize;
+  igstkPushInputMacro( ValidViewPort );
+  m_StateMachine.ProcessInputs();
+}
+
+/** */
+void Annotation2D::RequestAddAnnotations()
+{
+  igstkLogMacro( DEBUG, "RequestAddAnnotations called ....\n");
   igstkPushInputMacro( ValidAnnotations );
   m_StateMachine.ProcessInputs();
+}
+
+/** */
+void Annotation2D::SetViewPortProcessing( )
+{
+  igstkLogMacro( DEBUG, "SetViewPortProcessing called ....\n"  );
+  
+  this->m_ViewPortHorizontalSize = m_ViewPortHorizontalSizeToBeSet;
+  this->m_ViewPortVerticalSize = m_ViewPortVerticalSizeToBeSet;
 }
 
 
@@ -153,6 +176,12 @@ void Annotation2D::DeleteActors()
 void Annotation2D::ReportInvalidAnnotationIndexProcessing()
 {
   igstkLogMacro( WARNING, "ReportInvalidAnnotationIndexProcessing" );
+}
+
+/** */
+void Annotation2D::ReportInvalidRequestProcessing()
+{
+  igstkLogMacro( WARNING, "ReportInvalidRequestProcessing...." );
 }
 
 
