@@ -195,40 +195,22 @@ ENDFOREACH( SourceFile )
 # The header files
 SET(IGSTKSandbox_HEADS
   igstkMouseTracker.h
-  igstkPivotCalibration.h
-  igstkPrincipalAxisCalibration.h
   igstkFlockOfBirdsTracker.h
   igstkFlockOfBirdsTrackerTool.h
   igstkUltrasoundProbeObject.h
   igstkUltrasoundProbeObjectRepresentation.h
-  igstkAxesObject.h
-  igstkAxesObjectRepresentation.h
-  igstkAnnotation2D.h
   igstkLandmark3DRegistrationErrorEstimator.h
-  igstkBoxObject.h
-  igstkBoxObjectRepresentation.h
-  igstkConeObject.h
-  igstkConeObjectRepresentation.h
 )
 
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
   igstkMouseTracker.cxx
-  igstkPivotCalibration.cxx
-  igstkPrincipalAxisCalibration.cxx
   igstkFlockOfBirdsTracker.cxx
   igstkFlockOfBirdsTrackerTool.cxx
   igstkUltrasoundProbeObject.cxx
   igstkUltrasoundProbeObjectRepresentation.cxx
-  igstkAxesObject.cxx
-  igstkAxesObjectRepresentation.cxx
-  igstkAnnotation2D.cxx
   igstkLandmark3DRegistrationErrorEstimator.cxx
-  igstkBoxObject.cxx
-  igstkBoxObjectRepresentation.cxx
-  igstkConeObject.cxx
-  igstkConeObjectRepresentation.cxx
 )
 
 # Variable for holding extra libraries

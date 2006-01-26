@@ -65,12 +65,7 @@ INCLUDE_DIRECTORIES (
 # Add your new tests here
 SET(SandboxTests_SRCS
   igstkMouseTrackerTest.cxx
-  igstkPivotCalibrationTest.cxx
-  igstkPrincipalAxisCalibrationTest.cxx
   igstkLandmark3DRegistrationErrorEstimatorTest.cxx
-  igstkBoxObjectTest.cxx
-  igstkConeObjectTest.cxx
-  igstkAxesObjectTest.cxx
   igstkUltrasoundProbeObjectTest.cxx
   )
 
@@ -78,12 +73,6 @@ FOREACH(TestFiles ${SandboxTests_SRCS})
   GET_FILENAME_COMPONENT(TestProgram ${TestFiles} NAME_WE)
   ADD_TEST(${TestProgram} ${IGSTKSandbox_TESTS} ${TestProgram})
 ENDFOREACH(TestFiles)
-
-IF (IGSTKSandbox_DATA_ROOT) 
-  SET(SandboxTests_SRCS ${SandboxTests_SRCS}   igstkAnnotation2DTest.cxx)
-ADD_TEST( igstkAnnotation2DTest ${IGSTKSandbox_TESTS} igstkAnnotation2DTest
-       ${IGSTKSandbox_DATA_ROOT}/E000192 )
-ENDIF(IGSTKSandbox_DATA_ROOT)
 
 
 IF (IGSTK_USE_ATAMAI)
