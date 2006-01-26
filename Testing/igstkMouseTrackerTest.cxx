@@ -14,6 +14,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+
 #if defined(_MSC_VER)
    //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
@@ -21,134 +22,68 @@
 
 #include <iostream>
 #include <fstream>
-#include <set>
 
-#include "itkCommand.h"
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
-#include "itkVector.h"
-#include "itkVersor.h"
 
-#include "igstkSystemInformation.h"
 #include "igstkMouseTracker.h"
-#include "igstkTransform.h"
 
-class MouseTrackerTestCommand : public itk::Command 
+int igstkMouseTrackerTest( int, char * [] )
 {
-public:
-  typedef  MouseTrackerTestCommand   Self;
-  typedef  itk::Command               Superclass;
-  typedef itk::SmartPointer<Self>     Pointer;
-  itkNewMacro( Self );
-protected:
-  MouseTrackerTestCommand() {};
+  typedef igstk::Transform         TransformType;
+  typedef igstk::MouseTracker      MouseTrackerType;
+  typedef itk::Logger              LoggerType; 
+  typedef itk::StdStreamLogOutput  LogOutputType;
 
-public:
-  void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
-    Execute( (const itk::Object *)caller, event);
-  }
-
-  void Execute(const itk::Object * object, const itk::EventObject & event)
-  {
-    // don't print "CompletedEvent", only print interesting events
-    if (!igstk::CompletedEvent().CheckEvent(&event) &&
-        !itk::DeleteEvent().CheckEvent(&event) )
-      {
-      std::cout << event.GetEventName() << std::endl;
-      }
-  }
-};
-
-int igstkMouseTrackerTest( int argc, char * argv[] )
-{
-  typedef itk::Logger                   LoggerType; 
-  typedef itk::StdStreamLogOutput       LogOutputType;
-
-  MouseTrackerTestCommand::Pointer my_command = MouseTrackerTestCommand::New();
-
-  // logger object created 
-  std::string testName;
-  if (argc > 0)
-    {
-    testName = argv[0];
-    }
-
-  std::string outputDirectory = IGSTK_TEST_OUTPUT_DIR;
-  std::string filename = outputDirectory +"/";
-  filename = filename + testName;
-  filename = filename + "LoggerOutput.txt";
-  std::cout << "Logger output saved here:\n";
-  std::cout << filename << "\n"; 
-
-  std::ofstream loggerFile;
-  loggerFile.open( filename.c_str() );
+  // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();  
-  logOutput->SetStream( loggerFile );
+  logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG);
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
 
-  igstk::MouseTracker::Pointer  tracker;
-
-  tracker = igstk::MouseTracker::New();
-
-  tracker->AddObserver( itk::AnyEvent(), my_command);
-
+  MouseTrackerType::Pointer tracker = MouseTrackerType::New();
   tracker->SetLogger( logger );
 
-  std::cout << "Open()" << std::endl;
+  // Test SetScaleFactor()/GetScaleFactor() methods
+  const double scale = 1.0;
+  tracker->SetScaleFactor( scale );
+  const double scaleReturned = tracker->GetScaleFactor();
+  if( fabs( scale - scaleReturned ) > 1e-5 )
+    {
+    std::cerr << "Error in SetScaleFactor()/GetScaleFactor() " << std::endl;
+    return EXIT_FAILURE;
+    }
+
   tracker->Open();
 
-  std::cout << "Initialize()" << std::endl;
   tracker->Initialize();
 
-  std::cout << tracker << std::endl;
-
-  std::cout << "StartTracking()" << std::endl;
   tracker->StartTracking();
 
-  typedef igstk::Transform            TransformType;
-  typedef ::itk::Vector<double, 3>    VectorType;
-  typedef ::itk::Versor<double>       VersorType;
+  TransformType transform;
 
-  for(unsigned int i=0; i<10; i++)
-    {
-    tracker->UpdateStatus();
-    for (unsigned int port = 0; port < 4; port++)
-      {
-      for (unsigned int channel = 0; channel < 2; channel++)
-        {
-        TransformType             transform;
-        VectorType                position;
+  tracker->UpdateStatus();
 
-        tracker->GetToolTransform( port, channel, transform );
-        position = transform.GetTranslation();
-        std::cout << "Port, Channel (" << port << "," << channel
-                  << ") Position = (" << position[0]
-                  << "," << position[1] << "," << position[2]
-                  << ")" << std::endl;
-        }
-      }
-    }
+  tracker->GetTransform( transform );
+
+  TransformType::VectorType position = transform.GetTranslation();
   
-  std::cout << "Reset()" << std::endl;
+  std::cout << "Mouse Position -> ( " << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
+
   tracker->Reset();
-  
-  std::cout << "Initialize()" << std::endl;
-  tracker->Initialize();
-  
-  std::cout << "StartTracking()" << std::endl;
-  tracker->StartTracking();
 
-  std::cout << "StopTracking()" << std::endl;
   tracker->StopTracking();
 
-  std::cout << "Close()" << std::endl;
-  tracker->Close();
+  std::cout << tracker << std::endl;
+  std::cout << transform << std::endl;
 
-  std::cout << "[PASSED]" << std::endl;
+  tracker->Close();
 
   return EXIT_SUCCESS;
 }
+
 

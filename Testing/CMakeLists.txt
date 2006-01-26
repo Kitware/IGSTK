@@ -130,6 +130,7 @@ IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkPulseGeneratorTest ${IGSTK_TESTS} igstkPulseGeneratorTest)
   ADD_TEST(igstkTubeObjectTest ${IGSTK_TESTS} igstkTubeObjectTest)
   ADD_TEST(igstkMouseTrackerTest ${IGSTK_TESTS} igstkMouseTrackerTest)
+  ADD_TEST(igstkUltrasoundProbeObjectTest ${IGSTK_TESTS} igstkUltrasoundProbeObjectTest)
   
   IF (IGSTK_DATA_ROOT)
     ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest 
@@ -236,6 +237,7 @@ IF(IGSTK_USE_FLTK)
     igstkViewTest.cxx
     igstkViewRefreshRateTest.cxx
     igstkMouseTrackerTest.cxx
+    igstkUltrasoundProbeObjectTest.cxx
   )    
   IF(IGSTK_DATA_ROOT)
     SET(BasicTests_SRCS

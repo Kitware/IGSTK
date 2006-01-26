@@ -101,6 +101,7 @@ void RegisterTests()
   REGISTER_TEST(igstkMouseTrackerTest);
   REGISTER_TEST(igstkViewTest);
   REGISTER_TEST(igstkViewRefreshRateTest);
+  REGISTER_TEST(igstkUltrasoundProbeObjectTest);
 
   #ifdef IGSTK_DATA_ROOT
     REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
