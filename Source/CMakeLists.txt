@@ -36,6 +36,7 @@ SET(IGSTK_HEADS
   igstkMeshObject.h
   igstkMeshObjectRepresentation.h
   igstkMultipleOutput.h
+  igstkMouseTracker.h
   igstkNDICommandInterpreter.h
   igstkNDIErrorEvent.h
   igstkObjectRepresentation.h
@@ -111,6 +112,7 @@ SET(IGSTK_SRCS
   igstkMeshObject.cxx
   igstkMeshObjectRepresentation.cxx
   igstkMultipleOutput.cxx
+  igstkMouseTracker.cxx
   igstkNDICommandInterpreter.cxx
   igstkObject.cxx
   igstkPivotCalibration.cxx
