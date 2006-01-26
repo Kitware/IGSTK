@@ -47,10 +47,10 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarkPrincipalAxes()
    igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "ComputeLandmarkPrincipalAxes called...\n");
 
-   typedef itk::Matrix<double,3,3>                         MatrixType;
-   typedef itk::Matrix<double,4,4>                         AugmentedMatrixType;
-   typedef itk::Vector<double,3>                           VectorType;
-   typedef itk::Vector<double,4>                           AugmentedVectorType;
+   typedef itk::Matrix<double,3,3>                 MatrixType;
+   typedef itk::Matrix<double,4,4>                 AugmentedMatrixType;
+   typedef itk::Vector<double,3>                   VectorType;
+   typedef itk::Vector<double,4>                   AugmentedVectorType;
 
    MatrixType                                      covarianceMatrix;
    
@@ -163,9 +163,9 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarksCentroid()
 void Landmark3DRegistrationErrorEstimator::
      ComputeRMSDistanceLandmarksFromPrincipalAxes()
 {
-  typedef itk::Vector< double, 3 >                        VectorType;
-  typedef itk::Matrix< double, 3, 3 >                     MatrixType; 
-  typedef double                                          DistanceType; 
+  typedef itk::Vector< double, 3 >                VectorType;
+  typedef itk::Matrix< double, 3, 3 >             MatrixType; 
+  typedef double                                  DistanceType; 
   
   PointsContainerConstIterator                    pointItr;
   VectorType                                      landmarkVector;
@@ -185,9 +185,9 @@ void Landmark3DRegistrationErrorEstimator::
     }
   
   // Normalize the principal axes 
-  VectorType                                      normalizedPrincipalAxes1;
-  VectorType                                      normalizedPrincipalAxes2;
-  VectorType                                      normalizedPrincipalAxes3;
+  VectorType        normalizedPrincipalAxes1;
+  VectorType        normalizedPrincipalAxes2;
+  VectorType        normalizedPrincipalAxes3;
 
   normalizedPrincipalAxes1 = principalAxes1;
   normalizedPrincipalAxes2 = principalAxes1;
@@ -203,12 +203,9 @@ void Landmark3DRegistrationErrorEstimator::
   VectorType                                       differenceVector;
  
   //  Distance from the landmark point to the principal axes
-  DistanceType                                     
-                   distanceFromLandmarkPointToPrinciaplAxes1 = 0.0;
-  DistanceType                                     
-                   distanceFromLandmarkPointToPrinciaplAxes2 = 0.0;
-  DistanceType                                     
-                   distanceFromLandmarkPointToPrinciaplAxes3 = 0.0;
+  DistanceType    distanceFromLandmarkPointToPrinciaplAxes1 = 0.0;
+  DistanceType    distanceFromLandmarkPointToPrinciaplAxes2 = 0.0;
+  DistanceType    distanceFromLandmarkPointToPrinciaplAxes3 = 0.0;
   
   pointItr  = m_ImageLandmarks.begin();
   while( pointItr != m_ImageLandmarks.end() )
@@ -251,15 +248,15 @@ Landmark3DRegistrationErrorEstimator:: ComputeErrorParameters()
 /* The "EstimateTargetRegistrationError" method estimates target signal ( sample point )
  * registration error */
 Landmark3DRegistrationErrorEstimator::ErrorType 
-Landmark3DRegistrationErrorEstimator:: EstimateTargetRegistrationError( 
-Landmark3DRegistrationErrorEstimator::TargetPointType targetPoint )
+Landmark3DRegistrationErrorEstimator
+:: EstimateTargetRegistrationError( const TargetPointType & targetPoint )
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "EstimateTargetRegistrationError called...\n");
   
-  typedef itk::Vector< double, 3 >                        VectorType;
-  typedef itk::Matrix< double, 3, 3 >                     MatrixType; 
-  typedef double                                          DistanceType; 
+  typedef itk::Vector< double, 3 >                VectorType;
+  typedef itk::Matrix< double, 3, 3 >             MatrixType; 
+  typedef double                                  DistanceType; 
   
   MatrixType                                      principalAxesMatrix;
   VectorType                                      principalAxes1;
@@ -285,9 +282,9 @@ Landmark3DRegistrationErrorEstimator::TargetPointType targetPoint )
     }
   
   // Normalize the principal axes 
-  VectorType                                      normalizedPrincipalAxes1;
-  VectorType                                      normalizedPrincipalAxes2;
-  VectorType                                      normalizedPrincipalAxes3;
+  VectorType   normalizedPrincipalAxes1;
+  VectorType   normalizedPrincipalAxes2;
+  VectorType   normalizedPrincipalAxes3;
 
   normalizedPrincipalAxes1 = principalAxes1;
   normalizedPrincipalAxes2 = principalAxes1;
@@ -309,19 +306,19 @@ Landmark3DRegistrationErrorEstimator::TargetPointType targetPoint )
   // target error parameter 
   ErrorType                      targetRegistrationError = 0.0;
  
- for( unsigned int i=0; i < 3 ; i++ ) 
-   {
-   targetRegistrationError += 
+  for( unsigned int i=0; i < 3 ; i++ ) 
+    {
+    targetRegistrationError += 
            vnl_math_sqr( distanceFromTargetPointToPrincipalAxes[i] ) / 
            vnl_math_sqr( this->m_RMSDistanceFromLandmarkToPrincipalAxes[i] ); 
-   }
+    }
 
- targetRegistrationError *= (1.0/3.0);
- targetRegistrationError += 1.0;
- targetRegistrationError *= ( vnl_math_sqr( this->m_LandmarkRegistrationError ) ) / 
+  targetRegistrationError *= (1.0/3.0);
+  targetRegistrationError += 1.0;
+  targetRegistrationError *= ( vnl_math_sqr( this->m_LandmarkRegistrationError ) ) / 
                               ( this->m_ImageLandmarks.size() - 2 );
 
- return targetRegistrationError;
+  return targetRegistrationError;
 }
 
 

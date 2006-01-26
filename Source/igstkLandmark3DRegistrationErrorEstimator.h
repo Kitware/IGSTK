@@ -79,7 +79,7 @@ public:
   void ComputeErrorParameters();
 
   /** Estimate target registration error */
-  ErrorType  EstimateTargetRegistrationError( TargetPointType );
+  ErrorType  EstimateTargetRegistrationError( const TargetPointType & );
 
 protected:
 
