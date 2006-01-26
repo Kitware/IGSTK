@@ -47,6 +47,7 @@
 #include "igstkPulseGenerator.h"
 #include "igstkObjectRepresentation.h"   
 #include "igstkEvents.h"   
+#include "igstkAnnotation2D.h"   
 
 namespace igstk{
 
@@ -86,6 +87,9 @@ public:
   /** Add an object representation to the list of children and associate it
    * with a specific view. */ 
   void RequestAddObject( ObjectRepresentation* object ); 
+
+  /** Add annotation to the view */
+  void RequestAddAnnotation2D( Annotation2D *  annotation ); 
 
   /** Remove the object passed as arguments from the list of children, only if
    * it is associated to a particular view. */ 
@@ -177,6 +181,7 @@ private:
    *  user invokations from the actual state of this class */
   vtkProp            * m_ActorToBeAdded;
   vtkProp            * m_ActorToBeRemoved;
+  Annotation2D       * m_Annotation2DToBeAdded; 
   
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
 
@@ -195,6 +200,9 @@ private:
    * machine */
   void AddActorProcessing();
   void RemoveActorProcessing();
+
+  /** Add annotation */
+  void AddAnnotation2DProcessing(  );
 
   /** Add and remove RepresentationObject classes */
   void AddObjectProcessing();
@@ -236,6 +244,8 @@ private:
   igstkDeclareInputMacro( NullRemoveActor );
   igstkDeclareInputMacro( ValidAddObject );
   igstkDeclareInputMacro( NullAddObject );
+  igstkDeclareInputMacro( ValidAddAnnotation2D );
+  igstkDeclareInputMacro( NullAddAnnotation2D );
   igstkDeclareInputMacro( ExistingAddObject );
   igstkDeclareInputMacro( ValidRemoveObject );
   igstkDeclareInputMacro( InexistingRemoveObject );

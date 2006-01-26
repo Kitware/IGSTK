@@ -27,7 +27,7 @@
 #include <vtkPNGWriter.h>
 #include <igstkEvents.h>
 #include "itksys/SystemTools.hxx"
-
+#include "vtkViewport.h"
 
 namespace igstk{
 
@@ -55,6 +55,8 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
 
   igstkAddInputMacro( ValidAddObject );
   igstkAddInputMacro( NullAddObject  );
+  igstkAddInputMacro( ValidAddAnnotation2D );
+  igstkAddInputMacro( NullAddAnnotation2D  );
   igstkAddInputMacro( ExistingAddObject );
   igstkAddInputMacro( ValidRemoveObject );
   igstkAddInputMacro( InexistingRemoveObject );
@@ -78,6 +80,8 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
 
   igstkAddTransitionMacro( Idle, ValidAddObject, Idle,  AddObject );
   igstkAddTransitionMacro( Idle, NullAddObject,  Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidAddAnnotation2D, Idle,  AddAnnotation2D );
+  igstkAddTransitionMacro( Idle, NullAddAnnotation2D ,  Idle,  ReportInvalidRequest );
   igstkAddTransitionMacro( Idle, ExistingAddObject,  Idle,  ReportInvalidRequest );
   igstkAddTransitionMacro( Idle, ValidRemoveObject, Idle,  RemoveObject );
   igstkAddTransitionMacro( Idle, NullRemoveObject,  Idle,  ReportInvalidRequest );
@@ -94,6 +98,8 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
 
   igstkAddTransitionMacro( Refreshing, ValidAddObject, Refreshing,  AddObject );
   igstkAddTransitionMacro( Refreshing, NullAddObject,  Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidAddAnnotation2D, Refreshing,  AddAnnotation2D );
+  igstkAddTransitionMacro( Refreshing, NullAddAnnotation2D,  Refreshing,  ReportInvalidRequest );
   igstkAddTransitionMacro( Refreshing, ExistingAddObject,  Refreshing,  ReportInvalidRequest );
   igstkAddTransitionMacro( Refreshing, ValidRemoveObject, Refreshing,  RemoveObject );
   igstkAddTransitionMacro( Refreshing, NullRemoveObject,  Refreshing,  ReportInvalidRequest );
@@ -463,6 +469,24 @@ void View::RequestAddObject( ObjectRepresentation* pointer )
     }
 }
 
+/** Request for adding annotation */
+void View::RequestAddAnnotation2D ( Annotation2D * annotation )
+{
+  igstkLogMacro( DEBUG, "RequestAddAnnotation2D() called ...\n");
+
+  m_Annotation2DToBeAdded = annotation ;
+
+  if( !annotation )
+    {
+    igstkPushInputMacro( NullAddAnnotation2D );
+    m_StateMachine.ProcessInputs();
+    return;
+    }
+
+  igstkPushInputMacro( ValidAddAnnotation2D );
+  m_StateMachine.ProcessInputs();
+}
+
 
 /** Add an object to the View. This method should only be called by the state
  * machine. The state machine makes sure that this method is called with a valid
@@ -484,6 +508,24 @@ void View::AddObjectProcessing()
     actorIt++;
     } 
 }
+
+void View::AddAnnotation2DProcessing( )
+{
+  igstkLogMacro( DEBUG, "AddAnnotation2DProcessing called ...\n");
+  
+  const int * size = this->GetSize();
+  m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( size[0], size[1] );
+  m_Annotation2DToBeAdded->RequestAddAnnotations( );
+  Annotation2D::ActorsListType actors = m_Annotation2DToBeAdded->GetActors();
+  Annotation2D::ActorsListType::iterator actorIt = actors.begin();
+
+  while(actorIt != actors.end())
+    {
+    this->RequestAddActor(*actorIt);
+    actorIt++;
+    } 
+}
+
 
 /** Request for removing a spatial object from the View */
 void View::RequestRemoveObject( ObjectRepresentation* pointer )

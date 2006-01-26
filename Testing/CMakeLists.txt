@@ -50,6 +50,8 @@ ADD_TEST(igstkLandmark3DRegistrationTest ${IGSTK_TESTS} igstkLandmark3DRegistrat
 ADD_TEST(igstkMRImageSpatialObjectRepresentationTest ${IGSTK_TESTS} igstkMRImageSpatialObjectRepresentationTest )
 ADD_TEST(igstkMRImageSpatialObjectTest ${IGSTK_TESTS} igstkMRImageSpatialObjectTest )          
 ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
+ADD_TEST(igstkPivotCalibrationTest ${IGSTK_TESTS} igstkPivotCalibrationTest)
+ADD_TEST(igstkPrincipalAxisCalibrationTest ${IGSTK_TESTS} igstkPrincipalAxisCalibrationTest)
 ADD_TEST(igstkSerialCommunicationTest ${IGSTK_TESTS} igstkSerialCommunicationTest)
 ADD_TEST(igstkStateMachineErrorsTest ${IGSTK_TESTS} igstkStateMachineErrorsTest)
 ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
@@ -68,6 +70,8 @@ ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 #-----------------------------------------------------------------------------
 # Tests need data input
 IF (IGSTK_DATA_ROOT) 
+  ADD_TEST( igstkAnnotation2DTest ${IGSTK_TESTS} igstkAnnotation2DTest
+         ${IGSTK_DATA_ROOT}/Input/E000192 )
 
   ADD_TEST(igstkAuroraTrackerSimulatedTest ${IGSTK_TESTS} igstkAuroraTrackerSimulatedTest)
   ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS} igstkNDICommandInterpreterSimulatedTest)
@@ -145,6 +149,9 @@ ENDIF(IGSTK_USE_FLTK)
 #-----------------------------------------------------------------------------
 # Set the source file
 SET(BasicTests_SRCS
+  igstkAxesObjectTest.cxx
+  igstkBoxObjectTest.cxx
+  igstkConeObjectTest.cxx
   igstkBasicTrackerTest.cxx
   igstkBinaryDataTest.cxx
   igstkCommunicationTest.cxx
@@ -155,6 +162,8 @@ SET(BasicTests_SRCS
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectTest.cxx
   igstkMultipleOutputTest.cxx    
+  igstkPivotCalibrationTest.cxx
+  igstkPrincipalAxisCalibrationTest.cxx
   igstkSerialCommunicationTest.cxx
   igstkStateMachineErrorsTest.cxx
   igstkStateMachineTest.cxx
@@ -191,6 +200,7 @@ ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 IF(IGSTK_DATA_ROOT)
   SET(BasicTests_SRCS
     ${BasicTests_SRCS}
+    igstkAnnotation2DTest.cxx
     igstkCTImageReaderTest.cxx
     igstkCTImageSpatialObjectRepresentationTest.cxx
     igstkDICOMImageReaderErrorsTest.cxx

@@ -4,6 +4,13 @@
 # The header files
 
 SET(IGSTK_HEADS
+  igstkAnnotation2D.h
+  igstkAxesObject.h
+  igstkAxesObjectRepresentation.h
+  igstkBoxObject.h
+  igstkBoxObjectRepresentation.h
+  igstkConeObject.h
+  igstkConeObjectRepresentation.h
   igstkImageReader.h
   igstkDICOMImageReader.h
   igstkCTImageReader.h
@@ -32,8 +39,10 @@ SET(IGSTK_HEADS
   igstkNDIErrorEvent.h
   igstkObjectRepresentation.h
   igstkObject.h
+  igstkPivotCalibration.h
   igstkPolarisTracker.h
   igstkPolarisTrackerTool.h
+  igstkPrincipalAxisCalibration.h
   igstkPulseGenerator.h
   igstkSerialCommunication.h
   igstkSerialCommunicationSimulator.h
@@ -71,6 +80,13 @@ ENDIF(IGSTK_USE_FLTK)
 # The implementation files
 
 SET(IGSTK_SRCS  
+  igstkAnnotation2D.cxx
+  igstkAxesObject.cxx
+  igstkAxesObjectRepresentation.cxx
+  igstkBoxObject.cxx
+  igstkBoxObjectRepresentation.cxx
+  igstkConeObject.cxx
+  igstkConeObjectRepresentation.cxx
   igstkImageReader.txx
   igstkDICOMImageReader.txx
   igstkCTImageReader.cxx
@@ -95,9 +111,11 @@ SET(IGSTK_SRCS
   igstkMultipleOutput.cxx
   igstkNDICommandInterpreter.cxx
   igstkObject.cxx
+  igstkPivotCalibration.cxx
   igstkObjectRepresentation.cxx
   igstkPolarisTracker.cxx
   igstkPolarisTrackerTool.cxx
+  igstkPrincipalAxisCalibration.cxx
   igstkPulseGenerator.cxx
   igstkSerialCommunication.cxx
   igstkSerialCommunicationSimulator.cxx
