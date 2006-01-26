@@ -277,7 +277,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
 
   while(1)
     {
-    Fl::wait(0.001);
+    Fl::wait(0.0001);
     igstk::PulseGenerator::CheckTimeouts();
     if( bEnd )
       {
