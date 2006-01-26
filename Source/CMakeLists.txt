@@ -65,6 +65,8 @@ SET(IGSTK_HEADS
   igstkTrackerTool.h
   igstkTubeObject.h
   igstkTubeObjectRepresentation.h
+  igstkUltrasoundProbeObject.h
+  igstkUltrasoundProbeObjectRepresentation.h
   igstkVTKLoggerOutput.h
   igstkSpatialObjectReader.h
   igstkTubeReader.h
@@ -139,6 +141,8 @@ SET(IGSTK_SRCS
   igstkTransform.cxx
   igstkTubeObject.cxx
   igstkTubeObjectRepresentation.cxx
+  igstkUltrasoundProbeObject.cxx
+  igstkUltrasoundProbeObjectRepresentation.cxx
   igstkVTKLoggerOutput.cxx
   igstkTubeReader.cxx
   igstkMeshReader.cxx
@@ -218,8 +222,6 @@ ENDFOREACH( SourceFile )
 SET(IGSTKSandbox_HEADS
   igstkFlockOfBirdsTracker.h
   igstkFlockOfBirdsTrackerTool.h
-  igstkUltrasoundProbeObject.h
-  igstkUltrasoundProbeObjectRepresentation.h
 )
 
 
@@ -227,8 +229,6 @@ SET(IGSTKSandbox_HEADS
 SET(IGSTKSandbox_SRCS  
   igstkFlockOfBirdsTracker.cxx
   igstkFlockOfBirdsTrackerTool.cxx
-  igstkUltrasoundProbeObject.cxx
-  igstkUltrasoundProbeObjectRepresentation.cxx
 )
 
 # Variable for holding extra libraries
