@@ -129,6 +129,7 @@ SET(IGSTKTests_SRCS
   igstkTokenTest.cxx
   igstkTrackerPortTest.cxx
   igstkTrackerToolTest.cxx
+  igstkUltrasoundProbeObjectTest.cxx
   igstkTransformTest.cxx  
   igstkVTKLoggerOutputTest.cxx
   )
