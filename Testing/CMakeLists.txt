@@ -151,6 +151,8 @@ IF (IGSTK_DATA_ROOT)
   ADD_TEST(igstkPolarisTrackerSimulatedTest ${IGSTK_TESTS} igstkPolarisTrackerSimulatedTest)
   ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS} igstkSerialCommunicationSimulatorTest)
   
+  ADD_TEST( igstkAnnotation2DTest ${IGSTK_TESTS} igstkAnnotation2DTest
+       ${IGSTK_DATA_ROOT}/Input/E000192 )
   ADD_TEST( igstkDICOMImageReaderTest ${IGSTK_TESTS} igstkDICOMImageReaderTest 
        ${IGSTK_DATA_ROOT}/Input/E000192 )
   ADD_TEST( igstkCTImageReaderTest ${IGSTK_TESTS} igstkCTImageReaderTest 
