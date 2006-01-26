@@ -26,10 +26,7 @@
 #define IGSTK_TEST_LOOPBACK_PORT_NUMBER \
     igstk::SerialCommunication::PortNumber@IGSTK_TEST_LOOPBACK_PORT_NUMBER@
 
-#
 #define IGSTKSandbox_BINARY_DIR "@IGSTKSandbox_BINARY_DIR@"
 #define IGSTKSandbox_DATA_ROOT "@IGSTKSandbox_DATA_ROOT@"
-
-#cmakedefine IGSTK_TEST_POLARIS_ATTACHED
 
 #endif
