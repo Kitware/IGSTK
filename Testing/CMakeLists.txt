@@ -104,6 +104,10 @@ SET(IGSTK_TESTS ${CXX_TEST_PATH}/igstkLatestTests)
 
 # You just need to add your new tests here
 SET(IGSTKTests_SRCS
+  igstkAnnotation2DTest.cxx
+  igstkAxesObjectTest.cxx
+  igstkBoxObjectTest.cxx
+  igstkConeObjectTest.cxx
   igstkBasicTrackerTest.cxx
   igstkBinaryDataTest.cxx
   igstkCommunicationTest.cxx
@@ -111,9 +115,13 @@ SET(IGSTKTests_SRCS
   igstkImageReaderTest.cxx
   igstkImageSpatialObjectTest.cxx
   igstkLandmark3DRegistrationTest.cxx
+  igstkLandmark3DRegistrationErrorEstimatorTest.cxx
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectTest.cxx
+  igstkMouseTrackerTest.cxx
   igstkMultipleOutputTest.cxx    
+  igstkPivotCalibrationTest.cxx
+  igstkPrincipalAxisCalibrationTest.cxx
   igstkSerialCommunicationTest.cxx
   igstkStateMachineErrorsTest.cxx
   igstkStateMachineTest.cxx

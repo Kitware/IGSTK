@@ -10,6 +10,12 @@ INCLUDE_DIRECTORIES(
 
 SET(IGSTK_HEADS
   igstkAnnotation2D.h
+  igstkAxesObject.h
+  igstkAxesObjectRepresentation.h
+  igstkBoxObject.h
+  igstkBoxObjectRepresentation.h
+  igstkConeObject.h
+  igstkConeObjectRepresentation.h
   igstkImageReader.h
   igstkDICOMImageReader.h
   igstkCTImageReader.h
@@ -21,6 +27,8 @@ SET(IGSTK_HEADS
   igstkCTImageSpatialObjectRepresentation.h
   igstkMRImageSpatialObjectRepresentation.h
   igstkLandmark3DRegistration.h
+  igstkLandmark3DRegistrationErrorEstimator.h
+  igstkMouseTracker.h
   igstkAuroraTracker.h
   igstkAuroraTrackerTool.h
   igstkBinaryData.h
@@ -79,6 +87,12 @@ ENDIF(IGSTK_USE_FLTK)
 
 SET(IGSTK_SRCS  
   igstkAnnotation2D.cxx
+  igstkAxesObject.cxx
+  igstkAxesObjectRepresentation.cxx
+  igstkBoxObject.cxx
+  igstkBoxObjectRepresentation.cxx
+  igstkConeObject.cxx
+  igstkConeObjectRepresentation.cxx
   igstkImageReader.txx
   igstkDICOMImageReader.txx
   igstkCTImageReader.cxx
@@ -90,6 +104,8 @@ SET(IGSTK_SRCS
   igstkCTImageSpatialObjectRepresentation.cxx
   igstkMRImageSpatialObjectRepresentation.cxx
   igstkLandmark3DRegistration.cxx
+  igstkLandmark3DRegistrationErrorEstimator.cxx
+  igstkMouseTracker.cxx
   igstkAuroraTracker.cxx
   igstkAuroraTrackerTool.cxx
   igstkBinaryData.cxx
