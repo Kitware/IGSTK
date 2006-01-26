@@ -46,6 +46,8 @@ SET(IGSTK_HEADS
   igstkNDIErrorEvent.h
   igstkObjectRepresentation.h
   igstkObject.h
+  igstkPivotCalibration.h
+  igstkPrincipalAxisCalibration.h
   igstkPolarisTracker.h
   igstkPolarisTrackerTool.h
   igstkPulseGenerator.h
@@ -119,6 +121,8 @@ SET(IGSTK_SRCS
   igstkMultipleOutput.cxx
   igstkNDICommandInterpreter.cxx
   igstkObject.cxx
+  igstkPivotCalibration.cxx
+  igstkPrincipalAxisCalibration.cxx
   igstkObjectRepresentation.cxx
   igstkPolarisTracker.cxx
   igstkPolarisTrackerTool.cxx
