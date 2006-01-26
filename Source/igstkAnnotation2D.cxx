@@ -29,14 +29,14 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
 {
   igstkLogMacro( DEBUG, "Constructor() called ...\n");
   for (int i = 0; i < 4; i++)
-  {
+    {
     this->m_AnnotationText[i] = "";
     this->m_AnnotationMapper[i] = vtkTextMapper::New();
     this->m_AnnotationActor[i]  = vtkActor2D::New();
     this->m_AnnotationActor[i]->SetMapper(this->m_AnnotationMapper[i]);
     m_ActorToBeAdded = m_AnnotationActor[i];
     this->AddActorProcessing( );
-  }
+    }
   
   igstkAddInputMacro( ValidAnnotationIndex );
   igstkAddInputMacro( InvalidAnnotationIndex );
@@ -71,9 +71,9 @@ Annotation2D::~Annotation2D()
   this->DeleteActors();
 
   for (int i = 0; i < 4; i++)
-  {
+    {
     this->m_AnnotationMapper[i]->Delete();
-  }
+    }
 }
 
 /** Add actor */
@@ -93,13 +93,13 @@ void Annotation2D::RequestAddAnnotationText( int i, const std::string  & text )
  
   if ( m_IndexForAnnotationToBeAdded < 0 && m_IndexForAnnotationToBeAdded > 3 ) 
     {
-      igstkPushInputMacro( InvalidAnnotationIndex );
-      m_StateMachine.ProcessInputs();
+    igstkPushInputMacro( InvalidAnnotationIndex );
+    m_StateMachine.ProcessInputs();
     }
   else
     {
-      igstkPushInputMacro ( ValidAnnotationIndex );
-      m_StateMachine.ProcessInputs();
+    igstkPushInputMacro ( ValidAnnotationIndex );
+    m_StateMachine.ProcessInputs();
     }
 }
 
