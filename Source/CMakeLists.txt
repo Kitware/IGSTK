@@ -194,7 +194,6 @@ ENDFOREACH( SourceFile )
 
 # The header files
 SET(IGSTKSandbox_HEADS
-  igstkMouseTracker.h
   igstkFlockOfBirdsTracker.h
   igstkFlockOfBirdsTrackerTool.h
   igstkUltrasoundProbeObject.h
@@ -204,7 +203,6 @@ SET(IGSTKSandbox_HEADS
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
-  igstkMouseTracker.cxx
   igstkFlockOfBirdsTracker.cxx
   igstkFlockOfBirdsTrackerTool.cxx
   igstkUltrasoundProbeObject.cxx
