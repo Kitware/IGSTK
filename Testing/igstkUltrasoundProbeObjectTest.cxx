@@ -26,6 +26,91 @@
 #include "igstkUltrasoundProbeObjectRepresentation.h"
 #include "igstkView2D.h"
 
+
+namespace UltrasoundProbeObjectTest
+{
+  class ViewObserver : public ::itk::Command 
+  {
+  public:
+    typedef  ViewObserver   Self;
+    typedef  ::itk::Command    Superclass;
+    typedef  ::itk::SmartPointer<Self>  Pointer;
+    itkNewMacro( Self );
+  protected:
+    ViewObserver() 
+      {
+      m_PulseCounter = 0;
+      m_NumberOfPulsesToStop = 10;
+      m_Form = 0;
+      m_View = 0;
+      }
+  public:
+
+    void SetForm( Fl_Window * form )
+      {
+      m_Form = form;
+      }
+
+    void SetEndFlag( bool * end )
+      {
+      m_End = end;
+      }
+
+    void Execute(const itk::Object *caller, const itk::EventObject & event)
+      {
+      std::cerr << "Execute( const * ) should not be called" << std::endl;         
+      }
+
+    void SetView( ::igstk::View * view )
+    {
+    m_View = view;
+    if( m_View )
+      {
+      m_View->AddObserver( ::igstk::RefreshEvent(), this );
+      }
+    }
+
+    void SetNumberOfPulsesToStop( unsigned long number )
+      {
+      m_NumberOfPulsesToStop = number;
+      }
+
+    void Execute(itk::Object *caller, const itk::EventObject & event)
+      {
+      if( ::igstk::RefreshEvent().CheckEvent( &event ) )
+        {
+        m_PulseCounter++;
+
+        if( m_PulseCounter > m_NumberOfPulsesToStop )
+          {
+          if( m_View )
+            {
+            m_View->RequestStop();
+            } 
+          else
+            {
+            std::cerr << "View pointer is NULL " << std::endl;
+            }
+          if( m_Form )
+            {
+            m_Form->hide();
+            }
+          *m_End = true;
+          return;
+          }
+        }
+      }
+  private:
+    unsigned long       m_PulseCounter;
+    unsigned long       m_NumberOfPulsesToStop;
+    Fl_Window          *m_Form;
+    ::igstk::View      *m_View;
+    bool *              m_End;
+  };
+
+} // end of UltrasoundProbeObjectTest namespace
+
+
 int igstkUltrasoundProbeObjectTest( int, char * [] )
 {
   typedef igstk::UltrasoundProbeObjectRepresentation  ObjectRepresentationType;
@@ -70,9 +155,17 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   // testing actors
   std::cout << "Testing actors : ";
 
+  Fl_Window * form = new Fl_Window(512,512,"View2D Test");
+
   typedef igstk::View2D  View2DType;
-  View2DType * view2D = new View2DType(0,0,200,200,"View 2D");
+  View2DType * view2D = new View2DType(6,6,500,500,"View 2D");
+
+  form->end();
+  // End of the GUI creation
+
+  form->show();
   
+
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( UltrasoundProbeRepresentation );
   std::cout << "[PASSED]" << std::endl;
@@ -167,6 +260,32 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   std::cout << UltrasoundProbeRepresentation << std::endl;
   std::cout << UltrasoundProbeObjectA << std::endl;
 
+  bool bEnd = false;
+
+  typedef UltrasoundProbeObjectTest::ViewObserver ObserverType;
+  ObserverType::Pointer viewObserver = ObserverType::New();
+  
+  view2D->RequestSetRefreshRate( 20 );
+  view2D->RequestResetCamera();
+  view2D->RequestEnableInteractions();
+
+  viewObserver->SetView( view2D );
+  viewObserver->SetForm( form );
+  viewObserver->SetEndFlag( &bEnd );
+
+  view2D->RequestStart();
+
+  while(1)
+    {
+    Fl::wait(0.001);
+    igstk::PulseGenerator::CheckTimeouts();
+    if( bEnd )
+      {
+      break;
+      }
+    }
+
+  
   std::cout << "Test [DONE]" << std::endl;
 
   delete view2D;
