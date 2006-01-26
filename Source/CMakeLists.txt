@@ -9,6 +9,7 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(IGSTK_HEADS
+  igstkAnnotation2D.h
   igstkImageReader.h
   igstkDICOMImageReader.h
   igstkCTImageReader.h
@@ -77,6 +78,7 @@ ENDIF(IGSTK_USE_FLTK)
 # The implementation files
 
 SET(IGSTK_SRCS  
+  igstkAnnotation2D.cxx
   igstkImageReader.txx
   igstkDICOMImageReader.txx
   igstkCTImageReader.cxx
