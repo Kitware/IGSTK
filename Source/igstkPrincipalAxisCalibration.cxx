@@ -158,26 +158,19 @@ PrincipalAxisCalibration
 {
   igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::InternalAdjustPlaneNormalProcessing called...\n" );
 
-  // some part will change when dashboards update to CVS ITK: covariant vector cross product and assignment
-
-  VectorType vec[3];
-  CovariantVectorType adjustednormal;
-
   // Assign and normalize the vectors
-  vec[1].SetVnlVector( normal.GetVnlVector());
-  vec[1].Normalize();
-  vec[2].SetVnlVector( axis.GetVnlVector());
-  vec[2].Normalize();
+  VectorType vecnormal;
+  vecnormal.SetVnlVector( normal.GetVnlVector());
+  vecnormal.Normalize();
 
   // Compute the x axis
-  vec[0] = itk::CrossProduct( vec[1], vec[2]);
+  VectorType vec0 = itk::CrossProduct( vecnormal, axis );
 
   // Compute the perpendicular y axis
-  vec[1] = itk::CrossProduct( vec[2], vec[0]);
-  vec[1].Normalize();
+  CovariantVectorType adjustednormal;
 
-  // No direct conversion from itk::Vector to itk::ConvariantVector
-  adjustednormal.SetVnlVector( vec[1].GetVnlVector());
+  itk::CrossProduct( adjustednormal, axis, vec0 );
+  adjustednormal.Normalize();
 
   return adjustednormal;
 }
