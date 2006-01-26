@@ -65,7 +65,7 @@ int igstkPivotCalibrationTest( int, char * [] )
 
   // Open the calibration data file, which recorded the traker information
   std::string igstkDataDirectory = IGSTK_DATA_ROOT;
-  std::string simulationFile = ( igstkDataDirectory + "/" + "PivotCalibration.txt");
+  std::string simulationFile = ( igstkDataDirectory + "/Input/" + "PivotCalibration.txt");
   input.open( simulationFile.c_str() );
 
   if (input.is_open() == 1)
