@@ -22,6 +22,7 @@ SET(IGSTK_HEADS
   igstkCTImageSpatialObjectRepresentation.h
   igstkMRImageSpatialObjectRepresentation.h
   igstkLandmark3DRegistration.h
+  igstkLandmark3DRegistrationErrorEstimator.h
   igstkAuroraTracker.h
   igstkAuroraTrackerTool.h
   igstkBinaryData.h
@@ -98,6 +99,7 @@ SET(IGSTK_SRCS
   igstkCTImageSpatialObjectRepresentation.cxx
   igstkMRImageSpatialObjectRepresentation.cxx
   igstkLandmark3DRegistration.cxx
+  igstkLandmark3DRegistrationErrorEstimator.cxx
   igstkAuroraTracker.cxx
   igstkAuroraTrackerTool.cxx
   igstkBinaryData.cxx

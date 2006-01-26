@@ -47,6 +47,7 @@ ADD_TEST(igstkCTImageSpatialObjectTest ${IGSTK_TESTS} igstkCTImageSpatialObjectT
 ADD_TEST(igstkImageReaderTest ${IGSTK_TESTS} igstkImageReaderTest )
 ADD_TEST(igstkImageSpatialObjectTest ${IGSTK_TESTS} igstkImageSpatialObjectTest )
 ADD_TEST(igstkLandmark3DRegistrationTest ${IGSTK_TESTS} igstkLandmark3DRegistrationTest)
+ADD_TEST(igstkLandmark3DRegistrationErrorEstimatorTest ${IGSTK_TESTS} igstkLandmark3DRegistrationErrorEstimatorTest)
 ADD_TEST(igstkMRImageSpatialObjectRepresentationTest ${IGSTK_TESTS} igstkMRImageSpatialObjectRepresentationTest )
 ADD_TEST(igstkMRImageSpatialObjectTest ${IGSTK_TESTS} igstkMRImageSpatialObjectTest )          
 ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
@@ -159,6 +160,7 @@ SET(BasicTests_SRCS
   igstkImageReaderTest.cxx
   igstkImageSpatialObjectTest.cxx
   igstkLandmark3DRegistrationTest.cxx
+  igstkLandmark3DRegistrationErrorEstimatorTest.cxx
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectTest.cxx
   igstkMultipleOutputTest.cxx    
