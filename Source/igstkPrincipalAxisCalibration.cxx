@@ -152,7 +152,9 @@ void PrincipalAxisCalibration::ResetProcessing()
 
 /** Internal method to adjust the plane normal */
 PrincipalAxisCalibration::CovariantVectorType 
-PrincipalAxisCalibration::InternalAdjustPlaneNormalProcessing( VectorType axis, CovariantVectorType normal )
+PrincipalAxisCalibration
+::InternalAdjustPlaneNormalProcessing( const VectorType & axis, 
+                                       const CovariantVectorType & normal )
 {
   igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::InternalAdjustPlaneNormalProcessing called...\n" );
 
@@ -185,12 +187,21 @@ void PrincipalAxisCalibration::CalculateRotationProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::CalculateRotationProcessing called...\n" );
 
-  VersorType::MatrixType initialorthomatrix, desiredorthomatrix, matrix;
+  typedef VersorType::MatrixType  MatrixType;
+
+  MatrixType initialorthomatrix;
+  MatrixType desiredorthomatrix;
+  MatrixType matrix;
   VersorType quaternion;
 
   // Build the orthogonal matrix from the principal axis and plane normal
-  initialorthomatrix = InternalBuildOrthogonalMatrixProcessing( this->m_InitialPrincipalAxis, this->m_InitialAdjustedPlaneNormal );
-  desiredorthomatrix = InternalBuildOrthogonalMatrixProcessing( this->m_DesiredPrincipalAxis, this->m_DesiredAdjustedPlaneNormal );
+  initialorthomatrix = this->InternalBuildOrthogonalMatrixProcessing( 
+                                              this->m_InitialPrincipalAxis, 
+                                              this->m_InitialAdjustedPlaneNormal );
+
+  desiredorthomatrix = this->InternalBuildOrthogonalMatrixProcessing( 
+                                              this->m_DesiredPrincipalAxis, 
+                                              this->m_DesiredAdjustedPlaneNormal );
 
   // Find the rotation by M = A / B
   matrix = desiredorthomatrix * initialorthomatrix.GetInverse();
@@ -205,7 +216,9 @@ void PrincipalAxisCalibration::CalculateRotationProcessing()
 
 /** Internal method to construct the orthogonal matrix */
 PrincipalAxisCalibration::MatrixType 
-PrincipalAxisCalibration::InternalBuildOrthogonalMatrixProcessing( VectorType axis, CovariantVectorType normal )
+PrincipalAxisCalibration
+::InternalBuildOrthogonalMatrixProcessing( const VectorType & axis, 
+                                           const CovariantVectorType & normal )
 {
   igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::InternalBuildOrthogonalMatrixProcessing called...\n" );
 
@@ -233,15 +246,20 @@ PrincipalAxisCalibration::InternalBuildOrthogonalMatrixProcessing( VectorType ax
 }
 
 /** Set the initial orientation */
-void PrincipalAxisCalibration::SetInitialOrientationProcessing()
+void PrincipalAxisCalibration
+::SetInitialOrientationProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::SetInitialOrientationProcessing called...\n" );
 
-  this->InternalSetInitialOrientationProcessing( this->m_VectorToBeSent, this->m_CovariantVectorToBeSent );
+  this->InternalSetInitialOrientationProcessing( 
+                              this->m_VectorToBeSent, 
+                              this->m_CovariantVectorToBeSent );
 }
 
 /** Internal function to set the initial orientation */
-void PrincipalAxisCalibration::InternalSetInitialOrientationProcessing( VectorType axis, CovariantVectorType normal )
+void PrincipalAxisCalibration
+::InternalSetInitialOrientationProcessing( const VectorType & axis, 
+                                           const CovariantVectorType & normal )
 {
   igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::InternalSetInitialOrientationProcessing called...\n" );
 
@@ -264,7 +282,9 @@ void PrincipalAxisCalibration::SetDesiredOrientationProcessing()
 }
 
 /** Internal function to set the desired orientation */
-void PrincipalAxisCalibration::InternalSetDesiredOrientationProcessing( VectorType axis, CovariantVectorType normal )
+void PrincipalAxisCalibration
+::InternalSetDesiredOrientationProcessing( const VectorType & axis, 
+                                           const CovariantVectorType & normal )
 {
   igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::InternalSetDesiredOrientationProcessing called...\n" );
 
@@ -288,7 +308,9 @@ void PrincipalAxisCalibration::RequestReset()
 }
 
 /** Method to invoke to set the initial orientation */
-void PrincipalAxisCalibration::RequestSetInitialOrientation( VectorType axis, CovariantVectorType normal )
+void PrincipalAxisCalibration
+::RequestSetInitialOrientation( const VectorType & axis, 
+                                const CovariantVectorType & normal )
 {
   igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::RequestSetInitialOrientation called...\n" );
 
@@ -299,7 +321,9 @@ void PrincipalAxisCalibration::RequestSetInitialOrientation( VectorType axis, Co
 }
 
 /** Method to invoke to set the desired orientation */
-void PrincipalAxisCalibration::RequestSetDesiredOrientation( VectorType axis, CovariantVectorType normal )
+void PrincipalAxisCalibration
+::RequestSetDesiredOrientation( const VectorType & axis, 
+                                const CovariantVectorType & normal )
 {
   igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::RequestSetDesiredOrientation called...\n" );
 
@@ -321,3 +345,4 @@ void PrincipalAxisCalibration::RequestCalculateRotation()
 } // end namespace igstk
 
 #endif
+
