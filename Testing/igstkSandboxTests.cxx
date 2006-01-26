@@ -29,12 +29,6 @@ void RegisterTests()
 {
   // Register Sandbox tests
   REGISTER_TEST(igstkMouseTrackerTest);
-  REGISTER_TEST(igstkPivotCalibrationTest);
-  REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
   REGISTER_TEST(igstkLandmark3DRegistrationErrorEstimatorTest);
-  REGISTER_TEST(igstkBoxObjectTest);
-  REGISTER_TEST(igstkConeObjectTest);
-  REGISTER_TEST(igstkAnnotation2DTest);
-  REGISTER_TEST(igstkAxesObjectTest);
   REGISTER_TEST(igstkUltrasoundProbeObjectTest);
 }
