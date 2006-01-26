@@ -199,7 +199,6 @@ SET(IGSTKSandbox_HEADS
   igstkFlockOfBirdsTrackerTool.h
   igstkUltrasoundProbeObject.h
   igstkUltrasoundProbeObjectRepresentation.h
-  igstkLandmark3DRegistrationErrorEstimator.h
 )
 
 
@@ -210,7 +209,6 @@ SET(IGSTKSandbox_SRCS
   igstkFlockOfBirdsTrackerTool.cxx
   igstkUltrasoundProbeObject.cxx
   igstkUltrasoundProbeObjectRepresentation.cxx
-  igstkLandmark3DRegistrationErrorEstimator.cxx
 )
 
 # Variable for holding extra libraries

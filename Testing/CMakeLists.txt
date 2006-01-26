@@ -65,7 +65,6 @@ INCLUDE_DIRECTORIES (
 # Add your new tests here
 SET(SandboxTests_SRCS
   igstkMouseTrackerTest.cxx
-  igstkLandmark3DRegistrationErrorEstimatorTest.cxx
   igstkUltrasoundProbeObjectTest.cxx
   )
 
