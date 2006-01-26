@@ -40,7 +40,7 @@ namespace UltrasoundProbeObjectTest
     ViewObserver() 
       {
       m_PulseCounter = 0;
-      m_NumberOfPulsesToStop = 10;
+      m_NumberOfPulsesToStop = 100;
       m_Form = 0;
       m_View = 0;
       }
