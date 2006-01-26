@@ -6,7 +6,7 @@ decl {\#include <FL/fl_ask.H>} {}
 
 Function {Quit( Fl_Widget*, void* )} {private C return_type void
 } {
-  code {if ( !fl_ask("Are you sure you want to quit?") )
+  code {if ( !fl_choice("Are you sure you want to quit?","Yes","No") )
   {
   return;
   }
