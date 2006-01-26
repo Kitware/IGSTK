@@ -409,7 +409,7 @@ void NeedleBiopsy::VerifyPatientNameProcessing()
     msg += "Image has the name of: " + m_ImageReader->GetPatientName() +"\n";
     msg += "Name mismatch!!!!\n";
     msg += "Do you want to load another image? choose \'no\' will overwrite the name\n";
-    int i = fl_choice( msg.c_str() , "Yes", "No" );
+    int i = fl_choice( msg.c_str() , "Yes", "No", "Cancel" );
     if ( i )
       {
       igstkLogMacro (         DEBUG, "Load another image\n" )
@@ -886,7 +886,7 @@ void NeedleBiopsy::EvaluatingRegistrationErrorProcessing()
   igstkLogMacro2( logger, DEBUG, "Evaluating registration error....\n" )
   std::string msg = "Registration error (RMS) = Some Error Value \n";
   msg += "Accept this registration result?";
-  int i = fl_choice( msg.c_str(), "Yes", "No" );
+  int i = fl_choice( msg.c_str(), "Yes", "No", "Cancel" );
   m_StateMachine.PushInputBoolean( i, m_RegistrationErrorAcceptedInput, m_RegistrationErrorRejectedInput );
 }
 
@@ -908,7 +908,7 @@ void NeedleBiopsy::DrawPathProcessing()
 void NeedleBiopsy::RequestReset()
 {
   igstkLogMacro( DEBUG, "NeedleBiopsy::RequestReset is called... \n" )
-  if ( fl_choice( "Do you really want to reset the program?", "Yes", "No" ) )
+  if ( fl_choice( "Do you really want to reset the program?", "Yes", "No", "Cancel" ) )
     { 
     this->Reset(); // Took out the state machine logic
     }

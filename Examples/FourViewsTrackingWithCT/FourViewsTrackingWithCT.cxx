@@ -387,7 +387,7 @@ void FourViewsTrackingWithCT::VerifyPatientNameProcessing()
     msg += "Image has the name of: " + m_ImageReader->GetPatientName() +"\n";
     msg += "Name mismatch!!!!\n";
     msg += "Do you want to load another image? choose \'no\' will overwrite the name\n";
-    int i = fl_choice( msg.c_str(), "Yes", "No");
+    int i = fl_choice( msg.c_str(), "Yes", "No", "Cancel");
     if ( i )
       {
       igstkLogMacro (         DEBUG, "Load another image\n" )
@@ -859,7 +859,7 @@ void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
 void FourViewsTrackingWithCT::RequestReset()
 {
   igstkLogMacro( DEBUG, "FourViewsTrackingWithCT::RequestReset is called... \n" )
-  if ( fl_choice( "Do you really want to reset the program?","Yes","No" ) )
+  if ( fl_choice( "Do you really want to reset the program?","Yes","No", "Cancel" ) )
     { 
     this->Reset(); // Took out the state machine logic
     }
