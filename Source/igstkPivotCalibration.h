@@ -99,7 +99,7 @@ public:
   igstkGetMacro( CalibrationTransform, TransformType );
 
   /** Method to get the pivot position used to calibrate */
-  igstkGetMacro( PivotPosition, VectorType );
+  igstkGetMacro( PivotPosition, PointType );
 
   /** Method to retrieve the RootMeanSquareError (RMS) calibration error */
   igstkGetMacro( RootMeanSquareError, ErrorType );
@@ -226,7 +226,7 @@ private:
   TransformType                     m_CalibrationTransform;
 
   /** Variable to save the pivot position */
-  VectorType                        m_PivotPosition;
+  PointType                         m_PivotPosition;
 
   /** Variable to indicate the RootMeanSquareError error */
   ErrorType                         m_RootMeanSquareError;

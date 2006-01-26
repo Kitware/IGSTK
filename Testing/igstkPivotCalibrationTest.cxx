@@ -150,7 +150,7 @@ int igstkPivotCalibrationTest( int, char * [] )
     VectorType translation = pivot->GetCalibrationTransform().GetTranslation();
 
     // Get the pivot focus position
-    VectorType position = pivot->GetPivotPosition();
+    PointType position = pivot->GetPivotPosition();
 
     // Get the calibration RMS error
     ErrorType error = pivot->GetRootMeanSquareError();
@@ -182,7 +182,7 @@ int igstkPivotCalibrationTest( int, char * [] )
     VectorType translation = pivot->GetCalibrationTransform().GetTranslation();
 
     // Get the pivot focus position
-    VectorType position = pivot->GetPivotPosition();
+    PointType position = pivot->GetPivotPosition();
 
     // Get the calibration RMS error
     ErrorType error = pivot->GetRootMeanSquareError();
