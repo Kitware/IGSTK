@@ -48,6 +48,8 @@
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkMRImageSpatialObject.h"
 #include "igstkMRImageSpatialObjectRepresentation.h"
+#include "igstkPivotCalibration.h"
+#include "igstkPrincipalAxisCalibration.h"
 
 #if IGSTK_USE_FLTK
 #include "igstkView2D.h"
@@ -187,6 +189,8 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::CTImageSpatialObjectRepresentation, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::ImageSpatialObjectRepresentationType, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::SpatialObjectReaderType, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::PivotCalibration, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::PrincipalAxisCalibration, outputDirectory, skipLoops );
 
 
 #if IGSTK_USE_FLTK
@@ -203,7 +207,6 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::SpatialObjectSurrogate, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::ImageSpatialObjectSurrogate , outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::DICOMImageReaderSurrogate, outputDirectory, skipLoops );
-
 
 
   // Export the state diagrams for the Serial Communication classes according
