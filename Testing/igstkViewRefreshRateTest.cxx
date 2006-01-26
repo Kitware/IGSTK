@@ -180,7 +180,7 @@ int igstkViewRefreshRateTest( int, char * [] )
     // Exercise the code for resizing the window
     form->resize(100, 100, 600, 300);
 
-    const float refreshRate = 20;
+    const float refreshRate = 30;
     const float expectedNumberOfSeconds = 20;
     const unsigned long numberOfPulsesToStop = 
       static_cast< unsigned long >( refreshRate * expectedNumberOfSeconds );
@@ -207,7 +207,7 @@ int igstkViewRefreshRateTest( int, char * [] )
     
     while(1)
       {
-      Fl::wait(0.001);
+      Fl::wait(0.0001);
       igstk::PulseGenerator::CheckTimeouts();
       if( bEnd )
         {
