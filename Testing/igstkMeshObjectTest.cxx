@@ -314,10 +314,9 @@ int igstkMeshObjectTest( int argc, char * argv [] )
       }
     }
 
- 
-
-
   delete view3D;
   
+  delete form;
+
   return EXIT_SUCCESS;
 }
