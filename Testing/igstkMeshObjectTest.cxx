@@ -122,7 +122,13 @@ int igstkMeshObjectTest( int argc, char * argv [] )
 
 
   ObjectType::Pointer meshObject = ObjectType::New();
-    
+
+  meshObject->AddPoint(0,0,0,0);
+  meshObject->AddPoint(1,9,0,0);
+  meshObject->AddPoint(2,9,9,0);
+  meshObject->AddPoint(3,0,0,9);
+  meshObject->AddTetrahedronCell(0,0,1,2,3);
+   
   if( argc > 1 )
     {
     typedef igstk::MeshReader    ReaderType;
@@ -136,11 +142,6 @@ int igstkMeshObjectTest( int argc, char * argv [] )
     }
   else
     {
-    meshObject->AddPoint(0,0,0,0);
-    meshObject->AddPoint(1,9,0,0);
-    meshObject->AddPoint(2,9,9,0);
-    meshObject->AddPoint(3,0,0,9);
-    meshObject->AddTetrahedronCell(0,0,1,2,3);
     MeshRepresentation->RequestSetMeshObject( meshObject );
     }
 
