@@ -200,7 +200,9 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   ObserverType::Pointer observer = ObserverType::New();
 
-  representation->AddObserver( igstk::AxialSliceBoundsEvent(), observer );
+  representation->AddObserver( igstk::AxialSliceBoundsEvent(),    observer );
+  representation->AddObserver( igstk::CoronalSliceBoundsEvent(),  observer );
+  representation->AddObserver( igstk::SagittalSliceBoundsEvent(), observer );
   
   representation->RequestSetImageSpatialObject( reader->GetOutput() );
 
