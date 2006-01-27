@@ -23,11 +23,96 @@
 #include <iostream>
 
 #include "igstkMeshObject.h"
+#include "igstkMeshReader.h"
 #include "igstkMeshObjectRepresentation.h"
-#include "igstkView2D.h"
+#include "igstkView3D.h"
 
 
-int igstkMeshObjectTest( int, char * [] )
+namespace MeshObjectTest
+{
+  class ViewObserver : public ::itk::Command 
+  {
+  public:
+    typedef  ViewObserver   Self;
+    typedef  ::itk::Command    Superclass;
+    typedef  ::itk::SmartPointer<Self>  Pointer;
+    itkNewMacro( Self );
+  protected:
+    ViewObserver() 
+      {
+      m_PulseCounter = 0;
+      m_NumberOfPulsesToStop = 100;
+      m_Form = 0;
+      m_View = 0;
+      }
+  public:
+
+    void SetForm( Fl_Window * form )
+      {
+      m_Form = form;
+      }
+
+    void SetEndFlag( bool * end )
+      {
+      m_End = end;
+      }
+
+    void Execute(const itk::Object *caller, const itk::EventObject & event)
+      {
+      std::cerr << "Execute( const * ) should not be called" << std::endl;         
+      }
+
+    void SetView( ::igstk::View * view )
+    {
+    m_View = view;
+    if( m_View )
+      {
+      m_View->AddObserver( ::igstk::RefreshEvent(), this );
+      }
+    }
+
+    void SetNumberOfPulsesToStop( unsigned long number )
+      {
+      m_NumberOfPulsesToStop = number;
+      }
+
+    void Execute(itk::Object *caller, const itk::EventObject & event)
+      {
+      if( ::igstk::RefreshEvent().CheckEvent( &event ) )
+        {
+        m_PulseCounter++;
+
+        if( m_PulseCounter > m_NumberOfPulsesToStop )
+          {
+          if( m_View )
+            {
+            m_View->RequestStop();
+            } 
+          else
+            {
+            std::cerr << "View pointer is NULL " << std::endl;
+            }
+          if( m_Form )
+            {
+            m_Form->hide();
+            }
+          *m_End = true;
+          return;
+          }
+        }
+      }
+  private:
+    unsigned long       m_PulseCounter;
+    unsigned long       m_NumberOfPulsesToStop;
+    Fl_Window          *m_Form;
+    ::igstk::View      *m_View;
+    bool *              m_End;
+  };
+
+} // end of MeshObjectTest namespace
+
+
+int igstkMeshObjectTest( int argc, char * argv [] )
 {
   typedef igstk::MeshObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer MeshRepresentation = ObjectRepresentationType::New();
@@ -35,15 +120,30 @@ int igstkMeshObjectTest( int, char * [] )
   typedef igstk::MeshObject ObjectType;
   typedef ObjectType::PointType MeshPointType;
 
-  ObjectType::Pointer MeshObject = ObjectType::New();
 
-  MeshRepresentation->RequestSetMeshObject( MeshObject );
+  ObjectType::Pointer meshObject = ObjectType::New();
+    
+  if( argc > 1 )
+    {
+    typedef igstk::MeshReader    ReaderType;
 
-  MeshObject->AddPoint(0,0,0,0);
-  MeshObject->AddPoint(1,9,0,0);
-  MeshObject->AddPoint(2,9,9,0);
-  MeshObject->AddPoint(3,0,0,9);
-  MeshObject->AddTetrahedronCell(0,0,1,2,3);
+    ReaderType::Pointer  reader = ReaderType::New();
+
+    std::string filename = argv[1];
+    reader->RequestSetFileName( filename );
+    reader->RequestReadObject();
+    MeshRepresentation->RequestSetMeshObject( reader->GetOutput() );
+    }
+  else
+    {
+    meshObject->AddPoint(0,0,0,0);
+    meshObject->AddPoint(1,9,0,0);
+    meshObject->AddPoint(2,9,9,0);
+    meshObject->AddPoint(3,0,0,9);
+    meshObject->AddTetrahedronCell(0,0,1,2,3);
+    MeshRepresentation->RequestSetMeshObject( meshObject );
+    }
+
 
   // Test Property
   std::cout << "Testing Property : ";
@@ -71,20 +171,28 @@ int igstkMeshObjectTest( int, char * [] )
     }
   std::cout << "[PASSED]" << std::endl;
 
+
   // Testing PrintSelf()
   MeshRepresentation->Print(std::cout);
   MeshRepresentation->GetNameOfClass();
-  MeshObject->GetNameOfClass();
-  MeshObject->Print(std::cout);
+  meshObject->GetNameOfClass();
+  meshObject->Print(std::cout);
 
   // Testing CreateActors()
   std::cout << "Testing actors : ";
 
-  typedef igstk::View2D  View2DType;
-  View2DType * view2D = new View2DType(0,0,200,200,"View 2D");
+  Fl_Window * form = new Fl_Window(512,512,"MeshObject Test");
+
+  typedef igstk::View3D  View3DType;
+  View3DType * view3D = new View3DType(6,6,500,500,"View 3D");
+  
+  form->end();
+  // End of the GUI creation
+
+  form->show();
   
   // this will indirectly call CreateActors() 
-  view2D->RequestAddObject( MeshRepresentation );
+  view3D->RequestAddObject( MeshRepresentation );
 
   // Testing Update
   MeshRepresentation->IsModified();
@@ -115,8 +223,8 @@ int igstkMeshObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  MeshObject->RequestSetTransform( transform );
-  igstk::Transform  transform2 = MeshObject->GetTransform();
+  meshObject->RequestSetTransform( transform );
+  igstk::Transform  transform2 = meshObject->GetTransform();
   igstk::Transform::VectorType translation2 = transform2.GetTranslation();
   for( unsigned int i=0; i<3; i++ )
     {
@@ -145,7 +253,7 @@ int igstkMeshObjectTest( int, char * [] )
 
   // Exercise Copy() method
   ObjectRepresentationType::Pointer MeshRepresentation2 = MeshRepresentation->Copy();
-  view2D->RequestAddObject( MeshRepresentation2 );
+  view3D->RequestAddObject( MeshRepresentation2 );
   if(MeshRepresentation2->GetOpacity() != MeshRepresentation->GetOpacity())
     {
     std::cerr << "Copy() [FAILED]" << std::endl;
@@ -179,7 +287,36 @@ int igstkMeshObjectTest( int, char * [] )
 
   std::cout << "Test [DONE]" << std::endl;
 
-  delete view2D;
+
+  bool bEnd = false;
+
+  typedef MeshObjectTest::ViewObserver ObserverType;
+  ObserverType::Pointer viewObserver = ObserverType::New();
+  
+  view3D->RequestSetRefreshRate( 20 );
+  view3D->RequestResetCamera();
+  view3D->RequestEnableInteractions();
+
+  viewObserver->SetView( view3D );
+  viewObserver->SetForm( form );
+  viewObserver->SetEndFlag( &bEnd );
+
+  view3D->RequestStart();
+
+  while(1)
+    {
+    Fl::wait(0.0001);
+    igstk::PulseGenerator::CheckTimeouts();
+    if( bEnd )
+      {
+      break;
+      }
+    }
+
+ 
+
+
+  delete view3D;
   
   return EXIT_SUCCESS;
 }

@@ -128,7 +128,6 @@ IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
   ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
   ADD_TEST(igstkPulseGeneratorTest ${IGSTK_TESTS} igstkPulseGeneratorTest)
-  ADD_TEST(igstkMeshObjectTest    ${IGSTK_TESTS} igstkMeshObjectTest)
   ADD_TEST(igstkConeObjectTest    ${IGSTK_TESTS} igstkConeObjectTest)
   ADD_TEST(igstkBoxObjectTest     ${IGSTK_TESTS} igstkBoxObjectTest)
   ADD_TEST(igstkAxesObjectTest    ${IGSTK_TESTS} igstkAxesObjectTest)
@@ -146,6 +145,11 @@ IF(IGSTK_USE_FLTK)
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
+
+    ADD_TEST(igstkMeshObjectTest    ${IGSTK_TESTS} igstkMeshObjectTest
+              ${IGSTK_DATA_ROOT}/Input/liver.msh  
+              )
+  
     ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
               igstkImageSpatialObjectRepresentationTest 
               ${IGSTK_DATA_ROOT}/Input/E000192)   
@@ -235,7 +239,6 @@ IF(IGSTK_USE_FLTK)
     igstkEllipsoidObjectTest.cxx
     igstkFLTKTextBufferLogOutputTest.cxx
     igstkFLTKTextLogOutputTest.cxx
-    igstkMeshObjectTest.cxx
     igstkPulseGeneratorTest.cxx
     igstkTubeObjectTest.cxx
     igstkViewTest.cxx
@@ -246,6 +249,7 @@ IF(IGSTK_USE_FLTK)
   IF(IGSTK_DATA_ROOT)
     SET(BasicTests_SRCS
       ${BasicTests_SRCS}
+      igstkMeshObjectTest.cxx
       igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx
       igstkImageSpatialObjectRepresentationTest.cxx
     ) 
