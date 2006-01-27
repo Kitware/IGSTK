@@ -113,6 +113,17 @@ PulseGenerator::PulseGenerator():m_StateMachine(this)
 
 PulseGenerator::~PulseGenerator()
 {
+  // Release any pending Timeouts.
+  Timeout * t = m_FreeTimeout ;
+
+  while( t ) 
+    {
+    m_FreeTimeout  = t->next;
+    --m_FreeTimeoutCount;
+    Timeout * tt = t;
+    t = t->next;
+    delete tt;
+    }
 }
 
 
