@@ -45,27 +45,70 @@ namespace igstk
       }
       void Execute(itk::Object *caller, const itk::EventObject & event)
       {
+
         const AxialSliceBoundsEvent * axialEvent = 
           dynamic_cast< const AxialSliceBoundsEvent * >( &event );
         if( axialEvent )
           {
-          m_EventReceived = true;
+          m_CoronalEventReceived  = false;
+          m_SagittalEventReceived = false;
+          m_AxialEventReceived    = true;
           EventHelperType::IntegerBoundsType bounds = axialEvent->Get();
           std::cout << "Minimum Slice = " << bounds.minimum << std::endl;
           std::cout << "Maximum Slice = " << bounds.maximum << std::endl;
+          return;
+          }
+        
+        const CoronalSliceBoundsEvent * coronalEvent = 
+          dynamic_cast< const CoronalSliceBoundsEvent * >( &event );
+        if( coronalEvent )
+          {
+          m_CoronalEventReceived  = true;
+          m_SagittalEventReceived = false;
+          m_AxialEventReceived    = false;
+          EventHelperType::IntegerBoundsType bounds = coronalEvent->Get();
+          std::cout << "Minimum Slice = " << bounds.minimum << std::endl;
+          std::cout << "Maximum Slice = " << bounds.maximum << std::endl;
+          return;
+          }
+        
+        const SagittalSliceBoundsEvent * sagittalEvent = 
+          dynamic_cast< const SagittalSliceBoundsEvent * >( &event );
+        if( sagittalEvent )
+          {
+          m_AxialEventReceived    = false;
+          m_SagittalEventReceived = true;
+          m_CoronalEventReceived  = false;
+          EventHelperType::IntegerBoundsType bounds = sagittalEvent->Get();
+          std::cout << "Minimum Slice = " << bounds.minimum << std::endl;
+          std::cout << "Maximum Slice = " << bounds.maximum << std::endl;
+          return;
           }
       } 
-     bool GetEventReceived()
+
+     bool GetAxialEventReceived()
         { 
-        return m_EventReceived; 
+        return m_AxialEventReceived; 
+        }
+     bool GetSagittalEventReceived()
+        { 
+        return m_SagittalEventReceived; 
+        }
+     bool GetCoronalEventReceived()
+        { 
+        return m_CoronalEventReceived; 
         }
     protected:
       ImageRepresentationObserver()
-      {
-      m_EventReceived = false;
-      }
+        {
+        m_AxialEventReceived = false;
+        m_CoronalEventReceived = false;
+        m_SagittalEventReceived = false;
+        }
     private:
-      bool m_EventReceived;
+      bool m_AxialEventReceived;
+      bool m_CoronalEventReceived;
+      bool m_SagittalEventReceived;
       
     };  // end of ImageRepresentationObserver class 
 
@@ -161,18 +204,19 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   
   representation->RequestSetImageSpatialObject( reader->GetOutput() );
 
-  // Test all possible orientations 
-  representation->RequestSetOrientation( RepresentationType::Sagittal );
-  representation->RequestSetOrientation( RepresentationType::Coronal );
+  // Test Get Bounds for Axial orientation 
   representation->RequestSetOrientation( RepresentationType::Axial );
-
-  representation->RequestSetSliceNumber( 3 );
-
-  representation->RequestGetSliceNumberBounds();
+  igstk::PulseGenerator::CheckTimeouts();
   
-  if( observer->GetEventReceived() )
+  representation->RequestSetSliceNumber( 3 );
+  igstk::PulseGenerator::CheckTimeouts();
+  
+  representation->RequestGetSliceNumberBounds();
+  igstk::PulseGenerator::CheckTimeouts();
+  
+  if( observer->GetAxialEventReceived() )
     {
-    std::cout << "Event Received successfuly" << std::endl;
+    std::cout << "Axial Event Received successfuly" << std::endl;
     }
   else
     {
@@ -180,7 +224,56 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     std::cerr << "after invoking RequestGetSliceNumberBounds()." << std::endl;
     return EXIT_FAILURE;
     }
-    
+   
+
+
+  // Test Get Bounds for Coronal orientation 
+  representation->RequestSetOrientation( RepresentationType::Coronal );
+  igstk::PulseGenerator::CheckTimeouts();
+
+  representation->RequestSetSliceNumber( 3 );
+  igstk::PulseGenerator::CheckTimeouts();
+
+  representation->RequestGetSliceNumberBounds();
+  igstk::PulseGenerator::CheckTimeouts();
+
+  
+  if( observer->GetCoronalEventReceived() )
+    {
+    std::cout << "Coronal Event Received successfuly" << std::endl;
+    }
+  else
+    {
+    std::cerr << "Error CoronalSliceBoundsEvent() was not received ";
+    std::cerr << "after invoking RequestGetSliceNumberBounds()." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
+ 
+  // Test Get Bounds for Sagittal orientation 
+  representation->RequestSetOrientation( RepresentationType::Sagittal );
+  igstk::PulseGenerator::CheckTimeouts();
+
+  representation->RequestSetSliceNumber( 3 );
+  igstk::PulseGenerator::CheckTimeouts();
+
+  representation->RequestGetSliceNumberBounds();
+  igstk::PulseGenerator::CheckTimeouts();
+
+  
+  if( observer->GetSagittalEventReceived() )
+    {
+    std::cout << "Sagittal Event Received successfuly" << std::endl;
+    }
+  else
+    {
+    std::cerr << "Error SagittalSliceBoundsEvent() was not received ";
+    std::cerr << "after invoking RequestGetSliceNumberBounds()." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
   // Do manual redraws
   for(unsigned int i=0; i<5; i++)
     {
@@ -193,12 +286,14 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   // Do manual redraws for each orientation while changing slice numbers
   {
   representation->RequestSetOrientation( RepresentationType::Axial );
+  igstk::PulseGenerator::CheckTimeouts();
+
   for(unsigned int i=0; i<5; i++)
     {
     representation->RequestSetSliceNumber( i );
+    igstk::PulseGenerator::CheckTimeouts();
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
-    igstk::PulseGenerator::CheckTimeouts();
     std::cout << "i= " << i << std::endl;
     }
   }
@@ -208,9 +303,9 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   for(unsigned int i=0; i<10; i++)
     {
     representation->RequestSetSliceNumber( i );
+    igstk::PulseGenerator::CheckTimeouts();
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
-    igstk::PulseGenerator::CheckTimeouts();
     std::cout << "i= " << i << std::endl;
     }
   }
@@ -220,9 +315,9 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   for(unsigned int i=0; i<10; i++)
     {
     representation->RequestSetSliceNumber( i );
+    igstk::PulseGenerator::CheckTimeouts();
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
-    igstk::PulseGenerator::CheckTimeouts();
     std::cout << "i= " << i << std::endl;
     }
   }
@@ -235,9 +330,9 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   for(unsigned int i=5; i<10; i++)
     {
     representation->RequestSetSliceNumber( i );
+    igstk::PulseGenerator::CheckTimeouts();
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
-    igstk::PulseGenerator::CheckTimeouts();
     std::cout << "i= " << i << std::endl;
     }
   }
