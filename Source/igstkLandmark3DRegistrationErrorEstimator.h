@@ -64,7 +64,7 @@ public:
 
   /** Set the landmark registration error. This is computed by 
    *  the landmarkRegistration class */
-  igstkSetMacro ( LandmarkRegistrationError, double );
+  igstkSetMacro ( LandmarkRegistrationError, ErrorType );
 
   /** Compute Landmarks centroid */
   void ComputeLandmarksCentroid();

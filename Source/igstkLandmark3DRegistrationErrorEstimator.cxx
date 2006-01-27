@@ -32,7 +32,7 @@ namespace igstk
 Landmark3DRegistrationErrorEstimator::
   Landmark3DRegistrationErrorEstimator() :  m_StateMachine( this )
 {
-
+  m_LandmarkRegistrationError = 0.0;
 } 
 
 /** Destructor */
@@ -341,7 +341,8 @@ Landmark3DRegistrationErrorEstimator::PrintSelf( std::ostream& os,
     os << indent << *mitr << std::endl;
     ++mitr;
     }
-
+  os << indent << "LandmarkRegistrationError: "
+     << m_LandmarkRegistrationError << std::endl;
   os << indent << "Landmark Principal Axes: " << std::endl;
   os << indent << this->m_LandmarkPrincipalAxes << std::endl;
 }
