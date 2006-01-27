@@ -39,7 +39,9 @@ PulseGenerator::Timeout * PulseGenerator::m_FirstTimeout = 0;
 
 PulseGenerator::Timeout * PulseGenerator::m_FreeTimeout  = 0;
 
-int PulseGenerator::m_FreeTimeoutCount = 0;
+unsigned int PulseGenerator::m_FreeTimeoutCount = 0;
+
+unsigned int PulseGenerator::m_NumberOfPulseGenerators = 0;
 
 char PulseGenerator::m_ResetClock = 1;
 
@@ -53,6 +55,10 @@ double PulseGenerator::m_PreviousClock = 0.0;
 /** Constructor */
 PulseGenerator::PulseGenerator():m_StateMachine(this)
 {
+
+  this->m_NumberOfPulseGeneratorsLock.Lock();
+  this->m_NumberOfPulseGenerators++;
+  this->m_NumberOfPulseGeneratorsLock.Unlock();
 
   if( !m_RealTimeClock )
     {
@@ -113,17 +119,25 @@ PulseGenerator::PulseGenerator():m_StateMachine(this)
 
 PulseGenerator::~PulseGenerator()
 {
-  // Release any pending Timeouts.
-  Timeout * t = m_FreeTimeout ;
+  this->m_NumberOfPulseGeneratorsLock.Lock();
+  this->m_NumberOfPulseGenerators--;
 
-  while( t ) 
+  if( m_NumberOfPulseGenerators == 0 )
     {
-    m_FreeTimeout  = t->next;
-    --m_FreeTimeoutCount;
-    Timeout * tt = t;
-    t = t->next;
-    delete tt;
+    // Release any pending Timeouts.
+    Timeout * t = m_FreeTimeout ;
+
+    while( t ) 
+      {
+      m_FreeTimeout  = t->next;
+      --m_FreeTimeoutCount;
+      Timeout * tt = t;
+      t = t->next;
+      delete tt;
+      }
     }
+  
+  this->m_NumberOfPulseGeneratorsLock.Unlock();
 }
 
 

@@ -179,7 +179,11 @@ private:
 
   static Timeout *    m_FreeTimeout;
 
-  static int          m_FreeTimeoutCount;
+  static unsigned int m_FreeTimeoutCount;
+
+  static unsigned int m_NumberOfPulseGenerators;
+
+  mutable itk::SimpleFastMutexLock m_NumberOfPulseGeneratorsLock;
 
   static char         m_ResetClock;
   
