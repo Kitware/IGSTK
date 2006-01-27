@@ -145,6 +145,11 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarksCentroid()
   PointsContainerConstIterator                          pointItr;
   VectorType                                            landmarkVector;
 
+  // initialize to zero
+  landmarkVector[0] = 0.0;
+  landmarkVector[1] = 0.0;
+  landmarkVector[2] = 0.0;
+
   pointItr  = m_ImageLandmarks.begin();
   while( pointItr != m_ImageLandmarks.end() )
     {
@@ -153,6 +158,7 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarksCentroid()
     landmarkVector[2] += (*pointItr)[2] ;
     ++pointItr;
     }
+
   for(unsigned int ic=0; ic<3; ic++)
     {
     this->m_LandmarkCentroid[ic]  = landmarkVector[ic]  / this->m_ImageLandmarks.size();
