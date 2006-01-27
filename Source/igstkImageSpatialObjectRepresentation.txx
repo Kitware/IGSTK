@@ -40,6 +40,9 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 {
   // We create the image spatial object
   m_ImageSpatialObject = NULL;
+
+  m_Orientation = Axial;
+
   this->RequestSetSpatialObject( m_ImageSpatialObject );
 
   // Create classes for displaying images
@@ -458,6 +461,7 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::ReportSliceNumberBoundsProcessing() 
 {
+
     int ext[6];
 
     m_ImageData->Update();
