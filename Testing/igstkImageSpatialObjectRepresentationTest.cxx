@@ -42,7 +42,6 @@ namespace igstk
       itkNewMacro(Self);
       void Execute(const itk::Object *caller, const itk::EventObject & event)
       {
-
       }
       void Execute(itk::Object *caller, const itk::EventObject & event)
       {
@@ -118,6 +117,8 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   reader->RequestSetDirectory( directoryName );
  
+  reader->RequestReadImage();
+
   representation->SetLogger( logger );
 
   // Test error case
@@ -157,8 +158,15 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   ObserverType::Pointer observer = ObserverType::New();
 
   representation->AddObserver( igstk::AxialSliceBoundsEvent(), observer );
-
+  
   representation->RequestSetImageSpatialObject( reader->GetOutput() );
+
+  // Test all possible orientations 
+  representation->RequestSetOrientation( RepresentationType::Sagittal );
+  representation->RequestSetOrientation( RepresentationType::Coronal );
+  representation->RequestSetOrientation( RepresentationType::Axial );
+
+  representation->RequestSetSliceNumber( 3 );
 
   representation->RequestGetSliceNumberBounds();
   
@@ -170,6 +178,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     {
     std::cerr << "Error AxialSliceBoundsEvent() was not received ";
     std::cerr << "after invoking RequestGetSliceNumberBounds()." << std::endl;
+    return EXIT_FAILURE;
     }
     
   // Do manual redraws
@@ -177,6 +186,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     {
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
+    igstk::PulseGenerator::CheckTimeouts();
     std::cout << "i= " << i << std::endl;
     }
 
@@ -188,6 +198,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     representation->RequestSetSliceNumber( i );
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
+    igstk::PulseGenerator::CheckTimeouts();
     std::cout << "i= " << i << std::endl;
     }
   }
@@ -199,6 +210,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     representation->RequestSetSliceNumber( i );
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
+    igstk::PulseGenerator::CheckTimeouts();
     std::cout << "i= " << i << std::endl;
     }
   }
@@ -210,6 +222,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     representation->RequestSetSliceNumber( i );
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
+    igstk::PulseGenerator::CheckTimeouts();
     std::cout << "i= " << i << std::endl;
     }
   }
@@ -224,6 +237,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     representation->RequestSetSliceNumber( i );
     view2D->Update();  // schedule redraw of the view
     Fl::check();       // trigger FLTK redraws
+    igstk::PulseGenerator::CheckTimeouts();
     std::cout << "i= " << i << std::endl;
     }
   }
