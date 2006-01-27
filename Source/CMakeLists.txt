@@ -73,7 +73,6 @@ SET(IGSTK_HEADS
   igstkMeshReader.h
   igstkGroupObject.h
   igstkTubeGroupObject.h
-  igstkTestMain.h
 )
 
 IF(IGSTK_USE_FLTK)
