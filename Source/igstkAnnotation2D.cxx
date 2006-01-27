@@ -91,7 +91,7 @@ void Annotation2D::RequestAddAnnotationText( int i, const std::string  & text )
   m_IndexForAnnotationToBeAdded = i;
   m_AnnotationTextToBeAdded = text;
  
-  if ( m_IndexForAnnotationToBeAdded < 0 && m_IndexForAnnotationToBeAdded > 3 ) 
+  if ( m_IndexForAnnotationToBeAdded < 0 || m_IndexForAnnotationToBeAdded > 3 ) 
     {
     igstkPushInputMacro( InvalidAnnotationIndex );
     m_StateMachine.ProcessInputs();
@@ -175,13 +175,13 @@ void Annotation2D::DeleteActors()
 /** */
 void Annotation2D::ReportInvalidAnnotationIndexProcessing()
 {
-  igstkLogMacro( WARNING, "ReportInvalidAnnotationIndexProcessing" );
+  igstkLogMacro( WARNING, "ReportInvalidAnnotationIndexProcessing....\n" );
 }
 
 /** */
 void Annotation2D::ReportInvalidRequestProcessing()
 {
-  igstkLogMacro( WARNING, "ReportInvalidRequestProcessing...." );
+  igstkLogMacro( WARNING, "ReportInvalidRequestProcessing....\n" );
 }
 
 
