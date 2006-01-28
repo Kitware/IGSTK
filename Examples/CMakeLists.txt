@@ -6,9 +6,7 @@ INCLUDE_DIRECTORIES (
   )
 
 SUBDIRS( 
-  HelloWorld
   TwoViews
-  FourViewsAndTracking
   FourViewsTrackingWithCT
   FourViews
   UltrasoundGuidedRFA
