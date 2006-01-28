@@ -41,7 +41,6 @@
 // EndLatex
 
 // BeginCodeSnippet
-#include "igstkSandboxConfigure.h"
 #include "FourViewsAndTrackingGUI.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"

@@ -23,8 +23,6 @@
 #pragma warning( disable : 4284 )
 #endif
 
-#include "igstkSandboxConfigure.h"
-
 #include "OneViewAndTrackingGUI.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
