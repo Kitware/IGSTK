@@ -226,9 +226,9 @@ int igstkViewRefreshRateTest( int, char * [] )
     std::cout << "actual   refresh rate   = " << actualRate  << std::endl;
 
     //
-    //   Give it a tolerance of 1%
+    //   Give it a tolerance of 5%
     //
-    if( fabs( actualRate - refreshRate ) / refreshRate > 0.01 )
+    if( fabs( actualRate - refreshRate ) / refreshRate > 0.05 )
       {
       std::cerr << "Refresh Rate did not match the expected value" << std::endl;
       std::cerr << "secondsElapsed          = " << secondsElapsed << std::endl;
