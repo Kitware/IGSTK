@@ -175,7 +175,7 @@ void SpatialObject::AddObjectProcessing()
 /** Return a child object given the id */
 const SpatialObject::Self * SpatialObject::GetObject(unsigned long id) const
 {
-  if(id > m_InternalObjectList.size())
+  if(id >= m_InternalObjectList.size())
     {
     return NULL;
     }
