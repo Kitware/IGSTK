@@ -150,6 +150,8 @@ int igstkSpatialObjectTest( int, char * [] )
 
   tracker->AttachObjectToTrackerTool( toolPort, toolNumber, dummyObject );
 
+  dummyObject->Print( std::cout );
+
   tracker->StartTracking();
 
   for(unsigned int i=0; i<50; i++)
