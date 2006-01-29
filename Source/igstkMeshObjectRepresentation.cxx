@@ -106,6 +106,8 @@ void MeshObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent )
  *  object */
 void MeshObjectRepresentation::UpdateRepresentationProcessing()
 {
+  igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
+  this->RequestVerifyTimeStamp();
 }
 
 /** Create the vtk Actors */

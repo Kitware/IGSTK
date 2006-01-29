@@ -119,7 +119,7 @@ Transform
 
 void 
 Transform
-::ExportTransform( ::vtkMatrix4x4 & outmatrix )
+::ExportTransform( ::vtkMatrix4x4 & outmatrix ) const
 {
   VersorType::MatrixType inmatrix = m_Rotation.GetMatrix();
  

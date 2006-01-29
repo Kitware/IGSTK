@@ -87,12 +87,34 @@ void MeshReader::AttemptReadObjectProcessing()
           }
 
         delete children;
+
+        // Provide an identity transform with a long validity time.
+        const double validityTimeInMilliseconds = 1e30;
+        
+        igstk::Transform transform;
+
+        igstk::Transform::ErrorType errorValue = 1000; // 1 meter
+
+        igstk::Transform::VectorType translation;
+        translation[0] = 0;
+        translation[1] = 0;
+        translation[2] = 0;
+        igstk::Transform::VersorType rotation;
+        rotation.Set( 0.0, 0.0, 0.0, 1.0 );
+
+        transform.SetTranslationAndRotation( 
+            translation, rotation, errorValue, validityTimeInMilliseconds );
+
+        m_Mesh->RequestSetTransform( transform );
+
         return;
         }
       }
     it++;
     }
+
   delete children;
+
 }
 
 /** Return the output as a group */

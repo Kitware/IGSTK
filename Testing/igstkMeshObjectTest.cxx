@@ -211,7 +211,7 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   std::cout << "Testing Set/GetTransform(): ";
 
   const double tolerance = 1e-8;
-  double validityTimeInMilliseconds = 2000.0;
+  double validityTimeInMilliseconds = 5000.0;
   igstk::Transform transform;
   igstk::Transform::VectorType translation;
   translation[0] = 0;
@@ -294,13 +294,22 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   typedef MeshObjectTest::ViewObserver ObserverType;
   ObserverType::Pointer viewObserver = ObserverType::New();
   
-  view3D->RequestSetRefreshRate( 20 );
+  const double refreshRate = 20.0;
+
+  view3D->RequestSetRefreshRate( refreshRate );
   view3D->RequestResetCamera();
   view3D->RequestEnableInteractions();
 
   viewObserver->SetView( view3D );
   viewObserver->SetForm( form );
   viewObserver->SetEndFlag( &bEnd );
+
+  const unsigned long numberOfSeconds = 4;
+  const unsigned long numberOfPulsesToStop = 
+    static_cast< unsigned long >( refreshRate * numberOfSeconds );
+
+  viewObserver->SetNumberOfPulsesToStop( numberOfPulsesToStop );
+ 
 
   view3D->RequestStart();
 
@@ -313,6 +322,23 @@ int igstkMeshObjectTest( int argc, char * argv [] )
       break;
       }
     }
+
+  // Verify that the object appears if the Transform is updated.
+  transform.SetTranslationAndRotation( 
+      translation, rotation, errorValue, validityTimeInMilliseconds );
+
+  meshObject->RequestSetTransform( transform );
+
+  while(1)
+    {
+    Fl::wait(0.0001);
+    igstk::PulseGenerator::CheckTimeouts();
+    if( bEnd )
+      {
+      break;
+      }
+    }
+
 
   delete view3D;
   

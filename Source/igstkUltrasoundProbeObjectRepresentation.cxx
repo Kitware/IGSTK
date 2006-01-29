@@ -99,6 +99,8 @@ void UltrasoundProbeObjectRepresentation::PrintSelf( std::ostream& os, itk::Inde
  * object */
 void UltrasoundProbeObjectRepresentation::UpdateRepresentationProcessing()
 {
+  igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
+  this->RequestVerifyTimeStamp();
 }
 
 /** Create the vtk Actors */

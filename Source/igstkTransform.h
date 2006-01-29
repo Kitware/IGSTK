@@ -164,7 +164,7 @@ public:
    * method.  The current method will simply fill in the transform using the
    * current information of translation and rotation.
    */
-  void ExportTransform( vtkMatrix4x4 & matrix );
+  void ExportTransform( vtkMatrix4x4 & matrix ) const;
 
 
   /** Assign the values of one transform to another */

@@ -124,8 +124,11 @@ void CylinderObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent inde
  * object */
 void CylinderObjectRepresentation::UpdateRepresentationProcessing()
 {
-  m_CylinderSource->SetRadius(m_CylinderSpatialObject->GetRadius());
-  m_CylinderSource->SetHeight(m_CylinderSpatialObject->GetHeight());
+  igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
+  this->RequestVerifyTimeStamp();
+
+  m_CylinderSource->SetRadius( m_CylinderSpatialObject->GetRadius() );
+  m_CylinderSource->SetHeight( m_CylinderSpatialObject->GetHeight() );
 }
 
 

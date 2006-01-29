@@ -92,6 +92,8 @@ void AxesObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent )
  * object */
 void AxesObjectRepresentation::UpdateRepresentationProcessing()
 {
+  igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
+  this->RequestVerifyTimeStamp();
 }
 
 /** Create the vtk Actors */

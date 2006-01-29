@@ -37,21 +37,49 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_Logger(NULL)
 
   igstkAddInputMacro( ValidSpatialObject );
   igstkAddInputMacro( NullSpatialObject  );
-  igstkAddInputMacro( UpdatePosition  );
+  igstkAddInputMacro( ValidUpdatePosition );
+  igstkAddInputMacro( ExpiredUpdatePosition );
   igstkAddInputMacro( UpdateRepresentation );
+  igstkAddInputMacro( ValidTimeStamp );
+  igstkAddInputMacro( InvalidTimeStamp );
 
   igstkAddStateMacro( NullSpatialObject );
   igstkAddStateMacro( ValidSpatialObject );
+  igstkAddStateMacro( ValidTimeStamp );
+  igstkAddStateMacro( InvalidTimeStamp );
 
   igstkAddTransitionMacro( NullSpatialObject, NullSpatialObject, NullSpatialObject,  No );
   igstkAddTransitionMacro( NullSpatialObject, ValidSpatialObject, ValidSpatialObject,  SetSpatialObject );
-  igstkAddTransitionMacro( NullSpatialObject, UpdatePosition, NullSpatialObject,  No );
+  igstkAddTransitionMacro( NullSpatialObject, ValidUpdatePosition, NullSpatialObject,  ReportInvalidRequest );
+  igstkAddTransitionMacro( NullSpatialObject, ExpiredUpdatePosition, NullSpatialObject,  ReportInvalidRequest );
   igstkAddTransitionMacro( NullSpatialObject, UpdateRepresentation, NullSpatialObject,  No );
+  igstkAddTransitionMacro( NullSpatialObject, ValidTimeStamp, NullSpatialObject,  ReportInvalidRequest );
+  igstkAddTransitionMacro( NullSpatialObject, InvalidTimeStamp, NullSpatialObject,  ReportInvalidRequest );
  
-  igstkAddTransitionMacro( ValidSpatialObject, UpdatePosition, ValidSpatialObject,  UpdatePosition );
+  igstkAddTransitionMacro( ValidSpatialObject, ValidUpdatePosition, ValidTimeStamp,  UpdatePosition );
+  igstkAddTransitionMacro( ValidSpatialObject, ExpiredUpdatePosition, InvalidTimeStamp,  UpdatePosition );
   igstkAddTransitionMacro( ValidSpatialObject, NullSpatialObject, NullSpatialObject,  No ); 
   igstkAddTransitionMacro( ValidSpatialObject, ValidSpatialObject, ValidSpatialObject,  No ); 
   igstkAddTransitionMacro( ValidSpatialObject, UpdateRepresentation, ValidSpatialObject,  UpdateRepresentation );
+  igstkAddTransitionMacro( ValidSpatialObject, ValidTimeStamp, ValidTimeStamp,  MakeObjectsVisible );
+  igstkAddTransitionMacro( ValidSpatialObject, InvalidTimeStamp, InvalidTimeStamp,  MakeObjectsInvisible );
+
+  igstkAddTransitionMacro( ValidTimeStamp, ValidUpdatePosition, ValidTimeStamp,  UpdatePosition );
+  igstkAddTransitionMacro( ValidTimeStamp, ExpiredUpdatePosition, InvalidTimeStamp,  UpdatePosition );
+  igstkAddTransitionMacro( ValidTimeStamp, NullSpatialObject, NullSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidTimeStamp, ValidSpatialObject, ValidSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidTimeStamp, UpdateRepresentation, ValidTimeStamp,  UpdateRepresentation );
+  igstkAddTransitionMacro( ValidTimeStamp, ValidTimeStamp, ValidTimeStamp,  No );
+  igstkAddTransitionMacro( ValidTimeStamp, InvalidTimeStamp, InvalidTimeStamp,  MakeObjectsInvisible );
+
+  igstkAddTransitionMacro( InvalidTimeStamp, ValidUpdatePosition, ValidTimeStamp,  UpdatePosition );
+  igstkAddTransitionMacro( InvalidTimeStamp, ExpiredUpdatePosition, InvalidTimeStamp,  UpdatePosition );
+  igstkAddTransitionMacro( InvalidTimeStamp, NullSpatialObject, NullSpatialObject,  No ); 
+  igstkAddTransitionMacro( InvalidTimeStamp, ValidSpatialObject, ValidSpatialObject,  No ); 
+  igstkAddTransitionMacro( InvalidTimeStamp, UpdateRepresentation, ValidSpatialObject,  UpdateRepresentation );
+  igstkAddTransitionMacro( InvalidTimeStamp, ValidTimeStamp, ValidTimeStamp,  MakeObjectsVisible );
+  igstkAddTransitionMacro( InvalidTimeStamp, InvalidTimeStamp, InvalidTimeStamp,  No );
+
 
   igstkSetInitialStateMacro( NullSpatialObject );
 
@@ -161,8 +189,19 @@ void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 void ObjectRepresentation::RequestUpdatePosition( const TimeStamp & time )
 {
   m_TimeToRender = time; 
-  igstkPushInputMacro( UpdatePosition );
-  m_StateMachine.ProcessInputs();
+  const Transform & transform = m_SpatialObject->GetTransform();
+
+  if( m_TimeToRender.GetExpirationTime() < transform.GetStartTime() ||
+      m_TimeToRender.GetStartTime()      > transform.GetExpirationTime() )
+    {
+    igstkPushInputMacro( ExpiredUpdatePosition );
+    m_StateMachine.ProcessInputs();
+    }
+  else
+    {
+    igstkPushInputMacro( ValidUpdatePosition );
+    m_StateMachine.ProcessInputs();
+    }
 }
 
 /** Null operation for a State Machine transition */
@@ -170,11 +209,10 @@ void ObjectRepresentation::NoProcessing()
 {
 }
 
-/** Update the object representation (i.e vtkActors). Maybe we should check also the transform
- *  modified time. */
+/** Update the object representation (i.e vtkActors). */
 void ObjectRepresentation::UpdatePositionProcessing()
 {
-  Transform transform = m_SpatialObject->GetTransform();
+  const Transform & transform = m_SpatialObject->GetTransform();
 
   vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
 
@@ -192,6 +230,60 @@ void ObjectRepresentation::UpdatePositionProcessing()
 
   // Update the modified time
   m_LastMTime = this->GetMTime();
+}
+
+
+/** Update the object representation (i.e vtkActors). 
+ *  It checks the transform expiration time. */
+void ObjectRepresentation::RequestVerifyTimeStamp()
+{
+
+  const Transform & transform = m_SpatialObject->GetTransform();
+
+  if( m_TimeToRender.GetExpirationTime() < transform.GetStartTime() ||
+      m_TimeToRender.GetStartTime()      > transform.GetExpirationTime() )
+    {
+    igstkPushInputMacro( InvalidTimeStamp );
+    m_StateMachine.ProcessInputs();
+    }
+  else
+    {
+    igstkPushInputMacro( ValidTimeStamp );
+    m_StateMachine.ProcessInputs();
+    }
+}
+
+
+/** Make Objects Invisible. This method is called when the Transform time stamp
+ * has expired with respect to the requested rendering time. */
+void ObjectRepresentation::MakeObjectsInvisibleProcessing()
+{
+  ActorsListType::iterator it = m_Actors.begin();
+  while(it != m_Actors.end())
+    {
+    (*it)->VisibilityOff();
+    it++;
+    }
+}
+
+
+/** Make Objects Visible. This method is called when the Transform time stamp
+ * is valid with respect to the requested rendering time. */
+void ObjectRepresentation::MakeObjectsVisibleProcessing()
+{
+  ActorsListType::iterator it = m_Actors.begin();
+  while(it != m_Actors.end())
+    {
+    (*it)->VisibilityOn();
+    it++;
+    }
+}
+
+
+/** Report an invalid request made to the State Machine */
+void ObjectRepresentation::ReportInvalidRequestProcessing()
+{
+  igstkLogMacro( WARNING, "Invalid request in ObjectRepresentation");
 }
 
 

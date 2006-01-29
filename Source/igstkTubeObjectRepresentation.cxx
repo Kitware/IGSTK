@@ -103,6 +103,8 @@ void TubeObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent )
  * object */
 void TubeObjectRepresentation::UpdateRepresentationProcessing()
 {
+  igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
+  this->RequestVerifyTimeStamp();
 }
 
 /** Create the vtk Actors */

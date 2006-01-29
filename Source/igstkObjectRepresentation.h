@@ -63,7 +63,7 @@ public:
   typedef itk::SmartPointer < const Self >   ConstPointer;
   typedef Object                             Superclass;
   typedef SpatialObject                      SpatialObjectType;
-  typedef std::vector<vtkProp*>            ActorsListType; 
+  typedef std::vector< vtkProp* >            ActorsListType; 
 
   igstkTypeMacro(ObjectRepresentation, Object);
 
@@ -113,6 +113,12 @@ protected:
   /** Request the state machine to set a Spatial Object */
   void RequestSetSpatialObject( const SpatialObjectType * spatialObject );
   
+  /** Verify if the time of the rendering matches the time of the transform.
+   * If the two TimeStamps do not overlap, then the actors are made invisible.
+   * This method must be called from all the UpdatePositionProcessing() of the
+   * derived classes. */
+  void RequestVerifyTimeStamp();
+  
 private:
 
   ActorsListType              m_Actors;
@@ -142,17 +148,34 @@ private:
   /** Set the spatial object for this class */
   void SetSpatialObjectProcessing(); 
 
+  /** Report when an invalid request is made to the StateMachine */
+  void ReportInvalidRequestProcessing();
+
+  /** Make Objects Invisible. This method is called when the Transform time stamp
+   * has expired with respect to the requested rendering time. */
+  void MakeObjectsInvisibleProcessing();
+
+  /** Make Objects Visible. This method is called when the Transform time stamp
+   * is valid with respect to the requested rendering time. */
+  void MakeObjectsVisibleProcessing();
+
 private:
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidSpatialObject );
   igstkDeclareInputMacro( NullSpatialObject );
+  igstkDeclareInputMacro( ValidUpdatePosition );
+  igstkDeclareInputMacro( ExpiredUpdatePosition );
   igstkDeclareInputMacro( UpdatePosition );
   igstkDeclareInputMacro( UpdateRepresentation );
+  igstkDeclareInputMacro( ValidTimeStamp );
+  igstkDeclareInputMacro( InvalidTimeStamp );
   
   /** States for the State Machine */
   igstkDeclareStateMacro( NullSpatialObject );
   igstkDeclareStateMacro( ValidSpatialObject );
+  igstkDeclareStateMacro( ValidTimeStamp );
+  igstkDeclareStateMacro( InvalidTimeStamp );
 
   SpatialObjectType::ConstPointer m_SpatialObjectToAdd;
 

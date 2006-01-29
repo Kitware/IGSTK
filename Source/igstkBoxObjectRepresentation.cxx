@@ -124,6 +124,7 @@ void BoxObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) 
 void BoxObjectRepresentation::UpdateRepresentationProcessing()
 {
   igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
+  this->RequestVerifyTimeStamp();
 
   m_BoxSource->SetXLength(m_BoxSpatialObject->GetSizeX());
   m_BoxSource->SetYLength(m_BoxSpatialObject->GetSizeY());
