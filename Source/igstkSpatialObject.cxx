@@ -153,7 +153,7 @@ void SpatialObject::RequestAddObject(Self * object )
 {
   m_ObjectToBeAdded = object;
 
-  if( m_ObjectToBeAdded.IsNull() )
+  if( m_ObjectToBeAdded.IsNull()  || m_ObjectToBeAdded->GetSpatialObject()==NULL )
     {
     m_StateMachine.PushInput( m_ObjectNullInput );
     m_StateMachine.ProcessInputs();
