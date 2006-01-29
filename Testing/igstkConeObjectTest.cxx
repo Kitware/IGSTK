@@ -125,7 +125,7 @@ int igstkConeObjectTest( int, char * [] )
   std::cout << "Testing Set/GetTransform(): ";
 
   const double tolerance = 1e-8;
-  double validityTimeInMilliseconds = 2000.0;
+  double validityTimeInMilliseconds = 20000.0;  // 20 seconds
   igstk::Transform transform;
   igstk::Transform::VectorType translation;
   translation[0] = 0;

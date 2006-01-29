@@ -177,6 +177,21 @@ int igstkViewRefreshRateTest( int, char * [] )
     viewObserver->SetForm( form );
     viewObserver->SetEndFlag( &bEnd );
 
+    const double validityTimeInMilliseconds = 1e5; // 100 seconds
+    igstk::Transform transform;
+    igstk::Transform::VectorType translation;
+    translation[0] = 0;
+    translation[1] = 0;
+    translation[2] = 0;
+    igstk::Transform::VersorType rotation;
+    rotation.Set( 0.707, 0.0, 0.707, 0.0 );
+    igstk::Transform::ErrorType errorValue = 10; // 10 millimeters
+
+    transform.SetTranslationAndRotation( 
+        translation, rotation, errorValue, validityTimeInMilliseconds );
+
+    ellipsoid->RequestSetTransform( transform );
+
     // Exercise the code for resizing the window
     form->resize(100, 100, 600, 300);
 

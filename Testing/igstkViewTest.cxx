@@ -138,6 +138,29 @@ int igstkViewTest( int, char * [] )
     cylinderRepresentation->SetColor(1.0,0.0,0.0);
     cylinderRepresentation->SetOpacity(1.0);
 
+    const double validityTimeInMilliseconds = 1e5; // 100 seconds
+    igstk::Transform transform;
+    igstk::Transform::VectorType translation;
+    translation[0] = 0;
+    translation[1] = 0;
+    translation[2] = 0;
+    igstk::Transform::VersorType rotation;
+    rotation.Set( 0.707, 0.0, 0.707, 0.0 );
+    igstk::Transform::ErrorType errorValue = 10; // 10 millimeters
+
+    transform.SetTranslationAndRotation( 
+        translation, rotation, errorValue, validityTimeInMilliseconds );
+
+    ellipsoid->RequestSetTransform( transform );
+
+
+    translation[1] = 20.0;  // translate the cylinder 20.0mm along X
+    transform.SetTranslationAndRotation( 
+        translation, rotation, errorValue, validityTimeInMilliseconds );
+
+    cylinder->RequestSetTransform( transform );
+
+    
     // Create an FLTK minimal GUI
     Fl_Window * form = new Fl_Window(601,301,"View3D Test");
     
