@@ -107,7 +107,8 @@ void SpatialObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 
   if( this->m_SpatialObject )
     {
-    os << indent << this->m_SpatialObject << std::endl;
+    os << indent << "Spatial Object = ";
+    os << this->m_SpatialObject.GetPointer() << std::endl;
     }
   os << indent << this->m_Transform << std::endl;
   if( this->m_TrackerTool )
