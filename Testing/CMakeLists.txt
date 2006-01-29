@@ -122,6 +122,7 @@ SET(IGSTKTests_SRCS
   igstkPivotCalibrationTest.cxx
   igstkPrincipalAxisCalibrationTest.cxx
   igstkSerialCommunicationTest.cxx
+  igstkSpatialObjectTest.cxx
   igstkStateMachineErrorsTest.cxx
   igstkStateMachineTest.cxx
   igstkStringEventTest.cxx
