@@ -53,6 +53,7 @@ ADD_TEST(igstkMRImageSpatialObjectTest ${IGSTK_TESTS} igstkMRImageSpatialObjectT
 ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
 ADD_TEST(igstkPivotCalibrationTest ${IGSTK_TESTS} igstkPivotCalibrationTest)
 ADD_TEST(igstkPrincipalAxisCalibrationTest ${IGSTK_TESTS} igstkPrincipalAxisCalibrationTest)
+ADD_TEST(igstkSpatialObjectTest ${IGSTK_TESTS} igstkSpatialObjectTest)
 ADD_TEST(igstkSerialCommunicationTest ${IGSTK_TESTS} igstkSerialCommunicationTest)
 ADD_TEST(igstkStateMachineErrorsTest ${IGSTK_TESTS} igstkStateMachineErrorsTest)
 ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
@@ -176,6 +177,7 @@ SET(BasicTests_SRCS
   igstkMultipleOutputTest.cxx    
   igstkPivotCalibrationTest.cxx
   igstkPrincipalAxisCalibrationTest.cxx
+  igstkSpatialObjectTest.cxx
   igstkSerialCommunicationTest.cxx
   igstkStateMachineErrorsTest.cxx
   igstkStateMachineTest.cxx

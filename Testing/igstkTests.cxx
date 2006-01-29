@@ -46,6 +46,7 @@ void RegisterTests()
   REGISTER_TEST(igstkMultipleOutputTest);  
   REGISTER_TEST(igstkPivotCalibrationTest);
   REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
+  REGISTER_TEST(igstkSpatialObjectTest);
   REGISTER_TEST(igstkSerialCommunicationTest);
   REGISTER_TEST(igstkStateMachineErrorsTest);
   REGISTER_TEST(igstkStateMachineTest);
