@@ -144,7 +144,21 @@ int igstkSpatialObjectTest( int, char * [] )
   const unsigned int toolPort = 0;
   const unsigned int toolNumber = 0;
 
+
+  tracker->Open();
+  tracker->Initialize();
+
   tracker->AttachObjectToTrackerTool( toolPort, toolNumber, dummyObject );
+
+  tracker->StartTracking();
+
+  for(unsigned int i=0; i<50; i++)
+    {
+    igstk::PulseGenerator::CheckTimeouts();
+    }
+
+  tracker->StopTracking();
+  tracker->Close();
 
   std::cout << "[PASSED]" << std::endl;
 
