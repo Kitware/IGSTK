@@ -23,6 +23,7 @@
 #include <iostream>
 
 #include "igstkSpatialObject.h"
+#include "igstkTracker.h"
 
 namespace igstk
 {
@@ -47,6 +48,9 @@ public:
     SpatialObjectType::Pointer so = SpatialObjectType::New();
     this->RequestSetSpatialObject( so );   // Test with valid pointer
 
+    sibling->RequestSetSpatialObject( so );
+    this->RequestAddObject( sibling );
+      
     const Self * me1 = dynamic_cast< const Self *>( this->GetObject(  0  ) );
     if( !me1 )
       {
@@ -70,6 +74,56 @@ protected:
   
 };
 
+class MyTracker : public Tracker
+{
+public:
+
+    /** Macro with standard traits declarations. */
+    igstkStandardClassTraitsMacro( MyTracker, Tracker )
+
+    typedef Superclass::TransformType           TransformType;
+
+    void Initialize() { this->Tracker::Initialize(); }
+    void GetTransform(TransformType & transform) 
+          { this->GetToolTransform(0, 0, transform); }
+
+protected:
+    MyTracker():m_StateMachine(this) {};
+    virtual ~MyTracker() {};
+
+    typedef Tracker::ResultType                 ResultType;
+
+    virtual ResultType InternalOpen( void ) { return SUCCESS; }
+    virtual ResultType InternalActivateTools( void ) { return SUCCESS; }
+    virtual ResultType InternalStartTracking( void ) { return SUCCESS; }
+    virtual ResultType InternalUpdateStatus( void ) { return SUCCESS; }
+    virtual ResultType InternalReset( void ) { return SUCCESS; }
+    virtual ResultType InternalStopTracking( void ) { return SUCCESS; }
+    virtual ResultType InternalDeactivateTools( void ) 
+      { 
+      m_ValidityTime = 100.0; // 100.0 milliseconds
+      m_Port = TrackerPortType::New();
+      m_Tool = TrackerToolType::New();
+      m_Port->AddTool( m_Tool );
+      this->AddPort( m_Port );
+      return SUCCESS; 
+      }
+    virtual ResultType InternalClose( void ) { return SUCCESS; }
+
+private:
+
+    MyTracker(const Self&);  //purposely not implemented
+    void operator=(const Self&); //purposely not implemented
+
+    typedef TrackerTool                 TrackerToolType;
+    typedef TrackerPort                 TrackerPortType;
+    typedef Transform::TimePeriodType   TimePeriodType;
+    TimePeriodType                      m_ValidityTime;
+    TrackerPortType::Pointer            m_Port;
+    TrackerToolType::Pointer            m_Tool;
+};
+
+
 
 } // end SpatialObjectTest namespace
 
@@ -83,6 +137,14 @@ int igstkSpatialObjectTest( int, char * [] )
   ObjectType::Pointer dummyObject = ObjectType::New();
 
   dummyObject->TestMethods();
+
+  typedef igstk::SpatialObjectTest::MyTracker   TrackerType;
+  TrackerType::Pointer  tracker = TrackerType::New();
+
+  const unsigned int toolPort = 0;
+  const unsigned int toolNumber = 0;
+
+  tracker->AttachObjectToTrackerTool( toolPort, toolNumber, dummyObject );
 
   std::cout << "[PASSED]" << std::endl;
 
