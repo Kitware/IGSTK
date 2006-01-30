@@ -265,7 +265,7 @@ private: \
     m_StateMachine.PushInput( m_##input ); \
   } \
 public: \
-  void Observe##event(::itk::Object * object ) \
+  void Observe##event(const ::itk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this, & Self::Callback##event##input ); \
@@ -289,7 +289,7 @@ private: \
       } \
   } \
 public: \
-  void Observe##event(::itk::Object * object ) \
+  void Observe##event(const ::itk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this, & Self::Callback##event##input ); \
