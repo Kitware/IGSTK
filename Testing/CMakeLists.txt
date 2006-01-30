@@ -207,12 +207,12 @@ IF(IGSTK_USE_FLTK)
   IF (IGSTK_DATA_ROOT)
     ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest 
               ${IGSTK_TESTS}
-              --compare ${BASELINE}/igstkViewScreenShot.png 
-                        ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
               --tolerance 5
               igstkCTImageSpatialObjectReadingAndRepresentationTest
               ${IGSTK_DATA_ROOT}/Input/E000192
-              ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
     ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
               igstkImageSpatialObjectRepresentationTest 
