@@ -19,7 +19,6 @@
 #define __igstkSpatialObject_h
 
 #include "itkLogger.h"
-#include "itkCommand.h"
 #include "itkSpatialObject.h"
 
 #include "igstkMacros.h"
@@ -67,9 +66,9 @@ public:
   /** Set a new object. */
   void RequestAddObject(Self * object);
 
-  /** Return the Transform associated to the ObjectToWorld transformation
+  /** Request the Transform associated to the ObjectToWorld transformation
    * of the SpatialObject */
-  const Transform & GetTransform() const;
+  void RequestGetTransform();
 
   /** Return a child object given the id */
   const Self * GetObject(unsigned long id) const;
@@ -95,9 +94,6 @@ protected:
 
 private:
   
-  /** Command observer that will receive events from traker tools */
-  typedef ::itk::ReceptorMemberCommand< Self >           CommandType;
-
   /** Internal itkSpatialObject */
   SpatialObjectType::Pointer   m_SpatialObject;
   SpatialObjectType::Pointer   m_SpatialObjectToBeSet;
@@ -116,12 +112,6 @@ private:
   TrackerTool::ConstPointer    m_TrackerTool;
   TrackerTool::ConstPointer    m_TrackerToolToAttachTo;
 
-  /** Command observer that will listen for Events sent from a TrackerTool. */
-  CommandType::Pointer         m_TrackerToolObserver;
-
-  /** Command observer that will listen for Events sent from a TrackerTool. */
-  virtual void TransformUpdateFromTrackerTool( const ::itk::EventObject & event  );
-
   /** Set the Transform corresponding to the ObjectToWorld transformation of
    * the SpatialObject. This method is only intended to be called from a callback
    * that is observing events from a TrackerTool object. */
@@ -138,6 +128,7 @@ private:
   igstkDeclareInputMacro( TrackingDisabled );
   igstkDeclareInputMacro( ManualTransform );
   igstkDeclareInputMacro( TrackerTransform );
+  igstkDeclareInputMacro( RequestGetTransform );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
@@ -154,6 +145,9 @@ private:
   void ReportInvalidRequestProcessing();
   void AttachToTrackerToolProcessing();
   void SetTransformProcessing();
+  void BroadcastStaticTransformProcessing();
+  void BroadcastTrackedTransformProcessing();
+  void BroadcastExpiredTrackedTransformProcessing();
 
   /** Null operation for a State Machine transition */
   void NoProcessing();

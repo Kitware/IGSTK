@@ -42,11 +42,14 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_Logger(NULL)
   igstkAddInputMacro( UpdateRepresentation );
   igstkAddInputMacro( ValidTimeStamp );
   igstkAddInputMacro( InvalidTimeStamp );
+  igstkAddInputMacro( SpatialObjectTransform );
+  igstkAddInputMacro( RequestUpdatePosition );
 
   igstkAddStateMacro( NullSpatialObject );
   igstkAddStateMacro( ValidSpatialObject );
   igstkAddStateMacro( ValidTimeStamp );
   igstkAddStateMacro( InvalidTimeStamp );
+  igstkAddStateMacro( AttemptingUpdatePosition );
 
   igstkAddTransitionMacro( NullSpatialObject, NullSpatialObject, NullSpatialObject,  No );
   igstkAddTransitionMacro( NullSpatialObject, ValidSpatialObject, ValidSpatialObject,  SetSpatialObject );
@@ -55,7 +58,9 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_Logger(NULL)
   igstkAddTransitionMacro( NullSpatialObject, UpdateRepresentation, NullSpatialObject,  No );
   igstkAddTransitionMacro( NullSpatialObject, ValidTimeStamp, NullSpatialObject,  ReportInvalidRequest );
   igstkAddTransitionMacro( NullSpatialObject, InvalidTimeStamp, NullSpatialObject,  ReportInvalidRequest );
- 
+  igstkAddTransitionMacro( NullSpatialObject, RequestUpdatePosition, NullSpatialObject,  ReportInvalidRequest );
+  igstkAddTransitionMacro( NullSpatialObject, SpatialObjectTransform, NullSpatialObject,  ReportInvalidRequest );
+
   igstkAddTransitionMacro( ValidSpatialObject, ValidUpdatePosition, ValidTimeStamp,  UpdatePosition );
   igstkAddTransitionMacro( ValidSpatialObject, ExpiredUpdatePosition, InvalidTimeStamp,  UpdatePosition );
   igstkAddTransitionMacro( ValidSpatialObject, NullSpatialObject, NullSpatialObject,  No ); 
@@ -63,6 +68,8 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_Logger(NULL)
   igstkAddTransitionMacro( ValidSpatialObject, UpdateRepresentation, ValidSpatialObject,  UpdateRepresentation );
   igstkAddTransitionMacro( ValidSpatialObject, ValidTimeStamp, ValidTimeStamp,  MakeObjectsVisible );
   igstkAddTransitionMacro( ValidSpatialObject, InvalidTimeStamp, InvalidTimeStamp,  MakeObjectsInvisible );
+  igstkAddTransitionMacro( ValidSpatialObject, RequestUpdatePosition, AttemptingUpdatePosition,  RequestUpdatePosition );
+  igstkAddTransitionMacro( ValidSpatialObject, SpatialObjectTransform, ValidSpatialObject,  ReceiveSpatialObjectTransform );
 
   igstkAddTransitionMacro( ValidTimeStamp, ValidUpdatePosition, ValidTimeStamp,  UpdatePosition );
   igstkAddTransitionMacro( ValidTimeStamp, ExpiredUpdatePosition, InvalidTimeStamp,  UpdatePosition );
@@ -71,6 +78,8 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_Logger(NULL)
   igstkAddTransitionMacro( ValidTimeStamp, UpdateRepresentation, ValidTimeStamp,  UpdateRepresentation );
   igstkAddTransitionMacro( ValidTimeStamp, ValidTimeStamp, ValidTimeStamp,  No );
   igstkAddTransitionMacro( ValidTimeStamp, InvalidTimeStamp, InvalidTimeStamp,  MakeObjectsInvisible );
+  igstkAddTransitionMacro( ValidTimeStamp, RequestUpdatePosition, AttemptingUpdatePosition,  RequestUpdatePosition );
+  igstkAddTransitionMacro( ValidTimeStamp, SpatialObjectTransform, ValidSpatialObject,  ReceiveSpatialObjectTransform );
 
   igstkAddTransitionMacro( InvalidTimeStamp, ValidUpdatePosition, ValidTimeStamp,  UpdatePosition );
   igstkAddTransitionMacro( InvalidTimeStamp, ExpiredUpdatePosition, InvalidTimeStamp,  UpdatePosition );
@@ -79,6 +88,19 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_Logger(NULL)
   igstkAddTransitionMacro( InvalidTimeStamp, UpdateRepresentation, ValidSpatialObject,  UpdateRepresentation );
   igstkAddTransitionMacro( InvalidTimeStamp, ValidTimeStamp, ValidTimeStamp,  MakeObjectsVisible );
   igstkAddTransitionMacro( InvalidTimeStamp, InvalidTimeStamp, InvalidTimeStamp,  No );
+  igstkAddTransitionMacro( InvalidTimeStamp, RequestUpdatePosition, AttemptingUpdatePosition,  RequestUpdatePosition );
+  igstkAddTransitionMacro( InvalidTimeStamp, SpatialObjectTransform, ValidSpatialObject,  ReceiveSpatialObjectTransform );
+
+  igstkAddTransitionMacro( AttemptingUpdatePosition, ValidUpdatePosition, AttemptingUpdatePosition,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingUpdatePosition, ExpiredUpdatePosition, AttemptingUpdatePosition,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingUpdatePosition, NullSpatialObject, NullSpatialObject,  No ); 
+  igstkAddTransitionMacro( AttemptingUpdatePosition, ValidSpatialObject, ValidSpatialObject,  No ); 
+  igstkAddTransitionMacro( AttemptingUpdatePosition, UpdateRepresentation, ValidSpatialObject,  UpdateRepresentation );
+  igstkAddTransitionMacro( AttemptingUpdatePosition, ValidTimeStamp, AttemptingUpdatePosition,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingUpdatePosition, InvalidTimeStamp, AttemptingUpdatePosition,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingUpdatePosition, RequestUpdatePosition, AttemptingUpdatePosition,  RequestUpdatePosition );
+  igstkAddTransitionMacro( AttemptingUpdatePosition, SpatialObjectTransform, ValidSpatialObject,  ReceiveSpatialObjectTransform );
+
 
 
   igstkSetInitialStateMacro( NullSpatialObject );
@@ -128,7 +150,11 @@ bool ObjectRepresentation::IsModified() const
 /** Set the Spatial Object */
 void ObjectRepresentation::RequestSetSpatialObject( const SpatialObjectType * spatialObject )
 {
-  m_SpatialObjectToAdd = spatialObject;
+  // This const_cast is done because the ObjectRepresentation class invoke
+  // Request methods in the SpatialObject, and those methods modify the state
+  // of its internal StateMachine. It is however desirable to keep the outside
+  // API of this class refering to a const object.
+  m_SpatialObjectToAdd = const_cast< SpatialObjectType *>( spatialObject );
   if( !m_SpatialObjectToAdd )
     {
     igstkPushInputMacro( NullSpatialObject );
@@ -147,6 +173,8 @@ void ObjectRepresentation::RequestSetSpatialObject( const SpatialObjectType * sp
 void ObjectRepresentation::SetSpatialObjectProcessing()
 {
   m_SpatialObject = m_SpatialObjectToAdd;
+  this->ObserveTransformModifiedEvent( m_SpatialObject );
+
 }
 
 
@@ -174,8 +202,7 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
 }
 
 
-/** Request Update the object representation (i.e vtkActors). Maybe we should check also the transform
- *  modified time. */
+/** Request Update the object representation (i.e vtkActors). */
 void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 {
   m_TimeToRender = time; 
@@ -184,15 +211,30 @@ void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 }
 
 
-/** Request Update the object position (i.e vtkActors). Maybe we should check also the transform
- *  modified time. */
+/** Request Update the object position (i.e vtkActors). */
 void ObjectRepresentation::RequestUpdatePosition( const TimeStamp & time )
 {
   m_TimeToRender = time; 
-  const Transform & transform = m_SpatialObject->GetTransform();
+  igstkPushInputMacro( RequestUpdatePosition );
+  m_StateMachine.ProcessInputs();
+}
 
-  if( m_TimeToRender.GetExpirationTime() < transform.GetStartTime() ||
-      m_TimeToRender.GetStartTime()      > transform.GetExpirationTime() )
+
+/** Process the request for updating the transform from the SpatialObject. */
+void ObjectRepresentation::RequestUpdatePositionProcessing()
+{
+  m_SpatialObject->RequestGetTransform();  // The response should be sent back in an event
+}
+
+
+/** Receive the Transform from the SpatialObject via a transduction macro.
+ *  Once the transform is received, the validity time is verified. */
+void ObjectRepresentation::ReceiveSpatialObjectTransformProcessing()
+{
+  m_SpatialObjectTransform = m_SpatialObjectTransformToBeSet;
+
+  if( m_TimeToRender.GetExpirationTime() < m_SpatialObjectTransform.GetStartTime() ||
+      m_TimeToRender.GetStartTime()      > m_SpatialObjectTransform.GetExpirationTime() )
     {
     igstkPushInputMacro( ExpiredUpdatePosition );
     m_StateMachine.ProcessInputs();
@@ -212,11 +254,10 @@ void ObjectRepresentation::NoProcessing()
 /** Update the object representation (i.e vtkActors). */
 void ObjectRepresentation::UpdatePositionProcessing()
 {
-  const Transform & transform = m_SpatialObject->GetTransform();
 
   vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
 
-  transform.ExportTransform( *vtkMatrix );
+  m_SpatialObjectTransform.ExportTransform( *vtkMatrix );
 
   // Update all the actors
   ActorsListType::iterator it = m_Actors.begin();
@@ -238,10 +279,8 @@ void ObjectRepresentation::UpdatePositionProcessing()
 void ObjectRepresentation::RequestVerifyTimeStamp()
 {
 
-  const Transform & transform = m_SpatialObject->GetTransform();
-
-  if( m_TimeToRender.GetExpirationTime() < transform.GetStartTime() ||
-      m_TimeToRender.GetStartTime()      > transform.GetExpirationTime() )
+  if( m_TimeToRender.GetExpirationTime() < m_SpatialObjectTransform.GetStartTime() ||
+      m_TimeToRender.GetStartTime()      > m_SpatialObjectTransform.GetExpirationTime() )
     {
     igstkPushInputMacro( InvalidTimeStamp );
     m_StateMachine.ProcessInputs();

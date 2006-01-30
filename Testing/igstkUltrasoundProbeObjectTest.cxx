@@ -26,6 +26,8 @@
 #include "igstkUltrasoundProbeObjectRepresentation.h"
 #include "igstkView2D.h"
 
+namespace igstk
+{
 
 namespace UltrasoundProbeObjectTest
 {
@@ -108,7 +110,67 @@ namespace UltrasoundProbeObjectTest
     bool *              m_End;
   };
 
+  class TransformObserver : public ::itk::Command 
+  {
+  public:
+    typedef  TransformObserver   Self;
+    typedef  ::itk::Command    Superclass;
+    typedef  ::itk::SmartPointer<Self>  Pointer;
+    itkNewMacro( Self );
+  protected:
+    TransformObserver() 
+      {
+      m_GotTransform = false;
+      }
+    ~TransformObserver() {}
+  public:
+    
+      typedef ::igstk::TransformModifiedEvent  EventType;
+        
+      void Execute(itk::Object *caller, const itk::EventObject & event)
+        {
+        const itk::Object * constCaller = caller;
+        this->Execute( constCaller, event );
+        }
+
+      void Execute(const itk::Object *caller, const itk::EventObject & event)
+        {
+        m_GotTransform = false;
+        if( EventType().CheckEvent( &event ) )
+          {
+          const EventType * transformEvent = 
+                    dynamic_cast< const EventType *>( &event );
+          if( transformEvent )
+            {
+            m_Transform = transformEvent->Get();
+            m_GotTransform = true;
+            }
+          }
+        }
+
+      bool GotTransform() const
+        {
+        return m_GotTransform;
+        }
+
+      const ::igstk::Transform & GetTransform() const
+        {
+        return m_Transform;
+        }
+        
+  private:
+
+    ::igstk::Transform  m_Transform;
+
+    bool m_GotTransform;
+
+  };
+
+
 } // end of UltrasoundProbeObjectTest namespace
+
+} // end of igstk namespace
+
 
 
 int igstkUltrasoundProbeObjectTest( int, char * [] )
@@ -198,7 +260,24 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
   UltrasoundProbeObject->RequestSetTransform( transform );
-  igstk::Transform  transform2 = UltrasoundProbeObject->GetTransform();
+
+  typedef ::igstk::UltrasoundProbeObjectTest::TransformObserver  TransformObserverType;
+
+  TransformObserverType::Pointer transformObserver = TransformObserverType::New();
+
+  UltrasoundProbeObject->AddObserver( ::igstk::TransformModifiedEvent(), transformObserver );
+  
+  UltrasoundProbeObject->RequestSetTransform( transform );
+  UltrasoundProbeObject->RequestGetTransform();
+  
+  if( !transformObserver->GotTransform() )
+    {
+    std::cerr << "The UltrasoundProbeObject did not returned a Transform event" << std::endl;
+    return EXIT_FAILURE;
+    }
+      
+  igstk::Transform  transform2 = transformObserver->GetTransform();
+
   igstk::Transform::VectorType translation2 = transform2.GetTranslation();
   for( unsigned int i=0; i<3; i++ )
     {
@@ -262,7 +341,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
 
   bool bEnd = false;
 
-  typedef UltrasoundProbeObjectTest::ViewObserver ObserverType;
+  typedef ::igstk::UltrasoundProbeObjectTest::ViewObserver ObserverType;
   ObserverType::Pointer viewObserver = ObserverType::New();
   
   view2D->RequestSetRefreshRate( 20 );

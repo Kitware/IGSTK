@@ -126,7 +126,10 @@ private:
   float                       m_Opacity;
   unsigned long               m_LastMTime;
 
-  SpatialObjectType::ConstPointer  m_SpatialObject;
+  /** The associated SpatialObject is non-const because we invoke requests
+   * methods that indirectly will modify the state of its internal StateMachine
+   * */
+  SpatialObjectType::Pointer  m_SpatialObject;
 
   /** update the visual representation with changes in the geometry */
   virtual void RequestUpdateRepresentation( const TimeStamp & time );
@@ -159,6 +162,15 @@ private:
    * is valid with respect to the requested rendering time. */
   void MakeObjectsVisibleProcessing();
 
+  /** This method will delegate to the attached Spatial Object the request for
+   * updating the Transform that defines the position and orientation of the
+   * object in space. */
+  void RequestUpdatePositionProcessing();
+
+  /** Receive the Transform from the SpatialObject via a transduction macro.
+   *  Once the transform is received, the validity time is verified. */
+  void ReceiveSpatialObjectTransformProcessing();
+
 private:
 
   /** Inputs to the State Machine */
@@ -170,18 +182,29 @@ private:
   igstkDeclareInputMacro( UpdateRepresentation );
   igstkDeclareInputMacro( ValidTimeStamp );
   igstkDeclareInputMacro( InvalidTimeStamp );
+  igstkDeclareInputMacro( SpatialObjectTransform );
+  igstkDeclareInputMacro( RequestUpdatePosition );
   
   /** States for the State Machine */
   igstkDeclareStateMacro( NullSpatialObject );
   igstkDeclareStateMacro( ValidSpatialObject );
   igstkDeclareStateMacro( ValidTimeStamp );
   igstkDeclareStateMacro( InvalidTimeStamp );
+  igstkDeclareStateMacro( AttemptingUpdatePosition );
 
-  SpatialObjectType::ConstPointer m_SpatialObjectToAdd;
+  /** Transduction macros that will convert received events 
+   *  into StateMachine inputs */
+  igstkLoadedEventTransductionMacro( TransformModifiedEvent, SpatialObjectTransformInput, SpatialObjectTransform );
+
+  /** Internal temporary variable to use when connecting to a SpatialObject */
+  SpatialObjectType::Pointer    m_SpatialObjectToAdd;
 
   /** Time stamp for the time at which the next rendering will take place */
   TimeStamp            m_TimeToRender;
 
+  /** Transform returned from the Spatial Object */
+  Transform            m_SpatialObjectTransform;
+    
 };
 
 } // end namespace igstk

@@ -38,17 +38,15 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddInputMacro( TrackingDisabled );
   igstkAddInputMacro( ManualTransform );
   igstkAddInputMacro( TrackerTransform );
+  igstkAddInputMacro( RequestGetTransform );
 
   igstkAddStateMacro( Initial  );
   igstkAddStateMacro( NonTracked  );
   igstkAddStateMacro( Tracked     );
   igstkAddStateMacro( TrackedLost );
   
-  igstkAddTransitionMacro( Initial, ObjectValid, Initial,  AddObject );
   igstkAddTransitionMacro( Initial, ObjectValid, NonTracked,  AddObject );
-  igstkAddTransitionMacro( NonTracked, ObjectValid, NonTracked,  AddObject );
   igstkAddTransitionMacro( Initial, ObjectNull, Initial,  ReportInvalidRequest );
-
   igstkAddTransitionMacro( Initial, SpatialObjectValid, NonTracked,  SetSpatialObject );
   igstkAddTransitionMacro( Initial, SpatialObjectNull, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, TrackingEnabled, Initial,  ReportInvalidRequest );
@@ -57,6 +55,7 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddTransitionMacro( Initial, TrackingDisabled, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, ManualTransform, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, TrackerTransform, Initial,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, RequestGetTransform, Initial,  ReportInvalidRequest );
 
   igstkAddTransitionMacro( NonTracked, SpatialObjectValid, NonTracked,  ReportInvalidRequest );
   igstkAddTransitionMacro( NonTracked, SpatialObjectNull, NonTracked,  ReportInvalidRequest );
@@ -66,6 +65,8 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddTransitionMacro( NonTracked, TrackingDisabled, NonTracked,  ReportTrackingDisabled );
   igstkAddTransitionMacro( NonTracked, ManualTransform, NonTracked,  SetTransform );
   igstkAddTransitionMacro( NonTracked, TrackerTransform, NonTracked,  ReportInvalidRequest );
+  igstkAddTransitionMacro( NonTracked, ObjectValid, NonTracked,  AddObject );
+  igstkAddTransitionMacro( NonTracked, RequestGetTransform, NonTracked,  BroadcastStaticTransform );
 
   igstkAddTransitionMacro( Tracked, SpatialObjectValid, Tracked,  ReportInvalidRequest );
   igstkAddTransitionMacro( Tracked, SpatialObjectNull, Tracked,  ReportInvalidRequest );
@@ -75,6 +76,7 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddTransitionMacro( Tracked, TrackingDisabled, NonTracked, ReportTrackingDisabled  );
   igstkAddTransitionMacro( Tracked, ManualTransform, Tracked, ReportInvalidRequest  );
   igstkAddTransitionMacro( Tracked, TrackerTransform, Tracked, SetTransform  );
+  igstkAddTransitionMacro( Tracked, RequestGetTransform, Tracked,  BroadcastTrackedTransform );
 
   igstkAddTransitionMacro( TrackedLost, SpatialObjectValid, TrackedLost,  ReportInvalidRequest );
   igstkAddTransitionMacro( TrackedLost, SpatialObjectNull, TrackedLost,  ReportInvalidRequest );
@@ -84,14 +86,12 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddTransitionMacro( TrackedLost, TrackingDisabled, NonTracked,  ReportTrackingDisabled );
   igstkAddTransitionMacro( TrackedLost, ManualTransform, TrackedLost,  ReportInvalidRequest );
   igstkAddTransitionMacro( TrackedLost, TrackerTransform, TrackedLost,  ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackedLost, RequestGetTransform, TrackedLost,  BroadcastExpiredTrackedTransform );
 
   igstkSetInitialStateMacro( Initial );
 
   m_StateMachine.SetReadyToRun();
 
-
-  m_TrackerToolObserver = CommandType::New();
-  m_TrackerToolObserver->SetCallbackFunction( this, &SpatialObject::TransformUpdateFromTrackerTool );
 } 
 
 /** Destructor */
@@ -229,12 +229,44 @@ void SpatialObject::SetTransformProcessing()
 }
 
 
-/** Get Transform */
-const Transform &
-SpatialObject::GetTransform()  const
+/** Request Get Transform */
+void SpatialObject::RequestGetTransform()
 {
-  return m_Transform;
+  m_StateMachine.PushInput( m_RequestGetTransformInput );
+  m_StateMachine.ProcessInputs();
 }
+
+
+/** Broadcast Transform */
+void SpatialObject::BroadcastTrackedTransformProcessing()
+{
+  this->RequestSetTrackedTransform( m_TrackerTool->GetTransform() ); 
+
+  TransformModifiedEvent event;
+  event.Set( m_Transform );
+  this->InvokeEvent( event );
+}
+
+
+/** Broadcast Transform */
+void SpatialObject::BroadcastExpiredTrackedTransformProcessing() 
+{
+  this->RequestSetTrackedTransform( m_TrackerTool->GetTransform() ); 
+
+  TransformModifiedEvent event;
+  event.Set( m_Transform );
+  this->InvokeEvent( event );
+}
+
+
+/** Broadcast Transform */
+void SpatialObject::BroadcastStaticTransformProcessing() 
+{
+  TransformModifiedEvent event;
+  event.Set( m_Transform );
+  this->InvokeEvent( event );
+}
+
 
 /** Request the protocol for attaching to a tracker tool. This is a one-time
  * operation. Once a Spatial Object is attached to a tracker tool it is not
@@ -252,25 +284,27 @@ void
 SpatialObject::AttachToTrackerToolProcessing()
 {
    m_TrackerTool = m_TrackerToolToAttachTo;
-   m_TrackerTool->AddObserver( TransformModifiedEvent(), m_TrackerToolObserver ); 
 }
 
 /** Report that tracking is now enabled */
 void
 SpatialObject::ReportTrackingDisabledProcessing()
 {
+  igstkLogMacro( DEBUG, "Tracking was Disabled" );
 }
 
 /** Report that tracking has been lost */
 void
 SpatialObject::ReportTrackingLostProcessing()
 {
+  igstkLogMacro( WARNING, "Tracking was Lost" );
 }
 
 /** Report that tracking has been restored */
 void
 SpatialObject::ReportTrackingRestoredProcessing()
 {
+  igstkLogMacro( WARNING, "Tracking was restored" );
 }
 
 /** Report that an invalid or suspicious operation has been requested. This may
@@ -279,21 +313,10 @@ SpatialObject::ReportTrackingRestoredProcessing()
 void
 SpatialObject::ReportInvalidRequestProcessing()
 {
+  igstkLogMacro( WARNING, "Invalid request made to the State Machine" );
 }
 
-/** Receive the Events from the Tracker Tool and use them for updating the
- * transform of this Spatial Object */
-void
-SpatialObject::TransformUpdateFromTrackerTool( const ::itk::EventObject & event  )
-{
-  const TransformModifiedEvent * transformEvent = 
-    dynamic_cast< const TransformModifiedEvent * >( &event );
 
-  if( transformEvent )
-    {
-    this->RequestSetTrackedTransform( transformEvent->Get() );
-    }
-}
 
 } // end namespace igstk
 

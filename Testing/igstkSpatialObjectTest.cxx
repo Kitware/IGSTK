@@ -88,15 +88,40 @@ public:
           { this->GetToolTransform(0, 0, transform); }
 
 protected:
-    MyTracker():m_StateMachine(this) {};
+    MyTracker():m_StateMachine(this) 
+      {
+      m_Position[0] = 0.0;
+      m_Position[1] = 0.0;
+      m_Position[2] = 0.0;
+      }
     virtual ~MyTracker() {};
 
     typedef Tracker::ResultType                 ResultType;
+    typedef igstk::Transform                    TransformType;
+    typedef TransformType::VectorType           PositionType;
+    typedef TransformType::ErrorType            ErrorType;
 
     virtual ResultType InternalOpen( void ) { return SUCCESS; }
     virtual ResultType InternalActivateTools( void ) { return SUCCESS; }
     virtual ResultType InternalStartTracking( void ) { return SUCCESS; }
-    virtual ResultType InternalUpdateStatus( void ) { return SUCCESS; }
+    virtual ResultType InternalUpdateStatus( void ) 
+      { 
+      TransformType transform;
+      transform.SetToIdentity( m_ValidityTime );
+      
+      m_Position[0] += 1.0;  // drift along a vector (1.0, 2.0, 3.0)
+      m_Position[1] += 2.0;  // just to simulate a linear movement
+      m_Position[2] += 3.0;  // being tracked in space.
+
+      ErrorType errorValue = 0.5; 
+
+      transform.SetTranslation( m_Position, errorValue, m_ValidityTime );
+      this->SetToolTransform( 0, 0, transform );
+
+      std::cout << "MyTracker::InternalUpdateStatus() " << m_Position << std::endl;
+  
+      return SUCCESS; 
+      }
     virtual ResultType InternalReset( void ) { return SUCCESS; }
     virtual ResultType InternalStopTracking( void ) { return SUCCESS; }
     virtual ResultType InternalDeactivateTools( void ) 
@@ -121,6 +146,7 @@ private:
     TimePeriodType                      m_ValidityTime;
     TrackerPortType::Pointer            m_Port;
     TrackerToolType::Pointer            m_Tool;
+    PositionType                        m_Position;
 };
 
 
