@@ -258,19 +258,19 @@ Landmark3DRegistration:: ComputeTransformProcessing()
     }
   catch ( itk::ExceptionObject & excp )
     {
-      igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
+    igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
                      "Transform computation exception" << excp.GetDescription());
-      failure = true;
+    failure = true;
     }
 
   if( failure )
     {
-    std::cout << "ComputationFailureInput getting pushed" << std::endl;
+    igstkLogMacro( DEBUG, "ComputationFailureInput getting pushed" );
     igstkPushInputMacro( TransformComputationFailure );
     }
   else
     {
-    std::cout << "ComputationSuccessInput getting pushed" << std::endl;
+    igstkLogMacro( DEBUG, "ComputationSuccessInput getting pushed" );
     igstkPushInputMacro( TransformComputationSuccess );
     }    
   
