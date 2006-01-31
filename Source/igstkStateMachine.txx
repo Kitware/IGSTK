@@ -137,6 +137,18 @@ StateMachine< TClass >
 ::SelectInitialState( const StateType & initialState )
 {
 
+  if( m_ReadyToRun )
+    {
+    igstkLogMacroStatic( m_This, CRITICAL, "In class " 
+      << m_This->GetNameOfClass() 
+      << " Error: attempt to invoke SelectInitialState() " 
+      << " but the machine is ready to go " 
+      << " There is no reason for invoking SelectInitialState() after "
+      << " SetReadyToRun(). Something should be wrong in the logic" 
+      << " of your state machine programming.\n" );
+    return;
+    }
+
   StatesConstIterator  state = 
               m_States.find( initialState.GetIdentifier() );
     
