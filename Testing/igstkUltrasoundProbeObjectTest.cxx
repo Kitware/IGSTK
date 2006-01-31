@@ -368,6 +368,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   std::cout << "Test [DONE]" << std::endl;
 
   delete view2D;
+  delete form;
   
   return EXIT_SUCCESS;
 }
