@@ -404,8 +404,8 @@ void PulseGenerator
 
   while( t && t->time < 0.0 ) 
     {
-    (t->cb)(t->arg);
     m_FirstTimeout = t->next;
+    (t->cb)(t->arg);
     Timeout * tt = t;
     t = t->next;
     delete tt;
