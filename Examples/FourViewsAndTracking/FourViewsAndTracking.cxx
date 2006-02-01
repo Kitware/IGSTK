@@ -31,7 +31,24 @@ int main(int , char** )
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
   ellipsoid->SetRadius(200,200,300); // about a human skull
-  
+
+  double validityTimeInMilliseconds = 1e20; // in seconds
+  igstk::Transform transform;
+  igstk::Transform::VectorType translation;
+  translation[0] = 0.0;
+  translation[1] = 0.0;
+  translation[2] = 0.0;
+  igstk::Transform::VersorType rotation;
+  rotation.Set( 0.0, 0.0, 0.0, 1.0 );
+  igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
+
+  transform.SetTranslationAndRotation( 
+      translation, rotation, errorValue, validityTimeInMilliseconds );
+
+  ellipsoid->RequestSetTransform( transform );
+
+
+
   // Create the ellipsoid representation
   igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
   ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
