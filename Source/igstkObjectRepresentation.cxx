@@ -37,8 +37,7 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_Logger(NULL)
 
   igstkAddInputMacro( ValidSpatialObject );
   igstkAddInputMacro( NullSpatialObject  );
-  igstkAddInputMacro( ValidUpdatePosition );
-  igstkAddInputMacro( ExpiredUpdatePosition );
+  igstkAddInputMacro( UpdateActorsPosition );
   igstkAddInputMacro( UpdateRepresentation );
   igstkAddInputMacro( ValidTimeStamp );
   igstkAddInputMacro( InvalidTimeStamp );
@@ -46,62 +45,75 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_Logger(NULL)
   igstkAddInputMacro( RequestUpdatePosition );
 
   igstkAddStateMacro( NullSpatialObject );
-  igstkAddStateMacro( ValidSpatialObject );
+  igstkAddStateMacro( ValidSpatialObjectAndVisible );
+  igstkAddStateMacro( ValidSpatialObjectAndInvisible );
   igstkAddStateMacro( ValidTimeStamp );
   igstkAddStateMacro( InvalidTimeStamp );
-  igstkAddStateMacro( AttemptingUpdatePosition );
+  igstkAddStateMacro( AttemptingUpdatePositionAndVisible );
+  igstkAddStateMacro( AttemptingUpdatePositionAndInvisible );
 
   igstkAddTransitionMacro( NullSpatialObject, NullSpatialObject, NullSpatialObject,  No );
-  igstkAddTransitionMacro( NullSpatialObject, ValidSpatialObject, ValidSpatialObject,  SetSpatialObject );
-  igstkAddTransitionMacro( NullSpatialObject, ValidUpdatePosition, NullSpatialObject,  ReportInvalidRequest );
-  igstkAddTransitionMacro( NullSpatialObject, ExpiredUpdatePosition, NullSpatialObject,  ReportInvalidRequest );
+  igstkAddTransitionMacro( NullSpatialObject, ValidSpatialObject, ValidSpatialObjectAndInvisible,  SetSpatialObject );
+  igstkAddTransitionMacro( NullSpatialObject, UpdateActorsPosition, NullSpatialObject,  ReportInvalidRequest );
   igstkAddTransitionMacro( NullSpatialObject, UpdateRepresentation, NullSpatialObject,  No );
   igstkAddTransitionMacro( NullSpatialObject, ValidTimeStamp, NullSpatialObject,  ReportInvalidRequest );
   igstkAddTransitionMacro( NullSpatialObject, InvalidTimeStamp, NullSpatialObject,  ReportInvalidRequest );
   igstkAddTransitionMacro( NullSpatialObject, RequestUpdatePosition, NullSpatialObject,  ReportInvalidRequest );
   igstkAddTransitionMacro( NullSpatialObject, SpatialObjectTransform, NullSpatialObject,  ReportInvalidRequest );
 
-  igstkAddTransitionMacro( ValidSpatialObject, ValidUpdatePosition, ValidTimeStamp,  UpdatePosition );
-  igstkAddTransitionMacro( ValidSpatialObject, ExpiredUpdatePosition, InvalidTimeStamp,  UpdatePosition );
-  igstkAddTransitionMacro( ValidSpatialObject, NullSpatialObject, NullSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidSpatialObject, ValidSpatialObject, ValidSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidSpatialObject, UpdateRepresentation, ValidSpatialObject,  UpdateRepresentation );
-  igstkAddTransitionMacro( ValidSpatialObject, ValidTimeStamp, ValidTimeStamp,  MakeObjectsVisible );
-  igstkAddTransitionMacro( ValidSpatialObject, InvalidTimeStamp, InvalidTimeStamp,  MakeObjectsInvisible );
-  igstkAddTransitionMacro( ValidSpatialObject, RequestUpdatePosition, AttemptingUpdatePosition,  RequestUpdatePosition );
-  igstkAddTransitionMacro( ValidSpatialObject, SpatialObjectTransform, ValidSpatialObject,  ReceiveSpatialObjectTransform );
+  igstkAddTransitionMacro( ValidSpatialObjectAndVisible, NullSpatialObject, NullSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidSpatialObjectAndVisible, UpdateActorsPosition, ValidTimeStamp,  UpdateActorsPosition );
+  igstkAddTransitionMacro( ValidSpatialObjectAndVisible, ValidSpatialObject, ValidSpatialObjectAndInvisible,  No ); 
+  igstkAddTransitionMacro( ValidSpatialObjectAndVisible, UpdateRepresentation, ValidSpatialObjectAndVisible,  UpdateRepresentation );
+  igstkAddTransitionMacro( ValidSpatialObjectAndVisible, ValidTimeStamp, ValidTimeStamp,  No );
+  igstkAddTransitionMacro( ValidSpatialObjectAndVisible, InvalidTimeStamp, InvalidTimeStamp,  MakeObjectsInvisible );
+  igstkAddTransitionMacro( ValidSpatialObjectAndVisible, RequestUpdatePosition, AttemptingUpdatePositionAndInvisible,  RequestUpdatePosition );
+  igstkAddTransitionMacro( ValidSpatialObjectAndVisible, SpatialObjectTransform, ValidSpatialObjectAndVisible,  ReceiveSpatialObjectTransform );
 
-  igstkAddTransitionMacro( ValidTimeStamp, ValidUpdatePosition, ValidTimeStamp,  UpdatePosition );
-  igstkAddTransitionMacro( ValidTimeStamp, ExpiredUpdatePosition, InvalidTimeStamp,  UpdatePosition );
+  igstkAddTransitionMacro( ValidSpatialObjectAndInvisible, NullSpatialObject, NullSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidSpatialObjectAndInvisible, UpdateActorsPosition, ValidTimeStamp,  UpdateActorsPosition );
+  igstkAddTransitionMacro( ValidSpatialObjectAndInvisible, ValidSpatialObject, ValidSpatialObjectAndInvisible,  No ); 
+  igstkAddTransitionMacro( ValidSpatialObjectAndInvisible, UpdateRepresentation, ValidSpatialObjectAndInvisible,  UpdateRepresentation );
+  igstkAddTransitionMacro( ValidSpatialObjectAndInvisible, ValidTimeStamp, ValidTimeStamp,  MakeObjectsVisible );
+  igstkAddTransitionMacro( ValidSpatialObjectAndInvisible, InvalidTimeStamp, InvalidTimeStamp,  No );
+  igstkAddTransitionMacro( ValidSpatialObjectAndInvisible, RequestUpdatePosition, AttemptingUpdatePositionAndInvisible,  RequestUpdatePosition );
+  igstkAddTransitionMacro( ValidSpatialObjectAndInvisible, SpatialObjectTransform, ValidSpatialObjectAndInvisible,  ReceiveSpatialObjectTransform );
+
   igstkAddTransitionMacro( ValidTimeStamp, NullSpatialObject, NullSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidTimeStamp, ValidSpatialObject, ValidSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidTimeStamp, UpdateActorsPosition, ValidTimeStamp,  UpdateActorsPosition );
+  igstkAddTransitionMacro( ValidTimeStamp, ValidSpatialObject, ValidSpatialObjectAndInvisible,  No ); 
   igstkAddTransitionMacro( ValidTimeStamp, UpdateRepresentation, ValidTimeStamp,  UpdateRepresentation );
   igstkAddTransitionMacro( ValidTimeStamp, ValidTimeStamp, ValidTimeStamp,  No );
   igstkAddTransitionMacro( ValidTimeStamp, InvalidTimeStamp, InvalidTimeStamp,  MakeObjectsInvisible );
-  igstkAddTransitionMacro( ValidTimeStamp, RequestUpdatePosition, AttemptingUpdatePosition,  RequestUpdatePosition );
-  igstkAddTransitionMacro( ValidTimeStamp, SpatialObjectTransform, ValidSpatialObject,  ReceiveSpatialObjectTransform );
+  igstkAddTransitionMacro( ValidTimeStamp, RequestUpdatePosition, AttemptingUpdatePositionAndVisible,  RequestUpdatePosition );
+  igstkAddTransitionMacro( ValidTimeStamp, SpatialObjectTransform, InvalidTimeStamp,  ReceiveSpatialObjectTransform );
 
-  igstkAddTransitionMacro( InvalidTimeStamp, ValidUpdatePosition, ValidTimeStamp,  UpdatePosition );
-  igstkAddTransitionMacro( InvalidTimeStamp, ExpiredUpdatePosition, InvalidTimeStamp,  UpdatePosition );
   igstkAddTransitionMacro( InvalidTimeStamp, NullSpatialObject, NullSpatialObject,  No ); 
-  igstkAddTransitionMacro( InvalidTimeStamp, ValidSpatialObject, ValidSpatialObject,  No ); 
-  igstkAddTransitionMacro( InvalidTimeStamp, UpdateRepresentation, ValidSpatialObject,  UpdateRepresentation );
+  igstkAddTransitionMacro( InvalidTimeStamp, UpdateActorsPosition, InvalidTimeStamp,  UpdateActorsPosition );
+  igstkAddTransitionMacro( InvalidTimeStamp, ValidSpatialObject, ValidSpatialObjectAndInvisible,  No ); 
+  igstkAddTransitionMacro( InvalidTimeStamp, UpdateRepresentation, ValidSpatialObjectAndInvisible,  UpdateRepresentation );
   igstkAddTransitionMacro( InvalidTimeStamp, ValidTimeStamp, ValidTimeStamp,  MakeObjectsVisible );
   igstkAddTransitionMacro( InvalidTimeStamp, InvalidTimeStamp, InvalidTimeStamp,  No );
-  igstkAddTransitionMacro( InvalidTimeStamp, RequestUpdatePosition, AttemptingUpdatePosition,  RequestUpdatePosition );
-  igstkAddTransitionMacro( InvalidTimeStamp, SpatialObjectTransform, ValidSpatialObject,  ReceiveSpatialObjectTransform );
+  igstkAddTransitionMacro( InvalidTimeStamp, RequestUpdatePosition, AttemptingUpdatePositionAndInvisible,  RequestUpdatePosition );
+  igstkAddTransitionMacro( InvalidTimeStamp, SpatialObjectTransform, InvalidTimeStamp,  ReceiveSpatialObjectTransform );
 
-  igstkAddTransitionMacro( AttemptingUpdatePosition, ValidUpdatePosition, AttemptingUpdatePosition,  ReportInvalidRequest );
-  igstkAddTransitionMacro( AttemptingUpdatePosition, ExpiredUpdatePosition, AttemptingUpdatePosition,  ReportInvalidRequest );
-  igstkAddTransitionMacro( AttemptingUpdatePosition, NullSpatialObject, NullSpatialObject,  No ); 
-  igstkAddTransitionMacro( AttemptingUpdatePosition, ValidSpatialObject, ValidSpatialObject,  No ); 
-  igstkAddTransitionMacro( AttemptingUpdatePosition, UpdateRepresentation, ValidSpatialObject,  UpdateRepresentation );
-  igstkAddTransitionMacro( AttemptingUpdatePosition, ValidTimeStamp, AttemptingUpdatePosition,  ReportInvalidRequest );
-  igstkAddTransitionMacro( AttemptingUpdatePosition, InvalidTimeStamp, AttemptingUpdatePosition,  ReportInvalidRequest );
-  igstkAddTransitionMacro( AttemptingUpdatePosition, RequestUpdatePosition, AttemptingUpdatePosition,  RequestUpdatePosition );
-  igstkAddTransitionMacro( AttemptingUpdatePosition, SpatialObjectTransform, ValidSpatialObject,  ReceiveSpatialObjectTransform );
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndInvisible, NullSpatialObject, NullSpatialObject,  No ); 
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndInvisible, UpdateActorsPosition, AttemptingUpdatePositionAndInvisible,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndInvisible, ValidSpatialObject, ValidSpatialObjectAndInvisible,  No ); 
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndInvisible, UpdateRepresentation, ValidSpatialObjectAndInvisible,  UpdateRepresentation );
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndInvisible, ValidTimeStamp, AttemptingUpdatePositionAndInvisible,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndInvisible, InvalidTimeStamp, AttemptingUpdatePositionAndInvisible,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndInvisible, RequestUpdatePosition, AttemptingUpdatePositionAndInvisible,  RequestUpdatePosition );
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndInvisible, SpatialObjectTransform, InvalidTimeStamp,  ReceiveSpatialObjectTransform );
 
-
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndVisible, NullSpatialObject, NullSpatialObject,  No ); 
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndVisible, UpdateActorsPosition, AttemptingUpdatePositionAndVisible,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndVisible, ValidSpatialObject, ValidSpatialObjectAndInvisible,  No ); 
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndVisible, UpdateRepresentation, AttemptingUpdatePositionAndVisible,  No );
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndVisible, ValidTimeStamp, AttemptingUpdatePositionAndVisible,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndVisible, InvalidTimeStamp, AttemptingUpdatePositionAndVisible,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndVisible, RequestUpdatePosition, AttemptingUpdatePositionAndVisible,  RequestUpdatePosition );
+  igstkAddTransitionMacro( AttemptingUpdatePositionAndVisible, SpatialObjectTransform, ValidSpatialObjectAndVisible,  ReceiveSpatialObjectTransform );
 
   igstkSetInitialStateMacro( NullSpatialObject );
 
@@ -227,23 +239,13 @@ void ObjectRepresentation::RequestUpdatePositionProcessing()
 }
 
 
-/** Receive the Transform from the SpatialObject via a transduction macro.
- *  Once the transform is received, the validity time is verified. */
+/** Receive the Transform from the SpatialObject via a transduction macro. */
 void ObjectRepresentation::ReceiveSpatialObjectTransformProcessing()
 {
   m_SpatialObjectTransform = m_SpatialObjectTransformToBeSet;
 
-  if( m_TimeToRender.GetExpirationTime() < m_SpatialObjectTransform.GetStartTime() ||
-      m_TimeToRender.GetStartTime()      > m_SpatialObjectTransform.GetExpirationTime() )
-    {
-    igstkPushInputMacro( ExpiredUpdatePosition );
-    m_StateMachine.ProcessInputs();
-    }
-  else
-    {
-    igstkPushInputMacro( ValidUpdatePosition );
-    m_StateMachine.ProcessInputs();
-    }
+  igstkPushInputMacro( UpdateActorsPosition );
+  m_StateMachine.ProcessInputs();
 }
 
 /** Null operation for a State Machine transition */
@@ -251,8 +253,9 @@ void ObjectRepresentation::NoProcessing()
 {
 }
 
+
 /** Update the object representation (i.e vtkActors). */
-void ObjectRepresentation::UpdatePositionProcessing()
+void ObjectRepresentation::UpdateActorsPositionProcessing()
 {
 
   vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
@@ -263,8 +266,8 @@ void ObjectRepresentation::UpdatePositionProcessing()
   ActorsListType::iterator it = m_Actors.begin();
   while( it != m_Actors.end() )
     {  
-      vtkProp3D::SafeDownCast(*it)->SetUserMatrix(vtkMatrix);
-     it++;
+    vtkProp3D::SafeDownCast(*it)->SetUserMatrix(vtkMatrix);
+    it++;
     }
 
   vtkMatrix->Delete();
@@ -297,6 +300,8 @@ void ObjectRepresentation::RequestVerifyTimeStamp()
  * has expired with respect to the requested rendering time. */
 void ObjectRepresentation::MakeObjectsInvisibleProcessing()
 {
+  igstkLogMacro( WARNING, "MakeObjectsInvisibleProcessing at " << m_TimeToRender );
+  
   ActorsListType::iterator it = m_Actors.begin();
   while(it != m_Actors.end())
     {
@@ -310,6 +315,8 @@ void ObjectRepresentation::MakeObjectsInvisibleProcessing()
  * is valid with respect to the requested rendering time. */
 void ObjectRepresentation::MakeObjectsVisibleProcessing()
 {
+  igstkLogMacro( WARNING, "MakeObjectsVisibleProcessing at " << m_TimeToRender );
+
   ActorsListType::iterator it = m_Actors.begin();
   while(it != m_Actors.end())
     {

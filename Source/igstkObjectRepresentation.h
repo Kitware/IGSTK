@@ -115,7 +115,7 @@ protected:
   
   /** Verify if the time of the rendering matches the time of the transform.
    * If the two TimeStamps do not overlap, then the actors are made invisible.
-   * This method must be called from all the UpdatePositionProcessing() of the
+   * This method must be called from all the UpdateRepresentation() of the
    * derived classes. */
   void RequestVerifyTimeStamp();
   
@@ -146,7 +146,7 @@ private:
   void NoProcessing();
 
   /** update the position of the object. This should not be overloaded by other classes */
-  void UpdatePositionProcessing();
+  void UpdateActorsPositionProcessing();
 
   /** Set the spatial object for this class */
   void SetSpatialObjectProcessing(); 
@@ -176,9 +176,7 @@ private:
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidSpatialObject );
   igstkDeclareInputMacro( NullSpatialObject );
-  igstkDeclareInputMacro( ValidUpdatePosition );
-  igstkDeclareInputMacro( ExpiredUpdatePosition );
-  igstkDeclareInputMacro( UpdatePosition );
+  igstkDeclareInputMacro( UpdateActorsPosition );
   igstkDeclareInputMacro( UpdateRepresentation );
   igstkDeclareInputMacro( ValidTimeStamp );
   igstkDeclareInputMacro( InvalidTimeStamp );
@@ -187,10 +185,13 @@ private:
   
   /** States for the State Machine */
   igstkDeclareStateMacro( NullSpatialObject );
+  igstkDeclareStateMacro( ValidSpatialObjectAndVisible );
+  igstkDeclareStateMacro( ValidSpatialObjectAndInvisible );
   igstkDeclareStateMacro( ValidSpatialObject );
   igstkDeclareStateMacro( ValidTimeStamp );
   igstkDeclareStateMacro( InvalidTimeStamp );
-  igstkDeclareStateMacro( AttemptingUpdatePosition );
+  igstkDeclareStateMacro( AttemptingUpdatePositionAndVisible );
+  igstkDeclareStateMacro( AttemptingUpdatePositionAndInvisible );
 
   /** Transduction macros that will convert received events 
    *  into StateMachine inputs */
