@@ -29,6 +29,9 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
+
 namespace ViewTest
 {
   class ViewObserver : public ::itk::Command 
@@ -75,7 +78,7 @@ namespace ViewTest
         {
         m_PulseCounter++;
 
-        if( m_PulseCounter > 10 )
+        if( m_PulseCounter > 20 )
           {
           if( m_View )
             {
@@ -114,12 +117,22 @@ int igstkViewTest( int, char * [] )
 
   bool bEnd = false;
 
+  typedef itk::Logger              LoggerType;
+  typedef itk::StdStreamLogOutput  LogOutputType;
+  
+  // logger object created for logging mouse activities
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
   try
     {
 
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
-    ellipsoid->SetRadius(1,1,1);
+    ellipsoid->SetRadius(0.1,0.1,0.1);
     
     // Create the ellipsoid representation
     igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
@@ -130,7 +143,7 @@ int igstkViewTest( int, char * [] )
     // Create the cylinder 
     igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
     cylinder->SetRadius(0.1);
-    cylinder->SetHeight(3);
+    cylinder->SetHeight(0.5);
 
     // Create the cylinder representation
     igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
@@ -138,14 +151,14 @@ int igstkViewTest( int, char * [] )
     cylinderRepresentation->SetColor(1.0,0.0,0.0);
     cylinderRepresentation->SetOpacity(1.0);
 
-    const double validityTimeInMilliseconds = 1e5; // 100 seconds
+    const double validityTimeInMilliseconds = 1e300; // 100 seconds
     igstk::Transform transform;
     igstk::Transform::VectorType translation;
     translation[0] = 0;
     translation[1] = 0;
     translation[2] = 0;
     igstk::Transform::VersorType rotation;
-    rotation.Set( 0.707, 0.0, 0.707, 0.0 );
+    rotation.Set( 0.0, 0.0, 0.0, 1.0 );
     igstk::Transform::ErrorType errorValue = 10; // 10 millimeters
 
     transform.SetTranslationAndRotation( 
@@ -154,15 +167,20 @@ int igstkViewTest( int, char * [] )
     ellipsoid->RequestSetTransform( transform );
 
 
-    translation[1] = 20.0;  // translate the cylinder 20.0mm along X
+    translation[1] = -0.25;  // translate the cylinder along Y
+    translation[2] = -2.00;  // translate the cylinder along Z
+    rotation.Set( 0.7071, 0.0, 0.0, 0.7071 );
+
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
     cylinder->RequestSetTransform( transform );
 
     
+    cylinderRepresentation->SetLogger( logger );
+  
     // Create an FLTK minimal GUI
-    Fl_Window * form = new Fl_Window(601,301,"View3D Test");
+    Fl_Window * form = new Fl_Window(601,301,"View Test");
     
     View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
     View3DType * view3D = new View3DType(310,10,280,280,"3D View");

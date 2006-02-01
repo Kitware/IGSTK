@@ -145,7 +145,7 @@ int igstkViewRefreshRateTest( int, char * [] )
     ellipsoidRepresentation->SetOpacity(1.0);
 
     // Create an FLTK minimal GUI
-    Fl_Window * form = new Fl_Window(601,301,"View3D Test");
+    Fl_Window * form = new Fl_Window(601,301,"View Refresh Rate Test");
     
     View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
     View3DType * view3D = new View3DType(310,10,280,280,"3D View");
@@ -164,6 +164,7 @@ int igstkViewRefreshRateTest( int, char * [] )
  
     // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );
+    view3D->RequestAddObject( ellipsoidRepresentation );
     
     view2D->RequestDisableInteractions();
     view3D->RequestDisableInteractions();
