@@ -58,12 +58,12 @@ PulseGenerator::PulseGenerator():m_StateMachine(this)
 
   this->m_NumberOfPulseGeneratorsLock.Lock();
   this->m_NumberOfPulseGenerators++;
-  this->m_NumberOfPulseGeneratorsLock.Unlock();
 
   if( !m_RealTimeClock )
     {
     m_RealTimeClock = itk::RealTimeClock::New();
     }
+  this->m_NumberOfPulseGeneratorsLock.Unlock();
 
   igstkAddInputMacro( ValidFrequency );
   igstkAddInputMacro( InvalidLowFrequency );
