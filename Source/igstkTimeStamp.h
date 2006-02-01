@@ -20,10 +20,8 @@
 #define __igstkTimeStamp_H
 
 
-#include <time.h>
 #include <iostream>
-#include <itkLightObject.h>
-#include "itkWin32Header.h"
+#include "itkRealTimeClock.h"
 
 
 namespace igstk 
@@ -111,15 +109,16 @@ protected:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
-private:
-
-  typedef clock_t       ClickType;
-
 
 private:
 
-     TimePeriodType   m_StartTime;
-     TimePeriodType   m_ExpirationTime;
+     TimePeriodType                         m_StartTime;
+     
+     TimePeriodType                         m_ExpirationTime;
+
+     static ::itk::RealTimeClock::Pointer   m_RealTimeClock;
+
+     mutable itk::SimpleFastMutexLock       m_TimeStampLock;
 
 };
 

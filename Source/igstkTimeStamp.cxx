@@ -20,19 +20,32 @@
 namespace igstk
 {
 
+::itk::RealTimeClock::Pointer TimeStamp::m_RealTimeClock = NULL;
+
+  
 TimeStamp
 ::TimeStamp()
 {
-  m_StartTime       = 0;
-  m_ExpirationTime  = 0;
+  this->m_StartTime       = 0;
+  this->m_ExpirationTime  = 0;
+
+  this->m_TimeStampLock.Lock();
+
+  if( !this->m_RealTimeClock )
+    {
+    this->m_RealTimeClock = itk::RealTimeClock::New();
+    }
+  this->m_TimeStampLock.Unlock();
+
+
 }
 
 
 TimeStamp
 ::~TimeStamp()
 {
-  m_StartTime       = 0;
-  m_ExpirationTime  = 0;
+  this->m_StartTime       = 0;
+  this->m_ExpirationTime  = 0;
 }
 
 
@@ -40,8 +53,8 @@ const TimeStamp &
 TimeStamp
 ::operator=( const TimeStamp & inputTimeStamp )
 {
-  m_StartTime      = inputTimeStamp.m_StartTime;
-  m_ExpirationTime = inputTimeStamp.m_ExpirationTime;
+  this->m_StartTime      = inputTimeStamp.m_StartTime;
+  this->m_ExpirationTime = inputTimeStamp.m_ExpirationTime;
   return *this;
 }
    
@@ -50,12 +63,8 @@ void
 TimeStamp
 ::SetStartTimeNowAndExpireAfter(double millisecondsToExpire) 
 {
-  const ClickType currentTicks = clock();
-  
-  m_StartTime = static_cast<double>(currentTicks) /
-                static_cast<double>(CLOCKS_PER_SEC);
-
-  m_ExpirationTime = m_StartTime + millisecondsToExpire;
+  this->m_StartTime      = this->m_RealTimeClock->GetTimeStamp();
+  this->m_ExpirationTime = this->m_StartTime + millisecondsToExpire;
 }
 
 
@@ -64,7 +73,7 @@ double
 TimeStamp
 ::GetStartTime() const 
 {
-  return m_StartTime;
+  return this->m_StartTime;
 }
 
 
@@ -73,7 +82,7 @@ double
 TimeStamp
 ::GetExpirationTime() const 
 {
-  return m_ExpirationTime;
+  return this->m_ExpirationTime;
 }
 
 
@@ -83,12 +92,12 @@ bool
 TimeStamp
 ::IsValidAtTime( double milliseconds ) const
 {
-  if( m_StartTime > milliseconds )
+  if( this->m_StartTime > milliseconds )
     {
     return false;
     }
 
-  if( m_ExpirationTime < milliseconds )
+  if( this->m_ExpirationTime < milliseconds )
     {
     return false;
     }
@@ -114,7 +123,7 @@ void
 TimeStamp
 ::PrintHeader(std::ostream& os, itk::Indent indent) const
 {
-  os << indent << "Transform" << " (" << this << ")\n";
+  os << indent << "TimeStamp" << " (" << this << ")\n";
 }
 
 
@@ -144,10 +153,9 @@ std::ostream& operator<<(std::ostream& os, const TimeStamp& o)
 /** Print Self function */
 void TimeStamp::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
-  os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
-
-  os << indent << this->m_StartTime << std::endl;
-  os << indent << this->m_ExpirationTime << std::endl;
+  os << indent << "RTTI typeinfo:    " << typeid( *this ).name() << std::endl;
+  os << indent << "Start Time      = " << this->m_StartTime << std::endl;
+  os << indent << "Expiration Time = " << this->m_ExpirationTime << std::endl;
 }
 
 
