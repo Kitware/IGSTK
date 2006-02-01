@@ -24,7 +24,12 @@
 #include "igstkLandmark3DRegistration.h"
 #include "igstkTransform.h"
 #include "igstkEvents.h"
+
 #include "itkNumericTraits.h"
+#include "itkMatrix.h"
+#include "itkSymmetricEigenAnalysis.h"
+
+#include "vnl/vnl_math.h"
 
 namespace igstk
 { 
@@ -241,6 +246,84 @@ Landmark3DRegistration::ResetRegistrationProcessing()
   m_StateMachine.SelectInitialState( m_IdleState );
 }
 
+/* The "CheckCollinearity" method checks whether the landmark points 
+ *  are collinear or not */
+bool
+Landmark3DRegistration::CheckCollinearity()
+{
+   typedef itk::Matrix<double,3,3>                 MatrixType;
+   typedef itk::Vector<double,3>                   VectorType;
+
+   MatrixType                                      covarianceMatrix;
+   
+   PointsContainerConstIterator                    pointItr;
+   
+   VectorType                                      landmarkVector;
+   VectorType                                      landmarkCentered;
+   VectorType                                      landmarkCentroid;
+   
+   landmarkVector.Fill(0.0);
+   
+   pointItr  = m_ImageLandmarks.begin();
+   while( pointItr != m_ImageLandmarks.end() )
+     {
+     landmarkVector[0] += (*pointItr)[0] ;
+     landmarkVector[1] += (*pointItr)[1] ;
+     landmarkVector[2] += (*pointItr)[2] ;
+     ++pointItr;
+     }
+
+  for(unsigned int ic=0; ic<3; ic++)
+    {
+    landmarkCentroid[ic]  = landmarkVector[ic]  / this->m_ImageLandmarks.size();
+    } 
+  
+  pointItr  = m_ImageLandmarks.begin();
+  while( pointItr != m_ImageLandmarks.end() )
+     {
+     for(unsigned int i=0; i<3; i++)
+       {     
+       landmarkCentered[i]  = (*pointItr)[i]  - landmarkCentroid[i];
+       }
+
+     for(unsigned int i=0; i<3; i++)
+       {
+       for(unsigned int j=0; j<3; j++)
+         {
+         covarianceMatrix[i][j] += landmarkCentered[i] * landmarkCentered[j];
+         }
+       }
+     ++pointItr;
+     }
+
+    MatrixType                    eigenVectors;
+    VectorType                    eigenValues;
+
+   typedef itk::SymmetricEigenAnalysis< 
+           MatrixType,  
+           VectorType,
+           MatrixType > SymmetricEigenAnalysisType;
+
+   SymmetricEigenAnalysisType symmetricEigenSystem(3);
+   
+   symmetricEigenSystem.SetOrderEigenMagnitudes( true );
+        
+   symmetricEigenSystem.ComputeEigenValuesAndVectors
+               ( covarianceMatrix, eigenValues, eigenVectors );
+
+   double tolerance=0.001;
+
+   double ratio;
+
+   ratio = ( vnl_math_sqr ( eigenValues[0]) + vnl_math_sqr ( eigenValues[1]))/ 
+           ( vnl_math_sqr ( eigenValues[2]));
+
+   if ( ratio > tolerance )  
+      return false; 
+   else
+     return true;
+}
+
 /* The "ComputeTransform" method calculates the rigid body
   transformation parameters */
 void 
@@ -251,16 +334,24 @@ Landmark3DRegistration:: ComputeTransformProcessing()
   m_TransformInitializer->SetFixedLandmarks(m_TrackerLandmarks);
   m_TransformInitializer->SetMovingLandmarks(m_ImageLandmarks);
   m_TransformInitializer->SetTransform( m_Transform );
+  
   bool failure = false;
-  try 
+
+  // check for collinearity
+  failure = CheckCollinearity();
+
+  if ( ! failure ) 
     {
-    m_TransformInitializer->InitializeTransform(); 
-    }
-  catch ( itk::ExceptionObject & excp )
-    {
-    igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
+    try 
+      {
+      m_TransformInitializer->InitializeTransform(); 
+      }
+    catch ( itk::ExceptionObject & excp )
+      {
+      igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
                      "Transform computation exception" << excp.GetDescription());
-    failure = true;
+      failure = true;
+      }
     }
 
   if( failure )

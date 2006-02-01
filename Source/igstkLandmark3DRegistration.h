@@ -112,6 +112,10 @@ public:
        state machine: FIXME */
   double ComputeRMSError();
 
+  /**  The "CheckCollinearity" method checks whether the landmark points
+   *   are colliner or not */
+  bool CheckCollinearity();
+   
   /** Landmark registration events..they have to be eventually added
    * to the igstkEvents class */
   itkEventMacro( TransformInitializerEvent,        IGSTKEvent );
