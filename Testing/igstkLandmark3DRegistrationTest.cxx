@@ -89,6 +89,7 @@ class Landmark3DRegistrationGetTransformCallback: public itk::Command
     void Execute( itk::Object *caller, const itk::EventObject & event )
     {
       std::cout<< " TransformEvent is thrown" << std::endl;
+                    dynamic_cast < const TransformModifiedEventType* > ( &event );
       const TransformModifiedEventType * transformEvent =
                     dynamic_cast < const TransformModifiedEventType* > ( &event );
       m_Transform = transformEvent->Get();
@@ -101,7 +102,7 @@ class Landmark3DRegistrationGetTransformCallback: public itk::Command
     igstk::Transform GetTransform()
     {
       return m_Transform;
-    }  
+  }  
   protected:
     Landmark3DRegistrationGetTransformCallback()   
     {
@@ -325,7 +326,47 @@ int igstkLandmark3DRegistrationTest( int argv, char * argc[] )
     // Test the Reset method
     landmarkRegister->RequestResetRegistration();
 
-    
+    // Test the transform computation with collinear points
+    {
+      std::cout << "Compute transform using collinear point" << std::endl;
+      Rigid3DTransformType::Pointer   rigid3DTransform = Rigid3DTransformType::New();
+      rigid3DTransform->SetRotationMatrix( mrotation );
+      rigid3DTransform->SetTranslation(translation);
+
+    // Add 1st landmark
+      fixedPoint[0] =  25.0;
+      fixedPoint[1] =  11.0;
+      fixedPoint[2] =  15.0;
+      landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
+      movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
+      landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
+
+    // Add 2nd landmark
+      fixedPoint[0] =  15.0;
+      fixedPoint[1] =  11.0;
+      fixedPoint[2] =  15.0;
+      landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
+      movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
+      landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
+
+    // Add 3d landmark
+      fixedPoint[0] =  14.0;
+      fixedPoint[1] =  11.0;
+      fixedPoint[2] =  15.0;
+      landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
+      movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
+      landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
+      
+      landmarkRegister->Print(std::cout);
+         
+      Landmark3DRegistrationErrorCallback::Pointer ecb2 = Landmark3DRegistrationErrorCallback::New();
+
+      landmarkRegister->AddObserver( ComputationFailureEvent(), ecb2 );
+      
+      // Calculate transform
+      landmarkRegister->RequestComputeTransform();
+    }
+
     return EXIT_SUCCESS;
 }
 
