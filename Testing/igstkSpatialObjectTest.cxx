@@ -102,7 +102,14 @@ protected:
     typedef TransformType::ErrorType            ErrorType;
 
     virtual ResultType InternalOpen( void ) { return SUCCESS; }
-    virtual ResultType InternalActivateTools( void ) { return SUCCESS; }
+    virtual ResultType InternalActivateTools( void ) 
+      {
+      igstkLogMacro( DEBUG, "MyTracker::InternalActivateTools called ...\n");
+      TrackerPortType::Pointer port = TrackerPortType::New();
+      port->AddTool( TrackerToolType::New() );
+      this->AddPort( port );
+      return SUCCESS;
+      }
     virtual ResultType InternalStartTracking( void ) { return SUCCESS; }
     virtual ResultType InternalUpdateStatus( void ) 
       { 
@@ -177,12 +184,13 @@ int igstkSpatialObjectTest( int, char * [] )
   tracker->AttachObjectToTrackerTool( toolPort, toolNumber, dummyObject );
 
   dummyObject->Print( std::cout );
-
+  
   tracker->StartTracking();
 
   for(unsigned int i=0; i<50; i++)
     {
     igstk::PulseGenerator::CheckTimeouts();
+    dummyObject->RequestGetTransform();
     }
 
   tracker->StopTracking();
