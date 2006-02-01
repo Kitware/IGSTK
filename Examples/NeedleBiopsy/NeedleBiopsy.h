@@ -54,6 +54,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 
+#include "igstkTubeObject.h"
+#include "igstkTubeObjectRepresentation.h"
+
 #include "igstkCylinderObject.h"
 #include "igstkCylinderObjectRepresentation.h"
 
@@ -113,6 +116,9 @@ public:
   virtual void RequestRegistration();
   virtual void RequestStartTracking();
   virtual void RequestStopTracking();
+
+  virtual void RequestSetTargetPoint();
+  virtual void RequestSetEntryPoint();
   
   virtual void RequestReset();         // Do we need to offer this method?
   virtual void RequestResliceImage();  // Do we need state machine for this one?
@@ -263,6 +269,25 @@ private:
   typedef igstk::EllipsoidObjectRepresentation    EllipsoidRepresentationType;
   EllipsoidType::Pointer                          m_Ellipsoid;
   EllipsoidRepresentationType::Pointer            m_EllipsoidRepresentation;
+
+  /** Objects for path planning */
+  EllipsoidType::Pointer                          m_TargetPoint;
+  EllipsoidRepresentationType::Pointer            m_TargetRepresentation;
+  Transform                                       m_TargetTransform;
+
+  EllipsoidType::Pointer                          m_EntryPoint;
+  EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  
+  Transform                                       m_EntryTransform;
+  
+  typedef igstk::TubeObject                       PathType;
+  typedef igstk::TubeObjectRepresentation         PathRepresentationType;
+  typedef TubeObject::PointType                   TubePointType;
+  PathType::Pointer                               m_Path;
+  PathRepresentationType::Pointer                 m_PathRepresentationAxial;
+  PathRepresentationType::Pointer                 m_PathRepresentationSagittal;
+  PathRepresentationType::Pointer                 m_PathRepresentationCoronal;
+  PathRepresentationType::Pointer                 m_PathRepresentation3D;
+
 
   /** Cylinder spatial object, used to represent the probe */
   typedef igstk::CylinderObject                   CylinderType;    

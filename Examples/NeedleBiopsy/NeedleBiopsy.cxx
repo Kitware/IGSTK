@@ -88,8 +88,49 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_EllipsoidRepresentation     = EllipsoidRepresentationType::New();
   m_Ellipsoid->SetRadius( 5, 5, 5 );  
   m_EllipsoidRepresentation->RequestSetEllipsoidObject( m_Ellipsoid );
-  m_EllipsoidRepresentation->SetColor(1.0,0.0,0.0);
+  m_EllipsoidRepresentation->SetColor(1.0,1.0,0.0);
   m_EllipsoidRepresentation->SetOpacity(1.0);
+
+  m_TargetPoint                 = EllipsoidType::New();
+  m_TargetRepresentation        = EllipsoidRepresentationType::New();
+  m_TargetPoint->SetRadius( 6, 6, 6 );
+  m_TargetRepresentation->RequestSetEllipsoidObject( m_TargetPoint );
+  m_TargetRepresentation->SetColor( 1.0, 0.0, 0.0);
+  m_TargetRepresentation->SetOpacity( 0.5 );
+ 
+  m_EntryPoint                  = EllipsoidType::New();
+  m_EntryRepresentation         = EllipsoidRepresentationType::New();
+  m_EntryPoint->SetRadius( 6, 6, 6 );
+  m_EntryRepresentation->RequestSetEllipsoidObject( m_EntryPoint );
+  m_EntryRepresentation->SetColor( 0.0, 0.0, 1.0);
+  m_EntryRepresentation->SetOpacity( 0.5 );
+
+  m_Path                       = PathType::New();
+  TubePointType p;
+  p.SetPosition( 0, 0, 0);
+  p.SetRadius( 2 );
+  m_Path->AddPoint( p );
+  m_Path->AddPoint( p );
+
+  m_PathRepresentationAxial         = PathRepresentationType::New();
+  m_PathRepresentationAxial->RequestSetTubeObject( m_Path );
+  m_PathRepresentationAxial->SetColor( 0.0, 1.0, 0.0);
+  m_PathRepresentationAxial->SetOpacity( 0.5 );
+
+  m_PathRepresentationSagittal         = PathRepresentationType::New();
+  m_PathRepresentationSagittal->RequestSetTubeObject( m_Path );
+  m_PathRepresentationSagittal->SetColor( 0.0, 1.0, 0.0);
+  m_PathRepresentationSagittal->SetOpacity( 0.5 );
+
+  m_PathRepresentationCoronal         = PathRepresentationType::New();
+  m_PathRepresentationCoronal->RequestSetTubeObject( m_Path );
+  m_PathRepresentationCoronal->SetColor( 0.0, 1.0, 0.0);
+  m_PathRepresentationCoronal->SetOpacity( 0.5 );
+
+  m_PathRepresentation3D         = PathRepresentationType::New();
+  m_PathRepresentation3D->RequestSetTubeObject( m_Path );
+  m_PathRepresentation3D->SetColor( 0.0, 1.0, 0.0);
+  m_PathRepresentation3D->SetOpacity( 0.5 );
 
   m_Cylinder                    = CylinderType::New();
   m_CylinderRepresentation      = CylinderRepresentationType::New();
@@ -259,7 +300,7 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   igstkAddTransitionMacro( PatientNameVerified, CoronalBounds, PatientNameVerified, SetCoronalSliderBounds );
   
   /** Set image landmarks, any number of landmarks >= 3 */
-  igstkAddTransitionMacro( PatientNameVerified, RequestAddImageLandmark, AddingImageLandmark, AddImageLandmark );
+  igstkAddTransitionMacro( PatientNameVerified, RequestAddImageLandmark, AddingImageLandmark, AddImageLandmark ); //FIXME: This line is for faster testing purpose
   igstkAddTransitionMacro( AddingImageLandmark, RequestAddImageLandmark, AddingImageLandmark, AddImageLandmark );
   igstkAddTransitionMacro( ImageLandmarksReady, RequestAddImageLandmark, ImageLandmarksReady, AddImageLandmark );
   igstkAddTransitionMacro( AddingImageLandmark, NeedMoreLandmarkPoints, AddingImageLandmark, No );
@@ -293,6 +334,7 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   igstkAddTransitionMacro( EvaluatingRegistrationError, RegistrationErrorRejected, TrackerLandmarksReady, ResetRegistration );
 
   /** Path Planning */
+  igstkAddTransitionMacro( PatientNameVerified, RequestSetTargetPoint, TargetPointReady, DrawTargetPoint );
   igstkAddTransitionMacro( LandmarkRegistrationReady, RequestSetTargetPoint, TargetPointReady, DrawTargetPoint );
   igstkAddTransitionMacro( TargetPointReady, RequestSetTargetPoint, TargetPointReady, DrawTargetPoint );
   
@@ -408,7 +450,7 @@ void NeedleBiopsy::VerifyPatientNameProcessing()
       std::string msg = "Patient Registered as: " + m_PatientName + "\n";
     msg += "Image has the name of: " + m_ImageReader->GetPatientName() +"\n";
     msg += "Name mismatch!!!!\n";
-    msg += "Do you want to load another image? choose \'no\' will overwrite the name\n";
+    msg += "Do you want to overwrite the name?\n";
     int i = fl_choice( msg.c_str() , "Yes", "No", "Cancel" );
     if ( i )
       {
@@ -727,21 +769,32 @@ void NeedleBiopsy::ConnectImageRepresentationProcessing()
 
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
   this->DisplayAxial->RequestAddObject( m_EllipsoidRepresentation->Copy() );
-  //this->DisplayAxial->RequestAddObject( m_CylinderRepresentation->Copy() );
+  this->DisplayAxial->RequestAddObject( m_CylinderRepresentation->Copy() );
 
   this->DisplaySagittal->RequestAddObject( m_ImageRepresentationSagittal );
   this->DisplaySagittal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
-  //this->DisplaySagittal->RequestAddObject( m_CylinderRepresentation->Copy() );
+  this->DisplaySagittal->RequestAddObject( m_CylinderRepresentation->Copy() );
 
   this->DisplayCoronal->RequestAddObject( m_ImageRepresentationCoronal );
   this->DisplayCoronal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
-  //this->DisplayCoronal->RequestAddObject( m_CylinderRepresentation->Copy() );
+  this->DisplayCoronal->RequestAddObject( m_CylinderRepresentation->Copy() );
 
   this->Display3D->RequestAddObject( m_ImageRepresentationAxial3D );
   this->Display3D->RequestAddObject( m_ImageRepresentationSagittal3D );
   this->Display3D->RequestAddObject( m_ImageRepresentationCoronal3D );
   this->Display3D->RequestAddObject( m_EllipsoidRepresentation->Copy() );
-  //this->Display3D->RequestAddObject( m_CylinderRepresentation->Copy() );
+  this->Display3D->RequestAddObject( m_CylinderRepresentation->Copy() );
+
+
+  this->DisplayAxial->RequestAddObject( m_TargetRepresentation->Copy() );
+  this->DisplaySagittal->RequestAddObject( m_TargetRepresentation->Copy() );
+  this->DisplayCoronal->RequestAddObject( m_TargetRepresentation->Copy() );
+  this->Display3D->RequestAddObject( m_TargetRepresentation->Copy() );
+
+  this->DisplayAxial->RequestAddObject( m_EntryRepresentation->Copy() );
+  this->DisplaySagittal->RequestAddObject( m_EntryRepresentation->Copy() );
+  this->DisplayCoronal->RequestAddObject( m_EntryRepresentation->Copy() );
+  this->Display3D->RequestAddObject( m_EntryRepresentation->Copy() );
 
   this->Display3D->RequestResetCamera();
   this->Display3D->Update();
@@ -884,7 +937,9 @@ void NeedleBiopsy::EvaluatingRegistrationErrorProcessing()
 {
   igstkLogMacro (         DEBUG, "Evaluating registration error....\n" )
   igstkLogMacro2( logger, DEBUG, "Evaluating registration error....\n" )
-  std::string msg = "Registration error (RMS) = Some Error Value \n";
+  char *temp = "";
+  sprintf( temp, "Registration error (RMS) = %f\n", m_LandmarkRegistration->ComputeRMSError() );
+  std::string msg = temp;
   msg += "Accept this registration result?";
   int i = fl_choice( msg.c_str(), "Yes", "No", "Cancel" );
   m_StateMachine.PushInputBoolean( i, m_RegistrationErrorAcceptedInput, m_RegistrationErrorRejectedInput );
@@ -892,18 +947,90 @@ void NeedleBiopsy::EvaluatingRegistrationErrorProcessing()
 
 void NeedleBiopsy::ResetRegistrationProcessing()
 {
-  // code for reseting registor
-  
+  igstkLogMacro (         DEBUG, "Reset registration....\n" )
+  igstkLogMacro2( logger, DEBUG, "Reset registration....\n" )
+  m_LandmarkRegistration->RequestResetRegistration();  
+}
+
+void NeedleBiopsy::RequestSetTargetPoint()
+{
+  igstkLogMacro (         DEBUG, "NeedleBiopsy::RequestSetTargetPoint called....\n" )
+  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestSetTargetPoint called....\n" )
+  m_TargetTransform = m_ImageLandmarkTransformToBeSet;
+  m_StateMachine.PushInput( m_RequestSetTargetPointInput );
+  m_StateMachine.ProcessInputs();
+}
+void NeedleBiopsy::RequestSetEntryPoint()
+{
+  igstkLogMacro (         DEBUG, "NeedleBiopsy::RequestSetEntryPoint called....\n" )
+  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestSetEntryPoint called....\n" )
+  m_EntryTransform = m_ImageLandmarkTransformToBeSet;
+  m_StateMachine.PushInput( m_RequestSetEntryPointInput );
+  m_StateMachine.ProcessInputs();
 }
 
 void NeedleBiopsy::DrawTargetPointProcessing()
 {
-
+  m_TargetPoint->RequestSetTransform( m_TargetTransform );
+  igstk::PulseGenerator::CheckTimeouts();
 }
 
 void NeedleBiopsy::DrawPathProcessing()
 {
+  m_TargetPoint->RequestSetTransform( m_TargetTransform );
+  m_EntryPoint->RequestSetTransform( m_EntryTransform );
+
+  /*
+  this->DisplayAxial->RequestAddObject( m_EntryRepresentation );
+  this->DisplaySagittal->RequestAddObject( m_EntryRepresentation );
+  this->DisplayCoronal->RequestAddObject( m_EntryRepresentation );
+  this->Display3D->RequestAddObject( m_EntryRepresentation );
+  */
+  m_Path->Clear();
+  
+  TubePointType p;
+  Transform::VectorType v;
+    
+  v = m_EntryTransform.GetTranslation();
+  p.SetPosition( v[0], v[1], v[2]);
+  p.SetRadius( 2 );
+  m_Path->AddPoint( p );
+
+  v = m_TargetTransform.GetTranslation();
+  p.SetPosition( v[0], v[1], v[2]);
+  p.SetRadius( 2.1 ); //FIXME
+  m_Path->AddPoint( p );
+
+  this->DisplayAxial->RequestRemoveObject( m_PathRepresentationAxial );
+  this->DisplaySagittal->RequestRemoveObject( m_PathRepresentationSagittal );
+  this->DisplayCoronal->RequestRemoveObject( m_PathRepresentationCoronal );
+  this->Display3D->RequestRemoveObject( m_PathRepresentation3D );
+
+  m_PathRepresentationAxial->RequestSetTubeObject( NULL );
+  m_PathRepresentationAxial->RequestSetTubeObject( m_Path );
+  m_PathRepresentationAxial->SetColor( 0.0, 1.0, 0.0 );
+  m_PathRepresentationAxial->SetOpacity( 0.5 );
+  m_PathRepresentationSagittal->RequestSetTubeObject( NULL );
+  m_PathRepresentationSagittal->RequestSetTubeObject( m_Path );
+  m_PathRepresentationSagittal->SetColor( 0.0, 1.0, 0.0 );
+  m_PathRepresentationSagittal->SetOpacity( 0.5 );
+  m_PathRepresentationCoronal->RequestSetTubeObject( NULL );
+  m_PathRepresentationCoronal->RequestSetTubeObject( m_Path );
+  m_PathRepresentationCoronal->SetColor( 0.0, 1.0, 0.0 );
+  m_PathRepresentationCoronal->SetOpacity( 0.5 );
+  m_PathRepresentation3D->RequestSetTubeObject( NULL );
+  m_PathRepresentation3D->RequestSetTubeObject( m_Path );
+  m_PathRepresentation3D->SetColor( 0.0, 1.0, 0.0 );
+  m_PathRepresentation3D->SetOpacity( 0.5 );
+
+  this->DisplayAxial->RequestAddObject( m_PathRepresentationAxial );
+  this->DisplaySagittal->RequestAddObject( m_PathRepresentationSagittal );
+  this->DisplayCoronal->RequestAddObject( m_PathRepresentationCoronal );
+  this->Display3D->RequestAddObject( m_PathRepresentation3D );
+  
+  igstk::PulseGenerator::CheckTimeouts();
 }
+
 
 void NeedleBiopsy::RequestReset()
 {

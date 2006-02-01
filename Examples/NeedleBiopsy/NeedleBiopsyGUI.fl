@@ -21,7 +21,7 @@ class NeedleBiopsyGUI {open
   Function {NeedleBiopsyGUI()} {open
   } {
     Fl_Window mainWindow {
-      label {IGSTK: Needle Biopsy Demo Application} selected
+      label {IGSTK: Needle Biopsy Demo Application}
       xywh {331 31 930 732} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
@@ -66,11 +66,13 @@ else
         } {
           Fl_Light_Button {} {
             label {Target Point}
-            xywh {15 510 130 25} box PLASTIC_UP_FRAME labelsize 11
+            callback {RequestSetTargetPoint();}
+            xywh {15 510 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 1
           }
           Fl_Light_Button {} {
             label {Entry Point}
-            xywh {15 548 130 25} box PLASTIC_UP_FRAME labelsize 11
+            callback {RequestSetEntryPoint();} selected
+            xywh {15 548 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 4
           }
         }
         Fl_Group {} {open
@@ -192,5 +194,9 @@ QuitButton->callback( Quit );} {}
   Function {RequestResliceImage()} {return_type {virtual void}
   } {}
   Function {RequestReset()} {open return_type {virtual void}
+  } {}
+  Function {RequestSetTargetPoint()} {open return_type {virtual void}
+  } {}
+  Function {RequestSetEntryPoint()} {open return_type {virtual void}
   } {}
 } 
