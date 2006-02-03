@@ -188,6 +188,7 @@ FOREACH(HeaderFile ${IGSTK_HEADS})
      EXEC_PROGRAM("@CMAKE_COMMAND@" ARGS "-E remove \"${IGSTK_LATEST_FILES}/${HeaderFile}\""
                    OUTPUT_VARIABLE rm_out
                    RETURN_VARIABLE rm_retval )
+     SET(IGSTKModifiedFiles ${IGSTKModifiedFiles} ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${HeaderFile})
   ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${HeaderFile})
     # Copy the files from IGSTK
     CONFIGURE_FILE( ${IGSTK_SOURCE_DIR}/Source/${HeaderFile} ${IGSTK_LATEST_FILES}/${HeaderFile} COPYONLY)
@@ -204,6 +205,7 @@ FOREACH(SourceFile ${IGSTK_SRCS})
      EXEC_PROGRAM("@CMAKE_COMMAND@" ARGS "-E remove \"${IGSTK_LATEST_FILES}/${SourceFile}\""
                    OUTPUT_VARIABLE rm_out
                    RETURN_VARIABLE rm_retval )
+     SET(IGSTKModifiedFiles ${IGSTKModifiedFiles} ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${SourceFile})
   ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${SourceFile})
     # Copy the files from IGSTK
     CONFIGURE_FILE( ${IGSTK_SOURCE_DIR}/Source/${SourceFile} ${IGSTK_LATEST_FILES}/${SourceFile} COPYONLY)
@@ -212,6 +214,7 @@ FOREACH(SourceFile ${IGSTK_SRCS})
 
 ENDFOREACH( SourceFile )
 
+SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 #
 #  Define the list of source files forming the IGSTKSandbox Library
 #
