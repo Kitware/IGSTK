@@ -16,11 +16,10 @@
 =========================================================================*/
 
 #include "igstkTimeStamp.h"
+#include "igstkRealTimeClock.h"
 
 namespace igstk
 {
-
-::itk::RealTimeClock::Pointer TimeStamp::m_RealTimeClock = NULL;
 
   
 TimeStamp
@@ -28,16 +27,6 @@ TimeStamp
 {
   this->m_StartTime       = 0;
   this->m_ExpirationTime  = 0;
-
-  this->m_TimeStampLock.Lock();
-
-  if( !this->m_RealTimeClock )
-    {
-    this->m_RealTimeClock = itk::RealTimeClock::New();
-    }
-  this->m_TimeStampLock.Unlock();
-
-
 }
 
 
@@ -63,7 +52,7 @@ void
 TimeStamp
 ::SetStartTimeNowAndExpireAfter(double millisecondsToExpire) 
 {
-  this->m_StartTime      = this->m_RealTimeClock->GetTimeStamp();
+  this->m_StartTime      = RealTimeClock::GetTimeStamp();
   this->m_ExpirationTime = this->m_StartTime + millisecondsToExpire;
 }
 

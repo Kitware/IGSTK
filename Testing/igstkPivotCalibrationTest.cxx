@@ -31,6 +31,9 @@
 
 int igstkPivotCalibrationTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   // Define type used in the pivot calibration class
   typedef igstk::PivotCalibration           PivotCalibrationType;
   typedef PivotCalibrationType::VersorType  VersorType;

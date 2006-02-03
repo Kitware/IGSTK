@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include "igstkEvents.h"
+#include "igstkRealTimeClock.h"
 
 
 
@@ -32,8 +33,6 @@ namespace igstk
 // Initialize Static Variables.
 //
 double PulseGenerator::m_MaximumFrequency = 10000.0; // 10 KHz
-
-itk::RealTimeClock::Pointer PulseGenerator::m_RealTimeClock = 0;
 
 PulseGenerator::Timeout * PulseGenerator::m_FirstTimeout = 0;
 
@@ -58,11 +57,6 @@ PulseGenerator::PulseGenerator():m_StateMachine(this)
 
   this->m_NumberOfPulseGeneratorsLock.Lock();
   this->m_NumberOfPulseGenerators++;
-
-  if( !m_RealTimeClock )
-    {
-    m_RealTimeClock = itk::RealTimeClock::New();
-    }
   this->m_NumberOfPulseGeneratorsLock.Unlock();
 
   igstkAddInputMacro( ValidFrequency );
@@ -363,7 +357,7 @@ void PulseGenerator
 ::ElapseTimeouts() 
 {
 
-  const double newclock = m_RealTimeClock->GetTimeStamp();
+  const double newclock = RealTimeClock::GetTimeStamp();
   
   const double elapsed = newclock - m_PreviousClock;
   

@@ -22,10 +22,14 @@
 
 #include <iostream>
 #include "igstkBinaryData.h"
+#include "igstkRealTimeClock.h"
 
 
 int igstkBinaryDataTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   try
     {
     std::cout << "Testing igstk::BinaryData" << std::endl;

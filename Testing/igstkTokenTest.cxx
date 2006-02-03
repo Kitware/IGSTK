@@ -23,9 +23,13 @@
 #include <iostream>
 
 #include "igstkToken.h"
+#include "igstkRealTimeClock.h"
 
 int igstkTokenTest( int argc , char * argv [] )
 {
+
+    igstk::RealTimeClock::Initialize();
+
     typedef igstk::Token  TokenType;
     
     TokenType token;

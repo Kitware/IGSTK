@@ -72,6 +72,9 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
 int igstkAuroraTrackerTest( int argc, char * argv[] )
 #endif
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
 

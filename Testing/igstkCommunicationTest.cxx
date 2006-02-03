@@ -23,9 +23,13 @@
 #include <iostream>
 
 #include "igstkCommunication.h"
+#include "igstkRealTimeClock.h"
 
 int igstkCommunicationTest( int, char * [] )
 {
+
+    igstk::RealTimeClock::Initialize();
+
     typedef igstk::Communication  CommunicationType;
     
     CommunicationType::Pointer communicator = CommunicationType::New();

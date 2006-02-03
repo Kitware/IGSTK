@@ -24,9 +24,13 @@
 #include <fstream>
 
 #include "igstkMultipleOutput.h"
+#include "igstkRealTimeClock.h"
 
 int igstkMultipleOutputTest( int, char * [] )
 {
+
+    igstk::RealTimeClock::Initialize();
+
     typedef igstk::MultipleOutput  MultipleOutputType;
     
     MultipleOutputType multipleOutput;

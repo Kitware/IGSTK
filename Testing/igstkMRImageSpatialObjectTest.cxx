@@ -25,6 +25,9 @@
 int igstkMRImageSpatialObjectTest( int , char* [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
+
   typedef igstk::MRImageSpatialObject         ImageSpatialObjectType;
 
   /* Instantiate one MR image */

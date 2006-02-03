@@ -26,6 +26,7 @@
 #include "itkLogger.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
+#include "igstkRealTimeClock.h"
 
 #include <iostream>
 
@@ -192,6 +193,9 @@ private:
 
 int igstkStateMachineTest( int , char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
 
   std::cout << "Construct the State Machine Tester" << std::endl;
   igstk::Tester  tester;

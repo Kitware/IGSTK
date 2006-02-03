@@ -92,6 +92,9 @@ namespace CylinderObjectTest
 
 int igstkCylinderObjectTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef igstk::CylinderObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer cylinderRepresentation = ObjectRepresentationType::New();
 

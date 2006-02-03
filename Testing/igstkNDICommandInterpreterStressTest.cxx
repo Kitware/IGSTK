@@ -104,6 +104,9 @@ public:
 
 int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef igstk::SerialCommunicationSimulator   CommunicationType;
 
   typedef igstk::NDICommandInterpreter  CommandInterpreterType;

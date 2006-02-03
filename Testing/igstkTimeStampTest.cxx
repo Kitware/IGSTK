@@ -27,6 +27,9 @@
 int igstkTimeStampTest( int, char * [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
+
   try
     {
     const double tolerance = 0.01; // Platform dependent ??

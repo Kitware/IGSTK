@@ -26,6 +26,9 @@
 int igstkStringEventTest( int , char* [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
+
   igstk::StringEvent event;
 
   std::string message = "if it is not tested, it is broken !";

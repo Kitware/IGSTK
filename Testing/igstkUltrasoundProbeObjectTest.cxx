@@ -175,6 +175,9 @@ namespace UltrasoundProbeObjectTest
 
 int igstkUltrasoundProbeObjectTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef igstk::UltrasoundProbeObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer UltrasoundProbeRepresentation = ObjectRepresentationType::New();
 

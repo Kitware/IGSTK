@@ -17,6 +17,8 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#include "igstkRealTimeClock.h"
+
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
 
@@ -442,6 +444,9 @@ private:
 
 int igstkStateMachineErrorsTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
 
   itk::StdStreamLogOutput::Pointer coutput = itk::StdStreamLogOutput::New();
   coutput->SetStream( std::cout );

@@ -21,7 +21,7 @@
 
 
 #include <iostream>
-#include "itkRealTimeClock.h"
+#include "igstkRealTimeClock.h"
 
 
 namespace igstk 
@@ -115,10 +115,6 @@ private:
      TimePeriodType                         m_StartTime;
      
      TimePeriodType                         m_ExpirationTime;
-
-     static ::itk::RealTimeClock::Pointer   m_RealTimeClock;
-
-     mutable itk::SimpleFastMutexLock       m_TimeStampLock;
 
 };
 

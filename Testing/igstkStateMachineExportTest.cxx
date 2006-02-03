@@ -50,6 +50,7 @@
 #include "igstkMRImageSpatialObjectRepresentation.h"
 #include "igstkPivotCalibration.h"
 #include "igstkPrincipalAxisCalibration.h"
+#include "igstkRealTimeClock.h"
 
 #if IGSTK_USE_FLTK
 #include "igstkView2D.h"
@@ -153,6 +154,9 @@ namespace igstk
 
 int main( int argc, char * argv [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   
   std::string outputDirectory;
 

@@ -68,6 +68,9 @@ public:
 
 int igstkSerialCommunicationTest( int argc, char * argv[] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
 

@@ -144,6 +144,20 @@ int main(int , char** )
 { 
 // EndCodeSnippet
 
+// BeginLatex 
+// The first IGSTK command to be invoked in an application is the one that
+// initialize the parameters of the clock. Timing is critical for all the
+// operations performed in an IGS application. Timing signals make possible to
+// synchronize the operation of different components and to ensure that the
+// scene that is rendered on the screen actually displays a consistent state of
+// the environment on the operating room.
+// EndLatex
+// 
+// BeginCodeSnippet
+  igstk::RealTimeClock::Initialize();
+// EndCodeSnippet
+
+
 
 // BeginLatex
 // First, we instantiate the GUI application.

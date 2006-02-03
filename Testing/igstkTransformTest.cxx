@@ -27,6 +27,9 @@
 int igstkTransformTest( int, char * [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
+
   try
     {
     typedef igstk::Transform    TransformType;

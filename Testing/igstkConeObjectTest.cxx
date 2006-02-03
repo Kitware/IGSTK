@@ -25,6 +25,7 @@
 #include "igstkConeObject.h"
 #include "igstkConeObjectRepresentation.h"
 #include "igstkView2D.h"
+#include "igstkRealTimeClock.h"
 
 namespace igstk
 {
@@ -92,6 +93,9 @@ namespace ConeObjectTest
 
 int igstkConeObjectTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef igstk::ConeObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer ConeRepresentation = ObjectRepresentationType::New();
 

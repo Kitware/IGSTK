@@ -25,6 +25,7 @@
 #include "igstkAxesObject.h"
 #include "igstkAxesObjectRepresentation.h"
 #include "igstkView2D.h"
+#include "igstkRealTimeClock.h"
 
 namespace igstk
 {
@@ -93,6 +94,9 @@ namespace AxesObjectTest
 
 int igstkAxesObjectTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef igstk::AxesObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer AxesRepresentation = ObjectRepresentationType::New();
 

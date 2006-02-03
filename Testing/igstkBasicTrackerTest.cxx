@@ -28,6 +28,7 @@
 #include "igstkCylinderObject.h"
 
 #include "igstkTracker.h"
+#include "igstkRealTimeClock.h"
 
 namespace igstk
 {
@@ -202,6 +203,9 @@ namespace igstk
 
 int igstkBasicTrackerTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
 
   igstk::TestingTracker::Pointer tracker = igstk::TestingTracker::New();
   itk::Logger::Pointer logger = itk::Logger::New();

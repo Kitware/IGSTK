@@ -27,6 +27,9 @@
 int igstkMeshReaderTest( int argc, char * argv [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
+
   if( argc < 3 )
     {
     std::cerr << "Error: Missing command line arguments" << std::endl;

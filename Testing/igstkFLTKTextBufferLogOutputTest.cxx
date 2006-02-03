@@ -22,7 +22,10 @@
 
 #include <iostream>
 #include <fstream>
+
 #include "igstkFLTKTextBufferLogOutput.h"
+#include "igstkRealTimeClock.h"
+
 #include <FL/Fl.h>
 #include <FL/Fl_Window.h>
 #include <FL/Fl_Text_Display.H>
@@ -31,6 +34,9 @@
 
 int igstkFLTKTextBufferLogOutputTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   try
     {
 

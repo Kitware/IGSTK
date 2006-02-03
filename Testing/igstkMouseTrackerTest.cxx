@@ -33,6 +33,9 @@
 
 int igstkMouseTrackerTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef igstk::Transform         TransformType;
   typedef igstk::MouseTracker      MouseTrackerType;
   typedef itk::Logger              LoggerType; 

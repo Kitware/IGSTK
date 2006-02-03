@@ -22,7 +22,6 @@
 #include "igstkObject.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
-#include "itkRealTimeClock.h"
 
 
 namespace igstk
@@ -170,8 +169,6 @@ private:
 
   static void InvokeTimeoutActions();
 
-
-  static itk::RealTimeClock::Pointer   m_RealTimeClock;
 
   static double       m_PreviousClock;
 

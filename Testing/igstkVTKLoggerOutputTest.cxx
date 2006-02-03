@@ -25,10 +25,14 @@
 #include "itkStdStreamLogOutput.h"
 #include "itkLogger.h"
 #include "igstkVTKLoggerOutput.h"
+#include "igstkRealTimeClock.h"
 
 
 int igstkVTKLoggerOutputTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   try
     {
 

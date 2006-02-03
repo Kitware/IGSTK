@@ -108,6 +108,9 @@ namespace PulseGeneratorTest
 
 int igstkPulseGeneratorTest( int, char * [] )
 {
+
+    igstk::RealTimeClock::Initialize();
+
     typedef igstk::PulseGenerator  PulseGeneratorType;
     
     PulseGeneratorType::Pointer pulseGenerator = PulseGeneratorType::New();

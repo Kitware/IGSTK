@@ -27,6 +27,9 @@
 
 int igstkTrackerPortTest( int, char * [] )
 {
+
+    igstk::RealTimeClock::Initialize();
+
     typedef igstk::TrackerTool  TrackerToolType;
     typedef igstk::TrackerPort  TrackerPortType;
     

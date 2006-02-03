@@ -112,6 +112,9 @@ namespace ViewTest
 int igstkViewTest( int, char * [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
+
   typedef igstk::View2D  View2DType;
   typedef igstk::View3D  View3DType;
 

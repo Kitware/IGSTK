@@ -28,6 +28,9 @@
 int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
+
   if( argc < 4 )
     {
     std::cerr<<"Usage: "<<argv[0]<<"  CTImage  "<< "Output image file for a screenshot" <<" CTImageExcerpt "<< std::endl;

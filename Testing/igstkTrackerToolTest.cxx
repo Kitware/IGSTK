@@ -27,6 +27,9 @@
 
 int igstkTrackerToolTest( int, char * [] )
 {
+
+    igstk::RealTimeClock::Initialize();
+
     typedef igstk::TrackerTool                 TrackerToolType;
     typedef TrackerToolType::TransformType     TransformType;
     typedef TrackerToolType::ErrorType         ErrorType;

@@ -166,6 +166,9 @@ private:
 int igstkSpatialObjectTest( int, char * [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
+
   typedef igstk::SpatialObjectTest::DummySpatialObject ObjectType;
   ObjectType::Pointer dummyObject = ObjectType::New();
 

@@ -25,6 +25,7 @@
 #include "igstkBoxObject.h"
 #include "igstkBoxObjectRepresentation.h"
 #include "igstkView2D.h"
+#include "igstkRealTimeClock.h"
 
 namespace igstk
 {
@@ -92,6 +93,9 @@ namespace BoxObjectTest
 
 int igstkBoxObjectTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef igstk::BoxObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer BoxRepresentation = ObjectRepresentationType::New();
 

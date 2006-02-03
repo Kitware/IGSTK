@@ -25,6 +25,9 @@
 int igstkCTImageSpatialObjectTest( int , char* [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
+
   typedef igstk::CTImageSpatialObject         ImageSpatialObjectType;
 
   /* Instantiate one CT image */

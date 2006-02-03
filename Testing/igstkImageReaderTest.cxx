@@ -28,6 +28,9 @@
 int igstkImageReaderTest( int , char* [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
+
 
   typedef short    PixelType;
   const unsigned int Dimension = 3;

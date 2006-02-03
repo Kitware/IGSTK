@@ -29,6 +29,9 @@
 
 int igstkLandmark3DRegistrationErrorEstimatorTest( int argv, char * argc[] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
     std::cout << "Testing igstk::Landmark3DRegistrationErrorEstimator" << std::endl;
 
     typedef itk::Logger                   LoggerType;

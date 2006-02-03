@@ -31,6 +31,9 @@
 
 int igstkPrincipalAxisCalibrationTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   // Define type used in the principal axis calibration class
   typedef igstk::PrincipalAxisCalibration                     PrincipalAxisCalibrationType;
   typedef PrincipalAxisCalibrationType::VectorType            VectorType;

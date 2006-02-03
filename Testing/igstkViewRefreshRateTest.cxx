@@ -29,7 +29,7 @@
 
 #include <iostream>
 
-#include "itkRealTimeClock.h"
+#include "igstkRealTimeClock.h"
 
 #include "igstkView2D.h"
 #include "igstkView3D.h"
@@ -126,6 +126,8 @@ namespace ViewRefreshRateTest
 int igstkViewRefreshRateTest( int, char * [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
   typedef igstk::View2D  View2DType;
   typedef igstk::View3D  View3DType;
 
@@ -216,10 +218,8 @@ int igstkViewRefreshRateTest( int, char * [] )
     // time of the graphics.
     Fl::check();
 
-    // Now go for the actual measurement of the refresh rate
-    itk::RealTimeClock::Pointer realTimeClock = itk::RealTimeClock::New();
     
-    const double beginTime = realTimeClock->GetTimeStamp();
+    const double beginTime = igstk::RealTimeClock::GetTimeStamp();
     
     while(1)
       {
@@ -232,7 +232,7 @@ int igstkViewRefreshRateTest( int, char * [] )
       }
 
 
-    const double endTime   = realTimeClock->GetTimeStamp();
+    const double endTime   = igstk::RealTimeClock::GetTimeStamp();
 
     const double secondsElapsed = endTime - beginTime;
 

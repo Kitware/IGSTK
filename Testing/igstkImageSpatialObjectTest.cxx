@@ -25,6 +25,8 @@
 int igstkImageSpatialObjectTest( int , char* [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
  
   typedef signed short    PixelType;
   const unsigned int      Dimension = 3;

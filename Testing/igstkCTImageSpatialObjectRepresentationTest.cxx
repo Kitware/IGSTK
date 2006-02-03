@@ -28,6 +28,9 @@
 int igstkCTImageSpatialObjectRepresentationTest( int argc, char * argv [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
+
   typedef igstk::CTImageSpatialObjectRepresentation    RepresentationType;
 
   RepresentationType::Pointer  representation = RepresentationType::New();

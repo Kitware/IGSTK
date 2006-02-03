@@ -179,6 +179,9 @@ namespace MeshObjectTest
 
 int igstkMeshObjectTest( int argc, char * argv [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef igstk::MeshObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer MeshRepresentation = ObjectRepresentationType::New();
 

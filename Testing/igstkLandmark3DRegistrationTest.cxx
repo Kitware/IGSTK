@@ -115,6 +115,9 @@ class Landmark3DRegistrationGetTransformCallback: public itk::Command
 
 int igstkLandmark3DRegistrationTest( int argv, char * argc[] )
 {
+
+    igstk::RealTimeClock::Initialize();
+
     std::cout << "Testing igstk::Landmark3DRegistration" << std::endl;
 
     typedef itk::Logger                   LoggerType;

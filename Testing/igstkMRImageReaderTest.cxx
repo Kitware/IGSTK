@@ -28,6 +28,9 @@
 int igstkMRImageReaderTest( int argc, char* argv[] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
+
   if(argc < 2)
     {
     std::cerr<<"Usage: "<<argv[0]<<"  MRImage "<<std::endl;

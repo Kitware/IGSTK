@@ -74,6 +74,9 @@ int igstkPolarisTrackerSimulatedTest( int argc, char * argv[] )
 int igstkPolarisTrackerTest( int argc, char * argv[] )
 #endif
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
 

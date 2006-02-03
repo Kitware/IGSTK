@@ -106,6 +106,9 @@ int igstkNDICommandInterpreterSimulatedTest( int argc, char * argv[] )
 int igstkNDICommandInterpreterTest( int argc, char * argv[] )
 #endif
 {
+
+  igstk::RealTimeClock::Initialize();
+
 #ifdef IGSTK_SIMULATOR_TEST
   typedef igstk::SerialCommunicationSimulator   CommunicationType;
 #else  /* IGSTK_SIMULATOR_TEST */

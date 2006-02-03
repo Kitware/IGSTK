@@ -92,6 +92,9 @@ namespace TubeObjectTest
 
 int igstkTubeObjectTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef igstk::TubeObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer TubeRepresentation = ObjectRepresentationType::New();
 

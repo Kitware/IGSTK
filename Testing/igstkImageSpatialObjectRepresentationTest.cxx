@@ -120,6 +120,8 @@ namespace igstk
 int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 {
 
+  igstk::RealTimeClock::Initialize();
+
 
   typedef short    PixelType;
   const unsigned int Dimension = 3;

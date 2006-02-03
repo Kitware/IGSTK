@@ -183,6 +183,9 @@ private:
 
 int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
 {
+
+  igstk::RealTimeClock::Initialize();
+
   if ( argc < 3 )
   {
     std::cerr << "Error missing argument " << std::endl;

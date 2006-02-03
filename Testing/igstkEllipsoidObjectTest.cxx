@@ -92,6 +92,9 @@ namespace EllipsoidObjectTest
 
 int igstkEllipsoidObjectTest( int, char * [] )
 {
+
+  igstk::RealTimeClock::Initialize();
+
   typedef igstk::EllipsoidObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer ellipsoidRepresentation = ObjectRepresentationType::New();
 
