@@ -112,8 +112,6 @@ protected:
   typedef typename ImageType::ConstPointer            ImagePointer;
   typedef typename ImageType::RegionType              ImageRegionType; 
 
-  typename ImageSpatialObjectType::Pointer   m_ImageSpatialObject;
-
 private:
   
   /** These two methods must be declared and note be implemented
@@ -123,6 +121,8 @@ private:
   
   // FIXME : This must be replaced with StateMachine logic
   virtual const ImageType * GetITKImage() const = 0;    
+
+  typename ImageSpatialObjectType::Pointer   m_ImageSpatialObject;
 
 };
 
