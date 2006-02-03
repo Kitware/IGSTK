@@ -185,6 +185,9 @@ FOREACH(HeaderFile ${IGSTK_HEADS})
 
   IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${HeaderFile})
      SET(IGSTKLatest_HEADS ${IGSTKLatest_HEADS} ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${HeaderFile})
+     EXEC_PROGRAM("@CMAKE_COMMAND@" ARGS "-E remove \"${IGSTK_LATEST_FILES}/${HeaderFile}\""
+                   OUTPUT_VARIABLE rm_out
+                   RETURN_VARIABLE rm_retval )
   ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${HeaderFile})
     # Copy the files from IGSTK
     CONFIGURE_FILE( ${IGSTK_SOURCE_DIR}/Source/${HeaderFile} ${IGSTK_LATEST_FILES}/${HeaderFile} COPYONLY)
@@ -198,6 +201,9 @@ FOREACH(SourceFile ${IGSTK_SRCS})
 
   IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${SourceFile})
      SET(IGSTKLatest_SRCS ${IGSTKLatest_SRCS} ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${SourceFile})
+     EXEC_PROGRAM("@CMAKE_COMMAND@" ARGS "-E remove \"${IGSTK_LATEST_FILES}/${SourceFile}\""
+                   OUTPUT_VARIABLE rm_out
+                   RETURN_VARIABLE rm_retval )
   ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source/${SourceFile})
     # Copy the files from IGSTK
     CONFIGURE_FILE( ${IGSTK_SOURCE_DIR}/Source/${SourceFile} ${IGSTK_LATEST_FILES}/${SourceFile} COPYONLY)
