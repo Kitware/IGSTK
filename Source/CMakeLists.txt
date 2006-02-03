@@ -131,6 +131,7 @@ SET(IGSTK_SRCS
   igstkSerialCommunication.cxx
   igstkSerialCommunicationSimulator.cxx
   igstkSpatialObject.cxx
+  igstkSpatialObjectReader.txx
   igstkStateMachine.txx
   igstkTimeStamp.cxx
   igstkToken.cxx
@@ -178,14 +179,6 @@ ENDIF( WIN32 )
 
 # Copy igstkConfigure.h into latest
 CONFIGURE_FILE( ${IGSTK_BINARY_DIR}/igstkConfigure.h ${IGSTK_LATEST_FILES}/igstkConfigure.h COPYONLY)
-
-# Copy all the .txx files
-FILE(GLOB TemplateFiles ${IGSTK_SOURCE_DIR}/Source/*.txx)
-FOREACH(TemplateFile ${TemplateFiles})
-  GET_FILENAME_COMPONENT(tfile ${TemplateFile} NAME)
-  CONFIGURE_FILE( ${TemplateFile} ${IGSTK_LATEST_FILES}/${tfile} COPYONLY)
-ENDFOREACH(TemplateFile ${TemplateFiles})
-
 
 # Copy the header files if they are not a duplicated in the Sandbox
 FOREACH(HeaderFile ${IGSTK_HEADS})
