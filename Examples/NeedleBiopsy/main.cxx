@@ -23,9 +23,15 @@
 
 int main(int , char** )
 { 
+  
+  igstk::RealTimeClock::Initialize();
+
   igstk::NeedleBiopsy::Pointer application = igstk::NeedleBiopsy::New();
 
-  Fl::run();
-
+  while( !application->HasQuitted() )
+    {
+    Fl::wait(0.001);
+    igstk::PulseGenerator::CheckTimeouts();
+    }
   return 0;
 }

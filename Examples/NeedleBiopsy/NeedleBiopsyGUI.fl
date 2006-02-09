@@ -4,29 +4,18 @@ header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/fl_ask.H>} {} 
 
-Function {Quit( Fl_Widget*, void* )} {private C return_type void
-} {
-  code {if ( !fl_choice("Are you sure you want to quit?","Yes","No","Cancel") )
-  {
-  return;
-  }
-else
-  {
-  exit(0);
-  }} {}
-} 
-
-class NeedleBiopsyGUI {open
+class NeedleBiopsyGUI {open selected
 } {
   Function {NeedleBiopsyGUI()} {open
   } {
     Fl_Window mainWindow {
       label {IGSTK: Needle Biopsy Demo Application}
-      xywh {331 31 930 732} type Double box PLASTIC_UP_BOX resizable
+      callback {Quit();}
+      xywh {-32000 -32000 930 732} type Double box PLASTIC_UP_BOX hide resizable
       code0 {\#include "igstkView2D.h"}
-      code1 {\#include "igstkView3D.h"} visible
+      code1 {\#include "igstkView3D.h"}
     } {
-      Fl_Group ControlGroup {open
+      Fl_Group ControlGroup {
         xywh {0 0 165 690} box DOWN_BOX
       } {
         Fl_Light_Button TrackingButton {
@@ -58,6 +47,7 @@ else
         }
         Fl_Light_Button QuitButton {
           label Quit
+          callback {Quit();}
           xywh {15 645 130 25} type Normal box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Group {} {
@@ -71,7 +61,7 @@ else
           }
           Fl_Light_Button {} {
             label {Entry Point}
-            callback {RequestSetEntryPoint();} selected
+            callback {RequestSetEntryPoint();}
             xywh {15 548 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 4
           }
         }
@@ -166,8 +156,7 @@ else
       }
     }
     code {mainWindow->show();
-mainWindow->callback( Quit );
-QuitButton->callback( Quit );} {}
+hasQuitted = false;} {}
   }
   Function {~NeedleBiopsyGUI()} {return_type virtual
   } {}
@@ -199,4 +188,22 @@ QuitButton->callback( Quit );} {}
   } {}
   Function {RequestSetEntryPoint()} {open return_type {virtual void}
   } {}
+  decl {bool hasQuitted;} {}
+  Function {Quit()} {return_type void
+  } {
+    code {int i = fl_choice("Are you sure you want to quit?", NULL,"Yes","No"); 
+if ( i == 1 )
+  {
+  mainWindow->hide();
+  this->hasQuitted = true;
+  }
+else
+  {
+  return;
+  }} {}
+  }
+  Function {HasQuitted()} {return_type bool
+  } {
+    code {return this->hasQuitted;} {}
+  }
 } 

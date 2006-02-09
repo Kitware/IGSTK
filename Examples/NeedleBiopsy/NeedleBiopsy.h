@@ -23,12 +23,7 @@ PURPOSE.  See the above copyright notices for more information.
 #pragma warning( disable : 4284 )
 #endif
 
-#define TRACKER_TOOL_PORT 3
-#define TRACKER_TOOL_SROM_FILE "D:/Research/IGSTK/Vicra/Tool Definition Files/8700340.rom"
-
-#define USE_REFERENCE_TOOL 1
-#define REFERENCE_TOOL_PORT 4
-#define REFERENCE_TOOL_SROM_FILE "D:/Research/IGSTK/Vicra/Tool Definition Files/8700338.rom"
+#include "Configure.h"
 
 #include "NeedleBiopsyGUI.h"
 

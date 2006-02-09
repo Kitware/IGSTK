@@ -72,7 +72,7 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
 
   m_SerialCommunication = CommunicationType::New();
   m_SerialCommunication->SetLogger( logger );
-  m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber3 ); // FIXME. Should be configurable in CMake, GUI or ini file
+  m_SerialCommunication->SetPortNumber( IGSTK_POLARIS_PORT_NUMBER ); // FIXME. Should be configurable in CMake, GUI or ini file
   m_SerialCommunication->SetParity( SerialCommunication::NoParity );
   m_SerialCommunication->SetBaudRate( SerialCommunication::BaudRate9600 );
   m_SerialCommunication->SetDataBits( SerialCommunication::DataBits8 );
@@ -135,33 +135,22 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_Cylinder                    = CylinderType::New();
   m_CylinderRepresentation      = CylinderRepresentationType::New();
   m_Cylinder->SetRadius( 1.5 );   //   1.5 mm
-  m_Cylinder->SetHeight( 200 );   // 200.0 mm
+  m_Cylinder->SetHeight( 100 );   // 200.0 mm
   m_CylinderRepresentation->RequestSetCylinderObject( m_Cylinder );
   m_CylinderRepresentation->SetColor(0.0,1.0,0.0);
   m_CylinderRepresentation->SetOpacity(1.0);
   
-  igstk::PivotCalibration::Pointer pivot = igstk::PivotCalibration::New();
-//  pivot->RequestSetToolPrincipalAxis( 0.0, 1.0, 0.0);
-//  pivot->RequestSetToolPlaneNormal( 1.0, 0.0, 0.0);
-
-  igstk::Transform::VectorType CylinderTipOffset;     //FIXME, SpatialObject should have an tip to origin offet
-  CylinderTipOffset[0] = 0;   // Tip offset
-  CylinderTipOffset[1] = -200;
-  CylinderTipOffset[2] = 0;
-  
   /** Tool calibration transform */
   igstk::Transform toolCalibrationTransform;
-  igstk::Transform::VectorType translation;
-  igstk::Transform::VersorType rotation;
- 
-  rotation.SetRotationAroundX( 3.1415926/2 );
-  rotation = rotation.GetConjugate() ;  
-  rotation.SetIdentity();
   
+  igstk::Transform::VectorType translation;
   translation[0] = -18.0;   // Tip offset
   translation[1] = 0.5;
   translation[2] = -157.5;
 
+  igstk::Transform::VersorType rotation;
+  rotation.SetIdentity();
+    
   toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
   m_Tracker->SetToolCalibrationTransform( TRACKER_TOOL_PORT, 0, toolCalibrationTransform);
 
@@ -276,7 +265,6 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   igstkAddInputMacro( SagittalBounds               );
   igstkAddInputMacro( CoronalBounds                );
 
-  
   /** Register patient name */
   igstkAddTransitionMacro( Initial, RequestSetPatientName, WaitingForPatientName, SetPatientName );
   igstkAddTransitionMacro( PatientNameReady, RequestSetPatientName, WaitingForPatientName, SetPatientName );
@@ -334,7 +322,7 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   igstkAddTransitionMacro( EvaluatingRegistrationError, RegistrationErrorRejected, TrackerLandmarksReady, ResetRegistration );
 
   /** Path Planning */
-  igstkAddTransitionMacro( PatientNameVerified, RequestSetTargetPoint, TargetPointReady, DrawTargetPoint );
+  //igstkAddTransitionMacro( PatientNameVerified, RequestSetTargetPoint, TargetPointReady, DrawTargetPoint );
   igstkAddTransitionMacro( LandmarkRegistrationReady, RequestSetTargetPoint, TargetPointReady, DrawTargetPoint );
   igstkAddTransitionMacro( TargetPointReady, RequestSetTargetPoint, TargetPointReady, DrawTargetPoint );
   
@@ -451,19 +439,20 @@ void NeedleBiopsy::VerifyPatientNameProcessing()
     msg += "Image has the name of: " + m_ImageReader->GetPatientName() +"\n";
     msg += "Name mismatch!!!!\n";
     msg += "Do you want to overwrite the name?\n";
-    int i = fl_choice( msg.c_str() , "Yes", "No", "Cancel" );
-    if ( i )
+    int i = fl_choice( msg.c_str(), NULL, "Yes", "No");
+    if ( i == 1 )
       {
-      igstkLogMacro (         DEBUG, "Load another image\n" )
-      igstkLogMacro2( logger, DEBUG, "Load another image\n" )
-      m_StateMachine.PushInput( m_ReloadImageInput );
+        m_PatientName = m_ImageReader->GetPatientName();
+        igstkLogMacro(          DEBUG, "Patient name is overwritten to:" << m_PatientName << "\n" )
+        igstkLogMacro2( logger, DEBUG, "Patient name is overwritten to:" << m_PatientName << "\n" )
+        m_StateMachine.PushInput( m_OverwritePatientNameInput );
       }
     else
       {
-      m_PatientName = m_ImageReader->GetPatientName();
-      igstkLogMacro(          DEBUG, "Patient name is overwritten to:" << m_PatientName << "\n" )
-      igstkLogMacro2( logger, DEBUG, "Patient name is overwritten to:" << m_PatientName << "\n" )
-      m_StateMachine.PushInput( m_OverwritePatientNameInput );
+        igstkLogMacro (         DEBUG, "Load another image\n" )
+        igstkLogMacro2( logger, DEBUG, "Load another image\n" )
+        m_StateMachine.PushInput( m_ReloadImageInput );
+      
       }
     }
 }
@@ -719,7 +708,6 @@ void NeedleBiopsy::ResliceImage()
   m_ImageRepresentationSagittal3D->RequestSetSliceNumber( static_cast< unsigned int >( this->SagittalSlider->value() ) );
   m_ImageRepresentationCoronal3D->RequestSetSliceNumber( static_cast< unsigned int >( this->CoronalSlider->value() ) );
 
-  igstk::PulseGenerator::CheckTimeouts();
   this->ViewerGroup->redraw();
   Fl::check();
 }
@@ -735,8 +723,6 @@ void NeedleBiopsy::ResliceImage ( IndexType index )
   m_ImageRepresentationAxial3D->RequestSetSliceNumber( index[2] );
   m_ImageRepresentationSagittal3D->RequestSetSliceNumber( index[0] );
   m_ImageRepresentationCoronal3D->RequestSetSliceNumber( index[1] );
-
-  igstk::PulseGenerator::CheckTimeouts();
 
   this->AxialSlider->value( index[2] );
   this->SagittalSlider->value( index[0] );
@@ -896,8 +882,8 @@ void NeedleBiopsy
     m_Tracker->SetPatientTransform( m_ImageToTrackerTransform );
     
     igstkLogMacro( DEBUG, "Registration Transform" << m_ImageToTrackerTransform << "\n");
-    igstkLogMacro( DEBUG, "Registration Transform Inverse" << m_ImageToTrackerTransform.GetInverse() << "\n");
-    igstkLogMacro( DEBUG, "Registration Transform Inverse" << m_LandmarkRegistration->ComputeRMSError() << "\n");
+    //igstkLogMacro( DEBUG, "Registration Transform Inverse" << m_ImageToTrackerTransform.GetInverse() << "\n");
+    igstkLogMacro( DEBUG, "Registration Error" << m_LandmarkRegistration->ComputeRMSError() << "\n");
     m_StateMachine.PushInput( m_RegistrationSuccessInput );
     }
   else
@@ -919,7 +905,8 @@ void NeedleBiopsy::DrawPickedPoint( const itk::EventObject & event)
     
     if( m_ImageReader->GetOutput()->IsInside( p ) )
       {
-      m_ImageLandmarkTransformToBeSet = tmevent->Get();     
+      m_ImageLandmarkTransformToBeSet = tmevent->Get();
+      
       m_Ellipsoid->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
       ImageSpatialObjectType::IndexType index;
       m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index);
@@ -937,12 +924,21 @@ void NeedleBiopsy::EvaluatingRegistrationErrorProcessing()
 {
   igstkLogMacro (         DEBUG, "Evaluating registration error....\n" )
   igstkLogMacro2( logger, DEBUG, "Evaluating registration error....\n" )
-  char *temp = "";
+  char temp[255];
   sprintf( temp, "Registration error (RMS) = %f\n", m_LandmarkRegistration->ComputeRMSError() );
   std::string msg = temp;
   msg += "Accept this registration result?";
-  int i = fl_choice( msg.c_str(), "Yes", "No", "Cancel" );
-  m_StateMachine.PushInputBoolean( i, m_RegistrationErrorAcceptedInput, m_RegistrationErrorRejectedInput );
+  int i = fl_choice( msg.c_str(), NULL, "Yes", "No" );
+  if ( i==1 )
+    {
+      m_StateMachine.PushInput( m_RegistrationErrorAcceptedInput );
+    }
+  else
+    {
+      m_StateMachine.PushInput( m_RegistrationErrorRejectedInput );
+
+    }
+  
 }
 
 void NeedleBiopsy::ResetRegistrationProcessing()
@@ -972,7 +968,6 @@ void NeedleBiopsy::RequestSetEntryPoint()
 void NeedleBiopsy::DrawTargetPointProcessing()
 {
   m_TargetPoint->RequestSetTransform( m_TargetTransform );
-  igstk::PulseGenerator::CheckTimeouts();
 }
 
 void NeedleBiopsy::DrawPathProcessing()
@@ -980,12 +975,6 @@ void NeedleBiopsy::DrawPathProcessing()
   m_TargetPoint->RequestSetTransform( m_TargetTransform );
   m_EntryPoint->RequestSetTransform( m_EntryTransform );
 
-  /*
-  this->DisplayAxial->RequestAddObject( m_EntryRepresentation );
-  this->DisplaySagittal->RequestAddObject( m_EntryRepresentation );
-  this->DisplayCoronal->RequestAddObject( m_EntryRepresentation );
-  this->Display3D->RequestAddObject( m_EntryRepresentation );
-  */
   m_Path->Clear();
   
   TubePointType p;
@@ -1028,14 +1017,13 @@ void NeedleBiopsy::DrawPathProcessing()
   this->DisplayCoronal->RequestAddObject( m_PathRepresentationCoronal );
   this->Display3D->RequestAddObject( m_PathRepresentation3D );
   
-  igstk::PulseGenerator::CheckTimeouts();
 }
 
 
 void NeedleBiopsy::RequestReset()
 {
   igstkLogMacro( DEBUG, "NeedleBiopsy::RequestReset is called... \n" )
-  if ( fl_choice( "Do you really want to reset the program?", "Yes", "No", "Cancel" ) )
+  if ( fl_choice( "Do you really want to reset the program?", NULL, "Yes", "No" ) )
     { 
     this->Reset(); // Took out the state machine logic
     }
