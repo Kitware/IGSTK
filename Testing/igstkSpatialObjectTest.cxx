@@ -97,7 +97,6 @@ protected:
     virtual ~MyTracker() {};
 
     typedef Tracker::ResultType                 ResultType;
-    typedef igstk::Transform                    TransformType;
     typedef TransformType::VectorType           PositionType;
     typedef TransformType::ErrorType            ErrorType;
 
