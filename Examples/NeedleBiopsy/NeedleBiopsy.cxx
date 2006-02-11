@@ -975,7 +975,7 @@ void NeedleBiopsy::ResetRegistrationProcessing()
   igstkLogMacro (         DEBUG, "Reset registration....\n" )
   igstkLogMacro2( logger, DEBUG, "Reset registration....\n" )
   m_LandmarkRegistration->RequestResetRegistration();  
-  this->RegistrationError->value( NULL );
+  this->RegistrationError->value( 0.0 );
 }
 
 void NeedleBiopsy::RequestSetTargetPoint()
