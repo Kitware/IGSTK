@@ -227,23 +227,23 @@ ENDIF(IGSTK_USE_FLTK)
 
 #-----------------------------------------------------------------------------
 # Testing source file depend on external device
-IF(IGSTK_TEST_AURORA_ATTACHED)
-  SET(BasicTests_SRCS ${BasicTests_SRCS}
+#IF(IGSTK_TEST_AURORA_ATTACHED)
+  SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
     igstkAuroraTrackerTest.cxx
   )
-ENDIF(IGSTK_TEST_AURORA_ATTACHED)
+#ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
-IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
-  SET(BasicTests_SRCS ${BasicTests_SRCS}
-    igstkNDICommandInterpreterTest
+#IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+  SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
+    igstkNDICommandInterpreterTest.cxx
   )
-ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+#ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
 
-IF(IGSTK_TEST_POLARIS_ATTACHED)
-  SET(BasicTests_SRCS ${BasicTests_SRCS}
+#IF(IGSTK_TEST_POLARIS_ATTACHED)
+  SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
     igstkPolarisTrackerTest.cxx
   )
-ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
+#ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
 #-----------------------------------------------------------------------------
 # Testing source file need data input
