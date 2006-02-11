@@ -55,7 +55,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkCylinderObject.h"
 #include "igstkCylinderObjectRepresentation.h"
 
-#include "igstkPivotCalibration.h"
+#include "igstkAnnotation2D.h"
 
 namespace igstk
 {
@@ -123,7 +123,6 @@ public:
   igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,    AxialBoundsInput, AxialBounds    );
   igstkLoadedEventTransductionMacro( SagittalSliceBoundsEvent, SagittalBoundsInput, SagittalBounds );
   igstkLoadedEventTransductionMacro( CoronalSliceBoundsEvent,  CoronalBoundsInput, CoronalBounds  );
-
 
 protected:
 
@@ -203,6 +202,7 @@ private:
   igstkDeclareInputMacro( AxialBounds );                
   igstkDeclareInputMacro( SagittalBounds );
   igstkDeclareInputMacro( CoronalBounds );
+
 
   /** Logger */
   LogOutputType::Pointer              m_LogFileOutput;  // log output to file
@@ -292,6 +292,7 @@ private:
   CylinderType::Pointer                            m_Needle;
   CylinderRepresentationType::Pointer              m_NeedleRepresentation;
 
+  Annotation2D::Pointer                            m_Annotation2D;
 
   /** Action methods to be invoked only by the state machine */
   void NoProcessing();
