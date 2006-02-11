@@ -1,3 +1,7 @@
+# make a directory to copy latest versions of all source and header files
+SET(IGSTK_TESTS_LATEST  ${IGSTKSandbox_BINARY_DIR}/TestsLatest )
+MAKE_DIRECTORY( ${IGSTK_TESTS_LATEST} )
+
 SET(IGSTKSandbox_TESTS ${CXX_TEST_PATH}/igstkSandboxTests)
 
 SET(IGSTKSandbox_TEST_OUTPUT_DIR "${IGSTKSandbox_BINARY_DIR}/Testing/Temporary")
@@ -292,14 +296,19 @@ FOREACH(SourceFile ${IGSTKTests_SRCS})
 
   IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/${SourceFile})
      SET(IGSTKLatestTests_SRCS ${IGSTKLatestTests_SRCS} ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/${SourceFile})
+     EXEC_PROGRAM("@CMAKE_COMMAND@" ARGS "-E remove \"${IGSTK_TESTS_LATEST}/${SourceFile}\""
+                   OUTPUT_VARIABLE rm_out
+                   RETURN_VARIABLE rm_retval )
+     SET( TestsModifiedFiles ${TestsModifiedFiles} ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/${SourceFile} )
   ELSE(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/${SourceFile})
     # Copy the files from IGSTK
-    #CONFIGURE_FILE( ${IGSTK_SOURCE_DIR}/Testing/${SourceFile} ${IGSTK_LATEST_FILES}/${SourceFile} COPYONLY)
-    SET(IGSTKLatestTests_SRCS ${IGSTKLatestTests_SRCS} ${IGSTK_SOURCE_DIR}/Testing/${SourceFile})
+    CONFIGURE_FILE( ${IGSTK_SOURCE_DIR}/Testing/${SourceFile} ${IGSTK_TESTS_LATEST}/${SourceFile} COPYONLY)
+    SET(IGSTKLatestTests_SRCS ${IGSTKLatestTests_SRCS} ${IGSTK_TESTS_LATEST}/${SourceFile})
   ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/${SourceFile})
 
 ENDFOREACH( SourceFile )
 
+SOURCE_GROUP(TestsModified FILES ${TestsModifiedFiles})
 
 #-----------------------------------------------------------------------------
 # Add testing executables
