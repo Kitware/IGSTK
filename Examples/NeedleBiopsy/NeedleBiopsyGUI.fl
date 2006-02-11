@@ -4,16 +4,16 @@ header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/fl_ask.H>} {} 
 
-class NeedleBiopsyGUI {open selected
+class NeedleBiopsyGUI {selected
 } {
   Function {NeedleBiopsyGUI()} {open
   } {
     Fl_Window mainWindow {
       label {IGSTK: Needle Biopsy Demo Application}
-      callback {Quit();}
-      xywh {-32000 -32000 930 732} type Double box PLASTIC_UP_BOX hide resizable
+      callback {Quit();} open
+      xywh {298 24 930 732} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkView2D.h"}
-      code1 {\#include "igstkView3D.h"}
+      code1 {\#include "igstkView3D.h"} visible
     } {
       Fl_Group ControlGroup {
         xywh {0 0 165 690} box DOWN_BOX
@@ -111,7 +111,7 @@ else
           }
           Fl_Value_Output RegistrationError {
             label {Error:}
-            xywh {55 425 45 25} box DOWN_BOX labelsize 11 maximum 100 step 1 textfont 1
+            xywh {55 425 45 25} box DOWN_BOX labelsize 11 maximum 1000 step 0.001 textfont 1
           }
         }
       }

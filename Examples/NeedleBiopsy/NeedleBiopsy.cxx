@@ -27,9 +27,6 @@ namespace igstk
 /** Constructor: Initializes all internal variables. */
 NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
 {  
-  /** Setup m_Logger, this logger is used to log the application class. */
-  //m_Logger = LoggerType::New();
-
   /** Setup logger, for all other igstk components. */
   logger   = LoggerType::New();
 
@@ -62,16 +59,13 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
 
   /** Initialize all member variables and set logger */
   m_ImageReader = ImageReaderType::New();
-  m_ImageReader->SetLogger( logger );
-
+  
   m_LandmarkRegistration = RegistrationType::New();
-  m_LandmarkRegistration->SetLogger( logger );
   m_LandmarkRegistrationObserver = ObserverType2::New();
   m_LandmarkRegistrationObserver->SetCallbackFunction( this, &NeedleBiopsy::GetLandmarkRegistrationTransform );
   m_LandmarkRegistration->AddObserver( TransformModifiedEvent(), m_LandmarkRegistrationObserver );  //FIXME, Need error observer
 
   m_SerialCommunication = CommunicationType::New();
-  m_SerialCommunication->SetLogger( logger );
   m_SerialCommunication->SetPortNumber( IGSTK_POLARIS_PORT_NUMBER ); // FIXME. Should be configurable in CMake, GUI or ini file
   m_SerialCommunication->SetParity( SerialCommunication::NoParity );
   m_SerialCommunication->SetBaudRate( SerialCommunication::BaudRate9600 );
@@ -81,29 +75,35 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_SerialCommunication->OpenCommunication();
   
   m_Tracker = TrackerType::New();
-  m_Tracker->SetLogger( logger );
   m_Tracker->SetCommunication( m_SerialCommunication );
 
-  m_Ellipsoid                   = EllipsoidType::New();
-  m_EllipsoidRepresentation     = EllipsoidRepresentationType::New();
-  m_Ellipsoid->SetRadius( 5, 5, 5 );  
-  m_EllipsoidRepresentation->RequestSetEllipsoidObject( m_Ellipsoid );
-  m_EllipsoidRepresentation->SetColor(1.0,1.0,0.0);
-  m_EllipsoidRepresentation->SetOpacity(1.0);
+  m_PickedPoint                   = EllipsoidType::New();
+  m_PickedPointRepresentation     = EllipsoidRepresentationType::New();
+  m_PickedPoint->SetRadius( 5, 5, 5 );  
+  m_PickedPointRepresentation->RequestSetEllipsoidObject( m_PickedPoint );
+  m_PickedPointRepresentation->SetColor(1.0,1.0,0.0);
+  m_PickedPointRepresentation->SetOpacity(1.0);
+
+  m_NeedleTip                   = EllipsoidType::New();
+  m_NeedleTipRepresentation     = EllipsoidRepresentationType::New();
+  m_NeedleTip->SetRadius( 5, 5, 5 );  
+  m_NeedleTipRepresentation->RequestSetEllipsoidObject( m_NeedleTip );
+  m_NeedleTipRepresentation->SetColor(1.0,0.0,0.0);
+  m_NeedleTipRepresentation->SetOpacity(1.0);
 
   m_TargetPoint                 = EllipsoidType::New();
   m_TargetRepresentation        = EllipsoidRepresentationType::New();
   m_TargetPoint->SetRadius( 6, 6, 6 );
   m_TargetRepresentation->RequestSetEllipsoidObject( m_TargetPoint );
   m_TargetRepresentation->SetColor( 1.0, 0.0, 0.0);
-  m_TargetRepresentation->SetOpacity( 0.5 );
+  m_TargetRepresentation->SetOpacity( 0.6 );
  
   m_EntryPoint                  = EllipsoidType::New();
   m_EntryRepresentation         = EllipsoidRepresentationType::New();
   m_EntryPoint->SetRadius( 6, 6, 6 );
   m_EntryRepresentation->RequestSetEllipsoidObject( m_EntryPoint );
   m_EntryRepresentation->SetColor( 0.0, 0.0, 1.0);
-  m_EntryRepresentation->SetOpacity( 0.5 );
+  m_EntryRepresentation->SetOpacity( 0.6 );
 
   m_Path                       = PathType::New();
   TubePointType p;
@@ -115,30 +115,30 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_PathRepresentationAxial         = PathRepresentationType::New();
   m_PathRepresentationAxial->RequestSetTubeObject( m_Path );
   m_PathRepresentationAxial->SetColor( 0.0, 1.0, 0.0);
-  m_PathRepresentationAxial->SetOpacity( 0.5 );
+  m_PathRepresentationAxial->SetOpacity( 0.4 );
 
   m_PathRepresentationSagittal         = PathRepresentationType::New();
   m_PathRepresentationSagittal->RequestSetTubeObject( m_Path );
   m_PathRepresentationSagittal->SetColor( 0.0, 1.0, 0.0);
-  m_PathRepresentationSagittal->SetOpacity( 0.5 );
+  m_PathRepresentationSagittal->SetOpacity( 0.4 );
 
   m_PathRepresentationCoronal         = PathRepresentationType::New();
   m_PathRepresentationCoronal->RequestSetTubeObject( m_Path );
   m_PathRepresentationCoronal->SetColor( 0.0, 1.0, 0.0);
-  m_PathRepresentationCoronal->SetOpacity( 0.5 );
+  m_PathRepresentationCoronal->SetOpacity( 0.4 );
 
   m_PathRepresentation3D         = PathRepresentationType::New();
   m_PathRepresentation3D->RequestSetTubeObject( m_Path );
   m_PathRepresentation3D->SetColor( 0.0, 1.0, 0.0);
-  m_PathRepresentation3D->SetOpacity( 0.5 );
+  m_PathRepresentation3D->SetOpacity( 0.4 );
 
-  m_Cylinder                    = CylinderType::New();
-  m_CylinderRepresentation      = CylinderRepresentationType::New();
-  m_Cylinder->SetRadius( 1.5 );   //   1.5 mm
-  m_Cylinder->SetHeight( 100 );   // 200.0 mm
-  m_CylinderRepresentation->RequestSetCylinderObject( m_Cylinder );
-  m_CylinderRepresentation->SetColor(0.0,1.0,0.0);
-  m_CylinderRepresentation->SetOpacity(1.0);
+  m_Needle                    = CylinderType::New();
+  m_NeedleRepresentation      = CylinderRepresentationType::New();
+  m_Needle->SetRadius( 1.5 );   //   1.5 mm
+  m_Needle->SetHeight( 100 );   // 200.0 mm
+  m_NeedleRepresentation->RequestSetCylinderObject( m_Needle );
+  m_NeedleRepresentation->SetColor(0.0,1.0,0.0);
+  m_NeedleRepresentation->SetOpacity(1.0);
   
   /** Tool calibration transform */
   igstk::Transform toolCalibrationTransform;
@@ -164,11 +164,6 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_PulseGenerator->AddObserver( PulseEvent(), m_Observer );
   m_PulseGenerator->RequestSetFrequency( 30 ); //FIXME, move to request start tracking??
 
-  /** Temporary disable this logger */
-  //this->DisplayAxial->SetLogger( logger );
-  //this->DisplaySagittal->SetLogger( logger );
-  //this->DisplayCoronal->SetLogger( logger );
-
   m_ViewPickerObserver = ObserverType2::New();
   m_ViewPickerObserver->SetCallbackFunction( this, &NeedleBiopsy::DrawPickedPoint );
 
@@ -187,12 +182,24 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_ImageRepresentationSagittal3D = ImageRepresentationType::New();
   m_ImageRepresentationCoronal3D  = ImageRepresentationType::New();
 
-  m_ImageRepresentationAxial->SetLogger( logger );
-  m_ImageRepresentationSagittal->SetLogger( logger );
-  m_ImageRepresentationCoronal->SetLogger( logger );
-  m_ImageRepresentationAxial3D->SetLogger( logger );
-  m_ImageRepresentationSagittal3D->SetLogger( logger );
-  m_ImageRepresentationCoronal3D->SetLogger( logger );
+  /** Set logger */
+  if(0) // Temporary disable this logger
+  {
+    m_ImageReader->SetLogger( logger );
+    m_Tracker->SetLogger( logger );
+    m_LandmarkRegistration->SetLogger( logger );
+    m_SerialCommunication->SetLogger( logger );  
+    this->DisplayAxial->SetLogger( logger );
+    this->DisplaySagittal->SetLogger( logger );
+    this->DisplayCoronal->SetLogger( logger );
+    this->Display3D->SetLogger( logger );
+    m_ImageRepresentationAxial->SetLogger( logger );
+    m_ImageRepresentationSagittal->SetLogger( logger );
+    m_ImageRepresentationCoronal->SetLogger( logger );
+    m_ImageRepresentationAxial3D->SetLogger( logger );
+    m_ImageRepresentationSagittal3D->SetLogger( logger );
+    m_ImageRepresentationCoronal3D->SetLogger( logger );
+  }
 
   this->ObserveAxialSliceBoundsEvent(    m_ImageRepresentationAxial    );
   this->ObserveSagittalSliceBoundsEvent( m_ImageRepresentationSagittal );
@@ -638,9 +645,9 @@ void NeedleBiopsy::RequestStartTracking()
 void NeedleBiopsy::StartTrackingProcessing()
 {
   igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::StartTrackingProcessing called ... \n" )
-  m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Cylinder );
+  m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Needle );
 
-  m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Ellipsoid );
+  m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_NeedleTip );
   m_Tracker->StartTracking();
   m_PulseGenerator->RequestStart();   
   // We don't have observer for tracker, we are actively reading the transform right now
@@ -651,23 +658,18 @@ void NeedleBiopsy::StartTrackingProcessing()
 void NeedleBiopsy::Tracking()
 {
   igstkLogMacro( DEBUG,  "Pulse Events...\n" )
-    //m_Tracker->UpdateStatus();
-    Transform transform;
-  //transform = m_Ellipsoid->GetTransform();
+  Transform transform;
   m_Tracker->GetToolTransform( TRACKER_TOOL_PORT, 0, transform );
-  //m_Ellipsoid->RequestSetTransform( transform );
-
+  
   ImageSpatialObjectType::PointType    p;
   p[0] = transform.GetTranslation()[0];
   p[1] = transform.GetTranslation()[1];
   p[2] = transform.GetTranslation()[2];
 
-  igstkLogMacro( DEBUG,  "Tracker tool translation:" << p << "\n" )
     if( m_ImageReader->GetOutput()->IsInside( p ) )
       {
       ImageSpatialObjectType::IndexType index;
       m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index);
-      igstkLogMacro( DEBUG,  "Tracker tool index:" << index << "\n" )
       ResliceImage( index );      
       }
     else
@@ -714,8 +716,6 @@ void NeedleBiopsy::ResliceImage()
 
 void NeedleBiopsy::ResliceImage ( IndexType index )
 {
-  
-  igstkLogMacro( DEBUG, "ResliceImage( IndexType index ) called... \n" )
   m_ImageRepresentationAxial->RequestSetSliceNumber( index[2] );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( index[0] );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( index[1] );
@@ -754,22 +754,26 @@ void NeedleBiopsy::ConnectImageRepresentationProcessing()
   m_ImageRepresentationCoronal3D->RequestSetOrientation( ImageRepresentationType::Coronal );
 
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
-  this->DisplayAxial->RequestAddObject( m_EllipsoidRepresentation->Copy() );
-  this->DisplayAxial->RequestAddObject( m_CylinderRepresentation->Copy() );
+  this->DisplayAxial->RequestAddObject( m_PickedPointRepresentation->Copy() );
+  this->DisplayAxial->RequestAddObject( m_NeedleTipRepresentation->Copy() );
+  this->DisplayAxial->RequestAddObject( m_NeedleRepresentation->Copy() );
 
   this->DisplaySagittal->RequestAddObject( m_ImageRepresentationSagittal );
-  this->DisplaySagittal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
-  this->DisplaySagittal->RequestAddObject( m_CylinderRepresentation->Copy() );
+  this->DisplaySagittal->RequestAddObject( m_PickedPointRepresentation->Copy() );
+  this->DisplaySagittal->RequestAddObject( m_NeedleTipRepresentation->Copy() );
+  this->DisplaySagittal->RequestAddObject( m_NeedleRepresentation->Copy() );
 
   this->DisplayCoronal->RequestAddObject( m_ImageRepresentationCoronal );
-  this->DisplayCoronal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
-  this->DisplayCoronal->RequestAddObject( m_CylinderRepresentation->Copy() );
+  this->DisplayCoronal->RequestAddObject( m_PickedPointRepresentation->Copy() );
+  this->DisplayCoronal->RequestAddObject( m_NeedleTipRepresentation->Copy() );
+  this->DisplayCoronal->RequestAddObject( m_NeedleRepresentation->Copy() );
 
   this->Display3D->RequestAddObject( m_ImageRepresentationAxial3D );
   this->Display3D->RequestAddObject( m_ImageRepresentationSagittal3D );
   this->Display3D->RequestAddObject( m_ImageRepresentationCoronal3D );
-  this->Display3D->RequestAddObject( m_EllipsoidRepresentation->Copy() );
-  this->Display3D->RequestAddObject( m_CylinderRepresentation->Copy() );
+  this->Display3D->RequestAddObject( m_PickedPointRepresentation->Copy() );
+  this->Display3D->RequestAddObject( m_NeedleTipRepresentation->Copy() );
+  this->Display3D->RequestAddObject( m_NeedleRepresentation->Copy() );
 
 
   this->DisplayAxial->RequestAddObject( m_TargetRepresentation->Copy() );
@@ -907,7 +911,7 @@ void NeedleBiopsy::DrawPickedPoint( const itk::EventObject & event)
       {
       m_ImageLandmarkTransformToBeSet = tmevent->Get();
       
-      m_Ellipsoid->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
+      m_PickedPoint->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
       ImageSpatialObjectType::IndexType index;
       m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index);
       igstkLogMacro( DEBUG, index <<"\n")
@@ -925,12 +929,14 @@ void NeedleBiopsy::EvaluatingRegistrationErrorProcessing()
   igstkLogMacro (         DEBUG, "Evaluating registration error....\n" )
   igstkLogMacro2( logger, DEBUG, "Evaluating registration error....\n" )
   char temp[255];
-  sprintf( temp, "Registration error (RMS) = %f\n", m_LandmarkRegistration->ComputeRMSError() );
+  double error = m_LandmarkRegistration->ComputeRMSError();
+  sprintf( temp, "Registration error (RMS) = %f\n", error );
   std::string msg = temp;
   msg += "Accept this registration result?";
   int i = fl_choice( msg.c_str(), NULL, "Yes", "No" );
   if ( i==1 )
     {
+      this->RegistrationError->value( error );
       m_StateMachine.PushInput( m_RegistrationErrorAcceptedInput );
     }
   else
@@ -946,6 +952,7 @@ void NeedleBiopsy::ResetRegistrationProcessing()
   igstkLogMacro (         DEBUG, "Reset registration....\n" )
   igstkLogMacro2( logger, DEBUG, "Reset registration....\n" )
   m_LandmarkRegistration->RequestResetRegistration();  
+  this->RegistrationError->value( NULL );
 }
 
 void NeedleBiopsy::RequestSetTargetPoint()
@@ -1032,58 +1039,7 @@ void NeedleBiopsy::RequestReset()
 
 void NeedleBiopsy::Reset()
 {
-  //FILLME!!!!!!!!
-  m_Tracker->StopTracking();
-  m_Tracker->Close();
-  m_Tracker->Reset();
-
-  m_LandmarkRegistration->RequestResetRegistration();
-
-  this->ClearImageLandmarksProcessing();
-  this->ClearTrackerLandmarksProcessing();
-
-  this->DisplayAxial->RequestStop();
-  this->DisplaySagittal->RequestStop();
-  this->DisplayCoronal->RequestStop();
-  this->Display3D->RequestStop();
-
-  this->DisplayAxial->RequestDisableInteractions();
-  this->DisplaySagittal->RequestDisableInteractions();
-  this->DisplayCoronal->RequestDisableInteractions();
-  this->Display3D->RequestDisableInteractions();
-
-  //FIXME. Need an RemoveAllObject function
-  this->DisplayAxial->RequestRemoveObject( m_ImageRepresentationAxial );
-  //this->DisplayAxial->RequestRemoveObject( m_EllipsoidRepresentation->Copy() );
-  //this->DisplayAxial->RequestRemoveObject( m_CylinderRepresentation->Copy() );
-
-  this->DisplaySagittal->RequestRemoveObject( m_ImageRepresentationSagittal );
-  //this->DisplaySagittal->RequestRemoveObject( m_EllipsoidRepresentation->Copy() );
-  //this->DisplaySagittal->RequestRemoveObject( m_CylinderRepresentation->Copy() );
-
-  this->DisplayCoronal->RequestRemoveObject( m_ImageRepresentationCoronal );
-  //this->DisplayCoronal->RequestRemoveObject( m_EllipsoidRepresentation->Copy() );
-  //this->DisplayCoronal->RequestRemoveObject( m_CylinderRepresentation->Copy() );
-
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationAxial3D );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationSagittal3D );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationCoronal3D );
-  //this->Display3D->RequestRemoveObject( m_EllipsoidRepresentation->Copy() );
-  //this->Display3D->RequestRemoveObject( m_CylinderRepresentation->Copy() );
-
-  this->DisplayAxial->Update();
-  this->DisplaySagittal->Update();
-  this->DisplayCoronal->Update();
-  this->Display3D->Update();
-  
-  this->AxialSlider->deactivate();
-  this->SagittalSlider->deactivate();
-  this->CoronalSlider->deactivate();
-
-  this->ViewerGroup->redraw();
-  Fl::check();
-
+  // Reset method not provided here
 }
-
 
 } // end of namespace

@@ -262,8 +262,10 @@ private:
   /** Ellipsoid spatial object, used to represent the landmark point, tip of the probe. */
   typedef igstk::EllipsoidObject                  EllipsoidType;
   typedef igstk::EllipsoidObjectRepresentation    EllipsoidRepresentationType;
-  EllipsoidType::Pointer                          m_Ellipsoid;
-  EllipsoidRepresentationType::Pointer            m_EllipsoidRepresentation;
+  EllipsoidType::Pointer                          m_NeedleTip;
+  EllipsoidRepresentationType::Pointer            m_NeedleTipRepresentation;
+  EllipsoidType::Pointer                          m_PickedPoint;
+  EllipsoidRepresentationType::Pointer            m_PickedPointRepresentation;
 
   /** Objects for path planning */
   EllipsoidType::Pointer                          m_TargetPoint;
@@ -287,8 +289,8 @@ private:
   /** Cylinder spatial object, used to represent the probe */
   typedef igstk::CylinderObject                   CylinderType;    
   typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;  
-  CylinderType::Pointer                            m_Cylinder;
-  CylinderRepresentationType::Pointer              m_CylinderRepresentation;
+  CylinderType::Pointer                            m_Needle;
+  CylinderRepresentationType::Pointer              m_NeedleRepresentation;
 
 
   /** Action methods to be invoked only by the state machine */
