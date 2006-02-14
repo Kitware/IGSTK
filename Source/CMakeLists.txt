@@ -223,6 +223,7 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 
 # The header files
 SET(IGSTKSandbox_HEADS
+  igstkFlockOfBirdsCommandInterpreter.h
   igstkFlockOfBirdsTracker.h
   igstkFlockOfBirdsTrackerTool.h
 )
@@ -230,6 +231,7 @@ SET(IGSTKSandbox_HEADS
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
+  igstkFlockOfBirdsCommandInterpreter.cxx
   igstkFlockOfBirdsTracker.cxx
   igstkFlockOfBirdsTrackerTool.cxx
 )
