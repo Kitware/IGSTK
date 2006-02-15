@@ -1607,9 +1607,8 @@ int FlockOfBirdsCommandInterpreter::Unpack(char **cp)
   return msb;
 }
 
-/** \fn      FlockOfBirdsErrorCode SetErrorAndMessage(
-                                    FlockOfBirdsErrorCode errorcode,
-                                    const char *text)
+/** \fn      void SetErrorAndMessage(FlockOfBirdsErrorCode errorcode,
+                                     const char *text)
     \ingroup  InternalMethods
 
 Set the error indicator.
@@ -1620,14 +1619,12 @@ Set the error indicator.
 \return           the error code that was set
 */
 
-FlockOfBirdsErrorCode FlockOfBirdsCommandInterpreter::SetErrorAndMessage(
+void FlockOfBirdsCommandInterpreter::SetErrorAndMessage(
   FlockOfBirdsErrorCode errorcode, const char *text)
 {
   m_Error = errorcode;
   strncpy(m_ErrorText,text,255);
   m_ErrorText[255] = '\0';
-
-  return errorcode;
 }
 
 /*---------------------------------------------------------------------*/

@@ -436,8 +436,7 @@ private:
   int Unpack(char **cp);
 
   /** Set the error indicator. */
-  FlockOfBirdsErrorCode SetErrorAndMessage(FlockOfBirdsErrorCode errorcode,
-                                           const char *text);
+  void SetErrorAndMessage(FlockOfBirdsErrorCode errorcode, const char *text);
 
   /* stores last error */
   FlockOfBirdsErrorCode m_Error;
