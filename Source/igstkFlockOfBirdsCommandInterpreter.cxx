@@ -52,7 +52,7 @@ namespace igstk
 {
 
 /** Get the number of data words for a particular data format. */
-inline int ComputeRecordSize(int format)
+inline int ComputeRecordSize(FlockOfBirdsDataFormat format)
 {
   static int formatDataSizeTable[8] = { 3, 3, 9, 6, 12, 0, 4, 7 };
 
@@ -64,7 +64,7 @@ inline int ComputeRecordSize(int format)
 Different revisions of the Flock of Birds hardware support different
 paramters.
 */
-inline int GetMaxParameterForRevision(int revision)
+inline FlockOfBirdsParameter GetMaxParameterForRevision(int revision)
 {
   if (revision >= (3 << 8) + 71)
     {
@@ -93,15 +93,15 @@ Constructor.
 
 FlockOfBirdsCommandInterpreter::FlockOfBirdsCommandInterpreter() 
 {
-  m_Error = 0;
-  m_PointData = 0;
-  m_StreamData = 0;
+  m_Error = FB_NO_ERROR;
+  m_PointData = false;
+  m_StreamData = false;
   m_ErrorText[0] = '\0';
-  m_GroupMode = 0;
+  m_GroupMode = false;
   m_CurrentBird = 1;
   m_NumberOfBirds = 1;
   m_DataFormat[1] = FB_POSITION_ANGLES;
-  m_ButtonMode[1] = 0;
+  m_ButtonMode[1] = false;
   m_PositionScale[1] = FB_STANDARD; 
   m_FBBAddress = 1;
   m_PhaseErrorLeftoverBytes = 0;
@@ -140,8 +140,6 @@ the flock.
 
 void FlockOfBirdsCommandInterpreter::Open()
 {
-  int i;
-
   /* insert code to open serial communication and set baud rate */
 
   /* Insert code to turn off the Flock by setting the RTS line */
@@ -157,8 +155,8 @@ void FlockOfBirdsCommandInterpreter::Open()
     return;
     }
 
-  i = this->ExamineValue(FB_REVISION);
-  m_Revision = ((i >> 8) & 0x00ff) | ((i << 8) & 0xff00); 
+  int rev = this->ExamineValue(FB_REVISION);
+  m_Revision = ((rev >> 8) & 0x00ff) | ((rev << 8) & 0xff00); 
   m_MaxParameter = GetMaxParameterForRevision(m_Revision);
   if (m_Error)
     {
@@ -166,14 +164,19 @@ void FlockOfBirdsCommandInterpreter::Open()
     return;
     }
 
-  m_PositionScale[1] = this->ExamineValue(FB_POSITION_SCALING);
+  m_PositionScale[1] =
+    FlockOfBirdsPositionScale(this->ExamineValue(FB_POSITION_SCALING));
+
   if (m_Error)
     {
     this->Close();
     return;
     }
-  i = this->ExamineValue(FB_STATUS);
-  m_DataFormat[1] = ((i & FB_STATUS_FORMAT) >> 1) + (FB_POSITION-1);
+  int status = this->ExamineValue(FB_STATUS);
+  m_DataFormat[1] =
+    FlockOfBirdsDataFormat(((status & FB_STATUS_FORMAT) >> 1) +
+                           (FB_POSITION-1));
+
   if (m_Error)
     {
     this->Close();
@@ -183,12 +186,13 @@ void FlockOfBirdsCommandInterpreter::Open()
   m_AddressMode = FB_NORMAL;
   if (m_Revision > (3 << 8) + 33)
     {
-    if ((i & FB_STATUS_EXPANDED) != 0)
+    if ((status & FB_STATUS_EXPANDED) != 0)
       {
       m_AddressMode = FB_EXPANDED;
       if (m_Revision > (3 << 8) + 67)
         {
-        m_AddressMode = this->ExamineValue(FB_FBB_ADDRESS_MODE);
+        m_AddressMode =
+          FlockOfBirdsAddressMode(this->ExamineValue(FB_FBB_ADDRESS_MODE));
         }
       }
     }
@@ -242,16 +246,16 @@ void FlockOfBirdsCommandInterpreter::Reset()
   /* Insert code to sleep for 2 seconds */
 
   m_FBBAddress = 1;
-  m_StreamData = 0;
-  m_PointData = 0;
+  m_StreamData = false;
+  m_PointData = false;
   m_PhaseErrorLeftoverBytes = 0;
   m_CurrentBird = 1;
-  m_Error = 0;
+  m_Error = FB_NO_ERROR;
   m_ErrorText[0] = '\0';
-  m_GroupMode = 0;
+  m_GroupMode = false;
   m_NumberOfBirds = 1;
   m_DataFormat[1] = FB_POSITION_ANGLES;
-  m_ButtonMode[1] = 0;
+  m_ButtonMode[1] = false;
   m_PositionScale[1] = FB_STANDARD; 
  
   /* Insert code to purse the serial port buffer */
@@ -298,18 +302,17 @@ For each bird that is attached to the flock, the corresponding
 byte will be nonzero.
 */
 
-void FlockOfBirdsCommandInterpreter::FBBAutoConfig(int num)
+void FlockOfBirdsCommandInterpreter::FBBAutoConfig(unsigned int num)
 {
-  int i;
   char text[3];
 
   /* Insert code to sleep for 600 milliseconds */
 
   m_NumberOfBirds = num;
-  for (i = 1; i <= num; i++)
+  for (unsigned int i = 1; i <= num; i++)
     {
     m_DataFormat[i] = FB_POSITION_ANGLES;
-    m_ButtonMode[i] = 0;
+    m_ButtonMode[i] = false;
     m_PositionScale[i] = FB_STANDARD; 
     }
   text[0] = FB_CHANGE_VALUE;
@@ -321,7 +324,7 @@ void FlockOfBirdsCommandInterpreter::FBBAutoConfig(int num)
 
 }  
 
-/** \fn      void RS232ToFBB(int bird)
+/** \fn      void RS232ToFBB(unsigned int bird)
     \ingroup FlockMethods
 
 Inform the flock that the next command is to be sent
@@ -331,7 +334,7 @@ commands.
 \param bird       the bird address (1 or greater)
 */
 
-void FlockOfBirdsCommandInterpreter::RS232ToFBB(int bird)
+void FlockOfBirdsCommandInterpreter::RS232ToFBB(unsigned int bird)
 {
   char text[2];
 
@@ -365,7 +368,7 @@ from the flock.  It is necessary to call these methods before data is
 requested from the flock, or the data format remains unspecified.
 */
 
-/** \fn      void SetHemisphere(int hemisphere)
+/** \fn      void SetHemisphere(FlockOfBirdsHemisphere hemisphere)
     \ingroup ConfigureMethods
 
 Set the tracking hemisphere for the flock.  The flock will only
@@ -376,14 +379,15 @@ hemisphere.
                   FB_AFT, FB_UPPER, FB_LOWER, FB_LEFT, FB_RIGHT
 */
 
-void FlockOfBirdsCommandInterpreter::SetHemisphere(int hemisphere)
+void FlockOfBirdsCommandInterpreter::SetHemisphere(
+  FlockOfBirdsHemisphere hemisphere)
 {
   short hemiShort = hemisphere;
   this->SendCommandWords(FB_HEMISPHERE,&hemiShort);
 }
   
 
-/** \fn      void SetFormat(int format)
+/** \fn      void SetFormat(FlockOfBirdsDataFormat format)
     \ingroup ConfigureMethods
 
 Set the data format that will be used by the flock.  This must
@@ -397,7 +401,8 @@ The most common data format is FB_POSITION_ANGLES, which is the most
 compact format for the full six degrees of freedom.
 */
 
-void FlockOfBirdsCommandInterpreter::SetFormat(int format)
+void FlockOfBirdsCommandInterpreter::SetFormat(
+  FlockOfBirdsDataFormat format)
 {
   char text[1];
 
@@ -419,7 +424,7 @@ Enable or disable the reporting of button information from the flock.
 \param mode       0 or 1 depending on whether button information is desired
 */
 
-void FlockOfBirdsCommandInterpreter::SetButtonMode(int mode)
+void FlockOfBirdsCommandInterpreter::SetButtonMode(bool mode)
 {
   char text[2];
 
@@ -725,7 +730,6 @@ transferred through the serial port.
 
 void FlockOfBirdsCommandInterpreter::GetMatrix(float a[9])
 {
-  int i;
   char *cp;
   switch (m_DataFormat[m_CurrentBird])
     {
@@ -738,7 +742,7 @@ void FlockOfBirdsCommandInterpreter::GetMatrix(float a[9])
     default:
       return;
     }
-  for (i = 0; i < 9; i++)
+  for (unsigned int i = 0; i < 9; i++)
     {
     a[i] = (float)(this->Unpack(&cp)*0.000030517578125f);
     }
@@ -757,7 +761,6 @@ with one of the following modes: FB_QUATERNION, FB_POSITION_QUATERNION.
 
 void FlockOfBirdsCommandInterpreter::GetQuaternion(float q[4])
 {
-  int i;
   char *cp;
   switch (m_DataFormat[m_CurrentBird])
     {
@@ -771,7 +774,7 @@ void FlockOfBirdsCommandInterpreter::GetQuaternion(float q[4])
       return;
     }
 
-  for (i = 0; i < 4; i++)
+  for (unsigned int i = 0; i < 4; i++)
     {
     q[i] = (float)(this->Unpack(&cp)*0.000030517578125f);
     }
@@ -816,9 +819,10 @@ is always 1.  A return value of zero indicates that a phase error
 or some other communication problem occurred with the flock.
 */
 
-int FlockOfBirdsCommandInterpreter::GetBird()
+unsigned int FlockOfBirdsCommandInterpreter::GetBird()
 {
-  int bird;
+  unsigned int bird;
+
   if (m_GroupMode)
     {
     bird = m_DataBuffer[2*ComputeRecordSize(m_DataFormat[m_CurrentBird]) \
@@ -931,29 +935,6 @@ int FlockOfBirdsCommandInterpreter::GetShort(const char *cp)
   return msb; 
 }
 
-/*
-  A simple function to silently fudge commands like FB_HEMISPHERE into
-  their parameter values like FB_P_HEMISPHERE.
-*/
-
-static int fudge_parameter(int parameter)
-{
-  if (parameter == FB_HEMISPHERE)
-    {
-    parameter = FB_P_HEMISPHERE;
-    }
-  else if (parameter == FB_ANGLE_ALIGN2)
-    {
-    parameter = FB_P_ANGLE_ALIGN2;
-    }
-  else if (parameter == FB_REFERENCE_FRAME2)
-    {
-    parameter = FB_P_REFERENCE_FRAME2;
-    }
-
-  return parameter;
-}
-
 /*---------------------------------------------------------------------*/
 /** \defgroup CommandMethods Sending Commands to the Flock
 
@@ -973,7 +954,7 @@ commands, see The Flock of Birds INSTALLATION AND OPERATION GUIDE
 from Ascension Technology Corporation.
 */
 
-/** \fn      int ExamineValue(int parameter)
+/** \fn      int ExamineValue(FlockOfBirdsParameter parameter)
     \ingroup CommandMethods
 
 Examine a flock parameter.
@@ -987,12 +968,11 @@ byte or into a single word, otherwise either ExamineValueWords() or
 ExamineValueBytes() should be used instead.
 */
 
-int FlockOfBirdsCommandInterpreter::ExamineValue(int parameter)
+int FlockOfBirdsCommandInterpreter::ExamineValue(
+  FlockOfBirdsParameter parameter)
 {
   char data[128];
   int len;
-
-  parameter = fudge_parameter(parameter);
 
   len = this->ExamineValueBytes(parameter,data);
   
@@ -1012,7 +992,7 @@ int FlockOfBirdsCommandInterpreter::ExamineValue(int parameter)
     }
 }  
 
-/** \fn      int ExamineValueWords(int parameter,
+/** \fn      int ExamineValueWords(FlockOfBirdsParameter parameter,
                                    short *data)
     \ingroup CommandMethods
 
@@ -1024,15 +1004,13 @@ Examine a flock parameter that consists of 16-bit words.
 \return           number of word values stored in the array
 */
 
-int FlockOfBirdsCommandInterpreter::ExamineValueWords(int parameter,
-                                                      short *data)
+int FlockOfBirdsCommandInterpreter::ExamineValueWords(
+  FlockOfBirdsParameter parameter,
+  short *data)
 {
   char text[128];
-  int i,len;
 
-  parameter = fudge_parameter(parameter);
-
-  len = this->ExamineValueBytes(parameter,text);
+  unsigned int len = this->ExamineValueBytes(parameter,text);
   
   if (len % 2 != 0)
     {
@@ -1041,7 +1019,8 @@ int FlockOfBirdsCommandInterpreter::ExamineValueWords(int parameter,
     return 0;
     }
 
-  for (i = 0; i < len/2; i++)
+  unsigned int n = len/2;
+  for (unsigned int i = 0; i < n; i++)
     {
     data[i] = this->GetShort(&text[2*i]);
     }
@@ -1060,7 +1039,7 @@ static int examine_change_len_table[36] = { 2, 2, 2, 2,
                                             0, 0, 0, 0,
                                             2, 0, 0, 1 };
 
-/** \fn      int ExamineValueBytes(int parameter,
+/** \fn      int ExamineValueBytes(FlockOfBirdsParameter parameter,
                                    char *data)
     \ingroup CommandMethods
 
@@ -1071,13 +1050,12 @@ Examine a flock parameter that consists of bytes.
 
 \return           number of bytes stored in the array
 */
-int FlockOfBirdsCommandInterpreter::ExamineValueBytes(int parameter,
-                                                      char *data)
+int FlockOfBirdsCommandInterpreter::ExamineValueBytes(
+  FlockOfBirdsParameter parameter,
+  char *data)
 {
   char text[2];
   int len;
-
-  parameter = fudge_parameter(parameter);
 
   if (m_StreamData)
     {
@@ -1165,7 +1143,7 @@ void FlockOfBirdsCommandInterpreter::PutShort(char *cp, int val)
   *cp++ = (unsigned char)msb;
 }
 
-/** \fn      void ChangeValue(int param,
+/** \fn      void ChangeValue(FlockOfBirdsParameter param,
                               int val)
     \ingroup CommandMethods
 
@@ -1175,11 +1153,11 @@ Modify an 8-bit or 16-bit flock parameter.
 \param val        the new parameter value
 */
 
-void FlockOfBirdsCommandInterpreter::ChangeValue(int parameter, int val)
+void FlockOfBirdsCommandInterpreter::ChangeValue(
+  FlockOfBirdsParameter parameter, int val)
 {
   char data[16];
   int outputDataLen;
-  parameter = fudge_parameter(parameter);
   
   outputDataLen = 0;
   
@@ -1214,7 +1192,7 @@ void FlockOfBirdsCommandInterpreter::ChangeValue(int parameter, int val)
   this->ChangeValueBytes(parameter,data);
 }
 
-/** \fn      void ChangeValueWords(int param,
+/** \fn      void ChangeValueWords(FlockOfBirdsParameter param,
                                    const short *data)
     \ingroup CommandMethods
 
@@ -1224,12 +1202,11 @@ Modify a flock parameter that consists of several words.
 \param data       the new parameter data
 */
 
-void FlockOfBirdsCommandInterpreter::ChangeValueWords(int parameter,
-                                                      const short *data)
+void FlockOfBirdsCommandInterpreter::ChangeValueWords(
+  FlockOfBirdsParameter parameter, const short *data)
 {
   char text[16];
-  int i, outputDataLen;
-  parameter = fudge_parameter(parameter);
+  unsigned int outputDataLen;
   
   outputDataLen = 0;
   
@@ -1253,14 +1230,15 @@ void FlockOfBirdsCommandInterpreter::ChangeValueWords(int parameter,
     return;
     }
 
-  for (i = 0; i < outputDataLen/2; i++)
+  unsigned int n = outputDataLen/2;
+  for (unsigned int i = 0; i < n; i++)
     {
     PutShort(&text[2*i],data[i]);
     }
   this->ChangeValueBytes(parameter,text);
 }
 
-/** \fn      void ChangeValueBytes(int param,
+/** \fn      void ChangeValueBytes(FlockOfBirdsParameter param,
                                    const char *data)
     \ingroup CommandMethods
 
@@ -1270,19 +1248,19 @@ Modify a flock parameter that consists of several bytes.
 \param data       the new parameter data
 */
 
-void FlockOfBirdsCommandInterpreter::ChangeValueBytes(int parameter,
-                                                      const char *data)
+void FlockOfBirdsCommandInterpreter::ChangeValueBytes(
+  FlockOfBirdsParameter parameter, const char *data)
 {
   char text[16];
   int outputDataLen;
-  parameter = fudge_parameter(parameter);
 
   text[0] = (char)FB_CHANGE_VALUE;
   text[1] = (char)parameter;
 
   if (parameter == FB_POSITION_SCALING)
     {
-    m_PositionScale[m_FBBAddress] = this->GetShort(data);
+    m_PositionScale[m_FBBAddress] =
+      FlockOfBirdsPositionScale(this->GetShort(data));
     }
 
   if (parameter <= m_MaxParameter)
@@ -1315,7 +1293,7 @@ void FlockOfBirdsCommandInterpreter::ChangeValueBytes(int parameter,
   FlockOfBirdsCommandInterpreter::SendRaw(text,outputDataLen+2);    
 }
 
-/** \fn      void SendCommand(int command)
+/** \fn      void SendCommand(FlockOfBirdsCommand command)
     \ingroup CommandMethods
 
 Send a command to the flock with no arguments.
@@ -1327,12 +1305,12 @@ FB_REPORT_RATE_FULL, FB_REPORT_RATE_DIV2, FB_REPORT_RATE_DIV8,
 FB_REPORT_RATE_DIV32, FB_RUN, FB_SLEEP, FB_XOFF, FB_XON.
 */
 
-void FlockOfBirdsCommandInterpreter::SendCommand(int c)
+void FlockOfBirdsCommandInterpreter::SendCommand(FlockOfBirdsCommand c)
 {
   this->SendCommandBytes(c,0);
 }
 
-/** \fn      void SendCommandWords(int command,
+/** \fn      void SendCommandWords(FlockOfBirdsCommand command,
                                    const short *data)
     \ingroup CommandMethods
 
@@ -1349,8 +1327,8 @@ FB_ANGLE_ALIGN2 (3 words), FB_REFERENCE_FRAME2 (3 words),
 FB_HEMISPHERE (1 word) or FB_SYNC (1 word).
 */
 
-void FlockOfBirdsCommandInterpreter::SendCommandWords(int c,
-                                                      const short *output_data)
+void FlockOfBirdsCommandInterpreter::SendCommandWords(
+  FlockOfBirdsCommand c, const short *outputData)
 {
   char text[16];
   int outputDataLen,i;
@@ -1379,13 +1357,13 @@ void FlockOfBirdsCommandInterpreter::SendCommandWords(int c,
 
   for (i = 0; i < outputDataLen; i++)
     {
-    PutShort(&text[2*i],output_data[i]);
+    PutShort(&text[2*i],outputData[i]);
     }
 
   this->SendCommandBytes(c,text);
 }
 
-/** \fn      void SendCommandBytes(int command,
+/** \fn      void SendCommandBytes(FlockOfBirdsCommand command,
                                    const char *data)
     \ingroup CommandMethods
 
@@ -1399,19 +1377,21 @@ with the command.
 This function can be used to send any command to the flock.
 */
 
-void FlockOfBirdsCommandInterpreter::SendCommandBytes(int c,
-                                                      const char *output_data)
+void FlockOfBirdsCommandInterpreter::SendCommandBytes(
+  FlockOfBirdsCommand c, const char *outputData)
 {
-  int outputDataLen,i;
+  unsigned int outputDataLen;
   char text[16];
 
   switch (c)
     {
     case FB_EXAMINE_VALUE:
-      this->ExamineValueBytes(output_data[0],0);
+      this->ExamineValueBytes(FlockOfBirdsParameter(outputData[0]),
+                              0);
       return;
     case FB_CHANGE_VALUE:
-      this->ChangeValueBytes(output_data[0],&output_data[1]);
+      this->ChangeValueBytes(FlockOfBirdsParameter(outputData[0]),
+                             &outputData[1]);
       return;
     case FB_POINT:
       this->Point();
@@ -1432,7 +1412,7 @@ void FlockOfBirdsCommandInterpreter::SendCommandBytes(int c,
       this->SetFormat(c);
       return;
     case FB_BUTTON_MODE:
-      this->SetButtonMode(output_data[0]);
+      this->SetButtonMode(outputData[0]);
       return;
     case FB_FBB_RESET:
       this->FBBReset();
@@ -1463,7 +1443,7 @@ void FlockOfBirdsCommandInterpreter::SendCommandBytes(int c,
       outputDataLen = 1;
       break;
     case FB_RS232_TO_FBB_SE:
-      this->RS232ToFBB(output_data[0]);
+      this->RS232ToFBB(outputData[0]);
       return;
     default:
       if (c >= FB_RS232_TO_FBB && c < FB_RS232_TO_FBB+16)
@@ -1482,11 +1462,11 @@ void FlockOfBirdsCommandInterpreter::SendCommandBytes(int c,
     }
 
   text[0] = c;
-  if (output_data)
+  if (outputData)
     {
-    for (i = 0; i < outputDataLen; i++)
+    for (unsigned int i = 0; i < outputDataLen; i++)
       {
-      text[i+1] = output_data[i];
+      text[i+1] = outputData[i];
       }
     }
 
@@ -1517,7 +1497,8 @@ might be disrupted.  The SendCommandBytes() function should be
 used instead of SendRaw() and ReceiveRaw() in all circumstances.
 */
 
-void FlockOfBirdsCommandInterpreter::SendRaw(const char *text, int len)
+void FlockOfBirdsCommandInterpreter::SendRaw(const char *text,
+                                             unsigned int len)
 {
   int error;
 
@@ -1546,15 +1527,12 @@ raw stream of bytes from the flock.
 \param len        the number of bytes to read
 */
 
-void FlockOfBirdsCommandInterpreter::ReceiveRaw(char *reply, int len)
+void FlockOfBirdsCommandInterpreter::ReceiveRaw(char *reply,
+                                                unsigned int len)
 {
-  int error;
-  int n;
-  int i;
-
-  error = 0;
-  n = len;
-  i = 0;
+  int error = 0;
+  unsigned int n = len;
+  unsigned int i = 0;
 
   if (m_StreamData || m_PointData)
     { /* correct for previous phase error */
@@ -1629,7 +1607,8 @@ int FlockOfBirdsCommandInterpreter::Unpack(char **cp)
   return msb;
 }
 
-/** \fn      int SetErrorAndMessage(int errorcode,
+/** \fn      FlockOfBirdsErrorCode SetErrorAndMessage(
+                                    FlockOfBirdsErrorCode errorcode,
                                     const char *text)
     \ingroup  InternalMethods
 
@@ -1641,8 +1620,8 @@ Set the error indicator.
 \return           the error code that was set
 */
 
-int FlockOfBirdsCommandInterpreter::SetErrorAndMessage(int errorcode,
-                                                       const char *text)
+FlockOfBirdsErrorCode FlockOfBirdsCommandInterpreter::SetErrorAndMessage(
+  FlockOfBirdsErrorCode errorcode, const char *text)
 {
   m_Error = errorcode;
   strncpy(m_ErrorText,text,255);
@@ -1658,7 +1637,7 @@ These methods are used to check whether an error occured as a result of
 an attempt to communicate with the flock.
 */
 
-/** \fn      int GetError()
+/** \fn      FlockOfBirdsErrorCode GetError()
     \ingroup ErrorMethods
 
 Return the last error code and clear the error indicator.
@@ -1675,14 +1654,14 @@ the following:  GetButton(), GetPosition(), GetAngles(),
 GetQuaternion(), GetMatrix().
 */
 
-int FlockOfBirdsCommandInterpreter::GetError()
+FlockOfBirdsErrorCode FlockOfBirdsCommandInterpreter::GetError()
 {
-  int error = m_Error;
-  m_Error = 0;
+  FlockOfBirdsErrorCode error = m_Error;
+  m_Error = FB_NO_ERROR;
   return error;
 }
 
-/** \fn      char *GetErrorMessage()
+/** \fn      const char *GetErrorMessage()
     \ingroup ErrorMethods
 
 Return some text that describes the last error.
@@ -1690,7 +1669,7 @@ Return some text that describes the last error.
 \return           text for the last error
 */
 
-char *FlockOfBirdsCommandInterpreter::GetErrorMessage()
+const char *FlockOfBirdsCommandInterpreter::GetErrorMessage()
 {
   return m_ErrorText;
 }
