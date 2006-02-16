@@ -1409,7 +1409,7 @@ void FlockOfBirdsCommandInterpreter::SendCommandBytes(
     case FB_POSITION_MATRIX:
     case FB_QUATERNION:
     case FB_POSITION_QUATERNION:
-      this->SetFormat(c);
+      this->SetFormat(FlockOfBirdsDataFormat(c));
       return;
     case FB_BUTTON_MODE:
       this->SetButtonMode(outputData[0]);

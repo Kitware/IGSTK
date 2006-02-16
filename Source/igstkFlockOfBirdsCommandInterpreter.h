@@ -65,13 +65,13 @@ enum FlockOfBirdsCommand
   FB_REPORT_RATE_DIV8    = 'S',
   FB_REPORT_RATE_DIV32   = 'T',
 
-  FB_POSITION            = 'V',
-  FB_ANGLES              = 'W',
-  FB_MATRIX              = 'X',
-  FB_POSITION_ANGLES     = 'Y',
-  FB_POSITION_MATRIX     = 'Z',
-  FB_QUATERNION          = '\\',
-  FB_POSITION_QUATERNION = ']',
+  FB_C_POSITION          = 'V',
+  FB_C_ANGLES            = 'W',
+  FB_C_MATRIX            = 'X',
+  FB_C_POSITION_ANGLES   = 'Y',
+  FB_C_POSITION_MATRIX   = 'Z',
+  FB_C_QUATERNION        = '\\',
+  FB_C_POSITION_QUATERNION = ']',
 
   FB_BUTTON_MODE         = 'M',
   FB_BUTTON_READ         = 'N',
@@ -98,7 +98,23 @@ enum FlockOfBirdsCommand
   FB_CHANGE_VALUE        = 'P',
 };
 
-typedef FlockOfBirdsCommand FlockOfBirdsDataFormat;
+/** \enum FlockOfBirdsDataFormat
+ *
+ * The Flock of Birds supports several different data formats, which
+ * can be set with the SetFormat() method.  Since the native format
+ * is FB_POSITION_ANGLES, it is the one you should generally choose.
+ * It is also the most compact six-degree-of-freedom format.
+ */
+enum FlockOfBirdsDataFormat
+{
+  FB_POSITION            = 'V',
+  FB_ANGLES              = 'W',
+  FB_MATRIX              = 'X',
+  FB_POSITION_ANGLES     = 'Y',
+  FB_POSITION_MATRIX     = 'Z',
+  FB_QUATERNION          = '\\',
+  FB_POSITION_QUATERNION = ']',
+};
 
 /** \enum FlockOfBirdsStatusBits
  *
