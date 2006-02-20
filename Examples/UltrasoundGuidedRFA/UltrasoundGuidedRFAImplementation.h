@@ -34,6 +34,7 @@
 #include "igstkFlockOfBirdsTracker.h"
 #include "igstkUltrasoundProbeObjectRepresentation.h"
 #include "igstkAxesObjectRepresentation.h"
+#include "igstkMouseTracker.h"
 
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
@@ -56,6 +57,8 @@ class UltrasoundGuidedRFAImplementation : public UltrasoundGuidedRFA
     typedef itk::StdStreamLogOutput  LogOutputType;
 
     typedef igstk::FlockOfBirdsTracker     TrackerType;
+
+    //typedef igstk::MouseTracker TrackerType;
 
 #ifdef WIN32
     typedef igstk::SerialCommunicationForWindows  CommunicationType;
@@ -81,7 +84,7 @@ class UltrasoundGuidedRFAImplementation : public UltrasoundGuidedRFA
         std::cerr << "Problem opening Log file, using cerr instead " << std::endl;
         m_LogOutput->SetStream( std::cerr );
         }
-      m_Logger->AddLogOutput( m_LogOutput );
+     // m_Logger->AddLogOutput( m_LogOutput );
 
       // add stdout for debug purposes
       LogOutputType::Pointer coutLogOutput = LogOutputType::New();
@@ -97,7 +100,6 @@ class UltrasoundGuidedRFAImplementation : public UltrasoundGuidedRFA
       m_Communication->SetParity( igstk::SerialCommunication::NoParity );
       m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate19200 );
       m_Tracker->SetCommunication(m_Communication);
-
       m_Communication->OpenCommunication();
 
       /** Tool calibration transform */
@@ -106,16 +108,16 @@ class UltrasoundGuidedRFAImplementation : public UltrasoundGuidedRFA
       translation[0] = 0;   // Tip offset
       translation[1] = 0;
       translation[2] = 390;
-  
+      //translation[2] = 0;
+      
       igstk::Transform::VersorType rotation;
-      rotation.SetRotationAroundZ(-3.141597/2.0);
+      //rotation.SetRotationAroundZ(-3.141597/2.0);
+      rotation.SetRotationAroundY(-3.141597/2.0);
     
       igstk::Transform::VersorType rotation2;
-      rotation2.SetRotationAroundY(-3.141597/2.0);
-      
-      //igstk::Transform::VersorType rotation3;
-      //rotation3.SetRotationAroundY(3.141597/2.0);
- 
+      //rotation2.SetRotationAroundY(-3.141597/2.0);
+      rotation2.SetRotationAroundX(3.141597/2.0);
+    
       rotation = rotation2*rotation;
    
       translation = rotation.Transform(translation);
@@ -153,10 +155,13 @@ class UltrasoundGuidedRFAImplementation : public UltrasoundGuidedRFA
       translationP[2] = 0;
 
       igstk::Transform::VersorType rotationP;
-      rotationP.SetRotationAroundX(3.141597/2.0);
+      //rotationP.SetRotationAroundX(3.141597/2.0);
+      rotationP.SetRotationAroundY(-3.141597/2.0);
     
       igstk::Transform::VersorType rotation2P;
-      rotation2P.SetRotationAroundY(-3.141597/2.0);
+      //rotation2P.SetRotationAroundY(-3.141597/2.0);
+      rotation2P.SetRotationAroundZ(3.141597/2.0);
+   
       rotationP = rotation2P*rotationP;
 
       patientTransform.SetTranslationAndRotation(translationP,rotationP,0.0001,100000);

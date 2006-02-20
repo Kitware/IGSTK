@@ -25,11 +25,28 @@
 
 int main(int , char** )
 { 
+  igstk::RealTimeClock::Initialize();
+
   igstk::UltrasoundGuidedRFAImplementation   application;
   application.Show();
 
-  // Create the cylinder 
+  // Create the probe
   igstk::UltrasoundProbeObject::Pointer UltrasoundProbe = igstk::UltrasoundProbeObject::New();
+
+  double validityTimeInMilliseconds = 1e20; // in seconds
+  igstk::Transform transform;
+  igstk::Transform::VectorType translation;
+  translation[0] = 0.0;
+  translation[1] = 0.0;
+  translation[2] = 0.0;
+  igstk::Transform::VersorType rotation;
+  rotation.Set( 0.0, 0.0, 0.0, 1.0 );
+  igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
+ 
+  transform.SetTranslationAndRotation(
+           translation, rotation, errorValue, validityTimeInMilliseconds );
+ 
+  UltrasoundProbe->RequestSetTransform( transform );
 
   // Create the UltrasoundProbe representation
   igstk::UltrasoundProbeObjectRepresentation::Pointer UltrasoundProbeRepresentation = igstk::UltrasoundProbeObjectRepresentation::New();
@@ -53,13 +70,19 @@ int main(int , char** )
   axes2->SetSize(50,50,50);
   igstk::AxesObjectRepresentation::Pointer axesRepresentation2 = igstk::AxesObjectRepresentation::New();
   axesRepresentation2->RequestSetAxesObject( axes2 );
-  // application.AddAxes(axesRepresentation2);
+   application.AddAxes(axesRepresentation2);
 
   // Associate the Spatial Object to the tracker
   //application.AttachObjectToTrack( axes2 );
   application.AttachObjectToTrack(  UltrasoundProbe  );
 
-  Fl::run();
+  //Fl::run();
+
+  while( 1 )
+    {
+    Fl::wait(0.001);
+    igstk::PulseGenerator::CheckTimeouts();
+    }
 
   return EXIT_SUCCESS;
 }
