@@ -222,11 +222,11 @@ void Landmark3DRegistrationErrorEstimator::
      differenceVector[2] = (*pointItr)[2] - this->m_LandmarkCentroid[2];
    
      distanceFromLandmarkPointToPrinciaplAxes1 += 
-        vnl_math_sqr( CrossProduct ( normalizedPrincipalAxes1, differenceVector ).GetNorm() ) ; 
+        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes1, differenceVector ).GetNorm() ) ; 
      distanceFromLandmarkPointToPrinciaplAxes2 += 
-        vnl_math_sqr( CrossProduct ( normalizedPrincipalAxes2, differenceVector ).GetNorm() ); 
+        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes2, differenceVector ).GetNorm() ); 
      distanceFromLandmarkPointToPrinciaplAxes3 += 
-        vnl_math_sqr( CrossProduct ( normalizedPrincipalAxes3, differenceVector ).GetNorm() ); 
+        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes3, differenceVector ).GetNorm() ); 
      ++pointItr;
    }
 
@@ -303,11 +303,11 @@ Landmark3DRegistrationErrorEstimator
 
   // calculate the distance from the target point to the principal axes
   distanceFromTargetPointToPrincipalAxes[0] = 
-               CrossProduct ( normalizedPrincipalAxes1, differenceVector ).GetNorm() ; 
+               itk::CrossProduct ( normalizedPrincipalAxes1, differenceVector ).GetNorm() ; 
   distanceFromTargetPointToPrincipalAxes[1] = 
-               CrossProduct ( normalizedPrincipalAxes2, differenceVector ).GetNorm() ; 
+               itk::CrossProduct ( normalizedPrincipalAxes2, differenceVector ).GetNorm() ; 
   distanceFromTargetPointToPrincipalAxes[2] = 
-               CrossProduct ( normalizedPrincipalAxes3, differenceVector ).GetNorm() ; 
+               itk::CrossProduct ( normalizedPrincipalAxes3, differenceVector ).GetNorm() ; 
 
   // target error parameter 
   ErrorType                      targetRegistrationError = 0.0;
