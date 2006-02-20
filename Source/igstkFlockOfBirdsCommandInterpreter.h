@@ -1,14 +1,19 @@
-/*=======================================================================
+/*=========================================================================
 
-  Program:   Flock of Birds C Interface Library
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkFlockOfBirdsCommandInterpreter.h
-  Creator:   David Gobbi <dgobbi@atamai.com>
-  Language:  C
-  Author:    $Author: dgobbi $
+  Language:  C++
   Date:      $Date$
   Version:   $Revision$
 
-==========================================================================
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================
 
 Copyright (c) 2000-2005 Atamai, Inc.
 
@@ -44,6 +49,10 @@ POSSIBILITY OF SUCH DAMAGES.
 
 #ifndef __igstkFlockOfBirdsCommandInterpreter_h
 #define __igstkFlockOfBirdsCommandInterpreter_h
+
+#include "igstkObject.h"
+#include "igstkSerialCommunication.h"
+#include "igstkNDIErrorEvent.h"
 
 namespace igstk
 {
@@ -288,14 +297,23 @@ enum FlockOfBirdsBaudRate
   FB_115200 = 6,
 };
 
-class FlockOfBirdsCommandInterpreter
+class FlockOfBirdsCommandInterpreter : public Object
 {
 public:
-  /** Constructor */
-  FlockOfBirdsCommandInterpreter();
 
-  /** Destructor */
-  ~FlockOfBirdsCommandInterpreter();
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( FlockOfBirdsCommandInterpreter, Object )
+
+public:
+
+  /** Some required typedefs. */
+  typedef SerialCommunication            CommunicationType;
+
+  /** Set the communication object that commands will be sent to */
+  void SetCommunication(CommunicationType* communication);
+  
+  /** Get the communication object */
+  CommunicationType* GetCommunication();
 
   /** Open communication with the flock. */
   void Open();
@@ -440,6 +458,17 @@ public:
   /** Utility function to convert a short into two chars for the flock. */
   void PutShort(char *cp, int val);
 
+protected:
+
+  /** Constructor */
+  FlockOfBirdsCommandInterpreter();
+
+  /** Destructor */
+  virtual ~FlockOfBirdsCommandInterpreter();
+
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 private:
 
   /** Receive a number of raw characters over the serial port. */
@@ -501,6 +530,9 @@ private:
 
   /* leftover chars after a phase error */
   unsigned int m_PhaseErrorLeftoverBytes;
+
+  /** Serial communication */
+  CommunicationType::Pointer m_Communication;
 };
 
 } /* end namespace igstk */

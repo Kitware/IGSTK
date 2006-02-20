@@ -20,6 +20,7 @@
 
 #include "igstkSerialCommunication.h"
 #include "igstkFlockOfBirdsTrackerTool.h"
+#include "igstkFlockOfBirdsCommandInterpreter.h"
 #include "igstkTracker.h"
 
 namespace igstk
@@ -33,24 +34,6 @@ namespace igstk
   * \ingroup Trackers
   *
   */
-
-const unsigned int FoBDataSize[8] = {3,3,9,6,12,0,4,7};
-
-#define POSK36 (float)(36.0/32768.0)    /* integer to inches */
-#define POSK72 (float)(72.0/32768.0)    /* integer to inches */
-#define POSK144 (float)(144.0/32768.0)  /* integer to inches ER Controller */
-#define DTR (float)(3.141593/180.0)     /* degrees to radians */
-#define FTW (float)32768.0              /* float to word integer */
-#define WTF (float)(1.0/32768.0)        /* float to word integer */
-#define ANGK (float)(180.0/32768.0)     /* integer to degrees */
-const double I_TO_CM = 2.54;    /* inches to centimeters */
-const double I_TO_MM = 25.4;    /* inches to millimeters */
-const double CM_TO_I = 1/2.54;  /* centimeters to inches */
-const double MM_TO_I = 1/25.4;  /* millimeters to inches */
-const double MM_TO_CM = 1/10;   /* millimeters to centimeters */
-const double CM_TO_MM = 10;     /* centimeters to millimeters */
-
-
 class FlockOfBirdsTracker : public Tracker
 {
 public:
@@ -60,10 +43,13 @@ public:
 
 public:
 
-  /** number of ports to allow */
+  /** Number of ports to allow */
   itkStaticConstMacro( NumberOfPorts, unsigned int, 1 );
 
-  /** communication type */
+  /** Command Interpreter */
+  typedef igstk::FlockOfBirdsCommandInterpreter CommandInterpreterType;
+
+  /** Communication type */
   typedef igstk::SerialCommunication     CommunicationType;
 
   /** The SetCommunication method is used to attach a communication
@@ -122,54 +108,6 @@ private:
   FlockOfBirdsTracker(const Self&);   //purposely not implemented
   void operator=(const Self&);   //purposely not implemented
 
-  /** A mutex for multithreaded access to the buffer arrays */
-  ::itk::MutexLock::Pointer  m_BufferLock;
-
-  typedef enum 
-    {
-    POINTM=0,
-    CONTINUOUS=1, 
-    STREAM=2
-    } FoBMode;
-
-  typedef enum 
-    {
-    POS=0, 
-    ANGLE=1, 
-    MATRIX=2, 
-    POSANGLE=3, 
-    POSMATRIX=4, 
-    FACTORY_USE_ONLY=5,  
-    QUATER=6, 
-    POSQUATER=7
-    } FoBType;
-
-  typedef enum 
-    {
-    F_UP_RIGHT=0, 
-    F_UP_LEFT=1, 
-    F_DOWN_LEFT=2, 
-    F_DOWN_RIGHT=3, 
-    B_UP_RIGHT=4, 
-    B_UP_LEFT=5, 
-    B_DOWN_LEFT=6, 
-    B_DOWN_RIGHT=7
-    } FoBHemisphere;
-
-  typedef enum 
-    {
-    _36_INCHES, 
-    _72_INCHES, 
-    _144_INCHES = 1
-    } FoBPositionScaling;
-
-  typedef enum 
-    {
-    INCHES=0, 
-    CM=1, 
-    MM=2
-    } FoBUnit;
-
   /** typedefs for the tool */
   typedef igstk::FlockOfBirdsTrackerTool              FlockOfBirdsTrackerToolType;
   typedef FlockOfBirdsTrackerToolType::Pointer        FlockOfBirdsTrackerToolPointer;
@@ -213,23 +151,11 @@ private:
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;
 
-  /** Set the mode of operation of the Flock of Birds */
-  ResultType SetMode(const FoBMode mode);
+  /** The command interpreter */
+  CommandInterpreterType::Pointer  m_CommandInterpreter;
 
-  /** Set the type of operation of the Flock of Birds */
-  ResultType SetType(const FoBType type);
-
-  /** Set the position scaling of the Flock of Birds */
-  ResultType SetPositionScaling(const FoBPositionScaling scaling);
-
-  /** Mode of the Flock of Birds */
-  FoBMode m_Mode;
-
-  /** Type of acquisition */
-  FoBType m_Type;
-
-  /** Position Scaling for the Flock of Birds */
-  FoBPositionScaling m_PositionScaling;
+  /** A mutex for multithreaded access to the buffer arrays */
+  itk::MutexLock::Pointer  m_BufferLock;
 
 };
 

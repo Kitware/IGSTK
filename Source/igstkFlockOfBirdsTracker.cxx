@@ -48,10 +48,8 @@ FlockOfBirdsTracker::FlockOfBirdsTracker(void):m_StateMachine(this)
   this->SetThreadingEnabled( true );
 
   m_BufferLock = itk::MutexLock::New();
-
-  m_Mode = CONTINUOUS;
-  m_Type = POSQUATER;
-  m_PositionScaling = _36_INCHES;
+  m_Communication = 0;
+  m_CommandInterpreter = CommandInterpreterType::New();
 }
 
 /** Destructor */
@@ -65,6 +63,7 @@ void FlockOfBirdsTracker::SetCommunication( CommunicationType *communication )
 {
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker:: Entered SetCommunication ...\n");
   m_Communication = communication;
+  m_CommandInterpreter->SetCommunication( communication );
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker:: Exiting SetCommunication ...\n"); 
 }
 
@@ -72,9 +71,8 @@ void FlockOfBirdsTracker::SetCommunication( CommunicationType *communication )
 FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalOpen( void )
 {
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalOpen called ...\n");
-
-  this->SetMode(CONTINUOUS);
-  this->SetType(POSQUATER);
+  m_CommandInterpreter->Open();
+  m_CommandInterpreter->SetFormat(FB_POSITION_QUATERNION);
   return SUCCESS;
 }
 
@@ -82,6 +80,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalOpen( void )
 FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalClose called ...\n");
+  m_CommandInterpreter->Close();
   return SUCCESS;
 }
 
@@ -89,6 +88,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalClose( void )
 FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalActivateTools( void )
 {
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalActivateTools called ...\n");
+  
   // load any SROMS that are needed
   for (unsigned int i = 0; i < NumberOfPorts; i++)
     { 
@@ -109,7 +109,6 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalActivateTools( void
       m_NumberOfTools++;
       }
     }
-
   return SUCCESS;
 }
 
@@ -133,7 +132,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalDeactivateTools( vo
 /** Put the tracking device into tracking mode. */
 FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalStartTracking( void )
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalStartTracking called ...\n");  
+  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalStartTracking called ...\n");
   return SUCCESS;
 }
 
@@ -150,212 +149,13 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalReset( void )
   return SUCCESS;
 }
 
-/** Set the type of operation of the Flock of Birds */
-FlockOfBirdsTracker::ResultType
-FlockOfBirdsTracker::SetType(const FoBType type) 
-{
-  char cmd;
-
-  switch (type) 
-    {
-    case POS:
-      cmd = 86;
-      break;
-    case ANGLE:
-      cmd = 87;
-      break;
-    case MATRIX:
-      cmd = 88;
-      break;
-    case POSANGLE:
-      cmd = 89;
-      break;
-    case POSMATRIX:
-      cmd = 90;
-      break;
-    case QUATER:
-      cmd = 92;
-      break;
-    case POSQUATER:
-      cmd = 93;
-      break;
-    default:
-     igstkLogMacro( DEBUG, "FlockOfBirdsTracker::SetType() Unknown Type ...\n");
-     return FAILURE;
-    }
-
-  if(m_Communication->Write(&cmd,sizeof(char)) != igstk::Communication::SUCCESS)
-    {
-    return FAILURE;
-    }
- 
-  m_Type = type;
-  return SUCCESS;
-}
-
-/** Set the mode of operation of the Flock of Birds */
-FlockOfBirdsTracker::ResultType
-FlockOfBirdsTracker::SetMode(const FoBMode mode) 
-{
-  char cmd;
-
-  switch (mode) 
-    {
-    case STREAM:
-      cmd = '@';
-      break;
-    default:
-      cmd = 'B';
-      break;
-    }
-
-  if(m_Communication->Write(&cmd,sizeof(char)) != igstk::Communication::SUCCESS)
-    {
-    return FAILURE;
-    }
-
-  m_Mode = mode;
-  return SUCCESS;
-}
-
-/** Set the position scaling of the Flock of Birds */
-FlockOfBirdsTracker::ResultType
-FlockOfBirdsTracker::SetPositionScaling(const FoBPositionScaling scaling)
-{
-  m_PositionScaling = scaling;
-  return SUCCESS;
-}
 
 /** Update the status and the transforms for all TrackerTools. */
 FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
 {
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalUpdateStatus called ...\n");
-
-  unsigned int recordSize = 2*FoBDataSize[m_Type];
-  short * localData = new short[recordSize];
-  short* data = (short*)localData;
-  char command = 'B';
-  unsigned int numberErrors = 0;
-
-  if (m_Mode != STREAM) 
-    {
-    if(m_Communication->Write(&command,sizeof(char)) != igstk::Communication::SUCCESS)
-      {
-      igstkLogMacro( CRITICAL,
-                    "Cannot write command to serial port.\n" );
-      return FAILURE;
-      }
-    }
-
-  unsigned int bytesRead;
-
-  if (m_Communication->Read((char*)data,recordSize,bytesRead) != igstk::Communication::SUCCESS) 
-    {
-    igstkLogMacro( CRITICAL,
-                  "Cannot read command from serial port.\n" );
-
-    if(m_Mode == STREAM) 
-      {
-      numberErrors++;
-      if (numberErrors > 10)
-        {
-        this->SetMode(POINTM);
-        }
-      }
-    return FAILURE;
-    }
-
-  localData = (short*)data;
-
-  unsigned int i;
-  for (i = 0; i < FoBDataSize[m_Type]; i++) 
-    {
-    *localData++ = (short)((((short)(* (unsigned char *) localData) & 0x7F) |
-       (short)(* ((unsigned char *) localData + 1)) << 7)) << 2;
-    }
-
-  float* converted = new float[recordSize];
-
-  // Convert the data
-  float posk;
-  switch (m_PositionScaling) 
-    {
-    case _36_INCHES:
-      posk = POSK36;
-      break;
-    
-    case _72_INCHES:
-      posk = POSK72;
-      break; 
-    //case _144_INCHES:  posk = POSK144; break;
-    }
-
-  switch (m_Type) 
-    {
-    case POS:
-      for( i = 0; i < 3; i++ ) 
-        {
-        converted[i] = (float)((float)data[i] * posk);
-        }
-      break;
-    
-    case POSANGLE:
-      for( i = 0; i < 3; i++ ) 
-        {
-        converted[i] = (float)((float)data[i] * posk);
-        }
-      for( i = 3; i < 6; i++ ) 
-        {
-        converted[i] = (float)((float)data[i] * ANGK);
-        }
-      break;
-    
-    case ANGLE:
-      for( i = 0; i < 3; i++ ) 
-        {
-        converted[i] = (float)((float)data[i] * ANGK);
-        }
-      break;
-    
-    case MATRIX:
-      for( i = 0; i < 9; i++ ) 
-        {
-        converted[i] = (float)((float)data[i] / FTW);
-        }
-      break;
-
-    case POSMATRIX:
-      for( i = 0; i < 3; i++ )
-        {
-        converted[i] = (float)((float)data[i] * posk);
-        }
-      for( i = 3; i < 12; i++ ) 
-        {
-        converted[i] = (float)((float)data[i] / FTW);
-        }
-      break;
-
-    case QUATER:
-      for( i = 0; i < 4; i++ )
-        {
-        converted[i] = (float)((float)data[i] / FTW);
-        }
-      break;
-
-    case POSQUATER:
-      for( i = 0; i < 3; i++ )
-        {
-        converted[i] = (float)((float)data[i] * posk);
-        }
-      for( i = 3; i < 7; i++ )
-        {
-        converted[i] = (float)((float)data[i] / FTW);
-        }
-      break;
-
-    default:
-      return FAILURE;
-    }
+  m_CommandInterpreter->Point();
+  m_CommandInterpreter->Update();
 
   // create the transform
   TransformType transform;
@@ -363,21 +163,22 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
   typedef TransformType::VectorType TranslationType;
   TranslationType translation;
   
-  //convert inch to mm
-  for(i=0;i<3;i++)
-    {
-    converted[i] *= (float)I_TO_MM;
-    }
-
   m_BufferLock->Lock();
 
-  translation[0] = converted[0];
-  translation[1] = converted[1];
-  translation[2] = converted[2];
+  float offset[3];
+  m_CommandInterpreter->GetPosition(offset);
+
+  translation[0] = offset[0];
+  translation[1] = offset[1];
+  translation[2] = offset[2];
+
+  float quaternion[4];
+  m_CommandInterpreter->GetQuaternion(quaternion);
+
 
   typedef TransformType::VersorType RotationType;
   RotationType rotation;
-  rotation.Set(converted[3],-converted[6],converted[5],converted[4]);
+  rotation.Set(quaternion[0],-quaternion[3],quaternion[2],quaternion[1]);
 
   typedef TransformType::TimePeriodType TimePeriodType;
   const TimePeriodType validityTime = 100.0;
@@ -385,9 +186,6 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
   transform.SetToIdentity(validityTime);
   transform.SetTranslationAndRotation(translation, rotation, 0,
                                       validityTime);
-
-  delete [] localData;
-  delete [] converted;
 
   this->SetToolTransform(0, 0, transform);
 
@@ -402,7 +200,6 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalThreadedUpdateStatu
 {
   //igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalThreadedUpdateStatus "
   //               "called ...\n");
-
   return SUCCESS;
 }
 

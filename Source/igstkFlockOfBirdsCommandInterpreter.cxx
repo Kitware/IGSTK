@@ -1,14 +1,19 @@
-/*=======================================================================
+/*=========================================================================
 
-  Program:   Flock of Birds Interface Library
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkFlockOfBirdsCommandInterpreter.cxx
-  Creator:   David Gobbi <dgobbi@atamai.com>
   Language:  C++
-  Author:    $Author: dgobbi $
   Date:      $Date$
   Version:   $Revision$
 
-==========================================================================
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================
 
 Copyright (c) 2000-2005 Atamai, Inc.
 
@@ -85,13 +90,8 @@ inline FlockOfBirdsParameter GetMaxParameterForRevision(int revision)
   return FB_ERROR_CODE_EXPANDED;
 } 
 
-/*---------------------------------------------------------------------*/
-/** \fn      FlockOfBirdsCommandInterpreter() 
-
-Constructor.
-*/
-
-FlockOfBirdsCommandInterpreter::FlockOfBirdsCommandInterpreter() 
+/** Constructor */
+FlockOfBirdsCommandInterpreter::FlockOfBirdsCommandInterpreter() :m_StateMachine(this)
 {
   m_Error = FB_NO_ERROR;
   m_PointData = false;
@@ -105,15 +105,40 @@ FlockOfBirdsCommandInterpreter::FlockOfBirdsCommandInterpreter()
   m_PositionScale[1] = FB_STANDARD; 
   m_FBBAddress = 1;
   m_PhaseErrorLeftoverBytes = 0;
+  m_Communication = 0;
+  m_MaxParameter = FB_POSITION_SCALING;
 }
 
-/** \fn      ~FlockOfBirdsCommandInterpreter()
-
-Destructor.
-*/
-
+/** Desctructor */
 FlockOfBirdsCommandInterpreter::~FlockOfBirdsCommandInterpreter()
 {
+}
+
+
+/** Set the communication object to use. */
+void FlockOfBirdsCommandInterpreter::SetCommunication(CommunicationType* communication)
+{
+  m_Communication = communication;
+ 
+  /* These are the communication parameters that the NDI devices are
+     set up for when they are turned on or reset. */
+  /*communication->SetBaudRate(SerialCommunication::BaudRate9600);
+  communication->SetDataBits(SerialCommunication::DataBits8);
+  communication->SetParity(SerialCommunication::NoParity);
+  communication->SetStopBits(SerialCommunication::StopBits1);
+  communication->SetHardwareHandshake(SerialCommunication::HandshakeOff);
+  communication->UpdateParameters();
+  */
+  /* All replies from the NDI devices end in a carriage return. */
+  //communication->SetUseReadTerminationCharacter(1);
+  //communication->SetReadTerminationCharacter('\r');
+}
+
+/** Get the communication object. */
+FlockOfBirdsCommandInterpreter::CommunicationType *
+FlockOfBirdsCommandInterpreter::GetCommunication()
+{
+  return m_Communication;
 }
 
 /*---------------------------------------------------------------------*/
@@ -156,7 +181,8 @@ void FlockOfBirdsCommandInterpreter::Open()
     }
 
   int rev = this->ExamineValue(FB_REVISION);
-  m_Revision = ((rev >> 8) & 0x00ff) | ((rev << 8) & 0xff00); 
+  m_Revision = ((rev >> 8) & 0x00ff) | ((rev << 8) & 0xff00);
+
   m_MaxParameter = GetMaxParameterForRevision(m_Revision);
   if (m_Error)
     {
@@ -201,6 +227,8 @@ void FlockOfBirdsCommandInterpreter::Open()
     {
     this->Close();
     }
+
+
 }
 
 /** \fn      void Close()
@@ -211,6 +239,9 @@ Shut down the flock and close communication.
 
 void FlockOfBirdsCommandInterpreter::Close()
 {
+
+  std::cout << "FlockOfBirdsCommandInterpreter::Close()" << std::endl;
+
   if (m_StreamData)
     {
     this->EndStream();
@@ -238,12 +269,16 @@ void FlockOfBirdsCommandInterpreter::Reset()
     }
 
   /* Insert code to set the RTS line high */
+  m_Communication->SetRTS(1);
 
   /* Insert code to sleep for 1 second */
+  m_Communication->Sleep(1000);
 
   /* Insert code to set the RTS line low */
+  m_Communication->SetRTS(0);
 
   /* Insert code to sleep for 2 seconds */
+  m_Communication->Sleep(2000);
 
   m_FBBAddress = 1;
   m_StreamData = false;
@@ -287,6 +322,7 @@ void FlockOfBirdsCommandInterpreter::FBBReset()
   this->SendRaw("/",1);
 
   /* Insert code to sleep for 600 milliseconds */
+  m_Communication->Sleep(600);
 }
 
 /** \fn      void FBBAutoConfig()
@@ -307,6 +343,7 @@ void FlockOfBirdsCommandInterpreter::FBBAutoConfig(unsigned int num)
   char text[3];
 
   /* Insert code to sleep for 600 milliseconds */
+  m_Communication->Sleep(600);
 
   m_NumberOfBirds = num;
   for (unsigned int i = 1; i <= num; i++)
@@ -321,6 +358,7 @@ void FlockOfBirdsCommandInterpreter::FBBAutoConfig(unsigned int num)
   this->SendRaw(text,3);
 
   /* Insert code to sleep for 600 milliseconds */
+  m_Communication->Sleep(600);
 
 }  
 
@@ -1500,16 +1538,16 @@ used instead of SendRaw() and ReceiveRaw() in all circumstances.
 void FlockOfBirdsCommandInterpreter::SendRaw(const char *text,
                                              unsigned int len)
 {
-  int error;
-
   /* Insert code to write data to the serial port and check for errors */
+  igstk::Communication::ResultType result = m_Communication->Write(text,len);
+    
 
-  if (error == FB_IO_ERROR)
+  if (result == igstk::Communication::FAILURE)
     {
     this->SetErrorAndMessage(FB_IO_ERROR,
                              "I/O error on serial port write");
     }
-  else if (error == FB_TIMEOUT_ERROR)
+  else if (result == igstk::Communication::TIMEOUT)
     {
     this->SetErrorAndMessage(FB_TIMEOUT_ERROR,
                              "timeout on serial port write");
@@ -1543,9 +1581,12 @@ void FlockOfBirdsCommandInterpreter::ReceiveRaw(char *reply,
 
   /* Insert code to read from serial port: in order restart after a
    * phase error, read into &reply[i] and read n bytes. */
+  unsigned int bytesRead;
+  igstk::Communication::ResultType  result =
+               m_Communication->Read(reply,len,bytesRead);
 
   /* shared code ------------------------*/
-  if ((m_StreamData || m_PointData) && !error)
+  if ((m_StreamData || m_PointData) && result==igstk::Communication::SUCCESS)
     {  /* check for phase errors */
     if (!(reply[0] & 0x80))
       {
@@ -1563,21 +1604,21 @@ void FlockOfBirdsCommandInterpreter::ReceiveRaw(char *reply,
       }
     }
 
-  if (error == FB_IO_ERROR)
+  if (result==igstk::Communication::FAILURE)
     {
     this->SetErrorAndMessage(FB_IO_ERROR,
                              "I/O error on serial port read");
     }
-  else if (error == FB_TIMEOUT_ERROR)
+  else if (result==igstk::Communication::TIMEOUT)
     {
     this->SetErrorAndMessage(FB_TIMEOUT_ERROR,
                              "timeout while waiting for bird data");
     }
-  else if (error == FB_PHASE_ERROR)
-    {
-    this->SetErrorAndMessage(FB_PHASE_ERROR,
-                             "received malformed data record");
-    }
+  //else if (error == FB_PHASE_ERROR)
+  //  {
+  //  this->SetErrorAndMessage(FB_PHASE_ERROR,
+  //                           "received malformed data record");
+  //  }
 }
 
 /** \fn       int Unpack(char **cp)
@@ -1625,6 +1666,8 @@ void FlockOfBirdsCommandInterpreter::SetErrorAndMessage(
   m_Error = errorcode;
   strncpy(m_ErrorText,text,255);
   m_ErrorText[255] = '\0';
+
+  std::cout << m_ErrorText << std::endl;
 }
 
 /*---------------------------------------------------------------------*/
@@ -1670,6 +1713,30 @@ const char *FlockOfBirdsCommandInterpreter::GetErrorMessage()
 {
   return m_ErrorText;
 }
+
+/** PrintSelf function. **/
+void FlockOfBirdsCommandInterpreter::PrintSelf(std::ostream& os,
+                                      itk::Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+  //os << indent << "Tracking: " << m_Tracking << std::endl;
+  os << indent << "ErrorCode: " << m_ErrorText << std::endl;
+/*
+  m_Error = FB_NO_ERROR;
+  m_PointData = false;
+  m_StreamData = false;
+  m_ErrorText[0] = '\0';
+  m_GroupMode = false;
+  m_CurrentBird = 1;
+  m_NumberOfBirds = 1;
+  m_DataFormat[1] = FB_POSITION_ANGLES;
+  m_ButtonMode[1] = false;
+  m_PositionScale[1] = FB_STANDARD; 
+  m_FBBAddress = 1;
+  m_PhaseErrorLeftoverBytes = 0;
+  m_Communication = 0;*/
+}
+
 
 } /* end namespace igstk */
 
