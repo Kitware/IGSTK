@@ -107,7 +107,6 @@ SET(IGSTK_TESTS ${CXX_TEST_PATH}/igstkLatestTests)
 
 # You just need to add your new tests here
 SET(IGSTKTests_SRCS
-  igstkAnnotation2DTest.cxx
   igstkAxesObjectTest.cxx
   igstkBoxObjectTest.cxx
   igstkConeObjectTest.cxx
@@ -250,6 +249,7 @@ ENDIF(IGSTK_USE_FLTK)
 IF(IGSTK_DATA_ROOT)
   SET(IGSTKTests_SRCS
     ${IGSTKTests_SRCS}
+    igstkAnnotation2DTest.cxx
     igstkCTImageReaderTest.cxx
     igstkCTImageSpatialObjectRepresentationTest.cxx
     igstkDICOMImageReaderErrorsTest.cxx
