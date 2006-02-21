@@ -53,7 +53,7 @@ int main(int , char** )
   // Create the UltrasoundProbe representation
   typedef igstk::UltrasoundProbeObjectRepresentation USProbeRepresentationType;
   USProbeRepresentationType::Pointer UltrasoundProbeRepresentation;
-  UltrasoundProbeRepresentation = igstk::USProbeRepresentationType::New();
+  UltrasoundProbeRepresentation = USProbeRepresentationType::New();
   UltrasoundProbeRepresentation->RequestSetUltrasoundProbeObject( 
                                                               UltrasoundProbe );
   UltrasoundProbeRepresentation->SetColor(1.0,0.0,0.0);
