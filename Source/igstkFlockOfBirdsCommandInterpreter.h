@@ -283,9 +283,9 @@ enum FlockOfBirdsParameter
 };
 
 /** \enum FlockOfBirdsBaudRates
-  *
-  * The following baud rates are supported by Open():
-  */
+ *
+ * The following baud rates are supported by Open():
+ */
 enum FlockOfBirdsBaudRate
 {
   FB_2400   = 0,

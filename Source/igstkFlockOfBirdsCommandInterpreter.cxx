@@ -65,10 +65,8 @@ inline int ComputeRecordSize(FlockOfBirdsDataFormat format)
 }
 
 /** Get the maximum allowed parameter, given the revision number. 
-
-Different revisions of the Flock of Birds hardware support different
-paramters.
-*/
+ *  Different revisions of the Flock of Birds hardware support different
+ *  paramters. */
 inline FlockOfBirdsParameter GetMaxParameterForRevision(int revision)
 {
   if (revision >= (3 << 8) + 71)
@@ -91,7 +89,8 @@ inline FlockOfBirdsParameter GetMaxParameterForRevision(int revision)
 } 
 
 /** Constructor */
-FlockOfBirdsCommandInterpreter::FlockOfBirdsCommandInterpreter() :m_StateMachine(this)
+FlockOfBirdsCommandInterpreter::FlockOfBirdsCommandInterpreter()
+                                                 :m_StateMachine(this)
 {
   m_Error = FB_NO_ERROR;
   m_PointData = false;
@@ -116,22 +115,10 @@ FlockOfBirdsCommandInterpreter::~FlockOfBirdsCommandInterpreter()
 
 
 /** Set the communication object to use. */
-void FlockOfBirdsCommandInterpreter::SetCommunication(CommunicationType* communication)
+void FlockOfBirdsCommandInterpreter
+::SetCommunication(CommunicationType* communication)
 {
   m_Communication = communication;
- 
-  /* These are the communication parameters that the NDI devices are
-     set up for when they are turned on or reset. */
-  /*communication->SetBaudRate(SerialCommunication::BaudRate9600);
-  communication->SetDataBits(SerialCommunication::DataBits8);
-  communication->SetParity(SerialCommunication::NoParity);
-  communication->SetStopBits(SerialCommunication::StopBits1);
-  communication->SetHardwareHandshake(SerialCommunication::HandshakeOff);
-  communication->UpdateParameters();
-  */
-  /* All replies from the NDI devices end in a carriage return. */
-  //communication->SetUseReadTerminationCharacter(1);
-  //communication->SetReadTerminationCharacter('\r');
 }
 
 /** Get the communication object. */
@@ -141,34 +128,24 @@ FlockOfBirdsCommandInterpreter::GetCommunication()
   return m_Communication;
 }
 
-/*---------------------------------------------------------------------*/
-/** \defgroup SetupMethods Connecting to the Flock
-
-The flock of birds must be connected to one of the serial ports on the
-computer.  The device name for the serial ports are different for
-different operating systems, the DeviceName() function can be used
-to generate an appropriate device name for the host OS.
-*/
-
-/** \fn      void Open()
-    \ingroup SetupMethods
-
-Open communication between the computer and the flock.  This will
-also probe the flock for information such as the addressing mode.
-The serial port is set up to do XON/XOFF handshaking, and the RTS
-line is set to low.
-
-If it is unknown which baud rate the flock is set to, then Open() can
-be called repeatedly with different baud rates in order to probe for
-the flock.
-*/
-
+/** SetupMethods Connecting to the Flock
+ *  The flock of birds must be connected to one of the serial ports on the
+ *  computer.  The device name for the serial ports are different for
+ *  different operating systems, the DeviceName() function can be used
+ *  to generate an appropriate device name for the host OS 
+ *
+ *  Open communication between the computer and the flock.  This will
+ *  also probe the flock for information such as the addressing mode.
+ *  The serial port is set up to do XON/XOFF handshaking, and the RTS
+ *  line is set to low.
+ *  If it is unknown which baud rate the flock is set to, then Open() can
+ *  be called repeatedly with different baud rates in order to probe for
+ *  the flock. */
 void FlockOfBirdsCommandInterpreter::Open()
 {
   /* insert code to open serial communication and set baud rate */
 
   /* Insert code to turn off the Flock by setting the RTS line */
-
   this->Reset();
 
   /* reset command will fail if there was no carrier detect */
@@ -199,9 +176,8 @@ void FlockOfBirdsCommandInterpreter::Open()
     return;
     }
   int status = this->ExamineValue(FB_STATUS);
-  m_DataFormat[1] =
-    FlockOfBirdsDataFormat(((status & FB_STATUS_FORMAT) >> 1) +
-                           (FB_POSITION-1));
+  m_DataFormat[1] = FlockOfBirdsDataFormat(((status & FB_STATUS_FORMAT) >> 1) 
+                    +(FB_POSITION-1));
 
   if (m_Error)
     {
@@ -227,21 +203,11 @@ void FlockOfBirdsCommandInterpreter::Open()
     {
     this->Close();
     }
-
-
 }
 
-/** \fn      void Close()
-    \ingroup SetupMethods
-
-Shut down the flock and close communication.
-*/
-
+/** Shut down the flock and close communication */
 void FlockOfBirdsCommandInterpreter::Close()
 {
-
-  std::cout << "FlockOfBirdsCommandInterpreter::Close()" << std::endl;
-
   if (m_StreamData)
     {
     this->EndStream();
@@ -252,15 +218,11 @@ void FlockOfBirdsCommandInterpreter::Close()
   /* Insert code to close the Serial Communiction */
 }
 
-/** \fn      void Reset()
-    \ingroup SetupMethods
-
-Reset the bird that is connected to the serial port by toggling the RTS line.
-
-Note that this does not reset the whole flock.  After Reset() is called,
-FBBReset() can be called to reset the other birds.
-*/
-
+/** Reset the bird that is connected to the serial port by toggling 
+ *  the RTS line.
+ *
+ * Note that this does not reset the whole flock.  After Reset() is called,
+ * FBBReset() can be called to reset the other birds. */
 void FlockOfBirdsCommandInterpreter::Reset()
 {
   if (m_StreamData)
@@ -296,23 +258,14 @@ void FlockOfBirdsCommandInterpreter::Reset()
   /* Insert code to purse the serial port buffer */
 }  
 
-/*---------------------------------------------------------------------*/
-/** \defgroup FlockMethods The Flock of Birds Bus
+/** If more than one bird is used, then the flock of birds bus or FBB must
+ *  be properly initialized through the use of FBBReset() followed by
+ *  FBBAutoConfig().  As well, for commands that must be directed towards
+ *  one specific bird the fbRS232ToFBB() function specifies what bird the
+ * next command should be sent to. */
 
-If more than one bird is used, then the flock of birds bus or FBB must
-be properly initialized through the use of FBBReset() followed by
-FBBAutoConfig().  As well, for commands that must be directed towards
-one specific bird the fbRS232ToFBB() function specifies what bird the
-next command should be sent to.
-*/
-
-/** \fn      void FBBReset()
-    \ingroup FlockMethods
-
-Reset the flock.  This should be called after Reset() has
-been used to reset the first bird in the flock.
-*/
-
+/** Reset the flock.  This should be called after Reset() has
+ *  been used to reset the first bird in the flock. */
 void FlockOfBirdsCommandInterpreter::FBBReset()
 {
   if (m_StreamData)
@@ -325,24 +278,16 @@ void FlockOfBirdsCommandInterpreter::FBBReset()
   m_Communication->Sleep(600);
 }
 
-/** \fn      void FBBAutoConfig()
-    \ingroup FlockMethods
-
-Configure the flock for the specified number of birds.
-
-\param num        the number of birds to configure for
-
-The number of birds connected to the flock can be determined
-by examining the FB_FBB_STATUS parameter via ExamineValueBytes().
-For each bird that is attached to the flock, the corresponding
-byte will be nonzero.
-*/
-
+/** Configure the flock for the specified number of birds.
+ *  \param num        the number of birds to configure for
+ *  The number of birds connected to the flock can be determined
+ *  by examining the FB_FBB_STATUS parameter via ExamineValueBytes().
+ *  For each bird that is attached to the flock, the corresponding
+ *  byte will be nonzero. */
 void FlockOfBirdsCommandInterpreter::FBBAutoConfig(unsigned int num)
 {
   char text[3];
 
-  /* Insert code to sleep for 600 milliseconds */
   m_Communication->Sleep(600);
 
   m_NumberOfBirds = num;
@@ -357,21 +302,13 @@ void FlockOfBirdsCommandInterpreter::FBBAutoConfig(unsigned int num)
   text[2] = num;
   this->SendRaw(text,3);
 
-  /* Insert code to sleep for 600 milliseconds */
   m_Communication->Sleep(600);
-
 }  
 
-/** \fn      void RS232ToFBB(unsigned int bird)
-    \ingroup FlockMethods
-
-Inform the flock that the next command is to be sent
-to a specific bird.  This is only applicable to certain
-commands.
-
-\param bird       the bird address (1 or greater)
-*/
-
+/** Inform the flock that the next command is to be sent
+ *  to a specific bird.  This is only applicable to certain
+ *  commands.
+ *  \param bird       the bird address (1 or greater) */
 void FlockOfBirdsCommandInterpreter::RS232ToFBB(unsigned int bird)
 {
   char text[2];
@@ -398,25 +335,16 @@ void FlockOfBirdsCommandInterpreter::RS232ToFBB(unsigned int bird)
   m_FBBAddress = bird;
 }
 
-/*---------------------------------------------------------------------*/
-/** \defgroup ConfigureMethods Configuring the Data Format
+/** These methods are used to configure the data records that will be sent
+ *  from the flock.  It is necessary to call these methods before data is
+ *  requested from the flock, or the data format remains unspecified.
+ */
 
-These methods are used to configure the data records that will be sent
-from the flock.  It is necessary to call these methods before data is
-requested from the flock, or the data format remains unspecified.
-*/
-
-/** \fn      void SetHemisphere(FlockOfBirdsHemisphere hemisphere)
-    \ingroup ConfigureMethods
-
-Set the tracking hemisphere for the flock.  The flock will only
-correctly report the positions for birds within the specified
-hemisphere.
-
-\param hemisphere the hemisphere to use: one of FB_FORWARD,
-                  FB_AFT, FB_UPPER, FB_LOWER, FB_LEFT, FB_RIGHT
-*/
-
+/** Set the tracking hemisphere for the flock.  The flock will only
+ *  correctly report the positions for birds within the specified
+ * hemisphere.
+ * \param hemisphere the hemisphere to use: one of FB_FORWARD,
+ *                 FB_AFT, FB_UPPER, FB_LOWER, FB_LEFT, FB_RIGHT */
 void FlockOfBirdsCommandInterpreter::SetHemisphere(
   FlockOfBirdsHemisphere hemisphere)
 {
@@ -424,21 +352,15 @@ void FlockOfBirdsCommandInterpreter::SetHemisphere(
   this->SendCommandWords(FB_HEMISPHERE,&hemiShort);
 }
   
-
-/** \fn      void SetFormat(FlockOfBirdsDataFormat format)
-    \ingroup ConfigureMethods
-
-Set the data format that will be used by the flock.  This must
-be set before data records are requested from the flock.
-
-\param format     one of the following: FB_POSITION, FB_ANGLES,
-                  FB_MATRIX, FB_POSITION_ANGLES, FB_POSITION_MATRIX,  
-                  FB_QUATERNION, FB_POSITION_QUATERNION
-
-The most common data format is FB_POSITION_ANGLES, which is the most
-compact format for the full six degrees of freedom.
-*/
-
+/** Set the data format that will be used by the flock.  This must
+ *  be set before data records are requested from the flock.
+ *  
+ *  \param format     one of the following: FB_POSITION, FB_ANGLES,
+ *                   FB_MATRIX, FB_POSITION_ANGLES, FB_POSITION_MATRIX,  
+ *                   FB_QUATERNION, FB_POSITION_QUATERNION
+ *  
+ *  The most common data format is FB_POSITION_ANGLES, which is the most
+ *  compact format for the full six degrees of freedom. */
 void FlockOfBirdsCommandInterpreter::SetFormat(
   FlockOfBirdsDataFormat format)
 {
@@ -454,14 +376,10 @@ void FlockOfBirdsCommandInterpreter::SetFormat(
   this->SendRaw(text,1);
 }
 
-/** \fn      void SetButtonMode(int mode)
-    \ingroup ConfigureMethods
-
-Enable or disable the reporting of button information from the flock.
-
-\param mode       0 or 1 depending on whether button information is desired
-*/
-
+/** Enable or disable the reporting of button information from the flock.
+ *  
+ *  \param mode 0 or 1 depending on whether button information is desired 
+ */
 void FlockOfBirdsCommandInterpreter::SetButtonMode(bool mode)
 {
   char text[2];
@@ -477,44 +395,35 @@ void FlockOfBirdsCommandInterpreter::SetButtonMode(bool mode)
   this->SendRaw(text,2);
 }
 
-/*---------------------------------------------------------------------*/
-/** \defgroup RequestMethods Requesting Data from the Flock
+/** The flock has two primary methods for sending data records to the 
+ *  host computer: stream mode and point mode.
+ *  
+ *  In stream mode, the flock sends data records for all birds in the flock
+ *  at a maximum rate of 100Hz.  Stream mode continues indefinitely until
+ *  it is interrupted.
+ *  
+ *  In point mode, the flock will only send exactly one data record per bird
+ *  each time that data is requested from the flock.
+ *  
+ *  By default, the flock will not be set to group mode and data records
+ *  will only be sent from one bird.  The flock can be put into group mode
+ *  by using ChangeValue() to set the FB_GROUP_MODE parameter to 1. */
 
-The flock has two primary methods for sending data records to the 
-host computer: stream mode and point mode.
-
-In stream mode, the flock sends data records for all birds in the flock
-at a maximum rate of 100Hz.  Stream mode continues indefinitely until
-it is interrupted.
-
-In point mode, the flock will only send exactly one data record per bird
-each time that data is requested from the flock.
-
-By default, the flock will not be set to group mode and data records
-will only be sent from one bird.  The flock can be put into group mode
-by using ChangeValue() to set the FB_GROUP_MODE parameter to 1.
-*/
-
-/** \fn      void Stream()
-    \ingroup RequestMethods
-
-Request the flock to begin streaming data records.
-The default data rate is 100Hz.
-
-Once the flock is in stream mode, Update() can be used
-to prepare a data record for access via GetPosition() and
-the other related functions.
-
-It is the responsibility of the application to call Update()
-often enough to ensure that the serial port buffer does not
-fill up.
-
-Stream mode can be turned of by EndStream().  Note that stream
-mode is automatically terminated by any of the following functions:
-SetFormat(), SetButtonMode(), ExamineValue(), Close(),
-Reset(), FBBReset(), Point(), ButtonRead().
-*/
-
+/** Request the flock to begin streaming data records.
+ *  The default data rate is 100Hz.
+ *  
+ *  Once the flock is in stream mode, Update() can be used
+ *  to prepare a data record for access via GetPosition() and
+ *  the other related functions.
+ *  
+ *  It is the responsibility of the application to call Update()
+ *  often enough to ensure that the serial port buffer does not
+ *  fill up.
+ *  
+ *  Stream mode can be turned of by EndStream().  Note that stream
+ *  mode is automatically terminated by any of the following functions:
+ *  SetFormat(), SetButtonMode(), ExamineValue(), Close(),
+ *  Reset(), FBBReset(), Point(), ButtonRead(). */
 void FlockOfBirdsCommandInterpreter::Stream()
 {
   if (m_StreamData)
@@ -527,12 +436,7 @@ void FlockOfBirdsCommandInterpreter::Stream()
   this->SendRaw("@",1);
 }
 
-/** \fn      void EndStream()
-    \ingroup RequestMethods
-
-Terminate streaming mode.
-*/
-
+/** Terminate streaming mode. */
 void FlockOfBirdsCommandInterpreter::EndStream()
 {
   if (!m_StreamData)
@@ -546,22 +450,17 @@ void FlockOfBirdsCommandInterpreter::EndStream()
   /* Insert code to purse the serial port buffers */
 }
 
-/** \fn      void Point()
-    \ingroup RequestMethods
-
-Request a single data record from the flock.
-
-In group mode, this requests a single data record from each bird in
-the flock.  The data records must then be retrieved by a call to
-Update() for each one of the birds in the flock.
-
-If there are multiple birds but the flock is not in group mode,
-precede this command with RS232ToFBB() to get data from a single bird.
-
-Using point mode to obtain information from the flock is not
-as efficient as using stream mode.
-*/
-
+/** Request a single data record from the flock.
+ *  
+ *  In group mode, this requests a single data record from each bird in
+ *  the flock.  The data records must then be retrieved by a call to
+ *  Update() for each one of the birds in the flock.
+ *  
+ *  If there are multiple birds but the flock is not in group mode,
+ *  precede this command with RS232ToFBB() to get data from a single bird.
+ *  
+ *  Using point mode to obtain information from the flock is not
+ *  as efficient as using stream mode. */
 void FlockOfBirdsCommandInterpreter::Point()
 {
   if (m_StreamData)
@@ -586,23 +485,18 @@ void FlockOfBirdsCommandInterpreter::Point()
     }
 }   
 
-/** \fn      void ButtonRead(int *val)
-    \ingroup RequestMethods
-
-Read the button state.  This method should rarely be used.
-
-\param val        space to store the button state
-
-It is much better to use SetButtonMode() to force the
-flock to return button information with each Update() call,
-and to then use GetButton() to retrieve the button state.
-
-In particular, the use of ButtonRead() in stream mode will
-cause stream mode to terminate.  The use of SetButtonMode()
-prior to calling Stream() will cause button information to
-be streamed from the flock along with the position information.
-*/
-
+/** Read the button state.  This method should rarely be used.
+ *  
+ *  \param val        space to store the button state
+ *  
+ *  It is much better to use SetButtonMode() to force the
+ *  flock to return button information with each Update() call,
+ *  and to then use GetButton() to retrieve the button state.
+ *  
+ *  In particular, the use of ButtonRead() in stream mode will
+ *  cause stream mode to terminate.  The use of SetButtonMode()
+ *  prior to calling Stream() will cause button information to
+ *  be streamed from the flock along with the position information. */
 void FlockOfBirdsCommandInterpreter::ButtonRead(int *val)
 {
   char data[1];
@@ -625,33 +519,24 @@ void FlockOfBirdsCommandInterpreter::ButtonRead(int *val)
     }
 }
 
-/*---------------------------------------------------------------------*/
-/** \defgroup DataMethods Decoding Flock Data
+/** After a data record has been sent by the flock, the Update() method
+ *  can be used to retrieve it.  Data records can be requested from the
+ *  flock via either the Stream() or Point() methods.
+ *  
+ *  After Update() has been called, the various GetXX() methods 
+ *  extract various pieces of information from the data record.  The
+ *  GetBird() method should always be used to check which bird the
+ *  data record is for, unless there is only a single bird. */
 
-After a data record has been sent by the flock, the Update() method
-can be used to retrieve it.  Data records can be requested from the
-flock via either the Stream() or Point() methods.
-
-After Update() has been called, the various GetXX() methods 
-extract various pieces of information from the data record.  The
-GetBird() method should always be used to check which bird the
-data record is for, unless there is only a single bird.
-*/
-
-/** \fn      void Update()
-    \ingroup DataMethods
-
-This is the central function in the flock interface: it retrieves
-a single data record from the flock.
-
-If Point() is used to request data records from the flock, then
-every call to Update() must be preceeded by Point().
-
-If Stream() is used to put the flock into stream mode, then
-Update() is used to obtain the most recent data record that was
-sent from the flock.
-*/
-
+/** This is the central function in the flock interface: it retrieves
+ *  a single data record from the flock. 
+ *  
+ *  If Point() is used to request data records from the flock, then
+ *  every call to Update() must be preceeded by Point().
+ *  
+ *  If Stream() is used to put the flock into stream mode, then
+ *  Update() is used to obtain the most recent data record that was
+ *  sent from the flock. */
 void FlockOfBirdsCommandInterpreter::Update()
 {
   int len;
@@ -679,18 +564,13 @@ void FlockOfBirdsCommandInterpreter::Update()
     }
 }
 
-/** \fn      void GetPosition(float xyz[3])
-    \ingroup DataMethods
-
-Get the position returned in the last Update() data record.
-
-\param xyz        storage space for the position to be returned in
-
-The bird positions are only available if SetFormat() was called
-with one of the following modes: FB_POSITION, FB_POSITION_ANGLES,
-FB_POSITION_MATRIX, FB_POSITION_QUATERNION.
-*/
-
+/** Get the position returned in the last Update() data record.
+ *  
+ *  \param xyz        storage space for the position to be returned in
+ *  
+ *  The bird positions are only available if SetFormat() was called
+ *  with one of the following modes: FB_POSITION, FB_POSITION_ANGLES,
+ *  FB_POSITION_MATRIX, FB_POSITION_QUATERNION. */
 void FlockOfBirdsCommandInterpreter::GetPosition(float xyz[3])
 {
   float range;
@@ -706,7 +586,8 @@ void FlockOfBirdsCommandInterpreter::GetPosition(float xyz[3])
     default:
       return;
     }
-  /* note: 914.4 mm == 36 inches */
+
+  // note: 914.4 mm == 36 inches
   range = (m_PositionScale[m_CurrentBird]+1)*914.4f;
 
   xyz[0] = (float)(this->Unpack(&cp)*range*0.000030517578125f);
@@ -714,17 +595,12 @@ void FlockOfBirdsCommandInterpreter::GetPosition(float xyz[3])
   xyz[2] = (float)(this->Unpack(&cp)*range*0.000030517578125f);
 }
 
-/** \fn      void GetAngles(float zyx[3])
-    \ingroup DataMethods
-
-Get the euler angles returned in the last Update() data record.
-
-\param zyx        storage space for the angles to be returned in
-
-The bird angles are only available if SetFormat() was called
-with one of the following modes: FB_ANGLES, FB_POSITION_ANGLES.
-*/
-
+/** Get the euler angles returned in the last Update() data record.
+ *  
+ *  \param zyx        storage space for the angles to be returned in
+ *  
+ *  The bird angles are only available if SetFormat() was called
+ *  with one of the following modes: FB_ANGLES, FB_POSITION_ANGLES. */
 void FlockOfBirdsCommandInterpreter::GetAngles(float zyx[3])
 {
   static float pi = 3.1415926535897931f;
@@ -746,26 +622,21 @@ void FlockOfBirdsCommandInterpreter::GetAngles(float zyx[3])
   zyx[2] = (float)(this->Unpack(&cp)*pi*0.000030517578125f);
 }
 
-/** \fn      void GetMatrix(float a[9])
-    \ingroup DataMethods
-
-Get the matrix returned in the last Update() data record.
-
-\param a          storage space for the nine matrix elements,
-                  where the first three numbers are the first
-                  column, the next three numbers are the middle
-                  column, and the final three numbers are the
-                  final matrix column
-
-The bird matrix is only available if SetFormat() was called
-with one of the following modes: FB_MATRIX, FB_POSITION_MATRIX.
-
-It is almost always better to request angles from the flock
-and convert the angles to a matrix using fbMatrixFromAngles()
-because this reduces the amount of information that must be
-transferred through the serial port.
-*/
-
+/** Get the matrix returned in the last Update() data record.
+ *  
+ *  \param a          storage space for the nine matrix elements,
+ *                   where the first three numbers are the first
+ *                    column, the next three numbers are the middle
+ *                    column, and the final three numbers are the
+ *                    final matrix column
+ *  
+ *  The bird matrix is only available if SetFormat() was called
+ *  with one of the following modes: FB_MATRIX, FB_POSITION_MATRIX.
+ *  
+ *  It is almost always better to request angles from the flock
+ *  and convert the angles to a matrix using fbMatrixFromAngles()
+ *  because this reduces the amount of information that must be
+ *  transferred through the serial port. */
 void FlockOfBirdsCommandInterpreter::GetMatrix(float a[9])
 {
   char *cp;
@@ -786,17 +657,12 @@ void FlockOfBirdsCommandInterpreter::GetMatrix(float a[9])
     }
 }
 
-/** \fn      void GetQuaternion(float q[4])
-    \ingroup DataMethods
-
-Get the quaternion returned in the last Update() data record.
-
-\param q          storage space for the quaternion to be returned in
-
-The bird quaternion is only available if SetFormat() was called
-with one of the following modes: FB_QUATERNION, FB_POSITION_QUATERNION.
-*/
-
+/** Get the quaternion returned in the last Update() data record.
+ *  
+ *  \param q          storage space for the quaternion to be returned in
+ *  
+ *  The bird quaternion is only available if SetFormat() was called
+ *  with one of the following modes: FB_QUATERNION, FB_POSITION_QUATERNION. */
 void FlockOfBirdsCommandInterpreter::GetQuaternion(float q[4])
 {
   char *cp;
@@ -818,21 +684,16 @@ void FlockOfBirdsCommandInterpreter::GetQuaternion(float q[4])
     }
 }
 
-/** \fn      int GetButton()
-    \ingroup DataMethods
-
-Get the button state returned in the last Update() data record.
-
-\return           button state:
-                  - 0x00 no button was pressed
-                  - 0x10 left button was pressed
-                  - 0x30 middle (or middle and left) was pressed
-                  - 0x70 right (or right and any other) was pressed
-
-The return value is always zero unless ButtonMode() has been
-used to turn on button reporting.
-*/
-
+/** Get the button state returned in the last Update() data record.
+ *  
+ *  \return           button state:
+ *                    - 0x00 no button was pressed
+ *                    - 0x10 left button was pressed
+ *                    - 0x30 middle (or middle and left) was pressed
+ *                    - 0x70 right (or right and any other) was pressed
+ *  
+ *  The return value is always zero unless ButtonMode() has been
+ *  used to turn on button reporting. */
 int FlockOfBirdsCommandInterpreter::GetButton()
 {
   if (m_ButtonMode[m_CurrentBird])
@@ -842,21 +703,16 @@ int FlockOfBirdsCommandInterpreter::GetButton()
   return 0;
 }
 
-/** \fn      int GetBird()
-    \ingroup DataMethods
-
-Get the FBB address of the bird for the data record obtained through
-the last Update().
-
-\return           a value between 1 and \em n where \em n is the
-                  number of birds in the flock, or 0 if an error
-                  occurred
-
-If the flock is not operating in group mode, then the return value
-is always 1.  A return value of zero indicates that a phase error
-or some other communication problem occurred with the flock.
-*/
-
+/** Get the FBB address of the bird for the data record obtained through
+ *  the last Update().
+ *  
+ *  \return           a value between 1 and \em n where \em n is the
+ *                    number of birds in the flock, or 0 if an error
+ *                    occurred
+ *  
+ *  If the flock is not operating in group mode, then the return value
+ *  is always 1.  A return value of zero indicates that a phase error
+ *  or some other communication problem occurred with the flock. */
 unsigned int FlockOfBirdsCommandInterpreter::GetBird()
 {
   unsigned int bird;
@@ -874,7 +730,7 @@ unsigned int FlockOfBirdsCommandInterpreter::GetBird()
     {
     bird = m_CurrentBird;
     }
-  /* if bird > num_birds, then then an error has occured: return 0
+  /** if bird > num_birds, then an error has occured: return 0
      to flag the error */
   if (bird > m_NumberOfBirds || bird < 1)
     {
@@ -884,23 +740,13 @@ unsigned int FlockOfBirdsCommandInterpreter::GetBird()
   return bird;
 }
 
-/*---------------------------------------------------------------------*/
-/** \defgroup ConversionMethods Data Format Conversion
+/** These are helper functions that convert data from one format to
+ *  another in order to ease the decoding of data records sent by the flock. */
 
-These are helper functions that convert data from one format to
-another in order to ease the decoding of data records sent by the flock.
-*/
-
-/** \fn      void MatrixFromAngles(float a[9],
-                                   const float zyx[3])
-    \ingroup ConversionMethods
-
-Convert euler angles into a 3x3 matrix.
-
-\param a        the nine matrix elements are stored here, column by column
-\param zyx      the three angles
-*/
-
+/** Convert euler angles into a 3x3 matrix.
+ *  
+ *  \param a        the nine matrix elements are stored here, column by column
+ *  \param zyx      the three angles */
 void FlockOfBirdsCommandInterpreter::MatrixFromAngles(float a[9],
                                                       const float zyx[3])
 {
@@ -926,16 +772,9 @@ void FlockOfBirdsCommandInterpreter::MatrixFromAngles(float a[9],
   a[8] = (float)(cx*cy);
 }
 
-/** \fn      void AnglesFromMatrix(float zyx[3],
-                                   const float a[9])
-    \ingroup ConversionMethods
-
-Does the opposite of MatrixFromAngles().
-
-\param zyx        the three angles are stored here
-\param a          the matrix
-*/
-
+/** Does the opposite of MatrixFromAngles().
+ *  \param zyx        the three angles are stored here
+ *  \param a          the matrix */
 void FlockOfBirdsCommandInterpreter::AnglesFromMatrix(float zyx[3],
                                                       const float a[9])
 {
@@ -950,17 +789,9 @@ void FlockOfBirdsCommandInterpreter::AnglesFromMatrix(float zyx[3],
   zyx[2] = (float)atan2(sz*a[2]-cz*a[5], -sz*a[1]+cz*a[4]);
 }
 
-/** \fn       int GetShort(const char *cp)
-    \ingroup  ConversionMethods
-
-A helper function that concatenates two characters into an unsigned short.
-
-\param cp     pointer to the two characters
-
-\return       the unsigned short value
-
-*/
-
+/** A helper function that concatenates two characters into an unsigned short.
+ *  \param cp     pointer to the two characters
+ *  \return       the unsigned short value */
 int FlockOfBirdsCommandInterpreter::GetShort(const char *cp)
 {
   unsigned char lsb;
@@ -973,39 +804,28 @@ int FlockOfBirdsCommandInterpreter::GetShort(const char *cp)
   return msb; 
 }
 
-/*---------------------------------------------------------------------*/
-/** \defgroup CommandMethods Sending Commands to the Flock
+/** These are general-purpose methods for communicating with the flock.
+ *  The data sent to the flock and recived from the flock usually consists
+ *  of a single byte, multiple bytes, a single 2-byte word, or multiple
+ *  2-byte words.
+ *
+ *  Note that there are pre-defined functions to support
+ *  many of the flock commands, e.g. Stream() for FB_STREAM
+ *  and SetFormat() for handling FB_POSITION_ANGLES and the other
+ *  data format mode commands.  As a result, there is rarely any need
+ *  to call SendCommand() directly.
+ *
+ *  The commands are listed in flock.h.  For a description of the
+ *  commands, see The Flock of Birds INSTALLATION AND OPERATION GUIDE
+ *  from Ascension Technology Corporation. */
 
-These are general-purpose methods for communicating with the flock.
-The data sent to the flock and recived from the flock usually consists
-of a single byte, multiple bytes, a single 2-byte word, or multiple
-2-byte words.
-
-Note that there are pre-defined functions to support
-many of the flock commands, e.g. Stream() for FB_STREAM
-and SetFormat() for handling FB_POSITION_ANGLES and the other
-data format mode commands.  As a result, there is rarely any need
-to call SendCommand() directly.
-
-The commands are listed in flock.h.  For a description of the
-commands, see The Flock of Birds INSTALLATION AND OPERATION GUIDE
-from Ascension Technology Corporation.
-*/
-
-/** \fn      int ExamineValue(FlockOfBirdsParameter parameter)
-    \ingroup CommandMethods
-
-Examine a flock parameter.
-
-\param parameter  a constant that specifies what parameter to examine
-
-\return           the integer value of the parameter
-
-This function can only be used if the parameter value fits into a single
-byte or into a single word, otherwise either ExamineValueWords() or
-ExamineValueBytes() should be used instead.
-*/
-
+/** Examine a flock parameter.
+ *  \param parameter  a constant that specifies what parameter to examine
+ *  \return           the integer value of the parameter
+ *
+ *  This function can only be used if the parameter value fits into a single
+ *  byte or into a single word, otherwise either ExamineValueWords() or
+ *  ExamineValueBytes() should be used instead. */
 int FlockOfBirdsCommandInterpreter::ExamineValue(
   FlockOfBirdsParameter parameter)
 {
@@ -1030,18 +850,12 @@ int FlockOfBirdsCommandInterpreter::ExamineValue(
     }
 }  
 
-/** \fn      int ExamineValueWords(FlockOfBirdsParameter parameter,
-                                   short *data)
-    \ingroup CommandMethods
-
-Examine a flock parameter that consists of 16-bit words.
-
-\param parameter  a constant that specifies what parameter to examine
-\param data       space to store the word values
-
-\return           number of word values stored in the array
-*/
-
+/** Examine a flock parameter that consists of 16-bit words.
+ *
+ *  \param parameter  a constant that specifies what parameter to examine
+ *  \param data       space to store the word values
+ *
+ *  \return           number of word values stored in the array */
 int FlockOfBirdsCommandInterpreter::ExamineValueWords(
   FlockOfBirdsParameter parameter,
   short *data)
@@ -1066,28 +880,15 @@ int FlockOfBirdsCommandInterpreter::ExamineValueWords(
   return len/2;
 }  
 
-/* number of bytes in examine/change data */
-static int examine_change_len_table[36] = { 2, 2, 2, 2,
-                                            2,14, 2, 2, 
-                                            1, 1, 1, 1, 
-                                            14,14, 1,10, 
-                                            2, 1, 1, 1,
-                                            1, 1, 2, 6,
-                                            6, 2, 2, 2,
-                                            0, 0, 0, 0,
-                                            2, 0, 0, 1 };
+/** number of bytes in examine/change data */
+static int examine_change_len_table[36] = { 2, 2, 2, 2,2, 14, 2, 2,1, 1, 1, 1, 
+                                            14,14, 1,10, 2, 1, 1, 1, 1, 1, 2, 6,
+                                            6, 2, 2, 2, 0, 0, 0, 0,2, 0, 0, 1 };
 
-/** \fn      int ExamineValueBytes(FlockOfBirdsParameter parameter,
-                                   char *data)
-    \ingroup CommandMethods
-
-Examine a flock parameter that consists of bytes.
-
-\param parameter  a constant that specifies what parameter to examine
-\param data       space to store the byte values
-
-\return           number of bytes stored in the array
-*/
+/** Examine a flock parameter that consists of bytes.
+ *  \param parameter  a constant that specifies what parameter to examine
+ *  \param data       space to store the byte values
+ *  \return           number of bytes stored in the array */
 int FlockOfBirdsCommandInterpreter::ExamineValueBytes(
   FlockOfBirdsParameter parameter,
   char *data)
@@ -1157,16 +958,9 @@ int FlockOfBirdsCommandInterpreter::ExamineValueBytes(
   return len;
 }
 
-/** \fn       void PutShort(char *cp,
-                            int val)
-    \ingroup  ConversionMethods
-
-Store the low 16 bits of an integer in two bytes.
-
-\param cp      space to store the resulting two bytes
-\param val     the integer to convert
-*/
-
+/** Store the low 16 bits of an integer in two bytes.
+ *  \param cp      space to store the resulting two bytes
+ *  \param val     the integer to convert */
 void FlockOfBirdsCommandInterpreter::PutShort(char *cp, int val)
 {
   unsigned char lsb;
@@ -1181,16 +975,9 @@ void FlockOfBirdsCommandInterpreter::PutShort(char *cp, int val)
   *cp++ = (unsigned char)msb;
 }
 
-/** \fn      void ChangeValue(FlockOfBirdsParameter param,
-                              int val)
-    \ingroup CommandMethods
-
-Modify an 8-bit or 16-bit flock parameter.
-
-\param parameter  a constant that specifies what parameter to modify
-\param val        the new parameter value
-*/
-
+/** Modify an 8-bit or 16-bit flock parameter.
+ *  \param parameter  a constant that specifies what parameter to modify
+ *  \param val        the new parameter value */
 void FlockOfBirdsCommandInterpreter::ChangeValue(
   FlockOfBirdsParameter parameter, int val)
 {
@@ -1230,16 +1017,10 @@ void FlockOfBirdsCommandInterpreter::ChangeValue(
   this->ChangeValueBytes(parameter,data);
 }
 
-/** \fn      void ChangeValueWords(FlockOfBirdsParameter param,
-                                   const short *data)
-    \ingroup CommandMethods
-
-Modify a flock parameter that consists of several words.
-
-\param parameter  a constant that specifies what parameter to modify
-\param data       the new parameter data
-*/
-
+/** Modify a flock parameter that consists of several words.
+ *
+ *  \param parameter  a constant that specifies what parameter to modify
+ *  \param data       the new parameter data */
 void FlockOfBirdsCommandInterpreter::ChangeValueWords(
   FlockOfBirdsParameter parameter, const short *data)
 {
@@ -1276,16 +1057,10 @@ void FlockOfBirdsCommandInterpreter::ChangeValueWords(
   this->ChangeValueBytes(parameter,text);
 }
 
-/** \fn      void ChangeValueBytes(FlockOfBirdsParameter param,
-                                   const char *data)
-    \ingroup CommandMethods
-
-Modify a flock parameter that consists of several bytes.
-
-\param parameter  a constant that specifies what parameter to modify
-\param data       the new parameter data
-*/
-
+/** Modify a flock parameter that consists of several bytes.
+ *
+ *  \param parameter  a constant that specifies what parameter to modify
+ *  \param data       the new parameter data */
 void FlockOfBirdsCommandInterpreter::ChangeValueBytes(
   FlockOfBirdsParameter parameter, const char *data)
 {
@@ -1331,40 +1106,29 @@ void FlockOfBirdsCommandInterpreter::ChangeValueBytes(
   FlockOfBirdsCommandInterpreter::SendRaw(text,outputDataLen+2);    
 }
 
-/** \fn      void SendCommand(FlockOfBirdsCommand command)
-    \ingroup CommandMethods
-
-Send a command to the flock with no arguments.
-
-\param command    a constant that specifies what command to send
-
-This function is appropriate for the following commands only:
-FB_REPORT_RATE_FULL, FB_REPORT_RATE_DIV2, FB_REPORT_RATE_DIV8,
-FB_REPORT_RATE_DIV32, FB_RUN, FB_SLEEP, FB_XOFF, FB_XON.
-*/
-
+/** Send a command to the flock with no arguments.
+ *
+ *  \param command    a constant that specifies what command to send
+ *
+ *  This function is appropriate for the following commands only:
+ *  FB_REPORT_RATE_FULL, FB_REPORT_RATE_DIV2, FB_REPORT_RATE_DIV8,
+ *  FB_REPORT_RATE_DIV32, FB_RUN, FB_SLEEP, FB_XOFF, FB_XON. */
 void FlockOfBirdsCommandInterpreter::SendCommand(FlockOfBirdsCommand c)
 {
   this->SendCommandBytes(c,0);
 }
 
-/** \fn      void SendCommandWords(FlockOfBirdsCommand command,
-                                   const short *data)
-    \ingroup CommandMethods
-
-Send a command to the flock along with the data words associated
-with the command.
-
-\param fb         pointer to an fbird structure
-\param command    a constant that specifies what command to send
-\param data       the data to send with the command
-
-This function is only appropriate for the following commands:
-FB_ANGLE_ALIGN1 (6 words), FB_REFERENCE_FRAME1 (6 words),
-FB_ANGLE_ALIGN2 (3 words), FB_REFERENCE_FRAME2 (3 words),
-FB_HEMISPHERE (1 word) or FB_SYNC (1 word).
-*/
-
+/** Send a command to the flock along with the data words associated
+ *  with the command.
+ *
+ *  \param fb         pointer to an fbird structure
+ *  \param command    a constant that specifies what command to send
+ *  \param data       the data to send with the command
+ *
+ *  This function is only appropriate for the following commands:
+ *  FB_ANGLE_ALIGN1 (6 words), FB_REFERENCE_FRAME1 (6 words),
+ *  FB_ANGLE_ALIGN2 (3 words), FB_REFERENCE_FRAME2 (3 words),
+ *  FB_HEMISPHERE (1 word) or FB_SYNC (1 word). */
 void FlockOfBirdsCommandInterpreter::SendCommandWords(
   FlockOfBirdsCommand c, const short *outputData)
 {
@@ -1401,20 +1165,13 @@ void FlockOfBirdsCommandInterpreter::SendCommandWords(
   this->SendCommandBytes(c,text);
 }
 
-/** \fn      void SendCommandBytes(FlockOfBirdsCommand command,
-                                   const char *data)
-    \ingroup CommandMethods
-
-Send a command to the flock along with the data bytes associated
-with the command.
-
-\param command    a constant that specifies what command to send
-\param data       the data to send with the command, or NULL if there
-                  is no data associated with the command
-
-This function can be used to send any command to the flock.
-*/
-
+/** Send a command to the flock along with the data bytes associated
+ *  with the command.
+ *
+ *  \param command    a constant that specifies what command to send
+ *  \param data       the data to send with the command, or NULL if there
+ *                   is no data associated with the command
+ * This function can be used to send any command to the flock. */
 void FlockOfBirdsCommandInterpreter::SendCommandBytes(
   FlockOfBirdsCommand c, const char *outputData)
 {
@@ -1511,37 +1268,24 @@ void FlockOfBirdsCommandInterpreter::SendCommandBytes(
   this->SendRaw(text,outputDataLen+1);
 }
 
-/*---------------------------------------------------------------------*/
-/** \defgroup InternalMethods Internal Methods
+/** These methods send raw data to the flock and read raw data from the flock.
+ *  They should only be used by someone who is very familiar both with the
+ *  flock of birds and with the driver code. */
 
-These methods send raw data to the flock and read raw data from the flock.
-They should only be used by someone who is very familiar both with the
-flock of birds and with the driver code.
-*/
-
-/** \fn      void SendRaw(const char *text,
-                          int len)
-    \ingroup InternalMethods
-
-This function is meant primarily for internal use.  It sends a
-raw stream of bytes to the flock.
-
-\param text       the bytes to send to the flock
-\param len        the number of bytes to send
-
-If a command is sent to the flock with this function that causes
-the state of the flock to change, then communication with the flock
-might be disrupted.  The SendCommandBytes() function should be
-used instead of SendRaw() and ReceiveRaw() in all circumstances.
-*/
-
+/** This function is meant primarily for internal use.  It sends a
+ *  raw stream of bytes to the flock.
+ *  \param text       the bytes to send to the flock
+ *  \param len        the number of bytes to send
+ *
+ *  If a command is sent to the flock with this function that causes
+ *  the state of the flock to change, then communication with the flock
+ *  might be disrupted.  The SendCommandBytes() function should be
+ *  used instead of SendRaw() and ReceiveRaw() in all circumstances. */
 void FlockOfBirdsCommandInterpreter::SendRaw(const char *text,
                                              unsigned int len)
 {
-  /* Insert code to write data to the serial port and check for errors */
   igstk::Communication::ResultType result = m_Communication->Write(text,len);
-    
-
+   
   if (result == igstk::Communication::FAILURE)
     {
     this->SetErrorAndMessage(FB_IO_ERROR,
@@ -1554,17 +1298,10 @@ void FlockOfBirdsCommandInterpreter::SendRaw(const char *text,
     }
 }
 
-/** \fn      void ReceiveRaw(char *reply,
-                             int len)
-    \ingroup InternalMethods
-
-This function is meant primarily for internal use.  It reads a
-raw stream of bytes from the flock.
-
-\param reply      the bytes read from the flock
-\param len        the number of bytes to read
-*/
-
+/** This function is meant primarily for internal use.  It reads a
+ *  raw stream of bytes from the flock.
+ *  \param reply      the bytes read from the flock
+ *  \param len        the number of bytes to read */
 void FlockOfBirdsCommandInterpreter::ReceiveRaw(char *reply,
                                                 unsigned int len)
 {
@@ -1586,7 +1323,8 @@ void FlockOfBirdsCommandInterpreter::ReceiveRaw(char *reply,
                m_Communication->Read(reply,len,bytesRead);
 
   /* shared code ------------------------*/
-  if ((m_StreamData || m_PointData) && result==igstk::Communication::SUCCESS)
+  if ((m_StreamData || m_PointData) 
+      && result == igstk::Communication::SUCCESS)
     {  /* check for phase errors */
     if (!(reply[0] & 0x80))
       {
@@ -1614,26 +1352,14 @@ void FlockOfBirdsCommandInterpreter::ReceiveRaw(char *reply,
     this->SetErrorAndMessage(FB_TIMEOUT_ERROR,
                              "timeout while waiting for bird data");
     }
-  //else if (error == FB_PHASE_ERROR)
-  //  {
-  //  this->SetErrorAndMessage(FB_PHASE_ERROR,
-  //                           "received malformed data record");
-  //  }
 }
 
-/** \fn       int Unpack(char **cp)
-    \ingroup  InternalMethods
-
-A helper function: unpack two characters sent from the flock into
-a short integer, and advance the character pointer by two.  This
-will convert the data from the flock's special 7-bit data record
-encoding into conventional 8-bit data.
-
-\param cp    pointer to a data string from the flock
-
-\return      the unpacked data
-*/
-
+/** A helper function: unpack two characters sent from the flock into
+ *  a short integer, and advance the character pointer by two.  This
+ *  will convert the data from the flock's special 7-bit data record
+ *  encoding into conventional 8-bit data.
+ *  \param cp    pointer to a data string from the flock
+ *  \return      the unpacked data */
 int FlockOfBirdsCommandInterpreter::Unpack(char **cp)
 {
   unsigned char lsb;
@@ -1648,18 +1374,10 @@ int FlockOfBirdsCommandInterpreter::Unpack(char **cp)
   return msb;
 }
 
-/** \fn      void SetErrorAndMessage(FlockOfBirdsErrorCode errorcode,
-                                     const char *text)
-    \ingroup  InternalMethods
-
-Set the error indicator.
-
-\param errcode    the error code
-\param text       text description of the error
-
-\return           the error code that was set
-*/
-
+/** Set the error indicator.
+ *  \param errcode    the error code
+ *  \param text       description of the error
+ *  \return           the error code that was set */
 void FlockOfBirdsCommandInterpreter::SetErrorAndMessage(
   FlockOfBirdsErrorCode errorcode, const char *text)
 {
@@ -1670,30 +1388,20 @@ void FlockOfBirdsCommandInterpreter::SetErrorAndMessage(
   std::cout << m_ErrorText << std::endl;
 }
 
-/*---------------------------------------------------------------------*/
-/** \defgroup ErrorMethods Error Checking
+/** These methods are used to check whether an error occured as a result of
+ *  an attempt to communicate with the flock. */
 
-These methods are used to check whether an error occured as a result of
-an attempt to communicate with the flock.
-*/
-
-/** \fn      FlockOfBirdsErrorCode GetError()
-    \ingroup ErrorMethods
-
-Return the last error code and clear the error indicator.
-
-\return           integer error code, or zero if no error
-
-Note that the error codes are generated by the host computer,
-not by the flock.  To check the error code for the flock,
-use ExamineValue() to get the value of the FB_ERROR_CODE
-parameter.
-
-All of the flock functions can generate errors except for
-the following:  GetButton(), GetPosition(), GetAngles(),
-GetQuaternion(), GetMatrix().
-*/
-
+/** Return the last error code and clear the error indicator.
+ *  \return           integer error code, or zero if no error
+ *
+ *  Note that the error codes are generated by the host computer,
+ *  not by the flock.  To check the error code for the flock,
+ *  use ExamineValue() to get the value of the FB_ERROR_CODE
+ *  parameter.
+ *
+ *  All of the flock functions can generate errors except for
+ *  the following:  GetButton(), GetPosition(), GetAngles(),
+ *  GetQuaternion(), GetMatrix(). */
 FlockOfBirdsErrorCode FlockOfBirdsCommandInterpreter::GetError()
 {
   FlockOfBirdsErrorCode error = m_Error;
@@ -1701,42 +1409,54 @@ FlockOfBirdsErrorCode FlockOfBirdsCommandInterpreter::GetError()
   return error;
 }
 
-/** \fn      const char *GetErrorMessage()
-    \ingroup ErrorMethods
-
-Return some text that describes the last error.
-
-\return           text for the last error
-*/
-
+/** Return some text that describes the last error. */
 const char *FlockOfBirdsCommandInterpreter::GetErrorMessage()
 {
   return m_ErrorText;
 }
 
-/** PrintSelf function. **/
+/** PrintSelf function. */
 void FlockOfBirdsCommandInterpreter::PrintSelf(std::ostream& os,
                                       itk::Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
-  //os << indent << "Tracking: " << m_Tracking << std::endl;
   os << indent << "ErrorCode: " << m_ErrorText << std::endl;
-/*
-  m_Error = FB_NO_ERROR;
-  m_PointData = false;
-  m_StreamData = false;
-  m_ErrorText[0] = '\0';
-  m_GroupMode = false;
-  m_CurrentBird = 1;
-  m_NumberOfBirds = 1;
-  m_DataFormat[1] = FB_POSITION_ANGLES;
-  m_ButtonMode[1] = false;
-  m_PositionScale[1] = FB_STANDARD; 
-  m_FBBAddress = 1;
-  m_PhaseErrorLeftoverBytes = 0;
-  m_Communication = 0;*/
+  os << indent << "Error: " << m_Error << std::endl;
+ 
+  if(m_PointData)
+    {
+    os << indent << "PointData: true" << std::endl;
+    }
+  else
+    {
+    os << indent << "PointData: false" << std::endl;
+    }
+  
+  if(m_StreamData)
+    {
+    os << indent << "StreamData: true" << std::endl;
+    }
+  else
+    {
+    os << indent << "StreamData: false" << std::endl;
+    }
+  
+  if(m_GroupMode)
+    {
+    os << indent << "GroupMode: true" << std::endl;
+    }
+  else
+    {
+    os << indent << "GroupMode: false" << std::endl;
+    }
+
+  os << indent << "CurrentBird: " << m_CurrentBird << std::endl;
+  os << indent << "NumberOfBirds: " << m_NumberOfBirds << std::endl;
+  os << indent << "Communication: " << m_Communication << std::endl;
+  os << indent << "PhaseErrorLeftoverBytes: ";
+  std::cout << m_PhaseErrorLeftoverBytes << std::endl;
+  os << indent << "FBBAddress: " << m_FBBAddress << std::endl;
 }
 
 
-} /* end namespace igstk */
-
+} // end namespace igstk

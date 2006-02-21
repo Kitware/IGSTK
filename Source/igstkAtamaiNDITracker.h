@@ -14,9 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-#ifndef __igstk_AtamaiNDITracker_h_
-#define __igstk_AtamaiNDITracker_h_
+#ifndef __igstkAtamaiNDITracker_h
+#define __igstkAtamaiNDITracker_h
 
 #include "igstkTracker.h"
 
@@ -27,22 +26,20 @@ class vtkCallbackCommand;
 namespace igstk
 {
 /** \class AtamaiNDITracker
-    \brief A wrapper around the Atamai vtkNDITracker class.
-
-*/
+ *  \brief A wrapper around the Atamai vtkNDITracker class.
+ */
 
 class AtamaiNDITracker : public igstk::Tracker
 {
 public:
 
   /** Some required typedefs for itk::Object. */
-
   typedef AtamaiNDITracker               Self;
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
 
-  typedef vtkTrackerTool                  VTKTrackerToolType;
-  typedef VTKTrackerToolType*             VTKTrackerToolPointer;
+  typedef vtkTrackerTool                       VTKTrackerToolType;
+  typedef VTKTrackerToolType*                  VTKTrackerToolPointer;
   typedef std::vector< VTKTrackerToolPointer > VTKTrackerToolVectorType;
 
   /**  Run-time type information (and related methods). */

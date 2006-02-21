@@ -14,23 +14,22 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-#ifndef __igstk_FlockOfBirdsTrackerTool_h_
-#define __igstk_FlockOfBirdsTrackerTool_h_
+#ifndef __igstkFlockOfBirdsTrackerTool_h
+#define __igstkFlockOfBirdsTrackerTool_h
 
 #include "igstkTrackerTool.h"
 
 namespace igstk
 {
 /** \class FlockOfBirdsTrackerTool
-  * \brief A FlockOfBirds-specific TrackerTool class.
-  *
-  * This class is a for providing FlockOfBirds-specific functionality
-  * for TrackerTools, and also to allow compile-time type enforcement
-  * for other classes and functions that specifically require
-  * an FlockOfBirds tool.
-  *
-*/
+ * \brief A FlockOfBirds-specific TrackerTool class.
+ *
+ * This class is a for providing FlockOfBirds-specific functionality
+ * for TrackerTools, and also to allow compile-time type enforcement
+ * for other classes and functions that specifically require
+ * an FlockOfBirds tool.
+ *
+ */
 
 class FlockOfBirdsTrackerTool : public TrackerTool
 {
@@ -59,4 +58,3 @@ private:
 
 
 #endif  // __igstk_FlockOfBirdsTrackerTool_h_
-

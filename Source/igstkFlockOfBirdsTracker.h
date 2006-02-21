@@ -14,9 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-#ifndef __igstk_FlockOfBirdsTracker_h_
-#define __igstk_FlockOfBirdsTracker_h_
+#ifndef __igstkFlockOfBirdsTracker_h
+#define __igstkFlockOfBirdsTracker_h
 
 #include "igstkSerialCommunication.h"
 #include "igstkFlockOfBirdsTrackerTool.h"
@@ -26,14 +25,14 @@
 namespace igstk
 {
 /** \class FlockOfBirdsTracker
-  * \brief Provides support for the FlockOfBirds optical tracker.
-  *
-  * The FlockOfBirds is a magnetic tracker from Ascencion.
-  * This class provides an interface to the FlockOfBirds.
-  *
-  * \ingroup Trackers
-  *
-  */
+ * \brief Provides support for the FlockOfBirds optical tracker.
+ *
+ * The FlockOfBirds is a magnetic tracker from Ascencion.
+ * This class provides an interface to the FlockOfBirds.
+ *
+ * \ingroup Trackers
+ *
+ */
 class FlockOfBirdsTracker : public Tracker
 {
 public:
@@ -106,12 +105,15 @@ protected:
 private:
 
   FlockOfBirdsTracker(const Self&);   //purposely not implemented
-  void operator=(const Self&);   //purposely not implemented
+  void operator=(const Self&);        //purposely not implemented
 
   /** typedefs for the tool */
-  typedef igstk::FlockOfBirdsTrackerTool              FlockOfBirdsTrackerToolType;
-  typedef FlockOfBirdsTrackerToolType::Pointer        FlockOfBirdsTrackerToolPointer;
-  typedef FlockOfBirdsTrackerToolType::ConstPointer   FlockOfBirdsTrackerToolConstPointer;
+  typedef igstk::FlockOfBirdsTrackerTool              
+                                     FlockOfBirdsTrackerToolType;
+  typedef FlockOfBirdsTrackerToolType::Pointer        
+                                     FlockOfBirdsTrackerToolPointer;
+  typedef FlockOfBirdsTrackerToolType::ConstPointer   
+                                     FlockOfBirdsTrackerToolConstPointer;
 
   /** A buffer for holding tool transforms */
   double m_TransformBuffer[NumberOfPorts][8];
@@ -124,7 +126,7 @@ private:
 
   /** Load a virtual SROM, given the file name of the ROM file */
   bool LoadVirtualSROM( const unsigned int port, 
-                        const std::string SROMFileName) ;
+                        const std::string SROMFileName);
 
   /** Clear the virtual SROM for a tool */
   void ClearVirtualSROM( const unsigned int port );
@@ -162,4 +164,3 @@ private:
 }
 
 #endif //__igstk_FlockOfBirdsTracker_h_
-

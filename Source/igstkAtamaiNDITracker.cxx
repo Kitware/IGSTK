@@ -11,12 +11,13 @@
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more DEBUGrmation.
+     PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//Warning about: identifier was truncated to '255' characters 
+//in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -62,7 +63,8 @@ AtamaiNDITracker::~AtamaiNDITracker(void)
 AtamaiNDITracker::ResultType
 AtamaiNDITracker::InternalOpen( void )
 {
-  igstkLogMacro( DEBUG, "AtamaiNDITracker::AttemptToSetUpCommunicationProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+    "AtamaiNDITracker::AttemptToSetUpCommunicationProcessing called ...\n");
 
   // clear the error indicator
   m_VTKError = 0;
@@ -95,14 +97,15 @@ AtamaiNDITracker::InternalOpen( void )
 AtamaiNDITracker::ResultType
 AtamaiNDITracker::InternalActivateTools( void )
 {
-  igstkLogMacro( DEBUG, "AtamaiNDITracker::AttemptToSetUpToolsProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+           "AtamaiNDITracker::AttemptToSetUpToolsProcessing called ...\n");
 
   m_VTKError = 0;
 
   // there should be some code right here to load any SROMS that are needed
   // for (int j = 0; j < numSroms; j++)
   //   { 
-  //   m_VTKTracker->LoadVirtualSROM(j, sromFilename[j]);
+  //   m_VTKTracker->LoadVirtualSROM(j, sromFilename[j])
   //   }
 
   // the vtkNDITracker doesn't enable the tools until you call StarTracking
@@ -143,7 +146,8 @@ AtamaiNDITracker::InternalActivateTools( void )
 AtamaiNDITracker::ResultType
 AtamaiNDITracker::InternalStartTracking( void )
 {
-  igstkLogMacro( DEBUG, "AtamaiNDITracker::AttemptToStartTrackingProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+            "AtamaiNDITracker::AttemptToStartTrackingProcessing called ...\n");
 
   m_VTKError = 0;
   m_VTKTracker->StartTracking();
@@ -174,7 +178,8 @@ AtamaiNDITracker::InternalStopTracking( void )
 AtamaiNDITracker::ResultType
 AtamaiNDITracker::InternalUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "AtamaiNDITracker::UpdateStatusProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+                 "AtamaiNDITracker::UpdateStatusProcessing called ...\n");
 
   m_VTKError = 0;
   m_VTKTracker->Update();
@@ -226,7 +231,8 @@ AtamaiNDITracker::InternalUpdateStatus( void )
     TranslationType translation;
     translation[0] = position[0];
     translation[1] = position[1];
-    translation[2] = position[2] + 1900; // correction for origin of Polaris in mm.
+    // correction for origin of Polaris in mm.
+    translation[2] = position[2] + 1900;
 
     typedef TransformType::VersorType RotationType;
     RotationType rotation;
@@ -252,7 +258,8 @@ AtamaiNDITracker::InternalUpdateStatus( void )
 AtamaiNDITracker::ResultType
 AtamaiNDITracker::InternalReset( void )
 {
-  igstkLogMacro( DEBUG, "AtamaiNDITracker::ResetTrackingProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+                 "AtamaiNDITracker::ResetTrackingProcessing called ...\n");
 
   if (m_VTKTracker->IsTracking())
     {
@@ -268,7 +275,8 @@ AtamaiNDITracker::InternalReset( void )
 AtamaiNDITracker::ResultType
 AtamaiNDITracker::InternalClose( void )
 {
-  igstkLogMacro( DEBUG, "AtamaiNDITracker::DisableCommunicationProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+            "AtamaiNDITracker::DisableCommunicationProcessing called ...\n");
   // nothing to do: communication is disabled when vtkTracker isn't tracking
   return SUCCESS;
 }
@@ -277,7 +285,8 @@ AtamaiNDITracker::InternalClose( void )
 AtamaiNDITracker::ResultType
 AtamaiNDITracker::InternalDeactivateTools( void )
 {
-  igstkLogMacro( DEBUG, "AtamaiNDITracker::DisableToolsProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+                 "AtamaiNDITracker::DisableToolsProcessing called ...\n");
   // nothing to do: tools are disabled when vtkTracker isn't tracking
   return SUCCESS;
 }
@@ -289,4 +298,3 @@ void AtamaiNDITracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 }
-

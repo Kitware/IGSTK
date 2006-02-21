@@ -11,7 +11,7 @@
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more DEBUGrmation.
+     PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 
@@ -64,7 +64,7 @@ void FlockOfBirdsTracker::SetCommunication( CommunicationType *communication )
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker:: Entered SetCommunication ...\n");
   m_Communication = communication;
   m_CommandInterpreter->SetCommunication( communication );
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker:: Exiting SetCommunication ...\n"); 
+  igstkLogMacro( DEBUG, "FlockOfBirdsTracker:: Exiting SetCommunication ...\n");
 }
 
 /** Open communication with the tracking device. */
@@ -85,9 +85,11 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalClose( void )
 }
 
 /** Activate the tools attached to the tracking device. */
-FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalActivateTools( void )
+FlockOfBirdsTracker::ResultType 
+FlockOfBirdsTracker::InternalActivateTools( void )
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalActivateTools called ...\n");
+  igstkLogMacro( DEBUG, 
+               "FlockOfBirdsTracker::InternalActivateTools called ...\n");
   
   // load any SROMS that are needed
   for (unsigned int i = 0; i < NumberOfPorts; i++)
@@ -113,7 +115,8 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalActivateTools( void
 }
 
 /** Deactivate the tools attached to the tracking device. */
-FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalDeactivateTools( void )
+FlockOfBirdsTracker::ResultType 
+FlockOfBirdsTracker::InternalDeactivateTools( void )
 {
   for (unsigned int i = 0; i < NumberOfPorts; i++)
     { 
@@ -130,16 +133,20 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalDeactivateTools( vo
 }
 
 /** Put the tracking device into tracking mode. */
-FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalStartTracking( void )
+FlockOfBirdsTracker::ResultType 
+FlockOfBirdsTracker::InternalStartTracking( void )
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalStartTracking called ...\n");
+  igstkLogMacro( DEBUG, 
+                "FlockOfBirdsTracker::InternalStartTracking called ...\n");
   return SUCCESS;
 }
 
 /** Take the tracking device out of tracking mode. */
-FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalStopTracking( void )
+FlockOfBirdsTracker::ResultType 
+FlockOfBirdsTracker::InternalStopTracking( void )
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalStopTracking called ...\n");
+  igstkLogMacro( DEBUG,
+                "FlockOfBirdsTracker::InternalStopTracking called ...\n");
   return SUCCESS;
 }
 
@@ -153,7 +160,8 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalReset( void )
 /** Update the status and the transforms for all TrackerTools. */
 FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, 
+                 "FlockOfBirdsTracker::InternalUpdateStatus called ...\n");
   m_CommandInterpreter->Point();
   m_CommandInterpreter->Update();
 
@@ -196,7 +204,8 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
 
 /** Update the m_StatusBuffer and the transforms. 
     This function is called by a separate thread. */
-FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
+FlockOfBirdsTracker::ResultType 
+FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
 {
   //igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalThreadedUpdateStatus "
   //               "called ...\n");
@@ -205,9 +214,10 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalThreadedUpdateStatu
 
 /** Specify an SROM file to be used with a passive or custom tool. */
 void FlockOfBirdsTracker::AttachSROMFileNameToPort( const unsigned int portNum,
-                                               std::string fileName )
+                                                    std::string fileName )
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::AttachSROMFileNameToPort called..\n");
+  igstkLogMacro( DEBUG, 
+                 "FlockOfBirdsTracker::AttachSROMFileNameToPort called..\n");
 
   // the first 3 ports are active, don't allow SROMS for them
   if ( (portNum >= 3) && (portNum <= NumberOfPorts) )
@@ -274,7 +284,8 @@ void FlockOfBirdsTracker::DisableToolPorts( void )
 
 
 /** Print Self function */
-void FlockOfBirdsTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void FlockOfBirdsTracker::PrintSelf( std::ostream& os, 
+                                     itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
@@ -300,4 +311,3 @@ void FlockOfBirdsTracker::PrintSelf( std::ostream& os, itk::Indent indent ) cons
 
 
 } // end of namespace igstk
-
