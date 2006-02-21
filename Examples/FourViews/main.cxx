@@ -52,7 +52,8 @@ int main(int , char** )
     {
     // Create the ellipsoid representation
     igstk::TubeObject::ConstPointer tube = tubeGroup->GetTube(i);
-    igstk::TubeObjectRepresentation::Pointer tubeRepresentation = igstk::TubeObjectRepresentation::New();
+    igstk::TubeObjectRepresentation::Pointer tubeRepresentation = 
+                                     igstk::TubeObjectRepresentation::New();
     tubeRepresentation->RequestSetTubeObject( tube );
     tubeRepresentation->SetColor(0.0,1.0,0.0);
     tubeRepresentation->SetOpacity(1.0);
@@ -67,14 +68,15 @@ int main(int , char** )
   igstk::MeshObject::ConstPointer mesh = meshReader->GetOutput();
 
   // Create the object representations for the mesh
-  igstk::MeshObjectRepresentation::Pointer meshRepresentation = igstk::MeshObjectRepresentation::New();
+  igstk::MeshObjectRepresentation::Pointer meshRepresentation = 
+                                      igstk::MeshObjectRepresentation::New();
   meshRepresentation->RequestSetMeshObject( mesh );
   meshRepresentation->SetColor(1.0,0.0,0.0);
   meshRepresentation->SetOpacity(1.0);
   application.AddMesh( meshRepresentation );
 
   application.ResetCameras();
-*/
+  */
   Fl::run();
 
   return EXIT_SUCCESS;
