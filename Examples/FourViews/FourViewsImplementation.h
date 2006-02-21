@@ -159,7 +159,8 @@ public:
     // Try to read a mesh
     igstk::MeshReader::Pointer meshReader =  igstk::MeshReader::New();
     meshReader->SetLogger( m_Logger );
-    const char * filename = fl_file_chooser("Select a liver file","*.msh","*.msh");
+    const char * filename = 
+                     fl_file_chooser("Select a liver file","*.msh","*.msh");
 
     if(filename)
       {
@@ -168,7 +169,8 @@ public:
       igstk::MeshObject::ConstPointer mesh = meshReader->GetOutput();
 
       // Create the object representations for the mesh
-      igstk::MeshObjectRepresentation::Pointer meshRepresentation = igstk::MeshObjectRepresentation::New();
+      igstk::MeshObjectRepresentation::Pointer meshRepresentation =
+                                     igstk::MeshObjectRepresentation::New();
       meshRepresentation->RequestSetMeshObject( mesh );
       meshRepresentation->SetColor(1.0,0.0,0.0);
       meshRepresentation->SetOpacity(1.0);
@@ -191,7 +193,8 @@ public:
     for(double k=0;k<10;k+=0.1)
       {
       // Remove all the tubes
-      std::list<igstk::TubeObjectRepresentation::Pointer>::iterator it = m_VesselRepresentationList.begin();
+      std::list<igstk::TubeObjectRepresentation::Pointer>::iterator it = 
+                                          m_VesselRepresentationList.begin();
       while(it != m_VesselRepresentationList.end())
         {
         this->Display3D->RequestRemoveObject( *it );
@@ -212,11 +215,14 @@ public:
           {
           const igstk::TubeObject::PointType  * pt = tube->GetPoint(j);
           igstk::TubeObject::PointType ptnew;
-          ptnew.SetPosition(pt->GetPosition()[0] + k*sin(j*0.01*k),pt->GetPosition()[1],pt->GetPosition()[2]);
+          ptnew.SetPosition(pt->GetPosition()[0] + k*sin(j*0.01*k),
+                            pt->GetPosition()[1],
+                            pt->GetPosition()[2]);
           ptnew.SetRadius(pt->GetRadius());
           newTube->AddPoint(ptnew);
           }
-        igstk::TubeObjectRepresentation::Pointer tubeRepresentation = igstk::TubeObjectRepresentation::New();
+        igstk::TubeObjectRepresentation::Pointer tubeRepresentation = 
+                                        igstk::TubeObjectRepresentation::New();
         tubeRepresentation->RequestSetTubeObject( newTube );
         tubeRepresentation->SetColor(0.0,1.0,0.0);
         tubeRepresentation->SetOpacity(1.0);

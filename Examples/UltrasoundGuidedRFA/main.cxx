@@ -15,7 +15,8 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters 
+// in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4284 )
 #endif
 
@@ -31,7 +32,8 @@ int main(int , char** )
   application.Show();
 
   // Create the probe
-  igstk::UltrasoundProbeObject::Pointer UltrasoundProbe = igstk::UltrasoundProbeObject::New();
+  igstk::UltrasoundProbeObject::Pointer UltrasoundProbe 
+                                          = igstk::UltrasoundProbeObject::New();
 
   double validityTimeInMilliseconds = 1e20; // in seconds
   igstk::Transform transform;
@@ -49,8 +51,11 @@ int main(int , char** )
   UltrasoundProbe->RequestSetTransform( transform );
 
   // Create the UltrasoundProbe representation
-  igstk::UltrasoundProbeObjectRepresentation::Pointer UltrasoundProbeRepresentation = igstk::UltrasoundProbeObjectRepresentation::New();
-  UltrasoundProbeRepresentation->RequestSetUltrasoundProbeObject( UltrasoundProbe );
+  typedef igstk::UltrasoundProbeObjectRepresentation USProbeRepresentationType;
+  USProbeRepresentationType::Pointer UltrasoundProbeRepresentation;
+  UltrasoundProbeRepresentation = igstk::USProbeRepresentationType::New();
+  UltrasoundProbeRepresentation->RequestSetUltrasoundProbeObject( 
+                                                              UltrasoundProbe );
   UltrasoundProbeRepresentation->SetColor(1.0,0.0,0.0);
   UltrasoundProbeRepresentation->SetOpacity(1.0);
 
@@ -60,7 +65,8 @@ int main(int , char** )
   // Create the axes representation
   igstk::AxesObject::Pointer axes = igstk::AxesObject::New();
   axes->SetSize(50,50,50);
-  igstk::AxesObjectRepresentation::Pointer axesRepresentation = igstk::AxesObjectRepresentation::New();
+  igstk::AxesObjectRepresentation::Pointer axesRepresentation = 
+                                        igstk::AxesObjectRepresentation::New();
   axesRepresentation->RequestSetAxesObject( axes );
 
   application.AddAxes(axesRepresentation);
@@ -68,9 +74,10 @@ int main(int , char** )
   // Create a second axes representation for the probe
   igstk::AxesObject::Pointer axes2 = igstk::AxesObject::New();
   axes2->SetSize(50,50,50);
-  igstk::AxesObjectRepresentation::Pointer axesRepresentation2 = igstk::AxesObjectRepresentation::New();
+  igstk::AxesObjectRepresentation::Pointer axesRepresentation2 =
+                                        igstk::AxesObjectRepresentation::New();
   axesRepresentation2->RequestSetAxesObject( axes2 );
-   application.AddAxes(axesRepresentation2);
+  application.AddAxes(axesRepresentation2);
 
   // Associate the Spatial Object to the tracker
   //application.AttachObjectToTrack( axes2 );
