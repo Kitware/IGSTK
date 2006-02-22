@@ -164,7 +164,7 @@ int igstkTimeStampTest( int, char * [] )
       if( stamp.IsValidAtTime( scheduledRenderTime1 ) )
         {
         std::cerr << "Error in IsValidAtTime()." << std::endl; 
-        std::cerr << "Expected value was 'false',"
+        std::cerr << "Expected value was 'false',";
         std::cerr << "but returned 'true'" << std::endl;
         return EXIT_FAILURE;
         }
