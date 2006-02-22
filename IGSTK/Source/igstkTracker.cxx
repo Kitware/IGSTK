@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//Warning about: identifier was truncated to '255' characters in the debug 
+// information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -449,7 +450,8 @@ Tracker::ResultType Tracker::InternalUpdateStatus( void )
     and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalThreadedUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, 
+                 "igstk::Tracker::InternalThreadedUpdateStatus called ...\n");
   return SUCCESS;
 }
 
@@ -458,7 +460,8 @@ Tracker::ResultType Tracker::InternalThreadedUpdateStatus( void )
     tracking device. */
 void Tracker::AttemptToOpenProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToOpenProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+                 "igstk::Tracker::AttemptToOpenProcessing called ...\n");
 
   ResultType result = this->InternalOpen();
   
@@ -471,7 +474,8 @@ void Tracker::AttemptToOpenProcessing( void )
 /** Post-processing after communication setup has been successful. */ 
 void Tracker::CommunicationEstablishmentSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::CommunicationEstablishmentSuccessProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::Tracker::CommunicationEstablishmentSuccessProcessing called ...\n");
 }
 
 
@@ -497,7 +501,8 @@ void Tracker::ResetFromTrackingStateProcessing( void )
  *  CommunicationEstablished  state */
 void Tracker::ResetFromToolsActiveStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::ResetFromToolsActiveStateProcessing() called ...\n");
+  igstkLogMacro( DEBUG, 
+         "igstk::Tracker::ResetFromToolsActiveStateProcessing() called ...\n");
   this->ResetFromCommunicatingStateProcessing();
 }
 
@@ -520,7 +525,8 @@ void Tracker::ResetFromCommunicatingStateProcessing( void )
 /** The "AttemptToActivateTools" method attempts to activate tools. */
 void Tracker::AttemptToActivateToolsProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToActivateToolsProcessing called ...\n");
+  igstkLogMacro( DEBUG,
+           "igstk::Tracker::AttemptToActivateToolsProcessing called ...\n");
 
   ResultType result = this->InternalActivateTools();
   
@@ -547,7 +553,8 @@ void Tracker::ToolsActivationFailureProcessing( void )
 /** The "AttemptToStartTracking" method attempts to start tracking. */
 void Tracker::AttemptToStartTrackingProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStartTrackingProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStartTrackingProcessing  "
+                 "called ...\n");
 
   ResultType result = this->InternalStartTracking();
   
@@ -575,7 +582,8 @@ void Tracker::StartTrackingFailureProcessing( void )
 /** The "AttemptToStopTracking" method attempts to stop tracking. */
 void Tracker::AttemptToStopTrackingProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStopTrackingProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStopTrackingProcessing "
+                        "called ...\n");
   // leaving TrackingState, going to AttemptingToStopTrackingState
   this->ExitTrackingStateProcessing();
 
@@ -635,7 +643,8 @@ void Tracker::ExitTrackingStateProcessing( void )
     during tracking. */
 void Tracker::AttemptToUpdateStatusProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToUpdateStatusProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToUpdateStatusProcessing "
+                        "called ...\n");
 
   // Set all tools to "not updated"
   unsigned int numPorts = m_Ports.size();
@@ -693,17 +702,18 @@ void Tracker::UpdateStatusSuccessProcessing( void )
         ToolCalibrationTransformType toolCalibrationTransform
                                     = tool->GetToolCalibrationTransform();
 
-        /*
-          T ' = P * R^-1 * T * C
-
-          where:
-          " T " is the original tool transform reported by the device,
-          " R^-1 " is the inverse of the transform for the reference tool,
-          " P " is the Patient transform (it specifies the position of
-                the reference with respect to patient coordinates), and
-          " T ' " is the transformation that is reported to the spatial objects
-          " C " is the tool calibration transform.
-        */
+        
+        // T ' = P * R^-1 * T * C
+        //
+        // where:
+        // " T " is the original tool transform reported by the device,
+        // " R^-1 " is the inverse of the transform for the reference tool,
+        // " P " is the Patient transform (it specifies the position of
+        //       the reference with respect to patient coordinates), and
+        // " T ' " is the transformation that is reported to the spatial 
+        // objects
+        // " C " is the tool calibration transform.
+        
 
         TransformType::VersorType rotation;
         TransformType::VectorType translation;
@@ -745,7 +755,8 @@ void Tracker::UpdateStatusSuccessProcessing( void )
         TransformType toolTransform;
         toolTransform.SetTranslationAndRotation(translation, rotation,
                           transform.GetError(),
-                          (transform.GetExpirationTime()-transform.GetStartTime())*1000);
+                          (transform.GetExpirationTime()-
+                          transform.GetStartTime())*1000);
 
         tool->SetTransform( toolTransform );
         }
@@ -841,23 +852,23 @@ void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   if( this->m_PulseGenerator )
-  {
+    {
     os << indent << this->m_PulseGenerator << std::endl;
-  }
+    }
 
   if( this->m_PulseObserver )
-  {
+    {
     os << indent << this->m_PulseObserver << std::endl;
-  }
+    }
 
   os << indent << "Number of ports: " << this->m_Ports.size() << std::endl;
   for(unsigned int i=0; i < m_Ports.size(); ++i )
-  {
-    if( this->m_Ports[i] )
     {
+    if( this->m_Ports[i] )
+      {
       os << indent << *this->m_Ports[i] << std::endl;
+      }
     }
-  }
 }
 
 
@@ -885,7 +896,6 @@ void Tracker::SetReferenceTool( bool applyReferenceTool,
         }
       }
     }
-
 }
 
 
@@ -903,17 +913,16 @@ bool Tracker::GetReferenceTool( unsigned int &portNumber,
 
 
 /** The "SetPatientTransform" sets PatientTransform.
-
-  T ' = W * R^-1 * T * C
-
-  where:
-  " T " is the original tool transform reported by the device,
-  " R^-1 " is the inverse of the transform for the reference tool,
-  " W " is the Patient transform (it specifies the position of the reference
-  with respect to patient coordinates), and
-  " T ' " is the transformation that is reported to the spatial objects
-  " C " is the tool calibration transform.
-*/
+ *
+ *  T ' = W * R^-1 * T * C
+ *
+ *  where:
+ *  " T " is the original tool transform reported by the device,
+ *  " R^-1 " is the inverse of the transform for the reference tool,
+ *  " W " is the Patient transform (it specifies the position of the reference
+ *  with respect to patient coordinates), and
+ *  " T ' " is the transformation that is reported to the spatial objects
+ *  " C " is the tool calibration transform */
 void Tracker::SetPatientTransform( const PatientTransformType& transform )
 {
   m_PatientTransform = transform;
