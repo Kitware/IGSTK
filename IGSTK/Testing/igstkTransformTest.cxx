@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters in the 
+// debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -32,7 +33,7 @@ int igstkTransformTest( int, char * [] )
 
   try
     {
-    typedef igstk::Transform    TransformType;
+    typedef igstk::Transform            TransformType;
     typedef TransformType::VectorType   VectorType;
     typedef TransformType::VersorType   VersorType;
     typedef TransformType::PointType    PointType;
@@ -163,5 +164,3 @@ int igstkTransformTest( int, char * [] )
 
   return EXIT_SUCCESS;
 }
-
-

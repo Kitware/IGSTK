@@ -47,10 +47,14 @@ TubeObjectRepresentation::TubeObjectRepresentation():m_StateMachine(this)
   igstkAddStateMacro( NullTubeObject     );
   igstkAddStateMacro( ValidTubeObject     );
 
-  igstkAddTransitionMacro( NullTubeObject, NullTubeObject, NullTubeObject,  No );
-  igstkAddTransitionMacro( NullTubeObject, ValidTubeObject, ValidTubeObject,  SetTubeObject );
-  igstkAddTransitionMacro( ValidTubeObject, NullTubeObject, NullTubeObject,  No ); 
-  igstkAddTransitionMacro( ValidTubeObject, ValidTubeObject, ValidTubeObject,  No ); 
+  igstkAddTransitionMacro( NullTubeObject, NullTubeObject, 
+                           NullTubeObject,  No );
+  igstkAddTransitionMacro( NullTubeObject, ValidTubeObject, 
+                           ValidTubeObject,  SetTubeObject );
+  igstkAddTransitionMacro( ValidTubeObject, NullTubeObject, 
+                           NullTubeObject,  No ); 
+  igstkAddTransitionMacro( ValidTubeObject, ValidTubeObject, 
+                           ValidTubeObject,  No ); 
 
   igstkSetInitialStateMacro( NullTubeObject );
 
@@ -65,7 +69,8 @@ TubeObjectRepresentation::~TubeObjectRepresentation()
 }
 
 /** Set the Tubeal Spatial Object */
-void TubeObjectRepresentation::RequestSetTubeObject( const TubeObjectType * Tube )
+void TubeObjectRepresentation
+::RequestSetTubeObject( const TubeObjectType * Tube )
 {
   m_TubeObjectToAdd = Tube;
   if( !m_TubeObjectToAdd )
@@ -94,7 +99,8 @@ void TubeObjectRepresentation::SetTubeObjectProcessing()
 } 
 
 /** Print Self function */
-void TubeObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void TubeObjectRepresentation
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
@@ -141,7 +147,9 @@ void TubeObjectRepresentation::CreateActors()
 
   const TubeObjectType::PointType* pt = m_TubeSpatialObject->GetPoint(0); 
   vtkSphereSource * sphereSource1 = vtkSphereSource::New();
-  sphereSource1->SetCenter((float)(pt->GetPosition()[0]*spacing[0]), (float)(pt->GetPosition()[1]*spacing[1]), (float)(pt->GetPosition()[2]*spacing[2]));
+  sphereSource1->SetCenter((float)(pt->GetPosition()[0]*spacing[0]), 
+                           (float)(pt->GetPosition()[1]*spacing[1]), 
+                           (float)(pt->GetPosition()[2]*spacing[2]));
   sphereSource1->SetRadius(pt->GetRadius()*0.95*spacing[0]);
   vtkPolyDataMapper *sphereMapper1 = vtkPolyDataMapper::New();
   sphereMapper1->SetInput(sphereSource1->GetOutput());
@@ -162,14 +170,18 @@ void TubeObjectRepresentation::CreateActors()
   for( unsigned int i=0; i < nPoints; i++ )
     {
     const TubeObjectType::PointType* pt = m_TubeSpatialObject->GetPoint(i); 
-    vPoints->SetPoint(i, (float)(pt->GetPosition()[0]*spacing[0]), (float)(pt->GetPosition()[1]*spacing[1]), (float)(pt->GetPosition()[2]*spacing[2]));
+    vPoints->SetPoint(i, (float)(pt->GetPosition()[0]*spacing[0]), 
+                         (float)(pt->GetPosition()[1]*spacing[1]), 
+                         (float)(pt->GetPosition()[2]*spacing[2]));
     vScalars->SetTuple1(i,pt->GetRadius()*0.95*spacing[0]);
     vVectors->SetTuple3(i,pt->GetRadius()*0.95*spacing[0],0,0);
     }  
 
   pt = m_TubeSpatialObject->GetPoint(nPoints-1); 
   vtkSphereSource * sphereSource2 = vtkSphereSource::New();
-  sphereSource2->SetCenter((float)(pt->GetPosition()[0]*spacing[0]), (float)(pt->GetPosition()[1]*spacing[1]), (float)(pt->GetPosition()[2]*spacing[2]));
+  sphereSource2->SetCenter((float)(pt->GetPosition()[0]*spacing[0]),  
+                           (float)(pt->GetPosition()[1]*spacing[1]), 
+                           (float)(pt->GetPosition()[2]*spacing[2]));
   sphereSource2->SetRadius(pt->GetRadius()*0.95*spacing[0]);
   
   vtkPolyDataMapper *sphereMapper2 = vtkPolyDataMapper::New();
@@ -297,4 +309,3 @@ TubeObjectRepresentation::Copy() const
 
 
 } // end namespace igstk
-

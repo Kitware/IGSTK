@@ -57,7 +57,6 @@ TimeStamp
 }
 
 
-
 double 
 TimeStamp
 ::GetStartTime() const 
@@ -66,15 +65,12 @@ TimeStamp
 }
 
 
-
 double 
 TimeStamp
 ::GetExpirationTime() const 
 {
   return this->m_ExpirationTime;
 }
-
-
 
 
 bool 
@@ -121,8 +117,10 @@ TimeStamp
  */
 void 
 TimeStamp
-::PrintTrailer(std::ostream& itkNotUsed(os), itk::Indent itkNotUsed(indent)) const
+::PrintTrailer(std::ostream& itkNotUsed(os), 
+               itk::Indent itkNotUsed(indent)) const
 {
+
 }
 
 
@@ -148,7 +146,4 @@ void TimeStamp::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 
-
 } // end namespace igstk
-
-

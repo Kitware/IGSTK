@@ -26,7 +26,8 @@
 namespace igstk
 { 
 
-SerialCommunicationForWindows::SerialCommunicationForWindows():m_StateMachine(this)
+SerialCommunicationForWindows::SerialCommunicationForWindows()
+                                                   :m_StateMachine(this)
 {
   m_PortHandle = INVALID_HANDLE_VALUE;
   m_OldTimeoutPeriod = 0;
@@ -43,12 +44,14 @@ SerialCommunicationForWindows::InternalOpenPort( void )
 {
   unsigned int timeoutPeriod = this->GetTimeoutPeriod();
 
-  COMMTIMEOUTS default_ctmo = {
+  COMMTIMEOUTS default_ctmo = 
+    {
     MAXDWORD, MAXDWORD,
     timeoutPeriod, 
     2, 
     timeoutPeriod,
-  };
+    };
+
   HANDLE portHandle;
   DCB commSettings;
 
@@ -444,4 +447,3 @@ void SerialCommunicationForWindows::PrintSelf( std::ostream& os,
 }
 
 } // end namespace igstk
-

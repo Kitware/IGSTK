@@ -63,7 +63,7 @@ protected:
   virtual ResultType InternalOpenPort( void );
 
   /** Set communication on the open port as per the communication
-      parameters. */
+   *  parameters. */
   virtual ResultType InternalUpdateParameters( void );
 
   /** Closes serial port  */

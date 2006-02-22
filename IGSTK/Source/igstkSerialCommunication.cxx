@@ -495,12 +495,13 @@ void SerialCommunication::OpenPortSuccessProcessing( void )
       {
       m_CaptureFileOutput->SetStream( m_CaptureFileStream );
       m_Recorder->AddLogOutput( m_CaptureFileOutput );
-      igstkLogMacro2( m_Recorder, DEBUG, "# recorded " << asctime(localtime(&ti))
+      igstkLogMacro2( m_Recorder, DEBUG, "# recorded " 
+                      << asctime(localtime(&ti))
                           << "\n" );
       }
     }
 
-   // if the port was opened successfully, then set transfer parameters next
+  // if the port was opened successfully, then set transfer parameters next
   igstkPushInputMacro( UpdateParameters );
 }
 
@@ -663,4 +664,3 @@ void SerialCommunication::PrintSelf( std::ostream& os,
 
 
 } // end namespace igstk
-

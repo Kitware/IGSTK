@@ -77,11 +77,10 @@ void TubeObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   if( this->m_TubeSpatialObject )
-  {
+    {
     os << indent << this->m_TubeSpatialObject << std::endl;
-  }
+    }
 }
 
 
 } // end namespace igstk
-

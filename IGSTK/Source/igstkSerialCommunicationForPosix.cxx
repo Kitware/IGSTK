@@ -19,7 +19,7 @@
 #include "igstkConfigure.h"
 #include "igstkSerialCommunicationForPosix.h"
 
-/* =========== standard includes */
+/** Standard includes */
 #include <errno.h>
 #include <time.h>
 #include <ctype.h>
@@ -28,7 +28,7 @@
 #include <string.h>
 #include <iostream>
 
-/* =========== includes for serial communication */
+/** Includes for serial communication */
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
@@ -261,7 +261,7 @@ SerialCommunicationForPosix::InternalClosePort( void )
 
 /** Set the RTS value 
  *  0 : Clear the RTS (request-to-send) signal 
-    1 : Sends the RTS signal */
+ *  1 : Sends the RTS signal */
 SerialCommunicationForPosix::ResultType 
 SerialCommunicationForPosix::InternalSetRTS(unsigned int signal)
 {
@@ -446,4 +446,3 @@ void SerialCommunicationForPosix::PrintSelf( std::ostream& os,
 }
 
 } // end namespace igstk
-
