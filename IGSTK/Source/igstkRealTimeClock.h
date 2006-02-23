@@ -39,10 +39,10 @@ class RealTimeClock
   
 public:
   
-  /** Define the type for the timestap */
+  /** Define the type for the timestamp */
   typedef double        TimeStampType;
 
-  /** Returns a timestamp in seconds   e.g. 52.341243 seconds */
+  /** Returns a timestamp in milliseconds   e.g. 52.341243 milliseconds */
   static TimeStampType  GetTimeStamp();
 
   /** Initialize internal variables on the Clock service.

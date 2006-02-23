@@ -127,7 +127,7 @@ RealTimeClock::GetTimeStamp()
 
   value += m_Origin;
 
-  return value;
+  return value*1000; // in milliseconds
 
 #else
 
@@ -139,7 +139,7 @@ RealTimeClock::GetTimeStamp()
     static_cast< TimeStampType >( tval.tv_sec ) +
     static_cast< TimeStampType >( tval.tv_usec ) / m_Frequency;
 
-  return value;
+  return value*1000; // in milliseconds
 
 #endif  // defined(WIN32) || defined(_WIN32)
 }

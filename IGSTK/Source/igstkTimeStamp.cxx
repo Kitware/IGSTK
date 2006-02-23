@@ -53,7 +53,7 @@ TimeStamp
 ::SetStartTimeNowAndExpireAfter(double millisecondsToExpire) 
 {
   this->m_StartTime      = RealTimeClock::GetTimeStamp();
-  this->m_ExpirationTime = this->m_StartTime + millisecondsToExpire/1000;
+  this->m_ExpirationTime = this->m_StartTime + millisecondsToExpire;
 }
 
 
