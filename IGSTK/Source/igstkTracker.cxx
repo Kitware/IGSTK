@@ -756,7 +756,7 @@ void Tracker::UpdateStatusSuccessProcessing( void )
         toolTransform.SetTranslationAndRotation(translation, rotation,
                           transform.GetError(),
                           (transform.GetExpirationTime()-
-                          transform.GetStartTime())*1000);
+                          transform.GetStartTime()) );
 
         tool->SetTransform( toolTransform );
         }
