@@ -23,7 +23,7 @@ namespace igstk {
 
   /** \class View3D
    *
-   * \brief View2D provies the functionality of rendering a scene in a 3D
+   * \brief View3D provies the functionality of rendering a scene in a 3D
    * window. This class derives from the View class, and represents the
    * abstraction of a window in a GUI in which 3D objects will be displayed but
    * from a point of view in which the camera can change its orientation and
