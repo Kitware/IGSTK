@@ -737,9 +737,9 @@ int View::handle( int event )
     {
     case FL_FOCUS:
     case FL_UNFOCUS:
-       // Return 1 if you want keyboard events, 0 otherwise. Yes we do
-       break;
- 
+      // Return 1 if you want keyboard events, 0 otherwise. Yes we do
+      break;
+
     case FL_KEYBOARD:   // keypress
       this->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);        
       
@@ -771,16 +771,16 @@ int View::handle( int event )
           this->InvokeEvent(vtkCommand::RightButtonPressEvent,NULL);
           break;
         }
-      break; // this break should be here, at least according to vtkXRenderWindowInteractor
+      break; // this break should be here, 
+             // at least according to vtkXRenderWindowInteractor
 
-    // we test for both of these, as fltk classifies mouse moves as with or
-    // without button press whereas vtk wants all mouse movement (this bug took
-    // a while to find :)
+      // we test for both of these, as fltk classifies mouse moves as 
+      // with or without button press whereas vtk wants all mouse movement
+      // (this bug took a while to find :)
     case FL_DRAG:
     case FL_MOVE:
       this->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);
-    break;
-
+      break;
     case FL_RELEASE:    // mouse up
       switch( Fl::event_button() ) 
         {
@@ -799,7 +799,8 @@ int View::handle( int event )
           pickedPoint[2] = data[2];
           
           double validityTime = -1; // Never expire
-          double errorValue = 1.0; // this should be obtained from the picked object.
+          double errorValue = 1.0; // this should be obtained from 
+                                   // the picked object.
 
           igstk::Transform transform;
           transform.SetTranslation( pickedPoint, errorValue, validityTime );
@@ -817,7 +818,7 @@ int View::handle( int event )
           this->InvokeEvent(vtkCommand::RightButtonReleaseEvent,NULL);
           break;
         }
-     break;
+      break;
     default:    // let the base class handle everything else 
       return Fl_Gl_Window::handle( event );
     } // switch(event)...
