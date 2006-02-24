@@ -79,45 +79,78 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   igstkAddStateMacro( Refreshing );
 
 
-  igstkAddTransitionMacro( Idle, ValidAddObject, Idle,  AddObject );
-  igstkAddTransitionMacro( Idle, NullAddObject,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ValidAddAnnotation2D, Idle,  AddAnnotation2D );
-  igstkAddTransitionMacro( Idle, NullAddAnnotation2D ,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ExistingAddObject,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ValidRemoveObject, Idle,  RemoveObject );
-  igstkAddTransitionMacro( Idle, NullRemoveObject,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, InexistingRemoveObject,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ValidAddActor, Idle,  AddActor );
-  igstkAddTransitionMacro( Idle, NullAddActor,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ValidRemoveActor, Idle,  RemoveActor );
-  igstkAddTransitionMacro( Idle, NullRemoveActor,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ResetCamera,  Idle,  ResetCamera );
-  igstkAddTransitionMacro( Idle, EnableInteractions,  Idle,  EnableInteractions );
-  igstkAddTransitionMacro( Idle, DisableInteractions,  Idle,  DisableInteractions );
-  igstkAddTransitionMacro( Idle, StartRefreshing,  Refreshing,  Start );
-  igstkAddTransitionMacro( Idle, StopRefreshing,  Idle,  ReportInvalidRequest );
-
-  igstkAddTransitionMacro( Refreshing, ValidAddObject, Refreshing,  AddObject );
-  igstkAddTransitionMacro( Refreshing, NullAddObject,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, ValidAddAnnotation2D, Refreshing,  AddAnnotation2D );
-  igstkAddTransitionMacro( Refreshing, NullAddAnnotation2D,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, ExistingAddObject,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, ValidRemoveObject, Refreshing,  RemoveObject );
-  igstkAddTransitionMacro( Refreshing, NullRemoveObject,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, InexistingRemoveObject,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, ValidAddActor, Refreshing,  AddActor );
-  igstkAddTransitionMacro( Refreshing, NullAddActor,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, ValidRemoveActor, Refreshing,  RemoveActor );
-  igstkAddTransitionMacro( Refreshing, NullRemoveActor,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, ResetCamera,  Refreshing,  ResetCamera );
-  igstkAddTransitionMacro( Refreshing, EnableInteractions,  Refreshing,  EnableInteractions );
-  igstkAddTransitionMacro( Refreshing, DisableInteractions,  Refreshing,  DisableInteractions );
-  igstkAddTransitionMacro( Refreshing, StartRefreshing,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, StopRefreshing,  Idle,  Stop );
-  
-  igstkAddTransitionMacro( Idle, ValidScreenShotFileName,  Idle, SaveScreenShot )
-  igstkAddTransitionMacro( Idle, InvalidScreenShotFileName, Idle, ReportInvalidScreenShotFileName );
-
+  igstkAddTransitionMacro( Idle, ValidAddObject, 
+                           Idle,  AddObject );
+  igstkAddTransitionMacro( Idle, NullAddObject,  
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidAddAnnotation2D, 
+                           Idle, AddAnnotation2D );
+  igstkAddTransitionMacro( Idle, NullAddAnnotation2D ,  
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ExistingAddObject,  
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidRemoveObject, 
+                           Idle,  RemoveObject );
+  igstkAddTransitionMacro( Idle, NullRemoveObject,  
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, InexistingRemoveObject,  
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidAddActor, 
+                           Idle,  AddActor );
+  igstkAddTransitionMacro( Idle, NullAddActor,  
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidRemoveActor, 
+                           Idle,  RemoveActor );
+  igstkAddTransitionMacro( Idle, NullRemoveActor,  
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ResetCamera,  
+                           Idle,  ResetCamera );
+  igstkAddTransitionMacro( Idle, EnableInteractions,  
+                           Idle,  EnableInteractions );
+  igstkAddTransitionMacro( Idle, DisableInteractions,  
+                           Idle,  DisableInteractions );
+  igstkAddTransitionMacro( Idle, StartRefreshing,  
+                           Refreshing,  Start );
+  igstkAddTransitionMacro( Idle, StopRefreshing,  
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidAddObject, 
+                           Refreshing,  AddObject );
+  igstkAddTransitionMacro( Refreshing, NullAddObject,  
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidAddAnnotation2D, 
+                           Refreshing,  AddAnnotation2D );
+  igstkAddTransitionMacro( Refreshing, NullAddAnnotation2D,  
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ExistingAddObject,  
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidRemoveObject, 
+                           Refreshing,  RemoveObject );
+  igstkAddTransitionMacro( Refreshing, NullRemoveObject,  
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, InexistingRemoveObject,  
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidAddActor, 
+                           Refreshing,  AddActor );
+  igstkAddTransitionMacro( Refreshing, NullAddActor,  
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidRemoveActor, 
+                           Refreshing,  RemoveActor );
+  igstkAddTransitionMacro( Refreshing, NullRemoveActor,  
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ResetCamera,  
+                           Refreshing,  ResetCamera );
+  igstkAddTransitionMacro( Refreshing, EnableInteractions,  
+                           Refreshing,  EnableInteractions );
+  igstkAddTransitionMacro( Refreshing, DisableInteractions,  
+                           Refreshing,  DisableInteractions );
+  igstkAddTransitionMacro( Refreshing, StartRefreshing, 
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, StopRefreshing,  
+                           Idle,  Stop );
+  igstkAddTransitionMacro( Idle, ValidScreenShotFileName,  
+                           Idle, SaveScreenShot )
+  igstkAddTransitionMacro( Idle, InvalidScreenShotFileName, 
+                           Idle, ReportInvalidScreenShotFileName );
 
   igstkSetInitialStateMacro( Idle );
 

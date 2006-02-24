@@ -37,7 +37,7 @@ template<class ClassType>
 void ExportStateMachineDescription( 
               const ClassType * instance, 
               const std::string & outputDirectory, bool skipLoops )
-  {
+{
   std::string filename = outputDirectory+"/";
   filename = filename + "igstk";
   filename = filename + instance->GetNameOfClass();
@@ -70,7 +70,7 @@ void ExportStateMachineDescription(
   instance->ExportStateMachineDescription( ltsOutputFile, skipLoops );
   ltsOutputFile.close();
 
-  }
+}
 
 
 } // end namespace igstk
@@ -80,14 +80,17 @@ void ExportStateMachineDescription(
 #define igstkTestExportStateMachine1( type, outputDirectory, skipLoops ) \
   { \
   type::Pointer instance = type::New(); \
-  igstk::ExportStateMachineDescription( instance.GetPointer(), outputDirectory, skipLoops ); \
+  igstk::ExportStateMachineDescription( instance.GetPointer(), \
+  outputDirectory, skipLoops ); \
   }
 
-// This is for classes that do not use SmartPointers and have a default constructor
+// This is for classes that do not use SmartPointers and 
+// have a default constructor
 #define igstkTestExportStateMachine2( type, outputDirectory, skipLoops ) \
   { \
   type * instance = new type; \
-  igstk::ExportStateMachineDescription( instance, outputDirectory, skipLoops ); \
+  igstk::ExportStateMachineDescription( instance, \
+  outputDirectory, skipLoops ); \
   delete instance; \
   }
 
@@ -96,14 +99,12 @@ void ExportStateMachineDescription(
 class surrogate : public type \
   {  \
 public:      \
-    typedef surrogate                      Self;    \
-    typedef itk::Object                    Superclass;    \
-    typedef itk::SmartPointer<Self>        Pointer;       \
-    igstkTypeMacro( surrogate, type );   \
-    igstkNewMacro( Self );      \
+  typedef surrogate                      Self;    \
+  typedef itk::Object                    Superclass;    \
+  typedef itk::SmartPointer<Self>        Pointer;       \
+  igstkTypeMacro( surrogate, type );   \
+  igstkNewMacro( Self );      \
   };    \
-
-
 
 
 int main( int argc, char * argv [] )
@@ -133,4 +134,3 @@ int main( int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
-
