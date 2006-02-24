@@ -33,7 +33,8 @@ namespace igstk
 #define igstkUnsafeGetMacro(name,type) \
 virtual const type & Get##name () const \
 { \
-    igstkLogMacro( CRITICAL, "igstk::DICOMImageReader::Get" #name " unsafe method called...\n"); \
+    igstkLogMacro( CRITICAL, \
+            "igstk::DICOMImageReader::Get" #name " unsafe method called...\n"); \
     return this->m_##name; \
 }
 
@@ -43,21 +44,25 @@ itkEventMacro( DICOMPatientNameEvent,                             StringEvent);
 itkEventMacro( DICOMImageReaderEvent,                             StringEvent);
 
 // Invalid request error event 
-itkEventMacro( DICOMInvalidRequestErrorEvent,                      DICOMImageReaderEvent );
+itkEventMacro( DICOMInvalidRequestErrorEvent,                      
+               DICOMImageReaderEvent );
 
 // Events to handle errors with the ImageDirectory name
-itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,                  DICOMImageReaderEvent );
-itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,           DICOMImageReaderEvent );
-itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,         DICOMImageReaderEvent );
-itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent, DICOMImageReaderEvent );
+itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,                  
+              DICOMImageReaderEvent );
+itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,           
+              DICOMImageReaderEvent );
+itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,         
+              DICOMImageReaderEvent );
+itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent, 
+              DICOMImageReaderEvent );
 
 //Image reading error
-itkEventMacro( DICOMImageReadingErrorEvent,                        DICOMImageReaderEvent );
+itkEventMacro(DICOMImageReadingErrorEvent,                        
+              DICOMImageReaderEvent );
 
-
-  
 /** \class DICOMImageReader
-  * 
+ * 
  * \brief This class reads DICOM files. 
  *
  * This class should not be instantiated directly, instead the derived classes
@@ -65,7 +70,6 @@ itkEventMacro( DICOMImageReadingErrorEvent,                        DICOMImageRea
  * 
  * \ingroup Readers
  */
-
 template <class TImageSpatialObject>
 class DICOMImageReader : public ImageReader< TImageSpatialObject >
 {
@@ -74,7 +78,7 @@ public:
 
   /** Macro with standard traits declarations. */
   igstkStandardTemplatedAbstractClassTraitsMacro( DICOMImageReader, \
-                                                  ImageReader< TImageSpatialObject> )
+                                           ImageReader< TImageSpatialObject> )
 
 public:
 
@@ -92,13 +96,11 @@ public:
   void RequestModalityInformation();
 
   /** This function will be used to request patient name info */
-  void RequestPatientNameInformation();
-  
+  void RequestPatientNameInformation(); 
 
   /** This function will be used to reset the reader */
   void RequestResetReader();
 
-  
   /** Type used for returning string values from the DICOM header */
   typedef std::string    DICOMInformationType;
 
@@ -145,7 +147,7 @@ protected:
 
   typedef itk::ImageSeriesReader< ImageType >          ImageSeriesReaderType;
 
-  /* Internal itkImageSeriesReader */
+  /** Internal itkImageSeriesReader */
   typename ImageSeriesReaderType::Pointer        m_ImageSeriesReader;
 
   /** Print the object information in a stream. */
@@ -168,7 +170,6 @@ private:
   igstkDeclareStateMacro( AttemptingToReadImage );
   igstkDeclareStateMacro( ImageRead );
 
-
   /** List of State Inputs */
   igstkDeclareInputMacro( ReadImageRequest );
   igstkDeclareInputMacro( ImageDirectoryNameValid ); 
@@ -183,7 +184,6 @@ private:
   igstkDeclareInputMacro( ImageDirectoryNameDoesNotHaveEnoughFiles );
  
   /** DICOM tags request inputs */
-
   igstkDeclareInputMacro( GetModalityInformation );
   igstkDeclareInputMacro( GetPatientNameInformation );
   
@@ -194,7 +194,7 @@ private:
   void SetDirectoryNameProcessing();
 
   /** Invokes a FileNameGenerator in order to get the names of all the DICOM
-      files in a directory. To be invoked ONLY by the StateMachine */
+   *  files in a directory. To be invoked ONLY by the StateMachine */
   void ReadDirectoryFileNamesProcessing();
 
   /** This method request image read. To be invoked ONLY by the StateMachine. */
@@ -210,8 +210,8 @@ private:
   /** This function reports an error when image directory is non-existing */
   void ReportImageDirectoryDoesNotExistErrorProcessing();
 
- /* This function reports an error if the image directory doesn't have enough
-     files */
+  /** This function reports an error if the image directory doesn't have enough
+   *  files */
   void ReportImageDirectoryDoesNotHaveEnoughFilesErrorProcessing();
   
   /** This function reports an error while image reading */
@@ -224,21 +224,20 @@ private:
   void ResetReaderProcessing();
 
   /** This function reports an error when the image directory name
-      provided is not a directory containing DICOM series */
+   *  provided is not a directory containing DICOM series */
   void ReportImageDirectoryIsNotDirectoryErrorProcessing();
 
   /** This function throws a string loaded event. The string is loaded
-      with DICOM  modality */
+   *  with DICOM  modality */
   void GetModalityInformationProcessing();
 
   /** This function throws a string loaded event. The string is loaded
-      with patient name */
+   *  with patient name */
   void GetPatientNameInformationProcessing();
 
   /** This method MUST be private in order to prevent 
-      unsafe access to the ITK image level */
+   *  unsafe access to the ITK image level */
   virtual const ImageType * GetITKImage() const;
-
 
   /** Flag that indicates whether the file has been read successfully */
   bool                    m_FileSuccessfullyRead;

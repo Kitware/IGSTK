@@ -15,7 +15,8 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters 
+// in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4284 )
 #endif
 
@@ -45,7 +46,8 @@ int main(int , char** )
   ellipsoid->SetRadius(1,1,1);
   
   // Create the ellipsoid representation
-  igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
+  igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = 
+                                 igstk::EllipsoidObjectRepresentation::New();
   ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
   ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
   ellipsoidRepresentation->SetOpacity(1.0);
@@ -56,7 +58,8 @@ int main(int , char** )
   cylinder->SetHeight(3);
 
   // Create the cylinder representation
-  igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
+  igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation = 
+                                  igstk::CylinderObjectRepresentation::New();
   cylinderRepresentation->RequestSetCylinderObject( cylinder );
   cylinderRepresentation->SetColor(1.0,0.0,0.0);
   cylinderRepresentation->SetOpacity(1.0);
@@ -79,7 +82,8 @@ int main(int , char** )
   tube->AddPoint(p2);
 
   // Create the cylinder representation
-  igstk::TubeObjectRepresentation::Pointer tubeRepresentation = igstk::TubeObjectRepresentation::New();
+  igstk::TubeObjectRepresentation::Pointer tubeRepresentation = 
+                                     igstk::TubeObjectRepresentation::New();
   tubeRepresentation->RequestSetTubeObject( tube );
   tubeRepresentation->SetColor(0,0,1.0);
   m_GUI->Display1->RequestAddObject( tubeRepresentation );
@@ -93,7 +97,8 @@ int main(int , char** )
   mesh->AddTetrahedronCell(0,0,1,2,3);
 
   // Create the cylinder representation
-  igstk::MeshObjectRepresentation::Pointer meshRepresentation = igstk::MeshObjectRepresentation::New();
+  igstk::MeshObjectRepresentation::Pointer meshRepresentation = 
+                                      igstk::MeshObjectRepresentation::New();
   meshRepresentation->RequestSetMeshObject( mesh );
   meshRepresentation->SetColor(1,0,0);
   m_GUI->Display1->RequestAddObject( meshRepresentation );
@@ -115,7 +120,7 @@ int main(int , char** )
   // Enable interactions
   m_GUI->Display1->RequestEnableInteractions();
 
-   // Create a tracker
+  // Create a tracker
   igstk::MouseTracker::Pointer tracker = igstk::MouseTracker::New();
 
   // Initialize the tracker

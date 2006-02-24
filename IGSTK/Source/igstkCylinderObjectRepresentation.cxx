@@ -26,7 +26,8 @@ namespace igstk
 { 
 
 /** Constructor */
-CylinderObjectRepresentation::CylinderObjectRepresentation():m_StateMachine(this)
+CylinderObjectRepresentation::CylinderObjectRepresentation()
+                                                  : m_StateMachine(this)
 {
   // We create the ellipse spatial object
   m_CylinderSpatialObject = NULL;
@@ -39,16 +40,18 @@ CylinderObjectRepresentation::CylinderObjectRepresentation():m_StateMachine(this
   igstkAddStateMacro( NullCylinderObject  );
   igstkAddStateMacro( ValidCylinderObject );
 
-  igstkAddTransitionMacro( NullCylinderObject, NullCylinderObject, NullCylinderObject,  No );
-  igstkAddTransitionMacro( NullCylinderObject, ValidCylinderObject, ValidCylinderObject,  SetCylinderObject );
-  igstkAddTransitionMacro( ValidCylinderObject, NullCylinderObject, NullCylinderObject,  No ); 
-  igstkAddTransitionMacro( ValidCylinderObject, ValidCylinderObject, ValidCylinderObject,  No ); 
+  igstkAddTransitionMacro( NullCylinderObject, NullCylinderObject, 
+                           NullCylinderObject,  No );
+  igstkAddTransitionMacro( NullCylinderObject, ValidCylinderObject, 
+                           ValidCylinderObject,  SetCylinderObject );
+  igstkAddTransitionMacro( ValidCylinderObject, NullCylinderObject, 
+                           NullCylinderObject,  No ); 
+  igstkAddTransitionMacro( ValidCylinderObject, ValidCylinderObject, 
+                           ValidCylinderObject,  No ); 
 
   igstkSetInitialStateMacro( NullCylinderObject );
 
   m_StateMachine.SetReadyToRun();
-
-
 } 
 
 /** Destructor */
@@ -62,11 +65,9 @@ CylinderObjectRepresentation::~CylinderObjectRepresentation()
   this->DeleteActors();
 }
 
-
-
-
 /** Set the Cylinderal Spatial Object */
-void CylinderObjectRepresentation::RequestSetCylinderObject( const CylinderSpatialObjectType * cylinder )
+void CylinderObjectRepresentation
+::RequestSetCylinderObject( const CylinderSpatialObjectType * cylinder )
 {
   m_CylinderObjectToAdd = cylinder;
   if( !m_CylinderObjectToAdd )
@@ -79,17 +80,12 @@ void CylinderObjectRepresentation::RequestSetCylinderObject( const CylinderSpati
     igstkPushInputMacro( ValidCylinderObject );
     m_StateMachine.ProcessInputs();
     }
-
-
 }
-
-
 
 /** Set the Cylindrical Spatial Object */
 void CylinderObjectRepresentation::NoProcessing()
 {
 }
-
 
 /** Set the Cylindrical Spatial Object */
 void CylinderObjectRepresentation::SetCylinderObjectProcessing()
@@ -107,16 +103,16 @@ void CylinderObjectRepresentation::SetCylinderObjectProcessing()
     }
 } 
 
-
 /** Print Self function */
-void CylinderObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void CylinderObjectRepresentation::PrintSelf( std::ostream& os,
+                                              itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
   if( this->m_CylinderSource )
-  {
+    {
     os << indent << this->m_CylinderSource << std::endl;
-  }
+    }
 }
 
 
@@ -173,4 +169,3 @@ CylinderObjectRepresentation::Copy() const
 
 
 } // end namespace igstk
-

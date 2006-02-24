@@ -23,8 +23,6 @@
 
 #include "itkImageSpatialObject.h"
 
-
-
 namespace igstk
 {
  
@@ -42,14 +40,15 @@ namespace Friends
  */
 class ImageReaderToImageSpatialObject
 {
-  public:
-    template < class TReader, class TImageSpatialObject >
-    static void 
-    ConnectImage( const TReader * reader, 
-                  TImageSpatialObject * imageSpatialObject )
-    {
-       imageSpatialObject->SetImage( reader->GetITKImage() );  
-    }
+public:
+
+  template < class TReader, class TImageSpatialObject >
+  static void 
+  ConnectImage( const TReader * reader, 
+                TImageSpatialObject * imageSpatialObject )
+   {
+   imageSpatialObject->SetImage( reader->GetITKImage() );  
+   }
 
 }; // end of ImageReaderToImageSpatialObject class
 
@@ -66,7 +65,6 @@ class ImageReaderToImageSpatialObject
  *
  * \ingroup Object
  */
-
 template < class TImageSpatialObject >
 class ImageReader : public Object
 {
@@ -133,4 +131,3 @@ private:
 #endif
 
 #endif // __igstkImageReader_h
-

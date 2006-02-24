@@ -47,8 +47,6 @@ ImageReader< TImageSpatialObject >
   Superclass::PrintSelf(os, indent);
 }
 
-
-
 template < class TImageSpatialObject >
 const typename ImageReader< TImageSpatialObject >::ImageSpatialObjectType * 
 ImageReader< TImageSpatialObject >
