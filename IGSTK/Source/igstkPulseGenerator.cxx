@@ -191,7 +191,7 @@ PulseGenerator::SetFrequencyProcessing()
 {
   igstkLogMacro( DEBUG, "SetFrequencyProcessing() called ...\n");
   m_Frequency = m_FrequencyToBeSet;
-  m_Period = 1.0 / m_Frequency;
+  m_Period = 1000 / m_Frequency;
 }
 
 
