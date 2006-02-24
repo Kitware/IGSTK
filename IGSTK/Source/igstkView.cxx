@@ -19,6 +19,17 @@
 #pragma warning ( disable : 4355 )
 #endif
 
+// Better name demanging for gcc
+#if __GNUC__ > 3 || ( __GNUC__ == 3 && __GNUC_MINOR__ > 0 )
+#define GCC_USEDEMANGLE
+#endif
+
+#ifdef GCC_USEDEMANGLE
+#include <cstdlib>
+#include <cxxabi.h>
+#endif 
+
+
 #include "igstkView.h"
 #include <FL/x.H>
 #include <vtkVersion.h>
@@ -859,14 +870,11 @@ int View::handle( int event )
   return 1; // we handled the event if we didn't return earlier
 }
 
-
 void 
 View
-::Print(std::ostream& os)
+::Print( std::ostream& os, ::itk::Indent indent ) const
 {
-  os << "  " << "Transform" << " (" << this << ")\n";
-  itk::Indent indent;
-  this->PrintSelf(os, indent);
+ this->PrintSelf( os, indent );
 }
 
 
@@ -876,7 +884,7 @@ View
  * PrintSelf method that all objects should define, if they have anything
  * interesting to print out.
  */
-std::ostream& operator<<(std::ostream& os, View& o)
+std::ostream& operator<<(std::ostream& os, const View& o)
 {
   o.Print(os);
   return os;
@@ -886,7 +894,27 @@ std::ostream& operator<<(std::ostream& os, View& o)
 /** Print object information */
 void View::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
+#ifdef GCC_USEDEMANGLE
+  char const * mangledName = typeid(*this).name();
+  int status;
+  char* unmangled = abi::__cxa_demangle(mangledName, 0, 0, &status);
+  
+  os << indent << "RTTI typeinfo:   ";
+
+  if(status == 0)
+    {
+    os << unmangled;
+    free(unmangled);
+    }
+  else
+    {
+    os << mangledName;
+    }
+
+  os << std::endl;
+#else
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
+#endif
   os << indent << "RenderWindow Pointer: " << this->m_RenderWindow << std::endl;
   os << indent << "Renderer Pointer: " << this->m_Renderer << std::endl;
   os << indent << "Camera Pointer: " << this->m_Camera << std::endl;
