@@ -244,11 +244,11 @@ void DICOMImageReader<TPixelType>::ReadDirectoryFileNamesProcessing()
   const std::vector< std:: string > & seriesUID = 
                                                m_FileNames -> GetSeriesUIDs();
   if ( seriesUID.empty() ) 
-  {
+    {
     DICOMImageReadingErrorEvent event;
     this->InvokeEvent ( event );
     return;
-  } 
+    } 
  
   m_ImageSeriesReader->SetFileNames( m_FileNames->GetInputFileNames() );
 }
@@ -332,8 +332,8 @@ void
 DICOMImageReader<TPixelType>
 ::ReportImageDirectoryDoesNotExistErrorProcessing()
 {
-  igstkLogMacro( DEBUG, 
-    "igstk::DICOMImageReader::ReportImageDirectoryDoesNotExistError called...\n");
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::\
+                    ReportImageDirectoryDoesNotExistError called...\n");
   DICOMImageDirectoryDoesNotExistErrorEvent event;
   event.Set( m_ImageDirectoryNameToBeSet );
   this->InvokeEvent( event );
@@ -344,7 +344,7 @@ void
 DICOMImageReader<TPixelType>
 ::ReportImageDirectoryDoesNotHaveEnoughFilesErrorProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::DICOMImageReader:: \
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::\
          ReportImageDirectoryDoesNotHaveEnoughFilesError: called...\n");
   DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent event;
   event.Set( m_ImageDirectoryNameToBeSet );
@@ -445,4 +445,3 @@ void DICOMImageReader<TPixelType>
 } // end namespace igstk
 
 #endif
-

@@ -33,9 +33,9 @@ namespace igstk
 #define igstkUnsafeGetMacro(name,type) \
 virtual const type & Get##name () const \
 { \
-    igstkLogMacro( CRITICAL, \
-            "igstk::DICOMImageReader::Get" #name " unsafe method called...\n"); \
-    return this->m_##name; \
+  igstkLogMacro( CRITICAL, \
+         "igstk::DICOMImageReader::Get" #name " unsafe method called...\n"); \
+  return this->m_##name; \
 }
 
 

@@ -46,9 +46,9 @@ public:
   static void 
   ConnectImage( const TReader * reader, 
                 TImageSpatialObject * imageSpatialObject )
-   {
-   imageSpatialObject->SetImage( reader->GetITKImage() );  
-   }
+    {
+    imageSpatialObject->SetImage( reader->GetITKImage() );  
+    }
 
 }; // end of ImageReaderToImageSpatialObject class
 
