@@ -45,20 +45,18 @@ namespace Friends
  */
 class ImageSpatialObjectRepresentationToImageSpatialObject
 {
-  public:
-    template < class TSpatialObjectRepresentation, class TImageSpatialObject >
-    static void 
-    ConnectImage( const TImageSpatialObject * imageSpatialObject,
-                  TSpatialObjectRepresentation * imageSpatialObjectRepresentation )
+public:
+  template < class TSpatialObjectRepresentation, class TImageSpatialObject >
+  static void 
+  ConnectImage( const TImageSpatialObject * imageSpatialObject,
+                 TSpatialObjectRepresentation * imageSpatialObjectRepresentation )
     {
-       imageSpatialObjectRepresentation->SetImage( 
-                 imageSpatialObject->GetVTKImageData() );  
+    imageSpatialObjectRepresentation->SetImage( 
+               imageSpatialObject->GetVTKImageData() );  
     }
-
 }; // end of ImageSpatialObjectRepresentationToImageSpatialObject class
 
 } // end of Friend namespace
-
 
 
 /** \class ImageSpatialObjectRepresentation
@@ -70,9 +68,8 @@ class ImageSpatialObjectRepresentationToImageSpatialObject
  * \ingroup ObjectRepresentation
  */
 
-  template < class TImageSpatialObject >
-class ImageSpatialObjectRepresentation 
-                      : public ObjectRepresentation
+template < class TImageSpatialObject >
+class ImageSpatialObjectRepresentation : public ObjectRepresentation
 {
 
 public:
@@ -86,14 +83,13 @@ public:
   typedef TImageSpatialObject                      ImageSpatialObjectType;
 
   typedef typename ImageSpatialObjectType::ConstPointer 
-                                                   ImageSpatialObjectConstPointer;
+                                           ImageSpatialObjectConstPointer;
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
 
   /** Orientation Type: Publically declared
-   * orientation types supported for slice viewing.
-  */
+   * orientation types supported for slice viewing. */
   typedef enum
     { 
     Sagittal, 
@@ -104,7 +100,8 @@ public:
   OrientationType;
 
   /** Connect this representation class to the spatial object */
-  void RequestSetImageSpatialObject( const ImageSpatialObjectType * ImageSpatialObject );
+  void RequestSetImageSpatialObject( const ImageSpatialObjectType * 
+                                                ImageSpatialObject );
 
   /** Type used for representing the slice number */
   typedef unsigned int SliceNumberType;
@@ -123,7 +120,8 @@ public:
 
   /** Declare the ImageReaderToImageSpatialObject class to be a friend 
    *  in order to give it access to the private method GetITKImage(). */
-  igstkFriendClassMacro( igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
+  igstkFriendClassMacro( 
+     igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
 
   /** Returns the Minimum and Maximum number of slice available in the current
    * orientation.  */
@@ -190,8 +188,9 @@ private:
   /** Actually set the Slice Orientation. */
   void SetOrientationProcessing();
       
-  /** Reports the minimum and maximum slice numbers on the current orientation */
-  void ReportSliceNumberBoundsProcessing() ;
+  /** Reports the minimum and maximum slice numbers on the current
+   *  orientation */
+  void ReportSliceNumberBoundsProcessing();
 
   /** Connect VTK pipeline */
   void ConnectVTKPipelineProcessing();
@@ -234,4 +233,3 @@ private:
 
 
 #endif // __igstkImageSpatialObjectRepresentation_h
-

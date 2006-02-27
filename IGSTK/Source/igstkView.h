@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _igstkView_h
-#define _igstkView_h
+#ifndef __igstkView_h
+#define __igstkView_h
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4018 )
@@ -49,8 +49,8 @@
 #include "igstkEvents.h"   
 #include "igstkAnnotation2D.h"   
 
-namespace igstk{
-
+namespace igstk
+{
 
 /** \class View
  * 
@@ -59,13 +59,12 @@ namespace igstk{
  *
  * \ingroup Object
  */
-
 class View : public Fl_Gl_Window, public vtkRenderWindowInteractor 
 {
 
 public:
     
-  typedef View      Self;
+  typedef View                      Self;
   typedef vtkRenderWindowInteractor Superclass;
 
   igstkTypeMacro( View, vtkRenderWindowInteractor );
@@ -76,7 +75,8 @@ public:
   void RequestSetRefreshRate( double frequency );
   
   /** Add an observer to this View class */
-  void AddObserver( const ::itk::EventObject & event, ::itk::Command * observer );
+  void AddObserver( const ::itk::EventObject & event, 
+                    ::itk::Command * observer );
   
   /** Object representation types */
   typedef ObjectRepresentation::Pointer     ObjectPointer;
@@ -101,7 +101,7 @@ public:
    * */
   void RequestSaveScreenShot( const std::string & filename );
 
-   /** Declarations needed for the State Machine */
+  /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
   /** Print the object information in a stream. */

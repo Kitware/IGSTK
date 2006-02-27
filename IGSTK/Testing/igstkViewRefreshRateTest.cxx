@@ -20,10 +20,9 @@
 //  at a rate close to the one that was requested by the application developer.
 //
 //
-
-
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters 
+// in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -39,39 +38,42 @@
 
 namespace ViewRefreshRateTest
 {
-  class ViewObserver : public ::itk::Command 
-  {
-  public:
-    typedef  ViewObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    ViewObserver() 
-      {
-      m_PulseCounter = 0;
-      m_NumberOfPulsesToStop = 10;
-      m_Form = 0;
-      m_View = 0;
-      }
-  public:
+  
+class ViewObserver : public ::itk::Command 
+{
+public:
+  typedef  ViewObserver   Self;
+  typedef  ::itk::Command    Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
 
-    void SetForm( Fl_Window * form )
-      {
-      m_Form = form;
-      }
+protected:
+  ViewObserver() 
+    {
+    m_PulseCounter = 0;
+    m_NumberOfPulsesToStop = 10;
+    m_Form = 0;
+    m_View = 0;
+    }
 
-    void SetEndFlag( bool * end )
-      {
-      m_End = end;
-      }
+public:
 
-    void Execute(const itk::Object *caller, const itk::EventObject & event)
-      {
-      std::cerr << "Execute( const * ) should not be called" << std::endl;         
-      }
+  void SetForm( Fl_Window * form )
+    {
+    m_Form = form;
+    }
 
-    void SetView( ::igstk::View * view )
+  void SetEndFlag( bool * end )
+    {
+    m_End = end;
+    }
+
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    std::cerr << "Execute( const * ) should not be called" << std::endl;         
+    }
+
+  void SetView( ::igstk::View * view )
     {
     m_View = view;
     if( m_View )
@@ -80,52 +82,50 @@ namespace ViewRefreshRateTest
       }
     }
 
-    void SetNumberOfPulsesToStop( unsigned long number )
-      {
-      m_NumberOfPulsesToStop = number;
-      }
+  void SetNumberOfPulsesToStop( unsigned long number )
+    {
+    m_NumberOfPulsesToStop = number;
+    }
 
-    void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    if( ::igstk::RefreshEvent().CheckEvent( &event ) )
       {
-      if( ::igstk::RefreshEvent().CheckEvent( &event ) )
+      m_PulseCounter++;
+
+      if( m_PulseCounter > m_NumberOfPulsesToStop )
         {
-        m_PulseCounter++;
-
-        if( m_PulseCounter > m_NumberOfPulsesToStop )
+        if( m_View )
           {
-          if( m_View )
-            {
-            m_View->RequestStop();
-            } 
-          else
-            {
-            std::cerr << "View pointer is NULL " << std::endl;
-            }
-          if( m_Form )
-            {
-            m_Form->hide();
-            }
-          *m_End = true;
-          return;
+          m_View->RequestStop();
+          } 
+        else
+          {
+          std::cerr << "View pointer is NULL " << std::endl;
           }
+        if( m_Form )
+          {
+          m_Form->hide();
+          }
+        *m_End = true;
+        return;
         }
       }
-  private:
-    unsigned long       m_PulseCounter;
-    unsigned long       m_NumberOfPulsesToStop;
-    Fl_Window          *m_Form;
-    ::igstk::View      *m_View;
-    bool *              m_End;
-  };
+    }
 
+private:
 
+  unsigned long       m_PulseCounter;
+  unsigned long       m_NumberOfPulsesToStop;
+  Fl_Window          *m_Form;
+  ::igstk::View      *m_View;
+  bool *              m_End;
+};
 
 }
 
-
 int igstkViewRefreshRateTest( int, char * [] )
 {
-
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::View2D  View2DType;
@@ -135,7 +135,6 @@ int igstkViewRefreshRateTest( int, char * [] )
 
   try
     {
-
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
@@ -163,7 +162,6 @@ int igstkViewRefreshRateTest( int, char * [] )
     view3D->RequestResetCamera();
     view3D->RequestEnableInteractions();
     
- 
     // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );
     view3D->RequestAddObject( ellipsoidRepresentation );
@@ -231,7 +229,6 @@ int igstkViewRefreshRateTest( int, char * [] )
         }
       }
 
-
     const double endTime   = igstk::RealTimeClock::GetTimeStamp();
 
     const double secondsElapsed = ( endTime - beginTime ) / 1000;
@@ -252,9 +249,7 @@ int igstkViewRefreshRateTest( int, char * [] )
       result = false ;
       }
 
-  
     // at this point the observer should have hid the form
-
     delete view2D;
     delete view3D;
     delete form;
@@ -265,8 +260,6 @@ int igstkViewRefreshRateTest( int, char * [] )
     result = false;
     }
 
-
-
   if( !result )
     {
     return EXIT_FAILURE;
@@ -274,5 +267,3 @@ int igstkViewRefreshRateTest( int, char * [] )
 
   return EXIT_SUCCESS;
 }
-
-

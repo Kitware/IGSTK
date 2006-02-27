@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters 
+// in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -34,32 +35,35 @@
 
 namespace ViewTest
 {
-  class ViewObserver : public ::itk::Command 
-  {
-  public:
-    typedef  ViewObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    ViewObserver() 
-      {
-      m_PulseCounter = 0;
-      m_Form = 0;
-      m_View = 0;
-      }
-  public:
+  
+class ViewObserver : public ::itk::Command 
+{
+public:
+  
+  typedef  ViewObserver   Self;
+  typedef  ::itk::Command    Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
 
-    void SetForm( Fl_Window * form )
-      {
-      m_Form = form;
-      }
-    void Execute(const itk::Object *caller, const itk::EventObject & event)
-      {
-      std::cerr << "Execute( const * ) should not be called" << std::endl;         
-      }
+protected:
+  ViewObserver() 
+    {
+    m_PulseCounter = 0;
+    m_Form = 0;
+    m_View = 0;
+    }
+public:
 
-    void SetView( ::igstk::View * view )
+  void SetForm( Fl_Window * form )
+    {
+    m_Form = form;
+    }
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    std::cerr << "Execute( const * ) should not be called" << std::endl;         
+    }
+
+  void SetView( ::igstk::View * view )
     {
     m_View = view;
     if( m_View )
@@ -67,53 +71,49 @@ namespace ViewTest
       m_View->AddObserver( ::igstk::RefreshEvent(), this );
       }
     }
-    void SetEndFlag( bool * end )
-      {
-      m_End = end;
-      }
+    
+  void SetEndFlag( bool * end )
+    {
+    m_End = end;
+    }
 
-    void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    if( ::igstk::RefreshEvent().CheckEvent( &event ) )
       {
-      if( ::igstk::RefreshEvent().CheckEvent( &event ) )
+      m_PulseCounter++;
+      if( m_PulseCounter > 20 )
         {
-        m_PulseCounter++;
-
-        if( m_PulseCounter > 20 )
+        if( m_View )
           {
-          if( m_View )
-            {
-            m_View->RequestStop();
-            } 
-          else
-            {
-            std::cerr << "View pointer is NULL " << std::endl;
-            }
-          if( m_Form )
-            {
-            m_Form->hide();
-            }
-          *m_End = true;
-          return;
+          m_View->RequestStop();
+          } 
+        else
+          {
+          std::cerr << "View pointer is NULL " << std::endl;
           }
+        if( m_Form )
+          {
+          m_Form->hide();
+          }
+        *m_End = true;
+        return;
         }
       }
-  private:
-    unsigned long       m_PulseCounter;
-    Fl_Window          *m_Form;
-    ::igstk::View      *m_View;
-    bool *              m_End;
-  };
+    }
+private:
 
-
+  unsigned long       m_PulseCounter;
+  Fl_Window          *m_Form;
+  ::igstk::View      *m_View;
+  bool *              m_End;
+};
 
 }
 
-
 int igstkViewTest( int, char * [] )
 {
-
   igstk::RealTimeClock::Initialize();
-
 
   typedef igstk::View2D  View2DType;
   typedef igstk::View3D  View3DType;
@@ -132,7 +132,6 @@ int igstkViewTest( int, char * [] )
 
   try
     {
-
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
@@ -179,7 +178,6 @@ int igstkViewTest( int, char * [] )
 
     cylinder->RequestSetTransform( transform );
 
-    
     cylinderRepresentation->SetLogger( logger );
   
     // Create an FLTK minimal GUI
@@ -204,7 +202,6 @@ int igstkViewTest( int, char * [] )
     view3D->RequestResetCamera();
     view3D->RequestEnableInteractions();
     
- 
     // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );
     
@@ -218,8 +215,6 @@ int igstkViewTest( int, char * [] )
       view3D->Update();  // schedule redraw of the view
       Fl::check();       // trigger FLTK redraws
       }
-
-
 
     view2D->RequestDisableInteractions();
     view3D->RequestDisableInteractions();
@@ -262,8 +257,6 @@ int igstkViewTest( int, char * [] )
 
     view2D->RequestSetRefreshRate( 30 );
     view3D->RequestSetRefreshRate( 10 );
-
-
     while(1)
       {
       Fl::wait(0.0001);
@@ -274,9 +267,7 @@ int igstkViewTest( int, char * [] )
         }
       }
 
-
     // at this point the observer should have hid the form
-
     delete view2D;
     delete view3D;
     delete form;
@@ -287,11 +278,5 @@ int igstkViewTest( int, char * [] )
     return EXIT_FAILURE;
     }
 
-
-
-
-
   return EXIT_SUCCESS;
 }
-
-

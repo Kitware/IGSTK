@@ -25,15 +25,14 @@ namespace igstk
 {
 
 /** \class RealTimeClock
-* \brief The RealTimeClock provides a timestamp from a real-time clock
-*
-* This class represents a real-time clock object 
-* and provides a timestamp in platform-independent format.
-*
-* \author Hee-Su Kim, Compute Science Dept. Kyungpook National University,
-*                     ISIS Center, Georgetown University.
-*/
-
+ * \brief The RealTimeClock provides a timestamp from a real-time clock
+ *
+ * This class represents a real-time clock object 
+ * and provides a timestamp in platform-independent format.
+ *
+ * \author Hee-Su Kim, Compute Science Dept. Kyungpook National University,
+ *                     ISIS Center, Georgetown University.
+ */
 class RealTimeClock 
 {
   

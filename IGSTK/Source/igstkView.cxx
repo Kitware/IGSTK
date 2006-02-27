@@ -874,7 +874,7 @@ void
 View
 ::Print( std::ostream& os, ::itk::Indent indent ) const
 {
- this->PrintSelf( os, indent );
+  this->PrintSelf( os, indent );
 }
 
 
