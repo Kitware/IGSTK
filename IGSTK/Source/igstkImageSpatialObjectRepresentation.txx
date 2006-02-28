@@ -28,7 +28,6 @@
 #include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkImageData.h"
-#include "vtkMatrix4x4.h"
 
 namespace igstk
 {
@@ -51,10 +50,6 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_MapColors  = vtkImageMapToColors::New();
   m_LUT        = vtkLookupTable::New();
   m_ImageData  = NULL;
-
-  // Image reslice
-  m_ImageReslice = vtkImageReslice::New();      
-
 
   // Set default values for window and level
   m_Level = 0;
@@ -196,12 +191,6 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     m_LUT->Delete();
     m_LUT = NULL;
     }
- 
-  if( m_ImageReslice )
-    {
-    m_ImageReslice->Delete();
-    m_ImageReslice = NULL;
-    }
 }
 
 /** Overloaded DeleteActor function*/
@@ -276,6 +265,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
  
   // If the orientation is oblique, perform reslicing 
 
+  /*
   if ( m_Orientation == Oblique ) 
     {
     //std::cout << "The image data before reslicing " << std::endl; 
@@ -312,7 +302,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 
     m_ImageData = m_ImageReslice->GetOutput();   
     resliceAxes->Delete(); 
-    }
+    } */
 }
   
 
@@ -369,9 +359,6 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
         minSlice = ext[2];
         maxSlice = ext[3];
         break;
-      case Oblique:
-        minSlice = ext[4];
-        maxSlice = ext[5];
       }
 
     if( m_SliceNumberToBeSet >= minSlice && m_SliceNumberToBeSet <= maxSlice )
@@ -413,10 +400,6 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     case Coronal:
       m_ImageActor->SetDisplayExtent( ext[0], ext[1], m_SliceNumber, 
                                       m_SliceNumber, ext[4], ext[5] );
-      break;
-    case Oblique:
-      m_ImageActor->SetDisplayExtent( ext[0], ext[1], ext[2], ext[3],
-                                      m_SliceNumber, m_SliceNumber );
       break;
     }
 
@@ -608,15 +591,6 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
       break;
       }
     case Coronal:
-      {
-      bounds.minimum = ext[2];
-      bounds.maximum = ext[3];
-      CoronalSliceBoundsEvent event;
-      event.Set( bounds );
-      this->InvokeEvent( event );
-      break;
-      }
-    case Oblique:
       {
       bounds.minimum = ext[2];
       bounds.maximum = ext[3];
