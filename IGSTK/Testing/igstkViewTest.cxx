@@ -40,8 +40,8 @@ class ViewObserver : public ::itk::Command
 {
 public:
   
-  typedef  ViewObserver   Self;
-  typedef  ::itk::Command    Superclass;
+  typedef  ViewObserver               Self;
+  typedef  ::itk::Command             Superclass;
   typedef  ::itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
 
@@ -60,7 +60,7 @@ public:
     }
   void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
-    std::cerr << "Execute( const * ) should not be called" << std::endl;         
+    std::cerr << "Execute( const * ) should not be called" << std::endl;
     }
 
   void SetView( ::igstk::View * view )
@@ -137,7 +137,8 @@ int igstkViewTest( int, char * [] )
     ellipsoid->SetRadius(0.1,0.1,0.1);
     
     // Create the ellipsoid representation
-    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
+    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation 
+                            = igstk::EllipsoidObjectRepresentation::New();
     ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
     ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
     ellipsoidRepresentation->SetOpacity(1.0);
@@ -148,7 +149,8 @@ int igstkViewTest( int, char * [] )
     cylinder->SetHeight(0.5);
 
     // Create the cylinder representation
-    igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
+    igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation 
+                              = igstk::CylinderObjectRepresentation::New();
     cylinderRepresentation->RequestSetCylinderObject( cylinder );
     cylinderRepresentation->SetColor(1.0,0.0,0.0);
     cylinderRepresentation->SetOpacity(1.0);
