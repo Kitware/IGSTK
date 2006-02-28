@@ -24,19 +24,15 @@ PURPOSE.  See the above copyright notices for more information.
 #endif
 
 #include "Configure.h"
-
 #include "NeedleBiopsyGUI.h"
 
 #include "igstkStateMachine.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkFLTKTextLogOutput.h"
-
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
-
 #include "igstkLandmark3DRegistration.h"
 
-//#include "igstkSystemInformation.h"
 #include "igstkSandboxConfigure.h"
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
@@ -45,16 +41,12 @@ PURPOSE.  See the above copyright notices for more information.
 #endif
 
 #include "igstkPolarisTracker.h"
-
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
-
 #include "igstkTubeObject.h"
 #include "igstkTubeObjectRepresentation.h"
-
 #include "igstkCylinderObject.h"
 #include "igstkCylinderObjectRepresentation.h"
-
 #include "igstkAnnotation2D.h"
 
 namespace igstk
@@ -84,18 +76,19 @@ public:
 
   /** typedef for RegistrationType */
   typedef Landmark3DRegistration                        RegistrationType;
-  typedef RegistrationType::LandmarkPointContainerType  LandmarkPointContainerType;
+  typedef RegistrationType::LandmarkPointContainerType  
+                                                    LandmarkPointContainerType;
   typedef RegistrationType::LandmarkImagePointType      LandmarkPointType;
   
   /** typedef for TransformType */
   typedef RegistrationType::TransformType               TransformType;
 
   /** typedefs for the communication */
-  #ifdef WIN32
-    typedef SerialCommunicationForWindows               CommunicationType;
-  #else
-    typedef SerialCommunicationForPosix                 CommunicationType;
-  #endif
+#ifdef WIN32
+  typedef SerialCommunicationForWindows                 CommunicationType;
+#else
+  typedef SerialCommunicationForPosix                   CommunicationType;
+#endif
 
   /** typedefs for the tracker */
   typedef PolarisTracker                                TrackerType;
