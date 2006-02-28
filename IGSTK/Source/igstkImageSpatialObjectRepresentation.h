@@ -25,7 +25,6 @@
 #include "vtkImageActor.h"
 #include "vtkLookupTable.h"
 #include "vtkImageMapToColors.h"
-#include "vtkImageReslice.h"
 
 namespace igstk
 {
@@ -94,8 +93,7 @@ public:
     { 
     Sagittal, 
     Coronal, 
-    Axial,
-    Oblique 
+    Axial
     } 
   OrientationType;
 
@@ -159,7 +157,6 @@ private:
   vtkImageActor                        * m_ImageActor;
   vtkLookupTable                       * m_LUT;
   vtkImageMapToColors                  * m_MapColors;
-  vtkImageReslice                      * m_ImageReslice;
 
   /** Variables that store window and level values for 2D image display */
   double                                 m_Level;
