@@ -14,12 +14,12 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-#ifndef _NeedleBiopsy_h
-#define _NeedleBiopsy_h
+#ifndef __NeedleBiopsy_h
+#define __NeedleBiopsy_h
 
 #if defined(_MSC_VER)
-//Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters 
+// in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4284 )
 #endif
 
@@ -120,9 +120,12 @@ public:
 
 
   /** Methods for Converting Events into State Machine Inputs */
-  igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,    AxialBoundsInput, AxialBounds    );
-  igstkLoadedEventTransductionMacro( SagittalSliceBoundsEvent, SagittalBoundsInput, SagittalBounds );
-  igstkLoadedEventTransductionMacro( CoronalSliceBoundsEvent,  CoronalBoundsInput, CoronalBounds  );
+  igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,    
+                                     AxialBoundsInput, AxialBounds    );
+  igstkLoadedEventTransductionMacro( SagittalSliceBoundsEvent, 
+                                     SagittalBoundsInput, SagittalBounds );
+  igstkLoadedEventTransductionMacro( CoronalSliceBoundsEvent,  
+                                     CoronalBoundsInput, CoronalBounds  );
 
 protected:
 
@@ -208,12 +211,15 @@ private:
   LogOutputType::Pointer              m_LogFileOutput;  // log output to file
   LogOutputType::Pointer              m_LogCoutOutput;  // log output to console
   std::ofstream                       m_LogFile;        // file stream
-  FLTKTextLogOutput::Pointer          m_LogFLTKOutput;  // log output to FLTK text display
+  FLTKTextLogOutput::Pointer          m_LogFLTKOutput;  // log output to FLTK
 
-  /** igstkLoggerMacro create a m_Logger,igstkLogMacro(x,y) will write to m_Logger.
-      This logger is for the logging of internal igstk components, eg. m_ImageReader->SetLogger( logger ).
-      You can also use igstkLogMacro( logger, x, y ) to log your message in to this logger. */
-  LoggerType::Pointer                 logger; // Another logger for igstk components
+  /** igstkLoggerMacro create a m_Logger,igstkLogMacro(x,y) will write 
+   *  to m_Logger.
+   *  This logger is for the logging of internal igstk components, 
+   *  eg. m_ImageReader->SetLogger( logger ).
+   * You can also use igstkLogMacro( logger, x, y ) to log your 
+   * message in to this logger. */
+  LoggerType::Pointer                 logger; // Another logger for igstk
 
   /** Registered patient name */
   std::string                         m_PatientName;
@@ -250,16 +256,19 @@ private:
   /** A pulse generator which can generate PulseEvent. */
   PulseGenerator::Pointer             m_PulseGenerator;
 
-  /** Observer type for simple event, the callback can be set to a member function. */
+  /** Observer type for simple event, 
+   *  the callback can be set to a member function. */
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
   ObserverType::Pointer               m_Observer;
 
-  /** Observer type for loaded event, the callback can be set to a member function. */
+  /** Observer type for loaded event, 
+   *  the callback can be set to a member function. */
   typedef itk::ReceptorMemberCommand < Self > ObserverType2;
   ObserverType2::Pointer               m_LandmarkRegistrationObserver;
   ObserverType2::Pointer               m_ViewPickerObserver;
 
-  /** Ellipsoid spatial object, used to represent the landmark point, tip of the probe. */
+  /** Ellipsoid spatial object, used to represent 
+   *  the landmark point, tip of the probe. */
   typedef igstk::EllipsoidObject                  EllipsoidType;
   typedef igstk::EllipsoidObjectRepresentation    EllipsoidRepresentationType;
   EllipsoidType::Pointer                          m_NeedleTip;
@@ -341,4 +350,3 @@ private:
 } // end of namespace
 
 #endif
-

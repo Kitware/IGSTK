@@ -29,7 +29,7 @@ namespace igstk
 namespace Friends 
 {
 
-/** class ImageReaderToImageSpatialObject
+/** \class ImageReaderToImageSpatialObject
  * \brief This class is intended to make the connection between the ImageReader
  * and its output, the ImageSpatialObject. 
  *

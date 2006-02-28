@@ -92,7 +92,7 @@ void RealTimeClock::Initialize()
   m_Origin -= static_cast< TimeStampType >( (__int64)tick.QuadPart ) 
               / m_Frequency;
     
-  m_Origin +=  m_Difference;
+  m_Origin += m_Difference;
 
 #else
 

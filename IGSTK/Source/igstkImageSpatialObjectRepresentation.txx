@@ -14,28 +14,26 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+#ifndef __igstkImageSpatialObjectRepresentation_txx
+#define __igstkImageSpatialObjectRepresentation_txx
 
 #include "itkCommand.h"
 #include "itkImage.h"
+#include "itkCastImageFilter.h"
+#include "itkImageFileReader.h"
 
 #include "igstkImageSpatialObjectRepresentation.h"
+#include "igstkEvents.h"
 
 #include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkImageData.h"
 #include "vtkMatrix4x4.h"
 
-
-#include "igstkEvents.h"
-
-#include "itkCastImageFilter.h"
-#include "itkImageFileReader.h"
-
 namespace igstk
 {
 
 /** Constructor */
-
 template < class TImageSpatialObject >
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::ImageSpatialObjectRepresentation():m_StateMachine(this)
@@ -78,54 +76,96 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   igstkAddStateMacro( ValidSliceNumber );
   igstkAddStateMacro( AttemptingToSetSliceNumber );
 
-  igstkAddTransitionMacro( NullImageSpatialObject, NullImageSpatialObject, NullImageSpatialObject,  No );
-  igstkAddTransitionMacro( NullImageSpatialObject, EmptyImageSpatialObject, NullImageSpatialObject,  No );
-  igstkAddTransitionMacro( NullImageSpatialObject, ValidImageSpatialObject, ValidImageSpatialObject,  SetImageSpatialObject );
-  igstkAddTransitionMacro( NullImageSpatialObject, SetSliceNumber, NullImageSpatialObject,  No );
-  igstkAddTransitionMacro( NullImageSpatialObject, ValidSliceNumber, NullImageSpatialObject,  No );
-  igstkAddTransitionMacro( NullImageSpatialObject, InvalidSliceNumber, NullImageSpatialObject,  No );
-  igstkAddTransitionMacro( NullImageSpatialObject, ValidOrientation, NullImageSpatialObject,  No );
+  igstkAddTransitionMacro( NullImageSpatialObject, NullImageSpatialObject,
+                           NullImageSpatialObject,  No );
+  igstkAddTransitionMacro( NullImageSpatialObject, EmptyImageSpatialObject,
+                           NullImageSpatialObject,  No );
+  igstkAddTransitionMacro( NullImageSpatialObject, ValidImageSpatialObject,
+                           ValidImageSpatialObject,  SetImageSpatialObject );
+  igstkAddTransitionMacro( NullImageSpatialObject, SetSliceNumber,
+                           NullImageSpatialObject,  No );
+  igstkAddTransitionMacro( NullImageSpatialObject, ValidSliceNumber,
+                           NullImageSpatialObject,  No );
+  igstkAddTransitionMacro( NullImageSpatialObject, InvalidSliceNumber,
+                           NullImageSpatialObject,  No );
+  igstkAddTransitionMacro( NullImageSpatialObject, ValidOrientation,
+                           NullImageSpatialObject,  No );
 
-  igstkAddTransitionMacro( ValidImageSpatialObject, NullImageSpatialObject, NullImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidImageSpatialObject, EmptyImageSpatialObject, NullImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidImageSpatialObject, ValidImageSpatialObject, ValidImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidImageSpatialObject, SetSliceNumber, ValidImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidImageSpatialObject, ValidSliceNumber, ValidImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidImageSpatialObject, InvalidSliceNumber, ValidImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidImageSpatialObject, ValidOrientation, ValidImageOrientation,  SetOrientation ); 
+  igstkAddTransitionMacro( ValidImageSpatialObject, NullImageSpatialObject,
+                           NullImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidImageSpatialObject, EmptyImageSpatialObject,
+                           NullImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidImageSpatialObject, ValidImageSpatialObject,
+                           ValidImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidImageSpatialObject, SetSliceNumber,
+                           ValidImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidImageSpatialObject, ValidSliceNumber,
+                           ValidImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidImageSpatialObject, InvalidSliceNumber,
+                           ValidImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidImageSpatialObject, ValidOrientation,
+                           ValidImageOrientation,  SetOrientation ); 
 
-  igstkAddTransitionMacro( ValidImageOrientation, NullImageSpatialObject, NullImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidImageOrientation, EmptyImageSpatialObject, NullImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidImageOrientation, ValidImageSpatialObject, ValidImageSpatialObject,  SetImageSpatialObject );
-  igstkAddTransitionMacro( ValidImageOrientation, SetSliceNumber, AttemptingToSetSliceNumber,  AttemptSetSliceNumber ); 
-  igstkAddTransitionMacro( ValidImageOrientation, ValidSliceNumber, ValidSliceNumber,  SetSliceNumber ); 
-  igstkAddTransitionMacro( ValidImageOrientation, InvalidSliceNumber, ValidImageOrientation,  No ); 
-  igstkAddTransitionMacro( ValidImageOrientation, ValidOrientation, ValidImageOrientation,  SetOrientation ); 
+  igstkAddTransitionMacro( ValidImageOrientation, NullImageSpatialObject,
+                           NullImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidImageOrientation, EmptyImageSpatialObject,
+                           NullImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidImageOrientation, ValidImageSpatialObject,
+                           ValidImageSpatialObject,  SetImageSpatialObject );
+  igstkAddTransitionMacro( ValidImageOrientation, SetSliceNumber,
+                       AttemptingToSetSliceNumber,  AttemptSetSliceNumber ); 
+  igstkAddTransitionMacro( ValidImageOrientation, ValidSliceNumber,
+                           ValidSliceNumber,  SetSliceNumber ); 
+  igstkAddTransitionMacro( ValidImageOrientation, InvalidSliceNumber,
+                           ValidImageOrientation,  No ); 
+  igstkAddTransitionMacro( ValidImageOrientation, ValidOrientation,
+                           ValidImageOrientation,  SetOrientation ); 
 
-  igstkAddTransitionMacro( ValidSliceNumber, NullImageSpatialObject, NullImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidSliceNumber, EmptyImageSpatialObject, NullImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidSliceNumber, ValidImageSpatialObject, ValidImageSpatialObject,  SetImageSpatialObject );
-  igstkAddTransitionMacro( ValidSliceNumber, SetSliceNumber, AttemptingToSetSliceNumber,  AttemptSetSliceNumber ); 
-  igstkAddTransitionMacro( ValidSliceNumber, ValidSliceNumber, ValidSliceNumber,  SetSliceNumber ); 
-  igstkAddTransitionMacro( ValidSliceNumber, InvalidSliceNumber, ValidImageOrientation,  No ); 
-  igstkAddTransitionMacro( ValidSliceNumber, ValidOrientation, ValidImageOrientation,  SetOrientation ); 
+  igstkAddTransitionMacro( ValidSliceNumber, NullImageSpatialObject,
+                           NullImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidSliceNumber, EmptyImageSpatialObject,
+                           NullImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidSliceNumber, ValidImageSpatialObject,
+                           ValidImageSpatialObject,  SetImageSpatialObject );
+  igstkAddTransitionMacro( ValidSliceNumber, SetSliceNumber,
+                        AttemptingToSetSliceNumber,  AttemptSetSliceNumber );
+  igstkAddTransitionMacro( ValidSliceNumber, ValidSliceNumber,
+                           ValidSliceNumber,  SetSliceNumber ); 
+  igstkAddTransitionMacro( ValidSliceNumber, InvalidSliceNumber,
+                           ValidImageOrientation,  No ); 
+  igstkAddTransitionMacro( ValidSliceNumber, ValidOrientation,
+                           ValidImageOrientation,  SetOrientation ); 
 
-  igstkAddTransitionMacro( AttemptingToSetSliceNumber, NullImageSpatialObject, NullImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( AttemptingToSetSliceNumber, EmptyImageSpatialObject, NullImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( AttemptingToSetSliceNumber, ValidImageSpatialObject, ValidImageSpatialObject,  SetImageSpatialObject );
-  igstkAddTransitionMacro( AttemptingToSetSliceNumber, SetSliceNumber, AttemptingToSetSliceNumber,  AttemptSetSliceNumber ); 
-  igstkAddTransitionMacro( AttemptingToSetSliceNumber, ValidSliceNumber, ValidSliceNumber,  SetSliceNumber ); 
-  igstkAddTransitionMacro( AttemptingToSetSliceNumber, InvalidSliceNumber, ValidImageOrientation,  No ); 
-  igstkAddTransitionMacro( AttemptingToSetSliceNumber, ValidOrientation, ValidImageOrientation,  SetOrientation ); 
+  igstkAddTransitionMacro( AttemptingToSetSliceNumber, NullImageSpatialObject,
+                           NullImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( AttemptingToSetSliceNumber, EmptyImageSpatialObject,
+                           NullImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( AttemptingToSetSliceNumber, ValidImageSpatialObject,
+                           ValidImageSpatialObject,  SetImageSpatialObject );
+  igstkAddTransitionMacro( AttemptingToSetSliceNumber, SetSliceNumber,
+                        AttemptingToSetSliceNumber,  AttemptSetSliceNumber );
+  igstkAddTransitionMacro( AttemptingToSetSliceNumber, ValidSliceNumber,
+                           ValidSliceNumber,  SetSliceNumber ); 
+  igstkAddTransitionMacro( AttemptingToSetSliceNumber, InvalidSliceNumber,
+                           ValidImageOrientation,  No ); 
+  igstkAddTransitionMacro( AttemptingToSetSliceNumber, ValidOrientation,
+                           ValidImageOrientation,  SetOrientation ); 
 
-  igstkAddTransitionMacro( ValidImageSpatialObject, RequestSliceNumberBounds, ValidImageSpatialObject, ReportSliceNumberBounds );
-  igstkAddTransitionMacro( ValidSliceNumber, RequestSliceNumberBounds, ValidSliceNumber, ReportSliceNumberBounds );
-  igstkAddTransitionMacro( ValidImageOrientation, RequestSliceNumberBounds, ValidImageOrientation, ReportSliceNumberBounds );
+  igstkAddTransitionMacro( ValidImageSpatialObject, RequestSliceNumberBounds,
+                           ValidImageSpatialObject, ReportSliceNumberBounds );
+  igstkAddTransitionMacro( ValidSliceNumber, RequestSliceNumberBounds,
+                           ValidSliceNumber, ReportSliceNumberBounds );
+  igstkAddTransitionMacro( ValidImageOrientation, RequestSliceNumberBounds,
+                           ValidImageOrientation, ReportSliceNumberBounds );
 
-  igstkAddTransitionMacro( NullImageSpatialObject, ConnectVTKPipeline, NullImageSpatialObject, No );
-  igstkAddTransitionMacro( ValidImageSpatialObject, ConnectVTKPipeline, ValidImageSpatialObject, ConnectVTKPipeline );
-  igstkAddTransitionMacro( ValidImageOrientation, ConnectVTKPipeline, ValidImageOrientation, ConnectVTKPipeline );
-  igstkAddTransitionMacro( ValidSliceNumber, ConnectVTKPipeline, ValidSliceNumber, ConnectVTKPipeline );
+  igstkAddTransitionMacro( NullImageSpatialObject, ConnectVTKPipeline,
+                           NullImageSpatialObject, No );
+  igstkAddTransitionMacro( ValidImageSpatialObject, ConnectVTKPipeline,
+                           ValidImageSpatialObject, ConnectVTKPipeline );
+  igstkAddTransitionMacro( ValidImageOrientation, ConnectVTKPipeline,
+                           ValidImageOrientation, ConnectVTKPipeline );
+  igstkAddTransitionMacro( ValidSliceNumber, ConnectVTKPipeline, 
+                           ValidSliceNumber, ConnectVTKPipeline );
 
   igstkSetInitialStateMacro( NullImageSpatialObject );
 
@@ -170,7 +210,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::DeleteActors( )
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::DeleteActors called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::DeleteActors called...\n");
   
   this->Superclass::DeleteActors();
   
@@ -184,7 +225,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::RequestSetImageSpatialObject( const ImageSpatialObjectType * image )
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::RequestSetImageSpatialObject called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::RequestSetImageSpatialObject called...\n");
   
   m_ImageSpatialObjectToAdd = image;
 
@@ -213,7 +255,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::RequestSetOrientation( OrientationType orientation )
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::RequestSetOrientation called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::RequestSetOrientation called...\n");
   
   m_OrientationToBeSet = orientation;
 
@@ -227,53 +270,47 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetOrientationProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::SetOrientationProcessing called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::SetOrientationProcessing called...\n");
   m_Orientation = m_OrientationToBeSet;
  
   // If the orientation is oblique, perform reslicing 
 
   if ( m_Orientation == Oblique ) 
     {
-      //std::cout << "The image data before reslicing " << std::endl; 
-      //m_ImageData->Print ( std:: cout );
+    //std::cout << "The image data before reslicing " << std::endl; 
+    //m_ImageData->Print ( std:: cout );
 
+    m_ImageReslice->SetInput ( m_ImageData );
  
-      m_ImageReslice->SetInput ( m_ImageData );
- 
-      // Set the reslicing plane axes 
-      vtkMatrix4x4         * resliceAxes;
+    // Set the reslicing plane axes 
+    vtkMatrix4x4         * resliceAxes;
 
-      resliceAxes = vtkMatrix4x4::New();
+    resliceAxes = vtkMatrix4x4::New();
 
-      resliceAxes->Identity();
+    resliceAxes->Identity();
       
-      m_ImageReslice->SetResliceAxes( resliceAxes );
+    m_ImageReslice->SetResliceAxes( resliceAxes );
 
-      // Set the spacing 
-      double spacing[3];
-      m_ImageData->GetSpacing( spacing );
-      m_ImageReslice->SetOutputSpacing( spacing[0],spacing[1],spacing[2] );
+    // Set the spacing 
+    double spacing[3];
+    m_ImageData->GetSpacing( spacing );
+    m_ImageReslice->SetOutputSpacing( spacing[0],spacing[1],spacing[2] );
 
-      // Set the origin
-      double origin[3];
-      m_ImageData->GetOrigin( origin );
+    // Set the origin
+    double origin[3];
+    m_ImageData->GetOrigin( origin );
+    m_ImageReslice->SetOutputOrigin( origin );
 
-      m_ImageReslice->SetOutputOrigin( origin );
+    // Set the output extent
+    int ext[6];
+    m_ImageData->GetExtent( ext );
 
-      // Set the output extent
-      int ext[6];
-      m_ImageData->GetExtent( ext );
+    m_ImageReslice->SetOutputExtent( ext[0], ext[1], ext[2], ext[3], ext[4], ext[5]);
+    m_ImageReslice->Update();
 
-      m_ImageReslice->SetOutputExtent( ext[0], ext[1], ext[2], ext[3], ext[4], ext[5]);
-
-      m_ImageReslice->Update();
-
-      m_ImageData = m_ImageReslice->GetOutput();   
-   
-      //std::cout << "The image data after reslicing " << std::endl; 
-      //m_ImageData->Print ( std:: cout );
-
-      resliceAxes->Delete(); 
+    m_ImageData = m_ImageReslice->GetOutput();   
+    resliceAxes->Delete(); 
     }
 }
   
@@ -284,7 +321,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::RequestSetSliceNumber( SliceNumberType slice )
 {
 
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::RequestSetSliceNumber called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::RequestSetSliceNumber called...\n");
 
   m_SliceNumberToBeSet = slice;
 
@@ -300,7 +338,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::AttemptSetSliceNumberProcessing()
 {
 
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::AttemptSetSliceNumberProcessing called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::AttemptSetSliceNumberProcessing called...\n");
   if( m_ImageActor )
     {
 
@@ -352,8 +391,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetSliceNumberProcessing()
 {
-  
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::SetSliceNumber called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::SetSliceNumber called...\n");
 
   m_SliceNumber = m_SliceNumberToBeSet;
 
@@ -363,16 +402,20 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   switch( m_Orientation )
     {
     case Axial:
-      m_ImageActor->SetDisplayExtent( ext[0], ext[1], ext[2], ext[3], m_SliceNumber, m_SliceNumber );
+      m_ImageActor->SetDisplayExtent( ext[0], ext[1], ext[2], 
+                                      ext[3], m_SliceNumber, m_SliceNumber );
       break;
     case Sagittal:
-      m_ImageActor->SetDisplayExtent( m_SliceNumber, m_SliceNumber, ext[2], ext[3], ext[4], ext[5] );
+      m_ImageActor->SetDisplayExtent( m_SliceNumber, m_SliceNumber, 
+                                      ext[2], ext[3], ext[4], ext[5] );
       break;
     case Coronal:
-      m_ImageActor->SetDisplayExtent( ext[0], ext[1], m_SliceNumber, m_SliceNumber, ext[4], ext[5] );
+      m_ImageActor->SetDisplayExtent( ext[0], ext[1], m_SliceNumber, 
+                                      m_SliceNumber, ext[4], ext[5] );
       break;
     case Oblique:
-      m_ImageActor->SetDisplayExtent( ext[0], ext[1], ext[2], ext[3], m_SliceNumber, m_SliceNumber );
+      m_ImageActor->SetDisplayExtent( ext[0], ext[1], ext[2], ext[3],
+                                      m_SliceNumber, m_SliceNumber );
       break;
     }
 
@@ -384,7 +427,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetWindowLevel( double window, double level )
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::SetWindowLevel called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::SetWindowLevel called...\n");
 
   m_Window = window;
   m_Level = level;
@@ -406,7 +450,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetImageSpatialObjectProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::SetImageSpatialObjectProcessing called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::SetImageSpatialObjectProcessing called...\n");
 
   // We create the image spatial object
   m_ImageSpatialObject = m_ImageSpatialObjectToAdd;
@@ -442,11 +487,12 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::UpdateRepresentationProcessing()
 {    
-   igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::UpdateRepresentationProcessing called...\n");
-   if( m_ImageData )
-     {
-     m_MapColors->SetInput( m_ImageData );
-     }
+ igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                       ::UpdateRepresentationProcessing called...\n");
+ if( m_ImageData )
+   {
+   m_MapColors->SetInput( m_ImageData );
+   }
 }
 
 
@@ -456,7 +502,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::CreateActors()
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::CreateActors called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::CreateActors called...\n");
 
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
@@ -483,7 +530,8 @@ typename ImageSpatialObjectRepresentation< TImageSpatialObject >::Pointer
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::Copy() const
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::Copy called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::Copy called...\n");
 
   Pointer newOR = ImageSpatialObjectRepresentation::New();
   newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
@@ -493,18 +541,18 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   return newOR;
 }
 
-  
+ 
 template < class TImageSpatialObject >
 void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetImage( const vtkImageData * image )
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::SetImage called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::SetImage called...\n");
 
   // This const_cast<> is needed here due to the lack of const-correctness in VTK 
   m_ImageData = const_cast< vtkImageData *>( image );
 }
-
 
 
 template < class TImageSpatialObject >
@@ -512,7 +560,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::ConnectImage()
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation::ConnectImage called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::ConnectImage called...\n");
 
   typedef Friends::ImageSpatialObjectRepresentationToImageSpatialObject  HelperType;
   HelperType::ConnectImage( m_ImageSpatialObject.GetPointer(), this );
@@ -523,65 +572,58 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 }
 
 
-
-
 template < class TImageSpatialObject >
 void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::ReportSliceNumberBoundsProcessing() 
 {
+  int ext[6];
 
-    int ext[6];
+  m_ImageData->Update();
+  m_ImageData->GetExtent( ext );
 
-    m_ImageData->Update();
-    m_ImageData->GetExtent( ext );
+  EventHelperType::IntegerBoundsType bounds;
 
-    EventHelperType::IntegerBoundsType bounds;
-
-    switch( m_Orientation )
+  switch( m_Orientation )
+    {
+    case Axial:
       {
-      case Axial:
-        {
-        bounds.minimum = ext[4];
-        bounds.maximum = ext[5];
-        AxialSliceBoundsEvent event;
-        event.Set( bounds );
-        this->InvokeEvent( event );
-        break;
-        }
-      case Sagittal:
-        {
-        bounds.minimum = ext[0];
-        bounds.maximum = ext[1];
-        SagittalSliceBoundsEvent event;
-        event.Set( bounds );
-        this->InvokeEvent( event );
-        break;
-        }
-      case Coronal:
-        {
-        bounds.minimum = ext[2];
-        bounds.maximum = ext[3];
-        CoronalSliceBoundsEvent event;
-        event.Set( bounds );
-        this->InvokeEvent( event );
-        break;
-        }
-      case Oblique:
-        {
-        bounds.minimum = ext[2];
-        bounds.maximum = ext[3];
-        CoronalSliceBoundsEvent event;
-        event.Set( bounds );
-        this->InvokeEvent( event );
-        break;
-        }
-
+      bounds.minimum = ext[4];
+      bounds.maximum = ext[5];
+      AxialSliceBoundsEvent event;
+      event.Set( bounds );
+      this->InvokeEvent( event );
+      break;
       }
-
+    case Sagittal:
+      {
+      bounds.minimum = ext[0];
+      bounds.maximum = ext[1];
+      SagittalSliceBoundsEvent event;
+      event.Set( bounds );
+      this->InvokeEvent( event );
+      break;
+      }
+    case Coronal:
+      {
+      bounds.minimum = ext[2];
+      bounds.maximum = ext[3];
+      CoronalSliceBoundsEvent event;
+      event.Set( bounds );
+      this->InvokeEvent( event );
+      break;
+      }
+    case Oblique:
+      {
+      bounds.minimum = ext[2];
+      bounds.maximum = ext[3];
+      CoronalSliceBoundsEvent event;
+      event.Set( bounds );
+      this->InvokeEvent( event );
+      break;
+      }
+    }
 }
-
-
 
 template < class TImageSpatialObject >
 void
@@ -591,7 +633,6 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_StateMachine.PushInput( m_RequestSliceNumberBoundsInput );
   m_StateMachine.ProcessInputs();
 }
-
 
 template < class TImageSpatialObject >
 void
@@ -603,6 +644,6 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageActor->InterpolateOn();
 }
 
-
 } // end namespace igstk
 
+#endif

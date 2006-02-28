@@ -33,7 +33,8 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   /** Setup logger, for all other igstk components. */
   logger   = LoggerType::New();
 
-  /** Direct the application log message to the std::cout and FLTK text display. */
+  /** Direct the application log message to the std::cout 
+   *  and FLTK text display. */
   m_LogCoutOutput = LogOutputType::New();
   m_LogCoutOutput->SetStream( std::cout );
   this->GetLogger()->AddLogOutput( m_LogCoutOutput );
@@ -46,7 +47,8 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 
   /** Direct the igstk components log message to the file. */
   m_LogFileOutput = LogOutputType::New();
-  std::string logFileName = "logFourViewsTrackingWithCT.txt";                   //FIXME. use a date/time file name
+  //FIXME. use a date/time file name
+  std::string logFileName = "logFourViewsTrackingWithCT.txt";                   
   m_LogFile.open( logFileName.c_str() );
   if( !m_LogFile.fail() )
     {
@@ -56,7 +58,8 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
     }
   else
     {
-    igstkLogMacro( DEBUG, "Problem opening Log file: " << logFileName << "\n" ); //FIXME. may not return
+    //FIXME. may not return
+    igstkLogMacro( DEBUG, "Problem opening Log file: " << logFileName << "\n" );
     return;
     }
 
@@ -100,10 +103,11 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_CylinderRepresentation->SetOpacity(1.0);
   
   igstk::PivotCalibration::Pointer pivot = igstk::PivotCalibration::New();
-//  pivot->RequestSetToolPrincipalAxis( 0.0, 1.0, 0.0);
-//  pivot->RequestSetToolPlaneNormal( 1.0, 0.0, 0.0);
+  //pivot->RequestSetToolPrincipalAxis( 0.0, 1.0, 0.0);
+  //pivot->RequestSetToolPlaneNormal( 1.0, 0.0, 0.0);
 
-  igstk::Transform::VectorType CylinderTipOffset;     //FIXME, SpatialObject should have an tip to origin offet
+  //FIXME, SpatialObject should have an tip to origin offet
+  igstk::Transform::VectorType CylinderTipOffset;
   CylinderTipOffset[0] = 0;   // Tip offset
   CylinderTipOffset[1] = -200;
   CylinderTipOffset[2] = 0;
@@ -114,15 +118,17 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   igstk::Transform::VersorType rotation;
  
   rotation.SetRotationAroundX( 3.1415926/2 );
-  rotation = rotation.GetConjugate() ;  
+  rotation = rotation.GetConjugate();  
   rotation.SetIdentity();
   
   translation[0] = -18.0;   // Tip offset
   translation[1] = 0.5;
   translation[2] = -157.5;
 
-  toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
-  m_Tracker->SetToolCalibrationTransform( TRACKER_TOOL_PORT, 0, toolCalibrationTransform);
+  toolCalibrationTransform.SetTranslationAndRotation(translation, 
+                                                     rotation, 0.1, 10000);
+  m_Tracker->SetToolCalibrationTransform( TRACKER_TOOL_PORT, 0,
+                                          toolCalibrationTransform);
 
   m_ImageToTrackerTransform.SetToIdentity( 10000 );
   m_ImageLandmarkTransform.SetToIdentity( 10000 );
@@ -132,7 +138,8 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_Observer = ObserverType::New();
   m_Observer->SetCallbackFunction( this, & FourViewsTrackingWithCT::Tracking );
   m_PulseGenerator->AddObserver( PulseEvent(), m_Observer );
-  m_PulseGenerator->RequestSetFrequency( 30 ); //FIXME, move to request start tracking??
+  //FIXME, move to request start tracking??
+  m_PulseGenerator->RequestSetFrequency( 30 );
 
   /** Temporary disable this logger */
   //this->DisplayAxial->SetLogger( logger );
@@ -140,11 +147,15 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   //this->DisplayCoronal->SetLogger( logger );
 
   m_ViewPickerObserver = ObserverType2::New();
-  m_ViewPickerObserver->SetCallbackFunction( this, &FourViewsTrackingWithCT::DrawPickedPoint );
+  m_ViewPickerObserver->SetCallbackFunction( this, 
+                                   &FourViewsTrackingWithCT::DrawPickedPoint );
 
-  this->DisplayAxial->AddObserver( TransformModifiedEvent(), m_ViewPickerObserver );
-  this->DisplaySagittal->AddObserver( TransformModifiedEvent(), m_ViewPickerObserver );
-  this->DisplayCoronal->AddObserver( TransformModifiedEvent(), m_ViewPickerObserver );
+  this->DisplayAxial->AddObserver( TransformModifiedEvent(), 
+                                   m_ViewPickerObserver );
+  this->DisplaySagittal->AddObserver( TransformModifiedEvent(), 
+                                      m_ViewPickerObserver );
+  this->DisplayCoronal->AddObserver( TransformModifiedEvent(), 
+                                     m_ViewPickerObserver );
 
   this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
   this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
@@ -226,66 +237,106 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 
   
   /** Register patient name */
-  igstkAddTransitionMacro( Initial, RequestSetPatientName, WaitingForPatientName, SetPatientName );
-  igstkAddTransitionMacro( PatientNameReady, RequestSetPatientName, WaitingForPatientName, SetPatientName );
-  igstkAddTransitionMacro( WaitingForPatientName, PatientName, PatientNameReady, No );
-  igstkAddTransitionMacro( WaitingForPatientName, PatientNameEmpty, Initial, No );
+  igstkAddTransitionMacro( Initial, RequestSetPatientName, 
+                           WaitingForPatientName, SetPatientName );
+  igstkAddTransitionMacro( PatientNameReady, RequestSetPatientName, 
+                           WaitingForPatientName, SetPatientName );
+  igstkAddTransitionMacro( WaitingForPatientName, PatientName, 
+                           PatientNameReady, No );
+  igstkAddTransitionMacro( WaitingForPatientName, PatientNameEmpty, 
+                           Initial, No );
 
   /** Load image and verify patient name */
-  igstkAddTransitionMacro( PatientNameReady, RequestLoadImage, WaitingForDICOMDirectory, LoadImage );
-  igstkAddTransitionMacro( PatientNameVerified, RequestLoadImage, WaitingForDICOMDirectory, LoadImage );
-  igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageSuccess, ImageReady, VerifyPatientName );
-  igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageFailure, PatientNameReady, No );
+  igstkAddTransitionMacro( PatientNameReady, RequestLoadImage,
+                           WaitingForDICOMDirectory, LoadImage );
+  igstkAddTransitionMacro( PatientNameVerified, RequestLoadImage, 
+                           WaitingForDICOMDirectory, LoadImage );
+  igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageSuccess, 
+                           ImageReady, VerifyPatientName );
+  igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageFailure, 
+                           PatientNameReady, No );
 
   /** Display image */
-  igstkAddTransitionMacro( ImageReady, PatientNameMatch, PatientNameVerified, ConnectImageRepresentation );
-  igstkAddTransitionMacro( ImageReady, OverwritePatientName, PatientNameVerified, ConnectImageRepresentation );
-  igstkAddTransitionMacro( ImageReady, ReloadImage, WaitingForDICOMDirectory, LoadImage );
+  igstkAddTransitionMacro( ImageReady, PatientNameMatch, 
+                           PatientNameVerified, ConnectImageRepresentation );
+  igstkAddTransitionMacro( ImageReady, OverwritePatientName, 
+                           PatientNameVerified, ConnectImageRepresentation );
+  igstkAddTransitionMacro( ImageReady, ReloadImage, 
+                           WaitingForDICOMDirectory, LoadImage );
 
   /** Receive Slice Information from the Image Representation */
-  igstkAddTransitionMacro( PatientNameVerified, AxialBounds, PatientNameVerified, SetAxialSliderBounds );
-  igstkAddTransitionMacro( PatientNameVerified, SagittalBounds, PatientNameVerified, SetSagittalSliderBounds );
-  igstkAddTransitionMacro( PatientNameVerified, CoronalBounds, PatientNameVerified, SetCoronalSliderBounds );
+  igstkAddTransitionMacro( PatientNameVerified, AxialBounds, 
+                           PatientNameVerified, SetAxialSliderBounds );
+  igstkAddTransitionMacro( PatientNameVerified, SagittalBounds, 
+                           PatientNameVerified, SetSagittalSliderBounds );
+  igstkAddTransitionMacro( PatientNameVerified, CoronalBounds, 
+                           PatientNameVerified, SetCoronalSliderBounds );
   
   /** Set image landmarks, any number of landmarks >= 3 */
-  igstkAddTransitionMacro( PatientNameVerified, RequestAddImageLandmark, AddingImageLandmark, AddImageLandmark );
-  igstkAddTransitionMacro( AddingImageLandmark, RequestAddImageLandmark, AddingImageLandmark, AddImageLandmark );
-  igstkAddTransitionMacro( ImageLandmarksReady, RequestAddImageLandmark, ImageLandmarksReady, AddImageLandmark );
-  igstkAddTransitionMacro( AddingImageLandmark, NeedMoreLandmarkPoints, AddingImageLandmark, No );
-  igstkAddTransitionMacro( AddingImageLandmark, EnoughLandmarkPoints, ImageLandmarksReady, No );
-  igstkAddTransitionMacro( ImageLandmarksReady, EnoughLandmarkPoints, ImageLandmarksReady, No );
+  igstkAddTransitionMacro( PatientNameVerified, RequestAddImageLandmark, 
+                           AddingImageLandmark, AddImageLandmark );
+  igstkAddTransitionMacro( AddingImageLandmark, RequestAddImageLandmark, 
+                           AddingImageLandmark, AddImageLandmark );
+  igstkAddTransitionMacro( ImageLandmarksReady, RequestAddImageLandmark, 
+                           ImageLandmarksReady, AddImageLandmark );
+  igstkAddTransitionMacro( AddingImageLandmark, NeedMoreLandmarkPoints, 
+                           AddingImageLandmark, No );
+  igstkAddTransitionMacro( AddingImageLandmark, EnoughLandmarkPoints, 
+                           ImageLandmarksReady, No );
+  igstkAddTransitionMacro( ImageLandmarksReady, EnoughLandmarkPoints, 
+                           ImageLandmarksReady, No );
 
   /** Clear image landmarks */
-  igstkAddTransitionMacro( AddingImageLandmark, RequestClearImageLandmarks, PatientNameVerified, ClearImageLandmarks );
-  igstkAddTransitionMacro( ImageLandmarksReady, RequestClearImageLandmarks, PatientNameVerified, ClearImageLandmarks );
+  igstkAddTransitionMacro( AddingImageLandmark, RequestClearImageLandmarks, 
+                           PatientNameVerified, ClearImageLandmarks );
+  igstkAddTransitionMacro( ImageLandmarksReady, RequestClearImageLandmarks, 
+                           PatientNameVerified, ClearImageLandmarks );
 
   /** Initialize tracker */
-  igstkAddTransitionMacro( ImageLandmarksReady, RequestInitializeTracker, InitializingTracker, InitializeTracker );
-  igstkAddTransitionMacro( InitializingTracker, InitializeTrackerSuccess, TrackerReady, No );
-  igstkAddTransitionMacro( InitializingTracker, InitializeTrackerFailure, ImageLandmarksReady, No );
+  igstkAddTransitionMacro( ImageLandmarksReady, RequestInitializeTracker, 
+                           InitializingTracker, InitializeTracker );
+  igstkAddTransitionMacro( InitializingTracker, InitializeTrackerSuccess, 
+                           TrackerReady, No );
+  igstkAddTransitionMacro( InitializingTracker, InitializeTrackerFailure, 
+                           ImageLandmarksReady, No );
 
   /** Set tracker landmarks, require same number of landmarks as in image landmark */
-  igstkAddTransitionMacro( TrackerReady, RequestAddTrackerLandmark, AddingTrackerLandmark, AddTrackerLandmark );
-  igstkAddTransitionMacro( AddingTrackerLandmark, RequestAddTrackerLandmark, AddingTrackerLandmark, AddTrackerLandmark );
-  igstkAddTransitionMacro( AddingTrackerLandmark, NeedMoreLandmarkPoints, AddingTrackerLandmark, No );
-  igstkAddTransitionMacro( AddingTrackerLandmark, EnoughLandmarkPoints, TrackerLandmarksReady, No );
+  igstkAddTransitionMacro( TrackerReady, RequestAddTrackerLandmark, 
+                           AddingTrackerLandmark, AddTrackerLandmark );
+  igstkAddTransitionMacro( AddingTrackerLandmark, RequestAddTrackerLandmark, 
+                           AddingTrackerLandmark, AddTrackerLandmark );
+  igstkAddTransitionMacro( AddingTrackerLandmark, NeedMoreLandmarkPoints, 
+                           AddingTrackerLandmark, No );
+  igstkAddTransitionMacro( AddingTrackerLandmark, EnoughLandmarkPoints, 
+                           TrackerLandmarksReady, No );
   /** Clear tracker landmarks */
-  igstkAddTransitionMacro( AddingTrackerLandmark, RequestClearTrackerLandmarks, TrackerReady, ClearTrackerLandmarks );
-  igstkAddTransitionMacro( TrackerLandmarksReady, RequestClearTrackerLandmarks, TrackerReady, ClearTrackerLandmarks );
+  igstkAddTransitionMacro( AddingTrackerLandmark, RequestClearTrackerLandmarks, 
+                           TrackerReady, ClearTrackerLandmarks );
+  igstkAddTransitionMacro( TrackerLandmarksReady, RequestClearTrackerLandmarks, 
+                           TrackerReady, ClearTrackerLandmarks );
 
   /** Registration */
-  igstkAddTransitionMacro( TrackerLandmarksReady, RequestRegistration, TrackerLandmarksReady, Registration );
-  igstkAddTransitionMacro( TrackerLandmarksReady, RegistrationSuccess, LandmarkRegistrationReady, No );
-  igstkAddTransitionMacro( TrackerLandmarksReady, RegistrationFailure, TrackerLandmarksReady, No );
+  igstkAddTransitionMacro( TrackerLandmarksReady, RequestRegistration, 
+                           TrackerLandmarksReady, Registration );
+  igstkAddTransitionMacro( TrackerLandmarksReady, RegistrationSuccess, 
+                           LandmarkRegistrationReady, No );
+  igstkAddTransitionMacro( TrackerLandmarksReady, RegistrationFailure, 
+                           TrackerLandmarksReady, No );
 
   /** Tracking */
-  igstkAddTransitionMacro( LandmarkRegistrationReady, RequestStartTracking, LandmarkRegistrationReady, StartTracking );
-  igstkAddTransitionMacro( LandmarkRegistrationReady, StartTrackingSuccess, Tracking, No);
-  igstkAddTransitionMacro( LandmarkRegistrationReady, StartTrackingFailure, LandmarkRegistrationReady, No );
+  igstkAddTransitionMacro( LandmarkRegistrationReady, RequestStartTracking, 
+                           LandmarkRegistrationReady, StartTracking );
+  igstkAddTransitionMacro( LandmarkRegistrationReady, StartTrackingSuccess, 
+                           Tracking, No);
+  igstkAddTransitionMacro( LandmarkRegistrationReady, StartTrackingFailure, 
+                           LandmarkRegistrationReady, No );
 
-  igstkAddTransitionMacro( Tracking, RequestStopTracking, Tracking, StopTracking );
-  igstkAddTransitionMacro( Tracking, StopTrackingSuccess, LandmarkRegistrationReady, No);
-  igstkAddTransitionMacro( Tracking, StopTrackingFailure, Tracking, No );
+  igstkAddTransitionMacro( Tracking, RequestStopTracking, 
+                           Tracking, StopTracking );
+  igstkAddTransitionMacro( Tracking, StopTrackingSuccess, 
+                           LandmarkRegistrationReady, No);
+  igstkAddTransitionMacro( Tracking, StopTrackingFailure,
+                           Tracking, No );
   
   igstkSetInitialStateMacro( Initial );
 
@@ -315,20 +366,24 @@ void FourViewsTrackingWithCT::NoProcessing()
 
 void FourViewsTrackingWithCT::RequestSetPatientName()
 {
-  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::RequestSetPatientName called...\n" )
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::\
+                                 RequestSetPatientName called...\n" )
   m_StateMachine.PushInput( m_RequestSetPatientNameInput );
   m_StateMachine.ProcessInputs();
 }
 
 void FourViewsTrackingWithCT::SetPatientNameProcessing()
 {
-  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::GetPatientName called...\n" )
+  igstkLogMacro2( logger, DEBUG, "FourViewsTrackingWithCT::\
+                                 GetPatientName called...\n" )
   const char *patientName = fl_input("Patient Name:", "");
   if( patientName != NULL )
     {
     m_PatientName = patientName;
-    igstkLogMacro(          DEBUG, "Patient registered as: "<< m_PatientName <<"\n" )
-    igstkLogMacro2( logger, DEBUG, "Patient registered as: "<< m_PatientName <<"\n" )
+    igstkLogMacro(          DEBUG, "Patient registered as: "
+                                    << m_PatientName <<"\n" )
+    igstkLogMacro2( logger, DEBUG, "Patient registered as: "
+                                    << m_PatientName <<"\n" )
     m_StateMachine.PushInput( m_PatientNameInput );
     }
   else

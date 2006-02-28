@@ -69,37 +69,65 @@ PulseGenerator::PulseGenerator():m_StateMachine(this)
   igstkAddStateMacro( WaitingEventReturn  );
 
 
-  igstkAddTransitionMacro( Initial, ValidFrequency, Stopped,  SetFrequency );
-  igstkAddTransitionMacro( Initial, InvalidLowFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Initial, InvalidHighFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Initial, Stop, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Initial, Start, Initial, ReportErrorCondition );
-  igstkAddTransitionMacro( Initial, Pulse, Initial, ReportErrorCondition );
-  igstkAddTransitionMacro( Initial, EventReturn, Initial, ReportErrorCondition );
+  igstkAddTransitionMacro( Initial, ValidFrequency, 
+                           Stopped,  SetFrequency );
+  igstkAddTransitionMacro( Initial, InvalidLowFrequency, 
+                           Initial, ReportErrorCondition );
+  igstkAddTransitionMacro( Initial, InvalidHighFrequency, 
+                           Initial, ReportErrorCondition );
+  igstkAddTransitionMacro( Initial, Stop, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( Initial, Start, 
+                           Initial, ReportErrorCondition );
+  igstkAddTransitionMacro( Initial, Pulse, 
+                           Initial, ReportErrorCondition );
+  igstkAddTransitionMacro( Initial, EventReturn,
+                           Initial, ReportErrorCondition );
   
-  igstkAddTransitionMacro( Stopped, ValidFrequency, Stopped,  SetFrequency );
-  igstkAddTransitionMacro( Stopped, InvalidLowFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Stopped, InvalidHighFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Stopped, Stop, Stopped,   StopPulses );
-  igstkAddTransitionMacro( Stopped, Start, Pulsing, SetTimer );
-  igstkAddTransitionMacro( Stopped, Pulse, Stopped, ReportErrorCondition );
-  igstkAddTransitionMacro( Stopped, EventReturn, Stopped, ReportErrorCondition );
+  igstkAddTransitionMacro( Stopped, ValidFrequency, 
+                           Stopped,  SetFrequency );
+  igstkAddTransitionMacro( Stopped, InvalidLowFrequency, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( Stopped, InvalidHighFrequency, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( Stopped, Stop, 
+                           Stopped,   StopPulses );
+  igstkAddTransitionMacro( Stopped, Start,
+                           Pulsing, SetTimer );
+  igstkAddTransitionMacro( Stopped, Pulse, 
+                           Stopped, ReportErrorCondition );
+  igstkAddTransitionMacro( Stopped, EventReturn, 
+                           Stopped, ReportErrorCondition );
  
-  igstkAddTransitionMacro( Pulsing, ValidFrequency, Pulsing,  SetFrequency );
-  igstkAddTransitionMacro( Pulsing, InvalidLowFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Pulsing, InvalidHighFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Pulsing, Stop, Stopped,  StopPulses );
-  igstkAddTransitionMacro( Pulsing, Start, Pulsing, ReportErrorCondition );
-  igstkAddTransitionMacro( Pulsing, Pulse, WaitingEventReturn, EmitPulse );
-  igstkAddTransitionMacro( Pulsing, EventReturn, Stopped, ReportErrorCondition );
+  igstkAddTransitionMacro( Pulsing, ValidFrequency, 
+                           Pulsing,  SetFrequency );
+  igstkAddTransitionMacro( Pulsing, InvalidLowFrequency, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( Pulsing, InvalidHighFrequency, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( Pulsing, Stop, 
+                           Stopped,  StopPulses );
+  igstkAddTransitionMacro( Pulsing, Start, 
+                           Pulsing, ReportErrorCondition );
+  igstkAddTransitionMacro( Pulsing, Pulse, 
+                           WaitingEventReturn, EmitPulse );
+  igstkAddTransitionMacro( Pulsing, EventReturn, 
+                           Stopped, ReportErrorCondition );
 
-  igstkAddTransitionMacro( WaitingEventReturn, ValidFrequency, WaitingEventReturn,  SetFrequency );
-  igstkAddTransitionMacro( WaitingEventReturn, InvalidLowFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( WaitingEventReturn, InvalidHighFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( WaitingEventReturn, Stop, Stopped,  StopPulses );
-  igstkAddTransitionMacro( WaitingEventReturn, Start, WaitingEventReturn, ReportErrorCondition );
-  igstkAddTransitionMacro( WaitingEventReturn, Pulse, WaitingEventReturn, ReportMissedPulse );
-  igstkAddTransitionMacro( WaitingEventReturn, EventReturn, Pulsing, No );
+  igstkAddTransitionMacro( WaitingEventReturn, ValidFrequency,
+                           WaitingEventReturn,  SetFrequency );
+  igstkAddTransitionMacro( WaitingEventReturn, InvalidLowFrequency, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( WaitingEventReturn, InvalidHighFrequency, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( WaitingEventReturn, Stop, 
+                           Stopped,  StopPulses );
+  igstkAddTransitionMacro( WaitingEventReturn, Start, 
+                           WaitingEventReturn, ReportErrorCondition );
+  igstkAddTransitionMacro( WaitingEventReturn, Pulse, 
+                           WaitingEventReturn, ReportMissedPulse );
+  igstkAddTransitionMacro( WaitingEventReturn, EventReturn, 
+                           Pulsing, No );
  
   igstkSetInitialStateMacro( Initial );
 

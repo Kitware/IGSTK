@@ -78,38 +78,37 @@ void ExportStateMachineDescription(
 
 // This is for classes that use SmartPointers
 #define igstkTestExportStateMachine1( type, outputDirectory, skipLoops ) \
-  { \
+{ \
   type::Pointer instance = type::New(); \
   igstk::ExportStateMachineDescription( instance.GetPointer(), \
   outputDirectory, skipLoops ); \
-  }
+}
 
 // This is for classes that do not use SmartPointers and 
 // have a default constructor
 #define igstkTestExportStateMachine2( type, outputDirectory, skipLoops ) \
-  { \
+{ \
   type * instance = new type; \
   igstk::ExportStateMachineDescription( instance, \
   outputDirectory, skipLoops ); \
   delete instance; \
-  }
+}
 
 
 #define igstkDeclareSurrogateClass( surrogate, type ) \
 class surrogate : public type \
-  {  \
+{  \
 public:      \
   typedef surrogate                      Self;    \
   typedef itk::Object                    Superclass;    \
   typedef itk::SmartPointer<Self>        Pointer;       \
   igstkTypeMacro( surrogate, type );   \
   igstkNewMacro( Self );      \
-  };    \
+};    \
 
 
 int main( int argc, char * argv [] )
 {
-
   if( argc < 2 )
     {
     std::cerr << "ERROR: Missing arguments" << std::endl;

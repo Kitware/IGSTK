@@ -42,8 +42,8 @@ namespace ViewRefreshRateTest
 class ViewObserver : public ::itk::Command 
 {
 public:
-  typedef  ViewObserver   Self;
-  typedef  ::itk::Command    Superclass;
+  typedef  ViewObserver               Self;
+  typedef  ::itk::Command             Superclass;
   typedef  ::itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
 
@@ -70,7 +70,7 @@ public:
 
   void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
-    std::cerr << "Execute( const * ) should not be called" << std::endl;         
+    std::cerr << "Execute( const * ) should not be called" << std::endl;
     }
 
   void SetView( ::igstk::View * view )
@@ -140,7 +140,8 @@ int igstkViewRefreshRateTest( int, char * [] )
     ellipsoid->SetRadius(0.1,0.1,0.1);
     
     // Create the ellipsoid representation
-    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
+    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation 
+                                = igstk::EllipsoidObjectRepresentation::New();
     ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
     ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
     ellipsoidRepresentation->SetOpacity(1.0);
@@ -245,8 +246,9 @@ int igstkViewRefreshRateTest( int, char * [] )
       {
       std::cerr << "Refresh Rate did not match the expected value" << std::endl;
       std::cerr << "secondsElapsed          = " << secondsElapsed << std::endl;
-      std::cerr << "expectedNumberOfSeconds = " << expectedNumberOfSeconds << std::endl;
-      result = false ;
+      std::cerr << "expectedNumberOfSeconds = " << expectedNumberOfSeconds;
+      std::cerr << std::endl;
+      result = false;
       }
 
     // at this point the observer should have hid the form

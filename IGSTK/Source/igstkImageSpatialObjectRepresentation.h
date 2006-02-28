@@ -33,7 +33,7 @@ namespace igstk
 namespace Friends 
 {
 
-/** class ImageSpatialObjectRepresentationToImageSpatialObject 
+/** \class ImageSpatialObjectRepresentationToImageSpatialObject 
  *
  * \brief This class is intended to make the connection between the
  * ImageSpatialObjectRepresentation and its output, the ImageSpatialObject.
@@ -49,7 +49,7 @@ public:
   template < class TSpatialObjectRepresentation, class TImageSpatialObject >
   static void 
   ConnectImage( const TImageSpatialObject * imageSpatialObject,
-                 TSpatialObjectRepresentation * imageSpatialObjectRepresentation )
+          TSpatialObjectRepresentation * imageSpatialObjectRepresentation )
     {
     imageSpatialObjectRepresentation->SetImage( 
                imageSpatialObject->GetVTKImageData() );  
