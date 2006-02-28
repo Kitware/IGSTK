@@ -31,90 +31,95 @@
 namespace igstk
 {
 
-  namespace ImageSpatialObjectRepresentationTest
-  {
-    class ImageRepresentationObserver : public ::itk::Command
+namespace ImageSpatialObjectRepresentationTest
+{
+
+class ImageRepresentationObserver : public ::itk::Command
+{
+public:
+ 
+  typedef ImageRepresentationObserver  Self;
+  typedef itk::SmartPointer<Self>      Pointer;
+  typedef itk::Command                 Superclass;
+  itkNewMacro(Self);
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
-    public:
-      typedef ImageRepresentationObserver  Self;
-      typedef itk::SmartPointer<Self>      Pointer;
-      typedef itk::Command                 Superclass;
-      itkNewMacro(Self);
-      void Execute(const itk::Object *caller, const itk::EventObject & event)
+    }
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    const AxialSliceBoundsEvent * axialEvent = 
+           dynamic_cast< const AxialSliceBoundsEvent * >( &event );
+    if( axialEvent )
       {
+      m_CoronalEventReceived  = false;
+      m_SagittalEventReceived = false;
+      m_AxialEventReceived    = true;
+      EventHelperType::IntegerBoundsType bounds = axialEvent->Get();
+      std::cout << "Minimum Slice = " << bounds.minimum << std::endl;
+      std::cout << "Maximum Slice = " << bounds.maximum << std::endl;
+      return;
       }
-      void Execute(itk::Object *caller, const itk::EventObject & event)
+        
+    const CoronalSliceBoundsEvent * coronalEvent = 
+            dynamic_cast< const CoronalSliceBoundsEvent * >( &event );
+    
+    if( coronalEvent )
       {
+      m_CoronalEventReceived  = true;
+      m_SagittalEventReceived = false;
+      m_AxialEventReceived    = false;
+      EventHelperType::IntegerBoundsType bounds = coronalEvent->Get();
+      std::cout << "Minimum Slice = " << bounds.minimum << std::endl;
+      std::cout << "Maximum Slice = " << bounds.maximum << std::endl;
+      return;
+      }
+       
+    const SagittalSliceBoundsEvent * sagittalEvent = 
+           dynamic_cast< const SagittalSliceBoundsEvent * >( &event );
+    if( sagittalEvent )
+      {
+      m_AxialEventReceived    = false;
+      m_SagittalEventReceived = true;
+      m_CoronalEventReceived  = false;
+      EventHelperType::IntegerBoundsType bounds = sagittalEvent->Get();
+      std::cout << "Minimum Slice = " << bounds.minimum << std::endl;
+      std::cout << "Maximum Slice = " << bounds.maximum << std::endl;
+      return;
+      }
+    } 
 
-        const AxialSliceBoundsEvent * axialEvent = 
-          dynamic_cast< const AxialSliceBoundsEvent * >( &event );
-        if( axialEvent )
-          {
-          m_CoronalEventReceived  = false;
-          m_SagittalEventReceived = false;
-          m_AxialEventReceived    = true;
-          EventHelperType::IntegerBoundsType bounds = axialEvent->Get();
-          std::cout << "Minimum Slice = " << bounds.minimum << std::endl;
-          std::cout << "Maximum Slice = " << bounds.maximum << std::endl;
-          return;
-          }
-        
-        const CoronalSliceBoundsEvent * coronalEvent = 
-          dynamic_cast< const CoronalSliceBoundsEvent * >( &event );
-        if( coronalEvent )
-          {
-          m_CoronalEventReceived  = true;
-          m_SagittalEventReceived = false;
-          m_AxialEventReceived    = false;
-          EventHelperType::IntegerBoundsType bounds = coronalEvent->Get();
-          std::cout << "Minimum Slice = " << bounds.minimum << std::endl;
-          std::cout << "Maximum Slice = " << bounds.maximum << std::endl;
-          return;
-          }
-        
-        const SagittalSliceBoundsEvent * sagittalEvent = 
-          dynamic_cast< const SagittalSliceBoundsEvent * >( &event );
-        if( sagittalEvent )
-          {
-          m_AxialEventReceived    = false;
-          m_SagittalEventReceived = true;
-          m_CoronalEventReceived  = false;
-          EventHelperType::IntegerBoundsType bounds = sagittalEvent->Get();
-          std::cout << "Minimum Slice = " << bounds.minimum << std::endl;
-          std::cout << "Maximum Slice = " << bounds.maximum << std::endl;
-          return;
-          }
-      } 
+  bool GetAxialEventReceived()
+    { 
+    return m_AxialEventReceived; 
+    }
+  bool GetSagittalEventReceived()
+    { 
+    return m_SagittalEventReceived; 
+    }
+  bool GetCoronalEventReceived()
+    { 
+    return m_CoronalEventReceived; 
+    }
 
-     bool GetAxialEventReceived()
-        { 
-        return m_AxialEventReceived; 
-        }
-     bool GetSagittalEventReceived()
-        { 
-        return m_SagittalEventReceived; 
-        }
-     bool GetCoronalEventReceived()
-        { 
-        return m_CoronalEventReceived; 
-        }
-    protected:
-      ImageRepresentationObserver()
-        {
-        m_AxialEventReceived = false;
-        m_CoronalEventReceived = false;
-        m_SagittalEventReceived = false;
-        }
-    private:
-      bool m_AxialEventReceived;
-      bool m_CoronalEventReceived;
-      bool m_SagittalEventReceived;
+protected:
       
-    };  // end of ImageRepresentationObserver class 
+  ImageRepresentationObserver()
+    {
+    m_AxialEventReceived = false;
+    m_CoronalEventReceived = false;
+    m_SagittalEventReceived = false;
+    }
+private:
 
-  }
-}
+  bool m_AxialEventReceived;
+  bool m_CoronalEventReceived;
+  bool m_SagittalEventReceived;
+      
+};  // end of ImageRepresentationObserver class 
 
+} // end namespace ImageSpatialObjectRepresentationTest
+
+} // namespace igstk
 
 
 int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
@@ -126,14 +131,11 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   typedef short    PixelType;
   const unsigned int Dimension = 3;
 
-  typedef igstk::ImageSpatialObject< 
-                                PixelType, 
-                                Dimension 
-                                       > ImageSpatialObjectType;
+  typedef igstk::ImageSpatialObject< PixelType, 
+                                     Dimension > ImageSpatialObjectType;
   
-  typedef igstk::ImageSpatialObjectRepresentation< 
-                                  ImageSpatialObjectType 
-                                                      >   RepresentationType;
+  typedef igstk::ImageSpatialObjectRepresentation< ImageSpatialObjectType 
+                                                     >   RepresentationType;
 
   RepresentationType::Pointer  representation = RepresentationType::New();
 
@@ -170,7 +172,8 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   representation->RequestSetImageSpatialObject( NULL );
 
   // Test correct case
-  ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New();
+  ImageSpatialObjectType::Pointer imageSpatialObject 
+                                     = ImageSpatialObjectType::New();
   representation->RequestSetImageSpatialObject( imageSpatialObject );
 
   // Exercise the TypeMacro() which defines the GetNameOfClass()
@@ -199,8 +202,8 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   representation->RequestSetSliceNumber( 10 );
 
-  typedef igstk::ImageSpatialObjectRepresentationTest::ImageRepresentationObserver 
-                                                                        ObserverType;
+  typedef igstk::ImageSpatialObjectRepresentationTest\
+               ::ImageRepresentationObserver                ObserverType;
 
   ObserverType::Pointer observer = ObserverType::New();
 
@@ -279,94 +282,89 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     return EXIT_FAILURE;
     }
 
-
   view2D->RequestAddObject( representation );
   
   // Do manual redraws for each orientation while changing slice numbers
-
-  {
-  std::cout << " Axial View " << std::endl;
-  view2D->RequestSetOrientation( igstk::View2D::Axial );
-  view2D->RequestResetCamera();
-  representation->RequestSetOrientation( RepresentationType::Axial );
-  igstk::PulseGenerator::CheckTimeouts();
-
-  for(unsigned int i=0; i<5; i++)
     {
-    representation->RequestSetSliceNumber( i );
+    std::cout << " Axial View " << std::endl;
+    view2D->RequestSetOrientation( igstk::View2D::Axial );
+    view2D->RequestResetCamera();
+    representation->RequestSetOrientation( RepresentationType::Axial );
     igstk::PulseGenerator::CheckTimeouts();
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
-    std::cout << "Slice i= " << i << std::endl;
-    }
-  }
 
-  {
-  std::cout << " Sagittal View " << std::endl;
-  representation->RequestSetOrientation( RepresentationType::Sagittal );
-  view2D->RequestSetOrientation( igstk::View2D::Sagittal );
-  view2D->RequestResetCamera();
-  for(unsigned int i=0; i<10; i++)
-    {
-    representation->RequestSetSliceNumber( i );
-    igstk::PulseGenerator::CheckTimeouts();
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
-    std::cout << "i= " << i << std::endl;
+    for(unsigned int i=0; i<5; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      igstk::PulseGenerator::CheckTimeouts();
+      view2D->Update();  // schedule redraw of the view
+      Fl::check();       // trigger FLTK redraws
+      std::cout << "Slice i= " << i << std::endl;
+      }
     }
-  }
-  {
-  std::cout << " Coronal View " << std::endl;
-  representation->RequestSetOrientation( RepresentationType::Coronal );
-  view2D->RequestSetOrientation( igstk::View2D::Coronal );
-  view2D->RequestResetCamera();
-  for(unsigned int i=0; i<511; i++)
-    {
-    representation->RequestSetSliceNumber( i );
-    igstk::PulseGenerator::CheckTimeouts();
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
-    std::cout << "i= " << i << std::endl;
-    }
-  }
 
-  {
-  std::cout << "Oblique View" << std::endl;
-  representation->RequestSetOrientation( RepresentationType::Oblique );
-  view2D->RequestSetOrientation( igstk::View2D::Axial );
-  view2D->RequestResetCamera();
-  for(unsigned int i=0; i<4; i++)
     {
-    representation->RequestSetSliceNumber( i );
-    igstk::PulseGenerator::CheckTimeouts();
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
-    std::cout << "i= " << i << std::endl;
+    std::cout << " Sagittal View " << std::endl;
+    representation->RequestSetOrientation( RepresentationType::Sagittal );
+    view2D->RequestSetOrientation( igstk::View2D::Sagittal );
+    view2D->RequestResetCamera();
+    for(unsigned int i=0; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      igstk::PulseGenerator::CheckTimeouts();
+      view2D->Update();  // schedule redraw of the view
+      Fl::check();       // trigger FLTK redraws
+      std::cout << "i= " << i << std::endl;
+      }
     }
-  }
+    {
+    std::cout << " Coronal View " << std::endl;
+    representation->RequestSetOrientation( RepresentationType::Coronal );
+    view2D->RequestSetOrientation( igstk::View2D::Coronal );
+    view2D->RequestResetCamera();
+    for(unsigned int i=0; i<511; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      igstk::PulseGenerator::CheckTimeouts();
+      view2D->Update();  // schedule redraw of the view
+      Fl::check();       // trigger FLTK redraws
+      std::cout << "i= " << i << std::endl;
+      }
+    }
 
+    {
+    std::cout << "Oblique View" << std::endl;
+    representation->RequestSetOrientation( RepresentationType::Oblique );
+    view2D->RequestSetOrientation( igstk::View2D::Axial );
+    view2D->RequestResetCamera();
+    for(unsigned int i=0; i<4; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      igstk::PulseGenerator::CheckTimeouts();
+      view2D->Update();  // schedule redraw of the view
+      Fl::check();       // trigger FLTK redraws
+      std::cout << "i= " << i << std::endl;
+      }
+    }
 
   // On purpose request non-existing slices. 
   // The requests should be ignored by the state machine.
-  {
-  representation->RequestSetOrientation( RepresentationType::Axial );
-  view2D->RequestSetOrientation( igstk::View2D::Axial );
-  view2D->RequestResetCamera();
- 
-  for(unsigned int i=5; i<10; i++)
     {
-    representation->RequestSetSliceNumber( i );
-    igstk::PulseGenerator::CheckTimeouts();
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
-    std::cout << "i= " << i << std::endl;
+    representation->RequestSetOrientation( RepresentationType::Axial );
+    view2D->RequestSetOrientation( igstk::View2D::Axial );
+    view2D->RequestResetCamera();
+   
+    for(unsigned int i=5; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      igstk::PulseGenerator::CheckTimeouts();
+      view2D->Update();  // schedule redraw of the view
+      Fl::check();       // trigger FLTK redraws
+      std::cout << "i= " << i << std::endl;
+      }
     }
-  }
 
   delete view2D;
   delete form;
- 
 
   return EXIT_SUCCESS;
 }
-

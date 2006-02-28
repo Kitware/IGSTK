@@ -306,7 +306,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     int ext[6];
     m_ImageData->GetExtent( ext );
 
-    m_ImageReslice->SetOutputExtent( ext[0], ext[1], ext[2], ext[3], ext[4], ext[5]);
+    m_ImageReslice->SetOutputExtent( ext[0], ext[1], ext[2], 
+                                     ext[3], ext[4], ext[5]);
     m_ImageReslice->Update();
 
     m_ImageData = m_ImageReslice->GetOutput();   
@@ -487,12 +488,12 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::UpdateRepresentationProcessing()
 {    
- igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
                        ::UpdateRepresentationProcessing called...\n");
- if( m_ImageData )
-   {
-   m_MapColors->SetInput( m_ImageData );
-   }
+  if( m_ImageData )
+    {
+    m_MapColors->SetInput( m_ImageData );
+    }
 }
 
 
@@ -550,7 +551,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
                         ::SetImage called...\n");
 
-  // This const_cast<> is needed here due to the lack of const-correctness in VTK 
+  // This const_cast<> is needed here due to the lack of 
+  // const-correctness in VTK 
   m_ImageData = const_cast< vtkImageData *>( image );
 }
 
@@ -563,7 +565,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
                         ::ConnectImage called...\n");
 
-  typedef Friends::ImageSpatialObjectRepresentationToImageSpatialObject  HelperType;
+  typedef Friends::ImageSpatialObjectRepresentationToImageSpatialObject  
+                                                                HelperType;
   HelperType::ConnectImage( m_ImageSpatialObject.GetPointer(), this );
   if( m_ImageData )
     {
