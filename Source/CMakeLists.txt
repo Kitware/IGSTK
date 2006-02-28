@@ -226,6 +226,7 @@ SET(IGSTKSandbox_HEADS
   igstkFlockOfBirdsCommandInterpreter.h
   igstkFlockOfBirdsTracker.h
   igstkFlockOfBirdsTrackerTool.h
+  igstkObliqueImageSpatialObjectRepresentation.h
 )
 
 
@@ -234,6 +235,7 @@ SET(IGSTKSandbox_SRCS
   igstkFlockOfBirdsCommandInterpreter.cxx
   igstkFlockOfBirdsTracker.cxx
   igstkFlockOfBirdsTrackerTool.cxx
+  igstkObliqueImageSpatialObjectRepresentation.txx
 )
 
 # Variable for holding extra libraries
