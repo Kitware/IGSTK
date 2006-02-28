@@ -31,8 +31,10 @@ namespace igstk
  *        communication over a Serial Port(RS-232 connection).
  *
  *
- *  \image html  igstkSerialCommunicationForWindows.png  "SerialCommunicationForWindows State Machine Diagram"
- *  \image latex igstkSerialCommunicationForWindows.eps  "SerialCommunicationForWindows State Machine Diagram" 
+ *  \image html  igstkSerialCommunicationForWindows.png 
+ *              "SerialCommunicationForWindows State Machine Diagram"
+ *  \image latex igstkSerialCommunicationForWindows.eps  
+ *               "SerialCommunicationForWindows State Machine Diagram" 
  *
  *        
  * \ingroup Communication

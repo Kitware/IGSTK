@@ -30,8 +30,10 @@ namespace igstk
  *
  *
  *
- *  \image html  igstkSerialCommunicationForPosix.png  "SerialCommunicationForPosix State Machine Diagram"
- *  \image latex igstkSerialCommunicationForPosix.eps  "SerialCommunicationForPosix State Machine Diagram" 
+ *  \image html  igstkSerialCommunicationForPosix.png  
+ *               "SerialCommunicationForPosix State Machine Diagram"
+ *  \image latex igstkSerialCommunicationForPosix.eps  
+ *               "SerialCommunicationForPosix State Machine Diagram" 
  *
  *        
  * \ingroup Communication
