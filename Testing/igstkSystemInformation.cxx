@@ -70,10 +70,10 @@ int main(int,char *[])
 {
   const char* files[] =
     {
-      IGSTKSandbox_BINARY_DIR "/CMakeCache.txt", 
-      IGSTKSandbox_BINARY_DIR "/CMakeOutput.log",
-      IGSTKSandbox_BINARY_DIR "/CMakeError.log",
-      0
+    IGSTKSandbox_BINARY_DIR "/CMakeCache.txt", 
+    IGSTKSandbox_BINARY_DIR "/CMakeOutput.log",
+    IGSTKSandbox_BINARY_DIR "/CMakeError.log",
+    0
     };
 
   const char** f;
