@@ -86,12 +86,26 @@ public:
   typedef typename ImageSpatialObjectType::ConstPointer 
                                                    ImageSpatialObjectConstPointer;
 
+  typedef typename ImageSpatialObjectType::PointType  PointType;
+
+  typedef itk::Vector< double, 3 > VectorType;
+
   /** Return a copy of the current object representation */
   Pointer Copy() const;
+
+  /** Request to set point on the plane */
+  void RequestSetPointOnthePlane( const PointType & point);
+
+  /** Request to set plane's normal vector */
+  void RequestSetPlaneNormalVector( const VectorType & normalVector );
 
   /** Connect this representation class to the spatial object */
   void RequestSetImageSpatialObject( const ImageSpatialObjectType * ImageSpatialObject );
 
+  /** Request reslice a 3D image */
+  void RequestReslice();
+
+  
   /** Type used for representing the slice number */
   typedef unsigned int SliceNumberType;
 
@@ -132,6 +146,12 @@ private:
   ImageSpatialObjectConstPointer         m_ImageSpatialObject;
   ImageSpatialObjectConstPointer         m_ImageSpatialObjectToAdd;
 
+  /** Obique plane parameters */
+  PointType                              m_PointOnthePlane;
+  PointType                              m_PointOnthePlaneToBeSet;
+  VectorType                             m_PlaneNormalVector;
+  VectorType                             m_PlaneNormalVectorToBeSet;
+
   /** VTK classes that support display of an image */
   vtkImageData                         * m_ImageData;
   vtkImageActor                        * m_ImageActor;
@@ -143,6 +163,7 @@ private:
   double                                 m_Level;
   double                                 m_Window;
 
+  
   /** Update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationProcessing();
 
@@ -152,6 +173,16 @@ private:
   /** Connect this representation class to the spatial object. Only to be
    * called by the State Machine. */
   void SetImageSpatialObjectProcessing();
+
+  /** Set the point on the plane */
+  void SetPointOnthePlaneProcessing();
+ 
+  /** Set the normal vector of the plane */
+  void SetPlaneNormalVectorProcessing();
+
+
+  /** Reslice processing */
+  void ResliceProcessing ();
 
   /** Sets the vtkImageData from the spatial object. This method MUST be
    * private in order to prevent unsafe access from the VTK image layer. */
@@ -165,12 +196,25 @@ private:
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidImageSpatialObject );
   igstkDeclareInputMacro( NullImageSpatialObject );
+  igstkDeclareInputMacro( ValidPointOnThePlane );
+  igstkDeclareInputMacro( InValidPointOnThePlane );
+  igstkDeclareInputMacro( ValidPlaneNormalVector );
+  igstkDeclareInputMacro( InValidPlaneNormalVector );
+
+  igstkDeclareInputMacro( Reslice ); 
+      
   igstkDeclareInputMacro( EmptyImageSpatialObject );
   igstkDeclareInputMacro( ConnectVTKPipeline );
   
   /** States for the State Machine */
   igstkDeclareStateMacro( NullImageSpatialObject );
   igstkDeclareStateMacro( ValidImageSpatialObject );
+
+  igstkDeclareStateMacro( NullPointOnthePlane );
+  igstkDeclareStateMacro( ValidPointOnThePlane );
+
+  igstkDeclareStateMacro( NullPlaneNormalVector );
+  igstkDeclareStateMacro( ValidPlaneNormalVector );
 
 };
 
