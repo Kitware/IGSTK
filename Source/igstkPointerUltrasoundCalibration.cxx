@@ -62,8 +62,8 @@ PointerUltrasoundCalibration::PointerUltrasoundCalibration() :
   // Add transition  for PointerToolCalibrationSet state
   igstkAddTransitionMacro( PointerToolCalibrationSet, ResetCalibration, Idle, Reset );
   igstkAddTransitionMacro( PointerToolCalibrationSet, PointerToolCalibrationTransform, PointerToolCalibrationSet, SetPointerToolCalibrationTransform );
-  igstkAddTransitionMacro( PointerToolCalibrationSet, IndexPositionSample, PointerToolIndexPositionSampleAdd, AddIndexPositionSample );
-  igstkAddTransitionMacro( PointerToolCalibrationSet, ImagePositionSample, PointerToolImagePositionSampleAdd, AddImagePositionSample );
+  igstkAddTransitionMacro( PointerToolCalibrationSet, IndexPositionSample, PointerToolCalibrationSet, No );
+  igstkAddTransitionMacro( PointerToolCalibrationSet, ImagePositionSample, PointerToolCalibrationSet, No );
   igstkAddTransitionMacro( PointerToolCalibrationSet, PointerToolIndexPositionSample, PointerToolIndexPositionSampleAdd, AddPointerToolIndexPositionSample );
   igstkAddTransitionMacro( PointerToolCalibrationSet, PointerToolImagePositionSample, PointerToolImagePositionSampleAdd, AddPointerToolImagePositionSample );
   igstkAddTransitionMacro( PointerToolCalibrationSet, CalculateCalibration, PointerToolCalibrationSet, No );
@@ -89,7 +89,7 @@ PointerUltrasoundCalibration::PointerUltrasoundCalibration() :
   // Add transition  for PointerToolIndexPositionSampleAdd state
   igstkAddTransitionMacro( PointerToolIndexPositionSampleAdd, ResetCalibration, Idle, Reset );
   igstkAddTransitionMacro( PointerToolIndexPositionSampleAdd, PointerToolCalibrationTransform, PointerToolIndexPositionSampleAdd, SetPointerToolCalibrationTransform );
-  igstkAddTransitionMacro( PointerToolIndexPositionSampleAdd, IndexPositionSample, PointerToolIndexPositionSampleAdd, AddIndexPositionSample );
+  igstkAddTransitionMacro( PointerToolIndexPositionSampleAdd, IndexPositionSample, PointerToolIndexPositionSampleAdd, No );
   igstkAddTransitionMacro( PointerToolIndexPositionSampleAdd, ImagePositionSample, PointerToolIndexPositionSampleAdd, No );
   igstkAddTransitionMacro( PointerToolIndexPositionSampleAdd, PointerToolIndexPositionSample, PointerToolIndexPositionSampleAdd, AddPointerToolIndexPositionSample );
   igstkAddTransitionMacro( PointerToolIndexPositionSampleAdd, PointerToolImagePositionSample, PointerToolIndexPositionSampleAdd, No );
@@ -99,7 +99,7 @@ PointerUltrasoundCalibration::PointerUltrasoundCalibration() :
   igstkAddTransitionMacro( PointerToolImagePositionSampleAdd, ResetCalibration, Idle, Reset );
   igstkAddTransitionMacro( PointerToolImagePositionSampleAdd, PointerToolCalibrationTransform, PointerToolImagePositionSampleAdd, SetPointerToolCalibrationTransform );
   igstkAddTransitionMacro( PointerToolImagePositionSampleAdd, IndexPositionSample, PointerToolImagePositionSampleAdd, No );
-  igstkAddTransitionMacro( PointerToolImagePositionSampleAdd, ImagePositionSample, PointerToolImagePositionSampleAdd, AddImagePositionSample );
+  igstkAddTransitionMacro( PointerToolImagePositionSampleAdd, ImagePositionSample, PointerToolImagePositionSampleAdd, No );
   igstkAddTransitionMacro( PointerToolImagePositionSampleAdd, PointerToolIndexPositionSample, PointerToolImagePositionSampleAdd, No );
   igstkAddTransitionMacro( PointerToolImagePositionSampleAdd, PointerToolImagePositionSample, PointerToolImagePositionSampleAdd, AddPointerToolImagePositionSample );
   igstkAddTransitionMacro( PointerToolImagePositionSampleAdd, CalculateCalibration, CalibrationCalculated, CalculateCalibrationByImagePosition );
