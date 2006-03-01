@@ -29,4 +29,5 @@ void RegisterTests()
 {
   // Register Sandbox tests
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
+  REGISTER_TEST(igstkPointerUltrasoundCalibrationTest);
 }
