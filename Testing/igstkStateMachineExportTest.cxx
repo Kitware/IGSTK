@@ -30,6 +30,8 @@
 #include <iostream>
 #include "itkExceptionObject.h"
 
+#include "igstkPointerUltrasoundCalibration.h"
+
 namespace igstk 
 {
   
@@ -130,6 +132,8 @@ int main( int argc, char * argv [] )
     }
 
   std::cout << "Skip Loops option = " << skipLoops << std::endl;
+
+  igstkTestExportStateMachine1( igstk::PointerUltrasoundCalibration, outputDirectory, skipLoops );
 
   return EXIT_SUCCESS;
 }
