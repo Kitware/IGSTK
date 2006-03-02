@@ -68,7 +68,6 @@ INCLUDE_DIRECTORIES (
 
 # Add your new tests here
 SET(SandboxTests_SRCS
-  igstkObliqueImageSpatialObjectRepresentationTest.cxx 
   igstkLandmarkUltrasoundCalibrationTest.cxx
   )
 
@@ -77,6 +76,12 @@ FOREACH(TestFiles ${SandboxTests_SRCS})
   ADD_TEST(${TestProgram} ${IGSTKSandbox_TESTS} ${TestProgram})
 ENDFOREACH(TestFiles)
 
+IF ( IGSTK_DATA_ROOT )
+   ADD_TEST( igstkObliqueImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} 
+              igstkObliqueImageSpatialObjectRepresentationTest 
+              ${IGSTK_DATA_ROOT}/Input/E000192)   
+   SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkObliqueImageSpatialObjectRepresentationTest)
+ENDIF (IGSTK_DATA_ROOT )
 
 IF (IGSTK_USE_ATAMAI)
   ADD_TEST(igstkAtamaiNDITrackerTest ${IGSTKSandbox_TESTS} igstkAtamaiNDITrackerTest)
@@ -218,10 +223,12 @@ IF(IGSTK_USE_FLTK)
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
+
     ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
               igstkImageSpatialObjectRepresentationTest 
               ${IGSTK_DATA_ROOT}/Input/E000192)   
-  ENDIF (IGSTK_DATA_ROOT)
+
+      ENDIF (IGSTK_DATA_ROOT)
             
 ENDIF(IGSTK_USE_FLTK)
 
