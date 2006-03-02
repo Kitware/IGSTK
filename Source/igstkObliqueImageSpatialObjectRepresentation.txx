@@ -91,9 +91,23 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   igstkAddTransitionMacro( NullPointOnthePlane, ValidPointOnThePlane, ValidPointOnThePlane,  
                                                                                SetPointOnthePlane );
 
+  igstkAddTransitionMacro( NullImageSpatialObject, InValidPointOnThePlane, NullImageSpatialObject, No );
+  igstkAddTransitionMacro( ValidImageSpatialObject, InValidPointOnThePlane, ValidImageSpatialObject, No );
+
+   igstkAddTransitionMacro( NullImageSpatialObject, ValidPointOnThePlane, ValidPointOnThePlane,
+                                                                                SetPointOnthePlane );
+  igstkAddTransitionMacro( ValidImageSpatialObject, ValidPointOnThePlane, ValidPointOnThePlane, 
+                                                                                SetPointOnthePlane );
+
+
   igstkAddTransitionMacro( NullPlaneNormalVector, InValidPlaneNormalVector, NullPlaneNormalVector,  No );
   igstkAddTransitionMacro( NullPlaneNormalVector, ValidPlaneNormalVector, ValidPlaneNormalVector,  
                                                                                SetPlaneNormalVector );
+
+  igstkAddTransitionMacro( ValidPointOnThePlane, InValidPlaneNormalVector, ValidPointOnThePlane, No );
+  igstkAddTransitionMacro( ValidPointOnThePlane, ValidPlaneNormalVector, ValidPlaneNormalVector, 
+                                                                               SetPlaneNormalVector );
+
 
   igstkAddTransitionMacro( ValidPlaneNormalVector, Reslice, ValidPlaneNormalVector , Reslice);
 
@@ -193,7 +207,8 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   
   m_PointOnthePlaneToBeSet = point;
 
-  // Check if it is valid
+  // check if it is a valid point
+  m_StateMachine.PushInput( m_ValidPointOnThePlaneInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -220,6 +235,7 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   m_PlaneNormalVectorToBeSet = vector;
 
   // Check if it is valid
+  m_StateMachine.PushInput( m_ValidPlaneNormalVectorInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -254,8 +270,62 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 {
   igstkLogMacro( DEBUG, 
            "igstk::ObliqueImageSpatialObjectRepresentation::ResliceProcessing called...\n");
-}
 
+  std::cout << "Image Data after before reslicing " << std::endl;
+
+  m_ImageReslice->SetInput ( m_ImageData );
+ 
+  // Set the reslicing plane axes 
+  vtkMatrix4x4         * resliceAxes;
+
+  resliceAxes = vtkMatrix4x4::New();
+
+  resliceAxes->Identity();
+
+  // Set the x-axis 
+  resliceAxes->SetElement( 0, 0, 1.0);
+  resliceAxes->SetElement( 1, 0, 0.0);
+  resliceAxes->SetElement( 2, 0, 0.0);
+  
+  // Set the y-axis
+  resliceAxes->SetElement( 0, 0, 0.0);
+  resliceAxes->SetElement( 1, 0, 1.0);
+  resliceAxes->SetElement( 2, 0, 0.0);
+ 
+  // Set the z-axis
+  resliceAxes->SetElement( 0, 0, 0.0);
+  resliceAxes->SetElement( 1, 0, 0.0);
+  resliceAxes->SetElement( 2, 0, 1.0);
+ 
+  // Set the origin 
+  resliceAxes->SetElement( 0, 0, 128.0);
+  resliceAxes->SetElement( 1, 0, 128.0);
+  resliceAxes->SetElement( 2, 0, 2.0);
+
+  m_ImageReslice->SetResliceAxes( resliceAxes );
+
+ 
+  // Set the spacing 
+  double spacing[3];
+  m_ImageData->GetSpacing( spacing );
+  m_ImageReslice->SetOutputSpacing( spacing[0],spacing[1],spacing[2] );
+
+  // Set the output extent
+
+  int ext[6];
+  m_ImageData->GetExtent( ext );
+
+  m_ImageReslice->SetOutputExtent( ext[0], ext[1], ext[2], 
+                                     ext[3], ext[4], ext[5]);
+  m_ImageReslice->Update();
+
+  m_ImageData = m_ImageReslice->GetOutput();   
+
+  std::cout << "Image data after reslicing " << std::endl;
+
+  m_ImageData->Print( std::cout );
+  resliceAxes->Delete(); 
+}
 
 template < class TImageSpatialObject >
 void 
@@ -309,6 +379,8 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  std::cout << indent << "Point on the plane" << this->m_PointOnthePlane << std::endl;
+  std::cout << indent << "Plane normal vector" << this->m_PlaneNormalVector << std::endl;
 }
 
 
