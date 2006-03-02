@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkPointerUltrasoundCalibrationTest.cxx
+  Module:    igstkLandmarkUltrasoundCalibrationTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -28,19 +28,19 @@
 
 #include "igstkSystemInformation.h"
 #include "igstkPivotCalibration.h"
-#include "igstkPointerUltrasoundCalibration.h"
+#include "igstkLandmarkUltrasoundCalibration.h"
 
-int igstkPointerUltrasoundCalibrationTest( int, char * [] )
+int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
 {
   // Define type used in the pivot calibration class
-  typedef igstk::PointerUltrasoundCalibration             PointerUltrasoundCalibrationType;
-  typedef PointerUltrasoundCalibrationType::VersorType    VersorType;
-  typedef PointerUltrasoundCalibrationType::VectorType    VectorType;
-  typedef PointerUltrasoundCalibrationType::PointType     PointType;
-  typedef PointerUltrasoundCalibrationType::IndexType     IndexType;
-  typedef PointerUltrasoundCalibrationType::TransformType TransformType;
-  typedef PointerUltrasoundCalibrationType::SpacingType   SpacingType;
-  typedef PointerUltrasoundCalibrationType::ErrorType     ErrorType;
+  typedef igstk::LandmarkUltrasoundCalibration             LandmarkUltrasoundCalibrationType;
+  typedef LandmarkUltrasoundCalibrationType::VersorType    VersorType;
+  typedef LandmarkUltrasoundCalibrationType::VectorType    VectorType;
+  typedef LandmarkUltrasoundCalibrationType::PointType     PointType;
+  typedef LandmarkUltrasoundCalibrationType::IndexType     IndexType;
+  typedef LandmarkUltrasoundCalibrationType::TransformType TransformType;
+  typedef LandmarkUltrasoundCalibrationType::SpacingType   SpacingType;
+  typedef LandmarkUltrasoundCalibrationType::ErrorType     ErrorType;
   typedef itk::Logger                                     LoggerType; 
   typedef itk::StdStreamLogOutput                         LogOutputType;
 
@@ -53,7 +53,7 @@ int igstkPointerUltrasoundCalibrationTest( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create the pivot calibration object and attach the logger
-  PointerUltrasoundCalibrationType::Pointer ultrasound = PointerUltrasoundCalibrationType::New();
+  LandmarkUltrasoundCalibrationType::Pointer ultrasound = LandmarkUltrasoundCalibrationType::New();
   ultrasound->SetLogger( logger );
 
   // Define the input file and the variables to extract the rotation and translation information
@@ -139,7 +139,7 @@ int igstkPointerUltrasoundCalibrationTest( int, char * [] )
     }
   ultrasound->RequestCalculateCalibration();
 
-  if ( !ultrasound->GetValidPointerUltrasoundCalibration())
+  if ( !ultrasound->GetValidLandmarkUltrasoundCalibration())
     {
     std::cout << "No valid calibration!" << std::endl;
 
@@ -172,7 +172,7 @@ int igstkPointerUltrasoundCalibrationTest( int, char * [] )
     }
   ultrasound->RequestCalculateCalibration();
 
-  if ( !ultrasound->GetValidPointerUltrasoundCalibration())
+  if ( !ultrasound->GetValidLandmarkUltrasoundCalibration())
     {
     std::cout << "No valid calibration!" << std::endl;
 
