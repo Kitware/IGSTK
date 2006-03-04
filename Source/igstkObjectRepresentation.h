@@ -57,15 +57,14 @@ class ObjectRepresentation
 
 public:
 
-  typedef ObjectRepresentation               Self;
+  /** Macro with standard traits declarations. */
+  igstkStandardAbstractClassTraitsMacro( ObjectRepresentation, Object )
+
+public:
+
   typedef double                             ScalarType;
-  typedef itk::SmartPointer < Self >         Pointer;
-  typedef itk::SmartPointer < const Self >   ConstPointer;
-  typedef Object                             Superclass;
   typedef SpatialObject                      SpatialObjectType;
   typedef std::vector< vtkProp* >            ActorsListType; 
-
-  igstkTypeMacro(ObjectRepresentation, Object);
 
   igstkFriendClassMacro( View );
 
@@ -78,18 +77,12 @@ public:
   float GetBlue() const  {return m_Color[2];}
 
   /** Set/Get the opacity */
-  igstkSetMacro(Opacity,float);
-  igstkGetMacro(Opacity,float);
+  igstkSetMacro( Opacity, float );
+  igstkGetMacro( Opacity, float );
 
   /** Has the object been modified */
   bool IsModified() const;
 
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
-
-  /** Declarations needed for the Logging */
-  igstkLoggerMacro();
-  
 protected:
 
   ObjectRepresentation( void );

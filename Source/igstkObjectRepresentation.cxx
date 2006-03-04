@@ -26,7 +26,7 @@ namespace igstk
 { 
 
 /** Constructor */
-ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_Logger(NULL)
+ObjectRepresentation::ObjectRepresentation():m_StateMachine(this)
 {
   m_Color[0] = 1.0;
   m_Color[1] = 1.0;
