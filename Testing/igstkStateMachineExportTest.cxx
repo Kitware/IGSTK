@@ -28,6 +28,7 @@
 
 #include <fstream>
 
+#include "igstkObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkEllipsoidObject.h"
@@ -125,6 +126,7 @@ void ExportStateMachineDescription(
   }
 
 
+// This is for classes that use SmartPointers but lack a New operator
 #define igstkDeclareSurrogateClass( surrogate, type ) \
 class surrogate : public type \
   {  \
@@ -146,6 +148,19 @@ namespace igstk
                             ImageSpatialObjectType >     ImageSpatialObjectRepresentationType;
   typedef SpatialObjectReader<3,float>                   SpatialObjectReaderType;
 
+  class ObjectRepresentationSurrogate : public ObjectRepresentation
+  {
+  public:      
+    typedef ObjectRepresentationSurrogate     Self;    
+    typedef ObjectRepresentation              Superclass;    
+    typedef itk::SmartPointer<Self>           Pointer;      
+    igstkTypeMacro( ObjectRepresentationSurrogate, ObjectRepresentation );   
+    igstkNewMacro( Self );      
+    virtual void CreateActors() {}
+    virtual void UpdateRepresentationProcessing() {}
+
+  };
+  
   igstkDeclareSurrogateClass( SpatialObjectSurrogate, SpatialObject );
   igstkDeclareSurrogateClass( ImageSpatialObjectSurrogate, ImageSpatialObjectType );
   igstkDeclareSurrogateClass( DICOMImageReaderSurrogate, DICOMImageReaderType );
@@ -211,6 +226,7 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::SpatialObjectSurrogate, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::ImageSpatialObjectSurrogate , outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::DICOMImageReaderSurrogate, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::ObjectRepresentationSurrogate, outputDirectory, skipLoops );
 
 
   // Export the state diagrams for the Serial Communication classes according
