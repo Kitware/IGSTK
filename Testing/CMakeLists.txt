@@ -123,6 +123,7 @@ SET(IGSTKTests_SRCS
   igstkImageReaderTest.cxx
   igstkImageSpatialObjectTest.cxx
   igstkLandmark3DRegistrationTest.cxx
+  igstkMeshObjectTest.cxx
   igstkLandmark3DRegistrationErrorEstimatorTest.cxx
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectTest.cxx
