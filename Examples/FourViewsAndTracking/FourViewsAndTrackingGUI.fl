@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 class FourViewsAndTrackingGUI {open
@@ -49,11 +49,16 @@ else             this->DisableTracking();}
     code {this->hasQuitted = false;
 this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
 this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
-this->DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );} {selected
+this->DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );} {}
+  }
+  Function {~FourViewsAndTrackingGUI()} {open return_type virtual
+  } {
+    code {delete Display3D;
+delete DisplayAxial;
+delete DisplaySagittal;
+delete DisplayCoronal;} {selected
     }
   }
-  Function {~FourViewsAndTrackingGUI()} {return_type virtual
-  } {}
   Function {Quit()} {return_type {virtual void}
   } {
     code {mainWindow->hide();
