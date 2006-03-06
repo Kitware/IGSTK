@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 class TwoViews {open
@@ -39,8 +39,12 @@ class TwoViews {open
       }
     }
   }
-  Function {~TwoViews()} {open return_type virtual
-  } {}
+  Function {~TwoViews()} {return_type virtual
+  } {
+    code {delete Display1;
+delete Display2;} {selected
+    }
+  }
   Function {Quit()} {return_type {virtual void}
   } {
     code {this->MainWindow->hide();} {}
@@ -56,7 +60,7 @@ else
   this->m_Tracker->StopTracking();
   }} {}
   }
-  Function {SetTracker( TrackerType * tracker )} {selected return_type {virtual void}
+  Function {SetTracker( TrackerType * tracker )} {return_type {virtual void}
   } {
     code {this->m_Tracker = tracker;} {}
   }
