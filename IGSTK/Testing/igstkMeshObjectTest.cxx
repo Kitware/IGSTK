@@ -244,22 +244,22 @@ int igstkMeshObjectTest( int argc, char * argv [] )
 
 
   // Testing PrintSelf()
-  std::cout << "MeshRepresentation->Print(std::cout)" << std::endl;
+  //std::cout << "MeshRepresentation->Print(std::cout)" << std::endl;
   MeshRepresentation->Print(std::cout);
-  std::cout << "MeshRepresentation->GetNameOfClass()" << std::endl;
+  //std::cout << "MeshRepresentation->GetNameOfClass()" << std::endl;
   MeshRepresentation->GetNameOfClass();
-  std::cout << "meshObject->GetNameOfClass()" << std::endl;
+  //std::cout << "meshObject->GetNameOfClass()" << std::endl;
   meshObject->GetNameOfClass();
-  std::cout << "meshObject->Print(std::cout)" << std::endl;
+  //std::cout << "meshObject->Print(std::cout)" << std::endl;
   meshObject->Print(std::cout);
 
   // Testing CreateActors()
   std::cout << "Testing actors : ";
 
-  std::cout << "Creating form" << std::endl;
+  //std::cout << "Creating form" << std::endl;
   Fl_Window * form = new Fl_Window(512,512,"MeshObject Test");
 
-  std::cout << "Creating view" << std::endl;
+ // std::cout << "Creating view" << std::endl;
   typedef igstk::View3D  View3DType;
   View3DType * view3D = new View3DType(6,6,500,500,"View 3D");
   
@@ -267,15 +267,15 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   form->end();
   // End of the GUI creation
 
-  std::cout << "form->show()" << std::endl;
+  //std::cout << "form->show()" << std::endl;
   form->show();
   
-  std::cout << "view3D->RequestAddObject( MeshRepresentation )" << std::endl;
+  //std::cout << "view3D->RequestAddObject( MeshRepresentation )" << std::endl;
   // this will indirectly call CreateActors() 
   view3D->RequestAddObject( MeshRepresentation );
 
   // Testing Update
-  std::cout << "Testing Update" << std::endl;
+  //std::cout << "Testing Update" << std::endl;
   MeshRepresentation->IsModified();
 
   // Testing again in order to exercise the other half of an if().
