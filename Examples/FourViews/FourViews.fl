@@ -1,10 +1,11 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 class FourViews {open
 } {
-  Function {FourViews()} {} {
+  Function {FourViews()} {open
+  } {
     Fl_Window mainWindow {
       label {IGSTK: Four Quadrants Example} open
       xywh {573 292 775 710} type Double resizable visible
@@ -56,7 +57,13 @@ class FourViews {open
     }
   }
   Function {~FourViews()} {return_type virtual
-  } {}
+  } {
+    code {delete Display3D;
+delete DisplayAxial;
+delete DisplaySagittal;
+delete DisplayCoronal;} {selected
+    }
+  }
   Function {Quit()} {return_type {virtual void}
   } {
     code {mainWindow->hide();} {}
@@ -69,6 +76,6 @@ class FourViews {open
   } {}
   Function {LoadLiver()} {open return_type {virtual void}
   } {}
-  Function {MoveVessels()} {open selected return_type {virtual void}
+  Function {MoveVessels()} {open return_type {virtual void}
   } {}
 } 
