@@ -4,14 +4,14 @@ header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/fl_ask.H>} {} 
 
-class NeedleBiopsyGUI {selected
+class NeedleBiopsyGUI {open
 } {
   Function {NeedleBiopsyGUI()} {open
   } {
     Fl_Window mainWindow {
       label {IGSTK: Needle Biopsy Demo Application}
       callback {Quit();} open
-      xywh {298 24 930 732} type Double box PLASTIC_UP_BOX resizable
+      xywh {298 30 930 732} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
     } {
@@ -159,7 +159,13 @@ else
 hasQuitted = false;} {}
   }
   Function {~NeedleBiopsyGUI()} {return_type virtual
-  } {}
+  } {
+    code {delete DisplayAxial;
+delete DisplayCoronal;
+delete DisplaySagittal;
+delete Display3D;} {selected
+    }
+  }
   Function {RequestSetPatientName()} {open return_type {virtual void}
   } {}
   Function {RequestLoadImage()} {open return_type {virtual void}

@@ -16,12 +16,12 @@ else
   }} {}
 } 
 
-class FourViewsTrackingWithCTGUI {} {
-  Function {FourViewsTrackingWithCTGUI()} {open
-  } {
+class FourViewsTrackingWithCTGUI {open
+} {
+  Function {FourViewsTrackingWithCTGUI()} {} {
     Fl_Window mainWindow {
       label {IGSTK: Four Veiws Tracking With CT Images Example} open
-      xywh {97 31 1145 735} type Double box PLASTIC_UP_BOX resizable
+      xywh {102 272 1145 735} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
     } {
@@ -81,7 +81,7 @@ else
         }
         Fl_Button ClearTrackerLandmarks {
           label Clear
-          callback {RequestClearTrackerLandmarks();} selected
+          callback {RequestClearTrackerLandmarks();}
           xywh {250 180 50 25} box PLASTIC_UP_FRAME
         }
         Fl_Value_Output NumberOfImageLandmarks {
@@ -142,8 +142,14 @@ else
 mainWindow->callback( Quit );
 QuitButton->callback( Quit );} {}
   }
-  Function {~FourViewsTrackingWithCTGUI()} {return_type virtual
-  } {}
+  Function {~FourViewsTrackingWithCTGUI()} {open return_type virtual
+  } {
+    code {delete DisplayAxial;
+delete DisplayCoronal;
+delete DisplaySagittal;
+delete Display3D;} {selected
+    }
+  }
   Function {RequestSetPatientName()} {open return_type {virtual void}
   } {}
   Function {RequestLoadImage()} {open return_type {virtual void}
