@@ -18,6 +18,10 @@
 // Warning about: identifier was truncated to '255' characters in
 // the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
+// Turn off deprecation warnings in MSVC 8+
+#if (_MSC_VER >= 1400)
+#pragma warning( disable : 4996 ) 
+#endif
 #endif
 
 #include <iostream>
