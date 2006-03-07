@@ -268,20 +268,58 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
 
   this->m_StateMachine.ProcessInputs();
 
-  char tmp_string[5120];
 
-  m_ImageIO->GetPatientName(  tmp_string  );
-  m_PatientName = tmp_string;
-  
-  m_ImageIO->GetPatientID(  tmp_string );
-  m_PatientID  = tmp_string;
 
-  m_ImageIO->GetModality(   tmp_string );
-  m_Modality  = tmp_string;
+  std::string tagkey;
+    
 
-  igstkLogMacro( DEBUG, "Patient Name = " << m_PatientName << "\n" );
-  igstkLogMacro( DEBUG, "Patient ID   = " << m_PatientID << "\n" );
-  igstkLogMacro( DEBUG, "Modality     = " << m_Modality << "\n" );
+  // 
+  // Get the Patient Name from the DICOM header
+  //
+  tagkey = "0010|0010";
+
+  if( m_ImageIO->GetValueFromTag(tagkey, m_PatientName ) )
+    {
+    igstkLogMacro( DEBUG, "Patient Name = " << m_PatientName << "\n" );
+    }
+  else
+    {
+    igstkLogMacro( CRITICAL, "Patient Name not found in DICOM file \n" );
+    return;
+    }
+
+
+  // 
+  // Get the Patient ID from the DICOM header
+  //
+  tagkey = "0010|0020";
+
+  if( m_ImageIO->GetValueFromTag(tagkey, m_PatientID ) )
+    {
+    igstkLogMacro( DEBUG, "Patient ID = " << m_PatientID << "\n" );
+    }
+  else
+    {
+    igstkLogMacro( CRITICAL, "Patient ID not found in DICOM file \n" );
+    return;
+    }
+
+
+  // 
+  // Get the Modality from the DICOM header
+  //
+  tagkey = "0008|0060";
+
+  if( m_ImageIO->GetValueFromTag(tagkey, m_Modality ) )
+    {
+    igstkLogMacro( DEBUG, "Modality     = " << m_Modality << "\n" );
+    }
+  else
+    {
+    igstkLogMacro( CRITICAL, "Image Modality not found in DICOM file \n" );
+    return;
+    }
+
 
   this->Superclass::ConnectImage();
   
