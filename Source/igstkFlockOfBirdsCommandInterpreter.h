@@ -54,6 +54,8 @@ POSSIBILITY OF SUCH DAMAGES.
 #include "igstkSerialCommunication.h"
 #include "igstkNDIErrorEvent.h"
 
+#include <string>
+
 namespace igstk
 {
 
@@ -487,7 +489,7 @@ private:
   FlockOfBirdsErrorCode m_Error;
 
   /* stores text for last error */
-  char m_ErrorText[256];
+  std::string m_ErrorText;
 
   /* revision number (quite important) */
   int m_Revision;

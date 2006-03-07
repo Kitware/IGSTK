@@ -95,7 +95,7 @@ FlockOfBirdsCommandInterpreter::FlockOfBirdsCommandInterpreter()
   m_Error = FB_NO_ERROR;
   m_PointData = false;
   m_StreamData = false;
-  m_ErrorText[0] = '\0';
+  m_ErrorText = "";
   m_GroupMode = false;
   m_CurrentBird = 1;
   m_NumberOfBirds = 1;
@@ -248,7 +248,7 @@ void FlockOfBirdsCommandInterpreter::Reset()
   m_PhaseErrorLeftoverBytes = 0;
   m_CurrentBird = 1;
   m_Error = FB_NO_ERROR;
-  m_ErrorText[0] = '\0';
+  m_ErrorText = "";
   m_GroupMode = false;
   m_NumberOfBirds = 1;
   m_DataFormat[1] = FB_POSITION_ANGLES;
@@ -1382,8 +1382,7 @@ void FlockOfBirdsCommandInterpreter::SetErrorAndMessage(
   FlockOfBirdsErrorCode errorcode, const char *text)
 {
   m_Error = errorcode;
-  strncpy(m_ErrorText,text,255);
-  m_ErrorText[255] = '\0';
+  m_ErrorText = text;
 
   std::cout << m_ErrorText << std::endl;
 }
@@ -1412,7 +1411,7 @@ FlockOfBirdsErrorCode FlockOfBirdsCommandInterpreter::GetError()
 /** Return some text that describes the last error. */
 const char *FlockOfBirdsCommandInterpreter::GetErrorMessage()
 {
-  return m_ErrorText;
+  return m_ErrorText.c_str();
 }
 
 /** PrintSelf function. */
@@ -1420,7 +1419,7 @@ void FlockOfBirdsCommandInterpreter::PrintSelf(std::ostream& os,
                                       itk::Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << "ErrorCode: " << m_ErrorText << std::endl;
+  os << indent << "ErrorText: " << m_ErrorText << std::endl;
   os << indent << "Error: " << m_Error << std::endl;
  
   if(m_PointData)
