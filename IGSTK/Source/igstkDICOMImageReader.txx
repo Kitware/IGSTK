@@ -142,8 +142,12 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   m_FileNames = itk::GDCMSeriesFileNames::New();
   m_ImageIO = itk::GDCMImageIO::New();
   m_ImageSeriesReader = ImageSeriesReaderType::New();
-
   m_ImageSeriesReader->SetImageIO( m_ImageIO );
+
+  // In the case we only have one file we create a standard file writer
+  m_ImageFileReader = ImageReaderType::New();
+  m_ImageFileReader->SetImageIO( m_ImageIO );
+
 } 
 
 /** Destructor */
@@ -177,7 +181,7 @@ void DICOMImageReader<TImageSpatialObject>
     return;
     }
 
-  if( !itksys::SystemTools::FileIsDirectory( directory.c_str() ))
+  if( !itksys::SystemTools::FileIsDirectory(  directory.c_str() ))
     {
     this->m_StateMachine.PushInput( 
                               this->m_ImageDirectoryNameIsNotDirectoryInput );
@@ -261,17 +265,36 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
   igstkLogMacro( DEBUG, 
                  "igstk::DICOMImageReader::AttemptReadImage called...\n");
 
-  try
+  if(m_ImageSeriesReader->GetFileNames().size()>1)
     {
-    m_ImageSeriesReader->Update();
+    try
+      {
+      m_ImageSeriesReader->Update();
+      }
+    catch( itk::ExceptionObject & excp )
+      {
+      this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );    
+      DICOMImageReadingErrorEvent event;
+      event.Set( excp.GetDescription() );
+      this->InvokeEvent( event );
+      return;
+      }
     }
-  catch( itk::ExceptionObject & excp )
+  else
     {
-    this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );    
-    DICOMImageReadingErrorEvent event;
-    event.Set( excp.GetDescription() );
-    this->InvokeEvent( event );
-    return;
+    try
+      {
+      m_ImageFileReader->SetFileName(m_ImageSeriesReader->GetFileNames()[0].c_str());
+      m_ImageFileReader->Update();
+      }
+    catch( itk::ExceptionObject & excp )
+      {
+      this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );    
+      DICOMImageReadingErrorEvent event;
+      event.Set( excp.GetDescription() );
+      this->InvokeEvent( event );
+      return;
+      }
     }
 
   this->m_StateMachine.PushInput( this->m_ImageReadingSuccessInput );    
@@ -430,7 +453,11 @@ template <class TPixelType>
 const typename DICOMImageReader< TPixelType >::ImageType *
 DICOMImageReader<TPixelType>::GetITKImage() const
 {
-  return m_ImageSeriesReader->GetOutput();
+  if(m_ImageSeriesReader->GetFileNames().size()>1)
+   {
+   return m_ImageSeriesReader->GetOutput();
+   }
+  return m_ImageFileReader->GetOutput();
 }
 
 

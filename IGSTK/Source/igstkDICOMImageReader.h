@@ -143,12 +143,14 @@ protected:
   itk::GDCMSeriesFileNames::Pointer     m_FileNames;
   itk::GDCMImageIO::Pointer             m_ImageIO;
 
-  typedef typename Superclass::ImageType               ImageType;
+  typedef typename Superclass::ImageType         ImageType;
 
-  typedef itk::ImageSeriesReader< ImageType >          ImageSeriesReaderType;
+  typedef itk::ImageSeriesReader< ImageType >    ImageSeriesReaderType;
+  typedef itk::ImageFileReader< ImageType >      ImageReaderType;
 
   /** Internal itkImageSeriesReader */
   typename ImageSeriesReaderType::Pointer        m_ImageSeriesReader;
+  typename ImageReaderType::Pointer              m_ImageFileReader;
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
