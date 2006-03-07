@@ -85,7 +85,8 @@ public:
 
   /** typedef for RegistrationType */
   typedef Landmark3DRegistration                        RegistrationType;
-  typedef RegistrationType::LandmarkPointContainerType  LandmarkPointContainerType;
+  typedef RegistrationType::LandmarkPointContainerType  
+                                                      LandmarkPointContainerType;
   typedef RegistrationType::LandmarkImagePointType      LandmarkPointType;
   
   /** typedef for TransformType */
@@ -152,42 +153,40 @@ private:
   igstkDeclareStateMacro( Tracking );
 
   /** Inputs to the state machine and it's designed transitions */
-  igstkDeclareInputMacro( RequestSetPatientName );      //->m_WaitingForPatientNameState
-  igstkDeclareInputMacro( PatientName );                //->m_PatientNameReadyState
-  igstkDeclareInputMacro( PatientNameEmpty );           //->m_InitialState
+  igstkDeclareInputMacro( RequestSetPatientName );
+  igstkDeclareInputMacro( PatientName );
+  igstkDeclareInputMacro( PatientNameEmpty );
 
-  igstkDeclareInputMacro( RequestLoadImage );           //->m_WaitingForDICOMDirectoryState
-  igstkDeclareInputMacro( LoadImageSuccess );           //->m_ImageReady
-  igstkDeclareInputMacro( LoadImageFailure );           //->m_PatientNameReadeyState
-  igstkDeclareInputMacro( PatientNameMatch );           //->m_PatientNameVerifiedState
-  igstkDeclareInputMacro( OverwritePatientName );       //->m_PatientNameVerifiedState
-  igstkDeclareInputMacro( ReloadImage );                //->m_PatientNameReadyState
+  igstkDeclareInputMacro( RequestLoadImage );
+  igstkDeclareInputMacro( LoadImageSuccess );
+  igstkDeclareInputMacro( LoadImageFailure );
+  igstkDeclareInputMacro( PatientNameMatch );
+  igstkDeclareInputMacro( OverwritePatientName );
+  igstkDeclareInputMacro( ReloadImage );
   
-  igstkDeclareInputMacro( RequestAddImageLandmark );    //->m_AddingImageLandmarkState
-  igstkDeclareInputMacro( NeedMoreLandmarkPoints );     //->m_AddingImageLandmarkState
-  igstkDeclareInputMacro( EnoughLandmarkPoints );       //->m_ImageLandmarksReadyState
-  igstkDeclareInputMacro( RequestClearImageLandmarks ); //->m_PatientNameVerifiedState  
+  igstkDeclareInputMacro( RequestAddImageLandmark );
+  igstkDeclareInputMacro( NeedMoreLandmarkPoints );
+  igstkDeclareInputMacro( EnoughLandmarkPoints );
+  igstkDeclareInputMacro( RequestClearImageLandmarks );
 
-  igstkDeclareInputMacro( RequestInitializeTracker );   //
-  igstkDeclareInputMacro( InitializeTrackerSuccess );   //-> TrackerReadyState
-  igstkDeclareInputMacro( InitializeTrackerFailure );   //-> ImageLandmarksReadyState
+  igstkDeclareInputMacro( RequestInitializeTracker );
+  igstkDeclareInputMacro( InitializeTrackerSuccess );
+  igstkDeclareInputMacro( InitializeTrackerFailure );
 
-  igstkDeclareInputMacro( RequestAddTrackerLandmark );    //->m_AddingTrackerLandmarkState
-  //igstkDeclareInputMacro( NeedMoreLandmarkPoints );       //->m_AddingTrackerLandmarkState
-  //igstkDeclareInputMacro( EnoughLandmarkPoints );         //->m_TrackerLandmarksReadyState
-  igstkDeclareInputMacro( RequestClearTrackerLandmarks ); //->m_TrackerReadyState
+  igstkDeclareInputMacro( RequestAddTrackerLandmark );
+  igstkDeclareInputMacro( RequestClearTrackerLandmarks );
 
   igstkDeclareInputMacro( RequestRegistration );
-  igstkDeclareInputMacro( RegistrationSuccess );        //->m_LandmarkRegistrationReadyState
-  igstkDeclareInputMacro( RegistrationFailure );        //->m_TrackerLandmarksReadyState
+  igstkDeclareInputMacro( RegistrationSuccess );
+  igstkDeclareInputMacro( RegistrationFailure );
 
   igstkDeclareInputMacro( RequestStartTracking );
-  igstkDeclareInputMacro( StartTrackingSuccess );       //->m_TrackingState                   //FIXME, how to check if it succeed
-  igstkDeclareInputMacro( StartTrackingFailure );       //->m_LandmarkRegistrationReadyState
+  igstkDeclareInputMacro( StartTrackingSuccess );
+  igstkDeclareInputMacro( StartTrackingFailure );
 
   igstkDeclareInputMacro( RequestStopTracking );
-  igstkDeclareInputMacro( StopTrackingSuccess );        //->m_LandmarkRegistrationReadyState  //FIXME, how to check if it succeed
-  igstkDeclareInputMacro( StopTrackingFailure );        //->m_TrackingState
+  igstkDeclareInputMacro( StopTrackingSuccess );
+  igstkDeclareInputMacro( StopTrackingFailure );
 
   igstkDeclareInputMacro( AxialBounds );                
   igstkDeclareInputMacro( SagittalBounds );

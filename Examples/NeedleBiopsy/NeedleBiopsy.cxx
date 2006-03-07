@@ -30,7 +30,8 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   /** Setup logger, for all other igstk components. */
   logger   = LoggerType::New();
 
-  /** Direct the application log message to the std::cout and FLTK text display. */
+  /** Direct the application log message to the std::cout 
+    * and FLTK text display */
   m_LogCoutOutput = LogOutputType::New();
   m_LogCoutOutput->SetStream( std::cout );
   this->GetLogger()->AddLogOutput( m_LogCoutOutput );
@@ -43,7 +44,8 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
 
   /** Direct the igstk components log message to the file. */
   m_LogFileOutput = LogOutputType::New();
-  std::string logFileName = "logNeedleBiopsy.txt";                   //FIXME. use a date/time file name
+  //FIXME. use a date/time file name
+  std::string logFileName = "logNeedleBiopsy.txt";
   m_LogFile.open( logFileName.c_str() );
   if( !m_LogFile.fail() )
     {
@@ -53,7 +55,8 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
     }
   else
     {
-    igstkLogMacro( DEBUG, "Problem opening Log file: " << logFileName << "\n" ); //FIXME. may not return
+    //FIXME. should we return or not
+    igstkLogMacro( DEBUG, "Problem opening Log file: " << logFileName << "\n" );
     return;
     }
 
@@ -62,16 +65,19 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   
   m_LandmarkRegistration = RegistrationType::New();
   m_LandmarkRegistrationObserver = ObserverType2::New();
-  m_LandmarkRegistrationObserver->SetCallbackFunction( this, &NeedleBiopsy::GetLandmarkRegistrationTransform );
-  m_LandmarkRegistration->AddObserver( TransformModifiedEvent(), m_LandmarkRegistrationObserver );  //FIXME, Need error observer
+  m_LandmarkRegistrationObserver->SetCallbackFunction( this, 
+                               &NeedleBiopsy::GetLandmarkRegistrationTransform );
+  m_LandmarkRegistration->AddObserver( TransformModifiedEvent(), 
+                                                m_LandmarkRegistrationObserver );
 
   m_SerialCommunication = CommunicationType::New();
-  m_SerialCommunication->SetPortNumber( IGSTK_POLARIS_PORT_NUMBER ); // FIXME. Should be configurable in CMake, GUI or ini file
+  m_SerialCommunication->SetPortNumber( IGSTK_POLARIS_PORT_NUMBER );
   m_SerialCommunication->SetParity( SerialCommunication::NoParity );
   m_SerialCommunication->SetBaudRate( SerialCommunication::BaudRate9600 );
   m_SerialCommunication->SetDataBits( SerialCommunication::DataBits8 );
   m_SerialCommunication->SetStopBits( SerialCommunication::StopBits1 );
-  m_SerialCommunication->SetHardwareHandshake( SerialCommunication::HandshakeOff );
+  m_SerialCommunication->SetHardwareHandshake( 
+                                             SerialCommunication::HandshakeOff );
   m_SerialCommunication->OpenCommunication();
   
   m_Tracker = TrackerType::New();
@@ -161,8 +167,10 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   igstk::Transform::VersorType rotation;
   rotation.SetIdentity();
     
-  toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 0.1, -1);
-  m_Tracker->SetToolCalibrationTransform( TRACKER_TOOL_PORT, 0, toolCalibrationTransform);
+  toolCalibrationTransform.SetTranslationAndRotation(
+                                                 translation, rotation, 0.1, -1);
+  m_Tracker->SetToolCalibrationTransform( 
+                                 TRACKER_TOOL_PORT, 0, toolCalibrationTransform);
 
   m_ImageToTrackerTransform.SetToIdentity( -1 );
   m_ImageLandmarkTransform.SetToIdentity( -1 );
@@ -172,14 +180,18 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_Observer = ObserverType::New();
   m_Observer->SetCallbackFunction( this, & NeedleBiopsy::Tracking );
   m_PulseGenerator->AddObserver( PulseEvent(), m_Observer );
-  m_PulseGenerator->RequestSetFrequency( 30 ); //FIXME, move to request start tracking??
+  m_PulseGenerator->RequestSetFrequency( 30 ); 
 
   m_ViewPickerObserver = ObserverType2::New();
-  m_ViewPickerObserver->SetCallbackFunction( this, &NeedleBiopsy::DrawPickedPoint );
+  m_ViewPickerObserver->SetCallbackFunction( this, 
+                                                &NeedleBiopsy::DrawPickedPoint );
 
-  this->DisplayAxial->AddObserver( TransformModifiedEvent(), m_ViewPickerObserver );
-  this->DisplaySagittal->AddObserver( TransformModifiedEvent(), m_ViewPickerObserver );
-  this->DisplayCoronal->AddObserver( TransformModifiedEvent(), m_ViewPickerObserver );
+  this->DisplayAxial->AddObserver( TransformModifiedEvent(), 
+                                                          m_ViewPickerObserver );
+  this->DisplaySagittal->AddObserver( TransformModifiedEvent(), 
+                                                          m_ViewPickerObserver );
+  this->DisplayCoronal->AddObserver( TransformModifiedEvent(), 
+                                                          m_ViewPickerObserver );
 
   this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
   this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
@@ -283,78 +295,125 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   igstkAddInputMacro( CoronalBounds                );
 
   /** Register patient name */
-  igstkAddTransitionMacro( Initial, RequestSetPatientName, WaitingForPatientName, SetPatientName );
-  igstkAddTransitionMacro( PatientNameReady, RequestSetPatientName, WaitingForPatientName, SetPatientName );
-  igstkAddTransitionMacro( WaitingForPatientName, PatientName, PatientNameReady, No );
-  igstkAddTransitionMacro( WaitingForPatientName, PatientNameEmpty, Initial, No );
+  igstkAddTransitionMacro( Initial, RequestSetPatientName, 
+                                         WaitingForPatientName, SetPatientName );
+  igstkAddTransitionMacro( PatientNameReady, RequestSetPatientName, 
+                                         WaitingForPatientName, SetPatientName );
+  igstkAddTransitionMacro( WaitingForPatientName, PatientName, 
+                                                          PatientNameReady, No );
+  igstkAddTransitionMacro( WaitingForPatientName, PatientNameEmpty, 
+                                                                   Initial, No );
 
   /** Load image and verify patient name */
-  igstkAddTransitionMacro( PatientNameReady, RequestLoadImage, WaitingForDICOMDirectory, LoadImage );
-  igstkAddTransitionMacro( PatientNameVerified, RequestLoadImage, WaitingForDICOMDirectory, LoadImage );
-  igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageSuccess, ImageReady, VerifyPatientName );
-  igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageFailure, PatientNameReady, No );
+  igstkAddTransitionMacro( PatientNameReady, RequestLoadImage, 
+                                           WaitingForDICOMDirectory, LoadImage );
+  igstkAddTransitionMacro( PatientNameVerified, RequestLoadImage, 
+                                           WaitingForDICOMDirectory, LoadImage );
+  igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageSuccess, 
+                                                 ImageReady, VerifyPatientName );
+  igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageFailure, 
+                                                          PatientNameReady, No );
 
   /** Display image */
-  igstkAddTransitionMacro( ImageReady, PatientNameMatch, PatientNameVerified, ConnectImageRepresentation );
-  igstkAddTransitionMacro( ImageReady, OverwritePatientName, PatientNameVerified, ConnectImageRepresentation );
-  igstkAddTransitionMacro( ImageReady, ReloadImage, WaitingForDICOMDirectory, LoadImage );
+  igstkAddTransitionMacro( ImageReady, PatientNameMatch, 
+                               PatientNameVerified, ConnectImageRepresentation );
+  igstkAddTransitionMacro( ImageReady, OverwritePatientName, 
+                               PatientNameVerified, ConnectImageRepresentation );
+  igstkAddTransitionMacro( ImageReady, ReloadImage, 
+                                           WaitingForDICOMDirectory, LoadImage );
 
   /** Receive Slice Information from the Image Representation */
-  igstkAddTransitionMacro( PatientNameVerified, AxialBounds, PatientNameVerified, SetAxialSliderBounds );
-  igstkAddTransitionMacro( PatientNameVerified, SagittalBounds, PatientNameVerified, SetSagittalSliderBounds );
-  igstkAddTransitionMacro( PatientNameVerified, CoronalBounds, PatientNameVerified, SetCoronalSliderBounds );
+  igstkAddTransitionMacro( PatientNameVerified, AxialBounds, 
+                                     PatientNameVerified, SetAxialSliderBounds );
+  igstkAddTransitionMacro( PatientNameVerified, SagittalBounds, 
+                                  PatientNameVerified, SetSagittalSliderBounds );
+  igstkAddTransitionMacro( PatientNameVerified, CoronalBounds, 
+                                   PatientNameVerified, SetCoronalSliderBounds );
   
   /** Set image landmarks, any number of landmarks >= 3 */
-  igstkAddTransitionMacro( PatientNameVerified, RequestAddImageLandmark, AddingImageLandmark, AddImageLandmark ); //FIXME: This line is for faster testing purpose
-  igstkAddTransitionMacro( AddingImageLandmark, RequestAddImageLandmark, AddingImageLandmark, AddImageLandmark );
-  igstkAddTransitionMacro( ImageLandmarksReady, RequestAddImageLandmark, ImageLandmarksReady, AddImageLandmark );
-  igstkAddTransitionMacro( AddingImageLandmark, NeedMoreLandmarkPoints, AddingImageLandmark, No );
-  igstkAddTransitionMacro( AddingImageLandmark, EnoughLandmarkPoints, ImageLandmarksReady, No );
-  igstkAddTransitionMacro( ImageLandmarksReady, EnoughLandmarkPoints, ImageLandmarksReady, No );
+  igstkAddTransitionMacro( PatientNameVerified, RequestAddImageLandmark, 
+                                         AddingImageLandmark, AddImageLandmark );
+  igstkAddTransitionMacro( AddingImageLandmark, RequestAddImageLandmark, 
+                                         AddingImageLandmark, AddImageLandmark );
+  igstkAddTransitionMacro( ImageLandmarksReady, RequestAddImageLandmark, 
+                                         ImageLandmarksReady, AddImageLandmark );
+  igstkAddTransitionMacro( AddingImageLandmark, NeedMoreLandmarkPoints, 
+                                                       AddingImageLandmark, No );
+  igstkAddTransitionMacro( AddingImageLandmark, EnoughLandmarkPoints, 
+                                                       ImageLandmarksReady, No );
+  igstkAddTransitionMacro( ImageLandmarksReady, EnoughLandmarkPoints, 
+                                                       ImageLandmarksReady, No );
 
   /** Clear image landmarks */
-  igstkAddTransitionMacro( AddingImageLandmark, RequestClearImageLandmarks, PatientNameVerified, ClearImageLandmarks );
-  igstkAddTransitionMacro( ImageLandmarksReady, RequestClearImageLandmarks, PatientNameVerified, ClearImageLandmarks );
+  igstkAddTransitionMacro( AddingImageLandmark, RequestClearImageLandmarks, 
+                                      PatientNameVerified, ClearImageLandmarks );
+  igstkAddTransitionMacro( ImageLandmarksReady, RequestClearImageLandmarks, 
+                                      PatientNameVerified, ClearImageLandmarks );
 
   /** Initialize tracker */
-  igstkAddTransitionMacro( ImageLandmarksReady, RequestInitializeTracker, AttemptingInitializeTracker, InitializeTracker );
-  igstkAddTransitionMacro( AttemptingInitializeTracker, InitializeTrackerSuccess, TrackerReady, No );
-  igstkAddTransitionMacro( AttemptingInitializeTracker, InitializeTrackerFailure, ImageLandmarksReady, No );
+  igstkAddTransitionMacro( ImageLandmarksReady, RequestInitializeTracker, 
+                                AttemptingInitializeTracker, InitializeTracker );
+  igstkAddTransitionMacro( AttemptingInitializeTracker, InitializeTrackerSuccess, 
+                                                              TrackerReady, No );
+  igstkAddTransitionMacro( AttemptingInitializeTracker, InitializeTrackerFailure, 
+                                                       ImageLandmarksReady, No );
 
-  /** Set tracker landmarks, require same number of landmarks as in image landmark */
-  igstkAddTransitionMacro( TrackerReady, RequestAddTrackerLandmark, AddingTrackerLandmark, AddTrackerLandmark );
-  igstkAddTransitionMacro( AddingTrackerLandmark, RequestAddTrackerLandmark, AddingTrackerLandmark, AddTrackerLandmark );
-  igstkAddTransitionMacro( AddingTrackerLandmark, NeedMoreLandmarkPoints, AddingTrackerLandmark, No );
-  igstkAddTransitionMacro( AddingTrackerLandmark, EnoughLandmarkPoints, TrackerLandmarksReady, No );
+  /** Set tracker landmarks, require same number of landmarks as in 
+    * image landmark */
+  igstkAddTransitionMacro( TrackerReady, RequestAddTrackerLandmark, 
+                                     AddingTrackerLandmark, AddTrackerLandmark );
+  igstkAddTransitionMacro( AddingTrackerLandmark, RequestAddTrackerLandmark, 
+                                     AddingTrackerLandmark, AddTrackerLandmark );
+  igstkAddTransitionMacro( AddingTrackerLandmark, NeedMoreLandmarkPoints, 
+                                                     AddingTrackerLandmark, No );
+  igstkAddTransitionMacro( AddingTrackerLandmark, EnoughLandmarkPoints, 
+                                                     TrackerLandmarksReady, No );
   /** Clear tracker landmarks */
-  igstkAddTransitionMacro( AddingTrackerLandmark, RequestClearTrackerLandmarks, TrackerReady, ClearTrackerLandmarks );
-  igstkAddTransitionMacro( TrackerLandmarksReady, RequestClearTrackerLandmarks, TrackerReady, ClearTrackerLandmarks );
+  igstkAddTransitionMacro( AddingTrackerLandmark, RequestClearTrackerLandmarks, 
+                                           TrackerReady, ClearTrackerLandmarks );
+  igstkAddTransitionMacro( TrackerLandmarksReady, RequestClearTrackerLandmarks, 
+                                           TrackerReady, ClearTrackerLandmarks );
 
   /** Registration */
-  igstkAddTransitionMacro( TrackerLandmarksReady, RequestRegistration, AttemptingRegistration, Registration );
-  igstkAddTransitionMacro( AttemptingRegistration, RegistrationSuccess, EvaluatingRegistrationError, EvaluatingRegistrationError );
-  igstkAddTransitionMacro( AttemptingRegistration, RegistrationFailure, TrackerLandmarksReady, No );
+  igstkAddTransitionMacro( TrackerLandmarksReady, RequestRegistration, 
+                                          AttemptingRegistration, Registration );
+  igstkAddTransitionMacro( AttemptingRegistration, RegistrationSuccess, 
+                      EvaluatingRegistrationError, EvaluatingRegistrationError );
+  igstkAddTransitionMacro( AttemptingRegistration, RegistrationFailure, 
+                                                     TrackerLandmarksReady, No );
 
-  igstkAddTransitionMacro( EvaluatingRegistrationError, RegistrationErrorAccepted, LandmarkRegistrationReady, No );
-  igstkAddTransitionMacro( EvaluatingRegistrationError, RegistrationErrorRejected, TrackerLandmarksReady, ResetRegistration );
+  igstkAddTransitionMacro( EvaluatingRegistrationError, 
+                      RegistrationErrorAccepted, LandmarkRegistrationReady, No );
+  igstkAddTransitionMacro( EvaluatingRegistrationError, 
+           RegistrationErrorRejected, TrackerLandmarksReady, ResetRegistration );
 
   /** Path Planning */
-  //igstkAddTransitionMacro( PatientNameVerified, RequestSetTargetPoint, TargetPointReady, DrawTargetPoint );
-  igstkAddTransitionMacro( LandmarkRegistrationReady, RequestSetTargetPoint, TargetPointReady, DrawTargetPoint );
-  igstkAddTransitionMacro( TargetPointReady, RequestSetTargetPoint, TargetPointReady, DrawTargetPoint );
+  igstkAddTransitionMacro( LandmarkRegistrationReady, RequestSetTargetPoint, 
+                                             TargetPointReady, DrawTargetPoint );
+  igstkAddTransitionMacro( TargetPointReady, RequestSetTargetPoint, 
+                                             TargetPointReady, DrawTargetPoint );
   
-  igstkAddTransitionMacro( TargetPointReady, RequestSetEntryPoint, PathReady, DrawPath );
-  igstkAddTransitionMacro( PathReady, RequestSetTargetPoint, PathReady, DrawPath );
-  igstkAddTransitionMacro( PathReady, RequestSetEntryPoint, PathReady, DrawPath );
+  igstkAddTransitionMacro( TargetPointReady, RequestSetEntryPoint, 
+                                                           PathReady, DrawPath );
+  igstkAddTransitionMacro( PathReady, RequestSetTargetPoint, 
+                                                           PathReady, DrawPath );
+  igstkAddTransitionMacro( PathReady, RequestSetEntryPoint, 
+                                                           PathReady, DrawPath );
 
   /** Tracking */
-  igstkAddTransitionMacro( PathReady, RequestStartTracking, AttemptingStartTracking, StartTracking );
-  igstkAddTransitionMacro( AttemptingStartTracking, StartTrackingSuccess, Tracking, No);
-  igstkAddTransitionMacro( AttemptingStartTracking, StartTrackingFailure, PathReady, No );
+  igstkAddTransitionMacro( PathReady, RequestStartTracking, 
+                                        AttemptingStartTracking, StartTracking );
+  igstkAddTransitionMacro( AttemptingStartTracking, StartTrackingSuccess, 
+                                                                  Tracking, No );
+  igstkAddTransitionMacro( AttemptingStartTracking, StartTrackingFailure, 
+                                                                 PathReady, No );
 
-  igstkAddTransitionMacro( Tracking, RequestStopTracking, AttemptingStopTracking, StopTracking );
-  igstkAddTransitionMacro( AttemptingStopTracking, StopTrackingSuccess, PathReady, No);
-  igstkAddTransitionMacro( AttemptingStopTracking, StopTrackingFailure, Tracking, No );
+  igstkAddTransitionMacro( Tracking, RequestStopTracking, 
+                                          AttemptingStopTracking, StopTracking );
+  igstkAddTransitionMacro( AttemptingStopTracking, StopTrackingSuccess, 
+                                                                 PathReady, No );
+  igstkAddTransitionMacro( AttemptingStopTracking, StopTrackingFailure, 
+                                                                  Tracking, No );
   
   igstkSetInitialStateMacro( Initial );
 
@@ -384,7 +443,8 @@ void NeedleBiopsy::NoProcessing()
 
 void NeedleBiopsy::RequestSetPatientName()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestSetPatientName called...\n" )
+  igstkLogMacro2( logger, DEBUG, 
+                               "NeedleBiopsy::RequestSetPatientName called...\n" )
   m_StateMachine.PushInput( m_RequestSetPatientNameInput );
   m_StateMachine.ProcessInputs();
 }
@@ -396,8 +456,9 @@ void NeedleBiopsy::SetPatientNameProcessing()
   if( patientName != NULL )
     {
     m_PatientName = patientName;
-    igstkLogMacro(          DEBUG, "Patient registered as: "<< m_PatientName <<"\n" )
-    igstkLogMacro2( logger, DEBUG, "Patient registered as: "<< m_PatientName <<"\n" )
+    igstkLogMacro( DEBUG, "Patient registered as: "<< m_PatientName <<"\n" )
+    igstkLogMacro2( logger, DEBUG, 
+                               "Patient registered as: "<< m_PatientName <<"\n" )
     m_StateMachine.PushInput( m_PatientNameInput );
     }
   else
@@ -409,27 +470,33 @@ void NeedleBiopsy::SetPatientNameProcessing()
 
 void NeedleBiopsy::RequestLoadImage()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestLoadImageProcessing called...\n" )
+  igstkLogMacro2( logger, DEBUG, 
+                         "NeedleBiopsy::RequestLoadImageProcessing called...\n" )
   m_StateMachine.PushInput( m_RequestLoadImageInput );
   m_StateMachine.ProcessInputs();
 }
 
 void NeedleBiopsy::LoadImageProcessing()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::LoadImageProcessing called...\n" )
+  igstkLogMacro2( logger, DEBUG, 
+                                "NeedleBiopsy::LoadImageProcessing called...\n" )
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
   if ( directoryname != NULL )
     {
       m_ImageReader->RequestResetReader();
-      igstkLogMacro(          DEBUG, "Set ImageReader directory: " << directoryname << "\n" )
-      igstkLogMacro2( logger, DEBUG, "m_ImageReader->RequestSetDirectory called...\n" )
-      m_ImageReader->RequestSetDirectory( directoryname ); //FIXME. Add observer and callbacks to catch errors?
+      igstkLogMacro( DEBUG, 
+                         "Set ImageReader directory: " << directoryname << "\n" )
+      igstkLogMacro2( logger, DEBUG, 
+                               "m_ImageReader->RequestSetDirectory called...\n" )
+      m_ImageReader->RequestSetDirectory( directoryname ); 
 
-      igstkLogMacro(          DEBUG, "ImageReader loading images... \n" )
-      igstkLogMacro2( logger, DEBUG, "m_ImageReader->RequestReadImage called... \n" )
-      m_ImageReader->RequestReadImage();                   //FIXME. Add observer and callbacks to catch errors?
+      igstkLogMacro( DEBUG, "ImageReader loading images... \n" )
+      igstkLogMacro2( logger, DEBUG, 
+                                 "m_ImageReader->RequestReadImage called... \n" )
+      m_ImageReader->RequestReadImage();
 
-      m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), m_LoadImageSuccessInput, m_LoadImageFailureInput);
+      m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), 
+                               m_LoadImageSuccessInput, m_LoadImageFailureInput);
     }
   else
     {
@@ -441,11 +508,14 @@ void NeedleBiopsy::LoadImageProcessing()
 
 void NeedleBiopsy::VerifyPatientNameProcessing()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::VerifyPatientNameProcessing called ... \n")
+  igstkLogMacro2( logger, DEBUG, 
+                       "NeedleBiopsy::VerifyPatientNameProcessing called ... \n")
   if ( m_ImageReader->GetPatientName() == m_PatientName )
     {
-    igstkLogMacro(          DEBUG, "Registered patient name match with the name in loaded image \n" )
-    igstkLogMacro2( logger, DEBUG, "Registered patient name match with the name in loaded image \n" )
+    igstkLogMacro( DEBUG, 
+               "Registered patient name match with the name in loaded image \n" )
+    igstkLogMacro2( logger, DEBUG, 
+               "Registered patient name match with the name in loaded image \n" )
     m_StateMachine.PushInput( m_PatientNameMatchInput );
     }
   else
@@ -460,8 +530,10 @@ void NeedleBiopsy::VerifyPatientNameProcessing()
     if ( i == 1 )
       {
         m_PatientName = m_ImageReader->GetPatientName();
-        igstkLogMacro(          DEBUG, "Patient name is overwritten to:" << m_PatientName << "\n" )
-        igstkLogMacro2( logger, DEBUG, "Patient name is overwritten to:" << m_PatientName << "\n" )
+        igstkLogMacro( DEBUG, 
+                     "Patient name is overwritten to:" << m_PatientName << "\n" )
+        igstkLogMacro2( logger, DEBUG, 
+                     "Patient name is overwritten to:" << m_PatientName << "\n" )
         m_StateMachine.PushInput( m_OverwritePatientNameInput );
       }
     else
@@ -476,36 +548,44 @@ void NeedleBiopsy::VerifyPatientNameProcessing()
 
 void NeedleBiopsy::RequestInitializeTracker()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestInitializeTracker called ... \n" )
+  igstkLogMacro2( logger, DEBUG, 
+                         "NeedleBiopsy::RequestInitializeTracker called ... \n" )
   m_StateMachine.PushInput( m_RequestInitializeTrackerInput );
   m_StateMachine.ProcessInputs();
 }
 
 void NeedleBiopsy::InitializeTrackerProcessing()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::InitializeTrackerProcessing called ... \n" )    
+  igstkLogMacro2( logger, DEBUG, 
+                      "NeedleBiopsy::InitializeTrackerProcessing called ... \n" )
   m_Tracker->Open();
-  m_Tracker->AttachSROMFileNameToPort( TRACKER_TOOL_PORT, TRACKER_TOOL_SROM_FILE ); //FIXME use ini file
-  m_Tracker->AttachSROMFileNameToPort( REFERENCE_TOOL_PORT, REFERENCE_TOOL_SROM_FILE ); //FIXME use ini file
+  m_Tracker->AttachSROMFileNameToPort( TRACKER_TOOL_PORT, 
+                                                        TRACKER_TOOL_SROM_FILE );
+  m_Tracker->AttachSROMFileNameToPort( REFERENCE_TOOL_PORT, 
+                                                      REFERENCE_TOOL_SROM_FILE );
   m_Tracker->SetReferenceTool( USE_REFERENCE_TOOL, REFERENCE_TOOL_PORT, 0);  
-  m_Tracker->Initialize();                                                          //FIXME, how to check if this is success???
-  m_Tracker->StartTracking();                                                       //FIXME: Should we start tracking now?
-  m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(), m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
+  m_Tracker->Initialize();
+  m_Tracker->StartTracking();
+  m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(),
+              m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
 }
 
 void NeedleBiopsy::RequestAddImageLandmark()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestAddImageLandmark called ... \n" )
+  igstkLogMacro2( logger, DEBUG, 
+                          "NeedleBiopsy::RequestAddImageLandmark called ... \n" )
   m_StateMachine.PushInput( m_RequestAddImageLandmarkInput );
   m_StateMachine.ProcessInputs();
 }
 
 void NeedleBiopsy::AddImageLandmarkProcessing()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::AddImageLandmarkProcessing called ... \n" )
+  igstkLogMacro2( logger, DEBUG, 
+                       "NeedleBiopsy::AddImageLandmarkProcessing called ... \n" )
 
     /** Check if there is an updated image landmark picking point */
-    if ( m_ImageLandmarkTransform.GetTranslation() != m_ImageLandmarkTransformToBeSet.GetTranslation() ) // FIXME, the == is not defined for Transform
+    if ( m_ImageLandmarkTransform.GetTranslation() 
+                            != m_ImageLandmarkTransformToBeSet.GetTranslation() )
       {
 
       LandmarkPointType  p;
@@ -524,7 +604,8 @@ void NeedleBiopsy::AddImageLandmarkProcessing()
         this->NumberOfImageLandmarks->textcolor( FL_BLUE );
         }
       
-      m_ImageLandmarkTransform.SetTranslation( m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
+      m_ImageLandmarkTransform.SetTranslation( 
+                  m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
       igstkLogMacro(          DEBUG, "Image landmark point added: "<< p << "\n" )
       igstkLogMacro2( logger, DEBUG, "Image landmark point added: "<< p << "\n" )
 
@@ -535,12 +616,14 @@ void NeedleBiopsy::AddImageLandmarkProcessing()
       igstkLogMacro2( logger, DEBUG, "No new image landmark point picked.\n" )
       }
 
-  m_StateMachine.PushInputBoolean( (m_ImageLandmarksContainer.size()>=3), m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
+  m_StateMachine.PushInputBoolean( (m_ImageLandmarksContainer.size()>=3), 
+                     m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
 }
 
 void NeedleBiopsy::RequestClearImageLandmarks()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestClearImageLandmarks called ... \n") 
+  igstkLogMacro2( logger, DEBUG, 
+                        "NeedleBiopsy::RequestClearImageLandmarks called ... \n")
   m_StateMachine.PushInput( m_RequestClearImageLandmarksInput );
   m_StateMachine.ProcessInputs();
 }
@@ -552,23 +635,27 @@ void NeedleBiopsy::ClearImageLandmarksProcessing()
   m_ImageLandmarksContainer.clear();
   this->NumberOfImageLandmarks->value( 0 );
   this->NumberOfImageLandmarks->textcolor( FL_BLACK );
-  m_ImageLandmarkTransform.SetTranslation( m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
+  m_ImageLandmarkTransform.SetTranslation( 
+                  m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
 }
 
 void NeedleBiopsy::RequestAddTrackerLandmark()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestAddTrackerLandmark called ... \n")
+  igstkLogMacro2( logger, DEBUG, 
+                         "NeedleBiopsy::RequestAddTrackerLandmark called ... \n")
   m_StateMachine.PushInput( m_RequestAddTrackerLandmarkInput );
   m_StateMachine.ProcessInputs();
 }
 
 void NeedleBiopsy::AddTrackerLandmarkProcessing()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::AddTrackerLandmarkProcessing called ... \n")
+  igstkLogMacro2( logger, DEBUG, 
+                      "NeedleBiopsy::AddTrackerLandmarkProcessing called ... \n")
   
-  this->GetTrackerTransform();    //FIXME: Whether the m_TrackerPositionTransform is being updated. 
+  this->GetTrackerTransform();
   
-  if ( m_TrackerLandmarkTransform.GetTranslation() != m_TrackerLandmarkTransformToBeSet.GetTranslation()) // When there is a new transform reading
+  if ( m_TrackerLandmarkTransform.GetTranslation() 
+                           != m_TrackerLandmarkTransformToBeSet.GetTranslation())
     {
 
     LandmarkPointType  p;
@@ -587,7 +674,8 @@ void NeedleBiopsy::AddTrackerLandmarkProcessing()
       this->NumberOfTrackerLandmarks->textcolor( FL_BLUE );
       }
 
-    m_TrackerLandmarkTransform.SetTranslation( m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
+    m_TrackerLandmarkTransform.SetTranslation( 
+                m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
     igstkLogMacro(          DEBUG, "Tracker landmark point added: "<< p << "\n" )
     igstkLogMacro2( logger, DEBUG, "Tracker landmark point added: "<< p << "\n" )
 
@@ -598,20 +686,23 @@ void NeedleBiopsy::AddTrackerLandmarkProcessing()
     igstkLogMacro2( logger, DEBUG, "No new tracker landmark point reading.\n" )
     }  
 
-  m_StateMachine.PushInputBoolean( ( m_TrackerLandmarksContainer.size() < m_ImageLandmarksContainer.size() ),
-                                     m_NeedMoreLandmarkPointsInput, m_EnoughLandmarkPointsInput );
+  m_StateMachine.PushInputBoolean( 
+       ( m_TrackerLandmarksContainer.size() < m_ImageLandmarksContainer.size() ),
+                    m_NeedMoreLandmarkPointsInput, m_EnoughLandmarkPointsInput );
 }
 
 void NeedleBiopsy::GetTrackerTransform()
 {
   igstkLogMacro2( logger, DEBUG, "Tracker::GetToolTransform called...\n" )
   m_Tracker->UpdateStatus();
-  m_Tracker->GetToolTransform( TRACKER_TOOL_PORT, 0, m_TrackerLandmarkTransformToBeSet ); //FIXME, Port Number
+  m_Tracker->GetToolTransform( 
+                       TRACKER_TOOL_PORT, 0, m_TrackerLandmarkTransformToBeSet );
 }
 
 void NeedleBiopsy::RequestClearTrackerLandmarks()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestClearTrackerLandmarks called ... \n")
+  igstkLogMacro2( logger, DEBUG, 
+                      "NeedleBiopsy::RequestClearTrackerLandmarks called ... \n")
   m_StateMachine.PushInput( m_RequestClearTrackerLandmarksInput );
   m_StateMachine.ProcessInputs();
 }
@@ -623,12 +714,14 @@ void NeedleBiopsy::ClearTrackerLandmarksProcessing()
   m_TrackerLandmarksContainer.clear();
   this->NumberOfTrackerLandmarks->value( 0 );
   this->NumberOfTrackerLandmarks->textcolor( FL_BLACK );
-  m_TrackerLandmarkTransform.SetTranslation( m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
+  m_TrackerLandmarkTransform.SetTranslation( 
+                m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
 }
 
 void NeedleBiopsy::RequestRegistration()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestRegistration called ... \n" )
+  igstkLogMacro2( logger, DEBUG, 
+                              "NeedleBiopsy::RequestRegistration called ... \n" )
   m_StateMachine.PushInput( m_RequestRegistrationInput );
   m_StateMachine.ProcessInputs();
 }
@@ -636,8 +729,11 @@ void NeedleBiopsy::RequestRegistration()
 void NeedleBiopsy::RegistrationProcessing()
 {
   LandmarkPointContainerType::iterator it1, it2;
-  for( it1 = m_ImageLandmarksContainer.begin(), it2 = m_TrackerLandmarksContainer.begin(); 
-    it1!=m_ImageLandmarksContainer.end(), it2!=m_TrackerLandmarksContainer.end(); it1++, it2++)
+  for( it1 = m_ImageLandmarksContainer.begin(), 
+       it2 = m_TrackerLandmarksContainer.begin(); 
+       it1 != m_ImageLandmarksContainer.end(), 
+       it2 != m_TrackerLandmarksContainer.end(); 
+       it1 ++ , it2 ++ )
     {
     m_LandmarkRegistration->RequestAddImageLandmarkPoint( *it1);
     m_LandmarkRegistration->RequestAddTrackerLandmarkPoint( *it2 );  
@@ -648,26 +744,30 @@ void NeedleBiopsy::RegistrationProcessing()
 
 void NeedleBiopsy::RequestStartTracking()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestStartTracking called ... \n" )
+  igstkLogMacro2( logger, DEBUG, 
+                             "NeedleBiopsy::RequestStartTracking called ... \n" )
   m_StateMachine.PushInput( m_RequestStartTrackingInput );
   m_StateMachine.ProcessInputs();
 }
 void NeedleBiopsy::StartTrackingProcessing()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::StartTrackingProcessing called ... \n" )
+  igstkLogMacro2( logger, DEBUG, 
+                          "NeedleBiopsy::StartTrackingProcessing called ... \n" )
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Needle );
 
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_NeedleTip );
   m_Tracker->StartTracking();
   m_PulseGenerator->RequestStart();   
-  // We don't have observer for tracker, we are actively reading the transform right now
-  m_StateMachine.PushInput( m_StartTrackingSuccessInput ); // FIXME, How to get the failure condition
+  /** We don't have observer for tracker, we are actively reading the 
+    * transform right now, how to get the failure condition */
+  m_StateMachine.PushInput( m_StartTrackingSuccessInput ); 
   this->TrackingButton->label( "Stop" );
   this->ControlGroup->redraw();
   Fl::check();
   
 }
-/** Callback function for PulseEvent(), intend to actively read tracker tool transform */
+/** Callback function for PulseEvent(), 
+  * intend to actively read tracker tool transform */
 void NeedleBiopsy::Tracking()
 {
   igstkLogMacro( DEBUG,  "Pulse Events...\n" )
@@ -693,7 +793,8 @@ void NeedleBiopsy::Tracking()
 
 void NeedleBiopsy::RequestStopTracking()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestStopTracking called ... \n" )
+  igstkLogMacro2( logger, DEBUG, 
+                              "NeedleBiopsy::RequestStopTracking called ... \n" )
   m_StateMachine.PushInput( m_RequestStopTrackingInput );
   m_StateMachine.ProcessInputs();
 }
@@ -701,10 +802,12 @@ void NeedleBiopsy::RequestStopTracking()
 void NeedleBiopsy::StopTrackingProcessing()
 {
   igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::StopTracking called ... \n" )
-  // We don't have observer for tracker, we are actively reading the transform right now
+  /** We don't have observer for tracker, we are actively reading 
+    * the transform right now */
   m_Tracker->StopTracking();
   m_PulseGenerator->RequestStop();
-  m_StateMachine.PushInput( m_StopTrackingSuccessInput ); // FIXME, How to get the failure condition
+  // FIXME, How to get the failure condition
+  m_StateMachine.PushInput( m_StopTrackingSuccessInput );
   this->TrackingButton->label( "Tracking" );
   this->ControlGroup->redraw();
   Fl::check();
@@ -712,19 +815,26 @@ void NeedleBiopsy::StopTrackingProcessing()
 
 void NeedleBiopsy::RequestResliceImage()
 {
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestResliceImage called ... \n")
+  igstkLogMacro2( logger, DEBUG, 
+                               "NeedleBiopsy::RequestResliceImage called ... \n")
   this->ResliceImage(); // Take out the state machine logic from here
 }
 
 void NeedleBiopsy::ResliceImage()
 {
-  m_ImageRepresentationAxial->RequestSetSliceNumber( static_cast< unsigned int >( this->AxialSlider->value() ) );
-  m_ImageRepresentationSagittal->RequestSetSliceNumber( static_cast< unsigned int >( this->SagittalSlider->value() ) );
-  m_ImageRepresentationCoronal->RequestSetSliceNumber( static_cast< unsigned int >( this->CoronalSlider->value() ) );
+  m_ImageRepresentationAxial->RequestSetSliceNumber( 
+                     static_cast< unsigned int >( this->AxialSlider->value() ) );
+  m_ImageRepresentationSagittal->RequestSetSliceNumber( 
+                  static_cast< unsigned int >( this->SagittalSlider->value() ) );
+  m_ImageRepresentationCoronal->RequestSetSliceNumber( 
+                   static_cast< unsigned int >( this->CoronalSlider->value() ) );
 
-  m_ImageRepresentationAxial3D->RequestSetSliceNumber( static_cast< unsigned int >( this->AxialSlider->value() ) );
-  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( static_cast< unsigned int >( this->SagittalSlider->value() ) );
-  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( static_cast< unsigned int >( this->CoronalSlider->value() ) );
+  m_ImageRepresentationAxial3D->RequestSetSliceNumber( 
+                     static_cast< unsigned int >( this->AxialSlider->value() ) );
+  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( 
+                  static_cast< unsigned int >( this->SagittalSlider->value() ) );
+  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( 
+                   static_cast< unsigned int >( this->CoronalSlider->value() ) );
 
   this->ViewerGroup->redraw();
   Fl::check();
@@ -756,21 +866,33 @@ void NeedleBiopsy::ConnectImageRepresentationProcessing()
   m_Annotation2D->RequestAddAnnotationText( 2, "Subject: " + m_PatientName );
   m_Annotation2D->RequestAddAnnotationText( 0, "Georgetown ISIS Center" );
 
-  m_ImageRepresentationAxial->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
-  m_ImageRepresentationSagittal->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
-  m_ImageRepresentationCoronal->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
+  m_ImageRepresentationAxial->RequestSetImageSpatialObject( 
+                                                    m_ImageReader->GetOutput() );
+  m_ImageRepresentationSagittal->RequestSetImageSpatialObject( 
+                                                    m_ImageReader->GetOutput() );
+  m_ImageRepresentationCoronal->RequestSetImageSpatialObject( 
+                                                    m_ImageReader->GetOutput() );
 
-  m_ImageRepresentationAxial3D->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
-  m_ImageRepresentationSagittal3D->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
-  m_ImageRepresentationCoronal3D->RequestSetImageSpatialObject( m_ImageReader->GetOutput() );
+  m_ImageRepresentationAxial3D->RequestSetImageSpatialObject( 
+                                                    m_ImageReader->GetOutput() );
+  m_ImageRepresentationSagittal3D->RequestSetImageSpatialObject( 
+                                                    m_ImageReader->GetOutput() );
+  m_ImageRepresentationCoronal3D->RequestSetImageSpatialObject( 
+                                                    m_ImageReader->GetOutput() );
  
-  m_ImageRepresentationAxial->RequestSetOrientation( ImageRepresentationType::Axial );
-  m_ImageRepresentationSagittal->RequestSetOrientation( ImageRepresentationType::Sagittal );
-  m_ImageRepresentationCoronal->RequestSetOrientation( ImageRepresentationType::Coronal );
+  m_ImageRepresentationAxial->RequestSetOrientation( 
+                                                ImageRepresentationType::Axial );
+  m_ImageRepresentationSagittal->RequestSetOrientation( 
+                                             ImageRepresentationType::Sagittal );
+  m_ImageRepresentationCoronal->RequestSetOrientation( 
+                                              ImageRepresentationType::Coronal );
 
-  m_ImageRepresentationAxial3D->RequestSetOrientation( ImageRepresentationType::Axial );
-  m_ImageRepresentationSagittal3D->RequestSetOrientation( ImageRepresentationType::Sagittal );
-  m_ImageRepresentationCoronal3D->RequestSetOrientation( ImageRepresentationType::Coronal );
+  m_ImageRepresentationAxial3D->RequestSetOrientation( 
+                                                ImageRepresentationType::Axial );
+  m_ImageRepresentationSagittal3D->RequestSetOrientation( 
+                                             ImageRepresentationType::Sagittal );
+  m_ImageRepresentationCoronal3D->RequestSetOrientation( 
+                                              ImageRepresentationType::Coronal );
 
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
   this->DisplayAxial->RequestAddObject( m_PickedPointRepresentation->Copy() );
@@ -908,14 +1030,15 @@ void NeedleBiopsy
     
     m_Tracker->SetPatientTransform( m_ImageToTrackerTransform );
     
-    igstkLogMacro( DEBUG, "Registration Transform" << m_ImageToTrackerTransform << "\n");
-    //igstkLogMacro( DEBUG, "Registration Transform Inverse" << m_ImageToTrackerTransform.GetInverse() << "\n");
-    igstkLogMacro( DEBUG, "Registration Error" << m_LandmarkRegistration->ComputeRMSError() << "\n");
+    igstkLogMacro( DEBUG, 
+                  "Registration Transform" << m_ImageToTrackerTransform << "\n");
+    igstkLogMacro( DEBUG, 
+      "Registration Error" << m_LandmarkRegistration->ComputeRMSError() << "\n");
     m_StateMachine.PushInput( m_RegistrationSuccessInput );
     }
   else
     {
-    m_StateMachine.PushInput( m_RegistrationFailureInput );   // FIXME.. how to get the failure condition
+    m_StateMachine.PushInput( m_RegistrationFailureInput );
     }
 }
 
@@ -980,16 +1103,18 @@ void NeedleBiopsy::ResetRegistrationProcessing()
 
 void NeedleBiopsy::RequestSetTargetPoint()
 {
-  igstkLogMacro (         DEBUG, "NeedleBiopsy::RequestSetTargetPoint called....\n" )
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestSetTargetPoint called....\n" )
+  igstkLogMacro ( DEBUG, "NeedleBiopsy::RequestSetTargetPoint called....\n" )
+  igstkLogMacro2( logger, DEBUG, 
+                             "NeedleBiopsy::RequestSetTargetPoint called....\n" )
   m_TargetTransform = m_ImageLandmarkTransformToBeSet;
   m_StateMachine.PushInput( m_RequestSetTargetPointInput );
   m_StateMachine.ProcessInputs();
 }
 void NeedleBiopsy::RequestSetEntryPoint()
 {
-  igstkLogMacro (         DEBUG, "NeedleBiopsy::RequestSetEntryPoint called....\n" )
-  igstkLogMacro2( logger, DEBUG, "NeedleBiopsy::RequestSetEntryPoint called....\n" )
+  igstkLogMacro ( DEBUG, "NeedleBiopsy::RequestSetEntryPoint called....\n" )
+  igstkLogMacro2( logger, DEBUG, 
+                              "NeedleBiopsy::RequestSetEntryPoint called....\n" )
   m_EntryTransform = m_ImageLandmarkTransformToBeSet;
   m_StateMachine.PushInput( m_RequestSetEntryPointInput );
   m_StateMachine.ProcessInputs();
@@ -1053,7 +1178,8 @@ void NeedleBiopsy::DrawPathProcessing()
 void NeedleBiopsy::RequestReset()
 {
   igstkLogMacro( DEBUG, "NeedleBiopsy::RequestReset is called... \n" )
-  if ( fl_choice( "Do you really want to reset the program?", NULL, "Yes", "No" ) )
+  if ( fl_choice( "Do you really want to reset the program?", 
+                                                            NULL, "Yes", "No" ) )
     { 
     this->Reset(); // Took out the state machine logic
     }
