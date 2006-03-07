@@ -30,8 +30,8 @@
 #include <fstream>
 #include <set>
 
-#include <ctype.h>
-#include <stdio.h>
+// for memset
+#include <string.h>
 
 #include "itkCommand.h"
 #include "itkLogger.h"
@@ -41,30 +41,6 @@
 #include "igstkNDICommandInterpreter.h"
 #include "igstkSerialCommunicationSimulator.h"
 
-
-/** append a file name to a directory name and provide the result */
-static void joinDirAndFile(char *result, int maxLen,
-                           const char *dirName, const char *fileName)
-{
-  int dirNameLen = strlen( dirName );
-  int fileNameLen = strlen( fileName );
-  const char* slash = ( (dirName[dirNameLen-1] == '/') ? "" : "/" );
-  int slashLen = strlen( slash );
-
-  // allocate temporary string, concatenate
-  char* fullName = new char[dirNameLen + slashLen + fileNameLen + 1];
-  strncpy(&fullName[0], dirName, dirNameLen);
-  strncpy(&fullName[dirNameLen], slash, slashLen);
-  strncpy(&fullName[dirNameLen + slashLen], fileName, fileNameLen);
-  fullName[dirNameLen + slashLen + fileNameLen] = '\0';
-
-  // copy to the result
-  strncpy(result, fullName, maxLen);
-  result[maxLen-1] = '\0';
-
-  // delete temporary string
-  delete [] fullName;
-}
 
 class NDICommandInterpreterTestCommand : public itk::Command 
 {
@@ -148,11 +124,11 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
   interpreter->AddObserver( igstk::NDIErrorEvent(), errorCommand );
 
   // load a previously captured file
-  char pathToCaptureFile[1024];
-  joinDirAndFile( pathToCaptureFile, 1024,
-                  IGSTK_DATA_ROOT,
-                  "Input/polaris_stream_NDICommandInterpreterStress.txt" );
-  serialComm->SetFileName( pathToCaptureFile );
+  std::string igstkDataDirectory = IGSTK_DATA_ROOT;
+  std::string simulationFile = igstkDataDirectory + "/";
+  simulationFile = simulationFile + 
+    "Input/polaris_stream_NDICommandInterpreterStress.txt";
+  serialComm->SetFileName( simulationFile.c_str() );
 
   serialComm->SetPortNumber(IGSTK_TEST_POLARIS_PORT_NUMBER);
 
@@ -266,13 +242,15 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
   // -- write a virtual SROM to this port
   char data[1024]; // to hold the srom data
   memset( data, 0, 1024 );
-  char pathToRomFile[1024];
-  joinDirAndFile( pathToRomFile, 1024,
-                  IGSTK_DATA_ROOT,
-                  "Input/polaris_passive_pointer_1.rom" );
-  FILE *file = fopen( pathToRomFile, "rb" );
-  fread( data, 1, 1024, file );
-  fclose( file );
+  std::string romDataRoot = IGSTK_DATA_ROOT;
+  std::string romFileName = romDataRoot +
+    "/Input/polaris_passive_pointer_1.rom";
+  
+  std::ifstream romFile;
+  romFile.open( romFileName.c_str() );
+  romFile.read( data, 1024 );
+  romFile.close();
+
   for ( i = 0; i < 1024; i += 64 )
     {
     // convert data to hexidecimal and write to virtual SROM in

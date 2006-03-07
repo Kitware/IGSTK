@@ -23,8 +23,6 @@
 #include <fstream>
 #include <set>
 
-#include <string.h>
-
 #include "itkCommand.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -60,31 +58,6 @@ public:
 };
 
 
-/** append a file name to a directory name and provide the result */
-static void joinDirAndFile(char *result, int maxLen,
-                           const char *dirName, const char *fileName)
-{
-  int dirNameLen = strlen( dirName );
-  int fileNameLen = strlen( fileName );
-  const char* slash = ( (dirName[dirNameLen-1] == '/') ? "" : "/" );
-  int slashLen = strlen( slash );
-
-  // allocate temporary string, concatenate
-  char* fullName = new char[dirNameLen + slashLen + fileNameLen + 1];
-  strncpy(&fullName[0], dirName, dirNameLen);
-  strncpy(&fullName[dirNameLen], slash, slashLen);
-  strncpy(&fullName[dirNameLen + slashLen], fileName, fileNameLen);
-  fullName[dirNameLen + slashLen + fileNameLen] = '\0';
-
-  // copy to the result
-  strncpy(result, fullName, maxLen);
-  result[maxLen-1] = '\0';
-
-  // delete temporary string
-  delete [] fullName;
-}
-
-
 int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 {
 
@@ -102,12 +75,10 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
   serialComm->OpenCommunication();
 
   // set the name of the actual data file
-  char fullName[1024];
-  joinDirAndFile( fullName, 1024,
-                  IGSTK_DATA_ROOT,
-                  "Input/polaris_stream_07_27_2005.txt" );
-  std::cout << fullName << std::endl; 
-  serialComm->SetFileName( fullName );
+  std::string igstkDataDirectory = IGSTK_DATA_ROOT;
+  std::string simulationFile = igstkDataDirectory + "/";
+  simulationFile = simulationFile + "Input/polaris_stream_07_27_2005.txt";
+  serialComm->SetFileName( simulationFile.c_str() );
   serialComm->GetFileName();
 
   SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
