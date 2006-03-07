@@ -72,6 +72,7 @@ public:
 
   /** Constructor and destructor */
   Transform();
+  Transform( const Transform & t );
   virtual ~Transform();
 
   /** Assign the values of one transform to another */

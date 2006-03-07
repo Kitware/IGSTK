@@ -30,6 +30,15 @@ Transform
   m_Translation.Fill(0.0);
 }
 
+Transform
+::Transform( const Transform & inputTransform  )
+{
+  m_Error        = inputTransform.m_Error;
+  m_Translation  = inputTransform.m_Translation;
+  m_Rotation     = inputTransform.m_Rotation;
+  m_TimeStamp    = inputTransform.m_TimeStamp;
+}
+
 
 Transform
 ::~Transform()
@@ -243,6 +252,6 @@ void Transform::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 
-} // end namespace itk
+} // end namespace igstk
 
 
