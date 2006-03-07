@@ -123,7 +123,6 @@ SET(IGSTKTests_SRCS
   igstkImageReaderTest.cxx
   igstkImageSpatialObjectTest.cxx
   igstkLandmark3DRegistrationTest.cxx
-  igstkMeshObjectTest.cxx
   igstkLandmark3DRegistrationErrorEstimatorTest.cxx
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectTest.cxx
@@ -209,10 +208,11 @@ IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkEllipsoidObjectTest ${IGSTK_TESTS} igstkEllipsoidObjectTest)
   ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTK_TESTS} igstkFLTKTextBufferLogOutputTest)
   ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTK_TESTS} igstkFLTKTextLogOutputTest)
-  ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
-  ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
+  ADD_TEST(igstkMeshObjectTest ${IGSTK_TESTS} igstkMeshObjectTest)
   ADD_TEST(igstkPulseGeneratorTest ${IGSTK_TESTS} igstkPulseGeneratorTest)
   ADD_TEST(igstkTubeObjectTest ${IGSTK_TESTS} igstkTubeObjectTest)
+  ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
+  ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
   
   IF (IGSTK_DATA_ROOT)
     ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest 
