@@ -44,7 +44,7 @@ itkEventMacro( DICOMPatientNameEvent,                             StringEvent);
 itkEventMacro( DICOMImageReaderEvent,                             StringEvent);
 
 // Invalid request error event 
-itkEventMacro( DICOMInvalidRequestErrorEvent,                      
+itkEventMacro( DICOMInvalidRequestErrorEvent,
                DICOMImageReaderEvent );
 
 // Events to handle errors with the ImageDirectory name

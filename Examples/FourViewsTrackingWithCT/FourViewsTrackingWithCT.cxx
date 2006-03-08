@@ -424,7 +424,7 @@ void FourViewsTrackingWithCT::LoadImageProcessing()
       igstkLogMacro2( logger, DEBUG, 
                                 "m_ImageReader->RequestReadImage called... \n" )
       //FIXME. Add observer and callbacks to catch errors?
-      m_ImageReader->RequestReadImage();                   
+      m_ImageReader->RequestReadImage();
 
       m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), 
                               m_LoadImageSuccessInput, m_LoadImageFailureInput);

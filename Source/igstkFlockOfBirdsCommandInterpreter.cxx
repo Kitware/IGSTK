@@ -369,7 +369,7 @@ void FlockOfBirdsCommandInterpreter::SetFormat(
   if (m_StreamData)
     {
     this->EndStream();
-    }    
+    }
   m_DataFormat[m_FBBAddress] = format;
   text[0] = format;
 
@@ -387,7 +387,7 @@ void FlockOfBirdsCommandInterpreter::SetButtonMode(bool mode)
   if (m_StreamData)
     {
     this->EndStream();
-    }    
+    }
   m_ButtonMode[m_FBBAddress] = mode;
   text[0] = FB_BUTTON_MODE;
   text[1] = mode;

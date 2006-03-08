@@ -108,10 +108,8 @@ private:
   void operator=(const Self&);        //purposely not implemented
 
   /** typedefs for the tool */
-  typedef igstk::FlockOfBirdsTrackerTool
-                                     FlockOfBirdsTrackerToolType;
-  typedef FlockOfBirdsTrackerToolType::Pointer
-                                     FlockOfBirdsTrackerToolPointer;
+  typedef igstk::FlockOfBirdsTrackerTool       FlockOfBirdsTrackerToolType;
+  typedef FlockOfBirdsTrackerToolType::Pointer FlockOfBirdsTrackerToolPointer;
   typedef FlockOfBirdsTrackerToolType::ConstPointer
                                      FlockOfBirdsTrackerToolConstPointer;
 
