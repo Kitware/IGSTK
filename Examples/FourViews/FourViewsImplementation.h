@@ -27,10 +27,10 @@
 
 #include "igstkSandboxConfigure.h"
 #include "FourViews.h"
-#include "igstkTubeObjectRepresentation.h"
+#include "igstkVascularNetworkObjectRepresentation.h"
 #include "igstkMeshObjectRepresentation.h"
 #include "itkLogger.h"
-#include "igstkTubeReader.h"
+#include "igstkVascularNetworkReader.h"
 #include "igstkMeshReader.h"
 #include <itkStdStreamLogOutput.h>
 #include "FL/Fl_File_Chooser.H"
@@ -95,9 +95,9 @@ public:
     this->DisplaySagittal->Update();
     }
  
-  void AddTube( igstk::TubeObjectRepresentation * tubeRepresentation )
+  void AddTube( igstk::VascularNetworkObjectRepresentation * tubeRepresentation )
     {
-    igstk::TubeObjectRepresentation::Pointer object = 
+    igstk::VascularNetworkObjectRepresentation::Pointer object = 
                                             tubeRepresentation->Copy();
     m_VesselRepresentationList.push_back(object);
     this->Display3D->RequestAddObject(  object     );
@@ -124,7 +124,8 @@ public:
      
   void LoadVessels()
     {
-    igstk::TubeReader::Pointer tubeReader =  igstk::TubeReader::New();
+    igstk::VascularNetworkReader::Pointer tubeReader 
+                                    =  igstk::VascularNetworkReader::New();
     tubeReader->SetLogger( m_Logger );
        
     const char * filename = 
@@ -136,18 +137,12 @@ public:
       tubeReader->RequestReadObject();
       m_TubeGroup = tubeReader->GetOutput();
 
-      // Create the object representations for the tube
-      for(unsigned int i=0;i<m_TubeGroup->GetNumberOfObjects();i++)
-        {
-        // Create the ellipsoid representation
-        igstk::TubeObject::ConstPointer tube = m_TubeGroup->GetTube(i);
-        igstk::TubeObjectRepresentation::Pointer tubeRepresentation =
-                                      igstk::TubeObjectRepresentation::New();
-        tubeRepresentation->RequestSetTubeObject( tube );
-        tubeRepresentation->SetColor(0.0,1.0,0.0);
-        tubeRepresentation->SetOpacity(1.0);
-        this->AddTube( tubeRepresentation );
-        }
+      igstk::VascularNetworkObjectRepresentation::Pointer tubeRepresentation =
+                                  igstk::VascularNetworkObjectRepresentation::New();
+      tubeRepresentation->RequestSetVascularNetworkObject( m_TubeGroup );
+      tubeRepresentation->SetColor(0.0,1.0,0.0);
+      tubeRepresentation->SetOpacity(1.0);
+      this->AddTube( tubeRepresentation );
       }
 
     this->ResetCameras();
@@ -193,7 +188,7 @@ public:
     for(double k=0;k<10;k+=0.1)
       {
       // Remove all the tubes
-      std::list<igstk::TubeObjectRepresentation::Pointer>::iterator it = 
+      std::list<igstk::VascularNetworkObjectRepresentation::Pointer>::iterator it = 
                                           m_VesselRepresentationList.begin();
       while(it != m_VesselRepresentationList.end())
         {
@@ -206,38 +201,48 @@ public:
       m_VesselRepresentationList.clear();
        
       // Create the object representations for the tube
+      igstk::VascularNetworkObject::Pointer newNetwork 
+                                        = igstk::VascularNetworkObject::New();
+
       for(unsigned int i=0;i<m_TubeGroup->GetNumberOfObjects();i++)
         {
-        // Create the ellipsoid representation
-        igstk::TubeObject::ConstPointer tube = m_TubeGroup->GetTube(i);
-        igstk::TubeObject::Pointer newTube = igstk::TubeObject::New();
+        igstk::VesselObject::ConstPointer tube = m_TubeGroup->GetVessel(i);
+        igstk::VesselObject::Pointer newVessel = igstk::VesselObject::New();
         for(unsigned int j=0;j<tube->GetNumberOfPoints();j++)
           {
-          const igstk::TubeObject::PointType  * pt = tube->GetPoint(j);
-          igstk::TubeObject::PointType ptnew;
+          const igstk::VesselObject::PointType  * pt = tube->GetPoint(j);
+          igstk::VesselObject::PointType ptnew;
           ptnew.SetPosition(pt->GetPosition()[0] + k*sin(j*0.01*k),
                             pt->GetPosition()[1],
                             pt->GetPosition()[2]);
           ptnew.SetRadius(pt->GetRadius());
-          newTube->AddPoint(ptnew);
+          newVessel->AddPoint(ptnew);
           }
-        igstk::TubeObjectRepresentation::Pointer tubeRepresentation = 
-                                        igstk::TubeObjectRepresentation::New();
-        tubeRepresentation->RequestSetTubeObject( newTube );
-        tubeRepresentation->SetColor(0.0,1.0,0.0);
-        tubeRepresentation->SetOpacity(1.0);
-        this->AddTube( tubeRepresentation );
+        newNetwork->RequestAddObject(newVessel);
         }
+
+      igstk::VascularNetworkObjectRepresentation::Pointer tubeRepresentation 
+                          = igstk::VascularNetworkObjectRepresentation::New();
+      tubeRepresentation->RequestSetVascularNetworkObject( newNetwork );
+      tubeRepresentation->SetColor(0.0,1.0,0.0);
+      tubeRepresentation->SetOpacity(1.0);
+      this->AddTube( tubeRepresentation );
+     
+      this->Display3D->redraw();
+      this->DisplayAxial->redraw();
+      this->DisplayCoronal->redraw();
+      this->DisplaySagittal->redraw();
+
       Fl::check();
       }
     }
 
 private:
 
-  igstk::TubeGroupObject::ConstPointer  m_TubeGroup;
-  itk::Logger::Pointer                  m_Logger;
-  std::list<igstk::TubeObjectRepresentation::Pointer> 
-                                        m_VesselRepresentationList;
+  igstk::VascularNetworkObject::ConstPointer  m_TubeGroup;
+  itk::Logger::Pointer                        m_Logger;
+  std::list<igstk::VascularNetworkObjectRepresentation::Pointer> 
+                                              m_VesselRepresentationList;
 
 };
 
