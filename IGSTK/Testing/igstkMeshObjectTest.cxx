@@ -67,7 +67,7 @@ public:
 
   void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
-    std::cerr << "Execute( const * ) should not be called" << std::endl;         
+    std::cerr << "Execute( const * ) should not be called" << std::endl;
     }
 
   void SetView( ::igstk::View * view )
@@ -123,8 +123,8 @@ private:
 class TransformObserver : public ::itk::Command 
 {
 public:
-  typedef  TransformObserver   Self;
-  typedef  ::itk::Command    Superclass;
+  typedef  TransformObserver          Self;
+  typedef  ::itk::Command             Superclass;
   typedef  ::itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
 protected:
@@ -259,7 +259,7 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   //std::cout << "Creating form" << std::endl;
   Fl_Window * form = new Fl_Window(512,512,"MeshObject Test");
 
- // std::cout << "Creating view" << std::endl;
+  // std::cout << "Creating view" << std::endl;
   typedef igstk::View3D  View3DType;
   View3DType * view3D = new View3DType(6,6,500,500,"View 3D");
   
@@ -369,7 +369,8 @@ int igstkMeshObjectTest( int argc, char * argv [] )
                                               ObjectRepresentationType::New();
   MeshRepresentation3->RequestSetMeshObject( 0 );
 
-  // Exercise RequestSetMeshObject() called twice. The second call should be ignored.
+  // Exercise RequestSetMeshObject() called twice. 
+  // The second call should be ignored.
   std::cout << "Testing RequestSetMeshObject() called twice: ";
   ObjectRepresentationType::Pointer MeshRepresentation4 = 
                                               ObjectRepresentationType::New();

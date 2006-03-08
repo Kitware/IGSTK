@@ -31,12 +31,15 @@
 namespace igstk
 {
 
-  namespace ImageSpatialObjectRepresentationTest
-  {
-    class ImageRepresentationObserver : public ::itk::Command
-    {
-    public:
-      typedef ImageRepresentationObserver  Self;
+namespace ImageSpatialObjectRepresentationTest
+{
+
+class ImageRepresentationObserver : public ::itk::Command
+{
+
+public:
+  
+  typedef ImageRepresentationObserver  Self;
       typedef itk::SmartPointer<Self>      Pointer;
       typedef itk::Command                 Superclass;
       itkNewMacro(Self);
@@ -115,8 +118,6 @@ namespace igstk
   }
 }
 
-
-
 int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 {
 
@@ -126,14 +127,11 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   typedef short    PixelType;
   const unsigned int Dimension = 3;
 
-  typedef igstk::ImageSpatialObject< 
-                                PixelType, 
-                                Dimension 
-                                       > ImageSpatialObjectType;
+  typedef igstk::ImageSpatialObject<PixelType,Dimension> 
+                                                       ImageSpatialObjectType;
   
-  typedef igstk::ImageSpatialObjectRepresentation< 
-                                  ImageSpatialObjectType 
-                                                      >   RepresentationType;
+  typedef igstk::ImageSpatialObjectRepresentation<ImageSpatialObjectType>   
+                                                           RepresentationType;
 
   RepresentationType::Pointer  representation = RepresentationType::New();
 
@@ -170,7 +168,8 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   representation->RequestSetImageSpatialObject( NULL );
 
   // Test correct case
-  ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New();
+  ImageSpatialObjectType::Pointer imageSpatialObject = 
+                                                ImageSpatialObjectType::New();
   representation->RequestSetImageSpatialObject( imageSpatialObject );
 
   // Exercise the TypeMacro() which defines the GetNameOfClass()
@@ -301,54 +300,54 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     }
   }
 
-  {
-  std::cout << " Sagittal View " << std::endl;
-  representation->RequestSetOrientation( RepresentationType::Sagittal );
-  view2D->RequestSetOrientation( igstk::View2D::Sagittal );
-  view2D->RequestResetCamera();
-  for(unsigned int i=0; i<10; i++)
     {
-    representation->RequestSetSliceNumber( i );
-    igstk::PulseGenerator::CheckTimeouts();
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
-    std::cout << "i= " << i << std::endl;
+    std::cout << " Sagittal View " << std::endl;
+    representation->RequestSetOrientation( RepresentationType::Sagittal );
+    view2D->RequestSetOrientation( igstk::View2D::Sagittal );
+    view2D->RequestResetCamera();
+    for(unsigned int i=0; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      igstk::PulseGenerator::CheckTimeouts();
+      view2D->Update();  // schedule redraw of the view
+      Fl::check();       // trigger FLTK redraws
+      std::cout << "i= " << i << std::endl;
+      }
     }
-  }
-  {
-  std::cout << " Coronal View " << std::endl;
-  representation->RequestSetOrientation( RepresentationType::Coronal );
-  view2D->RequestSetOrientation( igstk::View2D::Coronal );
-  view2D->RequestResetCamera();
-  for(unsigned int i=0; i<511; i++)
+
     {
-    representation->RequestSetSliceNumber( i );
-    igstk::PulseGenerator::CheckTimeouts();
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
-    std::cout << "i= " << i << std::endl;
+    std::cout << " Coronal View " << std::endl;
+    representation->RequestSetOrientation( RepresentationType::Coronal );
+    view2D->RequestSetOrientation( igstk::View2D::Coronal );
+    view2D->RequestResetCamera();
+    for(unsigned int i=0; i<511; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      igstk::PulseGenerator::CheckTimeouts();
+      view2D->Update();  // schedule redraw of the view
+      Fl::check();       // trigger FLTK redraws
+      std::cout << "i= " << i << std::endl;
+      }
     }
-  }
-  // On purpose request non-existing slices. 
-  // The requests should be ignored by the state machine.
-  {
-  representation->RequestSetOrientation( RepresentationType::Axial );
-  view2D->RequestSetOrientation( igstk::View2D::Axial );
-  view2D->RequestResetCamera();
- 
-  for(unsigned int i=5; i<10; i++)
+    // On purpose request non-existing slices. 
+    // The requests should be ignored by the state machine.
     {
-    representation->RequestSetSliceNumber( i );
-    igstk::PulseGenerator::CheckTimeouts();
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
-    std::cout << "i= " << i << std::endl;
+    representation->RequestSetOrientation( RepresentationType::Axial );
+    view2D->RequestSetOrientation( igstk::View2D::Axial );
+    view2D->RequestResetCamera();
+   
+    for(unsigned int i=5; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      igstk::PulseGenerator::CheckTimeouts();
+      view2D->Update();  // schedule redraw of the view
+      Fl::check();       // trigger FLTK redraws
+      std::cout << "i= " << i << std::endl;
+      }
     }
-  }
+
   delete view2D;
   delete form;
  
-
   return EXIT_SUCCESS;
 }
-

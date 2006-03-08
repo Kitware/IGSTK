@@ -95,7 +95,8 @@ public:
     this->DisplaySagittal->Update();
     }
  
-  void AddTube( igstk::VascularNetworkObjectRepresentation * tubeRepresentation )
+  void AddTube( igstk::VascularNetworkObjectRepresentation 
+                                                  * tubeRepresentation )
     {
     igstk::VascularNetworkObjectRepresentation::Pointer object = 
                                             tubeRepresentation->Copy();
@@ -138,7 +139,7 @@ public:
       m_TubeGroup = tubeReader->GetOutput();
 
       igstk::VascularNetworkObjectRepresentation::Pointer tubeRepresentation =
-                                  igstk::VascularNetworkObjectRepresentation::New();
+                            igstk::VascularNetworkObjectRepresentation::New();
       tubeRepresentation->RequestSetVascularNetworkObject( m_TubeGroup );
       tubeRepresentation->SetColor(0.0,1.0,0.0);
       tubeRepresentation->SetOpacity(1.0);
@@ -188,8 +189,8 @@ public:
     for(double k=0;k<10;k+=0.1)
       {
       // Remove all the tubes
-      std::list<igstk::VascularNetworkObjectRepresentation::Pointer>::iterator it = 
-                                          m_VesselRepresentationList.begin();
+      std::list<igstk::VascularNetworkObjectRepresentation::Pointer>::iterator
+                                      it = m_VesselRepresentationList.begin();
       while(it != m_VesselRepresentationList.end())
         {
         this->Display3D->RequestRemoveObject( *it );
