@@ -96,7 +96,9 @@ public:
 
   /** Add a triangle cell to the mesh */
   bool AddTriangleCell(unsigned int id,
-                       unsigned int vertex1,unsigned int vertex2,unsigned int vertex3);
+                       unsigned int vertex1,
+                       unsigned int vertex2,
+                       unsigned int vertex3);
 
   /** Return the points */
   const PointsContainerPointer GetPoints() const;

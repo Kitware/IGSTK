@@ -96,4 +96,3 @@ int igstkTubeReaderTest( int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
-

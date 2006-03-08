@@ -24,7 +24,8 @@ namespace igstk
 MeshObject::MeshObject():m_StateMachine(this)
 {
   m_Mesh = MeshType::New();
-  m_Mesh->SetCellsAllocationMethod( MeshType::CellsAllocatedDynamicallyCellByCell );
+  m_Mesh->SetCellsAllocationMethod( 
+                              MeshType::CellsAllocatedDynamicallyCellByCell );
   
   // Create the mesh Spatial Object
   m_MeshSpatialObject = MeshSpatialObjectType::New();
@@ -59,7 +60,10 @@ bool MeshObject::AddPoint(unsigned int id,float x, float y,float z)
 }
 
 /** Add a triangle cell to the mesh */
-bool MeshObject::AddTriangleCell(unsigned int id,unsigned int vertex1,unsigned int vertex2,unsigned int vertex3)
+bool MeshObject::AddTriangleCell(unsigned int id,
+                                 unsigned int vertex1,
+                                 unsigned int vertex2,
+                                 unsigned int vertex3)
 {
   CellAutoPointer cell; 
   cell.TakeOwnership(  new TriangleCellType );
@@ -75,7 +79,11 @@ bool MeshObject::AddTriangleCell(unsigned int id,unsigned int vertex1,unsigned i
 }
 
 /** Add a tetrahedron cell to the mesh */
-bool MeshObject::AddTetrahedronCell(unsigned int id,unsigned int vertex1,unsigned int vertex2,unsigned int vertex3,unsigned int vertex4)
+bool MeshObject::AddTetrahedronCell(unsigned int id,
+                                    unsigned int vertex1,
+                                    unsigned int vertex2,
+                                    unsigned int vertex3,
+                                    unsigned int vertex4)
 {
   CellAutoPointer cell; 
   cell.TakeOwnership(  new TetraCellType );
@@ -112,9 +120,8 @@ void MeshObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
     {
     os << indent << this->m_MeshSpatialObject << std::endl;
     }
-   os << indent << this->m_Mesh << std::endl;
+  os << indent << this->m_Mesh << std::endl;
 }
 
 
 } // end namespace igstk
-
