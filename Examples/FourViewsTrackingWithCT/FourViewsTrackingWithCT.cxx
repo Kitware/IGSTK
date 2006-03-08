@@ -71,9 +71,9 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_LandmarkRegistration->SetLogger( logger );
   m_LandmarkRegistrationObserver = ObserverType2::New();
   m_LandmarkRegistrationObserver->SetCallbackFunction( this, 
-                    &FourViewsTrackingWithCT::GetLandmarkRegistrationTransform );
+                   &FourViewsTrackingWithCT::GetLandmarkRegistrationTransform );
   m_LandmarkRegistration->AddObserver( TransformModifiedEvent(), 
-                                                m_LandmarkRegistrationObserver );
+                                               m_LandmarkRegistrationObserver );
 
   m_SerialCommunication = CommunicationType::New();
   m_SerialCommunication->SetLogger( logger );
@@ -83,7 +83,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_SerialCommunication->SetDataBits( SerialCommunication::DataBits8 );
   m_SerialCommunication->SetStopBits( SerialCommunication::StopBits1 );
   m_SerialCommunication->SetHardwareHandshake( 
-                                             SerialCommunication::HandshakeOff );
+                                            SerialCommunication::HandshakeOff );
   m_SerialCommunication->OpenCommunication();
   
   m_Tracker = TrackerType::New();
@@ -304,8 +304,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
                            ImageLandmarksReady, No );
 
   /** Set tracker landmarks, require same number of landmarks as in 
-    * image landmark 
-    */
+    * image landmark */
   igstkAddTransitionMacro( TrackerReady, RequestAddTrackerLandmark, 
                            AddingTrackerLandmark, AddTrackerLandmark );
   igstkAddTransitionMacro( AddingTrackerLandmark, RequestAddTrackerLandmark, 
@@ -401,7 +400,7 @@ void FourViewsTrackingWithCT::SetPatientNameProcessing()
 void FourViewsTrackingWithCT::RequestLoadImage()
 {
   igstkLogMacro2( logger, DEBUG, 
-              "FourViewsTrackingWithCT::RequestLoadImageProcessing called...\n" )
+             "FourViewsTrackingWithCT::RequestLoadImageProcessing called...\n" )
   m_StateMachine.PushInput( m_RequestLoadImageInput );
   m_StateMachine.ProcessInputs();
 }
@@ -409,26 +408,26 @@ void FourViewsTrackingWithCT::RequestLoadImage()
 void FourViewsTrackingWithCT::LoadImageProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-                     "FourViewsTrackingWithCT::LoadImageProcessing called...\n" )
+                    "FourViewsTrackingWithCT::LoadImageProcessing called...\n" )
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
   if ( directoryname != NULL )
     {
       m_ImageReader->RequestResetReader();
       igstkLogMacro( DEBUG, 
-                         "Set ImageReader directory: " << directoryname << "\n" )
+                        "Set ImageReader directory: " << directoryname << "\n" )
       igstkLogMacro2( logger, DEBUG, 
-                               "m_ImageReader->RequestSetDirectory called...\n" )
+                              "m_ImageReader->RequestSetDirectory called...\n" )
       //FIXME. Add observer and callbacks to catch errors?
       m_ImageReader->RequestSetDirectory( directoryname ); 
 
       igstkLogMacro( DEBUG, "ImageReader loading images... \n" )
       igstkLogMacro2( logger, DEBUG, 
-                                 "m_ImageReader->RequestReadImage called... \n" )
+                                "m_ImageReader->RequestReadImage called... \n" )
       //FIXME. Add observer and callbacks to catch errors?
       m_ImageReader->RequestReadImage();                   
 
       m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), 
-                               m_LoadImageSuccessInput, m_LoadImageFailureInput);
+                              m_LoadImageSuccessInput, m_LoadImageFailureInput);
     }
   else
     {
@@ -441,13 +440,13 @@ void FourViewsTrackingWithCT::LoadImageProcessing()
 void FourViewsTrackingWithCT::VerifyPatientNameProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-            "FourViewsTrackingWithCT::VerifyPatientNameProcessing called ... \n")
+           "FourViewsTrackingWithCT::VerifyPatientNameProcessing called ... \n")
   if ( m_ImageReader->GetPatientName() == m_PatientName )
     {
     igstkLogMacro( DEBUG, 
-               "Registered patient name match with the name in loaded image \n" )
+              "Registered patient name match with the name in loaded image \n" )
     igstkLogMacro2( logger, DEBUG, 
-               "Registered patient name match with the name in loaded image \n" )
+              "Registered patient name match with the name in loaded image \n" )
     m_StateMachine.PushInput( m_PatientNameMatchInput );
     }
   else
@@ -458,7 +457,7 @@ void FourViewsTrackingWithCT::VerifyPatientNameProcessing()
     msg += "Image has the name of: " + m_ImageReader->GetPatientName() +"\n";
     msg += "Name mismatch!!!!\n";
     msg += "Do you want to load another image? \
-                                        choose \'no\' will overwrite the name\n";
+                                       choose \'no\' will overwrite the name\n";
     int i = fl_choice( msg.c_str(), "Yes", "No", "Cancel");
     if ( i )
       {
@@ -470,9 +469,9 @@ void FourViewsTrackingWithCT::VerifyPatientNameProcessing()
       {
       m_PatientName = m_ImageReader->GetPatientName();
       igstkLogMacro( DEBUG, 
-                     "Patient name is overwritten to:" << m_PatientName << "\n" )
+                    "Patient name is overwritten to:" << m_PatientName << "\n" )
       igstkLogMacro2( logger, DEBUG, 
-                     "Patient name is overwritten to:" << m_PatientName << "\n" )
+                    "Patient name is overwritten to:" << m_PatientName << "\n" )
       m_StateMachine.PushInput( m_OverwritePatientNameInput );
       }
     }
@@ -481,7 +480,7 @@ void FourViewsTrackingWithCT::VerifyPatientNameProcessing()
 void FourViewsTrackingWithCT::RequestInitializeTracker()
 {
   igstkLogMacro2( logger, DEBUG, 
-              "FourViewsTrackingWithCT::RequestInitializeTracker called ... \n" )
+             "FourViewsTrackingWithCT::RequestInitializeTracker called ... \n" )
   m_StateMachine.PushInput( m_RequestInitializeTrackerInput );
   m_StateMachine.ProcessInputs();
 }
@@ -489,20 +488,20 @@ void FourViewsTrackingWithCT::RequestInitializeTracker()
 void FourViewsTrackingWithCT::InitializeTrackerProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-           "FourViewsTrackingWithCT::InitializeTrackerProcessing called ... \n" )
+          "FourViewsTrackingWithCT::InitializeTrackerProcessing called ... \n" )
   m_Tracker->Open();
   m_Tracker->AttachSROMFileNameToPort( 
-                                     TRACKER_TOOL_PORT, TRACKER_TOOL_SROM_FILE );
+                                    TRACKER_TOOL_PORT, TRACKER_TOOL_SROM_FILE );
   m_Tracker->Initialize();
   m_Tracker->StartTracking();
   m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(), 
-              m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
+             m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
 }
 
 void FourViewsTrackingWithCT::RequestAddImageLandmark()
 {
   igstkLogMacro2( logger, DEBUG, 
-               "FourViewsTrackingWithCT::RequestAddImageLandmark called ... \n" )
+              "FourViewsTrackingWithCT::RequestAddImageLandmark called ... \n" )
   m_StateMachine.PushInput( m_RequestAddImageLandmarkInput );
   m_StateMachine.ProcessInputs();
 }
@@ -510,11 +509,11 @@ void FourViewsTrackingWithCT::RequestAddImageLandmark()
 void FourViewsTrackingWithCT::AddImageLandmarkProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-            "FourViewsTrackingWithCT::AddImageLandmarkProcessing called ... \n" )
+           "FourViewsTrackingWithCT::AddImageLandmarkProcessing called ... \n" )
 
     /** Check if there is an updated image landmark picking point */
-    if ( m_ImageLandmarkTransform.GetTranslation() 
-                            != m_ImageLandmarkTransformToBeSet.GetTranslation() )
+    if ( m_ImageLandmarkTransform.GetTranslation() != 
+                              m_ImageLandmarkTransformToBeSet.GetTranslation() )
       {
       LandmarkPointType  p;
       p[0] = m_ImageLandmarkTransformToBeSet.GetTranslation()[0];
@@ -533,9 +532,10 @@ void FourViewsTrackingWithCT::AddImageLandmarkProcessing()
         }
       
       m_ImageLandmarkTransform.SetTranslation( 
-                  m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
-      igstkLogMacro(          DEBUG, "Image landmark point added: "<< p << "\n" )
-      igstkLogMacro2( logger, DEBUG, "Image landmark point added: "<< p << "\n" )
+                 m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
+      igstkLogMacro( DEBUG, "Image landmark point added: "<< p << "\n" )
+      igstkLogMacro2( logger, DEBUG, 
+                                    "Image landmark point added: "<< p << "\n" )
 
       }
     else
@@ -545,13 +545,13 @@ void FourViewsTrackingWithCT::AddImageLandmarkProcessing()
       }
 
   m_StateMachine.PushInputBoolean( (m_ImageLandmarksContainer.size()>=3),
-                     m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
+                    m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
 }
 
 void FourViewsTrackingWithCT::RequestClearImageLandmarks()
 {
   igstkLogMacro2( logger, DEBUG, 
-             "FourViewsTrackingWithCT::RequestClearImageLandmarks called ... \n")
+            "FourViewsTrackingWithCT::RequestClearImageLandmarks called ... \n")
   m_StateMachine.PushInput( m_RequestClearImageLandmarksInput );
   m_StateMachine.ProcessInputs();
 }
@@ -564,13 +564,13 @@ void FourViewsTrackingWithCT::ClearImageLandmarksProcessing()
   this->NumberOfImageLandmarks->value( 0 );
   this->NumberOfImageLandmarks->textcolor( FL_BLACK );
   m_ImageLandmarkTransform.SetTranslation( 
-                  m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
+                 m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
 }
 
 void FourViewsTrackingWithCT::RequestAddTrackerLandmark()
 {
   igstkLogMacro2( logger, DEBUG, 
-              "FourViewsTrackingWithCT::RequestAddTrackerLandmark called ... \n")
+             "FourViewsTrackingWithCT::RequestAddTrackerLandmark called ... \n")
   m_StateMachine.PushInput( m_RequestAddTrackerLandmarkInput );
   m_StateMachine.ProcessInputs();
 }
@@ -578,12 +578,12 @@ void FourViewsTrackingWithCT::RequestAddTrackerLandmark()
 void FourViewsTrackingWithCT::AddTrackerLandmarkProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-           "FourViewsTrackingWithCT::AddTrackerLandmarkProcessing called ... \n")
+          "FourViewsTrackingWithCT::AddTrackerLandmarkProcessing called ... \n")
   
   this->GetTrackerTransform(); 
   
-  if ( m_TrackerLandmarkTransform.GetTranslation() 
-                           != m_TrackerLandmarkTransformToBeSet.GetTranslation())
+  if ( m_TrackerLandmarkTransform.GetTranslation() != 
+                             m_TrackerLandmarkTransformToBeSet.GetTranslation())
     {
 
     LandmarkPointType  p;
@@ -603,9 +603,10 @@ void FourViewsTrackingWithCT::AddTrackerLandmarkProcessing()
       }
 
     m_TrackerLandmarkTransform.SetTranslation( 
-                m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
-    igstkLogMacro(          DEBUG, "Tracker landmark point added: "<< p << "\n" )
-    igstkLogMacro2( logger, DEBUG, "Tracker landmark point added: "<< p << "\n" )
+               m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
+    igstkLogMacro( DEBUG, "Tracker landmark point added: "<< p << "\n" )
+    igstkLogMacro2( logger, DEBUG, 
+                                  "Tracker landmark point added: "<< p << "\n" )
 
     }
   else
@@ -615,8 +616,8 @@ void FourViewsTrackingWithCT::AddTrackerLandmarkProcessing()
     }  
 
   m_StateMachine.PushInputBoolean( 
-       ( m_TrackerLandmarksContainer.size() < m_ImageLandmarksContainer.size() ),
-                    m_NeedMoreLandmarkPointsInput, m_EnoughLandmarkPointsInput );
+      ( m_TrackerLandmarksContainer.size() < m_ImageLandmarksContainer.size() ),
+                   m_NeedMoreLandmarkPointsInput, m_EnoughLandmarkPointsInput );
 }
 
 void FourViewsTrackingWithCT::GetTrackerTransform()
@@ -624,13 +625,13 @@ void FourViewsTrackingWithCT::GetTrackerTransform()
   igstkLogMacro2( logger, DEBUG, "Tracker::GetToolTransform called...\n" )
   m_Tracker->UpdateStatus();
   m_Tracker->GetToolTransform( 
-                       TRACKER_TOOL_PORT, 0, m_TrackerLandmarkTransformToBeSet );
+                      TRACKER_TOOL_PORT, 0, m_TrackerLandmarkTransformToBeSet );
 }
 
 void FourViewsTrackingWithCT::RequestClearTrackerLandmarks()
 {
   igstkLogMacro2( logger, DEBUG, 
-           "FourViewsTrackingWithCT::RequestClearTrackerLandmarks called ... \n")
+          "FourViewsTrackingWithCT::RequestClearTrackerLandmarks called ... \n")
   m_StateMachine.PushInput( m_RequestClearTrackerLandmarksInput );
   m_StateMachine.ProcessInputs();
 }
@@ -643,13 +644,13 @@ void FourViewsTrackingWithCT::ClearTrackerLandmarksProcessing()
   this->NumberOfTrackerLandmarks->value( 0 );
   this->NumberOfTrackerLandmarks->textcolor( FL_BLACK );
   m_TrackerLandmarkTransform.SetTranslation( 
-                m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
+               m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
 }
 
 void FourViewsTrackingWithCT::RequestRegistration()
 {
   igstkLogMacro2( logger, DEBUG, 
-                   "FourViewsTrackingWithCT::RequestRegistration called ... \n" )
+                  "FourViewsTrackingWithCT::RequestRegistration called ... \n" )
   m_StateMachine.PushInput( m_RequestRegistrationInput );
   m_StateMachine.ProcessInputs();
 }
@@ -673,7 +674,7 @@ void FourViewsTrackingWithCT::RegistrationProcessing()
 void FourViewsTrackingWithCT::RequestStartTracking()
 {
   igstkLogMacro2( logger, DEBUG, 
-                  "FourViewsTrackingWithCT::RequestStartTracking called ... \n" )
+                 "FourViewsTrackingWithCT::RequestStartTracking called ... \n" )
   m_StateMachine.PushInput( m_RequestStartTrackingInput );
   m_StateMachine.ProcessInputs();
 }
@@ -681,20 +682,20 @@ void FourViewsTrackingWithCT::RequestStartTracking()
 void FourViewsTrackingWithCT::StartTrackingProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-               "FourViewsTrackingWithCT::StartTrackingProcessing called ... \n" )
+              "FourViewsTrackingWithCT::StartTrackingProcessing called ... \n" )
 
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Cylinder );
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Ellipsoid );
   m_Tracker->StartTracking();
   m_PulseGenerator->RequestStart();   
   /** We don't have observer for tracker, we are actively reading the transform 
-    * right now,how to get the failure condition
-    */
+    * right now,how to get the failure condition */
   m_StateMachine.PushInput( m_StartTrackingSuccessInput ); 
   
 }
 
-/** Callback function for PulseEvent(), intend to actively read tracker tool transform */
+/** Callback function for PulseEvent(), 
+  * intend to actively read tracker tool transform */
 void FourViewsTrackingWithCT::Tracking()
 {
   igstkLogMacro( DEBUG,  "Pulse Events...\n" )
@@ -726,7 +727,7 @@ void FourViewsTrackingWithCT::Tracking()
 void FourViewsTrackingWithCT::RequestStopTracking()
 {
   igstkLogMacro2( logger, DEBUG, 
-                   "FourViewsTrackingWithCT::RequestStopTracking called ... \n" )
+                  "FourViewsTrackingWithCT::RequestStopTracking called ... \n" )
   m_StateMachine.PushInput( m_RequestStopTrackingInput );
   m_StateMachine.ProcessInputs();
 }
@@ -734,7 +735,7 @@ void FourViewsTrackingWithCT::RequestStopTracking()
 void FourViewsTrackingWithCT::StopTrackingProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-                          "FourViewsTrackingWithCT::StopTracking called ... \n" )
+                         "FourViewsTrackingWithCT::StopTracking called ... \n" )
   /** We don't have observer for tracker, we are actively reading the transform 
     * right now
     */
@@ -747,25 +748,25 @@ void FourViewsTrackingWithCT::StopTrackingProcessing()
 void FourViewsTrackingWithCT::RequestResliceImage()
 {
   igstkLogMacro2( logger, DEBUG, 
-                    "FourViewsTrackingWithCT::RequestResliceImage called ... \n")
+                   "FourViewsTrackingWithCT::RequestResliceImage called ... \n")
   this->ResliceImage(); // Take out the state machine logic from here
 }
 
 void FourViewsTrackingWithCT::ResliceImage()
 {
   m_ImageRepresentationAxial->RequestSetSliceNumber( 
-                     static_cast< unsigned int >( this->AxialSlider->value() ) );
+                    static_cast< unsigned int >( this->AxialSlider->value() ) );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( 
-                  static_cast< unsigned int >( this->SagittalSlider->value() ) );
+                 static_cast< unsigned int >( this->SagittalSlider->value() ) );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( 
-                   static_cast< unsigned int >( this->CoronalSlider->value() ) );
+                  static_cast< unsigned int >( this->CoronalSlider->value() ) );
 
   m_ImageRepresentationAxial3D->RequestSetSliceNumber( 
-                     static_cast< unsigned int >( this->AxialSlider->value() ) );
+                    static_cast< unsigned int >( this->AxialSlider->value() ) );
   m_ImageRepresentationSagittal3D->RequestSetSliceNumber( 
-                  static_cast< unsigned int >( this->SagittalSlider->value() ) );
+                 static_cast< unsigned int >( this->SagittalSlider->value() ) );
   m_ImageRepresentationCoronal3D->RequestSetSliceNumber( 
-                   static_cast< unsigned int >( this->CoronalSlider->value() ) );
+                  static_cast< unsigned int >( this->CoronalSlider->value() ) );
 
   igstk::PulseGenerator::CheckTimeouts();
   this->ViewerGroup->redraw();
@@ -800,32 +801,32 @@ void FourViewsTrackingWithCT::ResliceImage ( IndexType index )
 void FourViewsTrackingWithCT::ConnectImageRepresentationProcessing()
 {
   m_ImageRepresentationAxial->RequestSetImageSpatialObject( 
-                                                    m_ImageReader->GetOutput() );
+                                                   m_ImageReader->GetOutput() );
   m_ImageRepresentationSagittal->RequestSetImageSpatialObject( 
-                                                    m_ImageReader->GetOutput() );
+                                                   m_ImageReader->GetOutput() );
   m_ImageRepresentationCoronal->RequestSetImageSpatialObject( 
-                                                    m_ImageReader->GetOutput() );
+                                                   m_ImageReader->GetOutput() );
 
   m_ImageRepresentationAxial3D->RequestSetImageSpatialObject( 
-                                                    m_ImageReader->GetOutput() );
+                                                   m_ImageReader->GetOutput() );
   m_ImageRepresentationSagittal3D->RequestSetImageSpatialObject( 
-                                                    m_ImageReader->GetOutput() );
+                                                   m_ImageReader->GetOutput() );
   m_ImageRepresentationCoronal3D->RequestSetImageSpatialObject( 
-                                                    m_ImageReader->GetOutput() );
+                                                   m_ImageReader->GetOutput() );
  
   m_ImageRepresentationAxial->RequestSetOrientation( 
-                                                ImageRepresentationType::Axial );
+                                               ImageRepresentationType::Axial );
   m_ImageRepresentationSagittal->RequestSetOrientation( 
-                                             ImageRepresentationType::Sagittal );
+                                            ImageRepresentationType::Sagittal );
   m_ImageRepresentationCoronal->RequestSetOrientation( 
-                                              ImageRepresentationType::Coronal );
+                                             ImageRepresentationType::Coronal );
 
   m_ImageRepresentationAxial3D->RequestSetOrientation( 
-                                                ImageRepresentationType::Axial );
+                                               ImageRepresentationType::Axial );
   m_ImageRepresentationSagittal3D->RequestSetOrientation( 
-                                             ImageRepresentationType::Sagittal );
+                                            ImageRepresentationType::Sagittal );
   m_ImageRepresentationCoronal3D->RequestSetOrientation( 
-                                              ImageRepresentationType::Coronal );
+                                             ImageRepresentationType::Coronal );
 
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
   this->DisplayAxial->RequestAddObject( m_EllipsoidRepresentation->Copy() );
@@ -884,7 +885,7 @@ void FourViewsTrackingWithCT::SetAxialSliderBoundsProcessing()
   /** Initialize the slider */
   const unsigned int min = m_AxialBoundsToBeSet.minimum;
   const unsigned int max = m_AxialBoundsToBeSet.maximum; 
-  const unsigned int slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
+  const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
   m_ImageRepresentationAxial->RequestSetSliceNumber( slice );
   m_ImageRepresentationAxial3D->RequestSetSliceNumber( slice );
   this->AxialSlider->minimum( min );
@@ -903,7 +904,7 @@ void FourViewsTrackingWithCT::SetSagittalSliderBoundsProcessing()
   /** Initialize the slider */
   const unsigned int min = m_SagittalBoundsToBeSet.minimum;
   const unsigned int max = m_SagittalBoundsToBeSet.maximum; 
-  const unsigned int slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
+  const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( slice );
   m_ImageRepresentationSagittal3D->RequestSetSliceNumber( slice );
   this->SagittalSlider->minimum( min );
@@ -921,7 +922,7 @@ void FourViewsTrackingWithCT::SetCoronalSliderBoundsProcessing()
   igstkLogMacro( DEBUG, "SetCoronalSliderBounds() " << "\n");
   const unsigned int min = m_CoronalBoundsToBeSet.minimum;
   const unsigned int max = m_CoronalBoundsToBeSet.maximum; 
-  const unsigned int slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
+  const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( slice );
   m_ImageRepresentationCoronal3D->RequestSetSliceNumber( slice );
   this->CoronalSlider->minimum( min );
@@ -945,11 +946,11 @@ void FourViewsTrackingWithCT
     m_Tracker->SetPatientTransform( m_ImageToTrackerTransform );
     
     igstkLogMacro( DEBUG, 
-                  "Registration Transform" << m_ImageToTrackerTransform << "\n");
+                 "Registration Transform" << m_ImageToTrackerTransform << "\n");
     igstkLogMacro( DEBUG, "Registration Transform Inverse" 
-                              << m_ImageToTrackerTransform.GetInverse() << "\n");
+                             << m_ImageToTrackerTransform.GetInverse() << "\n");
     igstkLogMacro( DEBUG, "Registration Transform Inverse" 
-                           << m_LandmarkRegistration->ComputeRMSError() << "\n");
+                          << m_LandmarkRegistration->ComputeRMSError() << "\n");
     m_StateMachine.PushInput( m_RegistrationSuccessInput );
     }
   else
@@ -988,9 +989,9 @@ void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
 
 void FourViewsTrackingWithCT::RequestReset()
 {
-  igstkLogMacro( DEBUG, "FourViewsTrackingWithCT::RequestReset is called... \n" )
+  igstkLogMacro( DEBUG, "FourViewsTrackingWithCT::RequestReset is called...\n" )
   if ( fl_choice( "Do you really want to reset the program?",
-                                                         "Yes","No", "Cancel" ) )
+                                                        "Yes","No", "Cancel" ) )
     { 
     this->Reset(); // Took out the state machine logic
     }

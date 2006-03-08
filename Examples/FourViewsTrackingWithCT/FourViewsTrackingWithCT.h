@@ -86,7 +86,7 @@ public:
   /** typedef for RegistrationType */
   typedef Landmark3DRegistration                        RegistrationType;
   typedef RegistrationType::LandmarkPointContainerType  
-                                                      LandmarkPointContainerType;
+                                                     LandmarkPointContainerType;
   typedef RegistrationType::LandmarkImagePointType      LandmarkPointType;
   
   /** typedef for TransformType */
