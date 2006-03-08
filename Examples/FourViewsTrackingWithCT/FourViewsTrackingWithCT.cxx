@@ -711,17 +711,18 @@ void FourViewsTrackingWithCT::Tracking()
   p[2] = transform.GetTranslation()[2];
 
   igstkLogMacro( DEBUG,  "Tracker tool translation:" << p << "\n" )
-    if( m_ImageReader->GetOutput()->IsInside( p ) )
-      {
-      ImageSpatialObjectType::IndexType index;
-      m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index );
-      igstkLogMacro( DEBUG,  "Tracker tool index:" << index << "\n" )
-      ResliceImage( index );      
-      }
-    else
-      {
-      igstkLogMacro( DEBUG,  "Tracker tool outside of image...\n" )
-      }
+  
+  if( m_ImageReader->GetOutput()->IsInside( p ) )
+    {
+    ImageSpatialObjectType::IndexType index;
+    m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index );
+    igstkLogMacro( DEBUG,  "Tracker tool index:" << index << "\n" )
+    ResliceImage( index );      
+    }
+  else
+    {
+    igstkLogMacro( DEBUG,  "Tracker tool outside of image...\n" )
+    }
 }
 
 void FourViewsTrackingWithCT::RequestStopTracking()

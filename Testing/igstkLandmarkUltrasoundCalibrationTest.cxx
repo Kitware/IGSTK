@@ -34,7 +34,8 @@
 int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
 {
   // Define type used in the pivot calibration class
-  typedef igstk::LandmarkUltrasoundCalibration             LandmarkUltrasoundCalibrationType;
+  typedef igstk::LandmarkUltrasoundCalibration             
+                                            LandmarkUltrasoundCalibrationType;
   typedef LandmarkUltrasoundCalibrationType::VersorType    VersorType;
   typedef LandmarkUltrasoundCalibrationType::VectorType    VectorType;
   typedef LandmarkUltrasoundCalibrationType::PointType     PointType;
@@ -42,8 +43,8 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
   typedef LandmarkUltrasoundCalibrationType::TransformType TransformType;
   typedef LandmarkUltrasoundCalibrationType::SpacingType   SpacingType;
   typedef LandmarkUltrasoundCalibrationType::ErrorType     ErrorType;
-  typedef itk::Logger                                     LoggerType; 
-  typedef itk::StdStreamLogOutput                         LogOutputType;
+  typedef itk::Logger                                      LoggerType; 
+  typedef itk::StdStreamLogOutput                          LogOutputType;
 
   // Logger object created for logging calibration computation
   LoggerType::Pointer                       logger = LoggerType::New();
@@ -54,10 +55,12 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create the pivot calibration object and attach the logger
-  LandmarkUltrasoundCalibrationType::Pointer ultrasound = LandmarkUltrasoundCalibrationType::New();
+  LandmarkUltrasoundCalibrationType::Pointer ultrasound 
+                                   = LandmarkUltrasoundCalibrationType::New();
   ultrasound->SetLogger( logger );
 
-  // Define the input file and the variables to extract the rotation and translation information
+  // Define the input file and the variables to extract 
+  // the rotation and translation information
   unsigned int i, j;
   std::ifstream input;
   
@@ -82,7 +85,8 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
   
   // Open the calibration data file, which recorded the traker information
   std::string igstkDataDirectory = IGSTKSandbox_DATA_ROOT;
-  std::string simulationFile = ( igstkDataDirectory + "/Input/USCalibration.txt");
+  std::string simulationFile = igstkDataDirectory 
+                               + "/Input/USCalibration.txt";
   input.open( simulationFile.c_str() );
 
   if (input.is_open() == 1)
@@ -108,7 +112,8 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
     indexposition[2] = 0.0;
     indexpositioncontainer.push_back( indexposition);
 
-    input >> pointertranslation[0] >> pointertranslation[1] >> pointertranslation[2];
+    input >> pointertranslation[0] >> pointertranslation[1];
+    input >> pointertranslation[2];
     pointertranslationcontainer.push_back( pointertranslation);
     
     input >> vw >> vx >> vy >> vz;
@@ -134,9 +139,12 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
   ultrasound->RequestSetPointerToolCalibrationTransform( toolcalibration);
   for (i = 0; i < indexpositioncontainer.size(); i++)
     {
-    ultrasound->RequestAddPointerToolIndexPositionSample( indexpositioncontainer[i], 
-      pointerversorcontainer[i], pointertranslationcontainer[i], 
-      probeversorcontainer[i], probetranslationcontainer[i] );
+    ultrasound->RequestAddPointerToolIndexPositionSample(
+                                                  indexpositioncontainer[i],
+                                                  pointerversorcontainer[i],
+                                                  pointertranslationcontainer[i],
+                                                  probeversorcontainer[i],
+                                                  probetranslationcontainer[i] );
     }
   ultrasound->RequestCalculateCalibration();
 
@@ -192,4 +200,3 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
   return EXIT_SUCCESS;
 
 }
-

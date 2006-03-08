@@ -53,8 +53,7 @@ public:
     Sagittal, 
     Coronal, 
     Axial
-    } 
-  OrientationType;
+    } OrientationType;
 
   /** Request the state machine to attempt to select a slice position */
   void RequestSetSlicePosition( float slicePosition );

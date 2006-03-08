@@ -161,7 +161,9 @@ void VascularNetworkObjectRepresentation::CreateActors()
 
     const VesselObjectType::PointType* pt = vessel->GetPoint(0); 
     vtkSphereSource * sphereSource1 = vtkSphereSource::New();
-    sphereSource1->SetCenter((float)(pt->GetPosition()[0]*spacing[0]), (float)(pt->GetPosition()[1]*spacing[1]), (float)(pt->GetPosition()[2]*spacing[2]));
+    sphereSource1->SetCenter((float)(pt->GetPosition()[0]*spacing[0]),
+                             (float)(pt->GetPosition()[1]*spacing[1]),
+                             (float)(pt->GetPosition()[2]*spacing[2]));
     sphereSource1->SetRadius(pt->GetRadius()*0.95*spacing[0]);
     vtkPolyDataMapper *sphereMapper1 = vtkPolyDataMapper::New();
     sphereMapper1->SetInput(sphereSource1->GetOutput());
@@ -182,14 +184,18 @@ void VascularNetworkObjectRepresentation::CreateActors()
     for( unsigned int i=0; i < nPoints; i++ )
       {
       const VesselObjectType::PointType* pt = vessel->GetPoint(i); 
-      vPoints->SetPoint(i, (float)(pt->GetPosition()[0]*spacing[0]), (float)(pt->GetPosition()[1]*spacing[1]), (float)(pt->GetPosition()[2]*spacing[2]));
+      vPoints->SetPoint(i, (float)(pt->GetPosition()[0]*spacing[0]),
+                           (float)(pt->GetPosition()[1]*spacing[1]),
+                           (float)(pt->GetPosition()[2]*spacing[2]));
       vScalars->SetTuple1(i,pt->GetRadius()*0.95*spacing[0]);
       vVectors->SetTuple3(i,pt->GetRadius()*0.95*spacing[0],0,0);
       }  
 
     pt = vessel->GetPoint(nPoints-1); 
     vtkSphereSource * sphereSource2 = vtkSphereSource::New();
-    sphereSource2->SetCenter((float)(pt->GetPosition()[0]*spacing[0]), (float)(pt->GetPosition()[1]*spacing[1]), (float)(pt->GetPosition()[2]*spacing[2]));
+    sphereSource2->SetCenter((float)(pt->GetPosition()[0]*spacing[0]),
+                             (float)(pt->GetPosition()[1]*spacing[1]),
+                             (float)(pt->GetPosition()[2]*spacing[2]));
     sphereSource2->SetRadius(pt->GetRadius()*0.95*spacing[0]);
     
     vtkPolyDataMapper *sphereMapper2 = vtkPolyDataMapper::New();

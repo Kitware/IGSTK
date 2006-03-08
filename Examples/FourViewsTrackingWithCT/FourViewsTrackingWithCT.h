@@ -93,11 +93,11 @@ public:
   typedef RegistrationType::TransformType               TransformType;
 
   /** typedefs for the communication */
-  #ifdef WIN32
-    typedef SerialCommunicationForWindows               CommunicationType;
-  #else
-    typedef SerialCommunicationForPosix                 CommunicationType;
-  #endif
+#ifdef WIN32
+  typedef SerialCommunicationForWindows               CommunicationType;
+#else
+  typedef SerialCommunicationForPosix                 CommunicationType;
+#endif
 
   /** typedefs for the tracker */
   typedef PolarisTracker                                TrackerType;
