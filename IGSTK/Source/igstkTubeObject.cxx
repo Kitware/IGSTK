@@ -33,6 +33,13 @@ TubeObject::~TubeObject()
 {
 }
 
+/** Set the ITKTubeSpatialObject. this is accessible only from the friend classes */
+void TubeObject
+::SetTubeSpatialObject( TubeSpatialObjectType * tube ) 
+{
+  m_TubeSpatialObject = tube;
+  this->RequestSetSpatialObject( m_TubeSpatialObject );
+}
 
 /** Add a point to the tube */
 void TubeObject::AddPoint(PointType & point)

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   SpatialObject Guided Surgery Software Toolkit
-  Module:    igstkTubeReader.cxx
+  Module:    igstkMeshReader.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -14,36 +14,28 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#include "igstkTubeReader.h"
+#include "igstkMeshReader.h"
 #include "igstkEvents.h"
 
 namespace igstk
 { 
 
 /** Constructor */
-TubeReader::TubeReader():m_StateMachine(this)
+MeshReader::MeshReader():m_StateMachine(this)
 { 
-  m_Tube = TubeType::New();
-  m_TubeSpatialObject = TubeSpatialObjectType::New();
+  m_MeshObject = MeshObjectType::New();
+  m_Mesh = MeshType::New();
 } 
 
 /** Destructor */
-TubeReader::~TubeReader()  
+MeshReader::~MeshReader()  
 {
-}
-
-
-// FIXME : This must be replaced with StateMachine logic
-TubeReader::TubeSpatialObjectType * 
-TubeReader::GetITKTubeSpatialObject() const
-{
-  return m_TubeSpatialObject;
 }
 
 /** Read the spatialobject file */
-void TubeReader::AttemptReadObjectProcessing()
+void MeshReader::AttemptReadObjectProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::TubeReader::AttemptReadObject called...\n");
+  igstkLogMacro( DEBUG, "igstk::MeshReader::AttemptReadObject called...\n");
   Superclass::AttemptReadObjectProcessing();
 
   // Do the conversion
@@ -53,42 +45,48 @@ void TubeReader::AttemptReadObjectProcessing()
 
   while(it != children->end())
     {
-    if(!strcmp((*it)->GetTypeName(),"TubeSpatialObject"))
+    if(!strcmp((*it)->GetTypeName(),"MeshSpatialObject"))
       {
-      TubeSpatialObjectType * tube = 
-              dynamic_cast< TubeSpatialObjectType * >( it->GetPointer() );
-      if(tube)
+      MeshObjectType::MeshSpatialObjectType* meshSO = dynamic_cast<MeshObjectType::MeshSpatialObjectType*>((*it).GetPointer());
+      if( meshSO )
         {
-        m_TubeSpatialObject = tube;
-        this->ConnectTube();
+        m_Mesh = meshSO->GetMesh();
         break;
         }
       }
     it++;
     }
   delete children;
+
+  this->ConnectMesh();
 }
 
 /** Return the output as a group */
-const TubeReader::TubeType *
-TubeReader::GetOutput() const
+const MeshReader::MeshObjectType *
+MeshReader::GetOutput() const
 {
-  return m_Tube;
+  return m_MeshObject;
+}
+ 
+// FIXME : This must be replaced with StateMachine logic
+MeshReader::MeshType * 
+MeshReader::GetITKMesh() const
+{
+  return m_Mesh;
 }
 
-void TubeReader::ConnectTube() 
+void MeshReader::ConnectMesh() 
 {
-  typedef Friends::TubeReaderToTubeSpatialObject  HelperType;
-  HelperType::ConnectTube( this, m_Tube.GetPointer() );
+  typedef Friends::MeshReaderToMeshSpatialObject  HelperType;
+  HelperType::ConnectMesh( this, m_MeshObject.GetPointer() );
 }
-
 
 /** Print Self function */
-void TubeReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void MeshReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  os << "Tube = " << m_Tube.GetPointer() << std::endl;
-  os << "TubeSpatialObject = " << m_TubeSpatialObject.GetPointer() << std::endl;
+  os << "Mesh = " << m_MeshObject.GetPointer() << std::endl;
+  os << "Mesh = " << m_Mesh.GetPointer() << std::endl;
 }
 
 } // end namespace igstk
