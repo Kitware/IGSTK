@@ -228,6 +228,16 @@ SET(IGSTKSandbox_HEADS
   igstkFlockOfBirdsTrackerTool.h
   igstkObliqueImageSpatialObjectRepresentation.h
   igstkLandmarkUltrasoundCalibration.h
+  igstkVascularNetworkObject.h
+  igstkVascularNetworkObjectRepresentation.h
+  igstkVascularNetworkReader.h
+  igstkVesselObject.h
+  igstkUSImageObject.h
+  igstkUSImageObjectRepresentation.h
+  igstkUSImageReader.h
+  igstkContourObjectRepresentation.h
+  igstkContourMeshObjectRepresentation.h
+  igstkContourVascularNetworkObjectRepresentation.h
 )
 
 
@@ -238,6 +248,16 @@ SET(IGSTKSandbox_SRCS
   igstkFlockOfBirdsTrackerTool.cxx
   igstkObliqueImageSpatialObjectRepresentation.txx
   igstkLandmarkUltrasoundCalibration.cxx
+  igstkVascularNetworkObject.cxx
+  igstkVascularNetworkObjectRepresentation.cxx
+  igstkVascularNetworkReader.cxx
+  igstkVesselObject.cxx
+  igstkUSImageObject.cxx
+  igstkUSImageObjectRepresentation.cxx
+  igstkUSImageReader.cxx
+  igstkContourObjectRepresentation.cxx
+  igstkContourMeshObjectRepresentation.cxx
+  igstkContourVascularNetworkObjectRepresentation.cxx
 )
 
 # Variable for holding extra libraries
