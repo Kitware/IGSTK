@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   SpatialObject Guided Surgery Software Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkMeshReader.cxx
   Language:  C++
   Date:      $Date$
@@ -39,15 +39,19 @@ void MeshReader::AttemptReadObjectProcessing()
   Superclass::AttemptReadObjectProcessing();
 
   // Do the conversion
-  GroupSpatialObjectType::Pointer m_GroupSpatialObject = m_SpatialObjectReader->GetGroup();
-  GroupSpatialObjectType::ChildrenListType * children = m_GroupSpatialObject->GetChildren(99999);
-  GroupSpatialObjectType::ChildrenListType::const_iterator it = children->begin();
+  GroupSpatialObjectType::Pointer m_GroupSpatialObject 
+                                          = m_SpatialObjectReader->GetGroup();
+  GroupSpatialObjectType::ChildrenListType * children 
+                                   = m_GroupSpatialObject->GetChildren(99999);
+  GroupSpatialObjectType::ChildrenListType::const_iterator it 
+                                                          = children->begin();
 
   while(it != children->end())
     {
     if(!strcmp((*it)->GetTypeName(),"MeshSpatialObject"))
       {
-      MeshObjectType::MeshSpatialObjectType* meshSO = dynamic_cast<MeshObjectType::MeshSpatialObjectType*>((*it).GetPointer());
+      MeshObjectType::MeshSpatialObjectType* meshSO  = dynamic_cast<
+                  MeshObjectType::MeshSpatialObjectType*>((*it).GetPointer());
       if( meshSO )
         {
         m_Mesh = meshSO->GetMesh();
@@ -90,5 +94,4 @@ void MeshReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 } // end namespace igstk
-
 

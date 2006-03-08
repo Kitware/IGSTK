@@ -22,7 +22,8 @@ namespace igstk
 {
 
 /** Constructor */
-UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation():m_StateMachine(this)
+UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
+                                                         :m_StateMachine(this)
 {
   m_Tracker = TrackerType::New();
     
@@ -167,7 +168,8 @@ void UltrasoundGuidedRFAImplementation::SetAxialSliderBoundsProcessing()
 {
   const unsigned int min = m_AxialBoundsToBeSet.minimum;
   const unsigned int max = m_AxialBoundsToBeSet.maximum; 
-  const unsigned int slice = static_cast< unsigned int > ( ( min + max ) / 2.0 );
+  const unsigned int slice = static_cast< unsigned int > ( 
+                                                   ( min + max ) / 2.0 );
   m_ObliqueLiverMRRepresentation->RequestSetSliceNumber( slice );
   this->slider->minimum( min );
   this->slider->maximum( max );
@@ -203,7 +205,7 @@ void UltrasoundGuidedRFAImplementation
 void UltrasoundGuidedRFAImplementation
 ::AddAxes( igstk::AxesObjectRepresentation * cylinderRepresentation )
 {
-//  this->Display2D->RequestAddObject(    cylinderRepresentation->Copy() );
+  //this->Display2D->RequestAddObject(    cylinderRepresentation->Copy() );
   this->Display3D->RequestAddObject(    cylinderRepresentation->Copy() );
 }
 
@@ -220,7 +222,8 @@ void UltrasoundGuidedRFAImplementation
 void UltrasoundGuidedRFAImplementation
 ::LoadLiverSurface()
 {
-  const char * liverfilename = fl_file_chooser("Load a liver mesh","*.msh","*.msh");
+  const char * liverfilename = fl_file_chooser("Load a liver mesh",
+                                               "*.msh","*.msh");
   if(liverfilename)
     {
     m_MeshReader->RequestSetFileName(liverfilename);
@@ -231,8 +234,10 @@ void UltrasoundGuidedRFAImplementation
     m_LiverRepresentation->SetOpacity(1.0);
     this->Display3D->RequestAddObject(m_LiverRepresentation);
  
-    m_ContourLiverRepresentation->RequestSetMeshObject( m_MeshReader->GetOutput() );
-    m_ContourLiverRepresentation->RequestSetOrientation(ContourMeshObjectRepresentation::Axial);
+    m_ContourLiverRepresentation->RequestSetMeshObject( 
+                                                  m_MeshReader->GetOutput() );
+    m_ContourLiverRepresentation->RequestSetOrientation(
+                                      ContourMeshObjectRepresentation::Axial);
     m_ContourLiverRepresentation->SetColor(1.0,0.0,0.0);
     m_ContourLiverRepresentation->SetOpacity(1.0);
     this->Display2D->RequestAddObject(m_ContourLiverRepresentation);
@@ -243,23 +248,26 @@ void UltrasoundGuidedRFAImplementation
 void UltrasoundGuidedRFAImplementation
 ::LoadLiverVasculature()
 {
-  const char * liverfilename = fl_file_chooser("Load a liver vasculature","*.tre","*.tre");
+  const char * liverfilename = fl_file_chooser("Load a liver vasculature",
+                                               "*.tre","*.tre");
   if(liverfilename)
     {
     m_VascularNetworkReader->RequestSetFileName(liverfilename);
     m_VascularNetworkReader->RequestReadObject();
     m_VascularNetworkRepresentation->RequestSetVascularNetworkObject( 
-                                                    m_VascularNetworkReader->GetOutput() );
+                                       m_VascularNetworkReader->GetOutput() );
     //m_VascularNetworkRepresentation->SetColor(1.0,0.0,0.0);
     //m_VascularNetworkRepresentation->SetOpacity(1.0);
     this->Display3D->RequestAddObject( m_VascularNetworkRepresentation );
 
     // Represent as a 2D contour on the 2D View
-    m_ContourVascularNetworkRepresentation->RequestSetVascularNetworkObject( m_VascularNetworkReader->GetOutput() );
-    m_ContourVascularNetworkRepresentation->RequestSetOrientation(ContourMeshObjectRepresentation::Axial);
+    m_ContourVascularNetworkRepresentation->RequestSetVascularNetworkObject( 
+                                       m_VascularNetworkReader->GetOutput() );
+    m_ContourVascularNetworkRepresentation->RequestSetOrientation(
+                                      ContourMeshObjectRepresentation::Axial);
     m_ContourVascularNetworkRepresentation->SetColor(1.0,1.0,1.0);
     m_ContourVascularNetworkRepresentation->SetOpacity(1.0);
-    this->Display2D->RequestAddObject( m_ContourVascularNetworkRepresentation );
+    this->Display2D->RequestAddObject(m_ContourVascularNetworkRepresentation);
     }
 }
 
@@ -283,14 +291,18 @@ void UltrasoundGuidedRFAImplementation
     m_MRImageReader->RequestSetDirectory(filename.c_str());
     m_MRImageReader->RequestReadImage();
   
-    m_LiverMRRepresentation->RequestSetImageSpatialObject( m_MRImageReader->GetOutput() );
+    m_LiverMRRepresentation->RequestSetImageSpatialObject( 
+                                                m_MRImageReader->GetOutput());
     m_LiverMRRepresentation->SetWindowLevel(52,52);
-    m_LiverMRRepresentation->RequestSetOrientation(MRImageRepresentationType::Axial);
+    m_LiverMRRepresentation->RequestSetOrientation(
+                                            MRImageRepresentationType::Axial);
     this->Display3D->RequestAddObject( m_LiverMRRepresentation );
 
-    m_ObliqueLiverMRRepresentation->RequestSetImageSpatialObject( m_MRImageReader->GetOutput() );
+    m_ObliqueLiverMRRepresentation->RequestSetImageSpatialObject(
+                                                m_MRImageReader->GetOutput());
     m_ObliqueLiverMRRepresentation->SetWindowLevel(52,52);
-    m_ObliqueLiverMRRepresentation->RequestSetOrientation(MRImageRepresentationType::Axial);
+    m_ObliqueLiverMRRepresentation->RequestSetOrientation(
+                                            MRImageRepresentationType::Axial);
 
     m_ObliqueLiverMRRepresentation->RequestGetSliceNumberBounds();
     m_StateMachine.ProcessInputs();
@@ -321,7 +333,8 @@ void UltrasoundGuidedRFAImplementation
     m_USImageReader->RequestReadImage();
 
     m_LiverUSRepresentation = USImageRepresentationType::New();
-    m_LiverUSRepresentation->RequestSetImageSpatialObject( m_USImageReader->GetOutput() );
+    m_LiverUSRepresentation->RequestSetImageSpatialObject(
+                                                m_USImageReader->GetOutput());
     m_LiverUSRepresentation->SetWindowLevel(255/2.0,255/2.0);
     this->Display2D->RequestAddObject( m_LiverUSRepresentation );
     this->Display2D->RequestResetCamera();
@@ -335,7 +348,8 @@ void UltrasoundGuidedRFAImplementation
   m_LiverMRRepresentation->RequestSetSliceNumber(value);
   m_ObliqueLiverMRRepresentation->RequestSetSliceNumber(value);
   m_ContourLiverRepresentation->RequestSetSlicePosition(value*0.78125);
-  m_ContourVascularNetworkRepresentation->RequestSetSlicePosition(value*0.78125);
+  m_ContourVascularNetworkRepresentation->RequestSetSlicePosition(
+                                                        value*0.78125);
   this->Display2D->RequestResetCamera();
 }
 
@@ -358,6 +372,4 @@ void UltrasoundGuidedRFAImplementation
     }*/
 }
 
-
 } // end of namespace
-

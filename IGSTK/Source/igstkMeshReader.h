@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   SpatialObject Guided Surgery Software Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkMeshReader.h
   Language:  C++
   Date:      $Date$

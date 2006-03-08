@@ -64,11 +64,13 @@
 namespace igstk
 {
 
-class UltrasoundGuidedRFAImplementation : public UltrasoundGuidedRFA, public igstk::Object
+class UltrasoundGuidedRFAImplementation : public UltrasoundGuidedRFA,
+                                          public igstk::Object
 {
 public:
   /** Typedefs */
-  igstkStandardClassBasicTraitsMacro( UltrasoundGuidedRFAImplementation, UltrasoundGuidedRFA );
+  igstkStandardClassBasicTraitsMacro( UltrasoundGuidedRFAImplementation, 
+                                      UltrasoundGuidedRFA );
   igstkNewMacro( Self );
 
   /** Declarations needed for the State Machine */
@@ -90,7 +92,7 @@ public:
   typedef igstk::MRImageReader                      MRImageReaderType;
 
   typedef igstk::ObliqueImageSpatialObjectRepresentation<MRImageType>
-                                                    MRObliqueImageRepresentationType;
+                                             MRObliqueImageRepresentationType;
 
   typedef igstk::USImageObject                      USImageType;
   typedef igstk::USImageObjectRepresentation        USImageRepresentationType;
@@ -141,9 +143,10 @@ private:
   LiverReaderType::Pointer   m_MeshReader;
   MeshObjectRepresentation::Pointer m_LiverRepresentation;
   ContourMeshObjectRepresentation::Pointer m_ContourLiverRepresentation;
-  ContourVascularNetworkObjectRepresentation::Pointer m_ContourVascularNetworkRepresentation;
+  ContourVascularNetworkObjectRepresentation::Pointer 
+                                       m_ContourVascularNetworkRepresentation;
   VascularNetworkReaderType::Pointer m_VascularNetworkReader;
-  VascularNetworkRepresentationType::Pointer       m_VascularNetworkRepresentation;
+  VascularNetworkRepresentationType::Pointer  m_VascularNetworkRepresentation;
    
   MRImageReaderType::Pointer   m_MRImageReader;
   MRImageType::Pointer         m_LiverMR;

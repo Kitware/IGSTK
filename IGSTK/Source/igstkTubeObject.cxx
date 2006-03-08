@@ -33,7 +33,8 @@ TubeObject::~TubeObject()
 {
 }
 
-/** Set the ITKTubeSpatialObject. this is accessible only from the friend classes */
+/** Set the ITKTubeSpatialObject. 
+ *  this is accessible only from the friend classes */
 void TubeObject
 ::SetTubeSpatialObject( TubeSpatialObjectType * tube ) 
 {

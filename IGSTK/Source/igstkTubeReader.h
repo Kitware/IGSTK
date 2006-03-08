@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   SpatialObject Guided Surgery Software Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkTubeReader.h
   Language:  C++
   Date:      $Date$
@@ -52,7 +52,8 @@ public:
   ConnectTube(  TReader * reader, 
                 TTubeSpatialObject * tubeSpatialObject )
     {
-    tubeSpatialObject->SetTubeSpatialObject( reader->GetITKTubeSpatialObject() );  
+    tubeSpatialObject->SetTubeSpatialObject(
+                                    reader->GetITKTubeSpatialObject());
     }
 
 }; // end of TubeReaderToTubeSpatialObject class
@@ -90,8 +91,9 @@ public:
   /** Return the output as a group */
   const TubeType * GetOutput() const;
 
- /** Declare the TubeReaderToTubeSpatialObject class to be a friend 
-   *  in order to give it access to the private method GetITKTubeSpatialObject(). */
+  /** Declare the TubeReaderToTubeSpatialObject class to be a friend 
+   *  in order to give it access to the private method 
+   *  GetITKTubeSpatialObject(). */
   igstkFriendClassMacro( igstk::Friends::TubeReaderToTubeSpatialObject );
 
 protected:
