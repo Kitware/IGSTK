@@ -202,8 +202,9 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   representation->RequestSetSliceNumber( 10 );
 
-  typedef igstk::ImageSpatialObjectRepresentationTest::ImageRepresentationObserver 
-                                                                        ObserverType;
+  typedef 
+    igstk::ImageSpatialObjectRepresentationTest::ImageRepresentationObserver 
+                                                                ObserverType;
 
   ObserverType::Pointer observer = ObserverType::New();
 
