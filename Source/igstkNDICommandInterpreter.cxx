@@ -23,12 +23,12 @@ namespace igstk
 {
 
 // maximum allowed size for a command to the device
-const int NDI_MAX_COMMAND_SIZE = 2047;
-const int NDI_MAX_REPLY_SIZE = 2047;
+const unsigned int NDI_MAX_COMMAND_SIZE = 2047;
+const unsigned int NDI_MAX_REPLY_SIZE = 2047;
 
 // timeouts for tracking and non-tracking modes
-const int NDI_NORMAL_TIMEOUT = 5000;
-const int NDI_TRACKING_TIMEOUT = 100;
+const unsigned int NDI_NORMAL_TIMEOUT = 5000;
+const unsigned int NDI_TRACKING_TIMEOUT = 100;
 
 
 /** Constructor: initialize internal variables. */
@@ -39,6 +39,9 @@ NDICommandInterpreter::NDICommandInterpreter():m_StateMachine(this)
   m_SerialCommand = new char[NDI_MAX_COMMAND_SIZE+1];
   m_SerialReply = new char[NDI_MAX_REPLY_SIZE+1];
   m_CommandReply = new char[NDI_MAX_REPLY_SIZE+1];
+  m_SerialCommand[NDI_MAX_COMMAND_SIZE] = '\0';
+  m_SerialReply[NDI_MAX_REPLY_SIZE] = '\0';
+  m_CommandReply[NDI_MAX_REPLY_SIZE] = '\0';
 
   m_Tracking = 0;
   m_ErrorCode = 0;
@@ -517,7 +520,7 @@ int NDICommandInterpreter::WriteCommand(unsigned int *nc)
   cp = m_SerialCommand;      /* the command to send */
 
   /* calculate CRC and command prefix size*/
-  for (i = 0; cp[i] != '\0'; i++)
+  for (i = 0; cp[i] != '\0' && i < NDI_MAX_COMMAND_SIZE; i++)
     {
     ndiCalcCRC16(cp[i], &CRC16);
     if (inCommand && cp[i] == ':')
@@ -532,16 +535,19 @@ int NDICommandInterpreter::WriteCommand(unsigned int *nc)
       }
     }
 
-  if (useCRC)
+  /* do a safety check on length, overlength strings will end up
+   *  producing a CRC error because they have no CRC on the end */
+  if (i < NDI_MAX_COMMAND_SIZE - 5)
     {
-    sprintf(&cp[i], "%04X", CRC16);           /* tack on the CRC */
-    i += 4;
+    if (useCRC)
+      {
+      snprintf(&cp[i], 5, "%04X", CRC16);           /* tack on the CRC */
+      i += 4;
+      }
+
+    cp[i++] = '\r';                         /* tack on carriage return */
+    cp[i] = '\0';                           /* terminate for good luck */
     }
-
-  cp[i] = '\0';
-
-  cp[i++] = '\r';                             /* tack on carriage return */
-  cp[i] = '\0';                               /* terminate for good luck */
 
   /* get the length */
   n = i;
@@ -718,7 +724,7 @@ int NDICommandInterpreter::ReadAsciiReply(unsigned int offset)
 /** Send a command to the device via the Communication object. */
 const char* NDICommandInterpreter::Command(const char* command)
 {
-  int i;
+  unsigned int i;
   unsigned int nc;
   char* cp, *rp, *crp;
 
@@ -860,14 +866,14 @@ const char* NDICommandInterpreter::Command(const char* command)
 /** Use printf-style formatting to create a command. */
 const char* NDICommandInterpreter::Command(const char* format, int a)
 {
-  sprintf(m_SerialCommand, format, a);
+  snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a);
   return this->Command(m_SerialCommand);
 }
 
 /** Use printf-style formatting to create a command. */
 const char* NDICommandInterpreter::Command(const char* format, int a, int b)
 {
-  sprintf(m_SerialCommand, format, a, b);
+  snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b);
   return this->Command(m_SerialCommand);
 }
 
@@ -875,7 +881,7 @@ const char* NDICommandInterpreter::Command(const char* format, int a, int b)
 const char* NDICommandInterpreter::Command(const char* format, int a, int b,
                                            int c)
 {
-  sprintf(m_SerialCommand, format, a, b, c);
+  snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b, c);
   return this->Command(m_SerialCommand);
 }
 
@@ -883,7 +889,7 @@ const char* NDICommandInterpreter::Command(const char* format, int a, int b,
 const char* NDICommandInterpreter::Command(const char* format, int a, int b,
                                            int c, int d)
 {
-  sprintf(m_SerialCommand, format, a, b, c, d);
+  snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b, c, d);
   return this->Command(m_SerialCommand);
 }
 
@@ -891,7 +897,7 @@ const char* NDICommandInterpreter::Command(const char* format, int a, int b,
 const char* NDICommandInterpreter::Command(const char* format, int a, int b,
                                            const char* c)
 {
-  sprintf(m_SerialCommand, format, a, b, c);
+  snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b, c);
   return this->Command(m_SerialCommand);
 }
 
@@ -900,7 +906,7 @@ const char* NDICommandInterpreter::Command(const char* format, const char* a,
                                            const char* b, const char* c,
                                            const char* d, const char* e)
 {
-  sprintf(m_SerialCommand, format, a, b, c, d, e);
+  snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b, c, d, e);
   return this->Command(m_SerialCommand);
 }
 
