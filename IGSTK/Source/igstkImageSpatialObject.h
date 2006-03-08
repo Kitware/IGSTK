@@ -20,24 +20,19 @@
 #include "igstkSpatialObject.h"
 
 #include "itkImageSpatialObject.h"
-#include "itkVTKImageExport.h"
 
+#include "itkVTKImageExport.h"
 #include "vtkImageImport.h"
 #include "vtkImageData.h"
-
-
-
 
 namespace igstk
 {
 
 namespace Friends 
 {
-  
 class ImageReaderToImageSpatialObject;
 class ImageSpatialObjectRepresentationToImageSpatialObject;
 class ObliqueImageSpatialObjectRepresentationToImageSpatialObject;
-
 }
 
 
@@ -53,8 +48,7 @@ class ObliqueImageSpatialObjectRepresentationToImageSpatialObject;
  *
  * \ingroup Object
  */
-
-template < class TPixelType, unsigned int VDimension >
+template < class TPixelType, unsigned int TDimension >
 class ImageSpatialObject 
 : public SpatialObject
 {
@@ -66,7 +60,8 @@ public:
 
 public:
 
-  typedef itk::ImageSpatialObject< VDimension, TPixelType > ImageSpatialObjectType;
+  typedef itk::ImageSpatialObject< TDimension, TPixelType > 
+                                                       ImageSpatialObjectType;
 
   typedef typename ImageSpatialObjectType::ImageType        ImageType;
   typedef typename ImageType::ConstPointer                  ImageConstPointer;
@@ -86,8 +81,10 @@ public:
   /** The ImageReaderToImageSpatialObject class is declared as a friend in
    * order to be able to set the input image */
   igstkFriendClassMacro( igstk::Friends::ImageReaderToImageSpatialObject );
-  igstkFriendClassMacro( igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
-  igstkFriendClassMacro( igstk::Friends::ObliqueImageSpatialObjectRepresentationToImageSpatialObject );
+  igstkFriendClassMacro( 
+     igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
+  igstkFriendClassMacro( igstk::Friends::
+              ObliqueImageSpatialObjectRepresentationToImageSpatialObject );
 
 protected:
 
@@ -142,4 +139,3 @@ private:
 #endif
 
 #endif // __igstkImageSpatialObject_h
-

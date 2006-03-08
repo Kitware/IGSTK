@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   SpatialObject Guided Surgery Software Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkTubeReader.cxx
   Language:  C++
   Date:      $Date$
@@ -47,9 +47,12 @@ void TubeReader::AttemptReadObjectProcessing()
   Superclass::AttemptReadObjectProcessing();
 
   // Do the conversion
-  GroupSpatialObjectType::Pointer m_GroupSpatialObject = m_SpatialObjectReader->GetGroup();
-  GroupSpatialObjectType::ChildrenListType * children = m_GroupSpatialObject->GetChildren(99999);
-  GroupSpatialObjectType::ChildrenListType::const_iterator it = children->begin();
+  GroupSpatialObjectType::Pointer m_GroupSpatialObject = 
+                                            m_SpatialObjectReader->GetGroup();
+  GroupSpatialObjectType::ChildrenListType * children = 
+                                     m_GroupSpatialObject->GetChildren(99999);
+  GroupSpatialObjectType::ChildrenListType::const_iterator it = 
+                                                            children->begin();
 
   while(it != children->end())
     {
@@ -92,5 +95,4 @@ void TubeReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 } // end namespace igstk
-
 

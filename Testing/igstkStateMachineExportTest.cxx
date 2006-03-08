@@ -133,7 +133,8 @@ int main( int argc, char * argv [] )
 
   std::cout << "Skip Loops option = " << skipLoops << std::endl;
 
-  igstkTestExportStateMachine1( igstk::LandmarkUltrasoundCalibration, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::LandmarkUltrasoundCalibration, 
+                                outputDirectory, skipLoops );
 
   return EXIT_SUCCESS;
 }

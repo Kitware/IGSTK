@@ -284,7 +284,8 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
     {
     try
       {
-      m_ImageFileReader->SetFileName(m_ImageSeriesReader->GetFileNames()[0].c_str());
+      m_ImageFileReader->SetFileName(
+        m_ImageSeriesReader->GetFileNames()[0].c_str());
       m_ImageFileReader->Update();
       }
     catch( itk::ExceptionObject & excp )
@@ -454,9 +455,9 @@ const typename DICOMImageReader< TPixelType >::ImageType *
 DICOMImageReader<TPixelType>::GetITKImage() const
 {
   if(m_ImageSeriesReader->GetFileNames().size()>1)
-   {
-   return m_ImageSeriesReader->GetOutput();
-   }
+    {
+    return m_ImageSeriesReader->GetOutput();
+    }
   return m_ImageFileReader->GetOutput();
 }
 

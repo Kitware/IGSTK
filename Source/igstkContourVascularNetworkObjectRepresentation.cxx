@@ -33,6 +33,7 @@
 #include <vtkCleanPolyData.h>
 #include <vtkTubeFilter.h>
 #include <vtkAppendPolyData.h>
+#include <vtkPolyDataNormals.h>
 
 namespace igstk
 { 
@@ -251,8 +252,7 @@ void ContourVascularNetworkObjectRepresentation::CreateActors()
 
     appender->AddInput(vTFilter->GetOutput());
    
-
-     vPoints->Delete();
+    vPoints->Delete();
     delete [] pntIds;
     vScalars->Delete();
     vPLine->Delete();
@@ -260,25 +260,22 @@ void ContourVascularNetworkObjectRepresentation::CreateActors()
     vCA->Delete();
     vPData->Delete();
     vTFilter->Delete();
-    //vMapper->Delete();
     vColorScalars->Delete();
     vVectors->Delete();
     }
 
   vtkDataSetMapper *pointMapper = vtkDataSetMapper::New();
+  
   pointMapper->ScalarVisibilityOff();
-
   vtkCutter* cutter = vtkCutter::New();
-
   cutter->SetInput(appender->GetOutput());
   cutter->SetCutFunction(m_Plane);
 
   vtkActor* tubeActor = vtkActor::New();
-
   tubeActor->GetProperty()->SetColor(this->GetRed(),
                                      this->GetGreen(),
-                                     this->GetBlue()); 
-      
+                                     this->GetBlue());
+
   pointMapper->SetInput(cutter->GetOutput());
   tubeActor->SetMapper(pointMapper);
 
