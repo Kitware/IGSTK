@@ -34,7 +34,7 @@
 int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
 {
   // Define type used in the pivot calibration class
-  typedef igstk::LandmarkUltrasoundCalibration             
+  typedef igstk::LandmarkUltrasoundCalibration
                                             LandmarkUltrasoundCalibrationType;
 
 

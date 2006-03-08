@@ -48,17 +48,17 @@ itkEventMacro( DICOMInvalidRequestErrorEvent,
                DICOMImageReaderEvent );
 
 // Events to handle errors with the ImageDirectory name
-itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,                  
+itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,
               DICOMImageReaderEvent );
-itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,           
+itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,
               DICOMImageReaderEvent );
-itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,         
+itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,
               DICOMImageReaderEvent );
-itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent, 
+itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent,
               DICOMImageReaderEvent );
 
 //Image reading error
-itkEventMacro(DICOMImageReadingErrorEvent,                        
+itkEventMacro(DICOMImageReadingErrorEvent,
               DICOMImageReaderEvent );
 
 /** \class DICOMImageReader

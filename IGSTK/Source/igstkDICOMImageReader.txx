@@ -273,7 +273,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
       }
     catch( itk::ExceptionObject & excp )
       {
-      this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );    
+      this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
       DICOMImageReadingErrorEvent event;
       event.Set( excp.GetDescription() );
       this->InvokeEvent( event );
@@ -290,7 +290,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
       }
     catch( itk::ExceptionObject & excp )
       {
-      this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );    
+      this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
       DICOMImageReadingErrorEvent event;
       event.Set( excp.GetDescription() );
       this->InvokeEvent( event );
@@ -298,7 +298,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
       }
     }
 
-  this->m_StateMachine.PushInput( this->m_ImageReadingSuccessInput );    
+  this->m_StateMachine.PushInput( this->m_ImageReadingSuccessInput );
 
   this->m_StateMachine.ProcessInputs();
 

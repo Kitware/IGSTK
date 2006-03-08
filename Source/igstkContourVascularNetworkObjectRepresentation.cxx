@@ -162,7 +162,7 @@ void ContourVascularNetworkObjectRepresentation::CreateActors()
     
     //Step 1: copy skeleton points from a vessel into vtkPoints
     //vtkpoints assumes a triplet is coming so use pointer arithmetic
-    //to jump to the next spot in a multidimensional array      
+    //to jump to the next spot in a multidimensional array
     unsigned int nPoints = vessel->GetNumberOfPoints();
 
     vtkPoints* vPoints = vtkPoints::New();

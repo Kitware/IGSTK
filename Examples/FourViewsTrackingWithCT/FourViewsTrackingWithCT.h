@@ -119,7 +119,7 @@ public:
 
 
   /** Methods for Converting Events into State Machine Inputs */
-  igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,    
+  igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,
                                      AxialBoundsInput, AxialBounds    );
   igstkLoadedEventTransductionMacro( SagittalSliceBoundsEvent, 
                                      SagittalBoundsInput, SagittalBounds );
@@ -188,7 +188,7 @@ private:
   igstkDeclareInputMacro( StopTrackingSuccess );
   igstkDeclareInputMacro( StopTrackingFailure );
 
-  igstkDeclareInputMacro( AxialBounds );                
+  igstkDeclareInputMacro( AxialBounds );
   igstkDeclareInputMacro( SagittalBounds );
   igstkDeclareInputMacro( CoronalBounds );
 
@@ -230,7 +230,7 @@ private:
   
   /** To store the transform of the image and tracker landmark points */
   Transform                           m_TrackerLandmarkTransform; 
-  Transform                           m_ImageLandmarkTransform;    
+  Transform                           m_ImageLandmarkTransform;
   Transform                           m_TrackerLandmarkTransformToBeSet; 
   Transform                           m_ImageLandmarkTransformToBeSet;  
 
@@ -260,7 +260,7 @@ private:
   EllipsoidRepresentationType::Pointer            m_EllipsoidRepresentation;
 
   /** Cylinder spatial object, used to represent the probe */
-  typedef igstk::CylinderObject                   CylinderType;    
+  typedef igstk::CylinderObject                   CylinderType;
   typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;  
   CylinderType::Pointer                            m_Cylinder;
   CylinderRepresentationType::Pointer              m_CylinderRepresentation;

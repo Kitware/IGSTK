@@ -35,7 +35,7 @@ namespace igstk
  *  \image latex igstkSerialCommunicationForPosix.eps  
  *               "SerialCommunicationForPosix State Machine Diagram" 
  *
- *        
+ *
  * \ingroup Communication
  * \ingroup SerialCommunication
  */

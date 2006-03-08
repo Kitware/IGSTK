@@ -177,7 +177,7 @@ SerialCommunicationForPosix::InternalUpdateParameters( void )
 
   // set data bits
   if (dataBits == DataBits8)
-    {                 
+    {
     t.c_cflag |= CS8;
     }
   else if (dataBits == DataBits7)
@@ -187,7 +187,7 @@ SerialCommunicationForPosix::InternalUpdateParameters( void )
 
   // set parity
   if (parity == NoParity)
-    { // none            
+    { // none
     t.c_cflag &= ~PARENB;
     t.c_cflag &= ~PARODD;
     }
@@ -209,9 +209,9 @@ SerialCommunicationForPosix::InternalUpdateParameters( void )
 
   // enable hardware handshake by default
 #ifdef sgi
-  t.c_cflag |= CNEW_RTSCTS;       
+  t.c_cflag |= CNEW_RTSCTS;
 #else
-  t.c_cflag |= CRTSCTS;           
+  t.c_cflag |= CRTSCTS;
 #endif
 
   // turn off hardware handshake if requested
@@ -221,7 +221,7 @@ SerialCommunicationForPosix::InternalUpdateParameters( void )
     t.c_cflag &= ~CNEW_RTSCTS;
 #else
     t.c_cflag &= ~CRTSCTS;
-#endif     
+#endif
     } 
 
   // set timeout period

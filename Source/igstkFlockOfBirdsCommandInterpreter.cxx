@@ -466,7 +466,7 @@ void FlockOfBirdsCommandInterpreter::Point()
   if (m_StreamData)
     {
     this->EndStream();
-    }    
+    }
 
   if (!m_GroupMode)
     {
@@ -504,7 +504,7 @@ void FlockOfBirdsCommandInterpreter::ButtonRead(int *val)
   if (m_StreamData)
     {
     this->EndStream();
-    }    
+    }
 
   this->SendRaw("N",1);
   if (m_Error || val == 0)
@@ -1103,7 +1103,7 @@ void FlockOfBirdsCommandInterpreter::ChangeValueBytes(
 
   memcpy(&text[2],data,outputDataLen);
 
-  FlockOfBirdsCommandInterpreter::SendRaw(text,outputDataLen+2);    
+  FlockOfBirdsCommandInterpreter::SendRaw(text,outputDataLen+2);
 }
 
 /** Send a command to the flock with no arguments.

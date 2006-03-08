@@ -199,7 +199,7 @@ SerialCommunicationForWindows::InternalUpdateParameters( void )
     {
     commSettings.fOutxCtsFlow = FALSE;       // off
     commSettings.fRtsControl = RTS_CONTROL_DISABLE;
-    }    
+    }
 
   // set data bits
   if (dataBits == DataBits8)
@@ -213,7 +213,7 @@ SerialCommunicationForWindows::InternalUpdateParameters( void )
 
   // set parity
   if (parity == NoParity)
-    { // none                
+    { // none
     commSettings.Parity = NOPARITY;
     }
   else if (parity == OddParity)

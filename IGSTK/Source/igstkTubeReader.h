@@ -124,7 +124,7 @@ private:
   void operator=(const Self&);     //purposely not implemented
 
   // FIXME : This must be replaced with StateMachine logic
-  virtual TubeSpatialObjectType * GetITKTubeSpatialObject() const;    
+  virtual TubeSpatialObjectType * GetITKTubeSpatialObject() const;
 
   TubeType::Pointer m_Tube;
   TubeSpatialObjectType::Pointer m_TubeSpatialObject;

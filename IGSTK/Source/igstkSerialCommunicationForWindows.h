@@ -36,7 +36,7 @@ namespace igstk
  *  \image latex igstkSerialCommunicationForWindows.eps  
  *               "SerialCommunicationForWindows State Machine Diagram" 
  *
- *        
+ *
  * \ingroup Communication
  * \ingroup SerialCommunication
  */

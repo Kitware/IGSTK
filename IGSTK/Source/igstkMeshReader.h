@@ -125,7 +125,7 @@ private:
   void operator=(const Self&);     //purposely not implemented
 
   // FIXME : This must be replaced with StateMachine logic
-  virtual MeshType * GetITKMesh() const;    
+  virtual MeshType * GetITKMesh() const;
 
   MeshObjectType::Pointer   m_MeshObject;
   MeshType::Pointer         m_Mesh;

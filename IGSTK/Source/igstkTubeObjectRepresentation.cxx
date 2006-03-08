@@ -132,7 +132,7 @@ void TubeObjectRepresentation::CreateActors()
   
   //Step 1: copy skeleton points from a vessel into vtkPoints
   //vtkpoints assumes a triplet is coming so use pointer arithmetic
-  //to jump to the next spot in a multidimensional array      
+  //to jump to the next spot in a multidimensional array
   unsigned int nPoints = m_TubeSpatialObject->GetNumberOfPoints();
 
   vtkPoints* vPoints = vtkPoints::New();
@@ -161,7 +161,7 @@ void TubeObjectRepresentation::CreateActors()
                                    this->GetGreen(),
                                    this->GetBlue());
         
-  sphere1->GetProperty()->SetOpacity(1.0);     
+  sphere1->GetProperty()->SetOpacity(1.0);
   this->AddActor( sphere1 );
 
   sphereMapper1->Delete();

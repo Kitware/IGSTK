@@ -139,7 +139,7 @@ void ContourMeshObjectRepresentation::CreateActors()
     {
     polyPoints->SetPoint((*it).first,
                         (*it).second[0],(*it).second[1],(*it).second[2]);
-    }    
+    }
 
   MeshObjectType::CellsContainer* cells = m_MeshObject->GetCells();
   MeshObjectType::CellsContainer::ConstIterator it_cells = cells->Begin();
@@ -149,7 +149,7 @@ void ContourMeshObjectRepresentation::CreateActors()
     
   for(;it_cells != cells->End();it_cells++)
     {
-    vtkIdList* pts = vtkIdList::New();     
+    vtkIdList* pts = vtkIdList::New();
     MeshObjectType::CellTraits::PointIdConstIterator itptids 
                                       = (*it_cells)->Value()->GetPointIds();
     unsigned int id =0;

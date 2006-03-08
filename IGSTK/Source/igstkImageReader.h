@@ -118,7 +118,7 @@ private:
   void operator=(const Self&);      //purposely not implemented
   
   // FIXME : This must be replaced with StateMachine logic
-  virtual const ImageType * GetITKImage() const = 0;    
+  virtual const ImageType * GetITKImage() const = 0;
 
   typename ImageSpatialObjectType::Pointer   m_ImageSpatialObject;
 

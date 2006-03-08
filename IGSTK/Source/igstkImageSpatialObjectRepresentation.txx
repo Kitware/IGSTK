@@ -470,7 +470,7 @@ template < class TImageSpatialObject >
 void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::UpdateRepresentationProcessing()
-{    
+{
   igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
                        ::UpdateRepresentationProcessing called...\n");
   if( m_ImageData )

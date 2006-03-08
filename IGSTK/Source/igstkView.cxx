@@ -499,7 +499,7 @@ void View::RequestAddObject( ObjectRepresentation* pointer )
     return;
     }
 
-  ObjectListType::iterator it =    
+  ObjectListType::iterator it =
     std::find(m_Objects.begin(),m_Objects.end(),pointer);
   if( it != m_Objects.end() )
     {
@@ -785,7 +785,7 @@ int View::handle( int event )
       break;
 
     case FL_KEYBOARD:   // keypress
-      this->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);        
+      this->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);
       
       // Disabling VTK keyboard interaction
       //this->InvokeEvent(vtkCommand::KeyPressEvent, NULL);

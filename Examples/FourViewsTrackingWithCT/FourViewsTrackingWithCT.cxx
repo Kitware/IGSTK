@@ -39,7 +39,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_LogCoutOutput->SetStream( std::cout );
   this->GetLogger()->AddLogOutput( m_LogCoutOutput );
 
-  Fl_Text_Buffer * textBuffer = new Fl_Text_Buffer();                    
+  Fl_Text_Buffer * textBuffer = new Fl_Text_Buffer();
   this->m_LogWindow->buffer( textBuffer );
   m_LogFLTKOutput = FLTKTextLogOutput::New();
   m_LogFLTKOutput->SetStream( *m_LogWindow );
@@ -48,7 +48,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   /** Direct the igstk components log message to the file. */
   m_LogFileOutput = LogOutputType::New();
   //FIXME. use a date/time file name
-  std::string logFileName = "logFourViewsTrackingWithCT.txt";                   
+  std::string logFileName = "logFourViewsTrackingWithCT.txt";
   m_LogFile.open( logFileName.c_str() );
   if( !m_LogFile.fail() )
     {
@@ -519,7 +519,7 @@ void FourViewsTrackingWithCT::AddImageLandmarkProcessing()
       p[0] = m_ImageLandmarkTransformToBeSet.GetTranslation()[0];
       p[1] = m_ImageLandmarkTransformToBeSet.GetTranslation()[1];
       p[2] = m_ImageLandmarkTransformToBeSet.GetTranslation()[2];
-      m_ImageLandmarksContainer.push_back( p );                  
+      m_ImageLandmarksContainer.push_back( p );
 
       this->NumberOfImageLandmarks->value( m_ImageLandmarksContainer.size() );
       if ( m_ImageLandmarksContainer.size() < 3 )
@@ -590,7 +590,7 @@ void FourViewsTrackingWithCT::AddTrackerLandmarkProcessing()
     p[0] = m_TrackerLandmarkTransformToBeSet.GetTranslation()[0];
     p[1] = m_TrackerLandmarkTransformToBeSet.GetTranslation()[1];
     p[2] = m_TrackerLandmarkTransformToBeSet.GetTranslation()[2];
-    m_TrackerLandmarksContainer.push_back( p );                     
+    m_TrackerLandmarksContainer.push_back( p );
 
     this->NumberOfTrackerLandmarks->value( m_TrackerLandmarksContainer.size() );
     if ( m_TrackerLandmarksContainer.size() < m_ImageLandmarksContainer.size() )
@@ -717,7 +717,7 @@ void FourViewsTrackingWithCT::Tracking()
     ImageSpatialObjectType::IndexType index;
     m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index );
     igstkLogMacro( DEBUG,  "Tracker tool index:" << index << "\n" )
-    ResliceImage( index );      
+    ResliceImage( index );
     }
   else
     {
@@ -974,7 +974,7 @@ void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
     
     if( m_ImageReader->GetOutput()->IsInside( p ) )
       {
-      m_ImageLandmarkTransformToBeSet = tmevent->Get();     
+      m_ImageLandmarkTransformToBeSet = tmevent->Get();
       m_Ellipsoid->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
       ImageSpatialObjectType::IndexType index;
       m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index);

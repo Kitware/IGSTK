@@ -148,7 +148,7 @@ int igstkTransformTest( int, char * [] )
         fabs(rotation.GetY()) > epsilon ||
         fabs(rotation.GetZ()) > epsilon ||
         fabs(rotation.GetW() - 1) > epsilon)
-      {      
+      {
       std::cerr << "Error in inverse" << std::endl;
       return EXIT_FAILURE;
       }

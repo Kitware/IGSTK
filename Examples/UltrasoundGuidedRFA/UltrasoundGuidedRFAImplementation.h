@@ -128,7 +128,7 @@ public:
   bool HasQuitted() {return m_HasQuitted;}
 
   /** Methods for Converting Events into State Machine Inputs */
-  igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,    
+  igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,
                                      AxialBoundsInput, AxialBounds );
 
 private:
@@ -165,7 +165,7 @@ private:
   MRObliqueImageRepresentationType::PointType m_ObliquePoint;
   
   void SetAxialSliderBoundsProcessing();
-  igstkDeclareInputMacro( AxialBounds );                
+  igstkDeclareInputMacro( AxialBounds );
   igstkDeclareStateMacro( Initial );
 };
 
