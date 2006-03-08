@@ -268,17 +268,16 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
 
   this->m_StateMachine.ProcessInputs();
 
-
-
   std::string tagkey;
     
+  itk::MetaDataDictionary & dict = m_ImageIO->GetMetaDataDictionary();
 
   // 
   // Get the Patient Name from the DICOM header
   //
   tagkey = "0010|0010";
 
-  if( m_ImageIO->GetValueFromTag(tagkey, m_PatientName ) )
+  if( itk::ExposeMetaData<std::string>(dict,tagkey, m_PatientName ) )
     {
     igstkLogMacro( DEBUG, "Patient Name = " << m_PatientName << "\n" );
     }
@@ -288,13 +287,12 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
     return;
     }
 
-
   // 
   // Get the Patient ID from the DICOM header
   //
   tagkey = "0010|0020";
 
-  if( m_ImageIO->GetValueFromTag(tagkey, m_PatientID ) )
+  if( itk::ExposeMetaData<std::string>(dict,tagkey, m_PatientID ) )
     {
     igstkLogMacro( DEBUG, "Patient ID = " << m_PatientID << "\n" );
     }
@@ -310,7 +308,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
   //
   tagkey = "0008|0060";
 
-  if( m_ImageIO->GetValueFromTag(tagkey, m_Modality ) )
+  if( itk::ExposeMetaData<std::string>(dict,tagkey, m_Modality ) )
     {
     igstkLogMacro( DEBUG, "Modality     = " << m_Modality << "\n" );
     }
@@ -319,7 +317,6 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
     igstkLogMacro( CRITICAL, "Image Modality not found in DICOM file \n" );
     return;
     }
-
 
   this->Superclass::ConnectImage();
   
