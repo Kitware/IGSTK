@@ -28,7 +28,8 @@
 #include "itkStdStreamLogOutput.h"
 #include "igstkEvents.h"
 
-int igstkObliqueImageSpatialObjectRepresentationTest( int argc , char * argv [] )
+int igstkObliqueImageSpatialObjectRepresentationTest( 
+                                                 int argc , char * argv [] )
 {
 
   igstk::RealTimeClock::Initialize();
@@ -36,14 +37,11 @@ int igstkObliqueImageSpatialObjectRepresentationTest( int argc , char * argv [] 
   typedef short    PixelType;
   const unsigned int Dimension = 3;
 
-  typedef igstk::ImageSpatialObject< 
-                                PixelType, 
-                                Dimension 
-                                       > ImageSpatialObjectType;
+  typedef igstk::ImageSpatialObject<PixelType,Dimension> 
+                                                      ImageSpatialObjectType;
   
-  typedef igstk::ObliqueImageSpatialObjectRepresentation< 
-                                  ImageSpatialObjectType 
-                                                      >   RepresentationType;
+  typedef igstk::ObliqueImageSpatialObjectRepresentation<
+                                 ImageSpatialObjectType>   RepresentationType;
 
   RepresentationType::Pointer  representation = RepresentationType::New();
 
@@ -124,4 +122,3 @@ int igstkObliqueImageSpatialObjectRepresentationTest( int argc , char * argv [] 
 
   return EXIT_SUCCESS;
 }
-

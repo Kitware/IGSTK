@@ -24,7 +24,8 @@ namespace igstk
 {
 
 /** \class USImageObjectRepresentation
- *  \brief This class implements a spatial object represenation for MRI modality.
+ *  \brief This class implements a spatial object represenation 
+ *         for US modality.
  *
  * \ingroup Spatial object representation
  */
@@ -54,4 +55,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkUSImageObjectRepresentation_h
-

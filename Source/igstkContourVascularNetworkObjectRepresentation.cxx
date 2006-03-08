@@ -61,7 +61,7 @@ ContourVascularNetworkObjectRepresentation
                            ValidVascularNetworkObject,  
                            SetVascularNetworkObject );
  
-   // ValidVascularNetworkObject 
+  // ValidVascularNetworkObject 
   igstkAddTransitionMacro( ValidVascularNetworkObject, 
                            NullVascularNetworkObject,
                            NullVascularNetworkObject,  No ); 
@@ -180,7 +180,9 @@ void ContourVascularNetworkObjectRepresentation::CreateActors()
     for( unsigned int i=0; i < nPoints; i++ )
       {
       const VesselObjectType::PointType* pt = vessel->GetPoint(i); 
-      vPoints->SetPoint(i, (float)(pt->GetPosition()[0]*spacing[0]), (float)(pt->GetPosition()[1]*spacing[1]), (float)(pt->GetPosition()[2]*spacing[2]));
+      vPoints->SetPoint(i, (float)(pt->GetPosition()[0]*spacing[0]), 
+                           (float)(pt->GetPosition()[1]*spacing[1]), 
+                           (float)(pt->GetPosition()[2]*spacing[2]));
       vScalars->SetTuple1(i,pt->GetRadius()*0.95*spacing[0]);
       vVectors->SetTuple3(i,pt->GetRadius()*0.95*spacing[0],0,0);
       }  
@@ -298,4 +300,3 @@ ContourVascularNetworkObjectRepresentation::Copy() const
 }
 
 } // end namespace igstk
-

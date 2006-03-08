@@ -37,15 +37,11 @@ ContourObjectRepresentation
   // We create the ellipse spatial object
   m_Orientation = Axial;
   
-  //igstkAddInputMacro( ValidObject );
-  //igstkAddInputMacro( NullObject );
   igstkAddInputMacro( SetSlicePosition  );
   igstkAddInputMacro( ValidSlicePosition  );
   igstkAddInputMacro( InvalidSlicePosition  );
   igstkAddInputMacro( ValidOrientation  );
 
- // igstkAddStateMacro( NullObject );
- // igstkAddStateMacro( ValidObject );
   igstkAddStateMacro( Initial );
   igstkAddStateMacro( ValidOrientation );
   igstkAddStateMacro( ValidSlicePosition );
@@ -98,7 +94,6 @@ ContourObjectRepresentation
   m_StateMachine.SetReadyToRun();
 
   m_Plane = vtkPlane::New();
-
 } 
 
 /** Destructor */
@@ -162,15 +157,10 @@ ContourObjectRepresentation
   igstkLogMacro( DEBUG, "igstk::ContourObjectRepresentation\
                         ::AttemptSetSlicePositionProcessing called...\n");
 
-      m_StateMachine.PushInput( m_ValidSlicePositionInput );
-  /*    }
-    else
-      {
-      m_StateMachine.PushInput( m_InvalidSlicePositionInput );
-      }
-*/
-    m_StateMachine.ProcessInputs();
-    //}
+  m_StateMachine.PushInput( m_ValidSlicePositionInput );
+
+  //m_StateMachine.PushInput( m_InvalidSlicePositionInput );
+  m_StateMachine.ProcessInputs();
 }
 
 void 

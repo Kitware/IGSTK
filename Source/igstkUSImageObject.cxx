@@ -46,4 +46,3 @@ USImageObject
 
 
 } // end namespace igstk
-

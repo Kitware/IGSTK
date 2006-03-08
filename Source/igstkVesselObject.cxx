@@ -33,7 +33,8 @@ VesselObject::~VesselObject()
 {
 }
 
-/** Set the ITKVesselSpatialObject. this is accessible only from the friend classes */
+/** Set the ITKVesselSpatialObject. 
+ *  this is accessible only from the friend classes */
 void VesselObject
 ::SetVesselSpatialObject( VesselSpatialObjectType * vessel ) 
 {
@@ -61,7 +62,8 @@ unsigned int VesselObject::GetNumberOfPoints(void) const
 }
 
 /** Return a given point */
-const VesselObject::PointType * VesselObject::GetPoint(unsigned int pointId) const
+const VesselObject::PointType * 
+VesselObject::GetPoint(unsigned int pointId) const
 {
   if(pointId >= m_VesselSpatialObject->GetPoints().size())
     {
@@ -86,11 +88,9 @@ void VesselObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   if( this->m_VesselSpatialObject )
-  {
+    {
     os << indent << this->m_VesselSpatialObject << std::endl;
-  }
+    }
 }
 
-
 } // end namespace igstk
-

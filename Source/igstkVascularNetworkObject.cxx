@@ -38,11 +38,11 @@ VascularNetworkObject::GetVessel(unsigned long id) const
 }
 
 /** Print object information */
-void VascularNetworkObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void VascularNetworkObject
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
 
 
 } // end namespace igstk
-

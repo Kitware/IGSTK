@@ -32,14 +32,14 @@ namespace igstk
  * \ingroup Readers
  */
 
-class USImageReader : 
-         public DICOMImageReader< USImageObject >
+class USImageReader : public DICOMImageReader< USImageObject >
 {
 
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( USImageReader, DICOMImageReader< USImageObject > )
+  igstkStandardClassTraitsMacro( USImageReader, 
+                                 DICOMImageReader< USImageObject > )
 
 protected:
 

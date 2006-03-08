@@ -27,7 +27,8 @@ USImageObjectRepresentation
 } 
 
 /** Print Self function */
-void USImageObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void USImageObjectRepresentation
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }

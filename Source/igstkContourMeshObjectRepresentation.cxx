@@ -51,14 +51,15 @@ ContourMeshObjectRepresentation
   igstkAddTransitionMacro( NullMeshObject, ValidMeshObject, 
                            ValidMeshObject,  SetMeshObject );
 
-   // ValidMeshObject 
-  igstkAddTransitionMacro( ValidMeshObject, NullMeshObject, NullMeshObject,  No ); 
-  igstkAddTransitionMacro( ValidMeshObject, ValidMeshObject, ValidMeshObject,  No ); 
+  // ValidMeshObject 
+  igstkAddTransitionMacro( ValidMeshObject, NullMeshObject, 
+                           NullMeshObject,  No ); 
+  igstkAddTransitionMacro( ValidMeshObject, ValidMeshObject, 
+                           ValidMeshObject,  No ); 
 
   igstkSetInitialStateMacro( NullMeshObject );
 
   m_StateMachine.SetReadyToRun();
-
 } 
 
 /** Destructor */
@@ -70,7 +71,8 @@ ContourMeshObjectRepresentation::~ContourMeshObjectRepresentation()
 
 
 /** Set the Meshal Spatial Object */
-void ContourMeshObjectRepresentation::RequestSetMeshObject( const MeshObjectType * Mesh )
+void ContourMeshObjectRepresentation
+::RequestSetMeshObject( const MeshObjectType * Mesh )
 {
   m_MeshObjectToAdd = Mesh;
   if( !m_MeshObjectToAdd )
@@ -102,7 +104,8 @@ void ContourMeshObjectRepresentation::SetMeshObjectProcessing()
 
 
 /** Print Self function */
-void ContourMeshObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void ContourMeshObjectRepresentation
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
@@ -134,7 +137,8 @@ void ContourMeshObjectRepresentation::CreateActors()
 
   for(;it != points->end();it++)
     {
-    polyPoints->SetPoint((*it).first,(*it).second[0],(*it).second[1],(*it).second[2]);
+    polyPoints->SetPoint((*it).first,
+                        (*it).second[0],(*it).second[1],(*it).second[2]);
     }    
 
   MeshObjectType::CellsContainer* cells = m_MeshObject->GetCells();
@@ -146,7 +150,8 @@ void ContourMeshObjectRepresentation::CreateActors()
   for(;it_cells != cells->End();it_cells++)
     {
     vtkIdList* pts = vtkIdList::New();     
-    MeshObjectType::CellTraits::PointIdConstIterator itptids = (*it_cells)->Value()->GetPointIds();
+    MeshObjectType::CellTraits::PointIdConstIterator itptids 
+                                      = (*it_cells)->Value()->GetPointIds();
     unsigned int id =0;
     const unsigned long ptsSize = (*it_cells)->Value()->GetNumberOfPoints();
     pts->SetNumberOfIds(ptsSize);
@@ -212,4 +217,3 @@ ContourMeshObjectRepresentation::Copy() const
 }
 
 } // end namespace igstk
-

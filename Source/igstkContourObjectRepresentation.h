@@ -31,11 +31,6 @@ namespace igstk
 /** \class ContourObjectRepresentation
  * 
  * \brief This class represents a Mesh object.
- * 
- *
- *  \image html  igstkContourObjectRepresentation.png  "ContourObjectRepresentation State Machine Diagram"
- *  \image latex igstkContourObjectRepresentation.eps  "ContourObjectRepresentation State Machine Diagram" 
- *
  * \ingroup ObjectRepresentation
  */
 
@@ -46,7 +41,8 @@ class ContourObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardAbstractClassTraitsMacro( ContourObjectRepresentation, ObjectRepresentation )
+  igstkStandardAbstractClassTraitsMacro( ContourObjectRepresentation, 
+                                         ObjectRepresentation )
 
 public:
 
@@ -100,9 +96,6 @@ private:
 private:
 
   /** Inputs to the State Machine */
-  //igstkDeclareInputMacro( ValidObject );
-  //igstkDeclareInputMacro( NullObject );
-  //igstkDeclareInputMacro( ValidObject );
   igstkDeclareInputMacro( SetSlicePosition );
   igstkDeclareInputMacro( ValidSlicePosition );
   igstkDeclareInputMacro( InvalidSlicePosition );
@@ -113,9 +106,7 @@ private:
   igstkDeclareStateMacro( ValidSlicePosition );
   igstkDeclareStateMacro( AttemptingToSetSlicePosition );
   igstkDeclareStateMacro( Initial );
-  //igstkDeclareStateMacro( NullObject );
-  //igstkDeclareStateMacro( ValidObject );
-
+  
   /** Variables for managing the Slice number through the StateMachine */
   float      m_SlicePositionToBeSet;
   float      m_SlicePosition;
@@ -130,4 +121,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkContourObjectRepresentation_h
-

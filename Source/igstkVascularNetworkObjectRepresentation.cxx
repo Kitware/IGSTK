@@ -35,21 +35,34 @@ namespace igstk
 { 
 
 /** Constructor */
-VascularNetworkObjectRepresentation::VascularNetworkObjectRepresentation():m_StateMachine(this)
+VascularNetworkObjectRepresentation
+::VascularNetworkObjectRepresentation():m_StateMachine(this)
 {
   m_VascularNetworkObject = NULL;
   this->RequestSetSpatialObject( m_VascularNetworkObject );
   
   igstkAddInputMacro( ValidVascularNetworkObject );
-  igstkAddInputMacro( NullVascularNetworkObject  );
+  igstkAddInputMacro( NullVascularNetworkObject );
 
-  igstkAddStateMacro( NullVascularNetworkObject     );
-  igstkAddStateMacro( ValidVascularNetworkObject     );
+  igstkAddStateMacro( NullVascularNetworkObject );
+  igstkAddStateMacro( ValidVascularNetworkObject );
 
-  igstkAddTransitionMacro( NullVascularNetworkObject, NullVascularNetworkObject, NullVascularNetworkObject,  No );
-  igstkAddTransitionMacro( NullVascularNetworkObject, ValidVascularNetworkObject, ValidVascularNetworkObject,  SetVascularNetworkObject );
-  igstkAddTransitionMacro( ValidVascularNetworkObject, NullVascularNetworkObject, NullVascularNetworkObject,  No ); 
-  igstkAddTransitionMacro( ValidVascularNetworkObject, ValidVascularNetworkObject, ValidVascularNetworkObject,  No ); 
+  igstkAddTransitionMacro( NullVascularNetworkObject, 
+                           NullVascularNetworkObject, 
+                           NullVascularNetworkObject,  
+                           No );
+  igstkAddTransitionMacro( NullVascularNetworkObject, 
+                           ValidVascularNetworkObject, 
+                           ValidVascularNetworkObject,  
+                           SetVascularNetworkObject );
+  igstkAddTransitionMacro( ValidVascularNetworkObject,
+                           NullVascularNetworkObject,
+                           NullVascularNetworkObject,
+                           No ); 
+  igstkAddTransitionMacro( ValidVascularNetworkObject,
+                           ValidVascularNetworkObject, 
+                           ValidVascularNetworkObject,
+                           No ); 
 
   igstkSetInitialStateMacro( NullVascularNetworkObject );
 
@@ -63,8 +76,9 @@ VascularNetworkObjectRepresentation::~VascularNetworkObjectRepresentation()
   this->DeleteActors();
 }
 
-/** Set the Tubeal Spatial Object */
-void VascularNetworkObjectRepresentation::RequestSetVascularNetworkObject( const VascularNetworkObjectType * network )
+/** Set the VasvualNetwork Spatial Object */
+void VascularNetworkObjectRepresentation
+::RequestSetVascularNetworkObject( const VascularNetworkObjectType * network )
 {
   m_VascularNetworkObjectToAdd = network;
   if( !m_VascularNetworkObjectToAdd )
@@ -93,7 +107,8 @@ void VascularNetworkObjectRepresentation::SetVascularNetworkObjectProcessing()
 } 
 
 /** Print Self function */
-void VascularNetworkObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void VascularNetworkObjectRepresentation
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
@@ -118,7 +133,7 @@ void VascularNetworkObjectRepresentation::CreateActors()
     {
     const VesselObjectType* vessel = m_VascularNetworkObject->GetVessel(ntube);
       
-   if(vessel->GetNumberOfPoints() < 2)
+  if(vessel->GetNumberOfPoints() < 2)
     {
     igstkLogMacro( CRITICAL, "Not enough points to render a tube.\n" );
     return;
@@ -301,4 +316,3 @@ VascularNetworkObjectRepresentation::Copy() const
 
 
 } // end namespace igstk
-

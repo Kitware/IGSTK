@@ -30,7 +30,8 @@ class VascularNetworkReader;
 /** \class VesselObject
  * 
  * \brief This class represents a Vessel object.
- * The Vessel is basically defined by a set of points representing its centerline.
+ * The Vessel is basically defined by a set of points 
+ * representing its centerline.
  * Each point as a position and an associated radius value.
  *
  * \ingroup Object
@@ -68,7 +69,7 @@ public:
   /** Return the spacing of the vessel */
   const double* GetSpacing() const;
 
-   /** The TubeReaderToTubeSpatialObject class is declared as a friend in
+  /** The TubeReaderToTubeSpatialObject class is declared as a friend in
    * order to be able to set the input mesh */
   igstkFriendClassMacro( igstk::VascularNetworkReader );
 
@@ -90,7 +91,7 @@ private:
 
   /** Internal itkSpatialObject */
   VesselSpatialObjectType::Pointer   m_VesselSpatialObject;
- };
+};
 
 } // end namespace igstk
 

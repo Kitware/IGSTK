@@ -28,12 +28,9 @@ namespace igstk
 
 /** \class VascularNetworkObjectRepresentation
  * 
- * \brief This class implements the representation a Tube object.
- * Basically the tube is represented as a VTK actor using a
- * vtkTubeFilter.
- *
- *  \image html  igstkVascularNetworkObjectRepresentation.png  "VascularNetworkObjectRepresentation State Machine Diagram"
- *  \image latex igstkVascularNetworkObjectRepresentation.eps  "VascularNetworkObjectRepresentation State Machine Diagram" 
+ * \brief This class implements the representation a VascularNetwork object.
+ *        Basically the tube is represented as a VTK actor using a
+ *        vtkTubeFilter.
  *
  * \ingroup ObjectRepresentation
  */
@@ -45,7 +42,8 @@ class VascularNetworkObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( VascularNetworkObjectRepresentation, ObjectRepresentation )
+  igstkStandardClassTraitsMacro( VascularNetworkObjectRepresentation, 
+                                 ObjectRepresentation )
 
 public:
 
@@ -56,7 +54,8 @@ public:
   Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
-  void RequestSetVascularNetworkObject( const VascularNetworkObjectType * VascularNetworkObject );
+  void RequestSetVascularNetworkObject( const VascularNetworkObjectType 
+                                                    * VascularNetworkObject );
 
 protected:
   
@@ -81,7 +80,7 @@ private:
   virtual void UpdateRepresentationProcessing();
 
   /** Connect this representation class to the spatial object. Only to be
-   * called by the State Machine. */
+   *  called by the State Machine. */
   void SetVascularNetworkObjectProcessing(); 
 
   /** Null operation for a State Machine transition */
@@ -105,4 +104,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkVascularNetworkObjectRepresentation_h
-

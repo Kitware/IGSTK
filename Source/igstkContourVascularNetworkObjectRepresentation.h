@@ -44,7 +44,8 @@ class ContourVascularNetworkObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( ContourVascularNetworkObjectRepresentation, ContourObjectRepresentation )
+  igstkStandardClassTraitsMacro( ContourVascularNetworkObjectRepresentation, 
+                                 ContourObjectRepresentation )
 
 public:
     
@@ -56,7 +57,8 @@ public:
   Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
-  void RequestSetVascularNetworkObject( const VascularNetworkObjectType * VascularNetworkObject );
+  void RequestSetVascularNetworkObject( const VascularNetworkObjectType * 
+                                                      VascularNetworkObject );
 
 protected:
 
@@ -92,32 +94,15 @@ private:
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidVascularNetworkObject );
   igstkDeclareInputMacro( NullVascularNetworkObject );
-//  igstkDeclareInputMacro( SetSlicePosition );
-//  igstkDeclareInputMacro( ValidSlicePosition );
-//  igstkDeclareInputMacro( InvalidSlicePosition );
-//  igstkDeclareInputMacro( ValidOrientation );
 
   /** States for the State Machine */
-//  igstkDeclareStateMacro( ValidVascularNetworkOrientation );
-//  igstkDeclareStateMacro( ValidSlicePosition );
-//  igstkDeclareStateMacro( AttemptingToSetSlicePosition );
   igstkDeclareStateMacro( NullVascularNetworkObject );
   igstkDeclareStateMacro( ValidVascularNetworkObject );
 
-  /** Variables for managing the Slice number through the StateMachine */
-//  float      m_SlicePositionToBeSet;
-//  float      m_SlicePosition;
-
-  /** Variables for managing the Orientation of the slices */
-//  OrientationType      m_OrientationToBeSet;
- // OrientationType      m_Orientation;
-
   VascularNetworkObjectType::ConstPointer m_VascularNetworkObjectToAdd;
- // vtkPlane* m_Plane;
 };
 
 
 } // end namespace igstk
 
 #endif // __igstkContourVascularNetworkObjectRepresentation_h
-

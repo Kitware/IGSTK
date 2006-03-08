@@ -33,9 +33,6 @@ namespace igstk
  * \brief This class represents a Mesh object.
  * 
  *
- *  \image html  igstkContourMeshObjectRepresentation.png  "ContourMeshObjectRepresentation State Machine Diagram"
- *  \image latex igstkContourMeshObjectRepresentation.eps  "ContourMeshObjectRepresentation State Machine Diagram" 
- *
  * \ingroup ObjectRepresentation
  */
 
@@ -46,7 +43,8 @@ class ContourMeshObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( ContourMeshObjectRepresentation, ContourObjectRepresentation )
+  igstkStandardClassTraitsMacro( ContourMeshObjectRepresentation, 
+                                 ContourObjectRepresentation )
 
 public:
     
@@ -93,32 +91,15 @@ private:
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidMeshObject );
   igstkDeclareInputMacro( NullMeshObject );
-//  igstkDeclareInputMacro( SetSlicePosition );
-//  igstkDeclareInputMacro( ValidSlicePosition );
-//  igstkDeclareInputMacro( InvalidSlicePosition );
-//  igstkDeclareInputMacro( ValidOrientation );
 
   /** States for the State Machine */
-//  igstkDeclareStateMacro( ValidMeshOrientation );
-//  igstkDeclareStateMacro( ValidSlicePosition );
-//  igstkDeclareStateMacro( AttemptingToSetSlicePosition );
   igstkDeclareStateMacro( NullMeshObject );
   igstkDeclareStateMacro( ValidMeshObject );
 
-  /** Variables for managing the Slice number through the StateMachine */
-//  float      m_SlicePositionToBeSet;
-//  float      m_SlicePosition;
-
-  /** Variables for managing the Orientation of the slices */
-//  OrientationType      m_OrientationToBeSet;
- // OrientationType      m_Orientation;
-
   MeshObjectType::ConstPointer m_MeshObjectToAdd;
- // vtkPlane* m_Plane;
 };
 
 
 } // end namespace igstk
 
 #endif // __igstkContourMeshObjectRepresentation_h
-

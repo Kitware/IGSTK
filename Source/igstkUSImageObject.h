@@ -38,8 +38,7 @@ namespace igstk
  * \ingroup Object
  */
 
-class USImageObject : 
-      public ImageSpatialObject< unsigned char, 3 >
+class USImageObject : public ImageSpatialObject< unsigned char, 3 >
 {
 
 public:
@@ -73,4 +72,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkUSImageObject_h
-
