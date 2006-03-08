@@ -28,8 +28,9 @@ int main(int , char** )
 { 
   igstk::RealTimeClock::Initialize();
 
-  igstk::UltrasoundGuidedRFAImplementation   application;
-  application.Show();
+  igstk::UltrasoundGuidedRFAImplementation::Pointer application 
+                              = igstk::UltrasoundGuidedRFAImplementation::New();
+  application->Show();
 
   // Create the probe
   igstk::UltrasoundProbeObject::Pointer UltrasoundProbe 
@@ -60,7 +61,7 @@ int main(int , char** )
   UltrasoundProbeRepresentation->SetOpacity(1.0);
 
   // Add the probe representations to the views
-  application.AddProbe(  UltrasoundProbeRepresentation  );
+  application->AddProbe(  UltrasoundProbeRepresentation  );
 
   // Create the axes representation
   igstk::AxesObject::Pointer axes = igstk::AxesObject::New();
@@ -69,7 +70,7 @@ int main(int , char** )
                                         igstk::AxesObjectRepresentation::New();
   axesRepresentation->RequestSetAxesObject( axes );
 
-  application.AddAxes(axesRepresentation);
+  application->AddAxes(axesRepresentation);
 
   // Create a second axes representation for the probe
   igstk::AxesObject::Pointer axes2 = igstk::AxesObject::New();
@@ -77,17 +78,18 @@ int main(int , char** )
   igstk::AxesObjectRepresentation::Pointer axesRepresentation2 =
                                         igstk::AxesObjectRepresentation::New();
   axesRepresentation2->RequestSetAxesObject( axes2 );
-  application.AddAxes(axesRepresentation2);
+  application->AddAxes(axesRepresentation2);
 
   // Associate the Spatial Object to the tracker
   //application.AttachObjectToTrack( axes2 );
-  application.AttachObjectToTrack(  UltrasoundProbe  );
+  application->AttachObjectToTrack(  UltrasoundProbe  );
 
   //Fl::run();
 
-  while( 1 )
+  while( !application->HasQuitted() )
     {
     Fl::wait(0.001);
+    application->Randomize();
     igstk::PulseGenerator::CheckTimeouts();
     }
 

@@ -7,6 +7,7 @@ SET(UltrasoundGuidedRFA_GUI_SRCS
 SET(UltrasoundGuidedRFA_SRCS
   main.cxx
   UltrasoundGuidedRFAImplementation.h
+  UltrasoundGuidedRFAImplementation.cxx
   )
 
 INCLUDE_DIRECTORIES(

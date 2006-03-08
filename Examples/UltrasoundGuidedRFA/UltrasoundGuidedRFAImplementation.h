@@ -35,6 +35,22 @@
 #include "igstkUltrasoundProbeObjectRepresentation.h"
 #include "igstkAxesObjectRepresentation.h"
 #include "igstkMouseTracker.h"
+#include "igstkMeshReader.h"
+#include "igstkMeshObject.h"
+#include "igstkMeshObjectRepresentation.h"
+#include "igstkContourMeshObjectRepresentation.h"
+#include "igstkContourVascularNetworkObjectRepresentation.h"
+#include "igstkVascularNetworkReader.h"
+#include "igstkVascularNetworkObject.h"
+#include "igstkVascularNetworkObjectRepresentation.h"
+#include "igstkMRImageReader.h"
+#include "igstkMRImageSpatialObject.h"
+#include "igstkMRImageSpatialObjectRepresentation.h"
+#include "igstkUSImageReader.h"
+#include "igstkUSImageObjectRepresentation.h"
+#include "igstkObliqueImageSpatialObjectRepresentation.h"
+
+#include "FL/Fl_File_Chooser.H"
 
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
@@ -48,15 +64,37 @@
 namespace igstk
 {
 
-
-class UltrasoundGuidedRFAImplementation : public UltrasoundGuidedRFA
+class UltrasoundGuidedRFAImplementation : public UltrasoundGuidedRFA, public igstk::Object
 {
+public:
+  /** Typedefs */
+  igstkStandardClassBasicTraitsMacro( UltrasoundGuidedRFAImplementation, UltrasoundGuidedRFA );
+  igstkNewMacro( Self );
+
+  /** Declarations needed for the State Machine */
+  igstkStateMachineMacro();
 
 public:
     
-  typedef itk::Logger                 LoggerType; 
-  typedef itk::StdStreamLogOutput     LogOutputType;
-  typedef igstk::FlockOfBirdsTracker  TrackerType;
+  typedef itk::Logger                   LoggerType; 
+  typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef igstk::FlockOfBirdsTracker    TrackerType;
+  typedef igstk::MeshReader             LiverReaderType;
+  typedef igstk::VascularNetworkReader  VascularNetworkReaderType;
+  typedef igstk::VascularNetworkObject  VascularNetworkType;
+  typedef igstk::VascularNetworkObjectRepresentation
+                                        VascularNetworkRepresentationType;
+
+  typedef igstk::MRImageSpatialObject               MRImageType;
+  typedef igstk::MRImageSpatialObjectRepresentation MRImageRepresentationType;
+  typedef igstk::MRImageReader                      MRImageReaderType;
+
+  typedef igstk::ObliqueImageSpatialObjectRepresentation<MRImageType>
+                                                    MRObliqueImageRepresentationType;
+
+  typedef igstk::USImageObject                      USImageType;
+  typedef igstk::USImageObjectRepresentation        USImageRepresentationType;
+  typedef igstk::USImageReader                      USImageReaderType;
 
 #ifdef WIN32
   typedef igstk::SerialCommunicationForWindows  CommunicationType;
@@ -66,169 +104,66 @@ public:
 
 public:
 
-  UltrasoundGuidedRFAImplementation()
-    {
-    m_Tracker = TrackerType::New();
-    
-    m_Logger = LoggerType::New();
-    m_LogOutput = LogOutputType::New();
-    m_LogFile.open("logUltrasoundGuidedRFA.txt");
-    if( !m_LogFile.fail() )
-      {
-      m_LogOutput->SetStream( m_LogFile );
-      }
-    else
-      {
-      std::cerr << "Problem opening Log file, using cerr instead " << std::endl;
-      m_LogOutput->SetStream( std::cerr );
-      }
-    // m_Logger->AddLogOutput( m_LogOutput );
-
-    // add stdout for debug purposes
-    LogOutputType::Pointer coutLogOutput = LogOutputType::New();
-    coutLogOutput->SetStream( std::cout );
-    m_Logger->AddLogOutput( coutLogOutput );
-
-    m_Logger->SetPriorityLevel( LoggerType::DEBUG );
-    //m_Tracker->SetLogger( m_Logger );
-
-    m_Communication = CommunicationType::New();
-    //m_Communication->SetLogger( m_Logger );
-    m_Communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
-    m_Communication->SetParity( igstk::SerialCommunication::NoParity );
-    m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate19200 );
-    m_Tracker->SetCommunication(m_Communication);
-    m_Communication->OpenCommunication();
-
-    /** Tool calibration transform */
-    igstk::Transform toolCalibrationTransform;
-    igstk::Transform::VectorType translation;
-    translation[0] = 0;   // Tip offset
-    translation[1] = 0;
-    translation[2] = 390;
-    //translation[2] = 0;
-      
-    igstk::Transform::VersorType rotation;
-    //rotation.SetRotationAroundZ(-3.141597/2.0);
-    rotation.SetRotationAroundY(-3.141597/2.0);
-    
-    igstk::Transform::VersorType rotation2;
-    //rotation2.SetRotationAroundY(-3.141597/2.0);
-    rotation2.SetRotationAroundX(3.141597/2.0);
-    
-    rotation = rotation2*rotation;
-   
-    translation = rotation.Transform(translation);
-
-    toolCalibrationTransform.SetTranslationAndRotation(translation,
-                                                    rotation,0.0001,100000);
-    m_Tracker->SetToolCalibrationTransform( 0, 0, toolCalibrationTransform);
-
-    /** Tool calibration transform */
-    igstk::Transform patientTransform;
-    igstk::Transform::VectorType translationP;
-    translationP[0] = 0;   // Tip offset
-    translationP[1] = 0;
-    translationP[2] = 0;
-
-    igstk::Transform::VersorType rotationP;
-    //rotationP.SetRotationAroundX(3.141597/2.0);
-    rotationP.SetRotationAroundY(-3.141597/2.0);
-    
-    igstk::Transform::VersorType rotation2P;
-    //rotation2P.SetRotationAroundY(-3.141597/2.0);
-    rotation2P.SetRotationAroundZ(3.141597/2.0);
-   
-    rotationP = rotation2P*rotationP;
-
-    patientTransform.SetTranslationAndRotation(translationP,
-                                               rotationP,0.0001,100000);
-    m_Tracker->SetPatientTransform(patientTransform);
-
-    m_Tracker->Open();
-    m_Tracker->Initialize();
-
-    // Set up the four quadrant views
-    this->Display3D->RequestResetCamera();
-    this->Display3D->Update();
-    this->Display3D->RequestEnableInteractions();
-    this->Display3D->RequestSetRefreshRate( 60 ); // 60 Hz
-    this->Display3D->RequestStart();
-
-    this->DisplayAxial->RequestResetCamera();
-    this->DisplayAxial->Update();
-    this->DisplayAxial->RequestEnableInteractions();
-    this->DisplayAxial->RequestSetRefreshRate( 60 ); // 60 Hz
-    this->DisplayAxial->RequestStart();
-
-    this->DisplayCoronal->RequestResetCamera();
-    this->DisplayCoronal->Update();
-    this->DisplayCoronal->RequestEnableInteractions();
-    this->DisplayCoronal->RequestSetRefreshRate( 60 ); // 60 Hz
-    this->DisplayCoronal->RequestStart();
-
-    this->DisplaySagittal->RequestResetCamera();
-    this->DisplaySagittal->Update();
-    this->DisplaySagittal->RequestEnableInteractions();
-    this->DisplaySagittal->RequestSetRefreshRate( 60 ); // 60 Hz
-    this->DisplaySagittal->RequestStart();
-      
-    m_Tracking = false;
-    }
-
-  ~UltrasoundGuidedRFAImplementation()
-    {
-    m_Tracker->Reset();
-    m_Tracker->StopTracking();
-    m_Tracker->Close();
-    }
-    
-  void EnableTracking()
-    {
-    m_Tracking = true;
-    m_Tracker->StartTracking();
-    }
-    
-  void DisableTracking()
-    {
-    m_Tracker->Reset();
-    m_Tracker->StopTracking();
-    m_Tracking = false;
-    }
-    
+  void EnableTracking();  
+  void DisableTracking();
   void AddProbe( igstk::UltrasoundProbeObjectRepresentation 
-                                                   * cylinderRepresentation )
-    {
-    this->Display3D->RequestAddObject(       cylinderRepresentation->Copy() );
-    this->DisplayAxial->RequestAddObject(    cylinderRepresentation->Copy() );
-    this->DisplayCoronal->RequestAddObject(  cylinderRepresentation->Copy() );
-    this->DisplaySagittal->RequestAddObject( cylinderRepresentation->Copy() );
-    }
+                                                   * cylinderRepresentation );
 
-  void AddAxes( igstk::AxesObjectRepresentation * cylinderRepresentation )
-    {
-    this->Display3D->RequestAddObject(       cylinderRepresentation->Copy() );
-    this->DisplayAxial->RequestAddObject(    cylinderRepresentation->Copy() );
-    this->DisplayCoronal->RequestAddObject(  cylinderRepresentation->Copy() );
-    this->DisplaySagittal->RequestAddObject( cylinderRepresentation->Copy() );
-    }
+  void AddAxes( igstk::AxesObjectRepresentation * cylinderRepresentation );
 
-  void AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
-    {
-    const unsigned int toolPort = 0;
-    const unsigned int toolNumber = 0;
-    m_Tracker->AttachObjectToTrackerTool( toolPort, toolNumber, objectToTrack );
-    }
+  void AttachObjectToTrack( igstk::SpatialObject * objectToTrack );
+
+  void LoadLiverSurface();
+  void LoadLiverVasculature();
+  void LoadLiverImage();
+  void Load2DUltrasound();
+  void Quit();
+
+  void SetSliceNumber(unsigned int value);
+
+  void Randomize();
+
+  bool HasQuitted() {return m_HasQuitted;}
+
+  /** Methods for Converting Events into State Machine Inputs */
+  igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,    
+                                     AxialBoundsInput, AxialBounds );
 
 private:
+
+  UltrasoundGuidedRFAImplementation();
+  ~UltrasoundGuidedRFAImplementation();
 
   LoggerType::Pointer        m_Logger;
   LogOutputType::Pointer     m_LogOutput;
   TrackerType::Pointer       m_Tracker;
   CommunicationType::Pointer m_Communication;
+  LiverReaderType::Pointer   m_MeshReader;
+  MeshObjectRepresentation::Pointer m_LiverRepresentation;
+  ContourMeshObjectRepresentation::Pointer m_ContourLiverRepresentation;
+  ContourVascularNetworkObjectRepresentation::Pointer m_ContourVascularNetworkRepresentation;
+  VascularNetworkReaderType::Pointer m_VascularNetworkReader;
+  VascularNetworkRepresentationType::Pointer       m_VascularNetworkRepresentation;
+   
+  MRImageReaderType::Pointer   m_MRImageReader;
+  MRImageType::Pointer         m_LiverMR;
+  MRImageRepresentationType::Pointer m_LiverMRRepresentation;
+  //MRObliqueImageRepresentationType::Pointer m_ObliqueLiverMRRepresentation;
+  MRImageRepresentationType::Pointer m_ObliqueLiverMRRepresentation;
 
-  bool                    m_Tracking;
-  std::ofstream           m_LogFile;
+  USImageReaderType::Pointer         m_USImageReader;
+  USImageType::Pointer               m_LiverUS;
+  USImageRepresentationType::Pointer m_LiverUSRepresentation;
+
+  bool                      m_Tracking;
+  std::ofstream             m_LogFile;
+  bool                      m_HasQuitted;
+
+  MRObliqueImageRepresentationType::PointType m_ObliquePoint;
+  
+  void SetAxialSliderBoundsProcessing();
+  igstkDeclareInputMacro( AxialBounds );                
+  igstkDeclareStateMacro( Initial );
 };
 
 
