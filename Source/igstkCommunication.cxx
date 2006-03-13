@@ -60,8 +60,9 @@ void Communication::PrintSelf(std::ostream &os, itk::Indent indent) const
   
   os << indent << "TimeoutPeriod: " << m_TimeoutPeriod 
      << std::endl;
-  os << indent << "ReadTerminationCharacter: " << m_ReadTerminationCharacter 
-     << std::endl;
+  os << indent << "ReadTerminationCharacter: " << "<"
+     << (static_cast<unsigned int>(m_ReadTerminationCharacter) & 0xFF)
+     << ">" << std::endl;
   os << indent << "UseReadTerminationCharacter: "
      << m_UseReadTerminationCharacter 
      << std::endl;
