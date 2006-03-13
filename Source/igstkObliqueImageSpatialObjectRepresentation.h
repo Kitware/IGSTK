@@ -33,10 +33,11 @@ namespace igstk
 namespace Friends 
 {
 
-/** class ObliqueImageSpatialObjectRepresentationToImageSpatialObject 
+/** \class ObliqueImageSpatialObjectRepresentationToImageSpatialObject 
  *
  * \brief This class is intended to make the connection between the
- * ObliqueImageSpatialObjectRepresentation and its output, the ImageSpatialObject.
+ * ObliqueImageSpatialObjectRepresentation and its output, 
+ * the ImageSpatialObject.
  * With this class it is possible to enforce encapsulation of the
  * SpatialObjectRepresentation and the ImageSpatialObject, and make their
  * GetImage() and SetImage() methods private, so that developers cannot gain
@@ -45,20 +46,21 @@ namespace Friends
  */
 class ObliqueImageSpatialObjectRepresentationToImageSpatialObject
 {
-  public:
-    template < class TSpatialObjectRepresentation, class TImageSpatialObject >
-    static void 
-    ConnectImage( const TImageSpatialObject * imageSpatialObject,
-                  TSpatialObjectRepresentation * obliqueImageSpatialObjectRepresentation )
+
+public:
+  template < class TSpatialObjectRepresentation, class TImageSpatialObject >
+  static void 
+  ConnectImage( const TImageSpatialObject * imageSpatialObject,
+                TSpatialObjectRepresentation * 
+                obliqueImageSpatialObjectRepresentation )
     {
-       obliqueImageSpatialObjectRepresentation->SetImage( 
-                 imageSpatialObject->GetVTKImageData() );  
+    obliqueImageSpatialObjectRepresentation->SetImage(
+                                      imageSpatialObject->GetVTKImageData() );  
     }
 
 }; // end of ObliqueImageSpatialObjectRepresentationToImageSpatialObject class
 
 } // end of Friend namespace
-
 
 
 /** \class ObliqueImageSpatialObjectRepresentation
@@ -67,24 +69,22 @@ class ObliqueImageSpatialObjectRepresentationToImageSpatialObject
  * 
  * \ingroup ObjectRepresentation
  */
-
-  template < class TImageSpatialObject >
-class ObliqueImageSpatialObjectRepresentation 
-                      : public ObjectRepresentation
+template < class TImageSpatialObject >
+class ObliqueImageSpatialObjectRepresentation : public ObjectRepresentation
 {
 
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardTemplatedClassTraitsMacro( ObliqueImageSpatialObjectRepresentation, \
-                                          ObjectRepresentation )
+  igstkStandardTemplatedClassTraitsMacro( 
+                ObliqueImageSpatialObjectRepresentation,ObjectRepresentation )
 
 public:
 
-  typedef TImageSpatialObject                      ImageSpatialObjectType;
+  typedef TImageSpatialObject                  ImageSpatialObjectType;
 
   typedef typename ImageSpatialObjectType::ConstPointer 
-                                                   ImageSpatialObjectConstPointer;
+                                               ImageSpatialObjectConstPointer;
 
   typedef typename ImageSpatialObjectType::PointType  PointType;
 
@@ -100,12 +100,12 @@ public:
   void RequestSetPlaneNormalVector( const VectorType & normalVector );
 
   /** Connect this representation class to the spatial object */
-  void RequestSetImageSpatialObject( const ImageSpatialObjectType * ImageSpatialObject );
+  void RequestSetImageSpatialObject( const ImageSpatialObjectType * 
+                                                 ImageSpatialObject );
 
   /** Request reslice a 3D image */
   void RequestReslice();
 
-  
   /** Type used for representing the slice number */
   typedef unsigned int SliceNumberType;
 
@@ -117,7 +117,8 @@ public:
 
   /** Declare the ObliqueImageSpatialObjectRepresentation class to be a friend 
    *  in order to give it access to the private method GetVTKImage(). */
-  igstkFriendClassMacro( igstk::Friends::ObliqueImageSpatialObjectRepresentationToImageSpatialObject );
+  igstkFriendClassMacro( igstk::Friends::\
+                ObliqueImageSpatialObjectRepresentationToImageSpatialObject );
 
 protected:
 
@@ -139,7 +140,7 @@ protected:
 
 private:
 
-  ObliqueImageSpatialObjectRepresentation(const Self&);   //purposely not implemented
+  ObliqueImageSpatialObjectRepresentation(const Self&);
   void operator=(const Self&);   //purposely not implemented
 
   /** Internal itkSpatialObject */
@@ -163,7 +164,6 @@ private:
   double                                 m_Level;
   double                                 m_Window;
 
-  
   /** Update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationProcessing();
 
@@ -179,7 +179,6 @@ private:
  
   /** Set the normal vector of the plane */
   void SetPlaneNormalVectorProcessing();
-
 
   /** Reslice processing */
   void ResliceProcessing ();
@@ -226,4 +225,3 @@ private:
 
 
 #endif // __igstkObliqueImageSpatialObjectRepresentation_h
-

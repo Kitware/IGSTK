@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef _igstkLandmarkUltrasoundCalibration_h
-#define _igstkLandmarkUltrasoundCalibration_h
+#ifndef __igstkLandmarkUltrasoundCalibration_h
+#define __igstkLandmarkUltrasoundCalibration_h
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4018 )
@@ -45,16 +45,15 @@ namespace igstk
 
 /** \class LandmarkUltrasoundCalibration
  * 
- * \brief Create a calibration transform for tracked ultrasound by pointer-based method.
+ * \brief Create a calibration transform for tracked ultrasound by
+ * pointer-based method.
  * 
- * This class calibrates the tracked ultrasound probe and get the transform from the 
- * indices of the ultrasound imaging plane to the general tracking coordinate. The result
- * will include the final calibration transform, the RMS calibration error and also
- * the orthogonality and determinant of the rotation matrix to evaluate the calibration
- * accuracy. Generally, more samples will give more stable result.
- *
- *  \image html  igstkLandmarkUltrasoundCalibration.png  "LandmarkUltrasoundCalibration State Machine Diagram"
- *  \image latex igstkLandmarkUltrasoundCalibration.eps  "LandmarkUltrasoundCalibration State Machine Diagram" 
+ * This class calibrates the tracked ultrasound probe and get the transform 
+ * from the indices of the ultrasound imaging plane to the general tracking 
+ * coordinate. The result will include the final calibration transform, 
+ * the RMS calibration error and also the orthogonality and determinant of the
+ * rotation matrix to evaluate the calibration accuracy. Generally, more 
+ * samples will give more stable result.
  *
  * \ingroup Calibration
  */
@@ -70,73 +69,30 @@ public:
 
   /** Typedefs for the internal computation */
   typedef Transform                       TransformType;
-
   typedef TransformType::VersorType       VersorType;
-
   typedef TransformType::VectorType       VectorType;
-
   typedef TransformType::PointType        PointType;
-
   typedef VersorType::MatrixType          MatrixType;
-
   typedef itk::Index< 3 >                 IndexType;
-
   typedef itk::Matrix< double, 4, 4 >     Matrix4x4Type;
-
-  typedef itk::Image< double, 3 >::SpacingType   
-                                          SpacingType;
-
+  typedef itk::Image<double,3>            ImageType;
+  typedef ImageType::SpacingType          SpacingType;
   typedef double                          ErrorType;
-
-private:
-
-  typedef vnl_matrix< double >            VnlMatrixType;
-
-  typedef vnl_vector< double >            VnlVectorType;
-
-  typedef vnl_svd< double >               VnlSVDType;
-
-  typedef itk::VectorContainer< int, IndexType >
-                                          InputIndexContainerType;
-
-  typedef InputIndexContainerType::Pointer
-                                          InputIndexContainerPointerType;
-
-  typedef itk::VectorContainer< int, PointType >
-                                          InputPointContainerType;
-
-  typedef InputPointContainerType::Pointer
-                                          InputPointContainerPointerType;  
-
-  typedef itk::VectorContainer< int, VersorType >
-                                          InputVersorContainerType;
-
-  typedef InputVersorContainerType::Pointer
-                                          InputVersorContainerPointerType;
-
-  typedef itk::VectorContainer< int, VectorType >
-                                          InputVectorContainerType;
-
-  typedef InputVectorContainerType::Pointer
-                                          InputVectorContainerPointerType;  
-
-  typedef enum {
-          INDEX_POSITION_INPUT,
-          IMAGE_POSITION_INPUT
-          } InputPositionType;
 
 public:
 
   /** Method to check whether a valid calibration is calculated */
   igstkGetMacro( ValidLandmarkUltrasoundCalibration, bool );
 
-  /** Method to get the final calibration transform with rotation and translation */
+  /** Method to get the final calibration transform with rotation 
+   *  and translation */
   igstkGetMacro( CalibrationTransform, TransformType );
 
   /** Method to get the final spacing transform */
   igstkGetMacro( ScaleTransform, SpacingType );
 
-  /** Method to get the final 4x4 calibration matrix with rotation, translation and spacing */
+  /** Method to get the final 4x4 calibration matrix with rotation, 
+   *  translation and spacing */
   igstkGetMacro( CalibrationMatrix4x4, Matrix4x4Type );
 
   /** Method to retrieve the RMS calibration error */
@@ -149,30 +105,60 @@ public:
   void RequestReset();
 
   /** Method invoked by the user to set the pointer's calibration matrix */
-  void RequestSetPointerToolCalibrationTransform( const TransformType & transform );
+  void RequestSetPointerToolCalibrationTransform( const TransformType & 
+                                                                transform );
 
   /** Method invoked by the user to add a new sample */
   void RequestAddIndexPositionSample( const IndexType & indexposition,
                                     const PointType & pointerposition, 
-                                    const VersorType & probeversor, const VectorType & probetranslation );
+                                    const VersorType & probeversor, 
+                                    const VectorType & probetranslation );
 
   /** Method invoked by the user to add a new sample */
   void RequestAddImagePositionSample( const PointType & imageposition,
                                     const PointType & pointerposition, 
-                                    const VersorType & probeversor, const VectorType & probetranslation );
+                                    const VersorType & probeversor, 
+                                    const VectorType & probetranslation );
 
   /** Method invoked by the user to add a new sample */
-  void RequestAddPointerToolIndexPositionSample( const IndexType & indexposition,
-                                       const VersorType & pointerversor, const VectorType & pointertranslation,
-                                       const VersorType & probeversor, const VectorType & probetranslation );
+  void RequestAddPointerToolIndexPositionSample( 
+                                       const IndexType & indexposition,
+                                       const VersorType & pointerversor, 
+                                       const VectorType & pointertranslation,
+                                       const VersorType & probeversor, 
+                                       const VectorType & probetranslation );
 
   /** Method invoked by the user to add a new sample */
-  void RequestAddPointerToolImagePositionSample( const PointType & imageposition,
-                                       const VersorType & pointerversor, const VectorType & pointertranslation,
-                                       const VersorType & probeversor, const VectorType & probetranslation );
+  void RequestAddPointerToolImagePositionSample( 
+                                       const PointType & imageposition,
+                                       const VersorType & pointerversor, 
+                                       const VectorType & pointertranslation,
+                                       const VersorType & probeversor, 
+                                       const VectorType & probetranslation );
 
   /** Method invoked by the user to calculate the calibration matrix */
   void RequestCalculateCalibration(); 
+
+protected:
+
+  typedef vnl_matrix<double>                   VnlMatrixType;
+  typedef vnl_vector<double>                   VnlVectorType;
+  typedef vnl_svd<double>                      VnlSVDType;
+  typedef itk::VectorContainer<int,IndexType>  InputIndexContainerType;
+  typedef InputIndexContainerType::Pointer     InputIndexContainerPointerType;
+
+  typedef itk::VectorContainer<int,PointType>  InputPointContainerType;
+  typedef InputPointContainerType::Pointer     InputPointContainerPointerType;
+  typedef itk::VectorContainer<int,VersorType> InputVersorContainerType;
+  typedef InputVersorContainerType::Pointer    InputVersorContainerPointerType;
+
+  typedef itk::VectorContainer<int,VectorType> InputVectorContainerType;
+  typedef InputVectorContainerType::Pointer    InputVectorContainerPointerType;
+
+  typedef enum {
+    INDEX_POSITION_INPUT,
+    IMAGE_POSITION_INPUT
+    } InputPositionType;
 
 protected:
 
@@ -195,42 +181,58 @@ protected:
   void SetPointerToolCalibrationTransformProcessing();
 
   /** Internal function to set the pointer tool calibration matrix */
-  void InternalSetPointerToolCalibrationTransformProcessing( const TransformType & transform );
+  void InternalSetPointerToolCalibrationTransformProcessing( 
+                                            const TransformType & transform );
 
-  /** Add a new sample, remove parameters to make it work with state machine input  */
+  /** Add a new sample, remove parameters to make it work with state machine 
+   *  input  */
   void AddIndexPositionSampleProcessing();
 
   /** Internal function to add a new sample */
-  void InternalAddIndexPositionSampleProcessing( const IndexType & indexposition,
-                            const PointType & pointerposition, 
-                            const VersorType & probeversor, const VectorType & probetranslation );
+  void InternalAddIndexPositionSampleProcessing( 
+                                        const IndexType & indexposition,
+                                        const PointType & pointerposition, 
+                                        const VersorType & probeversor, 
+                                        const VectorType & probetranslation );
 
-  /** Add a new sample, remove parameters to make it work with state machine input  */
+  /** Add a new sample, remove parameters to make it work with state 
+   *  machine input  */
   void AddImagePositionSampleProcessing();
 
   /** Internal function to add a new sample */
-  void InternalAddImagePositionSampleProcessing( const PointType & imageposition,
+  void InternalAddImagePositionSampleProcessing( 
+                            const PointType & imageposition,
                             const PointType & pointerposition, 
-                            const VersorType & probeversor, const VectorType & probetranslation );
+                            const VersorType & probeversor, 
+                            const VectorType & probetranslation );
 
-  /** Add a new sample, remove parameters to make it work with state machine input  */
+  /** Add a new sample, remove parameters to make it work with state machine 
+   *  input  */
   void AddPointerToolIndexPositionSampleProcessing();
 
   /** Internal function to add a new sample */
-  void InternalAddPointerToolIndexPositionSampleProcessing( const IndexType & indexposition,
-                            const VersorType & pointerversor, const VectorType & pointertranslation, 
-                            const VersorType & probeversor, const VectorType & probetranslation );
+  void InternalAddPointerToolIndexPositionSampleProcessing( 
+                                        const IndexType & indexposition,
+                                        const VersorType & pointerversor, 
+                                        const VectorType & pointertranslation, 
+                                        const VersorType & probeversor, 
+                                        const VectorType & probetranslation );
 
-  /** Add a new sample, remove parameters to make it work with state machine input  */
+  /** Add a new sample, remove parameters to make it work with state 
+   *  machine input  */
   void AddPointerToolImagePositionSampleProcessing();
 
   /** Internal function to add a new sample */
-  void InternalAddPointerToolImagePositionSampleProcessing( const PointType & imageposition,
-                            const VersorType & pointerversor, const VectorType & pointertranslation, 
-                            const VersorType & probeversor, const VectorType & probetranslation );
+  void InternalAddPointerToolImagePositionSampleProcessing( 
+                                        const PointType & imageposition,
+                                        const VersorType & pointerversor, 
+                                        const VectorType & pointertranslation,
+                                        const VersorType & probeversor,
+                                        const VectorType & probetranslation );
 
   /** Internal function to transform the pointer tool's input into position */
-  PointType InternalTransformPointerToolPoint( const VersorType & versor, const VectorType & translation );
+  PointType InternalTransformPointerToolPoint(const VersorType & versor, 
+                                              const VectorType & translation );
 
   /** Calculate the calibration by index position */
   void CalculateCalibrationByIndexPositionProcessing();
@@ -241,19 +243,27 @@ protected:
   /** Internal function to calculate the calibration */
   void InternalCalculateCalibrationProcessing( InputPositionType input );
 
-  /** Internal function to reconstruct the position from the index position and reference probe */
+  /** Internal function to reconstruct the position from the index position 
+   *  and reference probe */
   PointType InternalReconstruct( const IndexType & indexposition,
-                            const VersorType & probeversor, const VectorType & probetranslation );
+                                 const VersorType & probeversor, 
+                                 const VectorType & probetranslation );
 
-  /** Internal function to reconstruct the position from the image position and reference probe */
+  /** Internal function to reconstruct the position from the image position 
+   *  and reference probe */
   PointType InternalReconstruct( const PointType & imageposition,
-                            const VersorType & probeversor, const VectorType & probetranslation );
+                                 const VersorType & probeversor, 
+                                 const VectorType & probetranslation );
 
-  /** Internal function to export the 4x4 matrix from rotation and translation */
-  VnlMatrixType InternalExportTransformMatrix( const VersorType & versor, const VectorType & translation );
+  /** Internal function to export the 4x4 matrix from rotation 
+   *  and translation */
+  VnlMatrixType InternalExportTransformMatrix(const VersorType & versor, 
+                                              const VectorType & translation );
 
-  /** Internal function to export the 4x4 matrix from igstkTransform and scale factor */
-  VnlMatrixType InternalExportTransformMatrix( const TransformType & transform, const SpacingType & spacing );
+  /** Internal function to export the 4x4 matrix from igstkTransform and 
+   *  scale factor */
+  VnlMatrixType InternalExportTransformMatrix( const TransformType & transform,
+                                               const SpacingType & spacing );
 
 private:
 

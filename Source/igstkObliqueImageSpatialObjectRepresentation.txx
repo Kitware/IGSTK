@@ -14,6 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+#ifndef __igstkObliqueImageSpatialObjectRepresentation_txx
+#define __igstkObliqueImageSpatialObjectRepresentation_txx
 
 #include "itkCommand.h"
 #include "itkImage.h"
@@ -54,7 +56,7 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageData  = NULL;
 
   // Image reslice
-  m_ImageReslice = vtkImageReslice::New();      
+  m_ImageReslice = vtkImageReslice::New();
 
 
   // Set default values for window and level
@@ -83,40 +85,51 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   igstkAddStateMacro( ValidPlaneNormalVector );
 
 
-  igstkAddTransitionMacro( NullImageSpatialObject, NullImageSpatialObject, NullImageSpatialObject,  No );
-  igstkAddTransitionMacro( NullImageSpatialObject, EmptyImageSpatialObject, NullImageSpatialObject,  No );
-  igstkAddTransitionMacro( NullImageSpatialObject, ValidImageSpatialObject, ValidImageSpatialObject,  SetImageSpatialObject );
+  igstkAddTransitionMacro( NullImageSpatialObject, NullImageSpatialObject, 
+                           NullImageSpatialObject,  No );
+  igstkAddTransitionMacro( NullImageSpatialObject, EmptyImageSpatialObject,
+                           NullImageSpatialObject,  No );
+  igstkAddTransitionMacro( NullImageSpatialObject, ValidImageSpatialObject, 
+                           ValidImageSpatialObject,  SetImageSpatialObject );
 
-  igstkAddTransitionMacro( NullPointOnthePlane, InValidPointOnThePlane, NullPointOnthePlane,  No );
-  igstkAddTransitionMacro( NullPointOnthePlane, ValidPointOnThePlane, ValidPointOnThePlane,  
-                                                                               SetPointOnthePlane );
+  igstkAddTransitionMacro( NullPointOnthePlane, InValidPointOnThePlane, 
+                           NullPointOnthePlane,  No );
+  igstkAddTransitionMacro( NullPointOnthePlane, ValidPointOnThePlane, 
+                           ValidPointOnThePlane, SetPointOnthePlane );
+  igstkAddTransitionMacro( NullImageSpatialObject, InValidPointOnThePlane, 
+                           NullImageSpatialObject, No );
+  igstkAddTransitionMacro( ValidImageSpatialObject, InValidPointOnThePlane, 
+                           ValidImageSpatialObject, No );
 
-  igstkAddTransitionMacro( NullImageSpatialObject, InValidPointOnThePlane, NullImageSpatialObject, No );
-  igstkAddTransitionMacro( ValidImageSpatialObject, InValidPointOnThePlane, ValidImageSpatialObject, No );
+  igstkAddTransitionMacro( NullImageSpatialObject, ValidPointOnThePlane, 
+                            ValidPointOnThePlane, SetPointOnthePlane );
+  igstkAddTransitionMacro( ValidImageSpatialObject, ValidPointOnThePlane, 
+                           ValidPointOnThePlane, SetPointOnthePlane );
 
-   igstkAddTransitionMacro( NullImageSpatialObject, ValidPointOnThePlane, ValidPointOnThePlane,
-                                                                                SetPointOnthePlane );
-  igstkAddTransitionMacro( ValidImageSpatialObject, ValidPointOnThePlane, ValidPointOnThePlane, 
-                                                                                SetPointOnthePlane );
+  igstkAddTransitionMacro( NullPlaneNormalVector, InValidPlaneNormalVector, 
+                           NullPlaneNormalVector,  No );
+  igstkAddTransitionMacro( NullPlaneNormalVector, ValidPlaneNormalVector, 
+                           ValidPlaneNormalVector, SetPlaneNormalVector );
 
-
-  igstkAddTransitionMacro( NullPlaneNormalVector, InValidPlaneNormalVector, NullPlaneNormalVector,  No );
-  igstkAddTransitionMacro( NullPlaneNormalVector, ValidPlaneNormalVector, ValidPlaneNormalVector,  
-                                                                               SetPlaneNormalVector );
-
-  igstkAddTransitionMacro( ValidPointOnThePlane, InValidPlaneNormalVector, ValidPointOnThePlane, No );
-  igstkAddTransitionMacro( ValidPointOnThePlane, ValidPlaneNormalVector, ValidPlaneNormalVector, 
-                                                                               SetPlaneNormalVector );
+  igstkAddTransitionMacro( ValidPointOnThePlane, InValidPlaneNormalVector, 
+                           ValidPointOnThePlane, No );
+  igstkAddTransitionMacro( ValidPointOnThePlane, ValidPlaneNormalVector, 
+                           ValidPlaneNormalVector, SetPlaneNormalVector );
 
 
-  igstkAddTransitionMacro( ValidPlaneNormalVector, Reslice, ValidPlaneNormalVector , Reslice);
+  igstkAddTransitionMacro( ValidPlaneNormalVector, Reslice, 
+                           ValidPlaneNormalVector , Reslice);
+  igstkAddTransitionMacro( ValidImageSpatialObject, NullImageSpatialObject, 
+                           NullImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidImageSpatialObject, EmptyImageSpatialObject, 
+                           NullImageSpatialObject,  No ); 
+  igstkAddTransitionMacro( ValidImageSpatialObject, ValidImageSpatialObject, 
+                           ValidImageSpatialObject,  No ); 
 
-  igstkAddTransitionMacro( ValidImageSpatialObject, NullImageSpatialObject, NullImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidImageSpatialObject, EmptyImageSpatialObject, NullImageSpatialObject,  No ); 
-  igstkAddTransitionMacro( ValidImageSpatialObject, ValidImageSpatialObject, ValidImageSpatialObject,  No ); 
-
-  igstkAddTransitionMacro( NullImageSpatialObject, ConnectVTKPipeline, NullImageSpatialObject, No );
-  igstkAddTransitionMacro( ValidImageSpatialObject, ConnectVTKPipeline, ValidImageSpatialObject, ConnectVTKPipeline );
+  igstkAddTransitionMacro( NullImageSpatialObject, ConnectVTKPipeline, 
+                           NullImageSpatialObject, No );
+  igstkAddTransitionMacro( ValidImageSpatialObject, ConnectVTKPipeline, 
+                           ValidImageSpatialObject, ConnectVTKPipeline );
   igstkSetInitialStateMacro( NullImageSpatialObject );
 
   m_StateMachine.SetReadyToRun();
@@ -160,7 +173,8 @@ void
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::DeleteActors( )
 {
-  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation::DeleteActors called...\n");
+  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation\
+                        ::DeleteActors called...\n");
   
   this->Superclass::DeleteActors();
   
@@ -174,7 +188,8 @@ void
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::RequestSetImageSpatialObject( const ImageSpatialObjectType * image )
 {
-  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation::RequestSetImageSpatialObject called...\n");
+  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation\
+                        ::RequestSetImageSpatialObject called...\n");
   
   m_ImageSpatialObjectToAdd = image;
 
@@ -203,7 +218,8 @@ void
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::RequestSetPointOnthePlane( const PointType & point )
 {
-  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation::RequestSetPointOnthePlane called...\n");
+  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation\
+                        ::RequestSetPointOnthePlane called...\n");
   
   m_PointOnthePlaneToBeSet = point;
 
@@ -218,7 +234,8 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetPointOnthePlaneProcessing( )
 {
   igstkLogMacro( DEBUG, 
-       "igstk::ObliqueImageSpatialObjectRepresentation::SetPointOnthePlaneProcessing called...\n");
+       "igstk::ObliqueImageSpatialObjectRepresentation\
+       ::SetPointOnthePlaneProcessing called...\n");
   
   m_PointOnthePlane = m_PointOnthePlaneToBeSet;
 }
@@ -230,7 +247,8 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::RequestSetPlaneNormalVector( const VectorType & vector )
 {
   igstkLogMacro( DEBUG, 
-           "igstk::ObliqueImageSpatialObjectRepresentation::RequestSetPlaneNormalVector called...\n");
+           "igstk::ObliqueImageSpatialObjectRepresentation\
+           ::RequestSetPlaneNormalVector called...\n");
   
   m_PlaneNormalVectorToBeSet = vector;
 
@@ -245,7 +263,8 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetPlaneNormalVectorProcessing( )
 {
   igstkLogMacro( DEBUG, 
-       "igstk::ObliqueImageSpatialObjectRepresentation::SetPlaneNormalVectorProcessing called...\n");
+       "igstk::ObliqueImageSpatialObjectRepresentation\
+       ::SetPlaneNormalVectorProcessing called...\n");
   
   m_PlaneNormalVector = m_PlaneNormalVectorToBeSet;
 }
@@ -257,7 +276,8 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::RequestReslice(  )
 {
   igstkLogMacro( DEBUG, 
-           "igstk::ObliqueImageSpatialObjectRepresentation::RequestReslice called...\n");
+           "igstk::ObliqueImageSpatialObjectRepresentation\
+           ::RequestReslice called...\n");
   
   m_StateMachine.PushInput( m_ResliceInput );
   m_StateMachine.ProcessInputs();
@@ -269,7 +289,8 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::ResliceProcessing(  )
 {
   igstkLogMacro( DEBUG, 
-           "igstk::ObliqueImageSpatialObjectRepresentation::ResliceProcessing called...\n");
+           "igstk::ObliqueImageSpatialObjectRepresentation\
+           ::ResliceProcessing called...\n");
 
   std::cout << "Image Data after before reslicing " << std::endl;
 
@@ -332,7 +353,8 @@ void
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetWindowLevel( double window, double level )
 {
-  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation::SetWindowLevel called...\n");
+  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation\
+                        ::SetWindowLevel called...\n");
 
   m_Window = window;
   m_Level = level;
@@ -354,7 +376,8 @@ void
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetImageSpatialObjectProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation::SetImageSpatialObjectProcessing called...\n");
+  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation\
+                         ::SetImageSpatialObjectProcessing called...\n");
 
   // We create the image spatial object
   m_ImageSpatialObject = m_ImageSpatialObjectToAdd;
@@ -379,8 +402,10 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  std::cout << indent << "Point on the plane" << this->m_PointOnthePlane << std::endl;
-  std::cout << indent << "Plane normal vector" << this->m_PlaneNormalVector << std::endl;
+  os << indent << "Point on the plane";
+  os << indent << this->m_PointOnthePlane << std::endl;
+  os << indent << "Plane normal vector";
+  os << indent << this->m_PlaneNormalVector << std::endl;
 }
 
 
@@ -390,8 +415,9 @@ template < class TImageSpatialObject >
 void
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::UpdateRepresentationProcessing()
-{    
-   igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation::UpdateRepresentationProcessing called...\n");
+{
+   igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation::\
+                         UpdateRepresentationProcessing called...\n");
    if( m_ImageData )
      {
      m_MapColors->SetInput( m_ImageData );
@@ -405,7 +431,8 @@ void
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::CreateActors()
 {
-  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation::CreateActors called...\n");
+  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation\
+                        ::CreateActors called...\n");
 
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
@@ -432,7 +459,8 @@ typename ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >::Pointer
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::Copy() const
 {
-  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation::Copy called...\n");
+  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation\
+                        ::Copy called...\n");
 
   Pointer newOR = ObliqueImageSpatialObjectRepresentation::New();
   newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
@@ -448,29 +476,30 @@ void
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::SetImage( const vtkImageData * image )
 {
-  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation::SetImage called...\n");
+  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation\
+                        ::SetImage called...\n");
 
-  // This const_cast<> is needed here due to the lack of const-correctness in VTK 
+  // This const_cast<> is needed here due to 
+  // the lack of const-correctness in VTK 
   m_ImageData = const_cast< vtkImageData *>( image );
 }
-
-
 
 template < class TImageSpatialObject >
 void
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::ConnectImage()
 {
-  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation::ConnectImage called...\n");
+  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation\
+                        ::ConnectImage called...\n");
 
-  typedef Friends::ObliqueImageSpatialObjectRepresentationToImageSpatialObject  HelperType;
+  typedef Friends::ObliqueImageSpatialObjectRepresentationToImageSpatialObject  
+                                                                   HelperType;
   HelperType::ConnectImage( m_ImageSpatialObject.GetPointer(), this );
   if( m_ImageData )
     {
     m_ImageData->Update();
     }
 }
-
 
 template < class TImageSpatialObject >
 void
@@ -482,6 +511,6 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageActor->InterpolateOn();
 }
 
-
 } // end namespace igstk
 
+#endif
