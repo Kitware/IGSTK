@@ -93,11 +93,14 @@ public:
   /** Return a copy of the current object representation */
   Pointer Copy() const;
 
-  /** Request to set point on the plane */
-  void RequestSetPointOnthePlane( const PointType & point);
+  /** Request to set origin point on the plane */
+  void RequestSetOriginPointOnThePlane( const PointType & point);
 
-  /** Request to set plane's normal vector */
-  void RequestSetPlaneNormalVector( const VectorType & normalVector );
+  /** Request to set vector 1 on the plane */
+  void RequestSetVector1OnThePlane( const VectorType & vector );
+
+  /** Request to set vector 2 on the plane */
+  void RequestSetVector2OnThePlane( const VectorType & vector );
 
   /** Connect this representation class to the spatial object */
   void RequestSetImageSpatialObject( const ImageSpatialObjectType * 
@@ -148,11 +151,16 @@ private:
   ImageSpatialObjectConstPointer         m_ImageSpatialObjectToAdd;
 
   /** Obique plane parameters */
-  PointType                              m_PointOnthePlane;
-  PointType                              m_PointOnthePlaneToBeSet;
-  VectorType                             m_PlaneNormalVector;
-  VectorType                             m_PlaneNormalVectorToBeSet;
+  PointType                              m_OriginPointOnThePlane;
+  PointType                              m_OriginPointOnThePlaneToBeSet;
 
+  VectorType                             m_Vector1OnThePlane;
+  VectorType                             m_Vector1OnThePlaneToBeSet;
+
+  VectorType                             m_Vector2OnThePlane;
+  VectorType                             m_Vector2OnThePlaneToBeSet;
+
+    
   /** VTK classes that support display of an image */
   vtkImageData                         * m_ImageData;
   vtkImageActor                        * m_ImageActor;
@@ -174,12 +182,15 @@ private:
    * called by the State Machine. */
   void SetImageSpatialObjectProcessing();
 
-  /** Set the point on the plane */
-  void SetPointOnthePlaneProcessing();
+  /** Set the origin point on the plane */
+  void SetOriginPointOnThePlaneProcessing();
+  
+  /** Set vector 1 on the plane */
+  void SetVector1OnThePlaneProcessing();
  
-  /** Set the normal vector of the plane */
-  void SetPlaneNormalVectorProcessing();
-
+  /** Set vector 2 on the plane */
+  void SetVector2OnThePlaneProcessing();
+ 
   /** Reslice processing */
   void ResliceProcessing ();
 
@@ -195,26 +206,33 @@ private:
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidImageSpatialObject );
   igstkDeclareInputMacro( NullImageSpatialObject );
-  igstkDeclareInputMacro( ValidPointOnThePlane );
-  igstkDeclareInputMacro( InValidPointOnThePlane );
-  igstkDeclareInputMacro( ValidPlaneNormalVector );
-  igstkDeclareInputMacro( InValidPlaneNormalVector );
+  
+  igstkDeclareInputMacro( ValidOriginPointOnThePlane );
+  igstkDeclareInputMacro( InValidOriginPointOnThePlane );
 
-  igstkDeclareInputMacro( Reslice ); 
-      
+  igstkDeclareInputMacro( ValidVector1OnThePlane );
+  igstkDeclareInputMacro( InValidVector1OnThePlane );
+ 
+  igstkDeclareInputMacro( ValidVector2OnThePlane );
+  igstkDeclareInputMacro( InValidVector2OnThePlane );
+     
   igstkDeclareInputMacro( EmptyImageSpatialObject );
   igstkDeclareInputMacro( ConnectVTKPipeline );
-  
+ 
+  igstkDeclareInputMacro( Reslice );
+
   /** States for the State Machine */
   igstkDeclareStateMacro( NullImageSpatialObject );
   igstkDeclareStateMacro( ValidImageSpatialObject );
 
-  igstkDeclareStateMacro( NullPointOnthePlane );
-  igstkDeclareStateMacro( ValidPointOnThePlane );
+  igstkDeclareStateMacro( NullOriginPointOnThePlane );
+  igstkDeclareStateMacro( ValidOriginPointOnThePlane );
+  
+  igstkDeclareStateMacro( NullVector1OnthePlane );
+  igstkDeclareStateMacro( ValidVector1OnThePlane );
 
-  igstkDeclareStateMacro( NullPlaneNormalVector );
-  igstkDeclareStateMacro( ValidPlaneNormalVector );
-
+  igstkDeclareStateMacro( NullVector2OnthePlane );
+  igstkDeclareStateMacro( ValidVector2OnThePlane );
 };
 
 } // end namespace igstk
