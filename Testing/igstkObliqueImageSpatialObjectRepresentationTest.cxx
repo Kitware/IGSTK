@@ -20,6 +20,7 @@
 #endif
 
 #include "igstkObliqueImageSpatialObjectRepresentation.h"
+#include "igstkImageSpatialObjectRepresentation.h"
 #include "igstkImageSpatialObject.h"
 #include "igstkView2D.h"
 #include "igstkCTImageReader.h"
@@ -37,11 +38,14 @@ int igstkObliqueImageSpatialObjectRepresentationTest(
   typedef short    PixelType;
   const unsigned int Dimension = 3;
 
-  typedef igstk::ImageSpatialObject<PixelType,Dimension> 
-                                                      ImageSpatialObjectType;
+  typedef igstk::ImageSpatialObject< 
+                                PixelType, 
+                                Dimension 
+                                       > ImageSpatialObjectType;
   
-  typedef igstk::ObliqueImageSpatialObjectRepresentation<
-                                 ImageSpatialObjectType>   RepresentationType;
+  typedef igstk::ObliqueImageSpatialObjectRepresentation< 
+                                  ImageSpatialObjectType 
+                                                      >   RepresentationType;
 
   RepresentationType::Pointer  representation = RepresentationType::New();
 
@@ -92,30 +96,46 @@ int igstkObliqueImageSpatialObjectRepresentationTest(
   form->show();
   
   // Set oblique plane parameters
-  
+ 
   typedef RepresentationType::PointType  PointType;
   typedef RepresentationType::VectorType VectorType;
 
   PointType  point;
-  VectorType normal;
 
   point[0] = 0.0;
   point[1] = 0.0;
-  point[2] = 0.0;
+  point[2] = -186.0;
 
-  normal[0] = 0.0;
-  normal[1] = 0.0;
-  normal[2] = 1.0;
+  representation->RequestSetOriginPointOnThePlane( point );
   
-  representation->RequestSetPointOnthePlane( point );
-  representation->RequestSetPlaneNormalVector( normal );
-  representation->RequestReslice();
+  VectorType  vector1;
 
-  representation->Print( std::cout );
+  vector1[0] = 1.0;
+  vector1[1] = 0.0;
+  vector1[2] = 0.0;
+
+  representation->RequestSetVector1OnThePlane( vector1 );
   
-  // igstk::PulseGenerator::CheckTimeouts();
- 
-  view2D->Update();  // schedule redraw of the view
+  VectorType  vector2;
+
+  vector2[0] = 1.0;
+  vector2[1] = 0.0;
+  vector2[2] = 0.0;
+
+  representation->RequestSetVector2OnThePlane( vector2 );
+  
+  representation->RequestReslice();  
+
+  view2D->RequestAddObject( representation );
+  view2D->RequestResetCamera();
+
+  for ( int i=0 ; i < 100 ; i++ ) 
+    {
+    std::cout << "Refresh=" << i << std::endl;
+    igstk::PulseGenerator::CheckTimeouts();
+    view2D->Update();  // schedule redraw of the view
+    Fl::check(); 
+    }
   
   delete view2D;
   delete form;
