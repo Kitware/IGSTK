@@ -88,6 +88,7 @@ ImageSpatialObject< TPixelType, VDimension >
   // guarrantees that the m_Image pointer is not null.
   m_ImageSpatialObject->SetImage( m_Image );
   m_itkExporter->SetInput( m_Image );
+  m_vtkImporter->UpdateWholeExtent();
 }
 
 
