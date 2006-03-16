@@ -75,6 +75,10 @@ int igstkVTKLoggerOutputTest( int, char * [] )
     vtkOutputWindow::GetInstance()->DisplayErrorText("** This is from vtkOutputWindow **\n");
     vtkOutputWindow::GetInstance()->DisplayGenericWarningText("** This is from vtkOutputWindow **\n");
 
+    // test the print out of the number of errors and warnings
+    std::cout << "Number of Error Messages   = " << pOver->GetNumberOfErrorMessages()   << std::endl;
+    std::cout << "Number of Warning Messages = " << pOver->GetNumberOfWarningMessages() << std::endl;
+
     std::cout << *pOver << std::endl;
     }
   catch(...)

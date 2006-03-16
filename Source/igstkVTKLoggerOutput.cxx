@@ -33,6 +33,10 @@ vtkStandardNewMacro(VTKLoggerOutput);
 VTKLoggerOutput::VTKLoggerOutput()
 {
   m_InUnRegister = 0;
+
+  m_NumberOfWarningMessages = 0;
+
+  m_NumberOfErrorMessages = 0;
 }
 
 
@@ -91,6 +95,8 @@ void VTKLoggerOutput::DisplayText(const char* t)
  * could present this message differently. */
 void VTKLoggerOutput::DisplayErrorText(const char *t)
 {
+  m_NumberOfErrorMessages++;
+
   if( m_Logger )
     {
     m_Logger->Write(itk::Logger::CRITICAL, t);
@@ -103,6 +109,8 @@ void VTKLoggerOutput::DisplayErrorText(const char *t)
  * could present this message differently. */
 void VTKLoggerOutput::DisplayWarningText(const char *t)
 {
+  m_NumberOfWarningMessages++;
+
   if( m_Logger )
     {
     m_Logger->Write(itk::Logger::WARNING, t);

@@ -96,6 +96,12 @@ public:
   /** Declarations related to the Logger */
   igstkLoggerMacro();
 
+  /** Returns the number of error messages that have been posted to the output */
+  igstkGetMacro( NumberOfErrorMessages, unsigned int );
+
+  /** Returns the number of warning messages that have been posted to the output */
+  igstkGetMacro( NumberOfWarningMessages, unsigned int );
+
 protected:
   /** Constructor */
   VTKLoggerOutput();
@@ -113,6 +119,18 @@ private:
 
   /** Special flag for safe reference counting */
   int m_InUnRegister;
+
+  /** Internal counter for keeping track of the number of error messages that
+   * have been posted to the output. This can be used in the testing framework
+   * in order to flag as failing the tests for which VTK produce error
+   * messages.  */
+  unsigned int m_NumberOfErrorMessages;
+
+  /** Internal counter for keeping track of the number of warning messages that
+   * have been posted to the output. This can be used in the testing framework
+   * in order to flag as failing the tests for which VTK produce error
+   * messages.  */
+  unsigned int m_NumberOfWarningMessages;
 
 };
   
