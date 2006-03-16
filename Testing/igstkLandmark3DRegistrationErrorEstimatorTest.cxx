@@ -23,6 +23,7 @@
 #include <iostream>
 #include "igstkLandmark3DRegistration.h"
 #include "igstkLandmark3DRegistrationErrorEstimator.h"
+#include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkMacro.h"
@@ -63,6 +64,14 @@ int igstkLandmark3DRegistrationErrorEstimatorTest( int argv, char * argc[] )
     logOutput->SetStream( std::cout );
     logger->AddLogOutput( logOutput );
     logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+    // Create an igstk::VTKLoggerOutput and then test it.
+    igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+    vtkLoggerOutput->OverrideVTKWindow();
+    vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+
+
+
     landmarkRegister->SetLogger( logger );
 
 
@@ -175,6 +184,14 @@ int igstkLandmark3DRegistrationErrorEstimatorTest( int argv, char * argc[] )
     std::cout << "Target registration error:" << targetRegistrationError << std::endl;
 
     landmarkRegistrationErrorEstimator->Print(std::cout);
+
+   
+    if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
+      {
+      return EXIT_FAILURE;
+      }
+ 
+
     return EXIT_SUCCESS;
 }
 

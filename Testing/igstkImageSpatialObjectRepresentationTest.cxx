@@ -23,6 +23,7 @@
 #include "igstkImageSpatialObject.h"
 #include "igstkView2D.h"
 #include "igstkCTImageReader.h"
+#include "igstkVTKLoggerOutput.h"
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -146,6 +147,12 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+
 
   // Instantiate a reader
   //
@@ -345,7 +352,12 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   delete view2D;
   delete form;
  
-
+ 
+  if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
+    {
+    return EXIT_FAILURE;
+    }
+ 
   return EXIT_SUCCESS;
 }
 

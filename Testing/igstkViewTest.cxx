@@ -28,6 +28,7 @@
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
+#include "igstkVTKLoggerOutput.h"
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -129,6 +130,12 @@ int igstkViewTest( int, char * [] )
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+
 
   try
     {
@@ -291,7 +298,12 @@ int igstkViewTest( int, char * [] )
     }
 
 
-
+ 
+  if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
+    {
+    return EXIT_FAILURE;
+    }
+ 
 
 
   return EXIT_SUCCESS;
