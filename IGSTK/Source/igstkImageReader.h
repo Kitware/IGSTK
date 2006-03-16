@@ -88,9 +88,6 @@ public:
    *  in order to give it access to the private method GetITKImage(). */
   igstkFriendClassMacro( igstk::Friends::ImageReaderToImageSpatialObject );
 
-  /** Reset the image reader */
-  void ResetReader();
-
 protected:
 
   ImageReader();

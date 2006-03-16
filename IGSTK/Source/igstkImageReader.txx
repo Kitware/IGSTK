@@ -58,17 +58,6 @@ ImageReader< TImageSpatialObject >
 template < class TImageSpatialObject >
 void
 ImageReader< TImageSpatialObject >
-::ResetReader()
-{
-  /** This method is inroduced for a tempory fix of the update 
-    * content error from VTK */
-  m_ImageSpatialObject = NULL;
-  m_ImageSpatialObject = ImageSpatialObjectType::New();
-}
- 
-template < class TImageSpatialObject >
-void
-ImageReader< TImageSpatialObject >
 ::ConnectImage() 
 {
   typedef Friends::ImageReaderToImageSpatialObject  HelperType;
