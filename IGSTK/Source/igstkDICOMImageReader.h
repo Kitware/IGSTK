@@ -98,9 +98,6 @@ public:
   /** This function will be used to request patient name info */
   void RequestPatientNameInformation(); 
 
-  /** This function will be used to reset the reader */
-  void RequestResetReader();
-
   /** Type used for returning string values from the DICOM header */
   typedef std::string    DICOMInformationType;
 

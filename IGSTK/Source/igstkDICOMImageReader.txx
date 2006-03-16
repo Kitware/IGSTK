@@ -86,6 +86,11 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
 
   //Transitions for reset reader input 
 
+  igstkAddTransitionMacro( Idle,
+                           ResetReader,
+                           Idle,
+                           ResetReader );
+
   igstkAddTransitionMacro( ImageRead,
                            ResetReader,
                            Idle,
@@ -164,6 +169,11 @@ void DICOMImageReader<TImageSpatialObject>
   igstkLogMacro( DEBUG, 
                  "igstk::DICOMImageReader::RequestSetDirectory called...\n");
 
+
+  // Reset the reader 
+  this->m_StateMachine.PushInput( this->m_ResetReaderInput );
+  this->m_StateMachine.ProcessInputs();
+
   m_ImageDirectoryNameToBeSet = directory;
  
   if( directory.empty() )
@@ -224,15 +234,6 @@ void DICOMImageReader<TPixelType>::RequestReadImage()
   igstkLogMacro( DEBUG, 
                  "igstk::DICOMImageReader::RequestReadImage called...\n");
   this->m_StateMachine.PushInput( this->m_ReadImageRequestInput);
-  this->m_StateMachine.ProcessInputs();
-}
-
-template <class TPixelType>
-void DICOMImageReader<TPixelType>::RequestResetReader()
-{
-  igstkLogMacro( DEBUG, 
-                 "igstk::DICOMImageReader::RequestResetReader called...\n");
-  this->m_StateMachine.PushInput( this->m_ResetReaderInput);
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -339,7 +340,6 @@ DICOMImageReader<TPixelType>::ResetReaderProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ResetReader called...\n");
   m_FileSuccessfullyRead = false;
-  Superclass::ResetReader();
 }
 
 template <class TPixelType>
