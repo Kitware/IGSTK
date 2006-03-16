@@ -93,6 +93,8 @@ protected:
       m_Position[0] = 0.0;
       m_Position[1] = 0.0;
       m_Position[2] = 0.0;
+
+      m_ValidityTime = 100.0; // 100.0 milliseconds
       }
     virtual ~MyTracker() {};
 
@@ -132,7 +134,6 @@ protected:
     virtual ResultType InternalStopTracking( void ) { return SUCCESS; }
     virtual ResultType InternalDeactivateTools( void ) 
       { 
-      m_ValidityTime = 100.0; // 100.0 milliseconds
       m_Port = TrackerPortType::New();
       m_Tool = TrackerToolType::New();
       m_Port->AddTool( m_Tool );
