@@ -28,12 +28,11 @@
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkSystemInformation.h"
-#include "igstkPivotCalibration.h"
 #include "igstkLandmarkUltrasoundCalibration.h"
 
 int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
 {
-  // Define type used in the pivot calibration class
+  // Define type used in the landmark ultrasound calibration class
   typedef igstk::LandmarkUltrasoundCalibration
                                             LandmarkUltrasoundCalibrationType;
 
@@ -56,7 +55,7 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
-  // Create the pivot calibration object and attach the logger
+  // Create the landmark ultrasound calibration object and attach the logger
   LandmarkUltrasoundCalibrationType::Pointer ultrasound 
                                    = LandmarkUltrasoundCalibrationType::New();
   ultrasound->SetLogger( logger );
@@ -133,7 +132,7 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
   tooltranslation[0] = 0.0;
   tooltranslation[1] = 0.0;
   tooltranslation[2] = -9.5;
-  toolcalibration.SetTranslation( tooltranslation, 0.1, 1000 );
+  toolcalibration.SetTranslation( tooltranslation, 0.1, 1e300 );
 
   // Test for routine 1: index input && pointer tool input
   ultrasound->RequestReset();
