@@ -287,7 +287,6 @@ void UltrasoundGuidedRFAImplementation
       }
 
     //m_MRImageReader->SetLogger(m_Logger);
-    m_MRImageReader->RequestResetReader();
     m_MRImageReader->RequestSetDirectory(filename.c_str());
     m_MRImageReader->RequestReadImage();
   
@@ -327,8 +326,6 @@ void UltrasoundGuidedRFAImplementation
       filename[strlen(liverfilename)-1] = 0;
       }
 
-    //m_USImageReader->SetLogger(m_Logger);
-    m_USImageReader->RequestResetReader();
     m_USImageReader->RequestSetDirectory(filename.c_str());
     m_USImageReader->RequestReadImage();
 
