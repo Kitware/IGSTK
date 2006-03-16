@@ -485,7 +485,6 @@ void NeedleBiopsy::LoadImageProcessing()
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
   if ( directoryname != NULL )
     {
-    m_ImageReader->RequestResetReader();
     igstkLogMacro( DEBUG, 
                       "Set ImageReader directory: " << directoryname << "\n" )
     igstkLogMacro2( logger, DEBUG, 
