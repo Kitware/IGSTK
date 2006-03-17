@@ -808,14 +808,19 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
   // HexEncode does not null-terminate, so do it here
   hexString2[20] = '\0';
   
-  // to do check, need a full uppercase version
+  // to do check, need a full uppercase hex version
   char hexString3[22];  // extra space for null at end
-  strncpy(hexString3, hexString, 22);
-  for (char *cp = hexString3; *cp != '\0'; cp++)
+  for (i = 0; i < 22; i++)
     {
-    *cp = toupper(*cp);
+    if (hexString[i] == '\0')
+      {
+      hexString3[i] = '\0';
+      break;
+      }
+    hexString3[i] = toupper(hexString[i]);
     }
 
+  // do the check
   if (strcmp(hexString3, hexString2) != 0)
     {
     std::cout << "Encode/Decode mismatch: \"" << hexString << "\" != \""
