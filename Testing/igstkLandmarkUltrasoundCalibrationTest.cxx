@@ -109,7 +109,7 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
     double vw;
 
     input >> indexposition[0] >> indexposition[1];
-    indexposition[2] = 0.0;
+    indexposition[2] = 0;
     indexpositioncontainer.push_back( indexposition);
 
     input >> pointertranslation[0] >> pointertranslation[1];

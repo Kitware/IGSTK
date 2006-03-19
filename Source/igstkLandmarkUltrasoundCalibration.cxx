@@ -653,7 +653,6 @@ void LandmarkUltrasoundCalibration
   VersorType versor;
   VectorType translation;
   PointType position;
-  VectorType vec[3];
 
   InputPointContainerPointerType positions = InputPointContainerType::New();
 
