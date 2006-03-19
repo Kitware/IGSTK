@@ -24,7 +24,10 @@ IF(NOT IGSTKSandbox_SETUP_DASHBOARD)
 #
 FIND_PACKAGE(IGSTK)
 IF (IGSTK_USE_FILE)
-  INCLUDE (${IGSTK_USE_FILE})
+# Don't include the IGSTK_USE_FILE since the Sandbox build is completely independent 
+# of the IGSTK build.  We really just need to know where the IGSTK source is
+# and where the IGSTK dependencies are: VTK, ITK, FLTK
+#  INCLUDE (${IGSTK_USE_FILE})
 ELSE (IGSTK_USE_FILE)
   MESSAGE( FATAL_ERROR "This application requires IGSTK. One of these components is missing. Please verify configuration")
 ENDIF (IGSTK_USE_FILE)
