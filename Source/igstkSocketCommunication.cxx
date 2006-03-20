@@ -576,7 +576,7 @@ SocketCommunication::InternalReadProcessing( char * data, unsigned int length, u
         }
       else
         {
-        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: read failured!\n");
+        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: read not enough characters!\n");
         return FAILURE; 
         }
       }
