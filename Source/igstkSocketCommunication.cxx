@@ -192,6 +192,12 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
 
   this->m_ConnectionSocket = INVALID_SOCKET;  
 
+  this->m_CaptureFileName = "";
+  
+  this->m_Capture = false;
+  
+  this->m_CaptureMessageNumber = 0;
+
 } 
 
 
