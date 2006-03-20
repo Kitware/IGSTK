@@ -238,6 +238,7 @@ SET(IGSTKSandbox_HEADS
   igstkContourObjectRepresentation.h
   igstkContourMeshObjectRepresentation.h
   igstkContourVascularNetworkObjectRepresentation.h
+  igstkSocketCommunication.h
 )
 
 
@@ -258,6 +259,7 @@ SET(IGSTKSandbox_SRCS
   igstkContourObjectRepresentation.cxx
   igstkContourMeshObjectRepresentation.cxx
   igstkContourVascularNetworkObjectRepresentation.cxx
+  igstkSocketCommunication.cxx
 )
 
 # Variable for holding extra libraries
