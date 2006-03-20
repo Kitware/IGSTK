@@ -69,6 +69,7 @@ INCLUDE_DIRECTORIES (
 # Add your new tests here
 SET(SandboxTests_SRCS
   igstkLandmarkUltrasoundCalibrationTest.cxx
+  igstkSocketCommunicationTest.cxx
   )
 
 FOREACH(TestFiles ${SandboxTests_SRCS})
