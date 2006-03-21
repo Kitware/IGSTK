@@ -23,15 +23,13 @@
 
 #include "itkImageSpatialObject.h"
 
-
-
 namespace igstk
 {
  
 namespace Friends 
 {
 
-/** class ImageReaderToImageSpatialObject
+/** \class ImageReaderToImageSpatialObject
  * \brief This class is intended to make the connection between the ImageReader
  * and its output, the ImageSpatialObject. 
  *
@@ -42,13 +40,14 @@ namespace Friends
  */
 class ImageReaderToImageSpatialObject
 {
-  public:
-    template < class TReader, class TImageSpatialObject >
-    static void 
-    ConnectImage( const TReader * reader, 
-                  TImageSpatialObject * imageSpatialObject )
+public:
+
+  template < class TReader, class TImageSpatialObject >
+  static void 
+  ConnectImage( const TReader * reader, 
+                TImageSpatialObject * imageSpatialObject )
     {
-       imageSpatialObject->SetImage( reader->GetITKImage() );  
+    imageSpatialObject->RequestSetImage( reader->GetITKImage() );  
     }
 
 }; // end of ImageReaderToImageSpatialObject class
@@ -66,7 +65,6 @@ class ImageReaderToImageSpatialObject
  *
  * \ingroup Object
  */
-
 template < class TImageSpatialObject >
 class ImageReader : public Object
 {
@@ -89,7 +87,6 @@ public:
   /** Declare the ImageReaderToImageSpatialObject class to be a friend 
    *  in order to give it access to the private method GetITKImage(). */
   igstkFriendClassMacro( igstk::Friends::ImageReaderToImageSpatialObject );
-
 
 protected:
 
@@ -117,11 +114,10 @@ private:
   ImageReader(const Self&);         //purposely not implemented
   void operator=(const Self&);      //purposely not implemented
 
-  typename ImageSpatialObjectType::Pointer   m_ImageSpatialObject;
-
-
   // FIXME : This must be replaced with StateMachine logic
-  virtual const ImageType * GetITKImage() const = 0;    
+  virtual const ImageType * GetITKImage() const = 0;
+
+  typename ImageSpatialObjectType::Pointer   m_ImageSpatialObject;
 
 };
 
@@ -132,4 +128,3 @@ private:
 #endif
 
 #endif // __igstkImageReader_h
-

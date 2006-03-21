@@ -20,20 +20,16 @@
 #include "igstkSpatialObject.h"
 
 #include "itkImageSpatialObject.h"
-#include "itkVTKImageExport.h"
 
+#include "itkVTKImageExport.h"
 #include "vtkImageImport.h"
 #include "vtkImageData.h"
-
-
-
 
 namespace igstk
 {
 
 namespace Friends 
 {
-  
 class ImageReaderToImageSpatialObject;
 class ImageSpatialObjectRepresentationToImageSpatialObject;
 
@@ -52,8 +48,7 @@ class ImageSpatialObjectRepresentationToImageSpatialObject;
  *
  * \ingroup Object
  */
-
-template < class TPixelType, unsigned int VDimension >
+template < class TPixelType, unsigned int TDimension >
 class ImageSpatialObject 
 : public SpatialObject
 {
@@ -65,7 +60,8 @@ public:
 
 public:
 
-  typedef itk::ImageSpatialObject< VDimension, TPixelType > ImageSpatialObjectType;
+  typedef itk::ImageSpatialObject< TDimension, TPixelType > 
+                                                       ImageSpatialObjectType;
 
   typedef typename ImageSpatialObjectType::ImageType        ImageType;
   typedef typename ImageType::ConstPointer                  ImageConstPointer;
@@ -85,7 +81,8 @@ public:
   /** The ImageReaderToImageSpatialObject class is declared as a friend in
    * order to be able to set the input image */
   igstkFriendClassMacro( igstk::Friends::ImageReaderToImageSpatialObject );
-  igstkFriendClassMacro( igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
+  igstkFriendClassMacro( 
+     igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
 
 protected:
 
@@ -104,7 +101,7 @@ private:
   const vtkImageData * GetVTKImageData() const;
 
   /** Set method to be invoked only by friends of this class */
-  void SetImage( const ImageType * image );
+  void RequestSetImage( const ImageType * image );
 
 private:
  
@@ -113,9 +110,24 @@ private:
   ImageSpatialObject(const Self&);     //purposely not implemented
   void operator=(const Self&);         //purposely not implemented
 
+private:
+
+  /** State Machine Inputs */
+  igstkDeclareInputMacro( InvalidImage );
+  igstkDeclareInputMacro( ValidImage );
+  
+  /** State Machine States */
+  igstkDeclareStateMacro( Initial );
+  igstkDeclareStateMacro( ImageSet );
+
+  /** This method is intended to be called by the state machine */
+  void SetImageProcessing();
+  void ReportInvalidImageProcessing();
+
 
   /** This is the variable holding the real data container in the form of an
    * ITK image. This image should never be exposed at the IGSTK API. */
+  ImageConstPointer  m_ImageToBeSet;
   ImageConstPointer  m_Image;
 
   /** Filters for exporting the ITK image as a vtkImageData class. 
@@ -140,4 +152,3 @@ private:
 #endif
 
 #endif // __igstkImageSpatialObject_h
-

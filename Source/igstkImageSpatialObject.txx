@@ -52,6 +52,19 @@ ImageSpatialObject< TPixelType, VDimension >
   m_vtkImporter->SetBufferPointerCallback(m_itkExporter->GetBufferPointerCallback());
   m_vtkImporter->SetCallbackUserData(m_itkExporter->GetCallbackUserData());
 
+  igstkAddInputMacro( ValidImage );
+  igstkAddInputMacro( InvalidImage );
+
+  igstkAddStateMacro( Initial );
+  igstkAddStateMacro( ImageSet );
+
+  igstkAddTransitionMacro( Initial, ValidImage, ImageSet,  SetImage );
+  igstkAddTransitionMacro( Initial, InvalidImage, Initial,  ReportInvalidImage );
+
+  igstkSetInitialStateMacro( Initial );
+
+  m_StateMachine.SetReadyToRun();
+
 }
 
 
@@ -81,14 +94,46 @@ ImageSpatialObject< TPixelType, VDimension >
 template< class TPixelType, unsigned int VDimension >
 void
 ImageSpatialObject< TPixelType, VDimension >
-::SetImage( const ImageType * image ) 
+::RequestSetImage( const ImageType * image ) 
 {
-  m_Image = image;
-  // This line should be added once a StateMachine in this class
-  // guarrantees that the m_Image pointer is not null.
+  
+  m_ImageToBeSet = image;
+
+  if( m_ImageToBeSet )
+    {
+    igstkPushInputMacro( ValidImage );
+    m_StateMachine.ProcessInputs();
+    return;
+    }
+  else
+    {
+    igstkPushInputMacro( InvalidImage );
+    m_StateMachine.ProcessInputs();
+    return;
+    }
+}
+
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::SetImageProcessing() 
+{
+  m_Image = m_ImageToBeSet;
   m_ImageSpatialObject->SetImage( m_Image );
   m_itkExporter->SetInput( m_Image );
   m_vtkImporter->UpdateWholeExtent();
+}
+
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::ReportInvalidImageProcessing() 
+{
+  igstkLogMacro( WARNING, "ReportInvalidImageProcessing() called ...\n");
 }
 
 

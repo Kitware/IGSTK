@@ -21,11 +21,15 @@
 
 #include "igstkDICOMImageReader.h"
 #include "igstkImageSpatialObject.h"
+#include "igstkCTImageReader.h"
 
 #include "itkLogger.h"
 #include "itkCommand.h"
 #include "itkStdStreamLogOutput.h"
 
+namespace igstkDICOMImageReaderTestNamespace
+{
+  
 class DICOMImageModalityInformationCallback: public itk::Command
 {
 public:
@@ -96,6 +100,55 @@ private:
 };
 
 
+class myDicomTestReader : 
+  public igstk::DICOMImageReader< igstk::ImageSpatialObject< short, 3 > >
+{
+public:
+
+   typedef igstk::DICOMImageReader< 
+                  igstk::ImageSpatialObject< short, 3 > > DICOMReaderSuperclass;
+
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( myDicomTestReader, DICOMReaderSuperclass )
+
+  void TestMe()
+   {
+   m_CheckTheNullImage = true;
+   const ImageType * imageThatShallNotBeNamed = GetITKImage();
+   if( imageThatShallNotBeNamed != NULL )
+     {
+     std::cout << "Test of private abstract method Passed" << std::endl;
+     }
+   m_CheckTheNullImage = false;
+   }
+
+protected:
+   myDicomTestReader():m_StateMachine(this),m_CheckTheNullImage(false) {}
+   ~myDicomTestReader() {}
+private:
+  typedef Superclass::ImageType ImageType;
+  virtual const ImageType * GetITKImage() const 
+    { 
+    if(m_CheckTheNullImage)
+      {
+      return NULL;
+      }
+    else
+      { 
+      return this->Superclass::GetITKImage();
+      }
+    }
+
+  myDicomTestReader(const Self&);         //purposely not implemented
+  void operator=(const Self&);        //purposely not implemented
+
+  bool m_CheckTheNullImage;
+};
+
+
+} // end of igstkDICOMImageReaderTestNamespace namespace
+
+
 
 int igstkDICOMImageReaderTest( int argc, char* argv[] )
 {
@@ -119,41 +172,9 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
-  typedef short      PixelType;
-  const unsigned int Dimension = 3;
 
-  typedef igstk::ImageSpatialObject< 
-                                PixelType, 
-                                Dimension 
-                                       > ImageSpatialObjectType;
-  
-
-  class myDicomTestReader : 
-    public igstk::DICOMImageReader< ImageSpatialObjectType >
-  {
-    public:
-       typedef myDicomTestReader  Self;
-       typedef igstk::ImageReader< ImageSpatialObjectType > Superclass;
-
-       igstkNewMacro( Self );
-
-       void TestMe()
-       {
-       const ImageType * imageThatShallNotBeNamed = GetITKImage();
-       if( imageThatShallNotBeNamed != NULL )
-         {
-         std::cout << "Test of private abstract method Passed" << std::endl;
-         }
-       }
-    protected:
-       myDicomTestReader() {}
-       ~myDicomTestReader() {}
-    private:
-      typedef Superclass::ImageType ImageType;
-      virtual const ImageType * GetITKImage() const { return NULL; }
-  };
-
-  typedef myDicomTestReader   ReaderType;
+  //typedef igstk::CTImageReader         ReaderType;
+  typedef igstkDICOMImageReaderTestNamespace::myDicomTestReader   ReaderType;
 
 
   ReaderType::Pointer   reader = ReaderType::New();
@@ -173,18 +194,26 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
   reader->RequestReadImage();
   
  /* Add observer to listen to modality info */
-  DICOMImageModalityInformationCallback::Pointer dimcb = DICOMImageModalityInformationCallback::New();
+  typedef 
+    igstkDICOMImageReaderTestNamespace::DICOMImageModalityInformationCallback  
+                                                             ModalityCallbackType;
+
+  ModalityCallbackType::Pointer dimcb = ModalityCallbackType::New();
   reader->AddObserver( igstk::DICOMModalityEvent(), dimcb );
   reader->RequestModalityInformation(); 
  
   /* Add observer to listen to patient name  info */
-  DICOMImagePatientNameInformationCallback::Pointer dipncb = DICOMImagePatientNameInformationCallback::New();
+  typedef 
+    igstkDICOMImageReaderTestNamespace::DICOMImagePatientNameInformationCallback 
+                                                                PatientCallbackType;
+
+  PatientCallbackType::Pointer dipncb = PatientCallbackType::New();
   reader->AddObserver( igstk::DICOMPatientNameEvent(), dipncb );
   reader->RequestPatientNameInformation(); 
 
   reader->Print( std::cout );
 
-  /** Exercising the Unsafe GetPatientName() method */
+  /* Exercising the Unsafe GetPatientName() method */
   if( reader->FileSuccessfullyRead() )
     {
     ReaderType::DICOMInformationType  patientName = reader->GetPatientName();
@@ -201,6 +230,10 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
+  /* Testing the return of null pointer in the GetITKImage method */
+  reader->TestMe();
+
+  
   return EXIT_SUCCESS;
 }
 
