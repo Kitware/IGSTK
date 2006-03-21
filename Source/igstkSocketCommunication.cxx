@@ -257,15 +257,23 @@ void SocketCommunication::PrintSelf( std::ostream& os,
 
   os << indent << "Port: " << this->GetPortNumber() << std::endl;
 
-  os << indent << "Capture: " << m_Capture << std::endl;
+  os << indent << "Capture: " << this->GetCapture() << std::endl;
   
-  os << indent << "CaptureFileName: " << m_CaptureFileName << std::endl;
+  os << indent << "CaptureFileName: " << this->GetCaptureFileName() << std::endl;
   
   os << indent << "CaptureFileStream: " << m_CaptureFileStream << std::endl;
   
   os << indent << "CaptureMessageNumber: " << m_CaptureMessageNumber
      << std::endl;
 
+}
+
+/** Function to get capture file name. */
+const char* SocketCommunication::GetCaptureFileName() const
+{
+  igstkLogMacro( DEBUG, "SocketCommunication::GetCaptureFileName called ...\n");
+
+  return this->m_CaptureFileName.c_str();
 }
 
 /** Internal function to open communication. */
