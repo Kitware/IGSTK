@@ -30,5 +30,6 @@ void RegisterTests()
   // Register Sandbox tests
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
+  REGISTER_TEST(igstkFlockOfBirdsTrackerTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
 }
