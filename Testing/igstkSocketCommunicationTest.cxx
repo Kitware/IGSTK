@@ -82,7 +82,7 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction( void* data)
 
   int i = 0;
   bool stop = false;
-  while (i >= 0 && !stop)
+  while ( !stop)
     {
     result = server->RequestQueryForConnection( 1000 );
     
