@@ -207,7 +207,7 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
   // Finish the programming and get ready to run
   this->m_StateMachine.SetReadyToRun();
 
-  this->m_SocketType = NONE_SOCKET;
+  this->m_SocketUsageType = NONE_SOCKET;
 
   this->m_Socket = IGSTK_INVALID_SOCKET;
 
@@ -236,7 +236,7 @@ void SocketCommunication::PrintSelf( std::ostream& os,
 {
   Superclass::PrintSelf(os, indent);
 
-  switch ( this->GetSocketType())
+  switch ( this->GetSocketUsageType())
   {
   case NONE_SOCKET:
     os << indent << "Socket Type: NONE_SOCKET";
@@ -384,7 +384,7 @@ SocketCommunication::InternalOpenPortProcessing( SocketCommunication::PortNumber
     }
   else
     {
-    this->m_SocketType = SERVER_SOCKET;
+    this->m_SocketUsageType = SERVER_SOCKET;
     return SUCCESS; 
     }
 }
@@ -496,7 +496,7 @@ SocketCommunication::InternalConnectProcessing( AddressType address, PortNumberT
     return FAILURE;
     }
 
-  this->m_SocketType = CLIENT_SOCKET;
+  this->m_SocketUsageType = CLIENT_SOCKET;
   igstkLogMacro( DEBUG, "SocketCommunication::InternalConnectProcessing: socket connected!\n");
 
   return SUCCESS; 
@@ -509,7 +509,7 @@ SocketCommunication::InternalCloseCommunicationProcessing( void )
 { 
   igstkLogMacro( DEBUG, "SocketCommunication::InternalCloseCommunicationProcessing called ...\n");
 
-  if (this->m_SocketType == SERVER_SOCKET)
+  if (this->m_SocketUsageType == SERVER_SOCKET)
     {
     this->InternalDisconnectConnectionSocketProcessing();
     }
@@ -539,7 +539,7 @@ SocketCommunication::InternalWriteProcessing( const char *data, unsigned int len
   total = 0;
   do
     {
-    switch (this->m_SocketType)
+    switch (this->m_SocketUsageType)
       {
       case SERVER_SOCKET:
         n = send( this->m_ConnectionSocket, data + total, length - total, 0);
@@ -587,7 +587,7 @@ SocketCommunication::InternalReadProcessing( char * data, unsigned int length, u
   total = 0;
   do
     {
-      switch (this->m_SocketType)
+      switch (this->m_SocketUsageType)
       {
       case SERVER_SOCKET:
         n = recv( this->m_ConnectionSocket, data + total, length - total, 0);
@@ -642,7 +642,7 @@ SocketCommunication::InternalReadProcessing( char * data, unsigned int length, u
   total = 0;
   do
     {
-      switch (this->m_SocketType)
+      switch (this->m_SocketUsageType)
         {
       case SERVER_SOCKET:
         result = this->InternalSelectSocketProcessing( this->m_ConnectionSocket, msec);

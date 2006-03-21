@@ -114,7 +114,7 @@ public:
   igstkGetMacro( ConnectionSocket, SocketType );
 
   /** Function to get the socket type. */
-  igstkGetMacro( SocketType, SocketUsageType );
+  igstkGetMacro( SocketUsageType, SocketUsageType );
 
   /** Set the name of the file into which the data stream is recorded. */
   void SetCaptureFileName(const char* filename);
@@ -310,7 +310,7 @@ private:
   SocketType              m_ConnectionSocket;
 
   /** Variable for socket type. */
-  SocketUsageType          m_SocketType;
+  SocketUsageType          m_SocketUsageType;
 
   /** Variable for return value. */
   ResultType              m_ReturnValue;  
