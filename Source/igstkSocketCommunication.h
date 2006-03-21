@@ -35,7 +35,7 @@
 
 #include <string>
 
-#ifdef WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__)
 #include "winsock2.h"
 #else
 #include <sys/types.h>
@@ -79,6 +79,13 @@ public:
   /** Type for return result. */
   typedef Communication::ResultType      ResultType;
 
+  /** Type for the socket. */
+#if defined(_WIN32) && !defined(__CYGWIN__)
+  typedef SOCKET                         SocketType;
+#else
+  typedef int                            SocketType;
+#endif
+
   /** Type for socket. */
   typedef enum
     {
@@ -86,7 +93,7 @@ public:
     SERVER_SOCKET,
     CLIENT_SOCKET
     }
-  SocketType;
+  SocketTypeType;
   
 public:
 
@@ -97,13 +104,13 @@ public:
   igstkGetMacro( PortNumber, PortNumberType );  
 
   /** Function to get the socket. */
-  igstkGetMacro( Socket, SOCKET ) ;
+  igstkGetMacro( Socket, SocketType );
 
   /** Function to get the connection socket in server mode. */
-  igstkGetMacro( ConnectionSocket, SOCKET );
+  igstkGetMacro( ConnectionSocket, SocketType );
 
   /** Function to get the socket type. */
-  igstkGetMacro( SocketType, SocketType );
+  igstkGetMacro( SocketType, SocketTypeType );
 
   /** Set the name of the file into which the data stream is recorded. */
   void SetCaptureFileName(const char* filename);
@@ -278,13 +285,13 @@ private:
   PortNumberType  m_PortNumber;  
 
   /** Variable for socket. */
-  SOCKET m_Socket;
+  SocketType m_Socket;
 
   /** Variable for connection socket. */
-  SOCKET m_ConnectionSocket;
+  SocketType m_ConnectionSocket;
 
   /** Variable for socket type. */
-  SocketType  m_SocketType;
+  SocketTypeType  m_SocketType;
 
   /** Variable for return value. */
   ResultType  m_ReturnValue;  

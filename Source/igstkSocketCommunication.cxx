@@ -29,6 +29,16 @@
 #include "igstkBinaryData.h"
 #include "igstkSocketCommunication.h"
 
+/* define macros for platform independence */
+#if defined(_WIN32) && !defined(__CYGWIN__)
+#define WSA_VERSION MAKEWORD(1,1)
+#define igstkCloseSocketMacro(sock) (closesocket(sock))
+#define IGSTK_INVALID_SOCKET INVALID_SOCKET
+#else
+#define igstkCloseSocketMacro(sock) (close(sock))
+#define IGSTK_INVALID_SOCKET -1
+#endif
+
 namespace igstk
 { 
 
@@ -188,9 +198,9 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
 
   this->m_SocketType = NONE_SOCKET;
 
-  this->m_Socket = INVALID_SOCKET;
+  this->m_Socket = IGSTK_INVALID_SOCKET;
 
-  this->m_ConnectionSocket = INVALID_SOCKET;  
+  this->m_ConnectionSocket = IGSTK_INVALID_SOCKET;  
 
   this->m_CaptureFileName = "";
   
@@ -221,7 +231,7 @@ void SocketCommunication::PrintSelf( std::ostream& os,
     os << indent << "Socket Type: NONE_SOCKET";
     break;
   case SERVER_SOCKET:
-    os << indent << "Socket Type: SERVERE_SOCKET";
+    os << indent << "Socket Type: SERVER_SOCKET";
     break;
   case CLIENT_SOCKET:
     os << indent << "Socket Type: CLIENT_SOCKET";
@@ -270,7 +280,7 @@ SocketCommunication::InternalOpenCommunicationProcessing( void )
 
   on = 1;
   this->m_Socket = socket(AF_INET, SOCK_STREAM, 0);
-  if (this->m_Socket == INVALID_SOCKET )
+  if (this->m_Socket == IGSTK_INVALID_SOCKET )
     {
     igstkLogMacro( DEBUG, "SocketCommunication::InternalOpenCommunicationProcessing: create socket error!\n");
     return FAILURE;
@@ -406,10 +416,10 @@ SocketCommunication::InternalWaitForConnectionProcessing( )
 {
   igstkLogMacro( DEBUG, "SocketCommunication::InternalWaitForConnectionProcessing called ...\n");
 
-  SOCKET newsocket;
+  SocketType newsocket;
 
   newsocket = accept( this->m_Socket, 0, 0);
-  if ( newsocket == INVALID_SOCKET )
+  if ( newsocket == IGSTK_INVALID_SOCKET )
     {
     igstkLogMacro( DEBUG, "SocketCommunication::InternalWaitForConnectionProcessing: accept socket error!\n");
     return FAILURE;
@@ -485,11 +495,11 @@ SocketCommunication::InternalCloseCommunicationProcessing( void )
     this->InternalDisconnectConnectionSocketProcessing();
     }
 
-  if( this->m_Socket != INVALID_SOCKET )
-  {
-    closesocket( this->m_Socket);
-    this->m_Socket = INVALID_SOCKET;
-  }
+  if( this->m_Socket != IGSTK_INVALID_SOCKET )
+    {
+    igstkCloseSocketMacro( this->m_Socket);
+    this->m_Socket = IGSTK_INVALID_SOCKET;
+    }
 
   this->m_CaptureFileStream.close();
 
@@ -503,7 +513,7 @@ SocketCommunication::InternalWriteProcessing( const char *data, unsigned int len
 {
   igstkLogMacro( DEBUG, "SocketCommunication::InternalWriteProcessing called ...\n");
 
-  int total;
+  unsigned int total;
   int n;
   std::string encodedString;
   
@@ -606,10 +616,10 @@ SocketCommunication::InternalDisconnectConnectionSocketProcessing()
 {
   igstkLogMacro( DEBUG, "SocketCommunication::InternalDisconnectConnectionSocketProcessing called ...\n");
 
-  if( this->m_ConnectionSocket != INVALID_SOCKET )
+  if( this->m_ConnectionSocket != IGSTK_INVALID_SOCKET )
   {
-    closesocket( this->m_ConnectionSocket);
-    this->m_ConnectionSocket = INVALID_SOCKET;
+    igstkCloseSocketMacro( this->m_ConnectionSocket);
+    this->m_ConnectionSocket = IGSTK_INVALID_SOCKET;
   }
 
   return SUCCESS;
