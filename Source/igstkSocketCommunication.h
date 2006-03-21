@@ -90,14 +90,14 @@ public:
   /** Type for the socket itself */
   typedef IGSTK_SOCKET_TYPE              SocketType;
 
-  /** Type for socket. */
+  /** Type for socket usage. */
   typedef enum
     {
     NONE_SOCKET = 0,
     SERVER_SOCKET,
     CLIENT_SOCKET
     }
-  SocketTypeType;
+  SocketUsageType;
   
 public:
 
@@ -114,7 +114,7 @@ public:
   igstkGetMacro( ConnectionSocket, SocketType );
 
   /** Function to get the socket type. */
-  igstkGetMacro( SocketType, SocketTypeType );
+  igstkGetMacro( SocketType, SocketUsageType );
 
   /** Set the name of the file into which the data stream is recorded. */
   void SetCaptureFileName(const char* filename);
@@ -162,7 +162,15 @@ public:
 
   /** Function to write data. */
   /** Server and client. */
+  ResultType RequestWrite( const char* message );
+
+  /** Function to read data. */
+  /** Server and client. */
   ResultType RequestRead( char* data, unsigned int numberOfBytes, unsigned int &bytesRead );
+
+  /** Function to read data. */
+  /** Server and client. */
+  ResultType RequestRead( char* data, unsigned int numberOfBytes, unsigned int &bytesRead, unsigned int msec );
 
 protected:
 
@@ -203,7 +211,10 @@ protected:
   void WriteProcessing(); 
 
   /** State function to read. */
-  void ReadProcessing();
+  void WaitToReadProcessing();
+
+  /** State function to read. */
+  void QueryToReadProcessing();
 
   /** State function to disconnect connection socket. */
   void DisconnectConnectionSocketProcessing();  
@@ -221,7 +232,7 @@ protected:
   virtual ResultType InternalOpenPortProcessing( PortNumberType port );
 
   /** Internal function to select socket. */
-  virtual ResultType InternalSelectSocketProcessing( unsigned int msec );
+  virtual ResultType InternalSelectSocketProcessing( SocketType socket, unsigned int msec );
 
   /** Internal function to wait for connection. */
   virtual ResultType InternalWaitForConnectionProcessing();
@@ -237,6 +248,9 @@ protected:
 
   /** Internal function to read. */
   virtual ResultType InternalReadProcessing( char* data, unsigned int numberOfBytes, unsigned int& bytesRead );
+
+  /** Internal function to read. */
+  virtual ResultType InternalReadProcessing( char* data, unsigned int numberOfBytes, unsigned int& bytesRead, unsigned int msec );
 
   /** Internal function to disconenct connection socket. */
   virtual ResultType InternalDisconnectConnectionSocketProcessing(); 
@@ -262,7 +276,8 @@ private:
   igstkDeclareInputMacro( ServerWaitForConnection );
   igstkDeclareInputMacro( ServerQueryForConnection );
   igstkDeclareInputMacro( ClientConnect );
-  igstkDeclareInputMacro( Read );
+  igstkDeclareInputMacro( WaitToRead );
+  igstkDeclareInputMacro( QueryToRead );
   igstkDeclareInputMacro( Write );
   igstkDeclareInputMacro( ServerDisconnectConnectionSocket );
   igstkDeclareInputMacro( CloseCommunication );  
@@ -283,37 +298,37 @@ private:
   unsigned int            m_NumberToReceive;
   
   /** Variable for TCP/IP address. */
-  AddressType m_Address;
+  AddressType             m_Address;
 
   /** Variable for port number. */
-  PortNumberType  m_PortNumber;  
+  PortNumberType          m_PortNumber;  
 
   /** Variable for socket. */
-  SocketType m_Socket;
+  SocketType              m_Socket;
 
   /** Variable for connection socket. */
-  SocketType m_ConnectionSocket;
+  SocketType              m_ConnectionSocket;
 
   /** Variable for socket type. */
-  SocketTypeType  m_SocketType;
+  SocketUsageType          m_SocketType;
 
   /** Variable for return value. */
-  ResultType  m_ReturnValue;  
+  ResultType              m_ReturnValue;  
 
   /** Record file name */
-  std::string              m_CaptureFileName;
+  std::string             m_CaptureFileName;
 
   /** File output stream for recording stream into a file */
-  std::ofstream            m_CaptureFileStream;
+  std::ofstream           m_CaptureFileStream;
 
   /** Current message number */
-  unsigned int             m_CaptureMessageNumber;
+  unsigned int            m_CaptureMessageNumber;
 
   /** Recording flag */
-  bool                     m_Capture;
+  bool                    m_Capture;
   
   /** Logger for recording */
-  itk::Logger::Pointer     m_Recorder;
+  itk::Logger::Pointer    m_Recorder;
   
   /** LogOutput for File output stream */
   itk::StdStreamLogOutput::Pointer  m_CaptureFileOutput;
