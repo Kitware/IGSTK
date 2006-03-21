@@ -47,7 +47,7 @@ public:
   ConnectImage( const TReader * reader, 
                 TImageSpatialObject * imageSpatialObject )
     {
-    imageSpatialObject->SetImage( reader->GetITKImage() );  
+    imageSpatialObject->RequestSetImage( reader->GetITKImage() );  
     }
 
 }; // end of ImageReaderToImageSpatialObject class
@@ -113,7 +113,7 @@ private:
    *  in order to enforce the protocol of smart pointers. */
   ImageReader(const Self&);         //purposely not implemented
   void operator=(const Self&);      //purposely not implemented
-  
+
   // FIXME : This must be replaced with StateMachine logic
   virtual const ImageType * GetITKImage() const = 0;
 

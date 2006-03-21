@@ -103,7 +103,7 @@ private:
   const vtkImageData * GetVTKImageData() const;
 
   /** Set method to be invoked only by friends of this class */
-  void SetImage( const ImageType * image );
+  void RequestSetImage( const ImageType * image );
 
 private:
  
@@ -112,9 +112,24 @@ private:
   ImageSpatialObject(const Self&);     //purposely not implemented
   void operator=(const Self&);         //purposely not implemented
 
+private:
+
+  /** State Machine Inputs */
+  igstkDeclareInputMacro( InvalidImage );
+  igstkDeclareInputMacro( ValidImage );
+  
+  /** State Machine States */
+  igstkDeclareStateMacro( Initial );
+  igstkDeclareStateMacro( ImageSet );
+
+  /** This method is intended to be called by the state machine */
+  void SetImageProcessing();
+  void ReportInvalidImageProcessing();
+
 
   /** This is the variable holding the real data container in the form of an
    * ITK image. This image should never be exposed at the IGSTK API. */
+  ImageConstPointer  m_ImageToBeSet;
   ImageConstPointer  m_Image;
 
   /** Filters for exporting the ITK image as a vtkImageData class. 
