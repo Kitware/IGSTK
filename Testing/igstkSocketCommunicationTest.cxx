@@ -37,8 +37,14 @@
 ITK_THREAD_RETURN_TYPE ServerThreadFunction( void* data)
 {
   typedef igstk::SocketCommunication        SocketCommunicationType;
+  typedef SocketCommunicationType::Pointer  SocketCommunicationPointerType;
+  typedef SocketCommunicationType::ResultType
+                                            ResultType;
+  typedef itk::MultiThreader::ThreadInfoStruct*
+                                            ThreadInfoStructPointerType;
   typedef itk::Logger                       LoggerType; 
   typedef itk::StdStreamLogOutput           LogOutputType;
+  
 
   LoggerType::Pointer                       logger = LoggerType::New();
   LogOutputType::Pointer                    logOutput = LogOutputType::New();  
@@ -47,34 +53,34 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction( void* data)
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
-  itk::MultiThreader::ThreadInfoStruct* info = (itk::MultiThreader::ThreadInfoStruct*)data;
+  ThreadInfoStructPointerType info = (ThreadInfoStructPointerType)data;
+  bool* flag = (bool*)(info->UserData);
 
-  SocketCommunicationType::Pointer server = SocketCommunicationType::New();
+  SocketCommunicationPointerType server = SocketCommunicationType::New();
 
   server->SetLogger( logger );
 
   unsigned int num;
-  char* servermessage = "message from server!";
-  char* clientmessage = "message from client!";
+  char* servermessage = "response message from server!";
+  char* clientmessage = "request message from client!";
   char message[128];
   char buffer[1024];
+  ResultType result;
   
   if (!server->RequestOpenCommunication())
     {
     printf("Open communication error!\n");
-    *((bool*)info->UserData) = false;
+    *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
   if (!server->RequestOpenPort( 1234))
     {
     printf("Open port error!\n");
-    *((bool*)info->UserData) = false;
+    *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
 
-  SocketCommunicationType::ResultType result;
-
-  static int i = 0;
+  int i = 0;
   bool stop = false;
   while (i >= 0 && !stop)
     {
@@ -84,37 +90,49 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction( void* data)
       {
       do
         {
-        server->RequestRead( buffer, 100, num);
-        printf( "\n");
-        buffer[num] = '\0';
-        printf( buffer);
-        printf( "\n");
+        result = server->RequestRead( buffer, 100, num, 10);
+        switch (result)
+          {
+        case SocketCommunicationType::SUCCESS:
+          printf( "\n");
+          buffer[num] = '\0';
+          printf( buffer);
+          printf( "\n");
 
-        if (strcmp(buffer, "STOPSERVER") == 0)
-          {
-          stop = true;
-          }
-        else if (strncmp(buffer, clientmessage, strlen(clientmessage)) == 0)
-          {
-          sprintf(message, "%s:%d\n", servermessage, i);      
-          server->RequestWrite( message, 100);
-          i++;
-          }
-        else
-          {
-          printf("Data transfer error!\n");
-          *((bool*)info->UserData) = false;
+          if (strcmp(buffer, "STOPSERVER") == 0)
+            {
+            stop = true;
+            }
+          else if (strncmp(buffer, clientmessage, strlen(clientmessage)) == 0)
+            {
+            sprintf(message, "%s[%d]\n", servermessage, i);      
+            server->RequestWrite( message );
+            i++;
+            }
+          else
+            {
+            printf("Data transfer error!\n");
+            *flag = false;
+            return ITK_THREAD_RETURN_VALUE;
+            }
+          break;
+        case SocketCommunicationType::TIMEOUT:
+          break;
+        case SocketCommunicationType::FAILURE:
+          printf("Read error!\n");
+          *flag = false;
           return ITK_THREAD_RETURN_VALUE;
+          break;
           }
         }
-      while (num != 0 && !stop);
+      while (!stop);
       server->RequestDisconnectConnectionSocket();
       }
     }
 
   server->RequestCloseCommunication();
 
-  *((bool*)info->UserData) = true;
+  *flag = true;
   return ITK_THREAD_RETURN_VALUE;
 
 }
@@ -122,6 +140,11 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction( void* data)
 ITK_THREAD_RETURN_TYPE ClientThreadFunction( void* data)
 {
   typedef igstk::SocketCommunication        SocketCommunicationType;
+  typedef SocketCommunicationType::Pointer  SocketCommunicationPointerType;
+  typedef SocketCommunicationType::ResultType
+                                            ResultType;
+  typedef itk::MultiThreader::ThreadInfoStruct*
+                                            ThreadInfoStructPointerType;
   typedef itk::Logger                       LoggerType; 
   typedef itk::StdStreamLogOutput           LogOutputType;
 
@@ -132,36 +155,51 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction( void* data)
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
-  itk::MultiThreader::ThreadInfoStruct* info = (itk::MultiThreader::ThreadInfoStruct*)data;
+  ThreadInfoStructPointerType info = (ThreadInfoStructPointerType)data;
+  bool* flag = (bool*)(info->UserData);
 
-  SocketCommunicationType::Pointer client = SocketCommunicationType::New();
+  SocketCommunicationPointerType client = SocketCommunicationType::New();
 
   client->SetLogger( logger );
 
   unsigned int num;
-  char* servermessage = "message from server!";
-  char* clientmessage = "message from client!";
+  char* servermessage = "response message from server!";
+  char* clientmessage = "request message from client!";
   char* stopserver = "STOPSERVER";
   char message[128];
   char buffer[1024];
-  
+  ResultType result;
+
   if (!client->RequestOpenCommunication())
     {
     printf("Open communication error!\n");
-    *((bool*)info->UserData) = false;
+    *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
   if (!client->RequestConnect( "127.0.0.1", 1234))
     {
     printf("Connection error!\n");
-    *((bool*)info->UserData) = false;
+    *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
 
   for ( int i = 0; i < 10; i++)
     {
-    sprintf(message, "%s:%d\n", clientmessage, i);
-    if (client->RequestWrite( message, 100) && client->RequestRead( buffer, 100, num) && strncmp( buffer, servermessage, strlen(servermessage)) == 0)
+    sprintf(message, "%s[%d]\n", clientmessage, i);
+    if (!client->RequestWrite( message ))
+    { 
+      printf("Write error!\n", i);
+      *flag = false;
+      return ITK_THREAD_RETURN_VALUE;
+    }
+    
+    do 
+      {
+      result = client->RequestRead( buffer, 100, num, 10);
+      }
+    while (result != SocketCommunicationType::SUCCESS);
+
+    if (strncmp( buffer, servermessage, strlen(servermessage)) == 0)
       {
       printf("\n");
       buffer[num] = '\0';
@@ -169,17 +207,17 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction( void* data)
       }
     else
       {
-      printf("Data transfer error!", i);
-      *((bool*)info->UserData) = false;
+      printf("Data transfer error!\n", i);
+      *flag = false;
       return ITK_THREAD_RETURN_VALUE;
       }
     }
 
-  client->RequestWrite( stopserver, strlen(stopserver));
+  client->RequestWrite( stopserver );
 
   client->RequestCloseCommunication();
 
-  *((bool*)info->UserData) = true;
+  *flag = true;
   return ITK_THREAD_RETURN_VALUE;
 
 }
