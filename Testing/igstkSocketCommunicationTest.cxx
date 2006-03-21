@@ -21,6 +21,8 @@
 #pragma warning( disable : 4786 )
 #endif
 
+#define _CRT_SECURE_NO_DEPRECATE 1
+
 #include <iostream>
 #include <fstream>
 
