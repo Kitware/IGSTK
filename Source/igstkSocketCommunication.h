@@ -48,6 +48,14 @@
 #include <sys/time.h>
 #endif
 
+#if defined(_WIN32) && !defined(__CYGWIN__)
+#define IGSTK_SOCKET_TYPE SOCKET
+#define IGSTK_INVALID_SOCKET INVALID_SOCKET
+#else
+#define IGSTK_SOCKET_TYPE int
+#define IGSTK_INVALID_SOCKET -1
+#endif
+
 /** \class SocketCommunication
  * 
  * \brief This class implements communication over a TCP/IP protocal
@@ -79,12 +87,8 @@ public:
   /** Type for return result. */
   typedef Communication::ResultType      ResultType;
 
-  /** Type for the socket. */
-#if defined(_WIN32) && !defined(__CYGWIN__)
-  typedef SOCKET                         SocketType;
-#else
-  typedef int                            SocketType;
-#endif
+  /** Type for the socket itself */
+  typedef IGSTK_SOCKET_TYPE              SocketType;
 
   /** Type for socket. */
   typedef enum
