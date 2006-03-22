@@ -19,6 +19,7 @@
 
 #include "itkCommand.h"
 #include "itkImage.h"
+#include "itkMatrix.h"
 
 #include "igstkObliqueImageSpatialObjectRepresentation.h"
 
@@ -329,80 +330,82 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   std::cout << "Image Data before reslicing " << std::endl;
   m_ImageData->Print( std::cout );
 
-  //m_ImageReslice->SetOutputDimensionality(2);
   m_ImageReslice->SetInput ( m_ImageData );
   
-  // Set the spacing 
+  // Set the reslice axes origin
+  m_ImageReslice->SetResliceAxesOrigin( this->m_OriginPointOnThePlane[0], 
+                                        this->m_OriginPointOnThePlane[1], 
+                                        this->m_OriginPointOnThePlane[2] );
+  VectorType v1;
+  VectorType v2;
+  VectorType v3;  
+   
+  // Check if vector v1 and v2 are orthogonal
+
+  v1 = this->m_Vector1OnThePlane;
+  v2 = this->m_Vector2OnThePlane;
+  
+  double dot_product;
+  dot_product = v1*v2;
+
+  if ( dot_product != 0.0 )
+    {
+    // FIXME: need to handle this situation too
+    std::cerr<< "The two vectors are not perpendicular" << std::endl;        
+    }
+
+  // Generate vector v3 
+  v3 = itk::CrossProduct( v1, v2 ); 
+  
+  VectorType v1Normalized;
+  VectorType v2Normalized;
+  VectorType v3Normalized;
+  
+  v1Normalized = v1/v1.GetNorm();
+  v2Normalized = v2/v2.GetNorm();
+  v3Normalized = v3/v3.GetNorm();
+
+  std::cout << "V1:" << v1Normalized[0] << "," << v1Normalized[1] \
+                    << "," << v1Normalized[2] << std::endl;
+  std::cout << "V2:" << v2Normalized[0] << "," << v2Normalized[1] \
+                    << "," << v2Normalized[2] << std::endl;
+  std::cout << "V3:" << v3Normalized[0] << "," << v3Normalized[1] \
+                    << "," << v3Normalized[2] << std::endl;
+                
+  // set the reslice axes 
+  m_ImageReslice->SetResliceAxesDirectionCosines( 
+                 v1Normalized[0], v1Normalized[1], v1Normalized[2],
+                 v2Normalized[0], v2Normalized[1], v2Normalized[2],
+                 v3Normalized[0], v3Normalized[1], v3Normalized[2]
+               );
+                  
+  // set the output dimensionality to 2
+  m_ImageReslice->SetOutputDimensionality(2);
+
+  // Set the output spacing 
   double spacing[3];
   m_ImageData->GetSpacing( spacing );
-  m_ImageReslice->SetOutputSpacing( spacing[0],spacing[1],spacing[2] );
+  m_ImageReslice->SetOutputSpacing( spacing[0],spacing[1], 1.0 );
 
-  vtkMatrix4x4         * resliceAxes;
-
-  resliceAxes = vtkMatrix4x4::New();
-
-  resliceAxes->Identity();
-
-  // Set the x-axis 
-  resliceAxes->SetElement( 0, 0, 1.0);
-  resliceAxes->SetElement( 1, 0, 0.0);
-  resliceAxes->SetElement( 2, 0, 0.0);
-  
-  // Set the y-axis
-  resliceAxes->SetElement( 0, 1, 0.0);
-  resliceAxes->SetElement( 1, 1, 1.0);
-  resliceAxes->SetElement( 2, 1, 0.0);
- 
-  // Set the z-axis
-  resliceAxes->SetElement( 0, 2, 0.0);
-  resliceAxes->SetElement( 1, 2, 0.0);
-  resliceAxes->SetElement( 2, 2, 1.0);
- 
-  m_ImageReslice->SetResliceAxes( resliceAxes );
-  
-  // set the origin
-  double newOrigin[3];
-  
-  m_ImageData->GetOrigin( newOrigin );
-
-  newOrigin[2] = 0.0;
-  m_ImageReslice->SetOutputOrigin( newOrigin );
-
-  //newOrigin[0] = 18;
-  //newOrigin[1] = -126.0; 
-  newOrigin[0] = 0.0;
-  newOrigin[1] = 0.0;
-  newOrigin[2] = -186.0;
-
-  m_ImageReslice->SetResliceAxesOrigin( newOrigin );
-  
   // Set the output extent
   int ext[6];
   m_ImageData->GetExtent( ext );
-
-  //m_ImageReslice->SetOutputOrigin( 0.0, 0.0, 0.0 );
-  
   m_ImageReslice->SetOutputExtent( ext[0], ext[1], ext[2], 
                                      ext[3], 0, 0);
-  m_ImageReslice->Update();
+  // Set the output origin
+//  m_ImageReslice->SetOutputOrigin( 0.0, 0.0, 0.0 );
 
+  double origin[6];
+  m_ImageData->GetOrigin( origin );
+  m_ImageReslice->SetOutputOrigin( origin );
+  
+  m_ImageReslice->Update();
   m_ImageReslice->Print( std::cout );
 
   m_ImageData = m_ImageReslice->GetOutput();   
-
   std::cout << "Image data after reslicing " << std::endl;
-
-  m_ImageData->Update();
-  
-  m_MapColors->SetInput( m_ImageData );
-
-  m_ImageActor->SetDisplayExtent( ext[0], ext[1], ext[2], 
-                                     ext[3], 0, 0);
-
-  m_ImageActor->SetInput( m_MapColors->GetOutput() );
-  
   m_ImageData->Print( std::cout );
-   // resliceAxes->Delete(); 
+ 
 }
 
 template < class TImageSpatialObject >
