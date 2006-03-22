@@ -102,15 +102,15 @@ int igstkObliqueImageSpatialObjectRepresentationTest(
 
   PointType  point;
 
-  point[0] = 0.0;
-  point[1] = 0.0;
+  point[0] = 18.0;
+  point[1] = -171.0;
   point[2] = -186.0;
 
   representation->RequestSetOriginPointOnThePlane( point );
   
   VectorType  vector1;
 
-  vector1[0] = 1.0;
+  vector1[0] = 2.0;
   vector1[1] = 0.0;
   vector1[2] = 0.0;
 
@@ -118,8 +118,8 @@ int igstkObliqueImageSpatialObjectRepresentationTest(
   
   VectorType  vector2;
 
-  vector2[0] = 1.0;
-  vector2[1] = 0.0;
+  vector2[0] = 0.0;
+  vector2[1] = 4.0;
   vector2[2] = 0.0;
 
   representation->RequestSetVector2OnThePlane( vector2 );
@@ -129,7 +129,7 @@ int igstkObliqueImageSpatialObjectRepresentationTest(
   view2D->RequestAddObject( representation );
   view2D->RequestResetCamera();
 
-  for ( int i=0 ; i < 100 ; i++ ) 
+  for ( int i=0 ; i < 10 ; i++ ) 
     {
     std::cout << "Refresh=" << i << std::endl;
     igstk::PulseGenerator::CheckTimeouts();
