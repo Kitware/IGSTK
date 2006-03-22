@@ -26,6 +26,9 @@ View2D::View2D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
   vtkInteractorStyleImage * interactorStyle = vtkInteractorStyleImage::New();
   vtkRenderWindowInteractor::SetInteractorStyle( interactorStyle );
   interactorStyle->Delete();
+  
+    // initialize the orientation to be axial
+  this->m_Orientation = Axial;
 }
 
 /** Destructor */
