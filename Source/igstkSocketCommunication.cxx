@@ -385,6 +385,8 @@ SocketCommunication::InternalOpenPortProcessing( SocketCommunication::PortNumber
   else
     {
     this->m_SocketUsageType = SERVER_SOCKET;
+    this->m_PortNumber = port;
+
     return SUCCESS; 
     }
 }
@@ -497,6 +499,9 @@ SocketCommunication::InternalConnectProcessing( AddressType address, PortNumberT
     }
 
   this->m_SocketUsageType = CLIENT_SOCKET;
+  this->m_Address = address;
+  this->m_PortNumber = port;
+
   igstkLogMacro( DEBUG, "SocketCommunication::InternalConnectProcessing: socket connected!\n");
 
   return SUCCESS; 
@@ -521,6 +526,9 @@ SocketCommunication::InternalCloseCommunicationProcessing( void )
     }
 
   this->m_CaptureFileStream.close();
+
+  this->m_Address.empty();
+  this->m_PortNumber = 0;
 
   return SUCCESS; 
 

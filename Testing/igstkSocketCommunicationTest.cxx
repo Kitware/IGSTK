@@ -129,6 +129,9 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction( void* data)
           }
         }
       while (!stop);
+
+      server->Print( std::cout);
+
       server->RequestDisconnectConnectionSocket();
       }
     }
@@ -217,6 +220,8 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction( void* data)
     }
 
   client->RequestWrite( stopserver );
+
+  client->Print( std::cout);
 
   client->RequestCloseCommunication();
 
