@@ -22,6 +22,7 @@
 #endif
 
 #define _CRT_SECURE_NO_DEPRECATE 1
+#define _CRT_NONSTDC_NO_DEPRECATE 1
 
 #include <iostream>
 #include <fstream>
@@ -190,7 +191,7 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction( void* data)
     sprintf(message, "%s[%d]\n", clientmessage, i);
     if (!client->RequestWrite( message ))
     { 
-      printf("Write error!\n", i);
+      printf("Write error!\n");
       *flag = false;
       return ITK_THREAD_RETURN_VALUE;
     }
@@ -209,7 +210,7 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction( void* data)
       }
     else
       {
-      printf("Data transfer error!\n", i);
+      printf("Data transfer error!\n");
       *flag = false;
       return ITK_THREAD_RETURN_VALUE;
       }

@@ -547,6 +547,9 @@ SocketCommunication::InternalWriteProcessing( const char *data, unsigned int len
       case CLIENT_SOCKET:
         n = send( this->m_Socket, data + total, length - total, 0);
         break;
+      case NONE_SOCKET:
+        igstkLogMacro( DEBUG, "SocketCommunication::InternalWriteProcessing: write for none-socket ...\n");
+        return FAILURE;
       }
     
     if(n < 1)
@@ -595,6 +598,9 @@ SocketCommunication::InternalReadProcessing( char * data, unsigned int length, u
       case CLIENT_SOCKET:
         n = recv( this->m_Socket, data + total, length - total, 0);
         break;    
+      case NONE_SOCKET:
+        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: read for none-socket ...\n");
+        return FAILURE;
       }
     if (n < 1)
       {
@@ -674,6 +680,9 @@ SocketCommunication::InternalReadProcessing( char * data, unsigned int length, u
           return FAILURE;
           }
         break;
+      case NONE_SOCKET:
+        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: read for none-socket ...\n");
+        return FAILURE;
         }
     if (n < 1)
       {
