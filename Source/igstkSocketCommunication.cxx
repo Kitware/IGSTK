@@ -78,6 +78,62 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
                            AttemptingToOpenCommunication,
                            AttemptToOpenCommunication);
 
+  // Idle: null transitions
+  igstkAddTransitionMacro( Idle,
+                           ServerOpenPort,
+                           Idle,
+                           No);
+
+  igstkAddTransitionMacro( Idle,
+                           ServerWaitForConnection,
+                           Idle,
+                           No);
+
+  igstkAddTransitionMacro( Idle,
+                           ServerQueryForConnection,
+                           Idle,
+                           No);
+
+  igstkAddTransitionMacro( Idle,
+                           ClientConnect,
+                           Idle,
+                           No);
+
+  igstkAddTransitionMacro( Idle,
+                           WaitToRead,
+                           Idle,
+                           No);
+
+  igstkAddTransitionMacro( Idle,
+                           QueryToRead,
+                           Idle,
+                           No);
+
+  igstkAddTransitionMacro( Idle,
+                           Write,
+                           Idle,
+                           No);
+
+  igstkAddTransitionMacro( Idle,
+                           ServerDisconnectConnectionSocket,
+                           Idle,
+                           No);
+
+  igstkAddTransitionMacro( Idle,
+                           CloseCommunication,
+                           Idle,
+                           No);
+
+  igstkAddTransitionMacro( Idle,
+                           Success,
+                           Idle,
+                           No);
+
+  igstkAddTransitionMacro( Idle,
+                           Failure,
+                           Idle,
+                           No);
+
   // AttemptingToOpenCommunication
   igstkAddTransitionMacro( AttemptingToOpenCommunication,
                            Success,
@@ -88,6 +144,57 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
                            Failure,
                            Idle,
                            Failure );
+
+  // AttemptingToOpenCommunication: null transitions
+  igstkAddTransitionMacro( AttemptingToOpenCommunication,
+                           OpenCommunication,
+                           AttemptingToOpenCommunication,
+                           No);
+  
+  igstkAddTransitionMacro( AttemptingToOpenCommunication,
+                           ServerOpenPort,
+                           AttemptingToOpenCommunication,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToOpenCommunication,
+                           ServerWaitForConnection,
+                           AttemptingToOpenCommunication,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToOpenCommunication,
+                           ServerQueryForConnection,
+                           AttemptingToOpenCommunication,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToOpenCommunication,
+                           ClientConnect,
+                           AttemptingToOpenCommunication,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToOpenCommunication,
+                           WaitToRead,
+                           AttemptingToOpenCommunication,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToOpenCommunication,
+                           QueryToRead,
+                           AttemptingToOpenCommunication,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToOpenCommunication,
+                           Write,
+                           AttemptingToOpenCommunication,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToOpenCommunication,
+                           ServerDisconnectConnectionSocket,
+                           AttemptingToOpenCommunication,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToOpenCommunication,
+                           CloseCommunication,
+                           AttemptingToOpenCommunication,
+                           No);
 
   // CommunicationOpened
   igstkAddTransitionMacro( CommunicationOpened,
@@ -105,6 +212,52 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
                            Idle,
                            CloseCommunication );
 
+  // CommunicationOpened: null transitions
+  igstkAddTransitionMacro( CommunicationOpened,
+                           OpenCommunication,
+                           CommunicationOpened,
+                           No);
+  
+  igstkAddTransitionMacro( CommunicationOpened,
+                           ServerWaitForConnection,
+                           CommunicationOpened,
+                           No);
+
+  igstkAddTransitionMacro( CommunicationOpened,
+                           ServerQueryForConnection,
+                           CommunicationOpened,
+                           No);
+
+  igstkAddTransitionMacro( CommunicationOpened,
+                           WaitToRead,
+                           CommunicationOpened,
+                           No);
+
+  igstkAddTransitionMacro( CommunicationOpened,
+                           QueryToRead,
+                           CommunicationOpened,
+                           No);
+
+  igstkAddTransitionMacro( CommunicationOpened,
+                           Write,
+                           CommunicationOpened,
+                           No);
+
+  igstkAddTransitionMacro( CommunicationOpened,
+                           ServerDisconnectConnectionSocket,
+                           CommunicationOpened,
+                           No);
+
+  igstkAddTransitionMacro( CommunicationOpened,
+                           Success,
+                           CommunicationOpened,
+                           No);
+
+  igstkAddTransitionMacro( CommunicationOpened,
+                           Failure,
+                           CommunicationOpened,
+                           No);
+
   // AttemptingToServerOpenPort
   igstkAddTransitionMacro( AttemptingToServerOpenPort,
                            Success,
@@ -115,6 +268,57 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
                            Failure,
                            CommunicationOpened,
                            Failure );
+
+  // AttemptingToServerOpenPort: null transitions
+  igstkAddTransitionMacro( AttemptingToServerOpenPort,
+                           OpenCommunication,
+                           AttemptingToServerOpenPort,
+                           No);
+  
+  igstkAddTransitionMacro( AttemptingToServerOpenPort,
+                           ServerOpenPort,
+                           AttemptingToServerOpenPort,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerOpenPort,
+                           ServerWaitForConnection,
+                           AttemptingToServerOpenPort,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerOpenPort,
+                           ServerQueryForConnection,
+                           AttemptingToServerOpenPort,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerOpenPort,
+                           ClientConnect,
+                           AttemptingToServerOpenPort,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerOpenPort,
+                           WaitToRead,
+                           AttemptingToServerOpenPort,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerOpenPort,
+                           QueryToRead,
+                           AttemptingToServerOpenPort,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerOpenPort,
+                           Write,
+                           AttemptingToServerOpenPort,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerOpenPort,
+                           ServerDisconnectConnectionSocket,
+                           AttemptingToServerOpenPort,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerOpenPort,
+                           CloseCommunication,
+                           AttemptingToServerOpenPort,
+                           No);
 
   // ServerPortOpened
   igstkAddTransitionMacro( ServerPortOpened,
@@ -132,6 +336,52 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
                            Idle,
                            CloseCommunication );
 
+  // ServerPortOpened: null transitions
+  igstkAddTransitionMacro( ServerPortOpened,
+                           OpenCommunication,
+                           ServerPortOpened,
+                           No);
+  
+  igstkAddTransitionMacro( ServerPortOpened,
+                           ServerOpenPort,
+                           ServerPortOpened,
+                           No);
+
+  igstkAddTransitionMacro( ServerPortOpened,
+                           ClientConnect,
+                           ServerPortOpened,
+                           No);
+
+  igstkAddTransitionMacro( ServerPortOpened,
+                           WaitToRead,
+                           ServerPortOpened,
+                           No);
+
+  igstkAddTransitionMacro( ServerPortOpened,
+                           QueryToRead,
+                           ServerPortOpened,
+                           No);
+
+  igstkAddTransitionMacro( ServerPortOpened,
+                           Write,
+                           ServerPortOpened,
+                           No);
+
+  igstkAddTransitionMacro( ServerPortOpened,
+                           ServerDisconnectConnectionSocket,
+                           ServerPortOpened,
+                           No);
+
+  igstkAddTransitionMacro( ServerPortOpened,
+                           Success,
+                           ServerPortOpened,
+                           No);
+
+  igstkAddTransitionMacro( ServerPortOpened,
+                           Failure,
+                           ServerPortOpened,
+                           No);
+
   // AttemptingToServerConnect
   igstkAddTransitionMacro( AttemptingToServerConnect,
                            Success,
@@ -142,6 +392,57 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
                            Failure,
                            ServerPortOpened,
                            Failure );
+
+  // AttemptingToServerConnect: null transitions
+  igstkAddTransitionMacro( AttemptingToServerConnect,
+                           OpenCommunication,
+                           AttemptingToServerConnect,
+                           No);
+  
+  igstkAddTransitionMacro( AttemptingToServerConnect,
+                           ServerOpenPort,
+                           AttemptingToServerConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerConnect,
+                           ServerWaitForConnection,
+                           AttemptingToServerConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerConnect,
+                           ServerQueryForConnection,
+                           AttemptingToServerConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerConnect,
+                           ClientConnect,
+                           AttemptingToServerConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerConnect,
+                           WaitToRead,
+                           AttemptingToServerConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerConnect,
+                           QueryToRead,
+                           AttemptingToServerConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerConnect,
+                           Write,
+                           AttemptingToServerConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerConnect,
+                           ServerDisconnectConnectionSocket,
+                           AttemptingToServerConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToServerConnect,
+                           CloseCommunication,
+                           AttemptingToServerConnect,
+                           No);
 
   // ServerConnected
   igstkAddTransitionMacro( ServerConnected,
@@ -169,6 +470,42 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
                            Idle,
                            CloseCommunication );
 
+  // ServerConnected: null transitions
+  igstkAddTransitionMacro( ServerConnected,
+                           OpenCommunication,
+                           ServerConnected,
+                           No);
+  
+  igstkAddTransitionMacro( ServerConnected,
+                           ServerOpenPort,
+                           ServerConnected,
+                           No);
+
+  igstkAddTransitionMacro( ServerConnected,
+                           ServerWaitForConnection,
+                           ServerConnected,
+                           No);
+
+  igstkAddTransitionMacro( ServerConnected,
+                           ServerQueryForConnection,
+                           ServerConnected,
+                           No);
+
+  igstkAddTransitionMacro( ServerConnected,
+                           ClientConnect,
+                           ServerConnected,
+                           No);
+
+  igstkAddTransitionMacro( ServerConnected,
+                           Success,
+                           ServerConnected,
+                           No);
+
+  igstkAddTransitionMacro( ServerConnected,
+                           Failure,
+                           ServerConnected,
+                           No);
+
   // AttemptingToClientConnect
   igstkAddTransitionMacro( AttemptingToClientConnect,
                            Success,
@@ -179,6 +516,57 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
                            Failure,
                            CommunicationOpened,
                            Failure );
+
+  // AttemptingToClientConnect: null transitions
+  igstkAddTransitionMacro( AttemptingToClientConnect,
+                           OpenCommunication,
+                           AttemptingToClientConnect,
+                           No);
+  
+  igstkAddTransitionMacro( AttemptingToClientConnect,
+                           ServerOpenPort,
+                           AttemptingToClientConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToClientConnect,
+                           ServerWaitForConnection,
+                           AttemptingToClientConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToClientConnect,
+                           ServerQueryForConnection,
+                           AttemptingToClientConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToClientConnect,
+                           ClientConnect,
+                           AttemptingToClientConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToClientConnect,
+                           WaitToRead,
+                           AttemptingToClientConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToClientConnect,
+                           QueryToRead,
+                           AttemptingToClientConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToClientConnect,
+                           Write,
+                           AttemptingToClientConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToClientConnect,
+                           ServerDisconnectConnectionSocket,
+                           AttemptingToClientConnect,
+                           No);
+
+  igstkAddTransitionMacro( AttemptingToClientConnect,
+                           CloseCommunication,
+                           AttemptingToClientConnect,
+                           No);
 
   // ClientConnected
   igstkAddTransitionMacro( ClientConnected,
@@ -200,6 +588,47 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
                            CloseCommunication,
                            Idle,
                            CloseCommunication );  
+
+  // ClientConnected: null transitions
+  igstkAddTransitionMacro( ClientConnected,
+                           OpenCommunication,
+                           ClientConnected,
+                           No);
+  
+  igstkAddTransitionMacro( ClientConnected,
+                           ServerOpenPort,
+                           ClientConnected,
+                           No);
+
+  igstkAddTransitionMacro( ClientConnected,
+                           ServerWaitForConnection,
+                           ClientConnected,
+                           No);
+
+  igstkAddTransitionMacro( ClientConnected,
+                           ServerQueryForConnection,
+                           ClientConnected,
+                           No);
+
+  igstkAddTransitionMacro( ClientConnected,
+                           ClientConnect,
+                           ClientConnected,
+                           No);
+
+  igstkAddTransitionMacro( ClientConnected,
+                           ServerDisconnectConnectionSocket,
+                           ClientConnected,
+                           No);
+
+  igstkAddTransitionMacro( ClientConnected,
+                           Success,
+                           ClientConnected,
+                           No);
+
+  igstkAddTransitionMacro( ClientConnected,
+                           Failure,
+                           ClientConnected,
+                           No);
  
   // Select the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
