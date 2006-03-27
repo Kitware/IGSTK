@@ -60,6 +60,8 @@ ImageSpatialObject< TPixelType, VDimension >
 
   igstkAddTransitionMacro( Initial, ValidImage, ImageSet,  SetImage );
   igstkAddTransitionMacro( Initial, InvalidImage, Initial,  ReportInvalidImage );
+  igstkAddTransitionMacro( ImageSet, ValidImage, ImageSet,  SetImage );
+  igstkAddTransitionMacro( ImageSet, InvalidImage, Initial,  ReportInvalidImage );
 
   igstkSetInitialStateMacro( Initial );
 
