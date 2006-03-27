@@ -53,7 +53,7 @@ else             this->DisableTracking();}
         xywh {15 435 125 20} labelsize 11
       }
       Fl_Value_Slider slider {
-        callback {SetSliceNumber(slider->value());}
+        callback {this->SetSliceNumber(static_cast<unsigned int>( slider->value() ) );}
         xywh {395 10 20 330} labelsize 8 maximum 200 step 1 textsize 8
       }
     }
