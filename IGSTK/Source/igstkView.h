@@ -108,7 +108,8 @@ public:
   igstkStateMachineMacro();
 
   /** Print the object information in a stream. */
-  void Print( std::ostream& os ) const;
+  void Print( std::ostream& os, ::itk::Indent indent=0) const;
+
 
   /** Set up variables, types and methods related to the Logger */
   igstkLoggerMacro()
