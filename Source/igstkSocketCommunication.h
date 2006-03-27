@@ -186,6 +186,9 @@ protected:
   /** State function for no processing. */
   void NoProcessing();
 
+  /** State function for dangerous processing. */
+  void DangerousProcessing();
+
   /** State function for success processing. */
   void SuccessProcessing();
 

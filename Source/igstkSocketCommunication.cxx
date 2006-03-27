@@ -87,32 +87,32 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
   igstkAddTransitionMacro( Idle,
                            ServerWaitForConnection,
                            Idle,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( Idle,
                            ServerQueryForConnection,
                            Idle,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( Idle,
                            ClientConnect,
                            Idle,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( Idle,
                            WaitToRead,
                            Idle,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( Idle,
                            QueryToRead,
                            Idle,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( Idle,
                            Write,
                            Idle,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( Idle,
                            ServerDisconnectConnectionSocket,
@@ -221,27 +221,27 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
   igstkAddTransitionMacro( CommunicationOpened,
                            ServerWaitForConnection,
                            CommunicationOpened,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( CommunicationOpened,
                            ServerQueryForConnection,
                            CommunicationOpened,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( CommunicationOpened,
                            WaitToRead,
                            CommunicationOpened,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( CommunicationOpened,
                            QueryToRead,
                            CommunicationOpened,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( CommunicationOpened,
                            Write,
                            CommunicationOpened,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( CommunicationOpened,
                            ServerDisconnectConnectionSocket,
@@ -350,22 +350,22 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
   igstkAddTransitionMacro( ServerPortOpened,
                            ClientConnect,
                            ServerPortOpened,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( ServerPortOpened,
                            WaitToRead,
                            ServerPortOpened,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( ServerPortOpened,
                            QueryToRead,
                            ServerPortOpened,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( ServerPortOpened,
                            Write,
                            ServerPortOpened,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( ServerPortOpened,
                            ServerDisconnectConnectionSocket,
@@ -479,22 +479,22 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
   igstkAddTransitionMacro( ServerConnected,
                            ServerOpenPort,
                            ServerConnected,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( ServerConnected,
                            ServerWaitForConnection,
                            ServerConnected,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( ServerConnected,
                            ServerQueryForConnection,
                            ServerConnected,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( ServerConnected,
                            ClientConnect,
                            ServerConnected,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( ServerConnected,
                            Success,
@@ -598,17 +598,17 @@ SocketCommunication::SocketCommunication() :  m_StateMachine( this )
   igstkAddTransitionMacro( ClientConnected,
                            ServerOpenPort,
                            ClientConnected,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( ClientConnected,
                            ServerWaitForConnection,
                            ClientConnected,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( ClientConnected,
                            ServerQueryForConnection,
                            ClientConnected,
-                           No);
+                           Dangerous);
 
   igstkAddTransitionMacro( ClientConnected,
                            ClientConnect,
@@ -1263,6 +1263,12 @@ void SocketCommunication::DisconnectConnectionSocketProcessing()
 void SocketCommunication::NoProcessing()
 {
   igstkLogMacro( DEBUG, "SocketCommunication::NoProcessing called ...\n");
+}
+
+/** State function for dangerous processing. */
+void SocketCommunication::DangerousProcessing()
+{
+  igstkLogMacro( CRITICAL, "SocketCommunication::DangerousProcessing called ...\n");
 }
 
 /** State function for success processing. */
