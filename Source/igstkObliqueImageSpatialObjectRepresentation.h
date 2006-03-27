@@ -163,6 +163,7 @@ private:
     
   /** VTK classes that support display of an image */
   vtkImageData                         * m_ImageData;
+  vtkImageData                         * m_ReslicedImageData;
   vtkImageActor                        * m_ImageActor;
   vtkLookupTable                       * m_LUT;
   vtkImageMapToColors                  * m_MapColors;
