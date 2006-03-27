@@ -16,8 +16,7 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-// Warning about: identifier was truncated to '255' characters 
-// in the debug information (MVC6.0 Debug)
+   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -29,6 +28,7 @@
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
+#include "igstkVTKLoggerOutput.h"
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -71,7 +71,7 @@ public:
       m_View->AddObserver( ::igstk::RefreshEvent(), this );
       }
     }
-    
+
   void SetEndFlag( bool * end )
     {
     m_End = end;
@@ -82,6 +82,7 @@ public:
     if( ::igstk::RefreshEvent().CheckEvent( &event ) )
       {
       m_PulseCounter++;
+
       if( m_PulseCounter > 20 )
         {
         if( m_View )
@@ -102,11 +103,12 @@ public:
       }
     }
 private:
-
+  
   unsigned long       m_PulseCounter;
   Fl_Window          *m_Form;
   ::igstk::View      *m_View;
   bool *              m_End;
+
 };
 
 }
@@ -130,6 +132,12 @@ int igstkViewTest( int, char * [] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+
+
   try
     {
     // Create the ellipsoid 
@@ -137,8 +145,9 @@ int igstkViewTest( int, char * [] )
     ellipsoid->SetRadius(0.1,0.1,0.1);
     
     // Create the ellipsoid representation
-    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation 
-                            = igstk::EllipsoidObjectRepresentation::New();
+    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
+                             igstk::EllipsoidObjectRepresentation::New();
+
     ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
     ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
     ellipsoidRepresentation->SetOpacity(1.0);
@@ -149,8 +158,9 @@ int igstkViewTest( int, char * [] )
     cylinder->SetHeight(0.5);
 
     // Create the cylinder representation
-    igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation 
-                              = igstk::CylinderObjectRepresentation::New();
+    igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation =
+                              igstk::CylinderObjectRepresentation::New();
+
     cylinderRepresentation->RequestSetCylinderObject( cylinder );
     cylinderRepresentation->SetColor(1.0,0.0,0.0);
     cylinderRepresentation->SetOpacity(1.0);
@@ -250,15 +260,19 @@ int igstkViewTest( int, char * [] )
     // Exercise the code for resizing the window
     form->resize(100, 100, 600, 300);
 
-    // Exercise and test the PrintSelf() methods
-    view2D->Print(std::cout, 0);
-    view3D->Print(std::cout, 0);
+    // Exercise and test the Print() methods
+    view2D->Print( std::cout, 0 );
+    view3D->Print( std::cout, 0 );
 
     view2D->RequestStart();
     view3D->RequestStart();
 
+    std::cout << *view2D << std::endl;
+    std::cout << *view3D << std::endl;
+
     view2D->RequestSetRefreshRate( 30 );
     view3D->RequestSetRefreshRate( 10 );
+
     while(1)
       {
       Fl::wait(0.0001);
@@ -270,6 +284,7 @@ int igstkViewTest( int, char * [] )
       }
 
     // at this point the observer should have hid the form
+
     delete view2D;
     delete view3D;
     delete form;
@@ -280,5 +295,10 @@ int igstkViewTest( int, char * [] )
     return EXIT_FAILURE;
     }
 
+  if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
+    {
+    return EXIT_FAILURE;
+    }
+ 
   return EXIT_SUCCESS;
 }

@@ -20,9 +20,10 @@
 //  at a rate close to the one that was requested by the application developer.
 //
 //
+
+
 #if defined(_MSC_VER)
-// Warning about: identifier was truncated to '255' characters 
-// in the debug information (MVC6.0 Debug)
+   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -112,9 +113,7 @@ public:
         }
       }
     }
-
 private:
-
   unsigned long       m_PulseCounter;
   unsigned long       m_NumberOfPulsesToStop;
   Fl_Window          *m_Form;
@@ -140,8 +139,8 @@ int igstkViewRefreshRateTest( int, char * [] )
     ellipsoid->SetRadius(0.1,0.1,0.1);
     
     // Create the ellipsoid representation
-    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation 
-                                = igstk::EllipsoidObjectRepresentation::New();
+    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
+                                igstk::EllipsoidObjectRepresentation::New();
     ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
     ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
     ellipsoidRepresentation->SetOpacity(1.0);
@@ -163,6 +162,7 @@ int igstkViewRefreshRateTest( int, char * [] )
     view3D->RequestResetCamera();
     view3D->RequestEnableInteractions();
     
+ 
     // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );
     view3D->RequestAddObject( ellipsoidRepresentation );
@@ -230,6 +230,7 @@ int igstkViewRefreshRateTest( int, char * [] )
         }
       }
 
+
     const double endTime   = igstk::RealTimeClock::GetTimeStamp();
 
     const double secondsElapsed = ( endTime - beginTime ) / 1000;
@@ -251,7 +252,9 @@ int igstkViewRefreshRateTest( int, char * [] )
       result = false;
       }
 
+  
     // at this point the observer should have hid the form
+
     delete view2D;
     delete view3D;
     delete form;

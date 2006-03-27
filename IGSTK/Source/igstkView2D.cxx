@@ -24,7 +24,7 @@ namespace igstk {
 View2D::View2D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
 {
   vtkInteractorStyleImage * interactorStyle = vtkInteractorStyleImage::New();
-  vtkRenderWindowInteractor::SetInteractorStyle( interactorStyle );
+  this->SetInteractorStyle( interactorStyle );
   interactorStyle->Delete();
 
   // initialize the orientation to be axial
@@ -34,7 +34,7 @@ View2D::View2D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
 /** Destructor */
 View2D::~View2D()
 {
-  vtkRenderWindowInteractor::SetInteractorStyle( NULL );
+  this->SetInteractorStyle( NULL );
 }
 
 
