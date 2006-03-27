@@ -55,6 +55,7 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   m_MapColors  = vtkImageMapToColors::New();
   m_LUT        = vtkLookupTable::New();
   m_ImageData  = NULL;
+  m_ReslicedImageData  = NULL;
 
   // Image reslice
   m_ImageReslice = vtkImageReslice::New();
@@ -402,9 +403,9 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageReslice->Update();
   m_ImageReslice->Print( std::cout );
 
-  m_ImageData = m_ImageReslice->GetOutput();   
+  m_ReslicedImageData = m_ImageReslice->GetOutput();   
   std::cout << "Image data after reslicing " << std::endl;
-  m_ImageData->Print( std::cout );
+  m_ReslicedImageData->Print( std::cout );
  
 }
 
@@ -449,7 +450,7 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   // private SetImage method.
   this->ConnectImage();
 
-  m_MapColors->SetInput( m_ImageData );
+  m_MapColors->SetInput( m_ReslicedImageData) ;
 
   m_ImageActor->SetInput( m_MapColors->GetOutput() );
 }
@@ -480,9 +481,9 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 {
    igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation::\
                          UpdateRepresentationProcessing called...\n");
-   if( m_ImageData )
+   if( m_ReslicedImageData )
      {
-     m_MapColors->SetInput( m_ImageData );
+     m_MapColors->SetInput( m_ReslicedImageData );
      }
 }
 
@@ -568,7 +569,7 @@ void
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::ConnectVTKPipelineProcessing() 
 {
-  m_MapColors->SetInput( m_ImageData );
+  m_MapColors->SetInput( m_ReslicedImageData );
   m_ImageActor->SetInput( m_MapColors->GetOutput() );
   m_ImageActor->InterpolateOn();
 }
