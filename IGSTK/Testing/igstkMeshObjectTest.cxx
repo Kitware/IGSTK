@@ -27,7 +27,9 @@
 #include "igstkMeshReader.h"
 #include "igstkMeshObjectRepresentation.h"
 #include "igstkView3D.h"
-
+#include "igstkVTKLoggerOutput.h"
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
 
 namespace igstk
 {
@@ -184,14 +186,31 @@ int igstkMeshObjectTest( int argc, char * argv [] )
 
   igstk::RealTimeClock::Initialize();
 
+  typedef itk::Logger              LoggerType;
+  typedef itk::StdStreamLogOutput  LogOutputType;
+
+  // logger object created for logging mouse activities
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+
   typedef igstk::MeshObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer MeshRepresentation = 
                                           ObjectRepresentationType::New();
+  MeshRepresentation->SetLogger( logger );
 
   typedef igstk::MeshObject     ObjectType;
   typedef ObjectType::PointType MeshPointType;
 
   ObjectType::Pointer meshObject = ObjectType::New();
+  meshObject->SetLogger( logger );
 
   meshObject->AddPoint(0,0,0,0);
   meshObject->AddPoint(1,9,0,0);
@@ -262,6 +281,7 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   // std::cout << "Creating view" << std::endl;
   typedef igstk::View3D  View3DType;
   View3DType * view3D = new View3DType(6,6,500,500,"View 3D");
+  view3D->SetLogger( logger );
   
   std::cout << "form->end()" << std::endl;
   form->end();
@@ -447,6 +467,11 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   delete view3D;
   
   delete form;
+
+  if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
+    {
+    return EXIT_FAILURE;
+    }
 
   return EXIT_SUCCESS;
 }

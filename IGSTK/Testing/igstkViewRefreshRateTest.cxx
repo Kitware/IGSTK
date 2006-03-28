@@ -36,6 +36,9 @@
 #include "igstkEvents.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
+#include "igstkVTKLoggerOutput.h"
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
 
 namespace ViewRefreshRateTest
 {
@@ -127,6 +130,21 @@ int igstkViewRefreshRateTest( int, char * [] )
 {
   igstk::RealTimeClock::Initialize();
 
+  typedef itk::Logger              LoggerType;
+  typedef itk::StdStreamLogOutput  LogOutputType;
+
+  // logger object created for logging mouse activities
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+
   typedef igstk::View2D  View2DType;
   typedef igstk::View3D  View3DType;
 
@@ -137,6 +155,7 @@ int igstkViewRefreshRateTest( int, char * [] )
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
+    ellipsoid->SetLogger( logger );
     
     // Create the ellipsoid representation
     igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
@@ -144,12 +163,15 @@ int igstkViewRefreshRateTest( int, char * [] )
     ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
     ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
     ellipsoidRepresentation->SetOpacity(1.0);
+    ellipsoidRepresentation->SetLogger( logger );
 
     // Create an FLTK minimal GUI
     Fl_Window * form = new Fl_Window(601,301,"View Refresh Rate Test");
     
     View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
     View3DType * view3D = new View3DType(310,10,280,280,"3D View");
+    view2D->SetLogger( logger );
+    view3D->SetLogger( logger );
 
     form->end();
     // End of the GUI creation
@@ -266,6 +288,11 @@ int igstkViewRefreshRateTest( int, char * [] )
     }
 
   if( !result )
+    {
+    return EXIT_FAILURE;
+    }
+
+  if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
     return EXIT_FAILURE;
     }
