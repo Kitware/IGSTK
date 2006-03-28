@@ -32,4 +32,5 @@ void RegisterTests()
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
   REGISTER_TEST(igstkFlockOfBirdsTrackerTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
+  REGISTER_TEST(igstkPivotCalibrationReaderTest);
 }
