@@ -41,7 +41,8 @@ class PivotCalibrationReader : public ToolCalibrationReader<igstk::PivotCalibrat
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( PivotCalibrationReader, ToolCalibrationReader )
+  igstkStandardClassTraitsMacro( PivotCalibrationReader, 
+                                 ToolCalibrationReader<igstk::PivotCalibration> )
 
   /** Transform typedef */
   typedef Superclass::CalibrationType       CalibrationType;
