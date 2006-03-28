@@ -241,6 +241,9 @@ SET(IGSTKSandbox_HEADS
   igstkContourMeshObjectRepresentation.h
   igstkContourVascularNetworkObjectRepresentation.h
   igstkSocketCommunication.h
+  igstkToolCalibrationReader.h
+  igstkToolCalibration.h
+  igstkPivotCalibrationReader.h
 )
 
 
@@ -262,6 +265,8 @@ SET(IGSTKSandbox_SRCS
   igstkContourMeshObjectRepresentation.cxx
   igstkContourVascularNetworkObjectRepresentation.cxx
   igstkSocketCommunication.cxx
+  igstkToolCalibration.cxx
+  igstkPivotCalibrationReader.cxx
 )
 
 # Variable for holding extra libraries
