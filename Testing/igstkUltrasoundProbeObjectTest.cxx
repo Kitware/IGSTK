@@ -25,6 +25,9 @@
 #include "igstkUltrasoundProbeObject.h"
 #include "igstkUltrasoundProbeObjectRepresentation.h"
 #include "igstkView2D.h"
+#include "igstkVTKLoggerOutput.h"
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
 
 namespace igstk
 {
@@ -178,11 +181,28 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
+  typedef itk::Logger              LoggerType;
+  typedef itk::StdStreamLogOutput  LogOutputType;
+
+  // logger object created for logging mouse activities
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+
   typedef igstk::UltrasoundProbeObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer UltrasoundProbeRepresentation = ObjectRepresentationType::New();
+  UltrasoundProbeRepresentation->SetLogger( logger );
 
   typedef igstk::UltrasoundProbeObject  ObjectType;
   ObjectType::Pointer UltrasoundProbeObject = ObjectType::New();
+  UltrasoundProbeObject->SetLogger( logger );
 
   // Test Property
   std::cout << "Testing Property : ";
@@ -224,6 +244,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
 
   typedef igstk::View2D  View2DType;
   View2DType * view2D = new View2DType(6,6,500,500,"View 2D");
+  view2D->SetLogger( logger );
 
   form->end();
   // End of the GUI creation
@@ -372,6 +393,11 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
 
   delete view2D;
   delete form;
+
+  if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
+    {
+    return EXIT_FAILURE;
+    }
   
   return EXIT_SUCCESS;
 }

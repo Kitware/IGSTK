@@ -25,6 +25,9 @@
 #include "igstkTubeObject.h"
 #include "igstkTubeObjectRepresentation.h"
 #include "igstkView2D.h"
+#include "igstkVTKLoggerOutput.h"
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
 
 namespace igstk
 {
@@ -95,13 +98,30 @@ int igstkTubeObjectTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
+  typedef itk::Logger              LoggerType;
+  typedef itk::StdStreamLogOutput  LogOutputType;
+
+  // logger object created for logging mouse activities
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+
   typedef igstk::TubeObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer TubeRepresentation = ObjectRepresentationType::New();
+  TubeRepresentation->SetLogger( logger );
 
   typedef igstk::TubeObject ObjectType;
   typedef ObjectType::PointType TubePointType;
 
   ObjectType::Pointer TubeObject = ObjectType::New();
+  TubeObject->SetLogger( logger );
 
   TubeRepresentation->RequestSetTubeObject( TubeObject );
 
@@ -185,7 +205,8 @@ int igstkTubeObjectTest( int, char * [] )
 
   typedef igstk::View2D  View2DType;
   View2DType * view2D = new View2DType(0,0,200,200,"View 2D");
-  
+  view2D->SetLogger( logger );
+
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( TubeRepresentation );
 
@@ -300,6 +321,11 @@ int igstkTubeObjectTest( int, char * [] )
   std::cout << "Test [DONE]" << std::endl;
 
   delete view2D;
+
+  if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
+    {
+    return EXIT_FAILURE;
+    }
   
   return EXIT_SUCCESS;
 }

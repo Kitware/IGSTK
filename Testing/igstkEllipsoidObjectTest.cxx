@@ -25,6 +25,9 @@
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkView2D.h"
+#include "igstkVTKLoggerOutput.h"
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
 
 namespace igstk
 {
@@ -95,11 +98,28 @@ int igstkEllipsoidObjectTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
+  typedef itk::Logger              LoggerType;
+  typedef itk::StdStreamLogOutput  LogOutputType;
+
+  // logger object created for logging mouse activities
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+
   typedef igstk::EllipsoidObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer ellipsoidRepresentation = ObjectRepresentationType::New();
+  ellipsoidRepresentation->SetLogger( logger );
 
   typedef igstk::EllipsoidObject  ObjectType;
   ObjectType::Pointer ellipsoidObject = ObjectType::New();
+  ellipsoidObject->SetLogger( logger );
     
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetRadius() : ";
@@ -173,6 +193,7 @@ int igstkEllipsoidObjectTest( int, char * [] )
   
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( ellipsoidRepresentation );
+  view2D->SetLogger( logger );
     
   std::cout << "[PASSED]" << std::endl;
 
@@ -295,6 +316,11 @@ int igstkEllipsoidObjectTest( int, char * [] )
   std::cout << "Test [DONE]" << std::endl;
 
   delete view2D;
+
+  if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
+    {
+    return EXIT_FAILURE;
+    }
   
   return EXIT_SUCCESS;
 }

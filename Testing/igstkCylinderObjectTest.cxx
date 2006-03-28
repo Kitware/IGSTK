@@ -25,6 +25,9 @@
 #include "igstkCylinderObject.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkView2D.h"
+#include "igstkVTKLoggerOutput.h"
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
 
 namespace igstk
 {
@@ -95,14 +98,31 @@ int igstkCylinderObjectTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
+  typedef itk::Logger              LoggerType;
+  typedef itk::StdStreamLogOutput  LogOutputType;
+
+  // logger object created for logging mouse activities
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+
   typedef igstk::CylinderObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer cylinderRepresentation = ObjectRepresentationType::New();
+  cylinderRepresentation->SetLogger( logger );
 
   typedef igstk::CylinderObject ObjectType;
   ObjectType::Pointer cylinderObject = ObjectType::New();
+  cylinderObject->SetLogger( logger );
 
   cylinderRepresentation->RequestSetCylinderObject( cylinderObject );
-
+  
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetRadius() : ";
   cylinderObject->SetRadius(1.0);
@@ -164,6 +184,7 @@ int igstkCylinderObjectTest( int, char * [] )
 
   typedef igstk::View2D  View2DType;
   View2DType * view2D = new View2DType(0,0,200,200,"View 2D");
+  view2D->SetLogger( logger );
   
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( cylinderRepresentation );
@@ -279,6 +300,11 @@ int igstkCylinderObjectTest( int, char * [] )
   std::cout << "Test [DONE]" << std::endl;
 
   delete view2D;
+
+  if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
+    {
+    return EXIT_FAILURE;
+    }
 
   return EXIT_SUCCESS;
 }

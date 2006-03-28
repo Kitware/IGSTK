@@ -26,6 +26,9 @@
 #include "igstkConeObjectRepresentation.h"
 #include "igstkView2D.h"
 #include "igstkRealTimeClock.h"
+#include "igstkVTKLoggerOutput.h"
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
 
 namespace igstk
 {
@@ -96,11 +99,28 @@ int igstkConeObjectTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
+  typedef itk::Logger              LoggerType;
+  typedef itk::StdStreamLogOutput  LogOutputType;
+
+  // logger object created for logging mouse activities
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+
   typedef igstk::ConeObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer ConeRepresentation = ObjectRepresentationType::New();
+  ConeRepresentation->SetLogger( logger );
 
   typedef igstk::ConeObject  ObjectType;
   ObjectType::Pointer ConeObject = ObjectType::New();
+  ConeObject->SetLogger( logger );
     
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetRadius() : ";
@@ -164,7 +184,8 @@ int igstkConeObjectTest( int, char * [] )
 
   typedef igstk::View2D  View2DType;
   View2DType * view2D = new View2DType(0,0,200,200,"View 2D");
-  
+  view2D->SetLogger( logger );
+
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( ConeRepresentation );
     
@@ -290,6 +311,11 @@ int igstkConeObjectTest( int, char * [] )
   std::cout << "Test [DONE]" << std::endl;
 
   delete view2D;
+
+  if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
+    {
+    return EXIT_FAILURE;
+    }
   
   return EXIT_SUCCESS;
 }
