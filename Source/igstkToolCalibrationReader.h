@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   ToolCalibration Guided Surgery Software Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkToolCalibrationReader.h
   Language:  C++
   Date:      $Date$
@@ -35,9 +35,9 @@ class XMLToolCalibrationReader : public itk::XMLReaderBase
 public: 
   
   /** Standard typedefs */ 
-  typedef XMLToolCalibrationReader Self;
-  typedef itk::XMLReaderBase       Superclass;
-  typedef itk::SmartPointer<Self>  Pointer;
+  typedef XMLToolCalibrationReader           Self;
+  typedef itk::XMLReaderBase                 Superclass;
+  typedef itk::SmartPointer<Self>            Pointer;
   typedef std::pair<std::string,std::string> PairType;
 
   struct tag
@@ -75,7 +75,7 @@ public:
     tag currentTag;
     currentTag.name = name;
 
-    PairType value;    
+    PairType value;
     for(int i = 0; atts[i] != 0; i++)
       {
       if(i%2==0)

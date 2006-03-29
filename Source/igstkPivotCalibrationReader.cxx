@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   PivotCalibration Guided Surgery Software Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkPivotCalibrationReader.cxx
   Language:  C++
   Date:      $Date$
@@ -39,24 +39,36 @@ PivotCalibrationReader
   igstkAddInputMacro( ObjectFileNameDoesNotExist );
   igstkAddInputMacro( RequestCalibration );
 
-  igstkAddTransitionMacro( Idle, ObjectFileNameValid, ObjectFileNameRead, SetFileName );
-  igstkAddTransitionMacro( Idle, ObjectFileNameIsEmpty, Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ObjectFileNameIsDirectory, Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ObjectFileNameDoesNotExist, Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ReadObjectRequest, Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( ObjectFileNameRead, ReadObjectRequest, ObjectAttemptingRead, AttemptReadObject );
-  igstkAddTransitionMacro( ObjectRead, ObjectFileNameValid, ObjectFileNameRead, SetFileName );
-  igstkAddTransitionMacro( ObjectRead, ObjectFileNameIsEmpty, Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( ObjectRead, ObjectFileNameIsDirectory, Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( ObjectRead, ObjectFileNameDoesNotExist, Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ObjectFileNameValid, 
+                           ObjectFileNameRead, SetFileName );
+  igstkAddTransitionMacro( Idle, ObjectFileNameIsEmpty, 
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ObjectFileNameIsDirectory, 
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ObjectFileNameDoesNotExist, 
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ReadObjectRequest, 
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectFileNameRead, ReadObjectRequest, 
+                           ObjectAttemptingRead, AttemptReadObject );
+  igstkAddTransitionMacro( ObjectRead, ObjectFileNameValid, 
+                           ObjectFileNameRead, SetFileName );
+  igstkAddTransitionMacro( ObjectRead, ObjectFileNameIsEmpty, 
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectRead, ObjectFileNameIsDirectory, 
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectRead, ObjectFileNameDoesNotExist, 
+                           Idle, ReportInvalidRequest );
 
   igstkAddTransitionMacro( ObjectRead, RequestCalibration,
                            ObjectRead, ReportCalibration );
 
 
   //Errors related to Object reading 
-  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectReadingError, Idle, ReportObjectReadingError );
-  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectReadingSuccess, ObjectRead, ReportObjectReadingSuccess );
+  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectReadingError, 
+                           Idle, ReportObjectReadingError );
+  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectReadingSuccess, 
+                           ObjectRead, ReportObjectReadingSuccess );
 
   // Select the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
@@ -75,7 +87,8 @@ PivotCalibrationReader
 void PivotCalibrationReader
 ::ReportInvalidRequestProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::ReportInvalidRequestProcessing called...\n");
+  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
+                        ReportInvalidRequestProcessing called...\n");
   this->InvokeEvent( ObjectInvalidRequestErrorEvent() );
 }
 
@@ -83,7 +96,8 @@ void PivotCalibrationReader
 void PivotCalibrationReader
 ::ReportObjectReadingErrorProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::ReportObjectReadingErrorProcessing: called...\n");
+  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
+                        ReportObjectReadingErrorProcessing: called...\n");
   this->InvokeEvent( ObjectReadingErrorEvent() );
 }
 
@@ -91,14 +105,16 @@ void PivotCalibrationReader
 void PivotCalibrationReader
 ::ReportObjectReadingSuccessProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::ReportObjectReadingSuccessProcessing: called...\n");
+  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
+                        ReportObjectReadingSuccessProcessing: called...\n");
   this->InvokeEvent( ObjectReadingSuccessEvent() );
 }
 
 void PivotCalibrationReader
 ::RequestSetFileName( const FileNameType & filename )
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::RequestSetFileName called...\n");
+  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
+                        RequestSetFileName called...\n");
   m_FileNameToBeSet = filename;
 
   if( filename.empty() )
@@ -130,7 +146,8 @@ void PivotCalibrationReader
 void PivotCalibrationReader
 ::SetFileNameProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::SetFileNameProcessing called...\n");
+  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
+                        SetFileNameProcessing called...\n");
   m_FileName = m_FileNameToBeSet;
 }
 
@@ -138,7 +155,8 @@ void PivotCalibrationReader
 void PivotCalibrationReader
 ::AttemptReadObjectProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::AttemptReadObjectProcessing called...\n");
+igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
+                      AttemptReadObjectProcessing called...\n");
   
   if(!Superclass::ParseXML())
     {
@@ -167,7 +185,8 @@ void PivotCalibrationReader
 void PivotCalibrationReader
 ::RequestReadObject()
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::RequestReadObject called...\n");
+  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
+                        RequestReadObject called...\n");
   this->m_StateMachine.PushInput( this->m_ReadObjectRequestInput);
   this->m_StateMachine.ProcessInputs();
 }
@@ -180,7 +199,4 @@ PivotCalibrationReader
   Superclass::PrintSelf(os, indent);
 }
 
-
-
 } // end namespace igstk
-

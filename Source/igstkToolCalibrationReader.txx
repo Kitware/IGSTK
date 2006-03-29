@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   ToolCalibration Guided Surgery Software Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkToolCalibrationReader.txx
   Language:  C++
   Date:      $Date$
@@ -59,7 +59,8 @@ ToolCalibrationReader<TCalibration>
     if(!itksys::SystemTools::Strucmp((*it).name.c_str(),"Creation"))
       {
       std::vector<XMLToolCalibrationReader::PairType> values = (*it).values;
-      std::vector<XMLToolCalibrationReader::PairType>::const_iterator it2 = values.begin();
+      std::vector<XMLToolCalibrationReader::PairType>::const_iterator it2 
+                                                            = values.begin();
       while(it2 != values.end())
         {  
         if(!itksys::SystemTools::Strucmp((*it2).first.c_str(),"date"))
@@ -81,64 +82,8 @@ ToolCalibrationReader<TCalibration>
         it2++;
         }
       }
-    /*std::cout << (*it).name << std::endl;
-    std::vector<XMLToolCalibrationReader::PairType> values = (*it).values;
-    std::vector<XMLToolCalibrationReader::PairType>::const_iterator it2 = values.begin();
-    while(it2 != values.end())
-      {
-      std::cout << (*it2).first << " = " << (*it2).second << std::endl;
-      it2++;
-      }*/
-
-
-
     it++;
     }
-
-   /*m_CurrentTag = name;
-    if(itksys::SystemTools::Strucmp(name,"Creation") == 0) 
-      {
-      if(atts != 0)
-        {
-        for(int i = 0; atts[i] != 0; i++)
-          {
-          if(itksys::SystemTools::Strucmp(atts[i],"date") == 0)
-            {
-            i++;
-            if(atts[i] != 0)
-              {
-              m_Date = atts[i];
-              }
-            }
-           else if(itksys::SystemTools::Strucmp(atts[i],"time") == 0)
-            {
-            i++;
-            if(atts[i] != 0)
-              {
-              m_Time = atts[i];
-              }
-            }
-          else if(itksys::SystemTools::Strucmp(atts[i],"method") == 0)
-            {
-            i++;
-            if(atts[i] != 0)
-              {
-              m_Method = atts[i];
-              }
-            }
-          }
-        }
-      }*/
-
-  // Check that we have the correct calibration
-/*  if(itksys::SystemTools::Strucmp(reader->GetMethod(),
-                                  m_Calibration->GetNameOfClass()))
-    {
-    return false;
-    }
-
-  m_Calibration->SetDate(reader->GetDate());
-  m_Calibration->SetTime(reader->GetTime());*/
   return true;
 }
 

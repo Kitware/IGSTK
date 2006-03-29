@@ -40,8 +40,7 @@ int igstkObliqueImageSpatialObjectRepresentationTest(
 
   typedef igstk::ImageSpatialObject< 
                                 PixelType, 
-                                Dimension 
-                                       > ImageSpatialObjectType;
+                                Dimension> ImageSpatialObjectType;
   
   typedef igstk::ObliqueImageSpatialObjectRepresentation< 
                                   ImageSpatialObjectType 
@@ -129,7 +128,7 @@ int igstkObliqueImageSpatialObjectRepresentationTest(
   view2D->RequestAddObject( representation );
   view2D->RequestResetCamera();
 
-  for ( int i=0 ; i < 10 ; i++ ) 
+  for(int i=0; i<10; i++) 
     {
     std::cout << "Refresh=" << i << std::endl;
     igstk::PulseGenerator::CheckTimeouts();

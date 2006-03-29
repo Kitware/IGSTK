@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   PivotCalibration Guided Surgery Software Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkPivotCalibrationReader.h
   Language:  C++
   Date:      $Date$
@@ -35,14 +35,15 @@ namespace igstk
  *
  * \ingroup Object
  */
-class PivotCalibrationReader : public ToolCalibrationReader<igstk::PivotCalibration>
+class PivotCalibrationReader : 
+                         public ToolCalibrationReader<igstk::PivotCalibration>
 {
 
 public:
 
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( PivotCalibrationReader, 
-                                 ToolCalibrationReader<igstk::PivotCalibration> )
+                              ToolCalibrationReader<igstk::PivotCalibration> )
 
   /** Transform typedef */
   typedef Superclass::CalibrationType       CalibrationType;
@@ -56,7 +57,7 @@ public:
   /** This method request Object read **/
   void RequestReadObject();
 
- /** This method request the calibration **/
+  /** This method request the calibration **/
   void RequestGetCalibration();
 
 protected:
@@ -84,7 +85,7 @@ private:
   PivotCalibrationReader(const Self&);         //purposely not implemented
   void operator=(const Self&);      //purposely not implemented
 
-   /** List of States */
+  /** List of States */
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( ObjectFileNameRead );
   igstkDeclareStateMacro( ObjectRead );

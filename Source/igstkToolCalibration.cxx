@@ -47,19 +47,29 @@ ToolCalibration
   igstkAddTransitionMacro( Initialize, ValidDate, ValidCalibration,  SetDate );
    
   // Valid Calibration
-  igstkAddTransitionMacro( ValidCalibration, ValidTime, ValidCalibration,  SetTime );
-  igstkAddTransitionMacro( ValidCalibration, ValidDate, ValidCalibration,  SetDate );
-  igstkAddTransitionMacro( ValidCalibration, InvalidTime, InvalidCalibration,  No );
-  igstkAddTransitionMacro( ValidCalibration, InvalidDate, InvalidCalibration,  No );
+  igstkAddTransitionMacro( ValidCalibration, ValidTime, 
+                           ValidCalibration,  SetTime );
+  igstkAddTransitionMacro( ValidCalibration, ValidDate, 
+                           ValidCalibration,  SetDate );
+  igstkAddTransitionMacro( ValidCalibration, InvalidTime, 
+                           InvalidCalibration,  No );
+  igstkAddTransitionMacro( ValidCalibration, InvalidDate, 
+                           InvalidCalibration,  No );
 
   // Invalid Calibration
-  igstkAddTransitionMacro( InvalidCalibration, ValidDate, ValidCalibration,  SetDate );
-  igstkAddTransitionMacro( InvalidCalibration, ValidTime, ValidCalibration,  SetTime );
-  igstkAddTransitionMacro( InvalidCalibration, InvalidDate, InvalidCalibration,  No );
-  igstkAddTransitionMacro( InvalidCalibration, InvalidTime, InvalidCalibration,  No );
+  igstkAddTransitionMacro( InvalidCalibration, ValidDate, 
+                           ValidCalibration,  SetDate );
+  igstkAddTransitionMacro( InvalidCalibration, ValidTime, 
+                           ValidCalibration,  SetTime );
+  igstkAddTransitionMacro( InvalidCalibration, InvalidDate, 
+                           InvalidCalibration,  No );
+  igstkAddTransitionMacro( InvalidCalibration, InvalidTime, 
+                           InvalidCalibration,  No );
 
-  igstkAddTransitionMacro( ValidCalibration, RequestDate, ValidCalibration,  ReportDate );
-  igstkAddTransitionMacro( ValidCalibration, RequestTime, ValidCalibration,  ReportTime );
+  igstkAddTransitionMacro( ValidCalibration, RequestDate, 
+                           ValidCalibration,  ReportDate );
+  igstkAddTransitionMacro( ValidCalibration, RequestTime, 
+                           ValidCalibration,  ReportTime );
 
   igstkSetInitialStateMacro( Initialize );
 
@@ -158,7 +168,6 @@ ToolCalibration
     }
 }
 
-
 /** Request to set the time */
 void 
 ToolCalibration
@@ -167,7 +176,6 @@ ToolCalibration
   m_Date = m_DateToSet;
 }
 
-
 /** Print Self function */
 void 
 ToolCalibration
@@ -175,6 +183,5 @@ ToolCalibration
 {
   Superclass::PrintSelf(os, indent);
 }
-
 
 } // end namespace igstk

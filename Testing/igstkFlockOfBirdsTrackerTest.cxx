@@ -15,7 +15,8 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters 
+// in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -42,28 +43,28 @@
 class FlockOfBirdsTrackerTestCommand : public itk::Command 
 {
 public:
-  typedef  FlockOfBirdsTrackerTestCommand   Self;
-  typedef  itk::Command               Superclass;
-  typedef itk::SmartPointer<Self>     Pointer;
+  typedef  FlockOfBirdsTrackerTestCommand  Self;
+  typedef  itk::Command                    Superclass;
+  typedef itk::SmartPointer<Self>          Pointer;
   itkNewMacro( Self );
 protected:
   FlockOfBirdsTrackerTestCommand() {};
 
 public:
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     Execute( (const itk::Object *)caller, event);
-  }
+    }
 
   void Execute(const itk::Object * object, const itk::EventObject & event)
-  {
+    {
     // don't print "CompletedEvent", only print interesting events
     if (!igstk::CompletedEvent().CheckEvent(&event) &&
         !itk::DeleteEvent().CheckEvent(&event) )
       {
       std::cout << event.GetEventName() << std::endl;
       }
-  }
+    }
 };
 
 #define IGSTK_SIMULATOR_TEST 1
@@ -76,21 +77,27 @@ int igstkFlockOfBirdsTrackerTest( int argc, char * argv[] )
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
 
-  igstk::FlockOfBirdsTrackerTool::Pointer tool = igstk::FlockOfBirdsTrackerTool::New();
-  std::cout << "FlockOfBirdsTrackerTool class name : " << tool->GetNameOfClass() << std::endl;
+  igstk::FlockOfBirdsTrackerTool::Pointer tool 
+                                      = igstk::FlockOfBirdsTrackerTool::New();
+  std::cout << "FlockOfBirdsTrackerTool class name : " 
+            << tool->GetNameOfClass() << std::endl;
   std::cout << tool << std::endl;
 
 #ifdef IGSTK_SIMULATOR_TEST
-    igstk::SerialCommunicationSimulator::Pointer serialComm = igstk::SerialCommunicationSimulator::New();
+    igstk::SerialCommunicationSimulator::Pointer serialComm 
+                                 = igstk::SerialCommunicationSimulator::New();
 #else  /* IGSTK_SIMULATOR_TEST */
 #ifdef WIN32
-  igstk::SerialCommunicationForWindows::Pointer serialComm = igstk::SerialCommunicationForWindows::New();
+  igstk::SerialCommunicationForWindows::Pointer serialComm 
+                                 = igstk::SerialCommunicationForWindows::New();
 #else
-  igstk::SerialCommunicationForPosix::Pointer serialComm = igstk::SerialCommunicationForPosix::New();
+  igstk::SerialCommunicationForPosix::Pointer serialComm 
+                                  = igstk::SerialCommunicationForPosix::New();
 #endif /* WIN32 */
 #endif /* IGSTK_SIMULATOR_TEST */
 
-  FlockOfBirdsTrackerTestCommand::Pointer my_command = FlockOfBirdsTrackerTestCommand::New();
+  FlockOfBirdsTrackerTestCommand::Pointer my_command 
+                                      = FlockOfBirdsTrackerTestCommand::New();
 
   // logger object created 
   std::string testName;
@@ -129,7 +136,8 @@ int igstkFlockOfBirdsTrackerTest( int argc, char * argv[] )
                                 "flockofbirds_stream_03_21_2006.txt");
   serialComm->SetFileName( simulationFile.c_str() );
 #else /* IGSTK_SIMULATOR_TEST */
-  serialComm->SetCaptureFileName( "RecordedStreamByFlockOfBirdsTrackerTest.txt" );
+  serialComm->SetCaptureFileName( 
+                              "RecordedStreamByFlockOfBirdsTrackerTest.txt" );
   serialComm->SetCapture( true );
 #endif /* IGSTK_SIMULATOR_TEST */
 

@@ -14,12 +14,11 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __igstk_Events_h_
-#define __igstk_Events_h_
+#ifndef __igstkEvents_h
+#define __igstkEvents_h
 
-/** 
- * This file contains the declarations of IGSTK Events used to communicate among components.
- */
+/** This file contains the declarations of IGSTK Events used to communicate 
+ *  among components. */
 
 #include "igstkTransform.h"
 #include "igstkPivotCalibration.h"
@@ -33,8 +32,8 @@ namespace igstk
 class  name : public superclass \
 { \
 public:  \
-  typedef name Self; \
-  typedef superclass Superclass; \
+  typedef name        Self; \
+  typedef superclass  Superclass; \
   typedef payloadtype PayloadType; \
   name() {} \
   virtual ~name() {} \
@@ -79,8 +78,10 @@ typedef struct {
 igstkLoadedEventMacro( PointEvent, IGSTKEvent, EventHelperType::PointType );
 igstkLoadedEventMacro( TransformModifiedEvent, IGSTKEvent, Transform );
 igstkLoadedEventMacro( StringEvent, IGSTKEvent, EventHelperType::StringType );
-igstkLoadedEventMacro( UnsignedIntEvent, IGSTKEvent, EventHelperType::UnsignedIntType );
-igstkLoadedEventMacro( IntegerBoundsEvent, IGSTKEvent, EventHelperType::IntegerBoundsType );
+igstkLoadedEventMacro( UnsignedIntEvent, IGSTKEvent, 
+                       EventHelperType::UnsignedIntType );
+igstkLoadedEventMacro( IntegerBoundsEvent, IGSTKEvent, 
+                       EventHelperType::IntegerBoundsType );
 
 igstkEventMacro( AxialSliceBoundsEvent,      IntegerBoundsEvent );
 igstkEventMacro( SagittalSliceBoundsEvent,   IntegerBoundsEvent );
@@ -90,8 +91,8 @@ igstkEventMacro( CoronalSliceBoundsEvent,    IntegerBoundsEvent );
 class  name : public superclass \
 { \
 public:  \
-  typedef name Self; \
-  typedef superclass Superclass; \
+  typedef name        Self; \
+  typedef superclass  Superclass; \
   typedef payloadtype PayloadType; \
   name() {} \
   virtual ~name() {} \
@@ -110,7 +111,8 @@ private: \
   PayloadType::Pointer  m_Payload; \
 };
 
-igstkLoadedObjectEventMacro( CalibrationModifiedEvent, IGSTKEvent, PivotCalibration);
+igstkLoadedObjectEventMacro( CalibrationModifiedEvent, IGSTKEvent, 
+                             PivotCalibration);
 
 }
 

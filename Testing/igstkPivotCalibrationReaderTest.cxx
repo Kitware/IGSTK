@@ -15,7 +15,8 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -26,56 +27,57 @@
 
 #define igstkObserverMacro( name, eventType, payloadType ) \
 class name##Observer : public ::itk::Command \
-  { \
-  public: \
-    typedef  name##Observer   Self; \
-    typedef  ::itk::Command    Superclass;\
-    typedef  ::itk::SmartPointer<Self>  Pointer;\
-    itkNewMacro( Self );\
-  protected:\
-    name##Observer() \
+{ \
+public: \
+  typedef  name##Observer   Self; \
+  typedef  ::itk::Command    Superclass;\
+  typedef  ::itk::SmartPointer<Self>  Pointer;\
+  itkNewMacro( Self );\
+protected:\
+  name##Observer() \
+    {\
+    m_GotObject = false;\
+    }\
+  ~name##Observer() {}\
+public:\
+  typedef eventType  EventType;\
+  void Execute(itk::Object *caller, const itk::EventObject & event)\
+    {\
+    const itk::Object * constCaller = caller;\
+    this->Execute( constCaller, event );\
+    }\
+  void Execute(const itk::Object *caller, const itk::EventObject & event)\
+    {\
+    m_GotObject = false;\
+    if( EventType().CheckEvent( &event ) )\
       {\
-      m_GotObject = false;\
-      }\
-    ~name##Observer() {}\
-  public:\
-      typedef eventType  EventType;\
-      void Execute(itk::Object *caller, const itk::EventObject & event)\
-        {\
-        const itk::Object * constCaller = caller;\
-        this->Execute( constCaller, event );\
-        }\
-      void Execute(const itk::Object *caller, const itk::EventObject & event)\
-        {\
-        m_GotObject = false;\
-        if( EventType().CheckEvent( &event ) )\
-          {\
-          const EventType * objectEvent = \
+      const EventType * objectEvent = \
                     dynamic_cast< const EventType *>( &event );\
-          if( objectEvent )\
-            {\
-            m_Object = objectEvent->Get();\
-            m_GotObject = true;\
-            }\
-          }\
-        }\
-        bool Got##name() const\
+      if( objectEvent )\
         {\
-        return m_GotObject;\
+        m_Object = objectEvent->Get();\
+        m_GotObject = true;\
         }\
-      payloadType Get##name() const\
-        {\
-        return m_Object;\
-        }\
-  private:\
-    payloadType  m_Object;\
-    bool m_GotObject;\
+      }\
+    }\
+  bool Got##name() const\
+    {\
+    return m_GotObject;\
+    }\
+  payloadType Get##name() const\
+    {\
+    return m_Object;\
+    }\
+private:\
+  payloadType  m_Object;\
+  bool m_GotObject;\
 };
 
 
 namespace ToolCalibrationTest
 {
-igstkObserverMacro(Calibration,::igstk::CalibrationModifiedEvent,::igstk::PivotCalibration::Pointer)
+igstkObserverMacro(Calibration,::igstk::CalibrationModifiedEvent,
+                                           ::igstk::PivotCalibration::Pointer)
 igstkObserverMacro(String,::igstk::StringEvent,std::string)
 }
 
@@ -95,9 +97,10 @@ int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
   reader->RequestReadObject();
 
   typedef ToolCalibrationTest::CalibrationObserver CalibrationObserverType;
-  CalibrationObserverType::Pointer calibrationObserver = CalibrationObserverType::New();
+  CalibrationObserverType::Pointer calibrationObserver 
+                                              = CalibrationObserverType::New();
 
-  reader->AddObserver( ::igstk::CalibrationModifiedEvent(), calibrationObserver );
+  reader->AddObserver(::igstk::CalibrationModifiedEvent(),calibrationObserver);
   reader->RequestGetCalibration();
 
   igstk::PivotCalibration::Pointer calibration = NULL;
