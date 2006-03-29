@@ -81,7 +81,7 @@ ENDFOREACH(TestFiles)
 IF(IGSTKSandbox_DATA_ROOT)
    ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTKSandbox_TESTS} 
              igstkPivotCalibrationReaderTest
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt)   
+             ${IGSTKSandbox_DATA_ROOT}/Input/PivotCalibrationTool.txt) 
   SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkPivotCalibrationReaderTest.cxx)
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
