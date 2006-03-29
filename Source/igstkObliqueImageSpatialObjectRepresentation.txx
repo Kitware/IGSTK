@@ -59,8 +59,7 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 
   // Image reslice
   m_ImageReslice = vtkImageReslice::New();
-
-
+ 
   // Set default values for window and level
   m_Level = 0;
   m_Window = 2000;
@@ -123,7 +122,7 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   igstkAddTransitionMacro( ValidVector1OnThePlane, ValidVector2OnThePlane,
                            ValidVector2OnThePlane, SetVector2OnThePlane );
 
-  igstkAddTransitionMacro( ValidVector2OnThePlane, Reslice, ValidVector2OnThePlane , Reslice);
+  igstkAddTransitionMacro( ValidVector2OnThePlane, Reslice, ValidImageSpatialObject , Reslice);
   igstkAddTransitionMacro( ValidImageSpatialObject, Reslice, ValidImageSpatialObject , Reslice);
 
   igstkAddTransitionMacro( ValidImageSpatialObject, NullImageSpatialObject, 
@@ -137,10 +136,6 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
                            NullImageSpatialObject, No );
   igstkAddTransitionMacro( ValidImageSpatialObject, ConnectVTKPipeline, 
                            ValidImageSpatialObject, ConnectVTKPipeline );
-
-  igstkAddTransitionMacro( ValidVector2OnThePlane, ConnectVTKPipeline, 
-                           ValidVector2OnThePlane, ConnectVTKPipeline );
-
  
   igstkSetInitialStateMacro( NullImageSpatialObject );
 
@@ -322,16 +317,14 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 template < class TImageSpatialObject >
 void 
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
-::ResliceProcessing(  )
+::ResliceProcessing( )
 {
   igstkLogMacro( DEBUG, 
            "igstk::ObliqueImageSpatialObjectRepresentation\
            ::ResliceProcessing called...\n");
 
-  std::cout << "Image Data before reslicing " << std::endl;
-  m_ImageData->Print( std::cout );
-
-  m_ImageReslice->SetInput ( m_ImageData );
+  //std::cout << "Image Data before reslicing " << std::endl;
+  //m_ImageData->Print( std::cout );
   
   // Set the reslice axes origin
   m_ImageReslice->SetResliceAxesOrigin( this->m_OriginPointOnThePlane[0], 
@@ -365,14 +358,14 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   v1Normalized = v1/v1.GetNorm();
   v2Normalized = v2/v2.GetNorm();
   v3Normalized = v3/v3.GetNorm();
-
+/*
   std::cout << "V1:" << v1Normalized[0] << "," << v1Normalized[1] \
                     << "," << v1Normalized[2] << std::endl;
   std::cout << "V2:" << v2Normalized[0] << "," << v2Normalized[1] \
                     << "," << v2Normalized[2] << std::endl;
   std::cout << "V3:" << v3Normalized[0] << "," << v3Normalized[1] \
                     << "," << v3Normalized[2] << std::endl;
-                
+  */              
   // set the reslice axes 
   m_ImageReslice->SetResliceAxesDirectionCosines( 
                  v1Normalized[0], v1Normalized[1], v1Normalized[2],
@@ -401,12 +394,11 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageReslice->SetOutputOrigin( origin );
   
   m_ImageReslice->Update();
-  m_ImageReslice->Print( std::cout );
+  //m_ImageReslice->Print( std::cout );
 
-  m_ReslicedImageData = m_ImageReslice->GetOutput();   
-  std::cout << "Image data after reslicing " << std::endl;
-  m_ReslicedImageData->Print( std::cout );
- 
+  //m_ReslicedImageData = m_ImageReslice->GetOutput();   
+  //std::cout << "Image data after reslicing " << std::endl;
+  //m_ReslicedImageData->Print( std::cout );    
 }
 
 template < class TImageSpatialObject >
@@ -569,9 +561,11 @@ void
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 ::ConnectVTKPipelineProcessing() 
 {
-  m_MapColors->SetInput( m_ReslicedImageData );
-  m_ImageActor->SetInput( m_MapColors->GetOutput() );
-  m_ImageActor->InterpolateOn();
+   m_ImageReslice->SetInput ( m_ImageData );
+   m_ReslicedImageData = m_ImageReslice->GetOutput();
+   m_MapColors->SetInput( m_ReslicedImageData );
+   m_ImageActor->SetInput( m_MapColors->GetOutput() );
+   m_ImageActor->InterpolateOn();
 }
 
 } // end namespace igstk
