@@ -41,6 +41,7 @@
 #include "igstkCTImageReader.h"
 #include "igstkMRImageReader.h"
 #include "igstkLandmark3DRegistration.h"
+#include "igstkLandmark3DRegistrationErrorEstimator.h"
 #include "igstkImageSpatialObject.h"
 #include "igstkImageSpatialObjectRepresentation.h"
 #include "igstkImageReader.h"
@@ -200,6 +201,7 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::Tracker, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::Landmark3DRegistration, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::Landmark3DRegistrationErrorEstimator, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::CTImageReader, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::MRImageReader, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::MRImageSpatialObject, outputDirectory, skipLoops );
