@@ -32,6 +32,7 @@
 
 #include "igstkLandmarkUltrasoundCalibration.h"
 #include "igstkSocketCommunication.h"
+#include "igstkObliqueImageSpatialObjectRepresentation.h"
 
 namespace igstk 
 {
@@ -109,6 +110,12 @@ public:      \
   igstkNewMacro( Self );      \
 };    \
 
+namespace igstk
+{
+  typedef ImageSpatialObject<float,3>                    ImageSpatialObjectType;
+  typedef ObliqueImageSpatialObjectRepresentation< 
+                            ImageSpatialObjectType >     ObliqueImageSpatialObjectRepresentationType;
+}
 
 int main( int argc, char * argv [] )
 {
@@ -139,6 +146,9 @@ int main( int argc, char * argv [] )
 
   igstkTestExportStateMachine1( igstk::SocketCommunication, 
                                 outputDirectory, skipLoops );
+
+
+  igstkTestExportStateMachine1( igstk::ObliqueImageSpatialObjectRepresentationType, outputDirectory, skipLoops );
 
   return EXIT_SUCCESS;
 }
