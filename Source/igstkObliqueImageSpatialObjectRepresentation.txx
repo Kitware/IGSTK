@@ -187,7 +187,7 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 {
   igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation\
                         ::DeleteActors called...\n");
-  
+   
   this->Superclass::DeleteActors();
   
   m_ImageActor = NULL;
@@ -450,7 +450,7 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   // private SetImage method.
   this->ConnectImage();
 
-  m_MapColors->SetInput( m_ReslicedImageData) ;
+  m_MapColors->SetInput( m_ImageData ) ;
 
   m_ImageActor->SetInput( m_MapColors->GetOutput() );
 }
