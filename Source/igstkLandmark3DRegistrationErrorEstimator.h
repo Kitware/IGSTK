@@ -21,6 +21,7 @@
 #include "igstkStateMachine.h"
 #include "igstkMacros.h"
 #include "igstkObject.h"
+#include "igstkEvents.h"
 #include "itkPoint.h"
 #include "itkVersor.h"
 #include <vector>
@@ -54,33 +55,29 @@ public:
   /** Typedefs */
   typedef itk::Point<double, 3>                           TargetPointType;
   typedef itk::Point<double, 3>                           LandmarkPointType;
-  typedef std::vector< LandmarkPointType >                LandmarkPointContainerType;
+  typedef std::vector< LandmarkPointType >                LandmarkContainerType;
 
   /** Error parameter Typedefs */
   typedef double                                          ErrorType;
-  
-  /** Set image landmark points */
-  igstkSetMacro ( ImageLandmarks , LandmarkPointContainerType );
 
-  /** Set the landmark registration error. This is computed by 
-   *  the landmarkRegistration class */
-  igstkSetMacro ( LandmarkRegistrationError, ErrorType );
+  /** Method to set the landmark container */
+  void RequestSetLandmarkContainer( const LandmarkContainerType & );
 
-  /** Compute Landmarks centroid */
-  void ComputeLandmarksCentroid();
+  /** Method to set the target point */
+  void RequestSetTargetPoint ( const TargetPointType & );
 
-  /** Compute landmark principal axes */
-  void ComputeLandmarkPrincipalAxes();
+  /** Method to set the landmark registration error */
+  void RequestSetLandmarkRegistrationError ( const ErrorType & );
 
-  /** Compute RMS distance of landmarks from the principal axes */
-  void ComputeRMSDistanceLandmarksFromPrincipalAxes();
+  /** Method to request computation of error parameters used to estiamte target registration error*/
+  void RequestComputeErrorParameters();
 
-  /** Compute error parameters used to estiamte target registration error*/
-  void ComputeErrorParameters();
+  /** Method to request target registration estimation */
+  void RequestEstimateTargetPointRegistrationError( );
 
-  /** Estimate target registration error */
-  ErrorType  EstimateTargetRegistrationError( const TargetPointType & );
-
+  /** Request target point registration error event */
+  void RequestGetTargetPointRegistrationErrorEstimate();
+   
 protected:
 
   Landmark3DRegistrationErrorEstimator  ( void );
@@ -92,10 +89,72 @@ protected:
 private:
  
   typedef itk::Vector<double, 3>                          VectorType;
-  typedef LandmarkPointContainerType::const_iterator      PointsContainerConstIterator;
+  typedef LandmarkContainerType::const_iterator      PointsContainerConstIterator;
   typedef double                                          DistanceType;
   typedef itk::Versor<double>                             VersorType;
 
+  
+  /** Compute Landmarks centroid */
+  void ComputeLandmarksCentroid();
+
+  /** Compute landmark principal axes */
+  void ComputeLandmarkPrincipalAxes();
+
+  /** Compute RMS distance of landmarks from the principal axes */
+  void ComputeRMSDistanceLandmarksFromPrincipalAxes();
+
+  /** Set landmark container */
+  void SetLandmarkContainerProcessing();
+
+  /** Set target point */
+  void SetTargetPointProcessing();
+
+  /** Set landmark registration error */
+  void SetLandmarkRegistrationErrorProcessing( );
+    
+  /** Compute error parameters */
+  void ComputeErrorParametersProcessing( );
+
+  /** Estimate target point registration error */
+  void EstimateTargetPointRegistrationErrorProcessing( );
+
+  /** Report success in error parameter computation */
+  void ReportSuccessInErrorParametersComputationProcessing( );
+
+  /** Report failure in error parameter computation */
+  void ReportFailureInErrorParametersComputationProcessing( );    
+
+  /** Report success in target point registration error estimation */  
+  void ReportSuccessInTargetPointRegistrationErrorEstimationProcessing();
+
+  /** Report failure in target point registration error estimation */  
+  void ReportFailureInTargePointRegistrationErrorEstimationProcessing();
+
+  /** This method throws an event loaded with the landmark registration error  */
+  void GetTargetPointRegistrationErrorEstimateProcessing();
+
+  /** List of States */
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( LandmarkContainerSet );
+  igstkDeclareStateMacro( LandmarkRegistrationErrorSet );
+  igstkDeclareStateMacro( AttemptingToComputeErrorParameters );
+  igstkDeclareStateMacro( ErrorParametersComputed );
+  igstkDeclareStateMacro( TargetPointSet );
+  igstkDeclareStateMacro( AttemptingToEstimateTargetRegstirationError );
+  igstkDeclareStateMacro( TargetRegistrationErrorEstimated );
+
+
+  /** List of Inputs */
+  igstkDeclareInputMacro( LandmarkContainer );
+  igstkDeclareInputMacro( LandmarkRegistrationError );
+  igstkDeclareInputMacro( ComputeErrorParameters );
+  igstkDeclareInputMacro( ErrorParametersComputationSuccess );
+  igstkDeclareInputMacro( ErrorParametersComputationFailure );
+  igstkDeclareInputMacro( TargetPoint );
+  igstkDeclareInputMacro( EstimateTargetPointRegistrationError );
+  igstkDeclareInputMacro( TargetPointRegistrationErrorEstimationSuccess );
+  igstkDeclareInputMacro( TargetPointRegistrationErrorEstimationFailure );
+  igstkDeclareInputMacro( GetTargetPointRegistrationErrorEstimate );
 
   
   /** These two methods must be declared and note be implemented
@@ -103,8 +162,17 @@ private:
   Landmark3DRegistrationErrorEstimator(const Self&);    //purposely not implemented
   void operator=(const Self&);          //purposely not implemented
 
-  LandmarkPointContainerType               m_ImageLandmarks;
- 
+  LandmarkContainerType               m_LandmarkContainer;
+  LandmarkContainerType               m_LandmarkContainerToBeSet;
+
+  TargetPointType                     m_TargetPoint;
+  TargetPointType                     m_TargetPointToBeSet;
+
+  ErrorType                           m_LandmarkRegistrationError;
+  ErrorType                           m_LandmarkRegistrationErrorToBeSet;
+
+  ErrorType                           m_TargetPointRegistrationError;
+  
   /** Landmark configuration */
   VersorType                               m_LandmarkPrincipalAxes;
 
@@ -114,8 +182,6 @@ private:
   /** Landmarks centroid */ 
   LandmarkPointType                        m_LandmarkCentroid;
 
-  /** landmark registration error */
-  ErrorType                                m_LandmarkRegistrationError;
 };
 } // end namespace igstk
 
