@@ -28,6 +28,47 @@
 #include "itkStdStreamLogOutput.h"
 #include "itkMacro.h"
 
+class Landmark3DRegistrationErrorEstimatorGetErrorCallback: public itk::Command
+{
+  public:
+    typedef Landmark3DRegistrationErrorEstimatorGetErrorCallback    Self;
+    typedef itk::SmartPointer<Self>                     Pointer;
+    typedef itk::Command                                Superclass;
+    itkNewMacro(Self);
+
+    typedef igstk::LandmarkRegistrationErrorEvent LandmarkRegistrationErrorEventType;
+
+    void Execute( const itk::Object *caller, const itk::EventObject & event )
+    {
+    }
+    void Execute( itk::Object *caller, const itk::EventObject & event )
+    {
+      std::cout<< " LandmarkRegistrationErrorEvent is thrown" << std::endl;
+                    dynamic_cast < const LandmarkRegistrationErrorEventType* > ( &event );
+      const LandmarkRegistrationErrorEventType * errorEvent =
+                    dynamic_cast < const LandmarkRegistrationErrorEventType* > ( &event );
+      m_Error = errorEvent->Get();
+      m_EventReceived = true;
+    } 
+    bool GetEventReceived()
+    {
+      return m_EventReceived;
+    }
+    double GetError()
+    {
+      return m_Error;
+  }  
+  protected:
+    Landmark3DRegistrationErrorEstimatorGetErrorCallback()   
+    {
+      m_EventReceived = true;
+    };
+  private:
+      bool m_EventReceived;
+      double m_Error;
+};
+
+
 int igstkLandmark3DRegistrationErrorEstimatorTest( int argv, char * argc[] )
 {
 
@@ -152,35 +193,49 @@ int igstkLandmark3DRegistrationErrorEstimatorTest( int argv, char * argc[] )
     //Estimate the error 
     typedef igstk::Landmark3DRegistrationErrorEstimator     
                               Landmark3DRegistrationErrorEstimatorType;
-    typedef igstk::Landmark3DRegistrationErrorEstimator::LandmarkPointContainerType
-                              LandmarkPointContainerType;
-    typedef igstk::Landmark3DRegistrationErrorEstimator::LandmarkPointType 
-                              LandmarkPointType;
-    typedef igstk::Landmark3DRegistrationErrorEstimator::TargetPointType   TargetPointType;
-    typedef igstk::Landmark3DRegistrationErrorEstimator::ErrorType         ErrorType;
+    
+    typedef Landmark3DRegistrationErrorEstimatorType::TargetPointType   TargetPointType;
+    typedef Landmark3DRegistrationErrorEstimatorType::ErrorType         ErrorType;
      
     Landmark3DRegistrationErrorEstimatorType::Pointer landmarkRegistrationErrorEstimator = 
                                         Landmark3DRegistrationErrorEstimatorType::New();    
 
     landmarkRegistrationErrorEstimator->SetLogger( logger );
-    landmarkRegistrationErrorEstimator->SetImageLandmarks( fpointcontainer );
-
+    landmarkRegistrationErrorEstimator->RequestSetLandmarkContainer( fpointcontainer );
     // Compute the landmark registration error
     ErrorType                   landmarkRegistrationError;
     landmarkRegistrationError = landmarkRegister->ComputeRMSError();
-    landmarkRegistrationErrorEstimator->SetLandmarkRegistrationError( landmarkRegistrationError );
+    landmarkRegistrationErrorEstimator->RequestSetLandmarkRegistrationError( landmarkRegistrationError );
 
     //Compute all error parameters necessary for target registration error estimation
-    landmarkRegistrationErrorEstimator->ComputeErrorParameters();
+    landmarkRegistrationErrorEstimator->RequestComputeErrorParameters();
 
     //Estimate target regsitration error 
     TargetPointType       targetPoint;
     targetPoint[0] =  10.0;
     targetPoint[1] =  20.0;
     targetPoint[2] =  8.0;
+    landmarkRegistrationErrorEstimator->RequestSetTargetPoint( targetPoint );
 
     ErrorType       targetRegistrationError;
-    targetRegistrationError = landmarkRegistrationErrorEstimator->EstimateTargetRegistrationError( targetPoint );
+    landmarkRegistrationErrorEstimator->RequestEstimateTargetPointRegistrationError( );
+  
+    // Setup an obsever to get the registration error 
+    Landmark3DRegistrationErrorEstimatorGetErrorCallback::Pointer lrtcb =
+                            Landmark3DRegistrationErrorEstimatorGetErrorCallback::New();
+    landmarkRegistrationErrorEstimator->AddObserver( igstk::LandmarkRegistrationErrorEvent(), lrtcb );
+    landmarkRegistrationErrorEstimator->RequestGetTargetPointRegistrationErrorEstimate();
+
+    if( !lrtcb->GetEventReceived() )
+      {
+       std::cerr << "LandmarkRegsistrationErrorEstimator class failed to throw a "
+                 << "landmark registration error event" << std::endl;
+      return EXIT_FAILURE;
+     }
+        
+     targetRegistrationError = lrtcb->GetError();    
+     
+   
     std::cout << "Target registration error:" << targetRegistrationError << std::endl;
 
     landmarkRegistrationErrorEstimator->Print(std::cout);
