@@ -112,9 +112,9 @@ public:      \
 
 namespace igstk
 {
-  typedef ImageSpatialObject<float,3>                    ImageSpatialObjectType;
-  typedef ObliqueImageSpatialObjectRepresentation< 
-                            ImageSpatialObjectType >     ObliqueImageSpatialObjectRepresentationType;
+typedef ImageSpatialObject<float,3>                    ImageSpatialObjectType;
+typedef ObliqueImageSpatialObjectRepresentation< ImageSpatialObjectType >  
+                                  ObliqueImageSpatialObjectRepresentationType;
 }
 
 int main( int argc, char * argv [] )
@@ -148,7 +148,9 @@ int main( int argc, char * argv [] )
                                 outputDirectory, skipLoops );
 
 
-  igstkTestExportStateMachine1( igstk::ObliqueImageSpatialObjectRepresentationType, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( 
+                          igstk::ObliqueImageSpatialObjectRepresentationType, 
+                          outputDirectory, skipLoops );
 
   return EXIT_SUCCESS;
 }

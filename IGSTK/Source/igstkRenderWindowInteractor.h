@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _igstkRenderWindowInteractor_h
-#define _igstkRenderWindowInteractor_h
+#ifndef __igstkRenderWindowInteractor_h
+#define __igstkRenderWindowInteractor_h
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4018 )
@@ -58,5 +58,3 @@ private:
 
 
 #endif
-
-

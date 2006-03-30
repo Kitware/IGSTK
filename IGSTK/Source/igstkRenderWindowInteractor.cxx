@@ -26,7 +26,7 @@
 
 namespace igstk {
 
-vtkCxxRevisionMacro (RenderWindowInteractor, "1.1");
+vtkCxxRevisionMacro (RenderWindowInteractor, "1.2");
 vtkStandardNewMacro (RenderWindowInteractor);
 
 
@@ -45,8 +45,8 @@ void
 RenderWindowInteractor
 ::Initialize()
 {
-this->Initialized = 1;
-this->Enable();
+  this->Initialized = 1;
+  this->Enable();
 }
 
 void
@@ -58,4 +58,3 @@ RenderWindowInteractor
 
 
 } // end of IGSTK namespace
-

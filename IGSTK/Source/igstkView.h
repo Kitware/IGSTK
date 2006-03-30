@@ -50,10 +50,7 @@
 #include "igstkAnnotation2D.h"   
 #include "igstkRenderWindowInteractor.h"   
 
-
 namespace igstk {
-
-
 
 /** \class View
  * 
@@ -67,8 +64,8 @@ class View : public Fl_Gl_Window
 
 public:
     
-  typedef View      Self;
-  typedef Fl_Gl_Window Superclass;
+  typedef View          Self;
+  typedef Fl_Gl_Window  Superclass;
 
   igstkTypeMacro( View, Fl_Gl_Window );
   

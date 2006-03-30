@@ -23,7 +23,8 @@ namespace igstk {
 /** Constructor */
 View3D::View3D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
 {
-  vtkInteractorStyleTrackballCamera * interactorStyle = vtkInteractorStyleTrackballCamera::New();
+  vtkInteractorStyleTrackballCamera * interactorStyle = 
+                                     vtkInteractorStyleTrackballCamera::New();
   this->SetInteractorStyle( interactorStyle );
   interactorStyle->Delete();
 }

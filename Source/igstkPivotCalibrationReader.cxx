@@ -155,7 +155,7 @@ void PivotCalibrationReader
 void PivotCalibrationReader
 ::AttemptReadObjectProcessing()
 {
-igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
+  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
                       AttemptReadObjectProcessing called...\n");
   
   if(!Superclass::ParseXML())
