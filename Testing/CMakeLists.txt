@@ -268,6 +268,10 @@ ADD_EXECUTABLE(igstkSystemInformation igstkSystemInformation.cxx)
 ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation)
 TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon)
 
+ADD_EXECUTABLE(igstkVersionTest igstkVersionTest.cxx)
+ADD_TEST(igstkVersionTest ${EXECUTABLE_OUTPUT_PATH}/igstkVersionTest)
+TARGET_LINK_LIBRARIES(igstkVersionTest vtkCommon)
+
 ADD_EXECUTABLE(igstkStateMachineExportTest igstkStateMachineExportTest.cxx)
 ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
 TARGET_LINK_LIBRARIES(igstkStateMachineExportTest IGSTK)
