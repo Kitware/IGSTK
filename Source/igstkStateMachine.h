@@ -116,21 +116,26 @@ public:
   void SetReadyToRun();
 
   /** Set the descriptor of a state */
-  void AddState( const StateType & state, const StateDescriptorType & description );
+  void AddState( const StateType & state, 
+                 const StateDescriptorType & description );
 
   /** Set the descriptor of an input */
-  void AddInput( const InputType & input, const InputDescriptorType & description );
+  void AddInput( const InputType & input, 
+                 const InputDescriptorType & description );
 
-  /** This extra typedef is necessary for preventing an Internal Compiler Error in 
-   * Microsoft Visual C++ 6.0. This typedef is not needed for any other compiler. */
+  /** This extra typedef is necessary for preventing an Internal Compiler 
+   *  Error in  Microsoft Visual C++ 6.0. 
+   *  This typedef is not needed for any other compiler. */
    typedef std::ostream               OutputStreamType;
 
   /** Export the schematic description of the state machine to a stream.
-   *  This method use the format required as input by the "dot" tool from graphviz. */
+   *  This method use the format required as input by the "dot" tool 
+   *  from graphviz. */
   void ExportDescription( OutputStreamType & ostr, bool skipLoops ) const;
 
   /** Export the schematic description of the state machine to a stream.
-   *  This method use the format required as input by the "LTSA" analysis tools. 
+   *  This method use the format required as input by the "LTSA" analysis 
+   *  tools. 
    *  LTSA (Labeled Transition Systems Analyzer) available from  
    *  http://www-dse.doc.ic.ac.uk/concurrency.   */
   void ExportDescriptionToLTS( OutputStreamType & ostr, bool skipLoops) const;
@@ -167,39 +172,40 @@ private:
 
   /** This boolean flag is used as a security clip for separating the 
    *  programming stage from the running stage. During the programming stage
-   *  the method AddTransition() can be invoked while the method ProcessInput() is
-   *  forbiden. Once the machine is set to run, the method AddTransition() is
-   *  forbiden and the method ProcessInput() becomes available */
+   *  the method AddTransition() can be invoked while the method 
+   *  ProcessInput() is forbiden. Once the machine is set to run, 
+   *  the method AddTransition() is forbiden and the method ProcessInput() 
+   *  becomes available */
   bool m_ReadyToRun;
 
   /** This boolean flag indicates whether the user has defined an initial
-   * state or not. The machine will be be allowed to run until a valid state
+   * state or not. The machine will be allowed to run until a valid state
    * is selected as initial state. */
   bool m_InitialStateSelected;
 
   /** Container type for States */
-  typedef std::map< StateIdentifierType, StateDescriptorType >  StatesContainer;
-  typedef typename StatesContainer::iterator        StatesIterator;
-  typedef typename StatesContainer::const_iterator  StatesConstIterator;
+  typedef std::map< StateIdentifierType, StateDescriptorType > StatesContainer;
+  typedef typename StatesContainer::iterator                   StatesIterator;
+  typedef typename StatesContainer::const_iterator        StatesConstIterator;
 
   /** Container for States */
   StatesContainer   m_States;
 
   /** Get the Descriptor of a particular state. This method must be used instead
-   *  of the simple invokation to the m_States[] operator because the [] operator
-   *  creates an entry when the key is not found. */
+   *  of the simple invokation to the m_States[] operator because the [] 
+   *  operator creates an entry when the key is not found. */
   StateDescriptorType GetStateDescriptor( const StateIdentifierType & stateId );
 
   /** Get the Descriptor of a particular input. This method must be used instead
-   *  of the simple invokation to the m_Inputs[] operator because the [] operator
-   *  creates an entry when the key is not found. */
+   *  of the simple invokation to the m_Inputs[] operator because the [] 
+   *  operator creates an entry when the key is not found. */
   InputDescriptorType GetInputDescriptor( const InputIdentifierType & inputId );
   
   /** Container type for Inputs */
-  typedef std::map< InputIdentifierType, InputDescriptorType >  InputsContainer;
-  typedef typename InputsContainer::iterator        InputIterator;
-  typedef typename InputsContainer::const_iterator  InputConstIterator;
-  typedef std::queue< InputIdentifierType >         InputsQueueContainer;
+  typedef std::map< InputIdentifierType, InputDescriptorType > InputsContainer;
+  typedef typename InputsContainer::iterator                   InputIterator;
+  typedef typename InputsContainer::const_iterator       InputConstIterator;
+  typedef std::queue< InputIdentifierType >              InputsQueueContainer;
 
   /** Container for Inputs */
   InputsContainer   m_Inputs;
@@ -207,7 +213,7 @@ private:
   /** \class StateActionPair
    *  Pair class containing an output State and an Action to be taken */
   class StateActionPair 
-  {
+    {
   public:
     StateActionPair()
       {
@@ -234,23 +240,28 @@ private:
     ActionType GetAction() const { return m_Action; }
   
   private:
-  
+    
     StateIdentifierType     m_StateIdentifier;
     ActionType              m_Action;
-  };
+    };
    
   /** Matrix of state transitions. It encodes the next state for 
    *  every pair of state and input */
-  typedef std::map< InputIdentifierType, StateActionPair > TransitionsPerInputContainer;
-  typedef std::map< StateIdentifierType, TransitionsPerInputContainer * >  TransitionContainer;
-  typedef typename TransitionContainer::iterator                 TransitionIterator;
-  typedef typename TransitionContainer::const_iterator           TransitionConstIterator;
-  typedef typename TransitionsPerInputContainer::iterator        TransitionsPerInputIterator;
-  typedef typename TransitionsPerInputContainer::const_iterator  TransitionsPerInputConstIterator;
+  typedef std::map< InputIdentifierType, StateActionPair > 
+                                                  TransitionsPerInputContainer;
+  typedef std::map< StateIdentifierType, TransitionsPerInputContainer * >  
+                                                  TransitionContainer;
+  typedef typename TransitionContainer::iterator  TransitionIterator;
 
-  TransitionContainer                                           m_Transitions;
 
-  InputsQueueContainer                                          m_QueuedInputs;                      
+  typedef typename TransitionContainer::const_iterator TransitionConstIterator;
+  typedef typename TransitionsPerInputContainer::iterator
+                                                  TransitionsPerInputIterator;
+  typedef typename TransitionsPerInputContainer::const_iterator  
+                                              TransitionsPerInputConstIterator;
+
+  TransitionContainer                                 m_Transitions;
+  InputsQueueContainer                                m_QueuedInputs;
 };
 
 /** Print the object information in a stream. */

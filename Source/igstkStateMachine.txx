@@ -485,55 +485,50 @@ StateMachine< TClass >
   ostr << "digraph G {" << std::endl;
 
   // Export all the transitions between states
-    {
-    TransitionConstIterator transitionsFromThisState =
+  TransitionConstIterator transitionsFromThisState =
                                        m_Transitions.begin();
-    while( transitionsFromThisState != m_Transitions.end() )
-      {
-      TransitionsPerInputConstIterator  
-             transitionsFromThisStateAndInput =  
-                        transitionsFromThisState->second->begin();
-      while( transitionsFromThisStateAndInput != 
-             transitionsFromThisState->second->end() )
-        {
-        // find the label that identify the input.
-        InputDescriptorType label;
-        InputConstIterator inputItr = m_Inputs.find( 
-                                   transitionsFromThisStateAndInput->first ); 
-        if( inputItr != m_Inputs.end() )
-          {
-          label = inputItr->second;
-          }
-        if( !skipLoops ||
-             transitionsFromThisState->first !=
-             transitionsFromThisStateAndInput->second.GetStateIdentifier() )
-          {
-          ostr << transitionsFromThisState->first << " -> ";
-          ostr << transitionsFromThisStateAndInput->second.GetStateIdentifier();
-          ostr << " [label=\"" << label << "\"";
-          ostr << " fontname=Helvetica, fontcolor=Blue";
-          ostr << "];" << std::endl;
-          }
-        ++transitionsFromThisStateAndInput;
-        }
-      ++transitionsFromThisState;
-      }
-    }
-
-    // Export the descriptions of all states
+  while( transitionsFromThisState != m_Transitions.end() )
     {
-    StatesConstIterator  stateId = m_States.begin();
-    while( stateId != m_States.end() )
+    TransitionsPerInputConstIterator  
+           transitionsFromThisStateAndInput =  
+                      transitionsFromThisState->second->begin();
+    while( transitionsFromThisStateAndInput != 
+           transitionsFromThisState->second->end() )
       {
-      ostr << stateId->first << "  [label=\"";
-      ostr << stateId->second << "\"";
-      ostr << " fontname=Helvetica, fontcolor=Black";
-      ostr << "];" << std::endl;
-      ++stateId;
+      // find the label that identify the input.
+      InputDescriptorType label;
+      InputConstIterator inputItr = m_Inputs.find( 
+                                 transitionsFromThisStateAndInput->first ); 
+      if( inputItr != m_Inputs.end() )
+        {
+        label = inputItr->second;
+        }
+      if( !skipLoops ||
+           transitionsFromThisState->first !=
+           transitionsFromThisStateAndInput->second.GetStateIdentifier() )
+        {
+        ostr << transitionsFromThisState->first << " -> ";
+        ostr << transitionsFromThisStateAndInput->second.GetStateIdentifier();
+        ostr << " [label=\"" << label << "\"";
+        ostr << " fontname=Helvetica, fontcolor=Blue";
+        ostr << "];" << std::endl;
+        }
+      ++transitionsFromThisStateAndInput;
       }
+    ++transitionsFromThisState;
     }
-    ostr << "}" << std::endl;
-
+ 
+  // Export the descriptions of all states
+  StatesConstIterator  stateId = m_States.begin();
+  while( stateId != m_States.end() )
+    {
+    ostr << stateId->first << "  [label=\"";
+    ostr << stateId->second << "\"";
+    ostr << " fontname=Helvetica, fontcolor=Black";
+    ostr << "];" << std::endl;
+    ++stateId;
+    }
+  ostr << "}" << std::endl;
 }
 
 
@@ -542,7 +537,6 @@ void
 StateMachine< TClass >
 ::ExportDescriptionToLTS( OutputStreamType & ostr, bool skipLoops=false ) const
 {
-
   // Export all the transitions between states
   int out_count = 0;
   int in_count = 0;
