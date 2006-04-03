@@ -42,7 +42,7 @@ namespace igstk
  *  will produce errors as a result of any attempt to repeat the name of a
  *  variable inside the same namespace.
  *
- *    
+ *
  *  \sa StateMachine
  *  \sa StateMachineInput
  *  \sa Token
@@ -58,13 +58,14 @@ public:
   typedef StateMachineState Self;
   typedef Token             Superclass;
 
-   /** Constructor. It initializes all the member variables */
-   StateMachineState() {}
+  /** Constructor. It initializes all the member variables */
+  StateMachineState() {}
 
-   /** Destructor    */
-   virtual ~StateMachineState() {}
+  /** Destructor */
+  virtual ~StateMachineState() {}
 
 protected:
+  
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const
     {

@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_PolarisTracker_h
-#define __igstk_PolarisTracker_h
+#ifndef __igstkPolarisTracker_h
+#define __igstkPolarisTracker_h
 
 #include "igstkSerialCommunication.h"
 #include "igstkNDICommandInterpreter.h"

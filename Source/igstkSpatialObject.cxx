@@ -105,7 +105,7 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddTransitionMacro( Tracked, RequestGetTransform, 
                            Tracked,  BroadcastTrackedTransform );
 
-  igstkAddTransitionMacro( TrackedLost, SpatialObjectValid,                     
+  igstkAddTransitionMacro( TrackedLost, SpatialObjectValid,
                            TrackedLost,  ReportInvalidRequest );
   igstkAddTransitionMacro( TrackedLost, SpatialObjectNull, 
                            TrackedLost,  ReportInvalidRequest );

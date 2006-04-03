@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_MouseTracker_h
-#define __igstk_MouseTracker_h
+#ifndef __igstkMouseTracker_h
+#define __igstkMouseTracker_h
 
 #include "igstkTracker.h"
 

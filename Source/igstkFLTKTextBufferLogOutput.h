@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_FLTKTextBufferLogOutput_h
-#define __igstk_FLTKTextBufferLogOutput_h
+#ifndef __igstkFLTKTextBufferLogOutput_h
+#define __igstkFLTKTextBufferLogOutput_h
 
 #include <iostream>
 #include <string>

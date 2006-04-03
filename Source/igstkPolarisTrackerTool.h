@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_PolarisTrackerTool_h
-#define __igstk_PolarisTrackerTool_h
+#ifndef __igstkPolarisTrackerTool_h
+#define __igstkPolarisTrackerTool_h
 
 #include "igstkTrackerTool.h"
 

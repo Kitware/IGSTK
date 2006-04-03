@@ -73,8 +73,9 @@ StateMachine< TClass >
   
   /** The structure of the StateMachineToken guarantees that identifiers are
    * unique. Here we create a new entry by invoking the bracket [] operator.
-   * NOTE: This is the *ONLY* place where the bracket operator can be used safely;
-   *       in any other case we risk to create a state entry by accident. */
+   * NOTE: This is the *ONLY* place where the bracket operator can be used 
+   * safely;
+   * in any other case we risk to create a state entry by accident. */
   m_States[ state.GetIdentifier() ] = descriptor;
 }
 
@@ -562,9 +563,8 @@ StateMachine< TClass >
                                      
   while( transitionsFromThisState != m_Transitions.end() )
     {
-    TransitionsPerInputConstIterator  
-           transitionsFromThisStateAndInput =  
-                      transitionsFromThisState->second->begin();
+    TransitionsPerInputConstIterator  transitionsFromThisStateAndInput =  
+                                    transitionsFromThisState->second->begin();
     in_count = 0;
                       
     while( transitionsFromThisStateAndInput != 
@@ -574,17 +574,18 @@ StateMachine< TClass >
       ++transitionsFromThisStateAndInput;
       }
       
-      transitionsFromThisStateAndInput =  
-                      transitionsFromThisState->second->begin();
+    transitionsFromThisStateAndInput = 
+                                    transitionsFromThisState->second->begin();
 
     in_flag = 1;
 
-    while( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
+    while( transitionsFromThisStateAndInput 
+           != transitionsFromThisState->second->end() )
       {
       // find the label that identify the input.
       InputDescriptorType label;
-      InputConstIterator inputItr = m_Inputs.find( 
-                                       transitionsFromThisStateAndInput->first ); 
+      InputConstIterator inputItr = 
+                     m_Inputs.find( transitionsFromThisStateAndInput->first ); 
       if( inputItr != m_Inputs.end() )
         {
         label = inputItr->second;
@@ -615,7 +616,8 @@ StateMachine< TClass >
         stateId = m_States.begin();
         while( stateId != m_States.end() )
           {
-          if(stateId->first == transitionsFromThisStateAndInput->second.GetStateIdentifier())
+          if(stateId->first == 
+             transitionsFromThisStateAndInput->second.GetStateIdentifier())
             {
             ostr << stateId->second;
             }

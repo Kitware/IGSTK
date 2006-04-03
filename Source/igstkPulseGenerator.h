@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_PulseGenerator_h
-#define __igstk_PulseGenerator_h
+#ifndef __igstkPulseGenerator_h
+#define __igstkPulseGenerator_h
 
 
 #include "igstkObject.h"

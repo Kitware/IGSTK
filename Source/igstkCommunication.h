@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_Communication_h
-#define __igstk_Communication_h
+#ifndef __igstkCommunication_h
+#define __igstkCommunication_h
 
 
 #include "igstkObject.h"

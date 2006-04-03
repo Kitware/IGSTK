@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_MultipleOutput_h
-#define __igstk_MultipleOutput_h
+#ifndef __igstkMultipleOutput_h
+#define __igstkMultipleOutput_h
 
 
 #include <iostream>

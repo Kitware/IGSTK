@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_AuroraTracker_h
-#define __igstk_AuroraTracker_h
+#ifndef __igstkAuroraTracker_h
+#define __igstkAuroraTracker_h
 
 #include "igstkSerialCommunication.h"
 #include "igstkNDICommandInterpreter.h"

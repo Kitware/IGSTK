@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_TrackerPort_h
-#define __igstk_TrackerPort_h
+#ifndef __igstkTrackerPort_h
+#define __igstkTrackerPort_h
 
 #include <vector>
 

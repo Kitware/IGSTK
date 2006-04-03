@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __igstk_Object_h
-#define __igstk_Object_h
+#ifndef __igstkObject_h
+#define __igstkObject_h
 
 
 #include "itkObject.h"

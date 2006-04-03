@@ -57,7 +57,8 @@ public:
   Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
-  void RequestSetCylinderObject( const CylinderSpatialObjectType * cylinderObject );
+  void RequestSetCylinderObject( const CylinderSpatialObjectType * 
+                                                             cylinderObject );
 
 protected:
 

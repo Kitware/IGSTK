@@ -14,22 +14,23 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __igstk_Macros_h_
-#define __igstk_Macros_h_
+#ifndef __igstkMacros_h_
+#define __igstkMacros_h_
 
 #include "itkLogger.h"
 #include "itkCommand.h"
 
-/**
-  \file igstkMacros.h defines standard system-wide macros, constants, and other 
-  common parameters in the IGstk Library. It includes the Get, Set and
-  Log macros.
-*/
+/** \file igstkMacros.h defines standard system-wide macros, constants, 
+ * and other  common parameters in the IGSTK Library. 
+ * It includes the Get, Set and Log macros.
+ */
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
-   #pragma warning( disable : 4786 )
-  // warning C4503: 'insert' : decorated name length exceeded, name was truncated
+  // Warning about: identifier was truncated to '255' characters 
+  // in the debug information (MVC6.0 Debug)
+  #pragma warning( disable : 4786 )
+  // warning C4503: 'insert' : decorated name length exceeded, 
+  // name was truncated
   #pragma warning ( disable : 4503 )
 #endif
 
@@ -82,9 +83,9 @@ namespace igstk
 #define  igstkSetMacro(name,type) \
 virtual void Set##name (const type & _arg) \
 { \
-    if (this->m_##name != _arg) \
+  if (this->m_##name != _arg) \
     { \
-        this->m_##name = _arg; \
+    this->m_##name = _arg; \
     } \
 } 
 
@@ -94,7 +95,7 @@ virtual void Set##name (const type & _arg) \
 #define igstkGetMacro(name,type) \
 virtual const type & Get##name () const \
 { \
-    return this->m_##name; \
+  return this->m_##name; \
 }
 
 
@@ -116,7 +117,7 @@ static Pointer New(void) \
  * invoked. */
 #define igstkTypeMacro(thisClass,superclass) \
     virtual const char *GetNameOfClass() const \
-        {return #thisClass;} 
+      {return #thisClass;} 
 
 
 /** Create a Macro for friend class. This will take care of platform specific
@@ -161,7 +162,8 @@ public: \
 
 
 /** Macro that defines all the standard elements related to the StateMachine.
- * This macro factorizes code that should always be present when using the StateMachine. */
+ *  This macro factorizes code that should always be present when using 
+ *  the StateMachine. */
 #define  igstkStateMachineMacroBase( igstktypename ) \
 private: \
   typedef ::igstk::StateMachine< Self > StateMachineType; \
@@ -299,4 +301,3 @@ public: \
 
 }
 #endif // __igstk_Macros_h_
-

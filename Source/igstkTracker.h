@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_Tracker_h
-#define __igstk_Tracker_h
+#ifndef __igstkTracker_h
+#define __igstkTracker_h
 
 #include <vector>
 

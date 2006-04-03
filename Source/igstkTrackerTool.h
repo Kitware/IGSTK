@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_TrackerTool_h
-#define __igstk_TrackerTool_h
+#ifndef __igstkTrackerTool_h
+#define __igstkTrackerTool_h
 
 #include "igstkObject.h"
 #include "igstkTransform.h"
