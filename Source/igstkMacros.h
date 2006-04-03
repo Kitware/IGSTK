@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __igstkMacros_h_
-#define __igstkMacros_h_
+#ifndef __igstkMacros_h
+#define __igstkMacros_h
 
 #include "itkLogger.h"
 #include "itkCommand.h"
@@ -26,12 +26,12 @@
  */
 
 #if defined(_MSC_VER)
-  // Warning about: identifier was truncated to '255' characters 
-  // in the debug information (MVC6.0 Debug)
-  #pragma warning( disable : 4786 )
-  // warning C4503: 'insert' : decorated name length exceeded, 
-  // name was truncated
-  #pragma warning ( disable : 4503 )
+// Warning about: identifier was truncated to '255' characters 
+// in the debug information (MVC6.0 Debug)
+#pragma warning( disable : 4786 )
+// warning C4503: 'insert' : decorated name length exceeded, 
+// name was truncated
+#pragma warning ( disable : 4503 )
 #endif
 
 namespace igstk
@@ -116,8 +116,7 @@ static Pointer New(void) \
 /** Type Macro defines the GetNameOfClass() method for every class where it is
  * invoked. */
 #define igstkTypeMacro(thisClass,superclass) \
-    virtual const char *GetNameOfClass() const \
-      {return #thisClass;} 
+    virtual const char *GetNameOfClass() const {return #thisClass;} 
 
 
 /** Create a Macro for friend class. This will take care of platform specific
@@ -174,11 +173,14 @@ private: \
   igstkFriendClassMacro( ::igstk::StateMachine< Self > ); \
   StateMachineType     m_StateMachine; \
   typedef ::itk::ReceptorMemberCommand< Self >   ReceptorObserverType; \
-  typedef igstktypename ReceptorObserverType::Pointer          ReceptorObserverPointer;  \
+  typedef igstktypename ReceptorObserverType::Pointer \
+                                                   ReceptorObserverPointer;  \
 public:  \
-  void ExportStateMachineDescription( OutputStreamType & ostr, bool skipLoops=false ) const \
+  void ExportStateMachineDescription( OutputStreamType & ostr, \
+                                      bool skipLoops=false ) const \
    { m_StateMachine.ExportDescription( ostr, skipLoops ); } \
-  void ExportStateMachineDescriptionToLTS( OutputStreamType & ostr, bool skipLoops=false ) const \
+  void ExportStateMachineDescriptionToLTS( OutputStreamType & ostr,\
+                                           bool skipLoops=false ) const \
    { m_StateMachine.ExportDescriptionToLTS( ostr, skipLoops ); }
 
 #define EMPTYPARAMETER
@@ -202,13 +204,14 @@ public:  \
 
 /** Convenience macro for adding Inputs to the State Machine */
 #define igstkAddInputMacro( inputname ) \
-    this->m_StateMachine.AddInput( this->m_##inputname##Input,  #inputname"Input" );
+    this->m_StateMachine.AddInput( this->m_##inputname##Input,  \
+                                   #inputname"Input" );
 
 
 /** Convenience macro for adding States to the State Machine */
 #define igstkAddStateMacro( statename ) \
-    this->m_StateMachine.AddState( this->m_##statename##State,  #statename"State" );
-
+    this->m_StateMachine.AddState( this->m_##statename##State,\
+                                   #statename"State" );
 
 /** Convenience macro for adding Transitions to the State Machine */
 #define igstkAddTransitionMacro( state1, input, state2, action )   \
@@ -230,9 +233,9 @@ public:  \
 
 /** Convenience macro for the initial standard traits of a class */
 #define igstkStandardClassBasicTraitsMacro( classname, superclassname ) \
-  typedef classname Self;  \
-  typedef superclassname Superclass; \
-  typedef ::itk::SmartPointer< Self > Pointer; \
+  typedef classname                         Self;  \
+  typedef superclassname                    Superclass; \
+  typedef ::itk::SmartPointer< Self >       Pointer; \
   typedef ::itk::SmartPointer< const Self > ConstPointer; \
   igstkTypeMacro( classname, superclassname);  
 
@@ -247,7 +250,8 @@ public:  \
   igstkNewMacro( Self );  
 
 /** Convenience macro for the traits of an abstract templated class */
-#define igstkStandardTemplatedAbstractClassTraitsMacro( classname, superclassname ) \
+#define igstkStandardTemplatedAbstractClassTraitsMacro( classname, \
+                                                       superclassname ) \
   igstkStandardClassBasicTraitsMacro( classname, superclassname ) \
   igstkStateMachineTemplatedMacro(); 
 
@@ -270,13 +274,15 @@ public: \
   void Observe##event(const ::itk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
-    m_Observer##event##input->SetCallbackFunction( this, & Self::Callback##event##input ); \
+    m_Observer##event##input->SetCallbackFunction( this, \
+                                          & Self::Callback##event##input ); \
     object->AddObserver( event(),m_Observer##event##input ); \
     } 
 
 
-/** Convenience macro for creating an Observer for an Event with payload, its callback
- *  and transducing it into a specified input to the state machine that takes its value */
+/** Convenience macro for creating an Observer for an Event with payload,
+ *  its callback and transducing it into a specified input to the state 
+ *  machine that takes its value */
 #define igstkLoadedEventTransductionMacro( event, input, payload ) \
 private: \
   ReceptorObserverPointer m_Observer##event##input;  \
@@ -294,7 +300,8 @@ public: \
   void Observe##event(const ::itk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
-    m_Observer##event##input->SetCallbackFunction( this, & Self::Callback##event##input ); \
+    m_Observer##event##input->SetCallbackFunction( this,\
+                                           & Self::Callback##event##input ); \
     object->AddObserver( event(),m_Observer##event##input ); \
     } 
 
