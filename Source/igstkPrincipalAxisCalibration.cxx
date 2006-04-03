@@ -11,7 +11,7 @@
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more DEBUGrmation.
+     PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 
@@ -26,8 +26,7 @@ namespace igstk
 {
 
 /** Constructor */
-PrincipalAxisCalibration::PrincipalAxisCalibration() :
-  m_StateMachine( this )
+PrincipalAxisCalibration::PrincipalAxisCalibration() : m_StateMachine( this )
 {
   // Set the state descriptors
   igstkAddStateMacro( Idle );
@@ -44,33 +43,49 @@ PrincipalAxisCalibration::PrincipalAxisCalibration() :
 
   // Add transition  for idle state
   igstkAddTransitionMacro( Idle, ResetCalibration, Idle, Reset );
-  igstkAddTransitionMacro( Idle, InitialOrientation, InitialOrientationSet, SetInitialOrientation );
-  igstkAddTransitionMacro( Idle, DesiredOrientation, DesiredOrientationSet, SetDesiredOrientation );
+  igstkAddTransitionMacro( Idle, InitialOrientation, InitialOrientationSet,
+                           SetInitialOrientation );
+  igstkAddTransitionMacro( Idle, DesiredOrientation, DesiredOrientationSet, 
+                           SetDesiredOrientation );
   igstkAddTransitionMacro( Idle, CalculateRotation, Idle, No );
 
   // Add transition  for InitialOrientationSet state
-  igstkAddTransitionMacro( InitialOrientationSet, ResetCalibration, Idle, Reset );
-  igstkAddTransitionMacro( InitialOrientationSet, InitialOrientation, InitialOrientationSet, SetInitialOrientation );
-  igstkAddTransitionMacro( InitialOrientationSet, DesiredOrientation, OrientationAllSet, SetDesiredOrientation );
-  igstkAddTransitionMacro( InitialOrientationSet, CalculateRotation, InitialOrientationSet, No );
+  igstkAddTransitionMacro( InitialOrientationSet, ResetCalibration, 
+                           Idle, Reset );
+  igstkAddTransitionMacro( InitialOrientationSet, InitialOrientation, 
+                           InitialOrientationSet, SetInitialOrientation );
+  igstkAddTransitionMacro( InitialOrientationSet, DesiredOrientation, 
+                           OrientationAllSet, SetDesiredOrientation );
+  igstkAddTransitionMacro( InitialOrientationSet, CalculateRotation, 
+                           InitialOrientationSet, No );
 
   // Add transition  for DesiredOrientationSet state
-  igstkAddTransitionMacro( DesiredOrientationSet, ResetCalibration, Idle, Reset );
-  igstkAddTransitionMacro( DesiredOrientationSet, InitialOrientation, OrientationAllSet, SetInitialOrientation );
-  igstkAddTransitionMacro( DesiredOrientationSet, DesiredOrientation, DesiredOrientationSet, SetDesiredOrientation );
-  igstkAddTransitionMacro( DesiredOrientationSet, CalculateRotation, DesiredOrientationSet, No );
+  igstkAddTransitionMacro( DesiredOrientationSet, ResetCalibration, 
+                           Idle, Reset );
+  igstkAddTransitionMacro( DesiredOrientationSet, InitialOrientation, 
+                           OrientationAllSet, SetInitialOrientation );
+  igstkAddTransitionMacro( DesiredOrientationSet, DesiredOrientation, 
+                           DesiredOrientationSet, SetDesiredOrientation );
+  igstkAddTransitionMacro( DesiredOrientationSet, CalculateRotation, 
+                           DesiredOrientationSet, No );
 
   // Add transition  for OrientationAllSet state
   igstkAddTransitionMacro( OrientationAllSet, ResetCalibration, Idle, Reset );
-  igstkAddTransitionMacro( OrientationAllSet, InitialOrientation, OrientationAllSet, SetInitialOrientation );
-  igstkAddTransitionMacro( OrientationAllSet, DesiredOrientation, OrientationAllSet, SetDesiredOrientation );
-  igstkAddTransitionMacro( OrientationAllSet, CalculateRotation, RotationCalculated, CalculateRotation );
+  igstkAddTransitionMacro( OrientationAllSet, InitialOrientation, 
+                           OrientationAllSet, SetInitialOrientation );
+  igstkAddTransitionMacro( OrientationAllSet, DesiredOrientation, 
+                           OrientationAllSet, SetDesiredOrientation );
+  igstkAddTransitionMacro( OrientationAllSet, CalculateRotation, 
+                           RotationCalculated, CalculateRotation );
 
   // Add transition  for RotationCalculated state
   igstkAddTransitionMacro( RotationCalculated, ResetCalibration, Idle, Reset );
-  igstkAddTransitionMacro( RotationCalculated, InitialOrientation, RotationCalculated, SetInitialOrientation );
-  igstkAddTransitionMacro( RotationCalculated, DesiredOrientation, RotationCalculated, SetDesiredOrientation );
-  igstkAddTransitionMacro( RotationCalculated, CalculateRotation, RotationCalculated, No );
+  igstkAddTransitionMacro( RotationCalculated, InitialOrientation, 
+                           RotationCalculated, SetInitialOrientation );
+  igstkAddTransitionMacro( RotationCalculated, DesiredOrientation, 
+                           RotationCalculated, SetDesiredOrientation );
+  igstkAddTransitionMacro( RotationCalculated, CalculateRotation, 
+                           RotationCalculated, No );
   
   // Select the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
@@ -89,24 +104,32 @@ PrincipalAxisCalibration::~PrincipalAxisCalibration()
 }
 
 /** Print Self function */
-void PrincipalAxisCalibration::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void PrincipalAxisCalibration::PrintSelf( std::ostream& os, 
+                                          itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
   // Dump the calibration class information
-  os << indent << "Initial Principal Axis: " << this->m_InitialPrincipalAxis << std::endl;
+  os << indent << "Initial Principal Axis: " 
+     << this->m_InitialPrincipalAxis << std::endl;
 
-  os << indent << "Initial Plane Normal: " << this->m_InitialPlaneNormal << std::endl;
+  os << indent << "Initial Plane Normal: " 
+     << this->m_InitialPlaneNormal << std::endl;
 
-  os << indent << "Initial Adjusted Plane Normal: " << this->m_InitialAdjustedPlaneNormal << std::endl;
+  os << indent << "Initial Adjusted Plane Normal: " 
+     << this->m_InitialAdjustedPlaneNormal << std::endl;
 
-  os << indent << "Desired Principal Axis: " << this->m_DesiredPrincipalAxis << std::endl;
+  os << indent << "Desired Principal Axis: " 
+     << this->m_DesiredPrincipalAxis << std::endl;
 
-  os << indent << "Desired Plane Normal: " << this->m_DesiredPlaneNormal << std::endl;
+  os << indent << "Desired Plane Normal: " 
+     << this->m_DesiredPlaneNormal << std::endl;
 
-  os << indent << "Desired Adjusted Plane Normal: " << this->m_DesiredAdjustedPlaneNormal << std::endl;
+  os << indent << "Desired Adjusted Plane Normal: " 
+     << this->m_DesiredAdjustedPlaneNormal << std::endl;
 
-  os << indent << "Calibration Transform: " << this->m_CalibrationTransform << std::endl;
+  os << indent << "Calibration Transform: " 
+     << this->m_CalibrationTransform << std::endl;
 }
 
 /** Method to reset the calibration */
@@ -117,7 +140,8 @@ void PrincipalAxisCalibration::NoProcessing()
 /** Method to reset the calibration */
 void PrincipalAxisCalibration::ResetProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::ResetProcessing called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::ResetProcessing\
+                        called...\n" );
 
   // Reset the initial principal axis
   this->m_InitialPrincipalAxis[0] = 0.0;
@@ -156,7 +180,8 @@ PrincipalAxisCalibration
 ::InternalAdjustPlaneNormalProcessing( const VectorType & axis, 
                                        const CovariantVectorType & normal )
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::InternalAdjustPlaneNormalProcessing called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::\
+                          InternalAdjustPlaneNormalProcessing called...\n" );
 
   // Assign and normalize the vectors
   VectorType vecnormal;
@@ -178,7 +203,8 @@ PrincipalAxisCalibration
 /** Internal method to build the rotation */
 void PrincipalAxisCalibration::CalculateRotationProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::CalculateRotationProcessing called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::\
+                         CalculateRotationProcessing called...\n" );
 
   typedef VersorType::MatrixType  MatrixType;
 
@@ -189,12 +215,12 @@ void PrincipalAxisCalibration::CalculateRotationProcessing()
 
   // Build the orthogonal matrix from the principal axis and plane normal
   initialorthomatrix = this->InternalBuildOrthogonalMatrixProcessing( 
-                                              this->m_InitialPrincipalAxis, 
-                                              this->m_InitialAdjustedPlaneNormal );
+                                          this->m_InitialPrincipalAxis, 
+                                          this->m_InitialAdjustedPlaneNormal );
 
   desiredorthomatrix = this->InternalBuildOrthogonalMatrixProcessing( 
-                                              this->m_DesiredPrincipalAxis, 
-                                              this->m_DesiredAdjustedPlaneNormal );
+                                          this->m_DesiredPrincipalAxis, 
+                                          this->m_DesiredAdjustedPlaneNormal );
 
   // Find the rotation by M = A / B
   matrix = desiredorthomatrix * initialorthomatrix.GetInverse();
@@ -213,7 +239,8 @@ PrincipalAxisCalibration
 ::InternalBuildOrthogonalMatrixProcessing( const VectorType & axis, 
                                            const CovariantVectorType & normal )
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::InternalBuildOrthogonalMatrixProcessing called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::\
+                        InternalBuildOrthogonalMatrixProcessing called...\n" );
 
   unsigned int i, j;
   VectorType vec[3];
@@ -242,7 +269,8 @@ PrincipalAxisCalibration
 void PrincipalAxisCalibration
 ::SetInitialOrientationProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::SetInitialOrientationProcessing called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::\
+                        SetInitialOrientationProcessing called...\n" );
 
   this->InternalSetInitialOrientationProcessing( 
                               this->m_VectorToBeSent, 
@@ -254,14 +282,15 @@ void PrincipalAxisCalibration
 ::InternalSetInitialOrientationProcessing( const VectorType & axis, 
                                            const CovariantVectorType & normal )
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::InternalSetInitialOrientationProcessing called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::\
+                        InternalSetInitialOrientationProcessing called...\n" );
 
   this->m_InitialPrincipalAxis = axis;
   this->m_InitialPlaneNormal = normal;
   // Adjust the plane normal
-  this->m_InitialAdjustedPlaneNormal = this->InternalAdjustPlaneNormalProcessing( 
-                                                    this->m_InitialPrincipalAxis,
-                                                    this->m_InitialPlaneNormal );
+  this->m_InitialAdjustedPlaneNormal = 
+      this->InternalAdjustPlaneNormalProcessing( this->m_InitialPrincipalAxis,
+                                                 this->m_InitialPlaneNormal );
 
   this->m_ValidRotation = false;
 }
@@ -269,9 +298,11 @@ void PrincipalAxisCalibration
 /** Set the desired orientation */
 void PrincipalAxisCalibration::SetDesiredOrientationProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::SetDesiredOrientationProcessing called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::\
+                        SetDesiredOrientationProcessing called...\n" );
 
-  this->InternalSetDesiredOrientationProcessing( this->m_VectorToBeSent, this->m_CovariantVectorToBeSent );
+  this->InternalSetDesiredOrientationProcessing( this->m_VectorToBeSent,
+                                            this->m_CovariantVectorToBeSent );
 }
 
 /** Internal function to set the desired orientation */
@@ -279,14 +310,15 @@ void PrincipalAxisCalibration
 ::InternalSetDesiredOrientationProcessing( const VectorType & axis, 
                                            const CovariantVectorType & normal )
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::InternalSetDesiredOrientationProcessing called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::\
+                        InternalSetDesiredOrientationProcessing called...\n" );
 
   this->m_DesiredPrincipalAxis = axis;
   this->m_DesiredPlaneNormal = normal;
   // Adjust the plane normal
-  this->m_DesiredAdjustedPlaneNormal = this->InternalAdjustPlaneNormalProcessing( 
-                                                    this->m_DesiredPrincipalAxis,
-                                                    this->m_DesiredPlaneNormal ); 
+  this->m_DesiredAdjustedPlaneNormal = 
+    this->InternalAdjustPlaneNormalProcessing( this->m_DesiredPrincipalAxis,
+                                               this->m_DesiredPlaneNormal ); 
 
   this->m_ValidRotation = false;
 }
@@ -294,7 +326,8 @@ void PrincipalAxisCalibration
 /** Method to invoke the reset function */
 void PrincipalAxisCalibration::RequestReset()
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::RequestReset called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::\
+                        RequestReset called...\n" );
 
   this->m_StateMachine.PushInput( this->m_ResetCalibrationInput );
   this->m_StateMachine.ProcessInputs();
@@ -305,7 +338,8 @@ void PrincipalAxisCalibration
 ::RequestSetInitialOrientation( const VectorType & axis, 
                                 const CovariantVectorType & normal )
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::RequestSetInitialOrientation called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::\
+                        RequestSetInitialOrientation called...\n" );
 
   this->m_VectorToBeSent = axis;
   this->m_CovariantVectorToBeSent = normal;
@@ -318,7 +352,8 @@ void PrincipalAxisCalibration
 ::RequestSetDesiredOrientation( const VectorType & axis, 
                                 const CovariantVectorType & normal )
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::RequestSetDesiredOrientation called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::\
+                        RequestSetDesiredOrientation called...\n" );
 
   this->m_VectorToBeSent = axis;
   this->m_CovariantVectorToBeSent = normal;
@@ -329,7 +364,8 @@ void PrincipalAxisCalibration
 /** Method to invoke the calculation */
 void PrincipalAxisCalibration::RequestCalculateRotation()
 {
-  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::RequestCalculateRotation called...\n" );
+  igstkLogMacro( DEBUG, "igstk::PrincipalAxisCalibration::\
+                        RequestCalculateRotation called...\n" );
 
   this->m_StateMachine.PushInput( this->m_CalculateRotationInput );
   this->m_StateMachine.ProcessInputs();
@@ -338,4 +374,3 @@ void PrincipalAxisCalibration::RequestCalculateRotation()
 } // end namespace igstk
 
 #endif
-

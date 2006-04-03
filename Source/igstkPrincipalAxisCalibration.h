@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef _igstkPrincipalAxisCalibration_h
-#define _igstkPrincipalAxisCalibration_h
+#ifndef __igstkPrincipalAxisCalibration_h
+#define __igstkPrincipalAxisCalibration_h
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4018 )
@@ -44,9 +44,6 @@ namespace igstk
  * from the initial tracked tool's orientation, which is defined by
  * the principal axis and plane normal to the user specified orientation.
  *
- *  \image html  igstkPrincipalAxisCalibration.png  "PrincipalAxisCalibration State Machine Diagram"
- *  \image latex igstkPrincipalAxisCalibration.eps  "PrincipalAxisCalibration State Machine Diagram" 
- *
  * \ingroup Calibration
  */
 
@@ -68,8 +65,7 @@ public:
 
   typedef VersorType::MatrixType          MatrixType;
 
-  typedef itk::CovariantVector< double >  CovariantVectorType;        
-
+  typedef itk::CovariantVector< double >  CovariantVectorType;
 public:
 
   /** Method to get the final calibration transform */
@@ -94,10 +90,12 @@ public:
   void RequestReset();
 
   /** Method invoked by the user to set the initial orientation of the tool */
-  void RequestSetInitialOrientation( const VectorType & axis, const CovariantVectorType & normal );
+  void RequestSetInitialOrientation( const VectorType & axis, 
+                                     const CovariantVectorType & normal );
 
   /** Method invoked by the user to set the desired orientation of the tool */
-  void RequestSetDesiredOrientation( const VectorType & axis, const CovariantVectorType & normal );
+  void RequestSetDesiredOrientation( const VectorType & axis, 
+                                     const CovariantVectorType & normal );
 
   /** Method invoked by the user to calculate the rotation */
   void RequestCalculateRotation();
@@ -123,13 +121,15 @@ protected:
   void SetInitialOrientationProcessing();
 
   /** Internal function to set initial orientation of the tool */
-  void InternalSetInitialOrientationProcessing( const VectorType & axis, const CovariantVectorType & normal );
+  void InternalSetInitialOrientationProcessing( const VectorType & axis, 
+                                        const CovariantVectorType & normal );
 
   /** Set the desired orientation of the tool */
   void SetDesiredOrientationProcessing();
 
   /** Internal function to set the desired orientation of the tool */
-  void InternalSetDesiredOrientationProcessing( const VectorType & axis, const CovariantVectorType & normal );
+  void InternalSetDesiredOrientationProcessing( const VectorType & axis, 
+                                        const CovariantVectorType & normal );
 
   /** Calculate the rotation */
   void CalculateRotationProcessing();
@@ -138,10 +138,12 @@ protected:
   void InternalAdjustPlaneNormalProcessing();
 
   /** Internal function to adjust plane normal */
-  CovariantVectorType InternalAdjustPlaneNormalProcessing( const VectorType & axis, const CovariantVectorType & normal );
+  CovariantVectorType InternalAdjustPlaneNormalProcessing( 
+                const VectorType & axis, const CovariantVectorType & normal );
 
   /** Internal function to construct the orthogonal matrix */
-  MatrixType InternalBuildOrthogonalMatrixProcessing( const VectorType & axis, const CovariantVectorType & normal );
+  MatrixType InternalBuildOrthogonalMatrixProcessing( 
+                const VectorType & axis, const CovariantVectorType & normal );
 
 private:
 

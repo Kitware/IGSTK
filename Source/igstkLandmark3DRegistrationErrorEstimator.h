@@ -36,7 +36,8 @@ namespace igstk
  *  The error estimation is based on the work by West et al.
  *
  * J.B West et al, "Fiducial Point Placement and the Accuracy of Point-based,
- * Rigid Body Registration", Neurosurgery, pp 810-816, Vol.48, No.4, April 2001.  
+ * Rigid Body Registration", Neurosurgery, pp 810-816, Vol.48, No.4, 
+ * April 2001.  
  *
  *
  * \ingroup Registration 
@@ -69,7 +70,8 @@ public:
   /** Method to set the landmark registration error */
   void RequestSetLandmarkRegistrationError ( const ErrorType & );
 
-  /** Method to request computation of error parameters used to estiamte target registration error*/
+  /** Method to request computation of error parameters used to estimate 
+   *  target registration error*/
   void RequestComputeErrorParameters();
 
   /** Method to request target registration estimation */
@@ -81,17 +83,17 @@ public:
 protected:
 
   Landmark3DRegistrationErrorEstimator  ( void );
-  ~Landmark3DRegistrationErrorEstimator ( void ) ;
+  ~Landmark3DRegistrationErrorEstimator ( void );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
  
-  typedef itk::Vector<double, 3>                          VectorType;
-  typedef LandmarkContainerType::const_iterator      PointsContainerConstIterator;
-  typedef double                                          DistanceType;
-  typedef itk::Versor<double>                             VersorType;
+  typedef itk::Vector<double, 3>                 VectorType;
+  typedef LandmarkContainerType::const_iterator  PointsContainerConstIterator;
+  typedef double                                 DistanceType;
+  typedef itk::Versor<double>                    VersorType;
 
   
   /** Compute Landmarks centroid */
@@ -122,7 +124,7 @@ private:
   void ReportSuccessInErrorParametersComputationProcessing( );
 
   /** Report failure in error parameter computation */
-  void ReportFailureInErrorParametersComputationProcessing( );    
+  void ReportFailureInErrorParametersComputationProcessing( );
 
   /** Report success in target point registration error estimation */  
   void ReportSuccessInTargetPointRegistrationErrorEstimationProcessing();
@@ -130,7 +132,8 @@ private:
   /** Report failure in target point registration error estimation */  
   void ReportFailureInTargePointRegistrationErrorEstimationProcessing();
 
-  /** This method throws an event loaded with the landmark registration error  */
+  /** This method throws an event loaded with the landmark registration 
+   *  error */
   void GetTargetPointRegistrationErrorEstimateProcessing();
 
   /** List of States */
@@ -159,31 +162,31 @@ private:
   
   /** These two methods must be declared and note be implemented
    *  in order to enforce the protocol of smart pointers. */
-  Landmark3DRegistrationErrorEstimator(const Self&);    //purposely not implemented
+  Landmark3DRegistrationErrorEstimator(const Self&); //purposely not implemented
   void operator=(const Self&);          //purposely not implemented
 
-  LandmarkContainerType               m_LandmarkContainer;
-  LandmarkContainerType               m_LandmarkContainerToBeSet;
+  LandmarkContainerType             m_LandmarkContainer;
+  LandmarkContainerType             m_LandmarkContainerToBeSet;
 
-  TargetPointType                     m_TargetPoint;
-  TargetPointType                     m_TargetPointToBeSet;
+  TargetPointType                   m_TargetPoint;
+  TargetPointType                   m_TargetPointToBeSet;
 
-  ErrorType                           m_LandmarkRegistrationError;
-  ErrorType                           m_LandmarkRegistrationErrorToBeSet;
+  ErrorType                         m_LandmarkRegistrationError;
+  ErrorType                         m_LandmarkRegistrationErrorToBeSet;
 
-  ErrorType                           m_TargetPointRegistrationError;
+  ErrorType                         m_TargetPointRegistrationError;
   
   /** Landmark configuration */
-  VersorType                               m_LandmarkPrincipalAxes;
+  VersorType                        m_LandmarkPrincipalAxes;
 
-  /** RMS distance from the landmarks to the principal axes of the landmark configuration */
-  VectorType                               m_RMSDistanceFromLandmarkToPrincipalAxes;
+  /** RMS distance from the landmarks to the principal axes of the 
+   *  landmark configuration */
+  VectorType                        m_RMSDistanceFromLandmarkToPrincipalAxes;
 
   /** Landmarks centroid */ 
-  LandmarkPointType                        m_LandmarkCentroid;
+  LandmarkPointType                 m_LandmarkCentroid;
 
 };
 } // end namespace igstk
 
 #endif // __igstkLandmark3DRegistrationErrorEstimator_h
-

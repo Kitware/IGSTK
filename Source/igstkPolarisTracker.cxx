@@ -11,7 +11,7 @@
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more DEBUGrmation.
+     PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 
@@ -250,7 +250,7 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
       igstkLogMacro( DEBUG, "PolarisTracker::InternalUpdateStatus: " <<
                      "tool " << port << " is not in view\n");
       continue;
-      }      
+      }
 
     // create the transform
     TransformType transform;
@@ -688,4 +688,3 @@ void PolarisTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 
 
 } // end of namespace igstk
-

@@ -40,8 +40,6 @@ namespace igstk
  * required. The class is basically a wrapper around the
  * itk::LandmarkBasedTransformInitializer.
  *
- *  \image html  igstkLandmark3DRegistration.png  "Landmark3DRegistration State Machine Diagram"
- *  \image latex igstkLandmark3DRegistration.eps  "Landmark3DRegistration State Machine Diagram" 
  *
  * \ingroup Registration 
  */
@@ -60,12 +58,12 @@ public:
   itkStaticConstMacro(Dimension,unsigned int,3);
 
   /** typedefs for image and pixel type */
-  typedef  unsigned char  PixelType;
+  typedef  unsigned char                      PixelType;
   typedef itk::Image< PixelType, Dimension >  ImageType;
 
   /** typedefs for the transform types */ 
   typedef itk::VersorRigid3DTransform< double > TransformType;
-  typedef TransformType::Pointer     TransformPointerType;
+  typedef TransformType::Pointer                TransformPointerType;
   
   typedef itk::LandmarkBasedTransformInitializer< TransformType, 
             ImageType, ImageType > TransformInitializerType;
@@ -73,14 +71,11 @@ public:
   typedef TransformInitializerType::LandmarkPointContainer 
                                               LandmarkPointContainerType;
   
-  typedef TransformInitializerType::LandmarkPointType      
-                                              LandmarkImagePointType;
+  typedef TransformInitializerType::LandmarkPointType LandmarkImagePointType;
   
-  typedef TransformInitializerType::LandmarkPointType    
-                                              LandmarkTrackerPointType;
+  typedef TransformInitializerType::LandmarkPointType LandmarkTrackerPointType;
   
-  typedef TransformInitializerType::Pointer  
-                                              TransformInitializerPointerType;
+  typedef TransformInitializerType::Pointer   TransformInitializerPointerType;
   
   typedef LandmarkPointContainerType::const_iterator
                                               PointsContainerConstIterator;
@@ -100,16 +95,16 @@ public:
   void RequestResetRegistration();
 
   /** The "RequestComputeTransform" method will be used to request
-  * transform parameter calculation */
+   * transform parameter calculation */
   void RequestComputeTransform();
 
   /** The "RequesteGetTransform" method will be used to request to get
-      transform */
-   void RequestGetTransform();
+   *   transform */
+  void RequestGetTransform();
   
-   /** The "ComputeRMSError" method calculates and returns RMS error of
-        the transformation. This function should be moved into the 
-       state machine: FIXME */
+  /** The "ComputeRMSError" method calculates and returns RMS error of
+   *  the transformation. This function should be moved into the 
+   *  state machine: FIXME */
   double ComputeRMSError();
 
   /**  The "CheckCollinearity" method checks whether the landmark points
@@ -118,15 +113,15 @@ public:
    
   /** Landmark registration events..they have to be eventually added
    * to the igstkEvents class */
-  itkEventMacro( TransformInitializerEvent,        IGSTKEvent );
-  itkEventMacro( TransformComputationFailureEvent, TransformInitializerEvent );
-  itkEventMacro( TransformComputationSuccessEvent,         TransformInitializerEvent);
-  itkEventMacro( InvalidRequestErrorEvent,         TransformInitializerEvent );
+  itkEventMacro( TransformInitializerEvent,       IGSTKEvent );
+  itkEventMacro( TransformComputationFailureEvent,TransformInitializerEvent );
+  itkEventMacro( TransformComputationSuccessEvent,TransformInitializerEvent);
+  itkEventMacro( InvalidRequestErrorEvent,        TransformInitializerEvent );
 
 protected:
 
   Landmark3DRegistration  ( void );
-  ~Landmark3DRegistration ( void ) ;
+  ~Landmark3DRegistration ( void );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
@@ -186,21 +181,23 @@ private:
   void ComputeTransformProcessing();
 
  
-  /** The "GetTransform" method throws an event containing the transform parameters*/
+  /** The "GetTransform" method throws an event containing the 
+   *  transform parameters*/
   void GetTransformProcessing();
 
   /** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent
-   * when invalid requests are made */
+   *  when invalid requests are made */
   void ReportInvalidRequestProcessing();
 
-  /** The "ReportSuccessInTransformComputation" method throws TransformComputationSuccessEvent*/
+  /** The "ReportSuccessInTransformComputation" method throws 
+   *  TransformComputationSuccessEvent*/
   void ReportSuccessInTransformComputationProcessing();
 
-  /** The "ReportFailureInTransformComputation" method throws TransformComputationFailureEvent*/
+  /** The "ReportFailureInTransformComputation" method throws 
+   *  TransformComputationFailureEvent*/
   void ReportFailureInTransformComputationProcessing();
 };
 
 } // end namespace igstk
 
 #endif // __igstkLandmark3DRegistration_h
-

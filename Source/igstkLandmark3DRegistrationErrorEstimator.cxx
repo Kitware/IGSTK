@@ -11,7 +11,8 @@
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more DEBUGrmation.
+     PURPOSE.  See the above copyright notices for more information.
+
 =========================================================================*/
 #ifndef __igstkLandmark3DRegistrationErrorEstimator_cxx
 #define __igstkLandmark3DRegistrationErrorEstimator_cxx
@@ -44,66 +45,66 @@ Landmark3DRegistrationErrorEstimator::
   igstkAddStateMacro ( AttemptingToEstimateTargetRegstirationError );  
   igstkAddStateMacro ( TargetRegistrationErrorEstimated );
  
- // Set the Input descriptors 
- igstkAddInputMacro( LandmarkContainer );
- igstkAddInputMacro( LandmarkRegistrationError );
- igstkAddInputMacro( ComputeErrorParameters );
- igstkAddInputMacro( ErrorParametersComputationSuccess );
- igstkAddInputMacro( ErrorParametersComputationFailure );
- igstkAddInputMacro( TargetPoint ); 
- igstkAddInputMacro( EstimateTargetPointRegistrationError ); 
- igstkAddInputMacro( TargetPointRegistrationErrorEstimationSuccess ); 
- igstkAddInputMacro( TargetPointRegistrationErrorEstimationFailure ); 
- igstkAddInputMacro( GetTargetPointRegistrationErrorEstimate ); 
+  // Set the Input descriptors 
+  igstkAddInputMacro( LandmarkContainer );
+  igstkAddInputMacro( LandmarkRegistrationError );
+  igstkAddInputMacro( ComputeErrorParameters );
+  igstkAddInputMacro( ErrorParametersComputationSuccess );
+  igstkAddInputMacro( ErrorParametersComputationFailure );
+  igstkAddInputMacro( TargetPoint ); 
+  igstkAddInputMacro( EstimateTargetPointRegistrationError ); 
+  igstkAddInputMacro( TargetPointRegistrationErrorEstimationSuccess ); 
+  igstkAddInputMacro( TargetPointRegistrationErrorEstimationFailure ); 
+  igstkAddInputMacro( GetTargetPointRegistrationErrorEstimate ); 
 
- // Add the transitions
+  // Add the transitions
  
- igstkAddTransitionMacro( Idle, 
+  igstkAddTransitionMacro( Idle, 
                           LandmarkContainer,
                           LandmarkContainerSet,
                           SetLandmarkContainer );
 
- igstkAddTransitionMacro( LandmarkContainerSet,
+  igstkAddTransitionMacro( LandmarkContainerSet,
                           LandmarkRegistrationError,
                           LandmarkRegistrationErrorSet, 
                           SetLandmarkRegistrationError );
 
- igstkAddTransitionMacro( LandmarkRegistrationErrorSet,
+  igstkAddTransitionMacro( LandmarkRegistrationErrorSet,
                           ComputeErrorParameters, 
                           AttemptingToComputeErrorParameters,
                           ComputeErrorParameters );
 
- igstkAddTransitionMacro( AttemptingToComputeErrorParameters,
+  igstkAddTransitionMacro( AttemptingToComputeErrorParameters,
                           ErrorParametersComputationSuccess,
                           ErrorParametersComputed,
                           ReportSuccessInErrorParametersComputation );
 
- igstkAddTransitionMacro( AttemptingToComputeErrorParameters,
+  igstkAddTransitionMacro( AttemptingToComputeErrorParameters,
                           ErrorParametersComputationFailure,
                           LandmarkRegistrationErrorSet,
                           ReportFailureInErrorParametersComputation );
 
- igstkAddTransitionMacro( ErrorParametersComputed,
+  igstkAddTransitionMacro( ErrorParametersComputed,
                           TargetPoint,
                           TargetPointSet,
                           SetTargetPoint );
 
- igstkAddTransitionMacro( TargetPointSet,
+  igstkAddTransitionMacro( TargetPointSet,
                           EstimateTargetPointRegistrationError, 
                           AttemptingToEstimateTargetRegstirationError,
                           EstimateTargetPointRegistrationError );
 
- igstkAddTransitionMacro( AttemptingToEstimateTargetRegstirationError,
+  igstkAddTransitionMacro( AttemptingToEstimateTargetRegstirationError,
                           TargetPointRegistrationErrorEstimationSuccess,
                           TargetRegistrationErrorEstimated,
-                          ReportSuccessInTargetPointRegistrationErrorEstimation );
+                     ReportSuccessInTargetPointRegistrationErrorEstimation );
 
- igstkAddTransitionMacro( AttemptingToEstimateTargetRegstirationError,
+  igstkAddTransitionMacro( AttemptingToEstimateTargetRegstirationError,
                           TargetPointRegistrationErrorEstimationFailure,
                           TargetPointSet,
-                          ReportFailureInTargePointRegistrationErrorEstimation );
+                       ReportFailureInTargePointRegistrationErrorEstimation );
  
- igstkAddTransitionMacro( TargetRegistrationErrorEstimated, 
+  igstkAddTransitionMacro( TargetRegistrationErrorEstimated, 
                           GetTargetPointRegistrationErrorEstimate,
                           TargetRegistrationErrorEstimated,
                           GetTargetPointRegistrationErrorEstimate );
@@ -134,18 +135,21 @@ Landmark3DRegistrationErrorEstimator::RequestSetLandmarkContainer(
   this->m_StateMachine.ProcessInputs();
 }
 
-/** SetLandmarkContainer method is used by the state machine to set the landmark container*/
+/** SetLandmarkContainer method is used by the state machine to 
+ *  set the landmark container*/
 void 
 Landmark3DRegistrationErrorEstimator::SetLandmarkContainerProcessing()
 {
- igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "SetLandmarkContainerProcessing called...\n");
- this->m_LandmarkContainer= this->m_LandmarkContainerToBeSet; 
+  this->m_LandmarkContainer= this->m_LandmarkContainerToBeSet; 
 }
 
-/** RequestSetLandmarkRegistrationError method is used to set the landmark container */
+/** RequestSetLandmarkRegistrationError method is used to set 
+ *  the landmark container */
 void 
-Landmark3DRegistrationErrorEstimator::RequestSetLandmarkRegistrationError( const ErrorType & error )
+Landmark3DRegistrationErrorEstimator
+::RequestSetLandmarkRegistrationError( const ErrorType & error )
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "RequestSetLandmarkRegistrationError called...\n");
@@ -154,19 +158,20 @@ Landmark3DRegistrationErrorEstimator::RequestSetLandmarkRegistrationError( const
   this->m_StateMachine.ProcessInputs();
 }
 
-/** SetLandmarkRegistrationErrorProcessing method is used by the state machine to set the 
- *  the landmark registration error */
+/** SetLandmarkRegistrationErrorProcessing method is used 
+ *  by the state machine to set the landmark registration error */
 void 
 Landmark3DRegistrationErrorEstimator::SetLandmarkRegistrationErrorProcessing()
 {
- igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "SetLandmarkRegistrationErrorProcessing called...\n");
- this->m_LandmarkRegistrationError= this->m_LandmarkRegistrationErrorToBeSet; 
+  this->m_LandmarkRegistrationError = this->m_LandmarkRegistrationErrorToBeSet; 
 }
 
 /** RequestSetTargetPoint is used to set the target point location */
 void 
-Landmark3DRegistrationErrorEstimator::RequestSetTargetPoint( const TargetPointType & targetpoint )
+Landmark3DRegistrationErrorEstimator
+::RequestSetTargetPoint( const TargetPointType & targetpoint )
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "RequestSetTargetPoint called...\n");
@@ -175,7 +180,8 @@ Landmark3DRegistrationErrorEstimator::RequestSetTargetPoint( const TargetPointTy
   this->m_StateMachine.ProcessInputs();
 }
 
-/** SetTargetPointProcessing method is used by the state machine to set the target point*/
+/** SetTargetPointProcessing method is used by the state machine to 
+ *  set the target point*/
 void 
 Landmark3DRegistrationErrorEstimator::SetTargetPointProcessing()
 {
@@ -188,94 +194,104 @@ Landmark3DRegistrationErrorEstimator::SetTargetPointProcessing()
 /** Compute and set landmark principal axes */
 void Landmark3DRegistrationErrorEstimator::ComputeLandmarkPrincipalAxes()
 {
-   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "ComputeLandmarkPrincipalAxes called...\n");
 
-   typedef itk::Matrix<double,3,3>                 MatrixType;
-   typedef itk::Matrix<double,4,4>                 AugmentedMatrixType;
-   typedef itk::Vector<double,3>                   VectorType;
-   typedef itk::Vector<double,4>                   AugmentedVectorType;
+  typedef itk::Matrix<double,3,3>                 MatrixType;
+  typedef itk::Matrix<double,4,4>                 AugmentedMatrixType;
+  typedef itk::Vector<double,3>                   VectorType;
+  typedef itk::Vector<double,4>                   AugmentedVectorType;
 
-   MatrixType                                      covarianceMatrix;
+  MatrixType                                      covarianceMatrix;
    
-   PointsContainerConstIterator                    pointItr;
+  PointsContainerConstIterator                    pointItr;
    
-   VectorType                                      landmarkVector;
-   VectorType                                      landmarkCentered;
+  VectorType                                      landmarkVector;
+  VectorType                                      landmarkCentered;
+  
+  landmarkVector.Fill(0.0);
    
-   landmarkVector.Fill(0.0);
-   
-   pointItr  = m_LandmarkContainer.begin();
-   while( pointItr != m_LandmarkContainer.end() )
-     {
-     landmarkVector[0] += (*pointItr)[0] ;
-     landmarkVector[1] += (*pointItr)[1] ;
-     landmarkVector[2] += (*pointItr)[2] ;
-     ++pointItr;
-     }
+  pointItr  = m_LandmarkContainer.begin();
+  while( pointItr != m_LandmarkContainer.end() )
+    {
+    landmarkVector[0] += (*pointItr)[0];
+    landmarkVector[1] += (*pointItr)[1];
+    landmarkVector[2] += (*pointItr)[2];
+    ++pointItr;
+    }
 
-   pointItr  = m_LandmarkContainer.begin();
-   while( pointItr != m_LandmarkContainer.end() )
-     {
-     for(unsigned int i=0; i<3; i++)
-       {     
-       landmarkCentered[i]  = (*pointItr)[i]  - this->m_LandmarkCentroid[i];
-       }
+  pointItr  = m_LandmarkContainer.begin();
+  while( pointItr != m_LandmarkContainer.end() )
+    {
+    for(unsigned int i=0; i<3; i++)
+      {
+      landmarkCentered[i]  = (*pointItr)[i]  - this->m_LandmarkCentroid[i];
+      }
 
-     for(unsigned int i=0; i<3; i++)
-       {
-       for(unsigned int j=0; j<3; j++)
-         {
-         covarianceMatrix[i][j] += landmarkCentered[i] * landmarkCentered[j];
-         }
-       }
-     ++pointItr;
-     }
+    for(unsigned int i=0; i<3; i++)
+      {
+      for(unsigned int j=0; j<3; j++)
+        {
+        covarianceMatrix[i][j] += landmarkCentered[i] * landmarkCentered[j];
+        }
+      }
+    ++pointItr;
+    }
 
-   // Expand the matrix 
-   AugmentedMatrixType                                      augmentedCovarianceMatrix;
+  // Expand the matrix 
+  AugmentedMatrixType              augmentedCovarianceMatrix;
         
-   augmentedCovarianceMatrix[0][0] =  covarianceMatrix[0][0] +covarianceMatrix[1][1] +
-                                                             covarianceMatrix[2][2];
-   augmentedCovarianceMatrix[1][1] =  covarianceMatrix[0][0] -covarianceMatrix[1][1] -
-                                                              covarianceMatrix[2][2];
-   augmentedCovarianceMatrix[2][2] = -covarianceMatrix[0][0] +covarianceMatrix[1][1] -
-                                                               covarianceMatrix[2][2];
-   augmentedCovarianceMatrix[3][3] = -covarianceMatrix[0][0] -covarianceMatrix[1][1] +
-                                                                covarianceMatrix[2][2];
+  augmentedCovarianceMatrix[0][0] =  covarianceMatrix[0][0] 
+                                     + covarianceMatrix[1][1] 
+                                     + covarianceMatrix[2][2];
+  augmentedCovarianceMatrix[1][1] =  covarianceMatrix[0][0] 
+                                     - covarianceMatrix[1][1] 
+                                     - covarianceMatrix[2][2];
+  augmentedCovarianceMatrix[2][2] = -covarianceMatrix[0][0] 
+                                     + covarianceMatrix[1][1] 
+                                     - covarianceMatrix[2][2];
+  augmentedCovarianceMatrix[3][3] = -covarianceMatrix[0][0] 
+                                    - covarianceMatrix[1][1] 
+                                    +covarianceMatrix[2][2];
         
-   // off-diagonal elements
-   augmentedCovarianceMatrix[0][1] = augmentedCovarianceMatrix[1][0] = 
-                                     covarianceMatrix[1][2] -covarianceMatrix[2][1];
-   augmentedCovarianceMatrix[0][2] = augmentedCovarianceMatrix[2][0] = 
-                                     covarianceMatrix[2][0] -covarianceMatrix[0][2];
-   augmentedCovarianceMatrix[0][3] = augmentedCovarianceMatrix[3][0] = 
-                                     covarianceMatrix[0][1] -covarianceMatrix[1][0];
+  // off-diagonal elements
+  augmentedCovarianceMatrix[0][1] = augmentedCovarianceMatrix[1][0] = 
+                                    covarianceMatrix[1][2] 
+                                    -covarianceMatrix[2][1];
+  augmentedCovarianceMatrix[0][2] = augmentedCovarianceMatrix[2][0] = 
+                                    covarianceMatrix[2][0] 
+                                    -covarianceMatrix[0][2];
+  augmentedCovarianceMatrix[0][3] = augmentedCovarianceMatrix[3][0] = 
+                                    covarianceMatrix[0][1] 
+                                    -covarianceMatrix[1][0];
 
-   augmentedCovarianceMatrix[1][2] = augmentedCovarianceMatrix[2][1] = 
-                                     covarianceMatrix[0][1] +covarianceMatrix[1][0];
-   augmentedCovarianceMatrix[1][3] = augmentedCovarianceMatrix[3][1] = 
-                                     covarianceMatrix[2][0] +covarianceMatrix[0][2];
-   augmentedCovarianceMatrix[2][3] = augmentedCovarianceMatrix[3][2] = 
-                                     covarianceMatrix[1][2] +covarianceMatrix[2][1];
-   
-   AugmentedMatrixType                    eigenVectors;
-   AugmentedVectorType                    eigenValues;
+  augmentedCovarianceMatrix[1][2] = augmentedCovarianceMatrix[2][1] = 
+                                    covarianceMatrix[0][1] 
+                                    +covarianceMatrix[1][0];
+  augmentedCovarianceMatrix[1][3] = augmentedCovarianceMatrix[3][1] = 
+                                    covarianceMatrix[2][0] 
+                                    +covarianceMatrix[0][2];
+  augmentedCovarianceMatrix[2][3] = augmentedCovarianceMatrix[3][2] = 
+                                    covarianceMatrix[1][2] 
+                                    +covarianceMatrix[2][1];
+  
+  AugmentedMatrixType                    eigenVectors;
+  AugmentedVectorType                    eigenValues;
 
-   typedef itk::SymmetricEigenAnalysis< 
-           AugmentedMatrixType,  
-           AugmentedVectorType,
-           AugmentedMatrixType > SymmetricEigenAnalysisType;
+  typedef itk::SymmetricEigenAnalysis< 
+          AugmentedMatrixType,  
+          AugmentedVectorType,
+          AugmentedMatrixType > SymmetricEigenAnalysisType;
 
-   SymmetricEigenAnalysisType symmetricEigenSystem(4);
+  SymmetricEigenAnalysisType symmetricEigenSystem(4);
         
-   symmetricEigenSystem.ComputeEigenValuesAndVectors
-               ( augmentedCovarianceMatrix, eigenValues, eigenVectors );
+  symmetricEigenSystem.ComputeEigenValuesAndVectors
+              ( augmentedCovarianceMatrix, eigenValues, eigenVectors );
 
-   this->m_LandmarkPrincipalAxes.Set( eigenVectors[3][1],
-                    eigenVectors[3][2],
-                    eigenVectors[3][3],
-                    eigenVectors[3][0]  );
+  this->m_LandmarkPrincipalAxes.Set( eigenVectors[3][1],
+                   eigenVectors[3][2],
+                   eigenVectors[3][3],
+                   eigenVectors[3][0]  );
 }
 
 /** Compute landmark centroid */
@@ -297,15 +313,16 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarksCentroid()
   pointItr  = m_LandmarkContainer.begin();
   while( pointItr != m_LandmarkContainer.end() )
     {
-    landmarkVector[0] += (*pointItr)[0] ;
-    landmarkVector[1] += (*pointItr)[1] ;
-    landmarkVector[2] += (*pointItr)[2] ;
+    landmarkVector[0] += (*pointItr)[0];
+    landmarkVector[1] += (*pointItr)[1];
+    landmarkVector[2] += (*pointItr)[2];
     ++pointItr;
     }
 
   for(unsigned int ic=0; ic<3; ic++)
     {
-    this->m_LandmarkCentroid[ic]  = landmarkVector[ic]  / this->m_LandmarkContainer.size();
+    this->m_LandmarkCentroid[ic]  = landmarkVector[ic]  / 
+                                    this->m_LandmarkContainer.size();
     } 
 }
 
@@ -331,7 +348,7 @@ void Landmark3DRegistrationErrorEstimator::
   // Convert versor to a matrix
   principalAxesMatrix = this->m_LandmarkPrincipalAxes.GetMatrix();
  
-  for ( unsigned int i=0 ; i < 3 ; i ++ ) 
+  for ( unsigned int i=0; i<3; i++ ) 
     {
     principalAxes1[i] = principalAxesMatrix[0][i]; 
     principalAxes2[i] = principalAxesMatrix[1][i]; 
@@ -363,31 +380,37 @@ void Landmark3DRegistrationErrorEstimator::
   
   pointItr  = m_LandmarkContainer.begin();
   while( pointItr != m_LandmarkContainer.end() )
-   {
-     
-     differenceVector[0] = (*pointItr)[0] - this->m_LandmarkCentroid[0];
-     differenceVector[1] = (*pointItr)[1] - this->m_LandmarkCentroid[1];
-     differenceVector[2] = (*pointItr)[2] - this->m_LandmarkCentroid[2];
+    {
+    differenceVector[0] = (*pointItr)[0] - this->m_LandmarkCentroid[0];
+    differenceVector[1] = (*pointItr)[1] - this->m_LandmarkCentroid[1];
+    differenceVector[2] = (*pointItr)[2] - this->m_LandmarkCentroid[2];
    
-     distanceFromLandmarkPointToPrinciaplAxes1 += 
-        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes1, differenceVector ).GetNorm() ) ; 
-     distanceFromLandmarkPointToPrinciaplAxes2 += 
-        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes2, differenceVector ).GetNorm() ); 
-     distanceFromLandmarkPointToPrinciaplAxes3 += 
-        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes3, differenceVector ).GetNorm() ); 
-     ++pointItr;
-   }
+    distanceFromLandmarkPointToPrinciaplAxes1 += 
+        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes1, 
+                                          differenceVector ).GetNorm() ); 
+    distanceFromLandmarkPointToPrinciaplAxes2 += 
+        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes2, 
+                                          differenceVector ).GetNorm() ); 
+    distanceFromLandmarkPointToPrinciaplAxes3 += 
+        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes3, 
+                                          differenceVector ).GetNorm() ); 
+    ++pointItr;
+    }
 
   this->m_RMSDistanceFromLandmarkToPrincipalAxes[0] = 
-        sqrt( distanceFromLandmarkPointToPrinciaplAxes1 / m_LandmarkContainer.size() );
+        sqrt( distanceFromLandmarkPointToPrinciaplAxes1 / 
+                                                 m_LandmarkContainer.size() );
   this->m_RMSDistanceFromLandmarkToPrincipalAxes[1] = 
-        sqrt( distanceFromLandmarkPointToPrinciaplAxes2 / m_LandmarkContainer.size() );
+        sqrt( distanceFromLandmarkPointToPrinciaplAxes2 /
+                                                 m_LandmarkContainer.size() );
   this->m_RMSDistanceFromLandmarkToPrincipalAxes[2] = 
-        sqrt( distanceFromLandmarkPointToPrinciaplAxes3 / m_LandmarkContainer.size() );
+        sqrt( distanceFromLandmarkPointToPrinciaplAxes3 / 
+                                                 m_LandmarkContainer.size() );
   
 }
 
-/** RequestComputeErrorParameters is a public method to request error parameters computation */
+/** RequestComputeErrorParameters is a public method to request error 
+ *  parameters computation */
 void
 Landmark3DRegistrationErrorEstimator::RequestComputeErrorParameters()
 {
@@ -398,9 +421,11 @@ Landmark3DRegistrationErrorEstimator::RequestComputeErrorParameters()
   this->m_StateMachine.ProcessInputs();
 }
 
-/** RequestEstimateTargetPointRegistrationError is a public method to request error parameters computation */
+/** RequestEstimateTargetPointRegistrationError is a public method 
+ *  to request error parameters computation */
 void
-Landmark3DRegistrationErrorEstimator::RequestEstimateTargetPointRegistrationError()
+Landmark3DRegistrationErrorEstimator
+::RequestEstimateTargetPointRegistrationError()
 {
 
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
@@ -411,8 +436,8 @@ Landmark3DRegistrationErrorEstimator::RequestEstimateTargetPointRegistrationErro
 }
 
 
-/* The "ComputeErrorParametersParamters" method calculates all the rigid body
-  registration error parameters */
+/** The "ComputeErrorParametersParamters" method calculates all the rigid body
+ *  registration error parameters */
 void 
 Landmark3DRegistrationErrorEstimator:: ComputeErrorParametersProcessing()
 {
@@ -427,11 +452,10 @@ Landmark3DRegistrationErrorEstimator:: ComputeErrorParametersProcessing()
   this->m_StateMachine.ProcessInputs();
 }
 
-/* The "EstimateTargetRegistrationError" method estimates target signal ( sample point )
- * registration error */
-void
-  Landmark3DRegistrationErrorEstimator
-:: EstimateTargetPointRegistrationErrorProcessing( )
+/** The "EstimateTargetRegistrationError" method estimates 
+ *  target signal ( sample point ) registration error */
+void Landmark3DRegistrationErrorEstimator
+::EstimateTargetPointRegistrationErrorProcessing( )
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "EstimateTargetRegistrationError called...\n");
@@ -446,17 +470,17 @@ void
   VectorType                                      principalAxes3;
   
   //  Distance vector from target point to the principal axes
-  VectorType                               distanceFromTargetPointToPrincipalAxes;
+  VectorType                           distanceFromTargetPointToPrincipalAxes;
 
   // Vector from the target point to the landmark centroid
-  VectorType                               differenceVector;
+  VectorType                           differenceVector;
 
   differenceVector = this->m_TargetPoint - this->m_LandmarkCentroid;
 
   // Convert versor to a matrix
   principalAxesMatrix = this->m_LandmarkPrincipalAxes.GetMatrix();
  
-  for ( unsigned int i=0 ; i < 3 ; i ++ ) 
+  for ( unsigned int i=0; i<3; i++ ) 
     {
     principalAxes1[i] = principalAxesMatrix[0][i]; 
     principalAxes2[i] = principalAxesMatrix[1][i]; 
@@ -479,16 +503,19 @@ void
 
   // calculate the distance from the target point to the principal axes
   distanceFromTargetPointToPrincipalAxes[0] = 
-               itk::CrossProduct ( normalizedPrincipalAxes1, differenceVector ).GetNorm() ; 
+               itk::CrossProduct ( normalizedPrincipalAxes1, 
+                                   differenceVector ).GetNorm(); 
   distanceFromTargetPointToPrincipalAxes[1] = 
-               itk::CrossProduct ( normalizedPrincipalAxes2, differenceVector ).GetNorm() ; 
+               itk::CrossProduct ( normalizedPrincipalAxes2, 
+                                   differenceVector ).GetNorm(); 
   distanceFromTargetPointToPrincipalAxes[2] = 
-               itk::CrossProduct ( normalizedPrincipalAxes3, differenceVector ).GetNorm() ; 
+               itk::CrossProduct ( normalizedPrincipalAxes3, 
+                                   differenceVector ).GetNorm(); 
 
   // target error parameter 
   ErrorType                      targetRegistrationError = 0.0;
  
-  for( unsigned int i=0; i < 3 ; i++ ) 
+  for( unsigned int i=0; i<3; i++ ) 
     {
     targetRegistrationError += 
            vnl_math_sqr( distanceFromTargetPointToPrincipalAxes[i] ) / 
@@ -497,7 +524,8 @@ void
 
   targetRegistrationError *= (1.0/3.0);
   targetRegistrationError += 1.0;
-  targetRegistrationError *= ( vnl_math_sqr( this->m_LandmarkRegistrationError ) ) / 
+  targetRegistrationError *= ( vnl_math_sqr( 
+                              this->m_LandmarkRegistrationError ) ) / 
                               ( this->m_LandmarkContainer.size() - 2 );
 
   this->m_TargetPointRegistrationError = targetRegistrationError;
@@ -506,8 +534,8 @@ void
   this->m_StateMachine.ProcessInputs();
 }
 
-/* GetTargetPointRegistrationErrorEstimate method requests the target point 
- *   registration error */
+/** GetTargetPointRegistrationErrorEstimate method requests the target point 
+ *  registration error */
 void 
 Landmark3DRegistrationErrorEstimator
 ::RequestGetTargetPointRegistrationErrorEstimate()
@@ -520,59 +548,60 @@ Landmark3DRegistrationErrorEstimator
 }
 
 
-/* GetTargetPointRegistrationError method throws an event loaded with the 
- * landmark registration error */
+/** GetTargetPointRegistrationError method throws an event loaded with the 
+ *  landmark registration error */
 void 
 Landmark3DRegistrationErrorEstimator
 ::GetTargetPointRegistrationErrorEstimateProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
-                 "GetTargetPointRegistrationErrorEstimateProcessing called...\n");
+              "GetTargetPointRegistrationErrorEstimateProcessing called...\n");
 
   LandmarkRegistrationErrorEvent                event;
   event.Set( m_TargetPointRegistrationError );
   this->InvokeEvent( event );
 }
 
-/* The ReportFailureInErrorParametersComputation reports error in 
- * error parameters computation */
+/** The ReportFailureInErrorParametersComputation reports error in 
+ *  error parameters computation */
 void
 Landmark3DRegistrationErrorEstimator
 ::ReportFailureInErrorParametersComputationProcessing( )
 {
- igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator"
-                "ReportFailureInErrorParametersComputation called ...\n" );       
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator"
+                "ReportFailureInErrorParametersComputation called ...\n" );
 }
 
-/* The ReportFailureInTargePointRegistrationErrorEstimationProcessing reports success in 
- * error parameters computation */
+/** The ReportFailureInTargePointRegistrationErrorEstimationProcessing 
+ *  reports success in error parameters computation */
 void
 Landmark3DRegistrationErrorEstimator
 ::ReportFailureInTargePointRegistrationErrorEstimationProcessing( )
 {
- igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator"
-                "ReportFailureInTargePointRegistrationErrorEstimation called ...\n" );       
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator"
+        "ReportFailureInTargePointRegistrationErrorEstimation called ...\n" );
 }
 
 
-/* The ReportSuccessInErrorParametersComputationProcessing reports success  in 
- * error paramter computation */
+/** The ReportSuccessInErrorParametersComputationProcessing reports success
+ *  in error paramter computation */
 void
 Landmark3DRegistrationErrorEstimator
 ::ReportSuccessInErrorParametersComputationProcessing( )
 {
- igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator"
-                "ReportSuccessInErrorParametersComputationProcessing called ...\n" );       
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator"
+        "ReportSuccessInErrorParametersComputationProcessing called ...\n" );
 }
 
-/* The ReportSuccessInTargetPointRegistrationErrorEstimation reports success in 
- * target point registration error compuation */
+/** The ReportSuccessInTargetPointRegistrationErrorEstimation reports 
+ *  success in target point registration error compuation */
 void
 Landmark3DRegistrationErrorEstimator
 ::ReportSuccessInTargetPointRegistrationErrorEstimationProcessing( )
 {
- igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator"
-                "ReportSuccessInTargePointRegistrationErrorEstimationProcessing called ...\n" );       
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator"
+                "ReportSuccessInTargePointRegistrationErrorEstimation\
+                Processing called ...\n" );
 }
 
 /** Print Self function */
@@ -596,5 +625,3 @@ Landmark3DRegistrationErrorEstimator::PrintSelf( std::ostream& os,
 
 } // end namespace igstk
 #endif
-
-

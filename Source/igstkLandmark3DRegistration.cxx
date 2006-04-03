@@ -11,7 +11,7 @@
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more DEBUGrmation.
+     PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 #ifndef __igstkLandmark3DRegistration_cxx
@@ -35,8 +35,7 @@ namespace igstk
 { 
 
 /** Constructor */
-Landmark3DRegistration::Landmark3DRegistration() :
-  m_StateMachine( this )
+Landmark3DRegistration::Landmark3DRegistration() : m_StateMachine( this )
 {
   // Set the state descriptors
   igstkAddStateMacro( Idle );
@@ -187,7 +186,7 @@ Landmark3DRegistration::Landmark3DRegistration() :
                            Idle,
                            ResetRegistration);
 
-   // Select the initial state of the state machine
+  // Select the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
 
   // Finish the programming and get ready to run
@@ -251,27 +250,27 @@ Landmark3DRegistration::ResetRegistrationProcessing()
 bool
 Landmark3DRegistration::CheckCollinearity()
 {
-   typedef itk::Matrix<double,3,3>                 MatrixType;
-   typedef itk::Vector<double,3>                   VectorType;
+  typedef itk::Matrix<double,3,3>                 MatrixType;
+  typedef itk::Vector<double,3>                   VectorType;
 
-   MatrixType                                      covarianceMatrix;
+  MatrixType                                      covarianceMatrix;
    
-   PointsContainerConstIterator                    pointItr;
+  PointsContainerConstIterator                    pointItr;
    
-   VectorType                                      landmarkVector;
-   VectorType                                      landmarkCentered;
-   VectorType                                      landmarkCentroid;
+  VectorType                                      landmarkVector;
+  VectorType                                      landmarkCentered;
+  VectorType                                      landmarkCentroid;
    
-   landmarkVector.Fill(0.0);
+  landmarkVector.Fill(0.0);
    
-   pointItr  = m_ImageLandmarks.begin();
-   while( pointItr != m_ImageLandmarks.end() )
-     {
-     landmarkVector[0] += (*pointItr)[0] ;
-     landmarkVector[1] += (*pointItr)[1] ;
-     landmarkVector[2] += (*pointItr)[2] ;
-     ++pointItr;
-     }
+  pointItr  = m_ImageLandmarks.begin();
+  while( pointItr != m_ImageLandmarks.end() )
+    {
+    landmarkVector[0] += (*pointItr)[0];
+    landmarkVector[1] += (*pointItr)[1];
+    landmarkVector[2] += (*pointItr)[2];
+    ++pointItr;
+    }
 
   for(unsigned int ic=0; ic<3; ic++)
     {
@@ -280,48 +279,52 @@ Landmark3DRegistration::CheckCollinearity()
   
   pointItr  = m_ImageLandmarks.begin();
   while( pointItr != m_ImageLandmarks.end() )
-     {
-     for(unsigned int i=0; i<3; i++)
-       {     
-       landmarkCentered[i]  = (*pointItr)[i]  - landmarkCentroid[i];
-       }
+    {
+    for(unsigned int i=0; i<3; i++)
+      {
+      landmarkCentered[i]  = (*pointItr)[i]  - landmarkCentroid[i];
+      }
 
-     for(unsigned int i=0; i<3; i++)
-       {
-       for(unsigned int j=0; j<3; j++)
-         {
-         covarianceMatrix[i][j] += landmarkCentered[i] * landmarkCentered[j];
-         }
-       }
-     ++pointItr;
-     }
+    for(unsigned int i=0; i<3; i++)
+      {
+      for(unsigned int j=0; j<3; j++)
+        {
+        covarianceMatrix[i][j] += landmarkCentered[i] * landmarkCentered[j];
+        }
+      }
+    ++pointItr;
+    }
 
-    MatrixType                    eigenVectors;
-    VectorType                    eigenValues;
+  MatrixType                    eigenVectors;
+  VectorType                    eigenValues;
 
-   typedef itk::SymmetricEigenAnalysis< 
+  typedef itk::SymmetricEigenAnalysis< 
            MatrixType,  
            VectorType,
            MatrixType > SymmetricEigenAnalysisType;
 
-   SymmetricEigenAnalysisType symmetricEigenSystem(3);
+  SymmetricEigenAnalysisType symmetricEigenSystem(3);
    
-   symmetricEigenSystem.SetOrderEigenMagnitudes( true );
+  symmetricEigenSystem.SetOrderEigenMagnitudes( true );
         
-   symmetricEigenSystem.ComputeEigenValuesAndVectors
+  symmetricEigenSystem.ComputeEigenValuesAndVectors
                ( covarianceMatrix, eigenValues, eigenVectors );
 
-   double tolerance=0.001;
+  double tolerance=0.001;
 
-   double ratio;
+  double ratio;
 
-   ratio = ( vnl_math_sqr ( eigenValues[0]) + vnl_math_sqr ( eigenValues[1]))/ 
-           ( vnl_math_sqr ( eigenValues[2]));
+  ratio = ( vnl_math_sqr ( eigenValues[0]) + vnl_math_sqr ( eigenValues[1]))/ 
+          ( vnl_math_sqr ( eigenValues[2]));
 
-   if ( ratio > tolerance )  
-      return false; 
-   else
-     return true;
+  if ( ratio > tolerance )  
+    {
+    return false;
+    }
+  else
+    {
+    return true;
+    }
 }
 
 /* The "ComputeTransform" method calculates the rigid body
@@ -349,7 +352,7 @@ Landmark3DRegistration:: ComputeTransformProcessing()
     catch ( itk::ExceptionObject & excp )
       {
       igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                     "Transform computation exception" << excp.GetDescription());
+                 "Transform computation exception" << excp.GetDescription());
       failure = true;
       }
     }
@@ -363,12 +366,13 @@ Landmark3DRegistration:: ComputeTransformProcessing()
     {
     igstkLogMacro( DEBUG, "ComputationSuccessInput getting pushed" );
     igstkPushInputMacro( TransformComputationSuccess );
-    }    
+    }
   
   this->m_StateMachine.ProcessInputs();
 }
 
-/* The "ComputeRMSError" method calculates and returns RMS Error of the transformation */
+/** The "ComputeRMSError" method calculates and returns RMS Error 
+ *  of the transformation */
 double 
 Landmark3DRegistration::ComputeRMSError()
 {
@@ -385,17 +389,18 @@ Landmark3DRegistration::ComputeRMSError()
   TransformType::OutputVectorType   errortr;
   TransformType::OutputVectorType::RealValueType sum;
 
-  sum = itk::NumericTraits< TransformType::OutputVectorType::RealValueType >::ZeroValue();
+  sum = itk::NumericTraits< TransformType::OutputVectorType::RealValueType >
+                                                                ::ZeroValue();
   
   int counter = itk::NumericTraits< int >::ZeroValue();
  
   while( mitr != m_TrackerLandmarks.end() ) 
     {
-      errortr = *fitr - m_Transform->TransformPoint( *mitr );
-      sum = sum + errortr.GetSquaredNorm();
-      ++mitr;
-      ++fitr;
-      counter++;
+    errortr = *fitr - m_Transform->TransformPoint( *mitr );
+    sum = sum + errortr.GetSquaredNorm();
+    ++mitr;
+    ++fitr;
+    counter++;
     }
 
   double rms = sqrt( sum / counter );
@@ -403,17 +408,17 @@ Landmark3DRegistration::ComputeRMSError()
 }
   
 
-/* The "GetTransform()" method throws and event containing the transform */
+/** The "GetTransform()" method throws and event containing the transform */
 void
 Landmark3DRegistration::GetTransformProcessing()
 {
-  igstkLogMacro( DEBUG,
-                  "igstk::Landmark3DRegistration::GetTransformProcessing called...\n" );
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::\
+                         GetTransformProcessing called...\n" );
 
   igstk::Transform  transform;
 
   const igstk::Transform::ErrorType              error = 0.1;
-  const igstk::Transform::TimePeriodType         timePeriod = 1000;;
+  const igstk::Transform::TimePeriodType         timePeriod = 1000;
 
   typedef TransformType::TranslationType        TranslationType;
   typedef TransformType::VersorType             VersorType;
@@ -432,9 +437,9 @@ Landmark3DRegistration::GetTransformProcessing()
 void  
 Landmark3DRegistration::ReportInvalidRequestProcessing()
 {
-    igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                   "ReportInvalidRequestProcessing called...\n");
-    this->InvokeEvent(InvalidRequestErrorEvent());
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
+                 "ReportInvalidRequestProcessing called...\n");
+  this->InvokeEvent(InvalidRequestErrorEvent());
 }
 
 /* The ReportSuccessInTransformComputation function reports success in 
@@ -532,5 +537,3 @@ Landmark3DRegistration::PrintSelf( std::ostream& os,
 } // end namespace igstk
 
 #endif
-
-
