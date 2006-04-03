@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_AuroraTracker_h_
-#define __igstk_AuroraTracker_h_
+#ifndef __igstk_AuroraTracker_h
+#define __igstk_AuroraTracker_h
 
 #include "igstkSerialCommunication.h"
 #include "igstkNDICommandInterpreter.h"
@@ -66,7 +66,7 @@ public:
   /** Get the number of tools that have been detected. */
   igstkGetMacro( NumberOfTools, unsigned int );
 
-    /** Specify an SROM file to be used with a passive or custom tool. */
+  /** Specify an SROM file to be used with a passive or custom tool. */
   void AttachSROMFileNameToPort( const unsigned int portNum, 
                                  std::string  fileName );
 protected:
@@ -122,7 +122,7 @@ private:
 
   /** Load a virtual SROM, given the file name of the ROM file */
   bool LoadVirtualSROM( const unsigned int port, 
-                        const std::string SROMFileName) ;
+                        const std::string SROMFileName);
 
   /** Enable all tool ports that have tools plugged into them.
    * {The reference tool port is enabled as a static tool.} */

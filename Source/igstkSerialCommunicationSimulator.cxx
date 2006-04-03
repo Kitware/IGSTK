@@ -39,7 +39,8 @@
 namespace igstk
 { 
 
-SerialCommunicationSimulator::SerialCommunicationSimulator():m_StateMachine(this)
+SerialCommunicationSimulator::SerialCommunicationSimulator()
+                                                        :m_StateMachine(this)
 {
   m_ResponseTable.clear();
   m_CounterTable.clear();
@@ -308,4 +309,3 @@ void SerialCommunicationSimulator::PrintSelf( std::ostream& os,
 }
 
 } // end namespace igstk
-

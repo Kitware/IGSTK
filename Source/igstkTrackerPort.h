@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_TrackerPort_h_
-#define __igstk_TrackerPort_h_
+#ifndef __igstk_TrackerPort_h
+#define __igstk_TrackerPort_h
 
 #include <vector>
 
@@ -75,8 +75,8 @@ protected:
 
 private:
 
-    /** Vector of all tools on the port */
-    TrackerToolVectorType       m_Tools;
+  /** Vector of all tools on the port */
+  TrackerToolVectorType       m_Tools;
 
 };
 

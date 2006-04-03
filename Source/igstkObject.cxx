@@ -57,5 +57,3 @@ void Object::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 }
-
-

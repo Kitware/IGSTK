@@ -48,10 +48,13 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
   igstkAddStateMacro( ViewPortSet );
   igstkAddStateMacro( AnnotationsAdded ); 
 
-  igstkAddTransitionMacro ( Idle, ValidAnnotationIndex , Idle, AddAnnotationText );  
-  igstkAddTransitionMacro ( Idle, InvalidAnnotationIndex , Idle, ReportInvalidAnnotationIndex );  
+  igstkAddTransitionMacro ( Idle, ValidAnnotationIndex , 
+                            Idle, AddAnnotationText );  
+  igstkAddTransitionMacro ( Idle, InvalidAnnotationIndex , 
+                            Idle, ReportInvalidAnnotationIndex );  
   igstkAddTransitionMacro ( Idle, ValidViewPort, ViewPortSet, SetViewPort );
-  igstkAddTransitionMacro ( ViewPortSet, ValidAnnotations , AnnotationsAdded , AddAnnotations );  
+  igstkAddTransitionMacro ( ViewPortSet, ValidAnnotations , 
+                            AnnotationsAdded , AddAnnotations );  
 
   //Invalid requests
   igstkAddTransitionMacro ( Idle, ValidAnnotations, Idle, ReportInvalidRequest);
@@ -103,22 +106,22 @@ void Annotation2D::RequestAddAnnotationText( int i, const std::string  & text )
     }
 }
 
-
-
 /** Add annotation text processing */
 void Annotation2D::AddAnnotationTextProcessing( )
 {
   igstkLogMacro( DEBUG, "AddAnnotationTextProcessing called ...\n");
 
   m_AnnotationText[m_IndexForAnnotationToBeAdded] = m_AnnotationTextToBeAdded;
-  m_AnnotationMapper[m_IndexForAnnotationToBeAdded]->
-                  SetInput( m_AnnotationText[m_IndexForAnnotationToBeAdded].c_str() );
+  m_AnnotationMapper[m_IndexForAnnotationToBeAdded]->SetInput( 
+                    m_AnnotationText[m_IndexForAnnotationToBeAdded].c_str() );
   this->m_AnnotationActor[m_IndexForAnnotationToBeAdded]->
-                  SetMapper(this->m_AnnotationMapper[m_IndexForAnnotationToBeAdded]);
+                  SetMapper(this->m_AnnotationMapper[
+                                              m_IndexForAnnotationToBeAdded]);
 }
 
 /** */
-void Annotation2D::RequestSetAnnotationsViewPort( int horizontalSize, int verticalSize )
+void Annotation2D::RequestSetAnnotationsViewPort( int horizontalSize, 
+                                                  int verticalSize )
 {
   igstkLogMacro( DEBUG, "RequestSetAnnotationsViewPort called ....\n"  );
  
@@ -151,9 +154,12 @@ void Annotation2D::AddAnnotationsProcessing(  )
   igstkLogMacro( DEBUG, "AddAnnotationsProcessing called ...\n");
 
   this->m_AnnotationActor[0]->SetPosition(10,10);
-  this->m_AnnotationActor[1]->SetPosition( this->m_ViewPortHorizontalSize-60 ,10);
-  this->m_AnnotationActor[2]->SetPosition(10, this->m_ViewPortVerticalSize - 10);
-  this->m_AnnotationActor[3]->SetPosition( this->m_ViewPortHorizontalSize - 60, this->m_ViewPortVerticalSize - 10);
+  this->m_AnnotationActor[1]->SetPosition( 
+                                        this->m_ViewPortHorizontalSize-60,10);
+  this->m_AnnotationActor[2]->SetPosition(10, 
+                                          this->m_ViewPortVerticalSize - 10);
+  this->m_AnnotationActor[3]->SetPosition(this->m_ViewPortHorizontalSize-60, 
+                                          this->m_ViewPortVerticalSize - 10);
 }
 
 /** Empty the list of actors */
@@ -192,4 +198,3 @@ void Annotation2D::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 } // end namespace igstk
-

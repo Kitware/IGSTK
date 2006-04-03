@@ -96,10 +96,12 @@ public:
   /** Declarations related to the Logger */
   igstkLoggerMacro();
 
-  /** Returns the number of error messages that have been posted to the output */
+  /** Returns the number of error messages that have been posted 
+   *  to the output */
   igstkGetMacro( NumberOfErrorMessages, unsigned int );
 
-  /** Returns the number of warning messages that have been posted to the output */
+  /** Returns the number of warning messages that have been posted 
+   *  to the output */
   igstkGetMacro( NumberOfWarningMessages, unsigned int );
 
 protected:

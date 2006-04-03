@@ -46,9 +46,6 @@ class View;
  * give scene.
  *
  *
- *  \image html  igstkObjectRepresentation.png  "ObjectRepresentation State Machine Diagram"
- *  \image latex igstkObjectRepresentation.eps  "ObjectRepresentation State Machine Diagram" 
- *
  * \ingroup Object
  */
 class ObjectRepresentation 
@@ -138,7 +135,8 @@ private:
   /** Null operation for a State Machine transition */
   void NoProcessing();
 
-  /** update the position of the object. This should not be overloaded by other classes */
+  /** Update the position of the object. 
+   *  This should not be overloaded by other classes */
   void UpdateActorsPositionProcessing();
 
   /** Set the spatial object for this class */
@@ -147,8 +145,9 @@ private:
   /** Report when an invalid request is made to the StateMachine */
   void ReportInvalidRequestProcessing();
 
-  /** Make Objects Invisible. This method is called when the Transform time stamp
-   * has expired with respect to the requested rendering time. */
+  /** Make Objects Invisible. 
+   *  This method is called when the Transform time stamp
+   *  has expired with respect to the requested rendering time. */
   void MakeObjectsInvisibleProcessing();
 
   /** Make Objects Visible. This method is called when the Transform time stamp
@@ -188,7 +187,9 @@ private:
 
   /** Transduction macros that will convert received events 
    *  into StateMachine inputs */
-  igstkLoadedEventTransductionMacro( TransformModifiedEvent, SpatialObjectTransformInput, SpatialObjectTransform );
+  igstkLoadedEventTransductionMacro( TransformModifiedEvent, 
+                                     SpatialObjectTransformInput, 
+                                     SpatialObjectTransform );
 
   /** Internal temporary variable to use when connecting to a SpatialObject */
   SpatialObjectType::Pointer    m_SpatialObjectToAdd;
@@ -204,4 +205,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkObjectRepresentation_h
-

@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_MultipleOutput_h_
-#define __igstk_MultipleOutput_h_
+#ifndef __igstk_MultipleOutput_h
+#define __igstk_MultipleOutput_h
 
 
 #include <iostream>
@@ -67,7 +67,7 @@ public:
     ContainerType::iterator end = m_Output.end();
     while( itr != end )
       {
-      *(*itr) << tt ;
+      *(*itr) << tt;
       ++itr;
       }
     return *this;

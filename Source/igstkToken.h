@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_Token_h
-#define __igstk_Token_h
+#ifndef __igstkToken_h
+#define __igstkToken_h
 
 #include <string>
 #include <itkLightObject.h>
@@ -45,40 +45,30 @@ namespace igstk
 class Token
 {
 
-
-
 public:
 
+  /** Type used to represent the codes of the inputs */
+  typedef unsigned long    IdentifierType;
 
-   /** Type used to represent the codes of the inputs */
-   typedef unsigned long    IdentifierType;
+  /** Constructor. It initializes all the member variables */
+  Token();
 
+  /** Destructor */
+  virtual ~Token();
 
-   /** Constructor. It initializes all the member variables */
-   Token();
+  /** Returns the unique identifier of the current instance */
+  igstkGetMacro( Identifier, IdentifierType );
 
+  /** \warning A SetIndentifier() method should never be created since 
+   *  it will
+   *  open a door for violating the uniqueness of the Identifier.  
+   *
+   *    SetIndentifier();      Purposely not created.
+   */
 
-
-   /** Destructor    */
-   virtual ~Token();
-
-
-
-   /** Returns the unique identifier of the current instance */
-   igstkGetMacro( Identifier, IdentifierType );
-
-   
-
-   /** \warning A SetIndentifier() method should never be created since it will
-    * open a door for violating the uniqueness of the Identifier.  
-    *
-    *    SetIndentifier();      Purposely not created.
-    *
-    */
-
-   /** Method for printing out the member variables of this object to a ostream
-    * */
-   void Print(std::ostream& os, itk::Indent indent) const;
+  /** Method for printing out the member variables of this object 
+   *  to a ostream */
+  void Print(std::ostream& os, itk::Indent indent) const;
 
 protected:
 
@@ -87,18 +77,14 @@ protected:
 
 private:
 
+  /** Variable that holds the unique identifier of this State */
+  IdentifierType    m_Identifier;
 
-   /** Variable that holds the unique identifier of this State */
-   IdentifierType    m_Identifier;
-
-   
-   /** Static variable that will provide an unique Id to every new class
-    * instance */
-   static IdentifierType   IdentifierCounter;
-
+  /** Static variable that will provide an unique Id to every new class
+   * instance */
+  static IdentifierType   IdentifierCounter;
 
 };
-
 
 std::ostream& operator<<(std::ostream& os, const Token& o);
 
@@ -106,5 +92,3 @@ std::ostream& operator<<(std::ostream& os, const Token& o);
 
 
 #endif
-
-

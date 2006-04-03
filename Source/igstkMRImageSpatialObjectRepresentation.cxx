@@ -27,7 +27,8 @@ MRImageSpatialObjectRepresentation
 } 
 
 /** Print Self function */
-void MRImageSpatialObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void MRImageSpatialObjectRepresentation
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }

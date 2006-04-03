@@ -34,7 +34,7 @@ namespace igstk
  *  \sa CTImageSpatialObject
  *  \sa MRImageReader
  *  \sa MRImageSpatialObjectRepresentation
-
+ *
  * \ingroup Object
  */
 
@@ -73,4 +73,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkMRImageSpatialObject_h
-

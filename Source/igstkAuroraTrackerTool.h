@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_AuroraTrackerTool_h_
-#define __igstk_AuroraTrackerTool_h_
+#ifndef __igstk_AuroraTrackerTool_h
+#define __igstk_AuroraTrackerTool_h
 
 #include "igstkTrackerTool.h"
 
@@ -58,4 +58,3 @@ private:
 
 
 #endif  // __igstk_AuroraTrackerTool_h_
-

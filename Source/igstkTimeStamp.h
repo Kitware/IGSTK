@@ -14,10 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-
-#ifndef __igstkTimeStamp_H
-#define __igstkTimeStamp_H
+#ifndef __igstkTimeStamp_h
+#define __igstkTimeStamp_h
 
 
 #include <iostream>
@@ -49,7 +47,8 @@ namespace igstk
  * \warning TimeStamps are a mechanism for holding relative time periods. They
  * are not reliable as a mechanism for absolute time synchronization. For
  * example, they can not be used for networking synchronization or even
- * multi-machine communications. Times will only be valid inside the current machine, and probably the current process.
+ * multi-machine communications. Times will only be valid inside 
+ * the current machine, and probably the current process.
  * 
  **/
 
@@ -79,7 +78,7 @@ public:
   /** Returns the time in milliseconds at which this stamp started to be valid.
    * This is the time at which the SetStartTimeNowAndExpireAfter() was invoked
    * last time. */
-   TimePeriodType GetStartTime() const;
+  TimePeriodType GetStartTime() const;
 
   
   /** Returns the time in milliseconds at which this stamp will expire. This
@@ -104,7 +103,8 @@ protected:
 
   void PrintHeader(std::ostream& os, itk::Indent indent) const;
 
-  void PrintTrailer(std::ostream& itkNotUsed(os), itk::Indent itkNotUsed(indent)) const;
+  void PrintTrailer(std::ostream& itkNotUsed(os), 
+                    itk::Indent itkNotUsed(indent)) const;
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -112,9 +112,8 @@ protected:
 
 private:
 
-     TimePeriodType                         m_StartTime;
-     
-     TimePeriodType                         m_ExpirationTime;
+  TimePeriodType         m_StartTime;   
+  TimePeriodType         m_ExpirationTime;
 
 };
 

@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_TrackerTool_h_
-#define __igstk_TrackerTool_h_
+#ifndef __igstk_TrackerTool_h
+#define __igstk_TrackerTool_h
 
 #include "igstkObject.h"
 #include "igstkTransform.h"
@@ -54,7 +54,7 @@ public:
 
   /** Tool types */
   typedef enum
-  {
+    {
     UnknownTool         = 0x00,             // unidentified tool type
     TrackedReference    = 0x01,
     TrackedPointer      = 0x02,
@@ -63,7 +63,7 @@ public:
     TrackedMicroscope   = 0x05,
     TrackedCArm         = 0x0A,
     TrackedCatheter     = 0x0B,
-  } ToolType;
+    } ToolType;
 
 public:
 

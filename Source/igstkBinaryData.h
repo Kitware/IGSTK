@@ -14,10 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-
-#ifndef __igstkBinaryData_H
-#define __igstkBinaryData_H
+#ifndef __igstkBinaryData_h
+#define __igstkBinaryData_h
 
 
 #include <itkObject.h>
@@ -92,7 +90,7 @@ public:
   bool operator!=( const BinaryData & inputBinaryData ) const;
 
   /** operator< redefinition */
-  bool operator<( const BinaryData & inputBinaryData ) const ;
+  bool operator<( const BinaryData & inputBinaryData ) const;
 
   /** operator[] redefinition */
   unsigned char operator[]( const unsigned int index ) const;
@@ -100,14 +98,16 @@ public:
   /** operator[] redefinition (returns reference) */
   unsigned char& operator[]( const unsigned int index );
   
-  /** operator that converts BinaryData to std::string type after encoding as ASCII */
+  /** operator that converts BinaryData to std::string type after 
+   *  encoding as ASCII */
   operator std::string() const;
 
   /** Method for printing the member variables of this class to an ostream */
   void Print(std::ostream& os, itk::Indent indent) const;
   
   /** Encode method encodes binary data to ASCII string in std::string. */
-  static void Encode( std::string& output, const unsigned char *data, unsigned int size );
+  static void Encode( std::string& output, const unsigned char *data, 
+                                                          unsigned int size );
 
   /** Decode method decodes encoded ASCII string to binary data */
   bool Decode( const std::string& asciiString );
@@ -118,7 +118,8 @@ protected:
   void PrintHeader(std::ostream& os, itk::Indent indent) const;
 
   /** Method for printing the trailer to an ostream */
-  void PrintTrailer(std::ostream& itkNotUsed(os), itk::Indent itkNotUsed(indent)) const;
+  void PrintTrailer(std::ostream& itkNotUsed(os), 
+                    itk::Indent itkNotUsed(indent)) const;
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -134,7 +135,4 @@ private:
 std::ostream& operator<<(std::ostream& os, const igstk::BinaryData& o);
 }
 
-
-
 #endif
-

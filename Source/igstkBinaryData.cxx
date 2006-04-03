@@ -27,14 +27,12 @@ BinaryData
 {
 }
 
-
 /** Constructor that copies data from an encoded string. */
 BinaryData
 ::BinaryData(const char* encodedString)
 {
   this->Decode(encodedString);
 }
-
 
 /** Constructor that copies data from an encoded string. */
 BinaryData
@@ -43,35 +41,28 @@ BinaryData
   this->Decode(encodedString);
 }
 
-
 /** Destructor */
 BinaryData
 ::~BinaryData()
 {
 }
 
-
 /** SetSize method resizes/allocates memory */
-void 
-BinaryData
+void BinaryData
 ::SetSize(unsigned int size)
 {
   this->m_data.resize(size);
 }
 
-
 /** GetSize method returns the size of data */
-unsigned int
-BinaryData
+unsigned int BinaryData
 ::GetSize() const
 {
   return this->m_data.size();
 }
 
-
 /** Copy data from an array */
-void
-BinaryData
+void BinaryData
 ::CopyFrom(unsigned char* inputBegin, unsigned int inputLength)
 {
   this->SetSize(inputLength);
@@ -82,10 +73,8 @@ BinaryData
     }
 }
 
-
 /** Copy data into an array */
-void
-BinaryData
+void BinaryData
 ::CopyTo(unsigned char* output) const
 {
   const unsigned int size = this->m_data.size();
@@ -95,37 +84,26 @@ BinaryData
     }
 }
 
-
-const BinaryData &
-BinaryData
+const BinaryData & BinaryData
 ::operator=( const BinaryData & inputBinaryData )
 {
   this->m_data = inputBinaryData.m_data;
   return *this;
 }
 
-
-
-bool
-BinaryData
+bool BinaryData
 ::operator==( const BinaryData & inputBinaryData ) const
 {
   return (this->m_data == inputBinaryData.m_data);
 }
 
-
-
-bool
-BinaryData
+bool BinaryData
 ::operator!=( const BinaryData & inputBinaryData ) const
 {
   return (this->m_data != inputBinaryData.m_data );
 }
 
-
-
-bool
-BinaryData
+bool BinaryData
 ::operator<( const BinaryData & inputBinaryData ) const
 {
   unsigned int i;
@@ -151,25 +129,19 @@ BinaryData
   return false;
 }
 
-
-unsigned char
-BinaryData
+unsigned char BinaryData
 ::operator[]( const unsigned int index ) const
 {
   return this->m_data[index];
 }
 
-
-unsigned char&
-BinaryData
+unsigned char& BinaryData
 ::operator[]( const unsigned int index )
 {
   return this->m_data[index];
 }
 
-
-void 
-BinaryData
+void BinaryData
 ::Print(std::ostream& os, itk::Indent indent) const
 {
   this->PrintHeader(os, indent); 
@@ -177,34 +149,26 @@ BinaryData
   this->PrintTrailer(os, indent);
 }
 
-
-/**
- * Define a default print header for all objects.
- */
-void 
-BinaryData
+/** Define a default print header for all objects. */
+void BinaryData
 ::PrintHeader(std::ostream& os, itk::Indent indent) const
 {
   os << indent << "BinaryData" << " (" << this << ")\n";
 }
 
 
-/**
- * Define a default print trailer for all objects.
- */
-void 
-BinaryData
-::PrintTrailer(std::ostream& itkNotUsed(os), itk::Indent itkNotUsed(indent)) const
+/** Define a default print trailer for all objects. */
+void BinaryData
+::PrintTrailer(std::ostream& itkNotUsed(os), 
+               itk::Indent itkNotUsed(indent)) const
 {
 }
 
 
-/**
- * This operator allows all subclasses of LightObject to be printed via <<.
- * It in turn invokes the Print method, which in turn will invoke the
- * PrintSelf method that all objects should define, if they have anything
- * interesting to print out.
- */
+/** This operator allows all subclasses of LightObject to be printed via <<.
+ *  It in turn invokes the Print method, which in turn will invoke the
+ *  PrintSelf method that all objects should define, if they have anything
+ *  interesting to print out. */
 std::ostream& operator<<(std::ostream& os, const BinaryData& o)
 {
   o.Print(os, 0);
@@ -212,7 +176,8 @@ std::ostream& operator<<(std::ostream& os, const BinaryData& o)
 }
 
 
-/** operator that converts BinaryData to std::string type after encoding as ASCII */
+/** operator that converts BinaryData to std::string type after encoding 
+ * as ASCII */
 BinaryData::operator std::string() const
 {
   std::string encodedString;
@@ -223,7 +188,8 @@ BinaryData::operator std::string() const
 
 
 /** Encode method encodes binary data to ASCII string in std::string. */
-void BinaryData::Encode( std::string& output, const unsigned char *data, unsigned int size )
+void BinaryData::Encode( std::string& output, const unsigned char *data, 
+                         unsigned int size )
 {
   unsigned int i;
   itk::OStringStream os;
@@ -265,7 +231,7 @@ bool BinaryData::Decode( const std::string& asciiString )
       if( asciiString[i+1] == '\\' )
         {
         this->Append( '\\' );
-        i+=2;
+        i += 2;
         }
       else if( asciiString[i+1] == 'x' )
         {
@@ -300,7 +266,7 @@ bool BinaryData::Decode( const std::string& asciiString )
           {
           byte += (asciiString[i+3] - '0');
           }
-        i+=4;
+        i += 4;
         this->Append( byte );
         }
       else  // error
@@ -324,9 +290,9 @@ void BinaryData::Append(unsigned char byte)
   m_data.push_back(byte);
 }
 
-
 /** Append data from an array */
-void BinaryData::Append(const unsigned char* inputBegin, unsigned int inputLength)
+void BinaryData::Append(const unsigned char* inputBegin,
+                        unsigned int inputLength)
 {
   m_data.insert(m_data.end(), inputBegin, &inputBegin[inputLength]);
 }

@@ -46,4 +46,3 @@ MRImageSpatialObject
 
 
 } // end namespace igstk
-

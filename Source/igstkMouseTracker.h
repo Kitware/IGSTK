@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_MouseTracker_h_
-#define __igstk_MouseTracker_h_
+#ifndef __igstk_MouseTracker_h
+#define __igstk_MouseTracker_h
 
 #include "igstkTracker.h"
 
@@ -38,65 +38,65 @@ class MouseTracker : public Tracker
 {
 public:
 
-    /** Macro with standard traits declarations. */
-    igstkStandardClassTraitsMacro( MouseTracker, Tracker )
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( MouseTracker, Tracker )
 
-    typedef Superclass::TransformType           TransformType;
+  typedef Superclass::TransformType           TransformType;
 
-    /** Initialize the tracker */
-    void Initialize();
+  /** Initialize the tracker */
+  void Initialize();
 
-    /** Get the transform */ 
-    void GetTransform(TransformType & transform);
+  /** Get the transform */ 
+  void GetTransform(TransformType & transform);
 
-    /** Scaling factor */
-    igstkSetMacro( ScaleFactor, double );
-    igstkGetMacro( ScaleFactor, double );
+  /** Scaling factor */
+  igstkSetMacro( ScaleFactor, double );
+  igstkGetMacro( ScaleFactor, double );
 
 protected:
 
-    MouseTracker();
+  MouseTracker();
 
-    virtual ~MouseTracker();
+  virtual ~MouseTracker();
 
-    typedef Tracker::ResultType                 ResultType;
+  typedef Tracker::ResultType                 ResultType;
 
-    virtual ResultType InternalOpen( void );
+  virtual ResultType InternalOpen( void );
 
-    virtual ResultType InternalActivateTools( void );
+  virtual ResultType InternalActivateTools( void );
 
-    virtual ResultType InternalStartTracking( void );
+  virtual ResultType InternalStartTracking( void );
 
-    virtual ResultType InternalUpdateStatus( void );
+  virtual ResultType InternalUpdateStatus( void );
 
-    virtual ResultType InternalReset( void );
+  virtual ResultType InternalReset( void );
 
-    virtual ResultType InternalStopTracking( void );
+  virtual ResultType InternalStopTracking( void );
 
-    virtual ResultType InternalDeactivateTools( void );
+  virtual ResultType InternalDeactivateTools( void );
 
-    virtual ResultType InternalClose( void );
+  virtual ResultType InternalClose( void );
 
-    /** Print object information */
-    virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
 
-    MouseTracker(const Self&);  //purposely not implemented
-    void operator=(const Self&); //purposely not implemented
+  MouseTracker(const Self&);  //purposely not implemented
+  void operator=(const Self&); //purposely not implemented
 
-    typedef TrackerTool                 TrackerToolType;
-    typedef TrackerPort                 TrackerPortType;
+  typedef TrackerTool                 TrackerToolType;
+  typedef TrackerPort                 TrackerPortType;
 
-    typedef Transform::TimePeriodType   TimePeriodType;
+  typedef Transform::TimePeriodType   TimePeriodType;
 
-    TimePeriodType                      m_ValidityTime;
+  TimePeriodType                      m_ValidityTime;
 
-    TrackerToolType::Pointer            m_Tool;
+  TrackerToolType::Pointer            m_Tool;
 
-    TrackerPortType::Pointer            m_Port;
+  TrackerPortType::Pointer            m_Port;
 
-    double                              m_ScaleFactor;
+  double                              m_ScaleFactor;
 };
 
 }

@@ -32,11 +32,11 @@ UltrasoundProbeObject::~UltrasoundProbeObject()
 }
 
 /** Print object information */
-void UltrasoundProbeObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void UltrasoundProbeObject
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
 
 
 } // end namespace igstk
-

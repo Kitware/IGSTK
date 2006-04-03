@@ -99,15 +99,12 @@ Transform
 }
 
 
-
-
 Transform::TimePeriodType 
 Transform
 ::GetStartTime() const
 {
   return m_TimeStamp.GetStartTime();
 }
-
 
 
 Transform::TimePeriodType 
@@ -159,14 +156,12 @@ Transform
 }
 
 
-
 bool
 Transform
 ::operator!=( const Transform & inputTransform )
 {
   return !(this->operator==( inputTransform ));
 }
-
 
 
 void
@@ -180,7 +175,6 @@ Transform
 }
 
 
-
 Transform
 Transform
 ::GetInverse() const
@@ -188,12 +182,11 @@ Transform
   Transform inverse;
   inverse.m_TimeStamp = this->m_TimeStamp;
   inverse.m_Rotation = this->m_Rotation.GetConjugate();
-  inverse.m_Translation = inverse.m_Rotation.Transform( -(this->m_Translation) );
+  inverse.m_Translation = 
+                      inverse.m_Rotation.Transform( -(this->m_Translation) );
   inverse.m_Error = this->m_Error;
   return inverse;
 }
-
-
 
 
 void 
@@ -222,7 +215,8 @@ Transform
  */
 void 
 Transform
-::PrintTrailer(std::ostream& itkNotUsed(os), itk::Indent itkNotUsed(indent)) const
+::PrintTrailer(std::ostream& itkNotUsed(os), 
+               itk::Indent itkNotUsed(indent)) const
 {
 }
 
@@ -253,5 +247,3 @@ void Transform::PrintSelf( std::ostream& os, itk::Indent indent ) const
 
 
 } // end namespace igstk
-
-

@@ -15,11 +15,8 @@
 
 =========================================================================*/
 
-
-#ifndef __igstkTransform_H
-#define __igstkTransform_H
-
-
+#ifndef __igstkTransform_h
+#define __igstkTransform_h
 
 #include "itkVector.h"
 #include "itkVersor.h"
@@ -33,7 +30,8 @@ namespace igstk
 {
  
 /** \class Transform 
- *  \brief Transform representing relative positions and orientations in 3D space.
+ *  \brief Transform representing relative positions and orientations in 
+ *  3D space.
  * 
  * This class represents relative positions and orientations in 3D space. It is
  * intended to be used for positioning objects in the scene and as a
@@ -55,9 +53,6 @@ namespace igstk
  * \sa TimeStamp
  *
  **/
-
-
-
 class Transform
 {
 public:
@@ -187,7 +182,8 @@ protected:
 
   void PrintHeader(std::ostream& os, itk::Indent indent) const;
 
-  void PrintTrailer(std::ostream& itkNotUsed(os), itk::Indent itkNotUsed(indent)) const;
+  void PrintTrailer(std::ostream& itkNotUsed(os), 
+                    itk::Indent itkNotUsed(indent)) const;
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -201,11 +197,7 @@ private:
 
 };
 
-
 std::ostream& operator<<(std::ostream& os, const igstk::Transform& o);
 }
 
-
-
 #endif
-

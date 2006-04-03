@@ -33,7 +33,8 @@ namespace igstk
 { 
 
 /** Constructor */
-UltrasoundProbeObjectRepresentation::UltrasoundProbeObjectRepresentation():m_StateMachine(this)
+UltrasoundProbeObjectRepresentation
+::UltrasoundProbeObjectRepresentation():m_StateMachine(this)
 {
   // We create the ellipse spatial object
   m_UltrasoundProbeSpatialObject = NULL;
@@ -45,10 +46,19 @@ UltrasoundProbeObjectRepresentation::UltrasoundProbeObjectRepresentation():m_Sta
   igstkAddStateMacro( NullUltrasoundProbeObject   );
   igstkAddStateMacro( ValidUltrasoundProbeObject  );
 
-  igstkAddTransitionMacro( NullUltrasoundProbeObject, NullUltrasoundProbeObject, NullUltrasoundProbeObject,  No );
-  igstkAddTransitionMacro( NullUltrasoundProbeObject, ValidUltrasoundProbeObject, ValidUltrasoundProbeObject,  SetUltrasoundProbeObject );
-  igstkAddTransitionMacro( ValidUltrasoundProbeObject, NullUltrasoundProbeObject, NullUltrasoundProbeObject,  No ); 
-  igstkAddTransitionMacro( ValidUltrasoundProbeObject, ValidUltrasoundProbeObject, ValidUltrasoundProbeObject,  No ); 
+  igstkAddTransitionMacro( NullUltrasoundProbeObject, 
+                           NullUltrasoundProbeObject, 
+                           NullUltrasoundProbeObject,  No );
+  igstkAddTransitionMacro( NullUltrasoundProbeObject, 
+                           ValidUltrasoundProbeObject, 
+                           ValidUltrasoundProbeObject,  
+                           SetUltrasoundProbeObject );
+  igstkAddTransitionMacro( ValidUltrasoundProbeObject, 
+                           NullUltrasoundProbeObject, 
+                           NullUltrasoundProbeObject,  No ); 
+  igstkAddTransitionMacro( ValidUltrasoundProbeObject, 
+                           ValidUltrasoundProbeObject, 
+                           ValidUltrasoundProbeObject,  No ); 
 
   igstkSetInitialStateMacro( NullUltrasoundProbeObject );
 
@@ -62,7 +72,9 @@ UltrasoundProbeObjectRepresentation::~UltrasoundProbeObjectRepresentation()
 }
 
 /** Set the UltrasoundProbeal Spatial Object */
-void UltrasoundProbeObjectRepresentation::RequestSetUltrasoundProbeObject( const UltrasoundProbeSpatialObjectType * UltrasoundProbe )
+void UltrasoundProbeObjectRepresentation
+::RequestSetUltrasoundProbeObject( const UltrasoundProbeSpatialObjectType * 
+                                                            UltrasoundProbe )
 {
   m_UltrasoundProbeObjectToAdd = UltrasoundProbe;
   if( !m_UltrasoundProbeObjectToAdd )
@@ -90,7 +102,8 @@ void UltrasoundProbeObjectRepresentation::SetUltrasoundProbeObjectProcessing()
 } 
 
 /** Print Self function */
-void UltrasoundProbeObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void UltrasoundProbeObjectRepresentation
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }

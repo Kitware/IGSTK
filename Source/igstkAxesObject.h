@@ -85,4 +85,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkAxesObject_h
-

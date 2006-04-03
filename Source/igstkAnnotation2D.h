@@ -41,8 +41,8 @@ class View;
  * 
  * \brief Add 2D annotations to the viewport.
  *
- * This class is used to add 2D annotations to the viewport. Annotations can be added to 
- * any of the four corners of the viewport.
+ * This class is used to add 2D annotations to the viewport. 
+ * Annotations can be added to any of the four corners of the viewport.
  *
  *  \image html  igstkAnnotation2D.png  "2D Annotation State Machine Diagram"
  *  \image latex igstkAnnotation2D.eps  "2D Annotation  Machine Diagram" 
@@ -137,4 +137,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkAnnotation2D_h
-

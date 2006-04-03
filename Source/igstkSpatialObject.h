@@ -113,8 +113,8 @@ private:
   TrackerTool::ConstPointer    m_TrackerToolToAttachTo;
 
   /** Set the Transform corresponding to the ObjectToWorld transformation of
-   * the SpatialObject. This method is only intended to be called from a callback
-   * that is observing events from a TrackerTool object. */
+   * the SpatialObject. This method is only intended to be called from a 
+   * callback that is observing events from a TrackerTool object. */
   void RequestSetTrackedTransform(const Transform & transform );
 
   /** Inputs to the State Machine */
@@ -157,4 +157,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkSpatialObject_h
-

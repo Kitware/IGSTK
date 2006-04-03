@@ -41,14 +41,12 @@ TrackerPort
 }
 
 
-
 void 
 TrackerPort
 ::ClearTools( void )
 {
   m_Tools.clear();
 }
-
 
 
 unsigned int 
@@ -90,12 +88,12 @@ void TrackerPort::PrintSelf( std::ostream& os, itk::Indent indent ) const
 
   os << indent << "Number of tools: " << this->m_Tools.size() << std::endl;
   for(unsigned int i=0; i < m_Tools.size(); ++i )
-  {
-    if( this->m_Tools[i] )
     {
+    if( this->m_Tools[i] )
+      {
       os << indent << *(this->m_Tools[i]) << std::endl;
+      }
     }
-  }
 }
 
 
@@ -107,4 +105,3 @@ std::ostream& operator<<(std::ostream& os, const TrackerPort& o)
 
 
 }
-

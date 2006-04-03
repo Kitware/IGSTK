@@ -92,4 +92,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkBoxObject_h
-

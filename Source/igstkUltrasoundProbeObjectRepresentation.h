@@ -44,18 +44,20 @@ class UltrasoundProbeObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( UltrasoundProbeObjectRepresentation, ObjectRepresentation )
+  igstkStandardClassTraitsMacro( UltrasoundProbeObjectRepresentation, 
+                                 ObjectRepresentation )
 
 public:
 
   /** Typedefs */
-  typedef UltrasoundProbeObject                 UltrasoundProbeSpatialObjectType;
+  typedef UltrasoundProbeObject  UltrasoundProbeSpatialObjectType;
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
-  void RequestSetUltrasoundProbeObject( const UltrasoundProbeSpatialObjectType * UltrasoundProbeObject );
+  void RequestSetUltrasoundProbeObject( const 
+                   UltrasoundProbeSpatialObjectType * UltrasoundProbeObject );
 
 protected:
 
@@ -75,7 +77,8 @@ protected:
 private:
 
   /** Internal itkSpatialObject */
-  UltrasoundProbeSpatialObjectType::ConstPointer   m_UltrasoundProbeSpatialObject;
+  UltrasoundProbeSpatialObjectType::ConstPointer  
+                                               m_UltrasoundProbeSpatialObject;
 
   /** update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationProcessing();
@@ -84,7 +87,8 @@ private:
    * called by the State Machine. */
   void SetUltrasoundProbeObjectProcessing(); 
 
-  /** Method for performing a null operation during a State Machine transition */
+  /** Method for performing a null operation during a 
+   *  State Machine transition */
   void NoProcessing();
 
 private:
@@ -106,4 +110,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkUltrasoundProbeObjectRepresentation_h
-

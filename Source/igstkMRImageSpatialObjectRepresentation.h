@@ -24,7 +24,8 @@ namespace igstk
 {
 
 /** \class MRImageSpatialObjectRepresentation
- *  \brief This class implements a spatial object represenation for MRI modality.
+ *  \brief This class implements a spatial object represenation 
+ *  for MRI modality.
  *
  * \ingroup Spatial object representation
  */
@@ -37,7 +38,7 @@ public:
 
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( MRImageSpatialObjectRepresentation, \
-                        ImageSpatialObjectRepresentation< MRImageSpatialObject > )
+                    ImageSpatialObjectRepresentation< MRImageSpatialObject > )
 
 protected:
 
@@ -54,4 +55,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkMRImageSpatialObjectRepresentation_h
-

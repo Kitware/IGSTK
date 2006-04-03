@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_Tracker_h_
-#define __igstk_Tracker_h_
+#ifndef __igstk_Tracker_h
+#define __igstk_Tracker_h
 
 #include <vector>
 
@@ -87,7 +87,8 @@ public:
   typedef TrackerPortType::Pointer          TrackerPortPointer;
   typedef std::vector< TrackerPortPointer > TrackerPortVectorType;
 
-  /** The "Open" method attempts to open communication with the tracking device. */
+  /** The "Open" method attempts to open communication with the 
+   *  tracking device. */
   void Open( void );
 
   /** The "Close" method closes communication with the device. */
@@ -164,10 +165,10 @@ public:
 protected:
 
   typedef enum 
-  { 
+    { 
     FAILURE=0, 
     SUCCESS
-  } ResultType;
+    } ResultType;
 
   Tracker(void);
 
@@ -273,7 +274,7 @@ private:
   int                             m_ThreadID;
 
   /** itk::ConditionVariable object pointer to signal for the next
-      transform */
+   *  transform */
   itk::ConditionVariable::Pointer m_ConditionNextTransformReceived;
   
   /** itk::SimpleMutexLock object to be used for
@@ -311,10 +312,12 @@ private:
       tracking device. */
   void AttemptToOpenProcessing( void );
   
-  /** The "AttemptToActivateToolsProcessing" method attempts to activate tools. */
+  /** The "AttemptToActivateToolsProcessing" method attempts 
+   *  to activate tools. */
   void AttemptToActivateToolsProcessing( void );
 
-  /** The "AttemptToStartTrackingProcessing" method attempts to start tracking. */
+  /** The "AttemptToStartTrackingProcessing" method attempts 
+   *  to start tracking. */
   void AttemptToStartTrackingProcessing( void );
 
   /** The "AttemptToStopTrackingProcessing" method attempts to stop tracking. */

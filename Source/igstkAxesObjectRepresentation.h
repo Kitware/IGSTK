@@ -34,9 +34,6 @@ namespace igstk
  * Default representation axis is X.  The cylindrical object is rendered in a
  * VTK scene using the vtkAxesSource object.
  *
- *  \image html  igstkAxesObjectRepresentation.png  "AxesObjectRepresentation State Machine Diagram"
- *  \image latex igstkAxesObjectRepresentation.eps  "AxesObjectRepresentation State Machine Diagram" 
- *
  * \sa AxesObject
  *
  * \ingroup ObjectRepresentation
@@ -49,7 +46,8 @@ class AxesObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( AxesObjectRepresentation, ObjectRepresentation )
+  igstkStandardClassTraitsMacro( AxesObjectRepresentation, 
+                                 ObjectRepresentation )
 
 public:
 
@@ -88,7 +86,8 @@ private:
    * called by the State Machine. */
   void SetAxesObjectProcessing(); 
 
-  /** Method for performing a null operation during a State Machine transition */
+  /** Method for performing a null operation during a State Machine 
+   *  transition */
   void NoProcessing();
 
 private:
@@ -109,4 +108,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkAxesObjectRepresentation_h
-

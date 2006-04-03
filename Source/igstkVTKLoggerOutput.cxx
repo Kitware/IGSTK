@@ -172,5 +172,3 @@ std::ostream& operator<<(std::ostream& os, VTKLoggerOutput& o)
 }
   
 } // the end of the namespace igstk
-
-

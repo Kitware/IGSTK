@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_PulseGenerator_h_
-#define __igstk_PulseGenerator_h_
+#ifndef __igstk_PulseGenerator_h
+#define __igstk_PulseGenerator_h
 
 
 #include "igstkObject.h"
@@ -39,8 +39,10 @@ namespace igstk
  *  below the millisecond range. 
  *
  *
- *  \image html  igstkPulseGenerator.png  "PulseGenerator State Machine Diagram"
- *  \image latex igstkPulseGenerator.eps  "PulseGenerator State Machine Diagram" 
+ *  \image html  igstkPulseGenerator.png  
+ *                                      "PulseGenerator State Machine Diagram"
+ *  \image latex igstkPulseGenerator.eps  
+ *                                      "PulseGenerator State Machine Diagram" 
  *
  */
 
@@ -191,4 +193,3 @@ private:
 } // end of namespace igstk
 
 #endif //__igstk_PulseGenerator_h_
-

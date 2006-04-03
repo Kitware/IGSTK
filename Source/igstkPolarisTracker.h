@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_PolarisTracker_h_
-#define __igstk_PolarisTracker_h_
+#ifndef __igstk_PolarisTracker_h
+#define __igstk_PolarisTracker_h
 
 #include "igstkSerialCommunication.h"
 #include "igstkNDICommandInterpreter.h"
@@ -129,7 +129,7 @@ private:
 
   /** Load a virtual SROM, given the file name of the ROM file */
   bool LoadVirtualSROM( const unsigned int port, 
-                        const std::string SROMFileName) ;
+                        const std::string SROMFileName);
 
   /** Clear the virtual SROM for a tool */
   void ClearVirtualSROM( const unsigned int port );

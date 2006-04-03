@@ -69,4 +69,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkUltrasoundProbeObject_h
-

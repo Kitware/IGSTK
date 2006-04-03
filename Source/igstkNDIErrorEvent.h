@@ -14,10 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-
-#ifndef __igstkNDIErrorEvent_H
-#define __igstkNDIErrorEvent_H
+#ifndef __igstkNDIErrorEvent_h
+#define __igstkNDIErrorEvent_h
 
 
 #include "igstkEvents.h"
@@ -39,7 +37,7 @@ class NDIErrorEvent : public IGSTKEvent
 
 public: 
   typedef NDIErrorEvent Self; 
-  typedef IGSTKEvent Superclass;
+  typedef IGSTKEvent    Superclass;
 
   /** Constructor */
   NDIErrorEvent() {
@@ -79,8 +77,6 @@ private:
   int  m_ErrorCode;
 };
 
-
 }
 
 #endif
-

@@ -80,4 +80,3 @@ void BoxObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 
 
 } // end namespace igstk
-

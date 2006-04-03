@@ -14,18 +14,14 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-#ifndef __igstk_StateMachine_txx
-#define __igstk_StateMachine_txx
+#ifndef __igstkStateMachine_txx
+#define __igstkStateMachine_txx
 
 #include "igstkStateMachine.h"
 
 
 namespace igstk
 {
-
-
-
 
 template<class TClass>
 StateMachine< TClass >
@@ -37,8 +33,6 @@ StateMachine< TClass >
 
   m_InitialStateSelected = false;
 }
-
-
 
 
 template<class TClass>
@@ -58,22 +52,17 @@ StateMachine< TClass >
 }
 
 
-
-
 template<class TClass>
 void
 StateMachine< TClass >
 ::AddInput( const InputType & input, const InputDescriptorType & descriptor )
 {
 
-   /** The structure of the StateMachineToken guarantees that identifiers are
-    * unique. */
-   m_Inputs[ input.GetIdentifier() ] = descriptor;
+  /** The structure of the StateMachineToken guarantees that identifiers are
+   * unique. */
+  m_Inputs[ input.GetIdentifier() ] = descriptor;
 
 }
-
-
-
 
 
 template<class TClass>
@@ -81,13 +70,12 @@ void
 StateMachine< TClass >
 ::AddState( const StateType & state, const StateDescriptorType & descriptor )
 {
-
-   /** The structure of the StateMachineToken guarantees that identifiers are
-    * unique. Here we create a new entry by invoking the bracket [] operator.
-    * NOTE: This is the *ONLY* place where the bracket operator can be used safely;
-    *       in any other case we risk to create a state entry by accident. */
-   m_States[ state.GetIdentifier() ] = descriptor;
-
+  
+  /** The structure of the StateMachineToken guarantees that identifiers are
+   * unique. Here we create a new entry by invoking the bracket [] operator.
+   * NOTE: This is the *ONLY* place where the bracket operator can be used safely;
+   *       in any other case we risk to create a state entry by accident. */
+  m_States[ state.GetIdentifier() ] = descriptor;
 }
 
 
@@ -166,8 +154,6 @@ StateMachine< TClass >
   m_InitialStateSelected = true;
 
 }
-
-
 
 
 template<class TClass>
@@ -254,7 +240,6 @@ StateMachine< TClass >
 }
 
 
-
 template<class TClass>
 void
 StateMachine< TClass >
@@ -262,7 +247,6 @@ StateMachine< TClass >
 {
   m_QueuedInputs.push( input.GetIdentifier() );
 }
-
 
 
 template<class TClass>
@@ -282,24 +266,20 @@ StateMachine< TClass >
 }
 
 
-
 template<class TClass>
 void
 StateMachine< TClass >
 ::ProcessInputs()
 {
-
   while( ! m_QueuedInputs.empty() )
     {
     InputIdentifierType inputId = m_QueuedInputs.front();
     m_QueuedInputs.pop();
-    // WARNING: It is very important to do the pop() before invoking ProcessInput()
-    // otherwise the inputs will accumulate in the queue.
+    // WARNING: It is very important to do the pop() before invoking 
+    // ProcessInput() otherwise the inputs will accumulate in the queue.
     this->ProcessInput( inputId );
     }
-
 }
-
 
 
 template<class TClass>
@@ -370,8 +350,6 @@ StateMachine< TClass >
 }
 
 
-
-
 template<class TClass>
 void
 StateMachine< TClass >
@@ -394,7 +372,8 @@ StateMachine< TClass >
       << " Attempted input     = " << input.GetIdentifier()
       << " [" << this->GetInputDescriptor( input.GetIdentifier() ) << "]"
       << " Attempted new state = " << newState.GetIdentifier()
-      << " [" << this->GetStateDescriptor( newState.GetIdentifier() ) << "] \n" );
+      << " [" << this->GetStateDescriptor( newState.GetIdentifier() ) 
+      << "] \n" );
     return;
     } 
 
@@ -411,7 +390,8 @@ StateMachine< TClass >
       << " Attempted input     = " << input.GetIdentifier()
       << " [" << this->GetInputDescriptor( input.GetIdentifier() ) << "]" 
       << " Attempted new state = " << newState.GetIdentifier()
-      << " [" << this->GetStateDescriptor( newState.GetIdentifier() ) << "] \n" );
+      << " [" << this->GetStateDescriptor( newState.GetIdentifier() ) 
+      << "] \n" );
     return;
     } 
 
@@ -429,7 +409,8 @@ StateMachine< TClass >
       << " Attempted input     = " << input.GetIdentifier()
       << " [" << this->GetInputDescriptor( input.GetIdentifier() ) << "]" 
       << " Attempted new state = " << newState.GetIdentifier()
-      << " [" << this->GetStateDescriptor( newState.GetIdentifier() ) << "] \n" );
+      << " [" << this->GetStateDescriptor( newState.GetIdentifier() ) 
+      << "] \n" );
     return;
     } 
 
@@ -442,7 +423,8 @@ StateMachine< TClass >
     {
     // No transition has been created for this particular state.
     // Therefore create a new entry for it.
-    TransitionsPerInputContainer *transitionsPerInput = new TransitionsPerInputContainer;
+    TransitionsPerInputContainer *transitionsPerInput = 
+                                             new TransitionsPerInputContainer;
 
     // Insert the new state that should be assumed if the input is received.
     StateActionPair transition( newState.GetIdentifier(), action );
@@ -455,14 +437,15 @@ StateMachine< TClass >
     {
     // Check if the particular Input has already an Entry here
     TransitionsPerInputConstIterator transitionsFromThisStateAndInput =
-                     transitionsFromThisState->second->find( input.GetIdentifier() );
-    if( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
+               transitionsFromThisState->second->find(input.GetIdentifier() );
+    if( transitionsFromThisStateAndInput != 
+                                     transitionsFromThisState->second->end() )
       {
       // There is already an entry for this input. This is suspicious
       // because the user may be overriding a previous transition by
       // accident. 
       StateIdentifierType newStateIdentifier = 
-                      transitionsFromThisStateAndInput->second.GetStateIdentifier();
+               transitionsFromThisStateAndInput->second.GetStateIdentifier();
       igstkLogMacroStatic( m_This, CRITICAL, "In class " 
         << m_This->GetNameOfClass() 
         << " Attempt to override an existing transition. "
@@ -481,34 +464,26 @@ StateMachine< TClass >
       // Finally, add the Transition: new State to assume when the specific
       // Input is received.  and the Action to be taken.
       StateActionPair newTransition( newState.GetIdentifier(), action ); 
-      (*(transitionsFromThisState->second))[input.GetIdentifier()] = newTransition;
+      (*(transitionsFromThisState->second))[input.GetIdentifier()] 
+                                                              = newTransition;
       }
     }
-
 }
 
 
-
-
-
-
-
-
-
 /** The syntax of the string generated by this method is
-    taken from "dot" documentation available at:
-    http://www.research.att.com/sw/tools/graphviz/dotguide.pdf
-    If this string is saved to a file, the file will be 
-    a valid input for the "dot" tool.
- */
+ *   taken from "dot" documentation available at:
+ *   http://www.research.att.com/sw/tools/graphviz/dotguide.pdf
+ *   If this string is saved to a file, the file will be 
+ *   a valid input for the "dot" tool. */
 template<class TClass>
 void
 StateMachine< TClass >
 ::ExportDescription( OutputStreamType & ostr, bool skipLoops=false ) const
 {
-    ostr << "digraph G {" << std::endl;
+  ostr << "digraph G {" << std::endl;
 
-    // Export all the transitions between states
+  // Export all the transitions between states
     {
     TransitionConstIterator transitionsFromThisState =
                                        m_Transitions.begin();
@@ -517,12 +492,13 @@ StateMachine< TClass >
       TransitionsPerInputConstIterator  
              transitionsFromThisStateAndInput =  
                         transitionsFromThisState->second->begin();
-      while( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
+      while( transitionsFromThisStateAndInput != 
+             transitionsFromThisState->second->end() )
         {
         // find the label that identify the input.
         InputDescriptorType label;
         InputConstIterator inputItr = m_Inputs.find( 
-                                         transitionsFromThisStateAndInput->first ); 
+                                   transitionsFromThisStateAndInput->first ); 
         if( inputItr != m_Inputs.end() )
           {
           label = inputItr->second;
@@ -560,8 +536,6 @@ StateMachine< TClass >
 }
 
 
-
-
 template<class TClass>
 void
 StateMachine< TClass >
@@ -569,16 +543,14 @@ StateMachine< TClass >
 {
 
   // Export all the transitions between states
-  
-   int out_count = 0;
-   int in_count = 0;
-   int in_flag = 0;
-   int out_flag = 0;
+  int out_count = 0;
+  int in_count = 0;
+  int in_flag = 0;
+  int out_flag = 0;
    
-   StatesConstIterator  stateId;
+  StatesConstIterator  stateId;
   
-  TransitionConstIterator transitionsFromThisState =
-                                     m_Transitions.begin();
+  TransitionConstIterator transitionsFromThisState = m_Transitions.begin();
                                      
   while( transitionsFromThisState != m_Transitions.end() )
     {
@@ -586,17 +558,17 @@ StateMachine< TClass >
     ++transitionsFromThisState;
     }
     
-  transitionsFromThisState =
-                                     m_Transitions.begin();                            
+  transitionsFromThisState = m_Transitions.begin();
                                      
   while( transitionsFromThisState != m_Transitions.end() )
     {
     TransitionsPerInputConstIterator  
            transitionsFromThisStateAndInput =  
                       transitionsFromThisState->second->begin();
-    in_count = 0;                        
+    in_count = 0;
                       
-    while( transitionsFromThisStateAndInput != transitionsFromThisState->second->end() )
+    while( transitionsFromThisStateAndInput != 
+           transitionsFromThisState->second->end() )
       {
       in_count ++;
       ++transitionsFromThisStateAndInput;
@@ -674,13 +646,10 @@ StateMachine< TClass >
         }
 
       ++transitionsFromThisState;
-      } //out-while
-     
+      } //out-while 
 }
 
-
-
-  /** Print Self function */
+/** Print Self function */
 template<class TClass>
 void
 StateMachine< TClass >
@@ -690,12 +659,15 @@ StateMachine< TClass >
 
   os << indent << this->m_State << std::endl;
   os << indent << "the object pointed is set:" << this->m_This << std::endl;
-  os << indent << " and has class name = " << m_This->GetNameOfClass() << std::endl;
+  os << indent << " and has class name = " 
+     << m_This->GetNameOfClass() << std::endl;
   os << indent << "ReadyToRun: " << this->m_ReadyToRun << std::endl;
-  os << indent << "InitialStateSelected: " << this->m_InitialStateSelected << std::endl;
+  os << indent << "InitialStateSelected: " 
+     << this->m_InitialStateSelected << std::endl;
   os << indent << "Number of States: " << this->m_States.size() << std::endl;
   os << indent << "Number of Inputs: " << this->m_Inputs.size() << std::endl;
-  os << indent << "Number of Transitions: " << this->m_Transitions.size() << std::endl;
+  os << indent << "Number of Transitions: " 
+     << this->m_Transitions.size() << std::endl;
 }
 
 template<class TClass>
@@ -703,8 +675,8 @@ void
 StateMachine< TClass >
 ::Print(std::ostream& os, itk::Indent indent) const
 {
-os << indent << "Token" << " (" << this << ")\n";
-this->PrintSelf(os, indent.GetNextIndent());
+  os << indent << "Token" << " (" << this << ")\n";
+  this->PrintSelf(os, indent.GetNextIndent());
 }
 
 /** Print Self function */
@@ -715,9 +687,6 @@ std::ostream& operator<<(std::ostream& os, const StateMachine<TClass>& o)
   return os;
 }
 
-
 }
 
-
 #endif
-

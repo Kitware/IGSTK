@@ -38,10 +38,14 @@ AxesObjectRepresentation::AxesObjectRepresentation():m_StateMachine(this)
   igstkAddStateMacro( NullAxesObject  );
   igstkAddStateMacro( ValidAxesObject );
 
-  igstkAddTransitionMacro( NullAxesObject, NullAxesObject, NullAxesObject,  No );
-  igstkAddTransitionMacro( NullAxesObject, ValidAxesObject, ValidAxesObject,  SetAxesObject );
-  igstkAddTransitionMacro( ValidAxesObject, NullAxesObject, NullAxesObject,  No ); 
-  igstkAddTransitionMacro( ValidAxesObject, ValidAxesObject, ValidAxesObject,  No ); 
+  igstkAddTransitionMacro( NullAxesObject, NullAxesObject, 
+                           NullAxesObject,  No );
+  igstkAddTransitionMacro( NullAxesObject, ValidAxesObject, 
+                           ValidAxesObject,  SetAxesObject );
+  igstkAddTransitionMacro( ValidAxesObject, NullAxesObject, 
+                           NullAxesObject,  No ); 
+  igstkAddTransitionMacro( ValidAxesObject, ValidAxesObject, 
+                           ValidAxesObject,  No ); 
 
   m_StateMachine.SelectInitialState( m_NullAxesObjectState );
 
@@ -55,7 +59,8 @@ AxesObjectRepresentation::~AxesObjectRepresentation()
 }
 
 /** Request to Set the AxesSpatial Object */
-void AxesObjectRepresentation::RequestSetAxesObject( const AxesSpatialObjectType * Axes )
+void AxesObjectRepresentation::RequestSetAxesObject( 
+                                          const AxesSpatialObjectType * Axes )
 {
   m_AxesObjectToAdd = Axes;
   if( !m_AxesObjectToAdd )
@@ -83,7 +88,8 @@ void AxesObjectRepresentation::SetAxesObjectProcessing()
 } 
 
 /** Print Self function */
-void AxesObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void AxesObjectRepresentation::PrintSelf( std::ostream& os, 
+                                          itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
@@ -124,4 +130,3 @@ AxesObjectRepresentation::Copy() const
 }
 
 } // end namespace igstk
-

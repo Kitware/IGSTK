@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __igstk_Object_h_
-#define __igstk_Object_h_
+#ifndef __igstk_Object_h
+#define __igstk_Object_h
 
 
 #include "itkObject.h"
@@ -44,9 +44,9 @@ public:
   /** General Typedefs. Note that the igstkStandardClassTraitsMacro() cannot be
    * used here because that macro invokes calls in the superclass, for example
    * SetLogger, that will not be available in the ITK Object class. */
-  typedef Object Self;  
-  typedef ::itk::Object Superclass; 
-  typedef ::itk::SmartPointer< Self > Pointer; 
+  typedef Object                            Self;  
+  typedef ::itk::Object                     Superclass; 
+  typedef ::itk::SmartPointer< Self >       Pointer; 
   typedef ::itk::SmartPointer< const Self > ConstPointer; 
   
   igstkTypeMacro( Object, ::itk::Object );  
@@ -84,4 +84,3 @@ private:
 } // end of namespace igstk
 
 #endif //__igstk_Object_h_
-
