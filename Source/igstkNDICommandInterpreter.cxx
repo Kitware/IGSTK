@@ -68,8 +68,8 @@ void NDICommandInterpreter::SetCommunication(CommunicationType* communication)
 {
   m_Communication = communication;
  
-  /* These are the communication parameters that the NDI devices are
-     set up for when they are turned on or reset. */
+  /** These are the communication parameters that the NDI devices are
+   * set up for when they are turned on or reset. */
   communication->SetBaudRate(SerialCommunication::BaudRate9600);
   communication->SetDataBits(SerialCommunication::DataBits8);
   communication->SetParity(SerialCommunication::NoParity);
@@ -77,31 +77,31 @@ void NDICommandInterpreter::SetCommunication(CommunicationType* communication)
   communication->SetHardwareHandshake(SerialCommunication::HandshakeOff);
   communication->UpdateParameters();
 
-  /* The timeouts are tricky to deal with.  The NDI devices reply
-     almost immediately after most command, with notable exceptions:
-     INIT, RESET, PINIT and some diagnostic commands tie up the
-     device for quite some time.  The worst offender is PINIT,
-     since port initialization can take up to 5 seconds.
-
-     A long timeout is a problem if a line error (i.e. error caused
-     by noise in the serial cable) occurs.  Line errors occur
-     infrequently at 57600 baud and frequenty at 115200 baud.
-     A line error can cause a loss of the trailing carriage return
-     on a data record, and the Read() command will of course keep
-     waiting for this nonexistent carriage return. Five seconds is
-     a long time to wait!  As a solution, while in tracking mode, the
-     timeout period is reduced to just 0.1 seconds so that errors
-     can be detected and dealt with swiftly.
-
-     Line errors in tracking mode are no danger, since CRC checking will
-     automatically detect and discard bad data records.  However, we
-     don't want the system to freeze for 5 seconds each time an error
-     like this occurs, which is why we reduce the timeout to 0.1s in
-     tracking mode.
-  */
+  /**  The timeouts are tricky to deal with.  The NDI devices reply
+   *  almost immediately after most command, with notable exceptions:
+   *  INIT, RESET, PINIT and some diagnostic commands tie up the
+   *  device for quite some time.  The worst offender is PINIT,
+   *  since port initialization can take up to 5 seconds.
+   *
+   *  A long timeout is a problem if a line error (i.e. error caused
+   *  by noise in the serial cable) occurs.  Line errors occur
+   *  infrequently at 57600 baud and frequenty at 115200 baud.
+   *  A line error can cause a loss of the trailing carriage return
+   *  on a data record, and the Read() command will of course keep
+   *  waiting for this nonexistent carriage return. Five seconds is
+   *  a long time to wait!  As a solution, while in tracking mode, the
+   *  timeout period is reduced to just 0.1 seconds so that errors
+   *  can be detected and dealt with swiftly.
+   *
+   *  Line errors in tracking mode are no danger, since CRC checking will
+   *  automatically detect and discard bad data records.  However, we
+   *  don't want the system to freeze for 5 seconds each time an error
+   *  like this occurs, which is why we reduce the timeout to 0.1s in
+   *  tracking mode.
+   */
   communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
 
-  /* All replies from the NDI devices end in a carriage return. */
+  /** All replies from the NDI devices end in a carriage return. */
   communication->SetUseReadTerminationCharacter(1);
   communication->SetReadTerminationCharacter('\r');
 }
@@ -379,7 +379,7 @@ const char* NDICommandInterpreter::ErrorString(int errnum)
     "All handles have been allocated",
     "Invalid port description",
     "Requested port already assigned to a port handle",
-    "Invalid input or output state",    
+    "Invalid input or output state",
     "No camera parameters for this wavelength",
     "Command parameters out of range"
     "No camera parameters for this volume",
@@ -1197,8 +1197,7 @@ int NDICommandInterpreter::GetTXMarkerInfo(int ph, int marker) const
   int i;
   int result = 0;
   
-  if (this->TXIndexFromPortHandle(ph, &i) &&
-      marker >= 0 && marker < 20)
+  if (this->TXIndexFromPortHandle(ph, &i) && marker >= 0 && marker < 20)
     {
     if (m_TXHandleStatus[i] != NDI_DISABLED)
       {
@@ -1402,8 +1401,7 @@ int NDICommandInterpreter::GetBXMarkerInfo(int ph, int marker) const
   int i;  
   int result = 0;
   
-  if (this->BXIndexFromPortHandle(ph, &i) &&
-      marker >= 0 && marker < 20)
+  if (this->BXIndexFromPortHandle(ph, &i) && marker >= 0 && marker < 20)
     {
     if (m_BXHandleStatus[i] != NDI_DISABLED)
       {
@@ -1629,16 +1627,15 @@ int NDICommandInterpreter::GetIRCHKSourceXY(int side, int i,
   return result;
 }
 
-/*---------------------------------------------------------------------
-  Copy all the PHINF reply information into the ndicapi structure, according
-  to the PHINF reply mode that was requested.
-
-  This function is called every time a PHINF command is sent to the
-  Measurement System.
-
-  This information can be later extracted through one of the ndiGetPHINFxx()
-  functions.
-*/
+/** Copy all the PHINF reply information into the ndicapi structure,
+ *  according to the PHINF reply mode that was requested.
+ *
+ *  This function is called every time a PHINF command is sent to the
+ *  Measurement System.
+ *
+ *  This information can be later extracted through one of the ndiGetPHINFxx()
+ *  functions.
+ */
 void NDICommandInterpreter::HelperForPHINF(const char* cp, const char* crp)
 {
   unsigned int mode = NDI_BASIC; /* the default reply mode */
@@ -1885,7 +1882,7 @@ void NDICommandInterpreter::HelperForTX(const char* cp, const char* crp)
        /* check for "MISSING" */
         if (*crp == 'M')
           {
-          m_TXHandleStatus[i] = NDI_MISSING;          
+          m_TXHandleStatus[i] = NDI_MISSING;
           for (j = 0; j < 7 && *crp >= ' '; j++)
             {
             *dp++ = *crp++;
@@ -1893,7 +1890,7 @@ void NDICommandInterpreter::HelperForTX(const char* cp, const char* crp)
           }
         else
           {
-          m_TXHandleStatus[i] = NDI_VALID;          
+          m_TXHandleStatus[i] = NDI_VALID;
           /* read the transform */
           for (j = 0; j < 51 && *crp >= ' '; j++)
             {
@@ -2408,4 +2405,3 @@ void NDICommandInterpreter::PrintSelf(std::ostream& os,
 
 
 }
-
