@@ -77,7 +77,8 @@ typedef struct {
 
 igstkLoadedEventMacro( PointEvent, IGSTKEvent, EventHelperType::PointType );
 igstkLoadedEventMacro( TransformModifiedEvent, IGSTKEvent, Transform );
-igstkLoadedEventMacro( LandmarkRegistrationErrorEvent, IGSTKEvent, EventHelperType::DoubleType );
+igstkLoadedEventMacro( LandmarkRegistrationErrorEvent, IGSTKEvent, 
+                       EventHelperType::DoubleType );
 igstkLoadedEventMacro( StringEvent, IGSTKEvent, EventHelperType::StringType );
 igstkLoadedEventMacro( UnsignedIntEvent, IGSTKEvent, 
                        EventHelperType::UnsignedIntType );

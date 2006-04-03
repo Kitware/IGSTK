@@ -29,8 +29,8 @@
 class name##Observer : public ::itk::Command \
 { \
 public: \
-  typedef  name##Observer   Self; \
-  typedef  ::itk::Command    Superclass;\
+  typedef  name##Observer             Self; \
+  typedef  ::itk::Command             Superclass;\
   typedef  ::itk::SmartPointer<Self>  Pointer;\
   itkNewMacro( Self );\
 protected:\

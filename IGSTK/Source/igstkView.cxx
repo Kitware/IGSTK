@@ -165,8 +165,6 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this)
   igstkAddTransitionMacro( Idle, InvalidScreenShotFileName,
                            Idle, ReportInvalidScreenShotFileName );
 
-
-
   igstkSetInitialStateMacro( Idle );
 
   m_StateMachine.SetReadyToRun();
@@ -214,8 +212,6 @@ View::~View()
   m_RenderWindow->Delete();
 
 }
-
-
 
 /** Update the display */
 void View::Update()
@@ -325,8 +321,6 @@ void View::Render()
   m_RenderWindowInteractor->Render();
 }
 
-
-
 /** */
 void View::EnableInteractionsProcessing()
 {
@@ -341,8 +335,6 @@ void View::DisableInteractionsProcessing()
   m_InteractionHandling = false;
 }
 
-
-
 /** */
 void View::RequestResetCamera()
 {
@@ -351,15 +343,12 @@ void View::RequestResetCamera()
   m_StateMachine.ProcessInputs();
 }
 
-
 /** */
 void View::ResetCameraProcessing()
 {
   igstkLogMacro( DEBUG, "ResetCameraProcessing() called ...\n");
   m_Renderer->ResetCamera();
 }
-
-
 
 /** */
 void View::StartProcessing()
@@ -376,7 +365,6 @@ void View::StopProcessing()
   // the internal pulse generator will control the redraws
   m_PulseGenerator->RequestStop();
 }
-
 
 /** this gets called during FLTK window draw()s and resize()s */
 void View::UpdateSize(int W, int H)
@@ -406,7 +394,6 @@ void View::UpdateSize(int W, int H)
     }
 }
 
-
 /** Define the refresh rate by programming the internal pulse generator */
 void View::RequestSetRefreshRate( double frequencyHz )
 {
@@ -414,7 +401,6 @@ void View::RequestSetRefreshRate( double frequencyHz )
   // Let the state machine of the pulse generator manage this request
   m_PulseGenerator->RequestSetFrequency( frequencyHz );
 }
-
 
 /** Refresh the rendering. This function is called in response to pulses from
  * the pulse generator. */
@@ -446,7 +432,6 @@ void View::RefreshRender()
   // Last, report to observers that a refresh event took place.
   m_Reporter->InvokeEvent( RefreshEvent() );
 }
-
 
 /** Request for Adding an object to the View */
 void View::RequestAddObject( ObjectRepresentation* pointer )
@@ -737,7 +722,8 @@ int View::handle( int event )
   // SEI(x, y, ctrl, shift, keycode, repeatcount, keysym)
   m_RenderWindowInteractor->SetEventInformation(
                             Fl::event_x(), this->h()-Fl::event_y()-1, 
-                            Fl::event_state( FL_CTRL ), Fl::event_state( FL_SHIFT ),
+                            Fl::event_state( FL_CTRL ), 
+                            Fl::event_state( FL_SHIFT ),
                             Fl::event_key(), 1, NULL);   
     
   switch( event ) 
@@ -767,27 +753,31 @@ int View::handle( int event )
       // keyboard callbacks (including
       // hotkeys)
       return 0;
-    break;
+      break;
      
     case FL_PUSH: // mouse down
-    this->take_focus();  // this allows key events to work
-    switch( Fl::event_button() ) 
-      {
-      case FL_LEFT_MOUSE:
-        m_RenderWindowInteractor->InvokeEvent(vtkCommand::LeftButtonPressEvent,NULL);
-        break;
-      case FL_MIDDLE_MOUSE:
-        m_RenderWindowInteractor->InvokeEvent(vtkCommand::MiddleButtonPressEvent,NULL);
-        break;
-      case FL_RIGHT_MOUSE:
-        m_RenderWindowInteractor->InvokeEvent(vtkCommand::RightButtonPressEvent,NULL);
-        break;
-      }
-    break; // this break should be here, at least according to vtkXRenderWindowInteractor
+      this->take_focus();  // this allows key events to work
+      switch( Fl::event_button() ) 
+        {
+        case FL_LEFT_MOUSE:
+          m_RenderWindowInteractor->InvokeEvent(
+                                      vtkCommand::LeftButtonPressEvent,NULL);
+          break;
+        case FL_MIDDLE_MOUSE:
+          m_RenderWindowInteractor->InvokeEvent(
+                                    vtkCommand::MiddleButtonPressEvent,NULL);
+          break;
+        case FL_RIGHT_MOUSE:
+          m_RenderWindowInteractor->InvokeEvent(
+                                     vtkCommand::RightButtonPressEvent,NULL);
+          break;
+        }
+      break; // this break should be here, at least according to 
+             // vtkXRenderWindowInteractor
 
-    // we test for both of these, as fltk classifies mouse moves as with or
-    // without button press whereas vtk wants all mouse movement (this bug took
-    // a while to find :)
+      // we test for both of these, as fltk classifies mouse moves as 
+      // with or without button press whereas vtk wants all mouse movement 
+      // (this bug took a while to find :)
     case FL_DRAG:
     case FL_MOVE:
       m_RenderWindowInteractor->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);
@@ -798,7 +788,8 @@ int View::handle( int event )
         {
         case FL_LEFT_MOUSE:
           {
-          m_RenderWindowInteractor->InvokeEvent(vtkCommand::LeftButtonReleaseEvent,NULL);
+          m_RenderWindowInteractor->InvokeEvent(
+                                     vtkCommand::LeftButtonReleaseEvent,NULL);
           
           m_PointPicker->Pick( Fl::event_x(), 
                                this->h()-Fl::event_y()-1, 
@@ -811,7 +802,8 @@ int View::handle( int event )
           pickedPoint[2] = data[2];
           
           double validityTime = -1.0; // Never expire
-          double errorValue = 1.0; // this should be obtained from the picked object.
+          double errorValue = 1.0; // this should be obtained from 
+                                   // the picked object.
 
           igstk::Transform transform;
           transform.SetTranslation( pickedPoint, errorValue, validityTime );
@@ -823,13 +815,15 @@ int View::handle( int event )
           }
           break;
         case FL_MIDDLE_MOUSE:
-          m_RenderWindowInteractor->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent,NULL);
+          m_RenderWindowInteractor->InvokeEvent(
+                                   vtkCommand::MiddleButtonReleaseEvent,NULL);
           break;
         case FL_RIGHT_MOUSE:
-          m_RenderWindowInteractor->InvokeEvent(vtkCommand::RightButtonReleaseEvent,NULL);
+          m_RenderWindowInteractor->InvokeEvent(
+                                    vtkCommand::RightButtonReleaseEvent,NULL);
           break;
         }
-     break;
+      break;
 
     default:    // let the base class handle everything else 
     return Fl_Gl_Window::handle( event );
@@ -897,8 +891,6 @@ void View::PrintSelf( std::ostream& os, itk::Indent indent ) const
     os << indent << *itr << std::endl;
     }
 }
-
-
 
 /** */
 static char const rcsid[] =
