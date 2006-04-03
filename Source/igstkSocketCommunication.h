@@ -166,11 +166,13 @@ public:
 
   /** Function to read data. */
   /** Server and client. */
-  ResultType RequestRead( char* data, unsigned int numberOfBytes, unsigned int &bytesRead );
+  ResultType RequestRead( char* data, unsigned int numberOfBytes, 
+                                                    unsigned int &bytesRead );
 
   /** Function to read data. */
   /** Server and client. */
-  ResultType RequestRead( char* data, unsigned int numberOfBytes, unsigned int &bytesRead, unsigned int msec );
+  ResultType RequestRead( char* data, unsigned int numberOfBytes, 
+                                 unsigned int &bytesRead, unsigned int msec );
 
 protected:
 
@@ -235,7 +237,8 @@ protected:
   virtual ResultType InternalOpenPortProcessing( PortNumberType port );
 
   /** Internal function to select socket. */
-  virtual ResultType InternalSelectSocketProcessing( SocketType socket, unsigned int msec );
+  virtual ResultType InternalSelectSocketProcessing( SocketType socket, 
+                                                     unsigned int msec );
 
   /** Internal function to wait for connection. */
   virtual ResultType InternalWaitForConnectionProcessing();
@@ -244,16 +247,21 @@ protected:
   virtual ResultType InternalQueryForConnectionProcessing( unsigned int msec );
 
   /** Internal function to connect. */
-  virtual ResultType InternalConnectProcessing( AddressType address, PortNumberType port );
+  virtual ResultType InternalConnectProcessing( AddressType address, 
+                                                PortNumberType port );
 
   /** Internal function to write. */
-  virtual ResultType InternalWriteProcessing( const char* data, unsigned int numberOfBytes ); 
+  virtual ResultType InternalWriteProcessing( const char* data, 
+                                              unsigned int numberOfBytes ); 
 
   /** Internal function to read. */
-  virtual ResultType InternalReadProcessing( char* data, unsigned int numberOfBytes, unsigned int& bytesRead );
+  virtual ResultType InternalReadProcessing( char* data,
+                                             unsigned int numberOfBytes, 
+                                             unsigned int& bytesRead );
 
   /** Internal function to read. */
-  virtual ResultType InternalReadProcessing( char* data, unsigned int numberOfBytes, unsigned int& bytesRead, unsigned int msec );
+  virtual ResultType InternalReadProcessing( char* data, 
+     unsigned int numberOfBytes, unsigned int& bytesRead, unsigned int msec );
 
   /** Internal function to disconenct connection socket. */
   virtual ResultType InternalDisconnectConnectionSocketProcessing(); 

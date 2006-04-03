@@ -39,14 +39,12 @@
 
 ITK_THREAD_RETURN_TYPE ServerThreadFunction( void* data)
 {
-  typedef igstk::SocketCommunication        SocketCommunicationType;
-  typedef SocketCommunicationType::Pointer  SocketCommunicationPointerType;
-  typedef SocketCommunicationType::ResultType
-                                            ResultType;
-  typedef itk::MultiThreader::ThreadInfoStruct*
-                                            ThreadInfoStructPointerType;
-  typedef itk::Logger                       LoggerType; 
-  typedef itk::StdStreamLogOutput           LogOutputType;
+  typedef igstk::SocketCommunication            SocketCommunicationType;
+  typedef SocketCommunicationType::Pointer      SocketCommunicationPointerType;
+  typedef SocketCommunicationType::ResultType   ResultType;
+  typedef itk::MultiThreader::ThreadInfoStruct* ThreadInfoStructPointerType;
+  typedef itk::Logger                           LoggerType; 
+  typedef itk::StdStreamLogOutput               LogOutputType;
   
 
   LoggerType::Pointer                       logger = LoggerType::New();
@@ -96,36 +94,36 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction( void* data)
         result = server->RequestRead( buffer, 100, num, 10);
         switch (result)
           {
-        case SocketCommunicationType::SUCCESS:
-          printf( "\n");
-          buffer[num] = '\0';
-          printf( buffer);
-          printf( "\n");
+          case SocketCommunicationType::SUCCESS:
+            printf( "\n");
+            buffer[num] = '\0';
+            printf( buffer);
+            printf( "\n");
 
-          if (strcmp(buffer, "STOPSERVER") == 0)
-            {
-            stop = true;
-            }
-          else if (strncmp(buffer, clientmessage, strlen(clientmessage)) == 0)
-            {
-            sprintf(message, "%s[%d]\n", servermessage, i);      
-            server->RequestWrite( message );
-            i++;
-            }
-          else
-            {
-            printf("Data transfer error!\n");
+            if (strcmp(buffer, "STOPSERVER") == 0)
+              {
+              stop = true;
+              }
+            else if (strncmp(buffer, clientmessage, strlen(clientmessage)) == 0)
+              {
+              sprintf(message, "%s[%d]\n", servermessage, i);
+              server->RequestWrite( message );
+              i++;
+              }
+            else
+              {
+              printf("Data transfer error!\n");
+              *flag = false;
+              return ITK_THREAD_RETURN_VALUE;
+              }
+            break;
+          case SocketCommunicationType::TIMEOUT:
+            break;
+          case SocketCommunicationType::FAILURE:
+            printf("Read error!\n");
             *flag = false;
             return ITK_THREAD_RETURN_VALUE;
-            }
-          break;
-        case SocketCommunicationType::TIMEOUT:
-          break;
-        case SocketCommunicationType::FAILURE:
-          printf("Read error!\n");
-          *flag = false;
-          return ITK_THREAD_RETURN_VALUE;
-          break;
+            break;
           }
         }
       while (!stop);
@@ -145,14 +143,12 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction( void* data)
 
 ITK_THREAD_RETURN_TYPE ClientThreadFunction( void* data)
 {
-  typedef igstk::SocketCommunication        SocketCommunicationType;
-  typedef SocketCommunicationType::Pointer  SocketCommunicationPointerType;
-  typedef SocketCommunicationType::ResultType
-                                            ResultType;
-  typedef itk::MultiThreader::ThreadInfoStruct*
-                                            ThreadInfoStructPointerType;
-  typedef itk::Logger                       LoggerType; 
-  typedef itk::StdStreamLogOutput           LogOutputType;
+  typedef igstk::SocketCommunication            SocketCommunicationType;
+  typedef SocketCommunicationType::Pointer      SocketCommunicationPointerType;
+  typedef SocketCommunicationType::ResultType   ResultType;
+  typedef itk::MultiThreader::ThreadInfoStruct* ThreadInfoStructPointerType;
+  typedef itk::Logger                           LoggerType; 
+  typedef itk::StdStreamLogOutput               LogOutputType;
 
   LoggerType::Pointer                       logger = LoggerType::New();
   LogOutputType::Pointer                    logOutput = LogOutputType::New();  
@@ -193,11 +189,11 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction( void* data)
     {
     sprintf(message, "%s[%d]\n", clientmessage, i);
     if (!client->RequestWrite( message ))
-    { 
+      { 
       printf("Write error!\n");
       *flag = false;
       return ITK_THREAD_RETURN_VALUE;
-    }
+      }
     
     do 
       {

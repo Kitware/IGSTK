@@ -666,21 +666,22 @@ void SocketCommunication::PrintSelf( std::ostream& os,
   Superclass::PrintSelf(os, indent);
 
   switch ( this->GetSocketUsageType())
-  {
-  case NONE_SOCKET:
-    os << indent << "Socket Type: NONE_SOCKET";
-    break;
-  case SERVER_SOCKET:
-    os << indent << "Socket Type: SERVER_SOCKET";
-    break;
-  case CLIENT_SOCKET:
-    os << indent << "Socket Type: CLIENT_SOCKET";
-    break;
-  }
+    {
+    case NONE_SOCKET:
+      os << indent << "Socket Type: NONE_SOCKET";
+      break;
+    case SERVER_SOCKET:
+      os << indent << "Socket Type: SERVER_SOCKET";
+      break;
+    case CLIENT_SOCKET:
+      os << indent << "Socket Type: CLIENT_SOCKET";
+      break;
+    }
 
   os << indent << "Socket: " << this->GetSocket() << std::endl;
 
-  os << indent << "Connection Socket: " << this->GetConnectionSocket() << std::endl;
+  os << indent << "Connection Socket: " 
+     << this->GetConnectionSocket() << std::endl;
 
   os << indent << "Address: " << this->GetAddress() << std::endl;
 
@@ -688,7 +689,8 @@ void SocketCommunication::PrintSelf( std::ostream& os,
 
   os << indent << "Capture: " << this->GetCapture() << std::endl;
   
-  os << indent << "CaptureFileName: " << this->GetCaptureFileName() << std::endl;
+  os << indent << "CaptureFileName: " 
+     << this->GetCaptureFileName() << std::endl;
   
   os << indent << "CaptureFileStream: " << m_CaptureFileStream << std::endl;
   
@@ -709,7 +711,8 @@ const char* SocketCommunication::GetCaptureFileName() const
 SocketCommunication::ResultType 
 SocketCommunication::InternalOpenCommunicationProcessing( void ) 
 { 
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalOpenCommunicationProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::\
+                        InternalOpenCommunicationProcessing called ...\n");
 
 #ifdef WIN32
   WORD wVersionRequested;
@@ -730,13 +733,16 @@ SocketCommunication::InternalOpenCommunicationProcessing( void )
   this->m_Socket = socket(AF_INET, SOCK_STREAM, 0);
   if (this->m_Socket == IGSTK_INVALID_SOCKET )
     {
-    igstkLogMacro( DEBUG, "SocketCommunication::InternalOpenCommunicationProcessing: create socket error!\n");
+    igstkLogMacro( DEBUG, "SocketCommunication::InternalOpenCommunication\
+                          Processing: create socket error!\n");
     return FAILURE;
     }
 
-  if (setsockopt(this->m_Socket, IPPROTO_TCP, TCP_NODELAY, (char*)&on, sizeof(on)))
+  if (setsockopt(this->m_Socket, IPPROTO_TCP, TCP_NODELAY, 
+                 (char*)&on, sizeof(on)))
     {
-    igstkLogMacro( DEBUG, "SocketCommunication::InternalOpenCommunicationProcessing: set socket option error!\n");
+    igstkLogMacro( DEBUG, "SocketCommunication::InternalOpenCommunication\
+                          Processing: set socket option error!\n");
     return FAILURE;
     }
   else
@@ -770,8 +776,8 @@ SocketCommunication::InternalOpenCommunicationProcessing( void )
         {
         m_CaptureFileOutput->SetStream( m_CaptureFileStream );
         m_Recorder->AddLogOutput( m_CaptureFileOutput );
-        igstkLogMacro2( m_Recorder, DEBUG, "# recorded " << asctime(localtime(&ti))
-                            << "\n" );
+        igstkLogMacro2( m_Recorder, DEBUG, "# recorded " 
+                        << asctime(localtime(&ti)) << "\n" );
         }
     }
     return SUCCESS; 
@@ -781,9 +787,11 @@ SocketCommunication::InternalOpenCommunicationProcessing( void )
 
 /** Internal function to open port. */
 SocketCommunication::ResultType 
-SocketCommunication::InternalOpenPortProcessing( SocketCommunication::PortNumberType port )
+SocketCommunication::InternalOpenPortProcessing( 
+                                    SocketCommunication::PortNumberType port )
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalOpenPortProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalOpenPortProcessing\
+                        called ...\n");
 
   struct sockaddr_in server;
   int opt;
@@ -795,20 +803,25 @@ SocketCommunication::InternalOpenPortProcessing( SocketCommunication::PortNumber
   server.sin_port = htons(port);
 
 #ifdef WIN32
-  setsockopt( this->m_Socket, SOL_SOCKET, SO_REUSEADDR, (char*) &opt, sizeof(int));
+  setsockopt( this->m_Socket, SOL_SOCKET, SO_REUSEADDR, (char*) &opt, 
+                                                                  sizeof(int));
 #else
-  setsockopt( this->m_Socket, SOL_SOCKET, SO_REUSEADDR, (void*) &opt, sizeof(int));
+  setsockopt( this->m_Socket, SOL_SOCKET, SO_REUSEADDR, (void*) &opt, 
+                                                                  sizeof(int));
 #endif
 
-  if ( bind( this->m_Socket, reinterpret_cast<sockaddr*>(&server), sizeof(server)) )
+  if ( bind( this->m_Socket, reinterpret_cast<sockaddr*>(&server), 
+                                                            sizeof(server)) )
     {
-    igstkLogMacro( DEBUG, "SocketCommunication::InternalOpenPortProcessing: bind error!\n");
+    igstkLogMacro( DEBUG, "SocketCommunication::InternalOpenPortProcessing:\
+                           bind error!\n");
     return FAILURE;
     }
 
   if ( listen( this->m_Socket, 10))
     {
-    igstkLogMacro( DEBUG, "SocketCommunication::InternalOpenPortProcessing: listen error!\n");
+    igstkLogMacro( DEBUG, "SocketCommunication::InternalOpenPortProcessing:\
+                          listen error!\n");
     return FAILURE;
     }
   else
@@ -822,9 +835,11 @@ SocketCommunication::InternalOpenPortProcessing( SocketCommunication::PortNumber
 
 /** Internal function to select socket. */
 SocketCommunication::ResultType 
-SocketCommunication::InternalSelectSocketProcessing( SocketType socket, unsigned int msec )
+SocketCommunication::InternalSelectSocketProcessing( SocketType socket, 
+                                                     unsigned int msec )
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalSelectSocketProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalSelectSocketProcessing\
+                        called ...\n");
 
   fd_set rset;
   struct timeval tval;
@@ -846,16 +861,19 @@ SocketCommunication::InternalSelectSocketProcessing( SocketType socket, unsigned
   int res = select( socket + 1, &rset, NULL, NULL, tvalptr);
   if (res == 0)
     {
-    igstkLogMacro( DEBUG, "SocketCommunication::InternalSelectSocketProcessing: time out!\n");
-    return TIMEOUT;    
+    igstkLogMacro( DEBUG, "SocketCommunication::InternalSelectSocketProcessing\
+                          : time out!\n");
+    return TIMEOUT;
     }
   if ( res < 0 || !(FD_ISSET(socket, &rset)) )
     {
-    igstkLogMacro( DEBUG, "SocketCommunication::InternalSelectSocketProcessing: no active socket!\n");
+    igstkLogMacro( DEBUG, "SocketCommunication::InternalSelectSocketProcessing\
+                          : no active socket!\n");
     return FAILURE;
     } 
 
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalSelectSocketProcessing: active socket found!\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalSelectSocketProcessing:\
+                         active socket found!\n");
 
   return SUCCESS; 
 }
@@ -864,20 +882,23 @@ SocketCommunication::InternalSelectSocketProcessing( SocketType socket, unsigned
 SocketCommunication::ResultType 
 SocketCommunication::InternalWaitForConnectionProcessing( )
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalWaitForConnectionProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalWaitForConnection\
+                        Processing called ...\n");
 
   SocketType newsocket;
 
   newsocket = accept( this->m_Socket, 0, 0);
   if ( newsocket == IGSTK_INVALID_SOCKET )
     {
-    igstkLogMacro( DEBUG, "SocketCommunication::InternalWaitForConnectionProcessing: accept socket error!\n");
+    igstkLogMacro( DEBUG, "SocketCommunication::InternalWaitForConnection\
+                          Processing: accept socket error!\n");
     return FAILURE;
     }
  
   this->m_ConnectionSocket = newsocket;
 
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalWaitForConnectionProcessing: accept socket!\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalWaitForConnection\
+                        Processing: accept socket!\n");
 
   return SUCCESS; 
 }
@@ -886,14 +907,16 @@ SocketCommunication::InternalWaitForConnectionProcessing( )
 SocketCommunication::ResultType 
 SocketCommunication::InternalQueryForConnectionProcessing( unsigned int msec )
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalQueryForConnectionProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalQueryForConnection\
+                        Processing called ...\n");
 
   ResultType result;
 
   result = this->InternalSelectSocketProcessing( this->m_Socket, msec );
   if ( result != SUCCESS)
     {
-    igstkLogMacro( DEBUG, "SocketCommunication::InternalQueryForConnectionProcessing: no active socket found!\n");
+    igstkLogMacro( DEBUG, "SocketCommunication::InternalQueryForConnection\
+                          Processing: no active socket found!\n");
     return result;
     }
 
@@ -902,9 +925,11 @@ SocketCommunication::InternalQueryForConnectionProcessing( unsigned int msec )
 
 /** Internal function to connect. */  
 SocketCommunication::ResultType 
-SocketCommunication::InternalConnectProcessing( AddressType address, PortNumberType port ) 
+SocketCommunication::InternalConnectProcessing( AddressType address, 
+                                                PortNumberType port ) 
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalConnectProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalConnectProcessing\
+                         called ...\n");
 
   struct hostent* hp;
   struct sockaddr_in name;
@@ -921,9 +946,11 @@ SocketCommunication::InternalConnectProcessing( AddressType address, PortNumberT
   memcpy( &name.sin_addr, hp->h_addr, hp->h_length);
   name.sin_port = htons(port);
 
-  if( connect(this->m_Socket, reinterpret_cast<sockaddr*>(&name), sizeof(name)) < 0)
+  if( connect(this->m_Socket, reinterpret_cast<sockaddr*>(&name), 
+                                                            sizeof(name)) < 0)
     {
-    igstkLogMacro( DEBUG, "SocketCommunication::InternalConnectProcessing: socket connection error!\n");
+    igstkLogMacro( DEBUG, "SocketCommunication::InternalConnectProcessing:\
+                           socket connection error!\n");
     return FAILURE;
     }
 
@@ -931,7 +958,8 @@ SocketCommunication::InternalConnectProcessing( AddressType address, PortNumberT
   this->m_Address = address;
   this->m_PortNumber = port;
 
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalConnectProcessing: socket connected!\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalConnectProcessing:\
+                        socket connected!\n");
 
   return SUCCESS; 
 
@@ -941,7 +969,8 @@ SocketCommunication::InternalConnectProcessing( AddressType address, PortNumberT
 SocketCommunication::ResultType 
 SocketCommunication::InternalCloseCommunicationProcessing( void ) 
 { 
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalCloseCommunicationProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalCloseCommunication\
+                        Processing called ...\n");
 
   if (this->m_SocketUsageType == SERVER_SOCKET)
     {
@@ -965,9 +994,11 @@ SocketCommunication::InternalCloseCommunicationProcessing( void )
 
 /** Internal function to write. */
 SocketCommunication::ResultType 
-SocketCommunication::InternalWriteProcessing( const char *data, unsigned int length ) 
+SocketCommunication::InternalWriteProcessing( const char *data, 
+                                              unsigned int length ) 
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalWriteProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalWriteProcessing\
+                        called ...\n");
 
   unsigned int total;
   int n;
@@ -985,13 +1016,15 @@ SocketCommunication::InternalWriteProcessing( const char *data, unsigned int len
         n = send( this->m_Socket, data + total, length - total, 0);
         break;
       case NONE_SOCKET:
-        igstkLogMacro( DEBUG, "SocketCommunication::InternalWriteProcessing: write for none-socket ...\n");
+        igstkLogMacro( DEBUG, "SocketCommunication::InternalWriteProcessing:\
+                              write for none-socket ...\n");
         return FAILURE;
       }
     
     if(n < 1)
       {
-      igstkLogMacro( DEBUG, "SocketCommunication::InternalWriteProcessing: time out!\n");
+      igstkLogMacro( DEBUG, "SocketCommunication::InternalWriteProcessing:\
+                            time out!\n");
       return TIMEOUT;
       }
     total += n;
@@ -1010,16 +1043,20 @@ SocketCommunication::InternalWriteProcessing( const char *data, unsigned int len
                     << encodedString << std::endl );
     }
 
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalWriteProcessing: write succeed! ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalWriteProcessing:\
+                        write succeed! ...\n");
   return SUCCESS; 
 
 };
 
 /** Internal function to read. */
 SocketCommunication::ResultType 
-SocketCommunication::InternalReadProcessing( char * data, unsigned int length, unsigned int &total) 
+SocketCommunication::InternalReadProcessing( char * data, 
+                                            unsigned int length, 
+                                            unsigned int &total) 
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing\
+                        called ...\n");
 
   int n;
   std::string encodedString;
@@ -1034,21 +1071,24 @@ SocketCommunication::InternalReadProcessing( char * data, unsigned int length, u
         break;
       case CLIENT_SOCKET:
         n = recv( this->m_Socket, data + total, length - total, 0);
-        break;    
+        break;
       case NONE_SOCKET:
-        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: read for none-socket ...\n");
+        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
+                              read for none-socket ...\n");
         return FAILURE;
       }
     if (n < 1)
       {
       if (total == 0)
         {
-        igstkLogMacro( DEBUG, "SocketCommunication::socket transfer disconnected!\n");
+        igstkLogMacro( DEBUG, "SocketCommunication::socket transfer\
+                              disconnected!\n");
         return SUCCESS;
         }
       else
         {
-        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: read not enough characters!\n");
+        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
+                              read not enough characters!\n");
         return SUCCESS; 
         }
       }
@@ -1067,16 +1107,21 @@ SocketCommunication::InternalReadProcessing( char * data, unsigned int length, u
                     << encodedString << std::endl );
     }
 
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: read succeed!\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
+                        read succeed!\n");
   return SUCCESS; 
 
 };
 
 /** Internal function to read. */
 SocketCommunication::ResultType 
-SocketCommunication::InternalReadProcessing( char * data, unsigned int length, unsigned int &total, unsigned int msec) 
+SocketCommunication::InternalReadProcessing( char * data, 
+                                            unsigned int length, 
+                                            unsigned int &total,
+                                            unsigned int msec) 
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing\
+                        called ...\n");
 
   int n;
   std::string encodedString;
@@ -1085,52 +1130,61 @@ SocketCommunication::InternalReadProcessing( char * data, unsigned int length, u
   total = 0;
   do
     {
-      switch (this->m_SocketUsageType)
-        {
+    switch (this->m_SocketUsageType)
+      {
       case SERVER_SOCKET:
-        result = this->InternalSelectSocketProcessing( this->m_ConnectionSocket, msec);
+        result = this->InternalSelectSocketProcessing( 
+                                              this->m_ConnectionSocket, msec);
         switch (result)
           {
-        case SUCCESS:
-          n = recv( this->m_ConnectionSocket, data + total, length - total, 0);
-          break;
-        case TIMEOUT:
-          igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: read time out!\n");
-          return (total > 0)?SUCCESS:TIMEOUT;
-        case FAILURE:
-          igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: no active socket!\n");
-          return FAILURE;
+          case SUCCESS:
+            n = recv( this->m_ConnectionSocket, data + total, 
+                      length - total, 0);
+            break;
+          case TIMEOUT:
+            igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
+                                  read time out!\n");
+            return (total > 0)?SUCCESS:TIMEOUT;
+          case FAILURE:
+            igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
+                                no active socket!\n");
+            return FAILURE;
           }
         break;
       case CLIENT_SOCKET:
         result = this->InternalSelectSocketProcessing( this->m_Socket, msec);
         switch (result)
           {
-        case SUCCESS:
-          n = recv( this->m_Socket, data + total, length - total, 0);
-          break;
-        case TIMEOUT:
-          igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: read time out!\n");
-          return (total > 0)?SUCCESS:TIMEOUT;
-        case FAILURE:
-          igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: no active socket!\n");
-          return FAILURE;
+          case SUCCESS:
+            n = recv( this->m_Socket, data + total, length - total, 0);
+            break;
+          case TIMEOUT:
+            igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
+                                   read time out!\n");
+            return (total > 0)?SUCCESS:TIMEOUT;
+          case FAILURE:
+            igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
+                                no active socket!\n");
+            return FAILURE;
           }
         break;
       case NONE_SOCKET:
-        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: read for none-socket ...\n");
+        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
+                              read for none-socket ...\n");
         return FAILURE;
-        }
+      }
     if (n < 1)
       {
       if (total == 0)
         {
-        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: socket transfer disconnected!\n");
+        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
+                              socket transfer disconnected!\n");
         return SUCCESS;
         }
       else
         {
-        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: read not enough characters!\n");
+        igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
+                              read not enough characters!\n");
         return SUCCESS; 
         }
       }
@@ -1149,7 +1203,8 @@ SocketCommunication::InternalReadProcessing( char * data, unsigned int length, u
                     << encodedString << std::endl );
     }
 
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing: read succeed!\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
+                        read succeed!\n");
   return SUCCESS; 
 
 };
@@ -1158,13 +1213,15 @@ SocketCommunication::InternalReadProcessing( char * data, unsigned int length, u
 SocketCommunication::ResultType 
 SocketCommunication::InternalDisconnectConnectionSocketProcessing()
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::InternalDisconnectConnectionSocketProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::\
+                        InternalDisconnectConnectionSocketProcessing\
+                        called ...\n");
 
   if( this->m_ConnectionSocket != IGSTK_INVALID_SOCKET )
-  {
+    {
     igstkCloseSocketMacro( this->m_ConnectionSocket);
     this->m_ConnectionSocket = IGSTK_INVALID_SOCKET;
-  }
+    }
 
   return SUCCESS;
 }
@@ -1172,9 +1229,11 @@ SocketCommunication::InternalDisconnectConnectionSocketProcessing()
 /** State function to attempt to open communication. */
 void SocketCommunication::AttemptToOpenCommunicationProcessing( void )
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::AttemptToOpenCommunicationProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::AttemptToOpenCommunication\
+                        Processing called ...\n");
 
-  this->m_StateMachine.PushInputBoolean( (bool)this->InternalOpenCommunicationProcessing(), 
+  this->m_StateMachine.PushInputBoolean( (bool)
+                                   this->InternalOpenCommunicationProcessing(), 
                                    m_SuccessInput,
                                    m_FailureInput );
 }
@@ -1182,27 +1241,31 @@ void SocketCommunication::AttemptToOpenCommunicationProcessing( void )
 /** State function to attempt to open port. */
 void SocketCommunication::AttemptToOpenPortProcessing()
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::AttemptToOpenPortProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::AttemptToOpenPortProcessing \
+                        called ...\n");
 
-  this->m_StateMachine.PushInputBoolean( (bool)this->InternalOpenPortProcessing( this->m_PortToSend ), 
-                                   m_SuccessInput,
-                                   m_FailureInput );
+  this->m_StateMachine.PushInputBoolean( (bool)
+                        this->InternalOpenPortProcessing( this->m_PortToSend ), 
+                        m_SuccessInput, m_FailureInput );
 }
 
 /** State function to attempt to connect. */
 void SocketCommunication::AttemptToConnectProcessing()
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::AttemptToConnectProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::AttemptToConnectProcessing\
+                        called ...\n");
 
-  this->m_StateMachine.PushInputBoolean( (bool)this->InternalConnectProcessing( this->m_AddressToSend, this->m_PortToSend ), 
-                                   m_SuccessInput,
-                                   m_FailureInput );
+  this->m_StateMachine.PushInputBoolean( (bool)
+    this->InternalConnectProcessing( this->m_AddressToSend,
+                                     this->m_PortToSend ), 
+                                     m_SuccessInput, m_FailureInput );
 }
 
 /** State function to close communication. */
 void SocketCommunication::CloseCommunicationProcessing()
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::CloseCommunicationProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::CloseCommunicationProcessing\
+                        called ...\n");
 
   this->m_ReturnValue = this->InternalCloseCommunicationProcessing();
 }
@@ -1210,9 +1273,11 @@ void SocketCommunication::CloseCommunicationProcessing()
 /** State function to attempt to wait for connection. */
 void SocketCommunication::AttemptToWaitForConnectionProcessing()
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::AttemptToWaitForConnectionProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::AttemptToWaitForConnection\
+                        Processing called ...\n");
 
-  this->m_StateMachine.PushInputBoolean( (bool)this->InternalWaitForConnectionProcessing(), 
+  this->m_StateMachine.PushInputBoolean( (bool)
+                                   this->InternalWaitForConnectionProcessing(), 
                                    m_SuccessInput,
                                    m_FailureInput );
 }
@@ -1220,9 +1285,12 @@ void SocketCommunication::AttemptToWaitForConnectionProcessing()
 /** State function to attempt to query for connection. */
 void SocketCommunication::AttemptToQueryForConnectionProcessing()
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::AttemptToQueryForConnectionProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::AttemptToQueryForConnection\
+                        Processing called ...\n");
 
-  this->m_StateMachine.PushInputBoolean( (bool)(this->InternalQueryForConnectionProcessing( this->m_MillisecondToSend ) == SUCCESS), 
+  this->m_StateMachine.PushInputBoolean( (bool)
+                                   (this->InternalQueryForConnectionProcessing( 
+                                   this->m_MillisecondToSend ) == SUCCESS), 
                                    m_SuccessInput,
                                    m_FailureInput );
 }
@@ -1232,29 +1300,37 @@ void SocketCommunication::WriteProcessing()
 {
   igstkLogMacro( DEBUG, "SocketCommunication::WriteProcessing called ...\n");
 
-  this->m_ReturnValue = this->InternalWriteProcessing( this->m_BufferPointerToSend, this->m_NumberToSend );
+  this->m_ReturnValue = this->InternalWriteProcessing( 
+                          this->m_BufferPointerToSend, this->m_NumberToSend );
 }
 
 /** State function to read. */
 void SocketCommunication::WaitToReadProcessing()
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::WaitToReadProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::WaitToReadProcessing\
+                        called ...\n");
 
-  this->m_ReturnValue = this->InternalReadProcessing( this->m_BufferPointerToReceive, this->m_NumberToSend, this->m_NumberToReceive );
+  this->m_ReturnValue = this->InternalReadProcessing( 
+                              this->m_BufferPointerToReceive, 
+                              this->m_NumberToSend, this->m_NumberToReceive );
 }
 
 /** State function to read. */
 void SocketCommunication::QueryToReadProcessing()
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::QueryToReadProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::QueryToReadProcessing\
+                        called ...\n");
 
-  this->m_ReturnValue = this->InternalReadProcessing( this->m_BufferPointerToReceive, this->m_NumberToSend, this->m_NumberToReceive, this->m_MillisecondToSend );
+  this->m_ReturnValue = this->InternalReadProcessing( 
+                          this->m_BufferPointerToReceive, this->m_NumberToSend, 
+                          this->m_NumberToReceive, this->m_MillisecondToSend );
 }
 
 /** State function to disconnect connection socket. */
 void SocketCommunication::DisconnectConnectionSocketProcessing()
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::DisconnectConnectionSocketProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::\
+                        DisconnectConnectionSocketProcessing called ...\n");
 
   this->m_ReturnValue = this->InternalDisconnectConnectionSocketProcessing();
 }
@@ -1268,7 +1344,8 @@ void SocketCommunication::NoProcessing()
 /** State function for dangerous processing. */
 void SocketCommunication::DangerousProcessing()
 {
-  igstkLogMacro( CRITICAL, "SocketCommunication::DangerousProcessing called ...\n");
+  igstkLogMacro( CRITICAL, "SocketCommunication::DangerousProcessing \
+                           called ...\n");
 }
 
 /** State function for success processing. */
@@ -1291,7 +1368,8 @@ void SocketCommunication::FailureProcessing()
 SocketCommunication::ResultType
 SocketCommunication::RequestOpenCommunication( void )
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::RequestOpenCommunication called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::RequestOpenCommunication \
+                        called ...\n");
 
   igstkPushInputMacro( OpenCommunication );
   m_StateMachine.ProcessInputs();
@@ -1316,7 +1394,8 @@ SocketCommunication::RequestCloseCommunication( void )
 
 /** Function to write. */
 SocketCommunication::ResultType 
-SocketCommunication::RequestWrite( const char *data, unsigned int numberOfBytes )
+SocketCommunication::RequestWrite( const char *data, 
+                                  unsigned int numberOfBytes )
 {
   igstkLogMacro( DEBUG, "SocketCommunication::RequestWrite called ...\n");
 
@@ -1415,7 +1494,8 @@ SocketCommunication::RequestOpenPort( SocketCommunication::PortNumberType port )
 SocketCommunication::ResultType 
 SocketCommunication::RequestWaitForConnection( )
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::RequestWaitForConnection called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::RequestWaitForConnection\
+                        called ...\n");
 
   igstkPushInputMacro( ServerWaitForConnection );
   m_StateMachine.ProcessInputs();
@@ -1428,7 +1508,8 @@ SocketCommunication::RequestWaitForConnection( )
 SocketCommunication::ResultType 
 SocketCommunication::RequestQueryForConnection( unsigned int msec )
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::RequestQueryForConnection called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::RequestQueryForConnection\
+                         called ...\n");
 
   this->m_MillisecondToSend = msec;
 
@@ -1443,7 +1524,8 @@ SocketCommunication::RequestQueryForConnection( unsigned int msec )
 SocketCommunication::ResultType
 SocketCommunication::RequestDisconnectConnectionSocket()
 {
-  igstkLogMacro( DEBUG, "SocketCommunication::RequestDisconnectConnectionSocket called ...\n");
+  igstkLogMacro( DEBUG, "SocketCommunication::\
+                         RequestDisconnectConnectionSocket called ...\n");
 
   igstkPushInputMacro( ServerDisconnectConnectionSocket );
   m_StateMachine.ProcessInputs();
@@ -1451,7 +1533,4 @@ SocketCommunication::RequestDisconnectConnectionSocket()
   return m_ReturnValue;
 }
 
-
-
 } // end namespace igstk
-
