@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_Communication_h_
-#define __igstk_Communication_h_
+#ifndef __igstk_Communication_h
+#define __igstk_Communication_h
 
 
 #include "igstkObject.h"
@@ -46,11 +46,11 @@ public:
 public:
 
   typedef enum 
-  { 
+    { 
     FAILURE=0, 
     SUCCESS=1,
     TIMEOUT=2
-  } ResultType;
+    } ResultType;
 
   /** The method OpenCommunication sets up communication as per the data
    *  provided. */
@@ -109,4 +109,3 @@ private:
 } // end of namespace igstk
 
 #endif //__igstk_Communication_h_
-

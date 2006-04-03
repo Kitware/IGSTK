@@ -63,11 +63,10 @@ void CylinderObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   if( this->m_CylinderSpatialObject )
-  {
+    {
     os << indent << this->m_CylinderSpatialObject << std::endl;
-  }
+    }
 }
 
 
 } // end namespace igstk
-

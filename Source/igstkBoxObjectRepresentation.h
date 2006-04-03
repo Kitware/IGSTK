@@ -36,9 +36,6 @@ namespace igstk
  * VTK scene using the vtkCubeSource object.
  * 
  *
- *  \image html  igstkBoxObjectRepresentation.png  "BoxObjectRepresentation State Machine Diagram"
- *  \image latex igstkBoxObjectRepresentation.eps  "BoxObjectRepresentation State Machine Diagram" 
- *
  * \ingroup ObjectRepresentation
  */
 
@@ -91,7 +88,8 @@ private:
    * called by the State Machine. */
   void SetBoxObjectProcessing(); 
 
-  /** Method for performing a null operation during a State Machine transition */
+  /** Method for performing a null operation during a State Machine 
+   *  transition */
   void NoProcessing();
 
 private:
@@ -112,4 +110,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkBoxObjectRepresentation_h
-

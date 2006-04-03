@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_FLTKTextBufferLogOutput_h_
-#define __igstk_FLTKTextBufferLogOutput_h_
+#ifndef __igstk_FLTKTextBufferLogOutput_h
+#define __igstk_FLTKTextBufferLogOutput_h
 
 #include <iostream>
 #include <string>
@@ -36,8 +36,8 @@ namespace igstk
 {
 
 /** \class FLTKTextBufferLogOutput
- *   \brief Class FLTKTextBufferLogOutput represents a standard stream output stream.
- *   This class provides thread safety for the standard stream output stream.
+ *  \brief Class FLTKTextBufferLogOutput represents a standard output stream.
+ *  This class provides thread safety for the standard stream output stream.
  *
  * \ingroup Logging
  */

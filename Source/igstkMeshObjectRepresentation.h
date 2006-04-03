@@ -29,10 +29,6 @@ namespace igstk
 /** \class MeshObjectRepresentation
  * 
  * \brief This class represents a Mesh object.
- * 
- *
- *  \image html  igstkMeshObjectRepresentation.png  "MeshObjectRepresentation State Machine Diagram"
- *  \image latex igstkMeshObjectRepresentation.eps  "MeshObjectRepresentation State Machine Diagram" 
  *
  * \ingroup ObjectRepresentation
  */
@@ -44,7 +40,8 @@ class MeshObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( MeshObjectRepresentation, ObjectRepresentation )
+  igstkStandardClassTraitsMacro( MeshObjectRepresentation, 
+                                 ObjectRepresentation )
 
 public:
     
@@ -104,4 +101,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkMeshObjectRepresentation_h
-

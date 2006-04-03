@@ -55,4 +55,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkCTImageSpatialObjectRepresentation_h
-

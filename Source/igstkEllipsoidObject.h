@@ -27,9 +27,10 @@ namespace igstk
 
 /** \class EllipsoidObject
  * 
- * \brief This class represents an ellipsoid object. The parameters of the object
- * are the three radii defining the lenght of the principal axes of the ellipsoid.
- * The axes of the ellipsoid are orthogonal.
+ * \brief This class represents an ellipsoid object. 
+ * The parameters of the object are the three radii defining the lenght 
+ * of the principal axes of the ellipsoid. The axes of the ellipsoid 
+ * are orthogonal.
  * 
  * \ingroup Object
  */
@@ -46,8 +47,8 @@ public:
 public:
 
   /** Typedefs */
-  typedef itk::EllipseSpatialObject<3>   EllipseSpatialObjectType;
-  typedef EllipseSpatialObjectType::ArrayType         ArrayType;
+  typedef itk::EllipseSpatialObject<3>          EllipseSpatialObjectType;
+  typedef EllipseSpatialObjectType::ArrayType   ArrayType;
 
   /** Set the radius of the underlying ITK Spatial object */
   void SetRadius( double rx, double ry, double rz );
@@ -74,4 +75,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkEllipsoidObject_h
-

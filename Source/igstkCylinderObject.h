@@ -27,8 +27,9 @@ namespace igstk
 
 /** \class CylinderObject
  * 
- * \brief This class represents a cylinder object. The parameters of the object
- * are the height of the object, and the radius. Default representation axis is X.
+ * \brief This class represents a cylinder object. The parameters of the 
+ * object are the height of the object, and the radius. 
+ * Default representation axis is X.
  * 
  * \ingroup Object
  */
@@ -77,4 +78,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkCylinderObject_h
-

@@ -35,9 +35,6 @@ namespace igstk
  * vtkCylinderSource object.
  * 
  *
- *  \image html  igstkCylinderObjectRepresentation.png  "CylinderObjectRepresentation State Machine Diagram"
- *  \image latex igstkCylinderObjectRepresentation.eps  "CylinderObjectRepresentation State Machine Diagram" 
- *
  * \ingroup ObjectRepresentation
  */
 
@@ -48,7 +45,8 @@ class CylinderObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( CylinderObjectRepresentation, ObjectRepresentation )
+  igstkStandardClassTraitsMacro( CylinderObjectRepresentation, 
+                                 ObjectRepresentation )
 
 public:
 
@@ -87,7 +85,8 @@ private:
    * called by the State Machine. */
   void SetCylinderObjectProcessing(); 
 
-  /** Method for performing a null operation during a State Machine transition */
+  /** Method for performing a null operation during a 
+   *  State Machine transition */
   void NoProcessing();
 
 private:
@@ -108,4 +107,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkCylinderObjectRepresentation_h
-

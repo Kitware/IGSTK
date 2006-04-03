@@ -60,17 +60,15 @@ EllipsoidObject::GetRadius() const
 }
 
 
-
 /** Print Self function */
 void EllipsoidObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
   if( m_EllipseSpatialObject )
-  {
+    {
     os << indent << m_EllipseSpatialObject << std::endl; 
-  }
+    }
 }
 
 
 } // end namespace igstk
-

@@ -68,7 +68,4 @@ void Communication::PrintSelf(std::ostream &os, itk::Indent indent) const
      << std::endl;
 }
 
-
 }
-
-

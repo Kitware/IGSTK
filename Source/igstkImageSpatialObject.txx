@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __igstk_ImageSpatialObject_txx
-#define __igstk_ImageSpatialObject_txx
+#ifndef __igstkImageSpatialObject_txx
+#define __igstkImageSpatialObject_txx
 
 
 #include "igstkImageSpatialObject.h"
@@ -39,17 +39,24 @@ ImageSpatialObject< TPixelType, VDimension >
   // Connect the given itk::VTKImageExport filter to
   // the given vtkImageImport filter.
  
-  m_vtkImporter->SetUpdateInformationCallback(m_itkExporter->GetUpdateInformationCallback());
-  m_vtkImporter->SetPipelineModifiedCallback(m_itkExporter->GetPipelineModifiedCallback());
-  m_vtkImporter->SetWholeExtentCallback(m_itkExporter->GetWholeExtentCallback());
+  m_vtkImporter->SetUpdateInformationCallback(
+                               m_itkExporter->GetUpdateInformationCallback());
+  m_vtkImporter->SetPipelineModifiedCallback(
+                                m_itkExporter->GetPipelineModifiedCallback());
+  m_vtkImporter->SetWholeExtentCallback(
+                                m_itkExporter->GetWholeExtentCallback());
   m_vtkImporter->SetSpacingCallback(m_itkExporter->GetSpacingCallback());
   m_vtkImporter->SetOriginCallback(m_itkExporter->GetOriginCallback());
-  m_vtkImporter->SetScalarTypeCallback(m_itkExporter->GetScalarTypeCallback());
-  m_vtkImporter->SetNumberOfComponentsCallback(m_itkExporter->GetNumberOfComponentsCallback());
-  m_vtkImporter->SetPropagateUpdateExtentCallback(m_itkExporter->GetPropagateUpdateExtentCallback());
+  m_vtkImporter->SetScalarTypeCallback(
+                                      m_itkExporter->GetScalarTypeCallback());
+  m_vtkImporter->SetNumberOfComponentsCallback(
+                              m_itkExporter->GetNumberOfComponentsCallback());
+  m_vtkImporter->SetPropagateUpdateExtentCallback(
+                           m_itkExporter->GetPropagateUpdateExtentCallback());
   m_vtkImporter->SetUpdateDataCallback(m_itkExporter->GetUpdateDataCallback());
   m_vtkImporter->SetDataExtentCallback(m_itkExporter->GetDataExtentCallback());
-  m_vtkImporter->SetBufferPointerCallback(m_itkExporter->GetBufferPointerCallback());
+  m_vtkImporter->SetBufferPointerCallback(
+                                    m_itkExporter->GetBufferPointerCallback());
   m_vtkImporter->SetCallbackUserData(m_itkExporter->GetCallbackUserData());
 
   igstkAddInputMacro( ValidImage );
@@ -59,9 +66,11 @@ ImageSpatialObject< TPixelType, VDimension >
   igstkAddStateMacro( ImageSet );
 
   igstkAddTransitionMacro( Initial, ValidImage, ImageSet,  SetImage );
-  igstkAddTransitionMacro( Initial, InvalidImage, Initial,  ReportInvalidImage );
+  igstkAddTransitionMacro( Initial, InvalidImage, 
+                           Initial, ReportInvalidImage );
   igstkAddTransitionMacro( ImageSet, ValidImage, ImageSet,  SetImage );
-  igstkAddTransitionMacro( ImageSet, InvalidImage, Initial,  ReportInvalidImage );
+  igstkAddTransitionMacro( ImageSet, InvalidImage, 
+                           Initial,  ReportInvalidImage );
 
   igstkSetInitialStateMacro( Initial );
 
@@ -92,7 +101,6 @@ ImageSpatialObject< TPixelType, VDimension >
 }
 
 
-
 template< class TPixelType, unsigned int VDimension >
 void
 ImageSpatialObject< TPixelType, VDimension >
@@ -116,7 +124,6 @@ ImageSpatialObject< TPixelType, VDimension >
 }
 
 
-
 template< class TPixelType, unsigned int VDimension >
 void
 ImageSpatialObject< TPixelType, VDimension >
@@ -129,7 +136,6 @@ ImageSpatialObject< TPixelType, VDimension >
 }
 
 
-
 template< class TPixelType, unsigned int VDimension >
 void
 ImageSpatialObject< TPixelType, VDimension >
@@ -139,7 +145,6 @@ ImageSpatialObject< TPixelType, VDimension >
 }
 
 
-
 template< class TPixelType, unsigned int VDimension >
 bool
 ImageSpatialObject< TPixelType, VDimension >
@@ -147,7 +152,6 @@ ImageSpatialObject< TPixelType, VDimension >
 { 
   return m_ImageSpatialObject->IsInside( point ); 
 }
-
 
 
 template< class TPixelType, unsigned int VDimension >
@@ -164,7 +168,6 @@ ImageSpatialObject< TPixelType, VDimension >
 }
 
 
-
 template< class TPixelType, unsigned int VDimension >
 bool
 ImageSpatialObject< TPixelType, VDimension >
@@ -173,7 +176,6 @@ ImageSpatialObject< TPixelType, VDimension >
 { 
   return m_Image->TransformPhysicalPointToIndex( point, index);  
 }
-
 
 
 /** Print Self function */
@@ -192,4 +194,3 @@ ImageSpatialObject< TPixelType, VDimension >
 } // end namespace igstk
 
 #endif
-

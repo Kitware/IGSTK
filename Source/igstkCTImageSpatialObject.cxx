@@ -46,4 +46,3 @@ CTImageSpatialObject
 
 
 } // end namespace igstk
-

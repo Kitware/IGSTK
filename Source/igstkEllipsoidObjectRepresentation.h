@@ -35,9 +35,6 @@ namespace igstk
  * is rendered in a VTK scene using the vtkSuperquadricSource object.
  *
  *
- *  \image html  igstkEllipsoidObjectRepresentation.png  "EllipsoidObjectRepresentation State Machine Diagram"
- *  \image latex igstkEllipsoidObjectRepresentation.eps  "EllipsoidObjectRepresentation State Machine Diagram" 
- *
  * 
  * \ingroup ObjectRepresentation
  */
@@ -49,7 +46,8 @@ class EllipsoidObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( EllipsoidObjectRepresentation, ObjectRepresentation )
+  igstkStandardClassTraitsMacro( EllipsoidObjectRepresentation, 
+                                 ObjectRepresentation )
 
 public:
 
@@ -108,4 +106,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkEllipsoidObjectRepresentation_h
-

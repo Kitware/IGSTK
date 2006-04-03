@@ -40,16 +40,18 @@ ConeObjectRepresentation::ConeObjectRepresentation():m_StateMachine(this)
   igstkAddStateMacro( NullConeObject  );
   igstkAddStateMacro( ValidConeObject );
 
-  igstkAddTransitionMacro( NullConeObject, NullConeObject, NullConeObject,  No );
-  igstkAddTransitionMacro( NullConeObject, ValidConeObject, ValidConeObject,  SetConeObject );
-  igstkAddTransitionMacro( ValidConeObject, NullConeObject, NullConeObject,  No ); 
-  igstkAddTransitionMacro( ValidConeObject, ValidConeObject, ValidConeObject,  No ); 
+  igstkAddTransitionMacro( NullConeObject, NullConeObject, 
+                           NullConeObject,  No );
+  igstkAddTransitionMacro( NullConeObject, ValidConeObject, 
+                           ValidConeObject,  SetConeObject );
+  igstkAddTransitionMacro( ValidConeObject, NullConeObject,
+                           NullConeObject,  No ); 
+  igstkAddTransitionMacro( ValidConeObject, ValidConeObject, 
+                           ValidConeObject,  No ); 
 
   igstkSetInitialStateMacro( NullConeObject );
 
   m_StateMachine.SetReadyToRun();
-
-
 } 
 
 /** Destructor */
@@ -65,11 +67,9 @@ ConeObjectRepresentation::~ConeObjectRepresentation()
   this->DeleteActors();
 }
 
-
-
-
 /** Set the Coneal Spatial Object */
-void ConeObjectRepresentation::RequestSetConeObject( const ConeSpatialObjectType * cone )
+void ConeObjectRepresentation
+::RequestSetConeObject( const ConeSpatialObjectType * cone )
 {
   igstkLogMacro( DEBUG,  "RequestSetConeObject called ....\n" );
 
@@ -85,8 +85,6 @@ void ConeObjectRepresentation::RequestSetConeObject( const ConeSpatialObjectType
     m_StateMachine.ProcessInputs();
     }
 }
-
-
 
 /** Set the Cylindrical Spatial Object */
 void ConeObjectRepresentation::NoProcessing()
@@ -113,18 +111,17 @@ void ConeObjectRepresentation::SetConeObjectProcessing()
     }
 } 
 
-
 /** Print Self function */
-void ConeObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void ConeObjectRepresentation
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
   if( this->m_ConeSource )
-  {
+    {
     os << indent << this->m_ConeSource << std::endl;
-  }
+    }
 }
-
 
 /** Update the visual representation in response to changes in the geometric
  * object */
@@ -181,6 +178,4 @@ ConeObjectRepresentation::Copy() const
   return newOR;
 }
 
-
 } // end namespace igstk
-

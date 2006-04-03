@@ -25,7 +25,8 @@ namespace igstk
 { 
 
 /** Constructor */
-EllipsoidObjectRepresentation::EllipsoidObjectRepresentation():m_StateMachine(this)
+EllipsoidObjectRepresentation::EllipsoidObjectRepresentation()
+                                                        :m_StateMachine(this)
 {
   // We create the ellipse spatial object
   m_EllipsoidObject = NULL;
@@ -38,10 +39,14 @@ EllipsoidObjectRepresentation::EllipsoidObjectRepresentation():m_StateMachine(th
   igstkAddStateMacro( NullEllipsoidObject  );
   igstkAddStateMacro( ValidEllipsoidObject );
 
-  igstkAddTransitionMacro( NullEllipsoidObject, NullEllipsoidObject, NullEllipsoidObject,  No );
-  igstkAddTransitionMacro( NullEllipsoidObject, ValidEllipsoidObject, ValidEllipsoidObject,  SetEllipsoidObject );
-  igstkAddTransitionMacro( ValidEllipsoidObject, NullEllipsoidObject, NullEllipsoidObject,  No ); 
-  igstkAddTransitionMacro( ValidEllipsoidObject, ValidEllipsoidObject, ValidEllipsoidObject,  No ); 
+  igstkAddTransitionMacro( NullEllipsoidObject, NullEllipsoidObject, 
+                           NullEllipsoidObject,  No );
+  igstkAddTransitionMacro( NullEllipsoidObject, ValidEllipsoidObject, 
+                           ValidEllipsoidObject,  SetEllipsoidObject );
+  igstkAddTransitionMacro( ValidEllipsoidObject, NullEllipsoidObject, 
+                           NullEllipsoidObject,  No ); 
+  igstkAddTransitionMacro( ValidEllipsoidObject, ValidEllipsoidObject, 
+                           ValidEllipsoidObject,  No ); 
 
   igstkSetInitialStateMacro( NullEllipsoidObject );
 
@@ -60,10 +65,9 @@ EllipsoidObjectRepresentation::~EllipsoidObjectRepresentation()
   this->DeleteActors();
 }
 
-
-
 /** Print Self function */
-void EllipsoidObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void EllipsoidObjectRepresentation
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
   if(m_EllipsoidObject)
@@ -72,9 +76,9 @@ void EllipsoidObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent ind
     }
 }
 
-
 /** Set the Ellipsoidal Spatial Object */
-void EllipsoidObjectRepresentation::RequestSetEllipsoidObject( const EllipsoidObjectType * ellipsoid )
+void EllipsoidObjectRepresentation
+::RequestSetEllipsoidObject( const EllipsoidObjectType * ellipsoid )
 {
   m_EllipsoidObjectToAdd = ellipsoid;
   if( !m_EllipsoidObjectToAdd )
@@ -87,16 +91,12 @@ void EllipsoidObjectRepresentation::RequestSetEllipsoidObject( const EllipsoidOb
     igstkPushInputMacro( ValidEllipsoidObject );
     m_StateMachine.ProcessInputs();
     }
-
-
 }
-
 
 /** Null operation for a State Machine transition */
 void EllipsoidObjectRepresentation::NoProcessing()
 {
 }
-
 
 /** Set the Ellipsoidal Spatial Object */
 void EllipsoidObjectRepresentation::SetEllipsoidObjectProcessing()
@@ -167,4 +167,3 @@ EllipsoidObjectRepresentation::Copy() const
 
 
 } // end namespace igstk
-

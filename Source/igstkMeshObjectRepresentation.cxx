@@ -43,10 +43,14 @@ MeshObjectRepresentation
   igstkAddStateMacro( NullMeshObject );
   igstkAddStateMacro( ValidMeshObject );
 
-  igstkAddTransitionMacro( NullMeshObject, NullMeshObject, NullMeshObject,  No );
-  igstkAddTransitionMacro( NullMeshObject, ValidMeshObject, ValidMeshObject,  SetMeshObject );
-  igstkAddTransitionMacro( ValidMeshObject, NullMeshObject, NullMeshObject,  No ); 
-  igstkAddTransitionMacro( ValidMeshObject, ValidMeshObject, ValidMeshObject,  No ); 
+  igstkAddTransitionMacro( NullMeshObject, NullMeshObject, 
+                           NullMeshObject,  No );
+  igstkAddTransitionMacro( NullMeshObject, ValidMeshObject, 
+                           ValidMeshObject,  SetMeshObject );
+  igstkAddTransitionMacro( ValidMeshObject, NullMeshObject, 
+                           NullMeshObject,  No ); 
+  igstkAddTransitionMacro( ValidMeshObject, ValidMeshObject, 
+                           ValidMeshObject,  No ); 
 
   igstkSetInitialStateMacro( NullMeshObject );
 
@@ -64,7 +68,8 @@ MeshObjectRepresentation::~MeshObjectRepresentation()
 
 
 /** Set the Meshal Spatial Object */
-void MeshObjectRepresentation::RequestSetMeshObject( const MeshObjectType * Mesh )
+void MeshObjectRepresentation
+::RequestSetMeshObject( const MeshObjectType * Mesh )
 {
   m_MeshObjectToAdd = Mesh;
   if( !m_MeshObjectToAdd )
@@ -96,7 +101,8 @@ void MeshObjectRepresentation::SetMeshObjectProcessing()
 
 
 /** Print Self function */
-void MeshObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void MeshObjectRepresentation
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
@@ -128,8 +134,9 @@ void MeshObjectRepresentation::CreateActors()
 
   for(;it != points->end();it++)
     {
-    polyPoints->SetPoint((*it).first,(*it).second[0],(*it).second[1],(*it).second[2]);
-    }    
+    polyPoints->SetPoint((*it).first,(*it).second[0],
+                         (*it).second[1],(*it).second[2]);
+    }
 
   MeshObjectType::CellsContainer* cells = m_MeshObject->GetCells();
   MeshObjectType::CellsContainer::ConstIterator it_cells = cells->Begin();
@@ -139,8 +146,9 @@ void MeshObjectRepresentation::CreateActors()
     
   for(;it_cells != cells->End();it_cells++)
     {
-    vtkIdList* pts = vtkIdList::New();     
-    MeshObjectType::CellTraits::PointIdConstIterator itptids = (*it_cells)->Value()->GetPointIds();
+    vtkIdList* pts = vtkIdList::New();
+    MeshObjectType::CellTraits::PointIdConstIterator itptids 
+                                        = (*it_cells)->Value()->GetPointIds();
     unsigned int id =0;
     const unsigned long ptsSize = (*it_cells)->Value()->GetNumberOfPoints();
     pts->SetNumberOfIds(ptsSize);
@@ -202,4 +210,3 @@ MeshObjectRepresentation::Copy() const
 
 
 } // end namespace igstk
-

@@ -50,7 +50,7 @@ public:
   igstkSetMacro(Radius,double);
   
   /** Get the radius of the Cone */
-   igstkGetMacro(Radius,double);
+  igstkGetMacro(Radius,double);
   
   /** Set the height of the Cone */
   igstkSetMacro(Height,double); 
@@ -85,4 +85,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkConeObject_h
-

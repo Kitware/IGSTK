@@ -41,9 +41,11 @@ BoxObjectRepresentation::BoxObjectRepresentation():m_StateMachine(this)
   igstkAddStateMacro( ValidBoxObject );
 
   igstkAddTransitionMacro( NullBoxObject, NullBoxObject, NullBoxObject,  No );
-  igstkAddTransitionMacro( NullBoxObject, ValidBoxObject, ValidBoxObject,  SetBoxObject );
+  igstkAddTransitionMacro( NullBoxObject, ValidBoxObject, 
+                           ValidBoxObject, SetBoxObject );
   igstkAddTransitionMacro( ValidBoxObject, NullBoxObject, NullBoxObject,  No ); 
-  igstkAddTransitionMacro( ValidBoxObject, ValidBoxObject, ValidBoxObject,  No ); 
+  igstkAddTransitionMacro( ValidBoxObject, ValidBoxObject, 
+                           ValidBoxObject,  No ); 
 
   igstkSetInitialStateMacro( NullBoxObject );
 
@@ -64,7 +66,8 @@ BoxObjectRepresentation::~BoxObjectRepresentation()
 }
 
 /** Set the Box Spatial Object */
-void BoxObjectRepresentation::RequestSetBoxObject( const BoxSpatialObjectType * box )
+void BoxObjectRepresentation
+::RequestSetBoxObject( const BoxSpatialObjectType * box )
 {
   igstkLogMacro( DEBUG, "RequestSetBoxObject called ....\n");
 
@@ -108,7 +111,8 @@ void BoxObjectRepresentation::SetBoxObjectProcessing()
 } 
 
 /** Print Self function */
-void BoxObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void BoxObjectRepresentation
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
@@ -171,4 +175,3 @@ BoxObjectRepresentation::Copy() const
 }
 
 } // end namespace igstk
-

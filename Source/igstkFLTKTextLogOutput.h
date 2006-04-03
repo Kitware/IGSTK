@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstk_FLTKTextLogOutput_h_
-#define __igstk_FLTKTextLogOutput_h_
+#ifndef __igstk_FLTKTextLogOutput_h
+#define __igstk_FLTKTextLogOutput_h
 
 #include <iostream>
 #include <string>
@@ -37,8 +37,9 @@ namespace igstk
 {
 
 /** \class FLTKTextLogOutput
- *    \brief Class FLTKTextLogOutput represents LogOutput for FLTK Fl_Text_Display.
- *    This class provides thread safety for logging on FLTK Fl_Text_Display.
+ *  \brief Class FLTKTextLogOutput represents LogOutput for 
+ *  FLTK Fl_Text_Display.
+ *  This class provides thread safety for logging on FLTK Fl_Text_Display.
  *
  *  \ingroup Logging
  */
@@ -54,7 +55,7 @@ public:
 public:
 
   typedef Fl_Text_Display  StreamType;
-  typedef StreamType*     StreamPointerType;
+  typedef StreamType*      StreamPointerType;
 
   /** Get an output stream pointer */
   igstkGetMacro(Stream, StreamPointerType);

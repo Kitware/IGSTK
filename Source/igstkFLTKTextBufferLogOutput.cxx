@@ -29,7 +29,6 @@
 #endif
 
 
-
 namespace igstk
 {
 
@@ -88,7 +87,8 @@ void FLTKTextBufferLogOutput::Write(std::string const &content)
 
 
 /** Write to a buffer */
-void FLTKTextBufferLogOutput::Write(std::string const &content, double timestamp)
+void FLTKTextBufferLogOutput
+::Write(std::string const &content,double timestamp)
 {
   FLTKTextBufferLogOutput::m_Mutex.Lock();
   if( this->m_Stream )
@@ -103,7 +103,8 @@ void FLTKTextBufferLogOutput::Write(std::string const &content, double timestamp
 
 
 /** Print Self function */
-void FLTKTextBufferLogOutput::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void FLTKTextBufferLogOutput
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
@@ -119,4 +120,3 @@ void FLTKTextBufferLogOutput::PrintSelf( std::ostream& os, itk::Indent indent ) 
 
 
 } // end namespace igstk
-

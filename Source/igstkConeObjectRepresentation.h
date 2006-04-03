@@ -36,9 +36,6 @@ namespace igstk
  * VTK scene using the vtkConeSource object.
  * 
  *
- *  \image html  igstkConeObjectRepresentation.png  "ConeObjectRepresentation State Machine Diagram"
- *  \image latex igstkConeObjectRepresentation.eps  "ConeObjectRepresentation State Machine Diagram" 
- *
  * \ingroup ObjectRepresentation
  */
 
@@ -49,7 +46,8 @@ class ConeObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( ConeObjectRepresentation, ObjectRepresentation )
+  igstkStandardClassTraitsMacro( ConeObjectRepresentation, 
+                                 ObjectRepresentation )
 
 public:
 
@@ -91,7 +89,8 @@ private:
    * called by the State Machine. */
   void SetConeObjectProcessing(); 
 
-  /** Method for performing a null operation during a State Machine transition */
+  /** Method for performing a null operation during a 
+   *  State Machine transition */
   void NoProcessing();
 
 private:
@@ -112,4 +111,3 @@ private:
 } // end namespace igstk
 
 #endif // __igstkConeObjectRepresentation_h
-
