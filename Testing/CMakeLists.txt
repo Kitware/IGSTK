@@ -90,10 +90,14 @@ IF (IGSTK_DATA_ROOT)
   ADD_TEST( igstkMeshReaderTest ${IGSTK_TESTS} igstkMeshReaderTest 
        ${IGSTK_DATA_ROOT}/Input/liver.msh  
        ${IGSTK_DATA_ROOT}/Input/liverCorruptedOnPurpose.msh )
-  ADD_TEST( igstkTubeReaderTest ${IGSTK_TESTS} igstkTubeReaderTest 
+  ADD_TEST( igstkTubeVesselReaderTest ${IGSTK_TESTS} igstkTubeReaderTest 
        ${IGSTK_DATA_ROOT}/Input/vessel.tre 
        ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre  
        ${IGSTK_DATA_ROOT}/Input/vesselWithoutReadPermissions.tre )
+  ADD_TEST( igstkTubeReaderTest ${IGSTK_TESTS} igstkTubeReaderTest 
+       ${IGSTK_DATA_ROOT}/Input/Tube.tre 
+       ${IGSTK_DATA_ROOT}/Input/TubeCorruptedOnPurpose.tre  
+       ${IGSTK_DATA_ROOT}/Input/TubeWithoutReadPermissions.tre )
   ADD_TEST( igstkSpatialObjectReaderTest ${IGSTK_TESTS} igstkSpatialObjectReaderTest 
        ${IGSTK_DATA_ROOT}/Input/vessel.tre 
        ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre  
