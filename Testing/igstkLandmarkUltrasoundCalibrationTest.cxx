@@ -63,20 +63,26 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
   // Define the input file and the variables to extract 
   // the rotation and translation information
   unsigned int i, j;
-  std::ifstream input;
+  std::ifstream input1;
+  std::ifstream input2;
   
   // Input
   IndexType indexposition;
-  PointType imageposition;
+  PointType imageposition, pointerposition;
   VersorType pointerversor, probeversor;
   VectorType pointertranslation, probetranslation, tooltranslation;
   TransformType toolcalibration;
 
-  std::vector< IndexType > indexpositioncontainer;
-  std::vector< VersorType > pointerversorcontainer;
-  std::vector< VectorType > pointertranslationcontainer;
-  std::vector< VersorType > probeversorcontainer;
-  std::vector< VectorType > probetranslationcontainer;
+  std::vector< IndexType > indexpositioncontainer1;
+  std::vector< VersorType > pointerversorcontainer1;
+  std::vector< VectorType > pointertranslationcontainer1;
+  std::vector< VersorType > probeversorcontainer1;
+  std::vector< VectorType > probetranslationcontainer1;
+
+  std::vector< IndexType > indexpositioncontainer2;
+  std::vector< PointType > pointerpositioncontainer2;
+  std::vector< VersorType > probeversorcontainer2;
+  std::vector< VectorType > probetranslationcontainer2;
 
   // Output
   TransformType transform;
@@ -86,10 +92,12 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
   
   // Open the calibration data file, which recorded the traker information
   std::string igstkDataDirectory = IGSTKSandbox_DATA_ROOT;
-  std::string simulationFile = igstkDataDirectory+"/Input/USCalibration.txt";
-  input.open( simulationFile.c_str() );
+  std::string simulationFile1 = igstkDataDirectory+"/Input/USCalibration1.txt";
+  std::string simulationFile2 = igstkDataDirectory+"/Input/USCalibration2.txt";
+  
+  input1.open( simulationFile1.c_str() );
 
-  if (input.is_open() == 1)
+  if (input1.is_open() == 1)
     {
     std::cout << "UltrasoundCalibration data open sucessully!" << std::endl;
     }
@@ -101,32 +109,73 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
     }
 
   // Input the frame data into the calibration class
-  while ( !input.eof())
+  while ( !input1.eof())
     {
     double vx;
     double vy;
     double vz;
     double vw;
 
-    input >> indexposition[0] >> indexposition[1];
+    input1 >> indexposition[0] >> indexposition[1];
     indexposition[2] = 0;
-    indexpositioncontainer.push_back( indexposition);
+    indexpositioncontainer1.push_back( indexposition);
 
-    input >> pointertranslation[0] >> pointertranslation[1];
-    input >> pointertranslation[2];
-    pointertranslationcontainer.push_back( pointertranslation);
+    input1 >> pointertranslation[0] >> pointertranslation[1];
+    input1 >> pointertranslation[2];
+    pointertranslationcontainer1.push_back( pointertranslation);
     
-    input >> vw >> vx >> vy >> vz;
+    input1 >> vw >> vx >> vy >> vz;
     pointerversor.Set( vx, vy, vz, vw);
-    pointerversorcontainer.push_back( pointerversor);
+    pointerversorcontainer1.push_back( pointerversor);
 
-    input >> probetranslation[0] >> probetranslation[1] >> probetranslation[2];
-    probetranslationcontainer.push_back( probetranslation);
+    input1 >> probetranslation[0] >> probetranslation[1] >> probetranslation[2];
+    probetranslationcontainer1.push_back( probetranslation);
 
-    input >> vw >> vx >> vy >> vz;
+    input1 >> vw >> vx >> vy >> vz;
     probeversor.Set( vx, vy, vz, vw);
-    probeversorcontainer.push_back( probeversor);
+    probeversorcontainer1.push_back( probeversor);
     }
+
+  input1.close();
+
+  input2.open( simulationFile2.c_str() );
+
+  if (input2.is_open() == 1)
+    {
+    std::cout << "UltrasoundCalibration data open sucessully!" << std::endl;
+    }
+  else
+    {
+    std::cout << "UltrasoundCalibration data open error!" << std::endl;
+
+    return EXIT_FAILURE;
+    }
+
+  // Input the frame data into the calibration class
+  while ( !input2.eof())
+    {
+    double vx;
+    double vy;
+    double vz;
+    double vw;
+
+    input2 >> indexposition[0] >> indexposition[1];
+    indexposition[2] = 0;
+    indexpositioncontainer2.push_back( indexposition);
+
+    input2 >> pointerposition[0] >> pointerposition[1];
+    input2 >> pointerposition[2];
+    pointerpositioncontainer2.push_back( pointerposition);
+    
+    input2 >> probetranslation[0] >> probetranslation[1] >> probetranslation[2];
+    probetranslationcontainer2.push_back( probetranslation);
+
+    input2 >> vw >> vx >> vy >> vz;
+    probeversor.Set( vx, vy, vz, vw);
+    probeversorcontainer2.push_back( probeversor);
+    }
+
+  input2.close();
 
   // Set the pointer tool's calibration matrix
   tooltranslation[0] = 0.0;
@@ -137,14 +186,14 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
   // Test for routine 1: index input && pointer tool input
   ultrasound->RequestReset();
   ultrasound->RequestSetPointerToolCalibrationTransform( toolcalibration);
-  for (i = 0; i < indexpositioncontainer.size(); i++)
+  for (i = 0; i < indexpositioncontainer1.size(); i++)
     {
     ultrasound->RequestAddPointerToolIndexPositionSample(
-                                               indexpositioncontainer[i],
-                                               pointerversorcontainer[i],
-                                               pointertranslationcontainer[i],
-                                               probeversorcontainer[i],
-                                               probetranslationcontainer[i] );
+                                               indexpositioncontainer1[i],
+                                               pointerversorcontainer1[i],
+                                               pointertranslationcontainer1[i],
+                                               probeversorcontainer1[i],
+                                               probetranslationcontainer1[i] );
     }
   ultrasound->RequestCalculateCalibration();
 
@@ -168,16 +217,16 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
   // Test for routine 2: image input && pointer tool input
   ultrasound->RequestReset();
   ultrasound->RequestSetPointerToolCalibrationTransform( toolcalibration);
-  for (i = 0; i < indexpositioncontainer.size(); i++)
+  for (i = 0; i < indexpositioncontainer1.size(); i++)
     {
-    indexposition = indexpositioncontainer[i];
+    indexposition = indexpositioncontainer1[i];
     for (j = 0; j < 3; j++)
       {
       imageposition[j] = indexposition[j] * scale[j];
       }
     ultrasound->RequestAddPointerToolImagePositionSample( imageposition, 
-      pointerversorcontainer[i], pointertranslationcontainer[i], 
-      probeversorcontainer[i], probetranslationcontainer[i] );
+      pointerversorcontainer1[i], pointertranslationcontainer1[i], 
+      probeversorcontainer1[i], probetranslationcontainer1[i] );
     }
   ultrasound->RequestCalculateCalibration();
 
@@ -196,6 +245,69 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
 
     ultrasound->Print( std::cout);
     }
+
+  // Test for routine 3: index input && landmark position input
+  ultrasound->RequestReset();
+  for (i = 0; i < indexpositioncontainer2.size(); i++)
+    {
+    ultrasound->RequestAddIndexPositionSample(
+                                               indexpositioncontainer2[i],
+                                               pointerpositioncontainer2[i],
+                                               probeversorcontainer2[i],
+                                               probetranslationcontainer2[i] );
+    }
+  ultrasound->RequestCalculateCalibration();
+
+  if ( !ultrasound->GetValidLandmarkUltrasoundCalibration())
+    {
+    std::cout << "No valid calibration!" << std::endl;
+
+    return EXIT_FAILURE;
+    }
+  else
+    {
+    // Dump the self class information
+    transform = ultrasound->GetCalibrationTransform();
+    error = ultrasound->GetRootMeanSquareError();
+    num = ultrasound->GetNumberOfSamples();
+    scale = ultrasound->GetScaleTransform();
+
+    ultrasound->Print( std::cout);
+    }
+
+  // Test for routine 4: image input && landmark position input
+  ultrasound->RequestReset();
+  for (i = 0; i < indexpositioncontainer2.size(); i++)
+    {
+    indexposition = indexpositioncontainer2[i];
+    for (j = 0; j < 3; j++)
+      {
+      imageposition[j] = indexposition[j] * scale[j];
+      }
+    ultrasound->RequestAddImagePositionSample( imageposition, 
+      pointerpositioncontainer2[i],  
+      probeversorcontainer2[i], probetranslationcontainer2[i] );
+    }
+  ultrasound->RequestCalculateCalibration();
+
+  if ( !ultrasound->GetValidLandmarkUltrasoundCalibration())
+    {
+    std::cout << "No valid calibration!" << std::endl;
+
+    return EXIT_FAILURE;
+    }
+  else
+    {
+    // Dump the self class information
+    transform = ultrasound->GetCalibrationTransform();
+    error = ultrasound->GetRootMeanSquareError();
+    num = ultrasound->GetNumberOfSamples();
+
+    ultrasound->Print( std::cout);
+    }
+
+  // Test for NoProcessing
+  ultrasound->RequestCalculateCalibration();
 
   return EXIT_SUCCESS;
 
