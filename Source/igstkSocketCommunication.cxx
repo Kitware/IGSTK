@@ -707,6 +707,14 @@ const char* SocketCommunication::GetCaptureFileName() const
   return this->m_CaptureFileName.c_str();
 }
 
+/** Function to set capture file name. */
+void SocketCommunication::SetCaptureFileName(const char* filename)
+{
+  igstkLogMacro( DEBUG, "SocketCommunication::SetCaptureFileName called ...\n");
+
+  this->m_CaptureFileName = filename;
+}
+
 /** Internal function to open communication. */
 SocketCommunication::ResultType 
 SocketCommunication::InternalOpenCommunicationProcessing( void ) 
@@ -748,7 +756,7 @@ SocketCommunication::InternalOpenCommunicationProcessing( void )
   else
     {
     // Open a file for writing data stream.
-    if( m_Capture )
+    if( m_Capture && !m_CaptureFileName.empty())
       {
       time_t ti;
       time(&ti);
@@ -1144,7 +1152,23 @@ SocketCommunication::InternalReadProcessing( char * data,
           case TIMEOUT:
             igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
                                   read time out!\n");
-            return (total > 0)?SUCCESS:TIMEOUT;
+          
+            if ( total > 0)
+              {              
+              BinaryData::Encode(encodedString, (unsigned char*)data, total);
+
+              if( m_Capture && m_CaptureFileStream.is_open())
+                {
+                igstkLogMacro2( m_Recorder, INFO, m_CaptureMessageNumber
+                    << ". receive[" << total << "] "
+                    << encodedString << std::endl );
+                }
+              return SUCCESS;
+              }
+            else
+              {
+              return TIMEOUT;
+              }
           case FAILURE:
             igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
                                 no active socket!\n");
@@ -1161,7 +1185,22 @@ SocketCommunication::InternalReadProcessing( char * data,
           case TIMEOUT:
             igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
                                    read time out!\n");
-            return (total > 0)?SUCCESS:TIMEOUT;
+            if ( total > 0)
+              {
+              BinaryData::Encode(encodedString, (unsigned char*)data, total);
+
+              if( m_Capture && m_CaptureFileStream.is_open())
+                {
+                igstkLogMacro2( m_Recorder, INFO, m_CaptureMessageNumber
+                    << ". receive[" << total << "] "
+                    << encodedString << std::endl );
+                }
+              return SUCCESS;
+              }
+            else
+              {
+              return TIMEOUT;
+              }
           case FAILURE:
             igstkLogMacro( DEBUG, "SocketCommunication::InternalReadProcessing:\
                                 no active socket!\n");
