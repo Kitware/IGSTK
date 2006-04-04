@@ -375,7 +375,7 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction2( void* data)
     *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
-  if (!client->RequestConnect( "127.0.0.1", 1234))
+  if (!client->RequestConnect( "localhost", 1234))
     {
     printf("Connection error!\n");
     *flag = false;
