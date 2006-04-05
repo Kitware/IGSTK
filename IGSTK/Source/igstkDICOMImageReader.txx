@@ -328,7 +328,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
 
     // Check if the gantry tilt is within an acceptable range
     double gantryTilt;
-    double gantryTiltThreshold=-0.01;
+    double gantryTiltThreshold=0.01;
   
     std::stringstream sstr;
     sstr.str( m_GantryTilt );    
