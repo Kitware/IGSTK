@@ -170,7 +170,7 @@ public:
       const DICOMImageReadingErrorEventType * errorEvent = 
                    dynamic_cast< const DICOMImageReadingErrorEventType *>( &event );
     
-      std::cerr<<"Dicom image reading error event:"<<errorEvent.Get()<<std::endl;
+      std::cerr<<"Dicom image reading error event:"<<errorEvent->Get()<<std::endl;
       m_EventReceived = true;
       }
     }
