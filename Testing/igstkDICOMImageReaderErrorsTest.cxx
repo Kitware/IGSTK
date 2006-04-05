@@ -156,15 +156,24 @@ public:
   typedef itk::SmartPointer<Self>      Pointer;
   typedef itk::Command                 Superclass;
   itkNewMacro(Self);
+
+  typedef igstk::DICOMImageReadingErrorEvent   DICOMImageReadingErrorEventType;
+    
   void Execute(const itk::Object *caller, const itk::EventObject & event)
   {
  
   }
   void Execute(itk::Object *caller, const itk::EventObject & event)
   {
-    std::cerr<<"Dicom image reading error event"<<std::endl;
-    m_EventReceived = true;
-  }
+    if( DICOMImageReadingErrorEventType().CheckEvent( &event ) )
+      {
+      const DICOMImageReadingErrorEventType * errorEvent = 
+                   dynamic_cast< const DICOMImageReadingErrorEventType *>( &event );
+    
+      std::cerr<<"Dicom image reading error event:"<<errorEvent.Get()<<std::endl;
+      m_EventReceived = true;
+      }
+    }
   
  bool GetEventReceived()
  { 
