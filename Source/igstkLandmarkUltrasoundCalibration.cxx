@@ -588,7 +588,7 @@ LandmarkUltrasoundCalibration::InternalExportTransformMatrix(
                          InternalExportTransformMatrix called...\n" );
 
   unsigned int i, j;
-  VnlMatrixType matrix;
+  VnlMatrixType matrix(4, 4);
   
   matrix = this->InternalExportTransformMatrix( transform.GetRotation(), 
                                                 transform.GetTranslation() );
