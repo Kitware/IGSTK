@@ -57,6 +57,10 @@ itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,
 itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent,
               DICOMImageReaderEvent );
 
+// Image series filename generation error event
+itkEventMacro(DICOMImageSeriesFileNamesGeneratingErrorEvent,
+              DICOMImageReaderEvent );
+
 //Image reading error
 itkEventMacro(DICOMImageReadingErrorEvent,
               DICOMImageReaderEvent );
@@ -167,12 +171,14 @@ private:
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( ImageDirectoryNameRead );
   igstkDeclareStateMacro( AttemptingToReadImage );
+  igstkDeclareStateMacro( ImageSeriesFileNamesGenerated );
   igstkDeclareStateMacro( ImageRead );
 
   /** List of State Inputs */
   igstkDeclareInputMacro( ReadImageRequest );
   igstkDeclareInputMacro( ImageDirectoryNameValid ); 
   igstkDeclareInputMacro( ImageReadingSuccess );
+  igstkDeclareInputMacro( ImageSeriesFileNamesGeneratingSuccess );
   igstkDeclareInputMacro( ResetReader );
   
   /** Error related state inputs */
@@ -181,6 +187,7 @@ private:
   igstkDeclareInputMacro( ImageDirectoryNameDoesNotExist );
   igstkDeclareInputMacro( ImageDirectoryNameIsNotDirectory );
   igstkDeclareInputMacro( ImageDirectoryNameDoesNotHaveEnoughFiles );
+  igstkDeclareInputMacro( ImageSeriesFileNamesGeneratingError );
  
   /** DICOM tags request inputs */
   igstkDeclareInputMacro( GetModalityInformation );
@@ -213,6 +220,12 @@ private:
    *  files */
   void ReportImageDirectoryDoesNotHaveEnoughFilesErrorProcessing();
   
+  /** This function reports an error in dicom image series file name generation */
+  void ReportImageSeriesFileNamesGeneratingErrorProcessing();
+
+  /** This function reports success in dicom image series file name generation */
+  void ReportImageSeriesFileNamesGeneratingSuccessProcessing();
+
   /** This function reports an error while image reading */
   void ReportImageReadingErrorProcessing();
 
@@ -245,6 +258,10 @@ private:
   DICOMInformationType    m_PatientID;
   DICOMInformationType    m_PatientName;
   DICOMInformationType    m_Modality;
+  DICOMInformationType    m_GantryTilt;
+
+  /** Variable to hold image reading error information */
+  std::string             m_ImageReadingErrorInformation;
 };
 
 } // end namespace igstk

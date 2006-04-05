@@ -34,6 +34,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   //Set the state descriptors
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( ImageDirectoryNameRead ); 
+  igstkAddStateMacro( ImageSeriesFileNamesGenerated ); 
   igstkAddStateMacro( ImageRead ); 
   igstkAddStateMacro( AttemptingToReadImage ); 
 
@@ -45,6 +46,8 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   igstkAddInputMacro( ImageReadingError );
   igstkAddInputMacro( ImageReadingSuccess );
   igstkAddInputMacro( ImageDirectoryNameValid );
+  igstkAddInputMacro( ImageSeriesFileNamesGeneratingSuccess );
+  igstkAddInputMacro( ImageSeriesFileNamesGeneratingError );
   igstkAddInputMacro( ImageDirectoryNameIsEmpty );
   igstkAddInputMacro( ImageDirectoryNameDoesNotExist );
   igstkAddInputMacro( ImageDirectoryNameIsNotDirectory );
@@ -55,9 +58,20 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
                            ImageDirectoryNameValid,
                            ImageDirectoryNameRead,
                            SetDirectoryName );
-
-  //Transition for valid image read request
+  
+  //Transitions for image series file name reading 
   igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           ImageSeriesFileNamesGeneratingError,
+                           Idle,
+                           ReportImageSeriesFileNamesGeneratingError );
+
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           ImageSeriesFileNamesGeneratingSuccess,
+                           ImageSeriesFileNamesGenerated,
+                           ReportImageSeriesFileNamesGeneratingSuccess );
+
+  // Transitions for image reading
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
                            ReadImageRequest,
                            AttemptingToReadImage,
                            AttemptReadImage );
@@ -67,7 +81,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
                            ImageRead,
                            ReportImageReadingSuccess );
 
-  //Transition for invalid image reqes request
+  //Transition for invalid image request
   igstkAddTransitionMacro( Idle,
                            ReadImageRequest,
                            Idle,
@@ -250,12 +264,15 @@ void DICOMImageReader<TPixelType>::ReadDirectoryFileNamesProcessing()
                                                m_FileNames -> GetSeriesUIDs();
   if ( seriesUID.empty() ) 
     {
-    DICOMImageReadingErrorEvent event;
-    this->InvokeEvent ( event );
+    this->m_ImageReadingErrorInformation = "The dicom files are invalid or corrupted";
+    this->m_StateMachine.PushInput( this->m_ImageSeriesFileNamesGeneratingErrorInput );
+    this->m_StateMachine.ProcessInputs();
     return;
     } 
  
   m_ImageSeriesReader->SetFileNames( m_FileNames->GetInputFileNames() );
+  this->m_StateMachine.PushInput( this->m_ImageSeriesFileNamesGeneratingSuccessInput );
+  this->m_StateMachine.ProcessInputs();
 }
 
 
@@ -274,10 +291,9 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
       }
     catch( itk::ExceptionObject & excp )
       {
+      this->m_ImageReadingErrorInformation = excp.GetDescription();       
       this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
-      DICOMImageReadingErrorEvent event;
-      event.Set( excp.GetDescription() );
-      this->InvokeEvent( event );
+      this->m_StateMachine.ProcessInputs();
       return;
       }
     }
@@ -291,16 +307,43 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
       }
     catch( itk::ExceptionObject & excp )
       {
+      this->m_ImageReadingErrorInformation = excp.GetDescription();       
       this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
-      DICOMImageReadingErrorEvent event;
-      event.Set( excp.GetDescription() );
-      this->InvokeEvent( event );
+      this->m_StateMachine.ProcessInputs();
       return;
       }
     }
 
-  this->m_StateMachine.PushInput( this->m_ImageReadingSuccessInput );
+  // Check if the DICOM image has a gantry tilt or not 
+ 
+  std::string tagkey;
 
+  itk::MetaDataDictionary & dict = m_ImageIO->GetMetaDataDictionary();
+ 
+  tagkey = "0018|1120";
+
+  if( itk::ExposeMetaData<std::string>(dict,tagkey, m_GantryTilt ) )
+    {
+    igstkLogMacro( DEBUG, "Gantry Tilt = " << m_GantryTilt << "\n" );
+
+    // Check if the gantry tilt is within an acceptable range
+    double gantryTilt;
+    double gantryTiltThreshold=-0.01;
+  
+    std::stringstream sstr;
+    sstr.str( m_GantryTilt );    
+    sstr >> gantryTilt;
+
+    if( gantryTilt > gantryTiltThreshold )
+      {
+      this->m_ImageReadingErrorInformation = "Unacceptable gantry tilt";
+      this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
+      this->m_StateMachine.ProcessInputs();
+      return; 
+      }
+    }
+
+  this->m_StateMachine.PushInput( this->m_ImageReadingSuccessInput );
   this->m_StateMachine.ProcessInputs();
 
   char tmp_string[5120];
@@ -329,7 +372,7 @@ void
 DICOMImageReader<TPixelType>::ReportInvalidRequestProcessing()
 {
   igstkLogMacro( DEBUG, 
-     "igstk::DICOMImageReader::ReportInvalidRequestProcessing called...\n");
+      "igstk::DICOMImageReader::ReportInvalidRequestProcessing called...\n");
   this->InvokeEvent( DICOMInvalidRequestErrorEvent() );
 }
 
@@ -387,6 +430,25 @@ DICOMImageReader<TPixelType>
   this->InvokeEvent( event );
 }
 
+template <class TPixelType>
+void
+DICOMImageReader<TPixelType>::ReportImageSeriesFileNamesGeneratingErrorProcessing()
+{
+  igstkLogMacro( DEBUG, 
+            "igstk::DICOMImageReader::\
+            ReportImageSeriesFilesNamesGeneratingErrorProcessing: called...\n");
+  DICOMImageSeriesFileNamesGeneratingErrorEvent event;
+  this->InvokeEvent( event );
+}
+
+template <class TPixelType>
+void
+DICOMImageReader<TPixelType>::ReportImageSeriesFileNamesGeneratingSuccessProcessing()
+{
+  igstkLogMacro( DEBUG, 
+            "igstk::DICOMImageReader::\
+            ReportImageSeriesFileNamesGeneratingSuccessProcessing: called...\n");
+}
 
 template <class TPixelType>
 void
@@ -394,7 +456,9 @@ DICOMImageReader<TPixelType>::ReportImageReadingErrorProcessing()
 {
   igstkLogMacro( DEBUG, 
             "igstk::DICOMImageReader::ReportImageReadingError: called...\n");
-  this->InvokeEvent( DICOMImageReadingErrorEvent() );
+  DICOMImageReadingErrorEvent event;
+  event.Set ( this->m_ImageReadingErrorInformation );
+  this->InvokeEvent( event );
 }
 
 template <class TPixelType>
