@@ -24,56 +24,6 @@
 #include <fstream>
 #include "igstkPivotCalibrationReader.h"
 
-
-#define igstkObserverMacro( name, eventType, payloadType ) \
-class name##Observer : public ::itk::Command \
-{ \
-public: \
-  typedef  name##Observer             Self; \
-  typedef  ::itk::Command             Superclass;\
-  typedef  ::itk::SmartPointer<Self>  Pointer;\
-  itkNewMacro( Self );\
-protected:\
-  name##Observer() \
-    {\
-    m_GotObject = false;\
-    }\
-  ~name##Observer() {}\
-public:\
-  typedef eventType  EventType;\
-  void Execute(itk::Object *caller, const itk::EventObject & event)\
-    {\
-    const itk::Object * constCaller = caller;\
-    this->Execute( constCaller, event );\
-    }\
-  void Execute(const itk::Object *caller, const itk::EventObject & event)\
-    {\
-    m_GotObject = false;\
-    if( EventType().CheckEvent( &event ) )\
-      {\
-      const EventType * objectEvent = \
-                    dynamic_cast< const EventType *>( &event );\
-      if( objectEvent )\
-        {\
-        m_Object = objectEvent->Get();\
-        m_GotObject = true;\
-        }\
-      }\
-    }\
-  bool Got##name() const\
-    {\
-    return m_GotObject;\
-    }\
-  payloadType Get##name() const\
-    {\
-    return m_Object;\
-    }\
-private:\
-  payloadType  m_Object;\
-  bool m_GotObject;\
-};
-
-
 namespace ToolCalibrationTest
 {
 igstkObserverMacro(Calibration,::igstk::CalibrationModifiedEvent,
