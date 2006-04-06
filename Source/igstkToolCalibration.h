@@ -34,11 +34,6 @@ class ToolCalibration : public Object
 
 public:
 
-  /** Typedef for the superclass. This is needed because the 
-   *  igstkStandardClassTraitsMacro gets confused with the commas
-   *  in the template declaration. */
-  typedef Object  Superclass;
-
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( ToolCalibration, Object )
 
