@@ -220,10 +220,12 @@ private:
    *  files */
   void ReportImageDirectoryDoesNotHaveEnoughFilesErrorProcessing();
   
-  /** This function reports an error in dicom image series file name generation */
+  /** This function reports an error in dicom image series file name 
+   * generation */
   void ReportImageSeriesFileNamesGeneratingErrorProcessing();
 
-  /** This function reports success in dicom image series file name generation */
+  /** This function reports success in dicom image series file name 
+   * generation */
   void ReportImageSeriesFileNamesGeneratingSuccessProcessing();
 
   /** This function reports an error while image reading */

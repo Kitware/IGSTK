@@ -81,10 +81,242 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
                            ImageRead,
                            ReportImageReadingSuccess );
 
-  //Transition for invalid image request
+  //Transition for invalid inputs to Idle state
   igstkAddTransitionMacro( Idle,
                            ReadImageRequest,
                            Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Idle,
+                           GetModalityInformation,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Idle,
+                           GetPatientNameInformation,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Idle,
+                           ImageReadingError,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Idle,
+                           ImageReadingSuccess,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Idle,
+                           ImageSeriesFileNamesGeneratingSuccess,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Idle,
+                           ImageSeriesFileNamesGeneratingError,
+                           Idle,
+                           ReportInvalidRequest );
+
+  // Transitions for Invalid inputs to  ImageDirectoryNameRead state 
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           GetModalityInformation,
+                           ImageDirectoryNameRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           GetPatientNameInformation,
+                           ImageDirectoryNameRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           ImageReadingSuccess,
+                           ImageDirectoryNameRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           ImageReadingError,
+                           ImageDirectoryNameRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           ImageDirectoryNameValid,
+                           ImageDirectoryNameRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           ImageSeriesFileNamesGeneratingError,
+                           ImageDirectoryNameRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           ImageSeriesFileNamesGeneratingSuccess,
+                           ImageDirectoryNameRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           ImageDirectoryNameIsEmpty,
+                           ImageDirectoryNameRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           ImageDirectoryNameIsNotDirectory,
+                           ImageDirectoryNameRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           ImageDirectoryNameDoesNotHaveEnoughFiles,
+                           ImageDirectoryNameRead,
+                           ReportInvalidRequest );
+
+  // Transitions for invalid inputs to ImageSeriesFileNamesGenerated 
+
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
+                           GetModalityInformation,
+                           ImageSeriesFileNamesGenerated,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
+                           GetPatientNameInformation,
+                           ImageSeriesFileNamesGenerated,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
+                           ImageReadingSuccess,
+                           ImageSeriesFileNamesGenerated,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
+                           ImageReadingError,
+                           ImageSeriesFileNamesGenerated,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
+                           ImageDirectoryNameValid,
+                           ImageSeriesFileNamesGenerated,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
+                           ImageSeriesFileNamesGeneratingSuccess,
+                           ImageSeriesFileNamesGenerated,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
+                           ImageSeriesFileNamesGeneratingError,
+                           ImageSeriesFileNamesGenerated,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
+                           ImageDirectoryNameIsEmpty,
+                           ImageSeriesFileNamesGenerated,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
+                           ImageDirectoryNameDoesNotExist,
+                           ImageSeriesFileNamesGenerated,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
+                           ImageDirectoryNameIsNotDirectory,
+                           ImageSeriesFileNamesGenerated,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
+                           ImageDirectoryNameDoesNotHaveEnoughFiles,
+                           ImageSeriesFileNamesGenerated,
+                           ReportInvalidRequest );
+
+ // Transitions for invalid inputs to ImageRead state
+  igstkAddTransitionMacro( ImageRead,
+                           ReadImageRequest,
+                           ImageRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageRead,
+                           ImageReadingSuccess,
+                           ImageRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageRead,
+                           ImageReadingError,
+                           ImageRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageRead,
+                           ImageDirectoryNameValid,
+                           ImageRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageRead,
+                           ImageSeriesFileNamesGeneratingSuccess,
+                           ImageRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageRead,
+                           ImageSeriesFileNamesGeneratingError,
+                           ImageRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageRead,
+                           ImageDirectoryNameIsEmpty,
+                           ImageRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageRead,
+                           ImageDirectoryNameDoesNotExist,
+                           ImageRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageRead,
+                           ImageDirectoryNameIsNotDirectory,
+                           ImageRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageRead,
+                           ImageDirectoryNameDoesNotHaveEnoughFiles,
+                           ImageRead,
+                           ReportInvalidRequest );
+
+
+ // Transitions for invalid inputs to AttemptingToReadImage state
+
+  igstkAddTransitionMacro( AttemptingToReadImage,
+                           ReadImageRequest,
+                           AttemptingToReadImage,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToReadImage,
+                           ImageDirectoryNameValid,
+                           AttemptingToReadImage,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToReadImage,
+                           ImageSeriesFileNamesGeneratingSuccess,
+                           AttemptingToReadImage,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToReadImage,
+                           ImageSeriesFileNamesGeneratingError,
+                           AttemptingToReadImage,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToReadImage,
+                           ImageDirectoryNameIsEmpty,
+                           AttemptingToReadImage,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToReadImage,
+                           ImageDirectoryNameDoesNotExist,
+                           AttemptingToReadImage,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToReadImage,
+                           ImageDirectoryNameIsNotDirectory,
+                           AttemptingToReadImage,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToReadImage,
+                           ImageDirectoryNameDoesNotHaveEnoughFiles,
+                           AttemptingToReadImage,
                            ReportInvalidRequest );
 
   //Transitions for DICOM info request inputs
@@ -264,14 +496,17 @@ void DICOMImageReader<TPixelType>::ReadDirectoryFileNamesProcessing()
                                                m_FileNames -> GetSeriesUIDs();
   if ( seriesUID.empty() ) 
     {
-    this->m_ImageReadingErrorInformation = "The dicom files are invalid or corrupted";
-    this->m_StateMachine.PushInput( this->m_ImageSeriesFileNamesGeneratingErrorInput );
+    this->m_ImageReadingErrorInformation = 
+                                   "The dicom files are invalid or corrupted";
+    this->m_StateMachine.PushInput( 
+                            this->m_ImageSeriesFileNamesGeneratingErrorInput );
     this->m_StateMachine.ProcessInputs();
     return;
     } 
  
   m_ImageSeriesReader->SetFileNames( m_FileNames->GetInputFileNames() );
-  this->m_StateMachine.PushInput( this->m_ImageSeriesFileNamesGeneratingSuccessInput );
+  this->m_StateMachine.PushInput( 
+                   this->m_ImageSeriesFileNamesGeneratingSuccessInput );
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -291,7 +526,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
       }
     catch( itk::ExceptionObject & excp )
       {
-      this->m_ImageReadingErrorInformation = excp.GetDescription();       
+      this->m_ImageReadingErrorInformation = excp.GetDescription();
       this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
       this->m_StateMachine.ProcessInputs();
       return;
@@ -307,7 +542,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
       }
     catch( itk::ExceptionObject & excp )
       {
-      this->m_ImageReadingErrorInformation = excp.GetDescription();       
+      this->m_ImageReadingErrorInformation = excp.GetDescription();
       this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
       this->m_StateMachine.ProcessInputs();
       return;
@@ -331,7 +566,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
     double gantryTiltThreshold=0.01;
   
     std::stringstream sstr;
-    sstr.str( m_GantryTilt );    
+    sstr.str( m_GantryTilt );
     sstr >> gantryTilt;
 
     if( gantryTilt > gantryTiltThreshold )
@@ -432,22 +667,25 @@ DICOMImageReader<TPixelType>
 
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::ReportImageSeriesFileNamesGeneratingErrorProcessing()
+DICOMImageReader<TPixelType>
+::ReportImageSeriesFileNamesGeneratingErrorProcessing()
 {
   igstkLogMacro( DEBUG, 
-            "igstk::DICOMImageReader::\
-            ReportImageSeriesFilesNamesGeneratingErrorProcessing: called...\n");
+         "igstk::DICOMImageReader::\
+         ReportImageSeriesFilesNamesGeneratingErrorProcessing: called...\n");
+
   DICOMImageSeriesFileNamesGeneratingErrorEvent event;
   this->InvokeEvent( event );
 }
 
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::ReportImageSeriesFileNamesGeneratingSuccessProcessing()
+DICOMImageReader<TPixelType>
+::ReportImageSeriesFileNamesGeneratingSuccessProcessing()
 {
   igstkLogMacro( DEBUG, 
-            "igstk::DICOMImageReader::\
-            ReportImageSeriesFileNamesGeneratingSuccessProcessing: called...\n");
+         "igstk::DICOMImageReader::\
+         ReportImageSeriesFileNamesGeneratingSuccessProcessing: called...\n");
 }
 
 template <class TPixelType>
@@ -456,6 +694,7 @@ DICOMImageReader<TPixelType>::ReportImageReadingErrorProcessing()
 {
   igstkLogMacro( DEBUG, 
             "igstk::DICOMImageReader::ReportImageReadingError: called...\n");
+
   DICOMImageReadingErrorEvent event;
   event.Set ( this->m_ImageReadingErrorInformation );
   this->InvokeEvent( event );
