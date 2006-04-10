@@ -104,8 +104,8 @@ public:  \
   virtual ::itk::EventObject* MakeObject() const \
     { return new Self; } \
   name(const Self&s) :superclass(s){}; \
-  PayloadType::Pointer Get() const \
-    { return m_Payload; }  \
+  PayloadType* Get() const\
+    { return m_Payload.GetPointer(); }  \
   void Set( payloadtype * _var ) \
     { m_Payload = _var; }  \
 private: \
@@ -116,6 +116,54 @@ private: \
 igstkLoadedObjectEventMacro( CalibrationModifiedEvent, IGSTKEvent, 
                              PivotCalibration);
 
+
+#define igstkLoadedTemplatedObjectEventMacro( name, superclass, payloadtype ) \
+class  name : public superclass \
+{ \
+public:  \
+  typedef name        Self; \
+  typedef superclass  Superclass; \
+  typedef payloadtype PayloadType; \
+  name() {} \
+  virtual ~name() {} \
+  virtual const char * GetEventName() const { return #name; } \
+  virtual bool CheckEvent(const ::itk::EventObject* e) const \
+    { return dynamic_cast<const Self*>(e); } \
+  virtual ::itk::EventObject* MakeObject() const \
+    { return new Self; } \
+  name(const Self&s) :superclass(s){}; \
+  PayloadType * Get() const\
+    { return m_Payload.GetPointer(); }  \
+  void Set( payloadtype * _var ) \
+    { m_Payload = _var; }  \
+private: \
+  void operator=(const Self&);  \
+  typename PayloadType::Pointer  m_Payload; \
+};
+
+#define igstkLoadedTemplatedConstObjectEventMacro( name, superclass, payloadtype ) \
+class  name : public superclass \
+{ \
+public:  \
+  typedef name        Self; \
+  typedef superclass  Superclass; \
+  typedef payloadtype PayloadType; \
+  name() {} \
+  virtual ~name() {} \
+  virtual const char * GetEventName() const { return #name; } \
+  virtual bool CheckEvent(const ::itk::EventObject* e) const \
+    { return dynamic_cast<const Self*>(e); } \
+  virtual ::itk::EventObject* MakeObject() const \
+    { return new Self; } \
+  name(const Self&s) :superclass(s){}; \
+  const PayloadType * Get() const\
+    { return m_Payload.GetPointer(); }  \
+  void Set( const payloadtype * _var ) \
+    { m_Payload = _var; }  \
+private: \
+  void operator=(const Self&);  \
+  typename PayloadType::ConstPointer  m_Payload; \
+};
 }
 
 
