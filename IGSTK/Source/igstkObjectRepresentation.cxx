@@ -184,8 +184,7 @@ void ObjectRepresentation
 void ObjectRepresentation::SetSpatialObjectProcessing()
 {
   m_SpatialObject = m_SpatialObjectToAdd;
-  this->ObserveTransformModifiedEvent( m_SpatialObject );
-
+  this->ObserveSpatialObjectTransformInput( m_SpatialObject );
 }
 
 
@@ -241,7 +240,7 @@ void ObjectRepresentation::RequestUpdatePositionProcessing()
 /** Receive the Transform from the SpatialObject via a transduction macro. */
 void ObjectRepresentation::ReceiveSpatialObjectTransformProcessing()
 {
-  m_SpatialObjectTransform = m_SpatialObjectTransformToBeSet;
+  m_SpatialObjectTransform = m_SpatialObjectTransformInputToBeSet;
 
   igstkPushInputMacro( UpdateActorsPosition );
   m_StateMachine.ProcessInputs();
