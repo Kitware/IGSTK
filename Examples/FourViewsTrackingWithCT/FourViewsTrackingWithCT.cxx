@@ -178,9 +178,9 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ImageRepresentationSagittal3D->SetLogger( logger );
   m_ImageRepresentationCoronal3D->SetLogger( logger );
 
-  this->ObserveAxialSliceBoundsEvent(    m_ImageRepresentationAxial    );
-  this->ObserveSagittalSliceBoundsEvent( m_ImageRepresentationSagittal );
-  this->ObserveCoronalSliceBoundsEvent(  m_ImageRepresentationCoronal  );
+  this->ObserveAxialBoundsInput(    m_ImageRepresentationAxial    );
+  this->ObserveSagittalBoundsInput( m_ImageRepresentationSagittal );
+  this->ObserveCoronalBoundsInput(  m_ImageRepresentationCoronal  );
 
   /** Initialize  Machine */
   igstkAddStateMacro( Initial );
@@ -883,8 +883,8 @@ void FourViewsTrackingWithCT::SetAxialSliderBoundsProcessing()
 {
   igstkLogMacro( DEBUG, "SetAxialSliderBounds() " << "\n");
   /** Initialize the slider */
-  const unsigned int min = m_AxialBoundsToBeSet.minimum;
-  const unsigned int max = m_AxialBoundsToBeSet.maximum; 
+  const unsigned int min = m_AxialBoundsInputToBeSet.minimum;
+  const unsigned int max = m_AxialBoundsInputToBeSet.maximum; 
   const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
   m_ImageRepresentationAxial->RequestSetSliceNumber( slice );
   m_ImageRepresentationAxial3D->RequestSetSliceNumber( slice );
@@ -902,8 +902,8 @@ void FourViewsTrackingWithCT::SetSagittalSliderBoundsProcessing()
 {
   igstkLogMacro( DEBUG, "SetSagittalSliderBounds() " << "\n");
   /** Initialize the slider */
-  const unsigned int min = m_SagittalBoundsToBeSet.minimum;
-  const unsigned int max = m_SagittalBoundsToBeSet.maximum; 
+  const unsigned int min = m_SagittalBoundsInputToBeSet.minimum;
+  const unsigned int max = m_SagittalBoundsInputToBeSet.maximum; 
   const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( slice );
   m_ImageRepresentationSagittal3D->RequestSetSliceNumber( slice );
@@ -920,8 +920,8 @@ void FourViewsTrackingWithCT::SetSagittalSliderBoundsProcessing()
 void FourViewsTrackingWithCT::SetCoronalSliderBoundsProcessing()
 {
   igstkLogMacro( DEBUG, "SetCoronalSliderBounds() " << "\n");
-  const unsigned int min = m_CoronalBoundsToBeSet.minimum;
-  const unsigned int max = m_CoronalBoundsToBeSet.maximum; 
+  const unsigned int min = m_CoronalBoundsInputToBeSet.minimum;
+  const unsigned int max = m_CoronalBoundsInputToBeSet.maximum; 
   const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( slice );
   m_ImageRepresentationCoronal3D->RequestSetSliceNumber( slice );

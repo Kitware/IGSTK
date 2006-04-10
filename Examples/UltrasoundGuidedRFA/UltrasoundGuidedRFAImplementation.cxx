@@ -54,7 +54,7 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   m_Communication->SetParity( igstk::SerialCommunication::NoParity );
   m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate19200 );
   m_Tracker->SetCommunication(m_Communication);
-  //m_Communication->OpenCommunication();
+  m_Communication->OpenCommunication();
 
   /** Tool calibration transform */
   igstk::Transform toolCalibrationTransform;
@@ -96,8 +96,8 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
                                              rotationP,0.0001,100000);
   m_Tracker->SetPatientTransform(patientTransform);
 
-  //m_Tracker->Open();
-  //m_Tracker->Initialize();
+  m_Tracker->Open();
+  m_Tracker->Initialize();
 
   // Set up the four quadrant views
   this->Display3D->RequestResetCamera();
@@ -127,8 +127,10 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   m_HasQuitted = false;
    
   m_LiverMRRepresentation = MRImageRepresentationType::New();
-  m_ObliqueLiverMRRepresentation = MRImageRepresentationType::New();
-  this->ObserveAxialSliceBoundsEvent(    m_LiverMRRepresentation    );
+  //m_ObliqueLiverMRRepresentation = MRImageRepresentationType::New();
+  m_ObliqueLiverMRRepresentation = MRObliqueImageRepresentationType::New();
+  
+  this->ObserveAxialBoundsInput(    m_LiverMRRepresentation    );
   
   igstkAddStateMacro( Initial );
   igstkAddInputMacro( AxialBounds );
@@ -166,11 +168,11 @@ void UltrasoundGuidedRFAImplementation::Quit()
 
 void UltrasoundGuidedRFAImplementation::SetAxialSliderBoundsProcessing()
 {
-  const unsigned int min = m_AxialBoundsToBeSet.minimum;
-  const unsigned int max = m_AxialBoundsToBeSet.maximum; 
+  const unsigned int min = m_AxialBoundsInputToBeSet.minimum;
+  const unsigned int max = m_AxialBoundsInputToBeSet.maximum; 
   const unsigned int slice = static_cast< unsigned int > ( 
                                                    ( min + max ) / 2.0 );
-  m_ObliqueLiverMRRepresentation->RequestSetSliceNumber( slice );
+  //m_ObliqueLiverMRRepresentation->RequestSetSliceNumber( slice );
   this->slider->minimum( min );
   this->slider->maximum( max );
   this->slider->value( slice );  
@@ -300,10 +302,11 @@ void UltrasoundGuidedRFAImplementation
     m_ObliqueLiverMRRepresentation->RequestSetImageSpatialObject(
                                                 m_MRImageReader->GetOutput());
     m_ObliqueLiverMRRepresentation->SetWindowLevel(52,52);
-    m_ObliqueLiverMRRepresentation->RequestSetOrientation(
-                                            MRImageRepresentationType::Axial);
-
-    m_ObliqueLiverMRRepresentation->RequestGetSliceNumberBounds();
+    
+    //m_ObliqueLiverMRRepresentation->RequestSetOrientation(
+     //                                       MRImageRepresentationType::Axial);
+    //m_ObliqueLiverMRRepresentation->RequestGetSliceNumberBounds();
+    
     m_StateMachine.ProcessInputs();
 
     this->Display2D->RequestAddObject( m_ObliqueLiverMRRepresentation );
@@ -343,11 +346,28 @@ void UltrasoundGuidedRFAImplementation
 ::SetSliceNumber(unsigned int value)
 {
   m_LiverMRRepresentation->RequestSetSliceNumber(value);
-  m_ObliqueLiverMRRepresentation->RequestSetSliceNumber(value);
-  m_ContourLiverRepresentation->RequestSetSlicePosition(value*0.78125);
-  m_ContourVascularNetworkRepresentation->RequestSetSlicePosition(
-                                                        value*0.78125);
+  //m_ObliqueLiverMRRepresentation->RequestSetSliceNumber(value);
+
+  MRObliqueImageRepresentationType::PointType origin;
+  origin[0] = 0;
+  origin[1] = 0;
+  origin[2] = value;
+  MRObliqueImageRepresentationType::VectorType v1;
+  v1[0] = 1;
+  v1[1] = 0;
+  v1[2] = 1;
+  MRObliqueImageRepresentationType::VectorType v2;
+  v2[0] = 0;
+  v2[1] = 1;
+  v2[2] = 0;
+
+  m_ObliqueLiverMRRepresentation->RequestSetOriginPointOnThePlane(origin);
+  m_ObliqueLiverMRRepresentation->RequestSetVector1OnThePlane(v1);
+  m_ObliqueLiverMRRepresentation->RequestSetVector2OnThePlane(v2);
+  m_ObliqueLiverMRRepresentation->RequestReslice();
+  //m_ObliqueLiverMRRepresentation->RequestReslice();
   this->Display2D->RequestResetCamera();
+  
 }
 
 /** Randomize. Test only. */

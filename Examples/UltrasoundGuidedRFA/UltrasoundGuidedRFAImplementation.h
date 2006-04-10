@@ -151,8 +151,8 @@ private:
   MRImageReaderType::Pointer   m_MRImageReader;
   MRImageType::Pointer         m_LiverMR;
   MRImageRepresentationType::Pointer m_LiverMRRepresentation;
-  //MRObliqueImageRepresentationType::Pointer m_ObliqueLiverMRRepresentation;
-  MRImageRepresentationType::Pointer m_ObliqueLiverMRRepresentation;
+  MRObliqueImageRepresentationType::Pointer m_ObliqueLiverMRRepresentation;
+  //MRImageRepresentationType::Pointer m_ObliqueLiverMRRepresentation;
 
   USImageReaderType::Pointer         m_USImageReader;
   USImageType::Pointer               m_LiverUS;
