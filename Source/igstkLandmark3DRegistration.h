@@ -107,10 +107,7 @@ public:
    *  state machine: FIXME */
   double ComputeRMSError();
 
-  /**  The "CheckCollinearity" method checks whether the landmark points
-   *   are colliner or not */
-  bool CheckCollinearity();
-   
+  
   /** Landmark registration events..they have to be eventually added
    * to the igstkEvents class */
   itkEventMacro( TransformInitializerEvent,       IGSTKEvent );
@@ -163,6 +160,10 @@ private:
   igstkDeclareInputMacro( TransformComputationFailure );
   igstkDeclareInputMacro( TransformComputationSuccess );
 
+  /**  The "CheckCollinearity" method checks whether the landmark points
+   *   are colliner or not */
+  bool CheckCollinearity();
+   
   /** The "AddImageLandmark" method adds landmark points to the image
    * landmark point container */
 
