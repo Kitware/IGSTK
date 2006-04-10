@@ -243,9 +243,13 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   igstkLogMacro( DEBUG, "igstk::MR3DImageToUS3DImageRegistration\
                         ::CalculateRegistrationProcessing called...\n" );
 
+  typedef USImageObject::ImageType USImageType;
+  typedef USImageObject::ITKImageModifiedEvent USITKImageModifiedEvent;
+
   // Get the pointer to the ITK Ultrasound image
+  /*
   igstkObserverConstObjectMacro(ITKUSImage,
-    USImageObject::ITKImageModifiedEvent,USImageObject::ImageType)
+    USITKImageModifiedEvent,USImageType)
 
   ITKUSImageObserver::Pointer usImageObserver = ITKUSImageObserver::New(); 
   this->m_USFixedImage->AddObserver(
@@ -272,7 +276,7 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
     {
     return;
     }
-
+  */
   // Fixed Image Type
   typedef USImageObject::ImageType            FixedImageType;
   //typedef MRImageSpatialObject::ImageType     FixedImageType;
@@ -317,12 +321,12 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   registration->SetMetric(        metric        );
   registration->SetOptimizer(     optimizer     );
   registration->SetTransform(     transform     );
-  registration->SetFixedImage( usImageObserver->GetITKUSImage() );
-  registration->SetMovingImage( mrImageObserver->GetITKMRImage() );
+  //registration->SetFixedImage( usImageObserver->GetITKUSImage() );
+  //registration->SetMovingImage( mrImageObserver->GetITKMRImage() );
   registration->SetInterpolator(  interpolator  );
 
-  usImageObserver->GetITKUSImage()->Print(std::cout);
-  mrImageObserver->GetITKMRImage()->Print(std::cout);
+  //usImageObserver->GetITKUSImage()->Print(std::cout);
+  //mrImageObserver->GetITKMRImage()->Print(std::cout);
 
   typedef RegistrationType::ParametersType ParametersType;
   ParametersType initialParameters( transform->GetNumberOfParameters() );
