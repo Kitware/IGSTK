@@ -43,6 +43,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   igstkAddInputMacro( GetPatientNameInformation );
   igstkAddInputMacro( ReadImageRequest );
   igstkAddInputMacro( ResetReader );
+  igstkAddInputMacro( RequestImage );
   igstkAddInputMacro( ImageReadingError );
   igstkAddInputMacro( ImageReadingSuccess );
   igstkAddInputMacro( ImageDirectoryNameValid );
@@ -380,6 +381,13 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
                            Idle,
                            ReportImageReadingError );
 
+
+  igstkAddTransitionMacro( ImageRead,
+                           RequestImage,
+                           ImageRead,
+                           ReportImage );
+
+
   // Select the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
 
@@ -461,6 +469,25 @@ void DICOMImageReader<TImageSpatialObject>
 
 }
 
+/** This function reports the image */
+template <class TImageSpatialObject>
+void 
+DICOMImageReader<TImageSpatialObject>
+::ReportImageProcessing()
+{
+  ImageModifiedEvent  event;
+  event.Set( this->m_ImageSpatialObject );
+  this->InvokeEvent( event );
+}
+
+template <class TPixelType>
+void DICOMImageReader<TPixelType>::RequestGetImage()
+{
+  igstkLogMacro( DEBUG, 
+                 "igstk::DICOMImageReader::RequestGetImage called...\n");
+  this->m_StateMachine.PushInput( this->m_RequestImageInput);
+  this->m_StateMachine.ProcessInputs();
+}
 
 template <class TImageSpatialObject>
 void 

@@ -64,6 +64,7 @@ itkEventMacro(DICOMImageSeriesFileNamesGeneratingErrorEvent,
 //Image reading error
 itkEventMacro(DICOMImageReadingErrorEvent,
               DICOMImageReaderEvent );
+  
 
 /** \class DICOMImageReader
  * 
@@ -134,7 +135,14 @@ public:
    * has returned true. Calling GetModality() in any other situation will lead
    * to unpredictable behavior. */
   igstkUnsafeGetMacro( Modality, DICOMInformationType );
+
+  /** Request to get the output image as an event */
+  void RequestGetImage();
   
+  /** Event type */
+  igstkLoadedTemplatedObjectEventMacro( ImageModifiedEvent, IGSTKEvent, 
+                                        TImageSpatialObject);
+
 protected:
 
   DICOMImageReader( void );
@@ -180,6 +188,7 @@ private:
   igstkDeclareInputMacro( ImageReadingSuccess );
   igstkDeclareInputMacro( ImageSeriesFileNamesGeneratingSuccess );
   igstkDeclareInputMacro( ResetReader );
+  igstkDeclareInputMacro( RequestImage );
   
   /** Error related state inputs */
   igstkDeclareInputMacro( ImageReadingError );
@@ -233,6 +242,9 @@ private:
 
   /** This function reports success in image reading */
   void ReportImageReadingSuccessProcessing();
+
+  /** This function reports the image */
+  void ReportImageProcessing();
 
   /** This function resets the reader */
   void ResetReaderProcessing();
