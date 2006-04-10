@@ -267,6 +267,7 @@ SET(IGSTKSandbox_SRCS
   igstkSocketCommunication.cxx
   igstkToolCalibration.cxx
   igstkPivotCalibrationReader.cxx
+  igstkMR3DImageToUS3DImageRegistration.cxx
 )
 
 # Variable for holding extra libraries
