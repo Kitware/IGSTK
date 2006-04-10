@@ -33,4 +33,5 @@ void RegisterTests()
   REGISTER_TEST(igstkFlockOfBirdsTrackerTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
   REGISTER_TEST(igstkPivotCalibrationReaderTest);
+  REGISTER_TEST(igstkMR3DImageToUS3DImageRegistrationTest);
 }
