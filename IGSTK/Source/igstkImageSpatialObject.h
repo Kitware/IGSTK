@@ -35,6 +35,8 @@ class ImageSpatialObjectRepresentationToImageSpatialObject;
 class ObliqueImageSpatialObjectRepresentationToImageSpatialObject;
 }
 
+class MR3DImageToUS3DImageRegistration;
+
 
 /** \class ImageSpatialObject
  * 
@@ -85,6 +87,12 @@ public:
      igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
   igstkFriendClassMacro( igstk::Friends::
               ObliqueImageSpatialObjectRepresentationToImageSpatialObject );
+  igstkFriendClassMacro( igstk::MR3DImageToUS3DImageRegistration );
+
+  /** Event type */
+  igstkLoadedTemplatedConstObjectEventMacro( ITKImageModifiedEvent, IGSTKEvent,
+                                             ImageType);
+
 
 protected:
 
@@ -93,6 +101,10 @@ protected:
 
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+  /** Get the ITK image as a const pointer
+   *  This is only accessible friend classes */
+  void RequestGetITKImage();
 
 private:
 
@@ -121,11 +133,14 @@ private:
   /** State Machine States */
   igstkDeclareStateMacro( Initial );
   igstkDeclareStateMacro( ImageSet );
+  igstkDeclareInputMacro( RequestITKImage );
 
   /** This method is intended to be called by the state machine */
   void SetImageProcessing();
   void ReportInvalidImageProcessing();
 
+  /** This function reports the image */
+  void ReportITKImageProcessing();
 
   /** This is the variable holding the real data container in the form of an
    * ITK image. This image should never be exposed at the IGSTK API. */
