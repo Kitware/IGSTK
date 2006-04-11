@@ -36,7 +36,7 @@ class CommandIterationUpdate : public itk::Command
 public:
   typedef  CommandIterationUpdate   Self;
   typedef  itk::Command             Superclass;
-  typedef itk::SmartPointer<Self>  Pointer;
+  typedef itk::SmartPointer<Self>   Pointer;
   itkNewMacro( Self );
 
 protected:
@@ -44,18 +44,17 @@ protected:
 
 public:
 
-  typedef itk::RegularStepGradientDescentOptimizer     OptimizerType;
-  typedef const OptimizerType                         *OptimizerPointer;
+  typedef itk::RegularStepGradientDescentOptimizer   OptimizerType;
+  typedef const OptimizerType*                       OptimizerPointer;
 
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     Execute( (const itk::Object *)caller, event);
-  }
+    }
 
   void Execute(const itk::Object * object, const itk::EventObject & event)
-  {
-    OptimizerPointer optimizer = 
-                         dynamic_cast< OptimizerPointer >( object );
+    {
+    OptimizerPointer optimizer = dynamic_cast< OptimizerPointer >( object );
 
     if( ! itk::IterationEvent().CheckEvent( &event ) )
       {
@@ -65,7 +64,7 @@ public:
     std::cout << optimizer->GetCurrentIteration() << " = ";
     std::cout << optimizer->GetValue() << " : ";
     std::cout << optimizer->GetCurrentPosition() << std::endl;
-  }
+    }
    
 };
 
@@ -140,8 +139,10 @@ MR3DImageToUS3DImageRegistration::MR3DImageToUS3DImageRegistration() :
                            ImagesSet, SetFixedUS3D );
   igstkAddTransitionMacro( RegistrationCalculated, CalculateRegistration, 
                            RegistrationCalculated, CalculateRegistration );
-  igstkAddTransitionMacro( RegistrationCalculated, RequestRegistrationTransform, 
-                           RegistrationCalculated, ReportRegistrationTransform );
+  igstkAddTransitionMacro( RegistrationCalculated, 
+                           RequestRegistrationTransform, 
+                           RegistrationCalculated, 
+                           ReportRegistrationTransform );
 
   // Select the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
@@ -225,7 +226,6 @@ void MR3DImageToUS3DImageRegistration::ResetProcessing()
 }
 
 
-
 /** Method to invoke the ResetProcessing function */
 void MR3DImageToUS3DImageRegistration::RequestReset()
 {
@@ -260,7 +260,7 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   // Get the pointer to the ITK MR image
   ITKMRImageObserver::Pointer mrImageObserver = ITKMRImageObserver::New(); 
   this->m_MRMovingImage->AddObserver(
-                  MRImageSpatialObject::ITKImageModifiedEvent(),mrImageObserver);
+             MRImageSpatialObject::ITKImageModifiedEvent(),mrImageObserver);
 
   this->m_MRMovingImage->RequestGetITKImage();
 
@@ -364,14 +364,16 @@ void MR3DImageToUS3DImageRegistration::RequestCalculateRegistration()
   this->ObserveMRImageTransformInput(this->m_USFixedImage);
 
   const_cast<USImageObject*>(this->m_USFixedImage)->RequestGetTransform();
-  const_cast<MRImageSpatialObject*>(this->m_MRMovingImage)->RequestGetTransform();
+  const_cast<MRImageSpatialObject*>(
+                            this->m_MRMovingImage)->RequestGetTransform();
 
   this->m_StateMachine.PushInput( this->m_CalculateRegistrationInput );
   this->m_StateMachine.ProcessInputs();
 }
 
 /** Method to invoke the SetMovingMR3D function */
-void MR3DImageToUS3DImageRegistration::RequestSetMovingMR3D(MRImageSpatialObject* MRImage)
+void MR3DImageToUS3DImageRegistration
+::RequestSetMovingMR3D(MRImageSpatialObject* MRImage)
 {
   igstkLogMacro( DEBUG, "igstk::RequestSetMovingMR3D\
                         ::RequestReset called...\n" );
@@ -383,7 +385,8 @@ void MR3DImageToUS3DImageRegistration::RequestSetMovingMR3D(MRImageSpatialObject
 }
 
 /** Method to invoke the SetFixedUS3D function */
-void MR3DImageToUS3DImageRegistration::RequestSetFixedUS3D(USImageObject* USImage)
+void MR3DImageToUS3DImageRegistration
+::RequestSetFixedUS3D(USImageObject* USImage)
 {
   igstkLogMacro( DEBUG, "igstk::RequestSetFixedUS3D\
                         ::RequestReset called...\n" );

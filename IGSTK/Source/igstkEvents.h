@@ -141,7 +141,8 @@ private: \
   typename PayloadType::Pointer  m_Payload; \
 };
 
-#define igstkLoadedTemplatedConstObjectEventMacro( name, superclass, payloadtype ) \
+#define igstkLoadedTemplatedConstObjectEventMacro( name, superclass,\
+                                                   payloadtype ) \
 class  name : public superclass \
 { \
 public:  \

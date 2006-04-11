@@ -1154,7 +1154,7 @@ SocketCommunication::InternalReadProcessing( char * data,
                                   read time out!\n");
           
             if ( total > 0)
-              {              
+              {
               BinaryData::Encode(encodedString, (unsigned char*)data, total);
 
               if( m_Capture && m_CaptureFileStream.is_open())

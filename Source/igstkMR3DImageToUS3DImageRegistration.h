@@ -73,7 +73,7 @@ public:
   typedef ImageType::SpacingType          SpacingType;
   typedef double                          ErrorType;
 
-  typedef USImageObject::ImageType USImageType;
+  typedef USImageObject::ImageType             USImageType;
   typedef USImageObject::ITKImageModifiedEvent USITKImageModifiedEvent;
 
   igstkObserverConstObjectMacro(ITKUSImage,

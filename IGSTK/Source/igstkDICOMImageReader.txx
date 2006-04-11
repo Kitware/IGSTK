@@ -226,7 +226,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
                            ImageSeriesFileNamesGenerated,
                            ReportInvalidRequest );
 
- // Transitions for invalid inputs to ImageRead state
+  // Transitions for invalid inputs to ImageRead state
   igstkAddTransitionMacro( ImageRead,
                            ReadImageRequest,
                            ImageRead,
@@ -278,8 +278,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
                            ReportInvalidRequest );
 
 
- // Transitions for invalid inputs to AttemptingToReadImage state
-
+  // Transitions for invalid inputs to AttemptingToReadImage state
   igstkAddTransitionMacro( AttemptingToReadImage,
                            ReadImageRequest,
                            AttemptingToReadImage,
