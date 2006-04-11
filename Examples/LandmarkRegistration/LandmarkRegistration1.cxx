@@ -21,7 +21,7 @@
 #endif
 
 // BeginLatex
-// This example illustrates how to use igstk's landmark registration component to determine the rigid body
+// This example illustrates how to use igstk's landmark registration component to determine a rigid body
 // transformation parameters between image and patient coordinate system.
 //
 // EndLatex
@@ -41,8 +41,8 @@
 #include "itkCommand.h"
 #include "itkMacro.h"
 // BeginLatex
-// The transform parameters are returned to the requesting application using transform loaded event. For this purpose,
-// \doxygen{Events} and \doxygen{Transform} header files are added.
+// Transform parameters are returned to the application using loaded events. To handle these events,
+// \doxygen{Events} and \doxygen{Transform} header files are needed.
 //
 // EndLatex
 //
@@ -53,11 +53,11 @@
 
 // BeginLatex
 // 
-// The first task of the user of this component would be to set up observers to error events that could be thrown by
-// the registration component.   For this purpose, ITK command class is used as as superclass. This class 
-// implements command design pattern. A subject notifies an observer by running the \code{Execute } method of 
-// the callback class derived from itk::Command. For example a callback class is defined as follows for Error 
-// in transform computation
+// To fully  utilize the registration component, callbacks need to be set up to  observers events that could be thrown by the registration component.   For this purpose, ITK command class is used to derive a callback class .
+// The ITK command class implements subject/observer (command design) pattern.
+//  A subject notifies an observer by running the \code{Execute } method of 
+// the derived callback class . For example a callback class to observe error 
+// in transform computation is defined as follows.
 // 
 // EndLatex
 // BeginCodeSnippet
@@ -104,7 +104,7 @@ private:
 };
 
 //BeginLatex
-// Similarly, a callback class is defined to observe the \doxygen{TransformModified} event 
+// Similarly, a callback class needs to be defined to observe the \doxygen{TransformModified} event. 
 // This event is loaded with the transform parameters computed by the registration component.
 //
 //EndLatex
@@ -150,9 +150,14 @@ class Landmark3DRegistrationGetTransformCallback: public itk::Command
 };
 //EndCodeSnippet
 
+//BeginLatex
+//After defining the helper classes, the main function implementation is started.
+//
+//EndLatex
+//BeginCodeSnippet
 int main( int argv, char * argc[] )
 {
-
+//EndCodeSnippet
     igstk::RealTimeClock::Initialize();
 //BeginLatex
 //
@@ -183,14 +188,16 @@ int main( int argv, char * argc[] )
 //EndCodeSnippet
 //BeginLatex
 //The landmark containers that hold the landmark image and tracker coordinates are instantiated.
+//EndLatex
+//BeginCodeSnippet
     LandmarkPointContainerType  imagePointContainer;
     LandmarkPointContainerType  trackerPointContainer;
-
+//EndCodeSnippet
     LandmarkImagePointType      imagePoint;
     LandmarkTrackerPointType    trackerPoint;
 
 //BeginLatex
-// The callback objects are instantiated and added to the observer list of the registration component
+// Error event callback objects are instantiated and added to the observer list of the registration component.
 //EndLatex
 //
 //BeginCodeSnippet
@@ -219,9 +226,9 @@ int main( int argv, char * argc[] )
 //EndCodeSnippet
    
 //BeginLatex
-// Landmark coordinates are added to the image and tracker continers. Note that, the state machine
+// Next, landmark points are added to the image and tracker containers. The state machine
 // of this registration component is designed in such a way that image and tracker coordinates corresponding to
-// a landmark are consecutively added. This is consistent with the philosophy of igstk i.e safety by design
+// each landmark are added consecutively. This scheme was selected to prevent a mismatch in landmark correspondence that could occur when all landmarks image coordinates are recorded followed by the tracker coordinates. This design choice is consistent with the philosophy of igstk i.e safety by design
 //
 //EndLatex 
 //BeginCodeSnippet
@@ -238,7 +245,6 @@ int main( int argv, char * argc[] )
     trackerPoint[2] =  25.0;
     trackerPointContainer.push_back(trackerPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
-//EndCodeSnippet
 
     // Add 2nd landmark
     imagePoint[0] =  15.0;
@@ -253,7 +259,7 @@ int main( int argv, char * argc[] )
     trackerPointContainer.push_back(trackerPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
 
-    // Add 3d landmark
+   // Add 3d landmark
     imagePoint[0] =  14.0;
     imagePoint[1] =  25.0;
     imagePoint[2] =  11.0;
@@ -265,7 +271,10 @@ int main( int argv, char * argc[] )
     trackerPoint[2] =  21.0;
     trackerPointContainer.push_back(trackerPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
-
+//EndCodeSnippet
+//BeginLatex
+//More landmarks could be added for transform computation.  
+//EndLatex
     // Add 4th landmark
     imagePoint[0] =  10.0;
     imagePoint[1] =  11.0;
@@ -299,7 +308,7 @@ int main( int argv, char * argc[] )
 
 // BeginLatex
 // To access the tranform parameters, a GetTransform callback is instantiated to observe the transform 
-// event. 
+// event as follows. 
 // EndLatex
 //
 // BeginCodeSnippet
@@ -308,7 +317,6 @@ int main( int argv, char * argc[] )
     landmarkRegister->AddObserver( igstk::TransformModifiedEvent(), lrtcb );
 //EndCodeSnippet
 //
-//BeginCodeSnippet
 
 //BeginLatex
 // To request the registration component throw an event loaded with transform parameters, 
