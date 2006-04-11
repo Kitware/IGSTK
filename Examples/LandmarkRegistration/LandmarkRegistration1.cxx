@@ -11,533 +11,317 @@
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more DEBUGrmation.
+     PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __igstkLandmark3DRegistration_cxx
-#define __igstkLandmark3DRegistration_cxx
 
 #if defined(_MSC_VER)
+   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
 // BeginLatex
-// This example illustrates how the landmark registration component can 
-// be used.
+// This example illustrates how to use igstk's landmark registration component to determine the rigid body
+// transformation parameters between image and patient coordinate system.
+//
 // EndLatex
+// 
+#include <iostream>
 
+// BeginLatex
+// To use the registration component, the header file for \doxygen{Landmark3DRegistration} will be added.
+// EndLatex
+// 
 // BeginCodeSnippet
 #include "igstkLandmark3DRegistration.h"
-#include "igstkTransform.h"
+// EndCodeSnippet
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
+#include "itkObject.h"
+#include "itkCommand.h"
+#include "itkMacro.h"
+// BeginLatex
+// The transform parameters are returned to the requesting application using transform loaded event. For this purpose,
+// \doxygen{Events} and \doxygen{Transform} header files are added.
+//
+// EndLatex
+//
+// BeginCodeSnippet
 #include "igstkEvents.h"
-
-#include "itkNumericTraits.h"
-#include "itkMatrix.h"
-#include "itkSymmetricEigenAnalysis.h"
-
-#include "vnl/vnl_math.h"
+#include "igstkTransform.h"
 // EndCodeSnippet
 
-namespace igstk
-{ 
-
-/** Constructor */
-Landmark3DRegistration::Landmark3DRegistration() :
-  m_StateMachine( this )
+// BeginLatex
+// 
+// The first task of the user of this component would be to set up observers to error events that could be thrown by
+// the registration component.   For this purpose, ITK command class is used as as superclass. This class 
+// implements command design pattern. A subject notifies an observer by running the \code{Execute } method of 
+// the callback class derived from itk::Command. For example a callback class is defined as follows for Error 
+// in transform computation
+// 
+// EndLatex
+// BeginCodeSnippet
+class Landmark3DRegistrationErrorCallback : public itk::Command
 {
-  // Set the state descriptors
-  igstkAddStateMacro( Idle );
-  igstkAddStateMacro( ImageLandmark1Added );
-  igstkAddStateMacro( TrackerLandmark1Added );
-  igstkAddStateMacro( ImageLandmark2Added );
-  igstkAddStateMacro( TrackerLandmark2Added );
-  igstkAddStateMacro( ImageLandmark3Added );
-  igstkAddStateMacro( TrackerLandmark3Added );
-  igstkAddStateMacro( AttemptingToComputeTransform  );
-  igstkAddStateMacro( TransformComputed  );
+public:
+  typedef Landmark3DRegistrationErrorCallback Self;
+  typedef itk::SmartPointer<Self>      Pointer;
+  typedef itk::Command                 Superclass;
+  itkNewMacro(Self);
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  {
 
+  }
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+  {
+    std::cerr<<"Error in transform computation"<<std::endl;
+  }
+protected:
+  Landmark3DRegistrationErrorCallback()   { };
 
-  // Set the input descriptors 
-  igstkAddInputMacro( ImageLandmark );
-  igstkAddInputMacro( TrackerLandmark );
-  igstkAddInputMacro( ComputeTransform );
-  igstkAddInputMacro( GetTransform  );
-  igstkAddInputMacro( ResetRegistration );
-  igstkAddInputMacro( TransformComputationSuccess  );
-  igstkAddInputMacro( TransformComputationFailure  );
-
-  // Add transition  for landmark point adding
-  igstkAddTransitionMacro(Idle,
-                          ImageLandmark,
-                          ImageLandmark1Added,
-                          AddImageLandmarkPoint);
-
-  igstkAddTransitionMacro(ImageLandmark1Added,
-                          TrackerLandmark,
-                          TrackerLandmark1Added,
-                          AddTrackerLandmarkPoint);
-
-  igstkAddTransitionMacro(TrackerLandmark1Added,
-                          ImageLandmark,
-                          ImageLandmark2Added,
-                          AddImageLandmarkPoint);
-
-  igstkAddTransitionMacro(ImageLandmark2Added,
-                          TrackerLandmark,
-                          TrackerLandmark2Added,
-                          AddTrackerLandmarkPoint);
-
-  igstkAddTransitionMacro(TrackerLandmark2Added,
-                          ImageLandmark,
-                          ImageLandmark3Added,
-                          AddImageLandmarkPoint);
-
-  igstkAddTransitionMacro(ImageLandmark3Added,
-                          TrackerLandmark,
-                          TrackerLandmark3Added,
-                          AddTrackerLandmarkPoint);
-
-  igstkAddTransitionMacro(TrackerLandmark3Added,
-                          ImageLandmark,
-                          ImageLandmark3Added,
-                          AddImageLandmarkPoint);
-
-  igstkAddTransitionMacro( TrackerLandmark3Added,
-                           ComputeTransform,
-                           AttemptingToComputeTransform,
-                           ComputeTransform );
-
-  igstkAddTransitionMacro( AttemptingToComputeTransform,
-                           TransformComputationSuccess,
-                           TransformComputed,
-                           ReportSuccessInTransformComputation );
-
-  igstkAddTransitionMacro( AttemptingToComputeTransform,
-                           TransformComputationFailure,
-                           TrackerLandmark3Added,
-                           ReportFailureInTransformComputation );
-
-  igstkAddTransitionMacro( TransformComputed,
-                           GetTransform,
-                           TransformComputed,
-                           GetTransform );
-
-  // Add transitions for all invalid requests 
-  igstkAddTransitionMacro( Idle,
-                           ComputeTransform,
-                           Idle,
-                           ReportInvalidRequest );
-
-  igstkAddTransitionMacro( ImageLandmark1Added,
-                           ComputeTransform,
-                           ImageLandmark1Added,
-                           ReportInvalidRequest );
-
-  igstkAddTransitionMacro( ImageLandmark2Added,
-                           ComputeTransform,
-                           ImageLandmark2Added,
-                           ReportInvalidRequest);
-
-  igstkAddTransitionMacro( ImageLandmark3Added,
-                           ComputeTransform,
-                           ImageLandmark3Added,
-                           ReportInvalidRequest);
-
-  igstkAddTransitionMacro( TrackerLandmark1Added,
-                           ComputeTransform,
-                           TrackerLandmark1Added,
-                           ReportInvalidRequest);
-
-  igstkAddTransitionMacro( TrackerLandmark2Added,
-                           ComputeTransform,
-                           TrackerLandmark2Added,
-                           ReportInvalidRequest);
-
-  //Add transitions for registration reset state input 
-  igstkAddTransitionMacro( TransformComputed,
-                           ResetRegistration,
-                           Idle,
-                           ResetRegistration);
-  
-  igstkAddTransitionMacro( ImageLandmark1Added,
-                           ResetRegistration,
-                           Idle,
-                           ResetRegistration);
-  
-  igstkAddTransitionMacro( ImageLandmark2Added,
-                           ResetRegistration,
-                           Idle,
-                           ResetRegistration);
-
-  igstkAddTransitionMacro( ImageLandmark3Added,
-                           ResetRegistration,
-                           Idle,
-                           ResetRegistration);
-  
-  igstkAddTransitionMacro( TrackerLandmark1Added,
-                           ResetRegistration,
-                           Idle,
-                           ResetRegistration);
-
-  igstkAddTransitionMacro( TrackerLandmark2Added,
-                           ResetRegistration,
-                           Idle,
-                           ResetRegistration);
-  
-  igstkAddTransitionMacro( TrackerLandmark3Added,
-                           ResetRegistration,
-                           Idle,
-                           ResetRegistration);
-
-  igstkAddTransitionMacro( AttemptingToComputeTransform,
-                           ResetRegistration,
-                           Idle,
-                           ResetRegistration);
-
-   // Select the initial state of the state machine
-  igstkSetInitialStateMacro( Idle );
-
-  // Finish the programming and get ready to run
-  m_StateMachine.SetReadyToRun();
-
-  m_Transform = TransformType::New();
-  m_TransformInitializer = TransformInitializerType::New();
-
-} 
-
-/** Destructor */
-Landmark3DRegistration::~Landmark3DRegistration()  
+private:
+};
+//EndCodeSnippet
+class Landmark3DRegistrationInvalidRequestCallback : public itk::Command
 {
+public:
+  typedef Landmark3DRegistrationInvalidRequestCallback Self;
+  typedef itk::SmartPointer<Self>      Pointer;
+  typedef itk::Command                 Superclass;
+  itkNewMacro(Self);
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  {
 
-}
+  }
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+  {
+    std::cerr<<"Invalid input request!!"<<std::endl;
+  }
+protected:
+  Landmark3DRegistrationInvalidRequestCallback()   { };
 
-/* The "AddImageLandmark" method adds landmark points to the image
-* landmark point container */
-void 
-Landmark3DRegistration::AddImageLandmarkPointProcessing() 
+private:
+};
+
+//BeginLatex
+// Similarly, a callback class is defined to observe the \doxygen{TransformModified} event 
+// This event is loaded with the transform parameters computed by the registration component.
+//
+//EndLatex
+//BeginCodeSnippet
+class Landmark3DRegistrationGetTransformCallback: public itk::Command
 {
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "AddImageLandmarkPointProcessing called...\n");
-  m_ImageLandmarks.push_back(m_ImageLandmarkPoint);
-}
+  public:
+    typedef Landmark3DRegistrationGetTransformCallback    Self;
+    typedef itk::SmartPointer<Self>                     Pointer;
+    typedef itk::Command                                Superclass;
+    itkNewMacro(Self);
 
-  
-/* The "AddTrackerLandmark" method adds landmark points to the
-* tracker landmark point container */
-void  
-Landmark3DRegistration::AddTrackerLandmarkPointProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "AddTrackerLandmarkPointProcessing called...\n");
-  m_TrackerLandmarks.push_back(m_TrackerLandmarkPoint);
-}
+    typedef igstk::TransformModifiedEvent TransformModifiedEventType;
 
-/* The "ResetRegsitration" method empties the landmark point
-containers to start the process again */
-void 
-Landmark3DRegistration::ResetRegistrationProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "ResetRegistrationProcessing called...\n");
-
-  //Empty the image and tracker landmark containers
-  while( m_ImageLandmarks.size() > 0 )
+    void Execute( const itk::Object *caller, const itk::EventObject & event )
     {
-    m_ImageLandmarks.pop_back();
     }
-  while( m_TrackerLandmarks.size() > 0 )
+    void Execute( itk::Object *caller, const itk::EventObject & event )
     {
-    m_TrackerLandmarks.pop_back();
-    }
-  
-  m_StateMachine.SelectInitialState( m_IdleState );
-}
-
-/* The "CheckCollinearity" method checks whether the landmark points 
- *  are collinear or not */
-bool
-Landmark3DRegistration::CheckCollinearity()
-{
-   typedef itk::Matrix<double,3,3>                 MatrixType;
-   typedef itk::Vector<double,3>                   VectorType;
-
-   MatrixType                                      covarianceMatrix;
-   
-   PointsContainerConstIterator                    pointItr;
-   
-   VectorType                                      landmarkVector;
-   VectorType                                      landmarkCentered;
-   VectorType                                      landmarkCentroid;
-   
-   landmarkVector.Fill(0.0);
-   
-   pointItr  = m_ImageLandmarks.begin();
-   while( pointItr != m_ImageLandmarks.end() )
-     {
-     landmarkVector[0] += (*pointItr)[0] ;
-     landmarkVector[1] += (*pointItr)[1] ;
-     landmarkVector[2] += (*pointItr)[2] ;
-     ++pointItr;
-     }
-
-  for(unsigned int ic=0; ic<3; ic++)
-    {
-    landmarkCentroid[ic]  = landmarkVector[ic]  / this->m_ImageLandmarks.size();
+      std::cout<< " TransformEvent is thrown" << std::endl;
+                    dynamic_cast < const TransformModifiedEventType* > ( &event );
+      const TransformModifiedEventType * transformEvent =
+                    dynamic_cast < const TransformModifiedEventType* > ( &event );
+      m_Transform = transformEvent->Get();
+      m_EventReceived = true;
     } 
-  
-  pointItr  = m_ImageLandmarks.begin();
-  while( pointItr != m_ImageLandmarks.end() )
-     {
-     for(unsigned int i=0; i<3; i++)
-       {     
-       landmarkCentered[i]  = (*pointItr)[i]  - landmarkCentroid[i];
-       }
+    bool GetEventReceived()
+    {
+      return m_EventReceived;
+    }
+    igstk::Transform GetTransform()
+    {
+      return m_Transform;
+  }  
+  protected:
+    Landmark3DRegistrationGetTransformCallback()   
+    {
+      m_EventReceived = true;
+    };
+  private:
+      bool m_EventReceived;
+      igstk::Transform m_Transform;
+};
+//EndCodeSnippet
 
-     for(unsigned int i=0; i<3; i++)
-       {
-       for(unsigned int j=0; j<3; j++)
-         {
-         covarianceMatrix[i][j] += landmarkCentered[i] * landmarkCentered[j];
-         }
-       }
-     ++pointItr;
-     }
+int main( int argv, char * argc[] )
+{
 
-    MatrixType                    eigenVectors;
-    VectorType                    eigenValues;
+    igstk::RealTimeClock::Initialize();
+//BeginLatex
+//
+//All the necessary data types are defined.
+//EndLatex
+//BeginCodeSnippet
+    typedef itk::Logger                   LoggerType;
+    typedef itk::StdStreamLogOutput       LogOutputType;
+    
+    typedef igstk::Landmark3DRegistration     
+                              Landmark3DRegistrationType;
+    typedef igstk::Landmark3DRegistration::LandmarkPointContainerType
+                              LandmarkPointContainerType;
+    typedef igstk::Landmark3DRegistration::LandmarkImagePointType 
+                              LandmarkImagePointType;
+    typedef igstk::Landmark3DRegistration::LandmarkTrackerPointType
+                              LandmarkTrackerPointType;
+    typedef Landmark3DRegistrationType::TransformType::OutputVectorType 
+                              OutputVectorType;
+    typedef igstk::Transform  TransformType;
+//EndCodeSnippet
+//BeginLatex
+//The registration component is instantiated as follows
+//EndLatex
+//BeginCodeSnippet
+    Landmark3DRegistrationType::Pointer landmarkRegister = 
+                                        Landmark3DRegistrationType::New();    
+//EndCodeSnippet
+//BeginLatex
+//The landmark containers that hold the landmark image and tracker coordinates are instantiated.
+    LandmarkPointContainerType  imagePointContainer;
+    LandmarkPointContainerType  trackerPointContainer;
 
-   typedef itk::SymmetricEigenAnalysis< 
-           MatrixType,  
-           VectorType,
-           MatrixType > SymmetricEigenAnalysisType;
+    LandmarkImagePointType      imagePoint;
+    LandmarkTrackerPointType    trackerPoint;
 
-   SymmetricEigenAnalysisType symmetricEigenSystem(3);
+//BeginLatex
+// The callback objects are instantiated and added to the observer list of the registration component
+//EndLatex
+//
+//BeginCodeSnippet
+    Landmark3DRegistrationInvalidRequestCallback::Pointer 
+                              lrcb = Landmark3DRegistrationInvalidRequestCallback::New();
+    typedef igstk::Landmark3DRegistration::InvalidRequestErrorEvent  InvalidRequestEvent;
+    landmarkRegister->AddObserver( InvalidRequestEvent(), lrcb );
+
+    Landmark3DRegistrationErrorCallback::Pointer ecb = Landmark3DRegistrationErrorCallback::New();
+    typedef igstk::Landmark3DRegistration::TransformComputationFailureEvent ComputationFailureEvent;
+    landmarkRegister->AddObserver( ComputationFailureEvent(), ecb );
+
+//EndCodeSnippet
+
+//BeginLatex
+//  A logger can be connected to the registration component for debugging purpose as follows
+//EndLatex
+
+//BeginCodeSnippet 
+    LoggerType::Pointer   logger = LoggerType::New();
+    LogOutputType::Pointer logOutput = LogOutputType::New();
+    logOutput->SetStream( std::cout );
+    logger->AddLogOutput( logOutput );
+    logger->SetPriorityLevel( itk::Logger::DEBUG );
+    landmarkRegister->SetLogger( logger );
+//EndCodeSnippet
    
-   symmetricEigenSystem.SetOrderEigenMagnitudes( true );
-        
-   symmetricEigenSystem.ComputeEigenValuesAndVectors
-               ( covarianceMatrix, eigenValues, eigenVectors );
+//BeginLatex
+// Landmark coordinates are added to the image and tracker continers. Note that, the state machine
+// of this registration component is designed in such a way that image and tracker coordinates corresponding to
+// a landmark are consecutively added. This is consistent with the philosophy of igstk i.e safety by design
+//
+//EndLatex 
+//BeginCodeSnippet
+    // Add 1st landmark
+    imagePoint[0] =  25.0;
+    imagePoint[1] =  1.0;
+    imagePoint[2] =  15.0;
+    imagePointContainer.push_back(imagePoint);
+    landmarkRegister->RequestAddImageLandmarkPoint(imagePoint);
 
-   double tolerance=0.001;
+    
+    trackerPoint[0] =  29.8;
+    trackerPoint[1] =  -5.3;
+    trackerPoint[2] =  25.0;
+    trackerPointContainer.push_back(trackerPoint);
+    landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
+//EndCodeSnippet
 
-   double ratio;
+    // Add 2nd landmark
+    imagePoint[0] =  15.0;
+    imagePoint[1] =  21.0;
+    imagePoint[2] =  17.0;
+    imagePointContainer.push_back(imagePoint);
+    landmarkRegister->RequestAddImageLandmarkPoint(imagePoint);
+    
+    trackerPoint[0] =  35.0;
+    trackerPoint[1] =  16.5;
+    trackerPoint[2] =  27.0;
+    trackerPointContainer.push_back(trackerPoint);
+    landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
 
-   ratio = ( vnl_math_sqr ( eigenValues[0]) + vnl_math_sqr ( eigenValues[1]))/ 
-           ( vnl_math_sqr ( eigenValues[2]));
+    // Add 3d landmark
+    imagePoint[0] =  14.0;
+    imagePoint[1] =  25.0;
+    imagePoint[2] =  11.0;
+    imagePointContainer.push_back(imagePoint);
+    landmarkRegister->RequestAddImageLandmarkPoint(imagePoint);
 
-   if ( ratio > tolerance )  
-      return false; 
-   else
-     return true;
+    trackerPoint[0] =  36.8;
+    trackerPoint[1] =  20.0;
+    trackerPoint[2] =  21.0;
+    trackerPointContainer.push_back(trackerPoint);
+    landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
+
+    // Add 4th landmark
+    imagePoint[0] =  10.0;
+    imagePoint[1] =  11.0;
+    imagePoint[2] =  8.0;
+    imagePointContainer.push_back(imagePoint);
+    landmarkRegister->RequestAddImageLandmarkPoint(imagePoint);
+
+
+    trackerPoint[0] =  24.7;
+    trackerPoint[1] =  12.0;
+    trackerPoint[2] =  18.0;
+    trackerPointContainer.push_back(trackerPoint);
+    landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
+
+//BeginLatex
+// After adding all the landmark coordinates, the transform computation is requested as follows
+//EndLatex
+//
+    // Calculate transform
+    // BeginCodeSnippet
+    landmarkRegister->RequestComputeTransform();
+    // EndCodeSnippet
+     
+    typedef itk::VersorRigid3DTransform<double>                
+                                        VersorRigid3DTransformType;
+    typedef itk::VersorRigid3DTransform<double>::ParametersType 
+                                        ParametersType;
+
+    TransformType      transform;
+    ParametersType     parameters(6);
+
+// BeginLatex
+// To access the tranform parameters, a GetTransform callback is instantiated to observe the transform 
+// event. 
+// EndLatex
+//
+// BeginCodeSnippet
+    Landmark3DRegistrationGetTransformCallback::Pointer lrtcb =
+                            Landmark3DRegistrationGetTransformCallback::New();
+    landmarkRegister->AddObserver( igstk::TransformModifiedEvent(), lrtcb );
+//EndCodeSnippet
+//
+//BeginCodeSnippet
+
+//BeginLatex
+// To request the registration component throw an event loaded with transform parameters, 
+// a \code{RequestGetTransform}
+// function is invoked as follows
+//EndLatex
+//
+//BeginCodeSnippet
+    landmarkRegister->RequestGetTransform();
+    std::cout << "Transform " << transform << std::cout;
+//EndCodeSnippet
+    
+    return EXIT_SUCCESS;
 }
-
-/* The "ComputeTransform" method calculates the rigid body
-  transformation parameters */
-void 
-Landmark3DRegistration:: ComputeTransformProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "ComputeTransformProcessing called...\n");
-  m_TransformInitializer->SetFixedLandmarks(m_TrackerLandmarks);
-  m_TransformInitializer->SetMovingLandmarks(m_ImageLandmarks);
-  m_TransformInitializer->SetTransform( m_Transform );
-  
-  bool failure = false;
-
-  // check for collinearity
-  failure = CheckCollinearity();
-
-  if ( ! failure ) 
-    {
-    try 
-      {
-      m_TransformInitializer->InitializeTransform(); 
-      }
-    catch ( itk::ExceptionObject & excp )
-      {
-      igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                     "Transform computation exception" << excp.GetDescription());
-      failure = true;
-      }
-    }
-
-  if( failure )
-    {
-    igstkLogMacro( DEBUG, "ComputationFailureInput getting pushed" );
-    igstkPushInputMacro( TransformComputationFailure );
-    }
-  else
-    {
-    igstkLogMacro( DEBUG, "ComputationSuccessInput getting pushed" );
-    igstkPushInputMacro( TransformComputationSuccess );
-    }    
-  
-  this->m_StateMachine.ProcessInputs();
-}
-
-/* The "ComputeRMSError" method calculates and returns RMS Error of the transformation */
-double 
-Landmark3DRegistration::ComputeRMSError()
-{
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "ComputeRMSError called..\n");
-
-  //Check if the transformation parameters were evaluated correctly
-
-  PointsContainerConstIterator
-      mitr = m_TrackerLandmarks.begin();
-  PointsContainerConstIterator
-      fitr = m_ImageLandmarks.begin();
-
-  TransformType::OutputVectorType   errortr;
-  TransformType::OutputVectorType::RealValueType sum;
-
-  sum = itk::NumericTraits< TransformType::OutputVectorType::RealValueType >::ZeroValue();
-  
-  int counter = itk::NumericTraits< int >::ZeroValue();
- 
-  while( mitr != m_TrackerLandmarks.end() ) 
-    {
-      errortr = *fitr - m_Transform->TransformPoint( *mitr );
-      sum = sum + errortr.GetSquaredNorm();
-      ++mitr;
-      ++fitr;
-      counter++;
-    }
-
-  double rms = sqrt( sum / counter );
-  return rms;  
-}
-  
-
-/* The "GetTransform()" method throws and event containing the transform */
-void
-Landmark3DRegistration::GetTransformProcessing()
-{
-  igstkLogMacro( DEBUG,
-                  "igstk::Landmark3DRegistration::GetTransformProcessing called...\n" );
-
-  igstk::Transform  transform;
-
-  const igstk::Transform::ErrorType              error = 0.1;
-  const igstk::Transform::TimePeriodType         timePeriod = 1000;;
-
-  typedef TransformType::TranslationType        TranslationType;
-  typedef TransformType::VersorType             VersorType;
-  
-  VersorType       versor      = m_Transform->GetVersor();
-  TranslationType  translation = m_Transform->GetOffset();
-
-  transform.SetTranslationAndRotation( translation, versor, error, timePeriod );
-
-  TransformModifiedEvent event; 
-  event.Set( transform );
-  this->InvokeEvent( event );
-}
-
-/* The ReportInvalidRequest function reports invalid requests */
-void  
-Landmark3DRegistration::ReportInvalidRequestProcessing()
-{
-    igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                   "ReportInvalidRequestProcessing called...\n");
-    this->InvokeEvent(InvalidRequestErrorEvent());
-}
-
-/* The ReportSuccessInTransformComputation function reports success in 
-  transform calculation */
-void  
-Landmark3DRegistration::ReportSuccessInTransformComputationProcessing()
-{
-  igstkLogMacro( DEBUG,
-                  "igstk::Landmark3DRegistration::"
-                  "ReportSuccessInTransformComputationProcessing called...\n");
-  this->InvokeEvent( TransformComputationSuccessEvent() );
-}
-
-/* The ReportFailureInTransformComputationProcessing function reports failure 
-   in transform calculation */
-void  
-Landmark3DRegistration::ReportFailureInTransformComputationProcessing()
-{
-  igstkLogMacro( DEBUG,
-                  "igstk::Landmark3DRegistration::"
-                  "ReportFailureInTransformComputationProcessing called...\n");
-  this->InvokeEvent( TransformComputationFailureEvent() );
-}
-
-void Landmark3DRegistration::RequestAddImageLandmarkPoint(
-                                           const LandmarkImagePointType & pt)
-{
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "RequestAddImageLandmarkPoint called...\n");
-  this->m_ImageLandmarkPoint = pt;
-  igstkPushInputMacro( ImageLandmark );
-  this->m_StateMachine.ProcessInputs();
-}
-
-void 
-Landmark3DRegistration::RequestAddTrackerLandmarkPoint(
-                                      const LandmarkImagePointType & pt)
-{
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "RequestAddTrackerLandmarkPoint called...\n");
-  this->m_TrackerLandmarkPoint = pt;
-  igstkPushInputMacro( TrackerLandmark );
-  this->m_StateMachine.ProcessInputs();
-}
-
-void 
-Landmark3DRegistration::RequestResetRegistration()
-{
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "RequestResetRegistration called...\n");
-  igstkPushInputMacro( ResetRegistration );
-  this->m_StateMachine.ProcessInputs();
-}
-
-void 
-Landmark3DRegistration::RequestComputeTransform()
-{
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
-                 "RequestComputeTransform called...\n");
-  igstkPushInputMacro( ComputeTransform );
-  this->m_StateMachine.ProcessInputs();
-}
-
-void 
-Landmark3DRegistration::RequestGetTransform()
-{
-  igstkLogMacro( DEBUG,
-             "igstk::Landmark3DRegistration::RequestGetTransform called...\n" );
-  igstkPushInputMacro( GetTransform );
-  this->m_StateMachine.ProcessInputs();
-}
-
-/** Print Self function */
-void 
-Landmark3DRegistration::PrintSelf( std::ostream& os,
-                                             itk::Indent indent ) const
-{
-  Superclass::PrintSelf(os, indent);
-  os << indent << "Tracker Landmarks: " << std::endl;
-  PointsContainerConstIterator fitr = m_TrackerLandmarks.begin();
-  while( fitr != m_TrackerLandmarks.end() )
-    {
-    os << indent << *fitr << std::endl;
-    ++fitr;
-    }
-  os << indent << "Image Landmarks: " << std::endl;
-  PointsContainerConstIterator mitr = m_ImageLandmarks.begin();
-  while( mitr != m_ImageLandmarks.end() )
-    {
-    os << indent << *mitr << std::endl;
-    ++mitr;
-    }
-}
-
-} // end namespace igstk
-
-#endif
 
 
