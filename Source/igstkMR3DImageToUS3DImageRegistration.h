@@ -73,6 +73,16 @@ public:
   typedef ImageType::SpacingType          SpacingType;
   typedef double                          ErrorType;
 
+  typedef USImageObject::ImageType USImageType;
+  typedef USImageObject::ITKImageModifiedEvent USITKImageModifiedEvent;
+
+  igstkObserverConstObjectMacro(ITKUSImage,
+    USITKImageModifiedEvent,USImageType)
+
+  igstkObserverConstObjectMacro(ITKMRImage,
+    MRImageSpatialObject::ITKImageModifiedEvent,MRImageSpatialObject::ImageType)
+
+
 public:
 
   /** Method to check whether a valid calibration is calculated */

@@ -235,22 +235,16 @@ void MR3DImageToUS3DImageRegistration::RequestReset()
   this->m_StateMachine.PushInput( this->m_ResetRegistrationInput );
   this->m_StateMachine.ProcessInputs();
 }
-
-  
+ 
+ 
 /** Compute the registration transform */
 void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::MR3DImageToUS3DImageRegistration\
                         ::CalculateRegistrationProcessing called...\n" );
 
-  typedef USImageObject::ImageType USImageType;
-  typedef USImageObject::ITKImageModifiedEvent USITKImageModifiedEvent;
 
-  // Get the pointer to the ITK Ultrasound image
-  /*
-  igstkObserverConstObjectMacro(ITKUSImage,
-    USITKImageModifiedEvent,USImageType)
-
+  // Get the pointer to the ITK US image
   ITKUSImageObserver::Pointer usImageObserver = ITKUSImageObserver::New(); 
   this->m_USFixedImage->AddObserver(
                   USImageObject::ITKImageModifiedEvent(),usImageObserver);
@@ -262,10 +256,8 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
     return;
     }
 
-  // Get the pointer to the ITK MR image
-  igstkObserverConstObjectMacro(ITKMRImage,
-    MRImageSpatialObject::ITKImageModifiedEvent,MRImageSpatialObject::ImageType)
 
+  // Get the pointer to the ITK MR image
   ITKMRImageObserver::Pointer mrImageObserver = ITKMRImageObserver::New(); 
   this->m_MRMovingImage->AddObserver(
                   MRImageSpatialObject::ITKImageModifiedEvent(),mrImageObserver);
@@ -276,7 +268,7 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
     {
     return;
     }
-  */
+  
   // Fixed Image Type
   typedef USImageObject::ImageType            FixedImageType;
   //typedef MRImageSpatialObject::ImageType     FixedImageType;
@@ -321,12 +313,12 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   registration->SetMetric(        metric        );
   registration->SetOptimizer(     optimizer     );
   registration->SetTransform(     transform     );
-  //registration->SetFixedImage( usImageObserver->GetITKUSImage() );
-  //registration->SetMovingImage( mrImageObserver->GetITKMRImage() );
+  registration->SetFixedImage( usImageObserver->GetITKUSImage() );
+  registration->SetMovingImage( mrImageObserver->GetITKMRImage() );
   registration->SetInterpolator(  interpolator  );
 
-  //usImageObserver->GetITKUSImage()->Print(std::cout);
-  //mrImageObserver->GetITKMRImage()->Print(std::cout);
+  usImageObserver->GetITKUSImage()->Print(std::cout);
+  mrImageObserver->GetITKMRImage()->Print(std::cout);
 
   typedef RegistrationType::ParametersType ParametersType;
   ParametersType initialParameters( transform->GetNumberOfParameters() );
