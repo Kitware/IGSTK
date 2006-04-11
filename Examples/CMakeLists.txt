@@ -12,4 +12,5 @@ SUBDIRS(
   UltrasoundGuidedRFA
   NeedleBiopsy
   LandmarkRegistration
+  DICOMImageReader
   )
