@@ -11,4 +11,5 @@ SUBDIRS(
   FourViews
   UltrasoundGuidedRFA
   NeedleBiopsy
+  LandmarkRegistration
   )
