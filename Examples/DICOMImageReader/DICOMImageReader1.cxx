@@ -36,24 +36,23 @@ class DICOMImageModalityInformationCallback: public itk::Command
 {
 public:
   typedef DICOMImageModalityInformationCallback    Self;
-  typedef itk::SmartPointer<Self>           Pointer;
-  typedef itk::Command                      Superclass;
+  typedef itk::SmartPointer<Self>                  Pointer;
+  typedef itk::Command                             Superclass;
   itkNewMacro(Self);
 
   typedef igstk::ImageSpatialObject< 
                                 short, 
-                                3                                
-                                       > ImageSpatialObjectType;
+                                3 >                ImageSpatialObjectType;
   
  
   typedef igstk::DICOMModalityEvent DICOMModalityEventType;
   
   void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
+    {
 
-  }
+    }
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     if( DICOMModalityEventType().CheckEvent( &event ) )
       {
       const DICOMModalityEventType * modalityEvent = 
@@ -61,7 +60,7 @@ public:
       std::cout << "Modality= " << modalityEvent->Get() << std::endl;
       }
       
-  }
+    }
 protected:
   DICOMImageModalityInformationCallback()   { };
 
@@ -73,29 +72,28 @@ class DICOMImagePatientNameInformationCallback: public itk::Command
 {
 public:
   typedef DICOMImagePatientNameInformationCallback    Self;
-  typedef itk::SmartPointer<Self>           Pointer;
-  typedef itk::Command                      Superclass;
+  typedef itk::SmartPointer<Self>                     Pointer;
+  typedef itk::Command                                Superclass;
   itkNewMacro(Self);
 
   typedef igstk::ImageSpatialObject< 
                                 short, 
-                                3                                
-                                       > ImageSpatialObjectType;
+                                3 >                   ImageSpatialObjectType;
   
  
   typedef igstk::DICOMPatientNameEvent DICOMPatientNameEventType;
   
   void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
+    {
 
-  }
+    }
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     const DICOMPatientNameEventType * patientNameEvent = 
           dynamic_cast < const DICOMPatientNameEventType* > ( &event );    
     std::cerr << "PatientName= " << patientNameEvent->Get() << std::endl;
       
-  }
+    }
 protected:
   DICOMImagePatientNameInformationCallback()   { };
 
@@ -124,7 +122,7 @@ int main( int argc, char* argv[] )
 
   //BeginCodeSnippet
   typedef igstk::CTImageReader        ReaderType;
-//EndCodeSnippet
+  //EndCodeSnippet
   
   ReaderType::Pointer   reader = ReaderType::New();
   reader->SetLogger( logger );
@@ -139,7 +137,7 @@ int main( int argc, char* argv[] )
   //BeginCodeSnippet
   reader->RequestReadImage();
   //EndCodeSnippet
- /* Add observer to listen to modality info */
+  /* Add observer to listen to modality info */
   //BeginCodeSnippet
   typedef DICOMImageModalityInformationCallback  
                                      ModalityCallbackType;
@@ -147,8 +145,8 @@ int main( int argc, char* argv[] )
   ModalityCallbackType::Pointer dimcb = ModalityCallbackType::New();
   reader->AddObserver( igstk::DICOMModalityEvent(), dimcb );
   reader->RequestModalityInformation(); 
-//EndCodeSnippet 
-//BeginCodeSnippet
+  //EndCodeSnippet 
+  //BeginCodeSnippet
   /* Add observer to listen to patient name  info */
   typedef DICOMImagePatientNameInformationCallback 
                                         PatientCallbackType;
@@ -156,7 +154,7 @@ int main( int argc, char* argv[] )
   PatientCallbackType::Pointer dipncb = PatientCallbackType::New();
   reader->AddObserver( igstk::DICOMPatientNameEvent(), dipncb );
   reader->RequestPatientNameInformation(); 
-//EndCodeSnippet  
+  //EndCodeSnippet  
   return EXIT_SUCCESS;
 }
 
