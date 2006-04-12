@@ -16,20 +16,23 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//Warning about: identifier was truncated to '255' characters in the \
+//debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
 // BeginLatex
-// This example illustrates how to use igstk's landmark registration component to determine a rigid body
-// transformation parameters between image and patient coordinate system.
+// This example illustrates how to use igstk's landmark registration 
+// component to determine a rigid body transformation parameters between 
+// image and patient coordinate system.
 //
 // EndLatex
 // 
 #include <iostream>
 
 // BeginLatex
-// To use the registration component, the header file for \doxygen{Landmark3DRegistration} will be added.
+// To use the registration component, the header file for 
+// \doxygen{Landmark3DRegistration} will be added.
 // EndLatex
 // 
 // BeginCodeSnippet
@@ -41,8 +44,9 @@
 #include "itkCommand.h"
 #include "itkMacro.h"
 // BeginLatex
-// Transform parameters are returned to the application using loaded events. To handle these events,
-// \doxygen{Events} and \doxygen{Transform} header files are needed.
+// Transform parameters are returned to the application using loaded events. 
+// To handle these events, \doxygen{Events} and \doxygen{Transform} header 
+// files are needed.
 //
 // EndLatex
 //
@@ -53,7 +57,9 @@
 
 // BeginLatex
 // 
-// To fully  utilize the registration component, callbacks need to be set up to  observers events that could be thrown by the registration component.   For this purpose, ITK command class is used to derive a callback class .
+// To fully  utilize the registration component, callbacks need to be set up 
+// to  observers events that could be thrown by the registration component.  
+//  For this purpose, ITK command class is used to derive a callback class .
 // The ITK command class implements subject/observer (command design) pattern.
 //  A subject notifies an observer by running the \code{Execute } method of 
 // the derived callback class . For example a callback class to observe error 
@@ -69,13 +75,13 @@ public:
   typedef itk::Command                 Superclass;
   itkNewMacro(Self);
   void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
+    {
 
-  }
+    }
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     std::cerr<<"Error in transform computation"<<std::endl;
-  }
+    }
 protected:
   Landmark3DRegistrationErrorCallback()   { };
 
@@ -86,17 +92,17 @@ class Landmark3DRegistrationInvalidRequestCallback : public itk::Command
 {
 public:
   typedef Landmark3DRegistrationInvalidRequestCallback Self;
-  typedef itk::SmartPointer<Self>      Pointer;
-  typedef itk::Command                 Superclass;
+  typedef itk::SmartPointer<Self>                      Pointer;
+  typedef itk::Command                                 Superclass;
   itkNewMacro(Self);
   void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
+    {
 
-  }
+    }
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     std::cerr<<"Invalid input request!!"<<std::endl;
-  }
+    }
 protected:
   Landmark3DRegistrationInvalidRequestCallback()   { };
 
@@ -104,8 +110,9 @@ private:
 };
 
 //BeginLatex
-// Similarly, a callback class needs to be defined to observe the \doxygen{TransformModified} event. 
-// This event is loaded with the transform parameters computed by the registration component.
+// Similarly, a callback class needs to be defined to observe the 
+// \doxygen{TransformModified} event. This event is loaded with the 
+// transform parameters computed by the registration component.
 //
 //EndLatex
 //BeginCodeSnippet
@@ -113,37 +120,37 @@ class Landmark3DRegistrationGetTransformCallback: public itk::Command
 {
   public:
     typedef Landmark3DRegistrationGetTransformCallback    Self;
-    typedef itk::SmartPointer<Self>                     Pointer;
-    typedef itk::Command                                Superclass;
+    typedef itk::SmartPointer<Self>                       Pointer;
+    typedef itk::Command                                  Superclass;
     itkNewMacro(Self);
 
     typedef igstk::TransformModifiedEvent TransformModifiedEventType;
 
     void Execute( const itk::Object *caller, const itk::EventObject & event )
-    {
-    }
+      {
+      }
     void Execute( itk::Object *caller, const itk::EventObject & event )
-    {
+      {
       std::cout<< " TransformEvent is thrown" << std::endl;
                     dynamic_cast < const TransformModifiedEventType* > ( &event );
       const TransformModifiedEventType * transformEvent =
                     dynamic_cast < const TransformModifiedEventType* > ( &event );
       m_Transform = transformEvent->Get();
       m_EventReceived = true;
-    } 
+      } 
     bool GetEventReceived()
-    {
+      {
       return m_EventReceived;
-    }
+      }
     igstk::Transform GetTransform()
-    {
+      {
       return m_Transform;
-  }  
+      }  
   protected:
     Landmark3DRegistrationGetTransformCallback()   
-    {
+      {
       m_EventReceived = true;
-    };
+      };
   private:
       bool m_EventReceived;
       igstk::Transform m_Transform;
@@ -187,7 +194,8 @@ int main( int argv, char * argc[] )
                                         Landmark3DRegistrationType::New();    
 //EndCodeSnippet
 //BeginLatex
-//The landmark containers that hold the landmark image and tracker coordinates are instantiated.
+//The landmark containers that hold the landmark image and tracker 
+//coordinates are instantiated.
 //EndLatex
 //BeginCodeSnippet
     LandmarkPointContainerType  imagePointContainer;
@@ -197,23 +205,29 @@ int main( int argv, char * argc[] )
     LandmarkTrackerPointType    trackerPoint;
 
 //BeginLatex
-// Error event callback objects are instantiated and added to the observer list of the registration component.
+//Error event callback objects are instantiated and added to the observer
+//list of the registration component.
 //EndLatex
 //
 //BeginCodeSnippet
     Landmark3DRegistrationInvalidRequestCallback::Pointer 
-                              lrcb = Landmark3DRegistrationInvalidRequestCallback::New();
-    typedef igstk::Landmark3DRegistration::InvalidRequestErrorEvent  InvalidRequestEvent;
+                  lrcb = Landmark3DRegistrationInvalidRequestCallback::New();
+    
+    typedef igstk::Landmark3DRegistration::InvalidRequestErrorEvent  
+                                                         InvalidRequestEvent;
     landmarkRegister->AddObserver( InvalidRequestEvent(), lrcb );
 
-    Landmark3DRegistrationErrorCallback::Pointer ecb = Landmark3DRegistrationErrorCallback::New();
-    typedef igstk::Landmark3DRegistration::TransformComputationFailureEvent ComputationFailureEvent;
+    Landmark3DRegistrationErrorCallback::Pointer ecb = 
+                  Landmark3DRegistrationErrorCallback::New();
+    typedef igstk::Landmark3DRegistration::TransformComputationFailureEvent 
+                                                     ComputationFailureEvent;
     landmarkRegister->AddObserver( ComputationFailureEvent(), ecb );
 
 //EndCodeSnippet
 
 //BeginLatex
-//  A logger can be connected to the registration component for debugging purpose as follows
+//  A logger can be connected to the registration component for 
+//  debugging purpose as follows
 //EndLatex
 
 //BeginCodeSnippet 
@@ -226,9 +240,14 @@ int main( int argv, char * argc[] )
 //EndCodeSnippet
    
 //BeginLatex
-// Next, landmark points are added to the image and tracker containers. The state machine
-// of this registration component is designed in such a way that image and tracker coordinates corresponding to
-// each landmark are added consecutively. This scheme was selected to prevent a mismatch in landmark correspondence that could occur when all landmarks image coordinates are recorded followed by the tracker coordinates. This design choice is consistent with the philosophy of igstk i.e safety by design
+// Next, landmark points are added to the image and tracker containers. 
+// The state machine of this registration component is designed in such a 
+// way that image and tracker coordinates corresponding to
+// each landmark are added consecutively. This scheme was selected to prevent 
+// a mismatch in landmark correspondence that could occur when all landmarks 
+// image coordinates are recorded followed by the tracker coordinates. 
+// This design choice is consistent with the philosophy of igstk i.e safety
+// by design.
 //
 //EndLatex 
 //BeginCodeSnippet
@@ -290,7 +309,8 @@ int main( int argv, char * argc[] )
     landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
 
 //BeginLatex
-// After adding all the landmark coordinates, the transform computation is requested as follows
+//After adding all the landmark coordinates, the transform computation is 
+//requested as follows
 //EndLatex
 //
     // Calculate transform
@@ -307,8 +327,8 @@ int main( int argv, char * argc[] )
     ParametersType     parameters(6);
 
 // BeginLatex
-// To access the tranform parameters, a GetTransform callback is instantiated to observe the transform 
-// event as follows. 
+// To access the tranform parameters, a GetTransform callback is instantiated
+// to observe the transform event as follows. 
 // EndLatex
 //
 // BeginCodeSnippet
@@ -319,9 +339,8 @@ int main( int argv, char * argc[] )
 //
 
 //BeginLatex
-// To request the registration component throw an event loaded with transform parameters, 
-// a \code{RequestGetTransform}
-// function is invoked as follows
+// To request the registration component throw an event loaded with transform
+// parameters, a \code{RequestGetTransform} function is invoked as follows.
 //EndLatex
 //
 //BeginCodeSnippet
