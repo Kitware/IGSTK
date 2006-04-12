@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//Warning about: identifier was truncated to '255' characters in the debug 
+//information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -38,18 +39,16 @@
 //
 int main( int, char * [] )
 {
-
-// EndCodeSnippet
-//
+  // EndCodeSnippet
   igstk::RealTimeClock::Initialize();
 
-// BeginLatex
-// Define a 3D view
-// EndLatex
-// BeginCodeSnippet
+  // BeginLatex
+  // Define a 3D view
+  // EndLatex
+  // BeginCodeSnippet
   typedef igstk::View3D  View3DType;
-// EndCodeSnippet
-// 
+  // EndCodeSnippet
+  // 
   typedef itk::Logger              LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   
@@ -62,28 +61,29 @@ int main( int, char * [] )
 
   //BeginCodeSnippet
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
+                                  igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
- //EndCodeSnippet
+  vtkLoggerOutput->SetLogger(logger);  
+  //EndCodeSnippet
   try
     {
 
-   //BeginCodeSnippet
+    //BeginCodeSnippet
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
-   //EndCodeSnippet
+    //EndCodeSnippet
    
-   //BeginCodeSnippet 
+    //BeginCodeSnippet 
     // Create the ellipsoid representation
-    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
+    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = 
+                                  igstk::EllipsoidObjectRepresentation::New();
     ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
     ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
     ellipsoidRepresentation->SetOpacity(1.0);
-//EndCodeSnippet
-//
-// BeginCodeSnippet
+    //EndCodeSnippet
+    // BeginCodeSnippet
     const double validityTimeInMilliseconds = 1e300; // 100 seconds
     igstk::Transform transform;
     igstk::Transform::VectorType translation;
@@ -96,15 +96,11 @@ int main( int, char * [] )
 
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
-//EndCodeSnippet
-//
-//
-//BeginCodeSnippet
+    //EndCodeSnippet
+    //BeginCodeSnippet
     ellipsoid->RequestSetTransform( transform );
-//EndCodeSnippet
-//
-//
-//BeginCodeSnippet
+    //EndCodeSnippet
+    //BeginCodeSnippet
     // Create an FLTK minimal GUI
     Fl_Window * form = new Fl_Window(601,301,"View Test");
     
@@ -129,7 +125,7 @@ int main( int, char * [] )
 
     delete view3D;
     delete form;
- //EndCodeSnippet
+    //EndCodeSnippet
     }
   catch(...)
     {
