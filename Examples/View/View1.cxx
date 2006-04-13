@@ -22,7 +22,8 @@
 #endif
 
 // BeginLatex
-// This example illustrates how to use the \doxygen{View3D} class.
+// This example illustrates how to use the \doxygen{View3D} class to display
+// spatial objects.
 // EndLatex
 
 #include <iostream>
@@ -35,23 +36,19 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-// BeginCodeSnippet
-//
 int main( int, char * [] )
 {
-// EndCodeSnippet
   igstk::RealTimeClock::Initialize();
 
   // BeginLatex
-  // First, a 3D view date type is defined. 
+  // First, a 3D view and other useful data types are defined 
   // EndLatex
   // BeginCodeSnippet
-  typedef igstk::View3D  View3DType;
-  // EndCodeSnippet
-  // 
+  typedef igstk::View3D            View3DType;
   typedef itk::Logger              LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   
+  // EndCodeSnippet
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -60,8 +57,8 @@ int main( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   //BeginLatex
-  // To redirect vtk window output to a logger, 
-  // \doxygen{VTKLoggerOutput} can be used.
+  // For debugging purpose, vtk window output can be redirected to a logger, 
+  // using \doxygen{VTKLoggerOutput} as follows.
   //EndLatex
   //
   //BeginCodeSnippet
@@ -74,8 +71,7 @@ int main( int, char * [] )
     {
     //BeginLatex
     //In this example, we would like to display an ellipsoid object.
-    //For this purpose, \doxygen{EllipsoidObject} is used. First, the 
-    //ellipsoid spatial object is instantiated.
+    //To carry out this, an ellipsoid spatial object is first instantiated.
     //EndLatex
     //BeginCodeSnippet
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
@@ -83,10 +79,10 @@ int main( int, char * [] )
     //EndCodeSnippet
   
     //BeginLatex
-    //Next, a representation object is created. For this purpose, 
-    //\doxygen{EllipsoidObjectRepresentation } class is used.  The  
+    //Next, a representation object is created using 
+    //\doxygen{EllipsoidObjectRepresentation } class.  The  
     //representation class provides the mechanism to generate graphical 
-    //description of the spatial object for visualization in a VTK a scene. 
+    //description of the spatial object for visualization in a VTK scene. 
     //
     //EndLatex 
     //BeginCodeSnippet 
@@ -98,7 +94,7 @@ int main( int, char * [] )
     //EndCodeSnippet
     //BeginLatex
     //Geometrical transformation can be applied to the ellipsoid spatial object
-    //by setting the rotation and translation transform parameters.
+    //as follows.
     //EndLatex
     // BeginCodeSnippet
     const double validityTimeInMilliseconds = 1e300; // 100 seconds
@@ -113,19 +109,19 @@ int main( int, char * [] )
 
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
-    //EndCodeSnippet
     ellipsoid->RequestSetTransform( transform );
+    //EndCodeSnippet
+    //
     //BeginLatex
-    //For this example, we use FLTK to design the GUI. 
+    //Next, FLTK window and a view object is instantiated.
     //EndLatex
     //BeginCodeSnippet
-
     Fl_Window * form = new Fl_Window(601,301,"View Test");
     View3DType * view3D = new View3DType(310,10,280,280,"3D View");
     form->end();
     form->show();
     //EndCodeSnippet
-     
+    
     view3D->RequestResetCamera();
     view3D->RequestEnableInteractions();
    
@@ -134,16 +130,20 @@ int main( int, char * [] )
     //EndLatex
     //BeginCodeSnippet
     view3D->RequestAddObject( ellipsoidRepresentation );
-    // Do manual redraws
+    //EndCodeSnippet
+    //BeginLatex
+    //
+    //EndLatex
+    //BeginCodeSnippet
     for(unsigned int i=0; i<10; i++)
       {
       view3D->Update();  // schedule redraw of the view
       Fl::check();       // trigger FLTK redraws
       }
-
+    //EndCodeSnippet
+    //
     delete view3D;
     delete form;
-    //EndCodeSnippet
     }
   catch(...)
     {

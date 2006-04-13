@@ -30,7 +30,15 @@
 // This example illustrates how to use the DICOM image reader.
 //
 //EndLatex
- 
+
+//BeginLatex
+//To use this class, appropriate callback subclasses need to be first defined. 
+//This procedure is important because information is passed from the reader class 
+//to the application using information loaded events. The events could be error 
+//events or events loaded with dicom information such as modality and patient ID. 
+//
+//For example, callback class to observe Modality information is defined as follows.
+//EndLatex
 //BeginCodeSnippet
 class DICOMImageModalityInformationCallback: public itk::Command
 {
@@ -67,7 +75,11 @@ protected:
 private:
 };
 //EndCodeSnippet
-//BeginCodeSnippet
+//BeginLatex
+//Simialar callback classes need to be defined to observe patient name and 
+//image reading error. Full list of events related with the DICOM image reader
+//are given in section ?????
+//EndLatex
 class DICOMImagePatientNameInformationCallback: public itk::Command
 {
 public:
@@ -99,7 +111,6 @@ protected:
 
 private:
 };
-//EndCodeSnippet
 int main( int argc, char* argv[] )
 {
   
@@ -120,24 +131,42 @@ int main( int argc, char* argv[] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
+  //BeginLatex
+  //In this example, we would like to read a CT image. Therefore, first 
+  //a CT image reader object is insantiated as follows. 
+  //EndLatex
   //BeginCodeSnippet
   typedef igstk::CTImageReader        ReaderType;
+  ReaderType::Pointer   reader = ReaderType::New();
+  //EndCodeSnippet
+  //BeginLatex
+  //A logger can be linked to the reader.
+  //EndLatex
+  //BeginCodeSnippet
+  reader->SetLogger( logger );
   //EndCodeSnippet
   
-  ReaderType::Pointer   reader = ReaderType::New();
-  reader->SetLogger( logger );
-
   /* Read in a DICOM series */
   
   std::cout << "Reading the DICOM series : " << argv[1] <<std::endl;
   ReaderType::DirectoryNameType directoryName = argv[1];
+  //BeginLatex
+  //First, dicom image directory is set 
+  //EndLatex
   //BeginCodeSnippet
   reader->RequestSetDirectory( directoryName );
   //EndCodeSnippet
+  //BeginLatex
+  //Next, the user makes a request to read the image.
+  //EndLatex
   //BeginCodeSnippet
   reader->RequestReadImage();
   //EndCodeSnippet
-  /* Add observer to listen to modality info */
+  //BeginLatex
+  //To access DICOM information about this image, callback objects 
+  //need to be instantiated and added to the observer list of the reader
+  //object.
+  //EndLatex
   //BeginCodeSnippet
   typedef DICOMImageModalityInformationCallback  
                                      ModalityCallbackType;
@@ -146,6 +175,9 @@ int main( int argc, char* argv[] )
   reader->AddObserver( igstk::DICOMModalityEvent(), dimcb );
   reader->RequestModalityInformation(); 
   //EndCodeSnippet 
+  //BeginLatex
+  //Similar operation can be also done to access the patient name 
+  //EndLatex
   //BeginCodeSnippet
   /* Add observer to listen to patient name  info */
   typedef DICOMImagePatientNameInformationCallback 
