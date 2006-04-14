@@ -98,10 +98,10 @@ public:
   void RequestReadImage();
 
   /** This function should be used to request modality info*/
-  void RequestModalityInformation();
+  void RequestGetModalityInformation();
 
   /** This function will be used to request patient name info */
-  void RequestPatientNameInformation(); 
+  void RequestGetPatientNameInformation(); 
 
   /** Type used for returning string values from the DICOM header */
   typedef std::string    DICOMInformationType;
@@ -183,12 +183,12 @@ private:
   igstkDeclareStateMacro( ImageRead );
 
   /** List of State Inputs */
-  igstkDeclareInputMacro( ReadImageRequest );
+  igstkDeclareInputMacro( ReadImage );
   igstkDeclareInputMacro( ImageDirectoryNameValid ); 
   igstkDeclareInputMacro( ImageReadingSuccess );
   igstkDeclareInputMacro( ImageSeriesFileNamesGeneratingSuccess );
   igstkDeclareInputMacro( ResetReader );
-  igstkDeclareInputMacro( RequestImage );
+  igstkDeclareInputMacro( GetImage );
   
   /** Error related state inputs */
   igstkDeclareInputMacro( ImageReadingError );

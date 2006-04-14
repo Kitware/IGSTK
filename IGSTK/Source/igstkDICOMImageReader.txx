@@ -41,9 +41,9 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   /** List of  Inputs */
   igstkAddInputMacro( GetModalityInformation );
   igstkAddInputMacro( GetPatientNameInformation );
-  igstkAddInputMacro( ReadImageRequest );
+  igstkAddInputMacro( ReadImage );
   igstkAddInputMacro( ResetReader );
-  igstkAddInputMacro( RequestImage );
+  igstkAddInputMacro( GetImage );
   igstkAddInputMacro( ImageReadingError );
   igstkAddInputMacro( ImageReadingSuccess );
   igstkAddInputMacro( ImageDirectoryNameValid );
@@ -73,7 +73,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
 
   // Transitions for image reading
   igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
-                           ReadImageRequest,
+                           ReadImage,
                            AttemptingToReadImage,
                            AttemptReadImage );
 
@@ -84,7 +84,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
 
   //Transition for invalid inputs to Idle state
   igstkAddTransitionMacro( Idle,
-                           ReadImageRequest,
+                           ReadImage,
                            Idle,
                            ReportInvalidRequest );
 
@@ -228,7 +228,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
 
   // Transitions for invalid inputs to ImageRead state
   igstkAddTransitionMacro( ImageRead,
-                           ReadImageRequest,
+                           ReadImage,
                            ImageRead,
                            ReportInvalidRequest );
 
@@ -280,7 +280,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
 
   // Transitions for invalid inputs to AttemptingToReadImage state
   igstkAddTransitionMacro( AttemptingToReadImage,
-                           ReadImageRequest,
+                           ReadImage,
                            AttemptingToReadImage,
                            ReportInvalidRequest );
 
@@ -382,7 +382,7 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
 
 
   igstkAddTransitionMacro( ImageRead,
-                           RequestImage,
+                           GetImage,
                            ImageRead,
                            ReportImage );
 
@@ -484,7 +484,7 @@ void DICOMImageReader<TPixelType>::RequestGetImage()
 {
   igstkLogMacro( DEBUG, 
                  "igstk::DICOMImageReader::RequestGetImage called...\n");
-  this->m_StateMachine.PushInput( this->m_RequestImageInput);
+  this->m_StateMachine.PushInput( this->m_GetImageInput);
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -505,7 +505,7 @@ void DICOMImageReader<TPixelType>::RequestReadImage()
 {
   igstkLogMacro( DEBUG, 
                  "igstk::DICOMImageReader::RequestReadImage called...\n");
-  this->m_StateMachine.PushInput( this->m_ReadImageRequestInput);
+  this->m_StateMachine.PushInput( this->m_ReadImageInput);
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -738,10 +738,10 @@ DICOMImageReader<TPixelType>::ReportImageReadingSuccessProcessing()
 /** Request the DICOM modality info */
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::RequestModalityInformation() 
+DICOMImageReader<TPixelType>::RequestGetModalityInformation() 
 {
   igstkLogMacro( DEBUG,
-            "igstk::DICOMImageReader::RequestModalityInformation called...\n");
+            "igstk::DICOMImageReader::RequestGetModalityInformation called...\n");
   this->m_StateMachine.PushInput( this->m_GetModalityInformationInput );
   this->m_StateMachine.ProcessInputs();
 }
@@ -749,10 +749,10 @@ DICOMImageReader<TPixelType>::RequestModalityInformation()
 /** Request patient info */
 template <class TPixelType>
 void
-DICOMImageReader<TPixelType>::RequestPatientNameInformation() 
+DICOMImageReader<TPixelType>::RequestGetPatientNameInformation() 
 {
   igstkLogMacro( DEBUG, 
-    "igstk::DICOMImageReader::RequestPatientNameInformation called...\n");
+    "igstk::DICOMImageReader::RequestGetPatientNameInformation called...\n");
   this->m_StateMachine.PushInput( this->m_GetPatientNameInformationInput);
   this->m_StateMachine.ProcessInputs();
 }
