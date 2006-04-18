@@ -120,6 +120,9 @@ public:
   igstkLoadedEventTransductionMacro( CoronalSliceBoundsEvent,  
                                      CoronalBoundsInput, CoronalBounds  );
 
+  igstkObserverObjectMacro(CTImage,CTImageReader::ImageModifiedEvent,
+                                                  CTImageSpatialObject)
+
 protected:
 
   NeedleBiopsy();
@@ -217,6 +220,9 @@ private:
   
   /** DICOM image reader */
   ImageReaderType::Pointer            m_ImageReader;
+  
+  /** Observer for the image reader */
+  CTImageObserver::Pointer            m_CTImageObserver;
 
   /** Slice representations of the image in View2D and View3D */
   ImageRepresentationType::Pointer    m_ImageRepresentationAxial;

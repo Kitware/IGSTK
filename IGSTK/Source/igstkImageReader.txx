@@ -48,14 +48,6 @@ ImageReader< TImageSpatialObject >
 }
 
 template < class TImageSpatialObject >
-const typename ImageReader< TImageSpatialObject >::ImageSpatialObjectType * 
-ImageReader< TImageSpatialObject >
-::GetOutput() const
-{
-  return m_ImageSpatialObject;
-}
-
-template < class TImageSpatialObject >
 void
 ImageReader< TImageSpatialObject >
 ::ConnectImage() 

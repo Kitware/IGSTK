@@ -62,7 +62,10 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
 
   /** Initialize all member variables and set logger */
   m_ImageReader = ImageReaderType::New();
-  
+  m_CTImageObserver = CTImageObserver::New();
+  m_ImageReader->AddObserver(igstk::CTImageReader::ImageModifiedEvent(),
+                             m_CTImageObserver);
+
   m_LandmarkRegistration = RegistrationType::New();
   m_LandmarkRegistrationObserver = ObserverType2::New();
   m_LandmarkRegistrationObserver->SetCallbackFunction( this, 
@@ -496,6 +499,15 @@ void NeedleBiopsy::LoadImageProcessing()
                               "m_ImageReader->RequestReadImage called... \n" )
     m_ImageReader->RequestReadImage();
 
+    m_ImageReader->RequestGetImage();
+    if(!m_CTImageObserver->GotCTImage())
+      {
+      igstkLogMacro(          DEBUG, "Cannot read image\n" )
+      igstkLogMacro2( logger, DEBUG, "Cannot read image\n" )
+      m_StateMachine.PushInput( m_LoadImageFailureInput);
+      return;
+      }
+
     m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), 
                               m_LoadImageSuccessInput, m_LoadImageFailureInput);
     }
@@ -778,10 +790,10 @@ void NeedleBiopsy::Tracking()
   p[1] = transform.GetTranslation()[1];
   p[2] = transform.GetTranslation()[2];
 
-  if( m_ImageReader->GetOutput()->IsInside( p ) )
+  if( m_CTImageObserver->GetCTImage()->IsInside( p ) )
     {
     ImageSpatialObjectType::IndexType index;
-    m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index);
+    m_CTImageObserver->GetCTImage()->TransformPhysicalPointToIndex( p, index);
     ResliceImage( index );
     }
   else
@@ -866,18 +878,18 @@ void NeedleBiopsy::ConnectImageRepresentationProcessing()
   m_Annotation2D->RequestAddAnnotationText( 0, "Georgetown ISIS Center" );
 
   m_ImageRepresentationAxial->RequestSetImageSpatialObject( 
-                                                   m_ImageReader->GetOutput() );
+                                            m_CTImageObserver->GetCTImage() );
   m_ImageRepresentationSagittal->RequestSetImageSpatialObject( 
-                                                   m_ImageReader->GetOutput() );
+                                            m_CTImageObserver->GetCTImage() );
   m_ImageRepresentationCoronal->RequestSetImageSpatialObject( 
-                                                   m_ImageReader->GetOutput() );
+                                            m_CTImageObserver->GetCTImage() );
 
   m_ImageRepresentationAxial3D->RequestSetImageSpatialObject( 
-                                                   m_ImageReader->GetOutput() );
+                                            m_CTImageObserver->GetCTImage() );
   m_ImageRepresentationSagittal3D->RequestSetImageSpatialObject( 
-                                                   m_ImageReader->GetOutput() );
+                                            m_CTImageObserver->GetCTImage() );
   m_ImageRepresentationCoronal3D->RequestSetImageSpatialObject( 
-                                                   m_ImageReader->GetOutput() );
+                                            m_CTImageObserver->GetCTImage() );
  
   m_ImageRepresentationAxial->RequestSetOrientation( 
                                                ImageRepresentationType::Axial );
@@ -1053,13 +1065,13 @@ void NeedleBiopsy::DrawPickedPoint( const itk::EventObject & event)
     p[1] = tmevent->Get().GetTranslation()[1];
     p[2] = tmevent->Get().GetTranslation()[2];
     
-    if( m_ImageReader->GetOutput()->IsInside( p ) )
+    if( m_CTImageObserver->GetCTImage()->IsInside( p ) )
       {
       m_ImageLandmarkTransformToBeSet = tmevent->Get();
       
       m_PickedPoint->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
       ImageSpatialObjectType::IndexType index;
-      m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index);
+      m_CTImageObserver->GetCTImage()->TransformPhysicalPointToIndex( p, index);
       igstkLogMacro( DEBUG, index <<"\n")
       ResliceImage( index );
       }

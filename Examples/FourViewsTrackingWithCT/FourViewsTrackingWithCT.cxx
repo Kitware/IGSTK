@@ -66,6 +66,9 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   /** Initialize all member variables and set logger */
   m_ImageReader = ImageReaderType::New();
   m_ImageReader->SetLogger( logger );
+  m_CTImageObserver = CTImageObserver::New();
+  m_ImageReader->AddObserver(igstk::CTImageReader::ImageModifiedEvent(),
+                             m_CTImageObserver);
 
   m_LandmarkRegistration = RegistrationType::New();
   m_LandmarkRegistration->SetLogger( logger );
@@ -412,27 +415,35 @@ void FourViewsTrackingWithCT::LoadImageProcessing()
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
   if ( directoryname != NULL )
     {
-      igstkLogMacro( DEBUG, 
+    igstkLogMacro( DEBUG, 
                         "Set ImageReader directory: " << directoryname << "\n" )
-      igstkLogMacro2( logger, DEBUG, 
+    igstkLogMacro2( logger, DEBUG, 
                               "m_ImageReader->RequestSetDirectory called...\n" )
-      //FIXME. Add observer and callbacks to catch errors?
-      m_ImageReader->RequestSetDirectory( directoryname ); 
 
-      igstkLogMacro( DEBUG, "ImageReader loading images... \n" )
-      igstkLogMacro2( logger, DEBUG, 
+    m_ImageReader->RequestSetDirectory( directoryname ); 
+
+    igstkLogMacro( DEBUG, "ImageReader loading images... \n" )
+    igstkLogMacro2( logger, DEBUG, 
                                 "m_ImageReader->RequestReadImage called... \n" )
-      //FIXME. Add observer and callbacks to catch errors?
-      m_ImageReader->RequestReadImage();
+    m_ImageReader->RequestReadImage();
 
-      m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), 
+    m_ImageReader->RequestGetImage();
+    if(!m_CTImageObserver->GotCTImage())
+      {
+      igstkLogMacro(          DEBUG, "Cannot read image\n" )
+      igstkLogMacro2( logger, DEBUG, "Cannot read image\n" )
+      m_StateMachine.PushInput( m_LoadImageFailureInput);
+      return;
+      }
+
+    m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), 
                               m_LoadImageSuccessInput, m_LoadImageFailureInput);
     }
   else
     {
-      igstkLogMacro(          DEBUG, "No directory is selected\n" )
-      igstkLogMacro2( logger, DEBUG, "No directory is selected\n" )
-      m_StateMachine.PushInput( m_LoadImageFailureInput );
+    igstkLogMacro(          DEBUG, "No directory is selected\n" )
+    igstkLogMacro2( logger, DEBUG, "No directory is selected\n" )
+    m_StateMachine.PushInput( m_LoadImageFailureInput );
     }
 }
 
@@ -710,11 +721,10 @@ void FourViewsTrackingWithCT::Tracking()
   p[2] = transform.GetTranslation()[2];
 
   igstkLogMacro( DEBUG,  "Tracker tool translation:" << p << "\n" )
-  
-  if( m_ImageReader->GetOutput()->IsInside( p ) )
+  if( m_CTImageObserver->GetCTImage()->IsInside( p ) )
     {
     ImageSpatialObjectType::IndexType index;
-    m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index );
+    m_CTImageObserver->GetCTImage()->TransformPhysicalPointToIndex( p, index );
     igstkLogMacro( DEBUG,  "Tracker tool index:" << index << "\n" )
     ResliceImage( index );
     }
@@ -801,18 +811,18 @@ void FourViewsTrackingWithCT::ResliceImage ( IndexType index )
 void FourViewsTrackingWithCT::ConnectImageRepresentationProcessing()
 {
   m_ImageRepresentationAxial->RequestSetImageSpatialObject( 
-                                                   m_ImageReader->GetOutput() );
+                                                   m_CTImageObserver->GetCTImage() );
   m_ImageRepresentationSagittal->RequestSetImageSpatialObject( 
-                                                   m_ImageReader->GetOutput() );
+                                                   m_CTImageObserver->GetCTImage() );
   m_ImageRepresentationCoronal->RequestSetImageSpatialObject( 
-                                                   m_ImageReader->GetOutput() );
+                                                   m_CTImageObserver->GetCTImage() );
 
   m_ImageRepresentationAxial3D->RequestSetImageSpatialObject( 
-                                                   m_ImageReader->GetOutput() );
+                                                   m_CTImageObserver->GetCTImage() );
   m_ImageRepresentationSagittal3D->RequestSetImageSpatialObject( 
-                                                   m_ImageReader->GetOutput() );
+                                                   m_CTImageObserver->GetCTImage() );
   m_ImageRepresentationCoronal3D->RequestSetImageSpatialObject( 
-                                                   m_ImageReader->GetOutput() );
+                                                   m_CTImageObserver->GetCTImage() );
  
   m_ImageRepresentationAxial->RequestSetOrientation( 
                                                ImageRepresentationType::Axial );
@@ -971,12 +981,12 @@ void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
     p[1] = tmevent->Get().GetTranslation()[1];
     p[2] = tmevent->Get().GetTranslation()[2];
     
-    if( m_ImageReader->GetOutput()->IsInside( p ) )
+    if( m_CTImageObserver->GetCTImage()->IsInside( p ) )
       {
       m_ImageLandmarkTransformToBeSet = tmevent->Get();
       m_Ellipsoid->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
       ImageSpatialObjectType::IndexType index;
-      m_ImageReader->GetOutput()->TransformPhysicalPointToIndex( p, index);
+      m_CTImageObserver->GetCTImage()->TransformPhysicalPointToIndex( p, index);
       igstkLogMacro( DEBUG, index <<"\n")
       ResliceImage( index );
       }

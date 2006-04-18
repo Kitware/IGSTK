@@ -77,12 +77,7 @@ public:
 public:
 
   /** Some convenient typedefs for input image */
-  typedef TImageSpatialObject                   ImageSpatialObjectType;
-
-
-  /** Return the output of the reader as a ImageSpatialObject */
-  const ImageSpatialObjectType * GetOutput() const;
-  
+  typedef TImageSpatialObject                   ImageSpatialObjectType;  
 
   /** Declare the ImageReaderToImageSpatialObject class to be a friend 
    *  in order to give it access to the private method GetITKImage(). */
@@ -96,10 +91,8 @@ protected:
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
 
-
   /** Connect the ITK image to the output ImageSpatialObject */
   void ConnectImage();
-
 
   /** Some convenient typedefs for internal ITK image. 
    *  These types must not be exposed in the API of this class. */
