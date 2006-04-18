@@ -18,6 +18,8 @@
 #include "UltrasoundGuidedRFAImplementation.h"
 #include "igstkEvents.h"
 
+#include "time.h"
+
 namespace igstk
 {
 
@@ -39,20 +41,32 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
     std::cerr << "Problem opening Log file, using cerr instead " << std::endl;
     m_LogOutput->SetStream( std::cerr );
     }
-  m_Logger->AddLogOutput( m_LogOutput );
+  //m_Logger->AddLogOutput( m_LogOutput );
   // add stdout for debug purposes
   LogOutputType::Pointer coutLogOutput = LogOutputType::New();
   coutLogOutput->SetStream( std::cout );
-  //m_Logger->AddLogOutput( coutLogOutput );
+  m_Logger->AddLogOutput( coutLogOutput );
   
   m_Logger->SetPriorityLevel( LoggerType::DEBUG );
   //m_Tracker->SetLogger( m_Logger );
 
+#ifdef UGRFA_USE_FOB
   m_Communication = CommunicationType::New();
   //m_Communication->SetLogger( m_Logger );
   m_Communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
   m_Communication->SetParity( igstk::SerialCommunication::NoParity );
   m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate19200 );
+#else
+  m_Communication = CommunicationType::New();
+  //m_Communication->SetLogger( m_Logger );
+  m_Communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 ); 
+  m_Communication->SetParity( igstk::SerialCommunication::NoParity );
+  m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
+  m_Communication->SetDataBits( igstk::SerialCommunication::DataBits8 );
+  m_Communication->SetStopBits( igstk::SerialCommunication::StopBits1 );
+  m_Communication->SetHardwareHandshake(igstk::SerialCommunication::HandshakeOff );
+#endif
+
   m_Tracker->SetCommunication(m_Communication);
   m_Communication->OpenCommunication();
 
@@ -61,39 +75,43 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   igstk::Transform::VectorType translation;
   translation[0] = 0;   // Tip offset
   translation[1] = 0;
-  translation[2] = 390;
+  translation[2] = 120; //390
       
   igstk::Transform::VersorType rotation;
-  rotation.SetRotationAroundY(-3.141597/2.0);
+  //rotation.SetRotationAroundY(-3.141597/2.0);
+  rotation.SetRotationAroundZ(3.141597/2.0);
   
   igstk::Transform::VersorType rotation2;
-  rotation2.SetRotationAroundX(3.141597/2.0);
-    
+  //rotation2.SetRotationAroundX(3.141597/2.0);
+  rotation2.SetRotationAroundX(3.141597);
+
   rotation = rotation2*rotation;
   
   translation = rotation.Transform(translation);
 
   toolCalibrationTransform.SetTranslationAndRotation(translation,
-                                                  rotation,0.0001,100000);
-  m_Tracker->SetToolCalibrationTransform( 0, 0, toolCalibrationTransform);
+                                                  rotation,0.0001,100000000);
+  m_Tracker->SetToolCalibrationTransform( TRACKER_TOOL_PORT, 0, toolCalibrationTransform);
 
   /** Tool calibration transform */
   igstk::Transform patientTransform;
   igstk::Transform::VectorType translationP;
   translationP[0] = 0;   // Tip offset
   translationP[1] = 0;
-  translationP[2] = 0;
+  translationP[2] = -1500;
 
   igstk::Transform::VersorType rotationP;
-  rotationP.SetRotationAroundY(-3.141597/2.0);
+  //rotationP.SetRotationAroundY(-3.141597/2.0);
+  rotationP.SetRotationAroundZ(-3.141597/2.0);
     
   igstk::Transform::VersorType rotation2P;
-  rotation2P.SetRotationAroundZ(3.141597/2.0);
+  //rotation2P.SetRotationAroundZ(3.141597/2.0);
+  rotation2P.SetRotationAroundY(3.141597);
    
   rotationP = rotation2P*rotationP;
 
   patientTransform.SetTranslationAndRotation(translationP,
-                                             rotationP,0.0001,100000);
+                                             rotationP,0.0001,100000000);
   m_Tracker->SetPatientTransform(patientTransform);
 
   m_Tracker->Open();
@@ -140,6 +158,7 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   igstkSetInitialStateMacro( Initial );
   m_StateMachine.SetReadyToRun();
 
+  srand(time(NULL));
 }
 
 /** Desctructor */
@@ -215,9 +234,8 @@ void UltrasoundGuidedRFAImplementation
 void UltrasoundGuidedRFAImplementation
 ::AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
 {
-  const unsigned int toolPort = 0;
   const unsigned int toolNumber = 0;
-  m_Tracker->AttachObjectToTrackerTool( toolPort, toolNumber, objectToTrack );
+  m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, toolNumber, objectToTrack );
 }
 
 /** Load a liver surface */
@@ -289,18 +307,31 @@ void UltrasoundGuidedRFAImplementation
       }
 
     //m_MRImageReader->SetLogger(m_Logger);
+    MRImageObserver::Pointer mrImageObserver = MRImageObserver::New();
+
     m_MRImageReader->RequestSetDirectory(filename.c_str());
     m_MRImageReader->RequestReadImage();
-  
+
+    m_MRImageReader->AddObserver(igstk::MRImageReader::ImageModifiedEvent(),
+                                 mrImageObserver);
+
+    m_MRImageReader->RequestGetImage();
+
+    if(!mrImageObserver->GotMRImage())
+      {
+      std::cout << "No MRImage!" << std::endl;
+      return;
+      }
+ 
     m_LiverMRRepresentation->RequestSetImageSpatialObject( 
-                                                m_MRImageReader->GetOutput());
+                                                mrImageObserver->GetMRImage());
     m_LiverMRRepresentation->SetWindowLevel(52,52);
     m_LiverMRRepresentation->RequestSetOrientation(
                                             MRImageRepresentationType::Axial);
     this->Display3D->RequestAddObject( m_LiverMRRepresentation );
 
     m_ObliqueLiverMRRepresentation->RequestSetImageSpatialObject(
-                                                m_MRImageReader->GetOutput());
+                                                mrImageObserver->GetMRImage());
     m_ObliqueLiverMRRepresentation->SetWindowLevel(52,52);
     
     //m_ObliqueLiverMRRepresentation->RequestSetOrientation(
@@ -332,9 +363,20 @@ void UltrasoundGuidedRFAImplementation
     m_USImageReader->RequestSetDirectory(filename.c_str());
     m_USImageReader->RequestReadImage();
 
+    USImageObserver::Pointer usImageObserver = USImageObserver::New();
+    m_USImageReader->AddObserver(igstk::USImageReader::ImageModifiedEvent(),
+                                 usImageObserver);
+
+    m_USImageReader->RequestGetImage();
+
+    if(!usImageObserver->GotUSImage())
+      {
+      std::cout << "No USImage!" << std::endl;
+      return;
+      }
+ 
     m_LiverUSRepresentation = USImageRepresentationType::New();
-    m_LiverUSRepresentation->RequestSetImageSpatialObject(
-                                                m_USImageReader->GetOutput());
+    m_LiverUSRepresentation->RequestSetImageSpatialObject(usImageObserver->GetUSImage());
     m_LiverUSRepresentation->SetWindowLevel(255/2.0,255/2.0);
     this->Display2D->RequestAddObject( m_LiverUSRepresentation );
     this->Display2D->RequestResetCamera();
@@ -345,6 +387,51 @@ void UltrasoundGuidedRFAImplementation
 void UltrasoundGuidedRFAImplementation
 ::SetSliceNumber(unsigned int value)
 {
+  m_LiverMRRepresentation->RequestSetSliceNumber(value);
+  //m_ObliqueLiverMRRepresentation->RequestSetSliceNumber(value);
+/*
+  MRObliqueImageRepresentationType::PointType origin;
+  origin[0] = 0;
+  origin[1] = 0;
+  origin[2] = value;
+  MRObliqueImageRepresentationType::VectorType v1;
+  v1[0] = 1;
+  v1[1] = 0;
+  v1[2] = 1;
+  MRObliqueImageRepresentationType::VectorType v2;
+  v2[0] = 0;
+  v2[1] = 1;
+  v2[2] = 0;
+
+  m_ObliqueLiverMRRepresentation->RequestSetOriginPointOnThePlane(origin);
+  m_ObliqueLiverMRRepresentation->RequestSetVector1OnThePlane(v1);
+  m_ObliqueLiverMRRepresentation->RequestSetVector2OnThePlane(v2);
+  m_ObliqueLiverMRRepresentation->RequestReslice();
+  this->Display2D->RequestResetCamera();
+*/  
+}
+
+/** Randomize. Test only. */
+void UltrasoundGuidedRFAImplementation
+::Randomize()
+{
+  if(!m_Tracking)
+    {
+    return;
+    }
+
+  m_Tracker->UpdateStatus();
+  
+  typedef igstk::Transform            TransformType;
+  typedef TransformType::VectorType   VectorType;
+
+  TransformType             transform;
+  VectorType                position;
+
+
+/*
+  unsigned int value = (((double) rand() / (double) RAND_MAX) * 20);
+
   m_LiverMRRepresentation->RequestSetSliceNumber(value);
   //m_ObliqueLiverMRRepresentation->RequestSetSliceNumber(value);
 
@@ -367,26 +454,46 @@ void UltrasoundGuidedRFAImplementation
   m_ObliqueLiverMRRepresentation->RequestReslice();
   //m_ObliqueLiverMRRepresentation->RequestReslice();
   this->Display2D->RequestResetCamera();
-  
-}
+*/
+  m_Tracker->GetToolTransform( 0, 0, transform );
+  //std::cout << transform.GetStartTime() << " " << transform.GetExpirationTime() << std::endl;
+  position = transform.GetTranslation();
+  //std::cout << "Position = (" << position[0]
+  //          << "," << position[1] << "," << position[2]
+  //          << ")" << std::endl;
 
-/** Randomize. Test only. */
-void UltrasoundGuidedRFAImplementation
-::Randomize()
-{
-  // Not ready yet
-  /*if(m_ObliqueLiverMRRepresentation)
-    {
-    std::cout << m_ObliquePoint << std::endl;
-    m_ObliquePoint[2]++;
-    if(m_ObliquePoint[2]>20)
-      {
-      m_ObliquePoint[2]=0;
-      }
-    m_ObliqueLiverMRRepresentation->SetLogger(m_Logger);
-    m_ObliqueLiverMRRepresentation->RequestSetPointOnthePlane(m_ObliquePoint);
-    m_ObliqueLiverMRRepresentation->RequestReslice();
-    }*/
+  //std::cout << m_ObliquePoint << std::endl;
+  //m_ObliquePoint[2]++;
+  //if(m_ObliquePoint[2]>20)
+  //  {
+  //  m_ObliquePoint[2]=0;
+  //  }
+  m_ObliquePoint[0] = position[0];
+  m_ObliquePoint[1] = position[1];
+  m_ObliquePoint[2] = position[2];
+  //m_ObliqueLiverMRRepresentation->SetLogger(m_Logger);
+  //std::cout << m_ObliquePoint << std::endl;
+  //MRObliqueImageRepresentationType::PointType origin;
+  //origin[0] = 0;
+  //origin[1] = 0;
+  //origin[2] = value;
+  MRObliqueImageRepresentationType::VectorType v1;
+  v1[0] = 1;
+  v1[1] = 0;
+  v1[2] = 0;
+  v1 = transform.GetRotation().Transform(v1);
+  
+  MRObliqueImageRepresentationType::VectorType v2;
+  v2[0] = 0;
+  v2[1] = 1;
+  v2[2] = 0;
+  v2 = transform.GetRotation().Transform(v2);
+  
+  m_ObliqueLiverMRRepresentation->RequestSetOriginPointOnThePlane(m_ObliquePoint);
+  m_ObliqueLiverMRRepresentation->RequestSetVector1OnThePlane(v1);
+  m_ObliqueLiverMRRepresentation->RequestSetVector2OnThePlane(v2);
+  m_ObliqueLiverMRRepresentation->RequestReslice();
+  this->Display2D->RequestResetCamera();
 }
 
 } // end of namespace

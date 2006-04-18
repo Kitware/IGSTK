@@ -30,7 +30,7 @@
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
-#include "igstkAuroraTracker.h"
+#include "igstkPolarisTracker.h"
 #include "igstkFlockOfBirdsTracker.h"
 #include "igstkUltrasoundProbeObjectRepresentation.h"
 #include "igstkAxesObjectRepresentation.h"
@@ -61,6 +61,8 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+//#define UGRFA_USE_FOB
+
 namespace igstk
 {
 
@@ -76,11 +78,24 @@ public:
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
+  igstkObserverObjectMacro(MRImage,MRImageReader::ImageModifiedEvent,
+                                                  MRImageSpatialObject)
+  igstkObserverObjectMacro(USImage,USImageReader::ImageModifiedEvent,
+                                                  USImageObject)
+
 public:
     
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
+
+#ifdef UGRFA_USE_FOB
   typedef igstk::FlockOfBirdsTracker    TrackerType;
+  #define TRACKER_TOOL_PORT 0
+#else
+  typedef igstk::PolarisTracker         TrackerType;
+  #define TRACKER_TOOL_PORT 0
+#endif
+
   typedef igstk::MeshReader             LiverReaderType;
   typedef igstk::VascularNetworkReader  VascularNetworkReaderType;
   typedef igstk::VascularNetworkObject  VascularNetworkType;
