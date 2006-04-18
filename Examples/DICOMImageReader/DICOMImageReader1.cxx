@@ -33,11 +33,13 @@
 
 //BeginLatex
 //To use this class, appropriate callback subclasses need to be first defined. 
-//This procedure is important because information is passed from the reader class 
-//to the application using information loaded events. The events could be error 
-//events or events loaded with dicom information such as modality and patient ID. 
+//This procedure is important because information is passed from the reader 
+//class to the application using information loaded events. The events could 
+//be error events or events loaded with dicom information such as modality 
+//and patient ID. 
 //
-//For example, callback class to observe Modality information is defined as follows.
+//For example, callback class to observe Modality information is defined 
+//as follows.
 //EndLatex
 //BeginCodeSnippet
 class DICOMImageModalityInformationCallback: public itk::Command
@@ -102,7 +104,7 @@ public:
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
     const DICOMPatientNameEventType * patientNameEvent = 
-          dynamic_cast < const DICOMPatientNameEventType* > ( &event );    
+          dynamic_cast < const DICOMPatientNameEventType* > ( &event );
     std::cerr << "PatientName= " << patientNameEvent->Get() << std::endl;
       
     }
@@ -168,8 +170,7 @@ int main( int argc, char* argv[] )
   //object.
   //EndLatex
   //BeginCodeSnippet
-  typedef DICOMImageModalityInformationCallback  
-                                     ModalityCallbackType;
+  typedef DICOMImageModalityInformationCallback   ModalityCallbackType;
 
   ModalityCallbackType::Pointer dimcb = ModalityCallbackType::New();
   reader->AddObserver( igstk::DICOMModalityEvent(), dimcb );
@@ -180,8 +181,7 @@ int main( int argc, char* argv[] )
   //EndLatex
   //BeginCodeSnippet
   /* Add observer to listen to patient name  info */
-  typedef DICOMImagePatientNameInformationCallback 
-                                        PatientCallbackType;
+  typedef DICOMImagePatientNameInformationCallback  PatientCallbackType;
 
   PatientCallbackType::Pointer dipncb = PatientCallbackType::New();
   reader->AddObserver( igstk::DICOMPatientNameEvent(), dipncb );
@@ -189,4 +189,3 @@ int main( int argc, char* argv[] )
   //EndCodeSnippet  
   return EXIT_SUCCESS;
 }
-

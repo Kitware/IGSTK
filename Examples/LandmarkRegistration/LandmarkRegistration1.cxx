@@ -71,8 +71,8 @@ class Landmark3DRegistrationErrorCallback : public itk::Command
 {
 public:
   typedef Landmark3DRegistrationErrorCallback Self;
-  typedef itk::SmartPointer<Self>      Pointer;
-  typedef itk::Command                 Superclass;
+  typedef itk::SmartPointer<Self>             Pointer;
+  typedef itk::Command                        Superclass;
   itkNewMacro(Self);
   void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
@@ -118,91 +118,93 @@ private:
 //BeginCodeSnippet
 class Landmark3DRegistrationGetTransformCallback: public itk::Command
 {
-  public:
-    typedef Landmark3DRegistrationGetTransformCallback    Self;
-    typedef itk::SmartPointer<Self>                       Pointer;
-    typedef itk::Command                                  Superclass;
-    itkNewMacro(Self);
+public:
+  typedef Landmark3DRegistrationGetTransformCallback    Self;
+  typedef itk::SmartPointer<Self>                       Pointer;
+  typedef itk::Command                                  Superclass;
+  itkNewMacro(Self);
 
-    typedef igstk::TransformModifiedEvent TransformModifiedEventType;
-
-    void Execute( const itk::Object *caller, const itk::EventObject & event )
-      {
-      }
-    void Execute( itk::Object *caller, const itk::EventObject & event )
-      {
-      std::cout<< " TransformEvent is thrown" << std::endl;
-                    dynamic_cast < const TransformModifiedEventType* > ( &event );
-      const TransformModifiedEventType * transformEvent =
-                    dynamic_cast < const TransformModifiedEventType* > ( &event );
-      m_Transform = transformEvent->Get();
-      m_EventReceived = true;
-      } 
-    bool GetEventReceived()
-      {
-      return m_EventReceived;
-      }
-    igstk::Transform GetTransform()
-      {
-      return m_Transform;
-      }  
-  protected:
-    Landmark3DRegistrationGetTransformCallback()   
-      {
-      m_EventReceived = true;
-      };
-  private:
-      bool m_EventReceived;
-      igstk::Transform m_Transform;
+  typedef igstk::TransformModifiedEvent TransformModifiedEventType;
+  
+  void Execute( const itk::Object *caller, const itk::EventObject & event )
+    {
+    }
+ 
+  void Execute( itk::Object *caller, const itk::EventObject & event )
+    {
+    std::cout<< " TransformEvent is thrown" << std::endl;
+                dynamic_cast < const TransformModifiedEventType* > ( &event );
+    const TransformModifiedEventType * transformEvent =
+                dynamic_cast < const TransformModifiedEventType* > ( &event );
+    m_Transform = transformEvent->Get();
+    m_EventReceived = true;
+    } 
+  bool GetEventReceived()
+    {
+    return m_EventReceived;
+    }
+  igstk::Transform GetTransform()
+    {
+    return m_Transform;
+    }  
+protected:
+  Landmark3DRegistrationGetTransformCallback()   
+    {
+    m_EventReceived = true;
+    };
+private:
+  bool m_EventReceived;
+  igstk::Transform m_Transform;
 };
 //EndCodeSnippet
 
 //BeginLatex
-//After defining the helper classes, the main function implementation is started.
+//After defining the helper classes, the main function implementation 
+//is started.
 //
 //EndLatex
 //BeginCodeSnippet
 int main( int argv, char * argc[] )
 {
 //EndCodeSnippet
-    igstk::RealTimeClock::Initialize();
+  igstk::RealTimeClock::Initialize();
 //BeginLatex
 //
 //All the necessary data types are defined.
 //EndLatex
 //BeginCodeSnippet
-    typedef itk::Logger                   LoggerType;
-    typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef itk::Logger                   LoggerType;
+  typedef itk::StdStreamLogOutput       LogOutputType;
     
-    typedef igstk::Landmark3DRegistration     
-                              Landmark3DRegistrationType;
-    typedef igstk::Landmark3DRegistration::LandmarkPointContainerType
-                              LandmarkPointContainerType;
-    typedef igstk::Landmark3DRegistration::LandmarkImagePointType 
-                              LandmarkImagePointType;
-    typedef igstk::Landmark3DRegistration::LandmarkTrackerPointType
-                              LandmarkTrackerPointType;
-    typedef Landmark3DRegistrationType::TransformType::OutputVectorType 
-                              OutputVectorType;
-    typedef igstk::Transform  TransformType;
+  typedef igstk::Landmark3DRegistration
+                            Landmark3DRegistrationType;
+  typedef igstk::Landmark3DRegistration::LandmarkPointContainerType
+                            LandmarkPointContainerType;
+  typedef igstk::Landmark3DRegistration::LandmarkImagePointType 
+                            LandmarkImagePointType;
+  typedef igstk::Landmark3DRegistration::LandmarkTrackerPointType
+                            LandmarkTrackerPointType;
+  typedef Landmark3DRegistrationType::TransformType::OutputVectorType 
+                            OutputVectorType;
+  typedef igstk::Transform  TransformType;
 //EndCodeSnippet
 //BeginLatex
 //The registration component is instantiated as follows
 //EndLatex
 //BeginCodeSnippet
-    Landmark3DRegistrationType::Pointer landmarkRegister = 
-                                        Landmark3DRegistrationType::New();    
+  Landmark3DRegistrationType::Pointer landmarkRegister = 
+                                        Landmark3DRegistrationType::New();
 //EndCodeSnippet
 //BeginLatex
 //The landmark containers that hold the landmark image and tracker 
 //coordinates are instantiated.
 //EndLatex
 //BeginCodeSnippet
-    LandmarkPointContainerType  imagePointContainer;
-    LandmarkPointContainerType  trackerPointContainer;
+  LandmarkPointContainerType  imagePointContainer;
+  LandmarkPointContainerType  trackerPointContainer;
 //EndCodeSnippet
-    LandmarkImagePointType      imagePoint;
-    LandmarkTrackerPointType    trackerPoint;
+  LandmarkImagePointType      imagePoint;
+  LandmarkTrackerPointType    trackerPoint;
 
 //BeginLatex
 //Error event callback objects are instantiated and added to the observer
@@ -210,18 +212,18 @@ int main( int argv, char * argc[] )
 //EndLatex
 //
 //BeginCodeSnippet
-    Landmark3DRegistrationInvalidRequestCallback::Pointer 
+  Landmark3DRegistrationInvalidRequestCallback::Pointer 
                   lrcb = Landmark3DRegistrationInvalidRequestCallback::New();
     
-    typedef igstk::Landmark3DRegistration::InvalidRequestErrorEvent  
+  typedef igstk::Landmark3DRegistration::InvalidRequestErrorEvent  
                                                          InvalidRequestEvent;
-    landmarkRegister->AddObserver( InvalidRequestEvent(), lrcb );
+  landmarkRegister->AddObserver( InvalidRequestEvent(), lrcb );
 
-    Landmark3DRegistrationErrorCallback::Pointer ecb = 
+  Landmark3DRegistrationErrorCallback::Pointer ecb = 
                   Landmark3DRegistrationErrorCallback::New();
-    typedef igstk::Landmark3DRegistration::TransformComputationFailureEvent 
+  typedef igstk::Landmark3DRegistration::TransformComputationFailureEvent 
                                                      ComputationFailureEvent;
-    landmarkRegister->AddObserver( ComputationFailureEvent(), ecb );
+  landmarkRegister->AddObserver( ComputationFailureEvent(), ecb );
 
 //EndCodeSnippet
 
@@ -231,12 +233,12 @@ int main( int argv, char * argc[] )
 //EndLatex
 
 //BeginCodeSnippet 
-    LoggerType::Pointer   logger = LoggerType::New();
-    LogOutputType::Pointer logOutput = LogOutputType::New();
-    logOutput->SetStream( std::cout );
-    logger->AddLogOutput( logOutput );
-    logger->SetPriorityLevel( itk::Logger::DEBUG );
-    landmarkRegister->SetLogger( logger );
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  landmarkRegister->SetLogger( logger );
 //EndCodeSnippet
    
 //BeginLatex
@@ -251,104 +253,99 @@ int main( int argv, char * argc[] )
 //
 //EndLatex 
 //BeginCodeSnippet
-    // Add 1st landmark
-    imagePoint[0] =  25.0;
-    imagePoint[1] =  1.0;
-    imagePoint[2] =  15.0;
-    imagePointContainer.push_back(imagePoint);
-    landmarkRegister->RequestAddImageLandmarkPoint(imagePoint);
+  // Add 1st landmark
+  imagePoint[0] =  25.0;
+  imagePoint[1] =  1.0;
+  imagePoint[2] =  15.0;
+  imagePointContainer.push_back(imagePoint);
+  landmarkRegister->RequestAddImageLandmarkPoint(imagePoint);
 
+  trackerPoint[0] =  29.8;
+  trackerPoint[1] =  -5.3;
+  trackerPoint[2] =  25.0;
+  trackerPointContainer.push_back(trackerPoint);
+  landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
+
+  // Add 2nd landmark
+  imagePoint[0] =  15.0;
+  imagePoint[1] =  21.0;
+  imagePoint[2] =  17.0;
+  imagePointContainer.push_back(imagePoint);
+  landmarkRegister->RequestAddImageLandmarkPoint(imagePoint);
     
-    trackerPoint[0] =  29.8;
-    trackerPoint[1] =  -5.3;
-    trackerPoint[2] =  25.0;
-    trackerPointContainer.push_back(trackerPoint);
-    landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
+  trackerPoint[0] =  35.0;
+  trackerPoint[1] =  16.5;
+  trackerPoint[2] =  27.0;
+  trackerPointContainer.push_back(trackerPoint);
+  landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
 
-    // Add 2nd landmark
-    imagePoint[0] =  15.0;
-    imagePoint[1] =  21.0;
-    imagePoint[2] =  17.0;
-    imagePointContainer.push_back(imagePoint);
-    landmarkRegister->RequestAddImageLandmarkPoint(imagePoint);
-    
-    trackerPoint[0] =  35.0;
-    trackerPoint[1] =  16.5;
-    trackerPoint[2] =  27.0;
-    trackerPointContainer.push_back(trackerPoint);
-    landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
+  // Add 3d landmark
+  imagePoint[0] =  14.0;
+  imagePoint[1] =  25.0;
+  imagePoint[2] =  11.0;
+  imagePointContainer.push_back(imagePoint);
+  landmarkRegister->RequestAddImageLandmarkPoint(imagePoint);
 
-   // Add 3d landmark
-    imagePoint[0] =  14.0;
-    imagePoint[1] =  25.0;
-    imagePoint[2] =  11.0;
-    imagePointContainer.push_back(imagePoint);
-    landmarkRegister->RequestAddImageLandmarkPoint(imagePoint);
+  trackerPoint[0] =  36.8;
+  trackerPoint[1] =  20.0;
+  trackerPoint[2] =  21.0;
+  trackerPointContainer.push_back(trackerPoint);
+  landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
 
-    trackerPoint[0] =  36.8;
-    trackerPoint[1] =  20.0;
-    trackerPoint[2] =  21.0;
-    trackerPointContainer.push_back(trackerPoint);
-    landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
-//EndCodeSnippet
-//BeginLatex
-//More landmarks could be added for transform computation.  
-//EndLatex
-    // Add 4th landmark
-    imagePoint[0] =  10.0;
-    imagePoint[1] =  11.0;
-    imagePoint[2] =  8.0;
-    imagePointContainer.push_back(imagePoint);
-    landmarkRegister->RequestAddImageLandmarkPoint(imagePoint);
+  //EndCodeSnippet
+  //BeginLatex
+  //More landmarks could be added for transform computation.  
+  //EndLatex
+  // Add 4th landmark
+  imagePoint[0] =  10.0;
+  imagePoint[1] =  11.0;
+  imagePoint[2] =  8.0;
+  imagePointContainer.push_back(imagePoint);
+  landmarkRegister->RequestAddImageLandmarkPoint(imagePoint);
 
+  trackerPoint[0] =  24.7;
+  trackerPoint[1] =  12.0;
+  trackerPoint[2] =  18.0;
+  trackerPointContainer.push_back(trackerPoint);
+  landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
 
-    trackerPoint[0] =  24.7;
-    trackerPoint[1] =  12.0;
-    trackerPoint[2] =  18.0;
-    trackerPointContainer.push_back(trackerPoint);
-    landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
-
-//BeginLatex
-//After adding all the landmark coordinates, the transform computation is 
-//requested as follows
-//EndLatex
-//
-    // Calculate transform
-    // BeginCodeSnippet
-    landmarkRegister->RequestComputeTransform();
-    // EndCodeSnippet
+  //BeginLatex
+  //After adding all the landmark coordinates, the transform computation is 
+  //requested as follows
+  //EndLatex
+  //
+  // Calculate transform
+  // BeginCodeSnippet
+  landmarkRegister->RequestComputeTransform();
+  // EndCodeSnippet
      
-    typedef itk::VersorRigid3DTransform<double>                
-                                        VersorRigid3DTransformType;
-    typedef itk::VersorRigid3DTransform<double>::ParametersType 
-                                        ParametersType;
+  typedef itk::VersorRigid3DTransform<double>        VersorRigid3DTransformType;
+  typedef VersorRigid3DTransformType::ParametersType ParametersType;
 
-    TransformType      transform;
-    ParametersType     parameters(6);
+  TransformType      transform;
+  ParametersType     parameters(6);
 
-// BeginLatex
-// To access the tranform parameters, a GetTransform callback is instantiated
-// to observe the transform event as follows. 
-// EndLatex
-//
-// BeginCodeSnippet
-    Landmark3DRegistrationGetTransformCallback::Pointer lrtcb =
+  // BeginLatex
+  // To access the tranform parameters, a GetTransform callback is instantiated
+  // to observe the transform event as follows. 
+  // EndLatex
+  //
+  // BeginCodeSnippet
+  Landmark3DRegistrationGetTransformCallback::Pointer lrtcb =
                             Landmark3DRegistrationGetTransformCallback::New();
-    landmarkRegister->AddObserver( igstk::TransformModifiedEvent(), lrtcb );
-//EndCodeSnippet
-//
+  landmarkRegister->AddObserver( igstk::TransformModifiedEvent(), lrtcb );
+  //EndCodeSnippet
+  //
 
-//BeginLatex
-// To request the registration component throw an event loaded with transform
-// parameters, a \code{RequestGetTransform} function is invoked as follows.
-//EndLatex
-//
-//BeginCodeSnippet
-    landmarkRegister->RequestGetTransform();
-    std::cout << "Transform " << transform << std::cout;
-//EndCodeSnippet
+  //BeginLatex
+  // To request the registration component throw an event loaded with transform
+  // parameters, a \code{RequestGetTransform} function is invoked as follows.
+  //EndLatex
+  //
+  //BeginCodeSnippet
+  landmarkRegister->RequestGetTransform();
+  std::cout << "Transform " << transform << std::cout;
+  //EndCodeSnippet
     
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
-
-

@@ -47,7 +47,7 @@ int main( int, char * [] )
   typedef igstk::View3D            View3DType;
   typedef itk::Logger              LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
-  
+
   // EndCodeSnippet
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -153,5 +153,3 @@ int main( int, char * [] )
 
   return EXIT_SUCCESS;
 }
-
-

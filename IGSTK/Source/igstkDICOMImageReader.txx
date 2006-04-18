@@ -741,7 +741,7 @@ void
 DICOMImageReader<TPixelType>::RequestGetModalityInformation() 
 {
   igstkLogMacro( DEBUG,
-            "igstk::DICOMImageReader::RequestGetModalityInformation called...\n");
+        "igstk::DICOMImageReader::RequestGetModalityInformation called...\n");
   this->m_StateMachine.PushInput( this->m_GetModalityInformationInput );
   this->m_StateMachine.ProcessInputs();
 }

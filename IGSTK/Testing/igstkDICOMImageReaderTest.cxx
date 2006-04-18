@@ -33,33 +33,30 @@ namespace igstkDICOMImageReaderTestNamespace
 class DICOMImageModalityInformationCallback: public itk::Command
 {
 public:
-  typedef DICOMImageModalityInformationCallback    Self;
-  typedef itk::SmartPointer<Self>           Pointer;
-  typedef itk::Command                      Superclass;
+  typedef DICOMImageModalityInformationCallback   Self;
+  typedef itk::SmartPointer<Self>                 Pointer;
+  typedef itk::Command                            Superclass;
   itkNewMacro(Self);
 
-  typedef igstk::ImageSpatialObject< 
-                                short, 
-                                3                                
-                                       > ImageSpatialObjectType;
+  typedef igstk::ImageSpatialObject<short,3> ImageSpatialObjectType;
   
  
   typedef igstk::DICOMModalityEvent DICOMModalityEventType;
   
   void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
+    {
+    }
 
-  }
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     if( DICOMModalityEventType().CheckEvent( &event ) )
       {
       const DICOMModalityEventType * modalityEvent = 
                    dynamic_cast< const DICOMModalityEventType *>( &event );
       std::cout << "Modality= " << modalityEvent->Get() << std::endl;
-      }
-      
-  }
+      }   
+    }
+
 protected:
   DICOMImageModalityInformationCallback()   { };
 
@@ -69,30 +66,25 @@ private:
 class DICOMImagePatientNameInformationCallback: public itk::Command
 {
 public:
-  typedef DICOMImagePatientNameInformationCallback    Self;
-  typedef itk::SmartPointer<Self>           Pointer;
-  typedef itk::Command                      Superclass;
+  typedef DICOMImagePatientNameInformationCallback  Self;
+  typedef itk::SmartPointer<Self>                   Pointer;
+  typedef itk::Command                              Superclass;
   itkNewMacro(Self);
 
-  typedef igstk::ImageSpatialObject< 
-                                short, 
-                                3                                
-                                       > ImageSpatialObjectType;
-  
+  typedef igstk::ImageSpatialObject<short,3> ImageSpatialObjectType;
  
   typedef igstk::DICOMPatientNameEvent DICOMPatientNameEventType;
   
   void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
-
-  }
+    {
+    }
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     const DICOMPatientNameEventType * patientNameEvent = 
-          dynamic_cast < const DICOMPatientNameEventType* > ( &event );    
-    std::cerr << "PatientName= " << patientNameEvent->Get() << std::endl;
-      
-  }
+          dynamic_cast<const DICOMPatientNameEventType*> (&event);
+    std::cerr << "PatientName= " << patientNameEvent->Get() << std::endl;  
+    }
+
 protected:
   DICOMImagePatientNameInformationCallback()   { };
 
@@ -105,22 +97,22 @@ class myDicomTestReader :
 {
 public:
 
-   typedef igstk::DICOMImageReader< 
+  typedef igstk::DICOMImageReader< 
                   igstk::ImageSpatialObject< short, 3 > > DICOMReaderSuperclass;
 
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( myDicomTestReader, DICOMReaderSuperclass )
 
   void TestMe()
-   {
-   m_CheckTheNullImage = true;
-   const ImageType * imageThatShallNotBeNamed = GetITKImage();
-   if( imageThatShallNotBeNamed != NULL )
-     {
-     std::cout << "Test of private abstract method Passed" << std::endl;
-     }
-   m_CheckTheNullImage = false;
-   }
+    {
+    m_CheckTheNullImage = true;
+    const ImageType * imageThatShallNotBeNamed = GetITKImage();
+    if( imageThatShallNotBeNamed != NULL )
+      {
+      std::cout << "Test of private abstract method Passed" << std::endl;
+      }
+    m_CheckTheNullImage = false;
+    }
 
 protected:
    myDicomTestReader():m_StateMachine(this),m_CheckTheNullImage(false) {}
@@ -149,12 +141,10 @@ private:
 } // end of igstkDICOMImageReaderTestNamespace namespace
 
 
-
 int igstkDICOMImageReaderTest( int argc, char* argv[] )
 {
 
   igstk::RealTimeClock::Initialize();
-
 
   if(argc < 2)
     {
@@ -193,10 +183,10 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
   reader->RequestSetDirectory( directoryName );
   reader->RequestReadImage();
   
- /* Add observer to listen to modality info */
+  /* Add observer to listen to modality info */
   typedef 
     igstkDICOMImageReaderTestNamespace::DICOMImageModalityInformationCallback  
-                                                             ModalityCallbackType;
+                                                          ModalityCallbackType;
 
   ModalityCallbackType::Pointer dimcb = ModalityCallbackType::New();
   reader->AddObserver( igstk::DICOMModalityEvent(), dimcb );
@@ -204,8 +194,8 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
  
   /* Add observer to listen to patient name  info */
   typedef 
-    igstkDICOMImageReaderTestNamespace::DICOMImagePatientNameInformationCallback 
-                                                                PatientCallbackType;
+  igstkDICOMImageReaderTestNamespace::DICOMImagePatientNameInformationCallback
+                                                           PatientCallbackType;
 
   PatientCallbackType::Pointer dipncb = PatientCallbackType::New();
   reader->AddObserver( igstk::DICOMPatientNameEvent(), dipncb );
@@ -236,4 +226,3 @@ int igstkDICOMImageReaderTest( int argc, char* argv[] )
   
   return EXIT_SUCCESS;
 }
-
