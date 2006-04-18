@@ -29,6 +29,12 @@
 #include "itkStdStreamLogOutput.h"
 #include "igstkEvents.h"
 
+namespace ObliqueImageSpatialObjectRepresentationTest
+{
+  igstkObserverObjectMacro(CTImage,
+    ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
+}
+
 int igstkObliqueImageSpatialObjectRepresentationTest( 
                                                  int argc , char * argv [] )
 {
@@ -77,7 +83,22 @@ int igstkObliqueImageSpatialObjectRepresentationTest(
 
   representation->SetLogger( logger );
 
-  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+  // Attach an observer
+  typedef ObliqueImageSpatialObjectRepresentationTest::CTImageObserver CTImageObserverType;
+  CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New();
+  reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
+                            ctImageObserver);
+
+  reader->RequestGetImage();
+
+  if(!ctImageObserver->GotCTImage())
+    {
+    std::cout << "No CTImage!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
 
   // Exercise the TypeMacro() which defines the GetNameOfClass()
   std::string name = representation->GetNameOfClass();
