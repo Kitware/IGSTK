@@ -34,6 +34,9 @@ namespace igstk
 namespace ImageSpatialObjectRepresentationTest
 {
 
+igstkObserverObjectMacro(CTImage,
+    ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
+
 class ImageRepresentationObserver : public ::itk::Command
 {
 
@@ -159,10 +162,14 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   // Instantiate a reader
   //
   typedef igstk::CTImageReader         ReaderType;
-
   ReaderType::Pointer   reader = ReaderType::New();
-
   reader->SetLogger( logger );
+  typedef igstk::ImageSpatialObjectRepresentationTest::CTImageObserver 
+                                                        CTImageObserverType;
+  CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New(); 
+  reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
+                            ctImageObserver);
+
 
   /* Read in a DICOM series */
   std::cout << "Reading CT image : " << argv[1] << std::endl;
@@ -172,8 +179,17 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   reader->RequestSetDirectory( directoryName );
  
   reader->RequestReadImage();
-
   representation->SetLogger( logger );
+
+  reader->RequestGetImage();
+  reader->Print(std::cout);
+
+  if(!ctImageObserver->GotCTImage())
+    {
+    std::cout << "No CTImage!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   // Test error case
   representation->RequestSetImageSpatialObject( NULL );
@@ -219,7 +235,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   representation->AddObserver( igstk::CoronalSliceBoundsEvent(),  observer );
   representation->AddObserver( igstk::SagittalSliceBoundsEvent(), observer );
   
-  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
 
   // Test Get Bounds for Axial orientation 
   representation->RequestSetOrientation( RepresentationType::Axial );
@@ -242,8 +258,6 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     return EXIT_FAILURE;
     }
    
-
-
   // Test Get Bounds for Coronal orientation 
   representation->RequestSetOrientation( RepresentationType::Coronal );
   igstk::PulseGenerator::CheckTimeouts();
@@ -266,8 +280,6 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     return EXIT_FAILURE;
     }
 
-
- 
   // Test Get Bounds for Sagittal orientation 
   representation->RequestSetOrientation( RepresentationType::Sagittal );
   igstk::PulseGenerator::CheckTimeouts();
@@ -278,7 +290,6 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   representation->RequestGetSliceNumberBounds();
   igstk::PulseGenerator::CheckTimeouts();
 
-  
   if( observer->GetSagittalEventReceived() )
     {
     std::cout << "Sagittal Event Received successfuly" << std::endl;
@@ -289,7 +300,6 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     std::cerr << "after invoking RequestGetSliceNumberBounds()." << std::endl;
     return EXIT_FAILURE;
     }
-
 
   view2D->RequestAddObject( representation );
  

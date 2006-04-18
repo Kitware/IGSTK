@@ -26,6 +26,12 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+namespace CTImageSpatialObjectReadingAndRepresentationTest
+{
+  igstkObserverObjectMacro(CTImage,
+    ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
+}
+
 int igstkCTImageSpatialObjectReadingAndRepresentationTest( 
                                                         int argc, char* argv[] )
 {
@@ -77,7 +83,15 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   // First, on purpose attempt to use an Empty image, 
   // in order to test error conditions.
   //
-  CTImagePointer ctImage = reader->GetOutput();
+  typedef CTImageSpatialObjectReadingAndRepresentationTest::CTImageObserver 
+                                                        CTImageObserverType;
+  CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New();
+  reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
+                            ctImageObserver);
+
+  reader->RequestGetImage();
+
+  CTImagePointer ctImage = ctImageObserver->GetCTImage();
 
   if( !ctImage->IsEmpty() )
     {
@@ -93,7 +107,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
           
   representation->SetLogger( logger );
 
-  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
 
   representation->RequestSetOrientation( RepresentationType::Axial );
   representation->RequestSetSliceNumber( 0 );
@@ -140,7 +154,9 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     return EXIT_FAILURE;
     }
   
-  ctImage = reader->GetOutput();
+  reader->RequestGetImage();
+
+  ctImage = ctImageObserver->GetCTImage();
 
   if( ctImage->IsEmpty() )
     {
@@ -149,7 +165,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     return EXIT_FAILURE;
     }
  
-  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
 
   view2D->RequestAddObject( representation );
 
@@ -224,7 +240,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     directoryName = argv[1];
     reader->RequestSetDirectory( directoryName );
     reader->RequestReadImage();
-    representation->RequestSetImageSpatialObject( reader->GetOutput() );
+    representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
     representation->RequestSetOrientation( RepresentationType::Axial );
 
     for(unsigned int i=0; i<10; i++)
@@ -239,7 +255,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     directoryName = argv[3];
     reader->RequestSetDirectory( directoryName );
     reader->RequestReadImage();
-    representation->RequestSetImageSpatialObject( reader->GetOutput() );
+    representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
     representation->RequestSetOrientation( RepresentationType::Axial );
 
     for(unsigned int i=0; i<10; i++)
