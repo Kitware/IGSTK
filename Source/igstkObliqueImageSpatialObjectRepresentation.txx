@@ -353,7 +353,7 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   double dot_product;
   dot_product = v1*v2;
 
-  if ( dot_product != 0.0 )
+  if ( dot_product > 1e-9 )
     {
     // FIXME: need to handle this situation too
     std::cerr<< "The two vectors are not perpendicular" << std::endl;
