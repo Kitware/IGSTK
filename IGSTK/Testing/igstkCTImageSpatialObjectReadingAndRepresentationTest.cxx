@@ -78,7 +78,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   
  
   typedef igstk::CTImageSpatialObject  CTImageType;
-  typedef CTImageType::ConstPointer    CTImagePointer;
+  typedef CTImageType::Pointer         CTImagePointer;
 
   // First, on purpose attempt to use an Empty image, 
   // in order to test error conditions.

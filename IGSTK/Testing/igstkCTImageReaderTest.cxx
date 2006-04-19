@@ -95,7 +95,7 @@ int igstkCTImageReaderTest( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  igstk::CTImageSpatialObject::ConstPointer ctImage = ctImageObserver->GetCTImage();
+  igstk::CTImageSpatialObject::Pointer ctImage = ctImageObserver->GetCTImage();
 
   // Details of the loaded image
   ctImage->Print( std::cout );
