@@ -29,7 +29,7 @@
 
 namespace Annotation2DTest
 {
-  igstkObserverObjectMacro(CTImage,
+igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
 }
 
@@ -55,9 +55,11 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
+                                                igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
+                                       // VTK OutputWindow -> logger
 
 
   typedef igstk::CTImageReader         ReaderType;
@@ -89,9 +91,12 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
     }
   catch( ... )
     {
-    std::cerr << "ERROR: An exception was thrown while reading the CT dataset" << std::endl;
-    std::cerr << "This should not have happened. The State Machine should have" << std::endl;
-    std::cerr << "catched that exception and converted it into a SM Input " << std::endl;
+    std::cerr << "ERROR: An exception was thrown while reading the CT dataset" 
+              << std::endl;
+    std::cerr << "This should not have happened. The State Machine should have" 
+              << std::endl;
+    std::cerr << "catched that exception and converted it into a SM Input " 
+              << std::endl;
     return EXIT_FAILURE;
     }
 

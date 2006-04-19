@@ -27,7 +27,7 @@
 
 namespace MRImageReaderTest
 {
-  igstkObserverObjectMacro(MRImage,
+igstkObserverObjectMacro(MRImage,
     ::igstk::MRImageReader::ImageModifiedEvent,::igstk::MRImageSpatialObject)
 }
 
@@ -68,7 +68,7 @@ int igstkMRImageReaderTest( int argc, char* argv[] )
   
   reader->Print( std::cout );
 
-   // Attach an observer
+  // Attach an observer
   typedef MRImageReaderTest::MRImageObserver MRImageObserverType;
   MRImageObserverType::Pointer mrImageObserver = MRImageObserverType::New();
   reader->AddObserver(::igstk::MRImageReader::ImageModifiedEvent(),
@@ -80,9 +80,12 @@ int igstkMRImageReaderTest( int argc, char* argv[] )
     }
   catch( ... )
     {
-    std::cerr << "ERROR: An exception was thrown while reading the MR dataset" << std::endl;
-    std::cerr << "This should not have happened. The State Machine should have" << std::endl;
-    std::cerr << "catched that exception and converted it into a SM Input " << std::endl;
+    std::cerr << "ERROR: An exception was thrown while reading the MR dataset"
+              << std::endl;
+    std::cerr << "This should not have happened. The State Machine should have"
+              << std::endl;
+    std::cerr << "catched that exception and converted it into a SM Input"
+              << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -99,4 +102,3 @@ int igstkMRImageReaderTest( int argc, char* argv[] )
 
   return EXIT_SUCCESS;
 }
-

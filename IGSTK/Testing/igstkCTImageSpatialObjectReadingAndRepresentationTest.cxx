@@ -28,7 +28,7 @@
 
 namespace CTImageSpatialObjectReadingAndRepresentationTest
 {
-  igstkObserverObjectMacro(CTImage,
+igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
 }
 
@@ -240,7 +240,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     directoryName = argv[1];
     reader->RequestSetDirectory( directoryName );
     reader->RequestReadImage();
-    representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
+    representation->RequestSetImageSpatialObject( 
+                                              ctImageObserver->GetCTImage() );
     representation->RequestSetOrientation( RepresentationType::Axial );
 
     for(unsigned int i=0; i<10; i++)
@@ -255,7 +256,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     directoryName = argv[3];
     reader->RequestSetDirectory( directoryName );
     reader->RequestReadImage();
-    representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
+    representation->RequestSetImageSpatialObject( 
+                                              ctImageObserver->GetCTImage() );
     representation->RequestSetOrientation( RepresentationType::Axial );
 
     for(unsigned int i=0; i<10; i++)

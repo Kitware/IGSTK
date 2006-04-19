@@ -26,7 +26,7 @@
 
 namespace CTImageReaderTest
 {
-  igstkObserverObjectMacro(CTImage,
+igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
 }
 
@@ -80,9 +80,12 @@ int igstkCTImageReaderTest( int argc, char* argv[] )
     }
   catch( ... )
     {
-    std::cerr << "ERROR: An exception was thrown while reading the CT dataset" << std::endl;
-    std::cerr << "This should not have happened. The State Machine should have" << std::endl;
-    std::cerr << "catched that exception and converted it into a SM Input " << std::endl;
+    std::cerr << "ERROR: An exception was thrown while reading the CT dataset"
+              << std::endl;
+    std::cerr << "This should not have happened. The State Machine should have" 
+              << std::endl;
+    std::cerr << "catched that exception and converted it into a SM Input " 
+              << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -102,4 +105,3 @@ int igstkCTImageReaderTest( int argc, char* argv[] )
   
   return EXIT_SUCCESS;
 }
-

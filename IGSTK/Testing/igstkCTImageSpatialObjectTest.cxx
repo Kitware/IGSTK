@@ -35,4 +35,3 @@ int igstkCTImageSpatialObjectTest( int , char* [] )
 
   return EXIT_SUCCESS;
 }
-

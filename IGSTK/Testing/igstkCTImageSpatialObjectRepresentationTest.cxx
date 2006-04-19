@@ -68,7 +68,8 @@ int igstkCTImageSpatialObjectRepresentationTest( int argc, char * argv [] )
   std::string name = representation->GetNameOfClass();
 
   // Attach an observer
-  typedef CTImageSpatialObjectRepresentationTest::CTImageObserver CTImageObserverType;
+  typedef CTImageSpatialObjectRepresentationTest::CTImageObserver 
+                                                        CTImageObserverType;
   CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New();
   reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
                             ctImageObserver);
@@ -91,31 +92,29 @@ int igstkCTImageSpatialObjectRepresentationTest( int argc, char * argv [] )
   representation->Print( std::cout );
 
   // Do manual selections of slice number for each orientation 
-  {
-  representation->RequestSetOrientation( RepresentationType::Axial );
-  for(unsigned int i=0; i<5; i++)
     {
-    representation->RequestSetSliceNumber( i );
+    representation->RequestSetOrientation( RepresentationType::Axial );
+    for(unsigned int i=0; i<5; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      }
     }
-  }
 
-  {
-  representation->RequestSetOrientation( RepresentationType::Sagittal );
-  for(unsigned int i=0; i<10; i++)
     {
-    representation->RequestSetSliceNumber( i );
+    representation->RequestSetOrientation( RepresentationType::Sagittal );
+    for(unsigned int i=0; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      }
     }
-  }
 
-  {
-  representation->RequestSetOrientation( RepresentationType::Coronal );
-  for(unsigned int i=0; i<10; i++)
     {
-    representation->RequestSetSliceNumber( i );
+    representation->RequestSetOrientation( RepresentationType::Coronal );
+    for(unsigned int i=0; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      }
     }
-  }
-
-
   return EXIT_SUCCESS;
-}
 
+}

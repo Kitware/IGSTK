@@ -31,7 +31,7 @@
 
 namespace ObliqueImageSpatialObjectRepresentationTest
 {
-  igstkObserverObjectMacro(CTImage,
+igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
 }
 
@@ -84,7 +84,8 @@ int igstkObliqueImageSpatialObjectRepresentationTest(
   representation->SetLogger( logger );
 
   // Attach an observer
-  typedef ObliqueImageSpatialObjectRepresentationTest::CTImageObserver CTImageObserverType;
+  typedef ObliqueImageSpatialObjectRepresentationTest::CTImageObserver 
+                                                        CTImageObserverType;
   CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New();
   reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
                             ctImageObserver);
