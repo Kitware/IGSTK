@@ -95,7 +95,7 @@ int igstkMRImageReaderTest( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  igstk::MRImageSpatialObject::ConstPointer mrImage = mrImageObserver->GetMRImage();
+  igstk::MRImageSpatialObject::Pointer mrImage = mrImageObserver->GetMRImage();
 
   return EXIT_SUCCESS;
 }
