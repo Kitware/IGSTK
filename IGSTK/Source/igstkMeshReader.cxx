@@ -15,7 +15,6 @@
 
 =========================================================================*/
 #include "igstkMeshReader.h"
-#include "igstkEvents.h"
 
 namespace igstk
 { 

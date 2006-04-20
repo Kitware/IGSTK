@@ -18,7 +18,6 @@
 #ifndef __igstkMeshObject_h
 #define __igstkMeshObject_h
 
-#include "igstkMacros.h"
 #include "igstkSpatialObject.h"
 #include <itkMeshSpatialObject.h>
 #include <itkTetrahedronCell.h>
@@ -33,13 +32,12 @@ namespace Friends
 class MeshReaderToMeshSpatialObject;
 }
 
-/** \class Mesh
+/** \class MeshObject
+ *
  * \brief Implements the 3-dimensional mesh structure.
  *
- * \par Overview
  * Mesh implements the 3-dimensional mesh structure.  It provides
  * an API to perform operations on points, cells, boundaries, etc.
- *
  * Mesh is an adaptive, evolving structure. Typically points and cells
  * are created, with the cells referring to their defining points.
  *
@@ -125,8 +123,6 @@ private:
 
   /** Set method to be invoked only by friends of this class */
   void SetMesh( MeshType * mesh );
-
-private:
 
   /** Internal itkSpatialObject */
   MeshSpatialObjectType::Pointer   m_MeshSpatialObject;

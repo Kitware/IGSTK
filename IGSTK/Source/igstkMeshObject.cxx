@@ -15,7 +15,6 @@
 
 =========================================================================*/
 #include "igstkMeshObject.h"
-#include "igstkEvents.h"
 
 namespace igstk
 { 

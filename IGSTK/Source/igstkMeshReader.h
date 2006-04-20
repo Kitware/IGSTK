@@ -17,14 +17,7 @@
 #ifndef __igstkMeshReader_h
 #define __igstkMeshReader_h
 
-#include "igstkMacros.h"
 #include "igstkSpatialObjectReader.h"
-
-#include "itkSpatialObjectReader.h"
-#include "itkObject.h"
-#include "itkEventObject.h"
-
-#include "igstkEvents.h"
 #include "igstkMeshObject.h"
 
 namespace igstk
