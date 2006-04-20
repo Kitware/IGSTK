@@ -27,7 +27,7 @@
 
 namespace CTImageSpatialObjectRepresentationTest
 {
-  igstkObserverObjectMacro(CTImage,
+igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
 }
 

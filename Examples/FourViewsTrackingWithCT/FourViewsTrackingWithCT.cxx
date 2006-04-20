@@ -521,38 +521,37 @@ void FourViewsTrackingWithCT::AddImageLandmarkProcessing()
   igstkLogMacro2( logger, DEBUG, 
            "FourViewsTrackingWithCT::AddImageLandmarkProcessing called ... \n" )
 
-    /** Check if there is an updated image landmark picking point */
-    if ( m_ImageLandmarkTransform.GetTranslation() != 
-                              m_ImageLandmarkTransformToBeSet.GetTranslation() )
+  /** Check if there is an updated image landmark picking point */
+  if ( m_ImageLandmarkTransform.GetTranslation() != 
+                            m_ImageLandmarkTransformToBeSet.GetTranslation() )
+    {
+    LandmarkPointType  p;
+    p[0] = m_ImageLandmarkTransformToBeSet.GetTranslation()[0];
+    p[1] = m_ImageLandmarkTransformToBeSet.GetTranslation()[1];
+    p[2] = m_ImageLandmarkTransformToBeSet.GetTranslation()[2];
+    m_ImageLandmarksContainer.push_back( p );
+
+    this->NumberOfImageLandmarks->value( m_ImageLandmarksContainer.size() );
+    if ( m_ImageLandmarksContainer.size() < 3 )
       {
-      LandmarkPointType  p;
-      p[0] = m_ImageLandmarkTransformToBeSet.GetTranslation()[0];
-      p[1] = m_ImageLandmarkTransformToBeSet.GetTranslation()[1];
-      p[2] = m_ImageLandmarkTransformToBeSet.GetTranslation()[2];
-      m_ImageLandmarksContainer.push_back( p );
-
-      this->NumberOfImageLandmarks->value( m_ImageLandmarksContainer.size() );
-      if ( m_ImageLandmarksContainer.size() < 3 )
-        {
-        this->NumberOfImageLandmarks->textcolor( FL_BLACK );
-        }
-      else
-        {
-        this->NumberOfImageLandmarks->textcolor( FL_BLUE );
-        }
-      
-      m_ImageLandmarkTransform.SetTranslation( 
-                 m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
-      igstkLogMacro( DEBUG, "Image landmark point added: "<< p << "\n" )
-      igstkLogMacro2( logger, DEBUG, 
-                                    "Image landmark point added: "<< p << "\n" )
-
+      this->NumberOfImageLandmarks->textcolor( FL_BLACK );
       }
     else
       {
-      igstkLogMacro(          DEBUG, "No new image landmark point picked.\n" )
-      igstkLogMacro2( logger, DEBUG, "No new image landmark point picked.\n" )
+      this->NumberOfImageLandmarks->textcolor( FL_BLUE );
       }
+      
+    m_ImageLandmarkTransform.SetTranslation( 
+               m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
+    igstkLogMacro( DEBUG, "Image landmark point added: "<< p << "\n" )
+    igstkLogMacro2( logger, DEBUG, "Image landmark point added: "<< p << "\n" )
+
+    }
+  else
+    {
+    igstkLogMacro(          DEBUG, "No new image landmark point picked.\n" )
+    igstkLogMacro2( logger, DEBUG, "No new image landmark point picked.\n" )
+    }
 
   m_StateMachine.PushInputBoolean( (m_ImageLandmarksContainer.size()>=3),
                     m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
@@ -811,18 +810,18 @@ void FourViewsTrackingWithCT::ResliceImage ( IndexType index )
 void FourViewsTrackingWithCT::ConnectImageRepresentationProcessing()
 {
   m_ImageRepresentationAxial->RequestSetImageSpatialObject( 
-                                                   m_CTImageObserver->GetCTImage() );
+                                           m_CTImageObserver->GetCTImage() );
   m_ImageRepresentationSagittal->RequestSetImageSpatialObject( 
-                                                   m_CTImageObserver->GetCTImage() );
+                                           m_CTImageObserver->GetCTImage() );
   m_ImageRepresentationCoronal->RequestSetImageSpatialObject( 
-                                                   m_CTImageObserver->GetCTImage() );
+                                           m_CTImageObserver->GetCTImage() );
 
   m_ImageRepresentationAxial3D->RequestSetImageSpatialObject( 
-                                                   m_CTImageObserver->GetCTImage() );
+                                           m_CTImageObserver->GetCTImage() );
   m_ImageRepresentationSagittal3D->RequestSetImageSpatialObject( 
-                                                   m_CTImageObserver->GetCTImage() );
+                                           m_CTImageObserver->GetCTImage() );
   m_ImageRepresentationCoronal3D->RequestSetImageSpatialObject( 
-                                                   m_CTImageObserver->GetCTImage() );
+                                           m_CTImageObserver->GetCTImage() );
  
   m_ImageRepresentationAxial->RequestSetOrientation( 
                                                ImageRepresentationType::Axial );
