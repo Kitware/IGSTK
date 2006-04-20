@@ -219,6 +219,7 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   meshObject->AddPoint(2,9,9,0);
   meshObject->AddPoint(3,0,0,9);
   meshObject->AddTetrahedronCell(0,0,1,2,3);
+  meshObject->AddTriangleCell(1,0,1,2);
    
   if( argc > 1 )
     {
