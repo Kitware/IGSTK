@@ -1,0 +1,214 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0106 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/fl_ask.H>} {} 
+
+class DeckOfCardRobotGUI {open
+} {
+  Function {DeckOfCardRobotGUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label {IGSTK: Needle Biopsy Demo Application}
+      callback {Quit();} open
+      xywh {298 30 930 732} type Double box PLASTIC_UP_BOX resizable
+      code0 {\#include "igstkView2D.h"}
+      code1 {\#include "igstkView3D.h"} visible
+    } {
+      Fl_Group ControlGroup {
+        xywh {0 0 165 690} box DOWN_BOX
+      } {
+        Fl_Light_Button TrackingButton {
+          label Tracking
+          callback {if(o->value())
+{
+  RequestStartTracking();
+}
+else
+{
+    RequestStopTracking();
+}}
+          xywh {15 605 130 25} box PLASTIC_UP_FRAME labelsize 11
+        }
+        Fl_Light_Button LoadImageButton {
+          label {Load Image}
+          callback {RequestLoadImage();}
+          xywh {15 67 130 25} box PLASTIC_UP_FRAME labelsize 11
+        }
+        Fl_Light_Button SetPatientNameButton {
+          label {Register Patient}
+          callback {RequestSetPatientName();}
+          xywh {15 20 130 25} box PLASTIC_UP_FRAME labelsize 11
+        }
+        Fl_Light_Button InitializeTrackerButton {
+          label {Initialize Tracker}
+          callback {RequestInitializeTracker();}
+          xywh {15 219 130 25} box PLASTIC_UP_FRAME labelsize 11
+        }
+        Fl_Light_Button QuitButton {
+          label Quit
+          callback {Quit();}
+          xywh {15 645 130 25} type Normal box PLASTIC_UP_FRAME labelsize 11
+        }
+        Fl_Group {} {
+          label {Path Planning} open
+          xywh {10 485 140 100} box EMBOSSED_FRAME labelsize 11 align 17
+        } {
+          Fl_Light_Button {} {
+            label {Target Point}
+            callback {RequestSetTargetPoint();}
+            xywh {15 510 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 1
+          }
+          Fl_Light_Button {} {
+            label {Entry Point}
+            callback {RequestSetEntryPoint();}
+            xywh {15 548 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 4
+          }
+        }
+        Fl_Group {} {open
+          xywh {10 267 140 80} box EMBOSSED_FRAME
+        } {
+          Fl_Light_Button AddTrackerLandmarkButton {
+            label {Add Tracker Landmark}
+            callback {RequestAddTrackerLandmark();}
+            xywh {15 275 130 25} box PLASTIC_UP_FRAME labelsize 11
+          }
+          Fl_Value_Output NumberOfTrackerLandmarks {
+            label {No.}
+            xywh {40 312 32 25} box DOWN_BOX labelsize 11 maximum 100 step 1 textfont 1
+          }
+          Fl_Button ClearTrackerLandmarks {
+            label Clear
+            callback {RequestClearTrackerLandmarks();}
+            xywh {96 312 50 25} box PLASTIC_UP_FRAME labelsize 11
+          }
+        }
+        Fl_Group {} {open
+          xywh {10 113 140 80} box EMBOSSED_FRAME
+        } {
+          Fl_Light_Button AddImageLandmarkButton {
+            label {Add Image Landmark}
+            callback {RequestAddImageLandmark();}
+            xywh {15 120 130 25} box PLASTIC_UP_FRAME labelsize 11
+          }
+          Fl_Value_Output NumberOfImageLandmarks {
+            label {No.}
+            xywh {41 157 32 25} box DOWN_BOX labelsize 11 maximum 100 step 1 textfont 1 textcolor 0
+          }
+          Fl_Button ClearImageLandmarks {
+            label Clear
+            callback {RequestClearImageLandmarks();}
+            xywh {95 159 50 25} box PLASTIC_UP_FRAME labelsize 11
+          }
+        }
+        Fl_Group {} {open
+          xywh {10 380 140 80} box EMBOSSED_FRAME labelsize 11
+        } {
+          Fl_Light_Button RegistrationButton {
+            label {Landmark Registration}
+            callback {RequestRegistration();}
+            xywh {15 390 130 25} box PLASTIC_UP_FRAME labelsize 11
+          }
+          Fl_Value_Output RegistrationError {
+            label {Error:}
+            xywh {55 425 45 25} box DOWN_BOX labelsize 11 maximum 1000 step 0.001 textfont 1
+          }
+        }
+      }
+      Fl_Group ViewerGroup {
+        xywh {165 0 768 692} box DOWN_BOX
+      } {
+        Fl_Box DisplayAxial {
+          label {Display Axial}
+          xywh {165 0 380 330} box FLAT_BOX color 0 labelcolor 7
+          class {igstk::View2D}
+        }
+        Fl_Box DisplaySagittal {
+          label {Display Sagittal}
+          xywh {550 0 380 330} box FLAT_BOX color 0 labelcolor 7
+          class {igstk::View2D}
+        }
+        Fl_Box Display3D {
+          label {Display 3D}
+          xywh {550 345 380 330} box FLAT_BOX color 0 labelcolor 7
+          class {igstk::View3D}
+        }
+        Fl_Box DisplayCoronal {
+          label {Display Coronal}
+          xywh {165 345 380 330} box FLAT_BOX color 0 labelcolor 7
+          class {igstk::View2D}
+        }
+        Fl_Value_Slider AxialSlider {
+          callback {this->RequestResliceImage();}
+          xywh {165 330 378 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
+        }
+        Fl_Value_Slider SagittalSlider {
+          callback {this->RequestResliceImage();}
+          xywh {550 330 380 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
+        }
+        Fl_Value_Slider CoronalSlider {
+          callback {this->RequestResliceImage();}
+          xywh {165 676 380 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
+        }
+      }
+      Fl_Text_Display m_LogWindow {
+        xywh {0 690 930 60} box DOWN_BOX
+      }
+    }
+    code {mainWindow->show();
+hasQuitted = false;} {}
+  }
+  Function {~DeckOfCardRobotGUI()} {selected return_type virtual
+  } {
+    code {delete DisplayAxial;
+delete DisplayCoronal;
+delete DisplaySagittal;
+delete Display3D;} {}
+  }
+  Function {RequestSetPatientName()} {open return_type {virtual void}
+  } {}
+  Function {RequestLoadImage()} {open return_type {virtual void}
+  } {}
+  Function {RequestInitializeTracker()} {open return_type {virtual void}
+  } {}
+  Function {RequestAddImageLandmark()} {open return_type {virtual void}
+  } {}
+  Function {RequestAddTrackerLandmark()} {open return_type {virtual void}
+  } {}
+  Function {RequestClearImageLandmarks()} {open return_type {virtual void}
+  } {}
+  Function {RequestClearTrackerLandmarks()} {open return_type {virtual void}
+  } {}
+  Function {RequestRegistration()} {open return_type {virtual void}
+  } {}
+  Function {RequestStartTracking()} {open return_type {virtual void}
+  } {}
+  Function {RequestStopTracking()} {open return_type {virtual void}
+  } {}
+  Function {RequestResliceImage()} {return_type {virtual void}
+  } {}
+  Function {RequestReset()} {open return_type {virtual void}
+  } {}
+  Function {RequestSetTargetPoint()} {open return_type {virtual void}
+  } {}
+  Function {RequestSetEntryPoint()} {open return_type {virtual void}
+  } {}
+  decl {bool hasQuitted;} {}
+  Function {Quit()} {return_type void
+  } {
+    code {int i = fl_choice("Are you sure you want to quit?", NULL,"Yes","No"); 
+if ( i == 1 )
+  {
+  mainWindow->hide();
+  this->hasQuitted = true;
+  }
+else
+  {
+  return;
+  }} {}
+  }
+  Function {HasQuitted()} {return_type bool
+  } {
+    code {return this->hasQuitted;} {}
+  }
+} 

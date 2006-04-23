@@ -13,4 +13,5 @@ SUBDIRS(
   NeedleBiopsy
   LandmarkRegistration
   DICOMImageReader
+  DeckOfCardRobot
   )
