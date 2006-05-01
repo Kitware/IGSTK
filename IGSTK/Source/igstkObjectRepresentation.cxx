@@ -187,7 +187,6 @@ void ObjectRepresentation::SetSpatialObjectProcessing()
   this->ObserveSpatialObjectTransformInput( m_SpatialObject );
 }
 
-
 /** Set the color */
 void ObjectRepresentation::SetColor(float r, float g, float b)
 {
@@ -210,6 +209,25 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
   this->Modified();
 }
 
+/** Set the opacity */
+void ObjectRepresentation::SetOpacity(float alpha)
+{
+  if(m_Opacity == alpha)
+    {
+    return;
+    }
+  m_Opacity = alpha;
+
+  // Update all the actors
+  ActorsListType::iterator it = m_Actors.begin();
+  while(it != m_Actors.end())
+    {
+    vtkActor * va = static_cast<vtkActor*>(*it);
+    va->GetProperty()->SetOpacity(m_Opacity); 
+    it++;
+    }
+  this->Modified();
+}
 
 /** Request Update the object representation (i.e vtkActors). */
 void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
