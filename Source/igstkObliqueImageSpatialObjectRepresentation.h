@@ -150,7 +150,7 @@ private:
   ImageSpatialObjectConstPointer         m_ImageSpatialObject;
   ImageSpatialObjectConstPointer         m_ImageSpatialObjectToAdd;
 
-  /** Obique plane parameters */
+  /** Oblique plane parameters */
   PointType                              m_OriginPointOnThePlane;
   PointType                              m_OriginPointOnThePlaneToBeSet;
 
