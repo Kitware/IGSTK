@@ -46,7 +46,7 @@ int RobotCommunication::GetResFlag( const char buf[100], int numSC )
 }
 
 // Captures coordinate after appropriate ";" in robot response  
-float RobotCommunication::GetCoord( const char buf[100], int numSC ) 
+float RobotCommunication::GetCoord( const char * buf, int numSC ) 
 {
   int i = 0;
   int p1, p2;

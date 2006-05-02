@@ -146,7 +146,7 @@ public:
   
   // Captures coordinate after appropriate ";" in robot response  
   // FIXME -- DOES NOT WORK YET
-  float GetCoord( const char buf[100], int numSC );
+  float GetCoord( const char * buf, int numSC );
   
   // opens socket, logs in to robot and turns off asynchronous mode 
   // if ASYNCMODE == false
