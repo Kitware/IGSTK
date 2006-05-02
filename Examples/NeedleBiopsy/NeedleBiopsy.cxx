@@ -72,20 +72,7 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
                               &NeedleBiopsy::GetLandmarkRegistrationTransform );
   m_LandmarkRegistration->AddObserver( TransformModifiedEvent(), 
                                                m_LandmarkRegistrationObserver );
-
-  m_SerialCommunication = CommunicationType::New();
-  m_SerialCommunication->SetPortNumber( IGSTK_POLARIS_PORT_NUMBER );
-  m_SerialCommunication->SetParity( SerialCommunication::NoParity );
-  m_SerialCommunication->SetBaudRate( SerialCommunication::BaudRate9600 );
-  m_SerialCommunication->SetDataBits( SerialCommunication::DataBits8 );
-  m_SerialCommunication->SetStopBits( SerialCommunication::StopBits1 );
-  m_SerialCommunication->SetHardwareHandshake( 
-                                            SerialCommunication::HandshakeOff );
-  m_SerialCommunication->OpenCommunication();
-  
-  m_Tracker = TrackerType::New();
-  m_Tracker->SetCommunication( m_SerialCommunication );
-
+   
   m_Annotation2D = Annotation2D::New();
   
   Transform transform;
@@ -158,22 +145,6 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_PathRepresentation3D->RequestSetTubeObject( m_Path );
   m_PathRepresentation3D->SetColor( 0.0, 1.0, 0.0);
   m_PathRepresentation3D->SetOpacity( 0.4 );
-
-  /** Tool calibration transform */
-  igstk::Transform toolCalibrationTransform;
-  
-  igstk::Transform::VectorType translation;
-  translation[0] = -18.0;   // Tip offset
-  translation[1] = 0.5;
-  translation[2] = -157.5;
-
-  igstk::Transform::VersorType rotation;
-  rotation.SetIdentity();
-    
-  toolCalibrationTransform.SetTranslationAndRotation(
-                                                translation, rotation, 0.1, -1);
-  m_Tracker->SetToolCalibrationTransform( 
-                                TRACKER_TOOL_PORT, 0, toolCalibrationTransform);
 
   m_ImageToTrackerTransform.SetToIdentity( -1 );
   m_ImageLandmarkTransform.SetToIdentity( -1 );
@@ -571,16 +542,62 @@ void NeedleBiopsy::InitializeTrackerProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
                    "NeedleBiopsy::InitializeTrackerProcessing called ... \n" )
+  
+  m_SerialCommunication = CommunicationType::New();  
+  switch( SerialPort->value() ) {
+  case 0 : 
+    m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber0 ); 
+    break;
+  case 1 : 
+    m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber1 ); 
+    break;
+  case 2 : 
+    m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber2 ); 
+    break;
+  case 3 : 
+    m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber3 ); 
+    break;
+  default:
+    m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber0 );
+    }
+  
+  m_SerialCommunication->SetParity( SerialCommunication::NoParity );
+  m_SerialCommunication->SetBaudRate( SerialCommunication::BaudRate9600 );
+  m_SerialCommunication->SetDataBits( SerialCommunication::DataBits8 );
+  m_SerialCommunication->SetStopBits( SerialCommunication::StopBits1 );
+  m_SerialCommunication->SetHardwareHandshake( 
+                                             SerialCommunication::HandshakeOff );
+  m_SerialCommunication->OpenCommunication();
+
+  m_Tracker = TrackerType::New();
+  m_Tracker->SetCommunication( m_SerialCommunication );
+
+  /** Tool calibration transform */
+  igstk::Transform toolCalibrationTransform;
+
+  igstk::Transform::VectorType translation;
+  translation[0] = OffsetX->value();   // Tip offset
+  translation[1] = OffsetY->value();
+  translation[2] = OffsetZ->value();
+
+  igstk::Transform::VersorType rotation;
+  rotation.SetIdentity();
+
+  toolCalibrationTransform.SetTranslationAndRotation( translation, 
+                                                             rotation, 0.1, -1);
+  m_Tracker->SetToolCalibrationTransform( TrackerToolPort->value(), 
+                                                    0, toolCalibrationTransform);
   m_Tracker->Open();
-  m_Tracker->AttachSROMFileNameToPort( TRACKER_TOOL_PORT, 
-                                                     TRACKER_TOOL_SROM_FILE );
-  m_Tracker->AttachSROMFileNameToPort( REFERENCE_TOOL_PORT, 
-                                                   REFERENCE_TOOL_SROM_FILE );
-  m_Tracker->SetReferenceTool( USE_REFERENCE_TOOL, REFERENCE_TOOL_PORT, 0);  
+  m_Tracker->AttachSROMFileNameToPort( TrackerToolPort->value(), 
+                                                  TrackerToolSROMFile->value() );
+  m_Tracker->AttachSROMFileNameToPort( ReferenceToolPort->value(), 
+                                                ReferenceToolSROMFile->value() );
+  m_Tracker->SetReferenceTool( UseReferenceTool->value(), 
+                                                  ReferenceToolPort->value(), 0);  
   m_Tracker->Initialize();
   m_Tracker->StartTracking();
   m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(),
-           m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
+              m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
 }
 
 void NeedleBiopsy::RequestAddImageLandmark()
@@ -707,7 +724,7 @@ void NeedleBiopsy::GetTrackerTransform()
   igstkLogMacro2( logger, DEBUG, "Tracker::GetToolTransform called...\n" )
   m_Tracker->UpdateStatus();
   m_Tracker->GetToolTransform( 
-                      TRACKER_TOOL_PORT, 0, m_TrackerLandmarkTransformToBeSet );
+               TrackerToolPort->value(), 0, m_TrackerLandmarkTransformToBeSet );
 }
 
 void NeedleBiopsy::RequestClearTrackerLandmarks()
@@ -764,9 +781,10 @@ void NeedleBiopsy::StartTrackingProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
                          "NeedleBiopsy::StartTrackingProcessing called ... \n" )
-  m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Needle );
+  m_Tracker->AttachObjectToTrackerTool( TrackerToolPort->value(), 0, m_Needle );
 
-  m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_NeedleTip );
+  m_Tracker->AttachObjectToTrackerTool( 
+                                     TrackerToolPort->value(), 0, m_NeedleTip );
   m_Tracker->StartTracking();
   m_PulseGenerator->RequestStart();   
   /** We don't have observer for tracker, we are actively reading the 
@@ -783,7 +801,7 @@ void NeedleBiopsy::Tracking()
 {
   igstkLogMacro( DEBUG,  "Pulse Events...\n" )
   Transform transform;
-  m_Tracker->GetToolTransform( TRACKER_TOOL_PORT, 0, transform );
+  m_Tracker->GetToolTransform( TrackerToolPort->value(), 0, transform );
   
   ImageSpatialObjectType::PointType    p;
   p[0] = transform.GetTranslation()[0];

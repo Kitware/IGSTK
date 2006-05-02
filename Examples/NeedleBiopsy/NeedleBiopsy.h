@@ -23,7 +23,6 @@ PURPOSE.  See the above copyright notices for more information.
 #pragma warning( disable : 4284 )
 #endif
 
-#include "Configure.h"
 #include "NeedleBiopsyGUI.h"
 
 #include "igstkStateMachine.h"
