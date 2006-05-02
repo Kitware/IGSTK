@@ -69,7 +69,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_LandmarkRegistration = RegistrationType::New();
   m_LandmarkRegistrationObserver = ObserverType2::New();
   m_LandmarkRegistrationObserver->SetCallbackFunction( this, 
-                              &DeckOfCardRobot::GetLandmarkRegistrationTransform );
+                            &DeckOfCardRobot::GetLandmarkRegistrationTransform );
   m_LandmarkRegistration->AddObserver( TransformModifiedEvent(), 
                                                m_LandmarkRegistrationObserver );
 
@@ -187,7 +187,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
 
   m_ViewPickerObserver = ObserverType2::New();
   m_ViewPickerObserver->SetCallbackFunction( this, 
-                                               &DeckOfCardRobot::DrawPickedPoint );
+                                             &DeckOfCardRobot::DrawPickedPoint );
 
   this->DisplayAxial->AddObserver( TransformModifiedEvent(), 
                                                          m_ViewPickerObserver );
@@ -476,7 +476,7 @@ void DeckOfCardRobot::SetPatientNameProcessing()
 void DeckOfCardRobot::RequestLoadImage()
 {
   igstkLogMacro2( logger, DEBUG, 
-                        "DeckOfCardRobot::RequestLoadImageProcessing called...\n" )
+                     "DeckOfCardRobot::RequestLoadImageProcessing called...\n" )
   m_StateMachine.PushInput( m_RequestLoadImageInput );
   m_StateMachine.ProcessInputs();
 }
@@ -484,7 +484,7 @@ void DeckOfCardRobot::RequestLoadImage()
 void DeckOfCardRobot::LoadImageProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-                               "DeckOfCardRobot::LoadImageProcessing called...\n" )
+                            "DeckOfCardRobot::LoadImageProcessing called...\n" )
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
   if ( directoryname != NULL )
     {
@@ -522,7 +522,7 @@ void DeckOfCardRobot::LoadImageProcessing()
 void DeckOfCardRobot::VerifyPatientNameProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-                    "DeckOfCardRobot::VerifyPatientNameProcessing called ... \n")
+                   "DeckOfCardRobot::VerifyPatientNameProcessing called ... \n")
   if ( m_ImageReader->GetPatientName() == m_PatientName )
     {
     igstkLogMacro( DEBUG, 
@@ -562,7 +562,7 @@ void DeckOfCardRobot::VerifyPatientNameProcessing()
 void DeckOfCardRobot::RequestInitializeTracker()
 {
   igstkLogMacro2( logger, DEBUG, 
-                      "DeckOfCardRobot::RequestInitializeTracker called ... \n" )
+                     "DeckOfCardRobot::RequestInitializeTracker called ... \n" )
   m_StateMachine.PushInput( m_RequestInitializeTrackerInput );
   m_StateMachine.ProcessInputs();
 }
@@ -570,7 +570,7 @@ void DeckOfCardRobot::RequestInitializeTracker()
 void DeckOfCardRobot::InitializeTrackerProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-                   "DeckOfCardRobot::InitializeTrackerProcessing called ... \n" )
+                  "DeckOfCardRobot::InitializeTrackerProcessing called ... \n" )
   m_Tracker->Open();
   m_Tracker->AttachSROMFileNameToPort( TRACKER_TOOL_PORT, 
                                                      TRACKER_TOOL_SROM_FILE );
@@ -586,7 +586,7 @@ void DeckOfCardRobot::InitializeTrackerProcessing()
 void DeckOfCardRobot::RequestAddImageLandmark()
 {
   igstkLogMacro2( logger, DEBUG, 
-                       "DeckOfCardRobot::RequestAddImageLandmark called ... \n" )
+                      "DeckOfCardRobot::RequestAddImageLandmark called ... \n" )
   m_StateMachine.PushInput( m_RequestAddImageLandmarkInput );
   m_StateMachine.ProcessInputs();
 }
@@ -594,7 +594,7 @@ void DeckOfCardRobot::RequestAddImageLandmark()
 void DeckOfCardRobot::AddImageLandmarkProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-                    "DeckOfCardRobot::AddImageLandmarkProcessing called ... \n" )
+                   "DeckOfCardRobot::AddImageLandmarkProcessing called ... \n" )
 
   /** Check if there is an updated image landmark picking point */
   if ( m_ImageLandmarkTransform.GetTranslation() != 
@@ -634,7 +634,7 @@ void DeckOfCardRobot::AddImageLandmarkProcessing()
 void DeckOfCardRobot::RequestClearImageLandmarks()
 {
   igstkLogMacro2( logger, DEBUG, 
-                     "DeckOfCardRobot::RequestClearImageLandmarks called ... \n")
+                    "DeckOfCardRobot::RequestClearImageLandmarks called ... \n")
   m_StateMachine.PushInput( m_RequestClearImageLandmarksInput );
   m_StateMachine.ProcessInputs();
 }
@@ -653,7 +653,7 @@ void DeckOfCardRobot::ClearImageLandmarksProcessing()
 void DeckOfCardRobot::RequestAddTrackerLandmark()
 {
   igstkLogMacro2( logger, DEBUG, 
-                        "DeckOfCardRobot::RequestAddTrackerLandmark called ... \n")
+                     "DeckOfCardRobot::RequestAddTrackerLandmark called ... \n")
   m_StateMachine.PushInput( m_RequestAddTrackerLandmarkInput );
   m_StateMachine.ProcessInputs();
 }
@@ -661,7 +661,7 @@ void DeckOfCardRobot::RequestAddTrackerLandmark()
 void DeckOfCardRobot::AddTrackerLandmarkProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-                     "DeckOfCardRobot::AddTrackerLandmarkProcessing called ... \n")
+                  "DeckOfCardRobot::AddTrackerLandmarkProcessing called ... \n")
   
   this->GetTrackerTransform();
   
@@ -713,7 +713,7 @@ void DeckOfCardRobot::GetTrackerTransform()
 void DeckOfCardRobot::RequestClearTrackerLandmarks()
 {
   igstkLogMacro2( logger, DEBUG, 
-                     "DeckOfCardRobot::RequestClearTrackerLandmarks called ... \n")
+                  "DeckOfCardRobot::RequestClearTrackerLandmarks called ... \n")
   m_StateMachine.PushInput( m_RequestClearTrackerLandmarksInput );
   m_StateMachine.ProcessInputs();
 }
@@ -732,7 +732,7 @@ void DeckOfCardRobot::ClearTrackerLandmarksProcessing()
 void DeckOfCardRobot::RequestRegistration()
 {
   igstkLogMacro2( logger, DEBUG, 
-                             "DeckOfCardRobot::RequestRegistration called ... \n" )
+                          "DeckOfCardRobot::RequestRegistration called ... \n" )
   m_StateMachine.PushInput( m_RequestRegistrationInput );
   m_StateMachine.ProcessInputs();
 }
@@ -756,14 +756,14 @@ void DeckOfCardRobot::RegistrationProcessing()
 void DeckOfCardRobot::RequestStartTracking()
 {
   igstkLogMacro2( logger, DEBUG, 
-                            "DeckOfCardRobot::RequestStartTracking called ... \n" )
+                         "DeckOfCardRobot::RequestStartTracking called ... \n" )
   m_StateMachine.PushInput( m_RequestStartTrackingInput );
   m_StateMachine.ProcessInputs();
 }
 void DeckOfCardRobot::StartTrackingProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-                         "DeckOfCardRobot::StartTrackingProcessing called ... \n" )
+                      "DeckOfCardRobot::StartTrackingProcessing called ... \n" )
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Needle );
 
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_NeedleTip );
@@ -805,7 +805,7 @@ void DeckOfCardRobot::Tracking()
 void DeckOfCardRobot::RequestStopTracking()
 {
   igstkLogMacro2( logger, DEBUG, 
-                             "DeckOfCardRobot::RequestStopTracking called ... \n" )
+                          "DeckOfCardRobot::RequestStopTracking called ... \n" )
   m_StateMachine.PushInput( m_RequestStopTrackingInput );
   m_StateMachine.ProcessInputs();
 }
@@ -827,7 +827,7 @@ void DeckOfCardRobot::StopTrackingProcessing()
 void DeckOfCardRobot::RequestResliceImage()
 {
   igstkLogMacro2( logger, DEBUG, 
-                              "DeckOfCardRobot::RequestResliceImage called ... \n")
+                           "DeckOfCardRobot::RequestResliceImage called ... \n")
   this->ResliceImage(); // Take out the state machine logic from here
 }
 
@@ -1116,7 +1116,7 @@ void DeckOfCardRobot::RequestSetTargetPoint()
 {
   igstkLogMacro ( DEBUG, "DeckOfCardRobot::RequestSetTargetPoint called....\n" )
   igstkLogMacro2( logger, DEBUG, 
-                            "DeckOfCardRobot::RequestSetTargetPoint called....\n" )
+                         "DeckOfCardRobot::RequestSetTargetPoint called....\n" )
   m_TargetTransform = m_ImageLandmarkTransformToBeSet;
   m_StateMachine.PushInput( m_RequestSetTargetPointInput );
   m_StateMachine.ProcessInputs();
@@ -1125,7 +1125,7 @@ void DeckOfCardRobot::RequestSetEntryPoint()
 {
   igstkLogMacro ( DEBUG, "DeckOfCardRobot::RequestSetEntryPoint called....\n" )
   igstkLogMacro2( logger, DEBUG, 
-                             "DeckOfCardRobot::RequestSetEntryPoint called....\n" )
+                          "DeckOfCardRobot::RequestSetEntryPoint called....\n" )
   m_EntryTransform = m_ImageLandmarkTransformToBeSet;
   m_StateMachine.PushInput( m_RequestSetEntryPointInput );
   m_StateMachine.ProcessInputs();

@@ -7,12 +7,14 @@ SET(DeckOfCardRobot_GUI_SRCS
 SET(DeckOfCardRobot_HEADER
   DeckOfCardRobot.h
   DOCR_Registration.h  
+  RobotCommunication.h
 )
 
 SET(DeckOfCardRobot_SRCS
   main.cxx
   DeckOfCardRobot.cxx
   DOCR_Registration.cxx
+  RobotCommunication.cxx
   )
 
 INCLUDE_DIRECTORIES(
