@@ -20,7 +20,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include <string.h>
 
 // Captures ResFlag after appropriate ";" in robot response
-int RobotCommunication::GetResFlag( const char buf[100], int numSC ) 
+int RobotCommunication::GetResFlag( const char * buf, int numSC ) 
 {                         
   int i = 0;
   int p1, p2;
@@ -122,7 +122,13 @@ bool RobotCommunication::Init()
   }
 
   // to prevent communication timeout
-  Sleep(3000);
+  #if defined (_WIN32) || defined (WIN32)
+    Sleep(3000);            // Windows Sleep uses miliseconds
+  #else
+    usleep( 3000 * 1000 );  // linux usleep uses microsecond
+  #endif
+  
+  
 
   if (!ASYNCMODE) 
   {
