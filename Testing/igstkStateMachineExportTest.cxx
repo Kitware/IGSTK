@@ -105,6 +105,20 @@ void ExportStateMachineDescription(
   instance->ExportStateMachineDescriptionToLTS( ltsOutputFile, skipLoops );
   ltsOutputFile.close();
 
+
+  std::string scxmlfilename = filename + ".xml";
+  std::ofstream scxmlOutputFile;
+  scxmlOutputFile.open( scxmlfilename.c_str() );
+  if( scxmlOutputFile.fail() )
+    {
+    std::cerr << "Problem opening the file " << scxmlfilename << std::endl;
+    itk::ExceptionObject excp;
+    excp.SetDescription("Problem opening file");
+    throw excp;
+    }
+  instance->ExportStateMachineDescriptionToSCXML( scxmlOutputFile, skipLoops );
+  scxmlOutputFile.close();
+
   }
 
 

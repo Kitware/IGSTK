@@ -181,7 +181,10 @@ public:  \
    { m_StateMachine.ExportDescription( ostr, skipLoops ); } \
   void ExportStateMachineDescriptionToLTS( OutputStreamType & ostr,\
                                            bool skipLoops=false ) const \
-   { m_StateMachine.ExportDescriptionToLTS( ostr, skipLoops ); }
+   { m_StateMachine.ExportDescriptionToLTS( ostr, skipLoops ); } \
+  void ExportStateMachineDescriptionToSCXML( OutputStreamType & ostr,\
+                                           bool skipLoops=false ) const \
+   { m_StateMachine.ExportDescriptionToSCXML( ostr, skipLoops ); }
 
 #define EMPTYPARAMETER
 

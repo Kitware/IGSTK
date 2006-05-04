@@ -645,6 +645,104 @@ StateMachine< TClass >
       } //out-while 
 }
 
+
+template<class TClass>
+void
+StateMachine< TClass >
+::ExportDescriptionToSCXML( OutputStreamType & ostr, bool skipLoops ) const
+{   
+  // Export the descriptions of all states
+  StatesConstIterator  stateId = m_States.begin();
+
+  //write scxml header
+
+  ostr << "<?xml version=\"1.0\" encoding=\"us-ascii\"?>" << std::endl;
+  ostr << "<scxml version=\"1.0\" xmlns=\"http://www.w3.org/2005/07/scxml\"";
+  ostr << std::endl;
+
+  if( stateId != m_States.end() )
+    {
+    ostr << "initialstate=\""<< stateId->second << "\"" << std::endl;
+    }
+  ostr << ">" << std::endl;
+
+
+  //end of scxml header
+
+  //write scxml body
+  while( stateId != m_States.end() )
+    {
+    //write a state 
+
+    ostr << "  <state id=";
+    ostr << "\"" << stateId->second <<"\">" << std::endl ;
+
+    // Search for existing Transitions for that State
+    TransitionConstIterator transitionsFromThisState = m_Transitions.begin();
+
+    while( transitionsFromThisState != m_Transitions.end() )
+      {
+      if( stateId->first == transitionsFromThisState->first )
+        {
+        TransitionsPerInputConstIterator  
+               transitionsFromThisStateAndInput =  
+                    transitionsFromThisState->second->begin();
+
+      while( transitionsFromThisStateAndInput != 
+             transitionsFromThisState->second->end() )
+        {
+        // find the label that identifies the input.
+          InputDescriptorType label;
+
+          InputConstIterator inputItr = m_Inputs.find( 
+                         transitionsFromThisStateAndInput->first ); 
+          if( inputItr != m_Inputs.end() )
+            {
+            label = inputItr->second;
+            }
+
+          if( !skipLoops ||
+               transitionsFromThisState->first !=
+               transitionsFromThisStateAndInput->second.GetStateIdentifier() )
+            {
+            StateIdentifierType newStateIdentifier = 
+               transitionsFromThisStateAndInput->second.GetStateIdentifier();
+
+            ostr << "    <transition event=";
+            ostr << "\"" << label << "\">" << std::endl;
+            ostr << "      <target next=";
+
+            //get next state
+            StatesConstIterator stateItr = m_States.find(newStateIdentifier);
+
+            if( stateItr != m_States.end() )
+              {
+              ostr << "\"" << stateItr->second;
+              }
+
+            ostr << "\"/>" << std::endl;
+            ostr << "    </transition>" << std::endl;
+            }
+
+          ++transitionsFromThisStateAndInput;
+
+          }
+        }  
+
+      ++transitionsFromThisState;
+      }
+
+    ++stateId;
+    ostr << "  </state>" << std::endl;
+
+    }
+ 
+    //write end tag of scxml file
+    ostr <<"</scxml>"<< std::endl;
+
+}
+
+
 /** Print Self function */
 template<class TClass>
 void
