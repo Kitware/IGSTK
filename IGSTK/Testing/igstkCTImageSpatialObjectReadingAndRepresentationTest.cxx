@@ -91,13 +91,16 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
 
   reader->RequestGetImage();
 
-  CTImagePointer ctImage = ctImageObserver->GetCTImage();
-
-  if( !ctImage->IsEmpty() )
+  if( ctImageObserver->GotCTImage() )
     {
-    std::cerr << "The image was expected to be empty, but it is not..." 
-              << std::endl;
+    std::cerr << "Error: The image was sent  from the Reader " << std::endl;
+    std::cerr << "even though it was not actually read." << std::endl;
     return EXIT_FAILURE;
+    }
+  else
+    {
+    std::cout << "Test for premature reading of the image: PASSED !" 
+              << std::endl;
     }
 
   
@@ -156,15 +159,31 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   
   reader->RequestGetImage();
 
-  ctImage = ctImageObserver->GetCTImage();
-
-  if( ctImage->IsEmpty() )
+  if( ctImageObserver->GotCTImage() )
     {
-    std::cerr << "The image was expected to be Non-Empty, but it was empty." 
-              << std::endl;
+      
+    CTImagePointer ctImage = ctImageObserver->GetCTImage();
+
+    if( ctImage->IsEmpty() )
+      {
+      std::cerr << "The image was expected to be Non-Empty, but it was empty." 
+                << std::endl;
+      return EXIT_FAILURE;
+      }
+    else
+      {
+      std::cerr << "Test for reception of the image PASSED !" << std::endl;
+      }
+   
+    }
+  else
+    {
+    std::cerr << "The image was expected to be received" << std::endl;
+    std::cerr << " but the payload event did not arrive." << std::endl;
     return EXIT_FAILURE;
     }
- 
+
+
   representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
 
   view2D->RequestAddObject( representation );
