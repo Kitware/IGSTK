@@ -118,6 +118,12 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
                            Idle,
                            ReportInvalidRequest );
 
+  igstkAddTransitionMacro( Idle,
+                           GetImage,
+                           Idle,
+                           ReportInvalidRequest );
+
+
   // Transitions for Invalid inputs to  ImageDirectoryNameRead state 
   igstkAddTransitionMacro( ImageDirectoryNameRead,
                            GetModalityInformation,
@@ -136,6 +142,11 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
 
   igstkAddTransitionMacro( ImageDirectoryNameRead,
                            ImageReadingError,
+                           ImageDirectoryNameRead,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageDirectoryNameRead,
+                           GetImage,
                            ImageDirectoryNameRead,
                            ReportInvalidRequest );
 
@@ -188,6 +199,11 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
 
   igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
                            ImageReadingError,
+                           ImageSeriesFileNamesGenerated,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageSeriesFileNamesGenerated,
+                           GetImage,
                            ImageSeriesFileNamesGenerated,
                            ReportInvalidRequest );
 
@@ -318,6 +334,12 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
                            ImageDirectoryNameDoesNotHaveEnoughFiles,
                            AttemptingToReadImage,
                            ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToReadImage,
+                           GetImage,
+                           AttemptingToReadImage,
+                           ReportInvalidRequest );
+
 
   //Transitions for DICOM info request inputs
   igstkAddTransitionMacro( ImageRead,
