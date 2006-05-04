@@ -19,6 +19,17 @@ PURPOSE.  See the above copyright notices for more information.
 #include "time.h"
 #include <string.h>
 
+// On MSVC and Borland, snprintf is not defined but _snprintf is.
+// This should probably be checked by CMake instead of here.
+#if defined(WIN32) || defined(_WIN32)
+#ifndef snprintf
+#define snprintf _snprintf
+#endif
+#endif
+
+// Maximum size of the robot command
+const unsigned int ROBOT_MAX_COMMAND_SIZE = 1024;
+
 // Captures ResFlag after appropriate ";" in robot response
 int RobotCommunication::GetResFlag( const char * buf, int numSC ) 
 {                         
@@ -28,13 +39,13 @@ int RobotCommunication::GetResFlag( const char * buf, int numSC )
   char * pch;
   char temp[100];
 
-  pch=strchr(buf,';');
+  pch=strchr( const_cast<char *> (buf),';');
   while (pch!=NULL)
   {
     i++;
     if (i == numSC) p1 = pch-buf+1;
     if (i == (numSC+1)) p2 = pch-buf+1;
-    pch=strchr(pch+1,';');
+    pch=strchr( const_cast<char *>(pch+1),';');
   }
 
   for (i=0;i<100;i++) temp[i]=buf[i];
@@ -54,13 +65,13 @@ float RobotCommunication::GetCoord( const char * buf, int numSC )
   char * pch;
   char temp[100];
 
-  pch=strchr(buf,';');
+  pch=strchr( const_cast<char *>(buf),';');
   while (pch!=NULL)
   {
     i++;
     if (i == numSC) p1 = pch-buf+1;
     if (i == (numSC+1)) p2 = pch-buf+1;
-    pch=strchr(pch+1,';');
+    pch=strchr( const_cast<char *>(pch+1),';');
   }
 
   for (i=0;i<100;i++) 
@@ -79,7 +90,7 @@ float RobotCommunication::GetCoord( const char * buf, int numSC )
 // if ASYNCMODE == false
 bool RobotCommunication::Init() 
 {
-  char buffer[1024];
+  char buffer[ROBOT_MAX_COMMAND_SIZE];
   unsigned int num;
   bool LoginSuccessful = false;
   bool AsyncCommandSuccessful = false;
@@ -176,10 +187,11 @@ bool RobotCommunication::UnInit()
 bool RobotCommunication::Home() 
 {                                                  
   unsigned int num;
-  char buffer[1024];
-  char sendmessage[100];
+  char buffer[ROBOT_MAX_COMMAND_SIZE];
+  char sendmessage[ROBOT_MAX_COMMAND_SIZE];
 
-  sprintf(sendmessage, "@HOME;%d;%d\r\n", TRIGGER_IMMEDIATE, WRITE_TIMEOUT);
+  snprintf(sendmessage,ROBOT_MAX_COMMAND_SIZE, "@HOME;%d;%d\r\n", 
+                                               TRIGGER_IMMEDIATE, WRITE_TIMEOUT);
   m_Client->RequestWrite(sendmessage);
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
@@ -198,10 +210,10 @@ bool RobotCommunication::Home()
 bool RobotCommunication::HomeJoint( int JointNr ) 
 {
   unsigned int num;
-  char sendmessage[1024];
-  char buffer[1024];
+  char sendmessage[ROBOT_MAX_COMMAND_SIZE];
+  char buffer[ROBOT_MAX_COMMAND_SIZE];
 
-  sprintf(sendmessage, "@HOMEJ;%d;%d;%d\r\n", 
+  snprintf(sendmessage, ROBOT_MAX_COMMAND_SIZE, "@HOMEJ;%d;%d;%d\r\n", 
                                       TRIGGER_IMMEDIATE, WRITE_TIMEOUT, JointNr);
 
   m_Client->RequestWrite(sendmessage);
@@ -226,12 +238,12 @@ bool RobotCommunication::MoveRobotCoordinates ( float X, float Y, float Z,
                                                 float A, float B, float C ) 
 {
   unsigned int num;
-  char buffer[1024];
-  char sendmessage[1024];
+  char buffer[ROBOT_MAX_COMMAND_SIZE];
+  char sendmessage[ROBOT_MAX_COMMAND_SIZE];
 
-  sprintf( sendmessage, "@MAW;%d;%d;%d;%f;%f;%f;%f;%f;%f\r\n", 
-                           TRIGGER_IMMEDIATE, INTERRUPT_IMMEDIATE, WRITE_TIMEOUT,
-                                                               X, Y, Z, A, B, C);
+  snprintf( sendmessage, ROBOT_MAX_COMMAND_SIZE, 
+            "@MAW;%d;%d;%d;%f;%f;%f;%f;%f;%f\r\n", TRIGGER_IMMEDIATE, 
+            INTERRUPT_IMMEDIATE, WRITE_TIMEOUT, X, Y, Z, A, B, C);
 
   m_Client->RequestWrite( sendmessage );
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
@@ -253,12 +265,12 @@ int RobotCommunication::GetReachable ( float X, float Y, float Z,
                                        float A, float B, float C ) 
 {
 
-  char buffer[1024];
+  char buffer[ROBOT_MAX_COMMAND_SIZE];
   unsigned int result, num;
-  char sendmessage[1024];
+  char sendmessage[ROBOT_MAX_COMMAND_SIZE];
 
-  sprintf(sendmessage, "@POS_WC_REACHABLE;%f;%f;%f;%f;%f;%f\r\n",
-                                                               X, Y, Z, A, B, C);
+  snprintf( sendmessage, ROBOT_MAX_COMMAND_SIZE, 
+            "@POS_WC_REACHABLE;%f;%f;%f;%f;%f;%f\r\n", X, Y, Z, A, B, C);
   m_Client->RequestWrite( sendmessage );
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
@@ -285,7 +297,7 @@ int RobotCommunication::GetReachable ( float X, float Y, float Z,
 bool RobotCommunication::Stop( int mode ) 
 {
   unsigned int num;
-  char buffer[1024];
+  char buffer[ROBOT_MAX_COMMAND_SIZE];
 
   m_Client->RequestWrite("@STOP;%d\r\n", mode);
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
@@ -306,7 +318,7 @@ bool RobotCommunication::Stop( int mode )
 void RobotCommunication::GetCurrentRobotPosition( float * pos )  
 {
   unsigned int num;
-  char buffer[1024];
+  char buffer[ROBOT_MAX_COMMAND_SIZE];
 
   m_Client->RequestWrite("@GET_POS_WC\r\n");
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
