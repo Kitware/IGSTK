@@ -39,6 +39,18 @@ igstkObserverObjectMacro(USImage,::igstk::USImageReader::ImageModifiedEvent,
                          ::igstk::USImageObject)   
 igstkObserverObjectMacro(MRImage,
     ::igstk::MRImageReader::ImageModifiedEvent,::igstk::MRImageSpatialObject)
+
+
+// Simulate an US from the MR image
+typedef igstk::UltrasoundImageSimulator<igstk::MRImageSpatialObject> 
+                                                              USSimulatorType;
+typedef USSimulatorType::ImageModifiedEvent        USImageModifiedEventType;
+  
+igstkObserverObjectMacro(SimulatedUSImage,
+                         USImageModifiedEventType,
+                         igstk::USImageObject)
+
+
 }
 
 
@@ -71,11 +83,7 @@ int igstkMR3DImageToUS3DImageRegistrationTest( int argc, char * argv[] )
     }
 
   // Simulate an US from the MR image
-  typedef igstk::UltrasoundImageSimulator<igstk::MRImageSpatialObject> 
-                                                              USSimulatorType;
-  igstkObserverObjectMacro(SimulatedUSImage,
-                           USSimulatorType::ImageModifiedEvent,
-                           igstk::USImageObject)
+  typedef MR3DImageToUS3DImageRegistrationTest::USSimulatorType USSimulatorType;
   USSimulatorType::Pointer usSimulator = USSimulatorType::New();
 
   usSimulator->RequestSetImageGeometricModel(mrImageObserver->GetMRImage());
@@ -92,6 +100,8 @@ int igstkMR3DImageToUS3DImageRegistrationTest( int argc, char * argv[] )
   usSimulator->RequestSetTransform(usTransform);
   usSimulator->RequestReslice();
 
+  typedef MR3DImageToUS3DImageRegistrationTest::SimulatedUSImageObserver
+                                                           SimulatedUSImageObserver;
   SimulatedUSImageObserver::Pointer usImageObserver 
                                             = SimulatedUSImageObserver::New();
   usSimulator->AddObserver(USSimulatorType::ImageModifiedEvent(),
