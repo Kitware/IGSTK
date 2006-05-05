@@ -84,6 +84,9 @@ IF(IGSTKSandbox_DATA_ROOT)
              igstkPivotCalibrationReaderTest
              ${IGSTKSandbox_DATA_ROOT}/Input/PivotCalibrationTool.txt) 
   SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkPivotCalibrationReaderTest.cxx)
+   ADD_TEST( igstkMR3DImageToUS3DImageRegistrationTest ${IGSTKSandbox_TESTS} 
+             igstkMR3DImageToUS3DImageRegistrationTest
+             ${IGSTKSandbox_DATA_ROOT}/MRLiver) 
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
 IF ( IGSTK_DATA_ROOT )
