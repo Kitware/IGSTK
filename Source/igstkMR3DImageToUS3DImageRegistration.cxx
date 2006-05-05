@@ -27,6 +27,8 @@
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkRegularStepGradientDescentOptimizer.h"
 
+#include "itkImageFileWriter.h"
+
 namespace igstk
 {
 
@@ -72,6 +74,8 @@ public:
 MR3DImageToUS3DImageRegistration::MR3DImageToUS3DImageRegistration() :
   m_StateMachine( this )
 {
+  m_InitialTransform.SetToIdentity(10000);
+
   // Set the state descriptors
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( MRImageSet );
@@ -87,6 +91,8 @@ MR3DImageToUS3DImageRegistration::MR3DImageToUS3DImageRegistration() :
   igstkAddInputMacro( ResetRegistration );
   igstkAddInputMacro( CalculateRegistration );
   igstkAddInputMacro( RequestRegistrationTransform );
+  igstkAddInputMacro( MRImageTransform );
+  igstkAddInputMacro( USImageTransform  );
 
   // Add transition  for idle state
   igstkAddTransitionMacro( Idle, ResetRegistration, Idle, Reset );
@@ -128,6 +134,10 @@ MR3DImageToUS3DImageRegistration::MR3DImageToUS3DImageRegistration() :
   igstkAddTransitionMacro( ImagesSet, ValidRegistration, 
                            RegistrationCalculated, No );
   igstkAddTransitionMacro( ImagesSet, RequestRegistrationTransform, 
+                           ImagesSet, No );
+  igstkAddTransitionMacro( ImagesSet, MRImageTransform,
+                           ImagesSet, No );
+  igstkAddTransitionMacro( ImagesSet, USImageTransform,
                            ImagesSet, No );
 
   // Add transition for RegistrationCalculated state
@@ -245,7 +255,7 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
 
 
   // Get the pointer to the ITK US image
-  ITKUSImageObserver::Pointer usImageObserver = ITKUSImageObserver::New(); 
+  ITKUSImageObserver::Pointer usImageObserver = ITKUSImageObserver::New();
   this->m_USFixedImage->AddObserver(
                   USImageObject::ITKImageModifiedEvent(),usImageObserver);
 
@@ -271,12 +281,10 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   
   // Fixed Image Type
   typedef USImageObject::ImageType            FixedImageType;
-  //typedef MRImageSpatialObject::ImageType     FixedImageType;
-
+  
   // Moving Image Type
   typedef MRImageSpatialObject::ImageType     MovingImageType;
-  //typedef USImageObject::ImageType     MovingImageType;
-
+ 
   // Transform Type
   typedef itk::VersorRigid3DTransform< double > TransformType;
 
@@ -309,6 +317,9 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   
   CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
   optimizer->AddObserver( itk::IterationEvent(), observer );
+ 
+  //usImageObserver->GetITKUSImage()->Print(std::cout);
+  //mrImageObserver->GetITKMRImage()->Print(std::cout);
 
   registration->SetMetric(        metric        );
   registration->SetOptimizer(     optimizer     );
@@ -317,41 +328,92 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   registration->SetMovingImage( mrImageObserver->GetITKMRImage() );
   registration->SetInterpolator(  interpolator  );
 
-  usImageObserver->GetITKUSImage()->Print(std::cout);
-  mrImageObserver->GetITKMRImage()->Print(std::cout);
+  // Here we should get the transforms of the images and use it to initialize
+  // the registration
+  USImageTransformObserver::Pointer usTransformObserver 
+                                    = USImageTransformObserver::New();
+  m_USFixedImage->AddObserver(TransformModifiedEvent(),
+                                           usTransformObserver);
+  m_USFixedImage->RequestGetTransform();
 
+  Transform usTransform = usTransformObserver->GetUSImageTransform();
+  
   typedef RegistrationType::ParametersType ParametersType;
   ParametersType initialParameters( transform->GetNumberOfParameters() );
   initialParameters.Fill(0);
-  initialParameters[3] = 3;
+  initialParameters[0] = m_InitialTransform.GetRotation().GetX();
+  initialParameters[1] = m_InitialTransform.GetRotation().GetY();
+  initialParameters[2] = m_InitialTransform.GetRotation().GetZ();
+  initialParameters[3] = usTransform.GetTranslation()[0]
+                                      +m_InitialTransform.GetTranslation()[0];
+  initialParameters[4] = usTransform.GetTranslation()[1]
+                                      +m_InitialTransform.GetTranslation()[1];
+  initialParameters[5] = usTransform.GetTranslation()[2]
+                                      +m_InitialTransform.GetTranslation()[2];
 
   typedef OptimizerType::ScalesType ParameterScalesType;
   ParameterScalesType scales( transform->GetNumberOfParameters());
-  scales.Fill(1);
-  scales[0] = 10000;
-  scales[1] = 10000;
-  scales[2] = 10000;
+  scales.Fill(1000);
+  scales[0] = 1000000000;
+  scales[1] = 1000000000;
+  scales[2] = 1000000000;
 
   optimizer->SetScales(scales);
   registration->SetInitialTransformParameters( initialParameters );
-  registration->StartRegistration();
+  try
+    {
+    registration->StartRegistration();
+    }
+  catch( itk::ExceptionObject & excp )
+    {
+    std::cout << excp.GetDescription() << std::endl;
+    return;
+    }
   ParametersType params = registration->GetLastTransformParameters();
 
   // Reset the calibration transform (rotation and translation)
   VersorType quaternion;
   VectorType translation;
 
-  quaternion.SetIdentity();
-  translation[0] = params[3];
-  translation[1] = params[4];
-  translation[2] = params[5];
+  VersorType::VectorType axis;
+
+  ParametersType finalparams = params;
+  finalparams[0] -= initialParameters[0];
+  finalparams[1] -= initialParameters[1];
+  finalparams[2] -= initialParameters[2];
+  finalparams[3] -= initialParameters[3];
+  finalparams[4] -= initialParameters[4];
+  finalparams[5] -= initialParameters[5];
+    
+  double norm = finalparams[0]*finalparams[0];
+  axis[0] = finalparams[0];
+  norm += finalparams[1]*finalparams[1];
+  axis[1] = finalparams[1];
+  norm += finalparams[2]*finalparams[2];
+  axis[2] = finalparams[2];
+  if( norm > 0)
+    {
+    norm = vcl_sqrt(norm);
+    }
+
+  double epsilon = 1e-10;
+  if(norm >= 1.0-epsilon)
+    {
+    axis = axis / (norm+epsilon*norm);
+    }
+  VersorType newVersor;
+  quaternion.Set(axis);
+
+  translation[0] = finalparams[3];
+  translation[1] = finalparams[4];
+  translation[2] = finalparams[5];
+
   this->m_RegistrationTransform.SetTranslationAndRotation( translation, 
                                                           quaternion, 
                                                           0.1, 1000);
 
   this->m_StateMachine.PushInput( this->m_ValidRegistrationInput );
   this->m_StateMachine.ProcessInputs();
-
 }
 
 /** Method to invoke the calculation */

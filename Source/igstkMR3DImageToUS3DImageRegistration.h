@@ -40,17 +40,10 @@ namespace igstk
 
 /** \class MR3DImageToUS3DImageRegistration
  * 
- * \brief Create a calibration transform for tracked ultrasound by
- * pointer-based method.
+ * \brief 
  * 
- * This class calibrates the tracked ultrasound probe and get the transform 
- * from the indices of the ultrasound imaging plane to the general tracking 
- * coordinate. The result will include the final calibration transform, 
- * the RMS calibration error and also the orthogonality and determinant of the
- * rotation matrix to evaluate the calibration accuracy. Generally, more 
- * samples will give more stable result.
  *
- * \ingroup Calibration
+ * \ingroup Registration
  */
 class MR3DImageToUS3DImageRegistration : public Object
 {
@@ -81,7 +74,11 @@ public:
 
   igstkObserverConstObjectMacro(ITKMRImage,
     MRImageSpatialObject::ITKImageModifiedEvent,MRImageSpatialObject::ImageType)
-
+  
+  igstkObserverMacro(USImageTransform,TransformModifiedEvent,
+                     Transform)
+  igstkObserverMacro(MRImageTransform,TransformModifiedEvent,
+                     Transform)
 
 public:
 
@@ -106,10 +103,13 @@ public:
   /** Request to get the final transformation */
   void RequestGetRegistrationTransform(); 
 
+  /** Request to set the initial transformation */
+  igstkSetMacro(InitialTransform,TransformType);
+  igstkGetMacro(InitialTransform,TransformType);
+
   /** Declare the ImageReaderToImageSpatialObject class to be a friend 
    *  in order to give it access to the private method GetITKImage(). */
   igstkFriendClassMacro( igstk::USImageObject );
-
 
 protected:
 
@@ -191,10 +191,11 @@ private:
   /** Variable to indicate the RMS error */
   ErrorType                         m_RootMeanSquareError;
 
-  USImageObject*    m_USFixedImageToBeSet;
-  USImageObject*    m_USFixedImage;
+  USImageObject*           m_USFixedImageToBeSet;
+  USImageObject*           m_USFixedImage;
   MRImageSpatialObject*    m_MRMovingImageToBeSet;
   MRImageSpatialObject*    m_MRMovingImage;
+  TransformType            m_InitialTransform;
 
 };
 
