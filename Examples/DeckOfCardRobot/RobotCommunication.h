@@ -166,11 +166,13 @@ public:
   // Robot must be homed prior to executing this command, otherwise it 
   // will not work!
   // Z and C must equal zero for current robot configuration
+  bool MoveRobotCoordinates ( float T[], float R[] );
   bool MoveRobotCoordinates ( float X, float Y, float Z, 
                               float A, float B, float C );
 
   // checks to see if X, Y, Z, A, B, C is reachable in robot coordinates, 
   // Z and C must equal zero, returns -1 if error
+  int GetReachable ( float T[], float R[] );
   int GetReachable ( float X, float Y, float Z, float A, float B, float C );
 
   // interrupts all movement commands

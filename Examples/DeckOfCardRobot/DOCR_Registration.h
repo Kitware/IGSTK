@@ -64,7 +64,14 @@ PURPOSE.  See the above copyright notices for more information.
 // ----- test --------
 #include "itkImageFileWriter.h"
 
-class DOCR_Registration {
+#include "igstkObject.h"
+#include "igstkCTImageSpatialObject.h"
+
+
+namespace igstk {
+
+  class DOCR_Registration : public Object
+{
 
 #define NUM_FIDUCIALS 19 //8 //9
 #define SPACE_DIMENSION 3
@@ -75,28 +82,41 @@ class DOCR_Registration {
 #define M_PI 3.14159265358979323846
 #endif
 
-  typedef itk::Image< unsigned short, 3 >              USVolumeType;
-
-  typedef itk::Image< unsigned short, 3 >  LandmarkImageType;
-  typedef itk::VersorRigid3DTransform< double > TransformType;
-  typedef itk::LandmarkBasedTransformInitializer< TransformType,
-    LandmarkImageType, LandmarkImageType > TransformInitializerType;
-  typedef itk::Statistics::ScalarImageToHistogramGenerator< 
-    USVolumeType >   HistogramGeneratorType;
-  typedef HistogramGeneratorType::HistogramType  HistogramType;
-
-
-  // C 11
 public:
-  DOCR_Registration(USVolumeType *volume,
-                    USVolumeType::SpacingType spacing,
-                    USVolumeType::IndexType ROIstart,
-                    USVolumeType::SizeType ROIsize);
+  typedef igstk::CTImageSpatialObject                 ImageSOType;
+
+  typedef igstk::CTImageSpatialObject::ImageType      USVolumeType;
+  //typedef itk::Image< unsigned short, 3 >           USVolumeType;
+  typedef igstk::CTImageSpatialObject::ImageType      LandmarkImageType;
+  //typedef itk::Image< unsigned short, 3 >           LandmarkImageType;
+
+  typedef itk::VersorRigid3DTransform< double >       TransformType;
+  
+  typedef itk::LandmarkBasedTransformInitializer< TransformType,
+               LandmarkImageType, LandmarkImageType > TransformInitializerType;
+
+  typedef itk::Statistics::ScalarImageToHistogramGenerator< 
+                                     USVolumeType >   HistogramGeneratorType;
+
+  typedef HistogramGeneratorType::HistogramType       HistogramType;
+
+  igstkObserverConstObjectMacro( ITKImage,
+                              ImageSOType::ITKImageModifiedEvent, USVolumeType)
+
+  DOCR_Registration( ImageSOType::Pointer imageSO,
+                     USVolumeType::IndexType ROIstart,
+                     USVolumeType::SizeType ROIsize );
+  
+  DOCR_Registration( USVolumeType::Pointer volume,
+                     USVolumeType::IndexType ROIstart,
+                     USVolumeType::SizeType ROIsize );
+
   ~DOCR_Registration();
   void compute();
 
-  USVolumeType                       *m_USEntireLoadedVolume,
-                                     *m_USLoadedVolume;
+  USVolumeType::ConstPointer         m_USEntireLoadedVolume;
+  USVolumeType::Pointer              m_USLoadedVolume;
+
   USVolumeType::SpacingType          m_CT_Spacing;
   USVolumeType::IndexType            m_ROIstart;
   USVolumeType::SizeType             m_ROIsize;
@@ -117,3 +137,5 @@ public:
   TransformType::Pointer             m_transform;
   double                             m_verificationPoint[3];
 };
+
+}

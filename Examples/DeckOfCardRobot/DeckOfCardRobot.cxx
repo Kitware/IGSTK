@@ -20,6 +20,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "FL/Fl_File_Chooser.H"
 #include "FL/Fl_Input.H"
 #include "igstkEvents.h"
+#include "itkImageFileReader.h"
 
 namespace igstk
 {
@@ -62,30 +63,20 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
 
   /** Initialize all member variables and set logger */
   m_ImageReader = ImageReaderType::New();
-  m_CTImageObserver = CTImageObserver::New();
-  m_ImageReader->AddObserver(igstk::CTImageReader::ImageModifiedEvent(),
-                             m_CTImageObserver);
 
-  m_LandmarkRegistration = RegistrationType::New();
-  m_LandmarkRegistrationObserver = ObserverType2::New();
-  m_LandmarkRegistrationObserver->SetCallbackFunction( this, 
-                            &DeckOfCardRobot::GetLandmarkRegistrationTransform );
-  m_LandmarkRegistration->AddObserver( TransformModifiedEvent(), 
-                                               m_LandmarkRegistrationObserver );
+  m_Robot = new RobotCommunication();
 
-  m_SerialCommunication = CommunicationType::New();
-  m_SerialCommunication->SetPortNumber( IGSTK_POLARIS_PORT_NUMBER );
-  m_SerialCommunication->SetParity( SerialCommunication::NoParity );
-  m_SerialCommunication->SetBaudRate( SerialCommunication::BaudRate9600 );
-  m_SerialCommunication->SetDataBits( SerialCommunication::DataBits8 );
-  m_SerialCommunication->SetStopBits( SerialCommunication::StopBits1 );
-  m_SerialCommunication->SetHardwareHandshake( 
-                                            SerialCommunication::HandshakeOff );
-  m_SerialCommunication->OpenCommunication();
+  m_P1.Fill( 0 );
+  m_P2.Fill( 0 );
+
+  for (int i=0; i<3; i++)
+    {
+    m_Translation[i] = 0.0;
+    m_Rotation[i] = 0.0;
+    }
+
+  //m_ImageToRobotTransform->SetToIdentity();    //FIXME
   
-  m_Tracker = TrackerType::New();
-  m_Tracker->SetCommunication( m_SerialCommunication );
-
   m_Annotation2D = Annotation2D::New();
   
   Transform transform;
@@ -167,25 +158,8 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   translation[1] = 0.5;
   translation[2] = -157.5;
 
-  igstk::Transform::VersorType rotation;
-  rotation.SetIdentity();
-    
-  toolCalibrationTransform.SetTranslationAndRotation(
-                                                translation, rotation, 0.1, -1);
-  m_Tracker->SetToolCalibrationTransform( 
-                                TRACKER_TOOL_PORT, 0, toolCalibrationTransform);
 
-  m_ImageToTrackerTransform.SetToIdentity( -1 );
-  m_ImageLandmarkTransform.SetToIdentity( -1 );
-  m_TrackerLandmarkTransform.SetToIdentity( -1 );
-
-  m_PulseGenerator = PulseGenerator::New();
-  m_Observer = ObserverType::New();
-  m_Observer->SetCallbackFunction( this, & DeckOfCardRobot::Tracking );
-  m_PulseGenerator->AddObserver( PulseEvent(), m_Observer );
-  m_PulseGenerator->RequestSetFrequency( 30 ); 
-
-  m_ViewPickerObserver = ObserverType2::New();
+  m_ViewPickerObserver = ObserverType::New();
   m_ViewPickerObserver->SetCallbackFunction( this, 
                                              &DeckOfCardRobot::DrawPickedPoint );
 
@@ -211,9 +185,6 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   if(0) // Temporary disable this logger
     {
     m_ImageReader->SetLogger( logger );
-    m_Tracker->SetLogger( logger );
-    m_LandmarkRegistration->SetLogger( logger );
-    m_SerialCommunication->SetLogger( logger );  
     this->DisplayAxial->SetLogger( logger );
     this->DisplaySagittal->SetLogger( logger );
     this->DisplayCoronal->SetLogger( logger );
@@ -232,49 +203,24 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
 
   /** Initialize  Machine */
   igstkAddStateMacro( Initial );
-  igstkAddStateMacro( WaitingForPatientName      );
-  igstkAddStateMacro( PatientNameReady           );
   igstkAddStateMacro( WaitingForDICOMDirectory   );
   igstkAddStateMacro( ImageReady                 );
-  igstkAddStateMacro( PatientNameVerified        );
-  igstkAddStateMacro( AddingImageLandmark        );
-  igstkAddStateMacro( ImageLandmarksReady        );
-  igstkAddStateMacro( AttemptingInitializeTracker);
-  igstkAddStateMacro( TrackerReady               );  
-  igstkAddStateMacro( AddingTrackerLandmark      );
-  igstkAddStateMacro( TrackerLandmarksReady      );
   igstkAddStateMacro( AttemptingRegistration     );
   igstkAddStateMacro( EvaluatingRegistrationError);
   igstkAddStateMacro( LandmarkRegistrationReady  );
   igstkAddStateMacro( TargetPointReady           );
   igstkAddStateMacro( PathReady                  );
-  igstkAddStateMacro( AttemptingStartTracking    );
-  igstkAddStateMacro( Tracking                   );
-  igstkAddStateMacro( AttemptingStopTracking     );
+  igstkAddStateMacro( AttemptingConnectToRobot   );
+  igstkAddStateMacro( RobotConnected             );
+  igstkAddStateMacro( AttemptingHomeRobot        );
+  igstkAddStateMacro( RobotHomed                 );
+  igstkAddStateMacro( AttemptingTargetingRobot   );
+  igstkAddStateMacro( RobotReady                 );
 
-
-  igstkAddInputMacro( RequestSetPatientName        );
-  igstkAddInputMacro( PatientName                  );
-  igstkAddInputMacro( PatientNameEmpty             );
 
   igstkAddInputMacro( RequestLoadImage             );
   igstkAddInputMacro( LoadImageSuccess             );
   igstkAddInputMacro( LoadImageFailure             );
-  igstkAddInputMacro( PatientNameMatch             );
-  igstkAddInputMacro( OverwritePatientName         );
-  igstkAddInputMacro( ReloadImage                  );
-
-  igstkAddInputMacro( RequestAddImageLandmark      );
-  igstkAddInputMacro( NeedMoreLandmarkPoints       );
-  igstkAddInputMacro( EnoughLandmarkPoints         );
-  igstkAddInputMacro( RequestClearImageLandmarks   );
-  
-  igstkAddInputMacro( RequestInitializeTracker     );
-  igstkAddInputMacro( InitializeTrackerSuccess     );
-  igstkAddInputMacro( InitializeTrackerFailure     );
-  
-  igstkAddInputMacro( RequestAddTrackerLandmark    );
-  igstkAddInputMacro( RequestClearTrackerLandmarks );
 
   igstkAddInputMacro( RequestRegistration          );
   igstkAddInputMacro( RegistrationSuccess          );
@@ -284,115 +230,62 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
 
   igstkAddInputMacro( RequestSetTargetPoint        );
   igstkAddInputMacro( RequestSetEntryPoint         );
-  
-  igstkAddInputMacro( RequestStartTracking         );
-  igstkAddInputMacro( StartTrackingSuccess         );
-  igstkAddInputMacro( StartTrackingFailure         );
 
-  igstkAddInputMacro( RequestStopTracking          );
-  igstkAddInputMacro( StopTrackingSuccess          );
-  igstkAddInputMacro( StopTrackingFailure          );
+  igstkAddInputMacro( RequestConnectToRobot        );
+  igstkAddInputMacro( ConnectToRobotSuccess        );
+  igstkAddInputMacro( ConnectToRobotFailure        );
+
+  igstkAddInputMacro( RequestHomeRobot             );
+  igstkAddInputMacro( HomeRobotSuccess             );
+  igstkAddInputMacro( HomeRobotFailure             );
+
+  igstkAddInputMacro( RequestTargetingRobot        );  
+  igstkAddInputMacro( TargetingRobotSuccess        );
+  igstkAddInputMacro( TargetingRobotFailure        );
 
   igstkAddInputMacro( AxialBounds                  );
   igstkAddInputMacro( SagittalBounds               );
   igstkAddInputMacro( CoronalBounds                );
 
-  /** Register patient name */
-  igstkAddTransitionMacro( Initial, RequestSetPatientName, 
-                                        WaitingForPatientName, SetPatientName );
-  igstkAddTransitionMacro( PatientNameReady, RequestSetPatientName, 
-                                        WaitingForPatientName, SetPatientName );
-  igstkAddTransitionMacro( WaitingForPatientName, PatientName, 
-                                                         PatientNameReady, No );
-  igstkAddTransitionMacro( WaitingForPatientName, PatientNameEmpty, 
-                                                                  Initial, No );
-
-  /** Load image and verify patient name */
-  igstkAddTransitionMacro( PatientNameReady, RequestLoadImage, 
+  /** Load and Displayimage */
+  igstkAddTransitionMacro( Initial, RequestLoadImage, 
                                           WaitingForDICOMDirectory, LoadImage );
-  igstkAddTransitionMacro( PatientNameVerified, RequestLoadImage, 
+  igstkAddTransitionMacro( ImageReady, RequestLoadImage, 
                                           WaitingForDICOMDirectory, LoadImage );
   igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageSuccess, 
-                                                ImageReady, VerifyPatientName );
+                                       ImageReady, ConnectImageRepresentation );
   igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageFailure, 
-                                                         PatientNameReady, No );
-
-  /** Display image */
-  igstkAddTransitionMacro( ImageReady, PatientNameMatch, 
-                              PatientNameVerified, ConnectImageRepresentation );
-  igstkAddTransitionMacro( ImageReady, OverwritePatientName, 
-                              PatientNameVerified, ConnectImageRepresentation );
-  igstkAddTransitionMacro( ImageReady, ReloadImage, 
-                                          WaitingForDICOMDirectory, LoadImage );
+                                                                  Initial, No );
 
   /** Receive Slice Information from the Image Representation */
-  igstkAddTransitionMacro( PatientNameVerified, AxialBounds, 
-                                    PatientNameVerified, SetAxialSliderBounds );
-  igstkAddTransitionMacro( PatientNameVerified, SagittalBounds, 
-                                 PatientNameVerified, SetSagittalSliderBounds );
-  igstkAddTransitionMacro( PatientNameVerified, CoronalBounds, 
-                                  PatientNameVerified, SetCoronalSliderBounds );
-  
-  /** Set image landmarks, any number of landmarks >= 3 */
-  igstkAddTransitionMacro( PatientNameVerified, RequestAddImageLandmark, 
-                                        AddingImageLandmark, AddImageLandmark );
-  igstkAddTransitionMacro( AddingImageLandmark, RequestAddImageLandmark, 
-                                        AddingImageLandmark, AddImageLandmark );
-  igstkAddTransitionMacro( ImageLandmarksReady, RequestAddImageLandmark, 
-                                        ImageLandmarksReady, AddImageLandmark );
-  igstkAddTransitionMacro( AddingImageLandmark, NeedMoreLandmarkPoints, 
-                                                      AddingImageLandmark, No );
-  igstkAddTransitionMacro( AddingImageLandmark, EnoughLandmarkPoints, 
-                                                      ImageLandmarksReady, No );
-  igstkAddTransitionMacro( ImageLandmarksReady, EnoughLandmarkPoints, 
-                                                      ImageLandmarksReady, No );
-
-  /** Clear image landmarks */
-  igstkAddTransitionMacro( AddingImageLandmark, RequestClearImageLandmarks, 
-                                     PatientNameVerified, ClearImageLandmarks );
-  igstkAddTransitionMacro( ImageLandmarksReady, RequestClearImageLandmarks, 
-                                     PatientNameVerified, ClearImageLandmarks );
-
-  /** Initialize tracker */
-  igstkAddTransitionMacro( ImageLandmarksReady, RequestInitializeTracker, 
-                               AttemptingInitializeTracker, InitializeTracker );
-  igstkAddTransitionMacro( AttemptingInitializeTracker, 
-                           InitializeTrackerSuccess, 
-                           TrackerReady, No );
-  igstkAddTransitionMacro( AttemptingInitializeTracker, 
-                           InitializeTrackerFailure, 
-                           ImageLandmarksReady, No );
-
-  /** Set tracker landmarks, require same number of landmarks as in 
-    * image landmark */
-  igstkAddTransitionMacro( TrackerReady, RequestAddTrackerLandmark, 
-                                    AddingTrackerLandmark, AddTrackerLandmark );
-  igstkAddTransitionMacro( AddingTrackerLandmark, RequestAddTrackerLandmark, 
-                                    AddingTrackerLandmark, AddTrackerLandmark );
-  igstkAddTransitionMacro( AddingTrackerLandmark, NeedMoreLandmarkPoints, 
-                                                    AddingTrackerLandmark, No );
-  igstkAddTransitionMacro( AddingTrackerLandmark, EnoughLandmarkPoints, 
-                                                    TrackerLandmarksReady, No );
-  /** Clear tracker landmarks */
-  igstkAddTransitionMacro( AddingTrackerLandmark, RequestClearTrackerLandmarks, 
-                                          TrackerReady, ClearTrackerLandmarks );
-  igstkAddTransitionMacro( TrackerLandmarksReady, RequestClearTrackerLandmarks, 
-                                          TrackerReady, ClearTrackerLandmarks );
-
+  igstkAddTransitionMacro( ImageReady, AxialBounds, 
+                                      ImageReady, SetAxialSliderBounds );
+  igstkAddTransitionMacro( ImageReady, SagittalBounds, 
+                                   ImageReady, SetSagittalSliderBounds );
+  igstkAddTransitionMacro( ImageReady, CoronalBounds, 
+                                    ImageReady, SetCoronalSliderBounds );
+    
   /** Registration */
-  igstkAddTransitionMacro( TrackerLandmarksReady, RequestRegistration, 
+  igstkAddTransitionMacro( Initial, RequestRegistration, 
+                                  AttemptingRegistration, Registration );//FIXME
+  igstkAddTransitionMacro( ImageReady, RequestRegistration, 
                                          AttemptingRegistration, Registration );
+  
   igstkAddTransitionMacro( AttemptingRegistration, RegistrationSuccess, 
                      EvaluatingRegistrationError, EvaluatingRegistrationError );
+
   igstkAddTransitionMacro( AttemptingRegistration, RegistrationFailure, 
-                                                    TrackerLandmarksReady, No );
+                                                               ImageReady, No );
 
   igstkAddTransitionMacro( EvaluatingRegistrationError, 
                      RegistrationErrorAccepted, LandmarkRegistrationReady, No );
+ 
   igstkAddTransitionMacro( EvaluatingRegistrationError, 
-          RegistrationErrorRejected, TrackerLandmarksReady, ResetRegistration );
+                     RegistrationErrorRejected, ImageReady, ResetRegistration );
 
   /** Path Planning */
+  igstkAddTransitionMacro( ImageReady, RequestSetTargetPoint, 
+                                            TargetPointReady, DrawTargetPoint );
   igstkAddTransitionMacro( LandmarkRegistrationReady, RequestSetTargetPoint, 
                                             TargetPointReady, DrawTargetPoint );
   igstkAddTransitionMacro( TargetPointReady, RequestSetTargetPoint, 
@@ -405,20 +298,46 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   igstkAddTransitionMacro( PathReady, RequestSetEntryPoint, 
                                                           PathReady, DrawPath );
 
-  /** Tracking */
-  igstkAddTransitionMacro( PathReady, RequestStartTracking, 
-                                       AttemptingStartTracking, StartTracking );
-  igstkAddTransitionMacro( AttemptingStartTracking, StartTrackingSuccess, 
-                                                                 Tracking, No );
-  igstkAddTransitionMacro( AttemptingStartTracking, StartTrackingFailure, 
+  /** Robot commanding */
+  igstkAddTransitionMacro( PathReady, RequestConnectToRobot, 
+                                     AttemptingConnectToRobot, ConnectToRobot );
+
+  igstkAddTransitionMacro( AttemptingConnectToRobot, ConnectToRobotSuccess, 
+                                                           RobotConnected, No );
+
+  igstkAddTransitionMacro( AttemptingConnectToRobot, ConnectToRobotFailure, 
                                                                 PathReady, No );
 
-  igstkAddTransitionMacro( Tracking, RequestStopTracking, 
-                                         AttemptingStopTracking, StopTracking );
-  igstkAddTransitionMacro( AttemptingStopTracking, StopTrackingSuccess, 
-                                                                PathReady, No );
-  igstkAddTransitionMacro( AttemptingStopTracking, StopTrackingFailure, 
-                                                                 Tracking, No );
+  igstkAddTransitionMacro( RobotConnected, RequestHomeRobot, 
+                                              AttemptingHomeRobot, HomeRobot );
+
+  igstkAddTransitionMacro( AttemptingHomeRobot, HomeRobotSuccess, 
+                                                              RobotHomed, No );
+
+  igstkAddTransitionMacro( AttemptingHomeRobot, HomeRobotFailure, 
+                                                          RobotConnected, No );
+
+  igstkAddTransitionMacro( RobotHomed, RequestTargetingRobot, 
+                                    AttemptingTargetingRobot, TargetingRobot );
+
+  igstkAddTransitionMacro( AttemptingTargetingRobot, TargetingRobotSuccess, 
+                                                              RobotReady, No );
+
+  igstkAddTransitionMacro( AttemptingTargetingRobot, HomeRobotFailure, 
+                                                   RobotConnected, HomeRobot );
+
+  igstkAddTransitionMacro( RobotConnected, RequestSetTargetPoint, 
+                                                    RobotConnected, DrawPath );
+  igstkAddTransitionMacro( RobotConnected, RequestSetEntryPoint, 
+                                                    RobotConnected, DrawPath );
+  igstkAddTransitionMacro( RobotHomed, RequestSetTargetPoint, 
+                                                        RobotHomed, DrawPath );
+  igstkAddTransitionMacro( RobotHomed, RequestSetEntryPoint, 
+                                                        RobotHomed, DrawPath );
+  igstkAddTransitionMacro( RobotReady, RequestSetTargetPoint, 
+                                                        RobotReady, DrawPath );
+  igstkAddTransitionMacro( RobotReady, RequestSetEntryPoint, 
+                                                        RobotReady, DrawPath );
   
   igstkSetInitialStateMacro( Initial );
 
@@ -443,33 +362,6 @@ DeckOfCardRobot::~DeckOfCardRobot()
 /** Method to be invoked when no operation is required */
 void DeckOfCardRobot::NoProcessing()
 {
-}
-
-
-void DeckOfCardRobot::RequestSetPatientName()
-{
-  igstkLogMacro2( logger, DEBUG, 
-                          "DeckOfCardRobot::RequestSetPatientName called...\n" )
-  m_StateMachine.PushInput( m_RequestSetPatientNameInput );
-  m_StateMachine.ProcessInputs();
-}
-
-void DeckOfCardRobot::SetPatientNameProcessing()
-{
-  igstkLogMacro2( logger, DEBUG, "DeckOfCardRobot::GetPatientName called...\n" )
-  const char *patientName = fl_input("Patient Name:", "");
-  if( patientName != NULL )
-    {
-    m_PatientName = patientName;
-    igstkLogMacro( DEBUG, "Patient registered as: "<< m_PatientName <<"\n" )
-    igstkLogMacro2( logger, DEBUG, 
-                              "Patient registered as: "<< m_PatientName <<"\n" )
-    m_StateMachine.PushInput( m_PatientNameInput );
-    }
-  else
-    {
-    m_StateMachine.PushInput( m_PatientNameEmptyInput );
-    }
 }
 
 
@@ -499,17 +391,25 @@ void DeckOfCardRobot::LoadImageProcessing()
                               "m_ImageReader->RequestReadImage called... \n" )
     m_ImageReader->RequestReadImage();
 
+    ImageSpatialObjectObserver::Pointer imageSpatialObjectObserver 
+                                           = ImageSpatialObjectObserver::New();
+    m_ImageReader->AddObserver( ImageReaderType::ImageModifiedEvent(),
+                                                  imageSpatialObjectObserver );
     m_ImageReader->RequestGetImage();
-    if(!m_CTImageObserver->GotCTImage())
+
+    if(!imageSpatialObjectObserver->GotImageSpatialObject())
       {
       igstkLogMacro(          DEBUG, "Cannot read image\n" )
-      igstkLogMacro2( logger, DEBUG, "Cannot read image\n" )
+      igstkLogMacro2( logger, DEBUG, "Cannot read image\n" )      
       m_StateMachine.PushInput( m_LoadImageFailureInput);
-      return;
       }
-
-    m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), 
-                              m_LoadImageSuccessInput, m_LoadImageFailureInput);
+    else
+      {
+      igstkLogMacro(          DEBUG, "Image Loaded\n" )
+      igstkLogMacro2( logger, DEBUG, "Image Loaded\n" )      
+      m_StateMachine.PushInput( m_LoadImageSuccessInput);
+      m_ImageSpatialObject = imageSpatialObjectObserver->GetImageSpatialObject();
+      }
     }
   else
     {
@@ -519,214 +419,33 @@ void DeckOfCardRobot::LoadImageProcessing()
     }
 }
 
-void DeckOfCardRobot::VerifyPatientNameProcessing()
+void DeckOfCardRobot::RequestSetROI()
 {
-  igstkLogMacro2( logger, DEBUG, 
-                   "DeckOfCardRobot::VerifyPatientNameProcessing called ... \n")
-  if ( m_ImageReader->GetPatientName() == m_PatientName )
-    {
-    igstkLogMacro( DEBUG, 
-            "Registered patient name match with the name in loaded image \n" )
-    igstkLogMacro2( logger, DEBUG, 
-            "Registered patient name match with the name in loaded image \n" )
-    m_StateMachine.PushInput( m_PatientNameMatchInput );
-    }
-  else
-    {
-    igstkLogMacro (         DEBUG, "Patient name mismatch\n" )
-    igstkLogMacro2( logger, DEBUG, "Patient name mismatch\n" )
-      std::string msg = "Patient Registered as: " + m_PatientName + "\n";
-    msg += "Image has the name of: " + m_ImageReader->GetPatientName() +"\n";
-    msg += "Name mismatch!!!!\n";
-    msg += "Do you want to overwrite the name?\n";
-    int i = fl_choice( msg.c_str(), NULL, "Yes", "No");
-    if ( i == 1 )
-      {
-        m_PatientName = m_ImageReader->GetPatientName();
-        igstkLogMacro( DEBUG, 
-                  "Patient name is overwritten to:" << m_PatientName << "\n" )
-        igstkLogMacro2( logger, DEBUG, 
-                  "Patient name is overwritten to:" << m_PatientName << "\n" )
-        m_StateMachine.PushInput( m_OverwritePatientNameInput );
-      }
-    else
-      {
-        igstkLogMacro (         DEBUG, "Load another image\n" )
-        igstkLogMacro2( logger, DEBUG, "Load another image\n" )
-        m_StateMachine.PushInput( m_ReloadImageInput );
-      
-      }
-    }
-}
+  m_P1 = m_P2;
+  // Get the picked point
+  ImageSpatialObjectType::PointType    p;
+  p[0] = m_ImageLandmarkTransformToBeSet.GetTranslation()[0];
+  p[1] = m_ImageLandmarkTransformToBeSet.GetTranslation()[1];
+  p[2] = m_ImageLandmarkTransformToBeSet.GetTranslation()[2];
 
-void DeckOfCardRobot::RequestInitializeTracker()
-{
-  igstkLogMacro2( logger, DEBUG, 
-                     "DeckOfCardRobot::RequestInitializeTracker called ... \n" )
-  m_StateMachine.PushInput( m_RequestInitializeTrackerInput );
-  m_StateMachine.ProcessInputs();
-}
+  ITKImageType::IndexType index;
+  m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
+  m_P2 = index;
 
-void DeckOfCardRobot::InitializeTrackerProcessing()
-{
-  igstkLogMacro2( logger, DEBUG, 
-                  "DeckOfCardRobot::InitializeTrackerProcessing called ... \n" )
-  m_Tracker->Open();
-  m_Tracker->AttachSROMFileNameToPort( TRACKER_TOOL_PORT, 
-                                                     TRACKER_TOOL_SROM_FILE );
-  m_Tracker->AttachSROMFileNameToPort( REFERENCE_TOOL_PORT, 
-                                                   REFERENCE_TOOL_SROM_FILE );
-  m_Tracker->SetReferenceTool( USE_REFERENCE_TOOL, REFERENCE_TOOL_PORT, 0);  
-  m_Tracker->Initialize();
-  m_Tracker->StartTracking();
-  m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(),
-           m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
-}
+//  ITKImageType::IndexType start;
+//  ITKImageType::SizeType  size;
+//  start = m_P1;
+//
+//  for (int i=0; i<3; i++)
+//    {
+//    if ( start[i] > m_P2[i] )
+//      {
+//      start[i] = m_P2[i];
+//      }
+//    size[i] = abs( m_P2[i] - m_P1[i] );
+//    }
+//  std::cout<< m_P1 << m_P2 << start << size << std::endl;
 
-void DeckOfCardRobot::RequestAddImageLandmark()
-{
-  igstkLogMacro2( logger, DEBUG, 
-                      "DeckOfCardRobot::RequestAddImageLandmark called ... \n" )
-  m_StateMachine.PushInput( m_RequestAddImageLandmarkInput );
-  m_StateMachine.ProcessInputs();
-}
-
-void DeckOfCardRobot::AddImageLandmarkProcessing()
-{
-  igstkLogMacro2( logger, DEBUG, 
-                   "DeckOfCardRobot::AddImageLandmarkProcessing called ... \n" )
-
-  /** Check if there is an updated image landmark picking point */
-  if ( m_ImageLandmarkTransform.GetTranslation() != 
-                          m_ImageLandmarkTransformToBeSet.GetTranslation() )
-    {
-    LandmarkPointType  p;
-    p[0] = m_ImageLandmarkTransformToBeSet.GetTranslation()[0];
-    p[1] = m_ImageLandmarkTransformToBeSet.GetTranslation()[1];
-    p[2] = m_ImageLandmarkTransformToBeSet.GetTranslation()[2];
-    m_ImageLandmarksContainer.push_back( p );
-
-    this->NumberOfImageLandmarks->value( m_ImageLandmarksContainer.size() );
-    if ( m_ImageLandmarksContainer.size() < 3 )
-      {
-      this->NumberOfImageLandmarks->textcolor( FL_BLACK );
-      }
-    else
-      {
-      this->NumberOfImageLandmarks->textcolor( FL_BLUE );
-      }
-      
-    m_ImageLandmarkTransform.SetTranslation( 
-               m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
-    igstkLogMacro( DEBUG, "Image landmark point added: "<< p << "\n" )
-    igstkLogMacro2( logger, DEBUG, "Image landmark point added:"<< p << "\n" )
-    }
-  else
-    {
-    igstkLogMacro(          DEBUG, "No new image landmark point picked.\n" )
-    igstkLogMacro2( logger, DEBUG, "No new image landmark point picked.\n" )
-    }
-
-  m_StateMachine.PushInputBoolean( (m_ImageLandmarksContainer.size()>=3), 
-                  m_EnoughLandmarkPointsInput, m_NeedMoreLandmarkPointsInput);
-}
-
-void DeckOfCardRobot::RequestClearImageLandmarks()
-{
-  igstkLogMacro2( logger, DEBUG, 
-                    "DeckOfCardRobot::RequestClearImageLandmarks called ... \n")
-  m_StateMachine.PushInput( m_RequestClearImageLandmarksInput );
-  m_StateMachine.ProcessInputs();
-}
-
-void DeckOfCardRobot::ClearImageLandmarksProcessing()
-{
-  igstkLogMacro(          DEBUG, "Image landmark points cleared...\n" )
-  igstkLogMacro2( logger, DEBUG, "Image landmark points cleared...\n" )
-  m_ImageLandmarksContainer.clear();
-  this->NumberOfImageLandmarks->value( 0 );
-  this->NumberOfImageLandmarks->textcolor( FL_BLACK );
-  m_ImageLandmarkTransform.SetTranslation( 
-                 m_ImageLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
-}
-
-void DeckOfCardRobot::RequestAddTrackerLandmark()
-{
-  igstkLogMacro2( logger, DEBUG, 
-                     "DeckOfCardRobot::RequestAddTrackerLandmark called ... \n")
-  m_StateMachine.PushInput( m_RequestAddTrackerLandmarkInput );
-  m_StateMachine.ProcessInputs();
-}
-
-void DeckOfCardRobot::AddTrackerLandmarkProcessing()
-{
-  igstkLogMacro2( logger, DEBUG, 
-                  "DeckOfCardRobot::AddTrackerLandmarkProcessing called ... \n")
-  
-  this->GetTrackerTransform();
-  
-  if ( m_TrackerLandmarkTransform.GetTranslation() != 
-                             m_TrackerLandmarkTransformToBeSet.GetTranslation())
-    {
-
-    LandmarkPointType  p;
-    p[0] = m_TrackerLandmarkTransformToBeSet.GetTranslation()[0];
-    p[1] = m_TrackerLandmarkTransformToBeSet.GetTranslation()[1];
-    p[2] = m_TrackerLandmarkTransformToBeSet.GetTranslation()[2];
-    m_TrackerLandmarksContainer.push_back( p );
-
-    this->NumberOfTrackerLandmarks->value( m_TrackerLandmarksContainer.size() );
-    if ( m_TrackerLandmarksContainer.size() < m_ImageLandmarksContainer.size() )
-      {
-      this->NumberOfTrackerLandmarks->textcolor( FL_BLACK );
-      }
-    else
-      {
-      this->NumberOfTrackerLandmarks->textcolor( FL_BLUE );
-      }
-
-    m_TrackerLandmarkTransform.SetTranslation( 
-               m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
-    igstkLogMacro( DEBUG, "Tracker landmark point added: "<< p << "\n" )
-    igstkLogMacro2( logger, DEBUG, "Tracker landmark point added:"<< p << "\n" )
-
-    }
-  else
-    {
-    igstkLogMacro(          DEBUG, "No new tracker landmark point reading.\n" )
-    igstkLogMacro2( logger, DEBUG, "No new tracker landmark point reading.\n" )
-    }  
-
-  m_StateMachine.PushInputBoolean( 
-      ( m_TrackerLandmarksContainer.size() < m_ImageLandmarksContainer.size() ),
-                   m_NeedMoreLandmarkPointsInput, m_EnoughLandmarkPointsInput );
-}
-
-void DeckOfCardRobot::GetTrackerTransform()
-{
-  igstkLogMacro2( logger, DEBUG, "Tracker::GetToolTransform called...\n" )
-  m_Tracker->UpdateStatus();
-  m_Tracker->GetToolTransform( 
-                      TRACKER_TOOL_PORT, 0, m_TrackerLandmarkTransformToBeSet );
-}
-
-void DeckOfCardRobot::RequestClearTrackerLandmarks()
-{
-  igstkLogMacro2( logger, DEBUG, 
-                  "DeckOfCardRobot::RequestClearTrackerLandmarks called ... \n")
-  m_StateMachine.PushInput( m_RequestClearTrackerLandmarksInput );
-  m_StateMachine.ProcessInputs();
-}
-
-void DeckOfCardRobot::ClearTrackerLandmarksProcessing()
-{
-  igstkLogMacro(          DEBUG, "Tracker landmark points cleared...\n" )
-  igstkLogMacro2( logger, DEBUG, "Tracker landmark points cleared...\n" )
-  m_TrackerLandmarksContainer.clear();
-  this->NumberOfTrackerLandmarks->value( 0 );
-  this->NumberOfTrackerLandmarks->textcolor( FL_BLACK );
-  m_TrackerLandmarkTransform.SetTranslation( 
-               m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
 }
 
 void DeckOfCardRobot::RequestRegistration()
@@ -739,90 +458,32 @@ void DeckOfCardRobot::RequestRegistration()
 
 void DeckOfCardRobot::RegistrationProcessing()
 {
-  LandmarkPointContainerType::iterator it1, it2;
-  for( it1 = m_ImageLandmarksContainer.begin(), 
-       it2 = m_TrackerLandmarksContainer.begin(); 
-       it1 != m_ImageLandmarksContainer.end(), 
-       it2 != m_TrackerLandmarksContainer.end(); 
-       it1 ++ , it2 ++ )
+  ITKImageType::IndexType start;
+  ITKImageType::SizeType  size;
+  start = m_P1;
+
+  for (int i=0; i<3; i++)
     {
-    m_LandmarkRegistration->RequestAddImageLandmarkPoint( *it1);
-    m_LandmarkRegistration->RequestAddTrackerLandmarkPoint( *it2 );  
+    if ( start[i] > m_P2[i] )
+      {
+      start[i] = m_P2[i];
+      }
+    size[i] = abs( m_P2[i] - m_P1[i] );
     }
-  m_LandmarkRegistration->RequestComputeTransform();
-  m_LandmarkRegistration->RequestGetTransform();
+  // Read the mha file
+  typedef DOCR_Registration::USVolumeType  ImageType;
+  itk::ImageFileReader<ImageType>::Pointer reader = itk::ImageFileReader<ImageType>::New();
+  reader->SetFileName("volume_2_CT_ushort.mha");
+  reader->Update();
+   // Roland's class
+  //DOCR_Registration registration( reader->GetOutput(),start, size);
+  DOCR_Registration registration( m_ImageSpatialObject,start, size);
+  registration.compute();
+
+  m_ImageToRobotTransform = registration.m_transform;
+  std::cout<< registration.m_transform;
 }
 
-void DeckOfCardRobot::RequestStartTracking()
-{
-  igstkLogMacro2( logger, DEBUG, 
-                         "DeckOfCardRobot::RequestStartTracking called ... \n" )
-  m_StateMachine.PushInput( m_RequestStartTrackingInput );
-  m_StateMachine.ProcessInputs();
-}
-void DeckOfCardRobot::StartTrackingProcessing()
-{
-  igstkLogMacro2( logger, DEBUG, 
-                      "DeckOfCardRobot::StartTrackingProcessing called ... \n" )
-  m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Needle );
-
-  m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_NeedleTip );
-  m_Tracker->StartTracking();
-  m_PulseGenerator->RequestStart();   
-  /** We don't have observer for tracker, we are actively reading the 
-    * transform right now, how to get the failure condition */
-  m_StateMachine.PushInput( m_StartTrackingSuccessInput ); 
-  this->TrackingButton->label( "Stop" );
-  this->ControlGroup->redraw();
-  Fl::check();
-  
-}
-/** Callback function for PulseEvent(), 
-  * intend to actively read tracker tool transform */
-void DeckOfCardRobot::Tracking()
-{
-  igstkLogMacro( DEBUG,  "Pulse Events...\n" )
-  Transform transform;
-  m_Tracker->GetToolTransform( TRACKER_TOOL_PORT, 0, transform );
-  
-  ImageSpatialObjectType::PointType    p;
-  p[0] = transform.GetTranslation()[0];
-  p[1] = transform.GetTranslation()[1];
-  p[2] = transform.GetTranslation()[2];
-
-  if( m_CTImageObserver->GetCTImage()->IsInside( p ) )
-    {
-    ImageSpatialObjectType::IndexType index;
-    m_CTImageObserver->GetCTImage()->TransformPhysicalPointToIndex( p, index);
-    ResliceImage( index );
-    }
-  else
-    {
-    igstkLogMacro( DEBUG,  "Tracker tool outside of image...\n" )
-    }
-}
-
-void DeckOfCardRobot::RequestStopTracking()
-{
-  igstkLogMacro2( logger, DEBUG, 
-                          "DeckOfCardRobot::RequestStopTracking called ... \n" )
-  m_StateMachine.PushInput( m_RequestStopTrackingInput );
-  m_StateMachine.ProcessInputs();
-}
-
-void DeckOfCardRobot::StopTrackingProcessing()
-{
-  igstkLogMacro2( logger, DEBUG, "DeckOfCardRobot::StopTracking called ... \n" )
-  /** We don't have observer for tracker, we are actively reading 
-    * the transform right now */
-  m_Tracker->StopTracking();
-  m_PulseGenerator->RequestStop();
-  // FIXME, How to get the failure condition
-  m_StateMachine.PushInput( m_StopTrackingSuccessInput );
-  this->TrackingButton->label( "Tracking" );
-  this->ControlGroup->redraw();
-  Fl::check();
-}
 
 void DeckOfCardRobot::RequestResliceImage()
 {
@@ -851,7 +512,7 @@ void DeckOfCardRobot::ResliceImage()
   Fl::check();
 }
 
-void DeckOfCardRobot::ResliceImage ( IndexType index )
+void DeckOfCardRobot::ResliceImage ( ITKImageType::IndexType index )
 {
   m_ImageRepresentationAxial->RequestSetSliceNumber( index[2] );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( index[0] );
@@ -874,22 +535,22 @@ void DeckOfCardRobot::ResliceImage ( IndexType index )
  *  name has been verified */
 void DeckOfCardRobot::ConnectImageRepresentationProcessing()
 {
-  m_Annotation2D->RequestAddAnnotationText( 2, "Subject: " + m_PatientName );
+  //m_Annotation2D->RequestAddAnnotationText( 2, "Demo: Deck of Card Robot");
   m_Annotation2D->RequestAddAnnotationText( 0, "Georgetown ISIS Center" );
 
   m_ImageRepresentationAxial->RequestSetImageSpatialObject( 
-                                            m_CTImageObserver->GetCTImage() );
+                                            m_ImageSpatialObject );
   m_ImageRepresentationSagittal->RequestSetImageSpatialObject( 
-                                            m_CTImageObserver->GetCTImage() );
+                                            m_ImageSpatialObject );
   m_ImageRepresentationCoronal->RequestSetImageSpatialObject( 
-                                            m_CTImageObserver->GetCTImage() );
+                                            m_ImageSpatialObject );
 
   m_ImageRepresentationAxial3D->RequestSetImageSpatialObject( 
-                                            m_CTImageObserver->GetCTImage() );
+                                            m_ImageSpatialObject );
   m_ImageRepresentationSagittal3D->RequestSetImageSpatialObject( 
-                                            m_CTImageObserver->GetCTImage() );
+                                            m_ImageSpatialObject );
   m_ImageRepresentationCoronal3D->RequestSetImageSpatialObject( 
-                                            m_CTImageObserver->GetCTImage() );
+                                            m_ImageSpatialObject );
  
   m_ImageRepresentationAxial->RequestSetOrientation( 
                                                ImageRepresentationType::Axial );
@@ -973,6 +634,8 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->m_ImageRepresentationSagittal->RequestGetSliceNumberBounds();
   this->m_ImageRepresentationCoronal->RequestGetSliceNumberBounds();
 
+  this->SetROI->activate();
+
 }
 
   
@@ -1032,28 +695,6 @@ void DeckOfCardRobot::SetCoronalSliderBoundsProcessing()
 }
 
 
-void DeckOfCardRobot
-::GetLandmarkRegistrationTransform( const itk::EventObject & event )
-{
-  if ( TransformModifiedEvent().CheckEvent( &event ) )
-    {
-    TransformModifiedEvent *tmevent = ( TransformModifiedEvent *) & event;
-    m_ImageToTrackerTransform = tmevent->Get();
-    
-    m_Tracker->SetPatientTransform( m_ImageToTrackerTransform );
-    
-    igstkLogMacro( DEBUG, 
-                 "Registration Transform" << m_ImageToTrackerTransform << "\n");
-    igstkLogMacro( DEBUG, 
-     "Registration Error" << m_LandmarkRegistration->ComputeRMSError() << "\n");
-    m_StateMachine.PushInput( m_RegistrationSuccessInput );
-    }
-  else
-    {
-    m_StateMachine.PushInput( m_RegistrationFailureInput );
-    }
-}
-
 void DeckOfCardRobot::DrawPickedPoint( const itk::EventObject & event)
 {
   if ( TransformModifiedEvent().CheckEvent( &event ) )
@@ -1065,13 +706,13 @@ void DeckOfCardRobot::DrawPickedPoint( const itk::EventObject & event)
     p[1] = tmevent->Get().GetTranslation()[1];
     p[2] = tmevent->Get().GetTranslation()[2];
     
-    if( m_CTImageObserver->GetCTImage()->IsInside( p ) )
+    if( m_ImageSpatialObject->IsInside( p ) )
       {
       m_ImageLandmarkTransformToBeSet = tmevent->Get();
       
       m_PickedPoint->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
       ImageSpatialObjectType::IndexType index;
-      m_CTImageObserver->GetCTImage()->TransformPhysicalPointToIndex( p, index);
+      m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
       igstkLogMacro( DEBUG, index <<"\n")
       ResliceImage( index );
       }
@@ -1087,7 +728,7 @@ void DeckOfCardRobot::EvaluatingRegistrationErrorProcessing()
   igstkLogMacro (         DEBUG, "Evaluating registration error....\n" )
   igstkLogMacro2( logger, DEBUG, "Evaluating registration error....\n" )
   char temp[255];
-  double error = m_LandmarkRegistration->ComputeRMSError();
+  double error = 0.05; //m_LandmarkRegistration->ComputeRMSError(); //FIXME
   sprintf( temp, "Registration error (RMS) = %f\n", error );
   std::string msg = temp;
   msg += "Accept this registration result?";
@@ -1106,10 +747,7 @@ void DeckOfCardRobot::EvaluatingRegistrationErrorProcessing()
 
 void DeckOfCardRobot::ResetRegistrationProcessing()
 {
-  igstkLogMacro (         DEBUG, "Reset registration....\n" )
-  igstkLogMacro2( logger, DEBUG, "Reset registration....\n" )
-  m_LandmarkRegistration->RequestResetRegistration();  
-  this->RegistrationError->value( 0.0 );
+  //What to do here?
 }
 
 void DeckOfCardRobot::RequestSetTargetPoint()
@@ -1141,6 +779,15 @@ void DeckOfCardRobot::DrawPathProcessing()
   m_TargetPoint->RequestSetTransform( m_TargetTransform );
   m_EntryPoint->RequestSetTransform( m_EntryTransform );
 
+  CalculateRobotMovement();
+  m_Reachable = m_Robot->GetReachable( m_Translation, m_Rotation);
+  float a = 0.0;
+  if( m_Reachable )
+    {
+    a = 0.7;
+    }
+  //FIXME  ==== changing the color of the path ???
+
   m_Path->Clear();
   
   TubePointType p;
@@ -1164,19 +811,19 @@ void DeckOfCardRobot::DrawPathProcessing()
   m_PathRepresentationAxial->RequestSetTubeObject( NULL );
   m_PathRepresentationAxial->RequestSetTubeObject( m_Path );
   m_PathRepresentationAxial->SetColor( 0.0, 1.0, 0.0 );
-  m_PathRepresentationAxial->SetOpacity( 0.5 );
+  m_PathRepresentationAxial->SetOpacity( a );
   m_PathRepresentationSagittal->RequestSetTubeObject( NULL );
   m_PathRepresentationSagittal->RequestSetTubeObject( m_Path );
   m_PathRepresentationSagittal->SetColor( 0.0, 1.0, 0.0 );
-  m_PathRepresentationSagittal->SetOpacity( 0.5 );
+  m_PathRepresentationSagittal->SetOpacity( a );
   m_PathRepresentationCoronal->RequestSetTubeObject( NULL );
   m_PathRepresentationCoronal->RequestSetTubeObject( m_Path );
   m_PathRepresentationCoronal->SetColor( 0.0, 1.0, 0.0 );
-  m_PathRepresentationCoronal->SetOpacity( 0.5 );
+  m_PathRepresentationCoronal->SetOpacity( a );
   m_PathRepresentation3D->RequestSetTubeObject( NULL );
   m_PathRepresentation3D->RequestSetTubeObject( m_Path );
   m_PathRepresentation3D->SetColor( 0.0, 1.0, 0.0 );
-  m_PathRepresentation3D->SetOpacity( 0.5 );
+  m_PathRepresentation3D->SetOpacity( a );
 
   this->DisplayAxial->RequestAddObject( m_PathRepresentationAxial );
   this->DisplaySagittal->RequestAddObject( m_PathRepresentationSagittal );
@@ -1185,20 +832,117 @@ void DeckOfCardRobot::DrawPathProcessing()
   
 }
 
-
-void DeckOfCardRobot::RequestReset()
+void DeckOfCardRobot::RequestConnectToRobot()
 {
-  igstkLogMacro( DEBUG, "DeckOfCardRobot::RequestReset is called... \n" )
-  if ( fl_choice( "Do you really want to reset the program?", 
-                                                           NULL, "Yes", "No" ) )
-    { 
-    this->Reset(); // Took out the state machine logic
-    }
+  igstkLogMacro2( logger, DEBUG, 
+                "DeckOfCardRobot::RequestConnectToRobot called...\n" )
+                igstkPushInputMacro( RequestConnectToRobot );
+  m_StateMachine.ProcessInputs();
 }
 
-void DeckOfCardRobot::Reset()
+void DeckOfCardRobot::RequestHomeRobot()
 {
-  // Reset method not provided here
+  igstkLogMacro2( logger, DEBUG, 
+                "DeckOfCardRobot::RequestHomeRobot called...\n" )
+                igstkPushInputMacro( RequestHomeRobot );
+  m_StateMachine.ProcessInputs();
+}
+
+void DeckOfCardRobot::RequestTargetingRobot()
+  {
+  igstkLogMacro2( logger, DEBUG, 
+                "DeckOfCardRobot::RequestTargetingRobot called...\n" )
+                igstkPushInputMacro( RequestTargetingRobot );
+  m_StateMachine.ProcessInputs();
+}
+
+void DeckOfCardRobot::ConnectToRobotProcessing()
+{
+  igstkLogMacro2( logger, DEBUG, 
+               "DeckOfCardRobot::ConnectToRobotProcessing called...\n" )
+  m_StateMachine.PushInputBoolean( m_Robot->Init(), 
+                    m_ConnectToRobotSuccessInput, m_ConnectToRobotFailureInput);
+}
+
+void DeckOfCardRobot::HomeRobotProcessing()
+{
+  igstkLogMacro2( logger, DEBUG, 
+               "DeckOfCardRobot::HomeRobotProcessing called...\n" )
+  m_StateMachine.PushInputBoolean( m_Robot->Home(), 
+                              m_HomeRobotSuccessInput, m_HomeRobotFailureInput);
+}
+
+void DeckOfCardRobot::TargetingRobotProcessing()
+{
+
+  igstkLogMacro2( logger, DEBUG, 
+               "DeckOfCardRobot::TargetingRobotProcessing called...\n" )
+  
+  m_StateMachine.PushInputBoolean( 
+                   m_Robot->MoveRobotCoordinates( m_Translation, m_Rotation ), 
+                  m_TargetingRobotSuccessInput, m_TargetingRobotFailureInput);
+}
+
+void DeckOfCardRobot::CalculateRobotMovement()
+{
+  //From path calculate the robot movement
+  const double pi = acos(-1.0);
+  Transform::VectorType axis, rotated, rotatedA, rotatedB;
+  axis[0] = 0;
+  axis[1] = 1;
+  axis[2] = 0;
+  //rotated = m_ImageToRobotTransform->Transform(axis);   //FIXME
+  rotated.Normalize();
+  float ra, rb;
+  double sign;
+
+  float ra2, rb2;
+  ra2 = atan( rotated[0] ) * 180.0 / pi;
+  rb2 = - atan( rotated[2] ) * 180.0 / pi;
+  igstkLogMacro(INFO, "ra2 : " << ra2 << ",  rb2 : " << rb2 << std::endl );
+
+
+  rotatedA = rotated;
+  rotatedA[2] = 0;
+  rotatedA.Normalize();
+  if( rotated[0] >= 0 )
+    {
+    sign = -1;
+    }
+  else
+    {
+    sign = 1;
+    }
+
+  if( rotated[0] != 0 )
+    {
+    ra = acos( axis * rotatedA ) * 180.0 / pi * sign;
+    }
+  else
+    {
+    ra = 0;
+    }
+
+  rotatedB = rotated;
+  rotatedB[0] = 0;
+  rotatedB.Normalize();
+  if( rotated[2] >= 0 )
+    {
+    sign = 1;
+    }
+  else
+    {
+    sign = -1;
+    }
+
+  if( rotated[2] != 0 )
+    {
+    rb = acos( axis * rotatedB ) * 180.0 / pi * sign;
+    }
+  else
+    {
+    rb = 0;
+    }
 }
 
 } // end of namespace

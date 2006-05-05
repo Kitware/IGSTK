@@ -38,6 +38,8 @@ class UltrasoundImageSimulatorToImageSpatialObject;
 
 class MR3DImageToUS3DImageRegistration;
 
+class DOCR_Registration;
+
 
 /** \class ImageSpatialObject
  * 
@@ -91,6 +93,8 @@ public:
   igstkFriendClassMacro( igstk::Friends::
                              UltrasoundImageSimulatorToImageSpatialObject );
   igstkFriendClassMacro( igstk::MR3DImageToUS3DImageRegistration );
+  
+  igstkFriendClassMacro( igstk::DOCR_Registration );
 
   /** Event type */
   igstkLoadedTemplatedConstObjectEventMacro( ITKImageModifiedEvent, IGSTKEvent,

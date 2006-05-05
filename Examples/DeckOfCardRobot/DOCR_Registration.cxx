@@ -17,13 +17,64 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "DOCR_Registration.h"
 
-DOCR_Registration::DOCR_Registration(USVolumeType *volume,
-                  USVolumeType::SpacingType spacing,
-                  USVolumeType::IndexType ROIstart,
-                  USVolumeType::SizeType ROIsize)
+namespace igstk{
+
+DOCR_Registration::DOCR_Registration( ImageSOType::Pointer imageSO, 
+                                      USVolumeType::IndexType ROIstart,
+                                      USVolumeType::SizeType ROIsize) 
+{
+
+  ITKImageObserver::Pointer itkImageObserver = ITKImageObserver::New();
+  imageSO->AddObserver( ImageSOType::ITKImageModifiedEvent(), itkImageObserver);
+
+  imageSO->RequestGetITKImage();
+
+  if( itkImageObserver->GotITKImage() )
+    {
+    m_USEntireLoadedVolume = itkImageObserver->GetITKImage();
+
+  //---------------------------------------------------------------------
+    //typedef itk::ImageFileWriter< USVolumeType >  ROIWriterType;
+    //ROIWriterType::Pointer ROIwriter = ROIWriterType::New();
+    //ROIwriter->SetFileName( "dicoms.mha" );
+    //ROIwriter->SetInput( itkImageObserver->GetITKImage() );
+    //try 
+    //  { 
+    //  ROIwriter->Update(); 
+    //  } 
+    //catch( itk::ExceptionObject & err ) 
+    //  { 
+    //  std::cout << "ExceptionObject caught !" << std::endl; 
+    //  std::cout << err << std::endl; 
+    //  } 
+//------------------------------------------------------------------------
+
+    m_CT_Spacing = m_USEntireLoadedVolume->GetSpacing();
+    m_ROIstart = ROIstart;
+    m_ROIsize = ROIsize;
+
+    for (int i = 0; i < NUM_FIDUCIALS; i++) m_fiducials[i][0][0] = 0;
+    m_numFiducials = 0;
+
+    m_verificationPoint[0] = 37.772; //4.05799;
+    m_verificationPoint[1] = 48.8854; //7.0042;
+    m_verificationPoint[2] = 9.52381; //19.7692;
+    m_verificationPoint[2] *= -1; // reflection
+
+    }
+  else
+    {
+    std::cout<< "Error while accessing the ITK image..." << std::endl;
+    }
+}
+
+DOCR_Registration::DOCR_Registration( USVolumeType::Pointer volume,
+                                      USVolumeType::IndexType ROIstart,
+                                      USVolumeType::SizeType ROIsize )
 {
   m_USEntireLoadedVolume = volume;
-  m_CT_Spacing = spacing;
+
+  m_CT_Spacing = m_USEntireLoadedVolume->GetSpacing();
   m_ROIstart = ROIstart;
   m_ROIsize = ROIsize;
 
@@ -42,6 +93,8 @@ DOCR_Registration::~DOCR_Registration()
 
 void DOCR_Registration::compute() 
 {
+  m_ROIstart[0] = 44; m_ROIstart[1] = 127; m_ROIstart[2] = 42;
+  m_ROIsize[0] = 75; m_ROIsize[1] = 75; m_ROIsize[2] = 25;
   // Initialization
   std::vector< vnl_vector<double> > segmentedFiducials(NUM_FIDUCIALS);
   for(int i = 0; i < NUM_FIDUCIALS; i++) segmentedFiducials[i].set_size(3);
@@ -72,7 +125,7 @@ void DOCR_Registration::compute()
 
   typedef itk::ImageFileWriter< USVolumeType >  ROIWriterType;
   ROIWriterType::Pointer ROIwriter = ROIWriterType::New();
-  ROIwriter->SetFileName( "C:\\Documents and Settings\\Roland\\My Documents\\data\\datasets\\DOCR_050106\\E0001309\\2 CT\\volume_2_CT_ROI_ushort.mha" );
+  ROIwriter->SetFileName( "volume_2_CT_ROI_ushort.mha" );
   ROIwriter->SetInput( ROIfilter->GetOutput() );
   try 
   { 
@@ -132,15 +185,15 @@ void DOCR_Registration::compute()
       avg += histogram->GetFrequency( bin, 0 );
       if ((((bin+1)%BIGBINSIZE)==0)&&(bin < histogramSize)) {
         avg /= BIGBINSIZE;
-        //std::cout << bin << " " << avg << " ";
-        //for (int i=0; i <= (avg*120)/max; i++) std::cout << "#";
-        //std::cout << std::endl;
+        std::cout << bin << " " << avg << " ";
+        for (int i=0; i <= (avg*120)/max; i++) std::cout << "#";
+        std::cout << std::endl;
         avg = 0;
       } else if (bin == histogramSize) {
         avg /= (bin+1)%BIGBINSIZE;
-        //std::cout << bin << " " << avg << " ";
-        //for (int i=0; i <= (avg*120)/max; i++) std::cout << "#";
-        //std::cout << std::endl;
+        std::cout << bin << " " << avg << " ";
+        for (int i=0; i <= (avg*120)/max; i++) std::cout << "#";
+        std::cout << std::endl;
         avg = 0;
       }
     }
@@ -196,6 +249,7 @@ void DOCR_Registration::compute()
   std::cout << "----------------- Segmenting fiducials -------------------\n\n";
 
   for (int k = 0; k < m_volumeSize[2]; k++)              // z
+  //for (int k = m_volumeSize[2] - 1; k >=0 ; k--)              // z
   {
     for (int j = 0; j < m_volumeSize[1]; j++)            // y
     {
@@ -217,14 +271,14 @@ void DOCR_Registration::compute()
                    (m_fiducials[l][m][1] >= (((j - 1)<0) ? 0:(j-1))) &&
                    (m_fiducials[l][m][1] <= (((j + 1)>(m_volumeSize[1]-1)) ?
                    (m_volumeSize[1] - 1) : (j + 1))) &&
-                   (m_fiducials[l][m][2] >= (((k - 1)<0) ? 0:(k-1))) &&
-                   (m_fiducials[l][m][2] <= (((k + 1)>(m_volumeSize[2]-1)) ?
-                   (m_volumeSize[2] - 1) : (k + 1))))
+                   (m_fiducials[l][m][2] >= (((m_volumeSize[2] - 1 - k - 1)<0) ? 0:(m_volumeSize[2] - 1 - k-1))) &&
+                   (m_fiducials[l][m][2] <= (((m_volumeSize[2] - 1 - k + 1)>(m_volumeSize[2]-1)) ?
+                   (m_volumeSize[2] - 1) : (m_volumeSize[2] - 1 - k + 1))))
                 {
                   found = l;
                   m_fiducials[l][m_fiducials[l][0][0] + 1][0] = i;
                   m_fiducials[l][m_fiducials[l][0][0] + 1][1] = j;
-                  m_fiducials[l][m_fiducials[l][0][0] + 1][2] = k;
+                  m_fiducials[l][m_fiducials[l][0][0] + 1][2] = m_volumeSize[2] - 1 - k;
                 }
               }
             }
@@ -232,7 +286,7 @@ void DOCR_Registration::compute()
           if (found != -1)
           {
             m_fiducials[found][0][0]++;
-            std::cout << "Pixel " << i << "/" << j << "/" << k <<
+            std::cout << "Pixel " << i << "/" << j << "/" << m_volumeSize[2] - 1 - k <<
               " add: Fiducial " << found << std::endl;
           }
           else
@@ -240,8 +294,8 @@ void DOCR_Registration::compute()
             m_fiducials[m_numFiducials][0][0] = 1;
             m_fiducials[m_numFiducials][1][0] = i;
             m_fiducials[m_numFiducials][1][1] = j;
-            m_fiducials[m_numFiducials][1][2] = k;
-            std::cout << "Pixel " << i << "/" << j << "/" << k <<
+            m_fiducials[m_numFiducials][1][2] = m_volumeSize[2] - 1 - k;
+            std::cout << "Pixel " << i << "/" << j << "/" << m_volumeSize[2] - 1 - k <<
                   " new: Fiducial " << m_numFiducials << std::endl;
             m_numFiducials++;
           }
@@ -268,9 +322,15 @@ void DOCR_Registration::compute()
     avg[0] /= m_fiducials[i][0][0];
     avg[1] /= m_fiducials[i][0][0];
     avg[2] /= m_fiducials[i][0][0];
-    avg[0] *= m_CT_Spacing[0];
-    avg[1] *= m_CT_Spacing[1];
+    
+    USVolumeType::PointType origin = m_USEntireLoadedVolume->GetOrigin();
+    std::cout<< "Origin of image: "<< origin << std::endl;
+    for(int j=0; j<3; j++)
+      {
+      avg[j] = /*origin[j]*/ + (avg[j]+m_ROIstart[j]) * m_CT_Spacing[j];
+      }
     avg[2] *= -1; // reflection
+
     segmentedFiducials[i].copy_in(avg);
     std::cout << "Fiducial " << i << ": " << segmentedFiducials[i] << 
       ", CT pixel space: " << avg[0]/m_CT_Spacing[0] << " " << avg[1]/m_CT_Spacing[1] << " " << -1*avg[2] << std::endl;
@@ -346,7 +406,7 @@ void DOCR_Registration::compute()
     {
       if (m_transformedDataZ[i] == m_transformedData[j][2])
       {
-        m_sortedFiducials[m_numFiducials - 1 - i] = j;
+        m_sortedFiducials[/*m_numFiducials - 1 -*/ i] = j;
         m_transformedData[j][2] += 999;
       }
     }
@@ -769,10 +829,10 @@ void DOCR_Registration::compute()
   point[2] = segmentedFiducials[m_sortedFiducials[17]][2];
   landmarkSet2.push_back(point);
 
-  //point[0] = segmentedFiducials[m_sortedFiducials[18]][0]; 
-  //point[1] = segmentedFiducials[m_sortedFiducials[18]][1]; 
-  //point[2] = segmentedFiducials[m_sortedFiducials[18]][2];
-  //landmarkSet2.push_back(point);
+//  point[0] = segmentedFiducials[m_sortedFiducials[18]][0]; 
+//  point[1] = segmentedFiducials[m_sortedFiducials[18]][1]; 
+//  point[2] = segmentedFiducials[m_sortedFiducials[18]][2];
+//  landmarkSet2.push_back(point);
 
   initializer->SetFixedLandmarks(landmarkSet2);
   initializer->SetMovingLandmarks(landmarkSet1);
@@ -808,4 +868,6 @@ void DOCR_Registration::compute()
 
   // C 6
   // C 5
+}
+
 }

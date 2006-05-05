@@ -25,22 +25,17 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "Configure.h"
 #include "DeckOfCardRobotGUI.h"
+#include "DOCR_Registration.h"
+#include "RobotCommunication.h"
 
 #include "igstkStateMachine.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkFLTKTextLogOutput.h"
 #include "igstkCTImageReader.h"
+#include "igstkCTImageSpatialObject.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkLandmark3DRegistration.h"
 
-#include "igstkSandboxConfigure.h"
-#ifdef WIN32
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
-
-#include "igstkPolarisTracker.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkTubeObject.h"
@@ -60,7 +55,7 @@ public:
   igstkNewMacro( Self );
 
   /** typedefs for the log output */
-  typedef itk::StdStreamLogOutput        LogOutputType;
+  typedef itk::StdStreamLogOutput                       LogOutputType;
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
@@ -68,48 +63,23 @@ public:
   /** typedef for ImageReaderType */
   typedef CTImageReader                                 ImageReaderType;
 
-  typedef ImageReaderType::ImageSpatialObjectType       ImageSpatialObjectType;
-  typedef ImageSpatialObjectType::IndexType             IndexType;
+  typedef CTImageSpatialObject                          ImageSpatialObjectType;
+
+  typedef ImageSpatialObjectType::ImageType             ITKImageType;
 
   /** typedef for ImageRepresentationType */
   typedef CTImageSpatialObjectRepresentation            ImageRepresentationType;
 
-  /** typedef for RegistrationType */
-  typedef Landmark3DRegistration                        RegistrationType;
-  typedef RegistrationType::LandmarkPointContainerType  
-                                                    LandmarkPointContainerType;
-  typedef RegistrationType::LandmarkImagePointType      LandmarkPointType;
-  
-  /** typedef for TransformType */
-  typedef RegistrationType::TransformType               TransformType;
-
-  /** typedefs for the communication */
-#ifdef WIN32
-  typedef SerialCommunicationForWindows                 CommunicationType;
-#else
-  typedef SerialCommunicationForPosix                   CommunicationType;
-#endif
-
-  /** typedefs for the tracker */
-  typedef PolarisTracker                                TrackerType;
-
   /** Public request methods from the GUI. */
-  virtual void RequestSetPatientName();
   virtual void RequestLoadImage();
-  virtual void RequestInitializeTracker();
-  virtual void RequestAddImageLandmark();
-  virtual void RequestAddTrackerLandmark();
-  virtual void RequestClearImageLandmarks();
-  virtual void RequestClearTrackerLandmarks();
+  virtual void RequestSetROI();
   virtual void RequestRegistration();
-  virtual void RequestStartTracking();
-  virtual void RequestStopTracking();
-
   virtual void RequestSetTargetPoint();
-  virtual void RequestSetEntryPoint();
-  
-  virtual void RequestReset();         // Do we need to offer this method?
-  virtual void RequestResliceImage();  // Do we need state machine for this one?
+  virtual void RequestSetEntryPoint();  
+  virtual void RequestConnectToRobot();
+  virtual void RequestHomeRobot();
+  virtual void RequestTargetingRobot();
+  virtual void RequestResliceImage();
 
 
   /** Methods for Converting Events into State Machine Inputs */
@@ -120,9 +90,8 @@ public:
   igstkLoadedEventTransductionMacro( CoronalSliceBoundsEvent,  
                                      CoronalBoundsInput, CoronalBounds  );
 
-  igstkObserverObjectMacro(CTImage,CTImageReader::ImageModifiedEvent,
-                                                  CTImageSpatialObject)
-
+  igstkObserverObjectMacro( ImageSpatialObject,
+                     ImageReaderType::ImageModifiedEvent,ImageSpatialObjectType)
 protected:
 
   DeckOfCardRobot();
@@ -135,50 +104,31 @@ private:
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
-  igstkDeclareStateMacro( WaitingForPatientName );
-  igstkDeclareStateMacro( PatientNameReady );
+
   igstkDeclareStateMacro( WaitingForDICOMDirectory );
   igstkDeclareStateMacro( ImageReady );
-  igstkDeclareStateMacro( PatientNameVerified );
-  igstkDeclareStateMacro( AddingImageLandmark );
-  igstkDeclareStateMacro( ImageLandmarksReady );
-  igstkDeclareStateMacro( AttemptingInitializeTracker );
-  igstkDeclareStateMacro( TrackerReady );
-  igstkDeclareStateMacro( AddingTrackerLandmark );
-  igstkDeclareStateMacro( TrackerLandmarksReady );
+
   igstkDeclareStateMacro( AttemptingRegistration );
   igstkDeclareStateMacro( EvaluatingRegistrationError );
   igstkDeclareStateMacro( LandmarkRegistrationReady );
+
   igstkDeclareStateMacro( TargetPointReady );
   igstkDeclareStateMacro( PathReady );
-  igstkDeclareStateMacro( AttemptingStartTracking );
-  igstkDeclareStateMacro( Tracking );
-  igstkDeclareStateMacro( AttemptingStopTracking );
+
+  igstkDeclareStateMacro( AttemptingConnectToRobot );
+  igstkDeclareStateMacro( RobotConnected );
+
+  igstkDeclareStateMacro( AttemptingHomeRobot );
+  igstkDeclareStateMacro( RobotHomed );
+
+  igstkDeclareStateMacro( AttemptingTargetingRobot );
+  igstkDeclareStateMacro( RobotReady );
 
   /** Inputs to the state machine and it's designed transitions */
-  igstkDeclareInputMacro( RequestSetPatientName );
-  igstkDeclareInputMacro( PatientName );
-  igstkDeclareInputMacro( PatientNameEmpty );
-
   igstkDeclareInputMacro( RequestLoadImage );
   igstkDeclareInputMacro( LoadImageSuccess );
   igstkDeclareInputMacro( LoadImageFailure );
-  igstkDeclareInputMacro( PatientNameMatch );
-  igstkDeclareInputMacro( OverwritePatientName );
-  igstkDeclareInputMacro( ReloadImage );
   
-  igstkDeclareInputMacro( RequestAddImageLandmark );
-  igstkDeclareInputMacro( NeedMoreLandmarkPoints );
-  igstkDeclareInputMacro( EnoughLandmarkPoints );
-  igstkDeclareInputMacro( RequestClearImageLandmarks );
-
-  igstkDeclareInputMacro( RequestInitializeTracker );
-  igstkDeclareInputMacro( InitializeTrackerSuccess );
-  igstkDeclareInputMacro( InitializeTrackerFailure );
-
-  igstkDeclareInputMacro( RequestAddTrackerLandmark );
-  igstkDeclareInputMacro( RequestClearTrackerLandmarks );
-
   igstkDeclareInputMacro( RequestRegistration );
   igstkDeclareInputMacro( RegistrationSuccess );
   igstkDeclareInputMacro( RegistrationFailure );
@@ -188,13 +138,17 @@ private:
   igstkDeclareInputMacro( RequestSetTargetPoint );
   igstkDeclareInputMacro( RequestSetEntryPoint  );
 
-  igstkDeclareInputMacro( RequestStartTracking );
-  igstkDeclareInputMacro( StartTrackingSuccess ); 
-  igstkDeclareInputMacro( StartTrackingFailure );
+  igstkDeclareInputMacro( RequestConnectToRobot );
+  igstkDeclareInputMacro( ConnectToRobotSuccess ); 
+  igstkDeclareInputMacro( ConnectToRobotFailure );
 
-  igstkDeclareInputMacro( RequestStopTracking );
-  igstkDeclareInputMacro( StopTrackingSuccess );
-  igstkDeclareInputMacro( StopTrackingFailure );
+  igstkDeclareInputMacro( RequestHomeRobot );
+  igstkDeclareInputMacro( HomeRobotSuccess );
+  igstkDeclareInputMacro( HomeRobotFailure );
+
+  igstkDeclareInputMacro( RequestTargetingRobot );
+  igstkDeclareInputMacro( TargetingRobotSuccess );
+  igstkDeclareInputMacro( TargetingRobotFailure );
 
   igstkDeclareInputMacro( AxialBounds );
   igstkDeclareInputMacro( SagittalBounds );
@@ -215,14 +169,14 @@ private:
    * message in to this logger. */
   LoggerType::Pointer                 logger; // Another logger for igstk
 
-  /** Registered patient name */
-  std::string                         m_PatientName;
-  
   /** DICOM image reader */
   ImageReaderType::Pointer            m_ImageReader;
+
+  /** Robot */
+  RobotCommunication *                m_Robot;
   
-  /** Observer for the image reader */
-  CTImageObserver::Pointer            m_CTImageObserver;
+  /** Pointer to the CTImageSpatialObject */
+  ImageSpatialObjectType::Pointer     m_ImageSpatialObject;
 
   /** Slice representations of the image in View2D and View3D */
   ImageRepresentationType::Pointer    m_ImageRepresentationAxial;
@@ -232,37 +186,17 @@ private:
   ImageRepresentationType::Pointer    m_ImageRepresentationCoronal3D;
   ImageRepresentationType::Pointer    m_ImageRepresentationSagittal3D;
 
-  /** Landmark registration and its landmark points container */
-  RegistrationType::Pointer           m_LandmarkRegistration;
-  LandmarkPointContainerType          m_ImageLandmarksContainer;
-  LandmarkPointContainerType          m_TrackerLandmarksContainer;
 
   /** To store the landmark registration result transform*/
-  Transform                           m_ImageToTrackerTransform;  
+  DOCR_Registration::TransformType::Pointer    m_ImageToRobotTransform;  
   
   /** To store the transform of the image and tracker landmark points */
-  Transform                           m_TrackerLandmarkTransform; 
-  Transform                           m_ImageLandmarkTransform;
-  Transform                           m_TrackerLandmarkTransformToBeSet; 
-  Transform                           m_ImageLandmarkTransformToBeSet;  
-
-  /** Serial communication and tracker */
-  CommunicationType::Pointer          m_SerialCommunication;
-  TrackerType::Pointer                m_Tracker;
-
-  /** A pulse generator which can generate PulseEvent. */
-  PulseGenerator::Pointer             m_PulseGenerator;
-
-  /** Observer type for simple event, 
-   *  the callback can be set to a member function. */
-  typedef itk::SimpleMemberCommand< Self >   ObserverType;
-  ObserverType::Pointer               m_Observer;
+  Transform                                    m_ImageLandmarkTransformToBeSet;  
 
   /** Observer type for loaded event, 
    *  the callback can be set to a member function. */
-  typedef itk::ReceptorMemberCommand < Self > ObserverType2;
-  ObserverType2::Pointer               m_LandmarkRegistrationObserver;
-  ObserverType2::Pointer               m_ViewPickerObserver;
+  typedef itk::ReceptorMemberCommand < Self > ObserverType;
+  ObserverType::Pointer               m_ViewPickerObserver;
 
   /** Ellipsoid spatial object, used to represent 
    *  the landmark point, tip of the probe. */
@@ -297,26 +231,29 @@ private:
   typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;  
   CylinderType::Pointer                            m_Needle;
   CylinderRepresentationType::Pointer              m_NeedleRepresentation;
+  CylinderType::Pointer                            m_NeedleHolder;
+  CylinderRepresentationType::Pointer              m_NeedleHolderRepresentation;
 
   Annotation2D::Pointer                            m_Annotation2D;
+  ITKImageType::IndexType                          m_P1;
+  ITKImageType::IndexType                          m_P2;
+  float                                            m_Translation[3];
+  float                                            m_Rotation[3];
+  bool                                             m_Reachable;
 
   /** Action methods to be invoked only by the state machine */
   void NoProcessing();
-  void SetPatientNameProcessing();
+
   void LoadImageProcessing();
-  void VerifyPatientNameProcessing(); 
+
   void ConnectImageRepresentationProcessing();
-  void AddImageLandmarkProcessing();
-  void ClearImageLandmarksProcessing();
-  void InitializeTrackerProcessing();
-  void AddTrackerLandmarkProcessing();
-  void ClearTrackerLandmarksProcessing();  
-  void RegistrationProcessing();
-  void StartTrackingProcessing();
-  void StopTrackingProcessing();
   void SetAxialSliderBoundsProcessing();
   void SetSagittalSliderBoundsProcessing();
   void SetCoronalSliderBoundsProcessing();
+
+  void SetRegionProcessing();
+
+  void RegistrationProcessing();
 
   void EvaluatingRegistrationErrorProcessing();
   void ResetRegistrationProcessing();
@@ -324,23 +261,17 @@ private:
   void DrawTargetPointProcessing();
   void DrawPathProcessing();
 
-  /** Callback functions for picking and registration success events. */
-  void GetLandmarkRegistrationTransform( const itk::EventObject & event);
+  void ConnectToRobotProcessing();
+  void HomeRobotProcessing();
+  void TargetingRobotProcessing();
+
+  /** Callback functions for picking  events. */
   void DrawPickedPoint( const itk::EventObject & event );
-
-  /** Callback function for Events */
-  void Tracking();
-  
-  /** Obtain the transform from the tracker */
-  void GetTrackerTransform();
-
 
   /** Methods for reslicing the image */
   void ResliceImage();
-  void ResliceImage( IndexType index );  
-
-  /** Resetting the state of the application */
-  void Reset();
+  void ResliceImage( ITKImageType::IndexType index );
+  void CalculateRobotMovement();
 
 };
 

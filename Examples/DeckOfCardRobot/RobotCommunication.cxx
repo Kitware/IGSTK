@@ -234,6 +234,10 @@ bool RobotCommunication::HomeJoint( int JointNr )
 // robot coordinates robot must be homed prior to executing this command, 
 // otherwise it will not work! Z and C must equal zero 
 // for current robot configuration
+bool RobotCommunication::MoveRobotCoordinates ( float T[], float R[] )
+{
+  return MoveRobotCoordinates( T[0], T[1], T[2], R[0], R[1], R[2] );
+}
 bool RobotCommunication::MoveRobotCoordinates ( float X, float Y, float Z, 
                                                 float A, float B, float C ) 
 {
@@ -261,6 +265,11 @@ bool RobotCommunication::MoveRobotCoordinates ( float X, float Y, float Z,
 
 // checks to see if X, Y, Z, A, B, C is reachable in robot coordinates, 
 // Z and C must equal zero, returns -1 if error
+int RobotCommunication::GetReachable ( float T[], float R[] )
+{
+  return GetReachable( T[0], T[1], T[2], R[0], R[1], R[2] );
+}
+
 int RobotCommunication::GetReachable ( float X, float Y, float Z,
                                        float A, float B, float C ) 
 {
