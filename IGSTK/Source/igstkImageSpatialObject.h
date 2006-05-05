@@ -33,6 +33,7 @@ namespace Friends
 class ImageReaderToImageSpatialObject;
 class ImageSpatialObjectRepresentationToImageSpatialObject;
 class ObliqueImageSpatialObjectRepresentationToImageSpatialObject;
+class UltrasoundImageSimulatorToImageSpatialObject;
 }
 
 class MR3DImageToUS3DImageRegistration;
@@ -87,6 +88,8 @@ public:
      igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
   igstkFriendClassMacro( igstk::Friends::
               ObliqueImageSpatialObjectRepresentationToImageSpatialObject );
+  igstkFriendClassMacro( igstk::Friends::
+                             UltrasoundImageSimulatorToImageSpatialObject );
   igstkFriendClassMacro( igstk::MR3DImageToUS3DImageRegistration );
 
   /** Event type */
