@@ -61,6 +61,9 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this)
 
   m_RenderWindowInteractor->SetRenderWindow( m_RenderWindow );
 
+  // Set the default view to be axial
+  m_Camera->SetPosition ( 0, 0, -1 );
+  m_Camera->SetViewUp( 0, -1, 0 );
   m_Renderer->ResetCamera();
   
   this->end();

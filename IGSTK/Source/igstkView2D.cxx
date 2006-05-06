@@ -76,18 +76,18 @@ void View2D::RequestSetOrientation( const OrientationType & orientation )
     case Sagittal:
       {
       position[0] += distanceToFocalPoint;
-      m_Camera->SetViewUp (     0,  0,  -1 );
+      m_Camera->SetViewUp (     0,  0,  1 );
       break;
       }
     case Coronal:
       {
-      position[1] += distanceToFocalPoint;
-      m_Camera->SetViewUp (     0,  0,  -1 );
+      position[1] -= distanceToFocalPoint;
+      m_Camera->SetViewUp (     0,  0,  1 );
       break;
       }
     case Axial:
       {
-      position[2] += distanceToFocalPoint;
+      position[2] -= distanceToFocalPoint;
       m_Camera->SetViewUp (     0,  -1,  0 );
       break;
       }
