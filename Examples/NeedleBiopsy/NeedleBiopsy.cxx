@@ -160,13 +160,6 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_ViewPickerObserver->SetCallbackFunction( this, 
                                                &NeedleBiopsy::DrawPickedPoint );
 
-  this->DisplayAxial->AddObserver( TransformModifiedEvent(), 
-                                                         m_ViewPickerObserver );
-  this->DisplaySagittal->AddObserver( TransformModifiedEvent(), 
-                                                         m_ViewPickerObserver );
-  this->DisplayCoronal->AddObserver( TransformModifiedEvent(), 
-                                                         m_ViewPickerObserver );
-
   this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
   this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
   this->DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );
@@ -990,6 +983,13 @@ void NeedleBiopsy::ConnectImageRepresentationProcessing()
   this->m_ImageRepresentationAxial->RequestGetSliceNumberBounds();
   this->m_ImageRepresentationSagittal->RequestGetSliceNumberBounds();
   this->m_ImageRepresentationCoronal->RequestGetSliceNumberBounds();
+
+  this->DisplayAxial->AddObserver( TransformModifiedEvent(), 
+                                   m_ViewPickerObserver );
+  this->DisplaySagittal->AddObserver( TransformModifiedEvent(), 
+                                   m_ViewPickerObserver );
+  this->DisplayCoronal->AddObserver( TransformModifiedEvent(), 
+                                   m_ViewPickerObserver );
 
 }
 
