@@ -27,7 +27,7 @@ PURPOSE.  See the above copyright notices for more information.
 //
 // VersorRigid3DTransform< double >::Pointer m_transform
 //
-// Attention: There is a reflection in z dimension!
+// Attention for using mha files: There is a reflection in z dimension!
 // You can decide whether you want to reflect m_transform OR points
 // from CT space. (Search for "// reflection".)
 // 
@@ -35,10 +35,18 @@ PURPOSE.  See the above copyright notices for more information.
 //
 // Verification:
 //
-// There is a build-in verification: Set m_verificationPoint (CT space) in the
-// constructor. The corresponding point in needle holder space is displayed
-// via std::cout at the end of compute().
-// Measurement of m_verificationPoint is mm, i.e. you have to include spacing.
+// There is a build-in verification: Set m_verificationPoint (physical space)
+// in the constructor. The corresponding point in needle holder space is
+// displayed via std::cout at the end of compute().
+// Measurement of m_verificationPoint is 
+//
+// origin[j] + (avg[j]+m_ROIstart[j]) * m_CT_Spacing[j]
+//
+// -----------------------------------------------------------------------------
+//
+//Comments:
+//
+// I changes type name USVolumeType to SSVolumeType.
 //
 // -----------------------------------------------------------------------------
 
@@ -73,10 +81,12 @@ namespace igstk {
   class DOCR_Registration : public Object
 {
 
-#define NUM_FIDUCIALS 19 //8 //9
+#define NUM_FIDUCIALS 18 //8 //9
+#define NUM_SEGMENTATION_LABELS NUM_FIDUCIALS*3
 #define SPACE_DIMENSION 3
 #define BIGBINSIZE 30
 #define DUMMY 4096/BIGBINSIZE
+#define HIGHESTGRAYVALUE 3071 // depends on if data is signed or unsigned
 #define NUMBERBIGBINS (((4096 - (DUMMY)*BIGBINSIZE) == 0) ? DUMMY : (DUMMY + 1))
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -85,8 +95,8 @@ namespace igstk {
 public:
   typedef igstk::CTImageSpatialObject                 ImageSOType;
 
-  typedef igstk::CTImageSpatialObject::ImageType      USVolumeType;
-  //typedef itk::Image< unsigned short, 3 >           USVolumeType;
+  typedef igstk::CTImageSpatialObject::ImageType      SSVolumeType;
+  //typedef itk::Image< unsigned short, 3 >           SSVolumeType;
   typedef igstk::CTImageSpatialObject::ImageType      LandmarkImageType;
   //typedef itk::Image< unsigned short, 3 >           LandmarkImageType;
 
@@ -96,46 +106,49 @@ public:
                LandmarkImageType, LandmarkImageType > TransformInitializerType;
 
   typedef itk::Statistics::ScalarImageToHistogramGenerator< 
-                                     USVolumeType >   HistogramGeneratorType;
+                                     SSVolumeType >   HistogramGeneratorType;
 
   typedef HistogramGeneratorType::HistogramType       HistogramType;
 
   igstkObserverConstObjectMacro( ITKImage,
-                              ImageSOType::ITKImageModifiedEvent, USVolumeType)
+                              ImageSOType::ITKImageModifiedEvent, SSVolumeType)
 
   DOCR_Registration( ImageSOType::Pointer imageSO,
-                     USVolumeType::IndexType ROIstart,
-                     USVolumeType::SizeType ROIsize );
+                     SSVolumeType::IndexType ROIstart,
+                     SSVolumeType::SizeType ROIsize );
   
-  DOCR_Registration( USVolumeType::Pointer volume,
-                     USVolumeType::IndexType ROIstart,
-                     USVolumeType::SizeType ROIsize );
+  DOCR_Registration( SSVolumeType::Pointer volume,
+                     SSVolumeType::IndexType ROIstart,
+                     SSVolumeType::SizeType ROIsize );
 
   ~DOCR_Registration();
   void compute();
 
-  USVolumeType::ConstPointer         m_USEntireLoadedVolume;
-  USVolumeType::Pointer              m_USLoadedVolume;
+  SSVolumeType::ConstPointer         m_SSEntireLoadedVolume;
+  SSVolumeType::Pointer              m_SSLoadedVolume;
 
-  USVolumeType::SpacingType          m_CT_Spacing;
-  USVolumeType::IndexType            m_ROIstart;
-  USVolumeType::SizeType             m_ROIsize;
+  SSVolumeType::SpacingType          m_CT_Spacing;
+  SSVolumeType::IndexType            m_ROIstart;
+  SSVolumeType::SizeType             m_ROIsize;
   vnl_matrix<double>                 m_eigenVectors;
   vnl_matrix<double>                 m_covariance;
   vnl_matrix<double>                 m_inverseEigenVectors;
   std::vector<double>                m_eigenValues;
   vnl_vector<double>                 m_meanPoint;
   std::vector< vnl_vector<double> >  m_transformedData;
-  USVolumeType::SizeType             m_volumeSize;
-  unsigned short            m_fiducials[NUM_FIDUCIALS][100][SPACE_DIMENSION];
-  unsigned short                     m_numFiducials;
-  unsigned short                     m_sortedFiducials[NUM_FIDUCIALS];
-  double                             m_transformedDataZ[NUM_FIDUCIALS];
+  SSVolumeType::SizeType             m_volumeSize;
+  unsigned short     m_fiducials[NUM_SEGMENTATION_LABELS][100][SPACE_DIMENSION],
+                                     m_numFiducials,
+                                     m_sortedFiducials[NUM_FIDUCIALS];
+  double                             m_transformedDataZ[NUM_FIDUCIALS],
+                                     m_verificationPoint[SPACE_DIMENSION];
   TransformInitializerType::OutputVectorType  error;
-  float                              m_bins[NUMBERBIGBINS];
-  unsigned int                       m_threshold;
+  float                              m_bins[NUMBERBIGBINS],
+                                     m_meanRegistrationError,
+                                     m_maxRegistrationError;
+  int                                m_threshold;
   TransformType::Pointer             m_transform;
-  double                             m_verificationPoint[3];
+  bool                               m_usingMHA;
 };
 
 }

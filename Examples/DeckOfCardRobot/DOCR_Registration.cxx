@@ -20,8 +20,8 @@ PURPOSE.  See the above copyright notices for more information.
 namespace igstk{
 
 DOCR_Registration::DOCR_Registration( ImageSOType::Pointer imageSO, 
-                                      USVolumeType::IndexType ROIstart,
-                                      USVolumeType::SizeType ROIsize) 
+                                      SSVolumeType::IndexType ROIstart,
+                                      SSVolumeType::SizeType ROIsize) 
 {
 
   ITKImageObserver::Pointer itkImageObserver = ITKImageObserver::New();
@@ -31,12 +31,13 @@ DOCR_Registration::DOCR_Registration( ImageSOType::Pointer imageSO,
 
   if( itkImageObserver->GotITKImage() )
     {
-    m_USEntireLoadedVolume = itkImageObserver->GetITKImage();
+    m_SSEntireLoadedVolume = itkImageObserver->GetITKImage();
 
+  //Save DICOM data I just got from Patrick's class in mha file
   //---------------------------------------------------------------------
-    //typedef itk::ImageFileWriter< USVolumeType >  ROIWriterType;
+    //typedef itk::ImageFileWriter< SSVolumeType >  ROIWriterType;
     //ROIWriterType::Pointer ROIwriter = ROIWriterType::New();
-    //ROIwriter->SetFileName( "dicoms.mha" );
+    //ROIwriter->SetFileName( "c:\\dicoms.mha" );
     //ROIwriter->SetInput( itkImageObserver->GetITKImage() );
     //try 
     //  { 
@@ -49,18 +50,23 @@ DOCR_Registration::DOCR_Registration( ImageSOType::Pointer imageSO,
     //  } 
 //------------------------------------------------------------------------
 
-    m_CT_Spacing = m_USEntireLoadedVolume->GetSpacing();
+    m_CT_Spacing = m_SSEntireLoadedVolume->GetSpacing();
     m_ROIstart = ROIstart;
     m_ROIsize = ROIsize;
 
-    for (int i = 0; i < NUM_FIDUCIALS; i++) m_fiducials[i][0][0] = 0;
+    for (int i = 0; i < NUM_SEGMENTATION_LABELS; i++) m_fiducials[i][0][0] = 0;
     m_numFiducials = 0;
 
     m_verificationPoint[0] = 37.772; //4.05799;
     m_verificationPoint[1] = 48.8854; //7.0042;
     m_verificationPoint[2] = 9.52381; //19.7692;
-    m_verificationPoint[2] *= -1; // reflection
 
+    // higher value for m_ROIstart[2] moves the box to the front!! Why??
+    // I guess, it's again flipped coordinate systems between mha and DICOM.
+    m_ROIstart[0] = 44; m_ROIstart[1] = 127; m_ROIstart[2] = 52;
+    m_ROIsize[0] = 75; m_ROIsize[1] = 75; m_ROIsize[2] = 25;
+
+    m_usingMHA = false;
     }
   else
     {
@@ -68,23 +74,34 @@ DOCR_Registration::DOCR_Registration( ImageSOType::Pointer imageSO,
     }
 }
 
-DOCR_Registration::DOCR_Registration( USVolumeType::Pointer volume,
-                                      USVolumeType::IndexType ROIstart,
-                                      USVolumeType::SizeType ROIsize )
+DOCR_Registration::DOCR_Registration( SSVolumeType::Pointer volume,
+                                      SSVolumeType::IndexType ROIstart,
+                                      SSVolumeType::SizeType ROIsize )
 {
-  m_USEntireLoadedVolume = volume;
+  m_SSEntireLoadedVolume = volume;
 
-  m_CT_Spacing = m_USEntireLoadedVolume->GetSpacing();
+  m_CT_Spacing = m_SSEntireLoadedVolume->GetSpacing();
   m_ROIstart = ROIstart;
   m_ROIsize = ROIsize;
 
-  for (int i = 0; i < NUM_FIDUCIALS; i++) m_fiducials[i][0][0] = 0;
+  for (int i = 0; i < NUM_SEGMENTATION_LABELS; i++) m_fiducials[i][0][0] = 0;
   m_numFiducials = 0;
 
   m_verificationPoint[0] = 37.772; //4.05799;
   m_verificationPoint[1] = 48.8854; //7.0042;
   m_verificationPoint[2] = 9.52381; //19.7692;
-  m_verificationPoint[2] *= -1; // reflection
+
+  // Reflection necessary, because (I guess) ITKImageSeriesReadWrite saves
+  // the slices according to the filenames of the dcm-files! It doesn't
+  // incorporate the DICOM header, i.e. it's rather random if the resulting
+  // mha file has a right- or left handed coordinate system!! But it has to be
+  // a right handed system, because of the right handed CT system.
+  m_verificationPoint[2] *= -1; 
+
+  m_ROIstart[0] = 44; m_ROIstart[1] = 127; m_ROIstart[2] = 42;
+  m_ROIsize[0] = 75; m_ROIsize[1] = 75; m_ROIsize[2] = 25;
+
+  m_usingMHA = true;
 }
 
 DOCR_Registration::~DOCR_Registration()
@@ -93,8 +110,6 @@ DOCR_Registration::~DOCR_Registration()
 
 void DOCR_Registration::compute() 
 {
-  m_ROIstart[0] = 44; m_ROIstart[1] = 127; m_ROIstart[2] = 42;
-  m_ROIsize[0] = 75; m_ROIsize[1] = 75; m_ROIsize[2] = 25;
   // Initialization
   std::vector< vnl_vector<double> > segmentedFiducials(NUM_FIDUCIALS);
   for(int i = 0; i < NUM_FIDUCIALS; i++) segmentedFiducials[i].set_size(3);
@@ -109,33 +124,34 @@ void DOCR_Registration::compute()
 
   std::cout << "--------- Extracting ROI from CT ---------\n\n";
 
-  typedef itk::RegionOfInterestImageFilter< USVolumeType, 
-    USVolumeType > ROIfilterType;
+  typedef itk::RegionOfInterestImageFilter< SSVolumeType, 
+    SSVolumeType > ROIfilterType;
   ROIfilterType::Pointer ROIfilter = ROIfilterType::New();
 
-  USVolumeType::RegionType desiredRegion;
+  SSVolumeType::RegionType desiredRegion;
   desiredRegion.SetSize(  m_ROIsize  );
   desiredRegion.SetIndex( m_ROIstart );
 
   ROIfilter->SetRegionOfInterest( desiredRegion );
-  ROIfilter->SetInput( m_USEntireLoadedVolume );
+  ROIfilter->SetInput( m_SSEntireLoadedVolume );
   ROIfilter->Update();
 
-  m_USLoadedVolume = ROIfilter->GetOutput();
+  m_SSLoadedVolume = ROIfilter->GetOutput();
 
-  typedef itk::ImageFileWriter< USVolumeType >  ROIWriterType;
-  ROIWriterType::Pointer ROIwriter = ROIWriterType::New();
-  ROIwriter->SetFileName( "volume_2_CT_ROI_ushort.mha" );
-  ROIwriter->SetInput( ROIfilter->GetOutput() );
-  try 
-  { 
-    ROIwriter->Update(); 
-  } 
-  catch( itk::ExceptionObject & err ) 
-  { 
-    std::cout << "ExceptionObject caught !" << std::endl; 
-    std::cout << err << std::endl; 
-  } 
+  // Writing ROI to mha file
+  //typedef itk::ImageFileWriter< SSVolumeType >  ROIWriterType;
+  //ROIWriterType::Pointer ROIwriter = ROIWriterType::New();
+  //ROIwriter->SetFileName( "c:\\volume_2_CT_ROI_ushort.mha" );
+  //ROIwriter->SetInput( ROIfilter->GetOutput() );
+  //try 
+  //{ 
+  //  ROIwriter->Update(); 
+  //} 
+  //catch( itk::ExceptionObject & err ) 
+  //{ 
+  //  std::cout << "ExceptionObject caught !" << std::endl; 
+  //  std::cout << err << std::endl; 
+  //} 
 
 // ----------------------------------------------------------------------------
 
@@ -148,7 +164,7 @@ void DOCR_Registration::compute()
     HistogramGeneratorType::Pointer histogramGenerator =
       HistogramGeneratorType::New();
 
-    histogramGenerator->SetInput( m_USLoadedVolume );
+    histogramGenerator->SetInput( m_SSLoadedVolume );
     histogramGenerator->SetNumberOfBins( 4096 );
     histogramGenerator->SetMarginalScale( 10.0 );
     histogramGenerator->Compute();
@@ -222,7 +238,11 @@ void DOCR_Registration::compute()
 
     if (!thresholdfound) throw "no threshold";
 
-    std::cout << "threshold: " << m_threshold << std::endl;
+    std::cout << "threshold: " << m_threshold << std::endl <<
+      "In relation to " << HIGHESTGRAYVALUE << " scale :" << 
+      m_threshold-(4095-HIGHESTGRAYVALUE) << std::endl;
+
+    m_threshold = m_threshold-(4095-HIGHESTGRAYVALUE);
 
     //  //HistogramType::ConstIterator itr = histogram->Begin();
     //  //HistogramType::ConstIterator end = histogram->End();
@@ -239,26 +259,33 @@ void DOCR_Registration::compute()
 
 // ----------------------------------------------------------------------------
 
-  m_volumeSize = m_USLoadedVolume->GetLargestPossibleRegion().GetSize();
+  m_volumeSize = m_SSLoadedVolume->GetLargestPossibleRegion().GetSize();
 
-  itk::ImageRegionConstIterator< USVolumeType >
-  //itk::ImageRegionIterator< USVolumeType >
-    it1(m_USLoadedVolume, m_USLoadedVolume->GetLargestPossibleRegion() );
+  itk::ImageRegionConstIterator< SSVolumeType >
+  //itk::ImageRegionIterator< SSVolumeType >
+    it1(m_SSLoadedVolume, m_SSLoadedVolume->GetLargestPossibleRegion() );
   it1.GoToBegin();
 
   std::cout << "----------------- Segmenting fiducials -------------------\n\n";
 
   for (int k = 0; k < m_volumeSize[2]; k++)              // z
-  //for (int k = m_volumeSize[2] - 1; k >=0 ; k--)              // z
   {
     for (int j = 0; j < m_volumeSize[1]; j++)            // y
     {
       for (int i = 0; i < m_volumeSize[0]; i++, ++it1)   // x
       {
-        if ((it1.Get() > /*m_threshold*/3000)&&!((i>10)&&(i<16)&&(j>22)&&(j<28)))
+
+// The term !((i>10)&&(i<16)&&(j>22)&&(j<28))
+// excludes the 2. fiducial. (F. with 2nd highest z value in neede holder space)
+// It's data set SPECIFIC !!!
+
+        if ((it1.Get() > m_threshold)&&!((i>10)&&(i<16)&&(j>22)&&(j<28)))
         {
           // C 9
-          for (int l = 0; l < NUM_FIDUCIALS; l++)        // fiducial
+          //std::cout << "next pixel. Actual number of fiducials: " <<
+          //    m_numFiducials << std::endl;
+
+          for (int l = 0; l < NUM_SEGMENTATION_LABELS; l++)        // fiducial
           {
             if ((m_fiducials[l][0][0] != 0) && (found == -1))
             {
@@ -267,18 +294,25 @@ void DOCR_Registration::compute()
                 if ((found == -1)&&
                    (m_fiducials[l][m][0] >= (((i - 1)<0) ? 0:(i-1))) &&
                    (m_fiducials[l][m][0] <= (((i + 1)>(m_volumeSize[0]-1)) ? 
-                   (m_volumeSize[0] - 1) : (i + 1))) &&
+                   (m_volumeSize[0] - 1) : (i + 1)))
+                   &&
                    (m_fiducials[l][m][1] >= (((j - 1)<0) ? 0:(j-1))) &&
                    (m_fiducials[l][m][1] <= (((j + 1)>(m_volumeSize[1]-1)) ?
-                   (m_volumeSize[1] - 1) : (j + 1))) &&
-                   (m_fiducials[l][m][2] >= (((m_volumeSize[2] - 1 - k - 1)<0) ? 0:(m_volumeSize[2] - 1 - k-1))) &&
-                   (m_fiducials[l][m][2] <= (((m_volumeSize[2] - 1 - k + 1)>(m_volumeSize[2]-1)) ?
-                   (m_volumeSize[2] - 1) : (m_volumeSize[2] - 1 - k + 1))))
+                   (m_volumeSize[1] - 1) : (j + 1)))
+                   &&
+                   (m_fiducials[l][m][2] >= (((k - 1)<0) ? 0:(k-1))) &&
+                   (m_fiducials[l][m][2] <= (((k + 1)>(m_volumeSize[2]-1)) ?
+                   (m_volumeSize[2] - 1) : (k + 1))))
                 {
                   found = l;
                   m_fiducials[l][m_fiducials[l][0][0] + 1][0] = i;
                   m_fiducials[l][m_fiducials[l][0][0] + 1][1] = j;
-                  m_fiducials[l][m_fiducials[l][0][0] + 1][2] = m_volumeSize[2] - 1 - k;
+                  m_fiducials[l][m_fiducials[l][0][0] + 1][2] = k;
+                  //if (found == 1) 
+                  //  for (int o = 1; o <= m_fiducials[l][0][0]+1; o++)
+                  //    std::cout << m_fiducials[l][o][0] << " " <<
+               //  m_fiducials[l][o][1] << " " << m_fiducials[l][o][2] << " / ";
+                  //std::cout << std::endl;
                 }
               }
             }
@@ -286,16 +320,112 @@ void DOCR_Registration::compute()
           if (found != -1)
           {
             m_fiducials[found][0][0]++;
-            std::cout << "Pixel " << i << "/" << j << "/" << m_volumeSize[2] - 1 - k <<
+            std::cout << "Pixel " << i << "/" << j << "/" << k <<
               " add: Fiducial " << found << std::endl;
+
+            signed char label1, label2;
+            bool foundconnected = false;
+
+            do {
+              foundconnected = false;
+              label1 = label2 = -1;
+              for (int o = 0; (o < NUM_SEGMENTATION_LABELS)&&
+                                              (!foundconnected); o++)// fiducial
+              {
+                //std::cout << "o: " << o << std::endl;
+                if (m_fiducials[o][0][0] != 0)
+                {
+                  for (int p = 1; (p <= m_fiducials[o][0][0])&&
+                                  (!foundconnected); p++)    // voxel
+                  {
+                    //std::cout << "p: " << p << std::endl;
+                    for (int o2 = 0; (o2 < (NUM_SEGMENTATION_LABELS))&&
+                                     (!foundconnected); o2++)        // fiducial
+                    {
+                      //std::cout << "o2: " << o2 << std::endl;
+                      if (o != o2)
+                      {
+                        if (m_fiducials[o2][0][0] != 0)
+                        {
+                          for (int p2 = 1; (p2 <= m_fiducials[o2][0][0])&&
+                                           (!foundconnected); p2++)    // voxel
+                          {
+                            //std::cout << "p2: " << p2 << std::endl;
+                            //if ((o == 3)&&(p == 2)&&(o2 == 4)&&(p2 == 2))
+                            //  std::cout << std::endl << "~~~~~~~~~~~~~~~~" <<
+                            //  m_fiducials[o][p] << " - " <<
+                            //  m_fiducials[o2][p2] << std::endl << std::endl;
+if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
+  0:(m_fiducials[o2][p2][0]-1))) &&
+    (m_fiducials[o][p][0]<=(((m_fiducials[o2][p2][0] + 1)>(m_volumeSize[0]-1)) ?
+    (m_volumeSize[0] - 1) : (m_fiducials[o2][p2][0] + 1)))
+  &&
+    (m_fiducials[o][p][1] >= (((m_fiducials[o2][p2][1] - 1)<0) ?
+  0:(m_fiducials[o2][p2][1]-1))) &&
+    (m_fiducials[o][p][1]<=(((m_fiducials[o2][p2][1] + 1)>(m_volumeSize[1]-1)) ?
+    (m_volumeSize[1] - 1) : (m_fiducials[o2][p2][1] + 1)))
+  &&
+    (m_fiducials[o][p][2] >= (((m_fiducials[o2][p2][2] - 1)<0) ?
+  0:(m_fiducials[o2][p2][2]-1))) &&
+    (m_fiducials[o][p][2]<=(((m_fiducials[o2][p2][2] + 1)>(m_volumeSize[2]-1)) ?
+    (m_volumeSize[2] - 1) : (m_fiducials[o2][p2][2] + 1))))
+{
+      label1 = o;
+      label2 = o2;
+      foundconnected = true;
+}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+
+              if (foundconnected)
+              {
+                for (int p2 = 1; p2 <= m_fiducials[label2][0][0]; p2++) // voxel
+                {
+                  m_fiducials[label1][0][0]++;
+                  m_fiducials[label1][m_fiducials[label1][0][0]][0] = 
+                    m_fiducials[label2][p2][0];
+                  m_fiducials[label1][m_fiducials[label1][0][0]][1] =
+                    m_fiducials[label2][p2][1];
+                  m_fiducials[label1][m_fiducials[label1][0][0]][2] =
+                    m_fiducials[label2][p2][2];
+                }
+                m_fiducials[label2][0][0] = 0;
+                std::cout << "Merged " << (unsigned short)label1 << " and " <<
+                  (unsigned short)label2 << " m_numFiducials: " <<
+                  m_numFiducials << " ---------------------------" << std::endl;
+                {
+                  int o3;
+                  for (o3 = label2+1; ((o3 < (NUM_SEGMENTATION_LABELS))&&
+                                      (m_fiducials[o3][0][0] != 0)); o3++)
+                  {                                                  // fiducial
+                    std::cout << "Copy " << o3 << " ";
+                    m_fiducials[o3-1][0][0] = m_fiducials[o3][0][0];
+                    for (int p2 = 1; p2 <= m_fiducials[o3][0][0]; p2++) // voxel
+                    {
+                      m_fiducials[o3-1][p2][0] = m_fiducials[o3][p2][0];
+                      m_fiducials[o3-1][p2][1] = m_fiducials[o3][p2][1];
+                      m_fiducials[o3-1][p2][2] = m_fiducials[o3][p2][2];
+                    }
+                  }
+                  std::cout << std::endl;
+                  m_fiducials[o3][0][0] = 0;
+                }
+                m_numFiducials--;
+              }
+            } while(foundconnected);
           }
           else
           {
             m_fiducials[m_numFiducials][0][0] = 1;
             m_fiducials[m_numFiducials][1][0] = i;
             m_fiducials[m_numFiducials][1][1] = j;
-            m_fiducials[m_numFiducials][1][2] = m_volumeSize[2] - 1 - k;
-            std::cout << "Pixel " << i << "/" << j << "/" << m_volumeSize[2] - 1 - k <<
+            m_fiducials[m_numFiducials][1][2] = k;
+            std::cout << "Pixel " << i << "/" << j << "/" << k <<
                   " new: Fiducial " << m_numFiducials << std::endl;
             m_numFiducials++;
           }
@@ -305,9 +435,14 @@ void DOCR_Registration::compute()
     }
   }
 
+  if (m_numFiducials != NUM_FIDUCIALS)
+  {
+    std::cout << "\nNumber of fiducials is not correct !\n";
+    throw "Error";
+  }
   // C 8
 
-  std::cout << std::endl << "Modifying data according to spacing" <<
+  std::cout << std::endl << "Modifying data according to spacing and origin" <<
     std::endl << std::endl;
 
   for (int i = 0; i < m_numFiducials; i++)
@@ -323,17 +458,21 @@ void DOCR_Registration::compute()
     avg[1] /= m_fiducials[i][0][0];
     avg[2] /= m_fiducials[i][0][0];
     
-    USVolumeType::PointType origin = m_USEntireLoadedVolume->GetOrigin();
-    std::cout<< "Origin of image: "<< origin << std::endl;
+    std::cout << "CT pixel space: " << avg[0] << " " << avg[1] << " " <<
+      avg[2] << std::endl;
+
+    SSVolumeType::PointType origin = m_SSEntireLoadedVolume->GetOrigin();
+//    std::cout<< "Origin of image: "<< origin << std::endl;
     for(int j=0; j<3; j++)
       {
-      avg[j] = /*origin[j]*/ + (avg[j]+m_ROIstart[j]) * m_CT_Spacing[j];
+      avg[j] = origin[j] + (avg[j]+m_ROIstart[j]) * m_CT_Spacing[j];
       }
-    avg[2] *= -1; // reflection
+    // reflection for mha files
+    if (m_usingMHA) avg[2] *= -1;
 
     segmentedFiducials[i].copy_in(avg);
     std::cout << "Fiducial " << i << ": " << segmentedFiducials[i] << 
-      ", CT pixel space: " << avg[0]/m_CT_Spacing[0] << " " << avg[1]/m_CT_Spacing[1] << " " << -1*avg[2] << std::endl;
+      std::endl << std::endl;
   }
 
   std::cout << std::endl <<
@@ -406,7 +545,7 @@ void DOCR_Registration::compute()
     {
       if (m_transformedDataZ[i] == m_transformedData[j][2])
       {
-        m_sortedFiducials[/*m_numFiducials - 1 -*/ i] = j;
+        m_sortedFiducials[m_numFiducials - 1 - i] = j;
         m_transformedData[j][2] += 999;
       }
     }
@@ -540,6 +679,8 @@ void DOCR_Registration::compute()
   TransformInitializerType::LandmarkPointType point;
   TransformInitializerType::LandmarkPointType tmp;
 
+  // following commented initializations are for the 9 fiducial data
+  // Don't delete!
   //point[0] = -3.5;
   //point[1] = 8.5;
   //point[2] = 40;
@@ -585,17 +726,23 @@ void DOCR_Registration::compute()
   //point[2] = 0;
   //landmarkSet1.push_back(point);
 
+  // end of initializations for the 9 fiducial data
+
+  // Initialization of points in needle holder space
   //0
   point[0] = 8.0;
   point[1] = -3.3;
   point[2] = 45 - 1.25;
   landmarkSet1.push_back(point);
 
+  // has to be deactivated in case we use manually modified data w/ 18 fiducials
   //1
-  //point[0] = 3.3;
-  //point[1] = -8.0;
-  //point[2] = 42.5 - 1.25;
-  //landmarkSet1.push_back(point);
+#if (NUM_FIDUCIALS == 19)
+  point[0] = 3.3;
+  point[1] = -8.0;
+  point[2] = 42.5 - 1.25;
+  landmarkSet1.push_back(point);
+#endif
 
   //2
   point[0] = -3.3;
@@ -699,6 +846,9 @@ void DOCR_Registration::compute()
   point[2] = 0 - 1.25;
   landmarkSet1.push_back(point);
 
+  // following commented initializations are for the 9 fiducial data
+  // Don't delete!
+
   //point[0] = segmentedFiducials[m_sortedFiducials[0]][0]; 
   //point[1] = segmentedFiducials[m_sortedFiducials[0]][1]; 
   //point[2] = segmentedFiducials[m_sortedFiducials[0]][2];
@@ -738,6 +888,10 @@ void DOCR_Registration::compute()
   //point[1] = segmentedFiducials[m_sortedFiducials[7]][1]; 
   //point[2] = segmentedFiducials[m_sortedFiducials[7]][2];
   //landmarkSet2.push_back(point);
+
+  // end of initializations for the 9 fiducial data
+
+  // Initialization of points in physical CT space
 
   point[0] = segmentedFiducials[m_sortedFiducials[0]][0]; 
   point[1] = segmentedFiducials[m_sortedFiducials[0]][1]; 
@@ -829,16 +983,21 @@ void DOCR_Registration::compute()
   point[2] = segmentedFiducials[m_sortedFiducials[17]][2];
   landmarkSet2.push_back(point);
 
-//  point[0] = segmentedFiducials[m_sortedFiducials[18]][0]; 
-//  point[1] = segmentedFiducials[m_sortedFiducials[18]][1]; 
-//  point[2] = segmentedFiducials[m_sortedFiducials[18]][2];
-//  landmarkSet2.push_back(point);
+  // has to be deactivated in case we use manually modified data w/ 18 fiducials
+#if (NUM_FIDUCIALS == 19)
+  point[0] = segmentedFiducials[m_sortedFiducials[18]][0]; 
+  point[1] = segmentedFiducials[m_sortedFiducials[18]][1]; 
+  point[2] = segmentedFiducials[m_sortedFiducials[18]][2];
+  landmarkSet2.push_back(point);
+#endif
+
+  // end of Initialization of points in physical CT space
 
   initializer->SetFixedLandmarks(landmarkSet2);
   initializer->SetMovingLandmarks(landmarkSet1);
 
-  initializer->SetFixedImage( fixedImage );
-  initializer->SetMovingImage( movingImage );
+  //initializer->SetFixedImage( fixedImage );
+  //initializer->SetMovingImage( movingImage );
   initializer->SetTransform( m_transform );
   initializer->InitializeTransform();
 
@@ -847,18 +1006,28 @@ void DOCR_Registration::compute()
   TransformInitializerType::PointsContainerConstIterator 
     mitr = landmarkSet1.begin();
 
+  m_meanRegistrationError = 0;
+  m_maxRegistrationError = 0;
   while( mitr != landmarkSet1.end() )
   {
-    error = *mitr - m_transform->TransformPoint( *fitr);
+    error = *mitr - m_transform->TransformPoint( *fitr );
 
     std::cout << "Fixed Landmark: " << *fitr << " Moving landmark " << *mitr 
       << " Transformed fixed Landmark : " << 
       m_transform->TransformPoint( *fitr ) << std::endl <<
       "  Error: " << error.GetNorm() << std::endl;
 
+    if ( error.GetNorm() > m_maxRegistrationError)
+      m_maxRegistrationError = error.GetNorm();
+    m_meanRegistrationError += error.GetNorm();
+
     ++mitr;
     ++fitr;
   }
+  m_meanRegistrationError /= NUM_FIDUCIALS;
+  std::cout << std::endl << "Mean error: " << m_meanRegistrationError <<
+    std::endl << "Max error: " << m_maxRegistrationError <<
+    std::endl << std::endl;
 
   point[0] = testData[0][0];
   point[1] = testData[0][1];

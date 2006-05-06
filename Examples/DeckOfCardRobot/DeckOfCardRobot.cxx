@@ -470,18 +470,13 @@ void DeckOfCardRobot::RegistrationProcessing()
       }
     size[i] = abs( m_P2[i] - m_P1[i] );
     }
-  // Read the mha file
-  typedef DOCR_Registration::USVolumeType  ImageType;
-  itk::ImageFileReader<ImageType>::Pointer reader = itk::ImageFileReader<ImageType>::New();
-  reader->SetFileName("volume_2_CT_ushort.mha");
-  reader->Update();
-   // Roland's class
-  //DOCR_Registration registration( reader->GetOutput(),start, size);
-  DOCR_Registration registration( m_ImageSpatialObject,start, size);
-  registration.compute();
 
-  m_ImageToRobotTransform = registration.m_transform;
-  std::cout<< registration.m_transform;
+  DOCR_Registration * registration = new 
+                           DOCR_Registration( m_ImageSpatialObject,start, size);
+  registration->compute();
+
+  m_ImageToRobotTransform = registration->m_transform;
+  std::cout<< registration->m_transform;
 }
 
 
