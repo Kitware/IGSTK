@@ -163,13 +163,6 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_ViewPickerObserver->SetCallbackFunction( this, 
                                              &DeckOfCardRobot::DrawPickedPoint );
 
-  this->DisplayAxial->AddObserver( TransformModifiedEvent(), 
-                                                         m_ViewPickerObserver );
-  this->DisplaySagittal->AddObserver( TransformModifiedEvent(), 
-                                                         m_ViewPickerObserver );
-  this->DisplayCoronal->AddObserver( TransformModifiedEvent(), 
-                                                         m_ViewPickerObserver );
-
   this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
   this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
   this->DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );
@@ -431,21 +424,6 @@ void DeckOfCardRobot::RequestSetROI()
   ITKImageType::IndexType index;
   m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
   m_P2 = index;
-
-//  ITKImageType::IndexType start;
-//  ITKImageType::SizeType  size;
-//  start = m_P1;
-//
-//  for (int i=0; i<3; i++)
-//    {
-//    if ( start[i] > m_P2[i] )
-//      {
-//      start[i] = m_P2[i];
-//      }
-//    size[i] = abs( m_P2[i] - m_P1[i] );
-//    }
-//  std::cout<< m_P1 << m_P2 << start << size << std::endl;
-
 }
 
 void DeckOfCardRobot::RequestRegistration()
@@ -631,6 +609,14 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
 
   this->SetROI->activate();
 
+  //Add the picker observer
+  this->DisplayAxial->AddObserver( TransformModifiedEvent(), 
+                                   m_ViewPickerObserver );
+  this->DisplaySagittal->AddObserver( TransformModifiedEvent(), 
+                                   m_ViewPickerObserver );
+  this->DisplayCoronal->AddObserver( TransformModifiedEvent(), 
+                                   m_ViewPickerObserver );
+
 }
 
   
@@ -774,14 +760,11 @@ void DeckOfCardRobot::DrawPathProcessing()
   m_TargetPoint->RequestSetTransform( m_TargetTransform );
   m_EntryPoint->RequestSetTransform( m_EntryTransform );
 
-  CalculateRobotMovement();
-  m_Reachable = m_Robot->GetReachable( m_Translation, m_Rotation);
   float a = 0.0;
-  if( m_Reachable )
+  if( this->CalculateRobotMovement() )
     {
     a = 0.7;
     }
-  //FIXME  ==== changing the color of the path ???
 
   m_Path->Clear();
   
@@ -878,7 +861,7 @@ void DeckOfCardRobot::TargetingRobotProcessing()
                   m_TargetingRobotSuccessInput, m_TargetingRobotFailureInput);
 }
 
-void DeckOfCardRobot::CalculateRobotMovement()
+bool DeckOfCardRobot::CalculateRobotMovement()
 {
   //From path calculate the robot movement
   const double pi = acos(-1.0);
@@ -938,6 +921,17 @@ void DeckOfCardRobot::CalculateRobotMovement()
     {
     rb = 0;
     }
+
+  // Test if the move is reachable
+  for (int i=0; i<3; i++)
+    {
+    if ( ( m_Translation[i] > 1.9) || (  m_Rotation[i] > ( 30 * pi / 180 ) ) )
+      {
+      m_Reachable = false;
+      break;
+      }
+    }
+  return m_Reachable;
 }
 
 } // end of namespace

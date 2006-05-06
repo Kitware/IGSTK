@@ -271,7 +271,7 @@ private:
   /** Methods for reslicing the image */
   void ResliceImage();
   void ResliceImage( ITKImageType::IndexType index );
-  void CalculateRobotMovement();
+  bool CalculateRobotMovement();
 
 };
 
