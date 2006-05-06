@@ -641,33 +641,6 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
 
   // C 7
 
-  LandmarkImageType::Pointer fixedImage  = LandmarkImageType::New();
-  LandmarkImageType::Pointer movingImage = LandmarkImageType::New();
-
-  // Create fixed and moving images
-  LandmarkImageType::RegionType fRegion;
-  LandmarkImageType::SizeType   fSize;
-  LandmarkImageType::IndexType  fIndex;
-  fSize.Fill(30);
-  fIndex.Fill(0);
-  fRegion.SetSize( fSize );
-  fRegion.SetIndex( fIndex );
-  LandmarkImageType::RegionType mRegion;
-  LandmarkImageType::SizeType   mSize;
-  LandmarkImageType::IndexType  mIndex;
-  mSize.Fill(30);
-  mIndex.Fill(0);
-  mRegion.SetSize( mSize );
-  mRegion.SetIndex( mIndex );
-  fixedImage->SetLargestPossibleRegion( fRegion );
-  fixedImage->SetBufferedRegion( fRegion );
-  fixedImage->SetRequestedRegion( fRegion );
-  fixedImage->Allocate();
-  movingImage->SetLargestPossibleRegion( mRegion );
-  movingImage->SetBufferedRegion( mRegion );
-  movingImage->SetRequestedRegion( mRegion );
-  movingImage->Allocate();
-
   // Set the transform type
   m_transform = TransformType::New();
   TransformInitializerType::Pointer initializer =
@@ -996,8 +969,6 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
   initializer->SetFixedLandmarks(landmarkSet2);
   initializer->SetMovingLandmarks(landmarkSet1);
 
-  //initializer->SetFixedImage( fixedImage );
-  //initializer->SetMovingImage( movingImage );
   initializer->SetTransform( m_transform );
   initializer->InitializeTransform();
 
