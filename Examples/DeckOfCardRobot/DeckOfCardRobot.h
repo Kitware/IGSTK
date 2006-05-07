@@ -23,7 +23,6 @@ PURPOSE.  See the above copyright notices for more information.
 #pragma warning( disable : 4284 )
 #endif
 
-#include "Configure.h"
 #include "DeckOfCardRobotGUI.h"
 #include "DOCR_Registration.h"
 #include "RobotCommunication.h"
@@ -34,7 +33,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObject.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
-#include "igstkLandmark3DRegistration.h"
+#include "igstkImageSpatialObjectVolumeRepresentation.h"
 
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
@@ -71,6 +70,8 @@ public:
 
   /** typedef for ImageRepresentationType */
   typedef CTImageSpatialObjectRepresentation            ImageRepresentationType;
+  typedef ImageSpatialObjectVolumeRepresentation< CTImageSpatialObject>
+                                                       VolumeRepresentationType;
 
   /** Public request methods from the GUI. */
   virtual void RequestLoadImage();
@@ -184,9 +185,8 @@ private:
   ImageRepresentationType::Pointer    m_ImageRepresentationAxial;
   ImageRepresentationType::Pointer    m_ImageRepresentationCoronal;
   ImageRepresentationType::Pointer    m_ImageRepresentationSagittal;
-  ImageRepresentationType::Pointer    m_ImageRepresentationAxial3D;
-  ImageRepresentationType::Pointer    m_ImageRepresentationCoronal3D;
-  ImageRepresentationType::Pointer    m_ImageRepresentationSagittal3D;
+
+  VolumeRepresentationType::Pointer   m_ImageRepresentation3D;
 
   /** Registration */
   DOCR_Registration *                 m_Registration;

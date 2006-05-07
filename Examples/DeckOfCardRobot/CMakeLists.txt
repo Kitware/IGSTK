@@ -8,6 +8,7 @@ SET(DeckOfCardRobot_HEADER
   DeckOfCardRobot.h
   DOCR_Registration.h  
   RobotCommunication.h
+  igstkImageSpatialObjectVolumeRepresentation.h
 )
 
 SET(DeckOfCardRobot_SRCS
@@ -15,6 +16,7 @@ SET(DeckOfCardRobot_SRCS
   DeckOfCardRobot.cxx
   DOCR_Registration.cxx
   RobotCommunication.cxx
+  igstkImageSpatialObjectVolumeRepresentation.txx
   )
 
 INCLUDE_DIRECTORIES(

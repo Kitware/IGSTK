@@ -189,9 +189,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_ImageRepresentationAxial    = ImageRepresentationType::New();
   m_ImageRepresentationSagittal = ImageRepresentationType::New();
   m_ImageRepresentationCoronal  = ImageRepresentationType::New();
-  m_ImageRepresentationAxial3D    = ImageRepresentationType::New();
-  m_ImageRepresentationSagittal3D = ImageRepresentationType::New();
-  m_ImageRepresentationCoronal3D  = ImageRepresentationType::New();
+  m_ImageRepresentation3D       = VolumeRepresentationType::New();
 
   /** Set logger */
   if(0) // Temporary disable this logger
@@ -204,9 +202,6 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
     m_ImageRepresentationAxial->SetLogger( logger );
     m_ImageRepresentationSagittal->SetLogger( logger );
     m_ImageRepresentationCoronal->SetLogger( logger );
-    m_ImageRepresentationAxial3D->SetLogger( logger );
-    m_ImageRepresentationSagittal3D->SetLogger( logger );
-    m_ImageRepresentationCoronal3D->SetLogger( logger );
     }
 
   this->ObserveAxialBoundsInput(    m_ImageRepresentationAxial    );
@@ -546,13 +541,6 @@ void DeckOfCardRobot::ResliceImage()
   m_ImageRepresentationCoronal->RequestSetSliceNumber( 
                   static_cast< unsigned int >( this->CoronalSlider->value() ) );
 
-  m_ImageRepresentationAxial3D->RequestSetSliceNumber( 
-                    static_cast< unsigned int >( this->AxialSlider->value() ) );
-  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( 
-                 static_cast< unsigned int >( this->SagittalSlider->value() ) );
-  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( 
-                  static_cast< unsigned int >( this->CoronalSlider->value() ) );
-
   this->ViewerGroup->redraw();
   Fl::check();
 }
@@ -562,10 +550,6 @@ void DeckOfCardRobot::ResliceImage ( ITKImageType::IndexType index )
   m_ImageRepresentationAxial->RequestSetSliceNumber( index[2] );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( index[0] );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( index[1] );
-
-  m_ImageRepresentationAxial3D->RequestSetSliceNumber( index[2] );
-  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( index[0] );
-  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( index[1] );
 
   this->AxialSlider->value( index[2] );
   this->SagittalSlider->value( index[0] );
@@ -589,26 +573,13 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
                                             m_ImageSpatialObject );
   m_ImageRepresentationCoronal->RequestSetImageSpatialObject( 
                                             m_ImageSpatialObject );
-
-  m_ImageRepresentationAxial3D->RequestSetImageSpatialObject( 
-                                            m_ImageSpatialObject );
-  m_ImageRepresentationSagittal3D->RequestSetImageSpatialObject( 
-                                            m_ImageSpatialObject );
-  m_ImageRepresentationCoronal3D->RequestSetImageSpatialObject( 
-                                            m_ImageSpatialObject );
+  m_ImageRepresentation3D->RequestSetImageSpatialObject( m_ImageSpatialObject );
  
   m_ImageRepresentationAxial->RequestSetOrientation( 
                                                ImageRepresentationType::Axial );
   m_ImageRepresentationSagittal->RequestSetOrientation( 
                                             ImageRepresentationType::Sagittal );
   m_ImageRepresentationCoronal->RequestSetOrientation( 
-                                             ImageRepresentationType::Coronal );
-
-  m_ImageRepresentationAxial3D->RequestSetOrientation( 
-                                               ImageRepresentationType::Axial );
-  m_ImageRepresentationSagittal3D->RequestSetOrientation( 
-                                            ImageRepresentationType::Sagittal );
-  m_ImageRepresentationCoronal3D->RequestSetOrientation( 
                                              ImageRepresentationType::Coronal );
 
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
@@ -635,12 +606,10 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->DisplayCoronal->RequestAddObject( m_NeedleRepresentation->Copy() );
   this->DisplayCoronal->RequestAddObject( 
                                          m_NeedleHolderRepresentation->Copy() );
-   this->DisplayCoronal->RequestAddObject( m_BoxRepresentation->Copy() );
+  this->DisplayCoronal->RequestAddObject( m_BoxRepresentation->Copy() );
   this->DisplayCoronal->RequestAddAnnotation2D( m_Annotation2D );
 
-  this->Display3D->RequestAddObject( m_ImageRepresentationAxial3D );
-  this->Display3D->RequestAddObject( m_ImageRepresentationSagittal3D );
-  this->Display3D->RequestAddObject( m_ImageRepresentationCoronal3D );
+  this->Display3D->RequestAddObject( m_ImageRepresentation3D );
   this->Display3D->RequestAddObject( m_PickedPointRepresentation->Copy() );
   this->Display3D->RequestAddObject( m_NeedleTipRepresentation->Copy() );
   this->Display3D->RequestAddObject( m_NeedleRepresentation->Copy() );
@@ -710,7 +679,6 @@ void DeckOfCardRobot::SetAxialSliderBoundsProcessing()
   const unsigned int max = m_AxialBoundsInputToBeSet.maximum; 
   const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
   m_ImageRepresentationAxial->RequestSetSliceNumber( slice );
-  m_ImageRepresentationAxial3D->RequestSetSliceNumber( slice );
   this->AxialSlider->minimum( min );
   this->AxialSlider->maximum( max );
   this->AxialSlider->value( slice );  
@@ -729,7 +697,6 @@ void DeckOfCardRobot::SetSagittalSliderBoundsProcessing()
   const unsigned int max = m_SagittalBoundsInputToBeSet.maximum; 
   const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( slice );
-  m_ImageRepresentationSagittal3D->RequestSetSliceNumber( slice );
   this->SagittalSlider->minimum( min );
   this->SagittalSlider->maximum( max );
   this->SagittalSlider->value( slice );  
@@ -747,7 +714,6 @@ void DeckOfCardRobot::SetCoronalSliderBoundsProcessing()
   const unsigned int max = m_CoronalBoundsInputToBeSet.maximum; 
   const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( slice );
-  m_ImageRepresentationCoronal3D->RequestSetSliceNumber( slice );
   this->CoronalSlider->minimum( min );
   this->CoronalSlider->maximum( max );
   this->CoronalSlider->value( slice );  

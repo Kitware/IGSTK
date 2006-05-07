@@ -296,7 +296,7 @@ ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS} ${IGSTKLates
 # Linking with the FLTK, ITK and VTK libraries
 TARGET_LINK_LIBRARIES(IGSTKSandbox
     ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject ITKStatistics
-    vtkRendering vtkGraphics vtkHybrid vtkImaging 
+    vtkVolumeRendering vtkRendering vtkGraphics vtkHybrid vtkImaging 
     vtkIO vtkFiltering vtkCommon
     ${FLTK_LIBRARIES} ${EXTRA_LIBS}
 )
