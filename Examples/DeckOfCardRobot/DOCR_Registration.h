@@ -122,7 +122,7 @@ public:
                      SSVolumeType::SizeType ROIsize );
 
   ~DOCR_Registration();
-  void compute();
+  bool compute();
 
   SSVolumeType::ConstPointer         m_SSEntireLoadedVolume;
   SSVolumeType::Pointer              m_SSLoadedVolume;

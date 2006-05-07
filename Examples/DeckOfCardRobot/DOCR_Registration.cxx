@@ -108,7 +108,7 @@ DOCR_Registration::~DOCR_Registration()
 {
 }
 
-void DOCR_Registration::compute() 
+bool DOCR_Registration::compute() 
 {
   // Initialization
   std::vector< vnl_vector<double> > segmentedFiducials(NUM_FIDUCIALS);
@@ -236,7 +236,11 @@ void DOCR_Registration::compute()
     //for( bin=0; bin < NUMBERBIGBINS; bin++ )
     //  std::cout << bin << " " << m_bins[bin] << std::endl;
 
-    if (!thresholdfound) throw "no threshold";
+    if (!thresholdfound)
+      {
+      std::cout << "No threshold found" << std::endl;
+      return false;
+      }
 
     std::cout << "threshold: " << m_threshold << std::endl <<
       "In relation to " << HIGHESTGRAYVALUE << " scale :" << 
@@ -438,7 +442,7 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
   if (m_numFiducials != NUM_FIDUCIALS)
   {
     std::cout << "\nNumber of fiducials is not correct !\n";
-    throw "Error";
+    return false;
   }
   // C 8
 

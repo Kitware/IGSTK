@@ -458,12 +458,40 @@ void DeckOfCardRobot::RegistrationProcessing()
     size[i] = abs( m_P2[i] - m_P1[i] );
     }
 
-  DOCR_Registration * registration = new 
-                           DOCR_Registration( m_ImageSpatialObject,start, size);
-  registration->compute();
+  m_Registration = new DOCR_Registration( m_ImageSpatialObject,start, size);
+  m_StateMachine.PushInputBoolean( m_Registration->compute(),
+                                   m_RegistrationSuccessInput,
+                                   m_RegistrationFailureInput );
 
-  m_ImageToRobotTransform = registration->m_transform;
-  std::cout<< registration->m_transform;
+}
+
+void DeckOfCardRobot::EvaluatingRegistrationErrorProcessing()
+{
+  igstkLogMacro (         DEBUG, "Evaluating registration error....\n" )
+  igstkLogMacro2( logger, DEBUG, "Evaluating registration error....\n" )
+  
+  //FIXME, move the needle to registered position
+  char temp[255];
+  double error = m_Registration->m_meanRegistrationError;
+  sprintf( temp, "Registration error (RMS) = %f\n", error );
+  std::string msg = temp;
+  msg += "Accept this registration result?";
+  int i = fl_choice( msg.c_str(), NULL, "Yes", "No" );
+  if ( i==1 )
+    {
+    this->RegistrationError->value( error );
+    m_StateMachine.PushInput( m_RegistrationErrorAcceptedInput );
+    }
+  else
+    {
+    m_StateMachine.PushInput( m_RegistrationErrorRejectedInput );
+    //FIXME, move the needle back to origin position
+    }
+}
+
+void DeckOfCardRobot::ResetRegistrationProcessing()
+{
+  //What to do here?
 }
 
 
@@ -717,33 +745,6 @@ void DeckOfCardRobot::DrawPickedPoint( const itk::EventObject & event)
       igstkLogMacro( DEBUG,  "Picked point outside image...\n" )
       }
     }
-}
-
-void DeckOfCardRobot::EvaluatingRegistrationErrorProcessing()
-{
-  igstkLogMacro (         DEBUG, "Evaluating registration error....\n" )
-  igstkLogMacro2( logger, DEBUG, "Evaluating registration error....\n" )
-  char temp[255];
-  double error = 0.05; //m_LandmarkRegistration->ComputeRMSError(); //FIXME
-  sprintf( temp, "Registration error (RMS) = %f\n", error );
-  std::string msg = temp;
-  msg += "Accept this registration result?";
-  int i = fl_choice( msg.c_str(), NULL, "Yes", "No" );
-  if ( i==1 )
-    {
-    this->RegistrationError->value( error );
-    m_StateMachine.PushInput( m_RegistrationErrorAcceptedInput );
-    }
-  else
-    {
-    m_StateMachine.PushInput( m_RegistrationErrorRejectedInput );
-    }
-  
-}
-
-void DeckOfCardRobot::ResetRegistrationProcessing()
-{
-  //What to do here?
 }
 
 void DeckOfCardRobot::RequestSetTargetPoint()

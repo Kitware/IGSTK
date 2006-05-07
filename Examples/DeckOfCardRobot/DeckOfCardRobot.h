@@ -186,6 +186,8 @@ private:
   ImageRepresentationType::Pointer    m_ImageRepresentationCoronal3D;
   ImageRepresentationType::Pointer    m_ImageRepresentationSagittal3D;
 
+  /** Registration */
+  DOCR_Registration *                 m_Registration;
 
   /** To store the landmark registration result transform*/
   DOCR_Registration::TransformType::Pointer    m_ImageToRobotTransform;  
