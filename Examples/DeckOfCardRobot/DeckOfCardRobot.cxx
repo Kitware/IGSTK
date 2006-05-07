@@ -80,7 +80,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_Annotation2D = Annotation2D::New();
   
   Transform transform;
-  transform.SetToIdentity( 100 );
+  transform.SetToIdentity( -1 );
 
   m_PickedPoint                   = EllipsoidType::New();
   m_PickedPoint->RequestSetTransform( transform );
@@ -106,6 +106,15 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_NeedleRepresentation->RequestSetCylinderObject( m_Needle );
   m_NeedleRepresentation->SetColor(0.0,1.0,0.0);
   m_NeedleRepresentation->SetOpacity(1.0);
+
+  m_NeedleHolder                    = CylinderType::New();
+  m_NeedleHolder->RequestSetTransform( transform );
+  m_NeedleHolderRepresentation      = CylinderRepresentationType::New();
+  m_NeedleHolder->SetRadius( 16 );   //   16 mm
+  m_NeedleHolder->SetHeight( 45 );   // 45 mm
+  m_NeedleHolderRepresentation->RequestSetCylinderObject( m_NeedleHolder );
+  m_NeedleHolderRepresentation->SetColor(1.0,1.0,0.0);
+  m_NeedleHolderRepresentation->SetOpacity(0.5);
 
   m_TargetPoint                 = EllipsoidType::New();
   m_TargetPoint->RequestSetTransform( transform );
@@ -543,6 +552,7 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->DisplayAxial->RequestAddObject( m_PickedPointRepresentation->Copy() );
   this->DisplayAxial->RequestAddObject( m_NeedleTipRepresentation->Copy() );
   this->DisplayAxial->RequestAddObject( m_NeedleRepresentation->Copy() );
+  this->DisplayAxial->RequestAddObject( m_NeedleHolderRepresentation->Copy() );
   this->DisplayAxial->RequestAddAnnotation2D( m_Annotation2D );
 
   this->DisplaySagittal->RequestAddObject( m_ImageRepresentationSagittal );
@@ -550,12 +560,16 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
                                           m_PickedPointRepresentation->Copy() );
   this->DisplaySagittal->RequestAddObject( m_NeedleTipRepresentation->Copy() );
   this->DisplaySagittal->RequestAddObject( m_NeedleRepresentation->Copy() );
+  this->DisplaySagittal->RequestAddObject( 
+                                         m_NeedleHolderRepresentation->Copy() );
   this->DisplaySagittal->RequestAddAnnotation2D( m_Annotation2D );
 
   this->DisplayCoronal->RequestAddObject( m_ImageRepresentationCoronal );
   this->DisplayCoronal->RequestAddObject( m_PickedPointRepresentation->Copy() );
   this->DisplayCoronal->RequestAddObject( m_NeedleTipRepresentation->Copy() );
   this->DisplayCoronal->RequestAddObject( m_NeedleRepresentation->Copy() );
+  this->DisplayCoronal->RequestAddObject( 
+                                         m_NeedleHolderRepresentation->Copy() );
   this->DisplayCoronal->RequestAddAnnotation2D( m_Annotation2D );
 
   this->Display3D->RequestAddObject( m_ImageRepresentationAxial3D );
@@ -564,6 +578,7 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->Display3D->RequestAddObject( m_PickedPointRepresentation->Copy() );
   this->Display3D->RequestAddObject( m_NeedleTipRepresentation->Copy() );
   this->Display3D->RequestAddObject( m_NeedleRepresentation->Copy() );
+  this->Display3D->RequestAddObject( m_NeedleHolderRepresentation->Copy() );
   this->Display3D->RequestAddAnnotation2D( m_Annotation2D );
 
 
