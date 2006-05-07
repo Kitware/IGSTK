@@ -466,7 +466,6 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
       avg[2] << std::endl;
 
     SSVolumeType::PointType origin = m_SSEntireLoadedVolume->GetOrigin();
-//    std::cout<< "Origin of image: "<< origin << std::endl;
     for(int j=0; j<3; j++)
       {
       avg[j] = origin[j] + (avg[j]+m_ROIstart[j]) * m_CT_Spacing[j];
@@ -1009,6 +1008,8 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
   point[2] = testData[0][2];
   std::cout << "verification point (after landmark registration): " <<
     m_transform->TransformPoint( point ) << std::endl;
+  
+  return true;
 
   // C 6
   // C 5

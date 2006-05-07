@@ -43,6 +43,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkCylinderObject.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkAnnotation2D.h"
+#include "igstkBoxObject.h"
+#include "igstkBoxObjectRepresentation.h"
 
 namespace igstk
 {
@@ -191,9 +193,11 @@ private:
 
   /** To store the landmark registration result transform*/
   DOCR_Registration::TransformType::Pointer    m_ImageToRobotTransform;  
+  DOCR_Registration::TransformType::Pointer    m_RobotToImageTransform;  
   
   /** To store the transform of the image and tracker landmark points */
-  Transform                                    m_ImageLandmarkTransformToBeSet;  
+  Transform                                    m_ImageLandmarkTransformToBeSet;
+  Transform                                    m_RobotTransformToBeSet;
 
   /** Observer type for loaded event, 
    *  the callback can be set to a member function. */
@@ -235,6 +239,12 @@ private:
   CylinderRepresentationType::Pointer              m_NeedleRepresentation;
   CylinderType::Pointer                            m_NeedleHolder;
   CylinderRepresentationType::Pointer              m_NeedleHolderRepresentation;
+
+  /** Box spatial object, used to represent the movement region */
+  typedef igstk::BoxObject                        BoxType;
+  typedef igstk::BoxObjectRepresentation          BoxRepresentationType;
+  BoxType::Pointer                                m_Box;
+  BoxRepresentationType::Pointer                  m_BoxRepresentation;
 
   Annotation2D::Pointer                            m_Annotation2D;
   ITKImageType::IndexType                          m_P1;

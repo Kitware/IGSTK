@@ -110,11 +110,19 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_NeedleHolder                    = CylinderType::New();
   m_NeedleHolder->RequestSetTransform( transform );
   m_NeedleHolderRepresentation      = CylinderRepresentationType::New();
-  m_NeedleHolder->SetRadius( 16 );   //   16 mm
+  m_NeedleHolder->SetRadius( 8 );   //   16 mm
   m_NeedleHolder->SetHeight( 45 );   // 45 mm
   m_NeedleHolderRepresentation->RequestSetCylinderObject( m_NeedleHolder );
   m_NeedleHolderRepresentation->SetColor(1.0,1.0,0.0);
   m_NeedleHolderRepresentation->SetOpacity(0.5);
+
+  m_Box                   = BoxType::New();
+  m_Box->RequestSetTransform( transform );
+  m_BoxRepresentation     = BoxRepresentationType::New();
+  m_Box->SetSize( 38, 38, 1 );
+  m_BoxRepresentation->RequestSetBoxObject( m_Box );
+  m_BoxRepresentation->SetColor(1.0, 0.0, 1.0);
+  m_BoxRepresentation->SetOpacity( 0.5 );
 
   m_TargetPoint                 = EllipsoidType::New();
   m_TargetPoint->RequestSetTransform( transform );
@@ -459,10 +467,29 @@ void DeckOfCardRobot::RegistrationProcessing()
     }
 
   m_Registration = new DOCR_Registration( m_ImageSpatialObject,start, size);
-  m_StateMachine.PushInputBoolean( m_Registration->compute(),
-                                   m_RegistrationSuccessInput,
-                                   m_RegistrationFailureInput );
+  if ( m_Registration->compute() )
+    {
+    m_ImageToRobotTransform = m_Registration->m_transform; 
+    m_RobotToImageTransform = DOCR_Registration::TransformType::New();
+    m_ImageToRobotTransform->GetInverse( m_RobotToImageTransform );
+    
+    m_RobotTransformToBeSet.SetTranslationAndRotation(
+                                        m_RobotToImageTransform->GetOffset(), 
+                                        m_RobotToImageTransform->GetVersor(),
+                                        m_Registration->m_meanRegistrationError,
+                                        -1);
 
+    m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
+    m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
+    m_Box->RequestSetTransform( m_RobotTransformToBeSet );
+    Fl::wait(0.01);
+    igstk::PulseGenerator::CheckTimeouts();
+    igstkPushInputMacro( RegistrationSuccess );
+    }
+  else
+    {
+    igstkPushInputMacro( RegistrationFailure );
+    }
 }
 
 void DeckOfCardRobot::EvaluatingRegistrationErrorProcessing()
@@ -485,13 +512,17 @@ void DeckOfCardRobot::EvaluatingRegistrationErrorProcessing()
   else
     {
     m_StateMachine.PushInput( m_RegistrationErrorRejectedInput );
-    //FIXME, move the needle back to origin position
     }
 }
 
 void DeckOfCardRobot::ResetRegistrationProcessing()
 {
-  //What to do here?
+  this->RegistrationError->value( 0.0 );
+  m_RobotTransformToBeSet.SetToIdentity(-1);
+  m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
+  m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
+  m_Box->RequestSetTransform( m_RobotTransformToBeSet );
+
 }
 
 
@@ -581,6 +612,7 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->DisplayAxial->RequestAddObject( m_NeedleTipRepresentation->Copy() );
   this->DisplayAxial->RequestAddObject( m_NeedleRepresentation->Copy() );
   this->DisplayAxial->RequestAddObject( m_NeedleHolderRepresentation->Copy() );
+  this->DisplayAxial->RequestAddObject( m_BoxRepresentation->Copy() );
   this->DisplayAxial->RequestAddAnnotation2D( m_Annotation2D );
 
   this->DisplaySagittal->RequestAddObject( m_ImageRepresentationSagittal );
@@ -590,6 +622,7 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->DisplaySagittal->RequestAddObject( m_NeedleRepresentation->Copy() );
   this->DisplaySagittal->RequestAddObject( 
                                          m_NeedleHolderRepresentation->Copy() );
+  this->DisplaySagittal->RequestAddObject( m_BoxRepresentation->Copy() );
   this->DisplaySagittal->RequestAddAnnotation2D( m_Annotation2D );
 
   this->DisplayCoronal->RequestAddObject( m_ImageRepresentationCoronal );
@@ -598,6 +631,7 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->DisplayCoronal->RequestAddObject( m_NeedleRepresentation->Copy() );
   this->DisplayCoronal->RequestAddObject( 
                                          m_NeedleHolderRepresentation->Copy() );
+   this->DisplayCoronal->RequestAddObject( m_BoxRepresentation->Copy() );
   this->DisplayCoronal->RequestAddAnnotation2D( m_Annotation2D );
 
   this->Display3D->RequestAddObject( m_ImageRepresentationAxial3D );
@@ -607,6 +641,7 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->Display3D->RequestAddObject( m_NeedleTipRepresentation->Copy() );
   this->Display3D->RequestAddObject( m_NeedleRepresentation->Copy() );
   this->Display3D->RequestAddObject( m_NeedleHolderRepresentation->Copy() );
+  this->Display3D->RequestAddObject( m_BoxRepresentation->Copy() );
   this->Display3D->RequestAddAnnotation2D( m_Annotation2D );
 
 
