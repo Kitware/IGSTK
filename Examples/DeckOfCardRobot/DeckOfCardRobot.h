@@ -197,6 +197,7 @@ private:
   
   /** To store the transform of the image and tracker landmark points */
   Transform                                    m_ImageLandmarkTransformToBeSet;
+  Transform                                    m_RobotTransform;
   Transform                                    m_RobotTransformToBeSet;
 
   /** Observer type for loaded event, 

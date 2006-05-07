@@ -22,6 +22,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkEvents.h"
 #include "itkImageFileReader.h"
 
+#define PI 3.1415926
+
 namespace igstk
 {
 
@@ -507,6 +509,7 @@ void DeckOfCardRobot::EvaluatingRegistrationErrorProcessing()
   if ( i==1 )
     {
     this->RegistrationError->value( error );
+    m_RobotTransform = m_RobotTransformToBeSet;
     m_StateMachine.PushInput( m_RegistrationErrorAcceptedInput );
     }
   else
@@ -519,6 +522,7 @@ void DeckOfCardRobot::ResetRegistrationProcessing()
 {
   this->RegistrationError->value( 0.0 );
   m_RobotTransformToBeSet.SetToIdentity(-1);
+  m_RobotTransform.SetToIdentity(-1);
   m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
   m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
   m_Box->RequestSetTransform( m_RobotTransformToBeSet );
@@ -815,50 +819,61 @@ void DeckOfCardRobot::DrawPathProcessing()
   if( this->CalculateRobotMovement() )
     {
     a = 0.7;
+    m_Path->Clear();
+
+    TubePointType p;
+    Transform::VectorType v;
+
+    v = m_EntryTransform.GetTranslation();
+    p.SetPosition( v[0], v[1], v[2]);
+    p.SetRadius( 2 );
+    m_Path->AddPoint( p );
+
+    v = m_TargetTransform.GetTranslation();
+    p.SetPosition( v[0], v[1], v[2]);
+    p.SetRadius( 2.1 ); //FIXME
+    m_Path->AddPoint( p );
+
+    this->DisplayAxial->RequestRemoveObject( m_PathRepresentationAxial );
+    this->DisplaySagittal->RequestRemoveObject( m_PathRepresentationSagittal );
+    this->DisplayCoronal->RequestRemoveObject( m_PathRepresentationCoronal );
+    this->Display3D->RequestRemoveObject( m_PathRepresentation3D );
+
+    m_PathRepresentationAxial->RequestSetTubeObject( NULL );
+    m_PathRepresentationAxial->RequestSetTubeObject( m_Path );
+    m_PathRepresentationAxial->SetColor( 0.0, 1.0, 0.0 );
+    m_PathRepresentationAxial->SetOpacity( a );
+    m_PathRepresentationSagittal->RequestSetTubeObject( NULL );
+    m_PathRepresentationSagittal->RequestSetTubeObject( m_Path );
+    m_PathRepresentationSagittal->SetColor( 0.0, 1.0, 0.0 );
+    m_PathRepresentationSagittal->SetOpacity( a );
+    m_PathRepresentationCoronal->RequestSetTubeObject( NULL );
+    m_PathRepresentationCoronal->RequestSetTubeObject( m_Path );
+    m_PathRepresentationCoronal->SetColor( 0.0, 1.0, 0.0 );
+    m_PathRepresentationCoronal->SetOpacity( a );
+    m_PathRepresentation3D->RequestSetTubeObject( NULL );
+    m_PathRepresentation3D->RequestSetTubeObject( m_Path );
+    m_PathRepresentation3D->SetColor( 0.0, 1.0, 0.0 );
+    m_PathRepresentation3D->SetOpacity( a );
+
+    this->DisplayAxial->RequestAddObject( m_PathRepresentationAxial );
+    this->DisplaySagittal->RequestAddObject( m_PathRepresentationSagittal );
+    this->DisplayCoronal->RequestAddObject( m_PathRepresentationCoronal );
+    this->Display3D->RequestAddObject( m_PathRepresentation3D );
+
+    m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
+    m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
+    m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
+    //m_Box->RequestSetTransform( m_RobotTransformToBeSet );
     }
-
-  m_Path->Clear();
-  
-  TubePointType p;
-  Transform::VectorType v;
-    
-  v = m_EntryTransform.GetTranslation();
-  p.SetPosition( v[0], v[1], v[2]);
-  p.SetRadius( 2 );
-  m_Path->AddPoint( p );
-
-  v = m_TargetTransform.GetTranslation();
-  p.SetPosition( v[0], v[1], v[2]);
-  p.SetRadius( 2.1 ); //FIXME
-  m_Path->AddPoint( p );
-
-  this->DisplayAxial->RequestRemoveObject( m_PathRepresentationAxial );
-  this->DisplaySagittal->RequestRemoveObject( m_PathRepresentationSagittal );
-  this->DisplayCoronal->RequestRemoveObject( m_PathRepresentationCoronal );
-  this->Display3D->RequestRemoveObject( m_PathRepresentation3D );
-
-  m_PathRepresentationAxial->RequestSetTubeObject( NULL );
-  m_PathRepresentationAxial->RequestSetTubeObject( m_Path );
-  m_PathRepresentationAxial->SetColor( 0.0, 1.0, 0.0 );
-  m_PathRepresentationAxial->SetOpacity( a );
-  m_PathRepresentationSagittal->RequestSetTubeObject( NULL );
-  m_PathRepresentationSagittal->RequestSetTubeObject( m_Path );
-  m_PathRepresentationSagittal->SetColor( 0.0, 1.0, 0.0 );
-  m_PathRepresentationSagittal->SetOpacity( a );
-  m_PathRepresentationCoronal->RequestSetTubeObject( NULL );
-  m_PathRepresentationCoronal->RequestSetTubeObject( m_Path );
-  m_PathRepresentationCoronal->SetColor( 0.0, 1.0, 0.0 );
-  m_PathRepresentationCoronal->SetOpacity( a );
-  m_PathRepresentation3D->RequestSetTubeObject( NULL );
-  m_PathRepresentation3D->RequestSetTubeObject( m_Path );
-  m_PathRepresentation3D->SetColor( 0.0, 1.0, 0.0 );
-  m_PathRepresentation3D->SetOpacity( a );
-
-  this->DisplayAxial->RequestAddObject( m_PathRepresentationAxial );
-  this->DisplaySagittal->RequestAddObject( m_PathRepresentationSagittal );
-  this->DisplayCoronal->RequestAddObject( m_PathRepresentationCoronal );
-  this->Display3D->RequestAddObject( m_PathRepresentation3D );
-  
+  else
+    {
+    m_PathRepresentationAxial->SetOpacity( a );
+    m_PathRepresentationSagittal->SetOpacity( a );
+    m_PathRepresentationCoronal->SetOpacity( a );
+    m_PathRepresentation3D->SetOpacity( a );
+    std::cout << "Path not reachable by robot" << std::endl;
+    }
 }
 
 void DeckOfCardRobot::RequestConnectToRobot()
@@ -914,75 +929,97 @@ void DeckOfCardRobot::TargetingRobotProcessing()
 
 bool DeckOfCardRobot::CalculateRobotMovement()
 {
-  //From path calculate the robot movement
-  const double pi = acos(-1.0);
-  Transform::VectorType axis, rotated, rotatedA, rotatedB;
-  axis[0] = 0;
-  axis[1] = 1;
-  axis[2] = 0;
-  //rotated = m_ImageToRobotTransform->Transform(axis);   //FIXME
-  rotated.Normalize();
-  float ra, rb;
-  double sign;
+  Transform               transform;
+  Transform::VersorType   rotation;
+  Transform::VectorType   translation, pVect1, pVect2, axis;
+  double                  angle;
+  DOCR_Registration::TransformType::InputPointType rPE, rPT, pIntersect;
 
-  float ra2, rb2;
-  ra2 = atan( rotated[0] ) * 180.0 / pi;
-  rb2 = - atan( rotated[2] ) * 180.0 / pi;
-  igstkLogMacro(INFO, "ra2 : " << ra2 << ",  rb2 : " << rb2 << std::endl );
-
-
-  rotatedA = rotated;
-  rotatedA[2] = 0;
-  rotatedA.Normalize();
-  if( rotated[0] >= 0 )
-    {
-    sign = -1;
-    }
-  else
-    {
-    sign = 1;
-    }
-
-  if( rotated[0] != 0 )
-    {
-    ra = acos( axis * rotatedA ) * 180.0 / pi * sign;
-    }
-  else
-    {
-    ra = 0;
-    }
-
-  rotatedB = rotated;
-  rotatedB[0] = 0;
-  rotatedB.Normalize();
-  if( rotated[2] >= 0 )
-    {
-    sign = 1;
-    }
-  else
-    {
-    sign = -1;
-    }
-
-  if( rotated[2] != 0 )
-    {
-    rb = acos( axis * rotatedB ) * 180.0 / pi * sign;
-    }
-  else
-    {
-    rb = 0;
-    }
-
-  // Test if the move is reachable
   for (int i=0; i<3; i++)
     {
-    if ( ( m_Translation[i] > 1.9) || (  m_Rotation[i] > ( 30 * pi / 180 ) ) )
+    rPE[i] = m_EntryTransform.GetTranslation()[i];
+    rPT[i] = m_TargetTransform.GetTranslation()[i];
+    }
+  // In Robot coordinate system
+  rPE = m_ImageToRobotTransform->TransformPoint( rPE );
+  rPT = m_ImageToRobotTransform->TransformPoint( rPT );
+
+  // Calculate the intersect of a line with a plane => robot movement
+  // Planed Path equation:  p = rPT + u * ( rPE - rPT)
+  // Robot Plane equation:  p * normal = k;  => normal = {0,0,1}, k = 0
+  // u = (k - rPT * normal) / ( (rPE - rPT) * normal)
+  // u = - rPT[2]/ (rPE[2]-rPT[2])
+  double u = - rPT[2] / ( rPE[2] - rPT[2]);
+  pIntersect = rPT + ( rPE - rPT ) * u;
+
+  // Robot translational movement
+  m_Translation[0] = pIntersect[0]; 
+  m_Translation[1] = pIntersect[1];
+  m_Translation[2] = 0;
+
+  // Calculate robot rotation axis-angle
+  pVect1[0] = 0;  pVect1[1] = 0;  pVect1[2] = -1;
+  pVect2 = rPE - rPT;
+  pVect2.Normalize();
+  
+  if ( pVect1 * pVect2 < 0)
+    {
+    pVect2 *= -1;
+    }
+  angle = acos( pVect1 * pVect2 );
+  axis = itk::CrossProduct( pVect1, pVect2);
+  axis.Normalize();
+  
+  // Translate angle-axis into quaternion
+  rotation.Set( axis, angle );
+  rotation.Normalize();
+
+  // Translate angle-axis to two rotation around X and Y axis
+  m_Rotation[0] = acos( (1-cos(angle))*axis[1]*axis[1] + cos(angle) );
+  m_Rotation[1] = acos( (1-cos(angle))*axis[0]*axis[0] + cos(angle) );
+  m_Rotation[2] = 0;
+
+  for (int i=0; i<3; i++)
+    {
+    m_Rotation[i] = m_Rotation[i] * 180 / PI; // To degree
+    if ( m_Rotation[i] > 90)
+      {
+      m_Rotation[i] = m_Rotation[i] - 180;    // Flip the rotation angle
+      }
+    }
+  
+  // Compose the new robot transform
+  for (int i=0; i<3; i++)
+    {
+    translation[i] = pIntersect[i];
+    }
+  
+  // Transform it to CT coordinate system
+  rotation = m_RobotTransform.GetRotation()*rotation;
+  translation = m_RobotTransform.GetRotation().Transform(translation);
+  translation += m_RobotTransform.GetTranslation();
+
+  m_RobotTransformToBeSet.SetTranslationAndRotation( translation, rotation, 
+                                                     0.1, -1);
+
+  std::cout << "Robot translation: " << m_Translation[0] << "," 
+                                     << m_Translation[1] << std::endl;
+  std::cout << "Robot rotation: " << m_Rotation[0] << "," 
+                                  << m_Rotation[1] << std::endl;
+
+  // Test if the move is reachable
+  m_Reachable = true;
+  for (int i=0; i<3; i++)
+    {
+    if ( ( abs (m_Translation[i]) > 19 ) || 
+         ( abs (m_Rotation[i]) > ( 30 /** PI / 180*/ ) ) )
       {
       m_Reachable = false;
       break;
       }
     }
   return m_Reachable;
+
 }
 
 } // end of namespace
