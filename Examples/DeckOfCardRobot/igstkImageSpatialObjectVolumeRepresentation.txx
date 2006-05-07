@@ -38,7 +38,7 @@ ImageSpatialObjectVolumeRepresentation< TImageSpatialObject >
   m_ImageData  = NULL;
 
   m_MinThreshold = 0;
-  m_MaxThreshold = 1900;
+  m_MaxThreshold = 2048;
   m_ShiftBy = 1024;
 
   m_ShiftScale = vtkImageShiftScale::New();

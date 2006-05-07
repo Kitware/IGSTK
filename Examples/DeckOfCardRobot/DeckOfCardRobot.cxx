@@ -132,7 +132,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_TargetPoint->SetRadius( 6, 6, 6 );
   m_TargetRepresentation->RequestSetEllipsoidObject( m_TargetPoint );
   m_TargetRepresentation->SetColor( 1.0, 0.0, 0.0);
-  m_TargetRepresentation->SetOpacity( 0.6 );
+  m_TargetRepresentation->SetOpacity( 1 );
  
   m_EntryPoint                  = EllipsoidType::New();
   m_EntryPoint->RequestSetTransform( transform );
@@ -140,7 +140,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_EntryPoint->SetRadius( 6, 6, 6 );
   m_EntryRepresentation->RequestSetEllipsoidObject( m_EntryPoint );
   m_EntryRepresentation->SetColor( 0.0, 0.0, 1.0);
-  m_EntryRepresentation->SetOpacity( 0.6 );
+  m_EntryRepresentation->SetOpacity( 1 );
 
   m_Path                       = PathType::New();
   TubePointType p;
@@ -167,7 +167,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_PathRepresentation3D         = PathRepresentationType::New();
   m_PathRepresentation3D->RequestSetTubeObject( m_Path );
   m_PathRepresentation3D->SetColor( 0.0, 1.0, 0.0);
-  m_PathRepresentation3D->SetOpacity( 0.4 );
+  m_PathRepresentation3D->SetOpacity( 1 );
 
   /** Tool calibration transform */
   igstk::Transform toolCalibrationTransform;
@@ -613,8 +613,13 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->Display3D->RequestAddObject( m_PickedPointRepresentation->Copy() );
   this->Display3D->RequestAddObject( m_NeedleTipRepresentation->Copy() );
   this->Display3D->RequestAddObject( m_NeedleRepresentation->Copy() );
-  this->Display3D->RequestAddObject( m_NeedleHolderRepresentation->Copy() );
-  this->Display3D->RequestAddObject( m_BoxRepresentation->Copy() );
+  CylinderRepresentationType::Pointer needleHolderRep 
+                                    = m_NeedleHolderRepresentation->Copy();
+  needleHolderRep->SetOpacity(1.0);
+  this->Display3D->RequestAddObject( needleHolderRep );
+  BoxRepresentationType::Pointer boxRep = m_BoxRepresentation->Copy();
+  boxRep->SetOpacity(1.0);
+  this->Display3D->RequestAddObject( boxRep );
   this->Display3D->RequestAddAnnotation2D( m_Annotation2D );
 
 
@@ -784,7 +789,7 @@ void DeckOfCardRobot::DrawPathProcessing()
   float a = 0.0;
   if( this->CalculateRobotMovement() )
     {
-    a = 0.7;
+    a = 0.4;
     m_Path->Clear();
 
     TubePointType p;
@@ -820,7 +825,7 @@ void DeckOfCardRobot::DrawPathProcessing()
     m_PathRepresentation3D->RequestSetTubeObject( NULL );
     m_PathRepresentation3D->RequestSetTubeObject( m_Path );
     m_PathRepresentation3D->SetColor( 0.0, 1.0, 0.0 );
-    m_PathRepresentation3D->SetOpacity( a );
+    m_PathRepresentation3D->SetOpacity( 1 );
 
     this->DisplayAxial->RequestAddObject( m_PathRepresentationAxial );
     this->DisplaySagittal->RequestAddObject( m_PathRepresentationSagittal );
@@ -830,7 +835,6 @@ void DeckOfCardRobot::DrawPathProcessing()
     m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
     m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
     m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
-    //m_Box->RequestSetTransform( m_RobotTransformToBeSet );
     }
   else
     {
