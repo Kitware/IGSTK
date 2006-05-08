@@ -1110,9 +1110,10 @@ void DeckOfCardRobot::AnimateRobotMove( Transform TCurrent, Transform TToBeSet,
 
   for (int i=0; i<=steps; i++)
     {
-    translation = TCurrent.GetTranslation() + vect * (distance * i/steps)
+    // Interpolate quaternions
+    translation = TCurrent.GetTranslation() + vect * (distance * i/steps);
     
-    transform->SetTranslationAndRotation( translation, rotation, 0.1, -1 );
+    transform.SetTranslationAndRotation( translation, rotation, 0.1, -1 );
     Fl::wait(0.1);
     igstk::PulseGenerator::CheckTimeouts();
     }
