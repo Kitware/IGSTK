@@ -40,8 +40,8 @@ class DeckOfCardRobotGUI {open
         }
         Fl_Box DisplayOblique {
           label {Display Oblique} selected
-          xywh {550 345 380 330}
-          class {igstk::View3D}
+          xywh {550 345 380 330} hide
+          class {igstk::View2D}
         }
         Fl_Value_Slider AxialSlider {
           callback {this->RequestResliceImage();}

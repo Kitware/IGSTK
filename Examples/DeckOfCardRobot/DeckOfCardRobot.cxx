@@ -780,9 +780,10 @@ void DeckOfCardRobot::DrawPathProcessing()
     this->DisplayCoronal->RequestAddObject( m_PathRepresentationCoronal );
     this->Display3D->RequestAddObject( m_PathRepresentation3D );
 
-    m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
-    m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
-    m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
+    this->AnimateRobotMove( m_RobotTransform, m_RobotTransformToBeSet, 10);
+//    m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
+//    m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
+//    m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
     m_RobotCurrentTransform = m_RobotTransformToBeSet;
 
     Transform::VectorType  vect = m_TargetTransform.GetTranslation()
@@ -1101,19 +1102,35 @@ void DeckOfCardRobot::AnimateRobotMove( Transform TCurrent, Transform TToBeSet,
 
   // Calculate new transform to be set...
   Transform             transform;
-  Transform::VectorType vect, translation;
-  Transform::VersorType rotation;
+  Transform::VectorType vect, axis, translation;
+  Transform::VersorType versor, rotation;
+  double                angle;
   vect = TToBeSet.GetTranslation() - TCurrent.GetTranslation();
   double distance = vect.GetNorm();
   vect.Normalize();
 
+  versor = TToBeSet.GetRotation() / TCurrent.GetRotation();
+  versor.Normalize();
+  angle = versor.GetAngle();
+  axis = versor.GetAxis();
+  axis.Normalize();
 
   for (int i=0; i<=steps; i++)
     {
     // Interpolate quaternions
+    rotation.Set( axis, angle * i/steps );
+    rotation.Normalize();
+    rotation = rotation * TCurrent.GetRotation() ;
+
+    // Interpolate translation
     translation = TCurrent.GetTranslation() + vect * (distance * i/steps);
     
     transform.SetTranslationAndRotation( translation, rotation, 0.1, -1 );
+
+    m_NeedleTip->RequestSetTransform( transform );
+    m_Needle->RequestSetTransform( transform ); 
+    m_NeedleHolder->RequestSetTransform( transform );
+
     Fl::wait(0.1);
     igstk::PulseGenerator::CheckTimeouts();
     }
