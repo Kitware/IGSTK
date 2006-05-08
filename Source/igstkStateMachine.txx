@@ -489,11 +489,10 @@ StateMachine< TClass >
                                        m_Transitions.begin();
   while( transitionsFromThisState != m_Transitions.end() )
     {
-    TransitionsPerInputConstIterator  
-           transitionsFromThisStateAndInput =  
-                      transitionsFromThisState->second->begin();
+    TransitionsPerInputConstIterator transitionsFromThisStateAndInput =  
+                                    transitionsFromThisState->second->begin();
     while( transitionsFromThisStateAndInput != 
-           transitionsFromThisState->second->end() )
+                                     transitionsFromThisState->second->end() )
       {
       // find the label that identify the input.
       InputDescriptorType label;
@@ -655,7 +654,6 @@ StateMachine< TClass >
   StatesConstIterator  stateId = m_States.begin();
 
   //write scxml header
-
   ostr << "<?xml version=\"1.0\" encoding=\"us-ascii\"?>" << std::endl;
   ostr << "<scxml version=\"1.0\" xmlns=\"http://www.w3.org/2005/07/scxml\"";
   ostr << std::endl;
@@ -666,7 +664,6 @@ StateMachine< TClass >
     }
   ostr << ">" << std::endl;
 
-
   //end of scxml header
 
   //write scxml body
@@ -675,7 +672,7 @@ StateMachine< TClass >
     //write a state 
 
     ostr << "  <state id=";
-    ostr << "\"" << stateId->second <<"\">" << std::endl ;
+    ostr << "\"" << stateId->second <<"\">" << std::endl;
 
     // Search for existing Transitions for that State
     TransitionConstIterator transitionsFromThisState = m_Transitions.begin();
@@ -684,14 +681,13 @@ StateMachine< TClass >
       {
       if( stateId->first == transitionsFromThisState->first )
         {
-        TransitionsPerInputConstIterator  
-               transitionsFromThisStateAndInput =  
-                    transitionsFromThisState->second->begin();
+        TransitionsPerInputConstIterator transitionsFromThisStateAndInput =  
+                                    transitionsFromThisState->second->begin();
 
-      while( transitionsFromThisStateAndInput != 
-             transitionsFromThisState->second->end() )
-        {
-        // find the label that identifies the input.
+        while( transitionsFromThisStateAndInput != 
+                                     transitionsFromThisState->second->end() )
+          {
+          // find the label that identifies the input.
           InputDescriptorType label;
 
           InputConstIterator inputItr = m_Inputs.find( 
@@ -701,8 +697,7 @@ StateMachine< TClass >
             label = inputItr->second;
             }
 
-          if( !skipLoops ||
-               transitionsFromThisState->first !=
+          if( !skipLoops || transitionsFromThisState->first !=
                transitionsFromThisStateAndInput->second.GetStateIdentifier() )
             {
             StateIdentifierType newStateIdentifier = 
@@ -737,9 +732,8 @@ StateMachine< TClass >
 
     }
  
-    //write end tag of scxml file
-    ostr <<"</scxml>"<< std::endl;
-
+  //write end tag of scxml file
+  ostr <<"</scxml>"<< std::endl;
 }
 
 
