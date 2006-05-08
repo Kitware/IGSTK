@@ -82,9 +82,9 @@ public:
   igstkGetMacro( ShiftBy,      unsigned );
 
   vtkVolumeProperty * RequestGetVolumeProperty() 
-    { return m_VolumeProperty };
+    { return m_VolumeProperty; }
   void RequestSetVolumeProperty( vtkVolumeProperty * vp ) 
-    { m_VolumeProperty = vp };
+    { m_VolumeProperty = vp; }
 
   /** Type used for representing the slice number */
   typedef unsigned int SliceNumberType;

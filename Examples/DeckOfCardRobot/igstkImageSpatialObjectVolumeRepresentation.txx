@@ -273,7 +273,8 @@ ImageSpatialObjectVolumeRepresentation< TImageSpatialObject >
   igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
                         ::Copy called...\n");
 
-  Pointer newOR = ImageSpatialObjectRepresentation::New();
+  Pointer newOR = 
+         ImageSpatialObjectVolumeRepresentation<TImageSpatialObject>::New();
   newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue()); //FIXME
   newOR->SetOpacity(this->GetOpacity());
   newOR->RequestSetImageSpatialObject(m_ImageSpatialObject);
