@@ -103,7 +103,7 @@ bool RobotCommunication::Init()
   m_Logger->AddLogOutput( m_LogOutput );
   m_Logger->SetPriorityLevel( itk::Logger::DEBUG );
 
-  m_Client->SetLogger( m_Logger );
+ // m_Client->SetLogger( m_Logger );
   m_Client->SetCaptureFileName("client1.log");
   m_Client->SetCapture( true );
 
@@ -141,29 +141,34 @@ bool RobotCommunication::Init()
   
   
 
-  if (!ASYNCMODE) 
-  {
-    // turns off asynchronous mode if ASYNCMODE is false
-    m_Client->RequestWrite("@SEND_ASYNC_EVENTS;0\r\n");
-    m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
-    buffer[num]='\0';
-    // checks to see if command was successful
-    if ( GetResFlag(buffer, 2) == APIRESFLAG_OK )
-    {
-      AsyncCommandSuccessful = true;
-    }
-    else
-      AsyncCommandSuccessful = true;
+//  if (!ASYNCMODE) 
+//  {
+//    // turns off asynchronous mode if ASYNCMODE is false
+//    m_Client->RequestWrite("@SEND_ASYNC_EVENTS;0\r\n");
+//    m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
+//    buffer[num]='\0';
+//    // checks to see if command was successful
+//    if ( GetResFlag(buffer, 2) == APIRESFLAG_OK )
+//      {
+//        AsyncCommandSuccessful = true;
+//      }
+//    else
+//      {
+//        AsyncCommandSuccessful = false;
+//      }
+//  }
 
+   AsyncCommandSuccessful = true;
+   LoginSuccessful = true;
     if ( LoginSuccessful && AsyncCommandSuccessful )   
-    {
-      return true;
-    }
+      {
+        return true;
+      }
     else
-    {
-      return false;
-    }
-  }
+      {
+        return false;
+      }
+
 }
 
 // logs out of robot and closes socket

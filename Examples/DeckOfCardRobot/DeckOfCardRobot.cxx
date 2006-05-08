@@ -287,6 +287,8 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
                                                           PathReady, DrawPath );
 
   /** Robot commanding */
+  igstkAddTransitionMacro( Initial, RequestConnectToRobot, 
+                              AttemptingConnectToRobot, ConnectToRobot ); //FIXME
   igstkAddTransitionMacro( PathReady, RequestConnectToRobot, 
                                      AttemptingConnectToRobot, ConnectToRobot );
 
@@ -311,8 +313,15 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   igstkAddTransitionMacro( AttemptingTargetingRobot, TargetingRobotSuccess, 
                                                               RobotReady, No );
 
-  igstkAddTransitionMacro( AttemptingTargetingRobot, HomeRobotFailure, 
+  igstkAddTransitionMacro( AttemptingTargetingRobot, TargetingRobotFailure, 
                                                    RobotConnected, HomeRobot );
+
+  igstkAddTransitionMacro( RobotHomed, RequestHomeRobot, 
+                                                AttemptingHomeRobot, HomeRobot );
+  igstkAddTransitionMacro( RobotReady, RequestHomeRobot, 
+                                                AttemptingHomeRobot, HomeRobot );
+  igstkAddTransitionMacro( RobotReady, RequestTargetingRobot, 
+                                           AttemptingTargetingRobot, TargetingRobot );
 
   igstkAddTransitionMacro( RobotConnected, RequestSetTargetPoint, 
                                                     RobotConnected, DrawPath );
@@ -794,7 +803,7 @@ void DeckOfCardRobot::DrawPathProcessing()
     this->NeedleSlider->value( 0 );
     this->NeedleSlider->activate();
 
-    this->CreateObliqueView();
+    //this->CreateObliqueView();
 
     this->ViewerGroup->redraw();
     Fl::check();
@@ -816,7 +825,7 @@ void DeckOfCardRobot::DrawPathProcessing()
     // FIXME
     //m_Annotation2D->RequestAddAnnotationText( 1, "Unreachable position" );
 
-    this->DisableObliqueView();
+    //this->DisableObliqueView();
 
     this->ViewerGroup->redraw();
     Fl::check();
@@ -869,12 +878,15 @@ void DeckOfCardRobot::TargetingRobotProcessing()
 
   igstkLogMacro2( logger, DEBUG, 
                "DeckOfCardRobot::TargetingRobotProcessing called...\n" )
+
+  std::cout << "Robot translation: " << m_Translation[0] << "," 
+               << m_Translation[1] << std::endl;
+  std::cout << "Robot rotation: " << m_Rotation[0] << "," 
+               << m_Rotation[1] << std::endl;
   
   m_StateMachine.PushInputBoolean( 
                    m_Robot->MoveRobotCoordinates( m_Translation, m_Rotation ), 
                   m_TargetingRobotSuccessInput, m_TargetingRobotFailureInput);
-
-  this->AnimateRobotMove( m_RobotCurrentTransform, m_RobotTransformToBeSet, 10);
 }
 
 bool DeckOfCardRobot::CalculateRobotMovement()
@@ -898,17 +910,17 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   // Planed Path equation:  p = rPT + u * ( rPE - rPT)
   // Robot Plane equation:  p * normal = k;  => normal = {0,0,1}, k = 0
   // u = (k - rPT * normal) / ( (rPE - rPT) * normal)
-  // u = - rPT[2]/ (rPE[2]-rPT[2])
+  // u = -rPT[2]/ (rPE[2] - rPT[2])
   double u = - rPT[2] / ( rPE[2] - rPT[2]);
   pIntersect = rPT + ( rPE - rPT ) * u;
 
   // Robot translational movement
-  m_Translation[0] = pIntersect[0]; 
-  m_Translation[1] = pIntersect[1];
+  m_Translation[0] = - pIntersect[0];   //FIXME why reverse?
+  m_Translation[1] = - pIntersect[1];
   m_Translation[2] = 0;
 
   // Calculate robot rotation axis-angle
-  pVect1[0] = 0;  pVect1[1] = 0;  pVect1[2] = -1;
+  pVect1[0] = 0;  pVect1[1] = 0;  pVect1[2] = 1;
   pVect2 = rPE - rPT;
   pVect2.Normalize();
   
@@ -920,30 +932,44 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   axis = itk::CrossProduct( pVect1, pVect2);
   axis.Normalize();
   
-  // Translate angle-axis into quaternion
-  rotation.Set( axis, angle );
-  rotation.Normalize();
-
   // Translate angle-axis to two rotation around X and Y axis
-  m_Rotation[0] = acos( (1-cos(angle))*axis[1]*axis[1] + cos(angle) );
-  m_Rotation[1] = acos( (1-cos(angle))*axis[0]*axis[0] + cos(angle) );
-  m_Rotation[2] = 0;
+  int rotateXfirst = false;  //-1
+  double c = cos( angle );
+  double t  = 1-c;
+  double s = sin( angle );
+  double x, y, z;
+  x = axis[0];  y=axis[1]; z=axis[2];
 
+  if ( rotateXfirst )
+    {
+    m_Rotation[0] =  atan2( t*y*z + x*s,  t*y*y + c );
+    m_Rotation[1] =  atan2( t*x*z + y*s,  t*x*x + c );
+    }
+    else
+    {
+      m_Rotation[0] = - atan2( t*y*z - x*s,  t*y*y + c );
+      m_Rotation[1] = - atan2( t*x*z - y*s,  t*x*x + c );
+    }
+  
   for (int i=0; i<3; i++)
     {
-    m_Rotation[i] = m_Rotation[i] * 180 / PI; // To degree
+    m_Rotation[i] = m_Rotation[i] * 180 / PI;  // To degree
     if ( m_Rotation[i] > 90)
       {
       m_Rotation[i] = m_Rotation[i] - 180;    // Flip the rotation angle
       }
     }
-  
+
   // Compose the new robot transform
   for (int i=0; i<3; i++)
     {
     translation[i] = pIntersect[i];
     }
   
+    // Translate angle-axis into quaternion
+    rotation.Set( axis, angle );
+    rotation.Normalize();
+
   // Transform it to CT coordinate system
   rotation = m_RobotTransform.GetRotation()*rotation;
   translation = m_RobotTransform.GetRotation().Transform(translation);
@@ -961,15 +987,13 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   m_Reachable = true;
   for (int i=0; i<3; i++)
     {
-    if ( ( abs (m_Translation[i]) > 19 ) || 
-         ( abs (m_Rotation[i]) > ( 30 /** PI / 180*/ ) ) )
+    if ( ( abs (m_Translation[i]) > 19 ) || ( abs (m_Rotation[i]) > 30 ) )
       {
       m_Reachable = false;
       break;
       }
     }
   return m_Reachable;
-
 }
 
 void DeckOfCardRobot::RequestInsertNeedle()
