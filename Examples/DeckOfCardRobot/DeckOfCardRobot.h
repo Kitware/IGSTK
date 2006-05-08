@@ -34,6 +34,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkCTImageSpatialObject.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkImageSpatialObjectVolumeRepresentation.h"
+#include "igstkObliqueImageSpatialObjectRepresentation.h"
 
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
@@ -72,6 +73,8 @@ public:
   typedef CTImageSpatialObjectRepresentation            ImageRepresentationType;
   typedef ImageSpatialObjectVolumeRepresentation< CTImageSpatialObject>
                                                        VolumeRepresentationType;
+  typedef ObliqueImageSpatialObjectRepresentation< CTImageSpatialObject >
+                                                      ObliqueRepresentationType;
 
   /** Public request methods from the GUI. */
   virtual void RequestLoadImage();
@@ -83,6 +86,7 @@ public:
   virtual void RequestHomeRobot();
   virtual void RequestTargetingRobot();
   virtual void RequestResliceImage();
+  virtual void RequestInsertNeedle();
 
 
   /** Methods for Converting Events into State Machine Inputs */
@@ -112,7 +116,6 @@ private:
   igstkDeclareStateMacro( ImageReady );
 
   igstkDeclareStateMacro( AttemptingRegistration );
-  igstkDeclareStateMacro( EvaluatingRegistrationError );
   igstkDeclareStateMacro( LandmarkRegistrationReady );
 
   igstkDeclareStateMacro( TargetPointReady );
@@ -135,8 +138,6 @@ private:
   igstkDeclareInputMacro( RequestRegistration );
   igstkDeclareInputMacro( RegistrationSuccess );
   igstkDeclareInputMacro( RegistrationFailure );
-  igstkDeclareInputMacro( RegistrationErrorAccepted );
-  igstkDeclareInputMacro( RegistrationErrorRejected );
 
   igstkDeclareInputMacro( RequestSetTargetPoint );
   igstkDeclareInputMacro( RequestSetEntryPoint  );
@@ -185,8 +186,9 @@ private:
   ImageRepresentationType::Pointer    m_ImageRepresentationAxial;
   ImageRepresentationType::Pointer    m_ImageRepresentationCoronal;
   ImageRepresentationType::Pointer    m_ImageRepresentationSagittal;
-
+  
   VolumeRepresentationType::Pointer   m_ImageRepresentation3D;
+  ObliqueRepresentationType::Pointer  m_ImageRepresentationOblique;
 
   /** Registration */
   DOCR_Registration *                 m_Registration;
@@ -198,6 +200,7 @@ private:
   /** To store the transform of the image and tracker landmark points */
   Transform                                    m_ImageLandmarkTransformToBeSet;
   Transform                                    m_RobotTransform;
+  Transform                                    m_RobotCurrentTransform;
   Transform                                    m_RobotTransformToBeSet;
 
   /** Observer type for loaded event, 
@@ -268,9 +271,6 @@ private:
 
   void RegistrationProcessing();
 
-  void EvaluatingRegistrationErrorProcessing();
-  void ResetRegistrationProcessing();
-  
   void DrawTargetPointProcessing();
   void DrawPathProcessing();
 
@@ -285,6 +285,9 @@ private:
   void ResliceImage();
   void ResliceImage( ITKImageType::IndexType index );
   bool CalculateRobotMovement();
+  void CreateObliqueView();
+  void DisableObliqueView();
+  void AnimateRobotMove( Transform TCurrent, Transform TToBeSet, int steps);
 
 };
 

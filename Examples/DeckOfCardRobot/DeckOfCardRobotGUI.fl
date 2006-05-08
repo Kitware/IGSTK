@@ -11,12 +11,12 @@ class DeckOfCardRobotGUI {open
     Fl_Window mainWindow {
       label {IGSTK: Deck of Card Robot}
       callback {Quit();} open
-      xywh {169 34 930 732} type Double box PLASTIC_UP_BOX resizable
+      xywh {258 33 930 732} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
     } {
-      Fl_Group ViewerGroup {
-        xywh {165 0 768 692} box DOWN_BOX
+      Fl_Group ViewerGroup {open
+        xywh {164 0 771 696} box DOWN_BOX
       } {
         Fl_Box DisplayAxial {
           label {Display Axial}
@@ -38,9 +38,14 @@ class DeckOfCardRobotGUI {open
           xywh {165 345 380 330} box FLAT_BOX color 0 labelcolor 7
           class {igstk::View2D}
         }
+        Fl_Box DisplayOblique {
+          label {Display Oblique} selected
+          xywh {550 345 380 330}
+          class {igstk::View3D}
+        }
         Fl_Value_Slider AxialSlider {
           callback {this->RequestResliceImage();}
-          xywh {165 330 378 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
+          xywh {164 330 378 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
         }
         Fl_Value_Slider SagittalSlider {
           callback {this->RequestResliceImage();}
@@ -48,7 +53,27 @@ class DeckOfCardRobotGUI {open
         }
         Fl_Value_Slider CoronalSlider {
           callback {this->RequestResliceImage();}
-          xywh {165 676 380 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
+          xywh {164 675 380 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
+        }
+        Fl_Value_Slider NeedleSlider {
+          callback {this->RequestInsertNeedle();}
+          xywh {550 675 350 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
+        }
+        Fl_Menu_Button SwitchingView {open
+          xywh {899 675 30 15} box EMBOSSED_BOX
+        } {
+          menuitem {} {
+            label 3D
+            callback {Display3D->show();
+DisplayOblique->hide();}
+            xywh {5 5 100 20} type Radio value 1
+          }
+          menuitem {} {
+            label Obliq
+            callback {Display3D->hide();
+DisplayOblique->show();}
+            xywh {5 5 100 20} type Radio
+          }
         }
       }
       Fl_Text_Display m_LogWindow {
@@ -60,7 +85,7 @@ class DeckOfCardRobotGUI {open
         Fl_Light_Button LoadImageButton {
           label {Load Image}
           callback {RequestLoadImage();}
-          xywh {15 35 130 25} box PLASTIC_UP_FRAME labelsize 11
+          xywh {15 25 130 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Light_Button QuitButton {
           label Quit
@@ -69,52 +94,65 @@ class DeckOfCardRobotGUI {open
         }
         Fl_Group {} {
           label {Path Planning}
-          xywh {15 250 140 135} box EMBOSSED_FRAME labelsize 11 align 17
+          xywh {11 181 141 117} box EMBOSSED_FRAME labelsize 11 align 17
         } {
           Fl_Light_Button {} {
             label {Target Point}
             callback {RequestSetTargetPoint();}
-            xywh {20 285 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 1
+            xywh {16 211 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
           }
           Fl_Light_Button {} {
             label {Entry Point}
             callback {RequestSetEntryPoint();}
-            xywh {20 335 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 4
+            xywh {16 257 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
           }
-        }
-        Fl_Light_Button RobotRegistration {
-          label Registration
-          callback {RequestRegistration();}
-          xywh {15 155 130 25} box PLASTIC_UP_FRAME labelsize 11
         }
         Fl_Group {} {
           label {Robot Control}
-          xywh {13 409 140 186} box EMBOSSED_FRAME labelsize 11 align 17
+          xywh {11 439 140 174} box EMBOSSED_FRAME labelsize 11 align 17
         } {
           Fl_Light_Button {} {
             label Home
             callback {RequestHomeRobot();}
-            xywh {18 493 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
+            xywh {16 521 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
           }
           Fl_Light_Button {} {
             label Targeting
-            callback {RequestTargetingRobot();} selected
-            xywh {18 548 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
+            callback {RequestTargetingRobot();}
+            xywh {16 570 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
           }
           Fl_Light_Button {} {
             label {Connect to Robot}
             callback {RequestConnectToRobot();}
-            xywh {20 445 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
+            xywh {16 471 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
           }
         }
         Fl_Light_Button SetROI {
           label {Locate End Factor}
           callback {RequestSetROI();}
-          xywh {15 95 130 25} box PLASTIC_UP_FRAME labelsize 11 deactivate
+          xywh {15 3 130 25} box PLASTIC_UP_FRAME labelsize 11 hide deactivate
         }
-        Fl_Value_Output RegistrationError {
-          label {Error:}
-          xywh {90 200 45 25} box DOWN_BOX labelsize 11 maximum 1000 step 0.001 textfont 1
+        Fl_Group {} {
+          label {Biopsy Simulation}
+          xywh {11 323 140 95} box EMBOSSED_FRAME labelsize 11 align 17
+        } {
+          Fl_Value_Output TargetDistance {
+            label {Distance to Target (mm)}
+            xywh {45 373 65 25} box DOWN_BOX labelsize 11 align 1 maximum 1000 step 0.01 textfont 1
+          }
+        }
+        Fl_Group {} {
+          xywh {10 73 140 84} box EMBOSSED_FRAME labelsize 11 align 17
+        } {
+          Fl_Light_Button RobotRegistration {
+            label Registration
+            callback {RequestRegistration();}
+            xywh {15 83 130 25} box PLASTIC_UP_FRAME labelsize 11
+          }
+          Fl_Value_Output RegistrationError {
+            label {Error:}
+            xywh {95 122 45 25} box DOWN_BOX labelsize 11 maximum 1000 step 0.001 textfont 1
+          }
         }
       }
     }
@@ -166,4 +204,6 @@ else
   } {
     code {return this->hasQuitted;} {}
   }
+  Function {RequestInsertNeedle()} {open return_type {virtual void}
+  } {}
 } 

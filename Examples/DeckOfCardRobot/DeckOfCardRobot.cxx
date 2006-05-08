@@ -87,7 +87,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_PickedPoint                   = EllipsoidType::New();
   m_PickedPoint->RequestSetTransform( transform );
   m_PickedPointRepresentation     = EllipsoidRepresentationType::New();
-  m_PickedPoint->SetRadius( 5, 5, 5 );  
+  m_PickedPoint->SetRadius( 4, 4, 4 );  
   m_PickedPointRepresentation->RequestSetEllipsoidObject( m_PickedPoint );
   m_PickedPointRepresentation->SetColor(1.0,1.0,0.0);
   m_PickedPointRepresentation->SetOpacity(1.0);
@@ -95,7 +95,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_NeedleTip                   = EllipsoidType::New();
   m_NeedleTip->RequestSetTransform( transform );
   m_NeedleTipRepresentation     = EllipsoidRepresentationType::New();
-  m_NeedleTip->SetRadius( 5, 5, 5 );  
+  m_NeedleTip->SetRadius( 4, 4, 4 );  
   m_NeedleTipRepresentation->RequestSetEllipsoidObject( m_NeedleTip );
   m_NeedleTipRepresentation->SetColor(1.0,0.0,0.0);
   m_NeedleTipRepresentation->SetOpacity(1.0);
@@ -129,7 +129,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_TargetPoint                 = EllipsoidType::New();
   m_TargetPoint->RequestSetTransform( transform );
   m_TargetRepresentation        = EllipsoidRepresentationType::New();
-  m_TargetPoint->SetRadius( 6, 6, 6 );
+  m_TargetPoint->SetRadius( 3, 3, 3 );
   m_TargetRepresentation->RequestSetEllipsoidObject( m_TargetPoint );
   m_TargetRepresentation->SetColor( 1.0, 0.0, 0.0);
   m_TargetRepresentation->SetOpacity( 1 );
@@ -137,7 +137,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_EntryPoint                  = EllipsoidType::New();
   m_EntryPoint->RequestSetTransform( transform );
   m_EntryRepresentation         = EllipsoidRepresentationType::New();
-  m_EntryPoint->SetRadius( 6, 6, 6 );
+  m_EntryPoint->SetRadius( 3, 3, 3 );
   m_EntryRepresentation->RequestSetEllipsoidObject( m_EntryPoint );
   m_EntryRepresentation->SetColor( 0.0, 0.0, 1.0);
   m_EntryRepresentation->SetOpacity( 1 );
@@ -145,7 +145,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_Path                       = PathType::New();
   TubePointType p;
   p.SetPosition( 0, 0, 0);
-  p.SetRadius( 2 );
+  p.SetRadius( 1 );
   m_Path->AddPoint( p );
   m_Path->AddPoint( p );
 
@@ -169,15 +169,6 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_PathRepresentation3D->SetColor( 0.0, 1.0, 0.0);
   m_PathRepresentation3D->SetOpacity( 1 );
 
-  /** Tool calibration transform */
-  igstk::Transform toolCalibrationTransform;
-  
-  igstk::Transform::VectorType translation;
-  translation[0] = -18.0;   // Tip offset
-  translation[1] = 0.5;
-  translation[2] = -157.5;
-
-
   m_ViewPickerObserver = ObserverType::New();
   m_ViewPickerObserver->SetCallbackFunction( this, 
                                              &DeckOfCardRobot::DrawPickedPoint );
@@ -190,6 +181,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_ImageRepresentationSagittal = ImageRepresentationType::New();
   m_ImageRepresentationCoronal  = ImageRepresentationType::New();
   m_ImageRepresentation3D       = VolumeRepresentationType::New();
+  m_ImageRepresentationOblique  = ObliqueRepresentationType::New();
 
   /** Set logger */
   if(0) // Temporary disable this logger
@@ -202,6 +194,8 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
     m_ImageRepresentationAxial->SetLogger( logger );
     m_ImageRepresentationSagittal->SetLogger( logger );
     m_ImageRepresentationCoronal->SetLogger( logger );
+    m_ImageRepresentation3D->SetLogger( logger );
+    m_ImageRepresentationOblique->SetLogger( logger );
     }
 
   this->ObserveAxialBoundsInput(    m_ImageRepresentationAxial    );
@@ -213,7 +207,6 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   igstkAddStateMacro( WaitingForDICOMDirectory   );
   igstkAddStateMacro( ImageReady                 );
   igstkAddStateMacro( AttemptingRegistration     );
-  igstkAddStateMacro( EvaluatingRegistrationError);
   igstkAddStateMacro( LandmarkRegistrationReady  );
   igstkAddStateMacro( TargetPointReady           );
   igstkAddStateMacro( PathReady                  );
@@ -232,8 +225,6 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   igstkAddInputMacro( RequestRegistration          );
   igstkAddInputMacro( RegistrationSuccess          );
   igstkAddInputMacro( RegistrationFailure          );
-  igstkAddInputMacro( RegistrationErrorAccepted    );
-  igstkAddInputMacro( RegistrationErrorRejected    );
 
   igstkAddInputMacro( RequestSetTargetPoint        );
   igstkAddInputMacro( RequestSetEntryPoint         );
@@ -273,26 +264,16 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
                                     ImageReady, SetCoronalSliderBounds );
     
   /** Registration */
-  igstkAddTransitionMacro( Initial, RequestRegistration, 
-                                  AttemptingRegistration, Registration );//FIXME
   igstkAddTransitionMacro( ImageReady, RequestRegistration, 
                                          AttemptingRegistration, Registration );
   
   igstkAddTransitionMacro( AttemptingRegistration, RegistrationSuccess, 
-                     EvaluatingRegistrationError, EvaluatingRegistrationError );
+                                                LandmarkRegistrationReady, No );
 
   igstkAddTransitionMacro( AttemptingRegistration, RegistrationFailure, 
-                                                               ImageReady, No );
-
-  igstkAddTransitionMacro( EvaluatingRegistrationError, 
-                     RegistrationErrorAccepted, LandmarkRegistrationReady, No );
- 
-  igstkAddTransitionMacro( EvaluatingRegistrationError, 
-                     RegistrationErrorRejected, ImageReady, ResetRegistration );
+                                                               ImageReady, No );;
 
   /** Path Planning */
-  igstkAddTransitionMacro( ImageReady, RequestSetTargetPoint, 
-                                            TargetPointReady, DrawTargetPoint );
   igstkAddTransitionMacro( LandmarkRegistrationReady, RequestSetTargetPoint, 
                                             TargetPointReady, DrawTargetPoint );
   igstkAddTransitionMacro( TargetPointReady, RequestSetTargetPoint, 
@@ -476,6 +457,9 @@ void DeckOfCardRobot::RegistrationProcessing()
                                         m_Registration->m_meanRegistrationError,
                                         -1);
 
+    this->RegistrationError->value( m_Registration->m_meanRegistrationError );
+    m_RobotTransform = m_RobotTransformToBeSet;
+    m_RobotCurrentTransform = m_RobotTransformToBeSet;
     m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
     m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
     m_Box->RequestSetTransform( m_RobotTransformToBeSet );
@@ -488,42 +472,6 @@ void DeckOfCardRobot::RegistrationProcessing()
     igstkPushInputMacro( RegistrationFailure );
     }
 }
-
-void DeckOfCardRobot::EvaluatingRegistrationErrorProcessing()
-{
-  igstkLogMacro (         DEBUG, "Evaluating registration error....\n" )
-  igstkLogMacro2( logger, DEBUG, "Evaluating registration error....\n" )
-  
-  //FIXME, move the needle to registered position
-  char temp[255];
-  double error = m_Registration->m_meanRegistrationError;
-  sprintf( temp, "Registration error (RMS) = %f\n", error );
-  std::string msg = temp;
-  msg += "Accept this registration result?";
-  int i = fl_choice( msg.c_str(), NULL, "Yes", "No" );
-  if ( i==1 )
-    {
-    this->RegistrationError->value( error );
-    m_RobotTransform = m_RobotTransformToBeSet;
-    m_StateMachine.PushInput( m_RegistrationErrorAcceptedInput );
-    }
-  else
-    {
-    m_StateMachine.PushInput( m_RegistrationErrorRejectedInput );
-    }
-}
-
-void DeckOfCardRobot::ResetRegistrationProcessing()
-{
-  this->RegistrationError->value( 0.0 );
-  m_RobotTransformToBeSet.SetToIdentity(-1);
-  m_RobotTransform.SetToIdentity(-1);
-  m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
-  m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
-  m_Box->RequestSetTransform( m_RobotTransformToBeSet );
-
-}
-
 
 void DeckOfCardRobot::RequestResliceImage()
 {
@@ -564,7 +512,6 @@ void DeckOfCardRobot::ResliceImage ( ITKImageType::IndexType index )
  *  name has been verified */
 void DeckOfCardRobot::ConnectImageRepresentationProcessing()
 {
-  //m_Annotation2D->RequestAddAnnotationText( 2, "Demo: Deck of Card Robot");
   m_Annotation2D->RequestAddAnnotationText( 0, "Georgetown ISIS Center" );
 
   m_ImageRepresentationAxial->RequestSetImageSpatialObject( 
@@ -791,18 +738,19 @@ void DeckOfCardRobot::DrawPathProcessing()
     {
     a = 0.4;
     m_Path->Clear();
+    //m_Annotation2D->RequestAddAnnotationText( 1, "" ); // FIXME
 
     TubePointType p;
     Transform::VectorType v;
 
     v = m_EntryTransform.GetTranslation();
     p.SetPosition( v[0], v[1], v[2]);
-    p.SetRadius( 2 );
+    p.SetRadius( 1 );
     m_Path->AddPoint( p );
 
     v = m_TargetTransform.GetTranslation();
     p.SetPosition( v[0], v[1], v[2]);
-    p.SetRadius( 2.1 ); //FIXME
+    p.SetRadius( 1.01 ); //FIXME
     m_Path->AddPoint( p );
 
     this->DisplayAxial->RequestRemoveObject( m_PathRepresentationAxial );
@@ -835,6 +783,20 @@ void DeckOfCardRobot::DrawPathProcessing()
     m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
     m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
     m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
+    m_RobotCurrentTransform = m_RobotTransformToBeSet;
+
+    Transform::VectorType  vect = m_TargetTransform.GetTranslation()
+                                    - m_RobotCurrentTransform.GetTranslation();
+    double distance = vect.GetNorm();
+    this->TargetDistance->value( distance );
+    this->NeedleSlider->maximum( (int) (distance+5) );
+    this->NeedleSlider->value( 0 );
+    this->NeedleSlider->activate();
+
+    this->CreateObliqueView();
+
+    this->ViewerGroup->redraw();
+    Fl::check();
     }
   else
     {
@@ -842,6 +804,21 @@ void DeckOfCardRobot::DrawPathProcessing()
     m_PathRepresentationSagittal->SetOpacity( a );
     m_PathRepresentationCoronal->SetOpacity( a );
     m_PathRepresentation3D->SetOpacity( a );
+
+    m_NeedleTip->RequestSetTransform( m_RobotTransform );
+    m_Needle->RequestSetTransform( m_RobotTransform ); 
+    m_NeedleHolder->RequestSetTransform( m_RobotTransform );
+    m_RobotCurrentTransform = m_RobotTransform;
+    this->NeedleSlider->maximum(0);
+    this->NeedleSlider->value( 0 );
+    this->NeedleSlider->deactivate();
+    // FIXME
+    //m_Annotation2D->RequestAddAnnotationText( 1, "Unreachable position" );
+
+    this->DisableObliqueView();
+
+    this->ViewerGroup->redraw();
+    Fl::check();
     std::cout << "Path not reachable by robot" << std::endl;
     }
 }
@@ -895,6 +872,8 @@ void DeckOfCardRobot::TargetingRobotProcessing()
   m_StateMachine.PushInputBoolean( 
                    m_Robot->MoveRobotCoordinates( m_Translation, m_Rotation ), 
                   m_TargetingRobotSuccessInput, m_TargetingRobotFailureInput);
+
+  this->AnimateRobotMove( m_RobotCurrentTransform, m_RobotTransformToBeSet, 10);
 }
 
 bool DeckOfCardRobot::CalculateRobotMovement()
@@ -992,4 +971,152 @@ bool DeckOfCardRobot::CalculateRobotMovement()
 
 }
 
+void DeckOfCardRobot::RequestInsertNeedle()
+{
+  // Calculate new transform to be set...
+  Transform::VectorType vect, translation;
+  
+  vect = m_TargetTransform.GetTranslation()
+       - m_RobotCurrentTransform.GetTranslation();
+  vect.Normalize();
+
+  translation = m_RobotCurrentTransform.GetTranslation() 
+              + vect * this->NeedleSlider->value();
+  
+  m_RobotTransformToBeSet = m_RobotCurrentTransform;
+  m_RobotTransformToBeSet.SetTranslation( translation, 0.1, -1);
+
+  m_Needle->RequestSetTransform( m_RobotTransformToBeSet );
+  m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
+
+  // Update target distance
+  Transform::VectorType vect2 = m_TargetTransform.GetTranslation()
+                              - m_EntryTransform.GetTranslation();
+  double distance2 = vect2.GetNorm();
+
+  vect2 = m_TargetTransform.GetTranslation()
+        - m_RobotTransformToBeSet.GetTranslation();
+
+ double distance = vect2.GetNorm(); 
+  if( ( vect * vect2) < 0 )
+    {
+    distance *= -1;
+    }
+
+  if ( distance > distance2 )
+    {
+    TargetDistance->textcolor( FL_BLACK );
+    }
+  else if ( distance > 10 )
+    {
+    TargetDistance->textcolor( FL_YELLOW );
+    }
+  else if ( distance > 0 )
+    {
+    TargetDistance->textcolor( FL_BLUE );
+    }
+  else
+    {
+    TargetDistance->textcolor( FL_RED );
+    }
+  this->TargetDistance->value( distance );
+
+  // Calculate index
+  ImageSpatialObjectType::PointType    p;
+  p[0] = translation[0];
+  p[1] = translation[1];
+  p[2] = translation[2];
+  ImageSpatialObjectType::IndexType index;
+  m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
+
+  ResliceImage( index );
+
+  if ( this->DisplayOblique->visible())
+    {
+    m_ImageRepresentationOblique->RequestSetOriginPointOnThePlane( p );
+    m_ImageRepresentationOblique->RequestReslice();  
+    this->DisplayOblique->Update();
+    }
+}
+
+void DeckOfCardRobot::CreateObliqueView()
+{
+  Transform::VectorType o, v1, v2, p;
+  o.Fill( 0 );
+  o = m_RobotCurrentTransform.GetRotation().Transform(o);
+  o += m_RobotCurrentTransform.GetTranslation();
+
+  v1.Fill( 0 );
+  v1[0] = 1;
+  v1 = m_RobotCurrentTransform.GetRotation().Transform(v1);
+  v1 += m_RobotCurrentTransform.GetTranslation();
+  v1 -= o;
+  v1.Normalize();
+
+  v2.Fill( 0 );
+  v2[1] = -1;
+  v2 = m_RobotCurrentTransform.GetRotation().Transform(v2);
+  v2 += m_RobotCurrentTransform.GetTranslation();
+  v2 -= o;
+  v2.Normalize();
+
+  // Set oblique plane parameters
+  m_ImageRepresentationOblique->RequestSetImageSpatialObject( 
+                                                          m_ImageSpatialObject );
+  ObliqueRepresentationType::PointType  point;
+  point[0] = o[0];
+  point[1] = o[1];
+  point[2] = o[2];
+
+  m_ImageRepresentationOblique->RequestSetOriginPointOnThePlane( point );
+  m_ImageRepresentationOblique->RequestSetVector1OnThePlane( v1 );
+  m_ImageRepresentationOblique->RequestSetVector2OnThePlane( v2 );
+  this->DisplayOblique->RequestAddObject( m_ImageRepresentationOblique );
+  m_ImageRepresentationOblique->RequestReslice(); 
+  
+  this->DisplayOblique->RequestResetCamera();
+  this->DisplayOblique->Update();
+  this->DisplayOblique->RequestEnableInteractions();
+  this->DisplayOblique->RequestSetRefreshRate( 30 ); // 30 Hz
+  this->DisplayOblique->RequestStart();  
+  
+}
+
+void DeckOfCardRobot::DisableObliqueView()
+{
+  m_ImageRepresentationOblique->RequestSetImageSpatialObject( NULL );
+  this->DisplayOblique->RequestRemoveObject( m_ImageRepresentationOblique );
+  this->DisplayOblique->RequestDisableInteractions();
+  this->DisplayOblique->RequestStop();
+}
+
+void DeckOfCardRobot::AnimateRobotMove( Transform TCurrent, Transform TToBeSet, 
+                                                                     int steps )
+{
+  m_Needle->RequestSetTransform( TCurrent );
+  m_NeedleTip->RequestSetTransform( TCurrent );
+  m_NeedleHolder->RequestSetTransform( TCurrent );
+  Fl::wait(0.1);
+  igstk::PulseGenerator::CheckTimeouts();
+
+  // Calculate new transform to be set...
+  Transform             transform;
+  Transform::VectorType vect, translation;
+  Transform::VersorType rotation;
+  vect = TToBeSet.GetTranslation() - TCurrent.GetTranslation();
+  double distance = vect.GetNorm();
+  vect.Normalize();
+
+
+  for (int i=0; i<=steps; i++)
+    {
+    translation = TCurrent.GetTranslation() + vect * (distance * i/steps)
+    
+    transform->SetTranslationAndRotation( translation, rotation, 0.1, -1 );
+    Fl::wait(0.1);
+    igstk::PulseGenerator::CheckTimeouts();
+    }
+
+
+}
 } // end of namespace
