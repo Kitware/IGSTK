@@ -467,11 +467,12 @@ void DeckOfCardRobot::RegistrationProcessing()
                                         -1);
 
     this->RegistrationError->value( m_Registration->m_meanRegistrationError );
-    m_RobotTransform = m_RobotTransformToBeSet;
-    m_RobotCurrentTransform = m_RobotTransformToBeSet;
     m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
+    m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
     m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
     m_Box->RequestSetTransform( m_RobotTransformToBeSet );
+    m_RobotTransform = m_RobotTransformToBeSet;
+    m_RobotCurrentTransform = m_RobotTransformToBeSet;
     Fl::wait(0.01);
     igstk::PulseGenerator::CheckTimeouts();
     igstkPushInputMacro( RegistrationSuccess );
@@ -789,10 +790,10 @@ void DeckOfCardRobot::DrawPathProcessing()
     this->DisplayCoronal->RequestAddObject( m_PathRepresentationCoronal );
     this->Display3D->RequestAddObject( m_PathRepresentation3D );
 
-    this->AnimateRobotMove( m_RobotTransform, m_RobotTransformToBeSet, 10);
-//    m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
-//    m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
-//    m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
+    AnimateRobotMove( m_RobotCurrentTransform, m_RobotTransformToBeSet, 20);
+    //m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
+    //m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
+    //m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
     m_RobotCurrentTransform = m_RobotTransformToBeSet;
 
     Transform::VectorType  vect = m_TargetTransform.GetTranslation()
@@ -871,6 +872,16 @@ void DeckOfCardRobot::HomeRobotProcessing()
                "DeckOfCardRobot::HomeRobotProcessing called...\n" )
   m_StateMachine.PushInputBoolean( m_Robot->Home(), 
                               m_HomeRobotSuccessInput, m_HomeRobotFailureInput);
+  
+  // FIXME --> Needle State Machine Logic, success/failure
+  m_Needle->RequestSetTransform( m_RobotTransform ); 
+  m_NeedleTip->RequestSetTransform( m_RobotTransform );
+  m_NeedleHolder->RequestSetTransform( m_RobotTransform );
+  m_Box->RequestSetTransform( m_RobotTransform );
+  m_RobotCurrentTransform = m_RobotTransform;
+
+  Fl::wait(0.01);
+  igstk::PulseGenerator::CheckTimeouts();
 }
 
 void DeckOfCardRobot::TargetingRobotProcessing()
@@ -887,13 +898,23 @@ void DeckOfCardRobot::TargetingRobotProcessing()
   m_StateMachine.PushInputBoolean( 
                    m_Robot->MoveRobotCoordinates( m_Translation, m_Rotation ), 
                   m_TargetingRobotSuccessInput, m_TargetingRobotFailureInput);
+
+  // FIXME --> Needle State Machine Logic, success/failure
+  m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
+  m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
+  m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
+  m_Box->RequestSetTransform( m_RobotTransformToBeSet );
+  m_RobotCurrentTransform = m_RobotTransformToBeSet;
+
+  Fl::wait(0.01);
+  igstk::PulseGenerator::CheckTimeouts();
 }
 
 bool DeckOfCardRobot::CalculateRobotMovement()
 {
   Transform               transform;
   Transform::VersorType   rotation;
-  Transform::VectorType   translation, pVect1, pVect2, axis;
+  Transform::VectorType   translation, pVect1, pVect2, pProject, axis;
   double                  angle;
   DOCR_Registration::TransformType::InputPointType rPE, rPT, pIntersect;
 
@@ -906,7 +927,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   rPE = m_ImageToRobotTransform->TransformPoint( rPE );
   rPT = m_ImageToRobotTransform->TransformPoint( rPT );
 
-  // Calculate the intersect of a line with a plane => robot movement
+  // Calculate the intersect of a line with a plane => robot translation
   // Planed Path equation:  p = rPT + u * ( rPE - rPT)
   // Robot Plane equation:  p * normal = k;  => normal = {0,0,1}, k = 0
   // u = (k - rPT * normal) / ( (rPE - rPT) * normal)
@@ -914,26 +935,75 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   double u = - rPT[2] / ( rPE[2] - rPT[2]);
   pIntersect = rPT + ( rPE - rPT ) * u;
 
+  // Calculate robot rotation axis-angle
+  pVect1[0] = 0;  pVect1[1] = 0;  pVect1[2] = 1;  // Needle Axis
+  pVect2 = rPE - rPT;                             // Path vector
+  pVect2.Normalize();
+  if ( pVect1 * pVect2 < 0)
+    {
+    pVect2 *= -1;
+    }
+
+  angle = acos( pVect1 * pVect2 );
+  axis = itk::CrossProduct( pVect1, pVect2);
+  axis.Normalize();
+
+  // Compose the new robot transform
+  for (int i=0; i<3; i++)
+    {
+    translation[i] = pIntersect[i];  // Translation in robot space
+    }
+
+  // Translate angle-axis into quaternion
+  rotation.Set( axis, angle );
+  rotation.Normalize();
+
+  // Transform it to CT coordinate system
+  rotation = m_RobotTransform.GetRotation()*rotation;
+  translation = m_RobotTransform.GetRotation().Transform(translation);
+  translation += m_RobotTransform.GetTranslation();
+
+  m_RobotTransformToBeSet.SetTranslationAndRotation( translation, rotation, 
+    0.1, -1);
+
+  /** Robot Movement Code-------------------------------------------------*/
   // Robot translational movement
   m_Translation[0] = - pIntersect[0];   //FIXME why reverse?
   m_Translation[1] = - pIntersect[1];
   m_Translation[2] = 0;
 
-  // Calculate robot rotation axis-angle
-  pVect1[0] = 0;  pVect1[1] = 0;  pVect1[2] = 1;
-  pVect2 = rPE - rPT;
-  pVect2.Normalize();
+  /************************************************************************/
+  /* Projection Angle                                                     */
+  /************************************************************************/
   
-  if ( pVect1 * pVect2 < 0)
+  // Rotation along X axis
+  pProject = pVect2;
+  pProject[0] = 0;  // Projection to YZ plane
+  pProject.Normalize();
+  m_Rotation[0] = acos( pVect1 * pProject) * 180 /PI;
+  if ( pProject[1] < 0)
     {
-    pVect2 *= -1;
+    m_Rotation[0] *= -1;
     }
-  angle = acos( pVect1 * pVect2 );
-  axis = itk::CrossProduct( pVect1, pVect2);
-  axis.Normalize();
+
+  // Rotation along Y axis
+  pProject = pVect2;
+  pProject[1] = 0;  // Projection to XZ plane
+  pProject.Normalize();
+  m_Rotation[1] = acos( pVect1 * pProject) * 180 /PI;
+  if ( pProject[0] < 0)
+    {
+    m_Rotation[1] *= -1;
+    }
   
+  /************************************************************************/
+  /* Euler Angle                                                          */
+  /************************************************************************/
+  
+  if(0)
+  {    
   // Translate angle-axis to two rotation around X and Y axis
-  int rotateXfirst = false;  //-1
+  int rotateXfirst = false;  //Order of rotation Tx*Ty  or Ty*Tx
   double c = cos( angle );
   double t  = 1-c;
   double s = sin( angle );
@@ -959,29 +1029,15 @@ bool DeckOfCardRobot::CalculateRobotMovement()
       m_Rotation[i] = m_Rotation[i] - 180;    // Flip the rotation angle
       }
     }
-
-  // Compose the new robot transform
-  for (int i=0; i<3; i++)
-    {
-    translation[i] = pIntersect[i];
-    }
+  }  
   
-    // Translate angle-axis into quaternion
-    rotation.Set( axis, angle );
-    rotation.Normalize();
-
-  // Transform it to CT coordinate system
-  rotation = m_RobotTransform.GetRotation()*rotation;
-  translation = m_RobotTransform.GetRotation().Transform(translation);
-  translation += m_RobotTransform.GetTranslation();
-
-  m_RobotTransformToBeSet.SetTranslationAndRotation( translation, rotation, 
-                                                     0.1, -1);
-
+  // Output Result
   std::cout << "Robot translation: " << m_Translation[0] << "," 
                                      << m_Translation[1] << std::endl;
   std::cout << "Robot rotation: " << m_Rotation[0] << "," 
                                   << m_Rotation[1] << std::endl;
+  /** ----------------------------------------------------------------*/
+
 
   // Test if the move is reachable
   m_Reachable = true;
@@ -1008,11 +1064,11 @@ void DeckOfCardRobot::RequestInsertNeedle()
   translation = m_RobotCurrentTransform.GetTranslation() 
               + vect * this->NeedleSlider->value();
   
-  m_RobotTransformToBeSet = m_RobotCurrentTransform;
-  m_RobotTransformToBeSet.SetTranslation( translation, 0.1, -1);
+  m_NeedleTransformToBeSet = m_RobotCurrentTransform;
+  m_NeedleTransformToBeSet.SetTranslation( translation, 0.1, -1);
 
-  m_Needle->RequestSetTransform( m_RobotTransformToBeSet );
-  m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
+  m_Needle->RequestSetTransform( m_NeedleTransformToBeSet );
+  m_NeedleTip->RequestSetTransform( m_NeedleTransformToBeSet );
 
   // Update target distance
   Transform::VectorType vect2 = m_TargetTransform.GetTranslation()
@@ -1020,7 +1076,7 @@ void DeckOfCardRobot::RequestInsertNeedle()
   double distance2 = vect2.GetNorm();
 
   vect2 = m_TargetTransform.GetTranslation()
-        - m_RobotTransformToBeSet.GetTranslation();
+        - m_NeedleTransformToBeSet.GetTranslation();
 
  double distance = vect2.GetNorm(); 
   if( ( vect * vect2) < 0 )

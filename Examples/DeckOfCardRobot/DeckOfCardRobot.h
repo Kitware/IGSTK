@@ -202,6 +202,7 @@ private:
   Transform                                    m_RobotTransform;
   Transform                                    m_RobotCurrentTransform;
   Transform                                    m_RobotTransformToBeSet;
+  Transform                                    m_NeedleTransformToBeSet;
 
   /** Observer type for loaded event, 
    *  the callback can be set to a member function. */
