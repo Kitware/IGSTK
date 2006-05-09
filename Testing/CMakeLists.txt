@@ -94,6 +94,11 @@ IF ( IGSTK_DATA_ROOT )
               igstkObliqueImageSpatialObjectRepresentationTest 
               ${IGSTK_DATA_ROOT}/Input/E000192)   
    SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkObliqueImageSpatialObjectRepresentationTest)
+  
+   ADD_TEST( igstkImageSpatialObjectRepresentationTest2 ${IGSTKSandbox_TESTS} 
+              igstkImageSpatialObjectRepresentationTest2 
+              ${IGSTK_DATA_ROOT}/Input/E000192 "out.png")   
+   SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkImageSpatialObjectRepresentationTest2)
 ENDIF (IGSTK_DATA_ROOT )
 
 IF (IGSTK_USE_ATAMAI)
