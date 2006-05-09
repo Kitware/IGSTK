@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/fl_ask.H>} {} 
@@ -11,7 +11,7 @@ class DeckOfCardRobotGUI {open
     Fl_Window mainWindow {
       label {IGSTK: Deck of Card Robot}
       callback {Quit();} open
-      xywh {258 33 930 732} type Double box PLASTIC_UP_BOX resizable
+      xywh {258 34 930 732} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
     } {
@@ -39,7 +39,7 @@ class DeckOfCardRobotGUI {open
           class {igstk::View2D}
         }
         Fl_Box DisplayOblique {
-          label {Display Oblique} selected
+          label {Display Oblique}
           xywh {550 345 380 330} hide
           class {igstk::View2D}
         }
@@ -56,19 +56,19 @@ class DeckOfCardRobotGUI {open
           xywh {164 675 380 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
         }
         Fl_Value_Slider NeedleSlider {
-          callback {this->RequestInsertNeedle();}
-          xywh {550 675 350 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
+          callback {this->RequestInsertNeedle();} selected
+          xywh {550 675 350 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 0.1 deactivate
         }
         Fl_Menu_Button SwitchingView {open
           xywh {899 675 30 15} box EMBOSSED_BOX
         } {
-          menuitem {} {
+          MenuItem {} {
             label 3D
             callback {Display3D->show();
 DisplayOblique->hide();}
             xywh {5 5 100 20} type Radio value 1
           }
-          menuitem {} {
+          MenuItem {} {
             label Obliq
             callback {Display3D->hide();
 DisplayOblique->show();}
@@ -99,12 +99,12 @@ DisplayOblique->show();}
           Fl_Light_Button {} {
             label {Target Point}
             callback {RequestSetTargetPoint();}
-            xywh {16 211 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
+            xywh {16 211 130 25} box PLASTIC_UP_FRAME labelsize 11
           }
           Fl_Light_Button {} {
             label {Entry Point}
             callback {RequestSetEntryPoint();}
-            xywh {16 257 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
+            xywh {16 257 130 25} box PLASTIC_UP_FRAME labelsize 11
           }
         }
         Fl_Group {} {
@@ -114,17 +114,17 @@ DisplayOblique->show();}
           Fl_Light_Button {} {
             label Home
             callback {RequestHomeRobot();}
-            xywh {16 521 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
+            xywh {16 521 130 25} box PLASTIC_UP_FRAME labelsize 11
           }
           Fl_Light_Button {} {
             label Targeting
             callback {RequestTargetingRobot();}
-            xywh {16 570 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
+            xywh {16 570 130 25} box PLASTIC_UP_FRAME labelsize 11
           }
           Fl_Light_Button {} {
             label {Connect to Robot}
             callback {RequestConnectToRobot();}
-            xywh {16 471 130 25} box PLASTIC_UP_FRAME labelsize 11 labelcolor 0
+            xywh {16 471 130 25} box PLASTIC_UP_FRAME labelsize 11
           }
         }
         Fl_Light_Button SetROI {

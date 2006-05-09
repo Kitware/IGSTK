@@ -142,7 +142,7 @@ public:
   SocketCommunicationPointerType            m_Client;
   
   // Captures ResFlag after appropriate ";" in robot response
-  int GetResFlag( const char * buf, int numSC );                        
+  int GetResFlag( const char * buf, int size, int numSC );                        
   
   // Captures coordinate after appropriate ";" in robot response  
   // FIXME -- DOES NOT WORK YET

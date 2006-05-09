@@ -31,14 +31,15 @@ PURPOSE.  See the above copyright notices for more information.
 const unsigned int ROBOT_MAX_COMMAND_SIZE = 1024;
 
 // Captures ResFlag after appropriate ";" in robot response
-int RobotCommunication::GetResFlag( const char * buf, int numSC ) 
+int RobotCommunication::GetResFlag( const char * buf, int size, int numSC ) 
 {                         
   int i = 0;
   int p1, p2;
   int ResFlag;
   char * pch;
-  char temp[100];
+  char temp[ROBOT_MAX_COMMAND_SIZE];
 
+  p1 = p2 =-1;
   pch=strchr( const_cast<char *> (buf),';');
   while (pch!=NULL)
   {
@@ -48,12 +49,17 @@ int RobotCommunication::GetResFlag( const char * buf, int numSC )
     pch=strchr( const_cast<char *>(pch+1),';');
   }
 
-  for (i=0;i<100;i++) temp[i]=buf[i];
-  temp[p2-1]='\0';
-  pch = &temp[p1];
-  ResFlag = atoi(pch);
+  for (i=0;i<size;i++) temp[i]=buf[i];
 
-  return ResFlag;
+  if (p1>0 && p2>0)
+    {
+    temp[p2-1]='\0';
+    pch = &temp[p1];
+    ResFlag = atoi(pch);
+    return ResFlag;
+    }
+
+    return -1;
 }
 
 // Captures coordinate after appropriate ";" in robot response  
@@ -127,7 +133,7 @@ bool RobotCommunication::Init()
 
 
   // checks to see if robot command was successful
-  if ( GetResFlag(buffer, 2) == APIRESFLAG_OK )
+  if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK )
   {
     LoginSuccessful = true;
   }
@@ -141,22 +147,22 @@ bool RobotCommunication::Init()
   
   
 
-//  if (!ASYNCMODE) 
-//  {
-//    // turns off asynchronous mode if ASYNCMODE is false
-//    m_Client->RequestWrite("@SEND_ASYNC_EVENTS;0\r\n");
-//    m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
-//    buffer[num]='\0';
-//    // checks to see if command was successful
-//    if ( GetResFlag(buffer, 2) == APIRESFLAG_OK )
-//      {
-//        AsyncCommandSuccessful = true;
-//      }
-//    else
-//      {
-//        AsyncCommandSuccessful = false;
-//      }
-//  }
+  if (!ASYNCMODE) 
+  {
+    // turns off asynchronous mode if ASYNCMODE is false
+    m_Client->RequestWrite("@SEND_ASYNC_EVENTS;0\r\n");
+    m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
+    buffer[num]='\0';
+    // checks to see if command was successful
+    if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK )
+      {
+        AsyncCommandSuccessful = true;
+      }
+    else
+      {
+        AsyncCommandSuccessful = false;
+      }
+  }
 
    AsyncCommandSuccessful = true;
    LoginSuccessful = true;
@@ -201,7 +207,7 @@ bool RobotCommunication::Home()
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
 
-  if ( GetResFlag(buffer, 2) == APIRESFLAG_OK ) 
+  if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK ) 
   {
     return true;
   }
@@ -225,7 +231,7 @@ bool RobotCommunication::HomeJoint( int JointNr )
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
 
-  if ( GetResFlag(buffer, 2) == APIRESFLAG_OK ) 
+  if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK ) 
   {
     return true;
   }
@@ -258,7 +264,7 @@ bool RobotCommunication::MoveRobotCoordinates ( float X, float Y, float Z,
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
 
-  if ( GetResFlag(buffer, 2) == APIRESFLAG_OK ) 
+  if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK ) 
   {
     return true;
   }
@@ -289,7 +295,7 @@ int RobotCommunication::GetReachable ( float X, float Y, float Z,
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
 
-  result = GetResFlag(buffer, 2);
+  result = GetResFlag(buffer, num, 2);
   if ( result == APIRESFLAG_OK ) 
   {
     return true;
@@ -317,7 +323,7 @@ bool RobotCommunication::Stop( int mode )
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
 
-  if ( GetResFlag(buffer, 2) == APIRESFLAG_OK ) 
+  if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK ) 
   {
     return true;
   }

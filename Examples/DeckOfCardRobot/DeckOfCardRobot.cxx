@@ -877,11 +877,13 @@ void DeckOfCardRobot::HomeRobotProcessing()
   m_Needle->RequestSetTransform( m_RobotTransform ); 
   m_NeedleTip->RequestSetTransform( m_RobotTransform );
   m_NeedleHolder->RequestSetTransform( m_RobotTransform );
-  m_Box->RequestSetTransform( m_RobotTransform );
   m_RobotCurrentTransform = m_RobotTransform;
-
   Fl::wait(0.01);
   igstk::PulseGenerator::CheckTimeouts();
+//  AnimateRobotMove( m_RobotCurrentTransform, m_RobotTransform, 20 );
+//  Fl::wait(0.01);
+//  igstk::PulseGenerator::CheckTimeouts();
+
 }
 
 void DeckOfCardRobot::TargetingRobotProcessing()
@@ -903,11 +905,14 @@ void DeckOfCardRobot::TargetingRobotProcessing()
   m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
   m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
   m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
-  m_Box->RequestSetTransform( m_RobotTransformToBeSet );
   m_RobotCurrentTransform = m_RobotTransformToBeSet;
-
   Fl::wait(0.01);
   igstk::PulseGenerator::CheckTimeouts();
+
+//  AnimateRobotMove( m_RobotCurrentTransform, m_RobotTransformToBeSet, 20 );
+//  m_RobotCurrentTransform = m_RobotTransformToBeSet;
+//  Fl::wait(0.01);
+//  igstk::PulseGenerator::CheckTimeouts();
 }
 
 bool DeckOfCardRobot::CalculateRobotMovement()
@@ -1214,7 +1219,5 @@ void DeckOfCardRobot::AnimateRobotMove( Transform TCurrent, Transform TToBeSet,
     Fl::wait(0.1);
     igstk::PulseGenerator::CheckTimeouts();
     }
-
-
 }
 } // end of namespace
