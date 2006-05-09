@@ -232,6 +232,8 @@ void ObjectRepresentation::SetOpacity(float alpha)
 /** Request Update the object representation (i.e vtkActors). */
 void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 {
+  igstkLogMacro( DEBUG, "RequestUpdateRepresentation at time" 
+                          << time );
   m_TimeToRender = time; 
   igstkPushInputMacro( UpdateRepresentation );
   m_StateMachine.ProcessInputs();
@@ -241,6 +243,8 @@ void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 /** Request Update the object position (i.e vtkActors). */
 void ObjectRepresentation::RequestUpdatePosition( const TimeStamp & time )
 {
+  igstkLogMacro( DEBUG, "RequestUpdatePosition at time" 
+                          << time );
   m_TimeToRender = time; 
   igstkPushInputMacro( RequestUpdatePosition );
   m_StateMachine.ProcessInputs();
@@ -250,6 +254,7 @@ void ObjectRepresentation::RequestUpdatePosition( const TimeStamp & time )
 /** Process the request for updating the transform from the SpatialObject. */
 void ObjectRepresentation::RequestUpdatePositionProcessing()
 {
+  igstkLogMacro( DEBUG, "RequestUpdatePositionProcessing called ...."); 
   // The response should be sent back in an event
   m_SpatialObject->RequestGetTransform();  
 }
