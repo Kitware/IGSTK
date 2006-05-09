@@ -59,6 +59,11 @@ UltrasoundImageSimulator< TImageGeometricModel >
   // Image reslice
   m_ImageReslice = vtkImageReslice::New();
   
+  m_VTKImageObserver = VTKImageObserver::New();
+
+  m_ImageGeometricModel->AddObserver( VTKImageModifiedEvent(), 
+                                      m_VTKImageObserver );
+
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( NullImageSpatialObject  );
 
@@ -335,7 +340,7 @@ UltrasoundImageSimulator< TImageGeometricModel >
                                         m_VTKExporter->GetCallbackUserData());
 
   typedef Friends::UltrasoundImageSimulatorToImageSpatialObject  HelperType;
-  HelperType::SetITKImage(this,m_USImage.GetPointer());
+  HelperType::SetITKImage( this, m_USImage.GetPointer() );
 
   // Update the transform of the image 
   m_USImage->RequestSetTransform(m_Transform);
@@ -366,10 +371,28 @@ UltrasoundImageSimulator< TImageGeometricModel >
 
   this->RequestSetImageGeometricModel( m_ImageGeometricModel );
   
-  // This method gets a VTK image data from the private method of the
-  // ImageSpatialObject and stores it in the representation by invoking the
-  // private SetImage method.
-  this->ConnectImage();
+  m_ImageGeometricModel->AddObserver( VTKImageModifiedEvent(), 
+                                      m_VTKImageObserver );
+
+  //
+  // Here we get a VTK image data from the private method of the
+  // ImageSpatialObject and stores it in the representation .
+  //
+  m_ImageGeometricModel->RequestGetVTKImage();
+
+  m_VTKImageObserver->Reset();
+  
+  if( m_VTKImageObserver->GotVTKImage() )
+    {
+
+    this->SetImage( m_VTKImageObserver->GetVTKImage() );
+    
+    if( m_ImageData )
+      {
+      m_ImageData->Update();
+      }
+    }
+
 
   m_ImageReslice->SetInput ( m_ImageData );
   m_ReslicedImageData = m_ImageReslice->GetOutput();
@@ -400,21 +423,6 @@ UltrasoundImageSimulator< TImageGeometricModel >
   m_ImageData = const_cast< vtkImageData *>( image );
 }
 
-template < class TImageGeometricModel >
-void
-UltrasoundImageSimulator< TImageGeometricModel >
-::ConnectImage()
-{
-  igstkLogMacro( DEBUG, "igstk::UltrasoundImageSimulator\
-                        ::ConnectImage called...\n");
-
-  typedef Friends::UltrasoundImageSimulatorToImageSpatialObject HelperType;
-  HelperType::GetVTKImage( m_ImageGeometricModel.GetPointer(), this );
-  if( m_ImageData )
-    {
-    m_ImageData->Update();
-    }
-}
 
 } // end namespace igstk
 

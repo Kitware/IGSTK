@@ -344,6 +344,10 @@ public:\
     {\
     return m_GotObject;\
     }\
+  void Reset() \
+    {\
+    m_GotObject = false; \
+    }\
   payloadType Get##name() const\
     {\
     return m_Object;\
@@ -393,7 +397,11 @@ public:\
     {\
     return m_GotObject;\
     }\
-    payloadType::Pointer Get##name() const\
+  void Reset() \
+    {\
+    m_GotObject = false; \
+    }\
+  payloadType::Pointer Get##name() const\
     {\
     return m_Object;\
     }\
@@ -442,7 +450,11 @@ public:\
     {\
     return m_GotObject;\
     }\
-    payloadType::ConstPointer Get##name() const\
+  void Reset() \
+    {\
+    m_GotObject = false; \
+    }\
+  payloadType::ConstPointer Get##name() const\
     {\
     return m_Object;\
     }\

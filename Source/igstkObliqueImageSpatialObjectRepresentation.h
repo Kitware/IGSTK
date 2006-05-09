@@ -30,38 +30,6 @@
 namespace igstk
 {
  
-namespace Friends 
-{
-
-/** \class ObliqueImageSpatialObjectRepresentationToImageSpatialObject 
- *
- * \brief This class is intended to make the connection between the
- * ObliqueImageSpatialObjectRepresentation and its output, 
- * the ImageSpatialObject.
- * With this class it is possible to enforce encapsulation of the
- * SpatialObjectRepresentation and the ImageSpatialObject, and make their
- * GetImage() and SetImage() methods private, so that developers cannot gain
- * access to the ITK or VTK layers of these two classes.
- *
- */
-class ObliqueImageSpatialObjectRepresentationToImageSpatialObject
-{
-
-public:
-  template < class TSpatialObjectRepresentation, class TImageSpatialObject >
-  static void 
-  ConnectImage( const TImageSpatialObject * imageSpatialObject,
-                TSpatialObjectRepresentation * 
-                obliqueImageSpatialObjectRepresentation )
-    {
-    obliqueImageSpatialObjectRepresentation->SetImage(
-                                      imageSpatialObject->GetVTKImageData() );  
-    }
-
-}; // end of ObliqueImageSpatialObjectRepresentationToImageSpatialObject class
-
-} // end of Friend namespace
-
 
 /** \class ObliqueImageSpatialObjectRepresentation
  * 
@@ -118,10 +86,6 @@ public:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
-  /** Declare the ObliqueImageSpatialObjectRepresentation class to be a friend 
-   *  in order to give it access to the private method GetVTKImage(). */
-  igstkFriendClassMacro( igstk::Friends::\
-                ObliqueImageSpatialObjectRepresentationToImageSpatialObject );
 
 protected:
 
@@ -130,10 +94,6 @@ protected:
   
   /** Destructor */
   ~ObliqueImageSpatialObjectRepresentation();
-
-  /** Connect the VTK image from the ImageSpatialObject to the
-   * ObliqueImageSpatialObjectRepresentation*/
-  void ConnectImage();
 
   /** Overloaded function to delete actors */
   void DeleteActors();
@@ -202,6 +162,13 @@ private:
   /** Connect VTK pipeline */
   void ConnectVTKPipelineProcessing();
     
+  /** Declare the observer that will receive a VTK image from the
+   * ImageSpatialObject */
+  igstkObserverMacro( VTKImage, VTKImageModifiedEvent,
+                      EventHelperType::VTKImagePointerType);
+
+  typename VTKImageObserver::Pointer  m_VTKImageObserver;
+
 private:
 
   /** Inputs to the State Machine */

@@ -259,9 +259,11 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   this->m_USFixedImage->AddObserver(
                   USImageObject::ITKImageModifiedEvent(),usImageObserver);
 
+  usImageObserver->Reset();
+  
   this->m_USFixedImage->RequestGetITKImage();
 
-  if(!usImageObserver->GotITKUSImage())
+  if( !usImageObserver->GotITKUSImage() )
     {
     return;
     }
@@ -273,6 +275,8 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
              MRImageSpatialObject::ITKImageModifiedEvent(),mrImageObserver);
 
   this->m_MRMovingImage->RequestGetITKImage();
+
+  mrImageObserver->Reset();
 
   if(!mrImageObserver->GotITKMRImage())
     {
@@ -318,9 +322,6 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
   optimizer->AddObserver( itk::IterationEvent(), observer );
  
-  //usImageObserver->GetITKUSImage()->Print(std::cout);
-  //mrImageObserver->GetITKMRImage()->Print(std::cout);
-
   registration->SetMetric(        metric        );
   registration->SetOptimizer(     optimizer     );
   registration->SetTransform(     transform     );

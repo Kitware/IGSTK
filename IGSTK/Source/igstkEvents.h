@@ -22,6 +22,7 @@
 
 #include "igstkTransform.h"
 #include "igstkPivotCalibration.h"
+#include "vtkImageData.h"
 
 namespace igstk 
 {
@@ -65,6 +66,7 @@ namespace EventHelperType
 {
 typedef itk::Point< double, 3 >    PointType;
 typedef std::string                StringType;
+typedef vtkImageData *             VTKImagePointerType;
 typedef unsigned int               UnsignedIntType;
 typedef signed int                 SignedIntType;
 typedef float                      FloatType;
@@ -84,6 +86,8 @@ igstkLoadedEventMacro( UnsignedIntEvent, IGSTKEvent,
                        EventHelperType::UnsignedIntType );
 igstkLoadedEventMacro( IntegerBoundsEvent, IGSTKEvent, 
                        EventHelperType::IntegerBoundsType );
+igstkLoadedEventMacro( VTKImageModifiedEvent, IGSTKEvent,
+                       EventHelperType::VTKImagePointerType );
 
 igstkEventMacro( AxialSliceBoundsEvent,      IntegerBoundsEvent );
 igstkEventMacro( SagittalSliceBoundsEvent,   IntegerBoundsEvent );

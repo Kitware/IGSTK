@@ -62,18 +62,28 @@ ImageSpatialObject< TPixelType, VDimension >
   igstkAddInputMacro( ValidImage );
   igstkAddInputMacro( InvalidImage );
   igstkAddInputMacro( RequestITKImage );
+  igstkAddInputMacro( RequestVTKImage );
 
   igstkAddStateMacro( Initial );
   igstkAddStateMacro( ImageSet );
 
-  igstkAddTransitionMacro( Initial, ValidImage, ImageSet,  SetImage );
+  igstkAddTransitionMacro( Initial, ValidImage, 
+                           ImageSet,  SetImage );
   igstkAddTransitionMacro( Initial, InvalidImage, 
                            Initial, ReportInvalidImage );
-  igstkAddTransitionMacro( ImageSet, ValidImage, ImageSet,  SetImage );
+  igstkAddTransitionMacro( Initial, RequestITKImage, 
+                           Initial, ReportImageNotAvailable );
+  igstkAddTransitionMacro( Initial, RequestVTKImage, 
+                           Initial, ReportImageNotAvailable );
+
+  igstkAddTransitionMacro( ImageSet, ValidImage, 
+                           ImageSet, SetImage );
   igstkAddTransitionMacro( ImageSet, InvalidImage, 
                            Initial,  ReportInvalidImage );
-
-  igstkAddTransitionMacro( ImageSet, RequestITKImage,ImageSet,ReportITKImage );
+  igstkAddTransitionMacro( ImageSet, RequestITKImage, 
+                           ImageSet, ReportITKImage );
+  igstkAddTransitionMacro( ImageSet, RequestVTKImage, 
+                           ImageSet, ReportVTKImage );
 
   igstkSetInitialStateMacro( Initial );
 
@@ -92,15 +102,6 @@ ImageSpatialObject< TPixelType, VDimension >
     m_vtkImporter->Delete(); 
     m_vtkImporter = NULL;
     }
-}
-
-
-template< class TPixelType, unsigned int VDimension >
-const vtkImageData * 
-ImageSpatialObject< TPixelType, VDimension >
-::GetVTKImageData() const
-{
-  return m_vtkImporter->GetOutput();
 }
 
 
@@ -125,14 +126,59 @@ ImageSpatialObject< TPixelType, VDimension >
     }
 }
 
+
 template< class TPixelType, unsigned int VDimension >
 void
 ImageSpatialObject< TPixelType, VDimension >
-::RequestGetITKImage()
+::RequestGetITKImage() const
 {
   igstkPushInputMacro( RequestITKImage );
-  m_StateMachine.ProcessInputs();
+  // This const_cast is allowed here only because 
+  // all the transitions due to the RequestVTKImage
+  // are idempotent, meaning that they do not change
+  // the state of the state machine. Given that the 
+  // state of the class is not changed, the method 
+  // can still be considered to be const.
+  Self * self = const_cast< Self * >( this );
+  self->RequestGetITKImage();
 }
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::RequestGetITKImage() 
+{
+  igstkPushInputMacro( RequestITKImage );
+  this->m_StateMachine.ProcessInputs();
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::RequestGetVTKImage() const
+{
+  // This const_cast is allowed here only because 
+  // all the transitions due to the RequestVTKImage
+  // are idempotent, meaning that they do not change
+  // the state of the state machine. Given that the 
+  // state of the class is not changed, the method 
+  // can still be considered to be const.
+  Self * self = const_cast< Self * >( this );
+  self->RequestGetVTKImage();
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::RequestGetVTKImage() 
+{
+  igstkPushInputMacro( RequestVTKImage );
+  this->m_StateMachine.ProcessInputs();
+}
+
 
 template< class TPixelType, unsigned int VDimension >
 void
@@ -141,6 +187,28 @@ ImageSpatialObject< TPixelType, VDimension >
 {
   ITKImageModifiedEvent  event;
   event.Set( this->m_Image );
+  this->InvokeEvent( event );
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::ReportVTKImageProcessing() 
+{
+  VTKImageModifiedEvent  event;
+  event.Set( m_vtkImporter->GetOutput() );
+  this->InvokeEvent( event );
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::ReportImageNotAvailableProcessing() 
+{
+  ImageNotAvailableEvent  event;
+  igstkLogMacro( WARNING, "ReportImageNotAvailableProcessing() called ...\n");
   this->InvokeEvent( event );
 }
 

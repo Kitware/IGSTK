@@ -176,7 +176,17 @@ ImageSpatialObjectVolumeRepresentation< TImageSpatialObject >
   // This method gets a VTK image data from the private method of the
   // ImageSpatialObject and stores it in the representation by invoking the
   // private SetImage method.
-  this->ConnectImage();
+  
+  this->m_ImageSpatialObject->RequestGetVTKImage();
+
+  if( this->m_VTKImageObserver->GotVTKImage() ) 
+    {
+    m_ImageData = this->m_VTKImageObserver->GetVTKImage();
+    if( m_ImageData )
+      {
+      m_ImageData->Update();
+      }
+    }
 
   m_ShiftScale->SetInput( m_ImageData );
   m_VolumeMapper->SetInput( m_ShiftScale->GetOutput() );
@@ -294,24 +304,6 @@ ImageSpatialObjectVolumeRepresentation< TImageSpatialObject >
   // This const_cast<> is needed here due to the lack of 
   // const-correctness in VTK 
   m_ImageData = const_cast< vtkImageData *>( image );
-}
-
-
-template < class TImageSpatialObject >
-void
-ImageSpatialObjectVolumeRepresentation< TImageSpatialObject >
-::ConnectImage()
-{
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
-                        ::ConnectImage called...\n");
-
-  typedef Friends::ImageSpatialObjectRepresentationToImageSpatialObject  
-                                                                HelperType;
-  HelperType::ConnectImage( m_ImageSpatialObject.GetPointer(), this );
-  if( m_ImageData )
-    {
-    m_ImageData->Update();
-    }
 }
 
 

@@ -64,6 +64,12 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   m_Level = 0;
   m_Window = 2000;
   
+  m_VTKImageObserver = VTKImageObserver::New();
+
+  m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
+                                      m_VTKImageObserver );
+
+
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( NullImageSpatialObject  );
 
@@ -445,10 +451,31 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
 
   this->RequestSetSpatialObject( m_ImageSpatialObject );
   
-  // This method gets a VTK image data from the private method of the
-  // ImageSpatialObject and stores it in the representation by invoking the
-  // private SetImage method.
-  this->ConnectImage();
+  m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
+                                      m_VTKImageObserver );
+
+  //
+  // Here we get a VTK image data from the private method of the
+  // ImageSpatialObject and stores it in the representation .
+  //
+  m_ImageSpatialObject->RequestGetVTKImage();
+  
+  m_VTKImageObserver->Reset();
+
+  if( m_VTKImageObserver->GotVTKImage() )
+    {
+
+    this->SetImage( m_VTKImageObserver->GetVTKImage() );
+    
+    if( m_ImageData )
+      {
+      m_ImageData->Update();
+      }
+    }
+
+
+
+
 
   m_MapColors->SetInput( m_ImageData );
 
@@ -547,22 +574,6 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageData = const_cast< vtkImageData *>( image );
 }
 
-template < class TImageSpatialObject >
-void
-ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
-::ConnectImage()
-{
-  igstkLogMacro( DEBUG, "igstk::ObliqueImageSpatialObjectRepresentation\
-                        ::ConnectImage called...\n");
-
-  typedef Friends::ObliqueImageSpatialObjectRepresentationToImageSpatialObject  
-                                                                   HelperType;
-  HelperType::ConnectImage( m_ImageSpatialObject.GetPointer(), this );
-  if( m_ImageData )
-    {
-    m_ImageData->Update();
-    }
-}
 
 template < class TImageSpatialObject >
 void

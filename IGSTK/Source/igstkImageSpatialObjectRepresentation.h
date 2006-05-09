@@ -29,34 +29,6 @@
 namespace igstk
 {
  
-namespace Friends 
-{
-
-/** \class ImageSpatialObjectRepresentationToImageSpatialObject 
- *
- * \brief This class is intended to make the connection between the
- * ImageSpatialObjectRepresentation and its output, the ImageSpatialObject.
- * With this class it is possible to enforce encapsulation of the
- * SpatialObjectRepresentation and the ImageSpatialObject, and make their
- * GetImage() and SetImage() methods private, so that developers cannot gain
- * access to the ITK or VTK layers of these two classes.
- *
- */
-class ImageSpatialObjectRepresentationToImageSpatialObject
-{
-public:
-  template < class TSpatialObjectRepresentation, class TImageSpatialObject >
-  static void 
-  ConnectImage( const TImageSpatialObject * imageSpatialObject,
-          TSpatialObjectRepresentation * imageSpatialObjectRepresentation )
-    {
-    imageSpatialObjectRepresentation->SetImage( 
-               imageSpatialObject->GetVTKImageData() );  
-    }
-}; // end of ImageSpatialObjectRepresentationToImageSpatialObject class
-
-} // end of Friend namespace
-
 
 /** \class ImageSpatialObjectRepresentation
  * 
@@ -116,11 +88,6 @@ public:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
-  /** Declare the ImageReaderToImageSpatialObject class to be a friend 
-   *  in order to give it access to the private method GetITKImage(). */
-  igstkFriendClassMacro( 
-     igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
-
   /** Returns the Minimum and Maximum number of slice available in the current
    * orientation.  */
   void RequestGetSliceNumberBounds();
@@ -133,15 +100,18 @@ protected:
   /** Destructor */
   ~ImageSpatialObjectRepresentation();
 
-  /** Connect the VTK image from the ImageSpatialObject to the
-   * ImageSpatialObjectRepresentation*/
-  void ConnectImage();
-
   /** Overloaded function to delete actors */
   void DeleteActors();
 
   /** Create the VTK actors for displaying geometry */
   void CreateActors();
+
+  /** Observer macro that will received a event with an image as payload and
+   * will store it internally. This will be the receptor of the event sent by
+   * the ImageSpatialObject when an image is requested. */
+   igstkObserverMacro( VTKImage, VTKImageModifiedEvent, 
+                       EventHelperType::VTKImagePointerType );
+
 
 private:
 
@@ -219,6 +189,9 @@ private:
   /** Variables for managing the Orientation of the slices */
   OrientationType      m_OrientationToBeSet;
   OrientationType      m_Orientation;
+
+  /** Observer to the VTK image events */
+  typename VTKImageObserver::Pointer   m_VTKImageObserver;
 
 };
 

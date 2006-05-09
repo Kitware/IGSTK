@@ -31,13 +31,6 @@
 namespace igstk
 {
  
-namespace Friends 
-{
-
-class ImageSpatialObjectRepresentationToImageSpatialObject;
-
-} // end of Friend namespace
-
 
 /** \class ImageSpatialObjectVolumeRepresentation
  * 
@@ -92,10 +85,12 @@ public:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
-  /** Declare the ImageReaderToImageSpatialObject class to be a friend 
-   *  in order to give it access to the private method GetITKImage(). */
-  igstkFriendClassMacro( 
-     igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
+  /** Observer macro that will received a event with an image as payload and
+   * will store it internally. This will be the receptor of the event sent by
+   * the ImageSpatialObject when an image is requested. */
+  igstkObserverMacro( VTKImage, VTKImageModifiedEvent, 
+                      EventHelperType::VTKImagePointerType );
+
 
 protected:
 
@@ -104,10 +99,6 @@ protected:
   
   /** Destructor */
   ~ImageSpatialObjectVolumeRepresentation();
-
-  /** Connect the VTK image from the ImageSpatialObject to the
-   * ImageSpatialObjectVolumeRepresentation*/
-  void ConnectImage();
 
   /** Overloaded function to delete actors */
   void DeleteActors();
@@ -169,6 +160,10 @@ private:
   /** Connect VTK pipeline */
   void ConnectVTKPipelineProcessing();
     
+
+  /** Observer to the VTK image events */
+  typename VTKImageObserver::Pointer   m_VTKImageObserver;
+
 private:
 
   /** Inputs to the State Machine */

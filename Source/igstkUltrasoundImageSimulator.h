@@ -122,6 +122,11 @@ public:
   /** Event type */
   igstkLoadedObjectEventMacro( ImageModifiedEvent, IGSTKEvent, USImageObject);
 
+  /** Declare the observer that will receive a VTK image from the
+   * ImageSpatialObject */
+  igstkObserverMacro( VTKImage, VTKImageModifiedEvent,
+                      EventHelperType::VTKImagePointerType);
+
 protected:
 
   /** Constructor */
@@ -130,9 +135,6 @@ protected:
   /** Destructor */
   ~UltrasoundImageSimulator();
 
-  /** Connect the VTK image from the ImageSpatialObject to the
-   * UltrasoundImageSimulator*/
-  void ConnectImage();
 
 private:
 
@@ -200,6 +202,8 @@ private:
 
   // FIXME : This must be replaced with StateMachine logic
   const USImageType * GetITKImage() const;
+
+  typename VTKImageObserver::Pointer m_VTKImageObserver;
 
 };
 

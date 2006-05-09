@@ -55,6 +55,9 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_Level = 0;
   m_Window = 2000;
   
+  // Create the observer to VTK image events 
+  m_VTKImageObserver = VTKImageObserver::New();
+
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( NullImageSpatialObject  );
   igstkAddInputMacro( EmptyImageSpatialObject  );
@@ -445,9 +448,17 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   // This method gets a VTK image data from the private method of the
   // ImageSpatialObject and stores it in the representation by invoking the
   // private SetImage method.
-  this->ConnectImage();
+  this->m_ImageSpatialObject->RequestGetVTKImage();
 
-  m_MapColors->SetInput( m_ImageData );
+  if( this->m_VTKImageObserver->GotVTKImage() ) 
+    {
+    m_ImageData = this->m_VTKImageObserver->GetVTKImage();
+    if( m_ImageData )
+      {
+      m_ImageData->Update();
+      }
+    m_MapColors->SetInput( m_ImageData );
+    }
 
 
   m_ImageActor->SetInput( m_MapColors->GetOutput() );
@@ -518,9 +529,9 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
                         ::Copy called...\n");
 
   Pointer newOR = ImageSpatialObjectRepresentation::New();
-  newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
-  newOR->SetOpacity(this->GetOpacity());
-  newOR->RequestSetImageSpatialObject(m_ImageSpatialObject);
+  newOR->SetColor( this->GetRed(), this->GetGreen(), this->GetBlue() );
+  newOR->SetOpacity( this->GetOpacity() );
+  newOR->RequestSetImageSpatialObject( m_ImageSpatialObject );
 
   return newOR;
 }
@@ -537,24 +548,6 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   // This const_cast<> is needed here due to the lack of 
   // const-correctness in VTK 
   m_ImageData = const_cast< vtkImageData *>( image );
-}
-
-
-template < class TImageSpatialObject >
-void
-ImageSpatialObjectRepresentation< TImageSpatialObject >
-::ConnectImage()
-{
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
-                        ::ConnectImage called...\n");
-
-  typedef Friends::ImageSpatialObjectRepresentationToImageSpatialObject  
-                                                                HelperType;
-  HelperType::ConnectImage( m_ImageSpatialObject.GetPointer(), this );
-  if( m_ImageData )
-    {
-    m_ImageData->Update();
-    }
 }
 
 
