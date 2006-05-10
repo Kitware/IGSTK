@@ -161,7 +161,15 @@ int main(int , char** )
   m_GUI->Display1->RequestStart();
   m_GUI->Display2->RequestStart();
 
-  Fl::run();
+  while(1)
+    {
+    Fl::wait( 0.01 );
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();   // trigger FLTK redraws
+    }
+
+  m_GUI->Display1->RequestStop();
+  m_GUI->Display2->RequestStop();
 
   tracker->StopTracking();
   tracker->Close();
