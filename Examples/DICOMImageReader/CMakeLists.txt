@@ -1,0 +1,5 @@
+PROJECT(DICOMImageReader1)
+  
+ADD_EXECUTABLE(DICOMImageReaderExample1 DICOMImageReader1.cxx)
+TARGET_LINK_LIBRARIES(DICOMImageReaderExample1 IGSTKSandbox)
+
