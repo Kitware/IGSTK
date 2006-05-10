@@ -27,7 +27,12 @@ int main(int , char** )
   igstk::FourViewsTrackingWithCT::Pointer application 
                                        = igstk::FourViewsTrackingWithCT::New();
 
-  Fl::run();
+  while(1)
+    {
+    Fl::wait( 0.01 );
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();   // trigger FLTK redraws
+    }
 
   return 0;
 }
