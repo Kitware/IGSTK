@@ -149,7 +149,6 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   form->show();
 
   view2D->SetLogger( logger ); 
-  view2D->RequestResetCamera();
   view2D->RequestEnableInteractions();
 
   // Add spatialobject
@@ -158,11 +157,22 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   // Add annotation
   view2D->RequestAddAnnotation2D( annotation );
 
+  // Center the camera in order to make visible
+  // all the objects in the scene.
+  view2D->RequestResetCamera();
+
+  
+  // Start the pulse generator of the View 
+  view2D->RequestSetRefreshRate( 20 );
+  view2D->RequestStart();
+
+
   // Do manual redraws
-  for( unsigned int i=0; i < 10; i++)
+  for( unsigned int i=0; i < 100; i++)
     {
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
+    Fl::wait(0.01);
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();   // trigger FLTK redraws
     }
 
   delete view2D;
