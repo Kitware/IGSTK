@@ -14,4 +14,5 @@ SUBDIRS(
   LandmarkRegistration
   DICOMImageReader
   DeckOfCardRobot
+  View
   )
