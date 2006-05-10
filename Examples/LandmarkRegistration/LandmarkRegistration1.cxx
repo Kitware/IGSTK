@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-//Warning about: identifier was truncated to '255' characters in the \
+//Warning about: identifier was truncated to '255' characters in the 
 //debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -148,7 +148,6 @@ public:
   void Execute( itk::Object *caller, const itk::EventObject & event )
     {
     std::cout<< " TransformEvent is thrown" << std::endl;
-                dynamic_cast < const TransformModifiedEventType* > ( &event );
     const TransformModifiedEventType * transformEvent =
                 dynamic_cast < const TransformModifiedEventType* > ( &event );
     m_Transform = transformEvent->Get();
