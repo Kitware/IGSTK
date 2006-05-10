@@ -150,14 +150,20 @@ int igstkObliqueImageSpatialObjectRepresentationTest(
   view2D->RequestAddObject( representation );
   view2D->RequestResetCamera();
 
+  // Set the refresh rate and start the pulse generator
+  view2D->RequestSetRefreshRate( 30 );
+  view2D->RequestStart();
+
   for(int i=0; i<10; i++) 
     {
     std::cout << "Refresh=" << i << std::endl;
+    Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
-    view2D->Update();  // schedule redraw of the view
     Fl::check(); 
     }
   
+  view2D->RequestStop();
+
   delete view2D;
   delete form;
 
