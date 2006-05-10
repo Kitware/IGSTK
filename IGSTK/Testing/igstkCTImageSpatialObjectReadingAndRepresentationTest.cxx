@@ -141,7 +141,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   // Do manual redraws
   for( unsigned int i=0; i < 10; i++)
     {
-    Fl::wait(0.05);
+    Fl::wait( 0.05 );
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();       // trigger FLTK redraws
     }
@@ -199,7 +199,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   // Do manual redraws
   for( unsigned int i=0; i < 20; i++)
     {
-    Fl::wait(0.05);
+    Fl::wait( 0.05 );
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();       // trigger FLTK redraws
     }
@@ -217,7 +217,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     for(unsigned int i=0; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );
-      Fl::wait(0.05);
+      Fl::wait( 0.05 );
       igstk::PulseGenerator::CheckTimeouts();
       Fl::check();       // trigger FLTK redraws
       std::cout << "i= " << i << std::endl;
@@ -231,7 +231,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     for(unsigned int i=0; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );
-      Fl::5ait(0.01);
+      Fl::wait( 0.05 );
       igstk::PulseGenerator::CheckTimeouts();
       Fl::check();       // trigger FLTK redraws
       std::cout << "i= " << i << std::endl;
@@ -245,7 +245,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     for(unsigned int i=0; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );
-      Fl::wait(0.05);
+      Fl::wait( 0.05 );
       igstk::PulseGenerator::CheckTimeouts();
       Fl::check();       // trigger FLTK redraws
       std::cout << "i= " << i << std::endl;
@@ -278,7 +278,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     for(unsigned int i=0; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );
-      Fl::wait(0.05);
+      Fl::wait( 0.05 );
       igstk::PulseGenerator::CheckTimeouts();
       Fl::check();
       std::cout << "i= " << i << std::endl;
@@ -295,7 +295,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     for(unsigned int i=0; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );
-      Fl::wait(0.05);
+      Fl::wait( 0.05 );
       igstk::PulseGenerator::CheckTimeouts();
       Fl::check();
       std::cout << "i= " << i << std::endl;

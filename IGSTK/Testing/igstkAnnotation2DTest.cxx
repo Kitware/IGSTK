@@ -170,7 +170,7 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   // Do manual redraws
   for( unsigned int i=0; i < 100; i++)
     {
-    Fl::wait(0.01);
+    Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();   // trigger FLTK redraws
     }
