@@ -66,10 +66,6 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   
   m_VTKImageObserver = VTKImageObserver::New();
 
-  m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
-                                      m_VTKImageObserver );
-
-
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( NullImageSpatialObject  );
 
