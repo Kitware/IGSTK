@@ -223,11 +223,21 @@ int igstkViewTest( int, char * [] )
     // Add the cylinder to the view
     view3D->RequestAddObject( cylinderRepresentation );
     
+
+    // Set the refresh rate and start 
+    // the pulse generators of the views.
+    view2D->RequestSetRefreshRate( 30 );
+    view3D->RequestSetRefreshRate( 10 );
+
+    view2D->RequestStart();
+    view3D->RequestStart();
+
+
     // Do manual redraws
     for(unsigned int i=0; i<10; i++)
       {
-      view2D->Update();  // schedule redraw of the view
-      view3D->Update();  // schedule redraw of the view
+      Fl::wait(0.01);
+      igstk::PulseGenerator::CheckTimeouts();
       Fl::check();       // trigger FLTK redraws
       }
 
@@ -270,15 +280,9 @@ int igstkViewTest( int, char * [] )
     std::cout << *view2D << std::endl;
     std::cout << *view3D << std::endl;
 
-    view2D->RequestSetRefreshRate( 30 );
-    view3D->RequestSetRefreshRate( 10 );
-
-    view2D->RequestStart();
-    view3D->RequestStart();
-
     while(1)
       {
-      Fl::wait(0.0001);
+      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
       if( bEnd )
         {

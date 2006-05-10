@@ -126,15 +126,23 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   form->show();
 
   view2D->SetLogger( logger ); 
-  view2D->RequestResetCamera();
   view2D->RequestEnableInteractions();
 
   view2D->RequestAddObject( representation );
     
+  // Reseting the camera after reading the image is more effective
+  view2D->RequestResetCamera();
+
+  // Configuring the view refresh rate
+  view2D->RequestSetRefreshRate( 40 );
+  view2D->RequestStart();
+
+  
   // Do manual redraws
   for( unsigned int i=0; i < 10; i++)
     {
-    view2D->Update();  // schedule redraw of the view
+    Fl::wait(0.05);
+    igstk::PulseGenerator::CheckTimeouts();
     Fl::check();       // trigger FLTK redraws
     }
 
@@ -191,7 +199,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   // Do manual redraws
   for( unsigned int i=0; i < 20; i++)
     {
-    view2D->Update();  // schedule redraw of the view
+    Fl::wait(0.05);
+    igstk::PulseGenerator::CheckTimeouts();
     Fl::check();       // trigger FLTK redraws
     }
 
@@ -208,7 +217,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     for(unsigned int i=0; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );
-      view2D->Update();  // schedule redraw of the view
+      Fl::wait(0.05);
+      igstk::PulseGenerator::CheckTimeouts();
       Fl::check();       // trigger FLTK redraws
       std::cout << "i= " << i << std::endl;
       }
@@ -221,7 +231,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     for(unsigned int i=0; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );
-      view2D->Update();  // schedule redraw of the view
+      Fl::5ait(0.01);
+      igstk::PulseGenerator::CheckTimeouts();
       Fl::check();       // trigger FLTK redraws
       std::cout << "i= " << i << std::endl;
       }
@@ -234,7 +245,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     for(unsigned int i=0; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );
-      view2D->Update();  // schedule redraw of the view
+      Fl::wait(0.05);
+      igstk::PulseGenerator::CheckTimeouts();
       Fl::check();       // trigger FLTK redraws
       std::cout << "i= " << i << std::endl;
       }
@@ -266,7 +278,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     for(unsigned int i=0; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );
-      view2D->Update();
+      Fl::wait(0.05);
+      igstk::PulseGenerator::CheckTimeouts();
       Fl::check();
       std::cout << "i= " << i << std::endl;
       }
@@ -282,7 +295,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     for(unsigned int i=0; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );
-      view2D->Update();
+      Fl::wait(0.05);
+      igstk::PulseGenerator::CheckTimeouts();
       Fl::check();
       std::cout << "i= " << i << std::endl;
       }
