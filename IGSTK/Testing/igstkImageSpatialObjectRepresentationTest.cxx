@@ -302,7 +302,13 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     }
 
   view2D->RequestAddObject( representation );
+
+  
+  // Set and initialize the pulse generator of the view 
+  view2D->RequestSetRefreshRate( 30 );
+  view2D->RequestStart();
  
+
   // Do manual redraws for each orientation while changing slice numbers
     {
     std::cout << " Axial View " << std::endl;
@@ -314,8 +320,8 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     for(unsigned int i=0; i<5; i++)
       {
       representation->RequestSetSliceNumber( i );
+      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
-      view2D->Update();  // schedule redraw of the view
       Fl::check();       // trigger FLTK redraws
       std::cout << "Slice i= " << i << std::endl;
       }
@@ -329,8 +335,8 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     for(unsigned int i=0; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );
+      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
-      view2D->Update();  // schedule redraw of the view
       Fl::check();       // trigger FLTK redraws
       std::cout << "i= " << i << std::endl;
       }
@@ -341,14 +347,16 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     representation->RequestSetOrientation( RepresentationType::Coronal );
     view2D->RequestSetOrientation( igstk::View2D::Coronal );
     view2D->RequestResetCamera();
+    
     for(unsigned int i=0; i<511; i++)
       {
       representation->RequestSetSliceNumber( i );
+      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
-      view2D->Update();  // schedule redraw of the view
       Fl::check();       // trigger FLTK redraws
       std::cout << "i= " << i << std::endl;
       }
+    
     }
     
   // On purpose request non-existing slices. 
@@ -361,8 +369,8 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     for(unsigned int i=5; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );
+      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
-      view2D->Update();  // schedule redraw of the view
       Fl::check();       // trigger FLTK redraws
       std::cout << "i= " << i << std::endl;
       }
