@@ -75,6 +75,10 @@ public:
 
   ~FourViewsImplementation()
     {
+    this->Display3D->RequestStop();
+    this->DisplayAxial->RequestStop();
+    this->DisplaySagittal->RequestStop();
+    this->DisplayCoronal->RequestStop();
     }
     
   void SetLogger(itk::Logger * logger)

@@ -78,24 +78,12 @@ int main(int , char** )
   application.ResetCameras();
   */
 
-  application.DisplayAxial->RequestSetRefreshRate( 20 );
-  application.DisplayCoronal->RequestSetRefreshRate( 20 );
-  application.DisplaySagittal->RequestSetRefreshRate( 20 );
-
-  application.DisplayAxial->RequestStart();
-  application.DisplayCoronal->RequestStart();
-  application.DisplaySagittal->RequestStart();
-
   while(1)
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();   // trigger FLTK redraws
     }
-
-  application.DisplayAxial->RequestStop();
-  application.DisplayCoronal->RequestStop();
-  application.DisplaySagittal->RequestStop();
 
   return EXIT_SUCCESS;
 }
