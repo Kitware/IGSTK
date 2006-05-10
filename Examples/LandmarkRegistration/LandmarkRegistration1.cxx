@@ -22,38 +22,47 @@
 #endif
 
 // BeginLatex
+// 
 // This example illustrates how to use igstk's landmark registration 
 // component to determine a rigid body transformation parameters between 
 // image and patient coordinate system.
 //
 // EndLatex
-// 
+
 #include <iostream>
 
 // BeginLatex
+// 
 // To use the registration component, the header file for 
 // \doxygen{Landmark3DRegistration} will be added.
+//
 // EndLatex
-// 
+
 // BeginCodeSnippet
 #include "igstkLandmark3DRegistration.h"
 // EndCodeSnippet
+ 
+
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkObject.h"
 #include "itkCommand.h"
 #include "itkMacro.h"
+
 // BeginLatex
+// 
 // Transform parameters are returned to the application using loaded events. 
 // To handle these events, \doxygen{Events} and \doxygen{Transform} header 
 // files are needed.
 //
 // EndLatex
-//
+
 // BeginCodeSnippet
 #include "igstkEvents.h"
 #include "igstkTransform.h"
 // EndCodeSnippet
+
+
 
 // BeginLatex
 // 
@@ -66,6 +75,7 @@
 // in transform computation is defined as follows.
 // 
 // EndLatex
+
 // BeginCodeSnippet
 class Landmark3DRegistrationErrorCallback : public itk::Command
 {
@@ -88,6 +98,9 @@ protected:
 private:
 };
 //EndCodeSnippet
+
+
+
 class Landmark3DRegistrationInvalidRequestCallback : public itk::Command
 {
 public:
@@ -109,13 +122,15 @@ protected:
 private:
 };
 
-//BeginLatex
+// BeginLatex
+// 
 // Similarly, a callback class needs to be defined to observe the 
 // \doxygen{TransformModified} event. This event is loaded with the 
 // transform parameters computed by the registration component.
 //
-//EndLatex
-//BeginCodeSnippet
+// EndLatex
+
+// BeginCodeSnippet
 class Landmark3DRegistrationGetTransformCallback: public itk::Command
 {
 public:
@@ -156,23 +171,34 @@ private:
   bool m_EventReceived;
   igstk::Transform m_Transform;
 };
-//EndCodeSnippet
+// EndCodeSnippet
 
-//BeginLatex
-//After defining the helper classes, the main function implementation 
-//is started.
+
+
+// BeginLatex
+// 
+// After defining the helper classes, the main function implementation 
+// is started.
 //
-//EndLatex
-//BeginCodeSnippet
+// EndLatex
+
+// BeginCodeSnippet
 int main( int argv, char * argc[] )
 {
-//EndCodeSnippet
+// EndCodeSnippet
+
+
   igstk::RealTimeClock::Initialize();
-//BeginLatex
+
+
+
+// BeginLatex
 //
-//All the necessary data types are defined.
-//EndLatex
-//BeginCodeSnippet
+// All the necessary data types are defined.
+// 
+// EndLatex
+
+// BeginCodeSnippet
   typedef itk::Logger                   LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
     
@@ -187,31 +213,47 @@ int main( int argv, char * argc[] )
   typedef Landmark3DRegistrationType::TransformType::OutputVectorType 
                             OutputVectorType;
   typedef igstk::Transform  TransformType;
-//EndCodeSnippet
-//BeginLatex
-//The registration component is instantiated as follows
-//EndLatex
-//BeginCodeSnippet
+// EndCodeSnippet
+
+
+
+// BeginLatex
+// 
+// The registration component is instantiated as follows
+// 
+// EndLatex
+
+// BeginCodeSnippet
   Landmark3DRegistrationType::Pointer landmarkRegister = 
                                         Landmark3DRegistrationType::New();
-//EndCodeSnippet
-//BeginLatex
-//The landmark containers that hold the landmark image and tracker 
-//coordinates are instantiated.
-//EndLatex
-//BeginCodeSnippet
+// EndCodeSnippet
+ 
+
+
+// BeginLatex
+// 
+// The landmark containers that hold the landmark image and tracker coordinates
+// are instantiated.
+//
+// EndLatex
+
+// BeginCodeSnippet
   LandmarkPointContainerType  imagePointContainer;
   LandmarkPointContainerType  trackerPointContainer;
-//EndCodeSnippet
+// EndCodeSnippet
+
+
   LandmarkImagePointType      imagePoint;
   LandmarkTrackerPointType    trackerPoint;
 
-//BeginLatex
-//Error event callback objects are instantiated and added to the observer
-//list of the registration component.
-//EndLatex
+// BeginLatex
+// 
+// Error event callback objects are instantiated and added to the observer list
+// of the registration component.
 //
-//BeginCodeSnippet
+// EndLatex
+
+// BeginCodeSnippet
   Landmark3DRegistrationInvalidRequestCallback::Pointer 
                   lrcb = Landmark3DRegistrationInvalidRequestCallback::New();
     
@@ -225,23 +267,30 @@ int main( int argv, char * argc[] )
                                                      ComputationFailureEvent;
   landmarkRegister->AddObserver( ComputationFailureEvent(), ecb );
 
-//EndCodeSnippet
+// EndCodeSnippet
 
-//BeginLatex
-//  A logger can be connected to the registration component for 
-//  debugging purpose as follows
-//EndLatex
+// BeginLatex
+// 
+// A logger can be connected to the registration component for 
+// debugging purpose as follows
+//
+// EndLatex
 
-//BeginCodeSnippet 
+
+
+// BeginCodeSnippet 
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
   landmarkRegister->SetLogger( logger );
-//EndCodeSnippet
+// EndCodeSnippet
    
-//BeginLatex
+
+  
+// BeginLatex
+//
 // Next, landmark points are added to the image and tracker containers. 
 // The state machine of this registration component is designed in such a 
 // way that image and tracker coordinates corresponding to
@@ -252,7 +301,8 @@ int main( int argv, char * argc[] )
 // by design.
 //
 //EndLatex 
-//BeginCodeSnippet
+
+// BeginCodeSnippet
   // Add 1st landmark
   imagePoint[0] =  25.0;
   imagePoint[1] =  1.0;
@@ -292,10 +342,14 @@ int main( int argv, char * argc[] )
   trackerPointContainer.push_back(trackerPoint);
   landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
 
-  //EndCodeSnippet
-  //BeginLatex
-  //More landmarks could be added for transform computation.  
-  //EndLatex
+//EndCodeSnippet
+
+  // BeginLatex
+  // 
+  // More landmarks could be added for transform computation.  
+  // 
+  // EndLatex
+
   // Add 4th landmark
   imagePoint[0] =  10.0;
   imagePoint[1] =  11.0;
@@ -309,12 +363,15 @@ int main( int argv, char * argc[] )
   trackerPointContainer.push_back(trackerPoint);
   landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
 
-  //BeginLatex
-  //After adding all the landmark coordinates, the transform computation is 
-  //requested as follows
-  //EndLatex
-  //
+  // BeginLatex
+  // 
+  // After adding all the landmark coordinates, the transform computation is 
+  // requested as follows
+  // 
+  // EndLatex
+
   // Calculate transform
+
   // BeginCodeSnippet
   landmarkRegister->RequestComputeTransform();
   // EndCodeSnippet
@@ -326,26 +383,30 @@ int main( int argv, char * argc[] )
   ParametersType     parameters(6);
 
   // BeginLatex
+  // 
   // To access the tranform parameters, a GetTransform callback is instantiated
   // to observe the transform event as follows. 
+  // 
   // EndLatex
-  //
+
   // BeginCodeSnippet
   Landmark3DRegistrationGetTransformCallback::Pointer lrtcb =
                             Landmark3DRegistrationGetTransformCallback::New();
   landmarkRegister->AddObserver( igstk::TransformModifiedEvent(), lrtcb );
   //EndCodeSnippet
-  //
 
-  //BeginLatex
+
+  // BeginLatex
+  //
   // To request the registration component throw an event loaded with transform
   // parameters, a \code{RequestGetTransform} function is invoked as follows.
-  //EndLatex
-  //
-  //BeginCodeSnippet
+  // 
+  // EndLatex
+
+  // BeginCodeSnippet
   landmarkRegister->RequestGetTransform();
   std::cout << "Transform " << transform << std::cout;
-  //EndCodeSnippet
+  // EndCodeSnippet
     
   return EXIT_SUCCESS;
 }
