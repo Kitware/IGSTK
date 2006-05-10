@@ -267,14 +267,14 @@ int igstkViewTest( int, char * [] )
     view2D->Print( std::cout, 0 );
     view3D->Print( std::cout, 0 );
 
-    view2D->RequestStart();
-    view3D->RequestStart();
-
     std::cout << *view2D << std::endl;
     std::cout << *view3D << std::endl;
 
     view2D->RequestSetRefreshRate( 30 );
     view3D->RequestSetRefreshRate( 10 );
+
+    view2D->RequestStart();
+    view3D->RequestStart();
 
     while(1)
       {
