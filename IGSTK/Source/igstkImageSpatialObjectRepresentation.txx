@@ -58,6 +58,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   // Create the observer to VTK image events 
   m_VTKImageObserver = VTKImageObserver::New();
 
+
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( NullImageSpatialObject  );
   igstkAddInputMacro( EmptyImageSpatialObject  );
@@ -443,6 +444,9 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   // We create the image spatial object
   m_ImageSpatialObject = m_ImageSpatialObjectToAdd;
 
+  m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
+                                     m_VTKImageObserver );
+
   this->RequestSetSpatialObject( m_ImageSpatialObject );
   
   // This method gets a VTK image data from the private method of the
@@ -459,7 +463,6 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
       }
     m_MapColors->SetInput( m_ImageData );
     }
-
 
   m_ImageActor->SetInput( m_MapColors->GetOutput() );
 }
