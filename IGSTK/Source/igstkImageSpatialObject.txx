@@ -33,6 +33,9 @@ ImageSpatialObject< TPixelType, VDimension >
   m_ImageSpatialObject = ImageSpatialObjectType::New();
   this->RequestSetSpatialObject( m_ImageSpatialObject );
 
+  // initialize the logger 
+  m_Logger = NULL;
+
   m_itkExporter = ITKExportFilterType::New();
   m_vtkImporter = VTKImportFilterType::New();
   
@@ -132,6 +135,8 @@ void
 ImageSpatialObject< TPixelType, VDimension >
 ::RequestGetITKImage() const
 {
+  igstkLogMacro( DEBUG, "RequestGetITKImage() called ....\n");
+
   igstkPushInputMacro( RequestITKImage );
   // This const_cast is allowed here only because 
   // all the transitions due to the RequestVTKImage
@@ -149,6 +154,8 @@ void
 ImageSpatialObject< TPixelType, VDimension >
 ::RequestGetITKImage() 
 {
+  igstkLogMacro( DEBUG, "RequestGetITKImage() called ....\n");
+
   igstkPushInputMacro( RequestITKImage );
   this->m_StateMachine.ProcessInputs();
 }
@@ -159,6 +166,8 @@ void
 ImageSpatialObject< TPixelType, VDimension >
 ::RequestGetVTKImage() const
 {
+  igstkLogMacro( DEBUG, "RequestGetVTKImage() called ....\n");
+
   // This const_cast is allowed here only because 
   // all the transitions due to the RequestVTKImage
   // are idempotent, meaning that they do not change
@@ -175,6 +184,8 @@ void
 ImageSpatialObject< TPixelType, VDimension >
 ::RequestGetVTKImage() 
 {
+  igstkLogMacro( DEBUG, "RequestGetVTKImage() called ....\n");
+
   igstkPushInputMacro( RequestVTKImage );
   this->m_StateMachine.ProcessInputs();
 }
@@ -185,6 +196,8 @@ void
 ImageSpatialObject< TPixelType, VDimension >
 ::ReportITKImageProcessing() 
 {
+  igstkLogMacro( DEBUG, "ReportITKImageProcessing() called ....\n");
+
   ITKImageModifiedEvent  event;
   event.Set( this->m_Image );
   this->InvokeEvent( event );
@@ -196,6 +209,8 @@ void
 ImageSpatialObject< TPixelType, VDimension >
 ::ReportVTKImageProcessing() 
 {
+  igstkLogMacro( DEBUG, "ReportVTKImageProcessing() called ....\n");
+
   VTKImageModifiedEvent  event;
   event.Set( m_vtkImporter->GetOutput() );
   this->InvokeEvent( event );
@@ -212,14 +227,39 @@ ImageSpatialObject< TPixelType, VDimension >
   this->InvokeEvent( event );
 }
 
-
 template< class TPixelType, unsigned int VDimension >
 void
 ImageSpatialObject< TPixelType, VDimension >
 ::SetImageProcessing() 
 {
+  igstkLogMacro( DEBUG, "SetImageProcessing() called ....\n");
+
   m_Image = m_ImageToBeSet;
   m_ImageSpatialObject->SetImage( m_Image );
+
+  // Get direction cosine information from the Oriented image
+  // and use the information to setup transformation parameters 
+ 
+  /*  
+  typename ImageType::DirectionType    directionCosines;
+  directionCosines = m_Image->GetDirection();
+
+  std::cout<< "Direction cosine" << directionCosines << std::endl; 
+ 
+  Transform          transform;
+  typename Transform::VersorType          rotation;
+
+  rotation.Set( directionCosines );
+  
+  typename Transform::ErrorType           errorValue = 1e-20;
+
+  typename Transform::TimePeriodType      validtyTime = -1;
+  
+  transform.SetRotation( rotation, errorValue, validtyTime );  
+  
+  this->RequestSetTransform( transform ); 
+ */
+
   m_itkExporter->SetInput( m_Image );
   m_vtkImporter->UpdateWholeExtent();
 }

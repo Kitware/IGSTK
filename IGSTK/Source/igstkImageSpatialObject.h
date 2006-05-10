@@ -20,6 +20,7 @@
 #include "igstkSpatialObject.h"
 
 #include "itkImageSpatialObject.h"
+#include "itkOrientedImage.h"
 
 #include "itkVTKImageExport.h"
 #include "vtkImageImport.h"
@@ -62,7 +63,7 @@ public:
   typedef itk::ImageSpatialObject< TDimension, TPixelType > 
                                                        ImageSpatialObjectType;
 
-  typedef typename ImageSpatialObjectType::ImageType        ImageType;
+  typedef typename itk::OrientedImage< TPixelType, TDimension >       ImageType;
   typedef typename ImageType::ConstPointer                  ImageConstPointer;
   typedef typename ImageSpatialObjectType::PointType        PointType;
   typedef typename ImageType::IndexType                     IndexType;
@@ -117,6 +118,10 @@ private:
 
   /** Set method to be invoked only by friends of this class */
   void RequestSetImage( const ImageType * image );
+
+  /** Declarations needed for the Logger */
+  igstkLoggerMacro();
+
 
 private:
  
