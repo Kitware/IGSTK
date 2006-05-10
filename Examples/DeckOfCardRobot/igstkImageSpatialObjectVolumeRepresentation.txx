@@ -37,6 +37,9 @@ ImageSpatialObjectVolumeRepresentation< TImageSpatialObject >
   this->AddActor( m_ImageActor );
   m_ImageData  = NULL;
 
+  // Create the observer to VTK image events 
+  m_VTKImageObserver = VTKImageObserver::New();
+
   m_MinThreshold = 0;
   m_MaxThreshold = 2048;
   m_ShiftBy = 1024;
@@ -170,6 +173,9 @@ ImageSpatialObjectVolumeRepresentation< TImageSpatialObject >
 
   // We create the image spatial object
   m_ImageSpatialObject = m_ImageSpatialObjectToAdd;
+
+  m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
+                                     m_VTKImageObserver );
 
   this->RequestSetSpatialObject( m_ImageSpatialObject );
   
