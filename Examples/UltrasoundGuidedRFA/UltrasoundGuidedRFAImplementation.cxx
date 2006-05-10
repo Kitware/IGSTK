@@ -165,9 +165,11 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
 UltrasoundGuidedRFAImplementation
 ::~UltrasoundGuidedRFAImplementation()
 {
-  m_Tracker->Reset();
-  m_Tracker->StopTracking();
-  m_Tracker->Close();
+  this->Display3D->RequestStop();
+  this->Display2D->RequestStop();
+  this->m_Tracker->Reset();
+  this->m_Tracker->StopTracking();
+  this->m_Tracker->Close();
 }
 
 /** Quit */

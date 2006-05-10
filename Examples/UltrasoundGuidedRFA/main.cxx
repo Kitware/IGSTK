@@ -84,7 +84,6 @@ int main(int , char** )
   //application.AttachObjectToTrack( axes2 );
   application->AttachObjectToTrack(  UltrasoundProbe  );
 
-  //Fl::run();
 
   while( !application->HasQuitted() )
     {
