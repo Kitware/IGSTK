@@ -267,46 +267,6 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
                         ::SetOrientationProcessing called...\n");
   m_Orientation = m_OrientationToBeSet;
  
-  // If the orientation is oblique, perform reslicing 
-
-  /*
-  if ( m_Orientation == Oblique ) 
-    {
-    //std::cout << "The image data before reslicing " << std::endl; 
-    //m_ImageData->Print ( std:: cout );
-
-    m_ImageReslice->SetInput ( m_ImageData );
- 
-    // Set the reslicing plane axes 
-    vtkMatrix4x4         * resliceAxes;
-
-    resliceAxes = vtkMatrix4x4::New();
-
-    resliceAxes->Identity();
-      
-    m_ImageReslice->SetResliceAxes( resliceAxes );
-
-    // Set the spacing 
-    double spacing[3];
-    m_ImageData->GetSpacing( spacing );
-    m_ImageReslice->SetOutputSpacing( spacing[0],spacing[1],spacing[2] );
-
-    // Set the origin
-    double origin[3];
-    m_ImageData->GetOrigin( origin );
-    m_ImageReslice->SetOutputOrigin( origin );
-
-    // Set the output extent
-    int ext[6];
-    m_ImageData->GetExtent( ext );
-
-    m_ImageReslice->SetOutputExtent( ext[0], ext[1], ext[2], 
-                                     ext[3], ext[4], ext[5]);
-    m_ImageReslice->Update();
-
-    m_ImageData = m_ImageReslice->GetOutput();   
-    resliceAxes->Delete(); 
-    } */
 }
   
 
@@ -342,9 +302,6 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     SliceNumberType maxSlice = 0;
     
     int ext[6];
-
-    //std::cout << "ImageData right before updating : " << std::endl;
-    //m_ImageData->Print( std::cout );
 
     m_ImageData->Update();
     m_ImageData->GetExtent( ext );
@@ -452,6 +409,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   // This method gets a VTK image data from the private method of the
   // ImageSpatialObject and stores it in the representation by invoking the
   // private SetImage method.
+  //
+  // 
   this->m_ImageSpatialObject->RequestGetVTKImage();
 
   if( this->m_VTKImageObserver->GotVTKImage() ) 
