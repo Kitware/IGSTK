@@ -454,10 +454,10 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
   // Here we get a VTK image data from the private method of the
   // ImageSpatialObject and stores it in the representation .
   //
-  m_ImageSpatialObject->RequestGetVTKImage();
-  
   m_VTKImageObserver->Reset();
 
+  m_ImageSpatialObject->RequestGetVTKImage();
+  
   if( m_VTKImageObserver->GotVTKImage() )
     {
 
