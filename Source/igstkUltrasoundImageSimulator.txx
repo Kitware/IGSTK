@@ -61,9 +61,6 @@ UltrasoundImageSimulator< TImageGeometricModel >
   
   m_VTKImageObserver = VTKImageObserver::New();
 
-  m_ImageGeometricModel->AddObserver( VTKImageModifiedEvent(), 
-                                      m_VTKImageObserver );
-
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( NullImageSpatialObject  );
 
