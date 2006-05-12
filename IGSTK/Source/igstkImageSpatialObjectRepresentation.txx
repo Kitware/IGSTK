@@ -411,19 +411,21 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   // private SetImage method.
   //
   // 
+  this->m_VTKImageObserver->Reset();
+
   this->m_ImageSpatialObject->RequestGetVTKImage();
 
   if( this->m_VTKImageObserver->GotVTKImage() ) 
     {
-    m_ImageData = this->m_VTKImageObserver->GetVTKImage();
-    if( m_ImageData )
+    this->m_ImageData = this->m_VTKImageObserver->GetVTKImage();
+    if( this->m_ImageData )
       {
-      m_ImageData->Update();
+      this->m_ImageData->Update();
       }
-    m_MapColors->SetInput( m_ImageData );
+    this->m_MapColors->SetInput( this->m_ImageData );
     }
 
-  m_ImageActor->SetInput( m_MapColors->GetOutput() );
+  this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
 }
 
 
