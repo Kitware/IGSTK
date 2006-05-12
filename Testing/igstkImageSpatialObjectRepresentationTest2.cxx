@@ -275,7 +275,7 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   Fl::wait(1.0);  
   igstk::PulseGenerator::CheckTimeouts();
 
-    for(unsigned int i=0; i<900000; i++)
+    for(unsigned int i=0; i<10; i++)
       {
       igstk::PulseGenerator::CheckTimeouts();
       Fl::check();
