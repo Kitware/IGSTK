@@ -57,9 +57,9 @@ DOCR_Registration::DOCR_Registration( ImageSOType::Pointer imageSO,
     for (int i = 0; i < NUM_SEGMENTATION_LABELS; i++) m_fiducials[i][0][0] = 0;
     m_numFiducials = 0;
 
-    m_verificationPoint[0] = 37.772; //4.05799;
-    m_verificationPoint[1] = 48.8854; //7.0042;
-    m_verificationPoint[2] = 9.52381; //19.7692;
+    m_verificationPoint[0] = -100.3; //37.772; //4.05799;
+    m_verificationPoint[1] = -300.4; //48.8854; //7.0042;
+    m_verificationPoint[2] = 400.5; //9.52381; //19.7692;
 
     // higher value for m_ROIstart[2] moves the box to the front!! Why??
     // I guess, it's again flipped coordinate systems between mha and DICOM.
@@ -223,7 +223,7 @@ bool DOCR_Registration::compute()
       if((m_bins[bin] < 0)&&(m_bins[bin-1] < 0)&&
          (m_bins[bin-2] < 0)&&(m_bins[bin-3] < 0))
         thresholdfound = true;
-    } while((!thresholdfound) && (bin < (NUMBERBIGBINS - 2)));
+    } while((!thresholdfound) && (bin < (NUMBERBIGBINS - 1)) && (bin != 3));
 
     if (thresholdfound)
       std::cout << "threshold bin: " << bin+1 << ". (of " <<
@@ -441,7 +441,7 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
 
   if (m_numFiducials != NUM_FIDUCIALS)
   {
-    std::cout << "\nNumber of fiducials is not correct !\n";
+    std::cout << "\nNumber of fiducials (" << m_numFiducials << ") is not correct ! It should be " << NUM_FIDUCIALS << ". \n";
     return false;
   }
   // C 8
@@ -706,119 +706,119 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
 
   // Initialization of points in needle holder space
   //0
-  point[0] = 8.0;
-  point[1] = -3.3;
+  point[0] = SIGNSWITCH_X * 8.0;
+  point[1] = SIGNSWITCH_Y * -3.3;
   point[2] = 45 - 1.25;
   landmarkSet1.push_back(point);
 
   // has to be deactivated in case we use manually modified data w/ 18 fiducials
   //1
 #if (NUM_FIDUCIALS == 19)
-  point[0] = 3.3;
-  point[1] = -8.0;
+  point[0] = SIGNSWITCH_X * 3.3;
+  point[1] = SIGNSWITCH_Y * -8.0;
   point[2] = 42.5 - 1.25;
   landmarkSet1.push_back(point);
 #endif
 
   //2
-  point[0] = -3.3;
-  point[1] = -8.0;
+  point[0] = SIGNSWITCH_X * -3.3;
+  point[1] = SIGNSWITCH_Y * -8.0;
   point[2] = 40 - 1.25;
   landmarkSet1.push_back(point);
 
   //3
-  point[0] = -8.0;
-  point[1] = -3.3;
+  point[0] = SIGNSWITCH_X * -8.0;
+  point[1] = SIGNSWITCH_Y * -3.3;
   point[2] = 37.5 - 1.25;
   landmarkSet1.push_back(point);
 
   //4
-  point[0] = -8.0;
-  point[1] = 3.3;
+  point[0] = SIGNSWITCH_X * -8.0;
+  point[1] = SIGNSWITCH_Y * 3.3;
   point[2] = 35 - 1.25;
   landmarkSet1.push_back(point);
 
   //5
-  point[0] = -3.3;
-  point[1] = 8.0;
+  point[0] = SIGNSWITCH_X * -3.3;
+  point[1] = SIGNSWITCH_Y * 8.0;
   point[2] = 32.5 - 1.25;
   landmarkSet1.push_back(point);
 
   //6
-  point[0] = 3.3;
-  point[1] = 8.0;
+  point[0] = SIGNSWITCH_X * 3.3;
+  point[1] = SIGNSWITCH_Y * 8.0;
   point[2] = 30 - 1.25;
   landmarkSet1.push_back(point);
 
   //7
-  point[0] = 8.0;
-  point[1] = 3.3;
+  point[0] = SIGNSWITCH_X * 8.0;
+  point[1] = SIGNSWITCH_Y * 3.3;
   point[2] = 27.5 - 1.25;
   landmarkSet1.push_back(point);
 
   //8
-  point[0] = 8.0;
-  point[1] = -3.3;
+  point[0] = SIGNSWITCH_X * 8.0;
+  point[1] = SIGNSWITCH_Y * -3.3;
   point[2] = 25 - 1.25;
   landmarkSet1.push_back(point);
 
   //9
-  point[0] = 3.3;
-  point[1] = -8.0;
+  point[0] = SIGNSWITCH_X * 3.3;
+  point[1] = SIGNSWITCH_Y * -8.0;
   point[2] = 22.5 - 1.25;
   landmarkSet1.push_back(point);
 
   //10
-  point[0] = -3.3;
-  point[1] = -8.0;
+  point[0] = SIGNSWITCH_X * -3.3;
+  point[1] = SIGNSWITCH_Y * -8.0;
   point[2] = 20 - 1.25;
   landmarkSet1.push_back(point);
 
   //11
-  point[0] = -8.0;
-  point[1] = -3.3;
+  point[0] = SIGNSWITCH_X * -8.0;
+  point[1] = SIGNSWITCH_Y * -3.3;
   point[2] = 17.5 - 1.25;
   landmarkSet1.push_back(point);
 
   //12
-  point[0] = -8.0;
-  point[1] = 3.3;
+  point[0] = SIGNSWITCH_X * -8.0;
+  point[1] = SIGNSWITCH_Y * 3.3;
   point[2] = 15 - 1.25;
   landmarkSet1.push_back(point);
 
   //13
-  point[0] = -3.3;
-  point[1] = 8.0;
+  point[0] = SIGNSWITCH_X * -3.3;
+  point[1] = SIGNSWITCH_Y * 8.0;
   point[2] = 12.5 - 1.25;
   landmarkSet1.push_back(point);
 
   //14
-  point[0] = 3.3;
-  point[1] = 8.0;
+  point[0] = SIGNSWITCH_X * 3.3;
+  point[1] = SIGNSWITCH_Y * 8.0;
   point[2] = 10 - 1.25;
   landmarkSet1.push_back(point);
 
   //15
-  point[0] = 8.0;
-  point[1] = 3.3;
+  point[0] = SIGNSWITCH_X * 8.0;
+  point[1] = SIGNSWITCH_Y * 3.3;
   point[2] = 7.5 - 1.25;
   landmarkSet1.push_back(point);
 
   //16
-  point[0] = 8.0;
-  point[1] = -3.3;
+  point[0] = SIGNSWITCH_X * 8.0;
+  point[1] = SIGNSWITCH_Y * -3.3;
   point[2] = 5 - 1.25;
   landmarkSet1.push_back(point);
 
   //17
-  point[0] = 3.3;
-  point[1] = -8.0;
+  point[0] = SIGNSWITCH_X * 3.3;
+  point[1] = SIGNSWITCH_Y * -8.0;
   point[2] = 2.5 - 1.25;
   landmarkSet1.push_back(point);
 
   //18
-  point[0] = -3.3;
-  point[1] = -8.0;
+  point[0] = SIGNSWITCH_X * -3.3;
+  point[1] = SIGNSWITCH_Y * -8.0;
   point[2] = 0 - 1.25;
   landmarkSet1.push_back(point);
 

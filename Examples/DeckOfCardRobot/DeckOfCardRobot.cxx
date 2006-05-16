@@ -928,6 +928,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
     rPE[i] = m_EntryTransform.GetTranslation()[i];
     rPT[i] = m_TargetTransform.GetTranslation()[i];
     }
+
   // In Robot coordinate system
   rPE = m_ImageToRobotTransform->TransformPoint( rPE );
   rPT = m_ImageToRobotTransform->TransformPoint( rPT );
@@ -973,9 +974,14 @@ bool DeckOfCardRobot::CalculateRobotMovement()
 
   /** Robot Movement Code-------------------------------------------------*/
   // Robot translational movement
-  m_Translation[0] = - pIntersect[0];   //Internal X and Y axis flip
-  m_Translation[1] = - pIntersect[1];
+  // No flip necessary in case of correct needle holder orientation:
+  //     "R" must point towards Robot, i.e. top-level fiducial has to be in
+  //     needle holder space with NEGATIVE x and POSITIVE y
+  m_Translation[0] = pIntersect[0]; 
+  m_Translation[1] = pIntersect[1]; 
   m_Translation[2] = 0;
+
+  //std::cout << "Translation: " << m_Translation[0] << " " << m_Translation[1] << std::endl;
 
   /************************************************************************/
   /* Projection Angle                                                     */
@@ -986,7 +992,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   pProject[0] = 0;        // Projection to YZ plane
   pProject.Normalize();
   m_Rotation[0] = acos( pVect1 * pProject) * 180 /PI;
-  if ( - pProject[1] > 0)
+  if ( pProject[1] > 0)
     {
     m_Rotation[0] *= -1;
     }
@@ -996,7 +1002,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   pProject[1] = 0;        // Projection to XZ plane
   pProject.Normalize();
   m_Rotation[1] = acos( pVect1 * pProject) * 180 /PI;
-  if ( - pProject[0] < 0)
+  if ( pProject[0] < 0)
     {
     m_Rotation[1] *= -1;
     }

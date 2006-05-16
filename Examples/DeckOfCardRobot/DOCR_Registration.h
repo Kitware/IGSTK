@@ -91,6 +91,8 @@ namespace igstk {
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+#define SIGNSWITCH_X -1 // switch for x/y orientation of needle holder
+#define SIGNSWITCH_Y -1 // switch for x/y orientation of needle holder
 
 public:
   typedef igstk::CTImageSpatialObject                 ImageSOType;
