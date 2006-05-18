@@ -53,8 +53,6 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( MeshObject, SpatialObject )
 
-public:
-
   /** Unlike DefaultStaticMeshTraits, the DefaultDynamicMeshTraits structure
    * is designed to create Mesh instances that will have many insert and delete
    * operations done on them. **/
@@ -83,6 +81,8 @@ public:
   typedef MeshType::PointsContainerPointer          PointsContainerPointer;
   typedef MeshType::CellsContainer                  CellsContainer;
   typedef MeshType::CellsContainerPointer           CellsContainerPointer;
+
+public:
 
   /** Add a point to the mesh */
   bool AddPoint(unsigned int id,float x, float y,float z);

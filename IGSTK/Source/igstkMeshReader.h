@@ -83,7 +83,12 @@ public:
   typedef Superclass::GroupSpatialObjectType GroupSpatialObjectType;
   typedef SpatialObjectType::ConstPointer    SpatialObjectTypeConstPointer;
   typedef igstk::MeshObject                  MeshObjectType;
+
+protected:
+
   typedef MeshObjectType::MeshType           MeshType;
+
+public:
 
   /** Return the output as a group */
   const MeshObjectType * GetOutput() const;
