@@ -43,7 +43,7 @@ class View;
  *
  * This class serves as the base class for all the representation objects that
  * will provide a VTK visualization of the Spatial Objects that are composing a
- * give scene.
+ * given scene.
  *
  *
  * \ingroup Object
