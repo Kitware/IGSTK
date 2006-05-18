@@ -54,13 +54,13 @@ void TubeReader::AttemptReadObjectProcessing()
   GroupSpatialObjectType::ChildrenListType::const_iterator it = 
                                                             children->begin();
 
-  while(it != children->end())
+  while( it != children->end() )
     {
-    if(!strcmp((*it)->GetTypeName(),"TubeSpatialObject"))
+    if( !strcmp((*it)->GetTypeName(),"TubeSpatialObject") )
       {
       TubeSpatialObjectType * tube = 
               dynamic_cast< TubeSpatialObjectType * >( it->GetPointer() );
-      if(tube)
+      if( tube )
         {
         m_TubeSpatialObject = tube;
         this->ConnectTube();
