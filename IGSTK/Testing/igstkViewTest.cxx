@@ -210,6 +210,12 @@ int igstkViewTest( int, char * [] )
     // End of the GUI creation
 
     form->show();
+
+    // Exercice some view functions
+    view2D->Initialize();
+    view2D->Enable();
+    view2D->Render();
+    view2D->Update();
     
     view2D->RequestResetCamera();
     view2D->RequestEnableInteractions();
@@ -231,7 +237,6 @@ int igstkViewTest( int, char * [] )
 
     view2D->RequestStart();
     view3D->RequestStart();
-
 
     // Do manual redraws
     for(unsigned int i=0; i<10; i++)
