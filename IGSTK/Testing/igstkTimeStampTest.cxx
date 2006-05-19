@@ -26,10 +26,9 @@
 #include "igstkTimeStamp.h"
 
 int igstkTimeStampTest( int, char * [] )
-{
-
+{ 
   igstk::RealTimeClock::Initialize();
-
+  igstk::RealTimeClock::Print(std::cout);
 
   try
     {
