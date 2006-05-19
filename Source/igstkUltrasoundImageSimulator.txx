@@ -375,9 +375,8 @@ UltrasoundImageSimulator< TImageGeometricModel >
   // Here we get a VTK image data from the private method of the
   // ImageSpatialObject and stores it in the representation .
   //
-  m_ImageGeometricModel->RequestGetVTKImage();
-
   m_VTKImageObserver->Reset();
+  m_ImageGeometricModel->RequestGetVTKImage();
   
   if( m_VTKImageObserver->GotVTKImage() )
     {
