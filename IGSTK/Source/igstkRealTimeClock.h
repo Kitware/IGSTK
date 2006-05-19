@@ -49,6 +49,9 @@ public:
    *  IGSTK application. */
   static void Initialize();
 
+  /** Print the object */
+  static void Print(std::ostream& os, itk::Indent indent=0);
+
   /** Define the type for the frequency of the clock */
   typedef double        FrequencyType;
 
@@ -65,9 +68,7 @@ protected:
 private:
   
   static  FrequencyType    m_Frequency;
-
   static  TimeStampType    m_Difference;
-
   static  TimeStampType    m_Origin;
 
 };

@@ -19,25 +19,17 @@
 #include "igstkRealTimeClock.h"
 
 #if defined(WIN32) || defined(_WIN32)
-
 #include <windows.h>
-
 #else
-
 #include <sys/time.h>
-
 #endif  // defined(WIN32) || defined(_WIN32)
-
 
 namespace igstk
 {
 
 RealTimeClock::FrequencyType  RealTimeClock::m_Frequency = 1e6;
-
 RealTimeClock::TimeStampType  RealTimeClock::m_Difference = 0.0;
-
 RealTimeClock::TimeStampType  RealTimeClock::m_Origin = 0.0;
-
 
 /** Initialize the static variables for the RealTimeClock */
 void RealTimeClock::Initialize()
@@ -137,6 +129,11 @@ RealTimeClock::GetTimeStamp()
 #endif  // defined(WIN32) || defined(_WIN32)
 }
 
+/** Print the object */
+void RealTimeClock::Print(std::ostream& os, itk::Indent indent)
+{
+  PrintSelf(os,indent);
+}
 
 /** Print the object */
 void RealTimeClock::PrintSelf( std::ostream& os, itk::Indent indent ) 
