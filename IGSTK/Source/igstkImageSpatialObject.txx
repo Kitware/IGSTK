@@ -240,25 +240,31 @@ ImageSpatialObject< TPixelType, VDimension >
   // Get direction cosine information from the Oriented image
   // and use the information to setup transformation parameters 
  
-  /*  
   typename ImageType::DirectionType    directionCosines;
   directionCosines = m_Image->GetDirection();
 
-  std::cout<< "Direction cosine" << directionCosines << std::endl; 
- 
+  std::cout << "Direction cosines" << directionCosines << std::endl; 
+
+  typedef typename ImageType::PointType     PointType;  
+  PointType origin =  m_Image->GetOrigin();
+
+  std::cout <<"Image origin" << origin << std::endl; 
+
   Transform          transform;
-  typename Transform::VersorType          rotation;
-
-  rotation.Set( directionCosines );
+  typename Transform::VersorType                    rotation;
   
-  typename Transform::ErrorType           errorValue = 1e-20;
+  rotation.Set( directionCosines );
+ 
 
+  typename Transform::VectorType   tranlationToOrigin = 
+                 origin - rotation.Transform( origin );
+ 
+  typename Transform::ErrorType           errorValue = 1e-20;
   typename Transform::TimePeriodType      validtyTime = -1;
   
-  transform.SetRotation( rotation, errorValue, validtyTime );  
-  
+  transform.SetTranslationAndRotation( tranlationToOrigin, rotation, errorValue, validtyTime );  
+ 
   this->RequestSetTransform( transform ); 
- */
 
   m_itkExporter->SetInput( m_Image );
   m_vtkImporter->UpdateWholeExtent();
