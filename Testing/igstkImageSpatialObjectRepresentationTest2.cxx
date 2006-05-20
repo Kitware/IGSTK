@@ -30,7 +30,7 @@
 
 namespace ImageSpatialObjectRepresentationTest2
 {
-  igstkObserverObjectMacro(CTImage,
+igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
 }
 
@@ -43,7 +43,8 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
 
   if( argc < 3 )
     {
-    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  "<< "Output image file for a screenshot" << std::endl;
+    std::cerr << "Usage: " << argv[0] << "  CTImage  "
+              << "Output image file for a screenshot" << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -58,9 +59,10 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
+                                              = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -75,14 +77,16 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
 
   
   // Attach an observer
-  typedef ImageSpatialObjectRepresentationTest2::CTImageObserver CTImageObserverType;
+  typedef ImageSpatialObjectRepresentationTest2::CTImageObserver 
+                                                          CTImageObserverType;
   CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New();
   reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
                             ctImageObserver);
 
   /* set up the image spatial object representation */ 
   typedef igstk::CTImageSpatialObjectRepresentation ImageRepresentationType;
-  ImageRepresentationType::Pointer imageRepresentation = ImageRepresentationType::New();
+  ImageRepresentationType::Pointer imageRepresentation 
+                                            = ImageRepresentationType::New();
   imageRepresentation->SetLogger( logger );
 
   //
@@ -92,9 +96,12 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
     }
   catch( ... )
     {
-    std::cerr << "ERROR: An exception was thrown while reading the CT dataset" << std::endl;
-    std::cerr << "This should not have happened. The State Machine should have" << std::endl;
-    std::cerr << "catched that exception and converted it into a SM Input " << std::endl;
+    std::cerr << "ERROR: An exception was thrown while reading the CT dataset"
+              << std::endl;
+    std::cerr << "This should not have happened. The State Machine should have"
+              << std::endl;
+    std::cerr << "catched that exception and converted it into a SM Input " 
+              << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -118,7 +125,7 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   radius[2] = 20;
   ellipsoidObject->SetRadius(radius);
 
-  igstk::Transform                          transform ;
+  igstk::Transform                          transform;
   igstk::Transform::VectorType              translation;
 
   translation[0] = -153.66;
@@ -150,7 +157,7 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   radius2[2] = 20;
   ellipsoidObject2->SetRadius(radius2);
 
-  igstk::Transform                          transform2 ;
+  igstk::Transform                          transform2;
   igstk::Transform::VectorType              translation2;
 
   translation2[0] = -153.66 + 512*0.6718;
@@ -182,7 +189,7 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   radius3[2] = 20;
   ellipsoidObject3->SetRadius(radius3);
 
-  igstk::Transform                          transform3 ;
+  igstk::Transform                          transform3;
   igstk::Transform::VectorType              translation3;
 
   translation3[0] = -153.66;
@@ -200,7 +207,7 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   ellipsoidObjectRepresentation3->SetColor( 1.0, 0.0, 0.0 );
   ellipsoidObjectRepresentation3->SetOpacity( 1.0 );
 
- //Bottom right corner
+  //Bottom right corner
   EllipsoidObjectType::Pointer  ellipsoidObject4 = EllipsoidObjectType::New();
   ellipsoidObject4->SetLogger ( logger );
   
@@ -214,7 +221,7 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   radius4[2] = 20;
   ellipsoidObject4->SetRadius( radius4 );
 
-  igstk::Transform                          transform4 ;
+  igstk::Transform                          transform4;
   igstk::Transform::VectorType              translation4;
 
   translation4[0] = -153.66 + 512*0.6718;
@@ -262,7 +269,8 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
  
-  imageRepresentation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
+  imageRepresentation->RequestSetImageSpatialObject( 
+                                               ctImageObserver->GetCTImage() );
   imageRepresentation->RequestSetOrientation( ImageRepresentationType::Axial );
   
   view2D->RequestSetOrientation( igstk::View2D::Axial );
@@ -275,11 +283,11 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   Fl::wait(1.0);  
   igstk::PulseGenerator::CheckTimeouts();
 
-    for(unsigned int i=0; i<10; i++)
-      {
-      igstk::PulseGenerator::CheckTimeouts();
-      Fl::check();
-      }
+  for(unsigned int i=0; i<10; i++)
+    {
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();
+    }
 
   /* Save screenshots in a file */
   /* std::string filename;
@@ -296,4 +304,3 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   
   return EXIT_SUCCESS;
 }
-
