@@ -469,10 +469,6 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
       }
     }
 
-
-
-
-
   m_MapColors->SetInput( m_ImageData );
 
   m_ImageActor->SetInput( m_MapColors->GetOutput() );
