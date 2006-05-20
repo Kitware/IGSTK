@@ -260,11 +260,11 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
                   USImageObject::ITKImageModifiedEvent(),usImageObserver);
 
   usImageObserver->Reset();
-  
   this->m_USFixedImage->RequestGetITKImage();
 
   if( !usImageObserver->GotITKUSImage() )
     {
+    std::cout << "No US Image!" << std::endl;
     return;
     }
 
@@ -274,12 +274,12 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   this->m_MRMovingImage->AddObserver(
              MRImageSpatialObject::ITKImageModifiedEvent(),mrImageObserver);
 
-  this->m_MRMovingImage->RequestGetITKImage();
-
   mrImageObserver->Reset();
+  this->m_MRMovingImage->RequestGetITKImage();
 
   if(!mrImageObserver->GotITKMRImage())
     {
+    std::cout << "No MR Image!" << std::endl;
     return;
     }
   
@@ -424,7 +424,8 @@ void MR3DImageToUS3DImageRegistration::RequestCalculateRegistration()
                         ::RequestCalculateRegistration called...\n" );
 
   // Try to get the transform from the two images
-  this->ObserveMRImageTransformInput(this->m_USFixedImage);
+  this->ObserveUSImageTransformInput(this->m_USFixedImage);
+  this->ObserveMRImageTransformInput(this->m_MRMovingImage);
 
   const_cast<USImageObject*>(this->m_USFixedImage)->RequestGetTransform();
   const_cast<MRImageSpatialObject*>(
