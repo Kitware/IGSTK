@@ -871,7 +871,7 @@ void View::PrintSelf( std::ostream& os, itk::Indent indent ) const
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
   os << indent << "RenderWindow Pointer: " << this->m_RenderWindow << std::endl;
   os << indent << "RenderWindowInteractor Pointer: " 
-               << this->m_RenderWindowInteractor << std::endl;
+               << *(this->m_RenderWindowInteractor) << std::endl;
   os << indent << "Renderer Pointer: " << this->m_Renderer << std::endl;
   os << indent << "Camera Pointer: " << this->m_Camera << std::endl;
   os << indent << "InteractionHandling: ";
