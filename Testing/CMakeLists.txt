@@ -10,13 +10,14 @@ MAKE_DIRECTORY(${IGSTKSandbox_TEST_OUTPUT_DIR})
 SET(IGSTKSandbox_DICOM_TEST_OUTPUT_DIR "${IGSTKSandbox_TEST_OUTPUT_DIR}/DICOM")
 MAKE_DIRECTORY(${IGSTKSandbox_DICOM_TEST_OUTPUT_DIR})
 
-
 SET(IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR "${IGSTKSandbox_TEST_OUTPUT_DIR}/StateMachineDiagrams")
 MAKE_DIRECTORY(${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
 
 #-----------------------------------------------------------------------------
 # Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
 FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_DIR}/Testing/Data $ENV{IGSTKSandbox_DATA_ROOT})
+
+
 
 #-----------------------------------------------------------------------------
 # Configure the dot tool from graphviz in order to generate the State Machine Diagrams 
@@ -80,26 +81,46 @@ FOREACH(TestFiles ${SandboxTests_SRCS})
 ENDFOREACH(TestFiles)
 
 IF(IGSTKSandbox_DATA_ROOT)
+
+   SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
+
    ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTKSandbox_TESTS} 
              igstkPivotCalibrationReaderTest
              ${IGSTKSandbox_DATA_ROOT}/Input/PivotCalibrationTool.txt) 
-  SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkPivotCalibrationReaderTest.cxx)
+   SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkPivotCalibrationReaderTest.cxx)
+
    ADD_TEST( igstkMR3DImageToUS3DImageRegistrationTest ${IGSTKSandbox_TESTS} 
              igstkMR3DImageToUS3DImageRegistrationTest
              ${IGSTKSandbox_DATA_ROOT}/MRLiver) 
-ENDIF(IGSTKSandbox_DATA_ROOT)
 
-IF ( IGSTK_DATA_ROOT )
+   ADD_TEST( igstkImageSpatialObjectRepresentationTest2 
+       ${IGSTKSandbox_TESTS}
+       --compare ${IGSTKSandbox_BASELINE_DIR}/igstkImageSpatialObjectRepresentationTest2.png 
+       ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png 
+       --tolerance 5
+       igstkImageSpatialObjectRepresentationTest2
+       ${IGSTKSandbox_DATA_ROOT}/E000192
+       ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png)
+   SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
+                            igstkImageSpatialObjectRepresentationTest2)
+
+   ADD_TEST( igstkImageSpatialObjectRepresentationTest3 
+       ${IGSTKSandbox_TESTS}
+       --compare ${IGSTKSandbox_BASELINE_DIR}/igstkImageSpatialObjectRepresentationTest3.png 
+       ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png 
+       --tolerance 5
+       igstkImageSpatialObjectRepresentationTest3
+       ${IGSTKSandbox_DATA_ROOT}/E000192Mod2
+       ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png)
+
+   SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkImageSpatialObjectRepresentationTest3)
+   
    ADD_TEST( igstkObliqueImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} 
               igstkObliqueImageSpatialObjectRepresentationTest 
-              ${IGSTK_DATA_ROOT}/Input/E000192)   
+              ${IGSTKSandbox_DATA_ROOT}/E000192)   
    SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkObliqueImageSpatialObjectRepresentationTest)
-  
-   ADD_TEST( igstkImageSpatialObjectRepresentationTest2 ${IGSTKSandbox_TESTS} 
-              igstkImageSpatialObjectRepresentationTest2 
-              ${IGSTK_DATA_ROOT}/Input/E000192 "out.png")   
-   SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkImageSpatialObjectRepresentationTest2)
-ENDIF (IGSTK_DATA_ROOT )
+
+ENDIF(IGSTKSandbox_DATA_ROOT)
 
 IF (IGSTK_USE_ATAMAI)
   ADD_TEST(igstkAtamaiNDITrackerTest ${IGSTKSandbox_TESTS} igstkAtamaiNDITrackerTest)
