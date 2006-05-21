@@ -30,6 +30,7 @@ namespace Friends
 {
 
 /** \class ImageReaderToImageSpatialObject
+ * 
  * \brief This class is intended to make the connection between the ImageReader
  * and its output, the ImageSpatialObject. 
  *
@@ -37,6 +38,7 @@ namespace Friends
  * the ImageSpatialObject, and make their GetImage() and SetImage() methods
  * private, so that developers cannot gain access to the ITK or VTK layers of
  * these two classes.
+ *
  */
 class ImageReaderToImageSpatialObject
 {
@@ -57,6 +59,7 @@ public:
 
   
 /** \class ImageReader
+ * 
  * \brief This class is a base class for all image reader classes.
  * 
  * This class reads image data stored in files and outputs
