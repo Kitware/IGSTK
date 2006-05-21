@@ -243,12 +243,8 @@ ImageSpatialObject< TPixelType, VDimension >
   typename ImageType::DirectionType    directionCosines;
   directionCosines = m_Image->GetDirection();
 
-  std::cout << "Direction cosines" << directionCosines << std::endl; 
-
   typedef typename ImageType::PointType     PointType;  
   PointType origin =  m_Image->GetOrigin();
-
-  std::cout <<"Image origin" << origin << std::endl; 
 
   Transform          transform;
   typename Transform::VersorType                    rotation;
