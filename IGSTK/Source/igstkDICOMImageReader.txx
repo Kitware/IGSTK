@@ -123,7 +123,6 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
                            Idle,
                            ReportInvalidRequest );
 
-
   // Transitions for Invalid inputs to  ImageDirectoryNameRead state 
   igstkAddTransitionMacro( ImageDirectoryNameRead,
                            GetModalityInformation,
@@ -477,7 +476,9 @@ void DICOMImageReader<TImageSpatialObject>
   // Attempt to load the directory listing.
   itksys::Directory directoryClass;
   directoryClass.Load( directory.c_str() );
-  if( directoryClass.GetNumberOfFiles() < 3 ) // To count for  "." and ".." 
+
+  // To count for  "." and ".." and at least two dicom slices 
+  if( directoryClass.GetNumberOfFiles() < 4 ) 
     {
     this->m_StateMachine.PushInput( 
                       this->m_ImageDirectoryNameDoesNotHaveEnoughFilesInput );
@@ -505,7 +506,7 @@ template <class TPixelType>
 void DICOMImageReader<TPixelType>::RequestGetImage()
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::DICOMImageReader::RequestGetImage called...\n");
+                 "igstk::DICOMImageReader::RequestGetImage called...\n" );
   this->m_StateMachine.PushInput( this->m_GetImageInput);
   this->m_StateMachine.ProcessInputs();
 }
@@ -516,7 +517,7 @@ DICOMImageReader<TImageSpatialObject>
 ::SetDirectoryNameProcessing()
 {
   igstkLogMacro( DEBUG, 
-                "igstk::DICOMImageReader::SetDirectoryName called...\n");
+                "igstk::DICOMImageReader::SetDirectoryName called...\n" );
   m_ImageDirectoryName = m_ImageDirectoryNameToBeSet;
   this->ReadDirectoryFileNamesProcessing();
 }
@@ -526,7 +527,7 @@ template <class TPixelType>
 void DICOMImageReader<TPixelType>::RequestReadImage()
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::DICOMImageReader::RequestReadImage called...\n");
+                 "igstk::DICOMImageReader::RequestReadImage called...\n" );
   this->m_StateMachine.PushInput( this->m_ReadImageInput);
   this->m_StateMachine.ProcessInputs();
 }
@@ -536,7 +537,7 @@ template <class TPixelType>
 void DICOMImageReader<TPixelType>::ReadDirectoryFileNamesProcessing()
 {
   igstkLogMacro( DEBUG, 
-              "igstk::DICOMImageReader::ReadDirectoryFileNames called...\n");
+              "igstk::DICOMImageReader::ReadDirectoryFileNames called...\n" );
   
   m_FileNames->SetInputDirectory( m_ImageDirectoryName );
  
@@ -564,37 +565,18 @@ template <class TPixelType>
 void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::DICOMImageReader::AttemptReadImage called...\n");
+                 "igstk::DICOMImageReader::AttemptReadImage called...\n" );
 
-  if(m_ImageSeriesReader->GetFileNames().size()>1)
+  try
     {
-    try
-      {
-      m_ImageSeriesReader->Update();
-      }
-    catch( itk::ExceptionObject & excp )
-      {
-      this->m_ImageReadingErrorInformation = excp.GetDescription();
-      this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
-      this->m_StateMachine.ProcessInputs();
-      return;
-      }
+    m_ImageSeriesReader->Update();
     }
-  else
+  catch( itk::ExceptionObject & excp )
     {
-    try
-      {
-      m_ImageFileReader->SetFileName(
-        m_ImageSeriesReader->GetFileNames()[0].c_str());
-      m_ImageFileReader->Update();
-      }
-    catch( itk::ExceptionObject & excp )
-      {
-      this->m_ImageReadingErrorInformation = excp.GetDescription();
-      this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
-      this->m_StateMachine.ProcessInputs();
-      return;
-      }
+    this->m_ImageReadingErrorInformation = excp.GetDescription();
+    this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
+    this->m_StateMachine.ProcessInputs();
+    return;
     }
 
   // Check if the DICOM image has a gantry tilt or not 
@@ -655,7 +637,8 @@ void
 DICOMImageReader<TPixelType>::ReportInvalidRequestProcessing()
 {
   igstkLogMacro( DEBUG, 
-      "igstk::DICOMImageReader::ReportInvalidRequestProcessing called...\n");
+      "igstk::DICOMImageReader::ReportInvalidRequestProcessing called...\n" );
+
   this->InvokeEvent( DICOMInvalidRequestErrorEvent() );
 }
 
@@ -664,7 +647,8 @@ template <class TPixelType>
 void
 DICOMImageReader<TPixelType>::ResetReaderProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ResetReader called...\n");
+  igstkLogMacro( DEBUG, "igstk::DICOMImageReader::ResetReader called...\n" );
+
   m_FileSuccessfullyRead = false;
 }
 
@@ -673,7 +657,8 @@ void
 DICOMImageReader<TPixelType>::ReportImageDirectoryEmptyErrorProcessing()
 {
   igstkLogMacro( DEBUG, 
-     "igstk::DICOMImageReader::ReportImageDirectoryEmptyError called...\n");
+     "igstk::DICOMImageReader::ReportImageDirectoryEmptyError called...\n" );
+
   this->InvokeEvent( DICOMImageDirectoryEmptyErrorEvent() );
 }
 
@@ -683,7 +668,8 @@ DICOMImageReader<TPixelType>
 ::ReportImageDirectoryDoesNotExistErrorProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::\
-                    ReportImageDirectoryDoesNotExistError called...\n");
+                    ReportImageDirectoryDoesNotExistError called...\n" );
+
   DICOMImageDirectoryDoesNotExistErrorEvent event;
   event.Set( m_ImageDirectoryNameToBeSet );
   this->InvokeEvent( event );
@@ -695,7 +681,8 @@ DICOMImageReader<TPixelType>
 ::ReportImageDirectoryDoesNotHaveEnoughFilesErrorProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::\
-         ReportImageDirectoryDoesNotHaveEnoughFilesError: called...\n");
+         ReportImageDirectoryDoesNotHaveEnoughFilesError: called...\n" );
+
   DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent event;
   event.Set( m_ImageDirectoryNameToBeSet );
   this->InvokeEvent( event );
@@ -707,7 +694,8 @@ DICOMImageReader<TPixelType>
 ::ReportImageDirectoryIsNotDirectoryErrorProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMImageReader::\
-                 ReportImageDirectoryIsNotDirectoryError: called...\n");
+                 ReportImageDirectoryIsNotDirectoryError: called...\n" );
+
   DICOMImageDirectoryIsNotDirectoryErrorEvent event;
   event.Set( m_ImageDirectoryNameToBeSet );
   this->InvokeEvent( event );
@@ -764,6 +752,7 @@ DICOMImageReader<TPixelType>::RequestGetModalityInformation()
 {
   igstkLogMacro( DEBUG,
         "igstk::DICOMImageReader::RequestGetModalityInformation called...\n");
+
   this->m_StateMachine.PushInput( this->m_GetModalityInformationInput );
   this->m_StateMachine.ProcessInputs();
 }
@@ -775,6 +764,7 @@ DICOMImageReader<TPixelType>::RequestGetPatientNameInformation()
 {
   igstkLogMacro( DEBUG, 
     "igstk::DICOMImageReader::RequestGetPatientNameInformation called...\n");
+
   this->m_StateMachine.PushInput( this->m_GetPatientNameInformationInput);
   this->m_StateMachine.ProcessInputs();
 }
