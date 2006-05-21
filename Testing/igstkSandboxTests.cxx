@@ -21,7 +21,7 @@
 #pragma warning ( disable : 4786 )
 #endif
 #include <iostream>
-#include "itkTestMain.h" 
+#include "igstkTestMain.h" 
 #include "igstkSandboxConfigure.h"
 #include "igstkSystemInformation.h"
 
@@ -35,4 +35,5 @@ void RegisterTests()
   REGISTER_TEST(igstkPivotCalibrationReaderTest);
   REGISTER_TEST(igstkMR3DImageToUS3DImageRegistrationTest);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest2);
+  REGISTER_TEST(igstkImageSpatialObjectRepresentationTest3);
 }
