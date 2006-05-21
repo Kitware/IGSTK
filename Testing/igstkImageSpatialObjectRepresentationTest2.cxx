@@ -289,10 +289,14 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
     Fl::check();
     }
 
+  //Request refreshing stop to take a screenshot
+  view2D->RequestStop();
+      
   /* Save screenshots in a file */
-  /* std::string filename;
+  std::string filename;
   filename = argv[2]; 
-  view2D->RequestSaveScreenShot( filename ); */
+  std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
+  view2D->RequestSaveScreenShot( filename );
 
   delete view2D;
   delete form;
