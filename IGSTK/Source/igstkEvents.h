@@ -53,15 +53,6 @@ private: \
   PayloadType  m_Payload; \
 };
 
-igstkEventMacro( IGSTKEvent,               itk::UserEvent );
-igstkEventMacro( PulseEvent,               IGSTKEvent );
-igstkEventMacro( RefreshEvent,             IGSTKEvent );
-igstkEventMacro( CompletedEvent,           IGSTKEvent );
-igstkEventMacro( InputOutputErrorEvent,    IGSTKEvent );
-igstkEventMacro( InputOutputTimeoutEvent,  IGSTKEvent );
-igstkEventMacro( OpenPortErrorEvent,       IGSTKEvent );
-igstkEventMacro( ClosePortErrorEvent,      IGSTKEvent );
-
 namespace EventHelperType 
 {
 typedef itk::Point< double, 3 >    PointType;
@@ -76,22 +67,6 @@ typedef struct {
   unsigned int maximum;
 }                                  IntegerBoundsType;
 }
-
-igstkLoadedEventMacro( PointEvent, IGSTKEvent, EventHelperType::PointType );
-igstkLoadedEventMacro( TransformModifiedEvent, IGSTKEvent, Transform );
-igstkLoadedEventMacro( LandmarkRegistrationErrorEvent, IGSTKEvent, 
-                       EventHelperType::DoubleType );
-igstkLoadedEventMacro( StringEvent, IGSTKEvent, EventHelperType::StringType );
-igstkLoadedEventMacro( UnsignedIntEvent, IGSTKEvent, 
-                       EventHelperType::UnsignedIntType );
-igstkLoadedEventMacro( IntegerBoundsEvent, IGSTKEvent, 
-                       EventHelperType::IntegerBoundsType );
-igstkLoadedEventMacro( VTKImageModifiedEvent, IGSTKEvent,
-                       EventHelperType::VTKImagePointerType );
-
-igstkEventMacro( AxialSliceBoundsEvent,      IntegerBoundsEvent );
-igstkEventMacro( SagittalSliceBoundsEvent,   IntegerBoundsEvent );
-igstkEventMacro( CoronalSliceBoundsEvent,    IntegerBoundsEvent );
 
 #define igstkLoadedObjectEventMacro( name, superclass, payloadtype ) \
 class  name : public superclass \
@@ -116,9 +91,6 @@ private: \
   void operator=(const Self&);  \
   PayloadType::Pointer  m_Payload; \
 };
-
-igstkLoadedObjectEventMacro( CalibrationModifiedEvent, IGSTKEvent, 
-                             PivotCalibration);
 
 
 #define igstkLoadedTemplatedObjectEventMacro( name, superclass, payloadtype ) \
@@ -169,7 +141,34 @@ private: \
   void operator=(const Self&);  \
   typename PayloadType::ConstPointer  m_Payload; \
 };
+
+igstkEventMacro( IGSTKEvent,               itk::UserEvent );
+igstkEventMacro( PulseEvent,               IGSTKEvent );
+igstkEventMacro( RefreshEvent,             IGSTKEvent );
+igstkEventMacro( CompletedEvent,           IGSTKEvent );
+igstkEventMacro( InputOutputErrorEvent,    IGSTKEvent );
+igstkEventMacro( InputOutputTimeoutEvent,  IGSTKEvent );
+igstkEventMacro( OpenPortErrorEvent,       IGSTKEvent );
+igstkEventMacro( ClosePortErrorEvent,      IGSTKEvent );
+
+igstkLoadedEventMacro( PointEvent, IGSTKEvent, EventHelperType::PointType );
+igstkLoadedEventMacro( TransformModifiedEvent, IGSTKEvent, Transform );
+igstkLoadedEventMacro( LandmarkRegistrationErrorEvent, IGSTKEvent, 
+                       EventHelperType::DoubleType );
+igstkLoadedEventMacro( StringEvent, IGSTKEvent, EventHelperType::StringType );
+igstkLoadedEventMacro( UnsignedIntEvent, IGSTKEvent, 
+                       EventHelperType::UnsignedIntType );
+igstkLoadedEventMacro( IntegerBoundsEvent, IGSTKEvent, 
+                       EventHelperType::IntegerBoundsType );
+igstkLoadedEventMacro( VTKImageModifiedEvent, IGSTKEvent,
+                       EventHelperType::VTKImagePointerType );
+
+igstkEventMacro( AxialSliceBoundsEvent,      IntegerBoundsEvent );
+igstkEventMacro( SagittalSliceBoundsEvent,   IntegerBoundsEvent );
+igstkEventMacro( CoronalSliceBoundsEvent,    IntegerBoundsEvent );
+
+igstkLoadedObjectEventMacro( CalibrationModifiedEvent, IGSTKEvent,
+                             PivotCalibration);
+
 }
-
-
 #endif
