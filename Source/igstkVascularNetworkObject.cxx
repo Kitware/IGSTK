@@ -15,7 +15,6 @@
 
 =========================================================================*/
 #include "igstkVascularNetworkObject.h"
-#include "igstkEvents.h"
 
 namespace igstk
 { 

@@ -16,7 +16,6 @@
 =========================================================================*/
 
 #include "igstkVascularNetworkObjectRepresentation.h"
-#include "igstkEvents.h"
 
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
@@ -98,10 +97,10 @@ void VascularNetworkObjectRepresentation::NoProcessing()
 {
 }
 
-/** Set the Cylindrical Spatial Object */
+/** Set the Vascular Network Object */
 void VascularNetworkObjectRepresentation::SetVascularNetworkObjectProcessing()
 {
-  // We create the ellipse spatial object
+  // We create the vascular network spatial object
   m_VascularNetworkObject = m_VascularNetworkObjectToAdd;
   this->RequestSetSpatialObject( m_VascularNetworkObject );
 } 
@@ -145,7 +144,7 @@ void VascularNetworkObjectRepresentation::CreateActors()
     spacing[2] = vessel->GetSpacing()[2];
     
     //Step 1: copy skeleton points from a vessel into vtkPoints
-    //vtkpoints assumes a triplet is coming so use pointer arithmetic
+    //vtkPoints assumes a triplet is coming so use pointer arithmetic
     //to jump to the next spot in a multidimensional array
     unsigned int nPoints = vessel->GetNumberOfPoints();
 

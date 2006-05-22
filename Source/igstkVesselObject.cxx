@@ -15,7 +15,6 @@
 
 =========================================================================*/
 #include "igstkVesselObject.h"
-#include "igstkEvents.h"
 
 namespace igstk
 { 
@@ -23,7 +22,7 @@ namespace igstk
 /** Constructor */
 VesselObject::VesselObject():m_StateMachine(this)
 {
-  // We create the ellipse spatial object
+  // We create the verssel spatial object
   m_VesselSpatialObject = VesselSpatialObjectType::New();
   this->RequestSetSpatialObject( m_VesselSpatialObject );
 } 

@@ -17,22 +17,16 @@
 #ifndef __igstkVascularNetworkObject_h
 #define __igstkVascularNetworkObject_h
 
-#include "igstkMacros.h"
 #include "igstkGroupObject.h"
 #include "igstkVesselObject.h"
 
 namespace igstk
 {
 
-/** \class TubeGroup
- * \brief Implements the 3-dimensional VascularNetworkObject structure.
+/** \class VascularNetworkObject
+ * \brief Implements the 3-dimensional vascular network structure.
  *
- * \par Overview
- * VascularNetworkObject implements the 3-dimensional 
- * VascularNetworkObject structure. 
- *
- *
- * \inTubeGroup Object
+ * \ingroup GroupObject
  */
 
 class VascularNetworkObject 
@@ -64,6 +58,11 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+
+  /** These two methods must be declared and note be implemented
+  *  in order to enforce the protocol of smart pointers. */
+  VascularNetworkObject(const Self&);          //purposely not implemented
+  void operator=(const Self&);                 //purposely not implemented
 
 
 };

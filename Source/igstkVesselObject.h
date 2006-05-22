@@ -18,7 +18,6 @@
 #ifndef __igstkVesselObject_h
 #define __igstkVesselObject_h
 
-#include "igstkMacros.h"
 #include "igstkSpatialObject.h"
 #include <itkVesselTubeSpatialObject.h>
 
@@ -32,7 +31,7 @@ class VascularNetworkReader;
  * \brief This class represents a Vessel object.
  * The Vessel is basically defined by a set of points 
  * representing its centerline.
- * Each point as a position and an associated radius value.
+ * Each point has a position and an associated radius value.
  *
  * \ingroup Object
  */
@@ -85,6 +84,11 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+
+  /** These two methods must be declared and note be implemented
+  *  in order to enforce the protocol of smart pointers. */
+  VesselObject(const Self&);          //purposely not implemented
+  void operator=(const Self&);        //purposely not implemented
  
   /** Set method to be invoked only by friends of this class */
   void SetVesselSpatialObject( VesselSpatialObjectType * vessel );

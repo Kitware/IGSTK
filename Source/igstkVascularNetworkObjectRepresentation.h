@@ -18,17 +18,15 @@
 #ifndef __igstkVascularNetworkObjectRepresentation_h
 #define __igstkVascularNetworkObjectRepresentation_h
 
-#include "igstkMacros.h"
 #include "igstkObjectRepresentation.h"
 #include "igstkVascularNetworkObject.h"
-#include "igstkStateMachine.h"
 
 namespace igstk
 {
 
 /** \class VascularNetworkObjectRepresentation
  * 
- * \brief This class implements the representation a VascularNetwork object.
+ * \brief This class implements the representation of a VascularNetwork object.
  *        Basically the tube is represented as a VTK actor using a
  *        vtkTubeFilter.
  *
@@ -87,6 +85,11 @@ private:
   void NoProcessing();
 
 private:
+
+  /** These two methods must be declared and note be implemented
+  *  in order to enforce the protocol of smart pointers. */
+  VascularNetworkObjectRepresentation (const Self&); //purposely not implemented
+  void operator=(const Self&);                       //purposely not implemented
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidVascularNetworkObject );
