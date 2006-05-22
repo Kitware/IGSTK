@@ -183,7 +183,9 @@ void MeshObjectRepresentation::CreateActors()
 
   meshActor->GetProperty()->SetColor(this->GetRed(),
                                      this->GetGreen(),
-                                     this->GetBlue()); 
+                                     this->GetBlue());
+
+  meshActor->GetProperty()->SetOpacity(this->GetOpacity());
     
   polyData->SetPoints(polyPoints);
   pointMapper->SetInput(polyData);
