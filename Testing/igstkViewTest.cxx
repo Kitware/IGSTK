@@ -89,10 +89,6 @@ namespace ViewTest
             {
             std::cerr << "View pointer is NULL " << std::endl;
             }
-          if( m_Form )
-            {
-            m_Form->hide();
-            }
           *m_End = true;
           return;
           }

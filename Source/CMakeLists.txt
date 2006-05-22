@@ -46,6 +46,7 @@ SET(IGSTK_HEADS
   igstkPolarisTrackerTool.h
   igstkPrincipalAxisCalibration.h
   igstkPulseGenerator.h
+  igstkRenderWindowInteractor.h
   igstkRealTimeClock.h
   igstkSerialCommunication.h
   igstkSerialCommunicationSimulator.h
@@ -124,6 +125,7 @@ SET(IGSTK_SRCS
   igstkPolarisTrackerTool.cxx
   igstkPrincipalAxisCalibration.cxx
   igstkPulseGenerator.cxx
+  igstkRenderWindowInteractor.cxx
   igstkRealTimeClock.cxx
   igstkSerialCommunication.cxx
   igstkSerialCommunicationSimulator.cxx

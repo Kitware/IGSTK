@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _igstkView_h
-#define _igstkView_h
+#ifndef __igstkView_h
+#define __igstkView_h
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4018 )
@@ -29,13 +29,13 @@
 #include <FL/Fl_Gl_Window.H>
 
 // VTK headers
-#include <vtkRenderWindowInteractor.h>
 #include "vtkRenderWindow.h"
 #include "vtkRenderer.h"
 #include "vtkCamera.h"
 #include "vtkIndent.h"
 #include "vtkWorldPointPicker.h"
 #include "vtkCommand.h"
+#include "vtkInteractorStyle.h"
 
 // ITK headers
 #include "itkCommand.h"
@@ -48,9 +48,9 @@
 #include "igstkObjectRepresentation.h"   
 #include "igstkEvents.h"   
 #include "igstkAnnotation2D.h"   
+#include "igstkRenderWindowInteractor.h"   
 
-namespace igstk{
-
+namespace igstk {
 
 /** \class View
  * 
@@ -59,16 +59,15 @@ namespace igstk{
  *
  * \ingroup Object
  */
-
-class View : public Fl_Gl_Window, public vtkRenderWindowInteractor 
+class View : public Fl_Gl_Window
 {
 
 public:
     
-  typedef View      Self;
-  typedef vtkRenderWindowInteractor Superclass;
+  typedef View          Self;
+  typedef Fl_Gl_Window  Superclass;
 
-  igstkTypeMacro( View, vtkRenderWindowInteractor );
+  igstkTypeMacro( View, Fl_Gl_Window );
   
   /** Set the desired frequency for refreshing the view. It is not worth to
    * attempt to go faster than your monitor, nor more than double than your
@@ -76,7 +75,8 @@ public:
   void RequestSetRefreshRate( double frequency );
   
   /** Add an observer to this View class */
-  void AddObserver( const ::itk::EventObject & event, ::itk::Command * observer );
+  void AddObserver( const ::itk::EventObject & event, 
+                    ::itk::Command * observer );
   
   /** Object representation types */
   typedef ObjectRepresentation::Pointer     ObjectPointer;
@@ -101,32 +101,29 @@ public:
    * */
   void RequestSaveScreenShot( const std::string & filename );
 
-   /** Declarations needed for the State Machine */
+  /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
   /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
- 
-  void Print(std::ostream& os);
+  void Print( std::ostream& os, ::itk::Indent indent=0) const;
+
 
   /** Set up variables, types and methods related to the Logger */
   igstkLoggerMacro()
+
+  /** Initialize the render window interactor */
+  void Initialize();
+
+  /** Enable the render window interactor */
+  void Enable();
+
+  /** Enable the render window interactor */
+  void Render();
 
 protected:
 
   View( int x, int y, int w, int h, const char *l="");
   virtual ~View( void );
-
-  // vtkRenderWindowInteractor overrides made protected in order to prevent
-  // users from using these methods.
-  void Initialize();
-  void Enable();
-  void Disable();
-  void SetRenderWindow(vtkRenderWindow *aren);
-  void UpdateSize(int x, int y);
-  void ResetCameraProcessing();
-  void DisableInteractionsProcessing();
-  void EnableInteractionsProcessing();
 
 public:
   
@@ -156,15 +153,15 @@ protected:
   void resize( int x, int y, int w, int h );
   virtual int  handle( int event );
    
-  /** Get the vtk RenderWindow */
-  vtkRenderWindow* GetRenderWindow() {return m_RenderWindow;}
-    
-  /** Get the vtk Renderer */
-  vtkRenderer* GetRenderer() {return m_Renderer;}
-    
+  /** Print the object information in a stream. */
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+ 
   /** Default Camera */
   vtkCamera             * m_Camera;
  
+  /** Set the interactor style in the derived classes */
+  void SetInteractorStyle( vtkInteractorStyle * style );
+
 private:
   
   vtkRenderWindow       * m_RenderWindow;
@@ -175,7 +172,9 @@ private:
   
   bool                    m_InteractionHandling;
 
-  
+  /** Render Window Interactor */
+  RenderWindowInteractor  * m_RenderWindowInteractor;
+
   /** Member variables for holding temptative arguments of functions.
    *  This is needed for implementing a layer of security that decouples
    *  user invokations from the actual state of this class */
@@ -227,6 +226,17 @@ private:
   void StartProcessing();
   void StopProcessing();
   
+  /** Change the window size */
+  void UpdateSize(int x, int y);
+  
+  /** Reset the settings of the camera */  
+  void ResetCameraProcessing();
+  
+  /** Disable keyboard and mouse interactions */
+  void DisableInteractionsProcessing();
+
+  /** Enable keyboard and mouse interactions */
+  void EnableInteractionsProcessing();
 
 private:
   
@@ -264,7 +274,7 @@ private:
 
 };
 
-std::ostream& operator<<(std::ostream& os, View& o);
+std::ostream& operator<<(std::ostream& os, const View& o);
 
 } // end namespace igstk
 

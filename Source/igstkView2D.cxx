@@ -24,17 +24,17 @@ namespace igstk {
 View2D::View2D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
 {
   vtkInteractorStyleImage * interactorStyle = vtkInteractorStyleImage::New();
-  vtkRenderWindowInteractor::SetInteractorStyle( interactorStyle );
+  this->SetInteractorStyle( interactorStyle );
   interactorStyle->Delete();
-  
-    // initialize the orientation to be axial
+
+  // initialize the orientation to be axial
   this->m_Orientation = Axial;
 }
 
 /** Destructor */
 View2D::~View2D()
 {
-  vtkRenderWindowInteractor::SetInteractorStyle( NULL );
+  this->SetInteractorStyle( NULL );
 }
 
 
@@ -46,16 +46,18 @@ int View2D::handle( int event )
 
 
 /** Print object information */
-void View2D::PrintSelf( std::ostream& os, ::itk::Indent indent )
+void View2D::PrintSelf( std::ostream& os, ::itk::Indent indent ) const
 {
   this->Superclass::PrintSelf(os,indent);
+  os << indent << "Orientation type " << m_Orientation << std::endl;  
 }
 
 
 /** Select the orientation of the View */
 void View2D::RequestSetOrientation( const OrientationType & orientation )
 {
-  
+  igstkLogMacro( DEBUG, "igstk::View2D::RequestSetOrientation called ....\n");
+
   m_Orientation = orientation;
 
   double focalPoint[3];
@@ -71,21 +73,21 @@ void View2D::RequestSetOrientation( const OrientationType & orientation )
 
   switch( m_Orientation )
     {
-  case Sagittal:
+    case Sagittal:
       {
       position[0] += distanceToFocalPoint;
-      m_Camera->SetViewUp (     0,  0,  -1 );
+      m_Camera->SetViewUp (     0,  0,  1 );
       break;
       }
-  case Coronal:
+    case Coronal:
       {
-      position[1] += distanceToFocalPoint;
-      m_Camera->SetViewUp (     0,  0,  -1 );
+      position[1] -= distanceToFocalPoint;
+      m_Camera->SetViewUp (     0,  0,  1 );
       break;
       }
-  case Axial:
+    case Axial:
       {
-      position[2] += distanceToFocalPoint;
+      position[2] -= distanceToFocalPoint;
       m_Camera->SetViewUp (     0,  -1,  0 );
       break;
       }

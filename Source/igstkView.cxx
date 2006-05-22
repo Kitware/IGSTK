@@ -29,12 +29,12 @@
 #include "itksys/SystemTools.hxx"
 #include "vtkViewport.h"
 
-namespace igstk{
+namespace igstk
+{
 
 /** Constructor */
 View::View( int x, int y, int w, int h, const char *l ) : 
-Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
-  m_StateMachine(this)
+Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this)
 { 
   igstkLogMacro( DEBUG, "Constructor() called ...\n");
   
@@ -44,14 +44,31 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   m_RenderWindow = vtkRenderWindow::New();
   m_Renderer = vtkRenderer::New();
   m_PointPicker = PickerType::New();
+  m_RenderWindowInteractor = RenderWindowInteractor::New();
 
   m_RenderWindow->AddRenderer( m_Renderer );
   m_Camera = m_Renderer->GetActiveCamera();
   m_RenderWindow->BordersOff();
   m_Renderer->SetBackground(0.5,0.5,0.5);
-  this->Initialize();
-  m_InteractionHandling = true;
+
+  m_RenderWindow->SetSize( this->w(), this->h() );
+
+  int * size = m_RenderWindow->GetSize();
+    
+  m_RenderWindowInteractor->SetSize( size );
+
+  m_RenderWindowInteractor->SetPicker( m_PointPicker );
+
+  m_RenderWindowInteractor->SetRenderWindow( m_RenderWindow );
+
+  // Set the default view to be axial
+  m_Camera->SetPosition ( 0, 0, -1 );
+  m_Camera->SetViewUp( 0, -1, 0 );
+  m_Renderer->ResetCamera();
+  
   this->end();
+
+  m_InteractionHandling = true;
 
   igstkAddInputMacro( ValidAddObject );
   igstkAddInputMacro( NullAddObject  );
@@ -78,46 +95,78 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   igstkAddStateMacro( Refreshing );
 
 
-  igstkAddTransitionMacro( Idle, ValidAddObject, Idle,  AddObject );
-  igstkAddTransitionMacro( Idle, NullAddObject,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ValidAddAnnotation2D, Idle,  AddAnnotation2D );
-  igstkAddTransitionMacro( Idle, NullAddAnnotation2D ,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ExistingAddObject,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ValidRemoveObject, Idle,  RemoveObject );
-  igstkAddTransitionMacro( Idle, NullRemoveObject,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, InexistingRemoveObject,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ValidAddActor, Idle,  AddActor );
-  igstkAddTransitionMacro( Idle, NullAddActor,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ValidRemoveActor, Idle,  RemoveActor );
-  igstkAddTransitionMacro( Idle, NullRemoveActor,  Idle,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ResetCamera,  Idle,  ResetCamera );
-  igstkAddTransitionMacro( Idle, EnableInteractions,  Idle,  EnableInteractions );
-  igstkAddTransitionMacro( Idle, DisableInteractions,  Idle,  DisableInteractions );
-  igstkAddTransitionMacro( Idle, StartRefreshing,  Refreshing,  Start );
-  igstkAddTransitionMacro( Idle, StopRefreshing,  Idle,  ReportInvalidRequest );
-
-  igstkAddTransitionMacro( Refreshing, ValidAddObject, Refreshing,  AddObject );
-  igstkAddTransitionMacro( Refreshing, NullAddObject,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, ValidAddAnnotation2D, Refreshing,  AddAnnotation2D );
-  igstkAddTransitionMacro( Refreshing, NullAddAnnotation2D,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, ExistingAddObject,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, ValidRemoveObject, Refreshing,  RemoveObject );
-  igstkAddTransitionMacro( Refreshing, NullRemoveObject,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, InexistingRemoveObject,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, ValidAddActor, Refreshing,  AddActor );
-  igstkAddTransitionMacro( Refreshing, NullAddActor,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, ValidRemoveActor, Refreshing,  RemoveActor );
-  igstkAddTransitionMacro( Refreshing, NullRemoveActor,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, ResetCamera,  Refreshing,  ResetCamera );
-  igstkAddTransitionMacro( Refreshing, EnableInteractions,  Refreshing,  EnableInteractions );
-  igstkAddTransitionMacro( Refreshing, DisableInteractions,  Refreshing,  DisableInteractions );
-  igstkAddTransitionMacro( Refreshing, StartRefreshing,  Refreshing,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Refreshing, StopRefreshing,  Idle,  Stop );
-  
-  igstkAddTransitionMacro( Idle, ValidScreenShotFileName,  Idle, SaveScreenShot )
-  igstkAddTransitionMacro( Idle, InvalidScreenShotFileName, Idle, ReportInvalidScreenShotFileName );
-
-
+  igstkAddTransitionMacro( Idle, ValidAddObject, 
+                           Idle,  AddObject );
+  igstkAddTransitionMacro( Idle, NullAddObject,
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidAddAnnotation2D,
+                           Idle,  AddAnnotation2D );
+  igstkAddTransitionMacro( Idle, NullAddAnnotation2D,
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ExistingAddObject,
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidRemoveObject,
+                           Idle,  RemoveObject );
+  igstkAddTransitionMacro( Idle, NullRemoveObject,
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, InexistingRemoveObject,
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidAddActor,
+                           Idle,  AddActor );
+  igstkAddTransitionMacro( Idle, NullAddActor,
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidRemoveActor,
+                           Idle,  RemoveActor );
+  igstkAddTransitionMacro( Idle, NullRemoveActor,
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ResetCamera,
+                           Idle,  ResetCamera );
+  igstkAddTransitionMacro( Idle, EnableInteractions,
+                           Idle,  EnableInteractions );
+  igstkAddTransitionMacro( Idle, DisableInteractions,
+                           Idle,  DisableInteractions );
+  igstkAddTransitionMacro( Idle, StartRefreshing,
+                           Refreshing,  Start );
+  igstkAddTransitionMacro( Idle, StopRefreshing,
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidAddObject,
+                           Refreshing,  AddObject );
+  igstkAddTransitionMacro( Refreshing, NullAddObject,
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidAddAnnotation2D,
+                           Refreshing,  AddAnnotation2D );
+  igstkAddTransitionMacro( Refreshing, NullAddAnnotation2D,
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ExistingAddObject,
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidRemoveObject,
+                           Refreshing,  RemoveObject );
+  igstkAddTransitionMacro( Refreshing, NullRemoveObject,
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, InexistingRemoveObject,
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidAddActor,
+                           Refreshing,  AddActor );
+  igstkAddTransitionMacro( Refreshing, NullAddActor,
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidRemoveActor,
+                           Refreshing,  RemoveActor );
+  igstkAddTransitionMacro( Refreshing, NullRemoveActor,
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ResetCamera,
+                           Refreshing,  ResetCamera );
+  igstkAddTransitionMacro( Refreshing, EnableInteractions,
+                           Refreshing,  EnableInteractions );
+  igstkAddTransitionMacro( Refreshing, DisableInteractions,
+                           Refreshing,  DisableInteractions );
+  igstkAddTransitionMacro( Refreshing, StartRefreshing,
+                           Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, StopRefreshing,
+                           Idle,  Stop );
+  igstkAddTransitionMacro( Idle, ValidScreenShotFileName,
+                           Idle, SaveScreenShot )
+  igstkAddTransitionMacro( Idle, InvalidScreenShotFileName,
+                           Idle, ReportInvalidScreenShotFileName );
 
   igstkSetInitialStateMacro( Idle );
 
@@ -135,6 +184,9 @@ Fl_Gl_Window( x, y, w, h, l ), vtkRenderWindowInteractor(),
   m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
 
   this->RequestSetRefreshRate( 30 ); // 30 Hz is rather low frequency for video.
+
+  m_RenderWindowInteractor->Initialize();
+  
 }
 
 /** Destructor */
@@ -150,52 +202,28 @@ View::~View()
     ((Fl_Group*)parent())->remove(*(Fl_Gl_Window*)this);
     }
 
-  vtkRenderWindowInteractor::SetPicker( NULL );
+  m_RenderWindowInteractor->SetRenderWindow( NULL ); 
 
-  m_RenderWindow->Delete();
+  m_RenderWindowInteractor->SetPicker( NULL );
+
+  m_RenderWindowInteractor->Delete();
+  
+  m_PointPicker->Delete();
 
   m_Renderer->Delete();
 
-  m_PointPicker->Delete();
-
-  // This must be invoked to prevent Memory Leaks because we call
-  // SetRenderWindow() in the Initialize() method.
-  this->SetRenderWindow(NULL); 
-}
-
-/** */
-void View::Initialize()
-{
-  igstkLogMacro( DEBUG, "Initialize() called ...\n");
-
-  this->SetRenderWindow( m_RenderWindow );
-  // if don't have render window then we can't do anything yet
-  if (!RenderWindow)
-    {
-    vtkErrorMacro(<< "View::Initialize has no render window");
-    return;
-    }
-
-  int *size = RenderWindow->GetSize();
-  // enable everything and start rendering
-  this->Enable();
-    
-  // set the size in the render window interactor
-  Size[0] = size[0];
-  Size[1] = size[1];
-
-  // this is initialized
-  Initialized = 1;
-  m_Renderer->ResetCamera();
+  m_RenderWindow->Delete();
 
 }
-
-
 
 /** Update the display */
 void View::Update()
 {
   igstkLogMacro( DEBUG, "Update() called ...\n");
+  if( !m_RenderWindowInteractor->GetInitialized() )
+    {
+    m_RenderWindowInteractor->Initialize();
+    }
   this->redraw();
 }
 
@@ -278,6 +306,23 @@ void View::RequestDisableInteractions()
   m_StateMachine.ProcessInputs();
 }
 
+/** */
+void View::Initialize()
+{
+  m_RenderWindowInteractor->Initialize();
+}
+
+/** */
+void View::Enable()
+{
+  m_RenderWindowInteractor->Enable();
+}
+
+/** */
+void View::Render()
+{
+  m_RenderWindowInteractor->Render();
+}
 
 /** */
 void View::EnableInteractionsProcessing()
@@ -293,8 +338,6 @@ void View::DisableInteractionsProcessing()
   m_InteractionHandling = false;
 }
 
-
-
 /** */
 void View::RequestResetCamera()
 {
@@ -303,42 +346,11 @@ void View::RequestResetCamera()
   m_StateMachine.ProcessInputs();
 }
 
-
 /** */
 void View::ResetCameraProcessing()
 {
   igstkLogMacro( DEBUG, "ResetCameraProcessing() called ...\n");
   m_Renderer->ResetCamera();
-}
-
-/** */
-void View::Enable()
-{
-  igstkLogMacro( DEBUG, "Enable() called ...\n");
-  // if already enabled then done
-  if (Enabled)
-    {
-    return;
-    }
-  // that's it
-  Enabled = 1;
-  m_Renderer->ResetCamera();
-  this->Modified();
-}
-
-/** */
-void View::Disable()
-{
-  igstkLogMacro( DEBUG, "Disable() called ...\n");
-  // if already disabled then done
-  if (!Enabled)
-    {
-    return;
-    }
-  
-  // that's it (we can't remove the event handler like it should be...)
-  Enabled = 0;
-  this->Modified();
 }
 
 /** */
@@ -357,50 +369,33 @@ void View::StopProcessing()
   m_PulseGenerator->RequestStop();
 }
 
-
-/** */
-void View::SetRenderWindow(vtkRenderWindow *aren)
-{
-  igstkLogMacro( DEBUG, "SetRenderWindow() called ...\n");
-  vtkRenderWindowInteractor::SetRenderWindow(aren);
-  // if a View has been shown already, and one
-  // re-sets the RenderWindow, neither UpdateSize nor draw is called,
-  // so we have to force the dimensions of the NEW RenderWindow to match
-  // the our (vtkFlRWI) dimensions
-  if ( RenderWindow )
-    {
-    RenderWindow->SetSize(this->w(), this->h());
-    vtkRenderWindowInteractor::SetPicker( m_PointPicker );
-    }
-}
-
 /** this gets called during FLTK window draw()s and resize()s */
 void View::UpdateSize(int W, int H)
 {
   igstkLogMacro( DEBUG, "UpdateSize() called ...\n");
-  if (RenderWindow != NULL)
+  if ( m_RenderWindow != NULL)
     {
+    const int * size = m_RenderWindowInteractor->GetSize();
+    
     // if the size changed tell render window
-    if ( (W != Size[0]) || (H != Size[1]) )
+    if ( (W != size[0]) || (H != size[1]) )
       {
-      // adjust our (vtkRenderWindowInteractor size)
-      Size[0] = W;
-      Size[1] = H;
+      // adjust our (m_RenderWindowInteractor size)
+      m_RenderWindowInteractor->UpdateSize( W, H );
       // and our RenderWindow's size
-      RenderWindow->SetSize(W, H);
+      m_RenderWindow->SetSize(W, H);
      
       // FLTK can move widgets on resize; if that happened, make
       // sure the RenderWindow position agrees with that of the
       // Fl_Gl_Window
-      int *pos = RenderWindow->GetPosition();
+      int *pos = m_RenderWindow->GetPosition();
       if( pos[0] != x() || pos[1] != y() ) 
         {
-        RenderWindow->SetPosition( x(), y() );
+        m_RenderWindow->SetPosition( x(), y() );
         }
       }
     }
 }
-
 
 /** Define the refresh rate by programming the internal pulse generator */
 void View::RequestSetRefreshRate( double frequencyHz )
@@ -410,17 +405,18 @@ void View::RequestSetRefreshRate( double frequencyHz )
   m_PulseGenerator->RequestSetFrequency( frequencyHz );
 }
 
-
 /** Refresh the rendering. This function is called in response to pulses from
  * the pulse generator. */
 void View::RefreshRender()
 {
   igstkLogMacro( DEBUG, "RefreshRender() called ...\n");
 
-  // First, compute the time at which we estimate that the scene will be rendered
+  // First, compute the time at which we
+  // estimate that the scene will be rendered
   TimeStamp renderTime;
   double frequency = m_PulseGenerator->GetFrequency();
-  renderTime.SetStartTimeNowAndExpireAfter( 1.0 / frequency ); // milliseconds
+  // Frequency is in hertz but period is expected to be in milliseconds
+  renderTime.SetStartTimeNowAndExpireAfter( 1000.0 / frequency );
 
   // Second, notify all the representation object of the time at which this
   // scene will be rendered.
@@ -440,7 +436,6 @@ void View::RefreshRender()
   m_Reporter->InvokeEvent( RefreshEvent() );
 }
 
-
 /** Request for Adding an object to the View */
 void View::RequestAddObject( ObjectRepresentation* pointer )
 {
@@ -455,7 +450,7 @@ void View::RequestAddObject( ObjectRepresentation* pointer )
     return;
     }
 
-  ObjectListType::iterator it =    
+  ObjectListType::iterator it =
     std::find(m_Objects.begin(),m_Objects.end(),pointer);
   if( it != m_Objects.end() )
     {
@@ -474,7 +469,7 @@ void View::RequestAddAnnotation2D ( Annotation2D * annotation )
 {
   igstkLogMacro( DEBUG, "RequestAddAnnotation2D() called ...\n");
 
-  m_Annotation2DToBeAdded = annotation ;
+  m_Annotation2DToBeAdded = annotation;
 
   if( !annotation )
     {
@@ -496,7 +491,7 @@ void View::AddObjectProcessing()
   igstkLogMacro( DEBUG, "AddObjectProcessing() called ...\n");
   
   m_Objects.push_back( m_ObjectToBeAdded );
-  this->Modified();
+  m_RenderWindowInteractor->Modified();
   
   m_ObjectToBeAdded->CreateActors();
 
@@ -513,7 +508,7 @@ void View::AddAnnotation2DProcessing( )
 {
   igstkLogMacro( DEBUG, "AddAnnotation2DProcessing called ...\n");
   
-  const int * size = this->GetSize();
+  const int * size = m_RenderWindowInteractor->GetSize();
   m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( size[0], size[1] );
   m_Annotation2DToBeAdded->RequestAddAnnotations( );
   Annotation2D::ActorsListType actors = m_Annotation2DToBeAdded->GetActors();
@@ -566,9 +561,10 @@ void View::RemoveObjectProcessing()
   igstkLogMacro( DEBUG, "RemoveObjectProcessing() called ...\n");
 
   m_Objects.erase( m_IteratorToObjectToBeRemoved );
-  this->Modified();
+  m_RenderWindowInteractor->Modified();
   
-  ObjectRepresentation::ActorsListType actors = m_ObjectToBeRemoved->GetActors();
+  ObjectRepresentation::ActorsListType actors =
+                                         m_ObjectToBeRemoved->GetActors();
   ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
 
   while(actorIt != actors.end())
@@ -636,7 +632,8 @@ void View::ReportInvalidRequestProcessing()
 /** Report that an invalid filename for saving the screen shot */
 void View::ReportInvalidScreenShotFileNameProcessing()
 {
-  igstkLogMacro( WARNING, "ReportInvalidScreenShotFileNameProcessing() called ...\n");
+  igstkLogMacro( WARNING,
+                "ReportInvalidScreenShotFileNameProcessing() called ...\n");
 }
 
 
@@ -645,8 +642,7 @@ void View::SaveScreenShotProcessing()
 {
   igstkLogMacro( DEBUG, "SaveScreenShotProcessing() called ...\n");
 
-  vtkWindowToImageFilter * windowToImageFilter = 
-                                  vtkWindowToImageFilter::New();
+  vtkWindowToImageFilter * windowToImageFilter = vtkWindowToImageFilter::New();
 
   vtkPNGWriter * writer = vtkPNGWriter::New();
 
@@ -677,7 +673,7 @@ void View::flush(void)
   // err, we don't want to do any fansy pansy Fl_Gl_Window stuff, so we
   // bypass all of it (else we'll get our front and back buffers in all
   // kinds of tangles, and need extra glXSwapBuffers() calls and all that)
-  draw();
+  this->draw();
 }
 
 /** Draw function */
@@ -685,23 +681,23 @@ void View::draw(void)
 {
   igstkLogMacro( DEBUG, "draw() called ...\n");
 
-  if (RenderWindow!=NULL)
+  if( m_RenderWindow != NULL )
     {
     // make sure the vtk part knows where and how large we are
-    UpdateSize( this->w(), this->h() );
+    this->UpdateSize( this->w(), this->h() );
 
     // make sure the GL context exists and is current:
     // after a hide() and show() sequence e.g. there is no context yet
     // and the Render() will fail due to an invalid context.
     // see Fl_Gl_Window::show()
-    make_current();
+    this->make_current();
 
-    RenderWindow->SetWindowId( (void *)fl_xid( this ) );
+    m_RenderWindow->SetWindowId( (void *)fl_xid( this ) );
 #if !defined(WIN32) && !defined(__APPLE__)
-    RenderWindow->SetDisplayId( fl_display );
+    m_RenderWindow->SetDisplayId( fl_display );
 #endif
     // get vtk to render to the Fl_Gl_Window
-    Render();
+    m_RenderWindowInteractor->Render();
     }
 }
 
@@ -722,58 +718,72 @@ int View::handle( int event )
 {
   igstkLogMacro( DEBUG, "handle() called ...\n");
   
-  if( !Enabled || !m_InteractionHandling) 
+  if( !m_RenderWindowInteractor->GetEnabled() || !m_InteractionHandling) 
     {
     return 0;
     }
   // SEI(x, y, ctrl, shift, keycode, repeatcount, keysym)
-  this->SetEventInformation(Fl::event_x(), this->h()-Fl::event_y()-1, 
-                            Fl::event_state( FL_CTRL ), Fl::event_state( FL_SHIFT ),
+  m_RenderWindowInteractor->SetEventInformation(
+                            Fl::event_x(), this->h()-Fl::event_y()-1, 
+                            Fl::event_state( FL_CTRL ), 
+                            Fl::event_state( FL_SHIFT ),
                             Fl::event_key(), 1, NULL);   
     
   switch( event ) 
     {
     case FL_FOCUS:
     case FL_UNFOCUS:
-    ;   // Return 1 if you want keyboard events, 0 otherwise. Yes we do
-    break;
-      
+      // Return 1 if you want keyboard events, 0 otherwise. Yes we do
+      break;
+
     case FL_KEYBOARD:   // keypress
-      this->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);        
+      m_RenderWindowInteractor->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);
       
       // Disabling VTK keyboard interaction
       //this->InvokeEvent(vtkCommand::KeyPressEvent, NULL);
       //this->InvokeEvent(vtkCommand::CharEvent, NULL);
      
-      // now for possible controversy: there is no way to find out if the InteractorStyle actually did
-      // something with this event.  To play it safe (and have working hotkeys), we return "0", which indicates
-      // to FLTK that we did NOTHING with this event.  FLTK will send this keyboard event to other children
-      // in our group, meaning it should reach any FLTK keyboard callbacks (including hotkeys)
+      // now for possible controversy: there
+      // is no way to find out if the
+      // InteractorStyle actually did
+      // something with this event.  To play
+      // it safe (and have working hotkeys),
+      // we return "0", which indicates to
+      // FLTK that we did NOTHING with this
+      // event.  FLTK will send this keyboard
+      // event to other children in our group,
+      // meaning it should reach any FLTK
+      // keyboard callbacks (including
+      // hotkeys)
       return 0;
-    break;
-      
+      break;
+     
     case FL_PUSH: // mouse down
-    this->take_focus();  // this allows key events to work
-    switch( Fl::event_button() ) 
-      {
-      case FL_LEFT_MOUSE:
-            this->InvokeEvent(vtkCommand::LeftButtonPressEvent,NULL);
-        break;
-      case FL_MIDDLE_MOUSE:
-            this->InvokeEvent(vtkCommand::MiddleButtonPressEvent,NULL);
-        break;
-      case FL_RIGHT_MOUSE:
-            this->InvokeEvent(vtkCommand::RightButtonPressEvent,NULL);
-            break;
-      }
-    break; // this break should be here, at least according to vtkXRenderWindowInteractor
+      this->take_focus();  // this allows key events to work
+      switch( Fl::event_button() ) 
+        {
+        case FL_LEFT_MOUSE:
+          m_RenderWindowInteractor->InvokeEvent(
+                                      vtkCommand::LeftButtonPressEvent,NULL);
+          break;
+        case FL_MIDDLE_MOUSE:
+          m_RenderWindowInteractor->InvokeEvent(
+                                    vtkCommand::MiddleButtonPressEvent,NULL);
+          break;
+        case FL_RIGHT_MOUSE:
+          m_RenderWindowInteractor->InvokeEvent(
+                                     vtkCommand::RightButtonPressEvent,NULL);
+          break;
+        }
+      break; // this break should be here, at least according to 
+             // vtkXRenderWindowInteractor
 
-    // we test for both of these, as fltk classifies mouse moves as with or
-    // without button press whereas vtk wants all mouse movement (this bug took
-    // a while to find :)
+      // we test for both of these, as fltk classifies mouse moves as 
+      // with or without button press whereas vtk wants all mouse movement 
+      // (this bug took a while to find :)
     case FL_DRAG:
     case FL_MOVE:
-      this->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);
+      m_RenderWindowInteractor->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);
     break;
 
     case FL_RELEASE:    // mouse up
@@ -781,7 +791,8 @@ int View::handle( int event )
         {
         case FL_LEFT_MOUSE:
           {
-          this->InvokeEvent(vtkCommand::LeftButtonReleaseEvent,NULL);
+          m_RenderWindowInteractor->InvokeEvent(
+                                     vtkCommand::LeftButtonReleaseEvent,NULL);
           
           m_PointPicker->Pick( Fl::event_x(), 
                                this->h()-Fl::event_y()-1, 
@@ -793,8 +804,9 @@ int View::handle( int event )
           pickedPoint[1] = data[1];
           pickedPoint[2] = data[2];
           
-          double validityTime = 100000.0; // 100 seconds
-          double errorValue = 1.0; // this should be obtained from the picked object.
+          double validityTime = -1.0; // Never expire
+          double errorValue = 1.0; // this should be obtained from 
+                                   // the picked object.
 
           igstk::Transform transform;
           transform.SetTranslation( pickedPoint, errorValue, validityTime );
@@ -804,15 +816,17 @@ int View::handle( int event )
 
           m_Reporter->InvokeEvent( transformEvent );
           }
-        break;
+          break;
         case FL_MIDDLE_MOUSE:
-          this->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent,NULL);
-        break;
+          m_RenderWindowInteractor->InvokeEvent(
+                                   vtkCommand::MiddleButtonReleaseEvent,NULL);
+          break;
         case FL_RIGHT_MOUSE:
-          this->InvokeEvent(vtkCommand::RightButtonReleaseEvent,NULL);
-        break;
+          m_RenderWindowInteractor->InvokeEvent(
+                                    vtkCommand::RightButtonReleaseEvent,NULL);
+          break;
         }
-     break;
+      break;
 
     default:    // let the base class handle everything else 
     return Fl_Gl_Window::handle( event );
@@ -822,12 +836,18 @@ int View::handle( int event )
 }
 
 
+void
+View
+::SetInteractorStyle( vtkInteractorStyle * interactorStyle )
+{
+  m_RenderWindowInteractor->SetInteractorStyle( interactorStyle );
+}
+
+
 void 
 View
-::Print(std::ostream& os)
+::Print( std::ostream& os, ::itk::Indent indent ) const
 {
-  os << "  " << "Transform" << " (" << this << ")\n";
-  itk::Indent indent;
   this->PrintSelf(os, indent);
 }
 
@@ -838,7 +858,7 @@ View
  * PrintSelf method that all objects should define, if they have anything
  * interesting to print out.
  */
-std::ostream& operator<<(std::ostream& os, View& o)
+std::ostream& operator<<(std::ostream& os, const View& o)
 {
   o.Print(os);
   return os;
@@ -850,9 +870,12 @@ void View::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
   os << indent << "RenderWindow Pointer: " << this->m_RenderWindow << std::endl;
+  os << indent << "RenderWindowInteractor Pointer: " 
+               << *(this->m_RenderWindowInteractor) << std::endl;
   os << indent << "Renderer Pointer: " << this->m_Renderer << std::endl;
   os << indent << "Camera Pointer: " << this->m_Camera << std::endl;
-  os << indent << "InteractionHandling: " << this->m_InteractionHandling << std::endl;
+  os << indent << "InteractionHandling: ";
+  os << this->m_InteractionHandling << std::endl;
 
   if( this->m_PulseGenerator )
     {
@@ -873,17 +896,5 @@ void View::PrintSelf( std::ostream& os, itk::Indent indent ) const
     os << indent << *itr << std::endl;
     }
 }
-
-
-
-/** */
-static char const rcsid[] =
-  "Id";
-
-const char *View_rcsid(void)
-{
-    return rcsid;
-}
-
 
 } // end namespace igstk

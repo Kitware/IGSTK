@@ -84,12 +84,6 @@ namespace PulseGeneratorTest
           {
           std::cout << m_PulseCounter << std::endl;
           generator->RequestStop();
-          if( m_Form )
-            {
-            std::cout << "hiding a form." << std::endl;
-            m_Form->hide(); // close the FLTK window
-            std::cout << "the form is hidden." << std::endl;
-            }
           *m_End = true;
           return;
           }
