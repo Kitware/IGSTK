@@ -25,6 +25,11 @@
 namespace igstk
 {
 
+namespace Friends 
+{
+class TubeReaderToTubeSpatialObject;
+}
+
 /** \class TubeObject
  * 
  * \brief This class represents a Tube object.
@@ -62,6 +67,13 @@ public:
   /** Return the internal list of points */
   const PointListType GetPoints() const;
 
+  /** Remove all the points in the list */
+  void Clear( void );
+ 
+  /** The TubeReaderToTubeSpatialObject class is declared as a friend in
+   * order to be able to set the input mesh */
+  igstkFriendClassMacro( igstk::Friends::TubeReaderToTubeSpatialObject );
+
 protected:
 
   /** Constructor */
@@ -74,6 +86,9 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+
+  /** Set method to be invoked only by friends of this class */
+  void SetTubeSpatialObject( TubeSpatialObjectType * tube );
 
   /** Internal itkSpatialObject */
   TubeSpatialObjectType::Pointer   m_TubeSpatialObject;

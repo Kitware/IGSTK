@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   SpatialObject Guided Surgery Software Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkMeshReader.cxx
   Language:  C++
   Date:      $Date$
@@ -15,7 +15,6 @@
 
 =========================================================================*/
 #include "igstkMeshReader.h"
-#include "igstkEvents.h"
 
 namespace igstk
 { 
@@ -23,7 +22,8 @@ namespace igstk
 /** Constructor */
 MeshReader::MeshReader():m_StateMachine(this)
 { 
-  m_Mesh = MeshObjectType::New();
+  m_MeshObject = MeshObjectType::New();
+  m_Mesh = MeshType::New();
 } 
 
 /** Destructor */
@@ -38,99 +38,58 @@ void MeshReader::AttemptReadObjectProcessing()
   Superclass::AttemptReadObjectProcessing();
 
   // Do the conversion
-  GroupSpatialObjectType::Pointer m_GroupSpatialObject = m_SpatialObjectReader->GetGroup();
-  GroupSpatialObjectType::ChildrenListType * children = m_GroupSpatialObject->GetChildren(99999);
-  GroupSpatialObjectType::ChildrenListType::const_iterator it = children->begin();
+  GroupSpatialObjectType::Pointer m_GroupSpatialObject 
+                                          = m_SpatialObjectReader->GetGroup();
+  GroupSpatialObjectType::ChildrenListType * children 
+                                   = m_GroupSpatialObject->GetChildren(99999);
+  GroupSpatialObjectType::ChildrenListType::const_iterator it 
+                                                          = children->begin();
 
   while(it != children->end())
     {
     if(!strcmp((*it)->GetTypeName(),"MeshSpatialObject"))
       {
-      MeshObjectType::MeshSpatialObjectType* meshSO = dynamic_cast<MeshObjectType::MeshSpatialObjectType*>((*it).GetPointer());
+      MeshObjectType::MeshSpatialObjectType* meshSO  = dynamic_cast<
+                  MeshObjectType::MeshSpatialObjectType*>((*it).GetPointer());
       if( meshSO )
         {
-        typedef MeshObjectType::MeshType MeshType;
-        MeshObjectType::MeshType::Pointer mesh = meshSO->GetMesh();
-  
-        MeshType::PointsContainerPointer points = mesh->GetPoints();
-        MeshType::PointsContainer::const_iterator it = points->begin();
-
-        for(;it != points->end();it++)
-          {
-          m_Mesh->AddPoint((*it).first,
-                           (*it).second[0],
-                           (*it).second[1],
-                           (*it).second[2]);
-          }
-
-        typedef MeshType::CellsContainer::ConstIterator  CellIterator;
-        CellIterator cellItr = mesh->GetCells()->Begin();
-        CellIterator cellEnd = mesh->GetCells()->End();
-
-        while( cellItr != cellEnd )
-          {
-          if((*cellItr).Value()->GetNumberOfPoints() == 3)
-            {
-            typedef MeshType::CellTraits::PointIdConstIterator PointIterator;
-            PointIterator  itptids = (*cellItr)->Value()->GetPointIds();
-            unsigned int i =0;
-            MeshType::CellTraits::PointIdentifier ids[3];
-            while(itptids != (*cellItr)->Value()->PointIdsEnd())
-              {
-              ids[i] = *itptids;
-              itptids++;
-              i++;
-              }
-            m_Mesh->AddTriangleCell((*cellItr).Index(),ids[0],ids[1],ids[2]);
-            }
-          cellItr++;
-          }
-
-        delete children;
-
-        // Provide an identity transform with a long validity time.
-        const double validityTimeInMilliseconds = 1e30;
-        
-        igstk::Transform transform;
-
-        igstk::Transform::ErrorType errorValue = 1000; // 1 meter
-
-        igstk::Transform::VectorType translation;
-        translation[0] = 0;
-        translation[1] = 0;
-        translation[2] = 0;
-        igstk::Transform::VersorType rotation;
-        rotation.Set( 0.0, 0.0, 0.0, 1.0 );
-
-        transform.SetTranslationAndRotation( 
-            translation, rotation, errorValue, validityTimeInMilliseconds );
-
-        m_Mesh->RequestSetTransform( transform );
-
-        return;
+        m_Mesh = meshSO->GetMesh();
+        break;
         }
       }
     it++;
     }
-
   delete children;
 
+  this->ConnectMesh();
 }
 
 /** Return the output as a group */
 const MeshReader::MeshObjectType *
 MeshReader::GetOutput() const
 {
+  return m_MeshObject;
+}
+ 
+// FIXME : This must be replaced with StateMachine logic
+MeshReader::MeshType * 
+MeshReader::GetITKMesh() const
+{
   return m_Mesh;
+}
+
+void MeshReader::ConnectMesh() 
+{
+  typedef Friends::MeshReaderToMeshSpatialObject  HelperType;
+  HelperType::ConnectMesh( this, m_MeshObject.GetPointer() );
 }
 
 /** Print Self function */
 void MeshReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << "Mesh = " << m_MeshObject.GetPointer() << std::endl;
   os << "Mesh = " << m_Mesh.GetPointer() << std::endl;
 }
 
 } // end namespace igstk
-
-

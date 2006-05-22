@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   SpatialObject Guided Surgery Software Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkTubeReader.cxx
   Language:  C++
   Date:      $Date$
@@ -23,12 +23,21 @@ namespace igstk
 /** Constructor */
 TubeReader::TubeReader():m_StateMachine(this)
 { 
-  m_Group = GroupObjectType::New();
+  m_Tube = TubeType::New();
+  m_TubeSpatialObject = TubeSpatialObjectType::New();
 } 
 
 /** Destructor */
 TubeReader::~TubeReader()  
 {
+}
+
+
+// FIXME : This must be replaced with StateMachine logic
+TubeReader::TubeSpatialObjectType * 
+TubeReader::GetITKTubeSpatialObject() const
+{
+  return m_TubeSpatialObject;
 }
 
 /** Read the spatialobject file */
@@ -38,108 +47,51 @@ void TubeReader::AttemptReadObjectProcessing()
   Superclass::AttemptReadObjectProcessing();
 
   // Do the conversion
-  GroupSpatialObjectType::Pointer m_GroupSpatialObject = m_SpatialObjectReader->GetGroup();
-  GroupSpatialObjectType::ChildrenListType * children = m_GroupSpatialObject->GetChildren(99999);
-  GroupSpatialObjectType::ChildrenListType::const_iterator it = children->begin();
+  GroupSpatialObjectType::Pointer m_GroupSpatialObject = 
+                                            m_SpatialObjectReader->GetGroup();
+  GroupSpatialObjectType::ChildrenListType * children = 
+                                     m_GroupSpatialObject->GetChildren(99999);
+  GroupSpatialObjectType::ChildrenListType::const_iterator it = 
+                                                            children->begin();
 
-  while(it != children->end())
+  while( it != children->end() )
     {
-    if(!strcmp((*it)->GetTypeName(),"TubeSpatialObject"))
+    if( !strcmp((*it)->GetTypeName(),"TubeSpatialObject") )
       {
-      // Create a new TubeObject
-      TubeType::Pointer tube = TubeType::New();
-      
-      const TubeSpatialObjectType * tubes = 
+      TubeSpatialObjectType * tube = 
               dynamic_cast< TubeSpatialObjectType * >( it->GetPointer() );
-
-      // Get the points from the tube spatialobject
-      typedef TubeSpatialObjectType::PointListType    PointListType;
-      typedef PointListType::const_iterator           PointIterator;
-
-      PointIterator pointItr = tubes->GetPoints().begin();
-      PointIterator pointEnd = tubes->GetPoints().end();
-
-      while( pointItr != pointEnd )
+      if( tube )
         {
-        TubeType::PointType point;
-        point.SetPosition( pointItr->GetPosition() );
-        point.SetRadius( pointItr->GetRadius() );
-        tube->AddPoint( point );
-        pointItr++;
+        m_TubeSpatialObject = tube;
+        this->ConnectTube();
+        break;
         }
-
-      // For the moment no hierarchy
-      m_Group->RequestAddObject(tube);
-
-      }
-    else if(!strcmp((*it)->GetTypeName(),"VesselTubeSpatialObject"))
-      {
-      // Create a new TubeObject
-      TubeType::Pointer tube = TubeType::New();
-      
-      // Get the points from the tube spatialobject
-      typedef itk::VesselTubeSpatialObject<3> VesselTubeSpatialObjectType;
-      typedef VesselTubeSpatialObjectType::PointListType    PointListType;
-      typedef PointListType::const_iterator                 PointIterator;
-        
-      const VesselTubeSpatialObjectType * vessels =
-              dynamic_cast<VesselTubeSpatialObjectType*>( it->GetPointer() );
-
-      PointIterator  pointItr = vessels->GetPoints().begin();
-      PointIterator  pointEnd = vessels->GetPoints().end();
-
-      while( pointItr != pointEnd )
-        {
-        TubeType::PointType point;
-        point.SetPosition( pointItr->GetPosition() );
-        point.SetRadius( pointItr->GetRadius() );
-        tube->AddPoint( point );
-        ++pointItr;
-        }
-
-      // For the moment no hierarchy
-      m_Group->RequestAddObject( tube );
-
       }
     it++;
     }
   delete children;
-
-  // Provide an identity transform with a long validity time.
-  const double validityTimeInMilliseconds = 1e30;
-  
-  igstk::Transform transform;
-
-  igstk::Transform::ErrorType errorValue = 1000; // 1 meter
-
-  igstk::Transform::VectorType translation;
-  translation[0] = 0;
-  translation[1] = 0;
-  translation[2] = 0;
-  igstk::Transform::VersorType rotation;
-  rotation.Set( 0.0, 0.0, 0.0, 1.0 );
-
-  transform.SetTranslationAndRotation( 
-      translation, rotation, errorValue, validityTimeInMilliseconds );
-
-  m_Group->RequestSetTransform( transform );
- 
 }
 
 /** Return the output as a group */
-const TubeReader::GroupObjectType *
+const TubeReader::TubeType *
 TubeReader::GetOutput() const
 {
-  return m_Group;
+  return m_Tube;
 }
+
+void TubeReader::ConnectTube() 
+{
+  typedef Friends::TubeReaderToTubeSpatialObject  HelperType;
+  HelperType::ConnectTube( this, m_Tube.GetPointer() );
+}
+
 
 /** Print Self function */
 void TubeReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  os << "Group = " << m_Group.GetPointer() << std::endl;
+  os << "Tube = " << m_Tube.GetPointer() << std::endl;
+  os << "TubeSpatialObject = " << m_TubeSpatialObject.GetPointer() << std::endl;
 }
 
 } // end namespace igstk
-
-

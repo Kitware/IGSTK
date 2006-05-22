@@ -18,7 +18,6 @@
 #ifndef __igstkMeshObject_h
 #define __igstkMeshObject_h
 
-#include "igstkMacros.h"
 #include "igstkSpatialObject.h"
 #include <itkMeshSpatialObject.h>
 #include <itkTetrahedronCell.h>
@@ -28,13 +27,17 @@
 namespace igstk
 {
 
-/** \class Mesh
+namespace Friends 
+{
+class MeshReaderToMeshSpatialObject;
+}
+
+/** \class MeshObject
+ *
  * \brief Implements the 3-dimensional mesh structure.
  *
- * \par Overview
  * Mesh implements the 3-dimensional mesh structure.  It provides
  * an API to perform operations on points, cells, boundaries, etc.
- *
  * Mesh is an adaptive, evolving structure. Typically points and cells
  * are created, with the cells referring to their defining points.
  *
@@ -49,8 +52,6 @@ public:
 
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( MeshObject, SpatialObject )
-
-public:
 
   /** Unlike DefaultStaticMeshTraits, the DefaultDynamicMeshTraits structure
    * is designed to create Mesh instances that will have many insert and delete
@@ -81,6 +82,8 @@ public:
   typedef MeshType::CellsContainer                  CellsContainer;
   typedef MeshType::CellsContainerPointer           CellsContainerPointer;
 
+public:
+
   /** Add a point to the mesh */
   bool AddPoint(unsigned int id,float x, float y,float z);
 
@@ -91,13 +94,19 @@ public:
 
   /** Add a triangle cell to the mesh */
   bool AddTriangleCell(unsigned int id,
-                       unsigned int vertex1,unsigned int vertex2,unsigned int vertex3);
+                       unsigned int vertex1,
+                       unsigned int vertex2,
+                       unsigned int vertex3);
 
   /** Return the points */
   const PointsContainerPointer GetPoints() const;
 
   /** Return the cells */
   const CellsContainerPointer GetCells() const;
+
+  /** The MeshReaderToMeshSpatialObject class is declared as a friend in
+   * order to be able to set the input mesh */
+  igstkFriendClassMacro( igstk::Friends::MeshReaderToMeshSpatialObject );
 
 protected:
 
@@ -111,6 +120,9 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+
+  /** Set method to be invoked only by friends of this class */
+  void SetMesh( MeshType * mesh );
 
   /** Internal itkSpatialObject */
   MeshSpatialObjectType::Pointer   m_MeshSpatialObject;

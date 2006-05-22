@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters in the 
+// debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -30,45 +31,48 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-
 namespace igstk
 {
 
 namespace MeshObjectTest
 {
-  class ViewObserver : public ::itk::Command 
-  {
-  public:
-    typedef  ViewObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    ViewObserver() 
-      {
-      m_PulseCounter = 0;
-      m_NumberOfPulsesToStop = 100;
-      m_Form = 0;
-      m_View = 0;
-      }
-  public:
+  
+class ViewObserver : public ::itk::Command 
+{
+public:
 
-    void SetForm( Fl_Window * form )
-      {
-      m_Form = form;
-      }
+  typedef  ViewObserver               Self;
+  typedef  ::itk::Command             Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
 
-    void SetEndFlag( bool * end )
-      {
-      m_End = end;
-      }
+protected:
 
-    void Execute(const itk::Object *caller, const itk::EventObject & event)
-      {
-      std::cerr << "Execute( const * ) should not be called" << std::endl;         
-      }
+  ViewObserver() 
+    {
+    m_PulseCounter = 0;
+    m_NumberOfPulsesToStop = 100;
+    m_Form = 0;
+    m_View = 0;
+    }
+public:
 
-    void SetView( ::igstk::View * view )
+  void SetForm( Fl_Window * form )
+    {
+    m_Form = form;
+    }
+
+  void SetEndFlag( bool * end )
+    {
+    m_End = end;
+    }
+
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    std::cerr << "Execute( const * ) should not be called" << std::endl;
+    }
+
+  void SetView( ::igstk::View * view )
     {
     m_View = view;
     if( m_View )
@@ -77,103 +81,104 @@ namespace MeshObjectTest
       }
     }
 
-    void SetNumberOfPulsesToStop( unsigned long number )
-      {
-      m_NumberOfPulsesToStop = number;
-      }
+  void SetNumberOfPulsesToStop( unsigned long number )
+    {
+    m_NumberOfPulsesToStop = number;
+    }
 
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    if( ::igstk::RefreshEvent().CheckEvent( &event ) )
+      {
+      m_PulseCounter++;
+
+      if( m_PulseCounter > m_NumberOfPulsesToStop )
+        {
+        if( m_View )
+          {
+          m_View->RequestStop();
+          } 
+        else
+          {
+          std::cerr << "View pointer is NULL " << std::endl;
+          }
+        if( m_Form )
+          {
+          m_Form->hide();
+          }
+        *m_End = true;
+        return;
+        }
+      }
+    }
+
+private:
+
+  unsigned long       m_PulseCounter;
+  unsigned long       m_NumberOfPulsesToStop;
+  Fl_Window          *m_Form;
+  ::igstk::View      *m_View;
+  bool *              m_End;
+};
+
+
+class TransformObserver : public ::itk::Command 
+{
+public:
+  typedef  TransformObserver          Self;
+  typedef  ::itk::Command             Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
+protected:
+  TransformObserver() 
+    {
+    m_GotTransform = false;
+    }
+  ~TransformObserver() {}
+public:
+    
+    typedef ::igstk::TransformModifiedEvent  EventType;
+        
     void Execute(itk::Object *caller, const itk::EventObject & event)
       {
-      if( ::igstk::RefreshEvent().CheckEvent( &event ) )
-        {
-        m_PulseCounter++;
-
-        if( m_PulseCounter > m_NumberOfPulsesToStop )
-          {
-          if( m_View )
-            {
-            m_View->RequestStop();
-            } 
-          else
-            {
-            std::cerr << "View pointer is NULL " << std::endl;
-            }
-          *m_End = true;
-          return;
-          }
-        }
+      const itk::Object * constCaller = caller;
+      this->Execute( constCaller, event );
       }
-  private:
-    unsigned long       m_PulseCounter;
-    unsigned long       m_NumberOfPulsesToStop;
-    Fl_Window          *m_Form;
-    ::igstk::View      *m_View;
-    bool *              m_End;
-  };
 
-
-  class TransformObserver : public ::itk::Command 
-  {
-  public:
-    typedef  TransformObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    TransformObserver() 
+    void Execute(const itk::Object *caller, const itk::EventObject & event)
       {
       m_GotTransform = false;
-      }
-    ~TransformObserver() {}
-  public:
-    
-      typedef ::igstk::TransformModifiedEvent  EventType;
-        
-      void Execute(itk::Object *caller, const itk::EventObject & event)
+      if( EventType().CheckEvent( &event ) )
         {
-        const itk::Object * constCaller = caller;
-        this->Execute( constCaller, event );
-        }
-
-      void Execute(const itk::Object *caller, const itk::EventObject & event)
-        {
-        m_GotTransform = false;
-        if( EventType().CheckEvent( &event ) )
+        const EventType * transformEvent = 
+                  dynamic_cast< const EventType *>( &event );
+        if( transformEvent )
           {
-          const EventType * transformEvent = 
-                    dynamic_cast< const EventType *>( &event );
-          if( transformEvent )
-            {
-            m_Transform = transformEvent->Get();
-            m_GotTransform = true;
-            }
+          m_Transform = transformEvent->Get();
+          m_GotTransform = true;
           }
         }
+      }
 
-      bool GotTransform() const
-        {
-        return m_GotTransform;
-        }
+    bool GotTransform() const
+      {
+      return m_GotTransform;
+      }
 
-      const ::igstk::Transform & GetTransform() const
-        {
-        return m_Transform;
-        }
+    const ::igstk::Transform & GetTransform() const
+      {
+      return m_Transform;
+      }
         
-  private:
+private:
 
-    ::igstk::Transform  m_Transform;
-
-    bool m_GotTransform;
-
-  };
-
+  ::igstk::Transform  m_Transform;
+  bool m_GotTransform;
+};
   
 } // end of MeshObjectTest namespace
 
 } // end namespace igstk
-
-
 
 
 int igstkMeshObjectTest( int argc, char * argv [] )
@@ -192,17 +197,19 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
+                                               igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
+                                       // VTK OutputWindow -> logger
 
   typedef igstk::MeshObjectRepresentation  ObjectRepresentationType;
-  ObjectRepresentationType::Pointer MeshRepresentation = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer MeshRepresentation = 
+                                          ObjectRepresentationType::New();
   MeshRepresentation->SetLogger( logger );
 
-  typedef igstk::MeshObject ObjectType;
+  typedef igstk::MeshObject     ObjectType;
   typedef ObjectType::PointType MeshPointType;
-
 
   ObjectType::Pointer meshObject = ObjectType::New();
   meshObject->SetLogger( logger );
@@ -212,13 +219,13 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   meshObject->AddPoint(2,9,9,0);
   meshObject->AddPoint(3,0,0,9);
   meshObject->AddTetrahedronCell(0,0,1,2,3);
+  meshObject->AddTriangleCell(1,0,1,2);
    
   if( argc > 1 )
     {
     typedef igstk::MeshReader    ReaderType;
 
     ReaderType::Pointer  reader = ReaderType::New();
-    reader->SetLogger( logger );
 
     std::string filename = argv[1];
     reader->RequestSetFileName( filename );
@@ -259,29 +266,39 @@ int igstkMeshObjectTest( int argc, char * argv [] )
 
 
   // Testing PrintSelf()
+  //std::cout << "MeshRepresentation->Print(std::cout)" << std::endl;
   MeshRepresentation->Print(std::cout);
+  //std::cout << "MeshRepresentation->GetNameOfClass()" << std::endl;
   MeshRepresentation->GetNameOfClass();
+  //std::cout << "meshObject->GetNameOfClass()" << std::endl;
   meshObject->GetNameOfClass();
+  //std::cout << "meshObject->Print(std::cout)" << std::endl;
   meshObject->Print(std::cout);
 
   // Testing CreateActors()
   std::cout << "Testing actors : ";
 
+  //std::cout << "Creating form" << std::endl;
   Fl_Window * form = new Fl_Window(512,512,"MeshObject Test");
 
+  // std::cout << "Creating view" << std::endl;
   typedef igstk::View3D  View3DType;
   View3DType * view3D = new View3DType(6,6,500,500,"View 3D");
   view3D->SetLogger( logger );
   
+  std::cout << "form->end()" << std::endl;
   form->end();
   // End of the GUI creation
 
+  //std::cout << "form->show()" << std::endl;
   form->show();
   
+  //std::cout << "view3D->RequestAddObject( MeshRepresentation )" << std::endl;
   // this will indirectly call CreateActors() 
   view3D->RequestAddObject( MeshRepresentation );
 
   // Testing Update
+  //std::cout << "Testing Update" << std::endl;
   MeshRepresentation->IsModified();
 
   // Testing again in order to exercise the other half of an if().
@@ -289,7 +306,8 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   MeshRepresentation->SetColor(0.3,0.7,0.2);
   if( !MeshRepresentation->IsModified() )
     {
-    std::cerr << "IsModified() failed to be true after a SetColor()" << std::endl;
+    std::cerr << "IsModified() failed to be true ";
+    std::cerr << "after a SetColor()" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -314,16 +332,19 @@ int igstkMeshObjectTest( int argc, char * argv [] )
 
   typedef ::igstk::MeshObjectTest::TransformObserver  TransformObserverType;
 
-  TransformObserverType::Pointer transformObserver = TransformObserverType::New();
+  TransformObserverType::Pointer transformObserver = 
+                                                TransformObserverType::New();
 
-  meshObject->AddObserver( ::igstk::TransformModifiedEvent(), transformObserver );
+  meshObject->AddObserver( ::igstk::TransformModifiedEvent(), 
+                           transformObserver );
   
   meshObject->RequestSetTransform( transform );
   meshObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
     {
-    std::cerr << "The MeshObject did not returned a Transform event" << std::endl;
+    std::cerr << "The MeshObject did not returned ";
+    std::cerr << "a Transform event" << std::endl;
     return EXIT_FAILURE;
     }
       
@@ -334,7 +355,8 @@ int igstkMeshObjectTest( int argc, char * argv [] )
     {
     if( fabs( translation2[i]  - translation[i] ) > tolerance )
       {
-      std::cerr << "Translation component is out of range [FAILED]" << std::endl;
+      std::cerr << "Translation component is out of range";
+      std::cerr << " [FAILED]" << std::endl;
       std::cerr << "input  translation = " << translation << std::endl;
       std::cerr << "output translation = " << translation2 << std::endl;
       return EXIT_FAILURE;
@@ -353,10 +375,9 @@ int igstkMeshObjectTest( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-
-
   // Exercise Copy() method
-  ObjectRepresentationType::Pointer MeshRepresentation2 = MeshRepresentation->Copy();
+  ObjectRepresentationType::Pointer MeshRepresentation2 = 
+                                                  MeshRepresentation->Copy();
   view3D->RequestAddObject( MeshRepresentation2 );
   if(MeshRepresentation2->GetOpacity() != MeshRepresentation->GetOpacity())
     {
@@ -367,12 +388,15 @@ int igstkMeshObjectTest( int argc, char * argv [] )
 
   // Exercise RequestSetMeshObject() with a null pointer as argument
   std::cout << "Testing RequestSetMeshObject() with NULL argument: ";
-  ObjectRepresentationType::Pointer MeshRepresentation3 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer MeshRepresentation3 = 
+                                              ObjectRepresentationType::New();
   MeshRepresentation3->RequestSetMeshObject( 0 );
 
-  // Exercise RequestSetMeshObject() called twice. The second call should be ignored.
+  // Exercise RequestSetMeshObject() called twice. 
+  // The second call should be ignored.
   std::cout << "Testing RequestSetMeshObject() called twice: ";
-  ObjectRepresentationType::Pointer MeshRepresentation4 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer MeshRepresentation4 = 
+                                              ObjectRepresentationType::New();
   ObjectType::Pointer MeshObjectA = ObjectType::New();
   ObjectType::Pointer MeshObjectB = ObjectType::New();
   MeshRepresentation4->RequestSetMeshObject( MeshObjectA );

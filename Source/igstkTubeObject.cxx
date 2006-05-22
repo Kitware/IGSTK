@@ -33,6 +33,14 @@ TubeObject::~TubeObject()
 {
 }
 
+/** Set the ITKTubeSpatialObject. 
+ *  this is accessible only from the friend classes */
+void TubeObject
+::SetTubeSpatialObject( TubeSpatialObjectType * tube ) 
+{
+  m_TubeSpatialObject = tube;
+  this->RequestSetSpatialObject( m_TubeSpatialObject );
+}
 
 /** Add a point to the tube */
 void TubeObject::AddPoint(PointType & point)
@@ -65,6 +73,11 @@ const TubeObject::PointListType TubeObject::GetPoints() const
   return m_TubeSpatialObject->GetPoints();
 }
 
+/** Remove all the points in the list */
+void TubeObject::Clear( void )
+{
+  m_TubeSpatialObject->Clear();
+}
 
 /** Print object information */
 void TubeObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
@@ -72,11 +85,10 @@ void TubeObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   if( this->m_TubeSpatialObject )
-  {
+    {
     os << indent << this->m_TubeSpatialObject << std::endl;
-  }
+    }
 }
 
 
 } // end namespace igstk
-

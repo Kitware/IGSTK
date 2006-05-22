@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//Warning about: identifier was truncated to '255' characters in the 
+//debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -33,61 +34,62 @@ namespace igstk
 {
 namespace TubeObjectTest
 {
-  class TransformObserver : public ::itk::Command 
-  {
-  public:
-    typedef  TransformObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    TransformObserver() 
+  
+class TransformObserver : public ::itk::Command 
+{
+public:
+  typedef  TransformObserver          Self;
+  typedef  ::itk::Command             Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
+
+protected:
+  TransformObserver() 
+    {
+    m_GotTransform = false;
+    }
+  ~TransformObserver() {}
+public:
+  typedef ::igstk::TransformModifiedEvent  EventType;
+        
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    const itk::Object * constCaller = caller;
+    this->Execute( constCaller, event );
+    }
+
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    m_GotTransform = false;
+    if( EventType().CheckEvent( &event ) )
       {
-      m_GotTransform = false;
+      const EventType * transformEvent = 
+                dynamic_cast< const EventType *>( &event );
+      if( transformEvent )
+        {
+        m_Transform = transformEvent->Get();
+        m_GotTransform = true;
+        }
       }
-    ~TransformObserver() {}
-  public:
-    
-      typedef ::igstk::TransformModifiedEvent  EventType;
-        
-      void Execute(itk::Object *caller, const itk::EventObject & event)
-        {
-        const itk::Object * constCaller = caller;
-        this->Execute( constCaller, event );
-        }
+    }
 
-      void Execute(const itk::Object *caller, const itk::EventObject & event)
-        {
-        m_GotTransform = false;
-        if( EventType().CheckEvent( &event ) )
-          {
-          const EventType * transformEvent = 
-                    dynamic_cast< const EventType *>( &event );
-          if( transformEvent )
-            {
-            m_Transform = transformEvent->Get();
-            m_GotTransform = true;
-            }
-          }
-        }
+  bool GotTransform() const
+    {
+    return m_GotTransform;
+    }
 
-      bool GotTransform() const
-        {
-        return m_GotTransform;
-        }
+  const ::igstk::Transform & GetTransform() const
+    {
+    return m_Transform;
+    }
 
-      const ::igstk::Transform & GetTransform() const
-        {
-        return m_Transform;
-        }
-        
-  private:
+private:
 
-    ::igstk::Transform  m_Transform;
+  ::igstk::Transform  m_Transform;
 
-    bool m_GotTransform;
+  bool m_GotTransform;
 
-  };
+};
 
 } // end namespace TubeObjectTest
 } // end namespace igstk
@@ -95,7 +97,6 @@ namespace TubeObjectTest
 
 int igstkTubeObjectTest( int, char * [] )
 {
-
   igstk::RealTimeClock::Initialize();
 
   typedef itk::Logger              LoggerType;
@@ -109,15 +110,17 @@ int igstkTubeObjectTest( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
+                                              = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);
 
   typedef igstk::TubeObjectRepresentation  ObjectRepresentationType;
-  ObjectRepresentationType::Pointer TubeRepresentation = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer TubeRepresentation 
+                                            = ObjectRepresentationType::New();
   TubeRepresentation->SetLogger( logger );
 
-  typedef igstk::TubeObject ObjectType;
+  typedef igstk::TubeObject     ObjectType;
   typedef ObjectType::PointType TubePointType;
 
   ObjectType::Pointer TubeObject = ObjectType::New();
@@ -139,7 +142,8 @@ int igstkTubeObjectTest( int, char * [] )
   ObjectType::PointListType points = TubeObject->GetPoints();
   if(points.size() != 2)
     {
-    std::cout << "GetPoints error : " << points.size() << " v.s 2" << std::endl; 
+    std::cout << "GetPoints error : " << points.size() << " v.s 2" 
+              << std::endl; 
     return EXIT_FAILURE;
     }
   std::cout << "[PASSED]" << std::endl;
@@ -148,7 +152,8 @@ int igstkTubeObjectTest( int, char * [] )
   unsigned int nPoints = TubeObject->GetNumberOfPoints();
   if(nPoints != 2)
     {
-    std::cout << "GetNumberOfPoints error : " << nPoints << " v.s 2" << std::endl; 
+    std::cout << "GetNumberOfPoints error : " << nPoints << " v.s 2" 
+              << std::endl; 
     return EXIT_FAILURE;
     }
   std::cout << "[PASSED]" << std::endl;
@@ -156,6 +161,12 @@ int igstkTubeObjectTest( int, char * [] )
   std::cout << "Testing GetPoint: ";
   const TubePointType* pt = TubeObject->GetPoint(1);
   if(!pt)
+    {
+    std::cout << "GetPoint error" << std::endl; 
+    return EXIT_FAILURE;
+    }
+  const TubePointType* ptout = TubeObject->GetPoint(10);
+  if(ptout)
     {
     std::cout << "GetPoint error" << std::endl; 
     return EXIT_FAILURE;
@@ -218,7 +229,8 @@ int igstkTubeObjectTest( int, char * [] )
   TubeRepresentation->SetColor(0.3,0.7,0.2);
   if( !TubeRepresentation->IsModified() )
     {
-    std::cerr << "IsModified() failed to be true after a SetColor()" << std::endl;
+    std::cerr << "IsModified() failed to be true after a SetColor()" 
+              << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -243,16 +255,19 @@ int igstkTubeObjectTest( int, char * [] )
 
   typedef ::igstk::TubeObjectTest::TransformObserver  TransformObserverType;
 
-  TransformObserverType::Pointer transformObserver = TransformObserverType::New();
+  TransformObserverType::Pointer transformObserver 
+                                               = TransformObserverType::New();
 
-  TubeObject->AddObserver( ::igstk::TransformModifiedEvent(), transformObserver );
+  TubeObject->AddObserver( ::igstk::TransformModifiedEvent(), 
+                                          transformObserver );
   
   TubeObject->RequestSetTransform( transform );
   TubeObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
     {
-    std::cerr << "The TubeObject did not returned a Transform event" << std::endl;
+    std::cerr << "The TubeObject did not returned a Transform event" 
+              << std::endl;
     return EXIT_FAILURE;
     }
       
@@ -263,7 +278,8 @@ int igstkTubeObjectTest( int, char * [] )
     {
     if( fabs( translation2[i]  - translation[i] ) > tolerance )
       {
-      std::cerr << "Translation component is out of range [FAILED]" << std::endl;
+      std::cerr << "Translation component is out of range [FAILED]" 
+                << std::endl;
       std::cerr << "input  translation = " << translation << std::endl;
       std::cerr << "output translation = " << translation2 << std::endl;
       return EXIT_FAILURE;
@@ -282,10 +298,9 @@ int igstkTubeObjectTest( int, char * [] )
     return EXIT_FAILURE;
     }
 
-
-
   // Exercise Copy() method
-  ObjectRepresentationType::Pointer TubeRepresentation2 = TubeRepresentation->Copy();
+  ObjectRepresentationType::Pointer TubeRepresentation2 
+                                                = TubeRepresentation->Copy();
   view2D->RequestAddObject( TubeRepresentation2 );
   if(TubeRepresentation2->GetOpacity() != TubeRepresentation->GetOpacity())
     {
@@ -296,12 +311,15 @@ int igstkTubeObjectTest( int, char * [] )
 
   // Exercise RequestSetTubeObject() with a null pointer as argument
   std::cout << "Testing RequestSetTubeObject() with NULL argument: ";
-  ObjectRepresentationType::Pointer TubeRepresentation3 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer TubeRepresentation3 
+                                            = ObjectRepresentationType::New();
   TubeRepresentation3->RequestSetTubeObject( 0 );
 
-  // Exercise RequestSetTubeObject() called twice. The second call should be ignored.
+  // Exercise RequestSetTubeObject() called twice. 
+  // The second call should be ignored.
   std::cout << "Testing RequestSetTubeObject() called twice: ";
-  ObjectRepresentationType::Pointer TubeRepresentation4 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer TubeRepresentation4 
+                                            = ObjectRepresentationType::New();
   ObjectType::Pointer TubeObjectA = ObjectType::New();
   ObjectType::Pointer TubeObjectB = ObjectType::New();
   TubeRepresentation4->RequestSetTubeObject( TubeObjectA );
@@ -317,6 +335,16 @@ int igstkTubeObjectTest( int, char * [] )
   std::cout << TubeObjectA << std::endl;
 
   std::cout << "[PASSED]" << std::endl;
+
+  std::cout << "Testing Clear(): ";
+  TubeObject->Clear();
+  if(TubeObject->GetNumberOfPoints()>0)
+    {
+    std::cerr << "Clear() [FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "[PASSED]" << std::endl;
+
 
   std::cout << "Test [DONE]" << std::endl;
 

@@ -88,12 +88,11 @@ int igstkTubeReaderTest( int argc, char * argv [] )
   reader->RequestSetFileName( filenameWithCorruptedContent );
   reader->RequestReadObject();
   
-  typedef ReaderType::GroupObjectType TubesType;
+  typedef ReaderType::TubeType TubeType;
   
-  TubesType::ConstPointer tubes = reader->GetOutput();
+  TubeType::ConstPointer tube = reader->GetOutput();
 
-  tubes->Print( std::cout );
+  tube->Print( std::cout );
 
   return EXIT_SUCCESS;
 }
-

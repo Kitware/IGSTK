@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   SpatialObject Guided Surgery Software Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkMeshReader.h
   Language:  C++
   Date:      $Date$
@@ -17,18 +17,40 @@
 #ifndef __igstkMeshReader_h
 #define __igstkMeshReader_h
 
-#include "igstkMacros.h"
 #include "igstkSpatialObjectReader.h"
-
-#include "itkSpatialObjectReader.h"
-#include "itkObject.h"
-#include "itkEventObject.h"
-
-#include "igstkEvents.h"
 #include "igstkMeshObject.h"
 
 namespace igstk
 {
+
+namespace Friends 
+{
+
+/** \class MeshReaderToMeshSpatialObject
+ * \brief This class is intended to make the connection between the MeshReader
+ * and its output, the MeshSpatialObject. 
+ *
+ * With this class it is possible to enforce encapsulation of the Reader and
+ * the MeshSpatialObject, and make their GetMesh() and SetMesh() methods
+ * private, so that developers cannot gain access to the ITK or VTK layers of
+ * these two classes.
+ */
+class MeshReaderToMeshSpatialObject
+{
+public:
+
+  template < class TReader, class TMeshSpatialObject >
+  static void 
+  ConnectMesh(  TReader * reader, 
+                TMeshSpatialObject * imageSpatialObject )
+    {
+    imageSpatialObject->SetMesh( reader->GetITKMesh() );  
+    }
+
+}; // end of MeshReaderToMeshSpatialObject class
+
+} // end of Friend namespace
+
 
 /** \class MeshReader
  * 
@@ -62,8 +84,18 @@ public:
   typedef SpatialObjectType::ConstPointer    SpatialObjectTypeConstPointer;
   typedef igstk::MeshObject                  MeshObjectType;
 
+protected:
+
+  typedef MeshObjectType::MeshType           MeshType;
+
+public:
+
   /** Return the output as a group */
   const MeshObjectType * GetOutput() const;
+
+  /** Declare the MeshReaderToMeshSpatialObject class to be a friend 
+   *  in order to give it access to the private method GetITKMesh(). */
+  igstkFriendClassMacro( igstk::Friends::MeshReaderToMeshSpatialObject );
 
 protected:
 
@@ -82,12 +114,19 @@ protected:
    * Machine of the superclass. */
   void AttemptReadObjectProcessing();
 
+  /** Connect the ITK mesh to the output MeshSpatialObject */
+  void ConnectMesh();
+
 private:
 
   MeshReader(const Self&);         //purposely not implemented
   void operator=(const Self&);     //purposely not implemented
 
-  MeshObjectType::Pointer   m_Mesh;
+  // FIXME : This must be replaced with StateMachine logic
+  virtual MeshType * GetITKMesh() const;
+
+  MeshObjectType::Pointer   m_MeshObject;
+  MeshType::Pointer         m_Mesh;
 
 };
 

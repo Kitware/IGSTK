@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Program:   SpatialObject Guided Surgery Software Toolkit
+  Program:   Image Guided Surgery Software Toolkit
   Module:    igstkTubeReader.h
   Language:  C++
   Date:      $Date$
@@ -31,6 +31,35 @@
 namespace igstk
 {
 
+namespace Friends 
+{
+
+/** \class TubeReaderToTubeSpatialObject
+ * \brief This class is intended to make the connection between the TubeReader
+ * and its output, the TubeSpatialObject. 
+ *
+ * With this class it is possible to enforce encapsulation of the Reader and
+ * the TubeSpatialObject, and make their GetTube() and SetTube() methods
+ * private, so that developers cannot gain access to the ITK or VTK layers of
+ * these two classes.
+ */
+class TubeReaderToTubeSpatialObject
+{
+public:
+
+  template < class TReader, class TTubeSpatialObject >
+  static void 
+  ConnectTube(  TReader * reader, 
+                TTubeSpatialObject * tubeSpatialObject )
+    {
+    tubeSpatialObject->SetTubeSpatialObject(
+                                    reader->GetITKTubeSpatialObject());
+    }
+
+}; // end of TubeReaderToTubeSpatialObject class
+
+} // end of Friend namespace
+
 /** \class TubeReader
  * 
  * \brief This class reads 3D Tube in the metaIO format.
@@ -39,8 +68,6 @@ namespace igstk
  * to read groups of tubular structrures from files in metaIO format. Typical
  * these structures are the result of a segmentation method applied on
  * pre-operative images.
- * 
- * \sa MeshReader
  *
  * \ingroup Readers
  */
@@ -60,11 +87,14 @@ public:
   typedef SpatialObjectType::ConstPointer    SpatialObjectTypeConstPointer;
   typedef igstk::TubeObject                  TubeType;
   typedef itk::TubeSpatialObject<3>          TubeSpatialObjectType;
-  typedef igstk::TubeGroupObject             GroupObjectType;
-
 
   /** Return the output as a group */
-  const GroupObjectType * GetOutput() const;
+  const TubeType * GetOutput() const;
+
+  /** Declare the TubeReaderToTubeSpatialObject class to be a friend 
+   *  in order to give it access to the private method 
+   *  GetITKTubeSpatialObject(). */
+  igstkFriendClassMacro( igstk::Friends::TubeReaderToTubeSpatialObject );
 
 protected:
 
@@ -85,13 +115,19 @@ protected:
    *  invoked ONLY by the State Machine of the superclass. **/
   void AttemptReadObjectProcessing();
 
+  /** Connect the ITK TubeSpatialObject to the output TubeSpatialObject */
+  void ConnectTube();
+
 private:
 
   TubeReader(const Self&);         //purposely not implemented
   void operator=(const Self&);     //purposely not implemented
 
-  GroupObjectType::Pointer m_Group;
+  // FIXME : This must be replaced with StateMachine logic
+  virtual TubeSpatialObjectType * GetITKTubeSpatialObject() const;
 
+  TubeType::Pointer m_Tube;
+  TubeSpatialObjectType::Pointer m_TubeSpatialObject;
 };
 
 } // end namespace igstk
