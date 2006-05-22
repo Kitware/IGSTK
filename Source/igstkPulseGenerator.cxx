@@ -25,8 +25,6 @@
 #include "igstkEvents.h"
 #include "igstkRealTimeClock.h"
 
-
-
 namespace igstk
 {
 
@@ -47,8 +45,6 @@ char PulseGenerator::m_ResetClock = 1;
 double PulseGenerator::m_MissedTimeoutBy = 0.0;
 
 double PulseGenerator::m_PreviousClock = 0.0;
-
-
 
 
 /** Constructor */
@@ -73,37 +69,65 @@ PulseGenerator::PulseGenerator():m_StateMachine(this)
   igstkAddStateMacro( WaitingEventReturn  );
 
 
-  igstkAddTransitionMacro( Initial, ValidFrequency, Stopped,  SetFrequency );
-  igstkAddTransitionMacro( Initial, InvalidLowFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Initial, InvalidHighFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Initial, Stop, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Initial, Start, Initial, ReportErrorCondition );
-  igstkAddTransitionMacro( Initial, Pulse, Initial, ReportErrorCondition );
-  igstkAddTransitionMacro( Initial, EventReturn, Initial, ReportErrorCondition );
+  igstkAddTransitionMacro( Initial, ValidFrequency, 
+                           Stopped,  SetFrequency );
+  igstkAddTransitionMacro( Initial, InvalidLowFrequency, 
+                           Initial, ReportErrorCondition );
+  igstkAddTransitionMacro( Initial, InvalidHighFrequency, 
+                           Initial, ReportErrorCondition );
+  igstkAddTransitionMacro( Initial, Stop, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( Initial, Start, 
+                           Initial, ReportErrorCondition );
+  igstkAddTransitionMacro( Initial, Pulse, 
+                           Initial, ReportErrorCondition );
+  igstkAddTransitionMacro( Initial, EventReturn,
+                           Initial, ReportErrorCondition );
   
-  igstkAddTransitionMacro( Stopped, ValidFrequency, Stopped,  SetFrequency );
-  igstkAddTransitionMacro( Stopped, InvalidLowFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Stopped, InvalidHighFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Stopped, Stop, Stopped,   StopPulses );
-  igstkAddTransitionMacro( Stopped, Start, Pulsing, SetTimer );
-  igstkAddTransitionMacro( Stopped, Pulse, Stopped, ReportErrorCondition );
-  igstkAddTransitionMacro( Stopped, EventReturn, Stopped, ReportErrorCondition );
+  igstkAddTransitionMacro( Stopped, ValidFrequency, 
+                           Stopped,  SetFrequency );
+  igstkAddTransitionMacro( Stopped, InvalidLowFrequency, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( Stopped, InvalidHighFrequency, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( Stopped, Stop, 
+                           Stopped,   StopPulses );
+  igstkAddTransitionMacro( Stopped, Start,
+                           Pulsing, SetTimer );
+  igstkAddTransitionMacro( Stopped, Pulse, 
+                           Stopped, ReportErrorCondition );
+  igstkAddTransitionMacro( Stopped, EventReturn, 
+                           Stopped, ReportErrorCondition );
  
-  igstkAddTransitionMacro( Pulsing, ValidFrequency, Pulsing,  SetFrequency );
-  igstkAddTransitionMacro( Pulsing, InvalidLowFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Pulsing, InvalidHighFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( Pulsing, Stop, Stopped,  StopPulses );
-  igstkAddTransitionMacro( Pulsing, Start, Pulsing, ReportErrorCondition );
-  igstkAddTransitionMacro( Pulsing, Pulse, WaitingEventReturn, EmitPulse );
-  igstkAddTransitionMacro( Pulsing, EventReturn, Stopped, ReportErrorCondition );
+  igstkAddTransitionMacro( Pulsing, ValidFrequency, 
+                           Pulsing,  SetFrequency );
+  igstkAddTransitionMacro( Pulsing, InvalidLowFrequency, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( Pulsing, InvalidHighFrequency, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( Pulsing, Stop, 
+                           Stopped,  StopPulses );
+  igstkAddTransitionMacro( Pulsing, Start, 
+                           Pulsing, ReportErrorCondition );
+  igstkAddTransitionMacro( Pulsing, Pulse, 
+                           WaitingEventReturn, EmitPulse );
+  igstkAddTransitionMacro( Pulsing, EventReturn, 
+                           Stopped, ReportErrorCondition );
 
-  igstkAddTransitionMacro( WaitingEventReturn, ValidFrequency, WaitingEventReturn,  SetFrequency );
-  igstkAddTransitionMacro( WaitingEventReturn, InvalidLowFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( WaitingEventReturn, InvalidHighFrequency, Initial,  ReportErrorCondition );
-  igstkAddTransitionMacro( WaitingEventReturn, Stop, Stopped,  StopPulses );
-  igstkAddTransitionMacro( WaitingEventReturn, Start, WaitingEventReturn, ReportErrorCondition );
-  igstkAddTransitionMacro( WaitingEventReturn, Pulse, WaitingEventReturn, ReportMissedPulse );
-  igstkAddTransitionMacro( WaitingEventReturn, EventReturn, Pulsing, No );
+  igstkAddTransitionMacro( WaitingEventReturn, ValidFrequency,
+                           WaitingEventReturn,  SetFrequency );
+  igstkAddTransitionMacro( WaitingEventReturn, InvalidLowFrequency, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( WaitingEventReturn, InvalidHighFrequency, 
+                           Initial,  ReportErrorCondition );
+  igstkAddTransitionMacro( WaitingEventReturn, Stop, 
+                           Stopped,  StopPulses );
+  igstkAddTransitionMacro( WaitingEventReturn, Start, 
+                           WaitingEventReturn, ReportErrorCondition );
+  igstkAddTransitionMacro( WaitingEventReturn, Pulse, 
+                           WaitingEventReturn, ReportMissedPulse );
+  igstkAddTransitionMacro( WaitingEventReturn, EventReturn, 
+                           Pulsing, No );
  
   igstkSetInitialStateMacro( Initial );
 
@@ -119,7 +143,7 @@ PulseGenerator::~PulseGenerator()
   if( m_NumberOfPulseGenerators == 0 )
     {
     // Release any pending Timeouts.
-    Timeout * t = m_FreeTimeout ;
+    Timeout * t = m_FreeTimeout;
 
     while( t ) 
       {
@@ -191,7 +215,7 @@ PulseGenerator::SetFrequencyProcessing()
 {
   igstkLogMacro( DEBUG, "SetFrequencyProcessing() called ...\n");
   m_Frequency = m_FrequencyToBeSet;
-  m_Period = 1.0 / m_Frequency;
+  m_Period = 1000 / m_Frequency;
 }
 
 
@@ -243,9 +267,10 @@ PulseGenerator::CallbackTimer()
   igstkPushInputMacro( EventReturn );
   m_StateMachine.ProcessInputs();
 
-  // Set the timer for the next pulse. It is rescheduled at the end of the CallbackTimer()
-  // just in case the previous two ProcessInputs() calls takes a significant amount of time
-  // and risk to make the PulseGenerator to miss a timer pulse.
+  // Set the timer for the next pulse. It is rescheduled at the end of 
+  // the CallbackTimer()just in case the previous two ProcessInputs() 
+  // calls takes a significant amount of time and risk to make the 
+  // PulseGenerator to miss a timer pulse.
   RepeatTimeout( m_Period, 
             ::igstk::PulseGenerator::CallbackTimerGlobal, (void *)this );
 }
@@ -259,22 +284,22 @@ PulseGenerator::EmitPulseProcessing()
   this->InvokeEvent( PulseEvent() );
 }
 
-
 void
 PulseGenerator::ReportErrorConditionProcessing()
 {
   igstkLogMacro( WARNING, "ReportErrorConditionProcessing() called ...\n");
 }
 
-
 void
 PulseGenerator::ReportMissedPulseProcessing()
 {
-  igstkLogMacro( WARNING, "ReportMissedPulseProcessing() called ...Pulse Missed !!!. It means that the frequency of the pulse generator is to high for the time needed by Observers to complete their execute method. Please reduce the frequency, of use faster Execute methjods.");
+  igstkLogMacro( WARNING, "ReportMissedPulseProcessing() called ...\
+                          Pulse Missed !!!. It means that the frequency\
+                          of the pulse generator is to high for the time\
+                          needed by Observers to complete their execute\
+                          method. Please reduce the frequency, of use \
+                          faster Execute methods.");
 }
-
-
-
 
 void 
 PulseGenerator
@@ -283,8 +308,6 @@ PulseGenerator
   ElapseTimeouts();
   RepeatTimeout(time, cb, data);
 }
-
-
 
 void PulseGenerator
 ::RepeatTimeout(double time, TimeoutHandler cb, void *argp) 
@@ -297,7 +320,7 @@ void PulseGenerator
     time = 0;
     }
 
-  Timeout * t = m_FreeTimeout ;
+  Timeout * t = m_FreeTimeout;
 
   if( t ) 
     {
@@ -335,7 +358,7 @@ void PulseGenerator
     if(t->cb == cb && (t->arg == argp || !argp))
       {
       *p = t->next;
-      t->next = m_FreeTimeout ;
+      t->next = m_FreeTimeout;
       m_FreeTimeout  = t;
       } 
     else 
@@ -356,11 +379,8 @@ void PulseGenerator
 void PulseGenerator
 ::ElapseTimeouts() 
 {
-
   const double newclock = RealTimeClock::GetTimeStamp();
-  
   const double elapsed = newclock - m_PreviousClock;
-  
   m_PreviousClock = newclock;
   
   if( m_ResetClock ) 
@@ -417,5 +437,3 @@ void PulseGenerator::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 }
-
-
