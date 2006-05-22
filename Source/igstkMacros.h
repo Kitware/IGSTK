@@ -289,25 +289,182 @@ public: \
 #define igstkLoadedEventTransductionMacro( event, input, payload ) \
 private: \
   ReceptorObserverPointer m_Observer##event##input;  \
-  ::igstk::event::PayloadType                 m_##payload##ToBeSet; \
+  ::igstk::event::PayloadType                 m_##input##ToBeSet; \
   void Callback##event##input( const ::itk::EventObject & eventvar ) \
   { \
     const event * realevent = dynamic_cast < const event * > ( &eventvar ); \
     if( realevent ) \
       { \
-      m_##payload##ToBeSet = realevent->Get(); \
+      m_##input##ToBeSet = realevent->Get(); \
       m_StateMachine.PushInput( m_##input ); \
       } \
   } \
 public: \
-  void Observe##event(const ::itk::Object * object ) \
+ void Observe##input(const ::itk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this,\
                                            & Self::Callback##event##input ); \
     object->AddObserver( event(),m_Observer##event##input ); \
-    } 
+    }
 
+#define igstkObserverMacro( name, eventType, payloadType ) \
+class name##Observer : public ::itk::Command \
+{ \
+public: \
+  typedef  name##Observer             Self; \
+  typedef  ::itk::Command             Superclass;\
+  typedef  ::itk::SmartPointer<Self>  Pointer;\
+  itkNewMacro( Self );\
+protected:\
+  name##Observer() \
+    {\
+    m_GotObject = false;\
+    }\
+  ~name##Observer() {}\
+public:\
+  typedef eventType  EventType;\
+  void Execute(itk::Object *caller, const itk::EventObject & event)\
+    {\
+    const itk::Object * constCaller = caller;\
+    this->Execute( constCaller, event );\
+    }\
+  void Execute(const itk::Object *caller, const itk::EventObject & event)\
+    {\
+    m_GotObject = false;\
+    if( EventType().CheckEvent( &event ) )\
+      {\
+      const EventType * objectEvent = \
+                    dynamic_cast< const EventType *>( &event );\
+      if( objectEvent )\
+        {\
+        m_Object = objectEvent->Get();\
+        m_GotObject = true;\
+        }\
+      }\
+    }\
+  bool Got##name() const\
+    {\
+    return m_GotObject;\
+    }\
+  void Reset() \
+    {\
+    m_GotObject = false; \
+    }\
+  payloadType Get##name() const\
+    {\
+    return m_Object;\
+    }\
+private:\
+  payloadType  m_Object;\
+  bool m_GotObject;\
+};
+
+
+#define igstkObserverObjectMacro( name, eventType, payloadType ) \
+class name##Observer : public ::itk::Command \
+{ \
+public: \
+  typedef  name##Observer             Self; \
+  typedef  ::itk::Command             Superclass;\
+  typedef  ::itk::SmartPointer<Self>  Pointer;\
+  itkNewMacro( Self );\
+protected:\
+  name##Observer() \
+    {\
+    m_GotObject = false;\
+    }\
+  ~name##Observer() {}\
+public:\
+  typedef eventType  EventType;\
+  void Execute(itk::Object *caller, const itk::EventObject & event)\
+    {\
+    const itk::Object * constCaller = caller;\
+    this->Execute( constCaller, event );\
+    }\
+  void Execute(const itk::Object *caller, const itk::EventObject & event)\
+    {\
+    m_GotObject = false;\
+    if( EventType().CheckEvent( &event ) )\
+      {\
+      const EventType * objectEvent = \
+                    dynamic_cast< const EventType *>( &event );\
+      if( objectEvent )\
+        {\
+        m_Object = objectEvent->Get();\
+        m_GotObject = true;\
+        }\
+      }\
+    }\
+  bool Got##name() const\
+    {\
+    return m_GotObject;\
+    }\
+  void Reset() \
+    {\
+    m_GotObject = false; \
+    }\
+  payloadType::Pointer Get##name() const\
+    {\
+    return m_Object;\
+    }\
+private:\
+  payloadType::Pointer  m_Object;\
+  bool m_GotObject;\
+};
+
+
+#define igstkObserverConstObjectMacro( name, eventType, payloadType ) \
+class name##Observer : public ::itk::Command \
+{ \
+public: \
+  typedef  name##Observer             Self; \
+  typedef  ::itk::Command             Superclass;\
+  typedef  ::itk::SmartPointer<Self>  Pointer;\
+  itkNewMacro( Self );\
+protected:\
+  name##Observer() \
+    {\
+    m_GotObject = false;\
+    }\
+  ~name##Observer() {}\
+public:\
+  typedef eventType  EventType;\
+  void Execute(itk::Object *caller, const itk::EventObject & event)\
+    {\
+    const itk::Object * constCaller = caller;\
+    this->Execute( constCaller, event );\
+    }\
+  void Execute(const itk::Object *caller, const itk::EventObject & event)\
+    {\
+    m_GotObject = false;\
+    if( EventType().CheckEvent( &event ) )\
+      {\
+      const EventType * objectEvent = \
+                    dynamic_cast< const EventType *>( &event );\
+      if( objectEvent )\
+        {\
+        m_Object = objectEvent->Get();\
+        m_GotObject = true;\
+        }\
+      }\
+    }\
+  bool Got##name() const\
+    {\
+    return m_GotObject;\
+    }\
+  void Reset() \
+    {\
+    m_GotObject = false; \
+    }\
+  payloadType::ConstPointer Get##name() const\
+    {\
+    return m_Object;\
+    }\
+private:\
+  payloadType::ConstPointer  m_Object;\
+  bool m_GotObject;\
+};
 
 }
 #endif // __igstk_Macros_h_

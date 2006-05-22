@@ -29,36 +29,6 @@
 namespace igstk
 {
  
-namespace Friends 
-{
-
-/** class ImageSpatialObjectRepresentationToImageSpatialObject 
- *
- * \brief This class is intended to make the connection between the
- * ImageSpatialObjectRepresentation and its output, the ImageSpatialObject.
- * With this class it is possible to enforce encapsulation of the
- * SpatialObjectRepresentation and the ImageSpatialObject, and make their
- * GetImage() and SetImage() methods private, so that developers cannot gain
- * access to the ITK or VTK layers of these two classes.
- *
- */
-class ImageSpatialObjectRepresentationToImageSpatialObject
-{
-  public:
-    template < class TSpatialObjectRepresentation, class TImageSpatialObject >
-    static void 
-    ConnectImage( const TImageSpatialObject * imageSpatialObject,
-                  TSpatialObjectRepresentation * imageSpatialObjectRepresentation )
-    {
-       imageSpatialObjectRepresentation->SetImage( 
-                 imageSpatialObject->GetVTKImageData() );  
-    }
-
-}; // end of ImageSpatialObjectRepresentationToImageSpatialObject class
-
-} // end of Friend namespace
-
-
 
 /** \class ImageSpatialObjectRepresentation
  * 
@@ -69,9 +39,8 @@ class ImageSpatialObjectRepresentationToImageSpatialObject
  * \ingroup ObjectRepresentation
  */
 
-  template < class TImageSpatialObject >
-class ImageSpatialObjectRepresentation 
-                      : public ObjectRepresentation
+template < class TImageSpatialObject >
+class ImageSpatialObjectRepresentation : public ObjectRepresentation
 {
 
 public:
@@ -85,24 +54,24 @@ public:
   typedef TImageSpatialObject                      ImageSpatialObjectType;
 
   typedef typename ImageSpatialObjectType::ConstPointer 
-                                                   ImageSpatialObjectConstPointer;
+                                           ImageSpatialObjectConstPointer;
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
 
   /** Orientation Type: Publically declared
-   * orientation types supported for slice viewing.
-  */
+   * orientation types supported for slice viewing. */
   typedef enum
     { 
     Sagittal, 
     Coronal, 
-    Axial 
+    Axial
     } 
   OrientationType;
 
   /** Connect this representation class to the spatial object */
-  void RequestSetImageSpatialObject( const ImageSpatialObjectType * ImageSpatialObject );
+  void RequestSetImageSpatialObject( const ImageSpatialObjectType * 
+                                                ImageSpatialObject );
 
   /** Type used for representing the slice number */
   typedef unsigned int SliceNumberType;
@@ -119,10 +88,6 @@ public:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
-  /** Declare the ImageReaderToImageSpatialObject class to be a friend 
-   *  in order to give it access to the private method GetITKImage(). */
-  igstkFriendClassMacro( igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
-
   /** Returns the Minimum and Maximum number of slice available in the current
    * orientation.  */
   void RequestGetSliceNumberBounds();
@@ -135,15 +100,18 @@ protected:
   /** Destructor */
   ~ImageSpatialObjectRepresentation();
 
-  /** Connect the VTK image from the ImageSpatialObject to the
-   * ImageSpatialObjectRepresentation*/
-  void ConnectImage();
-
   /** Overloaded function to delete actors */
   void DeleteActors();
 
   /** Create the VTK actors for displaying geometry */
   void CreateActors();
+
+  /** Observer macro that will received a event with an image as payload and
+   * will store it internally. This will be the receptor of the event sent by
+   * the ImageSpatialObject when an image is requested. */
+   igstkObserverMacro( VTKImage, VTKImageModifiedEvent, 
+                       EventHelperType::VTKImagePointerType );
+
 
 private:
 
@@ -187,8 +155,9 @@ private:
   /** Actually set the Slice Orientation. */
   void SetOrientationProcessing();
       
-  /** Reports the minimum and maximum slice numbers on the current orientation */
-  void ReportSliceNumberBoundsProcessing() ;
+  /** Reports the minimum and maximum slice numbers on the current
+   *  orientation */
+  void ReportSliceNumberBoundsProcessing();
 
   /** Connect VTK pipeline */
   void ConnectVTKPipelineProcessing();
@@ -221,6 +190,9 @@ private:
   OrientationType      m_OrientationToBeSet;
   OrientationType      m_Orientation;
 
+  /** Observer to the VTK image events */
+  typename VTKImageObserver::Pointer   m_VTKImageObserver;
+
 };
 
 } // end namespace igstk
@@ -231,4 +203,3 @@ private:
 
 
 #endif // __igstkImageSpatialObjectRepresentation_h
-

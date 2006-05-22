@@ -33,6 +33,9 @@ ImageSpatialObject< TPixelType, VDimension >
   m_ImageSpatialObject = ImageSpatialObjectType::New();
   this->RequestSetSpatialObject( m_ImageSpatialObject );
 
+  // initialize the logger 
+  m_Logger = NULL;
+
   m_itkExporter = ITKExportFilterType::New();
   m_vtkImporter = VTKImportFilterType::New();
   
@@ -61,16 +64,29 @@ ImageSpatialObject< TPixelType, VDimension >
 
   igstkAddInputMacro( ValidImage );
   igstkAddInputMacro( InvalidImage );
+  igstkAddInputMacro( RequestITKImage );
+  igstkAddInputMacro( RequestVTKImage );
 
   igstkAddStateMacro( Initial );
   igstkAddStateMacro( ImageSet );
 
-  igstkAddTransitionMacro( Initial, ValidImage, ImageSet,  SetImage );
+  igstkAddTransitionMacro( Initial, ValidImage, 
+                           ImageSet,  SetImage );
   igstkAddTransitionMacro( Initial, InvalidImage, 
                            Initial, ReportInvalidImage );
-  igstkAddTransitionMacro( ImageSet, ValidImage, ImageSet,  SetImage );
+  igstkAddTransitionMacro( Initial, RequestITKImage, 
+                           Initial, ReportImageNotAvailable );
+  igstkAddTransitionMacro( Initial, RequestVTKImage, 
+                           Initial, ReportImageNotAvailable );
+
+  igstkAddTransitionMacro( ImageSet, ValidImage, 
+                           ImageSet, SetImage );
   igstkAddTransitionMacro( ImageSet, InvalidImage, 
                            Initial,  ReportInvalidImage );
+  igstkAddTransitionMacro( ImageSet, RequestITKImage, 
+                           ImageSet, ReportITKImage );
+  igstkAddTransitionMacro( ImageSet, RequestVTKImage, 
+                           ImageSet, ReportVTKImage );
 
   igstkSetInitialStateMacro( Initial );
 
@@ -93,20 +109,10 @@ ImageSpatialObject< TPixelType, VDimension >
 
 
 template< class TPixelType, unsigned int VDimension >
-const vtkImageData * 
-ImageSpatialObject< TPixelType, VDimension >
-::GetVTKImageData() const
-{
-  return m_vtkImporter->GetOutput();
-}
-
-
-template< class TPixelType, unsigned int VDimension >
 void
 ImageSpatialObject< TPixelType, VDimension >
 ::RequestSetImage( const ImageType * image ) 
 {
-  
   m_ImageToBeSet = image;
 
   if( m_ImageToBeSet )
@@ -127,10 +133,135 @@ ImageSpatialObject< TPixelType, VDimension >
 template< class TPixelType, unsigned int VDimension >
 void
 ImageSpatialObject< TPixelType, VDimension >
+::RequestGetITKImage() const
+{
+  igstkLogMacro( DEBUG, "RequestGetITKImage() called ....\n");
+
+  igstkPushInputMacro( RequestITKImage );
+  // This const_cast is allowed here only because 
+  // all the transitions due to the RequestVTKImage
+  // are idempotent, meaning that they do not change
+  // the state of the state machine. Given that the 
+  // state of the class is not changed, the method 
+  // can still be considered to be const.
+  Self * self = const_cast< Self * >( this );
+  self->RequestGetITKImage();
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::RequestGetITKImage() 
+{
+  igstkLogMacro( DEBUG, "RequestGetITKImage() called ....\n");
+
+  igstkPushInputMacro( RequestITKImage );
+  this->m_StateMachine.ProcessInputs();
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::RequestGetVTKImage() const
+{
+  igstkLogMacro( DEBUG, "RequestGetVTKImage() called ....\n");
+
+  // This const_cast is allowed here only because 
+  // all the transitions due to the RequestVTKImage
+  // are idempotent, meaning that they do not change
+  // the state of the state machine. Given that the 
+  // state of the class is not changed, the method 
+  // can still be considered to be const.
+  Self * self = const_cast< Self * >( this );
+  self->RequestGetVTKImage();
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::RequestGetVTKImage() 
+{
+  igstkLogMacro( DEBUG, "RequestGetVTKImage() called ....\n");
+
+  igstkPushInputMacro( RequestVTKImage );
+  this->m_StateMachine.ProcessInputs();
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::ReportITKImageProcessing() 
+{
+  igstkLogMacro( DEBUG, "ReportITKImageProcessing() called ....\n");
+
+  ITKImageModifiedEvent  event;
+  event.Set( this->m_Image );
+  this->InvokeEvent( event );
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::ReportVTKImageProcessing() 
+{
+  igstkLogMacro( DEBUG, "ReportVTKImageProcessing() called ....\n");
+
+  VTKImageModifiedEvent  event;
+  event.Set( m_vtkImporter->GetOutput() );
+  this->InvokeEvent( event );
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::ReportImageNotAvailableProcessing() 
+{
+  ImageNotAvailableEvent  event;
+  igstkLogMacro( WARNING, "ReportImageNotAvailableProcessing() called ...\n");
+  this->InvokeEvent( event );
+}
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
 ::SetImageProcessing() 
 {
+  igstkLogMacro( DEBUG, "SetImageProcessing() called ....\n");
+
   m_Image = m_ImageToBeSet;
   m_ImageSpatialObject->SetImage( m_Image );
+
+  // Get direction cosine information from the Oriented image
+  // and use the information to setup transformation parameters 
+ 
+  typename ImageType::DirectionType    directionCosines;
+  directionCosines = m_Image->GetDirection();
+
+  typedef typename ImageType::PointType     PointType;  
+  PointType origin =  m_Image->GetOrigin();
+
+  Transform          transform;
+  typename Transform::VersorType                    rotation;
+  
+  rotation.Set( directionCosines );
+ 
+
+  typename Transform::VectorType   tranlationToOrigin = 
+                 origin - rotation.Transform( origin );
+ 
+  typename Transform::ErrorType           errorValue = 1e-20;
+  typename Transform::TimePeriodType      validtyTime = -1;
+  
+  transform.SetTranslationAndRotation( tranlationToOrigin, rotation, errorValue, validtyTime );  
+ 
+  this->RequestSetTransform( transform ); 
+
   m_itkExporter->SetInput( m_Image );
   m_vtkImporter->UpdateWholeExtent();
 }

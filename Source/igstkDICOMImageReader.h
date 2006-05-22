@@ -33,8 +33,9 @@ namespace igstk
 #define igstkUnsafeGetMacro(name,type) \
 virtual const type & Get##name () const \
 { \
-    igstkLogMacro( CRITICAL, "igstk::DICOMImageReader::Get" #name " unsafe method called...\n"); \
-    return this->m_##name; \
+  igstkLogMacro( CRITICAL, \
+         "igstk::DICOMImageReader::Get" #name " unsafe method called...\n"); \
+  return this->m_##name; \
 }
 
 
@@ -43,21 +44,30 @@ itkEventMacro( DICOMPatientNameEvent,                             StringEvent);
 itkEventMacro( DICOMImageReaderEvent,                             StringEvent);
 
 // Invalid request error event 
-itkEventMacro( DICOMInvalidRequestErrorEvent,                      DICOMImageReaderEvent );
+itkEventMacro( DICOMInvalidRequestErrorEvent,
+               DICOMImageReaderEvent );
 
 // Events to handle errors with the ImageDirectory name
-itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,                  DICOMImageReaderEvent );
-itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,           DICOMImageReaderEvent );
-itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,         DICOMImageReaderEvent );
-itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent, DICOMImageReaderEvent );
+itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,
+              DICOMImageReaderEvent );
+itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,
+              DICOMImageReaderEvent );
+itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,
+              DICOMImageReaderEvent );
+itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent,
+              DICOMImageReaderEvent );
+
+// Image series filename generation error event
+itkEventMacro(DICOMImageSeriesFileNamesGeneratingErrorEvent,
+              DICOMImageReaderEvent );
 
 //Image reading error
-itkEventMacro( DICOMImageReadingErrorEvent,                        DICOMImageReaderEvent );
-
-
+itkEventMacro(DICOMImageReadingErrorEvent,
+              DICOMImageReaderEvent );
   
+
 /** \class DICOMImageReader
-  * 
+ * 
  * \brief This class reads DICOM files. 
  *
  * This class should not be instantiated directly, instead the derived classes
@@ -65,7 +75,6 @@ itkEventMacro( DICOMImageReadingErrorEvent,                        DICOMImageRea
  * 
  * \ingroup Readers
  */
-
 template <class TImageSpatialObject>
 class DICOMImageReader : public ImageReader< TImageSpatialObject >
 {
@@ -74,7 +83,7 @@ public:
 
   /** Macro with standard traits declarations. */
   igstkStandardTemplatedAbstractClassTraitsMacro( DICOMImageReader, \
-                                                  ImageReader< TImageSpatialObject> )
+                                           ImageReader< TImageSpatialObject> )
 
 public:
 
@@ -89,16 +98,11 @@ public:
   void RequestReadImage();
 
   /** This function should be used to request modality info*/
-  void RequestModalityInformation();
+  void RequestGetModalityInformation();
 
   /** This function will be used to request patient name info */
-  void RequestPatientNameInformation();
-  
+  void RequestGetPatientNameInformation(); 
 
-  /** This function will be used to reset the reader */
-  void RequestResetReader();
-
-  
   /** Type used for returning string values from the DICOM header */
   typedef std::string    DICOMInformationType;
 
@@ -131,7 +135,14 @@ public:
    * has returned true. Calling GetModality() in any other situation will lead
    * to unpredictable behavior. */
   igstkUnsafeGetMacro( Modality, DICOMInformationType );
+
+  /** Request to get the output image as an event */
+  void RequestGetImage();
   
+  /** Event type */
+  igstkLoadedTemplatedObjectEventMacro( ImageModifiedEvent, IGSTKEvent, 
+                                        TImageSpatialObject);
+
 protected:
 
   DICOMImageReader( void );
@@ -141,12 +152,14 @@ protected:
   itk::GDCMSeriesFileNames::Pointer     m_FileNames;
   itk::GDCMImageIO::Pointer             m_ImageIO;
 
-  typedef typename Superclass::ImageType               ImageType;
+  typedef typename Superclass::ImageType         ImageType;
 
-  typedef itk::ImageSeriesReader< ImageType >          ImageSeriesReaderType;
+  typedef itk::ImageSeriesReader< ImageType >    ImageSeriesReaderType;
+  typedef itk::ImageFileReader< ImageType >      ImageReaderType;
 
-  /* Internal itkImageSeriesReader */
+  /** Internal itkImageSeriesReader */
   typename ImageSeriesReaderType::Pointer        m_ImageSeriesReader;
+  typename ImageReaderType::Pointer              m_ImageFileReader;
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -166,14 +179,16 @@ private:
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( ImageDirectoryNameRead );
   igstkDeclareStateMacro( AttemptingToReadImage );
+  igstkDeclareStateMacro( ImageSeriesFileNamesGenerated );
   igstkDeclareStateMacro( ImageRead );
 
-
   /** List of State Inputs */
-  igstkDeclareInputMacro( ReadImageRequest );
+  igstkDeclareInputMacro( ReadImage );
   igstkDeclareInputMacro( ImageDirectoryNameValid ); 
   igstkDeclareInputMacro( ImageReadingSuccess );
+  igstkDeclareInputMacro( ImageSeriesFileNamesGeneratingSuccess );
   igstkDeclareInputMacro( ResetReader );
+  igstkDeclareInputMacro( GetImage );
   
   /** Error related state inputs */
   igstkDeclareInputMacro( ImageReadingError );
@@ -181,9 +196,9 @@ private:
   igstkDeclareInputMacro( ImageDirectoryNameDoesNotExist );
   igstkDeclareInputMacro( ImageDirectoryNameIsNotDirectory );
   igstkDeclareInputMacro( ImageDirectoryNameDoesNotHaveEnoughFiles );
+  igstkDeclareInputMacro( ImageSeriesFileNamesGeneratingError );
  
   /** DICOM tags request inputs */
-
   igstkDeclareInputMacro( GetModalityInformation );
   igstkDeclareInputMacro( GetPatientNameInformation );
   
@@ -194,7 +209,7 @@ private:
   void SetDirectoryNameProcessing();
 
   /** Invokes a FileNameGenerator in order to get the names of all the DICOM
-      files in a directory. To be invoked ONLY by the StateMachine */
+   *  files in a directory. To be invoked ONLY by the StateMachine */
   void ReadDirectoryFileNamesProcessing();
 
   /** This method request image read. To be invoked ONLY by the StateMachine. */
@@ -210,35 +225,45 @@ private:
   /** This function reports an error when image directory is non-existing */
   void ReportImageDirectoryDoesNotExistErrorProcessing();
 
- /* This function reports an error if the image directory doesn't have enough
-     files */
+  /** This function reports an error if the image directory doesn't have enough
+   *  files */
   void ReportImageDirectoryDoesNotHaveEnoughFilesErrorProcessing();
   
+  /** This function reports an error in dicom image series file name 
+   * generation */
+  void ReportImageSeriesFileNamesGeneratingErrorProcessing();
+
+  /** This function reports success in dicom image series file name 
+   * generation */
+  void ReportImageSeriesFileNamesGeneratingSuccessProcessing();
+
   /** This function reports an error while image reading */
   void ReportImageReadingErrorProcessing();
 
   /** This function reports success in image reading */
   void ReportImageReadingSuccessProcessing();
 
+  /** This function reports the image */
+  void ReportImageProcessing();
+
   /** This function resets the reader */
   void ResetReaderProcessing();
 
   /** This function reports an error when the image directory name
-      provided is not a directory containing DICOM series */
+   *  provided is not a directory containing DICOM series */
   void ReportImageDirectoryIsNotDirectoryErrorProcessing();
 
   /** This function throws a string loaded event. The string is loaded
-      with DICOM  modality */
+   *  with DICOM  modality */
   void GetModalityInformationProcessing();
 
   /** This function throws a string loaded event. The string is loaded
-      with patient name */
+   *  with patient name */
   void GetPatientNameInformationProcessing();
 
   /** This method MUST be private in order to prevent 
-      unsafe access to the ITK image level */
+   *  unsafe access to the ITK image level */
   virtual const ImageType * GetITKImage() const;
-
 
   /** Flag that indicates whether the file has been read successfully */
   bool                    m_FileSuccessfullyRead;
@@ -247,6 +272,10 @@ private:
   DICOMInformationType    m_PatientID;
   DICOMInformationType    m_PatientName;
   DICOMInformationType    m_Modality;
+  DICOMInformationType    m_GantryTilt;
+
+  /** Variable to hold image reading error information */
+  std::string             m_ImageReadingErrorInformation;
 };
 
 } // end namespace igstk

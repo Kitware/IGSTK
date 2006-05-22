@@ -20,6 +20,7 @@
 #include "igstkSpatialObject.h"
 
 #include "itkImageSpatialObject.h"
+#include "itkOrientedImage.h"
 
 #include "itkVTKImageExport.h"
 #include "vtkImageImport.h"
@@ -31,8 +32,7 @@ namespace igstk
 namespace Friends 
 {
 class ImageReaderToImageSpatialObject;
-class ImageSpatialObjectRepresentationToImageSpatialObject;
-
+class UltrasoundImageSimulatorToImageSpatialObject;
 }
 
 
@@ -40,9 +40,9 @@ class ImageSpatialObjectRepresentationToImageSpatialObject;
  * 
  * \brief This class represents an image object. 
  * 
- * This class is the base for all the image data objects in the toolkit. I
+ * This class is the base for all the image data objects in the toolkit. It
  * associates an internal ITK image and a VTK importer in such a way that
- * internally it can make available both image format to ITK and VTK classes.
+ * internally it can make available both image formats to ITK and VTK classes.
  * The ITK and VTK layers are concealed in order to enforce the safety of the
  * IGSTK layer.
  *
@@ -63,7 +63,7 @@ public:
   typedef itk::ImageSpatialObject< TDimension, TPixelType > 
                                                        ImageSpatialObjectType;
 
-  typedef typename ImageSpatialObjectType::ImageType        ImageType;
+  typedef typename itk::OrientedImage< TPixelType, TDimension >       ImageType;
   typedef typename ImageType::ConstPointer                  ImageConstPointer;
   typedef typename ImageSpatialObjectType::PointType        PointType;
   typedef typename ImageType::IndexType                     IndexType;
@@ -81,8 +81,27 @@ public:
   /** The ImageReaderToImageSpatialObject class is declared as a friend in
    * order to be able to set the input image */
   igstkFriendClassMacro( igstk::Friends::ImageReaderToImageSpatialObject );
+
+  /** The UltrasoundImageSimulatorToImageSpatialObject class is declared as a
+   * friend in order to be able to set the input image */
   igstkFriendClassMacro( 
-     igstk::Friends::ImageSpatialObjectRepresentationToImageSpatialObject );
+      igstk::Friends::UltrasoundImageSimulatorToImageSpatialObject );
+
+  /** Request to get the ITK image as a const pointer payload into an event.
+      Both the const and non-const versions are needed. */
+  void RequestGetITKImage();
+  void RequestGetITKImage() const;
+
+  /** Request to get the VTK image as a const pointer payload into an event.
+   *  Both the const and non-const versions are needed. */
+  void RequestGetVTKImage();
+  void RequestGetVTKImage() const;
+
+  /** Event types */
+  igstkLoadedTemplatedConstObjectEventMacro( ITKImageModifiedEvent, 
+                                             IGSTKEvent, ImageType);
+
+  igstkEventMacro( ImageNotAvailableEvent, IGSTKEvent );
 
 protected:
 
@@ -97,11 +116,12 @@ private:
   /** Internal itkImageSpatialObject */
   typename ImageSpatialObjectType::Pointer       m_ImageSpatialObject;
 
-  /** Get the VTK image data (converted from the ITK pipeline) */
-  const vtkImageData * GetVTKImageData() const;
-
   /** Set method to be invoked only by friends of this class */
   void RequestSetImage( const ImageType * image );
+
+  /** Declarations needed for the Logger */
+  igstkLoggerMacro();
+
 
 private:
  
@@ -113,8 +133,10 @@ private:
 private:
 
   /** State Machine Inputs */
-  igstkDeclareInputMacro( InvalidImage );
   igstkDeclareInputMacro( ValidImage );
+  igstkDeclareInputMacro( InvalidImage );
+  igstkDeclareInputMacro( RequestITKImage );
+  igstkDeclareInputMacro( RequestVTKImage );
   
   /** State Machine States */
   igstkDeclareStateMacro( Initial );
@@ -124,6 +146,10 @@ private:
   void SetImageProcessing();
   void ReportInvalidImageProcessing();
 
+  /** This function reports the image */
+  void ReportITKImageProcessing();
+  void ReportVTKImageProcessing();
+  void ReportImageNotAvailableProcessing();
 
   /** This is the variable holding the real data container in the form of an
    * ITK image. This image should never be exposed at the IGSTK API. */

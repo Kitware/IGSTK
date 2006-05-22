@@ -30,6 +30,7 @@ namespace Friends
 {
 
 /** \class ImageReaderToImageSpatialObject
+ * 
  * \brief This class is intended to make the connection between the ImageReader
  * and its output, the ImageSpatialObject. 
  *
@@ -37,6 +38,7 @@ namespace Friends
  * the ImageSpatialObject, and make their GetImage() and SetImage() methods
  * private, so that developers cannot gain access to the ITK or VTK layers of
  * these two classes.
+ *
  */
 class ImageReaderToImageSpatialObject
 {
@@ -57,6 +59,7 @@ public:
 
   
 /** \class ImageReader
+ * 
  * \brief This class is a base class for all image reader classes.
  * 
  * This class reads image data stored in files and outputs
@@ -77,12 +80,7 @@ public:
 public:
 
   /** Some convenient typedefs for input image */
-  typedef TImageSpatialObject                   ImageSpatialObjectType;
-
-
-  /** Return the output of the reader as a ImageSpatialObject */
-  const ImageSpatialObjectType * GetOutput() const;
-  
+  typedef TImageSpatialObject                   ImageSpatialObjectType;  
 
   /** Declare the ImageReaderToImageSpatialObject class to be a friend 
    *  in order to give it access to the private method GetITKImage(). */
@@ -96,16 +94,16 @@ protected:
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
 
-
   /** Connect the ITK image to the output ImageSpatialObject */
   void ConnectImage();
-
 
   /** Some convenient typedefs for internal ITK image. 
    *  These types must not be exposed in the API of this class. */
   typedef typename ImageSpatialObjectType::ImageType  ImageType;
   typedef typename ImageType::ConstPointer            ImagePointer;
   typedef typename ImageType::RegionType              ImageRegionType; 
+
+  typename ImageSpatialObjectType::Pointer   m_ImageSpatialObject;
 
 private:
   
@@ -116,8 +114,6 @@ private:
 
   // FIXME : This must be replaced with StateMachine logic
   virtual const ImageType * GetITKImage() const = 0;
-
-  typename ImageSpatialObjectType::Pointer   m_ImageSpatialObject;
 
 };
 
