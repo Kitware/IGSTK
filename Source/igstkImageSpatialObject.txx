@@ -258,7 +258,8 @@ ImageSpatialObject< TPixelType, VDimension >
   typename Transform::ErrorType           errorValue = 1e-20;
   typename Transform::TimePeriodType      validtyTime = -1;
   
-  transform.SetTranslationAndRotation( tranlationToOrigin, rotation, errorValue, validtyTime );  
+  transform.SetTranslationAndRotation( tranlationToOrigin, rotation, 
+                                           errorValue, validtyTime );
  
   this->RequestSetTransform( transform ); 
 
