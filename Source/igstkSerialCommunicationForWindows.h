@@ -31,10 +31,12 @@ namespace igstk
  *        communication over a Serial Port(RS-232 connection).
  *
  *
- *  \image html  igstkSerialCommunicationForWindows.png  "SerialCommunicationForWindows State Machine Diagram"
- *  \image latex igstkSerialCommunicationForWindows.eps  "SerialCommunicationForWindows State Machine Diagram" 
+ *  \image html  igstkSerialCommunicationForWindows.png 
+ *              "SerialCommunicationForWindows State Machine Diagram"
+ *  \image latex igstkSerialCommunicationForWindows.eps  
+ *               "SerialCommunicationForWindows State Machine Diagram" 
  *
- *        
+ *
  * \ingroup Communication
  * \ingroup SerialCommunication
  */
@@ -89,6 +91,11 @@ protected:
   /** Read data */
   virtual ResultType InternalRead( char *data, unsigned int numberOfBytes,
                                    unsigned int &bytesRead );
+
+  /** Set the RTS value 
+   *  0 : Clear the RTS (request-to-send) signal 
+   *  1 : Sends the RTS signal */
+  virtual ResultType InternalSetRTS(unsigned int signal);
 
   /** Set the timeout */
   virtual ResultType InternalSetTimeout( unsigned int timeoutPeriod );

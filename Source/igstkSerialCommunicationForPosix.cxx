@@ -19,7 +19,7 @@
 #include "igstkConfigure.h"
 #include "igstkSerialCommunicationForPosix.h"
 
-/* =========== standard includes */
+/** Standard includes */
 #include <errno.h>
 #include <time.h>
 #include <ctype.h>
@@ -28,8 +28,9 @@
 #include <string.h>
 #include <iostream>
 
-/* =========== includes for serial communication */
+/** Includes for serial communication */
 #include <fcntl.h>
+#include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -176,7 +177,7 @@ SerialCommunicationForPosix::InternalUpdateParameters( void )
 
   // set data bits
   if (dataBits == DataBits8)
-    {                 
+    {
     t.c_cflag |= CS8;
     }
   else if (dataBits == DataBits7)
@@ -186,7 +187,7 @@ SerialCommunicationForPosix::InternalUpdateParameters( void )
 
   // set parity
   if (parity == NoParity)
-    { // none            
+    { // none
     t.c_cflag &= ~PARENB;
     t.c_cflag &= ~PARODD;
     }
@@ -208,9 +209,9 @@ SerialCommunicationForPosix::InternalUpdateParameters( void )
 
   // enable hardware handshake by default
 #ifdef sgi
-  t.c_cflag |= CNEW_RTSCTS;       
+  t.c_cflag |= CNEW_RTSCTS;
 #else
-  t.c_cflag |= CRTSCTS;           
+  t.c_cflag |= CRTSCTS;
 #endif
 
   // turn off hardware handshake if requested
@@ -220,7 +221,7 @@ SerialCommunicationForPosix::InternalUpdateParameters( void )
     t.c_cflag &= ~CNEW_RTSCTS;
 #else
     t.c_cflag &= ~CRTSCTS;
-#endif     
+#endif
     } 
 
   // set timeout period
@@ -255,6 +256,36 @@ SerialCommunicationForPosix::InternalClosePort( void )
     }
 
   return result;
+}
+
+
+/** Set the RTS value 
+ *  0 : Clear the RTS (request-to-send) signal 
+ *  1 : Sends the RTS signal */
+SerialCommunicationForPosix::ResultType 
+SerialCommunicationForPosix::InternalSetRTS(unsigned int signal)
+{
+  int rs232bits = 0;
+
+  ioctl(m_PortHandle, TIOCMGET, &rs232bits);
+  if (signal)
+    {
+    rs232bits |= TIOCM_RTS;
+    }
+  else
+    {
+    rs232bits &= ~TIOCM_RTS;
+    }
+  int errval = ioctl(m_PortHandle, TIOCMSET, &rs232bits);
+
+  if(errval)
+    {
+    igstkLogMacro( WARNING, "SetRTS failed.\n" );
+    return FAILURE;
+    }
+
+  igstkLogMacro( DEBUG, "SetRTS succeeded...\n" );
+  return SUCCESS;
 }
 
 
@@ -415,4 +446,3 @@ void SerialCommunicationForPosix::PrintSelf( std::ostream& os,
 }
 
 } // end namespace igstk
-

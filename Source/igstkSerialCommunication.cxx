@@ -18,6 +18,10 @@
 // Warning about: identifier was truncated to '255' characters in
 // the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
+// Turn off deprecation warnings in MSVC 8+
+#if (_MSC_VER >= 1400)
+#pragma warning( disable : 4996 ) 
+#endif
 #endif
 
 #include <iostream>
@@ -52,6 +56,7 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
   m_BytesToWrite = 0;
   m_BytesToRead = 0;
   m_BytesRead = 0;
+  m_RTSSignal = 0;
 
   m_CaptureFileName = "";
   m_Capture = false;
@@ -72,6 +77,7 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
   igstkAddStateMacro( AttemptingToWrite ); 
   igstkAddStateMacro( AttemptingToPurgeBuffers ); 
   igstkAddStateMacro( AttemptingToSendBreak ); 
+  igstkAddStateMacro( AttemptingToSetRTS ); 
   igstkAddStateMacro( Sleep );
 
   // Set the input descriptors
@@ -80,6 +86,7 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
   igstkAddInputMacro( Timeout ); 
   igstkAddInputMacro( OpenPort ); 
   igstkAddInputMacro( UpdateParameters ); 
+  igstkAddInputMacro( SetRTS ); 
   igstkAddInputMacro( ClosePort ); 
   igstkAddInputMacro( SendBreak ); 
   igstkAddInputMacro( PurgeBuffers ); 
@@ -134,6 +141,23 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
                            AttemptingToClosePort,
                            AttemptToClosePort );
 
+  igstkAddTransitionMacro( PortOpen,
+                           SetRTS,
+                           AttemptingToSetRTS,
+                           AttemptToSetRTS );
+
+
+  // AttemptingToSetRTS
+  igstkAddTransitionMacro( AttemptingToSetRTS,
+                           Failure,
+                           ReadyForCommunication,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetRTS,
+                           Success,
+                           ReadyForCommunication,
+                           No );
+
   // AttemptingToUpdateParameters
   igstkAddTransitionMacro( AttemptingToUpdateParameters,
                            Success,
@@ -180,6 +204,11 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
                            UpdateParameters,
                            AttemptingToUpdateParameters,
                            AttemptToUpdateParameters);
+
+  igstkAddTransitionMacro( ReadyForCommunication,
+                           SetRTS,
+                           AttemptingToSetRTS,
+                           AttemptToSetRTS );
 
   // AttemptingToRead
   igstkAddTransitionMacro( AttemptingToRead,
@@ -390,6 +419,16 @@ SerialCommunication::Write( const char *data, unsigned int numberOfBytes )
 
 
 SerialCommunication::ResultType 
+SerialCommunication::SetRTS(unsigned int signal)
+{
+  m_RTSSignal = signal;
+  igstkPushInputMacro( SetRTS );
+  m_StateMachine.ProcessInputs(); 
+  return m_ReturnValue;
+}
+
+
+SerialCommunication::ResultType 
 SerialCommunication::Read( char *data, unsigned int numberOfBytes,
                            unsigned int &bytesRead )
 {
@@ -460,12 +499,13 @@ void SerialCommunication::OpenPortSuccessProcessing( void )
       {
       m_CaptureFileOutput->SetStream( m_CaptureFileStream );
       m_Recorder->AddLogOutput( m_CaptureFileOutput );
-      igstkLogMacro2( m_Recorder, DEBUG, "# recorded " << asctime(localtime(&ti))
+      igstkLogMacro2( m_Recorder, DEBUG, "# recorded " 
+                      << asctime(localtime(&ti))
                           << "\n" );
       }
     }
 
-   // if the port was opened successfully, then set transfer parameters next
+  // if the port was opened successfully, then set transfer parameters next
   igstkPushInputMacro( UpdateParameters );
 }
 
@@ -536,6 +576,13 @@ void SerialCommunication::AttemptToUpdateParametersProcessing()
 void SerialCommunication::AttemptToClosePortProcessing()
 {
   m_StateMachine.PushInputBoolean( (bool)this->InternalClosePort(),
+                                   m_SuccessInput,
+                                   m_FailureInput );
+}
+
+void SerialCommunication::AttemptToSetRTSProcessing()
+{
+  m_StateMachine.PushInputBoolean( (bool)this->InternalSetRTS(m_RTSSignal),
                                    m_SuccessInput,
                                    m_FailureInput );
 }
@@ -621,4 +668,3 @@ void SerialCommunication::PrintSelf( std::ostream& os,
 
 
 } // end namespace igstk
-

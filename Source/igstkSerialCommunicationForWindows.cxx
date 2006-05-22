@@ -26,7 +26,8 @@
 namespace igstk
 { 
 
-SerialCommunicationForWindows::SerialCommunicationForWindows():m_StateMachine(this)
+SerialCommunicationForWindows::SerialCommunicationForWindows()
+                                                   :m_StateMachine(this)
 {
   m_PortHandle = INVALID_HANDLE_VALUE;
   m_OldTimeoutPeriod = 0;
@@ -43,12 +44,14 @@ SerialCommunicationForWindows::InternalOpenPort( void )
 {
   unsigned int timeoutPeriod = this->GetTimeoutPeriod();
 
-  COMMTIMEOUTS default_ctmo = {
+  COMMTIMEOUTS default_ctmo = 
+    {
     MAXDWORD, MAXDWORD,
     timeoutPeriod, 
     2, 
     timeoutPeriod,
-  };
+    };
+
   HANDLE portHandle;
   DCB commSettings;
 
@@ -130,6 +133,34 @@ SerialCommunicationForWindows::InternalOpenPort( void )
 }
 
 
+/** Set the RTS value 
+ *  0 : Clear the RTS (request-to-send) signal 
+    1 : Sends the RTS signal */
+SerialCommunicationForWindows::ResultType 
+SerialCommunicationForWindows::InternalSetRTS(unsigned int signal)
+{
+  if(signal == 1)
+    {
+    if (EscapeCommFunction(m_PortHandle,SETRTS) == FALSE)
+      {
+      igstkLogMacro( WARNING, "SetRTS failed.\n" );
+      return FAILURE;
+      }
+    }
+  else
+    {
+    if (EscapeCommFunction(m_PortHandle,CLRRTS) == FALSE)
+      {
+      igstkLogMacro( WARNING, "SetRTS failed.\n" );
+      return FAILURE;
+      }
+    }
+
+  igstkLogMacro( DEBUG, "SetRTS succeeded...\n" );
+  return SUCCESS;
+}
+
+
 SerialCommunicationForWindows::ResultType
 SerialCommunicationForWindows::InternalUpdateParameters( void )
 {
@@ -168,7 +199,7 @@ SerialCommunicationForWindows::InternalUpdateParameters( void )
     {
     commSettings.fOutxCtsFlow = FALSE;       // off
     commSettings.fRtsControl = RTS_CONTROL_DISABLE;
-    }    
+    }
 
   // set data bits
   if (dataBits == DataBits8)
@@ -182,7 +213,7 @@ SerialCommunicationForWindows::InternalUpdateParameters( void )
 
   // set parity
   if (parity == NoParity)
-    { // none                
+    { // none
     commSettings.Parity = NOPARITY;
     }
   else if (parity == OddParity)
@@ -416,4 +447,3 @@ void SerialCommunicationForWindows::PrintSelf( std::ostream& os,
 }
 
 } // end namespace igstk
-

@@ -149,6 +149,11 @@ public:
   /** The method CloseCommunication closes the communication. */
   ResultType CloseCommunication( void );
 
+  /** Set the RTS value 
+   *  0 : Clear the RTS (request-to-send) signal 
+   *  1 : Sends the RTS signal */
+  ResultType SetRTS( unsigned int signal );
+
   /** Write method sends the string via the communication link. */
   ResultType Write( const char *message, unsigned int numberOfBytes );
 
@@ -199,6 +204,9 @@ protected:
 
   /** Closes serial port. */
   virtual ResultType InternalClosePort( void ) { return SUCCESS; };
+
+  /** Closes serial port. */
+  virtual ResultType InternalSetRTS( unsigned int ) { return SUCCESS; };
 
   /** write the data to the serial port. */
   virtual ResultType InternalWrite( const char *, unsigned int ) {
@@ -278,6 +286,9 @@ private:
   /** Logger for recording */
   itk::Logger::Pointer     m_Recorder;
   
+  /** RTS Signal type */
+  unsigned int             m_RTSSignal;
+
   /** LogOutput for File output stream */
   itk::StdStreamLogOutput::Pointer  m_CaptureFileOutput;
   
@@ -298,6 +309,7 @@ private:
   igstkDeclareStateMacro( AttemptingToWrite );
   igstkDeclareStateMacro( AttemptingToSendBreak );
   igstkDeclareStateMacro( AttemptingToPurgeBuffers );
+  igstkDeclareStateMacro( AttemptingToSetRTS );
   igstkDeclareStateMacro( Sleep );
 
   // List of Inputs
@@ -312,6 +324,7 @@ private:
   igstkDeclareInputMacro( SendBreak );
   igstkDeclareInputMacro( PurgeBuffers );
   igstkDeclareInputMacro( Sleep );
+  igstkDeclareInputMacro( SetRTS );
 
   /** called by state machine serial port is successfully opened */
   void OpenPortSuccessProcessing( void );
@@ -345,7 +358,10 @@ private:
 
   /** Called by the state machine when communication is to be closed */
   void AttemptToClosePortProcessing( void );
-  
+    
+  /** Called by the state machine when communication is to be closed */
+  void AttemptToSetRTSProcessing( void );
+
   /** Called by the state machine when writing is to be done */
   void AttemptToWriteProcessing( void );
   

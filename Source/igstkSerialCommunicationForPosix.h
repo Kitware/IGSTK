@@ -30,10 +30,12 @@ namespace igstk
  *
  *
  *
- *  \image html  igstkSerialCommunicationForPosix.png  "SerialCommunicationForPosix State Machine Diagram"
- *  \image latex igstkSerialCommunicationForPosix.eps  "SerialCommunicationForPosix State Machine Diagram" 
+ *  \image html  igstkSerialCommunicationForPosix.png  
+ *               "SerialCommunicationForPosix State Machine Diagram"
+ *  \image latex igstkSerialCommunicationForPosix.eps  
+ *               "SerialCommunicationForPosix State Machine Diagram" 
  *
- *        
+ *
  * \ingroup Communication
  * \ingroup SerialCommunication
  */
@@ -63,7 +65,7 @@ protected:
   virtual ResultType InternalOpenPort( void );
 
   /** Set communication on the open port as per the communication
-      parameters. */
+   *  parameters. */
   virtual ResultType InternalUpdateParameters( void );
 
   /** Closes serial port  */
@@ -85,6 +87,11 @@ protected:
   /** Read data */
   virtual ResultType InternalRead( char *data, unsigned int numberOfBytes,
                                    unsigned int &bytesRead );
+
+  /** Set the RTS (ready-to-send) value 
+   *  0 : Clear the RTS (request-to-send) signal 
+   *  1 : Sends the RTS signal */
+  virtual ResultType InternalSetRTS( unsigned int signal );
 
   /** Print object information. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
