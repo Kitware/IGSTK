@@ -225,6 +225,11 @@ int igstkViewTest( int, char * [] )
     // Add the cylinder to the view
     view3D->RequestAddObject( cylinderRepresentation );
     
+    // Exercise error conditions.
+    //
+    // Attempt to add an object that already exists.
+    view3D->RequestAddObject( ellipsoidRepresentation );
+
 
     // Set the refresh rate and start 
     // the pulse generators of the views.
@@ -253,14 +258,25 @@ int igstkViewTest( int, char * [] )
 
     // Exercise error conditions.
     //
+    // Attempt to remove an object that already was removed
+    view3D->RequestRemoveObject( ellipsoidRepresentation );
+
+
+    // Exercise error conditions.
+    //
     // Attempt to add an object with null pointer
     view3D->RequestAddObject( 0 );
-
+    
     // Exercise error conditions.
     //
     // Attempt to remove an object with null pointer
     view3D->RequestRemoveObject( 0 );
 
+    // Exercise error conditions.
+    //
+    // Attempt to add an annotation with a null pointer
+    view3D->RequestAddAnnotation2D( 0 );
+ 
     // Do automatic redraws using the internal PulseGenerator
     view2D->RequestAddObject( ellipsoidRepresentation );
     view3D->RequestAddObject( cylinderRepresentation );
@@ -290,6 +306,12 @@ int igstkViewTest( int, char * [] )
         break;
         }
       }
+
+    // Exercise the screenshot option with a valid filename
+    view2D->RequestSaveScreenShot("igstkViewTestScreenshot1.png");
+    
+    // Exercise the screenshot option with an valid filename
+    view2D->RequestSaveScreenShot("igstkViewTestScreenshot1.jpg");
 
     // at this point the observer should have hid the form
 
