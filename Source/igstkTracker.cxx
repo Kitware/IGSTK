@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//Warning about: identifier was truncated to '255' characters in the debug 
+// information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -239,7 +240,7 @@ void Tracker::Initialize( void )
 
 
 /** The "Reset" tracker method should be used to bring the tracker
-  to some defined default state. */
+ * to some defined default state. */
 void Tracker::Reset( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::Reset called ...\n");
@@ -249,7 +250,7 @@ void Tracker::Reset( void )
 
 
 /** The "StartTracking" method readies the tracker for tracking the
-  tools connected to the tracker. */
+ *  tools connected to the tracker. */
 void Tracker::StartTracking( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StartTracking called ...\n");
@@ -268,7 +269,7 @@ void Tracker::StopTracking( void )
 
 
 /** The "UpdateStatus" method is used for updating the status of 
-  ports and tools when the tracker is in tracking state. */
+ *  ports and tools when the tracker is in tracking state. */
 void Tracker::UpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::UpdateStatus called ...\n");
@@ -279,8 +280,7 @@ void Tracker::UpdateStatus( void )
 
 /** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
  * port numbered "portNumber" in the variable "position". Note that this
- * variable represents the position and orientation of the tool in 3D space.
- * */
+ * variable represents the position and orientation of the tool in 3D space. */
 void Tracker::GetToolTransform( unsigned int portNumber,
                                 unsigned int toolNumber,
                                 TransformType &transitions ) const
@@ -298,7 +298,6 @@ void Tracker::GetToolTransform( unsigned int portNumber,
       }
     }
 }
-
 
 /** The "SetToolTransform" sets the position of tool numbered "toolNumber" on
  * port numbered "portNumber" by the content of variable "position". Note
@@ -324,14 +323,12 @@ void Tracker::SetToolTransform( unsigned int portNumber,
     }
 }
 
-
 /** Associate a TrackerTool to an object to be tracked. This is a one-to-one
  * association and cannot be changed during the life of the application */
 void Tracker::AttachObjectToTrackerTool( unsigned int portNumber,
                                          unsigned int toolNumber,
                                          SpatialObject * objectToTrack )
 {
-
   if ( portNumber < this->m_Ports.size()  )
     {
     TrackerPortPointer port = this->m_Ports[ portNumber ];
@@ -344,7 +341,6 @@ void Tracker::AttachObjectToTrackerTool( unsigned int portNumber,
         }
       }
     }
-
 }
 
 
@@ -355,27 +351,24 @@ void Tracker::AddPort( TrackerPortType * port )
   this->m_Ports.push_back( portPtr );
 }
 
-
 /** The "ClearPorts" clears all the ports. */
 void Tracker::ClearPorts( void )
 {
   this->m_Ports.clear();
 }
 
-
 /** The "InternalOpen" method opens communication with a tracking device.
-    This method is to be overriden by a decendent class 
-    and responsible for device-specific processing */
+ *  This method is to be overriden by a decendent class 
+ *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalOpen( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::InternalOpen called ...\n");
   return SUCCESS;
 }
 
-
 /** The "InternalClose" method closes communication with a tracking device.
-    This method is to be overriden by a decendent class 
-    and responsible for device-specific processing */
+ *  This method is to be overriden by a decendent class 
+ *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::InternalClose called ...\n");
@@ -384,8 +377,8 @@ Tracker::ResultType Tracker::InternalClose( void )
 
 
 /** The "InternalReset" method resets tracker to a known configuration. 
-    This method is to be overriden by a decendent class 
-    and responsible for device-specific processing */
+ *  This method is to be overriden by a decendent class 
+ *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalReset( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::InternalReset called ...\n");
@@ -394,8 +387,8 @@ Tracker::ResultType Tracker::InternalReset( void )
 
 
 /** The "InternalActivateTools" method activates tools.
-    This method is to be overriden by a decendent class 
-    and responsible for device-specific processing */
+ *  This method is to be overriden by a decendent class 
+ *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalActivateTools( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::InternalActivateTools called ...\n");
@@ -404,8 +397,8 @@ Tracker::ResultType Tracker::InternalActivateTools( void )
 
 
 /** The "InternalDeactivateTools" method deactivates tools.
-    This method is to be overriden by a decendent class 
-    and responsible for device-specific processing */
+ *  This method is to be overriden by a decendent class 
+ *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalDeactivateTools( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::InternalDeactivateTools called ...\n");
@@ -414,8 +407,8 @@ Tracker::ResultType Tracker::InternalDeactivateTools( void )
 
 
 /** The "InternalStartTracking" method starts tracking.
-    This method is to be overriden by a decendent class 
-    and responsible for device-specific processing */
+ *  This method is to be overriden by a decendent class 
+ *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalStartTracking( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::InternalStartTracking called ...\n");
@@ -424,8 +417,8 @@ Tracker::ResultType Tracker::InternalStartTracking( void )
 
 
 /** The "InternalStopTracking" method stops tracking.
-    This method is to be overriden by a decendent class 
-    and responsible for device-specific processing */
+ *  This method is to be overriden by a decendent class 
+ *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalStopTracking( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::InternalStopTracking called ...\n");
@@ -434,8 +427,8 @@ Tracker::ResultType Tracker::InternalStopTracking( void )
 
 
 /** The "InternalUpdateStatus" method updates tracker status.
-    This method is to be overriden by a decendent class 
-    and responsible for device-specific processing */
+ *  This method is to be overriden by a decendent class 
+ *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::InternalUpdateStatus called ...\n");
@@ -444,21 +437,23 @@ Tracker::ResultType Tracker::InternalUpdateStatus( void )
 
 
 /** The "InternalThreadedUpdateStatus" method updates tracker status.
-    This method is called in a separate thread.
-    This method is to be overriden by a decendent class
-    and responsible for device-specific processing */
+ *  This method is called in a separate thread.
+ *  This method is to be overriden by a decendent class
+ *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalThreadedUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, 
+                 "igstk::Tracker::InternalThreadedUpdateStatus called ...\n");
   return SUCCESS;
 }
 
 
 /** The "AttemptToOpen" method attempts to open communication with a
-    tracking device. */
+ *  tracking device. */
 void Tracker::AttemptToOpenProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToOpenProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+                 "igstk::Tracker::AttemptToOpenProcessing called ...\n");
 
   ResultType result = this->InternalOpen();
   
@@ -471,7 +466,8 @@ void Tracker::AttemptToOpenProcessing( void )
 /** Post-processing after communication setup has been successful. */ 
 void Tracker::CommunicationEstablishmentSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::CommunicationEstablishmentSuccessProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::Tracker::CommunicationEstablishmentSuccessProcessing called ...\n");
 }
 
 
@@ -497,7 +493,8 @@ void Tracker::ResetFromTrackingStateProcessing( void )
  *  CommunicationEstablished  state */
 void Tracker::ResetFromToolsActiveStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::ResetFromToolsActiveStateProcessing() called ...\n");
+  igstkLogMacro( DEBUG, 
+         "igstk::Tracker::ResetFromToolsActiveStateProcessing() called ...\n");
   this->ResetFromCommunicatingStateProcessing();
 }
 
@@ -520,7 +517,8 @@ void Tracker::ResetFromCommunicatingStateProcessing( void )
 /** The "AttemptToActivateTools" method attempts to activate tools. */
 void Tracker::AttemptToActivateToolsProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToActivateToolsProcessing called ...\n");
+  igstkLogMacro( DEBUG,
+           "igstk::Tracker::AttemptToActivateToolsProcessing called ...\n");
 
   ResultType result = this->InternalActivateTools();
   
@@ -547,7 +545,8 @@ void Tracker::ToolsActivationFailureProcessing( void )
 /** The "AttemptToStartTracking" method attempts to start tracking. */
 void Tracker::AttemptToStartTrackingProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStartTrackingProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStartTrackingProcessing  "
+                 "called ...\n");
 
   ResultType result = this->InternalStartTracking();
   
@@ -575,7 +574,8 @@ void Tracker::StartTrackingFailureProcessing( void )
 /** The "AttemptToStopTracking" method attempts to stop tracking. */
 void Tracker::AttemptToStopTrackingProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStopTrackingProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToStopTrackingProcessing "
+                        "called ...\n");
   // leaving TrackingState, going to AttemptingToStopTrackingState
   this->ExitTrackingStateProcessing();
 
@@ -635,7 +635,8 @@ void Tracker::ExitTrackingStateProcessing( void )
     during tracking. */
 void Tracker::AttemptToUpdateStatusProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToUpdateStatusProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttemptToUpdateStatusProcessing "
+                        "called ...\n");
 
   // Set all tools to "not updated"
   unsigned int numPorts = m_Ports.size();
@@ -693,17 +694,18 @@ void Tracker::UpdateStatusSuccessProcessing( void )
         ToolCalibrationTransformType toolCalibrationTransform
                                     = tool->GetToolCalibrationTransform();
 
-        /*
-          T ' = P * R^-1 * T * C
-
-          where:
-          " T " is the original tool transform reported by the device,
-          " R^-1 " is the inverse of the transform for the reference tool,
-          " P " is the Patient transform (it specifies the position of
-                the reference with respect to patient coordinates), and
-          " T ' " is the transformation that is reported to the spatial objects
-          " C " is the tool calibration transform.
-        */
+        
+        // T ' = P * R^-1 * T * C
+        //
+        // where:
+        // " T " is the original tool transform reported by the device,
+        // " R^-1 " is the inverse of the transform for the reference tool,
+        // " P " is the Patient transform (it specifies the position of
+        //       the reference with respect to patient coordinates), and
+        // " T ' " is the transformation that is reported to the spatial 
+        // objects
+        // " C " is the tool calibration transform.
+        
 
         TransformType::VersorType rotation;
         TransformType::VectorType translation;
@@ -742,10 +744,13 @@ void Tracker::UpdateStatusSuccessProcessing( void )
         translation = m_PatientTransform.GetRotation().Transform(translation);
         translation += m_PatientTransform.GetTranslation();
 
+        const double timeToExpiration = transform.GetExpirationTime() - 
+                                        transform.GetStartTime();
+
         TransformType toolTransform;
-        toolTransform.SetTranslationAndRotation(translation, rotation,
+        toolTransform.SetTranslationAndRotation( translation, rotation,
                           transform.GetError(),
-                          transform.GetExpirationTime());
+                          timeToExpiration );
 
         tool->SetTransform( toolTransform );
         }
@@ -762,7 +767,7 @@ void Tracker::UpdateStatusFailureProcessing( void )
 
 
 /** The "CloseFromTrackingStateProcessing" method closes tracker in
-    use, when the tracker is in tracking state. */
+ *  use, when the tracker is in tracking state. */
 void Tracker::CloseFromTrackingStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::CloseFromTrackingStateProcessing "
@@ -788,7 +793,7 @@ void Tracker::CloseFromTrackingStateProcessing( void )
 }
 
 /** The "CloseFromToolsActiveStateProcessing" method closes tracker
-    in use, when the tracker is in active tools state. */
+ *  in use, when the tracker is in active tools state. */
 void Tracker::CloseFromToolsActiveStateProcessing( void)
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::"
@@ -807,7 +812,7 @@ void Tracker::CloseFromToolsActiveStateProcessing( void)
 }
 
 /** The "CloseFromCommunicatingStateProcessing" method closes
-    tracker in use, when the tracker is in communicating state. */
+ *  tracker in use, when the tracker is in communicating state. */
 void Tracker::CloseFromCommunicatingStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::"
@@ -841,23 +846,23 @@ void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   if( this->m_PulseGenerator )
-  {
+    {
     os << indent << this->m_PulseGenerator << std::endl;
-  }
+    }
 
   if( this->m_PulseObserver )
-  {
+    {
     os << indent << this->m_PulseObserver << std::endl;
-  }
+    }
 
   os << indent << "Number of ports: " << this->m_Ports.size() << std::endl;
   for(unsigned int i=0; i < m_Ports.size(); ++i )
-  {
-    if( this->m_Ports[i] )
     {
+    if( this->m_Ports[i] )
+      {
       os << indent << *this->m_Ports[i] << std::endl;
+      }
     }
-  }
 }
 
 
@@ -885,7 +890,6 @@ void Tracker::SetReferenceTool( bool applyReferenceTool,
         }
       }
     }
-
 }
 
 
@@ -903,17 +907,16 @@ bool Tracker::GetReferenceTool( unsigned int &portNumber,
 
 
 /** The "SetPatientTransform" sets PatientTransform.
-
-  T ' = W * R^-1 * T * C
-
-  where:
-  " T " is the original tool transform reported by the device,
-  " R^-1 " is the inverse of the transform for the reference tool,
-  " W " is the Patient transform (it specifies the position of the reference
-  with respect to patient coordinates), and
-  " T ' " is the transformation that is reported to the spatial objects
-  " C " is the tool calibration transform.
-*/
+ *
+ *  T ' = W * R^-1 * T * C
+ *
+ *  where:
+ *  " T " is the original tool transform reported by the device,
+ *  " R^-1 " is the inverse of the transform for the reference tool,
+ *  " W " is the Patient transform (it specifies the position of the reference
+ *  with respect to patient coordinates), and
+ *  " T ' " is the transformation that is reported to the spatial objects
+ *  " C " is the tool calibration transform */
 void Tracker::SetPatientTransform( const PatientTransformType& transform )
 {
   m_PatientTransform = transform;
@@ -1017,6 +1020,5 @@ ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
 
   return ITK_THREAD_RETURN_VALUE;
 }
-
 
 }
