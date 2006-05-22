@@ -657,7 +657,7 @@ StateMachine< TClass >
   ostr << "<?xml version=\"1.0\" encoding=\"us-ascii\"?>" << std::endl;
   ostr << "<scxml version=\"1.0\"";
   // The following XML namespace should work but is giving the parser problems
-  //  xmlns=\"http://www.w3.org/2005/07/scxml\"";
+  //  xmlns="\"http://www.w3.org/2005/07/scxml\"";
   ostr << std::endl;
 
   if( stateId != m_States.end() )
