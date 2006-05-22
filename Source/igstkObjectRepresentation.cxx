@@ -160,7 +160,8 @@ bool ObjectRepresentation::IsModified() const
 
 
 /** Set the Spatial Object */
-void ObjectRepresentation::RequestSetSpatialObject( const SpatialObjectType * spatialObject )
+void ObjectRepresentation
+::RequestSetSpatialObject( const SpatialObjectType * spatialObject )
 {
   // This const_cast is done because the ObjectRepresentation class invoke
   // Request methods in the SpatialObject, and those methods modify the state
@@ -185,11 +186,8 @@ void ObjectRepresentation::RequestSetSpatialObject( const SpatialObjectType * sp
 void ObjectRepresentation::SetSpatialObjectProcessing()
 {
   m_SpatialObject = m_SpatialObjectToAdd;
-  this->ObserveTransformModifiedEvent( m_SpatialObject );
-
+  this->ObserveSpatialObjectTransformInput( m_SpatialObject );
 }
-
-
 
 /** Set the color */
 void ObjectRepresentation::SetColor(float r, float g, float b)
@@ -213,10 +211,31 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
   this->Modified();
 }
 
+/** Set the opacity */
+void ObjectRepresentation::SetOpacity(float alpha)
+{
+  if(m_Opacity == alpha)
+    {
+    return;
+    }
+  m_Opacity = alpha;
+
+  // Update all the actors
+  ActorsListType::iterator it = m_Actors.begin();
+  while(it != m_Actors.end())
+    {
+    vtkActor * va = static_cast<vtkActor*>(*it);
+    va->GetProperty()->SetOpacity(m_Opacity); 
+    it++;
+    }
+  this->Modified();
+}
 
 /** Request Update the object representation (i.e vtkActors). */
 void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 {
+  igstkLogMacro( DEBUG, "RequestUpdateRepresentation at time" 
+                          << time );
   m_TimeToRender = time; 
   igstkPushInputMacro( UpdateRepresentation );
   m_StateMachine.ProcessInputs();
@@ -226,6 +245,8 @@ void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 /** Request Update the object position (i.e vtkActors). */
 void ObjectRepresentation::RequestUpdatePosition( const TimeStamp & time )
 {
+  igstkLogMacro( DEBUG, "RequestUpdatePosition at time" 
+                          << time );
   m_TimeToRender = time; 
   igstkPushInputMacro( RequestUpdatePosition );
   m_StateMachine.ProcessInputs();
@@ -235,14 +256,16 @@ void ObjectRepresentation::RequestUpdatePosition( const TimeStamp & time )
 /** Process the request for updating the transform from the SpatialObject. */
 void ObjectRepresentation::RequestUpdatePositionProcessing()
 {
-  m_SpatialObject->RequestGetTransform();  // The response should be sent back in an event
+  igstkLogMacro( DEBUG, "RequestUpdatePositionProcessing called ...."); 
+  // The response should be sent back in an event
+  m_SpatialObject->RequestGetTransform();  
 }
 
 
 /** Receive the Transform from the SpatialObject via a transduction macro. */
 void ObjectRepresentation::ReceiveSpatialObjectTransformProcessing()
 {
-  m_SpatialObjectTransform = m_SpatialObjectTransformToBeSet;
+  m_SpatialObjectTransform = m_SpatialObjectTransformInputToBeSet;
 
   igstkPushInputMacro( UpdateActorsPosition );
   m_StateMachine.ProcessInputs();
@@ -257,7 +280,6 @@ void ObjectRepresentation::NoProcessing()
 /** Update the object representation (i.e vtkActors). */
 void ObjectRepresentation::UpdateActorsPositionProcessing()
 {
-
   vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
 
   m_SpatialObjectTransform.ExportTransform( *vtkMatrix );
@@ -300,7 +322,8 @@ void ObjectRepresentation::RequestVerifyTimeStamp()
  * has expired with respect to the requested rendering time. */
 void ObjectRepresentation::MakeObjectsInvisibleProcessing()
 {
-  igstkLogMacro( WARNING, "MakeObjectsInvisibleProcessing at " << m_TimeToRender );
+  igstkLogMacro( WARNING, "MakeObjectsInvisibleProcessing at " 
+                          << m_TimeToRender );
   
   ActorsListType::iterator it = m_Actors.begin();
   while(it != m_Actors.end())
@@ -315,7 +338,8 @@ void ObjectRepresentation::MakeObjectsInvisibleProcessing()
  * is valid with respect to the requested rendering time. */
 void ObjectRepresentation::MakeObjectsVisibleProcessing()
 {
-  igstkLogMacro( WARNING, "MakeObjectsVisibleProcessing at " << m_TimeToRender );
+  igstkLogMacro( WARNING, "MakeObjectsVisibleProcessing at "
+                          << m_TimeToRender );
 
   ActorsListType::iterator it = m_Actors.begin();
   while(it != m_Actors.end())
@@ -334,12 +358,13 @@ void ObjectRepresentation::ReportInvalidRequestProcessing()
 
 
 /** Print Self function */
-void ObjectRepresentation::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void ObjectRepresentation
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << "Color: " << m_Color[0] << " : " << m_Color[1] << " : " << m_Color[2] << std::endl;
+  os << indent << "Color: " << m_Color[0] << " : ";
+  os << m_Color[1] << " : " << m_Color[2] << std::endl;
   os << indent << "Opacity: " << m_Opacity << std::endl;
 }
 
 } // end namespace igstk
-

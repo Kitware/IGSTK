@@ -43,7 +43,7 @@ class View;
  *
  * This class serves as the base class for all the representation objects that
  * will provide a VTK visualization of the Spatial Objects that are composing a
- * give scene.
+ * given scene.
  *
  *
  * \ingroup Object
@@ -74,7 +74,7 @@ public:
   float GetBlue() const  {return m_Color[2];}
 
   /** Set/Get the opacity */
-  igstkSetMacro( Opacity, float );
+  void SetOpacity(float alpha);
   igstkGetMacro( Opacity, float );
 
   /** Has the object been modified */
