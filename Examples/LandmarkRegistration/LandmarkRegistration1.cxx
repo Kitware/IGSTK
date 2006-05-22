@@ -63,7 +63,6 @@
 // EndCodeSnippet
 
 
-
 // BeginLatex
 // 
 // To fully  utilize the registration component, callbacks need to be set up 
@@ -98,7 +97,6 @@ protected:
 private:
 };
 //EndCodeSnippet
-
 
 
 class Landmark3DRegistrationInvalidRequestCallback : public itk::Command
@@ -173,7 +171,6 @@ private:
 // EndCodeSnippet
 
 
-
 // BeginLatex
 // 
 // After defining the helper classes, the main function implementation 
@@ -188,7 +185,6 @@ int main( int argv, char * argc[] )
 
 
   igstk::RealTimeClock::Initialize();
-
 
 
 // BeginLatex
@@ -215,7 +211,6 @@ int main( int argv, char * argc[] )
 // EndCodeSnippet
 
 
-
 // BeginLatex
 // 
 // The registration component is instantiated as follows
@@ -227,7 +222,6 @@ int main( int argv, char * argc[] )
                                         Landmark3DRegistrationType::New();
 // EndCodeSnippet
  
-
 
 // BeginLatex
 // 
@@ -276,7 +270,6 @@ int main( int argv, char * argc[] )
 // EndLatex
 
 
-
 // BeginCodeSnippet 
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -287,7 +280,6 @@ int main( int argv, char * argc[] )
 // EndCodeSnippet
    
 
-  
 // BeginLatex
 //
 // Next, landmark points are added to the image and tracker containers. 
@@ -341,7 +333,7 @@ int main( int argv, char * argc[] )
   trackerPointContainer.push_back(trackerPoint);
   landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
 
-//EndCodeSnippet
+  // EndCodeSnippet
 
   // BeginLatex
   // 
