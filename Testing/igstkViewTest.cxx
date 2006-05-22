@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters in the 
+//  debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -35,32 +36,35 @@
 
 namespace ViewTest
 {
-  class ViewObserver : public ::itk::Command 
-  {
-  public:
-    typedef  ViewObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    ViewObserver() 
-      {
-      m_PulseCounter = 0;
-      m_Form = 0;
-      m_View = 0;
-      }
-  public:
+  
+class ViewObserver : public ::itk::Command 
+{
+public:
+  
+  typedef  ViewObserver               Self;
+  typedef  ::itk::Command             Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
 
-    void SetForm( Fl_Window * form )
-      {
-      m_Form = form;
-      }
-    void Execute(const itk::Object *caller, const itk::EventObject & event)
-      {
-      std::cerr << "Execute( const * ) should not be called" << std::endl;         
-      }
+protected:
+  ViewObserver() 
+    {
+    m_PulseCounter = 0;
+    m_Form = 0;
+    m_View = 0;
+    }
+public:
 
-    void SetView( ::igstk::View * view )
+  void SetForm( Fl_Window * form )
+    {
+    m_Form = form;
+    }
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    std::cerr << "Execute( const * ) should not be called" << std::endl;
+    }
+
+  void SetView( ::igstk::View * view )
     {
     m_View = view;
     if( m_View )
@@ -68,49 +72,47 @@ namespace ViewTest
       m_View->AddObserver( ::igstk::RefreshEvent(), this );
       }
     }
-    void SetEndFlag( bool * end )
-      {
-      m_End = end;
-      }
 
-    void Execute(itk::Object *caller, const itk::EventObject & event)
+  void SetEndFlag( bool * end )
+    {
+    m_End = end;
+    }
+
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    if( ::igstk::RefreshEvent().CheckEvent( &event ) )
       {
-      if( ::igstk::RefreshEvent().CheckEvent( &event ) )
+      m_PulseCounter++;
+
+      if( m_PulseCounter > 20 )
         {
-        m_PulseCounter++;
-
-        if( m_PulseCounter > 20 )
+        if( m_View )
           {
-          if( m_View )
-            {
-            m_View->RequestStop();
-            } 
-          else
-            {
-            std::cerr << "View pointer is NULL " << std::endl;
-            }
-          *m_End = true;
-          return;
+          m_View->RequestStop();
+          } 
+        else
+          {
+          std::cerr << "View pointer is NULL " << std::endl;
           }
+        *m_End = true;
+        return;
         }
       }
-  private:
-    unsigned long       m_PulseCounter;
-    Fl_Window          *m_Form;
-    ::igstk::View      *m_View;
-    bool *              m_End;
-  };
+    }
+private:
+  
+  unsigned long       m_PulseCounter;
+  Fl_Window          *m_Form;
+  ::igstk::View      *m_View;
+  bool *              m_End;
 
-
+};
 
 }
 
-
 int igstkViewTest( int, char * [] )
 {
-
   igstk::RealTimeClock::Initialize();
-
 
   typedef igstk::View2D  View2DType;
   typedef igstk::View3D  View3DType;
@@ -128,20 +130,23 @@ int igstkViewTest( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
+                                                igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
+                                       // VTK OutputWindow -> logger
 
 
   try
     {
-
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
     
     // Create the ellipsoid representation
-    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
+    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
+                             igstk::EllipsoidObjectRepresentation::New();
+
     ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
     ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
     ellipsoidRepresentation->SetOpacity(1.0);
@@ -152,7 +157,9 @@ int igstkViewTest( int, char * [] )
     cylinder->SetHeight(0.5);
 
     // Create the cylinder representation
-    igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
+    igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation =
+                              igstk::CylinderObjectRepresentation::New();
+
     cylinderRepresentation->RequestSetCylinderObject( cylinder );
     cylinderRepresentation->SetColor(1.0,0.0,0.0);
     cylinderRepresentation->SetOpacity(1.0);
@@ -182,7 +189,6 @@ int igstkViewTest( int, char * [] )
 
     cylinder->RequestSetTransform( transform );
 
-    
     cylinderRepresentation->SetLogger( logger );
   
     // Create an FLTK minimal GUI
@@ -200,6 +206,12 @@ int igstkViewTest( int, char * [] )
     // End of the GUI creation
 
     form->show();
+
+    // Exercice some view functions
+    view2D->Initialize();
+    view2D->Enable();
+    view2D->Render();
+    view2D->Update();
     
     view2D->RequestResetCamera();
     view2D->RequestEnableInteractions();
@@ -207,22 +219,28 @@ int igstkViewTest( int, char * [] )
     view3D->RequestResetCamera();
     view3D->RequestEnableInteractions();
     
- 
     // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );
     
     // Add the cylinder to the view
     view3D->RequestAddObject( cylinderRepresentation );
     
+
+    // Set the refresh rate and start 
+    // the pulse generators of the views.
+    view2D->RequestSetRefreshRate( 30 );
+    view3D->RequestSetRefreshRate( 10 );
+
+    view2D->RequestStart();
+    view3D->RequestStart();
+
     // Do manual redraws
     for(unsigned int i=0; i<10; i++)
       {
-      view2D->Update();  // schedule redraw of the view
-      view3D->Update();  // schedule redraw of the view
+      Fl::wait(0.01);
+      igstk::PulseGenerator::CheckTimeouts();
       Fl::check();       // trigger FLTK redraws
       }
-
-
 
     view2D->RequestDisableInteractions();
     view3D->RequestDisableInteractions();
@@ -256,30 +274,22 @@ int igstkViewTest( int, char * [] )
     // Exercise the code for resizing the window
     form->resize(100, 100, 600, 300);
 
-    // Exercise and test the PrintSelf() methods
-    view2D->PrintSelf(std::cout, 0);
-    view3D->PrintSelf(std::cout, 0);
-
-    view2D->RequestStart();
-    view3D->RequestStart();
+    // Exercise and test the Print() methods
+    view2D->Print( std::cout, 0 );
+    view3D->Print( std::cout, 0 );
 
     std::cout << *view2D << std::endl;
     std::cout << *view3D << std::endl;
 
-    view2D->RequestSetRefreshRate( 30 );
-    view3D->RequestSetRefreshRate( 10 );
-
-
     while(1)
       {
-      Fl::wait(0.0001);
+      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
       if( bEnd )
         {
         break;
         }
       }
-
 
     // at this point the observer should have hid the form
 
@@ -293,16 +303,10 @@ int igstkViewTest( int, char * [] )
     return EXIT_FAILURE;
     }
 
-
- 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
     return EXIT_FAILURE;
     }
  
-
-
   return EXIT_SUCCESS;
 }
-
-

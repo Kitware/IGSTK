@@ -29,32 +29,33 @@
 #include <fstream>
 #include <iostream>
 
-class DICOMImageDirectoryNameDoesNotHaveEnoughFilesCallback : public itk::Command
+class DICOMImageDirectoryNameDoesNotHaveEnoughFilesCallback :\
+                                                     public itk::Command
 {
 public:
   typedef DICOMImageDirectoryNameDoesNotHaveEnoughFilesCallback Self;
-  typedef itk::SmartPointer<Self>      Pointer;
-  typedef itk::Command                 Superclass;
+  typedef itk::SmartPointer<Self>                               Pointer;
+  typedef itk::Command                                          Superclass;
   itkNewMacro(Self);
   void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
+    {
+    }
 
-  }
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     std::cerr<<"Error event received b/c of a directory that does not have" 
               << " enough number of files "<<std::endl;
     m_EventReceived = true;
-  } 
+    } 
  bool GetEventReceived()
     { 
     return m_EventReceived; 
     }
 protected:
   DICOMImageDirectoryNameDoesNotHaveEnoughFilesCallback()
-  {
-  m_EventReceived = false;
-  }
+    {
+    m_EventReceived = false;
+    }
 private:
   bool m_EventReceived;
 };
@@ -63,27 +64,27 @@ class DICOMImageReaderNonExistingDirectoryErrorCallback : public itk::Command
 {
 public:
   typedef DICOMImageReaderNonExistingDirectoryErrorCallback Self;
-  typedef itk::SmartPointer<Self>      Pointer;
-  typedef itk::Command                 Superclass;
+  typedef itk::SmartPointer<Self>                           Pointer;
+  typedef itk::Command                                      Superclass;
   itkNewMacro(Self);
   void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
+    {
+    }
 
-  }
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     std::cerr<<"Error Event received for a non-Existing directory "<<std::endl;
     m_EventReceived = true;
-  } 
+    } 
   bool GetEventReceived()
-  {   
+    {   
     return m_EventReceived; 
-  }
+    }
 protected:
   DICOMImageReaderNonExistingDirectoryErrorCallback()
-  {
-  m_EventReceived = false;
-  }
+    {
+    m_EventReceived = false;
+    }
 private:
   bool m_EventReceived;
 };
@@ -92,26 +93,27 @@ class DICOMImageReaderEmptyDirectoryErrorCallback : public itk::Command
 {
 public:
   typedef DICOMImageReaderEmptyDirectoryErrorCallback Self;
-  typedef itk::SmartPointer<Self>      Pointer;
-  typedef itk::Command                 Superclass;
+  typedef itk::SmartPointer<Self>                     Pointer;
+  typedef itk::Command                                Superclass;
   itkNewMacro(Self);
   void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
-  }
+    {
+    }
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
-    std::cerr << "Error Event received for empty string directory name " << std::endl;
+    {
+    std::cerr << "Error Event received for empty string directory name "
+              << std::endl;
     m_EventReceived = true;
-  }
+    }
   bool GetEventReceived()
-  {   
+    {   
     return m_EventReceived; 
-  }
+    }
 protected:
   DICOMImageReaderEmptyDirectoryErrorCallback()
-  {
-  m_EventReceived = false;
-  }
+    {
+    m_EventReceived = false;
+    }
 
 private:
   bool m_EventReceived;
@@ -122,85 +124,127 @@ class DICOMImageReaderInvalidDirectoryNameErrorCallback: public itk::Command
 {
 public:
   typedef DICOMImageReaderInvalidDirectoryNameErrorCallback Self;
-  typedef itk::SmartPointer<Self>      Pointer;
-  typedef itk::Command                 Superclass;
+  typedef itk::SmartPointer<Self>                           Pointer;
+  typedef itk::Command                                      Superclass;
   itkNewMacro(Self);
   void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
- 
-  }
+    {
+    }
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
-    std::cerr<<"Error Event received since the directory name specified is not a directory"<<std::endl;
+    {
+    std::cerr<<"Error Event received since the directory name specified " << 
+               "is not a directory"<<std::endl;
     m_EventReceived = true;
-  }
+    }
   
  bool GetEventReceived()
- { 
-  return m_EventReceived; 
- }
+   { 
+   return m_EventReceived; 
+   }
 
 protected:
   DICOMImageReaderInvalidDirectoryNameErrorCallback()
-  {
-  m_EventReceived = false;
-  }
+    {
+    m_EventReceived = false;
+    }
 private:
   bool m_EventReceived;
 };
 
-class DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback: public itk::Command
+class DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback: \
+                                               public itk::Command
 {
 public:
   typedef DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback Self;
-  typedef itk::SmartPointer<Self>      Pointer;
-  typedef itk::Command                 Superclass;
+  typedef itk::SmartPointer<Self>                                   Pointer;
+  typedef itk::Command                                              Superclass;
   itkNewMacro(Self);
 
-  typedef igstk::DICOMImageReadingErrorEvent   DICOMImageReadingErrorEventType;
+  typedef igstk::DICOMImageSeriesFileNamesGeneratingErrorEvent \
+                 DICOMImageSeriesFileNamesGeneratingErrorEventType;
     
   void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
- 
-  }
+    {
+    }
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
-    if( DICOMImageReadingErrorEventType().CheckEvent( &event ) )
+    {
+    if(DICOMImageSeriesFileNamesGeneratingErrorEventType().CheckEvent(&event))
       {
-      const DICOMImageReadingErrorEventType * errorEvent = 
-                   dynamic_cast< const DICOMImageReadingErrorEventType *>( &event );
+      const DICOMImageSeriesFileNamesGeneratingErrorEventType * errorEvent = 
+      dynamic_cast< 
+        const DICOMImageSeriesFileNamesGeneratingErrorEventType *>( &event );
     
-      std::cerr<<"Dicom image reading error event:"<<errorEvent->Get()<<std::endl;
+      std::cerr<<"Dicom image series file name generating error"
+               <<errorEvent->Get()<<std::endl;
       m_EventReceived = true;
       }
     }
   
  bool GetEventReceived()
- { 
-  return m_EventReceived; 
- }
+   { 
+   return m_EventReceived; 
+   }
 
 protected:
   DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback()
-  {
-  m_EventReceived = false;
-  }
+    {
+    m_EventReceived = false;
+    }
 private:
   bool m_EventReceived;
 };
 
+class DICOMImageInvalidErrorCallback: public itk::Command
+{
+public:
+  typedef DICOMImageInvalidErrorCallback Self;
+  typedef itk::SmartPointer<Self>        Pointer;
+  typedef itk::Command                   Superclass;
+  itkNewMacro(Self);
+
+  typedef igstk::DICOMImageReadingErrorEvent   DICOMImageReadingErrorEventType;
+    
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    }
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    if( DICOMImageReadingErrorEventType().CheckEvent( &event ) )
+      {
+      const DICOMImageReadingErrorEventType * errorEvent = 
+             dynamic_cast< const DICOMImageReadingErrorEventType *>( &event );
+    
+      std::cerr << "Dicom image reading error event:" 
+                << errorEvent->Get()<<std::endl;
+      m_EventReceived = true;
+      }
+    }
+  
+ bool GetEventReceived()
+   { 
+   return m_EventReceived; 
+   }
+
+protected:
+  DICOMImageInvalidErrorCallback()
+    {
+    m_EventReceived = false;
+    }
+private:
+  bool m_EventReceived;
+};
 
 int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
 {
-
   igstk::RealTimeClock::Initialize();
 
   if ( argc < 3 )
-  {
+    {
     std::cerr << "Error missing argument " << std::endl;
-    std::cerr << "Usage:  " << argv[0] << "Bad DICOM image Output Directory" << std::endl; 
+    std::cerr << "Usage:  " << argv[0]  
+              << "Bad DICOM image Output Directory" << std::endl; 
     return EXIT_FAILURE;
-  } 
+    } 
   typedef itk::Logger              LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   
@@ -216,50 +260,50 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
 
   typedef igstk::ImageSpatialObject< 
                                 PixelType, 
-                                Dimension 
-                                       > ImageSpatialObjectType;
+                                Dimension > ImageSpatialObjectType;
   
   class myDicomTestReader : 
     public igstk::DICOMImageReader< ImageSpatialObjectType >
-  {
-    public:
-       typedef myDicomTestReader  Self;
-       typedef igstk::ImageReader< ImageSpatialObjectType > Superclass;
+    {
+  public:
 
-       igstkNewMacro( Self );
+    typedef myDicomTestReader                            Self;
+    typedef igstk::ImageReader< ImageSpatialObjectType > Superclass;
 
-       void TestMe()
-       {
-       const ImageType * imageThatShallNotBeNamed = GetITKImage();
-       if( imageThatShallNotBeNamed != NULL )
-         {
-         std::cout << "Test of private abstract method Passed" << std::endl;
-         }
-       }
-    protected:
-       myDicomTestReader() {}
-       ~myDicomTestReader() {}
-    private:
-      typedef Superclass::ImageType ImageType;
-      virtual const ImageType * GetITKImage() const { return NULL; }
-  };
+    igstkNewMacro( Self );
+
+    void TestMe()
+      {
+      const ImageType * imageThatShallNotBeNamed = GetITKImage();
+      if( imageThatShallNotBeNamed != NULL )
+        {
+        std::cout << "Test of private abstract method Passed" << std::endl;
+        }
+      }
+  protected:
+    myDicomTestReader() {}
+    ~myDicomTestReader() {}
+  private:
+    typedef Superclass::ImageType ImageType;
+    virtual const ImageType * GetITKImage() const { return NULL; }
+    };
 
   typedef myDicomTestReader   ReaderType;
 
-
   ReaderType::Pointer   reader = ReaderType::New();
   reader->SetLogger( logger );
-
  
-   //Add observer for invalid directory 
+  //Add observer for invalid directory 
   DICOMImageReaderInvalidDirectoryNameErrorCallback::Pointer didcb = 
                     DICOMImageReaderInvalidDirectoryNameErrorCallback::New();
-  reader->AddObserver( igstk::DICOMImageDirectoryIsNotDirectoryErrorEvent(), didcb );
+  reader->AddObserver( 
+          igstk::DICOMImageDirectoryIsNotDirectoryErrorEvent(), didcb );
 
-   //Add observer for a non-existing directory 
+  //Add observer for a non-existing directory 
   DICOMImageReaderNonExistingDirectoryErrorCallback::Pointer dndcb = 
                       DICOMImageReaderNonExistingDirectoryErrorCallback::New();
-  reader->AddObserver( igstk::DICOMImageDirectoryDoesNotExistErrorEvent(), dndcb );
+  reader->AddObserver( 
+          igstk::DICOMImageDirectoryDoesNotExistErrorEvent(), dndcb );
     
   //Add observer for a an empty directory name (null string) 
   DICOMImageReaderEmptyDirectoryErrorCallback::Pointer decb = 
@@ -268,26 +312,37 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
 
   //Add observer for a directory which does not have enough number of files 
   DICOMImageDirectoryNameDoesNotHaveEnoughFilesCallback::Pointer ddhefcb = 
-                      DICOMImageDirectoryNameDoesNotHaveEnoughFilesCallback::New();
-  reader->AddObserver( igstk::DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent(), ddhefcb );
+            DICOMImageDirectoryNameDoesNotHaveEnoughFilesCallback::New();
+  reader->AddObserver( 
+      igstk::DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent(), ddhefcb );
 
   //Add observer for a directory containing non-DICOM files 
-  DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback::Pointer dircb = 
-                      DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback::New();
+  DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback::Pointer disgcb = 
+            DICOMImageDirectoryDoesNotContainValidDICOMSeriesCallback::New();
+  reader->AddObserver( 
+      igstk::DICOMImageSeriesFileNamesGeneratingErrorEvent(), disgcb );
+  
+  //Add observer for reading invalid/corrupted dicom files 
+  DICOMImageInvalidErrorCallback::Pointer dircb = 
+                      DICOMImageInvalidErrorCallback::New();
   reader->AddObserver( igstk::DICOMImageReadingErrorEvent(), dircb );
+
 
   // On purpose invoke read image before the directory has been set.
   // This exercises the error condition of "InvalidRequestEvent"
-  std::cout << "On purpose request the image before even giving the directory name" << std::endl;
+  std::cout << "On purpose request the image before even giving "  
+            << "the directory name" << std::endl;
   reader->RequestReadImage();
   
-  std::cout  << "Testing the input directory with an empty string  " << std::endl;
+  std::cout  << "Testing the input directory with an empty string  " 
+             << std::endl;
   std::string emptyDirectoryName; // THIS IS EMPTY ON PURPOSE !!
   reader->RequestSetDirectory( emptyDirectoryName );
   
   if( !decb->GetEventReceived() )
     {
-    std::cerr << "DICOMImageReader failed to complain about empty string directoryName" << std::endl;
+    std::cerr << "DICOMImageReader failed to complain about empty string" 
+              << "directoryName" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -300,7 +355,8 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
 
   if( !ddhefcb->GetEventReceived() )
     {
-    std::cerr << "DICOMImageReader failed to complain about empty directory " << std::endl;
+    std::cerr << "DICOMImageReader failed to complain about "  
+              << "empty directory " << std::endl;
     return EXIT_FAILURE;
     }
   std::cout  << "Testing invalid directory (regular file) " << std::endl;
@@ -322,7 +378,8 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
 
   if( !didcb->GetEventReceived() )
     {
-    std::cerr << "DICOMImageReader failed to complain about a non-Directory filename " << std::endl;
+    std::cerr << "DICOMImageReader failed to complain about a " 
+              << "non-Directory filename " << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -334,11 +391,13 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
 
   if( !didcb->GetEventReceived() )
     {
-    std::cerr << "DICOMImageReader failed to complain about a non-existing directory  " << std::endl;
+    std::cerr << "DICOMImageReader failed to complain about " 
+              << "a non-existing directory  " << std::endl;
     return EXIT_FAILURE;
     }
 
-  std::cout  << "Testing for directory containing non-dicom files " << std::endl;
+  std::cout  << "Testing for directory containing non-dicom files " 
+             << std::endl;
   std::string           directoryWithNonDicomFiles = argv[2];
   
   directoryWithNonDicomFiles = directoryWithNonDicomFiles + "/foo4";
@@ -351,30 +410,37 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
   std::string filename4 = directoryWithNonDicomFiles + "/foo4.txt";
   
   outputFile.open( filename1.c_str() );
-  outputFile << "Dummy file created to test the DICOMImageReader " << std::endl;
+  outputFile << "Dummy file created to test the DICOMImageReader " 
+             << std::endl;
   outputFile.close();
   
   outputFile.open( filename2.c_str() );
-  outputFile << "Dummy file2 created to test the DICOMImageReader " << std::endl;
+  outputFile << "Dummy file2 created to test the DICOMImageReader " 
+             << std::endl;
   outputFile.close();
     
   outputFile.open( filename3.c_str() );
-  outputFile << "Dummy file3 created to test the DICOMImageReader " << std::endl;
+  outputFile << "Dummy file3 created to test the DICOMImageReader " 
+             << std::endl;
   outputFile.close();
  
   outputFile.open( filename4.c_str() );
-  outputFile << "Dummy file4 created to test the DICOMImageReader " << std::endl;
+  outputFile << "Dummy file4 created to test the DICOMImageReader " 
+             << std::endl;
   outputFile.close();
   
   reader->RequestSetDirectory( directoryWithNonDicomFiles);
 
   if( !didcb->GetEventReceived() )
     {
-    std::cerr << "DICOMImageReader failed to complain about a non-existing directory  " << std::endl;
+    std::cerr << "DICOMImageReader failed to complain about a " 
+              << "non-existing directory  " << std::endl;
     return EXIT_FAILURE;
     }
 
-  std::cout << "Testing image reading error for a bad/corrupted/invalid dicom image" << std::endl;
+  std::cout << "Testing image reading error for a bad/corrupted/invalid " 
+            << "dicom image" << std::endl;
+
   std::string directorywithCorruptedDicomFiles = argv[1];
   reader->RequestSetDirectory ( directorywithCorruptedDicomFiles ); 
   reader->RequestReadImage( );  
@@ -382,4 +448,3 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
   
   return EXIT_SUCCESS;
 }
-

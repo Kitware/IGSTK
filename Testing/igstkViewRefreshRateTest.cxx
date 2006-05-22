@@ -23,7 +23,8 @@
 
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters in the debug 
+// information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -42,39 +43,42 @@
 
 namespace ViewRefreshRateTest
 {
-  class ViewObserver : public ::itk::Command 
-  {
-  public:
-    typedef  ViewObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    ViewObserver() 
-      {
-      m_PulseCounter = 0;
-      m_NumberOfPulsesToStop = 10;
-      m_Form = 0;
-      m_View = 0;
-      }
-  public:
+  
+class ViewObserver : public ::itk::Command 
+{
+public:
+  typedef  ViewObserver               Self;
+  typedef  ::itk::Command             Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
 
-    void SetForm( Fl_Window * form )
-      {
-      m_Form = form;
-      }
+protected:
+  ViewObserver() 
+    {
+    m_PulseCounter = 0;
+    m_NumberOfPulsesToStop = 10;
+    m_Form = 0;
+    m_View = 0;
+    }
 
-    void SetEndFlag( bool * end )
-      {
-      m_End = end;
-      }
+public:
 
-    void Execute(const itk::Object *caller, const itk::EventObject & event)
-      {
-      std::cerr << "Execute( const * ) should not be called" << std::endl;         
-      }
+  void SetForm( Fl_Window * form )
+    {
+    m_Form = form;
+    }
 
-    void SetView( ::igstk::View * view )
+  void SetEndFlag( bool * end )
+    {
+    m_End = end;
+    }
+
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    std::cerr << "Execute( const * ) should not be called" << std::endl;
+    }
+
+  void SetView( ::igstk::View * view )
     {
     m_View = view;
     if( m_View )
@@ -83,48 +87,44 @@ namespace ViewRefreshRateTest
       }
     }
 
-    void SetNumberOfPulsesToStop( unsigned long number )
-      {
-      m_NumberOfPulsesToStop = number;
-      }
+  void SetNumberOfPulsesToStop( unsigned long number )
+    {
+    m_NumberOfPulsesToStop = number;
+    }
 
-    void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    if( ::igstk::RefreshEvent().CheckEvent( &event ) )
       {
-      if( ::igstk::RefreshEvent().CheckEvent( &event ) )
+      m_PulseCounter++;
+
+      if( m_PulseCounter > m_NumberOfPulsesToStop )
         {
-        m_PulseCounter++;
-
-        if( m_PulseCounter > m_NumberOfPulsesToStop )
+        if( m_View )
           {
-          if( m_View )
-            {
-            m_View->RequestStop();
-            } 
-          else
-            {
-            std::cerr << "View pointer is NULL " << std::endl;
-            }
-          *m_End = true;
-          return;
+          m_View->RequestStop();
+          } 
+        else
+          {
+          std::cerr << "View pointer is NULL " << std::endl;
           }
+        *m_End = true;
+        return;
         }
       }
-  private:
-    unsigned long       m_PulseCounter;
-    unsigned long       m_NumberOfPulsesToStop;
-    Fl_Window          *m_Form;
-    ::igstk::View      *m_View;
-    bool *              m_End;
-  };
-
-
+    }
+private:
+  unsigned long       m_PulseCounter;
+  unsigned long       m_NumberOfPulsesToStop;
+  Fl_Window          *m_Form;
+  ::igstk::View      *m_View;
+  bool *              m_End;
+};
 
 }
 
-
 int igstkViewRefreshRateTest( int, char * [] )
 {
-
   igstk::RealTimeClock::Initialize();
 
   typedef itk::Logger              LoggerType;
@@ -138,9 +138,11 @@ int igstkViewRefreshRateTest( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
+                                              igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
+                                       // VTK OutputWindow -> logger
 
   typedef igstk::View2D  View2DType;
   typedef igstk::View3D  View3DType;
@@ -149,24 +151,24 @@ int igstkViewRefreshRateTest( int, char * [] )
 
   try
     {
-
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
     ellipsoid->SetLogger( logger );
     
     // Create the ellipsoid representation
-    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
+    igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
+                                igstk::EllipsoidObjectRepresentation::New();
     ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
     ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
     ellipsoidRepresentation->SetOpacity(1.0);
+    ellipsoidRepresentation->SetLogger( logger );
 
     // Create an FLTK minimal GUI
     Fl_Window * form = new Fl_Window(601,301,"View Refresh Rate Test");
     
     View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
     View3DType * view3D = new View3DType(310,10,280,280,"3D View");
-    
     view2D->SetLogger( logger );
     view3D->SetLogger( logger );
 
@@ -216,7 +218,7 @@ int igstkViewRefreshRateTest( int, char * [] )
     // Exercise the code for resizing the window
     form->resize(100, 100, 600, 300);
 
-    const float refreshRate = 30;
+    const float refreshRate = 20;
     const float expectedNumberOfSeconds = 20;
     const unsigned long numberOfPulsesToStop = 
       static_cast< unsigned long >( refreshRate * expectedNumberOfSeconds );
@@ -252,7 +254,7 @@ int igstkViewRefreshRateTest( int, char * [] )
 
     const double endTime   = igstk::RealTimeClock::GetTimeStamp();
 
-    const double secondsElapsed = endTime - beginTime;
+    const double secondsElapsed = ( endTime - beginTime ) / 1000;
 
     const float actualRate = numberOfPulsesToStop / secondsElapsed;
 
@@ -266,8 +268,9 @@ int igstkViewRefreshRateTest( int, char * [] )
       {
       std::cerr << "Refresh Rate did not match the expected value" << std::endl;
       std::cerr << "secondsElapsed          = " << secondsElapsed << std::endl;
-      std::cerr << "expectedNumberOfSeconds = " << expectedNumberOfSeconds << std::endl;
-      result = false ;
+      std::cerr << "expectedNumberOfSeconds = " << expectedNumberOfSeconds;
+      std::cerr << std::endl;
+      result = false;
       }
 
   
@@ -283,8 +286,6 @@ int igstkViewRefreshRateTest( int, char * [] )
     result = false;
     }
 
-
-
   if( !result )
     {
     return EXIT_FAILURE;
@@ -297,5 +298,3 @@ int igstkViewRefreshRateTest( int, char * [] )
 
   return EXIT_SUCCESS;
 }
-
-

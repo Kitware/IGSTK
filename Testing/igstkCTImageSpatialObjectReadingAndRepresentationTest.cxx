@@ -26,15 +26,23 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[] )
+namespace CTImageSpatialObjectReadingAndRepresentationTest
+{
+igstkObserverObjectMacro(CTImage,
+    ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
+}
+
+int igstkCTImageSpatialObjectReadingAndRepresentationTest( 
+                                                        int argc, char* argv[] )
 {
 
   igstk::RealTimeClock::Initialize();
 
-
   if( argc < 4 )
     {
-    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  "<< "Output image file for a screenshot" <<" CTImageExcerpt "<< std::endl;
+      std::cerr << "Usage: " << argv[0] << "  CTImage  " 
+              << "Output image file for a screenshot" 
+              << " CTImageExcerpt " << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -49,9 +57,11 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
+                                              = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
+                                       // OutputWindow -> logger
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -59,7 +69,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
 
   reader->SetLogger( logger );
 
-  /* Read in a DICOM series */
+  // Read in a DICOM series
   std::cout << "Reading CT image : " << argv[1] << std::endl;
 
   ReaderType::DirectoryNameType directoryName = argv[1];
@@ -68,17 +78,29 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
   
  
   typedef igstk::CTImageSpatialObject  CTImageType;
-  typedef CTImageType::ConstPointer    CTImagePointer;
+  typedef CTImageType::Pointer         CTImagePointer;
 
   // First, on purpose attempt to use an Empty image, 
   // in order to test error conditions.
   //
-  CTImagePointer ctImage = reader->GetOutput();
+  typedef CTImageSpatialObjectReadingAndRepresentationTest::CTImageObserver 
+                                                        CTImageObserverType;
+  CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New();
+  reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
+                            ctImageObserver);
 
-  if( !ctImage->IsEmpty() )
+  reader->RequestGetImage();
+
+  if( ctImageObserver->GotCTImage() )
     {
-    std::cerr << "The image was expected to be empty, but it is not..." << std::endl;
+    std::cerr << "Error: The image was sent  from the Reader " << std::endl;
+    std::cerr << "even though it was not actually read." << std::endl;
     return EXIT_FAILURE;
+    }
+  else
+    {
+    std::cout << "Test for premature reading of the image: PASSED !" 
+              << std::endl;
     }
 
   
@@ -88,7 +110,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
           
   representation->SetLogger( logger );
 
-  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
 
   representation->RequestSetOrientation( RepresentationType::Axial );
   representation->RequestSetSliceNumber( 0 );
@@ -104,15 +126,23 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
   form->show();
 
   view2D->SetLogger( logger ); 
-  view2D->RequestResetCamera();
   view2D->RequestEnableInteractions();
 
   view2D->RequestAddObject( representation );
     
+  // Reseting the camera after reading the image is more effective
+  view2D->RequestResetCamera();
+
+  // Configuring the view refresh rate
+  view2D->RequestSetRefreshRate( 40 );
+  view2D->RequestStart();
+
+  
   // Do manual redraws
   for( unsigned int i=0; i < 10; i++)
     {
-    view2D->Update();  // schedule redraw of the view
+    Fl::wait( 0.05 );
+    igstk::PulseGenerator::CheckTimeouts();
     Fl::check();       // trigger FLTK redraws
     }
 
@@ -126,28 +156,51 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
     }
   catch( ... )
     {
-    std::cerr << "ERROR: An exception was thrown while reading the CT dataset" << std::endl;
-    std::cerr << "This should not have happened. The State Machine should have" << std::endl;
-    std::cerr << "catched that exception and converted it into a SM Input " << std::endl;
+    std::cerr << "ERROR: An exception was thrown while reading the CT dataset"
+              << std::endl;
+    std::cerr << "This should not have happened. The State Machine should have"
+              << std::endl;
+    std::cerr << "catched that exception and converted it into a SM Input " 
+              << std::endl;
     return EXIT_FAILURE;
     }
   
-  ctImage = reader->GetOutput();
+  reader->RequestGetImage();
 
-  if( ctImage->IsEmpty() )
+  if( ctImageObserver->GotCTImage() )
     {
-    std::cerr << "The image was expected to be Non-Empty, but it was empty." << std::endl;
+      
+    CTImagePointer ctImage = ctImageObserver->GetCTImage();
+
+    if( ctImage->IsEmpty() )
+      {
+      std::cerr << "The image was expected to be Non-Empty, but it was empty." 
+                << std::endl;
+      return EXIT_FAILURE;
+      }
+    else
+      {
+      std::cerr << "Test for reception of the image PASSED !" << std::endl;
+      }
+   
+    }
+  else
+    {
+    std::cerr << "The image was expected to be received" << std::endl;
+    std::cerr << " but the payload event did not arrive." << std::endl;
     return EXIT_FAILURE;
     }
- 
-  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+
+
+  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
 
   view2D->RequestAddObject( representation );
 
   // Do manual redraws
   for( unsigned int i=0; i < 20; i++)
     {
-    view2D->Update();  // schedule redraw of the view
+    Fl::wait( 0.05 );
+    igstk::PulseGenerator::CheckTimeouts();
     Fl::check();       // trigger FLTK redraws
     }
 
@@ -157,94 +210,97 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
   view2D->RequestSaveScreenShot( filename ); 
 
   // Do manual redraws for each orientation while changing slice numbers
-  {
-  representation->RequestSetOrientation( RepresentationType::Axial );
-  view2D->RequestSetOrientation( igstk::View2D::Axial );
-  view2D->RequestResetCamera();
-  for(unsigned int i=0; i<10; i++)
     {
-    representation->RequestSetSliceNumber( i );
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
-    std::cout << "i= " << i << std::endl;
+    representation->RequestSetOrientation( RepresentationType::Axial );
+    view2D->RequestSetOrientation( igstk::View2D::Axial );
+    view2D->RequestResetCamera();
+    for(unsigned int i=0; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      Fl::wait( 0.05 );
+      igstk::PulseGenerator::CheckTimeouts();
+      Fl::check();       // trigger FLTK redraws
+      std::cout << "i= " << i << std::endl;
+      }
     }
-  }
 
-  {
-  representation->RequestSetOrientation( RepresentationType::Sagittal );
-  view2D->RequestSetOrientation( igstk::View2D::Sagittal );
-  view2D->RequestResetCamera();
-  for(unsigned int i=0; i<10; i++)
     {
-    representation->RequestSetSliceNumber( i );
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
-    std::cout << "i= " << i << std::endl;
+    representation->RequestSetOrientation( RepresentationType::Sagittal );
+    view2D->RequestSetOrientation( igstk::View2D::Sagittal );
+    view2D->RequestResetCamera();
+    for(unsigned int i=0; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      Fl::wait( 0.05 );
+      igstk::PulseGenerator::CheckTimeouts();
+      Fl::check();       // trigger FLTK redraws
+      std::cout << "i= " << i << std::endl;
+      }
     }
-  }
 
-  {
-  representation->RequestSetOrientation( RepresentationType::Coronal );
-  view2D->RequestSetOrientation( igstk::View2D::Coronal );
-  view2D->RequestResetCamera();
-  for(unsigned int i=0; i<10; i++)
     {
-    representation->RequestSetSliceNumber( i );
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
-    std::cout << "i= " << i << std::endl;
+    representation->RequestSetOrientation( RepresentationType::Coronal );
+    view2D->RequestSetOrientation( igstk::View2D::Coronal );
+    view2D->RequestResetCamera();
+    for(unsigned int i=0; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      Fl::wait( 0.05 );
+      igstk::PulseGenerator::CheckTimeouts();
+      Fl::check();       // trigger FLTK redraws
+      std::cout << "i= " << i << std::endl;
+      }
     }
-  }
 
   view2D->RequestRemoveObject( representation );
   representation = NULL;
   view2D->RequestRemoveObject( representation );
 
   /** Testing the reuse of the reader by reading a image with different size
-   *  Testing the ITK image to VTK image filter pipeline 
-   */
-  {
-  igstk::CTImageReader::Pointer reader = igstk::CTImageReader::New();
-  igstk::CTImageSpatialObjectRepresentation::Pointer representation = igstk::CTImageSpatialObjectRepresentation::New();
-  igstk::CTImageReader::DirectoryNameType directoryName;
-
-  view2D->RequestAddObject( representation );
-  view2D->RequestSetOrientation( igstk::View2D::Axial );
-
-  std::cout << "Reading the first DICOM series : " << argv[1] <<std::endl;
-  directoryName = argv[1];
-  reader->RequestSetDirectory( directoryName );
-  reader->RequestReadImage();    
-  representation->RequestSetImageSpatialObject( reader->GetOutput() );
-  representation->RequestSetOrientation( RepresentationType::Axial );
-
-  for(unsigned int i=0; i<10; i++)
+   *  Testing the ITK image to VTK image filter pipeline */
     {
-    representation->RequestSetSliceNumber( i );
-    view2D->Update();
-    Fl::check();
-    std::cout << "i= " << i << std::endl;
+    igstk::CTImageReader::Pointer reader = igstk::CTImageReader::New();
+    igstk::CTImageSpatialObjectRepresentation::Pointer representation 
+                          = igstk::CTImageSpatialObjectRepresentation::New();
+    igstk::CTImageReader::DirectoryNameType directoryName;
+
+    view2D->RequestAddObject( representation );
+    view2D->RequestSetOrientation( igstk::View2D::Axial );
+
+    std::cout << "Reading the first DICOM series : " << argv[1] <<std::endl;
+    directoryName = argv[1];
+    reader->RequestSetDirectory( directoryName );
+    reader->RequestReadImage();
+    representation->RequestSetImageSpatialObject( 
+                                              ctImageObserver->GetCTImage() );
+    representation->RequestSetOrientation( RepresentationType::Axial );
+
+    for(unsigned int i=0; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      Fl::wait( 0.05 );
+      igstk::PulseGenerator::CheckTimeouts();
+      Fl::check();
+      std::cout << "i= " << i << std::endl;
+      }
+
+    std::cout << "Reading the second DICOM series : " << argv[3] <<std::endl;
+    directoryName = argv[3];
+    reader->RequestSetDirectory( directoryName );
+    reader->RequestReadImage();
+    representation->RequestSetImageSpatialObject( 
+                                              ctImageObserver->GetCTImage() );
+    representation->RequestSetOrientation( RepresentationType::Axial );
+
+    for(unsigned int i=0; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      Fl::wait( 0.05 );
+      igstk::PulseGenerator::CheckTimeouts();
+      Fl::check();
+      std::cout << "i= " << i << std::endl;
+      }
     }
-
-  std::cout << "Reset the reader...." << std::endl;
-  reader->RequestResetReader();
-
-  std::cout << "Reading the second DICOM series : " << argv[3] <<std::endl;
-  directoryName = argv[3];
-  reader->RequestSetDirectory( directoryName );
-  reader->RequestReadImage();    
-  representation->RequestSetImageSpatialObject( reader->GetOutput() );
-  representation->RequestSetOrientation( RepresentationType::Axial );
-
-  for(unsigned int i=0; i<10; i++)
-    {
-    representation->RequestSetSliceNumber( i );
-    view2D->Update();
-    Fl::check();
-    std::cout << "i= " << i << std::endl;
-    }
-
-  }
 
   delete view2D;
   delete form;
@@ -256,4 +312,3 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest( int argc, char* argv[
   
   return EXIT_SUCCESS;
 }
-

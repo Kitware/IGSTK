@@ -25,14 +25,17 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+namespace CTImageSpatialObjectRepresentationTest
+{
+igstkObserverObjectMacro(CTImage,
+    ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
+}
+
 int igstkCTImageSpatialObjectRepresentationTest( int argc, char * argv [] )
 {
-
   igstk::RealTimeClock::Initialize();
 
-
   typedef igstk::CTImageSpatialObjectRepresentation    RepresentationType;
-
   RepresentationType::Pointer  representation = RepresentationType::New();
 
   typedef itk::Logger              LoggerType;
@@ -64,38 +67,54 @@ int igstkCTImageSpatialObjectRepresentationTest( int argc, char * argv [] )
  
   std::string name = representation->GetNameOfClass();
 
-  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+  // Attach an observer
+  typedef CTImageSpatialObjectRepresentationTest::CTImageObserver 
+                                                        CTImageObserverType;
+  CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New();
+  reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
+                            ctImageObserver);
+
+  reader->RequestReadImage();
+  reader->RequestGetImage();
+
+  if(!ctImageObserver->GotCTImage())
+    {
+    std::cout << "No CTImage!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
+  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
 
   std::cout << "Name of class = " << name << std::endl;
 
   representation->Print( std::cout );
 
   // Do manual selections of slice number for each orientation 
-  {
-  representation->RequestSetOrientation( RepresentationType::Axial );
-  for(unsigned int i=0; i<5; i++)
     {
-    representation->RequestSetSliceNumber( i );
+    representation->RequestSetOrientation( RepresentationType::Axial );
+    for(unsigned int i=0; i<5; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      }
     }
-  }
 
-  {
-  representation->RequestSetOrientation( RepresentationType::Sagittal );
-  for(unsigned int i=0; i<10; i++)
     {
-    representation->RequestSetSliceNumber( i );
+    representation->RequestSetOrientation( RepresentationType::Sagittal );
+    for(unsigned int i=0; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      }
     }
-  }
 
-  {
-  representation->RequestSetOrientation( RepresentationType::Coronal );
-  for(unsigned int i=0; i<10; i++)
     {
-    representation->RequestSetSliceNumber( i );
+    representation->RequestSetOrientation( RepresentationType::Coronal );
+    for(unsigned int i=0; i<10; i++)
+      {
+      representation->RequestSetSliceNumber( i );
+      }
     }
-  }
-
-
   return EXIT_SUCCESS;
-}
 
+}

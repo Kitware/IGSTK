@@ -27,9 +27,15 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+namespace Annotation2DTest
+{
+igstkObserverObjectMacro(CTImage,
+    ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
+}
+
+
 int igstkAnnotation2DTest( int argc, char* argv[] )
 {
-
   igstk::RealTimeClock::Initialize();
 
   if( argc < 2 )
@@ -49,9 +55,11 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
+                                                igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
+                                       // VTK OutputWindow -> logger
 
 
   typedef igstk::CTImageReader         ReaderType;
@@ -70,6 +78,12 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   typedef igstk::CTImageSpatialObject  CTImageType;
   typedef CTImageType::ConstPointer    CTImagePointer;
 
+  // Attach an observer
+  typedef Annotation2DTest::CTImageObserver CTImageObserverType;
+  CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New();
+  reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
+                            ctImageObserver);
+
   // Now read the image, so we can test the normal case
   try
     {
@@ -77,9 +91,21 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
     }
   catch( ... )
     {
-    std::cerr << "ERROR: An exception was thrown while reading the CT dataset" << std::endl;
-    std::cerr << "This should not have happened. The State Machine should have" << std::endl;
-    std::cerr << "catched that exception and converted it into a SM Input " << std::endl;
+    std::cerr << "ERROR: An exception was thrown while reading the CT dataset" 
+              << std::endl;
+    std::cerr << "This should not have happened. The State Machine should have" 
+              << std::endl;
+    std::cerr << "catched that exception and converted it into a SM Input " 
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  reader->RequestGetImage();
+
+  if(!ctImageObserver->GotCTImage())
+    {
+    std::cout << "No CTImage!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -88,7 +114,7 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   RepresentationType::Pointer representation = RepresentationType::New();
           
   representation->SetLogger( logger );
-  representation->RequestSetImageSpatialObject( reader->GetOutput() );
+  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
   representation->RequestSetOrientation( RepresentationType::Axial );
 
   // Add 2D Annotations
@@ -96,7 +122,6 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   Annotation2DType::Pointer annotation = Annotation2DType::New();
           
   annotation->SetLogger( logger );
-
   
   //Add the annotations to each corner ([0,3]
   annotation->RequestAddAnnotationText ( 0, "Corner 0");
@@ -124,7 +149,6 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   form->show();
 
   view2D->SetLogger( logger ); 
-  view2D->RequestResetCamera();
   view2D->RequestEnableInteractions();
 
   // Add spatialobject
@@ -133,11 +157,22 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   // Add annotation
   view2D->RequestAddAnnotation2D( annotation );
 
+  // Center the camera in order to make visible
+  // all the objects in the scene.
+  view2D->RequestResetCamera();
+
+  
+  // Start the pulse generator of the View 
+  view2D->RequestSetRefreshRate( 20 );
+  view2D->RequestStart();
+
+
   // Do manual redraws
-  for( unsigned int i=0; i < 10; i++)
+  for( unsigned int i=0; i < 100; i++)
     {
-    view2D->Update();  // schedule redraw of the view
-    Fl::check();       // trigger FLTK redraws
+    Fl::wait( 0.01 );
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();   // trigger FLTK redraws
     }
 
   delete view2D;
@@ -150,4 +185,3 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
  
   return EXIT_SUCCESS;
 }
-

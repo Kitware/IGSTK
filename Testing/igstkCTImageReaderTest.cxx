@@ -24,6 +24,13 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+namespace CTImageReaderTest
+{
+igstkObserverObjectMacro(CTImage,
+    ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
+}
+
+
 int igstkCTImageReaderTest( int argc, char* argv[] )
 {
 
@@ -61,23 +68,40 @@ int igstkCTImageReaderTest( int argc, char* argv[] )
   
   reader->Print( std::cout );
 
+  // Attach an observer
+  typedef CTImageReaderTest::CTImageObserver CTImageObserverType;
+  CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New();
+  reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
+                            ctImageObserver);
+
   try
     {
     reader->RequestReadImage();
     }
   catch( ... )
     {
-    std::cerr << "ERROR: An exception was thrown while reading the CT dataset" << std::endl;
-    std::cerr << "This should not have happened. The State Machine should have" << std::endl;
-    std::cerr << "catched that exception and converted it into a SM Input " << std::endl;
+    std::cerr << "ERROR: An exception was thrown while reading the CT dataset"
+              << std::endl;
+    std::cerr << "This should not have happened. The State Machine should have" 
+              << std::endl;
+    std::cerr << "catched that exception and converted it into a SM Input " 
+              << std::endl;
     return EXIT_FAILURE;
     }
 
-  igstk::CTImageSpatialObject::ConstPointer ctImage = reader->GetOutput();
+  reader->RequestGetImage();
+
+  if(!ctImageObserver->GotCTImage())
+    {
+    std::cout << "No CTImage!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  igstk::CTImageSpatialObject::Pointer ctImage = ctImageObserver->GetCTImage();
 
   // Details of the loaded image
   ctImage->Print( std::cout );
   
   return EXIT_SUCCESS;
 }
-
