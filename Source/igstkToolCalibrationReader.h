@@ -28,6 +28,36 @@
 namespace igstk
 {
 
+namespace Friends 
+{
+
+/** \class ToolCalibrationReaderToToolCalibration
+ * 
+ * \brief This class is intended to make the connection between the 
+ * ToolCalibrationReader and its output, the ToolCalibration. 
+ *
+ * With this class it is possible to enforce encapsulation of the Reader and
+ * the ToolCalibration, and make the SetTranslationAndRotation()
+ * private, so that developers cannot gain access to the ITK or VTK layers of
+ * these two classes.
+ *
+ */
+class ToolCalibrationReaderToToolCalibration
+{
+public:
+
+  template < class TToolCalibrationReader, class TToolCalibration >
+  static void 
+  ConnectToolCalibration( const TToolCalibrationReader * reader, 
+                TToolCalibration * toolCalibration )
+    {
+    toolCalibration->SetTransform( reader->GetTransform() );  
+    }
+
+}; // end of ToolCalibrationReaderToToolCalibration class
+
+} // end of Friend namespace
+
 
 class XMLToolCalibrationReader : public itk::XMLReaderBase
 {
@@ -132,7 +162,7 @@ protected:
     }
   ~XMLToolCalibrationReader() {};
 
-  std::vector<tag> m_Tags; 
+  std::vector<tag> m_Tags;
 
 };
 
@@ -154,13 +184,18 @@ public:
   igstkStandardTemplatedClassTraitsMacro( ToolCalibrationReader, Object )
 
   /** Transform typedef */
-  typedef TCalibration        CalibrationType;
+  typedef TCalibration                            CalibrationType;
+  typedef typename CalibrationType::TransformType TransformType;
 
   /** Return the output of the reader as a Transform */
   const CalibrationType * GetCalibration() const;
   
   /** Type for representing the string of the filename. */
   typedef std::string    FileNameType;
+  
+  /** Declare the ToolCalibrationReaderToToolCalibration class to be a friend 
+   *  in order to give it access to the private method GetTransform(). */
+  igstkFriendClassMacro( igstk::Friends::ToolCalibrationReaderToToolCalibration );
 
 protected:
 
@@ -174,12 +209,34 @@ protected:
   FileNameType                       m_FileName;
   typename CalibrationType::Pointer  m_Calibration;
 
+  typedef std::pair<std::string,float> ParameterType;
+  std::vector<ParameterType> m_Parameters;
+  typedef std::pair<std::string,float> ErrorType;
+  std::vector<ErrorType> m_Errors;
+
+  /** Add a parameter and its value */
+  bool AddParameter(const char* name, float value);
+
+  /** Add an error and its value */
+  bool AddError(const char* name, float value);
+
+  /** Get a parameter value given its name */
+  bool GetParameter(const char* name,float * param);
+
+  /** Get an error value given its name */
+  bool GetError(const char* name,float * error);
+
+  /** This transform is used to pass it to the calibration */
+  TransformType  m_Transform;
+  const TransformType & GetTransform() const;
+
 private:
   
   /** These two methods must be declared and note be implemented
    *  in order to enforce the protocol of smart pointers. */
   ToolCalibrationReader(const Self&);         //purposely not implemented
   void operator=(const Self&);      //purposely not implemented
+
 };
 
 } // end namespace igstk

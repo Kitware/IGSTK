@@ -24,6 +24,12 @@
 namespace igstk
 {
 
+namespace Friends 
+{
+class ToolCalibrationReaderToToolCalibration;
+}
+
+
 /** \class ToolCalibration
  * \brief  Represents the tool calibration structure
  *
@@ -46,10 +52,23 @@ public:
   /** Return the date and time */
   void RequestGetTime();
   void RequestGetDate();
+  void RequestGetToolType();
+  void RequestGetToolManufacturer();
+  void RequestGetToolPartNumber();
+  void RequestGetToolSerialNumber();
 
-  // Should be using State machine
+  /** Set the fields */
   void RequestSetTime(const char* time);
   void RequestSetDate(const char* date);
+  void RequestSetToolType(const char* type);
+  void RequestSetToolManufacturer(const char* manufacturer);
+  void RequestSetToolPartNumber(const char* partNumber);
+  void RequestSetToolSerialNumber(const char* serialNumber);
+
+  /** The ToolCalibrationReaderToToolCalibration class is declared as a
+   * friend in order to be able to set the transform */
+  igstkFriendClassMacro(
+               igstk::Friends::ToolCalibrationReaderToToolCalibration );
 
 protected:
 
@@ -63,9 +82,16 @@ protected:
 
   /** Return the date via event */
   virtual void ReportDateProcessing();
-
   /** Return the time via event */
   virtual void ReportTimeProcessing();
+  /** Return the Tool Type via event */
+  virtual void ReportToolTypeProcessing();
+  /** Return the Tool Manufacturer via event */
+  virtual void ReportToolManufacturerProcessing();
+  /** Return the Tool PartNumber via event */
+  virtual void ReportToolPartNumberProcessing();
+  /** Return the Tool SerialNumber via event */
+  virtual void ReportToolSerialNumberProcessing();
 
 private:
  
@@ -73,6 +99,12 @@ private:
   void NoProcessing();
   void SetTimeProcessing();
   void SetDateProcessing();
+  void SetToolTypeProcessing();
+  void SetToolManufacturerProcessing();
+  void SetToolPartNumberProcessing();
+  void SetToolSerialNumberProcessing();
+
+  void SetTransform(const TransformType & transform);
 
   /** These two methods must be declared and note be implemented
    *  in order to enforce the protocol of smart pointers. */
@@ -82,21 +114,48 @@ private:
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( RequestDate );
   igstkDeclareInputMacro( RequestTime ); 
+  igstkDeclareInputMacro( RequestToolType );
+  igstkDeclareInputMacro( RequestToolManufacturer );
+  igstkDeclareInputMacro( RequestToolPartNumber );
+  igstkDeclareInputMacro( RequestToolSerialNumber ); 
   igstkDeclareInputMacro( Initialize );
   igstkDeclareInputMacro( ValidTime );
   igstkDeclareInputMacro( InvalidTime );
   igstkDeclareInputMacro( ValidDate );
   igstkDeclareInputMacro( InvalidDate );
+  igstkDeclareInputMacro( ValidToolType );
+  igstkDeclareInputMacro( InvalidToolType );
+  igstkDeclareInputMacro( ValidToolManufacturer );
+  igstkDeclareInputMacro( InvalidToolManufacturer );
+  igstkDeclareInputMacro( ValidToolPartNumber );
+  igstkDeclareInputMacro( InvalidToolPartNumber );
+  igstkDeclareInputMacro( ValidToolSerialNumber );
+  igstkDeclareInputMacro( InvalidToolSerialNumber );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Initialize );
+  igstkDeclareStateMacro( ValidDate );
+  igstkDeclareStateMacro( ValidTime );
+  igstkDeclareStateMacro( ValidToolType );
+  igstkDeclareStateMacro( ValidToolManufacturer );
+  igstkDeclareStateMacro( ValidToolPartNumber );
+  igstkDeclareStateMacro( ValidToolSerialNumber );
   igstkDeclareStateMacro( ValidCalibration );
   igstkDeclareStateMacro( InvalidCalibration );
+
   std::string     m_Date;
   const char*     m_DateToSet;
-
   std::string     m_Time;
   const char*     m_TimeToSet;
+  std::string     m_ToolType;
+  const char*     m_ToolTypeToSet;
+  std::string     m_ToolManufacturer;
+  const char*     m_ToolManufacturerToSet;
+  std::string     m_ToolPartNumber;
+  const char*     m_ToolPartNumberToSet;
+  std::string     m_ToolSerialNumber;
+  const char*     m_ToolSerialNumberToSet;
+
 };
 
 } // end namespace igstk

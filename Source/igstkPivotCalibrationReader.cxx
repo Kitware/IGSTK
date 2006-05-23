@@ -23,6 +23,8 @@ namespace igstk
 PivotCalibrationReader
 ::PivotCalibrationReader():m_StateMachine(this)
 {
+  m_RootMeanSquareError = 0;
+
   //Set the state descriptors
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( ObjectFileNameRead );
@@ -151,7 +153,7 @@ void PivotCalibrationReader
   m_FileName = m_FileNameToBeSet;
 }
 
-/** Read the spatialobject file */
+/** Read the XML file */
 void PivotCalibrationReader
 ::AttemptReadObjectProcessing()
 {
@@ -163,11 +165,89 @@ void PivotCalibrationReader
     this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
     return;
     }
+
+  TransformType::VectorType translation;
+  TransformType::VersorType rotation;
+
+  float value;
+  if(!this->GetParameter("translation_x",&value))
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
+    return;
+    }
+  translation[0]=value;
+
+  if(!this->GetParameter("translation_y",&value))
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
+    return;
+    }
+  translation[1]=value;
+
+  if(!this->GetParameter("translation_z",&value))
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
+    return;
+    }
+  translation[2]=value;
+
+  if(!this->GetParameter("quaternion_x",&value))
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
+    return;
+    }
+  float x=value;
+
+  if(!this->GetParameter("quaternion_y",&value))
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
+    return;
+    }  
+  float y=value;
+
+  if(!this->GetParameter("quaternion_z",&value))
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
+    return;
+    }
+  float z=value;
+
+  if(!this->GetParameter("quaternion_w",&value))
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
+    return;
+    }
+  float w=value;
+
+  rotation.Set(x,y,z,w);
+
+  this->m_Transform.SetTranslationAndRotation(translation,rotation,0,10000);
+
+  Friends::ToolCalibrationReaderToToolCalibration::
+    ConnectToolCalibration<PivotCalibrationReader,PivotCalibration>
+                                              (this,this->m_Calibration);
+
+  // Set the error
+  if(!this->GetError("rms",&value))
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
+    return;
+    }
+  m_RootMeanSquareError = value;
+
+  Friends::PivotCalibrationReaderToPivotCalibration
+          ::ConnectToolCalibration<PivotCalibrationReader>(this,this->m_Calibration);
+
   this->m_StateMachine.PushInput( this->m_ObjectReadingSuccessInput );
 }
 
-void PivotCalibrationReader
-::RequestGetCalibration() 
+/** Return the RootMeanSquareError */
+float PivotCalibrationReader::GetRootMeanSquareError() const
+{
+  return m_RootMeanSquareError;
+}
+
+void PivotCalibrationReader::RequestGetCalibration() 
 {
   m_StateMachine.PushInput( m_RequestCalibrationInput );
   m_StateMachine.ProcessInputs();

@@ -34,16 +34,17 @@ igstkObserverMacro(String,::igstk::StringEvent,std::string)
 
 int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
 {
-  if(argc<2)
+  /*if(argc<2)
     {
     std::cout << "Usage = " << argv[0] << " calibrationFile" << std::endl;
     return EXIT_FAILURE;
-    }
+    }*/
 
   igstk::PivotCalibrationReader::Pointer reader = 
                               igstk::PivotCalibrationReader::New();
 
-  reader->RequestSetFileName(argv[1]);
+  //reader->RequestSetFileName(argv[1]);
+  reader->RequestSetFileName("C:/Julien/Workspace/Sandbox/Testing/Data/Input/PivotCalibrationTool.txt");
   reader->RequestReadObject();
 
   typedef ToolCalibrationTest::CalibrationObserver CalibrationObserverType;
@@ -55,9 +56,9 @@ int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
 
   igstk::PivotCalibration::Pointer calibration = NULL;
 
+  std::cout << "Testing Calibration: ";
   if(calibrationObserver->GotCalibration())
     {
-    std::cout << "Got Calibration! " << std::endl;
     calibration = calibrationObserver->GetCalibration();
     }
   else
@@ -66,14 +67,22 @@ int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
+  std::cout << "[PASSED]" << std::endl;
+
   typedef ToolCalibrationTest::StringObserver StringObserverType;
   StringObserverType::Pointer stringObserver = StringObserverType::New();
   calibration->AddObserver( ::igstk::StringEvent(), stringObserver );
+    
+  std::cout << "Testing Date: ";
   calibration->RequestGetDate();
-
   if(stringObserver->GotString())
     {
-    std::cout << stringObserver->GetString() << std::endl;
+    if(strcmp(stringObserver->GetString().c_str(),"20050824"))
+      {
+      std::cout << "Date = " <<  stringObserver->GetString().c_str()
+                << " expected 20050824" << std::endl; 
+      return EXIT_FAILURE;
+      }
     }
   else
     {
@@ -81,19 +90,128 @@ int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
+  std::cout << "[PASSED]" << std::endl;
+ 
+  std::cout << "Testing Time: ";
   calibration->RequestGetTime();
-
   if(stringObserver->GotString())
     {
-    std::cout << stringObserver->GetString() << std::endl;
+    if(strcmp(stringObserver->GetString().c_str(),"070907.0705"))
+      {
+      std::cout << "Time = " <<  stringObserver->GetString().c_str()
+                << " expected 070907.0705" << std::endl; 
+      return EXIT_FAILURE;
+      }
     }
   else
     {
     std::cout << "No time!" << std::endl;
     return EXIT_FAILURE;
     }
-
   std::cout << "[PASSED]" << std::endl;
 
+  std::cout << "Testing Tooltype: ";
+  calibration->RequestGetToolType();
+  if(stringObserver->GotString())
+    {
+    if(strcmp(stringObserver->GetString().c_str(),"Pointer"))
+      {
+      std::cout << "ToolType = " <<  stringObserver->GetString().c_str()
+                << " expected Pointer" << std::endl; 
+      return EXIT_FAILURE;
+      }
+    }
+  else
+    {
+    std::cout << "No tool type!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "[PASSED]" << std::endl;
+
+  std::cout << "Testing Manufacturer: ";
+  calibration->RequestGetToolManufacturer();
+  if(stringObserver->GotString())
+    {
+    if(strcmp(stringObserver->GetString().c_str(),"Traxtal"))
+      {
+      std::cout << "Manufacturer = " <<  stringObserver->GetString().c_str()
+                << " expected Traxtal" << std::endl; 
+      return EXIT_FAILURE;
+      }
+    }
+  else
+    {
+    std::cout << "No tool manufacturer!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "[PASSED]" << std::endl;
+
+  std::cout << "Testing Part Number: ";
+  calibration->RequestGetToolPartNumber();
+  if(stringObserver->GotString())
+    {
+    if(strcmp(stringObserver->GetString().c_str(),"023-X"))
+      {
+      std::cout << "Part Number = " <<  stringObserver->GetString().c_str()
+                << " expected 023-X" << std::endl; 
+      return EXIT_FAILURE;
+      }
+    }
+  else
+    {
+    std::cout << "No tool part number!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "[PASSED]" << std::endl;
+
+  std::cout << "Testing Serial Number: ";
+  calibration->RequestGetToolSerialNumber();
+  if(stringObserver->GotString())
+    {
+    if(strcmp(stringObserver->GetString().c_str(),"200501268"))
+      {
+      std::cout << "Serial Number = " <<  stringObserver->GetString().c_str()
+                << " expected 200501268" << std::endl; 
+      return EXIT_FAILURE;
+      }
+    }
+  else
+    {
+    std::cout << "No tool serial number!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "[PASSED]" << std::endl;
+
+  // Test the calibration transform
+  std::cout << "Testing Translation: ";
+  typedef igstk::Transform TransformType;
+  TransformType::VectorType translation = 
+                      calibration->GetCalibrationTransform().GetTranslation();
+  
+  if(translation[0] != 5
+     || translation[1] != 2 
+     || translation[2] != 3)
+    {
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "[PASSED]" << std::endl;
+
+  std::cout << "Testing Rotation: ";
+  TransformType::VersorType rotation = 
+                      calibration->GetCalibrationTransform().GetRotation();
+  
+  if( fabs(rotation.GetX()-0.994833) > 1e-6
+     || fabs(rotation.GetY()-0.0942473) > 1e-6
+     || fabs(rotation.GetZ()+0.0209438) > 1e-6
+     || fabs(rotation.GetW()-0.0314158) > 1e-6
+     )
+    {
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "[PASSED]" << std::endl;
+
+  std::cout << "[Test DONE]" << std::endl;
   return EXIT_SUCCESS;
 }

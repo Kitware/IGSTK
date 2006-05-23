@@ -28,6 +28,34 @@
 namespace igstk
 {
 
+namespace Friends
+{
+/** \class PivotCalibrationReaderToPivotCalibration
+ * 
+ * \brief This class is intended to make the connection between the 
+ * ToolCalibrationReader and its output, the ToolCalibration. 
+ *
+ * With this class it is possible to enforce encapsulation of the Reader and
+ * the ToolCalibration, and make the SetTranslationAndRotation()
+ * private, so that developers cannot gain access to the ITK or VTK layers of
+ * these two classes.
+ *
+ */
+class PivotCalibrationReaderToPivotCalibration
+{
+public:
+
+  template<class TCalibrationReader>
+  static void
+  ConnectToolCalibration( const TCalibrationReader * reader, 
+                igstk::PivotCalibration * toolCalibration )
+    {
+    toolCalibration->SetRootMeanSquareError( reader->GetRootMeanSquareError() );  
+    }
+
+}; // end of PivotCalibrationReaderToPivotCalibration class
+} // end of Friend namespace
+
 /** \class PivotCalibrationReader
  * \brief This class read an XML calibration file and returns a calibration
  *        transform.
@@ -59,6 +87,10 @@ public:
 
   /** This method request the calibration **/
   void RequestGetCalibration();
+
+  /** Declare the PivotCalibrationReaderToPivotCalibration class to be a friend 
+   *  in order to give it access to the private method SetRootMeanSquareError(). */
+  igstkFriendClassMacro( igstk::Friends::PivotCalibrationReaderToPivotCalibration );
 
 protected:
 
@@ -119,7 +151,11 @@ private:
    * success of the reading process. */
   void ReportObjectReadingSuccessProcessing();
 
+  /** Return the RootMeanSquareError */
+  float GetRootMeanSquareError() const;
+
   FileNameType m_FileNameToBeSet;
+  float m_RootMeanSquareError;
 
 };
 
