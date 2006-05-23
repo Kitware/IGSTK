@@ -112,6 +112,7 @@ ENDIF(IGSTKSandbox_BUILD_EXAMPLES)
 
 # include Sandbox header files before the main library IGSTK
 INCLUDE_DIRECTORIES(
+${ITK_DIR}/Utilities/zlib
 ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source
 ${IGSTKSandbox_BINARY_DIR}/SourceLatest
 )
