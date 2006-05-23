@@ -27,8 +27,9 @@ namespace igstk
 /** \class VascularNetworkObjectRepresentation
  * 
  * \brief This class implements the representation of a VascularNetwork object.
- *        Basically the tube is represented as a VTK actor using a
- *        vtkTubeFilter.
+ * 
+ *        This class represents a collection of VesselObjects, each one of them
+ *        is a tube represented as a VTK actor using a vtkTubeFilter.
  *
  * \ingroup ObjectRepresentation
  */
@@ -58,10 +59,10 @@ public:
 protected:
   
   /** Constructor */
-  VascularNetworkObjectRepresentation( void );
+  VascularNetworkObjectRepresentation();
 
   /** Destructor */
-  ~VascularNetworkObjectRepresentation( void );
+  ~VascularNetworkObjectRepresentation();
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

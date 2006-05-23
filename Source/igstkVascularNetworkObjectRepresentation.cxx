@@ -109,6 +109,8 @@ void VascularNetworkObjectRepresentation::SetVascularNetworkObjectProcessing()
 void VascularNetworkObjectRepresentation
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
+  os << "VascularNetworkObject " << m_VascularNetworkObject.GetPointer() 
+     << std::endl;
   Superclass::PrintSelf(os, indent);
 }
 
