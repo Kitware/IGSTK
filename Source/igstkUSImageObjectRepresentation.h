@@ -24,6 +24,7 @@ namespace igstk
 {
 
 /** \class USImageObjectRepresentation
+ *
  *  \brief This class implements a spatial object represenation 
  *         for US modality.
  *

@@ -31,5 +31,4 @@ void USImageReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 }
 
-
 } // end namespace igstk

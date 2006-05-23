@@ -24,6 +24,7 @@ namespace igstk
 {
 
 /** \class USImageReader
+ *
  *  \brief This class implements a reader specific for US modality.
 
  * This class derives from the DICOMImageReader. It expects to load a volume

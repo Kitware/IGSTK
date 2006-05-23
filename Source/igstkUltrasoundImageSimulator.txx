@@ -17,25 +17,10 @@
 #ifndef __igstkUltrasoundImageSimulator_txx
 #define __igstkUltrasoundImageSimulator_txx
 
-#include "itkCommand.h"
-#include "itkImage.h"
-#include "itkMatrix.h"
-
 #include "igstkUltrasoundImageSimulator.h"
 
-#include "vtkPolyDataMapper.h"
-#include "vtkProperty.h"
 #include "vtkImageData.h"
-#include "vtkMatrix4x4.h"
-#include "vtkTransform.h"
 #include "vtkImageCast.h"
-
-#include "igstkEvents.h"
-
-#include "itkCastImageFilter.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "vtkMetaImageWriter.h"
 
 namespace igstk
 {

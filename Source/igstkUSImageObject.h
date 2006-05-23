@@ -23,6 +23,7 @@ namespace igstk
 {
 
 /** \class USImageObject
+ * 
  * \brief  Represents a MR scan placed correctly in physical coordinates.
  *
  *  This class is the data structure used for containing a volumetric MRI scan.
@@ -66,7 +67,6 @@ private:
    *  in order to enforce the protocol of smart pointers. */
   USImageObject(const Self&);     //purposely not implemented
   void operator=(const Self&);           //purposely not implemented
-
 
 };
 

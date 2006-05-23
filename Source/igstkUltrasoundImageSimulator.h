@@ -39,6 +39,7 @@ namespace Friends
  *
  * \brief This class is intended to make the connection between the
  * UltrasoundImageSimulator and its output the ImageSpatialObject.
+ * 
  * With this class it is possible to enforce encapsulation of the
  * SpatialObjectRepresentation and the ImageSpatialObject, and make their
  * GetImage() and SetImage() methods private, so that developers cannot gain
