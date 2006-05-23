@@ -34,17 +34,16 @@ igstkObserverMacro(String,::igstk::StringEvent,std::string)
 
 int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
 {
-  /*if(argc<2)
+  if(argc<2)
     {
     std::cout << "Usage = " << argv[0] << " calibrationFile" << std::endl;
     return EXIT_FAILURE;
-    }*/
+    }
 
   igstk::PivotCalibrationReader::Pointer reader = 
                               igstk::PivotCalibrationReader::New();
 
-  //reader->RequestSetFileName(argv[1]);
-  reader->RequestSetFileName("C:/Julien/Workspace/Sandbox/Testing/Data/Input/PivotCalibrationTool.txt");
+  reader->RequestSetFileName(argv[1]);
   reader->RequestReadObject();
 
   typedef ToolCalibrationTest::CalibrationObserver CalibrationObserverType;
@@ -204,8 +203,7 @@ int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
   if( fabs(rotation.GetX()-0.994833) > 1e-6
      || fabs(rotation.GetY()-0.0942473) > 1e-6
      || fabs(rotation.GetZ()+0.0209438) > 1e-6
-     || fabs(rotation.GetW()-0.0314158) > 1e-6
-     )
+     || fabs(rotation.GetW()-0.0314158) > 1e-6 )
     {
     std::cout << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
