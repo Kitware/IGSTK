@@ -236,7 +236,7 @@ void PivotCalibrationReader
   m_RootMeanSquareError = value;
 
   Friends::PivotCalibrationReaderToPivotCalibration
-          ::ConnectToolCalibration<PivotCalibrationReader>(this,this->m_Calibration);
+   ::ConnectToolCalibration<PivotCalibrationReader>(this,this->m_Calibration);
 
   this->m_StateMachine.PushInput( this->m_ObjectReadingSuccessInput );
 }

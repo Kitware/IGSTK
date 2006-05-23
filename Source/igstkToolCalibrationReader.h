@@ -195,7 +195,8 @@ public:
   
   /** Declare the ToolCalibrationReaderToToolCalibration class to be a friend 
    *  in order to give it access to the private method GetTransform(). */
-  igstkFriendClassMacro( igstk::Friends::ToolCalibrationReaderToToolCalibration );
+  igstkFriendClassMacro( 
+                     igstk::Friends::ToolCalibrationReaderToToolCalibration );
 
 protected:
 

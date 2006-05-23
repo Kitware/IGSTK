@@ -50,7 +50,8 @@ public:
   ConnectToolCalibration( const TCalibrationReader * reader, 
                 igstk::PivotCalibration * toolCalibration )
     {
-    toolCalibration->SetRootMeanSquareError( reader->GetRootMeanSquareError() );  
+    toolCalibration->SetRootMeanSquareError( 
+                                            reader->GetRootMeanSquareError() );
     }
 
 }; // end of PivotCalibrationReaderToPivotCalibration class
@@ -88,9 +89,11 @@ public:
   /** This method request the calibration **/
   void RequestGetCalibration();
 
-  /** Declare the PivotCalibrationReaderToPivotCalibration class to be a friend 
-   *  in order to give it access to the private method SetRootMeanSquareError(). */
-  igstkFriendClassMacro( igstk::Friends::PivotCalibrationReaderToPivotCalibration );
+  /** Declare the PivotCalibrationReaderToPivotCalibration class 
+   *  to be a friend  in order to give it access to the private method 
+   *  SetRootMeanSquareError(). */
+  igstkFriendClassMacro( 
+                   igstk::Friends::PivotCalibrationReaderToPivotCalibration );
 
 protected:
 

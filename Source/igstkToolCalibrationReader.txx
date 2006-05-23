@@ -224,15 +224,18 @@ ToolCalibrationReader<TCalibration>
           {
           m_Calibration->RequestSetToolType((*it2).second.c_str());
           }
-        else if(!itksys::SystemTools::Strucmp((*it2).first.c_str(),"manufacturer"))
+        else if(!itksys::SystemTools::Strucmp((*it2).first.c_str(),
+                                                            "manufacturer"))
           {
           m_Calibration->RequestSetToolManufacturer((*it2).second.c_str());
           }
-        else if(!itksys::SystemTools::Strucmp((*it2).first.c_str(),"partNumber"))
+        else if(!itksys::SystemTools::Strucmp((*it2).first.c_str(),
+                                                            "partNumber"))
           {
           m_Calibration->RequestSetToolPartNumber((*it2).second.c_str());
           }
-        else if(!itksys::SystemTools::Strucmp((*it2).first.c_str(),"serialNumber"))
+        else if(!itksys::SystemTools::Strucmp((*it2).first.c_str(),
+                                                            "serialNumber"))
           {
           m_Calibration->RequestSetToolSerialNumber((*it2).second.c_str());
           }
@@ -270,7 +273,7 @@ ToolCalibrationReader<TCalibration>
       std::vector<XMLToolCalibrationReader::PairType> values = (*it).values;
       std::vector<XMLToolCalibrationReader::PairType>::const_iterator it2 
                                                             = values.begin();
-     std::string name = "";
+      std::string name = "";
       while(it2 != values.end())
         {
         if(!itksys::SystemTools::Strucmp((*it2).first.c_str(),"name"))
