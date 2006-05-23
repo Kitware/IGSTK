@@ -74,7 +74,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
 
   ReaderType::DirectoryNameType directoryName = argv[1];
 
-  reader->RequestSetDirectory( directoryName );
+  reader->RequestSetDirectory( directoryName );  // Set the DICOM directory
   
  
   typedef igstk::CTImageSpatialObject  CTImageType;
@@ -89,7 +89,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
                             ctImageObserver);
 
-  reader->RequestGetImage();
+  reader->RequestGetImage(); // Request to send the image as an event.
 
   if( ctImageObserver->GotCTImage() )
     {
@@ -110,7 +110,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
           
   representation->SetLogger( logger );
 
-  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
+  representation->RequestSetImageSpatialObject( 
+                                     ctImageObserver->GetCTImage() );
 
   representation->RequestSetOrientation( RepresentationType::Axial );
   representation->RequestSetSliceNumber( 0 );
@@ -137,7 +138,6 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   view2D->RequestSetRefreshRate( 40 );
   view2D->RequestStart();
 
-  
   // Do manual redraws
   for( unsigned int i=0; i < 10; i++)
     {
@@ -152,7 +152,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   //
   try
     {
-    reader->RequestReadImage();
+    reader->RequestReadImage(); // Request to read the image from the files
     }
   catch( ... )
     {
@@ -165,7 +165,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     return EXIT_FAILURE;
     }
   
-  reader->RequestGetImage();
+  reader->RequestGetImage();    // Request to send the image as an event.
 
   if( ctImageObserver->GotCTImage() )
     {
@@ -192,7 +192,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     }
 
 
-  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
+  representation->RequestSetImageSpatialObject( 
+                           ctImageObserver->GetCTImage() );
 
   view2D->RequestAddObject( representation );
 
@@ -264,16 +265,48 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
                           = igstk::CTImageSpatialObjectRepresentation::New();
     igstk::CTImageReader::DirectoryNameType directoryName;
 
-    view2D->RequestAddObject( representation );
-    view2D->RequestSetOrientation( igstk::View2D::Axial );
+    // Add an observer that will receive the image as an event.
+    reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
+                        ctImageObserver);
 
     std::cout << "Reading the first DICOM series : " << argv[1] <<std::endl;
     directoryName = argv[1];
-    reader->RequestSetDirectory( directoryName );
-    reader->RequestReadImage();
+
+    reader->RequestSetDirectory( directoryName );  // Set the DICOM directory
+    reader->RequestReadImage();   // Request to read the image from the files
+    reader->RequestGetImage();    // Request to send the image as an event.
+
+    if( ctImageObserver->GotCTImage() )
+      {
+        
+      CTImagePointer ctImage = ctImageObserver->GetCTImage();
+
+      if( ctImage->IsEmpty() )
+        {
+        std::cerr << "The image was expected to be Non-Empty, but it was empty." 
+                  << std::endl;
+        return EXIT_FAILURE;
+        }
+      else
+        {
+        std::cerr << "Test for reception of the image PASSED !" << std::endl;
+        }
+     
+      }
+    else
+      {
+      std::cerr << "The image was expected to be received" << std::endl;
+      std::cerr << " but the payload event did not arrive." << std::endl;
+      return EXIT_FAILURE;
+      }
+
     representation->RequestSetImageSpatialObject( 
-                                              ctImageObserver->GetCTImage() );
+                                       ctImageObserver->GetCTImage() );
+
     representation->RequestSetOrientation( RepresentationType::Axial );
+
+    view2D->RequestAddObject( representation );
+    view2D->RequestSetOrientation( igstk::View2D::Axial );
 
     for(unsigned int i=0; i<10; i++)
       {
@@ -286,10 +319,39 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
 
     std::cout << "Reading the second DICOM series : " << argv[3] <<std::endl;
     directoryName = argv[3];
-    reader->RequestSetDirectory( directoryName );
-    reader->RequestReadImage();
+
+    reader->RequestSetDirectory( directoryName );  // Set the DICOM directory
+    reader->RequestReadImage();   // Request to read the image from the files
+    reader->RequestGetImage();    // Request to send the image as an event.
+
+    if( ctImageObserver->GotCTImage() )
+      {
+        
+      CTImagePointer ctImage = ctImageObserver->GetCTImage();
+
+      if( ctImage->IsEmpty() )
+        {
+        std::cerr << "The image was expected to be Non-Empty, but it was empty." 
+                  << std::endl;
+        return EXIT_FAILURE;
+        }
+      else
+        {
+        std::cerr << "Test for reception of the image PASSED !" << std::endl;
+        }
+     
+      }
+    else
+      {
+      std::cerr << "The image was expected to be received" << std::endl;
+      std::cerr << " but the payload event did not arrive." << std::endl;
+      return EXIT_FAILURE;
+      }
+
+
     representation->RequestSetImageSpatialObject( 
-                                              ctImageObserver->GetCTImage() );
+                                       ctImageObserver->GetCTImage() );
+
     representation->RequestSetOrientation( RepresentationType::Axial );
 
     for(unsigned int i=0; i<10; i++)
