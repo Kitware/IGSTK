@@ -12,8 +12,8 @@ class NeedleBiopsyGUI {open
   } {
     Fl_Window mainWindow {
       label {IGSTK: Needle Biopsy Demo Application}
-      callback {Quit();}
-      xywh {263 108 930 732} type Double box PLASTIC_UP_BOX resizable
+      callback {Quit();} open
+      xywh {675 211 930 732} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkView2D.h"}
       code1 {\#include "igstkView3D.h"} visible
     } {
@@ -95,7 +95,7 @@ else
           }
           Fl_Value_Output NumberOfImageLandmarks {
             label {No.}
-            xywh {41 152 32 25} box DOWN_BOX labelsize 11 maximum 100 step 1 textfont 1 textcolor 0
+            xywh {41 152 32 25} box DOWN_BOX labelsize 11 maximum 100 step 1 textfont 1
           }
           Fl_Button ClearImageLandmarks {
             label Clear
@@ -163,7 +163,7 @@ else
       }
     }
     Fl_Window TrackerConfigWindow {
-      label {Tracker Configuration}
+      label {Tracker Configuration} open
       xywh {483 227 416 456} type Double hide
     } {
       Fl_Choice SerialPort {
@@ -180,10 +180,10 @@ else
         Fl_Button {} {
           label {...}
           callback {char * fileName = fl_file_chooser("SROM file for tracker tool","*.*","");
-if( ! fileName == NULL )
+if( fileName )
 {
   ReferenceToolSROMFile->value(fileName);
-}}
+}} selected
           xywh {350 370 25 25}
         }
         Fl_Choice ReferenceToolPort {
@@ -203,7 +203,7 @@ else
 }}
         xywh {35 275 25 25} down_box ROUND_DOWN_BOX value 1
       }
-      Fl_Group {} {open
+      Fl_Group {} {
         xywh {30 51 355 194} box ENGRAVED_BOX
       } {
         Fl_Output TrackerToolSROMFile {
@@ -213,18 +213,18 @@ else
         Fl_Button {} {
           label {...}
           callback {char * fileName = fl_file_chooser("SROM file for tracker tool","*.*","");
-if( ! fileName == NULL )
+if( fileName )
 {
   TrackerToolSROMFile->value(fileName);
 }}
           xywh {350 116 25 25}
         }
         Fl_Choice TrackerToolPort {
-          label {Tracker Tool Port:} open
+          label {Tracker Tool Port:}
           xywh {300 80 45 25} down_box BORDER_BOX
         } {}
         Fl_Group {} {
-          label {Tool Tip Offset} open
+          label {Tool Tip Offset}
           xywh {30 175 355 70} box ENGRAVED_BOX
         } {
           Fl_Value_Input OffsetX {
@@ -276,8 +276,7 @@ ReferenceToolPort->value(4);
 
 OffsetX->value( -18.0 );
 OffsetY->value( 0.5 );
-OffsetZ->value( -157.5 );} {selected
-    }
+OffsetZ->value( -157.5 );} {}
   }
   Function {~NeedleBiopsyGUI()} {return_type virtual
   } {
