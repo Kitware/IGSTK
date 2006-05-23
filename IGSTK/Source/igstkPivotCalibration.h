@@ -35,6 +35,11 @@
 namespace igstk
 {
 
+namespace Friends 
+{
+class PivotCalibrationReaderToPivotCalibration;
+}
+
 /** \class PivotCalibration
  * 
  * \brief Create a calibration transform for tracker tools.
@@ -120,6 +125,11 @@ public:
   bool RequestGetInputSample( unsigned int index, 
                               VersorType & versor, 
                               VectorType & translation );
+
+  /** Declare the PivotCalibrationReaderToPivotCalibration class to be a friend 
+   *  in order to give it access to the private method SetRootMeanSquareError(). */
+  igstkFriendClassMacro( igstk::Friends::PivotCalibrationReaderToPivotCalibration );
+
 protected:
 
   /** Constructor */
@@ -212,6 +222,9 @@ private:
 
   /** Variable to indicate the RootMeanSquareError error */
   ErrorType                         m_RootMeanSquareError;
+
+  /** Set the RootMeanSquareError */
+  void SetRootMeanSquareError(ErrorType error);
 
 };
 

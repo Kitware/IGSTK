@@ -107,6 +107,11 @@ PivotCalibration::~PivotCalibration()
 {
 }
 
+/** Set the RootMeanSquareError */
+void PivotCalibration::SetRootMeanSquareError(ErrorType error) 
+{
+  m_RootMeanSquareError = error;
+}
 
 /** Print Self function */
 void PivotCalibration::PrintSelf( std::ostream& os, itk::Indent indent ) const
