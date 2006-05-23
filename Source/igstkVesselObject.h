@@ -75,10 +75,10 @@ public:
 protected:
 
   /** Constructor */
-  VesselObject( void );
+  VesselObject();
 
   /** Destructor */
-  ~VesselObject( void );
+  ~VesselObject();
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
