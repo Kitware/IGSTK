@@ -126,9 +126,11 @@ public:
                               VersorType & versor, 
                               VectorType & translation );
 
-  /** Declare the PivotCalibrationReaderToPivotCalibration class to be a friend 
-   *  in order to give it access to the private method SetRootMeanSquareError(). */
-  igstkFriendClassMacro( igstk::Friends::PivotCalibrationReaderToPivotCalibration );
+  /** Declare the PivotCalibrationReaderToPivotCalibration class 
+   *  to be a friend in order to give it access to the private method 
+   *  SetRootMeanSquareError(). */
+  igstkFriendClassMacro( 
+                   igstk::Friends::PivotCalibrationReaderToPivotCalibration );
 
 protected:
 
