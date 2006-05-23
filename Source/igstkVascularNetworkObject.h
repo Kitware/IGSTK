@@ -26,6 +26,11 @@ namespace igstk
 /** \class VascularNetworkObject
  * \brief Implements the 3-dimensional vascular network structure.
  *
+ * This class implents a collection of VesselObject instances. They are
+ * intended to represent a vascular network but it can not ensure that the
+ * vessels are actually connected in a network. The vessels are typically
+ * extracted by applying a segmentation method on a pre-operative image.
+ *
  * \ingroup GroupObject
  */
 
