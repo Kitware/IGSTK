@@ -1054,7 +1054,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   m_Reachable = true;
   for (int i=0; i<3; i++)
     {
-    if ( ( abs (m_Translation[i]) > 19 ) || ( abs (m_Rotation[i]) > 30 ) )
+    if ( ( fabs (m_Translation[i]) > 19 ) || ( fabs (m_Rotation[i]) > 30 ) )
       {
       m_Reachable = false;
       break;
