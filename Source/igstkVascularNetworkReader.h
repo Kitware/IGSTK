@@ -35,10 +35,10 @@ namespace igstk
  * 
  * \brief This class reads 3D VascularNetwork in the metaIO format.
  *
- * Tubular structures are quite common in human anatomy. This class is intended
- * to read groups of tubular structrures from files in metaIO format. Typical
- * these structures are the result of a segmentation method applied on
- * pre-operative images.
+ * Tubular structures are quite common in human anatomy. This class is 
+ * intended to read groups of tubular structures from files in metaIO 
+ * format. Typically these structures are the result of a segmentation 
+ * method applied on pre-operative images.
  * 
  * \sa MeshReader
  *
@@ -50,7 +50,8 @@ class VascularNetworkReader : public SpatialObjectReader<3>
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( VascularNetworkReader, SpatialObjectReader<3> )
+  igstkStandardClassTraitsMacro( VascularNetworkReader, 
+                                 SpatialObjectReader<3> )
 
 public:
 
