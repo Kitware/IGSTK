@@ -100,6 +100,8 @@ int igstkMR3DImageToUS3DImageRegistrationTest( int argc, char * argv[] )
   usSimulator->RequestSetTransform(usTransform);
   usSimulator->RequestReslice();
 
+  usSimulator->Print(std::cout);
+
   typedef MR3DImageToUS3DImageRegistrationTest::SimulatedUSImageObserver
                                                      SimulatedUSImageObserver;
   SimulatedUSImageObserver::Pointer usImageObserver 
