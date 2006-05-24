@@ -131,7 +131,9 @@ bool ToolCalibrationReader<TCalibration>
 }
 
 /** Convert a current Buffer to Windows file type */
-void ConvertBufferToWindowsFileType(std::string & buffer)
+template <class TCalibration>
+void ToolCalibrationReader<TCalibration>
+::ConvertBufferToWindowsFileType(std::string & buffer)
 {
   size_t cc;
   const char* inch = buffer.c_str();
