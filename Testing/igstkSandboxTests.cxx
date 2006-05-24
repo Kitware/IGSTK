@@ -36,4 +36,6 @@ void RegisterTests()
   REGISTER_TEST(igstkMR3DImageToUS3DImageRegistrationTest);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest2);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest3);
+  REGISTER_TEST(igstkVesselObjectTest);
+  REGISTER_TEST(igstkVascularNetworkReaderTest);
 }

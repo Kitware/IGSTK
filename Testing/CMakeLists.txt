@@ -74,6 +74,7 @@ SET(SandboxTests_SRCS
   igstkSocketCommunicationTest.cxx
   igstkFlockOfBirdsTrackerTest.cxx
   igstkMR3DImageToUS3DImageRegistrationTest.cxx
+  igstkVesselObjectTest.cxx
   )
 
 FOREACH(TestFiles ${SandboxTests_SRCS})
@@ -122,6 +123,14 @@ IF(IGSTKSandbox_DATA_ROOT)
    SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkObliqueImageSpatialObjectRepresentationTest)
 
 ENDIF(IGSTKSandbox_DATA_ROOT)
+
+
+ADD_TEST( igstkVascularNetworkReaderTest ${IGSTKSandbox_TESTS} 
+            igstkVascularNetworkReaderTest 
+            ${IGSTK_DATA_ROOT}/Input/vessel.tre
+            ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre )        
+SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkVascularNetworkReaderTest.cxx)
+
 
 IF (IGSTK_USE_ATAMAI)
   ADD_TEST(igstkAtamaiNDITrackerTest ${IGSTKSandbox_TESTS} igstkAtamaiNDITrackerTest)
@@ -228,7 +237,8 @@ IF (IGSTK_DATA_ROOT)
        igstkCTImageSpatialObjectRepresentationTest
        ${IGSTK_DATA_ROOT}/Input/E000192)          
   ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTK_TESTS} igstkDICOMImageReaderErrorsTest 
-       ${IGSTK_DATA_ROOT}/Input/E000192Mod ${IGSTKSandbox_DICOM_TEST_OUTPUT_DIR})          
+       ${IGSTK_DATA_ROOT}/Input/E000192Mod ${IGSTKSandbox_DICOM_TEST_OUTPUT_DIR})
+        
 ENDIF(IGSTK_DATA_ROOT)
 
 #-----------------------------------------------------------------------------
