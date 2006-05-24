@@ -130,6 +130,32 @@ bool ToolCalibrationReader<TCalibration>
   return true;
 }
 
+/** Convert a current Buffer to Windows file type */
+void ConvertBufferToWindowsFileType(std::string & buffer)
+{
+  size_t cc;
+  const char* inch = buffer.c_str();
+  std::vector<char> outBuffer;
+  size_t inStrSize = buffer.size();
+  // Reserve enough space for most files
+  outBuffer.reserve(inStrSize+1000);
+
+  for ( cc = 0; cc < inStrSize; ++ cc )
+    {
+    if ( *inch == '\n' )
+      {
+      if ( cc == 0 || *(inch-1) != '\r' )
+        {
+        outBuffer.push_back('\r');
+        }
+      }
+    outBuffer.push_back(*inch);
+    inch ++;
+    }
+  outBuffer.push_back(0);
+  buffer = &*outBuffer.begin();
+}
+
 /** Read the spatialobject file */
 template <class TCalibration>
 bool 
@@ -159,6 +185,9 @@ ToolCalibrationReader<TCalibration>
   buffer.resize(fileSize);
   delete [] buf;
   file.close();
+
+  // Convert the buffer to Windows file type
+  this->ConvertBufferToWindowsFileType(buffer);
 
   // Find the <CRC32> tag
   long int crcpos = buffer.find("<CRC32>");

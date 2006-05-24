@@ -126,8 +126,7 @@ public:
     {
     }
   /** Callback function -- called from XML parser with the character data
-   * for an XML element
-   */
+   * for an XML element */
   virtual void CharacterDataHandler(const char *inData, int inLength)
     {
     PairType value;
@@ -172,8 +171,7 @@ protected:
  *        transform.
  * 
  *
- * \ingroup Object
- */
+ * \ingroup Object */
 template <class TCalibration>
 class ToolCalibrationReader : public Object
 {
@@ -237,6 +235,9 @@ private:
    *  in order to enforce the protocol of smart pointers. */
   ToolCalibrationReader(const Self&);         //purposely not implemented
   void operator=(const Self&);      //purposely not implemented
+
+  /** Convert a buffer to windows file type */
+  void ConvertBufferToWindowsFileType(std::string & buffer);
 
 };
 
