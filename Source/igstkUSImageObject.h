@@ -24,16 +24,16 @@ namespace igstk
 
 /** \class USImageObject
  * 
- * \brief  Represents a MR scan placed correctly in physical coordinates.
+ * \brief  Represents an Ultrasound Image Object in physical space.
  *
- *  This class is the data structure used for containing a volumetric MRI scan.
- *  The scan is usually provided by a MRImageReader class, but can also be
+ *  This class is the data structure used for containing a volumetric US image.
+ *  The image is usually provided by a USImageReader class, but can also be
  *  provided by other sources. Due to the protection of the ITK layer, any
  *  other potential source of ITK images must be included in the Friends
  *  mechanism.
  *
  *  \sa CTImageSpatialObject
- *  \sa MRImageReader
+ *  \sa USImageReader
  *  \sa USImageObjectRepresentation
 
  * \ingroup Object

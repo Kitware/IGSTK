@@ -24,17 +24,13 @@ namespace igstk
 USImageObject
 ::USImageObject():m_StateMachine(this)
 {
-
 } 
-
 
 /** Destructor */
 USImageObject
 ::~USImageObject()
 {
-
 } 
-
 
 /** Print Self function */
 void 
@@ -43,6 +39,5 @@ USImageObject
 {
   Superclass::PrintSelf(os, indent);
 }
-
 
 } // end namespace igstk
