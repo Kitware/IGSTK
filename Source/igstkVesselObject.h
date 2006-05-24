@@ -68,9 +68,13 @@ public:
   /** Return the spacing of the vessel */
   const double* GetSpacing() const;
 
+  /** Remove all the points in the list */
+  void Clear( void );
+
   /** The TubeReaderToTubeSpatialObject class is declared as a friend in
    * order to be able to set the input mesh */
   igstkFriendClassMacro( igstk::VascularNetworkReader );
+
 
 protected:
 

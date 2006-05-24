@@ -54,6 +54,12 @@ VesselObject::GetSpacing() const
   return m_VesselSpatialObject->GetSpacing();
 }
 
+/** Remove all the points in the list */
+void VesselObject::Clear( void )
+{
+  m_VesselSpatialObject->Clear();
+}
+
 /** Return the number of points in the Vessel */
 unsigned int VesselObject::GetNumberOfPoints(void) const
 {
