@@ -129,6 +129,10 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this)
                            Refreshing,  Start );
   igstkAddTransitionMacro( Idle, StopRefreshing,
                            Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidScreenShotFileName,
+                           Idle, SaveScreenShot )
+  igstkAddTransitionMacro( Idle, InvalidScreenShotFileName,
+                           Idle, ReportInvalidScreenShotFileName );
   igstkAddTransitionMacro( Refreshing, ValidAddObject,
                            Refreshing,  AddObject );
   igstkAddTransitionMacro( Refreshing, NullAddObject,
@@ -163,10 +167,10 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this)
                            Refreshing,  ReportInvalidRequest );
   igstkAddTransitionMacro( Refreshing, StopRefreshing,
                            Idle,  Stop );
-  igstkAddTransitionMacro( Idle, ValidScreenShotFileName,
-                           Idle, SaveScreenShot )
-  igstkAddTransitionMacro( Idle, InvalidScreenShotFileName,
-                           Idle, ReportInvalidScreenShotFileName );
+  igstkAddTransitionMacro( Refreshing, ValidScreenShotFileName,
+                           Refreshing, SaveScreenShot )
+  igstkAddTransitionMacro( Refreshing, InvalidScreenShotFileName,
+                           Refreshing, ReportInvalidScreenShotFileName );
 
   igstkSetInitialStateMacro( Idle );
 
