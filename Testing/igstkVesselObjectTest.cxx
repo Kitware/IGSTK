@@ -114,7 +114,7 @@ int igstkVesselObjectTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);
 
   typedef igstk::VesselObject     ObjectType;
-  typedef ObjectType::PointType TubePointType;
+  typedef ObjectType::PointType   TubePointType;
 
   ObjectType::Pointer VesselObject = ObjectType::New();
   VesselObject->SetLogger( logger );

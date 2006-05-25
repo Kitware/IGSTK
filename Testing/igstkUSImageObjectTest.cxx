@@ -34,4 +34,3 @@ int igstkUSImageObjectTest( int , char* [] )
 
   return EXIT_SUCCESS;
 }
-
