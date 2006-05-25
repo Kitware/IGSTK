@@ -24,6 +24,13 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+namespace VascularNetworkReaderTest
+{
+igstkObserverObjectMacro(VascularNetwork,
+    ::igstk::VascularNetworkReader::VascularNetworkModifiedEvent,
+    ::igstk::VascularNetworkObject)
+}
+
 int igstkVascularNetworkReaderTest( int argc, char * argv [] )
 {
 
@@ -76,6 +83,12 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
   std::string filenameIsADirectory = ".";
   reader->RequestSetFileName( filenameIsADirectory );
   
+  // Now reading a corrupted file
+  std::string filenameWithCorruptedContent = argv[2];
+
+  reader->RequestSetFileName( filenameWithCorruptedContent );
+  reader->RequestReadObject();
+
   // Test file that exists
   std::string filenameThatExists = argv[1];
   reader->RequestSetFileName( filenameThatExists );
@@ -83,15 +96,24 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
   // Request to read the object from the file
   reader->RequestReadObject();
   
-  // Now reading a corrupted file
-  std::string filenameWithCorruptedContent = argv[2];
+  typedef VascularNetworkReaderTest::VascularNetworkObserver
+                                                     VascularNetworkObserver;
+  VascularNetworkObserver::Pointer vascularNetworkObserver 
+                                            = VascularNetworkObserver::New();
+  reader->AddObserver(ReaderType::VascularNetworkModifiedEvent(),
+                      vascularNetworkObserver);
 
-  reader->RequestSetFileName( filenameWithCorruptedContent );
-  reader->RequestReadObject();
-  
+  reader->RequestGetVascularNetwork();
+
+  if(!vascularNetworkObserver->GotVascularNetwork())
+    {
+    std::cout << "No VascularNetwork!" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   typedef ReaderType::VascularNetworkType VascularNetworkType;
-  
-  VascularNetworkType::ConstPointer network = reader->GetOutput();
+  VascularNetworkType::ConstPointer network = 
+                                       vascularNetworkObserver->GetVascularNetwork();
 
   network->Print( std::cout );
 

@@ -23,11 +23,64 @@ namespace igstk
 VascularNetworkReader::VascularNetworkReader():m_StateMachine(this)
 { 
   m_VascularNetwork = VascularNetworkType::New();
+
+  igstkAddInputMacro( ValidVascularNetworkObject );
+  igstkAddInputMacro( NullVascularNetworkObject  );
+
+  igstkAddInputMacro( GetVascularNetwork );
+
+  igstkAddStateMacro( NullVascularNetworkObject );
+  igstkAddStateMacro( ValidVascularNetworkObject );
+
+  igstkAddTransitionMacro( NullVascularNetworkObject, NullVascularNetworkObject, 
+                           NullVascularNetworkObject,  No );
+
+  igstkAddTransitionMacro( NullVascularNetworkObject,
+                           GetVascularNetwork,
+                           NullVascularNetworkObject,
+                           No );
+
+  igstkAddTransitionMacro( NullVascularNetworkObject,
+                           ValidVascularNetworkObject,
+                           ValidVascularNetworkObject,
+                           No );
+
+  igstkAddTransitionMacro( ValidVascularNetworkObject,
+                           GetVascularNetwork,
+                           ValidVascularNetworkObject,
+                           ReportVascularNetwork );
+
+  igstkSetInitialStateMacro( NullVascularNetworkObject );
+
+  m_StateMachine.SetReadyToRun();
+
 } 
 
 /** Destructor */
 VascularNetworkReader::~VascularNetworkReader()  
 {
+}
+
+/** No Processing */
+void VascularNetworkReader::NoProcessing()  
+{
+}
+
+
+void VascularNetworkReader::RequestGetVascularNetwork()
+{
+  igstkLogMacro( DEBUG, 
+              "igstk::VascularNetworkReader::RequestGetVascularNetwork called...\n");
+  m_StateMachine.PushInput(m_GetVascularNetworkInput);
+  m_StateMachine.ProcessInputs();
+}
+
+/** This function reports the vascular network */
+void VascularNetworkReader::ReportVascularNetworkProcessing()
+{
+  VascularNetworkModifiedEvent  event;
+  event.Set( this->m_VascularNetwork );
+  this->InvokeEvent( event );
 }
 
 /** Read the spatialobject file */
@@ -65,14 +118,11 @@ void VascularNetworkReader::AttemptReadObjectProcessing()
     it++;
     }
   delete children;
+
+  m_StateMachine.PushInput( m_ValidVascularNetworkObjectInput );
+  m_StateMachine.ProcessInputs();
 }
 
-/** Return the output as a group */
-const VascularNetworkReader::VascularNetworkType *
-VascularNetworkReader::GetOutput() const
-{
-  return m_VascularNetwork;
-}
 
 /** Print Self function */
 void VascularNetworkReader

@@ -63,8 +63,12 @@ public:
   typedef igstk::VascularNetworkObject       VascularNetworkType;
   typedef igstk::VesselObject                VesselObjectType;
 
-  /** Return the output as a group */
-  const VascularNetworkType * GetOutput() const;
+  /** Return the output vascular Network as an event */
+  void RequestGetVascularNetwork();
+
+  /** Event type */
+  igstkLoadedObjectEventMacro( VascularNetworkModifiedEvent, IGSTKEvent, 
+                               VascularNetworkObject);
 
 protected:
 
@@ -72,20 +76,30 @@ protected:
   VascularNetworkReader();
   ~VascularNetworkReader();
 
-  // Generic event produced from this class
-  itkEventMacro( VascularNetworkReaderEvent,IGSTKEvent);
-  
-  //SpatialObject reading error
-  itkEventMacro( VascularNetworkReadingErrorEvent, VascularNetworkReaderEvent );
-
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+  /** Null operation for State Machine transition */
+  void NoProcessing();
 
   /** This method request Object read. This method is intended to be
    *  invoked ONLY by the State Machine of the superclass. **/
   void AttemptReadObjectProcessing();
+  
+  /** This function reports the vascular network */
+  void ReportVascularNetworkProcessing();
 
 private:
+
+  /** Inputs to the State Machine */
+  igstkDeclareInputMacro( ValidVascularNetworkObject );
+  igstkDeclareInputMacro( NullVascularNetworkObject );
+
+  igstkDeclareInputMacro( GetVascularNetwork );
+
+  /** States for the State Machine */
+  igstkDeclareStateMacro( ValidVascularNetworkObject );
+  igstkDeclareStateMacro( NullVascularNetworkObject );
 
   VascularNetworkReader(const Self&);         //purposely not implemented
   void operator=(const Self&);     //purposely not implemented
