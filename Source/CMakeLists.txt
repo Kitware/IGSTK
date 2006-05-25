@@ -244,6 +244,7 @@ SET(IGSTKSandbox_HEADS
   igstkToolCalibrationReader.h
   igstkToolCalibration.h
   igstkPivotCalibrationReader.h
+  igstkObliqueContourMeshObjectRepresentation.h
 )
 
 
@@ -268,6 +269,7 @@ SET(IGSTKSandbox_SRCS
   igstkToolCalibration.cxx
   igstkPivotCalibrationReader.cxx
   igstkMR3DImageToUS3DImageRegistration.cxx
+  igstkObliqueContourMeshObjectRepresentation.cxx
 )
 
 # Variable for holding extra libraries
