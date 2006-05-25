@@ -20,7 +20,6 @@
 #include "igstkUltrasoundImageSimulator.h"
 
 #include "vtkImageData.h"
-//#include "vtkImageCast.h"
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkCastImageFilter.h"
 
@@ -296,11 +295,6 @@ UltrasoundImageSimulator< TImageGeometricModel >
   m_ImageReslice->SetInterpolationModeToLinear();
   m_ImageReslice->Update();
   
-  //vtkImageCast* castFilter = vtkImageCast::New();
-  //castFilter->SetInput(m_ReslicedImageData);
-  //castFilter->SetOutputScalarTypeToUnsignedChar();
-  //m_VTKExporter->SetInput(castFilter->GetOutput());
-
   m_VTKExporter->SetInput(m_ReslicedImageData);
 
   m_VTKImageImporter->SetUpdateInformationCallback( 
@@ -328,14 +322,14 @@ UltrasoundImageSimulator< TImageGeometricModel >
 
   // Do the actual rescaling and casting of the US image
   typedef itk::RescaleIntensityImageFilter<MRImageType> RescaleFilterType;
-  RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
+  typename RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
   rescaler->SetInput(m_VTKImageImporter->GetOutput());
   rescaler->SetOutputMinimum(0);
   rescaler->SetOutputMaximum(255);
   rescaler->Update();
 
   typedef itk::CastImageFilter<MRImageType,USImageType> CastFilterType;
-  CastFilterType::Pointer caster = CastFilterType::New();
+  typename CastFilterType::Pointer caster = CastFilterType::New();
   caster->SetInput(rescaler->GetOutput());
   caster->Update();
   
@@ -348,7 +342,6 @@ UltrasoundImageSimulator< TImageGeometricModel >
   // Update the transform of the image 
   m_USImage->RequestSetTransform(m_Transform);
 
-  //castFilter->Delete();
 }
 
 
