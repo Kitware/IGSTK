@@ -74,6 +74,8 @@ SET(SandboxTests_SRCS
   igstkSocketCommunicationTest.cxx
   igstkFlockOfBirdsTrackerTest.cxx
   igstkVesselObjectTest.cxx
+  igstkUSImageObjectTest.cxx
+  igstkUSImageObjectRepresentationTest.cxx
   )
 
 FOREACH(TestFiles ${SandboxTests_SRCS})

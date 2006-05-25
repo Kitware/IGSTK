@@ -39,4 +39,6 @@ void RegisterTests()
   REGISTER_TEST(igstkVesselObjectTest);
   REGISTER_TEST(igstkVascularNetworkReaderTest);
   REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
+  REGISTER_TEST(igstkUSImageObjectTest);
+  REGISTER_TEST(igstkUSImageObjectRepresentationTest);
 }
