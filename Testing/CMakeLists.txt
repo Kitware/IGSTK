@@ -73,7 +73,6 @@ SET(SandboxTests_SRCS
   igstkLandmarkUltrasoundCalibrationTest.cxx
   igstkSocketCommunicationTest.cxx
   igstkFlockOfBirdsTrackerTest.cxx
-  igstkMR3DImageToUS3DImageRegistrationTest.cxx
   igstkVesselObjectTest.cxx
   )
 
@@ -93,7 +92,14 @@ IF(IGSTKSandbox_DATA_ROOT)
 
    ADD_TEST( igstkMR3DImageToUS3DImageRegistrationTest ${IGSTKSandbox_TESTS} 
              igstkMR3DImageToUS3DImageRegistrationTest
-             ${IGSTKSandbox_DATA_ROOT}/MRLiver) 
+             ${IGSTKSandbox_DATA_ROOT}/MRLiver)
+   SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkMR3DImageToUS3DImageRegistrationTest.cxx)
+
+   ADD_TEST( igstkUltrasoundImageSimulatorTest ${IGSTKSandbox_TESTS} 
+             igstkUltrasoundImageSimulatorTest
+             ${IGSTKSandbox_DATA_ROOT}/MRLiver
+             ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
+   SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkUltrasoundImageSimulatorTest.cxx)
 
    ADD_TEST( igstkImageSpatialObjectRepresentationTest2 
        ${IGSTKSandbox_TESTS}
