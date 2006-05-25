@@ -34,13 +34,12 @@ igstkObserverObjectMacro(USImage,
 int igstkUSImageReaderTest( int argc, char* argv[] )
 {
   igstk::RealTimeClock::Initialize();
-/*
+
   if(argc < 2)
     {
     std::cerr << "Usage: " << argv[0] << "  USImage " << std::endl;
     return EXIT_FAILURE;
     }
-*/
 
   typedef itk::Logger              LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
@@ -59,11 +58,10 @@ int igstkUSImageReaderTest( int argc, char* argv[] )
   reader->SetLogger( logger );
 
   /* Read in a DICOM series */
-  //std::cout << "Reading US image : " << argv[1] << std::endl;
+  std::cout << "Reading US image : " << argv[1] << std::endl;
 
-  //ReaderType::DirectoryNameType directoryName = argv[1];
-  ReaderType::DirectoryNameType directoryName = "C:/Julien/Workspace/Sandbox/Testing/Data/USLiver";
-
+  ReaderType::DirectoryNameType directoryName = argv[1];
+ 
   reader->RequestSetDirectory( directoryName );
   
   reader->Print( std::cout );
