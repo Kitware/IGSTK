@@ -41,4 +41,5 @@ void RegisterTests()
   REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
   REGISTER_TEST(igstkUSImageObjectTest);
   REGISTER_TEST(igstkUSImageObjectRepresentationTest);
+  REGISTER_TEST(igstkUSImageReaderTest);
 }

@@ -87,6 +87,10 @@ IF(IGSTKSandbox_DATA_ROOT)
 
    SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
 
+   ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest 
+       ${IGSTKSandbox_DATA_ROOT}/USLiver)
+   SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkUSImageReaderTest.cxx)
+
    ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTKSandbox_TESTS} 
              igstkPivotCalibrationReaderTest
              ${IGSTKSandbox_DATA_ROOT}/Input/PivotCalibrationTool.txt) 
