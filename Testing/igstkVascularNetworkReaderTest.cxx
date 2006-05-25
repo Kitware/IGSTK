@@ -23,6 +23,9 @@
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+#include "igstkView3D.h"
+#include "igstkVascularNetworkObjectRepresentation.h"
+#include "igstkVTKLoggerOutput.h"
 
 namespace VascularNetworkReaderTest
 {
@@ -36,12 +39,13 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
 
   igstk::RealTimeClock::Initialize();
 
-  if( argc < 3 )
+  if( argc < 4 )
     {
     std::cerr << "Error: Missing command line arguments" << std::endl;
     std::cerr << "Usage : " << std::endl;
     std::cerr << argv[0] << " inputGoodFileName ";
-    std::cerr << " inputBadFileName " << std::endl;
+    std::cerr << " inputBadFileName " 
+              << " screenshot" << std::endl;
     return 1;
     }
 
@@ -85,12 +89,12 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
   
   // Now reading a corrupted file
   std::string filenameWithCorruptedContent = argv[2];
-
   reader->RequestSetFileName( filenameWithCorruptedContent );
   reader->RequestReadObject();
 
   // Test file that exists
   std::string filenameThatExists = argv[1];
+  
   reader->RequestSetFileName( filenameThatExists );
 
   // Request to read the object from the file
@@ -112,10 +116,103 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
     }
 
   typedef ReaderType::VascularNetworkType VascularNetworkType;
-  VascularNetworkType::ConstPointer network = 
+  typedef VascularNetworkType::VesselObjectType VesselObjectType;
+
+  VascularNetworkType::Pointer network = 
                                        vascularNetworkObserver->GetVascularNetwork();
 
+  igstkObserverObjectMacro(Vessel,
+    VascularNetworkType::VesselObjectModifiedEvent,VesselObjectType)
+
+  VesselObserver::Pointer vesselObserver = VesselObserver::New();
+ 
+  network->AddObserver(
+            VascularNetworkType::VesselObjectModifiedEvent(),
+            vesselObserver);
+
+  std::cout << "Testing GetVessel(): ";
+  network->RequestGetVessel(0);
+  if(!vesselObserver->GotVessel())
+    {
+    std::cout << "No Vessel!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  
+  vesselObserver->Reset();
+
+  network->RequestGetVessel(10000);
+  if(vesselObserver->GotVessel())
+    {
+    std::cout << "Get Vessel but should not" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  std::cout << "[PASSED]";
+
   network->Print( std::cout );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
+                                              = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);
+
+   // Create an FLTK minimal GUI
+  Fl_Window * form = new Fl_Window(532,532,"Vascular Network View Test");
+    
+  typedef igstk::View3D  View3DType;
+
+  View3DType * view3D = new View3DType( 10,10,512,512,"3D View");
+
+  form->end();
+  form->show();
+
+  view3D->SetLogger( logger ); 
+  view3D->RequestEnableInteractions();
+
+  // Create the vascular network representation
+  typedef igstk::VascularNetworkObjectRepresentation 
+                                            VascularNetworkRepresentationType;
+
+  VascularNetworkRepresentationType::Pointer
+     vascularNetworkRepresentation = VascularNetworkRepresentationType::New();
+
+  vascularNetworkRepresentation->SetColor(1.0,0.0,0.0);
+  vascularNetworkRepresentation->SetOpacity(0.5);
+
+  vascularNetworkRepresentation->RequestSetVascularNetworkObject(network);
+
+  // Add the ellipsoid object representation to the view 
+  view3D->RequestAddObject( vascularNetworkRepresentation );
+
+  view3D->RequestResetCamera();
+  view3D->RequestSetRefreshRate( 30 );
+  view3D->RequestStart();
+  Fl::wait(1.0);  
+  igstk::PulseGenerator::CheckTimeouts();
+
+  for(unsigned int i=0; i<10; i++)
+    {
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();
+    }
+
+  //Request refreshing stop to take a screenshot
+  view3D->RequestStop();
+      
+  /* Save screenshots in a file */
+  std::string filename = argv[2]; 
+  std::cout << "Saving a screen shot in file:" 
+            << filename.c_str() << std::endl;
+  view3D->RequestSaveScreenShot( filename );
+
+  delete view3D;
+  delete form;
+ 
+  if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
+    {
+    return EXIT_FAILURE;
+    }
 
   std::cout << "Test DONE" << std::endl;
   return EXIT_SUCCESS;

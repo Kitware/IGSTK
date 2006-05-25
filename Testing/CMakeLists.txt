@@ -141,9 +141,14 @@ ENDIF(IGSTKSandbox_DATA_ROOT)
 
 
 ADD_TEST( igstkVascularNetworkReaderTest ${IGSTKSandbox_TESTS} 
-            igstkVascularNetworkReaderTest 
-            ${IGSTK_DATA_ROOT}/Input/vessel.tre
-            ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre )        
+          --compare ${IGSTKSandbox_BASELINE_DIR}/igstkVascularNetworkReaderTest.png 
+          ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png 
+          --tolerance 10
+          igstkVascularNetworkReaderTest 
+          ${IGSTK_DATA_ROOT}/Input/vessel.tre
+          ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre 
+          ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png
+          )        
 SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkVascularNetworkReaderTest.cxx)
 
 ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${SandboxTests_SRCS})
