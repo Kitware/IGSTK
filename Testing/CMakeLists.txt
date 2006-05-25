@@ -104,7 +104,7 @@ IF(IGSTKSandbox_DATA_ROOT)
    ADD_TEST( igstkUltrasoundImageSimulatorTest ${IGSTKSandbox_TESTS}
              --compare ${IGSTKSandbox_BASELINE_DIR}/igstkUltrasoundImageSimulatorTest.png 
              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
-             --tolerance 5
+             --tolerance 10
              igstkUltrasoundImageSimulatorTest
              ${IGSTKSandbox_DATA_ROOT}/MRLiver
              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
@@ -114,7 +114,7 @@ IF(IGSTKSandbox_DATA_ROOT)
        ${IGSTKSandbox_TESTS}
        --compare ${IGSTKSandbox_BASELINE_DIR}/igstkImageSpatialObjectRepresentationTest2.png 
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png 
-       --tolerance 5
+       --tolerance 10
        igstkImageSpatialObjectRepresentationTest2
        ${IGSTKSandbox_DATA_ROOT}/E000192
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png)
@@ -125,7 +125,7 @@ IF(IGSTKSandbox_DATA_ROOT)
        ${IGSTKSandbox_TESTS}
        --compare ${IGSTKSandbox_BASELINE_DIR}/igstkImageSpatialObjectRepresentationTest3.png 
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png 
-       --tolerance 5
+       --tolerance 10
        igstkImageSpatialObjectRepresentationTest3
        ${IGSTKSandbox_DATA_ROOT}/E000192Mod2
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png)
@@ -282,7 +282,7 @@ IF(IGSTK_USE_FLTK)
               ${IGSTK_TESTS}
               --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png 
                         ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
-              --tolerance 5
+              --tolerance 10
               igstkCTImageSpatialObjectReadingAndRepresentationTest
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
@@ -379,6 +379,10 @@ FOREACH(SourceFile ${IGSTKTests_SRCS})
   ENDIF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/${SourceFile})
 
 ENDFOREACH( SourceFile )
+
+#-----------------------------------------------------------------------------
+# Copy the .NoDartCoverage file to the duplicate testing directory
+CONFIGURE_FILE( ${IGSTK_SOURCE_DIR}/Testing/.NoDartCoverage ${IGSTK_TESTS_LATEST}/.NoDartCoverage COPYONLY)
 
 SOURCE_GROUP(TestsModified FILES ${TestsModifiedFiles})
 
