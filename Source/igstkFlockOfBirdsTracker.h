@@ -25,6 +25,7 @@
 namespace igstk
 {
 /** \class FlockOfBirdsTracker
+ *
  * \brief Provides support for the FlockOfBirds optical tracker.
  *
  * The FlockOfBirds is a magnetic tracker from Ascencion.
