@@ -37,8 +37,11 @@ VesselObject::~VesselObject()
 void VesselObject
 ::SetVesselSpatialObject( VesselSpatialObjectType * vessel ) 
 {
-  m_VesselSpatialObject = vessel;
-  this->RequestSetSpatialObject( m_VesselSpatialObject );
+  if(vessel)
+    {
+    m_VesselSpatialObject = vessel;
+    this->RequestSetSpatialObject( m_VesselSpatialObject );
+    }
 }
 
 /** Add a point to the Vessel */
