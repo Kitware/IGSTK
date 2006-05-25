@@ -145,7 +145,7 @@ IF(IGSTK_USE_FLTK)
               ${IGSTK_TESTS}
               --compare ${BASELINE}/igstkViewScreenShot.png 
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
-              --tolerance 5
+              --tolerance 10
               igstkCTImageSpatialObjectReadingAndRepresentationTest
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
