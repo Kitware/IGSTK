@@ -97,7 +97,10 @@ IF(IGSTKSandbox_DATA_ROOT)
              ${IGSTKSandbox_DATA_ROOT}/MRLiver)
    SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkMR3DImageToUS3DImageRegistrationTest.cxx)
 
-   ADD_TEST( igstkUltrasoundImageSimulatorTest ${IGSTKSandbox_TESTS} 
+   ADD_TEST( igstkUltrasoundImageSimulatorTest ${IGSTKSandbox_TESTS}
+             --compare ${IGSTKSandbox_BASELINE_DIR}/igstkUltrasoundImageSimulatorTest.png 
+             ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
+             --tolerance 5
              igstkUltrasoundImageSimulatorTest
              ${IGSTKSandbox_DATA_ROOT}/MRLiver
              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
