@@ -140,7 +140,20 @@ public:
       {
       tubeReader->RequestSetFileName(filename);
       tubeReader->RequestReadObject();
-      m_TubeGroup = tubeReader->GetOutput();
+
+      igstkObserverObjectMacro(VascularNetwork,
+                            VascularNetworkReader::VascularNetworkModifiedEvent,
+                            VascularNetworkObject)
+
+      VascularNetworkObserver::Pointer vascularNetworkObserver 
+                                            = VascularNetworkObserver::New();
+      tubeReader->AddObserver(
+                        VascularNetworkReader::VascularNetworkModifiedEvent(),
+                        vascularNetworkObserver);
+
+      tubeReader->RequestGetVascularNetwork();
+
+      m_TubeGroup = vascularNetworkObserver->GetVascularNetwork();
 
       igstk::VascularNetworkObjectRepresentation::Pointer tubeRepresentation =
                             igstk::VascularNetworkObjectRepresentation::New();
@@ -206,12 +219,25 @@ public:
       m_VesselRepresentationList.clear();
        
       // Create the object representations for the tube
-      igstk::VascularNetworkObject::Pointer newNetwork 
-                                        = igstk::VascularNetworkObject::New();
+      typedef igstk::VascularNetworkObject VascularNetworkObjectType;
+      typedef VascularNetworkObjectType::VesselObjectType VesselObjectType;
+      VascularNetworkObjectType::Pointer newNetwork 
+                                        = VascularNetworkObjectType::New();
+
+      igstkObserverObjectMacro(Vessel,
+       VascularNetworkObjectType::VesselObjectModifiedEvent,VesselObjectType)
+
+      VesselObserver::Pointer vesselObserver = VesselObserver::New();
+ 
+      m_TubeGroup->AddObserver(
+            VascularNetworkObjectType::VesselObjectModifiedEvent(),
+            vesselObserver);
 
       for(unsigned int i=0;i<m_TubeGroup->GetNumberOfObjects();i++)
         {
-        igstk::VesselObject::ConstPointer tube = m_TubeGroup->GetVessel(i);
+        const_cast<VascularNetworkObjectType*>(m_TubeGroup.GetPointer()
+                                                       )->RequestGetVessel(i);
+        igstk::VesselObject::ConstPointer tube = vesselObserver->GetVessel();
         igstk::VesselObject::Pointer newVessel = igstk::VesselObject::New();
         for(unsigned int j=0;j<tube->GetNumberOfPoints();j++)
           {
