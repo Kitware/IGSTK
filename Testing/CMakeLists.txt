@@ -87,7 +87,7 @@ IF(IGSTKSandbox_DATA_ROOT)
 
    SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
 
-   ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest 
+   ADD_TEST( igstkUSImageReaderTest ${IGSTKSandbox_TESTS} igstkUSImageReaderTest 
        ${IGSTKSandbox_DATA_ROOT}/USLiver)
    SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkUSImageReaderTest.cxx)
 
