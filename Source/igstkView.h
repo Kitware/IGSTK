@@ -216,8 +216,18 @@ private:
   /** Report any invalid request to the logger */
   void ReportInvalidRequestProcessing();
 
-  /** Save a screenshot of the current rendered scene */
-  void SaveScreenShotProcessing();
+  /** Save a screenshot of the current rendered scene while in idle state */
+  void SaveScreenShotWhileIdleProcessing();
+  
+  /** Save a screenshot of the current rendered scene while in refreshing
+   * state*/
+  void SaveScreenShotWhileRefreshingProcessing();
+
+  /** Save a screenshot. This method is the actual implementation of the
+   * process of saving the screenshot. This method is invoked from
+   * SaveScreenShotWhileIdleProcessing and
+   * SaveScreenShotWhileRefreshingProcessing */
+  void SaveScreenShot();
   
   /** Reports when a filename for the screen shot is not valid */
   void ReportInvalidScreenShotFileNameProcessing();

@@ -130,7 +130,7 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this)
   igstkAddTransitionMacro( Idle, StopRefreshing,
                            Idle,  ReportInvalidRequest );
   igstkAddTransitionMacro( Idle, ValidScreenShotFileName,
-                           Idle, SaveScreenShot )
+                           Idle, SaveScreenShotWhileIdle )
   igstkAddTransitionMacro( Idle, InvalidScreenShotFileName,
                            Idle, ReportInvalidScreenShotFileName );
   igstkAddTransitionMacro( Refreshing, ValidAddObject,
@@ -168,7 +168,7 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this)
   igstkAddTransitionMacro( Refreshing, StopRefreshing,
                            Idle,  Stop );
   igstkAddTransitionMacro( Refreshing, ValidScreenShotFileName,
-                           Refreshing, SaveScreenShot )
+                           Refreshing, SaveScreenShotWhileRefreshing )
   igstkAddTransitionMacro( Refreshing, InvalidScreenShotFileName,
                            Refreshing, ReportInvalidScreenShotFileName );
 
@@ -640,11 +640,30 @@ void View::ReportInvalidScreenShotFileNameProcessing()
                 "ReportInvalidScreenShotFileNameProcessing() called ...\n");
 }
 
+/** Save current screenshot while in refreshing state */
+void View::SaveScreenShotWhileRefreshingProcessing()
+{
+  igstkLogMacro( DEBUG, "SaveScreenShotWhileRefreshingProcessing() called ...\n");
+
+  m_PulseGenerator->RequestStop();
+  
+  this->SaveScreenShot();
+
+  m_PulseGenerator->RequestStart();
+}
+
+/** Save current screenshot in idle state*/
+void View::SaveScreenShotWhileIdleProcessing()
+{
+  igstkLogMacro( DEBUG, "SaveScreenShotWhileIdleProcessing() called ...\n");
+  
+  this->SaveScreenShot();
+}
 
 /** Save current screenshot */
-void View::SaveScreenShotProcessing()
+void View::SaveScreenShot()
 {
-  igstkLogMacro( DEBUG, "SaveScreenShotProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "SaveScreenShot() called ...\n");
 
   vtkWindowToImageFilter * windowToImageFilter = vtkWindowToImageFilter::New();
 
