@@ -136,7 +136,9 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   m_VascularNetworkReader = VascularNetworkReaderType::New();
   m_MRImageReader = MRImageReaderType::New();
   m_USImageReader = USImageReaderType::New();
-  m_ContourLiverRepresentation = ContourMeshObjectRepresentation::New();
+  m_ContourLiverRepresentation = ObliqueContourMeshObjectRepresentation::New();
+  //m_ContourLiverRepresentation = ContourMeshObjectRepresentation::New();
+  
   m_ContourVascularNetworkRepresentation = 
                       ContourVascularNetworkObjectRepresentation::New();
   m_VascularNetworkRepresentation = VascularNetworkRepresentationType::New();
@@ -158,7 +160,9 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   igstkSetInitialStateMacro( Initial );
   m_StateMachine.SetReadyToRun();
 
-  srand(time(NULL));
+  m_USSimulator = USSimulatorType::New();
+  m_Registration = RegistrationType::New();
+
 }
 
 /** Desctructor */
@@ -253,13 +257,13 @@ void UltrasoundGuidedRFAImplementation
     m_LiverRepresentation = MeshObjectRepresentation::New();
     m_LiverRepresentation->RequestSetMeshObject( m_MeshReader->GetOutput() );
     m_LiverRepresentation->SetColor(1.0,0.0,0.0);
-    m_LiverRepresentation->SetOpacity(1.0);
+    m_LiverRepresentation->SetOpacity(0.1);
     this->Display3D->RequestAddObject(m_LiverRepresentation);
  
     m_ContourLiverRepresentation->RequestSetMeshObject( 
                                                   m_MeshReader->GetOutput() );
-    m_ContourLiverRepresentation->RequestSetOrientation(
-                                      ContourMeshObjectRepresentation::Axial);
+    //m_ContourLiverRepresentation->RequestSetOrientation(
+    //                                  ContourMeshObjectRepresentation::Axial);
     m_ContourLiverRepresentation->SetColor(1.0,0.0,0.0);
     m_ContourLiverRepresentation->SetOpacity(1.0);
     this->Display2D->RequestAddObject(m_ContourLiverRepresentation);
@@ -276,17 +280,29 @@ void UltrasoundGuidedRFAImplementation
     {
     m_VascularNetworkReader->RequestSetFileName(liverfilename);
     m_VascularNetworkReader->RequestReadObject();
+
+    igstkObserverObjectMacro(VascularNetwork,
+    VascularNetworkReader::VascularNetworkModifiedEvent,VascularNetworkObject)
+
+    VascularNetworkObserver::Pointer vascularNetworkObserver 
+                                            = VascularNetworkObserver::New();
+    m_VascularNetworkReader->AddObserver(
+                        VascularNetworkReader::VascularNetworkModifiedEvent(),
+                        vascularNetworkObserver);
+
+    m_VascularNetworkReader->RequestGetVascularNetwork();
+
     m_VascularNetworkRepresentation->RequestSetVascularNetworkObject( 
-                                       m_VascularNetworkReader->GetOutput() );
+                              vascularNetworkObserver->GetVascularNetwork() );
     //m_VascularNetworkRepresentation->SetColor(1.0,0.0,0.0);
     //m_VascularNetworkRepresentation->SetOpacity(1.0);
     this->Display3D->RequestAddObject( m_VascularNetworkRepresentation );
 
     // Represent as a 2D contour on the 2D View
     m_ContourVascularNetworkRepresentation->RequestSetVascularNetworkObject( 
-                                       m_VascularNetworkReader->GetOutput() );
+                                   vascularNetworkObserver->GetVascularNetwork() );
     m_ContourVascularNetworkRepresentation->RequestSetOrientation(
-                                      ContourMeshObjectRepresentation::Axial);
+                                      ContourVascularNetworkObjectRepresentation::Axial);
     m_ContourVascularNetworkRepresentation->SetColor(1.0,1.0,1.0);
     m_ContourVascularNetworkRepresentation->SetOpacity(1.0);
     this->Display2D->RequestAddObject(m_ContourVascularNetworkRepresentation);
@@ -325,6 +341,8 @@ void UltrasoundGuidedRFAImplementation
       return;
       }
  
+    m_Registration->RequestSetMovingMR3D(mrImageObserver->GetMRImage());
+
     m_LiverMRRepresentation->RequestSetImageSpatialObject( 
                                                 mrImageObserver->GetMRImage());
     m_LiverMRRepresentation->SetWindowLevel(52,52);
@@ -339,7 +357,9 @@ void UltrasoundGuidedRFAImplementation
     //m_ObliqueLiverMRRepresentation->RequestSetOrientation(
      //                                       MRImageRepresentationType::Axial);
     //m_ObliqueLiverMRRepresentation->RequestGetSliceNumberBounds();
-    
+
+    m_USSimulator->RequestSetImageGeometricModel(mrImageObserver->GetMRImage());
+
     m_StateMachine.ProcessInputs();
 
     this->Display2D->RequestAddObject( m_ObliqueLiverMRRepresentation );
@@ -391,15 +411,15 @@ void UltrasoundGuidedRFAImplementation
 {
   m_LiverMRRepresentation->RequestSetSliceNumber(value);
   //m_ObliqueLiverMRRepresentation->RequestSetSliceNumber(value);
-/*
+
   MRObliqueImageRepresentationType::PointType origin;
   origin[0] = 0;
   origin[1] = 0;
-  origin[2] = value;
+  origin[2] = value*0.78125;
   MRObliqueImageRepresentationType::VectorType v1;
   v1[0] = 1;
   v1[1] = 0;
-  v1[2] = 1;
+  v1[2] = 0;
   MRObliqueImageRepresentationType::VectorType v2;
   v2[0] = 0;
   v2[1] = 1;
@@ -409,8 +429,16 @@ void UltrasoundGuidedRFAImplementation
   m_ObliqueLiverMRRepresentation->RequestSetVector1OnThePlane(v1);
   m_ObliqueLiverMRRepresentation->RequestSetVector2OnThePlane(v2);
   m_ObliqueLiverMRRepresentation->RequestReslice();
+
+  //m_ContourLiverRepresentation->RequestSetOrientation(ContourObjectRepresentation::Axial);
+  //m_ContourLiverRepresentation->RequestSetSlicePosition(value*0.78125);
+  m_ContourLiverRepresentation->RequestSetOriginPointOnThePlane(origin);
+  m_ContourLiverRepresentation->RequestSetVector1OnThePlane(v1);
+  m_ContourLiverRepresentation->RequestSetVector2OnThePlane(v2);
+  m_ContourLiverRepresentation->RequestReslice();
+  
   this->Display2D->RequestResetCamera();
-*/  
+
 }
 
 /** Randomize. Test only. */
@@ -423,62 +451,19 @@ void UltrasoundGuidedRFAImplementation
     }
 
   m_Tracker->UpdateStatus();
-  
+
   typedef igstk::Transform            TransformType;
   typedef TransformType::VectorType   VectorType;
 
   TransformType             transform;
   VectorType                position;
 
-
-/*
-  unsigned int value = (((double) rand() / (double) RAND_MAX) * 20);
-
-  m_LiverMRRepresentation->RequestSetSliceNumber(value);
-  //m_ObliqueLiverMRRepresentation->RequestSetSliceNumber(value);
-
-  MRObliqueImageRepresentationType::PointType origin;
-  origin[0] = 0;
-  origin[1] = 0;
-  origin[2] = value;
-  MRObliqueImageRepresentationType::VectorType v1;
-  v1[0] = 1;
-  v1[1] = 0;
-  v1[2] = 1;
-  MRObliqueImageRepresentationType::VectorType v2;
-  v2[0] = 0;
-  v2[1] = 1;
-  v2[2] = 0;
-
-  m_ObliqueLiverMRRepresentation->RequestSetOriginPointOnThePlane(origin);
-  m_ObliqueLiverMRRepresentation->RequestSetVector1OnThePlane(v1);
-  m_ObliqueLiverMRRepresentation->RequestSetVector2OnThePlane(v2);
-  m_ObliqueLiverMRRepresentation->RequestReslice();
-  //m_ObliqueLiverMRRepresentation->RequestReslice();
-  this->Display2D->RequestResetCamera();
-*/
   m_Tracker->GetToolTransform( 0, 0, transform );
-  //std::cout << transform.GetStartTime() << " " << transform.GetExpirationTime() << std::endl;
   position = transform.GetTranslation();
-  //std::cout << "Position = (" << position[0]
-  //          << "," << position[1] << "," << position[2]
-  //          << ")" << std::endl;
-
-  //std::cout << m_ObliquePoint << std::endl;
-  //m_ObliquePoint[2]++;
-  //if(m_ObliquePoint[2]>20)
-  //  {
-  //  m_ObliquePoint[2]=0;
-  //  }
-  m_ObliquePoint[0] = position[0];
+  m_ObliquePoint[0] = position[0]-(512*0.78125/2);
   m_ObliquePoint[1] = position[1];
   m_ObliquePoint[2] = position[2];
-  //m_ObliqueLiverMRRepresentation->SetLogger(m_Logger);
-  //std::cout << m_ObliquePoint << std::endl;
-  //MRObliqueImageRepresentationType::PointType origin;
-  //origin[0] = 0;
-  //origin[1] = 0;
-  //origin[2] = value;
+
   MRObliqueImageRepresentationType::VectorType v1;
   v1[0] = 1;
   v1[1] = 0;
@@ -487,15 +472,83 @@ void UltrasoundGuidedRFAImplementation
   
   MRObliqueImageRepresentationType::VectorType v2;
   v2[0] = 0;
-  v2[1] = 1;
-  v2[2] = 0;
-  v2 = transform.GetRotation().Transform(v2);
-  
+  v2[1] = 0;
+  v2[2] = 1;
+  v2 = transform.GetRotation().Transform(v2);  
   m_ObliqueLiverMRRepresentation->RequestSetOriginPointOnThePlane(m_ObliquePoint);
   m_ObliqueLiverMRRepresentation->RequestSetVector1OnThePlane(v1);
   m_ObliqueLiverMRRepresentation->RequestSetVector2OnThePlane(v2);
   m_ObliqueLiverMRRepresentation->RequestReslice();
+
+  m_ContourLiverRepresentation->RequestSetOriginPointOnThePlane(m_ObliquePoint);
+  m_ContourLiverRepresentation->RequestSetVector1OnThePlane(v1);
+  m_ContourLiverRepresentation->RequestSetVector2OnThePlane(v2);
+  m_ContourLiverRepresentation->RequestReslice();
+
   this->Display2D->RequestResetCamera();
+
+  // Generate 
+/*  m_USSimulator->RequestSetTransform(transform);
+  m_USSimulator->RequestReslice();
+  //m_USSimulator->SetLogger(m_Logger);
+
+  SimulatedUSImageObserver::Pointer usImageObserver = SimulatedUSImageObserver::New();
+  m_USSimulator->AddObserver(USSimulatorType::ImageModifiedEvent(),
+                             usImageObserver);
+
+  m_USSimulator->RequestGetImage();
+
+  if(!usImageObserver->GotSimulatedUSImage())
+    {
+    std::cout << "No USImage!" << std::endl;
+    return;
+    }
+*/
+  /*
+  USImageObject::Pointer usImage = usImageObserver->GetSimulatedUSImage();
+
+  USImageTransformObserver::Pointer transformObserver = 
+                                                USImageTransformObserver::New();
+
+  usImage->AddObserver( ::igstk::TransformModifiedEvent(), 
+                        transformObserver );
+  usImage->RequestGetTransform();
+  
+  if( !transformObserver->GotUSImageTransform() )
+    {
+    std::cerr << "The usImage did not returned ";
+    std::cerr << "a Transform event" << std::endl;
+    return;
+    }
+
+  std::cout << transformObserver->GetUSImageTransform() << std::endl;
+  */
+
+  //registration->SetLogger(logger);
+ // m_Registration->RequestSetFixedUS3D(usImageObserver->GetSimulatedUSImage()); 
+ // m_Registration->RequestCalculateRegistration();
+
+  /*
+  RegistrationTransformObserver::Pointer registrationTransformObserver 
+                                    = RegistrationTransformObserver::New();
+
+  m_Registration->AddObserver(TransformModifiedEvent(),
+                              registrationTransformObserver);
+  m_Registration->RequestGetRegistrationTransform();
+
+  if(registrationTransformObserver->GotRegistrationTransform())
+    {
+    std::cout << "Got Transform! " << std::endl;
+    std::cout << registrationTransformObserver->GetRegistrationTransform() 
+              << std::endl;
+    }
+  else
+    {
+    std::cout << "No Transform!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return;
+    }
+    */
 }
 
 } // end of namespace

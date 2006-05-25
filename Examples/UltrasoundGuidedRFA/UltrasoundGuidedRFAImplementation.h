@@ -23,8 +23,8 @@
 #pragma warning( disable : 4284 )
 #endif
 
-
 #include "igstkSandboxConfigure.h"
+#include "igstkMR3DImageToUS3DImageRegistration.h"
 #include "UltrasoundGuidedRFA.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
@@ -38,7 +38,8 @@
 #include "igstkMeshReader.h"
 #include "igstkMeshObject.h"
 #include "igstkMeshObjectRepresentation.h"
-#include "igstkContourMeshObjectRepresentation.h"
+#include "igstkObliqueContourMeshObjectRepresentation.h"
+//#include "igstkContourMeshObjectRepresentation.h"
 #include "igstkContourVascularNetworkObjectRepresentation.h"
 #include "igstkVascularNetworkReader.h"
 #include "igstkVascularNetworkObject.h"
@@ -49,6 +50,7 @@
 #include "igstkUSImageReader.h"
 #include "igstkUSImageObjectRepresentation.h"
 #include "igstkObliqueImageSpatialObjectRepresentation.h"
+#include "igstkUltrasoundImageSimulator.h"
 
 #include "FL/Fl_File_Chooser.H"
 
@@ -83,6 +85,10 @@ public:
   igstkObserverObjectMacro(USImage,USImageReader::ImageModifiedEvent,
                                                   USImageObject)
 
+  igstkObserverMacro(USImageTransform,TransformModifiedEvent,Transform)
+
+  igstkObserverMacro(RegistrationTransform,TransformModifiedEvent,Transform)
+
 public:
     
   typedef itk::Logger                   LoggerType; 
@@ -105,6 +111,15 @@ public:
   typedef igstk::MRImageSpatialObject               MRImageType;
   typedef igstk::MRImageSpatialObjectRepresentation MRImageRepresentationType;
   typedef igstk::MRImageReader                      MRImageReaderType;
+
+  typedef igstk::UltrasoundImageSimulator<MRImageType> USSimulatorType;
+
+  /** Registration typedefs */
+  typedef igstk::MR3DImageToUS3DImageRegistration   RegistrationType;
+
+  igstkObserverObjectMacro(SimulatedUSImage,
+                           USSimulatorType::ImageModifiedEvent,USImageObject)
+
 
   typedef igstk::ObliqueImageSpatialObjectRepresentation<MRImageType>
                                              MRObliqueImageRepresentationType;
@@ -157,7 +172,9 @@ private:
   CommunicationType::Pointer m_Communication;
   LiverReaderType::Pointer   m_MeshReader;
   MeshObjectRepresentation::Pointer m_LiverRepresentation;
-  ContourMeshObjectRepresentation::Pointer m_ContourLiverRepresentation;
+  ObliqueContourMeshObjectRepresentation::Pointer m_ContourLiverRepresentation;
+  //ContourMeshObjectRepresentation::Pointer m_ContourLiverRepresentation;
+  
   ContourVascularNetworkObjectRepresentation::Pointer 
                                        m_ContourVascularNetworkRepresentation;
   VascularNetworkReaderType::Pointer m_VascularNetworkReader;
@@ -177,11 +194,15 @@ private:
   std::ofstream             m_LogFile;
   bool                      m_HasQuitted;
 
+  USSimulatorType::Pointer          m_USSimulator;
+
   MRObliqueImageRepresentationType::PointType m_ObliquePoint;
   
   void SetAxialSliderBoundsProcessing();
   igstkDeclareInputMacro( AxialBounds );
   igstkDeclareStateMacro( Initial );
+
+  RegistrationType::Pointer m_Registration;
 };
 
 
