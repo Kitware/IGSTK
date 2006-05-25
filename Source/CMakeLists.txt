@@ -273,21 +273,6 @@ SET(IGSTKSandbox_SRCS
 # Variable for holding extra libraries
 SET(EXTRA_LIBS)
 
-# executed if Atamai classes in Utilities are used
-IF( IGSTK_USE_ATAMAI )
-  SET(IGSTKSandbox_HEADS ${IGSTKSandbox_HEADS}
-    igstkAtamaiNDITracker.h
-  )
-  SET(IGSTKSandbox_SRCS ${IGSTKSandbox_SRCS}
-    igstkAtamaiNDITracker.cxx
-  )
-  INCLUDE_DIRECTORIES(
-    ${ATAMAITRACKING_SOURCE_DIR}
-    ${NDICAPI_SOURCE_DIR}
-  )
-  SET(EXTRA_LIBS ${EXTRA_LIBS} vtkAtamaiTracking)
-ENDIF( IGSTK_USE_ATAMAI )
-
 # Adding the IGSTKSandbox library
 ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS} ${IGSTKLatest_HEADS} ${IGSTKLatest_SRCS})
 

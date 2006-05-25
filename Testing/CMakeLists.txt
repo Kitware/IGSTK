@@ -142,12 +142,6 @@ ADD_TEST( igstkVascularNetworkReaderTest ${IGSTKSandbox_TESTS}
             ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre )        
 SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkVascularNetworkReaderTest.cxx)
 
-
-IF (IGSTK_USE_ATAMAI)
-  ADD_TEST(igstkAtamaiNDITrackerTest ${IGSTKSandbox_TESTS} igstkAtamaiNDITrackerTest)
-  SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkAtamaiNDITrackerTest)
-ENDIF (IGSTK_USE_ATAMAI)
-
 ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${SandboxTests_SRCS})
 
 TARGET_LINK_LIBRARIES(igstkSandboxTests IGSTKSandbox)
