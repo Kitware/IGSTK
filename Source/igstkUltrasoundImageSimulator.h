@@ -97,6 +97,7 @@ public:
 
   typedef typename ImageGeometricModelType::PointType  PointType;
   typedef typename USImageObject::ImageType            USImageType;
+  typedef typename ImageGeometricModelType::ImageType  MRImageType;
   typedef Transform                                    TransformType;
   
   /** Request to set vector 2 on the plane */
@@ -150,13 +151,14 @@ private:
   vtkImageData                         * m_ImageData;
   vtkImageData                         * m_ReslicedImageData;
   vtkImageReslice                      * m_ImageReslice;
-  typedef itk::VTKImageImport<USImageType> VTKImageImporterType;
+  typedef itk::VTKImageImport<MRImageType> VTKImageImporterType;
   typename VTKImageImporterType::Pointer           m_VTKImageImporter;
 
   TransformType                           m_Transform;
   TransformType                           m_TransformToBeSet;
 
   USImageObject::Pointer                  m_USImage;
+  USImageType::Pointer                    m_RescaledUSImage;
   vtkImageExport*                         m_VTKExporter;
 
   /** Null operation for State Machine transition */

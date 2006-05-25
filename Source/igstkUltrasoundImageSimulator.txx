@@ -20,7 +20,9 @@
 #include "igstkUltrasoundImageSimulator.h"
 
 #include "vtkImageData.h"
-#include "vtkImageCast.h"
+//#include "vtkImageCast.h"
+#include "itkRescaleIntensityImageFilter.h"
+#include "itkCastImageFilter.h"
 
 namespace igstk
 {
@@ -33,6 +35,7 @@ UltrasoundImageSimulator< TImageGeometricModel >
 {
   // We create the image spatial object
   m_ImageGeometricModel = NULL;
+  m_RescaledUSImage = NULL;
 
   this->RequestSetImageGeometricModel( m_ImageGeometricModel );
 
@@ -157,7 +160,7 @@ const typename UltrasoundImageSimulator<TImageGeometricModel>::USImageType *
 UltrasoundImageSimulator<TImageGeometricModel>
 ::GetITKImage() const
 {
-  return m_VTKImageImporter->GetOutput();
+  return m_RescaledUSImage;
 }
 
 
@@ -293,10 +296,12 @@ UltrasoundImageSimulator< TImageGeometricModel >
   m_ImageReslice->SetInterpolationModeToLinear();
   m_ImageReslice->Update();
   
-  vtkImageCast* castFilter = vtkImageCast::New();
-  castFilter->SetInput(m_ReslicedImageData);
-  castFilter->SetOutputScalarTypeToUnsignedChar();
-  m_VTKExporter->SetInput(castFilter->GetOutput());
+  //vtkImageCast* castFilter = vtkImageCast::New();
+  //castFilter->SetInput(m_ReslicedImageData);
+  //castFilter->SetOutputScalarTypeToUnsignedChar();
+  //m_VTKExporter->SetInput(castFilter->GetOutput());
+
+  m_VTKExporter->SetInput(m_ReslicedImageData);
 
   m_VTKImageImporter->SetUpdateInformationCallback( 
                                m_VTKExporter->GetUpdateInformationCallback());
@@ -321,13 +326,29 @@ UltrasoundImageSimulator< TImageGeometricModel >
   m_VTKImageImporter->SetCallbackUserData( 
                                         m_VTKExporter->GetCallbackUserData());
 
+  // Do the actual rescaling and casting of the US image
+  typedef itk::RescaleIntensityImageFilter<MRImageType> RescaleFilterType;
+  RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
+  rescaler->SetInput(m_VTKImageImporter->GetOutput());
+  rescaler->SetOutputMinimum(0);
+  rescaler->SetOutputMaximum(255);
+  rescaler->Update();
+
+  typedef itk::CastImageFilter<MRImageType,USImageType> CastFilterType;
+  CastFilterType::Pointer caster = CastFilterType::New();
+  caster->SetInput(rescaler->GetOutput());
+  caster->Update();
+  
+  m_RescaledUSImage = caster->GetOutput();
+
+
   typedef Friends::UltrasoundImageSimulatorToImageSpatialObject  HelperType;
   HelperType::SetITKImage( this, m_USImage.GetPointer() );
 
   // Update the transform of the image 
   m_USImage->RequestSetTransform(m_Transform);
 
-  castFilter->Delete();
+  //castFilter->Delete();
 }
 
 
