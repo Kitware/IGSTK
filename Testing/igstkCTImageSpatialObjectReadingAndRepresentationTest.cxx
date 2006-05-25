@@ -198,6 +198,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   view2D->RequestAddObject( representation );
 
   // Do manual redraws
+  view2D->RequestResetCamera();
   for( unsigned int i=0; i < 20; i++)
     {
     Fl::wait( 0.05 );
@@ -205,11 +206,12 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     Fl::check();       // trigger FLTK redraws
     }
 
+  
   /* Save screenshots in a file */
   std::string filename;
   filename = argv[2]; 
   view2D->RequestSaveScreenShot( filename ); 
-
+  
   // Do manual redraws for each orientation while changing slice numbers
     {
     representation->RequestSetOrientation( RepresentationType::Axial );
