@@ -47,10 +47,14 @@ public:
     
   /** Typedefs */
   typedef VesselObject                      VesselObjectType;
+    
+  /** Return the output vessel as an event */
+  void RequestGetVessel(unsigned long id);
 
-  /** Get the object */
-  const VesselObjectType * GetVessel(unsigned long id) const;
-  
+  /** Event type */
+  igstkLoadedObjectEventMacro( VesselObjectModifiedEvent, IGSTKEvent, 
+                               VesselObject);
+
 protected:
 
   /** Constructor */
@@ -60,7 +64,10 @@ protected:
   ~VascularNetworkObject( void );
 
   /** Print object information */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
+  
+  /** This function reports the vascular network */
+  void ReportVesselProcessing();
 
 private:
 
@@ -68,7 +75,13 @@ private:
   *  in order to enforce the protocol of smart pointers. */
   VascularNetworkObject(const Self&);          //purposely not implemented
   void operator=(const Self&);                 //purposely not implemented
+ 
+  /** Inputs to the State Machine */
+  igstkDeclareInputMacro( GetVessel );
 
+  /** States for the State Machine */
+  igstkDeclareStateMacro( Init );
+  unsigned long m_VesselId;
 
 };
 

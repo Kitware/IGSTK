@@ -128,11 +128,22 @@ void VascularNetworkObjectRepresentation::CreateActors()
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
 
+  igstkObserverObjectMacro(Vessel,
+    VascularNetworkObjectType::VesselObjectModifiedEvent,VesselObjectType)
+
+  VesselObserver::Pointer vesselObserver = VesselObserver::New();
+ 
+  m_VascularNetworkObject->AddObserver(
+            VascularNetworkObjectType::VesselObjectModifiedEvent(),
+            vesselObserver);
+
   unsigned int nTubes = m_VascularNetworkObject->GetNumberOfObjects();
 
   for(unsigned int ntube = 0; ntube < nTubes; ntube++)
     {
-    const VesselObjectType* vessel = m_VascularNetworkObject->GetVessel(ntube);
+    const_cast<VascularNetworkObjectType*>(
+               m_VascularNetworkObject.GetPointer())->RequestGetVessel(ntube);
+    const VesselObjectType* vessel = vesselObserver->GetVessel();
       
     if(vessel->GetNumberOfPoints() < 2)
       {
@@ -176,7 +187,7 @@ void VascularNetworkObjectRepresentation::CreateActors()
                                     this->GetGreen(),
                                     this->GetBlue());
           
-    sphere1->GetProperty()->SetOpacity(1.0);
+    sphere1->GetProperty()->SetOpacity(this->GetOpacity());
     this->AddActor( sphere1 );
 
     sphereMapper1->Delete();
@@ -208,7 +219,8 @@ void VascularNetworkObjectRepresentation::CreateActors()
     sphere2->GetProperty()->SetColor(this->GetRed(),
                                     this->GetGreen(),
                                     this->GetBlue());
-    sphere2->GetProperty()->SetOpacity(1.0); 
+    sphere2->GetProperty()->SetOpacity(this->GetOpacity());
+
     this->AddActor( sphere2 );
 
     sphereMapper2->Delete();
@@ -291,7 +303,9 @@ void VascularNetworkObjectRepresentation::CreateActors()
 
     TubeActor->GetProperty()->SetColor(this->GetRed(),
                                       this->GetGreen(),
-                                      this->GetBlue()); 
+                                      this->GetBlue());
+
+    TubeActor->GetProperty()->SetOpacity(this->GetOpacity());
 
     this->AddActor( TubeActor );
 

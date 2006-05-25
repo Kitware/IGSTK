@@ -145,10 +145,21 @@ void ContourVascularNetworkObjectRepresentation::CreateActors()
   unsigned int nTubes = m_VascularNetworkObject->GetNumberOfObjects();
   vtkAppendPolyData* appender = vtkAppendPolyData::New();
 
+  igstkObserverObjectMacro(Vessel,
+    VascularNetworkObjectType::VesselObjectModifiedEvent,VesselObjectType)
+
+  VesselObserver::Pointer vesselObserver = VesselObserver::New();
+ 
+  m_VascularNetworkObject->AddObserver(
+            VascularNetworkObjectType::VesselObjectModifiedEvent(),
+            vesselObserver);
+
   for(unsigned int ntube = 0; ntube < nTubes; ntube++)
     {
-    const VesselObjectType* vessel = m_VascularNetworkObject->GetVessel(ntube);
-    
+    const_cast<VascularNetworkObjectType*>(
+               m_VascularNetworkObject.GetPointer())->RequestGetVessel(ntube);
+    const VesselObjectType* vessel = vesselObserver->GetVessel();
+
     if(vessel->GetNumberOfPoints() < 2)
       {
       igstkLogMacro( CRITICAL, "Not enough points to render a tube.\n" );
