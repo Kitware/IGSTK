@@ -58,7 +58,7 @@ public:
 } // end of Friend namespace
 
 /** \class PivotCalibrationReader
- * \brief This class read an XML calibration file and returns a calibration
+ * \brief This class reads an XML calibration file and returns a calibration
  *        transform.
  * 
  *
