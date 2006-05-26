@@ -128,9 +128,6 @@ void VascularNetworkObjectRepresentation::CreateActors()
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
 
-  igstkObserverObjectMacro(Vessel,
-    VascularNetworkObjectType::VesselObjectModifiedEvent,VesselObjectType)
-
   VesselObserver::Pointer vesselObserver = VesselObserver::New();
  
   m_VascularNetworkObject->AddObserver(

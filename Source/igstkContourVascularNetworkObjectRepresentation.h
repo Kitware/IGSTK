@@ -100,6 +100,11 @@ private:
   igstkDeclareStateMacro( ValidVascularNetworkObject );
 
   VascularNetworkObjectType::ConstPointer m_VascularNetworkObjectToAdd;
+
+  igstkObserverObjectMacro(Vessel,
+    VascularNetworkObjectType::VesselObjectModifiedEvent,VesselObjectType)
+
+
 };
 
 

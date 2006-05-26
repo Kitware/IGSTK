@@ -145,9 +145,6 @@ void ContourVascularNetworkObjectRepresentation::CreateActors()
   unsigned int nTubes = m_VascularNetworkObject->GetNumberOfObjects();
   vtkAppendPolyData* appender = vtkAppendPolyData::New();
 
-  igstkObserverObjectMacro(Vessel,
-    VascularNetworkObjectType::VesselObjectModifiedEvent,VesselObjectType)
-
   VesselObserver::Pointer vesselObserver = VesselObserver::New();
  
   m_VascularNetworkObject->AddObserver(
