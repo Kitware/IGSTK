@@ -115,15 +115,6 @@ private:
   typedef FlockOfBirdsTrackerToolType::ConstPointer
                                      FlockOfBirdsTrackerToolConstPointer;
 
-  /** A buffer for holding tool transforms */
-  double m_TransformBuffer[NumberOfPorts][8];
-
-  /** A buffer for holding status of tools */
-  int m_StatusBuffer[NumberOfPorts];
-
-  /** A buffer for holding absent status of tools */
-  int m_AbsentBuffer[NumberOfPorts];
-
   /** Enable all tool ports that have tools plugged into them.
    * {The reference tool port is enabled as a static tool.} */
   void EnableToolPorts( void );
@@ -143,8 +134,11 @@ private:
   /** The command interpreter */
   CommandInterpreterType::Pointer  m_CommandInterpreter;
 
-  /** A mutex for multithreaded access to the buffer arrays */
+  /** A mutex for multithreaded access to the transform buffer */
   itk::MutexLock::Pointer  m_BufferLock;  
+
+  /** The buffers for holding tool transforms */
+  TransformType m_TransformBuffer[NumberOfPorts];
 };
 
 }

@@ -143,42 +143,21 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
 {
   igstkLogMacro( DEBUG, 
                  "FlockOfBirdsTracker::InternalUpdateStatus called ...\n");
-  m_CommandInterpreter->Point();
-  m_CommandInterpreter->Update();
 
-  // create the transform
-  TransformType transform;
-
-  typedef TransformType::VectorType TranslationType;
-  TranslationType translation;
-  
+  // Lock the buffer and copy the tracking information that was
+  // set by the tracking thread (tracking information is for first
+  // bird only for now).
+  // The amount of code between the "Lock" and "Unlock" should
+  // be as small as possible: just a copy from the buffer and
+  // nothing else.
   m_BufferLock->Lock();
 
-  float offset[3];
-  m_CommandInterpreter->GetPosition(offset);
+  TransformType transform = m_TransformBuffer[0];
 
-  translation[0] = offset[0];
-  translation[1] = offset[1];
-  translation[2] = offset[2];
+  m_BufferLock->Unlock();
 
-  float quaternion[4];
-  m_CommandInterpreter->GetQuaternion(quaternion);
-
-
-  typedef TransformType::VersorType RotationType;
-  RotationType rotation;
-  rotation.Set(quaternion[0],-quaternion[3],quaternion[2],quaternion[1]);
-
-  typedef TransformType::TimePeriodType TimePeriodType;
-  const TimePeriodType validityTime = 100.0;
-
-  transform.SetToIdentity(validityTime);
-  transform.SetTranslationAndRotation(translation, rotation, 0,
-                                      validityTime);
-
+  // copy the transform to the tool
   this->SetToolTransform(0, 0, transform);
-
-  m_BufferLock->Unlock(); 
 
   return SUCCESS;
 }
@@ -188,8 +167,46 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
 FlockOfBirdsTracker::ResultType 
 FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
 {
-  //igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalThreadedUpdateStatus "
-  //               "called ...\n");
+  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalThreadedUpdateStatus "
+                 "called ...\n");
+
+  m_CommandInterpreter->Point();
+  m_CommandInterpreter->Update();
+
+  float offset[3];
+  m_CommandInterpreter->GetPosition(offset);
+
+  float quaternion[4];
+  m_CommandInterpreter->GetQuaternion(quaternion);
+
+  // set the translation
+  typedef TransformType::VectorType TranslationType;
+  TranslationType translation;
+
+  translation[0] = offset[0];
+  translation[1] = offset[1];
+  translation[2] = offset[2];
+  
+  // set the rotation
+  typedef TransformType::VersorType RotationType;
+  RotationType rotation;
+  rotation.Set(quaternion[0],-quaternion[3],quaternion[2],quaternion[1]);
+
+  // set the validity time
+  typedef TransformType::TimePeriodType TimePeriodType;
+  const TimePeriodType validityTime = 100.0;
+
+  // Lock the buffer and change the value of the transform in the
+  // buffer. The amount of code between the "Lock" and "Unlock" 
+  // should be as small as possible.
+  m_BufferLock->Lock();
+
+  m_TransformBuffer[0].SetToIdentity(validityTime);
+  m_TransformBuffer[0].SetTranslationAndRotation(translation, rotation, 0,
+                                                 validityTime);
+
+  m_BufferLock->Unlock();
+
   return SUCCESS;
 }
 
