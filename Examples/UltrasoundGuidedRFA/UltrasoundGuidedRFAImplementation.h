@@ -203,6 +203,9 @@ private:
   igstkDeclareStateMacro( Initial );
 
   RegistrationType::Pointer m_Registration;
+
+  igstkObserverObjectMacro(VascularNetwork,
+    VascularNetworkReader::VascularNetworkModifiedEvent,VascularNetworkObject)
 };
 
 

@@ -281,9 +281,6 @@ void UltrasoundGuidedRFAImplementation
     m_VascularNetworkReader->RequestSetFileName(liverfilename);
     m_VascularNetworkReader->RequestReadObject();
 
-    igstkObserverObjectMacro(VascularNetwork,
-    VascularNetworkReader::VascularNetworkModifiedEvent,VascularNetworkObject)
-
     VascularNetworkObserver::Pointer vascularNetworkObserver 
                                             = VascularNetworkObserver::New();
     m_VascularNetworkReader->AddObserver(
