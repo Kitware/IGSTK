@@ -91,15 +91,6 @@ FlockOfBirdsTracker::InternalActivateTools( void )
   igstkLogMacro( DEBUG, 
                "FlockOfBirdsTracker::InternalActivateTools called ...\n");
   
-  // load any SROMS that are needed
-  for (unsigned int i = 0; i < NumberOfPorts; i++)
-    { 
-    if (!m_SROMFileNames[i].empty())
-      {
-      this->LoadVirtualSROM(i, m_SROMFileNames[i]);
-      }
-    }
-
   this->EnableToolPorts();
 
   m_NumberOfTools = 0;
@@ -118,15 +109,6 @@ FlockOfBirdsTracker::InternalActivateTools( void )
 FlockOfBirdsTracker::ResultType 
 FlockOfBirdsTracker::InternalDeactivateTools( void )
 {
-  for (unsigned int i = 0; i < NumberOfPorts; i++)
-    { 
-    if (!m_SROMFileNames[i].empty() &&
-        this->m_PortHandle[i] != 0)
-      {
-      this->ClearVirtualSROM(i);
-      }
-    }
-
   this->DisableToolPorts();
 
   return SUCCESS;
@@ -197,7 +179,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
 
   this->SetToolTransform(0, 0, transform);
 
-  m_BufferLock->Unlock();
+  m_BufferLock->Unlock(); 
 
   return SUCCESS;
 }
@@ -210,53 +192,6 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
   //igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalThreadedUpdateStatus "
   //               "called ...\n");
   return SUCCESS;
-}
-
-/** Specify an SROM file to be used with a passive or custom tool. */
-void FlockOfBirdsTracker::AttachSROMFileNameToPort( const unsigned int portNum,
-                                                    std::string fileName )
-{
-  igstkLogMacro( DEBUG, 
-                 "FlockOfBirdsTracker::AttachSROMFileNameToPort called..\n");
-
-  // the first 3 ports are active, don't allow SROMS for them
-  if ( (portNum >= 3) && (portNum <= NumberOfPorts) )
-    {
-    m_SROMFileNames[portNum] = fileName;
-    }
-}
-
-/** Load a virtual SROM, given the file name of the ROM file */
-bool FlockOfBirdsTracker::LoadVirtualSROM( const unsigned int tool,
-                                      const std::string SROMFileName) 
-{
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::LoadVirtualSROM called...\n");
-
-  if (this->m_PortHandle[tool] != 0)
-    {
-    igstkLogMacro( WARNING, "An SROM has already been loaded for tool "
-                   << tool << "\n");
-    return false;
-    }
-
-  std::ifstream sromFile;
-  sromFile.open(SROMFileName.c_str(), std::ios::binary );
-
-  if (!sromFile.is_open())
-    {
-    igstkLogMacro( WARNING, "FlockOfBirdsTracker::LoadVirtualSROM: couldn't "
-                   "find SROM file " << SROMFileName << " ...\n");
-    return false;
-    }
-
-  return true;
-}
-
-/** Clear a previously loaded SROM. */
-void FlockOfBirdsTracker::ClearVirtualSROM(const unsigned int tool)
-{
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::ClearVirtualSROM called...\n");
-  this->m_PortEnabled[tool] = 0;
 }
 
 /** Enable all tool ports that are occupied. */
@@ -299,12 +234,6 @@ void FlockOfBirdsTracker::PrintSelf( std::ostream& os,
   for( i = 0; i < NumberOfPorts; ++i )
     {
     os << indent << "Port " << i << " Handle: " << m_PortHandle[i] 
-       << std::endl;
-    }
-  os << indent << "Number of tools: " << m_NumberOfTools << std::endl;
-  for( i = 0; i < NumberOfPorts; ++i )
-    {
-    os << indent << "SROM filename " << i << " : " << m_SROMFileNames[i]
        << std::endl;
     }
 }

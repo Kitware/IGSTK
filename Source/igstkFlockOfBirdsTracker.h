@@ -26,10 +26,15 @@ namespace igstk
 {
 /** \class FlockOfBirdsTracker
  *
- * \brief Provides support for the FlockOfBirds optical tracker.
+ * \brief Provides support for the FlockOfBirds tracker.
  *
- * The FlockOfBirds is a magnetic tracker from Ascencion.
- * This class provides an interface to the FlockOfBirds.
+ * The FlockOfBirds is a magnetic tracker from Ascension.
+ * This class provides an interface to the FlockOfBirds,
+ * which is a magnetic tracker from Ascension Technology
+ * Corporation.  Currently this class only supports the
+ * tracking of a single receiver, but it would be
+ * straightforward to modify it to support tracking of
+ * additional receivers.
  *
  * \ingroup Trackers
  *
@@ -58,10 +63,6 @@ public:
 
   /** Get the number of tools that have been detected. */
   igstkGetMacro( NumberOfTools, unsigned int );
-
-  /** Specify an SROM file to be used with a passive or custom tool. */
-  void AttachSROMFileNameToPort( const unsigned int portNum, 
-                                 std::string  fileName );
 
 protected:
 
@@ -123,13 +124,6 @@ private:
   /** A buffer for holding absent status of tools */
   int m_AbsentBuffer[NumberOfPorts];
 
-  /** Load a virtual SROM, given the file name of the ROM file */
-  bool LoadVirtualSROM( const unsigned int port, 
-                        const std::string SROMFileName);
-
-  /** Clear the virtual SROM for a tool */
-  void ClearVirtualSROM( const unsigned int port );
-
   /** Enable all tool ports that have tools plugged into them.
    * {The reference tool port is enabled as a static tool.} */
   void EnableToolPorts( void );
@@ -145,9 +139,6 @@ private:
 
   /** Total number of tools detected. */
   unsigned int   m_NumberOfTools;
-
-  /** Names of the SROM files for passive tools and custom tools. */
-  std::string    m_SROMFileNames[NumberOfPorts];
 
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;
