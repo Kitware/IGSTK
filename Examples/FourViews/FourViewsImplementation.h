@@ -46,7 +46,13 @@ public:
 
   typedef igstk::View2D ViewType;
 
+  igstkObserverObjectMacro(VascularNetwork,
+                           VascularNetworkReader::VascularNetworkModifiedEvent,
+                           VascularNetworkObject)
 
+  igstkObserverObjectMacro(Vessel,
+       VascularNetworkObject::VesselObjectModifiedEvent,VesselObject)
+  
   FourViewsImplementation()
     {
     // Set up the four quadrant views
@@ -141,9 +147,6 @@ public:
       tubeReader->RequestSetFileName(filename);
       tubeReader->RequestReadObject();
 
-      igstkObserverObjectMacro(VascularNetwork,
-                            VascularNetworkReader::VascularNetworkModifiedEvent,
-                            VascularNetworkObject)
 
       VascularNetworkObserver::Pointer vascularNetworkObserver 
                                             = VascularNetworkObserver::New();
@@ -224,8 +227,6 @@ public:
       VascularNetworkObjectType::Pointer newNetwork 
                                         = VascularNetworkObjectType::New();
 
-      igstkObserverObjectMacro(Vessel,
-       VascularNetworkObjectType::VesselObjectModifiedEvent,VesselObjectType)
 
       VesselObserver::Pointer vesselObserver = VesselObserver::New();
  
@@ -237,7 +238,7 @@ public:
         {
         const_cast<VascularNetworkObjectType*>(m_TubeGroup.GetPointer()
                                                        )->RequestGetVessel(i);
-        igstk::VesselObject::ConstPointer tube = vesselObserver->GetVessel();
+        igstk::VesselObject::Pointer tube = vesselObserver->GetVessel();
         igstk::VesselObject::Pointer newVessel = igstk::VesselObject::New();
         for(unsigned int j=0;j<tube->GetNumberOfPoints();j++)
           {
