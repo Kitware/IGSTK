@@ -22,6 +22,7 @@
 namespace igstk
 {
 /** \class FlockOfBirdsTrackerTool
+ *
  * \brief A FlockOfBirds-specific TrackerTool class.
  *
  * This class is a for providing FlockOfBirds-specific functionality
