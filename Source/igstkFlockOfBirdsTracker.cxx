@@ -34,7 +34,6 @@ FlockOfBirdsTracker::FlockOfBirdsTracker(void):m_StateMachine(this)
   for (unsigned int i = 0; i < NumberOfPorts; i++)
     {
     this->m_PortEnabled[i] = 0;
-    this->m_PortHandle[i] = 0;
     }
 
   for (unsigned int j = 0; j < NumberOfPorts; j++)
@@ -229,11 +228,6 @@ void FlockOfBirdsTracker::PrintSelf( std::ostream& os,
   for( i = 0; i < NumberOfPorts; ++i )
     {
     os << indent << "Port " << i << " Enabled: " << m_PortEnabled[i] 
-       << std::endl;
-    }
-  for( i = 0; i < NumberOfPorts; ++i )
-    {
-    os << indent << "Port " << i << " Handle: " << m_PortHandle[i] 
        << std::endl;
     }
 }

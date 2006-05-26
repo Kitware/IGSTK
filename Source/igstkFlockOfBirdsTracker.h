@@ -134,9 +134,6 @@ private:
   /** Information about which tool ports are enabled. */
   int m_PortEnabled[NumberOfPorts];
 
-  /** The tool handles that the device has provides us with. */
-  int m_PortHandle[NumberOfPorts];
-
   /** Total number of tools detected. */
   unsigned int   m_NumberOfTools;
 
@@ -147,8 +144,7 @@ private:
   CommandInterpreterType::Pointer  m_CommandInterpreter;
 
   /** A mutex for multithreaded access to the buffer arrays */
-  itk::MutexLock::Pointer  m_BufferLock;
-
+  itk::MutexLock::Pointer  m_BufferLock;  
 };
 
 }
