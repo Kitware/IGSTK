@@ -32,6 +32,11 @@ namespace VascularNetworkReaderTest
 igstkObserverObjectMacro(VascularNetwork,
     ::igstk::VascularNetworkReader::VascularNetworkModifiedEvent,
     ::igstk::VascularNetworkObject)
+
+igstkObserverObjectMacro(Vessel,
+  ::igstk::VascularNetworkObject::VesselObjectModifiedEvent,
+  ::igstk::VesselObject)
+
 }
 
 int igstkVascularNetworkReaderTest( int argc, char * argv [] )
@@ -121,8 +126,7 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
   VascularNetworkType::Pointer network = 
                                        vascularNetworkObserver->GetVascularNetwork();
 
-  igstkObserverObjectMacro(Vessel,
-    VascularNetworkType::VesselObjectModifiedEvent,VesselObjectType)
+  typedef VascularNetworkReaderTest::VesselObserver VesselObserver;
 
   VesselObserver::Pointer vesselObserver = VesselObserver::New();
  
