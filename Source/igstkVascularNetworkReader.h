@@ -20,10 +20,6 @@
 #include "igstkMacros.h"
 #include "igstkSpatialObjectReader.h"
 
-#include "itkSpatialObjectReader.h"
-#include "itkObject.h"
-#include "itkEventObject.h"
-
 #include "igstkVascularNetworkObject.h"
 #include "itkVesselTubeSpatialObject.h"
 #include "igstkVesselObject.h"
