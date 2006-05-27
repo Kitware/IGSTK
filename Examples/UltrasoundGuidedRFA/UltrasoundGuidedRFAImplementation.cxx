@@ -64,7 +64,8 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
   m_Communication->SetDataBits( igstk::SerialCommunication::DataBits8 );
   m_Communication->SetStopBits( igstk::SerialCommunication::StopBits1 );
-  m_Communication->SetHardwareHandshake(igstk::SerialCommunication::HandshakeOff );
+  m_Communication->SetHardwareHandshake(
+                                   igstk::SerialCommunication::HandshakeOff );
 #endif
 
   m_Tracker->SetCommunication(m_Communication);
@@ -91,7 +92,8 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
 
   toolCalibrationTransform.SetTranslationAndRotation(translation,
                                                   rotation,0.0001,100000000);
-  m_Tracker->SetToolCalibrationTransform( TRACKER_TOOL_PORT, 0, toolCalibrationTransform);
+  m_Tracker->SetToolCalibrationTransform( TRACKER_TOOL_PORT, 0, 
+                                          toolCalibrationTransform);
 
   /** Tool calibration transform */
   igstk::Transform patientTransform;
@@ -241,7 +243,8 @@ void UltrasoundGuidedRFAImplementation
 ::AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
 {
   const unsigned int toolNumber = 0;
-  m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, toolNumber, objectToTrack );
+  m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, toolNumber, 
+                                                        objectToTrack );
 }
 
 /** Load a liver surface */
@@ -297,9 +300,9 @@ void UltrasoundGuidedRFAImplementation
 
     // Represent as a 2D contour on the 2D View
     m_ContourVascularNetworkRepresentation->RequestSetVascularNetworkObject( 
-                                   vascularNetworkObserver->GetVascularNetwork() );
+                              vascularNetworkObserver->GetVascularNetwork() );
     m_ContourVascularNetworkRepresentation->RequestSetOrientation(
-                                      ContourVascularNetworkObjectRepresentation::Axial);
+                           ContourVascularNetworkObjectRepresentation::Axial);
     m_ContourVascularNetworkRepresentation->SetColor(1.0,1.0,1.0);
     m_ContourVascularNetworkRepresentation->SetOpacity(1.0);
     this->Display2D->RequestAddObject(m_ContourVascularNetworkRepresentation);
@@ -395,7 +398,8 @@ void UltrasoundGuidedRFAImplementation
       }
  
     m_LiverUSRepresentation = USImageRepresentationType::New();
-    m_LiverUSRepresentation->RequestSetImageSpatialObject(usImageObserver->GetUSImage());
+    m_LiverUSRepresentation->RequestSetImageSpatialObject(
+                                              usImageObserver->GetUSImage());
     m_LiverUSRepresentation->SetWindowLevel(255/2.0,255/2.0);
     this->Display2D->RequestAddObject( m_LiverUSRepresentation );
     this->Display2D->RequestResetCamera();
@@ -427,7 +431,8 @@ void UltrasoundGuidedRFAImplementation
   m_ObliqueLiverMRRepresentation->RequestSetVector2OnThePlane(v2);
   m_ObliqueLiverMRRepresentation->RequestReslice();
 
-  //m_ContourLiverRepresentation->RequestSetOrientation(ContourObjectRepresentation::Axial);
+  //m_ContourLiverRepresentation->RequestSetOrientation(
+  //                                    ContourObjectRepresentation::Axial);
   //m_ContourLiverRepresentation->RequestSetSlicePosition(value*0.78125);
   m_ContourLiverRepresentation->RequestSetOriginPointOnThePlane(origin);
   m_ContourLiverRepresentation->RequestSetVector1OnThePlane(v1);
@@ -472,12 +477,14 @@ void UltrasoundGuidedRFAImplementation
   v2[1] = 0;
   v2[2] = 1;
   v2 = transform.GetRotation().Transform(v2);  
-  m_ObliqueLiverMRRepresentation->RequestSetOriginPointOnThePlane(m_ObliquePoint);
+  m_ObliqueLiverMRRepresentation->RequestSetOriginPointOnThePlane(
+                                                             m_ObliquePoint);
   m_ObliqueLiverMRRepresentation->RequestSetVector1OnThePlane(v1);
   m_ObliqueLiverMRRepresentation->RequestSetVector2OnThePlane(v2);
   m_ObliqueLiverMRRepresentation->RequestReslice();
 
-  m_ContourLiverRepresentation->RequestSetOriginPointOnThePlane(m_ObliquePoint);
+  m_ContourLiverRepresentation->RequestSetOriginPointOnThePlane(
+                                                             m_ObliquePoint);
   m_ContourLiverRepresentation->RequestSetVector1OnThePlane(v1);
   m_ContourLiverRepresentation->RequestSetVector2OnThePlane(v2);
   m_ContourLiverRepresentation->RequestReslice();
@@ -485,7 +492,7 @@ void UltrasoundGuidedRFAImplementation
   this->Display2D->RequestResetCamera();
 
   // Generate 
-/*  m_USSimulator->RequestSetTransform(transform);
+  /*m_USSimulator->RequestSetTransform(transform);
   m_USSimulator->RequestReslice();
   //m_USSimulator->SetLogger(m_Logger);
 
@@ -500,7 +507,7 @@ void UltrasoundGuidedRFAImplementation
     std::cout << "No USImage!" << std::endl;
     return;
     }
-*/
+  */
   /*
   USImageObject::Pointer usImage = usImageObserver->GetSimulatedUSImage();
 
@@ -522,8 +529,9 @@ void UltrasoundGuidedRFAImplementation
   */
 
   //registration->SetLogger(logger);
- // m_Registration->RequestSetFixedUS3D(usImageObserver->GetSimulatedUSImage()); 
- // m_Registration->RequestCalculateRegistration();
+  // m_Registration->RequestSetFixedUS3D(
+  //                                   usImageObserver->GetSimulatedUSImage()); 
+  // m_Registration->RequestCalculateRegistration();
 
   /*
   RegistrationTransformObserver::Pointer registrationTransformObserver 
@@ -544,8 +552,7 @@ void UltrasoundGuidedRFAImplementation
     std::cout << "No Transform!" << std::endl;
     std::cout << "[FAILED]" << std::endl;
     return;
-    }
-    */
+    }*/
 }
 
 } // end of namespace

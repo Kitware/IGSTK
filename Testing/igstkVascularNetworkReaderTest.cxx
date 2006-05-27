@@ -120,11 +120,11 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  typedef ReaderType::VascularNetworkType VascularNetworkType;
+  typedef ReaderType::VascularNetworkType       VascularNetworkType;
   typedef VascularNetworkType::VesselObjectType VesselObjectType;
 
   VascularNetworkType::Pointer network = 
-                                       vascularNetworkObserver->GetVascularNetwork();
+                                vascularNetworkObserver->GetVascularNetwork();
 
   typedef VascularNetworkReaderTest::VesselObserver VesselObserver;
 
@@ -161,7 +161,7 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);
 
-   // Create an FLTK minimal GUI
+  // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"Vascular Network View Test");
     
   typedef igstk::View3D  View3DType;

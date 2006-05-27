@@ -70,13 +70,6 @@ void VascularNetworkObject::RequestGetVessel(unsigned long id)
     }
 }
 
-/** Return a pointer to a tube */
-/*const VascularNetworkObject::VesselObjectType * 
-VascularNetworkObject::GetVessel(unsigned long id) const
-{
-  return dynamic_cast<const VesselObjectType*>(this->GetObject(id));
-}*/
-
 /** Print object information */
 void VascularNetworkObject
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const

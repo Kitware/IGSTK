@@ -52,4 +52,3 @@ int igstkUSImageObjectRepresentationTest( int , char* [] )
 
   return EXIT_SUCCESS;
 }
-

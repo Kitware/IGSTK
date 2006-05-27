@@ -32,7 +32,8 @@ VascularNetworkReader::VascularNetworkReader():m_StateMachine(this)
   igstkAddStateMacro( NullVascularNetworkObject );
   igstkAddStateMacro( ValidVascularNetworkObject );
 
-  igstkAddTransitionMacro( NullVascularNetworkObject, NullVascularNetworkObject, 
+  igstkAddTransitionMacro( NullVascularNetworkObject, 
+                           NullVascularNetworkObject, 
                            NullVascularNetworkObject,  No );
 
   igstkAddTransitionMacro( NullVascularNetworkObject,
@@ -70,7 +71,7 @@ void VascularNetworkReader::NoProcessing()
 void VascularNetworkReader::RequestGetVascularNetwork()
 {
   igstkLogMacro( DEBUG, 
-              "igstk::VascularNetworkReader::RequestGetVascularNetwork called...\n");
+       "igstk::VascularNetworkReader::RequestGetVascularNetwork called...\n");
   m_StateMachine.PushInput(m_GetVascularNetworkInput);
   m_StateMachine.ProcessInputs();
 }
