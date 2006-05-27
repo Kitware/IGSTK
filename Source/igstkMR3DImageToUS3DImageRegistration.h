@@ -40,8 +40,11 @@ namespace igstk
 
 /** \class MR3DImageToUS3DImageRegistration
  * 
- * \brief 
- * 
+ * \brief This class registers a 3D MR image with a 3D Utrasound image
+ * The interpolator used is linear to perform the registration with a 
+ * minimum amount of time. The current metric evaluating the match between the
+ * two images is a mean square.
+ * The optimizer used in this class is a regular step gradient descent optimizer.
  *
  * \ingroup Registration
  */
