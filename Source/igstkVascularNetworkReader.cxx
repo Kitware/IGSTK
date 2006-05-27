@@ -88,11 +88,20 @@ void VascularNetworkReader::AttemptReadObjectProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::VascularNetworkReader::\
                         AttemptReadObject called...\n");
+
   Superclass::AttemptReadObjectProcessing();
 
   // Do the conversion
   GroupSpatialObjectType::Pointer m_GroupSpatialObject 
                                           = m_SpatialObjectReader->GetGroup();
+
+  if(!m_GroupSpatialObject)
+    {
+    m_StateMachine.PushInput( m_NullVascularNetworkObjectInput );
+    m_StateMachine.ProcessInputs();
+    return;
+    }
+
   GroupSpatialObjectType::ChildrenListType * children 
                                    = m_GroupSpatialObject->GetChildren(99999);
   GroupSpatialObjectType::ChildrenListType::const_iterator it 
