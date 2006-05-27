@@ -374,18 +374,14 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
 
   // Reset the calibration transform (rotation and translation)
   VersorType quaternion;
+  VersorType initQuaternion;
   VectorType translation;
 
   VersorType::VectorType axis;
 
   ParametersType finalparams = params;
-  finalparams[0] -= initialParameters[0];
-  finalparams[1] -= initialParameters[1];
-  finalparams[2] -= initialParameters[2];
-  finalparams[3] -= initialParameters[3];
-  finalparams[4] -= initialParameters[4];
-  finalparams[5] -= initialParameters[5];
-    
+  
+  // Create the optimized quaternion
   double norm = finalparams[0]*finalparams[0];
   axis[0] = finalparams[0];
   norm += finalparams[1]*finalparams[1];
@@ -402,12 +398,31 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
     {
     axis = axis / (norm+epsilon*norm);
     }
-  VersorType newVersor;
   quaternion.Set(axis);
 
-  translation[0] = finalparams[3];
-  translation[1] = finalparams[4];
-  translation[2] = finalparams[5];
+  // Compute the initial quaterniom
+  norm = initialParameters[0]*initialParameters[0];
+  axis[0] = initialParameters[0];
+  norm += initialParameters[1]*initialParameters[1];
+  axis[1] = initialParameters[1];
+  norm += initialParameters[2]*initialParameters[2];
+  axis[2] = initialParameters[2];
+  if( norm > 0)
+    {
+    norm = vcl_sqrt(norm);
+    }
+
+  if(norm >= 1.0-epsilon)
+    {
+    axis = axis / (norm+epsilon*norm);
+    }
+  initQuaternion.Set(axis);
+
+  quaternion /= initQuaternion;
+
+  translation[0] = finalparams[3]-initialParameters[3];
+  translation[1] = finalparams[4]-initialParameters[4];
+  translation[2] = finalparams[5]-initialParameters[5];
 
   this->m_RegistrationTransform.SetTranslationAndRotation( translation, 
                                                           quaternion, 
