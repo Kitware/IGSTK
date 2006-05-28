@@ -54,7 +54,10 @@ DOCR_Registration::DOCR_Registration( ImageSOType::Pointer imageSO,
     m_ROIstart = ROIstart;
     m_ROIsize = ROIsize;
 
-    for (int i = 0; i < NUM_SEGMENTATION_LABELS; i++) m_fiducials[i][0][0] = 0;
+    for(int i = 0; i < NUM_SEGMENTATION_LABELS; i++)
+      {
+      m_fiducials[i][0][0] = 0;
+      }
     m_numFiducials = 0;
 
     m_verificationPoint[0] = -100.3; //37.772; //4.05799;
@@ -84,7 +87,10 @@ DOCR_Registration::DOCR_Registration( SSVolumeType::Pointer volume,
   m_ROIstart = ROIstart;
   m_ROIsize = ROIsize;
 
-  for (int i = 0; i < NUM_SEGMENTATION_LABELS; i++) m_fiducials[i][0][0] = 0;
+  for( int i = 0; i < NUM_SEGMENTATION_LABELS; i++ )
+    {
+    m_fiducials[i][0][0] = 0;
+    }
   m_numFiducials = 0;
 
   m_verificationPoint[0] = 37.772; //4.05799;
@@ -112,12 +118,21 @@ bool DOCR_Registration::compute()
 {
   // Initialization
   std::vector< vnl_vector<double> > segmentedFiducials(NUM_FIDUCIALS);
-  for(int i = 0; i < NUM_FIDUCIALS; i++) segmentedFiducials[i].set_size(3);
+  for(int i = 0; i < NUM_FIDUCIALS; i++)
+    {
+    segmentedFiducials[i].set_size(3);
+    }
   short found = -1;
   std::vector< vnl_vector<double> > testData(NUM_FIDUCIALS);
-  for(int i = 0; i < NUM_FIDUCIALS; i++) testData[i].set_size(3);
+
+  for(int i = 0; i < NUM_FIDUCIALS; i++)
+    {
+    testData[i].set_size(3);
+    }
+
   testData[0].copy_in(m_verificationPoint);
-  vnl_matrix<double>                m_testPTProtation(3,3);
+
+  vnl_matrix<double>   m_testPTProtation(3,3);
 
 
 // ----------------------------------------------------------------------------
@@ -175,60 +190,102 @@ bool DOCR_Registration::compute()
     //std::cout << "Histogram size " << histogramSize << std::endl;
 
     for( bin=0; bin <= histogramSize; bin++ )
-    {
+      {
       avg += histogram->GetFrequency( bin, 0 );
-      if ((((bin+1)%BIGBINSIZE)==0)&&(bin < histogramSize)) {
+      if( (((bin+1)%BIGBINSIZE)==0)&&(bin < histogramSize) )
+        {
         avg /= BIGBINSIZE;
         m_bins[bigBin] = avg;
-        if (bigBin == NUMBERBIGBINS) std::cout << std::endl << "ERROR\n";
-        if (avg > max) max = avg;
+        
+        if (bigBin == NUMBERBIGBINS)
+          { 
+          std::cout << std::endl << "ERROR\n";
+          }
+        
+        if (avg > max) 
+          {
+          max = avg;
+          }
+
         avg = 0;
         bigBin++;
-      } else if (bin == histogramSize) 
-      {
+        } 
+      else if (bin == histogramSize) 
+        {
         avg /= (bin+1)%BIGBINSIZE;
         m_bins[bigBin] = avg;
-        if (bigBin == NUMBERBIGBINS) std::cout << std::endl << "ERROR\n";
+        if( bigBin == NUMBERBIGBINS )
+          {
+          std::cout << std::endl << "ERROR\n";
+          }
         avg = 0;
         bigBin++;
+        }
       }
-    }
   
     //std::cout << std::endl << max << std::endl << std::endl;
+   
     avg=0;
+
     for( bin=0; bin <= histogramSize; bin++ ) // <= is correct !!
-    {
+      {
       avg += histogram->GetFrequency( bin, 0 );
-      if ((((bin+1)%BIGBINSIZE)==0)&&(bin < histogramSize)) {
+      if( (((bin+1)%BIGBINSIZE)==0)&&(bin < histogramSize) )
+        {
         avg /= BIGBINSIZE;
         std::cout << bin << " " << avg << " ";
-        for (int i=0; i <= (avg*120)/max; i++) std::cout << "#";
+
+        for (int i=0; i <= (avg*120)/max; i++)
+          {
+          std::cout << "#";
+          }
+
         std::cout << std::endl;
         avg = 0;
-      } else if (bin == histogramSize) {
+        }
+      else if (bin == histogramSize) 
+        {
         avg /= (bin+1)%BIGBINSIZE;
         std::cout << bin << " " << avg << " ";
-        for (int i=0; i <= (avg*120)/max; i++) std::cout << "#";
+        for( int i=0; i <= (avg*120)/max; i++ )
+          {
+          std::cout << "#";
+          }
         std::cout << std::endl;
         avg = 0;
+        }
       }
-    }
   
     bool thresholdfound = false;
     unsigned int subtracted = 0;
-    do {
-      for( bin=0; bin < NUMBERBIGBINS; bin++ ) m_bins[bin] -= 0.01;
+
+    do{
+      for( bin=0; bin < NUMBERBIGBINS; bin++ )
+        {
+        m_bins[bin] -= 0.01;
+        }
+      
       subtracted++;
-      for( bin = NUMBERBIGBINS - 1; (bin >= 3)&&(m_bins[bin] >= 0); bin--) ;
+      
+      for( bin = NUMBERBIGBINS - 1; (bin >= 3)&&(m_bins[bin] >= 0); bin--);
+
       if((m_bins[bin] < 0)&&(m_bins[bin-1] < 0)&&
          (m_bins[bin-2] < 0)&&(m_bins[bin-3] < 0))
+        {
         thresholdfound = true;
-    } while((!thresholdfound) && (bin < (NUMBERBIGBINS - 1)) && (bin != 3));
+        }
+      } while((!thresholdfound) && (bin < (NUMBERBIGBINS - 1)) && (bin != 3));
 
-    if (thresholdfound)
+    if( thresholdfound )
+      {
       std::cout << "threshold bin: " << bin+1 << ". (of " <<
         NUMBERBIGBINS << ")" << std::endl;
-    else std::cout << "no threshold found" << std::endl;
+      }
+    else 
+      {
+      std::cout << "no threshold found" << std::endl;
+      }
+
     m_threshold = bin * BIGBINSIZE;
 
     std::cout << "subtraction steps of 0.01: " << subtracted << std::endl;
@@ -236,15 +293,16 @@ bool DOCR_Registration::compute()
     //for( bin=0; bin < NUMBERBIGBINS; bin++ )
     //  std::cout << bin << " " << m_bins[bin] << std::endl;
 
-    if (!thresholdfound)
+    if( !thresholdfound )
       {
       std::cout << "No threshold found" << std::endl;
       return false;
       }
 
-    std::cout << "threshold: " << m_threshold << std::endl <<
-      "In relation to " << HIGHESTGRAYVALUE << " scale :" << 
-      m_threshold-(4095-HIGHESTGRAYVALUE) << std::endl;
+    std::cout << "threshold: " << m_threshold << std::endl 
+              << "In relation to " << HIGHESTGRAYVALUE 
+              << " scale :" << m_threshold-(4095-HIGHESTGRAYVALUE) 
+              << std::endl;
 
     m_threshold = m_threshold-(4095-HIGHESTGRAYVALUE);
 
@@ -272,29 +330,29 @@ bool DOCR_Registration::compute()
 
   std::cout << "----------------- Segmenting fiducials -------------------\n\n";
 
-  for (int k = 0; k < m_volumeSize[2]; k++)              // z
-  {
-    for (int j = 0; j < m_volumeSize[1]; j++)            // y
+  for( int k = 0; k < m_volumeSize[2]; k++ )              // z
     {
-      for (int i = 0; i < m_volumeSize[0]; i++, ++it1)   // x
+    for (int j = 0; j < m_volumeSize[1]; j++ )            // y
       {
+      for (int i = 0; i < m_volumeSize[0]; i++, ++it1 )   // x
+        {
 
 // The term !((i>10)&&(i<16)&&(j>22)&&(j<28))
 // excludes the 2. fiducial. (F. with 2nd highest z value in neede holder space)
 // It's data set SPECIFIC !!!
 
-        if ((it1.Get() > m_threshold)&&!((i>10)&&(i<16)&&(j>22)&&(j<28)))
-        {
+        if((it1.Get() > m_threshold)&&!((i>10)&&(i<16)&&(j>22)&&(j<28)))
+          {
           // C 9
           //std::cout << "next pixel. Actual number of fiducials: " <<
           //    m_numFiducials << std::endl;
 
           for (int l = 0; l < NUM_SEGMENTATION_LABELS; l++)        // fiducial
-          {
-            if ((m_fiducials[l][0][0] != 0) && (found == -1))
             {
-              for (int m = 1; m <= m_fiducials[l][0][0]; m++)    // voxel
+            if ((m_fiducials[l][0][0] != 0) && (found == -1))
               {
+              for (int m = 1; m <= m_fiducials[l][0][0]; m++)    // voxel
+                {
                 if ((found == -1)&&
                    (m_fiducials[l][m][0] >= (((i - 1)<0) ? 0:(i-1))) &&
                    (m_fiducials[l][m][0] <= (((i + 1)>(m_volumeSize[0]-1)) ? 
@@ -307,7 +365,7 @@ bool DOCR_Registration::compute()
                    (m_fiducials[l][m][2] >= (((k - 1)<0) ? 0:(k-1))) &&
                    (m_fiducials[l][m][2] <= (((k + 1)>(m_volumeSize[2]-1)) ?
                    (m_volumeSize[2] - 1) : (k + 1))))
-                {
+                  {
                   found = l;
                   m_fiducials[l][m_fiducials[l][0][0] + 1][0] = i;
                   m_fiducials[l][m_fiducials[l][0][0] + 1][1] = j;
@@ -317,12 +375,13 @@ bool DOCR_Registration::compute()
                   //    std::cout << m_fiducials[l][o][0] << " " <<
                //  m_fiducials[l][o][1] << " " << m_fiducials[l][o][2] << " / ";
                   //std::cout << std::endl;
+                  }
                 }
               }
             }
-          }
-          if (found != -1)
-          {
+
+          if( found != -1 )
+            {
             m_fiducials[found][0][0]++;
             std::cout << "Pixel " << i << "/" << j << "/" << k <<
               " add: Fiducial " << found << std::endl;
@@ -333,27 +392,27 @@ bool DOCR_Registration::compute()
             do {
               foundconnected = false;
               label1 = label2 = -1;
-              for (int o = 0; (o < NUM_SEGMENTATION_LABELS)&&
-                                              (!foundconnected); o++)// fiducial
-              {
-                //std::cout << "o: " << o << std::endl;
-                if (m_fiducials[o][0][0] != 0)
+              for( int o = 0; (o < NUM_SEGMENTATION_LABELS)&&
+                              (!foundconnected); o++)// fiducial
                 {
-                  for (int p = 1; (p <= m_fiducials[o][0][0])&&
-                                  (!foundconnected); p++)    // voxel
+                //std::cout << "o: " << o << std::endl;
+                if( m_fiducials[o][0][0] != 0)
                   {
+                  for( int p = 1; (p <= m_fiducials[o][0][0])&&
+                                  (!foundconnected); p++)    // voxel
+                    {
                     //std::cout << "p: " << p << std::endl;
                     for (int o2 = 0; (o2 < (NUM_SEGMENTATION_LABELS))&&
                                      (!foundconnected); o2++)        // fiducial
-                    {
+                      {
                       //std::cout << "o2: " << o2 << std::endl;
                       if (o != o2)
-                      {
-                        if (m_fiducials[o2][0][0] != 0)
                         {
+                        if (m_fiducials[o2][0][0] != 0)
+                          {
                           for (int p2 = 1; (p2 <= m_fiducials[o2][0][0])&&
                                            (!foundconnected); p2++)    // voxel
-                          {
+                            {
                             //std::cout << "p2: " << p2 << std::endl;
                             //if ((o == 3)&&(p == 2)&&(o2 == 4)&&(p2 == 2))
                             //  std::cout << std::endl << "~~~~~~~~~~~~~~~~" <<
@@ -373,11 +432,11 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
   0:(m_fiducials[o2][p2][2]-1))) &&
     (m_fiducials[o][p][2]<=(((m_fiducials[o2][p2][2] + 1)>(m_volumeSize[2]-1)) ?
     (m_volumeSize[2] - 1) : (m_fiducials[o2][p2][2] + 1))))
-{
+      {
       label1 = o;
       label2 = o2;
       foundconnected = true;
-}
+      }
                           }
                         }
                       }
@@ -387,9 +446,9 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
               }
 
               if (foundconnected)
-              {
-                for (int p2 = 1; p2 <= m_fiducials[label2][0][0]; p2++) // voxel
                 {
+                for (int p2 = 1; p2 <= m_fiducials[label2][0][0]; p2++) // voxel
+                  {
                   m_fiducials[label1][0][0]++;
                   m_fiducials[label1][m_fiducials[label1][0][0]][0] = 
                     m_fiducials[label2][p2][0];
@@ -397,34 +456,34 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
                     m_fiducials[label2][p2][1];
                   m_fiducials[label1][m_fiducials[label1][0][0]][2] =
                     m_fiducials[label2][p2][2];
-                }
+                  }
                 m_fiducials[label2][0][0] = 0;
                 std::cout << "Merged " << (unsigned short)label1 << " and " <<
                   (unsigned short)label2 << " m_numFiducials: " <<
                   m_numFiducials << " ---------------------------" << std::endl;
-                {
+                  {
                   int o3;
                   for (o3 = label2+1; ((o3 < (NUM_SEGMENTATION_LABELS))&&
                                       (m_fiducials[o3][0][0] != 0)); o3++)
-                  {                                                  // fiducial
+                    {                                                  // fiducial
                     std::cout << "Copy " << o3 << " ";
                     m_fiducials[o3-1][0][0] = m_fiducials[o3][0][0];
                     for (int p2 = 1; p2 <= m_fiducials[o3][0][0]; p2++) // voxel
-                    {
+                      {
                       m_fiducials[o3-1][p2][0] = m_fiducials[o3][p2][0];
                       m_fiducials[o3-1][p2][1] = m_fiducials[o3][p2][1];
                       m_fiducials[o3-1][p2][2] = m_fiducials[o3][p2][2];
+                      }
                     }
-                  }
                   std::cout << std::endl;
                   m_fiducials[o3][0][0] = 0;
-                }
+                  }
                 m_numFiducials--;
-              }
-            } while(foundconnected);
-          }
+                }
+              } while(foundconnected);
+            }
           else
-          {
+            {
             m_fiducials[m_numFiducials][0][0] = 1;
             m_fiducials[m_numFiducials][1][0] = i;
             m_fiducials[m_numFiducials][1][1] = j;
@@ -432,50 +491,61 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
             std::cout << "Pixel " << i << "/" << j << "/" << k <<
                   " new: Fiducial " << m_numFiducials << std::endl;
             m_numFiducials++;
+            }
           }
-        }
         found = -1;
+        }
       }
     }
-  }
 
-  if (m_numFiducials != NUM_FIDUCIALS)
-  {
-    std::cout << "\nNumber of fiducials (" << m_numFiducials << ") is not correct ! It should be " << NUM_FIDUCIALS << ". \n";
+  if( m_numFiducials != NUM_FIDUCIALS )
+    {
+    std::cout << "\nNumber of fiducials (" 
+              << m_numFiducials 
+              << ") is not correct ! It should be " 
+              << NUM_FIDUCIALS << ". \n";
     return false;
-  }
+    }
   // C 8
 
-  std::cout << std::endl << "Modifying data according to spacing and origin" <<
-    std::endl << std::endl;
+  std::cout << std::endl;
+  std::cout << "Modifying data according to spacing and origin";
+  std::cout << std::endl << std::endl;
 
-  for (int i = 0; i < m_numFiducials; i++)
-  {
-    double avg[3] = {0, 0, 0};
-    for (int j = 1; j <= m_fiducials[i][0][0]; j++)
+  for( int i = 0; i < m_numFiducials; i++ )
     {
+    double avg[3] = {0, 0, 0};
+    for( int j = 1; j <= m_fiducials[i][0][0]; j++ )
+      {
       avg[0] += m_fiducials[i][j][0];
       avg[1] += m_fiducials[i][j][1];
       avg[2] += m_fiducials[i][j][2];
-    }
+      }
     avg[0] /= m_fiducials[i][0][0];
     avg[1] /= m_fiducials[i][0][0];
     avg[2] /= m_fiducials[i][0][0];
     
-    std::cout << "CT pixel space: " << avg[0] << " " << avg[1] << " " <<
-      avg[2] << std::endl;
+    std::cout << "CT pixel space: ";
+    std::cout << avg[0] << " " 
+              << avg[1] << " " 
+              << avg[2] << std::endl;
 
     SSVolumeType::PointType origin = m_SSEntireLoadedVolume->GetOrigin();
-    for(int j=0; j<3; j++)
+
+    for( int j=0; j<3; j++ )
       {
       avg[j] = origin[j] + (avg[j]+m_ROIstart[j]) * m_CT_Spacing[j];
       }
     // reflection for mha files
-    if (m_usingMHA) avg[2] *= -1;
+    if( m_usingMHA ) 
+       {
+       avg[2] *= -1;
+       }
 
     segmentedFiducials[i].copy_in(avg);
-    std::cout << "Fiducial " << i << ": " << segmentedFiducials[i] << 
-      std::endl << std::endl;
+    std::cout << "Fiducial " << i << ": " 
+              << segmentedFiducials[i] 
+              << std::endl << std::endl;
   }
 
   std::cout << std::endl <<
@@ -486,39 +556,63 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
 
   m_meanPoint.set_size(SPACE_DIMENSION);
   m_meanPoint = (double)(0.0);
-  for(int i = 0; i < SPACE_DIMENSION; i++)
-    for(int j = 0; j < m_numFiducials; j++)
+
+  for( int i = 0; i < SPACE_DIMENSION; i++ )
+    {
+    for( int j = 0; j < m_numFiducials; j++ )
+      {
       m_meanPoint[i] += segmentedFiducials[j][i];
+      }
+    }
+
   m_meanPoint /= m_numFiducials;
 
   std::cout << "mean point: " << m_meanPoint << std::endl;
 
-  for(int i = 0; i < m_numFiducials; i++)
-    m_transformedData.push_back(segmentedFiducials[i] - m_meanPoint);
+  for( int i = 0; i < m_numFiducials; i++ )
+    {
+    m_transformedData.push_back( segmentedFiducials[i] - m_meanPoint );
+    }
 
   std::cout << "verification point: " << testData[0] << std::endl;
 
   m_covariance.set_size(SPACE_DIMENSION, SPACE_DIMENSION);
   m_covariance = (double)0.0;            
-  for(int i = 0; i < m_numFiducials; i++)
-  {     
+
+  for( int i = 0; i < m_numFiducials; i++ )
+    {     
     for(int j = 0; j < SPACE_DIMENSION; j++)
+      {
       for(int k = j; k < SPACE_DIMENSION; k++)
-        m_covariance(j, k) += m_transformedData[i][j] * m_transformedData[i][k];
-  }
+        {
+        m_covariance(j, k) += m_transformedData[i][j] * 
+                              m_transformedData[i][k];
+        }
+      }
+    }
+
   for(int j = 0; j < SPACE_DIMENSION; j++)
+    {
     for(int k = j + 1; k < SPACE_DIMENSION; k++)
+      {
       m_covariance(k, j) = m_covariance(j, k);
+      }
+    }
 
   vnl_symmetric_eigensystem< double > eigenSystem(m_covariance);
 
   m_eigenVectors = eigenSystem.V;
   m_inverseEigenVectors = vnl_matrix_inverse<double>(m_eigenVectors);
+  
   for(int i = 0; i < SPACE_DIMENSION; i++)
+    {
     m_eigenValues.push_back(eigenSystem.D(i, i));
+    }
 
   for(int i = 0; i < m_numFiducials; i++) 
+    {
     m_transformedData[i].post_multiply(m_eigenVectors);
+    }
 
   // C 10
 
@@ -533,34 +627,46 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
 
   // C 2
 
-  for (int i = 0; i < m_numFiducials; i++) 
+  for( int i = 0; i < m_numFiducials; i++ ) 
+    {
     std::cout << "PCA Transformed Data " << i << ": " <<
         m_transformedData[i] << std::endl;
+    }
 
-  for (int i = 0; i < m_numFiducials; i++)
-        m_transformedDataZ[i] = m_transformedData[i][2];
+  for( int i = 0; i < m_numFiducials; i++ )
+    {
+    m_transformedDataZ[i] = m_transformedData[i][2];
+    }
 
   std::sort(m_transformedDataZ, m_transformedDataZ + m_numFiducials);
 
-  for (int i = 0; i < m_numFiducials; i++)
-  {
-    for (int j = 0; j < m_numFiducials; j++)
+  for( int i = 0; i < m_numFiducials; i++ )
     {
-      if (m_transformedDataZ[i] == m_transformedData[j][2])
+    for( int j = 0; j < m_numFiducials; j++ )
       {
+      if( m_transformedDataZ[i] == m_transformedData[j][2])
+        {
         m_sortedFiducials[m_numFiducials - 1 - i] = j;
         m_transformedData[j][2] += 999;
+        }
       }
     }
-  }
-  for (int i = 0; i < m_numFiducials; i++)
-    if (m_transformedData[i][2] > 500)
+
+  for( int i = 0; i < m_numFiducials; i++ )
+    {
+    if( m_transformedData[i][2] > 500 )
+      {
       m_transformedData[i][2] -= 999;
+      }
+    }
 
   std::cout << "Sorted Fiducials starting with fiducial on top of" <<
     " needle holder: " << std::endl;
+
   for (int i = 0; i < m_numFiducials; i++)
+    {
      std::cout << m_sortedFiducials[i] << " ";
+    }
   std::cout << std::endl;
 
   //std::cout << "xyz-distance(divided by 4) points 0-4-8: " <<
@@ -982,32 +1088,40 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
 
   m_meanRegistrationError = 0;
   m_maxRegistrationError = 0;
+
   while( mitr != landmarkSet1.end() )
-  {
+    {
     error = *mitr - m_transform->TransformPoint( *fitr );
 
-    std::cout << "Fixed Landmark: " << *fitr << " Moving landmark " << *mitr 
-      << " Transformed fixed Landmark : " << 
-      m_transform->TransformPoint( *fitr ) << std::endl <<
-      "  Error: " << error.GetNorm() << std::endl;
+    std::cout << "Fixed Landmark: "  << *fitr 
+              << " Moving landmark " << *mitr 
+              << " Transformed fixed Landmark : " 
+              << m_transform->TransformPoint( *fitr ) 
+              << std::endl 
+              << "  Error: " << error.GetNorm() << std::endl;
 
     if ( error.GetNorm() > m_maxRegistrationError)
+      {
       m_maxRegistrationError = error.GetNorm();
+      }
     m_meanRegistrationError += error.GetNorm();
 
     ++mitr;
     ++fitr;
-  }
+    }
+
   m_meanRegistrationError /= NUM_FIDUCIALS;
-  std::cout << std::endl << "Mean error: " << m_meanRegistrationError <<
-    std::endl << "Max error: " << m_maxRegistrationError <<
-    std::endl << std::endl;
+
+  std::cout << std::endl << "Mean error: " << m_meanRegistrationError 
+            << std::endl << "Max error: " << m_maxRegistrationError 
+            << std::endl << std::endl;
 
   point[0] = testData[0][0];
   point[1] = testData[0][1];
   point[2] = testData[0][2];
-  std::cout << "verification point (after landmark registration): " <<
-    m_transform->TransformPoint( point ) << std::endl;
+
+  std::cout << "verification point (after landmark registration): " 
+            << m_transform->TransformPoint( point ) << std::endl;
   
   return true;
 
