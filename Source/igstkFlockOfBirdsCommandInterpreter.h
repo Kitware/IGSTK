@@ -344,6 +344,10 @@ public:
   /** Request that the flock stops streaming data records. */
   void EndStream();
 
+  /** Request that the flock stops streaming data records, but
+   *  only if it is currently streaming. */
+  void EndStreamIfStreaming();
+
   /** Get the next data record from the flock.
    *
    * This should only be called after a call to Point(), or after

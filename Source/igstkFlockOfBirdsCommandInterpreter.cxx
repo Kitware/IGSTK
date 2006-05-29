@@ -161,40 +161,34 @@ void FlockOfBirdsCommandInterpreter::Open()
   m_Revision = ((rev >> 8) & 0x00ff) | ((rev << 8) & 0xff00);
 
   m_MaxParameter = GetMaxParameterForRevision(m_Revision);
-  if (m_Error)
+  if (!m_Error)
     {
-    this->Close();
-    return;
+    m_PositionScale[1] =
+      FlockOfBirdsPositionScale(this->ExamineValue(FB_POSITION_SCALING));
     }
 
-  m_PositionScale[1] =
-    FlockOfBirdsPositionScale(this->ExamineValue(FB_POSITION_SCALING));
-
-  if (m_Error)
+  int status = 0;
+  if (!m_Error)
     {
-    this->Close();
-    return;
-    }
-  int status = this->ExamineValue(FB_STATUS);
-  m_DataFormat[1] = FlockOfBirdsDataFormat(((status & FB_STATUS_FORMAT) >> 1) 
-                    +(FB_POSITION-1));
-
-  if (m_Error)
-    {
-    this->Close();
-    return;
+    status = this->ExamineValue(FB_STATUS);
+    m_DataFormat[1] = 
+      FlockOfBirdsDataFormat(((status & FB_STATUS_FORMAT) >> 1) 
+                             + (FB_POSITION-1));
     }
 
-  m_AddressMode = FB_NORMAL;
-  if (m_Revision > (3 << 8) + 33)
+  if (!m_Error)
     {
-    if ((status & FB_STATUS_EXPANDED) != 0)
+    m_AddressMode = FB_NORMAL;
+    if (m_Revision > (3 << 8) + 33)
       {
-      m_AddressMode = FB_EXPANDED;
-      if (m_Revision > (3 << 8) + 67)
+      if ((status & FB_STATUS_EXPANDED) != 0)
         {
-        m_AddressMode =
-          FlockOfBirdsAddressMode(this->ExamineValue(FB_FBB_ADDRESS_MODE));
+        m_AddressMode = FB_EXPANDED;
+        if (m_Revision > (3 << 8) + 67)
+          {
+          m_AddressMode =
+            FlockOfBirdsAddressMode(this->ExamineValue(FB_FBB_ADDRESS_MODE));
+          }
         }
       }
     }
@@ -208,10 +202,7 @@ void FlockOfBirdsCommandInterpreter::Open()
 /** Shut down the flock and close communication */
 void FlockOfBirdsCommandInterpreter::Close()
 {
-  if (m_StreamData)
-    {
-    this->EndStream();
-    }
+  this->EndStreamIfStreaming();
 
   /* Insert code to turn off the Flock by setting the RTS line */
 
@@ -225,10 +216,7 @@ void FlockOfBirdsCommandInterpreter::Close()
  * FBBReset() can be called to reset the other birds. */
 void FlockOfBirdsCommandInterpreter::Reset()
 {
-  if (m_StreamData)
-    {
-    this->EndStream();
-    }
+  this->EndStreamIfStreaming();
 
   /* Insert code to set the RTS line high */
   m_Communication->SetRTS(1);
@@ -268,10 +256,8 @@ void FlockOfBirdsCommandInterpreter::Reset()
  *  been used to reset the first bird in the flock. */
 void FlockOfBirdsCommandInterpreter::FBBReset()
 {
-  if (m_StreamData)
-    {
-    this->EndStream();
-    }
+  this->EndStreamIfStreaming();
+
   this->SendRaw("/",1);
 
   /* Insert code to sleep for 600 milliseconds */
@@ -364,13 +350,10 @@ void FlockOfBirdsCommandInterpreter::SetHemisphere(
 void FlockOfBirdsCommandInterpreter::SetFormat(
   FlockOfBirdsDataFormat format)
 {
-  char text[1];
+  this->EndStreamIfStreaming();
 
-  if (m_StreamData)
-    {
-    this->EndStream();
-    }
   m_DataFormat[m_FBBAddress] = format;
+  char text[1];
   text[0] = format;
 
   this->SendRaw(text,1);
@@ -382,13 +365,10 @@ void FlockOfBirdsCommandInterpreter::SetFormat(
  */
 void FlockOfBirdsCommandInterpreter::SetButtonMode(bool mode)
 {
-  char text[2];
+  this->EndStreamIfStreaming();
 
-  if (m_StreamData)
-    {
-    this->EndStream();
-    }
   m_ButtonMode[m_FBBAddress] = mode;
+  char text[2];
   text[0] = FB_BUTTON_MODE;
   text[1] = mode;
 
@@ -426,10 +406,6 @@ void FlockOfBirdsCommandInterpreter::SetButtonMode(bool mode)
  *  Reset(), FBBReset(), Point(), ButtonRead(). */
 void FlockOfBirdsCommandInterpreter::Stream()
 {
-  if (m_StreamData)
-    {
-    return;
-    }
   m_StreamData = 1;
   m_CurrentBird = 1;
 
@@ -439,15 +415,20 @@ void FlockOfBirdsCommandInterpreter::Stream()
 /** Terminate streaming mode. */
 void FlockOfBirdsCommandInterpreter::EndStream()
 {
-  if (!m_StreamData)
-    {
-    return;
-    }
-
   m_StreamData = 0;
   this->SendRaw("B",1);
 
-  /* Insert code to purse the serial port buffers */
+  /* Insert code to purge the serial port buffers to
+   * clear any data records that are still in the buffer */
+}
+
+/** Terminate streaming mode if streaming. */
+void FlockOfBirdsCommandInterpreter::EndStreamIfStreaming()
+{
+  if (m_StreamData)
+    {
+    this->EndStream();
+    }
 }
 
 /** Request a single data record from the flock.
@@ -463,18 +444,13 @@ void FlockOfBirdsCommandInterpreter::EndStream()
  *  as efficient as using stream mode. */
 void FlockOfBirdsCommandInterpreter::Point()
 {
-  if (m_StreamData)
-    {
-    this->EndStream();
-    }
+  this->EndStreamIfStreaming();
+
+  m_CurrentBird = 1;
 
   if (!m_GroupMode)
     {
     m_CurrentBird = m_FBBAddress;
-    }
-  else
-    {
-    m_CurrentBird = 1;
     }
 
   this->SendRaw("B",1);
@@ -499,21 +475,13 @@ void FlockOfBirdsCommandInterpreter::Point()
  *  be streamed from the flock along with the position information. */
 void FlockOfBirdsCommandInterpreter::ButtonRead(int *val)
 {
-  char data[1];
-
-  if (m_StreamData)
-    {
-    this->EndStream();
-    }
+  this->EndStreamIfStreaming();
 
   this->SendRaw("N",1);
-  if (m_Error || val == 0)
-    {
-    return;
-    }
 
-  if (val != 0)
+  if (!m_Error && val != 0)
     {
+    char data[1];
     this->ReceiveRaw(data,1);
     *val = data[0] >> 4;
     }
@@ -573,26 +541,22 @@ void FlockOfBirdsCommandInterpreter::Update()
  *  FB_POSITION_MATRIX, FB_POSITION_QUATERNION. */
 void FlockOfBirdsCommandInterpreter::GetPosition(float xyz[3])
 {
-  float range;
-  char *cp;
-  switch (m_DataFormat[m_CurrentBird])
+  FlockOfBirdsDataFormat format = m_DataFormat[m_CurrentBird];
+
+  if (format == FB_POSITION ||
+      format == FB_POSITION_ANGLES ||
+      format == FB_POSITION_MATRIX ||
+      format == FB_POSITION_QUATERNION)
     {
-    case FB_POSITION:
-    case FB_POSITION_ANGLES:
-    case FB_POSITION_MATRIX:
-    case FB_POSITION_QUATERNION:
-      cp = &m_DataBuffer[0];
-      break;
-    default:
-      return;
+    char *cp = &m_DataBuffer[0];
+
+    // note: 914.4 mm == 36 inches
+    float range = (m_PositionScale[m_CurrentBird]+1)*914.4f;
+
+    xyz[0] = (float)(this->Unpack(&cp)*range*0.000030517578125f);
+    xyz[1] = (float)(this->Unpack(&cp)*range*0.000030517578125f);
+    xyz[2] = (float)(this->Unpack(&cp)*range*0.000030517578125f);
     }
-
-  // note: 914.4 mm == 36 inches
-  range = (m_PositionScale[m_CurrentBird]+1)*914.4f;
-
-  xyz[0] = (float)(this->Unpack(&cp)*range*0.000030517578125f);
-  xyz[1] = (float)(this->Unpack(&cp)*range*0.000030517578125f);
-  xyz[2] = (float)(this->Unpack(&cp)*range*0.000030517578125f);
 }
 
 /** Get the euler angles returned in the last Update() data record.
@@ -605,21 +569,21 @@ void FlockOfBirdsCommandInterpreter::GetAngles(float zyx[3])
 {
   static float pi = 3.1415926535897931f;
 
-  char *cp;
-  switch (m_DataFormat[m_CurrentBird])
+  FlockOfBirdsDataFormat format = m_DataFormat[m_CurrentBird];
+
+  if (format == FB_ANGLES || format == FB_POSITION_ANGLES)
     {
-    case FB_ANGLES:
-      cp = &m_DataBuffer[0];
-      break;
-    case FB_POSITION_ANGLES:
+    char *cp = &m_DataBuffer[0];
+    
+    if (format == FB_POSITION_ANGLES)
+      {
       cp = &m_DataBuffer[6];
-      break;
-    default:
-      return;
+      }
+
+    zyx[0] = (float)(this->Unpack(&cp)*pi*0.000030517578125f);
+    zyx[1] = (float)(this->Unpack(&cp)*pi*0.000030517578125f);
+    zyx[2] = (float)(this->Unpack(&cp)*pi*0.000030517578125f);
     }
-  zyx[0] = (float)(this->Unpack(&cp)*pi*0.000030517578125f);
-  zyx[1] = (float)(this->Unpack(&cp)*pi*0.000030517578125f);
-  zyx[2] = (float)(this->Unpack(&cp)*pi*0.000030517578125f);
 }
 
 /** Get the matrix returned in the last Update() data record.
@@ -639,21 +603,21 @@ void FlockOfBirdsCommandInterpreter::GetAngles(float zyx[3])
  *  transferred through the serial port. */
 void FlockOfBirdsCommandInterpreter::GetMatrix(float a[9])
 {
-  char *cp;
-  switch (m_DataFormat[m_CurrentBird])
+  FlockOfBirdsDataFormat format = m_DataFormat[m_CurrentBird];
+
+  if (format == FB_MATRIX || format == FB_POSITION_MATRIX)
     {
-    case FB_MATRIX:
-      cp = &m_DataBuffer[0];
-      break;
-    case FB_POSITION_MATRIX:
+    char *cp = &m_DataBuffer[0];
+
+    if (format == FB_POSITION_MATRIX)
+      {
       cp = &m_DataBuffer[6];
-      break;
-    default:
-      return;
-    }
-  for (unsigned int i = 0; i < 9; i++)
-    {
-    a[i] = (float)(this->Unpack(&cp)*0.000030517578125f);
+      }
+
+    for (unsigned int i = 0; i < 9; i++)
+      {
+      a[i] = (float)(this->Unpack(&cp)*0.000030517578125f);
+      }
     }
 }
 
@@ -665,22 +629,21 @@ void FlockOfBirdsCommandInterpreter::GetMatrix(float a[9])
  *  with one of the following modes: FB_QUATERNION, FB_POSITION_QUATERNION. */
 void FlockOfBirdsCommandInterpreter::GetQuaternion(float q[4])
 {
-  char *cp;
-  switch (m_DataFormat[m_CurrentBird])
-    {
-    case FB_QUATERNION:
-      cp = &m_DataBuffer[0];
-      break;
-    case FB_POSITION_QUATERNION:
-      cp = &m_DataBuffer[6];
-      break;
-    default:
-      return;
-    }
+  FlockOfBirdsDataFormat format = m_DataFormat[m_CurrentBird];
 
-  for (unsigned int i = 0; i < 4; i++)
+  if (format == FB_QUATERNION || format == FB_POSITION_QUATERNION)
     {
-    q[i] = (float)(this->Unpack(&cp)*0.000030517578125f);
+    char *cp = &m_DataBuffer[0];
+
+    if (format == FB_POSITION_QUATERNION)
+      {
+      cp = &m_DataBuffer[6];
+      }
+
+    for (unsigned int i = 0; i < 4; i++)
+      {
+      q[i] = (float)(this->Unpack(&cp)*0.000030517578125f);
+      }
     }
 }
 
@@ -696,11 +659,14 @@ void FlockOfBirdsCommandInterpreter::GetQuaternion(float q[4])
  *  used to turn on button reporting. */
 int FlockOfBirdsCommandInterpreter::GetButton()
 {
+  int rval = 0;
+
   if (m_ButtonMode[m_CurrentBird])
     {
-    return m_DataBuffer[2*ComputeRecordSize(m_DataFormat[m_CurrentBird])] >> 4;
+    rval = m_DataBuffer[2*ComputeRecordSize(m_DataFormat[m_CurrentBird])] >> 4;
     }
-  return 0;
+
+  return rval;
 }
 
 /** Get the FBB address of the bird for the data record obtained through
@@ -721,6 +687,8 @@ unsigned int FlockOfBirdsCommandInterpreter::GetBird()
     {
     bird = m_DataBuffer[2*ComputeRecordSize(m_DataFormat[m_CurrentBird]) \
                           + m_ButtonMode[m_CurrentBird]];
+
+    /* check for standalone bird */ 
     if (bird == 0)
       {
       bird = 1;
@@ -927,16 +895,13 @@ int FlockOfBirdsCommandInterpreter::ExamineValueBytes(
   FlockOfBirdsParameter parameter,
   char *data)
 {
+  this->EndStreamIfStreaming();
+
   char text[2];
-  int len;
-
-  if (m_StreamData)
-    {
-    this->EndStream();
-    }   
-
   text[0] = FB_EXAMINE_VALUE;
   text[1] = parameter;
+
+  int len = 0;
 
   if (parameter <= m_MaxParameter)
     {
