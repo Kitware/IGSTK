@@ -73,6 +73,7 @@ SET(SandboxTests_SRCS
   igstkLandmarkUltrasoundCalibrationTest.cxx
   igstkSocketCommunicationTest.cxx
   igstkFlockOfBirdsTrackerTest.cxx
+  igstkFlockOfBirdsCommandInterpreterTest.cxx
   igstkVesselObjectTest.cxx
   igstkUSImageObjectTest.cxx
   igstkUSImageObjectRepresentationTest.cxx
