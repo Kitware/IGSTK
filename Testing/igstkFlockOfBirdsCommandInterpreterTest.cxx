@@ -338,8 +338,14 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
   interp->SetButtonMode(1);
   checkError(interp,errorCheck);
 
-  std::cout << "SetFormat(FB_POSITION_ANGLES)" << std::endl;
-  interp->SetFormat(igstk::FB_POSITION_ANGLES);
+  int buttonState = 0;
+  std::cout << "ButtonRead(&buttonState)" << std::endl;
+  interp->ButtonRead(&buttonState);
+  checkError(interp,errorCheck);
+  std::cout << "buttonState = " << buttonState << std::endl;  
+
+  std::cout << "SetFormat(FB_POSITION_MATRIX)" << std::endl;
+  interp->SetFormat(igstk::FB_POSITION_MATRIX);
   checkError(interp,errorCheck);
 
   std::cout << "Point()" << std::endl;
@@ -363,15 +369,26 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
               << position[1] << ", "
               << position[2] << " )" << std::endl; 
     
+    float matrix[9];
+    std::cout << "GetMatrix() = ";
+    interp->GetMatrix(matrix);
+    checkError(interp,errorCheck);
+    std::cout << "(" 
+              << "( " << matrix[0] << ", " << matrix[1] << ", " << matrix[2]
+              << "), "
+              << "( " << matrix[3] << ", " << matrix[4] << ", " << matrix[5]
+              << "), "
+              << "( " << matrix[6] << ", " << matrix[7] << ", " << matrix[8]
+              << ") )" << std::endl;
+  
     float angles[3];
-    std::cout << "GetAngles() = ";
-    interp->GetAngles(angles);
+    std::cout << "AnglesFromMatrix() = ";
+    interp->AnglesFromMatrix(angles, matrix);
     checkError(interp,errorCheck);
     std::cout << "( " << angles[0] << ", " 
               << angles[1] << ", "
               << angles[2] << " )" << std::endl;
 
-    float matrix[9];
     std::cout << "MatrixFromAngles() = ";
     interp->MatrixFromAngles(matrix, angles);
     checkError(interp,errorCheck);
@@ -382,15 +399,48 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
               << "), "
               << "( " << matrix[6] << ", " << matrix[7] << ", " << matrix[8]
               << ") )" << std::endl;
-  
-    float newangles[3];
-    std::cout << "AnglesFromMatrix() = ";
-    interp->AnglesFromMatrix(newangles, matrix);
-    checkError(interp,errorCheck);
-    std::cout << "( " << newangles[0] << ", " 
-              << newangles[1] << ", "
-              << newangles[2] << " )" << std::endl;
     }
+
+  std::cout << "SetFormat(FB_POSITION_ANGLES)" << std::endl;
+  interp->SetFormat(igstk::FB_POSITION_ANGLES);
+  checkError(interp,errorCheck);
+
+  std::cout << "Stream()" << std::endl;
+  interp->Stream();
+  checkError(interp,errorCheck);
+
+  for (unsigned int j = 0; j < 10; j++)
+    {
+    for (unsigned int i = 0; i < numBirds; i++)
+      {
+      std::cout << "Update()" << std::endl;
+      interp->Update();
+      checkError(interp,errorCheck);
+
+      std::cout << "GetBird() = ";
+      std::cout << interp->GetBird() << std::endl;
+
+      float position[3];
+      std::cout << "GetPosition() = ";
+      interp->GetPosition(position);
+      checkError(interp,errorCheck);
+      std::cout << "( " << position[0] << ", " 
+                << position[1] << ", "
+                << position[2] << " )" << std::endl; 
+    
+      float angles[3];
+      std::cout << "GetAngles() = ";
+      interp->GetAngles(angles);
+      checkError(interp,errorCheck);
+      std::cout << "( " << angles[0] << ", " 
+                << angles[1] << ", "
+                << angles[2] << " )" << std::endl;
+      }
+    }
+
+  std::cout << "EndStream()" << std::endl;
+  interp->EndStream();
+  checkError(interp,errorCheck);
 
   std::cout << "Close()" << std::endl;
   interp->Close();
