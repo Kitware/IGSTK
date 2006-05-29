@@ -205,7 +205,7 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
   view3D->RequestStop();
       
   /* Save screenshots in a file */
-  std::string filename = argv[2]; 
+  std::string filename = argv[3]; 
   std::cout << "Saving a screen shot in file:" 
             << filename.c_str() << std::endl;
   view3D->RequestSaveScreenShot( filename );
