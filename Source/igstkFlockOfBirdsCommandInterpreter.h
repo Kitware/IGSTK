@@ -188,7 +188,7 @@ enum FlockOfBirdsErrorCode
   FB_RESOURCE_ERROR = 9,     /**< out of system resources */
 };
 
-/** \enum FlockOfBirdsAddressingMode
+/** \enum FlockOfBirdsAddressMode
  *
  * The FB_FBB_ADDRESS_MODE parameter can be examined with fbExamineValue().
  * It is set via the dip switches on the bird units.
