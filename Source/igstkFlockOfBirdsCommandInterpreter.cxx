@@ -842,6 +842,10 @@ int FlockOfBirdsCommandInterpreter::ExamineValue(
     {
     return (unsigned char)data[0];
     }
+  else if (len == 0)
+    {
+    return 0;
+    }
   else
     {
     this->SetErrorAndMessage(FB_PARM_ERROR,
@@ -881,9 +885,39 @@ int FlockOfBirdsCommandInterpreter::ExamineValueWords(
 }  
 
 /** number of bytes in examine/change data */
-static int examine_change_len_table[36] = { 2, 2, 2, 2,2, 14, 2, 2,1, 1, 1, 1, 
-                                            14,14, 1,10, 2, 1, 1, 1, 1, 1, 2, 6,
-                                            6, 2, 2, 2, 0, 0, 0, 0,2, 0, 0, 1 };
+static int examine_change_len_table[36] = { 2, /* FB_STATUS */
+                                            2, /* FB_REVISION */
+                                            2, /* FB_SPEED */
+                                            2, /* FB_POSITION_SCALING */
+                                            2, /* FB_FILTER */ 
+                                            14,/* FB_ALPHA_MIN */ 
+                                            2, /* FB_RATE_COUNT */ 
+                                            2, /* FB_RATE */
+                                            1, /* FB_DATA_READY */
+                                            1, /* FB_DATA_READY_CHAR */
+                                            1, /* FB_ERROR_CODE */
+                                            1, /* FB_ERROR_BEHAVIOR */ 
+                                            14,/* FB_VM */
+                                            14,/* FB_ALPHA_MAX */
+                                            1, /* FB_ELIMINATION */
+                                            10,/* FB_IDENTIFICATION */
+                                            2, /* FB_ERROR_CODE_EXPANDED */ 
+                                            1, /* FB_REFERENCE_FRAME */ 
+                                            1, /* FB_TRANSMITTER_MODE */
+                                            1, /* FB_FBB_ADDRESS_MODE */
+                                            1, /* FB_LINE_FILTER */ 
+                                            1, /* FB_FBB_ADDRESS */
+                                            2, /* FB_P_HEMISPHERE */
+                                            6, /* FB_P_ANGLE_ALIGN2 */
+                                            6, /* FB_P_REFERENCE_FRAME2 */
+                                            2, /* FB_SERIAL_NUMBER */
+                                            2, /* FB_SENSOR_SERIAL_NUMBER */
+                                            2, /* FB_XMTR_SERIAL_NUMBER */
+                                            0, 0, 0, 0,
+                                            2, /* FB_FBB_DELAY */
+                                            0, 0,
+                                            1, /* FB_GROUP_MODE */
+};
 
 /** Examine a flock parameter that consists of bytes.
  *  \param parameter  a constant that specifies what parameter to examine
@@ -1383,8 +1417,7 @@ void FlockOfBirdsCommandInterpreter::SetErrorAndMessage(
 {
   m_Error = errorcode;
   m_ErrorText = text;
-
-  std::cout << m_ErrorText << std::endl;
+  /* std::cout << m_ErrorText << std::endl; */
 }
 
 /** These methods are used to check whether an error occured as a result of
@@ -1422,38 +1455,20 @@ void FlockOfBirdsCommandInterpreter::PrintSelf(std::ostream& os,
   os << indent << "ErrorText: " << m_ErrorText << std::endl;
   os << indent << "Error: " << m_Error << std::endl;
  
-  if(m_PointData)
-    {
-    os << indent << "PointData: true" << std::endl;
-    }
-  else
-    {
-    os << indent << "PointData: false" << std::endl;
-    }
-  
-  if(m_StreamData)
-    {
-    os << indent << "StreamData: true" << std::endl;
-    }
-  else
-    {
-    os << indent << "StreamData: false" << std::endl;
-    }
-  
-  if(m_GroupMode)
-    {
-    os << indent << "GroupMode: true" << std::endl;
-    }
-  else
-    {
-    os << indent << "GroupMode: false" << std::endl;
-    }
+  os << indent << "PointData: " << (m_PointData ? "true" : "false")
+     << std::endl;
 
+  os << indent << "StreamData: " << (m_StreamData ? "true" : "false")
+     << std::endl;
+  
+  os << indent << "GroupMode: " << (m_GroupMode ? "true" : "false")
+     << std::endl;
+  
   os << indent << "CurrentBird: " << m_CurrentBird << std::endl;
   os << indent << "NumberOfBirds: " << m_NumberOfBirds << std::endl;
   os << indent << "Communication: " << m_Communication << std::endl;
-  os << indent << "PhaseErrorLeftoverBytes: ";
-  std::cout << m_PhaseErrorLeftoverBytes << std::endl;
+  os << indent << "PhaseErrorLeftoverBytes: "
+     << m_PhaseErrorLeftoverBytes << std::endl;
   os << indent << "FBBAddress: " << m_FBBAddress << std::endl;
 }
 
