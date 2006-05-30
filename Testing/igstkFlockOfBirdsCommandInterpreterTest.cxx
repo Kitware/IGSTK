@@ -74,7 +74,7 @@ public:
 
 } /* end namespace igstk */
 
-#define IGSTK_SIMULATOR_TEST 1
+//#define IGSTK_SIMULATOR_TEST 1
 
 // helper function to print out the hemisphere
 void printHemisphere(int hemisphere)
@@ -180,7 +180,7 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
   serialComm->SetFileName( simulationFile.c_str() );
 #else /* IGSTK_SIMULATOR_TEST */
   serialComm->SetCaptureFileName( 
-                              "RecordedStreamByFlockOfBirdsCommandInterpreterTest.txt" );
+    "RecordedStreamByFlockOfBirdsCommandInterpreterTest.txt" );
   serialComm->SetCapture( true );
 #endif /* IGSTK_SIMULATOR_TEST */
 
@@ -317,15 +317,20 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
   printHemisphere(interp->ExamineValue(igstk::FB_P_HEMISPHERE));
   checkError(interp,errorCheck);
   
-  // again, this time use SendCommand to do the work
-  //short hemisphere = static_cast<short>(igstk::FB_AFT);
-  //std::cout << "SendCommandWords(FB_HEMISPHERE, FB_AFT)" << std::endl;
-  //interp->SendCommandWords(FB_HEMISPHERE, &hemisphere);
+  // again, this time use ChangeValueWords to do the work
+  short hemisphere = static_cast<short>(igstk::FB_AFT);
+  std::cout << "hemisphere == ";
+  printHemisphere(hemisphere);
+  std::cout << "ChangeValueWords(FB_HEMISPHERE, &hemisphere)" << std::endl;
+  interp->ChangeValueWords(igstk::FB_P_HEMISPHERE, &hemisphere);
 
-  //std::cout << "ExamineValue(igstk::FB_P_HEMISPHERE) == ";
-  //printHemisphere(interp->ExamineValue(igstk::FB_P_HEMISPHERE));
+  // again, this time use ExamineValueWords to do the work
+  std::cout << "ExamineValueWords(FB_HEMISPHERE, &hemisphere) == "
+            << std::endl;
+  interp->ExamineValueWords(igstk::FB_P_HEMISPHERE, &hemisphere);
+  printHemisphere(hemisphere);
 
-  // again, this time use ChangeValue
+  // again, this time use ChangeValue (the way it is usually done)
   std::cout << "ChangeValue(FB_P_HEMISPHERE, FB_FORWARD)" << std::endl;
   interp->ChangeValue(igstk::FB_P_HEMISPHERE, igstk::FB_FORWARD);
   checkError(interp,errorCheck);
