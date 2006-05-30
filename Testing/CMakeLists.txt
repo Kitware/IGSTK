@@ -94,7 +94,9 @@ IF(IGSTKSandbox_DATA_ROOT)
 
    ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTKSandbox_TESTS} 
              igstkPivotCalibrationReaderTest
-             ${IGSTKSandbox_DATA_ROOT}/Input/PivotCalibrationTool.txt) 
+             ${IGSTKSandbox_DATA_ROOT}/Input/PivotCalibrationTool.txt
+             ${IGSTKSandbox_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
+             ) 
    SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkPivotCalibrationReaderTest.cxx)
 
    ADD_TEST( igstkMR3DImageToUS3DImageRegistrationTest ${IGSTKSandbox_TESTS} 

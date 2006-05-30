@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include "igstkPivotCalibrationReader.h"
+#include <itksys/SystemTools.hxx>
 
 namespace ToolCalibrationTest
 {
@@ -34,17 +35,29 @@ igstkObserverMacro(String,::igstk::StringEvent,std::string)
 
 int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
 {
-  if(argc<2)
+  if(argc<3)
     {
-    std::cout << "Usage = " << argv[0] << " calibrationFile" << std::endl;
+    std::cout << "Usage = " << argv[0] << " calibrationFile" 
+              << " calibrationFileCorrupted" << std::endl;
     return EXIT_FAILURE;
     }
 
   igstk::PivotCalibrationReader::Pointer reader = 
                               igstk::PivotCalibrationReader::New();
 
+  // Set an empty filename
+  reader->RequestSetFileName("");
+  reader->RequestSetFileName("This.file.does.not.exists");
+
+  std::string dir = itksys::SystemTools::GetFilenamePath(argv[1]);
+  reader->RequestSetFileName(dir.c_str());
+
+  reader->RequestSetFileName(argv[2]);
+  reader->RequestReadObject();
+
   reader->RequestSetFileName(argv[1]);
   reader->RequestReadObject();
+  reader->Print(std::cout);
 
   typedef ToolCalibrationTest::CalibrationObserver CalibrationObserverType;
   CalibrationObserverType::Pointer calibrationObserver 
