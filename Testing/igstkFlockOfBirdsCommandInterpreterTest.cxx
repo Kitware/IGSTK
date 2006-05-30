@@ -334,10 +334,6 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
   printHemisphere(interp->ExamineValue(igstk::FB_P_HEMISPHERE));
   checkError(interp,errorCheck);
 
-  std::cout << "SetButtonMode(1)" << std::endl;
-  interp->SetButtonMode(1);
-  checkError(interp,errorCheck);
-
   int buttonState = 0;
   std::cout << "ButtonRead(&buttonState)" << std::endl;
   interp->ButtonRead(&buttonState);
@@ -346,6 +342,10 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
 
   std::cout << "SetFormat(FB_POSITION_MATRIX)" << std::endl;
   interp->SetFormat(igstk::FB_POSITION_MATRIX);
+  checkError(interp,errorCheck);
+
+  std::cout << "SetButtonMode(1)" << std::endl;
+  interp->SetButtonMode(1);
   checkError(interp,errorCheck);
 
   std::cout << "Point()" << std::endl;
@@ -399,6 +399,10 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
               << "), "
               << "( " << matrix[6] << ", " << matrix[7] << ", " << matrix[8]
               << ") )" << std::endl;
+
+    std::cout << "GetButton() = ";
+    int buttonDown = interp->GetButton();
+    std::cout << buttonDown << std::endl;
     }
 
   std::cout << "SetFormat(FB_POSITION_ANGLES)" << std::endl;
