@@ -66,7 +66,7 @@ public:
   void RequestSetImageSpatialObject( const ImageSpatialObjectType * 
                                                 ImageSpatialObject );
 
-  /** Set methods. Need State machine logic*/
+  /** Set methods. Need State machine logic */
   igstkSetMacro( MinThreshold, unsigned );
   igstkGetMacro( MinThreshold, unsigned );
   igstkSetMacro( MaxThreshold, unsigned );
@@ -74,9 +74,9 @@ public:
   igstkSetMacro( ShiftBy,      unsigned );
   igstkGetMacro( ShiftBy,      unsigned );
 
-  vtkVolumeProperty * RequestGetVolumeProperty() 
+  vtkVolumeProperty * RequestGetVolumeProperty()
     { return m_VolumeProperty; }
-  void RequestSetVolumeProperty( vtkVolumeProperty * vp ) 
+  void RequestSetVolumeProperty( vtkVolumeProperty * vp )
     { m_VolumeProperty = vp; }
 
   /** Type used for representing the slice number */
