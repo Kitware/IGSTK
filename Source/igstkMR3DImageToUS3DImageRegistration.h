@@ -44,7 +44,8 @@ namespace igstk
  * The interpolator used is linear to perform the registration with a 
  * minimum amount of time. The current metric evaluating the match between the
  * two images is a mean square.
- * The optimizer used in this class is a regular step gradient descent optimizer.
+ * The optimizer used in this class is a regular step gradient descent 
+ * optimizer.
  *
  * \ingroup Registration
  */
