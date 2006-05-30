@@ -496,6 +496,8 @@ void FlockOfBirdsCommandInterpreter::ButtonRead(int *val)
  *  GetBird() method should always be used to check which bird the
  *  data record is for, unless there is only a single bird. */
 
+
+
 /** This is the central function in the flock interface: it retrieves
  *  a single data record from the flock. 
  *  
@@ -589,7 +591,7 @@ void FlockOfBirdsCommandInterpreter::GetAngles(float zyx[3])
 /** Get the matrix returned in the last Update() data record.
  *  
  *  \param a          storage space for the nine matrix elements,
- *                   where the first three numbers are the first
+ *                    where the first three numbers are the first
  *                    column, the next three numbers are the middle
  *                    column, and the final three numbers are the
  *                    final matrix column
@@ -786,6 +788,8 @@ int FlockOfBirdsCommandInterpreter::GetShort(const char *cp)
  *  The commands are listed in flock.h.  For a description of the
  *  commands, see The Flock of Birds INSTALLATION AND OPERATION GUIDE
  *  from Ascension Technology Corporation. */
+
+
 
 /** Examine a flock parameter.
  *  \param parameter  a constant that specifies what parameter to examine
@@ -1120,7 +1124,6 @@ void FlockOfBirdsCommandInterpreter::SendCommand(FlockOfBirdsCommand c)
 /** Send a command to the flock along with the data words associated
  *  with the command.
  *
- *  \param fb         pointer to an fbird structure
  *  \param command    a constant that specifies what command to send
  *  \param data       the data to send with the command
  *

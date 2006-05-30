@@ -152,7 +152,7 @@ enum FlockOfBirdsStatusBits
 
 /** \enum FlockOfBirdsBusStatusBits
  *
- * The FB_FBB_STATUS parameter can be examined using fbExamineValueBytes(),
+ * The FB_FBB_STATUS parameter can be examined using ExamineValueBytes(),
  * which will provide one status byte for each bird supported by
  * the current addressing mode: 14 in FB_NORMAL addressing mode, 
  * 30 in FB_EXPANDED addressing mode, and 126 in FB_SUPER_EXPANDED
@@ -172,7 +172,7 @@ enum FlockOfBirdsBusStatusBits
 
 /** \enum FlockOfBirdsErrorCode
  *
- * The following error codes are returned by fbGetError():
+ * The following error codes are returned by GetError():
  */
 enum FlockOfBirdsErrorCode
 {
@@ -190,7 +190,7 @@ enum FlockOfBirdsErrorCode
 
 /** \enum FlockOfBirdsAddressMode
  *
- * The FB_FBB_ADDRESS_MODE parameter can be examined with fbExamineValue().
+ * The FB_FBB_ADDRESS_MODE parameter can be examined with ExamineValue().
  * It is set via the dip switches on the bird units.
  * The FB_NORMAL mode supports 14 birds, FB_EXPANDED supports 30 birds, and
  * FB_SUPER_EXPANDED supports 126 birds.
@@ -204,7 +204,7 @@ enum FlockOfBirdsAddressMode
 
 /** \enum FlockOfBirdsHemisphere
  *
- * The FB_P_HEMISPHERE parameter can be examined with fbExamineValue() and
+ * The FB_P_HEMISPHERE parameter can be examined with ExamineValue() and
  * changed with fbChangeValue().  Alternatively, it can be changed by
  * sending the FB_HEMISPHERE command to the flock.
  */
