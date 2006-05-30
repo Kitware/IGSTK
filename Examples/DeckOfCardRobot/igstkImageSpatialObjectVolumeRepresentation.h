@@ -108,7 +108,7 @@ protected:
 
 private:
 
-  ImageSpatialObjectVolumeRepresentation(const Self&);   //purposely not implemented
+  ImageSpatialObjectVolumeRepresentation(const Self&); //not implemented
   void operator=(const Self&);   //purposely not implemented
 
   /** Internal itkSpatialObject */

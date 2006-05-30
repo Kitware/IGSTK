@@ -258,9 +258,9 @@ ImageSpatialObjectVolumeRepresentation< TImageSpatialObject >
   m_OpacityTransferFunction = vtkPiecewiseFunction::New();
   m_OpacityTransferFunction->AddPoint(0, 0.0);
   if( m_MinThreshold > 0 )
-  {
+    {
     m_OpacityTransferFunction->AddPoint(m_MinThreshold, 0.05);
-  }
+    }
   m_OpacityTransferFunction->AddPoint(m_MaxThreshold, 0.1);
   m_OpacityTransferFunction->AddPoint(m_MaxThreshold+1, 0.0);
 
