@@ -31,9 +31,13 @@ class ToolCalibrationReaderToToolCalibration;
 
 
 /** \class ToolCalibration
- * \brief  Represents the tool calibration structure
+ * \brief  Represents the tool calibration structure.
  *
- * \ingroup Object
+ * This class is intended to factorize behaviors and data structures that are
+ * common between multiple classes that provide callibrations for tracker
+ * tools.
+ * 
+ * \ingroup Calibration
  */
 class ToolCalibration : public Object
 {
