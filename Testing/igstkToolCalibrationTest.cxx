@@ -52,6 +52,7 @@ int igstkToolCalibrationTest( int, char * [] )
   calibration->SetLogger( logger );
 
 
+  // Test the normal use
   calibration->RequestSetTime("10:30");
   calibration->RequestSetDate("May 31 2006");
   calibration->RequestSetToolType("Passive");
@@ -59,6 +60,22 @@ int igstkToolCalibrationTest( int, char * [] )
   calibration->RequestSetToolPartNumber("3141516");
   calibration->RequestSetToolSerialNumber("157");
 
+  // Test error cases with empty strings
+  calibration->RequestSetTime("");
+  calibration->RequestSetDate("");
+  calibration->RequestSetToolType("");
+  calibration->RequestSetToolManufacturer("");
+  calibration->RequestSetToolPartNumber("");
+  calibration->RequestSetToolSerialNumber("");
+
+  // Test the returns
+  calibration->RequestGetTime();
+  calibration->RequestGetDate();
+  calibration->RequestGetToolType();
+  calibration->RequestGetToolManufacturer();
+  calibration->RequestGetToolPartNumber();
+  calibration->RequestGetToolSerialNumber();
+ 
 
   return EXIT_SUCCESS;
 
