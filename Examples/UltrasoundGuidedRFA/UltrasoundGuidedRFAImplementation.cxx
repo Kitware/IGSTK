@@ -496,7 +496,8 @@ void UltrasoundGuidedRFAImplementation
   m_USSimulator->RequestReslice();
   //m_USSimulator->SetLogger(m_Logger);
 
-  SimulatedUSImageObserver::Pointer usImageObserver = SimulatedUSImageObserver::New();
+  SimulatedUSImageObserver::Pointer usImageObserver = 
+                                              SimulatedUSImageObserver::New();
   m_USSimulator->AddObserver(USSimulatorType::ImageModifiedEvent(),
                              usImageObserver);
 
