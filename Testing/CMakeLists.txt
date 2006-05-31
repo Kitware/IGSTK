@@ -77,6 +77,7 @@ SET(SandboxTests_SRCS
   igstkVesselObjectTest.cxx
   igstkUSImageObjectTest.cxx
   igstkUSImageObjectRepresentationTest.cxx
+  igstkToolCalibrationTest.cxx
   )
 
 FOREACH(TestFiles ${SandboxTests_SRCS})
