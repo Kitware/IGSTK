@@ -37,7 +37,7 @@
 #include "itkImageRegion.h"
 #include "itksys/SystemTools.hxx"
 
-#define IGSTK_TEST_DIMENSION_MAX 3
+const unsigned int IGSTK_TEST_DIMENSION_MAX = 2;
 
 typedef int (*MainFuncPointer)(int , char* [] );
 std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
@@ -75,6 +75,9 @@ int main(int ac, char* av[] )
   std::cout << "AC = " << ac << std::endl;
   RegisterTests();
   std::string testToRun;
+
+
+
   if(ac < 2)
     {
     PrintAvailableTests();
