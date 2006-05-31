@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include <set>
+#include <cctype>
 
 #include "itkCommand.h"
 #include "itkLogger.h"
@@ -263,8 +264,15 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
       interp->RS232ToFBB(bird+1);
       checkError(interp,errorCheck);
       interp->ExamineValueBytes(igstk::FB_IDENTIFICATION, modelID);
+      modelID[10] = '\0';
       checkError(interp,errorCheck);
-      modelID[11] = '\0';
+      for (unsigned int i = 0; i < 10; i++)
+        {
+        if (!isprint(modelID[i]))
+          {
+          modelID[i] = '#';
+          }
+        }
       std::cout << "bird " << (bird+1) << " identification = "
                 << modelID << std::endl;
 
