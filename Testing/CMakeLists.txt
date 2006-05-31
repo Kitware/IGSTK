@@ -108,7 +108,7 @@ IF(IGSTKSandbox_DATA_ROOT)
              --compare ${IGSTKSandbox_BASELINE_DIR}/igstkUltrasoundImageSimulatorTest.png 
              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
              --tolerance 10
-             --toleranceRadius 1
+             --toleranceRadius 3
              igstkUltrasoundImageSimulatorTest
              ${IGSTKSandbox_DATA_ROOT}/MRLiver
              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
@@ -119,6 +119,7 @@ IF(IGSTKSandbox_DATA_ROOT)
        --compare ${IGSTKSandbox_BASELINE_DIR}/igstkImageSpatialObjectRepresentationTest2.png 
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png 
        --tolerance 10
+       --toleranceRadius 3
        igstkImageSpatialObjectRepresentationTest2
        ${IGSTKSandbox_DATA_ROOT}/E000192
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png)
@@ -130,6 +131,7 @@ IF(IGSTKSandbox_DATA_ROOT)
        --compare ${IGSTKSandbox_BASELINE_DIR}/igstkImageSpatialObjectRepresentationTest3.png 
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png 
        --tolerance 10
+       --toleranceRadius 3
        igstkImageSpatialObjectRepresentationTest3
        ${IGSTKSandbox_DATA_ROOT}/E000192Mod2
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png)
