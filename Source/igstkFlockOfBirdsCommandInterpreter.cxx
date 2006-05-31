@@ -496,8 +496,6 @@ void FlockOfBirdsCommandInterpreter::ButtonRead(int *val)
  *  GetBird() method should always be used to check which bird the
  *  data record is for, unless there is only a single bird. */
 
-
-
 /** This is the central function in the flock interface: it retrieves
  *  a single data record from the flock. 
  *  
@@ -789,8 +787,6 @@ int FlockOfBirdsCommandInterpreter::GetShort(const char *cp)
  *  commands, see The Flock of Birds INSTALLATION AND OPERATION GUIDE
  *  from Ascension Technology Corporation. */
 
-
-
 /** Examine a flock parameter.
  *  \param parameter  a constant that specifies what parameter to examine
  *  \return           the integer value of the parameter
@@ -857,38 +853,38 @@ int FlockOfBirdsCommandInterpreter::ExamineValueWords(
 }  
 
 /** number of bytes in examine/change data */
-static int examine_change_len_table[36] = { 2, /* FB_STATUS */
-                                            2, /* FB_REVISION */
-                                            2, /* FB_SPEED */
-                                            2, /* FB_POSITION_SCALING */
-                                            2, /* FB_FILTER */ 
-                                            14,/* FB_ALPHA_MIN */ 
-                                            2, /* FB_RATE_COUNT */ 
-                                            2, /* FB_RATE */
-                                            1, /* FB_DATA_READY */
-                                            1, /* FB_DATA_READY_CHAR */
-                                            1, /* FB_ERROR_CODE */
-                                            1, /* FB_ERROR_BEHAVIOR */ 
-                                            14,/* FB_VM */
-                                            14,/* FB_ALPHA_MAX */
-                                            1, /* FB_ELIMINATION */
-                                            10,/* FB_IDENTIFICATION */
-                                            2, /* FB_ERROR_CODE_EXPANDED */ 
-                                            1, /* FB_REFERENCE_FRAME */ 
-                                            1, /* FB_TRANSMITTER_MODE */
-                                            1, /* FB_FBB_ADDRESS_MODE */
-                                            1, /* FB_LINE_FILTER */ 
-                                            1, /* FB_FBB_ADDRESS */
-                                            2, /* FB_P_HEMISPHERE */
-                                            6, /* FB_P_ANGLE_ALIGN2 */
-                                            6, /* FB_P_REFERENCE_FRAME2 */
-                                            2, /* FB_SERIAL_NUMBER */
-                                            2, /* FB_SENSOR_SERIAL_NUMBER */
-                                            2, /* FB_XMTR_SERIAL_NUMBER */
+static int examine_change_len_table[36] = { 2, // FB_STATUS
+                                            2, // FB_REVISION 
+                                            2, // FB_SPEED
+                                            2, // FB_POSITION_SCALING 
+                                            2, // FB_FILTER
+                                            14,// FB_ALPHA_MIN
+                                            2, // FB_RATE_COUNT 
+                                            2, // FB_RATE 
+                                            1, // FB_DATA_READY
+                                            1, // FB_DATA_READY_CHAR
+                                            1, // FB_ERROR_CODE
+                                            1, // FB_ERROR_BEHAVIOR
+                                            14,// FB_VM
+                                            14,// FB_ALPHA_MAX
+                                            1, // FB_ELIMINATION
+                                            10,// FB_IDENTIFICATION
+                                            2, // FB_ERROR_CODE_EXPANDED
+                                            1, // FB_REFERENCE_FRAME
+                                            1, // FB_TRANSMITTER_MODE
+                                            1, // FB_FBB_ADDRESS_MODE
+                                            1, // FB_LINE_FILTER
+                                            1, // FB_FBB_ADDRESS
+                                            2, // FB_P_HEMISPHERE
+                                            6, // FB_P_ANGLE_ALIGN2
+                                            6, // FB_P_REFERENCE_FRAME2
+                                            2, // FB_SERIAL_NUMBER
+                                            2, // FB_SENSOR_SERIAL_NUMBER
+                                            2, // FB_XMTR_SERIAL_NUMBER
                                             0, 0, 0, 0,
-                                            2, /* FB_FBB_DELAY */
+                                            2, // FB_FBB_DELAY 
                                             0, 0,
-                                            1, /* FB_GROUP_MODE */
+                                            1, // FB_GROUP_MODE
 };
 
 /** Examine a flock parameter that consists of bytes.

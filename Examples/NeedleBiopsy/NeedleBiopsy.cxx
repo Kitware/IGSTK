@@ -537,21 +537,22 @@ void NeedleBiopsy::InitializeTrackerProcessing()
                    "NeedleBiopsy::InitializeTrackerProcessing called ... \n" )
   
   m_SerialCommunication = CommunicationType::New();  
-  switch( SerialPort->value() ) {
-  case 0 : 
-    m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber0 ); 
-    break;
-  case 1 : 
-    m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber1 ); 
-    break;
-  case 2 : 
-    m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber2 ); 
-    break;
-  case 3 : 
-    m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber3 ); 
-    break;
-  default:
-    m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber0 );
+  switch( SerialPort->value() ) 
+    {
+    case 0 : 
+      m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber0 );
+      break;
+    case 1 : 
+      m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber1 );
+      break;
+    case 2 : 
+      m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber2 );
+      break;
+    case 3 : 
+      m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber3 );
+      break;
+    default:
+      m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber0 );
     }
   
   m_SerialCommunication->SetParity( SerialCommunication::NoParity );
@@ -559,7 +560,7 @@ void NeedleBiopsy::InitializeTrackerProcessing()
   m_SerialCommunication->SetDataBits( SerialCommunication::DataBits8 );
   m_SerialCommunication->SetStopBits( SerialCommunication::StopBits1 );
   m_SerialCommunication->SetHardwareHandshake( 
-                                             SerialCommunication::HandshakeOff );
+                                          SerialCommunication::HandshakeOff );
   m_SerialCommunication->OpenCommunication();
 
   m_Tracker = TrackerType::New();
@@ -579,18 +580,18 @@ void NeedleBiopsy::InitializeTrackerProcessing()
   toolCalibrationTransform.SetTranslationAndRotation( translation, 
                                                              rotation, 0.1, -1);
   m_Tracker->SetToolCalibrationTransform( TrackerToolPort->value(), 
-                                                    0, toolCalibrationTransform);
+                                                   0, toolCalibrationTransform);
   m_Tracker->Open();
   m_Tracker->AttachSROMFileNameToPort( TrackerToolPort->value(), 
-                                                  TrackerToolSROMFile->value() );
+                                                 TrackerToolSROMFile->value() );
   m_Tracker->AttachSROMFileNameToPort( ReferenceToolPort->value(), 
-                                                ReferenceToolSROMFile->value() );
+                                               ReferenceToolSROMFile->value() );
   m_Tracker->SetReferenceTool( UseReferenceTool->value(), 
-                                                  ReferenceToolPort->value(), 0);  
+                                                 ReferenceToolPort->value(), 0);
   m_Tracker->Initialize();
   m_Tracker->StartTracking();
   m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(),
-              m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
+             m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
 }
 
 void NeedleBiopsy::RequestAddImageLandmark()
