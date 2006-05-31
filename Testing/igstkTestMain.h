@@ -37,7 +37,7 @@
 #include "itkImageRegion.h"
 #include "itksys/SystemTools.hxx"
 
-#define ITK_TEST_DIMENSION_MAX 6
+#define IGSTK_TEST_DIMENSION_MAX 3
 
 typedef int (*MainFuncPointer)(int , char* [] );
 std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
@@ -46,7 +46,8 @@ std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
 extern int test(int, char* [] ); \
 StringToTestFunctionMap[#test] = test
 
-int RegressionTestImage (const char *, const char *, int, double);
+int RegressionTestImage (const char *, const char *, int, double, unsigned int);
+
 std::map<std::string,int> RegressionTestBaselines (char *);
 
 void RegisterTests();
@@ -69,6 +70,8 @@ int main(int ac, char* av[] )
   char *testFilename = NULL;
   
   double tolerance = 2.0;
+  unsigned int toleranceRadius = 1;
+
   std::cout << "AC = " << ac << std::endl;
   RegisterTests();
   std::string testToRun;
@@ -119,6 +122,12 @@ int main(int ac, char* av[] )
         av += 2;
         ac -= 2;
         }
+      if (strcmp(av[1], "--toleranceRadius") == 0)
+        {
+        toleranceRadius = atoi( av[2] );
+        av += 2;
+        ac -= 2;
+        }
       }
       testToRun = av[1];
     }
@@ -144,7 +153,8 @@ int main(int ac, char* av[] )
           baseline->second = RegressionTestImage(testFilename,
                                                  (baseline->first).c_str(),
                                                  0,
-                                                 tolerance);
+                                                 tolerance,
+                                                 toleranceRadius);
           if (baseline->second < bestBaselineStatus)
             {
             bestBaseline = baseline->first;
@@ -162,7 +172,8 @@ int main(int ac, char* av[] )
           baseline->second = RegressionTestImage(testFilename,
                                                  bestBaseline.c_str(),
                                                  1,
-                                                 tolerance);
+                                                 tolerance,
+                                                 toleranceRadius);
           }
 
         // output the matching baseline
@@ -200,11 +211,15 @@ int main(int ac, char* av[] )
 
 // Regression Testing Code
 
-int RegressionTestImage (const char *testImageFilename, const char *baselineImageFilename, int reportErrors, double tolerance)
+int RegressionTestImage( const char *testImageFilename, 
+                         const char *baselineImageFilename, 
+                         int reportErrors, 
+                         double tolerance, 
+                         unsigned int toleranceRadius)
 {
   // Use the factory mechanism to read the test and baseline files and convert them to double
-  typedef itk::Image<double,ITK_TEST_DIMENSION_MAX> ImageType;
-  typedef itk::Image<unsigned char,ITK_TEST_DIMENSION_MAX> OutputType;
+  typedef itk::Image<double,IGSTK_TEST_DIMENSION_MAX> ImageType;
+  typedef itk::Image<unsigned char,IGSTK_TEST_DIMENSION_MAX> OutputType;
   typedef itk::Image<unsigned char,2> DiffOutputType;
   typedef itk::ImageFileReader<ImageType> ReaderType;
 
@@ -256,6 +271,7 @@ int RegressionTestImage (const char *testImageFilename, const char *baselineImag
     diff->SetValidInput(baselineReader->GetOutput());
     diff->SetTestInput(testReader->GetOutput());
     diff->SetDifferenceThreshold( tolerance );
+    diff->SetToleranceRadius( toleranceRadius );
     diff->UpdateLargestPossibleRegion();
 
   double status = diff->GetTotalDifference();
@@ -266,7 +282,7 @@ int RegressionTestImage (const char *testImageFilename, const char *baselineImag
     typedef itk::RescaleIntensityImageFilter<ImageType,OutputType> RescaleType;
     typedef itk::ExtractImageFilter<OutputType,DiffOutputType> ExtractType;
     typedef itk::ImageFileWriter<DiffOutputType> WriterType;
-    typedef itk::ImageRegion<ITK_TEST_DIMENSION_MAX> RegionType;
+    typedef itk::ImageRegion<IGSTK_TEST_DIMENSION_MAX> RegionType;
     OutputType::IndexType index; index.Fill(0);
     OutputType::SizeType size; size.Fill(0);
 
@@ -280,7 +296,7 @@ int RegressionTestImage (const char *testImageFilename, const char *baselineImag
     region.SetIndex(index);
     
     size = rescale->GetOutput()->GetLargestPossibleRegion().GetSize();
-    for (unsigned int i = 2; i < ITK_TEST_DIMENSION_MAX; i++)
+    for (unsigned int i = 2; i < IGSTK_TEST_DIMENSION_MAX; i++)
       {
       size[i] = 0;
       }
