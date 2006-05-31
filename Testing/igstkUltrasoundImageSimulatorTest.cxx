@@ -68,7 +68,7 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
 
   MRReader->RequestGetImage();
 
-  if(!mrImageObserver->GotMRImage())
+  if( !mrImageObserver->GotMRImage() )
     {
     std::cout << "No MRImage!" << std::endl;
     std::cout << "[FAILED]" << std::endl;
@@ -84,16 +84,16 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
   typedef igstk::Transform TransformType;
   TransformType usTransform;
   TransformType::VectorType translation;
-  translation.Fill(0);
+  translation.Fill( 0 );
   translation[0] = 3;
   translation[1] = 2;
   translation[2] = 1;
-  usTransform.SetTranslation(translation,0,10000);
+  usTransform.SetTranslation( translation, 0, 10000 );
 
   usSimulator->RequestSetTransform(usTransform);
   usSimulator->RequestReslice();
 
-  usSimulator->Print(std::cout);
+  usSimulator->Print( std::cout );
 
   typedef UltrasoundImageSimulatorTest::SimulatedUSImageObserver
                                                      SimulatedUSImageObserver;
@@ -130,7 +130,7 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
 
   view2D->RequestAddObject( imageRepresentation );
  
-  imageRepresentation->SetWindowLevel(255/2.0,255/2.0);
+  imageRepresentation->SetWindowLevel( 255 / 2.0, 255 / 2.0 );
   imageRepresentation->RequestSetImageSpatialObject( usImage );
   imageRepresentation->RequestSetOrientation( ImageRepresentationType::Axial );
   
@@ -141,15 +141,13 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
   view2D->RequestResetCamera();
   view2D->RequestSetRefreshRate( 30 );
   view2D->RequestStart();
+
   Fl::wait(1.0);  
   igstk::PulseGenerator::CheckTimeouts();
 
   igstk::PulseGenerator::CheckTimeouts();
   Fl::check();
 
-  // Request refreshing stop to take a screenshot
-  view2D->RequestStop();
-      
   // Save screenshots in a file
   std::string filename;
   filename = argv[2]; 
