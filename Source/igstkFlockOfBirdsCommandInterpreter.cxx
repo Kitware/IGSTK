@@ -481,7 +481,7 @@ void FlockOfBirdsCommandInterpreter::ButtonRead(int *val)
 
   if (!m_Error && val != 0)
     {
-    char data[1];
+    char data[16];
     this->ReceiveRaw(data,1);
     *val = data[0] >> 4;
     }
