@@ -108,6 +108,7 @@ IF(IGSTKSandbox_DATA_ROOT)
              --compare ${IGSTKSandbox_BASELINE_DIR}/igstkUltrasoundImageSimulatorTest.png 
              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
              --tolerance 10
+             --toleranceRadius 1
              igstkUltrasoundImageSimulatorTest
              ${IGSTKSandbox_DATA_ROOT}/MRLiver
              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
