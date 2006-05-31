@@ -207,10 +207,10 @@ void ToolCalibration::ReportToolPartNumberProcessing()
 }
 
 /** Request to set the time */
-void ToolCalibration::RequestSetTime(const char* time)
+void ToolCalibration::RequestSetTime( const StringType & time)
 {
   m_TimeToSet = time;
-  if( !m_TimeToSet )
+  if( m_TimeToSet.empty() )
     {
     igstkPushInputMacro( InvalidTime );
     m_StateMachine.ProcessInputs();
@@ -230,10 +230,10 @@ void ToolCalibration::SetTimeProcessing()
 }
 
 /** Request to set the time */
-void ToolCalibration::RequestSetDate(const char* date)
+void ToolCalibration::RequestSetDate( const StringType & date)
 {
   m_DateToSet = date;
-  if( !m_DateToSet )
+  if( m_DateToSet.empty() )
     {
     igstkPushInputMacro( InvalidDate );
     m_StateMachine.ProcessInputs();
@@ -252,10 +252,11 @@ void ToolCalibration::SetDateProcessing()
 }
 
 /** Request to set the Tool Type */
-void ToolCalibration::RequestSetToolType(const char* toolType)
+void ToolCalibration::RequestSetToolType( 
+                            const StringType & toolType)
 {
   m_ToolTypeToSet = toolType;
-  if( !m_ToolTypeToSet )
+  if( m_ToolTypeToSet.empty() )
     {
     igstkPushInputMacro( InvalidToolType );
     m_StateMachine.ProcessInputs();
@@ -274,10 +275,11 @@ void ToolCalibration::SetToolTypeProcessing()
 }
 
 /** Request to set the Tool Manufacturer */
-void ToolCalibration::RequestSetToolManufacturer(const char* toolManufacturer)
+void ToolCalibration::RequestSetToolManufacturer( 
+                              const StringType & toolManufacturer)
 {
   m_ToolManufacturerToSet = toolManufacturer;
-  if( !m_ToolManufacturerToSet )
+  if( m_ToolManufacturerToSet.empty() )
     {
     igstkPushInputMacro( InvalidToolManufacturer );
     m_StateMachine.ProcessInputs();
@@ -296,10 +298,11 @@ void ToolCalibration::SetToolManufacturerProcessing()
 }
 
 /** Request to set the Tool Serial Number */
-void ToolCalibration::RequestSetToolSerialNumber(const char* toolSerialNumber)
+void ToolCalibration::RequestSetToolSerialNumber( 
+                               const StringType & toolSerialNumber)
 {
   m_ToolSerialNumberToSet = toolSerialNumber;
-  if( !m_ToolSerialNumberToSet )
+  if( m_ToolSerialNumberToSet.empty() )
     {
     igstkPushInputMacro( InvalidToolSerialNumber );
     m_StateMachine.ProcessInputs();
@@ -318,10 +321,11 @@ void ToolCalibration::SetToolSerialNumberProcessing()
 }
 
 /** Request to set the Tool Part Number */
-void ToolCalibration::RequestSetToolPartNumber(const char* toolPartNumber)
+void ToolCalibration::RequestSetToolPartNumber( 
+                               const StringType & toolPartNumber)
 {
   m_ToolPartNumberToSet = toolPartNumber;
-  if( !m_ToolPartNumberToSet )
+  if( m_ToolPartNumberToSet.empty() )
     {
     igstkPushInputMacro( InvalidToolPartNumber );
     m_StateMachine.ProcessInputs();

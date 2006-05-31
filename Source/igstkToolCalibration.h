@@ -61,13 +61,16 @@ public:
   void RequestGetToolPartNumber();
   void RequestGetToolSerialNumber();
 
+  /** Type used for representing strings */
+  typedef std::string  StringType;
+
   /** Set the fields */
-  void RequestSetTime(const char* time);
-  void RequestSetDate(const char* date);
-  void RequestSetToolType(const char* type);
-  void RequestSetToolManufacturer(const char* manufacturer);
-  void RequestSetToolPartNumber(const char* partNumber);
-  void RequestSetToolSerialNumber(const char* serialNumber);
+  void RequestSetTime( const StringType & time );
+  void RequestSetDate( const StringType & date );
+  void RequestSetToolType( const StringType & type );
+  void RequestSetToolManufacturer( const StringType & manufacturer );
+  void RequestSetToolPartNumber( const StringType & partNumber );
+  void RequestSetToolSerialNumber( const StringType & serialNumber );
 
   /** The ToolCalibrationReaderToToolCalibration class is declared as a
    * friend in order to be able to set the transform */
@@ -147,18 +150,18 @@ private:
   igstkDeclareStateMacro( ValidCalibration );
   igstkDeclareStateMacro( InvalidCalibration );
 
-  std::string     m_Date;
-  const char*     m_DateToSet;
-  std::string     m_Time;
-  const char*     m_TimeToSet;
-  std::string     m_ToolType;
-  const char*     m_ToolTypeToSet;
-  std::string     m_ToolManufacturer;
-  const char*     m_ToolManufacturerToSet;
-  std::string     m_ToolPartNumber;
-  const char*     m_ToolPartNumberToSet;
-  std::string     m_ToolSerialNumber;
-  const char*     m_ToolSerialNumberToSet;
+  StringType     m_Date;
+  StringType     m_DateToSet;
+  StringType     m_Time;
+  StringType     m_TimeToSet;
+  StringType     m_ToolType;
+  StringType     m_ToolTypeToSet;
+  StringType     m_ToolManufacturer;
+  StringType     m_ToolManufacturerToSet;
+  StringType     m_ToolPartNumber;
+  StringType     m_ToolPartNumberToSet;
+  StringType     m_ToolSerialNumber;
+  StringType     m_ToolSerialNumberToSet;
 
 };
 
