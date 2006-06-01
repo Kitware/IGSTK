@@ -75,7 +75,7 @@ public:
 
 } /* end namespace igstk */
 
-//#define IGSTK_SIMULATOR_TEST 1
+#define IGSTK_SIMULATOR_TEST 1
 
 // helper function to print out the hemisphere
 void printHemisphere(int hemisphere)
@@ -121,6 +121,9 @@ void checkError(igstk::FlockOfBirdsCommandInterpreter *interp, int &hasError)
 int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
 {
   int errorCheck = 0;
+
+  unsigned int birdMajorRevision = 0;
+  unsigned int birdMinorRevision = 0;
 
   igstk::RealTimeClock::Initialize();
 
@@ -177,7 +180,7 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
   std::string igstkDataDirectory = IGSTKSandbox_DATA_ROOT;
   std::string inputDirectory = igstkDataDirectory + "/Input";
   std::string simulationFile = (inputDirectory + "/" +
-                                "flockofbirds_stream_03_21_2006.txt");
+                                "flockofbirds_stream_05_31_2006.txt");
   serialComm->SetFileName( simulationFile.c_str() );
 #else /* IGSTK_SIMULATOR_TEST */
   serialComm->SetCaptureFileName( 
@@ -255,8 +258,11 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
       checkError(interp,errorCheck);
       // re-order the revision bytes
       rev = ((rev >> 8) & 0x00ff) | ((rev << 8) & 0xff00);
+      birdMajorRevision = ((rev & 0xff00) >> 8);
+      birdMinorRevision = (rev & 0x00ff);
+
       std::cout << "bird " << (bird+1) << " revision = "
-                << ((rev & 0xff00) >> 8) << "." << (rev & 0x00ff)
+                << birdMajorRevision << "." << birdMinorRevision
                 << std::endl;
       
       char modelID[16];
@@ -276,12 +282,17 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
       std::cout << "bird " << (bird+1) << " identification = "
                 << modelID << std::endl;
 
-      interp->RS232ToFBB(bird+1);
-      checkError(interp,errorCheck);
-      int serialNo = interp->ExamineValue(igstk::FB_SERIAL_NUMBER);
-      checkError(interp,errorCheck);
-      std::cout << "bird " << (bird+1) << " serial number = "
-                << serialNo << std::endl;
+      // FB_SERIAL_NUMER command only works on newer birds
+      if (birdMajorRevision > 3 || 
+          (birdMajorRevision == 3 && birdMinorRevision >= 66))
+        {  
+        interp->RS232ToFBB(bird+1);
+        checkError(interp,errorCheck);
+        int serialNo = interp->ExamineValue(igstk::FB_SERIAL_NUMBER);
+        checkError(interp,errorCheck);
+        std::cout << "bird " << (bird+1) << " serial number = "
+                  << serialNo << std::endl;
+        }
     
       std::cout << "RS232ToFBB(" << (bird+1) << ")" << std::endl;
       interp->RS232ToFBB(bird+1);
@@ -301,8 +312,11 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
     checkError(interp,errorCheck);
     // re-order the revision bytes
     rev = ((rev >> 8) & 0x00ff) | ((rev << 8) & 0xff00);
+    birdMajorRevision = ((rev & 0xff00) >> 8);
+    birdMinorRevision = (rev & 0x00ff);
+
     std::cout << "revision = "
-              << ((rev & 0xff00) >> 8) << "." << (rev & 0x00ff)
+              << birdMajorRevision << "." << birdMinorRevision
               << std::endl;
       
     char modelID[16];
@@ -312,46 +326,57 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
     modelID[11] = '\0';
     std::cout << "identification = " << modelID << std::endl;
 
-    int serialNo = interp->ExamineValue(igstk::FB_SERIAL_NUMBER);
-    checkError(interp,errorCheck);
-    std::cout << "serial number = " << serialNo << std::endl;
+    // FB_SERIAL_NUMER command only works on newer birds
+    if (birdMajorRevision > 3 || 
+        (birdMajorRevision == 3 && birdMinorRevision >= 66))
+      {  
+      int serialNo = interp->ExamineValue(igstk::FB_SERIAL_NUMBER);
+      checkError(interp,errorCheck);
+      std::cout << "serial number = " << serialNo << std::endl;
+      }
     
     std::cout << "SetHemisphere(FB_FORWARD)" << std::endl;
     interp->SetHemisphere(igstk::FB_FORWARD);
     checkError(interp,errorCheck);
     }
 
-  std::cout << "ExamineValue(FB_P_HEMISPHERE) == ";
-  printHemisphere(interp->ExamineValue(igstk::FB_P_HEMISPHERE));
-  checkError(interp,errorCheck);
+  // the FB_P_HEMISPHERE is not available on old bird units
+  if (birdMajorRevision > 3 || 
+      (birdMajorRevision == 3 && birdMinorRevision >= 66))
+    {  
+    std::cout << "ExamineValue(FB_P_HEMISPHERE) == ";
+    printHemisphere(interp->ExamineValue(igstk::FB_P_HEMISPHERE));
+    checkError(interp,errorCheck);
   
-  // again, this time use ChangeValueWords to do the work
-  short hemisphere = static_cast<short>(igstk::FB_AFT);
-  std::cout << "hemisphere == ";
-  printHemisphere(hemisphere);
-  std::cout << "ChangeValueWords(FB_HEMISPHERE, &hemisphere)" << std::endl;
-  interp->ChangeValueWords(igstk::FB_P_HEMISPHERE, &hemisphere);
+    // again, this time use ChangeValueWords to do the work
+    short hemisphere = static_cast<short>(igstk::FB_AFT);
+    std::cout << "hemisphere == ";
+    printHemisphere(hemisphere);
+    std::cout << "ChangeValueWords(FB_HEMISPHERE, &hemisphere)" << std::endl;
+    interp->ChangeValueWords(igstk::FB_P_HEMISPHERE, &hemisphere);
 
-  // again, this time use ExamineValueWords to do the work
-  std::cout << "ExamineValueWords(FB_HEMISPHERE, &hemisphere) == "
-            << std::endl;
-  interp->ExamineValueWords(igstk::FB_P_HEMISPHERE, &hemisphere);
-  printHemisphere(hemisphere);
+    // again, this time use ExamineValueWords to do the work
+    std::cout << "ExamineValueWords(FB_HEMISPHERE, &hemisphere) == "
+              << std::endl;
+    interp->ExamineValueWords(igstk::FB_P_HEMISPHERE, &hemisphere);
+    printHemisphere(hemisphere);
 
-  // again, this time use ChangeValue (the way it is usually done)
-  std::cout << "ChangeValue(FB_P_HEMISPHERE, FB_FORWARD)" << std::endl;
-  interp->ChangeValue(igstk::FB_P_HEMISPHERE, igstk::FB_FORWARD);
-  checkError(interp,errorCheck);
+    // again, this time use ChangeValue (the way it is usually done)
+    std::cout << "ChangeValue(FB_P_HEMISPHERE, FB_FORWARD)" << std::endl;
+    interp->ChangeValue(igstk::FB_P_HEMISPHERE, igstk::FB_FORWARD);
+    checkError(interp,errorCheck);
 
-  std::cout << "ExamineValue(FB_P_HEMISPHERE) == ";
-  printHemisphere(interp->ExamineValue(igstk::FB_P_HEMISPHERE));
-  checkError(interp,errorCheck);
+    std::cout << "ExamineValue(FB_P_HEMISPHERE) == ";
+    printHemisphere(interp->ExamineValue(igstk::FB_P_HEMISPHERE));
+    checkError(interp,errorCheck);
+    }
 
-  int buttonState = 0;
-  std::cout << "ButtonRead(&buttonState)" << std::endl;
-  interp->ButtonRead(&buttonState);
-  checkError(interp,errorCheck);
-  std::cout << "buttonState = " << buttonState << std::endl;  
+  // comment out for now: the simulation file doesn't do it yet
+  //int buttonState = 0;
+  //std::cout << "ButtonRead(&buttonState)" << std::endl;
+  //interp->ButtonRead(&buttonState);
+  //checkError(interp,errorCheck);
+  //std::cout << "buttonState = " << buttonState << std::endl;  
 
   std::cout << "SetFormat(FB_POSITION_MATRIX)" << std::endl;
   interp->SetFormat(igstk::FB_POSITION_MATRIX);
