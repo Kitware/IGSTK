@@ -79,7 +79,7 @@ public:
 
 // helper function to print out the hemisphere
 void printHemisphere(int hemisphere)
-  {
+{
   switch(hemisphere)
     {
     case igstk::FB_FORWARD:
