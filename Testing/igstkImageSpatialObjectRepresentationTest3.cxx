@@ -140,7 +140,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   ellipsoidObject->RequestSetTransform( transform );
   
   ellipsoidObjectRepresentation->RequestSetEllipsoidObject( ellipsoidObject );
-  ellipsoidObjectRepresentation->SetColor( 0.0, 1.0, 0.0 );
+  ellipsoidObjectRepresentation->SetColor( 1.0, 1.0, 1.0 );
   ellipsoidObjectRepresentation->SetOpacity( 1.0 );
 
   //Top Right corner
@@ -152,9 +152,9 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   ellipsoidObjectRepresentation2->SetLogger ( logger );
 
   EllipsoidObjectType::ArrayType radius2;
-  radius2[0] = 20;
-  radius2[1] = 20;
-  radius2[2] = 20;
+  radius2[0] = 30;
+  radius2[1] = 30;
+  radius2[2] = 30;
   ellipsoidObject2->SetRadius(radius2);
 
   igstk::Transform                          transform2;
@@ -172,7 +172,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   ellipsoidObject2->RequestSetTransform( transform2 );
   
   ellipsoidObjectRepresentation2->RequestSetEllipsoidObject( ellipsoidObject2 );
-  ellipsoidObjectRepresentation2->SetColor( 0.0, 0.0, 1.0 );
+  ellipsoidObjectRepresentation2->SetColor( 1.0, 1.0, 1.0 );
   ellipsoidObjectRepresentation2->SetOpacity( 1.0 );
 
  //Bottom Left corner
@@ -184,9 +184,9 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   ellipsoidObjectRepresentation3->SetLogger ( logger );
 
   EllipsoidObjectType::ArrayType radius3;
-  radius3[0] = 20;
-  radius3[1] = 20;
-  radius3[2] = 20;
+  radius3[0] = 40;
+  radius3[1] = 40;
+  radius3[2] = 40;
   ellipsoidObject3->SetRadius(radius3);
 
   igstk::Transform                          transform3;
@@ -204,7 +204,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   ellipsoidObject3->RequestSetTransform( transform3 );
   
   ellipsoidObjectRepresentation3->RequestSetEllipsoidObject( ellipsoidObject3 );
-  ellipsoidObjectRepresentation3->SetColor( 1.0, 0.0, 0.0 );
+  ellipsoidObjectRepresentation3->SetColor( 1.0, 1.0, 1.0 );
   ellipsoidObjectRepresentation3->SetOpacity( 1.0 );
 
   // Bottom right corner
@@ -216,9 +216,9 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   ellipsoidObjectRepresentation4->SetLogger ( logger );
 
   EllipsoidObjectType::ArrayType radius4;
-  radius4[0] = 20;
-  radius4[1] = 20;
-  radius4[2] = 20;
+  radius4[0] = 50;
+  radius4[1] = 50;
+  radius4[2] = 50;
   ellipsoidObject4->SetRadius( radius4 );
 
   igstk::Transform                          transform4;
@@ -237,43 +237,9 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   ellipsoidObject4->RequestSetTransform( transform4 );
   
   ellipsoidObjectRepresentation4->RequestSetEllipsoidObject( ellipsoidObject4 );
-  ellipsoidObjectRepresentation4->SetColor( 1.0, 1.0, 0.0 );
+  ellipsoidObjectRepresentation4->SetColor( 1.0, 1.0, 1.0 );
   ellipsoidObjectRepresentation4->SetOpacity( 1.0 );
 
-  
-  EllipsoidObjectType::Pointer  ellipsoidObject5 = EllipsoidObjectType::New();
-  ellipsoidObject5->SetLogger ( logger );
-
-  EllipsoidRepresentationType::Pointer 
-       ellipsoidObjectRepresentation5 = EllipsoidRepresentationType::New();
-  ellipsoidObjectRepresentation5->SetLogger ( logger );
-
-  EllipsoidObjectType::ArrayType radius5;
-  radius5[0] = 20;
-  radius5[1] = 20;
-  radius5[2] = 20;
-  ellipsoidObject5->SetRadius( radius5 );
-
-  igstk::Transform                          transform5;
-  igstk::Transform::VectorType              translation5;
-
-         
-  translation5[0] = 0.0;
-  translation5[1] = 0.0;
-  translation5[2] = -196.0;
- 
-  igstk::Transform::ErrorType            errorValue5 = 1e-20;
-  igstk::Transform::TimePeriodType       validtyTime5 = 1e20;
-  
-  transform5.SetTranslation( translation5, errorValue5, validtyTime5 ); 
-      
-  ellipsoidObject5->RequestSetTransform( transform5 );
-  
-  ellipsoidObjectRepresentation5->RequestSetEllipsoidObject( ellipsoidObject5 );
-  ellipsoidObjectRepresentation5->SetColor( 1.0, 1.0, 1.0 );
-  ellipsoidObjectRepresentation5->SetOpacity( 1.0 );
-
- 
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
@@ -295,7 +261,6 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   view2D->RequestAddObject( ellipsoidObjectRepresentation2 );
   view2D->RequestAddObject( ellipsoidObjectRepresentation3 );
   view2D->RequestAddObject( ellipsoidObjectRepresentation4 );
-  view2D->RequestAddObject( ellipsoidObjectRepresentation5 );
 
   reader->RequestGetImage();
   if(!ctImageObserver->GotCTImage())
