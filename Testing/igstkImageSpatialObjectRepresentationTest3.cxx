@@ -21,8 +21,8 @@
 
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
-#include "igstkEllipsoidObject.h"
-#include "igstkEllipsoidObjectRepresentation.h"
+#include "igstkCylinderObject.h"
+#include "igstkCylinderObjectRepresentation.h"
 #include "igstkView2D.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
@@ -105,26 +105,28 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  /* Set up the ellipsoidal spatial object that will be added to each 
+  /* Set up the cylinderal spatial object that will be added to each 
    * each corners of the image */
   
   // Top Left corner
-  typedef igstk::EllipsoidObject EllipsoidObjectType;
+  typedef igstk::CylinderObject CylinderObjectType;
 
-  EllipsoidObjectType::Pointer  ellipsoidObject = EllipsoidObjectType::New();
-  ellipsoidObject->SetLogger ( logger );
+  CylinderObjectType::Pointer  cylinderObject = CylinderObjectType::New();
+  cylinderObject->SetLogger ( logger );
   
-  typedef igstk::EllipsoidObjectRepresentation EllipsoidRepresentationType;
-  EllipsoidRepresentationType::Pointer 
-       ellipsoidObjectRepresentation = EllipsoidRepresentationType::New();
-  ellipsoidObjectRepresentation->SetLogger ( logger );
+  typedef igstk::CylinderObjectRepresentation CylinderRepresentationType;
+  CylinderRepresentationType::Pointer 
+       cylinderObjectRepresentation = CylinderRepresentationType::New();
+  cylinderObjectRepresentation->SetLogger ( logger );
          
-  EllipsoidObjectType::ArrayType radius;
-  radius[0] = 20;
-  radius[1] = 20;
-  radius[2] = 20;
-  ellipsoidObject->SetRadius(radius);
+  double radius;
+  radius = 20.0;
+  cylinderObject->SetRadius( radius );
 
+  double height;
+  height = 2.0;
+  cylinderObject->SetHeight ( height );
+  
   igstk::Transform                          transform;
   igstk::Transform::VectorType              translation;
 
@@ -137,25 +139,27 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform.SetTranslation( translation, errorValue, validtyTime ); 
       
-  ellipsoidObject->RequestSetTransform( transform );
+  cylinderObject->RequestSetTransform( transform );
   
-  ellipsoidObjectRepresentation->RequestSetEllipsoidObject( ellipsoidObject );
-  ellipsoidObjectRepresentation->SetColor( 1.0, 1.0, 1.0 );
-  ellipsoidObjectRepresentation->SetOpacity( 1.0 );
+  cylinderObjectRepresentation->RequestSetCylinderObject( cylinderObject );
+  cylinderObjectRepresentation->SetColor( 1.0, 1.0, 1.0 );
+  cylinderObjectRepresentation->SetOpacity( 1.0 );
 
   //Top Right corner
-  EllipsoidObjectType::Pointer  ellipsoidObject2 = EllipsoidObjectType::New();
-  ellipsoidObject2->SetLogger ( logger );
+  CylinderObjectType::Pointer  cylinderObject2 = CylinderObjectType::New();
+  cylinderObject2->SetLogger ( logger );
   
-  EllipsoidRepresentationType::Pointer 
-       ellipsoidObjectRepresentation2 = EllipsoidRepresentationType::New();
-  ellipsoidObjectRepresentation2->SetLogger ( logger );
+  CylinderRepresentationType::Pointer 
+       cylinderObjectRepresentation2 = CylinderRepresentationType::New();
+  cylinderObjectRepresentation2->SetLogger ( logger );
 
-  EllipsoidObjectType::ArrayType radius2;
-  radius2[0] = 30;
-  radius2[1] = 30;
-  radius2[2] = 30;
-  ellipsoidObject2->SetRadius(radius2);
+  double radius2;
+  radius2 = 20.0;
+  cylinderObject2->SetRadius( radius2 );
+
+  double height2;
+  height2 = 2.0;
+  cylinderObject2->SetHeight ( height2 );
 
   igstk::Transform                          transform2;
   igstk::Transform::VectorType              translation2;
@@ -169,25 +173,27 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform2.SetTranslation( translation2, errorValue2, validtyTime2 ); 
       
-  ellipsoidObject2->RequestSetTransform( transform2 );
+  cylinderObject2->RequestSetTransform( transform2 );
   
-  ellipsoidObjectRepresentation2->RequestSetEllipsoidObject( ellipsoidObject2 );
-  ellipsoidObjectRepresentation2->SetColor( 1.0, 1.0, 1.0 );
-  ellipsoidObjectRepresentation2->SetOpacity( 1.0 );
+  cylinderObjectRepresentation2->RequestSetCylinderObject( cylinderObject2 );
+  cylinderObjectRepresentation2->SetColor( 1.0, 1.0, 1.0 );
+  cylinderObjectRepresentation2->SetOpacity( 1.0 );
 
  //Bottom Left corner
-  EllipsoidObjectType::Pointer  ellipsoidObject3 = EllipsoidObjectType::New();
-  ellipsoidObject3->SetLogger ( logger );
+  CylinderObjectType::Pointer  cylinderObject3 = CylinderObjectType::New();
+  cylinderObject3->SetLogger ( logger );
   
-  EllipsoidRepresentationType::Pointer 
-       ellipsoidObjectRepresentation3 = EllipsoidRepresentationType::New();
-  ellipsoidObjectRepresentation3->SetLogger ( logger );
+  CylinderRepresentationType::Pointer 
+       cylinderObjectRepresentation3 = CylinderRepresentationType::New();
+  cylinderObjectRepresentation3->SetLogger ( logger );
 
-  EllipsoidObjectType::ArrayType radius3;
-  radius3[0] = 40;
-  radius3[1] = 40;
-  radius3[2] = 40;
-  ellipsoidObject3->SetRadius(radius3);
+  double radius3;
+  radius3 = 20.0;
+  cylinderObject3->SetRadius( radius3 );
+
+  double height3;
+  height3 = 2.0;
+  cylinderObject3->SetHeight ( height3 );
 
   igstk::Transform                          transform3;
   igstk::Transform::VectorType              translation3;
@@ -201,25 +207,27 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform3.SetTranslation( translation3, errorValue3, validtyTime3 ); 
       
-  ellipsoidObject3->RequestSetTransform( transform3 );
+  cylinderObject3->RequestSetTransform( transform3 );
   
-  ellipsoidObjectRepresentation3->RequestSetEllipsoidObject( ellipsoidObject3 );
-  ellipsoidObjectRepresentation3->SetColor( 1.0, 1.0, 1.0 );
-  ellipsoidObjectRepresentation3->SetOpacity( 1.0 );
+  cylinderObjectRepresentation3->RequestSetCylinderObject( cylinderObject3 );
+  cylinderObjectRepresentation3->SetColor( 1.0, 1.0, 1.0 );
+  cylinderObjectRepresentation3->SetOpacity( 1.0 );
 
   // Bottom right corner
-  EllipsoidObjectType::Pointer  ellipsoidObject4 = EllipsoidObjectType::New();
-  ellipsoidObject4->SetLogger ( logger );
+  CylinderObjectType::Pointer  cylinderObject4 = CylinderObjectType::New();
+  cylinderObject4->SetLogger ( logger );
   
-  EllipsoidRepresentationType::Pointer 
-       ellipsoidObjectRepresentation4 = EllipsoidRepresentationType::New();
-  ellipsoidObjectRepresentation4->SetLogger ( logger );
+  CylinderRepresentationType::Pointer 
+       cylinderObjectRepresentation4 = CylinderRepresentationType::New();
+  cylinderObjectRepresentation4->SetLogger ( logger );
 
-  EllipsoidObjectType::ArrayType radius4;
-  radius4[0] = 50;
-  radius4[1] = 50;
-  radius4[2] = 50;
-  ellipsoidObject4->SetRadius( radius4 );
+  double radius4;
+  radius4 = 20.0;
+  cylinderObject4->SetRadius( radius4 );
+
+  double height4;
+  height4 = 2.0;
+  cylinderObject4->SetHeight ( height4 );
 
   igstk::Transform                          transform4;
   igstk::Transform::VectorType              translation4;
@@ -234,11 +242,11 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform4.SetTranslation( translation4, errorValue4, validtyTime4 ); 
       
-  ellipsoidObject4->RequestSetTransform( transform4 );
+  cylinderObject4->RequestSetTransform( transform4 );
   
-  ellipsoidObjectRepresentation4->RequestSetEllipsoidObject( ellipsoidObject4 );
-  ellipsoidObjectRepresentation4->SetColor( 1.0, 1.0, 1.0 );
-  ellipsoidObjectRepresentation4->SetOpacity( 1.0 );
+  cylinderObjectRepresentation4->RequestSetCylinderObject( cylinderObject4 );
+  cylinderObjectRepresentation4->SetColor( 1.0, 1.0, 1.0 );
+  cylinderObjectRepresentation4->SetOpacity( 1.0 );
 
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
@@ -256,11 +264,11 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   // Add the image object representation to the view
   view2D->RequestAddObject( imageRepresentation );
 
-  // Add the ellipsoid object representation to the view 
-  view2D->RequestAddObject( ellipsoidObjectRepresentation );
-  view2D->RequestAddObject( ellipsoidObjectRepresentation2 );
-  view2D->RequestAddObject( ellipsoidObjectRepresentation3 );
-  view2D->RequestAddObject( ellipsoidObjectRepresentation4 );
+  // Add the cylinder object representation to the view 
+  view2D->RequestAddObject( cylinderObjectRepresentation );
+  view2D->RequestAddObject( cylinderObjectRepresentation2 );
+  view2D->RequestAddObject( cylinderObjectRepresentation3 );
+  view2D->RequestAddObject( cylinderObjectRepresentation4 );
 
   reader->RequestGetImage();
   if(!ctImageObserver->GotCTImage())
