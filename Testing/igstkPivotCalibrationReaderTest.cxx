@@ -25,6 +25,9 @@
 #include "igstkPivotCalibrationReader.h"
 #include <itksys/SystemTools.hxx>
 
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
+
 namespace ToolCalibrationTest
 {
 igstkObserverMacro(Calibration,::igstk::CalibrationModifiedEvent,
@@ -42,8 +45,22 @@ int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
+  typedef itk::Logger                       LoggerType; 
+  typedef itk::StdStreamLogOutput           LogOutputType;
+
+  // Logger object created for logging calibration computation
+  LoggerType::Pointer                       logger = LoggerType::New();
+  LogOutputType::Pointer                    logOutput = LogOutputType::New();
+
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create the pivot calibration reader and attach the logger
   igstk::PivotCalibrationReader::Pointer reader = 
                               igstk::PivotCalibrationReader::New();
+
+  reader->SetLogger( logger );
 
   // Set an empty filename
   reader->RequestSetFileName("");
@@ -57,6 +74,7 @@ int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
 
   reader->RequestSetFileName(argv[1]);
   reader->RequestReadObject();
+
   reader->Print(std::cout);
 
   typedef ToolCalibrationTest::CalibrationObserver CalibrationObserverType;
@@ -69,7 +87,7 @@ int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
   igstk::PivotCalibration::Pointer calibration = NULL;
 
   std::cout << "Testing Calibration: ";
-  if(calibrationObserver->GotCalibration())
+  if( calibrationObserver->GotCalibration() )
     {
     calibration = calibrationObserver->GetCalibration();
     }
