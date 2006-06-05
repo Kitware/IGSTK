@@ -540,7 +540,7 @@ ToolCalibrationReader<TCalibration>
   igstkLogMacro( DEBUG, "igstk::ToolCalibrationReader::\
                       AttemptReadObjectProcessing called...\n");
   
-  if( this->ParseXML() )
+  if( !this->ParseXML() )
     {
     this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
     return;
