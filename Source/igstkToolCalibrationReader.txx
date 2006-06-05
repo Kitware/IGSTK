@@ -363,7 +363,7 @@ ToolCalibrationReader<TCalibration>
   file.open(m_FileName.c_str(), std::ios::binary | std::ios::in);
   if(!file.is_open())
     {
-    std::cout << "Cannot open file: " << m_FileName.c_str() << std::endl;
+    std::cerr << "Cannot open file: " << m_FileName.c_str() << std::endl;
     return false;
     }
   file.seekg(0,std::ios::end);
@@ -385,7 +385,7 @@ ToolCalibrationReader<TCalibration>
   long int crcpos = buffer.find("<CRC32>");
   if(crcpos == -1)
     {
-    std::cout << "No CRC32 tag found in the file!" << std::endl;
+    std::cerr << "No CRC32 tag found in the file!" << std::endl;
     return false;
     }
  
@@ -518,7 +518,7 @@ ToolCalibrationReader<TCalibration>
       std::vector<XMLToolCalibrationReader::PairType> values = (*it).values;
       if(atof((*(values.begin())).first.c_str()) != crc)
         {
-        std::cout << "CRC is wrong: " 
+        std::cerr << "CRC is wrong: " 
                   << (*(values.begin())).first.c_str() << " : " 
                   << atof((*(values.begin())).first.c_str())
                   << " (expected: " << crc << ")" << std::endl;
@@ -548,9 +548,9 @@ ToolCalibrationReader<TCalibration>
 
   TransformType retrievedTransform;
   
-  bool errorStatus = this->RetrieveParametersFromFile( retrievedTransform );
+  bool returnStatus = this->RetrieveParametersFromFile( retrievedTransform );
   
-  if( errorStatus )
+  if( returnStatus == false )
     {
     this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
     }
