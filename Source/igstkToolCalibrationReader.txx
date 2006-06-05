@@ -537,7 +537,7 @@ void
 ToolCalibrationReader<TCalibration>
 ::AttemptReadObjectProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::CalibrationReader::\
+  igstkLogMacro( DEBUG, "igstk::ToolCalibrationReader::\
                       AttemptReadObjectProcessing called...\n");
   
   if( this->ParseXML() )
@@ -560,6 +560,19 @@ ToolCalibrationReader<TCalibration>
 
     this->m_StateMachine.PushInput( this->m_ObjectReadingSuccessInput );
     }
+}
+
+
+/** Read the XML file */
+template <class TCalibration>
+bool
+ToolCalibrationReader<TCalibration>
+::RetrieveParametersFromFile( TransformType & )
+{
+  igstkLogMacro( DEBUG, "igstk::ToolCalibrationReader::\
+                      RetrieveParametersFromFile called...\n");
+  
+  return false;
 }
 
 
