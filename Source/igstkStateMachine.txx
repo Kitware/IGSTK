@@ -338,6 +338,7 @@ StateMachine< TClass >
   
   igstkLogMacroStatic( m_This, DEBUG, "State transition is being made : " 
     << m_This->GetNameOfClass() << " "
+    << " PointerID " << m_This << " "
     << this->GetStateDescriptor( previousState ) << "(" << previousState << ") "
     << " with " << this->GetInputDescriptor( inputIdentifier ) 
     << "(" << inputIdentifier << ") ---> "
