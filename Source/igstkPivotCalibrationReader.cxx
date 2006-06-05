@@ -38,10 +38,11 @@ bool PivotCalibrationReader
 ::RetrieveParametersFromFile( TransformType & transform )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
-                      AttemptReadObjectProcessing called...\n");
+                      RetrieveParametersFromFile called...\n");
   
   TransformType::VectorType translation;
   TransformType::VersorType rotation;
+
 
   float value;
   if( !this->GetParameter( "translation_x", value ) )
