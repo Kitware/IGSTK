@@ -25,58 +25,6 @@ PivotCalibrationReader
 {
   m_RootMeanSquareError = 0;
 
-  //Set the state descriptors
-  igstkAddStateMacro( Idle );
-  igstkAddStateMacro( ObjectFileNameRead );
-  igstkAddStateMacro( ObjectRead );
-  igstkAddStateMacro( ObjectAttemptingRead );
-
-  /** List of  Inputs */
-  igstkAddInputMacro( ReadObjectRequest );
-  igstkAddInputMacro( ObjectReadingError );
-  igstkAddInputMacro( ObjectReadingSuccess );
-  igstkAddInputMacro( ObjectFileNameValid );
-  igstkAddInputMacro( ObjectFileNameIsEmpty );
-  igstkAddInputMacro( ObjectFileNameIsDirectory );
-  igstkAddInputMacro( ObjectFileNameDoesNotExist );
-  igstkAddInputMacro( RequestCalibration );
-
-  igstkAddTransitionMacro( Idle, ObjectFileNameValid, 
-                           ObjectFileNameRead, SetFileName );
-  igstkAddTransitionMacro( Idle, ObjectFileNameIsEmpty, 
-                           Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ObjectFileNameIsDirectory, 
-                           Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ObjectFileNameDoesNotExist, 
-                           Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ReadObjectRequest, 
-                           Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( ObjectFileNameRead, ReadObjectRequest, 
-                           ObjectAttemptingRead, AttemptReadObject );
-  igstkAddTransitionMacro( ObjectRead, ObjectFileNameValid, 
-                           ObjectFileNameRead, SetFileName );
-  igstkAddTransitionMacro( ObjectRead, ObjectFileNameIsEmpty, 
-                           Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( ObjectRead, ObjectFileNameIsDirectory, 
-                           Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( ObjectRead, ObjectFileNameDoesNotExist, 
-                           Idle, ReportInvalidRequest );
-
-  igstkAddTransitionMacro( ObjectRead, RequestCalibration,
-                           ObjectRead, ReportCalibration );
-
-
-  //Errors related to Object reading 
-  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectReadingError, 
-                           Idle, ReportObjectReadingError );
-  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectReadingSuccess, 
-                           ObjectRead, ReportObjectReadingSuccess );
-
-  // Select the initial state of the state machine
-  igstkSetInitialStateMacro( Idle );
-
-  // Finish the programming and get ready to run
-  m_StateMachine.SetReadyToRun();
 } 
 
 /** Destructor */
@@ -85,22 +33,72 @@ PivotCalibrationReader
 {
 }
 
-/* This function reports invalid requests */
-void PivotCalibrationReader
-::ReportInvalidRequestProcessing()
+/** Read the XML file */
+bool PivotCalibrationReader
+::RetrieveParametersFromFile( TransformType & transform )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
-                        ReportInvalidRequestProcessing called...\n");
-  this->InvokeEvent( ObjectInvalidRequestErrorEvent() );
-}
+                      AttemptReadObjectProcessing called...\n");
+  
+  TransformType::VectorType translation;
+  TransformType::VersorType rotation;
 
+  float value;
+  if( !this->GetParameter( "translation_x", value ) )
+    {
+    return false;
+    }
+  translation[0]=value;
 
-void PivotCalibrationReader
-::ReportObjectReadingErrorProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
-                        ReportObjectReadingErrorProcessing: called...\n");
-  this->InvokeEvent( ObjectReadingErrorEvent() );
+  if( !this->GetParameter( "translation_y", value ) )
+    {
+    return false;
+    }
+  translation[1]=value;
+
+  if( !this->GetParameter( "translation_z", value ) )
+    {
+    return false;
+    }
+  translation[2]=value;
+
+  if( !this->GetParameter( "quaternion_x", value ))
+    {
+    return false;
+    }
+  float x=value;
+
+  if( !this->GetParameter( "quaternion_y", value ))
+    {
+    return false;
+    }  
+  float y=value;
+  
+  if( !this->GetParameter( "quaternion_z", value ))
+    {
+    return false;
+    }
+  float z=value;
+
+  if( !this->GetParameter( "quaternion_w", value ))
+    {
+    return false;
+    }
+  float w=value;
+
+  rotation.Set(x,y,z,w);
+
+  transform.SetTranslationAndRotation(translation,rotation,0,10000);
+
+  // Set the error
+  if( !this->GetError( "rms", value ) )
+    {
+    return false;
+    }
+
+  m_RootMeanSquareError = value;
+
+  return true;
 }
 
 
@@ -109,166 +107,20 @@ void PivotCalibrationReader
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
                         ReportObjectReadingSuccessProcessing: called...\n");
+
+  Friends::PivotCalibrationReaderToPivotCalibration
+   ::ConnectToolCalibration( this, this->GetCalibration() );
+
   this->InvokeEvent( ObjectReadingSuccessEvent() );
 }
 
-void PivotCalibrationReader
-::RequestSetFileName( const FileNameType & filename )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
-                        RequestSetFileName called...\n");
-  m_FileNameToBeSet = filename;
-
-  if( filename.empty() )
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectFileNameIsEmptyInput );
-    this->m_StateMachine.ProcessInputs();
-    return;
-    }
-
-  if( !itksys::SystemTools::FileExists( filename.c_str() ) )
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectFileNameDoesNotExistInput );
-    this->m_StateMachine.ProcessInputs();
-    return;
-    }
-
-  if( itksys::SystemTools::FileIsDirectory( filename.c_str() ))
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectFileNameIsDirectoryInput );
-    this->m_StateMachine.ProcessInputs();
-    return;
-    }
-  
-  this->m_StateMachine.PushInput( this->m_ObjectFileNameValidInput );
-  this->m_StateMachine.ProcessInputs();
-}
-
-
-void PivotCalibrationReader
-::SetFileNameProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
-                        SetFileNameProcessing called...\n");
-  m_FileName = m_FileNameToBeSet;
-}
-
-/** Read the XML file */
-void PivotCalibrationReader
-::AttemptReadObjectProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
-                      AttemptReadObjectProcessing called...\n");
-  
-  if(!Superclass::ParseXML())
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
-    return;
-    }
-
-  TransformType::VectorType translation;
-  TransformType::VersorType rotation;
-
-  float value;
-  if(!this->GetParameter("translation_x",&value))
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
-    return;
-    }
-  translation[0]=value;
-
-  if(!this->GetParameter("translation_y",&value))
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
-    return;
-    }
-  translation[1]=value;
-
-  if(!this->GetParameter("translation_z",&value))
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
-    return;
-    }
-  translation[2]=value;
-
-  if(!this->GetParameter("quaternion_x",&value))
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
-    return;
-    }
-  float x=value;
-
-  if(!this->GetParameter("quaternion_y",&value))
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
-    return;
-    }  
-  float y=value;
-
-  if(!this->GetParameter("quaternion_z",&value))
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
-    return;
-    }
-  float z=value;
-
-  if(!this->GetParameter("quaternion_w",&value))
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
-    return;
-    }
-  float w=value;
-
-  rotation.Set(x,y,z,w);
-
-  this->m_Transform.SetTranslationAndRotation(translation,rotation,0,10000);
-
-  Friends::ToolCalibrationReaderToToolCalibration::
-    ConnectToolCalibration<PivotCalibrationReader,PivotCalibration>
-                                              (this,this->m_Calibration);
-
-  // Set the error
-  if(!this->GetError("rms",&value))
-    {
-    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
-    return;
-    }
-  m_RootMeanSquareError = value;
-
-  Friends::PivotCalibrationReaderToPivotCalibration
-   ::ConnectToolCalibration<PivotCalibrationReader>(this,this->m_Calibration);
-
-  this->m_StateMachine.PushInput( this->m_ObjectReadingSuccessInput );
-}
 
 /** Return the RootMeanSquareError */
-float PivotCalibrationReader::GetRootMeanSquareError() const
+float 
+PivotCalibrationReader
+::GetRootMeanSquareError() const
 {
   return m_RootMeanSquareError;
-}
-
-void PivotCalibrationReader::RequestGetCalibration() 
-{
-  m_StateMachine.PushInput( m_RequestCalibrationInput );
-  m_StateMachine.ProcessInputs();
-}
-
-void PivotCalibrationReader
-::ReportCalibrationProcessing() 
-{
-  CalibrationModifiedEvent event;
-  event.Set( this->m_Calibration );
-  this->InvokeEvent( event );
-}
-
-/** Request to read the object file */
-void PivotCalibrationReader
-::RequestReadObject()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationReader::\
-                        RequestReadObject called...\n");
-  this->m_StateMachine.PushInput( this->m_ReadObjectRequestInput);
-  this->m_StateMachine.ProcessInputs();
 }
 
 /** Print Self function */
@@ -277,6 +129,8 @@ PivotCalibrationReader
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << indent << "Root mean square error " 
+     << m_RootMeanSquareError << std::endl;
 }
 
 } // end namespace igstk

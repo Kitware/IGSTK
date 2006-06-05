@@ -37,9 +37,9 @@ namespace Friends
  * ToolCalibrationReader and its output, the ToolCalibration. 
  *
  * With this class it is possible to enforce encapsulation of the Reader and
- * the ToolCalibration, and make the SetTranslationAndRotation()
- * private, so that developers cannot gain access to the ITK or VTK layers of
- * these two classes.
+ * the ToolCalibration, and make the SetTranslationAndRotation() private, so
+ * that developers cannot gain access to the ITK or VTK layers of these two
+ * classes.
  *
  */
 class ToolCalibrationReaderToToolCalibration
@@ -170,8 +170,11 @@ protected:
  * \brief This class reads an XML calibration file and returns a calibration
  *        transform.
  * 
+ *  This class is the base class for readers of calibration files. The files
+ *  use an XML format and are specialiazed for particular calibration objects.
+ *  This class defines the generic interface of a reader.
  *
- * \ingroup Object */
+ * \ingroup Readers */
 template <class TCalibration>
 class ToolCalibrationReader : public Object
 {
@@ -185,12 +188,18 @@ public:
   typedef TCalibration                            CalibrationType;
   typedef typename CalibrationType::TransformType TransformType;
 
-  /** Return the output of the reader as a Transform */
-  const CalibrationType * GetCalibration() const;
-  
   /** Type for representing the string of the filename. */
   typedef std::string    FileNameType;
   
+  /** Method to pass the directory name containing the spatial object data */
+  void RequestSetFileName( const FileNameType & filename );
+
+  /** This method request Object read **/
+  void RequestReadObject();
+
+  /** This method request the calibration **/
+  void RequestGetCalibration();
+
   /** Declare the ToolCalibrationReaderToToolCalibration class to be a friend 
    *  in order to give it access to the private method GetTransform(). */
   igstkFriendClassMacro( 
@@ -205,29 +214,37 @@ protected:
   void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
 
   bool ParseXML();
-  FileNameType                       m_FileName;
-  typename CalibrationType::Pointer  m_Calibration;
 
-  typedef std::pair<std::string,float> ParameterType;
-  std::vector<ParameterType> m_Parameters;
-  typedef std::pair<std::string,float> ErrorType;
-  std::vector<ErrorType> m_Errors;
+  /** Event types */
+  itkEventMacro( ObjectReaderEvent,              IGSTKEvent        );
+  itkEventMacro( ObjectReadingErrorEvent,        ObjectReaderEvent );
+  itkEventMacro( ObjectReadingSuccessEvent,      ObjectReaderEvent );
+  itkEventMacro( ObjectInvalidRequestErrorEvent, ObjectReaderEvent );
+
+  /** Type for the name of the parameters */
+  typedef std::string  ParameterNameType;
 
   /** Add a parameter and its value */
-  bool AddParameter(const char* name, float value);
+  bool AddParameter( const ParameterNameType & name, float value);
 
   /** Add an error and its value */
-  bool AddError(const char* name, float value);
+  bool AddError( const ParameterNameType & name, float value);
 
   /** Get a parameter value given its name */
-  bool GetParameter(const char* name,float * param);
+  bool GetParameter( const ParameterNameType & name, float & param );
 
   /** Get an error value given its name */
-  bool GetError(const char* name,float * error);
+  bool GetError( const ParameterNameType & name, float & error );
 
   /** This transform is used to pass it to the calibration */
-  TransformType  m_Transform;
   const TransformType & GetTransform() const;
+
+  /** Return the Calibration */
+  CalibrationType * GetCalibration();
+  const CalibrationType * GetCalibration() const;
+
+  /** Service function to be overloaded by derived classes */
+  virtual bool RetrieveParametersFromFile( TransformType & transform );
 
 private:
   
@@ -239,6 +256,66 @@ private:
   /** Convert a buffer to windows file type */
   void ConvertBufferToWindowsFileType(std::string & buffer);
 
+  /** Method to be invoked only by the StateMachine. Reports that an input was
+   * received during a State where that input is not a valid request. For
+   * example, asking to read the file before providing the filename */
+  void ReportInvalidRequestProcessing();
+
+  /** Method to be invoked only by the StateMachine. This function reports the
+   * success of the reading process. */
+  void ReportObjectReadingSuccessProcessing();
+
+  /** Method to be invoked only by the StateMachine. This function reports an
+   * error while reading */
+  void ReportObjectReadingErrorProcessing();
+
+  /** Return the calibration via event */
+  virtual void ReportCalibrationProcessing();
+
+  /** Attempt to read the calibration file */
+  virtual void AttemptReadObjectProcessing();
+
+
+  /** Method to be invoked only by the StateMachine. Accepts the filename */
+  void SetFileNameProcessing();
+
+  /** List of States */
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( ObjectFileNameRead );
+  igstkDeclareStateMacro( ObjectRead );
+  igstkDeclareStateMacro( ObjectAttemptingRead );
+  igstkDeclareInputMacro( ObjectReadingError );
+  igstkDeclareInputMacro( ObjectReadingSuccess );
+
+  /** List of State Inputs */
+  igstkDeclareInputMacro( ObjectFileNameValid ); 
+  igstkDeclareInputMacro( ObjectFileNameIsEmpty ); 
+  igstkDeclareInputMacro( ObjectFileNameIsDirectory ); 
+  igstkDeclareInputMacro( ObjectFileNameDoesNotExist ); 
+  igstkDeclareInputMacro( RequestCalibration ); 
+  igstkDeclareInputMacro( ReadObjectRequest );
+
+  /** Name of the file to read */
+  FileNameType                       m_FileName;
+  FileNameType                       m_FileNameToBeSet;
+
+  /** Variable storing the callibration */
+  typename CalibrationType::Pointer  m_Calibration;
+
+  /** Variable storing the Transform */
+  TransformType                   m_Transform;
+
+  /** Type for array of parameters */
+  typedef std::pair<ParameterNameType,float> ParameterType;
+
+  /** Type for array of errors */
+  typedef std::pair<ParameterNameType,float> ErrorType;
+
+  /** Calibration parameters */
+  std::vector< ParameterType >    m_Parameters;
+
+  /** Array of Errors */
+  std::vector< ErrorType >        m_Errors;
 };
 
 } // end namespace igstk

@@ -29,6 +29,60 @@ ToolCalibrationReader<TCalibration>
 {
   m_Calibration = CalibrationType::New();
   m_FileName = "";
+
+  //Set the state descriptors
+  igstkAddStateMacro( Idle );
+  igstkAddStateMacro( ObjectFileNameRead );
+  igstkAddStateMacro( ObjectRead );
+  igstkAddStateMacro( ObjectAttemptingRead );
+
+  /** List of  Inputs */
+  igstkAddInputMacro( ReadObjectRequest );
+  igstkAddInputMacro( ObjectReadingError );
+  igstkAddInputMacro( ObjectReadingSuccess );
+  igstkAddInputMacro( ObjectFileNameValid );
+  igstkAddInputMacro( ObjectFileNameIsEmpty );
+  igstkAddInputMacro( ObjectFileNameIsDirectory );
+  igstkAddInputMacro( ObjectFileNameDoesNotExist );
+  igstkAddInputMacro( RequestCalibration );
+
+  igstkAddTransitionMacro( Idle, ObjectFileNameValid, 
+                           ObjectFileNameRead, SetFileName );
+  igstkAddTransitionMacro( Idle, ObjectFileNameIsEmpty, 
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ObjectFileNameIsDirectory, 
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ObjectFileNameDoesNotExist, 
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ReadObjectRequest, 
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectFileNameRead, ReadObjectRequest, 
+                           ObjectAttemptingRead, AttemptReadObject );
+  igstkAddTransitionMacro( ObjectRead, ObjectFileNameValid, 
+                           ObjectFileNameRead, SetFileName );
+  igstkAddTransitionMacro( ObjectRead, ObjectFileNameIsEmpty, 
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectRead, ObjectFileNameIsDirectory, 
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectRead, ObjectFileNameDoesNotExist, 
+                           Idle, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ObjectRead, RequestCalibration,
+                           ObjectRead, ReportCalibration );
+
+
+  //Errors related to Object reading 
+  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectReadingError, 
+                           Idle, ReportObjectReadingError );
+  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectReadingSuccess, 
+                           ObjectRead, ReportObjectReadingSuccess );
+
+  // Select the initial state of the state machine
+  igstkSetInitialStateMacro( Idle );
+
+  // Finish the programming and get ready to run
+  m_StateMachine.SetReadyToRun();
+
 } 
 
 /** Destructor */
@@ -38,10 +92,126 @@ ToolCalibrationReader<TCalibration>
 {
 }
 
+/* This function reports invalid requests */
+template <class TCalibration>
+void
+ToolCalibrationReader<TCalibration>
+::ReportInvalidRequestProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::ToolCalibrationReader::\
+                        ReportInvalidRequestProcessing called...\n");
+  this->InvokeEvent( ObjectInvalidRequestErrorEvent() );
+}
+
+
+template <class TCalibration>
+void
+ToolCalibrationReader<TCalibration>
+::ReportObjectReadingErrorProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::ToolCalibrationReader::\
+                        ReportObjectReadingErrorProcessing: called...\n");
+  this->InvokeEvent( ObjectReadingErrorEvent() );
+}
+
+
+template <class TCalibration>
+void
+ToolCalibrationReader<TCalibration>
+::ReportObjectReadingSuccessProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::ToolCalibrationReader::\
+                        ReportObjectReadingSuccessProcessing: called...\n");
+
+  Friends::ToolCalibrationReaderToToolCalibration
+   ::ConnectToolCalibration( this, this->m_Calibration.GetPointer() );
+
+  this->InvokeEvent( ObjectReadingSuccessEvent() );
+}
+
+template <class TCalibration>
+void
+ToolCalibrationReader<TCalibration>
+::RequestSetFileName( const FileNameType & filename )
+{
+  igstkLogMacro( DEBUG, "igstk::ToolCalibrationReader::\
+                        RequestSetFileName called...\n");
+  m_FileNameToBeSet = filename;
+
+  if( filename.empty() )
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectFileNameIsEmptyInput );
+    this->m_StateMachine.ProcessInputs();
+    return;
+    }
+
+  if( !itksys::SystemTools::FileExists( filename.c_str() ) )
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectFileNameDoesNotExistInput );
+    this->m_StateMachine.ProcessInputs();
+    return;
+    }
+
+  if( itksys::SystemTools::FileIsDirectory( filename.c_str() ))
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectFileNameIsDirectoryInput );
+    this->m_StateMachine.ProcessInputs();
+    return;
+    }
+  
+  this->m_StateMachine.PushInput( this->m_ObjectFileNameValidInput );
+  this->m_StateMachine.ProcessInputs();
+}
+
+
+template <class TCalibration>
+void
+ToolCalibrationReader<TCalibration>
+::SetFileNameProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::ToolCalibrationReader::\
+                        SetFileNameProcessing called...\n");
+  m_FileName = m_FileNameToBeSet;
+}
+
+template <class TCalibration>
+void
+ToolCalibrationReader<TCalibration>
+::RequestGetCalibration() 
+{
+  m_StateMachine.PushInput( m_RequestCalibrationInput );
+  m_StateMachine.ProcessInputs();
+}
+
+template <class TCalibration>
+void
+ToolCalibrationReader<TCalibration>
+::ReportCalibrationProcessing() 
+{
+  CalibrationModifiedEvent event;
+  event.Set( this->m_Calibration );
+  this->InvokeEvent( event );
+}
+
+/** Request to read the object file */
+template <class TCalibration>
+void
+ToolCalibrationReader<TCalibration>
+::RequestReadObject()
+{
+  igstkLogMacro( DEBUG, "igstk::ToolCalibrationReader::\
+                        RequestReadObject called...\n");
+  this->m_StateMachine.PushInput( this->m_ReadObjectRequestInput);
+  this->m_StateMachine.ProcessInputs();
+}
+
+
+
 /** Add a parameter */
 template <class TCalibration>
-bool ToolCalibrationReader<TCalibration>
-::AddParameter(const char* name,float value)
+bool 
+ToolCalibrationReader<TCalibration>
+::AddParameter( const ParameterNameType & name, float value )
 {
   std::vector<ParameterType>::const_iterator it = m_Parameters.begin();
   while(it != m_Parameters.end())
@@ -64,14 +234,14 @@ bool ToolCalibrationReader<TCalibration>
 /** Get a parameter given its name */
 template <class TCalibration>
 bool ToolCalibrationReader<TCalibration>
-::GetParameter(const char* name,float * value)
+::GetParameter( const ParameterNameType & name, float & value )
 {
   std::vector<ParameterType>::const_iterator it = m_Parameters.begin();
   while(it != m_Parameters.end())
     {
     if((*it).first == name)
       {
-      *value = (*it).second;
+      value = (*it).second;
       return true;
       }
     it++;
@@ -83,14 +253,14 @@ bool ToolCalibrationReader<TCalibration>
 /** Get an error given its name */
 template <class TCalibration>
 bool ToolCalibrationReader<TCalibration>
-::GetError(const char* name,float * value)
+::GetError( const ParameterNameType & name,float & value )
 {
   std::vector<ErrorType>::const_iterator it = m_Errors.begin();
   while(it != m_Errors.end())
     {
     if((*it).first == name)
       {
-      *value = (*it).second;
+      value = (*it).second;
       return true;
       }
     it++;
@@ -107,10 +277,29 @@ ToolCalibrationReader<TCalibration>
   return m_Transform;
 }
 
+/** Return the calibration */
+template <class TCalibration>
+const typename ToolCalibrationReader<TCalibration>::CalibrationType *
+ToolCalibrationReader<TCalibration>
+::GetCalibration() const
+{
+  return m_Calibration;
+}
+
+/** Return the calibration */
+template <class TCalibration>
+typename ToolCalibrationReader<TCalibration>::CalibrationType *
+ToolCalibrationReader<TCalibration>
+::GetCalibration()
+{
+  return m_Calibration;
+}
+
+
 /** Add an error */
 template <class TCalibration>
 bool ToolCalibrationReader<TCalibration>
-::AddError(const char* name,float value)
+::AddError( const ParameterNameType & name, float value )
 {
   std::vector<ErrorType>::const_iterator it = m_Errors.begin();
   while(it != m_Errors.end())
@@ -132,7 +321,8 @@ bool ToolCalibrationReader<TCalibration>
 
 /** Convert a current Buffer to Windows file type */
 template <class TCalibration>
-void ToolCalibrationReader<TCalibration>
+void
+ToolCalibrationReader<TCalibration>
 ::ConvertBufferToWindowsFileType(std::string & buffer)
 {
   size_t cc;
@@ -163,7 +353,7 @@ template <class TCalibration>
 bool 
 ToolCalibrationReader<TCalibration>
 ::ParseXML()
-{ 
+{
   m_Parameters.clear();
   m_Errors.clear();
 
@@ -341,6 +531,38 @@ ToolCalibrationReader<TCalibration>
 }
 
 
+/** Read the XML file */
+template <class TCalibration>
+void
+ToolCalibrationReader<TCalibration>
+::AttemptReadObjectProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::CalibrationReader::\
+                      AttemptReadObjectProcessing called...\n");
+  
+  if( this->ParseXML() )
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
+    return;
+    }
+
+  TransformType retrievedTransform;
+  
+  bool errorStatus = this->RetrieveParametersFromFile( retrievedTransform );
+  
+  if( errorStatus )
+    {
+    this->m_StateMachine.PushInput( this->m_ObjectReadingErrorInput );
+    }
+  else 
+    {
+    this->m_Transform = retrievedTransform;
+
+    this->m_StateMachine.PushInput( this->m_ObjectReadingSuccessInput );
+    }
+}
+
+
 /** Print Self function */
 template <class TCalibration>
 void
@@ -348,16 +570,10 @@ ToolCalibrationReader<TCalibration>
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << indent << "Calibration " << m_Calibration << std::endl;
+  os << indent << "Transform   " << m_Transform << std::endl;
 }
 
-template <class TCalibration>
-const 
-typename ToolCalibrationReader<TCalibration>::CalibrationType *
-ToolCalibrationReader<TCalibration>
-::GetCalibration() const
-{
-  return m_Calibration;
-}
 
 } // end namespace igstk
 
