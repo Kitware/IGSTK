@@ -21,8 +21,8 @@
 
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
-#include "igstkCylinderObject.h"
-#include "igstkCylinderObjectRepresentation.h"
+#include "igstkBoxObject.h"
+#include "igstkBoxObjectRepresentation.h"
 #include "igstkView2D.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
@@ -105,28 +105,30 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  /* Set up the cylinder spatial object that will be added to each 
+  /* Set up the box spatial object that will be added to each 
    * each corners of the image */
   
   // Top Left corner
-  typedef igstk::CylinderObject CylinderObjectType;
+  typedef igstk::BoxObject BoxObjectType;
 
-  CylinderObjectType::Pointer  cylinderObject = CylinderObjectType::New();
-  cylinderObject->SetLogger ( logger );
+  BoxObjectType::Pointer  boxObject = BoxObjectType::New();
+  boxObject->SetLogger ( logger );
   
-  typedef igstk::CylinderObjectRepresentation CylinderRepresentationType;
-  CylinderRepresentationType::Pointer 
-       cylinderObjectRepresentation = CylinderRepresentationType::New();
-  cylinderObjectRepresentation->SetLogger ( logger );
+  typedef igstk::BoxObjectRepresentation BoxRepresentationType;
+  BoxRepresentationType::Pointer 
+       boxObjectRepresentation = BoxRepresentationType::New();
+  boxObjectRepresentation->SetLogger ( logger );
 
-  double radius;
-  radius= 20.0;
-  cylinderObject->SetRadius( radius );
+  double size_X;
+  double size_Y;
+  double size_Z;
+  
+  size_X = 20.0;
+  size_Y = 20.0;
+  size_Z = 2.0;
 
-  double height;
-  height = 2;
-  cylinderObject->SetHeight( height );
- 
+  boxObject->SetSize( size_X, size_Y, size_Z );
+
   igstk::Transform                          transform;
   igstk::Transform::VectorType              translation;
 
@@ -139,28 +141,30 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   
   transform.SetTranslation( translation, errorValue, validtyTime ); 
       
-  cylinderObject->RequestSetTransform( transform );
+  boxObject->RequestSetTransform( transform );
   
-  cylinderObjectRepresentation->RequestSetCylinderObject( cylinderObject );
-  cylinderObjectRepresentation->SetColor( 1.0, 1.0, 1.0 );
-  cylinderObjectRepresentation->SetOpacity( 1.0 );
+  boxObjectRepresentation->RequestSetBoxObject( boxObject );
+  boxObjectRepresentation->SetColor( 1.0, 1.0, 1.0 );
+  boxObjectRepresentation->SetOpacity( 1.0 );
 
   //Top Right corner
-  CylinderObjectType::Pointer  cylinderObject2 = CylinderObjectType::New();
-  cylinderObject2->SetLogger ( logger );
+  BoxObjectType::Pointer  boxObject2 = BoxObjectType::New();
+  boxObject2->SetLogger ( logger );
   
-  CylinderRepresentationType::Pointer 
-       cylinderObjectRepresentation2 = CylinderRepresentationType::New();
-  cylinderObjectRepresentation2->SetLogger ( logger );
+  BoxRepresentationType::Pointer 
+       boxObjectRepresentation2 = BoxRepresentationType::New();
+  boxObjectRepresentation2->SetLogger ( logger );
 
-  double radius2;
-  radius2= 20.0;
-  cylinderObject2->SetRadius( radius2 );
+  double size_X2;
+  double size_Y2;
+  double size_Z2;
 
-  double height2;
-  height2 = 2;
-  cylinderObject2->SetHeight( height2 );
+  size_X2 = 20.0;
+  size_Y2 = 20.0;
+  size_Z2 = 2.0;
 
+  boxObject2->SetSize( size_X2, size_Y2, size_Z2 );
+  
   igstk::Transform                          transform2;
   igstk::Transform::VectorType              translation2;
 
@@ -173,27 +177,29 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   
   transform2.SetTranslation( translation2, errorValue2, validtyTime2 ); 
       
-  cylinderObject2->RequestSetTransform( transform2 );
+  boxObject2->RequestSetTransform( transform2 );
   
-  cylinderObjectRepresentation2->RequestSetCylinderObject( cylinderObject2 );
-  cylinderObjectRepresentation2->SetColor( 1.0, 1.0, 1.0 );
-  cylinderObjectRepresentation2->SetOpacity( 1.0 );
+  boxObjectRepresentation2->RequestSetBoxObject( boxObject2 );
+  boxObjectRepresentation2->SetColor( 1.0, 1.0, 1.0 );
+  boxObjectRepresentation2->SetOpacity( 1.0 );
 
  //Bottom Left corner
-  CylinderObjectType::Pointer  cylinderObject3 = CylinderObjectType::New();
-  cylinderObject3->SetLogger ( logger );
+  BoxObjectType::Pointer  boxObject3 = BoxObjectType::New();
+  boxObject3->SetLogger ( logger );
   
-  CylinderRepresentationType::Pointer 
-       cylinderObjectRepresentation3 = CylinderRepresentationType::New();
-  cylinderObjectRepresentation3->SetLogger ( logger );
+  BoxRepresentationType::Pointer 
+       boxObjectRepresentation3 = BoxRepresentationType::New();
+  boxObjectRepresentation3->SetLogger ( logger );
 
-  double radius3;
-  radius3= 20.0;
-  cylinderObject3->SetRadius( radius3 );
+  double size_X3;
+  double size_Y3;
+  double size_Z3;
 
-  double height3;
-  height3 = 2;
-  cylinderObject3->SetHeight( height3 );
+  size_X3 = 20.0;
+  size_Y3 = 20.0;
+  size_Z3 = 2.0;
+
+  boxObject3->SetSize( size_X3, size_Y3, size_Z3 );
 
   igstk::Transform                          transform3;
   igstk::Transform::VectorType              translation3;
@@ -207,28 +213,30 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   
   transform3.SetTranslation( translation3, errorValue3, validtyTime3 ); 
       
-  cylinderObject3->RequestSetTransform( transform3 );
+  boxObject3->RequestSetTransform( transform3 );
   
-  cylinderObjectRepresentation3->RequestSetCylinderObject( cylinderObject3 );
-  cylinderObjectRepresentation3->SetColor( 1.0, 1.0, 1.0 );
-  cylinderObjectRepresentation3->SetOpacity( 1.0 );
+  boxObjectRepresentation3->RequestSetBoxObject( boxObject3 );
+  boxObjectRepresentation3->SetColor( 1.0, 1.0, 1.0 );
+  boxObjectRepresentation3->SetOpacity( 1.0 );
 
   //Bottom right corner
-  CylinderObjectType::Pointer  cylinderObject4 = CylinderObjectType::New();
-  cylinderObject4->SetLogger ( logger );
+  BoxObjectType::Pointer  boxObject4 = BoxObjectType::New();
+  boxObject4->SetLogger ( logger );
   
-  CylinderRepresentationType::Pointer 
-       cylinderObjectRepresentation4 = CylinderRepresentationType::New();
-  cylinderObjectRepresentation4->SetLogger ( logger );
+  BoxRepresentationType::Pointer 
+       boxObjectRepresentation4 = BoxRepresentationType::New();
+  boxObjectRepresentation4->SetLogger ( logger );
 
-  double radius4;
-  radius4= 20.0;
-  cylinderObject4->SetRadius( radius4 );
+  double size_X4;
+  double size_Y4;
+  double size_Z4;
 
-  double height4;
-  height4 = 2;
-  cylinderObject4->SetHeight( height4 );
+  size_X4 = 20.0;
+  size_Y4 = 20.0;
+  size_Z4 = 2.0;
 
+  boxObject4->SetSize( size_X4, size_Y4, size_Z4 );
+  
   igstk::Transform                          transform4;
   igstk::Transform::VectorType              translation4;
 
@@ -241,11 +249,11 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   
   transform4.SetTranslation( translation4, errorValue4, validtyTime4 ); 
       
-  cylinderObject4->RequestSetTransform( transform4 );
+  boxObject4->RequestSetTransform( transform4 );
   
-  cylinderObjectRepresentation4->RequestSetCylinderObject( cylinderObject4 );
-  cylinderObjectRepresentation4->SetColor( 1.0, 1.0, 1.0 );
-  cylinderObjectRepresentation4->SetOpacity( 1.0 );
+  boxObjectRepresentation4->RequestSetBoxObject( boxObject4 );
+  boxObjectRepresentation4->SetColor( 1.0, 1.0, 1.0 );
+  boxObjectRepresentation4->SetOpacity( 1.0 );
 
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
@@ -264,10 +272,10 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   view2D->RequestAddObject( imageRepresentation );
 
   // Add the ellipsoid object representation to the view 
-  view2D->RequestAddObject( cylinderObjectRepresentation );
-  view2D->RequestAddObject( cylinderObjectRepresentation2 );
-  view2D->RequestAddObject( cylinderObjectRepresentation3 );
-  view2D->RequestAddObject( cylinderObjectRepresentation4 );
+  view2D->RequestAddObject( boxObjectRepresentation );
+  view2D->RequestAddObject( boxObjectRepresentation2 );
+  view2D->RequestAddObject( boxObjectRepresentation3 );
+  view2D->RequestAddObject( boxObjectRepresentation4 );
 
   reader->RequestGetImage();
   if(!ctImageObserver->GotCTImage())
