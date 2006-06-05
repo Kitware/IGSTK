@@ -246,6 +246,10 @@ protected:
   /** Service function to be overloaded by derived classes */
   virtual bool RetrieveParametersFromFile( TransformType & transform );
 
+  /** Method to be invoked only by the StateMachine. This function reports the
+   * success of the reading process. */
+  void ReportObjectReadingSuccessProcessing();
+
 private:
   
   /** These two methods must be declared and note be implemented
@@ -260,10 +264,6 @@ private:
    * received during a State where that input is not a valid request. For
    * example, asking to read the file before providing the filename */
   void ReportInvalidRequestProcessing();
-
-  /** Method to be invoked only by the StateMachine. This function reports the
-   * success of the reading process. */
-  void ReportObjectReadingSuccessProcessing();
 
   /** Method to be invoked only by the StateMachine. This function reports an
    * error while reading */

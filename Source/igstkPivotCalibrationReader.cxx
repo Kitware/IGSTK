@@ -111,7 +111,7 @@ void PivotCalibrationReader
   Friends::PivotCalibrationReaderToPivotCalibration
    ::ConnectToolCalibration( this, this->GetCalibration() );
 
-  this->InvokeEvent( ObjectReadingSuccessEvent() );
+  this->Superclass::ReportObjectReadingSuccessProcessing();
 }
 
 
@@ -128,7 +128,7 @@ void
 PivotCalibrationReader
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
-  Superclass::PrintSelf(os, indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "Root mean square error " 
      << m_RootMeanSquareError << std::endl;
 }
