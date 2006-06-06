@@ -22,9 +22,7 @@
 #include "igstkUSImageObject.h"
 #include "igstkStateMachine.h"
 
-#include "vtkImageActor.h"
-#include "vtkLookupTable.h"
-#include "vtkImageMapToColors.h"
+
 #include "vtkImageReslice.h"
 #include "itkVTKImageImport.h"
 #include "vtkImageExport.h"
@@ -76,7 +74,15 @@ public:
  * \brief This class simulates an ultrasound image by extracting a slice
  * from a 3D MR or CT image. 
  * 
- * \ingroup 
+ * Since most ultrasound systems provide images via a live feed, it is
+ * difficult to test Ultrasound applications offline. This class is intended to
+ * provide a simulation of Ultrasound images by reading a CT or MR image and
+ * extracting an slice from it. 
+ *
+ * \warning This class should ONLY be used for testing purposes, and not as
+ * part of a final application.
+ *
+ * \ingroup  Simulators
  */
 template < class TImageGeometricModel >
 class UltrasoundImageSimulator : public Object
@@ -91,15 +97,9 @@ public:
 public:
 
   typedef TImageGeometricModel               ImageGeometricModelType;
+  typedef Transform                          TransformType;
 
-  typedef typename ImageGeometricModelType::ConstPointer 
-                                              ImageGeometricModelConstPointer;
-
-  typedef typename ImageGeometricModelType::PointType  PointType;
-  typedef typename USImageObject::ImageType            USImageType;
-  typedef typename ImageGeometricModelType::ImageType  MRImageType;
-  typedef Transform                                    TransformType;
-  
+ 
   /** Request to set vector 2 on the plane */
   void RequestSetTransform( const TransformType & transform );
 
@@ -124,11 +124,6 @@ public:
   /** Event type */
   igstkLoadedObjectEventMacro( ImageModifiedEvent, IGSTKEvent, USImageObject);
 
-  /** Declare the observer that will receive a VTK image from the
-   * ImageSpatialObject */
-  igstkObserverMacro( VTKImage, VTKImageModifiedEvent,
-                      EventHelperType::VTKImagePointerType);
-
 protected:
 
   /** Constructor */
@@ -137,11 +132,18 @@ protected:
   /** Destructor */
   ~UltrasoundImageSimulator();
 
+  /** Types required for internal implementation */
+  typedef typename ImageGeometricModelType::ConstPointer 
+                                              ImageGeometricModelConstPointer;
 
+  typedef typename ImageGeometricModelType::PointType  PointType;
+  typedef typename USImageObject::ImageType            USImageType;
+  typedef typename ImageGeometricModelType::ImageType  MRImageType;
+ 
 private:
 
-  UltrasoundImageSimulator(const Self&);
-  void operator=(const Self&);   //purposely not implemented
+  UltrasoundImageSimulator(const Self&);   // purposely not implemented
+  void operator=(const Self&);             // purposely not implemented
 
   /** Internal itkSpatialObject */
   ImageGeometricModelConstPointer       m_ImageGeometricModel;
@@ -151,8 +153,10 @@ private:
   vtkImageData                         * m_ImageData;
   vtkImageData                         * m_ReslicedImageData;
   vtkImageReslice                      * m_ImageReslice;
+
   typedef itk::VTKImageImport<MRImageType> VTKImageImporterType;
-  typename VTKImageImporterType::Pointer           m_VTKImageImporter;
+
+  typename VTKImageImporterType::Pointer  m_VTKImageImporter;
 
   TransformType                           m_Transform;
   TransformType                           m_TransformToBeSet;
@@ -180,7 +184,12 @@ private:
   
   /** This function reports the image */
   void ReportImageProcessing();
-    
+
+  /** Declare the observer that will receive a VTK image from the
+   * ImageSpatialObject */
+  igstkObserverMacro( VTKImage, VTKImageModifiedEvent,
+                      EventHelperType::VTKImagePointerType);
+   
 private:
 
   /** Inputs to the State Machine */

@@ -36,8 +36,6 @@ UltrasoundImageSimulator< TImageGeometricModel >
   m_ImageGeometricModel = NULL;
   m_RescaledUSImage = NULL;
 
-  this->RequestSetImageGeometricModel( m_ImageGeometricModel );
-
   // Create classes for displaying images
   m_ImageData  = NULL;
   m_ReslicedImageData  = NULL;
@@ -47,6 +45,11 @@ UltrasoundImageSimulator< TImageGeometricModel >
   m_ImageReslice = vtkImageReslice::New();
   
   m_VTKImageObserver = VTKImageObserver::New();
+
+  m_USImage = USImageObject::New();
+
+  m_VTKExporter = vtkImageExport::New();
+
 
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( NullImageSpatialObject  );
@@ -95,8 +98,8 @@ UltrasoundImageSimulator< TImageGeometricModel >
 
   m_StateMachine.SetReadyToRun();
 
-  m_USImage = USImageObject::New();
-  m_VTKExporter = vtkImageExport::New();
+  this->RequestSetImageGeometricModel( m_ImageGeometricModel );
+
 } 
 
 /** Destructor */
@@ -403,6 +406,10 @@ UltrasoundImageSimulator< TImageGeometricModel >
   Superclass::PrintSelf(os, indent);
   os << indent << "Transform";
   os << indent << this->m_Transform << std::endl;
+  os << indent << "USImage";
+  os << indent << this->m_USImage.GetPointer() << std::endl;
+  os << indent << "RescaledUSImage";
+  os << indent << this->m_RescaledUSImage.GetPointer() << std::endl;
 }
   
 template < class TImageGeometricModel >
