@@ -24,7 +24,14 @@ USImageObjectRepresentation
 ::USImageObjectRepresentation():m_StateMachine(this)
 {
 
-} 
+}
+
+/** Destructor */
+USImageObjectRepresentation
+::~USImageObjectRepresentation()
+{
+
+}
 
 /** Print Self function */
 void USImageObjectRepresentation

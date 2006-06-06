@@ -25,10 +25,15 @@ namespace igstk
 
 /** \class USImageObjectRepresentation
  *
- *  \brief This class implements a spatial object represenation 
+ *  \brief This class implements a spatial object representation 
  *         for US modality.
  *
- * \ingroup Spatial object representation
+ *  ImageRepresentation objects are responsible for rendering images according
+ *  to their specific characteristics of PixelType and Dimension. In this case,
+ *  this image representation class is tailored for displaying Ultrasound
+ *  images.
+ *
+ * \ingroup SpatialObjectRepresentation
  */
 
 class USImageObjectRepresentation : 
@@ -44,12 +49,18 @@ public:
 protected:
 
   USImageObjectRepresentation( void );
-  virtual ~USImageObjectRepresentation( void ) {};
+  virtual ~USImageObjectRepresentation( void );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+ 
+  /** These two methods must be declared and note be implemented
+   *  in order to enforce the protocol of smart pointers. */
+  USImageObjectRepresentation(const Self&);     //purposely not implemented
+  void operator=(const Self&);                  //purposely not implemented
+
 
 };
 
