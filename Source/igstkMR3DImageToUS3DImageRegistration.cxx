@@ -376,12 +376,23 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   VersorType quaternion;
   VersorType initQuaternion;
   VectorType translation;
+  VectorType initTranslation;
 
   VersorType::VectorType axis;
 
   ParametersType finalparams = params;
   
-  // Create the optimized quaternion
+  // We have the following transforms:
+  // 1) Transform found by optimization of the metric (we'll call it "C")
+  // 2) The initial transform (we'll call it it "A")
+  // We want to find the transform "B" that, when combined with the
+  // initial transform "A", will produce the optimized transform "C",
+  // i.e.  B * A = C
+  // so    B = C * A^(-1)
+  // therefore we need to find the inverse of "A", and transform it by "C"
+  
+
+  // Create the quaternion for the optimized transform "C"
   double norm = finalparams[0]*finalparams[0];
   axis[0] = finalparams[0];
   norm += finalparams[1]*finalparams[1];
@@ -400,7 +411,7 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
     }
   quaternion.Set(axis);
 
-  // Compute the initial quaterniom
+  // Compute the quaternion for the initial transform "A"
   norm = initialParameters[0]*initialParameters[0];
   axis[0] = initialParameters[0];
   norm += initialParameters[1]*initialParameters[1];
@@ -418,12 +429,21 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
     }
   initQuaternion.Set(axis);
 
+  // Get the translation for the optimized transform "C"
+  translation[0] = finalparams[3];
+  translation[1] = finalparams[4];
+  translation[2] = finalparams[5];
+
+  // Get the translation for the initial transform "A"
+  initTranslation[0] = initialParameters[3];
+  initTranslation[1] = initialParameters[4];
+  initTranslation[2] = initialParameters[5];
+  
+  // Compute B = C * A^(-1)
   quaternion /= initQuaternion;
+  translation -= initTranslation;
 
-  translation[0] = finalparams[3]-initialParameters[3];
-  translation[1] = finalparams[4]-initialParameters[4];
-  translation[2] = finalparams[5]-initialParameters[5];
-
+  // Create the transform
   this->m_RegistrationTransform.SetTranslationAndRotation( translation, 
                                                           quaternion, 
                                                           0.1, 1000);
