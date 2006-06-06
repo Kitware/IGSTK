@@ -32,6 +32,8 @@
 namespace igstk
 {
 
+namespace MR3DImageToUS3DImageRegistrationHelper
+{
 
 class CommandIterationUpdate : public itk::Command 
 {
@@ -69,6 +71,8 @@ public:
     }
    
 };
+
+}
 
 /** Constructor */
 MR3DImageToUS3DImageRegistration::MR3DImageToUS3DImageRegistration() :
@@ -319,7 +323,10 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   InterpolatorType::Pointer   interpolator  = InterpolatorType::New();
   RegistrationType::Pointer   registration  = RegistrationType::New();
   
-  CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
+  typedef MR3DImageToUS3DImageRegistrationHelper::CommandIterationUpdate ObserverType;
+    
+  ObserverType::Pointer observer = ObserverType::New();
+
   optimizer->AddObserver( itk::IterationEvent(), observer );
  
   registration->SetMetric(        metric        );

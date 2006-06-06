@@ -40,12 +40,13 @@ namespace igstk
 
 /** \class MR3DImageToUS3DImageRegistration
  * 
- * \brief This class registers a 3D MR image with a 3D Utrasound image
- * The interpolator used is linear to perform the registration with a 
- * minimum amount of time. The current metric evaluating the match between the
- * two images is a mean square.
- * The optimizer used in this class is a regular step gradient descent 
- * optimizer.
+ * \brief This class registers a 3D MR image with a 3D Utrasound image.
+ *
+ * This class registers two 3D images, one from 3D Ultrasund and the other from
+ * MR modality.  The interpolator used is linear to perform the registration
+ * with a minimum amount of time. The current metric evaluating the match
+ * between the two images is a mean square.  The optimizer used in this class
+ * is a regular step gradient descent optimizer.
  *
  * \ingroup Registration
  */
@@ -59,30 +60,7 @@ public:
 public:
 
   /** Typedefs for the internal computation */
-  typedef Transform                       TransformType;
-  typedef TransformType::VersorType       VersorType;
-  typedef TransformType::VectorType       VectorType;
-  typedef TransformType::PointType        PointType;
-  typedef VersorType::MatrixType          MatrixType;
-  typedef itk::Index< 3 >                 IndexType;
-  typedef itk::Matrix< double, 4, 4 >     Matrix4x4Type;
-  typedef itk::Image<double,3>            ImageType;
-  typedef ImageType::SpacingType          SpacingType;
-  typedef double                          ErrorType;
-
-  typedef USImageObject::ImageType             USImageType;
-  typedef USImageObject::ITKImageModifiedEvent USITKImageModifiedEvent;
-
-  igstkObserverConstObjectMacro(ITKUSImage,
-    USITKImageModifiedEvent,USImageType)
-
-  igstkObserverConstObjectMacro(ITKMRImage,
-    MRImageSpatialObject::ITKImageModifiedEvent,MRImageSpatialObject::ImageType)
-  
-  igstkObserverMacro(USImageTransform,TransformModifiedEvent,
-                     Transform)
-  igstkObserverMacro(MRImageTransform,TransformModifiedEvent,
-                     Transform)
+  typedef Transform                            TransformType;
 
 public:
 
@@ -108,14 +86,25 @@ public:
   void RequestGetRegistrationTransform(); 
 
   /** Request to set the initial transformation */
-  igstkSetMacro(InitialTransform,TransformType);
-  igstkGetMacro(InitialTransform,TransformType);
-
+  igstkSetMacro( InitialTransform, TransformType );
+  igstkGetMacro( InitialTransform, TransformType );
+ 
   /** Declare the ImageReaderToImageSpatialObject class to be a friend 
    *  in order to give it access to the private method GetITKImage(). */
   igstkFriendClassMacro( igstk::USImageObject );
 
 protected:
+
+  typedef TransformType::VersorType       VersorType;
+  typedef TransformType::VectorType       VectorType;
+  typedef TransformType::PointType        PointType;
+  typedef VersorType::MatrixType          MatrixType;
+  typedef itk::Index< 3 >                 IndexType;
+  typedef itk::Matrix< double, 4, 4 >     Matrix4x4Type;
+  typedef itk::Image<double,3>            ImageType;
+  typedef ImageType::SpacingType          SpacingType;
+  typedef double                          ErrorType;
+
 
   typedef vnl_matrix<double>                   VnlMatrixType;
   typedef vnl_vector<double>                   VnlVectorType;
@@ -142,6 +131,9 @@ protected:
   /** Print the object information in a stream */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
+
+private:
+  
   /** Null operation for a transition in the State Machine */
   void NoProcessing();
 
@@ -159,6 +151,22 @@ protected:
 
   /** Return the final transformation as an event */
   void ReportRegistrationTransformProcessing();
+
+  /** Observers for internal events */
+  typedef USImageObject::ImageType             USImageType;
+  typedef USImageObject::ITKImageModifiedEvent USITKImageModifiedEvent;
+
+  igstkObserverConstObjectMacro(ITKUSImage,
+    USITKImageModifiedEvent,USImageType)
+
+  igstkObserverConstObjectMacro(ITKMRImage,
+    MRImageSpatialObject::ITKImageModifiedEvent,MRImageSpatialObject::ImageType)
+  
+  igstkObserverMacro(USImageTransform,TransformModifiedEvent,
+                     Transform)
+  igstkObserverMacro(MRImageTransform,TransformModifiedEvent,
+                     Transform)
+
 
 private:
 
