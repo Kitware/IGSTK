@@ -25,11 +25,11 @@
 namespace igstk
 {
 
-/** \class Group
+/** \class GroupObject
  * \brief Implements the 3-dimensional Group structure.
  *
  * \par Overview
- * Group implements the 3-dimensional Group structure. 
+ * GroupObject implements the 3-dimensional Group structure. 
  *
  *
  * \ingroup Object
