@@ -23,7 +23,12 @@ namespace igstk
 USImageReader::USImageReader():m_StateMachine(this)
 {
 
-} 
+}
+
+/** Destructor */
+USImageReader::~USImageReader()
+{
+}
 
 /** Print Self function */
 void USImageReader::PrintSelf( std::ostream& os, itk::Indent indent ) const

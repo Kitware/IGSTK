@@ -28,7 +28,9 @@ namespace igstk
  *  \brief This class implements a reader specific for US modality.
 
  * This class derives from the DICOMImageReader. It expects to load a volume
- * from a set of DICOM files. It will verify that the image modality is US.
+ * from a set of DICOM files. 
+ *
+ * \warning: To be fixed: It will verify that the image modality is US.
  *
  * \ingroup Readers
  */
@@ -45,7 +47,7 @@ public:
 protected:
 
   USImageReader( void );
-  virtual ~USImageReader( void ) {};
+  virtual ~USImageReader( void );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
