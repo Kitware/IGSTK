@@ -32,6 +32,7 @@ namespace igstk
  *  other potential source of ITK images must be included in the Friends
  *  mechanism.
  *
+ *  \sa MRImageSpatialObject
  *  \sa CTImageSpatialObject
  *  \sa USImageReader
  *  \sa USImageObjectRepresentation
@@ -47,11 +48,11 @@ public:
   /** Typedef for the superclass. This is needed because the 
    *  igstkStandardClassTraitsMacro gets confused with the commas
    *  in the template declaration. */
-  typedef ImageSpatialObject< unsigned char, 3 >  SuperClass;
-  typedef SuperClass::ImageType                   ImageType;
+  typedef ImageSpatialObject< unsigned char, 3 >  SuperclassType;
+  typedef SuperclassType::ImageType               ImageType;
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( USImageObject,SuperClass)
+  igstkStandardClassTraitsMacro( USImageObject, SuperclassType )
 
 protected:
 
@@ -66,7 +67,7 @@ private:
   /** These two methods must be declared and note be implemented
    *  in order to enforce the protocol of smart pointers. */
   USImageObject(const Self&);     //purposely not implemented
-  void operator=(const Self&);           //purposely not implemented
+  void operator=(const Self&);    //purposely not implemented
 
 };
 
