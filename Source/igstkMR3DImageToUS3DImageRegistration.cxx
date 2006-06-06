@@ -50,7 +50,16 @@ public:
 
   typedef itk::RegularStepGradientDescentOptimizer   OptimizerType;
   typedef const OptimizerType*                       OptimizerPointer;
+  typedef ::itk::Logger                              LoggerType; 
 
+  void SetLogger( LoggerType * logger )
+    {
+    m_Logger = logger;
+    }
+  LoggerType * GetLogger()
+    {
+    return m_Logger;
+    }
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
     Execute( (const itk::Object *)caller, event);
@@ -65,11 +74,13 @@ public:
       return;
       }
 
-    std::cout << optimizer->GetCurrentIteration() << " = ";
-    std::cout << optimizer->GetValue() << " : ";
-    std::cout << optimizer->GetCurrentPosition() << std::endl;
+    igstkLogMacro( DEBUG, "igstk::MR3DImageToUS3DImageRegistration "
+            << optimizer->GetCurrentIteration() << " = "
+            << optimizer->GetValue() << " : "
+            << optimizer->GetCurrentPosition() << "\n");
     }
-   
+private:
+  LoggerType::Pointer    m_Logger; 
 };
 
 }
@@ -268,7 +279,8 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
 
   if( !usImageObserver->GotITKUSImage() )
     {
-    std::cout << "No US Image!" << std::endl;
+    igstkLogMacro( CRITICAL, "igstk::MR3DImageToUS3DImageRegistration\
+                               No US Image!\n" );
     return;
     }
 
@@ -283,7 +295,8 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
 
   if(!mrImageObserver->GotITKMRImage())
     {
-    std::cout << "No MR Image!" << std::endl;
+    igstkLogMacro( CRITICAL, "igstk::MR3DImageToUS3DImageRegistration\
+                               No US Image!\n" );
     return;
     }
   
@@ -327,6 +340,8 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
     
   ObserverType::Pointer observer = ObserverType::New();
 
+  observer->SetLogger( this->GetLogger() );
+
   optimizer->AddObserver( itk::IterationEvent(), observer );
  
   registration->SetMetric(        metric        );
@@ -340,12 +355,21 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   // the registration
   USImageTransformObserver::Pointer usTransformObserver 
                                     = USImageTransformObserver::New();
-  m_USFixedImage->AddObserver(TransformModifiedEvent(),
-                                           usTransformObserver);
+  m_USFixedImage->AddObserver( TransformModifiedEvent(),
+                                           usTransformObserver );
   m_USFixedImage->RequestGetTransform();
 
-  Transform usTransform = usTransformObserver->GetUSImageTransform();
-  
+  Transform usTransform;
+  if( usTransformObserver->GotUSImageTransform() )
+    {
+    usTransform = usTransformObserver->GetUSImageTransform();
+    }
+  else
+    {
+    igstkLogMacro( CRITICAL, "igstk::MR3DImageToUS3DImageRegistration"
+        << " Observer did not receive expected Transform\n" );
+    }
+
   typedef RegistrationType::ParametersType ParametersType;
   ParametersType initialParameters( transform->GetNumberOfParameters() );
   initialParameters.Fill(0);
@@ -374,7 +398,8 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
     }
   catch( itk::ExceptionObject & excp )
     {
-    std::cout << excp.GetDescription() << std::endl;
+    igstkLogMacro( CRITICAL, "igstk::MR3DImageToUS3DImageRegistration" 
+                             << excp.GetDescription() << "\n" );
     return;
     }
   ParametersType params = registration->GetLastTransformParameters();
