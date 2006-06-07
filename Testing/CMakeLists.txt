@@ -80,7 +80,7 @@ ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 IF (IGSTK_DATA_ROOT) 
   
   ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest 
-       ${IGSTK_DATA_ROOT}/USLiver)
+       ${IGSTK_DATA_ROOT}/Input/USLiver)
 
   ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTK_TESTS} 
              igstkPivotCalibrationReaderTest
