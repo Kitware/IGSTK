@@ -120,6 +120,7 @@ INCLUDE(${IGSTK_SOURCE_DIR}/igstkIncludeDirectories.cmake)
 # tree, except for the Utilities and Wrapping directories.  We need to
 # do this in one place to make sure the order is correct.
 INCLUDE_DIRECTORIES(
+  ${ITK_DIR}/Utilities/zlib
   ${IGSTK_INCLUDE_DIRS_BUILD_TREE}
   ${IGSTK_INCLUDE_DIRS_BUILD_TREE_CXX}
   ${IGSTK_INCLUDE_DIRS_SYSTEM}
