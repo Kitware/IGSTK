@@ -177,7 +177,7 @@ IF (IGSTK_DATA_ROOT)
            ${IGSTK_DATA_ROOT}/Input/MRLiver)
 
   ADD_TEST( igstkUltrasoundImageSimulatorTest ${IGSTK_TESTS}
-             --compare ${BASELINE}/igstkUltrasoundImageSimulatorTest.png 
+             --compare ${IGSTKSandbox_BASELINE_DIR}/igstkUltrasoundImageSimulatorTest.png 
              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
              --tolerance 10
              --toleranceRadius 5
