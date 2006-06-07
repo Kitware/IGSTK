@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef _igstkPivotCalibration_h
-#define _igstkPivotCalibration_h
+#ifndef __igstkPivotCalibration_h
+#define __igstkPivotCalibration_h
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4018 )
@@ -28,13 +28,17 @@
 #include "itkCovariantVector.h"
 #include "itkVectorContainer.h"
 
-#include "igstkObject.h"
+#include "igstkToolCalibration.h"
 #include "igstkStateMachine.h"
-#include "igstkEvents.h"
 #include "igstkMacros.h"
 
 namespace igstk
 {
+
+namespace Friends 
+{
+class PivotCalibrationReaderToPivotCalibration;
+}
 
 /** \class PivotCalibration
  * 
@@ -46,57 +50,47 @@ namespace igstk
  * error (RMSE) of the calibration, which is used to evaluate the calibration
  * accuracy. Generally, more samples will give more stable result. 
  *
- *  \image html  igstkPivotCalibration.png  "PivotCalibration State Machine Diagram"
- *  \image latex igstkPivotCalibration.eps  "PivotCalibration State Machine Diagram" 
+ *  \image html  igstkPivotCalibration.png  
+ *               "PivotCalibration State Machine Diagram"
+ *  \image latex igstkPivotCalibration.eps  
+ *               "PivotCalibration State Machine Diagram" 
  *
  * \ingroup Calibration
  */
 
-class PivotCalibration : public Object
+class PivotCalibration : public ToolCalibration
 {
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( PivotCalibration, Object );
+  igstkStandardClassTraitsMacro( PivotCalibration, ToolCalibration );
 
 public:
 
   /** Typedefs for the internal computation */
-  typedef Transform                       TransformType;
-
+  typedef Superclass::TransformType       TransformType;
   typedef TransformType::VersorType       VersorType;
-
   typedef TransformType::VectorType       VectorType;
-
   typedef TransformType::PointType        PointType;
-
   typedef VersorType::MatrixType          MatrixType;
-
   typedef double                          ErrorType;
 
 private:
 
-  typedef itk::VectorContainer< int, VersorType >
-                                          InputVersorContainerType;
+  typedef itk::VectorContainer< int, VersorType > InputVersorContainerType;
 
-  typedef InputVersorContainerType::Pointer
-                                          InputVersorContainerPointerType;
+  typedef InputVersorContainerType::Pointer InputVersorContainerPointerType;
 
-  typedef itk::VectorContainer< int, VectorType >
-                                          InputVectorContainerType;
+  typedef itk::VectorContainer< int, VectorType > InputVectorContainerType;
 
-  typedef InputVectorContainerType::Pointer
-                                          InputVectorContainerPointerType;
+  typedef InputVectorContainerType::Pointer InputVectorContainerPointerType;
 
-  typedef itk::CovariantVector< double >  CovariantVectorType;        
+  typedef itk::CovariantVector< double >  CovariantVectorType;
 
 public:
 
   /** Method to check whether a valid calibration is calculated */
   igstkGetMacro( ValidPivotCalibration, bool );
-
-  /** Method to get the final calibration transform */
-  igstkGetMacro( CalibrationTransform, TransformType );
 
   /** Method to get the pivot position used to calibrate */
   igstkGetMacro( PivotPosition, PointType );
@@ -117,17 +111,26 @@ public:
   /** Method invoked by the user to calculate the calibration matrix */
   void RequestCalculateCalibration(); 
 
-  /** Method invoked by the user to calculate the calibration matrix along z-axis */
+  /** Method invoked by the user to calculate the calibration matrix along 
+   *  z-axis */
   void RequestCalculateCalibrationZ(); 
 
-  /** Method invoked by the user to calculate simulated pivot position of any input */
+  /** Method invoked by the user to calculate simulated pivot position of 
+   *  any input */
   PointType RequestSimulatePivotPosition( const VersorType & versor, 
                                           const VectorType & translation );
 
-  /** Method invoked by the user to get the rotation and translation in the input container */
+  /** Method invoked by the user to get the rotation and translation in 
+   *  the input container */
   bool RequestGetInputSample( unsigned int index, 
                               VersorType & versor, 
                               VectorType & translation );
+
+  /** Declare the PivotCalibrationReaderToPivotCalibration class 
+   *  to be a friend in order to give it access to the private method 
+   *  SetRootMeanSquareError(). */
+  igstkFriendClassMacro( 
+                   igstk::Friends::PivotCalibrationReaderToPivotCalibration );
 
 protected:
 
@@ -146,12 +149,13 @@ protected:
   /** Reset the calibration matrix */
   void ResetProcessing();
 
-  /** Add a new sample, remove parameters to make it work with state machine input  */
+  /** Add a new sample, remove parameters to make it work with state machine 
+   *  input */
   void AddSampleProcessing();
 
   /** Internal function to add a new sample */
   void InternalAddSampleProcessing( const VersorType & versor, 
-                                       const VectorType & translation );
+                                    const VectorType & translation );
 
   /** Calculate the calibration */
   void CalculateCalibrationProcessing();
@@ -166,8 +170,8 @@ protected:
   void SimulatePivotPositionProcessing();
 
   /** Internal function to calculate the simulated pivot position */
-  PointType InternalSimulatePivotPositionProcessing( const VersorType & versor, 
-                                                     const VectorType & translation );
+  PointType InternalSimulatePivotPositionProcessing(const VersorType & versor,
+                                             const VectorType & translation );
 
   /** Get the rotation and translation inputed */
   void GetInputSampleProcessing();
@@ -198,22 +202,15 @@ private:
 
   /** Temporary input variables for state machine */
   VersorType                        m_VersorToBeSent;
-
   VectorType                        m_TranslationToBeSent;
-
   int                               m_InputIndexToBeSent;
-
   PointType                         m_SimulatedPivotPositionToBeReceived;
-
   VersorType                        m_VersorToBeReceived;
-
   VectorType                        m_TranslationToBeReceived;
-
   int                               m_NumberOfSamplesToBeReceived;
 
   /** Container to save the samples */
   InputVersorContainerPointerType   m_VersorContainer;
-  
   InputVectorContainerPointerType   m_TranslationContainer;
 
   /** Variable to indicate the valid calibration */
@@ -222,14 +219,14 @@ private:
   /** Variable to indicate the valid input sample */
   bool                              m_ValidInputSample;
 
-  /** Variable to save the calibration transform */
-  TransformType                     m_CalibrationTransform;
-
   /** Variable to save the pivot position */
   PointType                         m_PivotPosition;
 
   /** Variable to indicate the RootMeanSquareError error */
   ErrorType                         m_RootMeanSquareError;
+
+  /** Set the RootMeanSquareError */
+  void SetRootMeanSquareError(ErrorType error);
 
 };
 
