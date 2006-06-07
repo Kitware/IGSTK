@@ -29,6 +29,17 @@ void RegisterTests()
 {
 
 // Register test  
+  REGISTER_TEST(igstkFlockOfBirdsTrackerTest);
+  REGISTER_TEST(igstkFlockOfBirdsCommandInterpreterTest);
+  REGISTER_TEST(igstkPivotCalibrationReaderTest);
+  REGISTER_TEST(igstkMR3DImageToUS3DImageRegistrationTest);
+  REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
+  REGISTER_TEST(igstkUSImageObjectTest);
+  REGISTER_TEST(igstkUSImageObjectRepresentationTest);
+  REGISTER_TEST(igstkUSImageReaderTest);
+  REGISTER_TEST(igstkToolCalibrationTest);
+  REGISTER_TEST(igstkVesselObjectTest);
+
   REGISTER_TEST(igstkAnnotation2DTest);
   REGISTER_TEST(igstkAxesObjectTest);
   REGISTER_TEST(igstkBasicTrackerTest);
@@ -105,6 +116,9 @@ void RegisterTests()
   REGISTER_TEST(igstkUltrasoundProbeObjectTest);
 
   #ifdef IGSTK_DATA_ROOT
+    REGISTER_TEST(igstkImageSpatialObjectRepresentationTest2);
+    REGISTER_TEST(igstkImageSpatialObjectRepresentationTest3);
+    REGISTER_TEST(igstkVascularNetworkReaderTest);
     REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
     REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
   #endif 
