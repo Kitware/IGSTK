@@ -78,7 +78,7 @@ public:
 #define IGSTK_SIMULATOR_TEST 1
 
 // helper function to print out the hemisphere
-void printHemisphere(int hemisphere)
+static void printHemisphere(int hemisphere)
 {
   switch(hemisphere)
     {
@@ -109,7 +109,7 @@ void printHemisphere(int hemisphere)
 
 
 // set a flag if error occurred
-void checkError(igstk::FlockOfBirdsCommandInterpreter *interp, int &hasError)
+static void checkError(igstk::FlockOfBirdsCommandInterpreter *interp, int &hasError)
 {
   if (interp->GetError() != igstk::FB_NO_ERROR)
     {
@@ -118,7 +118,11 @@ void checkError(igstk::FlockOfBirdsCommandInterpreter *interp, int &hasError)
     }
 }
 
+#ifdef IGSTK_FLOCK_FBB_TEST
+int igstkFlockOfBirdsCommandInterpreterFBBTest( int argc, char * argv[] )
+#else /* IGSTK_FLOCK_FBB_TEST */
 int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
+#endif /* IGSTK_FLOCK_FBB_TEST */
 {
   int errorCheck = 0;
 
@@ -154,7 +158,7 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
     }
   std::string outputDirectory = IGSTK_TEST_OUTPUT_DIR;
   std::string filename = outputDirectory +"/";
-  filename = filename + testName;
+  filename = /*filename + */ testName;
   filename = filename + "LoggerOutput.txt";
   std::cout << "Logger output saved here:\n";
   std::cout << filename << "\n"; 
@@ -171,7 +175,7 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
 
   serialComm->SetLogger( logger );
 
-  serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
+  serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber1 );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate19200 );
 
@@ -179,8 +183,15 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
   // load a previously captured file
   std::string igstkDataDirectory = IGSTKSandbox_DATA_ROOT;
   std::string inputDirectory = igstkDataDirectory + "/Input";
+#ifdef IGSTK_FLOCK_FBB_TEST
+  // this file was recorded from a flock set for FBB action
+  std::string simulationFile = (inputDirectory + "/" +
+                                "flockofbirds_stream_06_06_2006.txt");
+#else /* IGSTK_FLOCK_FBB_TEST */
+  // this file was recorded from a standalone bird
   std::string simulationFile = (inputDirectory + "/" +
                                 "flockofbirds_stream_05_31_2006.txt");
+#endif /* IGSTK_FLOCK_FBB_TEST */
   serialComm->SetFileName( simulationFile.c_str() );
 #else /* IGSTK_SIMULATOR_TEST */
   serialComm->SetCaptureFileName( 
@@ -204,10 +215,6 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
 
   std::cout << "Open()" << std::endl;
   interp->Open();
-  checkError(interp,errorCheck);
-
-  std::cout << "Reset()" << std::endl;
-  interp->Reset();
   checkError(interp,errorCheck);
 
   // check the FBB status to find out how many birds can be addressed
@@ -378,19 +385,38 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
   //checkError(interp,errorCheck);
   //std::cout << "buttonState = " << buttonState << std::endl;  
 
-  std::cout << "SetFormat(FB_POSITION_MATRIX)" << std::endl;
-  interp->SetFormat(igstk::FB_POSITION_MATRIX);
-  checkError(interp,errorCheck);
+  for (unsigned int bird = 0; bird < numBirds; bird++)
+    {
+    if (groupMode)
+      {
+      // in group mode, need to prefix with RS232ToFBB
+      std::cout << "RS232ToFBB(" << (bird+1) << ")" << std::endl;
+      interp->RS232ToFBB(bird+1);
+      checkError(interp,errorCheck);
+      }
+      
+    std::cout << "SetFormat(FB_POSITION_MATRIX)" << std::endl;
+    interp->SetFormat(igstk::FB_POSITION_MATRIX);
+    checkError(interp,errorCheck);
 
-  std::cout << "SetButtonMode(1)" << std::endl;
-  interp->SetButtonMode(1);
-  checkError(interp,errorCheck);
+    if (groupMode)
+      {
+      // in group mode, need to prefix with RS232ToFBB
+      std::cout << "RS232ToFBB(" << (bird+1) << ")" << std::endl;
+      interp->RS232ToFBB(bird+1);
+      checkError(interp,errorCheck);
+      }
+
+    std::cout << "SetButtonMode(1)" << std::endl;
+    interp->SetButtonMode(1);
+    checkError(interp,errorCheck);
+    }
 
   std::cout << "Point()" << std::endl;
   interp->Point();
   checkError(interp,errorCheck);
   
-  for (unsigned int i = 0; i < numBirds; i++)
+  for (unsigned int bird = 0; bird < numBirds; bird++)
     {
     std::cout << "Update()" << std::endl;
     interp->Update();
@@ -443,9 +469,20 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
     std::cout << buttonDown << std::endl;
     }
 
-  std::cout << "SetFormat(FB_POSITION_ANGLES)" << std::endl;
-  interp->SetFormat(igstk::FB_POSITION_ANGLES);
-  checkError(interp,errorCheck);
+  for (unsigned int bird = 0; bird < numBirds; bird++)
+    {
+    if (groupMode)
+      {
+      // in group mode, need to prefix with RS232ToFBB
+      std::cout << "RS232ToFBB(" << (bird+1) << ")" << std::endl;
+      interp->RS232ToFBB(bird+1);
+      checkError(interp,errorCheck);
+      }
+
+    std::cout << "SetFormat(FB_POSITION_ANGLES)" << std::endl;
+    interp->SetFormat(igstk::FB_POSITION_ANGLES);
+    checkError(interp,errorCheck);
+    }
 
   std::cout << "Stream()" << std::endl;
   interp->Stream();
@@ -453,7 +490,7 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
 
   for (unsigned int j = 0; j < 10; j++)
     {
-    for (unsigned int i = 0; i < numBirds; i++)
+    for (unsigned int bird = 0; bird < numBirds; bird++)
       {
       std::cout << "Update()" << std::endl;
       interp->Update();
@@ -482,6 +519,10 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
 
   std::cout << "EndStream()" << std::endl;
   interp->EndStream();
+  checkError(interp,errorCheck);
+
+  std::cout << "Reset()" << std::endl;
+  interp->Reset();
   checkError(interp,errorCheck);
 
   std::cout << "Close()" << std::endl;

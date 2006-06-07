@@ -74,6 +74,7 @@ SET(SandboxTests_SRCS
   igstkSocketCommunicationTest.cxx
   igstkFlockOfBirdsTrackerTest.cxx
   igstkFlockOfBirdsCommandInterpreterTest.cxx
+  igstkFlockOfBirdsCommandInterpreterFBBTest.cxx
   igstkVesselObjectTest.cxx
   igstkUSImageObjectTest.cxx
   igstkUSImageObjectRepresentationTest.cxx
