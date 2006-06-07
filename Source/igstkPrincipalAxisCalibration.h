@@ -28,7 +28,7 @@
 #include "itkCovariantVector.h"
 #include "itkVectorContainer.h"
 
-#include "igstkObject.h"
+#include "igstkToolCalibration.h"
 #include "igstkStateMachine.h"
 #include "igstkEvents.h"
 #include "igstkMacros.h"
@@ -47,12 +47,12 @@ namespace igstk
  * \ingroup Calibration
  */
 
-class PrincipalAxisCalibration : public Object
+class PrincipalAxisCalibration : public ToolCalibration
 {
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( PrincipalAxisCalibration, Object );
+  igstkStandardClassTraitsMacro( PrincipalAxisCalibration, ToolCalibration );
 
 public:
 
