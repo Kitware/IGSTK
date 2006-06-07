@@ -2,6 +2,12 @@
 # the specified NIGHLY_START_TIME. Time is specified in 24 hour format.
 SET (NIGHTLY_START_TIME "0:30:00 EDT")
 
+# USE HTTP for submittion
+
+IF(NOT DROP_METHOD)
+  SET(DROP_METHOD http)
+ENDIF(NOT DROP_METHOD)
+
 # Dart server to submit results (used by client)
 IF(DROP_METHOD MATCHES http)
   SET (DROP_SITE "public.kitware.com")
