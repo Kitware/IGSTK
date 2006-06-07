@@ -21,6 +21,7 @@
  *  among components. */
 
 #include "igstkTransform.h"
+#include "igstkPivotCalibration.h"
 #include "vtkImageData.h"
 
 namespace igstk 
@@ -166,7 +167,8 @@ igstkEventMacro( AxialSliceBoundsEvent,      IntegerBoundsEvent );
 igstkEventMacro( SagittalSliceBoundsEvent,   IntegerBoundsEvent );
 igstkEventMacro( CoronalSliceBoundsEvent,    IntegerBoundsEvent );
 
-
+igstkLoadedObjectEventMacro( CalibrationModifiedEvent, IGSTKEvent,
+                             PivotCalibration);
 
 }
 #endif
