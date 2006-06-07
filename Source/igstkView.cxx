@@ -827,7 +827,7 @@ int View::handle( int event )
           pickedPoint[1] = data[1];
           pickedPoint[2] = data[2];
           
-          double validityTime = -1.0; // Never expire
+          double validityTime = itk::NumericTraits<double>::max();
           double errorValue = 1.0; // this should be obtained from 
                                    // the picked object.
 
