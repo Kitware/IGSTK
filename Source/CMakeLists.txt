@@ -9,6 +9,20 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(IGSTK_HEADS
+  igstkFlockOfBirdsCommandInterpreter.h
+  igstkFlockOfBirdsTracker.h
+  igstkFlockOfBirdsTrackerTool.h
+  igstkUSImageObject.h
+  igstkUSImageObjectRepresentation.h
+  igstkUSImageReader.h
+  igstkMR3DImageToUS3DImageRegistration.h
+  igstkVascularNetworkObject.h
+  igstkVascularNetworkObjectRepresentation.h
+  igstkVascularNetworkReader.h
+  igstkVesselObject.h
+  igstkToolCalibrationReader.h
+  igstkToolCalibration.h
+  igstkPivotCalibrationReader.h
   igstkAnnotation2D.h
   igstkAxesObject.h
   igstkAxesObjectRepresentation.h
@@ -69,6 +83,7 @@ SET(IGSTK_HEADS
   igstkTubeObjectRepresentation.h
   igstkUltrasoundProbeObject.h
   igstkUltrasoundProbeObjectRepresentation.h
+  igstkUltrasoundImageSimulator.h
   igstkVTKLoggerOutput.h
   igstkSpatialObjectReader.h
   igstkTubeReader.h
@@ -91,6 +106,20 @@ ENDIF(IGSTK_USE_FLTK)
 # The implementation files
 
 SET(IGSTK_SRCS  
+  igstkFlockOfBirdsCommandInterpreter.cxx
+  igstkFlockOfBirdsTracker.cxx
+  igstkFlockOfBirdsTrackerTool.cxx
+  igstkUSImageObject.cxx
+  igstkUSImageObjectRepresentation.cxx
+  igstkUSImageReader.cxx
+  igstkMR3DImageToUS3DImageRegistration.cxx
+  igstkVascularNetworkObject.cxx
+  igstkVascularNetworkObjectRepresentation.cxx
+  igstkVascularNetworkReader.cxx
+  igstkVesselObject.cxx
+  igstkToolCalibration.cxx
+  igstkToolCalibrationReader.txx
+  igstkPivotCalibrationReader.cxx
   igstkAnnotation2D.cxx
   igstkAxesObject.cxx
   igstkAxesObjectRepresentation.cxx
@@ -147,6 +176,7 @@ SET(IGSTK_SRCS
   igstkTubeObjectRepresentation.cxx
   igstkUltrasoundProbeObject.cxx
   igstkUltrasoundProbeObjectRepresentation.cxx
+  igstkUltrasoundImageSimulator.txx
   igstkVTKLoggerOutput.cxx
   igstkTubeReader.cxx
   igstkMeshReader.cxx
@@ -225,50 +255,24 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 
 # The header files
 SET(IGSTKSandbox_HEADS
-  igstkFlockOfBirdsCommandInterpreter.h
-  igstkFlockOfBirdsTracker.h
-  igstkFlockOfBirdsTrackerTool.h
   igstkObliqueImageSpatialObjectRepresentation.h
   igstkLandmarkUltrasoundCalibration.h
-  igstkVascularNetworkObject.h
-  igstkVascularNetworkObjectRepresentation.h
-  igstkVascularNetworkReader.h
-  igstkVesselObject.h
-  igstkUSImageObject.h
-  igstkUSImageObjectRepresentation.h
-  igstkUSImageReader.h
   igstkContourObjectRepresentation.h
   igstkContourMeshObjectRepresentation.h
   igstkContourVascularNetworkObjectRepresentation.h
   igstkSocketCommunication.h
-  igstkToolCalibrationReader.h
-  igstkToolCalibration.h
-  igstkPivotCalibrationReader.h
   igstkObliqueContourMeshObjectRepresentation.h
 )
 
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
-  igstkFlockOfBirdsCommandInterpreter.cxx
-  igstkFlockOfBirdsTracker.cxx
-  igstkFlockOfBirdsTrackerTool.cxx
   igstkObliqueImageSpatialObjectRepresentation.txx
   igstkLandmarkUltrasoundCalibration.cxx
-  igstkVascularNetworkObject.cxx
-  igstkVascularNetworkObjectRepresentation.cxx
-  igstkVascularNetworkReader.cxx
-  igstkVesselObject.cxx
-  igstkUSImageObject.cxx
-  igstkUSImageObjectRepresentation.cxx
-  igstkUSImageReader.cxx
   igstkContourObjectRepresentation.cxx
   igstkContourMeshObjectRepresentation.cxx
   igstkContourVascularNetworkObjectRepresentation.cxx
   igstkSocketCommunication.cxx
-  igstkToolCalibration.cxx
-  igstkPivotCalibrationReader.cxx
-  igstkMR3DImageToUS3DImageRegistration.cxx
   igstkObliqueContourMeshObjectRepresentation.cxx
 )
 
