@@ -4,6 +4,19 @@
 # The header files
 
 SET(IGSTK_HEADS
+  igstkFlockOfBirdsCommandInterpreter.h
+  igstkFlockOfBirdsTracker.h
+  igstkFlockOfBirdsTrackerTool.h
+  igstkUSImageObject.h
+  igstkUSImageObjectRepresentation.h
+  igstkUSImageReader.h
+  igstkVascularNetworkObject.h
+  igstkVascularNetworkObjectRepresentation.h
+  igstkVascularNetworkReader.h
+  igstkVesselObject.h
+  igstkToolCalibrationReader.h
+  igstkToolCalibration.h
+  igstkPivotCalibrationReader.h
   igstkAnnotation2D.h
   igstkAxesObject.h
   igstkAxesObjectRepresentation.h
@@ -86,6 +99,19 @@ ENDIF(IGSTK_USE_FLTK)
 # The implementation files
 
 SET(IGSTK_SRCS  
+  igstkFlockOfBirdsCommandInterpreter.cxx
+  igstkFlockOfBirdsTracker.cxx
+  igstkFlockOfBirdsTrackerTool.cxx
+  igstkUSImageObject.cxx
+  igstkUSImageObjectRepresentation.cxx
+  igstkUSImageReader.cxx
+  igstkMR3DImageToUS3DImageRegistration.cxx
+  igstkVascularNetworkObject.cxx
+  igstkVascularNetworkObjectRepresentation.cxx
+  igstkVascularNetworkReader.cxx
+  igstkVesselObject.cxx
+  igstkToolCalibration.cxx
+  igstkPivotCalibrationReader.cxx
   igstkAnnotation2D.cxx
   igstkAxesObject.cxx
   igstkAxesObjectRepresentation.cxx
