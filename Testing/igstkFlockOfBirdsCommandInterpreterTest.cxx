@@ -378,6 +378,9 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
     checkError(interp,errorCheck);
     }
 
+  // print the interpreter
+  std::cout << interp << std::endl;
+
   // comment out for now: the simulation file doesn't do it yet
   //int buttonState = 0;
   //std::cout << "ButtonRead(&buttonState)" << std::endl;
@@ -531,6 +534,8 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
 
   std::cout << "CloseCommunication()" << std::endl;
   serialComm->CloseCommunication();
+
+  
 
   if (errorCheck)
     {
