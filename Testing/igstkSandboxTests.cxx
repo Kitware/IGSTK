@@ -30,19 +30,5 @@ void RegisterTests()
   // Register Sandbox tests
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
-  REGISTER_TEST(igstkFlockOfBirdsTrackerTest);
-  REGISTER_TEST(igstkFlockOfBirdsCommandInterpreterTest);
-  REGISTER_TEST(igstkFlockOfBirdsCommandInterpreterFBBTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
-  REGISTER_TEST(igstkPivotCalibrationReaderTest);
-  REGISTER_TEST(igstkMR3DImageToUS3DImageRegistrationTest);
-  REGISTER_TEST(igstkImageSpatialObjectRepresentationTest2);
-  REGISTER_TEST(igstkImageSpatialObjectRepresentationTest3);
-  REGISTER_TEST(igstkToolCalibrationTest);
-  REGISTER_TEST(igstkVesselObjectTest);
-  REGISTER_TEST(igstkVascularNetworkReaderTest);
-  REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
-  REGISTER_TEST(igstkUSImageObjectTest);
-  REGISTER_TEST(igstkUSImageObjectRepresentationTest);
-  REGISTER_TEST(igstkUSImageReaderTest);
 }
