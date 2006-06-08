@@ -32,7 +32,7 @@ const unsigned int ROBOT_MAX_COMMAND_SIZE = 1024;
 
 // Captures ResFlag after appropriate ";" in robot response
 int RobotCommunication::GetResFlag( const char * buf, int size, int numSC ) 
-{                         
+{
   int i = 0;
   int p1, p2;
   int ResFlag;
@@ -42,12 +42,12 @@ int RobotCommunication::GetResFlag( const char * buf, int size, int numSC )
   p1 = p2 =-1;
   pch=strchr( const_cast<char *> (buf),';');
   while (pch!=NULL)
-  {
+    {
     i++;
     if (i == numSC) p1 = pch-buf+1;
     if (i == (numSC+1)) p2 = pch-buf+1;
     pch=strchr( const_cast<char *>(pch+1),';');
-  }
+    }
 
   for (i=0;i<size;i++) temp[i]=buf[i];
 
@@ -59,7 +59,7 @@ int RobotCommunication::GetResFlag( const char * buf, int size, int numSC )
     return ResFlag;
     }
 
-    return -1;
+  return -1;
 }
 
 // Captures coordinate after appropriate ";" in robot response  
@@ -73,12 +73,12 @@ float RobotCommunication::GetCoord( const char * buf, int numSC )
 
   pch=strchr( const_cast<char *>(buf),';');
   while (pch!=NULL)
-  {
+    {
     i++;
     if (i == numSC) p1 = pch-buf+1;
     if (i == (numSC+1)) p2 = pch-buf+1;
     pch=strchr( const_cast<char *>(pch+1),';');
-  }
+    }
 
   for (i=0;i<100;i++) 
   {
@@ -109,23 +109,23 @@ bool RobotCommunication::Init()
   m_Logger->AddLogOutput( m_LogOutput );
   m_Logger->SetPriorityLevel( itk::Logger::DEBUG );
 
- // m_Client->SetLogger( m_Logger );
+  // m_Client->SetLogger( m_Logger );
   m_Client->SetCaptureFileName("client1.log");
   m_Client->SetCapture( true );
 
   // initializes socket communications
   if (!m_Client->RequestOpenCommunication()) 
-  { 
+    { 
     printf("Open communication error!\n");
     return false;
-  }
+    }
 
   // attempts to connect to HWServer @ localhost
   if (!m_Client->RequestConnect( IPADDRESS, PORT)) 
-  {
+    {
     printf("Connection error!\n");
     return false;
-  }
+    }
 
   m_Client->RequestWrite("@AUTH;Team;A\r\n");             // logs into robot
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);  // reads response into
@@ -134,21 +134,21 @@ bool RobotCommunication::Init()
 
   // checks to see if robot command was successful
   if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK )
-  {
+    {
     LoginSuccessful = true;
-  }
+    }
 
   // to prevent communication timeout
   #if defined (_WIN32) || defined (WIN32)
-    Sleep(3000);            // Windows Sleep uses miliseconds
+  Sleep(3000);            // Windows Sleep uses miliseconds
   #else
-    usleep( 3000 * 1000 );  // linux usleep uses microsecond
+  usleep( 3000 * 1000 );  // linux usleep uses microsecond
   #endif
   
   
 
   if (!ASYNCMODE) 
-  {
+    {
     // turns off asynchronous mode if ASYNCMODE is false
     m_Client->RequestWrite("@SEND_ASYNC_EVENTS;0\r\n");
     m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
@@ -156,23 +156,23 @@ bool RobotCommunication::Init()
     // checks to see if command was successful
     if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK )
       {
-        AsyncCommandSuccessful = true;
+      AsyncCommandSuccessful = true;
       }
     else
       {
-        AsyncCommandSuccessful = false;
+      AsyncCommandSuccessful = false;
       }
-  }
+    }
 
-   AsyncCommandSuccessful = true;
-   LoginSuccessful = true;
+    AsyncCommandSuccessful = true;
+    LoginSuccessful = true;
     if ( LoginSuccessful && AsyncCommandSuccessful )   
       {
-        return true;
+      return true;
       }
     else
       {
-        return false;
+      return false;
       }
 
 }
@@ -185,36 +185,36 @@ bool RobotCommunication::UnInit()
   
   // closes socket communication
   if (!m_Client->RequestCloseCommunication())
-  {
+    {
     return false;
-  }
+    }
   else
-  {
+    {
     return true;
-  }
+    }
 }
 
 // Homes robot, must be done before any move command
 bool RobotCommunication::Home() 
-{                                                  
+{
   unsigned int num;
   char buffer[ROBOT_MAX_COMMAND_SIZE];
   char sendmessage[ROBOT_MAX_COMMAND_SIZE];
 
   snprintf(sendmessage,ROBOT_MAX_COMMAND_SIZE, "@HOME;%d;%d\r\n", 
-                                               TRIGGER_IMMEDIATE, WRITE_TIMEOUT);
+                                              TRIGGER_IMMEDIATE, WRITE_TIMEOUT);
   m_Client->RequestWrite(sendmessage);
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
 
   if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK ) 
-  {
+    {
     return true;
-  }
+    }
   else
-  {
+    {
     return false;
-  }
+    }
 }
 
 // Homes robot in one axis described by JointNr
@@ -225,20 +225,20 @@ bool RobotCommunication::HomeJoint( int JointNr )
   char buffer[ROBOT_MAX_COMMAND_SIZE];
 
   snprintf(sendmessage, ROBOT_MAX_COMMAND_SIZE, "@HOMEJ;%d;%d;%d\r\n", 
-                                      TRIGGER_IMMEDIATE, WRITE_TIMEOUT, JointNr);
+                                     TRIGGER_IMMEDIATE, WRITE_TIMEOUT, JointNr);
 
   m_Client->RequestWrite(sendmessage);
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
 
   if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK ) 
-  {
+    {
     return true;
-  }
+    }
   else
-  {
+    {
     return false;
-  }
+    }
 }
 
 // Moves robot in X, Y (translation) and A, B (rotation) in absolute 
@@ -265,13 +265,13 @@ bool RobotCommunication::MoveRobotCoordinates ( float X, float Y, float Z,
   buffer[num]='\0';
 
   if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK ) 
-  {
+    {
     return true;
-  }
+    }
   else
-  {
+    {
     return false;
-  }
+    }
 }
 
 // checks to see if X, Y, Z, A, B, C is reachable in robot coordinates, 
@@ -297,18 +297,18 @@ int RobotCommunication::GetReachable ( float X, float Y, float Z,
 
   result = GetResFlag(buffer, num, 2);
   if ( result == APIRESFLAG_OK ) 
-  {
+    {
     return true;
-  }
+    }
 
   if ( result == APIRESFLAG_POS_NOT_REACHABLE )
-  {
+    {
     return false;
-  }
+    }
   else
-  {
+    {
     return -1;
-  }
+    }
 
 }
 // interrupts all movement commands
@@ -324,13 +324,13 @@ bool RobotCommunication::Stop( int mode )
   buffer[num]='\0';
 
   if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK ) 
-  {
+    {
     return true;
-  }
+    }
   else 
-  {
+    {
     return false;
-  }
+    }
 }
 
 // Gets current robot position and returns a pointer to an array of 

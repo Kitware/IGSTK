@@ -171,7 +171,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
 
   m_ViewPickerObserver = ObserverType::New();
   m_ViewPickerObserver->SetCallbackFunction( this, 
-                                             &DeckOfCardRobot::DrawPickedPoint );
+                                            &DeckOfCardRobot::DrawPickedPoint );
 
   this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
   this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
@@ -271,7 +271,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
                                                 LandmarkRegistrationReady, No );
 
   igstkAddTransitionMacro( AttemptingRegistration, RegistrationFailure, 
-                                                               ImageReady, No );;
+                                                               ImageReady, No );
 
   /** Path Planning */
   igstkAddTransitionMacro( LandmarkRegistrationReady, RequestSetTargetPoint, 
@@ -288,7 +288,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
 
   /** Robot commanding */
   igstkAddTransitionMacro( Initial, RequestConnectToRobot, 
-                              AttemptingConnectToRobot, ConnectToRobot ); //FIXME
+                            AttemptingConnectToRobot, ConnectToRobot ); //FIXME
   igstkAddTransitionMacro( PathReady, RequestConnectToRobot, 
                                      AttemptingConnectToRobot, ConnectToRobot );
 
@@ -317,11 +317,11 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
                                                    RobotConnected, HomeRobot );
 
   igstkAddTransitionMacro( RobotHomed, RequestHomeRobot, 
-                                                AttemptingHomeRobot, HomeRobot );
+                                               AttemptingHomeRobot, HomeRobot );
   igstkAddTransitionMacro( RobotReady, RequestHomeRobot, 
-                                                AttemptingHomeRobot, HomeRobot );
+                                               AttemptingHomeRobot, HomeRobot );
   igstkAddTransitionMacro( RobotReady, RequestTargetingRobot, 
-                                           AttemptingTargetingRobot, TargetingRobot );
+                                     AttemptingTargetingRobot, TargetingRobot );
 
   igstkAddTransitionMacro( RobotConnected, RequestSetTargetPoint, 
                                                     RobotConnected, DrawPath );
@@ -365,7 +365,7 @@ void DeckOfCardRobot::NoProcessing()
 void DeckOfCardRobot::RequestLoadImage()
 {
   igstkLogMacro2( logger, DEBUG, 
-                     "DeckOfCardRobot::RequestLoadImageProcessing called...\n" )
+                    "DeckOfCardRobot::RequestLoadImageProcessing called...\n" )
   m_StateMachine.PushInput( m_RequestLoadImageInput );
   m_StateMachine.ProcessInputs();
 }
@@ -373,7 +373,7 @@ void DeckOfCardRobot::RequestLoadImage()
 void DeckOfCardRobot::LoadImageProcessing()
 {
   igstkLogMacro2( logger, DEBUG, 
-                            "DeckOfCardRobot::LoadImageProcessing called...\n" )
+                           "DeckOfCardRobot::LoadImageProcessing called...\n" )
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
   if ( directoryname != NULL )
     {
@@ -397,15 +397,16 @@ void DeckOfCardRobot::LoadImageProcessing()
     if(!imageSpatialObjectObserver->GotImageSpatialObject())
       {
       igstkLogMacro(          DEBUG, "Cannot read image\n" )
-      igstkLogMacro2( logger, DEBUG, "Cannot read image\n" )      
+      igstkLogMacro2( logger, DEBUG, "Cannot read image\n" )
       m_StateMachine.PushInput( m_LoadImageFailureInput);
       }
     else
       {
       igstkLogMacro(          DEBUG, "Image Loaded\n" )
-      igstkLogMacro2( logger, DEBUG, "Image Loaded\n" )      
+      igstkLogMacro2( logger, DEBUG, "Image Loaded\n" )
       m_StateMachine.PushInput( m_LoadImageSuccessInput);
-      m_ImageSpatialObject = imageSpatialObjectObserver->GetImageSpatialObject();
+      m_ImageSpatialObject = 
+                           imageSpatialObjectObserver->GetImageSpatialObject();
       }
     }
   else
@@ -433,7 +434,7 @@ void DeckOfCardRobot::RequestSetROI()
 void DeckOfCardRobot::RequestRegistration()
 {
   igstkLogMacro2( logger, DEBUG, 
-                          "DeckOfCardRobot::RequestRegistration called ... \n" )
+                         "DeckOfCardRobot::RequestRegistration called ... \n" )
   m_StateMachine.PushInput( m_RequestRegistrationInput );
   m_StateMachine.ProcessInputs();
 }
@@ -486,7 +487,7 @@ void DeckOfCardRobot::RegistrationProcessing()
 void DeckOfCardRobot::RequestResliceImage()
 {
   igstkLogMacro2( logger, DEBUG, 
-                           "DeckOfCardRobot::RequestResliceImage called ... \n")
+                          "DeckOfCardRobot::RequestResliceImage called ... \n")
   this->ResliceImage(); // Take out the state machine logic from here
 }
 
@@ -851,7 +852,7 @@ void DeckOfCardRobot::RequestHomeRobot()
 }
 
 void DeckOfCardRobot::RequestTargetingRobot()
-  {
+{
   igstkLogMacro2( logger, DEBUG, 
                 "DeckOfCardRobot::RequestTargetingRobot called...\n" )
                 igstkPushInputMacro( RequestTargetingRobot );
@@ -880,9 +881,9 @@ void DeckOfCardRobot::HomeRobotProcessing()
   m_RobotCurrentTransform = m_RobotTransform;
   Fl::wait(0.01);
   igstk::PulseGenerator::CheckTimeouts();
-//  AnimateRobotMove( m_RobotCurrentTransform, m_RobotTransform, 20 );
-//  Fl::wait(0.01);
-//  igstk::PulseGenerator::CheckTimeouts();
+  //  AnimateRobotMove( m_RobotCurrentTransform, m_RobotTransform, 20 );
+  //  Fl::wait(0.01);
+  //  igstk::PulseGenerator::CheckTimeouts();
 
 }
 
@@ -981,8 +982,6 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   m_Translation[1] = pIntersect[1]; 
   m_Translation[2] = 0;
 
-  //std::cout << "Translation: " << m_Translation[0] << " " << m_Translation[1] << std::endl;
-
   /************************************************************************/
   /* Projection Angle                                                     */
   /************************************************************************/
@@ -1012,7 +1011,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   /************************************************************************/
   
   if(0)
-  {    
+  {
   // Translate angle-axis to two rotation around X and Y axis
   int rotateXfirst = false;  //Order of rotation Tx*Ty  or Ty*Tx
   double c = cos( angle );
@@ -1154,7 +1153,7 @@ void DeckOfCardRobot::CreateObliqueView()
 
   // Set oblique plane parameters
   m_ImageRepresentationOblique->RequestSetImageSpatialObject( 
-                                                          m_ImageSpatialObject );
+                                                         m_ImageSpatialObject );
   ObliqueRepresentationType::PointType  point;
   point[0] = o[0];
   point[1] = o[1];
@@ -1183,7 +1182,7 @@ void DeckOfCardRobot::DisableObliqueView()
 }
 
 void DeckOfCardRobot::AnimateRobotMove( Transform TCurrent, Transform TToBeSet, 
-                                                                     int steps )
+                                                                    int steps )
 {
   m_Needle->RequestSetTransform( TCurrent );
   m_NeedleTip->RequestSetTransform( TCurrent );
@@ -1211,7 +1210,7 @@ void DeckOfCardRobot::AnimateRobotMove( Transform TCurrent, Transform TToBeSet,
     // Interpolate quaternions
     rotation.Set( axis, angle * i/steps );
     rotation.Normalize();
-    rotation = rotation * TCurrent.GetRotation() ;
+    rotation = rotation * TCurrent.GetRotation();
 
     // Interpolate translation
     translation = TCurrent.GetTranslation() + vect * (distance * i/steps);

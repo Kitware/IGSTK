@@ -130,11 +130,9 @@ public:
   typedef itk::Logger                           LoggerType; 
   typedef itk::StdStreamLogOutput               LogOutputType;
   
-  RobotCommunication() {
-  }
+  RobotCommunication() {}
        
-  ~RobotCommunication() {
-  }
+  ~RobotCommunication() {}
 
   LoggerType::Pointer                       m_Logger;
   LogOutputType::Pointer                    m_LogOutput; 
@@ -142,7 +140,7 @@ public:
   SocketCommunicationPointerType            m_Client;
   
   // Captures ResFlag after appropriate ";" in robot response
-  int GetResFlag( const char * buf, int size, int numSC );                        
+  int GetResFlag( const char * buf, int size, int numSC );
   
   // Captures coordinate after appropriate ";" in robot response  
   // FIXME -- DOES NOT WORK YET

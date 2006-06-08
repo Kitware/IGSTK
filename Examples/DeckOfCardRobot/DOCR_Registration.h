@@ -15,6 +15,12 @@ PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 
+#include <vector>
+#include <algorithm>
+#include <vnl/vnl_vector.h> 
+#include <vnl/vnl_matrix.h> 
+#include <vnl/algo/vnl_symmetric_eigensystem.h> 
+
 // -----------------------------------------------------------------------------
 // Deck of cards robot registration
 // 
@@ -50,13 +56,6 @@ PURPOSE.  See the above copyright notices for more information.
 //
 // -----------------------------------------------------------------------------
 
-// ----- PCA and sorting ----------------
-#include <vector>
-#include <algorithm>
-#include <vnl/vnl_vector.h> 
-#include <vnl/vnl_matrix.h> 
-#include <vnl/algo/vnl_symmetric_eigensystem.h> 
-
 // ----- registration --------------
 // C 13
 #include "itkLandmarkBasedTransformInitializer.h"
@@ -78,7 +77,7 @@ PURPOSE.  See the above copyright notices for more information.
 
 namespace igstk {
 
-  class DOCR_Registration : public Object
+class DOCR_Registration : public Object
 {
 
 #define NUM_FIDUCIALS 18 //8 //9

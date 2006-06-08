@@ -33,8 +33,8 @@ DOCR_Registration::DOCR_Registration( ImageSOType::Pointer imageSO,
     {
     m_SSEntireLoadedVolume = itkImageObserver->GetITKImage();
 
-  //Save DICOM data I just got from Patrick's class in mha file
-  //---------------------------------------------------------------------
+    //Save DICOM data I just got from Patrick's class in mha file
+    //---------------------------------------------------------------------
     //typedef itk::ImageFileWriter< SSVolumeType >  ROIWriterType;
     //ROIWriterType::Pointer ROIwriter = ROIWriterType::New();
     //ROIwriter->SetFileName( "c:\\dicoms.mha" );
@@ -48,7 +48,7 @@ DOCR_Registration::DOCR_Registration( ImageSOType::Pointer imageSO,
     //  std::cout << "ExceptionObject caught !" << std::endl; 
     //  std::cout << err << std::endl; 
     //  } 
-//------------------------------------------------------------------------
+    //------------------------------------------------------------------------
 
     m_CT_Spacing = m_SSEntireLoadedVolume->GetSpacing();
     m_ROIstart = ROIstart;
@@ -135,7 +135,7 @@ bool DOCR_Registration::compute()
   vnl_matrix<double>   m_testPTProtation(3,3);
 
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   std::cout << "--------- Extracting ROI from CT ---------\n\n";
 
@@ -192,7 +192,7 @@ bool DOCR_Registration::compute()
     for( bin=0; bin <= histogramSize; bin++ )
       {
       avg += histogram->GetFrequency( bin, 0 );
-      if( (((bin+1)%BIGBINSIZE)==0)&&(bin < histogramSize) )
+      if( (((bin + 1) % BIGBINSIZE) == 0) && (bin < histogramSize) )
         {
         avg /= BIGBINSIZE;
         m_bins[bigBin] = avg;
@@ -230,7 +230,7 @@ bool DOCR_Registration::compute()
     for( bin=0; bin <= histogramSize; bin++ ) // <= is correct !!
       {
       avg += histogram->GetFrequency( bin, 0 );
-      if( (((bin+1)%BIGBINSIZE)==0)&&(bin < histogramSize) )
+      if( (((bin + 1) % BIGBINSIZE) == 0) && (bin < histogramSize) )
         {
         avg /= BIGBINSIZE;
         std::cout << bin << " " << avg << " ";
@@ -313,7 +313,7 @@ bool DOCR_Registration::compute()
     //  //while( itr != end )
     //  //{
     //   // std::cout << "bin = " << binNumber << " frequency = ";
-    //   // std::cout << itr.GetFrequency() << std::endl;     
+    //   // std::cout << itr.GetFrequency() << std::endl;
     //   // ++itr;
     //   // ++binNumber;
     //  //}
@@ -432,11 +432,11 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
   0:(m_fiducials[o2][p2][2]-1))) &&
     (m_fiducials[o][p][2]<=(((m_fiducials[o2][p2][2] + 1)>(m_volumeSize[2]-1)) ?
     (m_volumeSize[2] - 1) : (m_fiducials[o2][p2][2] + 1))))
-      {
-      label1 = o;
-      label2 = o2;
-      foundconnected = true;
-      }
+                            {
+                            label1 = o;
+                            label2 = o2;
+                            foundconnected = true;
+                            }
                           }
                         }
                       }
@@ -465,7 +465,7 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
                   int o3;
                   for (o3 = label2+1; ((o3 < (NUM_SEGMENTATION_LABELS))&&
                                       (m_fiducials[o3][0][0] != 0)); o3++)
-                    {                                                  // fiducial
+                    {                                               // fiducial
                     std::cout << "Copy " << o3 << " ";
                     m_fiducials[o3-1][0][0] = m_fiducials[o3][0][0];
                     for (int p2 = 1; p2 <= m_fiducials[o3][0][0]; p2++) // voxel
@@ -577,10 +577,10 @@ if ((m_fiducials[o][p][0] >= (((m_fiducials[o2][p2][0] - 1)<0) ?
   std::cout << "verification point: " << testData[0] << std::endl;
 
   m_covariance.set_size(SPACE_DIMENSION, SPACE_DIMENSION);
-  m_covariance = (double)0.0;            
+  m_covariance = (double)0.0;
 
   for( int i = 0; i < m_numFiducials; i++ )
-    {     
+    {
     for(int j = 0; j < SPACE_DIMENSION; j++)
       {
       for(int k = j; k < SPACE_DIMENSION; k++)
