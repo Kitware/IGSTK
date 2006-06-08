@@ -40,6 +40,7 @@ INCLUDE_DIRECTORIES (
 
 #-----------------------------------------------------------------------------
 # Add testing command
+ADD_TEST(igstkFlockOfBirdsCommandInterpreterFBBTest ${IGSTK_TESTS} igstkFlockOfBirdsCommandInterpreterFBBTest)
 ADD_TEST(igstkFlockOfBirdsCommandInterpreterTest ${IGSTK_TESTS} igstkFlockOfBirdsCommandInterpreterTest)
 ADD_TEST(igstkFlockOfBirdsTrackerTest ${IGSTK_TESTS} igstkFlockOfBirdsTrackerTest)
 ADD_TEST(igstkVesselObjectTest ${IGSTK_TESTS} igstkVesselObjectTest)
@@ -224,6 +225,7 @@ ENDIF(IGSTK_USE_FLTK)
 #-----------------------------------------------------------------------------
 # Set the source file
 SET(BasicTests_SRCS
+  igstkFlockOfBirdsCommandInterpreterFBBTest.cxx
   igstkFlockOfBirdsCommandInterpreterTest.cxx 
   igstkFlockOfBirdsTrackerTest.cxx 
   igstkVesselObjectTest.cxx 
