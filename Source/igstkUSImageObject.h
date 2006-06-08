@@ -48,11 +48,12 @@ public:
   /** Typedef for the superclass. This is needed because the 
    *  igstkStandardClassTraitsMacro gets confused with the commas
    *  in the template declaration. */
-  typedef ImageSpatialObject< unsigned char, 3 >  Superclass;
-  typedef Superclass::ImageType                   ImageType;
+  
+  typedef ImageSpatialObject< unsigned char, 3 >  SuperclassType;
+  typedef SuperclassType::ImageType                   ImageType;
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( USImageObject, Superclass )
+  igstkStandardClassTraitsMacro( USImageObject, SuperclassType )
 
 protected:
 
