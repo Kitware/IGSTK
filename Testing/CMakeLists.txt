@@ -116,6 +116,7 @@ SET(IGSTK_TESTS ${CXX_TEST_PATH}/igstkLatestTests)
 # You just need to add your new tests here
 SET(IGSTKTests_SRCS
   igstkFlockOfBirdsCommandInterpreterTest.cxx
+  igstkFlockOfBirdsCommandInterpreterFBBTest.cxx
   igstkFlockOfBirdsTrackerTest.cxx 
   igstkVesselObjectTest.cxx
   igstkUSImageObjectTest.cxx
