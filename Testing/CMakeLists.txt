@@ -180,8 +180,9 @@ IF (IGSTK_DATA_ROOT)
   ADD_TEST( igstkUltrasoundImageSimulatorTest ${IGSTK_TESTS}
              --compare ${IGSTKSandbox_BASELINE_DIR}/igstkUltrasoundImageSimulatorTest.png 
              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
-             --tolerance 10
+             --toleranceIntensity 10
              --toleranceRadius 5
+             --toleranceNumberOfPixels 5
              igstkUltrasoundImageSimulatorTest
              ${IGSTK_DATA_ROOT}/Input/MRLiver
              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
@@ -256,8 +257,9 @@ IF(IGSTK_USE_FLTK)
        ${IGSTK_TESTS}
        --compare ${IGSTKSandbox_BASELINE_DIR}/igstkImageSpatialObjectRepresentationTest2.png 
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png 
-       --tolerance 10
+       --toleranceIntensity 10
        --toleranceRadius 5
+       --toleranceNumberOfPixels 5
        igstkImageSpatialObjectRepresentationTest2
        ${IGSTKSandbox_DATA_ROOT}/E000192
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png)
@@ -266,16 +268,19 @@ IF(IGSTK_USE_FLTK)
        ${IGSTK_TESTS}
        --compare ${IGSTKSandbox_BASELINE_DIR}/igstkImageSpatialObjectRepresentationTest3.png 
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png 
-       --tolerance 10
+       --toleranceIntensity 10
        --toleranceRadius 5
+       --toleranceNumberOfPixels 5
        igstkImageSpatialObjectRepresentationTest3
        ${IGSTKSandbox_DATA_ROOT}/E000192Mod2
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png)
 
     ADD_TEST( igstkVascularNetworkReaderTest ${IGSTK_TESTS} 
           --compare ${IGSTKSandbox_BASELINE_DIR}/igstkVascularNetworkReaderTest.png 
-          ${IGSTK_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png 
-          --tolerance 10
+          ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png 
+          --toleranceIntensity 10
+          --toleranceRadius 5
+          --toleranceNumberOfPixels 5
           igstkVascularNetworkReaderTest 
           ${IGSTK_DATA_ROOT}/Input/vessel.tre
           ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre 
@@ -286,7 +291,9 @@ IF(IGSTK_USE_FLTK)
               ${IGSTK_TESTS}
               --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png 
                         ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
-              --tolerance 10
+              --toleranceIntensity 10
+              --toleranceRadius 5
+              --toleranceNumberOfPixels 5
               igstkCTImageSpatialObjectReadingAndRepresentationTest
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
