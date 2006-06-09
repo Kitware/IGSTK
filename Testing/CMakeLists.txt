@@ -96,8 +96,9 @@ IF (IGSTK_DATA_ROOT)
   ADD_TEST( igstkUltrasoundImageSimulatorTest ${IGSTK_TESTS}
              --compare ${BASELINE}/igstkUltrasoundImageSimulatorTest.png 
              ${IGSTK_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
-             --tolerance 10
+             --toleranceIntensity 10
              --toleranceRadius 5
+             --toleranceNumberOfPixels 5
              igstkUltrasoundImageSimulatorTest
              ${IGSTK_DATA_ROOT}/Input/MRLiver
              ${IGSTK_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
@@ -175,8 +176,9 @@ IF(IGSTK_USE_FLTK)
        ${IGSTK_TESTS}
        --compare ${BASELINE}/igstkImageSpatialObjectRepresentationTest2.png 
        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png 
-       --tolerance 10
+       --toleranceIntensity 10
        --toleranceRadius 5
+       --toleranceNumberOfPixels 5
        igstkImageSpatialObjectRepresentationTest2
        ${IGSTK_DATA_ROOT}/Input/E000192
        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png)
@@ -185,8 +187,9 @@ IF(IGSTK_USE_FLTK)
        ${IGSTK_TESTS}
        --compare ${BASELINE}/igstkImageSpatialObjectRepresentationTest3.png 
        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png 
-       --tolerance 10
+       --toleranceIntensity 10
        --toleranceRadius 5
+       --toleranceNumberOfPixels 5
        igstkImageSpatialObjectRepresentationTest3
        ${IGSTK_DATA_ROOT}/Input/E000192Mod2
        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png)
@@ -194,7 +197,9 @@ IF(IGSTK_USE_FLTK)
     ADD_TEST( igstkVascularNetworkReaderTest ${IGSTK_TESTS} 
           --compare ${BASELINE}/igstkVascularNetworkReaderTest.png 
           ${IGSTK_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png 
-          --tolerance 10
+          --toleranceIntensity 10
+          --toleranceRadius 5
+          --toleranceNumberOfPixels 5
           igstkVascularNetworkReaderTest 
           ${IGSTK_DATA_ROOT}/Input/vessel.tre
           ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre 
@@ -205,7 +210,9 @@ IF(IGSTK_USE_FLTK)
               ${IGSTK_TESTS}
               --compare ${BASELINE}/igstkViewScreenShot.png 
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
-              --tolerance 10
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
               igstkCTImageSpatialObjectReadingAndRepresentationTest
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png

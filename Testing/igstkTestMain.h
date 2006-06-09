@@ -46,7 +46,7 @@ std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
 extern int test(int, char* [] ); \
 StringToTestFunctionMap[#test] = test
 
-int RegressionTestImage (const char *, const char *, int, double, unsigned int);
+int RegressionTestImage (const char *, const char *, int, double, unsigned int, unsigned int);
 
 std::map<std::string,int> RegressionTestBaselines (char *);
 
@@ -69,8 +69,9 @@ int main(int ac, char* av[] )
   char *baselineFilename = NULL;
   char *testFilename = NULL;
   
-  double tolerance = 2.0;
+  double toleranceIntensity = 2.0;
   unsigned int toleranceRadius = 1;
+  unsigned int toleranceNumberOfPixels = 0;
 
   std::cout << "AC = " << ac << std::endl;
   RegisterTests();
@@ -119,9 +120,9 @@ int main(int ac, char* av[] )
       testFilename = av[3];
       av += 3;
       ac -= 3;
-      if (strcmp(av[1], "--tolerance") == 0)
+      if (strcmp(av[1], "--toleranceIntensity") == 0)
         {
-        tolerance = atof( av[2] );
+        toleranceIntensity = atof( av[2] );
         av += 2;
         ac -= 2;
         }
@@ -131,6 +132,13 @@ int main(int ac, char* av[] )
         av += 2;
         ac -= 2;
         }
+      if (strcmp(av[1], "--toleranceNumberOfPixels") == 0)
+        {
+        toleranceNumberOfPixels = atoi( av[2] );
+        av += 2;
+        ac -= 2;
+        }
+
       }
       testToRun = av[1];
     }
@@ -156,8 +164,9 @@ int main(int ac, char* av[] )
           baseline->second = RegressionTestImage(testFilename,
                                                  (baseline->first).c_str(),
                                                  0,
-                                                 tolerance,
-                                                 toleranceRadius);
+                                                 toleranceIntensity,
+                                                 toleranceRadius,
+                                                 toleranceNumberOfPixels);
           if (baseline->second < bestBaselineStatus)
             {
             bestBaseline = baseline->first;
@@ -175,8 +184,9 @@ int main(int ac, char* av[] )
           baseline->second = RegressionTestImage(testFilename,
                                                  bestBaseline.c_str(),
                                                  1,
-                                                 tolerance,
-                                                 toleranceRadius);
+                                                 toleranceIntensity,
+                                                 toleranceRadius,
+                                                 toleranceNumberOfPixels);
           }
 
         // output the matching baseline
@@ -217,8 +227,9 @@ int main(int ac, char* av[] )
 int RegressionTestImage( const char *testImageFilename, 
                          const char *baselineImageFilename, 
                          int reportErrors, 
-                         double tolerance, 
-                         unsigned int toleranceRadius)
+                         double toleranceIntensity, 
+                         unsigned int toleranceRadius,
+                         unsigned int toleranceNumberofPixels)
 {
   // Use the factory mechanism to read the test and baseline files and convert them to double
   typedef itk::Image<double,IGSTK_TEST_DIMENSION_MAX> ImageType;
@@ -273,11 +284,41 @@ int RegressionTestImage( const char *testImageFilename,
   DiffType::Pointer diff = DiffType::New();
     diff->SetValidInput(baselineReader->GetOutput());
     diff->SetTestInput(testReader->GetOutput());
-    diff->SetDifferenceThreshold( tolerance );
+    diff->SetDifferenceThreshold( toleranceIntensity );
     diff->SetToleranceRadius( toleranceRadius );
     diff->UpdateLargestPossibleRegion();
 
-  double status = diff->GetTotalDifference();
+  // Analyze the difference image
+  // 
+  // if the number of non-zero pixels in the difference image is  
+  // less than a threshold, then the baseline and test output 
+  // generated image are marked to be different and
+  // a difference image is generated.
+  // 
+  
+  typedef DiffType::OutputImageType  OutputImageType;
+  typedef OutputImageType::PixelType PixelType;
+  OutputImageType::Pointer outputImage = OutputImageType::New();
+  outputImage = diff->GetOutput();
+
+  typedef itk::ImageRegionConstIterator< OutputImageType > ConstIteratorType;
+  ConstIteratorType inputIt( outputImage, 
+                                    outputImage->GetLargestPossibleRegion());
+
+  PixelType ZeroValue  = itk::NumericTraits< PixelType >::Zero;
+ 
+  unsigned int count = 0;
+  for ( inputIt.GoToBegin(); !inputIt.IsAtEnd(); ++inputIt )
+    {
+    if ( inputIt.Get() != ZeroValue )
+      {
+      count++;
+      }
+    }
+
+  int status=0;
+
+  status = count > toleranceNumberofPixels ? 1 : 0; 
 
   // if there are discrepencies, create an diff image
   if (status && reportErrors)
