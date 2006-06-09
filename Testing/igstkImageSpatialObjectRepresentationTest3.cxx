@@ -159,8 +159,8 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   double size_Y2;
   double size_Z2;
   
-  size_X2 = 20.0;
-  size_Y2 = 20.0;
+  size_X2 = 30.0;
+  size_Y2 = 30.0;
   size_Z2 = 2.0;
 
   boxObject2->SetSize( size_X2, size_Y2, size_Z2 );
@@ -195,8 +195,8 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   double size_Y3;
   double size_Z3;
   
-  size_X3 = 20.0;
-  size_Y3 = 20.0;
+  size_X3 = 40.0;
+  size_Y3 = 40.0;
   size_Z3 = 2.0;
 
   boxObject3->SetSize( size_X3, size_Y3, size_Z3 );
@@ -231,8 +231,8 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   double size_Y4;
   double size_Z4;
   
-  size_X4 = 20.0;
-  size_Y4 = 20.0;
+  size_X4 = 50.0;
+  size_Y4 = 50.0;
   size_Z4 = 2.0;
 
   boxObject4->SetSize( size_X4, size_Y4, size_Z4 );
