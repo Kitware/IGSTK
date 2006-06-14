@@ -68,7 +68,7 @@ public:
   typedef CTImageReader                                 ImageReaderType;
 
   typedef ImageReaderType::ImageSpatialObjectType       ImageSpatialObjectType;
-  typedef ImageSpatialObjectType::IndexType             IndexType;
+  typedef ImageSpatialObjectType::ContinuousIndexType   IndexType;
 
   /** typedef for ImageRepresentationType */
   typedef CTImageSpatialObjectRepresentation            ImageRepresentationType;
