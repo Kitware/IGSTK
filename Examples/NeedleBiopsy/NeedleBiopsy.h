@@ -224,6 +224,9 @@ private:
   /** Observer for the image reader */
   CTImageObserver::Pointer            m_CTImageObserver;
 
+  /** Pointer to the CTImageSpatialObject */
+  ImageSpatialObjectType::Pointer     m_ImageSpatialObject;
+
   /** Slice representations of the image in View2D and View3D */
   ImageRepresentationType::Pointer    m_ImageRepresentationAxial;
   ImageRepresentationType::Pointer    m_ImageRepresentationCoronal;
