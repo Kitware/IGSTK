@@ -66,6 +66,7 @@ public:
   typedef CTImageReader                                 ImageReaderType;
 
   typedef CTImageSpatialObject                          ImageSpatialObjectType;
+  typedef ImageSpatialObjectType::ContinuousIndexType   IndexType;
 
   typedef ImageSpatialObjectType::ImageType             ITKImageType;
 
@@ -284,7 +285,7 @@ private:
 
   /** Methods for reslicing the image */
   void ResliceImage();
-  void ResliceImage( ITKImageType::IndexType index );
+  void ResliceImage( IndexType index );
   bool CalculateRobotMovement();
   void CreateObliqueView();
   void DisableObliqueView();

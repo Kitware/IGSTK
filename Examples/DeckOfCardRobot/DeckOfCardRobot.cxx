@@ -504,7 +504,7 @@ void DeckOfCardRobot::ResliceImage()
   Fl::check();
 }
 
-void DeckOfCardRobot::ResliceImage ( ITKImageType::IndexType index )
+void DeckOfCardRobot::ResliceImage ( IndexType index )
 {
   m_ImageRepresentationAxial->RequestSetSliceNumber( index[2] );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( index[0] );
@@ -703,8 +703,8 @@ void DeckOfCardRobot::DrawPickedPoint( const itk::EventObject & event)
       m_ImageLandmarkTransformToBeSet = tmevent->Get();
       
       m_PickedPoint->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
-      ImageSpatialObjectType::IndexType index;
-      m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
+      ImageSpatialObjectType::ContinuousIndexType index;
+      m_ImageSpatialObject->TransformPhysicalPointToContinuousIndex( p, index);
       igstkLogMacro( DEBUG, index <<"\n")
       ResliceImage( index );
       }
@@ -1117,8 +1117,8 @@ void DeckOfCardRobot::RequestInsertNeedle()
   p[0] = translation[0];
   p[1] = translation[1];
   p[2] = translation[2];
-  ImageSpatialObjectType::IndexType index;
-  m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
+  ImageSpatialObjectType::ContinuousIndexType index;
+  m_ImageSpatialObject->TransformPhysicalPointToContinuousIndex( p, index);
 
   ResliceImage( index );
 
