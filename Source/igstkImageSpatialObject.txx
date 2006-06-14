@@ -309,6 +309,14 @@ ImageSpatialObject< TPixelType, VDimension >
   return m_Image->TransformPhysicalPointToIndex( point, index);  
 }
 
+template< class TPixelType, unsigned int VDimension >
+bool
+ImageSpatialObject< TPixelType, VDimension >
+::TransformPhysicalPointToContinuousIndex ( const PointType & point, 
+                                        ContinuousIndexType & index ) const 
+{ 
+  return m_Image->TransformPhysicalPointToContinuousIndex( point, index);  
+}
 
 /** Print Self function */
 template< class TPixelType, unsigned int VDimension >

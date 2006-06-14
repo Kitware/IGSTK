@@ -67,6 +67,7 @@ public:
   typedef typename ImageType::ConstPointer                  ImageConstPointer;
   typedef typename ImageSpatialObjectType::PointType        PointType;
   typedef typename ImageType::IndexType                     IndexType;
+  typedef typename itk::ContinuousIndex< double, 3 >        ContinuousIndexType;
 
   /** Test whether a point is inside or outside the object. */
   virtual bool IsInside( const PointType & point ) const;
@@ -74,6 +75,10 @@ public:
   /** Transform physical point to index. */
   virtual bool TransformPhysicalPointToIndex ( const PointType & point, 
                                              IndexType & index ) const;
+
+  /** Transform physical point to index. */
+  virtual bool TransformPhysicalPointToContinuousIndex ( const PointType & point, 
+                                     ContinuousIndexType & index ) const;
 
   /** Returns wheter the image have any pixels allocated or not */
   virtual bool IsEmpty() const;
