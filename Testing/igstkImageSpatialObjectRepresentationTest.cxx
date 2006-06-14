@@ -376,6 +376,32 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
       }
     }
 
+  // Exercising the physical point to index function
+    {
+    ImageSpatialObjectType::IndexType            index;
+    ImageSpatialObjectType::ContinuousIndexType  cindex;
+    ImageSpatialObjectType::PointType            p;
+    for ( double z = 0.0; z< 100; z += 10.0 )
+      {
+      p[0] = cos( z ) * z;
+      p[1] = sin( z ) * z;
+      p[2] = z;
+      if ( !ctImageObserver->GetCTImage()->IsInside( p ) )
+        {
+        std::cout<< "Point outside the image region!" << std::endl; 
+        }
+        
+      ctImageObserver->GetCTImage()->TransformPhysicalPointToIndex( p, index );
+      ctImageObserver->GetCTImage()
+                        ->TransformPhysicalPointToContinuousIndex( p, cindex );
+      std::cout<< "Index           : " << index  << std::endl; 
+      std::cout<< "Continuous Index: " << cindex << std::endl;
+            
+      }
+
+    }
+
+
   delete view2D;
   delete form;
 
