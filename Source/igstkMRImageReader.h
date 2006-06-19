@@ -47,6 +47,9 @@ protected:
   MRImageReader( void );
   virtual ~MRImageReader( void ) {};
 
+  /** check if the dicom data is from "MRI" modality */
+  bool CheckModalityType( DICOMInformationType modality );
+
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 

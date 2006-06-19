@@ -25,6 +25,16 @@ CTImageReader::CTImageReader():m_StateMachine(this)
 
 } 
 
+/** Check if CT dicom is being read */
+bool CTImageReader::CheckModalityType( DICOMInformationType modality )
+{
+  if ( modality != "CT" ) 
+     return false; 
+  else
+     return true;
+}
+
+
 /** Print Self function */
 void CTImageReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {

@@ -25,6 +25,16 @@ MRImageReader::MRImageReader():m_StateMachine(this)
 
 } 
 
+/** Check if MRI dicom is being read */
+bool MRImageReader::CheckModalityType( DICOMInformationType modaltiy )
+{
+  if ( modaltiy != "MR" ) 
+     return false; 
+  else
+     return true;
+}
+
+
 /** Print Self function */
 void MRImageReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {

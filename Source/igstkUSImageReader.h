@@ -49,6 +49,9 @@ protected:
   USImageReader( void );
   virtual ~USImageReader( void );
 
+  /** check if the dicom data is from a "US" modality */
+  bool CheckModalityType( DICOMInformationType modality );
+
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
