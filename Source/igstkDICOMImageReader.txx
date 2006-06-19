@@ -580,7 +580,6 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
     }
 
   // Check if the DICOM image has a gantry tilt or not 
- 
   std::string tagkey;
 
   itk::MetaDataDictionary & dict = m_ImageIO->GetMetaDataDictionary();
@@ -608,23 +607,42 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
       }
     }
 
+  // Check if the dicom image data is being read by the correct DICOM image
+  // reader derived class
+  std::string modalityTagKey;
+  
+  modalityTagKey = "0008|0060";  
+
+  if( itk::ExposeMetaData<std::string>(dict,modalityTagKey, m_Modality ) )
+    {
+    igstkLogMacro( DEBUG, "Modality     = " << m_Modality << "\n" );
+    if( ! this->CheckModalityType( m_Modality ) )
+      {
+      this->m_ImageReadingErrorInformation = "Usage of a wrong image reader";
+      this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
+      this->m_StateMachine.ProcessInputs();
+      return; 
+      }
+    }
+
   this->m_StateMachine.PushInput( this->m_ImageReadingSuccessInput );
   this->m_StateMachine.ProcessInputs();
 
-  char tmp_string[5120];
+  std::string patientNameTagKey;
+  patientNameTagKey = "0010|0010";  
 
-  m_ImageIO->GetPatientName(  tmp_string  );
-  m_PatientName = tmp_string;
+  if( itk::ExposeMetaData<std::string>(dict,patientNameTagKey, m_PatientName ) )
+    { 
+    igstkLogMacro( DEBUG, "Patient Name = " << m_PatientName << "\n" );
+    }
   
-  m_ImageIO->GetPatientID(  tmp_string );
-  m_PatientID  = tmp_string;
+  std::string patientIDTagkey;
+  patientIDTagkey = "0010|0020";  
 
-  m_ImageIO->GetModality(   tmp_string );
-  m_Modality  = tmp_string;
-
-  igstkLogMacro( DEBUG, "Patient Name = " << m_PatientName << "\n" );
-  igstkLogMacro( DEBUG, "Patient ID   = " << m_PatientID << "\n" );
-  igstkLogMacro( DEBUG, "Modality     = " << m_Modality << "\n" );
+  if( itk::ExposeMetaData<std::string>(dict,patientIDTagkey, m_PatientID ) )
+    { 
+    igstkLogMacro( DEBUG, "Patient ID = " << m_PatientID << "\n" );
+    }
 
   this->Superclass::ConnectImage();
   
@@ -802,6 +820,13 @@ DICOMImageReader<TPixelType>::GetITKImage() const
   return m_ImageFileReader->GetOutput();
 }
 
+/** Check modality type */
+template <class TPixelType>
+bool
+DICOMImageReader<TPixelType>::CheckModalityType ( DICOMInformationType modality ) 
+{
+  return true;
+}
 
 /** Print Self function */
 template <class TPixelType>

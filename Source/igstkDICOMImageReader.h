@@ -197,7 +197,15 @@ private:
   igstkDeclareInputMacro( ImageDirectoryNameIsNotDirectory );
   igstkDeclareInputMacro( ImageDirectoryNameDoesNotHaveEnoughFiles );
   igstkDeclareInputMacro( ImageSeriesFileNamesGeneratingError );
- 
+
+  /** Check modality type 
+   * This method is implemented in the derived classes to
+   * check if the dicom data is read by the correct
+   * Dicom image reader. For example, CT DICOM image 
+   * should be read by CT image reader not by MRI image reader */
+  virtual bool CheckModalityType( DICOMInformationType modality );
+
+  
   /** DICOM tags request inputs */
   igstkDeclareInputMacro( GetModalityInformation );
   igstkDeclareInputMacro( GetPatientNameInformation );
