@@ -197,8 +197,22 @@ int igstkAxesObjectTest( int, char * [] )
   std::cout << "Testing UpdateRepresentationFromGeometry() : ";
   AxesObject->SetSize( 20.0, 30.0, 40.0 );
   
-  // Testing Update
-  AxesRepresentation->IsModified();
+  // Testing first call to IsModified() after SetSize() it should retur true.
+  bool status = AxesRepresentation->IsModified();
+  if( !status )
+    {
+    std::cerr << "Error in return value from IsModified() first call" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Testing the second call to IsModified() this time is should return false.
+  status = AxesRepresentation->IsModified();
+  if( status )
+    {
+    std::cerr << "Error in return value from IsModified() second call" << std::endl;
+    return EXIT_FAILURE;
+    }
+
 
   // Test GetTransform()
   std::cout << "Testing Set/GetTransform(): ";
