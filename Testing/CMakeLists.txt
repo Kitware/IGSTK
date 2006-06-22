@@ -200,7 +200,7 @@ IF (IGSTK_DATA_ROOT)
   ADD_TEST( igstkCTImageReaderTest ${IGSTK_TESTS} igstkCTImageReaderTest 
        ${IGSTK_DATA_ROOT}/Input/E000192 )
   ADD_TEST( igstkMRImageReaderTest ${IGSTK_TESTS} igstkMRImageReaderTest 
-       ${IGSTK_DATA_ROOT}/Input/E000192 )
+       ${IGSTK_DATA_ROOT}/Input/MRLiver )
   ADD_TEST( igstkMeshReaderTest ${IGSTK_TESTS} igstkMeshReaderTest 
        ${IGSTK_DATA_ROOT}/Input/liver.msh  
        ${IGSTK_DATA_ROOT}/Input/liverCorruptedOnPurpose.msh )
