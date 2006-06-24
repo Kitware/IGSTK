@@ -189,17 +189,7 @@ int igstkCylinderObjectTest( int, char * [] )
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( cylinderRepresentation );
 
-  // Testing Update
-  cylinderRepresentation->IsModified();
-
-  // Testing again in order to exercise the other half of an if().
-  cylinderRepresentation->IsModified();
   cylinderRepresentation->SetColor(0.3,0.7,0.2);
-  if( !cylinderRepresentation->IsModified() )
-    {
-    std::cerr << "IsModified() failed to be true after a SetColor()" << std::endl;
-    return EXIT_FAILURE;
-    }
 
   // Test GetTransform()
   std::cout << "Testing Set/GetTransform(): ";

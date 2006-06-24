@@ -253,14 +253,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
   // Testing again in order to exercise the other half of an if().
-  UltrasoundProbeRepresentation->IsModified();
   UltrasoundProbeRepresentation->SetColor(0.3,0.7,0.2);
-  if( !UltrasoundProbeRepresentation->IsModified() )
-    {
-    std::cerr << "IsModified() failed to be true after a SetColor()" << std::endl;
-    return EXIT_FAILURE;
-    }
-
 
   // Test GetTransform()
   std::cout << "Testing Set/GetTransform(): ";

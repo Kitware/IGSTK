@@ -77,9 +77,6 @@ public:
   void SetOpacity(float alpha);
   igstkGetMacro( Opacity, float );
 
-  /** Has the object been modified */
-  bool IsModified() const;
-
 protected:
 
   ObjectRepresentation( void );
@@ -114,7 +111,6 @@ private:
   ActorsListType              m_Actors;
   float                       m_Color[3];
   float                       m_Opacity;
-  unsigned long               m_LastMTime;
 
   /** The associated SpatialObject is non-const because we invoke requests
    * methods that indirectly will modify the state of its internal StateMachine

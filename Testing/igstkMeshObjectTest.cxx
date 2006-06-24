@@ -293,20 +293,9 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   // this will indirectly call CreateActors() 
   view3D->RequestAddObject( MeshRepresentation );
 
-  // Testing Update
-  //std::cout << "Testing Update" << std::endl;
-  MeshRepresentation->IsModified();
-
   // Testing again in order to exercise the other half of an if().
-  MeshRepresentation->IsModified();
   MeshRepresentation->SetColor(0.3,0.7,0.2);
-  if( !MeshRepresentation->IsModified() )
-    {
-    std::cerr << "IsModified() failed to be true ";
-    std::cerr << "after a SetColor()" << std::endl;
-    return EXIT_FAILURE;
-    }
-
+  
   // Test GetTransform()
   std::cout << "Testing Set/GetTransform(): ";
 

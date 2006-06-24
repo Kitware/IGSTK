@@ -183,37 +183,33 @@ int igstkAxesObjectTest( int, char * [] )
   std::cout << "Testing actors : ";
 
   typedef igstk::View2D  View2DType;
-  View2DType * view2D = new View2DType(0,0,200,200,"View 2D");
+
+  // Create an FLTK minimal GUI
+  Fl_Window * form = new Fl_Window(301,301,"AxesObjectTest");
+  View2DType * view2D = new View2DType(0,0,300,300,"View 2D");
   
+  form->end();
+  // End of the GUI creation
+
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( AxesRepresentation );
   view2D->SetLogger( logger );
     
   std::cout << "[PASSED]" << std::endl;
 
+  form->show();
+
+  view2D->Initialize();
+  view2D->Enable();
+  view2D->RequestResetCamera();
+  view2D->RequestEnableInteractions();
+ 
   // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
   // geometrical parameters should trigger an update in the representation
   // class.
   std::cout << "Testing UpdateRepresentationFromGeometry() : ";
   AxesObject->SetSize( 20.0, 30.0, 40.0 );
   
-  // Testing first call to IsModified() after SetSize() it should retur true.
-  bool status = AxesRepresentation->IsModified();
-  if( !status )
-    {
-    std::cerr << "Error in return value from IsModified() first call" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  // Testing the second call to IsModified() this time is should return false.
-  status = AxesRepresentation->IsModified();
-  if( status )
-    {
-    std::cerr << "Error in return value from IsModified() second call" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-
   // Test GetTransform()
   std::cout << "Testing Set/GetTransform(): ";
 
@@ -275,6 +271,17 @@ int igstkAxesObjectTest( int, char * [] )
 
   std::cout << "[PASSED]" << std::endl;
 
+  view2D->RequestSetRefreshRate( 30 );
+  view2D->RequestStart();
+
+  // Do manual redraws
+  for(unsigned int i=0; i<10; i++)
+    {
+    Fl::wait(0.01);
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();       // trigger FLTK redraws
+    }
+
 
   // Testing the Copy() function
   std::cout << "Testing Copy(): ";
@@ -298,13 +305,17 @@ int igstkAxesObjectTest( int, char * [] )
   ObjectType::Pointer AxesObjectB = ObjectType::New();
   AxesRepresentation4->RequestSetAxesObject( AxesObjectA );
   AxesRepresentation4->RequestSetAxesObject( AxesObjectB );
-
+    
   std::cout << AxesRepresentation << std::endl;
   std::cout << AxesObjectA << std::endl;
 
-  std::cout << "Test [DONE]" << std::endl;
-
+  // Exercise the screenshot option with a valid filename
+  view2D->RequestSaveScreenShot("igstkAxesObjectTestScreenshot1.png");
+    
   delete view2D;
+  delete form;
+
+  std::cout << "Test [DONE]" << std::endl;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {

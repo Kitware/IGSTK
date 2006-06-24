@@ -203,18 +203,8 @@ int igstkEllipsoidObjectTest( int, char * [] )
   std::cout << "Testing UpdateRepresentationFromGeometry() : ";
   ellipsoidObject->SetRadius( 20.0, 37.0, 39.0 );
   
-  // Testing Update
-  ellipsoidRepresentation->IsModified();
-
   // Testing again in order to exercise the other half of an if().
-  ellipsoidRepresentation->IsModified();
   ellipsoidRepresentation->SetColor(0.3,0.7,0.2);
-  if( !ellipsoidRepresentation->IsModified() )
-    {
-    std::cerr << "IsModified() failed to be true after a SetColor()" << std::endl;
-    return EXIT_FAILURE;
-    }
-
 
   // Test GetTransform()
   std::cout << "Testing Set/GetTransform(): ";

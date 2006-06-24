@@ -33,7 +33,6 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this)
   m_Color[2] = 1.0;
   m_Opacity = 1.0;
   m_SpatialObject = NULL;
-  m_LastMTime = 0;
 
   igstkAddInputMacro( ValidSpatialObject );
   igstkAddInputMacro( NullSpatialObject  );
@@ -148,16 +147,6 @@ void ObjectRepresentation::DeleteActors()
   m_Actors.clear();
 }
 
-/** Has the object been modified */
-bool ObjectRepresentation::IsModified() const
-{
-  if( m_LastMTime < this->GetMTime() )
-    {
-    return true;
-    }
-  return false;
-}
-
 
 /** Set the Spatial Object */
 void ObjectRepresentation
@@ -208,7 +197,6 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
     va->GetProperty()->SetColor(m_Color[0], m_Color[1], m_Color[2]); 
     it++;
     }
-  this->Modified();
 }
 
 /** Set the opacity */
@@ -228,7 +216,6 @@ void ObjectRepresentation::SetOpacity(float alpha)
     va->GetProperty()->SetOpacity(m_Opacity); 
     it++;
     }
-  this->Modified();
 }
 
 /** Request Update the object representation (i.e vtkActors). */
@@ -293,9 +280,6 @@ void ObjectRepresentation::UpdateActorsPositionProcessing()
     }
 
   vtkMatrix->Delete();
-
-  // Update the modified time
-  m_LastMTime = this->GetMTime();
 }
 
 
