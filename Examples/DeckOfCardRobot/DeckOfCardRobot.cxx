@@ -916,7 +916,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   Transform::VersorType   rotation;
   Transform::VectorType   translation, pVect1, pVect2, pProject, axis;
   double                  angle;
-  DOCR_Registration::TransformType::InputPointType rPE, rPT, pIntersect;
+  itk::VersorRigid3DTransform<double>::InputPointType rPE, rPT, pIntersect;
 
   for (int i=0; i<3; i++)
     {
