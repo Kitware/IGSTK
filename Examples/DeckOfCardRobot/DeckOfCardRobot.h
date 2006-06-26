@@ -24,7 +24,6 @@ PURPOSE.  See the above copyright notices for more information.
 #endif
 
 #include "DeckOfCardRobotGUI.h"
-#include "DOCR_Registration.h"
 #include "RobotCommunication.h"
 
 #include "igstkStateMachine.h"
@@ -45,6 +44,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkAnnotation2D.h"
 #include "igstkBoxObject.h"
 #include "igstkBoxObjectRepresentation.h"
+
+#include "itkVersorRigid3DTransform.h"
 
 namespace igstk
 {
@@ -194,12 +195,10 @@ private:
   VolumeRepresentationType::Pointer   m_ImageRepresentation3D;
   ObliqueRepresentationType::Pointer  m_ImageRepresentationOblique;
 
-  /** Registration */
-  DOCR_Registration *                 m_Registration;
-
+  
   /** To store the landmark registration result transform*/
-  DOCR_Registration::TransformType::Pointer    m_ImageToRobotTransform;  
-  DOCR_Registration::TransformType::Pointer    m_RobotToImageTransform;  
+  itk::VersorRigid3DTransform< double >::Pointer    m_ImageToRobotTransform;  
+  itk::VersorRigid3DTransform< double >::Pointer    m_RobotToImageTransform;  
   
   /** To store the transform of the image and tracker landmark points */
   Transform                                    m_ImageLandmarkTransformToBeSet;
