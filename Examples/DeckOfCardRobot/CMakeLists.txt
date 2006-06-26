@@ -15,6 +15,7 @@ SET(DeckOfCardRobot_HEADER
   IterativeClosestPointsBasedRegistration.h
   LandmarkBasedRegistration.h
   ModelBasedRegistration.h
+  PCAOnPoints.h
 )
 
 SET(DeckOfCardRobot_SRCS
@@ -29,6 +30,7 @@ SET(DeckOfCardRobot_SRCS
   IterativeClosestPointsBasedRegistration.cxx
   LandmarkBasedRegistration.cxx
   ModelBasedRegistration.cxx
+  PCAOnPoints.cxx
   )
 
 INCLUDE_DIRECTORIES(

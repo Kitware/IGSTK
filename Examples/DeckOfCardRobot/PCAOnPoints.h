@@ -1,7 +1,7 @@
 /*=========================================================================
 
 Program:   Image Guided Surgery Software Toolkit
-Module:    ModelBasedClustering.h
+Module:    PCAOnPoints.h
 Language:  C++
 Date:      $Date$
 Version:   $Revision$
@@ -14,17 +14,17 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __ModelBasedClustering_h
-#define __ModelBasedClustering_h
+#ifndef __PCAOnPoints_h
+#define __PCAOnPoints_h
 
 #include "itkImage.h"
 
-class ModelBasedClustering: public itk::Object
+class PCAOnPoints: public itk::Object
 {
 
 public:
 
-  typedef ModelBasedClustering              Self;
+  typedef PCAOnPoints              Self;
   typedef itk::Object                       Superclass;
   typedef itk::SmartPointer< Self >         Pointer;
   typedef itk::SmartPointer< const Self >   ConstPointer;
@@ -33,6 +33,7 @@ public:
 
   typedef itk::Point< double, 3 >           PointType;
   typedef std::vector< PointType >          PointsListType;
+  typedef vnl_vector< double >              VectorType;
 
   bool Execute();
 
@@ -40,32 +41,26 @@ public:
     {
     m_SamplePoints = pList;
     };
-
-  void SetModelPoints( PointsListType pList )
+  
+  PointsListType GetSortedPoints( void )
     {
-    m_ModelPoints = pList;
+    return m_SortedPoints;
     };
 
-  PointsListType GetClusteredPoints()
-    {
-    return m_ClusteredPoints;
-    };
-
+  itkGetMacro( Center, PointType);
+  itkGetMacro( PrincipleAxis, VectorType);
 
 protected:
-  ModelBasedClustering();
-  virtual ~ModelBasedClustering(){};
+  PCAOnPoints();
+  virtual ~PCAOnPoints(){};
   void PrintSelf( std::ostream & os, itk::Indent indet );
 
 private:
 
-  double Distance( PointType p1, PointType p2 );
-
-  double DistanceToSimilarity( double dis );
-  
   PointsListType                       m_SamplePoints;
-  PointsListType                       m_ModelPoints;
-  PointsListType                       m_ClusteredPoints;
+  PointsListType                       m_SortedPoints;
+  PointType                            m_Center;
+  VectorType                           m_PrincipleAxis;
 
 };
 
