@@ -30,14 +30,13 @@ FiducialModel::FiducialModel()
   double const Theta = atan( 8 / 3.3 );
 
   PointType p;
-  m_FiducialPoints.clear();
   for ( double z = 0; z <= 45; z += 2.5)
     {
     double x = R * cos( W * z + Theta );
     double y = R * sin( W * z + Theta );
     p[0] = x;
     p[1] = y;
-    p[3] = z - 1.25;
+    p[2] = z - 1.25;
     m_FiducialPoints.push_back( p );
     }
 }
@@ -56,6 +55,5 @@ void FiducialModel::PrintSelf(std::ostream& os, itk::Indent indent) const
 FiducialModel::ImageType::Pointer
 FiducialModel::GetModelImage()
 {
-
   return m_ModelImage;
 }
