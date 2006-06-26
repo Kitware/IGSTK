@@ -49,11 +49,9 @@ public:
   itkGetMacro( BlurSize, int);
   itkSetMacro( BlurSize, int);
   
-  virtual bool Execute();
+  virtual ImageType::Pointer GetModelImage();
 
-  itkGetMacro( ModelImage, ImageType::Pointer );
-
-  PointsListType GetFiducialPoints()
+  virtual PointsListType GetFiducialPoints()
     {
     return m_FiducialPoints;
     };
