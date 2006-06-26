@@ -6,17 +6,29 @@ SET(DeckOfCardRobot_GUI_SRCS
   
 SET(DeckOfCardRobot_HEADER
   DeckOfCardRobot.h
-  DOCR_Registration.h  
   RobotCommunication.h
   igstkImageSpatialObjectVolumeRepresentation.h
+  FiducialSegmentation.h
+  FiducialModel.h
+  ModelBasedClustering.h
+  DeckOfCardRobotRegistrationBase.h
+  IterativeClosestPointsBasedRegistration.h
+  LandmarkBasedRegistration.h
+  ModelBasedRegistration.h
 )
 
 SET(DeckOfCardRobot_SRCS
   main.cxx
   DeckOfCardRobot.cxx
-  DOCR_Registration.cxx
   RobotCommunication.cxx
   igstkImageSpatialObjectVolumeRepresentation.txx
+  FiducialSegmentation.cxx
+  FiducialModel.cxx
+  ModelBasedClustering.cxx
+  DeckOfCardRobotRegistrationBase.cxx
+  IterativeClosestPointsBasedRegistration.cxx
+  LandmarkBasedRegistration.cxx
+  ModelBasedRegistration.cxx
   )
 
 INCLUDE_DIRECTORIES(

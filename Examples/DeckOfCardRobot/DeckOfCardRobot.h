@@ -99,7 +99,10 @@ public:
                                      CoronalBoundsInput, CoronalBounds  );
 
   igstkObserverObjectMacro( ImageSpatialObject,
-                     ImageReaderType::ImageModifiedEvent,ImageSpatialObjectType)
+                    ImageReaderType::ImageModifiedEvent,ImageSpatialObjectType)
+  igstkObserverConstObjectMacro( ITKImage,
+                   ImageSpatialObjectType::ITKImageModifiedEvent, ITKImageType)
+
 protected:
 
   DeckOfCardRobot();
