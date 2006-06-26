@@ -56,8 +56,21 @@ bool ModelBasedClustering::Execute()
   distAvr /= N-1;
 
   // Clustering according to the average distance and distance threshold
+
+  // Calculating the model distance map to get the size of the model
+  vnl_matrix< double > modelDistanceMap( N, N );
+  modelDistanceMap.fill( 0.0 );
+  for ( int i=0; i<N; i++)
+    {
+    for ( int j=0; j<N; j++)
+      {
+      modelDistanceMap( i, j ) = this->Distance( m_ModelPoints[i], 
+                                                 m_ModelPoints[j] );
+      }
+    }
+
   bool done = false;
-  const double distT = 48; //46.6345
+  const double distT = modelDistanceMap.max_value() + 2.0; //46.6345
   const int    stopCounts = 2;
   int index;
   std::vector< int > deleteList;
@@ -133,6 +146,48 @@ bool ModelBasedClustering::Execute()
         }
       }
   
+  /* Using normal cut clustering
+  vnl_matrix< double > similarityMap( N, N );
+  similarityMap.fill( 0.0 );
+  for ( int i=0; i<N; i++)
+  {
+  for ( int j=i; j<N; j++)
+  {
+  similarityMap( i, j ) = this->DistanceToSimilarity( distanceMap( i, j ) );
+  similarityMap( j, i ) = similarityMap( i, j );
+  }
+  }
+  std::cout<< "Similarity Map:\n" << similarityMap << std::endl;
+
+  vnl_matrix< double > D( N, N );
+  D.fill( 0.0 );
+  for ( int i=0; i<N; i++)
+  {
+  for ( int j=0; j<N; j++)
+  {
+  D( i,i ) += similarityMap( i, j );
+  }
+  }
+
+  vnl_matrix< double > Dsqrt = D;
+  for ( int i=0; i<N; i++)
+  {
+  Dsqrt( i, i ) = pow( D( i, i ), -0.5 );
+  }
+
+  vnl_matrix< double > M( N, N );
+  M = Dsqrt * ( D - similarityMap ) * Dsqrt;
+
+  vnl_symmetric_eigensystem< double > cluster( M );
+  vnl_vector< double > clusterVector = cluster.get_eigenvector( 1 );
+  std::cout<< "Cluster Vector: \n" << clusterVector << std::endl;
+
+  // for sorting
+  //t = clusterVector[j+1];
+  //clusterVector[j+1] = clusterVector[j];
+  //clusterVector[j] = t;
+  */
+
   return true;
 }
 
