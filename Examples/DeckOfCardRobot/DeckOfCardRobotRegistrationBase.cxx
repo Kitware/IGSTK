@@ -21,5 +21,10 @@ void DeckOfCardRobotRegistrationBase::
   PrintSelf(std::ostream& os, itk::Indent indent)
 {
   Superclass::PrintSelf(os, indent);
+
+  os << indent << "Image: "
+    << m_ITKImage << std::endl;
+  os << indent << "Transform: "
+    << m_Transform << std::endl;
 }
 
