@@ -20,15 +20,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkConnectedComponentImageFilter.h"
 #include "itkRelabelComponentImageFilter.h"
-
 #include "itkImageRegionConstIteratorWithIndex.h"
-#include "itkImageRegionIteratorWithIndex.h"
-#include "vnl/vnl_matrix.h"
-#include "vnl/algo/vnl_symmetric_eigensystem.h"
-#include "vnl/vnl_cross.h"
-
-#include "itkRegionOfInterestImageFilter.h"
-
 
 
 FiducialSegmentation::FiducialSegmentation()
