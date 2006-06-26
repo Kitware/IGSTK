@@ -37,7 +37,7 @@ void ModelBasedClustering::PrintSelf(std::ostream& os, itk::Indent indent)
 
 bool ModelBasedClustering::Execute()
 { 
-  const int N = m_SamplePoints.size();
+  int N = m_SamplePoints.size();
   // Calculate Distance Map and clustering the points
   // Get rid of far way high intensity points
   vnl_matrix< double > distanceMap( N, N );
@@ -58,23 +58,30 @@ bool ModelBasedClustering::Execute()
   // Clustering according to the average distance and distance threshold
 
   // Calculating the model distance map to get the size of the model
+  N = m_ModelPoints.size();
   vnl_matrix< double > modelDistanceMap( N, N );
   modelDistanceMap.fill( 0.0 );
+  int maxD = 0;
   for ( int i=0; i<N; i++)
     {
     for ( int j=0; j<N; j++)
       {
       modelDistanceMap( i, j ) = this->Distance( m_ModelPoints[i], 
                                                  m_ModelPoints[j] );
+      if ( modelDistanceMap( i, j ) > maxD)
+        {
+        maxD = modelDistanceMap( i, j );
+        }
       }
     }
 
   bool done = false;
-  const double distT = modelDistanceMap.max_value() + 2.0; //46.6345
+  const double distT = maxD + 2.0; //46.6345
   const int    stopCounts = 2;
   int index;
   std::vector< int > deleteList;
   deleteList.clear();
+  N = m_SamplePoints.size();
 
   do {
     // Find the largest average distance
