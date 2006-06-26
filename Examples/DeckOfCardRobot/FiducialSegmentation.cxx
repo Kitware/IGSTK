@@ -89,6 +89,9 @@ bool FiducialSegmentation::Execute()
   /*-------------------------------------------------------------------------*/
   std::cout<< "filtering detected fiducial points according to their size and"; 
   std::cout<< " distances.... " << std::endl;
+  std::cout<< " Max size.... " << m_MaxSize << std::endl;
+  std::cout<< " Min size.... " << m_MinSize << std::endl;
+
 
   // Collecting indices for each label  
   std::vector< itk::ContinuousIndex< double, 3 > > indices;
@@ -123,39 +126,43 @@ bool FiducialSegmentation::Execute()
 
   PointType p; 
   m_FiducialPoints.clear();
-  for (int i=1; i<=N; i++)
+  for (int i=0; i<N; i++)
     {
     // Filter out abnormal size labels
-    if ( (size[i-1]<=m_MaxSize) & (size[i-1]>=m_MinSize) )
+    if ( (size[i]<=m_MaxSize) & (size[i]>=m_MinSize) )
       {
       // Calculate the centroid for each label
-      indices[i][0] /= relable->GetSizeOfObjectsInPixels()[i-1];
-      indices[i][1] /= relable->GetSizeOfObjectsInPixels()[i-1];
-      indices[i][2] /= relable->GetSizeOfObjectsInPixels()[i-1];
-      m_ITKImage->TransformContinuousIndexToPhysicalPoint( indices[i], p );
+      indices[i+1][0] /= relable->GetSizeOfObjectsInPixels()[i];
+      indices[i+1][1] /= relable->GetSizeOfObjectsInPixels()[i];
+      indices[i+1][2] /= relable->GetSizeOfObjectsInPixels()[i];
+      m_ITKImage->TransformContinuousIndexToPhysicalPoint( indices[i+1], p );
       m_FiducialPoints.push_back( p );
       }
-    std::cout<< "Discard object with size: "<< size[i-1] << std::endl;
+    else
+      {
+      std::cout<< "Discard object with size: "<< size[i] << std::endl;
+      }    
     }
   
   // Calculate Distance Map and recursively merge two closest points
   DistanceMapType distanceMap = this->DistanceMap( m_FiducialPoints );
-  while ( distanceMap.min_value() < m_MergeDistance )
+  int pa, pb;
+  double minDistance = distanceMap.max_value();
+  N = m_FiducialPoints.size();
+  for ( int i=0; i<N; i++)
     {
-    int pa, pb;
-    double minDistance = distanceMap.max_value();
-    N = m_FiducialPoints.size();
-    for ( int i=0; i<N; i++)
+    for ( int j=0; j<N; j++)
       {
-      for ( int j=0; j<N; j++)
+      if ( ( i!= j) && ( distanceMap(i,j) < minDistance) )
         {
-        if ( distanceMap(i,j) < minDistance)
-          {
-          minDistance = distanceMap(i,j);
-          pa = i; pb = j; // Find the minimum distance points pair
-          }
+        minDistance = distanceMap(i,j);
+        pa = i; pb = j; // Find the minimum distance points pair
         }
       }
+    }
+
+  while ( minDistance < m_MergeDistance )
+    {
     // Merge m_FiducialPoints[pa] and m_FiducialPoints[pb]
     std::cout<< "Merging fiducial point: " << std::endl;
     std::cout<< m_FiducialPoints[pa]       << std::endl;
@@ -170,10 +177,32 @@ bool FiducialSegmentation::Execute()
     m_FiducialPoints[pa][2] = 
                         ( m_FiducialPoints[pa][2] + m_FiducialPoints[pb][2])/2;
     m_FiducialPoints.erase( m_FiducialPoints.begin() + pb );
+
+
     distanceMap = this->DistanceMap( m_FiducialPoints );    
+    minDistance = distanceMap.max_value();
+    N = m_FiducialPoints.size();
+    for ( int i=0; i<N; i++)
+      {
+      for ( int j=0; j<N; j++)
+        {
+        if ( ( i!= j) && ( distanceMap(i,j) < minDistance) )
+          {
+          minDistance = distanceMap(i,j);
+          pa = i; pb = j; // Find the minimum distance points pair
+          }
+        }
+      }
     }
-   
-  
+    
+  std::cout<< "Fiducial segmentation results: " << std::endl;
+  std::cout<< "Number of fiducial points detected: " << 
+                                          m_FiducialPoints.size() << std::endl;
+  for (int i=0; i<m_FiducialPoints.size(); i++)
+    {
+     std::cout<< m_FiducialPoints[i] << std::endl;
+    }
+
   return true;
 }
 
