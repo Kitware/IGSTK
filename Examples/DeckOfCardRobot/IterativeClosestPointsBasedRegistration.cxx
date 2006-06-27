@@ -21,6 +21,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "FiducialModel.h"
 #include "ModelBasedClustering.h"
 #include "vtkIterativeClosestPointTransform.h"
+#include "vtkPoints.h"
+#include "vtkCellArray.h"
+#include "vtkPolyData.h"
 
 IterativeClosestPointsBasedRegistration::
   IterativeClosestPointsBasedRegistration()
@@ -54,9 +57,59 @@ bool IterativeClosestPointsBasedRegistration::Execute()
   ModelBasedClustering::Pointer cluster = ModelBasedClustering::New();
   cluster->SetSamplePoints( segmenter->GetFiducialPoints() );
   cluster->SetModelPoints( model->GetFiducialPoints() );
+  cluster->Execute();
 
+  // Build the vtk data structure for ICP registration
+  vtkPoints    * sourcePoints = vtkPoints::New();
+  vtkPoints    * targetPoints = vtkPoints::New();
+  vtkCellArray * sourceCell    = vtkCellArray::New();
+  vtkCellArray * targetCell    = vtkCellArray::New();
 
+  sourceCell->InsertNextCell( cluster->GetClusteredPoints().size() );
+  for ( int i=0; i<cluster->GetClusteredPoints().size(); i++)
+    {
+    double p[3];
+    p[0] = cluster->GetClusteredPoints()[i][0];
+    p[1] = cluster->GetClusteredPoints()[i][1];
+    p[2] = cluster->GetClusteredPoints()[i][2];
+    sourcePoints->InsertNextPoint( p );
+    sourceCell->InsertCellPoint( i );
+    }
+
+  for ( int i=0; i<model->GetFiducialPoints().size(); i++)
+    {
+    double p[3];
+    p[0] = model->GetFiducialPoints()[i][0];
+    p[1] = model->GetFiducialPoints()[i][1];
+    p[2] = model->GetFiducialPoints()[i][2];
+    targetPoints->InsertNextPoint( p );
+    targetCell->InsertCellPoint( i );
+    }
+
+  vtkPolyData * source = vtkPolyData::New();
+  vtkPolyData * target = vtkPolyData::New();
+
+  source->SetPoints( sourcePoints );
+  source->SetVerts( sourceCell );
+  target->SetPoints( targetPoints );
+  target->SetVerts( targetCell );
+
+  vtkIterativeClosestPointTransform * ICPTransform = 
+                                      vtkIterativeClosestPointTransform::New();
+
+  ICPTransform->SetSource( source );
+  ICPTransform->SetTarget( target );
+  ICPTransform->SetMeanDistanceModeToRMS();
+  ICPTransform->CheckMeanDistanceOn();
+  ICPTransform->StartByMatchingCentroidsOn();
+  ICPTransform->SetMaximumNumberOfIterations( 50 );
+  ICPTransform->SetMaximumMeanDistance( 0.5 );  
+  ICPTransform->SetMaximumNumberOfLandmarks( 50 );
+
+  ICPTransform->Update();
+
+  vtkIndent indent;
+  ICPTransform->PrintSelf( std::cout, indent);
 
   return true;
 }
-
