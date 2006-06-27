@@ -14,7 +14,6 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
 #include "LandmarkBasedRegistration.h"
 
 
@@ -31,4 +30,3 @@ bool LandmarkBasedRegistration::Execute()
 {   
   return true;
 }
-

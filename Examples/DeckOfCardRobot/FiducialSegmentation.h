@@ -97,7 +97,7 @@ private:
   int                                  m_MaxSize;
   double                               m_MergeDistance;
 
-  PointsListType                       m_FiducialPoints;              
+  PointsListType                       m_FiducialPoints;
 
 };
 

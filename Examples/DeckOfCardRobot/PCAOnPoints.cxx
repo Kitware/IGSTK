@@ -14,7 +14,6 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
 #include "PCAOnPoints.h"
 
 #include "vnl/vnl_matrix.h"

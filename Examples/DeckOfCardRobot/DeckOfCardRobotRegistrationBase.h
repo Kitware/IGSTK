@@ -26,7 +26,7 @@ class DeckOfCardRobotRegistrationBase: public itk::Object
 
 public:
 
-  typedef DeckOfCardRobotRegistrationBase              Self;
+  typedef DeckOfCardRobotRegistrationBase   Self;
   typedef itk::Object                       Superclass;
   typedef itk::SmartPointer< Self >         Pointer;
   typedef itk::SmartPointer< const Self >   ConstPointer;

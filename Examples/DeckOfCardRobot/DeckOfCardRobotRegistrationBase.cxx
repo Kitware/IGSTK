@@ -14,7 +14,6 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
 #include "DeckOfCardRobotRegistrationBase.h"
 
 void DeckOfCardRobotRegistrationBase::
@@ -22,9 +21,6 @@ void DeckOfCardRobotRegistrationBase::
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Image: "
-    << m_ITKImage << std::endl;
-  os << indent << "Transform: "
-    << m_Transform << std::endl;
+  os << indent << "Image: " << m_ITKImage << std::endl;
+  os << indent << "Transform: " << m_Transform << std::endl;
 }
-

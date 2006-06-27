@@ -26,9 +26,9 @@ class LandmarkBasedRegistration:
 public:
 
   typedef LandmarkBasedRegistration              Self;
-  typedef DeckOfCardRobotRegistrationBase                      Superclass;
-  typedef itk::SmartPointer< Self >                            Pointer;
-  typedef itk::SmartPointer< const Self >                      ConstPointer;
+  typedef DeckOfCardRobotRegistrationBase        Superclass;
+  typedef itk::SmartPointer< Self >              Pointer;
+  typedef itk::SmartPointer< const Self >        ConstPointer;
 
   itkNewMacro( Self );
    

@@ -25,10 +25,10 @@ class ModelBasedRegistration:
 
 public:
 
-  typedef ModelBasedRegistration              Self;
-  typedef DeckOfCardRobotRegistrationBase                      Superclass;
-  typedef itk::SmartPointer< Self >                            Pointer;
-  typedef itk::SmartPointer< const Self >                      ConstPointer;
+  typedef ModelBasedRegistration                  Self;
+  typedef DeckOfCardRobotRegistrationBase         Superclass;
+  typedef itk::SmartPointer< Self >               Pointer;
+  typedef itk::SmartPointer< const Self >         ConstPointer;
 
   itkNewMacro( Self );
    

@@ -14,7 +14,6 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
 #include "ModelBasedClustering.h"
 
 #include "vnl/vnl_matrix.h"
@@ -91,7 +90,7 @@ bool ModelBasedClustering::Execute()
       if ( distAvr[i] > max )
         {
         max = distAvr[i];
-        index = i;        
+        index = i;
         }
       }
     // Find this point has how many distance pairs exceed the threshold
@@ -159,10 +158,10 @@ bool ModelBasedClustering::Execute()
   for ( int i=0; i<N; i++)
   {
   for ( int j=i; j<N; j++)
-  {
-  similarityMap( i, j ) = this->DistanceToSimilarity( distanceMap( i, j ) );
-  similarityMap( j, i ) = similarityMap( i, j );
-  }
+    {
+    similarityMap( i, j ) = this->DistanceToSimilarity( distanceMap( i, j ) );
+    similarityMap( j, i ) = similarityMap( i, j );
+    }
   }
   std::cout<< "Similarity Map:\n" << similarityMap << std::endl;
 

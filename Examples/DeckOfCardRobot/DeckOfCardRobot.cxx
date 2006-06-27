@@ -256,7 +256,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
                                           WaitingForDICOMDirectory, LoadImage );
   igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageSuccess, 
                                        ImageReady, No );
-                                       //ImageReady, ConnectImageRepresentation );
+                               /*ImageReady, ConnectImageRepresentation );*/
   igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageFailure, 
                                                                   Initial, No );
 

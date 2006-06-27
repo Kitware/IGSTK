@@ -14,9 +14,7 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
 #include "FiducialSegmentation.h"
-
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkConnectedComponentImageFilter.h"
 #include "itkRelabelComponentImageFilter.h"
@@ -141,7 +139,7 @@ bool FiducialSegmentation::Execute()
     else
       {
       std::cout<< "Discard object with size: "<< size[i] << std::endl;
-      }    
+      }
     }
   
   // Calculate Distance Map and recursively merge two closest points
@@ -179,7 +177,7 @@ bool FiducialSegmentation::Execute()
     m_FiducialPoints.erase( m_FiducialPoints.begin() + pb );
 
 
-    distanceMap = this->DistanceMap( m_FiducialPoints );    
+    distanceMap = this->DistanceMap( m_FiducialPoints );
     minDistance = distanceMap.max_value();
     N = m_FiducialPoints.size();
     for ( int i=0; i<N; i++)
@@ -227,4 +225,3 @@ FiducialSegmentation::DistanceMap( PointsListType pointList )
   return distanceMap;
 
 }
-

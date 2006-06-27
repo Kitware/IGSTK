@@ -164,16 +164,16 @@ bool RobotCommunication::Init()
       }
     }
 
-    AsyncCommandSuccessful = true;
-    LoginSuccessful = true;
-    if ( LoginSuccessful && AsyncCommandSuccessful )   
-      {
-      return true;
-      }
-    else
-      {
-      return false;
-      }
+  AsyncCommandSuccessful = true;
+  LoginSuccessful = true;
+  if ( LoginSuccessful && AsyncCommandSuccessful )   
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
 
 }
 
