@@ -20,10 +20,15 @@ PURPOSE.  See the above copyright notices for more information.
 #include "FiducialSegmentation.h"
 #include "FiducialModel.h"
 #include "ModelBasedClustering.h"
+
+
 #include "vtkIterativeClosestPointTransform.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h"
 #include "vtkPolyData.h"
+#include "vtkLandmarkTransform.h"
+
+//#include "igstkTransform.h"
 
 IterativeClosestPointsBasedRegistration::
   IterativeClosestPointsBasedRegistration()
@@ -49,15 +54,17 @@ bool IterativeClosestPointsBasedRegistration::Execute()
   segmenter->SetMinSize( 0 );
   segmenter->SetMergeDistance( 1 );
   segmenter->Execute();
-
+  
   // Generate the model points
   FiducialModel::Pointer model = FiducialModel::New();
 
+  
   // Cluster the points, eliminate outliers
   ModelBasedClustering::Pointer cluster = ModelBasedClustering::New();
   cluster->SetSamplePoints( segmenter->GetFiducialPoints() );
   cluster->SetModelPoints( model->GetFiducialPoints() );
   cluster->Execute();
+  
 
   // Build the vtk data structure for ICP registration
   vtkPoints    * sourcePoints = vtkPoints::New();
@@ -65,23 +72,28 @@ bool IterativeClosestPointsBasedRegistration::Execute()
   vtkCellArray * sourceCell    = vtkCellArray::New();
   vtkCellArray * targetCell    = vtkCellArray::New();
 
-  sourceCell->InsertNextCell( cluster->GetClusteredPoints().size() );
-  for ( int i=0; i<cluster->GetClusteredPoints().size(); i++)
+  FiducialSegmentation::PointsListType sourcePointsList = 
+                                                segmenter->GetFiducialPoints();
+  sourceCell->InsertNextCell( sourcePointsList.size() );
+  for ( int i=0; i<sourcePointsList.size(); i++)
     {
     double p[3];
-    p[0] = cluster->GetClusteredPoints()[i][0];
-    p[1] = cluster->GetClusteredPoints()[i][1];
-    p[2] = cluster->GetClusteredPoints()[i][2];
+    p[0] = sourcePointsList[i][0];
+    p[1] = sourcePointsList[i][1];
+    p[2] = sourcePointsList[i][2];
     sourcePoints->InsertNextPoint( p );
     sourceCell->InsertCellPoint( i );
     }
 
-  for ( int i=0; i<model->GetFiducialPoints().size(); i++)
+  FiducialSegmentation::PointsListType targetPointsList = 
+                                                 model->GetFiducialPoints();
+  targetCell->InsertNextCell( targetPointsList.size() );
+  for ( int i=0; i<targetPointsList.size(); i++)
     {
     double p[3];
-    p[0] = model->GetFiducialPoints()[i][0];
-    p[1] = model->GetFiducialPoints()[i][1];
-    p[2] = model->GetFiducialPoints()[i][2];
+    p[0] = targetPointsList[i][0];
+    p[1] = targetPointsList[i][1];
+    p[2] = targetPointsList[i][2];
     targetPoints->InsertNextPoint( p );
     targetCell->InsertCellPoint( i );
     }
@@ -103,13 +115,31 @@ bool IterativeClosestPointsBasedRegistration::Execute()
   ICPTransform->CheckMeanDistanceOn();
   ICPTransform->StartByMatchingCentroidsOn();
   ICPTransform->SetMaximumNumberOfIterations( 50 );
-  ICPTransform->SetMaximumMeanDistance( 0.5 );  
-  ICPTransform->SetMaximumNumberOfLandmarks( 50 );
-
+  ICPTransform->SetMaximumMeanDistance( 0.0000001 );  
+  ICPTransform->SetMaximumNumberOfLandmarks( target->GetNumberOfPoints() );
+  ICPTransform->GetLandmarkTransform()->SetModeToRigidBody();
+  ICPTransform->Modified();
   ICPTransform->Update();
 
   vtkIndent indent;
   ICPTransform->PrintSelf( std::cout, indent);
+
+  igstk::Transform::VersorType  rotation;
+  igstk::Transform::VectorType  translation;
+  
+  vtkMatrix4x4 * matrix = ICPTransform->GetMatrix();
+
+  for(unsigned int i=0; i<3; i++ )
+    {
+    for(unsigned int j=0; j<3; j++ )
+      {
+      rotation.GetMatrix()(i,j) = matrix->GetElement(i,j);   
+      }
+
+    translation[i] = matrix->GetElement(i,3);
+    }
+
+  m_Transform.SetTranslationAndRotation( translation, rotation, 0.1, 1e300 );
 
   return true;
 }
