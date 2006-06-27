@@ -63,6 +63,12 @@ protected:
   
 private:
 
+  // Generate the fiducial point list
+  void GenerateFiducialPointList();
+
+  // Generate model image containing the fiducial points
+  void GenerateModelImage();
+
   ImageType::Pointer                   m_ModelImage;
   
   int                                  m_Size;
