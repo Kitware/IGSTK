@@ -29,8 +29,8 @@ FiducialModel::FiducialModel()
   m_BlurSize = 1;
   m_FiducialPoints.clear();
 
+  std::cout << "Generating fiducial points...." << std::endl;
   this->GenerateFiducialPointList();
-  this->GenerateModelImage();
 }
 
 void FiducialModel::GenerateFiducialPointList()
@@ -68,11 +68,19 @@ void FiducialModel::GenerateModelImage()
 
   PointsListType::const_iterator it; 
 
-  for ( it = m_FiducialPoints.begin(); it < m_FiducialPoints.end(); it++ )
+  double minx =  1000.0;
+  double maxx = -1000.0;
+  double miny =  1000.0;
+  double maxy = -1000.0;
+  double minz =  1000.0;
+  double maxz = -1000.0;
+
+  for ( it = m_FiducialPoints.begin(); it != m_FiducialPoints.end(); it++ )
     {
       EllipseSpatialObjectType::Pointer ellipse = EllipseSpatialObjectType::New();
       ellipse->SetRadius( FiducialSize );
-      
+     
+      std::cout << "Working on fiducial: " << *it << std::endl; 
       OffsetType offset;
       offset[0]  = (*it)[0]; 
       offset[1]  = (*it)[1]; 
@@ -80,13 +88,43 @@ void FiducialModel::GenerateModelImage()
       ellipse->GetObjectToParentTransform()->SetOffset( offset );
       ellipse->ComputeObjectToWorldTransform();
       groupSpatialObject->AddSpatialObject( ellipse );     
+  
+      minx = ( offset[0] < minx ) ? offset[0] : minx;
+      maxx = ( offset[0] > maxx ) ? offset[0] : maxx;
+      miny = ( offset[1] < miny ) ? offset[1] : miny;
+      maxy = ( offset[1] > maxy ) ? offset[1] : maxy;
+      minz = ( offset[2] < minz ) ? offset[2] : minz;
+      maxz = ( offset[2] > maxz ) ? offset[2] : maxz;
     } 
 
+  std::cout << " Bounding box for the fiducial coordinates: " 
+            << "minx=" << minx << "maxx=" << maxx 
+            << "miny=" << miny << "maxy=" << maxy
+            << "minz=" << minz << "maxz=" << maxz << std::endl;
+
   spatialObjectToImageFilter->SetInput( groupSpatialObject );
+  
+  ImageType::PointType origin;
+  origin[ 0 ] = minx - 5;
+  origin[ 1 ] = miny - 5;
+  origin[ 2 ] = minz - 5;
+
+  std::cout << "Image origin: " << origin << std::endl;
+  spatialObjectToImageFilter->SetOrigin( origin );
+
+  ImageType::SpacingType spacing;
+  spacing[ 0 ] = 1.0;
+  spacing[ 1 ] = 1.0;
+  spacing[ 2 ] = 1.0;
+  std::cout << "Image spacing: " << spacing << std::endl;
+  spatialObjectToImageFilter->SetSpacing( spacing );
+
   ImageType::SizeType  size;
-  size[ 0 ] = 512;
-  size[ 1 ] = 512;
-  size[ 2 ] = 10;
+  size[ 0 ] = (unsigned long) ((maxx - minx)/spacing[0]) + 5;
+  size[ 1 ] = (unsigned long) ((maxy - miny)/spacing[1]) + 5;
+  size[ 2 ] = (unsigned long) ((maxz - minz)/spacing[2]) + 5;
+  std::cout << "Image size: " << size << std::endl;
+
   spatialObjectToImageFilter->SetSize( size );
   spatialObjectToImageFilter->Update();
 
@@ -95,7 +133,9 @@ void FiducialModel::GenerateModelImage()
                                          GaussianImageFilterType;
   GaussianImageFilterType::Pointer smoothingFilter = GaussianImageFilterType::New();  
 
-  smoothingFilter->SetVariance( this->m_BlurSize );
+  smoothingFilter->SetInput ( spatialObjectToImageFilter->GetOutput() );
+  const double smoothingVariance = 0.2; 
+  smoothingFilter->SetVariance( smoothingVariance );
   smoothingFilter->Update();
   this->m_ModelImage = smoothingFilter->GetOutput();  
 }

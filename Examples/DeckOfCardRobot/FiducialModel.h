@@ -56,6 +56,9 @@ public:
     return m_FiducialPoints;
     };
 
+  // Generate model image containing the fiducial points
+  void GenerateModelImage();
+
 protected:
   FiducialModel();
   virtual ~FiducialModel(){};
@@ -65,9 +68,6 @@ private:
 
   // Generate the fiducial point list
   void GenerateFiducialPointList();
-
-  // Generate model image containing the fiducial points
-  void GenerateModelImage();
 
   ImageType::Pointer                   m_ModelImage;
   
