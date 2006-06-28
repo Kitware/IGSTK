@@ -127,18 +127,18 @@ bool IterativeClosestPointsBasedRegistration::Execute()
   igstk::Transform::VersorType  rotation;
   igstk::Transform::VectorType  translation;
   
-  vtkMatrix4x4 * matrix = ICPTransform->GetMatrix();
+  itk::Matrix< double > itkM;
+  vtkMatrix4x4 * vtkM = ICPTransform->GetMatrix();
 
   for(unsigned int i=0; i<3; i++ )
     {
     for(unsigned int j=0; j<3; j++ )
       {
-      rotation.GetMatrix()(i,j) = matrix->GetElement(i,j);   
+      itkM(i,j) = vtkM->GetElement(i,j);   
       }
-
-    translation[i] = matrix->GetElement(i,3);
+    translation[i] = vtkM->GetElement(i,3);
     }
-
+  rotation.Set( itkM );
   m_Transform.SetTranslationAndRotation( translation, rotation, 0.1, 1e300 );
 
   return true;
