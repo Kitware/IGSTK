@@ -26,6 +26,12 @@
 
 int main(int argc , char * argv [] )
 {
+  if ( argc < 2 ) 
+    {
+    std::cerr << "Usage" << argv[0] 
+              << "Fiducal_output_image_name" << std::endl;
+    return EXIT_FAILURE;
+    } 
   typedef FiducialModel  FiducialModelType;
 
   FiducialModelType::Pointer  fiducialModel = FiducialModelType::New();
