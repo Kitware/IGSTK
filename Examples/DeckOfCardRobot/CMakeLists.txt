@@ -48,13 +48,13 @@ ADD_EXECUTABLE(DeckOfCardRobot
 
 TARGET_LINK_LIBRARIES(DeckOfCardRobot IGSTKSandbox)
 
-ADD_EXECUTABLE(ModelImageGenerate
-  ModelImageGenerate.cxx
+ADD_EXECUTABLE(ModelImageGenerateTest
+  ModelImageGenerateTest.cxx
   FiducialModel.cxx
   FiducialModel.h
 )
 
-TARGET_LINK_LIBRARIES(ModelImageGenerate IGSTKSandbox)
+TARGET_LINK_LIBRARIES(ModelImageGenerateTest IGSTKSandbox)
 
 ADD_EXECUTABLE(FiducialSegmentationTest
   FiducialSegmentationTest.cxx
