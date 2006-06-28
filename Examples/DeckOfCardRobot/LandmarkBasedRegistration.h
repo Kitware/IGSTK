@@ -31,7 +31,9 @@ public:
   typedef itk::SmartPointer< const Self >        ConstPointer;
 
   itkNewMacro( Self );
-   
+  
+  igstkObserverMacro( Transform, 
+                            igstk::TransformModifiedEvent, igstk::Transform );
   virtual bool Execute();
 
 protected:
