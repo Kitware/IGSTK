@@ -81,6 +81,8 @@ bool FiducialSegmentation::Execute()
   relable->SetInput( label->GetOutput() );
   relable->Update();
 
+  this->m_SegmentedImage = relable->GetOutput();
+      
   int N = relable->GetOriginalNumberOfObjects();
   std::cout<< "Number of objects found: "<< N << std::endl;
 

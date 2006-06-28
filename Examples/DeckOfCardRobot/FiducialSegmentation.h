@@ -50,14 +50,17 @@ public:
 
   // Interface to IGSTK image data, it's an itkOrientedImage
   typedef igstk::CTImageSpatialObject::ImageType   ImageType;
-
-  typedef itk::Image< int, 3 >              BinaryImageType;
-  typedef itk::Point< double, 3 >           PointType;
-  typedef std::vector< PointType >          PointsListType;
-  typedef vnl_matrix< double >              DistanceMapType;
+  
+  typedef itk::Image< signed short, 3>             CTImageType;
+  typedef itk::Image< int, 3 >                     BinaryImageType;
+  typedef itk::Point< double, 3 >                  PointType;
+  typedef std::vector< PointType >                 PointsListType;
+  typedef vnl_matrix< double >                     DistanceMapType;
 
   itkGetMacro( ITKImage, ImageType::ConstPointer );
   itkSetMacro( ITKImage, ImageType::ConstPointer );
+ 
+  itkGetMacro( SegmentedImage, BinaryImageType::ConstPointer );
    
   itkGetMacro( Threshold, short );
   itkSetMacro( Threshold, short );
@@ -89,15 +92,16 @@ protected:
 
 private:
 
-  ImageType::ConstPointer              m_ITKImage;
+  ImageType::ConstPointer                                 m_ITKImage;
+  BinaryImageType::ConstPointer                           m_SegmentedImage;
   
-  short                                m_Threshold;
+  short                                                   m_Threshold;
 
-  int                                  m_MinSize;
-  int                                  m_MaxSize;
-  double                               m_MergeDistance;
+  int                                                     m_MinSize;
+  int                                                     m_MaxSize;
+  double                                                  m_MergeDistance;
 
-  PointsListType                       m_FiducialPoints;
+  PointsListType                                          m_FiducialPoints;
 
 };
 
