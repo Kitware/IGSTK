@@ -56,4 +56,11 @@ ADD_EXECUTABLE(ModelImageGenerate
 
 TARGET_LINK_LIBRARIES(ModelImageGenerate IGSTKSandbox)
 
+ADD_EXECUTABLE(FiducialSegmentationTest
+  FiducialSegmentationTest.cxx
+  FiducialSegmentation.cxx
+  FiducialSegmentation.h
+)
+
+TARGET_LINK_LIBRARIES(FiducialSegmentationTest IGSTKSandbox)
 
