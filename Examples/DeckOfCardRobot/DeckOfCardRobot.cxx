@@ -462,17 +462,39 @@ void DeckOfCardRobot::RegistrationProcessing()
     {
     return false;
     }*/
-
-  typedef IterativeClosestPointsBasedRegistration  RegistrationType;
-  //typedef LandmarkBasedRegistration                RegistrationType;
-  //typedef ModelBasedRegistration                   RegistrationType;
-
-  RegistrationType::Pointer registration = RegistrationType::New();
-
-  registration->SetITKImage( itkImageObserver->GetITKImage() );
-  registration->Execute();
-  std::cout << "Registration results:" << registration->GetTransform( ) 
-            << std::endl;
+  std::cout << "Choose which registration method to execute: " << std::endl;
+  std::cout << "0 - ICP Based "      << std::endl;
+  std::cout << "1 - Landmark Based " << std::endl;
+  std::cout << "2 - Model to Image " << std::endl;
+  int x;
+  std::cin >> x;
+  if ( x == 0 )
+    {
+    typedef IterativeClosestPointsBasedRegistration  RegistrationType;
+    RegistrationType::Pointer registration = RegistrationType::New();
+    registration->SetITKImage( itkImageObserver->GetITKImage() );
+    registration->Execute();
+    std::cout << "Registration results:" << registration->GetTransform( ) 
+      << std::endl;
+    }
+  else if ( x == 1 )
+    {
+    typedef LandmarkBasedRegistration  RegistrationType;
+    RegistrationType::Pointer registration = RegistrationType::New();
+    registration->SetITKImage( itkImageObserver->GetITKImage() );
+    registration->Execute();
+    std::cout << "Registration results:" << registration->GetTransform( ) 
+      << std::endl;
+    }
+  else
+    {
+    typedef ModelBasedRegistration  RegistrationType;
+    RegistrationType::Pointer registration = RegistrationType::New();
+    registration->SetITKImage( itkImageObserver->GetITKImage() );
+    registration->Execute();
+    std::cout << "Registration results:" << registration->GetTransform( ) 
+      << std::endl;
+    }
   
   igstkPushInputMacro( RegistrationFailure );
 
