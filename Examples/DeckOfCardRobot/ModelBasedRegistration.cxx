@@ -137,7 +137,7 @@ bool ModelBasedRegistration::Execute()
   axis = itk::CrossProduct( mAxis, fAxis );
   axis.Normalize();
 
-  // Compose the new robot transform
+  // Calculate the initial translation
   for (int i=0; i<3; i++)
     {
     translation[i] = fiducialCenter[i] - modelCenter[i];
