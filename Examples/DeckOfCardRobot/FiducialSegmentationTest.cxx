@@ -27,6 +27,9 @@
 #include "igstkMacros.h"
 #include "igstkCTImageSpatialObject.h"
 
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
+
 typedef igstk::CTImageReader                               ImageReaderType;
 typedef igstk::CTImageSpatialObject                        ImageSpatialObjectType;
 typedef ImageSpatialObjectType::ImageType                  ITKImageType;
@@ -38,6 +41,17 @@ igstkObserverConstObjectMacro( ITKImage,
 
 int main(int argc , char * argv [] )
 {
+  typedef itk::Logger                           LoggerType; 
+  typedef itk::StdStreamLogOutput               LogOutputType;
+  
+
+  LoggerType::Pointer                       logger = LoggerType::New();
+  LogOutputType::Pointer                    logOutput = LogOutputType::New();  
+
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  
   FiducialSegmentation::Pointer segmenter = FiducialSegmentation::New();
 
    if ( argc < 3 ) 
@@ -50,6 +64,7 @@ int main(int argc , char * argv [] )
   typedef igstk::CTImageReader         ReaderType;
   ReaderType::Pointer   reader = ReaderType::New();
 
+  reader->SetLogger( logger );
   ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New();
   
   std::cout << "Reading CT image : " << argv[1] << std::endl;
