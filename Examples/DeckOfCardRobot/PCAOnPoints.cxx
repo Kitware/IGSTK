@@ -75,7 +75,6 @@ bool PCAOnPoints::Execute()
   m_PrincipleAxis = eigenSystem.get_eigenvector( 2 );
   std::cout<< "Eigenvector: \n" << m_PrincipleAxis << std::endl;
 
-
   // Project points on to the eigenvector axis
   std::vector< double > projection;
   for ( int i=0; i< m_SamplePoints.size(); i++)
@@ -90,11 +89,10 @@ bool PCAOnPoints::Execute()
     //std::cout<< "Position: " << dot_product( p, eigenVector ) << std::endl;
     }
 
-  m_SortedPoints = m_SamplePoints;
   // Sort the points according to the projection
-  for ( int i=0; i< m_SortedPoints.size()-1; i++ )
+  for ( int i=0; i< m_SamplePoints.size()-1; i++ )
     {
-    for ( int j=0; j< m_SortedPoints.size()-1; j++ )
+    for ( int j=0; j< m_SamplePoints.size()-1; j++ )
       {
       if ( projection[j] > projection[j+1] )
         {
@@ -103,12 +101,28 @@ bool PCAOnPoints::Execute()
         projection[j]   = t;
 
         PointType tp;
-        tp = m_SortedPoints[j+1];
-        m_SortedPoints[j+1] = m_SortedPoints[j];
-        m_SortedPoints[j] = tp;
+        tp = m_SamplePoints[j+1];
+        m_SamplePoints[j+1] = m_SamplePoints[j];
+        m_SamplePoints[j] = tp;
         }
       }
     }
 
+  m_SortedPoints.clear();
+  // Put the largest Y index first
+  // Assumption: The needle holder will always pointing downwards
+  if ( m_SamplePoints.front()[1] < m_SamplePoints.back()[1])
+    {
+    while ( ! m_SamplePoints.empty())
+      {
+      m_SortedPoints.push_back( m_SamplePoints.back() );
+      m_SamplePoints.pop_back();
+      }
+    }
+  else
+    {
+    m_SortedPoints = m_SamplePoints;
+    }
+  
   return true;
 }
