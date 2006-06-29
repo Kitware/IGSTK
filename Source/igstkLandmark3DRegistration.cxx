@@ -417,8 +417,10 @@ Landmark3DRegistration::GetTransformProcessing()
 
   igstk::Transform  transform;
 
-  const igstk::Transform::ErrorType              error = 0.1;
-  const igstk::Transform::TimePeriodType         timePeriod = 1000;
+  const igstk::Transform::ErrorType              error = 
+                                                       this->ComputeRMSError();
+  const igstk::Transform::TimePeriodType         timePeriod = 
+                                             itk::NumericTraits<double>::max();
 
   typedef TransformType::TranslationType        TranslationType;
   typedef TransformType::VersorType             VersorType;
