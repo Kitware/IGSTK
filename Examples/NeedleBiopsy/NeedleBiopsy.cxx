@@ -35,7 +35,7 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_LogCoutOutput = LogOutputType::New();
   m_LogCoutOutput->SetStream( std::cout );
   this->GetLogger()->AddLogOutput( m_LogCoutOutput );
-  logger->AddLogOutput( m_LogCoutOutput );
+  //logger->AddLogOutput( m_LogCoutOutput );
 
   Fl_Text_Buffer * textBuffer = new Fl_Text_Buffer();
   this->m_LogWindow->buffer( textBuffer );
@@ -77,7 +77,7 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_Annotation2D = Annotation2D::New();
   
   Transform transform;
-  transform.SetToIdentity( 20000 );
+  transform.SetToIdentity( 100 );
 
   m_PickedPoint                   = EllipsoidType::New();
   m_PickedPoint->RequestSetTransform( transform );
@@ -813,8 +813,8 @@ void NeedleBiopsy::Tracking()
 
   if( m_ImageSpatialObject->IsInside( p ) )
     {
-    ImageSpatialObjectType::ContinuousIndexType index;
-    m_ImageSpatialObject->TransformPhysicalPointToContinuousIndex( p, index);
+    ImageSpatialObjectType::IndexType index;
+    m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
     ResliceImage( index );
     }
   else
@@ -1100,8 +1100,8 @@ void NeedleBiopsy::DrawPickedPoint( const itk::EventObject & event)
       std::cout<< m_ImageLandmarkTransformToBeSet << std::endl;
       
       m_PickedPoint->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
-      ImageSpatialObjectType::ContinuousIndexType index;
-      m_ImageSpatialObject->TransformPhysicalPointToContinuousIndex( p, index);
+      ImageSpatialObjectType::IndexType index;
+      m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
       igstkLogMacro( DEBUG, index <<"\n")
       ResliceImage( index );
       }
@@ -1185,6 +1185,10 @@ void NeedleBiopsy::DrawPathProcessing()
   p.SetPosition( v[0], v[1], v[2]);
   p.SetRadius( 2.1 ); //FIXME
   m_Path->AddPoint( p );
+
+  Transform transform;
+  transform.SetToIdentity( 1e300 );
+  m_Path->RequestSetTransform( transform );
 
   this->DisplayAxial->RequestRemoveObject( m_PathRepresentationAxial );
   this->DisplaySagittal->RequestRemoveObject( m_PathRepresentationSagittal );

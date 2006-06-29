@@ -722,9 +722,9 @@ void FourViewsTrackingWithCT::Tracking()
   igstkLogMacro( DEBUG,  "Tracker tool translation:" << p << "\n" )
   if( m_CTImageObserver->GetCTImage()->IsInside( p ) )
     {
-    ImageSpatialObjectType::ContinuousIndexType index;
+    ImageSpatialObjectType::IndexType index;
     m_CTImageObserver->GetCTImage()
-                         ->TransformPhysicalPointToContinuousIndex( p, index );
+                         ->TransformPhysicalPointToIndex( p, index );
     igstkLogMacro( DEBUG,  "Tracker tool index:" << index << "\n" )
     ResliceImage( index );
     }
@@ -985,9 +985,9 @@ void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
       {
       m_ImageLandmarkTransformToBeSet = tmevent->Get();
       m_Ellipsoid->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
-      ImageSpatialObjectType::ContinuousIndexType index;
+      ImageSpatialObjectType::IndexType index;
       m_CTImageObserver->GetCTImage()
-                          ->TransformPhysicalPointToContinuousIndex( p, index);
+                          ->TransformPhysicalPointToIndex( p, index);
       igstkLogMacro( DEBUG, index <<"\n")
       ResliceImage( index );
       }
