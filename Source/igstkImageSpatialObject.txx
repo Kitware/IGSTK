@@ -311,8 +311,8 @@ ImageSpatialObject< TPixelType, VDimension >
              m_Image->TransformPhysicalPointToContinuousIndex( point, cindex);
   // Do the right rounding
   index[0] = int ( cindex[0] + 0.5 );
-  index[1] = int ( cindex[2] + 0.5 );
-  index[2] = int ( cindex[3] + 0.5 );
+  index[1] = int ( cindex[1] + 0.5 );
+  index[2] = int ( cindex[2] + 0.5 );
   return isInside;
 }
 
