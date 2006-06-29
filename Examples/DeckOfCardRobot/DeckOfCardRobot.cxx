@@ -255,8 +255,8 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   igstkAddTransitionMacro( ImageReady, RequestLoadImage, 
                                           WaitingForDICOMDirectory, LoadImage );
   igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageSuccess, 
-                                       ImageReady, No );
-                               /*ImageReady, ConnectImageRepresentation );*/
+                                      ImageReady, ConnectImageRepresentation );
+                               /*        ImageReady, No ); */
   igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageFailure, 
                                                                   Initial, No );
 
@@ -476,6 +476,7 @@ void DeckOfCardRobot::RegistrationProcessing()
     registration->Execute();
     std::cout << "Registration results:" << registration->GetTransform( ) 
       << std::endl;
+    m_RobotTransformToBeSet = registration->GetTransform();
     }
   else if ( x == 1 )
     {
@@ -485,6 +486,7 @@ void DeckOfCardRobot::RegistrationProcessing()
     registration->Execute();
     std::cout << "Registration results:" << registration->GetTransform( ) 
       << std::endl;
+    m_RobotTransformToBeSet = registration->GetTransform();
     }
   else
     {
@@ -494,8 +496,33 @@ void DeckOfCardRobot::RegistrationProcessing()
     registration->Execute();
     std::cout << "Registration results:" << registration->GetTransform( ) 
       << std::endl;
+    m_RobotTransformToBeSet = registration->GetTransform();
     }
   
+  /*
+  m_ImageToRobotTransform = m_Registration->m_transform; 
+  m_RobotToImageTransform = DOCR_Registration::TransformType::New();
+  m_ImageToRobotTransform->GetInverse( m_RobotToImageTransform );
+  
+  
+  m_RobotTransformToBeSet.SetTranslationAndRotation(
+                                      m_RobotToImageTransform->GetOffset(), 
+                                      m_RobotToImageTransform->GetVersor(),
+                                      m_Registration->m_meanRegistrationError,
+                                      -1);
+                                      */
+  
+
+  //this->RegistrationError->value( m_Registration->m_meanRegistrationError );
+  m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
+  m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
+  m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
+  m_Box->RequestSetTransform( m_RobotTransformToBeSet );
+  m_RobotTransform = m_RobotTransformToBeSet;
+  m_RobotCurrentTransform = m_RobotTransformToBeSet;
+  Fl::wait(0.01);
+  igstk::PulseGenerator::CheckTimeouts();
+  //igstkPushInputMacro( RegistrationSuccess );
   igstkPushInputMacro( RegistrationFailure );
 
 }
