@@ -100,12 +100,32 @@ bool ModelBasedRegistration::Execute()
   roiFilter->SetRegionOfInterest( roi );
   roiFilter->Update();
 
+  // Segment the fiducial points
+  segmenter->SetITKImage( roiFilter->GetOutput() );
+  segmenter->SetThreshold( 2000 );
+  segmenter->SetMaxSize( 20 );
+  segmenter->SetMinSize( 0 );
+  segmenter->SetMergeDistance( 1 );
+  segmenter->Execute();
+
+  // Cluster the points, eliminate outliers
+  cluster->SetSamplePoints( segmenter->GetFiducialPoints() );
+  cluster->SetModelPoints( model->GetFiducialPoints() );
+  cluster->Execute();
+  fiducialPoints = cluster->GetClusteredPoints();
+
   // PCA on the points, get the initial transform
   PCAOnPoints::Pointer pca = PCAOnPoints::New();
   pca->SetSamplePoints( fiducialPoints );
   pca->Execute();
   PCAOnPoints::PointType  fiducialCenter = pca->GetCenter();
   PCAOnPoints::VectorType fiducialAxis   = pca->GetPrincipleAxis();
+  PCAOnPoints::VectorType yAxis(3);
+  yAxis.fill(0);  yAxis[1] = -1; // Negative Y axis direction
+  if ( dot_product( yAxis, fiducialAxis ) < 0)
+    {
+    fiducialAxis *= -1;
+    }
   std::cout<< "Centroid of the points: " << fiducialCenter << std::endl;
   std::cout<< "Principle axis: " << fiducialAxis << std::endl;
 
@@ -113,6 +133,12 @@ bool ModelBasedRegistration::Execute()
   pca->Execute();
   PCAOnPoints::PointType  modelCenter = pca->GetCenter();
   PCAOnPoints::VectorType modelAxis   = pca->GetPrincipleAxis();
+  PCAOnPoints::VectorType zAxis(3);
+  zAxis.fill(0);  zAxis[2] = 1; // Positive Z axis direction
+  if ( dot_product( zAxis, modelAxis ) < 0)
+    {
+    modelAxis *= -1;
+    }
   std::cout<< "Centroid of the points: " << modelCenter << std::endl;
   std::cout<< "Principle axis: " << modelAxis << std::endl;
 
@@ -128,11 +154,6 @@ bool ModelBasedRegistration::Execute()
     mAxis[i] = modelAxis[i];
     }
   
-  if ( fAxis * mAxis < 0)
-    {
-    fAxis *= -1;
-    }
-
   angle = acos( fAxis * mAxis );
   axis = itk::CrossProduct( mAxis, fAxis );
   axis.Normalize();
@@ -149,8 +170,6 @@ bool ModelBasedRegistration::Execute()
 
   transform.SetTranslationAndRotation( translation, rotation, 0.1, 1e300 );
 
-  
-
-
+  m_Transform = transform;
   return true;
 }

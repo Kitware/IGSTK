@@ -109,7 +109,8 @@ bool PCAOnPoints::Execute()
     }
 
   m_SortedPoints.clear();
-  // Put the largest Y index first
+  // Put the largest Y index first, which corresponds to the smallest
+  // Z index in model
   // Assumption: The needle holder will always pointing downwards
   if ( m_SamplePoints.front()[1] < m_SamplePoints.back()[1])
     {
