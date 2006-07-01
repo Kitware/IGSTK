@@ -468,35 +468,53 @@ void DeckOfCardRobot::RegistrationProcessing()
   std::cout << "2 - Model to Image " << std::endl;
   int x;
   std::cin >> x;
+
+  DeckOfCardRobotRegistrationBase::Pointer registration;
   if ( x == 0 )
     {
     typedef IterativeClosestPointsBasedRegistration  RegistrationType;
-    RegistrationType::Pointer registration = RegistrationType::New();
-    registration->SetITKImage( itkImageObserver->GetITKImage() );
-    registration->Execute();
-    std::cout << "Registration results:" << registration->GetTransform( ) 
-      << std::endl;
-    m_RobotTransformToBeSet = registration->GetTransform();
+    registration = RegistrationType::New();
     }
   else if ( x == 1 )
     {
     typedef LandmarkBasedRegistration  RegistrationType;
-    RegistrationType::Pointer registration = RegistrationType::New();
-    registration->SetITKImage( itkImageObserver->GetITKImage() );
-    registration->Execute();
-    std::cout << "Registration results:" << registration->GetTransform( ) 
-      << std::endl;
-    m_RobotTransformToBeSet = registration->GetTransform();
+    registration = RegistrationType::New();
     }
   else
     {
     typedef ModelBasedRegistration  RegistrationType;
-    RegistrationType::Pointer registration = RegistrationType::New();
-    registration->SetITKImage( itkImageObserver->GetITKImage() );
-    registration->Execute();
+    registration = RegistrationType::New();
+    }
+
+  registration->SetITKImage( itkImageObserver->GetITKImage() );
+  if ( registration->Execute() )
+    {
     std::cout << "Registration results:" << registration->GetTransform( ) 
       << std::endl;
     m_RobotTransformToBeSet = registration->GetTransform();
+
+    m_RobotToImageTransform = itk::VersorRigid3DTransform<double>::New();
+    m_RobotToImageTransform->SetOffset(m_RobotTransformToBeSet.GetTranslation());
+    m_RobotToImageTransform->SetRotation(m_RobotTransformToBeSet.GetRotation());
+
+    m_ImageToRobotTransform = itk::VersorRigid3DTransform<double>::New();
+    m_RobotToImageTransform->GetInverse( m_ImageToRobotTransform );
+
+    //this->RegistrationError->value( m_Registration->m_meanRegistrationError );
+    m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
+    m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
+    m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
+    m_Box->RequestSetTransform( m_RobotTransformToBeSet );
+    m_RobotTransform = m_RobotTransformToBeSet;
+    m_RobotCurrentTransform = m_RobotTransformToBeSet;
+    Fl::wait(0.01);
+    igstk::PulseGenerator::CheckTimeouts();
+
+    igstkPushInputMacro( RegistrationSuccess );
+    }
+  else
+    {
+    igstkPushInputMacro( RegistrationFailure );
     }
   
   /*
@@ -511,20 +529,6 @@ void DeckOfCardRobot::RegistrationProcessing()
                                       m_Registration->m_meanRegistrationError,
                                       -1);
                                       */
-  
-
-  //this->RegistrationError->value( m_Registration->m_meanRegistrationError );
-  m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
-  m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
-  m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
-  m_Box->RequestSetTransform( m_RobotTransformToBeSet );
-  m_RobotTransform = m_RobotTransformToBeSet;
-  m_RobotCurrentTransform = m_RobotTransformToBeSet;
-  Fl::wait(0.01);
-  igstk::PulseGenerator::CheckTimeouts();
-  //igstkPushInputMacro( RegistrationSuccess );
-  igstkPushInputMacro( RegistrationFailure );
-
 }
 
 void DeckOfCardRobot::RequestResliceImage()
@@ -1014,7 +1018,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   translation += m_RobotTransform.GetTranslation();
 
   m_RobotTransformToBeSet.SetTranslationAndRotation( translation, rotation, 
-    0.1, -1);
+    0.1, 1e300);
 
   /** Robot Movement Code-------------------------------------------------*/
   // Robot translational movement
@@ -1118,7 +1122,7 @@ void DeckOfCardRobot::RequestInsertNeedle()
               + vect * this->NeedleSlider->value();
   
   m_NeedleTransformToBeSet = m_RobotCurrentTransform;
-  m_NeedleTransformToBeSet.SetTranslation( translation, 0.1, -1);
+  m_NeedleTransformToBeSet.SetTranslation( translation, 0.1, 1e300);
 
   m_Needle->RequestSetTransform( m_NeedleTransformToBeSet );
   m_NeedleTip->RequestSetTransform( m_NeedleTransformToBeSet );
@@ -1258,7 +1262,7 @@ void DeckOfCardRobot::AnimateRobotMove( Transform TCurrent, Transform TToBeSet,
     // Interpolate translation
     translation = TCurrent.GetTranslation() + vect * (distance * i/steps);
     
-    transform.SetTranslationAndRotation( translation, rotation, 0.1, -1 );
+    transform.SetTranslationAndRotation( translation, rotation, 0.1, 1e300 );
 
     m_NeedleTip->RequestSetTransform( transform );
     m_Needle->RequestSetTransform( transform ); 
