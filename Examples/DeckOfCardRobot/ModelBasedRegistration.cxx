@@ -22,11 +22,16 @@ PURPOSE.  See the above copyright notices for more information.
 #include "PCAOnPoints.h"
 #include "igstkLandmark3DRegistration.h"
 #include "itkVersorRigid3DTransform.h"
+#include "itkVersorRigid3DTransformOptimizer.h"
+#include "itkImageRegistrationMethod.h"
+#include "itkTranslationTransform.h"
+#include "itkMeanSquaresImageToImageMetric.h"
+#include "itkLinearInterpolateImageFunction.h"
+#include "itkImage.h"
 
 ModelBasedRegistration::ModelBasedRegistration()
 {
 }
-
 
 void ModelBasedRegistration::PrintSelf(std::ostream& os, itk::Indent indent)
 {
@@ -171,5 +176,105 @@ bool ModelBasedRegistration::Execute()
   transform.SetTranslationAndRotation( translation, rotation, 0.1, 1e300 );
 
   m_Transform = transform;
+
+  // define itk transform type 
+  typedef itk::VersorRigid3DTransform< double > TransformType;
+  TransformType::Pointer  itkTransform = TransformType::New();
+  itkTransform->SetRotation( rotation );
+  itkTransform->SetTranslation ( translation );
+
+  // Define the registration optimizer type 
+  typedef itk::VersorRigid3DTransformOptimizer           OptimizerType;
+  OptimizerType::Pointer      optimizer         = OptimizerType::New();
+
+  // Define the image types
+  typedef itk::Image< int , 3 >              SegmentedImageType;
+  typedef itk::Image< double, 3 >            FiducialModelImageType;
+
+  // Define metric type
+  typedef itk::MeanSquaresImageToImageMetric< 
+                                    SegmentedImageType, 
+                                    FiducialModelImageType >    MetricType;
+  MetricType::Pointer         metric        = MetricType::New();
+
+  // Define interpolator type
+  typedef itk:: LinearInterpolateImageFunction< 
+                                    FiducialModelImageType,
+                                    double          >    InterpolatorType;
+  InterpolatorType::Pointer   interpolator  = InterpolatorType::New();
+
+  // Define image registration type
+  typedef itk::ImageRegistrationMethod< 
+                                    SegmentedImageType, 
+                                    FiducialModelImageType >    RegistrationType;
+  RegistrationType::Pointer   registration  = RegistrationType::New();
+
+  typedef RegistrationType::ParametersType ParametersType;
+ 
+  // initialize the registration components
+  registration->SetMetric(        metric        );
+  registration->SetOptimizer(     optimizer     );
+  registration->SetTransform(    itkTransform   );
+  registration->SetInterpolator(  interpolator  );
+  registration->SetFixedImage(    segmenter->GetSegmentedImage()    );
+  registration->SetMovingImage(   model->GetModelImage()   );
+   
+  // set optmizer parameters
+  typedef OptimizerType::ScalesType       OptimizerScalesType;
+  OptimizerScalesType optimizerScales( itkTransform->GetNumberOfParameters() );
+  const double translationScale = 1.0 / 1000.0;
+  optimizerScales[0] = 1.0;
+  optimizerScales[1] = 1.0;
+  optimizerScales[2] = 1.0;
+  optimizerScales[3] = translationScale;
+  optimizerScales[4] = translationScale;
+  optimizerScales[5] = translationScale;
+  optimizer->SetScales( optimizerScales );
+  optimizer->SetMaximumStepLength( 0.2000  ); 
+  optimizer->SetMinimumStepLength( 0.0001 );
+  optimizer->SetNumberOfIterations( 200 );
+
+  // connect an observer
+  typedef IterationCallback< OptimizerType >   IterationCallbackType;
+  IterationCallbackType::Pointer callback = IterationCallbackType::New();
+  callback->SetOptimizer( optimizer );
+
+  // initialize the parameters
+  registration->SetInitialTransformParameters( itkTransform->GetParameters() );
+  // run the registration component  
+  try 
+    { 
+    registration->StartRegistration(); 
+    } 
+  catch( itk::ExceptionObject & err ) 
+    { 
+    std::cerr << "ExceptionObject caught !" << std::endl; 
+    std::cerr << err << std::endl; 
+    return -1;
+    } 
+
+  ParametersType finalParameters = registration->GetLastTransformParameters();
+
+  const double versorX              = finalParameters[0];
+  const double versorY              = finalParameters[1];
+  const double versorZ              = finalParameters[2];
+  const double finalTranslationX    = finalParameters[3];
+  const double finalTranslationY    = finalParameters[4];
+  const double finalTranslationZ    = finalParameters[5];
+
+  const unsigned int numberOfIterations = optimizer->GetCurrentIteration();
+  const double bestValue = optimizer->GetValue();
+  
+  // Print out results
+  std::cout << std::endl << std::endl;
+  std::cout << "Result = " << std::endl;
+  std::cout << " versor X      = " << versorX  << std::endl;
+  std::cout << " versor Y      = " << versorY  << std::endl;
+  std::cout << " versor Z      = " << versorZ  << std::endl;
+  std::cout << " Translation X = " << finalTranslationX  << std::endl;
+  std::cout << " Translation Y = " << finalTranslationY  << std::endl;
+  std::cout << " Translation Z = " << finalTranslationZ  << std::endl;
+  std::cout << " Iterations    = " << numberOfIterations << std::endl;
+  std::cout << " Metric value  = " << bestValue          << std::endl;
   return true;
 }
