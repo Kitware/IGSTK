@@ -22,6 +22,7 @@
 
 
 #include "itkImageFileWriter.h"
+#include "itkImage.h"
 #include "FiducialModel.h"
 
 int main(int argc , char * argv [] )
@@ -36,7 +37,7 @@ int main(int argc , char * argv [] )
 
   FiducialModelType::Pointer  fiducialModel = FiducialModelType::New();
     
-  typedef igstk::CTImageSpatialObject::ImageType            ImageType; 
+  typedef itk::Image<double, 3 >             ImageType; 
   ImageType::Pointer image = ImageType::New();
 
   fiducialModel->GenerateModelImage();
