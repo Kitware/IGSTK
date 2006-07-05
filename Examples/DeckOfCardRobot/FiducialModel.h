@@ -40,6 +40,7 @@ public:
   itkNewMacro( Self );
 
   typedef igstk::CTImageSpatialObject::ImageType            ImageType;
+  typedef itk::Image< double, 3>                            DoubleImageType;
   typedef itk::Point< double, 3 >           PointType;
   typedef std::vector< PointType >          PointsListType;
 
@@ -49,7 +50,7 @@ public:
   itkGetMacro( BlurSize, int);
   itkSetMacro( BlurSize, int);
   
-  virtual ImageType::Pointer GetModelImage();
+  virtual DoubleImageType::Pointer GetModelImage();
 
   virtual PointsListType GetFiducialPoints()
     {
@@ -69,7 +70,7 @@ private:
   // Generate the fiducial point list
   void GenerateFiducialPointList();
 
-  ImageType::Pointer                   m_ModelImage;
+  DoubleImageType::Pointer                   m_ModelImage;
   
   int                                  m_Size;
   int                                  m_BlurSize;

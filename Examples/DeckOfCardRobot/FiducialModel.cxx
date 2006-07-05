@@ -129,7 +129,8 @@ void FiducialModel::GenerateModelImage()
   spatialObjectToImageFilter->Update();
 
   // Smooth the image
-  typedef itk::DiscreteGaussianImageFilter < ImageType, ImageType > 
+  typedef itk::Image< double, 3 >       DoubleImageType;
+  typedef itk::DiscreteGaussianImageFilter < ImageType, DoubleImageType > 
                                          GaussianImageFilterType;
   GaussianImageFilterType::Pointer smoothingFilter = GaussianImageFilterType::New();  
 
@@ -137,7 +138,7 @@ void FiducialModel::GenerateModelImage()
   const double smoothingVariance = 0.2; 
   smoothingFilter->SetVariance( smoothingVariance );
   smoothingFilter->Update();
-  this->m_ModelImage = smoothingFilter->GetOutput();  
+  this->m_ModelImage = smoothingFilter->GetOutput(); 
 }
 
 void FiducialModel::PrintSelf(std::ostream& os, itk::Indent indent) const
@@ -151,7 +152,7 @@ void FiducialModel::PrintSelf(std::ostream& os, itk::Indent indent) const
 
 }
 
-FiducialModel::ImageType::Pointer
+FiducialModel::DoubleImageType::Pointer
 FiducialModel::GetModelImage()
 {
   return m_ModelImage;
