@@ -12,6 +12,7 @@ SUBDIRS(
   UltrasoundGuidedRFA
   NeedleBiopsy
   LandmarkRegistration
+  LandmarkRegistrationErrorEstimation
   DICOMImageReader
   DeckOfCardRobot
   View
