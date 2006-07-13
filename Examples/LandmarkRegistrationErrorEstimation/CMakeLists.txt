@@ -1,0 +1,5 @@
+PROJECT(LandmarkRegistrationErrorEstimationExample)
+  
+ADD_EXECUTABLE(LandmarkRegistrationErrorEstimationExample ErrorEstimation1.cxx)
+TARGET_LINK_LIBRARIES(LandmarkRegistrationErrorEstimationExample IGSTKSandbox)
+
