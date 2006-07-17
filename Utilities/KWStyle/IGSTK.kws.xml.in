@@ -11,8 +11,8 @@
 <Comments>/**, *, */,true</Comments>
 <Header>"@IGSTK_SOURCE_DIR@/Utilities/KWStyle/IGSTKHeader.h",false,true</Header>
 <Indent>SPACE,2,true,true</Indent>
-<Namespace>itk</Namespace>
-<NameOfClass>[NameOfClass],itk</NameOfClass>
+<Namespace>igstk</Namespace>
+<NameOfClass>[NameOfClass],igstk</NameOfClass>
 <IfNDefDefine>__[NameOfClass]_[Extension]</IfNDefDefine>
 <EmptyLines>2</EmptyLines>
 <Template>[TNV]</Template>
