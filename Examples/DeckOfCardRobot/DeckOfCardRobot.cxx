@@ -256,7 +256,8 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
                                           WaitingForDICOMDirectory, LoadImage );
   igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageSuccess, 
                                       ImageReady, ConnectImageRepresentation );
-                               /*        ImageReady, No ); */
+  /*        ImageReady, No ); */
+
   igstkAddTransitionMacro( WaitingForDICOMDirectory, LoadImageFailure, 
                                                                   Initial, No );
 
@@ -462,6 +463,7 @@ void DeckOfCardRobot::RegistrationProcessing()
     {
     return false;
     }*/
+
   std::cout << "Choose which registration method to execute: " << std::endl;
   std::cout << "0 - ICP Based "      << std::endl;
   std::cout << "1 - Landmark Based " << std::endl;
@@ -494,13 +496,18 @@ void DeckOfCardRobot::RegistrationProcessing()
     m_RobotTransformToBeSet = registration->GetTransform();
 
     m_RobotToImageTransform = itk::VersorRigid3DTransform<double>::New();
-    m_RobotToImageTransform->SetOffset(m_RobotTransformToBeSet.GetTranslation());
-    m_RobotToImageTransform->SetRotation(m_RobotTransformToBeSet.GetRotation());
+    
+    m_RobotToImageTransform->SetOffset(
+                               m_RobotTransformToBeSet.GetTranslation() );
+    m_RobotToImageTransform->SetRotation(
+                               m_RobotTransformToBeSet.GetRotation() );
 
     m_ImageToRobotTransform = itk::VersorRigid3DTransform<double>::New();
     m_RobotToImageTransform->GetInverse( m_ImageToRobotTransform );
 
-    //this->RegistrationError->value( m_Registration->m_meanRegistrationError );
+    //this->RegistrationError->value( 
+    //           m_Registration->m_meanRegistrationError );
+
     m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
     m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
     m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
@@ -528,7 +535,7 @@ void DeckOfCardRobot::RegistrationProcessing()
                                       m_RobotToImageTransform->GetVersor(),
                                       m_Registration->m_meanRegistrationError,
                                       -1);
-                                      */
+  */
 }
 
 void DeckOfCardRobot::RequestResliceImage()
