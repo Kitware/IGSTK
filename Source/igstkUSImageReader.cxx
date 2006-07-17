@@ -39,10 +39,14 @@ void USImageReader::PrintSelf( std::ostream& os, itk::Indent indent ) const
 /** Check if US dicom is being read */
 bool USImageReader::CheckModalityType( DICOMInformationType modality )
 {
-  if ( modality != "US" ) 
-     return false; 
+  if( modality != "US" ) 
+    {
+    return false;
+    }
   else
-     return true;
+    {
+    return true;
+    }
 }
 
 } // end namespace igstk

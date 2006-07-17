@@ -28,10 +28,14 @@ CTImageReader::CTImageReader():m_StateMachine(this)
 /** Check if CT dicom is being read */
 bool CTImageReader::CheckModalityType( DICOMInformationType modality )
 {
-  if ( modality != "CT" ) 
-     return false; 
+  if( modality != "CT" )
+    {
+    return false;
+    }
   else
-     return true;
+    {
+    return true;
+    }
 }
 
 

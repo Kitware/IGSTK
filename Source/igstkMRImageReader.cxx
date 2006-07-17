@@ -28,10 +28,14 @@ MRImageReader::MRImageReader():m_StateMachine(this)
 /** Check if MRI dicom is being read */
 bool MRImageReader::CheckModalityType( DICOMInformationType modaltiy )
 {
-  if ( modaltiy != "MR" ) 
-     return false; 
+  if( modaltiy != "MR" )
+    {
+    return false;
+    }
   else
-     return true;
+    {
+    return true;
+    }
 }
 
 
