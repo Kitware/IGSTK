@@ -1,17 +1,17 @@
 /*=========================================================================
 
-Program:   Image Guided Surgery Software Toolkit
-Module:    ModelBasedClustering.cxx
-Language:  C++
-Date:      $Date$
-Version:   $Revision$
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    ModelBasedClustering.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
 
-Copyright (c) ISIS Georgetown University. All rights reserved.
-See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
 
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 #include "ModelBasedClustering.h"
@@ -60,7 +60,7 @@ bool ModelBasedClustering::Execute()
   N = m_ModelPoints.size();
   vnl_matrix< double > modelDistanceMap( N, N );
   modelDistanceMap.fill( 0.0 );
-  int maxD = 0;
+  double maxD = 0;
   for ( int i=0; i<N; i++)
     {
     for ( int j=0; j<N; j++)

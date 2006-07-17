@@ -1,17 +1,17 @@
 /*=========================================================================
 
-Program:   Image Guided Surgery Software Toolkit
-Module:    ModelBasedRegistration.h
-Language:  C++
-Date:      $Date$
-Version:   $Revision$
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    ModelBasedRegistration.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
 
-Copyright (c) ISIS Georgetown University. All rights reserved.
-See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
 
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 #ifndef __ModelBasedRegistration_h
@@ -77,6 +77,8 @@ protected:
   itk::WeakPointer<OptimizerType>   m_Optimizer;
 };
 
+namespace igstk {
+
 class ModelBasedRegistration: 
   public DeckOfCardRobotRegistrationBase
 {
@@ -100,5 +102,7 @@ protected:
 private:
 
 };
+
+} // end namespace igstk
 
 #endif

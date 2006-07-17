@@ -1,17 +1,17 @@
 /*=========================================================================
 
-Program:   Image Guided Surgery Software Toolkit
-Module:    ModelBasedRegistration.cxx
-Language:  C++
-Date:      $Date$
-Version:   $Revision$
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    ModelBasedRegistration.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
 
-Copyright (c) ISIS Georgetown University. All rights reserved.
-See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
 
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 #include "ModelBasedRegistration.h"
@@ -28,6 +28,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkMeanSquaresImageToImageMetric.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkImage.h"
+
+namespace igstk
+{
 
 ModelBasedRegistration::ModelBasedRegistration()
 {
@@ -278,3 +281,5 @@ bool ModelBasedRegistration::Execute()
   std::cout << " Metric value  = " << bestValue          << std::endl;
   return true;
 }
+
+} // end namespace igstk

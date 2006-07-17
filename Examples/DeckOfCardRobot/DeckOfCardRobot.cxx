@@ -1,20 +1,19 @@
 /*=========================================================================
 
-Program:   Image Guided Surgery Software Toolkit
-Module:    DeckOfCardRobot.cxx
-Language:  C++
-Date:      $Date$
-Version:   $Revision$
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    DeckOfCardRobot.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
 
-Copyright (c) ISIS Georgetown University. All rights reserved.
-See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+  Copyright (c) ISIS Georgetown University. All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
 
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
 #include "DeckOfCardRobot.h"
 
 #include "FL/Fl_File_Chooser.H"
@@ -26,7 +25,6 @@ PURPOSE.  See the above copyright notices for more information.
 #include "LandmarkBasedRegistration.h"
 #include "ModelBasedRegistration.h"
 
-#define PI 3.1415926
 
 namespace igstk
 {
@@ -1040,11 +1038,14 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   /* Projection Angle                                                     */
   /************************************************************************/
   
+  const double PI = 4.0 * atan( 1.0 );
+
   // Rotation along X axis
   pProject = pVect2; 
   pProject[0] = 0;        // Projection to YZ plane
   pProject.Normalize();
-  m_Rotation[0] = acos( pVect1 * pProject) * 180 /PI;
+  m_Rotation[0] = acos( pVect1 * pProject) * 180.0 /PI;
+  
   if ( pProject[1] > 0)
     {
     m_Rotation[0] *= -1;
@@ -1054,7 +1055,8 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   pProject = pVect2;
   pProject[1] = 0;        // Projection to XZ plane
   pProject.Normalize();
-  m_Rotation[1] = acos( pVect1 * pProject) * 180 /PI;
+  m_Rotation[1] = acos( pVect1 * pProject) * 180.0 /PI;
+
   if ( pProject[0] < 0)
     {
     m_Rotation[1] *= -1;
@@ -1087,10 +1089,10 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   
   for (int i=0; i<3; i++)
     {
-    m_Rotation[i] = m_Rotation[i] * 180 / PI;  // To degree
+    m_Rotation[i] = m_Rotation[i] * 180.0 / PI;  // To degree
     if ( m_Rotation[i] > 90)
       {
-      m_Rotation[i] = m_Rotation[i] - 180;    // Flip the rotation angle
+      m_Rotation[i] = m_Rotation[i] - 180.0;    // Flip the rotation angle
       }
     }
   }  
