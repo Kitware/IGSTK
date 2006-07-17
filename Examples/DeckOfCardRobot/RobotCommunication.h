@@ -14,11 +14,16 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+#ifndef __RobotCommunication_h
+#define __RobotCommunication_h
+
 #include "igstkSocketCommunication.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkMultiThreader.h"
 
+namespace igstk
+{
 
 #define READ_TIMEOUT 1000          // timeouts are in msec
 #define READ_BUFFER_SIZE 100
@@ -118,6 +123,13 @@ const int APIRESFLAG_LIMIT_SWITCH_RELEASED = 24;
 // Asynchronous mode 
 const bool ASYNCMODE = false;
 
+
+/** \brief Class that encapsulates the communication with the robot.
+ *
+ *  \class RobotCommunication This class manages the flow of information
+ *  between the robot and the application.
+ *
+ */
 class RobotCommunication
 {
 public:
@@ -183,3 +195,7 @@ public:
   void GetCurrentRobotPosition( float * pos );
 
 };
+
+} // end namespace igstk
+
+#endif

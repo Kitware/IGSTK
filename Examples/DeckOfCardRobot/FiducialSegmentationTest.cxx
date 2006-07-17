@@ -30,9 +30,9 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-typedef igstk::CTImageReader                               ImageReaderType;
-typedef igstk::CTImageSpatialObject                        ImageSpatialObjectType;
-typedef ImageSpatialObjectType::ImageType                  ITKImageType;
+typedef igstk::CTImageReader                      ImageReaderType;
+typedef igstk::CTImageSpatialObject               ImageSpatialObjectType;
+typedef ImageSpatialObjectType::ImageType         ITKImageType;
 
 igstkObserverObjectMacro( ImageSpatialObject,
                     ImageReaderType::ImageModifiedEvent,ImageSpatialObjectType)
@@ -41,31 +41,34 @@ igstkObserverConstObjectMacro( ITKImage,
 
 int main(int argc , char * argv [] )
 {
-  typedef itk::Logger                           LoggerType; 
-  typedef itk::StdStreamLogOutput               LogOutputType;
+  typedef itk::Logger                    LoggerType; 
+  typedef itk::StdStreamLogOutput        LogOutputType;
   
 
-  LoggerType::Pointer                       logger = LoggerType::New();
-  LogOutputType::Pointer                    logOutput = LogOutputType::New();  
+  LoggerType::Pointer      logger = LoggerType::New();
+  LogOutputType::Pointer   logOutput = LogOutputType::New();  
 
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
   
-  FiducialSegmentation::Pointer segmenter = FiducialSegmentation::New();
+  igstk::FiducialSegmentation::Pointer segmenter = 
+                              igstk::FiducialSegmentation::New();
 
-   if ( argc < 3 ) 
-      {
-      std::cerr << "Usage: " << argv[0] << " CT Image"
-                << " Segmented image " << std::endl;
-      return EXIT_FAILURE;
-      }  
+  if( argc < 3 ) 
+    {
+    std::cerr << "Usage: " << argv[0] << " CT Image"
+              << " Segmented image " << std::endl;
+    return EXIT_FAILURE;
+    }  
 
   typedef igstk::CTImageReader         ReaderType;
   ReaderType::Pointer   reader = ReaderType::New();
 
   reader->SetLogger( logger );
-  ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New();
+
+  ImageSpatialObjectType::Pointer imageSpatialObject =
+                                       ImageSpatialObjectType::New();
   
   std::cout << "Reading CT image : " << argv[1] << std::endl;
 
@@ -77,25 +80,28 @@ int main(int argc , char * argv [] )
   
   ImageSpatialObjectObserver::Pointer imageSpatialObjectObserver 
                                            = ImageSpatialObjectObserver::New();
+
   reader->AddObserver( ImageReaderType::ImageModifiedEvent(), 
                                              imageSpatialObjectObserver );
  
   reader->RequestGetImage(); // Request to send the image as an event.
 
- if(!imageSpatialObjectObserver->GotImageSpatialObject())
-      {
-      std::cerr << "Cannot read image " << std::endl;
-      return EXIT_FAILURE;
-      }
+  if(!imageSpatialObjectObserver->GotImageSpatialObject())
+    {
+    std::cerr << "Cannot read image " << std::endl;
+    return EXIT_FAILURE;
+    }
   else
-      {
-      imageSpatialObject = 
-                           imageSpatialObjectObserver->GetImageSpatialObject();
-      }
+    {
+    imageSpatialObject = 
+           imageSpatialObjectObserver->GetImageSpatialObject();
+    }
  
   ITKImageObserver::Pointer itkImageObserver = ITKImageObserver::New();
+  
   imageSpatialObject->AddObserver( 
-           ImageSpatialObjectType::ITKImageModifiedEvent(), itkImageObserver );
+      ImageSpatialObjectType::ITKImageModifiedEvent(), itkImageObserver );
+
   imageSpatialObject->RequestGetITKImage();
   
   segmenter->SetITKImage( itkImageObserver->GetITKImage() );
@@ -105,15 +111,14 @@ int main(int argc , char * argv [] )
   segmenter->SetMergeDistance( 1 );
   segmenter->Execute();
 
-  typedef itk::Image < int, 3 >                   OutputImageType;
-  typedef itk::ImageFileWriter< OutputImageType >  ImageFileWriterType;
+  typedef itk::Image < int, 3 >                     OutputImageType;
+  typedef itk::ImageFileWriter< OutputImageType >   ImageFileWriterType;
 
   ImageFileWriterType::Pointer   writer = ImageFileWriterType::New();
 
-  writer->SetFileName ( argv[2] ) ;
-  writer->SetInput ( segmenter->GetSegmentedImage() ); 
+  writer->SetFileName( argv[2] );
+  writer->SetInput( segmenter->GetSegmentedImage() ); 
   writer->Update();  
 
   return EXIT_SUCCESS;
 }
-

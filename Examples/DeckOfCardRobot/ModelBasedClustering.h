@@ -19,6 +19,9 @@
 
 #include "itkImage.h"
 
+namespace igstk
+{
+
 class ModelBasedClustering: public itk::Object
 {
 
@@ -68,5 +71,7 @@ private:
   PointsListType                       m_ClusteredPoints;
 
 };
+
+} // end namespace igstk
 
 #endif

@@ -21,6 +21,9 @@
 #include "igstkCTImageSpatialObject.h"
 #include "vnl/vnl_matrix.h"
 
+namespace igstk
+{
+
 /** \class FiducialSegmentation
 *  \brief Segment the fiducial points in the image.
 *
@@ -104,5 +107,7 @@ private:
   PointsListType                                          m_FiducialPoints;
 
 };
+
+}
 
 #endif

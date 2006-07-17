@@ -37,7 +37,7 @@ void LandmarkBasedRegistration::PrintSelf(std::ostream& os, itk::Indent indent)
 bool LandmarkBasedRegistration::Execute()
 {
   FiducialSegmentation::PointsListType     fiducialPoints;
-    FiducialSegmentation::PointsListType   modelPoints;
+  FiducialSegmentation::PointsListType     modelPoints;
 
   // Segment the fiducial points
   FiducialSegmentation::Pointer segmenter = FiducialSegmentation::New();

@@ -26,6 +26,9 @@
 #endif
 #endif
 
+namespace igstk 
+{
+
 // Maximum size of the robot command
 const unsigned int ROBOT_MAX_COMMAND_SIZE = 1024;
 
@@ -349,5 +352,7 @@ void RobotCommunication::GetCurrentRobotPosition( float * pos )
   pos[3] = GetCoord(buffer, 6);
   pos[4] = GetCoord(buffer, 7);
   pos[5] = GetCoord(buffer, 8);
+
+}
 
 }

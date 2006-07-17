@@ -21,6 +21,9 @@
 #include "itkSpatialObjectToImageFilter.h"
 #include "itkDiscreteGaussianImageFilter.h"
 
+namespace igstk 
+{
+
 FiducialModel::FiducialModel()
 {
   m_ModelImage = NULL;
@@ -56,12 +59,15 @@ void FiducialModel::GenerateModelImage()
   typedef EllipseSpatialObjectType::TransformType::OffsetType OffsetType; 
   
   typedef itk::GroupSpatialObject< 3 >    GroupSpatialObjectType;
-  GroupSpatialObjectType::Pointer groupSpatialObject = GroupSpatialObjectType::New(); 
+
+  GroupSpatialObjectType::Pointer groupSpatialObject = 
+                                          GroupSpatialObjectType::New(); 
  
   typedef itk::SpatialObjectToImageFilter< GroupSpatialObjectType, ImageType>
                                           SpatialObjectToImageFilterType;
-  SpatialObjectToImageFilterType::Pointer 
-               spatialObjectToImageFilter = SpatialObjectToImageFilterType::New();
+
+  SpatialObjectToImageFilterType::Pointer spatialObjectToImageFilter = 
+                                       SpatialObjectToImageFilterType::New();
     
   const double FiducialSize = this->m_Size;
 
@@ -76,24 +82,25 @@ void FiducialModel::GenerateModelImage()
 
   for ( it = m_FiducialPoints.begin(); it != m_FiducialPoints.end(); it++ )
     {
-      EllipseSpatialObjectType::Pointer ellipse = EllipseSpatialObjectType::New();
-      ellipse->SetRadius( FiducialSize );
-     
-      std::cout << "Working on fiducial: " << *it << std::endl; 
-      OffsetType offset;
-      offset[0]  = (*it)[0]; 
-      offset[1]  = (*it)[1]; 
-      offset[2]  = (*it)[2]; 
-      ellipse->GetObjectToParentTransform()->SetOffset( offset );
-      ellipse->ComputeObjectToWorldTransform();
-      groupSpatialObject->AddSpatialObject( ellipse );     
-  
-      minx = ( offset[0] < minx ) ? offset[0] : minx;
-      maxx = ( offset[0] > maxx ) ? offset[0] : maxx;
-      miny = ( offset[1] < miny ) ? offset[1] : miny;
-      maxy = ( offset[1] > maxy ) ? offset[1] : maxy;
-      minz = ( offset[2] < minz ) ? offset[2] : minz;
-      maxz = ( offset[2] > maxz ) ? offset[2] : maxz;
+    EllipseSpatialObjectType::Pointer ellipse = 
+                     EllipseSpatialObjectType::New();
+    ellipse->SetRadius( FiducialSize );
+   
+    std::cout << "Working on fiducial: " << *it << std::endl; 
+    OffsetType offset;
+    offset[0]  = (*it)[0]; 
+    offset[1]  = (*it)[1]; 
+    offset[2]  = (*it)[2]; 
+    ellipse->GetObjectToParentTransform()->SetOffset( offset );
+    ellipse->ComputeObjectToWorldTransform();
+    groupSpatialObject->AddSpatialObject( ellipse );
+
+    minx = ( offset[0] < minx ) ? offset[0] : minx;
+    maxx = ( offset[0] > maxx ) ? offset[0] : maxx;
+    miny = ( offset[1] < miny ) ? offset[1] : miny;
+    maxy = ( offset[1] > maxy ) ? offset[1] : maxy;
+    minz = ( offset[2] < minz ) ? offset[2] : minz;
+    maxz = ( offset[2] > maxz ) ? offset[2] : maxz;
     } 
 
   std::cout << " Bounding box for the fiducial coordinates: " 
@@ -129,9 +136,12 @@ void FiducialModel::GenerateModelImage()
 
   // Smooth the image
   typedef itk::Image< double, 3 >       DoubleImageType;
+  
   typedef itk::DiscreteGaussianImageFilter < ImageType, DoubleImageType > 
                                          GaussianImageFilterType;
-  GaussianImageFilterType::Pointer smoothingFilter = GaussianImageFilterType::New();  
+  
+  GaussianImageFilterType::Pointer smoothingFilter = 
+                                       GaussianImageFilterType::New();
 
   smoothingFilter->SetInput ( spatialObjectToImageFilter->GetOutput() );
   const double smoothingVariance = 0.2; 
@@ -144,11 +154,8 @@ void FiducialModel::PrintSelf(std::ostream& os, itk::Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Size: "
-    << m_Size << std::endl;
-  os << indent << "Blur Size: "
-    << m_BlurSize << std::endl;
-
+  os << indent << "Size: " << m_Size << std::endl;
+  os << indent << "Blur Size: " << m_BlurSize << std::endl;
 }
 
 FiducialModel::DoubleImageType::Pointer
@@ -156,3 +163,5 @@ FiducialModel::GetModelImage()
 {
   return m_ModelImage;
 }
+
+} // end namespace igstk

@@ -33,7 +33,7 @@ int main(int argc , char * argv [] )
               << "Fiducal_output_image_name" << std::endl;
     return EXIT_FAILURE;
     } 
-  typedef FiducialModel  FiducialModelType;
+  typedef igstk::FiducialModel  FiducialModelType;
 
   FiducialModelType::Pointer  fiducialModel = FiducialModelType::New();
     
@@ -48,10 +48,9 @@ int main(int argc , char * argv [] )
 
   ImageFileWriteType::Pointer   writer = ImageFileWriteType::New();
 
-  writer->SetFileName ( argv[1] ) ;
+  writer->SetFileName ( argv[1] );
   writer->SetInput ( image ); 
   writer->Update();  
 
   return EXIT_SUCCESS;
 }
-

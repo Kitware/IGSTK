@@ -1038,7 +1038,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   /* Projection Angle                                                     */
   /************************************************************************/
   
-  const double PI = 4.0 * atan( 1.0 );
+  const double PI = vnl_math::pi;
 
   // Rotation along X axis
   pProject = pVect2; 

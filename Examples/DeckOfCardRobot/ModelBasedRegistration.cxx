@@ -208,8 +208,9 @@ bool ModelBasedRegistration::Execute()
 
   // Define image registration type
   typedef itk::ImageRegistrationMethod< 
-                                    SegmentedImageType, 
-                                    FiducialModelImageType >    RegistrationType;
+                          SegmentedImageType, 
+                          FiducialModelImageType >    RegistrationType;
+  
   RegistrationType::Pointer   registration  = RegistrationType::New();
 
   typedef RegistrationType::ParametersType ParametersType;

@@ -20,6 +20,8 @@
 #include "itkRelabelComponentImageFilter.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
 
+namespace igstk
+{
 
 FiducialSegmentation::FiducialSegmentation()
 {
@@ -227,3 +229,5 @@ FiducialSegmentation::DistanceMap( PointsListType pointList )
   return distanceMap;
 
 }
+
+} // end namespace igstk

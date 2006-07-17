@@ -27,6 +27,9 @@
 *
 */
 
+namespace igstk 
+{
+
 class FiducialModel: public itk::Object
 {
 
@@ -39,10 +42,10 @@ public:
 
   itkNewMacro( Self );
 
-  typedef igstk::CTImageSpatialObject::ImageType            ImageType;
-  typedef itk::Image< double, 3>                            DoubleImageType;
-  typedef itk::Point< double, 3 >           PointType;
-  typedef std::vector< PointType >          PointsListType;
+  typedef igstk::CTImageSpatialObject::ImageType     ImageType;
+  typedef itk::Image< double, 3>                     DoubleImageType;
+  typedef itk::Point< double, 3 >                    PointType;
+  typedef std::vector< PointType >                   PointsListType;
 
   itkGetMacro( Size, int);
   itkSetMacro( Size, int);
@@ -70,13 +73,15 @@ private:
   // Generate the fiducial point list
   void GenerateFiducialPointList();
 
-  DoubleImageType::Pointer                   m_ModelImage;
+  DoubleImageType::Pointer             m_ModelImage;
   
   int                                  m_Size;
   int                                  m_BlurSize;
 
-  PointsListType                       m_FiducialPoints;              
+  PointsListType                       m_FiducialPoints;
 
 };
+
+} // end namespace igstk
 
 #endif

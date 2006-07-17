@@ -19,6 +19,9 @@
 
 #include "itkImage.h"
 
+namespace igstk 
+{
+
 class PCAOnPoints: public itk::Object
 {
 
@@ -63,5 +66,7 @@ private:
   VectorType                           m_PrincipleAxis;
 
 };
+
+}
 
 #endif

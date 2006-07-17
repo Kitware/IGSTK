@@ -20,6 +20,8 @@
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 #include "vnl/vnl_cross.h"
 
+namespace igstk 
+{
 
 PCAOnPoints::PCAOnPoints()
 {
@@ -126,4 +128,6 @@ bool PCAOnPoints::Execute()
     }
   
   return true;
+}
+
 }

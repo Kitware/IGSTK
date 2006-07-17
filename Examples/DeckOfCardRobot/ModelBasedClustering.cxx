@@ -20,6 +20,8 @@
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 #include "vnl/vnl_cross.h"
 
+namespace igstk
+{
 
 ModelBasedClustering::ModelBasedClustering()
 {
@@ -132,54 +134,55 @@ bool ModelBasedClustering::Execute()
   // Delete points from the m_SamplePoints according to the deleteList
   PointsListType pTemp;
   m_ClusteredPoints.clear();
-    for ( int i=0; i<N; i++)
+
+  for( int i=0; i<N; i++)
+    {
+    bool ToBeDelete = false;
+    for( int j=0; j<deleteList.size(); j++)
       {
-      bool ToBeDelete = false;
-      for ( int j=0; j<deleteList.size(); j++)
+      if( i == deleteList[j] )
         {
-        if ( i == deleteList[j] )
-          {
-          ToBeDelete = true;
-          }
-        }
-      if ( !ToBeDelete )
-        {
-        m_ClusteredPoints.push_back( m_SamplePoints[i] );
-        }
-      else
-        {
-        std::cout<< "Delete point: " << m_SamplePoints[i] << std::endl;
+        ToBeDelete = true;
         }
       }
+    if( !ToBeDelete )
+      {
+      m_ClusteredPoints.push_back( m_SamplePoints[i] );
+      }
+    else
+      {
+      std::cout<< "Delete point: " << m_SamplePoints[i] << std::endl;
+      }
+    }
   
   /* Using normal cut clustering
   vnl_matrix< double > similarityMap( N, N );
   similarityMap.fill( 0.0 );
   for ( int i=0; i<N; i++)
-  {
-  for ( int j=i; j<N; j++)
     {
-    similarityMap( i, j ) = this->DistanceToSimilarity( distanceMap( i, j ) );
-    similarityMap( j, i ) = similarityMap( i, j );
+    for ( int j=i; j<N; j++)
+      {
+      similarityMap( i, j ) = this->DistanceToSimilarity( distanceMap( i, j ) );
+      similarityMap( j, i ) = similarityMap( i, j );
+      }
     }
-  }
   std::cout<< "Similarity Map:\n" << similarityMap << std::endl;
 
   vnl_matrix< double > D( N, N );
   D.fill( 0.0 );
   for ( int i=0; i<N; i++)
-  {
-  for ( int j=0; j<N; j++)
-  {
-  D( i,i ) += similarityMap( i, j );
-  }
-  }
+    {
+    for ( int j=0; j<N; j++)
+      {
+      D( i,i ) += similarityMap( i, j );
+      }
+    }
 
   vnl_matrix< double > Dsqrt = D;
   for ( int i=0; i<N; i++)
-  {
-  Dsqrt( i, i ) = pow( D( i, i ), -0.5 );
-  }
+    {
+    Dsqrt( i, i ) = pow( D( i, i ), -0.5 );
+    }
 
   vnl_matrix< double > M( N, N );
   M = Dsqrt * ( D - similarityMap ) * Dsqrt;
@@ -216,3 +219,5 @@ double ModelBasedClustering::DistanceToSimilarity( double dis )
   return pow( vnl_math::e, (-0.5*dis*dis) /(delta*delta) ) /
     ( delta * vnl_math::sqrt2 * sqrt( vnl_math::pi) );
 }
+
+} // end namespace igstk
