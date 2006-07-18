@@ -16,52 +16,56 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//Warning about: identifier was truncated to '255' characters in the debug
+//information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
-//BeginLatex
+// BeginLatex
 //
-// This example illustrates how to estimate registration error of a target point when 
-// registered using transformation parameters computed using landmark-based registration
-// technique.
+// This example illustrates how to estimate registration error of a target
+// point when registered using transformation parameters computed using
+// landmark-based registration technique.
 // 
-// The error estimation is based on the closed form equation developed by West et al. 
-// In this closed form solution, the target point registration error is dependent on 
-// the location of the target point, the registration error of the landmark points 
-// ( root mean square error) and the configuration of the landmark points.
+// The error estimation is based on the closed form equation developed by West
+// et al.  In this closed form solution, the target point registration error is
+// dependent on the location of the target point, the registration error of the
+// landmark points ( root mean square error) and the configuration of the
+// landmark points.
 //
-//EndLatex
+// EndLatex
 
 
 
 #include <iostream>
 
-//BeginLatex
+// BeginLatex
 //
 // To use the IGSTK component for registration error computation, 
 // \doxygen{Landmark3DRegistrationErrorEstimator} header file needs
 // to be added.
 //
-//EndLatex
+// EndLatex
 #include "igstkLandmark3DRegistration.h"
-//BeginCodeSnippet
+// BeginCodeSnippet
 #include "igstkLandmark3DRegistrationErrorEstimator.h"
-//EndCodeSnippet
+// EndCodeSnippet
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkMacro.h"
 
-class Landmark3DRegistrationErrorEstimatorGetErrorCallback: public itk::Command
+class ErrorEstimationGetErrorCallback: public itk::Command
 {
   public:
-    typedef Landmark3DRegistrationErrorEstimatorGetErrorCallback    Self;
-    typedef itk::SmartPointer<Self>                     Pointer;
-    typedef itk::Command                                Superclass;
+    typedef ErrorEstimationGetErrorCallback    Self;
+    typedef itk::SmartPointer<Self>            Pointer;
+    typedef itk::Command                       Superclass;
+
     itkNewMacro(Self);
 
-    typedef igstk::LandmarkRegistrationErrorEvent LandmarkRegistrationErrorEventType;
+    typedef igstk::LandmarkRegistrationErrorEvent 
+                           LandmarkRegistrationErrorEventType;
 
     void Execute( const itk::Object *caller, const itk::EventObject & event )
     {
@@ -69,9 +73,8 @@ class Landmark3DRegistrationErrorEstimatorGetErrorCallback: public itk::Command
     void Execute( itk::Object *caller, const itk::EventObject & event )
     {
       std::cout<< " LandmarkRegistrationErrorEvent is thrown" << std::endl;
-                    dynamic_cast < const LandmarkRegistrationErrorEventType* > ( &event );
       const LandmarkRegistrationErrorEventType * errorEvent =
-                    dynamic_cast < const LandmarkRegistrationErrorEventType* > ( &event );
+        dynamic_cast < const LandmarkRegistrationErrorEventType* > ( &event );
       m_Error = errorEvent->Get();
       m_EventReceived = true;
     } 
@@ -84,7 +87,7 @@ class Landmark3DRegistrationErrorEstimatorGetErrorCallback: public itk::Command
       return m_Error;
   }  
   protected:
-    Landmark3DRegistrationErrorEstimatorGetErrorCallback()   
+    ErrorEstimationGetErrorCallback()   
     {
       m_EventReceived = true;
     };
@@ -132,9 +135,11 @@ int main( int argv, char * argc[] )
     logger->SetPriorityLevel( itk::Logger::DEBUG );
 
     // Create an igstk::VTKLoggerOutput and then test it.
-    igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+    typedef igstk::VTKLoggerOutput LoggerOutputType;
+    LoggerOutputType::Pointer vtkLoggerOutput = LoggerOutputType::New();
     vtkLoggerOutput->OverrideVTKWindow();
-    vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+    // redirect messages from VTK OutputWindow -> logger
+    vtkLoggerOutput->SetLogger(logger);  
 
 
     landmarkRegister->SetLogger( logger );
@@ -143,7 +148,8 @@ int main( int argv, char * argc[] )
     // Define the 3D rigid body transformation 
     typedef itk::Rigid3DTransform< double > Rigid3DTransformType;
 
-    Rigid3DTransformType::Pointer   rigid3DTransform = Rigid3DTransformType::New();
+    Rigid3DTransformType::Pointer rigid3DTransform = 
+                                       Rigid3DTransformType::New();
 
     Rigid3DTransformType::MatrixType mrotation;
 
@@ -214,118 +220,133 @@ int main( int argv, char * argc[] )
     landmarkRegister->RequestComputeTransform();
 
 
-    //Estimate the error 
-    //BeginLatex
+    // Estimate the error 
+    // BeginLatex
     //
-    //The registration error estimator type is defined and an object is instantiated.
+    // The registration error estimator type is defined and an object is
+    // instantiated.
     //
-    //EndLatex
-    //BeginCodeSnippet
-    typedef igstk::Landmark3DRegistrationErrorEstimator     
-                              Landmark3DRegistrationErrorEstimatorType;
-    //EndCodeSnippet
-    //
-    typedef Landmark3DRegistrationErrorEstimatorType::TargetPointType   TargetPointType;
-    typedef Landmark3DRegistrationErrorEstimatorType::ErrorType         ErrorType;
+    // EndLatex
+
+
+    // BeginCodeSnippet
+    typedef igstk::Landmark3DRegistrationErrorEstimator   ErrorEstimatorType;
+    // EndCodeSnippet
+
+
+    typedef ErrorEstimatorType::TargetPointType   TargetPointType;
+    typedef ErrorEstimatorType::ErrorType         ErrorType;
     
-   //BeginCodeSnippet
-   // 
-    Landmark3DRegistrationErrorEstimatorType::Pointer landmarkRegistrationErrorEstimator = 
-                                        Landmark3DRegistrationErrorEstimatorType::New();    
-   //
-   //EndCodeSnippet
+    // BeginCodeSnippet
+    ErrorEstimatorType::Pointer errorEstimator = ErrorEstimatorType::New();
+    // EndCodeSnippet
     
-    landmarkRegistrationErrorEstimator->SetLogger( logger );
-    //BeginLatex
+    errorEstimator->SetLogger( logger );
+
+    // BeginLatex
     //
-    //The landmark point container is set as follows
+    // The landmark point container is set as follows
     //
-    //EndLatex
-    //BeginCodeSnippet
-    landmarkRegistrationErrorEstimator->RequestSetLandmarkContainer( fpointcontainer );
-    //EndCodeSnippet
+    // EndLatex
+
+    // BeginCodeSnippet
+    errorEstimator->RequestSetLandmarkContainer( fpointcontainer );
+    // EndCodeSnippet
    
+
+
     // Compute the landmark registration error
-    //BeginLatex
+    // BeginLatex
     //
-    //Next, the landmark regisration error is set. The landmark registration component is used to 
-    //compute this parametr. This error paramete basically the root mean square error of the 
-    //landmark registration.
+    // Next, the landmark regisration error is set. The landmark registration
+    // component is used to compute this parametr. This error paramete
+    // basically the root mean square error of the landmark registration.
     //
-    //EndLatex
+    // EndLatex
+    
     ErrorType                   landmarkRegistrationError;
-    //BeginCodeSnippet
+
+    // BeginCodeSnippet
     landmarkRegistrationError = landmarkRegister->ComputeRMSError();
-    landmarkRegistrationErrorEstimator->RequestSetLandmarkRegistrationError( 
+    errorEstimator->RequestSetLandmarkRegistrationError( 
                                                   landmarkRegistrationError );
-    //EndCodeSnippet
+    // EndCodeSnippet
+    
+
+
+    // BeginLatex
     //
-    //BeginLatex
+    // Next, the other error parameters needed in the error estimation are
+    // computed.  This is done by invoking ComputeErrorParameter() method as
+    // shown below. 
     //
-    //Next, the other error parameters needed in the error estimation are computed. 
-    //This is done by invoking ComputeErrorParameter() method as shown below. 
+    // EndLatex
+    
+    // BeginCodeSnippet
+    errorEstimator->RequestComputeErrorParameters();
+    // EndCodeSnippet
+
+    // Estimate target regsitration error 
+    // BeginLatex
+    // Next, the target point that we will be estimating the registration error
+    // is set
     //
-    //EndLatex
-    //
-    //BeginCodeSnippet
-    landmarkRegistrationErrorEstimator->RequestComputeErrorParameters();
-    //EndCodeSnippet
-    //
-    //Estimate target regsitration error 
-    //BeginLatex
-    //Next, the target point that we will be estimating the registration error is set
-    //
-    //EndLatex
-    //
-    //BeginCodeSnippet
-    TargetPointType       targetPoint;
+    // EndLatex
+
+    // BeginCodeSnippet
+    TargetPointType targetPoint;
     targetPoint[0] =  10.0;
     targetPoint[1] =  20.0;
     targetPoint[2] =  8.0;
-    landmarkRegistrationErrorEstimator->RequestSetTargetPoint( targetPoint );
-    //EndCodeSnippet
+    errorEstimator->RequestSetTargetPoint( targetPoint );
+    // EndCodeSnippet
+
+
+
+    // BeginLatex
     //
-    //BeginLatex
+    // Finally, we are ready to estimate the registration error for the target
+    // point.
     //
-    //
-    //Finally, we are ready to estimate the registration error for the target point.
-    //
-    //EndLatex
-    //
-    //
-    //BeginCodeSnippet
-    ErrorType       targetRegistrationError;
-    landmarkRegistrationErrorEstimator->RequestEstimateTargetPointRegistrationError( );
-    //EndCodeSnippet
+    // EndLatex
     
+    // BeginCodeSnippet
+    ErrorType       targetRegistrationError;
+    errorEstimator->RequestEstimateTargetPointRegistrationError( );
+    // EndCodeSnippet
+    
+
+
     // Setup an obsever to get the registration error 
     //
-    //BeginLatex
+    // BeginLatex
     //
-    //To receive the error value, we have to set up an observer to listen to an event
-    //loaded with error value as follows
+    // To receive the error value, we have to set up an observer to listen to
+    // an event loaded with error value as follows
     //
-    //EndLatex
-    //
-    //BeginCodeSnippet
-    Landmark3DRegistrationErrorEstimatorGetErrorCallback::Pointer lrtcb =
-                            Landmark3DRegistrationErrorEstimatorGetErrorCallback::New();
-    landmarkRegistrationErrorEstimator->AddObserver( igstk::LandmarkRegistrationErrorEvent(), lrtcb );
-    landmarkRegistrationErrorEstimator->RequestGetTargetPointRegistrationErrorEstimate();
+    // EndLatex
+    
+    // BeginCodeSnippet
+    ErrorEstimationGetErrorCallback::Pointer lrtcb =
+                            ErrorEstimationGetErrorCallback::New();
+
+    errorEstimator->AddObserver( igstk::LandmarkRegistrationErrorEvent(), lrtcb );
+    errorEstimator->RequestGetTargetPointRegistrationErrorEstimate();
 
     if( !lrtcb->GetEventReceived() )
       {
-       std::cerr << "LandmarkRegsistrationErrorEstimator class failed to throw a "
-                 << "landmark registration error event" << std::endl;
+      std::cerr << "LandmarkRegsistrationErrorEstimator class failed to "
+                << "throw a landmark registration error event" << std::endl;
       return EXIT_FAILURE;
-     }
+      }
         
-     targetRegistrationError = lrtcb->GetError();    
-     //EndCodeSnippet
+    targetRegistrationError = lrtcb->GetError();    
+    // EndCodeSnippet
    
-    std::cout << "Target registration error:" << targetRegistrationError << std::endl;
+    std::cout << "Target registration error:";
+    std::cout << targetRegistrationError << std::endl;
 
-    landmarkRegistrationErrorEstimator->Print(std::cout);
+    errorEstimator->Print( std::cout );
 
    
     if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
