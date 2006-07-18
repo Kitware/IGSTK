@@ -75,18 +75,6 @@ public:
   typedef VersorType::MatrixType          MatrixType;
   typedef double                          ErrorType;
 
-private:
-
-  typedef itk::VectorContainer< int, VersorType > InputVersorContainerType;
-
-  typedef InputVersorContainerType::Pointer InputVersorContainerPointerType;
-
-  typedef itk::VectorContainer< int, VectorType > InputVectorContainerType;
-
-  typedef InputVectorContainerType::Pointer InputVectorContainerPointerType;
-
-  typedef itk::CovariantVector< double >  CovariantVectorType;
-
 public:
 
   /** Method to check whether a valid calibration is calculated */
@@ -185,7 +173,20 @@ private:
 
   PivotCalibration( const Self & ); //purposely not implemented
   void operator=(const Self&);  //purposely not implemented
-  
+ 
+
+  // Typedefs for members variables
+  typedef itk::VectorContainer< int, VersorType > InputVersorContainerType;
+
+  typedef InputVersorContainerType::Pointer InputVersorContainerPointerType;
+
+  typedef itk::VectorContainer< int, VectorType > InputVectorContainerType;
+
+  typedef InputVectorContainerType::Pointer InputVectorContainerPointerType;
+
+  typedef itk::CovariantVector< double >  CovariantVectorType;
+
+ 
   /** List of States */
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( SampleAdd );
