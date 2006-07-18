@@ -30,7 +30,7 @@ public:
   typedef itk::SmartPointer<Self>        Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
   
-  itkTypeMacro( IterationCallback, Superclass );
+  itkTypeMacro( IterationCallback, itk::Command );
   itkNewMacro( Self );
 
   /** Type defining the optimizer. */
