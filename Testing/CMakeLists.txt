@@ -221,6 +221,14 @@ IF(IGSTK_USE_FLTK)
     ADD_TEST(igstkMeshObjectTest    ${IGSTK_TESTS} igstkMeshObjectTest
               ${IGSTK_DATA_ROOT}/Input/liver.msh  
               )
+
+    ADD_TEST(igstkMeshObjectTest2    ${IGSTK_TESTS} igstkMeshObjectTest
+              ${IGSTK_DATA_ROOT}/Input/lineCells.msh  
+              )
+  
+    ADD_TEST(igstkMeshObjectTest3    ${IGSTK_TESTS} igstkMeshObjectTest
+              ${IGSTK_DATA_ROOT}/Input/tetrahedraCells.msh  
+              )
   
     ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
               igstkImageSpatialObjectRepresentationTest 
