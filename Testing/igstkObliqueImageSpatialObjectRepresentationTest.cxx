@@ -29,10 +29,13 @@
 #include "itkStdStreamLogOutput.h"
 #include "igstkEvents.h"
 
+namespace igstk
+{
 namespace ObliqueImageSpatialObjectRepresentationTest
 {
 igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
+}
 }
 
 int igstkObliqueImageSpatialObjectRepresentationTest( 
@@ -84,11 +87,13 @@ int igstkObliqueImageSpatialObjectRepresentationTest(
   representation->SetLogger( logger );
 
   // Attach an observer
-  typedef ObliqueImageSpatialObjectRepresentationTest::CTImageObserver 
-                                                        CTImageObserverType;
+  typedef igstk::ObliqueImageSpatialObjectRepresentationTest::CTImageObserver 
+                                                          CTImageObserverType;
+
   CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New();
+
   reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
-                            ctImageObserver);
+                               ctImageObserver);
 
   reader->RequestGetImage();
 
