@@ -48,14 +48,69 @@ int igstkMultipleOutputTest( int, char * [] )
     multipleOutput.AddOutputStream( file1 );
     multipleOutput.AddOutputStream( file2 );
 
+    ::itk::OStringStream messageStream; 
+
     multipleOutput << 12.4;
     multipleOutput << " text ";
     multipleOutput.Flush();
     multipleOutput << 23;
     multipleOutput << " reload ";
 
+    messageStream << 12.4;
+    messageStream << " text ";
+    messageStream << 23;
+    messageStream << " reload ";
+
+    std::string message = messageStream.str();
+
     file1.close();
     file2.close();
+
+
+    // Regression test
+    // 
+    // open the files again
+    //
+    std::ifstream ifile1("fileMultipleOutput1.txt");
+    std::ifstream ifile2("fileMultipleOutput2.txt");
+      
+    if( ifile1.fail() )
+      {
+      std::cerr << "fileMultipleOutput1.txt failed to open" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    if( ifile2.fail() )
+      {
+      std::cerr << "fileMultipleOutput2.txt failed to open" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    unsigned int i=0;
+    char c1 = ifile1.get();
+    char c2 = ifile2.get();
+    while( !ifile1.eof() && !ifile2.eof() )
+      {
+      if( c1 != c2 )
+        {
+        std::cerr << "The Two files differ !" << std::endl;
+        return EXIT_FAILURE;
+        }
+      if( c1 != message[i] )
+        {
+        std::cerr << "The files do not have the right message !" << std::endl;
+        std::cerr << "Character number " << i << std::endl;
+        std::cerr << "file is " << int(c1) << std::endl;
+        std::cerr << "message is " << message[i] << std::endl;
+        return EXIT_FAILURE;
+        }
+      i++;
+      c1 = ifile1.get();
+      c2 = ifile2.get();
+      }
+
+    ifile1.close();
+    ifile2.close();
 
     return EXIT_SUCCESS;
 }
