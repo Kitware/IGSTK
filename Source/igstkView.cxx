@@ -29,6 +29,10 @@
 #include "itksys/SystemTools.hxx"
 #include "vtkViewport.h"
 
+#if defined(__APPLE__) && defined(VTK_USE_CARBON)
+#include "vtkCarbonRenderWindow.h"
+#endif
+
 namespace igstk
 {
 
@@ -715,7 +719,12 @@ void View::draw(void)
     // see Fl_Gl_Window::show()
     this->make_current();
 
+#if defined(__APPLE__) && defined(VTK_USE_CARBON)
+    // FLTK 1.x does not support HiView
+    ((vtkCarbonRenderWindow *)m_RenderWindow)->SetRootWindow( fl_xid( this ) );
+#else
     m_RenderWindow->SetWindowId( (void *)fl_xid( this ) );
+#endif
 #if !defined(WIN32) && !defined(__APPLE__)
     m_RenderWindow->SetDisplayId( fl_display );
 #endif
