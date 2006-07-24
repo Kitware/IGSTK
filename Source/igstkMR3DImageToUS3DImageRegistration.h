@@ -48,6 +48,11 @@ namespace igstk
  * between the two images is a mean square.  The optimizer used in this class
  * is a regular step gradient descent optimizer.
  *
+ * \image html  igstkMR3DImageToUS3DImageRegistration.png
+ *             "MR to UltraSound Image Registration State Machine Diagram"
+ * \image latex igstkMR3DImageToUS3DImageRegistration.eps
+ *             "MR to UltraSound Image Registration State Machine Diagram"
+ *
  * \ingroup Registration
  */
 class MR3DImageToUS3DImageRegistration : public Object

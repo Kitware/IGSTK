@@ -34,6 +34,15 @@ namespace igstk
  * Boolean operators are also used on the implicit functions to obtain
  * a nice looking shape.
  *
+ * \image html  igstkUltrasoundProbeObjectRepresentation.png
+ *             "UltraSound Proble Object Representation State Diagram"
+ *
+ * \image latex igstkUltrasoundProbeObjectRepresentation.eps
+ *             "UltraSound Proble Object Representation State Diagram"
+ *
+
+ *
+ *
  * \ingroup ObjectRepresentation
  */
 

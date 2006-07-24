@@ -27,6 +27,12 @@ namespace igstk
 /** \class CTImageSpatialObjectRepresentation
  *  \brief This class implements a spatial object representation for CT images.
  *
+ * \image html  igstkCTImageSpatialObjectRepresentation.png
+ *             "CT Image Spatial Object Representation State Diagram"
+ *
+ * \image latex igstkCTImageSpatialObjectRepresentation.eps
+ *             "CT Image Spatial Object Representation State Diagram"
+ 
  * \ingroup Spatial object representation
  */
 

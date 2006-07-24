@@ -37,6 +37,12 @@ namespace igstk
  * the spatial object data for use in an ITK pipeline. This class is templated
  * over the dimension of the object to read
  *
+ * \image html  igstkSpatialObjectReader.png 
+ *              "Spatial Object Reader State Machine Diagram"
+ *
+ * \image latex igstkSpatialObjectReader.eps 
+ *              "Spatial Object Reader State Machine Diagram"
+ 
  * \ingroup Readers
  */
 
