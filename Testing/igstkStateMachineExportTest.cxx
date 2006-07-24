@@ -31,6 +31,7 @@
 #include "igstkObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkEllipsoidObjectRepresentation.h"
+#include "igstkUltrasoundProbeObjectRepresentation.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
 #include "igstkPulseGenerator.h"
@@ -63,6 +64,7 @@
 #include "igstkToolCalibration.h"
 #include "igstkToolCalibrationReader.h"
 #include "igstkRealTimeClock.h"
+#include "igstkMR3DImageToUS3DImageRegistration.h"
 
 #if IGSTK_USE_FLTK
 #include "igstkView2D.h"
@@ -227,6 +229,7 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::ConeObjectRepresentation, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::MeshObjectRepresentation, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::TubeObjectRepresentation, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::UltrasoundProbeObjectRepresentation, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::EllipsoidObject, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::CylinderObject, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::PulseGenerator, outputDirectory, skipLoops );
@@ -247,6 +250,7 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::PivotCalibration, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::ToolCalibration, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::PrincipalAxisCalibration, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::MR3DImageToUS3DImageRegistration, outputDirectory, skipLoops );
 
 
 #if IGSTK_USE_FLTK
