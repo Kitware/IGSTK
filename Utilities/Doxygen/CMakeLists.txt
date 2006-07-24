@@ -47,6 +47,8 @@ IF (BUILD_DOCUMENTATION)
     SET(DOT_PNG_DEPS ${DOT_PNG_DEPS} ${pngfile})
   ENDFOREACH(dotfile)
 
+  ADD_CUSTOM_TARGET(StateMachineDiagrams ALL DEPENDS ${DOT_PNG_DEPS})
+
   ADD_CUSTOM_TARGET(Documentation
     ${BASH}
     ${CMAKE_CURRENT_BINARY_DIR}/doc_makeall.sh
