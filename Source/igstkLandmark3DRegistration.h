@@ -40,6 +40,12 @@ namespace igstk
  * required. The class is basically a wrapper around the
  * itk::LandmarkBasedTransformInitializer.
  *
+ *  \image html igstkLandmark3DRegistration 
+ *              "3D Landmark Registration State Machine Diagrams"
+ *
+ *  \image latex igstkLandmark3DRegistration 
+ *              "3D Landmark Registration State Machine Diagrams"
+ *              
  *
  * \ingroup Registration 
  */

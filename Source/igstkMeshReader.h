@@ -60,6 +60,9 @@ public:
  * and a list of links between the nodes. The output of this reader is of type
  * MeshSpatialObject.
  *
+ * \image html  igstkMeshReader.png "Mesh Reader State Machine Diagram"
+ * \image latex igstkMeshReader.eps "Mesh Reader State Machine Diagram"
+ * 
  * \sa MeshObject
  *
  * \ingroup Readers

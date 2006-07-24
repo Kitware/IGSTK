@@ -70,9 +70,14 @@ itkEventMacro(DICOMImageReadingErrorEvent,
  * 
  * \brief This class reads DICOM files. 
  *
- * This class should not be instantiated directly, instead the derived classes
- * that are specific to particular image modalities should be used.
- * 
+ * This class should not be instantiated directly, instead the derived 
+ * classes that are specific to particular image modalities should be used.
+ *
+ * \image html  igstkDICOMImageReader.png  
+ *           "DICOM Image Reader State Machine Diagram" 
+ *
+ * \image latex igstkDICOMImageReader.eps  
+ *           "DICOM Image Reader State Machine Diagram" 
  * \ingroup Readers
  */
 template <class TImageSpatialObject>

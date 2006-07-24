@@ -44,6 +44,11 @@ namespace igstk
  * from the initial tracked tool's orientation, which is defined by
  * the principal axis and plane normal to the user specified orientation.
  *
+ * \image html  igstkPrincipalAxisCalibration.png
+ *              "Principal Axis Calibration State Machine Diagrams"
+ * \image latex igstkPrincipalAxisCalibration.eps
+ *              "Principal Axis Calibration State Machine Diagrams"
+ *
  * \ingroup Calibration
  */
 

@@ -35,8 +35,13 @@ namespace igstk
  * Default representation axis is X.  The cylindrical object is rendered in a
  * VTK scene using the vtkConeSource object.
  * 
+ * 
+ *  \image html  igstkConeObjectRepresentation.png 
+ *               "ConeObjectRepresentation State Machine Diagram"
+ *  \image latex igstkConeObjectRepresentation.eps 
+ *               "ConeObjectRepresentation State Machine Diagram"
  *
- * \ingroup ObjectRepresentation
+ *  \ingroup ObjectRepresentation
  */
 
 class ConeObjectRepresentation 

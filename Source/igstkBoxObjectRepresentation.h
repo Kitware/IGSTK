@@ -35,6 +35,10 @@ namespace igstk
  * Default representation axis is X.  The cylindrical object is rendered in a
  * VTK scene using the vtkCubeSource object.
  * 
+ * 
+ * \image html  igstkBoxObjectRepresentation.png  "State Machine Diagram"
+ * \image latex igstkBoxObjectRepresentation.eps  "State Machine Diagram" 
+ * 
  *
  * \ingroup ObjectRepresentation
  */

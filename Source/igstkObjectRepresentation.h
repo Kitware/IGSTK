@@ -45,6 +45,10 @@ class View;
  * will provide a VTK visualization of the Spatial Objects that are composing a
  * given scene.
  *
+ * \image html  igstkObjectRepresentation.png 
+ *                  "Object Representation State Machine Diagram"
+ * \image latex igstkObjectRepresentation.eps
+ *                  "Object Representation State Machine Diagram"
  *
  * \ingroup Object
  */

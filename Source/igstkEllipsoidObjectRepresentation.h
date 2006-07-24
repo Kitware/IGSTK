@@ -34,7 +34,8 @@ namespace igstk
  * ellipsoid.  The axes of the ellipsoid are orthogonal. The Ellipsoidal object
  * is rendered in a VTK scene using the vtkSuperquadricSource object.
  *
- *
+ * \image html  igstkEllipsoidObjectRepresentation.png "State Machine Diagram"
+ * \image latex igstkEllipsoidObjectRepresentation.eps "State Machine Diagram"
  * 
  * \ingroup ObjectRepresentation
  */

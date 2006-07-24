@@ -30,6 +30,11 @@ namespace igstk
  * 
  * \brief This class represents a Mesh object.
  *
+ * \image html igstkMeshObjectRepresentation.png 
+ *              "State Machine diagram for Mesh Object Representation"
+ * \image latex igstkMeshObjectRepresentation.eps
+ *              "State Machine diagram for Mesh Object Representation"
+ * 
  * \ingroup ObjectRepresentation
  */
 

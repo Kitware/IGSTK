@@ -174,6 +174,12 @@ protected:
  *  use an XML format and are specialiazed for particular calibration objects.
  *  This class defines the generic interface of a reader.
  *
+ * \image html igstkToolCalibrationReader.png 
+ *           "Tool Calibration Reader State Machine Diagram"
+ * 
+ * \image latex igstkToolCalibrationReader.eps
+ *           "Tool Calibration Reader State Machine Diagram" 
+ *
  * \ingroup Readers */
 template <class TCalibration>
 class ToolCalibrationReader : public Object

@@ -47,6 +47,15 @@ namespace igstk
  * on derived classes that are platform specific. This class is not intended
  * for being instantiated directly, instead, the derived classes should be
  * used.
+ * 
+ * \image html  igstkSerialCommunication.png 
+ *               "Serial Communication State Machine Diagram"
+ *
+ * \image latex igstkSerialCommunication.eps 
+ *               "Serial Communication State Machine Diagram"
+ * 
+ *
+ *
  *
  * \ingroup Communication
  */

@@ -38,7 +38,12 @@ namespace igstk
  * J.B West et al, "Fiducial Point Placement and the Accuracy of Point-based,
  * Rigid Body Registration", Neurosurgery, pp 810-816, Vol.48, No.4, 
  * April 2001.  
+ * 
+ * \image html  igstkLandmark3DRegistrationErrorEstimator.png
+ *             "Landmark Registration Error Estimator State Machine Diagram"
  *
+ * \image latex igstkLandmark3DRegistrationErrorEstimator.eps
+ *             "Landmark Registration Error Estimator State Machine Diagram"
  *
  * \ingroup Registration 
  */

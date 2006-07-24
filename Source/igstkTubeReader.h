@@ -69,6 +69,9 @@ public:
  * these structures are the result of a segmentation method applied on
  * pre-operative images.
  *
+ * \image html  igstkTubeReader.png "Tube Reader State Machine Diagram"
+ * \image latex igstkTubeReader.eps "Tube Reader State Machine Diagram"
+ *
  * \ingroup Readers
  */
 class TubeReader : public SpatialObjectReader<3>

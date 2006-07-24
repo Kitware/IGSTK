@@ -34,6 +34,10 @@ namespace igstk
  * X.  The cylindrical object is rendered in a VTK scene using the
  * vtkCylinderSource object.
  * 
+ * \image html  igstkCylinderObjectRepresentation.png 
+ *              "CylinderObjectRepresentation State Machine Diagram"
+ * \image latex igstkCylinderObjectRepresentation.eps 
+ *              "CylinderObjectRepresentation State Machine Diagram"
  *
  * \ingroup ObjectRepresentation
  */
