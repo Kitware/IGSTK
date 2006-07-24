@@ -40,6 +40,8 @@
 #include "igstkSpatialObjectReader.h"
 #include "igstkCTImageReader.h"
 #include "igstkMRImageReader.h"
+#include "igstkMeshReader.h"
+#include "igstkTubeReader.h"
 #include "igstkLandmark3DRegistration.h"
 #include "igstkLandmark3DRegistrationErrorEstimator.h"
 #include "igstkImageSpatialObject.h"
@@ -48,10 +50,18 @@
 #include "igstkDICOMImageReader.h"
 #include "igstkCTImageSpatialObject.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
+#include "igstkSerialCommunication.h"
 #include "igstkMRImageSpatialObject.h"
 #include "igstkMRImageSpatialObjectRepresentation.h"
+#include "igstkAxesObjectRepresentation.h"
+#include "igstkBoxObjectRepresentation.h"
+#include "igstkConeObjectRepresentation.h"
+#include "igstkTubeObjectRepresentation.h"
+#include "igstkMeshObjectRepresentation.h"
 #include "igstkPivotCalibration.h"
 #include "igstkPrincipalAxisCalibration.h"
+#include "igstkToolCalibration.h"
+#include "igstkToolCalibrationReader.h"
 #include "igstkRealTimeClock.h"
 
 #if IGSTK_USE_FLTK
@@ -162,6 +172,8 @@ namespace igstk
   typedef ImageSpatialObjectRepresentation< 
                             ImageSpatialObjectType >     ImageSpatialObjectRepresentationType;
   typedef SpatialObjectReader<3,float>                   SpatialObjectReaderType;
+  typedef ToolCalibration                                CalibrationType;
+  typedef ToolCalibrationReader< CalibrationType >       CalibrationReaderType;
 
   class ObjectRepresentationSurrogate : public ObjectRepresentation
   {
@@ -179,6 +191,7 @@ namespace igstk
   igstkDeclareSurrogateClass( SpatialObjectSurrogate, SpatialObject );
   igstkDeclareSurrogateClass( ImageSpatialObjectSurrogate, ImageSpatialObjectType );
   igstkDeclareSurrogateClass( DICOMImageReaderSurrogate, DICOMImageReaderType );
+  //igstkDeclareSurrogateClass( CalibrationReaderSurrogate, CalibrationReaderType );
 }
 
 
@@ -209,6 +222,11 @@ int main( int argc, char * argv [] )
   // This is for classes that use SmartPointers
   igstkTestExportStateMachine1( igstk::CylinderObjectRepresentation, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::EllipsoidObjectRepresentation, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::AxesObjectRepresentation, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::BoxObjectRepresentation, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::ConeObjectRepresentation, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::MeshObjectRepresentation, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::TubeObjectRepresentation, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::EllipsoidObject, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::CylinderObject, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::PulseGenerator, outputDirectory, skipLoops );
@@ -217,6 +235,8 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::Landmark3DRegistration, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::Landmark3DRegistrationErrorEstimator, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::CTImageReader, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::MeshReader, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::TubeReader, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::MRImageReader, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::MRImageSpatialObject, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::MRImageSpatialObjectRepresentation, outputDirectory, skipLoops );
@@ -225,6 +245,7 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::ImageSpatialObjectRepresentationType, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::SpatialObjectReaderType, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::PivotCalibration, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::ToolCalibration, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::PrincipalAxisCalibration, outputDirectory, skipLoops );
 
 
@@ -243,6 +264,7 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::ImageSpatialObjectSurrogate , outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::DICOMImageReaderSurrogate, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::ObjectRepresentationSurrogate, outputDirectory, skipLoops );
+//  igstkTestExportStateMachine1( igstk::CalibrationReaderSurrogate, outputDirectory, skipLoops );
 
 
   // Export the state diagrams for the Serial Communication classes according
