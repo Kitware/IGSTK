@@ -39,11 +39,9 @@ namespace igstk
  * Rigid Body Registration", Neurosurgery, pp 810-816, Vol.48, No.4, 
  * April 2001.  
  * 
- * \image html  igstkLandmark3DRegistrationErrorEstimator.png
- *             "Landmark Registration Error Estimator State Machine Diagram"
+ *\image html igstkLandmark3DRegistrationErrorEstimator.png "State Machine"
  *
- * \image latex igstkLandmark3DRegistrationErrorEstimator.eps
- *             "Landmark Registration Error Estimator State Machine Diagram"
+ *\image latex igstkLandmark3DRegistrationErrorEstimator.eps "State Machine"
  *
  * \ingroup Registration 
  */

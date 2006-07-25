@@ -32,18 +32,16 @@ namespace igstk
 
 /** \class ImageSpatialObjectRepresentation
  * 
- * \brief This class represents an image object. The parameters of the object
+ *\brief This class represents an image object. The parameters of the object
  * are ... The image object is rendered in a VTK scene using the
  * ... object.
  * 
- * \image html  igstkImageSpatialObjectRepresentation.png 
- *             "ImageSpatialObject Representation State Machine Diagram"
+ *\image html  igstkImageSpatialObjectRepresentation.png "State Machine Diagram" 
  *
- * \image latex igstkImageSpatialObjectRepresentation.eps 
- *             "ImageSpatialObject Representation State Machine Diagram"
+ *\image latex igstkImageSpatialObjectRepresentation.eps "State Machine Diagram"
  *
  * 
- * \ingroup ObjectRepresentation
+ *\ingroup ObjectRepresentation
  */
 
 template < class TImageSpatialObject >

@@ -36,10 +36,9 @@ namespace igstk
  * VTK scene using the vtkConeSource object.
  * 
  * 
- *  \image html  igstkConeObjectRepresentation.png 
- *               "ConeObjectRepresentation State Machine Diagram"
+ *  \image html  igstkConeObjectRepresentation.png "State Machine Diagram" 
+ *
  *  \image latex igstkConeObjectRepresentation.eps 
- *               "ConeObjectRepresentation State Machine Diagram"
  *
  *  \ingroup ObjectRepresentation
  */
