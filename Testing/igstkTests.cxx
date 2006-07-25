@@ -33,6 +33,7 @@ void RegisterTests()
   REGISTER_TEST(igstkFlockOfBirdsCommandInterpreterTest);
   REGISTER_TEST(igstkFlockOfBirdsCommandInterpreterFBBTest);
   REGISTER_TEST(igstkFlockOfBirdsTrackerTest);
+  REGISTER_TEST(igstkToolCalibrationReaderTest);
   REGISTER_TEST(igstkPivotCalibrationReaderTest);
   REGISTER_TEST(igstkMR3DImageToUS3DImageRegistrationTest);
   REGISTER_TEST(igstkUltrasoundImageSimulatorTest);

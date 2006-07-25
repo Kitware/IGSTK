@@ -83,6 +83,12 @@ IF (IGSTK_DATA_ROOT)
   ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest 
        ${IGSTK_DATA_ROOT}/Input/USLiver)
 
+  ADD_TEST( igstkToolCalibrationReaderTest ${IGSTK_TESTS} 
+             igstkToolCalibrationReaderTest
+             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
+             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
+             )
+
   ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTK_TESTS} 
              igstkPivotCalibrationReaderTest
              ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
@@ -301,6 +307,7 @@ IF(IGSTK_DATA_ROOT)
   SET(BasicTests_SRCS
     ${BasicTests_SRCS}
     igstkUSImageReaderTest.cxx 
+    igstkToolCalibrationReaderTest.cxx 
     igstkPivotCalibrationReaderTest.cxx 
     igstkMR3DImageToUS3DImageRegistrationTest.cxx 
     igstkUltrasoundImageSimulatorTest.cxx
