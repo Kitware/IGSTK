@@ -572,7 +572,7 @@ ToolCalibrationReader<TCalibration>
   igstkLogMacro( DEBUG, "igstk::ToolCalibrationReader::\
                       RetrieveParametersFromFile called...\n");
   
-  return false;
+  return true;
 }
 
 
