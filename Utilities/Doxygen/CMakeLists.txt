@@ -34,14 +34,12 @@ IF (BUILD_DOCUMENTATION)
     DEPENDS ${DOT_PNG_DEPS} ${DOT_PNG_DOXYGEN_DEPS})
 
   FILE(GLOB STATE_MACHINE_DOT_FILES "${IGSTK_BINARY_DIR}/Testing/Temporary/StateMachineDiagrams/*.dot")
-  SET(pngdestinationdir ${IGSTK_BINARY_DIR}/Utilities/Doxygen/doc/html)
 
   FOREACH(dotfile ${STATE_MACHINE_DOT_FILES})
     GET_FILENAME_COMPONENT(Imagebase ${dotfile} NAME)
     GET_FILENAME_COMPONENT(ImageBase ${Imagebase} NAME_WE)
     GET_FILENAME_COMPONENT(ImagePath ${dotfile} PATH)
     SET(pngfile ${ImagePath}/${ImageBase}.png)
-    SET(pngdestinationfile ${pngdestinationdir}/${ImageBase}.png)
     ADD_CUSTOM_COMMAND( 
     SOURCE    ${dotfile}
     COMMAND   ${DOT}
@@ -52,21 +50,12 @@ IF (BUILD_DOCUMENTATION)
     OUTPUTS   ${pngfile}
     )
     SET(DOT_PNG_DEPS ${DOT_PNG_DEPS} ${pngfile})
-    ADD_CUSTOM_COMMAND(
-    SOURCE ${pngfile}
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy ${pngfile} ${pngdestinationdir}
-    TARGET StateMachineDiagramsForDoxygen
-    OUTPUTS  ${pngdestinationfile}
-    )
-    SET(DOT_PNG_DOXYGEN_DEPS ${DOT_PNG_DOXYGEN_DEPS} ${pngdestinationfile})
   ENDFOREACH(dotfile)
 
   ADD_CUSTOM_TARGET(StateMachineDiagrams ALL DEPENDS ${DOT_PNG_DEPS})
-  ADD_CUSTOM_TARGET(StateMachineDiagramsForDoxygen ALL DEPENDS ${DOT_PNG_DOXYGEN_DEPS})
   ADD_CUSTOM_TARGET(Documentation ALL)
 
-  ADD_DEPENDENCIES(StateMachineDiagramsForDoxygen StateMachineDiagrams DoxygenDocumentation)
-  ADD_DEPENDENCIES(Documentation StateMachineDiagramsForDoxygen)
+  ADD_DEPENDENCIES(StateMachineDiagrams DoxygenDocumentation)
+  ADD_DEPENDENCIES(Documentation StateMachineDiagrams)
 
 ENDIF (BUILD_DOCUMENTATION)
