@@ -122,6 +122,7 @@ SET(IGSTKTests_SRCS
   igstkUSImageObjectTest.cxx
   igstkUSImageObjectRepresentationTest.cxx
   igstkToolCalibrationTest.cxx
+  igstkToolCalibrationReaderTest.cxx
   igstkAxesObjectTest.cxx
   igstkBoxObjectTest.cxx
   igstkConeObjectTest.cxx
