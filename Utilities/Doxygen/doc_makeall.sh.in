@@ -73,6 +73,7 @@ export REL_PATH_TO_TOP=.
 #
 export DOXTEMP="@IGSTK_BINARY_DIR@/Utilities/Doxygen"
 export INTERMEDIATE_DOX_DIR="$DOXTEMP/dox"
+export ADDITIONALIMAGESDIR="@IGSTK_BINARY_DIR@/Testing/Temporary/StateMachineDiagrams"
 
 # DOXYFILE:
 # Path to the Doxygen configuration file (i.e. doxyfile).
@@ -175,6 +176,14 @@ if test "x$DOXYGEN_PROG" != "xNOTFOUND" ; then
 
     # yes, a second time, to get the contrib, I don't know why
     "$DOXYGEN_PROG" "$DOXYFILE"
+fi
+
+# ----------------------------------------------------------------------------
+# Move the additional PNG files representing StateMachine diagrams from
+# the testing directories into the doxygen directory.
+
+if test "x$MV_PROG" != "xNOTFOUND" ; then
+    $MV_PROG $ADDITIONALIMAGESDIR/*.png "$OUTPUT_DIRECTORY/html"
 fi
 
 # ----------------------------------------------------------------------------
