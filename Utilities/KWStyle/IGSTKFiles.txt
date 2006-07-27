@@ -1,0 +1,3 @@
+/projects/KWStyle/IGSTK/Examples [R]
+/projects/KWStyle/IGSTK/Source
+/projects/KWStyle/IGSTK/Testing
