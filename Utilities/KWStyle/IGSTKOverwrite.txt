@@ -1,0 +1,7 @@
+igstkMacros.h Indent Disable
+igstkNDICommandInterpreter.h Indent Disable
+igstkDICOMImageReaderTest.cxx Namespace Disable
+igstkUSImageObjectRepresentationTest.cxx Namespace Disable
+igstkVascularNetworkReaderTest.cxx Namespace Disable
+igstkViewRefreshRateTest.cxx Namespace Disable
+igstkViewTest.cxx Namespace Disable
