@@ -5,3 +5,6 @@ igstkUSImageObjectRepresentationTest.cxx Namespace Disable
 igstkVascularNetworkReaderTest.cxx Namespace Disable
 igstkViewRefreshRateTest.cxx Namespace Disable
 igstkViewTest.cxx Namespace Disable
+igstkTubeReaderTest.cxx Namespace Disable
+igstkSystemInformation.h.in IfNDefDefine Disable
+igstkSystemInformation.cxx Operator Disable 
