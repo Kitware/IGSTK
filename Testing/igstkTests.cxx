@@ -72,7 +72,7 @@ void RegisterTests()
   REGISTER_TEST(igstkTransformTest);  
   REGISTER_TEST(igstkVTKLoggerOutputTest);
 
-// Tests depend on device 
+  // Tests depend on device 
 #ifdef IGSTK_TEST_AURORA_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
 #elif defined IGSTK_TEST_POLARIS_ATTACHED 
@@ -87,7 +87,7 @@ void RegisterTests()
   REGISTER_TEST(igstkPolarisTrackerTest);
 #endif
 
-// Tests depend on data
+  // Tests depend on data
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAuroraTrackerSimulatedTest);
   REGISTER_TEST(igstkCTImageReaderTest);
@@ -104,7 +104,7 @@ void RegisterTests()
   REGISTER_TEST(igstkTubeReaderTest);
 #endif
 
-// Tests depend on FLTK
+  // Tests depend on FLTK
 #ifdef IGSTK_USE_FLTK
   REGISTER_TEST(igstkCylinderObjectTest);
   REGISTER_TEST(igstkEllipsoidObjectTest);
@@ -118,13 +118,13 @@ void RegisterTests()
   REGISTER_TEST(igstkViewRefreshRateTest);
   REGISTER_TEST(igstkUltrasoundProbeObjectTest);
 
-  #ifdef IGSTK_DATA_ROOT
-    REGISTER_TEST(igstkImageSpatialObjectRepresentationTest2);
-    REGISTER_TEST(igstkImageSpatialObjectRepresentationTest3);
-    REGISTER_TEST(igstkVascularNetworkReaderTest);
-    REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
-    REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
-  #endif 
+#ifdef IGSTK_DATA_ROOT
+  REGISTER_TEST(igstkImageSpatialObjectRepresentationTest2);
+  REGISTER_TEST(igstkImageSpatialObjectRepresentationTest3);
+  REGISTER_TEST(igstkVascularNetworkReaderTest);
+  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
+  REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
+#endif 
   
 #endif
   

@@ -40,7 +40,7 @@ int igstkToolCalibrationTest( int, char * [] )
 
   // Logger object created for logging calibration computation
   LoggerType::Pointer                       logger = LoggerType::New();
-  LogOutputType::Pointer                    logOutput = LogOutputType::New();  
+  LogOutputType::Pointer                    logOutput = LogOutputType::New();
 
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );

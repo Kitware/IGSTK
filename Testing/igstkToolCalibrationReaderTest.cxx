@@ -41,7 +41,8 @@ int igstkToolCalibrationReaderTest( int argc, char * argv[] )
 
   typedef itk::Logger                       LoggerType; 
   typedef itk::StdStreamLogOutput           LogOutputType;
-  typedef igstk::ToolCalibrationReader< igstk::PivotCalibration > ToolCalibrationReaderType;
+  typedef igstk::ToolCalibrationReader< igstk::PivotCalibration > 
+                                            ToolCalibrationReaderType;
 
   // Logger object created for logging calibration computation
   LoggerType::Pointer                       logger = LoggerType::New();

@@ -28,32 +28,40 @@ int main(int,char *[])
   // ITK
   // 
   std::cout << std::endl;
-  std::cout << "--------------------------------------------------------" << std::endl;
-  std::cout << "ITK Version    = " << itk::Version::GetITKVersion()       << std::endl;
-  std::cout << "Major Version  = " << itk::Version::GetITKMajorVersion()  << std::endl;
-  std::cout << "Minor Version  = " << itk::Version::GetITKMinorVersion()  << std::endl;
-  std::cout << "Patch Version  = " << itk::Version::GetITKBuildVersion()  << std::endl;
-  std::cout << "Source Version = " << itk::Version::GetITKSourceVersion() << std::endl;
+  std::cout << "-----------------------------------------------" << std::endl;
+  std::cout << "ITK Version    = " 
+            << itk::Version::GetITKVersion()       << std::endl;
+  std::cout << "Major Version  = " 
+            << itk::Version::GetITKMajorVersion()  << std::endl;
+  std::cout << "Minor Version  = " 
+            << itk::Version::GetITKMinorVersion()  << std::endl;
+  std::cout << "Patch Version  = " 
+            << itk::Version::GetITKBuildVersion()  << std::endl;
+  std::cout << "Source Version = " 
+            << itk::Version::GetITKSourceVersion() << std::endl;
   //
   // VTK
   // 
-  std::cout << "--------------------------------------------------------" << std::endl;
-  std::cout << "VTK Version    = " << vtkVersion::GetVTKVersion()       << std::endl;
-  std::cout << "Major Version  = " << vtkVersion::GetVTKMajorVersion()  << std::endl;
-  std::cout << "Minor Version  = " << vtkVersion::GetVTKMinorVersion()  << std::endl;
-  std::cout << "Patch Version  = " << vtkVersion::GetVTKBuildVersion()  << std::endl;
-  std::cout << "Source Version = " << vtkVersion::GetVTKSourceVersion() << std::endl;
+  std::cout << "-----------------------------------------------" << std::endl;
+  std::cout << "VTK Version    = " 
+            << vtkVersion::GetVTKVersion()       << std::endl;
+  std::cout << "Major Version  = " 
+            << vtkVersion::GetVTKMajorVersion()  << std::endl;
+  std::cout << "Minor Version  = " 
+            << vtkVersion::GetVTKMinorVersion()  << std::endl;
+  std::cout << "Patch Version  = " 
+            << vtkVersion::GetVTKBuildVersion()  << std::endl;
+  std::cout << "Source Version = " 
+            << vtkVersion::GetVTKSourceVersion() << std::endl;
   std::cout << std::endl;
   //
   // FLTK
   // 
-  std::cout << "--------------------------------------------------------" << std::endl;
+  std::cout << "-----------------------------------------------" << std::endl;
   std::cout << "FLTK Version    = " << Fl::version() << std::endl;
-  std::cout << "--------------------------------------------------------" << std::endl;
+  std::cout << "-----------------------------------------------" << std::endl;
   std::cout << std::endl;
 
   return 0;
 
 }
-
-

@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters 
+// in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -59,25 +60,35 @@ int igstkVTKLoggerOutputTest( int, char * [] )
 
     // Printing the logger's member variables
     std::cout << "  Name: " << logger->GetName() << std::endl;
-    std::cout << "  Priority Level: " << logger->GetPriorityLevel() << std::endl;
-    std::cout << "  Level For Flushing: " << logger->GetLevelForFlushing() << std::endl;
+    std::cout << "  Priority Level: " << logger->GetPriorityLevel() 
+              << std::endl;
+    std::cout << "  Level For Flushing: " << logger->GetLevelForFlushing()
+              << std::endl;
 
     // Create an igstk::VTKLoggerOutput and then test it.
     igstk::VTKLoggerOutput::Pointer pOver = igstk::VTKLoggerOutput::New();
     std::cout << pOver->GetNameOfClass() << std::endl;
     pOver->OverrideVTKWindow();
-    pOver->SetLogger(logger);  // redirect messages from ITK OutputWindow -> logger2
+    pOver->SetLogger(logger);  // redirect messages from 
+                               // ITK OutputWindow -> logger2
 
     // test message for ITK OutputWindow
-    vtkOutputWindow::GetInstance()->DisplayText("** This is from vtkOutputWindow **\n");
-    vtkOutputWindow::GetInstance()->DisplayDebugText("** This is from vtkOutputWindow **\n");
-    vtkOutputWindow::GetInstance()->DisplayWarningText("** This is from vtkOutputWindow **\n");
-    vtkOutputWindow::GetInstance()->DisplayErrorText("** This is from vtkOutputWindow **\n");
-    vtkOutputWindow::GetInstance()->DisplayGenericWarningText("** This is from vtkOutputWindow **\n");
+    vtkOutputWindow::GetInstance()->DisplayText(
+                                      "** This is from vtkOutputWindow **\n");
+    vtkOutputWindow::GetInstance()->DisplayDebugText(
+                                      "** This is from vtkOutputWindow **\n");
+    vtkOutputWindow::GetInstance()->DisplayWarningText(
+                                      "** This is from vtkOutputWindow **\n");
+    vtkOutputWindow::GetInstance()->DisplayErrorText(
+                                      "** This is from vtkOutputWindow **\n");
+    vtkOutputWindow::GetInstance()->DisplayGenericWarningText(
+                                      "** This is from vtkOutputWindow **\n");
 
     // test the print out of the number of errors and warnings
-    std::cout << "Number of Error Messages   = " << pOver->GetNumberOfErrorMessages()   << std::endl;
-    std::cout << "Number of Warning Messages = " << pOver->GetNumberOfWarningMessages() << std::endl;
+    std::cout << "Number of Error Messages   = " 
+              << pOver->GetNumberOfErrorMessages()   << std::endl;
+    std::cout << "Number of Warning Messages = " 
+              << pOver->GetNumberOfWarningMessages() << std::endl;
 
     std::cout << *pOver << std::endl;
     }
@@ -90,5 +101,3 @@ int igstkVTKLoggerOutputTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
   return EXIT_SUCCESS;
 }
-
-

@@ -217,21 +217,22 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   meshObject->AddTetrahedronCell(0,0,1,2,3);
   meshObject->AddTriangleCell(1,0,1,2);
    
-  if( argc > 1 )
+  //if( argc > 1 )
     {
     typedef igstk::MeshReader    ReaderType;
 
     ReaderType::Pointer  reader = ReaderType::New();
 
-    std::string filename = argv[1];
+    //std::string filename = argv[1];
+    std::string filename = "C:/Julien/Workspace/IGSTK/Testing/Data/Input/tetrahedraCells.msh";
     reader->RequestSetFileName( filename );
     reader->RequestReadObject();
     MeshRepresentation->RequestSetMeshObject( reader->GetOutput() );
     }
-  else
+  /*else
     {
     MeshRepresentation->RequestSetMeshObject( meshObject );
-    }
+    }*/
 
 
   // Test Property

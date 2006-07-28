@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -27,36 +28,32 @@
 
 int igstkTrackerPortTest( int, char * [] )
 {
+  igstk::RealTimeClock::Initialize();
 
-    igstk::RealTimeClock::Initialize();
-
-    typedef igstk::TrackerTool  TrackerToolType;
-    typedef igstk::TrackerPort  TrackerPortType;
+  typedef igstk::TrackerTool  TrackerToolType;
+  typedef igstk::TrackerPort  TrackerPortType;
     
-    TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+  TrackerPortType::Pointer trackerPort = TrackerPortType::New();
 
-    TrackerPortType::Pointer trackerPort = TrackerPortType::New();
+  trackerPort->ClearTools();
 
-    trackerPort->ClearTools();
+  trackerPort->AddTool( trackerTool );
 
-    trackerPort->AddTool( trackerTool );
+  const unsigned int nt = trackerPort->GetNumberOfTools();
+  std::cout << "Number of tools = " << nt << std::endl;
 
-    const unsigned int nt = trackerPort->GetNumberOfTools();
-    std::cout << "Number of tools = " << nt << std::endl;
-
-    TrackerToolType::Pointer trackerTool2 = trackerPort->GetTool(0);
+  TrackerToolType::Pointer trackerTool2 = trackerPort->GetTool(0);
     
-    std::cout << "Tracker Tool : " << trackerTool2 << std::endl;
+  std::cout << "Tracker Tool : " << trackerTool2 << std::endl;
 
-    // Exercise the const methods for GetTool()
-    TrackerPortType::ConstPointer trackerPort2 = trackerPort.GetPointer();
-    TrackerToolType::ConstPointer trackerTool3 = trackerPort2->GetTool(0);
+  // Exercise the const methods for GetTool()
+  TrackerPortType::ConstPointer trackerPort2 = trackerPort.GetPointer();
+  TrackerToolType::ConstPointer trackerTool3 = trackerPort2->GetTool(0);
 
-    std::cout << trackerPort << std::endl;
+  std::cout << trackerPort << std::endl;
 
-    trackerPort->ClearTools();
+  trackerPort->ClearTools();
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
-
-
