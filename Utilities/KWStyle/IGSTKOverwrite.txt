@@ -1,0 +1,2 @@
+igstkSystemInformation.h.in IfNDefDefine Disable
+igstkSystemInformation.cxx Operator Disable
