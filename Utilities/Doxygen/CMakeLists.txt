@@ -28,11 +28,6 @@ IF (BUILD_DOCUMENTATION)
     ${CMAKE_CURRENT_SOURCE_DIR}/doc_makeall.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/doc_makeall.sh)
 
-  ADD_CUSTOM_TARGET(DoxygenDocumentation
-    ${BASH}
-    ${CMAKE_CURRENT_BINARY_DIR}/doc_makeall.sh
-    DEPENDS ${DOT_PNG_DEPS} ${DOT_PNG_DOXYGEN_DEPS})
-
   FILE(GLOB STATE_MACHINE_DOT_FILES "${IGSTK_BINARY_DIR}/Testing/Temporary/StateMachineDiagrams/*.dot")
 
   FOREACH(dotfile ${STATE_MACHINE_DOT_FILES})
@@ -40,6 +35,7 @@ IF (BUILD_DOCUMENTATION)
     GET_FILENAME_COMPONENT(ImageBase ${Imagebase} NAME_WE)
     GET_FILENAME_COMPONENT(ImagePath ${dotfile} PATH)
     SET(pngfile ${ImagePath}/${ImageBase}.png)
+
     ADD_CUSTOM_COMMAND( 
     SOURCE    ${dotfile}
     COMMAND   ${DOT}
@@ -53,9 +49,12 @@ IF (BUILD_DOCUMENTATION)
   ENDFOREACH(dotfile)
 
   ADD_CUSTOM_TARGET(StateMachineDiagrams ALL DEPENDS ${DOT_PNG_DEPS})
-  ADD_CUSTOM_TARGET(Documentation ALL)
+  
+  ADD_CUSTOM_TARGET(Documentation
+    ${BASH}
+    ${CMAKE_CURRENT_BINARY_DIR}/doc_makeall.sh
+    DEPENDS ${DOT_PNG_DEPS}) 
 
-  ADD_DEPENDENCIES(StateMachineDiagrams DoxygenDocumentation)
   ADD_DEPENDENCIES(Documentation StateMachineDiagrams)
 
 ENDIF (BUILD_DOCUMENTATION)

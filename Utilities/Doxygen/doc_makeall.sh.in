@@ -183,7 +183,10 @@ fi
 # the testing directories into the doxygen directory.
 
 if test "x$MV_PROG" != "xNOTFOUND" ; then
-    $MV_PROG "${ADDITIONALIMAGESDIR}/*.png" "$OUTPUT_DIRECTORY/html"
+    for pngfile in `ls $ADDITIONALIMAGESDIR/*.png`
+    do
+     $MV_PROG $pngfile "$OUTPUT_DIRECTORY/html"
+    done
 fi
 
 
