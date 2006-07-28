@@ -183,8 +183,9 @@ fi
 # the testing directories into the doxygen directory.
 
 if test "x$MV_PROG" != "xNOTFOUND" ; then
-    $MV_PROG $ADDITIONALIMAGESDIR/*.png "$OUTPUT_DIRECTORY/html"
+    $MV_PROG "${ADDITIONALIMAGESDIR}/*.png" "$OUTPUT_DIRECTORY/html"
 fi
+
 
 # ----------------------------------------------------------------------------
 # Clean the HTML pages to remove the path to the intermediate Doxygen dir.
