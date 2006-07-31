@@ -54,4 +54,3 @@ int igstkMRImageSpatialObjectRepresentationTest( int , char* [] )
 
   return EXIT_SUCCESS;
 }
-

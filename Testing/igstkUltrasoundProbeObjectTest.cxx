@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -34,39 +35,40 @@ namespace igstk
 
 namespace UltrasoundProbeObjectTest
 {
-  class ViewObserver : public ::itk::Command 
-  {
-  public:
-    typedef  ViewObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    ViewObserver() 
-      {
-      m_PulseCounter = 0;
-      m_NumberOfPulsesToStop = 100;
-      m_Form = 0;
-      m_View = 0;
-      }
-  public:
 
-    void SetForm( Fl_Window * form )
-      {
-      m_Form = form;
-      }
+class ViewObserver : public ::itk::Command 
+{
+public:
+  typedef  ViewObserver               Self;
+  typedef  ::itk::Command             Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
+protected:
+  ViewObserver() 
+    {
+    m_PulseCounter = 0;
+    m_NumberOfPulsesToStop = 100;
+    m_Form = 0;
+    m_View = 0;
+    }
+public:
 
-    void SetEndFlag( bool * end )
-      {
-      m_End = end;
-      }
+  void SetForm( Fl_Window * form )
+    {
+    m_Form = form;
+    }
 
-    void Execute(const itk::Object *caller, const itk::EventObject & event)
-      {
-      std::cerr << "Execute( const * ) should not be called" << std::endl;         
-      }
+  void SetEndFlag( bool * end )
+    {
+    m_End = end;
+    }
 
-    void SetView( ::igstk::View * view )
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    std::cerr << "Execute( const * ) should not be called" << std::endl;
+    }
+
+  void SetView( ::igstk::View * view )
     {
     m_View = view;
     if( m_View )
@@ -75,102 +77,100 @@ namespace UltrasoundProbeObjectTest
       }
     }
 
-    void SetNumberOfPulsesToStop( unsigned long number )
-      {
-      m_NumberOfPulsesToStop = number;
-      }
+  void SetNumberOfPulsesToStop( unsigned long number )
+    {
+    m_NumberOfPulsesToStop = number;
+    }
 
-    void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    if( ::igstk::RefreshEvent().CheckEvent( &event ) )
       {
-      if( ::igstk::RefreshEvent().CheckEvent( &event ) )
+      m_PulseCounter++;
+
+      if( m_PulseCounter > m_NumberOfPulsesToStop )
         {
-        m_PulseCounter++;
-
-        if( m_PulseCounter > m_NumberOfPulsesToStop )
+        if( m_View )
           {
-          if( m_View )
-            {
-            m_View->RequestStop();
-            } 
-          else
-            {
-            std::cerr << "View pointer is NULL " << std::endl;
-            }
-          *m_End = true;
-          return;
+          m_View->RequestStop();
+          } 
+        else
+          {
+          std::cerr << "View pointer is NULL " << std::endl;
           }
+        *m_End = true;
+        return;
         }
       }
-  private:
-    unsigned long       m_PulseCounter;
-    unsigned long       m_NumberOfPulsesToStop;
-    Fl_Window          *m_Form;
-    ::igstk::View      *m_View;
-    bool *              m_End;
-  };
+    }
+private:
+  unsigned long       m_PulseCounter;
+  unsigned long       m_NumberOfPulsesToStop;
+  Fl_Window          *m_Form;
+  ::igstk::View      *m_View;
+  bool *              m_End;
+};
 
-  class TransformObserver : public ::itk::Command 
-  {
-  public:
-    typedef  TransformObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    TransformObserver() 
-      {
-      m_GotTransform = false;
-      }
-    ~TransformObserver() {}
-  public:
+class TransformObserver : public ::itk::Command 
+{
+public:
+  typedef  TransformObserver          Self;
+  typedef  ::itk::Command             Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
+
+protected:
+  TransformObserver() 
+    {
+    m_GotTransform = false;
+    }
+  ~TransformObserver() {}
+public:
     
-      typedef ::igstk::TransformModifiedEvent  EventType;
+  typedef ::igstk::TransformModifiedEvent  EventType;
         
-      void Execute(itk::Object *caller, const itk::EventObject & event)
-        {
-        const itk::Object * constCaller = caller;
-        this->Execute( constCaller, event );
-        }
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    const itk::Object * constCaller = caller;
+    this->Execute( constCaller, event );
+    }
 
-      void Execute(const itk::Object *caller, const itk::EventObject & event)
-        {
-        m_GotTransform = false;
-        if( EventType().CheckEvent( &event ) )
-          {
-          const EventType * transformEvent = 
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    m_GotTransform = false;
+    if( EventType().CheckEvent( &event ) )
+      {
+      const EventType * transformEvent = 
                     dynamic_cast< const EventType *>( &event );
-          if( transformEvent )
-            {
-            m_Transform = transformEvent->Get();
-            m_GotTransform = true;
-            }
-          }
-        }
-
-      bool GotTransform() const
+      if( transformEvent )
         {
-        return m_GotTransform;
+        m_Transform = transformEvent->Get();
+        m_GotTransform = true;
         }
+      }
+    }
 
-      const ::igstk::Transform & GetTransform() const
-        {
-        return m_Transform;
-        }
+  bool GotTransform() const
+    {
+    return m_GotTransform;
+    }
+
+  const ::igstk::Transform & GetTransform() const
+    {
+    return m_Transform;
+    }
         
-  private:
+private:
 
-    ::igstk::Transform  m_Transform;
+  ::igstk::Transform  m_Transform;
+  bool m_GotTransform;
 
-    bool m_GotTransform;
-
-  };
+};
 
 
 } // end of UltrasoundProbeObjectTest namespace
 
 } // end of igstk namespace
-
-
 
 int igstkUltrasoundProbeObjectTest( int, char * [] )
 {
@@ -188,12 +188,14 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer 
+                              vtkLoggerOutput = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);
 
   typedef igstk::UltrasoundProbeObjectRepresentation  ObjectRepresentationType;
-  ObjectRepresentationType::Pointer UltrasoundProbeRepresentation = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer UltrasoundProbeRepresentation 
+                                            = ObjectRepresentationType::New();
   UltrasoundProbeRepresentation->SetLogger( logger );
 
   typedef igstk::UltrasoundProbeObject  ObjectType;
@@ -227,7 +229,8 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
   // Testing PrintSelf()
-  UltrasoundProbeRepresentation->RequestSetUltrasoundProbeObject(UltrasoundProbeObject);
+  UltrasoundProbeRepresentation->RequestSetUltrasoundProbeObject(
+                                                       UltrasoundProbeObject);
   UltrasoundProbeRepresentation->Print(std::cout);
   UltrasoundProbeObject->Print(std::cout);
   UltrasoundProbeObject->GetNameOfClass();
@@ -276,16 +279,19 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
 
   typedef ::igstk::UltrasoundProbeObjectTest::TransformObserver  TransformObserverType;
 
-  TransformObserverType::Pointer transformObserver = TransformObserverType::New();
+  TransformObserverType::Pointer 
+                             transformObserver = TransformObserverType::New();
 
-  UltrasoundProbeObject->AddObserver( ::igstk::TransformModifiedEvent(), transformObserver );
+  UltrasoundProbeObject->AddObserver( ::igstk::TransformModifiedEvent(),
+                                                          transformObserver );
   
   UltrasoundProbeObject->RequestSetTransform( transform );
   UltrasoundProbeObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
     {
-    std::cerr << "The UltrasoundProbeObject did not returned a Transform event" << std::endl;
+    std::cerr << "The UltrasoundProbeObject did not returned \
+                 a Transform event" << std::endl;
     return EXIT_FAILURE;
     }
       
@@ -296,7 +302,8 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
     {
     if( fabs( translation2[i]  - translation[i] ) > tolerance )
       {
-      std::cerr << "Translation component is out of range [FAILED]" << std::endl;
+      std::cerr << "Translation component is out of range [FAILED]" 
+                << std::endl;
       std::cerr << "input  translation = " << translation << std::endl;
       std::cerr << "output translation = " << translation2 << std::endl;
       return EXIT_FAILURE;
@@ -322,7 +329,8 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
 
   // Testing the Copy() function
   std::cout << "Testing Copy(): ";
-  ObjectRepresentationType::Pointer copy = UltrasoundProbeRepresentation->Copy();
+  ObjectRepresentationType::Pointer 
+                                  copy = UltrasoundProbeRepresentation->Copy();
   if(copy->GetOpacity() != UltrasoundProbeRepresentation->GetOpacity())
     {
     std::cerr << "[FAILED]" << std::endl;
@@ -332,16 +340,20 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
 
   // Exercise RequestSetUltrasoundProbeObject() with a null pointer as argument
   std::cout << "Testing RequestSetUltrasoundProbeObject() with NULL argument: ";
-  ObjectRepresentationType::Pointer UltrasoundProbeRepresentation3 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer 
+             UltrasoundProbeRepresentation3 = ObjectRepresentationType::New();
   UltrasoundProbeRepresentation3->RequestSetUltrasoundProbeObject( 0 );
 
   // Exercise RequestSetUltrasoundProbeObject() called twice. The second call should be ignored.
   std::cout << "Testing RequestSetUltrasoundProbeObject() called twice: ";
-  ObjectRepresentationType::Pointer UltrasoundProbeRepresentation4 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer 
+             UltrasoundProbeRepresentation4 = ObjectRepresentationType::New();
   ObjectType::Pointer UltrasoundProbeObjectA = ObjectType::New();
   ObjectType::Pointer UltrasoundProbeObjectB = ObjectType::New();
-  UltrasoundProbeRepresentation4->RequestSetUltrasoundProbeObject( UltrasoundProbeObjectA );
-  UltrasoundProbeRepresentation4->RequestSetUltrasoundProbeObject( UltrasoundProbeObjectB );
+  UltrasoundProbeRepresentation4->RequestSetUltrasoundProbeObject( 
+                                                     UltrasoundProbeObjectA );
+  UltrasoundProbeRepresentation4->RequestSetUltrasoundProbeObject( 
+                                                     UltrasoundProbeObjectB );
 
   // Set properties again in order to exercise the loop that goes through
   // Actors
@@ -376,7 +388,6 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
       break;
       }
     }
-
   
   std::cout << "Test [DONE]" << std::endl;
 

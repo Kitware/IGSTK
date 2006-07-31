@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -55,7 +56,8 @@ int igstkPivotCalibrationTest( int, char * [] )
   PivotCalibrationType::Pointer pivot = PivotCalibrationType::New();
   pivot->SetLogger( logger );
 
-  // Define the input file and the variables to extract the rotation and translation information
+  // Define the input file and the variables to extract the rotation 
+  // and translation information
   std::ifstream input;
   unsigned int i;
   int frame, index;
@@ -68,7 +70,8 @@ int igstkPivotCalibrationTest( int, char * [] )
 
   // Open the calibration data file, which recorded the traker information
   std::string igstkDataDirectory = IGSTK_DATA_ROOT;
-  std::string simulationFile = ( igstkDataDirectory + "/Input/" + "PivotCalibration.txt");
+  std::string simulationFile = ( igstkDataDirectory + 
+                                 "/Input/" + "PivotCalibration.txt");
   input.open( simulationFile.c_str() );
 
   if (input.is_open() == 1)
@@ -117,7 +120,8 @@ int igstkPivotCalibrationTest( int, char * [] )
       {
       if (pivot->RequestGetInputSample( i, versor, pos))
         {
-        std::cout << "Input Sample: " << i << " " << versor << pos << std::endl;
+        std::cout << "Input Sample: " << i << " " 
+                  << versor << pos << std::endl;
 
         pivotpos = pivot->RequestSimulatePivotPosition( versor, pos);
         std::cout << "SimulatedPivotPosition: " << pivotpos << std::endl;
@@ -132,7 +136,8 @@ int igstkPivotCalibrationTest( int, char * [] )
     index = -1;
     if (pivot->RequestGetInputSample( index, versor, pos))
       {
-      std::cout << "Input Sample: " << index << " " << versor << pos << std::endl;
+      std::cout << "Input Sample: " << index << " " 
+                << versor << pos << std::endl;
       }
     else
       {
@@ -142,7 +147,8 @@ int igstkPivotCalibrationTest( int, char * [] )
     index = pivot->GetNumberOfSamples();
     if (pivot->RequestGetInputSample( index, versor, pos))
       {
-      std::cout << "Input Sample: " << index << " " << versor << pos << std::endl;
+      std::cout << "Input Sample: " << index << " " 
+                << versor << pos << std::endl;
       }
     else
       {
@@ -160,7 +166,8 @@ int igstkPivotCalibrationTest( int, char * [] )
 
     // Dump the calibration class information
     std::cout << "PivotCalibration: " << std::endl;
-    std::cout << "NumberOfSamples: " << pivot->GetNumberOfSamples() << std::endl;
+    std::cout << "NumberOfSamples: " << pivot->GetNumberOfSamples() 
+                                     << std::endl;
     std::cout << "Translation: " << translation << std::endl;
     std::cout << "Pivot Position: " << position << std::endl;
     std::cout << "Calibration RMS: " << error << std::endl;
@@ -206,7 +213,4 @@ int igstkPivotCalibrationTest( int, char * [] )
   pivot->RequestCalculateCalibrationZ();
 
   return EXIT_SUCCESS;
-
 }
-
-

@@ -15,7 +15,8 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -46,8 +47,8 @@ public:
 #endif
 
   typedef  SerialCommunicationTestCommand   Self;
-  typedef  itk::Command             Superclass;
-  typedef itk::SmartPointer<Self>  Pointer;
+  typedef  itk::Command                     Superclass;
+  typedef itk::SmartPointer<Self>           Pointer;
   itkNewMacro( Self );
 
 protected:
@@ -55,14 +56,14 @@ protected:
 
 public:
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     Execute( (const itk::Object *)caller, event);
-  }
+    }
 
   void Execute(const itk::Object * object, const itk::EventObject & event)
-  {
+    {
     std::cout << event.GetEventName() << std::endl;
-  }
+    }
 };
 
 
@@ -85,7 +86,8 @@ int igstkSerialCommunicationTest( int argc, char * argv[] )
 
   CommunicationType::Pointer serialComm = CommunicationType::New();
 
-  SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
+  SerialCommunicationTestCommand::Pointer 
+                           my_command = SerialCommunicationTestCommand::New();
 
   // logger object created 
   std::string testName;
@@ -128,8 +130,10 @@ int igstkSerialCommunicationTest( int argc, char * argv[] )
   std::cout << "BaudRate: " << serialComm->GetBaudRate() << std::endl;
   std::cout << "DataBits: " << serialComm->GetDataBits() << std::endl;
   std::cout << "StopBits: " << serialComm->GetStopBits() << std::endl;
-  std::cout << "HardwareHandshake: " << serialComm->GetHardwareHandshake() << std::endl;
-  std::cout << "TimeoutPeriod: " << serialComm->GetTimeoutPeriod() << std::endl;
+  std::cout << "HardwareHandshake: " 
+            << serialComm->GetHardwareHandshake() << std::endl;
+  std::cout << "TimeoutPeriod: " 
+            << serialComm->GetTimeoutPeriod() << std::endl;
 
   serialComm->SetCaptureFileName( "RecordedStreamBySerialCommunicationTest.txt" );
   serialComm->SetCapture( true );
@@ -298,5 +302,3 @@ int igstkSerialCommunicationTest( int argc, char * argv[] )
 
 #endif /* IGSTK_TEST_LOOPBACK_ATTACHED */
 }
-
-

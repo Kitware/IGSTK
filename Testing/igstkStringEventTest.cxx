@@ -39,7 +39,8 @@ int igstkStringEventTest( int , char* [] )
 
   if( message2 != message )
     {
-    std::cerr << "ERROR: inconsistency between SetString() and GetString()" << std::endl;
+    std::cerr << "ERROR: inconsistency between SetString() and GetString()" 
+              << std::endl;
     std::cerr << "Set = " << message << std::endl;
     std::cerr << "Get = " << message2 << std::endl;
     return EXIT_FAILURE;
@@ -49,14 +50,16 @@ int igstkStringEventTest( int , char* [] )
   std::string expectedName = "StringEvent";
   if( eventName != expectedName )
     {
-    std::cerr << "ERROR: in GetEventName() it returned " << eventName << std::endl;
+    std::cerr << "ERROR: in GetEventName() it returned " 
+              << eventName << std::endl;
     std::cerr << "The expected name is " << expectedName << std::endl;
     return EXIT_FAILURE;
     }
 
   if( !event.CheckEvent( &event ) )
     {
-    std::cerr << "ERROR: in CheckEvent() it didn't recognized itself" << std::endl;
+    std::cerr << "ERROR: in CheckEvent() it didn't recognized itself" 
+              << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -67,7 +70,8 @@ int igstkStringEventTest( int , char* [] )
       !event.CheckEvent( newEvent )     || 
       newEvent->GetEventName() != event.GetEventName() )
     {
-    std::cerr << "ERROR: MakeObject() did not returned an event of the expected type" << std::endl;
+    std::cerr << "ERROR: MakeObject() did not returned an event \
+                 of the expected type" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -75,4 +79,3 @@ int igstkStringEventTest( int , char* [] )
 
   return EXIT_SUCCESS;
 }
-

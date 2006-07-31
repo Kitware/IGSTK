@@ -15,7 +15,8 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -39,34 +40,34 @@ class SerialCommunicationTestCommand : public itk::Command
 {
 public:
   typedef  SerialCommunicationTestCommand   Self;
-  typedef  itk::Command             Superclass;
-  typedef itk::SmartPointer<Self>  Pointer;
+  typedef  itk::Command                     Superclass;
+  typedef itk::SmartPointer<Self>           Pointer;
   itkNewMacro( Self );
 protected:
   SerialCommunicationTestCommand() {};
 
 public:
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     Execute( (const itk::Object *)caller, event);
-  }
+    }
 
   void Execute(const itk::Object * object, const itk::EventObject & event)
-  {
+    {
     std::cout << event.GetEventName() << std::endl;
-  }
+    }
 };
 
 
 int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 {
-
   igstk::RealTimeClock::Initialize();
 
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
 
-  igstk::SerialCommunicationSimulator::Pointer serialComm = igstk::SerialCommunicationSimulator::New();
+  igstk::SerialCommunicationSimulator::Pointer 
+                      serialComm = igstk::SerialCommunicationSimulator::New();
 
   std::cout << serialComm->GetNameOfClass() << std::endl;
 
@@ -81,7 +82,8 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
   serialComm->SetFileName( simulationFile.c_str() );
   serialComm->GetFileName();
 
-  SerialCommunicationTestCommand::Pointer my_command = SerialCommunicationTestCommand::New();
+  SerialCommunicationTestCommand::Pointer 
+                           my_command = SerialCommunicationTestCommand::New();
 
   // logger object created 
   std::string testName;
@@ -151,7 +153,8 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
     tracker->UpdateStatus();
     tracker->GetToolTransform( 0, 0, transitions );
     position = transitions.GetTranslation();
-    std::cout << "Position = (" << position[0] << "," << position[1] << "," << position[2] << ")" << std::endl;
+    std::cout << "Position = (" << position[0] << "," 
+              << position[1] << "," << position[2] << ")" << std::endl;
     }
 
   tracker->StopTracking();

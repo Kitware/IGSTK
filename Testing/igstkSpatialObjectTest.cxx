@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -126,7 +127,8 @@ protected:
       transform.SetTranslation( m_Position, errorValue, m_ValidityTime );
       this->SetToolTransform( 0, 0, transform );
 
-      std::cout << "MyTracker::InternalUpdateStatus() " << m_Position << std::endl;
+      std::cout << "MyTracker::InternalUpdateStatus() " 
+                << m_Position << std::endl;
   
       return SUCCESS; 
       }
@@ -155,8 +157,6 @@ private:
     TrackerToolType::Pointer            m_Tool;
     PositionType                        m_Position;
 };
-
-
 
 } // end SpatialObjectTest namespace
 

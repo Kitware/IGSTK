@@ -217,22 +217,21 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   meshObject->AddTetrahedronCell(0,0,1,2,3);
   meshObject->AddTriangleCell(1,0,1,2);
    
-  //if( argc > 1 )
+  if( argc > 1 )
     {
     typedef igstk::MeshReader    ReaderType;
 
     ReaderType::Pointer  reader = ReaderType::New();
 
-    //std::string filename = argv[1];
-    std::string filename = "C:/Julien/Workspace/IGSTK/Testing/Data/Input/tetrahedraCells.msh";
+    std::string filename = argv[1];
     reader->RequestSetFileName( filename );
     reader->RequestReadObject();
     MeshRepresentation->RequestSetMeshObject( reader->GetOutput() );
     }
-  /*else
+  else
     {
     MeshRepresentation->RequestSetMeshObject( meshObject );
-    }*/
+    }
 
 
   // Test Property
@@ -263,22 +262,16 @@ int igstkMeshObjectTest( int argc, char * argv [] )
 
 
   // Testing PrintSelf()
-  //std::cout << "MeshRepresentation->Print(std::cout)" << std::endl;
   MeshRepresentation->Print(std::cout);
-  //std::cout << "MeshRepresentation->GetNameOfClass()" << std::endl;
   MeshRepresentation->GetNameOfClass();
-  //std::cout << "meshObject->GetNameOfClass()" << std::endl;
   meshObject->GetNameOfClass();
-  //std::cout << "meshObject->Print(std::cout)" << std::endl;
   meshObject->Print(std::cout);
 
   // Testing CreateActors()
   std::cout << "Testing actors : ";
 
-  //std::cout << "Creating form" << std::endl;
   Fl_Window * form = new Fl_Window(512,512,"MeshObject Test");
 
-  // std::cout << "Creating view" << std::endl;
   typedef igstk::View3D  View3DType;
   View3DType * view3D = new View3DType(6,6,500,500,"View 3D");
   view3D->SetLogger( logger );
@@ -287,10 +280,8 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   form->end();
   // End of the GUI creation
 
-  //std::cout << "form->show()" << std::endl;
   form->show();
   
-  //std::cout << "view3D->RequestAddObject( MeshRepresentation )" << std::endl;
   // this will indirectly call CreateActors() 
   view3D->RequestAddObject( MeshRepresentation );
 

@@ -40,20 +40,18 @@
 
 #include <iostream>
 
-
 namespace igstk
 {
-
 
 class Tester1
 {
 public:
 
-  typedef StateMachine< Tester1 >                         StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer        ActionType;
-  typedef StateMachineType::StateType                     StateType;
-  typedef StateMachineType::InputType                     InputType;
-  typedef StateMachineType::StateIdentifierType           StateIdentifierType;
+  typedef StateMachine< Tester1 >                     StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer    ActionType;
+  typedef StateMachineType::StateType                 StateType;
+  typedef StateMachineType::InputType                 InputType;
+  typedef StateMachineType::StateIdentifierType       StateIdentifierType;
 
   igstkFriendClassMacro( StateMachine< Tester1 > );
 
@@ -91,11 +89,11 @@ public:
   virtual ~Tester1() {}
 
   void triggerError1()
-  {
-    // NOTE that on purpose the m_ThisStateDoesntExist was not added as a state
-    // with AddState() */
+    {
+    // NOTE that on purpose the m_ThisStateDoesntExist was not added 
+    // as a state with AddState()
     m_StateMachine.SelectInitialState( m_ThisStateDoesntExist );
-  }
+    }
 
 private:
 
@@ -110,12 +108,7 @@ private:
   
   /** List of Inputs */
   InputType m_QuarterInserted;
-
 };
-
-
-
-
 
 class Tester2
 {
@@ -165,9 +158,6 @@ private:
 
 };
 
-
-
-
 class Tester3
 {
 public:
@@ -205,7 +195,6 @@ public:
     m_StateMachine.PushInput( m_QuarterInserted );
     m_StateMachine.ProcessInputs();
     }
- 
 
 private:
   StateMachineType   m_StateMachine;
@@ -217,7 +206,6 @@ private:
   InputType m_QuarterInserted;
 
 };
-
 
 
 class Tester4
@@ -260,7 +248,6 @@ public:
     m_StateMachine.PushInput( m_QuarterInserted );
     m_StateMachine.ProcessInputs();
     }
- 
 
 private:
   StateMachineType   m_StateMachine;
@@ -273,13 +260,12 @@ private:
 
 };
 
-
 class Tester5
 {
 public:
 
   typedef StateMachine< Tester5 >                     StateMachineType;
-  typedef StateMachineType::TMemberFunctionPointer        ActionType;
+  typedef StateMachineType::TMemberFunctionPointer    ActionType;
   typedef StateMachineType::StateType                 StateType;
   typedef StateMachineType::InputType                 InputType;
   typedef StateMachineType::StateIdentifierType       StateIdentifierType;
@@ -314,7 +300,6 @@ public:
     m_StateMachine.ProcessInputs();
     }
  
-
 private:
   StateMachineType   m_StateMachine;
 
@@ -325,7 +310,6 @@ private:
   InputType m_QuarterInserted;
 
 };
-
 
 class Tester6
 {
@@ -385,7 +369,6 @@ public:
     m_StateMachine.ProcessInputs();
     }
  
-
 private:
   StateMachineType   m_StateMachine;
 
@@ -399,9 +382,7 @@ private:
   InputType m_DimeInserted;
   InputType m_Cancel;
   InputType m_NonRegisteredInput;
-
 };
-
 
 class Tester7
 {
@@ -441,7 +422,6 @@ public:
     m_StateMachine.PushInput( m_QuarterInserted );
     m_StateMachine.ProcessInputs();
     }
- 
 
 private:
   StateMachineType   m_StateMachine;
@@ -457,12 +437,9 @@ private:
 } // namespace igstk
 
 
-
 int igstkStateMachineErrorsTest( int, char * [] )
 {
-
   igstk::RealTimeClock::Initialize();
-
 
   itk::StdStreamLogOutput::Pointer coutput = itk::StdStreamLogOutput::New();
   coutput->SetStream( std::cout );
@@ -499,7 +476,6 @@ int igstkStateMachineErrorsTest( int, char * [] )
 
   tester3.InsertChange();
 
-
   std::cout << "Invoking  SetReadyToRun() twice." << std::endl;
   igstk::Tester4 tester4( logger );
 
@@ -519,10 +495,7 @@ int igstkStateMachineErrorsTest( int, char * [] )
 
   tester7.InsertChange();
 
-
-
   // The following call 
   return EXIT_SUCCESS;
 
 }
-

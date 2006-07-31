@@ -21,7 +21,6 @@
 #endif
 
 
-
 // BeginLatex
 //
 // This example illustrates the minimal applications that can be written using IGSTK.

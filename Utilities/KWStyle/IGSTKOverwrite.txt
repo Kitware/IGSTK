@@ -7,4 +7,15 @@ igstkViewRefreshRateTest.cxx Namespace Disable
 igstkViewTest.cxx Namespace Disable
 igstkTubeReaderTest.cxx Namespace Disable
 igstkSystemInformation.h.in IfNDefDefine Disable
-igstkSystemInformation.cxx Operator Disable 
+igstkSystemInformation.cxx Operator Disable
+igstkMRImageSpatialObjectRepresentationTest.cxx Namespace Disable
+igstkMeshReaderTest.cxx Namespace Disable
+igstkNDICommandInterpreterStressTest.cxx Namespace Disable
+igstkNDICommandInterpreterTest.cxx Namespace Disable
+igstkPolarisTrackerTest.cxx Namespace Disable
+igstkPulseGeneratorTest.cxx Namespace Disable
+igstkSerialCommunicationSimulatorTest.cxx Namespace Disable
+igstkSerialCommunicationTest.cxx Namespace Disable
+igstkSpatialObjectReaderTest.cxx Namespace Disable
+igstkTestMain.h Typedef Disable
+igstkTestMain.h IfNDefDefine Disable

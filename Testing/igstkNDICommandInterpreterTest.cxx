@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -45,9 +46,9 @@ class NDICommandInterpreterTestCommand : public itk::Command
 {
 public:
 
-  typedef NDICommandInterpreterTestCommand   Self;
-  typedef itk::Command             Superclass;
-  typedef itk::SmartPointer<Self>  Pointer;
+  typedef NDICommandInterpreterTestCommand  Self;
+  typedef itk::Command                      Superclass;
+  typedef itk::SmartPointer<Self>           Pointer;
   itkNewMacro( Self );
 
 protected:
@@ -55,12 +56,12 @@ protected:
 
 public:
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     Execute( (const itk::Object *)caller, event);
-  }
+    }
 
   void Execute(const itk::Object * object, const itk::EventObject & event)
-  {
+    {
     const igstk::NDIErrorEvent * ndiEvent = 
       dynamic_cast< const igstk::NDIErrorEvent * >( &event );
 
@@ -73,7 +74,7 @@ public:
                 << igstk::NDICommandInterpreter::ErrorString(errorCode)
                 << "." << std::endl;
       }
-  }
+    }
 };
 
 #ifdef IGSTK_SIMULATOR_TEST
@@ -142,7 +143,8 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
   serialComm->SetFileName( simulationFile.c_str() );
 #else /* IGSTK_SIMULATOR_TEST */
   // capture a fresh data file
-  serialComm->SetCaptureFileName( "PolarisCaptureForNDICommandInterpreterTest.txt" );
+  serialComm->SetCaptureFileName( 
+                          "PolarisCaptureForNDICommandInterpreterTest.txt" );
   serialComm->SetCapture( true );
 #endif /* IGSTK_SIMULATOR_TEST */
 
@@ -174,11 +176,14 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
   std::cout << interpreter->ErrorString(errorCode) << std::endl;
   std::cout << "Other errors:" << std::endl;
   std::cout << "Bad CRC on data sent to device:" << std::endl;
-  std::cout << interpreter->ErrorString(CommandInterpreterType::NDI_BAD_COMMAND_CRC) << std::endl;
+  std::cout << interpreter->ErrorString(
+                    CommandInterpreterType::NDI_BAD_COMMAND_CRC) << std::endl;
   std::cout << "Bad CRC on data received from device:" << std::endl;
-  std::cout << interpreter->ErrorString(CommandInterpreterType::NDI_BAD_CRC) << std::endl;
+  std::cout << interpreter->ErrorString(
+                            CommandInterpreterType::NDI_BAD_CRC) << std::endl;
   std::cout << "Background infrared is too bright, can't track:" << std::endl;
-  std::cout << interpreter->ErrorString(CommandInterpreterType::NDI_ENVIRONMENT) << std::endl;
+  std::cout << interpreter->ErrorString(
+                        CommandInterpreterType::NDI_ENVIRONMENT) << std::endl;
   std::cout << "This error doesn't exist:" << std::endl;
   std::cout << interpreter->ErrorString(0x80) << std::endl;
 
@@ -244,14 +249,16 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
   std::cout << "IRCHK Number Of Sources : " << std::dec << n << std::endl;
   for (i = 0; i < n; i++)
     {
-    std::cout << "IRCHK Source XY (LEFT) : " << interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_LEFT, i, vals);
+    std::cout << "IRCHK Source XY (LEFT) : " << interpreter->GetIRCHKSourceXY(
+                                   CommandInterpreterType::NDI_LEFT, i, vals);
     std::cout << "\tX : " << vals[0] << "\tY : " << vals[1] << std::endl;
     }
   interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_LEFT, 0, vals);
   n = interpreter->GetIRCHKNumberOfSources(CommandInterpreterType::NDI_RIGHT);
   for (i = 0; i < n; i++)
     {
-    std::cout << "IRCHK Source XY (LEFT) : " << interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_RIGHT, i, vals);
+    std::cout << "IRCHK Source XY (LEFT) : " << interpreter->GetIRCHKSourceXY(
+                                  CommandInterpreterType::NDI_RIGHT, i, vals);
     std::cout << "\tX : " << vals[0] << "\tY : " << vals[1] << std::endl;
     }
   interpreter->GetIRCHKSourceXY(CommandInterpreterType::NDI_RIGHT, 0, vals);
@@ -319,7 +326,8 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
     {
     portHandles[i] = interpreter->GetPHSRHandle(i);
     a = interpreter->GetPHSRInformation(i);
-    std::cout << "PHSR Handle : " << portHandles[i] << "    PHSRInformation : " << a << std::endl;
+    std::cout << "PHSR Handle : " << portHandles[i] 
+              << "    PHSRInformation : " << a << std::endl;
     }
 
   for (i = 0; i < numberOfHandles; i++)
@@ -391,7 +399,7 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
     {
     std::cout << "Calling BX #" << std::dec << j << std::endl;
     interpreter->BX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
-    a = interpreter->GetBXSystemStatus();      
+    a = interpreter->GetBXSystemStatus();
     std::cout << "  BX system status : " << std::hex << std::showbase
               << a << std::endl;
 
@@ -434,7 +442,7 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
     std::cout << "Calling BX with NDI_PASSIVE_STRAY" << std::endl;
 
     interpreter->BX(CommandInterpreterType::NDI_PASSIVE_STRAY);
-    a = interpreter->GetBXSystemStatus();      
+    a = interpreter->GetBXSystemStatus();
     std::cout << "  BXSystemStatus : " << std::hex << std::showbase
               << a << std::endl;
 
@@ -487,7 +495,7 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
     std::cout << "Calling BX with NDI_SINGLE_STRAY" << std::endl;
     interpreter->BX(CommandInterpreterType::NDI_XFORMS_AND_STATUS |
                     CommandInterpreterType::NDI_SINGLE_STRAY);
-    a = interpreter->GetBXSystemStatus();      
+    a = interpreter->GetBXSystemStatus();
     std::cout << "  BXSystemStatus : " << std::hex << std::showbase
               << a << std::endl;
 
@@ -573,7 +581,7 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
     {
     std::cout << "Calling TX" << std::endl;
     interpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
-    a = interpreter->GetTXSystemStatus();      
+    a = interpreter->GetTXSystemStatus(); 
     std::cout << "TX System Status : " << std::hex << std::showbase
               << a << std::endl;
 
@@ -784,9 +792,9 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
   for (i = 0; i < numberOfHandles; i++)
     {
     ph = portHandles[i];
-    std::cout << "Calling PDIS" << std::endl;    
+    std::cout << "Calling PDIS" << std::endl;
     interpreter->PDIS(ph);
-    std::cout << "Calling PHF" << std::endl;    
+    std::cout << "Calling PHF" << std::endl;
     interpreter->PHF(ph);
     }
   numberOfHandles = 0;

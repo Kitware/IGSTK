@@ -95,4 +95,3 @@ int igstkMeshReaderTest( int argc, char * argv [] )
   
   return EXIT_SUCCESS;
 }
-

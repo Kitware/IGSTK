@@ -46,7 +46,8 @@ std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
 extern int test(int, char* [] ); \
 StringToTestFunctionMap[#test] = test
 
-int RegressionTestImage (const char *, const char *, int, double, unsigned int, unsigned int);
+int RegressionTestImage (const char *, const char *, int, 
+                         double, unsigned int, unsigned int);
 
 std::map<std::string,int> RegressionTestBaselines (char *);
 
@@ -54,7 +55,8 @@ void RegisterTests();
 void PrintAvailableTests()
 {
   std::cout << "Available tests:\n";
-  std::map<std::string, MainFuncPointer>::iterator j = StringToTestFunctionMap.begin();
+  std::map<std::string, MainFuncPointer>::iterator 
+                                          j = StringToTestFunctionMap.begin();
   int i = 0;
   while(j != StringToTestFunctionMap.end())
     {
@@ -77,15 +79,14 @@ int main(int ac, char* av[] )
   RegisterTests();
   std::string testToRun;
 
-
-
   if(ac < 2)
     {
     PrintAvailableTests();
     std::cout << "To run a test, enter the test number: ";
     int testNum = 0;
     std::cin >> testNum;
-    std::map<std::string, MainFuncPointer>::iterator j = StringToTestFunctionMap.begin();
+    std::map<std::string, MainFuncPointer>::iterator 
+                                          j = StringToTestFunctionMap.begin();
     int i = 0;
     while(j != StringToTestFunctionMap.end() && i < testNum)
       {
@@ -142,7 +143,8 @@ int main(int ac, char* av[] )
       }
       testToRun = av[1];
     }
-  std::map<std::string, MainFuncPointer>::iterator j = StringToTestFunctionMap.find(testToRun);
+  std::map<std::string, MainFuncPointer>::iterator 
+                                 j = StringToTestFunctionMap.find(testToRun);
   if(j != StringToTestFunctionMap.end())
     {
     MainFuncPointer f = j->second;
@@ -155,7 +157,8 @@ int main(int ac, char* av[] )
       // Make a list of possible baselines
       if (baselineFilename && testFilename)
         {
-        std::map<std::string,int> baselines = RegressionTestBaselines(baselineFilename);
+        std::map<std::string,int> baselines = 
+                                    RegressionTestBaselines(baselineFilename);
         std::map<std::string,int>::iterator baseline = baselines.begin();
         std::string bestBaseline;
         int bestBaselineStatus = itk::NumericTraits<int>::max();
@@ -190,7 +193,8 @@ int main(int ac, char* av[] )
           }
 
         // output the matching baseline
-        std::cout << "<DartMeasurement name=\"BaselineImageName\" type=\"text/string\">";
+        std::cout << "<DartMeasurement name=\"BaselineImageName\" \
+                     type=\"text/string\">";
         std::cout << itksys::SystemTools::GetFilenameName(bestBaseline);
         std::cout << "</DartMeasurement>" << std::endl;
         
@@ -218,7 +222,8 @@ int main(int ac, char* av[] )
     return result;
     }
   PrintAvailableTests();
-  std::cerr << "Failed: " << testToRun << ": No test registered with name " << testToRun << "\n";
+  std::cerr << "Failed: " << testToRun << ": No test registered with name " 
+            << testToRun << "\n";
   return -1;
 }
 
@@ -231,7 +236,8 @@ int RegressionTestImage( const char *testImageFilename,
                          unsigned int toleranceRadius,
                          unsigned int toleranceNumberofPixels)
 {
-  // Use the factory mechanism to read the test and baseline files and convert them to double
+  // Use the factory mechanism to read the test and baseline files 
+  // and convert them to double
   typedef itk::Image<double,IGSTK_TEST_DIMENSION_MAX> ImageType;
   typedef itk::Image<unsigned char,IGSTK_TEST_DIMENSION_MAX> OutputType;
   typedef itk::Image<unsigned char,2> DiffOutputType;
@@ -246,7 +252,8 @@ int RegressionTestImage( const char *testImageFilename,
     }
   catch (itk::ExceptionObject& e)
     {
-    std::cerr << "Exception detected while reading " << baselineImageFilename << " : "  << e.GetDescription();
+    std::cerr << "Exception detected while reading " 
+              << baselineImageFilename << " : "  << e.GetDescription();
     return 1000;
     }
 
@@ -259,7 +266,8 @@ int RegressionTestImage( const char *testImageFilename,
     }
   catch (itk::ExceptionObject& e)
     {
-    std::cerr << "Exception detected while reading " << testImageFilename << " : "  << e.GetDescription() << std::endl;
+    std::cerr << "Exception detected while reading " 
+            << testImageFilename << " : "  << e.GetDescription() << std::endl;
     return 1000;
     }
 
@@ -271,7 +279,8 @@ int RegressionTestImage( const char *testImageFilename,
   
   if (baselineSize != testSize)
     {
-    std::cerr << "The size of the Baseline image and Test image do not match!" << std::endl;
+    std::cerr << "The size of the Baseline image and Test image do not match!"
+              << std::endl;
     std::cerr << "Baseline image: " << baselineImageFilename
               << " has size " << baselineSize << std::endl;
     std::cerr << "Test image:     " << testImageFilename
