@@ -291,7 +291,7 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
     ErrorType errorValue = m_TransformBuffer[port][7];
 
     typedef TransformType::TimePeriodType TimePeriodType;
-    const TimePeriodType validityTime = 100.0;
+    const TimePeriodType validityTime = 1000.0;
 
     transform.SetToIdentity(validityTime);
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
