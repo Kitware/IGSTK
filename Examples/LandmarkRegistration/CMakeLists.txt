@@ -1,5 +1,5 @@
-PROJECT(PivotCalibration)
+PROJECT(LandmarkRegistration)
   
-ADD_EXECUTABLE(PivotCalibrationExample PivotCalibration1.cxx)
-TARGET_LINK_LIBRARIES(PivotCalibrationExample IGSTKSandbox)
+ADD_EXECUTABLE(LandmarkRegistrationExample LandmarkRegistration1.cxx)
+TARGET_LINK_LIBRARIES(LandmarkRegistrationExample IGSTKSandbox)
 
