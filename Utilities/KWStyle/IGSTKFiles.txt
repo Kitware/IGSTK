@@ -1,4 +1,12 @@
-/projects/KWStyle/IGSTKSandbox/Examples [R]
-/projects/KWStyle/IGSTKSandbox/IGSTK [R]
-/projects/KWStyle/IGSTKSandbox/Source [R]
-/projects/KWStyle/IGSTKSandbox/Testing
+/projects/KWStyle/IGSTKSandbox/Examples/*.h* [R]
+/projects/KWStyle/IGSTKSandbox/Examples/*.txx [R]
+/projects/KWStyle/IGSTKSandbox/Examples/*.cxx [R]
+/projects/KWStyle/IGSTKSandbox/IGSTK/*.h* [R]
+/projects/KWStyle/IGSTKSandbox/IGSTK/*.txx [R]
+/projects/KWStyle/IGSTKSandbox/IGSTK/*.cxx [R]
+/projects/KWStyle/IGSTKSandbox/Source/*.h* [R]
+/projects/KWStyle/IGSTKSandbox/Source/*.txx [R]
+/projects/KWStyle/IGSTKSandbox/Source/*.cxx [R]
+/projects/KWStyle/IGSTKSandbox/Testing/*.h*
+/projects/KWStyle/IGSTKSandbox/Testing/*.cxx
+/projects/KWStyle/IGSTKSandbox/Testing/*.txx
