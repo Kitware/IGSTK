@@ -36,8 +36,7 @@ IMAGE_PATH           = "@IGSTK_BINARY_DIR@/Testing/Temporary/StateMachineDiagram
 
 OUTPUT_DIRECTORY     = "@IGSTK_BINARY_DIR@/Utilities/Doxygen/doc"
 
-INPUT                = "@IGSTK_SOURCE_DIR@/Source" \
-                       "@IGSTK_SANDBOX_SOURCE_DIR@/Source"
+INPUT                = "@IGSTK_SOURCE_DIR@/Source" 
 
 EXTRACT_ALL          = YES
 EXTRACT_PRIVATE      = NO
