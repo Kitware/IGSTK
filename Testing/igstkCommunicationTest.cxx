@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -27,24 +28,21 @@
 
 int igstkCommunicationTest( int, char * [] )
 {
-
-    igstk::RealTimeClock::Initialize();
-
-    typedef igstk::Communication  CommunicationType;
+  igstk::RealTimeClock::Initialize();
+  
+  typedef igstk::Communication  CommunicationType;
     
-    CommunicationType::Pointer communicator = CommunicationType::New();
+  CommunicationType::Pointer communicator = CommunicationType::New();
 
-    communicator->SetUseReadTerminationCharacter(true);
+  communicator->SetUseReadTerminationCharacter(true);
 
-    communicator->SetReadTerminationCharacter( '\r' );
+  communicator->SetReadTerminationCharacter( '\r' );
 
-    communicator->OpenCommunication();
+  communicator->OpenCommunication();
 
-    std::cout << communicator << std::endl;
+  std::cout << communicator << std::endl;
 
-    communicator->CloseCommunication();
+  communicator->CloseCommunication();
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
-
-

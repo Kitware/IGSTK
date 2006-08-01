@@ -647,7 +647,8 @@ void View::ReportInvalidScreenShotFileNameProcessing()
 /** Save current screenshot while in refreshing state */
 void View::SaveScreenShotWhileRefreshingProcessing()
 {
-  igstkLogMacro( DEBUG, "SaveScreenShotWhileRefreshingProcessing() called ...\n");
+  igstkLogMacro( DEBUG, 
+                 "SaveScreenShotWhileRefreshingProcessing() called ...\n");
 
   m_PulseGenerator->RequestStop();
   

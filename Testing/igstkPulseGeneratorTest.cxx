@@ -48,7 +48,7 @@ public:
   typedef ::igstk::PulseGenerator  PulseGeneratorType;
   void SetForm( Fl_Window * form )
     {
-    m_Form = form ;
+    m_Form = form;
     }
   void SetCounter( Fl_Value_Output * valueOutput )
     {
@@ -70,7 +70,7 @@ public:
 
   void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
-    std::cerr << "Execute( const * ) should not be called" << std::endl;       
+    std::cerr << "Execute( const * ) should not be called" << std::endl;
     }
       
   void Execute(itk::Object *caller, const itk::EventObject & event)
@@ -98,7 +98,7 @@ private:
   Fl_Window *         m_Form;
   Fl_Value_Output *   m_ValueOutput;
   bool *              m_End;
-  };
+};
 }
 
 int igstkPulseGeneratorTest( int, char * [] )

@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -41,12 +42,14 @@ int igstkFLTKTextBufferLogOutputTest( int, char * [] )
     {
 
     // Create an igstk::FLTKTextBufferLogOutput
-    igstk::FLTKTextBufferLogOutput::Pointer output = igstk::FLTKTextBufferLogOutput::New();
+    igstk::FLTKTextBufferLogOutput::Pointer 
+                              output = igstk::FLTKTextBufferLogOutput::New();
 
     std::cout << "Testing igstk::FLTKTextBufferLogOutput" << std::endl;
     std::cout.precision(20);
 
-    Fl_Window *win = new Fl_Window(0,0,400,300,"igstkFLTKTextBufferLogOutputTest");
+    Fl_Window *win = new Fl_Window(0,0,400,300,
+                                   "igstkFLTKTextBufferLogOutputTest");
     Fl_Text_Display *texts = new Fl_Text_Display(0,0,400,300,NULL);
     Fl_Text_Buffer *textBuffer = new Fl_Text_Buffer();
     texts->buffer(textBuffer);
@@ -86,5 +89,3 @@ int igstkFLTKTextBufferLogOutputTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
   return EXIT_SUCCESS;
 }
-
-

@@ -336,7 +336,8 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   InterpolatorType::Pointer   interpolator  = InterpolatorType::New();
   RegistrationType::Pointer   registration  = RegistrationType::New();
   
-  typedef MR3DImageToUS3DImageRegistrationHelper::CommandIterationUpdate ObserverType;
+  typedef MR3DImageToUS3DImageRegistrationHelper::CommandIterationUpdate 
+                                                                 ObserverType;
     
   ObserverType::Pointer observer = ObserverType::New();
 
@@ -416,7 +417,7 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   
   // We have the following transforms:
   // 1) Transform found by optimization of the metric (we'll call it "C")
-  // 2) The initial transform (we'll call it it "A")
+  // 2) The initial transform (we'll call it "A")
   // We want to find the transform "B" that, when combined with the
   // initial transform "A", will produce the optimized transform "C",
   // i.e.  B * A = C

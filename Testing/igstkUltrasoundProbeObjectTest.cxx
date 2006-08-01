@@ -277,7 +277,8 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
 
   UltrasoundProbeObject->RequestSetTransform( transform );
 
-  typedef ::igstk::UltrasoundProbeObjectTest::TransformObserver  TransformObserverType;
+  typedef ::igstk::UltrasoundProbeObjectTest::TransformObserver  
+                                                        TransformObserverType;
 
   TransformObserverType::Pointer 
                              transformObserver = TransformObserverType::New();
@@ -322,10 +323,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
     return EXIT_FAILURE;
     }
 
-
-
   std::cout << "[PASSED]" << std::endl;
-
 
   // Testing the Copy() function
   std::cout << "Testing Copy(): ";
@@ -344,7 +342,8 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
              UltrasoundProbeRepresentation3 = ObjectRepresentationType::New();
   UltrasoundProbeRepresentation3->RequestSetUltrasoundProbeObject( 0 );
 
-  // Exercise RequestSetUltrasoundProbeObject() called twice. The second call should be ignored.
+  // Exercise RequestSetUltrasoundProbeObject() called twice. 
+  // The second call should be ignored.
   std::cout << "Testing RequestSetUltrasoundProbeObject() called twice: ";
   ObjectRepresentationType::Pointer 
              UltrasoundProbeRepresentation4 = ObjectRepresentationType::New();

@@ -199,7 +199,8 @@ int igstkPivotCalibrationTest( int, char * [] )
 
     // Dump the calibration class information
     std::cout << "PivotCalibration: " << std::endl;
-    std::cout << "NumberOfSamples: " << pivot->GetNumberOfSamples() << std::endl;
+    std::cout << "NumberOfSamples: " 
+              << pivot->GetNumberOfSamples() << std::endl;
     std::cout << "Translation: " << translation << std::endl;
     std::cout << "Pivot Position: " << position << std::endl;
     std::cout << "Calibration RMS: " << error << std::endl;

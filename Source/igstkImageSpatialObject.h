@@ -77,7 +77,8 @@ public:
                                              IndexType & index ) const;
 
   /** Transform physical point to index. */
-  virtual bool TransformPhysicalPointToContinuousIndex ( const PointType & point, 
+  virtual bool TransformPhysicalPointToContinuousIndex ( 
+                                     const PointType & point, 
                                      ContinuousIndexType & index ) const;
 
   /** Returns wheter the image have any pixels allocated or not */

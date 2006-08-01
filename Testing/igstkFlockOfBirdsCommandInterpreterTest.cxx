@@ -109,7 +109,8 @@ static void printHemisphere(int hemisphere)
 
 
 // set a flag if error occurred
-static void checkError(igstk::FlockOfBirdsCommandInterpreter *interp, int &hasError)
+static void checkError(igstk::FlockOfBirdsCommandInterpreter *interp, 
+                       int &hasError)
 {
   if (interp->GetError() != igstk::FB_NO_ERROR)
     {

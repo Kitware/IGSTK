@@ -164,10 +164,10 @@ void MeshObjectRepresentation::CreateActors()
       case 2:
         polyData->InsertNextCell( VTK_LINE, pts );
         break;
-      case 3: 
+      case 3:
         polyData->InsertNextCell( VTK_TRIANGLE, pts );
         break;
-      case 4:         
+      case 4:
         system("PAUSE");
         polyData->InsertNextCell( VTK_TETRA, pts );
         break;

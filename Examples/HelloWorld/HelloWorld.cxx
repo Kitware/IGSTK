@@ -23,7 +23,8 @@
 
 // BeginLatex
 //
-// This example illustrates the minimal applications that can be written using IGSTK.
+// This example illustrates the minimal applications that can be 
+// written using IGSTK.
 // The application uses three main components. They are the View, the
 // SpatialObjects and the Tracker. The View is the visualization window that is
 // presented to the user in the graphical user interface (GUI) of the
@@ -58,8 +59,6 @@
 // EndCodeSnippet
 
 
-
-
 // BeginLatex
 //
 // The geometrical description of the Cylinder and the Sphere in the scene are
@@ -73,8 +72,6 @@
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
 // EndCodeSnippet
-
-
 
 // BeginLatex
 //
@@ -92,7 +89,6 @@
 // EndCodeSnippet
 
 
-
 // BeginLatex
 //
 // As we mention earlier, the tracker in this minimal application is
@@ -108,8 +104,6 @@
 // EndCodeSnippet
 
 
-
-
 // BeginLatex
 //
 // Since image guided surgery applications are used in a critical environment,
@@ -118,7 +112,8 @@
 // class and some helpers. The logger is a class that receives messages from
 // IGSTK classes and forward those messages to LoggerOutput classes. Typical
 // logger output classes are the standard output, a file and a popup window.
-// The Logger classes and their helpers are taken from the Insight Toolkit (ITK).
+// The Logger classes and their helpers are taken from the 
+// Insight Toolkit (ITK).
 // 
 // EndLatex
 
@@ -126,9 +121,6 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 // EndCodeSnippet
-
-
-
 
 
 // BeginLatex
@@ -141,63 +133,62 @@
 // BeginCodeSnippet
 int main(int , char** )
 { 
-// EndCodeSnippet
+  // EndCodeSnippet
 
-// BeginLatex 
-// The first IGSTK command to be invoked in an application is the one that
-// initialize the parameters of the clock. Timing is critical for all the
-// operations performed in an IGS application. Timing signals make possible to
-// synchronize the operation of different components and to ensure that the
-// scene that is rendered on the screen actually displays a consistent state of
-// the environment on the operating room.
-// EndLatex
-// 
-// BeginCodeSnippet
+  // BeginLatex 
+  // The first IGSTK command to be invoked in an application is the one that
+  // initialize the parameters of the clock. Timing is critical for all the
+  // operations performed in an IGS application. Timing signals make possible to
+  // synchronize the operation of different components and to ensure that the
+  // scene that is rendered on the screen actually displays a consistent state of
+  // the environment on the operating room.
+  // EndLatex
+  // 
+  // BeginCodeSnippet
   igstk::RealTimeClock::Initialize();
-// EndCodeSnippet
+  // EndCodeSnippet
 
-
-
-// BeginLatex
-// First, we instantiate the GUI application.
-// EndLatex
-// 
-// BeginCodeSnippet
+  // BeginLatex
+  // First, we instantiate the GUI application.
+  // EndLatex
+  // 
+  // BeginCodeSnippet
    HelloWorldGUI * m_GUI = new HelloWorldGUI();
-// EndCodeSnippet
-// 
+  // EndCodeSnippet
+  // 
   m_GUI->MainWindow->show();
 
-// BeginLatex
-// Next, we instantiate the ellipsoidal spatial object that we will be 
-// attaching to the tracker.
-// EndLatex
+  // BeginLatex
+  // Next, we instantiate the ellipsoidal spatial object that we will be 
+  // attaching to the tracker.
+  // EndLatex
 
-// Create the ellipsoid 
-// BeginCodeSnippet
+  // Create the ellipsoid 
+  // BeginCodeSnippet
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
-// EndCodeSnippet
-// 
-// BeginLatex
-// The ellipsoid radius can be set to one in all dimensions ( X,Y and Z ) 
-// using the SetRadius member function as follows.
-// EndLatex
-// BeginCodeSnippet
+  // EndCodeSnippet
+  // 
+  // BeginLatex
+  // The ellipsoid radius can be set to one in all dimensions ( X,Y and Z ) 
+  // using the SetRadius member function as follows.
+  // EndLatex
+  // BeginCodeSnippet
   ellipsoid->SetRadius(1,1,1);
-// EndCodeSnippet
+  // EndCodeSnippet
 
-// BeginLatex
-// To visualize the ellipsoid spatial object, an object representation class is created and the 
-// ellipsoid spatial object is added to it. 
-//
-// EndLatex
+  // BeginLatex
+  // To visualize the ellipsoid spatial object, an object representation 
+  // class is created and the ellipsoid spatial object is added to it. 
+  //
+  // EndLatex
  
- // BeginCodeSnippet 
-  igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
+  // BeginCodeSnippet 
+  igstk::EllipsoidObjectRepresentation::Pointer 
+        ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
   ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
   ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
   ellipsoidRepresentation->SetOpacity(1.0);
-// EndCodeSnippet
+  // EndCodeSnippet
   
   // BeginLatex
   // Similarly, a cylinder spatial object and cylinder spatial object representation
@@ -210,12 +201,13 @@ int main(int , char** )
   cylinder->SetRadius(0.1);
   cylinder->SetHeight(3);
 
-  igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
+  igstk::CylinderObjectRepresentation::Pointer 
+          cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
   cylinderRepresentation->RequestSetCylinderObject( cylinder );
   cylinderRepresentation->SetColor(1.0,0.0,0.0);
   cylinderRepresentation->SetOpacity(1.0);
   // EndCodeSnippet
-// 
+  // 
   // BeginLatex
   // Next, the spatial objects are added to the view
   // EndLatex
@@ -262,7 +254,6 @@ int main(int , char** )
   m_GUI->Display->RequestSetRefreshRate( 60 ); // 60 Hz
   m_GUI->Display->RequestStart();
 
-
   while( !m_GUI->HasQuitted() )
     {
     Fl::wait(0.001);
@@ -278,6 +269,4 @@ int main(int , char** )
   ofs.close();
 
   return EXIT_SUCCESS;
-  
 }
-

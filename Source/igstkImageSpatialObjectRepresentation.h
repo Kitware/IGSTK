@@ -36,7 +36,7 @@ namespace igstk
  * are ... The image object is rendered in a VTK scene using the
  * ... object.
  * 
- *\image html  igstkImageSpatialObjectRepresentation.png "State Machine Diagram" 
+ *\image html igstkImageSpatialObjectRepresentation.png "State Machine Diagram"
  *
  *\image latex igstkImageSpatialObjectRepresentation.eps "State Machine Diagram"
  *

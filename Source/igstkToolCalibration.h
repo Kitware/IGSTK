@@ -37,8 +37,10 @@ class ToolCalibrationReaderToToolCalibration;
  * common between multiple classes that provide callibrations for tracker
  * tools.
  * 
- * \image html  igstkToolCalibration.png "Tool Calibration State Machine Diagram"
- * \image latex igstkToolCalibration.eps "Tool Calibration State Machine Diagram"
+ * \image html  igstkToolCalibration.png 
+ *              "Tool Calibration State Machine Diagram"
+ * \image latex igstkToolCalibration.eps 
+ *              "Tool Calibration State Machine Diagram"
  *
  * \ingroup Calibration
  */

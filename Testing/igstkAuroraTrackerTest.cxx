@@ -15,7 +15,8 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -51,19 +52,19 @@ protected:
 
 public:
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     Execute( (const itk::Object *)caller, event);
-  }
+    }
 
   void Execute(const itk::Object * object, const itk::EventObject & event)
-  {
+    {
     // don't print "CompletedEvent", only print interesting events
     if (!igstk::CompletedEvent().CheckEvent(&event) &&
         !itk::DeleteEvent().CheckEvent(&event) )
       {
       std::cout << event.GetEventName() << std::endl;
       }
-  }
+    }
 };
 
 #ifdef IGSTK_SIMULATOR_TEST
@@ -79,20 +80,25 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
   typedef itk::StdStreamLogOutput       LogOutputType;
 
   igstk::AuroraTrackerTool::Pointer tool = igstk::AuroraTrackerTool::New();
-  std::cout << "AuroraTrackerTool class name : " << tool->GetNameOfClass() << std::endl;
+  std::cout << "AuroraTrackerTool class name : " 
+            << tool->GetNameOfClass() << std::endl;
   std::cout << tool << std::endl;
 
 #ifdef IGSTK_SIMULATOR_TEST
-    igstk::SerialCommunicationSimulator::Pointer serialComm = igstk::SerialCommunicationSimulator::New();
+    igstk::SerialCommunicationSimulator::Pointer 
+                      serialComm = igstk::SerialCommunicationSimulator::New();
 #else  /* IGSTK_SIMULATOR_TEST */
 #ifdef WIN32
-  igstk::SerialCommunicationForWindows::Pointer serialComm = igstk::SerialCommunicationForWindows::New();
+  igstk::SerialCommunicationForWindows::Pointer 
+                     serialComm = igstk::SerialCommunicationForWindows::New();
 #else
-  igstk::SerialCommunicationForPosix::Pointer serialComm = igstk::SerialCommunicationForPosix::New();
+  igstk::SerialCommunicationForPosix::Pointer 
+                       serialComm = igstk::SerialCommunicationForPosix::New();
 #endif /* WIN32 */
 #endif /* IGSTK_SIMULATOR_TEST */
 
-  AuroraTrackerTestCommand::Pointer my_command = AuroraTrackerTestCommand::New();
+  AuroraTrackerTestCommand::Pointer 
+                                 my_command = AuroraTrackerTestCommand::New();
 
   // logger object created 
   std::string testName;

@@ -37,6 +37,7 @@ int igstkPrincipalAxisCalibrationTest( int, char * [] )
 
   // Define type used in the principal axis calibration class
   typedef igstk::PrincipalAxisCalibration   PrincipalAxisCalibrationType;
+
   typedef PrincipalAxisCalibrationType::VectorType          VectorType;
   typedef PrincipalAxisCalibrationType::CovariantVectorType CovariantVectorType;
   typedef itk::Logger                                       LoggerType; 

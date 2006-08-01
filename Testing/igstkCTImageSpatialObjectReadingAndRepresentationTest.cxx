@@ -285,7 +285,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
 
       if( ctImage->IsEmpty() )
         {
-        std::cerr << "The image was expected to be Non-Empty, but it was empty." 
+        std::cerr << "The image was expected to be Non-Empty,but it was empty."
                   << std::endl;
         return EXIT_FAILURE;
         }
@@ -333,7 +333,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
 
       if( ctImage->IsEmpty() )
         {
-        std::cerr << "The image was expected to be Non-Empty, but it was empty." 
+        std::cerr << "The image was expected to be Non-Empty,but it was empty."
                   << std::endl;
         return EXIT_FAILURE;
         }

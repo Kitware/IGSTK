@@ -111,7 +111,8 @@ public:
     m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
     m_Communication->SetDataBits( igstk::SerialCommunication::DataBits8 );
     m_Communication->SetStopBits( igstk::SerialCommunication::StopBits1 );
-    m_Communication->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
+    m_Communication->SetHardwareHandshake( 
+                                  igstk::SerialCommunication::HandshakeOff );
     m_Tracker->SetCommunication(m_Communication);
 
     m_Communication->OpenCommunication();
@@ -167,7 +168,8 @@ public:
     m_Tracking = false;
     }
     
-  void AddCylinder( igstk::CylinderObjectRepresentation * cylinderRepresentation )
+  void AddCylinder( igstk::CylinderObjectRepresentation * 
+                                                      cylinderRepresentation )
     {
     this->Display3D->RequestAddObject(       cylinderRepresentation->Copy() );
     this->DisplayAxial->RequestAddObject(    cylinderRepresentation->Copy() );
@@ -175,7 +177,8 @@ public:
     this->DisplaySagittal->RequestAddObject( cylinderRepresentation->Copy() );
     }
     
-  void AddEllipsoid( igstk::EllipsoidObjectRepresentation * ellipsoidRepresentation )
+  void AddEllipsoid( igstk::EllipsoidObjectRepresentation * 
+                                                     ellipsoidRepresentation )
     {
     this->Display3D->RequestAddObject(       ellipsoidRepresentation->Copy() );
     this->DisplayAxial->RequestAddObject(    ellipsoidRepresentation->Copy() );

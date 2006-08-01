@@ -31,12 +31,13 @@ int igstkImageSpatialObjectTest( int , char* [] )
   typedef signed short    PixelType;
   const unsigned int      Dimension = 3;
 
-  typedef igstk::ImageSpatialObject< PixelType, Dimension > ImageSpatialObjectType;
+  typedef igstk::ImageSpatialObject< PixelType, Dimension > 
+                                                       ImageSpatialObjectType;
 
-  ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New();
+  ImageSpatialObjectType::Pointer 
+                           imageSpatialObject = ImageSpatialObjectType::New();
 
   imageSpatialObject->Print( std::cout );
 
   return EXIT_SUCCESS;
 }
-

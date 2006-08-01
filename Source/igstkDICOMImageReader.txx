@@ -823,7 +823,7 @@ DICOMImageReader<TPixelType>::GetITKImage() const
 /** Check modality type */
 template <class TPixelType>
 bool
-DICOMImageReader<TPixelType>::CheckModalityType ( DICOMInformationType modality ) 
+DICOMImageReader<TPixelType>::CheckModalityType( DICOMInformationType modality )
 {
   return true;
 }

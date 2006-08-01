@@ -205,8 +205,6 @@ ToolCalibrationReader<TCalibration>
   this->m_StateMachine.ProcessInputs();
 }
 
-
-
 /** Add a parameter */
 template <class TCalibration>
 bool 

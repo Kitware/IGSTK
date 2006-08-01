@@ -43,7 +43,6 @@ namespace igstk
  *\image html igstkLandmark3DRegistration.png "State Machine Diagram"
  *
  *\image latex igstkLandmark3DRegistration.eps "State Machine Diagram" 
- *              
  *
  * \ingroup Registration 
  */

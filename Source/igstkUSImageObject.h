@@ -50,7 +50,7 @@ public:
    *  in the template declaration. */
   
   typedef ImageSpatialObject< unsigned char, 3 >  SuperclassType;
-  typedef SuperclassType::ImageType                   ImageType;
+  typedef SuperclassType::ImageType               ImageType;
 
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( USImageObject, SuperclassType )

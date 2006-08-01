@@ -135,14 +135,16 @@ int igstkSerialCommunicationTest( int argc, char * argv[] )
   std::cout << "TimeoutPeriod: " 
             << serialComm->GetTimeoutPeriod() << std::endl;
 
-  serialComm->SetCaptureFileName( "RecordedStreamBySerialCommunicationTest.txt" );
+  serialComm->SetCaptureFileName( 
+                              "RecordedStreamBySerialCommunicationTest.txt" );
   serialComm->SetCapture( true );
   if( serialComm->GetCapture() != true )
     {
     std::cout << "Set/GetCapture() failed" << std::endl;
     std::cout << "[FAILED]" << std::endl;
     }
-  std::cout << "CaptureFileName: " << serialComm->GetCaptureFileName() << std::endl;
+  std::cout << "CaptureFileName: " 
+            << serialComm->GetCaptureFileName() << std::endl;
 
   unsigned int len = strlen("Hello World!!!");
   unsigned int numberOfBytesRead = 0;
