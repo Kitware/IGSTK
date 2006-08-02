@@ -45,6 +45,38 @@ Transform
 {
 }
 
+Transform 
+Transform
+::TransformCompose( Transform leftTransform, Transform rightTransform)
+{
+  VersorType rotation;
+  VectorType translation;
+
+  // start with rightTransform
+  rotation = rightTransform.GetRotation();
+  translation = rightTransform.GetTranslation();
+
+  // left multiple by the leftTransform
+  rotation = leftTransform.GetRotation()*rotation;
+  translation = leftTransform.GetRotation().Transform(translation);
+  translation += leftTransform.GetTranslation();
+
+  // FIXME: How to evaluate the correct error value?
+  ErrorType  error = (leftTransform.GetError() > rightTransform.GetError()) ?
+                      leftTransform.GetError() : rightTransform.GetError();
+
+  TimePeriodType t = 
+    (leftTransform.GetExpirationTime() < rightTransform.GetExpirationTime()) ?
+     leftTransform.GetExpirationTime() : rightTransform.GetExpirationTime();
+  
+  t -= RealTimeClock::GetTimeStamp();
+  t = ( 0 > t ) ? 0 : t;
+
+  Transform transform;
+  transform.SetTranslationAndRotation( translation, rotation, error, t);
+
+  return transform;
+}
 
 const Transform &
 Transform

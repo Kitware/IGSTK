@@ -21,6 +21,7 @@
 namespace igstk
 {
 
+const double TimeStamp::LongestPossibleTime = 1e300;
   
 TimeStamp
 ::TimeStamp()

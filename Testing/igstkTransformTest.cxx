@@ -24,6 +24,7 @@
 #include <math.h>
 #include <iostream>
 #include "igstkTransform.h"
+#include "FL/fl.h"
 
 int igstkTransformTest( int, char * [] )
 {
@@ -130,15 +131,12 @@ int igstkTransformTest( int, char * [] )
     std::cout << "Inverse = " << tinv << std::endl;
 
     // multiply to test inverse
-    rotation = t1.GetRotation() * tinv.GetRotation();
-    translation = (tinv.GetRotation().Transform(t1.GetTranslation())
-                   + tinv.GetTranslation());
-
-    t1.SetTranslationAndRotation( 
-        translation, rotation, errorValue, validityPeriod );
+    t1 = igstk::Transform::TransformCompose( tinv, t1 );
 
     std::cout << "Direct * Inverse = " << t1 << std::endl;
 
+    translation = t1.GetTranslation();
+    rotation    = t1.GetRotation();
     // verify that result to within 1 bit of double precision
     const double epsilon = 2.3e-16;
     if (fabs(translation[0]) > 1000*epsilon ||
@@ -152,6 +150,41 @@ int igstkTransformTest( int, char * [] )
       std::cerr << "Error in inverse" << std::endl;
       return EXIT_FAILURE;
       }
+
+    translation[0] = 0.0;
+    translation[1] = 0.0;
+    translation[2] = 0.0;
+    rotation.Set(0.0, 0.0, 0.0, 1.0);
+
+    double  smallerError  = 10;
+    double  lagerError    = 100;
+    double  shorterPeriod = 500;
+    double  longerPeriod  = 1000;
+    
+    t1.SetTranslationAndRotation( translation, rotation, smallerError, 
+                                                                shorterPeriod );
+
+    tinv.SetTranslationAndRotation( translation, rotation, lagerError, 
+                                                                longerPeriod );
+    
+#if defined (_WIN32) || defined (WIN32)
+    Sleep( 250 );            // Windows Sleep uses miliseconds
+#else
+    usleep( 250 * 1000 );  // linux usleep uses microsecond
+#endif
+
+    t1 = igstk::Transform::TransformCompose( t1, tinv );
+
+    std::cout<< "New transform = \n" << t1 << std::endl;
+    if ( t1.GetError() != lagerError )
+      {
+      std::cout<< "Error computing transform value" << std::endl;
+      return EXIT_FAILURE;
+      }
+    std::cout<< "Valid period (roughly 250) = " << 
+                       t1.GetExpirationTime() - t1.GetStartTime() << std::endl;
+   
+
     }
   catch(...)
     {

@@ -70,6 +70,10 @@ public:
   Transform( const Transform & t );
   virtual ~Transform();
 
+  //** Transform composition method */
+  static Transform TransformCompose( Transform leftTransform, 
+                                     Transform rightTransform);
+
   /** Assign the values of one transform to another */
   const Transform & operator=( const Transform & inputTransform );
 
@@ -87,7 +91,7 @@ public:
   /** Set only Rotation. This method should be used when the transform
    * represents only a rotation. Internally the translational part of the
    * transform will be set to zero. The assigned rotation will override any
-   * previouly set rotation and will set to zero any previous translation.
+   * previously set rotation and will set to zero any previous translation.
    * The information will be considered valid from the time of invokation of
    * the method until that time plus the millisecondsToExpiration value. */
   void SetRotation( 
@@ -98,7 +102,7 @@ public:
   /** Set only Translation. This method should be used when the transform
    * represents only a translation. Internally the rotational part of the
    * transform will be set to zero. The assigned translation will override any
-   * previouly set translation and will set to zero any previous rotation.
+   * previously set translation and will set to zero any previous rotation.
    * The information will be considered valid from the time of invokation of
    * the method until that time plus the millisecondsToExpiration value. */
   void SetTranslation( 

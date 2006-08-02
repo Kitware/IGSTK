@@ -21,10 +21,9 @@
 #include <iostream>
 #include "igstkRealTimeClock.h"
 
-
 namespace igstk 
 {
- 
+
 /** \class TimeStamp 
  *  \brief TimeStamp provides periods of validity for data.
  * 
@@ -34,12 +33,12 @@ namespace igstk
  * moment the toolkit is only managing information whose validity has not
  * expired. For example, the information of position for a tracked surgical
  * instrument will be valid from the moment it was acquired until a new data is
- * made available. The acquisition rate of a tracker will make posible to
+ * made available. The acquisition rate of a tracker will make possible to
  * define an expiration time for the position information associated with that
  * particular surgical instrument.
  * 
  * \warning Clock precision is unfortunately platform-dependent. It is known
- * that Unix systems will provide time resolution of fractions of millisecons,
+ * that Unix systems will provide time resolution of fractions of milliseconds,
  * while Microsoft Windows will only provide milliseconds.  Users must be aware
  * of the particular capabilities of the platform they are using for running
  * the software.
@@ -59,6 +58,8 @@ public:
 
   typedef double      TimePeriodType;
 
+  /** Define the longest time period on the machine */
+  const static double LongestPossibleTime; 
 
   /** Constructor and destructor */
   TimeStamp();
