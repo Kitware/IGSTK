@@ -1,0 +1,5 @@
+PROJECT(PrincipalAxisCalibration)
+  
+ADD_EXECUTABLE(PrincipalAxisCalibrationExample PrincipalAxisCalibration1.cxx)
+TARGET_LINK_LIBRARIES(PrincipalAxisCalibrationExample IGSTKSandbox)
+
