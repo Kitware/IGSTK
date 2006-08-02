@@ -1,0 +1,5 @@
+PROJECT(PivotCalibrationReader)
+  
+ADD_EXECUTABLE(PivotCalibrationReaderExample PivotCalibrationReader1.cxx)
+TARGET_LINK_LIBRARIES(PivotCalibrationReaderExample IGSTKSandbox)
+
