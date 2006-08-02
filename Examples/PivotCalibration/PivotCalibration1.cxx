@@ -62,7 +62,10 @@ int main( int argc, char * argv[] )
 // BeginLatex
 //
 // All the necessary data types in the pivot calibration are defined.
-// 
+// VersorType and VectorType are used to represent the quaternion and
+// translation inputs from the tracker; PointType is used to represent
+// the position coordinate of the specific point; and ErrorType is used
+// to represent the root mean square error.
 // EndLatex
 
 // BeginCodeSnippet
@@ -77,7 +80,7 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// At first, a pivot calibration class is initialized as follows: 
+// At the beginning, a pivot calibration class is initialized as follows: 
 //
 // EndLatex
 
@@ -184,9 +187,11 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// Before reading all the information, a GetValidPivotCalibration function is used
-// to check whether the transform and other reaults are OK to use. The sample code
-// is as follows:
+// Before the final calibration transform is retrieved, the user should
+// check the tag to see whether a valid calibration has been computed.
+// The final calibration result is stored in the translation factor in
+// the transform matrix. The pivot position is also retrievable. 
+// The sample code is as follows:
 //
 // EndLatex
 
