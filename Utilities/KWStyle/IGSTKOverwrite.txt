@@ -17,14 +17,14 @@ igstkPulseGeneratorTest.cxx Namespace Disable
 igstkSerialCommunicationSimulatorTest.cxx Namespace Disable
 igstkSerialCommunicationTest.cxx Namespace Disable
 igstkSpatialObjectReaderTest.cxx Namespace Disable
-igstkTestMain.h Typedef Disable
+igstkTestMain.h Typedefs Disable
 igstkTestMain.h IfNDefDefine Disable
 igstkImageReaderTest.cxx Namespace Disable
 igstkFlockOfBirdsTrackerTest.cxx Namespace Disable
 igstkDICOMImageReaderErrorsTest.cxx Namespace Disable
 igstkCTImageSpatialObjectRepresentationTest.cxx Namespace Disable
 igstkAuroraTrackerTest.cxx Namespace Disable
-igstkEvents.h Typedef Disable
+igstkEvents.h Typedefs Disable
 
 
 

@@ -140,8 +140,8 @@ int main(int , char** )
   // initialize the parameters of the clock. Timing is critical for all the
   // operations performed in an IGS application. Timing signals make possible to
   // synchronize the operation of different components and to ensure that the
-  // scene that is rendered on the screen actually displays a consistent state of
-  // the environment on the operating room.
+  // scene that is rendered on the screen actually displays a consistent 
+  // state of the environment on the operating room.
   // EndLatex
   // 
   // BeginCodeSnippet
@@ -153,7 +153,7 @@ int main(int , char** )
   // EndLatex
   // 
   // BeginCodeSnippet
-   HelloWorldGUI * m_GUI = new HelloWorldGUI();
+  HelloWorldGUI * m_GUI = new HelloWorldGUI();
   // EndCodeSnippet
   // 
   m_GUI->MainWindow->show();
@@ -191,8 +191,8 @@ int main(int , char** )
   // EndCodeSnippet
   
   // BeginLatex
-  // Similarly, a cylinder spatial object and cylinder spatial object representation
-  // object are instantiated as follows.
+  // Similarly, a cylinder spatial object and cylinder spatial object 
+  // representation object are instantiated as follows.
   // EndLatex
 
   

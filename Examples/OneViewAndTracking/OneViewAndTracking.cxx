@@ -15,7 +15,8 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4284 )
 #endif
 
@@ -53,7 +54,8 @@ int main(int , char** )
 
 
   // Create the ellipsoid representation
-  igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
+  igstk::EllipsoidObjectRepresentation::Pointer 
+        ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
   ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
   ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
   ellipsoidRepresentation->SetOpacity(1.0);
@@ -64,7 +66,8 @@ int main(int , char** )
   cylinder->SetHeight(300.0);  // about the size of a needle
 
   // Create the cylinder representation
-  igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
+  igstk::CylinderObjectRepresentation::Pointer 
+          cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
   cylinderRepresentation->RequestSetCylinderObject( cylinder );
   cylinderRepresentation->SetColor(1.0,0.0,0.0);
   cylinderRepresentation->SetOpacity(1.0);
