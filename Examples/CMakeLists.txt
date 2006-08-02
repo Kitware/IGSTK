@@ -17,4 +17,5 @@ SUBDIRS(
   DeckOfCardRobot
   View
   PivotCalibration
+  PrincipalAxisCalibration
   )
