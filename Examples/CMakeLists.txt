@@ -18,4 +18,5 @@ SUBDIRS(
   View
   PivotCalibration
   PrincipalAxisCalibration
+  PivotCalibrationReader
   )
