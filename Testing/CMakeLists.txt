@@ -122,7 +122,6 @@ SET(IGSTKTests_SRCS
   igstkUSImageObjectTest.cxx
   igstkUSImageObjectRepresentationTest.cxx
   igstkToolCalibrationTest.cxx
-  igstkToolCalibrationReaderTest.cxx
   igstkAxesObjectTest.cxx
   igstkBoxObjectTest.cxx
   igstkConeObjectTest.cxx
@@ -168,7 +167,11 @@ IF (IGSTK_DATA_ROOT)
 
   ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest 
             ${IGSTK_DATA_ROOT}/Input/USLiver )
-
+  ADD_TEST( igstkToolCalibrationReaderTest ${IGSTK_TESTS} 
+             igstkToolCalibrationReaderTest
+             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
+             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
+             ) 
   ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTK_TESTS} 
              igstkPivotCalibrationReaderTest
              ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
@@ -334,7 +337,7 @@ IF(IGSTK_DATA_ROOT)
   SET(IGSTKTests_SRCS
     ${IGSTKTests_SRCS}
     igstkUSImageReaderTest.cxx
-    igstkPivotCalibrationReaderTest.cxx
+    igstkPivotCalibrationReaderTest.cxx        igstkToolCalibrationReaderTest.cxx
     igstkMR3DImageToUS3DImageRegistrationTest.cxx
     igstkAnnotation2DTest.cxx
     igstkCTImageReaderTest.cxx
