@@ -57,6 +57,13 @@ int main( int argc, char * argv[] )
 {
 // EndCodeSnippet
 
+  if(argc<2)
+    {
+    std::cout << "Usage = " << argv[0] << " calibrationFile" 
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+
   igstk::RealTimeClock::Initialize();
 
 // BeginLatex
