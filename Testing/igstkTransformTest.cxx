@@ -24,7 +24,6 @@
 #include <math.h>
 #include <iostream>
 #include "igstkTransform.h"
-#include "FL/fl.h"
 
 int igstkTransformTest( int, char * [] )
 {
