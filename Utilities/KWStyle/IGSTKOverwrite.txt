@@ -26,6 +26,3 @@ igstkCTImageSpatialObjectRepresentationTest.cxx Namespace Disable
 igstkAuroraTrackerTest.cxx Namespace Disable
 igstkEvents.h Typedefs Disable
 igstkPivotCalibration.h DeclarationOrder Disable
-
-
-
