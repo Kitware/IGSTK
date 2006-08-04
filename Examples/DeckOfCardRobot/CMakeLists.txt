@@ -16,6 +16,7 @@ SET(DeckOfCardRobot_HEADER
   LandmarkBasedRegistration.h
   ModelBasedRegistration.h
   PCAOnPoints.h
+  PointsClustering.h
 )
 
 SET(DeckOfCardRobot_SRCS
@@ -31,6 +32,7 @@ SET(DeckOfCardRobot_SRCS
   LandmarkBasedRegistration.cxx
   ModelBasedRegistration.cxx
   PCAOnPoints.cxx
+  PointsClustering.cxx
   )
 
 INCLUDE_DIRECTORIES(
@@ -63,4 +65,14 @@ ADD_EXECUTABLE(FiducialSegmentationTest
 )
 
 TARGET_LINK_LIBRARIES(FiducialSegmentationTest IGSTKSandbox)
+
+ADD_EXECUTABLE(PointsClusteringTest
+  PointsClusteringTest.cxx
+  FiducialModel.cxx
+  FiducialModel.h
+  PointsClustering.cxx
+  PointsClustering.h
+)
+
+TARGET_LINK_LIBRARIES(PointsClusteringTest IGSTKSandbox)
 
