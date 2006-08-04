@@ -168,7 +168,6 @@ void MeshObjectRepresentation::CreateActors()
         polyData->InsertNextCell( VTK_TRIANGLE, pts );
         break;
       case 4:
-        system("PAUSE");
         polyData->InsertNextCell( VTK_TETRA, pts );
         break;
       default:
