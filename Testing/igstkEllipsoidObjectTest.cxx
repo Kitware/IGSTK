@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -33,61 +34,58 @@ namespace igstk
 {
 namespace EllipsoidObjectTest
 {
-  class TransformObserver : public ::itk::Command 
-  {
-  public:
-    typedef  TransformObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    TransformObserver() 
-      {
-      m_GotTransform = false;
-      }
-    ~TransformObserver() {}
-  public:
+class TransformObserver : public ::itk::Command 
+{
+public:
+  typedef  TransformObserver   Self;
+  typedef  ::itk::Command    Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
+protected:
+  TransformObserver() 
+    {
+    m_GotTransform = false;
+    }
+  ~TransformObserver() {}
+public:
     
-      typedef ::igstk::TransformModifiedEvent  EventType;
+  typedef ::igstk::TransformModifiedEvent  EventType;
         
-      void Execute(itk::Object *caller, const itk::EventObject & event)
-        {
-        const itk::Object * constCaller = caller;
-        this->Execute( constCaller, event );
-        }
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    const itk::Object * constCaller = caller;
+    this->Execute( constCaller, event );
+    }
 
-      void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    m_GotTransform = false;
+    if( EventType().CheckEvent( &event ) )
+      {
+      const EventType * transformEvent = 
+                dynamic_cast< const EventType *>( &event );
+      if( transformEvent )
         {
-        m_GotTransform = false;
-        if( EventType().CheckEvent( &event ) )
-          {
-          const EventType * transformEvent = 
-                    dynamic_cast< const EventType *>( &event );
-          if( transformEvent )
-            {
-            m_Transform = transformEvent->Get();
-            m_GotTransform = true;
-            }
-          }
+        m_Transform = transformEvent->Get();
+        m_GotTransform = true;
         }
+      }
+    }
 
-      bool GotTransform() const
-        {
-        return m_GotTransform;
-        }
+  bool GotTransform() const
+    {
+    return m_GotTransform;
+    }
 
-      const ::igstk::Transform & GetTransform() const
-        {
-        return m_Transform;
-        }
+  const ::igstk::Transform & GetTransform() const
+    {
+    return m_Transform;
+    }
         
-  private:
-
+private:
     ::igstk::Transform  m_Transform;
-
-    bool m_GotTransform;
-
-  };
+    bool                m_GotTransform;
+};
 
 } // end namespace EllipsoidObjectTest
 } // end namespace igstk
@@ -109,12 +107,14 @@ int igstkEllipsoidObjectTest( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer 
+                              vtkLoggerOutput = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);  //redirect messages from VTK Output
 
   typedef igstk::EllipsoidObjectRepresentation  ObjectRepresentationType;
-  ObjectRepresentationType::Pointer ellipsoidRepresentation = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer 
+                    ellipsoidRepresentation = ObjectRepresentationType::New();
   ellipsoidRepresentation->SetLogger( logger );
 
   typedef igstk::EllipsoidObject  ObjectType;
@@ -134,7 +134,8 @@ int igstkEllipsoidObjectTest( int, char * [] )
     {
     if(radiusRead[i] != radius[i])
       {
-      std::cerr << "Radius error : " << radius[i] << " v.s " << i << std::endl; 
+      std::cerr << "Radius error : " << radius[i] 
+                << " v.s " << i << std::endl; 
       return EXIT_FAILURE;
       }
     }
@@ -146,7 +147,8 @@ int igstkEllipsoidObjectTest( int, char * [] )
     {
     if(radiusRead[i] != radius[i]+1)
       {
-      std::cerr << "Radius error : " << radius[i] << " v.s " << i << std::endl; 
+      std::cerr << "Radius error : " << radius[i] 
+                << " v.s " << i << std::endl; 
       return EXIT_FAILURE;
       }
     }
@@ -225,18 +227,21 @@ int igstkEllipsoidObjectTest( int, char * [] )
 
   ellipsoidObject->RequestSetTransform( transform );
 
-  typedef ::igstk::EllipsoidObjectTest::TransformObserver  TransformObserverType;
+  typedef ::igstk::EllipsoidObjectTest::TransformObserver TransformObserverType;
 
-  TransformObserverType::Pointer transformObserver = TransformObserverType::New();
+  TransformObserverType::Pointer 
+                             transformObserver = TransformObserverType::New();
 
-  ellipsoidObject->AddObserver( ::igstk::TransformModifiedEvent(), transformObserver );
+  ellipsoidObject->AddObserver( ::igstk::TransformModifiedEvent(), 
+                                                          transformObserver );
   
   ellipsoidObject->RequestSetTransform( transform );
   ellipsoidObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
     {
-    std::cerr << "The EllipsoidObject did not returned a Transform event" << std::endl;
+    std::cerr << "The EllipsoidObject did not returned a Transform event" 
+              << std::endl;
     return EXIT_FAILURE;
     }
       
@@ -247,7 +252,8 @@ int igstkEllipsoidObjectTest( int, char * [] )
     {
     if( fabs( translation2[i]  - translation[i] ) > tolerance )
       {
-      std::cerr << "Translation component is out of range [FAILED]" << std::endl;
+      std::cerr << "Translation component is out of range [FAILED]" 
+                << std::endl;
       std::cerr << "input  translation = " << translation << std::endl;
       std::cerr << "output translation = " << translation2 << std::endl;
       return EXIT_FAILURE;
@@ -266,10 +272,7 @@ int igstkEllipsoidObjectTest( int, char * [] )
     return EXIT_FAILURE;
     }
 
-
-
   std::cout << "[PASSED]" << std::endl;
-
 
   // Testing the Copy() function
   std::cout << "Testing Copy(): ";
@@ -283,12 +286,15 @@ int igstkEllipsoidObjectTest( int, char * [] )
 
   // Exercise RequestSetEllipsoidObject() with a null pointer as argument
   std::cout << "Testing RequestSetEllipsoidObject() with NULL argument: ";
-  ObjectRepresentationType::Pointer ellipsoidRepresentation3 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer 
+                   ellipsoidRepresentation3 = ObjectRepresentationType::New();
   ellipsoidRepresentation3->RequestSetEllipsoidObject( 0 );
 
-  // Exercise RequestSetEllipsoidObject() called twice. The second call should be ignored.
+  // Exercise RequestSetEllipsoidObject() called twice. 
+  // The second call should be ignored.
   std::cout << "Testing RequestSetEllipsoidObject() called twice: ";
-  ObjectRepresentationType::Pointer ellipsoidRepresentation4 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer 
+                   ellipsoidRepresentation4 = ObjectRepresentationType::New();
   ObjectType::Pointer ellipsoidObjectA = ObjectType::New();
   ObjectType::Pointer ellipsoidObjectB = ObjectType::New();
   ellipsoidRepresentation4->RequestSetEllipsoidObject( ellipsoidObjectA );

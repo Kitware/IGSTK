@@ -30,8 +30,6 @@ int igstkImageReaderTest( int , char* [] )
 
   igstk::RealTimeClock::Initialize();
 
-
-
   typedef short    PixelType;
   const unsigned int Dimension = 3;
 
@@ -40,15 +38,15 @@ int igstkImageReaderTest( int , char* [] )
   
   class myTestReader : 
     public igstk::ImageReader< ImageSpatialObjectType >
-  {
-  public:
-     typedef myTestReader                                 Self;
-     typedef igstk::ImageReader< ImageSpatialObjectType > Superclass;
-     igstkNewMacro( Self );
-  private:
-    typedef Superclass::ImageType ImageType;
-    virtual const ImageType * GetITKImage() const { return NULL; }
-  };
+    {
+    public:
+      typedef myTestReader                                 Self;
+      typedef igstk::ImageReader< ImageSpatialObjectType > Superclass;
+      igstkNewMacro( Self );
+    private:
+      typedef Superclass::ImageType ImageType;
+      virtual const ImageType * GetITKImage() const { return NULL; }
+    };
 
   typedef myTestReader   ReaderType;
 

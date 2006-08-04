@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters 
+// in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -33,61 +34,60 @@ namespace igstk
 {
 namespace CylinderObjectTest
 {
-  class TransformObserver : public ::itk::Command 
-  {
-  public:
-    typedef  TransformObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    TransformObserver() 
+class TransformObserver : public ::itk::Command 
+{
+public:
+  typedef  TransformObserver          Self;
+  typedef  ::itk::Command             Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
+protected:
+  TransformObserver() 
+    {
+    m_GotTransform = false;
+    }
+  ~TransformObserver() {}
+public:
+ 
+  typedef ::igstk::TransformModifiedEvent  EventType;
+        
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    const itk::Object * constCaller = caller;
+    this->Execute( constCaller, event );
+    }
+
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    m_GotTransform = false;
+    if( EventType().CheckEvent( &event ) )
       {
-      m_GotTransform = false;
+      const EventType * transformEvent = 
+                   dynamic_cast< const EventType *>( &event );
+      if( transformEvent )
+        {
+        m_Transform = transformEvent->Get();
+        m_GotTransform = true;
+        }
       }
-    ~TransformObserver() {}
-  public:
-    
-      typedef ::igstk::TransformModifiedEvent  EventType;
-        
-      void Execute(itk::Object *caller, const itk::EventObject & event)
-        {
-        const itk::Object * constCaller = caller;
-        this->Execute( constCaller, event );
-        }
+    }
 
-      void Execute(const itk::Object *caller, const itk::EventObject & event)
-        {
-        m_GotTransform = false;
-        if( EventType().CheckEvent( &event ) )
-          {
-          const EventType * transformEvent = 
-                    dynamic_cast< const EventType *>( &event );
-          if( transformEvent )
-            {
-            m_Transform = transformEvent->Get();
-            m_GotTransform = true;
-            }
-          }
-        }
+  bool GotTransform() const
+    {
+    return m_GotTransform;
+    }
 
-      bool GotTransform() const
-        {
-        return m_GotTransform;
-        }
+  const ::igstk::Transform & GetTransform() const
+    {
+    return m_Transform;
+    }
 
-      const ::igstk::Transform & GetTransform() const
-        {
-        return m_Transform;
-        }
-        
-  private:
+private:
 
-    ::igstk::Transform  m_Transform;
+  ::igstk::Transform  m_Transform;
+  bool                m_GotTransform;
 
-    bool m_GotTransform;
-
-  };
+};
 
 } // end namespace CylinderObjectTest
 } // end namespace igstk
@@ -95,7 +95,6 @@ namespace CylinderObjectTest
 
 int igstkCylinderObjectTest( int, char * [] )
 {
-
   igstk::RealTimeClock::Initialize();
 
   typedef itk::Logger              LoggerType;
@@ -109,12 +108,14 @@ int igstkCylinderObjectTest( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer 
+                              vtkLoggerOutput = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK OutputWindow
 
   typedef igstk::CylinderObjectRepresentation  ObjectRepresentationType;
-  ObjectRepresentationType::Pointer cylinderRepresentation = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer 
+                      cylinderRepresentation = ObjectRepresentationType::New();
   cylinderRepresentation->SetLogger( logger );
 
   typedef igstk::CylinderObject ObjectType;
@@ -210,18 +211,21 @@ int igstkCylinderObjectTest( int, char * [] )
 
   cylinderObject->RequestSetTransform( transform );
 
-  typedef ::igstk::CylinderObjectTest::TransformObserver  TransformObserverType;
+  typedef ::igstk::CylinderObjectTest::TransformObserver TransformObserverType;
 
-  TransformObserverType::Pointer transformObserver = TransformObserverType::New();
+  TransformObserverType::Pointer 
+                              transformObserver = TransformObserverType::New();
 
-  cylinderObject->AddObserver( ::igstk::TransformModifiedEvent(), transformObserver );
+  cylinderObject->AddObserver(
+                        ::igstk::TransformModifiedEvent(), transformObserver );
   
   cylinderObject->RequestSetTransform( transform );
   cylinderObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
     {
-    std::cerr << "The CylinderObject did not returned a Transform event" << std::endl;
+    std::cerr << "The CylinderObject did not returned \
+                 a Transform event" << std::endl;
     return EXIT_FAILURE;
     }
       
@@ -232,7 +236,8 @@ int igstkCylinderObjectTest( int, char * [] )
     {
     if( fabs( translation2[i]  - translation[i] ) > tolerance )
       {
-      std::cerr << "Translation component is out of range [FAILED]" << std::endl;
+      std::cerr << "Translation component is out of range [FAILED]" 
+                << std::endl;
       std::cerr << "input  translation = " << translation << std::endl;
       std::cerr << "output translation = " << translation2 << std::endl;
       return EXIT_FAILURE;
@@ -251,12 +256,12 @@ int igstkCylinderObjectTest( int, char * [] )
     return EXIT_FAILURE;
     }
 
-
-
   // Exercise Copy() method
-  ObjectRepresentationType::Pointer cylinderRepresentation2 = cylinderRepresentation->Copy();
+  ObjectRepresentationType::Pointer 
+                     cylinderRepresentation2 = cylinderRepresentation->Copy();
   view2D->RequestAddObject( cylinderRepresentation2 );
-  if(cylinderRepresentation2->GetOpacity() != cylinderRepresentation->GetOpacity())
+  if(cylinderRepresentation2->GetOpacity() 
+     != cylinderRepresentation->GetOpacity())
     {
     std::cerr << "Copy() [FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -265,12 +270,15 @@ int igstkCylinderObjectTest( int, char * [] )
 
   // Exercise RequestSetCylinderObject() with a null pointer as argument
   std::cout << "Testing RequestSetCylinderObject() with NULL argument: ";
-  ObjectRepresentationType::Pointer cylinderRepresentation3 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer 
+                     cylinderRepresentation3 = ObjectRepresentationType::New();
   cylinderRepresentation3->RequestSetCylinderObject( 0 );
 
-  // Exercise RequestSetCylinderObject() called twice. The second call should be ignored.
+  // Exercise RequestSetCylinderObject() called twice. 
+  // The second call should be ignored.
   std::cout << "Testing RequestSetCylinderObject() called twice: ";
-  ObjectRepresentationType::Pointer cylinderRepresentation4 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer 
+                     cylinderRepresentation4 = ObjectRepresentationType::New();
   ObjectType::Pointer cylinderObjectA = ObjectType::New();
   ObjectType::Pointer cylinderObjectB = ObjectType::New();
   cylinderRepresentation4->RequestSetCylinderObject( cylinderObjectA );
