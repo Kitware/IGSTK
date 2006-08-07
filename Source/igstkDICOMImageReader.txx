@@ -598,7 +598,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
     sstr.str( m_GantryTilt );
     sstr >> gantryTilt;
 
-    if( gantryTilt > gantryTiltThreshold )
+    if( fabs(gantryTilt) > gantryTiltThreshold )
       {
       this->m_ImageReadingErrorInformation = "Unacceptable gantry tilt";
       this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
