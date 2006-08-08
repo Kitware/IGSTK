@@ -37,8 +37,8 @@ namespace EllipsoidObjectTest
 class TransformObserver : public ::itk::Command 
 {
 public:
-  typedef  TransformObserver   Self;
-  typedef  ::itk::Command    Superclass;
+  typedef  TransformObserver          Self;
+  typedef  ::itk::Command             Superclass;
   typedef  ::itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
 protected:
@@ -83,8 +83,8 @@ public:
     }
         
 private:
-    ::igstk::Transform  m_Transform;
-    bool                m_GotTransform;
+  ::igstk::Transform  m_Transform;
+  bool                m_GotTransform;
 };
 
 } // end namespace EllipsoidObjectTest

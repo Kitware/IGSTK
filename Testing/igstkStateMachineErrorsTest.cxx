@@ -22,7 +22,8 @@
  */
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+//  Warning about: identifier was truncated to '255' characters 
+// in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 // Warning about: constructor of the state machine receiving a pointer to this
 // from a constructor. This is not a problem in this case, since the state
@@ -76,9 +77,12 @@ public:
     const ActionType NoAction = 0;
 
     // Programming the machine
-    m_StateMachine.AddTransition( m_IdleState,          m_QuarterInserted, m_OneQuarterCredit,    NoAction );
-    m_StateMachine.AddTransition( m_OneQuarterCredit,   m_QuarterInserted, m_TwoQuarterCredit,    NoAction );
-    m_StateMachine.AddTransition( m_TwoQuarterCredit,   m_QuarterInserted, m_ThreeQuarterCredit,  NoAction );
+    m_StateMachine.AddTransition( m_IdleState,m_QuarterInserted, 
+                                            m_OneQuarterCredit,    NoAction );
+    m_StateMachine.AddTransition( m_OneQuarterCredit,m_QuarterInserted, 
+                                            m_TwoQuarterCredit,    NoAction );
+    m_StateMachine.AddTransition( m_TwoQuarterCredit,m_QuarterInserted, 
+                                            m_ThreeQuarterCredit,  NoAction );
 
     m_StateMachine.SelectInitialState( m_IdleState );
 
@@ -183,7 +187,8 @@ public:
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
     const ActionType NoAction = 0;
-    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
+    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, 
+                                            m_IdleState, NoAction );
     // On purpose NOT calling : m_StateMachine.SetReadyToRun();
     }
 
@@ -233,7 +238,8 @@ public:
     m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
     const ActionType NoAction = 0;
-    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
+    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, 
+                                                     m_IdleState, NoAction );
 
     // On purpose invode SetReadyToRun() twice.
     m_StateMachine.SetReadyToRun();
@@ -287,7 +293,8 @@ public:
 
     // On purpose NOT adding any transition: for testing error condition.
     // const ActionType NoAction = 0;
-    // m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
+    // m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, 
+    //                                               m_IdleState, NoAction );
     m_StateMachine.SetReadyToRun();
     }
 
@@ -341,21 +348,31 @@ public:
     m_StateMachine.AddInput( m_Cancel, "Cancel");
     const ActionType NoAction = 0;
    
-    std::cout << "TEST: On purpose NOT adding any transition for input m_Cancel" << std::endl;
-    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
+    std::cout << "TEST: On purpose NOT adding any transition \
+                 for input m_Cancel" << std::endl;
+    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, 
+                                                       m_IdleState, NoAction );
 
-    std::cout << "TEST: On purpose Adding a Transition for a non existing state " << std::endl;
-    m_StateMachine.AddTransition( m_NonRegisteredState, m_QuarterInserted, m_IdleState, NoAction );
+    std::cout << "TEST: On purpose Adding a Transition \
+                 for a non existing state " << std::endl;
+    m_StateMachine.AddTransition( m_NonRegisteredState, m_QuarterInserted, 
+                                                      m_IdleState, NoAction );
     
-    std::cout << "TEST: On purpose Adding a Transition for a non existing input " << std::endl;
-    m_StateMachine.AddTransition( m_IdleState, m_NonRegisteredInput, m_IdleState, NoAction );
+    std::cout << "TEST: On purpose Adding a Transition \
+                 for a non existing input " << std::endl;
+    m_StateMachine.AddTransition( m_IdleState, m_NonRegisteredInput, 
+                                                      m_IdleState, NoAction );
 
-    std::cout << "TEST: On purpose Adding a Transition for a non existing new state " << std::endl;
-    m_StateMachine.AddTransition( m_IdleState, m_DimeInserted, m_NonRegisteredState, NoAction );
+    std::cout << "TEST: On purpose Adding a Transition \
+                 for a non existing new state " << std::endl;
+    m_StateMachine.AddTransition( m_IdleState, m_DimeInserted, 
+                                             m_NonRegisteredState, NoAction );
 
-    std::cout << "TEST: On purpose Adding a Transition for a {State,Input} pair " << std::endl;
+    std::cout << "TEST: On purpose Adding a Transition \
+                 for a {State,Input} pair " << std::endl;
     std::cout << "      for which a transition ALREADY exists " << std::endl;
-    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_ChangeMindState, NoAction );
+    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, 
+                                                m_ChangeMindState, NoAction );
 
     m_StateMachine.SetReadyToRun();
     }
@@ -408,9 +425,12 @@ public:
     m_StateMachine.AddState( m_IdleState, "IdleState" );
     m_StateMachine.AddInput( m_QuarterInserted, "QuarterInserted" );
     const ActionType NoAction = 0;
-    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, m_IdleState, NoAction );
-    // On purpose NOT invoking SelectInitialState() before calling SetReadyToRun()
-    // COMMENTED OUT ON PURPOSE:  m_StateMachine.SelectInitialState( m_IdleState );
+    m_StateMachine.AddTransition( m_IdleState, m_QuarterInserted, 
+                                                      m_IdleState, NoAction );
+    // On purpose NOT invoking SelectInitialState() before calling 
+    // SetReadyToRun()
+    // COMMENTED OUT ON PURPOSE:  
+    // m_StateMachine.SelectInitialState( m_IdleState );
     m_StateMachine.SetReadyToRun();
     }
 
@@ -462,16 +482,20 @@ int igstkStateMachineErrorsTest( int, char * [] )
   // The following call are designed for testing the error conditions of the
   // state machine. 
 
-  std::cout << "Invoking as Initial state a state that doesn't exist." << std::endl;
+  std::cout << "Invoking as Initial state a state that doesn't exist." 
+            << std::endl;
   tester1.triggerError1();
 
-  std::cout << "Invoking SetReadyToRun() (in constructor) without parent class connected." << std::endl;
+  std::cout << "Invoking SetReadyToRun() (in constructor) without \
+               parent class connected." << std::endl;
   igstk::Tester2 tester2( logger );
 
-  std::cout << "Invoking ProcessInputs() without parent class connected." << std::endl;
+  std::cout << "Invoking ProcessInputs() without parent class connected." 
+            << std::endl;
   tester2.InsertChange();
 
-  std::cout << "Invoking ProcessInputs() without having called SetReadyToRun() ." << std::endl;
+  std::cout << "Invoking ProcessInputs() without having called \
+               SetReadyToRun() ." << std::endl;
   igstk::Tester3 tester3( logger );
 
   tester3.InsertChange();
@@ -480,17 +504,20 @@ int igstkStateMachineErrorsTest( int, char * [] )
   igstk::Tester4 tester4( logger );
 
   tester4.InsertChange();
-  std::cout << "Invoking  ProcessInputs() in a state without transitions defined." << std::endl;
+  std::cout << "Invoking  ProcessInputs() in a state without transitions \
+               defined." << std::endl;
   igstk::Tester5 tester5( logger );
   
   tester5.InvokeUndefinedTransition();
 
-  std::cout << "Invoking  ProcessInputs() in a state,input pair without transitions defined." << std::endl;
+  std::cout << "Invoking  ProcessInputs() in a state,input pair without \
+               transitions defined." << std::endl;
   igstk::Tester6 tester6( logger );
 
   tester6.InvokeUndefinedStateInputTransition();
 
-  std::cout << "Invoking  SetReadyToRun() without having called SetInitialState()" << std::endl;
+  std::cout << "Invoking  SetReadyToRun() without having called \
+               SetInitialState()" << std::endl;
   igstk::Tester7 tester7( logger );
 
   tester7.InsertChange();

@@ -480,7 +480,7 @@ std::map<std::string,int> RegressionTestBaselines (char *baselineFilename)
     std::ifstream filestream(filename.str().c_str());
     if (!filestream)
       {
-        break;
+      break;
       }
     baselines[filename.str()] = 0;
     filestream.close();
