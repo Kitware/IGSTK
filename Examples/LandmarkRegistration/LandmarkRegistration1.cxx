@@ -24,8 +24,8 @@
 // BeginLatex
 // 
 // This example illustrates how to use igstk's landmark registration 
-// component to determine a rigid body transformation parameters between 
-// image and patient coordinate system.
+// component to determine rigid body transformation parameters between 
+// an image and the patient coordinate system.
 //
 // EndLatex
 
@@ -34,7 +34,7 @@
 // BeginLatex
 // 
 // To use the registration component, the header file for 
-// \doxygen{Landmark3DRegistration} will be added.
+// \doxygen{Landmark3DRegistration} is added.
 //
 // EndLatex
 
@@ -52,7 +52,7 @@
 // BeginLatex
 // 
 // Transform parameters are returned to the application using loaded events. 
-// To handle these events, \doxygen{Events} and \doxygen{Transform} header 
+// To handle these events, the following \doxygen{Events} and \doxygen{Transform} header 
 // files are needed.
 //
 // EndLatex
@@ -66,12 +66,12 @@
 // BeginLatex
 // 
 // To fully  utilize the registration component, callbacks need to be set up 
-// to  observers events that could be thrown by the registration component.  
-//  For this purpose, ITK command class is used to derive a callback class .
-// The ITK command class implements subject/observer (command design) pattern.
+// to observer events that could be thrown by the registration component.  
+//  For this purpose, the ITK command class is used to derive a callback class .
+// The ITK command class implements a subject/observer (command design) pattern.
 //  A subject notifies an observer by running the \code{Execute } method of 
-// the derived callback class . For example a callback class to observe error 
-// in transform computation is defined as follows.
+// the derived callback class . For example a callback class meant to observe an error 
+// in the transform computation is defined as follows.
 // 
 // EndLatex
 
@@ -123,8 +123,8 @@ private:
 // BeginLatex
 // 
 // Similarly, a callback class needs to be defined to observe the 
-// \doxygen{TransformModified} event. This event is loaded with the 
-// transform parameters computed by the registration component.
+// \doxygen{TransformModified} event. This event is loaded with 
+// transform parameters that are computed by the registration component.
 //
 // EndLatex
 
@@ -173,7 +173,7 @@ private:
 
 // BeginLatex
 // 
-// After defining the helper classes, the main function implementation 
+// After the helper classes are defined, the main function implementation 
 // is started.
 //
 // EndLatex
@@ -242,7 +242,7 @@ int main( int argv, char * argc[] )
 // BeginLatex
 // 
 // Error event callback objects are instantiated and added to the observer list
-// of the registration component.
+// of the registration component as follows:
 //
 // EndLatex
 
@@ -283,13 +283,12 @@ int main( int argv, char * argc[] )
 // BeginLatex
 //
 // Next, landmark points are added to the image and tracker containers. 
-// The state machine of this registration component is designed in such a 
-// way that image and tracker coordinates corresponding to
-// each landmark are added consecutively. This scheme was selected to prevent 
-// a mismatch in landmark correspondence that could occur when all landmarks 
-// image coordinates are recorded followed by the tracker coordinates. 
-// This design choice is consistent with the philosophy of igstk i.e safety
-// by design.
+// The state machine of this registration component is designed so that 
+// the image and tracker coordinates that correspond to
+// each landmark are added consecutively. This scheme prevents
+// the mismatch in landmark correspondence that could occur when all landmarks 
+// image coordinates are recorded first and then the tracker coordinates. 
+// This design choice is consistent with the "safety by design" philosophy of igstk. 
 //
 //EndLatex 
 
@@ -337,7 +336,7 @@ int main( int argv, char * argc[] )
 
   // BeginLatex
   // 
-  // More landmarks could be added for transform computation.  
+  // More landmarks can be added for the transform computation.  
   // 
   // EndLatex
 
@@ -356,7 +355,7 @@ int main( int argv, char * argc[] )
 
   // BeginLatex
   // 
-  // After adding all the landmark coordinates, the transform computation is 
+  // After all the landmark coordinates are added, the transform computation is 
   // requested as follows
   // 
   // EndLatex
