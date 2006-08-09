@@ -23,12 +23,12 @@
 
 // BeginLatex
 //
-// This example illustrates how to estimate registration error of a target
-// point when registered using transformation parameters computed using
-// landmark-based registration technique.
+// This example illustrates how to estimate the registration error of a target
+// point that has been registered using transformation parameters that were 
+// computed using landmark-based registration.
 // 
-// The error estimation is based on the closed form equation developed by West
-// et al.  In this closed form solution, the target point registration error is
+// The error estimation is based on the closed-form equation developed by West
+// et al.  The target point registration error is
 // dependent on the location of the target point, the registration error of the
 // landmark points ( root mean square error) and the configuration of the
 // landmark points.
@@ -40,9 +40,9 @@
 
 // BeginLatex
 //
-// To use the IGSTK component for registration error computation, 
-// \doxygen{Landmark3DRegistrationErrorEstimator} header file needs
-// to be added.
+// To use the IGSTK component for computing the registration error, the 
+// following  \doxygen{Landmark3DRegistrationErrorEstimator} header file must
+// be added.
 //
 // EndLatex
 #include "igstkLandmark3DRegistration.h"
@@ -258,8 +258,8 @@ int main( int argv, char * argc[] )
   // Compute the landmark registration error
   // BeginLatex
   //
-  // Next, the landmark regisration error is set. The landmark registration
-  // component is used to compute this parametr. This error paramete
+  // Next, the landmark registration error is set. The landmark registration
+  // component is used to compute this parameter. This error parameter
   // basically the root mean square error of the landmark registration.
   //
   // EndLatex
@@ -275,8 +275,8 @@ int main( int argv, char * argc[] )
 
   // BeginLatex
   //
-  // Next, the other error parameters needed in the error estimation are
-  // computed.  This is done by invoking ComputeErrorParameter() method as
+  // Then, the other error parameters necessary for error estimation are
+  // computed by invoking the ComputeErrorParameter() method as
   // shown below. 
   //
   // EndLatex
@@ -304,8 +304,8 @@ int main( int argv, char * argc[] )
 
   // BeginLatex
   //
-  // Finally, we are ready to estimate the registration error for the target
-  // point.
+  // Finally, the registration error for the target
+  // point is estimated.
   //
   // EndLatex
 
@@ -319,7 +319,7 @@ int main( int argv, char * argc[] )
   //
   // BeginLatex
   //
-  // To receive the error value, we have to set up an observer to listen to
+  // To receive the error value, an observer is set up to listen to
   // an event loaded with error value as follows
   //
   // EndLatex
