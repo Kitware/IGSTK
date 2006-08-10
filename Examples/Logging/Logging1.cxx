@@ -36,7 +36,9 @@ using namespace std;
 // BeginLatex
 // 
 // XMLLogger class is defined to construct log messages in XML format.
-// Although indentation is not done here, XML viewers will show the hierarchical structure of log messages.
+// Indentation is automatically done here.
+// Most of XML viewers show the hierarchical structure of log messages
+// and provide UIs to collapse and expand subelements.
 // XMLLogger opens a new element when the first character of the log message is \begin{verbatim}'<'\end{verbatim}
 // and closes a element when the first character is \begin{verbatim}'>'\end{verbatim}.
 // Otherwise, a self-closing element is created when no angular bracket is used for the first character.
