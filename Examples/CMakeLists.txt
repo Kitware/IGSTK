@@ -16,6 +16,7 @@ SUBDIRS(
   DICOMImageReader
   DeckOfCardRobot
   View
+  Logging
   PivotCalibration
   PrincipalAxisCalibration
   PivotCalibrationReader

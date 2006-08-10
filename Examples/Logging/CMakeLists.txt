@@ -1,0 +1,5 @@
+PROJECT(Logging1)
+  
+ADD_EXECUTABLE(Logging1 Logging1.cxx)
+TARGET_LINK_LIBRARIES(Logging1 IGSTKSandbox)
+
