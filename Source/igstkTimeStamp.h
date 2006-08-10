@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include "igstkRealTimeClock.h"
+#include "itkNumericTraits.h"
 
 namespace igstk 
 {
@@ -59,7 +60,7 @@ public:
   typedef double      TimePeriodType;
 
   /** Define the longest time period on the machine */
-  const static double LongestPossibleTime; 
+  static double GetLongestPossibleTime(); 
 
   /** Constructor and destructor */
   TimeStamp();

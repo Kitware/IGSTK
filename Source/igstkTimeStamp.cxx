@@ -21,13 +21,19 @@
 namespace igstk
 {
 
-const double TimeStamp::LongestPossibleTime = 1e300;
   
 TimeStamp
 ::TimeStamp()
 {
   this->m_StartTime       = 0;
   this->m_ExpirationTime  = 0;
+}
+
+
+double 
+TimeStamp::GetLongestPossibleTime()
+{
+  return itk::NumericTraits<double>::max();
 }
 
 
