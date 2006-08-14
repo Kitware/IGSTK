@@ -176,6 +176,7 @@ IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkTubeObjectTest ${IGSTK_TESTS} igstkTubeObjectTest)
   ADD_TEST(igstkMouseTrackerTest ${IGSTK_TESTS} igstkMouseTrackerTest)
   ADD_TEST(igstkUltrasoundProbeObjectTest ${IGSTK_TESTS} igstkUltrasoundProbeObjectTest)
+  ADD_TEST(igstkSpatialObjectRepresentationVisibilityTest ${IGSTK_TESTS} igstkSpatialObjectRepresentationVisibilityTest)
   
   IF (IGSTK_DATA_ROOT)
      ADD_TEST( igstkImageSpatialObjectRepresentationTest2 
@@ -344,6 +345,7 @@ IF(IGSTK_USE_FLTK)
     igstkViewRefreshRateTest.cxx
     igstkMouseTrackerTest.cxx
     igstkUltrasoundProbeObjectTest.cxx
+    igstkSpatialObjectRepresentationVisibilityTest.cxx
   )    
   IF(IGSTK_DATA_ROOT)
     SET(BasicTests_SRCS
