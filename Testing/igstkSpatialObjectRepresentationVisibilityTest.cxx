@@ -251,21 +251,13 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   
   // Now start the real test.
-  // Reset the pulses counter in the view observer
-  viewObserver->SetNumberOfPulsesToStop( numberOfPulsesToStop );
-
-  while(1)
-    {
-    Fl::wait(0.001);
-    igstk::PulseGenerator::CheckTimeouts();
-    if( bEnd )
-      {
-      break;
-      }
-    }
-
-  std::cout << " Verify that the object appears if the Transform is updated. "  << std::endl;
-  
+  //
+  // 1) Set the transform to be valid for one second
+  // 2) Reset the pulses counter in the view observer
+  //    to count for 3 seconds.
+  //
+  // 3) Restart the pulse generator of the View.
+  //
   for( unsigned int tt=0; tt<5; tt++ )
     {
     validityTimeInMilliseconds = 1000;
