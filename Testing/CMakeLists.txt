@@ -254,6 +254,7 @@ IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkTubeObjectTest ${IGSTK_TESTS} igstkTubeObjectTest)
   ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
   ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
+  ADD_TEST(igstkSpatialObjectRepresentationVisibilityTest ${IGSTK_TESTS} igstkSpatialObjectRepresentationVisibilityTest)
   
   IF (IGSTK_DATA_ROOT)
 
@@ -370,6 +371,7 @@ IF(IGSTK_USE_FLTK)
     igstkTubeObjectTest.cxx
     igstkViewTest.cxx
     igstkViewRefreshRateTest.cxx
+    igstkSpatialObjectRepresentationVisibilityTest.cxx
   )    
   IF(IGSTK_DATA_ROOT)
     SET(IGSTKTests_SRCS
