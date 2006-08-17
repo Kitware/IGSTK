@@ -207,37 +207,71 @@ int main(int , char** )
   cylinderRepresentation->SetColor(1.0,0.0,0.0);
   cylinderRepresentation->SetOpacity(1.0);
   // EndCodeSnippet
-  // 
+  
   // BeginLatex
-  // Next, the spatial objects are added to the view
+  // Next, the spatial objects are added to the view, and the camera position of
+  // View class is being reset to accommodate all objects in the scene.
   // EndLatex
+  // BeginCodeSnippet
   m_GUI->Display->RequestAddObject( ellipsoidRepresentation );
   m_GUI->Display->RequestAddObject( cylinderRepresentation );
   m_GUI->Display->RequestResetCamera();
   m_GUI->Display->Update();
+  // EndCodeSnippet
 
-  // Enable interactions
+  // BeginLatex
+  // Function \code{RequestEnableInteractions()} allows the user to 
+  // interactively manipulate (rotate, pan, zoomm etc.) the camera. 
+  // For \doxygen{View2D} class, \code{vtkInteractorStyleImage} 
+  // is used; For \doxygen{View3D} class, 
+  // \code{vtkInteractorStyleTrackballCamera} is used. In IGSTK, the keyboard
+  // events are disabled, so it doesn't support the original VTK 
+  // key-mouse-combined interactions.
+  // In summary the mouse events are as follows: Left button click triggers 
+  // pick event; Left button hold rotates the camera, in \doxygen{View2D}, 
+  // camera direction is always perpendicular to image plane, so there is no 
+  // rotational movement available for \doxygen{View2D}; Middle mouse button 
+  // pans the camera; Right mouse button dollys the camera.
+  // EndLatex
+  // BeginCodeSnippet
   m_GUI->Display->RequestEnableInteractions();
+  // EndCodeSnippet
 
-  // Create a tracker
+  // BeginLatex
+  // The following code instantiate a new mouse tracker and initialize it.
+  // The scale factor is just a number to scale down the movement of the tracked
+  // object in the scene.
+  // EndLatex
+  // BeginCodeSnippet
   igstk::MouseTracker::Pointer tracker = igstk::MouseTracker::New();
-
-  // Initialize the tracker
   tracker->Open();
   tracker->Initialize();
   tracker->SetScaleFactor( 100.0 );
+  // EndCodeSnippet
 
+  // BeginLatex
+  // Now we attach previously created spatial object to the tracker and set the 
+  // tracker to monitor the mouse events from the user interface. The tool port
+  // and tool number is naming convention from NDI trackers. 
+  // \reviewComment{Reference to tracker chapter}
+  // object in the scene.
+  // EndLatex
+  // BeginCodeSnippet
   const unsigned int toolPort = 0;
   const unsigned int toolNumber = 0;
   tracker->AttachObjectToTrackerTool( toolPort, toolNumber, ellipsoid );
-
   m_GUI->SetTracker( tracker );
+  // EndCodeSnippet
 
-  // Setup the logging system
+  // BeginLatex
+  // Now we setup a logger do logging, we will direct the log output to both 
+  // standard output (std::cout) and a file (log.txt).
+  // EndLatex
+  // BeginCodeSnippet
   itk::Logger::Pointer logger = itk::Logger::New();
   itk::StdStreamLogOutput::Pointer logOutput = itk::StdStreamLogOutput::New();
   itk::StdStreamLogOutput::Pointer fileOutput = itk::StdStreamLogOutput::New();
-  
+    
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
@@ -245,28 +279,53 @@ int main(int , char** )
   std::ofstream ofs( "log.txt" );
   fileOutput->SetStream( ofs );
   logger->AddLogOutput( logOutput );
+  // EndCodeSnippet
   
+  // BeginLatex
+  // Messages from the display and the tracker will be logged and redirect to 
+  // the two log output we just setuped
+  // EndLatex
+  // BeginCodeSnippet
   m_GUI->Display->SetLogger( logger ); 
   tracker->SetLogger( logger );
+  // EndCodeSnippet
 
 
-  // Setup the frequency for refreshing the view
-  m_GUI->Display->RequestSetRefreshRate( 60 ); // 60 Hz
+  // BeginLatex
+  // In this step, we setup the refresh frequency of the display window. After
+  // we call the \code{RequestStart()} function, the pulse generator inside the
+  // display window will start ticking, and call the display to update 
+  // itself 60 times per second.
+  // EndLatex
+  // BeginCodeSnippet
+  m_GUI->Display->RequestSetRefreshRate( 60 ); 
   m_GUI->Display->RequestStart();
+  // EndCodeSnippet
 
+  // BeginLatex
+  // All application should includes the following code. This is the main event
+  // loop of the application. First it checks if the application is aborted by
+  // user, if not, it calls for the \doxygen{PulseGenerator} to check its time
+  // out.
+  // EndLatex
+  // BeginCodeSnippet
   while( !m_GUI->HasQuitted() )
     {
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
     }
+  // EndCodeSnippet
 
 
+  // BeginLatex
+  // Finally, we do some clean up and exit.
+  // EndLatex
+  // BeginCodeSnippet
   tracker->StopTracking();
   tracker->Close();
-
   delete m_GUI;
-
   ofs.close();
-
   return EXIT_SUCCESS;
+  // EndCodeSnippet
+
 }
