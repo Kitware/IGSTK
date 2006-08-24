@@ -62,6 +62,9 @@ public:
   /** Define the longest time period on the machine */
   static double GetLongestPossibleTime(); 
 
+  /** Compute the intersection of two time stamps */
+  static TimeStamp ComputeOverlap( TimeStamp t1, TimeStamp t2 );
+
   /** Constructor and destructor */
   TimeStamp();
   virtual ~TimeStamp();

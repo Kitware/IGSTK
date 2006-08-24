@@ -36,6 +36,18 @@ TimeStamp::GetLongestPossibleTime()
   return itk::NumericTraits<double>::max();
 }
 
+TimeStamp
+TimeStamp::ComputeOverlap( TimeStamp t1, TimeStamp t2 )
+{
+  TimeStamp t;
+  t.m_StartTime      = t1.GetStartTime() > t2.GetStartTime() ?
+                       t1.GetStartTime() : t2.GetStartTime();
+  t.m_ExpirationTime = t1.GetExpirationTime() < t2.GetExpirationTime() ?
+                       t1.GetExpirationTime() : t2.GetExpirationTime();
+  return t;
+
+}
+
 
 TimeStamp
 ::~TimeStamp()

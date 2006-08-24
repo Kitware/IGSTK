@@ -61,19 +61,15 @@ Transform
   translation = leftTransform.GetRotation().Transform(translation);
   translation += leftTransform.GetTranslation();
 
-  // FIXME: How to evaluate the correct error value?
-  ErrorType  error = (leftTransform.GetError() > rightTransform.GetError()) ?
-                      leftTransform.GetError() : rightTransform.GetError();
-
-  TimePeriodType t = 
-    (leftTransform.GetExpirationTime() < rightTransform.GetExpirationTime()) ?
-     leftTransform.GetExpirationTime() : rightTransform.GetExpirationTime();
-  
-  t -= RealTimeClock::GetTimeStamp();
-  t = ( 0 > t ) ? 0 : t;
+  // Add the error value together
+  ErrorType  error = leftTransform.GetError() + rightTransform.GetError();
 
   Transform transform;
-  transform.SetTranslationAndRotation( translation, rotation, error, t);
+  transform.SetTranslationAndRotation( translation, rotation, error, 0);
+
+  // Compute the overlap of two time stamps
+  transform.m_TimeStamp = TimeStamp::ComputeOverlap( leftTransform.m_TimeStamp, 
+                                                   rightTransform.m_TimeStamp );
 
   return transform;
 }

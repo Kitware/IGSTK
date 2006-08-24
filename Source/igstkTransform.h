@@ -70,7 +70,7 @@ public:
   Transform( const Transform & t );
   virtual ~Transform();
 
-  //** Transform composition method */
+  /** Transform composition method */
   static Transform TransformCompose( Transform leftTransform, 
                                      Transform rightTransform);
 
