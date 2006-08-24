@@ -20,28 +20,6 @@
 #pragma warning( disable : 4284 )
 #endif
 
-
-// BeginLatex
-//
-// This example illustrates the minimal applications that can be 
-// written using IGSTK.
-// The application uses three main components. They are the View, the
-// SpatialObjects and the Tracker. The View is the visualization window that is
-// presented to the user in the graphical user interface (GUI) of the
-// application. The SpatialObjects are used for representing geometrical shapes
-// in the scene of the surgical room. In this simplified example, we only use
-// them to represent a cylinder and a sphere. The Tracker is the device that
-// provides position and orientation information about some of the objects in
-// the scene. A Tracker can track multiple objects, and each one of them is
-// referred as a TrackerTool. In this minimal example we use a MouseTracker
-// that is a class intended mainly for demonstration and debugging purposes.
-// This tracker get the values of positions from the position of the mouse on
-// the screen. The position values are then passed to the sphere object in the
-// scene. The MouseTracker is not intended to be used in a real image guided
-// surgery application.
-// 
-// EndLatex
-
 // BeginLatex
 //
 // Given that this application has a graphical user interface, we use FLTK in
@@ -266,6 +244,7 @@ int main(int , char** )
   // BeginLatex
   // Now we setup a logger do logging, we will direct the log output to both 
   // standard output (std::cout) and a file (log.txt).
+  // \reviewComment{need reference to logger chapter about priority level}
   // EndLatex
   // BeginCodeSnippet
   itk::Logger::Pointer logger = itk::Logger::New();
@@ -278,7 +257,7 @@ int main(int , char** )
 
   std::ofstream ofs( "log.txt" );
   fileOutput->SetStream( ofs );
-  logger->AddLogOutput( logOutput );
+  logger->AddLogOutput( fileOutput );
   // EndCodeSnippet
   
   // BeginLatex
