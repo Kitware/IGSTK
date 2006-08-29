@@ -20,4 +20,5 @@ SUBDIRS(
   PivotCalibration
   PrincipalAxisCalibration
   PivotCalibrationReader
+  SpatialObjects
   )
