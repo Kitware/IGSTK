@@ -31,8 +31,6 @@ namespace igstk
  *
  * This class display a coordinate axis in a View. It is intended for providing
  * a visual reference of the orientation of space in the context of the scene.
- * The parameters of the object are the height of the object, and the radius.
- * Default representation axis is Z.
  * 
  * \ingroup Object
  */

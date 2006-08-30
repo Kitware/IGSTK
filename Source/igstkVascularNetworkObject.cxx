@@ -36,7 +36,6 @@ VascularNetworkObject::VascularNetworkObject():m_StateMachine(this)
   m_StateMachine.SetReadyToRun();
 
   m_VesselId = 0;
-
 }
 
 /** This function reports the vessel */
