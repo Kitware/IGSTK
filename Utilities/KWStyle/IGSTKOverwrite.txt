@@ -1,2 +1,16 @@
 igstkSystemInformation.h.in IfNDefDefine Disable
 igstkSystemInformation.cxx Operator Disable
+igstkNDICommandInterpreter.h Indent Disable
+AxesObject.cxx Indent Disable
+BoxObject.cxx Indent Disable
+ConeObject.cxx Indent Disable
+CylinderObject.cxx Indent Disable
+EllipsoidObject.cxx Indent Disable
+ImageObjects.cxx Indent Disable
+MeshObject.cxx Indent Disable
+SpatialObjectHierarchy.cxx Indent Disable
+TubeObject.cxx Indent Disable
+PrincipalAxisCalibration1.cxx Indent Disable
+PivotCalibrationReader1.cxx Indent Disable
+PivotCalibration1.cxx Indent Disable
+Logging1.cxx Indent Disable
