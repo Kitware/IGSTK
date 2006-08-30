@@ -22,7 +22,8 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::CTImageSpatialObject}
-// In this example we show the main functionalities of the igstk::ImageObject classes.
+// In this example we show the main functionalities of the 
+// igstk::ImageObject classes.
 // IGSTK defines different classes for each modality, CT, MR and US.
 // Software Guide : EndLatex 
 
@@ -80,19 +81,19 @@ int main( int argc, char * argv[] )
 // Software Guide : EndLatex  
   
 // Software Guide : BeginCodeSnippet
- if(ctImage->IsInside(pt))
-   {
-   typedef CTImageSpatialObject::IndexType IndexType;
-   IndexType index;
-   ctImage->TransformPhysicalPointToIndex (pt , index );
+  if(ctImage->IsInside(pt))
+    {
+    typedef CTImageSpatialObject::IndexType IndexType;
+    IndexType index;
+    ctImage->TransformPhysicalPointToIndex (pt , index );
 
-   std::cout << "Index is = " << index << std::endl;
+    std::cout << "Index is = " << index << std::endl;
     
-   typedef CTImageSpatialObject::ContinuousIndexType ContinuousIndexType;
-   ContinuousIndexType cindex;
-   ctImage->TransformPhysicalPointToContinuousIndex (pt, cindex);
-   std::cout << "Continuous index is = " << cindex << std::endl;
-   }
+    typedef CTImageSpatialObject::ContinuousIndexType ContinuousIndexType;
+    ContinuousIndexType cindex;
+    ctImage->TransformPhysicalPointToContinuousIndex (pt, cindex);
+    std::cout << "Continuous index is = " << cindex << std::endl;
+    }
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex

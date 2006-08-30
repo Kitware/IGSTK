@@ -112,7 +112,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginCodeSnippet
   SpatialObjectHierarchy::TransformObserver::Pointer transformObserver 
-                               = SpatialObjectHierarchy::TransformObserver::New();
+                           = SpatialObjectHierarchy::TransformObserver::New();
   sphere1->AddObserver( ::igstk::TransformModifiedEvent(), transformObserver );
 // Software Guide : EndCodeSnippet
 
