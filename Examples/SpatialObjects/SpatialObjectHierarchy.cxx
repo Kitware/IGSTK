@@ -36,11 +36,8 @@
 #include "igstkGroupObject.h"
 // Software Guide : EndCodeSnippet
 
-namespace SpatialObjectHierarchy
-{
 igstkObserverMacro(Transform,
     ::igstk::TransformModifiedEvent,::igstk::Transform)
-}
 
 int main( int , char *[] )
 {
@@ -101,18 +98,15 @@ int main( int , char *[] )
 // Then, in order to retreive the transformation we setup an observer.
 //
 // \begin{verbatim}
-// namespace SpatialObjectHierarchy
-//   {
 //   igstkObserverMacro(Transform,
 //   ::igstk::TransformModifiedEvent,::igstk::Transform)
-//   }
 // \end{verbatim}
 // We then set the observer using the AddObserver() command.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-  SpatialObjectHierarchy::TransformObserver::Pointer transformObserver 
-                           = SpatialObjectHierarchy::TransformObserver::New();
+  TransformObserver::Pointer transformObserver 
+                           = TransformObserver::New();
   sphere1->AddObserver( ::igstk::TransformModifiedEvent(), transformObserver );
 // Software Guide : EndCodeSnippet
 

@@ -26,3 +26,9 @@ TARGET_LINK_LIBRARIES(ImageObjects IGSTKSandbox)
 
 ADD_EXECUTABLE(TubeObject TubeObject.cxx)
 TARGET_LINK_LIBRARIES(TubeObject IGSTKSandbox)
+
+ADD_EXECUTABLE(VascularNetworkObject VascularNetworkObject.cxx)
+TARGET_LINK_LIBRARIES(VascularNetworkObject IGSTKSandbox)
+
+ADD_EXECUTABLE(ReadVascularNetworkObject ReadVascularNetworkObject.cxx)
+TARGET_LINK_LIBRARIES(ReadVascularNetworkObject IGSTKSandbox)
