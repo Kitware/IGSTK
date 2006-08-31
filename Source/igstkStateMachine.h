@@ -147,10 +147,7 @@ public:
   /** Select Initial state */
   void SelectInitialState( const StateType & initialState );
 
-  /** Return the current state identifier */
-  const StateIdentifierType & GetCurrentStateIdentifier() const
-                                 { return this->m_State; }
-
+  /** Print out the content of the class */
   void Print(std::ostream& os, itk::Indent indent) const;
 
 protected:
@@ -240,9 +237,14 @@ private:
       this->m_Action = in.m_Action;
       return *this;
       }
-    StateIdentifierType GetStateIdentifier() const { return m_StateIdentifier; }
-    ActionType GetAction() const { return m_Action; }
-  
+    StateIdentifierType GetStateIdentifier() const 
+      { 
+      return m_StateIdentifier;
+      }    
+    ActionType GetAction() const 
+      { 
+      return m_Action; 
+      }
   private:
     
     StateIdentifierType     m_StateIdentifier;
