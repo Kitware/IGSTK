@@ -22,8 +22,9 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::BoxObject}
-// The \doxygen{BoxObject} represents a box in space.
-//
+// The \doxygen{BoxObject} represents an hexahedron in space.
+// 
+// We include the appropriate header.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -43,8 +44,8 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
-// Then we can set the size of the box in each dimension by
-// using the SetSize() function.
+// Then we set the size of the box in each dimension by
+// using the \code{SetSize()} function.
 //
 // Software Guide : EndLatex 
 
@@ -56,8 +57,8 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
-// In case, we need to retreive the size of the box
-// we can use the GetSize() functions.
+// If one needs to retreive the size of the box
+// this can be done using the \code{GetSize()} function.
 //
 // Software Guide : EndLatex 
 

@@ -33,10 +33,10 @@
 
 // Software Guide : BeginLatex
 //
-// SpatialObject readers return the output object via events.
-// Therefore we declare an observer using the igstkObserverObjectMacro.
-// This macro expect three arguments: a) the name of the observer (to
-// be determined by the user), b) the type of event to observe, c) the type
+// The SpatialObject readers return the output object via events, 
+// therefore, we declare an observer using the igstkObserverObjectMacro.
+// This macro expect three arguments: a) the name of the observer -to
+// be determined by the user-, b) the type of event to observe, c) the type
 // of the object to be returned.
 //
 // Software Guide : EndLatex 
@@ -67,8 +67,8 @@ int main( int argc, char *argv[] )
 // Software Guide : BeginLatex
 //
 // We then plug a logger to the reader to get information
-// about the reading process. See the logging chapter for more
-// information.
+// about the reading process (see the logging chapter for more
+// information).
 //
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
@@ -85,7 +85,7 @@ int main( int argc, char *argv[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Then we set the filename using the RequestSetFileName()
+// Then we set the filename using the \code{RequestSetFileName()}
 // function.
 //
 // Software Guide : EndLatex 
@@ -105,8 +105,8 @@ int main( int argc, char *argv[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Once the reader has loaded the object, we ask for the output
-// object by, first, plug the observer in.
+// In order to get the output object we first plug the observer into 
+// the reader.
 //
 // Software Guide : EndLatex 
 
@@ -118,7 +118,7 @@ int main( int argc, char *argv[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Second by requesting the output vascular network.
+// Then we request the output vascular network.
 //
 // Software Guide : EndLatex 
 
@@ -129,7 +129,7 @@ int main( int argc, char *argv[] )
 //
 // If everything went well, the observer should 
 // receive the vascular network. We can check that this is the case
-// using the GotVascularNetwork() function of the observer.
+// using the \code{GotVascularNetwork()} function of the observer.
 //
 // Software Guide : EndLatex 
 
@@ -142,7 +142,7 @@ int main( int argc, char *argv[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Finally we get the output using the GetVascularNetwork() function.
+// Finally we get the output using the \code{GetVascularNetwork()} function.
 //
 // Software Guide : EndLatex 
 

@@ -22,9 +22,8 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::CTImageSpatialObject}
-// In this example we show the main functionalities of the 
-// igstk::ImageObject classes.
-// IGSTK defines different classes for each modality, CT, MR and US.
+// In this example we show the main features of the ImageObject classes.
+// IGSTK implements on class per modality, CT, MR and US.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -48,8 +47,8 @@ int main( int argc, char * argv[] )
 
 // Software Guide : BeginLatex
 //
-// For a given point in physical space, we can ask if this particular
-// point is inside the image or not using the IsInside() function.
+// Then, for a given point in physical space, we can ask if this particular
+// point is inside (or outside) the image using the \code{IsInside()} function.
 //
 // Software Guide : EndLatex 
 
@@ -74,9 +73,9 @@ int main( int argc, char * argv[] )
 // Software Guide : BeginLatex
 //
 // If the point is inside the image, we can convert the physical point
-// into and index or continuous index point in the image reference frame.
-// This is achieve using the TransformPhysicalPointToIndex() and
-// TransformPhysicalPointToContinuousIndex() functions.
+// into an index or a continuous index in the image reference frame.
+// This is achieve using the \code{TransformPhysicalPointToIndex()} and
+// \code{TransformPhysicalPointToContinuousIndex()} functions respectively.
 //
 // Software Guide : EndLatex  
   
@@ -98,7 +97,7 @@ int main( int argc, char * argv[] )
 
 // Software Guide : BeginLatex
 //
-// We can check if the image is empty by using the IsEmpty()
+// We can also check if the image is empty by using the \code{IsEmpty()}
 // function.
 //
 // Software Guide : EndLatex 

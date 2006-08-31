@@ -22,8 +22,9 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::EllipsoidObject}
-// The \doxygen{EllipsoidObject} represents a Ellipsoid in space.
+// The \doxygen{EllipsoidObject} represents an ellipsoid in space. 
 //
+// Let's start by including the appropriate header.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -33,7 +34,7 @@
 int main( int , char *[] )
 {
 // Software Guide : BeginLatex
-// First we declare the Ellipsoid using standard smart pointers.
+// First we declare the ellipsoid using standard smart pointers.
 //
 // Software Guide : EndLatex 
 
@@ -44,8 +45,8 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 // The radius of the ellipse can be adjusted in each dimension 
-// using the SetRadius() functions.
-// The easiest way is to use the SetRadius(double,double,double) function.
+// using the two \code{SetRadius()} functions.
+// The easiest way is to use the \code{SetRadius(double,double,double)} function.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -54,7 +55,7 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 // However, in some cases, the uses of an array might be appropriate
 // The array is defined using standard type definition, then
-// passed to the ellipsoid
+// passed to the ellipsoid as follow.
 // Software Guide : BeginCodeSnippet
   typedef EllipsoidObjectType::ArrayType   ArrayType;
   ArrayType radii;

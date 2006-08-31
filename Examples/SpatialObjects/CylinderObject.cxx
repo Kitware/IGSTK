@@ -22,8 +22,9 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::CylinderObject}
-// The \doxygen{CylinderObject} represents a Cylinder in space.
-//
+// The \doxygen{CylinderObject} represents a cylinder in space.
+// 
+// Let's start by including the appropriate header.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -33,7 +34,7 @@
 int main( int , char *[] )
 {
 // Software Guide : BeginLatex
-// First we declare the Cylinder using standard smart pointers.
+// First we declare the cylinder using standard smart pointers.
 //
 // Software Guide : EndLatex 
 
@@ -43,15 +44,16 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
-// The Cylinder has two parameters, the radius and the height.
-// These two parameters can be set using SetRadius() and
-// SetHeight() respectively.
+// The \doxygen{CylinderObject} has two parameters, its radius and its height
+// expressed in $mm$.
+// These two parameters can be set using \code{SetRadius()} and
+// \code{SetHeight()} respectively.
 //
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-  cylinder->SetRadius(10);
-  cylinder->SetHeight(20);
+  cylinder->SetRadius(10.0);
+  cylinder->SetHeight(20.0);
 // Software Guide : EndCodeSnippet
 
   cylinder->Print(std::cout);

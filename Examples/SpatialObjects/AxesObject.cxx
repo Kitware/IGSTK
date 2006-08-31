@@ -23,8 +23,10 @@
 //
 // \index{igstk::AxesObject}
 // This example describes how to use the \doxygen{AxesObject}.
-// This class display a coordinate axis in a View. It is intended for providing
-// a visual reference of the orientation of space in the context of the scene.
+// This class defines a 3-dimensional coordinate system in space. 
+// It is intended for providing a visual reference of the orientation 
+// of space in the context of the scene.
+//
 // First we include the appropriate header file.
 // Software Guide : EndLatex 
 
@@ -35,7 +37,7 @@
 int main( int , char *[] )
 {
 // Software Guide : BeginLatex
-// First we declare the object using smart pointers.
+// We then declare the object using smart pointers.
 //
 // Software Guide : EndLatex 
 
@@ -45,8 +47,8 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
-// Then we can set the size of each axis using the
-// SetSize() function.
+// The size of each axis can be set using the
+// \code{SetSize()} function.
 //
 // Software Guide : EndLatex 
 
@@ -58,8 +60,8 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
-// In case, we need to retreive the length of the axes
-// we can use the GetSize() functions.
+// In case we need to retreive the length of the axes
+// we can use the \code{GetSize()} functions.
 //
 // Software Guide : EndLatex 
 

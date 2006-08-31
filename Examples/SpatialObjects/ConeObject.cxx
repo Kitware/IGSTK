@@ -22,8 +22,10 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::ConeObject}
-// The \doxygen{ConeObject} represents a Cone in space.
+// As the name of class indicates, the \doxygen{ConeObject} 
+// represents a cone in space.
 //
+// First we include the header file.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -33,7 +35,7 @@
 int main( int , char *[] )
 {
 // Software Guide : BeginLatex
-// First we declare the Cone using standard smart pointers.
+// We then declare the cone using standard smart pointers.
 //
 // Software Guide : EndLatex 
 
@@ -43,15 +45,17 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
-// The cone has two parameters, the radius and the height.
-// These two parameters can be set using SetRadius() and
-// SetHeight() respectively.
+// The \doxygen{ConeObject} has two internal parameters, its radius 
+// and its height expressed in $mm$. The radius represents the radius of
+// base of the cone.
+// These two parameters can be set using \code{SetRadius()} and
+// \code{SetHeight()} respectively.
 //
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-  cone->SetRadius(10);
-  cone->SetHeight(20);
+  cone->SetRadius(10.0);
+  cone->SetHeight(20.0);
 // Software Guide : EndCodeSnippet
 
   cone->Print(std::cout);

@@ -23,6 +23,9 @@
 //
 // \index{igstk::VascularNetworkObject}
 // This example describes how to use the \doxygen{VascularNetworkObject}
+// to group \doxygen{VesselObject}s together to represent a vascular tree.
+//
+// We first include the header files.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -38,7 +41,7 @@ int main( int , char *[] )
 {
 // Software Guide : BeginLatex
 //
-// First we declare a VascularNetworkObject.
+// Next we declare a \doxygen{VascularNetworkObject}.
 //
 // Software Guide : EndLatex 
 
@@ -48,7 +51,7 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Next we create a VesselObject.
+// Then we create a \doxygen{VesselObject}.
 //
 // Software Guide : EndLatex 
 
@@ -77,9 +80,9 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// We then add the newly created vessel to the VascularNetworkObject.
-// Since the VascularNetworkObject derives from GroupObject we use
-// the superclass RequestAddObject() function.
+// We then add the newly created vessel to the vasculature.
+// Since the \code{VascularNetworkObject} derives from \code{GroupObject} we use
+// the superclass \code{RequestAddObject()} function.
 //
 // Software Guide : EndLatex 
 
@@ -89,8 +92,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // In some cases, it is interesting to get a selected vessel from
-// a VascularNetworkObject. To retreive the vessel, we need to setup
-// an observer.
+// a \code{VascularNetworkObject}. To retreive the vessel, we need to setup
+// an observer first.
 // \begin{verbatim}
 // igstkObserverObjectMacro(Vessel,
 //  ::igstk::VascularNetworkObject::VesselObjectModifiedEvent,
@@ -100,11 +103,11 @@ int main( int , char *[] )
 // This macro will create two functions depending on the name of the first
 // argument:
 //
-// - GotVessel() which returns true if the vessel exists.
+// - \code{GotVessel()} which returns true if the vessel exists.
 //
-// - GetVessel() which returns a pointer to the vessel.
+// - \code{GetVessel()} which returns the actual pointer to the vessel.
 // Once the observer is declared we add it to the VascularNetworkProject using
-// the AddObserver() function.
+// the \code{AddObserver()} function.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -118,7 +121,7 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // We then request for a vessel given its position in the list
-// using the RequestGetVessel(unsigned long position) function.
+// using the \code{RequestGetVessel(unsigned long position)} function.
 // We also check if the observer got the vessel.
 // 
 // Software Guide : EndLatex 
@@ -133,8 +136,8 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// The vessel is retreive using the GetVessel() function from the
-// Observer.
+// The vessel is retreived using the \code{GetVessel()} function from the
+// observer.
 //
 // Software Guide : EndLatex 
 

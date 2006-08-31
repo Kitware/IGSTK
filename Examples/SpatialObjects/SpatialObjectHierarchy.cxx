@@ -22,13 +22,12 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::SpatialObjectHierarchy}
-// This example describes how \doxygen{SpatialObject} can form a hierarchy.
-// This first example also shows how to create and manipulate 
-// spatial objects. In this example we use EllipsoidObject, therefore we
-// include the appropriate header file.
-// We also include the \doxygen{GroupObject} header file to show how to
-// group objects.
+// This example describes how to group the \doxygen{SpatialObject}s to form a hierarchy
+// of objects and also illustrates their creation and how to manipulate them.
 //
+// The first part of the example makes use of the \doxygen{EllipsoidObject}. The
+// second part uses the \doxygen{GroupObject}.
+// Let's start by including the appropriate header files.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -45,7 +44,7 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // First, we create two spheres using the \doxygen{EllipsoidObject} class.
-//
+// They are created using smart pointers.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -59,7 +58,7 @@ int main( int , char *[] )
 //
 // We then add the second sphere to the first one by using the
 // \code{RequestAddObject()} method.  As a result \code{sphere2} becomes a
-// child of sphere1.
+// child of \code{sphere1}.
 //
 // Software Guide : EndLatex 
 
@@ -69,7 +68,8 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 //
-// We can get a child object from its parent by using the GetObject() function
+// A child object can be retreive from its parent 
+// by using the \code{GetObject()} function.
 //
 // Software Guide : EndLatex 
 
@@ -79,11 +79,11 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 //
-// Next, we assign a transformation to the object
-// We first create a transformation and set the translation vector to be 10
-// in each direction, with an error value of 0.001 and a validity time
-// of 10ms.
-// We assign the transform to the object via the RequestSetTransform() function
+// Next, we assign a transformation to the object.
+// We first create a transformation and set the translation vector to be $10mm$
+// in each direction, with an error value of $0.001mm$ and a validity time
+// of $10ms$. Second We assign the transform to the object via the 
+// \code{RequestSetTransform()} function.
 //
 // Software Guide : EndLatex 
 
@@ -101,7 +101,8 @@ int main( int , char *[] )
 //   igstkObserverMacro(Transform,
 //   ::igstk::TransformModifiedEvent,::igstk::Transform)
 // \end{verbatim}
-// We then set the observer using the AddObserver() command.
+// We then add the observer to the object using the 
+// \code{AddObserver()} command.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -112,7 +113,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 // 
-// Then, we request the transform using the RequestGetTransform().
+// Then, we request the transform using the \code{RequestGetTransform()}.
 // 
 // Software Guide : EndLatex 
 
@@ -133,6 +134,7 @@ int main( int , char *[] )
 // Next, we introduce the \doxygen{GroupObject}. The GroupObject class
 // derives from \doxygen{SpatialObject} and acts as an empty container
 // used for grouping objects together.
+//
 // First, we declare a new group using standard type definition and
 // smart pointers.
 //
@@ -144,8 +146,9 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 // 
 // Since the igstk::GroupObject derives from SpatialObject, we can use
-// the RequestAddObject() function to add object into the group.
-// For instance we group sphere1 and sphere3 together
+// the \code{RequestAddObject()} function to add object into the group.
+// For instance we group \code{sphere1} and the newly created 
+// \code{sphere3} together.
 //
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
@@ -156,8 +159,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 // 
 // We can request the number of objects in the group using the
-// GetNumberOfObjects() function.
-// Since sphere1 has a child (sphere2), there are actually
+// \code{GetNumberOfObjects()} function.
+// Since \code{sphere1} has a child, \code{sphere2}, there are actually
 // three objects in the group.
 //
 // Software Guide : EndLatex 
