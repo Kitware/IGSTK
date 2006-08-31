@@ -99,7 +99,8 @@ int main( int , char *[] )
 //  ::igstk::VascularNetworkObject::VesselObjectModifiedEvent,
 //  ::igstk::VesselObject)
 // \end{verbatim}
-// Note that the declaration of the observer should be done outside of the class.
+// Note that the declaration of the observer should be done outside 
+// of the class.
 // This macro will create two functions depending on the name of the first
 // argument:
 //

@@ -23,9 +23,10 @@
 //
 // \index{igstk::BoxObjectRepresentation}
 // This example describes how to use the \doxygen{BoxObjectRepresentation}
-// to display a \doxygen{BoxObject} in a \doxygen{View3D}
-// This example also uses FLTK to create a window, so we include the appropriate header
-// files.
+// to display a \doxygen{BoxObject} in a \doxygen{View3D}.
+// 
+// This example also uses FLTK to create a window, therfore we include the 
+// appropriate header files.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -53,7 +54,7 @@ int main( int , char *[] )
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-  typedef igstk::BoxObject  ObjectType;
+  typedef igstk::BoxObject                ObjectType;
   typedef igstk::BoxObjectRepresentation  ObjectRepresentationType;
   ObjectType::Pointer cube = ObjectType::New();
 // Software Guide : EndCodeSnippet
@@ -71,8 +72,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // Every ObjectRepresentation have an RGB color and an opacity as rendering
-// parameters. These two parameters can be tuned using the SetColor(R,G,B)
-// and SetOpacity() functions respectively.
+// parameters. These two parameters can be tuned using the \code{SetColor(R,G,B)}
+// and \code{SetOpacity()} functions respectively.
 //
 // Software Guide : EndLatex 
 
@@ -109,7 +110,7 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // We set the current representation of the object to the view 
-// using the RequestAddObject() function.
+// using the  \code{RequestAddObject()} function.
 //
 // Software Guide : EndLatex 
 
@@ -153,7 +154,7 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// We delete the view3D and form since they are not using
+// At the end, we delete the view3D and form since they are not using
 // smart pointers.
 //
 // Software Guide : EndLatex 

@@ -73,7 +73,7 @@ mesh->AddPoint(3,10,0,10);
 // Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
-  typedef MeshObjectType::PointsContainer PointsContainer;
+  typedef MeshObjectType::PointsContainer        PointsContainer;
   typedef MeshObjectType::PointsContainerPointer PointsContainerPointer;
   PointsContainerPointer points = mesh->GetPoints();
 
@@ -119,7 +119,7 @@ mesh->AddPoint(3,10,0,10);
 //
 // Software Guide : EndLatex
 // Software Guide : BeginCodeSnippet
-  typedef MeshObjectType::CellsContainer CellsContainer;
+  typedef MeshObjectType::CellsContainer        CellsContainer;
   typedef MeshObjectType::CellsContainerPointer CellsContainerPointer;
   CellsContainerPointer cells = mesh->GetCells();
 

@@ -14,3 +14,6 @@ PrincipalAxisCalibration1.cxx Indent Disable
 PivotCalibrationReader1.cxx Indent Disable
 PivotCalibration1.cxx Indent Disable
 Logging1.cxx Indent Disable
+ObjectRepresentation.cxx Indent Disable
+ReadVascularNetworkObject.cxx Indent Disable
+VascularNetworkObject.cxx Indent Disable
