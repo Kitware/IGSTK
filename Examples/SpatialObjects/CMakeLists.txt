@@ -32,3 +32,6 @@ TARGET_LINK_LIBRARIES(VascularNetworkObject IGSTKSandbox)
 
 ADD_EXECUTABLE(ReadVascularNetworkObject ReadVascularNetworkObject.cxx)
 TARGET_LINK_LIBRARIES(ReadVascularNetworkObject IGSTKSandbox)
+
+ADD_EXECUTABLE(ObjectRepresentation ObjectRepresentation.cxx)
+TARGET_LINK_LIBRARIES(ObjectRepresentation IGSTKSandbox)
