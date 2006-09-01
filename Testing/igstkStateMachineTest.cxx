@@ -138,12 +138,6 @@ public:
     }
 
 
-  const StateIdentifierType & GetCurrentState() const
-    {
-    return m_StateMachine.GetCurrentStateIdentifier();
-    }
-
-
   /** Declarations needed for the Logging */
   igstkLoggerMacro();
 
@@ -251,9 +245,6 @@ int igstkStateMachineTest( int , char * [] )
 
   std::cout << std::endl;
 
-  // Exercise the GetCurrentState() method
-  std::cout << "Current State: " << tester.GetCurrentState() << std::endl;
-  
   bool skipLoops = false;
 
   std::cout << std::endl << std::endl;
