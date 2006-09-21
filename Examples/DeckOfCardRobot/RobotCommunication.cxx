@@ -20,7 +20,7 @@
 
 // On MSVC and Borland, snprintf is not defined but _snprintf is.
 // This should probably be checked by CMake instead of here.
-#if defined(WIN32) || defined(_WIN32)
+#if defined(__BORLANDC__) || defined(_MSC_VER)
 #ifndef snprintf
 #define snprintf _snprintf
 #endif
