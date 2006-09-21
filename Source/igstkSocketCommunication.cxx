@@ -722,7 +722,7 @@ SocketCommunication::InternalOpenCommunicationProcessing( void )
   igstkLogMacro( DEBUG, "SocketCommunication::\
                         InternalOpenCommunicationProcessing called ...\n");
 
-#ifdef WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__)
   WORD wVersionRequested;
   WSADATA wsaData;
 
@@ -810,7 +810,7 @@ SocketCommunication::InternalOpenPortProcessing(
   server.sin_addr.s_addr = INADDR_ANY;
   server.sin_port = htons(port);
 
-#ifdef WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__)
   setsockopt( this->m_Socket, SOL_SOCKET, SO_REUSEADDR, (char*) &opt, 
                                                                   sizeof(int));
 #else
