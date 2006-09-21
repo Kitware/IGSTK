@@ -15,8 +15,14 @@
 
 =========================================================================*/
 #include "RobotCommunication.h"
-#include "time.h"
 #include <string.h>
+
+// For Sleep
+#if defined (_WIN32) || defined (WIN32)
+#include <windows.h>
+#else
+#include <time.h>
+#endif
 
 // On MSVC and Borland, snprintf is not defined but _snprintf is.
 // This should probably be checked by CMake instead of here.
