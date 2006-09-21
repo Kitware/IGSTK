@@ -25,6 +25,13 @@
 #include <iostream>
 #include "igstkTransform.h"
 
+// includes for Sleep
+#if defined (_WIN32) || defined (WIN32)
+#include <windows.h>
+#else
+#include <time.h>
+#endif
+
 int igstkTransformTest( int, char * [] )
 {
 
@@ -167,7 +174,7 @@ int igstkTransformTest( int, char * [] )
                                                                 longerPeriod );
     
 #if defined (_WIN32) || defined (WIN32)
-    Sleep( 250 );            // Windows Sleep uses miliseconds
+    ::Sleep( 250 );            // Windows Sleep uses miliseconds
 #else
     usleep( 250 * 1000 );  // linux usleep uses microsecond
 #endif
