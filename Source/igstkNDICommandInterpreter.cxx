@@ -328,7 +328,7 @@ int NDICommandInterpreter::GetError() const
 /** Get a string that describes an error value. */
 const char* NDICommandInterpreter::ErrorString(int errnum)
 {
-  static char* textarrayLow[] = /* values from 0x01 to 0x23 */ 
+  static const char* textarrayLow[] = /* values from 0x01 to 0x23 */ 
   {
     "No error",
     "Invalid command",
@@ -400,7 +400,7 @@ const char* NDICommandInterpreter::ErrorString(int errnum)
     "Feature not available",
   };
 
-  static char* textarrayHigh[] = /* values from 0xf6 to 0xf4 */
+  static const char* textarrayHigh[] = /* values from 0xf6 to 0xf4 */
   {
     "Too much environmental infrared",
     "Unrecognized error code",
@@ -410,7 +410,7 @@ const char* NDICommandInterpreter::ErrorString(int errnum)
     "Unable to erase Flash EPROM"
   };
 
-  static char* textarrayApi[] = /* values specific to the API */
+  static const char* textarrayApi[] = /* values specific to the API */
   {
     "Bad CRC on reply from Measurement System",
     "Error opening serial connection",
