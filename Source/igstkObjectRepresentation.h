@@ -35,8 +35,6 @@
 namespace igstk
 {
 
-class View;
-
 /** \class ObjectRepresentation
  * 
  * \brief Base class for all the igstk representation objects.
@@ -67,8 +65,6 @@ public:
   typedef SpatialObject                      SpatialObjectType;
   typedef std::vector< vtkProp* >            ActorsListType; 
 
-  igstkFriendClassMacro( View );
-
   /** Set the color */
   void SetColor(float r, float g, float b);
 
@@ -81,6 +77,18 @@ public:
   void SetOpacity(float alpha);
   igstkGetMacro( Opacity, float );
 
+  /** Create the vtkActors */
+  virtual void CreateActors()= 0;
+
+  /** Get the VTK actors */
+  igstkGetMacro( Actors, ActorsListType );
+
+  /** update the visual representation position */
+  virtual void RequestUpdatePosition( const TimeStamp & time );
+
+  /** update the visual representation with changes in the geometry */
+  virtual void RequestUpdateRepresentation( const TimeStamp & time );
+
 protected:
 
   ObjectRepresentation( void );
@@ -88,12 +96,6 @@ protected:
 
   /** Add an actor to the list */
   void AddActor( vtkProp * );
-
-  /** Create the vtkActors */
-  virtual void CreateActors()= 0;
-
-  /** Get the VTK actors */
-  igstkGetMacro( Actors, ActorsListType );
 
   /** Empty the list of actors */
   virtual void DeleteActors();
@@ -121,17 +123,11 @@ private:
    * */
   SpatialObjectType::Pointer  m_SpatialObject;
 
-  /** update the visual representation with changes in the geometry */
-  virtual void RequestUpdateRepresentation( const TimeStamp & time );
-
   /** update the visual representation with changes in the geometry. Only to be
    * called by the State Machine. This is an abstract method that MUST be
    * overloaded in every derived class. */
   virtual void UpdateRepresentationProcessing() = 0;
  
-  /** update the visual representation position */
-  virtual void RequestUpdatePosition( const TimeStamp & time );
-
   /** Null operation for a State Machine transition */
   void NoProcessing();
 
