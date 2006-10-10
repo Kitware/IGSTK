@@ -89,7 +89,7 @@ class Landmark3DRegistrationGetTransformCallback: public itk::Command
     void Execute( itk::Object *caller, const itk::EventObject & event )
     {
       std::cout<< " TransformEvent is thrown" << std::endl;
-                    dynamic_cast < const TransformModifiedEventType* > ( &event );
+                    
       const TransformModifiedEventType * transformEvent =
                     dynamic_cast < const TransformModifiedEventType* > ( &event );
       m_Transform = transformEvent->Get();
