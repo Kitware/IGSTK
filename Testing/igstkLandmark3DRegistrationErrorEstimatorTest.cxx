@@ -44,7 +44,7 @@ class Landmark3DRegistrationErrorEstimatorGetErrorCallback: public itk::Command
     void Execute( itk::Object *caller, const itk::EventObject & event )
     {
       std::cout<< " LandmarkRegistrationErrorEvent is thrown" << std::endl;
-                    dynamic_cast < const LandmarkRegistrationErrorEventType* > ( &event );
+                    
       const LandmarkRegistrationErrorEventType * errorEvent =
                     dynamic_cast < const LandmarkRegistrationErrorEventType* > ( &event );
       m_Error = errorEvent->Get();
