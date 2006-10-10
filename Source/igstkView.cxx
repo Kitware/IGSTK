@@ -294,6 +294,7 @@ void View::RemoveActorProcessing()
 {
   igstkLogMacro( DEBUG, "RemoveActorProcessing() called ...\n");
   m_Renderer->RemoveActor( m_ActorToBeRemoved );
+  m_PointPicker->DeletePickList( m_ActorToBeRemoved );
 }
 
 
