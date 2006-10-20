@@ -1,8 +1,19 @@
+#
+# Examples that do not require GUI
+#
 
-SUBDIRS(
-  HelloWorld
-  OneViewAndTracking
-  FourViewsAndTracking
-  )
+
+
+
+#
+# Examples that require FLTK
+#
+IF(IGSTK_USE_FLTK)
+  SUBDIRS(
+    HelloWorld
+    OneViewAndTracking
+    FourViewsAndTracking
+    )
+ENDIF(IGSTK_USE_FLTK)
 
 

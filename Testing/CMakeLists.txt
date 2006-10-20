@@ -161,7 +161,7 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
 #-----------------------------------------------------------------------------
-# Tests depend on FLTK
+# Tests that depend on FLTK
 IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkCylinderObjectTest ${IGSTK_TESTS} igstkCylinderObjectTest)
   ADD_TEST(igstkEllipsoidObjectTest ${IGSTK_TESTS} igstkEllipsoidObjectTest)
