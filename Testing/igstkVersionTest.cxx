@@ -18,7 +18,12 @@
 //
 // Print out the versions of libraries on which IGSTK depends.
 //
+#include "igstkConfigure.h"
+
+#ifdef FLTK_FOUND
 #include "Fl/Fl.H"
+#endif
+
 #include "itkVersion.h"
 #include "vtkVersion.h"
 
@@ -54,6 +59,8 @@ int main(int,char *[])
   std::cout << "Source Version = " 
             << vtkVersion::GetVTKSourceVersion() << std::endl;
   std::cout << std::endl;
+
+#ifdef FLTK_FOUND  
   //
   // FLTK
   // 
@@ -61,6 +68,7 @@ int main(int,char *[])
   std::cout << "FLTK Version    = " << Fl::version() << std::endl;
   std::cout << "-----------------------------------------------" << std::endl;
   std::cout << std::endl;
+#endif  
 
   return 0;
 

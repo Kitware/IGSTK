@@ -17,3 +17,7 @@
 #define IGSTK_SERIAL_PORT_1 "@IGSTK_SERIAL_PORT_1@"
 #define IGSTK_SERIAL_PORT_2 "@IGSTK_SERIAL_PORT_2@"
 #define IGSTK_SERIAL_PORT_3 "@IGSTK_SERIAL_PORT_3@"
+
+/* indicate whether FLTK is being used or not */
+#cmakedefine FLTK_FOUND
+
