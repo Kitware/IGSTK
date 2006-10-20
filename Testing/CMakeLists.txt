@@ -254,9 +254,6 @@ SET(BasicTests_SRCS
   igstkUSImageObjectTest.cxx 
   igstkUSImageObjectRepresentationTest.cxx 
   igstkToolCalibrationTest 
-  igstkAxesObjectTest.cxx
-  igstkBoxObjectTest.cxx
-  igstkConeObjectTest.cxx
   igstkBasicTrackerTest.cxx
   igstkBinaryDataTest.cxx
   igstkCommunicationTest.cxx
@@ -311,8 +308,6 @@ IF(IGSTK_DATA_ROOT)
     igstkToolCalibrationReaderTest.cxx 
     igstkPivotCalibrationReaderTest.cxx 
     igstkMR3DImageToUS3DImageRegistrationTest.cxx 
-    igstkUltrasoundImageSimulatorTest.cxx
-    igstkAnnotation2DTest.cxx
     igstkCTImageReaderTest.cxx
     igstkCTImageSpatialObjectRepresentationTest.cxx
     igstkDICOMImageReaderErrorsTest.cxx
@@ -321,7 +316,6 @@ IF(IGSTK_DATA_ROOT)
     igstkMRImageReaderTest.cxx
     igstkSpatialObjectReaderTest.cxx
     igstkTubeReaderTest.cxx
-    
     igstkAuroraTrackerSimulatedTest.cxx
     igstkNDICommandInterpreterSimulatedTest.cxx
     igstkNDICommandInterpreterStressTest.cxx   
@@ -335,12 +329,17 @@ ENDIF(IGSTK_DATA_ROOT)
 IF(IGSTK_USE_FLTK)  
   SET(BasicTests_SRCS
     ${BasicTests_SRCS}
+    igstkAnnotation2DTest.cxx
+    igstkAxesObjectTest.cxx
+    igstkBoxObjectTest.cxx
+    igstkConeObjectTest.cxx
     igstkCylinderObjectTest.cxx
     igstkEllipsoidObjectTest.cxx
     igstkFLTKTextBufferLogOutputTest.cxx
     igstkFLTKTextLogOutputTest.cxx
     igstkPulseGeneratorTest.cxx
     igstkTubeObjectTest.cxx
+    igstkUltrasoundImageSimulatorTest.cxx
     igstkViewTest.cxx
     igstkViewRefreshRateTest.cxx
     igstkMouseTrackerTest.cxx

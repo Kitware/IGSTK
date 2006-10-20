@@ -36,19 +36,14 @@ void RegisterTests()
   REGISTER_TEST(igstkToolCalibrationReaderTest);
   REGISTER_TEST(igstkPivotCalibrationReaderTest);
   REGISTER_TEST(igstkMR3DImageToUS3DImageRegistrationTest);
-  REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
   REGISTER_TEST(igstkUSImageObjectTest);
   REGISTER_TEST(igstkUSImageObjectRepresentationTest);
   REGISTER_TEST(igstkUSImageReaderTest);
   REGISTER_TEST(igstkToolCalibrationTest);
   REGISTER_TEST(igstkVesselObjectTest);
 
-  REGISTER_TEST(igstkAnnotation2DTest);
-  REGISTER_TEST(igstkAxesObjectTest);
   REGISTER_TEST(igstkBasicTrackerTest);
   REGISTER_TEST(igstkBinaryDataTest);
-  REGISTER_TEST(igstkBoxObjectTest);
-  REGISTER_TEST(igstkConeObjectTest);
   REGISTER_TEST(igstkCommunicationTest);
   REGISTER_TEST(igstkCTImageSpatialObjectTest);
   REGISTER_TEST(igstkImageReaderTest);
@@ -106,6 +101,10 @@ void RegisterTests()
 
   // Tests depend on FLTK
 #ifdef IGSTK_USE_FLTK
+  REGISTER_TEST(igstkAnnotation2DTest);
+  REGISTER_TEST(igstkAxesObjectTest);
+  REGISTER_TEST(igstkBoxObjectTest);
+  REGISTER_TEST(igstkConeObjectTest);
   REGISTER_TEST(igstkCylinderObjectTest);
   REGISTER_TEST(igstkEllipsoidObjectTest);
   REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
@@ -117,6 +116,7 @@ void RegisterTests()
   REGISTER_TEST(igstkViewTest);
   REGISTER_TEST(igstkViewRefreshRateTest);
   REGISTER_TEST(igstkUltrasoundProbeObjectTest);
+  REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
   REGISTER_TEST(igstkSpatialObjectRepresentationVisibilityTest);
 
 #ifdef IGSTK_DATA_ROOT

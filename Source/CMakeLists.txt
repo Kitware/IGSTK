@@ -49,7 +49,6 @@ SET(IGSTK_HEADS
   igstkMeshObject.h
   igstkMeshObjectRepresentation.h
   igstkMultipleOutput.h
-  igstkMouseTracker.h
   igstkNDICommandInterpreter.h
   igstkNDIErrorEvent.h
   igstkObjectRepresentation.h
@@ -93,6 +92,7 @@ IF(IGSTK_USE_FLTK)
     igstkView.h
     igstkView2D.h
     igstkView3D.h
+    igstkMouseTracker.h
     )
 ENDIF(IGSTK_USE_FLTK)
 
@@ -142,7 +142,6 @@ SET(IGSTK_SRCS
   igstkMeshObject.cxx
   igstkMeshObjectRepresentation.cxx
   igstkMultipleOutput.cxx
-  igstkMouseTracker.cxx
   igstkNDICommandInterpreter.cxx
   igstkObject.cxx
   igstkPivotCalibration.cxx
@@ -182,6 +181,7 @@ IF(IGSTK_USE_FLTK)
     igstkView.cxx
     igstkView2D.cxx
     igstkView3D.cxx
+    igstkMouseTracker.cxx
     )
 ENDIF(IGSTK_USE_FLTK)
 
