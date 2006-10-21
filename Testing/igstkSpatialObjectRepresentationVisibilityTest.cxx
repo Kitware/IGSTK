@@ -190,7 +190,6 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   view3D->RequestAddObject( ellipsoidRepresentation  );
   view3D->RequestAddObject( ellipsoidRepresentation2 );
 
-  const double tolerance = 1e-8;
   double validityTimeInMilliseconds = 1000;
   igstk::Transform transform;
   igstk::Transform::VectorType translation;
