@@ -141,7 +141,7 @@ bool RobotCommunication::Init()
 
 
   // checks to see if robot command was successful
-  if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK )
+  if ( GetResFlag(buffer, num, 2) == (int)APIRESFLAG_OK )
     {
     LoginSuccessful = true;
     }
@@ -162,7 +162,7 @@ bool RobotCommunication::Init()
     m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
     buffer[num]='\0';
     // checks to see if command was successful
-    if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK )
+    if ( GetResFlag(buffer, num, 2) == (int)APIRESFLAG_OK )
       {
       AsyncCommandSuccessful = true;
       }
@@ -215,7 +215,7 @@ bool RobotCommunication::Home()
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
 
-  if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK ) 
+  if ( GetResFlag(buffer, num, 2) == (int)APIRESFLAG_OK ) 
     {
     return true;
     }
@@ -239,7 +239,7 @@ bool RobotCommunication::HomeJoint( int JointNr )
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
 
-  if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK ) 
+  if ( GetResFlag(buffer, num, 2) == (int)APIRESFLAG_OK ) 
     {
     return true;
     }
@@ -272,7 +272,7 @@ bool RobotCommunication::MoveRobotCoordinates ( float X, float Y, float Z,
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
 
-  if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK ) 
+  if ( GetResFlag(buffer, num, 2) == (int)APIRESFLAG_OK ) 
     {
     return true;
     }
@@ -294,7 +294,8 @@ int RobotCommunication::GetReachable ( float X, float Y, float Z,
 {
 
   char buffer[ROBOT_MAX_COMMAND_SIZE];
-  unsigned int result, num;
+  int result;
+  unsigned int num;
   char sendmessage[ROBOT_MAX_COMMAND_SIZE];
 
   snprintf( sendmessage, ROBOT_MAX_COMMAND_SIZE, 
@@ -304,12 +305,12 @@ int RobotCommunication::GetReachable ( float X, float Y, float Z,
   buffer[num]='\0';
 
   result = GetResFlag(buffer, num, 2);
-  if ( result == APIRESFLAG_OK ) 
+  if ( result == (int)APIRESFLAG_OK ) 
     {
     return true;
     }
 
-  if ( result == APIRESFLAG_POS_NOT_REACHABLE )
+  if ( result == (int)APIRESFLAG_POS_NOT_REACHABLE )
     {
     return false;
     }
@@ -331,7 +332,7 @@ bool RobotCommunication::Stop( int mode )
   m_Client->RequestRead(buffer, 100, num, READ_TIMEOUT);
   buffer[num]='\0';
 
-  if ( GetResFlag(buffer, num, 2) == APIRESFLAG_OK ) 
+  if ( GetResFlag(buffer, num, 2) == (int)APIRESFLAG_OK ) 
     {
     return true;
     }
