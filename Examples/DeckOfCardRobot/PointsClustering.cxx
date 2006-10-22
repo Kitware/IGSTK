@@ -88,13 +88,14 @@ bool PointsClustering::Execute()
   // Start the iteration of merging and re-calculate distance map
   for ( int n=0; n<N-1; n++)
     {
-    int iID, jID;
+    unsigned int iID;
+    unsigned int jID;
     double minDistance = itk::NumericTraits<double>::max();
 
     //Find the minimum distance pair (iID is always smaller than jID)
-    for ( int i=0; i< clusterDistanceMap.size(); i++)
+    for ( unsigned int i=0; i< clusterDistanceMap.size(); i++)
       {
-      for ( int j=i+1; j< clusterDistanceMap.size() ; j++)
+      for ( unsigned int j=i+1; j< clusterDistanceMap.size() ; j++)
         {
         if ( clusterDistanceMap[i][j] < minDistance )
           {
@@ -145,13 +146,13 @@ bool PointsClustering::Execute()
     m_IDCluster.erase( m_IDCluster.begin() + jID );
 
     // Update iID column and iID row distances in the clusterDistanceMap
-    for ( int i=0; i<clusterDistanceMap.size(); i++)
+    for ( unsigned int i=0; i<clusterDistanceMap.size(); i++)
       {
       clusterDistanceMap[i].erase( clusterDistanceMap[i].begin() + jID );
       }
     clusterDistanceMap.erase( clusterDistanceMap.begin() + jID );
     
-    for ( int j=0; j<clusterDistanceMap.size() ; j++)
+    for ( unsigned int j=0; j<clusterDistanceMap.size() ; j++)
       {
       if ( j == iID )
         {
@@ -178,10 +179,10 @@ bool PointsClustering::Execute()
     }
 
   // Print the clustering result
-  for( int i=0; i<m_Cluster.size(); i++ )
+  for( unsigned int i=0; i<m_Cluster.size(); i++ )
     {
     std::cout<< "Cluster " << i << " :" << std::endl;
-    for (int j=0; j< m_Cluster[i].size(); j++)
+    for (unsigned int j=0; j< m_Cluster[i].size(); j++)
       {
       std::cout << "Point ID: " << m_IDCluster[i][j] << "\t";
       std::cout << m_Cluster[i][j] << std::endl;
@@ -202,20 +203,20 @@ double PointsClustering::MaxMinDistance( PointIDsListType ids1,
                                          PointIDsListType ids2)
 {
   double maxD = -1;
-  for (int i=0; i< ids1.size(); i++)
+  for (unsigned int i=0; i< ids1.size(); i++)
     {
     double minD = itk::NumericTraits<double>::max();
-    for (int j=0; j< ids2.size(); j++)
+    for (unsigned int j=0; j< ids2.size(); j++)
       {
       minD = ( m_DistanceMap( ids1[i] , ids2[j] ) < minD ) ? 
                m_DistanceMap( ids1[i] , ids2[j] ) : minD;
       }
     maxD = ( maxD > minD ) ? maxD : minD;
   }
-  for (int i=0; i< ids2.size(); i++)
+  for (unsigned int i=0; i< ids2.size(); i++)
     {
     double minD = itk::NumericTraits<double>::max();
-    for (int j=0; j< ids1.size(); j++)
+    for (unsigned int j=0; j< ids1.size(); j++)
       {
       minD = ( m_DistanceMap( ids2[i] , ids1[j] ) < minD ) ? 
                m_DistanceMap( ids2[i] , ids1[j] ) : minD;
@@ -229,20 +230,20 @@ double PointsClustering::AveMinDistance( PointIDsListType ids1,
                                          PointIDsListType ids2)
 {
   double aveD = 0;
-  for (int i=0; i< ids1.size(); i++)
+  for (unsigned int i=0; i< ids1.size(); i++)
     {
     double minD = itk::NumericTraits<double>::max();
-    for (int j=0; j< ids2.size(); j++)
+    for (unsigned int j=0; j< ids2.size(); j++)
       {
       minD = ( m_DistanceMap( ids1[i] , ids2[j] ) < minD ) ? 
                m_DistanceMap( ids1[i] , ids2[j] ) : minD;
       }
     aveD += minD;
     }
-  for (int i=0; i< ids2.size(); i++)
+  for (unsigned int i=0; i< ids2.size(); i++)
     {
     double minD = itk::NumericTraits<double>::max();
-    for (int j=0; j< ids1.size(); j++)
+    for (unsigned int j=0; j< ids1.size(); j++)
       {
       minD = ( m_DistanceMap( ids2[i] , ids1[j] ) < minD ) ? 
                m_DistanceMap( ids2[i] , ids1[j] ) : minD;
@@ -276,14 +277,14 @@ double PointsClustering::CenterToCenter( PointsListType pts1,
   PointType pc1, pc2;
   pc1.Fill( 0.0 ); pc2.Fill( 0.0 );
 
-  for ( int i=0; i< pts1.size(); i++)
+  for ( unsigned int i=0; i< pts1.size(); i++)
     {
     pc1[0] += pts1[i][0] / pts1.size();
     pc1[1] += pts1[i][1] / pts1.size();
     pc1[2] += pts1[i][2] / pts1.size();
     }
 
-  for ( int i=0; i< pts2.size(); i++)
+  for ( unsigned int i=0; i< pts2.size(); i++)
     {
     pc2[0] += pts2[i][0] / pts2.size();
     pc2[1] += pts2[i][1] / pts2.size();
