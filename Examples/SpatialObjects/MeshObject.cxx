@@ -128,6 +128,7 @@ mesh->AddPoint(3,10,0,10);
     {
     typedef MeshObjectType::CellType CellType;
     unsigned int cellId = (*itCell).first;
+    std::cout << "Cell ID: " << cellId << std::endl;
     itCell++;
     }
 // Software Guide : EndCodeSnippet
