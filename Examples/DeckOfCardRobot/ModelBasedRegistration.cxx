@@ -72,9 +72,9 @@ bool ModelBasedRegistration::Execute()
   vnl_vector< double > minXYZ(3), maxXYZ(3);
   minXYZ.fill( itk::NumericTraits<double>::max() );
   maxXYZ.fill( itk::NumericTraits<double>::NonpositiveMin() );
-  for ( int i=0; i<fiducialPoints.size(); i++)
+  for ( unsigned int i=0; i<fiducialPoints.size(); i++)
     {
-    for ( int j=0; j<3; j++)
+    for ( unsigned int j=0; j<3; j++)
       {
       minXYZ(j) = vnl_math_min( minXYZ(j), fiducialPoints[i][j] );
       maxXYZ(j) = vnl_math_max( maxXYZ(j), fiducialPoints[i][j] );

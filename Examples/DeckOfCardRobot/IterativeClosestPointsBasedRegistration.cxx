@@ -75,7 +75,7 @@ bool IterativeClosestPointsBasedRegistration::Execute()
   FiducialSegmentation::PointsListType sourcePointsList = 
                                                 segmenter->GetFiducialPoints();
   sourceCell->InsertNextCell( sourcePointsList.size() );
-  for ( int i=0; i<sourcePointsList.size(); i++)
+  for ( unsigned int i=0; i<sourcePointsList.size(); i++)
     {
     double p[3];
     p[0] = sourcePointsList[i][0];
@@ -88,7 +88,7 @@ bool IterativeClosestPointsBasedRegistration::Execute()
   FiducialSegmentation::PointsListType targetPointsList = 
                                                  model->GetFiducialPoints();
   targetCell->InsertNextCell( targetPointsList.size() );
-  for ( int i=0; i<targetPointsList.size(); i++)
+  for ( unsigned int i=0; i<targetPointsList.size(); i++)
     {
     double p[3];
     p[0] = targetPointsList[i][0];

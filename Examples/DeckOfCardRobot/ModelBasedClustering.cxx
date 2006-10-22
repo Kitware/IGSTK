@@ -38,16 +38,16 @@ void ModelBasedClustering::PrintSelf(std::ostream& os, itk::Indent indent)
 
 bool ModelBasedClustering::Execute()
 { 
-  int N = m_SamplePoints.size();
+  unsigned int N = m_SamplePoints.size();
   // Calculate Distance Map and clustering the points
   // Get rid of far way high intensity points
   vnl_matrix< double > distanceMap( N, N );
   distanceMap.fill( 0.0 );
   vnl_vector< double > distAvr( N );
   distAvr.fill( 0.0 );
-  for ( int i=0; i<N; i++)
+  for ( unsigned int i=0; i<N; i++)
     {
-    for ( int j=0; j<N; j++)
+    for ( unsigned int j=0; j<N; j++)
       {
       distanceMap( i, j ) = this->Distance( m_SamplePoints[i], 
                                             m_SamplePoints[j] );
@@ -63,9 +63,9 @@ bool ModelBasedClustering::Execute()
   vnl_matrix< double > modelDistanceMap( N, N );
   modelDistanceMap.fill( 0.0 );
   double maxD = 0;
-  for ( int i=0; i<N; i++)
+  for ( unsigned int i=0; i<N; i++)
     {
-    for ( int j=0; j<N; j++)
+    for ( unsigned int j=0; j<N; j++)
       {
       modelDistanceMap( i, j ) = this->Distance( m_ModelPoints[i], 
                                                  m_ModelPoints[j] );
@@ -78,16 +78,16 @@ bool ModelBasedClustering::Execute()
 
   bool done = false;
   const double distT = maxD + 2.0; //46.6345
-  const int    stopCounts = 2;
+  const unsigned int   stopCounts = 2;
   int index;
-  std::vector< int > deleteList;
+  std::vector< unsigned int > deleteList;
   deleteList.clear();
   N = m_SamplePoints.size();
 
   do {
     // Find the largest average distance
     double max = 0;
-    for ( int i=0; i<N; i++)
+    for ( unsigned int i=0; i<N; i++)
       {
       if ( distAvr[i] > max )
         {
@@ -96,8 +96,8 @@ bool ModelBasedClustering::Execute()
         }
       }
     // Find this point has how many distance pairs exceed the threshold
-    int count = 0;
-    for ( int i=0; i<N; i++)
+    unsigned int count = 0;
+    for ( unsigned int i=0; i<N; i++)
       {
       if ( distanceMap( index,i ) > distT )
         {
@@ -109,15 +109,15 @@ bool ModelBasedClustering::Execute()
       {
       deleteList.push_back( index );
       // Update the distanceMap and disAvr
-      for ( int i=0; i<N; i++)
+      for ( unsigned int i=0; i<N; i++)
         {
         distanceMap( index, i ) = 0;
         distanceMap( i, index ) = 0;
         }
       distAvr.fill( 0.0 );
-      for ( int i=0; i<N; i++)
+      for ( unsigned int i=0; i<N; i++)
         {
-        for ( int j=0; j<N; j++)
+        for ( unsigned int j=0; j<N; j++)
           {
           distAvr[i] += distanceMap( i, j );
           }
@@ -135,10 +135,10 @@ bool ModelBasedClustering::Execute()
   PointsListType pTemp;
   m_ClusteredPoints.clear();
 
-  for( int i=0; i<N; i++)
+  for( unsigned int i=0; i<N; i++)
     {
     bool ToBeDelete = false;
-    for( int j=0; j<deleteList.size(); j++)
+    for( unsigned int j=0; j<deleteList.size(); j++)
       {
       if( i == deleteList[j] )
         {

@@ -55,15 +55,15 @@ bool PCAOnPoints::Execute()
   covar.fill( 0.0 );
 
   vnl_vector< double > diff( 3 );
-  for ( int i=0; i< m_SamplePoints.size(); i++)
+  for ( unsigned int i=0; i< m_SamplePoints.size(); i++)
     {
     diff[0] = m_SamplePoints[i][0] - m_Center[0];
     diff[1] = m_SamplePoints[i][1] - m_Center[1];
     diff[2] = m_SamplePoints[i][2] - m_Center[2];
 
-    for ( int j=0; j<3; j++)
+    for ( unsigned int j=0; j<3; j++)
       {
-      for ( int k=0; k<3; k++)
+      for ( unsigned int k=0; k<3; k++)
         {
         covar( j, k ) += diff[j] * diff[k];
         }
@@ -79,7 +79,7 @@ bool PCAOnPoints::Execute()
 
   // Project points on to the eigenvector axis
   std::vector< double > projection;
-  for ( int i=0; i< m_SamplePoints.size(); i++)
+  for ( unsigned int i=0; i< m_SamplePoints.size(); i++)
     {
     vnl_vector< double > p( 3 );
     p[0] = m_SamplePoints[i][0];
@@ -92,9 +92,9 @@ bool PCAOnPoints::Execute()
     }
 
   // Sort the points according to the projection
-  for ( int i=0; i< m_SamplePoints.size()-1; i++ )
+  for ( unsigned int i=0; i< m_SamplePoints.size()-1; i++ )
     {
-    for ( int j=0; j< m_SamplePoints.size()-1; j++ )
+    for ( unsigned int j=0; j< m_SamplePoints.size()-1; j++ )
       {
       if ( projection[j] > projection[j+1] )
         {

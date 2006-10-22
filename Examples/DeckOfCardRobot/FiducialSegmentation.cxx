@@ -200,7 +200,7 @@ bool FiducialSegmentation::Execute()
   std::cout<< "Fiducial segmentation results: " << std::endl;
   std::cout<< "Number of fiducial points detected: " << 
                                           m_FiducialPoints.size() << std::endl;
-  for (int i=0; i<m_FiducialPoints.size(); i++)
+  for (unsigned int i=0; i<m_FiducialPoints.size(); i++)
     {
      std::cout<< m_FiducialPoints[i] << std::endl;
     }

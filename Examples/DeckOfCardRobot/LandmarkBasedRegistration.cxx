@@ -65,7 +65,7 @@ bool LandmarkBasedRegistration::Execute()
   vnl_vector< double > minXYZ(3), maxXYZ(3);
   minXYZ.fill( itk::NumericTraits<double>::max() );
   maxXYZ.fill( itk::NumericTraits<double>::NonpositiveMin() );
-  for ( int i=0; i<fiducialPoints.size(); i++)
+  for ( unsigned int i=0; i<fiducialPoints.size(); i++)
     {
     for ( int j=0; j<3; j++)
       {
@@ -134,7 +134,7 @@ bool LandmarkBasedRegistration::Execute()
 
   igstk::Landmark3DRegistration::Pointer landmarkRegistration = 
                                           igstk::Landmark3DRegistration::New();
-  for ( int i=0; i<fiducialPoints.size(); i++)
+  for ( unsigned int i=0; i<fiducialPoints.size(); i++)
     {
     LandmarkPointType p;
     p = fiducialPoints[i];
