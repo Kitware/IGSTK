@@ -88,8 +88,7 @@ private:
 // BeginLatex
 // 
 // Simialar callback classes need to be defined to observe patient name and 
-// image reading error. Full list of events related with the DICOM image reader
-// are given in section ?????
+// image reading error.
 //
 // EndLatex
 
@@ -215,7 +214,7 @@ int main( int argc, char* argv[] )
   
   // BeginLatex
   //
-  // Similar operation can be also done to access the patient name 
+  // Similar operation can be performed to access the patient name 
   //
   // EndLatex
 
