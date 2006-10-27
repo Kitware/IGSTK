@@ -29,7 +29,8 @@ using namespace std;
 
 // BeginLatex
 //
-// This example shows how to extend Logger for printing log messages in a custom format.
+// This example shows how to extend Logger for printing 
+// log messages in a custom format.
 //
 // EndLatex
 
@@ -39,11 +40,16 @@ using namespace std;
 // Indentation is automatically done here.
 // Most of XML viewers show the hierarchical structure of log messages
 // and provide UIs to collapse and expand subelements.
-// XMLLogger opens a new element when the first character of the log message is \begin{verbatim}'<'\end{verbatim}
-// and closes a element when the first character is \begin{verbatim}'>'\end{verbatim}.
-// Otherwise, a self-closing element is created when no angular bracket is used for the first character.
-// BuildFormattedEntry() method is redefined in XMLLogger class for overriding default formatting.
-// It creates a string containing a timestamp, a logger name, the priority level of a message, and a message content.
+// XMLLogger opens a new element when the first character of the log message 
+// is \begin{verbatim}'<'\end{verbatim}
+// and closes a element when the first character is 
+// \begin{verbatim}'>'\end{verbatim}.
+// Otherwise, a self-closing element is created when no angular bracket is 
+// used for the first character.
+// BuildFormattedEntry() method is redefined in XMLLogger class for overriding 
+// default formatting.
+// It creates a string containing a timestamp, a logger name, 
+// the priority level of a message, and a message content.
 // Some of these components can be omitted if unnecessary. 
 // The logger name was omitted here to shorten the length of messages.
 //
@@ -56,6 +62,7 @@ namespace igstk
 class XMLLogger: public itk::Logger
 {
 public:
+
   typedef XMLLogger                                   Self;
   typedef itk::SmartPointer<Self>                     Pointer;
   typedef itk::Logger                                 Superclass;
@@ -65,54 +72,51 @@ public:
   /** Provides a XML-formatted log entry */
   virtual std::string BuildFormattedEntry(PriorityLevelType level, 
     std::string const & content)
-  {
+    {
     static std::string m_LevelString[] = { "MUSTFLUSH", "FATAL", 
       "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET" };
     itk::OStringStream s;
     s.precision(30);
     if( content.at(0) == '<' )
-    {
-      for( int i = 0; i < depth; ++i )
       {
+      for( int i = 0; i < depth; ++i )
+        {
         s << "  ";
-      }
+        }
     
       s << "<Log timestamp='" << m_Clock->GetTimeStamp() 
         <<  "' level='" <<  m_LevelString[level] 
         << "' message='" << content.substr(1, content.size()-1) << "'>"
         << std::endl;
       ++depth;
-    }
+      }
     else if( content.at(0) == '>' )
-    {
+      {
       --depth;
       for( int i = 0; i < depth; ++i )
-      {
+        {
         s << "  ";
-      }
+        }
     
       s << "</Log>" << std::endl;
-    }
-    else
-    {
-      for( int i = 0; i < depth; ++i )
-      {
-        s << "  ";
       }
-    
+    else
+      {
+      for( int i = 0; i < depth; ++i )
+        {
+        s << "  ";
+        }
       s << "<Log timestamp='" << m_Clock->GetTimeStamp() 
         <<  "' level='" <<  m_LevelString[level] 
         << "' message='" << content << "'/>"
         << std::endl;
-    }
+      }
     return s.str();
-  }
+    }
 
 protected:
   /** Constructor */
-  XMLLogger() {
-    depth = 0;
-  };
+  XMLLogger() {depth = 0;}
 
   /** Destructor */
   virtual ~XMLLogger() {};
@@ -139,7 +143,7 @@ int main( int argc, char* argv[] )
 
   // BeginCodeSnippet
   typedef igstk::XMLLogger              LoggerType;
-  typedef itk::StdStreamLogOutput   LogOutputType;
+  typedef itk::StdStreamLogOutput       LogOutputType;
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
   LogOutputType::Pointer logOutput2 = LogOutputType::New();
@@ -155,7 +159,8 @@ int main( int argc, char* argv[] )
   // 
   // The XMLLogger prints log messages in XML format so that the log messages
   // are structured hierarchically.
-  // After running this example, open the generated log.xml file using an XML viewer.
+  // After running this example, open the generated log.xml file 
+  // using an XML viewer.
   //
   // EndLatex
 
@@ -200,4 +205,3 @@ int main( int argc, char* argv[] )
 // \end{verbatim}
 // 
 // EndLatex
-

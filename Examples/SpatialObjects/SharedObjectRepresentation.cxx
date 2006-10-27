@@ -128,8 +128,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // An important function of the ObjectRepresentation is the 
-// \code{Copy()} function which creates a deep copy of the current representation
-// as shown below.
+// \code{Copy()} function which creates a deep copy of the 
+// current representation as shown below.
 //
 // Software Guide : EndLatex
 // Software Guide : BeginCodeSnippet

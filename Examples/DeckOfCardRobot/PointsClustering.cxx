@@ -64,8 +64,8 @@ bool PointsClustering::Execute()
     for ( int j=i+1; j<N; j++)
       {
       m_DistanceMap( i, j ) = 
-                       EuclideanDistance( m_SamplePoints[i], m_SamplePoints[j] );
-      m_DistanceMap( j, i ) = m_DistanceMap( i, j ); // Copy the symmetric matrix
+                     EuclideanDistance( m_SamplePoints[i], m_SamplePoints[j] );
+      m_DistanceMap( j, i ) = m_DistanceMap( i, j ); // Copy the matrix
       }
     }
 
@@ -95,7 +95,7 @@ bool PointsClustering::Execute()
     //Find the minimum distance pair (iID is always smaller than jID)
     for ( unsigned int i=0; i< clusterDistanceMap.size(); i++)
       {
-      for ( unsigned int j=i+1; j< clusterDistanceMap.size() ; j++)
+      for ( unsigned int j=i+1; j< clusterDistanceMap.size(); j++)
         {
         if ( clusterDistanceMap[i][j] < minDistance )
           {
@@ -108,7 +108,7 @@ bool PointsClustering::Execute()
     
     // Print the distance map
     /*
-    std::cout <<"------------------------------------------------------------\n";
+    std::cout <<"--------------------------------------------------------\n";
     std::cout<< "Pair:" << iID << "," << jID << std::endl;
     std::cout<< "Distance:" << minDistance << std::endl;
     for ( int i=0; i<clusterDistanceMap.size(); i++)
@@ -117,10 +117,10 @@ bool PointsClustering::Execute()
       for (int j=0; j<clusterDistanceMap[i].size(); j++)
         {
         std::cout<< clusterDistanceMap[i][j] << ",\t";
-        }      
+        }
       std::cout<< "]\n";
       }
-    std::cout <<"----------------------------------------------------------\n\n";
+    std::cout <<"------------------------------------------------------\n\n";
     */
 
     // Stop clustering if the minimum distance between clusters are larger than
@@ -152,7 +152,7 @@ bool PointsClustering::Execute()
       }
     clusterDistanceMap.erase( clusterDistanceMap.begin() + jID );
     
-    for ( unsigned int j=0; j<clusterDistanceMap.size() ; j++)
+    for ( unsigned int j=0; j<clusterDistanceMap.size(); j++)
       {
       if ( j == iID )
         {
@@ -212,7 +212,7 @@ double PointsClustering::MaxMinDistance( PointIDsListType ids1,
                m_DistanceMap( ids1[i] , ids2[j] ) : minD;
       }
     maxD = ( maxD > minD ) ? maxD : minD;
-  }
+    }
   for (unsigned int i=0; i< ids2.size(); i++)
     {
     double minD = itk::NumericTraits<double>::max();

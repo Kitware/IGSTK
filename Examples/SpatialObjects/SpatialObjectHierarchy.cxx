@@ -22,8 +22,9 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::SpatialObjectHierarchy}
-// This example describes how to group the \doxygen{SpatialObject}s to form a hierarchy
-// of objects and also illustrates their creation and how to manipulate them.
+// This example describes how to group the \doxygen{SpatialObject}s 
+// to form a hierarchy of objects and also illustrates their creation 
+// and how to manipulate them.
 //
 // The first part of the example makes use of the \doxygen{EllipsoidObject}. The
 // second part uses the \doxygen{GroupObject}.

@@ -126,9 +126,10 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// To retrieve the whole calibration data information, the previous defined observer
-// is attached to the reader class. After the RequestGetCalibration function is called,
-// the calibration info is passed by observer's GetCalibration function. The sample code
+// To retrieve the whole calibration data information, the previous 
+// defined observer is attached to the reader class. 
+// After the RequestGetCalibration function is called, the calibration info 
+// is passed by observer's GetCalibration function. The sample code
 // is as follows.
 //
 // EndLatex
@@ -159,10 +160,11 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 //
-// To retrieve some specific information, like serial number and manufacturer, 
-// from the trackers, another string even and observer is attached to the calibration
-// class we just get. For each request, the information content will be passed by
-// observer's GetString function. Some sample codes are shown as below:
+// To retrieve some specific information, like serial number and manufacturer,
+// from the trackers, another string even and observer is attached 
+// to the calibration class we just get. For each request, the information
+// content will be passed by observer's GetString function. 
+// Some sample codes are shown as below:
 //
 // EndLatex
 

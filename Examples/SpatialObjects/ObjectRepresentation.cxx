@@ -72,8 +72,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // Every ObjectRepresentation have an RGB color and an opacity as rendering
-// parameters. These two parameters can be tuned using the \code{SetColor(R,G,B)}
-// and \code{SetOpacity()} functions respectively.
+// parameters. These two parameters can be tuned using 
+// the \code{SetColor(R,G,B)} and \code{SetOpacity()} functions respectively.
 //
 // Software Guide : EndLatex 
 

@@ -222,7 +222,7 @@ public:
       m_VesselRepresentationList.clear();
        
       // Create the object representations for the tube
-      typedef igstk::VascularNetworkObject VascularNetworkObjectType;
+      typedef igstk::VascularNetworkObject   VascularNetworkObjectType;
       typedef VascularNetworkObjectType::VesselObjectType VesselObjectType;
       VascularNetworkObjectType::Pointer newNetwork 
                                         = VascularNetworkObjectType::New();

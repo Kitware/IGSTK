@@ -53,7 +53,6 @@ int main(int argc , char * argv [] )
   points.push_back( p );
 
 
-
   igstk::PointsClustering::Pointer cluster = igstk::PointsClustering::New();
   cluster->SetDistanceType( atoi( argv[1] ) );
   cluster->SetMaxMergeDistance( atof( argv[2] ) );
@@ -63,21 +62,6 @@ int main(int argc , char * argv [] )
 
   igstk::PointsClustering::PointClusterType clusteredPoints = 
                                                           cluster->GetCluster();
-
-/*
-  for( int i=0; i<clusteredPoints.size(); i++ )
-    {
-    std::cout<< "Cluster " << i << " :" << std::endl;
-    for (int j=0; j< clusteredPoints[i].size(); j++)
-      {
-      std::cout << clusteredPoints[i][j] << std::endl;
-      }
-    std::cout<< "\n\n";
-    }
-
-  std::cout << "Last merge distance: " << 
-                                   cluster->GetLastMergeDistance() << std::endl;*/
-
 
   return EXIT_SUCCESS;
 }

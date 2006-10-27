@@ -115,13 +115,15 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// To use the pivot calibration class, some input samples from the tracker should be provide. 
-// Those samples come directly from tracker tools. In our example, those samples are read
-// from the record data file in the IGSTK data directory.
+// To use the pivot calibration class, some input samples from the 
+// tracker should be provide. 
+// Those samples come directly from tracker tools. In our example, 
+// those samples are read from the record data file in the IGSTK 
+// data directory.
 //
 // EndLatex
-  // Define the input file and the variables to extract the rotation 
-  // and translation information
+// Define the input file and the variables to extract the rotation 
+// and translation information
   std::ifstream input;
   int frame;
   std::string temp;
@@ -161,7 +163,8 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// Then, the sample frame is read from the data file and input to calibration class
+// Then, the sample frame is read from the data file and input 
+// to calibration class
 //
 // EndLatex
 
@@ -184,7 +187,8 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// After this, a simple request will invole the class to compute the calibration transform.
+// After this, a simple request will invole the class to compute 
+// the calibration transform.
 //
 // EndLatex
 
@@ -263,7 +267,8 @@ int main( int argc, char * argv[] )
 
     // Dump the calibration class information
     std::cout << "PivotCalibration: " << std::endl;
-    std::cout << "NumberOfSamples: " << pivot->GetNumberOfSamples() << std::endl;
+    std::cout << "NumberOfSamples: "
+              << pivot->GetNumberOfSamples() << std::endl;
     std::cout << "Translation: " << translation << std::endl;
     std::cout << "Pivot Position: " << position << std::endl;
     std::cout << "Calibration RMS: " << error << std::endl;

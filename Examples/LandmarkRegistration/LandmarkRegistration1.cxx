@@ -52,8 +52,8 @@
 // BeginLatex
 // 
 // Transform parameters are returned to the application using loaded events. 
-// To handle these events, the following \doxygen{Events} and \doxygen{Transform} header 
-// files are needed.
+// To handle these events, the following \doxygen{Events} 
+// and \doxygen{Transform} header files are needed.
 //
 // EndLatex
 
@@ -67,11 +67,11 @@
 // 
 // To fully  utilize the registration component, callbacks need to be set up 
 // to observer events that could be thrown by the registration component.  
-//  For this purpose, the ITK command class is used to derive a callback class .
+// For this purpose, the ITK command class is used to derive a callback class .
 // The ITK command class implements a subject/observer (command design) pattern.
-//  A subject notifies an observer by running the \code{Execute } method of 
-// the derived callback class . For example a callback class meant to observe an error 
-// in the transform computation is defined as follows.
+// A subject notifies an observer by running the \code{Execute } method of 
+// the derived callback class . For example a callback class meant 
+// to observe an error in the transform computation is defined as follows.
 // 
 // EndLatex
 
@@ -92,7 +92,7 @@ public:
     std::cerr<<"Error in transform computation"<<std::endl;
     }
 protected:
-  Landmark3DRegistrationErrorCallback()   { };
+  Landmark3DRegistrationErrorCallback() {};
 
 private:
 };
@@ -115,7 +115,7 @@ public:
     std::cerr<<"Invalid input request!!"<<std::endl;
     }
 protected:
-  Landmark3DRegistrationInvalidRequestCallback()   { };
+  Landmark3DRegistrationInvalidRequestCallback() {};
 
 private:
 };
@@ -160,10 +160,12 @@ public:
     return m_Transform;
     }  
 protected:
+
   Landmark3DRegistrationGetTransformCallback()   
     {
     m_EventReceived = true;
-    };
+    }
+
 private:
   bool m_EventReceived;
   igstk::Transform m_Transform;
@@ -288,7 +290,8 @@ int main( int argv, char * argc[] )
 // each landmark are added consecutively. This scheme prevents
 // the mismatch in landmark correspondence that could occur when all landmarks 
 // image coordinates are recorded first and then the tracker coordinates. 
-// This design choice is consistent with the "safety by design" philosophy of igstk. 
+// This design choice is consistent with the "safety by design" philosophy 
+// of igstk. 
 //
 //EndLatex 
 

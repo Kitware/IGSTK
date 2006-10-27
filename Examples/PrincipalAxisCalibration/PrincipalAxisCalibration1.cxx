@@ -78,7 +78,8 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// At the beginning, a principal axis calibration class is initialized as follows: 
+// At the beginning, a principal axis calibration class is 
+// initialized as follows: 
 //
 // EndLatex
 
@@ -163,7 +164,8 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// Then a RequestCalculateRotation function is invoked to compute the final results
+// Then a RequestCalculateRotation function is invoked to compute 
+// the final results
 //
 // EndLatex
 

@@ -46,7 +46,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 // The radius of the ellipse can be adjusted in each dimension 
 // using the two \code{SetRadius()} functions.
-// The easiest way is to use the \code{SetRadius(double,double,double)} function.
+// The easiest way is to use the 
+// \code{SetRadius(double,double,double)} function.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
