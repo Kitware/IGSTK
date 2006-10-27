@@ -55,8 +55,9 @@
 // BeginLatex
 //
 // The visual representation of SpatialObjects in the visualization window is
-// created using SpatialObject Representation classes. Every SpatialObject has one or several
-// representation objects associated with it. We include now the header files
+// created using SpatialObject Representation classes. 
+// Every SpatialObject has one or several representation objects 
+// associated with it. We include now the header files
 // of the \doxygen{EllipsoidObjectRepresentation} and
 // \doxygen{CylinderObjectRepresentation}.
 // 
@@ -138,7 +139,7 @@ int main(int , char** )
   m_GUI->MainWindow->show();
 
   // BeginLatex
-  // Next, we instantiate the ellipsoidal spatial object that we will be 
+  // Next, we instantiate the ellipsoidal spatial object that we will be
   // attaching to the tracker.
   // EndLatex
 
@@ -300,8 +301,8 @@ int main(int , char** )
 
 
   // BeginLatex
-  // Finally, before exiting the application, the tracker is properly closed and other clean up
-  // procedures are executed.
+  // Finally, before exiting the application, the tracker is properly 
+  // closed and other clean up procedures are executed.
   // EndLatex
   // BeginCodeSnippet
   tracker->StopTracking();

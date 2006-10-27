@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef _OneViewAndTrackingImplementation_h
-#define _OneViewAndTrackingImplementation_h
+#ifndef __OneViewAndTrackingImplementation_h
+#define __OneViewAndTrackingImplementation_h
 
 #if defined(_MSC_VER)
 //Warning about: identifier was truncated to '255' characters in the debug
@@ -133,7 +133,8 @@ public:
     m_Tracking = false;
     }
   
-  void AddCylinder( igstk::CylinderObjectRepresentation * cylinderRepresentation )
+  void AddCylinder( igstk::CylinderObjectRepresentation 
+                                                    * cylinderRepresentation )
     {
     this->Display3D->RequestAddObject( cylinderRepresentation->Copy() );
     }

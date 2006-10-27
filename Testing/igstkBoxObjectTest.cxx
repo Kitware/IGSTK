@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters
+// in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -34,61 +35,61 @@ namespace igstk
 {
 namespace BoxObjectTest
 {
-  class TransformObserver : public ::itk::Command 
-  {
-  public:
-    typedef  TransformObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    TransformObserver() 
-      {
-      m_GotTransform = false;
-      }
-    ~TransformObserver() {}
-  public:
+
+class TransformObserver : public ::itk::Command 
+{
+public:
+  typedef  TransformObserver          Self;
+  typedef  ::itk::Command             Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
+
+protected:
+  TransformObserver() 
+    {
+    m_GotTransform = false;
+    }
+  ~TransformObserver() {}
+public:
     
-      typedef ::igstk::TransformModifiedEvent  EventType;
+  typedef ::igstk::TransformModifiedEvent  EventType;
         
-      void Execute(itk::Object *caller, const itk::EventObject & event)
-        {
-        const itk::Object * constCaller = caller;
-        this->Execute( constCaller, event );
-        }
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    const itk::Object * constCaller = caller;
+    this->Execute( constCaller, event );
+    }
 
-      void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    m_GotTransform = false;
+    if( EventType().CheckEvent( &event ) )
+      {
+      const EventType * transformEvent = 
+                 dynamic_cast< const EventType *>( &event );
+      if( transformEvent )
         {
-        m_GotTransform = false;
-        if( EventType().CheckEvent( &event ) )
-          {
-          const EventType * transformEvent = 
-                    dynamic_cast< const EventType *>( &event );
-          if( transformEvent )
-            {
-            m_Transform = transformEvent->Get();
-            m_GotTransform = true;
-            }
-          }
+        m_Transform = transformEvent->Get();
+        m_GotTransform = true;
         }
+      }
+    }
 
-      bool GotTransform() const
-        {
-        return m_GotTransform;
-        }
+  bool GotTransform() const
+    {
+    return m_GotTransform;
+    }
 
-      const ::igstk::Transform & GetTransform() const
-        {
-        return m_Transform;
-        }
+  const ::igstk::Transform & GetTransform() const
+    {
+    return m_Transform;
+    }
         
-  private:
+private:
 
-    ::igstk::Transform  m_Transform;
-
-    bool m_GotTransform;
-
-  };
+  ::igstk::Transform  m_Transform;
+  bool                m_GotTransform;
+};
 
 } // end namespace BoxObjectTest
 } // end namespace igstk
@@ -110,12 +111,15 @@ int igstkBoxObjectTest( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
+                                                = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
+                                       // OutputWindow -> logger
 
   typedef igstk::BoxObjectRepresentation  ObjectRepresentationType;
-  ObjectRepresentationType::Pointer BoxRepresentation = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer BoxRepresentation 
+                                              = ObjectRepresentationType::New();
   BoxRepresentation->SetLogger( logger );
 
   typedef igstk::BoxObject  ObjectType;
@@ -135,7 +139,8 @@ int igstkBoxObjectTest( int, char * [] )
     {
     if(sizeRead[i] != size[i])
       {
-      std::cerr << "Size error : " << sizeRead[i] << " v.s " << size << std::endl; 
+      std::cerr << "Size error : " << sizeRead[i] << " v.s " << size 
+                << std::endl; 
       return EXIT_FAILURE;
       }
     }
@@ -149,7 +154,8 @@ int igstkBoxObjectTest( int, char * [] )
     {
     if(sizeRead[i] != size[i])
       {
-      std::cerr << "Size error : " << sizeRead[i] << " v.s " << size << std::endl; 
+      std::cerr << "Size error : " << sizeRead[i] << " v.s " << size 
+                << std::endl; 
       return EXIT_FAILURE;
       }
     }
@@ -230,16 +236,18 @@ int igstkBoxObjectTest( int, char * [] )
 
   typedef ::igstk::BoxObjectTest::TransformObserver  TransformObserverType;
 
-  TransformObserverType::Pointer transformObserver = TransformObserverType::New();
+  TransformObserverType::Pointer transformObserver 
+                                                 = TransformObserverType::New();
 
-  BoxObject->AddObserver( ::igstk::TransformModifiedEvent(), transformObserver );
+  BoxObject->AddObserver( ::igstk::TransformModifiedEvent(),transformObserver );
   
   BoxObject->RequestSetTransform( transform );
   BoxObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
     {
-    std::cerr << "The BoxObject did not returned a Transform event" << std::endl;
+    std::cerr << "The BoxObject did not returned a Transform event" 
+              << std::endl;
     return EXIT_FAILURE;
     }
       
@@ -250,7 +258,8 @@ int igstkBoxObjectTest( int, char * [] )
     {
     if( fabs( translation2[i]  - translation[i] ) > tolerance )
       {
-      std::cerr << "Translation component is out of range [FAILED]" << std::endl;
+      std::cerr << "Translation component is out of range [FAILED]" 
+                << std::endl;
       std::cerr << "input  translation = " << translation << std::endl;
       std::cerr << "output translation = " << translation2 << std::endl;
       return EXIT_FAILURE;
@@ -269,10 +278,7 @@ int igstkBoxObjectTest( int, char * [] )
     return EXIT_FAILURE;
     }
 
-
-
   std::cout << "[PASSED]" << std::endl;
-
 
   // Testing the Copy() function
   std::cout << "Testing Copy(): ";
@@ -286,12 +292,15 @@ int igstkBoxObjectTest( int, char * [] )
 
   // Exercise RequestSetBoxObject() with a null pointer as argument
   std::cout << "Testing RequestSetBoxObject() with NULL argument: ";
-  ObjectRepresentationType::Pointer BoxRepresentation3 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer BoxRepresentation3 
+                                              = ObjectRepresentationType::New();
   BoxRepresentation3->RequestSetBoxObject( 0 );
 
-  // Exercise RequestSetBoxObject() called twice. The second call should be ignored.
+  // Exercise RequestSetBoxObject() called twice. 
+  // The second call should be ignored.
   std::cout << "Testing RequestSetBoxObject() called twice: ";
-  ObjectRepresentationType::Pointer BoxRepresentation4 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer BoxRepresentation4 
+                                              = ObjectRepresentationType::New();
   ObjectType::Pointer BoxObjectA = ObjectType::New();
   ObjectType::Pointer BoxObjectB = ObjectType::New();
   BoxRepresentation4->RequestSetBoxObject( BoxObjectA );

@@ -118,8 +118,8 @@ private:
 
   unsigned long       m_PulseCounter;
   unsigned long       m_NumberOfPulsesToStop;
-  Fl_Window          *m_Form;
-  ::igstk::View      *m_View;
+  Fl_Window *         m_Form;
+  ::igstk::View *     m_View;
   bool *              m_End;
 };
 
@@ -149,7 +149,8 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
                                                igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow 
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
+                                       // OutputWindow 
 
   typedef igstk::EllipsoidObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer 
@@ -175,7 +176,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   ellipsoidRepresentation->SetColor( 0.0, 0.0, 1.0 );
   ellipsoidRepresentation->SetOpacity( 1.0 );
   
-   Fl_Window * form = new Fl_Window(512,512,"Visibility Test");
+  Fl_Window * form = new Fl_Window(512,512,"Visibility Test");
 
   typedef igstk::View3D  View3DType;
   View3DType * view3D = new View3DType(6,6,500,500,"View 3D");

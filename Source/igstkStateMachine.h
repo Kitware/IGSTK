@@ -240,7 +240,7 @@ private:
     StateIdentifierType GetStateIdentifier() const 
       { 
       return m_StateIdentifier;
-      }    
+      }
     ActionType GetAction() const 
       { 
       return m_Action; 

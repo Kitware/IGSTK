@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-   //Warning about: identifier was truncated to '255' characters in the debug information (MVC6.0 Debug)
+// Warning about: identifier was truncated to '255' characters 
+// in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
@@ -34,61 +35,61 @@ namespace igstk
 {
 namespace ConeObjectTest
 {
-  class TransformObserver : public ::itk::Command 
-  {
-  public:
-    typedef  TransformObserver   Self;
-    typedef  ::itk::Command    Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
-    TransformObserver() 
+class TransformObserver : public ::itk::Command 
+{
+public:
+  typedef  TransformObserver          Self;
+  typedef  ::itk::Command             Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
+
+protected:
+  TransformObserver() 
+    {
+    m_GotTransform = false;
+    }
+  ~TransformObserver() {}
+
+public:
+
+  typedef ::igstk::TransformModifiedEvent  EventType;
+        
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    const itk::Object * constCaller = caller;
+    this->Execute( constCaller, event );
+    }
+
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    m_GotTransform = false;
+    if( EventType().CheckEvent( &event ) )
       {
-      m_GotTransform = false;
+      const EventType * transformEvent = 
+                dynamic_cast< const EventType *>( &event );
+      if( transformEvent )
+        {
+        m_Transform = transformEvent->Get();
+        m_GotTransform = true;
+        }
       }
-    ~TransformObserver() {}
-  public:
-    
-      typedef ::igstk::TransformModifiedEvent  EventType;
-        
-      void Execute(itk::Object *caller, const itk::EventObject & event)
-        {
-        const itk::Object * constCaller = caller;
-        this->Execute( constCaller, event );
-        }
+    }
+  bool GotTransform() const
+    {
+    return m_GotTransform;
+    }
 
-      void Execute(const itk::Object *caller, const itk::EventObject & event)
-        {
-        m_GotTransform = false;
-        if( EventType().CheckEvent( &event ) )
-          {
-          const EventType * transformEvent = 
-                    dynamic_cast< const EventType *>( &event );
-          if( transformEvent )
-            {
-            m_Transform = transformEvent->Get();
-            m_GotTransform = true;
-            }
-          }
-        }
+  const ::igstk::Transform & GetTransform() const
+    {
+    return m_Transform;
+    }
+      
+private:
 
-      bool GotTransform() const
-        {
-        return m_GotTransform;
-        }
+  ::igstk::Transform  m_Transform;
+  bool                m_GotTransform;
 
-      const ::igstk::Transform & GetTransform() const
-        {
-        return m_Transform;
-        }
-        
-  private:
-
-    ::igstk::Transform  m_Transform;
-
-    bool m_GotTransform;
-
-  };
+};
 
 } // end namespace ConeObjectTest
 } // end namespace igstk
@@ -110,12 +111,15 @@ int igstkConeObjectTest( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = igstk::VTKLoggerOutput::New();
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
+                                                = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK OutputWindow -> logger
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
+                                       // OutputWindow -> logger
 
   typedef igstk::ConeObjectRepresentation  ObjectRepresentationType;
-  ObjectRepresentationType::Pointer ConeRepresentation = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer ConeRepresentation 
+                                              = ObjectRepresentationType::New();
   ConeRepresentation->SetLogger( logger );
 
   typedef igstk::ConeObject  ObjectType;
@@ -129,7 +133,8 @@ int igstkConeObjectTest( int, char * [] )
   double radiusRead = ConeObject->GetRadius();
   if(radiusRead != 3.2)
     {
-    std::cerr << "Radius error : " << radiusRead << " v.s " << 3.2 << std::endl; 
+    std::cerr << "Radius error : " << radiusRead << " v.s " 
+              << 3.2 << std::endl; 
     return EXIT_FAILURE;
     }
   std::cout << "[PASSED]" << std::endl;
@@ -141,7 +146,8 @@ int igstkConeObjectTest( int, char * [] )
   double heightRead = ConeObject->GetHeight();
   if(heightRead != 4.1)
     {
-    std::cerr << "Height error : " << heightRead << " v.s " << 4.1 << std::endl; 
+    std::cerr << "Height error : " << heightRead << " v.s " 
+              << 4.1 << std::endl; 
     return EXIT_FAILURE;
     }
   std::cout << "[PASSED]" << std::endl;
@@ -220,16 +226,19 @@ int igstkConeObjectTest( int, char * [] )
 
   typedef ::igstk::ConeObjectTest::TransformObserver  TransformObserverType;
 
-  TransformObserverType::Pointer transformObserver = TransformObserverType::New();
+  TransformObserverType::Pointer transformObserver 
+                                                 = TransformObserverType::New();
 
-  ConeObject->AddObserver( ::igstk::TransformModifiedEvent(), transformObserver );
+  ConeObject->AddObserver( ::igstk::TransformModifiedEvent(), 
+                                                            transformObserver );
   
   ConeObject->RequestSetTransform( transform );
   ConeObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
     {
-    std::cerr << "The ConeObject did not returned a Transform event" << std::endl;
+    std::cerr << "The ConeObject did not returned a Transform event" 
+              << std::endl;
     return EXIT_FAILURE;
     }
       
@@ -241,7 +250,8 @@ int igstkConeObjectTest( int, char * [] )
     {
     if( fabs( translation2[i]  - translation[i] ) > tolerance )
       {
-      std::cerr << "Translation component is out of range [FAILED]" << std::endl;
+      std::cerr << "Translation component is out of range [FAILED]" 
+                << std::endl;
       std::cerr << "input  translation = " << translation << std::endl;
       std::cerr << "output translation = " << translation2 << std::endl;
       return EXIT_FAILURE;
@@ -260,10 +270,7 @@ int igstkConeObjectTest( int, char * [] )
     return EXIT_FAILURE;
     }
 
-
-
   std::cout << "[PASSED]" << std::endl;
-
 
   // Testing the Copy() function
   std::cout << "Testing Copy(): ";
@@ -277,12 +284,15 @@ int igstkConeObjectTest( int, char * [] )
 
   // Exercise RequestSetConeObject() with a null pointer as argument
   std::cout << "Testing RequestSetConeObject() with NULL argument: ";
-  ObjectRepresentationType::Pointer ConeRepresentation3 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer ConeRepresentation3 
+                                              = ObjectRepresentationType::New();
   ConeRepresentation3->RequestSetConeObject( 0 );
 
-  // Exercise RequestSetConeObject() called twice. The second call should be ignored.
+  // Exercise RequestSetConeObject() called twice. 
+  // The second call should be ignored.
   std::cout << "Testing RequestSetConeObject() called twice: ";
-  ObjectRepresentationType::Pointer ConeRepresentation4 = ObjectRepresentationType::New();
+  ObjectRepresentationType::Pointer ConeRepresentation4 
+                                              = ObjectRepresentationType::New();
   ObjectType::Pointer ConeObjectA = ObjectType::New();
   ObjectType::Pointer ConeObjectB = ObjectType::New();
   ConeRepresentation4->RequestSetConeObject( ConeObjectA );

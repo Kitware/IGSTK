@@ -38,7 +38,7 @@ int igstkImageReaderTest( int , char* [] )
   
   class myTestReader : 
     public igstk::ImageReader< ImageSpatialObjectType >
-  {
+    {
   public:
     typedef myTestReader                                 Self;
     typedef igstk::ImageReader< ImageSpatialObjectType > Superclass;
@@ -46,7 +46,7 @@ int igstkImageReaderTest( int , char* [] )
   private:
     typedef Superclass::ImageType ImageType;
     virtual const ImageType * GetITKImage() const { return NULL; }
-  };
+    };
 
   typedef myTestReader   ReaderType;
 
