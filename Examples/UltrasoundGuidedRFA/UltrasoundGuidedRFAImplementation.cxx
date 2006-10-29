@@ -262,7 +262,7 @@ void UltrasoundGuidedRFAImplementation
     m_LiverRepresentation->SetColor(1.0,0.0,0.0);
     m_LiverRepresentation->SetOpacity(1.0);
     this->Display3D->RequestAddObject(m_LiverRepresentation);
- /*
+    /*
     m_ContourLiverRepresentation->RequestSetMeshObject( 
                                                   m_MeshReader->GetOutput() );
     //m_ContourLiverRepresentation->RequestSetOrientation(
@@ -270,7 +270,7 @@ void UltrasoundGuidedRFAImplementation
     m_ContourLiverRepresentation->SetColor(1.0,0.0,0.0);
     m_ContourLiverRepresentation->SetOpacity(1.0);
     this->Display2D->RequestAddObject(m_ContourLiverRepresentation);
- */
+    */
     }
 }
 

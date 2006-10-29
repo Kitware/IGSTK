@@ -192,15 +192,15 @@ int main( int argc, char* argv[] )
 //
 // \begin{verbatim}
 // <Log timestamp='24444134232.34433' level='DEBUG' message='main()'>
-//   <Log timestamp='24444134232.3451' level='DEBUG' message='Hello world1'/>
-//   <Log timestamp='24444134232.345699' level='ERROR' message='nested 1'>
-//     <Log timestamp='24444134232.346279' level='DEBUG' message='Hello world2'/>
-//     <Log timestamp='24444134232.346897' level='INFO' message='nested 2'>
-//       <Log timestamp='24444134232.347507' level='DEBUG' message='Hello world3'/>
-//       <Log timestamp='24444134232.348164' level='ERROR' message='Hello world4'/>
-//     </Log>
-//     <Log timestamp='24444134232.348892' level='DEBUG' message='Hello world5'/>
+//  <Log timestamp='24444134232.3451' level='DEBUG' message='Hello world1'/>
+//  <Log timestamp='24444134232.345699' level='ERROR' message='nested 1'>
+//   <Log timestamp='24444134232.346279' level='DEBUG' message='Hello world2'/>
+//   <Log timestamp='24444134232.346897' level='INFO' message='nested 2'>
+//    <Log timestamp='24444134232.347507' level='DEBUG' message='Hello world3'/>
+//    <Log timestamp='24444134232.348164' level='ERROR' message='Hello world4'/>
 //   </Log>
+//   <Log timestamp='24444134232.348892' level='DEBUG' message='Hello world5'/>
+//  </Log>
 // </Log>
 // \end{verbatim}
 // 
