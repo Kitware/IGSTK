@@ -213,7 +213,7 @@ private:
    *  eg. m_ImageReader->SetLogger( logger ).
    * You can also use igstkLogMacro( logger, x, y ) to log your 
    * message in to this logger. */
-  LoggerType::Pointer                 logger; // Another logger for igstk
+  LoggerType::Pointer                 m_Logger; // Another logger for igstk
 
   /** Registered patient name */
   std::string                         m_PatientName;

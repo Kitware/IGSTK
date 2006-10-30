@@ -142,13 +142,7 @@ public:
   typedef itk::StdStreamLogOutput               LogOutputType;
   
   RobotCommunication() {}
-       
   ~RobotCommunication() {}
-
-  LoggerType::Pointer                       m_Logger;
-  LogOutputType::Pointer                    m_LogOutput; 
-  
-  SocketCommunicationPointerType            m_Client;
   
   // Captures ResFlag after appropriate ";" in robot response
   int GetResFlag( const char * buf, int size, int numSC );
@@ -193,6 +187,13 @@ public:
   // of coordinates (X,Y,Z,A,B,C)
   // need to check - buffer function works, and return is correct
   void GetCurrentRobotPosition( float * pos );
+
+protected:
+
+  LoggerType::Pointer                       m_Logger;
+  LogOutputType::Pointer                    m_LogOutput; 
+  
+  SocketCommunicationPointerType            m_Client;
 
 };
 

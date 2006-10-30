@@ -79,7 +79,7 @@ public:
     s.precision(30);
     if( content.at(0) == '<' )
       {
-      for( int i = 0; i < depth; ++i )
+      for( int i = 0; i < m_Depth; ++i )
         {
         s << "  ";
         }
@@ -88,12 +88,12 @@ public:
         <<  "' level='" <<  m_LevelString[level] 
         << "' message='" << content.substr(1, content.size()-1) << "'>"
         << std::endl;
-      ++depth;
+      ++m_Depth;
       }
     else if( content.at(0) == '>' )
       {
-      --depth;
-      for( int i = 0; i < depth; ++i )
+      --m_Depth;
+      for( int i = 0; i < m_Depth; ++i )
         {
         s << "  ";
         }
@@ -102,7 +102,7 @@ public:
       }
     else
       {
-      for( int i = 0; i < depth; ++i )
+      for( int i = 0; i < m_Depth; ++i )
         {
         s << "  ";
         }
@@ -116,13 +116,14 @@ public:
 
 protected:
   /** Constructor */
-  XMLLogger() {depth = 0;}
+  XMLLogger() {m_Depth = 0;}
 
   /** Destructor */
   virtual ~XMLLogger() {};
 
 private:
-  int depth;
+  
+  int m_Depth;
   
 };
 

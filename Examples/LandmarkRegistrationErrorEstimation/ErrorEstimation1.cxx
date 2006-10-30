@@ -91,7 +91,7 @@ protected:
     m_EventReceived = true;
     }
 private:
-  bool m_EventReceived;
+  bool   m_EventReceived;
   double m_Error;
 };
 

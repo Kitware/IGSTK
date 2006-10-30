@@ -66,7 +66,7 @@ public:
   void SetSamplePoints( PointsListType pList )
     {
     m_SamplePoints = pList;
-    };
+    }
 
   itkSetMacro( MaxMergeDistance,  double );
   itkGetMacro( LastMergeDistance, double );
@@ -75,7 +75,7 @@ public:
   PointClusterType GetCluster()
     {
     return m_Cluster;
-    };
+    }
 
 protected:
   PointsClustering();

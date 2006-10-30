@@ -971,7 +971,7 @@ SocketCommunication::InternalConnectProcessing( AddressType address,
 
   return SUCCESS; 
 
-};
+}
 
 /** Internal function to close communication. */
 SocketCommunication::ResultType 
@@ -998,7 +998,7 @@ SocketCommunication::InternalCloseCommunicationProcessing( void )
 
   return SUCCESS; 
 
-};
+}
 
 /** Internal function to write. */
 SocketCommunication::ResultType 
@@ -1055,7 +1055,7 @@ SocketCommunication::InternalWriteProcessing( const char *data,
                         write succeed! ...\n");
   return SUCCESS; 
 
-};
+}
 
 /** Internal function to read. */
 SocketCommunication::ResultType 
@@ -1119,7 +1119,7 @@ SocketCommunication::InternalReadProcessing( char * data,
                         read succeed!\n");
   return SUCCESS; 
 
-};
+}
 
 /** Internal function to read. */
 SocketCommunication::ResultType 
@@ -1246,7 +1246,7 @@ SocketCommunication::InternalReadProcessing( char * data,
                         read succeed!\n");
   return SUCCESS; 
 
-};
+}
 
 /** Internal function to disconnect connection socket. */
 SocketCommunication::ResultType 

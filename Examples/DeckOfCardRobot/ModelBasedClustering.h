@@ -42,18 +42,17 @@ public:
   void SetSamplePoints( PointsListType pList )
     {
     m_SamplePoints = pList;
-    };
+    }
 
   void SetModelPoints( PointsListType pList )
     {
     m_ModelPoints = pList;
-    };
+    }
 
   PointsListType GetClusteredPoints()
     {
     return m_ClusteredPoints;
-    };
-
+    }
 
 protected:
   ModelBasedClustering();

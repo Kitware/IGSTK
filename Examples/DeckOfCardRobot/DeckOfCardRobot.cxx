@@ -33,7 +33,7 @@ namespace igstk
 DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
 {  
   /** Setup logger, for all other igstk components. */
-  logger   = LoggerType::New();
+  m_Logger   = LoggerType::New();
 
   /** Direct the application log message to the std::cout 
     * and FLTK text display */
@@ -56,7 +56,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
     {
     m_LogFileOutput->SetStream( m_LogFile );
     this->GetLogger()->AddLogOutput( m_LogFileOutput );
-    logger->AddLogOutput( m_LogFileOutput );
+    m_Logger->AddLogOutput( m_LogFileOutput );
     }
   else
     {
@@ -188,16 +188,16 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   /** Set logger */
   if(0) // Temporary disable this logger
     {
-    m_ImageReader->SetLogger( logger );
-    this->DisplayAxial->SetLogger( logger );
-    this->DisplaySagittal->SetLogger( logger );
-    this->DisplayCoronal->SetLogger( logger );
-    this->Display3D->SetLogger( logger );
-    m_ImageRepresentationAxial->SetLogger( logger );
-    m_ImageRepresentationSagittal->SetLogger( logger );
-    m_ImageRepresentationCoronal->SetLogger( logger );
-    m_ImageRepresentation3D->SetLogger( logger );
-    m_ImageRepresentationOblique->SetLogger( logger );
+    m_ImageReader->SetLogger( m_Logger );
+    this->DisplayAxial->SetLogger( m_Logger );
+    this->DisplaySagittal->SetLogger( m_Logger );
+    this->DisplayCoronal->SetLogger( m_Logger );
+    this->Display3D->SetLogger( m_Logger );
+    m_ImageRepresentationAxial->SetLogger( m_Logger );
+    m_ImageRepresentationSagittal->SetLogger( m_Logger );
+    m_ImageRepresentationCoronal->SetLogger( m_Logger );
+    m_ImageRepresentation3D->SetLogger( m_Logger );
+    m_ImageRepresentationOblique->SetLogger( m_Logger );
     }
 
   this->ObserveAxialBoundsInput(    m_ImageRepresentationAxial    );
@@ -368,7 +368,7 @@ void DeckOfCardRobot::NoProcessing()
 
 void DeckOfCardRobot::RequestLoadImage()
 {
-  igstkLogMacro2( logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
                     "DeckOfCardRobot::RequestLoadImageProcessing called...\n" )
   m_StateMachine.PushInput( m_RequestLoadImageInput );
   m_StateMachine.ProcessInputs();
@@ -376,19 +376,19 @@ void DeckOfCardRobot::RequestLoadImage()
 
 void DeckOfCardRobot::LoadImageProcessing()
 {
-  igstkLogMacro2( logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
                            "DeckOfCardRobot::LoadImageProcessing called...\n" )
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
   if ( directoryname != NULL )
     {
     igstkLogMacro( DEBUG, 
                       "Set ImageReader directory: " << directoryname << "\n" )
-    igstkLogMacro2( logger, DEBUG, 
+    igstkLogMacro2( m_Logger, DEBUG, 
                             "m_ImageReader->RequestSetDirectory called...\n" )
     m_ImageReader->RequestSetDirectory( directoryname ); 
 
     igstkLogMacro( DEBUG, "ImageReader loading images... \n" )
-    igstkLogMacro2( logger, DEBUG, 
+    igstkLogMacro2( m_Logger, DEBUG, 
                               "m_ImageReader->RequestReadImage called... \n" )
     m_ImageReader->RequestReadImage();
 
@@ -401,13 +401,13 @@ void DeckOfCardRobot::LoadImageProcessing()
     if(!imageSpatialObjectObserver->GotImageSpatialObject())
       {
       igstkLogMacro(          DEBUG, "Cannot read image\n" )
-      igstkLogMacro2( logger, DEBUG, "Cannot read image\n" )
+      igstkLogMacro2( m_Logger, DEBUG, "Cannot read image\n" )
       m_StateMachine.PushInput( m_LoadImageFailureInput);
       }
     else
       {
       igstkLogMacro(          DEBUG, "Image Loaded\n" )
-      igstkLogMacro2( logger, DEBUG, "Image Loaded\n" )
+      igstkLogMacro2( m_Logger, DEBUG, "Image Loaded\n" )
       m_StateMachine.PushInput( m_LoadImageSuccessInput);
       m_ImageSpatialObject = 
                            imageSpatialObjectObserver->GetImageSpatialObject();
@@ -416,7 +416,7 @@ void DeckOfCardRobot::LoadImageProcessing()
   else
     {
     igstkLogMacro(          DEBUG, "No directory is selected\n" )
-    igstkLogMacro2( logger, DEBUG, "No directory is selected\n" )
+    igstkLogMacro2( m_Logger, DEBUG, "No directory is selected\n" )
     m_StateMachine.PushInput( m_LoadImageFailureInput );
     }
 }
@@ -437,7 +437,7 @@ void DeckOfCardRobot::RequestSetROI()
 
 void DeckOfCardRobot::RequestRegistration()
 {
-  igstkLogMacro2( logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
                          "DeckOfCardRobot::RequestRegistration called ... \n" )
   m_StateMachine.PushInput( m_RequestRegistrationInput );
   m_StateMachine.ProcessInputs();
@@ -538,7 +538,7 @@ void DeckOfCardRobot::RegistrationProcessing()
 
 void DeckOfCardRobot::RequestResliceImage()
 {
-  igstkLogMacro2( logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
                           "DeckOfCardRobot::RequestResliceImage called ... \n")
   this->ResliceImage(); // Take out the state machine logic from here
 }
@@ -770,7 +770,7 @@ void DeckOfCardRobot::DrawPickedPoint( const itk::EventObject & event)
 void DeckOfCardRobot::RequestSetTargetPoint()
 {
   igstkLogMacro ( DEBUG, "DeckOfCardRobot::RequestSetTargetPoint called....\n" )
-  igstkLogMacro2( logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
                          "DeckOfCardRobot::RequestSetTargetPoint called....\n" )
   m_TargetTransform = m_ImageLandmarkTransformToBeSet;
   m_StateMachine.PushInput( m_RequestSetTargetPointInput );
@@ -779,7 +779,7 @@ void DeckOfCardRobot::RequestSetTargetPoint()
 void DeckOfCardRobot::RequestSetEntryPoint()
 {
   igstkLogMacro ( DEBUG, "DeckOfCardRobot::RequestSetEntryPoint called....\n" )
-  igstkLogMacro2( logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
                           "DeckOfCardRobot::RequestSetEntryPoint called....\n" )
   m_EntryTransform = m_ImageLandmarkTransformToBeSet;
   m_StateMachine.PushInput( m_RequestSetEntryPointInput );
@@ -889,7 +889,7 @@ void DeckOfCardRobot::DrawPathProcessing()
 
 void DeckOfCardRobot::RequestConnectToRobot()
 {
-  igstkLogMacro2( logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
                 "DeckOfCardRobot::RequestConnectToRobot called...\n" )
                 igstkPushInputMacro( RequestConnectToRobot );
   m_StateMachine.ProcessInputs();
@@ -897,7 +897,7 @@ void DeckOfCardRobot::RequestConnectToRobot()
 
 void DeckOfCardRobot::RequestHomeRobot()
 {
-  igstkLogMacro2( logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
                 "DeckOfCardRobot::RequestHomeRobot called...\n" )
                 igstkPushInputMacro( RequestHomeRobot );
   m_StateMachine.ProcessInputs();
@@ -905,7 +905,7 @@ void DeckOfCardRobot::RequestHomeRobot()
 
 void DeckOfCardRobot::RequestTargetingRobot()
 {
-  igstkLogMacro2( logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
                 "DeckOfCardRobot::RequestTargetingRobot called...\n" )
                 igstkPushInputMacro( RequestTargetingRobot );
   m_StateMachine.ProcessInputs();
@@ -913,7 +913,7 @@ void DeckOfCardRobot::RequestTargetingRobot()
 
 void DeckOfCardRobot::ConnectToRobotProcessing()
 {
-  igstkLogMacro2( logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
                "DeckOfCardRobot::ConnectToRobotProcessing called...\n" )
   m_StateMachine.PushInputBoolean( m_Robot->Init(), 
                     m_ConnectToRobotSuccessInput, m_ConnectToRobotFailureInput);
@@ -921,7 +921,7 @@ void DeckOfCardRobot::ConnectToRobotProcessing()
 
 void DeckOfCardRobot::HomeRobotProcessing()
 {
-  igstkLogMacro2( logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
                "DeckOfCardRobot::HomeRobotProcessing called...\n" )
   m_StateMachine.PushInputBoolean( m_Robot->Home(), 
                               m_HomeRobotSuccessInput, m_HomeRobotFailureInput);
@@ -942,7 +942,7 @@ void DeckOfCardRobot::HomeRobotProcessing()
 void DeckOfCardRobot::TargetingRobotProcessing()
 {
 
-  igstkLogMacro2( logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
                "DeckOfCardRobot::TargetingRobotProcessing called...\n" )
 
   std::cout << "Robot translation: " << m_Translation[0] << "," 

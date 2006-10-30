@@ -166,12 +166,12 @@ private:
   UltrasoundGuidedRFAImplementation();
   ~UltrasoundGuidedRFAImplementation();
 
-  LoggerType::Pointer        m_Logger;
-  LogOutputType::Pointer     m_LogOutput;
-  TrackerType::Pointer       m_Tracker;
-  CommunicationType::Pointer m_Communication;
-  LiverReaderType::Pointer   m_MeshReader;
-  MeshObjectRepresentation::Pointer m_LiverRepresentation;
+  LoggerType::Pointer                             m_Logger;
+  LogOutputType::Pointer                          m_LogOutput;
+  TrackerType::Pointer                            m_Tracker;
+  CommunicationType::Pointer                      m_Communication;
+  LiverReaderType::Pointer                        m_MeshReader;
+  MeshObjectRepresentation::Pointer               m_LiverRepresentation;
   ObliqueContourMeshObjectRepresentation::Pointer m_ContourLiverRepresentation;
   //ContourMeshObjectRepresentation::Pointer m_ContourLiverRepresentation;
   

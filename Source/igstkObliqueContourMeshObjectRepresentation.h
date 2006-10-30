@@ -156,7 +156,7 @@ private:
   MeshObjectType::ConstPointer m_MeshObjectToAdd;
 
   /** Plane defining the contour */
-  vtkPlane* m_Plane;
+  vtkPlane*  m_Plane;
   vtkCutter* m_Cutter;
 };
 

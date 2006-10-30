@@ -43,12 +43,12 @@ public:
   void SetSamplePoints( PointsListType pList )
     {
     m_SamplePoints = pList;
-    };
+    }
   
   PointsListType GetSortedPoints( void )
     {
     return m_SortedPoints;
-    };
+    }
 
   itkGetMacro( Center, PointType);
   itkGetMacro( PrincipleAxis, VectorType);
