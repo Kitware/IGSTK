@@ -45,22 +45,22 @@ public:
 
   /** Constructor with error code */
   NDIErrorEvent( int errorCode ) {
-    m_ErrorCode = errorCode; };
+    m_ErrorCode = errorCode; }
 
   /** Copy constructor */
   NDIErrorEvent(const Self & s) : IGSTKEvent( s ) {
-    m_ErrorCode = s.m_ErrorCode; };
+    m_ErrorCode = s.m_ErrorCode; }
  
   /** Destructor */
   virtual ~NDIErrorEvent() {};
 
   /** Get the name of this event */
   virtual const char * GetEventName() const {
-    return "NDIErrorEvent"; };
+    return "NDIErrorEvent"; }
 
   /** check whether an event derives from this event */
   virtual bool CheckEvent(const ::itk::EventObject* e) const {
-    return dynamic_cast<const Self*>(e); };
+    return dynamic_cast<const Self*>(e); }
 
   /** Make another event of the same type */
   virtual ::itk::EventObject* MakeObject() const {
@@ -68,7 +68,7 @@ public:
 
   /** Get the error code */
   const unsigned int GetErrorCode() const {
-    return m_ErrorCode; };
+    return m_ErrorCode; }
 
 private:
   void operator=(const Self&); 

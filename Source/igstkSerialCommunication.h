@@ -209,27 +209,27 @@ protected:
   virtual ResultType InternalOpenPort( void ) { return SUCCESS; };
 
   /** Set communication parameters on the open port. */
-  virtual ResultType InternalUpdateParameters( void ) { return SUCCESS; };
+  virtual ResultType InternalUpdateParameters( void ) { return SUCCESS; }
 
   /** Closes serial port. */
-  virtual ResultType InternalClosePort( void ) { return SUCCESS; };
+  virtual ResultType InternalClosePort( void ) { return SUCCESS; }
 
   /** Closes serial port. */
-  virtual ResultType InternalSetRTS( unsigned int ) { return SUCCESS; };
+  virtual ResultType InternalSetRTS( unsigned int ) { return SUCCESS; }
 
   /** write the data to the serial port. */
   virtual ResultType InternalWrite( const char *, unsigned int ) {
-    return TIMEOUT; };
+    return TIMEOUT; }
 
   /** read the data from the serial port. */
   virtual ResultType InternalRead( char *, unsigned int, unsigned int &) {
-    return TIMEOUT; };
+    return TIMEOUT; }
 
   /** Send a break to the across the serial port. */
-  virtual ResultType InternalSendBreak( void ) { return SUCCESS; };
+  virtual ResultType InternalSendBreak( void ) { return SUCCESS; }
 
   /** Purge the buffers. */
-  virtual ResultType InternalPurgeBuffers( void ) { return SUCCESS; };
+  virtual ResultType InternalPurgeBuffers( void ) { return SUCCESS; }
 
   /** Sleep for the period of time specified, in milliseconds. */
   virtual void InternalSleep( unsigned int ) {};

@@ -129,7 +129,7 @@ private:
   // FIXME : This must be replaced with StateMachine logic
   virtual TubeSpatialObjectType * GetITKTubeSpatialObject() const;
 
-  TubeType::Pointer m_Tube;
+  TubeType::Pointer              m_Tube;
   TubeSpatialObjectType::Pointer m_TubeSpatialObject;
 };
 

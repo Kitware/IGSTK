@@ -1,4 +1,5 @@
 igstkMacros.h Indent Disable
+igstkMacros.h InternalVariables Disable
 igstkNDICommandInterpreter.h Indent Disable
 igstkDICOMImageReaderTest.cxx Namespace Disable
 igstkUSImageObjectRepresentationTest.cxx Namespace Disable

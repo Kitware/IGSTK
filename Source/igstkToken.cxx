@@ -25,7 +25,7 @@ namespace igstk
 {
 
 /** The counter for providing pseudo-unique identifiers for tokens */
-Token::IdentifierType Token::IdentifierCounter = 1;
+Token::IdentifierType Token::m_IdentifierCounter = 1;
 
 /** Used for mutex locking */
 static ::itk::SimpleFastMutexLock    TokenMutex;
@@ -40,7 +40,7 @@ Token::Token()
   /** When the IdentifierCounter rolls over (reaches it maximum value and
    * restars from zero) the Uniqueness of identifiers can no longer be
    * guaranted. */
-  this->m_Identifier  = IdentifierCounter++;
+  this->m_Identifier  = m_IdentifierCounter++;
 
   TokenMutex.Unlock();
 }

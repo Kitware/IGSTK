@@ -81,7 +81,7 @@ protected:
     TrackerPortType::Pointer trackerPort2 = TrackerPortType::New();
     trackerPort2->AddTool( trackerTool2 );
     this->AddPort( trackerPort2 );
-    igstk::Transform::VectorType translation;
+    igstk::Transform::VectorType   translation;
     igstk::Transform::VersorType rotation;
     igstk::Transform             transform;
     translation[0] = -100;

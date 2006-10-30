@@ -63,10 +63,10 @@ public:
   unsigned int GetSize() const;
 
   /** Get a data container (returns constant) */
-  const ContainerType& GetData() const { return this->m_data; }
+  const ContainerType& GetData() const { return this->m_Data; }
 
   /** Get a data container */
-  ContainerType& GetData() { return this->m_data; }
+  ContainerType& GetData() { return this->m_Data; }
 
   /** Copy data from an array */
   void CopyFrom(unsigned char* inputBegin, unsigned int inputLength);
@@ -127,7 +127,7 @@ protected:
 private:
 
   /** data container */
-  ContainerType   m_data;
+  ContainerType   m_Data;
 
 };
 

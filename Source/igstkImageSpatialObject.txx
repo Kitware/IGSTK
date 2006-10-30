@@ -36,31 +36,31 @@ ImageSpatialObject< TPixelType, VDimension >
   // initialize the logger 
   m_Logger = NULL;
 
-  m_itkExporter = ITKExportFilterType::New();
-  m_vtkImporter = VTKImportFilterType::New();
+  m_ItkExporter = ITKExportFilterType::New();
+  m_VtkImporter = VTKImportFilterType::New();
   
   // Connect the given itk::VTKImageExport filter to
   // the given vtkImageImport filter.
  
-  m_vtkImporter->SetUpdateInformationCallback(
-                               m_itkExporter->GetUpdateInformationCallback());
-  m_vtkImporter->SetPipelineModifiedCallback(
-                                m_itkExporter->GetPipelineModifiedCallback());
-  m_vtkImporter->SetWholeExtentCallback(
-                                m_itkExporter->GetWholeExtentCallback());
-  m_vtkImporter->SetSpacingCallback(m_itkExporter->GetSpacingCallback());
-  m_vtkImporter->SetOriginCallback(m_itkExporter->GetOriginCallback());
-  m_vtkImporter->SetScalarTypeCallback(
-                                      m_itkExporter->GetScalarTypeCallback());
-  m_vtkImporter->SetNumberOfComponentsCallback(
-                              m_itkExporter->GetNumberOfComponentsCallback());
-  m_vtkImporter->SetPropagateUpdateExtentCallback(
-                           m_itkExporter->GetPropagateUpdateExtentCallback());
-  m_vtkImporter->SetUpdateDataCallback(m_itkExporter->GetUpdateDataCallback());
-  m_vtkImporter->SetDataExtentCallback(m_itkExporter->GetDataExtentCallback());
-  m_vtkImporter->SetBufferPointerCallback(
-                                    m_itkExporter->GetBufferPointerCallback());
-  m_vtkImporter->SetCallbackUserData(m_itkExporter->GetCallbackUserData());
+  m_VtkImporter->SetUpdateInformationCallback(
+                               m_ItkExporter->GetUpdateInformationCallback());
+  m_VtkImporter->SetPipelineModifiedCallback(
+                                m_ItkExporter->GetPipelineModifiedCallback());
+  m_VtkImporter->SetWholeExtentCallback(
+                                m_ItkExporter->GetWholeExtentCallback());
+  m_VtkImporter->SetSpacingCallback(m_ItkExporter->GetSpacingCallback());
+  m_VtkImporter->SetOriginCallback(m_ItkExporter->GetOriginCallback());
+  m_VtkImporter->SetScalarTypeCallback(
+                                      m_ItkExporter->GetScalarTypeCallback());
+  m_VtkImporter->SetNumberOfComponentsCallback(
+                              m_ItkExporter->GetNumberOfComponentsCallback());
+  m_VtkImporter->SetPropagateUpdateExtentCallback(
+                           m_ItkExporter->GetPropagateUpdateExtentCallback());
+  m_VtkImporter->SetUpdateDataCallback(m_ItkExporter->GetUpdateDataCallback());
+  m_VtkImporter->SetDataExtentCallback(m_ItkExporter->GetDataExtentCallback());
+  m_VtkImporter->SetBufferPointerCallback(
+                                    m_ItkExporter->GetBufferPointerCallback());
+  m_VtkImporter->SetCallbackUserData(m_ItkExporter->GetCallbackUserData());
 
   igstkAddInputMacro( ValidImage );
   igstkAddInputMacro( InvalidImage );
@@ -100,10 +100,10 @@ template< class TPixelType, unsigned int VDimension >
 ImageSpatialObject< TPixelType, VDimension >
 ::~ImageSpatialObject()  
 {
-  if( m_vtkImporter )
+  if( m_VtkImporter )
     {
-    m_vtkImporter->Delete(); 
-    m_vtkImporter = NULL;
+    m_VtkImporter->Delete(); 
+    m_VtkImporter = NULL;
     }
 }
 
@@ -212,7 +212,7 @@ ImageSpatialObject< TPixelType, VDimension >
   igstkLogMacro( DEBUG, "ReportVTKImageProcessing() called ....\n");
 
   VTKImageModifiedEvent  event;
-  event.Set( m_vtkImporter->GetOutput() );
+  event.Set( m_VtkImporter->GetOutput() );
   this->InvokeEvent( event );
 }
 
@@ -263,8 +263,8 @@ ImageSpatialObject< TPixelType, VDimension >
  
   this->RequestSetTransform( transform ); 
 
-  m_itkExporter->SetInput( m_Image );
-  m_vtkImporter->UpdateWholeExtent();
+  m_ItkExporter->SetInput( m_Image );
+  m_VtkImporter->UpdateWholeExtent();
 }
 
 
@@ -333,8 +333,8 @@ ImageSpatialObject< TPixelType, VDimension >
 {
   Superclass::PrintSelf(os, indent);
   os << "Details of the image " << m_Image.GetPointer() << std::endl;
-  os << "ITK Exporter filter " << m_itkExporter.GetPointer() << std::endl;
-  os << "VTK Importer filter " << m_vtkImporter << std::endl;
+  os << "ITK Exporter filter " << m_ItkExporter.GetPointer() << std::endl;
+  os << "VTK Importer filter " << m_VtkImporter << std::endl;
 }
 
 

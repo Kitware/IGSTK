@@ -51,14 +51,14 @@ BinaryData
 void BinaryData
 ::SetSize(unsigned int size)
 {
-  this->m_data.resize(size);
+  this->m_Data.resize(size);
 }
 
 /** GetSize method returns the size of data */
 unsigned int BinaryData
 ::GetSize() const
 {
-  return this->m_data.size();
+  return this->m_Data.size();
 }
 
 /** Copy data from an array */
@@ -69,7 +69,7 @@ void BinaryData
   unsigned int i;
   for( i = 0; i < inputLength; ++i )
     {
-    this->m_data[i] = inputBegin[i];
+    this->m_Data[i] = inputBegin[i];
     }
 }
 
@@ -77,47 +77,47 @@ void BinaryData
 void BinaryData
 ::CopyTo(unsigned char* output) const
 {
-  const unsigned int size = this->m_data.size();
+  const unsigned int size = this->m_Data.size();
   for( unsigned int i = 0; i < size; ++i )
     {
-    output[i] = this->m_data[i];
+    output[i] = this->m_Data[i];
     }
 }
 
 const BinaryData & BinaryData
 ::operator=( const BinaryData & inputBinaryData )
 {
-  this->m_data = inputBinaryData.m_data;
+  this->m_Data = inputBinaryData.m_Data;
   return *this;
 }
 
 bool BinaryData
 ::operator==( const BinaryData & inputBinaryData ) const
 {
-  return (this->m_data == inputBinaryData.m_data);
+  return (this->m_Data == inputBinaryData.m_Data);
 }
 
 bool BinaryData
 ::operator!=( const BinaryData & inputBinaryData ) const
 {
-  return (this->m_data != inputBinaryData.m_data );
+  return (this->m_Data != inputBinaryData.m_Data );
 }
 
 bool BinaryData
 ::operator<( const BinaryData & inputBinaryData ) const
 {
   unsigned int i;
-  unsigned int size_left = this->m_data.size();
-  unsigned int size_right = inputBinaryData.m_data.size();
+  unsigned int size_left = this->m_Data.size();
+  unsigned int size_right = inputBinaryData.m_Data.size();
   unsigned int size_min = (size_left < size_right)? size_left : size_right;
 
   for( i = 0; i < size_min; ++i )
     {
-    if( this->m_data[i] < inputBinaryData.m_data[i] )
+    if( this->m_Data[i] < inputBinaryData.m_Data[i] )
       {
       return true;
       }
-    else if( this->m_data[i] > inputBinaryData.m_data[i] )
+    else if( this->m_Data[i] > inputBinaryData.m_Data[i] )
       {
       return false;
       }
@@ -132,13 +132,13 @@ bool BinaryData
 unsigned char BinaryData
 ::operator[]( const unsigned int index ) const
 {
-  return this->m_data[index];
+  return this->m_Data[index];
 }
 
 unsigned char& BinaryData
 ::operator[]( const unsigned int index )
 {
-  return this->m_data[index];
+  return this->m_Data[index];
 }
 
 void BinaryData
@@ -182,7 +182,7 @@ BinaryData::operator std::string() const
 {
   std::string encodedString;
   
-  BinaryData::Encode( encodedString, &this->m_data[0], this->GetSize() );
+  BinaryData::Encode( encodedString, &this->m_Data[0], this->GetSize() );
   return encodedString;
 }
 
@@ -287,14 +287,14 @@ bool BinaryData::Decode( const std::string& asciiString )
 /** Append a byte */
 void BinaryData::Append(unsigned char byte)
 {
-  m_data.push_back(byte);
+  m_Data.push_back(byte);
 }
 
 /** Append data from an array */
 void BinaryData::Append(const unsigned char* inputBegin,
                         unsigned int inputLength)
 {
-  m_data.insert(m_data.end(), inputBegin, &inputBegin[inputLength]);
+  m_Data.insert(m_Data.end(), inputBegin, &inputBegin[inputLength]);
 }
 
 
@@ -307,22 +307,22 @@ void BinaryData::PrintSelf( std::ostream& os, itk::Indent indent ) const
   os << indent << "Data: " << std::endl;
   os << indent;
   unsigned int i;
-  for( i = 0; i < this->m_data.size(); ++i )
+  for( i = 0; i < this->m_Data.size(); ++i )
     {
-    if( this->m_data[i] == '\\' )
+    if( this->m_Data[i] == '\\' )
       {
       os << "\\\\";
       }
-    else if( this->m_data[i] >= 0x20  &&  this->m_data[i] <= 0x7E )
+    else if( this->m_Data[i] >= 0x20  &&  this->m_Data[i] <= 0x7E )
       {
-      os << this->m_data[i];
+      os << this->m_Data[i];
       }
     else
       {
       os << "\\x";
       os.width(2);
       os.fill('0');
-      os << std::hex << std::uppercase << (int)this->m_data[i];
+      os << std::hex << std::uppercase << (int)this->m_Data[i];
       }
     }
   os << std::endl;

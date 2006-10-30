@@ -92,8 +92,8 @@ protected:
 
   /* Internal itkObjectFileReader */
   typename SpatialObjectReaderType::Pointer  m_SpatialObjectReader;
-  std::string m_FileNameToBeSet;
-  std::string m_FileName;
+  std::string                                m_FileNameToBeSet;
+  std::string                                m_FileName;
 
   itkEventMacro( ObjectReaderEvent,              IGSTKEvent        );
   itkEventMacro( ObjectReadingErrorEvent,        ObjectReaderEvent );

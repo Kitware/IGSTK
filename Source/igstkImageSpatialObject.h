@@ -171,8 +171,8 @@ private:
   typedef          VTKImportFilterType      *   VTKImportFilterPointer;
 
   /** Classes to connect an ITK pipeline to a VTK pipeline */
-  ITKExportFilterPointer             m_itkExporter;
-  VTKImportFilterPointer             m_vtkImporter;
+  ITKExportFilterPointer             m_ItkExporter;
+  VTKImportFilterPointer             m_VtkImporter;
 
 
 };

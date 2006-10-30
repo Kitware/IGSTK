@@ -82,7 +82,7 @@ private:
 
   /** Static variable that will provide an unique Id to every new class
    * instance */
-  static IdentifierType   IdentifierCounter;
+  static IdentifierType   m_IdentifierCounter;
 
 };
 

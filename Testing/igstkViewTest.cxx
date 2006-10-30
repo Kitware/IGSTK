@@ -102,8 +102,8 @@ public:
 private:
   
   unsigned long       m_PulseCounter;
-  Fl_Window          *m_Form;
-  ::igstk::View      *m_View;
+  Fl_Window *         m_Form;
+  ::igstk::View *     m_View;
   bool *              m_End;
 
 };
