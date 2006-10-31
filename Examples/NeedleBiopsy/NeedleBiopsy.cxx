@@ -708,13 +708,15 @@ void NeedleBiopsy::AddTrackerLandmarkProcessing()
     m_TrackerLandmarkTransform.SetTranslation( 
                m_TrackerLandmarkTransformToBeSet.GetTranslation(), 0.1, 10000 );
     igstkLogMacro( DEBUG, "Tracker landmark point added: "<< p << "\n" )
-    igstkLogMacro2( m_Logger, DEBUG, "Tracker landmark point added:"<< p << "\n" )
+    igstkLogMacro2( m_Logger, DEBUG, 
+                    "Tracker landmark point added:" << p << "\n" )
 
     }
   else
     {
     igstkLogMacro(          DEBUG, "No new tracker landmark point reading.\n" )
-    igstkLogMacro2( m_Logger, DEBUG, "No new tracker landmark point reading.\n" )
+    igstkLogMacro2( m_Logger, DEBUG, 
+                    "No new tracker landmark point reading.\n" )
     }  
 
   m_StateMachine.PushInputBoolean( 

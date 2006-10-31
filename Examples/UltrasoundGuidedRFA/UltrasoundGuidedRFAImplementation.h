@@ -176,14 +176,14 @@ private:
   //ContourMeshObjectRepresentation::Pointer m_ContourLiverRepresentation;
   
   ContourVascularNetworkObjectRepresentation::Pointer 
-                                       m_ContourVascularNetworkRepresentation;
-  VascularNetworkReaderType::Pointer m_VascularNetworkReader;
+                                        m_ContourVascularNetworkRepresentation;
+
+  VascularNetworkReaderType::Pointer          m_VascularNetworkReader;
   VascularNetworkRepresentationType::Pointer  m_VascularNetworkRepresentation;
-   
-  MRImageReaderType::Pointer   m_MRImageReader;
-  MRImageType::Pointer         m_LiverMR;
-  MRImageRepresentationType::Pointer m_LiverMRRepresentation;
-  MRObliqueImageRepresentationType::Pointer m_ObliqueLiverMRRepresentation;
+  MRImageReaderType::Pointer                  m_MRImageReader;
+  MRImageType::Pointer                        m_LiverMR;
+  MRImageRepresentationType::Pointer          m_LiverMRRepresentation;
+  MRObliqueImageRepresentationType::Pointer   m_ObliqueLiverMRRepresentation;
   //MRImageRepresentationType::Pointer m_ObliqueLiverMRRepresentation;
 
   USImageReaderType::Pointer         m_USImageReader;
