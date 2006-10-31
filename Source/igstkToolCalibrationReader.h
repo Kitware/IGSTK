@@ -72,7 +72,7 @@ public:
 
   struct tag
     {
-    std::string name;
+    std::string           name;
     std::vector<PairType> values;
     };
 
