@@ -9,7 +9,7 @@
 <Tabs>1</Tabs>
 <Spaces>3</Spaces>
 <Comments>/**, *, */,true</Comments>
-<Header>"@IGSTK_SOURCE_DIR@/Utilities/KWStyle/IGSTKHeader.h",false,true</Header>
+<Header>"@IGSTK_SOURCE_DIR@/Utilities/KWStyle/Headers",false,true</Header>
 <Indent>SPACE,2,true,true</Indent>
 <Namespace>igstk</Namespace>
 <NameOfClass>[NameOfClass],igstk</NameOfClass>
