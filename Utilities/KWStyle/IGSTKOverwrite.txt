@@ -30,3 +30,4 @@ igstkEvents.h Typedefs Disable
 igstkPivotCalibration.h DeclarationOrder Disable
 igstkLandmark3DRegistrationErrorEstimatorTest.cxx Namespace Disable
 igstkLandmark3DRegistrationTest.cxx Namespace Disable
+igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx LineLength Disable
