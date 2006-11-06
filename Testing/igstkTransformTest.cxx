@@ -179,12 +179,19 @@ int igstkTransformTest( int, char * [] )
     usleep( 250 * 1000 );  // linux usleep uses microsecond
 #endif
 
+    std::cout << "Composing two transforms" << std::endl;
+    std::cout << "Transform t1 = " << t1 << std::endl;
+    std::cout << "Transform t2 = " << tinv << std::endl;
+
     t1 = igstk::Transform::TransformCompose( t1, tinv );
 
-    std::cout<< "New transform = \n" << t1 << std::endl;
-    if ( t1.GetError() != lagerError )
+    std::cout << "Composed Transform  = " << t1 << std::endl;
+
+    std::cout << "New transform = \n" << t1 << std::endl;
+    if ( t1.GetError() != lagerError+smallerError )
       {
-      std::cout<< "Error computing transform value" << std::endl;
+      std::cout << "Error computing transform value" << std::endl;
+      std::cout << t1.GetError() << std::endl;
       return EXIT_FAILURE;
       }
     std::cout<< "Valid period (roughly 250) = " << 
