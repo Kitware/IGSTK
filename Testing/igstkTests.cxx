@@ -101,7 +101,6 @@ void RegisterTests()
 
   // Tests depend on FLTK
 #ifdef IGSTK_USE_FLTK
-  REGISTER_TEST(igstkAnnotation2DTest);
   REGISTER_TEST(igstkAxesObjectTest);
   REGISTER_TEST(igstkBoxObjectTest);
   REGISTER_TEST(igstkConeObjectTest);
@@ -116,15 +115,16 @@ void RegisterTests()
   REGISTER_TEST(igstkViewTest);
   REGISTER_TEST(igstkViewRefreshRateTest);
   REGISTER_TEST(igstkUltrasoundProbeObjectTest);
-  REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
   REGISTER_TEST(igstkSpatialObjectRepresentationVisibilityTest);
 
 #ifdef IGSTK_DATA_ROOT
+  REGISTER_TEST(igstkAnnotation2DTest);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest2);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest3);
   REGISTER_TEST(igstkVascularNetworkReaderTest);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
+  REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
 #endif 
   
 #endif
