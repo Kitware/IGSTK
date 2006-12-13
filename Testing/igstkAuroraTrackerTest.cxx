@@ -158,7 +158,7 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
 #ifdef IGSTK_SIMULATOR_TEST
   std::string romFile = inputDirectory + "/" + "aurora_multichan.rom";
   std::cout << "AttachSROMFileNameToPort()" << std::endl;
-  tracker->AttachSROMFileNameToPort( 0, romFile.c_str() );
+  tracker->AttachSROMFileNameToPort( 0, 0, romFile.c_str() );
 #endif /* IGSTK_SIMULATOR_TEST */
 
   std::cout << "SetCommunication()" << std::endl;

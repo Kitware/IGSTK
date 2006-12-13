@@ -136,10 +136,13 @@ AuroraTracker::ResultType AuroraTracker::InternalActivateTools( void )
 
   // load any SROMS that are needed
   for (unsigned int i = 0; i < NumberOfPorts; i++)
-    { 
-    if (!m_SROMFileNames[i].empty())
+    {
+    for (unsigned int j = 0; j < NumberOfChannels; j++)
       {
-      this->LoadVirtualSROM(i, m_SROMFileNames[i]);
+      if (!m_SROMFileNames[i][j].empty())
+        {
+        this->LoadVirtualSROM(i, j, m_SROMFileNames[i][j]);
+        }
       }
     }
 
@@ -378,18 +381,20 @@ AuroraTracker::ResultType AuroraTracker::InternalThreadedUpdateStatus( void )
 
 /** Specify an SROM file to be used with a passive or custom tool. */
 void AuroraTracker::AttachSROMFileNameToPort( const unsigned int portNum,
-                                               std::string fileName )
+                                              const unsigned int channelNum,
+                                              std::string fileName )
 {
   igstkLogMacro( DEBUG, "AuroraTracker::AttachSROMFileNameToPort called..\n");
 
-  if ( portNum <= NumberOfPorts )
+  if ( portNum < NumberOfPorts && channelNum < NumberOfChannels )
     {
-    m_SROMFileNames[portNum] = fileName;
+    m_SROMFileNames[portNum][channelNum] = fileName;
     }
 }
 
 /** Load a virtual SROM, given the file name of the ROM file */
 bool AuroraTracker::LoadVirtualSROM( const unsigned int port,
+                                     const unsigned int channel,
                                      const std::string SROMFileName) 
 {
   igstkLogMacro( DEBUG, "PolarisTracker::LoadVirtualSROM called...\n");
@@ -437,7 +442,8 @@ bool AuroraTracker::LoadVirtualSROM( const unsigned int port,
           char location[256];
           m_CommandInterpreter->GetPHINFPortLocation(location);
           unsigned int auroraPort = (location[10]-'0')*10 + (location[11]-'0');
-          if (port + 1 == auroraPort)
+          unsigned int auroraChan = (location[12]-'0')*10 + (location[13]-'0');
+          if (port + 1 == auroraPort && channel == auroraChan)
             {
             foundPort = 1;
             int successfulWrite = 1;

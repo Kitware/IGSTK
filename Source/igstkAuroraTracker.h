@@ -67,7 +67,8 @@ public:
   igstkGetMacro( NumberOfTools, unsigned int );
 
   /** Specify an SROM file to be used with a passive or custom tool. */
-  void AttachSROMFileNameToPort( const unsigned int portNum, 
+  void AttachSROMFileNameToPort( const unsigned int portNum,
+                                 const unsigned int channelNum,
                                  std::string  fileName );
 protected:
 
@@ -121,7 +122,8 @@ private:
   int m_AbsentBuffer[NumberOfPorts][NumberOfChannels];
 
   /** Load a virtual SROM, given the file name of the ROM file */
-  bool LoadVirtualSROM( const unsigned int port, 
+  bool LoadVirtualSROM( const unsigned int port,
+                        const unsigned int channel,
                         const std::string SROMFileName);
 
   /** Enable all tool ports that have tools plugged into them.
@@ -144,7 +146,7 @@ private:
   unsigned int   m_NumberOfTools;
 
   /** Names of the SROM files for special tools. */
-  std::string    m_SROMFileNames[NumberOfPorts];
+  std::string    m_SROMFileNames[NumberOfPorts][NumberOfChannels];
 
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;
