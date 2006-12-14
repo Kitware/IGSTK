@@ -66,10 +66,14 @@ public:
   /** Get the number of tools that have been detected. */
   igstkGetMacro( NumberOfTools, unsigned int );
 
-  /** Specify an SROM file to be used with a passive or custom tool. */
+  /** Specify an SROM file to be used with a splitter or custom tool. */
   void AttachSROMFileNameToPort( const unsigned int portNum,
-                                 const unsigned int channelNum,
                                  std::string  fileName );
+
+  /** Specify an SROM file to be used with a specific channel. */
+  void AttachSROMFileNameToChannel( const unsigned int portNum,
+                                    const unsigned int channelNum,
+                                    std::string  fileName );
 protected:
 
   AuroraTracker(void);
@@ -146,7 +150,8 @@ private:
   unsigned int   m_NumberOfTools;
 
   /** Names of the SROM files for special tools. */
-  std::string    m_SROMFileNames[NumberOfPorts][NumberOfChannels];
+  std::string    m_PortSROMFileNames[NumberOfPorts];
+  std::string    m_ChannelSROMFileNames[NumberOfPorts][NumberOfChannels];
 
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;

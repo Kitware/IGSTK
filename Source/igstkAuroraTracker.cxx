@@ -137,11 +137,16 @@ AuroraTracker::ResultType AuroraTracker::InternalActivateTools( void )
   // load any SROMS that are needed
   for (unsigned int i = 0; i < NumberOfPorts; i++)
     {
+    if (!m_PortSROMFileNames[i].empty())
+      {
+      this->LoadVirtualSROM(i, 0, m_PortSROMFileNames[i]);
+      }
+
     for (unsigned int j = 0; j < NumberOfChannels; j++)
       {
-      if (!m_SROMFileNames[i][j].empty())
+      if (!m_ChannelSROMFileNames[i][j].empty())
         {
-        this->LoadVirtualSROM(i, j, m_SROMFileNames[i][j]);
+        this->LoadVirtualSROM(i, j, m_ChannelSROMFileNames[i][j]);
         }
       }
     }
@@ -240,7 +245,7 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
       if (m_AbsentBuffer[port][channel])
         {
         // there should be a method to set that the tool is not in view
-        igstkLogMacro( DEBUG, "PolarisTracker::InternalUpdateStatus: " <<
+        igstkLogMacro( DEBUG, "AuroraTracker::InternalUpdateStatus: " <<
                        "tool " << port << " is not in view\n");
         continue;
         }
@@ -379,16 +384,29 @@ AuroraTracker::ResultType AuroraTracker::InternalThreadedUpdateStatus( void )
   return result;
 }
 
-/** Specify an SROM file to be used with a passive or custom tool. */
+/** Specify an SROM file to be used with a custom tool or splitter. */
 void AuroraTracker::AttachSROMFileNameToPort( const unsigned int portNum,
-                                              const unsigned int channelNum,
                                               std::string fileName )
 {
   igstkLogMacro( DEBUG, "AuroraTracker::AttachSROMFileNameToPort called..\n");
 
+  if ( portNum < NumberOfPorts )
+    {
+    m_PortSROMFileNames[portNum] = fileName;
+    }
+}
+
+/** Specify an SROM file to be used with a specific tool channel */
+void AuroraTracker::AttachSROMFileNameToChannel( const unsigned int portNum,
+                                                 const unsigned int channelNum,
+                                                 std::string fileName )
+{
+  igstkLogMacro( DEBUG,
+                 "AuroraTracker::AttachSROMFileNameToChannel called..\n");
+
   if ( portNum < NumberOfPorts && channelNum < NumberOfChannels )
     {
-    m_SROMFileNames[portNum][channelNum] = fileName;
+    m_ChannelSROMFileNames[portNum][channelNum] = fileName;
     }
 }
 
@@ -397,7 +415,7 @@ bool AuroraTracker::LoadVirtualSROM( const unsigned int port,
                                      const unsigned int channel,
                                      const std::string SROMFileName) 
 {
-  igstkLogMacro( DEBUG, "PolarisTracker::LoadVirtualSROM called...\n");
+  igstkLogMacro( DEBUG, "AuroraTracker::LoadVirtualSROM called...\n");
 
   std::ifstream sromFile;
   sromFile.open(SROMFileName.c_str(), std::ios::binary );
