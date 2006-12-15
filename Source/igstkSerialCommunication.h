@@ -68,7 +68,11 @@ public:
   enum PortNumberType { PortNumber0 = 0,
                         PortNumber1 = 1,
                         PortNumber2 = 2,
-                        PortNumber3 = 3 };
+                        PortNumber3 = 3,
+                        PortNumber4 = 4,
+                        PortNumber5 = 5,
+                        PortNumber6 = 6,
+                        PortNumber7 = 7 };
 
   /** Available baud rates. */
   enum BaudRateType { BaudRate9600 = 9600,
