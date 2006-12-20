@@ -34,6 +34,26 @@
 
 namespace igstk
 {
+
+itkEventMacro( TrackerEvent,                               StringEvent);
+itkEventMacro( TrackerErrorEvent,                          TrackerEvent);
+
+itkEventMacro( TrackerOpenEvent,                           TrackerEvent);
+itkEventMacro( TrackerOpenErrorEvent,                      TrackerErrorEvent);
+
+itkEventMacro( TrackerCloseEvent,                          TrackerEvent);
+itkEventMacro( TrackerCloseErrorEvent,                     TrackerErrorEvent);
+
+itkEventMacro( TrackerStartTrackingEvent,                  TrackerEvent);
+itkEventMacro( TrackerStartTrackingErrorEvent,             TrackerErrorEvent);
+
+itkEventMacro( TrackerStopTrackingEvent,                   TrackerEvent);
+itkEventMacro( TrackerStopTrackingErrorEvent,              TrackerErrorEvent);
+
+itkEventMacro( TrackerUpdateStatusEvent,                   TrackerEvent);
+itkEventMacro( TrackerUpdateStatusErrorEvent,              TrackerErrorEvent);
+
+
 /** \class Tracker
  *  \brief Generic implementation of the Tracker class.
  *
@@ -88,10 +108,13 @@ public:
   typedef std::vector< TrackerPortPointer > TrackerPortVectorType;
 
   /** The "Open" method attempts to open communication with the 
-   *  tracking device. */
+   *  tracking device. It generates a TrackerOpenEvent if successful,
+   *  or a TrackerOpenErrorEvent if not successful.  */
   void Open( void );
 
-  /** The "Close" method closes communication with the device. */
+  /** The "Close" method closes communication with the device. 
+   *  It generates a TrackerCloseEvent if successful,
+   *  or a TrackerCloseErrorEvent if not successful. */
   void Close( void );
 
   /** The "Initialize" method initializes a newly opened device. */

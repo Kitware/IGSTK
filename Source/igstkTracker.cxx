@@ -562,6 +562,8 @@ void Tracker::StartTrackingSuccessProcessing( void )
                  "called ...\n");
   // going from AttemptingToTrackState to TrackingState
   this->EnterTrackingStateProcessing();
+
+  this->InvokeEvent( TrackerStartTrackingEvent() );
 }
 
 /** Post-processing after start tracking has failed. */ 
@@ -569,6 +571,8 @@ void Tracker::StartTrackingFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StartTrackingFailureProcessing "
                  "called ...\n");
+
+  this->InvokeEvent( TrackerStartTrackingErrorEvent() );
 }
 
 /** The "AttemptToStopTracking" method attempts to stop tracking. */
@@ -592,6 +596,8 @@ void Tracker::StopTrackingSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StopTrackingSuccessProcessing "
                  "called ...\n");
+
+  this->InvokeEvent( TrackerStopTrackingEvent() );  
 }
 
 /** Post-processing after start tracking has failed. */ 
@@ -601,6 +607,8 @@ void Tracker::StopTrackingFailureProcessing( void )
                  "called ...\n");
   // going from AttemptingToStopTrackingState to TrackingState
   this->EnterTrackingStateProcessing();
+
+  this->InvokeEvent( TrackerStopTrackingErrorEvent() );  
 }
 
 /** Needs to be called every time when entering tracking state. */ 
@@ -755,7 +763,9 @@ void Tracker::UpdateStatusSuccessProcessing( void )
         tool->SetTransform( toolTransform );
         }
       }
-    }  
+    }
+
+  this->InvokeEvent( TrackerUpdateStatusEvent() );  
 }
 
 /** This method is called when a call to UpdateStatus failed */
@@ -763,6 +773,8 @@ void Tracker::UpdateStatusFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::UpdateStatusFailureProcessing "
                  "called ...\n");
+
+  this->InvokeEvent( TrackerUpdateStatusErrorEvent() );  
 }
 
 
@@ -831,6 +843,8 @@ void Tracker::CloseCommunicationSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::"
                  "CloseCommunicationSuccessProcessing called ...\n");
+
+  this->InvokeEvent( TrackerCloseEvent() );
 }
 
 /** Post-processing after close tracking has failed. */ 
@@ -838,6 +852,8 @@ void Tracker::CloseCommunicationFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::"
                  "CloseCommunicationFailureProcessing called ...\n");
+
+  this->InvokeEvent( TrackerCloseErrorEvent() );
 }
 
 /** Print object information */
