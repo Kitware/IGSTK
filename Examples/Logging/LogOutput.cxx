@@ -28,8 +28,7 @@
 // derived class StdStreamLogOutput will send the log data to a specific 
 // stream or file, and the derived class MultipleLogOutput will allow the 
 // log data to be sent to multiple locations.
-// Currently, StdStreamLogOutput and MultipleLogOutput classes are 
-// available. 
+// Several LogOutput implementations are available, these are described next.
 //
 // EndLatex
 
@@ -41,7 +40,7 @@
 //
 // First, we begin by including header files for using LogOutput objects.
 // The itk::StdStreamLogOutput needs the itkStdStreamLogOutput.h header file.
-// itk::MultipleLogOutput, igstk::MultipleOutput, igstk::FLTKTextBufferLogOutput, and
+// itk::MultipleLogOutput, igstk::FLTKTextBufferLogOutput, and
 // igstk::FLTKTextLogOutput need proper header files to be included as follows:
 //
 // EndLatex
@@ -49,10 +48,10 @@
 // BeginCodeSnippet
 #include "itkStdStreamLogOutput.h"
 #include "itkMultipleLogOutput.h"
-#include "igstkMultipleOutput.h"
 #include "igstkFLTKTextBufferLogOutput.h"
 #include "igstkFLTKTextLogOutput.h"
 // EndCodeSnippet
+#include "igstkMultipleOutput.h"
 #include "itkThreadLogger.h"
 #include "itkLoggerOutput.h"
 #include "igstkVTKLoggerOutput.h"
@@ -142,8 +141,8 @@ int main( int argc, char* argv[] )
 
   // BeginLatex
   //
-  // Then, an FLTK window is created and 
-  // an Fl\underline{ }Text\underline{ }Display widget is created and 
+  // Then, the following codes create an FLTK window and 
+  // an Fl\underline{ }Text\underline{ }Display widget, which is
   // contained in the window.
   //
   // EndLatex
@@ -193,7 +192,7 @@ int main( int argc, char* argv[] )
   
   // BeginCodeSnippet
   fltkBufferOutput->SetStream(*textBuffer);
-  fltkBufferOutput->Write("This is the test message.\n");
+  fltkBufferOutput->Write("This is a test message.\n");
   fltkBufferOutput->Flush();
   // EndCodeSnippet
 
@@ -216,9 +215,10 @@ int main( int argc, char* argv[] )
   // EndLatex
 
   // BeginCodeSnippet
-  igstk::FLTKTextLogOutput::Pointer fltkTextOutput = igstk::FLTKTextLogOutput::New();
+  igstk::FLTKTextLogOutput::Pointer fltkTextOutput = 
+                                    igstk::FLTKTextLogOutput::New();
   fltkTextOutput->SetStream(*textDisplay);
-  fltkTextOutput->Write("This is the test message.\n");
+  fltkTextOutput->Write("This is a test message.\n");
   // EndCodeSnippet
 
   // BeginLatex
@@ -227,7 +227,7 @@ int main( int argc, char* argv[] )
   // \label{Chapter:Logging:MultipleLogOutput}
   // \index{logging!MultipleLogOutput}
   // The itk::MultipleLogOutput aggregates multiple LogOutput objects in it. 
-  // However, it's already used in LoggerBase class so that Logger classes 
+  // It is used in the LoggerBase class so that Logger classes 
   // can contain multiple LogOutput objects.
   //
   // The following example shows how to create the itk::MultipleLogOutput object
@@ -239,13 +239,13 @@ int main( int argc, char* argv[] )
   // EndLatex
 
   // BeginCodeSnippet
-  itk::MultipleLogOutput::Pointer multipleLogOutput = itk::MultipleLogOutput::New();
+  itk::MultipleLogOutput::Pointer multipleLogOutput = 
+                                  itk::MultipleLogOutput::New();
   multipleLogOutput->AddLogOutput(consoleLogOutput);
   multipleLogOutput->AddLogOutput(fileLogOutput);
-  multipleLogOutput->Write("This is the test message.\n");
+  multipleLogOutput->Write("This is a test message.\n");
   // EndCodeSnippet
 
-  // BeginLatex
   //
   // \subsubsection{MultipleOutput}
   // \label{Chapter:Logging:MultipleOutput}
@@ -253,28 +253,24 @@ int main( int argc, char* argv[] )
   // The igstk::MultipleOutput class is a special 
   // C++ output stream that will forward data to any other output streams 
   // that have been connected to it.  In other words, it is used to branch a 
-  // single output into several outputs.  This class is a helper class of 
-  // igstk::MultipleLogOutput, but it is not derived from LogOutput itself.
+  // single output into several outputs.  
+  // This class is not derived from LogOutput itself.
   //
   // As the following example shows, the igstk::MultipleOutput object is
   // created without the New() method and can contain multiple output streams.
   // This object plays a role as an aggregate output stream object redirecting
   // messages toward output streams it has.
   //
-  // EndLatex
 
-  // BeginCodeSnippet
+  //
   typedef igstk::MultipleOutput  MultipleOutputType;  
   MultipleOutputType multipleOutput;
 
   std::ofstream file1("fileMultipleOutput1.txt");
-  std::ofstream file2("fileMultipleOutput2.txt");
 
   multipleOutput.AddOutputStream( std::cout );
   multipleOutput.AddOutputStream( file1 );
-  multipleOutput.AddOutputStream( file2 );
   multipleOutput << " text \n";
-  // EndCodeSnippet
 
   // BeginLatex
   //
@@ -300,8 +296,8 @@ int main( int argc, char* argv[] )
   // \index{logging!itk::OutputWindow}
   // The itk::LoggerOutput class can override itk::OutputWindow and redirect
   // log messages from ITK to a Logger object. ITK applications can still
-  // use conventional ITK log codes and those messages are sent to a
-  // Logger object by using itk::LoggerOutput class.
+  // use conventional ITK log codes and those messages can be sent to any type of
+  // Logger by using itk::LoggerOutput class.
   // itkLoggerOutput.h is the header file for using the itk::LoggerOutput class.
   //
   // The following code fragment shows how to create an itk::LoggerOutput object
@@ -318,11 +314,11 @@ int main( int argc, char* argv[] )
   itkOutput->SetLogger(logger);  // Redirect messages from the ITK OutputWindow to a logger
 
   // Test messages for ITK OutputWindow
-  itk::OutputWindow::GetInstance()->DisplayText("This is from ITK OutputWindow **\n");
-  itk::OutputWindow::GetInstance()->DisplayDebugText("This is from ITK OutputWindow **\n");
-  itk::OutputWindow::GetInstance()->DisplayWarningText("This is from ITK OutputWindow **\n");
-  itk::OutputWindow::GetInstance()->DisplayErrorText("This is from ITK OutputWindow **\n");
-  itk::OutputWindow::GetInstance()->DisplayGenericOutputText("This is from ITK OutputWindow **\n");
+  itk::OutputWindow::GetInstance()->DisplayText("This is from ITK\n");
+  itk::OutputWindow::GetInstance()->DisplayDebugText("This is from ITK\n");
+  itk::OutputWindow::GetInstance()->DisplayWarningText("This is from ITK\n");
+  itk::OutputWindow::GetInstance()->DisplayErrorText("This is from ITK\n");
+  itk::OutputWindow::GetInstance()->DisplayGenericOutputText("This is from ITK\n");
   // EndCodeSnippet
 
   // BeginLatex
@@ -350,15 +346,15 @@ int main( int argc, char* argv[] )
 
   // Test messages for VTK OutputWindow
   vtkOutputWindow::GetInstance()->DisplayText(
-                                    "** This is from vtkOutputWindow **\n");
+                                    "This is from vtkOutputWindow\n");
   vtkOutputWindow::GetInstance()->DisplayDebugText(
-                                    "** This is from vtkOutputWindow **\n");
+                                    "This is from vtkOutputWindow\n");
   vtkOutputWindow::GetInstance()->DisplayWarningText(
-                                    "** This is from vtkOutputWindow **\n");
+                                    "This is from vtkOutputWindow\n");
   vtkOutputWindow::GetInstance()->DisplayErrorText(
-                                    "** This is from vtkOutputWindow **\n");
+                                    "This is from vtkOutputWindow\n");
   vtkOutputWindow::GetInstance()->DisplayGenericWarningText(
-                                    "** This is from vtkOutputWindow **\n");
+                                    "This is from vtkOutputWindow\n");
   // EndCodeSnippet
 
   // BeginLatex
@@ -370,15 +366,16 @@ int main( int argc, char* argv[] )
   // \subsubsection{LoggerThreadWrapper}
   // \label{Chapter:Logging:LoggerThreadWrapper}
   // \index{logging!LoggerThreadWrapper}
-  // The itk::LoggerThreadWrapper is a template class that wraps a logger class
-  // and enables logging in a separate thread. LoggerThreadWrapper inherits
-  // the Logger class given as a template argument. Logging method calls through
-  // the LoggerThreadWrapper object make logging operation queued and 
-  // performed whenever the thread takes the available computational resource
-  // and the queue is not empty. Although LoggerThreadWrapper provides more
-  // flexibility than ThreadLogger by allowing various types of Loggers to be 
-  // used but LoggerThreadWrapper has a problem when used with compilers weak
-  // at the C++ template feature.
+  // The itk::LoggerThreadWrapper is a template class that wraps a Logger class
+  // to enable logging in a separate thread. LoggerThreadWrapper inherits
+  // the Logger class given as a template argument. 
+  // Logging method calls made through a LoggerThreadWrapper object 
+  // are queued and performed whenever the thread takes 
+  // the available computational resource.
+  // LoggerThreadWrapper provides more flexibility than ThreadLogger 
+  // by allowing various types of Loggers to be used,
+  // however LoggerThreadWrapper may be problematic when used with compilers with weak
+  // C++ template support.
 
   // An application should include the header file called itkLoggerThreadWrapper.h
   // to use this class.
@@ -388,7 +385,7 @@ int main( int argc, char* argv[] )
 
   // BeginCodeSnippet
   itk::LoggerThreadWrapper<itk::Logger>::Pointer 
-                         wrappedLogger = itk::LoggerThreadWrapper<itk::Logger>::New();
+                     wrappedLogger = itk::LoggerThreadWrapper<itk::Logger>::New();
   // EndCodeSnippet
 
   // BeginLatex
@@ -399,10 +396,10 @@ int main( int argc, char* argv[] )
   // \subsubsection{ThreadLogger}
   // \label{Chapter:Logging:ThreadLogger}
   // \index{logging!ThreadLogger}
-  // The itk::ThreadLogger provides the same functionality with LoggerThreadWrapper
+  // The itk::ThreadLogger provides the same functionality as LoggerThreadWrapper
   // except that ThreadLogger is derived from the Logger class. If different
-  // types of Logger is necessary instead of the simple Logger class, Loggers
-  // classes should be further derived from ThreadLogger class by creating a
+  // types of loggers are necessary instead of the simple Logger class, these
+  // classes derive from ThreadLogger class by creating a
   // new class or using LoggerThreadWrapper.
 
   // An application should include the header file called itkThreadLogger.h
