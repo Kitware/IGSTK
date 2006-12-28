@@ -85,7 +85,7 @@ int main( int argc, char* argv[] )
   // set to have a reference to a stream object. 
   // The example code below shows how to create itk::StdStreamLogOutput objects 
   // and set streams for the console and a file output stream.
-  // The prepared LogOutput objects are added to a logger. \ref{Chapter:Logging:Logger}
+  // The prepared LogOutput objects are added to a logger. \ref{Chapter:Logging:StructureOfLoggingComponent}
   // 
   // EndLatex
 
@@ -107,7 +107,9 @@ int main( int argc, char* argv[] )
   // Setting a priority level for a logger
   logger->SetPriorityLevel( itk::Logger::DEBUG );
   // Testing to print a debug message
-  logger->Debug("Test message\n");
+  logger->Debug("Debug message\n");
+  logger->Critical("Critical message\n");
+  logger->Fatal("Fatal message\n");
 
   // Creating a LoggerManager object
   itk::LoggerManager::Pointer manager = itk::LoggerManager::New();
@@ -311,7 +313,7 @@ int main( int argc, char* argv[] )
   // Create an ITK LoggerOutput and then test it.
   itk::LoggerOutput::Pointer itkOutput = itk::LoggerOutput::New();
   itkOutput->OverrideITKWindow();
-  itkOutput->SetLogger(logger);  // Redirect messages from the ITK OutputWindow to a logger
+  itkOutput->SetLogger(logger);
 
   // Test messages for ITK OutputWindow
   itk::OutputWindow::GetInstance()->DisplayText("This is from ITK\n");
