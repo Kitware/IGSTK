@@ -58,12 +58,16 @@ SerialCommunicationForWindows::InternalOpenPort( void )
   unsigned int portNumber = this->GetPortNumber();
   const char *device = "";  
 
-  if (portNumber >= 0 && portNumber < 4)
+  if (portNumber >= 0 && portNumber < 8)
     {
     const char *deviceNames[] = { IGSTK_SERIAL_PORT_0,
                                   IGSTK_SERIAL_PORT_1,
                                   IGSTK_SERIAL_PORT_2,
-                                  IGSTK_SERIAL_PORT_3  };
+                                  IGSTK_SERIAL_PORT_3,
+                                  IGSTK_SERIAL_PORT_4,
+                                  IGSTK_SERIAL_PORT_5,
+                                  IGSTK_SERIAL_PORT_6,
+                                  IGSTK_SERIAL_PORT_7  };
 
     device = deviceNames[portNumber];
     }
