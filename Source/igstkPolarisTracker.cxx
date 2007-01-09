@@ -51,6 +51,7 @@ PolarisTracker::PolarisTracker(void):m_StateMachine(this)
 
   this->SetThreadingEnabled( true );
 
+  m_BaudRate = CommunicationType::BaudRate9600; 
   m_BufferLock = itk::MutexLock::New();
 }
 
@@ -116,6 +117,41 @@ PolarisTracker::ResultType PolarisTracker::InternalOpen( void )
     {
     // log information about the device
     m_CommandInterpreter->VER(CommandInterpreterType::NDI_CONTROL_FIRMWARE);
+    result = this->CheckError(m_CommandInterpreter);
+    }
+
+  if (result == SUCCESS)
+    {
+    // increase the baud rate to the initial baud rate that was set for
+    // serial communication, since the baud rate is set to 9600 by 
+    // NDICommandInterpreter::SetCommunication() in order to communicate
+    // with the just-turned-on device which has a default baud rate of 9600
+    CommandInterpreterType::COMMBaudType baudRateForCOMM = 
+      CommandInterpreterType::NDI_9600;
+
+    switch (m_BaudRate)
+      {
+      case CommunicationType::BaudRate9600:
+        baudRateForCOMM = CommandInterpreterType::NDI_9600;
+        break;
+      case CommunicationType::BaudRate19200:
+        baudRateForCOMM = CommandInterpreterType::NDI_19200;
+        break;
+      case CommunicationType::BaudRate38400:
+        baudRateForCOMM = CommandInterpreterType::NDI_38400;
+        break;
+      case CommunicationType::BaudRate57600:
+        baudRateForCOMM = CommandInterpreterType::NDI_57600;
+        break;
+      case CommunicationType::BaudRate115200:
+        baudRateForCOMM = CommandInterpreterType::NDI_115200;
+        break;
+      }
+
+    m_CommandInterpreter->COMM(baudRateForCOMM,
+                               CommandInterpreterType::NDI_8N1,
+                               CommandInterpreterType::NDI_NOHANDSHAKE);
+
     result = this->CheckError(m_CommandInterpreter);
     }
 

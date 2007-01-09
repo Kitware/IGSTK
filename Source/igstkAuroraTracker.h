@@ -156,6 +156,9 @@ private:
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;
 
+  /** The baud rate to use */
+  CommunicationType::BaudRateType  m_BaudRate;
+
   /** The command interpreter */
   CommandInterpreterType::Pointer  m_CommandInterpreter;
 };
