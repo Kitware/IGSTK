@@ -6,19 +6,27 @@ INCLUDE_DIRECTORIES (
   )
 
 SUBDIRS( 
-  TwoViews
-  FourViewsTrackingWithCT
-  FourViews
-  UltrasoundGuidedRFA
-  NeedleBiopsy
   LandmarkRegistration
   LandmarkRegistrationErrorEstimation
   DICOMImageReader
-  DeckOfCardRobot
-  View
-  Logging
   PivotCalibration
   PrincipalAxisCalibration
   PivotCalibrationReader
   SpatialObjects
   )
+
+IF (IGSTK_USE_FLTK)
+
+  SUBDIRS(
+    TwoViews
+    FourViewsTrackingWithCT
+    FourViews
+    UltrasoundGuidedRFA
+    NeedleBiopsy
+    DeckOfCardRobot
+    View
+    Logging
+    )
+
+ENDIF (IGSTK_USE_FLTK)
+

@@ -81,12 +81,18 @@ ENDFOREACH(TestFiles)
 
 IF(IGSTKSandbox_DATA_ROOT)
 
-   SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
+  SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
 
-   ADD_TEST( igstkObliqueImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} 
+  IF (IGSTK_USE_FLTK)
+
+    ADD_TEST( igstkObliqueImageSpatialObjectRepresentationTest
+              ${IGSTKSandbox_TESTS} 
               igstkObliqueImageSpatialObjectRepresentationTest 
               ${IGSTKSandbox_DATA_ROOT}/E000192)   
-   SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkObliqueImageSpatialObjectRepresentationTest)
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkObliqueImageSpatialObjectRepresentationTest)
+
+  ENDIF (IGSTK_USE_FLTK)
 
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
@@ -122,9 +128,6 @@ SET(IGSTKTests_SRCS
   igstkUSImageObjectTest.cxx
   igstkUSImageObjectRepresentationTest.cxx
   igstkToolCalibrationTest.cxx
-  igstkAxesObjectTest.cxx
-  igstkBoxObjectTest.cxx
-  igstkConeObjectTest.cxx
   igstkBasicTrackerTest.cxx
   igstkBinaryDataTest.cxx
   igstkCommunicationTest.cxx
@@ -148,11 +151,21 @@ SET(IGSTKTests_SRCS
   igstkTokenTest.cxx
   igstkTrackerPortTest.cxx
   igstkTrackerToolTest.cxx
-  igstkUltrasoundProbeObjectTest.cxx
-  igstkUltrasoundImageSimulatorTest.cxx
   igstkTransformTest.cxx  
   igstkVTKLoggerOutputTest.cxx
   )
+
+IF (IGSTK_USE_FLTK)
+
+  SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
+    igstkAxesObjectTest.cxx
+    igstkBoxObjectTest.cxx
+    igstkConeObjectTest.cxx
+    igstkUltrasoundImageSimulatorTest.cxx
+    igstkUltrasoundProbeObjectTest.cxx
+  )   
+
+ENDIF (IGSTK_USE_FLTK)
 
   
 # Add testing command
@@ -167,7 +180,7 @@ IF (IGSTK_DATA_ROOT)
 
   ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest 
             ${IGSTK_DATA_ROOT}/Input/USLiver )
-  ADD_TEST( igstkToolCalibrationReaderTest ${IGSTK_TESTS} 
+  ADD_TEST( igstkToolCalibrationReaderTest ${IGSTK_TESTS} 
              igstkToolCalibrationReaderTest
              ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
              ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
@@ -196,9 +209,7 @@ IF (IGSTK_DATA_ROOT)
   ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTK_TESTS} igstkNDICommandInterpreterStressTest)
   ADD_TEST(igstkPolarisTrackerSimulatedTest ${IGSTK_TESTS} igstkPolarisTrackerSimulatedTest)
   ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS} igstkSerialCommunicationSimulatorTest)
-  
-  ADD_TEST( igstkAnnotation2DTest ${IGSTK_TESTS} igstkAnnotation2DTest
-       ${IGSTK_DATA_ROOT}/Input/E000192 )
+
   ADD_TEST( igstkDICOMImageReaderTest ${IGSTK_TESTS} igstkDICOMImageReaderTest 
        ${IGSTK_DATA_ROOT}/Input/E000192 )
   ADD_TEST( igstkCTImageReaderTest ${IGSTK_TESTS} igstkCTImageReaderTest 
@@ -226,6 +237,11 @@ IF (IGSTK_DATA_ROOT)
   ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTK_TESTS} igstkDICOMImageReaderErrorsTest 
        ${IGSTK_DATA_ROOT}/Input/E000192Mod ${IGSTKSandbox_DICOM_TEST_OUTPUT_DIR})
         
+  IF (IGSTK_USE_FLTK)
+    ADD_TEST( igstkAnnotation2DTest ${IGSTK_TESTS} igstkAnnotation2DTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 )
+  ENDIF (IGSTK_USE_FLTK)
+
 ENDIF(IGSTK_DATA_ROOT)
 
 #-----------------------------------------------------------------------------
@@ -308,7 +324,7 @@ IF(IGSTK_USE_FLTK)
               igstkImageSpatialObjectRepresentationTest 
               ${IGSTK_DATA_ROOT}/Input/E000192)   
 
-      ENDIF (IGSTK_DATA_ROOT)
+  ENDIF (IGSTK_DATA_ROOT)
             
 ENDIF(IGSTK_USE_FLTK)
 
@@ -338,9 +354,9 @@ IF(IGSTK_DATA_ROOT)
   SET(IGSTKTests_SRCS
     ${IGSTKTests_SRCS}
     igstkUSImageReaderTest.cxx
-    igstkPivotCalibrationReaderTest.cxx        igstkToolCalibrationReaderTest.cxx
+    igstkPivotCalibrationReaderTest.cxx
+    igstkToolCalibrationReaderTest.cxx
     igstkMR3DImageToUS3DImageRegistrationTest.cxx
-    igstkAnnotation2DTest.cxx
     igstkCTImageReaderTest.cxx
     igstkCTImageSpatialObjectRepresentationTest.cxx
     igstkDICOMImageReaderErrorsTest.cxx
@@ -362,6 +378,7 @@ ENDIF(IGSTK_DATA_ROOT)
 IF(IGSTK_USE_FLTK)  
   SET(IGSTKTests_SRCS
     ${IGSTKTests_SRCS}
+    igstkAnnotation2DTest.cxx
     igstkCylinderObjectTest.cxx
     igstkEllipsoidObjectTest.cxx
     igstkFLTKTextBufferLogOutputTest.cxx
