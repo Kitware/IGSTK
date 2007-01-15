@@ -158,13 +158,13 @@ ELSE(WIN32)
       "Device name for serial port 2")
   SET(IGSTK_SERIAL_PORT_3 "/dev/ttyS3" CACHE STRING
       "Device name for serial port 3")
-  SET(IGSTK_SERIAL_PORT_5 "/dev/ttyS4" CACHE STRING
+  SET(IGSTK_SERIAL_PORT_4 "/dev/ttyS4" CACHE STRING
       "Device name for serial port 4")
-  SET(IGSTK_SERIAL_PORT_6 "/dev/ttyS5" CACHE STRING
+  SET(IGSTK_SERIAL_PORT_5 "/dev/ttyS5" CACHE STRING
       "Device name for serial port 5")
-  SET(IGSTK_SERIAL_PORT_7 "/dev/ttyS6" CACHE STRING
+  SET(IGSTK_SERIAL_PORT_6 "/dev/ttyS6" CACHE STRING
       "Device name for serial port 6")
-  SET(IGSTK_SERIAL_PORT_8 "/dev/ttyS7" CACHE STRING
+  SET(IGSTK_SERIAL_PORT_7 "/dev/ttyS7" CACHE STRING
       "Device name for serial port 7")
 ENDIF(WIN32)
 MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_0)
