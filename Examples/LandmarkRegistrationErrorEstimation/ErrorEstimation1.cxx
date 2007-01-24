@@ -28,9 +28,9 @@
 // computed using landmark-based registration.
 // 
 // The error estimation is based on the closed-form equation developed by West
-// et al.  The target point registration error is
+// et al.~\cite{West2001}.  The target point registration error is
 // dependent on the location of the target point, the registration error of the
-// landmark points ( root mean square error) and the configuration of the
+// landmark points (RMS error) and the configuration of the
 // landmark points.
 //
 // EndLatex
@@ -260,7 +260,7 @@ int main( int argv, char * argc[] )
   //
   // Next, the landmark registration error is set. The landmark registration
   // component is used to compute this parameter. This error parameter
-  // basically the root mean square error of the landmark registration.
+  // is basically the RMS error of the landmark registration.
   //
   // EndLatex
 

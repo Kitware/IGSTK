@@ -23,7 +23,7 @@
 
 // BeginLatex
 // 
-// This example illustrates how to use igstk's landmark registration 
+// This example illustrates how to use IGSTK's landmark registration 
 // component to determine rigid body transformation parameters between 
 // an image and the patient coordinate system.
 //
@@ -66,11 +66,11 @@
 // BeginLatex
 // 
 // To fully  utilize the registration component, callbacks need to be set up 
-// to observer events that could be thrown by the registration component.  
-// For this purpose, the ITK command class is used to derive a callback class .
+// to observe events that could be thrown by the registration component.  
+// For this purpose, the ITK command class is used to derive a callback class.
 // The ITK command class implements a subject/observer (command design) pattern.
 // A subject notifies an observer by running the \code{Execute } method of 
-// the derived callback class . For example a callback class meant 
+// the derived callback class. For example a callback class meant 
 // to observe an error in the transform computation is defined as follows.
 // 
 // EndLatex
@@ -175,6 +175,7 @@ private:
 
 // BeginLatex
 // 
+// For more information on IGSTK events, see Chapter~\ref{Chapter:Events}.
 // After the helper classes are defined, the main function implementation 
 // is started.
 //
@@ -291,7 +292,7 @@ int main( int argv, char * argc[] )
 // the mismatch in landmark correspondence that could occur when all landmarks 
 // image coordinates are recorded first and then the tracker coordinates. 
 // This design choice is consistent with the "safety by design" philosophy 
-// of igstk. 
+// of IGSTK. 
 //
 //EndLatex 
 
