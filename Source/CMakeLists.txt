@@ -42,7 +42,6 @@ SET(IGSTK_HEADS
   igstkMRImageSpatialObjectRepresentation.h
   igstkLandmark3DRegistration.h
   igstkLandmark3DRegistrationErrorEstimator.h
-  igstkMouseTracker.h
   igstkAuroraTracker.h
   igstkAuroraTrackerTool.h
   igstkBinaryData.h
@@ -97,6 +96,7 @@ IF(IGSTK_USE_FLTK)
     ${IGSTK_HEADS}
     igstkFLTKTextBufferLogOutput.h
     igstkFLTKTextLogOutput.h
+    igstkMouseTracker.h
     igstkView.h
     igstkView2D.h
     igstkView3D.h
@@ -139,7 +139,6 @@ SET(IGSTK_SRCS
   igstkMRImageSpatialObjectRepresentation.cxx
   igstkLandmark3DRegistration.cxx
   igstkLandmark3DRegistrationErrorEstimator.cxx
-  igstkMouseTracker.cxx
   igstkAuroraTracker.cxx
   igstkAuroraTrackerTool.cxx
   igstkBinaryData.cxx
@@ -187,6 +186,7 @@ SET(IGSTK_SRCS
 IF(IGSTK_USE_FLTK)
   SET(IGSTK_SRCS  
     ${IGSTK_SRCS}
+    igstkMouseTracker.cxx
     igstkFLTKTextBufferLogOutput.cxx
     igstkFLTKTextLogOutput.cxx
     igstkView.cxx

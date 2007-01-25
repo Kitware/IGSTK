@@ -138,7 +138,6 @@ SET(IGSTKTests_SRCS
   igstkLandmark3DRegistrationErrorEstimatorTest.cxx
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectTest.cxx
-  igstkMouseTrackerTest.cxx
   igstkMultipleOutputTest.cxx    
   igstkPivotCalibrationTest.cxx
   igstkPrincipalAxisCalibrationTest.cxx
@@ -161,6 +160,7 @@ IF (IGSTK_USE_FLTK)
     igstkAxesObjectTest.cxx
     igstkBoxObjectTest.cxx
     igstkConeObjectTest.cxx
+    igstkMouseTrackerTest.cxx
     igstkUltrasoundImageSimulatorTest.cxx
     igstkUltrasoundProbeObjectTest.cxx
   )   
