@@ -36,22 +36,18 @@ using namespace std;
 
 // BeginLatex
 // 
-// The XMLLogger class constructs log messages in XML format.
-// Indentation is done automatically.
-// Most XML viewers show the hierarchical structure of log messages
-// and provide UIs to collapse and expand subelements.
-// XMLLogger opens a new element when the first character of the log message 
-// is \begin{verbatim}'<'\end{verbatim}
-// and closes an element when the first character is 
-// \begin{verbatim}'>'\end{verbatim}
-// Otherwise, a self-closing element is created when no angular bracket is 
-// used for the first character.
-// The BuildFormattedEntry() method is redefined in XMLLogger class for overriding 
-// default formatting.
-// It creates a string containing a timestamp, the logger name, 
-// the priority level of a message, and the message content.
-// Some of these components can be omitted if unnecessary. 
-// The logger name was omitted here to shorten the length of messages.
+// The XMLLogger class constructs log messages in XML format.  Indentation is
+// done automatically.  Most XML viewers show the hierarchical structure of log
+// messages and provide UIs to collapse and expand subelements.  XMLLogger
+// opens a new element when the first character of the log message is
+// \begin{verbatim}'<'\end{verbatim} and closes an element when the first
+// character is \begin{verbatim}'>'\end{verbatim} Otherwise, a self-closing
+// element is created when no angular bracket is used for the first character.
+// The BuildFormattedEntry() method is redefined in XMLLogger class for
+// overriding default formatting.  It creates a string containing a timestamp,
+// the logger name, the priority level of a message, and the message content.
+// Some of these components can be omitted if unnecessary.  The logger name was
+// omitted here to shorten the length of messages.
 //
 // EndLatex
 
