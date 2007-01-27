@@ -22,8 +22,8 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::SpatialObjectHierarchy}
-// This example describes how to group \doxygen{SpatialObject} 
-// to form a hierarchy of objects. It also illustrates their creation 
+// This example describes how to group \doxygen{SpatialObject}s 
+// to form an aggregate hierarchy of objects and also illustrates their creation 
 // and how to manipulate them.
 //
 // The first part of the example makes use of the \doxygen{EllipsoidObject}. The
@@ -84,7 +84,7 @@ int main( int , char *[] )
 // We first create a transformation and set the translation vector to be $10mm$
 // in each direction, with an error value of $0.001mm$ and a validity time
 // of $10ms$. Second, we assign the transform to the object via the 
-// \code{RequestSetTransform()} function.The commands appear as follows:
+// \code{RequestSetTransform()} function. The commands appear as follows:
 //
 // Software Guide : EndLatex 
 
