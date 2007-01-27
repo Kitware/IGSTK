@@ -148,7 +148,7 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// A desired orientation of the tracker tools are also specified
+// A desired orientation of the tracker tools is also specified
 //
 // EndLatex
 
