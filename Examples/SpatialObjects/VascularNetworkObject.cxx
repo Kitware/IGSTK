@@ -103,10 +103,10 @@ int main( int , char *[] )
 // of the class.
 // This macro will create two functions depending on the name of the first
 // argument:
-//
-// - \code{GotVessel()} which returns true if the vessel exists.
-//
-// - \code{GetVessel()} which returns the actual pointer to the vessel.
+// \begin{enumerate}
+// \item \code{GotVessel()} which returns true if the vessel exists.
+// \item \code{GetVessel()} which returns the actual pointer to the vessel.
+// \end{enumerate}
 // Once the observer is declared we add it to the VascularNetworkProject using
 // the \code{AddObserver()} function.
 // Software Guide : EndLatex 
