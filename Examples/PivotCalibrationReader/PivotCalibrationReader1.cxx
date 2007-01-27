@@ -113,7 +113,7 @@ int main( int argc, char * argv[] )
 // The pivot calibration file's name is passed through the argument.
 // After the filename is designated, a RequestReadObject function is invoked
 // to parse the data file. The information in the reader can be easily
-// dumped by default Print function.
+// dumped by the default Print function.
 //
 // EndLatex
 
@@ -161,10 +161,10 @@ int main( int argc, char * argv[] )
 // BeginLatex
 //
 // To retrieve some specific information, like serial number and manufacturer,
-// from the trackers, another string even and observer is attached 
-// to the calibration class we just get. For each request, the information
-// content will be passed by observer's GetString function. 
-// Some sample codes are shown as below:
+// from the trackers, another string event and observer is attached 
+// to the calibration class. For each request, the information
+// content will be passed by the observer's GetString function. 
+// Some sample code is shown below:
 //
 // EndLatex
 
