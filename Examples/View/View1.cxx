@@ -44,7 +44,7 @@ int main( int, char * [] )
 
   // BeginLatex
   // 
-  // First, a 3D view and other useful data types are defined 
+  // First, a 3D view and other useful data types are defined: 
   //
   // EndLatex
 
@@ -63,8 +63,8 @@ int main( int, char * [] )
 
   // BeginLatex
   //
-  // For debugging purpose, vtk window output can be redirected to a logger,
-  // using \doxygen{VTKLoggerOutput} as follows.
+  // For debugging purposes, VTK window output can be redirected to a logger,
+  // using \doxygen{VTKLoggerOutput}, as follows:
   //
   // EndLatex
 
@@ -80,7 +80,7 @@ int main( int, char * [] )
     // BeginLatex
     // 
     // In this example, we would like to display an ellipsoid object.  To carry
-    // out this, an ellipsoid spatial object is first instantiated.
+    // this out, an ellipsoid spatial object is first instantiated:
     // 
     // EndLatex
 
@@ -92,9 +92,9 @@ int main( int, char * [] )
     // BeginLatex
     // 
     // Next, a representation object is created using
-    // \doxygen{EllipsoidObjectRepresentation } class. The  representation
-    // class provides the mechanism to generate graphical description of the
-    // spatial object for visualization in a VTK scene. 
+    // the \doxygen{EllipsoidObjectRepresentation} class. The  representation
+    // class provides the mechanism to generate a graphical description of the
+    // spatial object for visualization in a VTK scene, as follows: 
     //
     //EndLatex 
 
@@ -109,7 +109,7 @@ int main( int, char * [] )
     // BeginLatex
     // 
     // Geometrical transformation can be applied to the ellipsoid spatial
-    // object as follows.
+    // object, as follows:
     // 
     // EndLatex
 
@@ -131,7 +131,7 @@ int main( int, char * [] )
 
     // BeginLatex
     // 
-    // Next, FLTK window and a view object is instantiated.
+    // Next, the FLTK window and a view object are instantiated:
     //
     // EndLatex
 
@@ -148,7 +148,7 @@ int main( int, char * [] )
     // BeginLatex
     // 
     // The ellispoid is added to the scene using \code{RequestAddObject}
-    // method.
+    // method, as follows:
     //
     // EndLatex
 
@@ -160,8 +160,8 @@ int main( int, char * [] )
     //
     // The View components are designed for refreshing their representation at
     // regular intervals. The application developer must set the desired
-    // refresh rate in Hertz and should trigger the start of the process of
-    // internal generation of pulses that makes possible for the View class to
+    // refresh rate in Hertz, which should trigger the start of the process of
+    // internal generation of pulses that makes it possible for the View class to
     // refresh itself.
     // 
     // EndLatex
@@ -175,13 +175,13 @@ int main( int, char * [] )
     // BeginLatex
     // 
     // At this point it is now possible to start the event loop that will drive
-    // the user interaction of the application. Inside the loop it is of
+    // the user interaction of the application. Inside the loop, it is of
     // fundamental importance to invoke the call to the
     // \doxygen{PulseGenerator} method \code{CheckTimeouts()}. This methods
-    // ensures that the timers of pulse generators in all the autonomous IGSTK
+    // ensures that the pulse generator timers in all the autonomous IGSTK
     // classes are checked to see if they should trigger timer events. The same
-    // for loop should have some form of wait or sleep instruction in order to
-    // prevent the loop from taking over the CPU time.
+    // loop should have some form of ``wait'' or ``sleep'' instruction in order
+    // to prevent the loop from taking over the CPU time.
     //
     // EndLatex
 
@@ -197,8 +197,8 @@ int main( int, char * [] )
 
     // BeginLatex
     // 
-    // Once the event loop finishes, we should stop the refresh process of the
-    // view class, by calling the method \code{RequestStop()}.
+    // Once the event loop finishes, the method \code{RequestStop()} should be 
+    // called to stop the refresh process of the View class, as follows:
     //
     // EndLatex
 
