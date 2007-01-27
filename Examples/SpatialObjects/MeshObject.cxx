@@ -22,13 +22,13 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::MeshObject}
-// This example describes how to use the \doxygen{MeshObject} which implements
+// This example describes how to use the \doxygen{MeshObject}, which implements
 // a 3-dimensional mesh structure.  
 // The mesh class provides an API to perform operations on points and
-// cell. Typically points and cells are created, with 
+// cells. Typically, points and cells are created, with 
 // the cells referring to their defining points.
 // 
-// Let's include the header file first.
+// Let's include the header file first:
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -39,7 +39,7 @@ int main( int , char *[] )
 {
 // Software Guide : BeginLatex
 //
-// Then we declare the object using smart pointers.
+// Then, we declare the object using smart pointers:
 //
 // Software Guide : EndLatex 
 
@@ -52,9 +52,9 @@ int main( int , char *[] )
 //
 // A mesh is defined as a collection of 3-dimensional points (x,y,z) 
 // in space referenced by an identification number.
-// In order to add points to the mesh strucutre we use the 
+// In order to add points to the mesh structure, we use the 
 // \code{AddPoint(unsigned int id,float x, float y,float z)} function.
-// Let's add 4 points in our mesh.
+// Let's add 4 points in our mesh, as follows:
 //
 // Software Guide : EndLatex 
 
@@ -67,8 +67,8 @@ mesh->AddPoint(3,10,0,10);
 
 // Software Guide : BeginLatex
 // 
-// Then we can retreive the list of points using the \code{GetPoints()}
-// function.
+// Then, we can retreive the list of points using the \code{GetPoints()}
+// function:
 //
 // Software Guide : EndLatex
 
@@ -90,8 +90,8 @@ mesh->AddPoint(3,10,0,10);
 
 // Software Guide : BeginLatex
 // The next step is to define cells for the mesh. IGSTK currently supports
-// two type of cells: tetrahedron and triangle cells. The functions to add
-// a cell to the mesh are defined as follow:
+// two type of cells: tetrahedron and triangle cells. The functions for adding
+// cells to the mesh are defined as follows:
 // 
 // \begin{verbatim}
 //  bool AddTetrahedronCell(unsigned int id,
@@ -104,7 +104,7 @@ mesh->AddPoint(3,10,0,10);
 //                       unsigned int vertex3);
 // \end{verbatim}
 //
-// Let's add on tetrahedral cell and one triangle cell to the mesh.
+// Let's add one tetrahedral cell and one triangle cell to the mesh.
 // Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
@@ -114,8 +114,8 @@ mesh->AddPoint(3,10,0,10);
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// We can then retrieve the cells using the \code{GetCells()}.
-// This function returns a list of cells as described next.
+// We can then retrieve the cells using \code{GetCells()}.
+// This function returns a list of cells, as follows:
 //
 // Software Guide : EndLatex
 // Software Guide : BeginCodeSnippet

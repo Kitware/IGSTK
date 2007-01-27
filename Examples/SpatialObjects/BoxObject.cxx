@@ -24,7 +24,7 @@
 // \index{igstk::BoxObject}
 // The \doxygen{BoxObject} represents an hexahedron in space.
 // 
-// We include the appropriate header.
+// We include the appropriate header:
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -34,7 +34,7 @@
 int main( int , char *[] )
 {
 // Software Guide : BeginLatex
-// First we declare the box using standard smart pointers.
+// First, we declare the box using standard smart pointers, as follows:
 //
 // Software Guide : EndLatex 
 
@@ -44,8 +44,8 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
-// Then we set the size of the box in each dimension by
-// using the \code{SetSize()} function.
+// Then, we set the size of the box in each dimension by
+// using the \code{SetSize()} function:
 //
 // Software Guide : EndLatex 
 
@@ -57,8 +57,8 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
-// If one needs to retreive the size of the box
-// this can be done using the \code{GetSize()} function.
+// If one needs to retrieve the size of the box,
+// they can do so using the \code{GetSize()} function:
 //
 // Software Guide : EndLatex 
 

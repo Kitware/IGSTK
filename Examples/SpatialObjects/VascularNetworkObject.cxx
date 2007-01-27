@@ -25,7 +25,7 @@
 // This example describes how to use the \doxygen{VascularNetworkObject}
 // to group \doxygen{VesselObject}s together to represent a vascular tree.
 //
-// We first include the header files.
+// We first include the header files:
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -41,7 +41,7 @@ int main( int , char *[] )
 {
 // Software Guide : BeginLatex
 //
-// Next we declare a \doxygen{VascularNetworkObject}.
+// Next we declare \doxygen{VascularNetworkObject}:
 //
 // Software Guide : EndLatex 
 
@@ -51,7 +51,7 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Then we create a \doxygen{VesselObject}.
+// Then we create \doxygen{VesselObject}:
 //
 // Software Guide : EndLatex 
 
@@ -63,7 +63,7 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // Like the TubeObject, a VesselObject is defined as a collection
-// of centerline points with associated radius.
+// of centerline points with an associated radius, as follows:
 //
 // Software Guide : EndLatex 
 
@@ -81,8 +81,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // We then add the newly created vessel to the vasculature.
-// Since the \code{VascularNetworkObject} derives from \code{GroupObject} we use
-// the superclass \code{RequestAddObject()} function.
+// Since the \code{VascularNetworkObject} derives from \code{GroupObject}, we use
+// the superclass \code{RequestAddObject()} function:
 //
 // Software Guide : EndLatex 
 
@@ -92,8 +92,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // In some cases, it is interesting to get a selected vessel from
-// a \code{VascularNetworkObject}. To retreive the vessel, we need to setup
-// an observer first.
+// a \code{VascularNetworkObject}. To retrieve the vessel, we first need to setup
+// an observer, as follows:
 // \begin{verbatim}
 // igstkObserverObjectMacro(Vessel,
 //  ::igstk::VascularNetworkObject::VesselObjectModifiedEvent,
@@ -121,9 +121,9 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// We then request for a vessel given its position in the list
+// We then request a vessel given its position in the list
 // using the \code{RequestGetVessel(unsigned long position)} function.
-// We also check if the observer got the vessel.
+// We also check to see if the observer got the vessel, as follows:
 // 
 // Software Guide : EndLatex 
 
@@ -138,7 +138,7 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // The vessel is retreived using the \code{GetVessel()} function from the
-// observer.
+// observer, as follows:
 //
 // Software Guide : EndLatex 
 

@@ -22,12 +22,12 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::TubeObject}
-// This example describes how to use the \doxygen{TubeObject} which implements
+// This example describes how to use the \doxygen{TubeObject}, which implements
 // a 3-dimensional tubular structure in space.
 // The tube is defined by a set of points representing its centerline.
-// Each point as a position and an associated radius value.
+// Each point has a position and an associated radius value.
 //
-// Let's start by including the appropriate header file.
+// Let's start by including the appropriate header file:
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -38,7 +38,7 @@ int main( int , char *[] )
 {
 // Software Guide : BeginLatex
 //
-// First we declare the object using smart pointers.
+// First, we declare the object using smart pointers:
 //
 // Software Guide : EndLatex 
 
@@ -50,8 +50,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 // Points can be added sequentially in the tube using
 // the \code{AddPoint()} function.
-// Let's add two points: one at position (0,1,2) with a radius of $10mm$,
-// and second one at (1,2,3) with a radius of $20mm$.
+// Let's add two points - one at position (0,1,2) with a radius of $10mm$,
+// and second one at (1,2,3) with a radius of $20mm$:
 //
 // Software Guide : EndLatex 
 
@@ -69,7 +69,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 //
-// Then we can use the \code{GetNumberOfPoints()} function to
+// Then, we can use the \code{GetNumberOfPoints()} function to
 // get the number of points composing the tube.
 //
 // Software Guide : EndLatex 
@@ -81,11 +81,11 @@ int main( int , char *[] )
   std::cout << std::endl;
 // Software Guide : BeginLatex
 //
-// There are two main functions to get points from the tube
-// The first one is \code{GetPoint(unsigned int id)} which returns
+// There are two main functions to get points from the tube.
+// The first one is \code{GetPoint(unsigned int id)}, which returns
 // a pointer to the corresponding point. 
-// Note that if the index does not exist the function returns
-// a null pointer.
+// Note that if the index does not exist, the function returns
+// a null pointer. The command is as follows:
 //
 // Software Guide : EndLatex
 // Software Guide : BeginCodeSnippet
@@ -96,7 +96,7 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // Instead, the second \code{GetPoints()} function should be 
-// used because it is safer by returning the internal list of points.
+// used. It is safer because it returns the internal list of points, as follows:
 //
 // Software Guide : EndLatex
 // Software Guide : BeginCodeSnippet
@@ -113,8 +113,8 @@ int main( int , char *[] )
    
 // Software Guide : BeginLatex
 //
-// The \code{Clear()} function can be used to remove all the
-// points from the tube.
+// The \code{Clear()} function can be used to remove all 
+// points from the tube:
 //
 // Software Guide : EndLatex
 // Software Guide : BeginCodeSnippet

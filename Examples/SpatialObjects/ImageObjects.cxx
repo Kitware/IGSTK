@@ -23,7 +23,7 @@
 //
 // \index{igstk::CTImageSpatialObject}
 // In this example we show the main features of the ImageObject classes.
-// IGSTK implements on class per modality, CT, MR and US.
+// IGSTK implements one class per modality for CT, MR, and US, as follows:
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -36,7 +36,7 @@ int main( int argc, char * argv[] )
 {
 // Software Guide : BeginLatex
 //
-// First we declare an empty CT image using smart pointers
+// First, we declare an empty CT image using smart pointers:
 //
 // Software Guide : EndLatex 
 
@@ -48,7 +48,7 @@ int main( int argc, char * argv[] )
 // Software Guide : BeginLatex
 //
 // Then, for a given point in physical space, we can ask if this particular
-// point is inside (or outside) the image using the \code{IsInside()} function.
+// point is inside (or outside) the image using the \code{IsInside()} function:
 //
 // Software Guide : EndLatex 
 
@@ -74,8 +74,8 @@ int main( int argc, char * argv[] )
 //
 // If the point is inside the image, we can convert the physical point
 // into an index or a continuous index in the image reference frame.
-// This is achieve using the \code{TransformPhysicalPointToIndex()} and
-// \code{TransformPhysicalPointToContinuousIndex()} functions respectively.
+// This is achieved using the \code{TransformPhysicalPointToIndex()} and
+// \code{TransformPhysicalPointToContinuousIndex()} functions, as follows:
 //
 // Software Guide : EndLatex  
   

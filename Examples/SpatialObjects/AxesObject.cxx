@@ -27,7 +27,7 @@
 // It is intended for providing a visual reference of the orientation 
 // of space in the context of the scene.
 //
-// First we include the appropriate header file.
+// First, we include the appropriate header file:
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -37,7 +37,7 @@
 int main( int , char *[] )
 {
 // Software Guide : BeginLatex
-// We then declare the object using smart pointers.
+// We then declare the object using smart pointers, as follows:
 //
 // Software Guide : EndLatex 
 
@@ -48,7 +48,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 // The size of each axis can be set using the
-// \code{SetSize()} function.
+// \code{SetSize()} function:
 //
 // Software Guide : EndLatex 
 
@@ -60,8 +60,8 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
-// In case we need to retreive the length of the axes
-// we can use the \code{GetSize()} functions.
+// In case we need to retrieve the length of the axes
+// we can use the \code{GetSize()} functions, as follows:
 //
 // Software Guide : EndLatex 
 

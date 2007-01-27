@@ -25,7 +25,7 @@
 // As the name of class indicates, the \doxygen{ConeObject} 
 // represents a cone in space.
 //
-// First we include the header file.
+// First, we include the header file:
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -35,7 +35,7 @@
 int main( int , char *[] )
 {
 // Software Guide : BeginLatex
-// We then declare the cone using standard smart pointers.
+// We then declare the cone using standard smart pointers:
 //
 // Software Guide : EndLatex 
 
@@ -46,10 +46,10 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 // The \doxygen{ConeObject} has two internal parameters, its radius 
-// and its height expressed in $mm$. The radius represents the radius of
-// base of the cone.
+// and its height both expressed in $mm$. The radius represents the radius of
+// the base of the cone.
 // These two parameters can be set using \code{SetRadius()} and
-// \code{SetHeight()} respectively.
+// \code{SetHeight()}, as follows:
 //
 // Software Guide : EndLatex 
 
