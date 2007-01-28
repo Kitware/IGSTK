@@ -34,7 +34,7 @@
 // BeginLatex
 // 
 // To use the registration component, the header file for 
-// \doxygen{Landmark3DRegistration} is added.
+// \doxygen{Landmark3DRegistration} is added:
 //
 // EndLatex
 
@@ -53,7 +53,7 @@
 // 
 // Transform parameters are returned to the application using loaded events. 
 // To handle these events, the following \doxygen{Events} 
-// and \doxygen{Transform} header files are needed.
+// and \doxygen{Transform} header files are needed:
 //
 // EndLatex
 
@@ -70,8 +70,8 @@
 // For this purpose, the ITK command class is used to derive a callback class.
 // The ITK command class implements a subject/observer (command design) pattern.
 // A subject notifies an observer by running the \code{Execute } method of 
-// the derived callback class. For example a callback class meant 
-// to observe an error in the transform computation is defined as follows.
+// the derived callback class. For example, a callback class meant 
+// to observe an error in the transform computation is defined as follows:
 // 
 // EndLatex
 
@@ -125,7 +125,7 @@ private:
 // Similarly, a callback class needs to be defined to observe the 
 // \doxygen{TransformModified} event. This event is loaded with 
 // transform parameters that are computed by the registration component.
-//
+// The commands are as follows:
 // EndLatex
 
 // BeginCodeSnippet
@@ -177,7 +177,7 @@ private:
 // 
 // For more information on IGSTK events, see Chapter~\ref{Chapter:Events}.
 // After the helper classes are defined, the main function implementation 
-// is started.
+// is started, as follows:
 //
 // EndLatex
 
@@ -192,7 +192,7 @@ int main( int argv, char * argc[] )
 
 // BeginLatex
 //
-// All the necessary data types are defined.
+// Next, all the necessary data types are defined:
 // 
 // EndLatex
 
@@ -216,7 +216,7 @@ int main( int argv, char * argc[] )
 
 // BeginLatex
 // 
-// The registration component is instantiated as follows
+// Then, the registration component is instantiated as follows:
 // 
 // EndLatex
 
@@ -228,8 +228,8 @@ int main( int argv, char * argc[] )
 
 // BeginLatex
 // 
-// The landmark containers that hold the landmark image and tracker coordinates
-// are instantiated.
+// Next, the landmark containers that hold the landmark image and tracker 
+// coordinates are instantiated:
 //
 // EndLatex
 
@@ -244,8 +244,8 @@ int main( int argv, char * argc[] )
 
 // BeginLatex
 // 
-// Error event callback objects are instantiated and added to the observer list
-// of the registration component as follows:
+// Then, error event callback objects are instantiated and added to the observer
+// list of the registration component, as follows:
 //
 // EndLatex
 
@@ -267,8 +267,8 @@ int main( int argv, char * argc[] )
 
 // BeginLatex
 // 
-// A logger can be connected to the registration component for 
-// debugging purpose as follows
+// A logger can then be connected to the registration component for 
+// debugging purpose, as follows:
 //
 // EndLatex
 
@@ -290,9 +290,9 @@ int main( int argv, char * argc[] )
 // the image and tracker coordinates that correspond to
 // each landmark are added consecutively. This scheme prevents
 // the mismatch in landmark correspondence that could occur when all landmarks 
-// image coordinates are recorded first and then the tracker coordinates. 
-// This design choice is consistent with the "safety by design" philosophy 
-// of IGSTK. 
+// image coordinates are recorded first and followed by the tracker coordinates. 
+// This design choice is consistent with the ``safety by design'' philosophy 
+// of IGSTK. The commands are as follows:
 //
 //EndLatex 
 
@@ -359,8 +359,8 @@ int main( int argv, char * argc[] )
 
   // BeginLatex
   // 
-  // After all the landmark coordinates are added, the transform computation is 
-  // requested as follows
+  // After all landmark coordinates are added, the transform computation is 
+  // requested as follows:
   // 
   // EndLatex
 
@@ -378,8 +378,8 @@ int main( int argv, char * argc[] )
 
   // BeginLatex
   // 
-  // To access the tranform parameters, a GetTransform callback is instantiated
-  // to observe the transform event as follows. 
+  // To access the transform parameters, a GetTransform callback is instantiated
+  // to observe the transform event, as follows: 
   // 
   // EndLatex
 
@@ -392,8 +392,9 @@ int main( int argv, char * argc[] )
 
   // BeginLatex
   //
-  // To request the registration component throw an event loaded with transform
-  // parameters, a \code{RequestGetTransform} function is invoked as follows.
+  // To request that the registration component throw an event loaded with 
+  // transform parameters, a \code{RequestGetTransform} function is invoked as 
+  // follows:
   // 
   // EndLatex
 

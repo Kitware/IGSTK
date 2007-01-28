@@ -30,7 +30,7 @@
 // The error estimation is based on the closed-form equation developed by West
 // et al.~\cite{West2001}.  The target point registration error is
 // dependent on the location of the target point, the registration error of the
-// landmark points (RMS error) and the configuration of the
+// landmark points (RMS error), and the configuration of the
 // landmark points.
 //
 // EndLatex
@@ -42,7 +42,7 @@
 //
 // To use the IGSTK component for computing the registration error, the 
 // following  \doxygen{Landmark3DRegistrationErrorEstimator} header file must
-// be added.
+// be added:
 //
 // EndLatex
 #include "igstkLandmark3DRegistration.h"
@@ -224,7 +224,7 @@ int main( int argv, char * argc[] )
   // BeginLatex
   //
   // The registration error estimator type is defined and an object is
-  // instantiated.
+  // instantiated, as follows:
   //
   // EndLatex
 
@@ -245,7 +245,7 @@ int main( int argv, char * argc[] )
 
   // BeginLatex
   //
-  // The landmark point container is set as follows
+  // The landmark point container is set as follows:
   //
   // EndLatex
 
@@ -260,7 +260,8 @@ int main( int argv, char * argc[] )
   //
   // Next, the landmark registration error is set. The landmark registration
   // component is used to compute this parameter. This error parameter
-  // is basically the RMS error of the landmark registration.
+  // is basically the RMS error of the landmark registration. The commands are 
+  // as follows:
   //
   // EndLatex
 
@@ -276,8 +277,8 @@ int main( int argv, char * argc[] )
   // BeginLatex
   //
   // Then, the other error parameters necessary for error estimation are
-  // computed by invoking the ComputeErrorParameter() method as
-  // shown below. 
+  // computed by invoking the \code{ComputeErrorParameter()} method, as
+  // shown below: 
   //
   // EndLatex
 
@@ -286,7 +287,7 @@ int main( int argv, char * argc[] )
   // EndCodeSnippet
 
 
-  // Estimate target regsitration error 
+  // Estimate target registration error 
   // BeginLatex
   // Next, the target point that we will be estimating the registration error
   // is set
@@ -305,7 +306,7 @@ int main( int argv, char * argc[] )
   // BeginLatex
   //
   // Finally, the registration error for the target
-  // point is estimated.
+  // point is estimated:
   //
   // EndLatex
 
@@ -315,12 +316,12 @@ int main( int argv, char * argc[] )
   // EndCodeSnippet
 
 
-  // Setup an obsever to get the registration error 
+  // Setup an observer to get the registration error 
   //
   // BeginLatex
   //
   // To receive the error value, an observer is set up to listen to
-  // an event loaded with error value as follows
+  // an event loaded with error value as follows:
   //
   // EndLatex
 
