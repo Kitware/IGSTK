@@ -34,7 +34,7 @@
 // BeginLatex
 // 
 // To use the principal axis calibration component, the header file for 
-// \doxygen{PrincipalAxisCalibration} should be added.
+// \doxygen{PrincipalAxisCalibration} should be added:
 //
 // EndLatex
 
@@ -48,7 +48,7 @@
 // BeginLatex
 // 
 // After defining the headers, the main function implementation 
-// is started.
+// is started:
 //
 // EndLatex
 
@@ -63,7 +63,7 @@ int main( int argc, char * argv[] )
 //
 // All the necessary data types in the principal axis calibration are defined.
 // VectorType and CovariantVectorType are used to represent the vectors 
-// along the principal axis and the plane normal.
+// along the principal axis and the plane normal, as follow:
 //
 // EndLatex
 
@@ -91,7 +91,7 @@ int main( int argc, char * argv[] )
 // BeginLatex
 // 
 // A logger is then created for logging the process of calibration 
-// computation, and then attached to the principal axis calibration class
+// computation and attached to the principal axis calibration class, as follows:
 //
 // EndLatex
 
@@ -108,9 +108,9 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// Before the computation, it is better to reset the calibration class to 
-// to remove all necessary information which may come from the previous
-// codes.
+// Before the computation, the calibration class must be reset 
+// to remove all necessary information that may come from the previous
+// codes:
 //
 // EndLatex
 
@@ -121,7 +121,7 @@ int main( int argc, char * argv[] )
 // BeginLatex
 // 
 // Some parameters, such as axis and normal, are defined to store 
-// the input information to determine the initial and desired orientations
+// the input information to determine the initial and desired orientations:
 //
 // EndLatex
 
@@ -132,7 +132,7 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// An initial orientation is given as the default one for the tracker tools
+// An initial orientation is given as the default for the tracker tools:
 //
 // EndLatex
 
@@ -148,7 +148,7 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// A desired orientation of the tracker tools is also specified
+// The desired orientation of the tracker tools is also specified:
 //
 // EndLatex
 
@@ -164,8 +164,8 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// Then a RequestCalculateRotation function is invoked to compute 
-// the final results
+// Then, a \code{RequestCalculateRotation} function is invoked to compute 
+// the final results:
 //
 // EndLatex
 

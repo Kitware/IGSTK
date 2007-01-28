@@ -34,7 +34,7 @@
 // BeginLatex
 // 
 // To use the pivot calibration component, the header file for 
-// \doxygen{PivotCalibration} should be added.
+// \doxygen{PivotCalibration} should be added, as follows:
 //
 // EndLatex
 
@@ -48,7 +48,7 @@
 // BeginLatex
 // 
 // After defining the headers, the main function implementation 
-// is started.
+// is started:
 //
 // EndLatex
 
@@ -72,7 +72,7 @@ int main( int argc, char * argv[] )
 // VersorType and VectorType are used to represent the quaternion and
 // translation inputs from the tracker; PointType is used to represent
 // the position coordinate of the specific point; and ErrorType is used
-// to represent the root mean square error.
+// to represent the root mean square error. The commands are as follows:
 // EndLatex
 
 // BeginCodeSnippet
@@ -98,7 +98,7 @@ int main( int argc, char * argv[] )
 // BeginLatex
 // 
 // A logger is then created for logging the process of calibration 
-// computation, and then attached to the pivot calibration class
+// computation and attached to the pivot calibration class, as follows:
 //
 // EndLatex
 
@@ -116,10 +116,10 @@ int main( int argc, char * argv[] )
 // BeginLatex
 // 
 // To use the pivot calibration class, some input samples from the 
-// tracker should be provide. 
+// tracker should be provided. 
 // Those samples come directly from tracker tools. In our example, 
 // those samples are read from the record data file in the IGSTK 
-// data directory.
+// data directory, as follows:
 //
 // EndLatex
 // Define the input file and the variables to extract the rotation 
@@ -153,7 +153,7 @@ int main( int argc, char * argv[] )
 // 
 // Before the computation, it is better to reset the calibration class to 
 // to remove all necessary information which may come from the previous
-// codes.
+// codes, as such:
 //
 // EndLatex
 
@@ -164,7 +164,7 @@ int main( int argc, char * argv[] )
 // BeginLatex
 // 
 // Then, the sample frame is read from the data file and input 
-// to calibration class
+// to the calibration class:
 //
 // EndLatex
 
@@ -187,8 +187,8 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// After this, a simple request will invole the class to compute 
-// the calibration transform.
+// After this, a simple request will invoke the class to compute 
+// the calibration transform:
 //
 // EndLatex
 
@@ -239,7 +239,7 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// For only computing the calibration along Z-axis, another 
+// For computing only the calibration along the Z-axis, the following 
 // function is used instead:
 //
 // EndLatex

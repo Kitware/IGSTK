@@ -35,7 +35,7 @@
 // BeginLatex
 // 
 // To use the pivot calibration reader component, the header file for 
-// \doxygen{PivotCalibrationReader} should be added.
+// \doxygen{PivotCalibrationReader} should be added:
 //
 // EndLatex
 
@@ -48,11 +48,12 @@
 
 // BeginLatex
 // 
-// At the very beginning of the program, two kinds of event and observers are 
+// At the very beginning of the program, two kinds of events and observers are 
 // defined to track the information from the reader. The first event is 
-// igstk::CalibrationModifiedEvent, which is to retrieve the calibration class
-// from the reader. The second one is igstk::StringEvent, which is to retrieve
-// some string-like information from the general calibration class.
+// \code{igstk::CalibrationModifiedEvent}, which retrieves the calibration 
+// class from the reader. The second one is \code{igstk::StringEvent}, which  
+// retrieves some string-like information from the general calibration class.
+// The commands are as follows:
 //
 // EndLatex
 
@@ -68,7 +69,7 @@ igstkObserverMacro(String,::igstk::StringEvent,std::string)
 // BeginLatex
 // 
 // After defining the headers, the main function implementation 
-// is started.
+// is started:
 //
 // EndLatex
 
@@ -89,7 +90,7 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// A pivot calibration reader is created and then a logger is attached. 
+// A pivot calibration reader is created and then a logger is attached:
 //
 // EndLatex
 
@@ -111,9 +112,9 @@ int main( int argc, char * argv[] )
 // BeginLatex
 // 
 // The pivot calibration file's name is passed through the argument.
-// After the filename is designated, a RequestReadObject function is invoked
-// to parse the data file. The information in the reader can be easily
-// dumped by the default Print function.
+// After the filename is designated, a \code{RequestReadObject} function is 
+// invoked to parse the data file. The information in the reader can be easily
+// dumped by the the default Print function, as follows:
 //
 // EndLatex
 
@@ -126,11 +127,11 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// To retrieve the whole calibration data information, the previous 
+// To retrieve all calibration data information, the previous 
 // defined observer is attached to the reader class. 
-// After the RequestGetCalibration function is called, the calibration info 
-// is passed by observer's GetCalibration function. The sample code
-// is as follows.
+// After the \code{RequestGetCalibration} function is called, the calibration  
+// info is passed by the observer's \code{GetCalibration} function. The sample 
+// code is as follows:
 //
 // EndLatex
 
@@ -160,11 +161,11 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 //
-// To retrieve some specific information, like serial number and manufacturer,
-// from the trackers, another string event and observer is attached 
+// To retrieve specific information from the trackers, like serial number and 
+// manufacturer, another string event and observer is attached 
 // to the calibration class. For each request, the information
-// content will be passed by the observer's GetString function. 
-// Some sample code is shown below:
+// content will be passed by the observer's \code{GetString} function. 
+// Some sample codes are as follows:
 //
 // EndLatex
 
