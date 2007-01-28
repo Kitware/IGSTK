@@ -21,13 +21,13 @@
 
 // BeginLatex
 //
-// The itk::LogOutput class represents the destination of the logging and
+// The \code{itk::LogOutput} class represents the destination of the logging and
 // serves as a base class for other LogOutput classes.  Classes derived from
 // the LogOutput class allow the log data to be directed to specific locations
 // (e.g. disk files) for recording. For example, the derived class
 // StdStreamLogOutput will send the log data to a specific stream or file, and
 // the derived class MultipleLogOutput will allow the log data to be sent to
-// multiple locations.  Several LogOutput implementations are available, these
+// multiple locations.  Several LogOutput implementations are available. These
 // are described next.
 //
 // EndLatex
@@ -39,9 +39,10 @@
 // BeginLatex
 //
 // First, we begin by including header files for using LogOutput objects.
-// The itk::StdStreamLogOutput needs the itkStdStreamLogOutput.h header file.
-// itk::MultipleLogOutput, igstk::FLTKTextBufferLogOutput, and
-// igstk::FLTKTextLogOutput need proper header files to be included as follows:
+// The \code{itk::StdStreamLogOutput} needs the \code{itkStdStreamLogOutput.h} 
+// header file. \code{itk::MultipleLogOutput}, 
+// \code{igstk::FLTKTextBufferLogOutput}, and \code{igstk::FLTKTextLogOutput}
+//  need proper header files to be included, as follows:
 //
 // EndLatex
 
@@ -76,15 +77,17 @@ int main( int argc, char* argv[] )
   // \subsubsection{StdStreamLogOutput}
   // \label{Chapter:Logging:StdStreamLogOutput}
   // \index{logging!StdStreamLogOutput}
-  // The itk::StdStreamLogOutput encapsulates and allows the log data to be
-  // sent to the standard output stream, which can be a console output stream,
+  // The \code{itk::StdStreamLogOutput} encapsulates and allows the log data to 
+  // be sent to the standard output stream, which can be a console output stream,
   // an error output stream, or a file output stream. 
   //
-  // Each LogOutput object must be created by the New() method and then set to
-  // have a reference to a stream object.  The example code below shows how to
-  // create itk::StdStreamLogOutput objects and set streams for the console and
-  // a file output stream.  The prepared LogOutput objects are added to a
-  // logger. \ref{Chapter:Logging:StructureOfLoggingComponent}
+  // Each LogOutput object must be created by the \code{New()} method and then 
+  // set to have a reference to a stream object.  The example code below shows 
+  // how to create \code{itk::StdStreamLogOutput} objects and set streams for 
+  // the console and a file output stream.  The prepared LogOutput objects are 
+  // added to a logger, see Chapter 
+  // \ref{Chapter:Logging:StructureOfLoggingComponent}. The commands are as 
+  // follows:
   // 
   // EndLatex
 
@@ -97,7 +100,7 @@ int main( int argc, char* argv[] )
   ofstream fout("log.txt");
   fileLogOutput->SetStream( fout );
 
-  // Creating a Logger object
+  // Creating a logger object
   itk::Logger::Pointer   logger = itk::Logger::New();
   logger->SetName( "MainLogger" );
   // Attaching LogOutput objects to a logger
@@ -112,7 +115,7 @@ int main( int argc, char* argv[] )
 
   // Creating a LoggerManager object
   itk::LoggerManager::Pointer manager = itk::LoggerManager::New();
-  // Creating a Logger object through the LoggerManager object
+  // Creating a logger object through the LoggerManager object
   itk::Logger::Pointer logger2 = manager->CreateLogger( "org.itk.logTester.logger", 
     itk::LoggerBase::DEBUG, itk::LoggerBase::CRITICAL );
   // Adding a LogOutput object to the LoggerManager object
@@ -127,11 +130,11 @@ int main( int argc, char* argv[] )
   // \subsubsection{FLTKTextBufferLogOutput}
   // \label{Chapter:Logging:FLTKTextBufferLogOutput}
   // \index{logging!FLTKTextBufferLogOutput}
-  // The igstk::FLTKTextBufferLogOutput forwards messages to a FLTK text buffer 
-  // which is in Fl\underline{ }Text\underline{ }Buffer type. 
+  // The \code{igstk::FLTKTextBufferLogOutput} forwards messages to a FLTK text 
+  // buffer, which is in Fl\_Text\_Buffer type. 
   // This buffer can be used for other FLTK widgets.
   // 
-  // Let's create an igstk::FLTKTextBufferLogOutput object.
+  // Let's create an \code{igstk::FLTKTextBufferLogOutput} object,
   //
   // EndLatex
 
@@ -143,8 +146,8 @@ int main( int argc, char* argv[] )
   // BeginLatex
   //
   // Then, the following codes create an FLTK window and 
-  // an Fl\underline{ }Text\underline{ }Display widget, which is
-  // contained in the window.
+  // an Fl\_Text\_Display widget, which is
+  // contained in the window:
   //
   // EndLatex
 
@@ -156,9 +159,9 @@ int main( int argc, char* argv[] )
 
   // BeginLatex
   //
-  // An Fl\underline{ }Text\underline{ }Buffer object is created and 
-  // then the Fl\underline{ }Text\underline{ }Display widget is set 
-  // to have a pointer to the text buffer using the buffer() method.
+  // An Fl\_Text\_Buffer object is created,  
+  // then, the Fl\_Text\_Display widget is set 
+  // to have a pointer to the text buffer using the buffer() method:
   //
   // EndLatex
 
@@ -170,7 +173,7 @@ int main( int argc, char* argv[] )
   // BeginLatex
   //
   // The end() method is called to finish containing widgets in the window.
-  // The show() method makes the window visible.
+  // The show() method makes the window visible:
   //
   // EndLatex
 
@@ -181,13 +184,13 @@ int main( int argc, char* argv[] )
 
   // BeginLatex
   //
-  // Finally, Let's assign the FLTK text buffer object as a stream for the
-  // FLTKTextBufferLogOutput object and write some message.  The Write() method
-  // only writes a message on a text buffer object but it doesn't update the
-  // display.  The Flush() method actually updates the display to show the
-  // contents of the buffer.  Although the following example uses Write() and
-  // Flush() methods from the LogOutput object, it is recommended that a Logger
-  // object be used instead.
+  // Finally, let's assign the FLTK text buffer object as a stream for the
+  // FLTKTextBufferLogOutput object and write some messages.  The \code{Write()} 
+  // method only writes a message on a text buffer object.It does not update the
+  // display.  The \code{Flush()} method actually updates the display to show the
+  // contents of the buffer.  Although the following example uses \code{Write()}
+  // and \code{Flush()} methods from the LogOutput object, it is recommended that
+  // a logger object be used instead.
   //
   // EndLatex
   
@@ -202,16 +205,16 @@ int main( int argc, char* argv[] )
   // \subsubsection{FLTKTextLogOutput}
   // \label{Chapter:Logging:FLTKTextLogOutput}
   // \index{logging!FLTKTextLogOutput}
-  // The igstk::FLTKTextLogOutput displays messages in FLTK text window which
-  // is in Fl\underline{ }Text\underline{ }Display type.  This is meant to
-  // diplay log messages on a GUI window.  The FLTKTextLogOutput doesn't need
-  // to use an explicit Flush() method because updating the display is
-  // automatically done by the FLTK text display object.
+  // The \code{igstk::FLTKTextLogOutput} displays messages in FLTK text window, 
+  // which is in Fl\_Text\_Display type.  This is meant to
+  // display log messages on a GUI window.  The \mbox{FLTKTextLogOutput} does not 
+  // need to use an explicit \code{Flush()} method because updating the display 
+  // is automatically done by the FLTK text display object.
   //
-  // An igstk::FLTKTextLogOutput object is created 
-  // and then an Fl\underline{ }Text\underline{ }Display object is set 
+  // An \code{igstk::FLTKTextLogOutput} object is created; 
+  // then, an Fl\_Text\_Display object is set 
   // as a stream of the FLTKTextLogOutput object.
-  // Write() method prints some messages on the text display widget.
+  // \code{Write()} method prints some messages on the text display widget.
   //
   // EndLatex
 
@@ -227,15 +230,15 @@ int main( int argc, char* argv[] )
   // \subsubsection{MultipleLogOutput}
   // \label{Chapter:Logging:MultipleLogOutput}
   // \index{logging!MultipleLogOutput}
-  // The itk::MultipleLogOutput aggregates multiple LogOutput objects in it. 
-  // It is used in the LoggerBase class so that Logger classes 
+  // The \code{itk::MultipleLogOutput} aggregates multiple LogOutput objects in it. 
+  // It is used in the LoggerBase class so that logger classes 
   // can contain multiple LogOutput objects.
   //
-  // The following example shows how to create the itk::MultipleLogOutput object
-  // and add multiple LogOutput objects to the MultipleLogOutput object.
+  // The following example shows how to create the \code{itk::MultipleLogOutput}
+  // object and add multiple LogOutput objects to the MultipleLogOutput object.
   // Whenever an application sends messages to the MultipleLogOutput object,
   // all the messages are redirected to every LogOutput object
-  // in the MultipleLogOutput object.
+  // in the MultipleLogOutput object. The commands are as follows:
   //
   // EndLatex
 
@@ -247,21 +250,7 @@ int main( int argc, char* argv[] )
   multipleLogOutput->Write("This is a test message.\n");
   // EndCodeSnippet
 
-  //
-  // \subsubsection{MultipleOutput}
-  // \label{Chapter:Logging:MultipleOutput}
-  // \index{logging!MultipleOutput}
-  // The igstk::MultipleOutput class is a special 
-  // C++ output stream that will forward data to any other output streams 
-  // that have been connected to it.  In other words, it is used to branch a 
-  // single output into several outputs.  
-  // This class is not derived from LogOutput itself.
-  //
-  // As the following example shows, the igstk::MultipleOutput object is
-  // created without the New() method and can contain multiple output streams.
-  // This object plays a role as an aggregate output stream object redirecting
-  // messages toward output streams it has.
-  //
+  //Patrick took out the duplicated documents
 
   //
   typedef igstk::MultipleOutput  MultipleOutputType;  
@@ -278,9 +267,9 @@ int main( int argc, char* argv[] )
   // \subsubsection{Extending LogOutput}
   // \label{Chapter:Logging:ExtendingLogOutput}
   // \index{logging!Extending LogOutput}
-  // Custom LogOutputs derived from LogOutput class can encapsulate other 
-  // output streams such as TCP/IP connection, OS-dependent system log records,
-  // the ring of files, database table, and so on. Developers only need to 
+  // Custom LogOutputs derived from the LogOutput class can encapsulate other 
+  // output streams, such as a TCP/IP connection, OS-dependent system log records,
+  // the ring of files, a database table, and so on. Developers only need to 
   // provide methods for writing, flushing a buffer, and setting up 
   // the output stream(s).
   //
@@ -295,17 +284,18 @@ int main( int argc, char* argv[] )
   // \subsubsection{Overriding itk::OutputWindow}
   // \label{Chapter:Logging:OutputWindow}
   // \index{logging!itk::OutputWindow}
-  // The itk::LoggerOutput class can override itk::OutputWindow and redirect
-  // log messages from ITK to a Logger object. ITK applications can still use
-  // conventional ITK log codes and those messages can be sent to any type of
-  // Logger by using itk::LoggerOutput class.  itkLoggerOutput.h is the header
-  // file for using the itk::LoggerOutput class.
+  // The \code{itk::LoggerOutput} class can override \code{itk::OutputWindow} 
+  // and redirect log messages from ITK to a logger object. ITK applications can
+  // still use conventional ITK log codes and those messages can be sent to any 
+  // type of logger by using \code{itk::LoggerOutput} class. 
+  // \code{itkLoggerOutput.h} is the header file for using the 
+  // \code{itk::LoggerOutput} class.
   //
-  // The following code fragment shows how to create an itk::LoggerOutput
-  // object and override itk::OutputWindow to redirect messages from ITK to a
-  // Logger object.  Once the setup using OverrideITKWindow() and SetLogger()
-  // methods are done, every message sent toward ITK is redirected to a Logger
-  // object.
+  // The following code fragment shows how to create an \code{itk::LoggerOutput}
+  // object and override \code{itk::OutputWindow} to redirect messages from ITK 
+  // to a logger object. Once the setup using \code{OverrideITKWindow()} and 
+  // \code{SetLogger()} methods are done, every message sent toward ITK is 
+  // redirected to a logger object. The commands are as follows:
   //
   // EndLatex
 
@@ -328,16 +318,17 @@ int main( int argc, char* argv[] )
   // \subsubsection{Overriding vtkOutputWindow}
   // \label{Chapter:Logging:vtkOutputWindow}
   // \index{logging!Overriding vtkOutputWindow}
-  // The igstk::VTKLoggerOutput redirects log messages from VTK to a Logger
-  // object. This class plays a similar role as itk::LoggerOutput but is
-  // included in IGSTK.  igstkVTKLoggerOutput.h should be included for using
-  // the igstk::VTKLoggerOutput class.
+  // The \code{igstk::VTKLoggerOutput} redirects log messages from VTK to a 
+  // logger object. This class plays a similar role as \code{itk::LoggerOutput} 
+  // but is included in IGSTK. \code{igstkVTKLoggerOutput.h} should be included 
+  // for using the \code{igstk::VTKLoggerOutput} class.
   //
   // The structure of the example code is the same as the example for the
-  // itk::LoggerOutput class.  An application creates an igstk::VTKLoggerOutput
-  // object and call OverrideVTKWindow() and SetLogger() methods.  After that,
-  // all the messages toward vtkOutputWindow are redirected to a Logger object.
-  //
+  // \code{itk::LoggerOutput} class.  An application creates an
+  // \code{igstk::VTKLoggerOutput} object and call
+  // \code{OverrideVTKWindow()} and \code{SetLogger()} methods.  After that,
+  // all the messages toward vtkOutputWindow are redirected to a logger object.
+  // The commands are as follows:
   // EndLatex
 
   // BeginCodeSnippet
@@ -367,18 +358,18 @@ int main( int argc, char* argv[] )
   // \subsubsection{LoggerThreadWrapper}
   // \label{Chapter:Logging:LoggerThreadWrapper}
   // \index{logging!LoggerThreadWrapper}
-  // The itk::LoggerThreadWrapper is a template class that wraps a Logger class
-  // to enable logging in a separate thread. LoggerThreadWrapper inherits the
-  // Logger class given as a template argument.  Logging method calls made
+  // \code{itk::LoggerThreadWrapper} is a template class that wraps a logger 
+  // class to enable logging in a separate thread. LoggerThreadWrapper inherits 
+  // the logger class given as a template argument.  Logging method calls made
   // through a LoggerThreadWrapper object are queued and performed whenever the
   // thread takes the available computational resource.  LoggerThreadWrapper
   // provides more flexibility than ThreadLogger by allowing various types of
-  // Loggers to be used, however LoggerThreadWrapper may be problematic when
+  // Loggers to be used; however, LoggerThreadWrapper may be problematic when
   // used with compilers with weak C++ template support.
 
-  // An application should include the header file called
-  // itkLoggerThreadWrapper.h to use this class.  The example code fragment
-  // shows how to wrap a logger within the itk::LoggerThreadWrapper class.
+  // To use this class, an application should include the header file 
+  // \code{itkLoggerThreadWrapper.h} to use this class. The example code fragment
+  // shows how to wrap a logger within the \code{itk::LoggerThreadWrapper} class:
   //
   // EndLatex
 
@@ -395,15 +386,15 @@ int main( int argc, char* argv[] )
   // \subsubsection{ThreadLogger}
   // \label{Chapter:Logging:ThreadLogger}
   // \index{logging!ThreadLogger}
-  // The itk::ThreadLogger provides the same functionality as
-  // LoggerThreadWrapper except that ThreadLogger is derived from the Logger
+  // The \code{itk::ThreadLogger} provides the same functionality as
+  // LoggerThreadWrapper except that ThreadLogger is derived from the logger
   // class. If different types of loggers are necessary instead of the simple
-  // Logger class, these classes derive from ThreadLogger class by creating a
+  // logger class, these classes derive from ThreadLogger class by creating a
   // new class or using LoggerThreadWrapper.
 
-  // An application should include the header file called itkThreadLogger.h to
-  // use this class.  The example code fragment shows how to create an
-  // itk::ThreadLogger object.
+  // An application should include the header file called 
+  // \code{itkThreadLogger.h} to use this class. The example code fragment shows 
+  // how to create an \code{itk::ThreadLogger} object.
   //
   // EndLatex
 

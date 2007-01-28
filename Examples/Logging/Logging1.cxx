@@ -29,7 +29,7 @@ using namespace std;
 
 // BeginLatex
 //
-// This example shows how to extend Logger for printing 
+// This example shows how to extend logger for printing 
 // log messages in a custom format.
 //
 // EndLatex
@@ -40,14 +40,14 @@ using namespace std;
 // done automatically.  Most XML viewers show the hierarchical structure of log
 // messages and provide UIs to collapse and expand subelements.  XMLLogger
 // opens a new element when the first character of the log message is
-// \begin{verbatim}'<'\end{verbatim} and closes an element when the first
-// character is \begin{verbatim}'>'\end{verbatim} Otherwise, a self-closing
+// \verb$'<'$ and closes an element when the first
+// character is \verb$'>'$. Otherwise, a self-closing
 // element is created when no angular bracket is used for the first character.
 // The BuildFormattedEntry() method is redefined in XMLLogger class for
 // overriding default formatting.  It creates a string containing a timestamp,
 // the logger name, the priority level of a message, and the message content.
 // Some of these components can be omitted if unnecessary.  The logger name was
-// omitted here to shorten the length of messages.
+// omitted here to shorten the length of messages. The commands are as follows:
 //
 // EndLatex
 
@@ -132,9 +132,9 @@ int main( int argc, char* argv[] )
   
   // BeginLatex
   // 
-  // The following code fragment creates an XMLLogger instance, 
+  // The following code fragment creates an XMLLogger instance and 
   // StdStreamLogOutput instances connected to a log file and the console,
-  // and then sets parameters for the logger.
+  // and then sets parameters for the logger:
   //
   // EndLatex
 
@@ -156,8 +156,8 @@ int main( int argc, char* argv[] )
   // 
   // The XMLLogger prints log messages in XML format so that the log messages
   // are structured hierarchically.
-  // After running this example, open the generated log.xml file 
-  // using an XML viewer.
+  // After running this example, open the generated \code{log.xml} file 
+  // using an XML viewer, as follows:
   //
   // EndLatex
 
@@ -185,7 +185,7 @@ int main( int argc, char* argv[] )
 
 // BeginLatex
 // 
-// log.xml file is generated as the following:
+// \code{log.xml} file is generated as follows:
 //
 // \begin{verbatim}
 // <Log timestamp='24444134232.34433' level='DEBUG' message='main()'>
