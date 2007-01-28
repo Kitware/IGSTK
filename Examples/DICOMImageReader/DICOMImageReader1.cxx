@@ -35,14 +35,14 @@
 
 // BeginLatex
 // 
-// To use this class, appropriate callback subclasses need to be first defined.
+// To use this class, appropriate callback subclasses need to be defined first.
 // This procedure is important because information is passed from the reader
-// class to the application using information loaded events. The events could
-// be error events or events loaded with dicom information such as modality and
+// class to the application using information-loaded events. The events could
+// be error events or events loaded with DICOM information, such as modality and
 // patient ID. 
 //
-// For example, callback class to observe Modality information is defined as
-// follows.
+// For example, a callback class to observe modality information is defined as
+// follows:
 // 
 // EndLatex
 
@@ -87,8 +87,8 @@ private:
 
 // BeginLatex
 // 
-// Simialar callback classes need to be defined to observe patient name and 
-// image reading error.
+// Similar callback classes need to be defined to observe patient name and 
+// image reading errors.
 //
 // EndLatex
 
@@ -146,8 +146,8 @@ int main( int argc, char* argv[] )
 
   // BeginLatex
   // 
-  // In this example, we would like to read a CT image. Therefore, first a CT
-  // image reader object is insantiated as follows. 
+  // In this example, we would like to read a CT image. First, a CT
+  // image reader object is instantiated as follows:
   // 
   // EndLatex
 
@@ -159,7 +159,7 @@ int main( int argc, char* argv[] )
   
   // BeginLatex
   // 
-  // A logger can be linked to the reader.
+  // A logger can be linked to the reader, as follows:
   // 
   // EndLatex
 
@@ -175,7 +175,7 @@ int main( int argc, char* argv[] )
   
   // BeginLatex
   // 
-  // First, dicom image directory is set 
+  // The DICOM image directory is set as:
   // 
   // EndLatex
 
@@ -214,7 +214,7 @@ int main( int argc, char* argv[] )
   
   // BeginLatex
   //
-  // Similar operation can be performed to access the patient name 
+  // A similar operation can be performed to access the patient name:
   //
   // EndLatex
 
