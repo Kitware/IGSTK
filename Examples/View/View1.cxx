@@ -161,8 +161,8 @@ int main( int, char * [] )
     // The View components are designed for refreshing their representation at
     // regular intervals. The application developer must set the desired
     // refresh rate in Hertz, which should trigger the start of the process of
-    // internal generation of pulses that makes it possible for the View class to
-    // refresh itself.
+    // internal generation of pulses that makes it possible for the View class
+    // to refresh itself.
     // 
     // EndLatex
 
