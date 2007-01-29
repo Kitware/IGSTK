@@ -80,9 +80,9 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// We then add the newly created vessel to the vasculature.
-// Since the \code{VascularNetworkObject} derives from \code{GroupObject}, we use
-// the superclass \code{RequestAddObject()} function:
+// We then add the newly created vessel to the vasculature.  Since the
+// \code{VascularNetworkObject} derives from \code{GroupObject}, we use the
+// superclass \code{RequestAddObject()} function:
 //
 // Software Guide : EndLatex 
 
@@ -91,8 +91,8 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// In some cases, it is interesting to get a selected vessel from
-// a \code{VascularNetworkObject}. To retrieve the vessel, we first need to setup
+// In some cases, it is interesting to get a selected vessel from a
+// \code{VascularNetworkObject}. To retrieve the vessel, we first need to setup
 // an observer, as follows:
 // \begin{verbatim}
 // igstkObserverObjectMacro(Vessel,
