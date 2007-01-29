@@ -285,14 +285,13 @@ int main( int argv, char * argc[] )
 
 // BeginLatex
 //
-// Next, landmark points are added to the image and tracker containers. 
-// The state machine of this registration component is designed so that 
-// the image and tracker coordinates that correspond to
-// each landmark are added consecutively. This scheme prevents
-// the mismatch in landmark correspondence that could occur when all landmarks 
-// image coordinates are recorded first and followed by the tracker coordinates. 
-// This design choice is consistent with the ``safety by design'' philosophy 
-// of IGSTK. The commands are as follows:
+// Next, landmark points are added to the image and tracker containers.  The
+// state machine of this registration component is designed so that the image
+// and tracker coordinates that correspond to each landmark are added
+// consecutively. This scheme prevents the mismatch in landmark correspondence
+// that could occur when all landmarks image coordinates are recorded first and
+// followed by the tracker coordinates.  This design choice is consistent with
+// the ``safety by design'' philosophy of IGSTK. The commands are as follows:
 //
 //EndLatex 
 
