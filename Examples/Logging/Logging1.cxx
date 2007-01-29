@@ -38,12 +38,12 @@ using namespace std;
 // 
 // The XMLLogger class constructs log messages in XML format.  Indentation is
 // done automatically.  Most XML viewers show the hierarchical structure of log
-// messages and provide UIs to collapse and expand subelements.  XMLLogger
+// messages and provide user interfaces to collapse and expand subelements.  XMLLogger
 // opens a new element when the first character of the log message is
-// \verb$'<'$ and closes an element when the first
-// character is \verb$'>'$. Otherwise, a self-closing
+// ``\verb$<$'' and closes an element when the first
+// character is ``\verb$>$''. Otherwise, a self-closing
 // element is created when no angular bracket is used for the first character.
-// The BuildFormattedEntry() method is redefined in XMLLogger class for
+// The \mbox{BuildFormattedEntry()} method is redefined in the XMLLogger class for
 // overriding default formatting.  It creates a string containing a timestamp,
 // the logger name, the priority level of a message, and the message content.
 // Some of these components can be omitted if unnecessary.  The logger name was
@@ -155,7 +155,7 @@ int main( int argc, char* argv[] )
   // BeginLatex
   // 
   // The XMLLogger prints log messages in XML format so that the log messages
-  // are structured hierarchically.
+  // are structured \mbox{hierarchically}.
   // After running this example, open the generated \code{log.xml} file 
   // using an XML viewer, as follows:
   //
