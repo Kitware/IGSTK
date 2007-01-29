@@ -86,13 +86,13 @@
 
 // BeginLatex
 //
-// Since image-guided surgery applications are used in a safety-critical 
+// Since image-guided surgery applications are used in a safety-critical
 // environment, it is important to be able to trace the behavior of the
-// application during the intervention. For this purpose, IGSTK uses a 
-// \doxygen{Logger} class and some helpers. The logger is a class that receives 
-// messages from IGSTK classes and forwards those messages to LoggerOutput 
-// classes. Typical logger output classes are the standard output, a file, and a 
-// popup window. The Logger classes and their helpers are taken from the 
+// application during the intervention. For this purpose, IGSTK uses a
+// \doxygen{Logger} class and some helpers. The logger is a class that receives
+// messages from IGSTK classes and forwards those messages to LoggerOutput
+// classes. Typical logger output classes are the standard output, a file, and
+// a popup window. The Logger classes and their helpers are taken from the
 // Insight Toolkit (ITK): 
 // 
 // EndLatex
@@ -277,11 +277,10 @@ int main(int , char** )
 
 
   // BeginLatex
-  // Next, the refresh frequency of the display window is set. After
-  // the \code{RequestStart()} function is called, the pulse generator inside the
-  // display window will start ticking, and will call the display to update 
-  // itself 60 times per second, as follows:
-  // EndLatex
+  // Next, the refresh frequency of the display window is set. After the
+  // \code{RequestStart()} function is called, the pulse generator inside the
+  // display window will start ticking, and will call the display to update
+  // itself 60 times per second, as follows: EndLatex
   // BeginCodeSnippet
   m_GUI->Display->RequestSetRefreshRate( 60 ); 
   m_GUI->Display->RequestStart();
