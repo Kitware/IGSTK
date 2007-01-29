@@ -63,7 +63,7 @@ int main( int, char * [] )
 
   // BeginLatex
   //
-  // For debugging purposes, VTK window output can be redirected to a logger,
+  // For debugging purposes, the VTK window output can be redirected to a logger,
   // using \doxygen{VTKLoggerOutput}, as follows:
   //
   // EndLatex
@@ -108,8 +108,8 @@ int main( int, char * [] )
 
     // BeginLatex
     // 
-    // Geometrical transformation can be applied to the ellipsoid spatial
-    // object, as follows:
+    // A geometrical transformation can then be applied to the ellipsoid spatial
+    // object as follows:
     // 
     // EndLatex
 
@@ -147,8 +147,8 @@ int main( int, char * [] )
    
     // BeginLatex
     // 
-    // The ellispoid is added to the scene using \code{RequestAddObject}
-    // method, as follows:
+    // The ellipsoid is added to the scene using the \code{RequestAddObject}
+    // method as follows:
     //
     // EndLatex
 
@@ -160,9 +160,9 @@ int main( int, char * [] )
     //
     // The View components are designed for refreshing their representation at
     // regular intervals. The application developer must set the desired
-    // refresh rate in Hertz, which should trigger the start of the process of
+    // refresh rate in Hertz, which should trigger the the 
     // internal generation of pulses that makes it possible for the View class
-    // to refresh itself.
+    // to refresh itself as follows:
     // 
     // EndLatex
 
@@ -198,7 +198,7 @@ int main( int, char * [] )
     // BeginLatex
     // 
     // Once the event loop finishes, the method \code{RequestStop()} should be 
-    // called to stop the refresh process of the View class, as follows:
+    // called to stop the refresh process of the View class as follows:
     //
     // EndLatex
 
