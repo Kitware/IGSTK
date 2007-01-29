@@ -289,8 +289,8 @@ int main( int argv, char * argc[] )
 
   // Estimate target registration error 
   // BeginLatex
-  // Next, the target point that we will be estimating the registration error
-  // is set
+  // Next, the target point, which we will use for estimating the registration
+  // error, is set.
   //
   // EndLatex
 
