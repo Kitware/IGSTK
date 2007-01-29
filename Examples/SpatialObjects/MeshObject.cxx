@@ -23,7 +23,7 @@
 //
 // \index{igstk::MeshObject}
 // This example describes how to use the \doxygen{MeshObject}, which implements
-// a 3-dimensional mesh structure.  
+// a 3D mesh structure.  
 // The mesh class provides an API to perform operations on points and
 // cells. Typically, points and cells are created, with 
 // the cells referring to their defining points.
@@ -50,7 +50,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 //
-// A mesh is defined as a collection of 3-dimensional points (x,y,z) 
+// A mesh is defined as a collection of 3D points (x,y,z) 
 // in space referenced by an identification number.
 // In order to add points to the mesh structure, we use the 
 // \code{AddPoint(unsigned int id,float x, float y,float z)} function.
@@ -67,7 +67,7 @@ mesh->AddPoint(3,10,0,10);
 
 // Software Guide : BeginLatex
 // 
-// Then, we can retreive the list of points using the \code{GetPoints()}
+// Then, we can retrieve the list of points using the \code{GetPoints()}
 // function:
 //
 // Software Guide : EndLatex

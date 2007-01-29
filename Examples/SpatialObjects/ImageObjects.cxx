@@ -23,7 +23,8 @@
 //
 // \index{igstk::CTImageSpatialObject}
 // In this example we show the main features of the ImageObject classes.
-// IGSTK implements one class per modality for CT, MR, and US, as follows:
+// IGSTK implements one class per modality for CT, MRI, and ultrasound, as 
+// follows:
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet

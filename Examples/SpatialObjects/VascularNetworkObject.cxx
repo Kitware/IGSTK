@@ -92,7 +92,7 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // In some cases, it is interesting to get a selected vessel from a
-// \code{VascularNetworkObject}. To retrieve the vessel, we first need to setup
+// \code{VascularNetworkObject}. To retrieve the vessel, we first need to create
 // an observer, as follows:
 // \begin{verbatim}
 // igstkObserverObjectMacro(Vessel,
@@ -137,7 +137,7 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// The vessel is retreived using the \code{GetVessel()} function from the
+// The vessel is retrieved using the \code{GetVessel()} function from the
 // observer, as follows:
 //
 // Software Guide : EndLatex 

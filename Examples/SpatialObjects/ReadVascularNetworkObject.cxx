@@ -35,8 +35,8 @@
 //
 // The SpatialObject readers return the output object via events; 
 // therefore, we declare an observer using the igstkObserverObjectMacro.
-// This macro expects three arguments: a) the name of the observer (to
-// be determined by the user), b) the type of event to observe, and c) the type
+// This macro expects three arguments: 1) the name of the observer (to
+// be determined by the user), 2) the type of event to observe, and 3) the type
 // of the object to be returned. The command is as follows:
 //
 // Software Guide : EndLatex 
@@ -57,7 +57,7 @@ int main( int argc, char *argv[] )
 // Software Guide : BeginLatex
 //
 // First, we declare the VascularNetwork using standard type
-// definition and smart pointers.
+// definitions and smart pointers.
 //
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
@@ -67,7 +67,7 @@ int main( int argc, char *argv[] )
 // Software Guide : BeginLatex
 //
 // We then plug a logger into the reader to get information
-// about the reading process (see the Chapter \ref{Chapter:Logging} for more
+// about the reading process (see Chapter \ref{Chapter:Logging} for more
 // information):
 //
 // Software Guide : EndLatex 

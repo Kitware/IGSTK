@@ -46,7 +46,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 // The \doxygen{ConeObject} has two internal parameters, its radius 
-// and its height both expressed in $mm$. The radius represents the radius of
+// and its height, both expressed in mm. The radius represents the radius of
 // the base of the cone.
 // These two parameters can be set using \code{SetRadius()} and
 // \code{SetHeight()}, as follows:

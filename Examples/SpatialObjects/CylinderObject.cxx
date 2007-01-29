@@ -44,8 +44,8 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
-// The \doxygen{CylinderObject} has two parameters, its radius and its height
-// both expressed in $mm$.
+// The \doxygen{CylinderObject} has two parameters, its radius and its height,
+// both expressed in mm.
 // These two parameters can be set using \code{SetRadius()} and
 // \code{SetHeight()}, as follows:
 //

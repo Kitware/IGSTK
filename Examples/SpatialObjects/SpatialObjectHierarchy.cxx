@@ -69,7 +69,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 //
-// A child object can be retreive from its parent 
+// A child object can be retreived from its parent 
 // by using the \code{GetObject()} function, as follows:
 //
 // Software Guide : EndLatex 
@@ -96,7 +96,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 //
-// Then, in order to retrieve the transformation, we setup an observer:
+// Then, in order to retrieve the transformation, we create an observer:
 //
 // \begin{verbatim}
 //   igstkObserverMacro(Transform,
@@ -137,7 +137,7 @@ int main( int , char *[] )
 // derives from \doxygen{SpatialObject} and acts as an empty container
 // used for grouping objects together.
 //
-// First, we declare a new group using standard type definition and
+// First, we declare a new group using standard type definitions and
 // smart pointers, as follows:
 //
 // Software Guide : EndLatex 

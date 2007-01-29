@@ -23,8 +23,8 @@
 //
 // \index{igstk::AxesObject}
 // This example describes how to use the \doxygen{AxesObject}.
-// This class defines a 3-dimensional coordinate system in space. 
-// It is intended for providing a visual reference of the orientation 
+// This class defines a 3D coordinate system in space. 
+// It is intended to provide a visual reference of the orientation 
 // of space in the context of the scene.
 //
 // First, we include the appropriate header file:

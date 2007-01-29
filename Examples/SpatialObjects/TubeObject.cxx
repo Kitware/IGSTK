@@ -23,7 +23,7 @@
 //
 // \index{igstk::TubeObject}
 // This example describes how to use the \doxygen{TubeObject}, which implements
-// a 3-dimensional tubular structure in space.
+// a 3D tubular structure in space.
 // The tube is defined by a set of points representing its centerline.
 // Each point has a position and an associated radius value.
 //
@@ -50,8 +50,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 // Points can be added sequentially in the tube using
 // the \code{AddPoint()} function.
-// Let's add two points - one at position (0,1,2) with a radius of $10mm$,
-// and second one at (1,2,3) with a radius of $20mm$:
+// Let's add two points - one at position (0,1,2) with a radius of 10mm,
+// and second one at (1,2,3) with a radius of 20mm:
 //
 // Software Guide : EndLatex 
 
