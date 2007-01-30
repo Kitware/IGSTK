@@ -49,6 +49,7 @@ void RegisterTests()
   REGISTER_TEST(igstkImageReaderTest);
   REGISTER_TEST(igstkImageSpatialObjectTest);
   REGISTER_TEST(igstkLandmark3DRegistrationTest);
+  REGISTER_TEST(igstkLandmark3DRegistrationTest2);
   REGISTER_TEST(igstkLandmark3DRegistrationErrorEstimatorTest);
   REGISTER_TEST(igstkMRImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkMRImageSpatialObjectTest);
