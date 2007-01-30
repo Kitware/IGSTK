@@ -138,7 +138,7 @@ int main( int argc, char * argv[] )
 
   if (input.is_open() == 1)
     {
-    std::cout << "PivotCalibration data open sucessully!" << std::endl;
+    std::cout << "PivotCalibration data open successfully!" << std::endl;
     }
   else
     {
@@ -151,9 +151,8 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// Before the computation, it is better to reset the calibration class to 
-// to remove all necessary information which may come from the previous
-// codes, as such:
+// Before the computation, it is better to reset the calibration class 
+// to remove any information which may come from previous operations:
 //
 // EndLatex
 

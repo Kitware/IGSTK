@@ -23,7 +23,7 @@
 
 // BeginLatex
 // 
-// This example illustrates how to use IGSTK's princiapl axis calibration 
+// This example illustrates how to use IGSTK's principal axis calibration 
 // class to determine the rotation matrix for the tracker tools. 
 //
 // EndLatex
@@ -109,8 +109,8 @@ int main( int argc, char * argv[] )
 // BeginLatex
 // 
 // Before the computation, the calibration class must be reset 
-// to remove all necessary information that may come from the previous
-// codes:
+// to remove any information that may come from previous
+// computation:
 //
 // EndLatex
 

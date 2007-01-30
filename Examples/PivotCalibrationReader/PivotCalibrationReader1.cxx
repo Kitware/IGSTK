@@ -24,7 +24,7 @@
 // BeginLatex
 // 
 // This example illustrates how to use IGSTK's pivot calibration 
-// reader class to read the calibration matrix from an offline
+// reader class to read the calibration matrix from an off-line
 // calibration file. 
 //
 // EndLatex
@@ -130,7 +130,7 @@ int main( int argc, char * argv[] )
 // To retrieve all calibration data information, the previous 
 // defined observer is attached to the reader class. 
 // After the \code{RequestGetCalibration} function is called, the calibration  
-// info is passed by the observer's \code{GetCalibration} function. The sample 
+// information is passed by the observer's \code{GetCalibration} function. The sample 
 // code is as follows:
 //
 // EndLatex
@@ -162,7 +162,7 @@ int main( int argc, char * argv[] )
 // BeginLatex
 //
 // To retrieve specific information from the trackers, like serial number and 
-// manufacturer, another string event and observer is attached 
+// manufacturer, another string event observer is attached 
 // to the calibration class. For each request, the information
 // content will be passed by the observer's \code{GetString} function. 
 // Some sample codes are as follows:
