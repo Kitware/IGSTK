@@ -237,7 +237,7 @@ int main(int , char** )
   // Now, The previously created spatial object is attached to the tracker and 
   // the tracker is set to monitor the mouse events from the user interface.
   // The tool port and tool number is the naming convention from NDI trackers 
-  // (refer to Chapter \ref{Chapter:Tracker} on page \pageref{}).
+  // (refer to Chapter \ref{Chapter:Tracker} on page \pageref{Chapter:Tracker}).
   // EndLatex
   // BeginCodeSnippet
   const unsigned int toolPort = 0;
