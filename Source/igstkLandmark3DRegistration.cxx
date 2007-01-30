@@ -241,6 +241,19 @@ Landmark3DRegistration::ResetRegistrationProcessing()
     {
     m_TrackerLandmarks.pop_back();
     }
+
+  //Reset the transform
+  TransformType::ParametersType parameters ( 
+                               m_Transform->GetNumberOfParameters() );
+
+  parameters[0] = 0.0;
+  parameters[1] = 0.0;
+  parameters[2] = 1.0;
+  parameters[3] = 0.0;
+  parameters[4] = 0.0;
+  parameters[5] = 0.0;
+
+  m_Transform->SetParameters( parameters );
   
   m_StateMachine.SelectInitialState( m_IdleState );
 }
