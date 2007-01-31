@@ -286,7 +286,7 @@ int main( int argc, char* argv[] )
 
   // BeginLatex
   //
-  // \subsection{Redirecting ITK and VTK log messages to Logger}
+  // \subsection{Redirecting ITK and VTK Log Messages to Logger}
   // \label{Chapter:Logging:Redirecting}
   // \index{logging!Redirecting ITK, VTK logs to Logger}
   // 
