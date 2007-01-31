@@ -23,7 +23,7 @@
 // BeginLatex
 //
 // To add a graphical user interface to the application, we use FLTK.
-// FLTK is a a light weight cross-platform GUI toolkit. 
+// FLTK is a light weight cross-platform GUI toolkit. 
 // FLTK stores a description of an interface in files with extension .fl. 
 // The FLTK tool \emph{fluid} takes this file and uses it for generating C++ 
 // code in two files: one header file with extension .h, and an implementation
@@ -150,7 +150,7 @@ int main(int , char** )
   // EndCodeSnippet
   // 
   // BeginLatex
-  // The ellipsoid radius can be set to one in all dimensions ( X,Y, and Z ) 
+  // The ellipsoid radius can be set to one in all dimensions ( X, Y, and Z ) 
   // using the \code{SetRadius} member function, as follows:
   // EndLatex
   // BeginCodeSnippet
@@ -204,7 +204,7 @@ int main(int , char** )
 
   // BeginLatex
   // Function \code{RequestEnableInteractions()} allows the user to 
-  // interactively manipulate (rotate, pan, zoomm etc.) the camera. 
+  // interactively manipulate (rotate, pan, zoom etc.) the camera. 
   // For \doxygen{View2D} class, \code{vtkInteractorStyleImage} 
   // is used; for \doxygen{View3D} class, 
   // \code{vtkInteractorStyleTrackballCamera} is used. In IGSTK, the keyboard
@@ -215,7 +215,7 @@ int main(int , char** )
   // (in \doxygen{View2D},
   // camera direction is always perpendicular to image plane, so there is no 
   // rotational movement available for it); middle mouse button 
-  // pans the camera; right mouse button dollies the camera.
+  // pans the camera; and right mouse button dollies the camera.
   // EndLatex
   // BeginCodeSnippet
   m_GUI->Display->RequestEnableInteractions();
@@ -234,7 +234,7 @@ int main(int , char** )
   // EndCodeSnippet
 
   // BeginLatex
-  // Now, The previously created spatial object is attached to the tracker and 
+  // Now, the previously created spatial object is attached to the tracker and 
   // the tracker is set to monitor the mouse events from the user interface.
   // The tool port and tool number is the naming convention from NDI trackers 
   // (refer to Chapter \ref{Chapter:Tracker} on page \pageref{Chapter:Tracker}).
