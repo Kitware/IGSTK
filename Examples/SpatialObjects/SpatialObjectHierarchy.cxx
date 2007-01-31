@@ -69,7 +69,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 //
-// A child object can be retreived from its parent 
+// A child object can be retrieved from its parent 
 // by using the \code{GetObject()} function, as follows:
 //
 // Software Guide : EndLatex 

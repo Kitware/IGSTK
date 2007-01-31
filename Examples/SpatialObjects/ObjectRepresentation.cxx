@@ -25,7 +25,7 @@
 // This example describes how to use the \doxygen{BoxObjectRepresentation}
 // to display a \doxygen{BoxObject} in a \doxygen{View3D}.
 // 
-// This example also uses FLTK to create a window, therfore we include the 
+// This example also uses FLTK to create a window, therefore we include the 
 // appropriate header files.
 // Software Guide : EndLatex 
 
@@ -71,7 +71,7 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Every ObjectRepresentation have an RGB color and an opacity as rendering
+// Every ObjectRepresentation has a RGB color and an opacity as rendering
 // parameters. These two parameters can be tuned using 
 // the \code{SetColor(R,G,B)} and \code{SetOpacity()} functions respectively.
 //
