@@ -287,7 +287,7 @@ int main(int , char** )
   // EndCodeSnippet
 
   // BeginLatex
-  // All applications should includes the following code. This is the main event
+  // All applications should include the following code. This is the main event
   // loop of the application. First, it checks if the application is aborted by
   // user. If not, it calls for the \doxygen{PulseGenerator} to check its time
   // out. The command is as follows:
