@@ -468,6 +468,8 @@ void Tracker::CommunicationEstablishmentSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, 
     "igstk::Tracker::CommunicationEstablishmentSuccessProcessing called ...\n");
+
+  this->InvokeEvent( TrackerOpenEvent() );
 }
 
 
@@ -476,6 +478,8 @@ void Tracker::CommunicationEstablishmentFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::"
                  "CommunicationEstablishmentFailureProcessing called ...\n");
+
+  this->InvokeEvent( TrackerOpenErrorEvent() );
 }
 
 /** The Reset methods force the tracker to the
@@ -533,6 +537,8 @@ void Tracker::ToolsActivationSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::ToolsActivationSuccessProcessing "
                  "called ...\n");
+
+  this->InvokeEvent( TrackerInitializeEvent() );
 }
 
 /** Post-processing after ports and tools setup has failed. */ 
@@ -540,6 +546,8 @@ void Tracker::ToolsActivationFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::ToolsActivationFailureProcessing "
                  "called ...\n");
+
+  this->InvokeEvent( TrackerInitializeErrorEvent() );
 }
 
 /** The "AttemptToStartTracking" method attempts to start tracking. */

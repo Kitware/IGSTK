@@ -44,6 +44,9 @@ itkEventMacro( TrackerOpenErrorEvent,                      TrackerErrorEvent);
 itkEventMacro( TrackerCloseEvent,                          TrackerEvent);
 itkEventMacro( TrackerCloseErrorEvent,                     TrackerErrorEvent);
 
+itkEventMacro( TrackerInitializeEvent,                     TrackerEvent);
+itkEventMacro( TrackerInitializeErrorEvent,                TrackerErrorEvent);
+
 itkEventMacro( TrackerStartTrackingEvent,                  TrackerEvent);
 itkEventMacro( TrackerStartTrackingErrorEvent,             TrackerErrorEvent);
 
