@@ -100,8 +100,8 @@ public:
 
     m_Communication->OpenCommunication();
 
-    m_Tracker->Open();
-    m_Tracker->Initialize();
+    m_Tracker->RequestOpen();
+    m_Tracker->RequestInitialize();
 
     // Set up the four quadrant views
     this->Display3D->RequestResetCamera();
@@ -115,21 +115,21 @@ public:
 
   ~OneViewAndTrackingImplementation()
     {
-    m_Tracker->Reset();
-    m_Tracker->StopTracking();
-    m_Tracker->Close();
+    m_Tracker->RequestReset();
+    m_Tracker->RequestStopTracking();
+    m_Tracker->RequestClose();
     }
   
   void EnableTracking()
     {
     m_Tracking = true;
-    m_Tracker->StartTracking();
+    m_Tracker->RequestStartTracking();
     }
   
   void DisableTracking()
     {
-    m_Tracker->Reset();
-    m_Tracker->StopTracking();
+    m_Tracker->RequestReset();
+    m_Tracker->RequestStopTracking();
     m_Tracking = false;
     }
   

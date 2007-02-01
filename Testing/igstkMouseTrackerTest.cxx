@@ -62,15 +62,15 @@ int igstkMouseTrackerTest( int, char * [] )
     return EXIT_FAILURE;
     }
 
-  tracker->Open();
+  tracker->RequestOpen();
 
-  tracker->Initialize();
+  tracker->RequestInitialize();
 
-  tracker->StartTracking();
+  tracker->RequestStartTracking();
 
   TransformType transform;
 
-  tracker->UpdateStatus();
+  tracker->RequestUpdateStatus();
 
   tracker->GetTransform( transform );
 
@@ -79,14 +79,14 @@ int igstkMouseTrackerTest( int, char * [] )
   std::cout << "Mouse Position -> ( " << position[0] << "," 
             << position[1] << "," << position[2] << ")" << std::endl;
 
-  tracker->Reset();
+  tracker->RequestReset();
 
-  tracker->StopTracking();
+  tracker->RequestStopTracking();
 
   std::cout << tracker << std::endl;
   std::cout << transform << std::endl;
 
-  tracker->Close();
+  tracker->RequestClose();
 
   return EXIT_SUCCESS;
 }

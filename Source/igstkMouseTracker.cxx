@@ -36,13 +36,6 @@ MouseTracker::~MouseTracker()
 {
 }
 
-void MouseTracker::Initialize()
-{
-  igstkLogMacro( DEBUG, "MouseTracker::Initialize called ...\n");
-  m_ValidityTime = 100.0; // 100.0 milliseconds
-  this->Tracker::Initialize();
-}
-    
 MouseTracker::ResultType MouseTracker::InternalOpen( void )
 {
   return SUCCESS;

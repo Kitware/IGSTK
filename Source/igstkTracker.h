@@ -107,33 +107,33 @@ public:
   typedef TrackerPortType::Pointer          TrackerPortPointer;
   typedef std::vector< TrackerPortPointer > TrackerPortVectorType;
 
-  /** The "Open" method attempts to open communication with the 
+  /** The "RequestOpen" method attempts to open communication with the 
    *  tracking device. It generates a TrackerOpenEvent if successful,
    *  or a TrackerOpenErrorEvent if not successful.  */
-  void Open( void );
+  void RequestOpen( void );
 
-  /** The "Close" method closes communication with the device. 
+  /** The "RequestClose" method closes communication with the device. 
    *  It generates a TrackerCloseEvent if successful,
    *  or a TrackerCloseErrorEvent if not successful. */
-  void Close( void );
+  void RequestClose( void );
 
-  /** The "Initialize" method initializes a newly opened device. */
-  void Initialize( void );
+  /** The "RequestInitialize" method initializes a newly opened device. */
+  void RequestInitialize( void );
 
-  /** The "Reset" tracker method should be used to bring the tracker
+  /** The "RequestReset" tracker method should be used to bring the tracker
   to some defined default state. */
-  void Reset( void );
+  void RequestReset( void );
 
-  /** The "StartTracking" method readies the tracker for tracking the
+  /** The "RequestStartTracking" method readies the tracker for tracking the
   tools connected to the tracker. */
-  void StartTracking( void );
+  void RequestStartTracking( void );
 
-  /** The "StopTracking" stops tracker from tracking the tools. */
-  void StopTracking( void );
+  /** The "RequestStopTracking" stops tracker from tracking the tools. */
+  void RequestStopTracking( void );
   
-  /** The "UpdateStatus" method is used for updating the status of 
+  /** The "RequestUpdateStatus" method is used for updating the status of 
   ports and tools when the tracker is in tracking state. */
-  void UpdateStatus( void );
+  void RequestUpdateStatus( void );
 
   /** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
    * port numbered "portNumber" in the variable "position". Note that this

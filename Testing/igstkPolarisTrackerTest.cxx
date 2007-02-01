@@ -157,8 +157,8 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   std::cout << "SetCommunication()" << std::endl;
   tracker->SetCommunication( serialComm );
 
-  std::cout << "Open()" << std::endl;
-  tracker->Open();
+  std::cout << "RequestOpen()" << std::endl;
+  tracker->RequestOpen();
 
 #ifdef IGSTK_SIMULATOR_TEST
   std::string romFile = igstkDataDirectory + "/";
@@ -167,8 +167,8 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   tracker->AttachSROMFileNameToPort( 3, romFile.c_str() );
 #endif /* IGSTK_SIMULATOR_TEST */
 
-  std::cout << "Initialize()" << std::endl;
-  tracker->Initialize();
+  std::cout << "RequestInitialize()" << std::endl;
+  tracker->RequestInitialize();
 
   std::cout << tracker << std::endl;
 
@@ -177,8 +177,8 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
 
   std::cout << "NumberOfTools : " << ntools << std::endl;
 
-  std::cout << "StartTracking()" << std::endl;
-  tracker->StartTracking();
+  std::cout << "RequestStartTracking()" << std::endl;
+  tracker->RequestStartTracking();
 
   typedef igstk::Transform            TransformType;
   typedef ::itk::Vector<double, 3>    VectorType;
@@ -186,7 +186,7 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
 
   for(unsigned int i=0; i<10; i++)
     {
-    tracker->UpdateStatus();
+    tracker->RequestUpdateStatus();
     for (unsigned int port = 0; port < 4; port++)
       {
       TransformType             transform;
@@ -200,20 +200,20 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
       }
     }
   
-  std::cout << "Reset()" << std::endl;
-  tracker->Reset();
+  std::cout << "RequestReset()" << std::endl;
+  tracker->RequestReset();
   
-  std::cout << "Initialize()" << std::endl;
-  tracker->Initialize();
+  std::cout << "RequestInitialize()" << std::endl;
+  tracker->RequestInitialize();
   
-  std::cout << "StartTracking()" << std::endl;
-  tracker->StartTracking();
+  std::cout << "RequestStartTracking()" << std::endl;
+  tracker->RequestStartTracking();
 
-  std::cout << "StopTracking()" << std::endl;
-  tracker->StopTracking();
+  std::cout << "RequestStopTracking()" << std::endl;
+  tracker->RequestStopTracking();
 
-  std::cout << "Close()" << std::endl;
-  tracker->Close();
+  std::cout << "RequestClose()" << std::endl;
+  tracker->RequestClose();
 
   std::cout << "CloseCommunication()" << std::endl;
   serialComm->CloseCommunication();

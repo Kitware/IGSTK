@@ -84,7 +84,6 @@ public:
 
     typedef Superclass::TransformType           TransformType;
 
-    void Initialize() { this->Tracker::Initialize(); }
     void GetTransform(TransformType & transform) 
           { this->GetToolTransform(0, 0, transform); }
 
@@ -181,14 +180,14 @@ int igstkSpatialObjectTest( int, char * [] )
   const unsigned int toolNumber = 0;
 
 
-  tracker->Open();
-  tracker->Initialize();
+  tracker->RequestOpen();
+  tracker->RequestInitialize();
 
   tracker->AttachObjectToTrackerTool( toolPort, toolNumber, dummyObject );
 
   dummyObject->Print( std::cout );
   
-  tracker->StartTracking();
+  tracker->RequestStartTracking();
 
   for(unsigned int i=0; i<50; i++)
     {
@@ -196,8 +195,8 @@ int igstkSpatialObjectTest( int, char * [] )
     dummyObject->RequestGetTransform();
     }
 
-  tracker->StopTracking();
-  tracker->Close();
+  tracker->RequestStopTracking();
+  tracker->RequestClose();
 
   std::cout << "[PASSED]" << std::endl;
 

@@ -133,13 +133,13 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 
   std::cout << "Exited SetCommunication ..." << std::endl;
 
-  tracker->Open();
+  tracker->RequestOpen();
 
   std::cout << tracker << std::endl;
 
-  tracker->Initialize();
+  tracker->RequestInitialize();
 
-  tracker->StartTracking();
+  tracker->RequestStartTracking();
 
   typedef igstk::Transform            TransformType;
   typedef ::itk::Vector<double, 3>    VectorType;
@@ -150,16 +150,16 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 
   for(int i=0; i<10; i++)
     {
-    tracker->UpdateStatus();
+    tracker->RequestUpdateStatus();
     tracker->GetToolTransform( 0, 0, transitions );
     position = transitions.GetTranslation();
     std::cout << "Position = (" << position[0] << "," 
               << position[1] << "," << position[2] << ")" << std::endl;
     }
 
-  tracker->StopTracking();
+  tracker->RequestStopTracking();
 
-  tracker->Close();
+  tracker->RequestClose();
 
   serialComm->CloseCommunication();
 

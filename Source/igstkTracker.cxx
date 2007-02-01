@@ -188,7 +188,7 @@ Tracker::Tracker(void) :  m_StateMachine( this )
   m_PulseGenerator = PulseGenerator::New();
 
   m_PulseObserver = ObserverType::New();
-  m_PulseObserver->SetCallbackFunction( this, & Tracker::UpdateStatus );
+  m_PulseObserver->SetCallbackFunction( this, & Tracker::RequestUpdateStatus );
   m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
 
   // This is update rate for sending tracking information to the
@@ -211,68 +211,68 @@ Tracker::~Tracker(void)
 }
 
 
-/** The "Open" method attempts to open communication with the
+/** The "RequestOpen" method attempts to open communication with the
  *  tracking device. */
-void Tracker::Open( void )
+void Tracker::RequestOpen( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::Open called...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::RequestOpen called...\n");
   igstkPushInputMacro( EstablishCommunication );
   this->m_StateMachine.ProcessInputs();
 }
 
 
-/** The "Close" method closes communication with the device. */
-void Tracker::Close( void )
+/** The "RequestClose" method closes communication with the device. */
+void Tracker::RequestClose( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::Close called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::RequestClose called ...\n");
   igstkPushInputMacro( CloseCommunication );
   m_StateMachine.ProcessInputs();
 }
 
 
-/** The "Initialize" method initializes a newly opened device. */
-void Tracker::Initialize( void )
+/** The "RequestInitialize" method initializes a newly opened device. */
+void Tracker::RequestInitialize( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::Initialize called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::RequestInitialize called ...\n");
   igstkPushInputMacro( ActivateTools );
   this->m_StateMachine.ProcessInputs();
 }
 
 
-/** The "Reset" tracker method should be used to bring the tracker
+/** The "RequestReset" tracker method should be used to bring the tracker
  * to some defined default state. */
-void Tracker::Reset( void )
+void Tracker::RequestReset( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::Reset called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::RequestReset called ...\n");
   igstkPushInputMacro( Reset );
   m_StateMachine.ProcessInputs();
 }
 
 
-/** The "StartTracking" method readies the tracker for tracking the
+/** The "RequestStartTracking" method readies the tracker for tracking the
  *  tools connected to the tracker. */
-void Tracker::StartTracking( void )
+void Tracker::RequestStartTracking( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::StartTracking called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::RequestStartTracking called ...\n");
   igstkPushInputMacro( StartTracking );
   m_StateMachine.ProcessInputs();
 }
 
 
-/** The "StopTracking" stops tracker from tracking the tools. */
-void Tracker::StopTracking( void )
+/** The "RequestStopTracking" stops tracker from tracking the tools. */
+void Tracker::RequestStopTracking( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::StopTracking called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::RequestStopTracking called ...\n");
   igstkPushInputMacro( StopTracking );
   m_StateMachine.ProcessInputs();
 }
 
 
-/** The "UpdateStatus" method is used for updating the status of 
+/** The "RequestUpdateStatus" method is used for updating the status of 
  *  ports and tools when the tracker is in tracking state. */
-void Tracker::UpdateStatus( void )
+void Tracker::RequestUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::UpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::RequestUpdateStatus called ...\n");
   igstkPushInputMacro( UpdateStatus );
   m_StateMachine.ProcessInputs();
 }
@@ -768,7 +768,7 @@ void Tracker::UpdateStatusSuccessProcessing( void )
   this->InvokeEvent( TrackerUpdateStatusEvent() );  
 }
 
-/** This method is called when a call to UpdateStatus failed */
+/** This method is called when a call to RequestUpdateStatus failed */
 void Tracker::UpdateStatusFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::UpdateStatusFailureProcessing "

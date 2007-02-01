@@ -43,9 +43,6 @@ public:
 
   typedef Superclass::TransformType           TransformType;
 
-  /** Initialize the tracker */
-  void Initialize();
-
   /** Get the transform */ 
   void GetTransform(TransformType & transform);
 

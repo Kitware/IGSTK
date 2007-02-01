@@ -228,8 +228,8 @@ int main(int , char** )
   // EndLatex
   // BeginCodeSnippet
   igstk::MouseTracker::Pointer tracker = igstk::MouseTracker::New();
-  tracker->Open();
-  tracker->Initialize();
+  tracker->RequestOpen();
+  tracker->RequestInitialize();
   tracker->SetScaleFactor( 100.0 );
   // EndCodeSnippet
 
@@ -306,8 +306,8 @@ int main(int , char** )
   // closed and other clean up procedures are executed, as follows:
   // EndLatex
   // BeginCodeSnippet
-  tracker->StopTracking();
-  tracker->Close();
+  tracker->RequestStopTracking();
+  tracker->RequestClose();
   delete m_GUI;
   ofs.close();
   return EXIT_SUCCESS;

@@ -294,52 +294,52 @@ int igstkBasicTrackerTest( int, char * [] )
   const unsigned int portNumber = 0;
   tracker->AttachObjectToTrackerTool(portNumber, toolNumber, object);
 
-  tracker->Open();  // for failure
-  tracker->Open();  // for success
+  tracker->RequestOpen();  // for failure
+  tracker->RequestOpen();  // for success
 
-  tracker->Initialize();  // for failure
-  tracker->Initialize();  // for success
+  tracker->RequestInitialize();  // for failure
+  tracker->RequestInitialize();  // for success
 
-  tracker->StartTracking(); // for failure
-  tracker->StartTracking(); // for success
+  tracker->RequestStartTracking(); // for failure
+  tracker->RequestStartTracking(); // for success
 
-  tracker->UpdateStatus();  // for failure
-  tracker->UpdateStatus();  // for success
+  tracker->RequestUpdateStatus();  // for failure
+  tracker->RequestUpdateStatus();  // for success
 
-  tracker->UpdateStatus();
+  tracker->RequestUpdateStatus();
 
-  tracker->Reset(); // for failure
-  tracker->Reset(); // for success
+  tracker->RequestReset(); // for failure
+  tracker->RequestReset(); // for success
 
-  tracker->Initialize();
-  tracker->StartTracking();
+  tracker->RequestInitialize();
+  tracker->RequestStartTracking();
   
-  tracker->StopTracking();  // for failure
-  tracker->Close();   // for failure of DeactivateTools
-  tracker->Close();   // for failure of Close
-  tracker->Close();
+  tracker->RequestStopTracking();  // for failure
+  tracker->RequestClose();   // for failure of DeactivateTools
+  tracker->RequestClose();   // for failure of Close
+  tracker->RequestClose();
 
   // for testing CloseFromToolsActiveStateProcessing()
-  tracker->Open();
-  tracker->Initialize();
-  tracker->Close();
+  tracker->RequestOpen();
+  tracker->RequestInitialize();
+  tracker->RequestClose();
 
   // covering the base tracker's internal functions
   igstk::Tracker::Pointer basetracker = igstk::Tracker::New();
   basetracker->SetLogger( logger );
 
-  basetracker->Open();
+  basetracker->RequestOpen();
 
-  basetracker->Initialize();
+  basetracker->RequestInitialize();
 
-  basetracker->StartTracking();
+  basetracker->RequestStartTracking();
 
-  basetracker->UpdateStatus();
-  basetracker->Reset();
-  basetracker->Initialize();
-  basetracker->StartTracking();
-  basetracker->StopTracking();
-  basetracker->Close();
+  basetracker->RequestUpdateStatus();
+  basetracker->RequestReset();
+  basetracker->RequestInitialize();
+  basetracker->RequestStartTracking();
+  basetracker->RequestStopTracking();
+  basetracker->RequestClose();
 
   std::cout << "[PASSED]" << std::endl;
   return EXIT_SUCCESS;
