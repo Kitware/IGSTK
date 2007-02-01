@@ -116,8 +116,8 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
                                              rotationP,0.0001,100000000);
   m_Tracker->SetPatientTransform(patientTransform);
 
-  m_Tracker->Open();
-  m_Tracker->Initialize();
+  m_Tracker->RequestOpen();
+  m_Tracker->RequestInitialize();
 
   // Set up the four quadrant views
   this->Display3D->RequestResetCamera();
@@ -173,9 +173,9 @@ UltrasoundGuidedRFAImplementation
 {
   this->Display3D->RequestStop();
   this->Display2D->RequestStop();
-  this->m_Tracker->Reset();
-  this->m_Tracker->StopTracking();
-  this->m_Tracker->Close();
+  this->m_Tracker->RequestReset();
+  this->m_Tracker->RequestStopTracking();
+  this->m_Tracker->RequestClose();
 }
 
 /** Quit */
@@ -210,14 +210,14 @@ void UltrasoundGuidedRFAImplementation::SetAxialSliderBoundsProcessing()
 void UltrasoundGuidedRFAImplementation::EnableTracking()
 {
   m_Tracking = true;
-  m_Tracker->StartTracking();
+  m_Tracker->RequestStartTracking();
 }
 
 /** Start the tracking */
 void UltrasoundGuidedRFAImplementation::DisableTracking()
 {
-  m_Tracker->Reset();
-  m_Tracker->StopTracking();
+  m_Tracker->RequestReset();
+  m_Tracker->RequestStopTracking();
   m_Tracking = false;
 }
 
@@ -454,7 +454,7 @@ void UltrasoundGuidedRFAImplementation
     return;
     }
 
-  m_Tracker->UpdateStatus();
+  m_Tracker->RequestUpdateStatus();
 
   typedef igstk::Transform            TransformType;
   typedef TransformType::VectorType   VectorType;

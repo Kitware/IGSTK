@@ -496,11 +496,11 @@ void FourViewsTrackingWithCT::InitializeTrackerProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
           "FourViewsTrackingWithCT::InitializeTrackerProcessing called ... \n" )
-  m_Tracker->Open();
+  m_Tracker->RequestOpen();
   m_Tracker->AttachSROMFileNameToPort( 
                                     TRACKER_TOOL_PORT, TRACKER_TOOL_SROM_FILE );
-  m_Tracker->Initialize();
-  m_Tracker->StartTracking();
+  m_Tracker->RequestInitialize();
+  m_Tracker->RequestStartTracking();
   m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(), 
              m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
 }
@@ -630,7 +630,7 @@ void FourViewsTrackingWithCT::AddTrackerLandmarkProcessing()
 void FourViewsTrackingWithCT::GetTrackerTransform()
 {
   igstkLogMacro2( m_Logger, DEBUG, "Tracker::GetToolTransform called...\n" )
-  m_Tracker->UpdateStatus();
+  m_Tracker->RequestUpdateStatus();
   m_Tracker->GetToolTransform( 
                       TRACKER_TOOL_PORT, 0, m_TrackerLandmarkTransformToBeSet );
 }
@@ -693,7 +693,7 @@ void FourViewsTrackingWithCT::StartTrackingProcessing()
 
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Cylinder );
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Ellipsoid );
-  m_Tracker->StartTracking();
+  m_Tracker->RequestStartTracking();
   m_PulseGenerator->RequestStart();   
   /** We don't have observer for tracker, we are actively reading the transform 
     * right now,how to get the failure condition */
@@ -747,7 +747,7 @@ void FourViewsTrackingWithCT::StopTrackingProcessing()
   /** We don't have observer for tracker, we are actively reading the transform 
     * right now
     */
-  m_Tracker->StopTracking();
+  m_Tracker->RequestStopTracking();
   m_PulseGenerator->RequestStop();
   // FIXME, How to get the failure condition
   m_StateMachine.PushInput( m_StopTrackingSuccessInput ); 
@@ -1010,9 +1010,9 @@ void FourViewsTrackingWithCT::RequestReset()
 void FourViewsTrackingWithCT::Reset()
 {
   //FILLME!!!!!!!!
-  m_Tracker->StopTracking();
-  m_Tracker->Close();
-  m_Tracker->Reset();
+  m_Tracker->RequestStopTracking();
+  m_Tracker->RequestClose();
+  m_Tracker->RequestReset();
 
   m_LandmarkRegistration->RequestResetRegistration();
 

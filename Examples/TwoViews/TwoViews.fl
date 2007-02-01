@@ -53,11 +53,11 @@ delete Display2;} {selected
   } {
     code {if( tracking )
   {
-  this->m_Tracker->StartTracking();
+  this->m_Tracker->RequestStartTracking();
   }
 else
   {
-  this->m_Tracker->StopTracking();
+  this->m_Tracker->RequestStopTracking();
   }} {}
   }
   Function {SetTracker( TrackerType * tracker )} {return_type {virtual void}

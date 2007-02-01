@@ -124,8 +124,8 @@ int main(int , char** )
   igstk::MouseTracker::Pointer tracker = igstk::MouseTracker::New();
 
   // Initialize the tracker
-  tracker->Open();
-  tracker->Initialize();
+  tracker->RequestOpen();
+  tracker->RequestInitialize();
   tracker->SetScaleFactor( 100.0 );
 
   const unsigned int toolPort = 0;
@@ -171,8 +171,8 @@ int main(int , char** )
   m_GUI->Display1->RequestStop();
   m_GUI->Display2->RequestStop();
 
-  tracker->StopTracking();
-  tracker->Close();
+  tracker->RequestStopTracking();
+  tracker->RequestClose();
 
   delete m_GUI;
 
