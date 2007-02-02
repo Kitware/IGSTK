@@ -44,11 +44,11 @@ this->quit = true;} {}
   } {
     code {if( tracking )
   {
-  this->m_Tracker->StartTracking();
+  this->m_Tracker->RequestStartTracking();
   }
 else
   {
-  this->m_Tracker->StopTracking();
+  this->m_Tracker->RequestStopTracking();
   }} {}
   }
   Function {~HelloWorldGUI()} {open return_type virtual
