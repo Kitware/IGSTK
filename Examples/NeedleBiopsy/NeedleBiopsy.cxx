@@ -6,7 +6,7 @@ Language:  C++
 Date:      $Date$
 Version:   $Revision$
 
-Copyright (c) ISIS Georgetown University. All rights reserved.
+Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
 See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
 
 This software is distributed WITHOUT ANY WARRANTY; without even
@@ -898,6 +898,7 @@ void NeedleBiopsy::ResliceImage ( IndexType index )
 void NeedleBiopsy::ConnectImageRepresentationProcessing()
 {
   m_Annotation2D->RequestAddAnnotationText( 2, "Subject: " + m_PatientName );
+
   m_Annotation2D->RequestAddAnnotationText( 0, "Georgetown ISIS Center" );
 
   m_ImageRepresentationAxial->RequestSetImageSpatialObject( 
