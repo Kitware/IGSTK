@@ -6,7 +6,7 @@
   Date:      $Date$
   Version:   $Revision$
 
-  Copyright (c) ISIS Georgetown University. All rights reserved.
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
   See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
 
   Portions of this code are covered under the VTK copyright.

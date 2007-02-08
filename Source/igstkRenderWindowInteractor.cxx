@@ -6,7 +6,7 @@
   Date:      $Date$
   Version:   $Revision$
 
-  Copyright (c) ISIS Georgetown University. All rights reserved.
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
   See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
@@ -26,7 +26,7 @@
 
 namespace igstk {
 
-vtkCxxRevisionMacro (RenderWindowInteractor, "1.1");
+vtkCxxRevisionMacro (RenderWindowInteractor, "1.2");
 vtkStandardNewMacro (RenderWindowInteractor);
 
 
