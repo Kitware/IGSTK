@@ -213,16 +213,16 @@ int main( int argc, char* argv[] )
   // \subsubsection{FLTKTextLogOutput}
   // \label{Chapter:Logging:FLTKTextLogOutput}
   // \index{logging!FLTKTextLogOutput}
-  // The \code{igstk::FLTKTextLogOutput} displays messages in a FLTK text window,
-  // which is in Fl\_Text\_Display type.  This is meant to display log messages
-  // on a GUI window.  The \mbox{FLTKTextLogOutput} does not need to use an
-  // explicit \code{Flush()} method because updating the display is
+  // The \code{igstk::FLTKTextLogOutput} displays messages in a FLTK text
+  // window, which is in Fl\_Text\_Display type.  This is meant to display log
+  // messages on a GUI window.  The \mbox{FLTKTextLogOutput} does not need to
+  // use an explicit \code{Flush()} method because updating the display is
   // automatically done by the FLTK text display object.
   //
-  // An \code{igstk::FLTKTextLogOutput} object is created; 
-  // then, an Fl\_Text\_Display object is set 
-  // as a stream of the FLTKTextLogOutput object.
-  // The \code{Write()} method prints some messages on the text display widget.
+  // An \code{igstk::FLTKTextLogOutput} object is created; then, an
+  // Fl\_Text\_Display object is set as a stream of the FLTKTextLogOutput
+  // object.  The \code{Write()} method prints some messages on the text
+  // display widget.
   //
   // EndLatex
 

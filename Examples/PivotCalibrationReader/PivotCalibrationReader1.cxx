@@ -127,11 +127,10 @@ int main( int argc, char * argv[] )
 
 // BeginLatex
 // 
-// To retrieve all calibration data information, the previous 
-// defined observer is attached to the reader class. 
-// After the \code{RequestGetCalibration} function is called, the calibration  
-// information is passed by the observer's \code{GetCalibration} function. The sample 
-// code is as follows:
+// To retrieve all calibration data information, the previous defined observer
+// is attached to the reader class.  After the \code{RequestGetCalibration}
+// function is called, the calibration  information is passed by the observer's
+// \code{GetCalibration} function. The sample code is as follows:
 //
 // EndLatex
 

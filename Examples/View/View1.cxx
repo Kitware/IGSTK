@@ -63,8 +63,8 @@ int main( int, char * [] )
 
   // BeginLatex
   //
-  // For debugging purposes, the VTK window output can be redirected to a logger,
-  // using \doxygen{VTKLoggerOutput}, as follows:
+  // For debugging purposes, the VTK window output can be redirected to a
+  // logger, using \doxygen{VTKLoggerOutput}, as follows:
   //
   // EndLatex
 
