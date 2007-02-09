@@ -7,7 +7,7 @@
   Version:   $Revision$
 
   Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
-  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm for details.

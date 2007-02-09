@@ -7,7 +7,7 @@
   Version:   $Revision$
 
   Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
-  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even 
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
