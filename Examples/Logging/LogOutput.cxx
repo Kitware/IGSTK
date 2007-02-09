@@ -386,8 +386,8 @@ int main( int argc, char* argv[] )
   // EndLatex
 
   // BeginCodeSnippet
-  itk::LoggerThreadWrapper<itk::Logger>::Pointer 
-                     wrappedLogger = itk::LoggerThreadWrapper<itk::Logger>::New();
+  typedef itk::LoggerThreadWrapper<itk::Logger> LoggerType;
+  LoggerType::Pointer wrappedLogger = LoggerType::New();
   // EndCodeSnippet
 
   // BeginLatex
@@ -401,8 +401,8 @@ int main( int argc, char* argv[] )
   // The \code{itk::ThreadLogger} provides the same functionality as
   // LoggerThreadWrapper except that ThreadLogger is derived from the logger
   // class. If different types of loggers are necessary instead of the simple
-  // logger class, these classes derive from the ThreadLogger class by creating a
-  // new class or by using LoggerThreadWrapper.
+  // logger class, these classes derive from the ThreadLogger class by creating
+  // a new class or by using LoggerThreadWrapper.
 
   // An application should include the header file called
   // \code{itkThreadLogger.h} to use this class. The example code fragment
