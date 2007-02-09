@@ -195,16 +195,6 @@ IF (IGSTK_DATA_ROOT)
            igstkMR3DImageToUS3DImageRegistrationTest 
            ${IGSTK_DATA_ROOT}/Input/MRLiver)
 
-  ADD_TEST( igstkUltrasoundImageSimulatorTest ${IGSTK_TESTS}
-             --compare ${IGSTKSandbox_BASELINE_DIR}/igstkUltrasoundImageSimulatorTest.png 
-             ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
-             --toleranceIntensity 10
-             --toleranceRadius 5
-             --toleranceNumberOfPixels 5
-             igstkUltrasoundImageSimulatorTest
-             ${IGSTK_DATA_ROOT}/Input/MRLiver
-             ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
-
   ADD_TEST(igstkAuroraTrackerSimulatedTest ${IGSTK_TESTS} igstkAuroraTrackerSimulatedTest)
   ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS} igstkNDICommandInterpreterSimulatedTest)
   ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTK_TESTS} igstkNDICommandInterpreterStressTest)
@@ -324,6 +314,16 @@ IF(IGSTK_USE_FLTK)
     ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
               igstkImageSpatialObjectRepresentationTest 
               ${IGSTK_DATA_ROOT}/Input/E000192)   
+
+    ADD_TEST( igstkUltrasoundImageSimulatorTest ${IGSTK_TESTS}
+              --compare ${IGSTKSandbox_BASELINE_DIR}/igstkUltrasoundImageSimulatorTest.png 
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
+              --toleranceIntensity 10
+              --toleranceRadius 5
+              --toleranceNumberOfPixels 5
+              igstkUltrasoundImageSimulatorTest
+              ${IGSTK_DATA_ROOT}/Input/MRLiver
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
 
   ENDIF (IGSTK_DATA_ROOT)
             
