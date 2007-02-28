@@ -207,48 +207,48 @@ protected:
   igstkGetMacro( ThreadingEnabled, bool );
 
   /** The "InternalOpen" method opens communication with a tracking device.
-      This method is to be overriden by a decendent class 
+      This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalOpen( void );
 
   /** The "InternalClose" method closes communication with a tracking device.
-      This method is to be overriden by a decendent class 
+      This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalClose( void );
 
   /** The "InternalReset" method resets tracker to a known configuration. 
-      This method is to be overriden by a decendent class 
+      This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalReset( void );
 
   /** The "InternalActivateTools" method activates tools.
-      This method is to be overriden by a decendent class 
+      This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalActivateTools( void );
 
   /** The "InternalDeactivateTools" method deactivates tools.
-      This method is to be overriden by a decendent class 
+      This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalDeactivateTools( void );
 
   /** The "InternalStartTracking" method starts tracking.
-      This method is to be overriden by a decendent class 
+      This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalStartTracking( void );
 
   /** The "InternalStopTracking" method stops tracking.
-      This method is to be overriden by a decendent class 
+      This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalStopTracking( void );
 
   /** The "InternalUpdateStatus" method updates tracker status.
-      This method is to be overriden by a decendent class 
+      This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalUpdateStatus( void );
 
   /** The "InternalThreadedUpdateStatus" method updates tracker status.
       This method is called in a separate thread.
-      This method is to be overriden by a decendent class
+      This method is to be overridden by a descendant class
       and responsible for device-specific processing */
   virtual ResultType InternalThreadedUpdateStatus( void );
 
@@ -289,7 +289,7 @@ private:
   /** Patient Transform */
   PatientTransformType      m_PatientTransform;
 
-  /** Multi-threading enabled flag : The decendent class will use
+  /** Multi-threading enabled flag : The descendant class will use
       multi-threading, if this flag is set as true */
   bool                            m_ThreadingEnabled;
 

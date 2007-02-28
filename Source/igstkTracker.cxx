@@ -358,7 +358,7 @@ void Tracker::ClearPorts( void )
 }
 
 /** The "InternalOpen" method opens communication with a tracking device.
- *  This method is to be overriden by a decendent class 
+ *  This method is to be overridden by a descendant class 
  *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalOpen( void )
 {
@@ -367,7 +367,7 @@ Tracker::ResultType Tracker::InternalOpen( void )
 }
 
 /** The "InternalClose" method closes communication with a tracking device.
- *  This method is to be overriden by a decendent class 
+ *  This method is to be overridden by a descendant class 
  *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalClose( void )
 {
@@ -377,7 +377,7 @@ Tracker::ResultType Tracker::InternalClose( void )
 
 
 /** The "InternalReset" method resets tracker to a known configuration. 
- *  This method is to be overriden by a decendent class 
+ *  This method is to be overridden by a descendant class 
  *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalReset( void )
 {
@@ -387,7 +387,7 @@ Tracker::ResultType Tracker::InternalReset( void )
 
 
 /** The "InternalActivateTools" method activates tools.
- *  This method is to be overriden by a decendent class 
+ *  This method is to be overridden by a descendant class 
  *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalActivateTools( void )
 {
@@ -397,7 +397,7 @@ Tracker::ResultType Tracker::InternalActivateTools( void )
 
 
 /** The "InternalDeactivateTools" method deactivates tools.
- *  This method is to be overriden by a decendent class 
+ *  This method is to be overridden by a descendant class 
  *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalDeactivateTools( void )
 {
@@ -407,7 +407,7 @@ Tracker::ResultType Tracker::InternalDeactivateTools( void )
 
 
 /** The "InternalStartTracking" method starts tracking.
- *  This method is to be overriden by a decendent class 
+ *  This method is to be overridden by a descendant class 
  *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalStartTracking( void )
 {
@@ -417,7 +417,7 @@ Tracker::ResultType Tracker::InternalStartTracking( void )
 
 
 /** The "InternalStopTracking" method stops tracking.
- *  This method is to be overriden by a decendent class 
+ *  This method is to be overridden by a descendant class 
  *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalStopTracking( void )
 {
@@ -427,7 +427,7 @@ Tracker::ResultType Tracker::InternalStopTracking( void )
 
 
 /** The "InternalUpdateStatus" method updates tracker status.
- *  This method is to be overriden by a decendent class 
+ *  This method is to be overridden by a descendant class 
  *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalUpdateStatus( void )
 {
@@ -438,7 +438,7 @@ Tracker::ResultType Tracker::InternalUpdateStatus( void )
 
 /** The "InternalThreadedUpdateStatus" method updates tracker status.
  *  This method is called in a separate thread.
- *  This method is to be overriden by a decendent class
+ *  This method is to be overridden by a descendant class
  *  and responsible for device-specific processing */
 Tracker::ResultType Tracker::InternalThreadedUpdateStatus( void )
 {

@@ -66,7 +66,7 @@ AuroraTracker::CheckError(CommandInterpreterType *interpreter)
   const int errnum = interpreter->GetError();
   if (errnum)
     {
-    // convert errnum to a hexidecimal string
+    // convert errnum to a hexadecimal string
     itk::OStringStream os;
     os << "0x";
     os.width(2);
@@ -509,10 +509,10 @@ bool AuroraTracker::LoadVirtualSROM( const unsigned int port,
                  address < 1024 && successfulWrite;
                  address += 64)
               {
-              // holds hexidecimal data to be sent to device
+              // holds hexadecimal data to be sent to device
               char hexbuffer[129];
     
-              // convert data to hexidecimal and write to virtual SROM in
+              // convert data to hexadecimal and write to virtual SROM in
               // 64-byte chunks
               m_CommandInterpreter->HexEncode(hexbuffer, &data[address], 64);
               m_CommandInterpreter->PVWR(ph, address, hexbuffer);
