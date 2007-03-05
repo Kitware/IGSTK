@@ -91,6 +91,7 @@ void PolarisTracker::SetCommunication( CommunicationType *communication )
 {
   igstkLogMacro( DEBUG, "PolarisTracker:: Entered SetCommunication ...\n");
   m_Communication = communication;
+  m_BaudRate = communication->GetBaudRate();
   m_CommandInterpreter->SetCommunication( communication );
 
   // data records are of variable length and end with a carriage return
