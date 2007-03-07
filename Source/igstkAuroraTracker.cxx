@@ -174,23 +174,6 @@ AuroraTracker::ResultType AuroraTracker::InternalActivateTools( void )
 {
   igstkLogMacro( DEBUG, "AuroraTracker::InternalActivateTools called ...\n");
 
-  // load any SROMS that are needed
-  for (unsigned int i = 0; i < NumberOfPorts; i++)
-    {
-    if (!m_PortSROMFileNames[i].empty())
-      {
-      this->LoadVirtualSROM(i, 0, m_PortSROMFileNames[i]);
-      }
-
-    for (unsigned int j = 0; j < NumberOfChannels; j++)
-      {
-      if (!m_ChannelSROMFileNames[i][j].empty())
-        {
-        this->LoadVirtualSROM(i, j, m_ChannelSROMFileNames[i][j]);
-        }
-      }
-    }
-
   this->EnableToolPorts();
 
   m_NumberOfTools = 0;
@@ -432,7 +415,7 @@ void AuroraTracker::AttachSROMFileNameToPort( const unsigned int portNum,
 
   if ( portNum < NumberOfPorts )
     {
-    m_PortSROMFileNames[portNum] = fileName;
+    m_SROMFileNames[portNum][0] = fileName;
     }
 }
 
@@ -446,84 +429,91 @@ void AuroraTracker::AttachSROMFileNameToChannel( const unsigned int portNum,
 
   if ( portNum < NumberOfPorts && channelNum < NumberOfChannels )
     {
-    m_ChannelSROMFileNames[portNum][channelNum] = fileName;
+    m_SROMFileNames[portNum][channelNum] = fileName;
     }
 }
 
-/** Load a virtual SROM, given the file name of the ROM file */
-bool AuroraTracker::LoadVirtualSROM( const unsigned int port,
-                                     const unsigned int channel,
-                                     const std::string SROMFileName) 
+/** Load the virtual SROMs onto tools that need them */
+bool AuroraTracker::LoadVirtualSROMs( void )
 {
-  igstkLogMacro( DEBUG, "AuroraTracker::LoadVirtualSROM called...\n");
+  igstkLogMacro( DEBUG, "AuroraTracker::LoadVirtualSROMS called...\n");
 
-  std::ifstream sromFile;
-  sromFile.open(SROMFileName.c_str(), std::ios::binary );
+  // if any SROMs were not successfully written, this method returns "false"
+  bool returnValue = true;
 
-  if (!sromFile.is_open())
-    {
-    igstkLogMacro( WARNING, "AuroraTracker::LoadVirtualSROM: couldn't "
-                   "find SROM file " << SROMFileName << " ...\n");
-    return false;
-    }
-
-  // most SROM files don't contain the whole 1024 bytes, they only
-  // contain whatever is necessary, so the rest should be filled with zero
-  char data[1024]; 
-  memset( data, 0, 1024 );
-  sromFile.read( data, 1024 );
-  sromFile.close();
-
-  // unless SROM is successfully written, this method returns "false"
-  bool returnValue = false;
-
+  // loop over all open port handles
   m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ALL_HANDLES);
   if (this->CheckError(m_CommandInterpreter) == SUCCESS)
-    {
+    { 
     unsigned int numHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
-    bool foundPort = false;
     for (unsigned int handleIndex = 0;
-         handleIndex < numHandles && !foundPort;
+         handleIndex < numHandles;
          handleIndex++)
       {
       int handleInfo = m_CommandInterpreter->GetPHSRInformation(handleIndex);
 
-      if (handleInfo & CommandInterpreterType::NDI_TOOL_IN_PORT)
+      // check whether there is an uninitialized tool plugged in
+      if ((handleInfo & CommandInterpreterType::NDI_TOOL_IN_PORT) &&
+          !(handleInfo & CommandInterpreterType::NDI_INITIALIZED))
         {
         int ph = m_CommandInterpreter->GetPHSRHandle(handleIndex);
+
+        // check what the port and channel numbers are
         m_CommandInterpreter->PHINF(ph,
                                     CommandInterpreterType::NDI_BASIC |
                                     CommandInterpreterType::NDI_PORT_LOCATION);
 
         if (this->CheckError(m_CommandInterpreter) == SUCCESS)
           {
+          // the port and channel are read in as text, so convert to
+          // int, note that Aurora starts counting ports at "1"
           char location[256];
           m_CommandInterpreter->GetPHINFPortLocation(location);
-          unsigned int auroraPort = (location[10]-'0')*10 + (location[11]-'0');
-          unsigned int auroraChan = (location[12]-'0')*10 + (location[13]-'0');
-          if (port + 1 == auroraPort && channel == auroraChan)
+          unsigned int port = (location[10]-'0')*10 + (location[11]-'0') - 1;
+          unsigned int channel = (location[12]-'0')*10 + (location[13]-'0');
+
+          // check if an SROM is attached for this port and channel
+          if (port < NumberOfPorts && channel < NumberOfChannels &&
+              !m_SROMFileNames[port][channel].empty())
             {
-            foundPort = 1;
-            int successfulWrite = 1;
-            for (unsigned int address = 0;
-                 address < 1024 && successfulWrite;
-                 address += 64)
+            std::string &sromFileName = m_SROMFileNames[port][channel];
+            std::ifstream sromFile;
+            sromFile.open(sromFileName.c_str(), std::ios::binary );
+            
+            if (!sromFile.is_open())
               {
-              // holds hexadecimal data to be sent to device
-              char hexbuffer[129];
-    
-              // convert data to hexadecimal and write to virtual SROM in
-              // 64-byte chunks
-              m_CommandInterpreter->HexEncode(hexbuffer, &data[address], 64);
-              m_CommandInterpreter->PVWR(ph, address, hexbuffer);
-              // check for successful write
-              successfulWrite =
-                (this->CheckError(m_CommandInterpreter) == SUCCESS);
+              igstkLogMacro( WARNING, "AuroraTracker::LoadVirtualSROM: couldn't "
+                             "find SROM file " << sromFileName << " ...\n");
+
+              returnValue = false;
               }
-            // return true if all chunks successfully written
-            if (successfulWrite)
+            else
               {
-              returnValue = true;
+              // most SROM files don't contain the whole 1024 bytes, they only
+              // contain whatever is necessary, so fill the rest with zero
+              char data[1024];
+              memset( data, 0, 1024 );
+              sromFile.read( data, 1024 );
+              sromFile.close();
+
+              // write the SROM contents to the AURORA
+              int successfulWrite = 1;
+              for (unsigned int address = 0;
+                   address < 1024 && successfulWrite;
+                   address += 64)
+                {
+                // holds hexadecimal data to be sent to device
+                char hexbuffer[129];
+    
+                // convert data to hexadecimal and write to virtual SROM in
+                // 64-byte chunks
+                m_CommandInterpreter->HexEncode(hexbuffer, &data[address], 64);
+                m_CommandInterpreter->PVWR(ph, address, hexbuffer);
+
+                // set returnValue to false if write wasn't successfule
+                returnValue = ((this->CheckError(m_CommandInterpreter)
+                                != SUCCESS) && returnValue);
+                }
               }
             }
           }
@@ -534,7 +524,10 @@ bool AuroraTracker::LoadVirtualSROM( const unsigned int port,
   return returnValue;
 }
 
-/** Enable all tool ports that are occupied. */
+/** Enable all tool ports that are occupied.
+  * This method follows the "wired" flowchart in the
+  * NDI Polaris and Aurora Combined Application Programmer's Interface
+  * Guide */
 void AuroraTracker::EnableToolPorts()
 {
   // reset our information about the tool ports
@@ -546,20 +539,7 @@ void AuroraTracker::EnableToolPorts()
       this->m_PortEnabled[port][channel] = 0;
       }
     }
-
-  // free ports that are waiting to be freed
-  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_STALE_HANDLES);
-  unsigned int nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
-  unsigned int iHandle;
-  for (iHandle = 0; iHandle < nHandles; iHandle++)
-    {
-    const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
-    m_CommandInterpreter->PHF(ph);
-
-    // if an error occurs, print the error but don't abort
-    this->CheckError(m_CommandInterpreter);
-    }
-
+  
   // keep list of tools that fail to initialize, so we don't keep retrying,
   // the largest port handle possible is 0xFF, or 256
   int alreadyAttemptedPINIT[256];
@@ -568,84 +548,109 @@ void AuroraTracker::EnableToolPorts()
     alreadyAttemptedPINIT[ph] = 0;
     }
 
-  // initialize ports waiting to be initialized,  
-  // repeat as necessary (in case multi-channel tools are used) 
-  for (int safetyCount = 0; safetyCount < 256; safetyCount++)
+  // this is the "outer loop" from the flow chart, loop 256 times maximum
+  unsigned int count = 0;
+  while (count < 256)
     {
-    m_CommandInterpreter->PHSR(
-      CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
-    
-    if (this->CheckError(m_CommandInterpreter) == FAILURE)
-      {
-      break;
-      }
-
-    nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
-    int foundNewTool = 0;
-
-    // try to initialize all port handles
+    // free ports that are waiting to be freed
+    m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_STALE_HANDLES);
+    unsigned int nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
+    unsigned int iHandle;
     for (iHandle = 0; iHandle < nHandles; iHandle++)
       {
       const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
-      // only call PINIT on tools that didn't fail last time
-      // (the &0xFF makes sure index is < 256)
-      if (!alreadyAttemptedPINIT[(ph & 0xFF)])
+      m_CommandInterpreter->PHF(ph);
+      
+      // if an error occurs, print the error but don't abort
+      this->CheckError(m_CommandInterpreter);
+
+      // allow this port handle to be re-initialized
+      alreadyAttemptedPINIT[ph] = 0;
+      }
+
+    // initialize ports waiting to be initialized,  
+    // repeat as necessary (in case multi-channel tools are used) 
+    while (count++ < 256)
+      {
+      m_CommandInterpreter->PHSR(
+        CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
+    
+      if (this->CheckError(m_CommandInterpreter) == FAILURE)
         {
-        alreadyAttemptedPINIT[(ph & 0xFF)] = 1;
-        m_CommandInterpreter->PINIT(ph);
-        if (this->CheckError(m_CommandInterpreter) == SUCCESS)
+        break;
+        }
+
+      nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
+      int foundNewTool = 0;
+
+      // try to initialize all port handles
+      for (iHandle = 0; iHandle < nHandles; iHandle++)
+        {
+        const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
+        // only call PINIT on tools that didn't fail last time
+        // (the &0xFF makes sure index is < 256)
+        if (!alreadyAttemptedPINIT[(ph & 0xFF)])
           {
-          foundNewTool = 1;
+          alreadyAttemptedPINIT[(ph & 0xFF)] = 1;
+          m_CommandInterpreter->PINIT(ph);
+          if (this->CheckError(m_CommandInterpreter) == SUCCESS)
+            {
+            foundNewTool = 1;
+            }
           }
         }
+
+      // exit if no new tools were initialized this round
+      if (!foundNewTool)
+        {
+        break;
+        }
+
+      // load the virtual SROMs, this is done here because the tools
+      // on a splitter don't appear until PINIT is called on the splitter.
+      this->LoadVirtualSROMs();
       }
 
-    // exit if no new tools were initialized this round
-    if (!foundNewTool)
-      {
-      break;
-      }
-    }
+    // enable all initialized tools
+    m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_UNENABLED_HANDLES);
 
-  // enable initialized tools
-  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_UNENABLED_HANDLES);
-
-  nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
+    nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
   
-  for (iHandle = 0; iHandle < nHandles; iHandle++)
-    {
-    const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
-    m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
+    for (iHandle = 0; iHandle < nHandles; iHandle++)
+      {
+      const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
+      m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
 
-    // tool identity and type information
-    char identity[512];
-    m_CommandInterpreter->GetPHINFToolInfo(identity);
+      // tool identity and type information
+      char identity[512];
+      m_CommandInterpreter->GetPHINFToolInfo(identity);
 
-    // use tool type information to figure out mode for enabling
-    int mode = CommandInterpreterType::NDI_DYNAMIC;
+      // use tool type information to figure out mode for enabling
+      int mode = CommandInterpreterType::NDI_DYNAMIC;
 
-    if (identity[1] == CommandInterpreterType::NDI_TYPE_BUTTON)
-      { // button-box or foot pedal
-      mode = CommandInterpreterType::NDI_BUTTON_BOX;
+      if (identity[1] == CommandInterpreterType::NDI_TYPE_BUTTON)
+        { // button-box or foot pedal
+        mode = CommandInterpreterType::NDI_BUTTON_BOX;
+        }
+      else if (identity[1] == CommandInterpreterType::NDI_TYPE_REFERENCE)
+        { // reference
+        mode = CommandInterpreterType::NDI_STATIC;
+        }
+
+      // enable the tool
+      m_CommandInterpreter->PENA(ph, mode);
+
+      // print any warnings
+      this->CheckError(m_CommandInterpreter);
       }
-    else if (identity[1] == CommandInterpreterType::NDI_TYPE_REFERENCE)
-      { // reference
-      mode = CommandInterpreterType::NDI_STATIC;
-      }
-
-    // enable the tool
-    m_CommandInterpreter->PENA(ph, mode);
-
-    // print any warnings
-    this->CheckError(m_CommandInterpreter);
     }
 
   // get information for all tools
   m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ALL_HANDLES);
 
-  nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
+  unsigned int nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
 
-  for (iHandle = 0; iHandle < nHandles; iHandle++)
+  for (unsigned int iHandle = 0; iHandle < nHandles; iHandle++)
     {
     const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
     m_CommandInterpreter->PHINF(ph,

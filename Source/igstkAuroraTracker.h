@@ -66,7 +66,7 @@ public:
   /** Get the number of tools that have been detected. */
   igstkGetMacro( NumberOfTools, unsigned int );
 
-  /** Specify an SROM file to be used with a splitter or custom tool. */
+  /** Specify an SROM file to be used with a custom tool. */
   void AttachSROMFileNameToPort( const unsigned int portNum,
                                  std::string  fileName );
 
@@ -125,10 +125,9 @@ private:
   /** A buffer for holding absent status of tools */
   int m_AbsentBuffer[NumberOfPorts][NumberOfChannels];
 
-  /** Load a virtual SROM, given the file name of the ROM file */
-  bool LoadVirtualSROM( const unsigned int port,
-                        const unsigned int channel,
-                        const std::string SROMFileName);
+  /** Load the virtual SROMs onto the tools.
+   * Called from EnableToolPorts() */
+  bool LoadVirtualSROMs( void );
 
   /** Enable all tool ports that have tools plugged into them.
    * {The reference tool port is enabled as a static tool.} */
@@ -150,8 +149,7 @@ private:
   unsigned int   m_NumberOfTools;
 
   /** Names of the SROM files for special tools. */
-  std::string    m_PortSROMFileNames[NumberOfPorts];
-  std::string    m_ChannelSROMFileNames[NumberOfPorts][NumberOfChannels];
+  std::string    m_SROMFileNames[NumberOfPorts][NumberOfChannels];
 
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;
