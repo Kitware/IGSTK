@@ -1,0 +1,53 @@
+#-----------------------------------------------------------------------------
+#
+# IGSTKSandboxConfig.cmake - IGSTKSandbox CMake configuration file for external projects.
+#
+# This file is configured by IGSTKSandbox and used by the UseIGSTKSandbox.cmake module
+# to load IGSTKSandbox's settings for an external project.
+
+# The IGSTKSandbox source tree.
+SET(IGSTKSandbox_SOURCE_DIR "@IGSTKSandbox_SOURCE_DIR@")
+
+# The IGSTKSandbox include file directories.
+SET(IGSTKSandbox_INCLUDE_DIRS "@IGSTKSandbox_INCLUDE_DIRS_CONFIG@" "@IGSTKSandbox_SOURCE_DIR@/Source" "@IGSTKSandbox_BINARY_DIR@/SourceLatest")
+
+# The IGSTKSandbox library directories.
+SET(IGSTKSandbox_LIBRARY_DIRS "@IGSTKSandbox_LIBRARY_DIRS_CONFIG@")
+
+# The C and C++ flags added by IGSTKSandbox to the cmake-configured flags.
+SET(IGSTKSandbox_REQUIRED_C_FLAGS "@IGSTKSandbox_REQUIRED_C_FLAGS@")
+SET(IGSTKSandbox_REQUIRED_CXX_FLAGS "@IGSTKSandbox_REQUIRED_CXX_FLAGS@")
+
+# The IGSTKSandbox version number
+SET(IGSTKSandbox_VERSION_MAJOR "@IGSTKSandbox_VERSION_MAJOR@")
+SET(IGSTKSandbox_VERSION_MINOR "@IGSTKSandbox_VERSION_MINOR@")
+SET(IGSTKSandbox_VERSION_PATCH "@IGSTKSandbox_VERSION_PATCH@")
+
+# The location of the UseIGSTKSandbox.cmake file.
+SET(IGSTKSandbox_USE_FILE "@IGSTKSandbox_USE_FILE@")
+
+# The build settings file.
+SET(IGSTKSandbox_BUILD_SETTINGS_FILE "@IGSTKSandbox_BUILD_SETTINGS_FILE@")
+
+# Whether IGSTKSandbox was built with shared libraries.
+SET(IGSTKSandbox_BUILD_SHARED "@BUILD_SHARED_LIBS@")
+
+# A list of all libraries for IGSTKSandbox.  Those listed here should
+# automatically pull in their dependencies.
+SET(IGSTKSandbox_LIBRARIES IGSTKSandbox)
+
+# The IGSTKSandbox library dependencies.
+IF(NOT IGSTKSandbox_NO_LIBRARY_DEPENDS)
+  INCLUDE("@IGSTKSandbox_LIBRARY_DEPENDS_FILE@")
+ENDIF(NOT IGSTKSandbox_NO_LIBRARY_DEPENDS)
+
+# The Binary Directory of ITK
+SET(ITK_DIR "@ITK_DIR@")
+SET(IGSTKSandbox_USE_ITK_FILE "@USE_ITK_FILE@")
+
+# The Binary Directory of VTK
+SET(VTK_DIR "@VTK_DIR@")
+SET(IGSTKSandbox_USE_VTK_FILE "@USE_VTK_FILE@")
+
+# The Binary Directory of FLTK
+SET(IGSTKSandbox_FLTK_DIR "@FLTK_DIR@")

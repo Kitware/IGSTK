@@ -103,6 +103,8 @@ IF(IGSTK_USE_FLTK)
     )
 ENDIF(IGSTK_USE_FLTK)
 
+
+
 # The implementation files
 
 SET(IGSTK_SRCS  
@@ -195,6 +197,8 @@ IF(IGSTK_USE_FLTK)
     )
 ENDIF(IGSTK_USE_FLTK)
 
+
+
 IF( WIN32 )
   SET(IGSTK_HEADS ${IGSTK_HEADS} 
     igstkSerialCommunicationForWindows.h
@@ -264,6 +268,17 @@ SET(IGSTKSandbox_HEADS
   igstkObliqueContourMeshObjectRepresentation.h
 )
 
+IF(IGSTKSandbox_USE_Qt)
+  SET(IGSTKSandbox_HEADS
+    ${IGSTKSandbox_HEADS}
+    igstkQMouseTracker.h
+    igstkSimulatedTracker.h
+    igstkQView.h
+    igstkQView2D.h
+    igstkQView3D.h
+    )
+ENDIF(IGSTKSandbox_USE_Qt)
+
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
@@ -275,6 +290,18 @@ SET(IGSTKSandbox_SRCS
   igstkSocketCommunication.cxx
   igstkObliqueContourMeshObjectRepresentation.cxx
 )
+
+IF(IGSTKSandbox_USE_Qt)
+  SET(IGSTKSandbox_SRCS  
+    ${IGSTKSandbox_SRCS}
+    igstkQMouseTracker.cxx
+    igstkSimulatedTracker.cxx
+    igstkQView.cxx
+    igstkQView2D.cxx
+    igstkQView3D.cxx
+    )
+ENDIF(IGSTKSandbox_USE_Qt)
+
 
 # Variable for holding extra libraries
 SET(EXTRA_LIBS)

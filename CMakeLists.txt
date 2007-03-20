@@ -96,6 +96,44 @@ ELSE (FLTK_FOUND)
 ENDIF (FLTK_FOUND)
 ENDIF(IGSTKSandbox_USE_FLTK)
 
+
+
+#
+# FIND Qt
+#
+OPTION(IGSTKSandbox_USE_Qt "Use Qt for GUI" OFF)
+IF(IGSTKSandbox_USE_Qt)
+ # use what QVTK built with
+ SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
+ SET(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
+ SET(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
+ SET(DESIRED_QT_VERSION ${VTK_DESIRED_QT_VERSION} CACHE STRING "")
+ FIND_PACKAGE(Qt)
+
+ IF(QT_USE_FILE)
+   INCLUDE(${QT_USE_FILE})
+ ELSE(QT_USE_FILE)
+   SET(QT_LIBRARIES   ${QT_QT_LIBRARY})
+ ENDIF(QT_USE_FILE)
+
+# IF (QT_FOUND)
+#  INCLUDE_DIRECTORIES (${QT_INCLUDE_DIR})
+# ELSE (QT_FOUND)
+#  MESSAGE( FATAL_ERROR "This application requires Qt. One of these components is missing. Please verify configuration")
+# ENDIF (QT_FOUND)
+
+ENDIF(IGSTKSandbox_USE_Qt)
+
+INCLUDE_DIRECTORIES(
+        ${QT_INCLUDE_DIR}
+#       ${CMAKE_CURRENT_BINARY_DIR}
+#       ${CMAKE_CURRENT_SOURCE_DIR}
+#       ${QTIGSTK_H_DIR}
+)
+
+
+
+
 # The IGSTKSandbox Library and any Utilities that it requires
 SUBDIRS(Utilities Source)
 
@@ -115,7 +153,35 @@ INCLUDE_DIRECTORIES(
 ${ITK_DIR}/Utilities/zlib
 ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source
 ${IGSTKSandbox_BINARY_DIR}/SourceLatest
+${IGSTKSandbox_SOURCE_DIR}/Source
 )
+
+
+#-----------------------------------------------------------------------------
+# Help other projects use IGSTKSandbox.
+SET(IGSTKSandbox_LIBRARY_PATH ${LIBRARY_OUTPUT_PATH})
+
+
+# Copy the UseIGSTKSandbox.cmake file to the binary tree for backward compatability.
+CONFIGURE_FILE(${IGSTKSandbox_SOURCE_DIR}/UseIGSTKSandbox.cmake.in
+               ${IGSTKSandbox_BINARY_DIR}/UseIGSTKSandbox.cmake COPYONLY IMMEDIATE)
+
+# Save the compiler settings so another project can import them.
+INCLUDE(${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
+CMAKE_EXPORT_BUILD_SETTINGS(${IGSTKSandbox_BINARY_DIR}/IGSTKSandboxBuildSettings.cmake)
+INSTALL_FILES(/lib/InsightToolkit .cmake IGSTKSandboxBuildSettings)
+
+# Save library dependencies.
+EXPORT_LIBRARY_DEPENDENCIES(${IGSTKSandbox_BINARY_DIR}/IGSTKSandboxLibraryDepends.cmake)
+
+# Create the IGSTKSandboxConfig.cmake file containing the IGSTKSandbox configuration.
+INCLUDE (${IGSTKSandbox_SOURCE_DIR}/igstkGenerateIGSTKSandboxConfig.cmake)
+
+# Install some files.
+INSTALL_FILES(/include/InsightToolkit .h igstkConfigure)
+INSTALL_FILES(/lib/InsightToolkit .cmake UseIGSTKSandbox IGSTKSandboxLibraryDepends)
+
+
 
 #-----------------------------------------------------------------------------
 # Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
