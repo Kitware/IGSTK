@@ -18,7 +18,12 @@
 #define __igstkQView3D_h
 
 #include "igstkQView.h"
-#include <QWidget.h>
+
+#if QT_VERSION < 0x040000
+#include <qwidget.h>
+#else
+#include <QWidget>
+#endif
 
 namespace igstk {
 
