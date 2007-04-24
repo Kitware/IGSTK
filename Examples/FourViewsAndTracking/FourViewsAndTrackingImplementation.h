@@ -59,9 +59,6 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-namespace igstk
-{
-
 class FourViewsAndTrackingImplementation : public FourViewsAndTrackingGUI
 {
 
@@ -219,6 +216,5 @@ private:
   std::ofstream           m_LogFile;
 };
 
-} // end of namespace
 
 #endif
