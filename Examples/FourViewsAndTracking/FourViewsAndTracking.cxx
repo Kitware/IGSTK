@@ -27,7 +27,7 @@ int main(int , char** )
 
   igstk::RealTimeClock::Initialize();
 
-  igstk::FourViewsAndTrackingImplementation   application;
+  FourViewsAndTrackingImplementation   application;
 
   application.Show();
 
