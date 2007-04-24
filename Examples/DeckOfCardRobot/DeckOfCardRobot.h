@@ -47,15 +47,15 @@
 
 #include "itkVersorRigid3DTransform.h"
 
-namespace igstk
-{
+using namespace igstk;
 
-class DeckOfCardRobot : public DeckOfCardRobotGUI, public igstk::Object
+class DeckOfCardRobot : public DeckOfCardRobotGUI
 {
 public:
   /** Typedefs */
   igstkStandardClassBasicTraitsMacro( DeckOfCardRobot, DeckOfCardRobotGUI );
-  igstkNewMacro( Self );
+  
+  igstkLoggerMacro();
 
   /** typedefs for the log output */
   typedef itk::StdStreamLogOutput                       LogOutputType;
@@ -103,8 +103,6 @@ public:
                     ImageReaderType::ImageModifiedEvent,ImageSpatialObjectType)
   igstkObserverConstObjectMacro( ITKImage,
                    ImageSpatialObjectType::ITKImageModifiedEvent, ITKImageType)
-
-protected:
 
   DeckOfCardRobot();
   virtual ~DeckOfCardRobot();
@@ -169,14 +167,6 @@ private:
   LogOutputType::Pointer              m_LogCoutOutput;  // log output to console
   std::ofstream                       m_LogFile;        // file stream
   FLTKTextLogOutput::Pointer          m_LogFLTKOutput;  // log output to FLTK
-
-  /** igstkLoggerMacro create a m_Logger,igstkLogMacro(x,y) will write 
-   *  to m_Logger.
-   *  This logger is for the logging of internal igstk components, 
-   *  eg. m_ImageReader->SetLogger( logger ).
-   * You can also use igstkLogMacro( logger, x, y ) to log your 
-   * message in to this logger. */
-  LoggerType::Pointer                 m_Logger; // Another logger for igstk
 
   /** DICOM image reader */
   ImageReaderType::Pointer            m_ImageReader;
@@ -294,7 +284,5 @@ private:
   void AnimateRobotMove( Transform TCurrent, Transform TToBeSet, int steps);
 
 };
-
-} // end of namespace
 
 #endif

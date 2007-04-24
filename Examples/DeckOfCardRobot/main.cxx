@@ -26,12 +26,15 @@ int main(int , char** )
 { 
   igstk::RealTimeClock::Initialize();
 
-  igstk::DeckOfCardRobot::Pointer application = igstk::DeckOfCardRobot::New();
+  DeckOfCardRobot * application = new DeckOfCardRobot;
 
   while( !application->HasQuitted() )
     {
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
     }
-  return 0;
+  
+  delete application;
+
+  return EXIT_SUCCESS;
 }

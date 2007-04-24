@@ -28,8 +28,8 @@ int main(int , char** )
 { 
   igstk::RealTimeClock::Initialize();
 
-  igstk::UltrasoundGuidedRFAImplementation::Pointer application 
-                              = igstk::UltrasoundGuidedRFAImplementation::New();
+  UltrasoundGuidedRFAImplementation * application =
+                                         new UltrasoundGuidedRFAImplementation;
   application->Show();
 
   // Create the probe
@@ -91,6 +91,8 @@ int main(int , char** )
     application->Randomize();
     igstk::PulseGenerator::CheckTimeouts();
     }
+
+  delete application;
 
   return EXIT_SUCCESS;
 }

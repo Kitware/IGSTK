@@ -65,17 +65,16 @@
 
 //#define UGRFA_USE_FOB
 
-namespace igstk
-{
+using namespace igstk;
 
-class UltrasoundGuidedRFAImplementation : public UltrasoundGuidedRFA,
-                                          public igstk::Object
+
+class UltrasoundGuidedRFAImplementation : public UltrasoundGuidedRFA
 {
 public:
   /** Typedefs */
   igstkStandardClassBasicTraitsMacro( UltrasoundGuidedRFAImplementation, 
                                       UltrasoundGuidedRFA );
-  igstkNewMacro( Self );
+  igstkLoggerMacro();
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
@@ -161,12 +160,11 @@ public:
   igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,
                                      AxialBoundsInput, AxialBounds );
 
-private:
-
   UltrasoundGuidedRFAImplementation();
   ~UltrasoundGuidedRFAImplementation();
 
-  LoggerType::Pointer                             m_Logger;
+private:
+
   LogOutputType::Pointer                          m_LogOutput;
   TrackerType::Pointer                            m_Tracker;
   CommunicationType::Pointer                      m_Communication;
@@ -208,7 +206,5 @@ private:
     VascularNetworkReader::VascularNetworkModifiedEvent,VascularNetworkObject)
 };
 
-
-} // end of namespace
 
 #endif

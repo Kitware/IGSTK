@@ -20,8 +20,6 @@
 
 #include "time.h"
 
-namespace igstk
-{
 
 /** Constructor */
 UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
@@ -558,4 +556,3 @@ void UltrasoundGuidedRFAImplementation
     }*/
 }
 
-} // end of namespace

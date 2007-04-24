@@ -24,8 +24,9 @@
 
 int main(int , char** )
 { 
-  igstk::FourViewsTrackingWithCT::Pointer application 
-                                       = igstk::FourViewsTrackingWithCT::New();
+ igstk::RealTimeClock::Initialize();
+
+  FourViewsTrackingWithCT * application = new FourViewsTrackingWithCT;
 
   while(1)
     {
@@ -34,5 +35,7 @@ int main(int , char** )
     Fl::check();   // trigger FLTK redraws
     }
 
-  return 0;
+  delete application;
+
+  return EXIT_SUCCESS;
 }

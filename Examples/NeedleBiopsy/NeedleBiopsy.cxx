@@ -21,8 +21,6 @@ PURPOSE.  See the above copyright notices for more information.
 #include "FL/Fl_Input.H"
 #include "igstkEvents.h"
 
-namespace igstk
-{
 
 /** Constructor: Initializes all internal variables. */
 NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
@@ -155,7 +153,7 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_PulseGenerator = PulseGenerator::New();
   m_Observer = ObserverType::New();
   m_Observer->SetCallbackFunction( this, & NeedleBiopsy::Tracking );
-  m_PulseGenerator->AddObserver( PulseEvent(), m_Observer );
+  m_PulseGenerator->AddObserver( igstk::PulseEvent(), m_Observer );
   m_PulseGenerator->RequestSetFrequency( 30 ); 
 
   m_ViewPickerObserver = ObserverType2::New();
@@ -1237,5 +1235,3 @@ void NeedleBiopsy::Reset()
 {
   // Reset method not provided here
 }
-
-} // end of namespace

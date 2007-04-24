@@ -26,8 +26,6 @@
 #include "ModelBasedRegistration.h"
 
 
-namespace igstk
-{
 
 /** Constructor: Initializes all internal variables. */
 DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
@@ -1281,4 +1279,4 @@ void DeckOfCardRobot::AnimateRobotMove( Transform TCurrent, Transform TToBeSet,
     igstk::PulseGenerator::CheckTimeouts();
     }
 }
-} // end of namespace
+

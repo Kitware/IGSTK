@@ -48,15 +48,15 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkAnnotation2D.h"
 
-namespace igstk
-{
+using namespace igstk;
 
-class NeedleBiopsy : public NeedleBiopsyGUI, public igstk::Object
+class NeedleBiopsy : public NeedleBiopsyGUI
 {
 public:
   /** Typedefs */
   igstkStandardClassBasicTraitsMacro( NeedleBiopsy, NeedleBiopsyGUI );
-  igstkNewMacro( Self );
+  
+  igstkLoggerMacro();
 
   /** typedefs for the log output */
   typedef itk::StdStreamLogOutput        LogOutputType;
@@ -122,8 +122,6 @@ public:
 
   igstkObserverObjectMacro(CTImage,CTImageReader::ImageModifiedEvent,
                                                   CTImageSpatialObject)
-
-protected:
 
   NeedleBiopsy();
   virtual ~NeedleBiopsy();
@@ -206,14 +204,6 @@ private:
   LogOutputType::Pointer              m_LogCoutOutput;  // log output to console
   std::ofstream                       m_LogFile;        // file stream
   FLTKTextLogOutput::Pointer          m_LogFLTKOutput;  // log output to FLTK
-
-  /** igstkLoggerMacro create a m_Logger,igstkLogMacro(x,y) will write 
-   *  to m_Logger.
-   *  This logger is for the logging of internal igstk components, 
-   *  eg. m_ImageReader->SetLogger( logger ).
-   * You can also use igstkLogMacro( logger, x, y ) to log your 
-   * message in to this logger. */
-  LoggerType::Pointer                 m_Logger; // Another logger for igstk
 
   /** Registered patient name */
   std::string                         m_PatientName;
@@ -346,7 +336,5 @@ private:
   void Reset();
 
 };
-
-} // end of namespace
 
 #endif

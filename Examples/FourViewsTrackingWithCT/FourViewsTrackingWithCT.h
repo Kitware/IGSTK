@@ -56,18 +56,17 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "igstkPivotCalibration.h"
 
-namespace igstk
-{
+using namespace igstk;
 
-class FourViewsTrackingWithCT 
-                     : public FourViewsTrackingWithCTGUI, public igstk::Object
+class FourViewsTrackingWithCT : public FourViewsTrackingWithCTGUI
 {
 public:
   /** Typedefs */
   igstkStandardClassBasicTraitsMacro( FourViewsTrackingWithCT, 
                                       FourViewsTrackingWithCTGUI );
-  igstkNewMacro( Self );
 
+  igstkLoggerMacro();
+  
   /** typedefs for the log output */
   typedef itk::StdStreamLogOutput        LogOutputType;
 
@@ -128,8 +127,6 @@ public:
 
   igstkObserverObjectMacro(CTImage,CTImageReader::ImageModifiedEvent,
                                                   CTImageSpatialObject)
-
-protected:
 
   FourViewsTrackingWithCT();
   virtual ~FourViewsTrackingWithCT();
@@ -200,14 +197,6 @@ private:
   LogOutputType::Pointer              m_LogCoutOutput;  // log output to console
   std::ofstream                       m_LogFile;        // file stream
   FLTKTextLogOutput::Pointer          m_LogFLTKOutput;  // log output to FLTK
-
-  /** igstkLoggerMacro create a m_Logger,igstkLogMacro(x,y) will write 
-   *  to m_Logger.
-   *  This logger is for the logging of internal igstk components, 
-   *  eg. m_ImageReader->SetLogger( logger ).
-   *  You can also use igstkLogMacro( logger, x, y ) to log your message 
-   *  in to this logger. */
-  LoggerType::Pointer                 m_Logger; // Another logger
 
   /** Registered patient name */
   std::string                         m_PatientName;
@@ -310,6 +299,5 @@ private:
 
 };
 
-} // end of namespace
 
 #endif

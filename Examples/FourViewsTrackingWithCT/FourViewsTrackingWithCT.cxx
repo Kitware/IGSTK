@@ -21,8 +21,6 @@ PURPOSE.  See the above copyright notices for more information.
 #include "FL/Fl_Input.H"
 #include "igstkEvents.h"
 
-namespace igstk
-{
 
 /** Constructor: Initializes all internal variables. */
 FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
@@ -140,7 +138,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_PulseGenerator = PulseGenerator::New();
   m_Observer = ObserverType::New();
   m_Observer->SetCallbackFunction( this, & FourViewsTrackingWithCT::Tracking );
-  m_PulseGenerator->AddObserver( PulseEvent(), m_Observer );
+  m_PulseGenerator->AddObserver( igstk::PulseEvent(), m_Observer );
   //FIXME, move to request start tracking??
   m_PulseGenerator->RequestSetFrequency( 30 );
 
@@ -1053,4 +1051,3 @@ void FourViewsTrackingWithCT::Reset()
 }
 
 
-} // end of namespace
