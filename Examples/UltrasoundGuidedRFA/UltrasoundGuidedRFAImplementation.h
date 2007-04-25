@@ -89,8 +89,7 @@ public:
   igstkObserverMacro(RegistrationTransform,TransformModifiedEvent,Transform)
 
 public:
-    
-  typedef itk::Logger                   LoggerType; 
+
   typedef itk::StdStreamLogOutput       LogOutputType;
 
 #ifdef UGRFA_USE_FOB
