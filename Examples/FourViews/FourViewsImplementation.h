@@ -35,10 +35,6 @@
 #include <itkStdStreamLogOutput.h>
 #include "FL/Fl_File_Chooser.H"
 
-namespace igstk
-{
-
-
 class FourViewsImplementation : public FourViews
 {
 
@@ -47,11 +43,12 @@ public:
   typedef igstk::View2D ViewType;
 
   igstkObserverObjectMacro(VascularNetwork,
-                           VascularNetworkReader::VascularNetworkModifiedEvent,
-                           VascularNetworkObject)
+                     igstk::VascularNetworkReader::VascularNetworkModifiedEvent,
+                     igstk::VascularNetworkObject)
 
   igstkObserverObjectMacro(Vessel,
-       VascularNetworkObject::VesselObjectModifiedEvent,VesselObject)
+                         igstk::VascularNetworkObject::VesselObjectModifiedEvent,
+                         igstk::VesselObject)
   
   FourViewsImplementation()
     {
@@ -151,7 +148,7 @@ public:
       VascularNetworkObserver::Pointer vascularNetworkObserver 
                                             = VascularNetworkObserver::New();
       tubeReader->AddObserver(
-                        VascularNetworkReader::VascularNetworkModifiedEvent(),
+                    igstk::VascularNetworkReader::VascularNetworkModifiedEvent(),
                         vascularNetworkObserver);
 
       tubeReader->RequestGetVascularNetwork();
@@ -278,7 +275,5 @@ private:
 
 };
 
-
-} // end of namespace
 
 #endif

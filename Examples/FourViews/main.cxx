@@ -28,7 +28,7 @@ int main(int , char** )
   typedef itk::Logger              LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   
-  igstk::FourViewsImplementation   application;
+  FourViewsImplementation   application;
   application.Show();
 
   // logger object created for logging mouse activities
