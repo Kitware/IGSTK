@@ -41,7 +41,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
 
   Fl_Text_Buffer * textBuffer = new Fl_Text_Buffer();
   this->m_LogWindow->buffer( textBuffer );
-  m_LogFLTKOutput = FLTKTextLogOutput::New();
+  m_LogFLTKOutput = igstk::FLTKTextLogOutput::New();
   m_LogFLTKOutput->SetStream( *m_LogWindow );
   this->GetLogger()->AddLogOutput( m_LogFLTKOutput );
 
@@ -66,7 +66,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   /** Initialize all member variables and set logger */
   m_ImageReader = ImageReaderType::New();
 
-  m_Robot = new RobotCommunication();
+  m_Robot = new igstk::RobotCommunication();
 
   m_P1.Fill( 0 );
   m_P2.Fill( 0 );
@@ -79,9 +79,9 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
 
   //m_ImageToRobotTransform->SetToIdentity();    //FIXME
   
-  m_Annotation2D = Annotation2D::New();
+  m_Annotation2D = igstk::Annotation2D::New();
   
-  Transform transform;
+  igstk::Transform transform;
   transform.SetToIdentity( -1 );
 
   m_PickedPoint                   = EllipsoidType::New();
@@ -467,20 +467,20 @@ void DeckOfCardRobot::RegistrationProcessing()
   int x;
   std::cin >> x;
 
-  DeckOfCardRobotRegistrationBase::Pointer registration;
+  igstk::DeckOfCardRobotRegistrationBase::Pointer registration;
   if ( x == 0 )
     {
-    typedef IterativeClosestPointsBasedRegistration  RegistrationType;
+    typedef igstk::IterativeClosestPointsBasedRegistration  RegistrationType;
     registration = RegistrationType::New();
     }
   else if ( x == 1 )
     {
-    typedef LandmarkBasedRegistration  RegistrationType;
+    typedef igstk::LandmarkBasedRegistration  RegistrationType;
     registration = RegistrationType::New();
     }
   else
     {
-    typedef ModelBasedRegistration  RegistrationType;
+    typedef igstk::ModelBasedRegistration  RegistrationType;
     registration = RegistrationType::New();
     }
 
@@ -674,11 +674,11 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->SetROI->activate();
 
   //Add the picker observer
-  this->DisplayAxial->AddObserver( TransformModifiedEvent(), 
+  this->DisplayAxial->AddObserver( igstk::TransformModifiedEvent(), 
                                    m_ViewPickerObserver );
-  this->DisplaySagittal->AddObserver( TransformModifiedEvent(), 
+  this->DisplaySagittal->AddObserver( igstk::TransformModifiedEvent(), 
                                    m_ViewPickerObserver );
-  this->DisplayCoronal->AddObserver( TransformModifiedEvent(), 
+  this->DisplayCoronal->AddObserver( igstk::TransformModifiedEvent(), 
                                    m_ViewPickerObserver );
 
 }
@@ -739,9 +739,10 @@ void DeckOfCardRobot::SetCoronalSliderBoundsProcessing()
 
 void DeckOfCardRobot::DrawPickedPoint( const itk::EventObject & event)
 {
-  if ( TransformModifiedEvent().CheckEvent( &event ) )
+  if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
     {
-    TransformModifiedEvent *tmevent = ( TransformModifiedEvent *) & event;
+    igstk::TransformModifiedEvent *tmevent = \
+                                     ( igstk::TransformModifiedEvent *) & event;
     
     ImageSpatialObjectType::PointType    p;
     p[0] = tmevent->Get().GetTranslation()[0];
@@ -802,7 +803,7 @@ void DeckOfCardRobot::DrawPathProcessing()
     //m_Annotation2D->RequestAddAnnotationText( 1, "" ); // FIXME
 
     TubePointType p;
-    Transform::VectorType v;
+    igstk::Transform::VectorType v;
 
     v = m_EntryTransform.GetTranslation();
     p.SetPosition( v[0], v[1], v[2]);
@@ -847,7 +848,7 @@ void DeckOfCardRobot::DrawPathProcessing()
     //m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
     m_RobotCurrentTransform = m_RobotTransformToBeSet;
 
-    Transform::VectorType  vect = m_TargetTransform.GetTranslation()
+    igstk::Transform::VectorType  vect = m_TargetTransform.GetTranslation()
                                     - m_RobotCurrentTransform.GetTranslation();
     double distance = vect.GetNorm();
     this->TargetDistance->value( distance );
@@ -968,9 +969,9 @@ void DeckOfCardRobot::TargetingRobotProcessing()
 
 bool DeckOfCardRobot::CalculateRobotMovement()
 {
-  Transform               transform;
-  Transform::VersorType   rotation;
-  Transform::VectorType   translation, pVect1, pVect2, pProject, axis;
+  igstk::Transform               transform;
+  igstk::Transform::VersorType   rotation;
+  igstk::Transform::VectorType   translation, pVect1, pVect2, pProject, axis;
   double                  angle;
   itk::VersorRigid3DTransform<double>::InputPointType rPE, rPT, pIntersect;
 
@@ -1119,7 +1120,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
 void DeckOfCardRobot::RequestInsertNeedle()
 {
   // Calculate new transform to be set...
-  Transform::VectorType vect, translation;
+  igstk::Transform::VectorType vect, translation;
   
   vect = m_TargetTransform.GetTranslation()
        - m_RobotCurrentTransform.GetTranslation();
@@ -1135,7 +1136,7 @@ void DeckOfCardRobot::RequestInsertNeedle()
   m_NeedleTip->RequestSetTransform( m_NeedleTransformToBeSet );
 
   // Update target distance
-  Transform::VectorType vect2 = m_TargetTransform.GetTranslation()
+  igstk::Transform::VectorType vect2 = m_TargetTransform.GetTranslation()
                               - m_EntryTransform.GetTranslation();
   double distance2 = vect2.GetNorm();
 
@@ -1186,7 +1187,7 @@ void DeckOfCardRobot::RequestInsertNeedle()
 
 void DeckOfCardRobot::CreateObliqueView()
 {
-  Transform::VectorType o, v1, v2, p;
+  igstk::Transform::VectorType o, v1, v2, p;
   o.Fill( 0 );
   o = m_RobotCurrentTransform.GetRotation().Transform(o);
   o += m_RobotCurrentTransform.GetTranslation();
@@ -1235,8 +1236,8 @@ void DeckOfCardRobot::DisableObliqueView()
   this->DisplayOblique->RequestStop();
 }
 
-void DeckOfCardRobot::AnimateRobotMove( Transform TCurrent, Transform TToBeSet, 
-                                                                    int steps )
+void DeckOfCardRobot::AnimateRobotMove( igstk::Transform TCurrent, 
+                                        igstk::Transform TToBeSet, int steps )
 {
   m_Needle->RequestSetTransform( TCurrent );
   m_NeedleTip->RequestSetTransform( TCurrent );
@@ -1245,9 +1246,9 @@ void DeckOfCardRobot::AnimateRobotMove( Transform TCurrent, Transform TToBeSet,
   igstk::PulseGenerator::CheckTimeouts();
 
   // Calculate new transform to be set...
-  Transform             transform;
-  Transform::VectorType vect, axis, translation;
-  Transform::VersorType versor, rotation;
+  igstk::Transform             transform;
+  igstk::Transform::VectorType vect, axis, translation;
+  igstk::Transform::VersorType versor, rotation;
   double                angle;
   vect = TToBeSet.GetTranslation() - TCurrent.GetTranslation();
   double distance = vect.GetNorm();

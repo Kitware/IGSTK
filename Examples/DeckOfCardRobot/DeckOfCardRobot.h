@@ -47,8 +47,6 @@
 
 #include "itkVersorRigid3DTransform.h"
 
-using namespace igstk;
-
 class DeckOfCardRobot : public DeckOfCardRobotGUI
 {
 public:
@@ -64,19 +62,19 @@ public:
   igstkStateMachineMacro();
 
   /** typedef for ImageReaderType */
-  typedef CTImageReader                                 ImageReaderType;
+  typedef igstk::CTImageReader                                 ImageReaderType;
 
-  typedef CTImageSpatialObject                          ImageSpatialObjectType;
+  typedef igstk::CTImageSpatialObject                    ImageSpatialObjectType;
   typedef ImageSpatialObjectType::IndexType             IndexType;
 
   typedef ImageSpatialObjectType::ImageType             ITKImageType;
 
   /** typedef for ImageRepresentationType */
-  typedef CTImageSpatialObjectRepresentation            ImageRepresentationType;
-  typedef ImageSpatialObjectVolumeRepresentation< CTImageSpatialObject>
-                                                       VolumeRepresentationType;
-  typedef ObliqueImageSpatialObjectRepresentation< CTImageSpatialObject >
-                                                      ObliqueRepresentationType;
+  typedef igstk::CTImageSpatialObjectRepresentation     ImageRepresentationType;
+  typedef igstk::ImageSpatialObjectVolumeRepresentation
+    < igstk::CTImageSpatialObject>                    VolumeRepresentationType;
+  typedef igstk::ObliqueImageSpatialObjectRepresentation
+    < igstk::CTImageSpatialObject >                  ObliqueRepresentationType;
 
   /** Public request methods from the GUI. */
   virtual void RequestLoadImage();
@@ -166,13 +164,13 @@ private:
   LogOutputType::Pointer              m_LogFileOutput;  // log output to file
   LogOutputType::Pointer              m_LogCoutOutput;  // log output to console
   std::ofstream                       m_LogFile;        // file stream
-  FLTKTextLogOutput::Pointer          m_LogFLTKOutput;  // log output to FLTK
+  igstk::FLTKTextLogOutput::Pointer   m_LogFLTKOutput;  // log output to FLTK
 
   /** DICOM image reader */
   ImageReaderType::Pointer            m_ImageReader;
 
   /** Robot */
-  RobotCommunication *                m_Robot;
+  igstk::RobotCommunication *                m_Robot;
   
   /** Pointer to the CTImageSpatialObject */
   ImageSpatialObjectType::Pointer     m_ImageSpatialObject;
@@ -191,11 +189,11 @@ private:
   itk::VersorRigid3DTransform< double >::Pointer    m_RobotToImageTransform;  
   
   /** To store the transform of the image and tracker landmark points */
-  Transform                                    m_ImageLandmarkTransformToBeSet;
-  Transform                                    m_RobotTransform;
-  Transform                                    m_RobotCurrentTransform;
-  Transform                                    m_RobotTransformToBeSet;
-  Transform                                    m_NeedleTransformToBeSet;
+  igstk::Transform                               m_ImageLandmarkTransformToBeSet;
+  igstk::Transform                                    m_RobotTransform;
+  igstk::Transform                                    m_RobotCurrentTransform;
+  igstk::Transform                                    m_RobotTransformToBeSet;
+  igstk::Transform                                    m_NeedleTransformToBeSet;
 
   /** Observer type for loaded event, 
    *  the callback can be set to a member function. */
@@ -214,15 +212,15 @@ private:
   /** Objects for path planning */
   EllipsoidType::Pointer                          m_TargetPoint;
   EllipsoidRepresentationType::Pointer            m_TargetRepresentation;
-  Transform                                       m_TargetTransform;
+  igstk::Transform                                       m_TargetTransform;
 
   EllipsoidType::Pointer                          m_EntryPoint;
   EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  
-  Transform                                       m_EntryTransform;
+  igstk::Transform                                m_EntryTransform;
   
   typedef igstk::TubeObject                       PathType;
   typedef igstk::TubeObjectRepresentation         PathRepresentationType;
-  typedef TubeObject::PointType                   TubePointType;
+  typedef igstk::TubeObject::PointType            TubePointType;
   PathType::Pointer                               m_Path;
   PathRepresentationType::Pointer                 m_PathRepresentationAxial;
   PathRepresentationType::Pointer                 m_PathRepresentationSagittal;
@@ -244,7 +242,7 @@ private:
   BoxType::Pointer                                m_Box;
   BoxRepresentationType::Pointer                  m_BoxRepresentation;
 
-  Annotation2D::Pointer                            m_Annotation2D;
+  igstk::Annotation2D::Pointer                     m_Annotation2D;
   ITKImageType::IndexType                          m_P1;
   ITKImageType::IndexType                          m_P2;
   float                                            m_Translation[3];
@@ -281,7 +279,8 @@ private:
   bool CalculateRobotMovement();
   void CreateObliqueView();
   void DisableObliqueView();
-  void AnimateRobotMove( Transform TCurrent, Transform TToBeSet, int steps);
+  void AnimateRobotMove( igstk::Transform TCurrent, 
+                                         igstk::Transform TToBeSet, int steps);
 
 };
 
