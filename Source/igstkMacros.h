@@ -279,7 +279,7 @@ public: \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this, \
                                           & Self::Callback##event##input ); \
-    object->AddObserver( event(),m_Observer##event##input ); \
+    object->AddObserver( ::igstk::event(),m_Observer##event##input ); \
     } 
 
 
@@ -292,7 +292,8 @@ private: \
   ::igstk::event::PayloadType                 m_##input##ToBeSet; \
   void Callback##event##input( const ::itk::EventObject & eventvar ) \
   { \
-    const event * realevent = dynamic_cast < const event * > ( &eventvar ); \
+  const ::igstk::event * realevent = \
+                      dynamic_cast < const ::igstk::event * > ( &eventvar ); \
     if( realevent ) \
       { \
       m_##input##ToBeSet = realevent->Get(); \
@@ -305,7 +306,7 @@ public: \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this,\
                                            & Self::Callback##event##input ); \
-    object->AddObserver( event(),m_Observer##event##input ); \
+    object->AddObserver( ::igstk::event(),m_Observer##event##input ); \
     }
 
 #define igstkObserverMacro( name, eventType, payloadType ) \
