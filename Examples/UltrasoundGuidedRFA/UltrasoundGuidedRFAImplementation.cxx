@@ -136,11 +136,12 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   m_VascularNetworkReader = VascularNetworkReaderType::New();
   m_MRImageReader = MRImageReaderType::New();
   m_USImageReader = USImageReaderType::New();
-  m_ContourLiverRepresentation = ObliqueContourMeshObjectRepresentation::New();
+  m_ContourLiverRepresentation = 
+                            igstk::ObliqueContourMeshObjectRepresentation::New();
   //m_ContourLiverRepresentation = ContourMeshObjectRepresentation::New();
   
   m_ContourVascularNetworkRepresentation = 
-                      ContourVascularNetworkObjectRepresentation::New();
+                      igstk::ContourVascularNetworkObjectRepresentation::New();
   m_VascularNetworkRepresentation = VascularNetworkRepresentationType::New();
   
   m_ObliquePoint.Fill(0);
@@ -255,7 +256,7 @@ void UltrasoundGuidedRFAImplementation
     {
     m_MeshReader->RequestSetFileName(liverfilename);
     m_MeshReader->RequestReadObject();
-    m_LiverRepresentation = MeshObjectRepresentation::New();
+    m_LiverRepresentation = igstk::MeshObjectRepresentation::New();
     m_LiverRepresentation->RequestSetMeshObject( m_MeshReader->GetOutput() );
     m_LiverRepresentation->SetColor(1.0,0.0,0.0);
     m_LiverRepresentation->SetOpacity(1.0);
@@ -286,7 +287,7 @@ void UltrasoundGuidedRFAImplementation
     VascularNetworkObserver::Pointer vascularNetworkObserver 
                                             = VascularNetworkObserver::New();
     m_VascularNetworkReader->AddObserver(
-                        VascularNetworkReader::VascularNetworkModifiedEvent(),
+                    igstk::VascularNetworkReader::VascularNetworkModifiedEvent(),
                         vascularNetworkObserver);
 
     m_VascularNetworkReader->RequestGetVascularNetwork();
@@ -301,7 +302,7 @@ void UltrasoundGuidedRFAImplementation
     m_ContourVascularNetworkRepresentation->RequestSetVascularNetworkObject( 
                               vascularNetworkObserver->GetVascularNetwork() );
     m_ContourVascularNetworkRepresentation->RequestSetOrientation(
-                           ContourVascularNetworkObjectRepresentation::Axial);
+                       igstk::ContourVascularNetworkObjectRepresentation::Axial);
     m_ContourVascularNetworkRepresentation->SetColor(1.0,1.0,1.0);
     m_ContourVascularNetworkRepresentation->SetOpacity(1.0);
 

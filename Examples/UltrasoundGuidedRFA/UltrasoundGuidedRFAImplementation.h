@@ -65,8 +65,6 @@
 
 //#define UGRFA_USE_FOB
 
-using namespace igstk;
-
 
 class UltrasoundGuidedRFAImplementation : public UltrasoundGuidedRFA
 {
@@ -79,14 +77,16 @@ public:
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
 
-  igstkObserverObjectMacro(MRImage,MRImageReader::ImageModifiedEvent,
-                                                  MRImageSpatialObject)
-  igstkObserverObjectMacro(USImage,USImageReader::ImageModifiedEvent,
-                                                  USImageObject)
+  igstkObserverObjectMacro(MRImage,igstk::MRImageReader::ImageModifiedEvent,
+                                                  igstk::MRImageSpatialObject)
+  igstkObserverObjectMacro(USImage,igstk::USImageReader::ImageModifiedEvent,
+                                                  igstk::USImageObject)
 
-  igstkObserverMacro(USImageTransform,TransformModifiedEvent,Transform)
+  igstkObserverMacro(USImageTransform, igstk::TransformModifiedEvent,
+                                                               igstk::Transform)
 
-  igstkObserverMacro(RegistrationTransform,TransformModifiedEvent,Transform)
+  igstkObserverMacro(RegistrationTransform,igstk::TransformModifiedEvent,
+                                                               igstk::Transform)
 
 public:
 
@@ -116,7 +116,7 @@ public:
   typedef igstk::MR3DImageToUS3DImageRegistration   RegistrationType;
 
   igstkObserverObjectMacro(SimulatedUSImage,
-                           USSimulatorType::ImageModifiedEvent,USImageObject)
+                       USSimulatorType::ImageModifiedEvent,igstk::USImageObject)
 
 
   typedef igstk::ObliqueImageSpatialObjectRepresentation<MRImageType>
@@ -168,11 +168,12 @@ private:
   TrackerType::Pointer                            m_Tracker;
   CommunicationType::Pointer                      m_Communication;
   LiverReaderType::Pointer                        m_MeshReader;
-  MeshObjectRepresentation::Pointer               m_LiverRepresentation;
-  ObliqueContourMeshObjectRepresentation::Pointer m_ContourLiverRepresentation;
+  igstk::MeshObjectRepresentation::Pointer               m_LiverRepresentation;
+  igstk::ObliqueContourMeshObjectRepresentation::Pointer 
+                                                  m_ContourLiverRepresentation;
   //ContourMeshObjectRepresentation::Pointer m_ContourLiverRepresentation;
   
-  ContourVascularNetworkObjectRepresentation::Pointer 
+  igstk::ContourVascularNetworkObjectRepresentation::Pointer 
                                         m_ContourVascularNetworkRepresentation;
 
   VascularNetworkReaderType::Pointer          m_VascularNetworkReader;
@@ -202,7 +203,8 @@ private:
   RegistrationType::Pointer m_Registration;
 
   igstkObserverObjectMacro(VascularNetwork,
-    VascularNetworkReader::VascularNetworkModifiedEvent,VascularNetworkObject)
+                     igstk::VascularNetworkReader::VascularNetworkModifiedEvent,
+                                                   igstk::VascularNetworkObject)
 };
 
 

@@ -56,8 +56,6 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "igstkPivotCalibration.h"
 
-using namespace igstk;
-
 class FourViewsTrackingWithCT : public FourViewsTrackingWithCTGUI
 {
 public:
@@ -74,16 +72,16 @@ public:
   igstkStateMachineMacro();
 
   /** typedef for ImageReaderType */
-  typedef CTImageReader                                 ImageReaderType;
+  typedef igstk::CTImageReader                                 ImageReaderType;
 
   typedef ImageReaderType::ImageSpatialObjectType       ImageSpatialObjectType;
   typedef ImageSpatialObjectType::IndexType             IndexType;
 
   /** typedef for ImageRepresentationType */
-  typedef CTImageSpatialObjectRepresentation            ImageRepresentationType;
+  typedef igstk::CTImageSpatialObjectRepresentation     ImageRepresentationType;
 
   /** typedef for RegistrationType */
-  typedef Landmark3DRegistration                        RegistrationType;
+  typedef igstk::Landmark3DRegistration                        RegistrationType;
   typedef RegistrationType::LandmarkImagePointType      LandmarkPointType;
   typedef RegistrationType::LandmarkPointContainerType  
                                                      LandmarkPointContainerType;
@@ -93,13 +91,13 @@ public:
 
   /** typedefs for the communication */
 #ifdef WIN32
-  typedef SerialCommunicationForWindows               CommunicationType;
+  typedef igstk::SerialCommunicationForWindows               CommunicationType;
 #else
-  typedef SerialCommunicationForPosix                 CommunicationType;
+  typedef igstk::SerialCommunicationForPosix                 CommunicationType;
 #endif
 
   /** typedefs for the tracker */
-  typedef PolarisTracker                                TrackerType;
+  typedef igstk::PolarisTracker                                TrackerType;
 
   /** Public request methods from the GUI. */
   virtual void RequestSetPatientName();
@@ -125,8 +123,8 @@ public:
   igstkLoadedEventTransductionMacro( CoronalSliceBoundsEvent,  
                                      CoronalBoundsInput, CoronalBounds  );
 
-  igstkObserverObjectMacro(CTImage,CTImageReader::ImageModifiedEvent,
-                                                  CTImageSpatialObject)
+  igstkObserverObjectMacro(CTImage,igstk::CTImageReader::ImageModifiedEvent,
+                                                  igstk::CTImageSpatialObject)
 
   FourViewsTrackingWithCT();
   virtual ~FourViewsTrackingWithCT();
@@ -196,7 +194,7 @@ private:
   LogOutputType::Pointer              m_LogFileOutput;  // log output to file
   LogOutputType::Pointer              m_LogCoutOutput;  // log output to console
   std::ofstream                       m_LogFile;        // file stream
-  FLTKTextLogOutput::Pointer          m_LogFLTKOutput;  // log output to FLTK
+  igstk::FLTKTextLogOutput::Pointer   m_LogFLTKOutput;  // log output to FLTK
 
   /** Registered patient name */
   std::string                         m_PatientName;
@@ -221,20 +219,20 @@ private:
   LandmarkPointContainerType          m_TrackerLandmarksContainer;
 
   /** To store the landmark registration result transform*/
-  Transform                           m_ImageToTrackerTransform;  
+  igstk::Transform                           m_ImageToTrackerTransform;  
   
   /** To store the transform of the image and tracker landmark points */
-  Transform                           m_TrackerLandmarkTransform; 
-  Transform                           m_ImageLandmarkTransform;
-  Transform                           m_TrackerLandmarkTransformToBeSet; 
-  Transform                           m_ImageLandmarkTransformToBeSet;  
+  igstk::Transform                           m_TrackerLandmarkTransform; 
+  igstk::Transform                           m_ImageLandmarkTransform;
+  igstk::Transform                           m_TrackerLandmarkTransformToBeSet; 
+  igstk::Transform                           m_ImageLandmarkTransformToBeSet;  
 
   /** Serial communication and tracker */
   CommunicationType::Pointer          m_SerialCommunication;
   TrackerType::Pointer                m_Tracker;
 
   /** A pulse generator which can generate PulseEvent. */
-  PulseGenerator::Pointer             m_PulseGenerator;
+  igstk::PulseGenerator::Pointer             m_PulseGenerator;
 
   /** Observer type for simple event, the callback can be set 
    *  to a member function. */

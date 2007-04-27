@@ -36,7 +36,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 
   Fl_Text_Buffer * textBuffer = new Fl_Text_Buffer();
   this->m_LogWindow->buffer( textBuffer );
-  m_LogFLTKOutput = FLTKTextLogOutput::New();
+  m_LogFLTKOutput = igstk::FLTKTextLogOutput::New();
   m_LogFLTKOutput->SetStream( *m_LogWindow );
   this->GetLogger()->AddLogOutput( m_LogFLTKOutput );
 
@@ -70,18 +70,18 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_LandmarkRegistrationObserver = ObserverType2::New();
   m_LandmarkRegistrationObserver->SetCallbackFunction( this, 
                    &FourViewsTrackingWithCT::GetLandmarkRegistrationTransform );
-  m_LandmarkRegistration->AddObserver( TransformModifiedEvent(), 
+  m_LandmarkRegistration->AddObserver( igstk::TransformModifiedEvent(), 
                                                m_LandmarkRegistrationObserver );
 
   m_SerialCommunication = CommunicationType::New();
   m_SerialCommunication->SetLogger( m_Logger );
-  m_SerialCommunication->SetPortNumber( SerialCommunication::PortNumber2 ); 
-  m_SerialCommunication->SetParity( SerialCommunication::NoParity );
-  m_SerialCommunication->SetBaudRate( SerialCommunication::BaudRate9600 );
-  m_SerialCommunication->SetDataBits( SerialCommunication::DataBits8 );
-  m_SerialCommunication->SetStopBits( SerialCommunication::StopBits1 );
+  m_SerialCommunication->SetPortNumber(igstk::SerialCommunication::PortNumber2 ); 
+  m_SerialCommunication->SetParity( igstk::SerialCommunication::NoParity );
+  m_SerialCommunication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
+  m_SerialCommunication->SetDataBits( igstk::SerialCommunication::DataBits8 );
+  m_SerialCommunication->SetStopBits( igstk::SerialCommunication::StopBits1 );
   m_SerialCommunication->SetHardwareHandshake( 
-                                            SerialCommunication::HandshakeOff );
+                                      igstk::SerialCommunication::HandshakeOff );
   m_SerialCommunication->OpenCommunication();
   
   m_Tracker = TrackerType::New();
@@ -135,7 +135,7 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ImageLandmarkTransform.SetToIdentity( 10000 );
   m_TrackerLandmarkTransform.SetToIdentity( 10000 );
 
-  m_PulseGenerator = PulseGenerator::New();
+  m_PulseGenerator = igstk::PulseGenerator::New();
   m_Observer = ObserverType::New();
   m_Observer->SetCallbackFunction( this, & FourViewsTrackingWithCT::Tracking );
   m_PulseGenerator->AddObserver( igstk::PulseEvent(), m_Observer );
@@ -151,11 +151,11 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ViewPickerObserver->SetCallbackFunction( this, 
                                    &FourViewsTrackingWithCT::DrawPickedPoint );
 
-  this->DisplayAxial->AddObserver( TransformModifiedEvent(), 
+  this->DisplayAxial->AddObserver( igstk::TransformModifiedEvent(), 
                                    m_ViewPickerObserver );
-  this->DisplaySagittal->AddObserver( TransformModifiedEvent(), 
+  this->DisplaySagittal->AddObserver( igstk::TransformModifiedEvent(), 
                                       m_ViewPickerObserver );
-  this->DisplayCoronal->AddObserver( TransformModifiedEvent(), 
+  this->DisplayCoronal->AddObserver( igstk::TransformModifiedEvent(), 
                                      m_ViewPickerObserver );
 
   this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
@@ -705,7 +705,7 @@ void FourViewsTrackingWithCT::Tracking()
 {
   igstkLogMacro( DEBUG,  "Pulse Events...\n" )
   //m_Tracker->UpdateStatus();
-  Transform transform;
+  igstk::Transform transform;
   //transform = m_Ellipsoid->GetTransform();
   m_Tracker->GetToolTransform( TRACKER_TOOL_PORT, 0, transform );
   //m_Ellipsoid->RequestSetTransform( transform );
@@ -944,9 +944,10 @@ void FourViewsTrackingWithCT::SetCoronalSliderBoundsProcessing()
 void FourViewsTrackingWithCT
 ::GetLandmarkRegistrationTransform( const itk::EventObject & event )
 {
-  if ( TransformModifiedEvent().CheckEvent( &event ) )
+  if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
     {
-    TransformModifiedEvent *tmevent = ( TransformModifiedEvent *) & event;
+    igstk::TransformModifiedEvent *tmevent = ( 
+                                        igstk::TransformModifiedEvent *) & event;
     m_ImageToTrackerTransform = tmevent->Get();
     
     m_Tracker->SetPatientTransform( m_ImageToTrackerTransform );
@@ -968,9 +969,10 @@ void FourViewsTrackingWithCT
 
 void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
 {
-  if ( TransformModifiedEvent().CheckEvent( &event ) )
+  if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
     {
-    TransformModifiedEvent *tmevent = ( TransformModifiedEvent *) & event;
+    igstk::TransformModifiedEvent *tmevent = ( 
+                                        igstk::TransformModifiedEvent *) & event;
     
     ImageSpatialObjectType::PointType    p;
     p[0] = tmevent->Get().GetTranslation()[0];
