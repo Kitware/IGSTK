@@ -32,3 +32,4 @@ igstkLandmark3DRegistrationErrorEstimatorTest.cxx Namespace Disable
 igstkLandmark3DRegistrationTest.cxx Namespace Disable
 igstkLandmark3DRegistrationTest2 Namespace Disable
 .*\Examples.*\.h Namespace Disable
+.*\Examples.*\.cxx Namespace Disable
