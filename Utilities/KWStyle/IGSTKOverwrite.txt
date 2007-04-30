@@ -20,3 +20,5 @@ VascularNetworkObject.cxx Indent Disable
 PivotCalibration1.cxx Indent Disable
 PivotCalibrationReader1.cxx Indent Disable
 PrincipalAxisCalibration.cxx Indent Disable
+.*\Examples.*\.h Namespace Disable
+.*\Examples.*\.cxx Namespace Disable

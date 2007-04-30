@@ -1,0 +1,13 @@
+@IGSTKSandbox_SOURCE_DIR@/Examples/*.h [R]
+@IGSTKSandbox_SOURCE_DIR@/Examples/*.cxx [R]
+@IGSTKSandbox_SOURCE_DIR@/Examples/*.txx [R]
+@IGSTKSandbox_SOURCE_DIR@/Source/*.h
+@IGSTKSandbox_SOURCE_DIR@/Source/*.cxx
+@IGSTKSandbox_SOURCE_DIR@/Source/*.txx
+@IGSTKSandbox_SOURCE_DIR@/Testing/*.h
+@IGSTKSandbox_SOURCE_DIR@/Testing/*.cxx
+@IGSTKSandbox_SOURCE_DIR@/Testing/*.txx
+@IGSTKSandbox_SOURCE_DIR@/IGSTK/*.h* [R]
+@IGSTKSandbox_SOURCE_DIR@/IGSTK/*.txx [R]
+@IGSTKSandbox_SOURCE_DIR@/IGSTK/*.cxx [R]
+

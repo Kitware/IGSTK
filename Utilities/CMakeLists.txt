@@ -20,13 +20,28 @@ IF(IGSTK_USE_KWSTYLE)
   )
   MARK_AS_ADVANCED(KWSTYLE_EXECUTABLE)
 
+  OPTION(KWSTYLE_USE_VIM_FORMAT "Set KWStyle to generate errors with a VIM-compatible format." OFF)
+  OPTION(KWSTYLE_USE_MSVC_FORMAT "Set KWStyle to generate errors with a VisualStudio-compatible format." OFF)
+
+  IF(KWSTYLE_USE_VIM_FORMAT)
+    SET(KWSTYLE_ARGUMENTS -vim ${KWSTYLE_ARGUMENTS})
+  ENDIF(KWSTYLE_USE_VIM_FORMAT)
+
+  IF(KWSTYLE_USE_MSVC_FORMAT)
+    SET(KWSTYLE_ARGUMENTS -msvc ${KWSTYLE_ARGUMENTS})
+  ENDIF(KWSTYLE_USE_MSVC_FORMAT)
+
   CONFIGURE_FILE(${IGSTKSandbox_SOURCE_DIR}/Utilities/KWStyle/IGSTK.kws.xml.in
                ${IGSTKSandbox_BINARY_DIR}/IGSTK.kws.xml)
+               
+  CONFIGURE_FILE(${IGSTKSandbox_SOURCE_DIR}/Utilities/KWStyle/IGSTKFiles.txt.in
+               ${IGSTKSandbox_BINARY_DIR}/IGSTKFiles.txt)
+
 
   ADD_CUSTOM_COMMAND(
     OUTPUT ${IGSTKSandbox_BINARY_DIR}/KWStyleReport.txt
     COMMAND ${KWSTYLE_EXECUTABLE}
-    ARGS    -xml ${IGSTKSandbox_BINARY_DIR}/IGSTK.kws.xml -o ${IGSTKSandbox_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt -R -v -d ${IGSTKSandbox_SOURCE_DIR} 
+    ARGS    -xml ${IGSTKSandbox_BINARY_DIR}/IGSTK.kws.xml -o ${IGSTKSandbox_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt ${KWSTYLE_ARGUMENTS} -D ${IGSTKSandbox_BINARY_DIR}/IGSTKFiles.txt
     COMMENT "Coding Style Checker"
     )
   ADD_CUSTOM_TARGET(StyleCheck DEPENDS ${IGSTKSandbox_BINARY_DIR}/KWStyleReport.txt)
