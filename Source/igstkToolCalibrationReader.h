@@ -200,10 +200,10 @@ public:
   /** Method to pass the directory name containing the spatial object data */
   void RequestSetFileName( const FileNameType & filename );
 
-  /** This method request Object read **/
+  /** This method request Object read */
   void RequestReadObject();
 
-  /** This method request the calibration **/
+  /** This method request the calibration */
   void RequestGetCalibration();
 
   /** Declare the ToolCalibrationReaderToToolCalibration class to be a friend 

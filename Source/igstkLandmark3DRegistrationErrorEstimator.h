@@ -74,7 +74,7 @@ public:
   void RequestSetLandmarkRegistrationError ( const ErrorType & );
 
   /** Method to request computation of error parameters used to estimate 
-   *  target registration error*/
+   *  target registration error */
   void RequestComputeErrorParameters();
 
   /** Method to request target registration estimation */

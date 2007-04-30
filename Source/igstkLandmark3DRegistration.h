@@ -94,7 +94,7 @@ public:
   /** The "RequestResetRegistration" function will be used to start the
    * registration process from the scratch. This method empties both the
    * image and tracker point containers  and reset the system to idle
-   * state*/
+   * state */
   void RequestResetRegistration();
 
   /** The "RequestComputeTransform" method will be used to request
@@ -186,7 +186,7 @@ private:
 
  
   /** The "GetTransform" method throws an event containing the 
-   *  transform parameters*/
+   *  transform parameters */
   void GetTransformProcessing();
 
   /** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent

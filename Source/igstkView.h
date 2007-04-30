@@ -127,7 +127,7 @@ protected:
 
 public:
   
-  /** Update the display in order to render the new content of the scene*/
+  /** Update the display in order to render the new content of the scene */
   void Update();
  
   /** Disable user interactions with the window via mouse and keyboard */
@@ -220,7 +220,7 @@ private:
   void SaveScreenShotWhileIdleProcessing();
   
   /** Save a screenshot of the current rendered scene while in refreshing
-   * state*/
+   * state */
   void SaveScreenShotWhileRefreshingProcessing();
 
   /** Save a screenshot. This method is the actual implementation of the

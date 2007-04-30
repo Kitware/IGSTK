@@ -261,6 +261,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
 
   /** Testing the reuse of the reader by reading a image with different size
    *  Testing the ITK image to VTK image filter pipeline */
+  if (1)
     {
     igstk::CTImageReader::Pointer reader = igstk::CTImageReader::New();
     igstk::CTImageSpatialObjectRepresentation::Pointer representation 

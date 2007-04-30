@@ -482,7 +482,7 @@ bool AuroraTracker::LoadVirtualSROMs( void )
             
             if (!sromFile.is_open())
               {
-              igstkLogMacro( WARNING, "AuroraTracker::LoadVirtualSROM: couldn't "
+              igstkLogMacro( WARNING, "AuroraTracker::LoadVirtualSROM: couldn't"
                              "find SROM file " << sromFileName << " ...\n");
 
               returnValue = false;

@@ -38,7 +38,7 @@ public:
   igstkStandardClassTraitsMacro( DummySpatialObject, SpatialObject )
 
   bool TestMethods()
-  {
+    {
     this->RequestAddObject( NULL );        // Test with null pointer
     this->RequestSetSpatialObject( NULL ); // Test with null pointer
 

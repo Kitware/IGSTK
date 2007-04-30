@@ -79,7 +79,7 @@ public:
   /** Method to pass the directory name containing the spatial object data */
   void RequestSetFileName( const FileNameType & filename );
 
-  /** This method request Object read **/
+  /** This method request Object read */
   void RequestReadObject();
 
 protected:
