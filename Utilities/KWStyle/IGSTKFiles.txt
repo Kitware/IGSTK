@@ -1,9 +1,0 @@
-/projects/KWStyle/IGSTK/Examples/*.h [R]
-/projects/KWStyle/IGSTK/Examples/*.cxx [R]
-/projects/KWStyle/IGSTK/Examples/*.txx [R]
-/projects/KWStyle/IGSTK/Source/*.h
-/projects/KWStyle/IGSTK/Source/*.cxx
-/projects/KWStyle/IGSTK/Source/*.txx
-/projects/KWStyle/IGSTK/Testing/*.h
-/projects/KWStyle/IGSTK/Testing/*.cxx
-/projects/KWStyle/IGSTK/Testing/*.txx
