@@ -32,8 +32,7 @@ namespace igstk
     may be established via serial port, parallel port, ethernet, or an 
     offline communication (through a file or class emulating tracker response).
     Classes specific to each such communication would be derived from this 
-    base Communication class.
-*/
+    base Communication class. */
 
 class Communication  : public Object
 {

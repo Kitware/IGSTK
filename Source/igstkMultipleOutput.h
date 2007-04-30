@@ -29,8 +29,7 @@ namespace igstk
 /** \class MultipleOutput
     \brief Class MultipleOutput allows writing simultaneously to multiple
     streams.  Note that the class derives from std::streambuf and contains a
-    std::set<> of std::ostream.
-*/
+    std::set<> of std::ostream. */
 
 class MultipleOutput : virtual public std::streambuf
 {

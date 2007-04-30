@@ -186,7 +186,7 @@ public:
   /** Purge the contents of the buffers.  This is used if the device 
    *  connected to the serial port has just been reset after an error,
    *  and the contents of the serial port buffers has to be thrown out
-   *  before communication can continue.*/
+   *  before communication can continue. */
   ResultType PurgeBuffers( void );
 
   /** Sleep for the specified number of milliseconds. This is useful

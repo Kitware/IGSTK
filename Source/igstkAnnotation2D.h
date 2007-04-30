@@ -62,7 +62,7 @@ public:
   /* Add annotation text */
   void RequestAddAnnotationText( int , const std::string & );
 
-  /** Request to Set viewport*/
+  /** Request to Set viewport */
   void RequestSetAnnotationsViewPort( int horizontal, int vertical );
 
   /** Request add annotations */

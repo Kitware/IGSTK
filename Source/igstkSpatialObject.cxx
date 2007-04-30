@@ -241,7 +241,7 @@ void SpatialObject::RequestSetTransform(const Transform & transform )
 
 /** Set the full Transform from a tracker. This call should only be invoked
  *  from the Callback of the observer that is listening to events from a 
- *  tracker.*/
+ *  tracker. */
 void SpatialObject::RequestSetTrackedTransform(const Transform & transform )
 {
   m_TransformToBeSet = transform;

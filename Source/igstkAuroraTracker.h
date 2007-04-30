@@ -30,8 +30,7 @@ namespace igstk
   *
   * The Aurora is a magnetic tracker from Northern Digital Inc.
   * in Waterloo, Ontario, Canada.  This class provides an
-  * an interface to the Aurora.
-*/
+  * an interface to the Aurora. */
 
 
 class AuroraTracker : public Tracker

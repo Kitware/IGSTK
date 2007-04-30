@@ -79,7 +79,7 @@ protected:
   void NoProcessing();
 
   /** This method request Object read. This method is intended to be
-   *  invoked ONLY by the State Machine of the superclass. **/
+   *  invoked ONLY by the State Machine of the superclass. */
   void AttemptReadObjectProcessing();
   
   /** This function reports the vascular network */

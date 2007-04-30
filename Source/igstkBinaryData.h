@@ -33,7 +33,7 @@ namespace igstk
  * 
  * This class can be used for storing binary stream during communication.
  *
- **/
+ * */
 
 class BinaryData
 {

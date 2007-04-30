@@ -38,9 +38,7 @@ namespace igstk
     \sa StateMachine
     \sa StateMachineInput
     \sa StateMachineState
-    \sa StateMachineAction
-
-*/
+    \sa StateMachineAction */
 
 class Token
 {

@@ -136,7 +136,7 @@ Landmark3DRegistrationErrorEstimator::RequestSetLandmarkContainer(
 }
 
 /** SetLandmarkContainer method is used by the state machine to 
- *  set the landmark container*/
+ *  set the landmark container */
 void 
 Landmark3DRegistrationErrorEstimator::SetLandmarkContainerProcessing()
 {
@@ -181,7 +181,7 @@ Landmark3DRegistrationErrorEstimator
 }
 
 /** SetTargetPointProcessing method is used by the state machine to 
- *  set the target point*/
+ *  set the target point */
 void 
 Landmark3DRegistrationErrorEstimator::SetTargetPointProcessing()
 {

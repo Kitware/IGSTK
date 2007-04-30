@@ -28,8 +28,7 @@ namespace igstk
   * This class is a for providing Polaris-specific functionality
   * for TrackerTools, and also to allow compile-time type enforcement
   * for other classes and functions that specifically require
-  * an Polaris tool.
-*/
+  * an Polaris tool. */
 
 class PolarisTrackerTool : public TrackerTool
 {

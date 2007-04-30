@@ -99,10 +99,10 @@ public:
   /** Method to pass the directory name containing the DICOM image data */
   void RequestSetDirectory( const DirectoryNameType & directory );
 
-  /** This method request image read **/
+  /** This method request image read */
   void RequestReadImage();
 
-  /** This function should be used to request modality info*/
+  /** This function should be used to request modality info */
   void RequestGetModalityInformation();
 
   /** This function will be used to request patient name info */

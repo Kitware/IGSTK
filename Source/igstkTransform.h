@@ -52,7 +52,7 @@ namespace igstk
  *
  * \sa TimeStamp
  *
- **/
+ * */
 class Transform
 {
 public:

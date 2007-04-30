@@ -50,7 +50,7 @@ namespace igstk
  * multi-machine communications. Times will only be valid inside 
  * the current machine, and probably the current process.
  * 
- **/
+ * */
 
 class TimeStamp
 {

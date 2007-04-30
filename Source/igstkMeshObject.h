@@ -55,13 +55,13 @@ public:
 
   /** Unlike DefaultStaticMeshTraits, the DefaultDynamicMeshTraits structure
    * is designed to create Mesh instances that will have many insert and delete
-   * operations done on them. **/
+   * operations done on them. */
   typedef itk::DefaultDynamicMeshTraits<float,3,3>  MeshTrait;
   
   /** Type of the itk mesh taking three template parameters:
    *  First, the type stored as data for an entity (cell, point, or boundary).
    *  Second, the dimensionality of the mesh. and third, the type information
-   *  structure for the mesh. **/
+   *  structure for the mesh. */
   typedef itk::Mesh<float,3,MeshTrait>              MeshType;
 
   /** Type of the internal MeshSpatialObject. Templated of the itkMesh type */

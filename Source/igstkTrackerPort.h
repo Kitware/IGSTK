@@ -30,8 +30,7 @@ namespace igstk
     This class provides a generic implementation of a port of
     a tracker. This may contain hardware specific details of 
     the tracker port, and a vector of all tracker tools
-    connected to the port.
-*/
+    connected to the port. */
 class TrackerPort : public Object
 {
 

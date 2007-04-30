@@ -59,7 +59,7 @@ public:
    *
    *  The error code is returned by NDICommandInterpreter::GetError() and
    *  the corresponding text is available by passing the code to
-   *  NDICommandInterpreter::ErrorString().*/
+   *  NDICommandInterpreter::ErrorString(). */
   typedef enum
     {
     NDI_OKAY            = 0x00,  /**< No error */
@@ -272,7 +272,7 @@ public:
     NDI_SOLID = 'S',    /**< on */
     } LEDStateType;
 
-  /** PSOUT() states for General Purpose Input Output (GPIO)*/
+  /** PSOUT() states for General Purpose Input Output (GPIO) */
   typedef enum
     {
     NDI_GPIO_OFF       = 'O',    /**< off */
@@ -473,7 +473,7 @@ public:
     this->Command("DSTOP:"); }
 
   /** Initialize the device.  The device must be
-   *  initialized before any other commands are sent.*/
+   *  initialized before any other commands are sent. */
   void INIT() {
     this->Command("INIT:"); }
 
@@ -733,7 +733,7 @@ public:
 
   /** Get the port handle returned by a PHRQ() command.
    *  \return  a port handle between 0x01 and 0xFF
-   *  <p>An SROM can be written to the port handle with the PVWR() command.*/
+   *  <p>An SROM can be written to the port handle with the PVWR() command. */
   int GetPHRQHandle() const;
 
   /** Get the number of port handles as returned by a PHSR() command.
@@ -828,7 +828,7 @@ public:
    *  \return 32-bit integer (see NDI documentation)
    *
    *  The information is updated only when a PHINF() command is sent with
-   *  the NDI_TESTING (0x0002) bit set in the reply mode.*/
+   *  the NDI_TESTING (0x0002) bit set in the reply mode. */
   unsigned int GetPHINFCurrentTest() const;
 
   /** Get a 20-byte string that contains the part number of the tool.
@@ -1007,7 +1007,7 @@ public:
    *  \return          a number between 0 and 20
    *  
    *  The passive stray marker coordinates are updated when a TX() command
-   *  is sent with the NDI_PASSIVE_STRAY (0x1000) bit set in the reply mode.*/
+   *  is sent with the NDI_PASSIVE_STRAY (0x1000) bit set in the reply mode. */
   int GetTXNumberOfPassiveStrays() const;
 
   /** Copy the coordinates of the specified stray marker into the
@@ -1164,7 +1164,7 @@ public:
    *  \return          a number between 0 and 20
    *
    *  The passive stray marker coordinates are updated when a BX() command
-   *  is sent with the NDI_PASSIVE_STRAY (0x1000) bit set in the reply mode.*/
+   *  is sent with the NDI_PASSIVE_STRAY (0x1000) bit set in the reply mode. */
   int GetBXNumberOfPassiveStrays() const;
 
   /** Copy the coordinates of the specified stray marker into the
@@ -1441,14 +1441,14 @@ private:
 
   /** Add a CRC to m_SerialCommand, write it, and return the number of
    *  characters in the command prefix in \em nc.
-   *  If an error occurred, m_ErrorCode will be set.*/
+   *  If an error occurred, m_ErrorCode will be set. */
   int WriteCommand(unsigned int *nc);
 
   /** Read a BX reply from the device into m_CommandReply, assuming
    *  that \em offset characters have already been read.  If the
    *  data does not start with the magic number "A5C4" then
    *  ReadAsciiReply() will be called instead.
-   *  If an error occurred, m_ErrorCode will be set.*/
+   *  If an error occurred, m_ErrorCode will be set. */
   int ReadBinaryReply(unsigned int offset);
 
   /**
@@ -1496,7 +1496,7 @@ private:
    *  other than decimal digits are permitted.
    *
    *  The primary use of this function is decoding replies from the
-   *  device.*/
+   *  device. */
   static int StringToInt(const char* cp, int n);
 
   /** Convert \em n characters of a signed decimal string to an int.

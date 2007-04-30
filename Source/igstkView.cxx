@@ -658,7 +658,7 @@ void View::SaveScreenShotWhileRefreshingProcessing()
   m_PulseGenerator->RequestStart();
 }
 
-/** Save current screenshot in idle state*/
+/** Save current screenshot in idle state */
 void View::SaveScreenShotWhileIdleProcessing()
 {
   igstkLogMacro( DEBUG, "SaveScreenShotWhileIdleProcessing() called ...\n");

@@ -459,7 +459,7 @@ Description:
     This routine calculates a running CRC16 using the polynomial
     X^16 + X^15 + X^2 + 1.
 
-*****************************************************************/
+**************************************************************** */
 
 inline void ndiCalcCRC16(int nextchar, unsigned int *puCRC16)
 {

@@ -115,7 +115,7 @@ protected:
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
   /** This method request Object read. This method is intended to be
-   *  invoked ONLY by the State Machine of the superclass. **/
+   *  invoked ONLY by the State Machine of the superclass. */
   void AttemptReadObjectProcessing();
 
   /** Connect the ITK TubeSpatialObject to the output TubeSpatialObject */
