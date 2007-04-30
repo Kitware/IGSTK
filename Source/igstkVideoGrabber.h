@@ -62,7 +62,11 @@ public:
   void GetVideoOutputClipRectangle();
   void GetVideoOutputPadding();
   void GetGrabbingMode();
-  
+
+protected:
+  VideoGrabber();
+  virtual ~VideoGrabber();
+
 private:
 
   /** States for the State Machine */
@@ -121,9 +125,6 @@ private:
   void StartGrabbingProcessing();
   void StopGrabbingProcessing();
   
-protected:
-  VideoGrabber();
-  virtual ~VideoGrabber();
 };
 
 } // end namespace igstk

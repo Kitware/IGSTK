@@ -236,7 +236,7 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            GrabberActive,
                            No );
                
-  /** State machine ready to run*/
+  /** State machine ready to run */
   igstkSetInitialStateMacro( Idle );
   m_StateMachine.SetReadyToRun();   
   
@@ -246,7 +246,7 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
   const bool skipLoops = false;
   this->ExportStateMachineDescription( ofile, skipLoops );
   ofile.close();
-                                                                                                                                            
+
 }
 
 /** Destructor */
