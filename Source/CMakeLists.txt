@@ -266,6 +266,7 @@ SET(IGSTKSandbox_HEADS
   igstkContourVascularNetworkObjectRepresentation.h
   igstkSocketCommunication.h
   igstkObliqueContourMeshObjectRepresentation.h
+  igstkVideoGrabber.h
 )
 
 IF(IGSTKSandbox_USE_Qt)
@@ -289,6 +290,7 @@ SET(IGSTKSandbox_SRCS
   igstkContourVascularNetworkObjectRepresentation.cxx
   igstkSocketCommunication.cxx
   igstkObliqueContourMeshObjectRepresentation.cxx
+  igstkVideoGrabber.cxx
 )
 
 IF(IGSTKSandbox_USE_Qt)
