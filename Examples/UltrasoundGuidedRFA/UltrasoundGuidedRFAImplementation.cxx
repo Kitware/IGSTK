@@ -137,7 +137,7 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   m_MRImageReader = MRImageReaderType::New();
   m_USImageReader = USImageReaderType::New();
   m_ContourLiverRepresentation = 
-                            igstk::ObliqueContourMeshObjectRepresentation::New();
+                           igstk::ObliqueContourMeshObjectRepresentation::New();
   //m_ContourLiverRepresentation = ContourMeshObjectRepresentation::New();
   
   m_ContourVascularNetworkRepresentation = 
@@ -287,7 +287,7 @@ void UltrasoundGuidedRFAImplementation
     VascularNetworkObserver::Pointer vascularNetworkObserver 
                                             = VascularNetworkObserver::New();
     m_VascularNetworkReader->AddObserver(
-                    igstk::VascularNetworkReader::VascularNetworkModifiedEvent(),
+                   igstk::VascularNetworkReader::VascularNetworkModifiedEvent(),
                         vascularNetworkObserver);
 
     m_VascularNetworkReader->RequestGetVascularNetwork();
@@ -302,7 +302,7 @@ void UltrasoundGuidedRFAImplementation
     m_ContourVascularNetworkRepresentation->RequestSetVascularNetworkObject( 
                               vascularNetworkObserver->GetVascularNetwork() );
     m_ContourVascularNetworkRepresentation->RequestSetOrientation(
-                       igstk::ContourVascularNetworkObjectRepresentation::Axial);
+                      igstk::ContourVascularNetworkObjectRepresentation::Axial);
     m_ContourVascularNetworkRepresentation->SetColor(1.0,1.0,1.0);
     m_ContourVascularNetworkRepresentation->SetOpacity(1.0);
 
@@ -556,4 +556,3 @@ void UltrasoundGuidedRFAImplementation
     return;
     }*/
 }
-

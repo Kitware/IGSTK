@@ -24,7 +24,7 @@
 
 int main(int , char** )
 { 
- igstk::RealTimeClock::Initialize();
+  igstk::RealTimeClock::Initialize();
 
   FourViewsTrackingWithCT * application = new FourViewsTrackingWithCT;
 

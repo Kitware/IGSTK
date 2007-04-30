@@ -548,31 +548,31 @@ void NeedleBiopsy::InitializeTrackerProcessing()
     {
     case 0 : 
       m_SerialCommunication->SetPortNumber( 
-                                       igstk::SerialCommunication::PortNumber0 );
+                                      igstk::SerialCommunication::PortNumber0 );
       break;
     case 1 : 
       m_SerialCommunication->SetPortNumber( 
-                                       igstk::SerialCommunication::PortNumber1 );
+                                      igstk::SerialCommunication::PortNumber1 );
       break;
     case 2 : 
       m_SerialCommunication->SetPortNumber( 
-                                       igstk::SerialCommunication::PortNumber2 );
+                                      igstk::SerialCommunication::PortNumber2 );
       break;
     case 3 : 
       m_SerialCommunication->SetPortNumber( 
-                                       igstk::SerialCommunication::PortNumber3 );
+                                      igstk::SerialCommunication::PortNumber3 );
       break;
     default:
       m_SerialCommunication->SetPortNumber( 
-                                       igstk::SerialCommunication::PortNumber0 );
+                                      igstk::SerialCommunication::PortNumber0 );
     }
   
   m_SerialCommunication->SetParity( igstk::SerialCommunication::NoParity );
-  m_SerialCommunication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
+  m_SerialCommunication->SetBaudRate(igstk::SerialCommunication::BaudRate9600);
   m_SerialCommunication->SetDataBits( igstk::SerialCommunication::DataBits8 );
   m_SerialCommunication->SetStopBits( igstk::SerialCommunication::StopBits1 );
   m_SerialCommunication->SetHardwareHandshake( 
-                                      igstk::SerialCommunication::HandshakeOff );
+                                      igstk::SerialCommunication::HandshakeOff);
   m_SerialCommunication->OpenCommunication();
 
   m_Tracker = TrackerType::New();
@@ -1009,8 +1009,6 @@ void NeedleBiopsy::ConnectImageRepresentationProcessing()
 
 }
 
-
-
 void NeedleBiopsy::SetAxialSliderBoundsProcessing()
 {
   igstkLogMacro( DEBUG, "SetAxialSliderBounds() " << "\n");
@@ -1068,15 +1066,13 @@ void NeedleBiopsy::SetCoronalSliderBoundsProcessing()
   Fl::check();
 }
 
-
-
 void NeedleBiopsy
 ::GetLandmarkRegistrationTransform( const itk::EventObject & event )
 {
   if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
     {
     igstk::TransformModifiedEvent *tmevent = 
-                                      ( igstk::TransformModifiedEvent *) & event;
+                                     ( igstk::TransformModifiedEvent *) & event;
     m_ImageToTrackerTransform = tmevent->Get();
     
     m_Tracker->SetPatientTransform( m_ImageToTrackerTransform );
@@ -1098,7 +1094,7 @@ void NeedleBiopsy::DrawPickedPoint( const itk::EventObject & event)
   if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
     {
     igstk::TransformModifiedEvent *tmevent = 
-                                      ( igstk::TransformModifiedEvent *) & event;
+                                     ( igstk::TransformModifiedEvent *) & event;
     
     ImageSpatialObjectType::PointType    p;
     p[0] = tmevent->Get().GetTranslation()[0];

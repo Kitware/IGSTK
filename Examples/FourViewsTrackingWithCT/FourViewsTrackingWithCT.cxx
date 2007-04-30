@@ -14,9 +14,7 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
 #include "FourViewsTrackingWithCT.h"
-
 #include "FL/Fl_File_Chooser.H"
 #include "FL/Fl_Input.H"
 #include "igstkEvents.h"
@@ -75,13 +73,13 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 
   m_SerialCommunication = CommunicationType::New();
   m_SerialCommunication->SetLogger( m_Logger );
-  m_SerialCommunication->SetPortNumber(igstk::SerialCommunication::PortNumber2 ); 
+  m_SerialCommunication->SetPortNumber(igstk::SerialCommunication::PortNumber2);
   m_SerialCommunication->SetParity( igstk::SerialCommunication::NoParity );
-  m_SerialCommunication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
+  m_SerialCommunication->SetBaudRate( igstk::SerialCommunication::BaudRate9600);
   m_SerialCommunication->SetDataBits( igstk::SerialCommunication::DataBits8 );
   m_SerialCommunication->SetStopBits( igstk::SerialCommunication::StopBits1 );
   m_SerialCommunication->SetHardwareHandshake( 
-                                      igstk::SerialCommunication::HandshakeOff );
+                                      igstk::SerialCommunication::HandshakeOff);
   m_SerialCommunication->OpenCommunication();
   
   m_Tracker = TrackerType::New();
@@ -947,7 +945,7 @@ void FourViewsTrackingWithCT
   if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
     {
     igstk::TransformModifiedEvent *tmevent = ( 
-                                        igstk::TransformModifiedEvent *) & event;
+                                       igstk::TransformModifiedEvent *) & event;
     m_ImageToTrackerTransform = tmevent->Get();
     
     m_Tracker->SetPatientTransform( m_ImageToTrackerTransform );
@@ -972,7 +970,7 @@ void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
   if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
     {
     igstk::TransformModifiedEvent *tmevent = ( 
-                                        igstk::TransformModifiedEvent *) & event;
+                                       igstk::TransformModifiedEvent *) & event;
     
     ImageSpatialObjectType::PointType    p;
     p[0] = tmevent->Get().GetTranslation()[0];
@@ -1051,5 +1049,3 @@ void FourViewsTrackingWithCT::Reset()
   Fl::check();
 
 }
-
-

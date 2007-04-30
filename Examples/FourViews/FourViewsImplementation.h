@@ -47,8 +47,8 @@ public:
                      igstk::VascularNetworkObject)
 
   igstkObserverObjectMacro(Vessel,
-                         igstk::VascularNetworkObject::VesselObjectModifiedEvent,
-                         igstk::VesselObject)
+                        igstk::VascularNetworkObject::VesselObjectModifiedEvent,
+                        igstk::VesselObject)
   
   FourViewsImplementation()
     {
@@ -148,8 +148,8 @@ public:
       VascularNetworkObserver::Pointer vascularNetworkObserver 
                                             = VascularNetworkObserver::New();
       tubeReader->AddObserver(
-                    igstk::VascularNetworkReader::VascularNetworkModifiedEvent(),
-                        vascularNetworkObserver);
+                   igstk::VascularNetworkReader::VascularNetworkModifiedEvent(),
+                   vascularNetworkObserver);
 
       tubeReader->RequestGetVascularNetwork();
 

@@ -218,7 +218,7 @@ private:
   LandmarkPointContainerType          m_ImageLandmarksContainer;
   LandmarkPointContainerType          m_TrackerLandmarksContainer;
 
-  /** To store the landmark registration result transform*/
+  /** To store the landmark registration result transform */
   igstk::Transform                           m_ImageToTrackerTransform;  
   
   /** To store the transform of the image and tracker landmark points */

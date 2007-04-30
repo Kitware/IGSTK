@@ -25,8 +25,6 @@
 #include "LandmarkBasedRegistration.h"
 #include "ModelBasedRegistration.h"
 
-
-
 /** Constructor: Initializes all internal variables. */
 DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
 {  
@@ -1024,7 +1022,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   m_RobotTransformToBeSet.SetTranslationAndRotation( translation, rotation, 
     0.1, 1e300);
 
-  /** Robot Movement Code-------------------------------------------------*/
+  /** Robot Movement Code------------------------------------------------- */
   // Robot translational movement
   // No flip necessary in case of correct needle holder orientation:
   //     "R" must point towards Robot, i.e. top-level fiducial has to be in
@@ -1035,7 +1033,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
 
   /************************************************************************/
   /* Projection Angle                                                     */
-  /************************************************************************/
+  /*********************************************************************** */
   
   const double PI = vnl_math::pi;
 
@@ -1280,4 +1278,3 @@ void DeckOfCardRobot::AnimateRobotMove( igstk::Transform TCurrent,
     igstk::PulseGenerator::CheckTimeouts();
     }
 }
-

@@ -168,7 +168,7 @@ private:
   TrackerType::Pointer                            m_Tracker;
   CommunicationType::Pointer                      m_Communication;
   LiverReaderType::Pointer                        m_MeshReader;
-  igstk::MeshObjectRepresentation::Pointer               m_LiverRepresentation;
+  igstk::MeshObjectRepresentation::Pointer        m_LiverRepresentation;
   igstk::ObliqueContourMeshObjectRepresentation::Pointer 
                                                   m_ContourLiverRepresentation;
   //ContourMeshObjectRepresentation::Pointer m_ContourLiverRepresentation;

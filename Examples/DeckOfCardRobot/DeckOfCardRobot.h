@@ -62,10 +62,9 @@ public:
   igstkStateMachineMacro();
 
   /** typedef for ImageReaderType */
-  typedef igstk::CTImageReader                                 ImageReaderType;
-
-  typedef igstk::CTImageSpatialObject                    ImageSpatialObjectType;
-  typedef ImageSpatialObjectType::IndexType             IndexType;
+  typedef igstk::CTImageReader                         ImageReaderType;
+  typedef igstk::CTImageSpatialObject                  ImageSpatialObjectType;
+  typedef ImageSpatialObjectType::IndexType            IndexType;
 
   typedef ImageSpatialObjectType::ImageType             ITKImageType;
 
@@ -184,16 +183,16 @@ private:
   ObliqueRepresentationType::Pointer  m_ImageRepresentationOblique;
 
   
-  /** To store the landmark registration result transform*/
+  /** To store the landmark registration result transform */
   itk::VersorRigid3DTransform< double >::Pointer    m_ImageToRobotTransform;  
   itk::VersorRigid3DTransform< double >::Pointer    m_RobotToImageTransform;  
   
   /** To store the transform of the image and tracker landmark points */
-  igstk::Transform                               m_ImageLandmarkTransformToBeSet;
-  igstk::Transform                                    m_RobotTransform;
-  igstk::Transform                                    m_RobotCurrentTransform;
-  igstk::Transform                                    m_RobotTransformToBeSet;
-  igstk::Transform                                    m_NeedleTransformToBeSet;
+  igstk::Transform                              m_ImageLandmarkTransformToBeSet;
+  igstk::Transform                              m_RobotTransform;
+  igstk::Transform                              m_RobotCurrentTransform;
+  igstk::Transform                              m_RobotTransformToBeSet;
+  igstk::Transform                              m_NeedleTransformToBeSet;
 
   /** Observer type for loaded event, 
    *  the callback can be set to a member function. */
@@ -212,7 +211,7 @@ private:
   /** Objects for path planning */
   EllipsoidType::Pointer                          m_TargetPoint;
   EllipsoidRepresentationType::Pointer            m_TargetRepresentation;
-  igstk::Transform                                       m_TargetTransform;
+  igstk::Transform                                m_TargetTransform;
 
   EllipsoidType::Pointer                          m_EntryPoint;
   EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  

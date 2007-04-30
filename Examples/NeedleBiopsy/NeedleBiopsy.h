@@ -63,16 +63,15 @@ public:
   igstkStateMachineMacro();
 
   /** typedef for ImageReaderType */
-  typedef igstk::CTImageReader                                 ImageReaderType;
-
+  typedef igstk::CTImageReader                          ImageReaderType;
   typedef ImageReaderType::ImageSpatialObjectType       ImageSpatialObjectType;
   typedef ImageSpatialObjectType::IndexType             IndexType;
 
   /** typedef for ImageRepresentationType */
-  typedef igstk::CTImageSpatialObjectRepresentation      ImageRepresentationType;
+  typedef igstk::CTImageSpatialObjectRepresentation     ImageRepresentationType;
 
   /** typedef for RegistrationType */
-  typedef igstk::Landmark3DRegistration                        RegistrationType;
+  typedef igstk::Landmark3DRegistration                 RegistrationType;
   typedef RegistrationType::LandmarkImagePointType      LandmarkPointType;
 
   typedef RegistrationType::LandmarkPointContainerType  
@@ -83,9 +82,9 @@ public:
 
   /** typedefs for the communication */
 #ifdef WIN32
-  typedef igstk::SerialCommunicationForWindows                 CommunicationType;
+  typedef igstk::SerialCommunicationForWindows               CommunicationType;
 #else
-  typedef igstk::SerialCommunicationForPosix                   CommunicationType;
+  typedef igstk::SerialCommunicationForPosix                 CommunicationType;
 #endif
 
   /** typedefs for the tracker */
@@ -229,7 +228,7 @@ private:
   LandmarkPointContainerType          m_ImageLandmarksContainer;
   LandmarkPointContainerType          m_TrackerLandmarksContainer;
 
-  /** To store the landmark registration result transform*/
+  /** To store the landmark registration result transform */
   igstk::Transform                           m_ImageToTrackerTransform;  
   
   /** To store the transform of the image and tracker landmark points */
@@ -268,15 +267,15 @@ private:
   /** Objects for path planning */
   EllipsoidType::Pointer                          m_TargetPoint;
   EllipsoidRepresentationType::Pointer            m_TargetRepresentation;
-  igstk::Transform                                       m_TargetTransform;
+  igstk::Transform                                m_TargetTransform;
 
   EllipsoidType::Pointer                          m_EntryPoint;
   EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  
-  igstk::Transform                                       m_EntryTransform;
+  igstk::Transform                                m_EntryTransform;
   
   typedef igstk::TubeObject                       PathType;
   typedef igstk::TubeObjectRepresentation         PathRepresentationType;
-  typedef igstk::TubeObject::PointType                   TubePointType;
+  typedef igstk::TubeObject::PointType            TubePointType;
   PathType::Pointer                               m_Path;
   PathRepresentationType::Pointer                 m_PathRepresentationAxial;
   PathRepresentationType::Pointer                 m_PathRepresentationSagittal;
