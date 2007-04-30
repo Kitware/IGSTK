@@ -185,7 +185,7 @@ ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >
     }
 }
 
-/** Overloaded DeleteActor function*/
+/** Overloaded DeleteActor function */
 template < class TImageSpatialObject >
 void 
 ObliqueImageSpatialObjectRepresentation< TImageSpatialObject >

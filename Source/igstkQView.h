@@ -1,17 +1,17 @@
 /*=========================================================================
 
-  Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkQView.h
-  Language:  C++
-  Date:      $Date$
-  Version:   $Revision$
+Program:   Image Guided Surgery Software Toolkit
+Module:    igstkQView.h
+Language:  C++
+Date:      $Date$
+Version:   $Revision$
 
-  Copyright (c) ISIS Georgetown University. All rights reserved.
-  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 #ifndef __igstkQView_h
@@ -131,7 +131,7 @@ public:
   /** Destructor */
   virtual ~QView( void );
   
-  /** Update the display in order to render the new content of the scene*/
+  /** Update the display in order to render the new content of the scene */
   void Update();
  
   /** Disable user interactions with the window via mouse and keyboard */
@@ -214,7 +214,7 @@ private:
   void SaveScreenShotWhileIdleProcessing();
   
   /** Save a screenshot of the current rendered scene while in refreshing
-   * state*/
+   * state */
   void SaveScreenShotWhileRefreshingProcessing();
 
   /** Save a screenshot. This method is the actual implementation of the

@@ -47,9 +47,9 @@ QView3D::~QView3D()
 /** Main FLTK event handler */
 /*
 int QView3D::handle( int event ) 
-{
+  {
   return QView::handle( event );
-}
+  }
 */
 
 /** Print object information */

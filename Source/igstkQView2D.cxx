@@ -20,9 +20,6 @@
 
 namespace igstk {
 
-/** Constructor */
-//QView2D::QView2D( int x, int y, int w, int h, const char *l ) : QView(x,y,w,h,l)
-
 #if QT_VERSION < 0x040000
   //! constructor for Qt 3
   QView2D::QView2D(QWidget* parent, const char* name, Qt::WFlags f)
@@ -49,9 +46,9 @@ QView2D::~QView2D()
 /** Main FLTK event handler */
 /*
 int QView2D::handle( int event ) 
-{
+  {
   return QView::handle( event );
-}
+  }
 */
 
 /** Print object information */

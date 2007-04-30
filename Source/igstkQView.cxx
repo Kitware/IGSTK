@@ -1,17 +1,17 @@
 /*=========================================================================
 
-  Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkQView.cxx
-  Language:  C++
-  Date:      $Date$
-  Version:   $Revision$
+Program:   Image Guided Surgery Software Toolkit
+Module:    igstkQView.cxx
+Language:  C++
+Date:      $Date$
+Version:   $Revision$
 
-  Copyright (c) ISIS Georgetown University. All rights reserved.
-  See IGSTKCopyright.txt or http://www.igstk.org/HTML/Copyright.htm for details.
+Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 // Disabling warning C4355: 'this' : used in base member initializer list
@@ -599,7 +599,7 @@ void QView::SaveScreenShotWhileRefreshingProcessing()
   m_PulseGenerator->RequestStart();
 }
 
-/** Save current screenshot in idle state*/
+/** Save current screenshot in idle state */
 void QView::SaveScreenShotWhileIdleProcessing()
 {
   this->SaveScreenShot();
