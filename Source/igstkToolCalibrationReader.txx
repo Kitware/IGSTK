@@ -18,7 +18,7 @@
 #define __igstkToolCalibrationReader_txx
 
 #include "igstkToolCalibrationReader.h"
-#include "zlib/zlib.h"
+#include "itk_zlib.h" 
 
 namespace igstk
 { 
