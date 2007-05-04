@@ -642,7 +642,7 @@ void PolarisTracker::EnableToolPorts()
     if (location[9] == '0') // wired tool
       {
       unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
-      if (ndiport > 0 && ndiport < NumberOfPorts)
+      if (ndiport > 0 && ndiport <= NumberOfPorts)
         {
         port = ndiport - 1;
         this->m_PortHandle[port] = ph;
