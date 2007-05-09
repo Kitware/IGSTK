@@ -28,9 +28,9 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
   igstkAddStateMacro( AttemptingToSetVideoBufferSize );
   igstkAddStateMacro( AttemptingToSetWantedFramerate );
   igstkAddStateMacro( AttemptingToSetVideoOutputFormat );
+  igstkAddStateMacro( AttemptingToSetVideoOutputDimensions );
   igstkAddStateMacro( AttemptingToSetVideoOutputClipRectangle );
   igstkAddStateMacro( AttemptingToSetVideoOutputPadding );
-  igstkAddStateMacro( AttemptingToSetGrabbingMode );
   igstkAddStateMacro( AttemptingToInitialize );
   igstkAddStateMacro( AttemptingToStartGrabbing );
   igstkAddStateMacro( AttemptingToStopGrabbing );
@@ -43,18 +43,18 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
   igstkAddStateMacro( Grabbing );
   
   
-  igstkAddInputMacro( RequestSetVideoBufferSize );
-  igstkAddInputMacro( RequestSetWantedFramerate );
-  igstkAddInputMacro( RequestSetVideoOutputFormat );
-  igstkAddInputMacro( RequestSetVideoOutputClipRectangle );
-  igstkAddInputMacro( RequestSetVideoOutputPadding );
-  igstkAddInputMacro( RequestSetGrabbingMode );
-  igstkAddInputMacro( RequestOpen );
-  igstkAddInputMacro( RequestClose );
-  igstkAddInputMacro( RequestInitialize );
-  igstkAddInputMacro( RequestStartGrabbing );
-  igstkAddInputMacro( RequestStopGrabbing );
-  igstkAddInputMacro( RequestGrabOneFrame );
+  igstkAddInputMacro( SetVideoBufferSize );
+  igstkAddInputMacro( SetWantedFramerate );
+  igstkAddInputMacro( SetVideoOutputFormat );
+  igstkAddInputMacro( SetVideoOutputDimensions );
+  igstkAddInputMacro( SetVideoOutputClipRectangle );
+  igstkAddInputMacro( SetVideoOutputPadding );
+  igstkAddInputMacro( Open );
+  igstkAddInputMacro( Close );
+  igstkAddInputMacro( Initialize );
+  igstkAddInputMacro( StartGrabbing );
+  igstkAddInputMacro( StopGrabbing );
+  igstkAddInputMacro( GrabOneFrame );
   
   igstkAddInputMacro( Success );
   igstkAddInputMacro( Failure );
@@ -62,7 +62,7 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
 
   /** RequestSet transitions */ 
   igstkAddTransitionMacro( Idle,                            // From_State
-                           RequestSetVideoBufferSize,       // Received_Input
+                           SetVideoBufferSize,              // Received_Input
                            AttemptingToSetVideoBufferSize,  // To_State
                            SetVideoBufferSize );            // Action
   igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
@@ -75,7 +75,7 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            No );
                            
   igstkAddTransitionMacro( Idle,
-                           RequestSetWantedFramerate,
+                           SetWantedFramerate,
                            AttemptingToSetWantedFramerate,
                            SetWantedFramerate );
   igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
@@ -88,7 +88,7 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            No );
                            
   igstkAddTransitionMacro( Idle,
-                           RequestSetVideoOutputFormat,
+                           SetVideoOutputFormat,
                            AttemptingToSetVideoOutputFormat,
                            SetVideoOutputFormat );
   igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
@@ -101,7 +101,20 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            No );
                            
   igstkAddTransitionMacro( Idle,
-                           RequestSetVideoOutputClipRectangle,
+                           SetVideoOutputDimensions,
+                           AttemptingToSetVideoOutputDimensions,
+                           SetVideoOutputDimensions );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           Success,
+                           Idle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           Failure,
+                           Idle,
+                           No );
+                           
+  igstkAddTransitionMacro( Idle,
+                           SetVideoOutputClipRectangle,
                            AttemptingToSetVideoOutputClipRectangle,
                            SetVideoOutputClipRectangle );
   igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
@@ -114,7 +127,7 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            No );
                            
   igstkAddTransitionMacro( Idle,
-                           RequestSetVideoOutputPadding,
+                           SetVideoOutputPadding,
                            AttemptingToSetVideoOutputPadding,
                            SetVideoOutputPadding );
   igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
@@ -126,22 +139,10 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            Idle,
                            No );
                            
-  igstkAddTransitionMacro( Idle,
-                           RequestSetGrabbingMode,
-                           AttemptingToSetGrabbingMode,
-                           SetGrabbingMode );
-  igstkAddTransitionMacro( AttemptingToSetGrabbingMode,
-                           Success,
-                           Idle,
-                           No );
-  igstkAddTransitionMacro( AttemptingToSetGrabbingMode,
-                           Failure,
-                           Idle,
-                           No );
                            
   /** Initialize */
   igstkAddTransitionMacro( Idle,
-                           RequestInitialize,
+                           Initialize,
                            AttemptingToInitialize,
                            Initialize );
   igstkAddTransitionMacro( AttemptingToInitialize,
@@ -155,7 +156,7 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            
   /** Activate grabber */ 
   igstkAddTransitionMacro( GrabberReady,
-                           RequestOpen,
+                           Open,
                            AttemptingToActivateGrabber,
                            ActivateGrabber );
   igstkAddTransitionMacro( AttemptingToActivateGrabber,
@@ -169,7 +170,7 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            
   /** Deactivate grabber */ 
   igstkAddTransitionMacro( GrabberActive,
-                           RequestClose,
+                           Close,
                            AttemptingToDeactivateGrabber,
                            DeactivateGrabber );
   igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
@@ -183,7 +184,7 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            
   /** Grab one frame */ 
   igstkAddTransitionMacro( GrabberActive,
-                           RequestGrabOneFrame,
+                           GrabOneFrame,
                            AttemptingToGrabOneFrame,
                            GrabOneFrame );
   igstkAddTransitionMacro( AttemptingToGrabOneFrame,
@@ -197,7 +198,7 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            
   /** Start continious grabbing */ 
   igstkAddTransitionMacro( GrabberActive,
-                           RequestStartGrabbing,
+                           StartGrabbing,
                            AttemptingToStartGrabbing,
                            StartGrabbing );
   igstkAddTransitionMacro( AttemptingToStartGrabbing,
@@ -211,7 +212,7 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            
   /** Stop continious grabbing */ 
   igstkAddTransitionMacro( Grabbing,
-                           RequestStopGrabbing,
+                           StopGrabbing,
                            AttemptingToStopGrabbing,
                            StopGrabbing );
   igstkAddTransitionMacro( AttemptingToStopGrabbing,
@@ -224,7 +225,7 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            No );
                            
   igstkAddTransitionMacro( Grabbing,
-                           RequestClose,
+                           Close,
                            AttemptingToDeactivateGrabber,
                            DeactivateGrabber );
   igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
@@ -252,7 +253,6 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
 /** Destructor */
 VideoGrabber::~VideoGrabber()
 {
- 
 }
 
 /** Method to be invoked when no operation is required */
@@ -260,79 +260,395 @@ void VideoGrabber::NoProcessing()
 {
 }
 
+/** Internal fuction to set and test video buffer size. 
+* This method must be overridden by a decendant class 
+* with testing of the input value */
+VideoGrabber::ResultType
+VideoGrabber
+::InternalSetVideoBufferSizeProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+::InternalSetVideoBufferSizeProcessing called...\n");
+  m_VideoBufferSize = m_VideoBufferSizeToBeSet;
+  return SUCCESS;
+}
+
+/** Internal fuction to set and test video framerate. 
+* This method must be overridden by a decendant class 
+* with testing of the input value */
+VideoGrabber::ResultType
+VideoGrabber
+::InternalSetWantedFramerateProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+::InternalSetWantedFramerateProcessing called...\n");
+  m_Framerate = m_FramerateToBeSet;
+  return SUCCESS;
+}
+
+/** Internal fuction to set and test video output format. 
+* This method must be overridden by a decendant class 
+* with testing of the input value */
+VideoGrabber::ResultType
+VideoGrabber
+::InternalSetVideoOutputFormatProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+::InternalSetVideoOutputFormatProcessing called...\n");
+  m_VideoOutputFormat = m_VideoOutputFormatToBeSet;
+  return SUCCESS;
+}
+
+/** Internal fuction to set and test video output dimensions. 
+* This method must be overridden by a decendant class 
+* with testing of the input value */
+VideoGrabber::ResultType
+VideoGrabber
+::InternalSetVideoOutputDimensionsProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+::InternalSetVideoOutputDimensionsProcessing called...\n");
+  m_VideoOutputHeight = m_VideoOutputHeightToBeSet;
+  m_VideoOutputWidth = m_VideoOutputWidthToBeSet;
+  return SUCCESS;
+}
+
+/** Internal fuction to set and test video output clipping rectangle. 
+* This method must be overridden by a decendant class 
+* with testing of the input value */
+VideoGrabber::ResultType
+VideoGrabber
+::InternalSetVideoOutputClipRectangleProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+::InternalSetVideoOutputClipRectangleProcessing called...\n");
+  m_VideoOutputClipRectangleHeight = m_VideoOutputClipRectangleHeightToBeSet;
+  m_VideoOutputClipRectangleWidth = m_VideoOutputClipRectangleWidthToBeSet;
+  m_VideoOutputClipRectangleXPosition = 
+    m_VideoOutputClipRectangleXPositionToBeSet;
+  m_VideoOutputClipRectangleYPosition = 
+    m_VideoOutputClipRectangleYPositionToBeSet;
+  return SUCCESS;
+}
+
+/** Internal fuction to set and test framerate. 
+* This method must be overridden by a decendant class 
+* with testing of the input value */
+VideoGrabber::ResultType
+VideoGrabber
+::InternalSetVideoOutputPaddingProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+::InternalSetVideoOutputPaddingProcessing called...\n");
+  m_VideoOutputPadding = m_VideoOutputPaddingToBeSet;
+  return SUCCESS;
+}
+
+/** The following methods should be abstract to make sure they are reimplemeted
+    in the decendant classes */
+
+/** Internal fuction to initialize grabber. 
+* This method must be overridden by a decendant class 
+* with testing of the input value */
+/*VideoGrabber::ResultType
+VideoGrabber
+::InternalInitializeProcessing( void ) 
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+::InternalInitializeProcessing called...\n");
+  return SUCCESS;
+}*/
+
+/** Internal fuction to activate grabber. 
+* This method must be overridden by a decendant class 
+* with testing of the input value */
+/*VideoGrabber::ResultType
+VideoGrabber
+::InternalActivateGrabberProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+::InternalActivateGrabberProcessing called...\n");
+  return SUCCESS;
+}*/
+
+/** Internal fuction to deactivate grabber. 
+* This method must be overridden by a decendant class 
+* with testing of the input value */
+/*VideoGrabber::ResultType
+VideoGrabber
+::InternalDeactivateGrabberProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+::InternalDeactivateGrabberProcessing called...\n");
+  return SUCCESS;
+}*/
+
+/** Internal fuction to grab one framer. 
+* This method must be overridden by a decendant class 
+* with testing of the input value */
+/*VideoGrabber::ResultType
+VideoGrabber
+::InternalGrabOneFrameProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+::InternalGrabOneFrameProcessing called...\n");
+  return SUCCESS;
+}*/
+
+/** Internal fuction to start grabbing. 
+* This method must be overridden by a decendant class 
+* with testing of the input value */
+/*VideoGrabber::ResultType
+VideoGrabber
+::InternalStartGrabbingProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+::InternalStartGrabbingProcessing called...\n");
+  return SUCCESS;
+}*/
+
+/** Internal fuction to stop grabbing. 
+* This method must be overridden by a decendant class 
+* with testing of the input value */
+/*VideoGrabber::ResultType
+VideoGrabber
+::InternalStopGrabbingProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+::InternalStopGrabbingProcessing called...\n");
+  return SUCCESS;
+}*/
+
 void VideoGrabber::SetVideoBufferSizeProcessing()
 {
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::SetVideoBufferSizeProcessing called...\n");
+  ResultType result = this->InternalSetVideoBufferSizeProcessing();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 void VideoGrabber::SetWantedFramerateProcessing()
 {
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::SetWantedFramerateProcessing called...\n");
+  ResultType result = this->InternalSetWantedFramerateProcessing();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 void VideoGrabber::SetVideoOutputFormatProcessing()
 {
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::SetVideoOutputFormatProcessing called...\n");
+  ResultType result = this->InternalSetVideoOutputFormatProcessing();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
+}
+
+void VideoGrabber::SetVideoOutputDimensionsProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::SetVideoOutputDimensionsProcessing called...\n");
+  ResultType result = this->InternalSetVideoOutputDimensionsProcessing();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 void VideoGrabber::SetVideoOutputClipRectangleProcessing()
 {
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::SetVideoOutputClipRectangleProcessing called...\n");
+  ResultType result = this->InternalSetVideoOutputClipRectangleProcessing();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 void VideoGrabber::SetVideoOutputPaddingProcessing()
 {
-}
-
-void VideoGrabber::SetGrabbingModeProcessing()
-{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::SetVideoOutputPaddingProcessing called...\n");
+  ResultType result = this->InternalSetVideoOutputPaddingProcessing();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 void VideoGrabber::InitializeProcessing()
 {
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::InitializeProcessing called...\n");
+  ResultType result = this->InternalInitializeProcessing();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 void VideoGrabber::ActivateGrabberProcessing()
 {
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::ActivateGrabberProcessing called...\n");
+  ResultType result = this->InternalActivateGrabberProcessing();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 void VideoGrabber::DeactivateGrabberProcessing()
 {
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::DeactivateGrabberProcessing called...\n");
+  ResultType result = this->InternalDeactivateGrabberProcessing();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 void VideoGrabber::GrabOneFrameProcessing()
 {
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::GrabOneFrameProcessing called...\n");
+  ResultType result = this->InternalGrabOneFrameProcessing();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 void VideoGrabber::StartGrabbingProcessing()
 {
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::StartGrabbingProcessing called...\n");
+  ResultType result = this->InternalStartGrabbingProcessing();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 void VideoGrabber::StopGrabbingProcessing()
 {
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::StopGrabbingProcessing called...\n");
+  ResultType result = this->InternalStopGrabbingProcessing();
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 /** Public request methods */
-void VideoGrabber::RequestSetVideoBufferSize()
-{}
-void VideoGrabber::RequestSetWantedFramerate()
-{}
-void VideoGrabber::RequestSetVideoOutputFormat()
-{}
-void VideoGrabber::RequestSetVideoOutputClipRectangle()
-{}
-void VideoGrabber::RequestSetVideoOutputPadding()
-{}
-void VideoGrabber::RequestSetGrabbingMode()
-{}
+void VideoGrabber::RequestSetVideoBufferSize( unsigned long videoBufferSize )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::RequestSetVideoBufferSize called...\n");
+  m_VideoBufferSizeToBeSet = videoBufferSize;
+  igstkPushInputMacro( SetVideoBufferSize );
+  this->m_StateMachine.ProcessInputs();
+}
+
+void VideoGrabber::RequestSetWantedFramerate( unsigned int framerate )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::RequestSetWantedFramerate called...\n");
+  m_FramerateToBeSet = framerate;
+  igstkPushInputMacro( SetWantedFramerate );
+  this->m_StateMachine.ProcessInputs();
+}
+
+void VideoGrabber::RequestSetVideoOutputFormat( unsigned int format )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::RequestSetVideoOutputFormat called...\n");
+  m_VideoOutputFormatToBeSet = format;
+  igstkPushInputMacro( SetVideoOutputFormat );
+  this->m_StateMachine.ProcessInputs();
+}
+
+void VideoGrabber::RequestSetVideoOutputDimensions( unsigned int videoHeight, 
+                                                    unsigned int videoWidth )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::RequestSetVideoOutputDimensions called...\n");
+  m_VideoOutputHeightToBeSet = videoHeight;
+  m_VideoOutputWidthToBeSet = videoWidth;
+  igstkPushInputMacro( SetVideoOutputDimensions );
+  this->m_StateMachine.ProcessInputs();
+}
+
+void VideoGrabber::RequestSetVideoOutputClipRectangle( unsigned int height, 
+                                                       unsigned int width,
+                                                       signed int xPosition, 
+                                                       signed int yPosition )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::RequestSetVideoOutputClipRectangle called...\n");
+  m_VideoOutputClipRectangleHeightToBeSet = height;
+  m_VideoOutputClipRectangleWidthToBeSet = width;
+  m_VideoOutputClipRectangleXPositionToBeSet = xPosition;
+  m_VideoOutputClipRectangleYPositionToBeSet = yPosition;
+  igstkPushInputMacro( SetVideoOutputClipRectangle );
+  this->m_StateMachine.ProcessInputs();
+}
+
+void VideoGrabber::RequestSetVideoOutputPadding( unsigned int padding )
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::RequestSetVideoOutputPadding called...\n");
+  m_VideoOutputPaddingToBeSet = padding;
+  igstkPushInputMacro( SetVideoOutputPadding );
+  this->m_StateMachine.ProcessInputs();
+}
+
 void VideoGrabber::RequestOpen()
-{}
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::RequestOpen called...\n");
+  igstkPushInputMacro( Open );
+  this->m_StateMachine.ProcessInputs();
+}
+
 void VideoGrabber::RequestClose()
-{}
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::RequestClose called...\n");
+  igstkPushInputMacro( Close );
+  this->m_StateMachine.ProcessInputs();
+}
+
 void VideoGrabber::RequestInitialize()
-{}
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::RequestInitialize called...\n");
+  igstkPushInputMacro( Initialize );
+  this->m_StateMachine.ProcessInputs();
+}
+
 void VideoGrabber::RequestStartGrabbing()
-{}
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::RequestStartGrabbing called...\n");
+  igstkPushInputMacro( StartGrabbing );
+  this->m_StateMachine.ProcessInputs();
+}
+
 void VideoGrabber::RequestStopGrabbing()
-{}
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::RequestStopGrabbing called...\n");
+  igstkPushInputMacro( StopGrabbing );
+  this->m_StateMachine.ProcessInputs();
+}
+
 void VideoGrabber::RequestGrabOneFrame()
-{}
+{
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber\
+                        ::RequestGrabOneFrame called...\n");
+  igstkPushInputMacro( GrabOneFrame );
+  this->m_StateMachine.ProcessInputs();
+}
 
 /** Public get methods */
 void VideoGrabber::GetVideoBufferSize()
@@ -349,11 +665,11 @@ void VideoGrabber::GetFramerate()
 {}
 void VideoGrabber::GetVideoOutputFormat()
 {}
+void VideoGrabber::GetVideoOutputDimensions()
+{}
 void VideoGrabber::GetVideoOutputClipRectangle()
 {}
 void VideoGrabber::GetVideoOutputPadding()
-{}
-void VideoGrabber::GetGrabbingMode()
 {}
 
 } // end namespace igstk
