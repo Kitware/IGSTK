@@ -360,6 +360,7 @@ void View::ResetCameraProcessing()
 {
   igstkLogMacro( DEBUG, "ResetCameraProcessing() called ...\n");
   m_Renderer->ResetCamera();
+  m_Camera->SetClippingRange( 0.1, 10000);
 }
 
 /** */
