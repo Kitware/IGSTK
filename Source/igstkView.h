@@ -75,8 +75,11 @@ public:
   void RequestSetRefreshRate( double frequency );
   
   /** Add an observer to this View class */
-  void AddObserver( const ::itk::EventObject & event, 
-                    ::itk::Command * observer );
+  unsigned long AddObserver( const ::itk::EventObject & event, 
+                                                   ::itk::Command * observer );
+
+  /** Remove an observer to this View class */
+  void  RemoveObserver( unsigned long tag );
   
   /** Object representation types */
   typedef ObjectRepresentation::Pointer     ObjectPointer;

@@ -236,13 +236,18 @@ void View::Update()
 }
 
 
-void View::AddObserver( const ::itk::EventObject & event, 
+unsigned long View::AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer )
 {
   igstkLogMacro( DEBUG, "AddObserver() called ...\n");
-  m_Reporter->AddObserver( event, observer );
+  return m_Reporter->AddObserver( event, observer );
 }
 
+void View::RemoveObserver( unsigned long tag )
+{
+  igstkLogMacro( DEBUG, "RemoveObserver() called ...\n");
+  m_Reporter->RemoveObserver( tag );
+}
 
 /** */
 void View::RequestAddActor( vtkProp * actor )
