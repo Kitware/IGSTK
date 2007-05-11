@@ -20,6 +20,7 @@
 #include "igstkObject.h"
 #include "igstkStateMachine.h"
 #include "igstkMacros.h"
+#include "igstkEvents.h"
 
 namespace igstk
 {
@@ -32,42 +33,106 @@ class VideoGrabber : public Object
 {
 public:
 
+  /** Container for video dimensions */
+  struct VideoDimensions
+  {
+    unsigned int m_Height;
+    unsigned int m_Width;
+  };
+  
+  /** Container for video clipping rectangle */
+  struct VideoClipRectangle
+  {
+    /** Height and width of rectangle */
+    unsigned int m_Height;
+    unsigned int m_Width;
+    
+    /** Starting X and Y position of rectangle */
+    signed int   m_XPosition;
+    signed int   m_YPosition;
+  };
+  
   /** Macro with standard traits declarations. */
   //igstkStandardClassTraitsMacro( VideoGrabber, Object )
   igstkStandardAbstractClassTraitsMacro( VideoGrabber, Object )
   
   /** Public request methods */
-  virtual void RequestSetVideoBufferSize( unsigned long videoBufferSize );
+  
+  /** Set methods */
+    
+  /** Set seize of the VideoGrabber videobuffer
+    * \param bufferSize Size of video buffer */
+  virtual void RequestSetVideoBufferSize( unsigned long bufferSize );
+  
+  /** Set framerate.
+    * \param framerate Desired framerate */
   virtual void RequestSetWantedFramerate(unsigned int framerate);
+  
+  /** Set the video output format. The possible formats are dependant on video 
+    * grabber hardware.
+    * \param format The format to use */
   virtual void RequestSetVideoOutputFormat( unsigned int format );
-  virtual void RequestSetVideoOutputDimensions( unsigned int videoHeight, 
-                                                unsigned int videoWidth );
+  
+  /** Set desired video output dimensions.
+    * \param height Desired height of video output
+    * \param width Desired width of video output */
+  virtual void RequestSetVideoOutputDimensions(  unsigned int videoHeight, 
+                                                 unsigned int videoWidth  );
+  
+  /** Set rectangle for clipping the video output to desired size.
+    * \param height Height of rectangle
+    * \param width Width of rectalgle
+    * \param xPosition X position of the upper rightmost rectangle corner
+    * \param yPosition Y Position of the upper righmost rectangle corner */
   virtual void RequestSetVideoOutputClipRectangle( unsigned int height, 
                                                    unsigned int width,
                                                    signed int xPosition, 
                                                    signed int yPosition );
+  
+  /** Apply padding around the video output to get video on a desired format.
+    * \param padding The padding value (in pixels) to use*/
   virtual void RequestSetVideoOutputPadding( unsigned int padding );
   
+  /** Activate VideoGrabber */
   virtual void RequestOpen();
+  
+  /** Deactivate VideoGrabber. Stops grabbing if VideoGrabber is currently 
+    * grabbing */
   virtual void RequestClose();
+  
+  /** Initialize VideoGrabber. Verifies that the grabber hardware is 
+    * correctly initialized. */
   virtual void RequestInitialize();
+  
+  /** Start grabbing to buffer */
   virtual void RequestStartGrabbing();
+  
+  /** Stop grabbing */
   virtual void RequestStopGrabbing();
+  
+  /** Grab one video frame. */
   virtual void RequestGrabOneFrame();
   
+  /** Get methods */
+  void RequestGetVideoBufferSize();
+  void RequestGetVideoFrameNo();
+  void RequestGetNumberOfVideoFrames();
+  void RequestGetTimeTag();
+  void RequestGetFramerate();
+  void RequestGetVideoOutputFormat();
+  void RequestGetVideoOutputDimensions();
+  void RequestGetVideoOutputClipRectangle();
+  void RequestGetVideoOutputPadding();
   
-  /** Public get methods 
-  - Framework functions, finished functions will not return void */
-  void GetVideoBufferSize();
-  void GetVideoBufferPtr();
-  void GetVideoFrameNo();
-  void GetNumberOfVideoFrames();
-  void GetTimeTag();
-  void GetFramerate();
-  void GetVideoOutputFormat();
-  void GetVideoOutputDimensions();
-  void GetVideoOutputClipRectangle();
-  void GetVideoOutputPadding();
+  /** Event types */
+  igstkLoadedEventMacro( SignedIntEvent, IGSTKEvent, 
+                         EventHelperType::SignedIntType );
+  igstkLoadedEventMacro( UnsignedLongEvent, IGSTKEvent, 
+                         unsigned long );
+  igstkLoadedEventMacro( VideoDimensionsEvent, IGSTKEvent, 
+                         VideoDimensions );
+  igstkLoadedEventMacro( VideoClipRectangleEvent, IGSTKEvent, 
+                         VideoClipRectangle );
 
 protected:
   VideoGrabber();
@@ -133,6 +198,18 @@ protected:
     * Abstract function to make sure it is implemented in a decendant class. */
   virtual ResultType InternalStopGrabbingProcessing( void ) = 0;
   
+  /** Internal functions to report from RequestGet methods. 
+    * These methods should be overridden by a decentand class */
+  /*virtual void InternalRequestVideoBufferSizeProcessing();
+  virtual void InternalRequestVideoFrameNoProcessing();
+  virtual void InternalRequestNumberOfVideoFramesProcessing();
+  virtual void InternalRequestTimeTagProcessing();
+  virtual void InternalRequestFramerateProcessing();
+  virtual void InternalRequestVideoOutputFormatProcessing();
+  virtual void InternalRequestVideoOutputDimensionsProcessing();
+  virtual void InternalRequestVideoOutputClipRectangleProcessing();
+  virtual void InternalRequestVideoOutputPaddingProcessing();*/
+  
 private:
     
   /** States for the State Machine */
@@ -163,6 +240,17 @@ private:
   igstkDeclareInputMacro( SetVideoOutputDimensions );
   igstkDeclareInputMacro( SetVideoOutputClipRectangle );
   igstkDeclareInputMacro( SetVideoOutputPadding );
+  
+  igstkDeclareInputMacro( RequestVideoBufferSize );
+  igstkDeclareInputMacro( RequestVideoFrameNo );
+  igstkDeclareInputMacro( RequestNumberOfVideoFrames );
+  igstkDeclareInputMacro( RequestTimeTag );
+  igstkDeclareInputMacro( RequestFramerate );
+  igstkDeclareInputMacro( RequestVideoOutputFormat );
+  igstkDeclareInputMacro( RequestVideoOutputDimensions );
+  igstkDeclareInputMacro( RequestVideoOutputClipRectangle );
+  igstkDeclareInputMacro( RequestVideoOutputPadding );
+  
   igstkDeclareInputMacro( Open );
   igstkDeclareInputMacro( Close );
   igstkDeclareInputMacro( Initialize );
@@ -183,6 +271,16 @@ private:
   void SetVideoOutputClipRectangleProcessing();
   void SetVideoOutputPaddingProcessing();
   
+  void ReportVideoBufferSizeProcessing();
+  void ReportVideoFrameNoProcessing();
+  void ReportNumberOfVideoFramesProcessing();
+  void ReportTimeTagProcessing();
+  void ReportFramerateProcessing();
+  void ReportVideoOutputFormatProcessing();
+  void ReportVideoOutputDimensionsProcessing();
+  void ReportVideoOutputClipRectangleProcessing();
+  void ReportVideoOutputPaddingProcessing();
+  
   void InitializeProcessing();
   void ActivateGrabberProcessing();
   void DeactivateGrabberProcessing();
@@ -191,28 +289,20 @@ private:
   void StopGrabbingProcessing();
   
   /** Temporary input variables for state machine */
-  unsigned long m_VideoBufferSizeToBeSet;
-  unsigned int  m_FramerateToBeSet;
-  unsigned int  m_VideoOutputFormatToBeSet;
-  unsigned int  m_VideoOutputHeightToBeSet;
-  unsigned int  m_VideoOutputWidthToBeSet;
-  unsigned int  m_VideoOutputClipRectangleHeightToBeSet;
-  unsigned int  m_VideoOutputClipRectangleWidthToBeSet;
-  signed int    m_VideoOutputClipRectangleXPositionToBeSet;
-  signed int    m_VideoOutputClipRectangleYPositionToBeSet;
-  unsigned int  m_VideoOutputPaddingToBeSet;
+  unsigned long       m_VideoBufferSizeToBeSet;
+  unsigned int        m_FramerateToBeSet;
+  unsigned int        m_VideoOutputFormatToBeSet;
+  VideoDimensions     m_VideoOutputDimensionsToBeSet;
+  VideoClipRectangle  m_VideoOutputClipRectangleToBeSet;
+  unsigned int        m_VideoOutputPaddingToBeSet;
   
   /** Variable to save the framrate */
-  unsigned long m_VideoBufferSize;
-  unsigned int  m_Framerate;
-  unsigned int  m_VideoOutputFormat;
-  unsigned int  m_VideoOutputHeight;
-  unsigned int  m_VideoOutputWidth;
-  unsigned int  m_VideoOutputClipRectangleHeight;
-  unsigned int  m_VideoOutputClipRectangleWidth;
-  signed int    m_VideoOutputClipRectangleXPosition;
-  signed int    m_VideoOutputClipRectangleYPosition;
-  unsigned int  m_VideoOutputPadding;
+  unsigned long       m_VideoBufferSize;
+  unsigned int        m_Framerate;
+  unsigned int        m_VideoOutputFormat;
+  VideoDimensions     m_VideoOutputDimensions;
+  VideoClipRectangle  m_VideoOutputClipRectangle;
+  unsigned int        m_VideoOutputPadding;
 };
 
 } // end namespace igstk
