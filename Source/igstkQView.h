@@ -160,6 +160,10 @@ protected:
   /** Set the interactor style in the derived classes */
   void SetInteractorStyle( vtkInteractorStyle * style );
 
+  /** Overload the method that manages mouse events in order
+      to provide picker functionalities */
+  void mouseReleaseEvent(QMouseEvent* e);
+
 private:
   
   vtkRenderer           * m_Renderer;

@@ -19,21 +19,25 @@ PURPOSE.  See the above copyright notices for more information.
 #pragma warning ( disable : 4355 )
 #endif
 
-#include <vtkVersion.h>
-#include <vtkCommand.h>
-#include <vtkWindowToImageFilter.h>
-#include <vtkPNGWriter.h>
-#include <igstkEvents.h>
-#include "itksys/SystemTools.hxx"
+#include "vtkVersion.h"
+#include "vtkCommand.h"
+#include "vtkWindowToImageFilter.h"
+#include "vtkPNGWriter.h"
 #include "vtkViewport.h"
 #include "vtkRenderWindow.h"
-#include "igstkRenderWindowInteractor.h"   
-
-#include "igstkQView.h"
 
 #if defined(__APPLE__) && defined(VTK_USE_CARBON)
 #include "vtkCarbonRenderWindow.h"
 #endif
+
+#include "qevent.h"
+
+#include "itksys/SystemTools.hxx"
+#include "igstkRenderWindowInteractor.h"   
+
+#include "igstkEvents.h"
+#include "igstkQView.h"
+
 
 namespace igstk
 {
@@ -660,9 +664,83 @@ std::ostream& operator<<(std::ostream& os, const QView& o)
   return os;
 }
 
+/** This method is overloaded from the QWidget class in 
+ *  order to insert the invocation of the TransformModifiedEvent.
+ */
+void 
+QView
+::mouseReleaseEvent(QMouseEvent* e)
+{
+  vtkRenderWindowInteractor* iren = NULL;
+  if(this->mRenWin)
+    {
+    iren = this->mRenWin->GetInteractor();
+    }
+  
+  if(!iren || !iren->GetEnabled())
+    {
+    return;
+    }
+  
+  // give vtk event information
+#if QT_VERSION < 0x040000
+  iren->SetEventInformationFlipY(e->x(), e->y(), 
+                                 (e->state() & Qt::ControlButton), 
+                                 (e->state() & Qt::ShiftButton ));
+#else
+  iren->SetEventInformationFlipY(e->x(), e->y(), 
+                                 (e->modifiers() & Qt::ControlModifier), 
+                                 (e->modifiers() & Qt::ShiftModifier ));
+#endif
+  
+  // invoke appropriate vtk event
+  switch(e->button())
+    {
+    case Qt::LeftButton:
+      {
+      iren->InvokeEvent(vtkCommand::LeftButtonReleaseEvent, e);
+
+      m_PointPicker->Pick( e->x(), 
+                           this->height() - e->y() - 1, 
+                           0, m_Renderer );
+      double data[3];
+      m_PointPicker->GetPickPosition( data );
+      Transform::VectorType pickedPoint;
+      pickedPoint[0] = data[0];
+      pickedPoint[1] = data[1];
+      pickedPoint[2] = data[2];
+      
+      double validityTime = itk::NumericTraits<double>::max();
+      double errorValue = 1.0; // this should be obtained from 
+                               // the picked object.
+
+      igstk::Transform transform;
+      transform.SetTranslation( pickedPoint, errorValue, validityTime );
+
+      igstk::TransformModifiedEvent transformEvent;
+      transformEvent.Set( transform );
+
+      m_Reporter->InvokeEvent( transformEvent );
+
+      break;
+      }
+    case Qt::MidButton:
+      iren->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent, e);
+      break;
+
+    case Qt::RightButton:
+      iren->InvokeEvent(vtkCommand::RightButtonReleaseEvent, e);
+      break;
+
+    default:
+      break;
+    }
+}
 
 /** Print object information */
-void QView::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void 
+QView
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
   os << indent << "Renderer Pointer: " << this->m_Renderer << std::endl;
