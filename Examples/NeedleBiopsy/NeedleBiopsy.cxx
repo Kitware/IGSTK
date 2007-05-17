@@ -478,9 +478,6 @@ void NeedleBiopsy::LoadImageProcessing()
       m_ImageSpatialObject = m_CTImageObserver->GetCTImage();
       m_StateMachine.PushInput( m_LoadImageSuccessInput);
       }
-
-    m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), 
-                              m_LoadImageSuccessInput, m_LoadImageFailureInput);
     }
   else
     {
