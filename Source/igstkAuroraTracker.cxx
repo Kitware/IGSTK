@@ -309,7 +309,7 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
       ErrorType errorValue = ndiTransform[7];
 
       typedef TransformType::TimePeriodType TimePeriodType;
-      const TimePeriodType validityTime = 100.0;
+      const TimePeriodType validityTime = 400.0;
 
       transform.SetToIdentity(validityTime);
       transform.SetTranslationAndRotation(translation, rotation, errorValue,
