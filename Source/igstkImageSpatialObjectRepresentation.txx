@@ -578,6 +578,28 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageActor->InterpolateOn();
 }
 
+/** Set the opacity */
+template < class TImageSpatialObject >
+void
+ImageSpatialObjectRepresentation< TImageSpatialObject >
+::SetOpacity(float alpha)
+{
+  if(m_Opacity == alpha)
+    {
+    return;
+    }
+  m_Opacity = alpha;
+
+  // Update all the actors
+  ActorsListType::iterator it = m_Actors.begin();
+  while(it != m_Actors.end())
+    {
+    vtkImageActor * va = static_cast<vtkImageActor*>(*it);
+    va->SetOpacity(m_Opacity); 
+    it++;
+    }
+}
+
 } // end namespace igstk
 
 #endif

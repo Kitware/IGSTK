@@ -74,7 +74,7 @@ public:
   float GetBlue() const  {return m_Color[2];}
 
   /** Set/Get the opacity */
-  void SetOpacity(float alpha);
+  virtual void SetOpacity(float alpha);
   igstkGetMacro( Opacity, float );
 
   /** Create the vtkActors */
@@ -93,6 +93,9 @@ protected:
 
   ObjectRepresentation( void );
   ~ObjectRepresentation( void );
+
+  ActorsListType              m_Actors;
+  float                       m_Opacity;
 
   /** Add an actor to the list */
   void AddActor( vtkProp * );
@@ -114,9 +117,7 @@ protected:
   
 private:
 
-  ActorsListType              m_Actors;
   float                       m_Color[3];
-  float                       m_Opacity;
 
   /** The associated SpatialObject is non-const because we invoke requests
    * methods that indirectly will modify the state of its internal StateMachine

@@ -225,6 +225,8 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   representation->RequestSetSliceNumber( 10 );
 
+  representation->SetOpacity( 0.3 );
+
   typedef 
     igstk::ImageSpatialObjectRepresentationTest::ImageRepresentationObserver 
                                                                 ObserverType;

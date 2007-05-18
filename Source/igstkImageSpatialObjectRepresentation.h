@@ -90,6 +90,9 @@ public:
   /** Set the Window Level for the representation */
   void SetWindowLevel( double window, double level );
 
+  /** Set the opacity */
+  void SetOpacity(float alpha);
+  
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
