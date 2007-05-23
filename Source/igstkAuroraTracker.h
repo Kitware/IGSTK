@@ -69,10 +69,6 @@ public:
   void AttachSROMFileNameToPort( const unsigned int portNum,
                                  std::string  fileName );
 
-  /** Specify an SROM file to be used with a specific channel. */
-  void AttachSROMFileNameToChannel( const unsigned int portNum,
-                                    const unsigned int channelNum,
-                                    std::string  fileName );
 protected:
 
   AuroraTracker(void);
@@ -124,9 +120,10 @@ private:
   /** A buffer for holding absent status of tools */
   int m_AbsentBuffer[NumberOfPorts][NumberOfChannels];
 
-  /** Load the virtual SROMs onto the tools.
+  /** Load a virtual SROM onto the tools.
    * Called from EnableToolPorts() */
-  bool LoadVirtualSROMs( void );
+  bool LoadVirtualSROM( const unsigned int port,
+                        const std::string SROMFileName );
 
   /** Enable all tool ports that have tools plugged into them.
    * {The reference tool port is enabled as a static tool.} */
@@ -148,7 +145,7 @@ private:
   unsigned int   m_NumberOfTools;
 
   /** Names of the SROM files for special tools. */
-  std::string    m_SROMFileNames[NumberOfPorts][NumberOfChannels];
+  std::string    m_PortSROMFileNames[NumberOfPorts];
 
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;

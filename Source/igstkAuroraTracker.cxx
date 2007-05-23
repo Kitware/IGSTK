@@ -174,6 +174,15 @@ AuroraTracker::ResultType AuroraTracker::InternalActivateTools( void )
 {
   igstkLogMacro( DEBUG, "AuroraTracker::InternalActivateTools called ...\n");
 
+  // load any SROMS that are needed
+  for (unsigned int i = 0; i < NumberOfPorts; i++)
+    {
+    if (!m_PortSROMFileNames[i].empty())
+      {
+      this->LoadVirtualSROM(i, m_PortSROMFileNames[i]);
+      }
+    }
+
   this->EnableToolPorts();
 
   m_NumberOfTools = 0;
@@ -415,46 +424,48 @@ void AuroraTracker::AttachSROMFileNameToPort( const unsigned int portNum,
 
   if ( portNum < NumberOfPorts )
     {
-    m_SROMFileNames[portNum][0] = fileName;
+    m_PortSROMFileNames[portNum] = fileName;
     }
 }
 
-/** Specify an SROM file to be used with a specific tool channel */
-void AuroraTracker::AttachSROMFileNameToChannel( const unsigned int portNum,
-                                                 const unsigned int channelNum,
-                                                 std::string fileName )
+/** Load a virtual SROM, given the file name of the ROM file */
+bool AuroraTracker::LoadVirtualSROM( const unsigned int port,
+                                     const std::string SROMFileName) 
 {
-  igstkLogMacro( DEBUG,
-                 "AuroraTracker::AttachSROMFileNameToChannel called..\n");
+  igstkLogMacro( DEBUG, "AuroraTracker::LoadVirtualSROM called...\n");
 
-  if ( portNum < NumberOfPorts && channelNum < NumberOfChannels )
+  std::ifstream sromFile;
+  sromFile.open(SROMFileName.c_str(), std::ios::binary );
+
+  if (!sromFile.is_open())
     {
-    m_SROMFileNames[portNum][channelNum] = fileName;
+    igstkLogMacro( WARNING, "AuroraTracker::LoadVirtualSROM: couldn't "
+                   "find SROM file " << SROMFileName << " ...\n");
+    return false;
     }
-}
 
-/** Load the virtual SROMs onto tools that need them */
-bool AuroraTracker::LoadVirtualSROMs( void )
-{
-  igstkLogMacro( DEBUG, "AuroraTracker::LoadVirtualSROMS called...\n");
+  // most SROM files don't contain the whole 1024 bytes, they only
+  // contain whatever is necessary, so the rest should be filled with zero
+  char data[1024]; 
+  memset( data, 0, 1024 );
+  sromFile.read( data, 1024 );
+  sromFile.close();
 
-  // if any SROMs were not successfully written, this method returns "false"
-  bool returnValue = true;
+  // unless SROM is successfully written, this method returns "false"
+  bool returnValue = false;
 
-  // loop over all open port handles
   m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ALL_HANDLES);
   if (this->CheckError(m_CommandInterpreter) == SUCCESS)
-    { 
+    {
     unsigned int numHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
+    bool foundPort = false;
     for (unsigned int handleIndex = 0;
-         handleIndex < numHandles;
+         handleIndex < numHandles && !foundPort;
          handleIndex++)
       {
       int handleInfo = m_CommandInterpreter->GetPHSRInformation(handleIndex);
 
-      // check whether there is an uninitialized tool plugged in
-      if ((handleInfo & CommandInterpreterType::NDI_TOOL_IN_PORT) &&
-          !(handleInfo & CommandInterpreterType::NDI_INITIALIZED))
+      if (handleInfo & CommandInterpreterType::NDI_TOOL_IN_PORT)
         {
         int ph = m_CommandInterpreter->GetPHSRHandle(handleIndex);
 
@@ -469,51 +480,33 @@ bool AuroraTracker::LoadVirtualSROMs( void )
           // int, note that Aurora starts counting ports at "1"
           char location[256];
           m_CommandInterpreter->GetPHINFPortLocation(location);
-          unsigned int port = (location[10]-'0')*10 + (location[11]-'0') - 1;
-          unsigned int channel = (location[12]-'0')*10 + (location[13]-'0');
+          unsigned int auroraPort = (location[10]-'0')*10 + (location[11]-'0');
 
-          // check if an SROM is attached for this port and channel
-          if (port < NumberOfPorts && channel < NumberOfChannels &&
-              !m_SROMFileNames[port][channel].empty())
+          if (port + 1 == auroraPort)
             {
-            std::string &sromFileName = m_SROMFileNames[port][channel];
-            std::ifstream sromFile;
-            sromFile.open(sromFileName.c_str(), std::ios::binary );
-            
-            if (!sromFile.is_open())
+            foundPort = 1;
+            int successfulWrite = 1;
+            for (unsigned int address = 0;
+                 address < 1024 && successfulWrite;
+                 address += 64)
               {
-              igstkLogMacro( WARNING, "AuroraTracker::LoadVirtualSROM: couldn't"
-                             "find SROM file " << sromFileName << " ...\n");
-
               returnValue = false;
-              }
-            else
-              {
-              // most SROM files don't contain the whole 1024 bytes, they only
-              // contain whatever is necessary, so fill the rest with zero
-              char data[1024];
-              memset( data, 0, 1024 );
-              sromFile.read( data, 1024 );
-              sromFile.close();
 
-              // write the SROM contents to the AURORA
-              int successfulWrite = 1;
-              for (unsigned int address = 0;
-                   address < 1024 && successfulWrite;
-                   address += 64)
-                {
-                // holds hexadecimal data to be sent to device
-                char hexbuffer[129];
+              // holds hexadecimal data to be sent to device
+              char hexbuffer[129];
     
-                // convert data to hexadecimal and write to virtual SROM in
-                // 64-byte chunks
-                m_CommandInterpreter->HexEncode(hexbuffer, &data[address], 64);
-                m_CommandInterpreter->PVWR(ph, address, hexbuffer);
-
-                // set returnValue to false if write wasn't successfule
-                returnValue = ((this->CheckError(m_CommandInterpreter)
-                                != SUCCESS) && returnValue);
-                }
+              // convert data to hexadecimal and write to virtual SROM in
+              // 64-byte chunks
+              m_CommandInterpreter->HexEncode(hexbuffer, &data[address], 64);
+              m_CommandInterpreter->PVWR(ph, address, hexbuffer);
+              // check for successful write
+              successfulWrite =
+                (this->CheckError(m_CommandInterpreter) == SUCCESS);
+              }
+            // return true if all chunks successfully written
+            if (successfulWrite)
+              {
+              returnValue = true;
               }
             }
           }
@@ -600,15 +593,11 @@ void AuroraTracker::EnableToolPorts()
           }
         }
 
-      // exit if no new tools were initialized this round
+      // exit the inner loop if no new tools were initialized this round
       if (!foundNewTool)
         {
         break;
         }
-
-      // load the virtual SROMs, this is done here because the tools
-      // on a splitter don't appear until PINIT is called on the splitter.
-      this->LoadVirtualSROMs();
       }
 
     // enable all initialized tools
@@ -616,6 +605,12 @@ void AuroraTracker::EnableToolPorts()
 
     nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
   
+    // we are done if there are no handles to enable
+    if (nHandles == 0)
+      {
+      break;
+      }
+
     for (iHandle = 0; iHandle < nHandles; iHandle++)
       {
       const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
