@@ -231,6 +231,9 @@ private:
 
 };
 
+/** Event that carries a calibration object */
+igstkLoadedObjectEventMacro( CalibrationModifiedEvent, IGSTKEvent,
+                             PivotCalibration);
 }
 
 #endif // _igstkPivotCalibration_h
