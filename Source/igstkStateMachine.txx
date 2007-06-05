@@ -230,10 +230,6 @@ StateMachine< TClass >
             << " There is no transition for \n"
             << " State:  " << stateItr->second 
             << " Input:  " << inputItr->second << "\n" );
-
-          IncompleteStateMachineTransitionTableErrorEvent errorEvent;
-
-          m_This->InvokeEvent( errorEvent );  
           }
         ++inputItr;
         }

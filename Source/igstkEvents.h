@@ -149,7 +149,6 @@ igstkEventMacro( InputOutputErrorEvent,    IGSTKEvent );
 igstkEventMacro( InputOutputTimeoutEvent,  IGSTKEvent );
 igstkEventMacro( OpenPortErrorEvent,       IGSTKEvent );
 igstkEventMacro( ClosePortErrorEvent,      IGSTKEvent );
-igstkEventMacro( IncompleteStateMachineTransitionTableErrorEvent, IGSTKEvent );
 
 igstkLoadedEventMacro( PointEvent, IGSTKEvent, EventHelperType::PointType );
 igstkLoadedEventMacro( TransformModifiedEvent, IGSTKEvent, Transform );
