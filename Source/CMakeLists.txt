@@ -213,7 +213,12 @@ ADD_LIBRARY(IGSTK ${IGSTK_HEADS} ${IGSTK_SRCS})
 TARGET_LINK_LIBRARIES( IGSTK
     ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject
     vtkRendering vtkGraphics vtkHybrid vtkImaging 
-    vtkIO vtkFiltering vtkCommon
+    vtkIO vtkFiltering vtkCommon vtksys
     ${FLTK_LIBRARIES}
 )
 
+INSTALL(TARGETS IGSTK DESTINATION ${IGSTK_INSTALL_LIB_DIR})
+FILE(GLOB __files1 "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+FILE(GLOB __files2 "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
+INSTALL(FILES ${__files1} ${__files2}
+    DESTINATION ${IGSTK_INSTALL_INCLUDE_DIR}/Source)

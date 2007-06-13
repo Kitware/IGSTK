@@ -11,6 +11,8 @@ SET(IGSTK_INCLUDE_DIRS_BUILD_TREE ${IGSTK_BINARY_DIR})
 SET(IGSTK_INCLUDE_DIRS_BUILD_TREE ${IGSTK_INCLUDE_DIRS_BUILD_TREE}
   ${IGSTK_SOURCE_DIR}/Source
   ${IGSTK_BINARY_DIR}/Source
+  ${ITK_INCLUDE_DIRS}
+  ${VTK_INCLUDE_DIRS}
 )
 
 # Patended include directories added only if the user explicitly enabled the
@@ -31,7 +33,7 @@ SET(IGSTK_INCLUDE_DIRS_BUILD_TREE_CXX)
 
 #-----------------------------------------------------------------------------
 # Include directories from the install tree.
-SET(IGSTK_INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/InsightToolkit")
+SET(IGSTK_INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/IGSTK")
 SET(IGSTK_INCLUDE_DIRS_INSTALL_TREE ${IGSTK_INCLUDE_DIRS_INSTALL_TREE}
   ${IGSTK_INSTALL_INCLUDE_DIR}
   ${IGSTK_INSTALL_INCLUDE_DIR}/Source

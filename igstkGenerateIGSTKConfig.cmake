@@ -16,7 +16,11 @@ SET(IGSTK_LIBRARY_DEPENDS_FILE ${IGSTK_BINARY_DIR}/IGSTKLibraryDepends.cmake)
 SET(IGSTK_BUILD_SETTINGS_FILE ${IGSTK_BINARY_DIR}/IGSTKBuildSettings.cmake)
 
 # Library directory.
-SET(IGSTK_LIBRARY_DIRS_CONFIG ${IGSTK_LIBRARY_PATH})
+SET(IGSTK_LIBRARY_DIRS_CONFIG 
+              ${IGSTK_LIBRARY_PATH}
+              ${ITK_LIBRARY_DIRS}
+              ${VTK_LIBRARY_DIRS}
+)
 
 # Determine the include directories needed.
 SET(IGSTK_INCLUDE_DIRS_CONFIG
@@ -51,7 +55,7 @@ SET(IGSTK_INCLUDE_DIRS_CONFIG
 )
 
 # Link directories.
-SET(IGSTK_LIBRARY_DIRS_CONFIG ${CMAKE_INSTALL_PREFIX}/lib/IgstkToolkit)
+SET(IGSTK_LIBRARY_DIRS_CONFIG ${CMAKE_INSTALL_PREFIX}/lib/IGSTK)
 
 #-----------------------------------------------------------------------------
 # Configure IGSTKConfig.cmake for the install tree.

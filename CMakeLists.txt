@@ -1,3 +1,5 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+
 PROJECT( IGSTK )
 
 # version
@@ -188,7 +190,35 @@ CONFIGURE_FILE(${IGSTK_SOURCE_DIR}/UseIGSTK.cmake.in
 # Save the compiler settings so another project can import them.
 INCLUDE(${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
 CMAKE_EXPORT_BUILD_SETTINGS(${IGSTK_BINARY_DIR}/IGSTKBuildSettings.cmake)
-INSTALL_FILES(/lib/InsightToolkit .cmake IGSTKBuildSettings)
+
+#-----------------------------------------------------------------------------
+# Installation vars.
+# IGSTK_INSTALL_BIN_DIR          - binary dir (executables)
+# IGSTK_INSTALL_LIB_DIR          - library dir (libs)
+# IGSTK_INSTALL_DATA_DIR         - share dir (say, examples, data, etc)
+# IGSTK_INSTALL_INCLUDE_DIR      - include dir (headers)
+
+IF(NOT IGSTK_INSTALL_BIN_DIR)
+  SET(IGSTK_INSTALL_BIN_DIR "bin")
+ENDIF(NOT IGSTK_INSTALL_BIN_DIR)
+
+IF(NOT IGSTK_INSTALL_LIB_DIR)
+  SET(IGSTK_INSTALL_LIB_DIR "lib/IGSTK")
+ENDIF(NOT IGSTK_INSTALL_LIB_DIR)
+
+IF(NOT IGSTK_INSTALL_DATA_DIR)
+  SET(IGSTK_INSTALL_DATA_DIR "share/IGSTK")
+ENDIF(NOT IGSTK_INSTALL_DATA_DIR)
+
+IF(NOT IGSTK_INSTALL_INCLUDE_DIR)
+  SET(IGSTK_INSTALL_INCLUDE_DIR "include/IGSTK")
+ENDIF(NOT IGSTK_INSTALL_INCLUDE_DIR)
+
+IF(NOT IGSTK_INSTALL_PACKAGE_DIR)
+  SET(IGSTK_INSTALL_PACKAGE_DIR ${IGSTK_INSTALL_LIB_DIR}
+    CACHE INTERNAL "")
+ENDIF(NOT IGSTK_INSTALL_PACKAGE_DIR)
+
 
 # Save library dependencies.
 EXPORT_LIBRARY_DEPENDENCIES(${IGSTK_BINARY_DIR}/IGSTKLibraryDepends.cmake)
@@ -197,8 +227,15 @@ EXPORT_LIBRARY_DEPENDENCIES(${IGSTK_BINARY_DIR}/IGSTKLibraryDepends.cmake)
 INCLUDE (${IGSTK_SOURCE_DIR}/igstkGenerateIGSTKConfig.cmake)
 
 # Install some files.
-INSTALL_FILES(/include/InsightToolkit .h igstkConfigure)
-INSTALL_FILES(/lib/InsightToolkit .cmake UseIGSTK IGSTKLibraryDepends)
+INSTALL(FILES ${IGSTK_BINARY_DIR}/igstkConfigure.h 
+        DESTINATION ${IGSTK_INSTALL_INCLUDE_DIR})
+
+INSTALL(FILES
+    ${IGSTK_BINARY_DIR}/IGSTKBuildSettings.cmake
+    ${IGSTK_BINARY_DIR}/IGSTKLibraryDepends.cmake
+    ${IGSTK_BINARY_DIR}/UseIGSTK.cmake
+    DESTINATION ${IGSTK_INSTALL_PACKAGE_DIR}
+    )
 
 #-----------------------------------------------------------------------------
 # Add compiler flags IGSTK needs to work on this platform.  This must be
