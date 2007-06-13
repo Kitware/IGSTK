@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkImageReader.cxx
+  Module:    HelloWorld.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -18,7 +18,6 @@
 //  The following code is an implementation of a small igstk
 //  program. It tests including header files and linking with IGSTK
 //  library.
-/
 #if defined(_MSC_VER)
 #pragma warning ( disable : 4786 )
 #endif
@@ -53,7 +52,7 @@ int main( int , char* [] )
 
   ReaderType::Pointer  reader = ReaderType::New();
 
-  reader->Print( std::cout );
-
+  std::cout << "IGSTK Hello !" << std::endl;
+  
   return EXIT_SUCCESS;
 }
