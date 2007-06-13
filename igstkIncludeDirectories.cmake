@@ -15,6 +15,11 @@ SET(IGSTK_INCLUDE_DIRS_BUILD_TREE ${IGSTK_INCLUDE_DIRS_BUILD_TREE}
   ${VTK_INCLUDE_DIRS}
 )
 
+IF(IGSTK_USE_FLTK)
+ SET(IGSTK_INCLUDE_DIRS_BUILD_TREE ${IGSTK_INCLUDE_DIRS_BUILD_TREE}
+     ${FLTK_INCLUDE_DIRS})
+ENDIF(IGSTK_USE_FLTK)
+
 # Patended include directories added only if the user explicitly enabled the
 # IGSTK_USE_PATENTED option. Users are responsible for getting a license from the
 # patent holders in order to use any of those methods.

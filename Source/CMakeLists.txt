@@ -214,8 +214,11 @@ TARGET_LINK_LIBRARIES( IGSTK
     ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject
     vtkRendering vtkGraphics vtkHybrid vtkImaging 
     vtkIO vtkFiltering vtkCommon vtksys
-    ${FLTK_LIBRARIES}
 )
+
+IF(IGSTK_USE_FLTK)
+  TARGET_LINK_LIBRARIES( IGSTK  ${FLTK_LIBRARIES} )
+ENDIF(IGSTK_USE_FLTK)
 
 INSTALL(TARGETS IGSTK DESTINATION ${IGSTK_INSTALL_LIB_DIR})
 FILE(GLOB __files1 "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
