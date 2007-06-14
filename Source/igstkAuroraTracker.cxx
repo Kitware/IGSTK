@@ -174,31 +174,40 @@ AuroraTracker::ResultType AuroraTracker::InternalActivateTools( void )
 {
   igstkLogMacro( DEBUG, "AuroraTracker::InternalActivateTools called ...\n");
 
+  ResultType result = SUCCESS;
+
   // load any SROMS that are needed
-  for (unsigned int i = 0; i < NumberOfPorts; i++)
+  for (unsigned int i = 0; i < NumberOfPorts && result == SUCCESS; i++)
     {
     if (!m_PortSROMFileNames[i].empty())
       {
-      this->LoadVirtualSROM(i, m_PortSROMFileNames[i]);
-      }
-    }
-
-  this->EnableToolPorts();
-
-  m_NumberOfTools = 0;
-
-  for(unsigned int port = 0; port < NumberOfPorts; port++)
-    {
-    for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
-      {
-      if( this->m_PortEnabled[port][channel] )
+      result = FAILURE;
+      if (this->LoadVirtualSROM(i, m_PortSROMFileNames[i]))
         {
-        m_NumberOfTools++;
+        result = SUCCESS;
         }
       }
     }
 
-  return SUCCESS;
+  if (result == SUCCESS)
+    {
+    this->EnableToolPorts();
+
+    m_NumberOfTools = 0;
+
+    for(unsigned int port = 0; port < NumberOfPorts; port++)
+      {
+      for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
+        {
+        if( this->m_PortEnabled[port][channel] )
+          {
+          m_NumberOfTools++;
+          }
+        }
+      }
+    }
+
+  return result;
 }
 
 /** Deactivate the tools attached to the tracking device. */

@@ -177,28 +177,37 @@ PolarisTracker::ResultType PolarisTracker::InternalActivateTools( void )
 {
   igstkLogMacro( DEBUG, "PolarisTracker::InternalActivateTools called ...\n");
 
-  // load any SROMS that are needed
-  for (unsigned int i = 0; i < NumberOfPorts; i++)
+  ResultType result = SUCCESS;
+
+  // Load any SROMS that are needed
+  for (unsigned int i = 0; i < NumberOfPorts && result == SUCCESS; i++)
     { 
     if (!m_SROMFileNames[i].empty())
       {
-      this->LoadVirtualSROM(i, m_SROMFileNames[i]);
+      result = FAILURE;
+      if (this->LoadVirtualSROM(i, m_SROMFileNames[i]))
+        {
+        result = SUCCESS;
+        }
       }
     }
 
-  this->EnableToolPorts();
+  if (result == SUCCESS)
+    {
+    this->EnableToolPorts();
 
-  m_NumberOfTools = 0;
+    m_NumberOfTools = 0;
 
-  for(unsigned int i = 0; i < NumberOfPorts; i++)
-    { 
-    if( this->m_PortEnabled[i] )
-      {
-      m_NumberOfTools++;
+    for(unsigned int i = 0; i < NumberOfPorts; i++)
+      { 
+      if( this->m_PortEnabled[i] )
+        {
+        m_NumberOfTools++;
+        }
       }
     }
 
-  return SUCCESS;
+  return result;
 }
 
 /** Deactivate the tools attached to the tracking device. */
