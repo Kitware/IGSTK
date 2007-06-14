@@ -109,10 +109,22 @@ PolarisTracker::ResultType PolarisTracker::InternalOpen( void )
 {
   igstkLogMacro( DEBUG, "PolarisTracker::InternalOpen called ...\n");
 
-  m_CommandInterpreter->RESET();
-  m_CommandInterpreter->INIT();
+  ResultType result = SUCCESS;
 
-  ResultType result = this->CheckError(m_CommandInterpreter);
+  if (!m_Communication)
+    {
+    igstkLogMacro( CRITICAL, "PolarisTracker: AttemptToOpen before "
+                   "Communication is set.\n");
+    result = FAILURE;
+    }
+
+  if (result == SUCCESS)
+    {
+    m_CommandInterpreter->RESET();
+    m_CommandInterpreter->INIT();
+
+    result = this->CheckError(m_CommandInterpreter);
+    }
 
   if (result == SUCCESS)
     {

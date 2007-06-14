@@ -106,10 +106,22 @@ AuroraTracker::ResultType AuroraTracker::InternalOpen( void )
 {
   igstkLogMacro( DEBUG, "AuroraTracker::InternalOpen called ...\n");
 
-  m_CommandInterpreter->RESET();
-  m_CommandInterpreter->INIT();
+  ResultType result = SUCCESS;
 
-  ResultType result = this->CheckError(m_CommandInterpreter);
+  if (!m_Communication)
+    {
+    igstkLogMacro( CRITICAL, "AuroraTracker: AttemptToOpen before "
+                   "Communication is set.\n");
+    result = FAILURE;
+    }
+
+  if (result == SUCCESS)
+    {
+    m_CommandInterpreter->RESET();
+    m_CommandInterpreter->INIT();
+
+    result = this->CheckError(m_CommandInterpreter);
+    }
 
   if (result == SUCCESS)
     {
