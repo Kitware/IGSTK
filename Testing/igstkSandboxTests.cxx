@@ -30,6 +30,7 @@ void RegisterTests()
   // Register Sandbox tests
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
+  REGISTER_TEST(igstkViewNewTest);
 
 #ifdef IGSTK_USE_FLTK
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
