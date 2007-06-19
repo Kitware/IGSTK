@@ -91,8 +91,7 @@ SET(IGSTK_HEADS
   igstkTubeGroupObject.h
 )
 
-IF(USE_NEW_VIEW_ARCHITECTURE)
-  IF(IGSTK_USE_FLTK)
+IF(IGSTK_USE_FLTK)
     SET(IGSTK_HEADS
       ${IGSTK_HEADS}
       igstkFLTKTextBufferLogOutput.h
@@ -102,23 +101,7 @@ IF(USE_NEW_VIEW_ARCHITECTURE)
       igstkView2D.h
       igstkView3D.h
       )
-  ENDIF(IGSTK_USE_FLTK)
-ELSE(USE_NEW_VIEW_ARCHITECTURE)
-  IF(IGSTK_USE_FLTK)
-    SET(IGSTK_HEADS
-      ${IGSTK_HEADS}
-      igstkFLTKTextBufferLogOutput.h
-      igstkFLTKTextLogOutput.h
-      igstkMouseTracker.h
-      igstkView.h
-      igstkView2D.h
-      igstkView3D.h
-      )
-  ENDIF(IGSTK_USE_FLTK)
-ENDIF(USE_NEW_VIEW_ARCHITECTURE)
-
-
-
+ENDIF(IGSTK_USE_FLTK)
 
 # The implementation files
 
@@ -200,9 +183,8 @@ SET(IGSTK_SRCS
   igstkTubeGroupObject.cxx
 )
 
-IF(USE_NEW_VIEW_ARCHITECTURE)
-  IF(IGSTK_USE_FLTK)
-    SET(IGSTK_SRCS  
+IF(IGSTK_USE_FLTK)
+  SET(IGSTK_SRCS  
       ${IGSTK_SRCS}
       igstkMouseTracker.cxx
       igstkFLTKTextBufferLogOutput.cxx
@@ -211,22 +193,7 @@ IF(USE_NEW_VIEW_ARCHITECTURE)
       igstkView2D.cxx
       igstkView3D.cxx
       )
-  ENDIF(IGSTK_USE_FLTK)
-ELSE(USE_NEW_VIEW_ARCHITECTURE)
-  IF(IGSTK_USE_FLTK)
-    SET(IGSTK_SRCS  
-      ${IGSTK_SRCS}
-      igstkMouseTracker.cxx
-      igstkFLTKTextBufferLogOutput.cxx
-      igstkFLTKTextLogOutput.cxx
-      igstkView.cxx
-      igstkView2D.cxx
-      igstkView3D.cxx
-      )
-  ENDIF(IGSTK_USE_FLTK)
-ENDIF(USE_NEW_VIEW_ARCHITECTURE)
-
-
+ENDIF(IGSTK_USE_FLTK)
 
 IF( WIN32 )
   SET(IGSTK_HEADS ${IGSTK_HEADS} 
@@ -296,31 +263,21 @@ SET(IGSTKSandbox_HEADS
   igstkSocketCommunication.h
   igstkObliqueContourMeshObjectRepresentation.h
   igstkVideoGrabber.h
+  igstkViewNew.h
+  igstkViewNew2D.h
+  igstkViewNew3D.h
 )
 
-IF(USE_NEW_VIEW_ARCHITECTURE)
-  IF(IGSTKSandbox_USE_Qt)
-    SET(IGSTKSandbox_HEADS
+IF(IGSTKSandbox_USE_Qt)
+  SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
       igstkQMouseTracker.h
       igstkSimulatedTracker.h
       igstkQView.h
       igstkQView2D.h
       igstkQView3D.h
-      )
-  ENDIF(IGSTKSandbox_USE_Qt)
-ELSE(USE_NEW_VIEW_ARCHITECTURE)
-  IF(IGSTKSandbox_USE_Qt)
-    SET(IGSTKSandbox_HEADS
-      ${IGSTKSandbox_HEADS}
-      igstkQMouseTracker.h
-      igstkSimulatedTracker.h
-      igstkQView.h
-      igstkQView2D.h
-      igstkQView3D.h
-      )
-  ENDIF(IGSTKSandbox_USE_Qt)
-ENDIF(USE_NEW_VIEW_ARCHITECTURE)
+   )
+ENDIF(IGSTKSandbox_USE_Qt)
 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
@@ -332,32 +289,21 @@ SET(IGSTKSandbox_SRCS
   igstkSocketCommunication.cxx
   igstkObliqueContourMeshObjectRepresentation.cxx
   igstkVideoGrabber.cxx
+  igstkViewNew.cxx
+  igstkViewNew2D.cxx
+  igstkViewNew3D.cxx
 )
 
-IF(USE_NEW_VIEW_ARCHITECTURE)
-  IF(IGSTKSandbox_USE_Qt)
-    SET(IGSTKSandbox_SRCS  
-      ${IGSTKSandbox_SRCS}
-      igstkQMouseTracker.cxx
-      igstkSimulatedTracker.cxx
-      igstkQView.cxx
-      igstkQView2D.cxx
-      igstkQView3D.cxx
-      )
-  ENDIF(IGSTKSandbox_USE_Qt)
-ELSE(USE_NEW_VIEW_ARCHITECTURE)
-  IF(IGSTKSandbox_USE_Qt)
-    SET(IGSTKSandbox_SRCS  
-      ${IGSTKSandbox_SRCS}
-      igstkQMouseTracker.cxx
-      igstkSimulatedTracker.cxx
-      igstkQView.cxx
-      igstkQView2D.cxx
-      igstkQView3D.cxx
-      )
-  ENDIF(IGSTKSandbox_USE_Qt)
-ENDIF(USE_NEW_VIEW_ARCHITECTURE)
-
+IF(IGSTKSandbox_USE_Qt)
+  SET(IGSTKSandbox_SRCS  
+    ${IGSTKSandbox_SRCS}
+    igstkQMouseTracker.cxx
+    igstkSimulatedTracker.cxx
+    igstkQView.cxx
+    igstkQView2D.cxx
+    igstkQView3D.cxx
+    )
+ENDIF(IGSTKSandbox_USE_Qt)
 
 # Variable for holding extra libraries
 SET(EXTRA_LIBS)

@@ -17,9 +17,6 @@ ENDIF(IGSTKSandbox_BUILD_TESTING)
 
 SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
-# Option to select the new view architecture
-OPTION(USE_NEW_VIEW_ARCHITECTURE "Use the new view architecture " OFF)
-
 IF(NOT IGSTKSandbox_SETUP_DASHBOARD)
 
 #
