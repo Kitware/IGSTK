@@ -279,6 +279,13 @@ IF(IGSTKSandbox_USE_Qt)
    )
 ENDIF(IGSTKSandbox_USE_Qt)
 
+IF(IGSTKSandbox_USE_FLTK)
+  SET(IGSTKSandbox_HEADS
+      ${IGSTKSandbox_HEADS}
+      igstkFLTKWidget.h   
+     )
+ENDIF(IGSTKSandbox_USE_FLTK)
+ 
 # The implementation files
 SET(IGSTKSandbox_SRCS  
   igstkObliqueImageSpatialObjectRepresentation.txx
@@ -305,6 +312,13 @@ IF(IGSTKSandbox_USE_Qt)
     )
 ENDIF(IGSTKSandbox_USE_Qt)
 
+IF(IGSTKSandbox_USE_FLTK)
+  SET(IGSTKSandbox_SRCS  
+    ${IGSTKSandbox_SRCS}
+    igstkFLTKWidget.cxx   
+    )
+ENDIF(IGSTKSandbox_USE_FLTK)
+ 
 # Variable for holding extra libraries
 SET(EXTRA_LIBS)
 
