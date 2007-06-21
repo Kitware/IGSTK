@@ -28,7 +28,11 @@ namespace igstk
   * This class is a for providing Aurora-specific functionality
   * for TrackerTools, and also to allow compile-time type enforcement
   * for other classes and functions that specifically require
-  * an Aurora tool. */
+  * an Aurora tool.
+  *
+  * \ingroup Tracker
+  *
+*/
 
 class AuroraTrackerTool : public TrackerTool
 {

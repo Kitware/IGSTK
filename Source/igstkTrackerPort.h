@@ -25,12 +25,16 @@
 namespace igstk
 {
 /** \class TrackerPort
-    \brief Generic implementation of the Tracker Port.
+  * \brief Generic implementation of the Tracker Port.
+  *
+  * This class provides a generic implementation of a port of
+  * a tracker.  It is simply vector of all tracker tools
+  * connected to the port. 
+  *
+  * \ingroup Tracker
+  *
+  */
 
-    This class provides a generic implementation of a port of
-    a tracker. This may contain hardware specific details of 
-    the tracker port, and a vector of all tracker tools
-    connected to the port. */
 class TrackerPort : public Object
 {
 

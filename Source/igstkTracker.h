@@ -58,19 +58,27 @@ itkEventMacro( TrackerUpdateStatusErrorEvent,              TrackerErrorEvent);
 
 
 /** \class Tracker
- *  \brief Generic implementation of the Tracker class.
+ *  \brief Superclass for concrete IGSTK Tracker classes.
  *
- *  This class provides a generic implementation of a tracker
- *  class. It has two member variables, an instant of a state
- *  machine, and reference to an instance of "communication"
- *  class. 
+ *  This class presents a generic interface for tracking the
+ *  positions of objects in IGSTK.  The various derived
+ *  subclasses of this class provide back-ends that communicate
+ *  with several of the tracking systems that are available on
+ *  the market.
  *
- *  The state machine implements the basic state transitions
- *  of a tracker.
+ *  The state machine of this class implements the basic
+ *  state transitions of a tracker.  Inputs to the state
+ *  machine are translated into method calls that can be
+ *  overridden by device-specific derive classes that do
+ *  the appropriate processing for a particular device.
  *
- *  The communications object manages communication, either
- *  through serial/parallel ports, or through data files (for
- *  offline execution of tracker.)
+ *  Most (but not all) of the derived classes utilize a
+ *  communication object to mediate all communication between
+ *  the computer and the device.  When a communication object
+ *  is used, all communication can be logged, and furthermore,
+ *  the communication log can be used to drive an offline
+ *  simulation of a particular device 
+ *  (See SerialCommunicationSimulator).
  *
  *  The following diagram illustrates the state machine of 
  *  the tracker class
@@ -78,6 +86,7 @@ itkEventMacro( TrackerUpdateStatusErrorEvent,              TrackerErrorEvent);
  *  \image html  igstkTracker.png  "Tracker State Machine Diagram"
  *  \image latex igstkTracker.eps  "Tracker State Machine Diagram" 
  *
+ *  \ingroup Tracker
  */
 
 class Tracker : public Object

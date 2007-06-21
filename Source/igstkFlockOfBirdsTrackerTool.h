@@ -30,6 +30,8 @@ namespace igstk
  * for other classes and functions that specifically require
  * an FlockOfBirds tool.
  *
+ * \ingroup Tracker
+ *
  */
 
 class FlockOfBirdsTrackerTool : public TrackerTool

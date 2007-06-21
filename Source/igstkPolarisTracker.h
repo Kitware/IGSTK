@@ -28,11 +28,27 @@ namespace igstk
 /** \class PolarisTracker
   * \brief Provides support for the Polaris optical tracker.
   *
-  * The Polaris is an optical tracker from Northern Digital Inc.
-  * in Waterloo, Ontario, Canada.  This class provides an
-  * an interface to the Polaris.
+  * This class provides an interface to the Polaris line of
+  * optical tracking systems, including the Vicra and the
+  * Spectra.  These devices are manufactured by
+  * Northern Digital Inc. of Waterloo, Ontario, Canada.
   *
-  * \ingroup Trackers
+  * IMPORTANT NOTE ABOUT PASSIVE TOOLS: the mapping that this
+  * class provides between igstk::Tracker ports and the actual
+  * device ports on the Polaris can be confusing.  Tracker ports
+  * numbered 0, 1, and 2 map to wired Polaris ports 1, 2 and 3.
+  * Note that the Vicra does not have wired ports, and Tracker
+  * ports 0, 1, 2 are completely inactive when the Vicra is used.
+  * Tracker ports numbered 3 and above are for use with passive
+  * (wireless) tools.  To use passive tools, you must call the
+  * PolarisTracker::AttachSROMFilenameToPort() method to associate
+  * an SROM with a port that is numbered between 3 and 11.
+  *
+  * Tracking of the silvered markers individually is not possible,
+  * the markers must be configured as a tool before they can
+  * be tracked.
+  *
+  * \ingroup Tracker
   *
   */
 

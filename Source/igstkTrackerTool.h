@@ -40,7 +40,8 @@ namespace igstk
   *  \image html  igstkTrackerTool.png  "TrackerTool State Machine Diagram"
   *  \image latex igstkTrackerTool.eps  "TrackerTool State Machine Diagram" 
   *
-  *
+  *  \ingroup Tracker
+  * 
   */
 
 class TrackerTool : public Object

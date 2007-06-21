@@ -37,8 +37,9 @@ namespace igstk
  *  private instance of NDICommandInterpreter, and then pass
  *  their Communication objects to the NDICommandInterpreter.
  *
- *  \ingroup Tracking
+ *  \ingroup Tracker
  */
+
 class NDICommandInterpreter : public Object
 {
 public:

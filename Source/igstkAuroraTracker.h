@@ -28,9 +28,20 @@ namespace igstk
 /** \class AuroraTracker
   * \brief Provides support for the AURORA magnetic tracker.
   *
-  * The Aurora is a magnetic tracker from Northern Digital Inc.
-  * in Waterloo, Ontario, Canada.  This class provides an
-  * an interface to the Aurora. */
+  * This class provides an interface to the Aurora magnetic
+  * tracking system, which is manufactured by
+  * Northern Digital Inc. in Waterloo, Ontario, Canada.
+  * 
+  * The use of two 5DOF tools on a single port is supported.
+  * In order to use the Aurora in this configuration, a 
+  * splitter for the port is required, as well as an SROM
+  * file that can work with the two tools in question.  The
+  * AttachSROMFilenameToPort() method is used to associate
+  * the SROM with the port.
+  *
+  * \ingroup Tracker
+  *
+  */
 
 
 class AuroraTracker : public Tracker

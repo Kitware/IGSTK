@@ -36,7 +36,7 @@ namespace igstk
  * straightforward to modify it to support tracking of
  * additional receivers.
  *
- * \ingroup Trackers
+ * \ingroup Tracker
  *
  */
 class FlockOfBirdsTracker : public Tracker
