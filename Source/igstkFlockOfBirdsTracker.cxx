@@ -192,18 +192,14 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
   RotationType rotation;
   rotation.Set(quaternion[0],-quaternion[3],quaternion[2],quaternion[1]);
 
-  // set the validity time
-  typedef TransformType::TimePeriodType TimePeriodType;
-  const TimePeriodType validityTime = 100.0;
-
   // Lock the buffer and change the value of the transform in the
   // buffer. The amount of code between the "Lock" and "Unlock" 
   // should be as small as possible.
   m_BufferLock->Lock();
 
-  m_TransformBuffer[0].SetToIdentity(validityTime);
+  m_TransformBuffer[0].SetToIdentity(this->GetValidityTime());
   m_TransformBuffer[0].SetTranslationAndRotation(translation, rotation, 0,
-                                                 validityTime);
+                                                 this->GetValidityTime());
 
   m_BufferLock->Unlock();
 

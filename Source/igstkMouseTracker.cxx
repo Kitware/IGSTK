@@ -30,6 +30,7 @@ namespace igstk
 MouseTracker::MouseTracker():m_StateMachine(this)
 {
   m_ScaleFactor = 1.0;
+  this->SetValidityTime(100.0);
 }
 
 MouseTracker::~MouseTracker()
@@ -69,7 +70,7 @@ MouseTracker::ResultType MouseTracker::InternalClose( void )
 MouseTracker::ResultType MouseTracker::InternalActivateTools( void )
 {
   igstkLogMacro( DEBUG, "MouseTracker::InternalActivateTools called ...\n");
-  m_ValidityTime = 100.0; // 100.0 milliseconds
+
   m_Port = TrackerPortType::New();
   m_Tool = TrackerToolType::New();
   m_Port->AddTool( m_Tool );
@@ -83,7 +84,7 @@ MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
 
   typedef igstk::Transform   TransformType;
   TransformType transform;
-  transform.SetToIdentity( m_ValidityTime );
+  transform.SetToIdentity( this->GetValidityTime() );
   
   typedef TransformType::VectorType PositionType;
   PositionType  position;
@@ -94,7 +95,7 @@ MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
   typedef TransformType::ErrorType  ErrorType;
   ErrorType errorValue = 0.5; // +/- half Pixel Uncertainty
 
-  transform.SetTranslation( position, errorValue, m_ValidityTime );
+  transform.SetTranslation( position, errorValue, this->GetValidityTime() );
   this->SetToolTransform( 0, 0, transform );
 
   return SUCCESS;
@@ -109,8 +110,6 @@ void MouseTracker::GetTransform(TransformType & transform)
 void MouseTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-
-  os << indent << "Validity Time: " << m_ValidityTime << std::endl;
   
   if( this->m_Tool )
     {

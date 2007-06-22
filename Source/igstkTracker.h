@@ -99,6 +99,9 @@ public:
 
 public:
 
+  /** typedef for times used by the tracker */
+  typedef Transform::TimePeriodType      TimePeriodType;
+
   /** typedefs from igstk::TrackerTool class */
   typedef Transform                      TransformType;
   typedef double                         ErrorType;
@@ -196,6 +199,13 @@ public:
   ToolCalibrationTransformType GetToolCalibrationTransform(
                              unsigned int portNumber,
                              unsigned int toolNumber) const;
+
+  /** Set the time period over which a tool transform should be considered
+   *  valid. */
+  igstkSetMacro( ValidityTime, TimePeriodType );
+
+  /** Get the validity time. */
+  igstkGetMacro( ValidityTime, TimePeriodType );
 
 protected:
 
@@ -297,6 +307,9 @@ private:
 
   /** Patient Transform */
   PatientTransformType      m_PatientTransform;
+
+  /** Validity time */
+  TimePeriodType            m_ValidityTime;
 
   /** Multi-threading enabled flag : The descendant class will use
       multi-threading, if this flag is set as true */

@@ -85,10 +85,6 @@ private:
   typedef TrackerTool                 TrackerToolType;
   typedef TrackerPort                 TrackerPortType;
 
-  typedef Transform::TimePeriodType   TimePeriodType;
-
-  TimePeriodType                      m_ValidityTime;
-
   TrackerToolType::Pointer            m_Tool;
 
   TrackerPortType::Pointer            m_Port;

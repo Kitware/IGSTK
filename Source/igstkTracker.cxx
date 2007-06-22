@@ -195,6 +195,11 @@ Tracker::Tracker(void) :  m_StateMachine( this )
   // spatial objects, it should be set to at least 30 Hz
   m_PulseGenerator->RequestSetFrequency( 30 );
 
+  // This is the time period for which transformation should be
+  // considered valid.  After this time, they expire.  This time
+  // is in milliseconds.
+  m_ValidityTime = 400.0;
+
   // By default, the reference is not used
   m_ApplyingReferenceTool = false;
 
@@ -878,6 +883,8 @@ void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
     {
     os << indent << this->m_PulseObserver << std::endl;
     }
+
+  os << indent << "ValidityTime: " << this->m_ValidityTime << std::endl;
 
   os << indent << "Number of ports: " << this->m_Ports.size() << std::endl;
   for(unsigned int i=0; i < m_Ports.size(); ++i )
