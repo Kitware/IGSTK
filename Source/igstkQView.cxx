@@ -33,9 +33,10 @@ PURPOSE.  See the above copyright notices for more information.
 #include "qevent.h"
 
 #include "itksys/SystemTools.hxx"
-#include "igstkRenderWindowInteractor.h"   
 
+#include "igstkRenderWindowInteractor.h"   
 #include "igstkEvents.h"
+
 #include "igstkQView.h"
 
 
@@ -643,7 +644,6 @@ QView
   this->GetInteractor()->SetInteractorStyle( interactorStyle );
 }
 
-
 void 
 QView
 ::Print( std::ostream& os, ::itk::Indent indent ) const
@@ -734,6 +734,60 @@ QView
 
     default:
       break;
+    }
+}
+
+/**
+ * This method is overridden from the QWidget class in order to provide
+ * transform events when the mouse is moved and the left button is pressed.
+ */
+void QView::mouseMoveEvent(QMouseEvent *e)
+{
+    vtkRenderWindowInteractor* iren = NULL;
+    if(this->mRenWin)
+    {
+        iren = this->mRenWin->GetInteractor();
+    }
+    
+    if(!iren || !iren->GetEnabled())
+    {
+        return;
+    }
+  
+    // give vtk event information
+#if QT_VERSION < 0x040000
+    iren->SetEventInformationFlipY(e->x(), e->y(), 
+                                   (e->state() & Qt::ControlButton) > 0 ? 1 : 0, 
+                                   (e->state() & Qt::ShiftButton ) > 0 ? 1 : 0);
+#else
+    iren->SetEventInformationFlipY(e->x(), e->y(), 
+                                   (e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0, 
+                                   (e->modifiers() & Qt::ShiftModifier ) > 0 ? 1 : 0);
+#endif
+  
+    if(e->buttons() == Qt::LeftButton)
+    {
+        iren->InvokeEvent(vtkCommand::MouseMoveEvent, e);
+
+        // Get x,y,z in world coordinates from the clicked point
+        m_PointPicker->Pick(e->x(), this->height() - e->y() - 1, 0, m_Renderer);
+
+        double data[3];
+        m_PointPicker->GetPickPosition(data);
+        igstk::Transform::VectorType pickedPoint;
+        pickedPoint[0] = data[0];
+        pickedPoint[1] = data[1];
+        pickedPoint[2] = data[2];
+        
+        double validityTime = itk::NumericTraits<double>::max(); // Valid unitl next click
+        double errorValue = 1.0; // @TODO: Should be obtained from picked object.
+        igstk::Transform transform;
+        transform.SetTranslation(pickedPoint, errorValue, validityTime);
+      
+        igstk::TransformModifiedEvent transformEvent;
+        transformEvent.Set(transform);
+        
+        m_Reporter->InvokeEvent(transformEvent);
     }
 }
 
