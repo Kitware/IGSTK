@@ -22,6 +22,7 @@
 #include "igstkEvents.h"
 #include "igstkMacros.h"
 #include "igstkObject.h"
+#include "igstkTransform.h"
 
 #include "itkImage.h"
 #include "itkLandmarkBasedTransformInitializer.h"
@@ -104,24 +105,33 @@ public:
   /** The "RequesteGetTransform" method will be used to request to get
    *   transform */
   void RequestGetTransform();
+ 
+  /** The "RequestGetRMSError" method will be used to get the RMS error
+      value */
+  void RequestGetRMSError();
   
-  /** The "ComputeRMSError" method calculates and returns RMS error of
-   *  the transformation. This function should be moved into the 
-   *  state machine: FIXME */
-  double ComputeRMSError();
+  /** Landmark registration events */
+  igstkEventMacro( TransformInitializerEvent,       IGSTKEvent );
 
-  
-  /** Landmark registration events..they have to be eventually added
-   * to the igstkEvents class */
-  itkEventMacro( TransformInitializerEvent,       IGSTKEvent );
-  itkEventMacro( TransformComputationFailureEvent,TransformInitializerEvent );
-  itkEventMacro( TransformComputationSuccessEvent,TransformInitializerEvent);
-  itkEventMacro( InvalidRequestErrorEvent,        TransformInitializerEvent );
+  /** TransformComputationFailureEvent event will be invoked if the transform
+      computation fails */
+  igstkEventMacro( TransformComputationFailureEvent,TransformInitializerEvent );
+
+  /** TransformComputationSuccessEvent event will be invoked if the transform
+      computation is succesful */ 
+  igstkEventMacro( TransformComputationSuccessEvent,TransformInitializerEvent);
+
+  /** InvalidRequestErrorEvent event will be invoked when invalid request is made
+      by the class user */
+  igstkEventMacro( InvalidRequestErrorEvent,        TransformInitializerEvent );
 
 protected:
 
   Landmark3DRegistration  ( void );
   ~Landmark3DRegistration ( void );
+
+  /** The "ComputeRMSError" method calculates and returns RMS error */
+  void ComputeRMSError();
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
@@ -140,7 +150,8 @@ private:
   LandmarkPointContainerType               m_ImageLandmarks;
   LandmarkImagePointType                   m_ImageLandmarkPoint;
   LandmarkTrackerPointType                 m_TrackerLandmarkPoint;
-   
+  
+  Transform::ErrorType                     m_RMSError;
   
   /** List of States */
   igstkDeclareStateMacro( Idle );
@@ -159,6 +170,7 @@ private:
   igstkDeclareInputMacro( TrackerLandmark );
   igstkDeclareInputMacro( ComputeTransform );
   igstkDeclareInputMacro( GetTransform );
+  igstkDeclareInputMacro( GetRMSError );
   igstkDeclareInputMacro( ResetRegistration );
   igstkDeclareInputMacro( TransformComputationFailure );
   igstkDeclareInputMacro( TransformComputationSuccess );
@@ -184,10 +196,13 @@ private:
    * transformation parameters */
   void ComputeTransformProcessing();
 
- 
-  /** The "GetTransform" method throws an event containing the 
+  /** The "GetTransformProcessing" method throws an event containing the 
    *  transform parameters */
   void GetTransformProcessing();
+
+  /** The "GetRMSErrorProcessing" method throws an event containing the 
+   *  RMS error value */
+  void GetRMSErrorProcessing();
 
   /** The "ReportInvalidRequest" method throws InvalidRequestErrorEvent
    *  when invalid requests are made */

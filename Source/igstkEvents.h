@@ -161,6 +161,9 @@ igstkLoadedEventMacro( IntegerBoundsEvent, IGSTKEvent,
                        EventHelperType::IntegerBoundsType );
 igstkLoadedEventMacro( VTKImageModifiedEvent, IGSTKEvent,
                        EventHelperType::VTKImagePointerType );
+igstkLoadedEventMacro( DoubleTypeEvent, IGSTKEvent,
+                       EventHelperType::DoubleType );
+
 
 igstkEventMacro( AxialSliceBoundsEvent,      IntegerBoundsEvent );
 igstkEventMacro( SagittalSliceBoundsEvent,   IntegerBoundsEvent );
