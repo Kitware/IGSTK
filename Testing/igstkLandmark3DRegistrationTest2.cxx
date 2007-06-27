@@ -73,6 +73,49 @@ private:
   igstk::Transform m_Transform;
 };
 
+class Landmark3DRegistrationGetRMSErrorCallback: public itk::Command
+{
+public:
+  typedef Landmark3DRegistrationGetRMSErrorCallback  Self;
+  typedef itk::SmartPointer<Self>                     Pointer;
+  typedef itk::Command                                Superclass;
+  itkNewMacro(Self);
+
+  typedef igstk::DoubleTypeEvent DoubleTypeEventType;
+
+  void Execute( const itk::Object *caller, const itk::EventObject & event )
+    {
+    }
+  void Execute( itk::Object *caller, const itk::EventObject & event )
+    {
+    std::cout<< " DoubleTypeEvent is thrown" << std::endl;
+    const DoubleTypeEventType * errorEvent =
+                  dynamic_cast < const DoubleTypeEventType* > ( &event );
+    m_RMSError = errorEvent->Get();
+    m_EventReceived = true;
+    } 
+  
+  bool GetEventReceived()
+    {
+    return m_EventReceived;
+    }
+  
+  igstk::Transform::ErrorType GetRMSError()
+    {
+    return m_RMSError;
+    }  
+
+protected:
+  Landmark3DRegistrationGetRMSErrorCallback()   
+    {
+    m_EventReceived = true;
+    }
+
+private:
+  bool m_EventReceived;
+  igstk::Transform::ErrorType m_RMSError;
+};
+
 
 /** The objective of this program is to test if the LandmarkRegistration can
     be reused. First, registration transform is computed by populating the 
@@ -198,8 +241,21 @@ int igstkLandmark3DRegistrationTest2( int argv, char * argc[] )
   transform = lrtcb->GetTransform();
   std::cout << "Transform " << transform << std::cout;
 
-  landmarkRegistrationError = landmarkRegister->ComputeRMSError();
-  std::cout<<"RMS Error is "<<landmarkRegistrationError<<std::endl;
+  // Setup an obsever to get the RMS error 
+  Landmark3DRegistrationGetRMSErrorCallback::Pointer lRmscb =
+                            Landmark3DRegistrationGetRMSErrorCallback::New();
+
+  landmarkRegister->AddObserver( igstk::DoubleTypeEvent(), lRmscb );
+  landmarkRegister->RequestGetRMSError();
+
+  if( !lRmscb->GetEventReceived() )
+    {
+    std::cerr << "LandmarkRegsistration class failed to throw a event "
+              << "containing the RMS error " << std::endl;
+    return EXIT_FAILURE;
+    }
+ 
+  std::cout << "RMS error= " << lRmscb->GetRMSError() << std::endl;
 
 
   // second landmark registration
@@ -248,11 +304,21 @@ int igstkLandmark3DRegistrationTest2( int argv, char * argc[] )
   transform2 = lrtcb2->GetTransform();
   std::cout << "Transform " << transform2 << std::cout;
 
-  ErrorType                   landmarkRegistrationError2;
+  // Setup an obsever to get the RMS error 
+  Landmark3DRegistrationGetRMSErrorCallback::Pointer lRmscb2 =
+                            Landmark3DRegistrationGetRMSErrorCallback::New();
 
-  landmarkRegistrationError2 = landmarkRegister2->ComputeRMSError();
-  std::cout<<"RMS Error is "<<landmarkRegistrationError2<<std::endl;
+  landmarkRegister2->AddObserver( igstk::DoubleTypeEvent(), lRmscb2 );
+  landmarkRegister2->RequestGetRMSError();
 
+  if( !lRmscb2->GetEventReceived() )
+    {
+    std::cerr << "LandmarkRegsistration class failed to throw a event "
+              << "containing the RMS error " << std::endl;
+    return EXIT_FAILURE;
+    }
+ 
+  std::cout << "RMS error= " << lRmscb2->GetRMSError() << std::endl;
 
   // Compare the two transforms ( transform1 and transform2 )
 
