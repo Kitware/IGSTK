@@ -95,6 +95,49 @@ private:
   double m_Error;
 };
 
+class Landmark3DRegistrationGetRMSErrorCallback: public itk::Command
+{
+public:
+  typedef Landmark3DRegistrationGetRMSErrorCallback  Self;
+  typedef itk::SmartPointer<Self>                     Pointer;
+  typedef itk::Command                                Superclass;
+  itkNewMacro(Self);
+
+  typedef igstk::DoubleTypeEvent DoubleTypeEventType;
+
+  void Execute( const itk::Object *caller, const itk::EventObject & event )
+    {
+    }
+  void Execute( itk::Object *caller, const itk::EventObject & event )
+    {
+    std::cout<< " DoubleTypeEvent is thrown" << std::endl;
+    const DoubleTypeEventType * errorEvent =
+                  dynamic_cast < const DoubleTypeEventType* > ( &event );
+    m_RMSError = errorEvent->Get();
+    m_EventReceived = true;
+    } 
+  
+  bool GetEventReceived()
+    {
+    return m_EventReceived;
+    }
+  
+  igstk::Transform::ErrorType GetRMSError()
+    {
+    return m_RMSError;
+    }  
+
+protected:
+  Landmark3DRegistrationGetRMSErrorCallback()   
+    {
+    m_EventReceived = true;
+    }
+
+private:
+  bool m_EventReceived;
+  igstk::Transform::ErrorType m_RMSError;
+};
+
 
 int main( int argv, char * argc[] )
 {
@@ -268,7 +311,14 @@ int main( int argv, char * argc[] )
   ErrorType                   landmarkRegistrationError;
 
   // BeginCodeSnippet
-  landmarkRegistrationError = landmarkRegister->ComputeRMSError();
+  Landmark3DRegistrationGetRMSErrorCallback::Pointer lRmscb =
+                            Landmark3DRegistrationGetRMSErrorCallback::New();
+
+  landmarkRegister->AddObserver( igstk::DoubleTypeEvent(), lRmscb );
+  landmarkRegister->RequestGetRMSError();
+
+  landmarkRegistrationError = lRmscb->GetRMSError();
+
   errorEstimator->RequestSetLandmarkRegistrationError( 
                                                 landmarkRegistrationError );
   // EndCodeSnippet
