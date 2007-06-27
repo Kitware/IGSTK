@@ -151,8 +151,18 @@ bool LandmarkBasedRegistration::Execute()
   if ( transformObserver->GotTransform())
     {
     m_Transform = transformObserver->GetTransform();
-    std::cout << "RMS Error: " << landmarkRegistration->ComputeRMSError() 
-      << std::endl;
+    }
+
+  LandmarkRegistrationRMSErrorObserver::Pointer rmsErrorObserver 
+                                    = LandmarkRegistrationRMSErrorObserver::New();
+
+  landmarkRegistration->AddObserver( igstk::DoubleTypeEvent(),
+                                     rmsErrorObserver );
+  landmarkRegistration->RequestGetRMSError();
+  if ( rmsErrorObserver->GotLandmarkRegistrationRMSError())
+    {
+    std::cout << "Landmark registration RMS error= " 
+              << rmsErrorObserver->GetLandmarkRegistrationRMSError() << std::endl ;
     }
 
   return true;

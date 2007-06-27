@@ -66,12 +66,22 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
                              m_CTImageObserver);
 
   m_LandmarkRegistration = RegistrationType::New();
+
   m_LandmarkRegistrationObserver = ObserverType2::New();
   m_LandmarkRegistrationObserver->SetCallbackFunction( this, 
                               &NeedleBiopsy::GetLandmarkRegistrationTransform );
   m_LandmarkRegistration->AddObserver( igstk::TransformModifiedEvent(), 
                                                m_LandmarkRegistrationObserver );
-   
+ 
+  m_LandmarkRegistrationRMSErrorObserver = ObserverType2::New();
+  m_LandmarkRegistrationRMSErrorObserver->SetCallbackFunction( this, 
+                              &NeedleBiopsy::GetLandmarkRegistrationRMSError );
+  m_LandmarkRegistration->AddObserver( igstk::DoubleTypeEvent(), 
+                                               m_LandmarkRegistrationRMSErrorObserver );
+ 
+  //Initialize the registration RMS error 
+  m_LandmarkRegistrationRMSError = 0.0;
+
   m_Annotation2D = igstk::Annotation2D::New();
   
   igstk::Transform transform;
@@ -772,6 +782,7 @@ void NeedleBiopsy::RegistrationProcessing()
     m_LandmarkRegistration->RequestAddTrackerLandmarkPoint( *it2 );  
     }
   m_LandmarkRegistration->RequestComputeTransform();
+  m_LandmarkRegistration->RequestGetRMSError();
   m_LandmarkRegistration->RequestGetTransform();
 }
 
@@ -1076,13 +1087,25 @@ void NeedleBiopsy
     
     igstkLogMacro( DEBUG, 
                  "Registration Transform" << m_ImageToTrackerTransform << "\n");
-    igstkLogMacro( DEBUG, 
-     "Registration Error" << m_LandmarkRegistration->ComputeRMSError() << "\n");
     m_StateMachine.PushInput( m_RegistrationSuccessInput );
     }
   else
     {
     m_StateMachine.PushInput( m_RegistrationFailureInput );
+    }
+}
+
+void NeedleBiopsy
+::GetLandmarkRegistrationRMSError( const itk::EventObject & event )
+{
+  if ( igstk::DoubleTypeEvent().CheckEvent( &event ) )
+    {
+    igstk::DoubleTypeEvent *tmevent = 
+                                     ( igstk::DoubleTypeEvent *) & event;
+    m_LandmarkRegistrationRMSError  = tmevent->Get();
+    
+    igstkLogMacro( DEBUG, 
+     "Registration Error" << m_LandmarkRegistrationRMSError << "\n");
     }
 }
 
@@ -1122,7 +1145,7 @@ void NeedleBiopsy::EvaluatingRegistrationErrorProcessing()
   igstkLogMacro (         DEBUG, "Evaluating registration error....\n" )
   igstkLogMacro2( m_Logger, DEBUG, "Evaluating registration error....\n" )
   char temp[255];
-  double error = m_LandmarkRegistration->ComputeRMSError();
+  double error = m_LandmarkRegistrationRMSError;
   sprintf( temp, "Registration error (RMS) = %f\n", error );
   std::string msg = temp;
   msg += "Accept this registration result?";

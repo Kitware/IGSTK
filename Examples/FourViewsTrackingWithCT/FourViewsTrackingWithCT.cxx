@@ -71,6 +71,16 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_LandmarkRegistration->AddObserver( igstk::TransformModifiedEvent(), 
                                                m_LandmarkRegistrationObserver );
 
+  m_LandmarkRegistrationRMSErrorObserver = ObserverType2::New();
+  m_LandmarkRegistrationRMSErrorObserver->SetCallbackFunction( this, 
+                              &FourViewsTrackingWithCT::GetLandmarkRegistrationRMSError );
+  m_LandmarkRegistration->AddObserver( igstk::DoubleTypeEvent(), 
+                                               m_LandmarkRegistrationRMSErrorObserver );
+ 
+  //Initialize the registration RMS error 
+  m_LandmarkRegistrationRMSError = 0.0;
+
+
   m_SerialCommunication = CommunicationType::New();
   m_SerialCommunication->SetLogger( m_Logger );
   m_SerialCommunication->SetPortNumber(igstk::SerialCommunication::PortNumber2);
@@ -671,6 +681,7 @@ void FourViewsTrackingWithCT::RegistrationProcessing()
     m_LandmarkRegistration->RequestAddTrackerLandmarkPoint( *it2 );  
     }
   m_LandmarkRegistration->RequestComputeTransform();
+  m_LandmarkRegistration->RequestGetRMSError();
   m_LandmarkRegistration->RequestGetTransform();
 }
 
@@ -954,14 +965,26 @@ void FourViewsTrackingWithCT
                  "Registration Transform" << m_ImageToTrackerTransform << "\n");
     igstkLogMacro( DEBUG, "Registration Transform Inverse" 
                              << m_ImageToTrackerTransform.GetInverse() << "\n");
-    igstkLogMacro( DEBUG, "Registration Transform Inverse" 
-                          << m_LandmarkRegistration->ComputeRMSError() << "\n");
     m_StateMachine.PushInput( m_RegistrationSuccessInput );
     }
   else
     {
     // FIXME.. how to get the failure condition
     m_StateMachine.PushInput( m_RegistrationFailureInput );
+    }
+}
+
+void FourViewsTrackingWithCT
+::GetLandmarkRegistrationRMSError( const itk::EventObject & event )
+{
+  if ( igstk::DoubleTypeEvent().CheckEvent( &event ) )
+    {
+    igstk::DoubleTypeEvent *tmevent = 
+                                     ( igstk::DoubleTypeEvent *) & event;
+    m_LandmarkRegistrationRMSError  = tmevent->Get();
+    
+    igstkLogMacro( DEBUG, 
+     "Registration Error" << m_LandmarkRegistrationRMSError << "\n");
     }
 }
 

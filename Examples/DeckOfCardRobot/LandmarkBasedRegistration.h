@@ -37,6 +37,10 @@ public:
   
   igstkObserverMacro( Transform, 
                             igstk::TransformModifiedEvent, igstk::Transform );
+
+  igstkObserverMacro( LandmarkRegistrationRMSError, 
+                            igstk::DoubleTypeEvent, double );
+
   virtual bool Execute();
 
 protected:

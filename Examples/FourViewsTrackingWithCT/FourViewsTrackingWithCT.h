@@ -217,6 +217,7 @@ private:
   RegistrationType::Pointer           m_LandmarkRegistration;
   LandmarkPointContainerType          m_ImageLandmarksContainer;
   LandmarkPointContainerType          m_TrackerLandmarksContainer;
+  igstk::Transform::ErrorType         m_LandmarkRegistrationRMSError;
 
   /** To store the landmark registration result transform */
   igstk::Transform                           m_ImageToTrackerTransform;  
@@ -243,6 +244,7 @@ private:
    *  to a member function. */
   typedef itk::ReceptorMemberCommand < Self > ObserverType2;
   ObserverType2::Pointer               m_LandmarkRegistrationObserver;
+  ObserverType2::Pointer               m_LandmarkRegistrationRMSErrorObserver;
   ObserverType2::Pointer               m_ViewPickerObserver;
 
   /** Ellipsoid spatial object, used to represent 
@@ -279,6 +281,7 @@ private:
   
   /** Callback functions for picking and registration success events. */
   void GetLandmarkRegistrationTransform( const itk::EventObject & event);
+  void GetLandmarkRegistrationRMSError ( const itk::EventObject & event);
   void DrawPickedPoint( const itk::EventObject & event );
 
   /** Callback function for Events */
