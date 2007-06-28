@@ -255,6 +255,24 @@ void ViewNew::RequestAddActor( vtkProp * actor )
     }
 }
 
+/** this gets called during FLTK window draw()s and resize()s */
+void ViewNew::UpdateSize(int W, int H)
+{
+  igstkLogMacro( DEBUG, "UpdateSize() called ...\n");
+  if ( m_RenderWindow != NULL)
+    {
+    const int * size = m_RenderWindowInteractor->GetSize();
+    
+    // if the size changed tell render window
+    if ( (W != size[0]) || (H != size[1]) )
+      {
+      // adjust our (m_RenderWindowInteractor size)
+      m_RenderWindowInteractor->UpdateSize( W, H );
+      // and our RenderWindow's size
+      m_RenderWindow->SetSize(W, H);
+      }
+    }
+}
 
 /** */
 void ViewNew::AddActorProcessing()

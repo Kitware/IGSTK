@@ -22,6 +22,10 @@
 #include "igstkFLTKWidget.h"
 #include <FL/x.H>
 
+#if defined(__APPLE__) && defined(VTK_USE_CARBON)
+#include "vtkCarbonRenderWindow.h"
+#endif
+
 namespace igstk
 {
 
@@ -109,6 +113,30 @@ void FLTKWidget::flush(void)
 void FLTKWidget::draw(void)
 {
   igstkLogMacro( DEBUG, "draw() called ...\n");
+
+  // make sure the vtk part knows where and how large we are
+  m_View->UpdateSize( this->w(), this->h() );
+
+  // make sure the GL context exists and is current:
+  // after a hide() and show() sequence e.g. there is no context yet
+  // and the Render() will fail due to an invalid context.
+  // see Fl_Gl_Window::show()
+  this->make_current();
+
+  vtkRenderWindow * renderWindow = m_View->GetRenderWindow();
+  vtkRenderWindowInteractor * interactor = m_View->GetRenderWindowInteractor();
+
+#if defined(__APPLE__) && defined(VTK_USE_CARBON)
+  // FLTK 1.x does not support HiView
+  ((vtkCarbonRenderWindow *)renderWindow)->SetRootWindow( fl_xid( this ) );
+#else
+  renderWindow->SetWindowId( (void *)fl_xid( this ) );
+#endif
+#if !defined(WIN32) && !defined(__APPLE__)
+  renderWindow->SetDisplayId( fl_display );
+#endif
+  // get vtk to render to the Fl_Gl_Window
+  interactor->Render();
 }
 
 /** Resize function */

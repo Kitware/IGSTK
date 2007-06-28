@@ -112,6 +112,18 @@ public:
   /** Enable the render window interactor */
   void Render();
 
+  /** Get render window */
+  vtkRenderWindow * GetRenderWindow()
+    {
+    return this->m_RenderWindow; 
+    } 
+
+  /** Get render window interactor */
+  RenderWindowInteractor *  GetRenderWindowInteractor()
+    {
+    return this->m_RenderWindowInteractor; 
+    }
+
 protected:
 
   ViewNew( );
@@ -136,6 +148,9 @@ public:
 
   /** Request Stopping the periodic refreshing of the view */
   void RequestStop();
+
+  /** Change the window size */
+  void UpdateSize(int x, int y);
 
 protected:
   
@@ -221,9 +236,6 @@ private:
   /** This should be called by the state machine */
   void StartProcessing();
   void StopProcessing();
-  
-  /** Change the window size */
-  void UpdateSize(int x, int y);
   
   /** Reset the settings of the camera */  
   void ResetCameraProcessing();
