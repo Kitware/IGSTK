@@ -73,6 +73,7 @@ SET(SandboxTests_SRCS
   igstkLandmarkUltrasoundCalibrationTest.cxx
   igstkSocketCommunicationTest.cxx
   igstkViewNewTest.cxx
+  igstkFLTKWidgetTest.cxx
   )
 
 FOREACH(TestFiles ${SandboxTests_SRCS})

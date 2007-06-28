@@ -41,23 +41,18 @@ public:
   typedef ViewNew      Superclass;
 
   igstkTypeMacro( ViewNew3D, ViewNew );
+
+  igstkNewMacro( ViewNew3D );
    
-  /** Constructor. The parameters of this constructor are related to the FLTK
-   * box class. They include the screen coordinates of the upper left
-   * coordinate, its width and height, and a string associated to the label */
-  ViewNew3D( int x, int y, int w, int h, const char *l="");
-
-  /** Destructor */
-  ~ViewNew3D( void );
-
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
 
 protected:
+  /** Constructor */
+  ViewNew3D( );
 
-  /** This method implements the user interactions with the view. It is an
-   * overload of a virtual medthod defined for FLTK classes. */
-  int  handle( int event );
+  /** Destructor */
+  ~ViewNew3D( void );
 
 };
 

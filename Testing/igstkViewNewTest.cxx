@@ -185,8 +185,8 @@ int igstkViewNewTest( int, char * [] )
 
     cylinderRepresentation->SetLogger( logger );
   
-    ViewNew2DType * view2D = new ViewNew2DType( 10,10,280,280,"2D ViewNew");
-    ViewNew3DType * view3D = new ViewNew3DType(310,10,280,280,"3D ViewNew");
+    ViewNew2DType::Pointer view2D = ViewNew2DType::New();
+    ViewNew3DType::Pointer view3D = ViewNew3DType::New();
 
     // Exercise GetNameOfClass() method
     std::cout << view2D->ViewNew2DType::Superclass::GetNameOfClass() << std::endl;
@@ -294,8 +294,6 @@ int igstkViewNewTest( int, char * [] )
 
     // at this point the observer should have hid the form
 
-    delete view2D;
-    delete view3D;
     }
   catch(...)
     {

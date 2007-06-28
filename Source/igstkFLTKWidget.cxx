@@ -35,8 +35,11 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this)
   
   this->end();
 
+  //Turn on interaction handling
   m_InteractionHandling = true;
-  
+
+  // instantiate the view object 
+  m_View = ViewType::New();
 }
 
 /** Destructor */
@@ -58,22 +61,7 @@ FLTKWidget::~FLTKWidget()
 void FLTKWidget::Update()
 {
   igstkLogMacro( DEBUG, "Update() called ...\n");
-  this->redraw();
-}
-
-/** */
-void FLTKWidget::Initialize()
-{
-}
-
-/** */
-void FLTKWidget::Enable()
-{
-}
-
-/** */
-void FLTKWidget::Render()
-{
+  this->m_View->Update();
 }
 
 /** */
@@ -99,9 +87,6 @@ void FLTKWidget::UpdateSize(int W, int H)
 void FLTKWidget::Refresh()
 {
   igstkLogMacro( DEBUG, "Refresh() called ...\n");
-
-  // Third, trigger VTK rendering by invoking a refresh of the GUI.
-  this->redraw();
 }
 
 /** FLTK event handlers */
@@ -182,37 +167,6 @@ int FLTKWidget::handle( int event )
     } // switch(event)...
 
   return 1; // we handled the event if we didn't return earlier
-}
-
-
-void 
-FLTKWidget
-::Print( std::ostream& os, ::itk::Indent indent ) const
-{
-  this->PrintSelf(os, indent);
-}
-
-
-/**
- * This operator allows all subclasses of LightObject to be printed via <<.
- * It in turn invokes the Print method, which in turn will invoke the
- * PrintSelf method that all objects should define, if they have anything
- * interesting to print out.
- */
-std::ostream& operator<<(std::ostream& os, const FLTKWidget & o)
-{
-  o.Print(os);
-  return os;
-}
-
-
-/** Print object information */
-void FLTKWidget::PrintSelf( std::ostream& os, itk::Indent indent ) const
-{
-  os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
-  os << indent << "InteractionHandling: ";
-  os << this->m_InteractionHandling << std::endl;
-
 }
 
 } // end namespace igstk

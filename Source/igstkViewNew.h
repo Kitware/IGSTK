@@ -58,12 +58,10 @@ class ViewNew : public Object
 {
 
 public:
-    
-  typedef ViewNew          Self;
-  typedef Object        Superclass;
 
-  igstkTypeMacro( ViewNew, Object );
-  
+  /** Macro with standard traits declarations. */    
+   igstkStandardClassTraitsMacro( ViewNew, Object );
+ 
   /** Set the desired frequency for refreshing the view. It is not worth to
    * attempt to go faster than your monitor, nor more than double than your
    * trackers */
@@ -99,12 +97,8 @@ public:
    * */
   void RequestSaveScreenShot( const std::string & filename );
 
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
-
   /** Print the object information in a stream. */
   void Print( std::ostream& os, ::itk::Indent indent=0) const;
-
 
   /** Set up variables, types and methods related to the Logger */
   igstkLoggerMacro()
@@ -120,7 +114,7 @@ public:
 
 protected:
 
-  ViewNew( int x, int y, int w, int h, const char *l="");
+  ViewNew( );
   virtual ~ViewNew( void );
 
 public:

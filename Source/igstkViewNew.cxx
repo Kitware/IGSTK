@@ -36,7 +36,7 @@ namespace igstk
 {
 
 /** Constructor */
-ViewNew::ViewNew( int x, int y, int w, int h, const char *l ) : 
+ViewNew::ViewNew() : 
 m_StateMachine(this)
 { 
   igstkLogMacro( DEBUG, "Constructor() called ...\n");

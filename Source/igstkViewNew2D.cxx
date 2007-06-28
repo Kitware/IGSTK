@@ -21,7 +21,7 @@
 namespace igstk {
 
 /** Constructor */
-ViewNew2D::ViewNew2D( int x, int y, int w, int h, const char *l ) : ViewNew(x,y,w,h,l)
+ViewNew2D::ViewNew2D() : ViewNew()
 {
   vtkInteractorStyleImage * interactorStyle = vtkInteractorStyleImage::New();
   this->SetInteractorStyle( interactorStyle );

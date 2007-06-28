@@ -35,6 +35,7 @@
 // IGSTK headers
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
+#include "igstkViewNew.h"
 
 namespace igstk {
 
@@ -46,6 +47,8 @@ public:
   typedef FLTKWidget          Self;
   typedef Fl_Gl_Window        Superclass;
 
+  typedef ViewNew             ViewType;
+
   igstkTypeMacro( FLTKWidget, Fl_Gl_Window );
   
   /** Declarations needed for the State Machine */
@@ -56,15 +59,6 @@ public:
 
   /** Set up variables, types and methods related to the Logger */
   igstkLoggerMacro()
-
-  /** Initialize */
-  void Initialize();
-
-  /** Enable */
-  void Enable();
-
-  /** Render */
-  void Render();
 
   /** Enable interaction */
   void EnableInteractions();
@@ -103,6 +97,8 @@ private:
 
 private:
   bool m_InteractionHandling;
+  
+  ViewType::Pointer m_View; 
 
 };
 
