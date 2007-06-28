@@ -282,6 +282,9 @@ Landmark3DRegistration::Landmark3DRegistration() : m_StateMachine( this )
 
   // Initialize the RMS error
   m_RMSError = 0.0;
+
+  // Initialize collinearity tolerance
+  m_CollinearityTolerance = 0.01;
 } 
 
 /** Destructor */
@@ -410,14 +413,12 @@ Landmark3DRegistration::CheckCollinearity()
   symmetricEigenSystem.ComputeEigenValuesAndVectors
                ( covarianceMatrix, eigenValues, eigenVectors );
 
-  double tolerance=0.001;
-
   double ratio;
 
   ratio = ( vnl_math_sqr ( eigenValues[0]) + vnl_math_sqr ( eigenValues[1]))/ 
           ( vnl_math_sqr ( eigenValues[2]));
 
-  if ( ratio > tolerance )  
+  if ( ratio > m_CollinearityTolerance )  
     {
     return false;
     }
@@ -610,6 +611,16 @@ Landmark3DRegistration::RequestResetRegistration()
   igstkPushInputMacro( ResetRegistration );
   this->m_StateMachine.ProcessInputs();
 }
+
+void Landmark3DRegistration::RequestSetCollinearityTolerance(
+                                            const double & tolerance)
+{
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::"
+                 "RequestSetCollinearityTolerance called...\n");
+  this->m_CollinearityTolerance = tolerance;
+  this->m_StateMachine.ProcessInputs();
+}
+
 
 void 
 Landmark3DRegistration::RequestComputeTransform()

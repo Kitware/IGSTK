@@ -31,15 +31,25 @@
 namespace igstk
 {
 /** \class Landmark3DRegistration
- * \brief This class evaluates the transformation parameters between 
- * the tracker and image coordinate systems.
+ * \brief This class computes rigid body transformation parameters between 
+ * two 3D coordinate systems. 
  *  
- * The Landmark registration class is used to register the tracker
- * coordinate system with the image coordinate system using rigid
- * body transformation. Landmark points are used to solve for the
- * transform parameters. A minimum of three pair of landmarks are
- * required. The class is basically a wrapper around the
- * itk::LandmarkBasedTransformInitializer.
+ * The Landmark registration class is used to compute rigid body transformation
+ * parameters between two 3D coordinate system. For example, transformation 
+ * between an image coordinate system and a tracker system. The registration
+ * algorithm is based on a closed-form solution to the least-squares problem of
+ * computing transformation parameters between two coordinate sytems.
+ * A minimum of three pair of landmarks are required. The class is basically 
+ * a wrapper around the itk::LandmarkBasedTransformInitializer.
+ *
+ * Before computing the transformation parameters,  the algorithm checks if
+ * the landmarks are collinear by analyzing the eigen values of the geometric 
+ * distribution of the landmark points. For this purpose, a tolerance metric is 
+ * defined. The tolerance metric is given by the ratio of the square sum of the two
+ * smallest eigen values to the square of the largest eigen value. By default, the 
+ * tolerance value is set to 0.01. However, the user can modify the tolerance using
+ * RequestSetCollinearityTolerance() method.
+ *  
  *
  *\image html igstkLandmark3DRegistration.png "State Machine Diagram"
  *
@@ -109,6 +119,10 @@ public:
   /** The "RequestGetRMSError" method will be used to get the RMS error
       value */
   void RequestGetRMSError();
+
+  /** RequestSetCollinearityTolerance method will be used to set collinearity
+      tolerance */
+  void RequestSetCollinearityTolerance( const double & tolerance ); 
   
   /** Landmark registration events */
   igstkEventMacro( TransformInitializerEvent,       IGSTKEvent );
@@ -152,6 +166,9 @@ private:
   LandmarkTrackerPointType                 m_TrackerLandmarkPoint;
   
   Transform::ErrorType                     m_RMSError;
+
+  /** Collinearity tolerance */
+  double                                   m_CollinearityTolerance;
   
   /** List of States */
   igstkDeclareStateMacro( Idle );

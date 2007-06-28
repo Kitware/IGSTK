@@ -244,6 +244,9 @@ int igstkLandmark3DRegistrationTest( int argv, char * argc[] )
   // Simulate invalid request
   landmarkRegister->RequestComputeTransform();
 
+  // Set tolerance 
+  landmarkRegister->RequestSetCollinearityTolerance( 0.01 );
+
   // Add 1st landmark
   fixedPoint[0] =  25.0;
   fixedPoint[1] =  1.0;
