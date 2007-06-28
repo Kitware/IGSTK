@@ -38,20 +38,20 @@
 namespace FLTKWidgetTest
 {
   
-class ViewNewObserver : public ::itk::Command 
+class ViewObserver : public ::itk::Command 
 {
 public:
   
-  typedef  ViewNewObserver               Self;
+  typedef  ViewObserver               Self;
   typedef  ::itk::Command             Superclass;
   typedef  ::itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
 
 protected:
-  ViewNewObserver() 
+  ViewObserver() 
     {
     m_PulseCounter = 0;
-    m_ViewNew = 0;
+    m_View = 0;
     }
 public:
 
@@ -60,12 +60,12 @@ public:
     std::cerr << "Execute( const * ) should not be called" << std::endl;
     }
 
-  void SetViewNew( ::igstk::ViewNew * view )
+  void SetView( ::igstk::ViewNew * view )
     {
-    m_ViewNew = view;
-    if( m_ViewNew )
+    m_View = view;
+    if( m_View )
       {
-      m_ViewNew->AddObserver( ::igstk::RefreshEvent(), this );
+      m_View->AddObserver( ::igstk::RefreshEvent(), this );
       }
     }
 
@@ -82,13 +82,13 @@ public:
 
       if( m_PulseCounter > 20 )
         {
-        if( m_ViewNew )
+        if( m_View )
           {
-          m_ViewNew->RequestStop();
+          m_View->RequestStop();
           } 
         else
           {
-          std::cerr << "ViewNew pointer is NULL " << std::endl;
+          std::cerr << "View pointer is NULL " << std::endl;
           }
         *m_End = true;
         return;
@@ -98,7 +98,7 @@ public:
 private:
   
   unsigned long       m_PulseCounter;
-  ::igstk::ViewNew *     m_ViewNew;
+  ::igstk::ViewNew *     m_View;
   bool *              m_End;
 
 };
@@ -207,18 +207,50 @@ int igstkFLTKWidgetTest( int, char * [] )
 
     view2D->RequestStart();
 
+    ViewNew2DType::Pointer view3D = ViewNew2DType::New();
+
+    view3D->Initialize();
+    view3D->Enable();
+    view3D->Render();
+    view3D->Update();
+    
+    view3D->RequestResetCamera();
+    view3D->RequestEnableInteractions();
+    
+    // Add the ellipsoid to the view
+    view3D->RequestAddObject( ellipsoidRepresentation );
+
+    // Add the cylinder to the view
+    view3D->RequestAddObject( cylinderRepresentation );
+
+    // Set the refresh rate and start 
+    // the pulse generators of the views.
+    view3D->RequestSetRefreshRate( 30 );
+
+    view3D->RequestStart();
+
     // Create an FLTK minimal GUI
     typedef igstk::FLTKWidget      FLTKWidgetType;
 
     Fl_Window * form = new Fl_Window(601,301,"View Test");
     
     // instantiate FLTK widget 
-    FLTKWidgetType * fltkWidget = new FLTKWidgetType( 10,10,280,280,"2D View");
-    fltkWidget->SetView( view2D );
+    FLTKWidgetType * fltkWidget2D = new FLTKWidgetType( 10,10,280,280,"2D View");
+    fltkWidget2D->SetView( view2D );
+    
+    FLTKWidgetType * fltkWidget3D = new FLTKWidgetType( 310,10,280,280,"3D View");
+    fltkWidget3D->SetView( view3D );
+   
     form->end();
     // End of the GUI creation
 
     form->show();
+
+    typedef FLTKWidgetTest::ViewObserver ObserverType;
+    ObserverType::Pointer viewObserver = ObserverType::New();
+    
+    viewObserver->SetView( view3D );
+    viewObserver->SetEndFlag( &bEnd );
 
     while(1)
       {
@@ -230,7 +262,8 @@ int igstkFLTKWidgetTest( int, char * [] )
         }
       }
 
-    delete fltkWidget;
+    delete fltkWidget2D;
+    delete fltkWidget3D;
     delete form;
     }
   catch(...)
