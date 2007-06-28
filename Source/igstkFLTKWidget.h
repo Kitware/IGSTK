@@ -60,16 +60,19 @@ public:
   /** Set up variables, types and methods related to the Logger */
   igstkLoggerMacro()
 
+  /** Set view */
+  void SetView( ViewType::Pointer view );
+
   /** Enable interaction */
   void EnableInteractions();
 
   /** Disable interaction */
   void DisableInteractions();
 
-protected:
-
   FLTKWidget( int x, int y, int w, int h, const char *l="");
   virtual ~FLTKWidget( void );
+
+protected:
 
 public:
   
@@ -84,9 +87,6 @@ protected:
   void resize( int x, int y, int w, int h );
   virtual int  handle( int event );
    
-  /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
- 
 private:
   
   /** Refresh GUI */

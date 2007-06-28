@@ -57,6 +57,12 @@ FLTKWidget::~FLTKWidget()
 
 }
 
+/** Set View */
+void FLTKWidget::SetView( ViewType::Pointer view )
+{
+  m_View = view;
+}
+
 /** Update the display */
 void FLTKWidget::Update()
 {

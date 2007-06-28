@@ -207,11 +207,31 @@ int igstkFLTKWidgetTest( int, char * [] )
 
     view2D->RequestStart();
 
-    // Do manual redraws
-    for(unsigned int i=0; i<10; i++)
+    // Create an FLTK minimal GUI
+    typedef igstk::FLTKWidget      FLTKWidgetType;
+
+    Fl_Window * form = new Fl_Window(601,301,"View Test");
+    
+    // instantiate FLTK widget 
+    FLTKWidgetType * fltkWidget = new FLTKWidgetType( 10,10,280,280,"2D View");
+    fltkWidget->SetView( view2D );
+    form->end();
+    // End of the GUI creation
+
+    form->show();
+
+    while(1)
       {
+      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
+      if( bEnd )
+        {
+        break;
+        }
       }
+
+    delete fltkWidget;
+    delete form;
     }
   catch(...)
     {
