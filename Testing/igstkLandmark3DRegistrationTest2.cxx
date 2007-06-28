@@ -168,7 +168,6 @@ int igstkLandmark3DRegistrationTest2( int argv, char * argc[] )
   typedef ErrorEstimatorType::TargetPointType   TargetPointType;
   typedef ErrorEstimatorType::ErrorType         ErrorType;
 
-  ErrorType                   landmarkRegistrationError;
 
   imagePoint[0] =  78.3163;
   imagePoint[1] =  15.3252;
@@ -256,7 +255,6 @@ int igstkLandmark3DRegistrationTest2( int argv, char * argc[] )
     }
  
   std::cout << "RMS error= " << lRmscb->GetRMSError() << std::endl;
-
 
   // second landmark registration
 
