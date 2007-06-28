@@ -155,14 +155,47 @@ void FLTKWidget::resize( int x, int y, int w, int h )
 int FLTKWidget::handle( int event ) 
 {
   igstkLogMacro( DEBUG, "handle() called ...\n");
-  
+
+  vtkRenderWindow * renderWindow = m_View->GetRenderWindow();
+  vtkRenderWindowInteractor * renderWindowInteractor = m_View->GetRenderWindowInteractor();
+
+  if( !renderWindowInteractor->GetEnabled() || !m_InteractionHandling) 
+    {
+    return 0;
+    }
+  // SEI(x, y, ctrl, shift, keycode, repeatcount, keysym)
+  renderWindowInteractor->SetEventInformation(
+                            Fl::event_x(), this->h()-Fl::event_y()-1, 
+                            Fl::event_state( FL_CTRL ), 
+                            Fl::event_state( FL_SHIFT ),
+                            Fl::event_key(), 1, NULL);   
+    
   switch( event ) 
     {
     case FL_FOCUS:
     case FL_UNFOCUS:
+      // Return 1 if you want keyboard events, 0 otherwise. Yes we do
       break;
 
     case FL_KEYBOARD:   // keypress
+      renderWindowInteractor->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);
+      
+      // Disabling VTK keyboard interaction
+      //this->InvokeEvent(vtkCommand::KeyPressEvent, NULL);
+      //this->InvokeEvent(vtkCommand::CharEvent, NULL);
+     
+      // now for possible controversy: there
+      // is no way to find out if the
+      // InteractorStyle actually did
+      // something with this event.  To play
+      // it safe (and have working hotkeys),
+      // we return "0", which indicates to
+      // FLTK that we did NOTHING with this
+      // event.  FLTK will send this keyboard
+      // event to other children in our group,
+      // meaning it should reach any FLTK
+      // keyboard callbacks (including
+      // hotkeys)
       return 0;
       break;
      
@@ -171,15 +204,27 @@ int FLTKWidget::handle( int event )
       switch( Fl::event_button() ) 
         {
         case FL_LEFT_MOUSE:
+          renderWindowInteractor->InvokeEvent(
+                                      vtkCommand::LeftButtonPressEvent,NULL);
           break;
         case FL_MIDDLE_MOUSE:
+          renderWindowInteractor->InvokeEvent(
+                                    vtkCommand::MiddleButtonPressEvent,NULL);
           break;
         case FL_RIGHT_MOUSE:
+          renderWindowInteractor->InvokeEvent(
+                                     vtkCommand::RightButtonPressEvent,NULL);
           break;
         }
       break; // this break should be here, at least according to 
+             // vtkXRenderWindowInteractor
+
+      // we test for both of these, as fltk classifies mouse moves as 
+      // with or without button press whereas vtk wants all mouse movement 
+      // (this bug took a while to find :)
     case FL_DRAG:
     case FL_MOVE:
+      renderWindowInteractor->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);
     break;
 
     case FL_RELEASE:    // mouse up
@@ -187,11 +232,17 @@ int FLTKWidget::handle( int event )
         {
         case FL_LEFT_MOUSE:
           {
+          renderWindowInteractor->InvokeEvent(
+                                     vtkCommand::LeftButtonReleaseEvent,NULL);
           }
           break;
         case FL_MIDDLE_MOUSE:
+          renderWindowInteractor->InvokeEvent(
+                                   vtkCommand::MiddleButtonReleaseEvent,NULL);
           break;
         case FL_RIGHT_MOUSE:
+          renderWindowInteractor->InvokeEvent(
+                                    vtkCommand::RightButtonReleaseEvent,NULL);
           break;
         }
       break;
@@ -199,6 +250,7 @@ int FLTKWidget::handle( int event )
     default:    // let the base class handle everything else 
     return Fl_Gl_Window::handle( event );
     } // switch(event)...
+
 
   return 1; // we handled the event if we didn't return earlier
 }
