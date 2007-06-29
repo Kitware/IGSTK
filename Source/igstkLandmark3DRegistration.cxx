@@ -69,30 +69,60 @@ Landmark3DRegistration::Landmark3DRegistration() : m_StateMachine( this )
                           TrackerLandmark1Added,
                           AddTrackerLandmarkPoint);
 
+  igstkAddTransitionMacro(ImageLandmark1Added,
+                          ImageLandmark,
+                          ImageLandmark1Added,
+                          ReportInvalidRequest);
+
   igstkAddTransitionMacro(TrackerLandmark1Added,
                           ImageLandmark,
                           ImageLandmark2Added,
                           AddImageLandmarkPoint);
+
+  igstkAddTransitionMacro(TrackerLandmark1Added,
+                          TrackerLandmark,
+                          TrackerLandmark1Added,
+                          ReportInvalidRequest);
 
   igstkAddTransitionMacro(ImageLandmark2Added,
                           TrackerLandmark,
                           TrackerLandmark2Added,
                           AddTrackerLandmarkPoint);
 
+  igstkAddTransitionMacro(ImageLandmark2Added,
+                          ImageLandmark,
+                          ImageLandmark2Added,
+                          ReportInvalidRequest);
+
   igstkAddTransitionMacro(TrackerLandmark2Added,
                           ImageLandmark,
                           ImageLandmark3Added,
                           AddImageLandmarkPoint);
+
+  igstkAddTransitionMacro(TrackerLandmark2Added,
+                          TrackerLandmark,
+                          TrackerLandmark2Added,
+                          ReportInvalidRequest);
 
   igstkAddTransitionMacro(ImageLandmark3Added,
                           TrackerLandmark,
                           TrackerLandmark3Added,
                           AddTrackerLandmarkPoint);
 
+  igstkAddTransitionMacro(ImageLandmark3Added,
+                          ImageLandmark,
+                          ImageLandmark3Added,
+                          ReportInvalidRequest);
+
   igstkAddTransitionMacro(TrackerLandmark3Added,
                           ImageLandmark,
                           ImageLandmark3Added,
                           AddImageLandmarkPoint);
+
+  igstkAddTransitionMacro(TrackerLandmark3Added,
+                          TrackerLandmark,
+                          TrackerLandmark3Added,
+                          ReportInvalidRequest);
 
   igstkAddTransitionMacro( TrackerLandmark3Added,
                            ComputeTransform,
@@ -182,7 +212,7 @@ Landmark3DRegistration::Landmark3DRegistration() : m_StateMachine( this )
 
   igstkAddTransitionMacro( TrackerLandmark3Added,
                            GetTransform,
-                           TrackerLandmark2Added,
+                           TrackerLandmark3Added,
                            ReportInvalidRequest);
 
   igstkAddTransitionMacro( Idle,
@@ -217,7 +247,7 @@ Landmark3DRegistration::Landmark3DRegistration() : m_StateMachine( this )
 
   igstkAddTransitionMacro( TrackerLandmark3Added,
                            GetRMSError,
-                           TrackerLandmark2Added,
+                           TrackerLandmark3Added,
                            ReportInvalidRequest);
 
   igstkAddTransitionMacro( TransformComputed,
