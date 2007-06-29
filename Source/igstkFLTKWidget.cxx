@@ -156,7 +156,6 @@ int FLTKWidget::handle( int event )
 {
   igstkLogMacro( DEBUG, "handle() called ...\n");
 
-  vtkRenderWindow * renderWindow = m_View->GetRenderWindow();
   vtkRenderWindowInteractor * renderWindowInteractor = m_View->GetRenderWindowInteractor();
 
   if( !renderWindowInteractor->GetEnabled() || !m_InteractionHandling) 
