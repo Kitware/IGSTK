@@ -31,9 +31,9 @@ void RegisterTests()
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
   REGISTER_TEST(igstkViewNewTest);
-  REGISTER_TEST(igstkFLTKWidgetTest);
 
 #ifdef IGSTK_USE_FLTK
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
+  REGISTER_TEST(igstkFLTKWidgetTest);
 #endif /* IGSTK_USE_FLTK */
 }
