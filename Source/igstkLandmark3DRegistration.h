@@ -45,10 +45,10 @@ namespace igstk
  * Before computing the transformation parameters,  the algorithm checks if
  * the landmarks are collinear by analyzing the eigen values of the geometric 
  * distribution of the landmark points. For this purpose, a tolerance metric is 
- * defined. The tolerance metric is given by the ratio of the square sum of the two
- * smallest eigen values to the square of the largest eigen value. By default, the 
- * tolerance value is set to 0.01. However, the user can modify the tolerance using
- * RequestSetCollinearityTolerance() method.
+ * defined. The tolerance metric is given by the ratio of the square sum of the
+ * two smallest eigen values to the square of the largest eigen value. 
+ * By default, the tolerance value is set to 0.01. However, the user can modify
+ * the tolerance using RequestSetCollinearityTolerance() method.
  *  
  *
  *\image html igstkLandmark3DRegistration.png "State Machine Diagram"
@@ -117,7 +117,7 @@ public:
   void RequestGetTransform();
  
   /** The "RequestGetRMSError" method will be used to get the RMS error
-      value */
+   *  value */
   void RequestGetRMSError();
 
   /** RequestSetCollinearityTolerance method will be used to set collinearity
