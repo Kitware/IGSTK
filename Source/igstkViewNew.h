@@ -59,7 +59,7 @@ class ViewNew : public Object
 
 public:
 
-  /** Macro with standard traits declarations. */    
+  /** Macro with standard traits declarations. */
    igstkStandardClassTraitsMacro( ViewNew, Object );
  
   /** Set the desired frequency for refreshing the view. It is not worth to

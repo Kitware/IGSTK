@@ -34,16 +34,15 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-namespace ViewNewTest
-{
+namespace ViewNewTest {
   
 class ViewNewObserver : public ::itk::Command 
 {
 public:
   
   typedef  ViewNewObserver               Self;
-  typedef  ::itk::Command             Superclass;
-  typedef  ::itk::SmartPointer<Self>  Pointer;
+  typedef  ::itk::Command                Superclass;
+  typedef  ::itk::SmartPointer<Self>     Pointer;
   itkNewMacro( Self );
 
 protected:
@@ -97,7 +96,7 @@ public:
 private:
   
   unsigned long       m_PulseCounter;
-  ::igstk::ViewNew *     m_ViewNew;
+  ::igstk::ViewNew    * m_ViewNew;
   bool *              m_End;
 
 };
@@ -189,7 +188,9 @@ int igstkViewNewTest( int, char * [] )
     ViewNew3DType::Pointer view3D = ViewNew3DType::New();
 
     // Exercise GetNameOfClass() method
-    std::cout << view2D->ViewNew2DType::Superclass::GetNameOfClass() << std::endl;
+    std::cout << view2D->ViewNew2DType::Superclass::GetNameOfClass() 
+              << std::endl;
+
     std::cout << view3D->GetNameOfClass() << std::endl;
     std::cout << view3D->GetNameOfClass() << std::endl;
       

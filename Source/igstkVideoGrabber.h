@@ -35,14 +35,14 @@ public:
 
   /** Container for video dimensions */
   struct VideoDimensions
-  {
+    {
     unsigned int m_Height;
     unsigned int m_Width;
-  };
+    };
   
   /** Container for video clipping rectangle */
   struct VideoClipRectangle
-  {
+    {
     /** Height and width of rectangle */
     unsigned int m_Height;
     unsigned int m_Width;
@@ -50,7 +50,7 @@ public:
     /** Starting X and Y position of rectangle */
     signed int   m_XPosition;
     signed int   m_YPosition;
-  };
+    };
   
   /** Macro with standard traits declarations. */
   //igstkStandardClassTraitsMacro( VideoGrabber, Object )
@@ -65,12 +65,12 @@ public:
   virtual void RequestSetVideoBufferSize( unsigned long bufferSize );
   
   /** Set framerate.
-    * \param framerate Desired framerate */
+   * \param framerate Desired framerate */
   virtual void RequestSetWantedFramerate(unsigned int framerate);
   
   /** Set the video output format. The possible formats are dependant on video 
-    * grabber hardware.
-    * \param format The format to use */
+   * grabber hardware.
+   * \param format The format to use */
   virtual void RequestSetVideoOutputFormat( unsigned int format );
   
   /** Set desired video output dimensions.
@@ -80,10 +80,10 @@ public:
                                                  unsigned int videoWidth  );
   
   /** Set rectangle for clipping the video output to desired size.
-    * \param height Height of rectangle
-    * \param width Width of rectalgle
-    * \param xPosition X position of the upper rightmost rectangle corner
-    * \param yPosition Y Position of the upper righmost rectangle corner */
+   * \param height Height of rectangle
+   * \param width Width of rectalgle
+   * \param xPosition X position of the upper rightmost rectangle corner
+   * \param yPosition Y Position of the upper righmost rectangle corner */
   virtual void RequestSetVideoOutputClipRectangle( unsigned int height, 
                                                    unsigned int width,
                                                    signed int xPosition, 

@@ -77,7 +77,7 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_LandmarkRegistrationRMSErrorObserver->SetCallbackFunction( this, 
                               &NeedleBiopsy::GetLandmarkRegistrationRMSError );
   m_LandmarkRegistration->AddObserver( igstk::DoubleTypeEvent(), 
-                                               m_LandmarkRegistrationRMSErrorObserver );
+                                      m_LandmarkRegistrationRMSErrorObserver );
  
   //Initialize the registration RMS error 
   m_LandmarkRegistrationRMSError = 0.0;

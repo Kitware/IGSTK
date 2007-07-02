@@ -73,9 +73,9 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 
   m_LandmarkRegistrationRMSErrorObserver = ObserverType2::New();
   m_LandmarkRegistrationRMSErrorObserver->SetCallbackFunction( this, 
-                              &FourViewsTrackingWithCT::GetLandmarkRegistrationRMSError );
+            &FourViewsTrackingWithCT::GetLandmarkRegistrationRMSError );
   m_LandmarkRegistration->AddObserver( igstk::DoubleTypeEvent(), 
-                                               m_LandmarkRegistrationRMSErrorObserver );
+            m_LandmarkRegistrationRMSErrorObserver );
  
   //Initialize the registration RMS error 
   m_LandmarkRegistrationRMSError = 0.0;

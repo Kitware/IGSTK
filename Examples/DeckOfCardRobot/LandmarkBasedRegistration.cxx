@@ -154,7 +154,7 @@ bool LandmarkBasedRegistration::Execute()
     }
 
   LandmarkRegistrationRMSErrorObserver::Pointer rmsErrorObserver 
-                                    = LandmarkRegistrationRMSErrorObserver::New();
+                            = LandmarkRegistrationRMSErrorObserver::New();
 
   landmarkRegistration->AddObserver( igstk::DoubleTypeEvent(),
                                      rmsErrorObserver );
@@ -162,7 +162,7 @@ bool LandmarkBasedRegistration::Execute()
   if ( rmsErrorObserver->GotLandmarkRegistrationRMSError())
     {
     std::cout << "Landmark registration RMS error= " 
-              << rmsErrorObserver->GetLandmarkRegistrationRMSError() << std::endl ;
+        << rmsErrorObserver->GetLandmarkRegistrationRMSError() << std::endl;
     }
 
   return true;

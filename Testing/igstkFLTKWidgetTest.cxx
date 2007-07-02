@@ -35,8 +35,7 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-namespace FLTKWidgetTest
-{
+namespace FLTKWidgetTest{
   
 class ViewObserver : public ::itk::Command 
 {
@@ -98,7 +97,7 @@ public:
 private:
   
   unsigned long       m_PulseCounter;
-  ::igstk::ViewNew *     m_View;
+  ::igstk::ViewNew *  m_View;
   bool *              m_End;
 
 };
@@ -235,10 +234,12 @@ int igstkFLTKWidgetTest( int, char * [] )
     Fl_Window * form = new Fl_Window(601,301,"View Test");
     
     // instantiate FLTK widget 
-    FLTKWidgetType * fltkWidget2D = new FLTKWidgetType( 10,10,280,280,"2D View");
+    FLTKWidgetType * fltkWidget2D = 
+                      new FLTKWidgetType( 10,10,280,280,"2D View");
     fltkWidget2D->SetView( view2D );
     
-    FLTKWidgetType * fltkWidget3D = new FLTKWidgetType( 310,10,280,280,"3D View");
+    FLTKWidgetType * fltkWidget3D = 
+                      new FLTKWidgetType( 310,10,280,280,"3D View");
     fltkWidget3D->SetView( view3D );
    
     form->end();

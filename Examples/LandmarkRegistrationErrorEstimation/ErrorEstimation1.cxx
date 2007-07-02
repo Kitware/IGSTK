@@ -99,8 +99,8 @@ class Landmark3DRegistrationGetRMSErrorCallback: public itk::Command
 {
 public:
   typedef Landmark3DRegistrationGetRMSErrorCallback  Self;
-  typedef itk::SmartPointer<Self>                     Pointer;
-  typedef itk::Command                                Superclass;
+  typedef itk::SmartPointer<Self>                    Pointer;
+  typedef itk::Command                               Superclass;
   itkNewMacro(Self);
 
   typedef igstk::DoubleTypeEvent DoubleTypeEventType;

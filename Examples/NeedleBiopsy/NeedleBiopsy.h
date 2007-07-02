@@ -317,7 +317,8 @@ private:
   void DrawTargetPointProcessing();
   void DrawPathProcessing();
 
-  /** Callback functions for picking and registration success and rms error events. */
+  /** Callback functions for picking and registration success 
+   and rms error events. */
   void GetLandmarkRegistrationTransform( const itk::EventObject & event);
   void GetLandmarkRegistrationRMSError( const itk::EventObject & event);
   void DrawPickedPoint( const itk::EventObject & event );
