@@ -90,6 +90,7 @@ void FLTKWidget::DisableInteractions()
 void FLTKWidget::UpdateSize(int W, int H)
 {
   igstkLogMacro( DEBUG, "UpdateSize() called ...\n");
+  this->m_View->UpdateSize( W, H );
 }
 
 /** Refresh the rendering. This function is called in response to pulses from

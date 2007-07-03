@@ -423,6 +423,9 @@ void ViewNew::RefreshRender()
     ++itr;
     }
 
+  //Third, trigger VTK rendering
+  m_RenderWindowInteractor->Render();
+
   // Last, report to observers that a refresh event took place.
   m_Reporter->InvokeEvent( RefreshEvent() );
 }
