@@ -104,10 +104,8 @@ public:
   void RequestGetVTKImage() const;
 
   /** Event types */
-  // FIXME: restore this event
-  //
-  // igstkLoadedTemplatedConstObjectEventMacro( ITKImageModifiedEvent, 
-  //                                           IGSTKEvent, ImageType);
+  igstkLoadedConstObjectEventMacro( 
+    ITKImageModifiedEvent, IGSTKEvent, ImageBaseType);
 
   igstkEventMacro( ImageNotAvailableEvent, IGSTKEvent );
 
