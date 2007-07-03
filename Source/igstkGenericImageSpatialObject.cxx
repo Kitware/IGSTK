@@ -1,0 +1,393 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkGenericImageSpatialObject.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+#include "igstkGenericImageSpatialObject.h"
+
+#include "itkOrientedImage.h"
+#include "itkVTKImageExport.h"
+
+#include "vtkImageImport.h"
+#include "vtkImageData.h"
+
+
+namespace igstk
+{ 
+
+/** \class PipelineCreator
+ *  This helper class will take care of instantiating the appropriate
+ *  ITK Export class corresponding to the actual pixel type of the 
+ *  input image. */
+template <class TPixel >
+class PipelineCreator
+{
+public:
+  
+  typedef itk::ImageBase<3>           ImageBaseType;
+  typedef ImageBaseType::Pointer      ImageBasePointer;
+  typedef itk::ProcessObject          ExporterBaseType;
+  typedef itk::ProcessObject::Pointer ExporterBasePointer;
+  typedef itk::Image< TPixel, 3 >     ImageType;
+
+  static void 
+  CreateExporter( ImageBasePointer    & imageBase, 
+                  ExporterBasePointer & exporter,
+                  vtkImageImport      * importer  )
+    {
+    ImageType * image = 
+      dynamic_cast< ImageType * >( imageBase.GetPointer() );
+
+    if( image )
+      {
+      typedef itk::VTKImageExport< ImageType >   ExportFilterType;
+      typedef typename ExportFilterType::Pointer ExportFilterPointer;
+      ExportFilterPointer itkExporter = ExportFilterType::New();
+      itkExporter->SetInput( image );
+
+      exporter = itkExporter;
+
+      importer->SetUpdateInformationCallback(
+        itkExporter->GetUpdateInformationCallback());
+      importer->SetPipelineModifiedCallback(
+        itkExporter->GetPipelineModifiedCallback());
+      importer->SetWholeExtentCallback(
+        itkExporter->GetWholeExtentCallback());
+      importer->SetSpacingCallback(
+        itkExporter->GetSpacingCallback());
+      importer->SetOriginCallback(
+        itkExporter->GetOriginCallback());
+      importer->SetScalarTypeCallback(
+        itkExporter->GetScalarTypeCallback());
+      importer->SetNumberOfComponentsCallback(
+        itkExporter->GetNumberOfComponentsCallback());
+      importer->SetPropagateUpdateExtentCallback(
+        itkExporter->GetPropagateUpdateExtentCallback());
+      importer->SetUpdateDataCallback(
+        itkExporter->GetUpdateDataCallback());
+      importer->SetDataExtentCallback(
+        itkExporter->GetDataExtentCallback());
+      importer->SetBufferPointerCallback(
+        itkExporter->GetBufferPointerCallback());
+      importer->SetCallbackUserData(
+        itkExporter->GetCallbackUserData());
+      }
+    }
+};
+
+
+/** This helper macro will instantiate the pipeline creator for a particular
+ * pixel type */
+#define CreatePipelineMacro( PixelType ) \
+  PipelineCreator< PixelType >::CreateExporter( \
+      this->ItkImage, this->Exporter, this->Importer );
+
+
+/** Constructor */
+GenericImageSpatialObject
+::GenericImageSpatialObject():m_StateMachine(this)
+{
+  // Create the image spatial object
+  // FIXME: to be replaced with switch statement per pixel type
+  // m_GenericImageSpatialObject = GenericSpatialObjectType::New();
+  // this->RequestSetSpatialObject( m_GenericImageSpatialObject );
+
+  // initialize the logger 
+  m_Logger = NULL;
+
+  //
+  // FIXME Here: Add the importer & exporter and connect the pipelines
+  //
+  //
+  this->m_VtkImporter = vtkImageImport::New();
+
+  igstkAddInputMacro( ValidImage );
+  igstkAddInputMacro( InvalidImage );
+  igstkAddInputMacro( RequestITKImage );
+  igstkAddInputMacro( RequestVTKImage );
+
+  igstkAddStateMacro( Initial );
+  igstkAddStateMacro( ImageSet );
+
+  igstkAddTransitionMacro( Initial, ValidImage, 
+                           ImageSet,  SetImage );
+  igstkAddTransitionMacro( Initial, InvalidImage, 
+                           Initial, ReportInvalidImage );
+  igstkAddTransitionMacro( Initial, RequestITKImage, 
+                           Initial, ReportImageNotAvailable );
+  igstkAddTransitionMacro( Initial, RequestVTKImage, 
+                           Initial, ReportImageNotAvailable );
+
+  igstkAddTransitionMacro( ImageSet, ValidImage, 
+                           ImageSet, SetImage );
+  igstkAddTransitionMacro( ImageSet, InvalidImage, 
+                           Initial,  ReportInvalidImage );
+  igstkAddTransitionMacro( ImageSet, RequestITKImage, 
+                           ImageSet, ReportITKImage );
+  igstkAddTransitionMacro( ImageSet, RequestVTKImage, 
+                           ImageSet, ReportVTKImage );
+
+  igstkSetInitialStateMacro( Initial );
+
+  m_StateMachine.SetReadyToRun();
+
+}
+
+
+/** Destructor */
+GenericImageSpatialObject
+::~GenericImageSpatialObject()  
+{
+  if( this->m_VtkImporter )
+    {
+    this->m_VtkImporter->Delete(); 
+    this->m_VtkImporter = NULL;
+    }
+}
+
+
+void
+GenericImageSpatialObject
+::RequestSetImage( const ImageBaseType * image ) 
+{
+  m_ImageToBeSet = image;
+
+  if( m_ImageToBeSet )
+    {
+    igstkPushInputMacro( ValidImage );
+    m_StateMachine.ProcessInputs();
+    return;
+    }
+  else
+    {
+    igstkPushInputMacro( InvalidImage );
+    m_StateMachine.ProcessInputs();
+    return;
+    }
+}
+
+
+void
+GenericImageSpatialObject
+::RequestGetITKImage() const
+{
+  igstkLogMacro( DEBUG, "RequestGetITKImage() called ....\n");
+
+  //
+  // FIXME : Constness issue igstkPushInputMacro( RequestITKImage );
+  //
+  // This const_cast is allowed here only because 
+  // all the transitions due to the RequestVTKImage
+  // are idempotent, meaning that they do not change
+  // the state of the state machine. Given that the 
+  // state of the class is not changed, the method 
+  // can still be considered to be const.
+  Self * self = const_cast< Self * >( this );
+  self->RequestGetITKImage();
+}
+
+
+void
+GenericImageSpatialObject
+::RequestGetITKImage() 
+{
+  igstkLogMacro( DEBUG, "RequestGetITKImage() called ....\n");
+
+  igstkPushInputMacro( RequestITKImage );
+  this->m_StateMachine.ProcessInputs();
+}
+
+
+void
+GenericImageSpatialObject
+::RequestGetVTKImage() const
+{
+  igstkLogMacro( DEBUG, "RequestGetVTKImage() called ....\n");
+
+  // This const_cast is allowed here only because 
+  // all the transitions due to the RequestVTKImage
+  // are idempotent, meaning that they do not change
+  // the state of the state machine. Given that the 
+  // state of the class is not changed, the method 
+  // can still be considered to be const.
+  Self * self = const_cast< Self * >( this );
+  self->RequestGetVTKImage();
+}
+
+
+void
+GenericImageSpatialObject
+::RequestGetVTKImage() 
+{
+  igstkLogMacro( DEBUG, "RequestGetVTKImage() called ....\n");
+
+  igstkPushInputMacro( RequestVTKImage );
+  this->m_StateMachine.ProcessInputs();
+}
+
+
+void
+GenericImageSpatialObject
+::ReportITKImageProcessing() 
+{
+  igstkLogMacro( DEBUG, "ReportITKImageProcessing() called ....\n");
+
+  // FIXME: Restore an event here...
+  //
+  // ITKImageModifiedEvent  event;
+  // event.Set( this->m_Image );
+  // this->InvokeEvent( event );
+}
+
+
+void
+GenericImageSpatialObject
+::ReportVTKImageProcessing() 
+{
+  igstkLogMacro( DEBUG, "ReportVTKImageProcessing() called ....\n");
+
+  VTKImageModifiedEvent  event;
+  event.Set( this->m_VtkImporter->GetOutput() );
+  this->InvokeEvent( event );
+}
+
+
+void
+GenericImageSpatialObject
+::ReportImageNotAvailableProcessing() 
+{
+  ImageNotAvailableEvent  event;
+  igstkLogMacro( WARNING, "ReportImageNotAvailableProcessing() called ...\n");
+  this->InvokeEvent( event );
+}
+
+void
+GenericImageSpatialObject
+::SetImageProcessing() 
+{
+  igstkLogMacro( DEBUG, "SetImageProcessing() called ....\n");
+
+  m_Image = m_ImageToBeSet;
+  // 
+  // FIXME: To be replaced with switch statement
+  //
+  // m_GenericImageSpatialObject->SetImage( m_Image );
+
+  // Get direction cosine information from the Oriented image
+  // and use the information to setup transformation parameters 
+ 
+  ImageBaseType::DirectionType    directionCosines;
+  directionCosines = m_Image->GetDirection();
+
+  PointType origin =  m_Image->GetOrigin();
+
+  Transform          transform;
+  Transform::VersorType                    rotation;
+  
+  rotation.Set( directionCosines );
+ 
+
+  Transform::VectorType   tranlationToOrigin = 
+                 origin - rotation.Transform( origin );
+ 
+  Transform::ErrorType           errorValue = 1e-20;
+  Transform::TimePeriodType      validtyTime = -1;
+  
+  transform.SetTranslationAndRotation( tranlationToOrigin, rotation, 
+                                           errorValue, validtyTime );
+ 
+  this->RequestSetTransform( transform ); 
+
+// FIXME:   m_ItkExporter->SetInput( m_Image );
+  this->m_VtkImporter->UpdateWholeExtent();
+}
+
+
+void
+GenericImageSpatialObject
+::ReportInvalidImageProcessing() 
+{
+  igstkLogMacro( WARNING, "ReportInvalidImageProcessing() called ...\n");
+}
+
+
+bool
+GenericImageSpatialObject
+::IsInside( const PointType & point ) const 
+{ 
+  //
+  // FIXME: Update implementation
+  //
+  // return m_GenericImageSpatialObject->IsInside( point ); 
+  //
+  return false; // FIXME: to be removed when the new implementation is in place
+}
+
+
+bool
+GenericImageSpatialObject
+::IsEmpty() const 
+{ 
+  typedef ::itk::ImageRegion< 3 > RegionType;
+  /* FIXME  update implementation
+  RegionType region = 
+    m_GenericImageSpatialObject->GetImage()->GetLargestPossibleRegion();
+  const unsigned int numberOfPixels = region.GetNumberOfPixels();
+  const bool isEmpty = ( numberOfPixels == 0 );
+  return isEmpty;
+  */
+  return true;  // FIXME
+}
+
+
+bool
+GenericImageSpatialObject
+::TransformPhysicalPointToIndex ( const PointType & point, 
+                                        IndexType & index ) const 
+{ 
+  ContinuousIndexType cindex;
+  bool isInside = true;
+  // FIXME: here there should be a switch statement...
+  // bool isInside = m_Image->TransformPhysicalPointToContinuousIndex( point, cindex);
+  // Do the right rounding
+  index[0] = int ( cindex[0] + 0.5 );
+  index[1] = int ( cindex[1] + 0.5 );
+  index[2] = int ( cindex[2] + 0.5 );
+  return isInside;
+}
+
+bool
+GenericImageSpatialObject
+::TransformPhysicalPointToContinuousIndex ( const PointType & point, 
+                                        ContinuousIndexType & index ) const 
+{ 
+  // FIXME: here there should be a switch statement...
+  // return m_Image->TransformPhysicalPointToContinuousIndex( point, index);  
+  //
+  return false;
+}
+
+/** Print Self function */
+void 
+GenericImageSpatialObject
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+  os << "Details of the image " << m_Image.GetPointer() << std::endl;
+  // FIXME:: os << "ITK Exporter filter " << m_ItkExporter.GetPointer() << std::endl;
+  os << "VTK Importer filter " << this->m_VtkImporter << std::endl;
+}
+
+
+} // end namespace igstk
