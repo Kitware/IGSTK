@@ -255,6 +255,7 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 
 # The header files
 SET(IGSTKSandbox_HEADS
+  igstkDICOMGenericImageReader.h
   igstkObliqueImageSpatialObjectRepresentation.h
   igstkLandmarkUltrasoundCalibration.h
   igstkContourObjectRepresentation.h
@@ -288,6 +289,7 @@ ENDIF(IGSTKSandbox_USE_FLTK)
  
 # The implementation files
 SET(IGSTKSandbox_SRCS  
+  igstkDICOMGenericImageReader.cxx
   igstkObliqueImageSpatialObjectRepresentation.txx
   igstkLandmarkUltrasoundCalibration.cxx
   igstkContourObjectRepresentation.cxx

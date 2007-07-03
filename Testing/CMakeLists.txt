@@ -70,6 +70,7 @@ INCLUDE_DIRECTORIES (
 
 # Add your new tests here
 SET(SandboxTests_SRCS
+  igstkDICOMGenericImageReaderTest.cxx
   igstkLandmarkUltrasoundCalibrationTest.cxx
   igstkSocketCommunicationTest.cxx
   igstkViewNewTest.cxx
