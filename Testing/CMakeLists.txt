@@ -73,7 +73,6 @@ SET(SandboxTests_SRCS
   igstkLandmarkUltrasoundCalibrationTest.cxx
   igstkSocketCommunicationTest.cxx
   igstkViewNewTest.cxx
-  igstkFLTKWidgetTest.cxx
   )
 
 FOREACH(TestFiles ${SandboxTests_SRCS})
@@ -81,21 +80,25 @@ FOREACH(TestFiles ${SandboxTests_SRCS})
   ADD_TEST(${TestProgram} ${IGSTKSandbox_TESTS} ${TestProgram})
 ENDFOREACH(TestFiles)
 
+IF(IGSTK_USE_FLTK)
+    ADD_TEST( igstkFLTKWidgetTest
+              ${IGSTKSandbox_TESTS} 
+              igstkFLTKWidgetTest)   
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkFLTKWidgetTest)
+ENDIF(IGSTK_USE_FLTK)
+
+
 IF(IGSTKSandbox_DATA_ROOT)
-
   SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
-
   IF (IGSTK_USE_FLTK)
-
     ADD_TEST( igstkObliqueImageSpatialObjectRepresentationTest
               ${IGSTKSandbox_TESTS} 
               igstkObliqueImageSpatialObjectRepresentationTest 
               ${IGSTKSandbox_DATA_ROOT}/E000192)   
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkObliqueImageSpatialObjectRepresentationTest)
-
   ENDIF (IGSTK_USE_FLTK)
-
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
 ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${SandboxTests_SRCS})
