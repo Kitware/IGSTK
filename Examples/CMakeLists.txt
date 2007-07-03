@@ -18,6 +18,7 @@ SUBDIRS(
 IF (IGSTK_USE_FLTK)
 
   SUBDIRS(
+    OneViewAndTrackingUsingFLTKWidget
     TwoViews
     FourViewsTrackingWithCT
     FourViews
