@@ -92,6 +92,31 @@ private: \
 };
 
 
+#define igstkLoadedConstObjectEventMacro( name, superclass, payloadtype ) \
+class  name : public superclass \
+{ \
+public:  \
+  typedef name        Self; \
+  typedef superclass  Superclass; \
+  typedef payloadtype PayloadType; \
+  name() {} \
+  virtual ~name() {} \
+  virtual const char * GetEventName() const { return #name; } \
+  virtual bool CheckEvent(const ::itk::EventObject* e) const \
+    { return dynamic_cast<const Self*>(e); } \
+  virtual ::itk::EventObject* MakeObject() const \
+    { return new Self; } \
+  name(const Self&s) :superclass(s){}; \
+  const PayloadType* Get() const\
+    { return m_Payload.GetPointer(); }  \
+  void Set( const payloadtype * _var ) \
+    { m_Payload = _var; }  \
+private: \
+  void operator=(const Self&);  \
+  PayloadType::ConstPointer  m_Payload; \
+};
+
+
 #define igstkLoadedTemplatedObjectEventMacro( name, superclass, payloadtype ) \
 class  name : public superclass \
 { \
