@@ -103,15 +103,6 @@ public:
   /** Set up variables, types and methods related to the Logger */
   igstkLoggerMacro()
 
-  /** Initialize the render window interactor */
-  void Initialize();
-
-  /** Enable the render window interactor */
-  void Enable();
-
-  /** Enable the render window interactor */
-  void Render();
-
   /** Get render window */
   vtkRenderWindow * GetRenderWindow()
     {

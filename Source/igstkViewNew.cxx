@@ -190,8 +190,6 @@ m_StateMachine(this)
   m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
 
   this->RequestSetRefreshRate( 30 ); // 30 Hz is rather low frequency for video.
-
-  m_RenderWindowInteractor->Initialize();
   
 }
 
@@ -325,24 +323,6 @@ void ViewNew::RequestDisableInteractions()
   igstkLogMacro( DEBUG, "RequestDisableInteractions() called ...\n");
   igstkPushInputMacro( DisableInteractions );
   m_StateMachine.ProcessInputs();
-}
-
-/** */
-void ViewNew::Initialize()
-{
-  m_RenderWindowInteractor->Initialize();
-}
-
-/** */
-void ViewNew::Enable()
-{
-  m_RenderWindowInteractor->Enable();
-}
-
-/** */
-void ViewNew::Render()
-{
-  m_RenderWindowInteractor->Render();
 }
 
 /** */

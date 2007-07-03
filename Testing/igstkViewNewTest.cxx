@@ -194,10 +194,6 @@ int igstkViewNewTest( int, char * [] )
     std::cout << view3D->GetNameOfClass() << std::endl;
     std::cout << view3D->GetNameOfClass() << std::endl;
       
-    // Exercice some view functions
-    view2D->Initialize();
-    view2D->Enable();
-    view2D->Render();
     view2D->Update();
     
     view2D->RequestResetCamera();

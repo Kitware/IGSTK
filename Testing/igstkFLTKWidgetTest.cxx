@@ -186,9 +186,6 @@ int igstkFLTKWidgetTest( int, char * [] )
   
     ViewNew2DType::Pointer view2D = ViewNew2DType::New();
 
-    view2D->Initialize();
-    view2D->Enable();
-    view2D->Render();
     view2D->Update();
     
     view2D->RequestResetCamera();
@@ -208,9 +205,6 @@ int igstkFLTKWidgetTest( int, char * [] )
 
     ViewNew3DType::Pointer view3D = ViewNew3DType::New();
 
-    view3D->Initialize();
-    view3D->Enable();
-    view3D->Render();
     view3D->Update();
     
     view3D->RequestResetCamera();
