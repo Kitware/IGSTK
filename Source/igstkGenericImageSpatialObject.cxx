@@ -35,19 +35,19 @@ class PipelineCreator
 {
 public:
   
-  typedef itk::ImageBase<3>           ImageBaseType;
-  typedef ImageBaseType::Pointer      ImageBasePointer;
-  typedef itk::ProcessObject          ExporterBaseType;
-  typedef itk::ProcessObject::Pointer ExporterBasePointer;
-  typedef itk::Image< TPixel, 3 >     ImageType;
+  typedef itk::ImageBase<3>                ImageBaseType;
+  typedef ImageBaseType::ConstPointer      ImageBasePointer;
+  typedef itk::ProcessObject               ExporterBaseType;
+  typedef itk::ProcessObject::Pointer      ExporterBasePointer;
+  typedef itk::Image< TPixel, 3 >          ImageType;
 
   static void 
   CreateExporter( ImageBasePointer    & imageBase, 
                   ExporterBasePointer & exporter,
                   vtkImageImport      * importer  )
     {
-    ImageType * image = 
-      dynamic_cast< ImageType * >( imageBase.GetPointer() );
+    const ImageType * image = 
+      dynamic_cast< const ImageType * >( imageBase.GetPointer() );
 
     if( image )
       {
@@ -91,7 +91,7 @@ public:
  * pixel type */
 #define CreatePipelineMacro( PixelType ) \
   PipelineCreator< PixelType >::CreateExporter( \
-      this->ItkImage, this->Exporter, this->Importer );
+      this->m_Image, this->m_ItkExporter, this->m_VtkImporter );
 
 
 /** Constructor */
@@ -278,11 +278,27 @@ GenericImageSpatialObject
 {
   igstkLogMacro( DEBUG, "SetImageProcessing() called ....\n");
 
-  m_Image = m_ImageToBeSet;
+  this->m_Image = this->m_ImageToBeSet;
+
+  this->Modified();
+
   // 
   // FIXME: To be replaced with switch statement
   //
   // m_GenericImageSpatialObject->SetImage( m_Image );
+
+  CreatePipelineMacro( unsigned char );
+  CreatePipelineMacro( char );
+  CreatePipelineMacro( unsigned short );
+  CreatePipelineMacro( short );
+  CreatePipelineMacro( unsigned int );
+  CreatePipelineMacro( int );
+  CreatePipelineMacro( unsigned long );
+  CreatePipelineMacro( long );
+  CreatePipelineMacro( float );
+  CreatePipelineMacro( double );
+
+  this->m_VtkImporter->Update();
 
   // Get direction cosine information from the Oriented image
   // and use the information to setup transformation parameters 
@@ -309,7 +325,6 @@ GenericImageSpatialObject
  
   this->RequestSetTransform( transform ); 
 
-// FIXME:   m_ItkExporter->SetInput( m_Image );
   this->m_VtkImporter->UpdateWholeExtent();
 }
 
