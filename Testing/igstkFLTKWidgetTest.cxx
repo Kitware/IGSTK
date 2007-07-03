@@ -206,7 +206,7 @@ int igstkFLTKWidgetTest( int, char * [] )
 
     view2D->RequestStart();
 
-    ViewNew2DType::Pointer view3D = ViewNew2DType::New();
+    ViewNew3DType::Pointer view3D = ViewNew3DType::New();
 
     view3D->Initialize();
     view3D->Enable();
