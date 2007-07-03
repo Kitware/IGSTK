@@ -15,6 +15,7 @@
 
 =========================================================================*/
 #include "igstkGenericImageSpatialObject.h"
+#include "igstkImageSpatialObject.h"
 
 #include "itkOrientedImage.h"
 #include "itkVTKImageExport.h"
@@ -35,14 +36,20 @@ class PipelineCreator
 {
 public:
   
-  typedef itk::ImageBase<3>                ImageBaseType;
-  typedef ImageBaseType::ConstPointer      ImageBasePointer;
-  typedef itk::ProcessObject               ExporterBaseType;
-  typedef itk::ProcessObject::Pointer      ExporterBasePointer;
-  typedef itk::Image< TPixel, 3 >          ImageType;
+  typedef itk::ImageBase<3>                   ImageBaseType;
+  typedef ImageBaseType::ConstPointer         ImageBasePointer;
+  typedef itk::ProcessObject                  ExporterBaseType;
+  typedef itk::ProcessObject::Pointer         ExporterBasePointer;
+  typedef itk::Image< TPixel, 3 >             ImageType;
+
+  typedef itk::SpatialObject< 3 >                       SpatialObjectBaseType;
+  typedef typename SpatialObjectBaseType::Pointer       SpatialObjectBasePointer;
+  typedef itk::ImageSpatialObject< 3, TPixel >          ImageSpatialObjectType;
+  typedef typename ImageSpatialObjectType::Pointer      ImageSpatialObjectPointer;
 
   static void 
   CreateExporter( ImageBasePointer    & imageBase, 
+                  SpatialObjectBasePointer & spatialObject,
                   ExporterBasePointer & exporter,
                   vtkImageImport      * importer  )
     {
@@ -53,8 +60,14 @@ public:
       {
       typedef itk::VTKImageExport< ImageType >   ExportFilterType;
       typedef typename ExportFilterType::Pointer ExportFilterPointer;
+
       ExportFilterPointer itkExporter = ExportFilterType::New();
       itkExporter->SetInput( image );
+
+      ImageSpatialObjectPointer imageSpatialObject = ImageSpatialObjectType::New();
+      imageSpatialObject->SetImage( image );
+
+      spatialObject = imageSpatialObject;
 
       exporter = itkExporter;
 
@@ -91,25 +104,17 @@ public:
  * pixel type */
 #define CreatePipelineMacro( PixelType ) \
   PipelineCreator< PixelType >::CreateExporter( \
-      this->m_Image, this->m_ItkExporter, this->m_VtkImporter );
+      this->m_Image, this->m_GenericSpatialObject, \
+      this->m_ItkExporter, this->m_VtkImporter );
 
 
 /** Constructor */
 GenericImageSpatialObject
 ::GenericImageSpatialObject():m_StateMachine(this)
 {
-  // Create the image spatial object
-  // FIXME: to be replaced with switch statement per pixel type
-  // m_GenericImageSpatialObject = GenericSpatialObjectType::New();
-  // this->RequestSetSpatialObject( m_GenericImageSpatialObject );
-
   // initialize the logger 
   m_Logger = NULL;
 
-  //
-  // FIXME Here: Add the importer & exporter and connect the pipelines
-  //
-  //
   this->m_VtkImporter = vtkImageImport::New();
 
   igstkAddInputMacro( ValidImage );
@@ -243,11 +248,9 @@ GenericImageSpatialObject
 {
   igstkLogMacro( DEBUG, "ReportITKImageProcessing() called ....\n");
 
-  // FIXME: Restore an event here...
-  //
-  // ITKImageModifiedEvent  event;
-  // event.Set( this->m_Image );
-  // this->InvokeEvent( event );
+  ITKImageModifiedEvent  event;
+  event.Set( this->m_Image );
+  this->InvokeEvent( event );
 }
 
 
@@ -282,11 +285,6 @@ GenericImageSpatialObject
 
   this->Modified();
 
-  // 
-  // FIXME: To be replaced with switch statement
-  //
-  // m_GenericImageSpatialObject->SetImage( m_Image );
-
   CreatePipelineMacro( unsigned char );
   CreatePipelineMacro( char );
   CreatePipelineMacro( unsigned short );
@@ -297,6 +295,8 @@ GenericImageSpatialObject
   CreatePipelineMacro( long );
   CreatePipelineMacro( float );
   CreatePipelineMacro( double );
+
+  this->RequestSetSpatialObject( this->m_GenericSpatialObject );
 
   this->m_VtkImporter->Update();
 
@@ -400,7 +400,8 @@ GenericImageSpatialObject
 {
   Superclass::PrintSelf(os, indent);
   os << "Details of the image " << m_Image.GetPointer() << std::endl;
-  // FIXME:: os << "ITK Exporter filter " << m_ItkExporter.GetPointer() << std::endl;
+  os << "SpatialObjectBase " << m_GenericSpatialObject.GetPointer() << std::endl;
+  os << "ITK Exporter filter " << m_ItkExporter.GetPointer() << std::endl;
   os << "VTK Importer filter " << this->m_VtkImporter << std::endl;
 }
 

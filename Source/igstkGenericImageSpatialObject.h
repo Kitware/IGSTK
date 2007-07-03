@@ -164,13 +164,12 @@ private:
 
   /** Filters for exporting the ITK image as a vtkImageData class. 
    *  This VTK representation should never be exposed to the IGSTK API. */
-  typedef vtkImageImport                        VTKImportFilterType;
-  typedef          VTKImportFilterType      *   VTKImportFilterPointer;
+  typedef vtkImageImport             VTKImportFilterType;
+  typedef VTKImportFilterType      * VTKImportFilterPointer;
 
   /** Classes to connect an ITK pipeline to a VTK pipeline */
   itk::ProcessObject::Pointer        m_ItkExporter;
   VTKImportFilterPointer             m_VtkImporter;
-
 
 };
 
