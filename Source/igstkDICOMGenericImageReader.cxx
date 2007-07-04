@@ -427,7 +427,7 @@ void DICOMGenericImageReader
 ::RequestSetDirectory( const DirectoryNameType & directory )
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::DICOMGenericImageReader::RequestSetDirectory called...\n");
+    "igstk::DICOMGenericImageReader::RequestSetDirectory called...\n");
 
 
   // Reset the reader 
@@ -491,7 +491,7 @@ DICOMGenericImageReader
 void DICOMGenericImageReader::RequestGetImage()
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::DICOMGenericImageReader::RequestGetImage called...\n" );
+    "igstk::DICOMGenericImageReader::RequestGetImage called...\n" );
   this->m_StateMachine.PushInput( this->m_GetImageInput);
   this->m_StateMachine.ProcessInputs();
 }
@@ -502,7 +502,7 @@ DICOMGenericImageReader
 ::SetDirectoryNameProcessing()
 {
   igstkLogMacro( DEBUG, 
-                "igstk::DICOMGenericImageReader::SetDirectoryName called...\n" );
+    "igstk::DICOMGenericImageReader::SetDirectoryName called...\n" );
   m_ImageDirectoryName = m_ImageDirectoryNameToBeSet;
   this->ReadDirectoryFileNamesProcessing();
 }
@@ -512,7 +512,7 @@ void DICOMGenericImageReader
 ::RequestReadImage()
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::DICOMGenericImageReader::RequestReadImage called...\n" );
+    "igstk::DICOMGenericImageReader::RequestReadImage called...\n" );
   this->m_StateMachine.PushInput( this->m_ReadImageInput);
   this->m_StateMachine.ProcessInputs();
 }
@@ -522,7 +522,7 @@ void DICOMGenericImageReader
 ::ReadDirectoryFileNamesProcessing()
 {
   igstkLogMacro( DEBUG, 
-              "igstk::DICOMGenericImageReader::ReadDirectoryFileNames called...\n" );
+    "igstk::DICOMGenericImageReader::ReadDirectoryFileNames called...\n" );
   
   m_FileNames->SetInputDirectory( m_ImageDirectoryName );
  
@@ -554,7 +554,7 @@ void DICOMGenericImageReader
 ::AttemptReadImageProcessing()
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::DICOMGenericImageReader::AttemptReadImage called...\n" );
+    "igstk::DICOMGenericImageReader::AttemptReadImage called...\n" );
 
   try
     {
@@ -643,7 +643,8 @@ DICOMGenericImageReader
 ::ReportInvalidRequestProcessing()
 {
   igstkLogMacro( DEBUG, 
-      "igstk::DICOMGenericImageReader::ReportInvalidRequestProcessing called...\n" );
+    "igstk::DICOMGenericImageReader::"
+    "ReportInvalidRequestProcessing called...\n" );
 
   this->InvokeEvent( DICOMInvalidRequestErrorEvent() );
 }
@@ -653,7 +654,8 @@ void
 DICOMGenericImageReader
 ::ResetReaderProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::DICOMGenericImageReader::ResetReader called...\n" );
+  igstkLogMacro( DEBUG, 
+    "igstk::DICOMGenericImageReader::ResetReader called...\n" );
 }
 
 void
@@ -661,7 +663,8 @@ DICOMGenericImageReader
 ::ReportImageDirectoryEmptyErrorProcessing()
 {
   igstkLogMacro( DEBUG, 
-     "igstk::DICOMGenericImageReader::ReportImageDirectoryEmptyError called...\n" );
+     "igstk::DICOMGenericImageReader::"
+     "ReportImageDirectoryEmptyError called...\n" );
 
   this->InvokeEvent( DICOMImageDirectoryEmptyErrorEvent() );
 }
@@ -672,7 +675,7 @@ DICOMGenericImageReader
 ::ReportImageDirectoryDoesNotExistErrorProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMGenericImageReader::\
-                    ReportImageDirectoryDoesNotExistError called...\n" );
+    ReportImageDirectoryDoesNotExistError called...\n" );
 
   DICOMImageDirectoryDoesNotExistErrorEvent event;
   event.Set( m_ImageDirectoryNameToBeSet );
@@ -684,7 +687,7 @@ DICOMGenericImageReader
 ::ReportImageDirectoryDoesNotHaveEnoughFilesErrorProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMGenericImageReader::\
-         ReportImageDirectoryDoesNotHaveEnoughFilesError: called...\n" );
+    ReportImageDirectoryDoesNotHaveEnoughFilesError: called...\n" );
 
   DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent event;
   event.Set( m_ImageDirectoryNameToBeSet );
@@ -696,7 +699,7 @@ DICOMGenericImageReader
 ::ReportImageDirectoryIsNotDirectoryErrorProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::DICOMGenericImageReader::\
-                 ReportImageDirectoryIsNotDirectoryError: called...\n" );
+    ReportImageDirectoryIsNotDirectoryError: called...\n" );
 
   DICOMImageDirectoryIsNotDirectoryErrorEvent event;
   event.Set( m_ImageDirectoryNameToBeSet );
@@ -707,9 +710,8 @@ void
 DICOMGenericImageReader
 ::ReportImageSeriesFileNamesGeneratingErrorProcessing()
 {
-  igstkLogMacro( DEBUG, 
-         "igstk::DICOMGenericImageReader::\
-         ReportImageSeriesFilesNamesGeneratingErrorProcessing: called...\n");
+  igstkLogMacro( DEBUG, "igstk::DICOMGenericImageReader::\
+    ReportImageSeriesFilesNamesGeneratingErrorProcessing: called...\n");
 
   DICOMImageSeriesFileNamesGeneratingErrorEvent event;
   this->InvokeEvent( event );
@@ -719,9 +721,8 @@ void
 DICOMGenericImageReader
 ::ReportImageSeriesFileNamesGeneratingSuccessProcessing()
 {
-  igstkLogMacro( DEBUG, 
-         "igstk::DICOMGenericImageReader::\
-         ReportImageSeriesFileNamesGeneratingSuccessProcessing: called...\n");
+  igstkLogMacro( DEBUG, "igstk::DICOMGenericImageReader::\
+    ReportImageSeriesFileNamesGeneratingSuccessProcessing: called...\n");
 }
 
 void
@@ -729,7 +730,8 @@ DICOMGenericImageReader
 ::ReportImageReadingErrorProcessing()
 {
   igstkLogMacro( DEBUG, 
-            "igstk::DICOMGenericImageReader::ReportImageReadingError: called...\n");
+    "igstk::DICOMGenericImageReader::\
+    ReportImageReadingError: called...\n");
 
   DICOMImageReadingErrorEvent event;
   event.Set ( this->m_ImageReadingErrorInformation );
@@ -741,7 +743,8 @@ DICOMGenericImageReader
 ::ReportImageReadingSuccessProcessing()
 {
   igstkLogMacro( DEBUG, 
-  "igstk::DICOMGenericImageReader::ReportImageReadingSuccessProcessing: called...\n");
+    "igstk::DICOMGenericImageReader::\
+    ReportImageReadingSuccessProcessing: called...\n");
 }
 
 
@@ -751,7 +754,8 @@ DICOMGenericImageReader
 ::RequestGetModalityInformation() 
 {
   igstkLogMacro( DEBUG,
-        "igstk::DICOMGenericImageReader::RequestGetModalityInformation called...\n");
+    "igstk::DICOMGenericImageReader::\
+    RequestGetModalityInformation called...\n");
 
   this->m_StateMachine.PushInput( this->m_GetModalityInformationInput );
   this->m_StateMachine.ProcessInputs();
@@ -764,7 +768,8 @@ DICOMGenericImageReader
 ::RequestGetPatientNameInformation() 
 {
   igstkLogMacro( DEBUG, 
-    "igstk::DICOMGenericImageReader::RequestGetPatientNameInformation called...\n");
+    "igstk::DICOMGenericImageReader::\
+    RequestGetPatientNameInformation called...\n");
 
   this->m_StateMachine.PushInput( this->m_GetPatientNameInformationInput);
   this->m_StateMachine.ProcessInputs();
@@ -800,4 +805,3 @@ void DICOMGenericImageReader
 }
 
 } // end namespace igstk
-

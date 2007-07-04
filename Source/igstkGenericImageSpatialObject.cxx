@@ -42,10 +42,10 @@ public:
   typedef itk::ProcessObject::Pointer         ExporterBasePointer;
   typedef itk::Image< TPixel, 3 >             ImageType;
 
-  typedef itk::SpatialObject< 3 >                       SpatialObjectBaseType;
-  typedef typename SpatialObjectBaseType::Pointer       SpatialObjectBasePointer;
-  typedef itk::ImageSpatialObject< 3, TPixel >          ImageSpatialObjectType;
-  typedef typename ImageSpatialObjectType::Pointer      ImageSpatialObjectPointer;
+  typedef itk::SpatialObject< 3 >                   SpatialObjectBaseType;
+  typedef typename SpatialObjectBaseType::Pointer   SpatialObjectBasePointer;
+  typedef itk::ImageSpatialObject< 3, TPixel >      ImageSpatialObjectType;
+  typedef typename ImageSpatialObjectType::Pointer  ImageSpatialObjectPointer;
 
   static void 
   CreateExporter( ImageBasePointer    & imageBase, 
@@ -64,7 +64,9 @@ public:
       ExportFilterPointer itkExporter = ExportFilterType::New();
       itkExporter->SetInput( image );
 
-      ImageSpatialObjectPointer imageSpatialObject = ImageSpatialObjectType::New();
+      ImageSpatialObjectPointer imageSpatialObject = 
+        ImageSpatialObjectType::New();
+
       imageSpatialObject->SetImage( image );
 
       spatialObject = imageSpatialObject;
@@ -374,7 +376,8 @@ GenericImageSpatialObject
   ContinuousIndexType cindex;
   bool isInside = true;
   // FIXME: here there should be a switch statement...
-  // bool isInside = m_Image->TransformPhysicalPointToContinuousIndex( point, cindex);
+  // bool isInside = 
+  // m_Image->TransformPhysicalPointToContinuousIndex( point, cindex);
   // Do the right rounding
   index[0] = int ( cindex[0] + 0.5 );
   index[1] = int ( cindex[1] + 0.5 );

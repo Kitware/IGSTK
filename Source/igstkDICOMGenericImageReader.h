@@ -110,9 +110,11 @@ public:
   void RequestGetImage();
   
   /** Event type */
-  // igstkLoadedTemplatedObjectEventMacro( ImageModifiedEvent, IGSTKEvent, 
-  //                                      TImageSpatialObject);
-  // FIXME: Replace this with the EventMacro that sends the typeless image.                                     
+  // igstkLoadedTemplatedObjectEventMacro( ImageModifiedEvent, IGSTKEvent,
+  // TImageSpatialObject); 
+  //
+  // FIXME: Replace this with the EventMacro that sends
+  // the typeless image.
 
 protected:
 

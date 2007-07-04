@@ -84,12 +84,13 @@ public:
   /** Returns wheter the image have any pixels allocated or not */
   virtual bool IsEmpty() const;
 
-  /** The ImageReaderToGenericImageSpatialObject class is declared as a friend in
-   * order to be able to set the input image */
-  igstkFriendClassMacro( igstk::Friends::ImageReaderToGenericImageSpatialObject );
+  /** The ImageReaderToGenericImageSpatialObject class is declared as a friend
+   * in order to be able to set the input image */
+  igstkFriendClassMacro( 
+    igstk::Friends::ImageReaderToGenericImageSpatialObject );
 
-  /** The UltrasoundImageSimulatorToGenericImageSpatialObject class is declared as a
-   * friend in order to be able to set the input image */
+  /** The UltrasoundImageSimulatorToGenericImageSpatialObject class is declared
+   * as a friend in order to be able to set the input image */
   igstkFriendClassMacro( 
       igstk::Friends::UltrasoundImageSimulatorToGenericImageSpatialObject );
 
