@@ -26,10 +26,11 @@
 
 /* FIXME: This Event must be added, once we have the generic image.
 namespace DICOMGenericImageReaderTest
-{
-igstkObserverObjectMacro(CTImage,
-    ::igstk::DICOMGenericImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
-}
+  {
+  igstkObserverObjectMacro(CTImage,
+  ::igstk::DICOMGenericImageReader::ImageModifiedEvent,
+  ::igstk::CTImageSpatialObject);
+  }
 */
 
 
@@ -70,7 +71,8 @@ int igstkDICOMGenericImageReaderTest( int argc, char* argv[] )
   
   reader->Print( std::cout );
 
-  // FIXME: This observer must be added back, once we have the generic image class
+  // FIXME: This observer must be added back, once we have the generic image
+  // class
   //
   // Attach an observer
   // typedef DICOMGenericImageReaderTest::CTImageObserver CTImageObserverType;
@@ -98,8 +100,8 @@ int igstkDICOMGenericImageReaderTest( int argc, char* argv[] )
 
   reader->RequestGetImage();
 
-/* FIXME: Restore the verification of the image once we add the generic image.
- *
+  /* FIXME: Restore the verification of the image once we add the generic image.
+   *
   if(!ctImageObserver->GotCTImage())
     {
     std::cout << "No CTImage!" << std::endl;
@@ -111,7 +113,7 @@ int igstkDICOMGenericImageReaderTest( int argc, char* argv[] )
 
   // Details of the loaded image
   ctImage->Print( std::cout );
-*/
+  */
   
   return EXIT_SUCCESS;
 }
