@@ -43,7 +43,8 @@ int igstkGenericImageSpatialObjectTest( int argc, char* argv[] )
 
   typedef igstk::GenericImageSpatialObject    ImageSpatialObjectType;
   
-  ImageSpatialObjectType::Pointer genericImageSpatialObject = ImageSpatialObjectType::New();
+  ImageSpatialObjectType::Pointer genericImageSpatialObject = 
+    ImageSpatialObjectType::New();
 
   return EXIT_SUCCESS;
 }
