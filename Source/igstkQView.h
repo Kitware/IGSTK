@@ -165,7 +165,7 @@ protected:
   void mouseReleaseEvent(QMouseEvent* e);
 
 /** Overload the mouse move event to send transform events
-    when the mouse is moved while the left button is down **/
+    when the mouse is moved while the left button is down */
   void mouseMoveEvent(QMouseEvent* e);
 
 private:
