@@ -34,3 +34,4 @@ igstkLandmark3DRegistrationTest2 Namespace Disable
 .*\Examples.*\.h Namespace Disable
 .*\Examples.*\.cxx Namespace Disable
 igstk.*\Test.*\.h Namespace Disable
+igstk.*\Test.*\.cxx Namespace Disable
