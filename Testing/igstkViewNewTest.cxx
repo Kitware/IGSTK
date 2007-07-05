@@ -95,9 +95,9 @@ public:
     }
 private:
   
-  unsigned long       m_PulseCounter;
+  unsigned long         m_PulseCounter;
   ::igstk::ViewNew    * m_ViewNew;
-  bool *              m_End;
+  bool *                m_End;
 
 };
 
