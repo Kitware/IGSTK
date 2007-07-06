@@ -103,6 +103,13 @@ public:
   /** Set up variables, types and methods related to the Logger */
   igstkLoggerMacro()
 
+  /** Request methods to control camera parameters */
+  void RequestSetPosition( double x, double y, double z);
+  void RequestSetFocalPoint( double x, double y, double z);
+  void RequestSetViewUp( double vx, double vy, double vz);
+  void RequestSetClippingRange( double dNear, double dFar );
+  void RequestSetParallelProjection( bool flag );
+
   /** Get render window */
   vtkRenderWindow * GetRenderWindow()
     {

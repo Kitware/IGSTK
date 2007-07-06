@@ -371,6 +371,41 @@ void ViewNew::StopProcessing()
   m_PulseGenerator->RequestStop();
 }
 
+/** Set camera position */
+void ViewNew::RequestSetPosition( double x, double y, double z )
+{
+  igstkLogMacro( DEBUG, "RequestSetPosition(...) called ...\n");
+  m_Camera->SetPosition( x,y,z );
+}
+
+/** Set camera focal point */
+void ViewNew::RequestSetFocalPoint( double x, double y, double z )
+{
+  igstkLogMacro( DEBUG, "RequestSetFocalPoint(...) called ...\n");
+  m_Camera->SetFocalPoint( x,y,z );
+}
+
+/** Set camera view up vector */
+void ViewNew::RequestSetViewUp( double vx, double vy, double vz )
+{
+  igstkLogMacro( DEBUG, "RequestSetViewUp(...) called ...\n");
+  m_Camera->SetViewUp( vx,vy,vz );
+}
+
+/** Set camera clipping range */
+void ViewNew::RequestSetClippingRange( double dNear, double dFar) 
+{
+  igstkLogMacro( DEBUG, "RequestSetClippingRange(...) called ...\n");
+  m_Camera->SetClippingRange( dNear, dFar );
+}
+
+/** Turn on/off parallel projection */
+void ViewNew::RequestSetParallelProjection( bool flag ) 
+{
+  igstkLogMacro( DEBUG, "RequestSetParallelProjection(...) called ...\n");
+  m_Camera->SetParallelProjection( flag );
+}
+
 /** Define the refresh rate by programming the internal pulse generator */
 void ViewNew::RequestSetRefreshRate( double frequencyHz )
 {

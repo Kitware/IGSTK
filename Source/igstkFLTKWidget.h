@@ -89,9 +89,6 @@ protected:
    
 private:
   
-  /** Refresh GUI */
-  void Refresh();
-
   /** Change the window size */
   void UpdateSize(int x, int y);
 

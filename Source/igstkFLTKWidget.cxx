@@ -64,6 +64,7 @@ FLTKWidget::~FLTKWidget()
 /** Set View */
 void FLTKWidget::SetView( ViewType::Pointer view )
 {
+  igstkLogMacro( DEBUG, "SetView(ViewType::Pointer ) called ...\n");
   m_View = view;
 }
 
@@ -77,12 +78,14 @@ void FLTKWidget::Update()
 /** */
 void FLTKWidget::EnableInteractions()
 {
+  igstkLogMacro( DEBUG, "Update() called ...\n");
   m_InteractionHandling = true;
 }
 
 /** */
 void FLTKWidget::DisableInteractions()
 {
+  igstkLogMacro( DEBUG, "Update() called ...\n");
   m_InteractionHandling = false;
 }
 
@@ -91,13 +94,6 @@ void FLTKWidget::UpdateSize(int W, int H)
 {
   igstkLogMacro( DEBUG, "UpdateSize() called ...\n");
   this->m_View->UpdateSize( W, H );
-}
-
-/** Refresh the rendering. This function is called in response to pulses from
- * the pulse generator. */
-void FLTKWidget::Refresh()
-{
-  igstkLogMacro( DEBUG, "Refresh() called ...\n");
 }
 
 /** FLTK event handlers */
