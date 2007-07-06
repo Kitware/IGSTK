@@ -135,10 +135,6 @@ public:
       computation is succesful */ 
   igstkEventMacro( TransformComputationSuccessEvent,TransformInitializerEvent);
 
-  /** InvalidRequestErrorEvent event will be invoked when invalid request is made
-      by the class user */
-  igstkEventMacro( InvalidRequestErrorEvent,        TransformInitializerEvent );
-
 protected:
 
   Landmark3DRegistration  ( void );
