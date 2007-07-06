@@ -14,8 +14,6 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __igstkLandmark3DRegistration_cxx
-#define __igstkLandmark3DRegistration_cxx
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4786 )
@@ -703,4 +701,3 @@ Landmark3DRegistration::PrintSelf( std::ostream& os,
 
 } // end namespace igstk
 
-#endif
