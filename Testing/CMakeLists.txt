@@ -70,17 +70,23 @@ INCLUDE_DIRECTORIES (
 
 # Add your new tests here
 SET(SandboxTests_SRCS
-  igstkGenericImageSpatialObjectTest.cxx
   igstkDICOMGenericImageReaderTest.cxx
+  igstkGenericImageSpatialObjectTest.cxx
   igstkLandmarkUltrasoundCalibrationTest.cxx
   igstkSocketCommunicationTest.cxx
   igstkViewNewTest.cxx
   )
 
-FOREACH(TestFiles ${SandboxTests_SRCS})
-  GET_FILENAME_COMPONENT(TestProgram ${TestFiles} NAME_WE)
-  ADD_TEST(${TestProgram} ${IGSTKSandbox_TESTS} ${TestProgram})
-ENDFOREACH(TestFiles)
+
+ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest 
+   ${IGSTK_DATA_ROOT}/Input/E000192 )
+
+ADD_TEST( igstkGenericImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkGenericImageSpatialObjectTest)
+
+ADD_TEST( igstkLandmarkUltrasoundCalibrationTest ${IGSTKSandbox_TESTS} igstkLandmarkUltrasoundCalibrationTest)
+ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunicationTest) 
+ADD_TEST( igstkViewNewTest ${IGSTKSandbox_TESTS} igstkViewNewTest)
+
 
 IF(IGSTK_USE_FLTK)
     ADD_TEST( igstkFLTKWidgetTest
