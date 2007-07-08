@@ -253,8 +253,8 @@ int main( int argv, char * argc[] )
   Landmark3DRegistrationInvalidRequestCallback::Pointer 
                   lrcb = Landmark3DRegistrationInvalidRequestCallback::New();
     
-  typedef igstk::Landmark3DRegistration::InvalidRequestErrorEvent  
-                                                         InvalidRequestEvent;
+  typedef igstk::InvalidRequestErrorEvent  InvalidRequestEvent;
+
   landmarkRegister->AddObserver( InvalidRequestEvent(), lrcb );
 
   Landmark3DRegistrationErrorCallback::Pointer ecb = 
