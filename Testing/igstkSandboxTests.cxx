@@ -31,6 +31,8 @@ void RegisterTests()
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
   REGISTER_TEST(igstkViewNewTest);
+  REGISTER_TEST(igstkGenericImageSpatialObjectTest);
+  REGISTER_TEST(igstkDICOMGenericImageReaderTest);
 
 #ifdef IGSTK_USE_FLTK
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
