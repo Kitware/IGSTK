@@ -122,6 +122,12 @@ public:
     return this->m_RenderWindowInteractor; 
     }
 
+  /** Get renderer */ 
+   vtkRenderer *  GetRenderer()
+    {
+    return this->m_Renderer; 
+    }
+
 protected:
 
   ViewNew( );
