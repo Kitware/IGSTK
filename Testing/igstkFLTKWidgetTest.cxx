@@ -182,11 +182,8 @@ int igstkFLTKWidgetTest( int, char * [] )
 
     cylinder->RequestSetTransform( transform );
 
-    cylinderRepresentation->SetLogger( logger );
-  
     ViewNew2DType::Pointer view2D = ViewNew2DType::New();
-
-    view2D->Update();
+    view2D->SetLogger( logger );
     
     view2D->RequestResetCamera();
     view2D->RequestEnableInteractions();
@@ -197,16 +194,9 @@ int igstkFLTKWidgetTest( int, char * [] )
     // Add the cylinder to the view
     view2D->RequestAddObject( cylinderRepresentation );
 
-    // Set the refresh rate and start 
-    // the pulse generators of the views.
-    view2D->RequestSetRefreshRate( 30 );
-
-    view2D->RequestStart();
-
     ViewNew3DType::Pointer view3D = ViewNew3DType::New();
+    view3D->SetLogger( logger );
 
-    view3D->Update();
-    
     view3D->RequestResetCamera();
     view3D->RequestEnableInteractions();
     
@@ -216,13 +206,7 @@ int igstkFLTKWidgetTest( int, char * [] )
     // Add the cylinder to the view
     view3D->RequestAddObject( cylinderRepresentation );
 
-    // Set the refresh rate and start 
-    // the pulse generators of the views.
-    view3D->RequestSetRefreshRate( 30 );
-
-    view3D->RequestStart();
-
-    // Create an FLTK minimal GUI
+       // Create an FLTK minimal GUI
     typedef igstk::FLTKWidget      FLTKWidgetType;
 
     Fl_Window * form = new Fl_Window(601,301,"View Test");
@@ -231,13 +215,27 @@ int igstkFLTKWidgetTest( int, char * [] )
     FLTKWidgetType * fltkWidget2D = 
                       new FLTKWidgetType( 10,10,280,280,"2D View");
     fltkWidget2D->SetView( view2D );
+    fltkWidget2D->SetLogger( logger );
     
     FLTKWidgetType * fltkWidget3D = 
                       new FLTKWidgetType( 310,10,280,280,"3D View");
     fltkWidget3D->SetView( view3D );
-   
+    fltkWidget3D->SetLogger( logger );
+
     form->end();
     // End of the GUI creation
+
+    // Set the refresh rate and start 
+    // the pulse generators of the views.
+    view2D->Update();    
+    view2D->RequestSetRefreshRate( 30 );
+    view2D->RequestStart();
+
+    // Set the refresh rate and start 
+    // the pulse generators of the views.
+    view3D->Update();    
+    view3D->RequestSetRefreshRate( 30 );
+    view3D->RequestStart();
 
     form->show();
 
