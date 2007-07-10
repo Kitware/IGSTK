@@ -278,6 +278,7 @@ IF(IGSTKSandbox_USE_Qt)
       igstkQView.h
       igstkQView2D.h
       igstkQView3D.h
+      igstkQTWidget.h
    )
 ENDIF(IGSTKSandbox_USE_Qt)
 
@@ -313,6 +314,7 @@ IF(IGSTKSandbox_USE_Qt)
     igstkQView.cxx
     igstkQView2D.cxx
     igstkQView3D.cxx
+    igstkQTWidget.cxx
     )
 ENDIF(IGSTKSandbox_USE_Qt)
 
