@@ -26,6 +26,9 @@ PURPOSE.  See the above copyright notices for more information.
 // QT dared to define macro called DEBUG!!
 #define QT_NO_DEBUG 1
 
+// VTK 
+#include "vtkInteractorStyle.h"
+
 // ITK headers
 #include "itkCommand.h"
 #include "itkLogger.h"
@@ -33,7 +36,7 @@ PURPOSE.  See the above copyright notices for more information.
 // IGSTK headers
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
-1;5D
+#include "igstkViewNew.h"
 
 #include "QVTKWidget.h"
 
@@ -49,7 +52,8 @@ class QTWidget : public QVTKWidget
 public:
     
   typedef QTWidget          Self;
-  typedef QVTKWidget     Superclass;
+  typedef QVTKWidget        Superclass;
+  typedef ViewNew           ViewType; 
 
   igstkTypeMacro( QTWidget, QVTKWidget );
   
@@ -83,6 +87,18 @@ public:
   /** Update the display in order to render the new content of the scene */
   void Update();
  
+  /** set the view */
+  void SetView( ViewType::Pointer view );
+
+  /** Initialize method */
+  void Initialize();
+
+  /** Enable method */
+  void Enable();
+
+  /** Render method */
+  void Render();
+
 protected:
   
   /** Print the object information in a stream. */
@@ -109,6 +125,7 @@ private:
 
 private:
   bool                    m_InteractionHandling;
+  ViewType::Pointer       m_View;
 
 };
 

@@ -67,7 +67,7 @@ QTWidget::~QTWidget()
 }
 
 /** Set View */
-void QTWidget::SetView( ViewType::Pointe view)
+void QTWidget::SetView( ViewType::Pointer view)
 {
   igstkLogMacro( DEBUG, "SetView called ...\n");
 
@@ -112,36 +112,6 @@ void QTWidget::Render()
 {
   igstkLogMacro( DEBUG, "Render() called ...\n");
   this->GetInteractor()->Render();
-}
-
-void QTWidget::RefreshRender()
-{
-  igstkLogMacro( DEBUG, "RefreshRender() called ...\n");
-
-  // First, compute the time at which we
-  // estimate that the scene will be rendered
-  TimeStamp renderTime;
-  double frequency = m_PulseGenerator->GetFrequency();
-  // Frequency is in hertz but period is expected to be in milliseconds
-  renderTime.SetStartTimeNowAndExpireAfter( 1000.0 / frequency );
-
-  // Second, notify all the representation object of the time at which this
-  // scene will be rendered.
-  ObjectListType::iterator itr    = m_Objects.begin();
-  ObjectListType::iterator endItr = m_Objects.end();
-  while( itr != endItr )
-    {
-    (*itr)->RequestUpdateRepresentation( renderTime );
-    (*itr)->RequestUpdatePosition( renderTime );
-    ++itr;
-    }
-
-  // Third, trigger VTK rendering by invoking a refresh of the GUI.
-  this->markCachedImageAsDirty();
-  this->Render();
-
-  // Last, report to observers that a refresh event took place.
-  m_Reporter->InvokeEvent( RefreshEvent() );
 }
 
 void
@@ -206,28 +176,6 @@ QTWidget
     case Qt::LeftButton:
       {
       iren->InvokeEvent(vtkCommand::LeftButtonReleaseEvent, e);
-
-      m_PointPicker->Pick( e->x(), 
-                           this->height() - e->y() - 1, 
-                           0, m_Renderer );
-      double data[3];
-      m_PointPicker->GetPickPosition( data );
-      Transform::VectorType pickedPoint;
-      pickedPoint[0] = data[0];
-      pickedPoint[1] = data[1];
-      pickedPoint[2] = data[2];
-      
-      double validityTime = itk::NumericTraits<double>::max();
-      double errorValue = 1.0; // this should be obtained from 
-                               // the picked object.
-
-      igstk::Transform transform;
-      transform.SetTranslation( pickedPoint, errorValue, validityTime );
-
-      igstk::TransformModifiedEvent transformEvent;
-      transformEvent.Set( transform );
-
-      m_Reporter->InvokeEvent( transformEvent );
 
       break;
       }

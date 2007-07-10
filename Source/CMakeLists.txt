@@ -326,17 +326,23 @@ IF(IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_USE_FLTK)
  
 # Variable for holding extra libraries
-SET(EXTRA_LIBS)
+
+IF(IGSTKSandbox_USE_FLTK)
+  SET(EXTRA_LIBS ${FLTK_LIBRARIES})
+ENDIF(IGSTKSandbox_USE_FLTK)
+
+IF(IGSTKSandbox_USE_Qt)
+  SET(EXTRA_LIBS QVTK)
+ENDIF(IGSTKSandbox_USE_Qt)
 
 # Adding the IGSTKSandbox library
 ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS} ${IGSTKLatest_HEADS} ${IGSTKLatest_SRCS})
 
 # Linking with the IGSTK libraries should bring up all the other dependent
-# libraries such as ITK, VTK and FLTK
-# Linking with the FLTK, ITK and VTK libraries
+
 TARGET_LINK_LIBRARIES(IGSTKSandbox
     ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject ITKStatistics
     vtkVolumeRendering vtkRendering vtkGraphics vtkHybrid vtkImaging 
     vtkIO vtkFiltering vtkCommon
-    ${FLTK_LIBRARIES} ${EXTRA_LIBS}
-)
+    ${EXTRA_LIBS} )
+
