@@ -38,7 +38,10 @@
 #include "igstkViewNew.h"
 
 namespace igstk {
-
+/** \class FLTKWidget
+ * 
+ * \brief Widget class to develop FLTK based GUI application 
+ */
 class FLTKWidget : public Fl_Gl_Window
 {
 
