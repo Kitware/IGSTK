@@ -88,13 +88,21 @@ ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunic
 ADD_TEST( igstkViewNewTest ${IGSTKSandbox_TESTS} igstkViewNewTest)
 
 
-IF(IGSTK_USE_FLTK)
+IF(IGSTKSandbox_USE_FLTK)
     ADD_TEST( igstkFLTKWidgetTest
               ${IGSTKSandbox_TESTS} 
               igstkFLTKWidgetTest)   
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkFLTKWidgetTest)
-ENDIF(IGSTK_USE_FLTK)
+ENDIF(IGSTKSandbox_USE_FLTK)
+
+IF(IGSTKSandbox_USE_Qt)
+    ADD_TEST( igstkQTWidgetTest
+              ${IGSTKSandbox_TESTS} 
+              igstkQTWidgetTest)   
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkQTWidgetTest)
+ENDIF(IGSTKSandbox_USE_Qt)
 
 
 IF(IGSTKSandbox_DATA_ROOT)
