@@ -25,6 +25,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkPNGWriter.h"
 #include "vtkViewport.h"
 #include "vtkRenderWindow.h"
+#include <vtkAxisActor2D.h>
 
 #if defined(__APPLE__) && defined(VTK_USE_CARBON)
 #include "vtkCarbonRenderWindow.h"
@@ -85,6 +86,8 @@ QVTKWidget( parent, f ), m_StateMachine(this)
   igstkAddInputMacro( NullAddObject  );
   igstkAddInputMacro( ValidAddAnnotation2D );
   igstkAddInputMacro( NullAddAnnotation2D  );
+  igstkAddInputMacro( ValidAddCrosshairs2D );
+  igstkAddInputMacro( NullAddCrosshairs2D );
   igstkAddInputMacro( ExistingAddObject );
   igstkAddInputMacro( ValidRemoveObject );
   igstkAddInputMacro( InexistingRemoveObject );
@@ -114,6 +117,10 @@ QVTKWidget( parent, f ), m_StateMachine(this)
                            Idle,  AddAnnotation2D );
   igstkAddTransitionMacro( Idle, NullAddAnnotation2D,
                            Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ValidAddCrosshairs2D,
+                           Idle, AddCrosshairs2D);
+  igstkAddTransitionMacro( Idle, NullAddCrosshairs2D,
+                           Idle, ReportInvalidRequest );
   igstkAddTransitionMacro( Idle, ExistingAddObject,
                            Idle,  ReportInvalidRequest );
   igstkAddTransitionMacro( Idle, ValidRemoveObject,
@@ -152,6 +159,10 @@ QVTKWidget( parent, f ), m_StateMachine(this)
                            Refreshing,  AddAnnotation2D );
   igstkAddTransitionMacro( Refreshing, NullAddAnnotation2D,
                            Refreshing,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Refreshing, ValidAddCrosshairs2D,
+                           Refreshing, AddCrosshairs2D );
+  igstkAddTransitionMacro( Refreshing, NullAddCrosshairs2D, 
+                           Refreshing, ReportInvalidRequest);
   igstkAddTransitionMacro( Refreshing, ExistingAddObject,
                            Refreshing,  ReportInvalidRequest );
   igstkAddTransitionMacro( Refreshing, ValidRemoveObject,
@@ -449,6 +460,21 @@ void QView::RequestAddAnnotation2D ( Annotation2D * annotation )
   m_StateMachine.ProcessInputs();
 }
 
+/** Request for adding a crosshairs */
+    void QView::RequestAddCrosshairs2D(Crosshairs2D *crosshairs)
+{
+    if(!crosshairs)
+    {
+        igstkPushInputMacro( NullAddCrosshairs2D );
+        
+    }
+    else
+    {
+        m_Crosshairs2DToBeAdded = crosshairs;
+        igstkPushInputMacro(ValidAddCrosshairs2D);
+    }
+    m_StateMachine.ProcessInputs();
+}
 
 /** Add an object to the View. This method should only be called by the state
  * machine. The state machine makes sure that this method is called with a valid
@@ -485,6 +511,14 @@ void QView::AddAnnotation2DProcessing( )
     } 
 }
 
+void QView::AddCrosshairs2DProcessing()
+{
+    m_Crosshairs2DToBeAdded->RequestSetViewport(m_Renderer);
+    vtkActor2D *horizontalAxis = m_Crosshairs2DToBeAdded->GetHorizontalAxisActor();
+    vtkActor2D *verticalAxis = m_Crosshairs2DToBeAdded->GetVerticalAxisActor();
+    this->RequestAddActor(horizontalAxis);
+    this->RequestAddActor(verticalAxis);
+}
 
 /** Request for removing a spatial object from the View */
 void QView::RequestRemoveObject( ObjectRepresentation* pointer )

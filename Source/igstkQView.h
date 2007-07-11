@@ -46,6 +46,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkObjectRepresentation.h"   
 #include "igstkEvents.h"   
 #include "igstkAnnotation2D.h"   
+#include "igstkCrosshairs2D.h"
 
 #include "QVTKWidget.h"
 
@@ -89,6 +90,9 @@ public:
 
   /** Add annotation to the view */
   void RequestAddAnnotation2D( Annotation2D *  annotation ); 
+
+  /** Add a crosshair to the view */
+  void RequestAddCrosshairs2D(Crosshairs2D * crosshairs);
 
   /** Remove the object passed as arguments from the list of children, only if
    * it is associated to a particular view. */ 
@@ -183,7 +187,8 @@ private:
   vtkProp            * m_ActorToBeAdded;
   vtkProp            * m_ActorToBeRemoved;
   Annotation2D       * m_Annotation2DToBeAdded; 
-  
+  Crosshairs2D       * m_Crosshairs2DToBeAdded;
+
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
 
   PulseGenerator::Pointer   m_PulseGenerator;
@@ -204,6 +209,9 @@ private:
 
   /** Add annotation */
   void AddAnnotation2DProcessing(  );
+
+  /** Add crosshairs */
+  void AddCrosshairs2DProcessing();
 
   /** Add and remove RepresentationObject classes */
   void AddObjectProcessing();
@@ -265,6 +273,8 @@ private:
   igstkDeclareInputMacro( NullAddObject );
   igstkDeclareInputMacro( ValidAddAnnotation2D );
   igstkDeclareInputMacro( NullAddAnnotation2D );
+  igstkDeclareInputMacro( ValidAddCrosshairs2D );
+  igstkDeclareInputMacro( NullAddCrosshairs2D );
   igstkDeclareInputMacro( ExistingAddObject );
   igstkDeclareInputMacro( ValidRemoveObject );
   igstkDeclareInputMacro( InexistingRemoveObject );

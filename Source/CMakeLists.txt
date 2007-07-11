@@ -268,6 +268,7 @@ SET(IGSTKSandbox_HEADS
   igstkViewNew.h
   igstkViewNew2D.h
   igstkViewNew3D.h
+  igstkCrosshairs2D.h
 )
 
 IF(IGSTKSandbox_USE_Qt)
@@ -304,6 +305,7 @@ SET(IGSTKSandbox_SRCS
   igstkViewNew.cxx
   igstkViewNew2D.cxx
   igstkViewNew3D.cxx
+  igstkCrosshairs2D.cxx
 )
 
 IF(IGSTKSandbox_USE_Qt)
