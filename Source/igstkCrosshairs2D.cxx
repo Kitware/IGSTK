@@ -4,7 +4,6 @@
 #include "igstkCrosshairs2D.h"
 
 #include <vtkAxisActor2D.h>
-#include <vtkViewPort.h>
 #include <vtkCoordinate.h>
 #include <vtkViewport.h>
 #include <vtkProperty2D.h>
