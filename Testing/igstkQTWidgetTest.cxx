@@ -21,6 +21,10 @@
 #pragma warning( disable : 4786 )
 #endif
 
+// QT header files
+#include <QApplication>
+#include <QMainWindow>
+
 #include <iostream>
 #include "igstkViewNew2D.h"
 #include "igstkViewNew3D.h"
@@ -104,7 +108,7 @@ private:
 
 }
 
-int igstkQTWidgetTest( int, char * [] )
+int igstkQTWidgetTest( int argc, char ** argv)
 {
   igstk::RealTimeClock::Initialize();
 
@@ -206,20 +210,21 @@ int igstkQTWidgetTest( int, char * [] )
     // Add the cylinder to the view
     view3D->RequestAddObject( cylinderRepresentation );
 
-       // Create an QT minimal GUI
+    // Create an QT minimal GUI
+    QApplication app(argc, argv);
+    QMainWindow  * qtMainWindow = new QMainWindow();
+    qtMainWindow->setFixedSize(601,301);
+
     typedef igstk::QTWidget      QTWidgetType;
 
-    // instantiate QT widget 
     QTWidgetType * qtWidget2D = new QTWidgetType();
     qtWidget2D->SetView( view2D );
     qtWidget2D->SetLogger( logger );
+    qtMainWindow->setCentralWidget( qtWidget2D );
     
     QTWidgetType * qtWidget3D = new QTWidgetType();
- 
     qtWidget3D->SetView( view3D );
     qtWidget3D->SetLogger( logger );
-
-    // End of the GUI creation
 
     // Set the refresh rate and start 
     // the pulse generators of the views.
@@ -227,8 +232,6 @@ int igstkQTWidgetTest( int, char * [] )
     view2D->RequestSetRefreshRate( 30 );
     view2D->RequestStart();
 
-    // Set the refresh rate and start 
-    // the pulse generators of the views.
     view3D->Update();    
     view3D->RequestSetRefreshRate( 30 );
     view3D->RequestStart();
@@ -239,6 +242,19 @@ int igstkQTWidgetTest( int, char * [] )
     viewObserver->SetView( view3D );
     viewObserver->SetEndFlag( &bEnd );
 
+    qtMainWindow->show();
+
+    while(1)
+      {
+      igstk::PulseGenerator::CheckTimeouts();
+      if( bEnd )
+        {
+        break;
+        }
+      }
+
+
+    delete qtMainWindow;
     delete qtWidget2D;
     delete qtWidget3D;
 
