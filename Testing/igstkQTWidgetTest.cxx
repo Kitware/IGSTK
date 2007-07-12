@@ -24,10 +24,10 @@
 // QT header files
 #include <QApplication>
 #include <QMainWindow>
+#include <QtTest/QTest>
 
 #include <iostream>
 #include "igstkViewNew2D.h"
-#include "igstkViewNew3D.h"
 #include "igstkEvents.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
@@ -113,7 +113,6 @@ int igstkQTWidgetTest( int argc, char ** argv)
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::ViewNew2D  ViewNew2DType;
-  typedef igstk::ViewNew3D  ViewNew3DType;
 
   bool bEnd = false;
 
@@ -198,18 +197,6 @@ int igstkQTWidgetTest( int argc, char ** argv)
     // Add the cylinder to the view
     view2D->RequestAddObject( cylinderRepresentation );
 
-    ViewNew3DType::Pointer view3D = ViewNew3DType::New();
-    view3D->SetLogger( logger );
-
-    view3D->RequestResetCamera();
-    view3D->RequestEnableInteractions();
-    
-    // Add the ellipsoid to the view
-    view3D->RequestAddObject( ellipsoidRepresentation );
-
-    // Add the cylinder to the view
-    view3D->RequestAddObject( cylinderRepresentation );
-
     // Create an QT minimal GUI
     QApplication app(argc, argv);
     QMainWindow  * qtMainWindow = new QMainWindow();
@@ -222,41 +209,32 @@ int igstkQTWidgetTest( int argc, char ** argv)
     qtWidget2D->SetLogger( logger );
     qtMainWindow->setCentralWidget( qtWidget2D );
     
-    QTWidgetType * qtWidget3D = new QTWidgetType();
-    qtWidget3D->SetView( view3D );
-    qtWidget3D->SetLogger( logger );
-
     // Set the refresh rate and start 
     // the pulse generators of the views.
     view2D->Update();    
     view2D->RequestSetRefreshRate( 30 );
     view2D->RequestStart();
 
-    view3D->Update();    
-    view3D->RequestSetRefreshRate( 30 );
-    view3D->RequestStart();
+    qtMainWindow->show();
 
     typedef QTWidgetTest::ViewObserver ObserverType;
     ObserverType::Pointer viewObserver = ObserverType::New();
     
-    viewObserver->SetView( view3D );
+    viewObserver->SetView( view2D );
     viewObserver->SetEndFlag( &bEnd );
-
-    qtMainWindow->show();
-
+    
     while(1)
       {
+      QTest::qWait(10);      
       igstk::PulseGenerator::CheckTimeouts();
       if( bEnd )
         {
         break;
         }
       }
-
-
-    delete qtMainWindow;
+    
     delete qtWidget2D;
-    delete qtWidget3D;
+    delete qtMainWindow;
 
     }
   catch(...)
