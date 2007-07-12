@@ -38,4 +38,9 @@ void RegisterTests()
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkFLTKWidgetTest);
 #endif /* IGSTK_USE_FLTK */
+
+#ifdef IGSTKSandbox_USE_Qt
+  REGISTER_TEST(igstkQTWidgetTest);
+#endif /* IGSTKSandbox_USE_Qt */
+
 }

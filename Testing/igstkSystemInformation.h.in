@@ -18,6 +18,7 @@
 #define __IGSTKSandbox_SystemInformation_h
 
 #cmakedefine IGSTK_USE_FLTK
+#cmakedefine IGSTKSandbox_USE_Qt
 
 #cmakedefine IGSTK_DATA_ROOT
 #ifdef IGSTK_DATA_ROOT
