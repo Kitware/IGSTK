@@ -335,7 +335,11 @@ IF(IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF(IGSTKSandbox_USE_Qt)
-  SET(EXTRA_LIBS ${EXTRA_LIBS} QVTK  QtTest)
+  IF(APPLE)
+   SET(EXTRA_LIBS ${EXTRA_LIBS} QVTK  "-framework QtTest")
+  ELSE(APPLE)
+    SET(EXTRA_LIBS ${EXTRA_LIBS} QVTK  QtTest)
+  ENDIF(APPLE)
 ENDIF(IGSTKSandbox_USE_Qt)
 
 # Adding the IGSTKSandbox library
