@@ -305,6 +305,7 @@ SET(IGSTKSandbox_SRCS
   igstkViewNew.cxx
   igstkViewNew2D.cxx
   igstkViewNew3D.cxx
+  igstkViewProxyBase.cxx
   igstkCrosshairs2D.cxx
 )
 

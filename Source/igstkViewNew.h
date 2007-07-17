@@ -122,20 +122,15 @@ public:
     return this->m_RenderWindowInteractor; 
     }
 
-  /** Get renderer */ 
-   vtkRenderer *  GetRenderer()
-    {
-    return this->m_Renderer; 
-    }
-
-protected:
+  friend class ViewProxyBase;
+ protected:
 
   ViewNew( );
   virtual ~ViewNew( void );
 
 public:
   
-  /** Update the display in order to render the new content of the scene */
+ /** Update the display in order to render the new content of the scene */
   void Update();
  
   /** Disable user interactions with the window via mouse and keyboard */
@@ -198,6 +193,12 @@ private:
 
 private:
 
+  /** Get renderer */ 
+   vtkRenderer *  GetRenderer()
+    {
+    return this->m_Renderer; 
+    }
+ 
   /** Methods that will only be invoked by the State Machine */
 
   /** Add and remove vtk Actors. Intended to be called only by the state

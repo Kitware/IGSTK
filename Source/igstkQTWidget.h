@@ -28,6 +28,7 @@ PURPOSE.  See the above copyright notices for more information.
 
 // VTK 
 #include "vtkInteractorStyle.h"
+#include "vtkRenderer.h"
 
 // ITK headers
 #include "itkCommand.h"
@@ -37,6 +38,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
 #include "igstkViewNew.h"
+#include "igstkViewProxy.h"
 
 #include "QVTKWidget.h"
 
@@ -99,6 +101,10 @@ public:
   /** Render method */
   void Render();
 
+  typedef ViewProxy< QTWidget > ProxyType;
+
+  friend class ViewProxy< QTWidget >;
+
 protected:
   
   /** Print the object information in a stream. */
@@ -117,15 +123,28 @@ protected:
 
 private:
 
+  /** Set VTK renderer */
+  void SetVTKRenderer( vtkRenderer * renderer )
+    {
+    this->m_VTKRenderer = renderer;
+    }
+
   /** Disable keyboard and mouse interactions */
   void DisableInteractionsProcessing();
 
   /** Enable keyboard and mouse interactions */
   void EnableInteractionsProcessing();
 
+  /** Set VTK render window */
+  void SetVTKRenderer();
+
 private:
   bool                    m_InteractionHandling;
   ViewType::Pointer       m_View;
+
+  ProxyType               m_ProxyView;
+
+  vtkRenderer           * m_VTKRenderer;
 
 };
 

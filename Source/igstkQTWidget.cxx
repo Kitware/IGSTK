@@ -48,11 +48,11 @@ QTWidget::
 #if QT_VERSION < 0x040000
 //! constructor for Qt 3
 QTWidget(QWidget* parent, const char* name, Qt::WFlags f):
-QVTKWidget( parent, name, f ), m_StateMachine(this)
+QVTKWidget( parent, name, f ), m_StateMachine(this), m_ProxyView(this)
 #else
 //! constructor for Qt 4
 QTWidget(QWidget* parent, Qt::WFlags f):
-QVTKWidget( parent, f ), m_StateMachine(this)
+QVTKWidget( parent, f ), m_StateMachine(this), m_ProxyView(this)
 #endif
 { 
   m_Logger = NULL;
@@ -73,11 +73,14 @@ void QTWidget::SetView( ViewType::Pointer view)
 
   m_View = view;
   
-  this->GetRenderWindow()->AddRenderer( m_View->GetRenderer()); 
 
   int * size = this->GetRenderWindow()->GetSize();
   this->GetInteractor()->SetSize( size );
   this->GetInteractor()->SetRenderWindow( this->GetRenderWindow() );
+
+  this->m_ProxyView.Connect ( view );
+
+  this->GetRenderWindow()->AddRenderer( m_VTKRenderer ); 
 }
 
 
