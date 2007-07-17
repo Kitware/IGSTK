@@ -36,6 +36,7 @@
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
 #include "igstkViewNew.h"
+#include "igstkViewProxy.h"
 
 namespace igstk {
 /** \class FLTKWidget
@@ -72,6 +73,10 @@ public:
   /** Disable interaction */
   void DisableInteractions();
 
+  typedef ViewProxy< FLTKWidget > ProxyType;
+
+  friend class ViewProxy< FLTKWidget >;
+
   FLTKWidget( int x, int y, int w, int h, const char *l="");
   virtual ~FLTKWidget( void );
 
@@ -91,14 +96,33 @@ protected:
   virtual int  handle( int event );
    
 private:
-  
+   /** Set VTK renderer */
+  void SetVTKRenderer( vtkRenderer * renderer )
+    {
+    this->m_VTKRenderer = renderer;
+    }
+
+  /** Set VTK renderw window interactor */
+  void SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
+    {
+    this->m_VTKRenderWindowInteractor = interactor;
+    }
+
+ 
   /** Change the window size */
   void UpdateSize(int x, int y);
 
 private:
+
   bool m_InteractionHandling;
   
   ViewType::Pointer m_View; 
+
+  ProxyType         m_ProxyView;
+
+  vtkRenderer       *m_VTKRenderer; 
+
+  vtkRenderWindowInteractor       *m_VTKRenderWindowInteractor; 
 
 };
 

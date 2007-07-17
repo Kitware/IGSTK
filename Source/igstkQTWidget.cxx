@@ -78,7 +78,7 @@ void QTWidget::SetView( ViewType::Pointer view)
   this->GetInteractor()->SetSize( size );
   this->GetInteractor()->SetRenderWindow( this->GetRenderWindow() );
 
-  this->m_ProxyView.Connect ( view );
+  this->m_ProxyView.Connect( view );
 
   this->GetRenderWindow()->AddRenderer( m_VTKRenderer ); 
 }

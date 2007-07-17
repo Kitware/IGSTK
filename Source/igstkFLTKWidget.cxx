@@ -120,8 +120,14 @@ void FLTKWidget::draw(void)
   // see Fl_Gl_Window::show()
   this->make_current();
 
+  this->m_ProxyView.Connect ( m_View );
+
+  /*
   vtkRenderWindow * renderWindow = m_View->GetRenderWindow();
-  vtkRenderWindowInteractor * interactor = m_View->GetRenderWindowInteractor();
+  vtkRenderWindowInteractor * interactor = m_View->GetRenderWindowInteractor(); */
+
+  vtkRenderWindow * renderWindow = m_VTKRenderer->GetRenderWindow();
+  vtkRenderWindowInteractor * interactor = m_VTKRenderWindowInteractor; 
 
 #if defined(__APPLE__) && defined(VTK_USE_CARBON)
   // FLTK 1.x does not support HiView
@@ -153,8 +159,8 @@ int FLTKWidget::handle( int event )
 {
   igstkLogMacro( DEBUG, "handle() called ...\n");
 
-  vtkRenderWindowInteractor * renderWindowInteractor 
-                               = m_View->GetRenderWindowInteractor();
+  vtkRenderWindowInteractor * renderWindowInteractor = 
+                                                   m_VTKRenderWindowInteractor;
 
   if( !renderWindowInteractor->GetEnabled() || !m_InteractionHandling) 
     {

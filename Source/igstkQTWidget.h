@@ -129,6 +129,12 @@ private:
     this->m_VTKRenderer = renderer;
     }
 
+  /** Set VTK render window interactor */
+  void SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
+    {
+    this->m_VTKRenderWindowInteractor = interactor;
+    }
+
   /** Disable keyboard and mouse interactions */
   void DisableInteractionsProcessing();
 
@@ -145,6 +151,8 @@ private:
   ProxyType               m_ProxyView;
 
   vtkRenderer           * m_VTKRenderer;
+
+  vtkRenderWindowInteractor           * m_VTKRenderWindowInteractor;
 
 };
 

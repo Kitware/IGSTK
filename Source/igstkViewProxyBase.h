@@ -19,6 +19,8 @@
 
 #include "igstkViewNew.h"
 #include "vtkRenderer.h"
+#include "vtkRenderWindowInteractor.h"
+
 
 namespace igstk {
 
@@ -32,7 +34,8 @@ class ViewProxyBase
 public:
 
 protected:
-  vtkRenderer * Connect( ViewNew * view );
+  vtkRenderer *               ConnectRenderer( ViewNew * view );
+  vtkRenderWindowInteractor * ConnectRenderWindowInteractor( ViewNew * view );
 
 private:
 

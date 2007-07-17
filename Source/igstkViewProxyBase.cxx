@@ -16,12 +16,17 @@
 =========================================================================*/
 #include "igstkViewProxyBase.h"
 #include "igstkViewNew.h"
-#include "vtkRenderer.h"
 
 namespace igstk {
 
-vtkRenderer * ViewProxyBase::Connect( ViewNew * view )
+vtkRenderer * ViewProxyBase::ConnectRenderer( ViewNew * view )
   {
   return view->GetRenderer();
+  } 
+
+vtkRenderWindowInteractor * 
+ViewProxyBase::ConnectRenderWindowInteractor( ViewNew * view )
+  {
+  return view->GetRenderWindowInteractor();
   } 
 } // end namespace igstk

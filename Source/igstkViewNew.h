@@ -110,19 +110,7 @@ public:
   void RequestSetClippingRange( double dNear, double dFar );
   void RequestSetParallelProjection( bool flag );
 
-  /** Get render window */
-  vtkRenderWindow * GetRenderWindow()
-    {
-    return this->m_RenderWindow; 
-    } 
-
-  /** Get render window interactor */
-  RenderWindowInteractor *  GetRenderWindowInteractor()
-    {
-    return this->m_RenderWindowInteractor; 
-    }
-
-  friend class ViewProxyBase;
+   friend class ViewProxyBase;
  protected:
 
   ViewNew( );
@@ -199,6 +187,18 @@ private:
     return this->m_Renderer; 
     }
  
+  /** Get render window */
+  vtkRenderWindow * GetRenderWindow()
+    {
+    return this->m_RenderWindow; 
+    } 
+
+  /** Get render window interactor */
+  RenderWindowInteractor *  GetRenderWindowInteractor()
+    {
+    return this->m_RenderWindowInteractor; 
+    }
+
   /** Methods that will only be invoked by the State Machine */
 
   /** Add and remove vtk Actors. Intended to be called only by the state

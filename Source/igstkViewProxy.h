@@ -51,9 +51,13 @@ public:
   void Connect ( ViewNew * view )
     {
     vtkRenderer * renderer =
-        ViewProxyBase::Connect( view );
+        ViewProxyBase::ConnectRenderer( view );
+
+    vtkRenderWindowInteractor * interactor =
+        ViewProxyBase::ConnectRenderWindowInteractor( view );
 
     this->m_Widget->SetVTKRenderer( renderer ); 
+    this->m_Widget->SetVTKRenderWindowInteractor( interactor ); 
     }  
 
 
