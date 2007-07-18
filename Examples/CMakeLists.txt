@@ -16,7 +16,6 @@ SUBDIRS(
   )
 
 IF (IGSTK_USE_FLTK)
-
   SUBDIRS(
     OneViewAndTrackingUsingFLTKWidget
     TwoViews
@@ -28,6 +27,11 @@ IF (IGSTK_USE_FLTK)
     View
     Logging
     )
-
 ENDIF (IGSTK_USE_FLTK)
+
+IF (IGSTKSandbox_USE_Qt)
+  SUBDIRS(
+    OneViewAndTrackingUsingQTWidget
+    )
+ENDIF (IGSTKSandbox_USE_Qt)
 

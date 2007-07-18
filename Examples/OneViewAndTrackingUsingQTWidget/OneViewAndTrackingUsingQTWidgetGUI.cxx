@@ -1,0 +1,98 @@
+#include <QtGui>
+#include "OneViewAndTrackingUsingQTWidgetGUI.moc"
+#include "OneViewAndTrackingUsingQTWidgetGUI.h"
+
+OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
+{
+  ui.setupUi(this);
+  this->CreateActions();
+
+  m_Tracker = TrackerType::New();
+
+  m_Logger = LoggerType::New();
+  m_LogOutput = LogOutputType::New();
+  m_LogFile.open("logOneViewAndTrackingUsingFLTKWidget.txt");
+  if( !m_LogFile.fail() )
+    {
+    m_LogOutput->SetStream( m_LogFile );
+    }
+  else
+    {
+    std::cerr << "Problem opening Log file, using cerr instead " 
+      << std::endl;
+    m_LogOutput->SetStream( std::cerr );
+    }
+  m_Logger->AddLogOutput( m_LogOutput );
+
+  // add stdout for debug purposes
+  LogOutputType::Pointer coutLogOutput = LogOutputType::New();
+  coutLogOutput->SetStream( std::cout );
+  m_Logger->AddLogOutput( coutLogOutput );
+
+  m_Logger->SetPriorityLevel( LoggerType::DEBUG );
+  m_Tracker->SetLogger( m_Logger );
+
+  m_Communication = CommunicationType::New();
+  m_Communication->SetLogger( m_Logger );
+  m_Communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
+  m_Communication->SetParity( igstk::SerialCommunication::NoParity );
+  m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
+  m_Communication->SetDataBits( igstk::SerialCommunication::DataBits8 );
+  m_Communication->SetStopBits( igstk::SerialCommunication::StopBits1 );
+  m_Communication->SetHardwareHandshake( 
+    igstk::SerialCommunication::HandshakeOff );
+  m_Tracker->SetCommunication(m_Communication);
+
+  m_Communication->OpenCommunication();
+
+  m_Tracker->RequestOpen();
+  m_Tracker->RequestInitialize();
+
+  m_Tracking = false;
+
+}
+
+OneViewAndTrackingUsingQTWidgetGUI::~OneViewAndTrackingUsingQTWidgetGUI()
+{
+  m_Tracker->RequestReset();
+  m_Tracker->RequestStopTracking();
+  m_Tracker->RequestClose();
+}
+
+void OneViewAndTrackingUsingQTWidgetGUI::CreateActions()
+{
+ connect(ui.QuitPushButton, SIGNAL(clicked()), this, SLOT(OnQuitAction()));
+}
+
+void OneViewAndTrackingUsingQTWidgetGUI::OnQuitAction()
+{
+ QMessageBox::StandardButton value = QMessageBox::information(this,
+    "Group Curve Generation", "Are you sure you want to quit ?", QMessageBox::Yes | QMessageBox::No );
+ 
+  if( value == QMessageBox::Yes )
+    {
+    this->close();
+    }
+}
+
+void OneViewAndTrackingUsingQTWidgetGUI::EnableTracking()
+{
+  m_Tracking = true;
+  m_Tracker->RequestStartTracking();
+}
+
+void OneViewAndTrackingUsingQTWidgetGUI::DisableTracking()
+{
+  m_Tracker->RequestReset();
+  m_Tracker->RequestStopTracking();
+  m_Tracking = false;
+}
+
+void OneViewAndTrackingUsingQTWidgetGUI::AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
+{
+  const unsigned int toolPort = 0;
+  const unsigned int toolNumber = 0;
+  m_Tracker->AttachObjectToTrackerTool( 
+      toolPort, toolNumber, objectToTrack );
+}
+
