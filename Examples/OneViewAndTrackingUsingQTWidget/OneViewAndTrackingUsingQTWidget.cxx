@@ -101,13 +101,11 @@ int main(int argc, char** argv)
   // Associate the Spatial Object to the tracker
   // mainWindow.AttachObjectToTrack( cylinder );
 
-  /*
-  while( !mainWindow.HasQuitted() )
+  while(1)
     {
     QTest::qWait(10);
     igstk::PulseGenerator::CheckTimeouts();
     }
-  */
 
   return EXIT_SUCCESS;
 }
