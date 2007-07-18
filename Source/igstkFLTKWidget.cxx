@@ -162,6 +162,11 @@ int FLTKWidget::handle( int event )
   vtkRenderWindowInteractor * renderWindowInteractor = 
                                                    m_VTKRenderWindowInteractor;
 
+  if ( renderWindowInteractor == NULL )
+    {
+    return 0;
+    }
+
   if( !renderWindowInteractor->GetEnabled() || !m_InteractionHandling) 
     {
     return 0;
