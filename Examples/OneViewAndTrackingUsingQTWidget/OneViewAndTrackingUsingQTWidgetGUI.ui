@@ -13,6 +13,16 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
+   <widget class="igstk::QTWidget" name="Display3D">
+    <property name="geometry" >
+     <rect>
+      <x>40</x>
+      <y>20</y>
+      <width>700</width>
+      <height>500</height>
+     </rect>
+    </property>
+   </widget>
    <widget class="QPushButton" name="QuitPushButton" >
     <property name="geometry" >
      <rect>
@@ -39,6 +49,17 @@
   </widget>
   <widget class="QStatusBar" name="statusbar" />
  </widget>
+ <pixmapfunction></pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>igstk::QTWidget</class>
+   <extends></extends>
+   <header>igstkQTWidget.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ 
  <resources/>
  <connections/>
 </ui>
