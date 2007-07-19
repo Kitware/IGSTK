@@ -49,7 +49,7 @@ OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
   m_Tracker->RequestInitialize();
 
   m_Tracking = false;
-
+  m_GUIQuit  = false;
 }
 
 OneViewAndTrackingUsingQTWidgetGUI::~OneViewAndTrackingUsingQTWidgetGUI()
@@ -67,11 +67,12 @@ void OneViewAndTrackingUsingQTWidgetGUI::CreateActions()
 void OneViewAndTrackingUsingQTWidgetGUI::OnQuitAction()
 {
  QMessageBox::StandardButton value = QMessageBox::information(this,
-    "Group Curve Generation", "Are you sure you want to quit ?", QMessageBox::Yes | QMessageBox::No );
+    "Tracking application", "Are you sure you want to quit ?", QMessageBox::Yes | QMessageBox::No );
  
   if( value == QMessageBox::Yes )
     {
     this->close();
+    m_GUIQuit = true;
     }
 }
 
@@ -99,5 +100,10 @@ void OneViewAndTrackingUsingQTWidgetGUI::AttachObjectToTrack( igstk::SpatialObje
   const unsigned int toolNumber = 0;
   m_Tracker->AttachObjectToTrackerTool( 
       toolPort, toolNumber, objectToTrack );
+}
+
+bool OneViewAndTrackingUsingQTWidgetGUI::HasQuitted( ) 
+{
+  return m_GUIQuit;
 }
 

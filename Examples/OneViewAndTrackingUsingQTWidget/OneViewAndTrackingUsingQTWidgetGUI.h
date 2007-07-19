@@ -41,6 +41,7 @@ public:
     ~OneViewAndTrackingUsingQTWidgetGUI();
     void AttachObjectToTrack( igstk::SpatialObject *objectToTrack);
     void SetView( igstk::ViewNew::Pointer  view );
+    bool HasQuitted();
 
 public slots:
     void OnQuitAction();
@@ -63,6 +64,7 @@ private:
     
     std::ofstream           m_LogFile;
 
+    bool                    m_GUIQuit;
 };
 
 #endif

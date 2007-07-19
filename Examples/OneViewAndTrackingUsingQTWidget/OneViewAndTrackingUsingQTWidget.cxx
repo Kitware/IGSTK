@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
-  ellipsoid->SetRadius(0.1,0.1,0.1); // about a human skull
+  ellipsoid->SetRadius(0.3,0.3,0.6); // about a human skull
   
   // Create the ellipsoid representation
   igstk::EllipsoidObjectRepresentation::Pointer 
@@ -127,7 +127,7 @@ translation, rotation, errorValue, validityTimeInMilliseconds );
 
   mainWindow.show();
 
-  while(1)
+  while(! mainWindow.HasQuitted())
     {
     QTest::qWait(10);
     igstk::PulseGenerator::CheckTimeouts();

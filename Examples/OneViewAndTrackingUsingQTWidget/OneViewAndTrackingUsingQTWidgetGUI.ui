@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>MainWindow</string>
+   <string>IGSTK: Tracking Example Using QTWidget </string>
   </property>
   <widget class="QWidget" name="centralwidget" >
    <widget class="igstk::QTWidget" name="Display3D">
