@@ -26,6 +26,7 @@
 
 #include "OneViewAndTrackingUsingQTWidgetGUI.h"
 #include "igstkViewNew3D.h"
+#include "igstkVTKLoggerOutput.h"
 
 int main(int argc, char** argv)
 { 
@@ -35,13 +36,50 @@ int main(int argc, char** argv)
 
   OneViewAndTrackingUsingQTWidgetGUI   mainWindow;
 
-  mainWindow.show();
+  typedef itk::Logger              LoggerType;
+  typedef itk::StdStreamLogOutput  LogOutputType;
+  
+  // logger object created for logging mouse activities
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
+                                                igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
+                                       // VTK OutputWindow -> logger
+
 
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
-  ellipsoid->SetRadius(200,200,300); // about a human skull
+  ellipsoid->SetRadius(0.1,0.1,0.1); // about a human skull
   
-  double validityTimeInMilliseconds = 1e20; // in seconds
+  // Create the ellipsoid representation
+  igstk::EllipsoidObjectRepresentation::Pointer 
+        ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
+  ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
+  ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
+  ellipsoidRepresentation->SetOpacity(1.0);
+  ellipsoidRepresentation->SetLogger( logger );
+
+  // Create the cylinder 
+  igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
+  cylinder->SetRadius(0.1);
+  cylinder->SetHeight(0.5);  // about the size of a needle
+
+  // Create the cylinder representation
+  igstk::CylinderObjectRepresentation::Pointer 
+          cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
+  cylinderRepresentation->RequestSetCylinderObject( cylinder );
+  cylinderRepresentation->SetColor(1.0,0.0,0.0);
+  cylinderRepresentation->SetOpacity(1.0);
+  cylinderRepresentation->SetLogger( logger );
+
+  double validityTimeInMilliseconds = 1e300; // in seconds
   igstk::Transform transform;
   igstk::Transform::VectorType translation;
   translation[0] = 0.0;
@@ -49,7 +87,7 @@ int main(int argc, char** argv)
   translation[2] = 0.0;
   igstk::Transform::VersorType rotation;
   rotation.Set( 0.0, 0.0, 0.0, 1.0 );
-  igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
+  igstk::Transform::ErrorType errorValue = 10; // 10 millimeters
 
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
@@ -58,48 +96,36 @@ int main(int argc, char** argv)
 
   ellipsoid->RequestSetTransform( transform );
 
+  translation[1] = -0.25;  // translate the cylinder along Y
+  translation[2] = -2.00;  // translate the cylinder along Z
+  rotation.Set( 0.7071, 0.0, 0.0, 0.7071 );
 
-  // Create the ellipsoid representation
-  igstk::EllipsoidObjectRepresentation::Pointer 
-        ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
-  ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
-  ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
-  ellipsoidRepresentation->SetOpacity(1.0);
+  transform.SetTranslationAndRotation( 
+translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  // Create the cylinder 
-  igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
-  cylinder->SetRadius(1.0);
-  cylinder->SetHeight(300.0);  // about the size of a needle
+  cylinder->RequestSetTransform( transform );
 
-  // Create the cylinder representation
-  igstk::CylinderObjectRepresentation::Pointer 
-          cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
-  cylinderRepresentation->RequestSetCylinderObject( cylinder );
-  cylinderRepresentation->SetColor(1.0,0.0,0.0);
-  cylinderRepresentation->SetOpacity(1.0);
 
   // instantiate a 3D view 
   typedef igstk::ViewNew3D        ViewNew3DType;
   ViewNew3DType::Pointer view3D = ViewNew3DType::New();
 
-  view3D->Update();
+  view3D->SetLogger( logger );
 
+  view3D->Update();
   view3D->RequestResetCamera();
   view3D->RequestEnableInteractions();
-
   view3D->RequestAddObject( ellipsoidRepresentation );
   view3D->RequestAddObject( cylinderRepresentation );
- 
-  // Set the refresh rate and start 
-  // the pulse generators of the views.
-  view3D->RequestSetRefreshRate( 30 );
-
+  view3D->RequestSetRefreshRate( 10 );
   view3D->RequestStart();
 
   mainWindow.SetView( view3D );
 
   //Associate the Spatial Object to the tracker
   mainWindow.AttachObjectToTrack( cylinder );
+
+  mainWindow.show();
 
   while(1)
     {
