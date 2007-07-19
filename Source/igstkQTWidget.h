@@ -68,12 +68,6 @@ public:
   /** Set up variables, types and methods related to the Logger */
   igstkLoggerMacro()
 
-  /** Enable interaction */
-  void EnableInteractions();
-
-  /** Disable interaction */
-  void DisableInteractions();
-
   /** Constructor */
 #if QT_VERSION < 0x040000
     //! constructor for Qt 3
@@ -110,14 +104,11 @@ protected:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
  
-  /** Set the interactor style in the derived classes */
-  void SetInteractorStyle( vtkInteractorStyle * style );
-
   /** Overload the method that manages mouse events in order
       to provide picker functionalities */
   void mouseReleaseEvent(QMouseEvent* e);
 
-/** Overload the mouse move event to send transform events
+ /** Overload the mouse move event to send transform events
     when the mouse is moved while the left button is down */
   void mouseMoveEvent(QMouseEvent* e);
 

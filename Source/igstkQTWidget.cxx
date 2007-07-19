@@ -74,13 +74,8 @@ void QTWidget::SetView( ViewType::Pointer view)
   m_View = view;
   
 
-  int * size = this->GetRenderWindow()->GetSize();
-  this->GetInteractor()->SetSize( size );
-  this->GetInteractor()->SetRenderWindow( this->GetRenderWindow() );
-
   this->m_ProxyView.Connect( view );
-
-  this->GetRenderWindow()->AddRenderer( m_VTKRenderer ); 
+  this->SetRenderWindow( this->m_VTKRenderer->GetRenderWindow());
 }
 
 
@@ -104,24 +99,10 @@ void QTWidget::Update()
 }
 
 /** */
-void QTWidget::Enable()
-{
-  igstkLogMacro( DEBUG, "Enable() called ...\n");
-  this->GetInteractor()->Enable();
-}
-
-/** */
 void QTWidget::Render()
 {
   igstkLogMacro( DEBUG, "Render() called ...\n");
   this->GetInteractor()->Render();
-}
-
-void
-QTWidget
-::SetInteractorStyle( vtkInteractorStyle * interactorStyle )
-{
-  this->GetInteractor()->SetInteractorStyle( interactorStyle );
 }
 
 void 
@@ -162,6 +143,7 @@ QTWidget
     return;
     }
   
+
   // give vtk event information
 #if QT_VERSION < 0x040000
   iren->SetEventInformationFlipY(e->x(), e->y(), 
