@@ -8,6 +8,8 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkAuroraTracker.h"
+#include "igstkViewNew.h"
+
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
 #else
@@ -37,6 +39,8 @@ class OneViewAndTrackingUsingQTWidgetGUI : public QMainWindow
 public:
     OneViewAndTrackingUsingQTWidgetGUI();
     ~OneViewAndTrackingUsingQTWidgetGUI();
+    void AttachObjectToTrack( igstk::SpatialObject *objectToTrack);
+    void SetView( igstk::ViewNew::Pointer  view );
 
 public slots:
     void OnQuitAction();
@@ -44,7 +48,6 @@ public slots:
 private:
     void EnableTracking();
     void DisableTracking();
-    void AttachObjectToTrack( igstk::SpatialObject *objectToTrack);
 
     void CreateActions();
  

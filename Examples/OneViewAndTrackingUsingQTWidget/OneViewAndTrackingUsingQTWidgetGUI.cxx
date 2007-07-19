@@ -75,6 +75,11 @@ void OneViewAndTrackingUsingQTWidgetGUI::OnQuitAction()
     }
 }
 
+void OneViewAndTrackingUsingQTWidgetGUI::SetView( igstk::ViewNew::Pointer view )
+{
+  ui.Display3D->SetView (view);
+}
+
 void OneViewAndTrackingUsingQTWidgetGUI::EnableTracking()
 {
   m_Tracking = true;

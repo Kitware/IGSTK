@@ -96,10 +96,10 @@ int main(int argc, char** argv)
 
   view3D->RequestStart();
 
-  //mainWindow.Display3D->SetView( view3D );
+  mainWindow.SetView( view3D );
 
-  // Associate the Spatial Object to the tracker
-  // mainWindow.AttachObjectToTrack( cylinder );
+  //Associate the Spatial Object to the tracker
+  mainWindow.AttachObjectToTrack( cylinder );
 
   while(1)
     {
