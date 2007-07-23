@@ -13,11 +13,11 @@
    <string>IGSTK: Tracking Example Using QTWidget </string>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <widget class="igstk::QTWidget" name="Display3D">
+   <widget class="igstk::QTWidget" native="1" name="Display3D" >
     <property name="geometry" >
      <rect>
       <x>40</x>
-      <y>20</y>
+      <y>10</y>
       <width>700</width>
       <height>500</height>
      </rect>
@@ -26,14 +26,27 @@
    <widget class="QPushButton" name="QuitPushButton" >
     <property name="geometry" >
      <rect>
-      <x>340</x>
-      <y>520</y>
+      <x>120</x>
+      <y>540</y>
       <width>75</width>
       <height>24</height>
      </rect>
     </property>
     <property name="text" >
      <string>Quit</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="TrackingCheckBox" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>540</y>
+      <width>80</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Tracking</string>
     </property>
    </widget>
   </widget>
@@ -49,17 +62,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar" />
  </widget>
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>igstk::QTWidget</class>
    <extends></extends>
    <header>igstkQTWidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
- 
  <resources/>
  <connections/>
 </ui>

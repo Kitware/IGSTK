@@ -45,11 +45,9 @@ public:
 
 public slots:
     void OnQuitAction();
+    void OnTrackingAction( int state);
 
 private:
-    void EnableTracking();
-    void DisableTracking();
-
     void CreateActions();
  
     Ui::MainWindow ui;

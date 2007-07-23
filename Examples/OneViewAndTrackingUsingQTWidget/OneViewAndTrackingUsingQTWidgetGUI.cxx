@@ -62,6 +62,7 @@ OneViewAndTrackingUsingQTWidgetGUI::~OneViewAndTrackingUsingQTWidgetGUI()
 void OneViewAndTrackingUsingQTWidgetGUI::CreateActions()
 {
  connect(ui.QuitPushButton, SIGNAL(clicked()), this, SLOT(OnQuitAction()));
+ connect(ui.TrackingCheckBox, SIGNAL(stateChanged(int )), this, SLOT(OnTrackingAction(int)));
 }
 
 void OneViewAndTrackingUsingQTWidgetGUI::OnQuitAction()
@@ -81,17 +82,21 @@ void OneViewAndTrackingUsingQTWidgetGUI::SetView( igstk::ViewNew::Pointer view )
   ui.Display3D->SetView (view);
 }
 
-void OneViewAndTrackingUsingQTWidgetGUI::EnableTracking()
+void OneViewAndTrackingUsingQTWidgetGUI::OnTrackingAction( int state )
 {
-  m_Tracking = true;
-  m_Tracker->RequestStartTracking();
-}
-
-void OneViewAndTrackingUsingQTWidgetGUI::DisableTracking()
-{
-  m_Tracker->RequestReset();
-  m_Tracker->RequestStopTracking();
-  m_Tracking = false;
+  if ( state )
+    {
+    std::cout << "Tracker is enabled: " << std::endl;
+    m_Tracking = true;
+    m_Tracker->RequestStartTracking();
+    }
+  else
+    {
+    std::cout << "Tracker is disabled: " << std::endl;
+    m_Tracker->RequestReset();
+    m_Tracker->RequestStopTracking();
+    m_Tracking = false;
+    } 
 }
 
 void OneViewAndTrackingUsingQTWidgetGUI::AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
