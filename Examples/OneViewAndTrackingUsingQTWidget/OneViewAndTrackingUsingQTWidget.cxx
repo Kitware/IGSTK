@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 
   // Create the cylinder 
   igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
-  cylinder->SetRadius(0.1);
+  cylinder->SetRadius(0.05);
   cylinder->SetHeight(0.5);  // about the size of a needle
 
   // Create the cylinder representation
