@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
-  ellipsoid->SetRadius(0.3,0.3,0.6); // about a human skull
+  ellipsoid->SetRadius(200,200,300); // about a human skull
   
   // Create the ellipsoid representation
   igstk::EllipsoidObjectRepresentation::Pointer 
@@ -68,8 +68,8 @@ int main(int argc, char** argv)
 
   // Create the cylinder 
   igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
-  cylinder->SetRadius(0.05);
-  cylinder->SetHeight(0.5);  // about the size of a needle
+  cylinder->SetRadius(1.0);
+  cylinder->SetHeight(300.0);  // about the size of a needle
 
   // Create the cylinder representation
   igstk::CylinderObjectRepresentation::Pointer 
@@ -112,14 +112,14 @@ translation, rotation, errorValue, validityTimeInMilliseconds );
 
   view3D->SetLogger( logger );
 
-  view3D->Update();
-  view3D->RequestResetCamera();
-  view3D->RequestEnableInteractions();
+ view3D->RequestEnableInteractions();
   view3D->RequestAddObject( ellipsoidRepresentation );
   view3D->RequestAddObject( cylinderRepresentation );
   view3D->RequestSetRefreshRate( 10 );
   view3D->RequestStart();
-
+  view3D->Update();
+  view3D->RequestResetCamera();
+  
   mainWindow.SetView( view3D );
 
   //Associate the Spatial Object to the tracker
