@@ -70,7 +70,6 @@ QTWidget::~QTWidget()
   igstkLogMacro( DEBUG, "Destructor called ...\n");
 
   m_PointPicker->Delete();
-
 }
 
 /** Set View */
@@ -92,33 +91,6 @@ void QTWidget::SetView( ViewType::Pointer view)
     {
     this->m_PointPicker->AddPickList(prop);
     }
-}
-
-
-/** Update the display */
-void QTWidget::Initialize()
-{
-  igstkLogMacro( DEBUG, "Initialize() called ...\n");
-  this->GetInteractor()->Initialize();
-}
-
-/** Update the display */
-void QTWidget::Update()
-{
-  igstkLogMacro( DEBUG, "Update() called ...\n");
-  if( !this->GetInteractor()->GetInitialized() )
-    {
-    this->GetInteractor()->Initialize();
-    }
-  this->markCachedImageAsDirty();
-  this->Render();
-}
-
-/** */
-void QTWidget::Render()
-{
-  igstkLogMacro( DEBUG, "Render() called ...\n");
-  this->GetInteractor()->Render();
 }
 
 /** This method is overloaded from the QWidget class in 

@@ -47,7 +47,7 @@ namespace igstk {
 
 /** \class QTWidget
  * 
- * \brief Widget class to develop QT based GUI application 
+ * \brief Widget class to develop QT based IGSTK application 
  */
 class QTWidget : public QVTKWidget
 {
@@ -81,20 +81,8 @@ public:
   /** Destructor */
   virtual ~QTWidget( void );
   
-  /** Update the display in order to render the new content of the scene */
-  void Update();
- 
   /** set the view */
   void SetView( ViewType::Pointer view );
-
-  /** Initialize method */
-  void Initialize();
-
-  /** Enable method */
-  void Enable();
-
-  /** Render method */
-  void Render();
 
   typedef ViewProxy< QTWidget > ProxyType;
 
