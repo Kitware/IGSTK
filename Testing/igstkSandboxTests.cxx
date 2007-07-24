@@ -33,6 +33,7 @@ void RegisterTests()
   REGISTER_TEST(igstkViewNewTest);
   REGISTER_TEST(igstkGenericImageSpatialObjectTest);
   REGISTER_TEST(igstkDICOMGenericImageReaderTest);
+  REGISTER_TEST(igstkPivotCalibrationAlgorithmTest);
 
 #ifdef IGSTK_USE_FLTK
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);

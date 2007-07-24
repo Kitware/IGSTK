@@ -20,7 +20,7 @@ FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_D
 
 
 #-----------------------------------------------------------------------------
-# Configure the dot tool from graphviz in order to generate the State Machine Diagrams 
+# Configure the dot tool from graphviz in order to generate the State Machine Diagrams
 FIND_PROGRAM(DOT
   dot
   "C:/Program Files/ATT/Graphviz/bin"
@@ -37,10 +37,10 @@ FILE(GLOB STATE_MACHINE_DOT_FILES "${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR}/*.
     GET_FILENAME_COMPONENT(ImageBase ${Imagebase} NAME_WE)
     GET_FILENAME_COMPONENT(ImagePath ${dotfile} PATH)
     SET(pngfile ${ImagePath}/${ImageBase}.png)
-    ADD_CUSTOM_COMMAND( 
+    ADD_CUSTOM_COMMAND(
     SOURCE    ${dotfile}
     COMMAND   ${DOT}
-    ARGS      -Tpng 
+    ARGS      -Tpng
               -o ${pngfile}
               ${dotfile}
     TARGET    StateMachineDiagrams
@@ -59,9 +59,9 @@ INCLUDE_DIRECTORIES (
   ${IGSTK_SOURCE_DIR}/Testing
   ${IGSTKSandbox_BINARY_DIR}
   ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source
-  ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing 
+  ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing
   ${IGSTKSandbox_SOURCE_DIR}/Source
-  ${IGSTKSandbox_BINARY_DIR}/Source  
+  ${IGSTKSandbox_BINARY_DIR}/Source
   ${IGSTKSandbox_SOURCE_DIR}/Testing
   ${IGSTKSandbox_BINARY_DIR}/Testing
   ${IGSTKSandbox_SOURCE_DIR}/SourceLatest
@@ -70,6 +70,7 @@ INCLUDE_DIRECTORIES (
 
 # Add your new tests here
 SET(SandboxTests_SRCS
+  igstkPivotCalibrationAlgorithmTest.cxx
   igstkDICOMGenericImageReaderTest.cxx
   igstkGenericImageSpatialObjectTest.cxx
   igstkLandmarkUltrasoundCalibrationTest.cxx
@@ -79,28 +80,28 @@ SET(SandboxTests_SRCS
 
 
 
-ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest 
+ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest
    ${IGSTK_DATA_ROOT}/Input/E000192 )
 
 ADD_TEST( igstkGenericImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkGenericImageSpatialObjectTest)
 
 ADD_TEST( igstkLandmarkUltrasoundCalibrationTest ${IGSTKSandbox_TESTS} igstkLandmarkUltrasoundCalibrationTest)
-ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunicationTest) 
+ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunicationTest)
 ADD_TEST( igstkViewNewTest ${IGSTKSandbox_TESTS} igstkViewNewTest)
-
+ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
 
 IF(IGSTKSandbox_USE_FLTK)
     ADD_TEST( igstkFLTKWidgetTest
-              ${IGSTKSandbox_TESTS} 
-              igstkFLTKWidgetTest)   
+              ${IGSTKSandbox_TESTS}
+              igstkFLTKWidgetTest)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkFLTKWidgetTest.cxx)
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF(IGSTKSandbox_USE_Qt)
     ADD_TEST( igstkQTWidgetTest
-              ${IGSTKSandbox_TESTS} 
-              igstkQTWidgetTest)   
+              ${IGSTKSandbox_TESTS}
+              igstkQTWidgetTest)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkQTWidgetTest.cxx)
 ENDIF(IGSTKSandbox_USE_Qt)
@@ -110,9 +111,9 @@ IF(IGSTKSandbox_DATA_ROOT)
   SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
   IF (IGSTK_USE_FLTK)
     ADD_TEST( igstkObliqueImageSpatialObjectRepresentationTest
-              ${IGSTKSandbox_TESTS} 
-              igstkObliqueImageSpatialObjectRepresentationTest 
-              ${IGSTKSandbox_DATA_ROOT}/E000192)   
+              ${IGSTKSandbox_TESTS}
+              igstkObliqueImageSpatialObjectRepresentationTest
+              ${IGSTKSandbox_DATA_ROOT}/E000192)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkObliqueImageSpatialObjectRepresentationTest)
   ENDIF (IGSTK_USE_FLTK)
@@ -145,7 +146,7 @@ SET(IGSTK_TESTS ${CXX_TEST_PATH}/igstkLatestTests)
 SET(IGSTKTests_SRCS
   igstkFlockOfBirdsCommandInterpreterTest.cxx
   igstkFlockOfBirdsCommandInterpreterFBBTest.cxx
-  igstkFlockOfBirdsTrackerTest.cxx 
+  igstkFlockOfBirdsTrackerTest.cxx
   igstkVesselObjectTest.cxx
   igstkUSImageObjectTest.cxx
   igstkUSImageObjectRepresentationTest.cxx
@@ -161,7 +162,7 @@ SET(IGSTKTests_SRCS
   igstkLandmark3DRegistrationErrorEstimatorTest.cxx
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectTest.cxx
-  igstkMultipleOutputTest.cxx    
+  igstkMultipleOutputTest.cxx
   igstkPivotCalibrationTest.cxx
   igstkPrincipalAxisCalibrationTest.cxx
   igstkSerialCommunicationTest.cxx
@@ -173,7 +174,7 @@ SET(IGSTKTests_SRCS
   igstkTokenTest.cxx
   igstkTrackerPortTest.cxx
   igstkTrackerToolTest.cxx
-  igstkTransformTest.cxx  
+  igstkTransformTest.cxx
   igstkVTKLoggerOutputTest.cxx
   )
 
@@ -186,11 +187,11 @@ IF (IGSTK_USE_FLTK)
     igstkMouseTrackerTest.cxx
     igstkUltrasoundImageSimulatorTest.cxx
     igstkUltrasoundProbeObjectTest.cxx
-  )   
+  )
 
 ENDIF (IGSTK_USE_FLTK)
 
-  
+
 # Add testing command
 FOREACH(TestFiles ${IGSTKTests_SRCS})
   GET_FILENAME_COMPONENT(TestProgram ${TestFiles} NAME_WE)
@@ -199,22 +200,22 @@ ENDFOREACH(TestFiles)
 
 #-----------------------------------------------------------------------------
 # Tests need data input
-IF (IGSTK_DATA_ROOT) 
+IF (IGSTK_DATA_ROOT)
 
-  ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest 
+  ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest
             ${IGSTK_DATA_ROOT}/Input/USLiver )
-  ADD_TEST( igstkToolCalibrationReaderTest ${IGSTK_TESTS} 
+  ADD_TEST( igstkToolCalibrationReaderTest ${IGSTK_TESTS}
              igstkToolCalibrationReaderTest
              ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
              ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
-             ) 
-  ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTK_TESTS} 
+             )
+  ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTK_TESTS}
              igstkPivotCalibrationReaderTest
              ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
              ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
-             ) 
-  ADD_TEST(igstkMR3DImageToUS3DImageRegistrationTest ${IGSTK_TESTS} 
-           igstkMR3DImageToUS3DImageRegistrationTest 
+             )
+  ADD_TEST(igstkMR3DImageToUS3DImageRegistrationTest ${IGSTK_TESTS}
+           igstkMR3DImageToUS3DImageRegistrationTest
            ${IGSTK_DATA_ROOT}/Input/MRLiver)
 
   ADD_TEST(igstkAuroraTrackerSimulatedTest ${IGSTK_TESTS} igstkAuroraTrackerSimulatedTest)
@@ -223,33 +224,33 @@ IF (IGSTK_DATA_ROOT)
   ADD_TEST(igstkPolarisTrackerSimulatedTest ${IGSTK_TESTS} igstkPolarisTrackerSimulatedTest)
   ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS} igstkSerialCommunicationSimulatorTest)
 
-  ADD_TEST( igstkDICOMImageReaderTest ${IGSTK_TESTS} igstkDICOMImageReaderTest 
+  ADD_TEST( igstkDICOMImageReaderTest ${IGSTK_TESTS} igstkDICOMImageReaderTest
        ${IGSTK_DATA_ROOT}/Input/E000192 )
-  ADD_TEST( igstkCTImageReaderTest ${IGSTK_TESTS} igstkCTImageReaderTest 
+  ADD_TEST( igstkCTImageReaderTest ${IGSTK_TESTS} igstkCTImageReaderTest
        ${IGSTK_DATA_ROOT}/Input/E000192 )
-  ADD_TEST( igstkMRImageReaderTest ${IGSTK_TESTS} igstkMRImageReaderTest 
+  ADD_TEST( igstkMRImageReaderTest ${IGSTK_TESTS} igstkMRImageReaderTest
        ${IGSTK_DATA_ROOT}/Input/MRLiver )
-  ADD_TEST( igstkMeshReaderTest ${IGSTK_TESTS} igstkMeshReaderTest 
-       ${IGSTK_DATA_ROOT}/Input/liver.msh  
+  ADD_TEST( igstkMeshReaderTest ${IGSTK_TESTS} igstkMeshReaderTest
+       ${IGSTK_DATA_ROOT}/Input/liver.msh
        ${IGSTK_DATA_ROOT}/Input/liverCorruptedOnPurpose.msh )
- ADD_TEST( igstkTubeVesselReaderTest ${IGSTK_TESTS} igstkTubeReaderTest 
-       ${IGSTK_DATA_ROOT}/Input/vessel.tre 
-       ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre  
+ ADD_TEST( igstkTubeVesselReaderTest ${IGSTK_TESTS} igstkTubeReaderTest
+       ${IGSTK_DATA_ROOT}/Input/vessel.tre
+       ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre
        ${IGSTK_DATA_ROOT}/Input/vesselWithoutReadPermissions.tre )
-  ADD_TEST( igstkTubeReaderTest ${IGSTK_TESTS} igstkTubeReaderTest 
-       ${IGSTK_DATA_ROOT}/Input/Tube.tre 
-       ${IGSTK_DATA_ROOT}/Input/TubeCorruptedOnPurpose.tre  
+  ADD_TEST( igstkTubeReaderTest ${IGSTK_TESTS} igstkTubeReaderTest
+       ${IGSTK_DATA_ROOT}/Input/Tube.tre
+       ${IGSTK_DATA_ROOT}/Input/TubeCorruptedOnPurpose.tre
        ${IGSTK_DATA_ROOT}/Input/TubeWithoutReadPermissions.tre )
-  ADD_TEST( igstkSpatialObjectReaderTest ${IGSTK_TESTS} igstkSpatialObjectReaderTest 
-       ${IGSTK_DATA_ROOT}/Input/vessel.tre 
-       ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre  
-       ${IGSTK_DATA_ROOT}/Input/vesselWithoutReadPermissions.tre )       
-  ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
+  ADD_TEST( igstkSpatialObjectReaderTest ${IGSTK_TESTS} igstkSpatialObjectReaderTest
+       ${IGSTK_DATA_ROOT}/Input/vessel.tre
+       ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre
+       ${IGSTK_DATA_ROOT}/Input/vesselWithoutReadPermissions.tre )
+  ADD_TEST( igstkCTImageSpatialObjectRepresentationTest ${IGSTK_TESTS}
        igstkCTImageSpatialObjectRepresentationTest
-       ${IGSTK_DATA_ROOT}/Input/E000192)          
-  ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTK_TESTS} igstkDICOMImageReaderErrorsTest 
+       ${IGSTK_DATA_ROOT}/Input/E000192)
+  ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTK_TESTS} igstkDICOMImageReaderErrorsTest
        ${IGSTK_DATA_ROOT}/Input/E000192Mod ${IGSTKSandbox_DICOM_TEST_OUTPUT_DIR})
-        
+
   IF (IGSTK_USE_FLTK)
     ADD_TEST( igstkAnnotation2DTest ${IGSTK_TESTS} igstkAnnotation2DTest
               ${IGSTK_DATA_ROOT}/Input/E000192 )
@@ -284,13 +285,13 @@ IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
   ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
   ADD_TEST(igstkSpatialObjectRepresentationVisibilityTest ${IGSTK_TESTS} igstkSpatialObjectRepresentationVisibilityTest)
-  
+
   IF (IGSTK_DATA_ROOT)
 
-     ADD_TEST( igstkImageSpatialObjectRepresentationTest2 
+     ADD_TEST( igstkImageSpatialObjectRepresentationTest2
        ${IGSTK_TESTS}
-       --compare ${IGSTKSandbox_BASELINE_DIR}/igstkImageSpatialObjectRepresentationTest2.png 
-       ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png 
+       --compare ${IGSTKSandbox_BASELINE_DIR}/igstkImageSpatialObjectRepresentationTest2.png
+       ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png
        --toleranceIntensity 10
        --toleranceRadius 5
        --toleranceNumberOfPixels 5
@@ -298,10 +299,10 @@ IF(IGSTK_USE_FLTK)
        ${IGSTKSandbox_DATA_ROOT}/E000192
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png)
 
-    ADD_TEST( igstkImageSpatialObjectRepresentationTest3 
+    ADD_TEST( igstkImageSpatialObjectRepresentationTest3
        ${IGSTK_TESTS}
-       --compare ${IGSTKSandbox_BASELINE_DIR}/igstkImageSpatialObjectRepresentationTest3.png 
-       ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png 
+       --compare ${IGSTKSandbox_BASELINE_DIR}/igstkImageSpatialObjectRepresentationTest3.png
+       ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png
        --toleranceIntensity 10
        --toleranceRadius 5
        --toleranceNumberOfPixels 5
@@ -309,22 +310,22 @@ IF(IGSTK_USE_FLTK)
        ${IGSTKSandbox_DATA_ROOT}/E000192Mod2
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png)
 
-    ADD_TEST( igstkVascularNetworkReaderTest ${IGSTK_TESTS} 
-          --compare ${IGSTKSandbox_BASELINE_DIR}/igstkVascularNetworkReaderTest.png 
-          ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png 
+    ADD_TEST( igstkVascularNetworkReaderTest ${IGSTK_TESTS}
+          --compare ${IGSTKSandbox_BASELINE_DIR}/igstkVascularNetworkReaderTest.png
+          ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png
           --toleranceIntensity 10
           --toleranceRadius 5
           --toleranceNumberOfPixels 5
-          igstkVascularNetworkReaderTest 
+          igstkVascularNetworkReaderTest
           ${IGSTK_DATA_ROOT}/Input/vessel.tre
-          ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre 
+          ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre
           ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png
-          )        
+          )
 
-    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest 
+    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest
               ${IGSTK_TESTS}
-              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png 
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               --toleranceIntensity 10
               --toleranceRadius 5
               --toleranceNumberOfPixels 5
@@ -333,13 +334,13 @@ IF(IGSTK_USE_FLTK)
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
 
-    ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
-              igstkImageSpatialObjectRepresentationTest 
-              ${IGSTK_DATA_ROOT}/Input/E000192)   
+    ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS}
+              igstkImageSpatialObjectRepresentationTest
+              ${IGSTK_DATA_ROOT}/Input/E000192)
 
     ADD_TEST( igstkUltrasoundImageSimulatorTest ${IGSTK_TESTS}
-              --compare ${IGSTKSandbox_BASELINE_DIR}/igstkUltrasoundImageSimulatorTest.png 
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
+              --compare ${IGSTKSandbox_BASELINE_DIR}/igstkUltrasoundImageSimulatorTest.png
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png
               --toleranceIntensity 10
               --toleranceRadius 5
               --toleranceNumberOfPixels 5
@@ -348,7 +349,7 @@ IF(IGSTK_USE_FLTK)
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
 
   ENDIF (IGSTK_DATA_ROOT)
-            
+
 ENDIF(IGSTK_USE_FLTK)
 
 #-----------------------------------------------------------------------------
@@ -384,21 +385,21 @@ IF(IGSTK_DATA_ROOT)
     igstkCTImageSpatialObjectRepresentationTest.cxx
     igstkDICOMImageReaderErrorsTest.cxx
     igstkDICOMImageReaderTest.cxx
-    igstkMeshReaderTest.cxx 
+    igstkMeshReaderTest.cxx
     igstkMRImageReaderTest.cxx
     igstkSpatialObjectReaderTest.cxx
     igstkTubeReaderTest.cxx
     igstkAuroraTrackerSimulatedTest.cxx
     igstkNDICommandInterpreterSimulatedTest.cxx
-    igstkNDICommandInterpreterStressTest.cxx   
-    igstkPolarisTrackerSimulatedTest.cxx 
+    igstkNDICommandInterpreterStressTest.cxx
+    igstkPolarisTrackerSimulatedTest.cxx
     igstkSerialCommunicationSimulatorTest.cxx
-  )  
+  )
 ENDIF(IGSTK_DATA_ROOT)
 
 #-----------------------------------------------------------------------------
 # Testing source file depend on FLTK
-IF(IGSTK_USE_FLTK)  
+IF(IGSTK_USE_FLTK)
   SET(IGSTKTests_SRCS
     ${IGSTKTests_SRCS}
     igstkAnnotation2DTest.cxx
@@ -412,7 +413,7 @@ IF(IGSTK_USE_FLTK)
     igstkViewTest.cxx
     igstkViewRefreshRateTest.cxx
     igstkSpatialObjectRepresentationVisibilityTest.cxx
-  )    
+  )
   IF(IGSTK_DATA_ROOT)
     SET(IGSTKTests_SRCS
       ${IGSTKTests_SRCS}
@@ -421,8 +422,8 @@ IF(IGSTK_USE_FLTK)
       igstkVascularNetworkReaderTest.cxx
       igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx
       igstkImageSpatialObjectRepresentationTest.cxx
-    ) 
-  ENDIF(IGSTK_DATA_ROOT)  
+    )
+  ENDIF(IGSTK_DATA_ROOT)
 ENDIF(IGSTK_USE_FLTK)
 
 #-----------------------------------------------------------------------------
