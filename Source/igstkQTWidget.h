@@ -104,10 +104,6 @@ protected:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
  
-  /** Overload the method that manages mouse events in order
-      to provide picker functionalities */
-  void mouseReleaseEvent(QMouseEvent* e);
-
  /** Overload the mouse move event to send transform events
     when the mouse is moved while the left button is down */
   void mouseMoveEvent(QMouseEvent* e);
@@ -125,15 +121,6 @@ private:
     {
     this->m_VTKRenderWindowInteractor = interactor;
     }
-
-  /** Disable keyboard and mouse interactions */
-  void DisableInteractionsProcessing();
-
-  /** Enable keyboard and mouse interactions */
-  void EnableInteractionsProcessing();
-
-  /** Set VTK render window */
-  void SetVTKRenderer();
 
 private:
   bool                    m_InteractionHandling;

@@ -125,58 +125,6 @@ std::ostream& operator<<(std::ostream& os, const QTWidget& o)
   return os;
 }
 
-/** This method is overloaded from the QWidget class in 
- *  order to insert the invocation of the TransformModifiedEvent.
- */
-void 
-QTWidget
-::mouseReleaseEvent(QMouseEvent* e)
-{
-  vtkRenderWindowInteractor* iren = NULL;
-  if(this->mRenWin)
-    {
-    iren = this->mRenWin->GetInteractor();
-    }
-  
-  if(!iren || !iren->GetEnabled())
-    {
-    return;
-    }
-  
-
-  // give vtk event information
-#if QT_VERSION < 0x040000
-  iren->SetEventInformationFlipY(e->x(), e->y(), 
-                                 (e->state() & Qt::ControlButton), 
-                                 (e->state() & Qt::ShiftButton ));
-#else
-  iren->SetEventInformationFlipY(e->x(), e->y(), 
-                                 (e->modifiers() & Qt::ControlModifier), 
-                                 (e->modifiers() & Qt::ShiftModifier ));
-#endif
-  
-  // invoke appropriate vtk event
-  switch(e->button())
-    {
-    case Qt::LeftButton:
-      {
-      iren->InvokeEvent(vtkCommand::LeftButtonReleaseEvent, e);
-
-      break;
-      }
-    case Qt::MidButton:
-      iren->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent, e);
-      break;
-
-    case Qt::RightButton:
-      iren->InvokeEvent(vtkCommand::RightButtonReleaseEvent, e);
-      break;
-
-    default:
-      break;
-    }
-}
-
 /**
  * This method is overridden from the QWidget class in order to provide
  * transform events when the mouse is moved and the left button is pressed.
