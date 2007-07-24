@@ -1,5 +1,4 @@
 /*=========================================================================
-
   Program:   Image Guided Surgery Software Toolkit
   Module:    igstkQTWidgetTest.cxx
   Language:  C++
@@ -108,7 +107,7 @@ private:
 
 }
 
-int igstkQTWidgetTest( int argc, char ** argv)
+int igstkQTWidgetTest( int argc, char * argv[]) 
 {
   igstk::RealTimeClock::Initialize();
 

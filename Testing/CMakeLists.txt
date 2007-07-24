@@ -78,6 +78,7 @@ SET(SandboxTests_SRCS
   )
 
 
+
 ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest 
    ${IGSTK_DATA_ROOT}/Input/E000192 )
 
@@ -93,7 +94,7 @@ IF(IGSTKSandbox_USE_FLTK)
               ${IGSTKSandbox_TESTS} 
               igstkFLTKWidgetTest)   
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkFLTKWidgetTest)
+        igstkFLTKWidgetTest.cxx)
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF(IGSTKSandbox_USE_Qt)
@@ -101,7 +102,7 @@ IF(IGSTKSandbox_USE_Qt)
               ${IGSTKSandbox_TESTS} 
               igstkQTWidgetTest)   
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkQTWidgetTest)
+        igstkQTWidgetTest.cxx)
 ENDIF(IGSTKSandbox_USE_Qt)
 
 
