@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    OneViewAndTrackingUsingQTWidgetGUI.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+#
 #ifndef __OneViewAndTrackingUsingQTWidgetGUI_h
 #define __OneViewAndTrackingUsingQTWidgetGUI_h
 
@@ -23,7 +40,7 @@
 
 class OneViewAndTrackingUsingQTWidgetGUI : public QMainWindow
 {
-    Q_OBJECT
+  Q_OBJECT
 
   typedef itk::Logger              LoggerType; 
   typedef itk::StdStreamLogOutput  LogOutputType;
@@ -37,32 +54,32 @@ class OneViewAndTrackingUsingQTWidgetGUI : public QMainWindow
 #endif
 
 public:
-    OneViewAndTrackingUsingQTWidgetGUI();
-    ~OneViewAndTrackingUsingQTWidgetGUI();
-    void AttachObjectToTrack( igstk::SpatialObject *objectToTrack);
-    void SetView( igstk::ViewNew::Pointer  view );
-    bool HasQuitted();
+  OneViewAndTrackingUsingQTWidgetGUI();
+  ~OneViewAndTrackingUsingQTWidgetGUI();
+  void AttachObjectToTrack( igstk::SpatialObject *objectToTrack);
+  void SetView( igstk::ViewNew::Pointer  view );
+  bool HasQuitted();
 
 public slots:
-    void OnQuitAction();
-    void OnTrackingAction( int state);
+  void OnQuitAction();
+  void OnTrackingAction( int state);
 
 private:
-    void CreateActions();
- 
-    Ui::MainWindow ui;
+  void CreateActions();
 
-    LoggerType::Pointer     m_Logger;
-    LogOutputType::Pointer  m_LogOutput;
-    TrackerType::Pointer    m_Tracker;
+  Ui::MainWindow ui;
 
-    CommunicationType::Pointer m_Communication;
+  LoggerType::Pointer     m_Logger;
+  LogOutputType::Pointer  m_LogOutput;
+  TrackerType::Pointer    m_Tracker;
 
-    bool                    m_Tracking;
-    
-    std::ofstream           m_LogFile;
+  CommunicationType::Pointer m_Communication;
 
-    bool                    m_GUIQuit;
+  bool                    m_Tracking;
+  
+  std::ofstream           m_LogFile;
+
+  bool                    m_GUIQuit;
 };
 
 #endif

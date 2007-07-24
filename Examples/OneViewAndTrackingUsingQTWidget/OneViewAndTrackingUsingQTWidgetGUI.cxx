@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    OneViewAndTrackingUsingQTWidgetGUI.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+#
 #include <QtGui>
 #include "OneViewAndTrackingUsingQTWidgetGUI.moc"
 #include "OneViewAndTrackingUsingQTWidgetGUI.h"
@@ -64,15 +81,18 @@ OneViewAndTrackingUsingQTWidgetGUI::~OneViewAndTrackingUsingQTWidgetGUI()
 
 void OneViewAndTrackingUsingQTWidgetGUI::CreateActions()
 {
- connect(ui.QuitPushButton, SIGNAL(clicked()), this, SLOT(OnQuitAction()));
- connect(ui.TrackingCheckBox, SIGNAL(stateChanged(int )), this, SLOT(OnTrackingAction(int)));
+  connect(ui.QuitPushButton, SIGNAL(clicked()), this, SLOT(OnQuitAction()));
+  connect(ui.TrackingCheckBox, SIGNAL(stateChanged(int )), this,
+          SLOT(OnTrackingAction(int)));
 }
 
 void OneViewAndTrackingUsingQTWidgetGUI::OnQuitAction()
 {
- QMessageBox::StandardButton value = QMessageBox::information(this,
-    "Tracking application", "Are you sure you want to quit ?", QMessageBox::Yes | QMessageBox::No );
- 
+  QMessageBox::StandardButton value = 
+    QMessageBox::information(this,
+    "Tracking application", "Are you sure you want to quit ?",
+    QMessageBox::Yes | QMessageBox::No );
+
   if( value == QMessageBox::Yes )
     {
     this->close();
@@ -102,7 +122,9 @@ void OneViewAndTrackingUsingQTWidgetGUI::OnTrackingAction( int state )
     } 
 }
 
-void OneViewAndTrackingUsingQTWidgetGUI::AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
+void 
+OneViewAndTrackingUsingQTWidgetGUI::
+AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
 {
   const unsigned int toolPort = 0;
   const unsigned int toolNumber = 0;
@@ -114,4 +136,3 @@ bool OneViewAndTrackingUsingQTWidgetGUI::HasQuitted( )
 {
   return m_GUIQuit;
 }
-
