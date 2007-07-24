@@ -48,8 +48,8 @@ SET(IGSTK_HEADS
   igstkCommunication.h
   igstkCylinderObject.h
   igstkCylinderObjectRepresentation.h
-  igstkEllipsoidObject.h  
-  igstkEllipsoidObjectRepresentation.h  
+  igstkEllipsoidObject.h
+  igstkEllipsoidObjectRepresentation.h
   igstkEvents.h
   igstkMacros.h
   igstkMeshObject.h
@@ -105,7 +105,7 @@ ENDIF(IGSTK_USE_FLTK)
 
 # The implementation files
 
-SET(IGSTK_SRCS  
+SET(IGSTK_SRCS
   igstkFlockOfBirdsCommandInterpreter.cxx
   igstkFlockOfBirdsTracker.cxx
   igstkFlockOfBirdsTrackerTool.cxx
@@ -184,7 +184,7 @@ SET(IGSTK_SRCS
 )
 
 IF(IGSTK_USE_FLTK)
-  SET(IGSTK_SRCS  
+  SET(IGSTK_SRCS
       ${IGSTK_SRCS}
       igstkMouseTracker.cxx
       igstkFLTKTextBufferLogOutput.cxx
@@ -196,17 +196,17 @@ IF(IGSTK_USE_FLTK)
 ENDIF(IGSTK_USE_FLTK)
 
 IF( WIN32 )
-  SET(IGSTK_HEADS ${IGSTK_HEADS} 
+  SET(IGSTK_HEADS ${IGSTK_HEADS}
     igstkSerialCommunicationForWindows.h
   )
-  SET(IGSTK_SRCS ${IGSTK_SRCS} 
+  SET(IGSTK_SRCS ${IGSTK_SRCS}
     igstkSerialCommunicationForWindows.cxx
   )
 ELSE( WIN32 )
-  SET(IGSTK_HEADS ${IGSTK_HEADS} 
+  SET(IGSTK_HEADS ${IGSTK_HEADS}
     igstkSerialCommunicationForPosix.h
   )
-  SET(IGSTK_SRCS ${IGSTK_SRCS} 
+  SET(IGSTK_SRCS ${IGSTK_SRCS}
     igstkSerialCommunicationForPosix.cxx
   )
 ENDIF( WIN32 )
@@ -255,6 +255,7 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 
 # The header files
 SET(IGSTKSandbox_HEADS
+  igstkPivotCalibrationAlgorithm.h
   igstkGenericImageSpatialObject.h
   igstkDICOMGenericImageReader.h
   igstkObliqueImageSpatialObjectRepresentation.h
@@ -286,12 +287,13 @@ ENDIF(IGSTKSandbox_USE_Qt)
 IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
-      igstkFLTKWidget.h   
+      igstkFLTKWidget.h
      )
 ENDIF(IGSTKSandbox_USE_FLTK)
- 
+
 # The implementation files
-SET(IGSTKSandbox_SRCS  
+SET(IGSTKSandbox_SRCS
+  igstkPivotCalibrationAlgorithm.cxx
   igstkGenericImageSpatialObject.cxx
   igstkDICOMGenericImageReader.cxx
   igstkObliqueImageSpatialObjectRepresentation.txx
@@ -310,7 +312,7 @@ SET(IGSTKSandbox_SRCS
 )
 
 IF(IGSTKSandbox_USE_Qt)
-  SET(IGSTKSandbox_SRCS  
+  SET(IGSTKSandbox_SRCS
     ${IGSTKSandbox_SRCS}
     igstkQMouseTracker.cxx
     igstkSimulatedTracker.cxx
@@ -322,12 +324,12 @@ IF(IGSTKSandbox_USE_Qt)
 ENDIF(IGSTKSandbox_USE_Qt)
 
 IF(IGSTKSandbox_USE_FLTK)
-  SET(IGSTKSandbox_SRCS  
+  SET(IGSTKSandbox_SRCS
     ${IGSTKSandbox_SRCS}
-    igstkFLTKWidget.cxx   
+    igstkFLTKWidget.cxx
     )
 ENDIF(IGSTKSandbox_USE_FLTK)
- 
+
 # Variable for holding extra libraries
 SET(EXTRA_LIBS)
 
@@ -350,7 +352,6 @@ ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS} ${IGSTKLates
 
 TARGET_LINK_LIBRARIES(IGSTKSandbox
     ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject ITKStatistics
-    vtkVolumeRendering vtkRendering vtkGraphics vtkHybrid vtkImaging 
+    vtkVolumeRendering vtkRendering vtkGraphics vtkHybrid vtkImaging
     vtkIO vtkFiltering vtkCommon
     ${EXTRA_LIBS} )
-
