@@ -62,6 +62,17 @@ QVTKWidget( parent, f ), m_StateMachine(this), m_ProxyView(this)
 
   m_PointPicker = PickerType::New();
   m_Reporter    = ::itk::Object::New();
+
+  igstkAddInputMacro( ValidView );
+  igstkAddInputMacro( InValidView );
+
+  igstkAddStateMacro( Idle );
+  igstkAddStateMacro( ViewConnected );
+
+  igstkAddTransitionMacro( Idle, ValidView, ViewConnected, ConnectView );   
+  igstkSetInitialStateMacro( Idle );
+  m_StateMachine.SetReadyToRun();
+
 }
 
 /** Destructor */
@@ -72,14 +83,23 @@ QTWidget::~QTWidget()
   m_PointPicker->Delete();
 }
 
-/** Set View */
-void QTWidget::SetView( ViewType::Pointer view)
+/** Request set view */
+void QTWidget::RequestSetView( ViewType::Pointer view)
 {
-  igstkLogMacro( DEBUG, "SetView called ...\n");
-
+  igstkLogMacro( DEBUG, "RequestSetView called ...\n");
+  //FIXME: insert a logic to check if the specified view is 
+  //valid or not
   m_View = view;
-  
-  this->m_ProxyView.Connect( view );
+  igstkPushInputMacro( ValidView );
+  m_StateMachine.ProcessInputs();
+}
+ 
+/** Set View */
+void QTWidget::ConnectViewProcessing( )
+{
+  igstkLogMacro( DEBUG, "ConnectViewProcessing called ...\n");
+
+  this->m_ProxyView.Connect( m_View );
   this->SetRenderWindow( this->m_VTKRenderer->GetRenderWindow());
   this->GetRenderWindow()->GetInteractor()->SetPicker( m_PointPicker );
 
@@ -223,6 +243,20 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
+/** Report that an invalid or suspicious operation has been requested. This may
+ * mean that an error condition has arised in one of the componenta that
+ * interact with this class. */
+void QTWidget::ReportInvalidRequestProcessing()
+{
+  igstkLogMacro( WARNING, "ReportInvalidRequestProcessing() called ...\n");
+}
+
+/** Report that an invalid view component is specified */
+void QTWidget::ReportInvalidViewConnectedProcessing()
+{
+  igstkLogMacro( WARNING,
+                "ReportInvalidViewConnectedProcessing() called ...\n");
+}
 
 void 
 QTWidget

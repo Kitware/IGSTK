@@ -82,7 +82,7 @@ public:
   virtual ~QTWidget( void );
   
   /** set the view */
-  void SetView( ViewType::Pointer view );
+  void RequestSetView( ViewType::Pointer view );
 
   typedef ViewProxy< QTWidget > ProxyType;
 
@@ -103,6 +103,14 @@ protected:
 
 
 private:
+  /** Report any invalid request to the logger */
+  void ReportInvalidRequestProcessing();
+
+  /** Report Invalid view connected */
+  void ReportInvalidViewConnectedProcessing();
+
+  /** Process a valid view component that is connected to the widget */ 
+  void ConnectViewProcessing();
 
   /** Set VTK renderer */
   void SetVTKRenderer( vtkRenderer * renderer )
@@ -130,6 +138,15 @@ private:
   vtkRenderer           * m_VTKRenderer;
 
   vtkRenderWindowInteractor           * m_VTKRenderWindowInteractor;
+
+
+  /** States for the State Machine */
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( ViewConnected );
+
+  /** Inputs to the State machine */
+  igstkDeclareInputMacro( ValidView );
+  igstkDeclareInputMacro( InValidView );
 
 };
 
