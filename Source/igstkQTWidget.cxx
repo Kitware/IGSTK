@@ -83,6 +83,20 @@ QTWidget::~QTWidget()
   m_PointPicker->Delete();
 }
 
+/** Set VTK renderer */
+void QTWidget::SetVTKRenderer( vtkRenderer * renderer )
+{
+  this->m_VTKRenderer = renderer;
+}
+
+/** Set VTK render window interactor */
+void 
+QTWidget::SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
+{
+  this->m_VTKRenderWindowInteractor = interactor;
+}
+
+
 /** Request set view */
 void QTWidget::RequestSetView( ViewType::Pointer view)
 {

@@ -68,64 +68,64 @@ void Crosshairs2D::RequestSetViewport(vtkViewport *viewport)
 
 void Crosshairs2D::SetViewportProcessing()
 {
-    m_Viewport = m_ViewportToBeSet;
+  m_Viewport = m_ViewportToBeSet;
 }
 
 void Crosshairs2D::RequestSetPosition(double x, double y, double z)
 {
-    ///@TODO: Add checks for valid Points?
-    m_XPosition = x;
-    m_YPosition = y;
-    m_ZPosition = z;
-    igstkPushInputMacro(ValidPosition);
-    m_StateMachine.ProcessInputs();
+  ///@TODO: Add checks for valid Points?
+  m_XPosition = x;
+  m_YPosition = y;
+  m_ZPosition = z;
+  igstkPushInputMacro(ValidPosition);
+  m_StateMachine.ProcessInputs();
 }
 
 void Crosshairs2D::SetPositionProcessing()
 {
-    // Convert from world coordinates to display coordinates
-    vtkCoordinate *positionCoordinate = vtkCoordinate::New();
-    positionCoordinate->SetCoordinateSystemToWorld();
-    positionCoordinate->SetValue(m_XPosition, m_YPosition, m_ZPosition);
+  // Convert from world coordinates to display coordinates
+  vtkCoordinate *positionCoordinate = vtkCoordinate::New();
+  positionCoordinate->SetCoordinateSystemToWorld();
+  positionCoordinate->SetValue(m_XPosition, m_YPosition, m_ZPosition);
 
-    int *displayCoordinates = positionCoordinate->GetComputedDisplayValue(m_Viewport);
-    int displayXPosition = displayCoordinates[0];
-    int displayYPosition = displayCoordinates[1];
-    positionCoordinate->Delete();
-    
-    // Get viewport size
-    int *portSize = m_Viewport->GetSize();
-    int viewportXSizeInPixels = portSize[0];
-    int viewportYSizeInPixels = portSize[1];
+  int *displayCoordinates = positionCoordinate->GetComputedDisplayValue(m_Viewport);
+  int displayXPosition = displayCoordinates[0];
+  int displayYPosition = displayCoordinates[1];
+  positionCoordinate->Delete();
+  
+  // Get viewport size
+  int *portSize = m_Viewport->GetSize();
+  int viewportXSizeInPixels = portSize[0];
+  int viewportYSizeInPixels = portSize[1];
 
-    // Horizontal axis
-    m_HorizontalAxisActor->GetPoint1Coordinate()->SetCoordinateSystemToDisplay();
-    m_HorizontalAxisActor->GetPoint2Coordinate()->SetCoordinateSystemToDisplay();
-    m_HorizontalAxisActor->SetPoint1(0, displayYPosition);
-    m_HorizontalAxisActor->SetPoint2(viewportXSizeInPixels, displayYPosition);
-    m_HorizontalAxisActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
+  // Horizontal axis
+  m_HorizontalAxisActor->GetPoint1Coordinate()->SetCoordinateSystemToDisplay();
+  m_HorizontalAxisActor->GetPoint2Coordinate()->SetCoordinateSystemToDisplay();
+  m_HorizontalAxisActor->SetPoint1(0, displayYPosition);
+  m_HorizontalAxisActor->SetPoint2(viewportXSizeInPixels, displayYPosition);
+  m_HorizontalAxisActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
 
-    // Vertical axis
-    m_VerticalAxisActor->GetPoint1Coordinate()->SetCoordinateSystemToDisplay();
-    m_VerticalAxisActor->GetPoint2Coordinate()->SetCoordinateSystemToDisplay();
-    m_VerticalAxisActor->SetPoint1(displayXPosition, 0);
-    m_VerticalAxisActor->SetPoint2(displayXPosition, viewportYSizeInPixels);
-    m_VerticalAxisActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
+  // Vertical axis
+  m_VerticalAxisActor->GetPoint1Coordinate()->SetCoordinateSystemToDisplay();
+  m_VerticalAxisActor->GetPoint2Coordinate()->SetCoordinateSystemToDisplay();
+  m_VerticalAxisActor->SetPoint1(displayXPosition, 0);
+  m_VerticalAxisActor->SetPoint2(displayXPosition, viewportYSizeInPixels);
+  m_VerticalAxisActor->GetProperty()->SetColor(0.0, 1.0, 0.0);
 }
 
 void Crosshairs2D::RequestSetXPosition(double x)
 {
-    RequestSetPosition(x, m_YPosition, m_ZPosition);
+  RequestSetPosition(x, m_YPosition, m_ZPosition);
 }
 
 void Crosshairs2D::RequestSetYPosition(double y)
 {
-    RequestSetPosition(m_XPosition, y, m_ZPosition);
+  RequestSetPosition(m_XPosition, y, m_ZPosition);
 }
 
 void Crosshairs2D::RequestSetZPosition(double z)
 {
-    RequestSetPosition(m_XPosition, m_YPosition, z);
+ RequestSetPosition(m_XPosition, m_YPosition, z);
 }
 
 void Crosshairs2D::NoProcessing()

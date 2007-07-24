@@ -111,7 +111,7 @@ public:
   void RequestSetParallelProjection( bool flag );
 
    friend class ViewProxyBase;
- protected:
+protected:
 
   ViewNew( );
   virtual ~ViewNew( void );

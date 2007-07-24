@@ -51,7 +51,6 @@ namespace igstk {
  */
 class QTWidget : public QVTKWidget
 {
-
 public:
     
   typedef QTWidget          Self;
@@ -113,16 +112,10 @@ private:
   void ConnectViewProcessing();
 
   /** Set VTK renderer */
-  void SetVTKRenderer( vtkRenderer * renderer )
-    {
-    this->m_VTKRenderer = renderer;
-    }
+  void SetVTKRenderer( vtkRenderer * renderer );
 
   /** Set VTK render window interactor */
-  void SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
-    {
-    this->m_VTKRenderWindowInteractor = interactor;
-    }
+  void SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
 
 private:
   bool                    m_InteractionHandling;
@@ -133,10 +126,8 @@ private:
   PickerType                  * m_PointPicker;
   ::itk::Object::Pointer        m_Reporter;
  
-  ProxyType               m_ProxyView;
-
-  vtkRenderer           * m_VTKRenderer;
-
+  ProxyType                             m_ProxyView;
+  vtkRenderer                         * m_VTKRenderer;
   vtkRenderWindowInteractor           * m_VTKRenderWindowInteractor;
 
 
