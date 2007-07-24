@@ -204,8 +204,8 @@ int igstkQTWidgetTest( int argc, char * argv[])
     typedef igstk::QTWidget      QTWidgetType;
 
     QTWidgetType * qtWidget2D = new QTWidgetType();
-    qtWidget2D->SetView( view2D );
     qtWidget2D->SetLogger( logger );
+    qtWidget2D->RequestSetView( view2D );
     qtMainWindow->setCentralWidget( qtWidget2D );
     
     // Set the refresh rate and start 
