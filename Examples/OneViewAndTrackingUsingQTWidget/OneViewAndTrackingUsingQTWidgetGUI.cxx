@@ -50,6 +50,9 @@ OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
 
   m_Tracking = false;
   m_GUIQuit  = false;
+
+  ui.Display3D->SetLogger( m_Logger );
+  
 }
 
 OneViewAndTrackingUsingQTWidgetGUI::~OneViewAndTrackingUsingQTWidgetGUI()
@@ -79,7 +82,7 @@ void OneViewAndTrackingUsingQTWidgetGUI::OnQuitAction()
 
 void OneViewAndTrackingUsingQTWidgetGUI::SetView( igstk::ViewNew::Pointer view )
 {
-  ui.Display3D->SetView (view);
+  ui.Display3D->RequestSetView (view);
 }
 
 void OneViewAndTrackingUsingQTWidgetGUI::OnTrackingAction( int state )
