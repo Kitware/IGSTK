@@ -50,7 +50,11 @@
 namespace igstk {
 
 /** \class ViewNew
+ *  
+ *  \brief Base class for View2D and View3D
  * 
+ *  The functionality of the View class is to aggregate all the graphical
+ *  representations of spatial objects into one scene,
  *
  * \ingroup Object
  */
