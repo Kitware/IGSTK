@@ -25,6 +25,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkPNGWriter.h"
 #include "vtkViewport.h"
 #include "vtkRenderWindow.h"
+#include "vtkPropCollection.h"
+#include "vtkProp.h"
 
 #if defined(__APPLE__) && defined(VTK_USE_CARBON)
 #include "vtkCarbonRenderWindow.h"
@@ -57,12 +59,17 @@ QVTKWidget( parent, f ), m_StateMachine(this), m_ProxyView(this)
 { 
   m_Logger = NULL;
   m_View = ViewType::New();
+
+  m_PointPicker = PickerType::New();
+  m_Reporter    = ::itk::Object::New();
 }
 
 /** Destructor */
 QTWidget::~QTWidget()
 {
   igstkLogMacro( DEBUG, "Destructor called ...\n");
+
+  m_PointPicker->Delete();
 
 }
 
@@ -73,9 +80,18 @@ void QTWidget::SetView( ViewType::Pointer view)
 
   m_View = view;
   
-
   this->m_ProxyView.Connect( view );
   this->SetRenderWindow( this->m_VTKRenderer->GetRenderWindow());
+  this->GetRenderWindow()->GetInteractor()->SetPicker( m_PointPicker );
+
+  //Add actors to the point picker list
+  vtkPropCollection * propList = this->m_VTKRenderer->GetViewProps();
+  vtkProp * prop;
+
+  while(prop = propList->GetNextProp())
+    {
+    this->m_PointPicker->AddPickList(prop);
+    }
 }
 
 
@@ -105,24 +121,77 @@ void QTWidget::Render()
   this->GetInteractor()->Render();
 }
 
+/** This method is overloaded from the QWidget class in 
+ *  order to insert the invocation of the TransformModifiedEvent.
+ */
 void 
 QTWidget
-::Print( std::ostream& os, ::itk::Indent indent ) const
+::mouseReleaseEvent(QMouseEvent* e)
 {
-  this->PrintSelf(os, indent);
-}
+  vtkRenderWindowInteractor* iren = NULL;
+  if(this->mRenWin)
+    {
+    iren = this->mRenWin->GetInteractor();
+    }
+  
+  if(!iren || !iren->GetEnabled())
+    {
+    return;
+    }
+  
+  // give vtk event information
+#if QT_VERSION < 0x040000
+  iren->SetEventInformationFlipY(e->x(), e->y(), 
+                                 (e->state() & Qt::ControlButton), 
+                                 (e->state() & Qt::ShiftButton ));
+#else
+  iren->SetEventInformationFlipY(e->x(), e->y(), 
+                                 (e->modifiers() & Qt::ControlModifier), 
+                                 (e->modifiers() & Qt::ShiftModifier ));
+#endif
+  
+  // invoke appropriate vtk event
+  switch(e->button())
+    {
+    case Qt::LeftButton:
+      {
+      iren->InvokeEvent(vtkCommand::LeftButtonReleaseEvent, e);
 
+      m_PointPicker->Pick( e->x(), 
+                           this->height() - e->y() - 1, 
+                           0, m_VTKRenderer );
+      double data[3];
+      m_PointPicker->GetPickPosition( data );
+      Transform::VectorType pickedPoint;
+      pickedPoint[0] = data[0];
+      pickedPoint[1] = data[1];
+      pickedPoint[2] = data[2];
+      
+      double validityTime = itk::NumericTraits<double>::max();
+      double errorValue = 1.0; // this should be obtained from 
+                               // the picked object.
 
-/**
- * This operator allows all subclasses of LightObject to be printed via <<.
- * It in turn invokes the Print method, which in turn will invoke the
- * PrintSelf method that all objects should define, if they have anything
- * interesting to print out.
- */
-std::ostream& operator<<(std::ostream& os, const QTWidget& o)
-{
-  o.Print(os);
-  return os;
+      igstk::Transform transform;
+      transform.SetTranslation( pickedPoint, errorValue, validityTime );
+
+      igstk::TransformModifiedEvent transformEvent;
+      transformEvent.Set( transform );
+
+      m_Reporter->InvokeEvent( transformEvent );
+
+      break;
+      }
+    case Qt::MidButton:
+      iren->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent, e);
+      break;
+
+    case Qt::RightButton:
+      iren->InvokeEvent(vtkCommand::RightButtonReleaseEvent, e);
+      break;
+
+    default:
+      break;
+    }
 }
 
 /**
@@ -152,11 +221,55 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
     (e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0, 
     (e->modifiers() & Qt::ShiftModifier  ) > 0 ? 1 : 0);
 #endif
-  
+
+ iren->InvokeEvent(vtkCommand::MouseMoveEvent, e);
+
   if(e->buttons() == Qt::LeftButton)
     {
-    iren->InvokeEvent(vtkCommand::MouseMoveEvent, e);
+    // Get x,y,z in world coordinates from the clicked point
+    m_PointPicker->Pick(e->x(), this->height() - e->y() - 1, 0, m_VTKRenderer);
+
+    double data[3];
+    m_PointPicker->GetPickPosition(data);
+    igstk::Transform::VectorType pickedPoint;
+    pickedPoint[0] = data[0];
+    pickedPoint[1] = data[1];
+    pickedPoint[2] = data[2];
+
+    // Valid unitl next click
+    double validityTime = itk::NumericTraits<double>::max(); 
+
+    double errorValue = 1.0; // @TODO: Should be obtained from picked object.
+
+    igstk::Transform transform;
+    transform.SetTranslation(pickedPoint, errorValue, validityTime);
+  
+    igstk::TransformModifiedEvent transformEvent;
+    transformEvent.Set(transform);
+    
+    m_Reporter->InvokeEvent(transformEvent);
     }
+}
+
+
+void 
+QTWidget
+::Print( std::ostream& os, ::itk::Indent indent ) const
+{
+  this->PrintSelf(os, indent);
+}
+
+
+/**
+ * This operator allows all subclasses of LightObject to be printed via <<.
+ * It in turn invokes the Print method, which in turn will invoke the
+ * PrintSelf method that all objects should define, if they have anything
+ * interesting to print out.
+ */
+std::ostream& operator<<(std::ostream& os, const QTWidget& o)
+{
+  o.Print(os);
+  return os;
 }
 
 /** Print object information */

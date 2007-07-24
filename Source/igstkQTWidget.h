@@ -29,6 +29,7 @@ PURPOSE.  See the above copyright notices for more information.
 // VTK 
 #include "vtkInteractorStyle.h"
 #include "vtkRenderer.h"
+#include "vtkWorldPointPicker.h"
 
 // ITK headers
 #include "itkCommand.h"
@@ -103,10 +104,15 @@ protected:
   
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
- 
- /** Overload the mouse move event to send transform events
+
+  /** Overload the method that manages mouse events in order
+      to provide picker functionalities */
+  void mouseReleaseEvent(QMouseEvent* e);
+
+  /** Overload the mouse move event to send transform events
     when the mouse is moved while the left button is down */
   void mouseMoveEvent(QMouseEvent* e);
+
 
 private:
 
@@ -126,6 +132,11 @@ private:
   bool                    m_InteractionHandling;
   ViewType::Pointer       m_View;
 
+  typedef vtkWorldPointPicker  PickerType;
+
+  PickerType                  * m_PointPicker;
+  ::itk::Object::Pointer        m_Reporter;
+ 
   ProxyType               m_ProxyView;
 
   vtkRenderer           * m_VTKRenderer;
