@@ -65,13 +65,28 @@ QVTKWidget( parent, f ), m_StateMachine(this), m_ProxyView(this)
 
   igstkAddInputMacro( ValidView );
   igstkAddInputMacro( InValidView );
+  igstkAddInputMacro( EnableInteractions );
+  igstkAddInputMacro( DisableInteractions );
 
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( ViewConnected );
 
   igstkAddTransitionMacro( Idle, ValidView, ViewConnected, ConnectView );   
+
+  igstkAddTransitionMacro( Idle, EnableInteractions,
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, DisableInteractions,
+                           Idle,  ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ViewConnected, EnableInteractions,
+                           ViewConnected,  EnableInteractions );
+  igstkAddTransitionMacro( ViewConnected, DisableInteractions,
+                           ViewConnected,  DisableInteractions );
+
   igstkSetInitialStateMacro( Idle );
   m_StateMachine.SetReadyToRun();
+
+  m_InteractionHandling  = true;
 
 }
 
@@ -127,6 +142,88 @@ void QTWidget::ConnectViewProcessing( )
     }
 }
 
+/** Request enable interactions */
+void QTWidget::RequestEnableInteractions()
+{
+  igstkLogMacro( DEBUG, "RequestEnableInteractions() called ...\n");
+  igstkPushInputMacro( EnableInteractions );
+  m_StateMachine.ProcessInputs();
+}
+
+
+/** Request disable interactions */
+void QTWidget::RequestDisableInteractions()
+{
+  igstkLogMacro( DEBUG, "RequestDisableInteractions() called ...\n");
+  igstkPushInputMacro( DisableInteractions );
+  m_StateMachine.ProcessInputs();
+}
+
+/** */
+void QTWidget::EnableInteractionsProcessing()
+{
+  igstkLogMacro( DEBUG, "EnableInteractionsProcessing() called ...\n");
+  m_InteractionHandling = true;
+}
+
+/** */
+void QTWidget::DisableInteractionsProcessing()
+{
+  igstkLogMacro( DEBUG, "DisableInteractionsProcessing() called ...\n");
+  m_InteractionHandling = false;
+}
+
+/** This method is overridden to be able to enable/disable interaction 
+ */
+void QTWidget::mousePressEvent(QMouseEvent* e)
+{
+
+  vtkRenderWindowInteractor* iren = NULL;
+  if(this->mRenWin)
+    {
+    iren = this->mRenWin->GetInteractor();
+    }
+  
+  if(!iren || !iren->GetEnabled() || !m_InteractionHandling)
+    {
+    return;
+    }
+
+  // give interactor the event information
+#if QT_VERSION < 0x040000
+  iren->SetEventInformationFlipY(e->x(), e->y(), 
+                              (e->state() & Qt::ControlButton) > 0 ? 1 : 0, 
+                              (e->state() & Qt::ShiftButton ) > 0 ? 1 : 0, 0,
+                              e->type() == QEvent::MouseButtonDblClick ? 1 : 0);
+#else
+  iren->SetEventInformationFlipY(e->x(), e->y(), 
+                              (e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0, 
+                              (e->modifiers() & Qt::ShiftModifier ) > 0 ? 1 : 0,
+                              0,
+                              e->type() == QEvent::MouseButtonDblClick ? 1 : 0);
+#endif
+
+  // invoke appropriate vtk event
+  switch(e->button())
+    {
+    case Qt::LeftButton:
+      iren->InvokeEvent(vtkCommand::LeftButtonPressEvent, e);
+      break;
+
+    case Qt::MidButton:
+      iren->InvokeEvent(vtkCommand::MiddleButtonPressEvent, e);
+      break;
+
+    case Qt::RightButton:
+      iren->InvokeEvent(vtkCommand::RightButtonPressEvent, e);
+      break;
+
+    default:
+      break;
+    }
+}
+
+
 /** This method is overloaded from the QWidget class in 
  *  order to insert the invocation of the TransformModifiedEvent.
  */
@@ -140,7 +237,7 @@ QTWidget
     iren = this->mRenWin->GetInteractor();
     }
   
-  if(!iren || !iren->GetEnabled())
+  if(!iren || !iren->GetEnabled() || !m_InteractionHandling)
     {
     return;
     }
@@ -212,7 +309,7 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
     iren = this->mRenWin->GetInteractor();
     }
     
-  if(!iren || !iren->GetEnabled())
+  if(!iren || !iren->GetEnabled() || !m_InteractionHandling)
     {
     return;
     }
@@ -257,6 +354,48 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
+/** This method is overridden to be able to enable/disable interaction 
+ */
+#ifndef QT_NO_WHEELEVENT
+void QTWidget::wheelEvent(QWheelEvent* e)
+{
+  vtkRenderWindowInteractor* iren = NULL;
+  if(this->mRenWin)
+    {
+    iren = this->mRenWin->GetInteractor();
+    }
+  
+  if(!iren || !iren->GetEnabled() || !m_InteractionHandling)
+    {
+    return;
+    }
+
+// VTK supports wheel mouse events only in version 4.5 or greater
+  // give event information to interactor
+#if QT_VERSION < 0x040000
+  iren->SetEventInformationFlipY(e->x(), e->y(), 
+                             (e->state() & Qt::ControlButton) > 0 ? 1 : 0, 
+                             (e->state() & Qt::ShiftButton ) > 0 ? 1 : 0);
+#else
+  iren->SetEventInformationFlipY(e->x(), e->y(), 
+                             (e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0, 
+                             (e->modifiers() & Qt::ShiftModifier ) > 0 ? 1 : 0);
+#endif
+  
+  // invoke vtk event
+  // if delta is positive, it is a forward wheel event
+  if(e->delta() > 0)
+    {
+    iren->InvokeEvent(vtkCommand::MouseWheelForwardEvent, e);
+    }
+  else
+    {
+    iren->InvokeEvent(vtkCommand::MouseWheelBackwardEvent, e);
+    }
+}
+#endif
+
+
 /** Report that an invalid or suspicious operation has been requested. This may
  * mean that an error condition has arised in one of the componenta that
  * interact with this class. */
@@ -298,8 +437,6 @@ QTWidget
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
-  os << indent << "InteractionHandling: ";
-  os << this->m_InteractionHandling << std::endl;
 }
 
 } // end namespace igstk

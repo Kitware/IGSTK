@@ -125,12 +125,6 @@ public:
  /** Update the display in order to render the new content of the scene */
   void Update();
  
-  /** Disable user interactions with the window via mouse and keyboard */
-  void RequestDisableInteractions();
-
-  /** Enable user interactions with the window via mouse and keyboard */
-  void RequestEnableInteractions();
-
   /** Request to return the camera to a known position */
   void RequestResetCamera();
   
@@ -162,8 +156,6 @@ private:
   typedef vtkWorldPointPicker  PickerType;
   PickerType            * m_PointPicker;
   
-  bool                    m_InteractionHandling;
-
   /** Render Window Interactor */
   RenderWindowInteractor  * m_RenderWindowInteractor;
 
@@ -249,12 +241,6 @@ private:
   /** Reset the settings of the camera */  
   void ResetCameraProcessing();
   
-  /** Disable keyboard and mouse interactions */
-  void DisableInteractionsProcessing();
-
-  /** Enable keyboard and mouse interactions */
-  void EnableInteractionsProcessing();
-
 private:
   
   // Arguments for methods to be invoked by the state machine.
@@ -278,8 +264,6 @@ private:
   igstkDeclareInputMacro( InexistingRemoveObject );
   igstkDeclareInputMacro( NullRemoveObject );
   igstkDeclareInputMacro( ResetCamera );
-  igstkDeclareInputMacro( EnableInteractions );
-  igstkDeclareInputMacro( DisableInteractions );
   igstkDeclareInputMacro( StartRefreshing );
   igstkDeclareInputMacro( StopRefreshing );
   igstkDeclareInputMacro( ValidScreenShotFileName );

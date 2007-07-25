@@ -186,9 +186,6 @@ int igstkFLTKWidgetTest( int, char * [] )
     view2D->SetLogger( logger );
     
     view2D->RequestResetCamera();
-    view2D->RequestEnableInteractions();
-    
-    // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );
 
     // Add the cylinder to the view
@@ -198,7 +195,6 @@ int igstkFLTKWidgetTest( int, char * [] )
     view3D->SetLogger( logger );
 
     view3D->RequestResetCamera();
-    view3D->RequestEnableInteractions();
     
     // Add the ellipsoid to the view
     view3D->RequestAddObject( ellipsoidRepresentation );

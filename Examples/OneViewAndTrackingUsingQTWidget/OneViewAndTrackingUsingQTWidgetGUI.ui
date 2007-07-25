@@ -26,7 +26,7 @@
    <widget class="QPushButton" name="QuitPushButton" >
     <property name="geometry" >
      <rect>
-      <x>110</x>
+      <x>210</x>
       <y>640</y>
       <width>75</width>
       <height>24</height>
@@ -47,6 +47,19 @@
     </property>
     <property name="text" >
      <string>Tracking</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="InteractionCheckBox" >
+    <property name="geometry" >
+     <rect>
+      <x>120</x>
+      <y>640</y>
+      <width>80</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Interaction</string>
     </property>
    </widget>
   </widget>

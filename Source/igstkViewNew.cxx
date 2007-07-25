@@ -70,8 +70,6 @@ m_StateMachine(this)
   m_Camera->SetViewUp( 0, -1, 0 );
   m_Renderer->ResetCamera();
   
-  m_InteractionHandling = true;
-
   igstkAddInputMacro( ValidAddObject );
   igstkAddInputMacro( NullAddObject  );
   igstkAddInputMacro( ValidAddAnnotation2D );
@@ -85,8 +83,6 @@ m_StateMachine(this)
   igstkAddInputMacro( ValidRemoveActor );
   igstkAddInputMacro( NullRemoveActor  );
   igstkAddInputMacro( ResetCamera  );
-  igstkAddInputMacro( EnableInteractions  );
-  igstkAddInputMacro( DisableInteractions  );
   igstkAddInputMacro( StartRefreshing  );
   igstkAddInputMacro( StopRefreshing  );
   igstkAddInputMacro( ValidScreenShotFileName  );
@@ -123,10 +119,6 @@ m_StateMachine(this)
                            Idle,  ReportInvalidRequest );
   igstkAddTransitionMacro( Idle, ResetCamera,
                            Idle,  ResetCamera );
-  igstkAddTransitionMacro( Idle, EnableInteractions,
-                           Idle,  EnableInteractions );
-  igstkAddTransitionMacro( Idle, DisableInteractions,
-                           Idle,  DisableInteractions );
   igstkAddTransitionMacro( Idle, StartRefreshing,
                            Refreshing,  Start );
   igstkAddTransitionMacro( Idle, StopRefreshing,
@@ -161,10 +153,6 @@ m_StateMachine(this)
                            Refreshing,  ReportInvalidRequest );
   igstkAddTransitionMacro( Refreshing, ResetCamera,
                            Refreshing,  ResetCamera );
-  igstkAddTransitionMacro( Refreshing, EnableInteractions,
-                           Refreshing,  EnableInteractions );
-  igstkAddTransitionMacro( Refreshing, DisableInteractions,
-                           Refreshing,  DisableInteractions );
   igstkAddTransitionMacro( Refreshing, StartRefreshing,
                            Refreshing,  ReportInvalidRequest );
   igstkAddTransitionMacro( Refreshing, StopRefreshing,
@@ -305,38 +293,6 @@ void ViewNew::RemoveActorProcessing()
   igstkLogMacro( DEBUG, "RemoveActorProcessing() called ...\n");
   m_Renderer->RemoveActor( m_ActorToBeRemoved );
   m_PointPicker->DeletePickList( m_ActorToBeRemoved );
-}
-
-
-/** */
-void ViewNew::RequestEnableInteractions()
-{
-  igstkLogMacro( DEBUG, "RequestEnableInteractions() called ...\n");
-  igstkPushInputMacro( EnableInteractions );
-  m_StateMachine.ProcessInputs();
-}
-
-
-/** */
-void ViewNew::RequestDisableInteractions()
-{
-  igstkLogMacro( DEBUG, "RequestDisableInteractions() called ...\n");
-  igstkPushInputMacro( DisableInteractions );
-  m_StateMachine.ProcessInputs();
-}
-
-/** */
-void ViewNew::EnableInteractionsProcessing()
-{
-  igstkLogMacro( DEBUG, "EnableInteractionsProcessing() called ...\n");
-  m_InteractionHandling = true;
-}
-
-/** */
-void ViewNew::DisableInteractionsProcessing()
-{
-  igstkLogMacro( DEBUG, "DisableInteractionsProcessing() called ...\n");
-  m_InteractionHandling = false;
 }
 
 /** */
@@ -732,8 +688,6 @@ void ViewNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
                << *(this->m_RenderWindowInteractor) << std::endl;
   os << indent << "Renderer Pointer: " << this->m_Renderer << std::endl;
   os << indent << "Camera Pointer: " << this->m_Camera << std::endl;
-  os << indent << "InteractionHandling: ";
-  os << this->m_InteractionHandling << std::endl;
 
   if( this->m_PulseGenerator )
     {

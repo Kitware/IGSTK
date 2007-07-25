@@ -188,7 +188,6 @@ int igstkQTWidgetTest( int argc, char * argv[])
     view2D->SetLogger( logger );
     
     view2D->RequestResetCamera();
-    view2D->RequestEnableInteractions();
     
     // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );

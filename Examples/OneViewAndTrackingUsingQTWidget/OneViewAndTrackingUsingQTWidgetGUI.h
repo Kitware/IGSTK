@@ -63,6 +63,7 @@ public:
 public slots:
   void OnQuitAction();
   void OnTrackingAction( int state);
+  void OnInteractionAction( int state);
 
 private:
   void CreateActions();

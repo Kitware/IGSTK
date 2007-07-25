@@ -31,7 +31,7 @@ namespace igstk
 
 /** Constructor */
 FLTKWidget::FLTKWidget( int x, int y, int w, int h, const char *l ) : 
-Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this)
+Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
 { 
   igstkLogMacro( DEBUG, "Constructor() called ...\n");
   
@@ -43,7 +43,8 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this)
   m_InteractionHandling = true;
 
   // instantiate the view object 
-  m_View = ViewType::New();
+  m_View = ViewType::New(); 
+
 }
 
 /** Destructor */
@@ -61,17 +62,48 @@ FLTKWidget::~FLTKWidget()
 
 }
 
+/** Set VTK renderer */
+void FLTKWidget::SetVTKRenderer( vtkRenderer * renderer )
+{
+  this->m_VTKRenderer = renderer;
+}
+
+/** Set VTK renderw window interactor */
+void FLTKWidget::SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
+{
+  this->m_VTKRenderWindowInteractor = interactor;
+}
+
 /** Set View */
 void FLTKWidget::SetView( ViewType::Pointer view )
 {
   igstkLogMacro( DEBUG, "SetView(ViewType::Pointer ) called ...\n");
   m_View = view;
+
 }
 
 /** Update the display */
 void FLTKWidget::Update()
 {
   igstkLogMacro( DEBUG, "Update() called ...\n");
+
+  this->m_ProxyView.Connect ( m_View );
+
+  vtkRenderWindow * renderWindow = m_VTKRenderer->GetRenderWindow();
+  vtkRenderWindowInteractor * interactor = m_VTKRenderWindowInteractor; 
+
+  #if defined(__APPLE__) && defined(VTK_USE_CARBON)
+    // FLTK 1.x does not support HiView
+    ((vtkCarbonRenderWindow *)renderWindow)->SetRootWindow( fl_xid( this ) );
+  #else
+    renderWindow->SetWindowId( (void *)fl_xid( this ) );
+  #endif
+  #if !defined(WIN32) && !defined(__APPLE__)
+    renderWindow->SetDisplayId( fl_display );
+  #endif
+    // get vtk to render to the Fl_Gl_Window
+  interactor->Render();
+
   this->m_View->Update();
 }
 
@@ -121,10 +153,6 @@ void FLTKWidget::draw(void)
   this->make_current();
 
   this->m_ProxyView.Connect ( m_View );
-
-  /*
-  vtkRenderWindow * renderWindow = m_View->GetRenderWindow();
-  vtkRenderWindowInteractor * interactor = m_View->GetRenderWindowInteractor(); */
 
   vtkRenderWindow * renderWindow = m_VTKRenderer->GetRenderWindow();
   vtkRenderWindowInteractor * interactor = m_VTKRenderWindowInteractor; 

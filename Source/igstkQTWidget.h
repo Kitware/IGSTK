@@ -87,19 +87,27 @@ public:
 
   friend class ViewProxy< QTWidget >;
 
+  /** Disable user interactions with the window via mouse and keyboard */
+  void RequestDisableInteractions();
+
+  /** Enable user interactions with the window via mouse and keyboard */
+  void RequestEnableInteractions();
+
 protected:
   
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
-  /** Overload the method that manages mouse events in order
+  /** Override the method that manages mouse events in order
       to provide picker functionalities */
   void mouseReleaseEvent(QMouseEvent* e);
 
-  /** Overload the mouse move event to send transform events
+  /** Override the mouse move event to send transform events
     when the mouse is moved while the left button is down */
   void mouseMoveEvent(QMouseEvent* e);
-
+  void mousePressEvent(QMouseEvent* e);
+  void wheelEvent(QWheelEvent* e);
+  
 
 private:
   /** Report any invalid request to the logger */
@@ -111,6 +119,12 @@ private:
   /** Process a valid view component that is connected to the widget */ 
   void ConnectViewProcessing();
 
+  /** Disable keyboard and mouse interactions */
+  void DisableInteractionsProcessing();
+
+  /** Enable keyboard and mouse interactions */
+  void EnableInteractionsProcessing();
+
   /** Set VTK renderer */
   void SetVTKRenderer( vtkRenderer * renderer );
 
@@ -118,7 +132,6 @@ private:
   void SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
 
 private:
-  bool                    m_InteractionHandling;
   ViewType::Pointer       m_View;
 
   typedef vtkWorldPointPicker  PickerType;
@@ -130,14 +143,17 @@ private:
   vtkRenderer                         * m_VTKRenderer;
   vtkRenderWindowInteractor           * m_VTKRenderWindowInteractor;
 
+  bool                    m_InteractionHandling;
 
-  /** States for the State Machine */
+   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( ViewConnected );
 
   /** Inputs to the State machine */
   igstkDeclareInputMacro( ValidView );
   igstkDeclareInputMacro( InValidView );
+  igstkDeclareInputMacro( EnableInteractions );
+  igstkDeclareInputMacro( DisableInteractions );
 
 };
 

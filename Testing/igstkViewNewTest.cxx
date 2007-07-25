@@ -197,10 +197,7 @@ int igstkViewNewTest( int, char * [] )
     view2D->Update();
     
     view2D->RequestResetCamera();
-    view2D->RequestEnableInteractions();
-    
     view3D->RequestResetCamera();
-    view3D->RequestEnableInteractions();
     
     // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );
@@ -227,9 +224,6 @@ int igstkViewNewTest( int, char * [] )
       {
       igstk::PulseGenerator::CheckTimeouts();
       }
-
-    view2D->RequestDisableInteractions();
-    view3D->RequestDisableInteractions();
 
     // Remove the ellipsoid from the view
     view2D->RequestRemoveObject( ellipsoidRepresentation );

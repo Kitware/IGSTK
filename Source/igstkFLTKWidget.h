@@ -97,17 +97,10 @@ protected:
    
 private:
    /** Set VTK renderer */
-  void SetVTKRenderer( vtkRenderer * renderer )
-    {
-    this->m_VTKRenderer = renderer;
-    }
+  void SetVTKRenderer( vtkRenderer * renderer );
 
   /** Set VTK renderw window interactor */
-  void SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
-    {
-    this->m_VTKRenderWindowInteractor = interactor;
-    }
-
+  void SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
  
   /** Change the window size */
   void UpdateSize(int x, int y);

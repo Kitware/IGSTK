@@ -69,6 +69,9 @@ OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
   m_GUIQuit  = false;
 
   ui.Display3D->SetLogger( m_Logger );
+
+  //By default turn on interaction
+  ui.InteractionCheckBox->setCheckState( Qt::Checked );
   
 }
 
@@ -84,6 +87,8 @@ void OneViewAndTrackingUsingQTWidgetGUI::CreateActions()
   connect(ui.QuitPushButton, SIGNAL(clicked()), this, SLOT(OnQuitAction()));
   connect(ui.TrackingCheckBox, SIGNAL(stateChanged(int )), this,
           SLOT(OnTrackingAction(int)));
+  connect(ui.InteractionCheckBox, SIGNAL(stateChanged(int )), this,
+          SLOT(OnInteractionAction(int)));
 }
 
 void OneViewAndTrackingUsingQTWidgetGUI::OnQuitAction()
@@ -109,18 +114,29 @@ void OneViewAndTrackingUsingQTWidgetGUI::OnTrackingAction( int state )
 {
   if ( state )
     {
-    std::cout << "Tracker is enabled: " << std::endl;
     m_Tracking = true;
     m_Tracker->RequestStartTracking();
     }
   else
     {
-    std::cout << "Tracker is disabled: " << std::endl;
     m_Tracker->RequestReset();
     m_Tracker->RequestStopTracking();
     m_Tracking = false;
     } 
 }
+
+void OneViewAndTrackingUsingQTWidgetGUI::OnInteractionAction( int state )
+{
+  if ( state )
+    {
+    ui.Display3D->RequestEnableInteractions();
+    }
+  else
+    {
+    ui.Display3D->RequestDisableInteractions();
+    } 
+}
+
 
 void 
 OneViewAndTrackingUsingQTWidgetGUI::
