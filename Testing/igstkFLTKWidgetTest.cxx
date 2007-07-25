@@ -202,36 +202,37 @@ int igstkFLTKWidgetTest( int, char * [] )
     // Add the cylinder to the view
     view3D->RequestAddObject( cylinderRepresentation );
 
-       // Create an FLTK minimal GUI
+    // Create an FLTK minimal GUI
     typedef igstk::FLTKWidget      FLTKWidgetType;
+
+    // End of the GUI creation
+
+    // Set the refresh rate and start 
+    // the pulse generators of the views.
+    view2D->RequestSetRefreshRate( 10 );
+
+    // Set the refresh rate and start 
+    // the pulse generators of the views.
+    view3D->RequestSetRefreshRate( 10 );
 
     Fl_Window * form = new Fl_Window(601,301,"View Test");
     
     // instantiate FLTK widget 
     FLTKWidgetType * fltkWidget2D = 
                       new FLTKWidgetType( 10,10,280,280,"2D View");
-    fltkWidget2D->SetView( view2D );
+    fltkWidget2D->RequestSetView( view2D );
     fltkWidget2D->SetLogger( logger );
+    view2D->RequestStart();
+    view2D->Update();    
     
     FLTKWidgetType * fltkWidget3D = 
                       new FLTKWidgetType( 310,10,280,280,"3D View");
-    fltkWidget3D->SetView( view3D );
+    fltkWidget3D->RequestSetView( view3D );
+    view3D->RequestStart();
+    view3D->Update();    
     fltkWidget3D->SetLogger( logger );
 
     form->end();
-    // End of the GUI creation
-
-    // Set the refresh rate and start 
-    // the pulse generators of the views.
-    view2D->Update();    
-    view2D->RequestSetRefreshRate( 30 );
-    view2D->RequestStart();
-
-    // Set the refresh rate and start 
-    // the pulse generators of the views.
-    view3D->Update();    
-    view3D->RequestSetRefreshRate( 30 );
-    view3D->RequestStart();
 
     form->show();
 

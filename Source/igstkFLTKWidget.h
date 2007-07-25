@@ -24,6 +24,11 @@
 #pragma warning( disable : 4284 )
 #endif
 
+// VTK 
+#include "vtkInteractorStyle.h"
+#include "vtkRenderer.h"
+#include "vtkWorldPointPicker.h"
+
 // FLTK headers
 #include <FL/Fl.H>
 #include <FL/Fl_Gl_Window.H>
@@ -65,13 +70,13 @@ public:
   igstkLoggerMacro()
 
   /** Set view */
-  void SetView( ViewType::Pointer view );
+  void RequestSetView( ViewType::Pointer view );
 
-  /** Enable interaction */
-  void EnableInteractions();
+  /** Disable user interactions with the window via mouse and keyboard */
+  void RequestDisableInteractions();
 
-  /** Disable interaction */
-  void DisableInteractions();
+  /** Enable user interactions with the window via mouse and keyboard */
+  void RequestEnableInteractions();
 
   typedef ViewProxy< FLTKWidget > ProxyType;
 
@@ -96,6 +101,23 @@ protected:
   virtual int  handle( int event );
    
 private:
+
+  /** Report any invalid request to the logger */
+  void ReportInvalidRequestProcessing();
+
+  /** Report Invalid view connected */
+  void ReportInvalidViewConnectedProcessing();
+
+  /** Process a valid view component that is connected to the widget */ 
+  void ConnectViewProcessing();
+
+  /** Disable keyboard and mouse interactions */
+  void DisableInteractionsProcessing();
+
+  /** Enable keyboard and mouse interactions */
+  void EnableInteractionsProcessing();
+
+
    /** Set VTK renderer */
   void SetVTKRenderer( vtkRenderer * renderer );
 
@@ -116,6 +138,22 @@ private:
   vtkRenderer       *m_VTKRenderer; 
 
   vtkRenderWindowInteractor       *m_VTKRenderWindowInteractor; 
+
+  typedef vtkWorldPointPicker  PickerType;
+
+  PickerType                  * m_PointPicker;
+  ::itk::Object::Pointer        m_Reporter;
+ 
+   /** States for the State Machine */
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( ViewConnected );
+
+  /** Inputs to the State machine */
+  igstkDeclareInputMacro( ValidView );
+  igstkDeclareInputMacro( InValidView );
+  igstkDeclareInputMacro( EnableInteractions );
+  igstkDeclareInputMacro( DisableInteractions );
+
 
 };
 

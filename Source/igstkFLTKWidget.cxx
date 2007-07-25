@@ -39,11 +39,38 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
   
   this->end();
 
+  m_PointPicker = PickerType::New();
+  m_Reporter    = ::itk::Object::New();
+
   //Turn on interaction handling
   m_InteractionHandling = true;
 
   // instantiate the view object 
   m_View = ViewType::New(); 
+
+  igstkAddInputMacro( ValidView );
+  igstkAddInputMacro( InValidView );
+  igstkAddInputMacro( EnableInteractions );
+  igstkAddInputMacro( DisableInteractions );
+
+  igstkAddStateMacro( Idle );
+  igstkAddStateMacro( ViewConnected );
+
+  igstkAddTransitionMacro( Idle, ValidView, ViewConnected, ConnectView );   
+
+  igstkAddTransitionMacro( Idle, EnableInteractions,
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, DisableInteractions,
+                           Idle,  ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ViewConnected, EnableInteractions,
+                           ViewConnected,  EnableInteractions );
+  igstkAddTransitionMacro( ViewConnected, DisableInteractions,
+                           ViewConnected,  DisableInteractions );
+
+  igstkSetInitialStateMacro( Idle );
+  m_StateMachine.SetReadyToRun();
+
 
 }
 
@@ -60,6 +87,7 @@ FLTKWidget::~FLTKWidget()
     ((Fl_Group*)parent())->remove(*(Fl_Gl_Window*)this);
     }
 
+  m_PointPicker->Delete();
 }
 
 /** Set VTK renderer */
@@ -74,20 +102,71 @@ void FLTKWidget::SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * inter
   this->m_VTKRenderWindowInteractor = interactor;
 }
 
-/** Set View */
-void FLTKWidget::SetView( ViewType::Pointer view )
+/** Request set View */
+void FLTKWidget::RequestSetView( ViewType::Pointer view )
 {
-  igstkLogMacro( DEBUG, "SetView(ViewType::Pointer ) called ...\n");
+  igstkLogMacro( DEBUG, "RequestSetView called ...\n");
+  //FIXME: insert a logic to check if the specified view is 
+  //valid or not
   m_View = view;
+  igstkPushInputMacro( ValidView );
+  m_StateMachine.ProcessInputs();
+}
 
+/** Connect view  */
+void FLTKWidget::ConnectViewProcessing( )
+{
+  igstkLogMacro( DEBUG, "ConnectViewProcessing called ...\n");
+
+  this->m_ProxyView.Connect( m_View );
+  
+  m_VTKRenderer->GetRenderWindow()->GetInteractor()->SetPicker( m_PointPicker );
+
+  //Add actors to the point picker list
+  vtkPropCollection * propList = this->m_VTKRenderer->GetViewProps();
+  vtkProp * prop;
+
+  while(prop = propList->GetNextProp())
+    {
+    this->m_PointPicker->AddPickList(prop);
+    }
+}
+
+/** Request enable interactions */
+void FLTKWidget::RequestEnableInteractions()
+{
+  igstkLogMacro( DEBUG, "RequestEnableInteractions() called ...\n");
+  igstkPushInputMacro( EnableInteractions );
+  m_StateMachine.ProcessInputs();
+}
+
+
+/** Request disable interactions */
+void FLTKWidget::RequestDisableInteractions()
+{
+  igstkLogMacro( DEBUG, "RequestDisableInteractions() called ...\n");
+  igstkPushInputMacro( DisableInteractions );
+  m_StateMachine.ProcessInputs();
+}
+
+/** */
+void FLTKWidget::EnableInteractionsProcessing()
+{
+  igstkLogMacro( DEBUG, "EnableInteractionsProcessing() called ...\n");
+  m_InteractionHandling = true;
+}
+
+/** */
+void FLTKWidget::DisableInteractionsProcessing()
+{
+  igstkLogMacro( DEBUG, "DisableInteractionsProcessing() called ...\n");
+  m_InteractionHandling = false;
 }
 
 /** Update the display */
 void FLTKWidget::Update()
 {
   igstkLogMacro( DEBUG, "Update() called ...\n");
-
-  this->m_ProxyView.Connect ( m_View );
 
   vtkRenderWindow * renderWindow = m_VTKRenderer->GetRenderWindow();
   vtkRenderWindowInteractor * interactor = m_VTKRenderWindowInteractor; 
@@ -105,20 +184,6 @@ void FLTKWidget::Update()
   interactor->Render();
 
   this->m_View->Update();
-}
-
-/** */
-void FLTKWidget::EnableInteractions()
-{
-  igstkLogMacro( DEBUG, "Update() called ...\n");
-  m_InteractionHandling = true;
-}
-
-/** */
-void FLTKWidget::DisableInteractions()
-{
-  igstkLogMacro( DEBUG, "Update() called ...\n");
-  m_InteractionHandling = false;
 }
 
 /** this gets called during FLTK window draw()s and resize()s */
@@ -151,8 +216,6 @@ void FLTKWidget::draw(void)
   // and the Render() will fail due to an invalid context.
   // see Fl_Gl_Window::show()
   this->make_current();
-
-  this->m_ProxyView.Connect ( m_View );
 
   vtkRenderWindow * renderWindow = m_VTKRenderer->GetRenderWindow();
   vtkRenderWindowInteractor * interactor = m_VTKRenderWindowInteractor; 
@@ -290,5 +353,21 @@ int FLTKWidget::handle( int event )
 
   return 1; // we handled the event if we didn't return earlier
 }
+
+/** Report that an invalid or suspicious operation has been requested. This may
+ * mean that an error condition has arised in one of the componenta that
+ * interact with this class. */
+void FLTKWidget::ReportInvalidRequestProcessing()
+{
+  igstkLogMacro( WARNING, "ReportInvalidRequestProcessing() called ...\n");
+}
+
+/** Report that an invalid view component is specified */
+void FLTKWidget::ReportInvalidViewConnectedProcessing()
+{
+  igstkLogMacro( WARNING,
+                "ReportInvalidViewConnectedProcessing() called ...\n");
+}
+
 
 } // end namespace igstk
