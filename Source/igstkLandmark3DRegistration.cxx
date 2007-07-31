@@ -312,7 +312,7 @@ Landmark3DRegistration::Landmark3DRegistration() : m_StateMachine( this )
   m_RMSError = 0.0;
 
   // Initialize collinearity tolerance
-  m_CollinearityTolerance = 0.01;
+  m_CollinearityTolerance = 0.0001;
 } 
 
 /** Destructor */
