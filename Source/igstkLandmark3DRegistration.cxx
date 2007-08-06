@@ -700,4 +700,3 @@ Landmark3DRegistration::PrintSelf( std::ostream& os,
 }
 
 } // end namespace igstk
-
