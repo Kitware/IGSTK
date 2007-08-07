@@ -54,8 +54,8 @@ m_StateMachine(this)
   m_RenderWindow->BordersOff();
   m_Renderer->SetBackground(0.5,0.5,0.5);
 
-  //SET THE SIZE PROPERLY
-  m_RenderWindow->SetSize( 256, 256);
+  // Initialize the render window size 
+  m_RenderWindow->SetSize( 512, 512 );
 
   int * size = m_RenderWindow->GetSize();
     
@@ -87,7 +87,8 @@ m_StateMachine(this)
   igstkAddInputMacro( StopRefreshing  );
   igstkAddInputMacro( ValidScreenShotFileName  );
   igstkAddInputMacro( InvalidScreenShotFileName  );
-
+  igstkAddInputMacro( ValidRenderWindowSize  );
+  igstkAddInputMacro( InValidRenderWindowSize  );
 
   igstkAddStateMacro( Idle       );
   igstkAddStateMacro( Refreshing );
@@ -127,6 +128,11 @@ m_StateMachine(this)
                            Idle, SaveScreenShotWhileIdle )
   igstkAddTransitionMacro( Idle, InvalidScreenShotFileName,
                            Idle, ReportInvalidScreenShotFileName );
+  igstkAddTransitionMacro( Idle, ValidRenderWindowSize,
+                           Idle, SetRenderWindowSize );
+  igstkAddTransitionMacro( Idle, InValidRenderWindowSize,
+                           Idle, ReportInvalidRenderWindowSize);
+  
   igstkAddTransitionMacro( Refreshing, ValidAddObject,
                            Refreshing,  AddObject );
   igstkAddTransitionMacro( Refreshing, NullAddObject,
@@ -161,6 +167,11 @@ m_StateMachine(this)
                            Refreshing, SaveScreenShotWhileRefreshing )
   igstkAddTransitionMacro( Refreshing, InvalidScreenShotFileName,
                            Refreshing, ReportInvalidScreenShotFileName );
+  igstkAddTransitionMacro( Refreshing, ValidRenderWindowSize,
+                           Refreshing, SetRenderWindowSize );
+  igstkAddTransitionMacro( Refreshing, InValidRenderWindowSize,
+                           Refreshing, ReportInvalidRenderWindowSize);
+ 
 
   igstkSetInitialStateMacro( Idle );
 
@@ -241,7 +252,7 @@ void ViewNew::RequestAddActor( vtkProp * actor )
     }
 }
 
-/** this gets called during FLTK window draw()s and resize()s */
+/** this gets called during GUI window draw()s and resize()s */
 void ViewNew::UpdateSize(int W, int H)
 {
   igstkLogMacro( DEBUG, "UpdateSize() called ...\n");
@@ -326,6 +337,41 @@ void ViewNew::StopProcessing()
   // the internal pulse generator will control the redraws
   m_PulseGenerator->RequestStop();
 }
+
+/** Set RenderWindow size */
+void ViewNew::SetRenderWindowSizeProcessing()
+{
+  igstkLogMacro( DEBUG, "SetRenderWindowSizeProcessing(...) called ...\n");
+
+  m_RenderWindowInteractor->UpdateSize( m_RenderWindowWidthToBeSet,
+                                        m_RenderWindowHeightToBeSet);
+  m_RenderWindow->SetSize(m_RenderWindowWidthToBeSet,
+                          m_RenderWindowHeightToBeSet);
+
+  m_RenderWindowInteractor->Modified();
+  m_RenderWindow->Modified();
+}
+
+/** Set camera position */
+void ViewNew::RequestSetRenderWindowSize( int width , int height )
+{
+  igstkLogMacro( DEBUG, "RequestSetRenderWindowSize(...) called ...\n");
+
+  if ( width > 0 && height > 0 )
+    {
+    m_RenderWindowWidthToBeSet = width;
+    m_RenderWindowHeightToBeSet = height;
+    igstkPushInputMacro( ValidRenderWindowSize );
+    }
+  else
+    {
+    igstkPushInputMacro( InValidRenderWindowSize );
+    }
+
+  m_StateMachine.ProcessInputs();
+}
+
+
 
 /** Set camera position */
 void ViewNew::RequestSetPosition( double x, double y, double z )
@@ -474,6 +520,7 @@ void ViewNew::AddAnnotation2DProcessing( )
   igstkLogMacro( DEBUG, "AddAnnotation2DProcessing called ...\n");
   
   const int * size = m_RenderWindowInteractor->GetSize();
+  std::cout << "RenderWindowInteractor size: " << size[0] <<"," << size[1] << std::endl;
   m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( size[0], size[1] );
   m_Annotation2DToBeAdded->RequestAddAnnotations( );
   Annotation2D::ActorsListType actors = m_Annotation2DToBeAdded->GetActors();
@@ -593,6 +640,11 @@ void ViewNew::ReportInvalidRequestProcessing()
   igstkLogMacro( WARNING, "ReportInvalidRequestProcessing() called ...\n");
 }
 
+/** Report a request to set an invalid render window size set */ 
+void ViewNew::ReportInvalidRenderWindowSizeProcessing()
+{
+  igstkLogMacro( WARNING, "ReportInvalidRenderWindowSizeProcessing() called ...\n");
+}
 
 /** Report that an invalid filename for saving the screen shot */
 void ViewNew::ReportInvalidScreenShotFileNameProcessing()

@@ -70,6 +70,9 @@ public:
    * attempt to go faster than your monitor, nor more than double than your
    * trackers */
   void RequestSetRefreshRate( double frequency );
+
+  /** Set the size of the render window */
+  void RequestSetRenderWindowSize( int width, int height );
   
   /** Add an observer to this ViewNew class */
   unsigned long AddObserver( const ::itk::EventObject & event, 
@@ -234,6 +237,12 @@ private:
   /** Reports when a filename for the screen shot is not valid */
   void ReportInvalidScreenShotFileNameProcessing();
 
+  /** Set render window size */
+  void SetRenderWindowSizeProcessing(); 
+
+  /** Report invalid render window size*/
+  void ReportInvalidRenderWindowSizeProcessing();
+ 
   /** This should be called by the state machine */
   void StartProcessing();
   void StopProcessing();
@@ -249,6 +258,9 @@ private:
   ObjectRepresentation::Pointer m_ObjectToBeRemoved;
   ObjectListType::iterator      m_IteratorToObjectToBeRemoved;
   std::string                   m_ScreenShotFileName;
+  int                           m_RenderWindowWidthToBeSet;
+  int                           m_RenderWindowHeightToBeSet;
+ 
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidAddActor );
@@ -268,6 +280,8 @@ private:
   igstkDeclareInputMacro( StopRefreshing );
   igstkDeclareInputMacro( ValidScreenShotFileName );
   igstkDeclareInputMacro( InvalidScreenShotFileName );
+  igstkDeclareInputMacro( ValidRenderWindowSize );
+  igstkDeclareInputMacro( InValidRenderWindowSize );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
