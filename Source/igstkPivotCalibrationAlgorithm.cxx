@@ -10,8 +10,9 @@ namespace igstk
 
 const double PivotCalibrationAlgorithm::DEFAULT_SINGULAR_VALUE_THRESHOLD = 1e-3;
 
-PivotCalibrationAlgorithm::PivotCalibrationAlgorithm() : m_StateMachine( this ), 
-                                                         m_SingularValueThreshold( DEFAULT_SINGULAR_VALUE_THRESHOLD )
+PivotCalibrationAlgorithm::PivotCalibrationAlgorithm() : 
+  m_StateMachine( this ), 
+  m_SingularValueThreshold( DEFAULT_SINGULAR_VALUE_THRESHOLD )
 {
         //define the state machine's states 
   igstkAddStateMacro( Idle );
@@ -164,7 +165,7 @@ PivotCalibrationAlgorithm::PivotCalibrationAlgorithm() : m_StateMachine( this ),
   igstkAddTransitionMacro(CalibrationComputed,
                           CalibrationComputationFailure,
                           CalibrationComputed,
-                          ReportInvalidRequest);               
+                          ReportInvalidRequest);
 
          //set the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
@@ -172,8 +173,8 @@ PivotCalibrationAlgorithm::PivotCalibrationAlgorithm() : m_StateMachine( this ),
          // done setting the state machine, ready to run
   this->m_StateMachine.SetReadyToRun();
   
-         //internal variables are not initialized as they are not accessible till
-         //they are assigned valid values later on
+       //internal variables are not initialized as they are not accessible till
+       //they are assigned valid values later on
 } 
 
 
@@ -193,7 +194,8 @@ PivotCalibrationAlgorithm::RequestAddTransform( const TransformType & t )
 }
 
 void 
-PivotCalibrationAlgorithm::RequestAddTransforms( std::vector< TransformType > & t )
+PivotCalibrationAlgorithm::RequestAddTransforms( 
+  std::vector< TransformType > & t )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibrationAlgorithm::"
                  "RequestAddTransforms called...\n");
@@ -320,12 +322,15 @@ PivotCalibrationAlgorithm::ComputeCalibrationProcessing()
   minusI( 2, 2 ) = -1;
 
               //do the computation and set the internal variables
-  TransformContainerType::const_iterator it, transformsEnd = this->m_Transforms.end();
+  TransformContainerType::const_iterator it, 
+    transformsEnd = this->m_Transforms.end();
   unsigned int currentRow;
-  for( currentRow = 0, it = this->m_Transforms.begin(); it != transformsEnd; it++, currentRow+=3 ) 
+  for( currentRow = 0, it = this->m_Transforms.begin(); 
+       it != transformsEnd; 
+       it++, currentRow += 3 ) 
   {
     t = (*it).GetTranslation().GetVnlVector();
-    t*=-1;
+    t *= -1;
     b.update( t, currentRow );
     R = (*it).GetRotation().GetMatrix().GetVnlMatrix();
     A.update( R, currentRow, 0 );
@@ -334,13 +339,14 @@ PivotCalibrationAlgorithm::ComputeCalibrationProcessing()
   vnl_svd<double> svdA(A);
   svdA.zero_out_absolute(m_SingularValueThreshold);
 
-          //there is a solution only if rank(A)=6 (columns are linearly independent) 
+          //there is a solution only if rank(A)=6 (columns are linearly 
+          //independent) 
   if( svdA.rank() < 6 ) 
   {
     igstkPushInputMacro( CalibrationComputationFailure );
   }
   else
-  {           
+  {
     x = svdA.solve( b );
 
              //set the RMSE
@@ -351,10 +357,13 @@ PivotCalibrationAlgorithm::ComputeCalibrationProcessing()
     igstk::Transform::VectorType translation;
     translation[0] = x[0];
     translation[1] = x[1];
-    translation[2] = x[2];             
-                     //error value associated with transformation is the RMSE of the equation system, 
-                     //and validity time is set to maximal possible 
-    this->m_Transform.SetTranslation( translation, this->m_RMSE, itk::NumericTraits<double>::max() );
+    translation[2] = x[2];
+                     //error value associated with transformation is the RMSE 
+                     //of the equation system, and validity time is set to 
+                     //maximal possible 
+    this->m_Transform.SetTranslation( translation, 
+                                      this->m_RMSE, 
+                                      itk::NumericTraits<double>::max() );
 
              //set the pivot point
     this->m_PivotPoint[0] = x[3];
@@ -369,8 +378,8 @@ void
 PivotCalibrationAlgorithm::ReportSuccessInCalibrationComputationProcessing()
 {
   igstkLogMacro( DEBUG,
-                  "igstk::PivotCalibrationAlgorithm::"
-                  "ReportSuccessInCalibrationComputationProcessing called...\n");
+                 "igstk::PivotCalibrationAlgorithm::"
+                 "ReportSuccessInCalibrationComputationProcessing called...\n");
   this->InvokeEvent( CalibrationSuccessEvent() );
 }
 
@@ -378,8 +387,8 @@ void
 PivotCalibrationAlgorithm::ReportFailureInCalibrationComputationProcessing()
 {
   igstkLogMacro( DEBUG,
-                  "igstk::PivotCalibrationAlgorithm::"
-                  "ReportFailureInCalibrationComputationProcessing called...\n");
+                 "igstk::PivotCalibrationAlgorithm::"
+                 "ReportFailureInCalibrationComputationProcessing called...\n");
   this->InvokeEvent( CalibrationFailureEvent() );
 }
 
@@ -423,7 +432,8 @@ PivotCalibrationAlgorithm::PrintSelf( std::ostream& os,
 {
   Superclass::PrintSelf(os, indent);
   os << indent << "Transforms for pivot calibration: " << std::endl;
-  TransformContainerType::const_iterator it, endTransforms = this->m_Transforms.end();
+  TransformContainerType::const_iterator it, 
+    endTransforms = this->m_Transforms.end();
   for( it=this->m_Transforms.begin(); it != endTransforms; it++)   
     os << indent << *it << std::endl;
 }
