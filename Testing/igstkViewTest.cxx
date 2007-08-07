@@ -208,9 +208,6 @@ int igstkViewTest( int, char * [] )
     form->show();
 
     // Exercice some view functions
-    view2D->Initialize();
-    view2D->Enable();
-    view2D->Render();
     view2D->Update();
     
     view2D->RequestResetCamera();

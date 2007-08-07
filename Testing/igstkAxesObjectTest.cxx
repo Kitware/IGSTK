@@ -206,8 +206,6 @@ int igstkAxesObjectTest( int, char * [] )
 
   form->show();
 
-  view2D->Initialize();
-  view2D->Enable();
   view2D->RequestResetCamera();
   view2D->RequestEnableInteractions();
  

@@ -320,23 +320,6 @@ void View::RequestDisableInteractions()
   m_StateMachine.ProcessInputs();
 }
 
-/** */
-void View::Initialize()
-{
-  m_RenderWindowInteractor->Initialize();
-}
-
-/** */
-void View::Enable()
-{
-  m_RenderWindowInteractor->Enable();
-}
-
-/** */
-void View::Render()
-{
-  m_RenderWindowInteractor->Render();
-}
 
 /** */
 void View::EnableInteractionsProcessing()
