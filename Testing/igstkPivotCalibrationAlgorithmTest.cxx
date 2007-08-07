@@ -993,7 +993,7 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
   computedTransform2 = transformEventObserver->Get();
   composedTransform = igstk::Transform::TransformCompose( computedTransform2, 
                                                           computedTransform1.GetInverse() );
-  std::cout<<"Next line should show the identity transformation:\n"
+  std::cout<<"Next line should show the identity transformation:\n";
   std::cout<<composedTransform<<std::endl;
 
   pivotCalibrationAlgorithm->RequestPivotPoint();
