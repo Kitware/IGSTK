@@ -115,7 +115,12 @@ IF(IGSTKSandbox_DATA_ROOT)
               igstkObliqueImageSpatialObjectRepresentationTest
               ${IGSTKSandbox_DATA_ROOT}/E000192)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkObliqueImageSpatialObjectRepresentationTest)
+        igstkObliqueImageSpatialObjectRepresentationTest.cxx)
+
+    ADD_TEST( igstkAnnotation2DTest2 ${IGSTKSandbox_TESTS} igstkAnnotation2DTest2
+              ${IGSTK_DATA_ROOT}/Input/E000192 )
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkAnnotation2DTest2.cxx)
   ENDIF (IGSTK_USE_FLTK)
 ENDIF(IGSTKSandbox_DATA_ROOT)
 

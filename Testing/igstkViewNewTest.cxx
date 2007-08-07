@@ -72,12 +72,22 @@ public:
     m_End = end;
     }
 
+  void SetResizeFlag( bool * resize )
+    {
+    m_Resize = resize;
+    }
+
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
     if( ::igstk::RefreshEvent().CheckEvent( &event ) )
       {
       m_PulseCounter++;
 
+      if( m_PulseCounter == 10 )
+        {
+        *m_Resize = true; 
+        }                
+   
       if( m_PulseCounter > 20 )
         {
         if( m_ViewNew )
@@ -98,7 +108,7 @@ private:
   unsigned long         m_PulseCounter;
   ::igstk::ViewNew    * m_ViewNew;
   bool *                m_End;
-
+  bool *                m_Resize;
 };
 
 }
@@ -110,7 +120,8 @@ int igstkViewNewTest( int, char * [] )
   typedef igstk::ViewNew2D  ViewNew2DType;
   typedef igstk::ViewNew3D  ViewNew3DType;
 
-  bool bEnd = false;
+  bool bEnd    = false;
+  bool bResize = false;
 
   typedef itk::Logger              LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
@@ -186,38 +197,31 @@ int igstkViewNewTest( int, char * [] )
   
     ViewNew2DType::Pointer view2D = ViewNew2DType::New();
     ViewNew3DType::Pointer view3D = ViewNew3DType::New();
+  
+    view2D->SetLogger( logger );
 
     // Exercise GetNameOfClass() method
     std::cout << view2D->ViewNew2DType::Superclass::GetNameOfClass() 
               << std::endl;
 
-    std::cout << view3D->GetNameOfClass() << std::endl;
-    std::cout << view3D->GetNameOfClass() << std::endl;
-      
+    // Exercise GetNameOfClass() method
+    std::cout << view3D->ViewNew3DType::Superclass::GetNameOfClass() 
+              << std::endl;
+
     view2D->Update();
-    
     view2D->RequestResetCamera();
+
+    view3D->Update();
     view3D->RequestResetCamera();
     
     // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );
     
-    // Add the cylinder to the view
-    view3D->RequestAddObject( cylinderRepresentation );
-    
-    // Exercise error conditions.
-    //
-    // Attempt to add an object that already exists.
-    view3D->RequestAddObject( ellipsoidRepresentation );
-
-
     // Set the refresh rate and start 
     // the pulse generators of the views.
     view2D->RequestSetRefreshRate( 30 );
-    view3D->RequestSetRefreshRate( 10 );
 
     view2D->RequestStart();
-    view3D->RequestStart();
 
     // Do manual redraws
     for(unsigned int i=0; i<10; i++)
@@ -228,45 +232,22 @@ int igstkViewNewTest( int, char * [] )
     // Remove the ellipsoid from the view
     view2D->RequestRemoveObject( ellipsoidRepresentation );
     
-    // Remove the cylinder from the view
-    view3D->RequestRemoveObject( cylinderRepresentation );
-
-    // Exercise error conditions.
-    //
-    // Attempt to remove an object that already was removed
-    view3D->RequestRemoveObject( ellipsoidRepresentation );
-
-
-    // Exercise error conditions.
-    //
-    // Attempt to add an object with null pointer
-    view3D->RequestAddObject( 0 );
-    
-    // Exercise error conditions.
-    //
-    // Attempt to remove an object with null pointer
-    view3D->RequestRemoveObject( 0 );
-
-    // Exercise error conditions.
-    //
-    // Attempt to add an annotation with a null pointer
-    view3D->RequestAddAnnotation2D( 0 );
- 
     // Do automatic redraws using the internal PulseGenerator
     view2D->RequestAddObject( ellipsoidRepresentation );
-    view3D->RequestAddObject( cylinderRepresentation );
     typedef ViewNewTest::ViewNewObserver ObserverType;
     ObserverType::Pointer viewObserver = ObserverType::New();
     
-    viewObserver->SetViewNew( view3D );
+    viewObserver->SetViewNew( view2D );
     viewObserver->SetEndFlag( &bEnd );
+    viewObserver->SetResizeFlag( &bResize );
 
     // Exercise and test the Print() methods
     view2D->Print( std::cout, 0 );
-    view3D->Print( std::cout, 0 );
 
     std::cout << *view2D << std::endl;
-    std::cout << *view3D << std::endl;
+
+    view2D->RequestSetRenderWindowSize( 256, 256 );
+    view2D->RequestStart();
 
     while(1)
       {
@@ -275,16 +256,18 @@ int igstkViewNewTest( int, char * [] )
         {
         break;
         }
+      
+      // modify the render window  
+      if ( bResize )
+        {
+        view2D->RequestSetRenderWindowSize( 512, 512 );
+        bResize = false;
+        } 
       }
 
     // Exercise the screenshot option with a valid filename
     view2D->RequestSaveScreenShot("igstkViewNewTestScreenshot1.png");
     
-    // Exercise the screenshot option with an valid filename
-    view2D->RequestSaveScreenShot("igstkViewNewTestScreenshot1.jpg");
-
-    // at this point the observer should have hid the form
-
     }
   catch(...)
     {
