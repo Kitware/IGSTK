@@ -222,19 +222,22 @@ int igstkFLTKWidgetTest( int, char * [] )
                       new FLTKWidgetType( 10,10,280,280,"2D View");
     fltkWidget2D->RequestSetView( view2D );
     fltkWidget2D->SetLogger( logger );
-    view2D->RequestStart();
-    view2D->Update();    
     
     FLTKWidgetType * fltkWidget3D = 
                       new FLTKWidgetType( 310,10,280,280,"3D View");
     fltkWidget3D->RequestSetView( view3D );
-    view3D->RequestStart();
-    view3D->Update();    
     fltkWidget3D->SetLogger( logger );
+
+    view2D->Update();    
+
+    view3D->Update();
 
     form->end();
 
     form->show();
+
+    view2D->RequestStart();
+    view3D->RequestStart();
 
     typedef FLTKWidgetTest::ViewObserver ObserverType;
     ObserverType::Pointer viewObserver = ObserverType::New();
