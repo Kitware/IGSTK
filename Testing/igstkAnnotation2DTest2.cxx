@@ -170,8 +170,9 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
                     new FLTKWidgetType( 10,10,512,512,"2D View");
   fltkWidget2D->RequestSetView( view2D );
   fltkWidget2D->SetLogger( logger );
+
+  view2D->RequestInitializeRenderWindowInteractor();    
   view2D->RequestStart();
-  view2D->Update();    
 
 
   form->end();

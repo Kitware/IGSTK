@@ -3,3 +3,7 @@ PROJECT(LandmarkRegistration)
 ADD_EXECUTABLE(LandmarkRegistrationExample LandmarkRegistration1.cxx)
 TARGET_LINK_LIBRARIES(LandmarkRegistrationExample IGSTKSandbox)
 
+ADD_EXECUTABLE(LandmarkRegistrationExample2 LandmarkRegistration2.cxx)
+TARGET_LINK_LIBRARIES(LandmarkRegistrationExample2 IGSTKSandbox)
+
+

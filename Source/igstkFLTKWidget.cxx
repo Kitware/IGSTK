@@ -183,7 +183,7 @@ void FLTKWidget::Update()
     // get vtk to render to the Fl_Gl_Window
   interactor->Render();
 
-  this->m_View->Update();
+  this->m_View->RequestInitializeRenderWindowInteractor();
 }
 
 /** this gets called during FLTK window draw()s and resize()s */

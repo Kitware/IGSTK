@@ -117,6 +117,9 @@ public:
   void RequestSetClippingRange( double dNear, double dFar );
   void RequestSetParallelProjection( bool flag );
 
+  /** Request initialize the RenderWindow interactor */
+  void RequestInitializeRenderWindowInteractor();
+
    friend class ViewProxyBase;
 protected:
 
@@ -198,7 +201,8 @@ private:
     return this->m_RenderWindowInteractor; 
     }
 
-  /** Methods that will only be invoked by the State Machine */
+  /** Initialize the interactor */
+  void InitializeRenderWindowInteractorProcessing();
 
   /** Add and remove vtk Actors. Intended to be called only by the state
    * machine */
@@ -282,9 +286,11 @@ private:
   igstkDeclareInputMacro( InvalidScreenShotFileName );
   igstkDeclareInputMacro( ValidRenderWindowSize );
   igstkDeclareInputMacro( InValidRenderWindowSize );
+  igstkDeclareInputMacro( InitializeInteractor );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( InteractorInitialized );
   igstkDeclareStateMacro( Refreshing );
 
 };

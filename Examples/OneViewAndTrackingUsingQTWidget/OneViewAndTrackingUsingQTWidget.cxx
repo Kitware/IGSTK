@@ -115,14 +115,14 @@ translation, rotation, errorValue, validityTimeInMilliseconds );
   view3D->RequestAddObject( ellipsoidRepresentation );
   view3D->RequestAddObject( cylinderRepresentation );
   view3D->RequestSetRefreshRate( 10 );
+  view3D->RequestInitializeRenderWindowInteractor();
   view3D->RequestStart();
-  view3D->Update();
   view3D->RequestResetCamera();
   
   mainWindow.SetView( view3D );
 
   //Associate the Spatial Object to the tracker
-  mainWindow.AttachObjectToTrack( cylinder );
+  mainWindow.AttachObjectToTrack( ellipsoid );
 
   mainWindow.show();
 

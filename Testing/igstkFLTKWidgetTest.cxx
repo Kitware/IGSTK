@@ -228,9 +228,9 @@ int igstkFLTKWidgetTest( int, char * [] )
     fltkWidget3D->RequestSetView( view3D );
     fltkWidget3D->SetLogger( logger );
 
-    view2D->Update();    
+    view2D->RequestInitializeRenderWindowInteractor();    
 
-    view3D->Update();
+    view3D->RequestInitializeRenderWindowInteractor();
 
     form->end();
 

@@ -49,21 +49,9 @@ OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
   m_Logger->SetPriorityLevel( LoggerType::DEBUG );
   m_Tracker->SetLogger( m_Logger );
 
-  m_Communication = CommunicationType::New();
-  m_Communication->SetLogger( m_Logger );
-  m_Communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
-  m_Communication->SetParity( igstk::SerialCommunication::NoParity );
-  m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
-  m_Communication->SetDataBits( igstk::SerialCommunication::DataBits8 );
-  m_Communication->SetStopBits( igstk::SerialCommunication::StopBits1 );
-  m_Communication->SetHardwareHandshake( 
-    igstk::SerialCommunication::HandshakeOff );
-  m_Tracker->SetCommunication(m_Communication);
-
-  m_Communication->OpenCommunication();
-
   m_Tracker->RequestOpen();
   m_Tracker->RequestInitialize();
+  m_Tracker->SetScaleFactor( 100.0 );
 
   m_Tracking = false;
   m_GUIQuit  = false;

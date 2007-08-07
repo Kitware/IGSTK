@@ -89,8 +89,10 @@ m_StateMachine(this)
   igstkAddInputMacro( InvalidScreenShotFileName  );
   igstkAddInputMacro( ValidRenderWindowSize  );
   igstkAddInputMacro( InValidRenderWindowSize  );
+  igstkAddInputMacro( InitializeInteractor  );
 
   igstkAddStateMacro( Idle       );
+  igstkAddStateMacro( InteractorInitialized );
   igstkAddStateMacro( Refreshing );
 
 
@@ -120,16 +122,26 @@ m_StateMachine(this)
                            Idle,  ReportInvalidRequest );
   igstkAddTransitionMacro( Idle, ResetCamera,
                            Idle,  ResetCamera );
-  igstkAddTransitionMacro( Idle, StartRefreshing,
+
+  igstkAddTransitionMacro( Idle, InitializeInteractor,
+                           InteractorInitialized,  
+                           InitializeRenderWindowInteractor);
+
+  igstkAddTransitionMacro( InteractorInitialized, StartRefreshing,
                            Refreshing,  Start );
+
   igstkAddTransitionMacro( Idle, StopRefreshing,
                            Idle,  ReportInvalidRequest );
+
   igstkAddTransitionMacro( Idle, ValidScreenShotFileName,
                            Idle, SaveScreenShotWhileIdle )
+
   igstkAddTransitionMacro( Idle, InvalidScreenShotFileName,
                            Idle, ReportInvalidScreenShotFileName );
+
   igstkAddTransitionMacro( Idle, ValidRenderWindowSize,
                            Idle, SetRenderWindowSize );
+
   igstkAddTransitionMacro( Idle, InValidRenderWindowSize,
                            Idle, ReportInvalidRenderWindowSize);
   
@@ -211,16 +223,27 @@ ViewNew::~ViewNew()
 
 }
 
-/** Update the display */
-void ViewNew::Update()
+/** Request initialize render window interactor */
+void ViewNew::RequestInitializeRenderWindowInteractor()
 {
-  igstkLogMacro( DEBUG, "Update() called ...\n");
+  igstkLogMacro( DEBUG, "RequestInitializeRenderWindowInteractor() called ...\n");
+
+  igstkPushInputMacro( InitializeInteractor );
+  m_StateMachine.ProcessInputs();
+
+} 
+
+/** Initialize render window interactor */
+void ViewNew::InitializeRenderWindowInteractorProcessing()
+{
+
+  igstkLogMacro( DEBUG, "InitializeRenderWindowInteractorProcessing() called ...\n");
+
   if( !m_RenderWindowInteractor->GetInitialized() )
     {
     m_RenderWindowInteractor->Initialize();
     }
 }
-
 
 unsigned long ViewNew::AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer )
