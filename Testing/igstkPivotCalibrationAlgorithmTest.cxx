@@ -2,38 +2,37 @@
 #include "igstkPivotCalibrationAlgorithm.h"
 
 
-
-
 /** Class for observing the invalid request error.*/
 class InvalidRequestErrorEventObserver : public itk::Command
 {
 public:
   typedef InvalidRequestErrorEventObserver            Self;
-  typedef itk::SmartPointer<Self>                      Pointer;
-  typedef itk::Command                                 Superclass;
+  typedef itk::SmartPointer<Self>                     Pointer;
+  typedef itk::Command                                Superclass;
   itkNewMacro(Self);
 
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
-    const itk::Object * constCaller = caller;
-    this->Execute(constCaller, event);
-  }
+void Execute(const itk::Object *caller, const itk::EventObject & event)
+{
+  const itk::Object * constCaller = caller;
+  this->Execute(constCaller, event);
+}
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
-    std::cout<<"Invalid method request, cannot invoke this method in current object state."<<std::endl;
-    this->m_EventOccured = true;
-  }
+void Execute(itk::Object *caller, const itk::EventObject & event)
+{
+  std::cout<<"Invalid method request, cannot invoke this method in current ";
+  std::cout<<"object state."<<std::endl;
+  this->m_EventOccured = true;
+}
 
-  bool EventOccured()
-  {
-    return this->m_EventOccured;
-  }
+bool EventOccured()
+{
+  return this->m_EventOccured;
+}
 
-  void Reset()
-  {
-    this->m_EventOccured = false;
-  }
+void Reset()
+{
+  this->m_EventOccured = false;
+}
 
 protected:
   InvalidRequestErrorEventObserver() : m_EventOccured(false) {}
@@ -46,15 +45,16 @@ private:
   bool m_EventOccured;
 };
 
-/** Class for observing events that carry a payload. The user can query the class if an event occured (EventOccured), 
- *  access the payload (Get()), and reset (EventOccured==false) the observer (Reset()).*/
+/** Class for observing events that carry a payload. The user can query the 
+ *  class if an event occured (EventOccured), access the payload (Get()), and 
+ *  reset (EventOccured==false) the observer (Reset()).*/
 template <class EventType>
 class PayloadEventObserver : public itk::Command
 {
 public:
   typedef PayloadEventObserver            Self;
-  typedef itk::SmartPointer<Self>                      Pointer;
-  typedef itk::Command                                 Superclass;
+  typedef itk::SmartPointer<Self>         Pointer;
+  typedef itk::Command                    Superclass;
   itkNewMacro(Self);
 
   void Execute(const itk::Object *caller, const itk::EventObject & event)
@@ -101,7 +101,8 @@ private:
 };
 
 
-typedef PayloadEventObserver< igstk::TransformModifiedEvent > TransformEventObserver;
+typedef PayloadEventObserver< igstk::TransformModifiedEvent > 
+  TransformEventObserver;
 typedef PayloadEventObserver< igstk::PointEvent > PivotPointEventObserver;
 typedef PayloadEventObserver< igstk::DoubleTypeEvent > RMSEEventObserver;
 
@@ -110,8 +111,8 @@ class CalibrationEventObserver : public itk::Command
 {
 public:
   typedef CalibrationEventObserver            Self;
-  typedef itk::SmartPointer<Self>                      Pointer;
-  typedef itk::Command                                 Superclass;
+  typedef itk::SmartPointer<Self>             Pointer;
+  typedef itk::Command                        Superclass;
   itkNewMacro(Self);
 
   void Execute(const itk::Object *caller, const itk::EventObject & event)
@@ -162,9 +163,9 @@ private:
   bool m_Failure;
 };
 
-
-static const unsigned int NUMBER_OF_VALID_TRANSFORMATIONS = 600; //15 second acquisition at 40Hz
-static double pivotCalibrationValidDataSet[NUMBER_OF_VALID_TRANSFORMATIONS][7] = 
+                                //15 second acquisition at 40Hz
+static const unsigned int NUMBER_OF_VALID_TRANSFORMATIONS = 600; 
+static double pivotCalibrationValidDataSet[NUMBER_OF_VALID_TRANSFORMATIONS][7] =
 {
 {90.39, -8.58, -205.45, -0.011201, -0.691084, 0, 0.722688},
 {90.39, -8.58, -205.45, -0.011201, -0.691084, 0, 0.722688},
@@ -804,19 +805,22 @@ static double pivotCalibrationDegenerateDataSet[NUMBER_OF_DEGENERATE_TRANSFORMAT
 };
 
 /** Test the pivot calibration algorithm class as follows:
- *  1. Cause all possible invalid request errors by invoking all RequestXYZ() methods before
- *     computation.
- *  2. Use a valid data set and give it to the algorithm in one vector, check that computation 
- *     results in expected values.
- *  3. Reset and redo computation after giving the algorithm the transformations one by one.
+ *  1. Cause all possible invalid request errors by invoking all RequestXYZ() 
+ *     methods before computation.
+ *  2. Use a valid data set and give it to the algorithm in one vector, check 
+ *     that computation results in expected values.
+ *  3. Reset and redo computation after giving the algorithm the transformations
+ *     one by one.
  *     Check that we get the same results as in the previous step.
- *  4. Reset and run with degenerate set of transformations, check that the algorithm fails. */
+ *  4. Reset and run with degenerate set of transformations, check that the 
+ *     algorithm fails. */
 int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
 {
   std::vector< igstk::Transform > transformations;
   igstk::Transform::VectorType translation;
-  igstk::Transform::VersorType rotation;               
+  igstk::Transform::VersorType rotation;
   igstk::Transform currentTransform, computedTransform1, computedTransform2;
+  igstk::Transform composedTransform;
   itk::Point< double, 3 > pivotPoint1, pivotPoint2;
   double calibrationRMSE1, calibrationRMSE2;
 
@@ -824,22 +828,35 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
   igstk::RealTimeClock::Initialize();
 
               //the class we are testing
-  igstk::PivotCalibrationAlgorithm::Pointer pivotCalibrationAlgorithm = igstk::PivotCalibrationAlgorithm::New();
+  igstk::PivotCalibrationAlgorithm::Pointer pivotCalibrationAlgorithm = 
+    igstk::PivotCalibrationAlgorithm::New();
                  //observers for all events generated by this class
-  InvalidRequestErrorEventObserver::Pointer invalidRequestErrorObserver = InvalidRequestErrorEventObserver::New();
-  CalibrationEventObserver::Pointer calibrationEventObserver = CalibrationEventObserver::New();
-  TransformEventObserver::Pointer transformEventObserver = TransformEventObserver::New();
-  PivotPointEventObserver::Pointer pivotPointEventObserver = PivotPointEventObserver::New();
-  RMSEEventObserver::Pointer rmseEventObserver = RMSEEventObserver::New();
+  InvalidRequestErrorEventObserver::Pointer invalidRequestErrorObserver = 
+    InvalidRequestErrorEventObserver::New();
+  CalibrationEventObserver::Pointer calibrationEventObserver = 
+    CalibrationEventObserver::New();
+  TransformEventObserver::Pointer transformEventObserver = 
+    TransformEventObserver::New();
+  PivotPointEventObserver::Pointer pivotPointEventObserver = 
+    PivotPointEventObserver::New();
+  RMSEEventObserver::Pointer rmseEventObserver = 
+    RMSEEventObserver::New();
                   //attach all observers
-  pivotCalibrationAlgorithm->AddObserver(igstk::InvalidRequestErrorEvent(), invalidRequestErrorObserver);
-  pivotCalibrationAlgorithm->AddObserver(igstk::PivotCalibrationAlgorithm::CalibrationSuccessEvent(), calibrationEventObserver);
-  pivotCalibrationAlgorithm->AddObserver(igstk::PivotCalibrationAlgorithm::CalibrationFailureEvent(), calibrationEventObserver);
-  pivotCalibrationAlgorithm->AddObserver(igstk::TransformModifiedEvent(), transformEventObserver);
-  pivotCalibrationAlgorithm->AddObserver(igstk::PointEvent(), pivotPointEventObserver);
-  pivotCalibrationAlgorithm->AddObserver(igstk::DoubleTypeEvent(), rmseEventObserver);
+  pivotCalibrationAlgorithm->AddObserver(igstk::InvalidRequestErrorEvent(), 
+                                         invalidRequestErrorObserver);
+  pivotCalibrationAlgorithm->AddObserver(igstk::PivotCalibrationAlgorithm::CalibrationSuccessEvent(), 
+                                         calibrationEventObserver);
+  pivotCalibrationAlgorithm->AddObserver(igstk::PivotCalibrationAlgorithm::CalibrationFailureEvent(), 
+                                         calibrationEventObserver);
+  pivotCalibrationAlgorithm->AddObserver(igstk::TransformModifiedEvent(), 
+                                         transformEventObserver);
+  pivotCalibrationAlgorithm->AddObserver(igstk::PointEvent(), 
+                                         pivotPointEventObserver);
+  pivotCalibrationAlgorithm->AddObserver(igstk::DoubleTypeEvent(), 
+                                         rmseEventObserver);
   
-                //step 1: invoke all methods that cannot be invoked in the current object state
+                //step 1: invoke all methods that cannot be invoked in the 
+                //        current object state
   std::cout<<"Next line should report failed calibration:\n\t";
   pivotCalibrationAlgorithm->RequestComputeCalibration();
   if( !calibrationEventObserver->FailureEventOccured() )
@@ -863,16 +880,24 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
     return EXIT_FAILURE;
   invalidRequestErrorObserver->Reset();
 
-             //step 2: use a valid data set and give it in one vector, check that computation results in expected values
+             //step 2: use a valid data set and give it in one vector, check 
+             //        that computation results in expected values
   for( int i=0; i<NUMBER_OF_VALID_TRANSFORMATIONS; i++ ) 
   {
     translation[0] = pivotCalibrationValidDataSet[i][0];  
     translation[1] = pivotCalibrationValidDataSet[i][1];  
     translation[2] = pivotCalibrationValidDataSet[i][2];  
             //x,y,z,w
-    rotation.Set( pivotCalibrationValidDataSet[i][3], pivotCalibrationValidDataSet[i][4], pivotCalibrationValidDataSet[i][5], pivotCalibrationValidDataSet[i][6] );
-                          //minimal possible value is used for error, and maximal possible value is used for validity time
-    currentTransform.SetTranslationAndRotation( translation, rotation, itk::NumericTraits<double>::min(), itk::NumericTraits<double>::max() );
+    rotation.Set( pivotCalibrationValidDataSet[i][3], 
+                  pivotCalibrationValidDataSet[i][4], 
+                  pivotCalibrationValidDataSet[i][5], 
+                  pivotCalibrationValidDataSet[i][6] );
+                          //minimal possible value is used for error, and 
+                          //maximal possible value is used for validity time
+    currentTransform.SetTranslationAndRotation( translation, 
+                                                rotation, 
+                                                itk::NumericTraits<double>::min(), 
+                                                itk::NumericTraits<double>::max() );
     transformations.push_back( currentTransform );
   }  
   pivotCalibrationAlgorithm->RequestAddTransforms( transformations );
@@ -907,7 +932,9 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
   std::cout<<"Next line should show the transformation RMSE:\n";
   std::cout<<calibrationRMSE1<<std::endl;
 
-             //step 3: reset and redo computation after giving the algorithm the transformations one by one, compare to previous result
+             //step 3: reset and redo computation after giving the algorithm 
+             //        the transformations one by one, compare to previous 
+             //        result
   pivotCalibrationAlgorithm->RequestResetCalibration();
 
   std::cout<<"Next line should report failed calibration:\n\t";
@@ -940,9 +967,16 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
     translation[1] = pivotCalibrationValidDataSet[i][1];  
     translation[2] = pivotCalibrationValidDataSet[i][2];  
             //x,y,z,w
-    rotation.Set( pivotCalibrationValidDataSet[i][3], pivotCalibrationValidDataSet[i][4], pivotCalibrationValidDataSet[i][5], pivotCalibrationValidDataSet[i][6] );
-                          //minimal possible value is used for error, and maximal possible value is used for validity time
-    currentTransform.SetTranslationAndRotation( translation,rotation,itk::NumericTraits<double>::min(),itk::NumericTraits<double>::max() );
+    rotation.Set( pivotCalibrationValidDataSet[i][3], 
+                  pivotCalibrationValidDataSet[i][4], 
+                  pivotCalibrationValidDataSet[i][5], 
+                  pivotCalibrationValidDataSet[i][6] );
+                          //minimal possible value is used for error, and 
+                          //maximal possible value is used for validity time
+    currentTransform.SetTranslationAndRotation( translation,
+                                                rotation,
+                                                itk::NumericTraits<double>::min(),
+                                                itk::NumericTraits<double>::max() );
     pivotCalibrationAlgorithm->RequestAddTransform( currentTransform );
   }
   
@@ -957,15 +991,18 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
     return EXIT_FAILURE;
   transformEventObserver->Reset();
   computedTransform2 = transformEventObserver->Get();
-  std::cout<<"Next line should show the identity transformation:\n";
-  std::cout<<igstk::Transform::TransformCompose( computedTransform2, computedTransform1.GetInverse() )<<std::endl;
+  composedTransform = igstk::Transform::TransformCompose( computedTransform2, 
+                                                          computedTransform1.GetInverse() );
+  std::cout<<"Next line should show the identity transformation:\n"
+  std::cout<<composedTransform<<std::endl;
 
   pivotCalibrationAlgorithm->RequestPivotPoint();
   if( !pivotPointEventObserver->EventOccured() )
     return EXIT_FAILURE;
   pivotPointEventObserver->Reset();
   pivotPoint2 = pivotPointEventObserver->Get();
-  std::cout<<"Next line should show (0,0,0) [result of subtracting the current and previously computed pivot points]:\n";
+  std::cout<<"Next line should show (0,0,0) [result of subtracting the current";
+  std::cout<<" and previously computed pivot points]:\n";
   std::cout<<pivotPoint1 - pivotPoint2<<std::endl;
 
   pivotCalibrationAlgorithm->RequestCalibrationRMSE();
@@ -973,7 +1010,8 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
     return EXIT_FAILURE;
   rmseEventObserver->Reset();
   calibrationRMSE2 = rmseEventObserver->Get();
-  std::cout<<"Next line should show 0 [result of subtracting the current and previously computed calibration RMSE]:\n";
+  std::cout<<"Next line should show 0 [result of subtracting the current and";
+  std::cout<<" previously computed calibration RMSE]:\n";
   std::cout<<calibrationRMSE1 - calibrationRMSE2<<std::endl;
 
              //step 4: reset and run with degenerate set of transformations
@@ -985,9 +1023,16 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
     translation[1] = pivotCalibrationDegenerateDataSet[i][1];  
     translation[2] = pivotCalibrationDegenerateDataSet[i][2];  
             //x,y,z,w
-    rotation.Set( pivotCalibrationDegenerateDataSet[i][3], pivotCalibrationDegenerateDataSet[i][4], pivotCalibrationDegenerateDataSet[i][5], pivotCalibrationDegenerateDataSet[i][6] );
-                          //minimal possible value is used for error, and maximal possible value is used for validity time
-    currentTransform.SetTranslationAndRotation( translation,rotation,itk::NumericTraits<double>::min(),itk::NumericTraits<double>::max() );
+    rotation.Set( pivotCalibrationDegenerateDataSet[i][3], 
+                  pivotCalibrationDegenerateDataSet[i][4], 
+                  pivotCalibrationDegenerateDataSet[i][5], 
+                  pivotCalibrationDegenerateDataSet[i][6] );
+                          //minimal possible value is used for error, and 
+                          //maximal possible value is used for validity time
+    currentTransform.SetTranslationAndRotation( translation,
+                                                rotation,
+                                                itk::NumericTraits<double>::min(),
+                                                itk::NumericTraits<double>::max() );
     pivotCalibrationAlgorithm->RequestAddTransform( currentTransform );
   }
 
