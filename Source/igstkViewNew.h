@@ -128,9 +128,6 @@ protected:
 
 public:
   
- /** Update the display in order to render the new content of the scene */
-  void Update();
- 
   /** Request to return the camera to a known position */
   void RequestResetCamera();
   
@@ -139,9 +136,6 @@ public:
 
   /** Request Stopping the periodic refreshing of the view */
   void RequestStop();
-
-  /** Change the window size */
-  void UpdateSize(int x, int y);
 
 protected:
   
@@ -155,7 +149,7 @@ protected:
   void SetInteractorStyle( vtkInteractorStyle * style );
 
 private:
-  
+
   vtkRenderWindow       * m_RenderWindow;
   vtkRenderer           * m_Renderer;
 

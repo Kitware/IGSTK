@@ -207,18 +207,17 @@ m_StateMachine(this)
 /** Destructor */
 ViewNew::~ViewNew()
 {
-  igstkLogMacro( DEBUG, "Destructor() called ...\n");
+  igstkLogMacro( DEBUG, "ViewNew Destructor() called ...\n");
   
-  m_RenderWindowInteractor->SetRenderWindow( NULL ); 
+  m_PulseGenerator->RequestStop();
 
+  m_RenderWindowInteractor->SetRenderWindow( NULL ); 
   m_RenderWindowInteractor->SetPicker( NULL );
 
+  m_RenderWindow->RemoveRenderer( m_Renderer );
   m_RenderWindowInteractor->Delete();
-  
   m_PointPicker->Delete();
-
   m_Renderer->Delete();
-
   m_RenderWindow->Delete();
 
 }
@@ -272,25 +271,6 @@ void ViewNew::RequestAddActor( vtkProp * actor )
     {
     igstkPushInputMacro( ValidAddActor );
     m_StateMachine.ProcessInputs();
-    }
-}
-
-/** this gets called during GUI window draw()s and resize()s */
-void ViewNew::UpdateSize(int W, int H)
-{
-  igstkLogMacro( DEBUG, "UpdateSize() called ...\n");
-  if ( m_RenderWindow != NULL)
-    {
-    const int * size = m_RenderWindowInteractor->GetSize();
-    
-    // if the size changed tell render window
-    if ( (W != size[0]) || (H != size[1]) )
-      {
-      // adjust our (m_RenderWindowInteractor size)
-      m_RenderWindowInteractor->UpdateSize( W, H );
-      // and our RenderWindow's size
-      m_RenderWindow->SetSize(W, H);
-      }
     }
 }
 
@@ -379,6 +359,14 @@ void ViewNew::SetRenderWindowSizeProcessing()
 void ViewNew::RequestSetRenderWindowSize( int width , int height )
 {
   igstkLogMacro( DEBUG, "RequestSetRenderWindowSize(...) called ...\n");
+
+  const int * size = m_RenderWindowInteractor->GetSize();
+    
+  // If the size is the same then ignore the request
+  if ( (width == size[0]) && (height == size[1]) )
+    {
+    return;
+    }
 
   if ( width > 0 && height > 0 )
     {
