@@ -66,8 +66,33 @@ int igstkPolarisHardwareTest( int argc, char* argv[] )
   tester->SetTracker( tracker );
   tester->SetBaselineFilename( argv[1] );
   tester->SetLogOutputFilename( argv[2] );
+
   tester->Initialize();
-  tester->Execute();
+
+  
+  unsigned int numberOfPositions    = tester->GetNumberOfPositionsToTest();
+  unsigned int numberOfOrientations = tester->GetNumberOfOrientationsToTest();
+
+  std::cout << "Starting to grab Positions" << std::endl;
+  while( tester->GetNumberOfPositionsCollected() <
+         tester->GetNumberOfPositionsToTest()  )
+    {
+    tester->GrabOnePosition();
+    }
+  std::cout << "End of positions collection" << std::endl;
+  std::cout << std::endl;
+
+  std::cout << "Starting to grab Orientations" << std::endl;
+  while( tester->GetNumberOfOrientationsCollected() < 
+         tester->GetNumberOfOrientationsToTest()  )
+    {
+    tester->GrabOneOrientation();
+    }
+  std::cout << "End of orientations collection" << std::endl;
+  std::cout << std::endl;
+
+
+  tester->Finalize();
   tester->Report();
 
   return tester->GetFinalStatus();

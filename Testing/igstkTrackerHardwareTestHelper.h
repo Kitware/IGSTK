@@ -44,15 +44,23 @@ public:
   typedef  ::itk::SmartPointer<Self>      Pointer;
   itkNewMacro( Self );
 
-  typedef igstk::Point3D                  PointType;
-  typedef std::vector< PointType >        PointsArrayType;
   typedef igstk::Transform                TransformType;
+  typedef TransformType::VectorType       VectorType;
+  typedef TransformType::VersorType       VersorType;
+
+  typedef std::vector< VectorType >       VectorArrayType;
+  typedef std::vector< VersorType >       VersorArrayType;
 
   typedef itk::Logger                     LoggerType; 
   typedef itk::StdStreamLogOutput         LogOutputType;
 
   typedef itk::ReceptorMemberCommand< Self >   ReceptorObserverType;
 
+  typedef enum
+    {
+    GrabbingPosition,
+    GrabbingOrientation
+    }                                      GrabbingType;
 
 protected:
   TrackerHardwareTestHelper() 
@@ -71,8 +79,9 @@ protected:
     this->m_SpatialObject->AddObserver( 
       TransformModifiedEvent(), this->m_TransformObserver );
 
-    this->m_NumberOfPositions = 16;
-    this->m_NumberOfOrientations = 12;
+    this->m_NumberOfPositionsToTest = 16;
+    this->m_NumberOfOrientationsToTest = 12;
+    this->m_GrabbingType = GrabbingPosition;
     }
 
 public:
@@ -90,6 +99,26 @@ public:
   void SetLogOutputFilename( const char * filename )
     {
     this->m_LogOutputFilename = filename;
+    }
+
+  unsigned int GetNumberOfPositionsToTest() const
+    {
+    return this->m_NumberOfPositionsToTest;
+    }
+
+  unsigned int GetNumberOfOrientationsToTest() const
+    {
+    return this->m_NumberOfOrientationsToTest;
+    }
+
+  unsigned int GetNumberOfPositionsCollected() const
+    {
+    return this->m_NumberOfPositionsCollected;
+    }
+
+  unsigned int GetNumberOfOrientationsCollected() const
+    {
+    return this->m_NumberOfOrientationsCollected;
     }
 
   void Initialize()
@@ -117,24 +146,39 @@ public:
       }
     this->m_Logger->AddLogOutput( this->m_LogOutput );
 
+    this->m_NumberOfPositionsCollected = 0;
+    this->m_NumberOfOrientationsCollected = 0;
+   
+    this->m_VectorArray.clear();
+    this->m_VersorArray.clear();
+
     this->m_Tracker->RequestOpen();
     this->m_Tracker->RequestInitialize();
-
-    this->m_PositionsArray.resize( this->m_NumberOfPositions );
-
-
+    this->m_Tracker->RequestStartTracking();
     }
 
-   void Execute()
+  void GrabOnePosition()
     {
-    this->m_Tracker->RequestStartTracking();
+    this->m_GrabbingType = GrabbingPosition;
+    std::cout << "Position # " << this->m_NumberOfPositionsCollected;
+    std::cout << " of " << this->m_NumberOfPositionsToTest << "  press ENTER when ready" << std::endl;
+    char pressKey;
+    std::cin >> pressKey;
+    this->m_SpatialObject->RequestGetTransform();  
+    }
 
-    for( unsigned int positionItr = 0; 
-         positionItr < this->m_NumberOfPositions; positionItr++ )
-      {
-      this->GrabOneMeasurement( positionItr );
-      }
+  void GrabOneOrientation()
+    {
+    this->m_GrabbingType = GrabbingOrientation;
+    std::cout << "Orientation # " << this->m_NumberOfOrientationsCollected;
+    std::cout << " of " << this->m_NumberOfOrientationsToTest << "  press ENTER when ready" << std::endl;
+    char pressKey;
+    std::cin >> pressKey;
+    this->m_SpatialObject->RequestGetTransform();  
+    }
 
+  void Finalize()
+    {
     this->m_Tracker->RequestReset();
     this->m_Tracker->RequestStopTracking();
     this->m_Tracker->RequestClose();
@@ -151,21 +195,30 @@ public:
 
 private:
   
-  void GrabOneMeasurement( unsigned int positionItr )
-    {
-    this->m_SpatialObject->RequestGetTransform();  
-    }
-
   void CallbackModifiedEvent( const ::itk::EventObject & eventvar )
     {
-    const TransformModifiedEvent * realevent =
+    const TransformModifiedEvent * realEvent =
       dynamic_cast < const TransformModifiedEvent * > ( &eventvar ); 
 
-    if( realevent )
+    if( realEvent )
       {
-      this->m_SpatialObjectTransform = realevent->Get();
-      PointType point;
-      this->m_PositionsArray.push_back( point );
+
+      this->m_SpatialObjectTransform = realEvent->Get();
+
+      if( this->m_GrabbingType == GrabbingPosition )
+        {
+        VectorType vector = this->m_SpatialObjectTransform.GetTranslation();
+        this->m_VectorArray.push_back( vector );
+        this->m_NumberOfPositionsCollected++;
+        }
+
+      if( this->m_GrabbingType == GrabbingOrientation )
+        {
+        VersorType versor = this->m_SpatialObjectTransform.GetRotation();
+        this->m_VersorArray.push_back( versor );
+        this->m_NumberOfOrientationsCollected++;
+        }
+
       }
     }
 
@@ -180,13 +233,20 @@ private:
   LogOutputType::Pointer          m_LogOutput;
   std::ofstream                   m_LogFile;
 
-  unsigned int                    m_NumberOfPositions;
-  unsigned int                    m_NumberOfOrientations;
+  unsigned int                    m_NumberOfPositionsToTest;
+  unsigned int                    m_NumberOfOrientationsToTest;
   
-  PointsArrayType                 m_PositionsArray;
+  unsigned int                    m_NumberOfPositionsCollected;
+  unsigned int                    m_NumberOfOrientationsCollected;
+  
+  VectorArrayType                 m_VectorArray;
+  VersorArrayType                 m_VersorArray;
+
   TransformType                   m_SpatialObjectTransform;
 
   ReceptorObserverType::Pointer   m_TransformObserver;
+  
+  GrabbingType                    m_GrabbingType;
 };
 
 }
