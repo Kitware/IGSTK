@@ -27,6 +27,7 @@
 #include "igstkTracker.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkPoint3D.h"
+#include "igstkTransform.h"
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -45,9 +46,13 @@ public:
 
   typedef igstk::Point3D                  PointType;
   typedef std::vector< PointType >        PointsArrayType;
+  typedef igstk::Transform                TransformType;
 
   typedef itk::Logger                     LoggerType; 
   typedef itk::StdStreamLogOutput         LogOutputType;
+
+  typedef itk::ReceptorMemberCommand< Self >   ReceptorObserverType;
+
 
 protected:
   TrackerHardwareTestHelper() 
@@ -59,6 +64,12 @@ protected:
 
     this->m_Logger->SetPriorityLevel( LoggerType::DEBUG );
     this->m_Tracker->SetLogger( this->m_Logger );
+
+    this->m_TransformObserver = ReceptorObserverType::New();
+    this->m_TransformObserver->SetCallbackFunction( this,
+                                          & Self::CallbackModifiedEvent );
+    this->m_SpatialObject->AddObserver( 
+      TransformModifiedEvent(), this->m_TransformObserver );
 
     this->m_NumberOfPositions = 16;
     this->m_NumberOfOrientations = 12;
@@ -110,6 +121,8 @@ public:
     this->m_Tracker->RequestInitialize();
 
     this->m_PositionsArray.resize( this->m_NumberOfPositions );
+
+
     }
 
    void Execute()
@@ -138,28 +151,42 @@ public:
 
 private:
   
-  int GrabOneMeasurement( unsigned int positionItr )
+  void GrabOneMeasurement( unsigned int positionItr )
     {
-    PointType point;
-    this->m_PositionsArray[ positionItr ] = point;
-    return EXIT_SUCCESS;
+    this->m_SpatialObject->RequestGetTransform();  
     }
 
-  int                         m_FinalStatus;
+  void CallbackModifiedEvent( const ::itk::EventObject & eventvar )
+    {
+    const TransformModifiedEvent * realevent =
+      dynamic_cast < const TransformModifiedEvent * > ( &eventvar ); 
 
-  Tracker::Pointer            m_Tracker;
-  EllipsoidObject::Pointer    m_SpatialObject;
+    if( realevent )
+      {
+      this->m_SpatialObjectTransform = realevent->Get();
+      PointType point;
+      this->m_PositionsArray.push_back( point );
+      }
+    }
 
-  std::string                 m_BaseLineFilename;
-  std::string                 m_LogOutputFilename;
-  LoggerType::Pointer         m_Logger;
-  LogOutputType::Pointer      m_LogOutput;
-  std::ofstream               m_LogFile;
+  int                             m_FinalStatus;
 
-  unsigned int                m_NumberOfPositions;
-  unsigned int                m_NumberOfOrientations;
+  Tracker::Pointer                m_Tracker;
+  EllipsoidObject::Pointer        m_SpatialObject;
+
+  std::string                     m_BaseLineFilename;
+  std::string                     m_LogOutputFilename;
+  LoggerType::Pointer             m_Logger;
+  LogOutputType::Pointer          m_LogOutput;
+  std::ofstream                   m_LogFile;
+
+  unsigned int                    m_NumberOfPositions;
+  unsigned int                    m_NumberOfOrientations;
   
-  PointsArrayType             m_PositionsArray;
+  PointsArrayType                 m_PositionsArray;
+  TransformType                   m_SpatialObjectTransform;
+
+  ReceptorObserverType::Pointer   m_TransformObserver;
 };
 
 }
