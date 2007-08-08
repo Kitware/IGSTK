@@ -77,8 +77,20 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
 /** Destructor */
 FLTKWidget::~FLTKWidget()
 {
-  igstkLogMacro( DEBUG, "Destructor() called ...\n");
-  
+  igstkLogMacro( DEBUG, "FLTKWidget Destructor() called ...\n");
+  this->m_View->RequestStop();
+
+  vtkRenderWindow * renderWindow = m_VTKRenderer->GetRenderWindow();
+#if defined(__APPLE__) && defined(VTK_USE_CARBON)
+    // FLTK 1.x does not support HiView
+    ((vtkCarbonRenderWindow *)renderWindow)->SetRootWindow( NULL );
+#else
+    renderWindow->SetWindowId( NULL );
+#endif
+#if !defined(WIN32) && !defined(__APPLE__)
+    renderWindow->SetDisplayId( NULL );
+#endif
+
   // according to the fltk docs, destroying a widget does NOT remove it from
   // its parent, so we have to do that explicitly at destruction
   // (and remember, NEVER delete() an instance of this class)
@@ -163,35 +175,6 @@ void FLTKWidget::DisableInteractionsProcessing()
   m_InteractionHandling = false;
 }
 
-/** Update the display */
-void FLTKWidget::Update()
-{
-  igstkLogMacro( DEBUG, "Update() called ...\n");
-
-  vtkRenderWindow * renderWindow = m_VTKRenderer->GetRenderWindow();
-  vtkRenderWindowInteractor * interactor = m_VTKRenderWindowInteractor; 
-
-  #if defined(__APPLE__) && defined(VTK_USE_CARBON)
-    // FLTK 1.x does not support HiView
-    ((vtkCarbonRenderWindow *)renderWindow)->SetRootWindow( fl_xid( this ) );
-  #else
-    renderWindow->SetWindowId( (void *)fl_xid( this ) );
-  #endif
-  #if !defined(WIN32) && !defined(__APPLE__)
-    renderWindow->SetDisplayId( fl_display );
-  #endif
-    // get vtk to render to the Fl_Gl_Window
-  interactor->Render();
-
-  this->m_View->RequestInitializeRenderWindowInteractor();
-}
-
-/** this gets called during FLTK window draw()s and resize()s */
-void FLTKWidget::UpdateSize(int W, int H)
-{
-  igstkLogMacro( DEBUG, "UpdateSize() called ...\n");
-  this->m_View->UpdateSize( W, H );
-}
 
 /** FLTK event handlers */
 void FLTKWidget::flush(void)
@@ -209,7 +192,7 @@ void FLTKWidget::draw(void)
   igstkLogMacro( DEBUG, "draw() called ...\n");
 
   // make sure the vtk part knows where and how large we are
-  m_View->UpdateSize( this->w(), this->h() );
+  m_View->RequestSetRenderWindowSize( this->w(), this->h() );
 
   // make sure the GL context exists and is current:
   // after a hide() and show() sequence e.g. there is no context yet
@@ -239,7 +222,8 @@ void FLTKWidget::resize( int x, int y, int w, int h )
   igstkLogMacro( DEBUG, "resize() called ...\n");
 
   // make sure VTK knows about the new situation
-  UpdateSize( w, h );
+  m_View->RequestSetRenderWindowSize( w, h );
+
   // resize the FLTK window by calling ancestor method
   Fl_Gl_Window::resize( x, y, w, h ); 
 }

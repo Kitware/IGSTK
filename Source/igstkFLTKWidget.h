@@ -87,13 +87,6 @@ public:
 
 protected:
 
-public:
-  
-  /** Update the display in order to render the new content of the scene */
-  void Update();
- 
-protected:
-  
   // Fl_Gl_Window overrides
   void flush(void);
   void draw( void );
@@ -124,9 +117,6 @@ private:
   /** Set VTK renderw window interactor */
   void SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
  
-  /** Change the window size */
-  void UpdateSize(int x, int y);
-
 private:
 
   bool m_InteractionHandling;
