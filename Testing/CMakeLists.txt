@@ -71,6 +71,7 @@ INCLUDE_DIRECTORIES (
 # Add your new tests here
 SET(SandboxTests_SRCS
   igstkPivotCalibrationAlgorithmTest.cxx
+  igstkPolarisHardwareTest.cxx
   igstkDICOMGenericImageReaderTest.cxx
   igstkGenericImageSpatialObjectTest.cxx
   igstkLandmarkUltrasoundCalibrationTest.cxx
@@ -89,6 +90,10 @@ ADD_TEST( igstkLandmarkUltrasoundCalibrationTest ${IGSTKSandbox_TESTS} igstkLand
 ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunicationTest)
 ADD_TEST( igstkViewNewTest ${IGSTKSandbox_TESTS} igstkViewNewTest)
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
+
+ADD_TEST( igstkPolarisHardwareTest ${IGSTKSandbox_TESTS} igstkPolarisHardwareTest
+  ${IGSTK_DATA_ROOT}/Baseline/PolarisHardwarePositionsAndOrientations.txt
+  ${IGSTKSandbox_TEST_OUTPUT_DIR}/PolarisHardwarePositionsAndOrientationsLogOutput.txt )
 
 IF(IGSTKSandbox_USE_FLTK)
     ADD_TEST( igstkFLTKWidgetTest
