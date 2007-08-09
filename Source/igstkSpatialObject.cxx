@@ -26,7 +26,8 @@ namespace igstk
 SpatialObject::SpatialObject():m_StateMachine(this)
 {
   m_SpatialObject = NULL;
-  m_TrackerTool = NULL;
+  m_TrackerTool   = NULL;
+  m_Parent        = NULL;
 
   igstkAddInputMacro( SpatialObjectValid );
   igstkAddInputMacro( SpatialObjectNull );
@@ -209,6 +210,7 @@ void SpatialObject::AddObjectProcessing()
 {
   m_SpatialObject->AddSpatialObject(m_ObjectToBeAdded->GetSpatialObject());
   m_InternalObjectList.push_back(m_ObjectToBeAdded);
+  m_ObjectToBeAdded->SetParent( this );
 }
 
 /** Return a child object given the id */

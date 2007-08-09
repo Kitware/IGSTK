@@ -98,6 +98,9 @@ private:
   SpatialObjectType::Pointer   m_SpatialObject;
   SpatialObjectType::Pointer   m_SpatialObjectToBeSet;
 
+  /** Parent Spatial Object */
+  Self::Pointer                m_Parent;
+
   /** Internal list of object */
   std::vector<Pointer> m_InternalObjectList;
 
@@ -151,6 +154,12 @@ private:
 
   /** Null operation for a State Machine transition */
   void NoProcessing();
+
+  /** Set/Get the parent Spatial Object, this method provides half of the
+   * functionality of attaching this object to a scene graph. This method is
+   * private, and can only be called from the AddObjectProcessing() method. */
+  igstkSetMacro( Parent, Pointer );
+  igstkGetMacro( Parent, Pointer );
 
 };
 
