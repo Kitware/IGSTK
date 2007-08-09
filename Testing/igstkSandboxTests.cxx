@@ -36,11 +36,11 @@ void RegisterTests()
   REGISTER_TEST(igstkPivotCalibrationAlgorithmTest);
   REGISTER_TEST(igstkPolarisHardwareTest);
 
-#ifdef IGSTK_USE_FLTK
+#ifdef IGSTKSandbox_USE_FLTK
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkFLTKWidgetTest);
   REGISTER_TEST(igstkAnnotation2DTest2);
-#endif /* IGSTK_USE_FLTK */
+#endif /* IGSTKSandbox_USE_FLTK */
 
 #ifdef IGSTKSandbox_USE_Qt
   REGISTER_TEST(igstkQTWidgetTest);

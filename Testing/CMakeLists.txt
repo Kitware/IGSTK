@@ -114,7 +114,7 @@ ENDIF(IGSTKSandbox_USE_Qt)
 
 IF(IGSTKSandbox_DATA_ROOT)
   SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
-  IF (IGSTK_USE_FLTK)
+  IF (IGSTKSandbox_USE_FLTK)
     ADD_TEST( igstkObliqueImageSpatialObjectRepresentationTest
               ${IGSTKSandbox_TESTS}
               igstkObliqueImageSpatialObjectRepresentationTest
@@ -126,7 +126,7 @@ IF(IGSTKSandbox_DATA_ROOT)
               ${IGSTK_DATA_ROOT}/Input/E000192 )
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkAnnotation2DTest2.cxx)
-  ENDIF (IGSTK_USE_FLTK)
+  ENDIF (IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
 ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${SandboxTests_SRCS})
