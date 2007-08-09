@@ -81,14 +81,9 @@ FLTKWidget::~FLTKWidget()
   this->m_View->RequestStop();
 
   vtkRenderWindow * renderWindow = m_VTKRenderer->GetRenderWindow();
-#if defined(__APPLE__) && defined(VTK_USE_CARBON)
-    // FLTK 1.x does not support HiView
-    ((vtkCarbonRenderWindow *)renderWindow)->SetRootWindow( NULL );
-#else
+
+#if defined(WIN32)
     renderWindow->SetWindowId( NULL );
-#endif
-#if !defined(WIN32) && !defined(__APPLE__)
-    renderWindow->SetDisplayId( NULL );
 #endif
 
   // according to the fltk docs, destroying a widget does NOT remove it from
