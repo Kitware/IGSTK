@@ -26,6 +26,7 @@ PURPOSE.  See the above copyright notices for more information.
 
 
 #include "itkPoint.h"
+#include "itkSmartPointer.h"
 
 
 namespace igstk {
@@ -36,11 +37,10 @@ class SpatialObject;
 /** \class Point3D
  * 
  * \brief Class for representing a position in 3D Space.
- * a VTK controlled window attached to the Qt GUI.
  *
  * \ingroup Object
  */
-class Point3D : protected itk::Point< double, 3 >
+class Point3D : public ::itk::Point< double, 3 >
 {
 
 public:
@@ -48,13 +48,19 @@ public:
   typedef Point3D                   Self;
   typedef itk::Point<double, 3>     Superclass;
 
+  typedef ::itk::SmartPointer< const SpatialObject > SpatialObjectPointer;
+
   /** Constructor. It will initialize the point to (0,0,0) and the world
    * coordinate system. */
   Point3D();
+  ~Point3D();
+
+  /** Set the spatial object serving as coordinate reference system for this point */
+  void SetCoordinateReferenceSystem( const SpatialObject * referenceSystem );
 
 private:
 
-  const SpatialObject *  m_ReferenceFrame;
+  SpatialObjectPointer  m_ReferenceFrame;
 
 };
 

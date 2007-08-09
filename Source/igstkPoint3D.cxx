@@ -33,8 +33,21 @@ namespace igstk {
  * coordinate system. */
 Point3D::Point3D()
 {
-
+  this->Fill( 0.0 );
   this->m_ReferenceFrame = NULL;
 }
+
+/* Destructor. */
+Point3D::~Point3D()
+{
+}
+
+/* Set the spatial object serving as coordinate reference system for this point */
+void 
+Point3D::SetCoordinateReferenceSystem( const SpatialObject * referenceSystem )
+{
+  this->m_ReferenceFrame = referenceSystem;
+}
+
 
 } // end namespace igstk
