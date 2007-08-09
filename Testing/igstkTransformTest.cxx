@@ -63,16 +63,14 @@ int igstkTransformTest( int, char * [] )
     
     igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
   
+    const double tolerance = 1e-7;
+
     t1.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityPeriod );
 
-    t1.SetRotation( rotation, errorValue, validityPeriod );
-
-    t1.SetTranslation( translation,  errorValue, validityPeriod );
-
-
     VectorType translationSet = t1.GetTranslation();
     VersorType rotationSet    = t1.GetRotation();
+
 
     std::cout << t1 << std::endl;
     std::cout << translationSet << std::endl;
@@ -87,6 +85,75 @@ int igstkTransformTest( int, char * [] )
       std::cerr << "Expected to be valid, but returned invalid" << std::endl;
       return EXIT_FAILURE;
       }
+
+
+    for( unsigned int k=0; k < 3; k++ )
+      {
+      if( vnl_math_abs( translationSet[k] - translation[k] ) > tolerance )
+        {
+        std::cerr << "Pair : SetTranslationAndRotation() : GetTranslation() failed " << std::endl;
+        return EXIT_FAILURE;
+        }
+      } 
+
+    if( ( vnl_math_abs( rotationSet.GetX() - rotation.GetX() ) > tolerance ) ||
+        ( vnl_math_abs( rotationSet.GetY() - rotation.GetY() ) > tolerance ) ||
+        ( vnl_math_abs( rotationSet.GetZ() - rotation.GetZ() ) > tolerance ) ||
+        ( vnl_math_abs( rotationSet.GetW() - rotation.GetW() ) > tolerance )    )
+      {
+      std::cerr << "Pair : SetTranslationAndRotation() : GetRotation() failed " << std::endl;
+      return EXIT_FAILURE;
+      }
+
+
+    t1.SetRotation( rotation, errorValue, validityPeriod );
+
+    translationSet = t1.GetTranslation();
+    rotationSet    = t1.GetRotation();
+
+    for( unsigned int k=0; k < 3; k++ )
+      {
+      // SetRotation() must set the Translation to identity.
+      if( vnl_math_abs( translationSet[k] - 0.0 ) > tolerance )
+        {
+        std::cerr << "Pair : SetRotation() : GetTranslation() failed " << std::endl;
+        return EXIT_FAILURE;
+        }
+      } 
+
+    if( ( vnl_math_abs( rotationSet.GetX() - rotation.GetX() ) > tolerance ) ||
+        ( vnl_math_abs( rotationSet.GetY() - rotation.GetY() ) > tolerance ) ||
+        ( vnl_math_abs( rotationSet.GetZ() - rotation.GetZ() ) > tolerance ) ||
+        ( vnl_math_abs( rotationSet.GetW() - rotation.GetW() ) > tolerance )    )
+      {
+      std::cerr << "Pair : SetRotation() : GetRotation() failed " << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    t1.SetTranslation( translation,  errorValue, validityPeriod );
+
+    translationSet = t1.GetTranslation();
+    rotationSet    = t1.GetRotation();
+
+    for( unsigned int k=0; k < 3; k++ )
+      {
+      if( vnl_math_abs( translationSet[k] - translation[k] ) > tolerance )
+        {
+        std::cerr << "Pair : SetTranslation() : GetTranslation() failed " << std::endl;
+        return EXIT_FAILURE;
+        }
+      } 
+
+
+    if( ( vnl_math_abs( rotationSet.GetX() - 0.0 ) > tolerance ) ||
+        ( vnl_math_abs( rotationSet.GetY() - 0.0 ) > tolerance ) ||
+        ( vnl_math_abs( rotationSet.GetZ() - 0.0 ) > tolerance ) ||
+        ( vnl_math_abs( rotationSet.GetW() - 1.0 ) > tolerance )    )
+      {
+      std::cerr << "Pair : SetTranslation() : GetRotation() failed " << std::endl;
+      return EXIT_FAILURE;
+      }
+
 
 
     double timeExpired = t1.GetExpirationTime() + 10.0;

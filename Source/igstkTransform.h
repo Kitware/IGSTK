@@ -77,7 +77,7 @@ public:
   /** Assign the values of one transform to another */
   const Transform & operator=( const Transform & inputTransform );
 
-  /** Set Translation and Rotation simultaneously. These values will override
+  /** Set Translation and Rotation simultaneously. This values will override
    * any previously set rotation and translation. The information will be
    * considered valid from the time of invokation of the method until that time
    * plus the millisecondsToExpiration value. */
@@ -89,18 +89,22 @@ public:
 
 
   /** Set only Rotation. This method should be used when the transform
-   * represents only a rotation. The assigned rotation will override any
-   * previously set rotation. The information will be considered valid from the time of 
-   * invocation of the method until that time plus the millisecondsToExpiration value. */
+   * represents only a rotation. Internally the translational part of the
+   * transform will be set to zero. The assigned rotation will override any
+   * previously set rotation and will set to zero any previous translation.
+   * The information will be considered valid from the time of invokation of
+   * the method until that time plus the millisecondsToExpiration value. */
   void SetRotation( 
           const  VersorType & rotation,
                  ErrorType errorValue,
           TimePeriodType millisecondsToExpiration);
 
   /** Set only Translation. This method should be used when the transform
-   * represents only a translation. The assigned translation will override any
-   * previously set translation. The information will be considered valid from the 
-   * time of invocation of the method until that time plus the millisecondsToExpiration value. */
+   * represents only a translation. Internally the rotational part of the
+   * transform will be set to zero. The assigned translation will override any
+   * previously set translation and will set to zero any previous rotation.
+   * The information will be considered valid from the time of invokation of
+   * the method until that time plus the millisecondsToExpiration value. */
   void SetTranslation( 
           const  VectorType & translation,
                  ErrorType errorValue,

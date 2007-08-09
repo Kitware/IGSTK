@@ -28,6 +28,7 @@ Transform
   // non-zero epsilon that can be represented with the ErrorType. 
   m_Error = itk::NumericTraits< ErrorType >::min();
   m_Translation.Fill(0.0);
+  m_Rotation.SetIdentity();
 }
 
 Transform
@@ -111,6 +112,7 @@ Transform
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Translation = translation;
   m_Error       = errorValue;
+  m_Rotation.SetIdentity();
 }
 
 
@@ -123,7 +125,8 @@ Transform
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Rotation = rotation;
-  m_Error       = errorValue;
+  m_Error    = errorValue;
+  m_Translation.Fill( 0.0 );
 }
 
 
