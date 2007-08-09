@@ -24,7 +24,7 @@
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
-#include "igstkMouseTracker.h"
+#include "igstkQMouseTracker.h"
 #include "igstkViewNew.h"
 
 #ifdef WIN32
@@ -45,7 +45,7 @@ class OneViewAndTrackingUsingQTWidgetGUI : public QMainWindow
   typedef itk::Logger              LoggerType; 
   typedef itk::StdStreamLogOutput  LogOutputType;
 
-  typedef igstk::MouseTracker     TrackerType;
+  typedef igstk::QMouseTracker     TrackerType;
 
 #ifdef WIN32
   typedef igstk::SerialCommunicationForWindows  CommunicationType;
