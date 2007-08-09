@@ -17,6 +17,7 @@
 
 #include "igstkSpatialObject.h"
 #include "igstkEvents.h"
+#include "igstkTrackerTool.h"
 
 namespace igstk
 { 
@@ -312,7 +313,9 @@ void SpatialObject::BroadcastStaticTransformProcessing()
  * operation. Once a Spatial Object is attached to a tracker tool it is not
  * expected to get back to manual nor to be re-attached to a second tracker
  * tool. */
-void SpatialObject::RequestAttachToTrackerTool(const TrackerTool * tool )
+// FIXME : Deprecated : Spatial Object doesn't need to know anymore about TrackerTools.
+// Transform updates will happen naturaly through the scene graph of spatial objects.
+void SpatialObject::RequestAttachToTrackerTool(TrackerTool * tool )
 {
   m_TrackerToolToAttachTo = tool;
   m_StateMachine.PushInput( m_TrackingEnabledInput );
@@ -324,6 +327,7 @@ void
 SpatialObject::AttachToTrackerToolProcessing()
 {
   m_TrackerTool = m_TrackerToolToAttachTo;
+  m_TrackerTool->RequestAttachSpatialObject( this );
 }
 
 /** Report that tracking is now enabled */

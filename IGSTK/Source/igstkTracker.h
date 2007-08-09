@@ -122,6 +122,9 @@ public:
   typedef TrackerPortType::Pointer          TrackerPortPointer;
   typedef std::vector< TrackerPortPointer > TrackerPortVectorType;
 
+  /** typedefs for the coordinate reference system */
+  typedef SpatialObject                     CoordinateReferenceSystemType;
+  
   /** The "RequestOpen" method attempts to open communication with the 
    *  tracking device. It generates a TrackerOpenEvent if successful,
    *  or a TrackerOpenErrorEvent if not successful.  */
@@ -150,6 +153,11 @@ public:
   ports and tools when the tracker is in tracking state. */
   void RequestUpdateStatus( void );
 
+  /** Get reference system. This is the reference frame of the Tracker itself.
+   * Tracker tools need access to this reference system in order to use it
+   * as parent in the scene graph. */
+  const CoordinateReferenceSystemType * GetCoordinateReferenceSystem() const;
+  
   /** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
    * port numbered "portNumber" in the variable "position". Note that this
    * variable represents the position and orientation of the tool in 3D space.
@@ -158,10 +166,15 @@ public:
                          TransformType &position ) const;
 
   /** Associate a TrackerTool to an object to be tracked. This is a one-to-one
-   * association and cannot be changed during the life of the application */
-  void AttachObjectToTrackerTool( unsigned int portNumber,
+   * association and cannot be changed during the life of the application 
+   *
+   *  FIXME: This method is now DEPRECATED. Instead use the RequestAttachSpatialObject() 
+   *         on a TrackerTool object and then add the Tracker tool to this Tracker.
+   */
+  void AttachObjectToTrackerTool( unsigned int portNumber, 
                                   unsigned int toolNumber,
                                   SpatialObject * objectToTrack );
+  
 
   /** The "SetReferenceTool" sets the reference tool. */
   void SetReferenceTool( bool applyReferenceTool, unsigned int portNumber,
@@ -306,7 +319,10 @@ private:
   unsigned int              m_ReferenceToolNumber;
 
   /** Patient Transform */
-  PatientTransformType      m_PatientTransform;
+  PatientTransformType      m_PatientTransform;  // FIXME: This is deprecated due to Bug 5474
+
+  /** Coordinate Reference System */
+  CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;
 
   /** Validity time */
   TimePeriodType            m_ValidityTime;

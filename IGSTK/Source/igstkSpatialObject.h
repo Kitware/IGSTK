@@ -25,11 +25,12 @@
 #include "igstkObject.h"
 #include "igstkTransform.h"
 #include "igstkStateMachine.h"
-#include "igstkTrackerTool.h"
 #include "igstkEvents.h"
 
 namespace igstk
 {
+
+class TrackerTool;
 
 /** \class SpatialObject
  * 
@@ -77,7 +78,7 @@ public:
    * operation. Once a Spatial Object is attached to a tracker tool it is not
    * expected to get back to manual nor to be re-attached to a second tracker
    * tool. */
-  void RequestAttachToTrackerTool( const TrackerTool * trackerTool );
+  void RequestAttachToTrackerTool( TrackerTool * trackerTool );
 
 protected:
 
@@ -99,7 +100,7 @@ private:
   SpatialObjectType::Pointer   m_SpatialObjectToBeSet;
 
   /** Parent Spatial Object */
-  Self::Pointer                m_Parent;
+  Self::ConstPointer           m_Parent;
 
   /** Internal list of object */
   std::vector<Pointer> m_InternalObjectList;
@@ -112,8 +113,8 @@ private:
   Transform                    m_TransformToBeSet;
 
   /** TrackerTool to be attached to, and temporary pointer */
-  TrackerTool::ConstPointer    m_TrackerTool;
-  TrackerTool::ConstPointer    m_TrackerToolToAttachTo;
+  TrackerTool *    m_TrackerTool;
+  TrackerTool *    m_TrackerToolToAttachTo;
 
   /** Set the Transform corresponding to the ObjectToWorld transformation of
    * the SpatialObject. This method is only intended to be called from a 
@@ -158,8 +159,8 @@ private:
   /** Set/Get the parent Spatial Object, this method provides half of the
    * functionality of attaching this object to a scene graph. This method is
    * private, and can only be called from the AddObjectProcessing() method. */
-  igstkSetMacro( Parent, Pointer );
-  igstkGetMacro( Parent, Pointer );
+  igstkSetMacro( Parent, ConstPointer );
+  igstkGetMacro( Parent, ConstPointer );
 
 };
 

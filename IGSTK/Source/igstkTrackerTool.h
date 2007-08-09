@@ -22,6 +22,7 @@
 #include "igstkTransform.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
+#include "igstkSpatialObject.h"
 
 
 namespace igstk
@@ -73,6 +74,9 @@ public:
   typedef double            ErrorType;
   typedef double            TimePeriodType;
 
+  /** typedefs for the coordinate reference system */
+  typedef SpatialObject     CoordinateReferenceSystemType;
+  
   /** Get the tool transform. */
   igstkGetMacro( Transform, TransformType );
 
@@ -106,6 +110,16 @@ public:
   /** Get whether the tool was updated during tracker UpdateStatus() */
   igstkSetMacro( Updated, bool );
 
+  
+  /** Request attaching the SpatialObject given as argument as an
+   *  object to track with this tracker tool. The SpatialObject will
+   *  become a child of the coordinate reference system of this TrackerTool,
+   *  and in this way its transform to world coordinates will be computed
+   *  by composing its callibration transform with the transform relating
+   *  the TrackerTool and the Tracker 
+   */
+  void RequestAttachSpatialObject( SpatialObject * );
+
 protected:
 
   TrackerTool(void);
@@ -121,7 +135,12 @@ protected:
 private:
 
   /** Position and Orientation of the tool */
-  TransformType      m_Transform;
+  TransformType      m_Transform;   // FIXME: This is deprecated due to Bug 5474.
+                                    // This transform should now be computed by the Spatial objects
+                                    // that serve as the coordinate reference systems.
+                                    // This transform is computed as the composition of the 
+                                    // callibration transform (SO -> TrackerTool) and the
+                                    // raw transform (TrackerTool -> Tracker ).
 
   /** Time in milliseconds for which this tool will be reporting results */
   TimePeriodType     m_ValidityPeriod;
@@ -130,13 +149,24 @@ private:
   ToolType           m_ToolType;
   
   /** Raw transform for the tool */
-  TransformType      m_RawTransform;
+  TransformType      m_RawTransform; // FIXME: This is deprecated due to Bug 5474. 
+                                     // This transform is now stored in the parent 
+                                     // child relationship between the TrackerTool
+                                     // and the Tracker. E.g. all uses of m_RawTransform
+                                     // should become m_CoordinateReferenceSystem->GetTransformToParent();
 
   /** Calibration transform for the tool */
-  ToolCalibrationTransformType      m_ToolCalibrationTransform;
+  ToolCalibrationTransformType      m_ToolCalibrationTransform; // FIXME: This is deprecated due to Bug 5474.
+                                    // This transform is now the transform between the spatial object being
+                                    // tracked and the coordinate system of this tracker tool.
+                                    // When a spatial object is attached to a tracker tool, it becomes the child
+                                    // of the tracker tool.
 
   /** Updated flag */
   bool               m_Updated;
+
+  /** Coordinate Reference System */
+  CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;
 
 private:
 

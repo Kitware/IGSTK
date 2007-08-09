@@ -206,6 +206,9 @@ Tracker::Tracker(void) :  m_StateMachine( this )
   m_ConditionNextTransformReceived = itk::ConditionVariable::New();
   m_Threader = itk::MultiThreader::New();
   m_ThreadingEnabled = false;
+
+  // Create the coordinate reference system of the Tracker
+  m_CoordinateReferenceSystem = CoordinateReferenceSystemType::New();
 }
 
 
@@ -960,6 +963,12 @@ Tracker::PatientTransformType Tracker::GetPatientTransform() const
   return m_PatientTransform;
 }
 
+/** Return the coordinate system associated with this tracker */
+const Tracker::CoordinateReferenceSystemType *
+Tracker::GetCoordinateReferenceSystem() const
+{
+  return m_CoordinateReferenceSystem;
+}
 
 /** The "SetToolCalibrationTransform" sets the tool calibration transform */
 void Tracker::SetToolCalibrationTransform( unsigned int portNumber,
