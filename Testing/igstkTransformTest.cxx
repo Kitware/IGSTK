@@ -91,7 +91,9 @@ int igstkTransformTest( int, char * [] )
       {
       if( vnl_math_abs( translationSet[k] - translation[k] ) > tolerance )
         {
-        std::cerr << "Pair : SetTranslationAndRotation() : GetTranslation() failed " << std::endl;
+        std::cerr << "Pair:SetTranslationAndRotation() : GetTranslation() failed"
+                  << std::endl;
+
         return EXIT_FAILURE;
         }
       } 
@@ -101,7 +103,8 @@ int igstkTransformTest( int, char * [] )
         ( vnl_math_abs( rotationSet.GetZ() - rotation.GetZ() ) > tolerance ) ||
         ( vnl_math_abs( rotationSet.GetW() - rotation.GetW() ) > tolerance )    )
       {
-      std::cerr << "Pair : SetTranslationAndRotation() : GetRotation() failed " << std::endl;
+      std::cerr << "Pair : SetTranslationAndRotation() : GetRotation() failed " 
+                << std::endl;
       return EXIT_FAILURE;
       }
 
@@ -116,7 +119,8 @@ int igstkTransformTest( int, char * [] )
       // SetRotation() must set the Translation to identity.
       if( vnl_math_abs( translationSet[k] - 0.0 ) > tolerance )
         {
-        std::cerr << "Pair : SetRotation() : GetTranslation() failed " << std::endl;
+        std::cerr << "Pair : SetRotation() : GetTranslation() failed " 
+                  << std::endl;
         return EXIT_FAILURE;
         }
       } 
@@ -139,7 +143,8 @@ int igstkTransformTest( int, char * [] )
       {
       if( vnl_math_abs( translationSet[k] - translation[k] ) > tolerance )
         {
-        std::cerr << "Pair : SetTranslation() : GetTranslation() failed " << std::endl;
+        std::cerr << "Pair : SetTranslation() : GetTranslation() failed " 
+                  << std::endl;
         return EXIT_FAILURE;
         }
       } 
@@ -150,10 +155,10 @@ int igstkTransformTest( int, char * [] )
         ( vnl_math_abs( rotationSet.GetZ() - 0.0 ) > tolerance ) ||
         ( vnl_math_abs( rotationSet.GetW() - 1.0 ) > tolerance )    )
       {
-      std::cerr << "Pair : SetTranslation() : GetRotation() failed " << std::endl;
+      std::cerr << "Pair : SetTranslation() : GetRotation() failed " 
+                << std::endl;
       return EXIT_FAILURE;
       }
-
 
 
     double timeExpired = t1.GetExpirationTime() + 10.0;
