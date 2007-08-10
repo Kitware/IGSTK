@@ -19,13 +19,13 @@
 
 namespace igstk {
 
-vtkRenderer * ViewProxyBase::ConnectRenderer( ViewNew * view )
+vtkRenderer * ViewProxyBase::GetRenderer( ViewNew * view )
 {
   return view->GetRenderer();
 } 
 
 vtkRenderWindowInteractor * 
-ViewProxyBase::ConnectRenderWindowInteractor( ViewNew * view )
+ViewProxyBase::GetRenderWindowInteractor( ViewNew * view )
 {
   return view->GetRenderWindowInteractor();
 } 

@@ -34,8 +34,8 @@ class ViewProxyBase
 public:
 
 protected:
-  vtkRenderer *               ConnectRenderer( ViewNew * view );
-  vtkRenderWindowInteractor * ConnectRenderWindowInteractor( ViewNew * view );
+  vtkRenderer *               GetRenderer( ViewNew * view );
+  vtkRenderWindowInteractor * GetRenderWindowInteractor( ViewNew * view );
 
 private:
 
