@@ -45,6 +45,12 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
   //Turn on interaction handling
   m_InteractionHandling = true;
 
+
+  m_RenderWindowIDSet = false;
+
+  m_Renderer = NULL;
+  m_RenderWindowInteractor = NULL;
+
   // instantiate the view object 
   m_View = ViewType::New(); 
 
@@ -78,13 +84,24 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
 FLTKWidget::~FLTKWidget()
 {
   igstkLogMacro( DEBUG, "FLTKWidget Destructor() called ...\n");
-  this->m_View->RequestStop();
 
-  vtkRenderWindow * renderWindow = m_VTKRenderer->GetRenderWindow();
+  if ( ! m_View.IsNull() ) 
+    {
+    this->m_View->RequestStop();
 
-#if defined(WIN32)
-    renderWindow->SetWindowId( NULL );
-#endif
+
+    if ( m_Renderer != NULL )
+      {
+      vtkRenderWindow * renderWindow = m_Renderer->GetRenderWindow();
+
+      if ( renderWindow != NULL )
+        {
+        #if defined(WIN32)
+          renderWindow->SetWindowId( NULL );
+        #endif
+        }
+      }
+    }
 
   // according to the fltk docs, destroying a widget does NOT remove it from
   // its parent, so we have to do that explicitly at destruction
@@ -98,15 +115,15 @@ FLTKWidget::~FLTKWidget()
 }
 
 /** Set VTK renderer */
-void FLTKWidget::SetVTKRenderer( vtkRenderer * renderer )
+void FLTKWidget::SetRenderer( vtkRenderer * renderer )
 {
-  this->m_VTKRenderer = renderer;
+  this->m_Renderer = renderer;
 }
 
 /** Set VTK renderw window interactor */
-void FLTKWidget::SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
+void FLTKWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
 {
-  this->m_VTKRenderWindowInteractor = interactor;
+  this->m_RenderWindowInteractor = interactor;
 }
 
 /** Request set View */
@@ -127,10 +144,10 @@ void FLTKWidget::ConnectViewProcessing( )
 
   this->m_ProxyView.Connect( m_View );
   
-  m_VTKRenderer->GetRenderWindow()->GetInteractor()->SetPicker( m_PointPicker );
+  m_Renderer->GetRenderWindow()->GetInteractor()->SetPicker( m_PointPicker );
 
   //Add actors to the point picker list
-  vtkPropCollection * propList = this->m_VTKRenderer->GetViewProps();
+  vtkPropCollection * propList = this->m_Renderer->GetViewProps();
   vtkProp * prop;
 
   while(prop = propList->GetNextProp())
@@ -139,6 +156,36 @@ void FLTKWidget::ConnectViewProcessing( )
     }
 }
 
+/** Set render window */
+void FLTKWidget::SetRenderWindowID(void)
+{
+
+  if ( m_Renderer == NULL ) 
+    {
+    return;
+    }
+
+  vtkRenderWindow * renderWindow = m_Renderer->GetRenderWindow();
+
+  if ( renderWindow == NULL ) 
+    {
+    return;
+    }
+
+  m_RenderWindowIDSet = true;
+
+  #if defined(__APPLE__) && defined(VTK_USE_CARBON)
+    // FLTK 1.x does not support HiView
+    ((vtkCarbonRenderWindow *)renderWindow)->SetRootWindow( fl_xid( this ) );
+  #else
+    renderWindow->SetWindowId( (void *)fl_xid( this ) );
+  #endif
+  #if !defined(WIN32) && !defined(__APPLE__)
+    renderWindow->SetDisplayId( fl_display );
+  #endif
+
+}
+ 
 /** Request enable interactions */
 void FLTKWidget::RequestEnableInteractions()
 {
@@ -187,7 +234,11 @@ void FLTKWidget::draw(void)
   igstkLogMacro( DEBUG, "draw() called ...\n");
 
   // make sure the vtk part knows where and how large we are
-  m_View->RequestSetRenderWindowSize( this->w(), this->h() );
+  //
+  if ( ! m_View.IsNull() )
+    {
+    m_View->RequestSetRenderWindowSize( this->w(), this->h() );
+    }
 
   // make sure the GL context exists and is current:
   // after a hide() and show() sequence e.g. there is no context yet
@@ -195,20 +246,17 @@ void FLTKWidget::draw(void)
   // see Fl_Gl_Window::show()
   this->make_current();
 
-  vtkRenderWindow * renderWindow = m_VTKRenderer->GetRenderWindow();
-  vtkRenderWindowInteractor * interactor = m_VTKRenderWindowInteractor; 
+  if ( ! m_RenderWindowIDSet )
+    {
+    this->SetRenderWindowID();
+    }
 
-#if defined(__APPLE__) && defined(VTK_USE_CARBON)
-  // FLTK 1.x does not support HiView
-  ((vtkCarbonRenderWindow *)renderWindow)->SetRootWindow( fl_xid( this ) );
-#else
-  renderWindow->SetWindowId( (void *)fl_xid( this ) );
-#endif
-#if !defined(WIN32) && !defined(__APPLE__)
-  renderWindow->SetDisplayId( fl_display );
-#endif
-  // get vtk to render to the Fl_Gl_Window
-  interactor->Render();
+  vtkRenderWindowInteractor * interactor = m_RenderWindowInteractor; 
+
+  if ( interactor != NULL )
+    {
+    interactor->Render();
+    }
 }
 
 /** Resize function */
@@ -217,7 +265,10 @@ void FLTKWidget::resize( int x, int y, int w, int h )
   igstkLogMacro( DEBUG, "resize() called ...\n");
 
   // make sure VTK knows about the new situation
-  m_View->RequestSetRenderWindowSize( w, h );
+  if ( ! m_View.IsNull() )
+    {
+    m_View->RequestSetRenderWindowSize( w, h );
+    }
 
   // resize the FLTK window by calling ancestor method
   Fl_Gl_Window::resize( x, y, w, h ); 
@@ -230,7 +281,7 @@ int FLTKWidget::handle( int event )
   igstkLogMacro( DEBUG, "handle() called ...\n");
 
   vtkRenderWindowInteractor * renderWindowInteractor = 
-                                                   m_VTKRenderWindowInteractor;
+                                                   m_RenderWindowInteractor;
 
   if ( renderWindowInteractor == NULL )
     {

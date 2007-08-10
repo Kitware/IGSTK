@@ -110,12 +110,14 @@ private:
   /** Enable keyboard and mouse interactions */
   void EnableInteractionsProcessing();
 
-
-   /** Set VTK renderer */
-  void SetVTKRenderer( vtkRenderer * renderer );
+  /** Set VTK renderer */
+  void SetRenderer( vtkRenderer * renderer );
 
   /** Set VTK renderw window interactor */
-  void SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
+  void SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
+
+  /** Set render window ID */
+  void SetRenderWindowID();
  
 private:
 
@@ -125,9 +127,11 @@ private:
 
   ProxyType         m_ProxyView;
 
-  vtkRenderer       *m_VTKRenderer; 
+  vtkRenderer       *m_Renderer; 
 
-  vtkRenderWindowInteractor       *m_VTKRenderWindowInteractor; 
+  bool               m_RenderWindowIDSet;
+
+  vtkRenderWindowInteractor       *m_RenderWindowInteractor; 
 
   typedef vtkWorldPointPicker  PickerType;
 

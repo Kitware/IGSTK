@@ -126,10 +126,10 @@ private:
   void EnableInteractionsProcessing();
 
   /** Set VTK renderer */
-  void SetVTKRenderer( vtkRenderer * renderer );
+  void SetRenderer( vtkRenderer * renderer );
 
   /** Set VTK render window interactor */
-  void SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
+  void SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
 
 private:
   ViewType::Pointer       m_View;
@@ -140,8 +140,8 @@ private:
   ::itk::Object::Pointer        m_Reporter;
  
   ProxyType                             m_ProxyView;
-  vtkRenderer                         * m_VTKRenderer;
-  vtkRenderWindowInteractor           * m_VTKRenderWindowInteractor;
+  vtkRenderer                         * m_Renderer;
+  vtkRenderWindowInteractor           * m_RenderWindowInteractor;
 
   bool                    m_InteractionHandling;
 

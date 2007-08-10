@@ -63,6 +63,9 @@ QVTKWidget( parent, f ), m_StateMachine(this), m_ProxyView(this)
   m_PointPicker = PickerType::New();
   m_Reporter    = ::itk::Object::New();
 
+  m_Renderer = NULL;
+  m_RenderWindowInteractor = NULL;
+
   igstkAddInputMacro( ValidView );
   igstkAddInputMacro( InValidView );
   igstkAddInputMacro( EnableInteractions );
@@ -99,16 +102,16 @@ QTWidget::~QTWidget()
 }
 
 /** Set VTK renderer */
-void QTWidget::SetVTKRenderer( vtkRenderer * renderer )
+void QTWidget::SetRenderer( vtkRenderer * renderer )
 {
-  this->m_VTKRenderer = renderer;
+  this->m_Renderer = renderer;
 }
 
 /** Set VTK render window interactor */
 void 
-QTWidget::SetVTKRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
+QTWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
 {
-  this->m_VTKRenderWindowInteractor = interactor;
+  this->m_RenderWindowInteractor = interactor;
 }
 
 
@@ -129,11 +132,11 @@ void QTWidget::ConnectViewProcessing( )
   igstkLogMacro( DEBUG, "ConnectViewProcessing called ...\n");
 
   this->m_ProxyView.Connect( m_View );
-  this->SetRenderWindow( this->m_VTKRenderer->GetRenderWindow());
+  this->SetRenderWindow( this->m_Renderer->GetRenderWindow());
   this->GetRenderWindow()->GetInteractor()->SetPicker( m_PointPicker );
 
   //Add actors to the point picker list
-  vtkPropCollection * propList = this->m_VTKRenderer->GetViewProps();
+  vtkPropCollection * propList = this->m_Renderer->GetViewProps();
   vtkProp * prop;
 
   while(prop = propList->GetNextProp())
@@ -262,7 +265,7 @@ QTWidget
 
       m_PointPicker->Pick( e->x(), 
                            this->height() - e->y() - 1, 
-                           0, m_VTKRenderer );
+                           0, m_Renderer );
       double data[3];
       m_PointPicker->GetPickPosition( data );
       Transform::VectorType pickedPoint;
@@ -330,7 +333,7 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
   if(e->buttons() == Qt::LeftButton)
     {
     // Get x,y,z in world coordinates from the clicked point
-    m_PointPicker->Pick(e->x(), this->height() - e->y() - 1, 0, m_VTKRenderer);
+    m_PointPicker->Pick(e->x(), this->height() - e->y() - 1, 0, m_Renderer);
 
     double data[3];
     m_PointPicker->GetPickPosition(data);
