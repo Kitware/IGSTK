@@ -17,19 +17,7 @@
 #ifndef __IGSTKSandbox_SystemInformation_h
 #define __IGSTKSandbox_SystemInformation_h
 
-#cmakedefine IGSTK_USE_FLTK
-#cmakedefine IGSTKSandbox_USE_Qt
-
-#cmakedefine IGSTK_DATA_ROOT
-#ifdef IGSTK_DATA_ROOT
-#  undef IGSTK_DATA_ROOT
-#  define IGSTK_DATA_ROOT "@IGSTK_DATA_ROOT@"
-#else
-#  undef IGSTK_DATA_ROOT
-#endif
-
-#define IGSTK_BINARY_DIR "@IGSTK_BINARY_DIR@"
-#define IGSTK_TEST_OUTPUT_DIR "@IGSTK_TEST_OUTPUT_DIR@"
+#include "igstkSandboxConfigure.h"
 
 #cmakedefine IGSTK_TEST_AURORA_ATTACHED
 #define IGSTK_TEST_AURORA_PORT_NUMBER \
@@ -43,7 +31,6 @@
 #define IGSTK_TEST_LOOPBACK_PORT_NUMBER \
     igstk::SerialCommunication::PortNumber@IGSTK_TEST_LOOPBACK_PORT_NUMBER@
 
-#define IGSTKSandbox_BINARY_DIR "@IGSTKSandbox_BINARY_DIR@"
-#define IGSTKSandbox_DATA_ROOT "@IGSTKSandbox_DATA_ROOT@"
 
+#define IGSTK_TEST_OUTPUT_DIR "@IGSTKSandbox_TEST_OUTPUT_DIR@"
 #endif

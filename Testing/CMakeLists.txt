@@ -86,7 +86,10 @@ ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGener
 
 ADD_TEST( igstkGenericImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkGenericImageSpatialObjectTest)
 
-ADD_TEST( igstkLandmarkUltrasoundCalibrationTest ${IGSTKSandbox_TESTS} igstkLandmarkUltrasoundCalibrationTest)
+ADD_TEST( igstkLandmarkUltrasoundCalibrationTest ${IGSTKSandbox_TESTS} igstkLandmarkUltrasoundCalibrationTest
+  ${IGSTKSandbox_DATA_ROOT}/Input
+  )
+
 ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunicationTest)
 ADD_TEST( igstkViewNewTest ${IGSTKSandbox_TESTS} igstkViewNewTest)
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)

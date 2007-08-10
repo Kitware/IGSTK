@@ -30,8 +30,16 @@
 #include "igstkSystemInformation.h"
 #include "igstkLandmarkUltrasoundCalibration.h"
 
-int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
+int igstkLandmarkUltrasoundCalibrationTest( int argc, char * argv [] )
 {
+  if( argc < 2 )
+    {
+    std::cerr << "Missing arguments" << std::endl;
+    std::cerr << "Usage: " << std::endl;
+    std::cerr << argv[0] << " inputDirectory" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   // Define type used in the landmark ultrasound calibration class
   typedef igstk::LandmarkUltrasoundCalibration
                                             LandmarkUltrasoundCalibrationType;
@@ -91,9 +99,9 @@ int igstkLandmarkUltrasoundCalibrationTest( int, char * [] )
   int           num;
   
   // Open the calibration data file, which recorded the traker information
-  std::string igstkDataDirectory = IGSTKSandbox_DATA_ROOT;
-  std::string simulationFile1 = igstkDataDirectory+"/Input/USCalibration1.txt";
-  std::string simulationFile2 = igstkDataDirectory+"/Input/USCalibration2.txt";
+  std::string igstkDataDirectory = argv[1];
+  std::string simulationFile1 = igstkDataDirectory+"/USCalibration1.txt";
+  std::string simulationFile2 = igstkDataDirectory+"/USCalibration2.txt";
   
   input1.open( simulationFile1.c_str() );
 
