@@ -22,7 +22,7 @@
 #include "igstkTransform.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
-#include "igstkSpatialObject.h"
+#include "igstkAxesObject.h"
 
 
 namespace igstk
@@ -75,7 +75,7 @@ public:
   typedef double            TimePeriodType;
 
   /** typedefs for the coordinate reference system */
-  typedef SpatialObject     CoordinateReferenceSystemType;
+  typedef AxesObject        CoordinateReferenceSystemType;
   
   /** Get the tool transform. */
   igstkGetMacro( Transform, TransformType );

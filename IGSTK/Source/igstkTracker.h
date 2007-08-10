@@ -29,7 +29,7 @@
 #include "igstkStateMachine.h"
 #include "igstkTrackerPort.h"
 #include "igstkTransform.h"
-#include "igstkSpatialObject.h"
+#include "igstkAxesObject.h"
 #include "igstkPulseGenerator.h"
 
 namespace igstk
@@ -123,7 +123,7 @@ public:
   typedef std::vector< TrackerPortPointer > TrackerPortVectorType;
 
   /** typedefs for the coordinate reference system */
-  typedef SpatialObject                     CoordinateReferenceSystemType;
+  typedef AxesObject                        CoordinateReferenceSystemType;
   
   /** The "RequestOpen" method attempts to open communication with the 
    *  tracking device. It generates a TrackerOpenEvent if successful,
