@@ -29,6 +29,7 @@ TrackerTool::TrackerTool(void):m_StateMachine(this)
   m_Transform.SetToIdentity( m_ValidityPeriod ); 
   m_RawTransform.SetToIdentity( m_ValidityPeriod ); 
   m_ToolCalibrationTransform.SetToIdentity( 1e300 ); 
+  m_CoordinateReferenceSystem = CoordinateReferenceSystemType::New();
   m_ToolType = UnknownTool;
   m_Updated = false; // not yet updated
 
