@@ -255,8 +255,14 @@ int igstkFLTKWidgetTest( int, char * [] )
         }
       }
 
+    //Test a widget without a view connected to it 
+    FLTKWidgetType * fltkWidget3DWithoutViewConnected = 
+                      new FLTKWidgetType( 310,10,280,280,"3D View");
+    fltkWidget3DWithoutViewConnected->SetLogger( logger );
+
     delete fltkWidget2D;
     delete fltkWidget3D;
+    delete fltkWidget3DWithoutViewConnected;
     delete form;
     }
   catch(...)
