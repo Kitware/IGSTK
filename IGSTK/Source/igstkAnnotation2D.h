@@ -67,7 +67,10 @@ public:
   void RequestSetFontColor( int index, double red,
                             double green, double blue );
 
-    /** Request add annotations */
+  /** Request to change font size  */
+  void RequestSetFontSize( int index, int fontSize );
+
+  /** Request add annotations */
   void RequestAddAnnotations();
 
   /** Declarations needed for the Logging */
@@ -123,6 +126,9 @@ private:
 
   double                           m_FontColor[3];
   int                              m_AnnotationIndexFontColorToBeChanged;
+
+  int                              m_FontSize;
+  int                              m_AnnotationIndexFontSizeToBeChanged;
  
   /** Private functions that only be invoked through the state machine */
   void AddActorProcessing();
@@ -132,6 +138,7 @@ private:
   void ReportInvalidAnnotationIndexProcessing();
   void ReportInvalidRequestProcessing();
   void ChangeTextColorProcessing();
+  void ChangeFontSizeProcessing();
   
   /** Annotation index */
   int                              m_IndexForAnnotationToBeAdded;
@@ -144,6 +151,8 @@ private:
   igstkDeclareInputMacro( InvalidAnnotationIndex );
   igstkDeclareInputMacro( ValidColorProperty );
   igstkDeclareInputMacro( InvalidColorProperty );
+  igstkDeclareInputMacro( ValidFontSizeProperty );
+  igstkDeclareInputMacro( InvalidFontSizeProperty );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );

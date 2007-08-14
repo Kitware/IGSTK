@@ -44,6 +44,9 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
   igstkAddInputMacro( InvalidAnnotations );
   igstkAddInputMacro( ValidColorProperty );
   igstkAddInputMacro( InvalidColorProperty );
+  igstkAddInputMacro( ValidFontSizeProperty );
+  igstkAddInputMacro( InvalidFontSizeProperty );
+
   
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( ViewPortSet );
@@ -66,17 +69,28 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
   igstkAddTransitionMacro ( AnnotationsAdded, ValidColorProperty , 
                             AnnotationsAdded, ChangeTextColor );  
 
-  igstkAddTransitionMacro ( AnnotationsAdded, ValidViewPort, AnnotationsAdded
-                                             , SetViewPort );
-
-  igstkAddTransitionMacro ( ViewPortSet, ValidViewPort , 
-                            ViewPortSet , SetViewPort );  
-
   igstkAddTransitionMacro ( Idle, ValidColorProperty , 
                             Idle, ChangeTextColor );  
 
   igstkAddTransitionMacro ( ViewPortSet, ValidColorProperty , 
                             ViewPortSet, ChangeTextColor );  
+
+  igstkAddTransitionMacro ( AnnotationsAdded, ValidFontSizeProperty , 
+                            AnnotationsAdded, ChangeFontSize );  
+
+  igstkAddTransitionMacro ( Idle, ValidFontSizeProperty , 
+                            Idle, ChangeFontSize );  
+
+  igstkAddTransitionMacro ( ViewPortSet, ValidFontSizeProperty , 
+                            ViewPortSet, ChangeFontSize );  
+
+
+
+  igstkAddTransitionMacro ( AnnotationsAdded, ValidViewPort, AnnotationsAdded
+                                             , SetViewPort );
+
+  igstkAddTransitionMacro ( ViewPortSet, ValidViewPort , 
+                            ViewPortSet , SetViewPort );  
 
   //Invalid requests
   igstkAddTransitionMacro ( Idle, ValidAnnotations, Idle, ReportInvalidRequest);
@@ -161,11 +175,25 @@ void Annotation2D
   m_FontColor[1] = green;
   m_FontColor[2] = blue;
 
-  // Check for valid color property 
+  // TODO Check for valid color property 
   igstkPushInputMacro ( ValidColorProperty );
   m_StateMachine.ProcessInputs();
 }
 
+/** Request set font size */
+void Annotation2D
+::RequestSetFontSize( int index, int size)
+{
+  igstkLogMacro( DEBUG, "RequestSetFontColor() called ....\n"  );
+
+  m_AnnotationIndexFontSizeToBeChanged= index;
+  m_FontSize = size;
+
+  // TODO Check for valid font size property 
+  igstkPushInputMacro ( ValidFontSizeProperty );
+  m_StateMachine.ProcessInputs();
+}
+ 
 /** Change the font color */ 
 void Annotation2D::ChangeTextColorProcessing( )
 {
@@ -176,6 +204,18 @@ void Annotation2D::ChangeTextColorProcessing( )
 
   this->m_AnnotationActor[m_AnnotationIndexFontColorToBeChanged]->SetTextProperty(
                        m_TextProperty[m_AnnotationIndexFontColorToBeChanged]);
+}
+ 
+/** Change the font size */ 
+void Annotation2D::ChangeFontSizeProcessing( )
+{
+  igstkLogMacro( DEBUG, "ChangeFontSizeProcessing() called ....\n"  );
+
+  m_TextProperty[m_AnnotationIndexFontSizeToBeChanged]->SetFontSize(
+                                  m_FontSize);
+
+  this->m_AnnotationActor[m_AnnotationIndexFontSizeToBeChanged]->SetTextProperty(
+                       m_TextProperty[m_AnnotationIndexFontSizeToBeChanged]);
 }
  
  

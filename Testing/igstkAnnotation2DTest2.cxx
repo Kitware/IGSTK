@@ -185,7 +185,7 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   form->show();
 
   // Do manual redraws
-  for( unsigned int i=0; i < 30; i++)
+  for( unsigned int i=0; i < 100; i++)
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
@@ -196,8 +196,12 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   annotation->RequestAddAnnotationText( 2, "Corner 22" );
   annotation->RequestAddAnnotationText( 3, "Corner 33" );
 
+  //Modify the font size
+  annotation->RequestSetFontSize( 1, 10 );
+  annotation->RequestSetFontSize( 0, 10 );
+
   // Do manual redraws
-  for( unsigned int i=0; i < 30; i++)
+  for( unsigned int i=0; i < 100; i++)
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
