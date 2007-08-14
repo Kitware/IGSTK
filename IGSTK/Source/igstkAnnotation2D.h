@@ -25,8 +25,9 @@
 #endif
 
 #include <string>
-#include "vtkActor2D.h"
+#include "vtkTextActor.h"
 #include "vtkTextMapper.h"
+#include "vtkTextProperty.h"
 #include "igstkObject.h"
 #include "igstkStateMachine.h"
 #include "vtkViewport.h"
@@ -62,20 +63,27 @@ public:
   /* Add annotation text */
   void RequestAddAnnotationText( int , const std::string & );
 
-  /** Request to Set viewport */
-  void RequestSetAnnotationsViewPort( int horizontal, int vertical );
+  /** Request to change font color */
+  void RequestSetFontColor( int index, double red,
+                            double green, double blue );
 
-  /** Request add annotations */
+    /** Request add annotations */
   void RequestAddAnnotations();
 
   /** Declarations needed for the Logging */
   igstkLoggerMacro();
   
   /** Type defining the container of actors */
-  typedef std::vector< vtkActor2D* >         ActorsListType; 
+  typedef std::vector< vtkTextActor* >         ActorsListType; 
 
   /** Get the VTK actors */
   igstkGetMacro( Actors, ActorsListType );
+
+  friend class ViewNew;
+  friend class View;
+
+  /** REMOVE this when QView class is removed from the sandbox */
+  friend class QView;
 
 protected:
 
@@ -84,7 +92,7 @@ protected:
 
 
   /** Add an actor */
-  void AddActors( vtkActor2D* );
+  void AddActors( vtkTextActor* );
 
   /** Delete Actors */
   void DeleteActors( );
@@ -92,6 +100,9 @@ protected:
   /** Print the object informations in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
   
+  /** Request to Set viewport */
+  void RequestSetAnnotationsViewPort( int horizontal, int vertical );
+
 private:
 
   Annotation2D( const Self & ); //purposely not implemented
@@ -101,14 +112,17 @@ private:
 
   std::string                      m_AnnotationText[4];
   std::string                      m_AnnotationTextToBeAdded;
-  vtkTextMapper *                  m_AnnotationMapper[4]; 
-  vtkActor2D    *                  m_AnnotationActor[4];
-  vtkActor2D    *                  m_ActorToBeAdded;
+  vtkTextActor  *                  m_AnnotationActor[4];
+  vtkTextActor  *                  m_ActorToBeAdded;
+  vtkTextProperty *                m_TextProperty[4];
 
   int                              m_ViewPortHorizontalSize;
   int                              m_ViewPortVerticalSize;
   int                              m_ViewPortHorizontalSizeToBeSet;
   int                              m_ViewPortVerticalSizeToBeSet;
+
+  double                           m_FontColor[3];
+  int                              m_AnnotationIndexFontColorToBeChanged;
  
   /** Private functions that only be invoked through the state machine */
   void AddActorProcessing();
@@ -117,6 +131,7 @@ private:
   void AddAnnotationsProcessing();
   void ReportInvalidAnnotationIndexProcessing();
   void ReportInvalidRequestProcessing();
+  void ChangeTextColorProcessing();
   
   /** Annotation index */
   int                              m_IndexForAnnotationToBeAdded;
@@ -127,6 +142,8 @@ private:
   igstkDeclareInputMacro( ValidViewPort );
   igstkDeclareInputMacro( ValidAnnotationIndex );
   igstkDeclareInputMacro( InvalidAnnotationIndex );
+  igstkDeclareInputMacro( ValidColorProperty );
+  igstkDeclareInputMacro( InvalidColorProperty );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );

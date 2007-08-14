@@ -129,7 +129,13 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   annotation->RequestAddAnnotationText ( 1, "Corner 1");
   annotation->RequestAddAnnotationText ( 2, "Corner 2");
   annotation->RequestAddAnnotationText ( 3, "Corner 3");
-  
+
+  //use different colors for each corner annotation 
+  annotation->RequestSetFontColor( 0, 1.0, 0.0, 0.0 ); 
+  annotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 ); 
+  annotation->RequestSetFontColor( 2, 0.0, 0.0, 1.0 ); 
+  annotation->RequestSetFontColor( 3, 1.0, 1.0, 0.0 ); 
+
   // Add an invalid index for testing purpose 
   annotation->RequestAddAnnotationText ( 10, "Invalid index");
 
@@ -177,6 +183,18 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
 
   form->end();
   form->show();
+
+  // Do manual redraws
+  for( unsigned int i=0; i < 100; i++)
+    {
+    Fl::wait( 0.01 );
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();   // trigger FLTK redraws
+    }
+
+  //Modify the text of corner 2 and 3
+  annotation->RequestAddAnnotationText( 2, "Corner 22" );
+  annotation->RequestAddAnnotationText( 3, "Corner 33" );
 
   // Do manual redraws
   for( unsigned int i=0; i < 100; i++)

@@ -16,9 +16,8 @@
 =========================================================================*/
 
 #include "igstkAnnotation2D.h" 
-#include "vtkActor2D.h"
+#include "vtkTextActor.h"
 #include "vtkTextProperty.h"
-#include "vtkTextMapper.h"
 
 
 namespace igstk 
@@ -31,9 +30,9 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
   for (int i = 0; i < 4; i++)
     {
     this->m_AnnotationText[i] = "";
-    this->m_AnnotationMapper[i] = vtkTextMapper::New();
-    this->m_AnnotationActor[i]  = vtkActor2D::New();
-    this->m_AnnotationActor[i]->SetMapper(this->m_AnnotationMapper[i]);
+    this->m_TextProperty[i] = vtkTextProperty::New();
+    this->m_AnnotationActor[i]  = vtkTextActor::New();
+    this->m_AnnotationActor[i]->SetTextProperty(this->m_TextProperty[i]);
     m_ActorToBeAdded = m_AnnotationActor[i];
     this->AddActorProcessing( );
     }
@@ -43,6 +42,8 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
   igstkAddInputMacro( ValidViewPort );
   igstkAddInputMacro( ValidAnnotations );
   igstkAddInputMacro( InvalidAnnotations );
+  igstkAddInputMacro( ValidColorProperty );
+  igstkAddInputMacro( InvalidColorProperty );
   
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( ViewPortSet );
@@ -50,11 +51,26 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
 
   igstkAddTransitionMacro ( Idle, ValidAnnotationIndex , 
                             Idle, AddAnnotationText );  
+
   igstkAddTransitionMacro ( Idle, InvalidAnnotationIndex , 
                             Idle, ReportInvalidAnnotationIndex );  
+
   igstkAddTransitionMacro ( Idle, ValidViewPort, ViewPortSet, SetViewPort );
+
   igstkAddTransitionMacro ( ViewPortSet, ValidAnnotations , 
                             AnnotationsAdded , AddAnnotations );  
+
+  igstkAddTransitionMacro ( AnnotationsAdded, ValidAnnotationIndex , 
+                            AnnotationsAdded, AddAnnotationText );  
+
+  igstkAddTransitionMacro ( AnnotationsAdded, ValidColorProperty , 
+                            AnnotationsAdded, ChangeTextColor );  
+ 
+  igstkAddTransitionMacro ( Idle, ValidColorProperty , 
+                            Idle, ChangeTextColor );  
+
+  igstkAddTransitionMacro ( ViewPortSet, ValidColorProperty , 
+                            ViewPortSet, ChangeTextColor );  
 
   //Invalid requests
   igstkAddTransitionMacro ( Idle, ValidAnnotations, Idle, ReportInvalidRequest);
@@ -75,7 +91,8 @@ Annotation2D::~Annotation2D()
 
   for (int i = 0; i < 4; i++)
     {
-    this->m_AnnotationMapper[i]->Delete();
+    this->m_TextProperty[i]->Delete();
+    this->m_AnnotationActor[i]->Delete();
     }
 }
 
@@ -86,7 +103,7 @@ void Annotation2D::AddActorProcessing( )
   m_Actors.push_back( m_ActorToBeAdded );
 }
 
-/** */
+/** Add annotation text */
 void Annotation2D::RequestAddAnnotationText( int i, const std::string  & text )
 {
   igstkLogMacro( DEBUG, "RequestAddAnnotationText called ...\n");  
@@ -112,14 +129,11 @@ void Annotation2D::AddAnnotationTextProcessing( )
   igstkLogMacro( DEBUG, "AddAnnotationTextProcessing called ...\n");
 
   m_AnnotationText[m_IndexForAnnotationToBeAdded] = m_AnnotationTextToBeAdded;
-  m_AnnotationMapper[m_IndexForAnnotationToBeAdded]->SetInput( 
-                    m_AnnotationText[m_IndexForAnnotationToBeAdded].c_str() );
   this->m_AnnotationActor[m_IndexForAnnotationToBeAdded]->
-                  SetMapper(this->m_AnnotationMapper[
-                                              m_IndexForAnnotationToBeAdded]);
+                  SetInput( m_AnnotationText[m_IndexForAnnotationToBeAdded].c_str() );
 }
 
-/** */
+/** Request set annotation view port */
 void Annotation2D::RequestSetAnnotationsViewPort( int horizontalSize, 
                                                   int verticalSize )
 {
@@ -131,7 +145,36 @@ void Annotation2D::RequestSetAnnotationsViewPort( int horizontalSize,
   m_StateMachine.ProcessInputs();
 }
 
-/** */
+/** Request font color */
+void Annotation2D
+::RequestSetFontColor( int index, double red, double blue, double green )
+{
+  igstkLogMacro( DEBUG, "RequestSetFontColor() called ....\n"  );
+
+  m_AnnotationIndexFontColorToBeChanged = index;
+  m_FontColor[0] = red;
+  m_FontColor[1] = green;
+  m_FontColor[2] = blue;
+
+  // Check for valid color property 
+  igstkPushInputMacro ( ValidColorProperty );
+  m_StateMachine.ProcessInputs();
+}
+
+/** Change the font color */ 
+void Annotation2D::ChangeTextColorProcessing( )
+{
+  igstkLogMacro( DEBUG, "ChangeTextColorProcessing() called ....\n"  );
+
+  m_TextProperty[m_AnnotationIndexFontColorToBeChanged]->SetColor(
+                                  m_FontColor[0], m_FontColor[1], m_FontColor[2]); 
+
+  this->m_AnnotationActor[m_AnnotationIndexFontColorToBeChanged]->SetTextProperty(
+                       m_TextProperty[m_AnnotationIndexFontColorToBeChanged]);
+}
+ 
+ 
+/** Request Add annotations */
 void Annotation2D::RequestAddAnnotations()
 {
   igstkLogMacro( DEBUG, "RequestAddAnnotations called ....\n");
