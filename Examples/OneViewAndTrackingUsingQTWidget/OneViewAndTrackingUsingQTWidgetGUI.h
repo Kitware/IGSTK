@@ -57,7 +57,7 @@ public:
   OneViewAndTrackingUsingQTWidgetGUI();
   ~OneViewAndTrackingUsingQTWidgetGUI();
   void AttachObjectToTrack( igstk::SpatialObject *objectToTrack);
-  void SetView( igstk::ViewNew::Pointer  view );
+  void SetView( igstk::ViewNew * view );
   bool HasQuitted();
 
 public slots:

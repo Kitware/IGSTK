@@ -93,7 +93,7 @@ void OneViewAndTrackingUsingQTWidgetGUI::OnQuitAction()
     }
 }
 
-void OneViewAndTrackingUsingQTWidgetGUI::SetView( igstk::ViewNew::Pointer view )
+void OneViewAndTrackingUsingQTWidgetGUI::SetView( igstk::ViewNew * view )
 {
   ui.Display3D->RequestSetView (view);
 }
