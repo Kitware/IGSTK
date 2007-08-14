@@ -65,7 +65,13 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
 
   igstkAddTransitionMacro ( AnnotationsAdded, ValidColorProperty , 
                             AnnotationsAdded, ChangeTextColor );  
- 
+
+  igstkAddTransitionMacro ( AnnotationsAdded, ValidViewPort, AnnotationsAdded
+                                             , SetViewPort );
+
+  igstkAddTransitionMacro ( ViewPortSet, ValidViewPort , 
+                            ViewPortSet , SetViewPort );  
+
   igstkAddTransitionMacro ( Idle, ValidColorProperty , 
                             Idle, ChangeTextColor );  
 
@@ -92,7 +98,6 @@ Annotation2D::~Annotation2D()
   for (int i = 0; i < 4; i++)
     {
     this->m_TextProperty[i]->Delete();
-    this->m_AnnotationActor[i]->Delete();
     }
 }
 
@@ -189,6 +194,14 @@ void Annotation2D::SetViewPortProcessing( )
   
   this->m_ViewPortHorizontalSize = m_ViewPortHorizontalSizeToBeSet;
   this->m_ViewPortVerticalSize = m_ViewPortVerticalSizeToBeSet;
+
+  this->m_AnnotationActor[0]->SetPosition(10,10);
+  this->m_AnnotationActor[1]->SetPosition( 
+                                        this->m_ViewPortHorizontalSize-60,10);
+  this->m_AnnotationActor[2]->SetPosition(10, 
+                                          this->m_ViewPortVerticalSize - 10);
+  this->m_AnnotationActor[3]->SetPosition(this->m_ViewPortHorizontalSize-60, 
+                                          this->m_ViewPortVerticalSize - 10);
 }
 
 

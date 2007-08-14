@@ -180,12 +180,12 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   view2D->RequestInitializeRenderWindowInteractor();    
   view2D->RequestStart();
 
-
+  form->resizable( form );
   form->end();
   form->show();
 
   // Do manual redraws
-  for( unsigned int i=0; i < 100; i++)
+  for( unsigned int i=0; i < 30; i++)
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
@@ -197,7 +197,7 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   annotation->RequestAddAnnotationText( 3, "Corner 33" );
 
   // Do manual redraws
-  for( unsigned int i=0; i < 100; i++)
+  for( unsigned int i=0; i < 30; i++)
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();

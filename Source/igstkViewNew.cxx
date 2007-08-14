@@ -351,6 +351,15 @@ void ViewNew::SetRenderWindowSizeProcessing()
   m_RenderWindow->SetSize(m_RenderWindowWidthToBeSet,
                           m_RenderWindowHeightToBeSet);
 
+ 
+  // update the viewport size of the annotations if annotations have been added
+  
+  if ( m_Annotation2DToBeAdded ) 
+      {
+      m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( m_RenderWindowWidthToBeSet, 
+                                                          m_RenderWindowHeightToBeSet );
+      }
+
   m_RenderWindowInteractor->Modified();
   m_RenderWindow->Modified();
 }
