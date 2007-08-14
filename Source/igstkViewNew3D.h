@@ -37,13 +37,9 @@ namespace igstk {
 class ViewNew3D : public ViewNew 
 {
 public:
-  typedef ViewNew3D    Self;
-  typedef ViewNew      Superclass;
 
-  igstkTypeMacro( ViewNew3D, ViewNew );
+  igstkStandardClassTraitsMacro( ViewNew3D, ViewNew ); 
 
-  igstkNewMacro( ViewNew3D );
-   
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
 

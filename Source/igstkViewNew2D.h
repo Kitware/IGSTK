@@ -40,12 +40,7 @@ class ViewNew2D : public ViewNew
 {
 public:
 
-  typedef ViewNew2D    Self;
-  typedef ViewNew      Superclass;
-
-  igstkTypeMacro( ViewNew2D, ViewNew );
-
-  igstkNewMacro( ViewNew2D );
+  igstkStandardClassTraitsMacro( ViewNew2D, ViewNew );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 

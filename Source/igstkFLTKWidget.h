@@ -70,7 +70,7 @@ public:
   igstkLoggerMacro()
 
   /** Set view */
-  void RequestSetView( ViewType::Pointer view );
+  void RequestSetView( const ViewType * view );
 
   /** Disable user interactions with the window via mouse and keyboard */
   void RequestDisableInteractions();

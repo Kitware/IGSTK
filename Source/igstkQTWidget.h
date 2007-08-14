@@ -81,7 +81,7 @@ public:
   virtual ~QTWidget( void );
   
   /** set the view */
-  void RequestSetView( ViewType::Pointer view );
+  void RequestSetView( const ViewType * view );
 
   typedef ViewProxy< QTWidget > ProxyType;
 

@@ -15,13 +15,12 @@
 
 =========================================================================*/
 #include "igstkViewNew2D.h"
-
 #include "vtkInteractorStyleImage.h"
 
 namespace igstk {
 
 /** Constructor */
-ViewNew2D::ViewNew2D() : ViewNew()
+ViewNew2D::ViewNew2D() : m_StateMachine(this), ViewNew()
 {
   vtkInteractorStyleImage * interactorStyle = vtkInteractorStyleImage::New();
   this->SetInteractorStyle( interactorStyle );

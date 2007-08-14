@@ -127,12 +127,12 @@ void FLTKWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interact
 }
 
 /** Request set View */
-void FLTKWidget::RequestSetView( ViewType::Pointer view )
+void FLTKWidget::RequestSetView( const ViewType* view )
 {
   igstkLogMacro( DEBUG, "RequestSetView called ...\n");
   //FIXME: insert a logic to check if the specified view is 
   //valid or not
-  m_View = view;
+  m_View = const_cast< ViewType*  >( view );
   igstkPushInputMacro( ValidView );
   m_StateMachine.ProcessInputs();
 }
