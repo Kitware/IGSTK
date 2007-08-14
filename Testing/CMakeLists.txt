@@ -129,6 +129,22 @@ IF(IGSTKSandbox_DATA_ROOT)
               ${IGSTK_DATA_ROOT}/Input/E000192 )
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkAnnotation2DTest2.cxx)
+
+    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest2 
+              ${IGSTKSandbox_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+              igstkCTImageSpatialObjectReadingAndRepresentationTest2
+              ${IGSTK_DATA_ROOT}/Input/E000192
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
+              ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
+
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkCTImageSpatialObjectReadingAndRepresentationTest2.cxx)
+
   ENDIF (IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_DATA_ROOT)
 

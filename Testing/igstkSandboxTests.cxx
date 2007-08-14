@@ -38,6 +38,7 @@ void RegisterTests()
 
 #ifdef IGSTKSandbox_USE_FLTK
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
+  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest2);
   REGISTER_TEST(igstkFLTKWidgetTest);
   REGISTER_TEST(igstkAnnotation2DTest2);
 #endif /* IGSTKSandbox_USE_FLTK */
