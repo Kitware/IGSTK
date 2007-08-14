@@ -112,6 +112,19 @@ IF(IGSTKSandbox_USE_Qt)
               igstkQTWidgetTest)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkQTWidgetTest.cxx)
+    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest3 
+              ${IGSTKSandbox_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+              igstkCTImageSpatialObjectReadingAndRepresentationTest3
+              ${IGSTK_DATA_ROOT}/Input/E000192
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
+              ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkCTImageSpatialObjectReadingAndRepresentationTest3.cxx)
 ENDIF(IGSTKSandbox_USE_Qt)
 
 

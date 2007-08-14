@@ -45,6 +45,7 @@ void RegisterTests()
 
 #ifdef IGSTKSandbox_USE_Qt
   REGISTER_TEST(igstkQTWidgetTest);
+  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
 #endif /* IGSTKSandbox_USE_Qt */
 
 }
