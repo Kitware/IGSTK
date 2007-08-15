@@ -44,17 +44,19 @@ public:
   typedef  ::itk::SmartPointer<Self>      Pointer;
   itkNewMacro( Self );
 
-  typedef igstk::Transform                TransformType;
+  typedef ::igstk::Tracker                TrackerType;
+  typedef ::igstk::TrackerTool            TrackerToolType;
+  typedef ::igstk::Transform              TransformType;
   typedef TransformType::VectorType       VectorType;
   typedef TransformType::VersorType       VersorType;
 
   typedef std::vector< VectorType >       VectorArrayType;
   typedef std::vector< VersorType >       VersorArrayType;
 
-  typedef itk::Logger                     LoggerType; 
-  typedef itk::StdStreamLogOutput         LogOutputType;
+  typedef ::itk::Logger                   LoggerType; 
+  typedef ::itk::StdStreamLogOutput       LogOutputType;
 
-  typedef itk::ReceptorMemberCommand< Self >   ReceptorObserverType;
+  typedef ::itk::ReceptorMemberCommand< Self >   ReceptorObserverType;
 
   typedef enum
     {
@@ -71,7 +73,6 @@ protected:
     this->m_LogOutput = LogOutputType::New();
 
     this->m_Logger->SetPriorityLevel( LoggerType::DEBUG );
-    this->m_Tracker->SetLogger( this->m_Logger );
 
     this->m_TransformObserver = ReceptorObserverType::New();
     this->m_TransformObserver->SetCallbackFunction( this,
@@ -86,10 +87,16 @@ protected:
 
 public:
 
-  void SetTracker( Tracker * tracker )
+  void SetTracker( TrackerType * tracker )
     {
     this->m_Tracker = tracker;
     }
+
+  void SetTrackerTool( TrackerToolType * trackerTool )
+    {
+    this->m_TrackerTool = trackerTool;
+    }
+
 
   void SetBaselineFilename( const char * filename )
     {
@@ -125,13 +132,17 @@ public:
     {
     igstk::RealTimeClock::Initialize();
 
-    const unsigned int toolPort = 0;
     const unsigned int toolNumber = 0;
 
-    this->m_Tracker->AttachObjectToTrackerTool( 
-      toolPort, 
-      toolNumber, 
-      this->m_SpatialObject );
+    this->m_TrackerTool->RequestAttachSpatialObject( this->m_SpatialObject );
+    this->m_Tracker->RequestAddTool( this->m_TrackerTool );
+
+    //  PREVIOUS: DEPRECATED METHOD : DELETE FROM HERE : FIXME
+    //  this->m_Tracker->AttachObjectToTrackerTool( 
+    //  toolPort, 
+    //  toolNumber, 
+    //  this->m_SpatialObject );
+    //  PREVIOUS: DEPRECATED METHOD : DELETE FROM HERE : FIXME
 
     this->m_LogFile.open( this->m_LogOutputFilename.c_str() );
     if( !this->m_LogFile.fail() )
@@ -145,6 +156,8 @@ public:
       this->m_LogOutput->SetStream( std::cerr );
       }
     this->m_Logger->AddLogOutput( this->m_LogOutput );
+
+    this->m_Tracker->SetLogger( this->m_Logger );
 
     this->m_NumberOfPositionsCollected = 0;
     this->m_NumberOfOrientationsCollected = 0;
@@ -224,7 +237,8 @@ private:
 
   int                             m_FinalStatus;
 
-  Tracker::Pointer                m_Tracker;
+  TrackerType::Pointer            m_Tracker;
+  TrackerTool::Pointer            m_TrackerTool;
   EllipsoidObject::Pointer        m_SpatialObject;
 
   std::string                     m_BaseLineFilename;

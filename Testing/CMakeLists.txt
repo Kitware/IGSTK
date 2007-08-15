@@ -3,6 +3,7 @@ SET(IGSTK_TESTS_LATEST  ${IGSTKSandbox_BINARY_DIR}/TestsLatest )
 MAKE_DIRECTORY( ${IGSTK_TESTS_LATEST} )
 
 SET(IGSTKSandbox_TESTS ${CXX_TEST_PATH}/igstkSandboxTests)
+SET(IGSTKSandboxTrackerSuppervised_TESTS ${CXX_TEST_PATH}/igstkTrackerSupervisedTests)
 
 SET(IGSTKSandbox_TEST_OUTPUT_DIR "${IGSTKSandbox_BINARY_DIR}/Testing/Temporary")
 MAKE_DIRECTORY(${IGSTKSandbox_TEST_OUTPUT_DIR})
@@ -71,7 +72,6 @@ INCLUDE_DIRECTORIES (
 # Add your new tests here
 SET(SandboxTests_SRCS
   igstkPivotCalibrationAlgorithmTest.cxx
-  igstkPolarisHardwareTest.cxx
   igstkDICOMGenericImageReaderTest.cxx
   igstkGenericImageSpatialObjectTest.cxx
   igstkLandmarkUltrasoundCalibrationTest.cxx
@@ -93,10 +93,6 @@ ADD_TEST( igstkLandmarkUltrasoundCalibrationTest ${IGSTKSandbox_TESTS} igstkLand
 ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunicationTest)
 ADD_TEST( igstkViewNewTest ${IGSTKSandbox_TESTS} igstkViewNewTest)
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
-
-ADD_TEST( igstkPolarisHardwareTest ${IGSTKSandbox_TESTS} igstkPolarisHardwareTest
-  ${IGSTK_DATA_ROOT}/Baseline/PolarisHardwarePositionsAndOrientations.txt
-  ${IGSTKSandbox_TEST_OUTPUT_DIR}/PolarisHardwarePositionsAndOrientationsLogOutput.txt )
 
 IF(IGSTKSandbox_USE_FLTK)
     ADD_TEST( igstkFLTKWidgetTest
@@ -161,8 +157,23 @@ IF(IGSTKSandbox_DATA_ROOT)
   ENDIF (IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
-ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${SandboxTests_SRCS})
+IF( IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING )
 
+  # Add your supervised tracker new tests here
+  SET(TrackerSupervisedTests_SRCS
+    igstkPolarisHardwareTest.cxx
+    )
+
+  ADD_TEST( igstkPolarisHardwareTest ${IGSTKSandboxTrackerSuppervised_TESTS} igstkPolarisHardwareTest
+    ${IGSTK_DATA_ROOT}/Baseline/PolarisHardwarePositionsAndOrientations.txt
+    ${IGSTKSandbox_TEST_OUTPUT_DIR}/PolarisHardwarePositionsAndOrientationsLogOutput.txt )
+
+  ADD_EXECUTABLE(igstkTrackerSupervisedTests igstkTrackerSupervisedTests.cxx ${TrackerSupervisedTests_SRCS})
+  TARGET_LINK_LIBRARIES(igstkTrackerSupervisedTests IGSTKSandbox)
+
+ENDIF( IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING )
+
+ADD_EXECUTABLE(igstkSandboxTests igstkSandboxTests.cxx ${SandboxTests_SRCS})
 TARGET_LINK_LIBRARIES(igstkSandboxTests IGSTKSandbox)
 
 ADD_EXECUTABLE(igstkSystemInformation igstkSystemInformation.cxx)

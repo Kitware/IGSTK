@@ -41,6 +41,7 @@ int igstkPolarisHardwareTest( int argc, char* argv[] )
 
   typedef igstk::TrackerHardwareTestHelper    TestHelperType;
   typedef igstk::PolarisTracker               TrackerType;
+  typedef igstk::PolarisTrackerTool           TrackerToolType;
 
  #ifdef WIN32
   typedef igstk::SerialCommunicationForWindows  CommunicationType;
@@ -51,6 +52,11 @@ int igstkPolarisHardwareTest( int argc, char* argv[] )
   TestHelperType::Pointer tester = TestHelperType::New();
 
   TrackerType::Pointer tracker = TrackerType::New();
+
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+
+  const unsigned int toolPort = 0;
+  trackerTool->RequestSetPort( toolPort );
 
   CommunicationType::Pointer communication = CommunicationType::New();
   communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
@@ -64,6 +70,8 @@ int igstkPolarisHardwareTest( int argc, char* argv[] )
   tracker->SetCommunication( communication );
 
   tester->SetTracker( tracker );
+  tester->SetTrackerTool( trackerTool );
+
   tester->SetBaselineFilename( argv[1] );
   tester->SetLogOutputFilename( argv[2] );
 

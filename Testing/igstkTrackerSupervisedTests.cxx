@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkSandboxTests.cxx
+  Module:    igstkTrackerSupervisedTests.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -28,23 +28,5 @@
 void RegisterTests()
 {
   // Register Sandbox tests
-  REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
-  REGISTER_TEST(igstkSocketCommunicationTest);
-  REGISTER_TEST(igstkViewNewTest);
-  REGISTER_TEST(igstkGenericImageSpatialObjectTest);
-  REGISTER_TEST(igstkDICOMGenericImageReaderTest);
-  REGISTER_TEST(igstkPivotCalibrationAlgorithmTest);
-
-#ifdef IGSTKSandbox_USE_FLTK
-  REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
-  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest2);
-  REGISTER_TEST(igstkFLTKWidgetTest);
-  REGISTER_TEST(igstkAnnotation2DTest2);
-#endif /* IGSTKSandbox_USE_FLTK */
-
-#ifdef IGSTKSandbox_USE_Qt
-  REGISTER_TEST(igstkQTWidgetTest);
-  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
-#endif /* IGSTKSandbox_USE_Qt */
-
+  REGISTER_TEST(igstkPolarisHardwareTest);
 }
