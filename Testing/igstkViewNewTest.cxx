@@ -210,6 +210,7 @@ int igstkViewNewTest( int, char * [] )
 
     view2D->RequestInitializeRenderWindowInteractor();
     view2D->RequestResetCamera();
+    view2D->RequestSetRendererBackgroundColor( 0.0, 0.0, 1.0 );
 
     view3D->RequestInitializeRenderWindowInteractor();
     view3D->RequestResetCamera();

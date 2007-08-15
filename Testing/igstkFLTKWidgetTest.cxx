@@ -188,17 +188,11 @@ int igstkFLTKWidgetTest( int, char * [] )
     view2D->RequestResetCamera();
     view2D->RequestAddObject( ellipsoidRepresentation );
 
-    // Add the cylinder to the view
-    view2D->RequestAddObject( cylinderRepresentation );
-
     ViewNew3DType::Pointer view3D = ViewNew3DType::New();
     view3D->SetLogger( logger );
 
     view3D->RequestResetCamera();
     
-    // Add the ellipsoid to the view
-    view3D->RequestAddObject( ellipsoidRepresentation );
-
     // Add the cylinder to the view
     view3D->RequestAddObject( cylinderRepresentation );
 
@@ -229,11 +223,14 @@ int igstkFLTKWidgetTest( int, char * [] )
     fltkWidget3D->SetLogger( logger );
 
     view2D->RequestInitializeRenderWindowInteractor();    
+    // Add the cylinder to the view 2D
+    view2D->RequestAddObject( cylinderRepresentation );
 
     view3D->RequestInitializeRenderWindowInteractor();
+    // Add the ellipsoid to the view 3D
+    view3D->RequestAddObject( ellipsoidRepresentation );
 
     form->end();
-
     form->show();
 
     view2D->RequestStart();
