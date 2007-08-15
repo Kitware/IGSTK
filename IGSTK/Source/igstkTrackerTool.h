@@ -78,19 +78,19 @@ public:
   typedef AxesObject        CoordinateReferenceSystemType;
   
   /** Get the tool transform. */
-  igstkGetMacro( Transform, TransformType );
+  igstkGetMacro( Transform, TransformType ); // FIXME : DEPRECATED : A REQUEST SHOULD BE MADE OR THIS SHOULD BE PRIVATE ONLY TO BE USED BY THE TRACKER.
 
   /** Set the tool transform (called by Tracker). */
-  void SetTransform( const TransformType & transform );
+  void RequestSetTransform( const TransformType & transform ); // FIXME: MUST BE PRIVATE : THE TRACKER MUST BE A FRIEND
 
   /** Get the validity period for this tool. */
-  igstkGetMacro( ValidityPeriod, TimePeriodType );
+  igstkGetMacro( ValidityPeriod, TimePeriodType ); // FIXME : DEPRECATED : NOT USED
 
   /** Set the validity period for this tool. */
-  igstkSetMacro( ValidityPeriod, TimePeriodType );
+  igstkSetMacro( ValidityPeriod, TimePeriodType ); // FIXME : DEPRECATED : NOT USED
   
   /** Get the ToolType (set by subclasses of this class) */
-  igstkGetMacro( ToolType, ToolType );
+  igstkGetMacro( ToolType, ToolType ); // FIXME : DEPRECATED : NOT USED
 
   /** Get the calibration transform for this tool. */
   igstkGetMacro( ToolCalibrationTransform, ToolCalibrationTransformType );
@@ -143,10 +143,10 @@ private:
                                     // raw transform (TrackerTool -> Tracker ).
 
   /** Time in milliseconds for which this tool will be reporting results */
-  TimePeriodType     m_ValidityPeriod;
+  TimePeriodType     m_ValidityPeriod;  // FIXME: DEPRECATED: THIS IS NOT BEING USED : The Transform has its own validity time.
   
   /** The type of the tool reflecting the property of the tool */
-  ToolType           m_ToolType;
+  ToolType           m_ToolType;    // FIXME : DEPRECATED : NOT IN USE
   
   /** Raw transform for the tool */
   TransformType      m_RawTransform; // FIXME: This is deprecated due to Bug 5474. 

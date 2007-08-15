@@ -331,7 +331,14 @@ void Tracker::SetToolTransform( unsigned int portNumber,
     }
 }
 
-/** Associate a TrackerTool to an object to be tracked. This is a one-to-one
+
+
+/** DEPRECATED: This method will be removed from the Toolkit.
+ *  Instead create a TrackerTool, attache the SpatialObject
+ *  to the TrackerTool, and then assign the TrackerTool to
+ *  this Tracker.
+ *
+ *  Associate a TrackerTool to an object to be tracked. This is a one-to-one
  * association and cannot be changed during the life of the application */
 void Tracker::AttachObjectToTrackerTool( unsigned int portNumber,
                                          unsigned int toolNumber,
@@ -345,7 +352,8 @@ void Tracker::AttachObjectToTrackerTool( unsigned int portNumber,
       if( toolNumber < port->GetNumberOfTools() )
         {
         TrackerToolPointer tool = port->GetTool( toolNumber );
-        objectToTrack->RequestAttachToTrackerTool( tool );
+        // FIXME:   objectToTrack->RequestAttachToTrackerTool( tool );
+        tool->RequestAttachSpatialObject( objectToTrack );
         }
       }
     }
@@ -776,7 +784,7 @@ void Tracker::UpdateStatusSuccessProcessing( void )
                           transform.GetError(),
                           timeToExpiration );
 
-        tool->SetTransform( toolTransform );
+        tool->RequestSetTransform( toolTransform );
         }
       }
     }
@@ -899,6 +907,12 @@ void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
     }
 }
 
+
+/** Request adding a tool to the tracker */
+void Tracker::RequestAddTool( TrackerToolType * trackerTool )
+{
+   // FIXME: thread this in the State Machine
+}
 
 /** The "SetReferenceTool" sets the reference tool. */
 void Tracker::SetReferenceTool( bool applyReferenceTool,

@@ -153,11 +153,7 @@ public:
   ports and tools when the tracker is in tracking state. */
   void RequestUpdateStatus( void );
 
-  /** Get reference system. This is the reference frame of the Tracker itself.
-   * Tracker tools need access to this reference system in order to use it
-   * as parent in the scene graph. */
-  const CoordinateReferenceSystemType * GetCoordinateReferenceSystem() const;
-  
+ 
   /** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
    * port numbered "portNumber" in the variable "position". Note that this
    * variable represents the position and orientation of the tool in 3D space.
@@ -169,12 +165,16 @@ public:
    * association and cannot be changed during the life of the application 
    *
    *  FIXME: This method is now DEPRECATED. Instead use the RequestAttachSpatialObject() 
-   *         on a TrackerTool object and then add the Tracker tool to this Tracker.
+   *         on a TrackerTool object and then add the Tracker tool to this Tracker using 
+   *         the method RequestAddTool( tool ).
    */
   void AttachObjectToTrackerTool( unsigned int portNumber, 
                                   unsigned int toolNumber,
                                   SpatialObject * objectToTrack );
   
+  /** Add a tracker tool to this tracker 
+   * FIXME: This has yet to be inserted in the State Machine. */
+  void RequestAddTool( TrackerToolType * trackerTool );
 
   /** The "SetReferenceTool" sets the reference tool. */
   void SetReferenceTool( bool applyReferenceTool, unsigned int portNumber,
@@ -300,6 +300,11 @@ protected:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
+  /** Get reference system. This is the reference frame of the Tracker itself.
+   * Tracker tools need access to this reference system in order to use it
+   * as parent in the scene graph. */
+  const CoordinateReferenceSystemType * GetCoordinateReferenceSystem() const;
+ 
 private:
 
   /** Pulse generator for driving the rate of tracker updates. */

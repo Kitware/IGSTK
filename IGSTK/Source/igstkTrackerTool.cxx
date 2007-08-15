@@ -25,14 +25,20 @@ namespace igstk
 TrackerTool::TrackerTool(void):m_StateMachine(this)
 {
   // Initialize the variables
-  m_ValidityPeriod = 0.0; // current values are alreay invalid
+  m_ValidityPeriod = 0.0; // current values are alreay invalid // FIXME DEPRECATED: This is redundat. Transform manage their own timestamps.
   m_Transform.SetToIdentity( m_ValidityPeriod ); 
-  m_RawTransform.SetToIdentity( m_ValidityPeriod ); 
-  m_ToolCalibrationTransform.SetToIdentity( 1e300 ); 
-  m_CoordinateReferenceSystem = CoordinateReferenceSystemType::New();
-  m_ToolType = UnknownTool;
+  m_RawTransform.SetToIdentity( m_ValidityPeriod );  // FIXME: DEPRECATED: This is now the Transform to parent between the m_CoordinateReferenceSystem of this tool and the m_CoordinateReferenceSystem of the Tracker.
+  m_ToolCalibrationTransform.SetToIdentity( 1e300 );  // FIXME : DEPRECATED: This is now the Transfrom To Parent of the spatial object attached to this tool.
+  m_ToolType = UnknownTool; // FIXME : DEPRECATED : This is not being used.
   m_Updated = false; // not yet updated
 
+  m_CoordinateReferenceSystem = CoordinateReferenceSystemType::New();
+
+
+  // FIXME : Bogus State Machine
+  //
+  // The real state machine should require the TrackerTool to be attached to a Spatial Object before accepting RequestSetTransform calls.
+  //
   igstkAddInputMacro( Initialize );
 
   igstkAddStateMacro( Initial );
@@ -55,8 +61,9 @@ TrackerTool::~TrackerTool(void)
 }
 
 
+/** This method should only be available to the Tracker */
 void 
-TrackerTool::SetTransform( const TransformType & transform )
+TrackerTool::RequestSetTransform( const TransformType & transform )
 {
   m_Transform = transform;
 

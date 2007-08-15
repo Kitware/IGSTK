@@ -325,7 +325,7 @@ GenericImageSpatialObject
   transform.SetTranslationAndRotation( tranlationToOrigin, rotation, 
                                            errorValue, validtyTime );
  
-  this->RequestSetTransform( transform ); 
+  this->RequestSetTransformToSpatialObjectParent( transform ); 
 
   this->m_VtkImporter->UpdateWholeExtent();
 }

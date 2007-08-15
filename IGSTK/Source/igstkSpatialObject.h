@@ -30,7 +30,6 @@
 namespace igstk
 {
 
-class TrackerTool;
 
 /** \class SpatialObject
  * 
@@ -60,38 +59,112 @@ public:
   /** Typedefs */
   typedef itk::SpatialObject<3>          SpatialObjectType;
 
-  /** Set the Transform corresponding to the ObjectToWorld transformation of
-   * the SpatialObject. */
-  void RequestSetTransform( const Transform & transform );
+  /** Attach as a child of another Spatial Object. Once this call has been
+   * honored, the object is considered to be static in space, and any call to
+   * RequestSetTransformToSpatialObjectParent() will only be honored the first
+   * time it is invoked; calls to RequestSetCalibrationTransformToTrackerTool()
+   * will be ignored as well. */
+  void RequestAttachToSpatialObjectParent( Self * object );
 
-  /** Set a new object. */
-  void RequestAddObject(Self * object);
+  /** Attach to a tracker tool. If this call is successful, the object
+   * will not honor any subsequent calls to
+   * RequestSetTransformToSpatialObjectParent(), and will only respond
+   * to RequestSetCalibrationTransformToTrackerTool(). If the operation
+   * succeeds then the coordinate system of the Tracker tool will
+   * become the parent of the current spatial object.  */
+  void RequestAttachToTrackerTool( Self * trackerToolCoordinateReferenceSystem );
 
-  /** Request the Transform associated to the ObjectToWorld transformation
-   * of the SpatialObject */
-  void RequestGetTransform();
+  /** Set the Transform corresponding to the ObjectToParent transformation of
+   * the Parent SpatialObject. This call is acknowledge only the first time
+   * that it is invoked. Since only tracked object should move in the scene.
+   * */
+  void RequestSetTransformToSpatialObjectParent( const Transform & transform );
 
-  /** Return a child object given the id */
-  const Self * GetObject(unsigned long id) const;
+  /**
+   * DEPRECATED :
+   *  This method should be to be replaced with RequestSetTransformToSpatialObjectParent()
+   *  In the meantime we just use delegation.
+   */
+  void RequestSetTransform( const Transform & transform )
+    {
+    this->RequestSetTransformToSpatialObjectParent( transform );
+    }
 
-  /** Request the protocol for attaching to a tracker tool. This is a one-time
-   * operation. Once a Spatial Object is attached to a tracker tool it is not
-   * expected to get back to manual nor to be re-attached to a second tracker
-   * tool. */
-  void RequestAttachToTrackerTool( TrackerTool * trackerTool );
+  /**
+   * DEPRECATED :
+   *  This method should be to be replaced with RequestGetTransformToWorld()
+   *  In the meantime we just use delegation.
+   */
+  void RequestGetTransform()
+    {
+    this->RequestGetTransformToWorld();
+    }
+
+  /**
+   * DEPRECATED:
+   * Return a child object given the id */
+  const Self * GetObject(unsigned long id) const
+    {
+    return NULL; // It used to return the child numbered "id".
+    }
+
+  /**
+   * DEPRECATED :
+   *  This method is deprecated, the interaction is now to Attache the child
+   *  to the parent, by calling RequestAttachToSpatialObjectParent();
+   *  In the meantime we just use delegation.
+   */
+  void RequestAddObject( Self * object )
+    {
+    if( object )  // ALL THIS METHOD WILL GO AWAY... don't be too picky about the style at this point.
+      {
+      object->RequestAttachToSpatialObjectParent( this );
+      }
+    }
+
+
+
+  /** Set the Transform describing the relationship between the coordinate
+   * system of the current SpatialObject and the coordinate system of the
+   * TrackerTool to which the object is attached. This call is only honored
+   * if the SpatialObject is currently attached to a TrackerTool.
+   * */
+  void RequestSetCalibrationTransformToTrackerTool( const Transform & transform );
+
+  /** Request the Transform associated to the ObjectToWorld transformation of
+   * the SpatialObject. This call, if acknowledged, will compute the transform
+   * between this spatial object coordinate frame and the world coordinate
+   * system. */
+  void RequestGetTransformToWorld();
 
 protected:
 
   SpatialObject( void );
   ~SpatialObject( void );
 
-  /** Connect this representation class to the spatial object */
-  void RequestSetSpatialObject( SpatialObjectType * );
+  /** DEPRECATED: Connect this representation class to the spatial object */
+  void RequestSetSpatialObject( SpatialObjectType * object )
+    {
+    this->RequestSetInternalSpatialObject( object );
+    }
+  /** Replacement for RequestSetSpatialObject(). Internal is added to the
+   *  name to clarify that this is used with the ITK spatial object as argument */
+  void RequestSetInternalSpatialObject( SpatialObjectType * object );
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
-  SpatialObjectType * GetSpatialObject();
+  /** DEPRECATED: use now GetInternalSpatialObject(). The word "Internal" was
+   *  added to differentiate between the ITK spatial object and the IGSTK 
+   *  spatial objects that wraps around it. */
+  SpatialObjectType * GetSpatialObject()
+    {
+    return this->GetInternalSpatialObject();
+    }
+
+  /** Returns the ITK spatial object that is contained inside this IGSTK 
+   *  spatial object */
+  SpatialObjectType * GetInternalSpatialObject();
 
 private:
   
@@ -100,68 +173,49 @@ private:
   SpatialObjectType::Pointer   m_SpatialObjectToBeSet;
 
   /** Parent Spatial Object */
-  Self::ConstPointer           m_Parent;
+  Self::Pointer                m_Parent;
+  Self::Pointer                m_ParentToBeSet;
 
-  /** Internal list of object */
-  std::vector<Pointer> m_InternalObjectList;
-
-  /** Internal Object */
-  Pointer m_ObjectToBeAdded;
-
-  /** Internal Transform and temporary transform */
-  Transform                    m_Transform;
-  Transform                    m_TransformToBeSet;
-
-  /** TrackerTool to be attached to, and temporary pointer */
-  TrackerTool *    m_TrackerTool;
-  TrackerTool *    m_TrackerToolToAttachTo;
-
-  /** Set the Transform corresponding to the ObjectToWorld transformation of
-   * the SpatialObject. This method is only intended to be called from a 
-   * callback that is observing events from a TrackerTool object. */
-  void RequestSetTrackedTransform(const Transform & transform );
+  /** Internal Transform and temporary transform. 
+   *  This transform can represent the relationship to the parent
+   *  spatial object or to the tracker tool to which this spatial
+   *  object may be attached. */
+  Transform                    m_TransformToSpatialObjectParent;
+  Transform                    m_TransformToSpatialObjectParentToBeSet;
 
   /** Inputs to the State Machine */
-  igstkDeclareInputMacro( SpatialObjectNull );
-  igstkDeclareInputMacro( SpatialObjectValid );
-  igstkDeclareInputMacro( ObjectNull );
-  igstkDeclareInputMacro( ObjectValid );
-  igstkDeclareInputMacro( TrackingEnabled );
-  igstkDeclareInputMacro( TrackingLost );
-  igstkDeclareInputMacro( TrackingRestored );
-  igstkDeclareInputMacro( TrackingDisabled );
-  igstkDeclareInputMacro( ManualTransform );
-  igstkDeclareInputMacro( TrackerTransform );
-  igstkDeclareInputMacro( RequestGetTransform );
+  igstkDeclareInputMacro( InternalSpatialObjectNull );
+  igstkDeclareInputMacro( InternalSpatialObjectValid );
+  igstkDeclareInputMacro( SpatialObjectParentNull );
+  igstkDeclareInputMacro( SpatialObjectParentValid );
+  igstkDeclareInputMacro( TrackerToolNull );
+  igstkDeclareInputMacro( TrackerToolValid );
+  igstkDeclareInputMacro( TransformToSpatialObjectParent );
+  igstkDeclareInputMacro( CalibrationTransformToTrackerTool );
+  igstkDeclareInputMacro( GetTransformToWorld );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
-  igstkDeclareStateMacro( NonTracked );
-  igstkDeclareStateMacro( Tracked );
-  igstkDeclareStateMacro( TrackedLost );
+  igstkDeclareStateMacro( InternalSpatialObjectValidSet );
+  igstkDeclareStateMacro( AttachedToTrackerTool );
+  igstkDeclareStateMacro( AttachedToSpatialObjectParent );
+  igstkDeclareStateMacro( AttachedToTrackerToolAndCalibrated );
+  igstkDeclareStateMacro( AttachedToSpatialObjectParentAndLocated );
 
   /** Action methods to be invoked only by the state machine */
-  void SetSpatialObjectProcessing();
-  void AddObjectProcessing();
-  void ReportTrackingRestoredProcessing();
-  void ReportTrackingDisabledProcessing();
-  void ReportTrackingLostProcessing();
-  void ReportInvalidRequestProcessing();
+  void AttachToSpatialObjectParentProcessing();
   void AttachToTrackerToolProcessing();
-  void SetTransformProcessing();
-  void BroadcastStaticTransformProcessing();
-  void BroadcastTrackedTransformProcessing();
-  void BroadcastExpiredTrackedTransformProcessing();
+  void SetTransformToSpatialObjectParentProcessing();
+  void SetCalibrationTransformToTrackerToolProcessing();
+  void BroadcastTransformToWorldProcessing();
+  void BroadcastExpiredTransformProcessing();
+  void SetInternalSpatialObjectProcessing();
 
   /** Null operation for a State Machine transition */
   void NoProcessing();
 
-  /** Set/Get the parent Spatial Object, this method provides half of the
-   * functionality of attaching this object to a scene graph. This method is
-   * private, and can only be called from the AddObjectProcessing() method. */
-  igstkSetMacro( Parent, ConstPointer );
-  igstkGetMacro( Parent, ConstPointer );
-
+  /** Report when a request has been made at an incorrect time. */
+  void ReportInvalidRequestProcessing();
 };
 
 } // end namespace igstk
