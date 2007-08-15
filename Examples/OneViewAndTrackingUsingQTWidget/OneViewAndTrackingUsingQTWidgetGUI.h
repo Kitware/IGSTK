@@ -81,6 +81,14 @@ private:
   std::ofstream           m_LogFile;
 
   bool                    m_GUIQuit;
+
+  typedef itk::ReceptorMemberCommand < OneViewAndTrackingUsingQTWidgetGUI > ObserverType;
+  ObserverType::Pointer                       m_ViewPickerObserver;
+
+
+  /** Callback functions for picking */ 
+  void ParsePickedPoint( const itk::EventObject & event );
+
 };
 
 #endif

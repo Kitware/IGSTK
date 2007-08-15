@@ -123,6 +123,20 @@ void QTWidget::SetReporter( ::itk::Object * reporter )
   this->m_Reporter = reporter;
 }
 
+/** Add observer */
+unsigned long QTWidget::AddObserver( const ::itk::EventObject & event, 
+                              ::itk::Command * observer )
+{
+  igstkLogMacro( DEBUG, "AddObserver() called ...\n");
+  
+  if ( m_Reporter.IsNull() )
+    {
+    return 0;
+    }
+  return m_Reporter->AddObserver( event, observer );
+}
+
+
 /** Request set view */
 void QTWidget::RequestSetView( const ViewType* view)
 {

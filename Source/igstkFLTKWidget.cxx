@@ -135,6 +135,18 @@ void FLTKWidget::SetReporter( ::itk::Object * reporter )
   this->m_Reporter = reporter;
 }
 
+unsigned long FLTKWidget::AddObserver( const ::itk::EventObject & event, 
+                              ::itk::Command * observer )
+{
+  igstkLogMacro( DEBUG, "AddObserver() called ...\n");
+  
+  if ( m_Reporter.IsNull() )
+    {
+    return 0; 
+    }
+  return m_Reporter->AddObserver( event, observer );
+}
+
 /** Request set View */
 void FLTKWidget::RequestSetView( const ViewType* view )
 {

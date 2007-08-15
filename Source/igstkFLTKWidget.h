@@ -80,6 +80,10 @@ public:
   /** Enable user interactions with the window via mouse and keyboard */
   void RequestEnableInteractions();
 
+  /** Add observer */
+  unsigned long AddObserver( const ::itk::EventObject & event, 
+                              ::itk::Command * observer );
+  
   typedef ViewProxy< FLTKWidget > ProxyType;
 
   friend class ViewProxy< FLTKWidget >;
