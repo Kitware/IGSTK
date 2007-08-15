@@ -53,7 +53,7 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
   igstkAddStateMacro( AnnotationsAdded ); 
 
   igstkAddTransitionMacro ( Idle, ValidAnnotationIndex , 
-                            Idle, AddAnnotationText );  
+                            Idle, SetAnnotationText );  
 
   igstkAddTransitionMacro ( Idle, InvalidAnnotationIndex , 
                             Idle, ReportInvalidAnnotationIndex );  
@@ -64,7 +64,7 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
                             AnnotationsAdded , AddAnnotations );  
 
   igstkAddTransitionMacro ( AnnotationsAdded, ValidAnnotationIndex , 
-                            AnnotationsAdded, AddAnnotationText );  
+                            AnnotationsAdded, SetAnnotationText );  
 
   igstkAddTransitionMacro ( AnnotationsAdded, ValidColorProperty , 
                             AnnotationsAdded, ChangeTextColor );  
@@ -123,9 +123,9 @@ void Annotation2D::AddActorProcessing( )
 }
 
 /** Add annotation text */
-void Annotation2D::RequestAddAnnotationText( int i, const std::string  & text )
+void Annotation2D::RequestSetAnnotationText( int i, const std::string  & text )
 {
-  igstkLogMacro( DEBUG, "RequestAddAnnotationText called ...\n");  
+  igstkLogMacro( DEBUG, "RequestSetAnnotationText called ...\n");  
 
   m_IndexForAnnotationToBeAdded = i;
   m_AnnotationTextToBeAdded = text;
@@ -143,9 +143,9 @@ void Annotation2D::RequestAddAnnotationText( int i, const std::string  & text )
 }
 
 /** Add annotation text processing */
-void Annotation2D::AddAnnotationTextProcessing( )
+void Annotation2D::SetAnnotationTextProcessing( )
 {
-  igstkLogMacro( DEBUG, "AddAnnotationTextProcessing called ...\n");
+  igstkLogMacro( DEBUG, "SetAnnotationTextProcessing called ...\n");
 
   m_AnnotationText[m_IndexForAnnotationToBeAdded] = m_AnnotationTextToBeAdded;
   this->m_AnnotationActor[m_IndexForAnnotationToBeAdded]->

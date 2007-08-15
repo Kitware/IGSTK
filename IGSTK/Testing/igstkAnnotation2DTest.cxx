@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkAnnotation2DTest2.cxx
+  Module:    igstkAnnotation2DTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -21,12 +21,11 @@
 
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
-#include "igstkViewNew2D.h"
+#include "igstkView2D.h"
 #include "igstkAnnotation2D.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
-#include "igstkFLTKWidget.h"
 
 namespace Annotation2DTest
 {
@@ -35,7 +34,7 @@ igstkObserverObjectMacro(CTImage,
 }
 
 
-int igstkAnnotation2DTest2( int argc, char* argv[] )
+int igstkAnnotation2DTest( int argc, char* argv[] )
 {
   igstk::RealTimeClock::Initialize();
 
@@ -129,13 +128,7 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   annotation->RequestSetAnnotationText ( 1, "Corner 1");
   annotation->RequestSetAnnotationText ( 2, "Corner 2");
   annotation->RequestSetAnnotationText ( 3, "Corner 3");
-
-  //use different colors for each corner annotation 
-  annotation->RequestSetFontColor( 0, 1.0, 0.0, 0.0 ); 
-  annotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 ); 
-  annotation->RequestSetFontColor( 2, 0.0, 0.0, 1.0 ); 
-  annotation->RequestSetFontColor( 3, 1.0, 1.0, 0.0 ); 
-
+  
   // Add an invalid index for testing purpose 
   annotation->RequestSetAnnotationText ( 10, "Invalid index");
 
@@ -146,13 +139,17 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   annotation->Print( std::cout );
 
   // Create an FLTK minimal GUI
-  Fl_Window * form = new Fl_Window(532,532," Annotation View Test");
+  Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
-  typedef igstk::ViewNew2D  View2DType;
+  typedef igstk::View2D  View2DType;
 
-  View2DType::Pointer view2D = View2DType::New();
+  View2DType * view2D = new View2DType( 10,10,512,512,"2D View");
+
+  form->end();
+  form->show();
 
   view2D->SetLogger( logger ); 
+  view2D->RequestEnableInteractions();
 
   // Add spatialobject
   view2D->RequestAddObject( representation );
@@ -164,25 +161,11 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   // all the objects in the scene.
   view2D->RequestResetCamera();
 
+  
   // Start the pulse generator of the View 
   view2D->RequestSetRefreshRate( 20 );
   view2D->RequestStart();
 
-  // Create an FLTK minimal GUI
-  typedef igstk::FLTKWidget      FLTKWidgetType;
-  
-  // instantiate FLTK widget 
-  FLTKWidgetType * fltkWidget2D = 
-                    new FLTKWidgetType( 10,10,512,512,"2D View");
-  fltkWidget2D->RequestSetView( view2D );
-  fltkWidget2D->SetLogger( logger );
-
-  view2D->RequestInitializeRenderWindowInteractor();    
-  view2D->RequestStart();
-
-  form->resizable( form );
-  form->end();
-  form->show();
 
   // Do manual redraws
   for( unsigned int i=0; i < 100; i++)
@@ -192,23 +175,7 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
     Fl::check();   // trigger FLTK redraws
     }
 
-  //Modify the text of corner 2 and 3
-  annotation->RequestSetAnnotationText( 2, "Corner 22" );
-  annotation->RequestSetAnnotationText( 3, "Corner 33" );
-
-  //Modify the font size
-  annotation->RequestSetFontSize( 1, 10 );
-  annotation->RequestSetFontSize( 0, 10 );
-
-  // Do manual redraws
-  for( unsigned int i=0; i < 100; i++)
-    {
-    Fl::wait( 0.01 );
-    igstk::PulseGenerator::CheckTimeouts();
-    Fl::check();   // trigger FLTK redraws
-    }
-
-  delete fltkWidget2D;
+  delete view2D;
   delete form;
   
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )

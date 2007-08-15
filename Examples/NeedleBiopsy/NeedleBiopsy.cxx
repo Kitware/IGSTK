@@ -908,9 +908,9 @@ void NeedleBiopsy::ResliceImage ( IndexType index )
  *  name has been verified */
 void NeedleBiopsy::ConnectImageRepresentationProcessing()
 {
-  m_Annotation2D->RequestAddAnnotationText( 2, "Subject: " + m_PatientName );
+  m_Annotation2D->RequestSetAnnotationText( 2, "Subject: " + m_PatientName );
 
-  m_Annotation2D->RequestAddAnnotationText( 0, "Georgetown ISIS Center" );
+  m_Annotation2D->RequestSetAnnotationText( 0, "Georgetown ISIS Center" );
 
   m_ImageRepresentationAxial->RequestSetImageSpatialObject( 
                                            m_ImageSpatialObject );

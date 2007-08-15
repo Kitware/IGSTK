@@ -571,7 +571,7 @@ void DeckOfCardRobot::ResliceImage ( IndexType index )
  *  name has been verified */
 void DeckOfCardRobot::ConnectImageRepresentationProcessing()
 {
-  m_Annotation2D->RequestAddAnnotationText( 0, "Georgetown ISIS Center" );
+  m_Annotation2D->RequestSetAnnotationText( 0, "Georgetown ISIS Center" );
 
   m_ImageRepresentationAxial->RequestSetImageSpatialObject( 
                                             m_ImageSpatialObject );
@@ -798,7 +798,7 @@ void DeckOfCardRobot::DrawPathProcessing()
     {
     a = 0.4;
     m_Path->Clear();
-    //m_Annotation2D->RequestAddAnnotationText( 1, "" ); // FIXME
+    //m_Annotation2D->RequestSetAnnotationText( 1, "" ); // FIXME
 
     TubePointType p;
     igstk::Transform::VectorType v;
@@ -874,7 +874,7 @@ void DeckOfCardRobot::DrawPathProcessing()
     this->NeedleSlider->value( 0 );
     this->NeedleSlider->deactivate();
     // FIXME
-    //m_Annotation2D->RequestAddAnnotationText( 1, "Unreachable position" );
+    //m_Annotation2D->RequestSetAnnotationText( 1, "Unreachable position" );
 
     //this->DisableObliqueView();
 

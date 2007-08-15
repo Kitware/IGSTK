@@ -61,7 +61,7 @@ public:
   igstkStandardClassTraitsMacro( Annotation2D, Object )
 
   /* Add annotation text */
-  void RequestAddAnnotationText( int , const std::string & );
+  void RequestSetAnnotationText( int , const std::string & );
 
   /** Request to change font color */
   void RequestSetFontColor( int index, double red,
@@ -132,7 +132,7 @@ private:
  
   /** Private functions that only be invoked through the state machine */
   void AddActorProcessing();
-  void AddAnnotationTextProcessing();
+  void SetAnnotationTextProcessing();
   void SetViewPortProcessing();
   void AddAnnotationsProcessing();
   void ReportInvalidAnnotationIndexProcessing();
