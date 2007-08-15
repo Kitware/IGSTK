@@ -133,6 +133,9 @@ IF(IGSTKSandbox_USE_Qt)
 
 ENDIF(IGSTKSandbox_USE_Qt)
 
+# Enable test for hardware. This includes human supervised tests
+# for the Trackers
+OPTION(IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING "Build human supervised tests for Trackers" OFF)
 
 # The IGSTKSandbox Library and any Utilities that it requires
 SUBDIRS(Utilities Source)
