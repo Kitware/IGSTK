@@ -57,6 +57,8 @@ public:
   typedef QVTKWidget        Superclass;
   typedef ViewNew           ViewType; 
 
+  typedef vtkWorldPointPicker  PickerType;
+
   igstkTypeMacro( QTWidget, QVTKWidget );
   
   /** Declarations needed for the State Machine */
@@ -130,11 +132,15 @@ private:
 
   /** Set VTK render window interactor */
   void SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
+  /** Set the reporter */
+  void SetReporter( ::itk::Object * reporter );
 
+  /** Set VTK point picker */ 
+  void SetPointPicker( PickerType * picker );
+ 
 private:
   ViewType::Pointer       m_View;
 
-  typedef vtkWorldPointPicker  PickerType;
 
   PickerType                  * m_PointPicker;
   ::itk::Object::Pointer        m_Reporter;

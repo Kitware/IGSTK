@@ -29,7 +29,6 @@
 #include "vtkRenderer.h"
 #include "vtkCamera.h"
 #include "vtkIndent.h"
-#include "vtkWorldPointPicker.h"
 #include "vtkCommand.h"
 #include "vtkInteractorStyle.h"
 
@@ -92,7 +91,7 @@ public:
   void RequestAddObject( ObjectRepresentation* object ); 
 
   /** Add annotation to the view */
-  void RequestAddAnnotation2D( Annotation2D *  annotation ); 
+  void RequestAddAnnotation2D( Annotation2D::Pointer  annotation ); 
 
   /** Remove the object passed as arguments from the list of children, only if
    * it is associated to a particular view. */ 
@@ -155,9 +154,6 @@ private:
   vtkRenderWindow       * m_RenderWindow;
   vtkRenderer           * m_Renderer;
 
-  typedef vtkWorldPointPicker  PickerType;
-  PickerType            * m_PointPicker;
-  
   /** Render Window Interactor */
   RenderWindowInteractor  * m_RenderWindowInteractor;
 
@@ -166,7 +162,8 @@ private:
    *  user invokations from the actual state of this class */
   vtkProp            * m_ActorToBeAdded;
   vtkProp            * m_ActorToBeRemoved;
-  Annotation2D       * m_Annotation2DToBeAdded; 
+
+  Annotation2D::Pointer       m_Annotation2DToBeAdded; 
   
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
 
@@ -196,6 +193,14 @@ private:
     {
     return this->m_RenderWindowInteractor; 
     }
+
+  /** Get reporter */ 
+  ::itk::Object::Pointer GetReporter()
+    {
+    return this->m_Reporter; 
+    }
+
+
 
   /** Initialize the interactor */
   void InitializeRenderWindowInteractorProcessing();

@@ -46,7 +46,6 @@ m_StateMachine(this)
   // Create a default render window
   m_RenderWindow = vtkRenderWindow::New();
   m_Renderer = vtkRenderer::New();
-  m_PointPicker = PickerType::New();
   m_RenderWindowInteractor = RenderWindowInteractor::New();
 
   m_RenderWindow->AddRenderer( m_Renderer );
@@ -60,8 +59,6 @@ m_StateMachine(this)
   int * size = m_RenderWindow->GetSize();
     
   m_RenderWindowInteractor->SetSize( size );
-
-  m_RenderWindowInteractor->SetPicker( m_PointPicker );
 
   m_RenderWindowInteractor->SetRenderWindow( m_RenderWindow );
 
@@ -243,7 +240,6 @@ ViewNew::~ViewNew()
 
   m_RenderWindow->RemoveRenderer( m_Renderer );
   m_RenderWindowInteractor->Delete();
-  m_PointPicker->Delete();
   m_Renderer->Delete();
   m_RenderWindow->Delete();
 
@@ -306,7 +302,6 @@ void ViewNew::AddActorProcessing()
 {
   igstkLogMacro( DEBUG, "AddActorProcessing() called ...\n");
   m_Renderer->AddActor( m_ActorToBeAdded );
-  m_PointPicker->AddPickList( m_ActorToBeAdded );
 }
 
 
@@ -333,7 +328,6 @@ void ViewNew::RemoveActorProcessing()
 {
   igstkLogMacro( DEBUG, "RemoveActorProcessing() called ...\n");
   m_Renderer->RemoveActor( m_ActorToBeRemoved );
-  m_PointPicker->DeletePickList( m_ActorToBeRemoved );
 }
 
 /** */
@@ -380,7 +374,6 @@ void ViewNew::SetRenderWindowSizeProcessing()
 
  
   // update the viewport size of the annotations if annotations have been added
-  
   if ( m_Annotation2DToBeAdded ) 
       {
       m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( m_RenderWindowWidthToBeSet, 
@@ -532,7 +525,7 @@ void ViewNew::RequestAddObject( ObjectRepresentation* pointer )
 }
 
 /** Request for adding annotation */
-void ViewNew::RequestAddAnnotation2D ( Annotation2D * annotation )
+void ViewNew::RequestAddAnnotation2D ( Annotation2D::Pointer annotation )
 {
   igstkLogMacro( DEBUG, "RequestAddAnnotation2D() called ...\n");
 

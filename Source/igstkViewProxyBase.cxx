@@ -29,4 +29,10 @@ ViewProxyBase::GetRenderWindowInteractor( ViewNew * view )
 {
   return view->GetRenderWindowInteractor();
 } 
+
+::itk::Object::Pointer  
+ViewProxyBase::GetReporter( ViewNew * view )
+{
+  return view->GetReporter();
+} 
 } // end namespace igstk

@@ -58,6 +58,8 @@ public:
 
   typedef ViewNew             ViewType;
 
+  typedef vtkWorldPointPicker  PickerType;
+
   igstkTypeMacro( FLTKWidget, Fl_Gl_Window );
   
   /** Declarations needed for the State Machine */
@@ -118,7 +120,10 @@ private:
 
   /** Set render window ID */
   void SetRenderWindowID();
- 
+
+  /** Set the reporter */
+  void SetReporter( ::itk::Object * reporter );
+
 private:
 
   bool m_InteractionHandling;
@@ -133,7 +138,6 @@ private:
 
   vtkRenderWindowInteractor       *m_RenderWindowInteractor; 
 
-  typedef vtkWorldPointPicker  PickerType;
 
   PickerType                  * m_PointPicker;
   ::itk::Object::Pointer        m_Reporter;

@@ -39,8 +39,8 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
   
   this->end();
 
-  m_PointPicker = PickerType::New();
-  m_Reporter    = ::itk::Object::New();
+  m_PointPicker = PickerType::New(); 
+  m_Reporter    = NULL; 
 
   //Turn on interaction handling
   m_InteractionHandling = true;
@@ -111,7 +111,10 @@ FLTKWidget::~FLTKWidget()
     ((Fl_Group*)parent())->remove(*(Fl_Gl_Window*)this);
     }
 
-  m_PointPicker->Delete();
+  if ( m_PointPicker != NULL )
+    {
+    m_PointPicker->Delete();
+    }
 }
 
 /** Set VTK renderer */
@@ -124,6 +127,12 @@ void FLTKWidget::SetRenderer( vtkRenderer * renderer )
 void FLTKWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
 {
   this->m_RenderWindowInteractor = interactor;
+}
+
+/** Set the reporter */
+void FLTKWidget::SetReporter( ::itk::Object * reporter )
+{
+  this->m_Reporter = reporter;
 }
 
 /** Request set View */
@@ -363,6 +372,27 @@ int FLTKWidget::handle( int event )
           {
           renderWindowInteractor->InvokeEvent(
                                      vtkCommand::LeftButtonReleaseEvent,NULL);
+          m_PointPicker->Pick( Fl::event_x(), 
+                               this->h()-Fl::event_y()-1, 
+                               0, m_Renderer );
+          double data[3];
+          m_PointPicker->GetPickPosition( data );
+          Transform::VectorType pickedPoint;
+          pickedPoint[0] = data[0];
+          pickedPoint[1] = data[1];
+          pickedPoint[2] = data[2];
+          
+          double validityTime = itk::NumericTraits<double>::max();
+          double errorValue = 1.0; // this should be obtained from 
+                                   // the picked object.
+
+          igstk::Transform transform;
+          transform.SetTranslation( pickedPoint, errorValue, validityTime );
+
+          igstk::TransformModifiedEvent transformEvent;
+          transformEvent.Set( transform );
+
+          m_Reporter->InvokeEvent( transformEvent );
           }
           break;
         case FL_MIDDLE_MOUSE:

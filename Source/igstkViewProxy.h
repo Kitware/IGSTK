@@ -56,8 +56,13 @@ public:
     vtkRenderWindowInteractor * interactor =
         ViewProxyBase::GetRenderWindowInteractor( view );
 
+    ::itk::Object::Pointer reporter =
+        ViewProxyBase::GetReporter( view );
+
+
     this->m_Widget->SetRenderer( renderer ); 
     this->m_Widget->SetRenderWindowInteractor( interactor ); 
+    this->m_Widget->SetReporter ( reporter );
     }  
 
 

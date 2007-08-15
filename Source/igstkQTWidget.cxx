@@ -60,8 +60,8 @@ QVTKWidget( parent, f ), m_StateMachine(this), m_ProxyView(this)
   m_Logger = NULL;
   m_View = ViewType::New();
 
-  m_PointPicker = PickerType::New();
-  m_Reporter    = ::itk::Object::New();
+  m_PointPicker = PickerType::New(); 
+  m_Reporter    = NULL; 
 
   m_Renderer = NULL;
   m_RenderWindowInteractor = NULL;
@@ -98,7 +98,10 @@ QTWidget::~QTWidget()
 {
   igstkLogMacro( DEBUG, "Destructor called ...\n");
 
-  m_PointPicker->Delete();
+  if ( m_PointPicker != NULL )
+    {
+    m_PointPicker->Delete();
+    }
 }
 
 /** Set VTK renderer */
@@ -114,6 +117,11 @@ QTWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
   this->m_RenderWindowInteractor = interactor;
 }
 
+/** Set the reporter */
+void QTWidget::SetReporter( ::itk::Object * reporter )
+{
+  this->m_Reporter = reporter;
+}
 
 /** Request set view */
 void QTWidget::RequestSetView( const ViewType* view)
