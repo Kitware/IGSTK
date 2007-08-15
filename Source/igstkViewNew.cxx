@@ -130,6 +130,33 @@ m_StateMachine(this)
   igstkAddTransitionMacro( InteractorInitialized, StartRefreshing,
                            Refreshing,  Start );
 
+  igstkAddTransitionMacro( InteractorInitialized, ValidAddObject, 
+                           InteractorInitialized,  AddObject );
+  igstkAddTransitionMacro( InteractorInitialized, NullAddObject,
+                           InteractorInitialized,  ReportInvalidRequest );
+  igstkAddTransitionMacro( InteractorInitialized, ValidAddAnnotation2D,
+                           InteractorInitialized,  AddAnnotation2D );
+  igstkAddTransitionMacro( InteractorInitialized, NullAddAnnotation2D,
+                           InteractorInitialized,  ReportInvalidRequest );
+  igstkAddTransitionMacro( InteractorInitialized, ExistingAddObject,
+                           InteractorInitialized,  ReportInvalidRequest );
+  igstkAddTransitionMacro( InteractorInitialized, ValidRemoveObject,
+                           InteractorInitialized,  RemoveObject );
+  igstkAddTransitionMacro( InteractorInitialized, NullRemoveObject,
+                           InteractorInitialized,  ReportInvalidRequest );
+  igstkAddTransitionMacro( InteractorInitialized, InexistingRemoveObject,
+                           InteractorInitialized,  ReportInvalidRequest );
+  igstkAddTransitionMacro( InteractorInitialized, ValidAddActor,
+                           InteractorInitialized,  AddActor );
+  igstkAddTransitionMacro( InteractorInitialized, NullAddActor,
+                           InteractorInitialized,  ReportInvalidRequest );
+  igstkAddTransitionMacro( InteractorInitialized, ValidRemoveActor,
+                           InteractorInitialized,  RemoveActor );
+  igstkAddTransitionMacro( InteractorInitialized, NullRemoveActor,
+                           InteractorInitialized,  ReportInvalidRequest );
+  igstkAddTransitionMacro( InteractorInitialized, ResetCamera,
+                           InteractorInitialized,  ResetCamera );
+
   igstkAddTransitionMacro( Idle, StopRefreshing,
                            Idle,  ReportInvalidRequest );
 
@@ -427,6 +454,15 @@ void ViewNew::RequestSetParallelProjection( bool flag )
   igstkLogMacro( DEBUG, "RequestSetParallelProjection(...) called ...\n");
   m_Camera->SetParallelProjection( flag );
 }
+
+/** Set background color */
+void ViewNew::
+RequestSetRendererBackgroundColor( double red, double green, double blue) 
+{
+  igstkLogMacro( DEBUG, "RequestSetRendererBackgroundColor(...) called ...\n");
+  m_Renderer->SetBackground( red, green, blue );
+}
+
 
 /** Define the refresh rate by programming the internal pulse generator */
 void ViewNew::RequestSetRefreshRate( double frequencyHz )

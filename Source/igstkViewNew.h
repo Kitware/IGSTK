@@ -116,6 +116,8 @@ public:
   void RequestSetViewUp( double vx, double vy, double vz);
   void RequestSetClippingRange( double dNear, double dFar );
   void RequestSetParallelProjection( bool flag );
+  void RequestSetRendererBackgroundColor(
+                    double red, double green, double blue ); 
 
   /** Request initialize the RenderWindow interactor */
   void RequestInitializeRenderWindowInteractor();
