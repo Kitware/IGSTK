@@ -32,7 +32,15 @@
 
 #include "igstkLandmarkUltrasoundCalibration.h"
 #include "igstkSocketCommunication.h"
+#include "igstkImageSpatialObjectRepresentation.h"
 #include "igstkObliqueImageSpatialObjectRepresentation.h"
+#include "igstkSpatialObject.h"
+#include "igstkTracker.h"
+#include "igstkTrackerTool.h"
+#include "igstkObjectRepresentation.h"
+#include "igstkViewNew.h"
+#include "igstkViewNew2D.h"
+#include "igstkViewNew3D.h"
 
 namespace igstk 
 {
@@ -115,6 +123,21 @@ namespace igstk
 typedef ImageSpatialObject<float,3>                    ImageSpatialObjectType;
 typedef ObliqueImageSpatialObjectRepresentation< ImageSpatialObjectType >  
                                   ObliqueImageSpatialObjectRepresentationType;
+
+class ObjectRepresentationSurrogate : public ObjectRepresentation
+{
+public:
+  typedef ObjectRepresentationSurrogate     Self;
+  typedef ObjectRepresentation              Superclass;
+  typedef itk::SmartPointer<Self>           Pointer;
+  igstkTypeMacro( ObjectRepresentationSurrogate, ObjectRepresentation );
+  igstkNewMacro( Self );
+  virtual void CreateActors() {};
+  virtual void UpdateRepresentationProcessing() {};
+
+};
+  
+igstkDeclareSurrogateClass( SpatialObjectSurrogate, SpatialObject );
 }
 
 int main( int argc, char * argv [] )
@@ -147,10 +170,20 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::SocketCommunication, 
                                 outputDirectory, skipLoops );
 
-
   igstkTestExportStateMachine1( 
                           igstk::ObliqueImageSpatialObjectRepresentationType, 
                           outputDirectory, skipLoops );
+
+  igstkTestExportStateMachine1( igstk::Tracker, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory,skipLoops );
+
+  // Exporting Abstract classes by creating derived surrogates for them.
+  igstkTestExportStateMachine1( igstk::SpatialObjectSurrogate, outputDirectory, 
+                                                                    skipLoops );
+  // The View New classes
+  igstkTestExportStateMachine1( igstk::ViewNew, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::ViewNew2D, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::ViewNew3D, outputDirectory, skipLoops );
 
   return EXIT_SUCCESS;
 }
