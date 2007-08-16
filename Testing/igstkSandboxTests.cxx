@@ -28,6 +28,7 @@
 void RegisterTests()
 {
   // Register Sandbox tests
+  REGISTER_TEST(igstkCoordinateReferenceSystemObjectTest);
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
   REGISTER_TEST(igstkViewNewTest);
@@ -36,6 +37,7 @@ void RegisterTests()
   REGISTER_TEST(igstkPivotCalibrationAlgorithmTest);
 
 #ifdef IGSTKSandbox_USE_FLTK
+  REGISTER_TEST(igstkCoordinateReferenceSystemObjectWithViewTest);
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest2);
   REGISTER_TEST(igstkFLTKWidgetTest);

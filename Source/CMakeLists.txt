@@ -255,6 +255,7 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 
 # The header files
 SET(IGSTKSandbox_HEADS
+  igstkCoordinateReferenceSystemObject.h
   igstkPivotCalibrationAlgorithm.h
   igstkGenericImageSpatialObject.h
   igstkDICOMGenericImageReader.h
@@ -294,6 +295,7 @@ ENDIF(IGSTKSandbox_USE_FLTK)
 
 # The implementation files
 SET(IGSTKSandbox_SRCS
+  igstkCoordinateReferenceSystemObject.cxx
   igstkPivotCalibrationAlgorithm.cxx
   igstkGenericImageSpatialObject.cxx
   igstkDICOMGenericImageReader.cxx

@@ -71,6 +71,7 @@ INCLUDE_DIRECTORIES (
 
 # Add your new tests here
 SET(SandboxTests_SRCS
+  igstkCoordinateReferenceSystemObjectTest.cxx
   igstkPivotCalibrationAlgorithmTest.cxx
   igstkDICOMGenericImageReaderTest.cxx
   igstkGenericImageSpatialObjectTest.cxx
@@ -93,13 +94,22 @@ ADD_TEST( igstkLandmarkUltrasoundCalibrationTest ${IGSTKSandbox_TESTS} igstkLand
 ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunicationTest)
 ADD_TEST( igstkViewNewTest ${IGSTKSandbox_TESTS} igstkViewNewTest)
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
+ADD_TEST( igstkCoordinateReferenceSystemObjectTest ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemObjectTest)
 
 IF(IGSTKSandbox_USE_FLTK)
     ADD_TEST( igstkFLTKWidgetTest
               ${IGSTKSandbox_TESTS}
               igstkFLTKWidgetTest)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkFLTKWidgetTest.cxx)
+              igstkFLTKWidgetTest.cxx)
+
+    ADD_TEST( igstkCoordinateReferenceSystemObjectWithViewTest
+              ${IGSTKSandbox_TESTS}
+              igstkCoordinateReferenceSystemObjectWithViewTest)
+
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
+              igstkCoordinateReferenceSystemObjectWithViewTest.cxx)
+
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF(IGSTKSandbox_USE_Qt)
