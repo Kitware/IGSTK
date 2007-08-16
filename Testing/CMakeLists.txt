@@ -108,6 +108,13 @@ IF(IGSTKSandbox_USE_Qt)
               igstkQTWidgetTest)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkQTWidgetTest.cxx)
+
+    ADD_TEST( igstkQTWidgetTest2
+              ${IGSTKSandbox_TESTS}
+              igstkQTWidgetTest2)
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkQTWidgetTest2.cxx)
+ 
     ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest3 
               ${IGSTKSandbox_TESTS}
               --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png 
