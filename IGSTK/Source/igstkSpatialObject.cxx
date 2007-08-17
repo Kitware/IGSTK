@@ -127,7 +127,12 @@ void SpatialObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
     os << indent << "Internal Spatial Object = ";
     os << this->m_SpatialObject.GetPointer() << std::endl;
     }
+  os << indent << "Transform To Parent = ";
   os << indent << this->m_TransformToSpatialObjectParent << std::endl;
+
+  os << indent << "Transform To World = ";
+  os << indent << this->m_TransformToWorld << std::endl;
+
   if( this->m_Parent )
     {
     os << indent << "Spatial Object Parent = ";
@@ -287,13 +292,32 @@ void SpatialObject::BroadcastTransformToWorldProcessing()
  * cache mutable member variable m_TransformToWorld. */
 const Transform & SpatialObject::ComputeTransformToWorld() const
 {
+  std::cout << "SpatialObject::ComputeTransformToWorld " << std::endl;
+  std::cout << "Object : " << this << std::endl;
+
   //
   //      VERY IMPORTANT METHOD: TEST CAREFULLY !!!
   //
   this->m_TransformToWorld.TransformCompose( 
     this->m_Parent->ComputeTransformToWorld(),
     this->m_TransformToSpatialObjectParent );
- 
+
+    
+  Transform::VectorType translation = 
+    this->m_TransformToWorld.GetTranslation();
+  this->m_SpatialObject->GetObjectToWorldTransform()->SetOffset( translation );
+
+  Transform::VersorType rotation = 
+    this->m_TransformToWorld.GetRotation();
+  Transform::VersorType::MatrixType matrix = rotation.GetMatrix();
+  this->m_SpatialObject->GetObjectToWorldTransform()->SetMatrix( matrix );
+
+  igstkLogMacro( DEBUG, " SpatialObject::ComputeTransformToWorld() T: " 
+      << translation << " R: " << rotation << "\n" );
+
+  std::cout << "Transform To World = " << std::endl;
+  std::cout << m_TransformToWorld << std::endl << std::endl;
+
   return this->m_TransformToWorld;
 }
 
