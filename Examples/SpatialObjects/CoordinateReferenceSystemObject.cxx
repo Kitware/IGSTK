@@ -72,11 +72,11 @@ int main( int , char *[] )
   const double validityTimeInMilliseconds = 20000.0; // 20 seconds
 
   igstk::Transform::VectorType translation;
-  translation[0] = 0;
-  translation[1] = 1;
-  translation[2] = 2;
+  translation[0] =  0.0;
+  translation[1] = 10.0;
+  translation[2] =  0.0;
   igstk::Transform::VersorType rotation;
-  rotation.Set( 0.707, 0.0, 0.707, 0.0 );
+  rotation.Set( 0.0, 0.0, 0.0, 1.0 );
 
   igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
 
@@ -96,12 +96,12 @@ int main( int , char *[] )
 
   cone->RequestAttachToSpatialObjectParent( referenceA );
 
-  double validityTimeInMilliseconds2 = 20.0;
+  double validityTimeInMilliseconds2 = 200.0;
 
   translation[0] = 10.0;
   translation[1] =  0.0;
   translation[2] =  0.0;
-  rotation.Set( 0.0, 0.0, 0.0, 1.0 );
+  rotation.Set( -0.707, 0.0, 0.707, 0.0 );
 
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds2 );
@@ -117,14 +117,27 @@ int main( int , char *[] )
 
   cylinder->RequestAttachToSpatialObjectParent( referenceA );
 
-  translation[0] = 10.0;
-  translation[1] =  0.0;
-  translation[2] =  0.0;
+  translation[0] = -10.0;
+  translation[1] =   0.0;
+  translation[2] =   0.0;
+  rotation.Set( 0.707, 0.0, 0.707, 0.0 );
 
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds2 );
 
   cylinder->RequestSetTransform( transform );
+
+  cone->RequestGetTransform();
+  cylinder->RequestGetTransform();
+
+  std::cout << "Reference System A " << std::endl;
+  referenceA->Print( std::cout );
+
+  std::cout << "Cone " << std::endl;
+  cone->Print( std::cout );
+
+  std::cout << "Cylinder " << std::endl;
+  cylinder->Print( std::cout );
 
   return EXIT_SUCCESS;
 }
