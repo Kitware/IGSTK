@@ -97,6 +97,12 @@ ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCal
 ADD_TEST( igstkCoordinateReferenceSystemObjectTest ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemObjectTest)
 
 IF(IGSTKSandbox_USE_FLTK)
+
+#ERASEME
+ADD_EXECUTABLE( igstkFLTKWidgetTest2 igstkFLTKWidgetTest2.cxx)
+TARGET_LINK_LIBRARIES( igstkFLTKWidgetTest2 IGSTKSandbox )
+#ERASEME
+
     ADD_TEST( igstkFLTKWidgetTest
               ${IGSTKSandbox_TESTS}
               igstkFLTKWidgetTest)
