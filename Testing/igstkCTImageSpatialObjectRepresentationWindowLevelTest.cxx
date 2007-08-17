@@ -32,7 +32,7 @@ igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
 }
 
-int igstkCTImageSpatialObjectReadingAndRepresentationTest( 
+int igstkCTImageSpatialObjectRepresentationWindowLevelTest( 
                                                         int argc, char* argv[] )
 {
 
@@ -196,6 +196,13 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
 
   view2D->RequestAddObject( representation );
 
+  representation->RequestSetSliceNumber( 0 );
+
+  double window = 500;
+  double level  = 1000;
+ 
+  representation->SetWindowLevel( window, level );
+
   // Do manual redraws
   view2D->RequestResetCamera();
   for( unsigned int i=0; i < 20; i++)
@@ -210,53 +217,20 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   std::string filename;
   filename = argv[2]; 
   view2D->RequestSaveScreenShot( filename ); 
+
   
-  // Do manual redraws for each orientation while changing slice numbers
+  // Do manual redraws  while changing the window level
+  for(unsigned int i=0; i<100; i++)
     {
-    representation->RequestSetOrientation( RepresentationType::Axial );
-    view2D->RequestSetOrientation( igstk::View2D::Axial );
-    view2D->RequestResetCamera();
-    for(unsigned int i=0; i<10; i++)
-      {
-      representation->RequestSetSliceNumber( i );
-      Fl::wait( 0.05 );
-      igstk::PulseGenerator::CheckTimeouts();
-      Fl::check();       // trigger FLTK redraws
-      std::cout << "i= " << i << std::endl;
-      }
+    level = i * 10;
+    Fl::wait( 0.05 );
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();       // trigger FLTK redraws
+    std::cout << "i= " << i << std::endl;
+    representation->SetWindowLevel( window, level );
     }
+  
 
-    {
-    representation->RequestSetOrientation( RepresentationType::Sagittal );
-    view2D->RequestSetOrientation( igstk::View2D::Sagittal );
-    view2D->RequestResetCamera();
-    for(unsigned int i=0; i<10; i++)
-      {
-      representation->RequestSetSliceNumber( i );
-      Fl::wait( 0.05 );
-      igstk::PulseGenerator::CheckTimeouts();
-      Fl::check();       // trigger FLTK redraws
-      std::cout << "i= " << i << std::endl;
-      }
-    }
-
-    {
-    representation->RequestSetOrientation( RepresentationType::Coronal );
-    view2D->RequestSetOrientation( igstk::View2D::Coronal );
-    view2D->RequestResetCamera();
-    for(unsigned int i=0; i<10; i++)
-      {
-      representation->RequestSetSliceNumber( i );
-      Fl::wait( 0.05 );
-      igstk::PulseGenerator::CheckTimeouts();
-      Fl::check();       // trigger FLTK redraws
-      std::cout << "i= " << i << std::endl;
-      }
-    }
-
-  view2D->RequestRemoveObject( representation );
-  representation = NULL;
-  view2D->RequestRemoveObject( representation );
 
   delete view2D;
   delete form;
