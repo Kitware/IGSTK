@@ -42,6 +42,8 @@ WorldCoordinateReferenceSystemObject
   this->m_IdentityTransformToWorld.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
+  this->RequestSetTransformToSpatialObjectParent( 
+    this->m_IdentityTransformToWorld );
 } 
 
 /** Destructor */
@@ -58,6 +60,9 @@ const Transform &
 WorldCoordinateReferenceSystemObject
 ::ComputeTransformToWorld() const
 {
+  std::cout << "WorldCoordinateReferenceSystemObject::ComputeTransformToWorld() " << std::endl;
+  std::cout << "Returning the Identity Transform = " << std::endl;
+  std::cout << m_IdentityTransformToWorld << std::endl;
   return this->m_IdentityTransformToWorld;
 }
 
