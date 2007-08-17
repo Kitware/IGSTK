@@ -165,6 +165,8 @@ ObjectRepresentation::~ObjectRepresentation()
 /** Add an actor to the actors list */
 void ObjectRepresentation::AddActor( vtkProp * actor )
 {
+  // Initialize objects as invisible until we learn from their Transform time stamp.
+  actor->VisibilityOff();
   m_Actors.push_back( actor );
 }
 
