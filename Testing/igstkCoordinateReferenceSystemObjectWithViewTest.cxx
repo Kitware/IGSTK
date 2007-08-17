@@ -25,7 +25,8 @@
 
 #include "igstkCoordinateReferenceSystemObject.h"
 #include "igstkAxesObjectRepresentation.h"
-#include "igstkView2D.h"
+#include "igstkViewNew2D.h"
+#include "igstkFLTKWidget.h"
 #include "igstkRealTimeClock.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
@@ -189,25 +190,30 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   // testing actors
   std::cout << "Testing actors : ";
 
-  typedef igstk::View2D  View2DType;
+  typedef igstk::ViewNew2D  View2DType;
+
+  View2DType::Pointer view2D = View2DType::New();
+  view2D->SetLogger( logger );
+    
+  // Create an FLTK minimal GUI
+  typedef igstk::FLTKWidget      FLTKWidgetType;
 
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(301,301,"CoordinateReferenceSystemObjectWithViewTest");
-  View2DType * view2D = new View2DType(0,0,300,300,"View 2D");
-  
+  FLTKWidgetType * fltkWidget2D = new FLTKWidgetType(0,0,300,300,"View 2D");
+
+  fltkWidget2D->RequestSetView( view2D );
   form->end();
   // End of the GUI creation
 
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( AxesRepresentation );
-  view2D->SetLogger( logger );
     
   std::cout << "[PASSED]" << std::endl;
 
   form->show();
 
   view2D->RequestResetCamera();
-  view2D->RequestEnableInteractions();
  
   // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
   // geometrical parameters should trigger an update in the representation
@@ -325,7 +331,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   // Exercise the screenshot option with a valid filename
   view2D->RequestSaveScreenShot("igstkcoordinateSystemTestScreenshot1.png");
     
-  delete view2D;
+  delete fltkWidget2D;
   delete form;
 
   std::cout << "Test [DONE]" << std::endl;
