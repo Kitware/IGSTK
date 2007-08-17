@@ -38,7 +38,7 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
 
   igstk::RealTimeClock::Initialize();
 
-  if( argc < 4 )
+  if( argc < 3 )
     {
       std::cerr << "Usage: " << argv[0] << "  CTImage  " 
               << "Output image file for a screenshot" << std::endl;
@@ -88,33 +88,6 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
   reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
                             ctImageObserver);
 
-  reader->RequestGetImage(); // Request to send the image as an event.
-
-  if( ctImageObserver->GotCTImage() )
-    {
-    std::cerr << "Error: The image was sent  from the Reader " << std::endl;
-    std::cerr << "even though it was not actually read." << std::endl;
-    return EXIT_FAILURE;
-    }
-  else
-    {
-    std::cout << "Test for premature reading of the image: PASSED !" 
-              << std::endl;
-    }
-
-  
-  typedef igstk::CTImageSpatialObjectRepresentation RepresentationType;
-
-  RepresentationType::Pointer representation = RepresentationType::New();
-          
-  representation->SetLogger( logger );
-
-  representation->RequestSetImageSpatialObject( 
-                                     ctImageObserver->GetCTImage() );
-
-  representation->RequestSetOrientation( RepresentationType::Axial );
-  representation->RequestSetSliceNumber( 0 );
-
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
@@ -128,6 +101,13 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
   view2D->SetLogger( logger ); 
   view2D->RequestEnableInteractions();
 
+
+  typedef igstk::CTImageSpatialObjectRepresentation RepresentationType;
+
+  RepresentationType::Pointer representation = RepresentationType::New();
+
+  representation->SetLogger( logger );
+
   view2D->RequestAddObject( representation );
     
   // Reseting the camera after reading the image is more effective
@@ -137,34 +117,8 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
   view2D->RequestSetRefreshRate( 40 );
   view2D->RequestStart();
 
-  // Do manual redraws
-  for( unsigned int i=0; i < 10; i++)
-    {
-    Fl::wait( 0.05 );
-    igstk::PulseGenerator::CheckTimeouts();
-    Fl::check();       // trigger FLTK redraws
-    }
-
-
-  //
-  // Now read the image, so we can test the normal case
-  //
-  try
-    {
-    reader->RequestReadImage(); // Request to read the image from the files
-    }
-  catch( ... )
-    {
-    std::cerr << "ERROR: An exception was thrown while reading the CT dataset"
-              << std::endl;
-    std::cerr << "This should not have happened. The State Machine should have"
-              << std::endl;
-    std::cerr << "catched that exception and converted it into a SM Input " 
-              << std::endl;
-    return EXIT_FAILURE;
-    }
-  
-  reader->RequestGetImage();    // Request to send the image as an event.
+  reader->RequestReadImage(); // Request to read the image from the files
+  reader->RequestGetImage();  // Request to send the image as an event.
 
   if( ctImageObserver->GotCTImage() )
     {
@@ -194,12 +148,10 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
   representation->RequestSetImageSpatialObject( 
                            ctImageObserver->GetCTImage() );
 
-  view2D->RequestAddObject( representation );
-
   representation->RequestSetSliceNumber( 0 );
 
-  double window = 500;
-  double level  = 1000;
+  double window = 2000;
+  double level  =  100;
  
   representation->SetWindowLevel( window, level );
 
