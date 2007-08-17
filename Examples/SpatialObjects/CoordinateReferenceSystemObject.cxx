@@ -30,6 +30,9 @@
 #include "igstkWorldCoordinateReferenceSystemObject.h"
 // Software Guide : EndCodeSnippet
 
+#include "igstkConeObject.h"
+#include "igstkCylinderObject.h"
+
 int main( int , char *[] )
 {
 // Software Guide : BeginLatex
@@ -84,6 +87,44 @@ int main( int , char *[] )
 
   referenceA->RequestSetTransform( transform );
 // Software Guide : EndCodeSnippet
+
+  typedef igstk::ConeObject ConeObjectType;
+  ConeObjectType::Pointer cone = ConeObjectType ::New();
+
+  cone->SetRadius(10.0);
+  cone->SetHeight(20.0);
+
+  cone->RequestAttachToSpatialObjectParent( referenceA );
+
+  double validityTimeInMilliseconds2 = 20.0;
+
+  translation[0] = 10.0;
+  translation[1] =  0.0;
+  translation[2] =  0.0;
+  rotation.Set( 0.0, 0.0, 0.0, 1.0 );
+
+  transform.SetTranslationAndRotation( 
+      translation, rotation, errorValue, validityTimeInMilliseconds2 );
+
+  cone->RequestSetTransform( transform );
+
+
+  typedef igstk::CylinderObject CylinderObjectType;
+  CylinderObjectType::Pointer cylinder = CylinderObjectType ::New();
+
+  cylinder->SetRadius(10.0);
+  cylinder->SetHeight(20.0);
+
+  cylinder->RequestAttachToSpatialObjectParent( referenceA );
+
+  translation[0] = 10.0;
+  translation[1] =  0.0;
+  translation[2] =  0.0;
+
+  transform.SetTranslationAndRotation( 
+      translation, rotation, errorValue, validityTimeInMilliseconds2 );
+
+  cylinder->RequestSetTransform( transform );
 
   return EXIT_SUCCESS;
 }
