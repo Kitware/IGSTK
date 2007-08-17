@@ -217,6 +217,18 @@ IF(IGSTK_USE_FLTK)
               ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
 
+    ADD_TEST( igstkCTImageSpatialObjectRepresentationWindowLevelTest 
+              ${IGSTK_TESTS}
+              --compare ${BASELINE}/igstkWindowLevelScreenShot01.png 
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkWindowLevelScreenShot01.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+              igstkCTImageSpatialObjectRepresentationWindowLevelTest
+              ${IGSTK_DATA_ROOT}/Input/E000192
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkWindowLevelScreenShot01.png
+              )
+
     ADD_TEST(igstkMeshObjectTest    ${IGSTK_TESTS} igstkMeshObjectTest
               ${IGSTK_DATA_ROOT}/Input/liver.msh  
               )
@@ -358,6 +370,7 @@ IF(IGSTK_USE_FLTK)
       igstkVascularNetworkReaderTest.cxx
       igstkMeshObjectTest.cxx
       igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx
+      igstkCTImageSpatialObjectRepresentationWindowLevelTest.cxx
       igstkImageSpatialObjectRepresentationTest.cxx
     ) 
   ENDIF(IGSTK_DATA_ROOT)  

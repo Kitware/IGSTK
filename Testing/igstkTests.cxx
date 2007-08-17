@@ -124,6 +124,7 @@ void RegisterTests()
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest3);
   REGISTER_TEST(igstkVascularNetworkReaderTest);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
+  REGISTER_TEST(igstkCTImageSpatialObjectRepresentationWindowLevelTest);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
 #endif 
