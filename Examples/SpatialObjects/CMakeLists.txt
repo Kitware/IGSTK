@@ -33,6 +33,10 @@ TARGET_LINK_LIBRARIES(VascularNetworkObject IGSTKSandbox)
 ADD_EXECUTABLE(ReadVascularNetworkObject ReadVascularNetworkObject.cxx)
 TARGET_LINK_LIBRARIES(ReadVascularNetworkObject IGSTKSandbox)
 
+ADD_EXECUTABLE(CoordinateReferenceSystemObject CoordinateReferenceSystemObject.cxx)
+TARGET_LINK_LIBRARIES(CoordinateReferenceSystemObject IGSTKSandbox)
+
+
 IF (IGSTK_USE_FLTK)
 
   ADD_EXECUTABLE(ObjectRepresentation ObjectRepresentation.cxx)
