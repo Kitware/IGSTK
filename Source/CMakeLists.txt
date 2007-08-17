@@ -255,23 +255,24 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 
 # The header files
 SET(IGSTKSandbox_HEADS
-  igstkCoordinateReferenceSystemObject.h
-  igstkPivotCalibrationAlgorithm.h
-  igstkGenericImageSpatialObject.h
-  igstkDICOMGenericImageReader.h
-  igstkObliqueImageSpatialObjectRepresentation.h
-  igstkLandmarkUltrasoundCalibration.h
-  igstkContourObjectRepresentation.h
   igstkContourMeshObjectRepresentation.h
+  igstkContourObjectRepresentation.h
   igstkContourVascularNetworkObjectRepresentation.h
-  igstkSocketCommunication.h
+  igstkCoordinateReferenceSystemObject.h
+  igstkCrosshairs2D.h
+  igstkDICOMGenericImageReader.h
+  igstkGenericImageSpatialObject.h
+  igstkLandmarkUltrasoundCalibration.h
   igstkObliqueContourMeshObjectRepresentation.h
+  igstkObliqueImageSpatialObjectRepresentation.h
+  igstkPivotCalibrationAlgorithm.h
+  igstkPoint3D.h
+  igstkSocketCommunication.h
   igstkVideoGrabber.h
   igstkViewNew.h
   igstkViewNew2D.h
   igstkViewNew3D.h
-  igstkCrosshairs2D.h
-  igstkPoint3D.h
+  igstkWorldCoordinateReferenceSystemObject.h
 )
 
 IF(IGSTKSandbox_USE_Qt)
@@ -295,24 +296,25 @@ ENDIF(IGSTKSandbox_USE_FLTK)
 
 # The implementation files
 SET(IGSTKSandbox_SRCS
-  igstkCoordinateReferenceSystemObject.cxx
-  igstkPivotCalibrationAlgorithm.cxx
-  igstkGenericImageSpatialObject.cxx
-  igstkDICOMGenericImageReader.cxx
-  igstkObliqueImageSpatialObjectRepresentation.txx
-  igstkLandmarkUltrasoundCalibration.cxx
-  igstkContourObjectRepresentation.cxx
   igstkContourMeshObjectRepresentation.cxx
+  igstkContourObjectRepresentation.cxx
   igstkContourVascularNetworkObjectRepresentation.cxx
-  igstkSocketCommunication.cxx
+  igstkCoordinateReferenceSystemObject.cxx
+  igstkCrosshairs2D.cxx
+  igstkDICOMGenericImageReader.cxx
+  igstkGenericImageSpatialObject.cxx
+  igstkLandmarkUltrasoundCalibration.cxx
   igstkObliqueContourMeshObjectRepresentation.cxx
+  igstkObliqueImageSpatialObjectRepresentation.txx
+  igstkPivotCalibrationAlgorithm.cxx
+  igstkPoint3D.cxx
+  igstkSocketCommunication.cxx
   igstkVideoGrabber.cxx
   igstkViewNew.cxx
   igstkViewNew2D.cxx
   igstkViewNew3D.cxx
   igstkViewProxyBase.cxx
-  igstkCrosshairs2D.cxx
-  igstkPoint3D.cxx
+  igstkWorldCoordinateReferenceSystemObject.cxx
 )
 
 IF(IGSTKSandbox_USE_Qt)

@@ -24,11 +24,11 @@
 #include <iostream>
 
 #include "igstkCoordinateReferenceSystemObject.h"
-#include "igstkAxesObjectRepresentation.h"
+#include "igstkWorldCoordinateReferenceSystemObject.h"
 #include "igstkRealTimeClock.h"
-#include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+#include "igstkVTKLoggerOutput.h"
 
 namespace igstk
 {
@@ -116,15 +116,19 @@ int igstkCoordinateReferenceSystemObjectTest( int, char * [] )
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
                                        // VTK OutputWindow -> logger
-  
-  typedef igstk::AxesObjectRepresentation  ObjectRepresentationType;
-  ObjectRepresentationType::Pointer AxesRepresentation 
-                                            = ObjectRepresentationType::New();
-  AxesRepresentation->SetLogger( logger );
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
 
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+ 
   typedef igstk::CoordinateReferenceSystemObject  ObjectType;
   ObjectType::Pointer coordinateSystem = ObjectType::New();
   coordinateSystem->SetLogger( logger );
+
+  coordinateSystem->RequestAttachToSpatialObjectParent( worldReference );
     
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetSize() : ";
@@ -152,43 +156,6 @@ int igstkCoordinateReferenceSystemObjectTest( int, char * [] )
     }
   std::cout << "[PASSED]" << std::endl;
 
-  // Test Property
-  std::cout << "Testing Property : ";
-  AxesRepresentation->SetColor(0.1,0.2,0.3);
-  AxesRepresentation->SetOpacity(0.4);
-  if(fabs(AxesRepresentation->GetRed()-0.1)>0.00001)
-    {
-    std::cerr << "GetRed() [FAILED]" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if(fabs(AxesRepresentation->GetGreen()-0.2)>0.00001)
-    {
-    std::cerr << "GetGreen()[FAILED]" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if(fabs(AxesRepresentation->GetBlue()-0.3)>0.00001)
-    {
-    std::cerr << "GetBlue() [FAILED]" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if(fabs(AxesRepresentation->GetOpacity()-0.4)>0.00001)
-    {
-    std::cerr << "GetOpacity() [FAILED]" << std::endl;
-    return EXIT_FAILURE;
-    }
-  std::cout << "[PASSED]" << std::endl;
-
-  // Testing PrintSelf()
-  AxesRepresentation->RequestSetAxesObject( coordinateSystem );
-  AxesRepresentation->Print(std::cout);
-  coordinateSystem->Print(std::cout);
-  coordinateSystem->GetNameOfClass();
-  AxesRepresentation->GetNameOfClass();
-
-  // testing actors
-  std::cout << "Testing actors : ";
-
-
   // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
   // geometrical parameters should trigger an update in the representation
   // class.
@@ -199,7 +166,7 @@ int igstkCoordinateReferenceSystemObjectTest( int, char * [] )
   std::cout << "Testing Set/GetTransform(): ";
 
   const double tolerance = 1e-8;
-  double validityTimeInMilliseconds = 20000.0; // 20 seconds
+  const double validityTimeInMilliseconds = 20000.0; // 20 seconds
   igstk::Transform transform;
   igstk::Transform::VectorType translation;
   translation[0] = 0;
@@ -213,7 +180,8 @@ int igstkCoordinateReferenceSystemObjectTest( int, char * [] )
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
 
-  typedef ::igstk::CoordinateReferenceSystemObjectTest::TransformObserver  TransformObserverType;
+  typedef ::igstk::CoordinateReferenceSystemObjectTest::TransformObserver
+     TransformObserverType;
 
   TransformObserverType::Pointer transformObserver 
                                                = TransformObserverType::New();
@@ -260,40 +228,10 @@ int igstkCoordinateReferenceSystemObjectTest( int, char * [] )
 
   std::cout << "[PASSED]" << std::endl;
 
-
-  // Testing the Copy() function
-  std::cout << "Testing Copy(): ";
-  ObjectRepresentationType::Pointer copy = AxesRepresentation->Copy();
-  if(copy->GetOpacity() != AxesRepresentation->GetOpacity())
-    {
-    std::cerr << "[FAILED]" << std::endl;
-    return EXIT_FAILURE;
-    }
-  std::cout << "[PASSED]" << std::endl;
-
-  // Exercise RequestSetAxesObject() with a null pointer as argument
-  std::cout << "Testing RequestSetAxesObject() with NULL argument: ";
-  ObjectRepresentationType::Pointer AxesRepresentation3 
-                                            = ObjectRepresentationType::New();
-  AxesRepresentation3->RequestSetAxesObject( 0 );
-
-  // Exercise RequestSetAxesObject() called twice. 
-  // The second call should be ignored.
-  std::cout << "Testing RequestSetAxesObject() called twice: ";
-  ObjectRepresentationType::Pointer AxesRepresentation4 
-                                            = ObjectRepresentationType::New();
-  ObjectType::Pointer coordinateSystemA = ObjectType::New();
-  ObjectType::Pointer coordinateSystemB = ObjectType::New();
-  AxesRepresentation4->RequestSetAxesObject( coordinateSystemA );
-  AxesRepresentation4->RequestSetAxesObject( coordinateSystemB );
-    
-  std::cout << AxesRepresentation << std::endl;
-  std::cout << coordinateSystemA << std::endl;
-
-  std::cout << "Test [DONE]" << std::endl;
-
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
+    std::cout << "Test Failing due to error messages ";
+    std::cout << " received in vtkLoggerOutput" << std::endl;
     return EXIT_FAILURE;
     }
 

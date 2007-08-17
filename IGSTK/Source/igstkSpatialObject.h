@@ -183,6 +183,12 @@ private:
   Transform                    m_TransformToSpatialObjectParent;
   Transform                    m_TransformToSpatialObjectParentToBeSet;
 
+  /** This transform will be recomputed every time that a
+   * RequestGetTransformToWorld() is called. The purpose of this
+   * variable is to cache the memory allocation so that the Transform
+   * doesn't have to be constructed every time. */
+  mutable Transform            m_TransformToWorld;
+
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( InternalSpatialObjectNull );
   igstkDeclareInputMacro( InternalSpatialObjectValid );
@@ -216,6 +222,13 @@ private:
 
   /** Report when a request has been made at an incorrect time. */
   void ReportInvalidRequestProcessing();
+
+  /** Computes the transform from this object to the World Coordinate System.
+   *  This is a service method and should never be exposed to the API of this
+   *  class.
+   **/
+  virtual const Transform & ComputeTransformToWorld() const;
+
 };
 
 } // end namespace igstk

@@ -268,19 +268,34 @@ void SpatialObject::RequestGetTransformToWorld()
 /** Broadcast Transform */
 void SpatialObject::BroadcastTransformToWorldProcessing()
 {
-  m_Parent->RequestGetTransformToWorld(); 
+  std::cout << "SpatialObject::BroadcastTransformToWorldProcessing " << std::endl;
 
-  // FIXME : Add here the logic for listening to the returning event.
-  // Then compose the transform with the current TransformToParent, 
-  // and finally broadcast the resulting transform.
-  //  TransformModifiedEvent event;
-  // event.Set( m_Transform );
-  // this->InvokeEvent( event );
+  this->ComputeTransformToWorld();
+
+  TransformModifiedEvent event;
+  event.Set( this->ComputeTransformToWorld() );
+  this->InvokeEvent( event );
   //
   //      VERY IMPORTANT METHOD: TEST CAREFULLY !!!
   //
 }
 
+
+/** Compute the transfrom from the current object to the World Coordinate
+ * system by recursively composing transforms from parents. At the end of
+ * the execution of this method the new transform to world is stored in the
+ * cache mutable member variable m_TransformToWorld. */
+const Transform & SpatialObject::ComputeTransformToWorld() const
+{
+  //
+  //      VERY IMPORTANT METHOD: TEST CAREFULLY !!!
+  //
+  this->m_TransformToWorld.TransformCompose( 
+    this->m_Parent->ComputeTransformToWorld(),
+    this->m_TransformToSpatialObjectParent );
+ 
+  return this->m_TransformToWorld;
+}
 
 /** Request to attach this spatial object to a tracker tool. If the
  * operation succeeds then the coordinate system of the Tracker tool
