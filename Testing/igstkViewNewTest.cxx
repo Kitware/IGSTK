@@ -208,11 +208,9 @@ int igstkViewNewTest( int, char * [] )
     std::cout << view3D->ViewNew3DType::Superclass::GetNameOfClass() 
               << std::endl;
 
-    view2D->RequestInitializeRenderWindowInteractor();
     view2D->RequestResetCamera();
     view2D->RequestSetRendererBackgroundColor( 0.0, 0.0, 1.0 );
 
-    view3D->RequestInitializeRenderWindowInteractor();
     view3D->RequestResetCamera();
     
     // Add the ellipsoid to the view

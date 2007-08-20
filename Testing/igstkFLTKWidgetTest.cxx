@@ -222,11 +222,9 @@ int igstkFLTKWidgetTest( int, char * [] )
     fltkWidget3D->RequestSetView( view3D );
     fltkWidget3D->SetLogger( logger );
 
-    view2D->RequestInitializeRenderWindowInteractor();    
     // Add the cylinder to the view 2D
     view2D->RequestAddObject( cylinderRepresentation );
 
-    view3D->RequestInitializeRenderWindowInteractor();
     // Add the ellipsoid to the view 3D
     view3D->RequestAddObject( ellipsoidRepresentation );
 

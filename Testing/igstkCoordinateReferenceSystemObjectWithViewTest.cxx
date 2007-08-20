@@ -227,12 +227,12 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   std::cout << "Testing Set/GetTransform(): ";
 
   const double tolerance = 1e-8;
-  double validityTimeInMilliseconds = 20000.0; // 20 seconds
+  double validityTimeInMilliseconds = 60000.0; // 60 seconds
   igstk::Transform transform;
   igstk::Transform::VectorType translation;
   translation[0] = 0;
-  translation[1] = 1;
-  translation[2] = 2;
+  translation[1] = 0;
+  translation[2] = 0;
   igstk::Transform::VersorType rotation;
   rotation.Set( 0.0, 0.0, 0.0, 1.0 );
   igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
@@ -290,7 +290,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
   view2D->RequestSetRefreshRate( 30 );
-  view2D->RequestSetRendererBackgroundColor( 0.1, 0.1, 0.3 );
+  view2D->RequestSetRendererBackgroundColor( 0.8, 0.8, 0.9 );
   view2D->RequestSetPosition( 100.0, 100.0, 100.0 );
   view2D->RequestSetFocalPoint( 0.0, 0.0, 0.0 );
   view2D->RequestSetViewUp( 0, 0, 1.0 );
@@ -310,8 +310,61 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
     }
 
   // Exercise the screenshot option with a valid filename
-  view2D->RequestSaveScreenShot("igstkcoordinateSystemTestScreenshot1.png");
-    
+  view2D->RequestSaveScreenShot("igstkCoordinateSystemTestScreenshot1.png");
+
+  ObjectType::Pointer coordinateSystemA = ObjectType::New();
+  coordinateSystemA->RequestAttachToSpatialObjectParent( coordinateSystem );
+
+  ObjectType::Pointer coordinateSystemB = ObjectType::New();
+  coordinateSystemB->RequestAttachToSpatialObjectParent( coordinateSystem );
+
+  ObjectType::Pointer coordinateSystemC = ObjectType::New();
+  coordinateSystemC->RequestAttachToSpatialObjectParent( coordinateSystem );
+
+  igstk::Transform transformA;
+  igstk::Transform transformB;
+  igstk::Transform transformC;
+
+  translation[0] = 10.0;
+  translation[1] =  0.0;
+  translation[2] =  0.0;
+  rotation.Set( 0.2588, 0.0, 0.0, 0.9659 );
+
+  transformA.SetTranslationAndRotation( 
+      translation, rotation, errorValue, validityTimeInMilliseconds );
+
+  translation[0] =  0.0;
+  translation[1] = 20.0;
+  translation[2] =  0.0;
+  rotation.Set( 0.0, 0.2588, 0.0, 0.9659 );
+
+  transformB.SetTranslationAndRotation( 
+      translation, rotation, errorValue, validityTimeInMilliseconds );
+
+  translation[0] =  0.0;
+  translation[1] =  0.0;
+  translation[2] = 30.0;
+  rotation.Set( 0.0, 0.0, 0.2588, 0.9659 );
+
+  transformC.SetTranslationAndRotation( 
+      translation, rotation, errorValue, validityTimeInMilliseconds );
+
+  coordinateSystemA->RequestSetTransformToSpatialObjectParent( transformA );
+  coordinateSystemB->RequestSetTransformToSpatialObjectParent( transformB );
+  coordinateSystemC->RequestSetTransformToSpatialObjectParent( transformC );
+
+  // Do manual redraws
+  for(unsigned int i=0; i<50; i++)
+    {
+    Fl::wait(0.01);
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();       // trigger FLTK redraws
+    }
+
+  // Exercise the screenshot option with a valid filename
+  view2D->RequestSaveScreenShot("igstkCoordinateSystemTestScreenshot2.png");
+
+  
   delete fltkWidget2D;
   delete form;
 

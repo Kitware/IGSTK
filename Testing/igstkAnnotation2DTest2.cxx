@@ -177,7 +177,6 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   fltkWidget2D->RequestSetView( view2D );
   fltkWidget2D->SetLogger( logger );
 
-  view2D->RequestInitializeRenderWindowInteractor();    
   view2D->RequestStart();
 
   form->resizable( form );

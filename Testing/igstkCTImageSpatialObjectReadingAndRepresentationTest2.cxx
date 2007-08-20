@@ -156,8 +156,6 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
   fltkWidget2D->RequestSetView( view2D );
   fltkWidget2D->SetLogger( logger );
 
-  view2D->RequestInitializeRenderWindowInteractor();    
- 
   form->end();
   form->show();
 

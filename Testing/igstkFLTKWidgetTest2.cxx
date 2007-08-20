@@ -127,8 +127,6 @@ int main( int, char * [] )
                       new FLTKWidgetType( 10,10,280,280,"2D View");
     fltkWidget2D->RequestSetView( view2D );
     
-    view2D->RequestInitializeRenderWindowInteractor();    
-
     form->end();
     form->show();
 
