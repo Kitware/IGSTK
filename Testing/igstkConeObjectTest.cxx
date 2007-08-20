@@ -23,6 +23,7 @@
 
 #include <iostream>
 
+#include "igstkConfigure.h"
 #include "igstkConeObject.h"
 #include "igstkConeObjectRepresentation.h"
 #include "igstkView2D.h"
@@ -30,6 +31,10 @@
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace igstk
 {
@@ -117,6 +122,16 @@ int igstkConeObjectTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow -> logger
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
+
   typedef igstk::ConeObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer ConeRepresentation 
                                               = ObjectRepresentationType::New();
@@ -126,6 +141,10 @@ int igstkConeObjectTest( int, char * [] )
   ObjectType::Pointer ConeObject = ObjectType::New();
   ConeObject->SetLogger( logger );
     
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  ConeObject->RequestAttachToSpatialObjectParent( worldReference );
+#endif 
+
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetRadius() : ";
   ConeObject->SetRadius(3.2);
@@ -222,8 +241,6 @@ int igstkConeObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  ConeObject->RequestSetTransform( transform );
-
   typedef ::igstk::ConeObjectTest::TransformObserver  TransformObserverType;
 
   TransformObserverType::Pointer transformObserver 
@@ -232,7 +249,12 @@ int igstkConeObjectTest( int, char * [] )
   ConeObject->AddObserver( ::igstk::TransformModifiedEvent(), 
                                                             transformObserver );
   
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  ConeObject->RequestSetTransformToSpatialObjectParent( transform );
+#else
   ConeObject->RequestSetTransform( transform );
+#endif
+  
   ConeObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
