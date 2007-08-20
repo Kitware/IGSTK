@@ -23,6 +23,7 @@
 
 #include <iostream>
 
+#include "igstkConfigure.h"
 #include "igstkMeshObject.h"
 #include "igstkMeshReader.h"
 #include "igstkMeshObjectRepresentation.h"
@@ -30,6 +31,10 @@
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace igstk
 {
@@ -199,6 +204,16 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
                                        // VTK OutputWindow -> logger
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
+
   typedef igstk::MeshObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer MeshRepresentation = 
                                           ObjectRepresentationType::New();
@@ -209,6 +224,10 @@ int igstkMeshObjectTest( int argc, char * argv [] )
 
   ObjectType::Pointer meshObject = ObjectType::New();
   meshObject->SetLogger( logger );
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  meshObject->RequestAttachToSpatialObjectParent( worldReference );
+#endif 
 
   meshObject->AddPoint(0,0,0,0);
   meshObject->AddPoint(1,9,0,0);
@@ -305,8 +324,6 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  meshObject->RequestSetTransform( transform );
-
   typedef ::igstk::MeshObjectTest::TransformObserver  TransformObserverType;
 
   TransformObserverType::Pointer transformObserver = 
@@ -314,8 +331,13 @@ int igstkMeshObjectTest( int argc, char * argv [] )
 
   meshObject->AddObserver( ::igstk::TransformModifiedEvent(), 
                            transformObserver );
-  
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  meshObject->RequestSetTransformToSpatialObjectParent( transform );
+#else
   meshObject->RequestSetTransform( transform );
+#endif
+
   meshObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )

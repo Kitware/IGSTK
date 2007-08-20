@@ -23,12 +23,17 @@
 
 #include <iostream>
 
+#include "igstkConfigure.h"
 #include "igstkTubeObject.h"
 #include "igstkTubeObjectRepresentation.h"
 #include "igstkView2D.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace igstk
 {
@@ -115,6 +120,16 @@ int igstkTubeObjectTest( int, char * [] )
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
+
   typedef igstk::TubeObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer TubeRepresentation 
                                             = ObjectRepresentationType::New();
@@ -125,6 +140,10 @@ int igstkTubeObjectTest( int, char * [] )
 
   ObjectType::Pointer TubeObject = ObjectType::New();
   TubeObject->SetLogger( logger );
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  TubeObject->RequestAttachToSpatialObjectParent( worldReference );
+#endif 
 
   TubeRepresentation->RequestSetTubeObject( TubeObject );
 
@@ -240,8 +259,6 @@ int igstkTubeObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  TubeObject->RequestSetTransform( transform );
-
   typedef ::igstk::TubeObjectTest::TransformObserver  TransformObserverType;
 
   TransformObserverType::Pointer transformObserver 
@@ -249,8 +266,13 @@ int igstkTubeObjectTest( int, char * [] )
 
   TubeObject->AddObserver( ::igstk::TransformModifiedEvent(), 
                                           transformObserver );
-  
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  TubeObject->RequestSetTransformToSpatialObjectParent( transform );
+#else
   TubeObject->RequestSetTransform( transform );
+#endif
+
   TubeObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
