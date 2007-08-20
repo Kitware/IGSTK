@@ -111,12 +111,14 @@ TARGET_LINK_LIBRARIES( igstkFLTKWidgetTest2 IGSTKSandbox )
 
     ADD_TEST( igstkCoordinateReferenceSystemObjectWithViewTest
               ${IGSTKSandbox_TESTS}
-              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkCoordinateSystemTestScreenshot1.png 
+              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkCoordinateSystemTestScreenshot1.png 
                         ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png 
               --toleranceIntensity 10
               --toleranceRadius    5
               --toleranceNumberOfPixels 5 
-              igstkCoordinateReferenceSystemObjectWithViewTest)
+              igstkCoordinateReferenceSystemObjectWithViewTest
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png 
+              )
 
     SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
               igstkCoordinateReferenceSystemObjectWithViewTest.cxx)

@@ -98,8 +98,15 @@ private:
 } // end namespace igstk
 
 
-int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
+int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
 {
+ 
+  std::string ScreenShotFilename;
+
+  if( argc > 1 )
+    {
+    ScreenShotFilename = argv[1];
+    }
 
   igstk::RealTimeClock::Initialize();
 
@@ -120,9 +127,8 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
                                        // VTK OutputWindow -> logger
   
-  typedef igstk::AxesObjectRepresentation  ObjectRepresentationType;
-  ObjectRepresentationType::Pointer AxesRepresentation 
-                                            = ObjectRepresentationType::New();
+  typedef igstk::AxesObjectRepresentation  RepresentationType;
+  RepresentationType::Pointer AxesRepresentation = RepresentationType::New();
   AxesRepresentation->SetLogger( logger );
 
   typedef igstk::WorldCoordinateReferenceSystemObject WorldReferenceSystemType;
@@ -227,7 +233,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   std::cout << "Testing Set/GetTransform(): ";
 
   const double tolerance = 1e-8;
-  double validityTimeInMilliseconds = 60000.0; // 60 seconds
+  double validityTimeInMilliseconds = 6e5; // 600 seconds
   igstk::Transform transform;
   igstk::Transform::VectorType translation;
   translation[0] = 0;
@@ -298,7 +304,6 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( AxesRepresentation );
   view2D->RequestResetCamera();
-
   view2D->RequestStart();
 
   // Do manual redraws
@@ -309,9 +314,11 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
     Fl::check();       // trigger FLTK redraws
     }
 
-  // Exercise the screenshot option with a valid filename
-  view2D->RequestSaveScreenShot("igstkCoordinateSystemTestScreenshot1.png");
-
+  //
+  // Add three other coordinate reference systems
+  // and position and rotate them avay from the main 
+  // coordinate system.
+  //
   ObjectType::Pointer coordinateSystemA = ObjectType::New();
   coordinateSystemA->RequestAttachToSpatialObjectParent( coordinateSystem );
 
@@ -353,6 +360,22 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   coordinateSystemB->RequestSetTransformToSpatialObjectParent( transformB );
   coordinateSystemC->RequestSetTransformToSpatialObjectParent( transformC );
 
+  coordinateSystemA->SetSize(10,10,10);
+  coordinateSystemB->SetSize(10,10,10);
+  coordinateSystemC->SetSize(10,10,10);
+
+  RepresentationType::Pointer AxesRepresentationA = RepresentationType::New();
+  RepresentationType::Pointer AxesRepresentationB = RepresentationType::New();
+  RepresentationType::Pointer AxesRepresentationC = RepresentationType::New();
+
+  AxesRepresentationA->RequestSetAxesObject( coordinateSystemA );
+  AxesRepresentationB->RequestSetAxesObject( coordinateSystemB );
+  AxesRepresentationC->RequestSetAxesObject( coordinateSystemC );
+
+  view2D->RequestAddObject( AxesRepresentationA );
+  view2D->RequestAddObject( AxesRepresentationB );
+  view2D->RequestAddObject( AxesRepresentationC );
+
   // Do manual redraws
   for(unsigned int i=0; i<50; i++)
     {
@@ -361,10 +384,12 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
     Fl::check();       // trigger FLTK redraws
     }
 
-  // Exercise the screenshot option with a valid filename
-  view2D->RequestSaveScreenShot("igstkCoordinateSystemTestScreenshot2.png");
+  // Save the new scene
+  if( argc > 1 )
+    {
+    view2D->RequestSaveScreenShot( ScreenShotFilename );
+    }
 
-  
   delete fltkWidget2D;
   delete form;
 
