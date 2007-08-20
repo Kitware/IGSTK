@@ -31,6 +31,11 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#error
+#endif
+
 namespace igstk
 {
 namespace AxesObjectTest
@@ -118,6 +123,16 @@ int igstkAxesObjectTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
                                        // VTK OutputWindow -> logger
   
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
+
   typedef igstk::AxesObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer AxesRepresentation 
                                             = ObjectRepresentationType::New();
@@ -127,6 +142,10 @@ int igstkAxesObjectTest( int, char * [] )
   ObjectType::Pointer AxesObject = ObjectType::New();
   AxesObject->SetLogger( logger );
     
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  AxesObject->RequestAttachToSpatialObjectParent( worldReference );
+#endif 
+
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetSize() : ";
   AxesObject->SetSize(10,20,30);
@@ -241,7 +260,12 @@ int igstkAxesObjectTest( int, char * [] )
   AxesObject->AddObserver( ::igstk::TransformModifiedEvent(), 
                                                           transformObserver );
   
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  AxesObject->RequestSetTransformToSpatialObjectParent( transform );
+#else
   AxesObject->RequestSetTransform( transform );
+#endif
+
   AxesObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
