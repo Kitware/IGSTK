@@ -23,6 +23,7 @@
 
 #include <iostream>
 
+#include "igstkWorldCoordinateReferenceSystemObject.h"
 #include "igstkCoordinateReferenceSystemObject.h"
 #include "igstkAxesObjectRepresentation.h"
 #include "igstkViewNew2D.h"
@@ -124,10 +125,15 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
                                             = ObjectRepresentationType::New();
   AxesRepresentation->SetLogger( logger );
 
+  typedef igstk::WorldCoordinateReferenceSystemObject WorldReferenceSystemType;
+  WorldReferenceSystemType::Pointer worldReference = WorldReferenceSystemType::New();
+
   typedef igstk::CoordinateReferenceSystemObject  ObjectType;
   ObjectType::Pointer coordinateSystem = ObjectType::New();
   coordinateSystem->SetLogger( logger );
     
+  coordinateSystem->RequestAttachToSpatialObjectParent( worldReference );
+
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetSize() : ";
   coordinateSystem->SetSize(10,20,30);
@@ -206,14 +212,10 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   form->end();
   // End of the GUI creation
 
-  // this will indirectly call CreateActors() 
-  view2D->RequestAddObject( AxesRepresentation );
-    
   std::cout << "[PASSED]" << std::endl;
 
   form->show();
 
-  view2D->RequestResetCamera();
  
   // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
   // geometrical parameters should trigger an update in the representation
@@ -232,7 +234,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   translation[1] = 1;
   translation[2] = 2;
   igstk::Transform::VersorType rotation;
-  rotation.Set( 0.707, 0.0, 0.707, 0.0 );
+  rotation.Set( 0.0, 0.0, 0.0, 1.0 );
   igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
 
   transform.SetTranslationAndRotation( 
@@ -248,8 +250,8 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   coordinateSystem->AddObserver( ::igstk::TransformModifiedEvent(), 
                                                           transformObserver );
   
-  coordinateSystem->RequestSetTransform( transform );
-  coordinateSystem->RequestGetTransform();
+  coordinateSystem->RequestSetTransformToSpatialObjectParent( transform );
+  coordinateSystem->RequestGetTransformToWorld();
   
   if( !transformObserver->GotTransform() )
     {
@@ -287,46 +289,25 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
 
   std::cout << "[PASSED]" << std::endl;
 
+  view2D->RequestInitializeRenderWindowInteractor();
   view2D->RequestSetRefreshRate( 30 );
   view2D->RequestStart();
+  view2D->RequestSetRendererBackgroundColor( 0.1, 0.1, 0.3 );
+  view2D->RequestSetPosition( 100.0, 100.0, 100.0 );
+  view2D->RequestSetFocalPoint( 0.0, 0.0, 0.0 );
+  view2D->RequestSetViewUp( 0, 0, 1.0 );
+
+  // this will indirectly call CreateActors() 
+  view2D->RequestAddObject( AxesRepresentation );
+  view2D->RequestResetCamera();
 
   // Do manual redraws
-  for(unsigned int i=0; i<10; i++)
+  for(unsigned int i=0; i<50; i++)
     {
     Fl::wait(0.01);
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();       // trigger FLTK redraws
     }
-
-
-  // Testing the Copy() function
-  std::cout << "Testing Copy(): ";
-  ObjectRepresentationType::Pointer copy = AxesRepresentation->Copy();
-  if(copy->GetOpacity() != AxesRepresentation->GetOpacity())
-    {
-    std::cerr << "[FAILED]" << std::endl;
-    return EXIT_FAILURE;
-    }
-  std::cout << "[PASSED]" << std::endl;
-
-  // Exercise RequestSetAxesObject() with a null pointer as argument
-  std::cout << "Testing RequestSetAxesObject() with NULL argument: ";
-  ObjectRepresentationType::Pointer AxesRepresentation3 
-                                            = ObjectRepresentationType::New();
-  AxesRepresentation3->RequestSetAxesObject( 0 );
-
-  // Exercise RequestSetAxesObject() called twice. 
-  // The second call should be ignored.
-  std::cout << "Testing RequestSetAxesObject() called twice: ";
-  ObjectRepresentationType::Pointer AxesRepresentation4 
-                                            = ObjectRepresentationType::New();
-  ObjectType::Pointer coordinateSystemA = ObjectType::New();
-  ObjectType::Pointer coordinateSystemB = ObjectType::New();
-  AxesRepresentation4->RequestSetAxesObject( coordinateSystemA );
-  AxesRepresentation4->RequestSetAxesObject( coordinateSystemB );
-    
-  std::cout << AxesRepresentation << std::endl;
-  std::cout << coordinateSystemA << std::endl;
 
   // Exercise the screenshot option with a valid filename
   view2D->RequestSaveScreenShot("igstkcoordinateSystemTestScreenshot1.png");
