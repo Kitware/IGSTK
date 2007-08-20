@@ -360,7 +360,18 @@ IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkTubeObjectTest ${IGSTK_TESTS} igstkTubeObjectTest)
   ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
   ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
-  ADD_TEST(igstkSpatialObjectRepresentationVisibilityTest ${IGSTK_TESTS} igstkSpatialObjectRepresentationVisibilityTest)
+
+  ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest 
+              ${IGSTK_TESTS}
+              --compare ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest.png 
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+              igstkSpatialObjectRepresentationVisibilityTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
+          )
 
   IF (IGSTK_DATA_ROOT)
 
