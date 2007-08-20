@@ -23,6 +23,7 @@
 
 #include <iostream>
 
+#include "igstkConfigure.h"
 #include "igstkBoxObject.h"
 #include "igstkBoxObjectRepresentation.h"
 #include "igstkView2D.h"
@@ -30,6 +31,10 @@
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace igstk
 {
@@ -117,6 +122,16 @@ int igstkBoxObjectTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow -> logger
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
+
   typedef igstk::BoxObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer BoxRepresentation 
                                               = ObjectRepresentationType::New();
@@ -126,6 +141,10 @@ int igstkBoxObjectTest( int, char * [] )
   ObjectType::Pointer BoxObject = ObjectType::New();
   BoxObject->SetLogger( logger );
     
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  BoxObject->RequestAttachToSpatialObjectParent( worldReference );
+#endif 
+
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetSize() : ";
   igstk::BoxObject::ArrayType size;
@@ -232,16 +251,19 @@ int igstkBoxObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  BoxObject->RequestSetTransform( transform );
-
   typedef ::igstk::BoxObjectTest::TransformObserver  TransformObserverType;
 
   TransformObserverType::Pointer transformObserver 
                                                  = TransformObserverType::New();
 
   BoxObject->AddObserver( ::igstk::TransformModifiedEvent(),transformObserver );
-  
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  BoxObject->RequestSetTransformToSpatialObjectParent( transform );
+#else
   BoxObject->RequestSetTransform( transform );
+#endif
+
   BoxObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
