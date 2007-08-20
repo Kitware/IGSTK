@@ -23,12 +23,17 @@
 
 #include <iostream>
 
+#include "igstkConfigure.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkView2D.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace igstk
 {
@@ -112,6 +117,16 @@ int igstkEllipsoidObjectTest( int, char * [] )
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);  //redirect messages from VTK Output
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+typedef igstk::WorldCoordinateReferenceSystemObject  
+  WorldReferenceSystemType;
+
+WorldReferenceSystemType::Pointer worldReference =
+  WorldReferenceSystemType::New();
+
+worldReference->SetLogger( logger );
+#endif 
+
   typedef igstk::EllipsoidObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer 
                     ellipsoidRepresentation = ObjectRepresentationType::New();
@@ -120,7 +135,11 @@ int igstkEllipsoidObjectTest( int, char * [] )
   typedef igstk::EllipsoidObject  ObjectType;
   ObjectType::Pointer ellipsoidObject = ObjectType::New();
   ellipsoidObject->SetLogger( logger );
-    
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  ellipsoidObject->RequestAttachToSpatialObjectParent( worldReference );
+#endif 
+
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetRadius() : ";
   ObjectType::ArrayType radius;
@@ -234,8 +253,13 @@ int igstkEllipsoidObjectTest( int, char * [] )
 
   ellipsoidObject->AddObserver( ::igstk::TransformModifiedEvent(), 
                                                           transformObserver );
-  
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  ellipsoidObject->RequestSetTransformToSpatialObjectParent( transform );
+#else
   ellipsoidObject->RequestSetTransform( transform );
+#endif
+ 
   ellipsoidObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )

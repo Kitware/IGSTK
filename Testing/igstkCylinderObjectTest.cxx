@@ -23,12 +23,17 @@
 
 #include <iostream>
 
+#include "igstkConfigure.h"
 #include "igstkCylinderObject.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkView2D.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace igstk
 {
@@ -113,6 +118,16 @@ int igstkCylinderObjectTest( int, char * [] )
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK OutputWindow
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
+
   typedef igstk::CylinderObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer 
                       cylinderRepresentation = ObjectRepresentationType::New();
@@ -121,6 +136,10 @@ int igstkCylinderObjectTest( int, char * [] )
   typedef igstk::CylinderObject ObjectType;
   ObjectType::Pointer cylinderObject = ObjectType::New();
   cylinderObject->SetLogger( logger );
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  cylinderObject->RequestAttachToSpatialObjectParent( worldReference );
+#endif 
 
   cylinderRepresentation->RequestSetCylinderObject( cylinderObject );
   
@@ -209,8 +228,6 @@ int igstkCylinderObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  cylinderObject->RequestSetTransform( transform );
-
   typedef ::igstk::CylinderObjectTest::TransformObserver TransformObserverType;
 
   TransformObserverType::Pointer 
@@ -219,7 +236,12 @@ int igstkCylinderObjectTest( int, char * [] )
   cylinderObject->AddObserver(
                         ::igstk::TransformModifiedEvent(), transformObserver );
   
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  cylinderObject->RequestSetTransformToSpatialObjectParent( transform );
+#else
   cylinderObject->RequestSetTransform( transform );
+#endif
+  
   cylinderObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
