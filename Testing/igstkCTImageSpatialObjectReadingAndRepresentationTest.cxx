@@ -26,6 +26,10 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
+
 namespace CTImageSpatialObjectReadingAndRepresentationTest
 {
 igstkObserverObjectMacro(CTImage,
@@ -62,6 +66,16 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow -> logger
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -103,15 +117,16 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
               << std::endl;
     }
 
-  
+  CTImagePointer ctImage = ctImageObserver->GetCTImage();  
+
   typedef igstk::CTImageSpatialObjectRepresentation RepresentationType;
 
   RepresentationType::Pointer representation = RepresentationType::New();
           
   representation->SetLogger( logger );
 
-  representation->RequestSetImageSpatialObject( 
-                                     ctImageObserver->GetCTImage() );
+  representation->RequestSetImageSpatialObject( ctImage );
+                        
 
   representation->RequestSetOrientation( RepresentationType::Axial );
   representation->RequestSetSliceNumber( 0 );
@@ -191,9 +206,19 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     return EXIT_FAILURE;
     }
 
+  ctImage = ctImageObserver->GetCTImage();
 
-  representation->RequestSetImageSpatialObject( 
-                           ctImageObserver->GetCTImage() );
+  ctImage->SetLogger( logger );
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  ctImage->RequestAttachToSpatialObjectParent( worldReference );
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  ctImage->RequestSetTransformToSpatialObjectParent( transform );
+#endif 
+
+  representation->RequestSetImageSpatialObject( ctImage );
+                           
 
   view2D->RequestAddObject( representation );
 
@@ -303,8 +328,18 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
       return EXIT_FAILURE;
       }
 
-    representation->RequestSetImageSpatialObject( 
-                                       ctImageObserver->GetCTImage() );
+    ctImage = ctImageObserver->GetCTImage();
+
+    ctImage->SetLogger( logger );
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+    ctImage->RequestAttachToSpatialObjectParent( worldReference );
+    igstk::Transform transform;
+    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    ctImage->RequestSetTransformToSpatialObjectParent( transform );
+#endif 
+
+    representation->RequestSetImageSpatialObject( ctImage );
 
     representation->RequestSetOrientation( RepresentationType::Axial );
 
