@@ -37,6 +37,7 @@ protected:
   vtkRenderer *               GetRenderer( ViewNew * view );
   vtkRenderWindowInteractor * GetRenderWindowInteractor( ViewNew * view );
   ::itk::Object::Pointer      GetReporter( ViewNew * view );
+  void                        InitializeInteractor( ViewNew * view );
   
 private:
 

@@ -59,11 +59,11 @@ public:
     ::itk::Object::Pointer reporter =
         ViewProxyBase::GetReporter( view );
 
-    view->RequestInitializeRenderWindowInteractor();
-
     this->m_Widget->SetRenderer( renderer ); 
     this->m_Widget->SetRenderWindowInteractor( interactor ); 
     this->m_Widget->SetReporter ( reporter );
+
+    ViewProxyBase::InitializeInteractor( view );
     }  
 
 
