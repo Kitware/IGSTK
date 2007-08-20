@@ -23,6 +23,7 @@
 
 #include <iostream>
 
+#include "igstkConfigure.h"
 #include "igstkAxesObject.h"
 #include "igstkAxesObjectRepresentation.h"
 #include "igstkView2D.h"
@@ -33,7 +34,6 @@
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
 #include "igstkWorldCoordinateReferenceSystemObject.h"
-#error
 #endif
 
 namespace igstk
