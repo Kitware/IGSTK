@@ -23,12 +23,17 @@
 
 #include <iostream>
 
+#include "igstkConfigure.h"
 #include "igstkUltrasoundProbeObject.h"
 #include "igstkUltrasoundProbeObjectRepresentation.h"
 #include "igstkView2D.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace igstk
 {
@@ -193,6 +198,16 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
+
   typedef igstk::UltrasoundProbeObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer UltrasoundProbeRepresentation 
                                             = ObjectRepresentationType::New();
@@ -201,6 +216,10 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   typedef igstk::UltrasoundProbeObject  ObjectType;
   ObjectType::Pointer UltrasoundProbeObject = ObjectType::New();
   UltrasoundProbeObject->SetLogger( logger );
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  UltrasoundProbeObject->RequestAttachToSpatialObjectParent( worldReference );
+#endif 
 
   // Test Property
   std::cout << "Testing Property : ";
@@ -275,8 +294,6 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  UltrasoundProbeObject->RequestSetTransform( transform );
-
   typedef ::igstk::UltrasoundProbeObjectTest::TransformObserver  
                                                         TransformObserverType;
 
@@ -285,8 +302,13 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
 
   UltrasoundProbeObject->AddObserver( ::igstk::TransformModifiedEvent(),
                                                           transformObserver );
-  
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  UltrasoundProbeObject->RequestSetTransformToSpatialObjectParent( transform );
+#else
   UltrasoundProbeObject->RequestSetTransform( transform );
+#endif
+  
   UltrasoundProbeObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )

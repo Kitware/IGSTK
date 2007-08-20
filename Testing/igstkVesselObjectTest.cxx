@@ -23,10 +23,15 @@
 
 #include <iostream>
 
+#include "igstkConfigure.h"
 #include "igstkVesselObject.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace igstk
 {
@@ -113,11 +118,25 @@ int igstkVesselObjectTest( int, char * [] )
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
+
   typedef igstk::VesselObject     ObjectType;
   typedef ObjectType::PointType   TubePointType;
 
   ObjectType::Pointer VesselObject = ObjectType::New();
   VesselObject->SetLogger( logger );
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  VesselObject->RequestAttachToSpatialObjectParent( worldReference );
+#endif 
 
   // Test Set/GetRadius()
   TubePointType p1;
@@ -191,8 +210,6 @@ int igstkVesselObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  VesselObject->RequestSetTransform( transform );
-
   typedef ::igstk::VesselObjectTest::TransformObserver  TransformObserverType;
 
   TransformObserverType::Pointer transformObserver 
@@ -200,8 +217,13 @@ int igstkVesselObjectTest( int, char * [] )
 
   VesselObject->AddObserver( ::igstk::TransformModifiedEvent(), 
                                           transformObserver );
-  
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  VesselObject->RequestSetTransformToSpatialObjectParent( transform );
+#else
   VesselObject->RequestSetTransform( transform );
+#endif
+  
   VesselObject->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )
