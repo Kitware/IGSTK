@@ -134,6 +134,14 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   igstk::RealTimeClock::Initialize();
 
+  if( argc < 3 )
+    {
+      std::cerr << "Usage: " << argv[0] 
+              << "ScreenShot filename before "
+              << "ScreenShotfilename  after  " << std::endl;
+    return EXIT_FAILURE;
+    }
+  
   typedef itk::Logger              LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
 
@@ -249,7 +257,6 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
     view3D->RequestResetCamera();
     }
 
-  
   // Now start the real test.
   //
   // 1) Set the transform to be valid for one second
@@ -258,6 +265,14 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   //
   // 3) Restart the pulse generator of the View.
   //
+  //
+ 
+  std::string screenShotFileName1 = argv[1]; 
+
+  std::string screenShotFileName2 = argv[2];
+
+  bool screenShotTaken = false;
+
   for( unsigned int tt=0; tt<5; tt++ )
     {
     validityTimeInMilliseconds = 1000;
@@ -266,20 +281,29 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
     ellipsoidObject->RequestSetTransform( transform );
 
+
     // restart the count of the observer
     viewObserver->SetNumberOfPulsesToStop( numberOfPulsesToStop );
     bEnd = false;
     view3D->RequestStart();
 
+
     while(1)
       {
       Fl::wait(0.001);
+      if ( ! screenShotTaken )  
+        {
+        view3D->RequestSaveScreenShot( screenShotFileName1 );
+        screenShotTaken = true;
+        }
       igstk::PulseGenerator::CheckTimeouts();
       if( bEnd )
         {
         break;
         }
       }
+  
+      view3D->RequestSaveScreenShot( screenShotFileName2 );
     }
 
 
