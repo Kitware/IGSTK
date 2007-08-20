@@ -180,10 +180,6 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
                     ellipsoidRepresentation = ObjectRepresentationType::New();
   ellipsoidRepresentation->SetLogger( logger );
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  ellipsoidRepresentation->RequestAttachToSpatialObjectParent( worldReference );
-#endif 
-
   ObjectRepresentationType::Pointer 
                     ellipsoidRepresentation2 = ObjectRepresentationType::New();
 
