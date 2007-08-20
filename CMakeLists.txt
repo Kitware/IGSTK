@@ -159,6 +159,10 @@ ${IGSTKSandbox_BINARY_DIR}/SourceLatest
 ${IGSTKSandbox_SOURCE_DIR}/Source
 )
 
+#
+# Define the options that enables the use of the Coordinate Reference Systems
+#
+OPTION(IGSTK_USE_COORDINATE_REFERENCE_SYSTEM "Use the new coordinate reference system infrastructure" ON)
 
 #-----------------------------------------------------------------------------
 # Help other projects use IGSTKSandbox.
