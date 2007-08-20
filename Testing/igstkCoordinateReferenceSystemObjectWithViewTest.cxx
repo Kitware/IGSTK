@@ -209,6 +209,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   FLTKWidgetType * fltkWidget2D = new FLTKWidgetType(0,0,300,300,"View 2D");
 
   fltkWidget2D->RequestSetView( view2D );
+
   form->end();
   // End of the GUI creation
 
@@ -216,7 +217,6 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
 
   form->show();
 
- 
   // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
   // geometrical parameters should trigger an update in the representation
   // class.
@@ -289,9 +289,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
 
   std::cout << "[PASSED]" << std::endl;
 
-  view2D->RequestInitializeRenderWindowInteractor();
   view2D->RequestSetRefreshRate( 30 );
-  view2D->RequestStart();
   view2D->RequestSetRendererBackgroundColor( 0.1, 0.1, 0.3 );
   view2D->RequestSetPosition( 100.0, 100.0, 100.0 );
   view2D->RequestSetFocalPoint( 0.0, 0.0, 0.0 );
@@ -300,6 +298,8 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int, char * [] )
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( AxesRepresentation );
   view2D->RequestResetCamera();
+
+  view2D->RequestStart();
 
   // Do manual redraws
   for(unsigned int i=0; i<50; i++)

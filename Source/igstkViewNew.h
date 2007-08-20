@@ -118,9 +118,6 @@ public:
   void RequestSetRendererBackgroundColor(
                     double red, double green, double blue ); 
 
-  /** Request initialize the RenderWindow interactor */
-  void RequestInitializeRenderWindowInteractor();
-
    friend class ViewProxyBase;
 protected:
 
@@ -148,6 +145,9 @@ protected:
  
   /** Set the interactor style in the derived classes */
   void SetInteractorStyle( vtkInteractorStyle * style );
+
+  /** Request initialize the RenderWindow interactor */
+  void RequestInitializeRenderWindowInteractor();
 
 private:
 
