@@ -211,8 +211,11 @@ ELSE( WIN32 )
   )
 ENDIF( WIN32 )
 
-# Copy igstkConfigure.h into latest
-CONFIGURE_FILE( ${IGSTK_BINARY_DIR}/igstkConfigure.h ${IGSTK_LATEST_FILES}/igstkConfigure.h COPYONLY)
+# Configure igstkConfigure.h into latest
+CONFIGURE_FILE(${IGSTK_SOURCE_DIR}/igstkConfigure.h.in
+               ${IGSTK_LATEST_FILES}/igstkConfigure.h
+               @ONLY IMMEDIATE)
+
 
 # Copy the header files if they are not a duplicated in the Sandbox
 FOREACH(HeaderFile ${IGSTK_HEADS})

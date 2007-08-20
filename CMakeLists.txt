@@ -3,11 +3,6 @@ PROJECT( IGSTKSandbox )
 SET (LIBRARY_OUTPUT_PATH ${IGSTKSandbox_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries." FORCE)
 SET (EXECUTABLE_OUTPUT_PATH ${IGSTKSandbox_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables." FORCE)
 
-# Create the header to configure the classes.
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/igstkSandboxConfigure.h.in
-               ${PROJECT_BINARY_DIR}/igstkSandboxConfigure.h
-               @ONLY IMMEDIATE)
-
 # Add the testing directories
 OPTION(IGSTKSandbox_BUILD_TESTING "Test the project" ON)
 IF(IGSTKSandbox_BUILD_TESTING)
@@ -137,6 +132,19 @@ ENDIF(IGSTKSandbox_USE_Qt)
 # for the Trackers
 OPTION(IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING "Build human supervised tests for Trackers" OFF)
 
+#
+# Define the options that enables the use of the Coordinate Reference Systems
+#
+OPTION(IGSTK_USE_COORDINATE_REFERENCE_SYSTEM "Use the new coordinate reference system infrastructure" ON)
+
+#-----------------------------------------------------------------------------
+# check for header files that we need
+INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
+# for serial communication: termio.h or termios.h?
+CHECK_INCLUDE_FILE("termios.h"       HAVE_TERMIOS_H)
+CHECK_INCLUDE_FILE("termio.h"        HAVE_TERMIO_H)
+
+
 # The IGSTKSandbox Library and any Utilities that it requires
 SUBDIRS(Utilities Source)
 
@@ -159,15 +167,14 @@ ${IGSTKSandbox_BINARY_DIR}/SourceLatest
 ${IGSTKSandbox_SOURCE_DIR}/Source
 )
 
-#
-# Define the options that enables the use of the Coordinate Reference Systems
-#
-OPTION(IGSTK_USE_COORDINATE_REFERENCE_SYSTEM "Use the new coordinate reference system infrastructure" ON)
-
 #-----------------------------------------------------------------------------
 # Help other projects use IGSTKSandbox.
 SET(IGSTKSandbox_LIBRARY_PATH ${LIBRARY_OUTPUT_PATH})
 
+# Create the header to configure the classes.
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/igstkSandboxConfigure.h.in
+               ${PROJECT_BINARY_DIR}/igstkSandboxConfigure.h
+               @ONLY IMMEDIATE)
 
 # Copy the UseIGSTKSandbox.cmake file to the binary tree for backward compatability.
 CONFIGURE_FILE(${IGSTKSandbox_SOURCE_DIR}/UseIGSTKSandbox.cmake.in
