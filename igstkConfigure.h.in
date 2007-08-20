@@ -25,3 +25,5 @@
 /* indicate whether FLTK is being used or not */
 #cmakedefine FLTK_FOUND
 
+/* indicate whether to use or not the coordinate reference system infrastructure */
+#cmakedefine IGSTK_USE_COORDINATE_REFERENCE_SYSTEM

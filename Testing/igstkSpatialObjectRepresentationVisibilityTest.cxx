@@ -23,12 +23,17 @@
 
 #include <iostream>
 
+#include "igstkConfigure.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkView3D.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace igstk
 {
@@ -160,10 +165,24 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow 
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
+
   typedef igstk::EllipsoidObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer 
                     ellipsoidRepresentation = ObjectRepresentationType::New();
   ellipsoidRepresentation->SetLogger( logger );
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  ellipsoidRepresentation->RequestAttachToSpatialObjectParent( worldReference );
+#endif 
 
   ObjectRepresentationType::Pointer 
                     ellipsoidRepresentation2 = ObjectRepresentationType::New();
@@ -175,6 +194,11 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   ObjectType::Pointer ellipsoidObject2 = ObjectType::New();
   ellipsoidObject2->SetLogger( logger );
  
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  ellipsoidObject->RequestAttachToSpatialObjectParent( worldReference );
+  ellipsoidObject2->RequestAttachToSpatialObjectParent( worldReference );
+#endif 
+
   ellipsoidRepresentation2->RequestSetEllipsoidObject(ellipsoidObject2);
   ellipsoidRepresentation2->SetColor( 1.0, 0.0, 0.0 );
   ellipsoidRepresentation2->SetOpacity( 1.0 );
