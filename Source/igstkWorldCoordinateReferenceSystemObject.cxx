@@ -60,9 +60,6 @@ const Transform &
 WorldCoordinateReferenceSystemObject
 ::ComputeTransformToWorld() const
 {
-  std::cout << "WorldCoordinateReferenceSystemObject::ComputeTransformToWorld() " << std::endl;
-  std::cout << "Returning the Identity Transform = " << std::endl;
-  std::cout << m_IdentityTransformToWorld << std::endl;
   return this->m_IdentityTransformToWorld;
 }
 
