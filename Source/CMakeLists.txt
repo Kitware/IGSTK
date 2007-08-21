@@ -276,6 +276,7 @@ SET(IGSTKSandbox_HEADS
   igstkViewNew2D.h
   igstkViewNew3D.h
   igstkWorldCoordinateReferenceSystemObject.h
+  igstkImageSliceRepresentation.h
 )
 
 IF(IGSTKSandbox_USE_Qt)
@@ -318,6 +319,7 @@ SET(IGSTKSandbox_SRCS
   igstkViewNew3D.cxx
   igstkViewProxyBase.cxx
   igstkWorldCoordinateReferenceSystemObject.cxx
+  igstkImageSliceRepresentation.txx
 )
 
 IF(IGSTKSandbox_USE_Qt)
