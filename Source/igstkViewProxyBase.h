@@ -38,6 +38,8 @@ protected:
   vtkRenderWindowInteractor * GetRenderWindowInteractor( ViewNew * view );
   ::itk::Object::Pointer      GetReporter( ViewNew * view );
   void                        InitializeInteractor( ViewNew * view );
+  void                        SetRenderWindowSize( ViewNew * view, int width, int height );
+
   
 private:
 

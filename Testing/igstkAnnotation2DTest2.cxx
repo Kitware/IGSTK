@@ -165,7 +165,7 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   view2D->RequestResetCamera();
 
   // Start the pulse generator of the View 
-  view2D->RequestSetRefreshRate( 20 );
+  view2D->SetRefreshRate( 20 );
   view2D->RequestStart();
 
   // Create an FLTK minimal GUI

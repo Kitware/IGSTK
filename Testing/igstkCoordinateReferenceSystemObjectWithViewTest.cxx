@@ -295,11 +295,11 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
 
   std::cout << "[PASSED]" << std::endl;
 
-  view2D->RequestSetRefreshRate( 30 );
-  view2D->RequestSetRendererBackgroundColor( 0.8, 0.8, 0.9 );
-  view2D->RequestSetPosition( 100.0, 100.0, 100.0 );
-  view2D->RequestSetFocalPoint( 0.0, 0.0, 0.0 );
-  view2D->RequestSetViewUp( 0, 0, 1.0 );
+  view2D->SetRefreshRate( 30 );
+  view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
+  view2D->SetCameraPosition( 100.0, 100.0, 100.0 );
+  view2D->SetFocalPoint( 0.0, 0.0, 0.0 );
+  view2D->SetCameraViewUp( 0, 0, 1.0 );
 
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( AxesRepresentation );

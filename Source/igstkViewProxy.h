@@ -66,6 +66,12 @@ public:
     ViewProxyBase::InitializeInteractor( view );
     }  
 
+  void SetRenderWindowSize( ViewNew * view, int width, int height )
+    {
+    ViewProxyBase::SetRenderWindowSize( view, width, height );
+
+    }
+
 
 protected:
 

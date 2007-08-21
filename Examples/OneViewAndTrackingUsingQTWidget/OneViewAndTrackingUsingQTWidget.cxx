@@ -114,7 +114,7 @@ translation, rotation, errorValue, validityTimeInMilliseconds );
 
   view3D->RequestAddObject( ellipsoidRepresentation );
   view3D->RequestAddObject( cylinderRepresentation );
-  view3D->RequestSetRefreshRate( 10 );
+  view3D->SetRefreshRate( 10 );
   view3D->RequestStart();
   view3D->RequestResetCamera();
   

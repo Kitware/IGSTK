@@ -159,7 +159,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
   form->end();
   form->show();
 
-  view2D->RequestSetRefreshRate( 40 );
+  view2D->SetRefreshRate( 40 );
   view2D->RequestStart();
   view2D->RequestResetCamera();
 

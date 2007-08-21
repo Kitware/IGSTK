@@ -166,7 +166,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest3(
   qtWidget2D->SetLogger( logger );
   qtMainWindow->setCentralWidget( qtWidget2D );
 
-  view2D->RequestSetRefreshRate( 40 );
+  view2D->SetRefreshRate( 40 );
   view2D->RequestStart();
   view2D->RequestResetCamera();
 

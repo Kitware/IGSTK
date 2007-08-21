@@ -68,11 +68,9 @@ public:
   /** Set the desired frequency for refreshing the view. It is not worth to
    * attempt to go faster than your monitor, nor more than double than your
    * trackers */
-  void RequestSetRefreshRate( double frequency );
+  void SetRefreshRate( double frequency );
 
-  /** Set the size of the render window */
-  void RequestSetRenderWindowSize( int width, int height );
-  
+ 
   /** Add an observer to this ViewNew class */
   unsigned long AddObserver( const ::itk::EventObject & event, 
                                                    ::itk::Command * observer );
@@ -109,13 +107,13 @@ public:
   /** Set up variables, types and methods related to the Logger */
   igstkLoggerMacro()
 
-  /** Request methods to control camera parameters */
-  void RequestSetPosition( double x, double y, double z);
-  void RequestSetFocalPoint( double x, double y, double z);
-  void RequestSetViewUp( double vx, double vy, double vz);
-  void RequestSetClippingRange( double dNear, double dFar );
-  void RequestSetParallelProjection( bool flag );
-  void RequestSetRendererBackgroundColor(
+  /** Methods to control camera parameters */
+  void SetCameraPosition( double x, double y, double z);
+  void SetFocalPoint( double x, double y, double z);
+  void SetCameraViewUp( double vx, double vy, double vz);
+  void SetClippingRange( double dNear, double dFar );
+  void SetParallelProjection( bool flag );
+  void SetRendererBackgroundColor(
                     double red, double green, double blue ); 
 
    friend class ViewProxyBase;
@@ -146,6 +144,9 @@ protected:
   /** Set the interactor style in the derived classes */
   void SetInteractorStyle( vtkInteractorStyle * style );
 
+  /** Set the size of the render window */
+  void RequestSetRenderWindowSize( int width, int height );
+ 
   /** Request initialize the RenderWindow interactor */
   void RequestInitializeRenderWindowInteractor();
 

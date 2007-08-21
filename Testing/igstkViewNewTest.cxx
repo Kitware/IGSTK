@@ -209,7 +209,7 @@ int igstkViewNewTest( int, char * [] )
               << std::endl;
 
     view2D->RequestResetCamera();
-    view2D->RequestSetRendererBackgroundColor( 0.0, 0.0, 1.0 );
+    view2D->SetRendererBackgroundColor( 0.0, 0.0, 1.0 );
 
     view3D->RequestResetCamera();
     
@@ -218,7 +218,7 @@ int igstkViewNewTest( int, char * [] )
     
     // Set the refresh rate and start 
     // the pulse generators of the views.
-    view2D->RequestSetRefreshRate( 30 );
+    view2D->SetRefreshRate( 30 );
 
     view2D->RequestStart();
 
@@ -245,7 +245,6 @@ int igstkViewNewTest( int, char * [] )
 
     std::cout << *view2D << std::endl;
 
-    view2D->RequestSetRenderWindowSize( 256, 256 );
     view2D->RequestStart();
 
     while(1)
@@ -259,7 +258,6 @@ int igstkViewNewTest( int, char * [] )
       // modify the render window  
       if ( bResize )
         {
-        view2D->RequestSetRenderWindowSize( 512, 512 );
         bResize = false;
         } 
       }

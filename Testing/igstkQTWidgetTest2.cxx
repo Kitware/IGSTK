@@ -139,10 +139,10 @@ int igstkQTWidgetTest2( int argc, char * argv[])
 
     // Set the refresh rate and start 
     // the pulse generators of the views.
-    view2D->RequestSetRefreshRate( 30 );
+    view2D->SetRefreshRate( 30 );
     view2D->RequestStart();
 
-    view2D2->RequestSetRefreshRate( 30 );
+    view2D2->SetRefreshRate( 30 );
     view2D2->RequestStart();
 
     view2D->RequestResetCamera();

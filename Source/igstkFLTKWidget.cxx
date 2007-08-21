@@ -258,7 +258,7 @@ void FLTKWidget::draw(void)
   //
   if ( ! m_View.IsNull() )
     {
-    m_View->RequestSetRenderWindowSize( this->w(), this->h() );
+    m_ProxyView.SetRenderWindowSize( m_View, this->w(), this->h() );
     }
 
   // make sure the GL context exists and is current:
@@ -288,7 +288,7 @@ void FLTKWidget::resize( int x, int y, int w, int h )
   // make sure VTK knows about the new situation
   if ( ! m_View.IsNull() )
     {
-    m_View->RequestSetRenderWindowSize( w, h );
+    m_ProxyView.SetRenderWindowSize( m_View, w, h );
     }
 
   // resize the FLTK window by calling ancestor method

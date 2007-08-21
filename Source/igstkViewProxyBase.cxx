@@ -42,4 +42,10 @@ ViewProxyBase::InitializeInteractor( ViewNew * view )
   view->RequestInitializeRenderWindowInteractor();
 }
 
+void 
+ViewProxyBase::SetRenderWindowSize( ViewNew * view, int width, int height )
+{
+  view->RequestSetRenderWindowSize( width, height );
+}
+
 } // end namespace igstk

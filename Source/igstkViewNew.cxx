@@ -224,7 +224,7 @@ m_StateMachine(this)
 
   m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
 
-  this->RequestSetRefreshRate( 30 ); // 30 Hz is rather low frequency for video.
+  this->SetRefreshRate( 30 ); // 30 Hz is rather low frequency for video.
   
 }
 
@@ -411,56 +411,54 @@ void ViewNew::RequestSetRenderWindowSize( int width , int height )
   m_StateMachine.ProcessInputs();
 }
 
-
-
 /** Set camera position */
-void ViewNew::RequestSetPosition( double x, double y, double z )
+void ViewNew::SetCameraPosition( double x, double y, double z )
 {
-  igstkLogMacro( DEBUG, "RequestSetPosition(...) called ...\n");
+  igstkLogMacro( DEBUG, "SetCameraPosition(...) called ...\n");
   m_Camera->SetPosition( x,y,z );
 }
 
 /** Set camera focal point */
-void ViewNew::RequestSetFocalPoint( double x, double y, double z )
+void ViewNew::SetFocalPoint( double x, double y, double z )
 {
-  igstkLogMacro( DEBUG, "RequestSetFocalPoint(...) called ...\n");
+  igstkLogMacro( DEBUG, "SetFocalPoint(...) called ...\n");
   m_Camera->SetFocalPoint( x,y,z );
 }
 
 /** Set camera view up vector */
-void ViewNew::RequestSetViewUp( double vx, double vy, double vz )
+void ViewNew::SetCameraViewUp( double vx, double vy, double vz )
 {
   igstkLogMacro( DEBUG, "RequestSetViewUp(...) called ...\n");
   m_Camera->SetViewUp( vx,vy,vz );
 }
 
 /** Set camera clipping range */
-void ViewNew::RequestSetClippingRange( double dNear, double dFar) 
+void ViewNew::SetClippingRange( double dNear, double dFar) 
 {
-  igstkLogMacro( DEBUG, "RequestSetClippingRange(...) called ...\n");
+  igstkLogMacro( DEBUG, "SetClippingRange(...) called ...\n");
   m_Camera->SetClippingRange( dNear, dFar );
 }
 
 /** Turn on/off parallel projection */
-void ViewNew::RequestSetParallelProjection( bool flag ) 
+void ViewNew::SetParallelProjection( bool flag ) 
 {
-  igstkLogMacro( DEBUG, "RequestSetParallelProjection(...) called ...\n");
+  igstkLogMacro( DEBUG, "SetParallelProjection(...) called ...\n");
   m_Camera->SetParallelProjection( flag );
 }
 
 /** Set background color */
 void ViewNew::
-RequestSetRendererBackgroundColor( double red, double green, double blue) 
+SetRendererBackgroundColor( double red, double green, double blue) 
 {
-  igstkLogMacro( DEBUG, "RequestSetRendererBackgroundColor(...) called ...\n");
+  igstkLogMacro( DEBUG, "SetRendererBackgroundColor(...) called ...\n");
   m_Renderer->SetBackground( red, green, blue );
 }
 
 
 /** Define the refresh rate by programming the internal pulse generator */
-void ViewNew::RequestSetRefreshRate( double frequencyHz )
+void ViewNew::SetRefreshRate( double frequencyHz )
 {
-  igstkLogMacro( DEBUG, "RequestSetRefreshRate() called ...\n");
+  igstkLogMacro( DEBUG, "SetRefreshRate() called ...\n");
   // Let the state machine of the pulse generator manage this request
   m_PulseGenerator->RequestSetFrequency( frequencyHz );
 }

@@ -203,11 +203,11 @@ int igstkFLTKWidgetTest( int, char * [] )
 
     // Set the refresh rate and start 
     // the pulse generators of the views.
-    view2D->RequestSetRefreshRate( 10 );
+    view2D->SetRefreshRate( 10 );
 
     // Set the refresh rate and start 
     // the pulse generators of the views.
-    view3D->RequestSetRefreshRate( 10 );
+    view3D->SetRefreshRate( 10 );
 
     Fl_Window * form = new Fl_Window(601,301,"View Test");
     
