@@ -323,7 +323,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
         }
       }
   
-      view3D->RequestSaveScreenShot( screenShotFileName2 );
+    view3D->RequestSaveScreenShot( screenShotFileName2 );
     }
 
 
