@@ -48,7 +48,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
 
   if( argc < 3 )
     {
-    std::cerr << "Usage: " << argv[0] << "  CTImage  " 
+    std::cerr << "Usage: " << argv[0] << "  CTImage  "
               << "Output image file for a screenshot" << std::endl;
     return EXIT_FAILURE;
     }
@@ -100,8 +100,8 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
 
   /* set up the image spatial object representation */ 
   typedef igstk::CTImageSpatialObjectRepresentation ImageRepresentationType;
-  ImageRepresentationType::Pointer imageRepresentation = 
-                                               ImageRepresentationType::New();
+  ImageRepresentationType::Pointer imageRepresentation =
+    ImageRepresentationType::New();
   imageRepresentation->SetLogger( logger );
 
   //
@@ -111,7 +111,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
     }
   catch( ... )
     {
-    std::cerr << "ERROR: An exception was thrown while reading the CT dataset" 
+    std::cerr << "ERROR: An exception was thrown while reading the CT dataset"
               << std::endl;
     std::cerr << "This should not have happened. The State Machine should have"
               << std::endl;
@@ -133,7 +133,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   BoxRepresentationType::Pointer 
        boxObjectRepresentation = BoxRepresentationType::New();
   boxObjectRepresentation->SetLogger ( logger );
-         
+
   double size_X;
   double size_Y;
   double size_Z;
@@ -155,7 +155,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   igstk::Transform::TimePeriodType       validtyTime = 1e20;
   
   transform.SetTranslation( translation, errorValue, validtyTime ); 
-      
+
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
   boxObject->RequestAttachToSpatialObjectParent( worldReference );
   boxObject->RequestSetTransformToSpatialObjectParent( transform );
@@ -178,7 +178,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   double size_X2;
   double size_Y2;
   double size_Z2;
-  
+
   size_X2 = 30.0;
   size_Y2 = 30.0;
   size_Z2 = 2.0;
@@ -196,7 +196,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   igstk::Transform::TimePeriodType       validtyTime2 = 1e20;
   
   transform2.SetTranslation( translation2, errorValue2, validtyTime2 ); 
-      
+
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
   boxObject2->RequestAttachToSpatialObjectParent( worldReference );
   boxObject2->RequestSetTransformToSpatialObjectParent( transform2 );
@@ -219,7 +219,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   double size_X3;
   double size_Y3;
   double size_Z3;
-  
+
   size_X3 = 40.0;
   size_Y3 = 40.0;
   size_Z3 = 2.0;
@@ -260,7 +260,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   double size_X4;
   double size_Y4;
   double size_Z4;
-  
+
   size_X4 = 50.0;
   size_Y4 = 50.0;
   size_Z4 = 2.0;
@@ -270,7 +270,6 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   igstk::Transform                          transform4;
   igstk::Transform::VectorType              translation4;
 
-         
   translation4[0] = -153.66;
   translation4[1] = 178.752;
   translation4[2] = -196.0;
@@ -287,7 +286,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   boxObject4->RequestSetTransform( transform4 );
 #endif
 
- 
+
   boxObjectRepresentation4->RequestSetBoxObject( boxObject4 );
   boxObjectRepresentation4->SetColor( 1.0, 1.0, 1.0 );
   boxObjectRepresentation4->SetOpacity( 1.0 );
@@ -335,7 +334,6 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
 #else
   imageSpatialObject->RequestSetTransform( transform );
 #endif
-
   imageRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
 
   imageRepresentation->RequestSetOrientation( ImageRepresentationType::Axial );
@@ -364,8 +362,6 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   filename = argv[2]; 
   std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
   view2D->RequestSaveScreenShot( filename );
-
- 
 
   delete view2D;
   delete form;
