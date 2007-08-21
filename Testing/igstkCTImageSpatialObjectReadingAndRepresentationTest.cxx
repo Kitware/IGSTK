@@ -19,6 +19,7 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#include "igstkConfigure.h"
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkView2D.h"

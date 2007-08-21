@@ -19,6 +19,7 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#include "igstkConfigure.h"
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkBoxObject.h"
@@ -27,6 +28,10 @@
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace ImageSpatialObjectRepresentationTest3
 {
@@ -63,6 +68,16 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
                                             = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -141,8 +156,13 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform.SetTranslation( translation, errorValue, validtyTime ); 
       
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  boxObject->RequestAttachToSpatialObjectParent( worldReference );
+  boxObject->RequestSetTransformToSpatialObjectParent( transform );
+#else
   boxObject->RequestSetTransform( transform );
-  
+#endif
+
   boxObjectRepresentation->RequestSetBoxObject( boxObject );
   boxObjectRepresentation->SetColor( 1.0, 1.0, 1.0 );
   boxObjectRepresentation->SetOpacity( 1.0 );
@@ -177,8 +197,13 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform2.SetTranslation( translation2, errorValue2, validtyTime2 ); 
       
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  boxObject2->RequestAttachToSpatialObjectParent( worldReference );
+  boxObject2->RequestSetTransformToSpatialObjectParent( transform2 );
+#else
   boxObject2->RequestSetTransform( transform2 );
-  
+#endif
+
   boxObjectRepresentation2->RequestSetBoxObject( boxObject2 );
   boxObjectRepresentation2->SetColor( 1.0, 1.0, 1.0 );
   boxObjectRepresentation2->SetOpacity( 1.0 );
@@ -213,8 +238,13 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform3.SetTranslation( translation3, errorValue3, validtyTime3 ); 
       
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  boxObject3->RequestAttachToSpatialObjectParent( worldReference );
+  boxObject3->RequestSetTransformToSpatialObjectParent( transform3 );
+#else
   boxObject3->RequestSetTransform( transform3 );
-  
+#endif
+
   boxObjectRepresentation3->RequestSetBoxObject( boxObject3 );
   boxObjectRepresentation3->SetColor( 1.0, 1.0, 1.0 );
   boxObjectRepresentation3->SetOpacity( 1.0 );
@@ -250,8 +280,14 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform4.SetTranslation( translation4, errorValue4, validtyTime4 ); 
       
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  boxObject4->RequestAttachToSpatialObjectParent( worldReference );
+  boxObject4->RequestSetTransformToSpatialObjectParent( transform4 );
+#else
   boxObject4->RequestSetTransform( transform4 );
-  
+#endif
+
+ 
   boxObjectRepresentation4->RequestSetBoxObject( boxObject4 );
   boxObjectRepresentation4->SetColor( 1.0, 1.0, 1.0 );
   boxObjectRepresentation4->SetOpacity( 1.0 );
@@ -285,9 +321,23 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
     std::cout << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
- 
-  imageRepresentation->RequestSetImageSpatialObject( 
-                                               ctImageObserver->GetCTImage() );
+
+  typedef igstk::CTImageSpatialObject::Pointer ImagePointer;
+  ImagePointer imageSpatialObject = ctImageObserver->GetCTImage(); 
+
+  imageSpatialObject->SetLogger( logger );
+
+  transform.SetToIdentity( validtyTime );
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  imageSpatialObject->RequestAttachToSpatialObjectParent( worldReference );
+  imageSpatialObject->RequestSetTransformToSpatialObjectParent( transform );
+#else
+  imageSpatialObject->RequestSetTransform( transform );
+#endif
+
+  imageRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
+
   imageRepresentation->RequestSetOrientation( ImageRepresentationType::Axial );
   
   view2D->RequestSetOrientation( igstk::View2D::Axial );

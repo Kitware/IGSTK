@@ -19,12 +19,17 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#include "igstkConfigure.h"
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkView2D.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace CTImageSpatialObjectReadingAndRepresentationTest
 {
@@ -61,6 +66,15 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow -> logger
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -123,9 +137,9 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
   if( ctImageObserver->GotCTImage() )
     {
       
-    CTImagePointer ctImage = ctImageObserver->GetCTImage();
+    CTImagePointer imageSpatialObject = ctImageObserver->GetCTImage();
 
-    if( ctImage->IsEmpty() )
+    if( imageSpatialObject->IsEmpty() )
       {
       std::cerr << "The image was expected to be Non-Empty, but it was empty." 
                 << std::endl;
@@ -145,8 +159,18 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
     }
 
 
-  representation->RequestSetImageSpatialObject( 
-                           ctImageObserver->GetCTImage() );
+  CTImagePointer ctImage = ctImageObserver->GetCTImage();
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  ctImage->RequestAttachToSpatialObjectParent( worldReference );
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  ctImage->RequestSetTransformToSpatialObjectParent( transform );
+#endif 
+
+
+  representation->RequestSetImageSpatialObject( ctImage );
+
 
   representation->RequestSetSliceNumber( 0 );
 

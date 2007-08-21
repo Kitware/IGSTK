@@ -19,6 +19,7 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#include "igstkConfigure.h"
 #include "igstkImageSpatialObjectRepresentation.h"
 #include "igstkImageSpatialObject.h"
 #include "igstkView2D.h"
@@ -27,6 +28,10 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkEvents.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace igstk
 {
@@ -159,6 +164,16 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
                                      // OutputWindow -> logger
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
+
   // Instantiate a reader
   //
   typedef igstk::CTImageReader         ReaderType;
@@ -206,6 +221,11 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   
   representation->RequestSetSliceNumber( 10 );
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  imageSpatialObject->RequestAttachToSpatialObjectParent( worldReference );
+#endif 
+
+
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
@@ -236,8 +256,20 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   representation->AddObserver( igstk::AxialSliceBoundsEvent(),    observer );
   representation->AddObserver( igstk::CoronalSliceBoundsEvent(),  observer );
   representation->AddObserver( igstk::SagittalSliceBoundsEvent(), observer );
-  
-  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
+
+  imageSpatialObject = ctImageObserver->GetCTImage();
+
+  imageSpatialObject->SetLogger( logger );
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  imageSpatialObject->RequestAttachToSpatialObjectParent( worldReference );
+  igstk::Transform                   transform;
+  igstk::Transform::TimePeriodType   validtyTime = 1e20;
+  transform.SetToIdentity( validtyTime );
+  imageSpatialObject->RequestSetTransformToSpatialObjectParent( transform );
+#endif 
+
+  representation->RequestSetImageSpatialObject( imageSpatialObject );
 
   // Test Get Bounds for Axial orientation 
   representation->RequestSetOrientation( RepresentationType::Axial );
@@ -388,14 +420,13 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
       p[0] = cos( z ) * z;
       p[1] = sin( z ) * z;
       p[2] = z;
-      if ( !ctImageObserver->GetCTImage()->IsInside( p ) )
+      if ( !imageSpatialObject->IsInside( p ) )
         {
         std::cout<< "Point outside the image region!" << std::endl; 
         }
         
-      ctImageObserver->GetCTImage()->TransformPhysicalPointToIndex( p, index );
-      ctImageObserver->GetCTImage()
-                        ->TransformPhysicalPointToContinuousIndex( p, cindex );
+      imageSpatialObject->TransformPhysicalPointToIndex( p, index );
+      imageSpatialObject->TransformPhysicalPointToContinuousIndex( p, cindex );
       std::cout<< "Index           : " << index  << std::endl; 
       std::cout<< "Continuous Index: " << cindex << std::endl;
             

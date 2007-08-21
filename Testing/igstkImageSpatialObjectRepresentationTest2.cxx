@@ -19,6 +19,7 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#include "igstkConfigure.h"
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkBoxObject.h"
@@ -27,6 +28,10 @@
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
 
 namespace ImageSpatialObjectRepresentationTest2
 {
@@ -63,6 +68,16 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
                                               = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -285,8 +300,23 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
  
-  imageRepresentation->RequestSetImageSpatialObject( 
-                                               ctImageObserver->GetCTImage() );
+  typedef igstk::CTImageSpatialObject::Pointer ImagePointer;
+  ImagePointer imageSpatialObject = ctImageObserver->GetCTImage(); 
+
+  imageSpatialObject->SetLogger( logger );
+
+  transform.SetToIdentity( validtyTime );
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  imageSpatialObject->RequestAttachToSpatialObjectParent( worldReference );
+  imageSpatialObject->RequestSetTransformToSpatialObjectParent( transform );
+#else
+  imageSpatialObject->RequestSetTransform( transform );
+#endif
+
+
+  imageRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
+   
   imageRepresentation->RequestSetOrientation( ImageRepresentationType::Axial );
   
   view2D->RequestSetOrientation( igstk::View2D::Axial );
