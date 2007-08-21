@@ -180,6 +180,8 @@ int main( int argc, char * argv [] )
   // Exporting Abstract classes by creating derived surrogates for them.
   igstkTestExportStateMachine1( igstk::SpatialObjectSurrogate, outputDirectory, 
                                                                     skipLoops );
+  igstkTestExportStateMachine1( igstk::ObjectRepresentationSurrogate, 
+                                                   outputDirectory, skipLoops );
   // The View New classes
   igstkTestExportStateMachine1( igstk::ViewNew, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::ViewNew2D, outputDirectory, skipLoops );
