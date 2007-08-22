@@ -35,7 +35,7 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-int main( int, char * [] )
+int igstkFLTKWidgetTest2( int, char * [] )
 {
   igstk::RealTimeClock::Initialize();
 
