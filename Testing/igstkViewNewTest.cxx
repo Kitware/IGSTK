@@ -32,6 +32,7 @@
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkWorldCoordinateReferenceSystemObject.h"
+#include "igstkAxesObjectRepresentation.h"
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -90,7 +91,7 @@ public:
         *m_Resize = true; 
         }                
    
-      if( m_PulseCounter > 20 )
+      if( m_PulseCounter > 50 )
         {
         if( m_ViewNew )
           {
@@ -180,6 +181,14 @@ int igstkViewNewTest( int, char * [] )
     WorldReferenceSystemType::Pointer worldReference =
       WorldReferenceSystemType::New();
 
+    // make the Z axis very small to avoid disturbing the 2D view
+    worldReference->SetSize(10,10,0.001); 
+
+    // Define a representation for the coordinate system
+    typedef igstk::AxesObjectRepresentation  RepresentationType;
+    RepresentationType::Pointer AxesRepresentation = RepresentationType::New();
+    AxesRepresentation->RequestSetAxesObject( worldReference );
+
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
@@ -208,10 +217,12 @@ int igstkViewNewTest( int, char * [] )
     cylinderRepresentation->SetColor(1.0,0.0,0.0);
     cylinderRepresentation->SetOpacity(1.0);
 
-    const double validityTimeInMilliseconds = 1e300; // 100 seconds
+    const double validityTimeInMilliseconds = 
+      igstk::TimeStamp::GetLongestPossibleTime();
+
     igstk::Transform transform;
     igstk::Transform::VectorType translation;
-    translation[0] = 0;
+    translation[0] = 0.5;
     translation[1] = 0;
     translation[2] = 0;
     igstk::Transform::VersorType rotation;
@@ -224,9 +235,10 @@ int igstkViewNewTest( int, char * [] )
     ellipsoid->RequestSetTransformToSpatialObjectParent( transform );
 
 
-    translation[1] = -0.25;  // translate the cylinder along Y
-    translation[2] = -2.00;  // translate the cylinder along Z
-    rotation.Set( 0.7071, 0.0, 0.0, 0.7071 );
+    translation[0] =  0.0;
+    translation[1] =  0.5;  // translate the cylinder along Y
+    translation[2] =  0.0;  // translate the cylinder along Z
+    rotation.Set( 0.0, 0.0, 0.0, 1.0 );
 
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
@@ -237,7 +249,13 @@ int igstkViewNewTest( int, char * [] )
   
     ViewNew2DType::Pointer view2D = ViewNew2DType::New();
     ViewNew3DType::Pointer view3D = ViewNew3DType::New();
-  
+
+    view3D->SetRefreshRate( 30 );
+    view3D->SetRendererBackgroundColor( 0.8, 0.9, 0.8 );
+    view3D->SetCameraPosition( 0.0, 0.0, 250.0 ); // Looking from Z positive
+    view3D->SetFocalPoint( 0.0, 0.0, 0.0 );   // Looking at the origin
+    view3D->SetCameraViewUp( 0.0, 1.0, 0.0 ); // Y axis up
+
     view2D->SetLogger( logger );
 
     // Exercise GetNameOfClass() method
@@ -252,35 +270,24 @@ int igstkViewNewTest( int, char * [] )
     std::cout << view3D->ViewNew3DType::Superclass::GetNameOfClass() 
               << std::endl;
 
-    view2D->SetRendererBackgroundColor( 0.0, 0.0, 1.0 );
-
-    
-    // Add the ellipsoid and cylinder representations to the view
-    view2D->RequestAddObject( ellipsoidRepresentation );
-    view2D->RequestAddObject( cylinderRepresentation );
-    view2D->RequestResetCamera();
-
-    view3D->RequestAddObject( ellipsoidRepresentation );
-    view3D->RequestAddObject( cylinderRepresentation );
-    view3D->RequestResetCamera();
-    
-    // Set the refresh rate and start 
-    // the pulse generators of the views.
     view2D->SetRefreshRate( 30 );
-
+    view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
+    view2D->RequestSetOrientation( ViewNew2DType::Axial );
+   
     view2D->RequestStart();
 
-    // Do manual redraws
-    for(unsigned int i=0; i<10; i++)
-      {
-      igstk::PulseGenerator::CheckTimeouts();
-      }
+    // Add the ellipsoid and cylinder representations to the view
+    view2D->RequestAddObject( AxesRepresentation );
+    view2D->RequestAddObject( ellipsoidRepresentation );
+    view2D->RequestAddObject( cylinderRepresentation );
+
 
     // Remove the ellipsoid from the view
     view2D->RequestRemoveObject( ellipsoidRepresentation );
+    // Add it back
+    view2D->RequestAddObject( ellipsoidRepresentation );
     
     // Do automatic redraws using the internal PulseGenerator
-    view2D->RequestAddObject( ellipsoidRepresentation );
     typedef ViewNewTest::ViewNewObserver ObserverType;
     ObserverType::Pointer viewObserver = ObserverType::New();
     
@@ -316,9 +323,26 @@ int igstkViewNewTest( int, char * [] )
 
 
     // Do manual redraws of the 3D view
-    dummyWidget.SetView( view3D );
+    ViewNewTest::DummyWidget dummyWidget2;
+    dummyWidget2.SetView( view3D );
+
+    ObserverType::Pointer viewObserver2 = ObserverType::New();
+    
+    bEnd = false;
+    bResize = false;
+
+    viewObserver2->SetViewNew( view3D );
+    viewObserver2->SetEndFlag( &bEnd );
+    viewObserver2->SetResizeFlag( &bResize );
+
     view3D->RequestStart();
-    for(unsigned int i=0; i<20; i++)
+
+    // Add the ellipsoid and cylinder representations to the view
+    view3D->RequestAddObject( AxesRepresentation );
+    view3D->RequestAddObject( ellipsoidRepresentation );
+    view3D->RequestAddObject( cylinderRepresentation );
+ 
+    while( !bEnd )
       {
       igstk::PulseGenerator::CheckTimeouts();
       }
