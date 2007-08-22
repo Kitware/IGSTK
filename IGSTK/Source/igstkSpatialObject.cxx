@@ -273,14 +273,9 @@ void SpatialObject::RequestGetTransformToWorld()
 /** Broadcast Transform */
 void SpatialObject::BroadcastTransformToWorldProcessing()
 {
-  std::cout << "SpatialObject::BroadcastTransformToWorldProcessing " << std::endl;
-
   TransformModifiedEvent event;
   event.Set( this->ComputeTransformToWorld() );
   this->InvokeEvent( event );
-  //
-  //      VERY IMPORTANT METHOD: TEST CAREFULLY !!!
-  //
 }
 
 
@@ -290,18 +285,9 @@ void SpatialObject::BroadcastTransformToWorldProcessing()
  * cache mutable member variable m_TransformToWorld. */
 const Transform & SpatialObject::ComputeTransformToWorld() const
 {
-  std::cout << "SpatialObject::ComputeTransformToWorld " << std::endl;
-  std::cout << "Object : " << this << std::endl;
-
-  //
-  //      VERY IMPORTANT METHOD: TEST CAREFULLY !!!
-  //
-  // BTW TransformCompose has a misleading API... 
-  //
   this->m_TransformToWorld = Transform::TransformCompose( 
     this->m_Parent->ComputeTransformToWorld(),
     this->m_TransformToSpatialObjectParent );
-
     
   Transform::VectorType translation = 
     this->m_TransformToWorld.GetTranslation();
@@ -314,12 +300,6 @@ const Transform & SpatialObject::ComputeTransformToWorld() const
 
   igstkLogMacro( DEBUG, " SpatialObject::ComputeTransformToWorld() T: " 
       << translation << " R: " << rotation << "\n" );
-
-  std::cout << "SpatialObject::" << this << " Transform To Parent = " << std::endl;
-  std::cout << m_TransformToSpatialObjectParent << std::endl << std::endl;
-
-  std::cout << "SpatialObject::" << this << " Transform To World = " << std::endl;
-  std::cout << m_TransformToWorld << std::endl << std::endl;
 
   return this->m_TransformToWorld;
 }
