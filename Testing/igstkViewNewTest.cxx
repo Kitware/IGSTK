@@ -22,6 +22,7 @@
 #endif
 
 #include <iostream>
+#include "igstkViewProxy.h"
 #include "igstkViewNew2D.h"
 #include "igstkViewNew3D.h"
 #include "igstkEvents.h"
@@ -109,6 +110,34 @@ private:
   ::igstk::ViewNew    * m_ViewNew;
   bool *                m_End;
   bool *                m_Resize;
+};
+
+
+// This is an ad-hoc Widget that emulate the actions
+// of an actual GUI Widget.
+class DummyWidget 
+{
+public:
+  typedef ::igstk::ViewProxy< DummyWidget > ProxyType;
+  typedef ::igstk::ViewNew                  ViewType;
+
+  friend class ::igstk::ViewProxy< DummyWidget >;
+
+  void SetView( ViewType * view )
+    {
+    m_View = view;
+    this->m_ProxyView.Connect( m_View );
+    m_ProxyView.SetRenderWindowSize( m_View, 300, 300 );
+    }
+
+private:
+  ProxyType           m_ProxyView;
+  ViewType::Pointer   m_View; 
+
+  // Fake methods needed to satisfy the API exposed to the ViewProxy
+  void SetRenderer( vtkRenderer * ) {};
+  void SetRenderWindowInteractor( vtkRenderWindowInteractor * ) {};
+  void SetReporter ( ::itk::Object::Pointer ) {};
 };
 
 }
@@ -203,6 +232,10 @@ int igstkViewNewTest( int, char * [] )
     // Exercise GetNameOfClass() method
     std::cout << view2D->ViewNew2DType::Superclass::GetNameOfClass() 
               << std::endl;
+
+    ViewNewTest::DummyWidget dummyWidget;
+
+    dummyWidget.SetView( view2D );
 
     // Exercise GetNameOfClass() method
     std::cout << view3D->ViewNew3DType::Superclass::GetNameOfClass() 
