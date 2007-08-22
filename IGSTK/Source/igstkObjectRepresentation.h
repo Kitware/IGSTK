@@ -83,11 +83,17 @@ public:
   /** Get the VTK actors */
   igstkGetMacro( Actors, ActorsListType );
 
-  /** update the visual representation position */
-  virtual void RequestUpdatePosition( const TimeStamp & time );
-
   /** update the visual representation with changes in the geometry */
   virtual void RequestUpdateRepresentation( const TimeStamp & time );
+
+
+  /** DEPRECATED !!! DELETE THIS METHOD */
+  void RequestUpdatePosition( const TimeStamp & time ) {};
+  /** DEPRECATED !!! DELETE THIS METHOD */
+
+  /** DEPRECATED !!! DELETE THIS METHOD */
+  void RequestVerifyTimeStamp() {};
+  /** DEPRECATED !!! DELETE THIS METHOD */
 
 protected:
 
@@ -109,11 +115,6 @@ protected:
   /** Request the state machine to set a Spatial Object */
   void RequestSetSpatialObject( const SpatialObjectType * spatialObject );
   
-  /** Verify if the time of the rendering matches the time of the transform.
-   * If the two TimeStamps do not overlap, then the actors are made invisible.
-   * This method must be called from all the UpdateRepresentation() of the
-   * derived classes. */
-  void RequestVerifyTimeStamp();
   
 private:
 
@@ -128,7 +129,11 @@ private:
    * called by the State Machine. This is an abstract method that MUST be
    * overloaded in every derived class. */
   virtual void UpdateRepresentationProcessing() = 0;
- 
+
+  /** This method checks the time stamp of the transform
+   *  and modifies the visibility of the objects accordingly. */
+  void VerifyTimeStampAndUpdateVisibility();
+
   /** Null operation for a State Machine transition */
   void NoProcessing();
 
@@ -142,55 +147,63 @@ private:
   /** Make Objects Invisible. 
    *  This method is called when the Transform time stamp
    *  has expired with respect to the requested rendering time. */
-  void MakeObjectsInvisibleProcessing();
+  void MakeObjectsInvisible();
 
   /** Make Objects Visible. This method is called when the Transform time stamp
    * is valid with respect to the requested rendering time. */
-  void MakeObjectsVisibleProcessing();
-
-  /** This method will delegate to the attached Spatial Object the request for
-   * updating the Transform that defines the position and orientation of the
-   * object in space. */
-  void RequestUpdatePositionProcessing();
+  void MakeObjectsVisible();
 
   /** Receive the Transform from the SpatialObject via a transduction macro.
    *  Once the transform is received, the validity time is verified. */
   void ReceiveSpatialObjectTransformProcessing();
 
+  /** Receive TransformNotAvailable message from the SpatialObject via a transduction macro.
+   *  Since no new transform is available, it checks whether the validity time
+   *  of the previously existing transform has not expired and updates the
+   *  visibility of the object accordingly. */
+  void ReceiveTransformNotAvailableProcessing();
+
+  /** This action calls the RequestGetTransform() method in the spatial
+   *  object, and the answer is expected to be processed by the observer
+   *  created in the transduction macro */
+  void RequestGetTransformProcessing();
+
 private:
 
   /** Inputs to the State Machine */
-  igstkDeclareInputMacro( ValidSpatialObject );
   igstkDeclareInputMacro( NullSpatialObject );
-  igstkDeclareInputMacro( RequestUpdateRepresentation );
-  igstkDeclareInputMacro( RequestUpdatePosition );
-  igstkDeclareInputMacro( ValidTimeStamp );
-  igstkDeclareInputMacro( InvalidTimeStamp );
+  igstkDeclareInputMacro( ValidSpatialObject );
+  igstkDeclareInputMacro( UpdateRepresentation );
   igstkDeclareInputMacro( SpatialObjectTransform );
+  igstkDeclareInputMacro( TransformNotAvailable );
   
   /** States for the State Machine */
   igstkDeclareStateMacro( NullSpatialObject );
-  igstkDeclareStateMacro( ValidSpatialObjectAndVisible );
-  igstkDeclareStateMacro( ValidSpatialObjectAndInvisible );
   igstkDeclareStateMacro( ValidSpatialObject );
-  igstkDeclareStateMacro( AttemptingUpdatePositionAndVisible );
-  igstkDeclareStateMacro( AttemptingUpdatePositionAndInvisible );
+  igstkDeclareStateMacro( AttemptingGetTransform );
 
   /** Transduction macros that will convert received events 
    *  into StateMachine inputs */
   igstkLoadedEventTransductionMacro( TransformModifiedEvent, 
                                      SpatialObjectTransformInput, 
                                      SpatialObjectTransform );
+  igstkEventTransductionMacro( TransformNotAvailableEvent, 
+                                     TransformNotAvailableInput ); 
 
   /** Internal temporary variable to use when connecting to a SpatialObject */
   SpatialObjectType::Pointer    m_SpatialObjectToAdd;
 
   /** Time stamp for the time at which the next rendering will take place */
-  TimeStamp            m_TimeToRender;
+  TimeStamp                     m_TimeToRender;
 
   /** Transform returned from the Spatial Object */
-  Transform            m_SpatialObjectTransform;
+  Transform                     m_SpatialObjectTransform;
     
+  /** State variable that indicates the visibility of the objects in the
+   * representation.  The visibility of the vtkActors will be modified 
+   * according to this state variable. */
+  bool                          m_ObjectsAreVisible;
+
 };
 
 } // end namespace igstk
