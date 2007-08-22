@@ -26,14 +26,17 @@
 #include "igstkConfigure.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
-#include "igstkView3D.h"
+#include "igstkViewNew3D.h"
+#include "igstkFLTKWidget.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
 #include "igstkWorldCoordinateReferenceSystemObject.h"
-#endif
+#include "igstkAxesObjectRepresentation.h"
+
+#include "igstkTracker.h"
+#include "igstkTrackerTool.h"
 
 namespace igstk
 {
@@ -77,7 +80,7 @@ public:
     std::cerr << "Execute( const * ) should not be called" << std::endl;
     }
 
-  void SetView( ::igstk::View * view )
+  void SetView( ::igstk::ViewNew * view )
     {
     m_View = view;
     if( m_View )
@@ -121,11 +124,93 @@ public:
 
 private:
 
-  unsigned long       m_PulseCounter;
-  unsigned long       m_NumberOfPulsesToStop;
-  Fl_Window *         m_Form;
-  ::igstk::View *     m_View;
-  bool *              m_End;
+  unsigned long              m_PulseCounter;
+  unsigned long              m_NumberOfPulsesToStop;
+  Fl_Window *                m_Form;
+  ::igstk::ViewNew::Pointer  m_View;
+  bool *                     m_End;
+};
+
+class MyTracker : public ::igstk::Tracker
+{
+public:
+
+    /** Macro with standard traits declarations. */
+    igstkStandardClassTraitsMacro( MyTracker, ::igstk::Tracker )
+
+    typedef Superclass::TransformType           TransformType;
+
+    void GetTransform(TransformType & transform) 
+          { this->GetToolTransform(0, 0, transform); }
+
+protected:
+    MyTracker():m_StateMachine(this) 
+      {
+      m_Position[0] = 0.0;
+      m_Position[1] = 0.0;
+      m_Position[2] = 0.0;
+
+      m_ValidityTime = 100.0; // 100.0 milliseconds
+      }
+    virtual ~MyTracker() {};
+
+    typedef ::igstk::Tracker::ResultType        ResultType;
+    typedef TransformType::VectorType           PositionType;
+    typedef TransformType::ErrorType            ErrorType;
+
+    virtual ResultType InternalOpen( void ) { return SUCCESS; }
+    virtual ResultType InternalActivateTools( void ) 
+      {
+      igstkLogMacro( DEBUG, "MyTracker::InternalActivateTools called ...\n");
+      TrackerPortType::Pointer port = TrackerPortType::New();
+      port->AddTool( TrackerToolType::New() );
+      this->AddPort( port );
+      return SUCCESS;
+      }
+    virtual ResultType InternalStartTracking( void ) { return SUCCESS; }
+    virtual ResultType InternalUpdateStatus( void ) 
+      { 
+      TransformType transform;
+      transform.SetToIdentity( m_ValidityTime );
+      
+      m_Position[0] += 1.0;  // drift along a vector (1.0, 2.0, 3.0)
+      m_Position[1] += 2.0;  // just to simulate a linear movement
+      m_Position[2] += 3.0;  // being tracked in space.
+
+      ErrorType errorValue = 0.5; 
+
+      transform.SetTranslation( m_Position, errorValue, m_ValidityTime );
+      this->SetToolTransform( 0, 0, transform );
+
+      std::cout << "MyTracker::InternalUpdateStatus() " 
+                << m_Position << std::endl;
+  
+      return SUCCESS; 
+      }
+    virtual ResultType InternalReset( void ) { return SUCCESS; }
+    virtual ResultType InternalStopTracking( void ) { return SUCCESS; }
+    virtual ResultType InternalDeactivateTools( void ) 
+      { 
+      m_Port = TrackerPortType::New();
+      m_Tool = TrackerToolType::New();
+      m_Port->AddTool( m_Tool );
+      this->AddPort( m_Port );
+      return SUCCESS; 
+      }
+    virtual ResultType InternalClose( void ) { return SUCCESS; }
+
+private:
+
+    MyTracker(const Self&);  //purposely not implemented
+    void operator=(const Self&); //purposely not implemented
+
+    typedef TrackerTool                 TrackerToolType;
+    typedef TrackerPort                 TrackerPortType;
+    typedef Transform::TimePeriodType   TimePeriodType;
+    TimePeriodType                      m_ValidityTime;
+    TrackerPortType::Pointer            m_Port;
+    TrackerToolType::Pointer            m_Tool;
+    PositionType                        m_Position;
 };
 
 
@@ -165,50 +250,77 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow 
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
   WorldReferenceSystemType::Pointer worldReference =
     WorldReferenceSystemType::New();
 
-  worldReference->SetLogger( logger );
-#endif 
+  typedef igstk::AxesObjectRepresentation  RepresentationType;
+  RepresentationType::Pointer AxesRepresentation = RepresentationType::New();
+  AxesRepresentation->RequestSetAxesObject( worldReference );
+  worldReference->SetSize(1,1,1);
+
+  typedef ::igstk::VisibilityObjectTest::MyTracker    TrackerType;
+  typedef ::igstk::TrackerTool                        TrackerToolType;
+
+  TrackerType::Pointer       tracker     = TrackerType::New();
+  TrackerToolType::Pointer   trackerTool = TrackerToolType::New();
+
 
   typedef igstk::EllipsoidObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer 
-                    ellipsoidRepresentation = ObjectRepresentationType::New();
-  ellipsoidRepresentation->SetLogger( logger );
+                    ellipsoidRepresentation1 = ObjectRepresentationType::New();
+  ellipsoidRepresentation1->SetLogger( logger );
 
   ObjectRepresentationType::Pointer 
                     ellipsoidRepresentation2 = ObjectRepresentationType::New();
 
+  ObjectRepresentationType::Pointer 
+                    ellipsoidRepresentation3 = ObjectRepresentationType::New();
+
   typedef igstk::EllipsoidObject  ObjectType;
-  ObjectType::Pointer ellipsoidObject = ObjectType::New();
-  ellipsoidObject->SetLogger( logger );
+  ObjectType::Pointer ellipsoidObject1 = ObjectType::New();
+  ellipsoidObject1->SetLogger( logger );
  
   ObjectType::Pointer ellipsoidObject2 = ObjectType::New();
   ellipsoidObject2->SetLogger( logger );
  
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  ellipsoidObject->RequestAttachToSpatialObjectParent( worldReference );
+  ObjectType::Pointer ellipsoidObject3 = ObjectType::New();
+  ellipsoidObject3->SetLogger( logger );
+ 
+  ellipsoidObject1->RequestAttachToSpatialObjectParent( worldReference );
   ellipsoidObject2->RequestAttachToSpatialObjectParent( worldReference );
-#endif 
 
+  trackerTool->RequestAttachSpatialObject( ellipsoidObject3 );
+  tracker->RequestAddTool( trackerTool );
+
+   
+  ellipsoidRepresentation1->RequestSetEllipsoidObject(ellipsoidObject1);
+  ellipsoidRepresentation1->SetColor( 0.0, 0.0, 1.0 );
+  ellipsoidRepresentation1->SetOpacity( 1.0 );
+ 
   ellipsoidRepresentation2->RequestSetEllipsoidObject(ellipsoidObject2);
   ellipsoidRepresentation2->SetColor( 1.0, 0.0, 0.0 );
   ellipsoidRepresentation2->SetOpacity( 1.0 );
   
-   
-  ellipsoidRepresentation->RequestSetEllipsoidObject(ellipsoidObject);
-  ellipsoidRepresentation->SetColor( 0.0, 0.0, 1.0 );
-  ellipsoidRepresentation->SetOpacity( 1.0 );
+  ellipsoidRepresentation3->RequestSetEllipsoidObject(ellipsoidObject3);
+  ellipsoidRepresentation3->SetColor( 0.0, 1.0, 0.0 );
+  ellipsoidRepresentation3->SetOpacity( 1.0 );
   
-  Fl_Window * form = new Fl_Window(512,512,"Visibility Test");
+ 
+  typedef igstk::ViewNew3D  View3DType;
 
-  typedef igstk::View3D  View3DType;
-  View3DType * view3D = new View3DType(6,6,500,500,"View 3D");
+  View3DType::Pointer view3D = View3DType::New();
   view3D->SetLogger( logger );
+ 
+  // Create an FLTK minimal GUI
+  typedef igstk::FLTKWidget      FLTKWidgetType;
+
+  Fl_Window * form = new Fl_Window(512,512,"Visibility Test");
+  FLTKWidgetType * fltkWidget = new FLTKWidgetType(6,6,500,500,"View 2D");
+
+  fltkWidget->RequestSetView( view3D );
   
   form->end();
   // End of the GUI creation
@@ -216,25 +328,22 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   form->show();
   
   // this will indirectly call CreateActors() 
-  view3D->RequestAddObject( ellipsoidRepresentation  );
+  view3D->RequestAddObject( AxesRepresentation );
+  view3D->RequestAddObject( ellipsoidRepresentation1  );
   view3D->RequestAddObject( ellipsoidRepresentation2 );
+  view3D->RequestAddObject( ellipsoidRepresentation3 );
 
-  double validityTimeInMilliseconds = 1000;
-  igstk::Transform transform;
-  igstk::Transform::VectorType translation;
-  translation[0] = 0;
-  translation[1] = 1;
-  translation[2] = 2;
+  double validityTimeInMilliseconds = 1000; // 1 second
+  igstk::Transform transform1;
+  igstk::Transform::VectorType translation1;
+  translation1[0] = 0.5;
+  translation1[1] = 1.0;
+  translation1[2] = 0.0;
   igstk::Transform::VersorType rotation;
   rotation.Set( 0.707, 0.0, 0.707, 0.0 );
   igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
 
 
-  igstk::Transform transform2;
-  igstk::Transform::VectorType translation2;
-  translation2[0] = 0;
-  translation2[1] = 2;
-  translation2[2] = 2;
 
   
   bool bEnd = false;
@@ -243,8 +352,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   typedef ::igstk::VisibilityObjectTest::ViewObserver  ViewObserverType;
   ViewObserverType::Pointer viewObserver = ViewObserverType::New();
 
-  view3D->RequestSetRefreshRate( refreshRate );
-  view3D->RequestEnableInteractions();
+  view3D->SetRefreshRate( refreshRate );
 
   viewObserver->SetView( view3D );
   viewObserver->SetForm( form );
@@ -256,16 +364,23 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   view3D->RequestStart();
 
-  transform.SetTranslationAndRotation( 
-      translation, rotation, errorValue, validityTimeInMilliseconds );
+  transform1.SetTranslationAndRotation( 
+      translation1, rotation, errorValue, validityTimeInMilliseconds );
 
-  ellipsoidObject->RequestSetTransform( transform );
+  ellipsoidObject1->RequestSetTransformToSpatialObjectParent( transform1 );
+
+  // This is the transform for the permanent object.
+  igstk::Transform transform2;
+  igstk::Transform::VectorType translation2;
+  translation2[0] = 0.0;
+  translation2[1] = 2.0;
+  translation2[2] = 0.0;
 
   transform2.SetTranslationAndRotation( 
       translation2, rotation, errorValue, 
       ::igstk::TimeStamp::GetLongestPossibleTime() );
 
-  ellipsoidObject2->RequestSetTransform( transform2 );
+  ellipsoidObject2->RequestSetTransformToSpatialObjectParent( transform2 );
 
   
   // Stabilize the transient period where the camera
@@ -277,58 +392,36 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
     view3D->RequestResetCamera();
     }
 
-  // Now start the real test.
-  //
-  // 1) Set the transform to be valid for one second
-  // 2) Reset the pulses counter in the view observer
-  //    to count for 3 seconds.
-  //
-  // 3) Restart the pulse generator of the View.
-  //
-  //
  
   std::string screenShotFileName1 = argv[1]; 
-
   std::string screenShotFileName2 = argv[2];
 
   bool screenShotTaken = false;
 
-  for( unsigned int tt=0; tt<5; tt++ )
+  // restart the count of the observer
+  viewObserver->SetNumberOfPulsesToStop( numberOfPulsesToStop );
+  bEnd = false;
+  view3D->RequestStart();
+
+
+  while(1)
     {
-    validityTimeInMilliseconds = 1000;
-    transform.SetTranslationAndRotation( 
-        translation, rotation, errorValue, validityTimeInMilliseconds );
-
-    ellipsoidObject->RequestSetTransform( transform );
-
-
-    // restart the count of the observer
-    viewObserver->SetNumberOfPulsesToStop( numberOfPulsesToStop );
-    bEnd = false;
-    view3D->RequestStart();
-
-
-    while(1)
+    Fl::wait(0.001);
+    if ( ! screenShotTaken )  
       {
-      Fl::wait(0.001);
-      if ( ! screenShotTaken )  
-        {
-        view3D->RequestSaveScreenShot( screenShotFileName1 );
-        screenShotTaken = true;
-        }
-      igstk::PulseGenerator::CheckTimeouts();
-      if( bEnd )
-        {
-        break;
-        }
+      view3D->RequestSaveScreenShot( screenShotFileName1 );
+      screenShotTaken = true;
       }
-  
-    view3D->RequestSaveScreenShot( screenShotFileName2 );
+    igstk::PulseGenerator::CheckTimeouts();
+    if( bEnd )
+      {
+      break;
+      }
     }
-
-
-  delete view3D;
   
+  view3D->RequestSaveScreenShot( screenShotFileName2 );
+
+  delete fltkWidget;
   delete form;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
