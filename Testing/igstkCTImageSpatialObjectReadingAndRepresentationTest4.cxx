@@ -117,8 +117,6 @@ int main( int argc, char* argv[] )
     }
 
   ctImage->SetLogger( logger );
-  ctImage->PassLoggerUp();
-  ctImage->Print( std::cout );
 
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
