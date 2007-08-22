@@ -119,6 +119,10 @@ m_StateMachine(this)
                            Idle,  ReportInvalidRequest );
   igstkAddTransitionMacro( Idle, ResetCamera,
                            Idle,  ResetCamera );
+  igstkAddTransitionMacro( Idle, StartRefreshing,
+                           Idle,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, StopRefreshing,
+                           Idle,  ReportInvalidRequest );
 
   igstkAddTransitionMacro( Idle, InitializeInteractor,
                            InteractorInitialized,  
@@ -126,6 +130,8 @@ m_StateMachine(this)
 
   igstkAddTransitionMacro( InteractorInitialized, StartRefreshing,
                            Refreshing,  Start );
+  igstkAddTransitionMacro( InteractorInitialized, StopRefreshing,
+                           InteractorInitialized,  ReportInvalidRequest );
 
   igstkAddTransitionMacro( InteractorInitialized, ValidAddObject, 
                            InteractorInitialized,  AddObject );
@@ -153,9 +159,6 @@ m_StateMachine(this)
                            InteractorInitialized,  ReportInvalidRequest );
   igstkAddTransitionMacro( InteractorInitialized, ResetCamera,
                            InteractorInitialized,  ResetCamera );
-
-  igstkAddTransitionMacro( Idle, StopRefreshing,
-                           Idle,  ReportInvalidRequest );
 
   igstkAddTransitionMacro( Idle, ValidScreenShotFileName,
                            Idle, SaveScreenShotWhileIdle )
