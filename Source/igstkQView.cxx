@@ -405,7 +405,6 @@ void QView::RefreshRender()
   while( itr != endItr )
     {
     (*itr)->RequestUpdateRepresentation( renderTime );
-    (*itr)->RequestUpdatePosition( renderTime );
     ++itr;
     }
 
