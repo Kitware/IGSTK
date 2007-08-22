@@ -144,12 +144,16 @@ private:
 
 }
 
+#define TESTView2D
+#define TESTView3D
+
 int igstkViewNewTest( int, char * [] )
 {
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::ViewNew2D  ViewNew2DType;
-  typedef igstk::ViewNew3D  ViewNew3DType;
+  typedef igstk::ViewNew2D              ViewNew2DType;
+  typedef igstk::ViewNew3D              ViewNew3DType;
+  typedef ViewNewTest::ViewNewObserver  ObserverType;
 
   bool bEnd    = false;
   bool bResize = false;
@@ -182,7 +186,7 @@ int igstkViewNewTest( int, char * [] )
       WorldReferenceSystemType::New();
 
     // make the Z axis very small to avoid disturbing the 2D view
-    worldReference->SetSize(10,10,0.001); 
+    worldReference->SetSize(1.0,1.0,0.001); 
 
     // Define a representation for the coordinate system
     typedef igstk::AxesObjectRepresentation  RepresentationType;
@@ -250,15 +254,59 @@ int igstkViewNewTest( int, char * [] )
 
     cylinderRepresentation->SetLogger( logger );
   
-    ViewNew2DType::Pointer view2D = ViewNew2DType::New();
+#ifdef TESTView3D
+    { // create a scope for the view3D
+
+    // Test the 3D view
     ViewNew3DType::Pointer view3D = ViewNew3DType::New();
+
+    // Use a surrogate Widget to initialize the view
+    ViewNewTest::DummyWidget dummyWidget2;
+    dummyWidget2.SetView( view3D );
+
+    ObserverType::Pointer viewObserver2 = ObserverType::New();
+    
+    bEnd = false;
+    bResize = false;
+
+    viewObserver2->SetViewNew( view3D );
+    viewObserver2->SetEndFlag( &bEnd );
+    viewObserver2->SetResizeFlag( &bResize );
+
+    worldReference->SetSize(1.0,1.0,1.0); 
 
     view3D->SetRefreshRate( 30 );
     view3D->SetRendererBackgroundColor( 0.8, 0.9, 0.8 );
-    view3D->SetCameraPosition( 0.0, 0.0, 250.0 ); // Looking from Z positive
+    view3D->SetCameraPosition( 5.0, 2.0, 1.0 ); // Looking from a diagonal
     view3D->SetFocalPoint( 0.0, 0.0, 0.0 );   // Looking at the origin
-    view3D->SetCameraViewUp( 0.0, 1.0, 0.0 ); // Y axis up
+    view3D->SetCameraViewUp( 0.0, 0.0, 1.0 ); // Z axis up
+    // Exercise GetNameOfClass() method
+    std::cout << view3D->ViewNew3DType::Superclass::GetNameOfClass() 
+              << std::endl;
 
+    // Add the ellipsoid and cylinder representations to the view
+    view3D->RequestAddObject( AxesRepresentation );
+    view3D->RequestAddObject( ellipsoidRepresentation );
+    view3D->RequestAddObject( cylinderRepresentation );
+    view3D->RequestStart();
+ 
+    while( !bEnd )
+      {
+      igstk::PulseGenerator::CheckTimeouts();
+      }
+    view3D->RequestStop();
+    // Exercise the screenshot option with a valid filename
+    view3D->RequestStop();
+    view3D->RequestSaveScreenShot("igstkViewNewTestScreenshot2.png");
+   
+    } // end of view3D scope
+#endif
+
+
+#ifdef TESTView2D
+    // create a scope to destroy the view2D at the end
+    {
+    ViewNew2DType::Pointer view2D = ViewNew2DType::New();
     view2D->SetLogger( logger );
 
     // Exercise GetNameOfClass() method
@@ -269,9 +317,6 @@ int igstkViewNewTest( int, char * [] )
 
     dummyWidget.SetView( view2D );
 
-    // Exercise GetNameOfClass() method
-    std::cout << view3D->ViewNew3DType::Superclass::GetNameOfClass() 
-              << std::endl;
 
     view2D->SetRefreshRate( 30 );
     view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
@@ -290,10 +335,12 @@ int igstkViewNewTest( int, char * [] )
     // Add it back
     view2D->RequestAddObject( ellipsoidRepresentation );
     
-    // Do automatic redraws using the internal PulseGenerator
-    typedef ViewNewTest::ViewNewObserver ObserverType;
+    // Create an observer in order to count number of view redraws
     ObserverType::Pointer viewObserver = ObserverType::New();
     
+    bEnd = false;
+    bResize = false;
+
     viewObserver->SetViewNew( view2D );
     viewObserver->SetEndFlag( &bEnd );
     viewObserver->SetResizeFlag( &bResize );
@@ -323,33 +370,9 @@ int igstkViewNewTest( int, char * [] )
     // Exercise the screenshot option with a valid filename
     view2D->RequestStop();
     view2D->RequestSaveScreenShot("igstkViewNewTestScreenshot1.png");
+    } // end of view2D scope
+#endif
 
-
-    // Do manual redraws of the 3D view
-    ViewNewTest::DummyWidget dummyWidget2;
-    dummyWidget2.SetView( view3D );
-
-    ObserverType::Pointer viewObserver2 = ObserverType::New();
-    
-    bEnd = false;
-    bResize = false;
-
-    viewObserver2->SetViewNew( view3D );
-    viewObserver2->SetEndFlag( &bEnd );
-    viewObserver2->SetResizeFlag( &bResize );
-
-    view3D->RequestStart();
-
-    // Add the ellipsoid and cylinder representations to the view
-    view3D->RequestAddObject( AxesRepresentation );
-    view3D->RequestAddObject( ellipsoidRepresentation );
-    view3D->RequestAddObject( cylinderRepresentation );
- 
-    while( !bEnd )
-      {
-      igstk::PulseGenerator::CheckTimeouts();
-      }
-    view3D->RequestStop();
 
     }
   catch(...)
