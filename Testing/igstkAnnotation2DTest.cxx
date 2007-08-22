@@ -27,6 +27,10 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#include "igstkWorldCoordinateReferenceSystemObject.h"
+#endif
+
 namespace Annotation2DTest
 {
 igstkObserverObjectMacro(CTImage,
@@ -61,6 +65,16 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
                                        // VTK OutputWindow -> logger
 
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  typedef igstk::WorldCoordinateReferenceSystemObject  
+    WorldReferenceSystemType;
+
+  WorldReferenceSystemType::Pointer worldReference =
+    WorldReferenceSystemType::New();
+
+  worldReference->SetLogger( logger );
+#endif 
+
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -76,7 +90,7 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   reader->RequestSetDirectory( directoryName );
   
   typedef igstk::CTImageSpatialObject  CTImageType;
-  typedef CTImageType::ConstPointer    CTImagePointer;
+  typedef CTImageType::Pointer         CTImagePointer;
 
   // Attach an observer
   typedef Annotation2DTest::CTImageObserver CTImageObserverType;
@@ -113,8 +127,17 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
 
   RepresentationType::Pointer representation = RepresentationType::New();
           
+  CTImagePointer ctImage = ctImageObserver->GetCTImage();
+
+#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  ctImage->RequestAttachToSpatialObjectParent( worldReference );
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  ctImage->RequestSetTransformToSpatialObjectParent( transform );
+#endif 
+
   representation->SetLogger( logger );
-  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
+  representation->RequestSetImageSpatialObject( ctImage );
   representation->RequestSetOrientation( RepresentationType::Axial );
 
   // Add 2D Annotations
