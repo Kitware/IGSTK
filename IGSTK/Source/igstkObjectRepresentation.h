@@ -132,7 +132,7 @@ private:
 
   /** This method checks the time stamp of the transform
    *  and modifies the visibility of the objects accordingly. */
-  void VerifyTimeStampAndUpdateVisibility();
+  void RequestVerifyTimeStampAndUpdateVisibility();
 
   /** Null operation for a State Machine transition */
   void NoProcessing();
@@ -147,11 +147,11 @@ private:
   /** Make Objects Invisible. 
    *  This method is called when the Transform time stamp
    *  has expired with respect to the requested rendering time. */
-  void MakeObjectsInvisible();
+  void MakeObjectsInvisibleProcessing();
 
   /** Make Objects Visible. This method is called when the Transform time stamp
    * is valid with respect to the requested rendering time. */
-  void MakeObjectsVisible();
+  void MakeObjectsVisibleProcessing();
 
   /** Receive the Transform from the SpatialObject via a transduction macro.
    *  Once the transform is received, the validity time is verified. */
@@ -199,11 +199,18 @@ private:
   /** Transform returned from the Spatial Object */
   Transform                     m_SpatialObjectTransform;
     
-  /** State variable that indicates the visibility of the objects in the
-   * representation.  The visibility of the vtkActors will be modified 
-   * according to this state variable. */
-  bool                          m_ObjectsAreVisible;
+  /** Auxiliary State Machine that manages the states of Visibility and
+   * Invisibility of the objects. This State Machine is driven by the inputs of
+   * the time stamp validity check. */
+  StateMachineType     m_VisibilityStateMachine;
 
+  /** Inputs to the Visibility State Machine */
+  igstkDeclareInputMacro( ValidTimeStamp );
+  igstkDeclareInputMacro( InvalidTimeStamp );
+  
+  /** States for the Visibility State Machine */
+  igstkDeclareStateMacro( Visible );
+  igstkDeclareStateMacro( Invisible );
 };
 
 } // end namespace igstk

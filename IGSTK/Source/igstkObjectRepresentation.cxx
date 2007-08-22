@@ -26,14 +26,13 @@ namespace igstk
 {
 
 /** Constructor */
-ObjectRepresentation::ObjectRepresentation():m_StateMachine(this)
+ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_VisibilityStateMachine(this)
 {
   m_Color[0] = 1.0;
   m_Color[1] = 1.0;
   m_Color[2] = 1.0;
   m_Opacity = 1.0;
   m_SpatialObject = NULL;
-  m_ObjectsAreVisible = false;
 
   igstkAddInputMacro( ValidSpatialObject );
   igstkAddInputMacro( NullSpatialObject  );
@@ -67,6 +66,37 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this)
 
   m_StateMachine.SetReadyToRun();
 
+
+  // Configure the auxiliary State Machine that controls the Visibility of the
+  // objects.
+  m_VisibilityStateMachine.AddInput( this->m_ValidTimeStampInput, "ValidTimeStampInput" );
+  m_VisibilityStateMachine.AddInput( this->m_InvalidTimeStampInput, "InvalidTimeStampInput" );
+
+  m_VisibilityStateMachine.AddState( this->m_InvisibleState, "InvisibleState" );
+  m_VisibilityStateMachine.AddState( this->m_VisibleState, "VisibleState" );
+
+  m_VisibilityStateMachine.AddTransition( this->m_InvisibleState,
+                                          this->m_InvalidTimeStampInput,
+                                          this->m_InvisibleState,
+                                        & Self::NoProcessing );
+
+  m_VisibilityStateMachine.AddTransition( this->m_InvisibleState,
+                                          this->m_ValidTimeStampInput,
+                                          this->m_VisibleState,
+                                        & Self::MakeObjectsVisibleProcessing );
+
+  m_VisibilityStateMachine.AddTransition( this->m_VisibleState,
+                                          this->m_InvalidTimeStampInput,
+                                          this->m_InvisibleState,
+                                        & Self::MakeObjectsInvisibleProcessing );
+
+  m_VisibilityStateMachine.AddTransition( this->m_VisibleState,
+                                          this->m_ValidTimeStampInput,
+                                          this->m_VisibleState,
+                                        & Self::NoProcessing );
+
+  m_VisibilityStateMachine.SelectInitialState( this->m_InvisibleState );
+  m_VisibilityStateMachine.SetReadyToRun();
 }
 
 /** Destructor */
@@ -210,7 +240,7 @@ std::cout << "ReceiveSpatialObjectTransformProcessing() " << std::endl;
 
   vtkMatrix->Delete();
 
-  this->VerifyTimeStampAndUpdateVisibility();
+  this->RequestVerifyTimeStampAndUpdateVisibility();
 }
 
 /** Receive No Transform Availabe message from the SpatialObject via a transduction macro. */
@@ -221,34 +251,27 @@ std::cout << "ReceiveTransformNotAvailableProcessing() " << std::endl;
   //
   // Check if the old one has not expired.
   //
-  this->VerifyTimeStampAndUpdateVisibility();
+  this->RequestVerifyTimeStampAndUpdateVisibility();
 }
 
 /** Receive No Transform Availabe message from the SpatialObject via a transduction macro. */
-void ObjectRepresentation::VerifyTimeStampAndUpdateVisibility()
+void ObjectRepresentation::RequestVerifyTimeStampAndUpdateVisibility()
 {
   if( m_TimeToRender.GetExpirationTime() <
     m_SpatialObjectTransform.GetStartTime() ||
     m_TimeToRender.GetStartTime() >
     m_SpatialObjectTransform.GetExpirationTime() )
     {
-    if( this->m_ObjectsAreVisible )
-      {
-      this->MakeObjectsInvisible();
-      }
+    m_VisibilityStateMachine.PushInput( m_InvalidTimeStampInput );
+    m_VisibilityStateMachine.ProcessInputs();
     }
   else
     {
-    if( !this->m_ObjectsAreVisible )
-      {
-      this->MakeObjectsVisible();
-      }
+    m_VisibilityStateMachine.PushInput( m_ValidTimeStampInput );
+    m_VisibilityStateMachine.ProcessInputs();
     }
 
-  if( this->m_ObjectsAreVisible )
-    {  
-    this->UpdateRepresentationProcessing();
-    }
+  this->UpdateRepresentationProcessing();
 }
 
 
@@ -261,9 +284,9 @@ void ObjectRepresentation::NoProcessing()
 
 /** Make Objects Invisible. This method is called when the Transform time stamp
  * has expired with respect to the requested rendering time. */
-void ObjectRepresentation::MakeObjectsInvisible()
+void ObjectRepresentation::MakeObjectsInvisibleProcessing()
 {
-  igstkLogMacro( WARNING, "MakeObjectsInvisible at " << m_TimeToRender );
+  igstkLogMacro( WARNING, "MakeObjectsInvisibleProcessing at " << m_TimeToRender );
 
   ActorsListType::iterator it = m_Actors.begin();
   while(it != m_Actors.end())
@@ -271,16 +294,14 @@ void ObjectRepresentation::MakeObjectsInvisible()
     (*it)->VisibilityOff();
     it++;
     }
-
-  this->m_ObjectsAreVisible = false;
 }
 
 
 /** Make Objects Visible. This method is called when the Transform time stamp
  * is valid with respect to the requested rendering time. */
-void ObjectRepresentation::MakeObjectsVisible()
+void ObjectRepresentation::MakeObjectsVisibleProcessing()
 {
-  igstkLogMacro( WARNING, "MakeObjectsVisible at " << m_TimeToRender );
+  igstkLogMacro( WARNING, "MakeObjectsVisibleProcessing at " << m_TimeToRender );
   
   ActorsListType::iterator it = m_Actors.begin();
   while(it != m_Actors.end())
@@ -288,8 +309,6 @@ void ObjectRepresentation::MakeObjectsVisible()
     (*it)->VisibilityOn();
     it++;
     }
-
-  this->m_ObjectsAreVisible = true;
 }
 
 
