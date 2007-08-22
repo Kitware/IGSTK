@@ -189,7 +189,7 @@ int igstkCoordinateReferenceSystemObjectTest( int, char * [] )
   coordinateSystem->AddObserver( ::igstk::TransformModifiedEvent(), 
                                                           transformObserver );
   
-  coordinateSystem->RequestSetTransform( transform );
+  coordinateSystem->RequestSetTransformToSpatialObjectParent( transform );
   coordinateSystem->RequestGetTransform();
   
   if( !transformObserver->GotTransform() )

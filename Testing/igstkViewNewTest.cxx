@@ -31,6 +31,7 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkVTKLoggerOutput.h"
+#include "igstkWorldCoordinateReferenceSystemObject.h"
 
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -172,10 +173,19 @@ int igstkViewNewTest( int, char * [] )
 
   try
     {
+    // Define the World coordinate system
+    typedef igstk::WorldCoordinateReferenceSystemObject  
+      WorldReferenceSystemType;
+
+    WorldReferenceSystemType::Pointer worldReference =
+      WorldReferenceSystemType::New();
+
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
     
+    ellipsoid->RequestAttachToSpatialObjectParent( worldReference );
+
     // Create the ellipsoid representation
     igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
                              igstk::EllipsoidObjectRepresentation::New();
@@ -188,6 +198,7 @@ int igstkViewNewTest( int, char * [] )
     igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
     cylinder->SetRadius(0.1);
     cylinder->SetHeight(0.5);
+    cylinder->RequestAttachToSpatialObjectParent( worldReference );
 
     // Create the cylinder representation
     igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation =
@@ -210,7 +221,7 @@ int igstkViewNewTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    ellipsoid->RequestSetTransform( transform );
+    ellipsoid->RequestSetTransformToSpatialObjectParent( transform );
 
 
     translation[1] = -0.25;  // translate the cylinder along Y
@@ -220,7 +231,7 @@ int igstkViewNewTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    cylinder->RequestSetTransform( transform );
+    cylinder->RequestSetTransformToSpatialObjectParent( transform );
 
     cylinderRepresentation->SetLogger( logger );
   
@@ -241,13 +252,17 @@ int igstkViewNewTest( int, char * [] )
     std::cout << view3D->ViewNew3DType::Superclass::GetNameOfClass() 
               << std::endl;
 
-    view2D->RequestResetCamera();
     view2D->SetRendererBackgroundColor( 0.0, 0.0, 1.0 );
 
-    view3D->RequestResetCamera();
     
-    // Add the ellipsoid to the view
+    // Add the ellipsoid and cylinder representations to the view
     view2D->RequestAddObject( ellipsoidRepresentation );
+    view2D->RequestAddObject( cylinderRepresentation );
+    view2D->RequestResetCamera();
+
+    view3D->RequestAddObject( ellipsoidRepresentation );
+    view3D->RequestAddObject( cylinderRepresentation );
+    view3D->RequestResetCamera();
     
     // Set the refresh rate and start 
     // the pulse generators of the views.
@@ -296,8 +311,19 @@ int igstkViewNewTest( int, char * [] )
       }
 
     // Exercise the screenshot option with a valid filename
+    view2D->RequestStop();
     view2D->RequestSaveScreenShot("igstkViewNewTestScreenshot1.png");
-    
+
+
+    // Do manual redraws of the 3D view
+    dummyWidget.SetView( view3D );
+    view3D->RequestStart();
+    for(unsigned int i=0; i<20; i++)
+      {
+      igstk::PulseGenerator::CheckTimeouts();
+      }
+    view3D->RequestStop();
+
     }
   catch(...)
     {
