@@ -235,10 +235,13 @@ int igstkViewNewTest( int, char * [] )
     ellipsoid->RequestSetTransformToSpatialObjectParent( transform );
 
 
+    const double cylinderAngle = 30.0 * vcl_atan(1.0) / 45.0; // 30 degrees in radians
+    const double rx = vcl_sin( cylinderAngle / 2.0 );
+    const double rw = vcl_cos( cylinderAngle / 2.0 );
     translation[0] =  0.0;
     translation[1] =  0.5;  // translate the cylinder along Y
     translation[2] =  0.0;  // translate the cylinder along Z
-    rotation.Set( 0.0, 0.0, 0.0, 1.0 );
+    rotation.Set( rx, 0.0, 0.0, rw );
 
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
