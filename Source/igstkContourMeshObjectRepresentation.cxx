@@ -116,7 +116,6 @@ void ContourMeshObjectRepresentation
 void ContourMeshObjectRepresentation::UpdateRepresentationProcessing()
 {
   igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
-  this->RequestVerifyTimeStamp();
 }
 
 /** Create the vtk Actors */
