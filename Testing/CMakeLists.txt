@@ -98,16 +98,19 @@ ADD_TEST( igstkCoordinateReferenceSystemObjectTest ${IGSTKSandbox_TESTS} igstkCo
 
 IF(IGSTKSandbox_USE_FLTK)
 
-#ERASEME
-ADD_EXECUTABLE( igstkFLTKWidgetTest2 igstkFLTKWidgetTest2.cxx)
-TARGET_LINK_LIBRARIES( igstkFLTKWidgetTest2 IGSTKSandbox )
-#ERASEME
+# FIXME: When done debugging, register it inside of the test drivers.
+ADD_EXECUTABLE( igstkCTImageSpatialObjectReadingAndRepresentationTest4 igstkCTImageSpatialObjectReadingAndRepresentationTest4.cxx)
+TARGET_LINK_LIBRARIES( igstkCTImageSpatialObjectReadingAndRepresentationTest4 IGSTKSandbox )
+ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4  
+  ${CXX_TEST_PATH}/igstkCTImageSpatialObjectReadingAndRepresentationTest4
+  ${IGSTK_DATA_ROOT}/Input/E000192 )
+# END OF FIXME
 
-    ADD_TEST( igstkFLTKWidgetTest
-              ${IGSTKSandbox_TESTS}
-              igstkFLTKWidgetTest)
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-              igstkFLTKWidgetTest.cxx)
+    ADD_TEST( igstkFLTKWidgetTest ${IGSTKSandbox_TESTS} igstkFLTKWidgetTest)
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkFLTKWidgetTest.cxx)
+
+    ADD_TEST( igstkFLTKWidgetTest2 ${IGSTKSandbox_TESTS} igstkFLTKWidgetTest2)
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkFLTKWidgetTest2.cxx)
 
     ADD_TEST( igstkCoordinateReferenceSystemObjectWithViewTest
               ${IGSTKSandbox_TESTS}
