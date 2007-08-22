@@ -214,7 +214,7 @@ private:
   void SetTransformToSpatialObjectParentProcessing();
   void SetCalibrationTransformToTrackerToolProcessing();
   void BroadcastTransformToWorldProcessing();
-  void BroadcastExpiredTransformProcessing();
+  void BroadcastInvalidTransformMessageProcessing();
   void SetInternalSpatialObjectProcessing();
 
   /** Null operation for a State Machine transition */

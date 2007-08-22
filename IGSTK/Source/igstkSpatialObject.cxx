@@ -53,7 +53,7 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddTransitionMacro( Initial, TrackerToolValid, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, TransformToSpatialObjectParent, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, CalibrationTransformToTrackerTool, Initial,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, GetTransformToWorld, Initial,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, GetTransformToWorld, Initial,  BroadcastInvalidTransformMessage );
 
   igstkAddTransitionMacro( InternalSpatialObjectValidSet, InternalSpatialObjectNull, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( InternalSpatialObjectValidSet, InternalSpatialObjectValid, InternalSpatialObjectValidSet,  ReportInvalidRequest );
@@ -63,7 +63,7 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddTransitionMacro( InternalSpatialObjectValidSet, TrackerToolValid, AttachedToTrackerTool,  AttachToTrackerTool );
   igstkAddTransitionMacro( InternalSpatialObjectValidSet, TransformToSpatialObjectParent, InternalSpatialObjectValidSet,  ReportInvalidRequest );
   igstkAddTransitionMacro( InternalSpatialObjectValidSet, CalibrationTransformToTrackerTool, InternalSpatialObjectValidSet,  ReportInvalidRequest );
-  igstkAddTransitionMacro( InternalSpatialObjectValidSet, GetTransformToWorld, InternalSpatialObjectValidSet,  ReportInvalidRequest );
+  igstkAddTransitionMacro( InternalSpatialObjectValidSet, GetTransformToWorld, InternalSpatialObjectValidSet,  BroadcastInvalidTransformMessage );
 
   igstkAddTransitionMacro( AttachedToTrackerTool, InternalSpatialObjectNull, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToTrackerTool, InternalSpatialObjectValid, InternalSpatialObjectValidSet,  ReportInvalidRequest );
@@ -73,7 +73,7 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddTransitionMacro( AttachedToTrackerTool, TrackerToolValid, AttachedToTrackerTool,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToTrackerTool, TransformToSpatialObjectParent, AttachedToTrackerTool,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToTrackerTool, CalibrationTransformToTrackerTool, AttachedToTrackerToolAndCalibrated,  SetCalibrationTransformToTrackerTool );
-  igstkAddTransitionMacro( AttachedToTrackerTool, GetTransformToWorld, AttachedToTrackerTool,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttachedToTrackerTool, GetTransformToWorld, AttachedToTrackerTool,  BroadcastInvalidTransformMessage );
 
   igstkAddTransitionMacro( AttachedToSpatialObjectParent, InternalSpatialObjectNull, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToSpatialObjectParent, InternalSpatialObjectValid, InternalSpatialObjectValidSet,  ReportInvalidRequest );
@@ -83,7 +83,7 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddTransitionMacro( AttachedToSpatialObjectParent, TrackerToolValid, AttachedToSpatialObjectParent,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToSpatialObjectParent, TransformToSpatialObjectParent, AttachedToSpatialObjectParentAndLocated,  SetTransformToSpatialObjectParent );
   igstkAddTransitionMacro( AttachedToSpatialObjectParent, CalibrationTransformToTrackerTool, AttachedToSpatialObjectParent,  ReportInvalidRequest );
-  igstkAddTransitionMacro( AttachedToSpatialObjectParent, GetTransformToWorld, AttachedToSpatialObjectParent,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttachedToSpatialObjectParent, GetTransformToWorld, AttachedToSpatialObjectParent,  BroadcastInvalidTransformMessage );
 
   igstkAddTransitionMacro( AttachedToTrackerToolAndCalibrated, InternalSpatialObjectNull, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToTrackerToolAndCalibrated, InternalSpatialObjectValid, InternalSpatialObjectValidSet,  ReportInvalidRequest );
@@ -275,6 +275,14 @@ void SpatialObject::BroadcastTransformToWorldProcessing()
 {
   TransformModifiedEvent event;
   event.Set( this->ComputeTransformToWorld() );
+  this->InvokeEvent( event );
+}
+
+
+/** Broadcast Transform */
+void SpatialObject::BroadcastInvalidTransformMessageProcessing()
+{
+  TransformNotAvailableEvent event;
   this->InvokeEvent( event );
 }
 
