@@ -223,7 +223,6 @@ void ObjectRepresentation::RequestGetTransformProcessing()
 /** Receive the Transform from the SpatialObject via a transduction macro. */
 void ObjectRepresentation::ReceiveSpatialObjectTransformProcessing()
 {
-std::cout << "ReceiveSpatialObjectTransformProcessing() " << std::endl;
   m_SpatialObjectTransform = m_SpatialObjectTransformInputToBeSet;
 
   vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
@@ -246,7 +245,6 @@ std::cout << "ReceiveSpatialObjectTransformProcessing() " << std::endl;
 /** Receive No Transform Availabe message from the SpatialObject via a transduction macro. */
 void ObjectRepresentation::ReceiveTransformNotAvailableProcessing()
 {
-std::cout << "ReceiveTransformNotAvailableProcessing() " << std::endl;
   // No new transform for us to use.
   //
   // Check if the old one has not expired.
