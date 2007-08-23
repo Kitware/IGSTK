@@ -117,6 +117,14 @@ QTWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
   this->m_RenderWindowInteractor = interactor;
 }
 
+/** Get VTK render window interactor */
+vtkRenderWindowInteractor *
+QTWidget::GetRenderWindowInteractor( )
+{
+  return ( this->m_RenderWindowInteractor );
+}
+
+
 /** Set the reporter */
 void QTWidget::SetReporter( ::itk::Object * reporter )
 {

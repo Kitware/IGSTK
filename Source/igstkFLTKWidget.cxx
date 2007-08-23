@@ -129,6 +129,14 @@ void FLTKWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interact
   this->m_RenderWindowInteractor = interactor;
 }
 
+/** Get VTK render window interactor */
+vtkRenderWindowInteractor *
+FLTKWidget::GetRenderWindowInteractor( )
+{
+  return ( this->m_RenderWindowInteractor );
+}
+
+
 /** Set the reporter */
 void FLTKWidget::SetReporter( ::itk::Object * reporter )
 {

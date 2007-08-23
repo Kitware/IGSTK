@@ -99,6 +99,9 @@ public:
   unsigned long AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer );
  
+  /** Get render window interactor */
+  vtkRenderWindowInteractor * GetRenderWindowInteractor();
+ 
 protected:
   
   /** Print the object information in a stream. */

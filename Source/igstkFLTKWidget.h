@@ -83,6 +83,9 @@ public:
   /** Add observer */
   unsigned long AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer );
+
+  /** Get render window interactor */
+  vtkRenderWindowInteractor * GetRenderWindowInteractor();
   
   typedef ViewProxy< FLTKWidget > ProxyType;
 
