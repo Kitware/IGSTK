@@ -109,7 +109,30 @@ ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4
     ADD_TEST( igstkFLTKWidgetTest ${IGSTKSandbox_TESTS} igstkFLTKWidgetTest)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkFLTKWidgetTest.cxx)
 
-    ADD_TEST( igstkFLTKWidgetTest2 ${IGSTKSandbox_TESTS} igstkFLTKWidgetTest2)
+    ADD_TEST( igstkFLTKWidgetTest2
+              ${IGSTKSandbox_TESTS}
+              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot1.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+              igstkFLTKWidgetTest2
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png 
+              )
+
+    ADD_TEST( igstkFLTKWidgetTest2_2
+              ${IGSTKSandbox_TESTS}
+              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot2.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+              igstkFLTKWidgetTest2
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png 
+              )
+
     SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkFLTKWidgetTest2.cxx)
 
     ADD_TEST( igstkCoordinateReferenceSystemObjectWithViewTest

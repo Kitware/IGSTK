@@ -35,11 +35,36 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-int igstkFLTKWidgetTest2( int, char * [] )
+class FLTKWidgetTest2 : public igstk::FLTKWidget 
+{
+  typedef igstk::FLTKWidget Superclass;
+
+  public:
+  void resize( int x, int y, int width, int height )
+    {
+    Superclass::resize( x, y, width, height ); 
+    }    
+
+  FLTKWidgetTest2( int x, int y, int width, int height, const char * name) : Superclass( x, y, width, height,name )
+    {
+
+    } 
+};
+
+int igstkFLTKWidgetTest2( int argc, char * argv[] )
 {
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::ViewNew2D  ViewNew2DType;
+
+  if( argc < 3 )
+    {
+    std::cerr  << "Usage: " << argv[0] 
+               << "ScreenShotFileNam\t ScreenShotFileName2"
+               << std::endl;
+    return EXIT_FAILURE;
+    }
+
 
   bool bEnd = false;
 
@@ -89,7 +114,7 @@ int igstkFLTKWidgetTest2( int, char * [] )
     ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
     ellipsoidRepresentation->SetOpacity(1.0);
 
-    const double validityTimeInMilliseconds = 2000;
+    const double validityTimeInMilliseconds = 2e10;
     igstk::Transform transform;
     igstk::Transform::VectorType translation;
     translation[0] = 0;
@@ -112,7 +137,7 @@ int igstkFLTKWidgetTest2( int, char * [] )
 
 
     // Create an FLTK minimal GUI
-    typedef igstk::FLTKWidget      FLTKWidgetType;
+    typedef FLTKWidgetTest2 FLTKWidgetType;
 
     // End of the GUI creation
 
@@ -120,7 +145,7 @@ int igstkFLTKWidgetTest2( int, char * [] )
     // the pulse generators of the views.
     view2D->SetRefreshRate( 10 );
 
-    Fl_Window * form = new Fl_Window(301,301,"View Test");
+    Fl_Window * form = new Fl_Window(512,512,"View Test");
     
     // instantiate FLTK widget 
     FLTKWidgetType * fltkWidget2D = 
@@ -132,11 +157,27 @@ int igstkFLTKWidgetTest2( int, char * [] )
 
     view2D->RequestStart();
 
-    for(unsigned int i=0; i<1000; i++)
+    std::string ScreenShotFileName = argv[1];
+
+    for(unsigned int i=0; i<100; i++)
       {
       Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
       }
+
+    view2D->RequestSaveScreenShot( ScreenShotFileName );
+
+    //Resize the window and take a screenshot
+    std::string ScreenShotFileName2 = argv[2];
+
+    // resize the widget
+    fltkWidget2D->resize(10,10,490,490);
+    for(unsigned int i=0; i<100; i++)
+      {
+      Fl::wait(0.01);
+      igstk::PulseGenerator::CheckTimeouts();
+      }
+    view2D->RequestSaveScreenShot( ScreenShotFileName2 );
 
     delete fltkWidget2D;
     delete form;
