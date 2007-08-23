@@ -113,14 +113,15 @@ public:
   typedef Transform                      ToolCalibrationTransformType;
 
   /** typedefs from igstk::TrackerTool class */
-  typedef igstk::TrackerTool             TrackerToolType;
-  typedef TrackerToolType::Pointer       TrackerToolPointer;
-  typedef TrackerToolType::ConstPointer  TrackerToolConstPointer;
+  typedef igstk::TrackerTool                TrackerToolType;
+  typedef TrackerToolType::Pointer          TrackerToolPointer;
+  typedef TrackerToolType::ConstPointer     TrackerToolConstPointer;
+  typedef std::vector< TrackerToolPointer > TrackerToolVectorType;
 
   /** typedefs for the TrackerPort class */
   typedef igstk::TrackerPort                TrackerPortType;
   typedef TrackerPortType::Pointer          TrackerPortPointer;
-  typedef std::vector< TrackerPortPointer > TrackerPortVectorType;
+  typedef std::vector< TrackerPortPointer > TrackerPortVectorType; // FIXME: DEPRECATED: Ports are specific to Polaris and Aurora.
 
   /** typedefs for the coordinate reference system */
   typedef AxesObject                        CoordinateReferenceSystemType;
@@ -157,6 +158,10 @@ public:
   /** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
    * port numbered "portNumber" in the variable "position". Note that this
    * variable represents the position and orientation of the tool in 3D space.
+   * 
+   * FIXME: This method is DEPRECATED. Transforms are passed directly to 
+   *        TrackerTools, and then to Spatial objects. Application developers
+   *        do not need access to the transforms.
    * */
   void GetToolTransform( unsigned int portNumber, unsigned int toolNumber,
                          TransformType &position ) const;
@@ -177,12 +182,17 @@ public:
   void RequestAddTool( TrackerToolType * trackerTool );
 
   /** The "SetReferenceTool" sets the reference tool. */
+  // FIXME: This method is DEPRECATED. It will be replaced with a 
+  //        RequestAttachToReferenceTool, and that tool will be used
+  //        as the parent of the coordinate reference system.
   void SetReferenceTool( bool applyReferenceTool, unsigned int portNumber,
                          unsigned int toolNumber );
 
   /** The "GetReferenceTool" gets the reference tool.
    * If the reference tool is not applied, it returns false.
    * Otherwise, it returns true. */
+   // FIXME: This method is DEPRECATED. Nobody should need access to 
+   // the reference tool.
   bool GetReferenceTool( unsigned int &portNumber,
                          unsigned int &toolNumber ) const;
 
@@ -198,17 +208,26 @@ public:
     " T ' " is the transformation that is reported to the spatial objects
     " C " is the tool calibration transform.
   */
+  // FIXME: DEPRECATED. This is no longer used, now that a graph scene manages
+  // the relative positions of spatial objects.
   void SetPatientTransform( const PatientTransformType& _arg );
 
   /** The "GetPatientTransform" gets PatientTransform. */
+  // FIXME: DEPRECATED. This is no longer used, now that a graph scene manages
+  // the relative positions of spatial objects.
   PatientTransformType GetPatientTransform() const; 
 
   /** The "SetToolCalibrationTransform" sets the tool calibration transform */
+  // FIXME: DEPRECATED. The calibration transform is now set simply as the 
+  // object to parent transform in the SpatialObject attached to the trackertool.
   void SetToolCalibrationTransform( unsigned int portNumber,
                                     unsigned int toolNumber,
                                     const ToolCalibrationTransformType& t );
 
   /** Get the tool calibration transform. */
+  // FIXME: DEPRECATED. The calibration transform is now set simply as the 
+  // object to parent transform in the SpatialObject attached to the trackertool.
+  // Nobody should need to access this transform.
   ToolCalibrationTransformType GetToolCalibrationTransform(
                              unsigned int portNumber,
                              unsigned int toolNumber) const;
@@ -219,6 +238,25 @@ public:
 
   /** Get the validity time. */
   igstkGetMacro( ValidityTime, TimePeriodType );
+
+
+  /** Attach the coordinate reference system of the tracker to a parent
+   * spatial object. In this way the tracker gets integrated in the scene
+   * tree. FIXME: this is a temporary quick-and-dirty implementation. The
+   *              method should be integrated in the state machine. */
+  void RequestAttachToSpatialObjectParent( SpatialObject * parent )
+    {
+    this->m_CoordinateReferenceSystem->RequestAttachToSpatialObjectParent( parent );
+    }
+
+  /** Set the transform between the coordinate reference system of the tracker
+   *  and its spatial object parent.
+   *  FIXME: this is a temporary quick-and-dirty implementation. The method
+   *  should be integrated in the state machine. */
+  void RequestSetTransformToSpatialObjectParent( const TransformType & transform )
+    {
+    this->m_CoordinateReferenceSystem->RequestSetTransformToSpatialObjectParent( transform );
+    }
 
 protected:
 
@@ -294,8 +332,17 @@ protected:
    * port numbered "portNumber" by the content of variable "position". Note
    * that this variable represents the position and orientation of the tool in
    * 3D space.  */
+  // FIXME : DEPRECATED ports are specific to Polaris and Aura
   void SetToolTransform( unsigned int portNumber, unsigned int toolNumber,
                          const TransformType & position );
+  // NEW: This method replaces the old SetToolTransform() above.
+  void SetToolTransform( unsigned int toolId, const TransformType & transform )
+    {
+    // FIXME: Quick and dirty implementation. A good implementation should
+    // verify the id to avoid out of bounds segmentation faults.
+    TrackerToolType * tool = m_TrackerTools[toolId];
+    tool->RequestSetTransformToSpatialObjectParent( transform );
+    }
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -315,7 +362,12 @@ private:
   ObserverType::Pointer     m_PulseObserver;
 
   /** Vector of all tool ports on the tracker */
-  TrackerPortVectorType     m_Ports;
+  // FIXME: THIS IS DEPRECATED. Ports are only for Polaris and Aurora and are
+  // now contained in their corresponding tracker tools.
+  TrackerPortVectorType     m_Ports; // DEPRECATED
+
+  // NEW: an array of tracker tools replace the array of ports
+  TrackerToolVectorType     m_TrackerTools;
   
   /** The reference tool */
   bool                      m_ApplyingReferenceTool;
@@ -324,7 +376,7 @@ private:
   unsigned int              m_ReferenceToolNumber;
 
   /** Patient Transform */
-  PatientTransformType      m_PatientTransform;  // FIXME: This is deprecated due to Bug 5474
+  PatientTransformType      m_PatientTransform;  // FIXME: This is DEPRECATED due to Bug 5474
 
   /** Coordinate Reference System */
   CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;

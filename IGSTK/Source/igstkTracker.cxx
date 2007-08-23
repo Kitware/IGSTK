@@ -911,7 +911,9 @@ void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 /** Request adding a tool to the tracker */
 void Tracker::RequestAddTool( TrackerToolType * trackerTool )
 {
-   // FIXME: thread this in the State Machine
+  // FIXME: thread this in the State Machine
+  m_TrackerTools.push_back( trackerTool );
+  trackerTool->RequestAttachToSpatialObjectParent( this->m_CoordinateReferenceSystem );
 }
 
 /** The "SetReferenceTool" sets the reference tool. */
