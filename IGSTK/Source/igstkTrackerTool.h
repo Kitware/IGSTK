@@ -189,7 +189,6 @@ private:
    *  should be integrated in the state machine. */
   void RequestSetTransformToSpatialObjectParent( const TransformType & transform )
     {
-    std::cout << "TrackerTool: Set Transform " << transform.GetTranslation() << std::endl;
     this->m_CoordinateReferenceSystem->RequestSetTransformToSpatialObjectParent( transform );
     }
 

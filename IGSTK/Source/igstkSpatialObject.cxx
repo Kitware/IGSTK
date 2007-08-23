@@ -249,7 +249,6 @@ void SpatialObject::SetTransformToSpatialObjectParentProcessing()
 
   igstkLogMacro( DEBUG, " SpatialObject::SetTransform() T: " 
       << translation << " R: " << rotation << "\n" );
-std::cout << "SO: Set Transform " << translation << std::endl;
 }
 
 /** Set the calibration transform that relates this Spatial Object to the 
