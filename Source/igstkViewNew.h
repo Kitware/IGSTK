@@ -115,6 +115,7 @@ public:
   void SetParallelProjection( bool flag );
   void SetRendererBackgroundColor(
                     double red, double green, double blue ); 
+  void SetCameraZoomFactor( double rate );
 
    friend class ViewProxyBase;
 protected:

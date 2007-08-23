@@ -457,6 +457,13 @@ SetRendererBackgroundColor( double red, double green, double blue)
   m_Renderer->SetBackground( red, green, blue );
 }
 
+/** Set camera zoom factor */
+void ViewNew::
+SetCameraZoomFactor( double factor ) 
+{
+  igstkLogMacro( DEBUG, "SetCameraZoomFactor(...) called ...\n");
+  m_Camera->Zoom( factor );
+}
 
 /** Define the refresh rate by programming the internal pulse generator */
 void ViewNew::SetRefreshRate( double frequencyHz )
