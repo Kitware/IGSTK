@@ -101,7 +101,7 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddTransitionMacro( AttachedToSpatialObjectParentAndLocated, SpatialObjectParentValid, AttachedToSpatialObjectParentAndLocated,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToSpatialObjectParentAndLocated, TrackerToolNull, AttachedToSpatialObjectParentAndLocated,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToSpatialObjectParentAndLocated, TrackerToolValid, AttachedToSpatialObjectParentAndLocated,  ReportInvalidRequest );
-  igstkAddTransitionMacro( AttachedToSpatialObjectParentAndLocated, TransformToSpatialObjectParent, AttachedToSpatialObjectParentAndLocated,  ReportInvalidRequest );
+  igstkAddTransitionMacro( AttachedToSpatialObjectParentAndLocated, TransformToSpatialObjectParent, AttachedToSpatialObjectParentAndLocated,  SetTransformToSpatialObjectParent ); // Let the transform be reset ?
   igstkAddTransitionMacro( AttachedToSpatialObjectParentAndLocated, CalibrationTransformToTrackerTool, AttachedToSpatialObjectParentAndLocated,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToSpatialObjectParentAndLocated, GetTransformToWorld, AttachedToSpatialObjectParentAndLocated,  BroadcastTransformToWorld );
 
@@ -249,6 +249,7 @@ void SpatialObject::SetTransformToSpatialObjectParentProcessing()
 
   igstkLogMacro( DEBUG, " SpatialObject::SetTransform() T: " 
       << translation << " R: " << rotation << "\n" );
+std::cout << "SO: Set Transform " << translation << std::endl;
 }
 
 /** Set the calibration transform that relates this Spatial Object to the 
