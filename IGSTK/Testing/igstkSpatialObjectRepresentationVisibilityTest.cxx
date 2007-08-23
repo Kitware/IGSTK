@@ -38,6 +38,8 @@
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
 
+#define OBJECTTRACKED
+
 namespace igstk
 {
 
@@ -146,7 +148,7 @@ public:
 protected:
     MyTracker():m_StateMachine(this) 
       {
-      m_Position[0] = -2.0;
+      m_Position[0] = -1.0;
       m_Position[1] = -0.5;
       m_Position[2] =  0.0;
 
@@ -173,9 +175,9 @@ protected:
       TransformType transform;
       transform.SetToIdentity( m_ValidityTime );
       
-      m_Position[0] += 0.1;  // drift along a vector (1.0, 2.0, 3.0)
-      m_Position[1] += 0.0;  // just to simulate a linear movement
-      m_Position[2] += 0.0;  // being tracked in space.
+      m_Position[0] += 0.01;  // drift along a vector (1.0, 2.0, 3.0)
+      m_Position[1] += 0.00;  // just to simulate a linear movement
+      m_Position[2] += 0.00;  // being tracked in space.
 
       ErrorType errorValue = 0.5; 
 
@@ -291,10 +293,22 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
  
   ellipsoidObject1->RequestAttachToSpatialObjectParent( worldReference );
   ellipsoidObject2->RequestAttachToSpatialObjectParent( worldReference );
+#ifdef OBJECTFIXED
+  ellipsoidObject3->RequestAttachToSpatialObjectParent( worldReference );
+#endif
 
+#ifdef OBJECTTRACKED
   trackerTool->RequestAttachSpatialObject( ellipsoidObject3 );
+  igstk::Transform calibrationTransform;
+  calibrationTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
+  ellipsoidObject3->RequestSetCalibrationTransformToTrackerTool( calibrationTransform );
+#endif
   tracker->RequestAddTool( trackerTool );
   tracker->RequestAttachToSpatialObjectParent( worldReference );
+
+  igstk::Transform trackerTransform;
+  trackerTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
+  tracker->RequestSetTransformToSpatialObjectParent( trackerTransform );
 
    
   ellipsoidRepresentation1->RequestSetEllipsoidObject(ellipsoidObject1);
@@ -384,9 +398,21 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   ellipsoidObject2->RequestSetTransformToSpatialObjectParent( transform2 );
 
   
+#ifdef OBJECTFIXED
+  // This is the transform for the permanent object.
   igstk::Transform transform3;
-  transform3.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
-  tracker->RequestSetTransformToSpatialObjectParent( transform3 );
+  igstk::Transform::VectorType translation3;
+  translation3[0] = -0.5;
+  translation3[1] = -0.5;
+  translation3[2] =  0.0;
+
+  transform3.SetTranslationAndRotation( 
+      translation3, rotation, errorValue, 
+      ::igstk::TimeStamp::GetLongestPossibleTime() );
+
+  ellipsoidObject3->RequestSetTransformToSpatialObjectParent( transform3 );
+#endif
+
 
   // Stabilize the transient period where the camera
   // must be reset.
