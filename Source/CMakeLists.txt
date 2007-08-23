@@ -288,6 +288,10 @@ IF(IGSTKSandbox_USE_Qt)
       igstkQView2D.h
       igstkQView3D.h
       igstkQTWidget.h
+      igstkImageSpatialObjectImagePlaneRepresentation.h
+      igstkCTImageSpatialObjectImagePlaneRepresentation.h
+      igstkMRImageSpatialObjectImagePlaneRepresentation.h
+      vtkImagePlaneWidget2D.h
    )
 ENDIF(IGSTKSandbox_USE_Qt)
 
@@ -320,6 +324,10 @@ SET(IGSTKSandbox_SRCS
   igstkViewProxyBase.cxx
   igstkWorldCoordinateReferenceSystemObject.cxx
   igstkImageSliceRepresentation.txx
+  igstkImageSpatialObjectImagePlaneRepresentation.txx
+  igstkCTImageSpatialObjectImagePlaneRepresentation.cxx
+  igstkMRImageSpatialObjectImagePlaneRepresentation.cxx
+  vtkImagePlaneWidget2D.cxx
 )
 
 IF(IGSTKSandbox_USE_Qt)
