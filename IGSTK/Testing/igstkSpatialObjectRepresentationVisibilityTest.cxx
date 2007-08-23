@@ -58,7 +58,7 @@ protected:
   ViewObserver() 
     {
     m_PulseCounter = 0;
-    m_NumberOfPulsesToStop = 100;
+    m_NumberOfPulsesToStop = 50;
     m_Form = 0;
     m_View = 0;
     }
@@ -146,11 +146,11 @@ public:
 protected:
     MyTracker():m_StateMachine(this) 
       {
-      m_Position[0] = 0.0;
-      m_Position[1] = 0.0;
-      m_Position[2] = 0.0;
+      m_Position[0] = -2.0;
+      m_Position[1] = -0.5;
+      m_Position[2] =  0.0;
 
-      m_ValidityTime = 100.0; // 100.0 milliseconds
+      m_ValidityTime = 1000.0; // 1 second
       }
     virtual ~MyTracker() {};
 
@@ -173,14 +173,14 @@ protected:
       TransformType transform;
       transform.SetToIdentity( m_ValidityTime );
       
-      m_Position[0] += 1.0;  // drift along a vector (1.0, 2.0, 3.0)
-      m_Position[1] += 2.0;  // just to simulate a linear movement
-      m_Position[2] += 3.0;  // being tracked in space.
+      m_Position[0] += 0.1;  // drift along a vector (1.0, 2.0, 3.0)
+      m_Position[1] += 0.0;  // just to simulate a linear movement
+      m_Position[2] += 0.0;  // being tracked in space.
 
       ErrorType errorValue = 0.5; 
 
       transform.SetTranslation( m_Position, errorValue, m_ValidityTime );
-      this->SetToolTransform( 0, 0, transform );
+      this->SetToolTransform( 0, transform );
 
       std::cout << "MyTracker::InternalUpdateStatus() " 
                 << m_Position << std::endl;
@@ -259,7 +259,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   typedef igstk::AxesObjectRepresentation  RepresentationType;
   RepresentationType::Pointer AxesRepresentation = RepresentationType::New();
   AxesRepresentation->RequestSetAxesObject( worldReference );
-  worldReference->SetSize(1,1,1);
+  worldReference->SetSize( 0.5, 0.5, 0.5 );
 
   typedef ::igstk::VisibilityObjectTest::MyTracker    TrackerType;
   typedef ::igstk::TrackerTool                        TrackerToolType;
@@ -294,6 +294,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   trackerTool->RequestAttachSpatialObject( ellipsoidObject3 );
   tracker->RequestAddTool( trackerTool );
+  tracker->RequestAttachToSpatialObjectParent( worldReference );
 
    
   ellipsoidRepresentation1->RequestSetEllipsoidObject(ellipsoidObject1);
@@ -336,9 +337,9 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   double validityTimeInMilliseconds = 1000; // 1 second
   igstk::Transform transform1;
   igstk::Transform::VectorType translation1;
-  translation1[0] = 0.5;
-  translation1[1] = 1.0;
-  translation1[2] = 0.0;
+  translation1[0] =  0.5;
+  translation1[1] =- 0.5;
+  translation1[2] =  0.0;
   igstk::Transform::VersorType rotation;
   rotation.Set( 0.707, 0.0, 0.707, 0.0 );
   igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
@@ -373,7 +374,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   igstk::Transform transform2;
   igstk::Transform::VectorType translation2;
   translation2[0] = 0.0;
-  translation2[1] = 2.0;
+  translation2[1] = 1.0;
   translation2[2] = 0.0;
 
   transform2.SetTranslationAndRotation( 
@@ -383,6 +384,10 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   ellipsoidObject2->RequestSetTransformToSpatialObjectParent( transform2 );
 
   
+  igstk::Transform transform3;
+  transform3.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
+  tracker->RequestSetTransformToSpatialObjectParent( transform3 );
+
   // Stabilize the transient period where the camera
   // must be reset.
   for(unsigned int k=0; k<10; k++)
@@ -403,6 +408,10 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   bEnd = false;
   view3D->RequestStart();
 
+  tracker->RequestOpen();
+  tracker->RequestInitialize();
+  tracker->RequestStartTracking();
+
 
   while(1)
     {
@@ -419,6 +428,9 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
       }
     }
   
+  tracker->RequestStopTracking();
+  tracker->RequestClose();
+
   view3D->RequestSaveScreenShot( screenShotFileName2 );
 
   delete fltkWidget;
