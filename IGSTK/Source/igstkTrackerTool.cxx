@@ -82,7 +82,7 @@ TrackerTool::RequestAttachSpatialObject( SpatialObject * spatialObject )
 {
   // Note: the ToolCalibrationTransform should be the transform relating
   //       the spatial object to the tracker tool. FIXME.
-  this->m_CoordinateReferenceSystem->RequestAddObject( spatialObject );
+  spatialObject->RequestAttachToTrackerTool( this->m_CoordinateReferenceSystem );
 }
 
 /** Print object information */
