@@ -35,30 +35,16 @@ namespace igstk
 /** Constructor */
 template < class TImageSpatialObject >
 ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
-::ImageSpatialObjectImagePlaneRepresentation():m_StateMachine(this)
+::ImageSpatialObjectImagePlaneRepresentation() : 
+    m_StateMachine(this),
+    m_ImageSpatialObject(NULL),
+    m_ImageSpatialObjectToAdd(NULL),
+    m_ImageData(NULL),
+    m_ImagePlane(vtkImagePlaneWidget2D::New()),
+    m_Orientation(Axial),
+    m_VTKImageObserver(VTKImageObserver::New())
 {
-  // We create the image spatial object
-  m_ImageSpatialObject = NULL;
-
-  m_Orientation = Axial;
-
   this->RequestSetSpatialObject( m_ImageSpatialObject );
-
-  // Create classes for displaying images
-  m_MapColors = vtkImageMapToColors::New();
-  m_LUT = vtkLookupTable::New();
-
-  m_ImagePlane = vtkImagePlaneWidget2D::New();
-
-  m_ImageData  = NULL;
-
-  // Set default values for window and level
-  m_Level = 0;
-  m_Window = 2000;
-  
-  // Create the observer to VTK image events 
-  m_VTKImageObserver = VTKImageObserver::New();
-
 
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( NullImageSpatialObject  );
@@ -181,21 +167,6 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
   m_ImagePlane->Delete();
   // This deletes also the m_ImageActor
   this->DeleteActors();
-
-
-  if( m_MapColors )
-    {
-    m_MapColors->SetLookupTable( NULL );
-    m_MapColors->SetInput( NULL );
-    m_MapColors->Delete();
-    m_MapColors = NULL;
-    }
-    
-  if( m_LUT )
-    {
-    m_LUT->Delete();
-    m_LUT = NULL;
-    }
 }
 
 /** Overloaded DeleteActor function */
@@ -378,10 +349,7 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
   igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
                         ::SetWindowLevel called...\n");
 
-  m_Window = window;
-  m_Level = level;
-
-  m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+  m_ImagePlane->SetWindowLevel(window, level);
 }
 
 /** Null Operation for a State Machine Transition */
@@ -426,7 +394,6 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
           this->m_ImageData->Update();          
           this->m_ImagePlane->SetInput( this->m_ImageData);
       }
-    this->m_MapColors->SetInput( this->m_ImageData );
     }
 }
 
@@ -469,19 +436,8 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
 
-
-    
-  m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
-  m_LUT->SetSaturationRange (0, 0);
-  m_LUT->SetHueRange (0, 0);
-  m_LUT->SetValueRange (0, 1);
-  m_LUT->SetRampToLinear();
-
-  m_MapColors->SetLookupTable( m_LUT );
-
   igstkPushInputMacro( ConnectVTKPipeline );
   m_StateMachine.ProcessInputs(); 
-
 }
 
 /** Create a copy of the current object representation */
@@ -574,9 +530,6 @@ void
 ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 ::ConnectVTKPipelineProcessing() 
 {
-    m_MapColors->SetInput( m_ImageData );
-
-//  m_ImagePlane->TextureInterpolateOn();
 }
 
 /** Set the opacity */

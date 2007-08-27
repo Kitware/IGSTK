@@ -98,11 +98,12 @@ public:
    * orientation.  */
   void RequestGetSliceNumberBounds();
   
-  void setInteractor(vtkRenderWindowInteractor * interactor)
+  void SetInteractor(vtkRenderWindowInteractor * interactor)
   { m_ImagePlane->SetInteractor(interactor);}
 
   void RequestSetCursorPosition(double x, double y, double z)
   { m_ImagePlane->SetCursorPosition(x, y, z);}
+
 protected:
 
   /** Constructor */
@@ -128,20 +129,6 @@ private:
 
   ImageSpatialObjectImagePlaneRepresentation(const Self&);   //purposely not implemented
   void operator=(const Self&);   //purposely not implemented
-
-  /** Internal itkSpatialObject */
-  ImageSpatialObjectConstPointer         m_ImageSpatialObject;
-  ImageSpatialObjectConstPointer         m_ImageSpatialObjectToAdd;
-
-  /** VTK classes that support display of an image */
-  vtkImageData                         * m_ImageData;
-  vtkImagePlaneWidget2D                * m_ImagePlane;
-  vtkLookupTable                       * m_LUT;
-  vtkImageMapToColors                  * m_MapColors;
-
-  /** Variables that store window and level values for 2D image display */
-  double                                 m_Level;
-  double                                 m_Window;
 
   /** Update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationProcessing();
@@ -192,6 +179,14 @@ private:
   igstkDeclareStateMacro( ValidImageOrientation );
   igstkDeclareStateMacro( ValidSliceNumber );
   igstkDeclareStateMacro( AttemptingToSetSliceNumber );
+
+  /** Internal itkSpatialObject */
+  ImageSpatialObjectConstPointer         m_ImageSpatialObject;
+  ImageSpatialObjectConstPointer         m_ImageSpatialObjectToAdd;
+
+  /** VTK classes that support display of an image */
+  vtkImageData                         * m_ImageData;
+  vtkImagePlaneWidget2D                * m_ImagePlane;
 
   /** Variables for managing the Slice number through the StateMachine */
   SliceNumberType      m_SliceNumberToBeSet;
