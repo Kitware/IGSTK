@@ -9,7 +9,7 @@
  * In addition, a method SetCursorPosition method is added to set the cursor
  * position in world coordinates.
  *
- * @Date 3007.08.23
+ * @Date 2007.08.23
  * @Author Torleif Sandnes, Sintef Health Research
  */
 class vtkImagePlaneWidget2D : public vtkImagePlaneWidget
