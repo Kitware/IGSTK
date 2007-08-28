@@ -102,10 +102,10 @@ public:
 
   /**
    * DEPRECATED:
-   * Return a child object given the id */
-  const Self * GetObject(unsigned long id) const
+   * Return a child object given the identifier */
+  const Self * GetObject(unsigned long childId) const
     {
-    return NULL; // It used to return the child numbered "id".
+    return NULL; // It used to return the child numbered "childId".
     }
 
   /**
