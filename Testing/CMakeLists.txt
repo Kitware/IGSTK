@@ -156,7 +156,12 @@ IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTK_TESTS} igstkFLTKTextBufferLogOutputTest)
   ADD_TEST(igstkFLTKTextLogOutputTest ${IGSTK_TESTS} igstkFLTKTextLogOutputTest)
   ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
-  ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
+
+  ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} 
+     igstkViewRefreshRateTest
+     ${IGSTK_TEST_OUTPUT_DIR}/igstkViewRefreshRateTestLog.txt
+     )
+
   ADD_TEST(igstkPulseGeneratorTest ${IGSTK_TESTS} igstkPulseGeneratorTest)
   ADD_TEST(igstkConeObjectTest    ${IGSTK_TESTS} igstkConeObjectTest)
   ADD_TEST(igstkBoxObjectTest     ${IGSTK_TESTS} igstkBoxObjectTest)

@@ -123,7 +123,7 @@ private:
 
 }
 
-int igstkViewRefreshRateTest( int, char * [] )
+int igstkViewRefreshRateTest( int argc, char *argv [] )
 {
   igstk::RealTimeClock::Initialize();
 
@@ -132,10 +132,17 @@ int igstkViewRefreshRateTest( int, char * [] )
 
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
-  LogOutputType::Pointer logOutput = LogOutputType::New();
-  logOutput->SetStream( std::cout );
-  logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+
+  std::ofstream outputLogFile;
+  if( argc > 1 )
+    {
+    outputLogFile.open( argv[1] );
+    logOutput->SetStream( outputLogFile );
+    logger->AddLogOutput( logOutput );
+    }
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
@@ -219,7 +226,7 @@ int igstkViewRefreshRateTest( int, char * [] )
     form->resize(100, 100, 600, 300);
 
     const float refreshRate = 20;
-    const float expectedNumberOfSeconds = 20;
+    const float expectedNumberOfSeconds = 30;
     const unsigned long numberOfPulsesToStop = 
       static_cast< unsigned long >( refreshRate * expectedNumberOfSeconds );
 
@@ -243,7 +250,7 @@ int igstkViewRefreshRateTest( int, char * [] )
     
     while(1)
       {
-      Fl::wait(0.0001);
+      Fl::wait(0.001);
       igstk::PulseGenerator::CheckTimeouts();
       if( bEnd )
         {
