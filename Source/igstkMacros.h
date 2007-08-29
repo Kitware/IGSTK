@@ -286,7 +286,7 @@ public: \
 /** Convenience macro for creating an Observer for an Event with payload,
  *  its callback and transducing it into a specified input to the state 
  *  machine that takes its value */
-#define igstkLoadedEventTransductionMacro( event, input, payload ) \
+#define igstkLoadedEventTransductionMacro( event, input ) \
 private: \
   ReceptorObserverPointer m_Observer##event##input;  \
   ::igstk::event::PayloadType                 m_##input##ToBeSet; \
@@ -308,6 +308,30 @@ public: \
                                            & Self::Callback##event##input ); \
     object->AddObserver( ::igstk::event(),m_Observer##event##input ); \
     }
+
+#define igstkLoadedObjectEventTransductionMacro( event, input ) \
+private: \
+  ReceptorObserverPointer m_Observer##event##input;  \
+  ::igstk::event::PayloadType *                m_##input##ToBeSet; \
+  void Callback##event##input( const ::itk::EventObject & eventvar ) \
+  { \
+  const ::igstk::event * realevent = \
+                      dynamic_cast < const ::igstk::event * > ( &eventvar ); \
+    if( realevent ) \
+      { \
+      m_##input##ToBeSet = realevent->Get(); \
+      m_StateMachine.PushInput( m_##input ); \
+      } \
+  } \
+public: \
+ void Observe##input(const ::itk::Object * object ) \
+    { \
+    m_Observer##event##input = ReceptorObserverType::New(); \
+    m_Observer##event##input->SetCallbackFunction( this,\
+                                           & Self::Callback##event##input ); \
+    object->AddObserver( ::igstk::event(),m_Observer##event##input ); \
+    }
+
 
 #define igstkObserverMacro( name, eventType, payloadType ) \
 class name##Observer : public ::itk::Command \
