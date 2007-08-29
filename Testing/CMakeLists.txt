@@ -277,7 +277,7 @@ ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest2.png
              ${IGSTK_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
              --toleranceIntensity 10
              --toleranceRadius 5
-             --toleranceNumberOfPixels 5
+             --toleranceNumberOfPixels 20
              igstkUltrasoundImageSimulatorTest
              ${IGSTK_DATA_ROOT}/Input/MRLiver
              ${IGSTK_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
