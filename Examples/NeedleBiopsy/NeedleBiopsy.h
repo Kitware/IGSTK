@@ -112,11 +112,11 @@ public:
   /** Methods for Converting Events into State Machine Inputs */
 
   igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,
-                                     AxialBoundsInput, AxialBounds    );
+                                     AxialBoundsInput );
   igstkLoadedEventTransductionMacro( SagittalSliceBoundsEvent, 
-                                     SagittalBoundsInput, SagittalBounds );
+                                     SagittalBoundsInput );
   igstkLoadedEventTransductionMacro( CoronalSliceBoundsEvent,  
-                                     CoronalBoundsInput, CoronalBounds  );
+                                     CoronalBoundsInput );
   
   igstkObserverObjectMacro(CTImage,igstk::CTImageReader::ImageModifiedEvent,
                                                   igstk::CTImageSpatialObject)

@@ -157,7 +157,7 @@ public:
 
   /** Methods for Converting Events into State Machine Inputs */
   igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,
-                                     AxialBoundsInput, AxialBounds );
+                                     AxialBoundsInput );
 
   UltrasoundGuidedRFAImplementation();
   ~UltrasoundGuidedRFAImplementation();

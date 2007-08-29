@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkContourVascularNetworkObjectRepresentation.h
+  Module:    igstkVascularNetworkObjectRepresentation.h
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -15,40 +15,37 @@
 
 =========================================================================*/
 
-#ifndef __igstkContourVascularNetworkObjectRepresentation_h
-#define __igstkContourVascularNetworkObjectRepresentation_h
+#ifndef __igstkVascularNetworkObjectRepresentation_h
+#define __igstkVascularNetworkObjectRepresentation_h
 
-#include "igstkContourObjectRepresentation.h"
+#include "igstkObjectRepresentation.h"
 #include "igstkVascularNetworkObject.h"
-#include "igstkVesselObject.h"
-
-#include <vtkPlane.h>
-#include <vtkAppendPolyData.h>
 
 namespace igstk
 {
 
-/** \class ContourVascularNetworkObjectRepresentation
+/** \class VascularNetworkObjectRepresentation
  * 
- * \brief This class represents a VascularNetwork object as contour
+ * \brief This class implements the representation of a VascularNetwork object.
  * 
+ *        This class represents a collection of VesselObjects, each one of them
+ *        is a tube represented as a VTK actor using a vtkTubeFilter.
  *
  * \ingroup ObjectRepresentation
  */
 
-class ContourVascularNetworkObjectRepresentation 
-: public ContourObjectRepresentation
+class VascularNetworkObjectRepresentation 
+: public ObjectRepresentation
 {
 
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( ContourVascularNetworkObjectRepresentation, 
-                                 ContourObjectRepresentation )
+  igstkStandardClassTraitsMacro( VascularNetworkObjectRepresentation, 
+                                 ObjectRepresentation )
 
 public:
-    
-  /** Typedefs */
+
   typedef VascularNetworkObject                     VascularNetworkObjectType;
   typedef VesselObject                              VesselObjectType;
 
@@ -56,33 +53,33 @@ public:
   Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
-  void RequestSetVascularNetworkObject( const VascularNetworkObjectType * 
-                                                      VascularNetworkObject );
+  void RequestSetVascularNetworkObject( const VascularNetworkObjectType 
+                                                    * VascularNetworkObject );
 
 protected:
+  
+  /** Constructor */
+  VascularNetworkObjectRepresentation();
+
+  /** Destructor */
+  ~VascularNetworkObjectRepresentation();
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
-  
-  /** Constructor */
-  ContourVascularNetworkObjectRepresentation( void );
-
-  /** Destructor */
-  ~ContourVascularNetworkObjectRepresentation( void );
 
   /** Create the VTK actors */
   void CreateActors();
 
 private:
 
-  /** Internal itkSpatialObject */
+  /** Internal igstk group object */
   VascularNetworkObjectType::ConstPointer   m_VascularNetworkObject;
 
   /** update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationProcessing();
 
   /** Connect this representation class to the spatial object. Only to be
-   * called by the State Machine. */
+   *  called by the State Machine. */
   void SetVascularNetworkObjectProcessing(); 
 
   /** Null operation for a State Machine transition */
@@ -92,34 +89,36 @@ private:
    * callback for the VesselObserver. */
   void CreateActorsForOneVesselProcessing();
 
+
 private:
+
+  /** These two methods must be declared and note be implemented
+  *  in order to enforce the protocol of smart pointers. */
+  VascularNetworkObjectRepresentation (const Self&); //purposely not implemented
+  void operator=(const Self&);                       //purposely not implemented
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidVascularNetworkObject );
   igstkDeclareInputMacro( NullVascularNetworkObject );
   igstkDeclareInputMacro( VesselReceived );
   igstkDeclareInputMacro( VesselNotFound );
-
+  
   /** States for the State Machine */
   igstkDeclareStateMacro( NullVascularNetworkObject );
   igstkDeclareStateMacro( ValidVascularNetworkObject );
   igstkDeclareStateMacro( AttemptingToGetVessel );
 
   VascularNetworkObjectType::ConstPointer m_VascularNetworkObjectToAdd;
-
+ 
   igstkLoadedObjectEventTransductionMacro(
     VesselObjectModifiedEvent, VesselReceivedInput );
 
   igstkEventTransductionMacro(
     VesselObjectNotAvailableEvent, VesselNotFoundInput );
 
-private:
-
-  vtkAppendPolyData *         m_PolyDataAppender;
-
 };
 
 
 } // end namespace igstk
 
-#endif // __igstkContourVascularNetworkObjectRepresentation_h
+#endif // __igstkVascularNetworkObjectRepresentation_h

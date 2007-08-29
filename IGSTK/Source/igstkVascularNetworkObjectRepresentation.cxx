@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkContourVascularNetworkObjectRepresentation.cxx
+  Module:    igstkVascularNetworkObjectRepresentation.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -14,12 +14,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#include "igstkContourVascularNetworkObjectRepresentation.h"
-#include "igstkEvents.h"
 
-#include <vtkDataSetMapper.h>
-#include <vtkUnstructuredGrid.h>
-#include <vtkCutter.h>
+#include "igstkVascularNetworkObjectRepresentation.h"
+
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
 #include <vtkProperty.h>
@@ -32,19 +29,15 @@
 #include <vtkPointData.h>
 #include <vtkCleanPolyData.h>
 #include <vtkTubeFilter.h>
-#include <vtkPolyDataNormals.h>
 
 namespace igstk
 { 
 
 /** Constructor */
-ContourVascularNetworkObjectRepresentation
-::ContourVascularNetworkObjectRepresentation():m_StateMachine(this)
+VascularNetworkObjectRepresentation
+::VascularNetworkObjectRepresentation():m_StateMachine(this)
 {
-  // We create the ellipse spatial object
   m_VascularNetworkObject = NULL;
-  m_PolyDataAppender = vtkAppendPolyData::New();
-
   this->RequestSetSpatialObject( m_VascularNetworkObject );
   
   igstkAddInputMacro( ValidVascularNetworkObject );
@@ -58,48 +51,39 @@ ContourVascularNetworkObjectRepresentation
 
   // FIXME : Include Vessel dialog in the Transitions
   igstkAddTransitionMacro( NullVascularNetworkObject, 
-                           NullVascularNetworkObject,
-                           NullVascularNetworkObject,  No );
+                           NullVascularNetworkObject, 
+                           NullVascularNetworkObject,  
+                           No );
   igstkAddTransitionMacro( NullVascularNetworkObject, 
                            ValidVascularNetworkObject, 
                            ValidVascularNetworkObject,  
                            SetVascularNetworkObject );
- 
-  // ValidVascularNetworkObject 
-  igstkAddTransitionMacro( ValidVascularNetworkObject, 
+  igstkAddTransitionMacro( ValidVascularNetworkObject,
                            NullVascularNetworkObject,
-                           NullVascularNetworkObject,  No ); 
-  igstkAddTransitionMacro( ValidVascularNetworkObject, 
+                           NullVascularNetworkObject,
+                           No ); 
+  igstkAddTransitionMacro( ValidVascularNetworkObject,
                            ValidVascularNetworkObject, 
-                           ValidVascularNetworkObject,  No ); 
+                           ValidVascularNetworkObject,
+                           No ); 
 
   igstkSetInitialStateMacro( NullVascularNetworkObject );
 
   m_StateMachine.SetReadyToRun();
-
 } 
 
 /** Destructor */
-ContourVascularNetworkObjectRepresentation
-::~ContourVascularNetworkObjectRepresentation()  
+VascularNetworkObjectRepresentation::~VascularNetworkObjectRepresentation()  
 {
-  // This must be called in order to avoid memory leaks.
+  // This must be called in order to avoid Memory Leaks.
   this->DeleteActors();
-
-  if( m_PolyDataAppender )
-    { 
-    m_PolyDataAppender->Delete();
-    m_PolyDataAppender = NULL;
-    }
 }
 
-
-/** Set the VascularNetworkal Spatial Object */
-void ContourVascularNetworkObjectRepresentation
-::RequestSetVascularNetworkObject( const VascularNetworkObjectType * 
-                                                      VascularNetwork )
+/** Set the VasvualNetwork Spatial Object */
+void VascularNetworkObjectRepresentation
+::RequestSetVascularNetworkObject( const VascularNetworkObjectType * network )
 {
-  m_VascularNetworkObjectToAdd = VascularNetwork;
+  m_VascularNetworkObjectToAdd = network;
   if( !m_VascularNetworkObjectToAdd )
     {
     igstkPushInputMacro( NullVascularNetworkObject );
@@ -112,18 +96,16 @@ void ContourVascularNetworkObjectRepresentation
     }
 }
 
-
 /** Null operation for a State Machine transition */
-void ContourVascularNetworkObjectRepresentation::NoProcessing()
+void VascularNetworkObjectRepresentation::NoProcessing()
 {
 }
 
-
-/** Set the VascularNetwork Spatial Object */
-void ContourVascularNetworkObjectRepresentation
+/** Set the Vascular Network Object */
+void VascularNetworkObjectRepresentation
 ::SetVascularNetworkObjectProcessing()
 {
-  // We create the VascularNetwork spatial object
+  // We create the vascular network spatial object
   m_VascularNetworkObject = m_VascularNetworkObjectToAdd;
 
   // Connect the method that enables the observer in the 
@@ -133,25 +115,25 @@ void ContourVascularNetworkObjectRepresentation
   this->RequestSetSpatialObject( m_VascularNetworkObject );
 } 
 
-
 /** Print Self function */
-void ContourVascularNetworkObjectRepresentation
+void VascularNetworkObjectRepresentation
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
+  os << "VascularNetworkObject " << m_VascularNetworkObject.GetPointer() 
+     << std::endl;
   Superclass::PrintSelf(os, indent);
 }
 
-
 /** Update the visual representation in response to changes in the geometric
- *  object */
-void ContourVascularNetworkObjectRepresentation
-::UpdateRepresentationProcessing()
+ * object */
+void VascularNetworkObjectRepresentation::UpdateRepresentationProcessing()
 {
   igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
+  this->RequestVerifyTimeStamp();
 }
 
 /** Create the vtk Actors */
-void ContourVascularNetworkObjectRepresentation::CreateActors()
+void VascularNetworkObjectRepresentation::CreateActors()
 {
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
@@ -168,29 +150,10 @@ void ContourVascularNetworkObjectRepresentation::CreateActors()
     // The observer will do the rest...
     }
 
-  vtkDataSetMapper *pointMapper = vtkDataSetMapper::New();
-  
-  pointMapper->ScalarVisibilityOff();
-  vtkCutter* cutter = vtkCutter::New();
-  cutter->SetInput( m_PolyDataAppender->GetOutput());
-  cutter->SetCutFunction(m_Plane);
-
-  vtkActor* tubeActor = vtkActor::New();
-  tubeActor->GetProperty()->SetColor(this->GetRed(),
-                                     this->GetGreen(),
-                                     this->GetBlue());
-
-  pointMapper->SetInput(cutter->GetOutput());
-  tubeActor->SetMapper(pointMapper);
-
-  this->AddActor( tubeActor );
-
-  pointMapper->Delete();
-  cutter->Delete();
 }
 
 /** Create the vtk Actors for one vessel */
-void ContourVascularNetworkObjectRepresentation::CreateActorsForOneVesselProcessing()
+void VascularNetworkObjectRepresentation::CreateActorsForOneVesselProcessing()
 {
   const VesselObjectType * vessel = m_VesselReceivedInputToBeSet;
 
@@ -199,14 +162,14 @@ void ContourVascularNetworkObjectRepresentation::CreateActorsForOneVesselProcess
     igstkLogMacro( CRITICAL, "Not enough points to render a tube.\n" );
     return;
     }
-   
+      
   double spacing[3];
   spacing[0] = vessel->GetSpacing()[0];
   spacing[1] = vessel->GetSpacing()[1];
   spacing[2] = vessel->GetSpacing()[2];
   
   //Step 1: copy skeleton points from a vessel into vtkPoints
-  //vtkpoints assumes a triplet is coming so use pointer arithmetic
+  //vtkPoints assumes a triplet is coming so use pointer arithmetic
   //to jump to the next spot in a multidimensional array
   unsigned int nPoints = vessel->GetNumberOfPoints();
 
@@ -221,18 +184,59 @@ void ContourVascularNetworkObjectRepresentation::CreateActorsForOneVesselProcess
   vVectors->SetNumberOfComponents(3);
 
   const VesselObjectType::PointType* pt = vessel->GetPoint(0); 
+  vtkSphereSource * sphereSource1 = vtkSphereSource::New();
+  sphereSource1->SetCenter((float)(pt->GetPosition()[0]*spacing[0]),
+                           (float)(pt->GetPosition()[1]*spacing[1]),
+                           (float)(pt->GetPosition()[2]*spacing[2]));
+  sphereSource1->SetRadius(pt->GetRadius()*0.95*spacing[0]);
+  vtkPolyDataMapper *sphereMapper1 = vtkPolyDataMapper::New();
+  sphereMapper1->SetInput(sphereSource1->GetOutput());
+  
+  vtkActor* sphere1 = vtkActor::New();
+  sphere1->SetMapper(sphereMapper1);
+  
+  sphere1->GetProperty()->SetColor(this->GetRed(),
+                                  this->GetGreen(),
+                                  this->GetBlue());
+        
+  sphere1->GetProperty()->SetOpacity(this->GetOpacity());
+  this->AddActor( sphere1 );
+
+  sphereMapper1->Delete();
+  sphereSource1->Delete();
 
   for( unsigned int i=0; i < nPoints; i++ )
     {
     const VesselObjectType::PointType* pt = vessel->GetPoint(i); 
-    vPoints->SetPoint(i, (float)(pt->GetPosition()[0]*spacing[0]), 
-                         (float)(pt->GetPosition()[1]*spacing[1]), 
+    vPoints->SetPoint(i, (float)(pt->GetPosition()[0]*spacing[0]),
+                         (float)(pt->GetPosition()[1]*spacing[1]),
                          (float)(pt->GetPosition()[2]*spacing[2]));
     vScalars->SetTuple1(i,pt->GetRadius()*0.95*spacing[0]);
     vVectors->SetTuple3(i,pt->GetRadius()*0.95*spacing[0],0,0);
     }  
 
   pt = vessel->GetPoint(nPoints-1); 
+  vtkSphereSource * sphereSource2 = vtkSphereSource::New();
+  sphereSource2->SetCenter((float)(pt->GetPosition()[0]*spacing[0]),
+                           (float)(pt->GetPosition()[1]*spacing[1]),
+                           (float)(pt->GetPosition()[2]*spacing[2]));
+  sphereSource2->SetRadius(pt->GetRadius()*0.95*spacing[0]);
+  
+  vtkPolyDataMapper *sphereMapper2 = vtkPolyDataMapper::New();
+  sphereMapper2->SetInput(sphereSource2->GetOutput());
+  
+  vtkActor* sphere2 = vtkActor::New();
+  sphere2->SetMapper(sphereMapper2);
+ 
+  sphere2->GetProperty()->SetColor(this->GetRed(),
+                                  this->GetGreen(),
+                                  this->GetBlue());
+  sphere2->GetProperty()->SetOpacity(this->GetOpacity());
+
+  this->AddActor( sphere2 );
+
+  sphereMapper2->Delete();
+  sphereSource2->Delete();
   
   //Step 2: create a point id list (for a polyline this is just linear)
   vtkIdType* pntIds = new vtkIdType[nPoints];
@@ -289,7 +293,7 @@ void ContourVascularNetworkObjectRepresentation::CreateActorsForOneVesselProcess
   //Step 8: make tubes. The number of sides per tube is set by nsides.
   //Even an nsides of 3 looks surprisingly good.
   vtkTubeFilter* vTFilter = vtkTubeFilter::New();
-  vTFilter->SetNumberOfSides(10);
+  vTFilter->SetNumberOfSides(5);
   vTFilter->SetInput(vClean->GetOutput());
   vTFilter->CappingOff();
 
@@ -297,8 +301,26 @@ void ContourVascularNetworkObjectRepresentation::CreateActorsForOneVesselProcess
   vTFilter->SetRadiusFactor(max_scalar/min_scalar); //sets max rad.
   vTFilter->SetVaryRadiusToVaryRadiusByScalar();
 
-  m_PolyDataAppender->AddInput(vTFilter->GetOutput());
- 
+  //Step 9: create a mapper of the tube
+  vtkPolyDataMapper* vMapper = vtkPolyDataMapper::New();
+  vMapper->SetInput(vTFilter->GetOutput());
+      
+  vMapper->ScalarVisibilityOff();    //interpret scalars as color command
+   
+  //Step 10: Add the mapper to the actor. You can now delete everything.
+  //A matrix for the actor, colors, opacities, etc can be set by
+  //the caller before or after this function is called.
+  vtkActor* TubeActor = vtkActor::New();
+  TubeActor->SetMapper(vMapper);
+
+  TubeActor->GetProperty()->SetColor(this->GetRed(),
+                                    this->GetGreen(),
+                                    this->GetBlue());
+
+  TubeActor->GetProperty()->SetOpacity(this->GetOpacity());
+
+  this->AddActor( TubeActor );
+
   vPoints->Delete();
   delete [] pntIds;
   vScalars->Delete();
@@ -307,19 +329,22 @@ void ContourVascularNetworkObjectRepresentation::CreateActorsForOneVesselProcess
   vCA->Delete();
   vPData->Delete();
   vTFilter->Delete();
+  vMapper->Delete();
   vColorScalars->Delete();
   vVectors->Delete();
 }
 
 /** Create a copy of the current object representation */
-ContourVascularNetworkObjectRepresentation::Pointer
-ContourVascularNetworkObjectRepresentation::Copy() const
+VascularNetworkObjectRepresentation::Pointer
+VascularNetworkObjectRepresentation::Copy() const
 {
-  Pointer newOR = ContourVascularNetworkObjectRepresentation::New();
+  Pointer newOR = VascularNetworkObjectRepresentation::New();
   newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
   newOR->SetOpacity(this->GetOpacity());
   newOR->RequestSetVascularNetworkObject(m_VascularNetworkObject);
+
   return newOR;
 }
+
 
 } // end namespace igstk

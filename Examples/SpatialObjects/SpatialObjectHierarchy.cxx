@@ -161,19 +161,19 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 // 
 // We can request the number of objects in the group using the
-// \code{GetNumberOfObjects()} function.
+// \code{GetNumberOfChildren()} function.
 // Since \code{sphere1} has a child, \code{sphere2}, there are actually
 // three objects in the group.
 //
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
   std::cout << "Number of object in my group: " 
-            << group->GetNumberOfObjects() << std::endl;
+            << group->GetNumberOfChildren() << std::endl;
 // Software Guide : EndCodeSnippet
-  if(group->GetNumberOfObjects() != 3)
+  if(group->GetNumberOfChildren() != 3)
     {
     std::cout << "group should have 3 objects and got: " 
-              << group->GetNumberOfObjects() << std::endl;
+              << group->GetNumberOfChildren() << std::endl;
     }
   return EXIT_SUCCESS;
 }

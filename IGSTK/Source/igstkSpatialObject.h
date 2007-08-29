@@ -231,6 +231,14 @@ private:
 
 };
 
+//
+// Macros declaring events to be used when requesting SpatialObjects.
+//
+igstkLoadedObjectEventMacro( SpatialObjectModifiedEvent, 
+  IGSTKEvent, SpatialObject );
+
+igstkEventMacro( SpatialObjectNotAvailableEvent, InvalidRequestErrorEvent );
+
 } // end namespace igstk
 
 #endif // __igstkSpatialObject_h

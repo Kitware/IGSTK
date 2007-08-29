@@ -185,8 +185,8 @@ private:
   /** Transduction macros that will convert received events 
    *  into StateMachine inputs */
   igstkLoadedEventTransductionMacro( TransformModifiedEvent, 
-                                     SpatialObjectTransformInput, 
-                                     SpatialObjectTransform );
+                                     SpatialObjectTransformInput );
+
   igstkEventTransductionMacro( TransformNotAvailableEvent, 
                                      TransformNotAvailableInput ); 
 

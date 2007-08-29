@@ -43,12 +43,12 @@ public:
   typedef igstk::View2D ViewType;
 
   igstkObserverObjectMacro(VascularNetwork,
-                     igstk::VascularNetworkReader::VascularNetworkModifiedEvent,
+                     igstk::VascularNetworkObjectModifiedEvent,
                      igstk::VascularNetworkObject)
 
   igstkObserverObjectMacro(Vessel,
-                        igstk::VascularNetworkObject::VesselObjectModifiedEvent,
-                        igstk::VesselObject)
+                     igstk::VesselObjectModifiedEvent,
+                     igstk::VesselObject)
   
   FourViewsImplementation()
     {
@@ -228,10 +228,10 @@ public:
       VesselObserver::Pointer vesselObserver = VesselObserver::New();
  
       m_TubeGroup->AddObserver(
-            VascularNetworkObjectType::VesselObjectModifiedEvent(),
+            igstk::VesselObjectModifiedEvent(),
             vesselObserver);
 
-      for(unsigned int i=0;i<m_TubeGroup->GetNumberOfObjects();i++)
+      for(unsigned int i=0;i<m_TubeGroup->GetNumberOfVessels();i++)
         {
         const_cast<VascularNetworkObjectType*>(m_TubeGroup.GetPointer()
                                                        )->RequestGetVessel(i);

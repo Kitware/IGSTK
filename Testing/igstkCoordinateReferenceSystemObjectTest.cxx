@@ -30,70 +30,7 @@
 #include "itkStdStreamLogOutput.h"
 #include "igstkVTKLoggerOutput.h"
 
-namespace igstk
-{
-namespace CoordinateReferenceSystemObjectTest
-{
-class TransformObserver : public ::itk::Command 
-{
-public:
-  typedef  TransformObserver          Self;
-  typedef  ::itk::Command             Superclass;
-  typedef  ::itk::SmartPointer<Self>  Pointer;
-  itkNewMacro( Self );
-
-protected:
-  TransformObserver() 
-    {
-    m_GotTransform = false;
-    }
-  ~TransformObserver() {}
-
-public:
-
-  typedef ::igstk::TransformModifiedEvent  EventType;
-        
-  void Execute(itk::Object *caller, const itk::EventObject & event)
-    {
-    const itk::Object * constCaller = caller;
-    this->Execute( constCaller, event );
-    }
-
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
-    {
-    m_GotTransform = false;
-    if( EventType().CheckEvent( &event ) )
-      {
-      const EventType * transformEvent = 
-                 dynamic_cast< const EventType *>( &event );
-      if( transformEvent )
-        {
-        m_Transform = transformEvent->Get();
-        m_GotTransform = true;
-        }
-      }
-    }
-
-  bool GotTransform() const
-    {
-    return m_GotTransform;
-    }
-
-  const ::igstk::Transform & GetTransform() const
-    {
-    return m_Transform;
-    }
-      
-private:
-
-  ::igstk::Transform  m_Transform;
-  bool                m_GotTransform;
-
-};
-
-} // end namespace CoordinateReferenceSystemObjectTest
-} // end namespace igstk
-
+#include "igstkTransformObserverTestHelper.h"
 
 int igstkCoordinateReferenceSystemObjectTest( int, char * [] )
 {
@@ -180,8 +117,7 @@ int igstkCoordinateReferenceSystemObjectTest( int, char * [] )
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
 
-  typedef ::igstk::CoordinateReferenceSystemObjectTest::TransformObserver
-     TransformObserverType;
+  typedef igstk::TransformObserverTestHelper TransformObserverType;
 
   TransformObserverType::Pointer transformObserver 
                                                = TransformObserverType::New();

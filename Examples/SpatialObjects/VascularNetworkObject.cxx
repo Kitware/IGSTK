@@ -34,7 +34,7 @@
 // Software Guide : EndCodeSnippet
 
 igstkObserverObjectMacro(Vessel,
-  ::igstk::VascularNetworkObject::VesselObjectModifiedEvent,
+  ::igstk::VesselObjectModifiedEvent,
   ::igstk::VesselObject)
 
 int main( int , char *[] )
@@ -116,7 +116,7 @@ int main( int , char *[] )
   VesselObserver::Pointer vesselObserver = VesselObserver::New();
  
   vasculature->AddObserver(
-            VascularNetworkType::VesselObjectModifiedEvent(),
+            igstk::VesselObjectModifiedEvent(),
             vesselObserver);
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
