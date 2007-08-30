@@ -236,8 +236,8 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
                         ::SetOrientationProcessing called...\n");
   m_Orientation = m_OrientationToBeSet;
 
-  this->m_ImagePlane->SetMarginSizeX(0.0);
-  this->m_ImagePlane->SetMarginSizeY(0.0);
+  //this->m_ImagePlane->SetMarginSizeX(0.0);
+  //this->m_ImagePlane->SetMarginSizeY(0.0);
   this->m_ImagePlane->RestrictPlaneToVolumeOn();
   this->m_ImagePlane->DisplayTextOff();
   this->m_ImagePlane->On();
