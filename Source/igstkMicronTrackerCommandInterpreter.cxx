@@ -29,7 +29,7 @@ namespace igstk
 {
 
 /** Constructor (initializes MicronTrackerCommandInterpreter values) */
-MicronTrackerCommandInterpreter::MicronTrackerCommandInterpreter()
+MicronTrackerCommandInterpreter::MicronTrackerCommandInterpreter():m_StateMachine(this)
 {
 }
 
@@ -50,9 +50,9 @@ int MicronTrackerCommandInterpreter::Init()
 {
   m_ErrorString = "No error!";
 
-  m_Markers = new Markers();
-  m_Persistance = new Persistence();
-  this->InitializeInitFileAccess();
+  m_Markers = new ::Markers();
+  m_Persistence = new ::Persistence();
+  //this->InitialInitFileAccess();
   m_TempMarkerForAddingFacet = 0;
   
   return 1;
@@ -138,7 +138,7 @@ void MicronTrackerCommandInterpreter::InitialInitFileAccess()
   initFileName += "/MicronTracker Demo.ini";
 #endif
 
-  m_Persistence->setPath(micronTrackerDirectory);
+  //m_Persistence->setPath( micronTrackerDirectory.c_str() );
   m_Persistence->setSection("General");
   
   // Setting the FrameInterleave property in the Markers object
@@ -170,7 +170,7 @@ int MicronTrackerCommandInterpreter::SetupCameras()
 
 
 
-  m_Cameras = new Cameras();
+  m_Cameras = new ::Cameras();
   int result = m_Cameras->AttachAvailableCameras();
   
   if (result == MT_OK &&  m_Cameras->getCount() >= 1 )
@@ -427,7 +427,7 @@ int MicronTrackerCommandInterpreter::StopSampling(char* templateName, double jit
             }
           // Combine the transforms accumulated to a new one and save it with the facet in the marker
           facet1ToNewFacetXf = facet1ToNewFacetXfs[1];
-          for (i=2; i<facet1ToNewFacetXfs.size(); i++)
+          for (unsigned int i=2; i<facet1ToNewFacetXfs.size(); i++)
             {
               facet1ToNewFacetXf->inBetween(facet1ToNewFacetXfs[i], 1);// will result in equal contribution by all faces
             }
@@ -438,7 +438,7 @@ int MicronTrackerCommandInterpreter::StopSampling(char* templateName, double jit
         }
       else
         {
-          m_CurrMarker = new Marker();
+          m_CurrMarker = new ::Marker();
           Xform3D* Xf = new Xform3D();
           m_CurrMarker->setName(templateName);
           result = m_CurrMarker->addTemplateFacet(f, Xf);
@@ -478,7 +478,7 @@ int MicronTrackerCommandInterpreter::SaveMarkerTemplate(char* templName)
     }
   else
     {
-      mtResetSamples();
+      //mtResetSamples();
       return 0;
     }
 }
@@ -526,156 +526,19 @@ int MicronTrackerCommandInterpreter::GetNumberOfTotalFacetsInMarker(int markerIn
 //------------------------------------------
 void MicronTrackerCommandInterpreter::FindIdentifiedMarkers()
 {
-  Collection* markersCollection = new Collection(m_Markers->identifiedMarkers(m_CurrentCamera));
-  m_NumberOfIdentifiedMarkers = markersCollection->count();
-  if (m_NumberOfIdentifiedMarkers == 0)
-    {
-      m_markerStatus = MTI_NO_MARKER_CAPTURED;
-      delete markersCollection; 
-      return;
-    }
-  m_Rotations.clear();
-  m_Translations.clear();
-  m_IdentifiedMarkersXPoints.clear();
-  for (int i=0;i<m_IdentifiedMarkersName.size();i++)
-    {
-      m_IdentifiedMarkersName[i].erase();
-    }
-  
-  m_IdentifiedMarkersName.resize(0);
-  m_IdentifiedMarkersName.clear();
-  m_NumberOfFacetsInEachMarker.clear();
-  m_NumberOfTotalFacetsInEachMarker.clear();
-  
-  m_markerStatus = MTI_MARKER_CAPTURED;
-  int markerNum = 1;
-  int facetNum = 1;
-  
-  for (markerNum = 1; markerNum <= markersCollection->count(); markerNum++)
-    {
-      //m_CurrTempMarker->setHandle(markersCollection->itemI(markerNum));
-      Marker* marker = new Marker (markersCollection->itemI(markerNum));
-      //Collection* totalFacetsCollection = new Collection(marker->getTemplateFacets());
-      Collection* totalFacetsCollection = new Collection(marker->getTemplateFacets());
-      m_IdentifiedMarkersName.push_back(marker->getName());
-      
-      if (marker->wasIdentified(m_CurrentCamera) != 0)
-        {
-          Collection* facetsCollection = new Collection(marker->identifiedFacets(m_CurrentCamera));
-          
-          // Adjust the colour temperature if we see a CoolCard marker
-          if ((0 == strncmp(marker->getName(), "COOL", 4)) ||  
-              (0 == strncmp(marker->getName(), "cool", 4)) ||
-              (0 == strncmp(marker->getName(), "Cool", 4)) )
-            {
-              Facet* f = new Facet(facetsCollection->itemI(1));
-              Vector* ColorVector = (f->IdentifiedVectors())[0];
-              m_CurrentCamera->AdjustCoolnessFromColorVector(ColorVector->Handle());
-              delete f;
-            }
-          vXPointsTemp.clear();
-          for (facetNum = 1; facetNum <= facetsCollection->count(); facetNum++)
-            {
-              Facet* f = new Facet(facetsCollection->itemI(facetNum));
-              // get Xpoints and then draw on each image if enabled        
-              f->getXpoints(m_CurrentCamera, (double *)LS_LR_BH_XY);
-              
-              // Have to push_back the elements one by one. If pass the address of the whole
-              // array, the points will be deleted if the facet is deleted.
-                    
-              // Left, Long vector
-              vXPointsTemp.push_back(LS_LR_BH_XY[0][0][0][0]);
-              vXPointsTemp.push_back(LS_LR_BH_XY[0][0][0][1]);
-              vXPointsTemp.push_back(LS_LR_BH_XY[0][0][1][0]);
-              vXPointsTemp.push_back(LS_LR_BH_XY[0][0][1][1]);
-                            
-              // Right, Long vector
-              vXPointsTemp.push_back(LS_LR_BH_XY[0][1][0][0]);
-              vXPointsTemp.push_back(LS_LR_BH_XY[0][1][0][1]);
-              vXPointsTemp.push_back(LS_LR_BH_XY[0][1][1][0]);
-              vXPointsTemp.push_back(LS_LR_BH_XY[0][1][1][1]);
-              
-              // Left, short vector
-              vXPointsTemp.push_back(LS_LR_BH_XY[1][0][0][0]);
-              vXPointsTemp.push_back(LS_LR_BH_XY[1][0][0][1]);
-              vXPointsTemp.push_back(LS_LR_BH_XY[1][0][1][0]);
-              vXPointsTemp.push_back(LS_LR_BH_XY[1][0][1][1]);
 
-              // Right, Short vector
-              vXPointsTemp.push_back(LS_LR_BH_XY[1][1][0][0]);
-              vXPointsTemp.push_back(LS_LR_BH_XY[1][1][0][1]);
-              vXPointsTemp.push_back(LS_LR_BH_XY[1][1][1][0]);
-              vXPointsTemp.push_back(LS_LR_BH_XY[1][1][1][1]);
-              
-              delete f;
-              
-            } // End of the for loop for the facets.
-          m_IdentifiedMarkersXPoints.push_back( vXPointsTemp );
-          m_NumberOfFacetsInEachMarker.push_back(facetsCollection->count());
-          m_NumberOfTotalFacetsInEachMarker.push_back(totalFacetsCollection->count());
-          delete facetsCollection;
-          
-
-          /***********************************/
-          /*VERY IMPORTANT PROGRAMMING NOTE                                       
-            Deleting the totalFacetsCollection here causes the identified facets to be deleted
-            and hence not shown as identified on the GUI side. Obviously on the other hand, not deleting this
-            object results in memory leak. Should be fixed soon! */
-          /***********************************/
-          //                        delete totalFacetsCollection;
-          Xform3D* Marker2CurrentCameraeraXf = marker->marker2CameraXf(m_CurrentCamera->getHandle());
-          // Find the translations and push them in a 2 temporary vector and then push that temp vector into a 
-          // 2 dimensional vector.
-          vector<double> vTransTemp;
-          vTransTemp.clear();
-          for (int i = 0 ; i < 3; i++)
-            {
-              vTransTemp.push_back(Marker2CurrentCameraeraXf->getShift(i));
-            }
-          vTransTemp.push_back(1);
-          m_Translations.push_back(vTransTemp);
-          // Find the rotations and push them in a 2 temporary vector and then push that temp vector into a 
-          // 2 dimensional vector.
-          
-          double vR[3][3];
-          
-          vector<double> vRotTemp;
-          // problem lies here !
-          Xform3D_RotMatGet(Marker2CurrentCameraeraXf->getHandle(), reinterpret_cast<double *>(vR[0]));
-         //Marker2CurrentCameraeraXf->getRotationMatrix(reinterpret_cast<double *>(vR[0]));
-          for (int j = 0; j < 3; j++)
-            {
-                for (int k = 0; k < 3; k++)
-                  { 
-                  vRotTemp.push_back( vR[j][k] );
-                    }
-            }
-          
-          m_Rotations.push_back(vRotTemp);/**/
-          delete Marker2CurrentCameraeraXf;
-          
-          
-        } // End of if (m_CurrTempMarker->wasIdentified...)
-      
-
-    } // End of the for loop for the markers.
-  delete markersCollection;
 }
-
-
-
-
 
 //------------------------------------------
 void MicronTrackerCommandInterpreter::GetTranslations(vector<double> &vTranslations, int markerIndex)
 {        
-  vTranslations = m_Translations[markerIndex];        
+  // vTranslations = m_Translations[markerIndex];        
 }
 
 //------------------------------------------
 void MicronTrackerCommandInterpreter::GetRotations(vector<double> &vRotations, int markerIndex)
 {
-  vRotations = m_Rotations[markerIndex];
+  // vRotations = m_Rotations[markerIndex];
 }
 
 //------------------------------------------
@@ -687,22 +550,7 @@ int MicronTrackerCommandInterpreter::GetStatus()
 //------------------------------------------
 int MicronTrackerCommandInterpreter::GetMarkerStatus(int loadedMarkerIndex, int* identifiedMarkerIndex)
 {
-  // Safety check. If the request marke index is greater than the identified markers,
-  // return NO_MARKER_CAPTURED
-  if (loadedMarkerIndex > this->GetLoadedTemplatesNum() || loadedMarkerIndex < 0)
-    {
-      return MTI_NO_MARKER_CAPTURED;
-    }
-  char* markerName = this->GetTemplateName(loadedMarkerIndex);
-  for (int i=0; i< m_NumberOfIdentifiedMarkers; i++)
-    {
-      if (markerName == m_IdentifiedMarkersName[i])
-        {
-          *identifiedMarkerIndex = i;
-          return MTI_MARKER_CAPTURED;
-        }
-    }
-  return MTI_NO_MARKER_CAPTURED;
+
 }
 
 //------------------------------------------
@@ -1054,18 +902,7 @@ double MicronTrackerCommandInterpreter::GetLatestFrameTime(int index)
 //------------------------------------------
 int MicronTrackerCommandInterpreter::GetNumberOfFramesGrabbed(int index)
 {
-  if (index == -1)
-    {
-    return m_CurrentCamera->getNumberOfFramesGrabbed();
-    }
-  else if (!this->CheckCameraIndex(index))
-    {
-    return -1;
-    }
-  else
-    {
-    return m_Cameras->getCamera(index)->getNumberOfFramesGrabbed();
-    }
+  return 1;
 }
 
 //------------------------------------------
@@ -1093,7 +930,7 @@ int MicronTrackerCommandInterpreter::GetLatestFramePixHistogram(long* &aPixHist,
 }
 
 //------------------------------------------
-mtMeasurementHazardCode MicronTrackerCommandInterpreter::GetLatestFrameHazardCode()
+int MicronTrackerCommandInterpreter::GetLatestFrameHazardCode()
 {
   return Camera_LastFrameThermalHazard(m_CurrentCamera->getHandle());
   // return m_CurrentCamera->getHazardCode();
@@ -1131,15 +968,7 @@ char* MicronTrackerCommandInterpreter::GetTemplateName(int index)
 //------------------------------------------
 char* MicronTrackerCommandInterpreter::GetIdentifiedTemplateName(int index)
 {
-  // Check the index
-  if (index > -1 && index < m_NumberOfIdentifiedMarkers)
-    {
-    return (char*)m_IdentifiedMarkersName[index].c_str();
-    }
-  else
-    {
-    return "";
-    }
+  return "";
 }
 
 //------------------------------------------
@@ -1210,103 +1039,28 @@ int MicronTrackerCommandInterpreter::GetLeftRightImageArrayHalfSize(
 void MicronTrackerCommandInterpreter::GetIdentifiedMarkersXPoints(
   double* &xPoints, int markerIndex)
 {
-  //Check the marker index
-  if (markerIndex >= m_NumberOfIdentifiedMarkers-1)
-    {
-    markerIndex = m_NumberOfIdentifiedMarkers -1;
-    }
-  if(markerIndex < 0)
-    {
-    markerIndex = 0;
-    }
-  xPoints = &m_IdentifiedMarkersXPoints[markerIndex][0];
+
 }
 
 //------------------------------------------
 void MicronTrackerCommandInterpreter::GetUnidentifiedMarkersEnds(
   double* &endPoints, int vectorIndex)
 {        
-  //Check the vector index
-  if (vectorIndex >= m_NumberOfUnidentifiedMarkers-1)
-    {
-    vectorIndex = m_NumberOfUnidentifiedMarkers-1;
-    }
-  if (vectorIndex < 0)
-    {
-    vectorIndex = 0;
-    }
-  endPoints = &m_UnidentifiedMarkersEndPoints[vectorIndex][0];
 }
 
 //------------------------------------------
 int MicronTrackerCommandInterpreter::RemoveFile(string fileName, char* dir)
 {
-  char currentFolderPath[255];
-  mtUtils::getCurrPath(currentFolderPath);
-  if ( dir != NULL )
-    {
-#if(WIN32)
-    strcat(currentFolderPath, "\\");
-    strcat(currentFolderPath, dir);
-    strcat(currentFolderPath, "\\");
-#else
-    strcat(currentFolderPath, "/");
-    strcat(currentFolderPath, dir);
-    strcat(currentFolderPath, "/");
-#endif
-    }
-  if (_chdir(currentFolderPath) == 0)
-    {
-    int result = remove(fileName.c_str());
-    // Return to the parent directory
-    _chdir("..");
-    if (result == 0)
-      {
-      return 0; // successful
-      }
-    else // not successful
-      {
-      return -1;
-      }
-    }
-  return -1;
+  return 0;
 }
 
 //---------------------------------------------
 int MicronTrackerCommandInterpreter::RenameFile(
   string oldName, string newName, char* dir)
 {
-  char currentFolderPath[255];
-  mtUtils::getCurrPath(currentFolderPath);
-  if ( dir != NULL )
-    {
-#if(WIN32)
-    strcat(currentFolderPath, "\\");
-    strcat(currentFolderPath, dir);
-    strcat(currentFolderPath, "\\");
-#else
-    strcat(currentFolderPath, "/");
-    strcat(currentFolderPath, dir);
-    strcat(currentFolderPath, "/");
-#endif
-    }
-  if (_chdir(currentFolderPath) == 0 )
-    {
-    int result = rename(oldName.c_str(), newName.c_str());
-      
-    // Return to the parent directory
-    _chdir("..");
-    if (result == 0 )
-      {
-      return 0; // successful
-      }
-    else // not successful
-      {
-      return -1;
-      }
-    }
-  return -1;
+  return 0;
 }
+
 //------------------------------------------
 string MicronTrackerCommandInterpreter::HandleErrors(int errorNum)
 {
@@ -1347,6 +1101,7 @@ string MicronTrackerCommandInterpreter::HandleErrors(int errorNum)
     mtCalibrationFileIncomplete,
     mtCameraInitializeFailed,
     mtGrabFrameError*/
+
   string error = "";
   switch (errorNum)
     {
@@ -1370,4 +1125,5 @@ string MicronTrackerCommandInterpreter::HandleErrors(int errorNum)
       break;
     }
   return error;
+}
 }

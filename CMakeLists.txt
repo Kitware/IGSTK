@@ -164,6 +164,18 @@ IF(IGSTKSandbox_BUILD_EXAMPLES)
     SUBDIRS(Examples)
 ENDIF(IGSTKSandbox_BUILD_EXAMPLES)
 
+# Connect MicronTracker
+OPTION(IGSTKSandbox_USE_MicronTracker "Connect MicronTracker" OFF)
+
+IF(IGSTKSandbox_USE_MicronTracker)
+  FIND_PATH(MTC_INCLUDE_DIRECTORY MTC.h)
+  INCLUDE_DIRECTORIES( ${MTC_INCLUDE_DIRECTORY} )
+  INCLUDE_DIRECTORIES( ${IGSTKSandbox_SOURCE_DIR}/Utilities/MicronTracker/src )
+
+  FIND_LIBRARY( MTC_LIBRARY_DIRS MTC )
+  LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
+ENDIF(IGSTKSandbox_USE_MicronTracker)
+
 # include Sandbox header files before the main library IGSTK
 INCLUDE_DIRECTORIES(
 ${ITK_DIR}/Utilities/zlib

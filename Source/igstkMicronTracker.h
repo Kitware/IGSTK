@@ -19,8 +19,8 @@
 #define __igstkMicronTracker_h
 
 #include "igstkMicronTrackerCommandInterpreter.h"
-#include "igstkMicronTrackerTool.h"
-#include "igstkMicronTrackerAttributes.h"
+/* #include "igstkMicronTrackerTool.h" */
+/* #include "igstkMicronTrackerAttributes.h" */
 #include "igstkTracker.h"
 
 namespace igstk
@@ -38,9 +38,12 @@ class MicronTracker : public Tracker
 public:
 
   /** typedefs for the tool */
+
+  /* 
   typedef igstk::MicronTrackerTool              MicronTrackerToolType;
   typedef MicronTrackerToolType::Pointer        MicronTrackerToolPointer;
   typedef MicronTrackerToolType::ConstPointer   MicronTrackerToolConstPointer;
+  */
 
   /** Number of ports to allow for this tracker. */
   itkStaticConstMacro( NumberOfPorts, unsigned int, 10 );
@@ -49,7 +52,7 @@ public:
   itkStaticConstMacro( NumberOfChannels, unsigned int, 1 );
 
   /** Typedef for the attributes of the tracker. */
-  typedef igstk::MicronTrackerAttributes           AttributesType;
+  // typedef igstk::MicronTrackerAttributes           AttributesType;
 
   /** Typedef for command interpreter. */
   typedef igstk::MicronTrackerCommandInterpreter   CommandInterpreterType;
@@ -63,6 +66,9 @@ public:
   /** Get the number of tools that have been detected. */
   igstkGetMacro( NumberOfTools, unsigned int );
 
+  /** Helper function for reporting interpreter errors. */
+  ResultType CheckError(CommandInterpreterType *interpreter);
+ 
 protected:
 
   MicronTracker(void);
@@ -74,11 +80,11 @@ protected:
    *  settings in a single class, rather than having a separate
    *  request method for each setting, makes the state machine for the
    *  MicronTracker much simpler.  */
-  virtual void RequestSetAttributes( const AttributesType *attribs );
+  // virtual void RequestSetAttributes( const AttributesType *attribs );
 
   /** Get settings and status information for the MicronTracker via
    *  a MicronTrackerAttributes object. */
-  virtual void RequestGetAttributes( AttributesType *attribs);
+  // virtual void RequestGetAttributes( AttributesType *attribs);
 
   /** Open communication with the tracking device. */
   virtual ResultType InternalOpen( void );

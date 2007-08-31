@@ -46,3 +46,13 @@ IF(IGSTK_USE_KWSTYLE)
     )
   ADD_CUSTOM_TARGET(StyleCheck DEPENDS ${IGSTKSandbox_BINARY_DIR}/KWStyleReport.txt)
 ENDIF(IGSTK_USE_KWSTYLE)
+
+IF( IGSTKSandbox_USE_MicronTracker )
+    SUBDIRS( MicronTracker )
+ENDIF( IGSTKSandbox_USE_MicronTracker )
+
+
+
+
+
+

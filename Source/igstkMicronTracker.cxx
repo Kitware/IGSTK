@@ -32,6 +32,8 @@ MicronTracker::MicronTracker(void):m_StateMachine(this)
 {
   m_CommandInterpreter = CommandInterpreterType::New();
   m_NumberOfTools = 0;
+
+  /*
   for (unsigned int port = 0; port < NumberOfPorts; port++)
     {
     TrackerPortPointer tport = TrackerPortType::New();
@@ -42,6 +44,7 @@ MicronTracker::MicronTracker(void):m_StateMachine(this)
       }
     this->AddPort(tport);
     }
+  */
 
   this->SetThreadingEnabled( true );
 
@@ -70,9 +73,9 @@ MicronTracker::CheckError(CommandInterpreterType *interpreter)
     os.fill('0');
     os << std::hex << std::uppercase << errnum;
     igstkLogMacro( WARNING, "MicronTracker Error " << os.str() << ": " <<
-                   interpreter->ErrorString(errnum) << "\n");
+                   interpreter->GetErrorString(errnum) << "\n");
 
-    igstkLogMacro( WARNING, interpreter->ErrorString(errnum) << "\n");
+    igstkLogMacro( WARNING, interpreter->GetErrorString(errnum) << "\n");
     return FAILURE;
     }
 
@@ -136,7 +139,7 @@ MicronTracker::ResultType MicronTracker::InternalStartTracking( void )
   igstkLogMacro( DEBUG, "MicronTracker::InternalStartTracking called ...\n");  
 
   // Send the command to start tracking
-  m_CommandInterpreter->StartTracking();
+  // m_CommandInterpreter->StartTracking();
 
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
@@ -150,7 +153,7 @@ MicronTracker::ResultType MicronTracker::InternalStopTracking( void )
   igstkLogMacro( DEBUG, "MicronTracker::InternalStopTracking called ...\n");
 
   // Send the command to stop tracking.
-  m_CommandInterpreter->StopTracking();
+  // m_CommandInterpreter->StopTracking();
 
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
@@ -161,7 +164,7 @@ MicronTracker::ResultType MicronTracker::InternalStopTracking( void )
 /** Reset the tracking device to put it back to its original state. */
 MicronTracker::ResultType MicronTracker::InternalReset( void )
 {
-  m_CommandInterpreter->Reset();
+  //m_CommandInterpreter->Reset();
 
   ResultType result = this->CheckError(m_CommandInterpreter);
 
@@ -197,6 +200,9 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
       TranslationType translation;
       ErrorType errorValue;
 
+      typedef TransformType::VersorType RotationType;
+      RotationType rotation;
+ 
       // Insert code here to copy the transformation out of the
       // shared memory buffer
 

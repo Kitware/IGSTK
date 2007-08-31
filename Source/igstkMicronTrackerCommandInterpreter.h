@@ -34,6 +34,7 @@
 #include "MTC.h"
 
 #include "igstkObject.h"
+#include "igstkStateMachine.h"
 
 
 namespace igstk
@@ -63,8 +64,6 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( MicronTrackerCommandInterpreter, Object )
 
-protected:
-
   /** Device error codes
    *
    *  These error codes can be set as a result of a successful
@@ -81,6 +80,10 @@ protected:
     MTI_CAMERA_INDEX_OUT_OF_RANGE = 6,   /**< Bad camera index */
   } ErrorCodeType;
 
+
+  /** Define MeasurementHazardCode type */
+
+  typedef int MeasurementHazardCode;
 
   /** Constructor */
   MicronTrackerCommandInterpreter();
@@ -420,10 +423,25 @@ protected:
                                      int index);
 
   /** Get the stored error string */
-  char *GetErrorString() { return m_ErrorString.c_str(); };
+  const char *GetErrorString( const int number ) 
+    { 
+    return m_ErrorString.c_str();
+    }
+
+  /** Get error */
+  const int GetError() 
+    {  
+    return 1;
+    };
 
   /** Update the ini file */
   void UpdateInitFile();
+
+  /** Initialize */
+  void InitialInitFileAccess();
+
+  /** Check camera index */
+  bool CheckCameraIndex(int id);
 
 protected:
 
@@ -443,19 +461,22 @@ protected:
   std::string m_ErrorString;
 
   /** Handle for each camera available to the system. */
-  Cameras m_Cameras;
+  ::Cameras * m_Cameras;
 
   /** Handle for the current camera. */
-  MCamera m_CurrentCamera;
+  ::MCamera * m_CurrentCamera;
 
   /** The index of the current camera. */
   unsigned int m_CurrentCameraIndex;
 
   /** Handle for each marker registered with the system. */
-  Markers m_Markers;
+  ::Markers * m_Markers;
+
+  /** template marker */
+  ::Marker  * m_TempMarkerForAddingFacet;
 
   /** The persistence object stores information between sessions. */ 
-  Persistence m_Persistence;
+  ::Persistence *  m_Persistence;
 
   /** Whether a camera is attached. */
   bool m_CameraIsAttached;
@@ -465,6 +486,23 @@ protected:
 
   /** The Translations */
   std::vector<double> m_Translations;
+
+  int m_isAddingAdditionalFacet;
+
+  typedef ::Collection  CollectionType;
+  std::vector<CollectionType*> m_sampleVectors;
+
+  typedef ::Xform3D     Xform3DType; 
+  vector<Xform3DType*> facet1ToCameraXfs;
+
+  ::Marker    * m_CurrMarker;
+  int  m_NumberOfUnidentifiedMarkers;
+  int  m_NumberOfIdentifiedMarkers;
+
+  std::vector<int >      m_NumberOfFacetsInEachMarker;
+  std::vector<int>       m_NumberOfTotalFacetsInEachMarker;
+
+  int   m_markerStatus;
 
 private:
 

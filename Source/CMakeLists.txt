@@ -302,6 +302,14 @@ IF(IGSTKSandbox_USE_FLTK)
      )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
+IF(IGSTKSandbox_USE_MicronTracker)
+  SET(IGSTKSandbox_HEADS
+      ${IGSTKSandbox_HEADS}
+      igstkMicronTracker.h
+      igstkMicronTrackerCommandInterpreter.h
+     )
+ENDIF(IGSTKSandbox_USE_MicronTracker)
+
 # The implementation files
 SET(IGSTKSandbox_SRCS
   igstkContourMeshObjectRepresentation.cxx
@@ -348,6 +356,14 @@ IF(IGSTKSandbox_USE_FLTK)
     igstkFLTKWidget.cxx
     )
 ENDIF(IGSTKSandbox_USE_FLTK)
+
+IF(IGSTKSandbox_USE_MicronTracker)
+  SET(IGSTKSandbox_SRCS
+      ${IGSTKSandbox_SRCS}
+      igstkMicronTracker.cxx
+      igstkMicronTrackerCommandInterpreter.cxx
+     )
+ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 # Variable for holding extra libraries
 SET(EXTRA_LIBS)
