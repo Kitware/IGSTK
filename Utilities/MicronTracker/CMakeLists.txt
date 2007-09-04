@@ -1,5 +1,0 @@
-PROJECT(MicronTracker)
-SUBDIRS(
-  src
-)
-
