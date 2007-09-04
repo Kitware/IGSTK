@@ -53,4 +53,8 @@ void RegisterTests()
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
 #endif /* IGSTKSandbox_USE_Qt */
 
+#ifdef IGSTKSandbox_USE_MicronTracker
+  REGISTER_TEST(igstkMicronTrackerTest);
+#endif /* IGSTKSandbox_USE_MicronTracker */
+
 }

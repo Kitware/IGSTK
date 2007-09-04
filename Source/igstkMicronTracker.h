@@ -18,7 +18,6 @@
 #ifndef __igstkMicronTracker_h
 #define __igstkMicronTracker_h
 
-#include "igstkMicronTrackerCommandInterpreter.h"
 /* #include "igstkMicronTrackerTool.h" */
 /* #include "igstkMicronTrackerAttributes.h" */
 #include "igstkTracker.h"
@@ -45,17 +44,11 @@ public:
   typedef MicronTrackerToolType::ConstPointer   MicronTrackerToolConstPointer;
   */
 
-  /** Number of ports to allow for this tracker. */
-  itkStaticConstMacro( NumberOfPorts, unsigned int, 10 );
-
   /** Number of channels to allow. */
   itkStaticConstMacro( NumberOfChannels, unsigned int, 1 );
 
   /** Typedef for the attributes of the tracker. */
   // typedef igstk::MicronTrackerAttributes           AttributesType;
-
-  /** Typedef for command interpreter. */
-  typedef igstk::MicronTrackerCommandInterpreter   CommandInterpreterType;
 
   /** Typedef for internal boolean return type. */
   typedef Tracker::ResultType   ResultType;
@@ -66,9 +59,6 @@ public:
   /** Get the number of tools that have been detected. */
   igstkGetMacro( NumberOfTools, unsigned int );
 
-  /** Helper function for reporting interpreter errors. */
-  ResultType CheckError(CommandInterpreterType *interpreter);
- 
 protected:
 
   MicronTracker(void);
@@ -128,8 +118,6 @@ private:
   /** MicronTracker version information */
   std::string m_Version;
 
-  /** The command interpreter */
-  CommandInterpreterType::Pointer  m_CommandInterpreter;
 };
 
 }

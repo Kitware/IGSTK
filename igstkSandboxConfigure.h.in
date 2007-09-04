@@ -28,6 +28,7 @@ Configure file for IGSTKSandbox
 #cmakedefine IGSTK_USE_FLTK
 #cmakedefine IGSTKSandbox_USE_FLTK
 #cmakedefine IGSTKSandbox_USE_Qt
+#cmakedefine IGSTKSandbox_USE_MicronTracker
 #cmakedefine IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
 
 #cmakedefine IGSTK_DATA_ROOT "@IGSTK_DATA_ROOT@"

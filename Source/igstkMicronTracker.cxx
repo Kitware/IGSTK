@@ -22,7 +22,6 @@
 #endif
 
 #include "igstkMicronTracker.h"
-#include "igstkTrackerPort.h"
 
 namespace igstk
 {
@@ -30,21 +29,7 @@ namespace igstk
 /** Constructor: Initializes all internal variables. */
 MicronTracker::MicronTracker(void):m_StateMachine(this)
 {
-  m_CommandInterpreter = CommandInterpreterType::New();
   m_NumberOfTools = 0;
-
-  /*
-  for (unsigned int port = 0; port < NumberOfPorts; port++)
-    {
-    TrackerPortPointer tport = TrackerPortType::New();
-    for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
-      {
-      MicronTrackerToolPointer tool = MicronTrackerToolType::New();
-      tport->AddTool(tool);
-      }
-    this->AddPort(tport);
-    }
-  */
 
   this->SetThreadingEnabled( true );
 
@@ -57,29 +42,6 @@ MicronTracker::MicronTracker(void):m_StateMachine(this)
 /** Destructor */
 MicronTracker::~MicronTracker(void)
 {
-}
-
-/** Helper function for reporting interpreter errors. */
-MicronTracker::ResultType
-MicronTracker::CheckError(CommandInterpreterType *interpreter)
-{
-  const int errnum = interpreter->GetError();
-  if (errnum)
-    {
-    // convert errnum to a hexadecimal string
-    itk::OStringStream os;
-    os << "0x";
-    os.width(2);
-    os.fill('0');
-    os << std::hex << std::uppercase << errnum;
-    igstkLogMacro( WARNING, "MicronTracker Error " << os.str() << ": " <<
-                   interpreter->GetErrorString(errnum) << "\n");
-
-    igstkLogMacro( WARNING, interpreter->GetErrorString(errnum) << "\n");
-    return FAILURE;
-    }
-
-  return SUCCESS;
 }
 
 /** Open communication with the tracking device. */
@@ -139,12 +101,11 @@ MicronTracker::ResultType MicronTracker::InternalStartTracking( void )
   igstkLogMacro( DEBUG, "MicronTracker::InternalStartTracking called ...\n");  
 
   // Send the command to start tracking
-  // m_CommandInterpreter->StartTracking();
 
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
   //  set the appropriate input to the state machine) 
-  return this->CheckError(m_CommandInterpreter);
+  return SUCCESS; 
 }
 
 /** Take the tracking device out of tracking mode. */
@@ -153,25 +114,22 @@ MicronTracker::ResultType MicronTracker::InternalStopTracking( void )
   igstkLogMacro( DEBUG, "MicronTracker::InternalStopTracking called ...\n");
 
   // Send the command to stop tracking.
-  // m_CommandInterpreter->StopTracking();
 
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
   //  set the appropriate input to the state machine) 
-  return this->CheckError(m_CommandInterpreter);
+  return SUCCESS; 
 }
 
 /** Reset the tracking device to put it back to its original state. */
 MicronTracker::ResultType MicronTracker::InternalReset( void )
 {
-  //m_CommandInterpreter->Reset();
-
-  ResultType result = this->CheckError(m_CommandInterpreter);
-
+  // Send the command to reset.
+  
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
   //  set the appropriate input to the state machine) 
-  return this->CheckError(m_CommandInterpreter);
+  return SUCCESS;
 }
 
 /** Update the status and the transforms for all TrackerTools. */
@@ -188,34 +146,6 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
   // accessing it.
   m_BufferLock->Lock();
 
-  for (unsigned int port = 0; port < NumberOfPorts; port++) 
-    {
-    for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
-      {
-      // Create the transform
-      typedef TransformType::VectorType TranslationType;
-      typedef TransformType::VersorType RotationType;
-      typedef TransformType::ErrorType  ErrorType;
-      TransformType transform;
-      TranslationType translation;
-      ErrorType errorValue;
-
-      typedef TransformType::VersorType RotationType;
-      RotationType rotation;
- 
-      // Insert code here to copy the transformation out of the
-      // shared memory buffer
-
-      typedef TransformType::TimePeriodType TimePeriodType;
-      const TimePeriodType validityTime = 100.0;
-
-      transform.SetToIdentity(validityTime);
-      transform.SetTranslationAndRotation(translation, rotation, errorValue,
-                                          validityTime);
-
-      this->SetToolTransform(port, channel, transform);
-      }
-    }
 
   m_BufferLock->Unlock();
 

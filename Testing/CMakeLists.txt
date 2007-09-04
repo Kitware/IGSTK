@@ -183,6 +183,13 @@ IF(IGSTKSandbox_USE_Qt)
         igstkCTImageSpatialObjectReadingAndRepresentationTest3.cxx)
 ENDIF(IGSTKSandbox_USE_Qt)
 
+IF(IGSTKSandbox_USE_MicronTracker)
+    ADD_TEST( igstkMicronTrackerTest
+              ${IGSTKSandbox_TESTS}
+              igstkMicronTrackerTest)
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkMicronTrackerTest.cxx)
+ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 IF(IGSTKSandbox_DATA_ROOT)
   SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
