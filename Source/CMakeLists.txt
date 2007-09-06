@@ -382,6 +382,10 @@ IF(IGSTKSandbox_USE_Qt)
   ENDIF(APPLE)
 ENDIF(IGSTKSandbox_USE_Qt)
 
+IF(IGSTKSandbox_USE_MicronTracker)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} igstkMTCu raw1394 dc1394_control )
+ENDIF(IGSTKSandbox_USE_MicronTracker)
+
 # Adding the IGSTKSandbox library
 ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS} ${IGSTKLatest_HEADS} ${IGSTKLatest_SRCS})
 
