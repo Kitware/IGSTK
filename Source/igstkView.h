@@ -243,6 +243,11 @@ private:
   /** Enable keyboard and mouse interactions */
   void EnableInteractionsProcessing();
 
+  /** Overloaded version of hide() that will Finalize() the vtkRenderWindow.
+   * This call to Finalize() is needed to prevent secondary effects when
+   * destroying a vtkRenderWindow on which we called SetWindowId(). */
+  void hide();
+
 private:
   
   // Arguments for methods to be invoked by the state machine.

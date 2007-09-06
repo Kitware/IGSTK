@@ -867,6 +867,13 @@ View
 }
 
 
+void View::hide()
+{
+  m_RenderWindow->Finalize();
+  this->Superclass::hide();
+}
+
+
 void 
 View
 ::Print( std::ostream& os, ::itk::Indent indent ) const
