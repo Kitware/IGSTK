@@ -140,6 +140,11 @@ public:
   /** Request Stopping the periodic refreshing of the view */
   void RequestStop();
 
+  /** Overloaded version of hide() that will Finalize() the vtkRenderWindow.
+   * This call to Finalize() is needed to prevent secondary effects when
+   * destroying a vtkRenderWindow on which we called SetWindowId(). */
+  void hide();
+
 protected:
   
   // Fl_Gl_Window overrides
@@ -242,11 +247,6 @@ private:
 
   /** Enable keyboard and mouse interactions */
   void EnableInteractionsProcessing();
-
-  /** Overloaded version of hide() that will Finalize() the vtkRenderWindow.
-   * This call to Finalize() is needed to prevent secondary effects when
-   * destroying a vtkRenderWindow on which we called SetWindowId(). */
-  void hide();
 
 private:
   
