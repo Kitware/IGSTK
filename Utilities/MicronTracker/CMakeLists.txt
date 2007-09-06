@@ -1,0 +1,5 @@
+PROJECT(MicronTracker)
+SUBDIRS(
+  src
+)
+
