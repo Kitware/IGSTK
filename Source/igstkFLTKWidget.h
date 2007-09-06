@@ -99,6 +99,7 @@ protected:
   // Fl_Gl_Window overrides
   void flush(void);
   void draw( void );
+  void hide( void );
   void resize( int x, int y, int w, int h );
   virtual int  handle( int event );
    

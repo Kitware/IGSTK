@@ -288,6 +288,13 @@ void FLTKWidget::draw(void)
     }
 }
 
+void FLTKWidget::hide()
+{
+  vtkRenderWindow * renderWindow = m_Renderer->GetRenderWindow();
+  renderWindow->Finalize();
+  this->Superclass::hide();
+}
+
 /** Resize function */
 void FLTKWidget::resize( int x, int y, int w, int h ) 
 {
