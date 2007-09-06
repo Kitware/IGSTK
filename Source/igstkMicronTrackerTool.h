@@ -41,6 +41,9 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( MicronTrackerTool, TrackerTool )
 
+  /** Load marker template */
+  void LoadMarkerTemplate( std::string filename );
+
 protected:
 
   MicronTrackerTool();
@@ -54,9 +57,8 @@ private:
   MicronTrackerTool(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
 
-  /** Port number that identifies this tool in the Tracker. */
-  unsigned int m_PortNumber;
-  unsigned int m_PortNumberToBeSet;
+  //marker template directory
+  std::string m_MarkerTemplateDirectory;
 };  
 
 

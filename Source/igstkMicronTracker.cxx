@@ -37,6 +37,15 @@ MicronTracker::MicronTracker(void):m_StateMachine(this)
   // transformations from thread that is communicating
   // with the tracker to the main thread.
   m_BufferLock = itk::MutexLock::New();
+
+  //instantiate Persistance object
+  m_Persistence = new Persistence();
+
+  //instantiate Markers object
+  m_Markers = new Markers();
+
+  //instantiate cameras
+  m_Cameras = new Cameras();
 }
 
 /** Destructor */
@@ -44,27 +53,102 @@ MicronTracker::~MicronTracker(void)
 {
 }
 
-/** Open communication with the tracking device. */
+/** Specify camera calibration directory */
+void MicronTracker::SetCameraCalibrationFilesDirectory( std::string fileName )
+{
+  igstkLogMacro( DEBUG,
+                "MicronTracker::SetCameraCalibrationFilesDirectory called..\n");
+
+  m_CalibrationFilesDirectory = fileName;
+}
+
+/** Specify the initialization filename */
+void MicronTracker::SetInitializationFile( std::string fileName )
+{
+  igstkLogMacro( DEBUG,
+                "MicronTracker::SetInitializationFileDirectoryPath called..\n");
+
+  m_InitializationFile = fileName;
+}
+
 MicronTracker::ResultType MicronTracker::InternalOpen( void )
 {
   igstkLogMacro( DEBUG, "MicronTracker::InternalOpen called ...\n");
 
-  // Insert logic for opening communication with the MicronTracker,
-  // and set m_Version and any other status information
-  m_Version = "";
-
-  // Return SUCCESS or FAILURE depending on whether communication
-  // was successfully opened, without error
-  return SUCCESS;
+  /* Initialization involves two steps
+   * 1) Set algorithm and camera attributes
+   * 2) Attach the cameras
+   */
+  if ( ! this->Initialize() )
+      {
+      std::cerr << "Error initializing" << std::endl;
+      }
+   
+  if ( ! this->SetUpCameras() )
+      {
+      std::cerr << "Error setting up cameras " << std::endl;
+      }
 }
 
-/** Close communication with the tracking device. */
+/** Initialize camera and algorithm attributes such as 
+ *  Frame interleave, template matching tolerance, extrapolate frame etc*/
+bool MicronTracker::Initialize()
+{
+  bool result = true;
+
+  char * initializationFilename = 
+            const_cast< char *> ( m_InitializationFile.c_str() );
+  this->m_Persistence->setPath( initializationFilename );
+  this->m_Persistence->setSection ("General");
+
+  //Setting the TemplateMatchToleranceMM property in the Markers object
+  double defaultTempMatchToleranceMM = 1.0;
+  double defaultLightCoolness = 0.1;
+
+  this->m_Markers->setTemplateMatchToleranceMM( this->m_Persistence->retrieveDouble("TemplateMatchToleranceMM", defaultTempMatchToleranceMM) );
+  
+  bool defaultSmallerXPFootprint = true;
+  int defaultExtrapolatedFrames = 5;
+
+  bool SmallerXPFootprint = (bool)(this->m_Persistence->retrieveInt("DetectSmallMarkers", defaultSmallerXPFootprint));
+  int ExtrapolatedFrames = this->m_Persistence->retrieveInt("ExtrapolatedFrames", defaultExtrapolatedFrames);
+
+  this->m_Markers->setSmallerXPFootprint(SmallerXPFootprint);
+  this->m_Markers->setExtrapolatedFrames(ExtrapolatedFrames);
+
+  //could have been clipped
+  this->m_Persistence->saveInt("ExtrapolatedFrames", this->m_Markers->getExtrapolatedFrames());
+
+  /* Markers directory might need to be created: TODO!!! */
+  
+  return result;
+}
+
+bool MicronTracker::SetUpCameras()
+{
+  bool result = true;
+
+  this->m_Cameras->SetCameraCalibrationFilesDirectory( this->m_CalibrationFilesDirectory );
+  int success = this->m_Cameras->AttachAvailableCameras();
+
+  if ( success )
+    {
+    std::cerr << " No camera available or missing calibration file. " 
+              << " Please also check that MTHome system environment variable is set " << endl;
+    std::cerr << "Error returned: " << MTLastErrorString() << std::endl; 
+    result = false;
+    }
+
+  return result;
+}
+
+/** Detach camera . */
 MicronTracker::ResultType MicronTracker::InternalClose( void )
 {
-  igstkLogMacro( DEBUG, "MicronTracker::InternalClose called ...\n");
-
-  // Return SUCCESS or FAILURE depending on whether communication
-  // was successfully opened, without error
+  igstkLogMacro( DEBUG, "MicronTracker::InternalClose called ...\n");  
+  m_Cameras->Detach();
+ 
+  //TODO: parse detach procedure result 
   return SUCCESS;
 }
 

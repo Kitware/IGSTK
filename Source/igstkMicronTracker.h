@@ -18,9 +18,17 @@
 #ifndef __igstkMicronTracker_h
 #define __igstkMicronTracker_h
 
-/* #include "igstkMicronTrackerTool.h" */
-/* #include "igstkMicronTrackerAttributes.h" */
+#include "igstkMicronTrackerTool.h" 
 #include "igstkTracker.h"
+
+#include "Markers.h"
+#include "Marker.h"
+#include "Persistence.h"
+#include "Cameras.h"
+#include "Facet.h"
+#include "Xform3D.h"
+#include "MTC.h"
+#include <math.h>
 
 namespace igstk
 {
@@ -38,17 +46,9 @@ public:
 
   /** typedefs for the tool */
 
-  /* 
   typedef igstk::MicronTrackerTool              MicronTrackerToolType;
   typedef MicronTrackerToolType::Pointer        MicronTrackerToolPointer;
   typedef MicronTrackerToolType::ConstPointer   MicronTrackerToolConstPointer;
-  */
-
-  /** Number of channels to allow. */
-  itkStaticConstMacro( NumberOfChannels, unsigned int, 1 );
-
-  /** Typedef for the attributes of the tracker. */
-  // typedef igstk::MicronTrackerAttributes           AttributesType;
 
   /** Typedef for internal boolean return type. */
   typedef Tracker::ResultType   ResultType;
@@ -58,6 +58,17 @@ public:
 
   /** Get the number of tools that have been detected. */
   igstkGetMacro( NumberOfTools, unsigned int );
+
+  /** Set the directory path that contains the camera calibration
+    * files. FIXME: this should be pushed through the state machine
+  */
+  void SetCameraCalibrationFilesDirectory( std::string fileName );
+
+  /** Set the full path to the persistance file
+    * The persistance file contains camera parameters and algorithm parameters 
+     FIXME: this should be pushed through the state machine
+  */
+  void SetInitializationFile( std::string fileName );
 
 protected:
 
@@ -109,6 +120,13 @@ protected:
 
 private:
 
+  /** Initialize camera and algorithm attributes such as Frame interleave
+      template matching tolerance, extrapolate frame etc */ 
+  bool Initialize();
+
+  /** Setup cameras */
+  bool SetUpCameras();
+
   /** A mutex for multithreaded access to the buffer arrays */
   itk::MutexLock::Pointer  m_BufferLock;
 
@@ -117,6 +135,16 @@ private:
 
   /** MicronTracker version information */
   std::string m_Version;
+
+  /** Calibration files directory */
+  std::string m_CalibrationFilesDirectory;
+
+  /** Initialization file directory */
+  std::string m_InitializationFile;
+  
+  Persistence * m_Persistence;
+  Markers     * m_Markers;
+  Cameras     * m_Cameras;
 
 };
 

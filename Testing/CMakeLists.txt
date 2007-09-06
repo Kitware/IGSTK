@@ -186,7 +186,10 @@ ENDIF(IGSTKSandbox_USE_Qt)
 IF(IGSTKSandbox_USE_MicronTracker)
     ADD_TEST( igstkMicronTrackerTest
               ${IGSTKSandbox_TESTS}
-              igstkMicronTrackerTest)
+              igstkMicronTrackerTest
+              ${IGSTKSandbox_DATA_ROOT}/Input/CalibrationFiles
+              ${IGSTKSandbox_DATA_ROOT}/Input/MicronTracker.ini
+              ${IGSTKSandbox_TEST_OUTPUT_DIR})
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkMicronTrackerTest.cxx)
 ENDIF(IGSTKSandbox_USE_MicronTracker)

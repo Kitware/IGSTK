@@ -72,9 +72,11 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   MicronTrackerTrackerTestCommand::Pointer 
                                 my_command = MicronTrackerTrackerTestCommand::New();
 
-  if( argc < 2 )
+  if( argc < 4 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
+                            << "MicronTracker camera calibration file"
+                            << "MicronTracker initialization file"
                             << "Output directory" << std::endl;
     return EXIT_FAILURE;
     }
@@ -100,8 +102,14 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   tracker = igstk::MicronTracker::New();
 
   tracker->AddObserver( itk::AnyEvent(), my_command);
-
   tracker->SetLogger( logger );
+
+  std::string calibrationFilesDirectory = argv[1];
+  tracker->SetCameraCalibrationFilesDirectory( 
+                            calibrationFilesDirectory );
+
+  std::string initializationFile = argv[2];
+  tracker->SetInitializationFile( initializationFile );
 
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
@@ -119,6 +127,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   std::cout << "RequestStartTracking()" << std::endl;
   tracker->RequestStartTracking();
 
+  /*
   typedef igstk::Transform            TransformType;
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
@@ -127,18 +136,9 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
     {
     tracker->RequestUpdateStatus();
 
-    // Get transform information
     }
+  */
   
-  std::cout << "RequestReset()" << std::endl;
-  tracker->RequestReset();
-  
-  std::cout << "RequestInitialize()" << std::endl;
-  tracker->RequestInitialize();
-  
-  std::cout << "RequestStartTracking()" << std::endl;
-  tracker->RequestStartTracking();
-
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
 
