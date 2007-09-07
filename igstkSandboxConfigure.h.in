@@ -33,6 +33,8 @@ Configure file for IGSTKSandbox
 
 #cmakedefine IGSTK_DATA_ROOT "@IGSTK_DATA_ROOT@"
 
+#cmakedefine IGSTKSandbox_DATA_ROOT "@IGSTKSandbox_DATA_ROOT@"
+
 #cmakedefine IGSTKSandbox_BINARY_DIR "@IGSTKSandbox_BINARY_DIR@"
 
 #endif // __igstkSandboxConfigure_h
