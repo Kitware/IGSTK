@@ -9,7 +9,9 @@
 SET(IGSTKSandbox_SOURCE_DIR "@IGSTKSandbox_SOURCE_DIR@")
 
 # The IGSTKSandbox include file directories.
-SET(IGSTKSandbox_INCLUDE_DIRS "@IGSTKSandbox_INCLUDE_DIRS_CONFIG@" "@IGSTKSandbox_SOURCE_DIR@/Source" "@IGSTKSandbox_BINARY_DIR@/SourceLatest")
+SET(IGSTKSandbox_INCLUDE_DIRS "@IGSTKSandbox_INCLUDE_DIRS_CONFIG@" "@IGSTKSandbox_SOURCE_DIR@/Source" 
+                              "@IGSTKSandbox_SOURCE_DIR@/IGSTK/Source"
+                              "@IGSTKSandbox_BINARY_DIR@/SourceLatest")
 
 # The IGSTKSandbox library directories.
 SET(IGSTKSandbox_LIBRARY_DIRS "@IGSTKSandbox_LIBRARY_DIRS_CONFIG@")
