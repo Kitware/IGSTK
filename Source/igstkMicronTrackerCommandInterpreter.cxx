@@ -550,7 +550,7 @@ int MicronTrackerCommandInterpreter::GetStatus()
 //------------------------------------------
 int MicronTrackerCommandInterpreter::GetMarkerStatus(int loadedMarkerIndex, int* identifiedMarkerIndex)
 {
-
+  return 1;
 }
 
 //------------------------------------------

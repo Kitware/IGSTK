@@ -82,12 +82,15 @@ MicronTracker::ResultType MicronTracker::InternalOpen( void )
   if ( ! this->Initialize() )
       {
       std::cerr << "Error initializing" << std::endl;
+      return FAILURE;
       }
    
   if ( ! this->SetUpCameras() )
       {
       std::cerr << "Error setting up cameras " << std::endl;
+      return FAILURE;
       }
+  return SUCCESS;
 }
 
 /** Initialize camera and algorithm attributes such as 
