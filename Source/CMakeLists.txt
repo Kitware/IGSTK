@@ -383,7 +383,14 @@ IF(IGSTKSandbox_USE_Qt)
 ENDIF(IGSTKSandbox_USE_Qt)
 
 IF(IGSTKSandbox_USE_MicronTracker)
-  SET(EXTRA_LIBS ${EXTRA_LIBS} igstkMTCu raw1394 dc1394_control )
+  SET(EXTRA_LIBS ${EXTRA_LIBS} igstkMTCu)
+   
+  IF(WIN32)
+    SET(EXTRA_LIBS ${EXTRA_LIBS}  comctl32 wsock32 odbc32 odbccp32 )
+  ELSEIF(WIN32)
+    SET(EXTRA_LIBS ${EXTRA_LIBS} raw1394 dc1394_control )
+  ENDIF(WIN32)
+  
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 # Adding the IGSTKSandbox library
