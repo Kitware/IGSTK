@@ -31,8 +31,6 @@
 
 namespace igstk
 {
-
-/** Constructor */
 template < class TImageSpatialObject >
 ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 ::ImageSpatialObjectImagePlaneRepresentation() : 
@@ -335,8 +333,6 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
                         ::SetSliceNumber called...\n");
 
   m_SliceNumber = m_SliceNumberToBeSet;
-
-  std::cout << "Setting slice number " << m_SliceNumber << std::endl;
   m_ImagePlane->SetSliceIndex(m_SliceNumber);
 }
 

@@ -6,10 +6,14 @@
 #include <vtkCoordinate.h>
 #include <vtkRenderer.h>
 
+#include "vtkImagePlaneWidget2DInteractionListener.h"
+
 vtkStandardNewMacro(vtkImagePlaneWidget2D);
 
 vtkImagePlaneWidget2D::vtkImagePlaneWidget2D() : vtkImagePlaneWidget()
-{}
+{
+  this->ActivateMargins(0);
+}
 
 vtkImagePlaneWidget2D::~vtkImagePlaneWidget2D()
 {}
@@ -45,4 +49,28 @@ void vtkImagePlaneWidget2D::StopCursor()
      this->Interactor->Render();
 }
 
+int vtkImagePlaneWidget2D::GetState() const
+{
+  switch(this->State)
+  {
+  case Cursoring:
+    return CURSORING;
+  case WindowLevelling:
+    return WINDOWLEVELLING;
+  case Pushing:
+    return PUSHING;
+  default:
+    return NONE;
+  }
+}
 
+void vtkImagePlaneWidget2D::
+ConnectWindowLevel(vtkImagePlaneWidget2D *imagePlaneWidget)
+{
+  vtkImagePlaneWidget2DInteractionListener *observer = 
+    vtkImagePlaneWidget2DInteractionListener::New();
+
+  observer->SubscribeToWindowLevel(imagePlaneWidget);
+  this->AddObserver(vtkCommand::InteractionEvent, observer);
+  observer->Delete();
+}

@@ -9,8 +9,8 @@
  * In addition, a method SetCursorPosition method is added to set the cursor
  * position in world coordinates.
  *
- * @Date 2007.08.23
- * @Author Torleif Sandnes, Sintef Health Research
+ * @date 2007.08.23
+ * @author Torleif Sandnes, Sintef Health Research
  */
 class vtkImagePlaneWidget2D : public vtkImagePlaneWidget
 {
@@ -20,11 +20,45 @@ public:
 
     /**
      * Set the cursor position, (crosshairs), of the vtkImagePlaneWidget.
-     * @Param x The x coordinate in world coordinates.
-     * @Param y The y coordinate in world coordinates.
-     * @Param z The z coordinate in world coordinates.
+     * @param x The x coordinate in world coordinates.
+     * @param y The y coordinate in world coordinates.
+     * @param z The z coordinate in world coordinates.
      */
     void SetCursorPosition(double x, double y, double z);
+
+    enum WidgetState
+    {
+        START=0,
+        CURSORING,
+        WINDOWLEVELLING,
+        PUSHING,
+        // Spinning,
+        // Rotating,
+        //Moving,
+        //Scaling,
+        //Outside
+        NONE
+    };
+  
+  /**
+   * Get the current interactor state of the widget. This is a rehash of the
+   * internal interactor states necessary for connecting events among
+   * vtkImagePlaneWidget2Ds
+   * @return The current interactor state of the widget.
+   */
+  int GetState() const;
+
+  /**
+   * Connect window/level for this ImagePlaneWidget2D to another
+   * ImagePlaneWidget2D´s window/level
+   * @param imagePlaneWidget The vtkImagePlaneWidget2D whose window/level should
+   *        always be the same as this vtkImagePlaneWidget´s window/level
+   */
+  void ConnectWindowLevel(vtkImagePlaneWidget2D *imagePlaneWidget);
+
+
+  void ConnectSliceIndex(vtkImagePlaneWidget2D *imagePlaneWidget);
+
 protected:
     vtkImagePlaneWidget2D();
     ~vtkImagePlaneWidget2D();

@@ -25,11 +25,11 @@
 #include "vtkImagePlaneWidget2D.h"
 #include "vtkLookupTable.h"
 #include "vtkImageMapToColors.h"
+#include <vtkCommand.h>
 
 namespace igstk
 {
  
-
 /** @class ImageSpatialObjectImagePlaneRepresentation
  * 
  * @brief This class represents an image object as a slice of the image projected
@@ -47,12 +47,9 @@ class ImageSpatialObjectImagePlaneRepresentation : public ObjectRepresentation
 {
 
 public:
-
   /** Macro with standard traits declarations. */
   igstkStandardTemplatedClassTraitsMacro( ImageSpatialObjectImagePlaneRepresentation, \
                                           ObjectRepresentation )
-
-public:
 
   typedef TImageSpatialObject                      ImageSpatialObjectType;
 
@@ -104,6 +101,10 @@ public:
   void RequestSetCursorPosition(double x, double y, double z)
   { m_ImagePlane->SetCursorPosition(x, y, z);}
 
+  void ConnectWindowLevel(Self::Pointer representation)
+    {
+      this->m_ImagePlane->ConnectWindowLevel(representation->m_ImagePlane);
+    }
 protected:
 
   /** Constructor */
@@ -159,7 +160,7 @@ private:
 
   /** Connect VTK pipeline */
   void ConnectVTKPipelineProcessing();
-    
+
 private:
 
   /** Inputs to the State Machine */
