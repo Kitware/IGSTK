@@ -46,6 +46,9 @@ MicronTracker::MicronTracker(void):m_StateMachine(this)
 
   //instantiate cameras
   m_Cameras = new Cameras();
+
+  // initialize selected camera
+  m_SelectedCamera = NULL;
 }
 
 /** Destructor */
@@ -152,6 +155,13 @@ bool MicronTracker::SetUpCameras()
               << " Please also check that MTHome system environment variable is set " << endl;
     std::cerr << "Error returned: " << MTLastErrorString() << std::endl; 
     result = false;
+    }
+  else
+    {
+    if ( this->m_Cameras->getCount() >= 1 ) 
+      {
+      this->m_SelectedCamera = this->m_Cameras->m_vCameras[0];
+      } 
     }
 
   return result;
@@ -267,12 +277,169 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
 
   // Send the commands to the device that will get the transforms
   // for all of the tools.
-
-
-  // In case of failure, return FAILURE
-
   // Lock the buffer that this method shares with InternalUpdateStatus
   m_BufferLock->Lock();
+
+  // process frame
+  m_Markers->processFrame( NULL );
+
+  // process identified markers
+  Collection* markersCollection = new Collection(this->m_Markers->identifiedMarkers(this->m_SelectedCamera));
+  if (markersCollection->count() == 0) 
+    {
+    delete markersCollection; 
+    return FAILURE;
+    }
+
+  int markerNum = 1;
+  int facetNum = 1;
+  Marker* marker;
+  for (markerNum = 1; markerNum <= markersCollection->count(); markerNum++)
+    {
+    marker = new Marker(markersCollection->itemI(markerNum));
+    if (marker->wasIdentified(this->m_SelectedCamera) )
+      {
+      Collection* facetsCollection = new Collection(marker->identifiedFacets(this->m_SelectedCamera));
+      for (facetNum = 1; facetNum <= facetsCollection->count(); facetNum++)
+        {
+        Facet* f = new Facet(facetsCollection->itemI(facetNum));
+        /* Get the x-points. The x-points are returned as a four dimensional array
+           [Long/Short vector][L/R][base/head][X/Y] */
+        double LS_LR_BH_XY[2][2][2][2];
+        f->getXpoints(this->m_SelectedCamera, (double *)LS_LR_BH_XY);
+
+        char caption[255];
+          if (facetsCollection->count() > 1) {
+            sprintf(caption,"%d.%s/%d",markerNum, marker->getName(), facetNum);
+          } else {
+            sprintf(caption,"%d.%s",markerNum, marker->getName());
+          }
+
+        std::cout << caption <<  std::endl;
+
+        delete f;
+        }
+      delete facetsCollection;
+      }
+    delete marker;
+    }
+
+  Xform3D* Marker2CurrCameraXf = NULL;
+  for (markerNum = 1; markerNum <= markersCollection->count(); markerNum++)
+    {
+    marker = new Marker(markersCollection->itemI(markerNum));
+    Marker2CurrCameraXf = marker->marker2CameraXf(this->m_SelectedCamera->Handle());
+    // There may be a situation where marker was identified by another camera (not CurrCamera)
+    // and the identifying camera is not registered with CurrCamera. In this case, the pose is
+    // not known in CurrCamera coordinates and Marker2CurrCameraXf is Nothing.
+    if(Marker2CurrCameraXf != NULL)
+        {
+        //Show the XYZ position of the Marker's origin.
+        //string s = ".(";
+        char buffer[3][100];
+        char s[600];
+        Xform3D* m2c;
+        m2c = marker->marker2CameraXf(this->m_SelectedCamera->Handle());
+        for (int i=0; i<3; i++)
+        { 
+          sprintf(buffer[i], "%.2f",m2c->getShift(i));
+        }
+        sprintf(s, "%d", markerNum);
+        strcat(s, ". (");
+        strcat(s, buffer[0]);
+        strcat(s, ",");
+        strcat(s, buffer[1]);
+        strcat(s, ",");
+        strcat(s, buffer[2]);
+        strcat(s, ")");
+
+        // If there's a tooltip, add it
+        Xform3D* t2m; // tooltip to marker xform
+        Xform3D* t2c; // tooltip to camera xform
+        double svec[3];
+        t2m = marker->tooltip2MarkerXf();
+        t2m->getShiftVector(svec);
+        if (svec[0] != 0 || svec[1] != 0 || svec[2] != 0) 
+          { // non-null transform
+          strcat(s, " tip(");
+          t2c = t2m->concatenate(m2c);
+          for (int i=0; i<3; i++) {
+            sprintf(buffer[i], "%.2f", t2c->getShift(i));
+          }
+          strcat(s, buffer[0]);
+          strcat(s, ",");
+          strcat(s, buffer[1]);
+          strcat(s, ",");
+          strcat(s, buffer[2]);
+          strcat(s, ")");
+          delete t2c;
+          }
+        delete t2m;
+        delete m2c;
+        std::cout << "XYZ= " << s << std::endl;
+        }
+
+      delete Marker2CurrCameraXf;
+    }
+
+    Xform3D* Mi2Cam = NULL;
+    Xform3D* Mj2Cam = NULL;
+    for(int i=1; i<markersCollection->count(); i++)
+      {
+      Marker* m1 = new Marker(markersCollection->itemI(i));
+      Mi2Cam = m1->marker2CameraXf(this->m_SelectedCamera->Handle());
+      for (int j=i+1; j<markersCollection->count()+1; j++)
+        {
+        Marker* m2 = new Marker(markersCollection->itemI(j));
+        Mj2Cam = m2->marker2CameraXf(this->m_SelectedCamera->Handle());
+        if(Mi2Cam != NULL || Mj2Cam != NULL)
+          {
+          Xform3D* Xf;
+          double XUnitV[3] = {0};
+          double angleCos;
+          double angleRads;
+
+          double vec1[3];
+          Mi2Cam->getShiftVector(vec1);
+          double vec2[3];
+          Mj2Cam->getShiftVector(vec2);
+          double distance = this->FindDistance( vec1, vec2 );
+            
+          char s[300];
+          char buffer[100];
+          sprintf(s, "%d", i);
+          strcat(s, "-");
+          sprintf(buffer, "%d", i+1);
+          strcat(s, buffer);
+          strcat(s, ": ");
+          sprintf(buffer, "%.2f", distance);
+          strcat(s, buffer);
+          strcat(s, " mm / ");
+            
+          XUnitV[0] = 1;
+          double XVect1[3];
+          Mi2Cam->getRotateVector(XVect1, XUnitV);
+          double XVect2[3];
+          Mj2Cam->getRotateVector(XVect2, XUnitV);
+          angleCos = this->EvaluteDotProduct(XVect1, XVect2);
+          angleRads = ACOS(angleCos);
+            
+          sprintf(buffer, "%.1f", angleRads * 180 / PI);
+          strcat(s, buffer);
+#ifdef WIN32
+          strcat(s, "°");
+#else
+          strcat(s, " deg");
+#endif
+           std::cout << "Angle=" << s << std::endl;
+           }
+        delete m2;
+        }
+        delete Mj2Cam;
+        delete m1;
+        delete Mi2Cam;
+      }
+  delete markersCollection; 
 
   // Copy the transforms and any status information into the
   // buffer.
@@ -287,6 +454,40 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
   m_BufferLock->Unlock();
 
   return SUCCESS;
+}
+
+double MicronTracker::FindDistance(double* v1, double* v2)
+{
+  double acc = 0.0;
+  for (int i=0; i< 3; i++)
+    acc = acc + ( (v1[i] - v2[i]) * (v1[i] - v2[i]) );
+  return sqrt(acc);
+}
+
+/****************************/
+double MicronTracker::EvaluteDotProduct(double* v1, double* v2)
+{
+  double result = 0;
+  for (int i=0; i<3; i++)
+    result += v1[i]*v2[i];
+  return result;
+}
+
+double MicronTracker::ACOS(double x)
+{
+  // REMOVE THIS METHOD...LATER ON..it is not needed
+  if ( x == 1 )
+    {
+    return 0;
+    }
+  else if ( x == -1)
+    {
+    return PI / 2.0;
+    }
+  else 
+    {
+    return atan((double) ( -x / sqrt(-x * x + 1)) + 2 * atan(1.0));
+    }
 }
 
 /** Print Self function */

@@ -118,6 +118,11 @@ protected:
 
 private:
 
+  /** helper methods */
+  double FindDistance( double* v1, double* v2);
+  double EvaluteDotProduct( double* v1, double* v2);
+  double ACOS( double x );
+
   /** Initialize camera and algorithm attributes such as Frame interleave
       template matching tolerance, extrapolate frame etc */ 
   bool Initialize();
@@ -146,6 +151,7 @@ private:
   Persistence * m_Persistence;
   Markers     * m_Markers;
   Cameras     * m_Cameras;
+  MCamera     * m_SelectedCamera;
 
 };
 
