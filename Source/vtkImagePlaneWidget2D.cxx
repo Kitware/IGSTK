@@ -7,6 +7,8 @@
 #include <vtkRenderer.h>
 #include <vtkCamera.h>
 
+#include <assert.h>
+
 #include "vtkImagePlaneWidget2DInteractionListener.h"
 
 vtkStandardNewMacro(vtkImagePlaneWidget2D);
