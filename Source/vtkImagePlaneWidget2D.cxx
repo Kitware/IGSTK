@@ -64,34 +64,34 @@ void vtkImagePlaneWidget2D::ProcessEvents(vtkObject *object,
 {
   vtkImagePlaneWidget2D * self = reinterpret_cast<vtkImagePlaneWidget2D *>(clientData);
 
-  self->LastButtonPressed = vtkImagePlaneWidget::VTK_NO_BUTTON;
+  self->LastButtonPressed = vtkImagePlaneWidget::NO_BUTTON;
 
   switch ( event )
   {
   case vtkCommand::LeftButtonPressEvent:
-    self->LastButtonPressed = vtkImagePlaneWidget::VTK_LEFT_BUTTON;
+    self->LastButtonPressed = vtkImagePlaneWidget::LEFT_BUTTON;
     self->OnLeftButtonDown();
     break;
   case vtkCommand::LeftButtonReleaseEvent:
-    self->LastButtonPressed = vtkImagePlaneWidget::VTK_LEFT_BUTTON;
+    self->LastButtonPressed = vtkImagePlaneWidget::LEFT_BUTTON;
     self->OnLeftButtonUp();
     self->mLastXPosition = self->Interactor->GetEventPosition()[0];
     self->mLastYPosition = self->Interactor->GetEventPosition()[1];
     break;
   case vtkCommand::MiddleButtonPressEvent:
-    self->LastButtonPressed = vtkImagePlaneWidget::VTK_MIDDLE_BUTTON;
+    self->LastButtonPressed = vtkImagePlaneWidget::MIDDLE_BUTTON;
     self->OnMiddleButtonDown();
     break;
   case vtkCommand::MiddleButtonReleaseEvent:
-    self->LastButtonPressed = vtkImagePlaneWidget::VTK_MIDDLE_BUTTON;
+    self->LastButtonPressed = vtkImagePlaneWidget::MIDDLE_BUTTON;
     self->OnMiddleButtonUp();
     break;
   case vtkCommand::RightButtonPressEvent:
-    self->LastButtonPressed = vtkImagePlaneWidget::VTK_RIGHT_BUTTON;
+    self->LastButtonPressed = vtkImagePlaneWidget::RIGHT_BUTTON;
     self->OnRightButtonDown();
     break;
   case vtkCommand::RightButtonReleaseEvent:
-    self->LastButtonPressed = vtkImagePlaneWidget::VTK_RIGHT_BUTTON;
+    self->LastButtonPressed = vtkImagePlaneWidget::RIGHT_BUTTON;
     self->OnRightButtonUp();
     break;
   case vtkCommand::MouseMoveEvent:
