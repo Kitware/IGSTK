@@ -308,7 +308,6 @@ IF(IGSTKSandbox_USE_MicronTracker)
       ${IGSTKSandbox_HEADS}
       igstkMicronTracker.h
       igstkMicronTrackerTool.h
-      igstkMicronTrackerCommandInterpreter.h
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
@@ -365,7 +364,6 @@ IF(IGSTKSandbox_USE_MicronTracker)
       ${IGSTKSandbox_SRCS}
       igstkMicronTracker.cxx
       igstkMicronTrackerTool.cxx
-      igstkMicronTrackerCommandInterpreter.cxx
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
