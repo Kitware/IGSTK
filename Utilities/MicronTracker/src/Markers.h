@@ -16,7 +16,6 @@
 #define __MARKERS_H__
 
 #include "MTC.h"
-#include "UtilityFunctions.h"
 #include "Collection.h"
 #include "Marker.h"
 #include "MCamera.h"

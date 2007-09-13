@@ -28,8 +28,6 @@
 
 #include "MCamera.h"
 
-#include "UtilityFunctions.h"
-
 #include "MTC.h"
 
 #include "MTVideo.h"

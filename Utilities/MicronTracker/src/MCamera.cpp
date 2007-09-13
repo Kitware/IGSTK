@@ -24,8 +24,6 @@
 
 #include "MCamera.h"
 
-#include "UtilityFunctions.h"
-
 #include "MTC.h"
 
 
@@ -91,46 +89,6 @@ int MCamera::Handle()
 
 
 }
-
-
-
-#if 0
-
-bool MCamera::RawBufferValid()
-
-{
-
-  int result, r;
-
-  r = Camera_RawBufferValidGet(m_handle, &result);
-
-  if (r != mtOK)
-
-    return false;
-
-  else
-
-    return ( result != 0 );
-
-}
-
-
-
-unsigned char **MCamera::RawBufferAddr()
-
-{
-
-  int  r;
-
-  unsigned char **result = NULL;
-
-  r = Camera_RawBufferAddrGet(m_handle, &result);
-
-  return result;
-
-}
-
-#endif
 
 
 
