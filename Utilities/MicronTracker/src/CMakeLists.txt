@@ -11,7 +11,6 @@ SET( SOURCES
   Marker.cpp
   Markers.cpp
   Persistence.cpp
-  UtilityFunctions.cpp
   Vector.cpp
   Xform3D.cpp
   )
