@@ -18,6 +18,13 @@
 #ifndef __igstkMicronTracker_h
 #define __igstkMicronTracker_h
 
+#ifdef _MSC_VER
+#pragma warning ( disable : 4018 )
+//Warning about: identifier was truncated to '255' characters in the debug
+//information (MVC6.0 Debug)
+#pragma warning( disable : 4284 )
+#endif
+
 #include "igstkMicronTrackerTool.h" 
 #include "igstkTracker.h"
 
@@ -30,8 +37,8 @@
 #include "MTC.h"
 #include <math.h>
 
-namespace igstk
-{
+namespace igstk {
+
 /** \class MicronTracker
   * \brief Provides support for the Claron MicronTracker.
   *
@@ -39,13 +46,11 @@ namespace igstk
   * from Claron Technologies in Toronto.
 */
 
-
 class MicronTracker : public Tracker
 {
 public:
 
   /** typedefs for the tool */
-
   typedef igstk::MicronTrackerTool              MicronTrackerToolType;
   typedef MicronTrackerToolType::Pointer        MicronTrackerToolPointer;
   typedef MicronTrackerToolType::ConstPointer   MicronTrackerToolConstPointer;
@@ -70,22 +75,15 @@ public:
   */
   void SetInitializationFile( std::string fileName );
 
+  /** Load markers template */
+  void LoadMarkerTemplate( std::string filename );
+
+ 
 protected:
 
   MicronTracker(void);
 
   virtual ~MicronTracker(void);
-
-  /** The MicronTrackerAttributes class contains settings and status
-   *  information for the MicronTracker.  Collecting all the
-   *  settings in a single class, rather than having a separate
-   *  request method for each setting, makes the state machine for the
-   *  MicronTracker much simpler.  */
-  // virtual void RequestSetAttributes( const AttributesType *attribs );
-
-  /** Get settings and status information for the MicronTracker via
-   *  a MicronTrackerAttributes object. */
-  // virtual void RequestGetAttributes( AttributesType *attribs);
 
   /** Open communication with the tracking device. */
   virtual ResultType InternalOpen( void );
@@ -142,6 +140,9 @@ private:
   /** Initialization file directory */
   std::string m_InitializationFile;
   
+  /** marker template directory */
+  std::string m_MarkerTemplateDirectory;
+
   Persistence * m_Persistence;
   Markers     * m_Markers;
   Cameras     * m_Cameras;

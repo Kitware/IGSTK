@@ -71,6 +71,18 @@ void MicronTracker::SetInitializationFile( std::string fileName )
   m_InitializationFile = fileName;
 }
 
+/** Load marker template  */
+void
+MicronTracker::LoadMarkerTemplate( std::string filename )
+{
+  this->m_MarkerTemplateDirectory = filename;
+
+  char * markerTemplateDirectory = 
+            const_cast< char *> ( m_MarkerTemplateDirectory.c_str() );
+ 
+  Markers_LoadTemplates( markerTemplateDirectory );
+}
+
 MicronTracker::ResultType MicronTracker::InternalOpen( void )
 {
   igstkLogMacro( DEBUG, "MicronTracker::InternalOpen called ...\n");
@@ -160,12 +172,8 @@ MicronTracker::ResultType MicronTracker::InternalActivateTools( void )
 {
   igstkLogMacro( DEBUG, "MicronTracker::InternalActivateTools called ...\n");
 
-  // Communicate with the tracker to get all tools on-line.
-  // Set m_NumberOfTools to be the number of tools that were found.
-  m_NumberOfTools = 0;
+  // There is no need to invoke a special command to activate the tools 
 
-  // Return SUCCESS or FAILURE depending on whether communication
-  // was successfully opened, without error
   return SUCCESS;
 }
 
@@ -186,8 +194,6 @@ MicronTracker::ResultType MicronTracker::InternalDeactivateTools( void )
 MicronTracker::ResultType MicronTracker::InternalStartTracking( void )
 {
   igstkLogMacro( DEBUG, "MicronTracker::InternalStartTracking called ...\n");  
-
-  // Send the command to start tracking
 
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
@@ -233,6 +239,18 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
   // accessing it.
   m_BufferLock->Lock();
 
+  /* From the transform buffer information, create transform objects 
+    
+    typedef TransformType::ErrorType  ErrorType;
+    ErrorType errorValue = m_TransformBuffer[port][7];
+
+    transform.SetToIdentity(this->GetValidityTime());
+    transform.SetTranslationAndRotation(translation, rotation, errorValue,
+                                        this->GetValidityTime());
+
+    this->SetToolTransform(port, 0, transform);
+  */
+
 
   m_BufferLock->Unlock();
 
@@ -258,6 +276,12 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
 
   // Copy the transforms and any status information into the
   // buffer.
+
+  /* TODO : create a data structure ( transform buffer ) that will be used to 
+  store the position  on and pose information for the markers.  The data structure will be 
+  a list vector of transform parameters. Each tracker tool ( marker ) 
+  will have an entry. Get the identified makers list and for each marker
+  run Maerk2CameraXfGet and get the pose information */  
 
   // unlock the buffer
   m_BufferLock->Unlock();

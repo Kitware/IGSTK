@@ -20,6 +20,8 @@
 
 #include "igstkTrackerTool.h"
 
+#include "Markers.h"
+
 namespace igstk
 {
 /** \class MicronTrackerTool
@@ -41,26 +43,24 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( MicronTrackerTool, TrackerTool )
 
-  /** Load marker template */
-  void LoadMarkerTemplate( std::string filename );
-
-protected:
+  protected:
 
   MicronTrackerTool();
   ~MicronTrackerTool();
 
-  /** Print object information */
+ /** Print object information */
   virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
+ /** Each tracker tool is associated with a marker index */
+ void SetMarkerIndex( int index ); 
 
 private:
 
   MicronTrackerTool(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
 
-  //marker template directory
-  std::string m_MarkerTemplateDirectory;
-};  
+  int m_MarkerIndex;
 
+};  
 
 } // namespace igstk
 

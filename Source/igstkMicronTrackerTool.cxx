@@ -36,18 +36,10 @@ MicronTrackerTool::~MicronTrackerTool()
 {
 }
 
-/** Load marker template  */
-void
-MicronTrackerTool::LoadMarkerTemplate( std::string filename )
-{
-  this->m_MarkerTemplateDirectory = filename;
-  // Markers_LoadTemplates(currentFolderPath);
-}
-
 /** Print Self function */
 void MicronTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
 
-}
+} //igstk namespace
