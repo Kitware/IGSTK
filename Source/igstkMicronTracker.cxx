@@ -21,6 +21,8 @@
 #pragma warning( disable : 4786 )
 #endif
 
+#define PI atan(1.0) * 4
+
 #include "igstkMicronTracker.h"
 
 namespace igstk
