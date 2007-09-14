@@ -72,16 +72,18 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   MicronTrackerTrackerTestCommand::Pointer 
                                 my_command = MicronTrackerTrackerTestCommand::New();
 
-  if( argc < 4 )
+  if( argc < 5 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "MicronTracker camera calibration file"
                             << "MicronTracker initialization file"
+                            << "Marker template directory "
                             << "Output directory" << std::endl;
     return EXIT_FAILURE;
     }
 
-  std::string outputDirectory = argv[1];
+  /*
+  std::string outputDirectory = argv[4];
   std::string testName = argv[0];
   std::string filename = outputDirectory +"/";
   filename = filename + testName;
@@ -96,6 +98,15 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   logOutput->SetStream( loggerFile );
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG);
+  */
+
+  /* dump debug information to the standard output */
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();  
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG);
+
 
   igstk::MicronTracker::Pointer  tracker;
 
@@ -110,6 +121,9 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
 
   std::string initializationFile = argv[2];
   tracker->SetInitializationFile( initializationFile );
+
+  std::string markerTemplateDirectory = argv[3];
+  tracker->LoadMarkerTemplate( markerTemplateDirectory );
 
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
@@ -127,17 +141,11 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   std::cout << "RequestStartTracking()" << std::endl;
   tracker->RequestStartTracking();
 
-  /*
-  typedef igstk::Transform            TransformType;
-  typedef ::itk::Vector<double, 3>    VectorType;
-  typedef ::itk::Versor<double>       VersorType;
-
   for(unsigned int i=0; i<10; i++)
     {
     tracker->RequestUpdateStatus();
 
     }
-  */
   
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();

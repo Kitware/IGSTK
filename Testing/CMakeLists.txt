@@ -189,6 +189,7 @@ IF(IGSTKSandbox_USE_MicronTracker)
               igstkMicronTrackerTest
               ${IGSTKSandbox_DATA_ROOT}/Input/CalibrationFiles
               ${IGSTKSandbox_DATA_ROOT}/Input/MicronTracker.ini
+              ${IGSTKSandbox_DATA_ROOT}/Input/Markers
               ${IGSTKSandbox_TEST_OUTPUT_DIR})
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkMicronTrackerTest.cxx)
