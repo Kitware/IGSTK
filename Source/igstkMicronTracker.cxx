@@ -23,7 +23,11 @@
 
 #define PI atan(1.0) * 4
 
+#define DEBUGMTC
+
 #include "igstkMicronTracker.h"
+
+#include <sstream>
 
 namespace igstk
 {
@@ -51,11 +55,28 @@ MicronTracker::MicronTracker(void):m_StateMachine(this)
 
   // initialize selected camera
   m_SelectedCamera = NULL;
+
+  //REMOVE
+  m_Counter = 0;
 }
 
 /** Destructor */
 MicronTracker::~MicronTracker(void)
 {
+  if ( m_Cameras != NULL )
+    {
+    delete m_Cameras;
+    }
+
+  if ( m_Markers != NULL )
+    {
+    delete m_Markers;
+    }
+
+  if ( m_Persistence != NULL )
+    {
+    delete m_Persistence;
+    }
 }
 
 /** Specify camera calibration directory */
@@ -80,8 +101,10 @@ void MicronTracker::SetInitializationFile( std::string fileName )
 void
 MicronTracker::LoadMarkerTemplate( std::string filename )
 {
-  this->m_MarkerTemplateDirectory = filename;
+  // clear templates already loaded
+  this->m_Markers->clearTemplates();
 
+  this->m_MarkerTemplateDirectory = filename;
   char * markerTemplateDirectory = 
             const_cast< char *> ( m_MarkerTemplateDirectory.c_str() );
  
@@ -96,12 +119,13 @@ MicronTracker::ResultType MicronTracker::InternalOpen( void )
    * 1) Set algorithm and camera attributes
    * 2) Attach the cameras
    */
+
   if ( ! this->Initialize() )
       {
       std::cerr << "Error initializing" << std::endl;
       return FAILURE;
       }
-   
+
   if ( ! this->SetUpCameras() )
       {
       std::cerr << "Error setting up cameras " << std::endl;
@@ -119,6 +143,9 @@ bool MicronTracker::Initialize()
   char * initializationFilename = 
             const_cast< char *> ( m_InitializationFile.c_str() );
   this->m_Persistence->setPath( initializationFilename );
+
+  std::cout << "Initialization file: " << initializationFilename << std::endl;
+
   this->m_Persistence->setSection ("General");
 
   //Setting the TemplateMatchToleranceMM property in the Markers object
@@ -153,8 +180,8 @@ bool MicronTracker::SetUpCameras()
 
   if ( success )
     {
-    std::cerr << " No camera available or missing calibration file. " 
-              << " Please also check that MTHome system environment variable is set " << endl;
+    std::cerr << " No camera available or missing calibration file in:\t " 
+              << this->m_CalibrationFilesDirectory << endl;
     std::cerr << "Error returned: " << MTLastErrorString() << std::endl; 
     result = false;
     }
@@ -276,20 +303,70 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "MicronTracker::InternalThreadedUpdateStatus "
                  "called ...\n");
+  std::cout << "InternalThreadedUpdateStatus called... " << std::endl;
 
   // Send the commands to the device that will get the transforms
   // for all of the tools.
   // Lock the buffer that this method shares with InternalUpdateStatus
   m_BufferLock->Lock();
 
-  // process frame
-  m_Markers->processFrame( NULL );
+  // Grab frame
+  if ( ! m_Cameras->grabFrame( m_SelectedCamera ) )
+    {
+    std::cerr << "Error grabbing a frame" << std::endl;
+    m_BufferLock->Unlock();
+    return FAILURE;
+    }
 
+  // process frame
+  int completionCode = m_Markers->processFrame( m_SelectedCamera ); 
+
+  if ( completionCode != 0 ) 
+    {
+    std::cout << "Error in processing frame " << std::endl;
+    m_BufferLock->Unlock();
+    return FAILURE;
+    }
+
+#ifdef DEBUGMTC 
+    unsigned char **laddr, **raddr;
+    m_SelectedCamera->getImages( &laddr, &raddr);
+    int width = m_SelectedCamera->getXRes();
+    int height = m_SelectedCamera->getYRes();
+
+    unsigned int size = width*height;
+    const char* copyPixels = (char *) laddr;
+
+    std::stringstream leftImageNameStream;
+    leftImageNameStream << "dataLeft" << m_Counter << ".bin";
+    
+    std::string leftImageName = leftImageNameStream.str(); 
+    ofstream myFile (leftImageName.c_str(), ios::out | ios::binary);
+    myFile.write (copyPixels, size );
+    myFile.close();
+
+    std::stringstream rightImageNameStream;
+    rightImageNameStream << "dataRight" << m_Counter << ".bin";
+    
+    std::string rightImageName = rightImageNameStream.str(); 
+    const char* copyPixelsRight = (char *) raddr;
+    ofstream myFileRight (rightImageName.c_str(), ios::out | ios::binary);
+    myFileRight.write (copyPixelsRight, size );
+    myFileRight.close();
+
+    m_Counter++;
+
+#endif
+ 
   // process identified markers
   Collection* markersCollection = new Collection(this->m_Markers->identifiedMarkers(this->m_SelectedCamera));
+ 
+  std::cout << "\tNumber of identified markers: \t" <<  markersCollection->count() << std::endl;
+
   if (markersCollection->count() == 0) 
     {
     delete markersCollection; 
+    m_BufferLock->Unlock();
     return FAILURE;
     }
 
@@ -304,11 +381,11 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
       Collection* facetsCollection = new Collection(marker->identifiedFacets(this->m_SelectedCamera));
       for (facetNum = 1; facetNum <= facetsCollection->count(); facetNum++)
         {
-        Facet* f = new Facet(facetsCollection->itemI(facetNum));
+        Facet* face = new Facet(facetsCollection->itemI(facetNum));
         /* Get the x-points. The x-points are returned as a four dimensional array
            [Long/Short vector][L/R][base/head][X/Y] */
         double LS_LR_BH_XY[2][2][2][2];
-        f->getXpoints(this->m_SelectedCamera, (double *)LS_LR_BH_XY);
+        face->getXpoints(this->m_SelectedCamera, (double *)LS_LR_BH_XY);
 
         char caption[255];
           if (facetsCollection->count() > 1) {
@@ -319,11 +396,14 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
 
         std::cout << caption <<  std::endl;
 
-        delete f;
+        delete face;
         }
       delete facetsCollection;
       }
-    delete marker;
+    // DONOT invoke delete marker. This is a possible bug in Marker class.
+    // Invoking the marker class destructor causes misidentification of the
+    // markers in the subsequent frames. 
+    //delete marker;
     }
 
   Xform3D* Marker2CurrCameraXf = NULL;

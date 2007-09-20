@@ -153,6 +153,9 @@ private:
   Cameras     * m_Cameras;
   MCamera     * m_SelectedCamera;
 
+  //REMOVE
+  int     m_Counter; 
+
 };
 
 }
