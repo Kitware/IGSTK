@@ -22,6 +22,8 @@
 #include "igstkMacros.h"
 #include "igstkEvents.h"
 
+#include "itkStdStreamLogOutput.h"
+
 namespace igstk
 {
 
@@ -55,6 +57,12 @@ public:
   /** Macro with standard traits declarations. */
   //igstkStandardClassTraitsMacro( VideoGrabber, Object )
   igstkStandardAbstractClassTraitsMacro( VideoGrabber, Object )
+
+  igstkLoggerMacro();
+  /** typedefs for the log output */
+  typedef itk::StdStreamLogOutput        LogOutputType;
+  LogOutputType::Pointer              m_LogCoutOutput;  // log output to console
+
   
   /** Public request methods */
   
@@ -264,6 +272,7 @@ private:
   
   /** Methods used only by the state machine */
   void NoProcessing();
+  void ErrorProcessing();
   void SetVideoBufferSizeProcessing();
   void SetWantedFramerateProcessing();
   void SetVideoOutputFormatProcessing();
@@ -296,7 +305,7 @@ private:
   VideoClipRectangle  m_VideoOutputClipRectangleToBeSet;
   unsigned int        m_VideoOutputPaddingToBeSet;
   
-  /** Variable to save the framrate */
+  /** Variable to save parameter settings */
   unsigned long       m_VideoBufferSize;
   unsigned int        m_Framerate;
   unsigned int        m_VideoOutputFormat;
