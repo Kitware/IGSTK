@@ -22,6 +22,14 @@ namespace igstk
 
 VideoGrabber::VideoGrabber() : m_StateMachine( this )
 {
+  /** Setup logger, for all other igstk components. */
+  m_Logger   = LoggerType::New();
+  m_LogCoutOutput = LogOutputType::New();
+  m_LogCoutOutput->SetStream( std::cout );
+  this->SetLogger(m_Logger);
+  this->GetLogger()->AddLogOutput( m_LogCoutOutput );
+
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber constructor called...\n");
 
   /** Initialize  Machine */
   igstkAddStateMacro( Idle );
@@ -278,14 +286,1364 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
                            Close,
                            AttemptingToDeactivateGrabber,
                            DeactivateGrabber );
-  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+
+  /*********************/                           
+  /** null transitions */
+  /*********************/
+  
+  // Idle state
+  igstkAddTransitionMacro( Idle,
+                           Open,
+                           Idle,
+                           No );
+  igstkAddTransitionMacro( Idle,
+                           Close,
+                           Idle,
+                           No );
+  igstkAddTransitionMacro( Idle,
+                           StartGrabbing,
+                           Idle,
+                           No );
+  igstkAddTransitionMacro( Idle,
+                           StopGrabbing,
+                           Idle,
+                           No );
+  igstkAddTransitionMacro( Idle,
+                           GrabOneFrame,
+                           Idle,
+                           No );
+  igstkAddTransitionMacro( Idle,
+                           Success,
+                           Idle,
+                           No );
+  igstkAddTransitionMacro( Idle,
+                           Failure,
+                           Idle,
+                           No );
+  igstkAddTransitionMacro( Idle,
+                           RequestNumberOfVideoFrames,
+                           Idle,
+                           No );
+  igstkAddTransitionMacro( Idle,
+                           RequestTimeTag,
+                           Idle,
+                           No );
+  igstkAddTransitionMacro( Idle,
+                           RequestVideoFrameNo,
+                           Idle,
+                           No );
+                           
+ // AttemptingToSetVideoBufferSize
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           SetVideoBufferSize,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           SetWantedFramerate,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           SetVideoOutputFormat,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           SetVideoOutputDimensions,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           SetVideoOutputClipRectangle,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           SetVideoOutputPadding,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           RequestVideoBufferSize,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           RequestVideoFrameNo,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           RequestFramerate,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           RequestVideoOutputFormat,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           RequestVideoOutputDimensions,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           RequestVideoOutputClipRectangle,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           RequestVideoOutputPadding,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           RequestNumberOfVideoFrames,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           RequestTimeTag,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           Open,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           Close,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           Initialize,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           StartGrabbing,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           StopGrabbing,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoBufferSize,
+                           GrabOneFrame,
+                           AttemptingToSetVideoBufferSize,
+                           No );
+
+ // AttemptingToSetWantedFramerate
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           SetVideoBufferSize,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           SetWantedFramerate,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           SetVideoOutputFormat,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           SetVideoOutputDimensions,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           SetVideoOutputClipRectangle,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           SetVideoOutputPadding,
+                           AttemptingToSetWantedFramerate,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           RequestVideoBufferSize,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           RequestVideoFrameNo,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           RequestFramerate,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           RequestVideoOutputFormat,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           RequestVideoOutputDimensions,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           RequestVideoOutputClipRectangle,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           RequestVideoOutputPadding,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           RequestNumberOfVideoFrames,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           RequestTimeTag,
+                           AttemptingToSetWantedFramerate,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           Open,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           Close,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           Initialize,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           StartGrabbing,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           StopGrabbing,
+                           AttemptingToSetWantedFramerate,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetWantedFramerate,
+                           GrabOneFrame,
+                           AttemptingToSetWantedFramerate,
+                           No );
+
+ // AttemptingToSetVideoOutputFormat
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           SetVideoBufferSize,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           SetWantedFramerate,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           SetVideoOutputFormat,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           SetVideoOutputDimensions,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           SetVideoOutputClipRectangle,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           SetVideoOutputPadding,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           RequestVideoBufferSize,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           RequestVideoFrameNo,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           RequestFramerate,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           RequestVideoOutputFormat,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           RequestVideoOutputDimensions,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           RequestVideoOutputClipRectangle,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           RequestVideoOutputPadding,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           RequestNumberOfVideoFrames,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           RequestTimeTag,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           Open,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           Close,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           Initialize,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           StartGrabbing,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           StopGrabbing,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputFormat,
+                           GrabOneFrame,
+                           AttemptingToSetVideoOutputFormat,
+                           No );
+ 
+ 
+  // AttemptingToSetVideoOutputDimensions
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           SetVideoBufferSize,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           SetWantedFramerate,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           SetVideoOutputFormat,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           SetVideoOutputDimensions,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           SetVideoOutputClipRectangle,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           SetVideoOutputPadding,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           RequestVideoBufferSize,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           RequestVideoFrameNo,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           RequestFramerate,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           RequestVideoOutputFormat,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           RequestVideoOutputDimensions,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           RequestVideoOutputClipRectangle,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           RequestVideoOutputPadding,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           RequestNumberOfVideoFrames,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           RequestTimeTag,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           Open,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           Close,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           Initialize,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           StartGrabbing,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           StopGrabbing,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputDimensions,
+                           GrabOneFrame,
+                           AttemptingToSetVideoOutputDimensions,
+                           No );
+
+  // AttemptingToSetVideoOutputClipRectangle
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           SetVideoBufferSize,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           SetWantedFramerate,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           SetVideoOutputFormat,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           SetVideoOutputDimensions,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           SetVideoOutputClipRectangle,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           SetVideoOutputPadding,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           RequestVideoBufferSize,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           RequestVideoFrameNo,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           RequestFramerate,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           RequestVideoOutputFormat,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           RequestVideoOutputDimensions,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           RequestVideoOutputClipRectangle,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           RequestVideoOutputPadding,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           RequestNumberOfVideoFrames,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           RequestTimeTag,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           Open,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           Close,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           Initialize,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           StartGrabbing,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           StopGrabbing,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputClipRectangle,
+                           GrabOneFrame,
+                           AttemptingToSetVideoOutputClipRectangle,
+                           No );
+
+  // AttemptingToSetVideoOutputPadding
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           SetVideoBufferSize,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           SetWantedFramerate,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           SetVideoOutputFormat,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           SetVideoOutputDimensions,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           SetVideoOutputClipRectangle,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           SetVideoOutputPadding,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           RequestVideoBufferSize,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           RequestVideoFrameNo,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           RequestFramerate,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           RequestVideoOutputFormat,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           RequestVideoOutputDimensions,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           RequestVideoOutputClipRectangle,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           RequestVideoOutputPadding,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           RequestNumberOfVideoFrames,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           RequestTimeTag,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           Open,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           Close,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           Initialize,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           StartGrabbing,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           StopGrabbing,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+  igstkAddTransitionMacro( AttemptingToSetVideoOutputPadding,
+                           GrabOneFrame,
+                           AttemptingToSetVideoOutputPadding,
+                           No );
+
+  // AttemptingToInitialize
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           SetVideoBufferSize,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           SetWantedFramerate,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           SetVideoOutputFormat,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           SetVideoOutputDimensions,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           SetVideoOutputClipRectangle,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           SetVideoOutputPadding,
+                           AttemptingToInitialize,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           RequestVideoBufferSize,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           RequestVideoFrameNo,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           RequestFramerate,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           RequestVideoOutputFormat,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           RequestVideoOutputDimensions,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           RequestVideoOutputClipRectangle,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           RequestVideoOutputPadding,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           RequestNumberOfVideoFrames,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           RequestTimeTag,
+                           AttemptingToInitialize,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           Open,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           Close,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           Initialize,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           StartGrabbing,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           StopGrabbing,
+                           AttemptingToInitialize,
+                           No );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           GrabOneFrame,
+                           AttemptingToInitialize,
+                           No );
+
+  // AttemptingToStartGrabbing
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           SetVideoBufferSize,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           SetWantedFramerate,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           SetVideoOutputFormat,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           SetVideoOutputDimensions,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           SetVideoOutputClipRectangle,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           SetVideoOutputPadding,
+                           AttemptingToStartGrabbing,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           RequestVideoBufferSize,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           RequestVideoFrameNo,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           RequestFramerate,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           RequestVideoOutputFormat,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           RequestVideoOutputDimensions,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           RequestVideoOutputClipRectangle,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           RequestVideoOutputPadding,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           RequestNumberOfVideoFrames,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           RequestTimeTag,
+                           AttemptingToStartGrabbing,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           Open,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           Close,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           Initialize,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           StartGrabbing,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           StopGrabbing,
+                           AttemptingToStartGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStartGrabbing,
+                           GrabOneFrame,
+                           AttemptingToStartGrabbing,
+                           No );
+
+  // AttemptingToStopGrabbing
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           SetVideoBufferSize,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           SetWantedFramerate,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           SetVideoOutputFormat,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           SetVideoOutputDimensions,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           SetVideoOutputClipRectangle,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           SetVideoOutputPadding,
+                           AttemptingToStopGrabbing,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           RequestVideoBufferSize,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           RequestVideoFrameNo,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           RequestFramerate,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           RequestVideoOutputFormat,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           RequestVideoOutputDimensions,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           RequestVideoOutputClipRectangle,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           RequestVideoOutputPadding,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           RequestNumberOfVideoFrames,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           RequestTimeTag,
+                           AttemptingToStopGrabbing,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           Open,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           Close,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           Initialize,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           StartGrabbing,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           StopGrabbing,
+                           AttemptingToStopGrabbing,
+                           No );
+  igstkAddTransitionMacro( AttemptingToStopGrabbing,
+                           GrabOneFrame,
+                           AttemptingToStopGrabbing,
+                           No );
+
+
+  // GrabberReady
+  igstkAddTransitionMacro( GrabberReady,
+                           SetVideoBufferSize,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           SetWantedFramerate,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           SetVideoOutputFormat,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           SetVideoOutputDimensions,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           SetVideoOutputClipRectangle,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           SetVideoOutputPadding,
+                           GrabberReady,
+                           No );
+
+  igstkAddTransitionMacro( GrabberReady,
+                           RequestVideoBufferSize,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           RequestVideoFrameNo,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           RequestFramerate,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           RequestVideoOutputFormat,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           RequestVideoOutputDimensions,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           RequestVideoOutputClipRectangle,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           RequestVideoOutputPadding,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           RequestNumberOfVideoFrames,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           RequestTimeTag,
+                           GrabberReady,
+                           No );
+
+  igstkAddTransitionMacro( GrabberReady,
+                           Close,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           Initialize,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           StartGrabbing,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           StopGrabbing,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
+                           GrabOneFrame,
+                           GrabberReady,
+                           No );
+  igstkAddTransitionMacro( GrabberReady,
                            Success,
                            GrabberReady,
                            No );
+  igstkAddTransitionMacro( GrabberReady,
+                           Failure,
+                           GrabberReady,
+                           No );
+
+  // AttemptingToActivateGrabber
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           SetVideoBufferSize,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           SetWantedFramerate,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           SetVideoOutputFormat,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           SetVideoOutputDimensions,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           SetVideoOutputClipRectangle,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           SetVideoOutputPadding,
+                           AttemptingToActivateGrabber,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           RequestVideoBufferSize,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           RequestVideoFrameNo,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           RequestFramerate,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           RequestVideoOutputFormat,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           RequestVideoOutputDimensions,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           RequestVideoOutputClipRectangle,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           RequestVideoOutputPadding,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           RequestNumberOfVideoFrames,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           RequestTimeTag,
+                           AttemptingToActivateGrabber,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           Open,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           Close,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           Initialize,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           StartGrabbing,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           StopGrabbing,
+                           AttemptingToActivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToActivateGrabber,
+                           GrabOneFrame,
+                           AttemptingToActivateGrabber,
+                           No );
+
+  // AttemptingToDeactivateGrabber
   igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           SetVideoBufferSize,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           SetWantedFramerate,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           SetVideoOutputFormat,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           SetVideoOutputDimensions,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           SetVideoOutputClipRectangle,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           SetVideoOutputPadding,
+                           AttemptingToDeactivateGrabber,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           RequestVideoBufferSize,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           RequestVideoFrameNo,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           RequestFramerate,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           RequestVideoOutputFormat,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           RequestVideoOutputDimensions,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           RequestVideoOutputClipRectangle,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           RequestVideoOutputPadding,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           RequestNumberOfVideoFrames,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           RequestTimeTag,
+                           AttemptingToDeactivateGrabber,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           Open,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           Close,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           Initialize,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           StartGrabbing,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           StopGrabbing,
+                           AttemptingToDeactivateGrabber,
+                           No );
+  igstkAddTransitionMacro( AttemptingToDeactivateGrabber,
+                           GrabOneFrame,
+                           AttemptingToDeactivateGrabber,
+                           No );
+
+  // GrabberActive
+  igstkAddTransitionMacro( GrabberActive,
+                           SetVideoBufferSize,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           SetWantedFramerate,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           SetVideoOutputFormat,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           SetVideoOutputDimensions,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           SetVideoOutputClipRectangle,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           SetVideoOutputPadding,
+                           GrabberActive,
+                           No );
+
+  igstkAddTransitionMacro( GrabberActive,
+                           RequestVideoBufferSize,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           RequestVideoFrameNo,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           RequestFramerate,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           RequestVideoOutputFormat,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           RequestVideoOutputDimensions,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           RequestVideoOutputClipRectangle,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           RequestVideoOutputPadding,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           RequestNumberOfVideoFrames,
+                           GrabberActive,
+                           No );
+
+  igstkAddTransitionMacro( GrabberActive,
+                           Open,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           Initialize,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           StopGrabbing,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
+                           Success,
+                           GrabberActive,
+                           No );
+  igstkAddTransitionMacro( GrabberActive,
                            Failure,
                            GrabberActive,
                            No );
+
+
+  // AttemptingToGrabOneFrame
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           SetVideoBufferSize,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           SetWantedFramerate,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           SetVideoOutputFormat,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           SetVideoOutputDimensions,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           SetVideoOutputClipRectangle,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           SetVideoOutputPadding,
+                           AttemptingToGrabOneFrame,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           RequestVideoBufferSize,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           RequestVideoFrameNo,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           RequestFramerate,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           RequestVideoOutputFormat,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           RequestVideoOutputDimensions,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           RequestVideoOutputClipRectangle,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           RequestVideoOutputPadding,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           RequestNumberOfVideoFrames,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           RequestTimeTag,
+                           AttemptingToGrabOneFrame,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           Open,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           Close,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           Initialize,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           StartGrabbing,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           StopGrabbing,
+                           AttemptingToGrabOneFrame,
+                           No );
+  igstkAddTransitionMacro( AttemptingToGrabOneFrame,
+                           GrabOneFrame,
+                           AttemptingToGrabOneFrame,
+                           No );
+
+  // Grabbing
+  igstkAddTransitionMacro( Grabbing,
+                           SetVideoBufferSize,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           SetWantedFramerate,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           SetVideoOutputFormat,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           SetVideoOutputDimensions,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           SetVideoOutputClipRectangle,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           SetVideoOutputPadding,
+                           Grabbing,
+                           No );
+
+  igstkAddTransitionMacro( Grabbing,
+                           RequestVideoBufferSize,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           RequestVideoFrameNo,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           RequestFramerate,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           RequestVideoOutputFormat,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           RequestVideoOutputDimensions,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           RequestVideoOutputClipRectangle,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           RequestVideoOutputPadding,
+                           Grabbing,
+                           No );
+
+  igstkAddTransitionMacro( Grabbing,
+                           Open,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           Initialize,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           StartGrabbing,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           GrabOneFrame,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           Success,
+                           Grabbing,
+                           No );
+  igstkAddTransitionMacro( Grabbing,
+                           Failure,
+                           Grabbing,
+                           No );
+
                
   /** State machine ready to run */
   igstkSetInitialStateMacro( Idle );
@@ -303,11 +1661,21 @@ VideoGrabber::VideoGrabber() : m_StateMachine( this )
 /** Destructor */
 VideoGrabber::~VideoGrabber()
 {
+  igstkLogMacro( DEBUG, "igstk::VideoGrabber destructor called...\n");
 }
 
 /** Method to be invoked when no operation is required */
 void VideoGrabber::NoProcessing()
 {
+  igstkLogMacro( DEBUG, "VideoGrabber::NoProcessing \
+                           called ...\n");
+}
+
+/** State machine Input error processing. */
+void VideoGrabber::ErrorProcessing()
+{
+  igstkLogMacro( CRITICAL, "VideoGrabber::ErrorProcessing \
+                           called ...\n");
 }
 
 /** Internal fuction to set and test video buffer size. 
