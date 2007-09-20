@@ -141,10 +141,9 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   std::cout << "RequestStartTracking()" << std::endl;
   tracker->RequestStartTracking();
 
-  for(unsigned int i=0; i<10; i++)
+  for(unsigned int i=0; i<100; i++)
     {
     tracker->RequestUpdateStatus();
-
     }
   
   std::cout << "RequestStopTracking()" << std::endl;
