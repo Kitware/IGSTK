@@ -25,6 +25,11 @@ namespace igstk {
 
 /** \class ViewProxy
  *
+ *  A proxy class designed to access private member data 
+ *  of the view class and pass the values to widget classes. 
+ *
+ *  This class is templated over widget type.
+ *
  *
  */
 

@@ -27,6 +27,9 @@ namespace igstk {
 
 /** \class ViewProxyBase
  *
+ *  A proxy class designed to access private member data 
+ *  of the view class.
+ *
  *
  */
 class ViewProxyBase 
@@ -40,7 +43,6 @@ protected:
   void                        InitializeInteractor( ViewNew * view );
   void                        SetRenderWindowSize( ViewNew * view, int width, int height );
 
-  
 private:
 
 };

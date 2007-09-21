@@ -248,6 +248,30 @@ ViewNew::~ViewNew()
 
 }
 
+/** Get renderer */ 
+vtkRenderer *  ViewNew::GetRenderer()
+{
+return this->m_Renderer; 
+}
+ 
+/** Get render window */
+vtkRenderWindow * ViewNew::GetRenderWindow()
+{
+return this->m_RenderWindow; 
+} 
+
+/** Get render window interactor */
+RenderWindowInteractor *  ViewNew::GetRenderWindowInteractor()
+{
+return this->m_RenderWindowInteractor; 
+}
+
+/** Get reporter */ 
+::itk::Object::Pointer ViewNew::GetReporter()
+{
+return this->m_Reporter; 
+}
+
 /** Request initialize render window interactor */
 void ViewNew::RequestInitializeRenderWindowInteractor()
 {

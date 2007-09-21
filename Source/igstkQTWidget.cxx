@@ -149,10 +149,17 @@ unsigned long QTWidget::AddObserver( const ::itk::EventObject & event,
 void QTWidget::RequestSetView( const ViewType* view)
 {
   igstkLogMacro( DEBUG, "RequestSetView called ...\n");
-  //FIXME: insert a logic to check if the specified view is 
-  //valid or not
-  m_View = const_cast< ViewType*  >( view );
-  igstkPushInputMacro( ValidView );
+
+  if ( view == NULL )
+    {
+    igstkPushInputMacro( InValidView );
+    }
+  else
+    {
+    m_View = const_cast< ViewType*  >( view );
+    igstkPushInputMacro( ValidView );
+    }
+
   m_StateMachine.ProcessInputs();
 }
  

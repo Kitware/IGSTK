@@ -53,7 +53,7 @@ namespace igstk {
  *  \brief Base class for View2D and View3D
  * 
  *  The functionality of the View class is to aggregate all the graphical
- *  representations of spatial objects into one scene,
+ *  representations of spatial objects into one scene.
  *
  * \ingroup Object
  */
@@ -69,12 +69,10 @@ public:
    * attempt to go faster than your monitor, nor more than double than your
    * trackers */
   void SetRefreshRate( double frequency );
-
  
   /** Add an observer to this ViewNew class */
   unsigned long AddObserver( const ::itk::EventObject & event, 
                                                    ::itk::Command * observer );
-
   /** Remove an observer to this ViewNew class */
   void  RemoveObserver( unsigned long tag );
   
@@ -107,24 +105,6 @@ public:
   /** Set up variables, types and methods related to the Logger */
   igstkLoggerMacro()
 
-  /** Methods to control camera parameters */
-  void SetCameraPosition( double x, double y, double z);
-  void SetFocalPoint( double x, double y, double z);
-  void SetCameraViewUp( double vx, double vy, double vz);
-  void SetClippingRange( double dNear, double dFar );
-  void SetParallelProjection( bool flag );
-  void SetRendererBackgroundColor(
-                    double red, double green, double blue ); 
-  void SetCameraZoomFactor( double rate );
-
-   friend class ViewProxyBase;
-protected:
-
-  ViewNew( );
-  virtual ~ViewNew( void );
-
-public:
-  
   /** Request to return the camera to a known position */
   void RequestResetCamera();
   
@@ -134,8 +114,35 @@ public:
   /** Request Stopping the periodic refreshing of the view */
   void RequestStop();
 
-protected:
+  /** Set Camera position */
+  void SetCameraPosition( double x, double y, double z);
   
+  /** Set camera focal point */
+  void SetFocalPoint( double x, double y, double z);
+
+  /** Set Camera View Up vector */
+  void SetCameraViewUp( double vx, double vy, double vz);
+
+  /** Set Clipping range */
+  void SetClippingRange( double dNear, double dFar );
+
+  /** Turn on/off parallel projection */
+  void SetParallelProjection( bool flag );
+
+  /** Set renderer background color */
+  void SetRendererBackgroundColor(
+                    double red, double green, double blue ); 
+
+  /** Set camera zoom factor */
+  void SetCameraZoomFactor( double rate );
+
+  friend class ViewProxyBase;
+
+protected:
+
+  ViewNew( );
+  virtual ~ViewNew( void );
+
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
  
@@ -153,56 +160,17 @@ protected:
 
 private:
 
-  vtkRenderWindow       * m_RenderWindow;
-  vtkRenderer           * m_Renderer;
-
-  /** Render Window Interactor */
-  RenderWindowInteractor  * m_RenderWindowInteractor;
-
-  /** Member variables for holding temptative arguments of functions.
-   *  This is needed for implementing a layer of security that decouples
-   *  user invokations from the actual state of this class */
-  vtkProp            * m_ActorToBeAdded;
-  vtkProp            * m_ActorToBeRemoved;
-
-  Annotation2D::Pointer       m_Annotation2DToBeAdded; 
-  
-  typedef itk::SimpleMemberCommand< Self >   ObserverType;
-
-  PulseGenerator::Pointer   m_PulseGenerator;
-  ObserverType::Pointer     m_PulseObserver;
-  ::itk::Object::Pointer    m_Reporter;
-
-  /** List of the children object plug to the spatial object. */
-  ObjectListType m_Objects; 
-
-private:
-
   /** Get renderer */ 
-   vtkRenderer *  GetRenderer()
-    {
-    return this->m_Renderer; 
-    }
+  vtkRenderer *  GetRenderer();
  
   /** Get render window */
-  vtkRenderWindow * GetRenderWindow()
-    {
-    return this->m_RenderWindow; 
-    } 
+  vtkRenderWindow * GetRenderWindow();
 
   /** Get render window interactor */
-  RenderWindowInteractor *  GetRenderWindowInteractor()
-    {
-    return this->m_RenderWindowInteractor; 
-    }
+  RenderWindowInteractor *  GetRenderWindowInteractor();
 
   /** Get reporter */ 
-  ::itk::Object::Pointer GetReporter()
-    {
-    return this->m_Reporter; 
-    }
-
-
+  ::itk::Object::Pointer GetReporter();
 
   /** Initialize the interactor */
   void InitializeRenderWindowInteractorProcessing();
@@ -222,7 +190,10 @@ private:
   /** Method that will refresh the view.. and the GUI */
   void RefreshRender();
 
+  /** Request add actor */
   void RequestAddActor( vtkProp * actor );
+
+  /** Request remove actor */
   void RequestRemoveActor( vtkProp * actor );
   
   /** Report any invalid request to the logger */
@@ -258,9 +229,31 @@ private:
   void ResetCameraProcessing();
   
 private:
+ 
+  vtkRenderWindow       * m_RenderWindow;
+  vtkRenderer           * m_Renderer;
+
+  /** Render Window Interactor */
+  RenderWindowInteractor  * m_RenderWindowInteractor;
+
+  /** Member variables for holding temptative arguments of functions.
+   *  This is needed for implementing a layer of security that decouples
+   *  user invokations from the actual state of this class */
+  vtkProp            * m_ActorToBeAdded;
+  vtkProp            * m_ActorToBeRemoved;
+
+  Annotation2D::Pointer       m_Annotation2DToBeAdded; 
   
+  typedef itk::SimpleMemberCommand< Self >   ObserverType;
+
+  PulseGenerator::Pointer   m_PulseGenerator;
+  ObserverType::Pointer     m_PulseObserver;
+  ::itk::Object::Pointer    m_Reporter;
+
+  /** List of the children object plug to the spatial object. */
+  ObjectListType m_Objects; 
+ 
   // Arguments for methods to be invoked by the state machine.
-  //
   ObjectRepresentation::Pointer m_ObjectToBeAdded;
   ObjectRepresentation::Pointer m_ObjectToBeRemoved;
   ObjectListType::iterator      m_IteratorToObjectToBeRemoved;
@@ -268,7 +261,6 @@ private:
   int                           m_RenderWindowWidthToBeSet;
   int                           m_RenderWindowHeightToBeSet;
  
-
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidAddActor );
   igstkDeclareInputMacro( NullAddActor );
