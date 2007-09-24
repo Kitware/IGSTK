@@ -166,7 +166,7 @@ void Annotation2D::RequestSetAnnotationsViewPort( int horizontalSize,
 
 /** Request font color */
 void Annotation2D
-::RequestSetFontColor( int index, double red, double blue, double green )
+::RequestSetFontColor( int index, double red, double green, double blue )
 {
   igstkLogMacro( DEBUG, "RequestSetFontColor() called ....\n"  );
 
