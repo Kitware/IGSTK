@@ -436,6 +436,10 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
         strcat(s, ")");
 
         // If there's a tooltip, add it
+        // Marker to tooltip is set using 
+        // Marker_Tooltip2MarkerXfSet method or it can be 
+        // specified in the marker template file in the
+        // marker's coordinate system
         Xform3D* t2m; // tooltip to marker xform
         Xform3D* t2c; // tooltip to camera xform
         double svec[3];
