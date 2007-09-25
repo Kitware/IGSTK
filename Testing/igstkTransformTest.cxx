@@ -30,6 +30,7 @@
 #include <windows.h>
 #else
 #include <time.h>
+#include <unistd.h>
 #endif
 
 int igstkTransformTest( int, char * [] )
