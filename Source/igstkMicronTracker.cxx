@@ -515,12 +515,14 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
 #endif
            std::cout << "Angle=" << s << std::endl;
            }
-        delete m2;
+        /* Deleteing markers m1 and m2, somehow affects the marker indentifcation: DEBUG */
+        //delete m2;
         }
         delete Mj2Cam;
-        delete m1;
+        //delete m1;
         delete Mi2Cam;
       }
+
   delete markersCollection; 
 
   // Copy the transforms and any status information into the
