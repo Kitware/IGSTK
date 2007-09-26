@@ -148,6 +148,9 @@ public:
   igstkLoadedTemplatedObjectEventMacro( ImageModifiedEvent, IGSTKEvent, 
                                         TImageSpatialObject);
 
+  /** Declarations needed for the Logger */
+  igstkLoggerMacro();
+
 protected:
 
   DICOMImageReader( void );
@@ -168,6 +171,10 @@ protected:
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+  /** This method MUST be protected n order to prevent 
+   *  unsafe access to the ITK image level */
+  virtual const ImageType * GetITKImage() const;
 
 private:
 
@@ -210,15 +217,11 @@ private:
    * should be read by CT image reader not by MRI image reader */
   virtual bool CheckModalityType( DICOMInformationType modality );
 
-  
   /** DICOM tags request inputs */
   igstkDeclareInputMacro( GetModalityInformation );
   igstkDeclareInputMacro( GetPatientNameInformation );
   
-  /** Declarations needed for the Logger */
-  igstkLoggerMacro();
-
-  /** Set the name of the directory. To be invoked ONLY by the StateMachine */
+    /** Set the name of the directory. To be invoked ONLY by the StateMachine */
   void SetDirectoryNameProcessing();
 
   /** Invokes a FileNameGenerator in order to get the names of all the DICOM
@@ -273,10 +276,6 @@ private:
   /** This function throws a string loaded event. The string is loaded
    *  with patient name */
   void GetPatientNameInformationProcessing();
-
-  /** This method MUST be private in order to prevent 
-   *  unsafe access to the ITK image level */
-  virtual const ImageType * GetITKImage() const;
 
   /** Flag that indicates whether the file has been read successfully */
   bool                    m_FileSuccessfullyRead;
