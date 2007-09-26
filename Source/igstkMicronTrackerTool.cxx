@@ -36,6 +36,19 @@ MicronTrackerTool::~MicronTrackerTool()
 {
 }
 
+/** Get marker name */
+std::string MicronTrackerTool::GetMarkerName( )
+{
+  return m_MarkerName;
+}
+
+/** Request set marker name */
+void MicronTrackerTool::RequestSetMarkerName( std::string markerName )
+{
+  //FIXME: should be routed through the state machine
+  this->m_MarkerName = markerName;
+}
+
 /** Print Self function */
 void MicronTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {

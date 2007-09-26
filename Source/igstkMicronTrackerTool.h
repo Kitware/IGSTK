@@ -43,22 +43,28 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( MicronTrackerTool, TrackerTool )
 
-  protected:
+  /** Get Tracker tool marker name */
+  std::string GetMarkerName( );
+
+ /** Each tracker tool is associated with a marker name
+ *FIXME  This should be routed through the state machine 
+ **/
+ void RequestSetMarkerName( std::string markerName); 
+
+protected:
 
   MicronTrackerTool();
   ~MicronTrackerTool();
 
  /** Print object information */
   virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
- /** Each tracker tool is associated with a marker index */
- void SetMarkerIndex( int index ); 
 
 private:
 
   MicronTrackerTool(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
 
-  int m_MarkerIndex;
+  std::string m_MarkerName;
 
 };  
 

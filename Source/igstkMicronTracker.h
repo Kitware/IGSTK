@@ -37,6 +37,8 @@
 #include "MTC.h"
 #include <math.h>
 
+#include <map>
+
 namespace igstk {
 
 /** \class MicronTracker
@@ -78,6 +80,8 @@ public:
   /** Load markers template */
   void LoadMarkerTemplate( std::string filename );
 
+  /** Add the tracker tool std::map container */
+  void RequestAddTool( MicronTrackerToolType * trackerTool );
  
 protected:
 
@@ -145,6 +149,9 @@ private:
   Cameras     * m_Cameras;
   MCamera     * m_SelectedCamera;
 
+  /** A buffer to hold tool transforms */
+  std::map< std::string, std::vector < double > > 
+                                              m_ToolTransformBuffer;
 };
 
 }

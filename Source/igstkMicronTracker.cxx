@@ -218,6 +218,26 @@ bool MicronTracker::SetUpCameras()
   return result;
 }
 
+/** Request adding a tool to the tracker */
+void MicronTracker::RequestAddTool( MicronTrackerToolType * trackerTool )
+{
+  // Superclass::RequestAddTool( trackerTool );
+
+  //populate std::map with the marker name and corresponding transform
+  //REVISIT this..there should be an easier way of doing this
+  std::vector< double > transform;
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+
+  m_ToolTransformBuffer[ trackerTool->GetMarkerName() ] = transform;
+}
+
+
 /** Detach camera . */
 MicronTracker::ResultType MicronTracker::InternalClose( void )
 {
@@ -414,10 +434,16 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
       if(Marker2CurrCameraXf != NULL)
         {
 
+        double translation[3];
+
+        translation[0] = Marker2CurrCameraXf->getShift(0);
+        translation[1] = Marker2CurrCameraXf->getShift(1);
+        translation[2] = Marker2CurrCameraXf->getShift(2);
+      
         std::cout.setf(ios::fixed,ios::floatfield); 
-        std::cout << "\tOrigin XYZ= " << setprecision(5) << Marker2CurrCameraXf->getShift(0) << "\t" 
-                            << Marker2CurrCameraXf->getShift(1) << "\t"
-                            << Marker2CurrCameraXf->getShift(2) << std::endl;
+        std::cout << "\tOrigin XYZ= " << setprecision(5) << translation[0] << "\t" 
+                            << translation[1] << "\t"
+                            << translation[2] << std::endl;
 
         // If there's a tooltip, add it
         // Marker to tooltip is set using 
@@ -438,6 +464,28 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
                             << t2c->getShift(2) << std::endl;
           delete t2c;
           }
+
+          // Add the translation and rotation to the transform buffer
+          std::vector < double > transform;
+
+          //the first three are translation
+          transform.push_back( translation[0] ); 
+          transform.push_back( translation[1] ); 
+          transform.push_back( translation[2] ); 
+
+          //the next four are quaternion
+          double quaternion[4];
+          quaternion[0] = 0.0;
+          quaternion[1] = 0.0;
+          quaternion[2] = 0.0;
+          quaternion[3] = 0.0;
+
+          transform.push_back( quaternion[0] ); 
+          transform.push_back( quaternion[1] ); 
+          transform.push_back( quaternion[2] ); 
+          transform.push_back( quaternion[3] ); 
+
+          m_ToolTransformBuffer[ marker->getName() ] = transform;
 
         delete t2m;
         }
