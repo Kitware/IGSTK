@@ -456,7 +456,6 @@ m_BufferLock->Lock();
 
       if(Marker2CurrCameraXf != NULL)
         {
-
         double translation[3];
 
         translation[0] = Marker2CurrCameraXf->getShift(0);
@@ -477,6 +476,7 @@ m_BufferLock->Lock();
         double svec[3];
         t2m = marker->tooltip2MarkerXf();
         t2m->getShiftVector(svec);
+
         if (svec[0] != 0 || svec[1] != 0 || svec[2] != 0) 
           { 
           Xform3D* t2c; // tooltip to camera xform
@@ -488,27 +488,39 @@ m_BufferLock->Lock();
           delete t2c;
           }
 
-          // Add the translation and rotation to the transform buffer
-          std::vector < double > transform;
+        // Add the translation and rotation to the transform buffer
+        std::vector < double > transform;
 
-          //the first three are translation
-          transform.push_back( translation[0] ); 
-          transform.push_back( translation[1] ); 
-          transform.push_back( translation[2] ); 
+        //the first three are translation
+        transform.push_back( translation[0] ); 
+        transform.push_back( translation[1] ); 
+        transform.push_back( translation[2] ); 
 
-          //the next four are quaternion
-          double quaternion[4];
-          quaternion[0] = 0.0;
-          quaternion[1] = 0.0;
-          quaternion[2] = 0.0;
-          quaternion[3] = 0.0;
+        //the next four are quaternion
+        double quaternion[4];
+        quaternion[0] = 0.0;
+        quaternion[1] = 0.0;
+        quaternion[2] = 0.0;
+        quaternion[3] = 0.0;
 
-          transform.push_back( quaternion[0] ); 
-          transform.push_back( quaternion[1] ); 
-          transform.push_back( quaternion[2] ); 
-          transform.push_back( quaternion[3] ); 
+        transform.push_back( quaternion[0] ); 
+        transform.push_back( quaternion[1] ); 
+        transform.push_back( quaternion[2] ); 
+        transform.push_back( quaternion[3] ); 
 
+        //Check if a Tracker tool is added with this marker type 
+        //
+        typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
+        InputConstIterator markerItr = m_ToolTransformBuffer.find( marker->getName() );
+  
+        if( markerItr != m_ToolTransformBuffer.end() )
+          {
           m_ToolTransformBuffer[ marker->getName() ] = transform;
+          }
+        else
+          {
+          std::cout << "No TrackerTool is attached to this marker " << std::endl;
+          }
 
         delete t2m;
         }
@@ -520,15 +532,6 @@ m_BufferLock->Lock();
     }
 
   delete markersCollection; 
-
-  // Copy the transforms and any status information into the
-  // buffer.
-
-  /* TODO : create a data structure ( transform buffer ) that will be used to 
-  store the position  on and pose information for the markers.  The data structure will be 
-  a list vector of transform parameters. Each tracker tool ( marker ) 
-  will have an entry. Get the identified makers list and for each marker
-  run Maerk2CameraXfGet and get the pose information */  
 
   // unlock the buffer
   m_BufferLock->Unlock();
