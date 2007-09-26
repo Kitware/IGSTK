@@ -8,7 +8,7 @@
 namespace igstk
 { 
 
-const double PivotCalibrationAlgorithm::DEFAULT_SINGULAR_VALUE_THRESHOLD = 1e-3;
+const double PivotCalibrationAlgorithm::DEFAULT_SINGULAR_VALUE_THRESHOLD = 1e-1;
 
 PivotCalibrationAlgorithm::PivotCalibrationAlgorithm() : 
   m_StateMachine( this ), 
@@ -337,7 +337,8 @@ PivotCalibrationAlgorithm::ComputeCalibrationProcessing()
     A.update( minusI, currentRow, 3 );
   }
   vnl_svd<double> svdA(A);
-  svdA.zero_out_absolute(m_SingularValueThreshold);
+
+  svdA.zero_out_absolute( this->m_SingularValueThreshold );
 
           //there is a solution only if rank(A)=6 (columns are linearly 
           //independent) 

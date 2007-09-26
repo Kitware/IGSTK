@@ -192,7 +192,8 @@ private:
 
             //below this threshold the singular values of SVD(A) are set to zero
   double m_SingularValueThreshold;
-  double m_TmpSingularValueThreshold;  
+  double m_TmpSingularValueThreshold;
+
 };
 
 } // end namespace igstk

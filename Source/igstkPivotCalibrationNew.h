@@ -135,7 +135,6 @@ private:
   //igstkDeclareInputMacro( CalibrationComputationFailure  );
 
   /**List of state machine actions*/
-  void EmptyProcessing();
   void ReportInvalidRequestProcessing();  
   void InitializeProcessing();
   void ReportInitializationFailureProcessing();

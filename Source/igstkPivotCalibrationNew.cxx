@@ -213,8 +213,8 @@ PivotCalibrationNew::PivotCalibrationNew() : m_StateMachine( this )
 
   igstkAddTransitionMacro(CalibrationComputed,
                           ComputeCalibration,
-                          CalibrationComputed,
-                          Empty);
+                          AttemptingToComputeCalibration,
+                          ComputeCalibration);
 
   igstkAddTransitionMacro(CalibrationComputed,
                           GetTransform,
@@ -298,13 +298,6 @@ PivotCalibrationNew::RequestCalibrationRMSE()
 
 
 void 
-PivotCalibrationNew::EmptyProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibrationNew::"
-                 "EmptyProcessing called...\n");
-}
-
-void 
 PivotCalibrationNew::ReportInvalidRequestProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibrationNew::"
@@ -366,6 +359,7 @@ PivotCalibrationNew::ComputeCalibrationProcessing()
   unsigned int numberOfAcquisitionAttempts, currentSampleSize = 0;
   igstk::Transform currentTransform;
 
+  this->m_Transforms.clear();
   this->m_ReasonForCalibrationFailure.clear();
   unsigned long observerID = this->m_Tracker->AddObserver( igstk::TrackerUpdateStatusErrorEvent(), 
                                                            this->m_ErrorObserver);
@@ -442,6 +436,7 @@ PivotCalibrationNew::ComputeCalibrationProcessing()
                //actually perform the calibration
   observerID = this->m_PivotCalibrationAlgorithm->AddObserver( PivotCalibrationAlgorithm::CalibrationFailureEvent(), 
                                                                this->m_ErrorObserver );
+  this->m_PivotCalibrationAlgorithm->RequestResetCalibration();
   this->m_PivotCalibrationAlgorithm->RequestAddTransforms( this->m_Transforms );
   this->m_PivotCalibrationAlgorithm->RequestComputeCalibration();
                 //check if the calibration computation failed
