@@ -131,9 +131,6 @@ private:
   /** Total number of tools detected. */
   unsigned int   m_NumberOfTools;
 
-  /** MicronTracker version information */
-  std::string m_Version;
-
   /** Calibration files directory */
   std::string m_CalibrationFilesDirectory;
 

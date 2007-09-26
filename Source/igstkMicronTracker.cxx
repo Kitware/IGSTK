@@ -21,8 +21,6 @@
 #pragma warning( disable : 4786 )
 #endif
 
-#define PI atan(1.0) * 4
-
 #define DEBUGMTC
 
 #include "igstkMicronTracker.h"
@@ -99,10 +97,20 @@ void MicronTracker::SetInitializationFile( std::string fileName )
 void
 MicronTracker::LoadMarkerTemplate( std::string filename )
 {
+  igstkLogMacro( DEBUG,
+                "MicronTracker::LoadMarkerTemplate called..\n");
+
   // clear templates already loaded
   this->m_Markers->clearTemplates();
 
   this->m_MarkerTemplateDirectory = filename;
+
+  if ( m_MarkerTemplateDirectory == "" )
+    {
+    std::cerr << "Marker template directory name is empty string " << std::endl;
+    return ;
+    }
+ 
   char * markerTemplateDirectory = 
             const_cast< char *> ( m_MarkerTemplateDirectory.c_str() );
  
@@ -136,8 +144,15 @@ MicronTracker::ResultType MicronTracker::InternalOpen( void )
  *  Frame interleave, template matching tolerance, extrapolate frame etc*/
 bool MicronTracker::Initialize()
 {
+  igstkLogMacro( DEBUG, "MicronTracker::Initialize called ...\n");
+
   bool result = true;
 
+  if ( m_InitializationFile == "" )
+    {
+    std::cerr << "Initialization file (.ini ) is not set" << std::endl;
+    return FAILURE;
+    }
   char * initializationFilename = 
             const_cast< char *> ( m_InitializationFile.c_str() );
   this->m_Persistence->setPath( initializationFilename );
@@ -150,19 +165,26 @@ bool MicronTracker::Initialize()
   double defaultTempMatchToleranceMM = 1.0;
   double defaultLightCoolness = 0.1;
 
-  this->m_Markers->setTemplateMatchToleranceMM( this->m_Persistence->retrieveDouble("TemplateMatchToleranceMM", defaultTempMatchToleranceMM) );
+  this->m_Markers->setTemplateMatchToleranceMM( 
+      this->m_Persistence->retrieveDouble(
+         "TemplateMatchToleranceMM", defaultTempMatchToleranceMM) );
   
   bool defaultSmallerXPFootprint = true;
-  int defaultExtrapolatedFrames = 5;
+  int  defaultExtrapolatedFrames = 5;
 
-  bool SmallerXPFootprint = (bool)(this->m_Persistence->retrieveInt("DetectSmallMarkers", defaultSmallerXPFootprint));
-  int ExtrapolatedFrames = this->m_Persistence->retrieveInt("ExtrapolatedFrames", defaultExtrapolatedFrames);
+  bool SmallerXPFootprint = 
+            (bool)(this->m_Persistence->retrieveInt(
+                       "DetectSmallMarkers", defaultSmallerXPFootprint));
+
+  int ExtrapolatedFrames = this->m_Persistence->retrieveInt(
+                        "ExtrapolatedFrames", defaultExtrapolatedFrames);
 
   this->m_Markers->setSmallerXPFootprint(SmallerXPFootprint);
   this->m_Markers->setExtrapolatedFrames(ExtrapolatedFrames);
 
   //could have been clipped
-  this->m_Persistence->saveInt("ExtrapolatedFrames", this->m_Markers->getExtrapolatedFrames());
+  this->m_Persistence->saveInt("ExtrapolatedFrames", 
+                               this->m_Markers->getExtrapolatedFrames());
 
   /* Markers directory might need to be created: TODO!!! */
   
@@ -171,6 +193,8 @@ bool MicronTracker::Initialize()
 
 bool MicronTracker::SetUpCameras()
 {
+  igstkLogMacro( DEBUG, "MicronTracker::SetUpCameras called ...\n");
+
   bool result = true;
 
   this->m_Cameras->SetCameraCalibrationFilesDirectory( this->m_CalibrationFilesDirectory );
