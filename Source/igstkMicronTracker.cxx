@@ -392,70 +392,32 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     return FAILURE;
     }
 
-  int markerNum = 1;
-  int facetNum = 1;
-  Marker* marker;
-  for (markerNum = 1; markerNum <= markersCollection->count(); markerNum++)
+  for (unsigned int markerNum = 1; markerNum <= markersCollection->count(); markerNum++)
     {
-    marker = new Marker(markersCollection->itemI(markerNum));
+    Marker * marker = new Marker(markersCollection->itemI(markerNum));
     if (marker->wasIdentified(this->m_SelectedCamera) )
       {
+      //output facet information for each marker
       Collection* facetsCollection = new Collection(marker->identifiedFacets(this->m_SelectedCamera));
-      for (facetNum = 1; facetNum <= facetsCollection->count(); facetNum++)
+      for (unsigned int facetNum = 1; facetNum <= facetsCollection->count(); facetNum++)
         {
-        Facet* face = new Facet(facetsCollection->itemI(facetNum));
-        /* Get the x-points. The x-points are returned as a four dimensional array
-           [Long/Short vector][L/R][base/head][X/Y] */
-        double LS_LR_BH_XY[2][2][2][2];
-        face->getXpoints(this->m_SelectedCamera, (double *)LS_LR_BH_XY);
-
-        char caption[255];
-          if (facetsCollection->count() > 1) {
-            sprintf(caption,"%d.%s/%d",markerNum, marker->getName(), facetNum);
-          } else {
-            sprintf(caption,"%d.%s",markerNum, marker->getName());
-          }
-
-        std::cout << caption <<  std::endl;
-
-        delete face;
+        std::cout << "Marker number= " << markerNum << "\tFacet number= " 
+                  << facetNum << "\t name=" << marker->getName() << std::endl;
         }
       delete facetsCollection;
-      }
-    // DONOT invoke delete marker. This is a possible bug in Marker class.
-    // Invoking the marker class destructor causes misidentification of the
-    // markers in the subsequent frames. 
-    //delete marker;
-    }
 
-  Xform3D* Marker2CurrCameraXf = NULL;
-  for (markerNum = 1; markerNum <= markersCollection->count(); markerNum++)
-    {
-    marker = new Marker(markersCollection->itemI(markerNum));
-    Marker2CurrCameraXf = marker->marker2CameraXf(this->m_SelectedCamera->Handle());
-    // There may be a situation where marker was identified by another camera (not CurrCamera)
-    // and the identifying camera is not registered with CurrCamera. In this case, the pose is
-    // not known in CurrCamera coordinates and Marker2CurrCameraXf is Nothing.
-    if(Marker2CurrCameraXf != NULL)
+
+      //Get postion and pose information 
+      Xform3D* Marker2CurrCameraXf = NULL;
+      Marker2CurrCameraXf = marker->marker2CameraXf(this->m_SelectedCamera->Handle());
+
+      if(Marker2CurrCameraXf != NULL)
         {
-        //Show the XYZ position of the Marker's origin.
-        //string s = ".(";
-        char buffer[3][100];
-        char s[600];
-        Xform3D* m2c;
-        m2c = marker->marker2CameraXf(this->m_SelectedCamera->Handle());
-        for (int i=0; i<3; i++)
-        { 
-          sprintf(buffer[i], "%.2f",m2c->getShift(i));
-        }
-        sprintf(s, "%d", markerNum);
-        strcat(s, ". (");
-        strcat(s, buffer[0]);
-        strcat(s, ",");
-        strcat(s, buffer[1]);
-        strcat(s, ",");
-        strcat(s, buffer[2]);
-        strcat(s, ")");
+
+        std::cout.setf(ios::fixed,ios::floatfield); 
+        std::cout << "\tOrigin XYZ= " << setprecision(5) << Marker2CurrCameraXf->getShift(0) << "\t" 
+                            << Marker2CurrCameraXf->getShift(1) << "\t"
+                            << Marker2CurrCameraXf->getShift(2) << std::endl;
 
         // If there's a tooltip, add it
         // Marker to tooltip is set using 
@@ -463,31 +425,27 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
         // specified in the marker template file in the
         // marker's coordinate system
         Xform3D* t2m; // tooltip to marker xform
-        Xform3D* t2c; // tooltip to camera xform
         double svec[3];
         t2m = marker->tooltip2MarkerXf();
         t2m->getShiftVector(svec);
         if (svec[0] != 0 || svec[1] != 0 || svec[2] != 0) 
-          { // non-null transform
-          strcat(s, " tip(");
-          t2c = t2m->concatenate(m2c);
-          for (int i=0; i<3; i++) {
-            sprintf(buffer[i], "%.2f", t2c->getShift(i));
-          }
-          strcat(s, buffer[0]);
-          strcat(s, ",");
-          strcat(s, buffer[1]);
-          strcat(s, ",");
-          strcat(s, buffer[2]);
-          strcat(s, ")");
+          { 
+          Xform3D* t2c; // tooltip to camera xform
+          t2c = t2m->concatenate(Marker2CurrCameraXf);
+          std::cout.setf(ios::fixed,ios::floatfield); 
+          std::cout << "\tTIP XYZ=" << setprecision(5) << t2c->getShift(0) << "\t" 
+                            << t2c->getShift(1) << "\t"
+                            << t2c->getShift(2) << std::endl;
           delete t2c;
           }
-        delete t2m;
-        delete m2c;
-        std::cout << "XYZ= " << s << std::endl;
-        }
 
-      delete Marker2CurrCameraXf;
+        delete t2m;
+        }
+      }
+    // DO NOT invoke delete marker. This is a possible bug in Marker class.
+    // Invoking the marker class destructor causes misidentification of the
+    // markers in the subsequent frames. 
+    //delete marker;
     }
 
   delete markersCollection; 
