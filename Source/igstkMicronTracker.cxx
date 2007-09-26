@@ -320,17 +320,40 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
   // accessing it.
   m_BufferLock->Lock();
 
-  /* From the transform buffer information, create transform objects 
-    
+  typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
+
+  InputConstIterator inputItr = m_ToolTransformBuffer.begin();
+  InputConstIterator inputEnd = m_ToolTransformBuffer.end();
+
+  while( inputItr != inputEnd )
+    {
+    // create the transform
+    TransformType transform;
+
+    typedef TransformType::VectorType TranslationType;
+    TranslationType translation;
+
+    translation[0] = (inputItr->second)[0];
+    translation[1] = (inputItr->second)[1];
+    translation[2] = (inputItr->second)[2];
+
+    typedef TransformType::VersorType RotationType;
+    RotationType rotation;
+
+    // report error value
+    // Get error value from the tracker. TODO
     typedef TransformType::ErrorType  ErrorType;
-    ErrorType errorValue = m_TransformBuffer[port][7];
+    ErrorType errorValue = 0.0; 
 
     transform.SetToIdentity(this->GetValidityTime());
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         this->GetValidityTime());
 
-    this->SetToolTransform(port, 0, transform);
-  */
+    // Set the tool transform...there is no notion of port
+    // consult the new architecture..or talk to Luis
+    //this->SetToolTransform(port, 0, transform);
+    }
+
 
 
   m_BufferLock->Unlock();
@@ -350,7 +373,7 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
   // Send the commands to the device that will get the transforms
   // for all of the tools.
   // Lock the buffer that this method shares with InternalUpdateStatus
-  m_BufferLock->Lock();
+m_BufferLock->Lock();
 
   // Grab frame
   if ( ! m_Cameras->grabFrame( m_SelectedCamera ) )

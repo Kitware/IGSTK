@@ -150,8 +150,10 @@ private:
   MCamera     * m_SelectedCamera;
 
   /** A buffer to hold tool transforms */
-  std::map< std::string, std::vector < double > > 
-                                              m_ToolTransformBuffer;
+  typedef std::map< std::string, std::vector < double > > 
+                                TrackerToolTransformContainerType; 
+
+ TrackerToolTransformContainerType     m_ToolTransformBuffer;
 };
 
 }
