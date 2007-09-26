@@ -56,8 +56,6 @@ MicronTracker::MicronTracker(void):m_StateMachine(this)
   // initialize selected camera
   m_SelectedCamera = NULL;
 
-  //REMOVE
-  m_Counter = 0;
 }
 
 /** Destructor */
@@ -329,7 +327,8 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     }
 
 #ifdef DEBUGMTC 
-    unsigned char **laddr, **raddr;
+    unsigned char **laddr;
+    unsigned char **raddr;
     m_SelectedCamera->getImages( &laddr, &raddr);
     int width = m_SelectedCamera->getXRes();
     int height = m_SelectedCamera->getYRes();
@@ -337,8 +336,9 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     unsigned int size = width*height;
     const char* copyPixels = (char *) laddr;
 
+    unsigned int counter = 0; 
     std::stringstream leftImageNameStream;
-    leftImageNameStream << "dataLeft" << m_Counter << ".bin";
+    leftImageNameStream << "dataLeft" << counter << ".bin";
     
     std::string leftImageName = leftImageNameStream.str(); 
     ofstream myFile (leftImageName.c_str(), ios::out | ios::binary);
@@ -346,15 +346,13 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     myFile.close();
 
     std::stringstream rightImageNameStream;
-    rightImageNameStream << "dataRight" << m_Counter << ".bin";
+    rightImageNameStream << "dataRight" << counter << ".bin";
     
     std::string rightImageName = rightImageNameStream.str(); 
     const char* copyPixelsRight = (char *) raddr;
     ofstream myFileRight (rightImageName.c_str(), ios::out | ios::binary);
     myFileRight.write (copyPixelsRight, size );
     myFileRight.close();
-
-    m_Counter++;
 
 #endif
  
@@ -468,65 +466,6 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
       delete Marker2CurrCameraXf;
     }
 
-    Xform3D* Mi2Cam = NULL;
-    Xform3D* Mj2Cam = NULL;
-    for(int i=1; i<markersCollection->count(); i++)
-      {
-      Marker* m1 = new Marker(markersCollection->itemI(i));
-      Mi2Cam = m1->marker2CameraXf(this->m_SelectedCamera->Handle());
-      for (int j=i+1; j<markersCollection->count()+1; j++)
-        {
-        Marker* m2 = new Marker(markersCollection->itemI(j));
-        Mj2Cam = m2->marker2CameraXf(this->m_SelectedCamera->Handle());
-        if(Mi2Cam != NULL || Mj2Cam != NULL)
-          {
-          Xform3D* Xf;
-          double XUnitV[3] = {0};
-          double angleCos;
-          double angleRads;
-
-          double vec1[3];
-          Mi2Cam->getShiftVector(vec1);
-          double vec2[3];
-          Mj2Cam->getShiftVector(vec2);
-          double distance = this->FindDistance( vec1, vec2 );
-            
-          char s[300];
-          char buffer[100];
-          sprintf(s, "%d", i);
-          strcat(s, "-");
-          sprintf(buffer, "%d", i+1);
-          strcat(s, buffer);
-          strcat(s, ": ");
-          sprintf(buffer, "%.2f", distance);
-          strcat(s, buffer);
-          strcat(s, " mm / ");
-            
-          XUnitV[0] = 1;
-          double XVect1[3];
-          Mi2Cam->getRotateVector(XVect1, XUnitV);
-          double XVect2[3];
-          Mj2Cam->getRotateVector(XVect2, XUnitV);
-          angleCos = this->EvaluteDotProduct(XVect1, XVect2);
-          angleRads = ACOS(angleCos);
-            
-          sprintf(buffer, "%.1f", angleRads * 180 / PI);
-          strcat(s, buffer);
-#ifdef WIN32
-          strcat(s, "°");
-#else
-          strcat(s, " deg");
-#endif
-           std::cout << "Angle=" << s << std::endl;
-           }
-        /* Deleteing markers m1 and m2, somehow affects the marker indentifcation: DEBUG */
-        //delete m2;
-        }
-        delete Mj2Cam;
-        //delete m1;
-        delete Mi2Cam;
-      }
-
   delete markersCollection; 
 
   // Copy the transforms and any status information into the
@@ -542,40 +481,6 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
   m_BufferLock->Unlock();
 
   return SUCCESS;
-}
-
-double MicronTracker::FindDistance(double* v1, double* v2)
-{
-  double acc = 0.0;
-  for (int i=0; i< 3; i++)
-    acc = acc + ( (v1[i] - v2[i]) * (v1[i] - v2[i]) );
-  return sqrt(acc);
-}
-
-/****************************/
-double MicronTracker::EvaluteDotProduct(double* v1, double* v2)
-{
-  double result = 0;
-  for (int i=0; i<3; i++)
-    result += v1[i]*v2[i];
-  return result;
-}
-
-double MicronTracker::ACOS(double x)
-{
-  // REMOVE THIS METHOD...LATER ON..it is not needed
-  if ( x == 1 )
-    {
-    return 0;
-    }
-  else if ( x == -1)
-    {
-    return PI / 2.0;
-    }
-  else 
-    {
-    return atan((double) ( -x / sqrt(-x * x + 1)) + 2 * atan(1.0));
-    }
 }
 
 /** Print Self function */
