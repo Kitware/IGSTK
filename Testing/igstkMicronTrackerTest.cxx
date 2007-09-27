@@ -31,6 +31,7 @@ See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 #include "itkVersor.h"
 
 #include "igstkMicronTracker.h"
+#include "igstkMicronTrackerTool.h"
 #include "igstkTransform.h"
 
 class MicronTrackerTrackerTestCommand : public itk::Command 
@@ -113,7 +114,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   tracker = igstk::MicronTracker::New();
 
   tracker->AddObserver( itk::AnyEvent(), my_command);
-  tracker->SetLogger( logger );
+  //tracker->SetLogger( logger );
 
   std::string calibrationFilesDirectory = argv[1];
   tracker->SetCameraCalibrationFilesDirectory( 
@@ -124,6 +125,27 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
 
   std::string markerTemplateDirectory = argv[3];
   tracker->LoadMarkerTemplate( markerTemplateDirectory );
+
+  // Add tracker tools
+  typedef igstk::MicronTrackerTool  MicronTrackerToolType;
+
+  // Add a tracker tool with "TTblock" marker type attached to it.
+  MicronTrackerToolType::Pointer tool1 = MicronTrackerToolType::New();
+  std::string markerNameTT = "TTblock";
+  tool1->RequestSetMarkerName( markerNameTT );  
+  tracker->RequestAddTool( tool1 );
+
+  // Add a tracker tool with "a" marker type attached to it.
+  MicronTrackerToolType::Pointer tool2 = MicronTrackerToolType::New();
+  std::string markerNameA = "a";
+  tool2->RequestSetMarkerName( markerNameA );  
+  tracker->RequestAddTool( tool2 );
+
+  // Add a tracker tool with "sPointer" marker type attached to it.
+  MicronTrackerToolType::Pointer tool3 = MicronTrackerToolType::New();
+  std::string markerNamePointer = "sPointer";
+  tool3->RequestSetMarkerName( markerNamePointer );  
+  tracker->RequestAddTool( tool3 );
 
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
@@ -141,7 +163,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   std::cout << "RequestStartTracking()" << std::endl;
   tracker->RequestStartTracking();
 
-  for(unsigned int i=0; i<100; i++)
+  for(unsigned int i=0; i<500; i++)
     {
     tracker->RequestUpdateStatus();
     }
