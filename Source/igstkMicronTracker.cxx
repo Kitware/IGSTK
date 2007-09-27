@@ -221,6 +221,8 @@ bool MicronTracker::SetUpCameras()
 /** Request adding a tool to the tracker */
 void MicronTracker::RequestAddTool( MicronTrackerToolType * trackerTool )
 {
+  igstkLogMacro( DEBUG, "MicronTracker::InternalClose called ...\n");  
+
   // Superclass::RequestAddTool( trackerTool );
 
   //populate std::map with the marker name and corresponding transform
@@ -232,9 +234,12 @@ void MicronTracker::RequestAddTool( MicronTrackerToolType * trackerTool )
   transform.push_back( 0.0 );
   transform.push_back( 0.0 );
   transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
+  transform.push_back( 1.0 );
 
   m_ToolTransformBuffer[ trackerTool->GetMarkerName() ] = transform;
+
+  std::cout << " Adding a trackertool with marker:\t " 
+           << trackerTool->GetMarkerName() << std::endl;
 }
 
 
@@ -340,6 +345,12 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
     typedef TransformType::VersorType RotationType;
     RotationType rotation;
 
+    //TODO quaternions order. xyzw
+    rotation.Set( (inputItr->second)[3],
+                   (inputItr->second)[4],
+                   (inputItr->second)[5],
+                   (inputItr->second)[6]);
+
     // report error value
     // Get error value from the tracker. TODO
     typedef TransformType::ErrorType  ErrorType;
@@ -352,9 +363,9 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
     // Set the tool transform...there is no notion of port
     // consult the new architecture..or talk to Luis
     //this->SetToolTransform(port, 0, transform);
+    //
+    ++inputItr;
     }
-
-
 
   m_BufferLock->Unlock();
 
@@ -373,7 +384,7 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
   // Send the commands to the device that will get the transforms
   // for all of the tools.
   // Lock the buffer that this method shares with InternalUpdateStatus
-m_BufferLock->Lock();
+  m_BufferLock->Lock();
 
   // Grab frame
   if ( ! m_Cameras->grabFrame( m_SelectedCamera ) )
@@ -498,10 +509,16 @@ m_BufferLock->Lock();
 
         //the next four are quaternion
         double quaternion[4];
-        quaternion[0] = 0.0;
-        quaternion[1] = 0.0;
-        quaternion[2] = 0.0;
-        quaternion[3] = 0.0;
+        quaternion[0] = Marker2CurrCameraXf->getQuaternion(0);
+        quaternion[1] = Marker2CurrCameraXf->getQuaternion(1);
+        quaternion[2] = Marker2CurrCameraXf->getQuaternion(2);
+        quaternion[3] = Marker2CurrCameraXf->getQuaternion(3);
+
+        std::cout.setf(ios::fixed,ios::floatfield); 
+        std::cout << "\t Versor = " << setprecision(5) << quaternion[0] << "\t"
+                                    << quaternion[1]  << "\t" << quaternion[2] << "\t"
+                                    << quaternion[3] << std::endl;
+                                    
 
         transform.push_back( quaternion[0] ); 
         transform.push_back( quaternion[1] ); 
@@ -510,8 +527,8 @@ m_BufferLock->Lock();
 
         //Check if a Tracker tool is added with this marker type 
         //
-        typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
-        InputConstIterator markerItr = m_ToolTransformBuffer.find( marker->getName() );
+        typedef TrackerToolTransformContainerType::iterator InputIterator;
+        InputIterator markerItr = m_ToolTransformBuffer.find( marker->getName() );
   
         if( markerItr != m_ToolTransformBuffer.end() )
           {
@@ -519,13 +536,14 @@ m_BufferLock->Lock();
           }
         else
           {
-          std::cout << "No TrackerTool is attached to this marker " << std::endl;
+          std::cout << "\tNo TrackerTool is attached to this marker: " 
+                    << marker->getName() << std::endl;
           }
 
         delete t2m;
         }
       }
-    // DO NOT invoke delete marker. This is a possible bug in Marker class.
+    // DO NOT delete marker. This is a possible bug in Marker class.
     // Invoking the marker class destructor causes misidentification of the
     // markers in the subsequent frames. 
     //delete marker;
