@@ -200,7 +200,7 @@ bool MicronTracker::SetUpCameras()
   this->m_Cameras->SetCameraCalibrationFilesDirectory( this->m_CalibrationFilesDirectory );
   int success = this->m_Cameras->AttachAvailableCameras();
 
-  if ( success )
+  if ( !success )
     {
     std::cerr << " No camera available or missing calibration file in:\t " 
               << this->m_CalibrationFilesDirectory << endl;
