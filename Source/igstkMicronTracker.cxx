@@ -223,7 +223,7 @@ void MicronTracker::RequestAddTool( MicronTrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, "MicronTracker::InternalClose called ...\n");  
 
-  // Superclass::RequestAddTool( trackerTool );
+  Superclass::RequestAddTool( trackerTool );
 
   //populate std::map with the marker name and corresponding transform
   //REVISIT this..there should be an easier way of doing this
@@ -330,6 +330,8 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
   InputConstIterator inputItr = m_ToolTransformBuffer.begin();
   InputConstIterator inputEnd = m_ToolTransformBuffer.end();
 
+  unsigned int toolId = 0;
+
   while( inputItr != inputEnd )
     {
     // create the transform
@@ -345,7 +347,7 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
     typedef TransformType::VersorType RotationType;
     RotationType rotation;
 
-    //TODO quaternions order. xyzw
+    //TODO: Check the quaternions order. xyzw
     rotation.Set( (inputItr->second)[3],
                    (inputItr->second)[4],
                    (inputItr->second)[5],
@@ -360,11 +362,11 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         this->GetValidityTime());
 
-    // Set the tool transform...there is no notion of port
-    // consult the new architecture..or talk to Luis
-    //this->SetToolTransform(port, 0, transform);
+    // Set the tool transform...use the new method that was added
+    this->SetToolTransform(toolId, transform);
     //
     ++inputItr;
+    ++toolId;
     }
 
   m_BufferLock->Unlock();
