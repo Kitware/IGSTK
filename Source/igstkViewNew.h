@@ -24,13 +24,13 @@
 #pragma warning( disable : 4284 )
 #endif
 
-// VTK headers
-#include "vtkRenderWindow.h"
-#include "vtkRenderer.h"
-#include "vtkCamera.h"
-#include "vtkIndent.h"
-#include "vtkCommand.h"
-#include "vtkInteractorStyle.h"
+// VTK declarations
+class vtkRenderWindow;
+class vtkCamera;
+class vtkProp;
+class vtkInteractorStyle;
+class vtkRenderer;
+
 
 // ITK headers
 #include "itkCommand.h"
@@ -50,7 +50,7 @@ namespace igstk {
 
 /** \class ViewNew
  *  
- *  \brief Base class for View2D and View3D
+ *  \brief Base class for View2D and View3D.
  * 
  *  The functionality of the View class is to aggregate all the graphical
  *  representations of spatial objects into one scene.
@@ -72,16 +72,10 @@ public:
  
   /** Add an observer to this ViewNew class */
   unsigned long AddObserver( const ::itk::EventObject & event, 
-                                                   ::itk::Command * observer );
+                                                 ::itk::Command * observer );
   /** Remove an observer to this ViewNew class */
   void  RemoveObserver( unsigned long tag );
   
-  /** Object representation types */
-  typedef ObjectRepresentation::Pointer     ObjectPointer;
-  typedef std::list< ObjectPointer >        ObjectListType; 
-  typedef ObjectListType::iterator          ObjectListIterator;
-  typedef ObjectListType::const_iterator    ObjectListConstIterator;
-
   /** Add an object representation to the list of children and associate it
    * with a specific view. */ 
   void RequestAddObject( ObjectRepresentation* object ); 
@@ -89,8 +83,8 @@ public:
   /** Add annotation to the view */
   void RequestAddAnnotation2D( Annotation2D::Pointer  annotation ); 
 
-  /** Remove the object passed as arguments from the list of children, only if
-   * it is associated to a particular view. */ 
+  /** Remove the object passed as arguments from the list of children, only 
+   * if it is associated to a particular view. */ 
   void RequestRemoveObject( ObjectRepresentation* object ); 
 
   /** Request to save a screen shot into a file. The file format MUST be PNG
@@ -131,7 +125,7 @@ public:
 
   /** Set renderer background color */
   void SetRendererBackgroundColor(
-                    double red, double green, double blue ); 
+                    double red, double green, double blue );
 
   /** Set camera zoom factor */
   void SetCameraZoomFactor( double rate );
@@ -144,7 +138,7 @@ protected:
   virtual ~ViewNew( void );
 
   /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
  
   /** Default Camera */
   vtkCamera             * m_Camera;
@@ -161,16 +155,16 @@ protected:
 private:
 
   /** Get renderer */ 
-  vtkRenderer *  GetRenderer();
+  vtkRenderer *  GetRenderer() const;
  
   /** Get render window */
-  vtkRenderWindow * GetRenderWindow();
+  vtkRenderWindow * GetRenderWindow() const;
 
   /** Get render window interactor */
-  RenderWindowInteractor *  GetRenderWindowInteractor();
+  RenderWindowInteractor *  GetRenderWindowInteractor() const;
 
   /** Get reporter */ 
-  ::itk::Object::Pointer GetReporter();
+  ::itk::Object::Pointer GetReporter() const;
 
   /** Initialize the interactor */
   void InitializeRenderWindowInteractorProcessing();
@@ -250,6 +244,11 @@ private:
   ObserverType::Pointer     m_PulseObserver;
   ::itk::Object::Pointer    m_Reporter;
 
+  /** Object representation types */
+  typedef ObjectRepresentation::Pointer     ObjectPointer;
+  typedef std::list< ObjectPointer >        ObjectListType; 
+  typedef ObjectListType::const_iterator    ObjectListConstIterator;
+
   /** List of the children object plug to the spatial object. */
   ObjectListType m_Objects; 
  
@@ -287,6 +286,9 @@ private:
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( InteractorInitialized );
   igstkDeclareStateMacro( Refreshing );
+
+  ViewNew(const ViewNew& ); // purposely not implemented
+  ViewNew& operator=(const ViewNew& ); // purposely not implemented
 
 };
 

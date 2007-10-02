@@ -27,6 +27,10 @@
 #include <igstkEvents.h>
 #include "itksys/SystemTools.hxx"
 #include "vtkViewport.h"
+#include "vtkRenderWindow.h"
+#include "vtkCamera.h"
+#include "vtkInteractorStyle.h"
+#include "vtkRenderer.h"
 
 #if defined(__APPLE__) && defined(VTK_USE_CARBON)
 #include "vtkCarbonRenderWindow.h"
@@ -228,7 +232,6 @@ m_StateMachine(this)
   m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
 
   this->SetRefreshRate( 30 ); // 30 Hz is rather low frequency for video.
-  
 }
 
 /** Destructor */
@@ -249,25 +252,25 @@ ViewNew::~ViewNew()
 }
 
 /** Get renderer */ 
-vtkRenderer *  ViewNew::GetRenderer()
+vtkRenderer *  ViewNew::GetRenderer() const
 {
 return this->m_Renderer; 
 }
  
 /** Get render window */
-vtkRenderWindow * ViewNew::GetRenderWindow()
+vtkRenderWindow * ViewNew::GetRenderWindow() const
 {
 return this->m_RenderWindow; 
 } 
 
 /** Get render window interactor */
-RenderWindowInteractor *  ViewNew::GetRenderWindowInteractor()
+RenderWindowInteractor *  ViewNew::GetRenderWindowInteractor() const
 {
 return this->m_RenderWindowInteractor; 
 }
 
 /** Get reporter */ 
-::itk::Object::Pointer ViewNew::GetReporter()
+::itk::Object::Pointer ViewNew::GetReporter() const
 {
 return this->m_Reporter; 
 }
@@ -275,7 +278,8 @@ return this->m_Reporter;
 /** Request initialize render window interactor */
 void ViewNew::RequestInitializeRenderWindowInteractor()
 {
-  igstkLogMacro( DEBUG, "RequestInitializeRenderWindowInteractor() called ...\n");
+  igstkLogMacro(DEBUG,
+                "RequestInitializeRenderWindowInteractor() called.\n");
 
   igstkPushInputMacro( InitializeInteractor );
   m_StateMachine.ProcessInputs();
@@ -286,7 +290,8 @@ void ViewNew::RequestInitializeRenderWindowInteractor()
 void ViewNew::InitializeRenderWindowInteractorProcessing()
 {
 
-  igstkLogMacro( DEBUG, "InitializeRenderWindowInteractorProcessing() called ...\n");
+  igstkLogMacro(DEBUG,
+                "InitializeRenderWindowInteractorProcessing() called...\n");
 
   if( !m_RenderWindowInteractor->GetInitialized() )
     {
@@ -400,11 +405,13 @@ void ViewNew::SetRenderWindowSizeProcessing()
                           m_RenderWindowHeightToBeSet);
 
  
-  // update the viewport size of the annotations if annotations have been added
+  // update the viewport size of the annotations if annotations have been
+  // added
   if ( m_Annotation2DToBeAdded ) 
       {
-      m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( m_RenderWindowWidthToBeSet, 
-                                                          m_RenderWindowHeightToBeSet );
+      m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( 
+                                                m_RenderWindowWidthToBeSet,
+                                                m_RenderWindowHeightToBeSet );
       }
 
   m_RenderWindowInteractor->Modified();
@@ -460,14 +467,14 @@ void ViewNew::SetCameraViewUp( double vx, double vy, double vz )
 }
 
 /** Set camera clipping range */
-void ViewNew::SetClippingRange( double dNear, double dFar) 
+void ViewNew::SetClippingRange( double dNear, double dFar)
 {
   igstkLogMacro( DEBUG, "SetClippingRange(...) called ...\n");
   m_Camera->SetClippingRange( dNear, dFar );
 }
 
 /** Turn on/off parallel projection */
-void ViewNew::SetParallelProjection( bool flag ) 
+void ViewNew::SetParallelProjection( bool flag )
 {
   igstkLogMacro( DEBUG, "SetParallelProjection(...) called ...\n");
   m_Camera->SetParallelProjection( flag );
@@ -475,7 +482,7 @@ void ViewNew::SetParallelProjection( bool flag )
 
 /** Set background color */
 void ViewNew::
-SetRendererBackgroundColor( double red, double green, double blue) 
+SetRendererBackgroundColor( double red, double green, double blue)
 {
   igstkLogMacro( DEBUG, "SetRendererBackgroundColor(...) called ...\n");
   m_Renderer->SetBackground( red, green, blue );
@@ -483,7 +490,7 @@ SetRendererBackgroundColor( double red, double green, double blue)
 
 /** Set camera zoom factor */
 void ViewNew::
-SetCameraZoomFactor( double factor ) 
+SetCameraZoomFactor( double factor )
 {
   igstkLogMacro( DEBUG, "SetCameraZoomFactor(...) called ...\n");
   m_Camera->Zoom( factor );
@@ -574,9 +581,9 @@ void ViewNew::RequestAddAnnotation2D ( Annotation2D::Pointer annotation )
 }
 
 
-/** Add an object to the ViewNew. This method should only be called by the state
- * machine. The state machine makes sure that this method is called with a valid
- * value in the ObjectToBeAdded. */
+/** Add an object to the ViewNew. This method should only be called by the 
+ * state machine. The state machine makes sure that this method is called 
+ * with a valid value in the ObjectToBeAdded. */
 void ViewNew::AddObjectProcessing()
 {
   igstkLogMacro( DEBUG, "AddObjectProcessing() called ...\n");
@@ -586,7 +593,8 @@ void ViewNew::AddObjectProcessing()
   
   m_ObjectToBeAdded->CreateActors();
 
-  ObjectRepresentation::ActorsListType actors = m_ObjectToBeAdded->GetActors();
+  ObjectRepresentation::ActorsListType actors = 
+                                              m_ObjectToBeAdded->GetActors();
   ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
   while(actorIt != actors.end())
     {
@@ -600,7 +608,8 @@ void ViewNew::AddAnnotation2DProcessing( )
   igstkLogMacro( DEBUG, "AddAnnotation2DProcessing called ...\n");
   
   const int * size = m_RenderWindowInteractor->GetSize();
-  std::cout << "RenderWindowInteractor size: " << size[0] <<"," << size[1] << std::endl;
+  std::cout << "RenderWindowInteractor size: " << size[0] <<",";
+  std::cout << size[1] << std::endl;
   m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( size[0], size[1] );
   m_Annotation2DToBeAdded->RequestAddAnnotations( );
   Annotation2D::ActorsListType actors = m_Annotation2DToBeAdded->GetActors();
@@ -645,8 +654,8 @@ void ViewNew::RequestRemoveObject( ObjectRepresentation* pointer )
 }
 
 
-/** Remove a spatial object from the ViewNew. This method can only be invoked by
- * the State Machine who will make sure that the content of
+/** Remove a spatial object from the ViewNew. This method can only be invoked
+ * by the State Machine who will make sure that the content of
  * m_IteratorToObjectToBeRemoved is valid. */
 void ViewNew::RemoveObjectProcessing()
 {
@@ -667,7 +676,8 @@ void ViewNew::RemoveObjectProcessing()
 }
 
 
-/** Request to Start the Pulse Generator for periodically refreshing the ViewNew
+/** Request to Start the Pulse Generator for periodically refreshing the 
+ *  ViewNew
  * */
 void ViewNew::RequestStart()
 {
@@ -678,7 +688,8 @@ void ViewNew::RequestStart()
 }
 
 
-/** Request to Stop the Pulse Generator for periodically refreshing the ViewNew
+/** Request to Stop the Pulse Generator for periodically refreshing the 
+ *  ViewNew
  * */
 void ViewNew::RequestStop()
 {
@@ -712,8 +723,8 @@ void ViewNew::RequestSaveScreenShot( const std::string & filename )
 }
 
 
-/** Report that an invalid or suspicious operation has been requested. This may
- * mean that an error condition has arised in one of the componenta that
+/** Report that an invalid or suspicious operation has been requested. This 
+ * may mean that an error condition has arised in one of the components that
  * interact with this class. */
 void ViewNew::ReportInvalidRequestProcessing()
 {
@@ -723,7 +734,8 @@ void ViewNew::ReportInvalidRequestProcessing()
 /** Report a request to set an invalid render window size set */ 
 void ViewNew::ReportInvalidRenderWindowSizeProcessing()
 {
-  igstkLogMacro( WARNING, "ReportInvalidRenderWindowSizeProcessing() called ...\n");
+  igstkLogMacro( WARNING, 
+                  "ReportInvalidRenderWindowSizeProcessing() called ...\n");
 }
 
 /** Report that an invalid filename for saving the screen shot */
@@ -759,7 +771,8 @@ void ViewNew::SaveScreenShot()
 {
   igstkLogMacro( DEBUG, "SaveScreenShot() called ...\n");
 
-  vtkWindowToImageFilter * windowToImageFilter = vtkWindowToImageFilter::New();
+  vtkWindowToImageFilter * windowToImageFilter = 
+                                              vtkWindowToImageFilter::New();
 
   vtkPNGWriter * writer = vtkPNGWriter::New();
 
@@ -815,7 +828,8 @@ std::ostream& operator<<(std::ostream& os, const ViewNew& o)
 void ViewNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
-  os << indent << "RenderWindow Pointer: " << this->m_RenderWindow << std::endl;
+  os << indent << "RenderWindow Pointer: " << this->m_RenderWindow;
+  os << std::endl;
   os << indent << "RenderWindowInteractor Pointer: " 
                << *(this->m_RenderWindowInteractor) << std::endl;
   os << indent << "Renderer Pointer: " << this->m_Renderer << std::endl;
