@@ -16,6 +16,7 @@
 =========================================================================*/
 #include "igstkViewNew2D.h"
 #include "vtkInteractorStyleImage.h"
+#include "vtkCamera.h"
 
 namespace igstk {
 
