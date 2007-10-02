@@ -18,7 +18,6 @@ SUBDIRS(
 IF (IGSTK_USE_FLTK)
   SUBDIRS(
     OneViewAndTrackingUsingFLTKWidget
-    OneViewAndTrackingUsingMicronTracker
     TwoViews
     FourViewsTrackingWithCT
     FourViews
@@ -28,6 +27,9 @@ IF (IGSTK_USE_FLTK)
     View
     Logging
     )
+  IF (IGSTKSandbox_USE_MicronTracker) 
+    SUBDIRS( OneViewAndTrackingUsingMicronTracker)
+  ENDIF(IGSTKSandbox_USE_MicronTracker) 
 ENDIF (IGSTK_USE_FLTK)
 
 IF (IGSTKSandbox_USE_Qt)
