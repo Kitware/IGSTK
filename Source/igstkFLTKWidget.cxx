@@ -22,6 +22,11 @@
 #include "igstkFLTKWidget.h"
 #include <FL/x.H>
 
+#include "vtkRenderer.h"
+#include "vtkRenderWindowInteractor.h"
+#include "vtkRenderWindow.h"
+#include "vtkCommand.h"
+
 #if defined(__APPLE__) && defined(VTK_USE_CARBON)
 #include "vtkCarbonRenderWindow.h"
 #endif
@@ -131,7 +136,7 @@ void FLTKWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interact
 
 /** Get VTK render window interactor */
 vtkRenderWindowInteractor *
-FLTKWidget::GetRenderWindowInteractor( )
+FLTKWidget::GetRenderWindowInteractor( ) const
 {
   return ( this->m_RenderWindowInteractor );
 }

@@ -25,9 +25,9 @@
 #endif
 
 // VTK 
-#include "vtkInteractorStyle.h"
-#include "vtkRenderer.h"
-#include "vtkWorldPointPicker.h"
+#include "vtkWorldPointPicker.h" // needed for typedef
+class vtkRenderer;
+class vtkRenderWindowInteractor;
 
 // FLTK headers
 #include <FL/Fl.H>
@@ -46,7 +46,7 @@
 namespace igstk {
 /** \class FLTKWidget
  * 
- * \brief Widget class to develop FLTK based GUI application 
+ * \brief Widget class to develop FLTK based GUI applications.
  */
 class FLTKWidget : public Fl_Gl_Window
 {
@@ -85,7 +85,7 @@ public:
                               ::itk::Command * observer );
 
   /** Get render window interactor */
-  vtkRenderWindowInteractor * GetRenderWindowInteractor();
+  vtkRenderWindowInteractor * GetRenderWindowInteractor() const;
   
   typedef ViewProxy< FLTKWidget > ProxyType;
 
