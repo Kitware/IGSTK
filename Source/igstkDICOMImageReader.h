@@ -221,7 +221,7 @@ private:
   igstkDeclareInputMacro( GetModalityInformation );
   igstkDeclareInputMacro( GetPatientNameInformation );
   
-    /** Set the name of the directory. To be invoked ONLY by the StateMachine */
+  /** Set the name of the directory. To be invoked ONLY by the StateMachine */
   void SetDirectoryNameProcessing();
 
   /** Invokes a FileNameGenerator in order to get the names of all the DICOM
