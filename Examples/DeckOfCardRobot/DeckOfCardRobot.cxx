@@ -591,9 +591,7 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->DisplayAxial->RequestRemoveObject( m_ImageRepresentationAxial );
   this->DisplaySagittal->RequestRemoveObject( m_ImageRepresentationSagittal );
   this->DisplayCoronal->RequestRemoveObject( m_ImageRepresentationCoronal );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationAxial3D );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationSagittal3D );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationCoronal3D );
+  this->Display3D->RequestRemoveObject( m_ImageRepresentation3D );
 
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
   this->DisplayAxial->RequestAddObject( m_PickedPointRepresentation->Copy() );
