@@ -843,6 +843,13 @@ void FourViewsTrackingWithCT::ConnectImageRepresentationProcessing()
   m_ImageRepresentationCoronal3D->RequestSetOrientation( 
                                              ImageRepresentationType::Coronal );
 
+  this->DisplayAxial->RequestRemoveObject( m_ImageRepresentationAxial );
+  this->DisplaySagittal->RequestRemoveObject( m_ImageRepresentationSagittal );
+  this->DisplayCoronal->RequestRemoveObject( m_ImageRepresentationCoronal );
+  this->Display3D->RequestRemoveObject( m_ImageRepresentationAxial3D );
+  this->Display3D->RequestRemoveObject( m_ImageRepresentationSagittal3D );
+  this->Display3D->RequestRemoveObject( m_ImageRepresentationCoronal3D );
+
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
   this->DisplayAxial->RequestAddObject( m_EllipsoidRepresentation->Copy() );
   this->DisplayAxial->RequestAddObject( m_CylinderRepresentation->Copy() );
