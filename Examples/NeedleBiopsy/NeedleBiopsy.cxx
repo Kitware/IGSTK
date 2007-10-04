@@ -940,12 +940,14 @@ void NeedleBiopsy::ConnectImageRepresentationProcessing()
   m_ImageRepresentationCoronal3D->RequestSetOrientation( 
                                              ImageRepresentationType::Coronal );
 
+  this->DisplayAxial->RequestRemoveObject( m_ImageRepresentationAxial );
   this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
   this->DisplayAxial->RequestAddObject( m_PickedPointRepresentation );
   this->DisplayAxial->RequestAddObject( m_NeedleTipRepresentation->Copy() );
   this->DisplayAxial->RequestAddObject( m_NeedleRepresentation->Copy() );
   this->DisplayAxial->RequestAddAnnotation2D( m_Annotation2D );
 
+  this->DisplaySagittal->RequestRemoveObject( m_ImageRepresentationSagittal );
   this->DisplaySagittal->RequestAddObject( m_ImageRepresentationSagittal );
   this->DisplaySagittal->RequestAddObject(
                                           m_PickedPointRepresentation->Copy() );
@@ -953,11 +955,16 @@ void NeedleBiopsy::ConnectImageRepresentationProcessing()
   this->DisplaySagittal->RequestAddObject( m_NeedleRepresentation->Copy() );
   this->DisplaySagittal->RequestAddAnnotation2D( m_Annotation2D );
 
+  this->DisplayCoronal->RequestRemoveObject( m_ImageRepresentationCoronal );
   this->DisplayCoronal->RequestAddObject( m_ImageRepresentationCoronal );
   this->DisplayCoronal->RequestAddObject( m_PickedPointRepresentation->Copy() );
   this->DisplayCoronal->RequestAddObject( m_NeedleTipRepresentation->Copy() );
   this->DisplayCoronal->RequestAddObject( m_NeedleRepresentation->Copy() );
   this->DisplayCoronal->RequestAddAnnotation2D( m_Annotation2D );
+
+  this->Display3D->RequestRemoveObject( m_ImageRepresentationAxial3D );
+  this->Display3D->RequestRemoveObject( m_ImageRepresentationSagittal3D );
+  this->Display3D->RequestRemoveObject( m_ImageRepresentationCoronal3D );
 
   this->Display3D->RequestAddObject( m_ImageRepresentationAxial3D );
   this->Display3D->RequestAddObject( m_ImageRepresentationSagittal3D );
