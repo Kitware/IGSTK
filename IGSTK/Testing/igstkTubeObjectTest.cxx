@@ -32,7 +32,7 @@
 #include "itkStdStreamLogOutput.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
 
 namespace igstk
@@ -121,6 +121,7 @@ int igstkTubeObjectTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS 
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
@@ -128,6 +129,7 @@ int igstkTubeObjectTest( int, char * [] )
     WorldReferenceSystemType::New();
 
   worldReference->SetLogger( logger );
+  */ 
 #endif 
 
   typedef igstk::TubeObjectRepresentation  ObjectRepresentationType;
@@ -142,7 +144,7 @@ int igstkTubeObjectTest( int, char * [] )
   TubeObject->SetLogger( logger );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  TubeObject->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS TubeObject->RequestAttachToSpatialObjectParent( worldReference );
 #endif 
 
   TubeRepresentation->RequestSetTubeObject( TubeObject );
@@ -268,7 +270,7 @@ int igstkTubeObjectTest( int, char * [] )
                                           transformObserver );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  TubeObject->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS TubeObject->RequestSetTransformToSpatialObjectParent( transform );
 #else
   TubeObject->RequestSetTransform( transform );
 #endif

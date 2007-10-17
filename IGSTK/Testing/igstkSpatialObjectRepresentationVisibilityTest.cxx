@@ -32,7 +32,7 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #include "igstkAxesObjectRepresentation.h"
 
 #include "igstkTracker.h"
@@ -252,16 +252,18 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow 
 
+  /* FIXCS
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
   WorldReferenceSystemType::Pointer worldReference =
     WorldReferenceSystemType::New();
+  */
 
   typedef igstk::AxesObjectRepresentation  RepresentationType;
   RepresentationType::Pointer AxesRepresentation = RepresentationType::New();
-  AxesRepresentation->RequestSetAxesObject( worldReference );
-  worldReference->SetSize( 0.5, 0.5, 0.5 );
+  // FIXCS AxesRepresentation->RequestSetAxesObject( worldReference );
+  // FIXCS worldReference->SetSize( 0.5, 0.5, 0.5 );
 
   typedef ::igstk::VisibilityObjectTest::MyTracker    TrackerType;
   typedef ::igstk::TrackerTool                        TrackerToolType;
@@ -291,24 +293,26 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   ObjectType::Pointer ellipsoidObject3 = ObjectType::New();
   ellipsoidObject3->SetLogger( logger );
  
+  /* FIXCS
   ellipsoidObject1->RequestAttachToSpatialObjectParent( worldReference );
   ellipsoidObject2->RequestAttachToSpatialObjectParent( worldReference );
 #ifdef OBJECTFIXED
   ellipsoidObject3->RequestAttachToSpatialObjectParent( worldReference );
 #endif
+  */
 
 #ifdef OBJECTTRACKED
   trackerTool->RequestAttachSpatialObject( ellipsoidObject3 );
   igstk::Transform calibrationTransform;
   calibrationTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
-  ellipsoidObject3->RequestSetCalibrationTransformToTrackerTool( calibrationTransform );
+  // FIXCS ellipsoidObject3->RequestSetCalibrationTransformToTrackerTool( calibrationTransform );
 #endif
   tracker->RequestAddTool( trackerTool );
-  tracker->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS tracker->RequestAttachToSpatialObjectParent( worldReference );
 
   igstk::Transform trackerTransform;
   trackerTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
-  tracker->RequestSetTransformToSpatialObjectParent( trackerTransform );
+  // FIXCS tracker->RequestSetTransformToSpatialObjectParent( trackerTransform );
 
    
   ellipsoidRepresentation1->RequestSetEllipsoidObject(ellipsoidObject1);
@@ -382,7 +386,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   transform1.SetTranslationAndRotation( 
       translation1, rotation, errorValue, validityTimeInMilliseconds );
 
-  ellipsoidObject1->RequestSetTransformToSpatialObjectParent( transform1 );
+  // FIXCS ellipsoidObject1->RequestSetTransformToSpatialObjectParent( transform1 );
 
   // This is the transform for the permanent object.
   igstk::Transform transform2;
@@ -395,7 +399,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
       translation2, rotation, errorValue, 
       ::igstk::TimeStamp::GetLongestPossibleTime() );
 
-  ellipsoidObject2->RequestSetTransformToSpatialObjectParent( transform2 );
+  // FIXCS ellipsoidObject2->RequestSetTransformToSpatialObjectParent( transform2 );
 
   
 #ifdef OBJECTFIXED

@@ -30,7 +30,7 @@
 #include "itkStdStreamLogOutput.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
 
 namespace ImageSpatialObjectRepresentationTest3
@@ -69,6 +69,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);
 
+  /* FIXCS
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
@@ -78,6 +79,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
 
   worldReference->SetLogger( logger );
 #endif 
+  */
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -157,8 +159,10 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   transform.SetTranslation( translation, errorValue, validtyTime ); 
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
   boxObject->RequestAttachToSpatialObjectParent( worldReference );
   boxObject->RequestSetTransformToSpatialObjectParent( transform );
+  */
 #else
   boxObject->RequestSetTransform( transform );
 #endif
@@ -198,8 +202,10 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   transform2.SetTranslation( translation2, errorValue2, validtyTime2 ); 
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
   boxObject2->RequestAttachToSpatialObjectParent( worldReference );
   boxObject2->RequestSetTransformToSpatialObjectParent( transform2 );
+  */
 #else
   boxObject2->RequestSetTransform( transform2 );
 #endif
@@ -239,8 +245,10 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   transform3.SetTranslation( translation3, errorValue3, validtyTime3 ); 
       
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
   boxObject3->RequestAttachToSpatialObjectParent( worldReference );
   boxObject3->RequestSetTransformToSpatialObjectParent( transform3 );
+  */
 #else
   boxObject3->RequestSetTransform( transform3 );
 #endif
@@ -280,8 +288,10 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   transform4.SetTranslation( translation4, errorValue4, validtyTime4 ); 
       
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
   boxObject4->RequestAttachToSpatialObjectParent( worldReference );
   boxObject4->RequestSetTransformToSpatialObjectParent( transform4 );
+  */
 #else
   boxObject4->RequestSetTransform( transform4 );
 #endif
@@ -329,8 +339,10 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   transform.SetToIdentity( validtyTime );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
   imageSpatialObject->RequestAttachToSpatialObjectParent( worldReference );
   imageSpatialObject->RequestSetTransformToSpatialObjectParent( transform );
+  */
 #else
   imageSpatialObject->RequestSetTransform( transform );
 #endif

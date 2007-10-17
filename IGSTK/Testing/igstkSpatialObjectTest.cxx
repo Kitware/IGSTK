@@ -25,7 +25,7 @@
 
 #include "igstkSpatialObject.h"
 #include "igstkTracker.h"
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 
 #include "igstkTransformObserverTestHelper.h"
 
@@ -170,12 +170,13 @@ int igstkSpatialObjectTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
+  /* FIXCS
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
   WorldReferenceSystemType::Pointer worldReference =
     WorldReferenceSystemType::New();
-
+  */
 
   typedef igstk::SpatialObjectTest::DummySpatialObject ObjectType;
   ObjectType::Pointer dummyObject = ObjectType::New();
@@ -188,7 +189,7 @@ int igstkSpatialObjectTest( int, char * [] )
   const unsigned int toolPort = 0;
   const unsigned int toolNumber = 0;
 
-  tracker->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS tracker->RequestAttachToSpatialObjectParent( worldReference );
 
   tracker->RequestOpen();
   tracker->RequestInitialize();
@@ -213,11 +214,11 @@ int igstkSpatialObjectTest( int, char * [] )
 
   ObjectType::Pointer dummyObject2 = ObjectType::New();
 
-  dummyObject2->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS dummyObject2->RequestAttachToSpatialObjectParent( worldReference );
 
   igstk::Transform trackerTransform;
   trackerTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
-  tracker->RequestSetTransformToSpatialObjectParent( trackerTransform );
+  // FIXCS tracker->RequestSetTransformToSpatialObjectParent( trackerTransform );
 
 
   std::cout << "Test [DONE]" << std::endl;

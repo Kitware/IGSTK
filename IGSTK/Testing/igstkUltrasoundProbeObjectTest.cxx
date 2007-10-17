@@ -32,7 +32,7 @@
 #include "itkStdStreamLogOutput.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
 
 namespace igstk
@@ -199,6 +199,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
@@ -206,6 +207,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
     WorldReferenceSystemType::New();
 
   worldReference->SetLogger( logger );
+  */
 #endif 
 
   typedef igstk::UltrasoundProbeObjectRepresentation  ObjectRepresentationType;
@@ -218,7 +220,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   UltrasoundProbeObject->SetLogger( logger );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  UltrasoundProbeObject->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS UltrasoundProbeObject->RequestAttachToSpatialObjectParent( worldReference );
 #endif 
 
   // Test Property
@@ -304,7 +306,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
                                                           transformObserver );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  UltrasoundProbeObject->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS UltrasoundProbeObject->RequestSetTransformToSpatialObjectParent( transform );
 #else
   UltrasoundProbeObject->RequestSetTransform( transform );
 #endif

@@ -33,7 +33,7 @@
 #include "itkStdStreamLogOutput.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
 
 namespace igstk
@@ -205,6 +205,7 @@ int igstkMeshObjectTest( int argc, char * argv [] )
                                        // VTK OutputWindow -> logger
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
@@ -212,6 +213,7 @@ int igstkMeshObjectTest( int argc, char * argv [] )
     WorldReferenceSystemType::New();
 
   worldReference->SetLogger( logger );
+  */
 #endif 
 
   typedef igstk::MeshObjectRepresentation  ObjectRepresentationType;
@@ -226,7 +228,7 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   meshObject->SetLogger( logger );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  meshObject->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS meshObject->RequestAttachToSpatialObjectParent( worldReference );
 #endif 
 
   meshObject->AddPoint(0,0,0,0);
@@ -333,7 +335,7 @@ int igstkMeshObjectTest( int argc, char * argv [] )
                            transformObserver );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  meshObject->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS meshObject->RequestSetTransformToSpatialObjectParent( transform );
 #else
   meshObject->RequestSetTransform( transform );
 #endif
