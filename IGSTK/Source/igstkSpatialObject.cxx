@@ -139,9 +139,10 @@ void SpatialObject::SetInternalSpatialObjectProcessing()
 
 /** Request adding this current IGSTK spatial object as child of the
  * Spatial Object passed as argument. */
-void SpatialObject::RequestAttachToSpatialObjectParent(Self * object )
+void SpatialObject::RequestSetTransformAndParent(const Transform & transform, Self * object )
 {
-  m_ParentToBeSet = object;
+  m_ParentToBeSet    = object;
+  m_TransformToParentToBeSet = transform;
 
   if( m_ParentToBeSet.IsNull() || 
       m_ParentToBeSet->GetInternalSpatialObject() == NULL)

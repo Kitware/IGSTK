@@ -75,6 +75,11 @@ public:
    * become the parent of the current spatial object.  */
   void RequestAttachToTrackerTool( Self * trackerToolCoordinateReferenceSystem );
 
+  /** This method implements the construction of a scene graph by defining the
+   * parent of this object and the Transforms defining their relative position
+   * and orientation */
+  void RequestSetTransformAndParent( const Transform & transformToParent, Self * parent ); 
+
   /**
    * DEPRECATED :
    *  This method should be to be replaced with RequestSetTransformToSpatialObjectParent()
@@ -176,6 +181,8 @@ private:
   igstkDeclareInputMacro( TrackerToolValid );
   igstkDeclareInputMacro( TransformAndParent );
   igstkDeclareInputMacro( GetTransformToWorld );
+  igstkDeclareInputMacro( SpatialObjectParentNull );  // deprecated
+  igstkDeclareInputMacro( SpatialObjectParentValid );  // deprecated;
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
