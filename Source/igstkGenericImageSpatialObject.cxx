@@ -325,7 +325,8 @@ GenericImageSpatialObject
   transform.SetTranslationAndRotation( tranlationToOrigin, rotation, 
                                            errorValue, validtyTime );
  
-  this->RequestSetTransformToSpatialObjectParent( transform ); 
+  // FIXME once the API of the internal scene graph is defined
+  // this->RequestSetTransformToSpatialObjectParent( transform ); 
 
   this->m_VtkImporter->UpdateWholeExtent();
 }
