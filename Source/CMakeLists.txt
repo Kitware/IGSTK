@@ -261,7 +261,7 @@ SET(IGSTKSandbox_HEADS
   igstkContourMeshObjectRepresentation.h
   igstkContourObjectRepresentation.h
   igstkContourVascularNetworkObjectRepresentation.h
-  igstkCoordinateReferenceSystemObject.h
+  igstkCoordinateReferenceSystem.h
   igstkCrosshairs2D.h
   igstkDICOMGenericImageReader.h
   igstkGenericImageSpatialObject.h
@@ -275,7 +275,6 @@ SET(IGSTKSandbox_HEADS
   igstkViewNew.h
   igstkViewNew2D.h
   igstkViewNew3D.h
-  igstkWorldCoordinateReferenceSystemObject.h
   igstkImageSliceRepresentation.h
 # vtkImagePlaneWidget2D.h
 #  vtkImagePlaneWidget2DInteractionListener.h
@@ -316,7 +315,7 @@ SET(IGSTKSandbox_SRCS
   igstkContourMeshObjectRepresentation.cxx
   igstkContourObjectRepresentation.cxx
   igstkContourVascularNetworkObjectRepresentation.cxx
-  igstkCoordinateReferenceSystemObject.cxx
+  igstkCoordinateReferenceSystem.cxx
   igstkCrosshairs2D.cxx
   igstkDICOMGenericImageReader.cxx
   igstkGenericImageSpatialObject.cxx
@@ -331,7 +330,6 @@ SET(IGSTKSandbox_SRCS
   igstkViewNew2D.cxx
   igstkViewNew3D.cxx
   igstkViewProxyBase.cxx
-  igstkWorldCoordinateReferenceSystemObject.cxx
   igstkImageSliceRepresentation.txx
 #  igstkImageSpatialObjectImagePlaneRepresentation.txx
 #  igstkCTImageSpatialObjectImagePlaneRepresentation.cxx
