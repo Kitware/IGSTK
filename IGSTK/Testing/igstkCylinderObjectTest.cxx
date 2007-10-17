@@ -32,7 +32,7 @@
 #include "itkStdStreamLogOutput.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
 
 namespace igstk
@@ -119,6 +119,7 @@ int igstkCylinderObjectTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK OutputWindow
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
@@ -126,6 +127,7 @@ int igstkCylinderObjectTest( int, char * [] )
     WorldReferenceSystemType::New();
 
   worldReference->SetLogger( logger );
+  */
 #endif 
 
   typedef igstk::CylinderObjectRepresentation  ObjectRepresentationType;
@@ -138,7 +140,7 @@ int igstkCylinderObjectTest( int, char * [] )
   cylinderObject->SetLogger( logger );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  cylinderObject->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS cylinderObject->RequestAttachToSpatialObjectParent( worldReference );
 #endif 
 
   cylinderRepresentation->RequestSetCylinderObject( cylinderObject );
@@ -237,7 +239,7 @@ int igstkCylinderObjectTest( int, char * [] )
                         ::igstk::TransformModifiedEvent(), transformObserver );
   
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  cylinderObject->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS cylinderObject->RequestSetTransformToSpatialObjectParent( transform );
 #else
   cylinderObject->RequestSetTransform( transform );
 #endif

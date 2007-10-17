@@ -33,7 +33,7 @@
 #include "itkStdStreamLogOutput.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
 
 namespace igstk
@@ -123,6 +123,7 @@ int igstkConeObjectTest( int, char * [] )
                                        // OutputWindow -> logger
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
@@ -130,6 +131,7 @@ int igstkConeObjectTest( int, char * [] )
     WorldReferenceSystemType::New();
 
   worldReference->SetLogger( logger );
+  */
 #endif 
 
   typedef igstk::ConeObjectRepresentation  ObjectRepresentationType;
@@ -142,7 +144,7 @@ int igstkConeObjectTest( int, char * [] )
   ConeObject->SetLogger( logger );
     
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  ConeObject->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS ConeObject->RequestAttachToSpatialObjectParent( worldReference );
 #endif 
 
   // Test Set/GetRadius()
@@ -250,7 +252,7 @@ int igstkConeObjectTest( int, char * [] )
                                                             transformObserver );
   
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  ConeObject->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS ConeObject->RequestSetTransformToSpatialObjectParent( transform );
 #else
   ConeObject->RequestSetTransform( transform );
 #endif

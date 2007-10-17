@@ -30,7 +30,7 @@
 #include "igstkEvents.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
 
 namespace igstk
@@ -164,6 +164,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
                                      // OutputWindow -> logger
 
+  /* FIXCS
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
@@ -173,6 +174,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   worldReference->SetLogger( logger );
 #endif 
+  */
 
   // Instantiate a reader
   //
@@ -221,10 +223,11 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   
   representation->RequestSetSliceNumber( 10 );
 
+  /* FIXCS
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
   imageSpatialObject->RequestAttachToSpatialObjectParent( worldReference );
 #endif 
-
+  */
 
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
@@ -261,6 +264,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   imageSpatialObject->SetLogger( logger );
 
+  /* FIXCS
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
   imageSpatialObject->RequestAttachToSpatialObjectParent( worldReference );
   igstk::Transform                   transform;
@@ -268,6 +272,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   transform.SetToIdentity( validtyTime );
   imageSpatialObject->RequestSetTransformToSpatialObjectParent( transform );
 #endif 
+  */
 
   representation->RequestSetImageSpatialObject( imageSpatialObject );
 

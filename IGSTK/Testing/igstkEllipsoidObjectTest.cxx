@@ -32,7 +32,7 @@
 #include "itkStdStreamLogOutput.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
 
 namespace igstk
@@ -118,6 +118,7 @@ int igstkEllipsoidObjectTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);  //redirect messages from VTK Output
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
 typedef igstk::WorldCoordinateReferenceSystemObject  
   WorldReferenceSystemType;
 
@@ -125,6 +126,7 @@ WorldReferenceSystemType::Pointer worldReference =
   WorldReferenceSystemType::New();
 
 worldReference->SetLogger( logger );
+  */
 #endif 
 
   typedef igstk::EllipsoidObjectRepresentation  ObjectRepresentationType;
@@ -137,7 +139,7 @@ worldReference->SetLogger( logger );
   ellipsoidObject->SetLogger( logger );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  ellipsoidObject->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS ellipsoidObject->RequestAttachToSpatialObjectParent( worldReference );
 #endif 
 
   // Test Set/GetRadius()
@@ -255,7 +257,7 @@ worldReference->SetLogger( logger );
                                                           transformObserver );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  ellipsoidObject->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS ellipsoidObject->RequestSetTransformToSpatialObjectParent( transform );
 #else
   ellipsoidObject->RequestSetTransform( transform );
 #endif
