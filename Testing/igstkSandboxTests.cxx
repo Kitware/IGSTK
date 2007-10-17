@@ -28,7 +28,7 @@
 void RegisterTests()
 {
   // Register Sandbox tests
-  REGISTER_TEST(igstkCoordinateReferenceSystemObjectTest);
+  REGISTER_TEST(igstkCoordinateReferenceSystemTest);
   REGISTER_TEST(igstkGroupObjectTest);
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
