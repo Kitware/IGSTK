@@ -31,7 +31,7 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkVTKLoggerOutput.h"
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #include "igstkAxesObjectRepresentation.h"
 
 #include "itkLogger.h"
@@ -179,6 +179,7 @@ int igstkViewNewTest( int, char * [] )
   try
     {
     // Define the World coordinate system
+    /* FIXCS
     typedef igstk::WorldCoordinateReferenceSystemObject  
       WorldReferenceSystemType;
 
@@ -187,17 +188,18 @@ int igstkViewNewTest( int, char * [] )
 
     // make the Z axis very small to avoid disturbing the 2D view
     worldReference->SetSize(1.0,1.0,0.001); 
+    */
 
     // Define a representation for the coordinate system
     typedef igstk::AxesObjectRepresentation  RepresentationType;
     RepresentationType::Pointer AxesRepresentation = RepresentationType::New();
-    AxesRepresentation->RequestSetAxesObject( worldReference );
+    // FIXCS AxesRepresentation->RequestSetAxesObject( worldReference );
 
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
     
-    ellipsoid->RequestAttachToSpatialObjectParent( worldReference );
+    // FIXCS ellipsoid->RequestAttachToSpatialObjectParent( worldReference );
 
     // Create the ellipsoid representation
     igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
@@ -211,7 +213,7 @@ int igstkViewNewTest( int, char * [] )
     igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
     cylinder->SetRadius(0.1);
     cylinder->SetHeight(0.5);
-    cylinder->RequestAttachToSpatialObjectParent( worldReference );
+    // FIXCS cylinder->RequestAttachToSpatialObjectParent( worldReference );
 
     // Create the cylinder representation
     igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation =
@@ -236,7 +238,7 @@ int igstkViewNewTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    ellipsoid->RequestSetTransformToSpatialObjectParent( transform );
+    // FIXCS ellipsoid->RequestSetTransformToSpatialObjectParent( transform );
 
 
     const double cylinderAngle = 30.0 * vcl_atan(1.0) / 45.0; // 30 degrees in radians
@@ -250,7 +252,7 @@ int igstkViewNewTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    cylinder->RequestSetTransformToSpatialObjectParent( transform );
+    // FIXCS cylinder->RequestSetTransformToSpatialObjectParent( transform );
 
     cylinderRepresentation->SetLogger( logger );
   
@@ -273,7 +275,7 @@ int igstkViewNewTest( int, char * [] )
     viewObserver2->SetEndFlag( &bEnd );
     viewObserver2->SetResizeFlag( &bResize );
 
-    worldReference->SetSize(1.0,1.0,1.0); 
+    // FIXCS worldReference->SetSize(1.0,1.0,1.0); 
 
     view3D->SetRefreshRate( 30 );
     view3D->SetRendererBackgroundColor( 0.8, 0.9, 0.8 );

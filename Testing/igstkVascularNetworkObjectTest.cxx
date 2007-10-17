@@ -30,7 +30,7 @@
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 
 #include "igstkTransformObserverTestHelper.h"
 
@@ -146,6 +146,7 @@ int igstkVascularNetworkObjectTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow -> logger
 
+  /* FIXCS 
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
@@ -153,12 +154,13 @@ int igstkVascularNetworkObjectTest( int, char * [] )
     WorldReferenceSystemType::New();
 
   worldReference->SetLogger( logger );
+  */
 
   typedef igstk::VascularNetworkObject  ObjectType;
   ObjectType::Pointer network = ObjectType::New();
   network->SetLogger( logger );
     
-  network->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS network->RequestAttachToSpatialObjectParent( worldReference );
 
   // Testing PrintSelf()
   network->Print(std::cout);
@@ -188,7 +190,7 @@ int igstkVascularNetworkObjectTest( int, char * [] )
                                                  = TransformObserverType::New();
 
   network->AddObserver( igstk::TransformModifiedEvent(),transformObserver );
-  network->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS network->RequestSetTransformToSpatialObjectParent( transform );
 
   network->RequestGetTransformToWorld();
   

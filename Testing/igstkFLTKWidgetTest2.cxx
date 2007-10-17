@@ -28,7 +28,7 @@
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkFLTKWidget.h"
 
@@ -93,8 +93,10 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
   try
     {
     // create the World coordinate reference system
+    /* FIXCS
     igstk::WorldCoordinateReferenceSystemObject::Pointer worldReference =
       igstk::WorldCoordinateReferenceSystemObject::New();
+    */
 
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
@@ -102,7 +104,7 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
     
     ellipsoid->SetLogger( logger );
 
-    ellipsoid->RequestAttachToSpatialObjectParent( worldReference );
+    // FIXCS ellipsoid->RequestAttachToSpatialObjectParent( worldReference );
 
     // Create the ellipsoid representation
     igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
@@ -128,7 +130,7 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
 //    ellipsoid->RequestSetTransform( transform ); // DEPRECATED
-    ellipsoid->RequestSetTransformToSpatialObjectParent( transform );
+    // FIXCS ellipsoid->RequestSetTransformToSpatialObjectParent( transform );
 
     ViewNew2DType::Pointer view2D = ViewNew2DType::New();
     

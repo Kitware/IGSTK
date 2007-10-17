@@ -30,7 +30,7 @@
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 
 #include "igstkTransformObserverTestHelper.h"
 
@@ -146,6 +146,7 @@ int igstkGroupObjectTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow -> logger
 
+  /* FIXCS 
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
@@ -153,12 +154,13 @@ int igstkGroupObjectTest( int, char * [] )
     WorldReferenceSystemType::New();
 
   worldReference->SetLogger( logger );
+  */
 
   typedef igstk::GroupObject  ObjectType;
   ObjectType::Pointer group = ObjectType::New();
   group->SetLogger( logger );
     
-  group->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS group->RequestAttachToSpatialObjectParent( worldReference );
 
   // Testing PrintSelf()
   group->Print(std::cout);
@@ -188,7 +190,7 @@ int igstkGroupObjectTest( int, char * [] )
                                                  = TransformObserverType::New();
 
   group->AddObserver( igstk::TransformModifiedEvent(),transformObserver );
-  group->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS group->RequestSetTransformToSpatialObjectParent( transform );
 
   group->RequestGetTransformToWorld();
   

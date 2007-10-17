@@ -21,7 +21,7 @@
 #include "igstkVTKLoggerOutput.h"
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #include "igstkBoxObject.h"
 #include "igstkBoxObjectRepresentation.h"
 #include "igstkAxesObjectRepresentation.h"
@@ -56,14 +56,16 @@ int main( int argc, char* argv[] )
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);  
 
+  /* FIXCS 
   typedef igstk::WorldCoordinateReferenceSystemObject  WorldReferenceSystemType;
 
   WorldReferenceSystemType::Pointer worldReference = WorldReferenceSystemType::New();
   worldReference->SetSize(10,10,10);
+  */
 
   typedef igstk::AxesObjectRepresentation  AxesRepresentationType;
   AxesRepresentationType::Pointer AxesRepresentation = AxesRepresentationType::New();
-  AxesRepresentation->RequestSetAxesObject( worldReference );
+  // FIXCS AxesRepresentation->RequestSetAxesObject( worldReference );
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -121,8 +123,8 @@ int main( int argc, char* argv[] )
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  ctImage->RequestAttachToSpatialObjectParent( worldReference );
-  ctImage->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS ctImage->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS ctImage->RequestSetTransformToSpatialObjectParent( transform );
 
   typedef igstk::CTImageSpatialObjectRepresentation RepresentationType;
   RepresentationType::Pointer imageRepresentation = RepresentationType::New();
@@ -136,9 +138,9 @@ int main( int argc, char* argv[] )
   BoxObjectType::Pointer  boxObject = BoxObjectType::New();
 
   boxObject->SetSize( 10, 10, 10 );
-  boxObject->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS boxObject->RequestAttachToSpatialObjectParent( worldReference );
   transform.SetToIdentity( 1000 ); // 1 second
-  boxObject->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS boxObject->RequestSetTransformToSpatialObjectParent( transform );
  
   typedef igstk::BoxObjectRepresentation BoxRepresentationType;
   BoxRepresentationType::Pointer boxObjectRepresentation = BoxRepresentationType::New();
