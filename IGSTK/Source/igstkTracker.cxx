@@ -913,7 +913,7 @@ void Tracker::RequestAddTool( TrackerToolType * trackerTool )
 {
   // FIXME: thread this in the State Machine
   m_TrackerTools.push_back( trackerTool );
-  trackerTool->RequestAttachToSpatialObjectParent( this->m_CoordinateReferenceSystem );
+  // FIXCS trackerTool->RequestAttachToSpatialObjectParent( this->m_CoordinateReferenceSystem );
 }
 
 /** The "SetReferenceTool" sets the reference tool. */

@@ -33,7 +33,7 @@
 #include "itkStdStreamLogOutput.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
 
 namespace igstk
@@ -123,6 +123,7 @@ int igstkBoxObjectTest( int, char * [] )
                                        // OutputWindow -> logger
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
@@ -130,6 +131,7 @@ int igstkBoxObjectTest( int, char * [] )
     WorldReferenceSystemType::New();
 
   worldReference->SetLogger( logger );
+  */
 #endif 
 
   typedef igstk::BoxObjectRepresentation  ObjectRepresentationType;
@@ -142,7 +144,7 @@ int igstkBoxObjectTest( int, char * [] )
   BoxObject->SetLogger( logger );
     
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  BoxObject->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS BoxObject->RequestAttachToSpatialObjectParent( worldReference );
 #endif 
 
   // Test Set/GetRadius()
@@ -259,7 +261,7 @@ int igstkBoxObjectTest( int, char * [] )
   BoxObject->AddObserver( ::igstk::TransformModifiedEvent(),transformObserver );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  BoxObject->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS BoxObject->RequestSetTransformToSpatialObjectParent( transform );
 #else
   BoxObject->RequestSetTransform( transform );
 #endif

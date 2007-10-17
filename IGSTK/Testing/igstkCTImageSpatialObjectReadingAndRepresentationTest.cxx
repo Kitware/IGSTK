@@ -28,7 +28,7 @@
 #include "itkStdStreamLogOutput.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
 
 namespace CTImageSpatialObjectReadingAndRepresentationTest
@@ -69,6 +69,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
                                        // OutputWindow -> logger
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
@@ -76,6 +77,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     WorldReferenceSystemType::New();
 
   worldReference->SetLogger( logger );
+  */
 #endif 
 
   typedef igstk::CTImageReader         ReaderType;
@@ -212,10 +214,10 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   ctImage->SetLogger( logger );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  ctImage->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS ctImage->RequestAttachToSpatialObjectParent( worldReference );
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  ctImage->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS ctImage->RequestSetTransformToSpatialObjectParent( transform );
 #endif 
 
   representation->RequestSetImageSpatialObject( ctImage );
@@ -334,10 +336,10 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     ctImage->SetLogger( logger );
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-    ctImage->RequestAttachToSpatialObjectParent( worldReference );
+    // FIXCS ctImage->RequestAttachToSpatialObjectParent( worldReference );
     igstk::Transform transform;
     transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-    ctImage->RequestSetTransformToSpatialObjectParent( transform );
+    // FIXCS ctImage->RequestSetTransformToSpatialObjectParent( transform );
 #endif 
 
     representation->RequestSetImageSpatialObject( ctImage );

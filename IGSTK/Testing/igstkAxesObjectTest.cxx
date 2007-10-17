@@ -33,7 +33,7 @@
 #include "itkStdStreamLogOutput.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
 
 namespace igstk
@@ -124,6 +124,7 @@ int igstkAxesObjectTest( int, char * [] )
                                        // VTK OutputWindow -> logger
   
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+  /* FIXCS
   typedef igstk::WorldCoordinateReferenceSystemObject  
     WorldReferenceSystemType;
 
@@ -131,6 +132,7 @@ int igstkAxesObjectTest( int, char * [] )
     WorldReferenceSystemType::New();
 
   worldReference->SetLogger( logger );
+  */
 #endif 
 
   typedef igstk::AxesObjectRepresentation  ObjectRepresentationType;
@@ -143,7 +145,7 @@ int igstkAxesObjectTest( int, char * [] )
   AxesObject->SetLogger( logger );
     
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  AxesObject->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS AxesObject->RequestAttachToSpatialObjectParent( worldReference );
 #endif 
 
   // Test Set/GetRadius()
@@ -261,7 +263,7 @@ int igstkAxesObjectTest( int, char * [] )
                                                           transformObserver );
   
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  AxesObject->RequestSetTransformToSpatialObjectParent( transform );
+  // FIXCS AxesObject->RequestSetTransformToSpatialObjectParent( transform );
 #else
   AxesObject->RequestSetTransform( transform );
 #endif
