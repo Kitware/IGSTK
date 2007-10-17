@@ -173,26 +173,6 @@ private:
   CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;
 
 
-  /** Attach the coordinate reference system of the tracker to a parent
-   * spatial object. In this way the tracker gets integrated in the scene
-   * tree. FIXME: this is a temporary quick-and-dirty implementation. The
-   *              method should be integrated in the state machine. */
-  void RequestAttachToSpatialObjectParent( SpatialObject * parent )
-    {
-    this->m_CoordinateReferenceSystem->RequestAttachToSpatialObjectParent( parent );
-    }
-
-
-  /** Set the transform between the coordinate reference system of the tracker
-   *  and its spatial object parent.
-   *  FIXME: this is a temporary quick-and-dirty implementation. The method
-   *  should be integrated in the state machine. */
-  void RequestSetTransformToSpatialObjectParent( const TransformType & transform )
-    {
-    this->m_CoordinateReferenceSystem->RequestSetTransformToSpatialObjectParent( transform );
-    }
-
-
 private:
 
   /** Inputs to the State Machine */

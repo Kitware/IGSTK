@@ -26,6 +26,7 @@
 #include "igstkTransform.h"
 #include "igstkStateMachine.h"
 #include "igstkEvents.h"
+#include "igstkCoordinateReferenceSystem.h"
 
 namespace igstk
 {
@@ -64,7 +65,7 @@ public:
    * RequestSetTransformToSpatialObjectParent() will only be honored the first
    * time it is invoked; calls to RequestSetCalibrationTransformToTrackerTool()
    * will be ignored as well. */
-  void RequestAttachToSpatialObjectParent( Self * object );
+  void RequestSetTransform( const Transform & transform, const Self * object );
 
   /** Attach to a tracker tool. If this call is successful, the object
    * will not honor any subsequent calls to
@@ -74,12 +75,6 @@ public:
    * become the parent of the current spatial object.  */
   void RequestAttachToTrackerTool( Self * trackerToolCoordinateReferenceSystem );
 
-  /** Set the Transform corresponding to the ObjectToParent transformation of
-   * the Parent SpatialObject. This call is acknowledge only the first time
-   * that it is invoked. Since only tracked object should move in the scene.
-   * */
-  void RequestSetTransformToSpatialObjectParent( const Transform & transform );
-
   /**
    * DEPRECATED :
    *  This method should be to be replaced with RequestSetTransformToSpatialObjectParent()
@@ -87,7 +82,7 @@ public:
    */
   void RequestSetTransform( const Transform & transform )
     {
-    this->RequestSetTransformToSpatialObjectParent( transform );
+    this->RequestSetTransform( transform, Self::New() );
     }
 
   /**
@@ -114,23 +109,8 @@ public:
    *  to the parent, by calling RequestAttachToSpatialObjectParent();
    *  In the meantime we just use delegation.
    */
-  void RequestAddObject( Self * object )
-    {
-    if( object )  // ALL THIS METHOD WILL GO AWAY... don't be too picky about the style at this point.
-      {
-      object->RequestAttachToSpatialObjectParent( this );
-      }
-    }
-
-
-
-  /** Set the Transform describing the relationship between the coordinate
-   * system of the current SpatialObject and the coordinate system of the
-   * TrackerTool to which the object is attached. This call is only honored
-   * if the SpatialObject is currently attached to a TrackerTool.
-   * */
-  void RequestSetCalibrationTransformToTrackerTool( const Transform & transform );
-
+  void RequestAddObject( Self * object );
+    
   /** Request the Transform associated to the ObjectToWorld transformation of
    * the SpatialObject. This call, if acknowledged, will compute the transform
    * between this spatial object coordinate frame and the world coordinate
@@ -192,27 +172,20 @@ private:
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( InternalSpatialObjectNull );
   igstkDeclareInputMacro( InternalSpatialObjectValid );
-  igstkDeclareInputMacro( SpatialObjectParentNull );
-  igstkDeclareInputMacro( SpatialObjectParentValid );
   igstkDeclareInputMacro( TrackerToolNull );
   igstkDeclareInputMacro( TrackerToolValid );
-  igstkDeclareInputMacro( TransformToSpatialObjectParent );
-  igstkDeclareInputMacro( CalibrationTransformToTrackerTool );
+  igstkDeclareInputMacro( TransformAndParent );
   igstkDeclareInputMacro( GetTransformToWorld );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
   igstkDeclareStateMacro( InternalSpatialObjectValidSet );
+  igstkDeclareStateMacro( AttachedToParent );
   igstkDeclareStateMacro( AttachedToTrackerTool );
-  igstkDeclareStateMacro( AttachedToSpatialObjectParent );
-  igstkDeclareStateMacro( AttachedToTrackerToolAndCalibrated );
-  igstkDeclareStateMacro( AttachedToSpatialObjectParentAndLocated );
 
   /** Action methods to be invoked only by the state machine */
-  void AttachToSpatialObjectParentProcessing();
   void AttachToTrackerToolProcessing();
-  void SetTransformToSpatialObjectParentProcessing();
-  void SetCalibrationTransformToTrackerToolProcessing();
+  void SetTransformToParentProcessing();
   void BroadcastTransformToWorldProcessing();
   void BroadcastInvalidTransformMessageProcessing();
   void SetInternalSpatialObjectProcessing();
@@ -228,6 +201,9 @@ private:
    *  class.
    **/
   virtual const Transform & ComputeTransformToWorld() const;
+
+  /** Node of the Scene graph to which this object is attached */
+  CoordinateReferenceSystem::Pointer    m_CoordinateReferenceSystem;
 
 };
 

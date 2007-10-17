@@ -240,24 +240,6 @@ public:
   igstkGetMacro( ValidityTime, TimePeriodType );
 
 
-  /** Attach the coordinate reference system of the tracker to a parent
-   * spatial object. In this way the tracker gets integrated in the scene
-   * tree. FIXME: this is a temporary quick-and-dirty implementation. The
-   *              method should be integrated in the state machine. */
-  void RequestAttachToSpatialObjectParent( SpatialObject * parent )
-    {
-    this->m_CoordinateReferenceSystem->RequestAttachToSpatialObjectParent( parent );
-    }
-
-  /** Set the transform between the coordinate reference system of the tracker
-   *  and its spatial object parent.
-   *  FIXME: this is a temporary quick-and-dirty implementation. The method
-   *  should be integrated in the state machine. */
-  void RequestSetTransformToSpatialObjectParent( const TransformType & transform )
-    {
-    this->m_CoordinateReferenceSystem->RequestSetTransformToSpatialObjectParent( transform );
-    }
-
 protected:
 
   typedef enum 
@@ -341,7 +323,7 @@ protected:
     // FIXME: Quick and dirty implementation. A good implementation should
     // verify the id to avoid out of bounds segmentation faults.
     TrackerToolType * tool = m_TrackerTools[toolId];
-    tool->RequestSetTransformToSpatialObjectParent( transform );
+    tool->RequestSetTransform( transform );
     }
 
   /** Print the object information in a stream. */
