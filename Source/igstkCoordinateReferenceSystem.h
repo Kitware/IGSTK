@@ -86,6 +86,22 @@ private:
 
 };
 
+
+namespace Friends 
+{
+
+class CoordinateReferenceSystemHelper
+{
+public:
+  template <class T>
+  static const CoordinateReferenceSystem & GetCoordinateReferenceSystem( const T * input )
+    {
+    return input.GetCoordinateReferenceSystem();  // private
+    }
+};
+
+} // end of Friends namespace 
+
 } // end namespace igstk
 
 #endif // __igstkCoordinateReferenceSystem_h

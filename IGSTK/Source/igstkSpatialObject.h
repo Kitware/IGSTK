@@ -60,12 +60,16 @@ public:
   /** Typedefs */
   typedef itk::SpatialObject<3>          SpatialObjectType;
 
-  /** Attach as a child of another Spatial Object. Once this call has been
+  /** DEPRECATED 
+   * Attach as a child of another Spatial Object. Once this call has been
    * honored, the object is considered to be static in space, and any call to
    * RequestSetTransformToSpatialObjectParent() will only be honored the first
    * time it is invoked; calls to RequestSetCalibrationTransformToTrackerTool()
    * will be ignored as well. */
-  void RequestSetTransform( const Transform & transform, const Self * object );
+  void RequestSetTransform( const Transform & transform, const Self * object )
+  {
+  // REMOVE ME
+  }
 
   /** Attach to a tracker tool. If this call is successful, the object
    * will not honor any subsequent calls to
@@ -78,7 +82,25 @@ public:
   /** This method implements the construction of a scene graph by defining the
    * parent of this object and the Transforms defining their relative position
    * and orientation */
-  void RequestSetTransformAndParent( const Transform & transformToParent, Self * parent ); 
+  template < class TParent >
+  void RequestSetTransformAndParent( const Transform & transformToParent, const TParent * parent )
+    {
+    if( parent != NULL )
+       {
+       CoordinateReferenceSystem & referenceSystem = 
+       igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( parent );
+       // m_CoordinateSystemParentToBeSet = parent;
+       // Add here the state machine input invocation...
+       // igstkPushInputMacro( TransformAndParent );
+       // m_StateMachine.ProcessInputs();
+       //
+       //
+       //  WE need to add a private method called SetTransformAndParentProcessing() with a body like
+       //  {
+       //  m_CoordinateReferenceSystem->RequesetSetParent( m_CoordinateSystemParentToBeSet );
+       //  }
+       }
+    }
 
   /**
    * DEPRECATED :
@@ -87,7 +109,7 @@ public:
    */
   void RequestSetTransform( const Transform & transform )
     {
-    this->RequestSetTransform( transform, Self::New() );
+    // DEPRECATED this->RequestSetTransform( transform, Self::New() );
     }
 
   /**
@@ -174,21 +196,39 @@ private:
    * doesn't have to be constructed every time. */
   mutable Transform            m_TransformToWorld;
 
+  /** Declaring frienship with helper that will facilitate enforcing the
+   * privacy of the CoordinateReferenceSystem. */
+  igstkFriendClassMacro( igstk::Friends::CoordinateReferenceSystemHelper );
+
+  /** Private method for getting the CoordinateReferenceSystem. This method is
+   * mainly intended to be called from the CoordinateReferenceSystemHelper as a
+   * secure way of passing the CoordinateReferenceSystem without breaking its
+   * encapsulation. */
+  const CoordinateReferenceSystem * GetCoordinateReferenceSystem() const
+    {
+    return m_CoordinateReferenceSystem; // FIXME Move to the .cxx
+    }
+
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( InternalSpatialObjectNull );
   igstkDeclareInputMacro( InternalSpatialObjectValid );
-  igstkDeclareInputMacro( TrackerToolNull );
-  igstkDeclareInputMacro( TrackerToolValid );
   igstkDeclareInputMacro( TransformAndParent );
+  igstkDeclareInputMacro( AttachmentToParentSuccess ); // To be done through TransductionMacro
   igstkDeclareInputMacro( GetTransformToWorld );
+
   igstkDeclareInputMacro( SpatialObjectParentNull );  // deprecated
   igstkDeclareInputMacro( SpatialObjectParentValid );  // deprecated;
+  igstkDeclareInputMacro( TrackerToolNull );  // deprecated
+  igstkDeclareInputMacro( TrackerToolValid );  // deprecated
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
   igstkDeclareStateMacro( InternalSpatialObjectValidSet );
   igstkDeclareStateMacro( AttachedToParent );
-  igstkDeclareStateMacro( AttachedToTrackerTool );
+  igstkDeclareStateMacro( AttemptingToAttachToParent ); // new
+
+  igstkDeclareStateMacro( AttachedToTrackerTool ); // deprecated
+
 
   /** Action methods to be invoked only by the state machine */
   void AttachToTrackerToolProcessing();

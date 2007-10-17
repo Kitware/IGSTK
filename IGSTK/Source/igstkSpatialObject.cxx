@@ -179,11 +179,12 @@ SpatialObject::GetInternalSpatialObject()
 /** Set the Transform to the Parent by a direct call. The state machine
  * will take care of only accepting this transform if the object is not
  * currently being tracked by a TrackerTool. */
-void SpatialObject
-::RequestSetTransform(const Transform & transform, const Self * parent )
-{
+// IMPLEMENTATION MOVED TO THE .h file because this method is templated.
+// void SpatialObject
+//::RequestSetTransform(const Transform & transform, const Self * parent )
+//{
   // FIXCS m_ParentToBeSet = parent;
-  m_TransformToSpatialObjectParentToBeSet = transform;
+//  m_TransformToSpatialObjectParentToBeSet = transform;
 
   /* FIXCS
   if( parent.IsNotNull() )
@@ -192,7 +193,7 @@ void SpatialObject
     m_StateMachine.ProcessInputs();
     }
   */
-}
+// }
 
 
 /** Set the Transform relative to the spatial object parent. Only to be
