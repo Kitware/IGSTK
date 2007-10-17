@@ -26,8 +26,8 @@
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-#include "igstkCoordinateReferenceSystemObject.h"
-#include "igstkWorldCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkCoordinateReferenceSystemObject.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 // Software Guide : EndCodeSnippet
 
 #include "igstkConeObject.h"
@@ -41,14 +41,16 @@ int main( int , char *[] )
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
+  /* FIXCS
   typedef igstk::WorldCoordinateReferenceSystemObject WorldReferenceSystemType;
   WorldReferenceSystemType::Pointer worldReference = 
      WorldReferenceSystemType ::New();
+   */
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginCodeSnippet
-  typedef igstk::CoordinateReferenceSystemObject ReferenceSystemType;
-  ReferenceSystemType::Pointer referenceA = ReferenceSystemType ::New();
+  // FIXCS typedef igstk::CoordinateReferenceSystemObject ReferenceSystemType;
+  // FIXCS ReferenceSystemType::Pointer referenceA = ReferenceSystemType ::New();
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
@@ -59,7 +61,7 @@ int main( int , char *[] )
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-  referenceA->RequestAttachToSpatialObjectParent( worldReference );
+  // FIXCS referenceA->RequestAttachToSpatialObjectParent( worldReference );
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
@@ -85,7 +87,7 @@ int main( int , char *[] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  referenceA->RequestSetTransform( transform );
+  // FIXCS referenceA->RequestSetTransform( transform );
 // Software Guide : EndCodeSnippet
 
   typedef igstk::ConeObject ConeObjectType;
@@ -94,7 +96,7 @@ int main( int , char *[] )
   cone->SetRadius(10.0);
   cone->SetHeight(20.0);
 
-  cone->RequestAttachToSpatialObjectParent( referenceA );
+  // FIXCS cone->RequestAttachToSpatialObjectParent( referenceA );
 
   double validityTimeInMilliseconds2 = 200.0;
 
@@ -115,7 +117,7 @@ int main( int , char *[] )
   cylinder->SetRadius(10.0);
   cylinder->SetHeight(20.0);
 
-  cylinder->RequestAttachToSpatialObjectParent( referenceA );
+  // FIXCS cylinder->RequestAttachToSpatialObjectParent( referenceA );
 
   translation[0] = -10.0;
   translation[1] =   0.0;
@@ -131,7 +133,7 @@ int main( int , char *[] )
   cylinder->RequestGetTransform();
 
   std::cout << "Reference System A " << std::endl;
-  referenceA->Print( std::cout );
+  // FIXCS referenceA->Print( std::cout );
 
   std::cout << "Cone " << std::endl;
   cone->Print( std::cout );

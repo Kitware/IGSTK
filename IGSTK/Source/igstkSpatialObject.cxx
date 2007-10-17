@@ -139,7 +139,8 @@ void SpatialObject::SetInternalSpatialObjectProcessing()
 
 /** Request adding this current IGSTK spatial object as child of the
  * Spatial Object passed as argument. */
-void SpatialObject::RequestSetTransformAndParent(const Transform & transform, Self * object )
+/* FIXCS
+void SpatialObject::RequestAttachToSpatialObjectParent(Self * object )
 {
   m_ParentToBeSet    = object;
   m_TransformToParentToBeSet = transform;
@@ -156,15 +157,17 @@ void SpatialObject::RequestSetTransformAndParent(const Transform & transform, Se
     m_StateMachine.ProcessInputs();
     }
 }
+*/
 
 /** Attach this object to a parent. */
+/* FIXCS
 void SpatialObject::AttachToSpatialObjectParentProcessing()
 {
   m_Parent = m_ParentToBeSet;
   m_Parent->GetInternalSpatialObject()->AddSpatialObject( 
     this->GetInternalSpatialObject() );
 }
-
+*/ 
 
 /** Return the internal pointer to the SpatialObject */
 SpatialObject::SpatialObjectType * 
@@ -179,14 +182,16 @@ SpatialObject::GetInternalSpatialObject()
 void SpatialObject
 ::RequestSetTransform(const Transform & transform, const Self * parent )
 {
-  m_ParentToBeSet = parent;
+  // FIXCS m_ParentToBeSet = parent;
   m_TransformToSpatialObjectParentToBeSet = transform;
 
+  /* FIXCS
   if( parent.IsNotNull() )
     {
     igstkPushInputMacro( TransformAndParent );
     m_StateMachine.ProcessInputs();
     }
+  */
 }
 
 
@@ -196,10 +201,12 @@ void SpatialObject::SetTransformToSpatialObjectParentProcessing()
 {
   m_TransformToSpatialObjectParent = m_TransformToSpatialObjectParentToBeSet;
 
+  /* FIXCS
   this->m_CoordinateReferenceSystem->SetTransform( 
     this->m_TransformToSpatialObjectParent,
-    m_Parent->m_CoordinateReferenceSystem )
-    
+    m_Parent->m_CoordinateReferenceSystem );
+   */
+
   Transform::VectorType translation = 
     m_TransformToSpatialObjectParent.GetTranslation();
   m_SpatialObject->GetObjectToParentTransform()->SetOffset( translation );
@@ -215,6 +222,8 @@ void SpatialObject::SetTransformToSpatialObjectParentProcessing()
 
 /** Set the calibration transform that relates this Spatial Object to the 
  *  Tracker tool to which it is attached */
+/* 
+FIXCS
 void SpatialObject::SetCalibrationTransformToTrackerToolProcessing()
 {
   // Delegate to the method that sets the transform to parent.  In this case
@@ -222,7 +231,7 @@ void SpatialObject::SetCalibrationTransformToTrackerToolProcessing()
   // TrackerTool.
   this->SetTransformToSpatialObjectParentProcessing();
 }
-
+*/
 
 /** Request Get Transform */
 void SpatialObject::RequestGetTransformToWorld()
@@ -255,9 +264,11 @@ void SpatialObject::BroadcastInvalidTransformMessageProcessing()
  * cache mutable member variable m_TransformToWorld. */
 const Transform & SpatialObject::ComputeTransformToWorld() const
 {
+  /* FIXCS
   this->m_TransformToWorld = 
     this->m_CoordinateReferenceSystem->ComputeTransformToWorld();
-    
+  */
+
   Transform::VectorType translation = 
     this->m_TransformToWorld.GetTranslation();
   this->m_SpatialObject->GetObjectToWorldTransform()->SetOffset( translation );
@@ -311,7 +322,7 @@ void SpatialObject::AttachToTrackerToolProcessing()
 
 /** DEPRECATED method, Used to used when building a scene graph with SpatialObjects. */
 void 
-SpatialObjects
+SpatialObject
 ::RequestAddObject( Self * object )
 {
 if( object )  // ALL THIS METHOD WILL GO AWAY... don't be too picky about the style at this point.

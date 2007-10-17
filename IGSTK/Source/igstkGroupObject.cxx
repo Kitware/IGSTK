@@ -107,7 +107,7 @@ void GroupObject::RequestGetChild( unsigned long childID )
 void GroupObject::AddChildProcessing()
 {
   m_ChildrenArray.push_back( m_ChildToAdd );
-  m_ChildToAdd->RequestAttachToSpatialObjectParent( this );
+  // FIXCS m_ChildToAdd->RequestAttachToSpatialObjectParent( this );
 }
 
 /** Return a child from the group */
