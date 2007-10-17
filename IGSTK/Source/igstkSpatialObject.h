@@ -189,6 +189,7 @@ private:
   void BroadcastTransformToWorldProcessing();
   void BroadcastInvalidTransformMessageProcessing();
   void SetInternalSpatialObjectProcessing();
+  void SetTransformToSpatialObjectParentProcessing();
 
   /** Null operation for a State Machine transition */
   void NoProcessing();
