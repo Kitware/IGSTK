@@ -1,0 +1,80 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0106 
+header_name {.h} 
+code_name {.cxx}
+class FourViewsAndTrackingGUI {open
+} {
+  Function {FourViewsAndTrackingGUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label {IGSTK: Four Quadrants Example} open
+      xywh {457 58 775 710} type Double hide resizable
+    } {
+      Fl_Box Display3D {
+        label {Display 3D}
+        xywh {5 5 380 330} box FLAT_BOX color 0 labelcolor 7
+        code0 {\#include <igstkView3D.h>}
+        class {igstk::View3D}
+      }
+      Fl_Box DisplayAxial {
+        label {Display Axial}
+        xywh {388 5 380 330} box FLAT_BOX color 0 labelcolor 7
+        code0 {\#include <igstkView2D.h>}
+        class {igstk::View2D}
+      }
+      Fl_Box DisplaySagittal {
+        label {Display Sagittal}
+        xywh {388 338 380 330} box FLAT_BOX color 0 labelcolor 7
+        code0 {\#include <igstkView2D.h>}
+        class {igstk::View2D}
+      }
+      Fl_Box DisplayCoronal {
+        label {Display Coronal}
+        xywh {5 338 380 330} box FLAT_BOX color 0 labelcolor 7
+        code0 {\#include <igstkView2D.h>}
+        class {igstk::View2D}
+      }
+      Fl_Light_Button TrackingButton {
+        label Tracking
+        callback {if( o->value() ) this->EnableTracking();
+else             this->DisableTracking();}
+        xywh {11 675 85 25} labelsize 11
+      }
+      Fl_Button QuitButton {
+        label Quit
+        callback {this->Quit();}
+        xywh {670 675 85 25}
+      }
+    }
+    code {this->hasQuitted = false;
+this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
+this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
+this->DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );} {}
+  }
+  Function {~FourViewsAndTrackingGUI()} {open return_type virtual
+  } {
+    code {delete Display3D;
+delete DisplayAxial;
+delete DisplaySagittal;
+delete DisplayCoronal;} {selected
+    }
+  }
+  Function {Quit()} {return_type {virtual void}
+  } {
+    code {mainWindow->hide();
+this->hasQuitted = true;} {}
+  }
+  Function {Show()} {return_type {virtual void}
+  } {
+    code {mainWindow->show();} {}
+  }
+  Function {EnableTracking()} {open return_type {virtual void}
+  } {}
+  Function {DisableTracking()} {open return_type {virtual void}
+  } {}
+  decl {bool hasQuitted;} {}
+  Function {HasQuitted()} {return_type {virtual bool}
+  } {
+    code {return this->hasQuitted;} {}
+  }
+} 

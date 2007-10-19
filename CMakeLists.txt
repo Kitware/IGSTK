@@ -162,6 +162,7 @@ ENDIF(IGSTKSandbox_BUILD_TESTING)
 OPTION(IGSTKSandbox_BUILD_EXAMPLES "Examples of the project" ON)
 IF(IGSTKSandbox_BUILD_EXAMPLES)
     SUBDIRS(Examples)
+    SUBDIRS(IGSTK/Examples)
 ENDIF(IGSTKSandbox_BUILD_EXAMPLES)
 
 # Connect MicronTracker

@@ -1,0 +1,67 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0106 
+header_name {.h} 
+code_name {.cxx}
+class HelloWorldGUI {open
+} {
+  decl {typedef igstk::Tracker TrackerType;} {public
+  }
+  decl {typedef TrackerType::Pointer TrackerPointer;} {public
+  }
+  decl {bool quit;} {}
+  decl {TrackerPointer m_Tracker;} {}
+  Function {HelloWorldGUI()} {} {
+    Fl_Window MainWindow {
+      label {IGSTK: HelloWorld Example} open
+      xywh {619 249 515 375} type Double resizable visible
+    } {
+      Fl_Box Display {
+        label Display
+        xywh {5 5 505 330} box FLAT_BOX color 0 labelcolor 7
+        code0 {\#include <igstkView3D.h>}
+        class {igstk::View3D}
+      }
+      Fl_Light_Button TrackingBt {
+        label Tracking
+        callback {this->SetTracking(o->value());}
+        xywh {5 345 85 25} labelsize 11
+        code0 {\#include "igstkTracker.h"}
+      }
+      Fl_Button {} {
+        label Quit
+        callback {this->Quit()}
+        xywh {421 345 90 25}
+      }
+    }
+    code {this->quit = false;} {}
+  }
+  Function {Quit()} {return_type {virtual void}
+  } {
+    code {this->MainWindow->hide();
+this->quit = true;} {}
+  }
+  Function {SetTracking( bool tracking )} {return_type {virtual void}
+  } {
+    code {if( tracking )
+  {
+  this->m_Tracker->RequestStartTracking();
+  }
+else
+  {
+  this->m_Tracker->RequestStopTracking();
+  }} {}
+  }
+  Function {~HelloWorldGUI()} {open return_type virtual
+  } {
+    code {delete Display;} {selected
+    }
+  }
+  Function {SetTracker( TrackerType * tracker)} {return_type {virtual void}
+  } {
+    code {this->m_Tracker = tracker;} {}
+  }
+  Function {HasQuitted()} {return_type {virtual bool}
+  } {
+    code {return this->quit;} {}
+  }
+} 
