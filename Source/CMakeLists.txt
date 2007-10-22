@@ -278,6 +278,10 @@ SET(IGSTKSandbox_HEADS
   igstkImageSliceRepresentation.h
 # vtkImagePlaneWidget2D.h
 #  vtkImagePlaneWidget2DInteractionListener.h
+
+# Refactored tracker classs 
+  igstkTrackerNew.h
+  igstkTrackerToolNew.h
 )
 
 IF(IGSTKSandbox_USE_Qt)
@@ -336,6 +340,10 @@ SET(IGSTKSandbox_SRCS
 #  igstkMRImageSpatialObjectImagePlaneRepresentation.cxx
 #  vtkImagePlaneWidget2D.cxx
 #  vtkImagePlaneWidget2DInteractionListener.cxx
+
+# Refactored tracker classs 
+  igstkTrackerNew.cxx
+  igstkTrackerToolNew.cxx
 )
 
 IF(IGSTKSandbox_USE_Qt)
