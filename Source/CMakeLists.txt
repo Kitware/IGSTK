@@ -282,6 +282,8 @@ SET(IGSTKSandbox_HEADS
 # Refactored tracker classs 
   igstkTrackerNew.h
   igstkTrackerToolNew.h
+  igstkPolarisTrackerNew.h
+  igstkPolarisTrackerToolNew.h
 )
 
 IF(IGSTKSandbox_USE_Qt)
@@ -311,6 +313,10 @@ IF(IGSTKSandbox_USE_MicronTracker)
       ${IGSTKSandbox_HEADS}
       igstkMicronTracker.h
       igstkMicronTrackerTool.h
+
+# Refactored classes
+      igstkMicronTrackerNew.h
+      igstkMicronTrackerToolNew.h
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
@@ -344,6 +350,8 @@ SET(IGSTKSandbox_SRCS
 # Refactored tracker classs 
   igstkTrackerNew.cxx
   igstkTrackerToolNew.cxx
+  igstkPolarisTrackerNew.cxx
+  igstkPolarisTrackerToolNew.cxx
 )
 
 IF(IGSTKSandbox_USE_Qt)
@@ -370,6 +378,11 @@ IF(IGSTKSandbox_USE_MicronTracker)
       ${IGSTKSandbox_SRCS}
       igstkMicronTracker.cxx
       igstkMicronTrackerTool.cxx
+
+# Refactored classes
+      igstkMicronTrackerNew.cxx
+      igstkMicronTrackerToolNew.cxx
+ 
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 

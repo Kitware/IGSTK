@@ -56,6 +56,13 @@ void RegisterTests()
 
 #ifdef IGSTKSandbox_USE_MicronTracker
   REGISTER_TEST(igstkMicronTrackerTest);
+  REGISTER_TEST(igstkMicronTrackerNewTest);
 #endif /* IGSTKSandbox_USE_MicronTracker */
+
+#ifdef IGSTK_TEST_POLARIS_ATTACHED
+  REGISTER_TEST(igstkPolarisTrackerNewTest);
+#endif
+
+
 
 }

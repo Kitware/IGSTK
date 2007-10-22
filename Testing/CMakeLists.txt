@@ -102,6 +102,12 @@ ADD_TEST( igstkCoordinateReferenceSystemTest ${IGSTKSandbox_TESTS} igstkCoordina
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 
+IF(IGSTK_TEST_POLARIS_ATTACHED)
+  ADD_TEST(igstkPolarisTrackerNewTest ${IGSTKSandbox_TESTS}
+igstkPolarisTrackerNewTest)
+ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
+
+
 IF(IGSTKSandbox_USE_FLTK)
 
 # FIXME: When done debugging, register it inside of the test drivers.
@@ -195,7 +201,17 @@ IF(IGSTKSandbox_USE_MicronTracker)
               ${IGSTKSandbox_TEST_OUTPUT_DIR})
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkMicronTrackerTest.cxx)
-ENDIF(IGSTKSandbox_USE_MicronTracker)
+
+    ADD_TEST( igstkMicronTrackerNewTest
+              ${IGSTKSandbox_TESTS}
+              igstkMicronTrackerNewTest
+              ${IGSTKSandbox_DATA_ROOT}/Input/CalibrationFiles
+              ${IGSTKSandbox_DATA_ROOT}/Input/MicronTrackerNew.ini
+              ${IGSTKSandbox_DATA_ROOT}/Input/Markers
+              ${IGSTKSandbox_TEST_OUTPUT_DIR})
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkMicronTrackerNewTest.cxx)
+ENDIF(IGSTKSandbox_USE_MicronTrackerNew)
 
 IF(IGSTKSandbox_DATA_ROOT)
   SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
