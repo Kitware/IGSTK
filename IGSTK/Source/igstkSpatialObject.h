@@ -89,7 +89,14 @@ public:
        {
        CoordinateReferenceSystem & referenceSystem = 
        igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( parent );
-       // m_CoordinateSystemParentToBeSet = parent;
+       this->m_CoordinateSystemParentToBeSet = parent;
+
+       //
+       // For now, be bad and call the set method directly. We need to setup the state
+       // machine properly.
+       //
+       this->SetTransformAndParentProcessing( transformToParent, parent );
+
        // Add here the state machine input invocation...
        // igstkPushInputMacro( TransformAndParent );
        // m_StateMachine.ProcessInputs();
@@ -113,13 +120,14 @@ public:
     }
 
   /**
+   * DEPRECATE: This whole method should go...
    * DEPRECATED :
    *  This method should be to be replaced with RequestGetTransformToWorld()
    *  In the meantime we just use delegation.
    */
   void RequestGetTransform()
     {
-    this->RequestGetTransformToWorld();
+    // this->RequestGetTransformToWorld();
     }
 
   /**
@@ -142,7 +150,7 @@ public:
    * the SpatialObject. This call, if acknowledged, will compute the transform
    * between this spatial object coordinate frame and the world coordinate
    * system. */
-  void RequestGetTransformToWorld();
+  // void RequestGetTransformToWorld();
 
 protected:
 
@@ -194,7 +202,7 @@ private:
    * RequestGetTransformToWorld() is called. The purpose of this
    * variable is to cache the memory allocation so that the Transform
    * doesn't have to be constructed every time. */
-  mutable Transform            m_TransformToWorld;
+  // mutable Transform            m_TransformToWorld;
 
   /** Declaring frienship with helper that will facilitate enforcing the
    * privacy of the CoordinateReferenceSystem. */
@@ -214,7 +222,7 @@ private:
   igstkDeclareInputMacro( InternalSpatialObjectValid );
   igstkDeclareInputMacro( TransformAndParent );
   igstkDeclareInputMacro( AttachmentToParentSuccess ); // To be done through TransductionMacro
-  igstkDeclareInputMacro( GetTransformToWorld );
+  // igstkDeclareInputMacro( GetTransformToWorld );
 
   igstkDeclareInputMacro( SpatialObjectParentNull );  // deprecated
   igstkDeclareInputMacro( SpatialObjectParentValid );  // deprecated;
@@ -233,7 +241,7 @@ private:
   /** Action methods to be invoked only by the state machine */
   void AttachToTrackerToolProcessing();
   void SetTransformToParentProcessing();
-  void BroadcastTransformToWorldProcessing();
+  // void BroadcastTransformToWorldProcessing(); // deprecate
   void BroadcastInvalidTransformMessageProcessing();
   void SetInternalSpatialObjectProcessing();
   void SetTransformToSpatialObjectParentProcessing();
@@ -247,11 +255,26 @@ private:
   /** Computes the transform from this object to the World Coordinate System.
    *  This is a service method and should never be exposed to the API of this
    *  class.
+   *
+   *  THIS METHOD IS BE DEPRECATED. THERE IS NO LONGER
+   *  AN EXPLICIT WORLD COORDINATE SYSTEM.
+   *
    **/
-  virtual const Transform & ComputeTransformToWorld() const;
+  // virtual const Transform & ComputeTransformToWorld() const;
 
   /** Node of the Scene graph to which this object is attached */
   CoordinateReferenceSystem::Pointer    m_CoordinateReferenceSystem;
+
+  /** Setup the coordinate system. This method sets both the parent that the
+   *  spatial object is attached to and the transformation from this 
+   *  spatial object to its parent.
+   */
+  template < class TParent >
+  void SetTransformAndParentProcessing( const Transform & transformToParent, const TParent * parent )
+    {
+    this->m_TransformToSpatialObjectParent = transformToParent;
+    this->m_Parent = parent;
+    }
 
 };
 

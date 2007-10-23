@@ -33,7 +33,7 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddInputMacro( TrackerToolNull );
   igstkAddInputMacro( TrackerToolValid );
   igstkAddInputMacro( TransformAndParent );
-  igstkAddInputMacro( GetTransformToWorld );
+  // igstkAddInputMacro( GetTransformToWorld );
 
   igstkAddStateMacro( Initial  );
   igstkAddStateMacro( InternalSpatialObjectValidSet );
@@ -45,28 +45,28 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddTransitionMacro( Initial, TrackerToolNull, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, TrackerToolValid, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, TransformAndParent, Initial,  ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, GetTransformToWorld, Initial,  BroadcastInvalidTransformMessage );
+  // igstkAddTransitionMacro( Initial, GetTransformToWorld, Initial,  BroadcastInvalidTransformMessage );
 
   igstkAddTransitionMacro( InternalSpatialObjectValidSet, InternalSpatialObjectNull, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( InternalSpatialObjectValidSet, InternalSpatialObjectValid, InternalSpatialObjectValidSet,  ReportInvalidRequest );
   igstkAddTransitionMacro( InternalSpatialObjectValidSet, TrackerToolNull, InternalSpatialObjectValidSet,  ReportInvalidRequest );
   igstkAddTransitionMacro( InternalSpatialObjectValidSet, TrackerToolValid, AttachedToTrackerTool,  AttachToTrackerTool );
   igstkAddTransitionMacro( InternalSpatialObjectValidSet, TransformAndParent, AttachedToParent,  ReportInvalidRequest );
-  igstkAddTransitionMacro( InternalSpatialObjectValidSet, GetTransformToWorld, InternalSpatialObjectValidSet,  BroadcastInvalidTransformMessage );
+  // igstkAddTransitionMacro( InternalSpatialObjectValidSet, GetTransformToWorld, InternalSpatialObjectValidSet,  BroadcastInvalidTransformMessage );
 
   igstkAddTransitionMacro( AttachedToTrackerTool, InternalSpatialObjectNull, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToTrackerTool, InternalSpatialObjectValid, InternalSpatialObjectValidSet,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToTrackerTool, TrackerToolNull, AttachedToTrackerTool,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToTrackerTool, TrackerToolValid, AttachedToTrackerTool,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToTrackerTool, TransformAndParent, AttachedToTrackerTool,  ReportInvalidRequest );
-  igstkAddTransitionMacro( AttachedToTrackerTool, GetTransformToWorld, AttachedToTrackerTool,  BroadcastInvalidTransformMessage );
+  // igstkAddTransitionMacro( AttachedToTrackerTool, GetTransformToWorld, AttachedToTrackerTool,  BroadcastInvalidTransformMessage );
 
   igstkAddTransitionMacro( AttachedToParent, InternalSpatialObjectNull, Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToParent, InternalSpatialObjectValid, InternalSpatialObjectValidSet,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToParent, TrackerToolNull, AttachedToParent,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToParent, TrackerToolValid, AttachedToParent,  ReportInvalidRequest );
   igstkAddTransitionMacro( AttachedToParent, TransformAndParent, AttachedToParent,  SetTransformToSpatialObjectParent );
-  igstkAddTransitionMacro( AttachedToParent, GetTransformToWorld, AttachedToParent,  BroadcastInvalidTransformMessage );
+  // igstkAddTransitionMacro( AttachedToParent, GetTransformToWorld, AttachedToParent,  BroadcastInvalidTransformMessage );
 
   igstkSetInitialStateMacro( Initial );
 
@@ -93,8 +93,8 @@ void SpatialObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
   os << indent << "Transform To Parent = ";
   os << indent << this->m_TransformToSpatialObjectParent << std::endl;
 
-  os << indent << "Transform To World = ";
-  os << indent << this->m_TransformToWorld << std::endl;
+  // os << indent << "Transform To World = ";
+  // os << indent << this->m_TransformToWorld << std::endl;
 
   if( this->m_Parent )
     {
@@ -235,20 +235,23 @@ void SpatialObject::SetCalibrationTransformToTrackerToolProcessing()
 */
 
 /** Request Get Transform */
+/*
 void SpatialObject::RequestGetTransformToWorld()
 {
   igstkPushInputMacro( GetTransformToWorld );
   m_StateMachine.ProcessInputs();
 }
-
+*/
 
 /** Broadcast Transform */
+/* FIXCS - Deprecate
 void SpatialObject::BroadcastTransformToWorldProcessing()
 {
   TransformModifiedEvent event;
   event.Set( this->ComputeTransformToWorld() );
   this->InvokeEvent( event );
 }
+*/ 
 
 
 /** Broadcast Transform */
@@ -263,12 +266,12 @@ void SpatialObject::BroadcastInvalidTransformMessageProcessing()
  * system by recursively composing transforms from parents. At the end of
  * the execution of this method the new transform to world is stored in the
  * cache mutable member variable m_TransformToWorld. */
+#if 0
 const Transform & SpatialObject::ComputeTransformToWorld() const
 {
-  /* FIXCS
-  this->m_TransformToWorld = 
-    this->m_CoordinateReferenceSystem->ComputeTransformToWorld();
-  */
+  // FIXCS
+  // this->m_TransformToWorld = 
+  //   this->m_CoordinateReferenceSystem->ComputeTransformToWorld();
 
   Transform::VectorType translation = 
     this->m_TransformToWorld.GetTranslation();
@@ -284,6 +287,7 @@ const Transform & SpatialObject::ComputeTransformToWorld() const
 
   return this->m_TransformToWorld;
 }
+#endif 
 
 /** Request to attach this spatial object to a tracker tool. If the
  * operation succeeds then the coordinate system of the Tracker tool
