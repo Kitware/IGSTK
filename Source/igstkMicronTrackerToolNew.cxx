@@ -29,6 +29,7 @@ namespace igstk
 /** Constructor (initializes Polaris-specific tool values) */
 MicronTrackerToolNew::MicronTrackerToolNew():m_StateMachine(this)
 {
+  m_TrackerToolInitialized = false;
 }
 
 /** Destructor */
@@ -36,17 +37,11 @@ MicronTrackerToolNew::~MicronTrackerToolNew()
 {
 }
 
-/** Get marker name */
-std::string MicronTrackerToolNew::GetMarkerName( )
-{
-  return m_MarkerName;
-}
-
 /** Request set marker name */
 void MicronTrackerToolNew::RequestSetMarkerName( std::string markerName )
 {
-  //FIXME: should be routed through the state machine
   this->m_MarkerName = markerName;
+  m_TrackerToolInitialized = true;
 }
 
 /** Print Self function */

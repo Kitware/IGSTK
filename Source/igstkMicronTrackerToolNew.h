@@ -18,7 +18,7 @@
 #ifndef __igstkMicronTrackerToolNew_h
 #define __igstkMicronTrackerToolNew_h
 
-#include "igstkTrackerTool.h"
+#include "igstkTrackerToolNew.h"
 
 #include "Markers.h"
 
@@ -36,18 +36,17 @@ namespace igstk
   *
   */
 
-class MicronTrackerToolNew : public TrackerTool
+class MicronTrackerToolNew : public TrackerToolNew
 {
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( MicronTrackerToolNew, TrackerTool )
+  igstkStandardClassTraitsMacro( MicronTrackerToolNew, TrackerToolNew )
 
   /** Get Tracker tool marker name */
-  std::string GetMarkerName( );
+  igstkGetMacro( MarkerName, std::string );
 
- /** Each tracker tool is associated with a marker name
- *FIXME  This should be routed through the state machine 
+ /** Set tracker tool marker name
  **/
  void RequestSetMarkerName( std::string markerName); 
 
@@ -61,10 +60,16 @@ protected:
 
 private:
 
+  /** Get boolean variable to check if the tracker tool is 
+   * initialized or not */
+  igstkGetMacro( TrackerToolInitialized, bool );
+
   MicronTrackerToolNew(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
 
   std::string m_MarkerName;
+
+  bool m_TrackerToolInitialized;
 
 };  
 

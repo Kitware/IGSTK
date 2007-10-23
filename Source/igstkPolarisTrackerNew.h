@@ -20,7 +20,7 @@
 
 #include "igstkSerialCommunication.h"
 #include "igstkNDICommandInterpreter.h"
-#include "igstkPolarisTrackerToolNew.h"
+#include "igstkPolarisTrackerTool.h"
 #include "igstkTrackerNew.h"
 
 namespace igstk
@@ -62,7 +62,8 @@ public:
 public:
 
   /** typedefs for the tool */
-  typedef igstk::PolarisTrackerToolNew              PolarisTrackerToolType;
+  /** FIXME: this needs to be converted to the new TOOL */
+  typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;
   typedef PolarisTrackerToolType::Pointer        PolarisTrackerToolPointer;
   typedef PolarisTrackerToolType::ConstPointer   PolarisTrackerToolConstPointer;
 

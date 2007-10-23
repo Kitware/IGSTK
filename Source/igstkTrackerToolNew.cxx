@@ -31,31 +31,104 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
 
   m_CoordinateReferenceSystem = CoordinateReferenceSystemType::New();
 
-
-  // FIXME : Bogus State Machine
-  //
-  // The real state machine should require the TrackerToolNew to be attached to a Spatial Object before accepting RequestSetTransform calls.
-  //
-  igstkAddInputMacro( Initialize );
-
-  igstkAddStateMacro( Initial );
-  igstkAddStateMacro( Invalid );
-  igstkAddStateMacro( NotAvailable );
-  igstkAddStateMacro( Available );
+  // States
+  igstkAddStateMacro( Idle );
+  igstkAddStateMacro( AttemptingToInitializeTrackerTool );
   igstkAddStateMacro( Initialized );
-  igstkAddStateMacro( Tracking );
-  igstkAddStateMacro( Visible );
+  igstkAddStateMacro( Attached );
+  igstkAddStateMacro( NotAvailable );
+  igstkAddStateMacro( Tracked );
 
-  igstkSetInitialStateMacro( Initial );
+  // Inputs to the state machine
+  igstkSetInitialStateMacro( Idle );
+
+  // Set the input descriptors
+  igstkAddInputMacro( InitializeTool );
+  igstkAddInputMacro( Success); 
+  igstkAddInputMacro( Failure); 
+
 
   m_StateMachine.SetReadyToRun();
 
+  // Programming the state machine transitions:
 
+  // Transitions from the Idle
+  igstkAddTransitionMacro( Idle,
+                           InitializeTool,
+                           AttemptingToInitializeTrackerTool,
+                           AttemptToInitialize );
+
+  // Transitions from the AttemptingToInitialize
+  igstkAddTransitionMacro( AttemptingToInitializeTrackerTool,
+                           Success,
+                           Initialized,
+                           TrackerToolInitializationSuccess );
+
+  igstkAddTransitionMacro( AttemptingToInitializeTrackerTool,
+                           Failure,
+                           Idle,
+                           TrackerToolInitializationFailure );
+ 
 }
 
 TrackerToolNew::~TrackerToolNew(void)
 {
 }
+
+void 
+TrackerToolNew::RequestInitialize( )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::RequestInitialize called...\n");
+  igstkPushInputMacro( InitializeTool );
+  this->m_StateMachine.ProcessInputs();
+}
+
+/** The "AttemptToInitialize" method attempts to initialize the tracker to    ol */
+void TrackerToolNew::AttemptToInitializeProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+                 "igstk::TrackerToolNew::AttemptToInitializeProcessing called ...\n");
+
+  bool  result = this->GetTrackerToolInitialized();
+  
+  m_StateMachine.PushInputBoolean( result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
+}
+
+/** The "GetTrackerToolInitialized" methods returns a boolean indicating
+ * if the tracker tool is initialized or not. This method is to be overriden in
+ * the dervied classes
+ */
+bool  TrackerToolNew::GetTrackerToolInitialized()
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::GetTrackerToolInitialized called ...\n");
+  return true;
+}
+
+/** Post-processing after a successful initialization attempt . */ 
+void TrackerToolNew::TrackerToolInitializationSuccessProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerToolNew::TrackerToolInitializationSuccessProcessing called ...\n");
+
+
+  // FIXME: convert this std::cout to an event 
+  std::cout << "TrackerToolNew Initialized succesfully: " << std::endl;
+}
+
+
+/** Post-processing after a failed initialization attempt . */ 
+void TrackerToolNew::TrackerToolInitializationFailureProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerToolNew::TrackerToolInitializationFailureProcessing called ...\n");
+
+
+  // FIXME: convert this std::cout to an event 
+  std::cerr << "TrackerTool Initialization failed: Make sure to establish the required tool parameters " << std::endl;
+}
+
 
 
 /** This method should only be available to the Tracker */

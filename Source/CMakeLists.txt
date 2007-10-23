@@ -284,6 +284,8 @@ SET(IGSTKSandbox_HEADS
   igstkTrackerToolNew.h
   igstkPolarisTrackerNew.h
   igstkPolarisTrackerToolNew.h
+  igstkAuroraTrackerNew.h
+  igstkAuroraTrackerToolNew.h
 )
 
 IF(IGSTKSandbox_USE_Qt)
@@ -352,6 +354,8 @@ SET(IGSTKSandbox_SRCS
   igstkTrackerToolNew.cxx
   igstkPolarisTrackerNew.cxx
   igstkPolarisTrackerToolNew.cxx
+  igstkAuroraTrackerNew.cxx
+  igstkAuroraTrackerToolNew.cxx
 )
 
 IF(IGSTKSandbox_USE_Qt)

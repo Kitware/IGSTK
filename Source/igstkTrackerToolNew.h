@@ -100,6 +100,11 @@ public:
    */
   void RequestAttachSpatialObject( SpatialObject * );
 
+  /** The "RequestInitialize" method attempts to initialize the tracker tool */
+  virtual void RequestInitialize( void );
+
+
+
 protected:
 
   TrackerToolNew(void);
@@ -143,19 +148,32 @@ private:
 
 private:
 
+  /** Get boolean variable to check if the tracker tool is 
+   * initialized or not */
+  bool GetTrackerToolInitialized( );
+
   /** Inputs to the State Machine */
-  igstkDeclareInputMacro( Initialize );
+  igstkDeclareInputMacro( InitializeTool );
+  igstkDeclareInputMacro( Success );
+  igstkDeclareInputMacro( Failure );
   
 
   /** States for the State Machine */
-  igstkDeclareStateMacro( Initial );
-  igstkDeclareStateMacro( Invalid );
-  igstkDeclareStateMacro( NotAvailable );
-  igstkDeclareStateMacro( Available );
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( AttemptingToInitializeTrackerTool );
   igstkDeclareStateMacro( Initialized );
-  igstkDeclareStateMacro( Tracking );
-  igstkDeclareStateMacro( Visible );
+  igstkDeclareStateMacro( Attached );
+  igstkDeclareStateMacro( NotAvailable );
+  igstkDeclareStateMacro( Tracked );
 
+  /** Attempt method to initialize */
+  void AttemptToInitializeProcessing( void );
+
+  /** Post-processing after a successful tracker tool initialization */
+  void TrackerToolInitializationSuccessProcessing( void );
+
+  /** Post-processing after a failed tracker tool initialization */
+  void TrackerToolInitializationFailureProcessing( void );
 
 };
 

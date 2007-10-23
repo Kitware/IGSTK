@@ -25,7 +25,7 @@
 #pragma warning( disable : 4284 )
 #endif
 
-#include "igstkMicronTrackerToolNew.h" 
+#include "igstkMicronTrackerTool.h" 
 #include "igstkTrackerNew.h"
 
 #include "Markers.h"
@@ -53,7 +53,8 @@ class MicronTrackerNew : public TrackerNew
 public:
 
   /** typedefs for the tool */
-  typedef igstk::MicronTrackerToolNew              MicronTrackerToolType;
+  /** The should be converted to the new Tool class */
+  typedef igstk::MicronTrackerTool              MicronTrackerToolType;
   typedef MicronTrackerToolType::Pointer        MicronTrackerToolPointer;
   typedef MicronTrackerToolType::ConstPointer   MicronTrackerToolConstPointer;
 
