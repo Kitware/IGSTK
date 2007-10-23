@@ -47,24 +47,97 @@ public:
   /** Type used to uniquely identify every coordinate system */
   typedef Token::IdentifierType    IdentifierType;
 
-  /** Returns the unique identifier of this node. */
+  /** Returns the unique identifier of this node. 
+   *  This method should not be in the API. Instead
+   *  a RequestGetIdentifier() should be available.
+   */
   IdentifierType GetIdentifier() const;
 
   /** Returns the unique identifier of the root node in the scene graph to
    * which this node may be attached. If the node is not attached to a parent,
-   * the identifier returned here will be equal to the one regurned by
-   * GetIdentifier(). */
-  IdentifierType GetRootIdentifier() const;
+   * the identifier returned here will be equal to the one returned by
+   * GetIdentifier(). 
+   *
+   * THIS METHOD SHOULD BE DEPRECATED. There is no explicit root in the 
+   * new design.
+   */
+  // IdentifierType GetRootIdentifier() const;
 
   /** Connects a coordinate system as a child of another coordinate system,
    * given a transform. This call is used for constructing a scene graph.
+   *
+   * This method should be private and a RequestSetTransformAndParent 
+   * available instead.
+   *
    **/
-  void SetTransformAndParent( const Transform & transform, const Self * object );
+  void SetTransformAndParent( const Transform & transform, const Self * parent );
 
   /** Computes and returns the transform that relates this node to the root node
    *  of the scene graph 
+   *
+   * THIS METHOD SHOULD BE DEPRECATED. There is no explicit root in the 
+   * new design.
    */
-  const Transform & ComputeTransformToRoot() const;
+  //const Transform & ComputeTransformToRoot() const;
+
+  /** Returns a pointer to the parent.
+   *  This method should be private and a RequestGetParent() 
+   *  should be the public API.
+   */
+  Self::ConstPointer GetParent() const
+    {
+    return this->m_Parent;
+    }
+
+  /** DEVELOPMENT ONLY
+   *  Allows a char* name to be set on the coordinate system.
+   */
+  void SetName(const char* name);
+
+  /** DEVELOPMENT ONLY  
+   *  Returns the name of the coordinate system.
+   */
+  const char* GetName() const
+    {
+    return m_Name;
+    }
+
+  /** This method finds the ancestor between two coordinate reference systems
+   *  which is lowest in the graph (directed, acyclic, hopefully a tree) 
+   *  relating CoordinateReferenceSystems. Note that this method is static.
+   *
+   *  The current implementation returns a NULL pointer if there is no common
+   *  ancestor. This probably should be changed to throw an exception, or 
+   *  if we use a local state machine and make the public API a Request based
+   *  method, we could handle the error condition in an error state.
+   *
+   */
+  static ConstPointer 
+    GetLowestCommonAncestor(ConstPointer A, ConstPointer B);
+
+  /** This method computes the transform between two 
+   *  CoordinateReferenceSystems. Instead of being in the public API,
+   *  this method should be private and a request based method should
+   *  be available in its place.
+   *
+   *  GetTransformBetween computes the transformation between 
+   *  arbitrary coordinate systems. If the destination coordinate
+   *  system is not reachable from the source, the returned transform
+   *  will have a valid time that has already expired.
+   */ 
+  static Transform 
+    GetTransformBetween(ConstPointer source, ConstPointer destination);
+
+  /** This method computes the transform between the current 
+   *  CoordinateReferenceSystem and an ancestor 
+   *  CoordinateReferenceSystem. In other words, this method
+   *  can only compute a transformation to a coordinate system
+   *  that is reachable by following links through parents.
+   *
+   *  If the transform to an arbitrary coordinate system is
+   *  needed, use GetTransformBetween(). 
+   */
+  Transform ComputeTransformTo(ConstPointer ancestor) const;
 
 protected:
 
@@ -82,8 +155,10 @@ private:
   Token               m_Token;                // provides a unique identifier
   Self::ConstPointer  m_Parent;               // Parent node in the scene graph
   Transform           m_TransformToParent;    // Transform relating this node to the parent
-  mutable Transform   m_TransformToRoot;      // Transform relating this node to root node
+  // mutable Transform   m_TransformToRoot;      // Transform relating this node to root node
+  
 
+  char*               m_Name; // DEBUG/DEVEL ONLY
 };
 
 
