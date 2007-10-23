@@ -72,6 +72,7 @@ INCLUDE_DIRECTORIES (
 # Add your new tests here
 SET(SandboxTests_SRCS
   igstkCoordinateReferenceSystemTest.cxx
+  igstkCoordinateReferenceSystemTest2.cxx
   igstkGroupObjectTest.cxx
   igstkPivotCalibrationAlgorithmTest.cxx
   igstkDICOMGenericImageReaderTest.cxx
@@ -115,6 +116,7 @@ ADD_TEST( igstkViewNewTest ${IGSTKSandbox_TESTS} igstkViewNewTest)
 ADD_TEST( igstkTrackerToolNewTest ${IGSTKSandbox_TESTS} igstkTrackerToolNewTest)
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
 ADD_TEST( igstkCoordinateReferenceSystemTest ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest)
+ADD_TEST( igstkCoordinateReferenceSystemTest2 ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest2)
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 
