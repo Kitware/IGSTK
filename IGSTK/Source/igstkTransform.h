@@ -167,9 +167,10 @@ public:
   void ExportTransform( vtkMatrix4x4 & matrix ) const;
 
 
-  /** Assign the values of one transform to another */
+  /** Compare two transforms for equivalence */
   bool operator==( const Transform & inputTransform );
   bool operator!=( const Transform & inputTransform );
+  bool IsNumericallyEquivalent( const Transform& inputTransform );
 
 
   /** Resets the Transform to an Identity Transform */

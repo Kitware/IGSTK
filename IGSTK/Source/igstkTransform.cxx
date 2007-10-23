@@ -171,6 +171,29 @@ Transform
     }
 }
 
+bool 
+Transform
+::IsNumericallyEquivalent( const Transform& inputTransform )
+{
+  // Add Dimension to class interface?
+  static const int Dimension = 3;
+
+  if (m_Rotation != inputTransform.m_Rotation)
+    {
+    return false;
+    }
+
+  for (int i = 0; i < Dimension; i++)
+    {
+    // vnl_math::eps is defined for doubles...
+    if (fabs(m_Translation[i] - inputTransform.m_Translation[i]) > vnl_math::eps)
+      {
+      return false;
+      }
+    }
+
+  return true;
+}
 
 bool
 Transform
