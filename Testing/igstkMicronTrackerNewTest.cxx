@@ -31,7 +31,7 @@ See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 #include "itkVersor.h"
 
 #include "igstkMicronTrackerNew.h"
-#include "igstkMicronTrackerToolNew.h"
+#include "igstkMicronTrackerTool.h"
 #include "igstkTransform.h"
 
 class MicronTrackerNewTrackerTestCommand : public itk::Command 
@@ -127,7 +127,7 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   tracker->LoadMarkerTemplate( markerTemplateDirectory );
 
   // Add tracker tools
-  typedef igstk::MicronTrackerToolNew  MicronTrackerToolType;
+  typedef igstk::MicronTrackerTool  MicronTrackerToolType;
 
   // Add a tracker tool with "TTblock" marker type attached to it.
   MicronTrackerToolType::Pointer tool1 = MicronTrackerToolType::New();

@@ -85,10 +85,20 @@ SET(SandboxTests_SRCS
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
   SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-    igstkPolarisTrackerNewTest.cxx
+    igstkPolarisTrackerNewTest.cxx )
+  SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+    igstkPolarisTrackerToolNewTest.cxx
   )
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
+IF(IGSTK_TEST_AURORA_ATTACHED)
+  SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+    igstkAuroraTrackerNewTest.cxx
+  )
+  SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+    igstkAuroraTrackerToolNewTest.cxx
+  )
+ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 
 ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest
@@ -111,8 +121,16 @@ ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetw
 IF(IGSTK_TEST_POLARIS_ATTACHED)
   ADD_TEST(igstkPolarisTrackerNewTest ${IGSTKSandbox_TESTS}
 igstkPolarisTrackerNewTest)
+  ADD_TEST(igstkPolarisTrackerToolNewTest ${IGSTKSandbox_TESTS}
+igstkPolarisTrackerToolNewTest)
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
+IF(IGSTK_TEST_AURORA_ATTACHED)
+  ADD_TEST(igstkAuroraTrackerNewTest ${IGSTKSandbox_TESTS}
+igstkAuroraTrackerNewTest)
+  ADD_TEST(igstkAuroraTrackerToolNewTest ${IGSTKSandbox_TESTS}
+igstkAuroraTrackerToolNewTest)
+ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 IF(IGSTKSandbox_USE_FLTK)
 
@@ -217,6 +235,12 @@ IF(IGSTKSandbox_USE_MicronTracker)
               ${IGSTKSandbox_TEST_OUTPUT_DIR})
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkMicronTrackerNewTest.cxx)
+
+    ADD_TEST( igstkMicronTrackerToolNewTest
+              ${IGSTKSandbox_TESTS} igstkMicronTrackerToolNewTest ) 
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkMicronTrackerToolNewTest.cxx)
+
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 IF(IGSTKSandbox_DATA_ROOT)

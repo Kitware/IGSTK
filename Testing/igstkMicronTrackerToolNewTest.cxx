@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkTrackerToolNewTest.cxx
+  Module:    igstkMicronTrackerToolNewTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -24,18 +24,21 @@
 #include <iostream>
 #include <fstream>
 
-#include "igstkTrackerToolNew.h"
+#include "igstkMicronTrackerToolNew.h"
 
 
-int igstkTrackerToolNewTest( int, char * [] )
+int igstkMicronTrackerToolNewTest( int, char * [] )
 {
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::TrackerToolNew                 TrackerToolType;
+  typedef igstk::MicronTrackerToolNew           TrackerToolType;
   typedef TrackerToolType::TransformType        TransformType;
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
+  std::string markerNameTT = "TTblock";
+  trackerTool->RequestSetMarkerName( markerNameTT );  
+ 
   trackerTool->RequestInitialize();
 
   std::cout << trackerTool << std::endl;

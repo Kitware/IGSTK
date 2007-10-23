@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkTrackerToolNewTest.cxx
+  Module:    igstkPolarisTrackerToolNewTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -24,14 +24,14 @@
 #include <iostream>
 #include <fstream>
 
-#include "igstkTrackerToolNew.h"
+#include "igstkPolarisTrackerToolNew.h"
 
 
 int igstkTrackerToolNewTest( int, char * [] )
 {
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::TrackerToolNew                 TrackerToolType;
+  typedef igstk::PolarisTrackerToolNew           TrackerToolType;
   typedef TrackerToolType::TransformType        TransformType;
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
