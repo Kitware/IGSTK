@@ -83,6 +83,12 @@ SET(SandboxTests_SRCS
   igstkTrackerToolNewTest.cxx
   )
 
+IF(IGSTK_TEST_POLARIS_ATTACHED)
+  SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+    igstkPolarisTrackerNewTest.cxx
+  )
+ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
+
 
 
 ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest
@@ -211,7 +217,7 @@ IF(IGSTKSandbox_USE_MicronTracker)
               ${IGSTKSandbox_TEST_OUTPUT_DIR})
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkMicronTrackerNewTest.cxx)
-ENDIF(IGSTKSandbox_USE_MicronTrackerNew)
+ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 IF(IGSTKSandbox_DATA_ROOT)
   SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
