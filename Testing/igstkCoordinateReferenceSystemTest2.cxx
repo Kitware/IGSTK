@@ -127,46 +127,37 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   TGA.SetToIdentity(aReallyLongTime);
   G->SetTransformAndParent(TGA, A);
 
-  ConstCoordinateSystemPointer rootConst = root;
-  ConstCoordinateSystemPointer AConst = A;
-  ConstCoordinateSystemPointer BConst = B;
-  ConstCoordinateSystemPointer CConst = C;
-  ConstCoordinateSystemPointer DConst = D;
-  ConstCoordinateSystemPointer EConst = E;
-  ConstCoordinateSystemPointer FConst = F;
-  ConstCoordinateSystemPointer GConst = G;
-
   CoordSysType::ConstPointer ancestor;
-  ancestor = CoordSysType::GetLowestCommonAncestor(rootConst, AConst);
+  ancestor = CoordSysType::GetLowestCommonAncestor(root, A);
   std::cout << "root and A has ancestor: " 
             << ancestor->GetName() << std::endl;
 
-  ancestor = CoordSysType::GetLowestCommonAncestor(rootConst, BConst);
+  ancestor = CoordSysType::GetLowestCommonAncestor(root, B);
   std::cout << "root and B has ancestor: " 
             << ancestor->GetName() << std::endl;
 
-  ancestor = CoordSysType::GetLowestCommonAncestor(rootConst, CConst);
+  ancestor = CoordSysType::GetLowestCommonAncestor(root, C);
   std::cout << "root and C has ancestor: " 
             << ancestor->GetName() << std::endl;
 
-  ancestor = CoordSysType::GetLowestCommonAncestor(rootConst, DConst);
+  ancestor = CoordSysType::GetLowestCommonAncestor(root, D);
   std::cout << "root and D has ancestor: " 
             << ancestor->GetName() << std::endl;
 
-  ancestor = CoordSysType::GetLowestCommonAncestor(AConst, BConst);
+  ancestor = CoordSysType::GetLowestCommonAncestor(A, B);
   std::cout << "A and B has ancestor: " 
             <<  ancestor->GetName() << std::endl;
 
-  ancestor = CoordSysType::GetLowestCommonAncestor(CConst, DConst);
+  ancestor = CoordSysType::GetLowestCommonAncestor(C, D);
   std::cout << "C and D has ancestor: " 
             <<  ancestor->GetName() << std::endl;
 
-  ancestor = CoordSysType::GetLowestCommonAncestor(AConst, CConst);
+  ancestor = CoordSysType::GetLowestCommonAncestor(A, C);
   std::cout << "A and C has ancestor: " 
             <<  ancestor->GetName() << std::endl;
   
   // NULL pointer return
-  ancestor = CoordSysType::GetLowestCommonAncestor(EConst, CConst); 
+  ancestor = CoordSysType::GetLowestCommonAncestor(E, C); 
   const char* ancestorName;
   if (ancestor.IsNull())
     {
@@ -189,7 +180,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     }
   std::cout << "NULL and NULL has ancestor: " <<  ancestorName << std::endl;
 
-  ancestor = CoordSysType::GetLowestCommonAncestor(NULL, EConst);
+  ancestor = CoordSysType::GetLowestCommonAncestor(NULL, E);
   if (ancestor.IsNull())
     {
     ancestorName = "NULL";
@@ -200,7 +191,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     }
   std::cout << "NULL and E has ancestor : " <<  ancestorName << std::endl; 
 
-  ancestor = CoordSysType::GetLowestCommonAncestor(EConst, NULL);
+  ancestor = CoordSysType::GetLowestCommonAncestor(E, NULL);
   if (ancestor.IsNull())
     {
     ancestorName = "NULL";
@@ -211,7 +202,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     }
   std::cout << "E and NULL has ancestor : " <<  ancestorName << std::endl; 
 
-  ancestor = CoordSysType::GetLowestCommonAncestor(FConst, GConst);
+  ancestor = CoordSysType::GetLowestCommonAncestor(F, G);
   if (ancestor.IsNull())
     {
     ancestorName = "NULL";
@@ -222,7 +213,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     }
   std::cout << "F and G has ancestor : " << ancestorName << std::endl; 
   
-  ancestor = CoordSysType::GetLowestCommonAncestor(GConst, GConst);
+  ancestor = CoordSysType::GetLowestCommonAncestor(G, G);
   if (ancestor.IsNull())
     {
     ancestorName = "NULL";
@@ -233,7 +224,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     }
   std::cout << "G and G has ancestor : " << ancestorName << std::endl; 
 
-  ancestor = CoordSysType::GetLowestCommonAncestor(rootConst, rootConst);
+  ancestor = CoordSysType::GetLowestCommonAncestor(root, root);
   if (ancestor.IsNull())
     {
     ancestorName = "NULL";
@@ -246,7 +237,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 
 
   std::cout << "Checking transform from root to A : ";
-  TransformType TRootA = CoordSysType::GetTransformBetween(rootConst,AConst);
+  TransformType TRootA = CoordSysType::GetTransformBetween(root,A);
   if (TRootA.IsNumericallyEquivalent(TARoot.GetInverse()) == false)
     {
     testPassed = EXIT_FAILURE;
@@ -258,7 +249,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     }
 
   std::cout << "Checking transform from root to B : ";
-  TransformType TRootB = CoordSysType::GetTransformBetween(rootConst,BConst);
+  TransformType TRootB = CoordSysType::GetTransformBetween(root,B);
   if (TRootB.IsNumericallyEquivalent(TBRoot.GetInverse()) == false)
     {
     testPassed = EXIT_FAILURE;
@@ -270,7 +261,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     }
 
   std::cout << "Checking transform from root to C : "; 
-  TransformType TRootC = CoordSysType::GetTransformBetween(rootConst,CConst);
+  TransformType TRootC = CoordSysType::GetTransformBetween(root,C);
   TransformType TCRoot = TransformType::TransformCompose(TARoot, TCA);
   if (TRootC.IsNumericallyEquivalent(TCRoot.GetInverse()) == false)
     {
@@ -283,7 +274,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     }
 
   std::cout << "Checking transform from root to D : "; 
-  TransformType TRootD = CoordSysType::GetTransformBetween(rootConst,DConst);
+  TransformType TRootD = CoordSysType::GetTransformBetween(root,D);
   TransformType TDRoot = TransformType::TransformCompose(TBRoot, TDB);
   if (TRootD.IsNumericallyEquivalent(TDRoot.GetInverse()) == false)
     {
@@ -299,7 +290,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   TimeStampType now;
   now.SetStartTimeNowAndExpireAfter(0);
 
-  TransformType TRootE = CoordSysType::GetTransformBetween(rootConst,EConst);
+  TransformType TRootE = CoordSysType::GetTransformBetween(root,E);
   // Should never be valid since root and E are disconnected.
   if (TRootE.GetExpirationTime() >= now.GetExpirationTime())
     {
