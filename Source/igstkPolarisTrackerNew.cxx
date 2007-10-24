@@ -353,7 +353,9 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         this->GetValidityTime());
 
-    this->SetToolTransform(port, 0, transform);
+    //FIXME: Replace the old SetToolTransform with method to set the trackertool
+    //transform to its parent which is the tracker. 
+    //this->SetToolTransform(port, 0, transform);
     }
   m_BufferLock->Unlock();
 

@@ -342,8 +342,8 @@ AuroraTrackerNew::ResultType AuroraTrackerNew::InternalUpdateStatus()
       transform.SetToIdentity(this->GetValidityTime());
       transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                           this->GetValidityTime());
-
-      this->SetToolTransform(port, channel, transform);
+      //FIXME: replace the SetToolTransform method  
+      //this->SetToolTransform(port, channel, transform);
       }
     }
 

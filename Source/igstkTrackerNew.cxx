@@ -285,81 +285,6 @@ void TrackerNew::RequestUpdateStatus( void )
   m_StateMachine.ProcessInputs();
 }
 
-
-/** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
- * port numbered "portNumber" in the variable "position". Note that this
- * variable represents the position and orientation of the tool in 3D space. */
-void TrackerNew::GetToolTransform( unsigned int portNumber,
-                                unsigned int toolNumber,
-                                TransformType &transitions ) const
-{
-  if ( portNumber < this->m_Ports.size()  )
-    {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    if ( port.IsNotNull() )
-      {
-      if( toolNumber < port->GetNumberOfTools() )
-        {
-        TrackerToolConstPointer tool = port->GetTool( toolNumber );
-        transitions = tool->GetTransform();
-        }
-      }
-    }
-}
-
-/** The "SetToolTransform" sets the position of tool numbered "toolNumber" on
- * port numbered "portNumber" by the content of variable "position". Note
- * that this variable represents the position and orientation of the tool in
- * 3D space.  */
-void TrackerNew::SetToolTransform( unsigned int portNumber,
-                                unsigned int toolNumber,
-                                const TransformType & transform )
-{
-
-  if ( portNumber < this->m_Ports.size()  )
-    {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    if ( port.IsNotNull() )
-      {
-      if( toolNumber < port->GetNumberOfTools() )
-        {
-        TrackerToolPointer tool = port->GetTool( toolNumber );
-        tool->SetRawTransform( transform );
-        tool->SetUpdated( true );
-        }
-      }
-    }
-}
-
-
-
-/** DEPRECATED: This method will be removed from the Toolkit.
- *  Instead create a TrackerTool, attache the SpatialObject
- *  to the TrackerTool, and then assign the TrackerTool to
- *  this Tracker.
- *
- *  Associate a TrackerTool to an object to be tracked. This is a one-to-one
- * association and cannot be changed during the life of the application */
-void TrackerNew::AttachObjectToTrackerTool( unsigned int portNumber,
-                                         unsigned int toolNumber,
-                                         SpatialObject * objectToTrack )
-{
-  if ( portNumber < this->m_Ports.size()  )
-    {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    if ( port.IsNotNull() )
-      {
-      if( toolNumber < port->GetNumberOfTools() )
-        {
-        TrackerToolPointer tool = port->GetTool( toolNumber );
-        // FIXME:   objectToTrack->RequestAttachToTrackerTool( tool );
-        tool->RequestAttachSpatialObject( objectToTrack );
-        }
-      }
-    }
-}
-
-
 /** The "AddPort" method adds a port to the tracker. */
 void TrackerNew::AddPort( TrackerPortType * port )
 {
@@ -771,11 +696,6 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
           rotation = inverseRotation*rotation;
           }
 
-        // applying PatientTransform
-        rotation = m_PatientTransform.GetRotation()*rotation;
-        translation = m_PatientTransform.GetRotation().Transform(translation);
-        translation += m_PatientTransform.GetTranslation();
-
         const double timeToExpiration = transform.GetExpirationTime() - 
                                         transform.GetStartTime();
 
@@ -916,119 +836,12 @@ void TrackerNew::RequestAddTool( TrackerToolType * trackerTool )
   // FIXCS trackerTool->RequestAttachToSpatialObjectParent( this->m_CoordinateReferenceSystem );
 }
 
-/** The "SetReferenceTool" sets the reference tool. */
-void TrackerNew::SetReferenceTool( bool applyReferenceTool,
-                                unsigned int portNumber,
-                                unsigned int toolNumber )
-{
-  if( applyReferenceTool == false )
-    {
-    m_ApplyingReferenceTool = applyReferenceTool;
-    return;
-    }
-  if ( portNumber < this->m_Ports.size()  )
-    {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    if ( port.IsNotNull() )
-      {
-      if( toolNumber < port->GetNumberOfTools() )
-        {
-        m_ReferenceTool = port->GetTool( toolNumber );
-        m_ReferenceToolPortNumber = portNumber;
-        m_ReferenceToolNumber = toolNumber;
-        m_ApplyingReferenceTool = applyReferenceTool;
-        }
-      }
-    }
-}
-
-
-/** The "GetReferenceTool" gets the reference tool.
- * If the reference tool is not applied, it returns false.
- * Otherwise, it returns true. */
-bool TrackerNew::GetReferenceTool( unsigned int &portNumber,
-                                unsigned int &toolNumber ) const
-{
-  portNumber = m_ReferenceToolPortNumber;
-  toolNumber = m_ReferenceToolNumber;
-
-  return m_ApplyingReferenceTool;
-}
-
-
-/** The "SetPatientTransform" sets PatientTransform.
- *
- *  T ' = W * R^-1 * T * C
- *
- *  where:
- *  " T " is the original tool transform reported by the device,
- *  " R^-1 " is the inverse of the transform for the reference tool,
- *  " W " is the Patient transform (it specifies the position of the reference
- *  with respect to patient coordinates), and
- *  " T ' " is the transformation that is reported to the spatial objects
- *  " C " is the tool calibration transform */
-void TrackerNew::SetPatientTransform( const PatientTransformType& transform )
-{
-  m_PatientTransform = transform;
-}
-
-
-/** The "GetPatientTransform" gets PatientTransform. */
-TrackerNew::PatientTransformType TrackerNew::GetPatientTransform() const
-{
-  return m_PatientTransform;
-}
-
 /** Return the coordinate system associated with this tracker */
 const TrackerNew::CoordinateReferenceSystemType *
 TrackerNew::GetCoordinateReferenceSystem() const
 {
   return m_CoordinateReferenceSystem;
 }
-
-/** The "SetToolCalibrationTransform" sets the tool calibration transform */
-void TrackerNew::SetToolCalibrationTransform( unsigned int portNumber,
-                                           unsigned int toolNumber,
-                           const ToolCalibrationTransformType& transform )
-{
-  if ( portNumber < this->m_Ports.size()  )
-    {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    if ( port.IsNotNull() )
-      {
-      if( toolNumber < port->GetNumberOfTools() )
-        {
-        TrackerToolPointer tool = port->GetTool( toolNumber );
-        tool->SetToolCalibrationTransform( transform );
-        }
-      }
-    }
-}
-
-
-/** The "GetToolCalibrationTransform" gets the tool calibration transform */
-TrackerNew::ToolCalibrationTransformType
-TrackerNew::GetToolCalibrationTransform(unsigned int portNumber,
-                                     unsigned int toolNumber) const
-{
-  ToolCalibrationTransformType transform;
-
-  if ( portNumber < this->m_Ports.size()  )
-    {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    if ( port.IsNotNull() )
-      {
-      if( toolNumber < port->GetNumberOfTools() )
-        {
-        TrackerToolPointer tool = port->GetTool( toolNumber );
-        transform = tool->GetToolCalibrationTransform();
-        }
-      }
-    }
-
-  return transform;
-}
-
 
 /** Thread function for tracking */
 ITK_THREAD_RETURN_TYPE TrackerNew::TrackingThreadFunction(void* pInfoStruct)

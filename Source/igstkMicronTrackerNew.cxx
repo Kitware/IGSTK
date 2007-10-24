@@ -362,8 +362,8 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalUpdateStatus()
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         this->GetValidityTime());
 
-    // Set the tool transform...use the new method that was added
-    this->SetToolTransform(toolId, transform);
+    //FIXME: replace the SetToolTransform method
+    //this->SetToolTransform(toolId, transform);
     //
     ++inputItr;
     ++toolId;

@@ -154,83 +154,9 @@ public:
   ports and tools when the tracker is in tracking state. */
   void RequestUpdateStatus( void );
 
- 
-  /** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
-   * port numbered "portNumber" in the variable "position". Note that this
-   * variable represents the position and orientation of the tool in 3D space.
-   * 
-   * FIXME: This method is DEPRECATED. Transforms are passed directly to 
-   *        TrackerTools, and then to Spatial objects. Application developers
-   *        do not need access to the transforms.
-   * */
-  void GetToolTransform( unsigned int portNumber, unsigned int toolNumber,
-                         TransformType &position ) const;
-
-  /** Associate a TrackerTool to an object to be tracked. This is a one-to-one
-   * association and cannot be changed during the life of the application 
-   *
-   *  FIXME: This method is now DEPRECATED. Instead use the RequestAttachSpatialObject() 
-   *         on a TrackerTool object and then add the Tracker tool to this Tracker using 
-   *         the method RequestAddTool( tool ).
-   */
-  void AttachObjectToTrackerTool( unsigned int portNumber, 
-                                  unsigned int toolNumber,
-                                  SpatialObject * objectToTrack );
-  
   /** Add a tracker tool to this tracker 
    * FIXME: This has yet to be inserted in the State Machine. */
   void RequestAddTool( TrackerToolType * trackerTool );
-
-  /** The "SetReferenceTool" sets the reference tool. */
-  // FIXME: This method is DEPRECATED. It will be replaced with a 
-  //        RequestAttachToReferenceTool, and that tool will be used
-  //        as the parent of the coordinate reference system.
-  void SetReferenceTool( bool applyReferenceTool, unsigned int portNumber,
-                         unsigned int toolNumber );
-
-  /** The "GetReferenceTool" gets the reference tool.
-   * If the reference tool is not applied, it returns false.
-   * Otherwise, it returns true. */
-   // FIXME: This method is DEPRECATED. Nobody should need access to 
-   // the reference tool.
-  bool GetReferenceTool( unsigned int &portNumber,
-                         unsigned int &toolNumber ) const;
-
-  /** The "SetPatientTransform" sets PatientTransform.
-
-    T ' = P * R^-1 * T * C
-
-    where:
-    " T " is the original tool transform reported by the device,
-    " R^-1 " is the inverse of the transform for the reference tool,
-    " P " is the Patient transform (it specifies the position of the reference
-    with respect to patient coordinates), and
-    " T ' " is the transformation that is reported to the spatial objects
-    " C " is the tool calibration transform.
-  */
-  // FIXME: DEPRECATED. This is no longer used, now that a graph scene manages
-  // the relative positions of spatial objects.
-  void SetPatientTransform( const PatientTransformType& _arg );
-
-  /** The "GetPatientTransform" gets PatientTransform. */
-  // FIXME: DEPRECATED. This is no longer used, now that a graph scene manages
-  // the relative positions of spatial objects.
-  PatientTransformType GetPatientTransform() const; 
-
-  /** The "SetToolCalibrationTransform" sets the tool calibration transform */
-  // FIXME: DEPRECATED. The calibration transform is now set simply as the 
-  // object to parent transform in the SpatialObject attached to the trackertool.
-  void SetToolCalibrationTransform( unsigned int portNumber,
-                                    unsigned int toolNumber,
-                                    const ToolCalibrationTransformType& t );
-
-  /** Get the tool calibration transform. */
-  // FIXME: DEPRECATED. The calibration transform is now set simply as the 
-  // object to parent transform in the SpatialObject attached to the trackertool.
-  // Nobody should need to access this transform.
-  ToolCalibrationTransformType GetToolCalibrationTransform(
-                             unsigned int portNumber,
-                             unsigned int toolNumber) const;
 
   /** Set the time period over which a tool transform should be considered
    *  valid. */
@@ -310,22 +236,6 @@ protected:
   /** The "ClearPorts" clears all the ports. */
   void ClearPorts( void );
 
-  /** The "SetToolTransform" sets the position of tool numbered "toolNumber" on
-   * port numbered "portNumber" by the content of variable "position". Note
-   * that this variable represents the position and orientation of the tool in
-   * 3D space.  */
-  // FIXME : DEPRECATED ports are specific to Polaris and Aura
-  void SetToolTransform( unsigned int portNumber, unsigned int toolNumber,
-                         const TransformType & position );
-  // NEW: This method replaces the old SetToolTransform() above.
-  void SetToolTransform( unsigned int toolId, const TransformType & transform )
-    {
-    // FIXME: Quick and dirty implementation. A good implementation should
-    // verify the id to avoid out of bounds segmentation faults.
-    TrackerToolType * tool = m_TrackerTools[toolId];
-    tool->RequestSetTransform( transform );
-    }
-
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
@@ -356,9 +266,6 @@ private:
   TrackerToolPointer        m_ReferenceTool;
   unsigned int              m_ReferenceToolPortNumber;
   unsigned int              m_ReferenceToolNumber;
-
-  /** Patient Transform */
-  PatientTransformType      m_PatientTransform;  // FIXME: This is DEPRECATED due to Bug 5474
 
   /** Coordinate Reference System */
   CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;
