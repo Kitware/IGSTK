@@ -70,7 +70,7 @@ public:
    * available instead.
    *
    **/
-  void SetTransformAndParent( const Transform & transform, const Self * parent );
+  void SetTransformAndParent( const Transform & transform, const CoordinateReferenceSystem * parent );
 
   /** Computes and returns the transform that relates this node to the root node
    *  of the scene graph 
@@ -84,7 +84,7 @@ public:
    *  This method should be private and a RequestGetParent() 
    *  should be the public API.
    */
-  Self::ConstPointer GetParent() const
+  const CoordinateReferenceSystem* GetParent() const
     {
     return this->m_Parent;
     }
@@ -112,8 +112,8 @@ public:
    *  method, we could handle the error condition in an error state.
    *
    */
-  static ConstPointer 
-    GetLowestCommonAncestor(ConstPointer A, ConstPointer B);
+  static const CoordinateReferenceSystem*  
+    GetLowestCommonAncestor(const CoordinateReferenceSystem* A, const CoordinateReferenceSystem* B);
 
   /** This method computes the transform between two 
    *  CoordinateReferenceSystems. Instead of being in the public API,
@@ -126,7 +126,7 @@ public:
    *  will have a valid time that has already expired.
    */ 
   static Transform 
-    GetTransformBetween(ConstPointer source, ConstPointer destination);
+    GetTransformBetween(const CoordinateReferenceSystem* source, const CoordinateReferenceSystem* destination);
 
   /** This method computes the transform between the current 
    *  CoordinateReferenceSystem and an ancestor 
@@ -137,7 +137,7 @@ public:
    *  If the transform to an arbitrary coordinate system is
    *  needed, use GetTransformBetween(). 
    */
-  Transform ComputeTransformTo(ConstPointer ancestor) const;
+  Transform ComputeTransformTo(const CoordinateReferenceSystem* ancestor) const;
 
 protected:
 

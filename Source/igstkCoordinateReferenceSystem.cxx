@@ -43,7 +43,7 @@ CoordinateReferenceSystem
 
 void 
 CoordinateReferenceSystem
-::SetTransformAndParent( const Transform & transform, const Self * parent )
+::SetTransformAndParent( const Transform & transform, const CoordinateReferenceSystem * parent )
 {
   if( parent == NULL || parent == this )
     {
@@ -69,10 +69,10 @@ void CoordinateReferenceSystem::PrintSelf(
      << this->m_TransformToParent << std::endl;
 }
 
-CoordinateReferenceSystem::ConstPointer 
-  CoordinateReferenceSystem::GetLowestCommonAncestor(
-                                   CoordinateReferenceSystem::ConstPointer A,
-                                   CoordinateReferenceSystem::ConstPointer B)
+const CoordinateReferenceSystem* 
+CoordinateReferenceSystem::GetLowestCommonAncestor(
+                                   const CoordinateReferenceSystem* A,
+                                   const CoordinateReferenceSystem* B)
 {
   //
   // A simple algorithm is to find a path to a root for each 
@@ -81,12 +81,14 @@ CoordinateReferenceSystem::ConstPointer
   // node in the other path.
   // 
   typedef CoordinateReferenceSystem::ConstPointer CSPointer;
+  CSPointer aSmart = A;
+  CSPointer bSmart = B;
 
-  if (A == B)
+  if (aSmart == bSmart)
     {
-    return A;
+    return aSmart.GetPointer();
     }
-  if (A.IsNull() || B.IsNull())
+  if (aSmart.IsNull() || bSmart.IsNull())
     {
     return NULL;
     }
@@ -96,12 +98,12 @@ CoordinateReferenceSystem::ConstPointer
   CSPointer aTempPrev = NULL;
   CSPointer bTempPrev = NULL;
 
-  for(bTemp = B; 
+  for(bTemp = bSmart; 
       (bTemp.IsNotNull() && bTempPrev != bTemp); 
       bTemp = bTemp->GetParent())
     {
     aTempPrev = NULL;
-    for(aTemp = A; 
+    for(aTemp = aSmart; 
         (aTemp.IsNotNull() && aTempPrev != aTemp); 
         aTemp = aTemp->GetParent())
       {
@@ -124,8 +126,8 @@ CoordinateReferenceSystem::ConstPointer
 // This method can compute the transform between two leaves.
 //
 Transform CoordinateReferenceSystem::GetTransformBetween(
-                          CoordinateReferenceSystem::ConstPointer source,
-                          CoordinateReferenceSystem::ConstPointer destination)
+                          const CoordinateReferenceSystem* source,
+                          const CoordinateReferenceSystem* destination)
 {
   CoordinateReferenceSystem::ConstPointer ancestor = 
                                  GetLowestCommonAncestor(source, destination);
@@ -148,7 +150,7 @@ Transform CoordinateReferenceSystem::GetTransformBetween(
 // This method can only traverse up the tree.
 //
 Transform CoordinateReferenceSystem::ComputeTransformTo(
-                       CoordinateReferenceSystem::ConstPointer ancestor) const
+                       const CoordinateReferenceSystem* ancestor) const
 {
   //
   // Go up the hierarchy of parents until we find the ancestor coordinate 
