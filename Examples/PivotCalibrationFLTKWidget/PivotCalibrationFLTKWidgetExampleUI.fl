@@ -1,0 +1,105 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0106 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+class PivotCalibrationFLTKWidgetExampleUI {open
+} {
+  Function {PivotCalibrationFLTKWidgetExampleUI()} {open
+  } {
+    Fl_Window m_mainWindow {
+      label {Pivot Calibration Widget Example} open
+      private xywh {164 39 412 528} type Double align 5 visible
+    } {
+      Fl_Group {} {
+        label Settings open
+        private xywh {7 28 396 152} box ENGRAVED_BOX align 5
+      } {
+        Fl_Choice m_comPortChoice {
+          label {COM Port:}
+          callback {this->m_pivotCalibrationFLTKWidget->RequestReset();} open
+          tooltip {The COM port used by the tracker} xywh {85 36 90 25} down_box BORDER_BOX when 1
+        } {
+          menuitem {} {
+            label COM1
+            xywh {5 5 100 20}
+          }
+          menuitem {} {
+            label COM2
+            xywh {5 5 100 20}
+          }
+          menuitem {} {
+            label COM3
+            xywh {15 15 100 20}
+          }
+          menuitem {} {
+            label COM4
+            xywh {25 25 100 20}
+          }
+          menuitem {} {
+            label COM5
+            xywh {35 35 100 20}
+          }
+          menuitem {} {
+            label COM6
+            xywh {45 45 100 20}
+          }
+          menuitem {} {
+            label COM7
+            xywh {55 55 100 20}
+          }
+          menuitem {} {
+            label COM8 selected
+            xywh {65 65 100 20}
+          }
+        }
+        Fl_Value_Slider m_toolPortSlider {
+          label {Tool port:}
+          callback {this->m_pivotCalibrationFLTKWidget->RequestReset();}
+          tooltip {Tool is assigned this port (ports 1-3 reserved for wired tools)} xywh {295 39 87 18} type Horizontal align 4 minimum 1 maximum 13 step 1 value 1
+        }
+        Fl_Button {} {
+          label {...}
+          callback {char *fileName = fl_file_chooser("Load SROM File", "SROM Files(*.rom,*.ROM)",NULL,0);
+if(fileName!=NULL) { //file name is copied to the text field
+  this->m_SROMFileNameTextField->value(fileName);
+  this->m_pivotCalibrationFLTKWidget->RequestReset();
+}}
+          private xywh {359 105 35 25}
+        }
+        Fl_Input m_SROMFileNameTextField {
+          label {Optional SROM File:}
+          xywh {145 105 205 25}
+        }
+        Fl_Button m_initializeButton {
+          label Initialize
+          callback {this->InitializeTrackingAndCalibration();}
+          private xywh {172 145 65 28}
+        }
+        Fl_Value_Slider m_delaySlider {
+          label {Delay [sec]:}
+          callback {this->m_pivotCalibrationFLTKWidget->RequestReset();}
+          tooltip {Delay before starting data acquisition} xywh {93 72 87 18} type Horizontal align 4 maximum 30 step 1 value 5
+        }
+        Fl_Value_Slider m_numberOfFramesSlider {
+          label {\# of frames:}
+          callback {this->m_pivotCalibrationFLTKWidget->RequestReset();}
+          tooltip {Number of frames (transformations) to acquire} xywh {295 72 87 18} type Horizontal align 4 minimum 300 maximum 1800 step 1 value 300
+        }
+      }
+      Fl_Box m_pivotCalibrationFLTKWidget {
+        label {Pivot Calibration FLTK Widget}
+        xywh {7 198 396 320} box ENGRAVED_FRAME align 5
+        code0 {\#include <igstkPivotCalibrationFLTKWidget.h>}
+        class {igstk::PivotCalibrationFLTKWidget}
+      }
+    }
+  }
+  Function {Show()} {open return_type void
+  } {
+    code {this->m_mainWindow->show();} {}
+  }
+  Function {InitializeTrackingAndCalibration()} {return_type {virtual void}
+  } {}
+} 
