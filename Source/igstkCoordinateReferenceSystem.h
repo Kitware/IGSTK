@@ -169,9 +169,9 @@ class CoordinateReferenceSystemHelper
 {
 public:
   template <class T>
-  static const CoordinateReferenceSystem & GetCoordinateReferenceSystem( const T * input )
+  static const CoordinateReferenceSystem* GetCoordinateReferenceSystem( const T * input )
     {
-    return input.GetCoordinateReferenceSystem();  // private
+    return input->GetCoordinateReferenceSystem();  // private
     }
 };
 
