@@ -77,8 +77,7 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
 
   coordinateSystemA->SetTransformAndParent( transform1, coordinateSystemRoot );
 
-  ObjectType::ConstPointer coordinateSystemRootConst = coordinateSystemRoot;
-  igstk::Transform  transform1b = coordinateSystemA->ComputeTransformTo(coordinateSystemRootConst);
+  igstk::Transform  transform1b = coordinateSystemA->ComputeTransformTo(coordinateSystemRoot);
 
   igstk::Transform::VectorType translation1b = transform1b.GetTranslation();
   for( unsigned int i=0; i<3; i++ )
@@ -144,7 +143,7 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
   // Verify the computation of the transform to the root
   igstk::Transform  transform3a  = igstk::Transform::TransformCompose( transform1, transform2 );
 
-  igstk::Transform  transform3b  = coordinateSystemB->ComputeTransformTo(coordinateSystemRootConst);
+  igstk::Transform  transform3b  = coordinateSystemB->ComputeTransformTo(coordinateSystemRoot);
 
   igstk::Transform::VectorType translation3a = transform3a.GetTranslation();
   igstk::Transform::VectorType translation3b = transform3b.GetTranslation();
