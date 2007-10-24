@@ -89,7 +89,7 @@ public:
        {
        CoordinateReferenceSystem & referenceSystem = 
        igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( parent );
-       this->m_CoordinateSystemParentToBeSet = parent;
+       // this->m_CoordinateSystemParentToBeSet = parent;
 
        //
        // For now, be bad and call the set method directly. We need to setup the state
