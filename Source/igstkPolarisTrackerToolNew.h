@@ -98,6 +98,13 @@ private:
    * initialized or not */
   igstkGetMacro( TrackerToolInitialized, bool );
 
+  /** Get boolean variable to check if SROM file is specified */
+  igstkGetMacro( SROMFileNameSpecified, bool );
+
+  /** Get boolean variable to check if the tracker toolId is 
+   * specified*/
+  igstkGetMacro( ToolIdSpecified, bool );
+
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( WirelessTrackerToolSelected );
