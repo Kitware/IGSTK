@@ -19,6 +19,7 @@
 #define __igstkTrackerNew_h
 
 #include <vector>
+#include <map>
 
 #include "itkMutexLock.h"
 #include "itkConditionVariable.h"
@@ -31,6 +32,7 @@
 #include "igstkTransform.h"
 #include "igstkAxesObject.h"
 #include "igstkPulseGenerator.h"
+#include "igstkTrackerToolNew.h"
 
 namespace igstk
 {
@@ -113,10 +115,10 @@ public:
   typedef Transform                      ToolCalibrationTransformType;
 
   /** typedefs from igstk::TrackerTool class */
-  typedef igstk::TrackerTool                TrackerToolType;
-  typedef TrackerToolType::Pointer          TrackerToolPointer;
-  typedef TrackerToolType::ConstPointer     TrackerToolConstPointer;
-  typedef std::vector< TrackerToolPointer > TrackerToolVectorType;
+  typedef igstk::TrackerToolNew              TrackerToolType;
+  typedef TrackerToolType::Pointer           TrackerToolPointer;
+  typedef TrackerToolType::ConstPointer      TrackerToolConstPointer;
+  typedef std::map< std::string, TrackerToolType *>  TrackerToolsContainerType;
 
   /** typedefs for the TrackerPort class */
   typedef igstk::TrackerPort                TrackerPortType;
@@ -154,9 +156,8 @@ public:
   ports and tools when the tracker is in tracking state. */
   void RequestUpdateStatus( void );
 
-  /** Add a tracker tool to this tracker 
-   * FIXME: This has yet to be inserted in the State Machine. */
-  void RequestAddTool( TrackerToolType * trackerTool );
+  /** Add a tracker tool to this tracker  */
+  void RequestAddTool( std::string TrackerToolIdentifier, TrackerToolType * trackerTool );
 
   /** Set the time period over which a tool transform should be considered
    *  valid. */
@@ -258,8 +259,9 @@ private:
   // now contained in their corresponding tracker tools.
   TrackerPortVectorType     m_Ports; // DEPRECATED
 
-  // NEW: an array of tracker tools replace the array of ports
-  TrackerToolVectorType     m_TrackerTools;
+  // An associative container of TrackerTool Pointer with 
+  // TrackerTool identifier used as a Key
+  TrackerToolsContainerType           m_TrackerTools;
   
   /** The reference tool */
   bool                      m_ApplyingReferenceTool;

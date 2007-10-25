@@ -28,7 +28,7 @@
 namespace igstk
 {
 
-class Tracker;
+class TrackerNew;
 
 /**  \class TrackerToolNew
   *  \brief Generic implementation of the Tracker tool.
@@ -58,6 +58,7 @@ public:
 
   igstkFriendClassMacro( Tracker );
 
+  typedef TrackerNew        TrackerType;
   typedef Transform         TransformType;
   typedef Transform         ToolCalibrationTransformType;
   typedef double            ErrorType;
@@ -103,7 +104,9 @@ public:
   /** The "RequestInitialize" method attempts to initialize the tracker tool */
   virtual void RequestInitialize( void );
 
-
+  /** The "RequestAttachToTracker" method attaches the tracker tool to a
+ * tracker*/
+  virtual void RequestAttachToTracker( TrackerType * );
 
 protected:
 
@@ -113,6 +116,8 @@ protected:
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+  void SetTrackerToolIdentifier( std::string identifier );
 
 
 private:
@@ -141,6 +146,9 @@ private:
 
   /** Updated flag */
   bool               m_Updated;
+
+  /** Unique identifier of the tracker tool */
+  std::string        m_TrackerToolIdentifier;
 
   /** Coordinate Reference System */
   CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;

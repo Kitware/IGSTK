@@ -22,6 +22,7 @@
 #endif
 
 #include "igstkPolarisTrackerToolNew.h"
+#include <sstream>
 
 namespace igstk
 {
@@ -43,9 +44,13 @@ PolarisTrackerToolNew::PolarisTrackerToolNew():m_StateMachine(this)
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( WirelessTrackerToolSelected );
   igstkAddStateMacro( WiredTrackerToolSelected );
-  igstkAddStateMacro( PortNumberSpecified );
-  igstkAddStateMacro( SROMFileNameSpecified );
-  igstkAddStateMacro( ToolIdSpecified );
+  igstkAddStateMacro( WirelessTrackerToolPortNumberSpecified );
+  igstkAddStateMacro( WiredTrackerToolPortNumberSpecified );
+  igstkAddStateMacro( WirelessTrackerToolSROMFileNameSpecified );
+  igstkAddStateMacro( WiredTrackerToolSROMFileNameSpecified );
+  igstkAddStateMacro( WirelessTrackerToolToolIdSpecified );
+  igstkAddStateMacro( WiredTrackerToolToolIdSpecified );
+
 
   // Set the input descriptors
   igstkAddInputMacro( SelectWirelessTrackerTool );
@@ -75,7 +80,7 @@ PolarisTrackerToolNew::PolarisTrackerToolNew():m_StateMachine(this)
   // Transitions from the WiredTrackerToolSelected
   igstkAddTransitionMacro( WiredTrackerToolSelected,
                            ValidPortNumber,
-                           PortNumberSpecified,
+                           WiredTrackerToolPortNumberSpecified,
                            SetPortNumber);
 
   igstkAddTransitionMacro( WiredTrackerToolSelected,
@@ -86,7 +91,7 @@ PolarisTrackerToolNew::PolarisTrackerToolNew():m_StateMachine(this)
   // Transitions from the WirelessTrackerToolSelected
   igstkAddTransitionMacro( WirelessTrackerToolSelected,
                            ValidPortNumber,
-                           PortNumberSpecified,
+                           WirelessTrackerToolPortNumberSpecified,
                            SetPortNumber);
 
   igstkAddTransitionMacro( WirelessTrackerToolSelected,
@@ -94,26 +99,49 @@ PolarisTrackerToolNew::PolarisTrackerToolNew():m_StateMachine(this)
                            WirelessTrackerToolSelected,
                            ReportInValidPortNumberSpecified );
 
-  // Transitions from PortNumberSpecified
-  igstkAddTransitionMacro( PortNumberSpecified,
+  // Transitions from WiredTrackerToolPortNumberSpecified
+  igstkAddTransitionMacro( WiredTrackerToolPortNumberSpecified,
                            ValidSROMFileName,
-                           SROMFileNameSpecified,
+                           WiredTrackerToolSROMFileNameSpecified,
                            SetSROMFileName);
 
-  igstkAddTransitionMacro( PortNumberSpecified,
+  igstkAddTransitionMacro( WiredTrackerToolPortNumberSpecified,
                            InValidSROMFileName,
-                           PortNumberSpecified,
+                           WiredTrackerToolPortNumberSpecified,
                            ReportInValidSROMFileSpecified);
 
-  // Transitions from SROMFileNameSpecified
-  igstkAddTransitionMacro( SROMFileNameSpecified,
+  // Transitions from WirelessTrackerToolPortNumberSpecified
+  igstkAddTransitionMacro( WirelessTrackerToolPortNumberSpecified,
+                           ValidSROMFileName,
+                           WirelessTrackerToolPortNumberSpecified,
+                           SetSROMFileName);
+
+  igstkAddTransitionMacro( WirelessTrackerToolPortNumberSpecified,
+                           InValidSROMFileName,
+                           WirelessTrackerToolPortNumberSpecified,
+                           ReportInValidSROMFileSpecified);
+
+
+  // Transitions from WiredTrackerToolSROMFileNameSpecified
+  igstkAddTransitionMacro( WiredTrackerToolSROMFileNameSpecified,
                            ValidToolId,
-                           ToolIdSpecified,
+                           WiredTrackerToolToolIdSpecified,
                            SetToolId);
 
-  igstkAddTransitionMacro( SROMFileNameSpecified,
+  igstkAddTransitionMacro( WiredTrackerToolSROMFileNameSpecified,
                            InValidToolId,
-                           SROMFileNameSpecified,
+                           WiredTrackerToolSROMFileNameSpecified,
+                           ReportInValidToolIdSpecified);
+
+  // Transitions from WirelessTrackerToolSROMFileNameSpecified
+  igstkAddTransitionMacro( WirelessTrackerToolSROMFileNameSpecified,
+                           ValidToolId,
+                           WirelessTrackerToolToolIdSpecified,
+                           SetToolId);
+
+  igstkAddTransitionMacro( WirelessTrackerToolSROMFileNameSpecified,
+                           InValidToolId,
+                           WirelessTrackerToolSROMFileNameSpecified,
                            ReportInValidToolIdSpecified);
 
 
@@ -230,6 +258,12 @@ void PolarisTrackerToolNew::SetPortNumberProcessing( )
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTrackerToolNew::SetPortNumberProcessing called ...\n");
   m_PortNumber = m_PortNumberToBeSet;
+  
+  std::stringstream identifierStream;
+  identifierStream << m_PortNumber;
+  
+  // For polaris tracker, port number could be used as a unique identifier
+  this->SetTrackerToolIdentifier( identifierStream.str() );
 }
 
 /** Report Invalid port number specified */ 

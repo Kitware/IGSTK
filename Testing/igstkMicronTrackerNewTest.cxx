@@ -127,52 +127,7 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   tracker->LoadMarkerTemplate( markerTemplateDirectory );
 
   // Add tracker tools
-  typedef igstk::MicronTrackerTool  MicronTrackerToolType;
-
-  // Add a tracker tool with "TTblock" marker type attached to it.
-  MicronTrackerToolType::Pointer tool1 = MicronTrackerToolType::New();
-  std::string markerNameTT = "TTblock";
-  tool1->RequestSetMarkerName( markerNameTT );  
-  tracker->RequestAddTool( tool1 );
-
-  // Add a tracker tool with "a" marker type attached to it.
-  MicronTrackerToolType::Pointer tool2 = MicronTrackerToolType::New();
-  std::string markerNameA = "a";
-  tool2->RequestSetMarkerName( markerNameA );  
-  tracker->RequestAddTool( tool2 );
-
-  // Add a tracker tool with "sPointer" marker type attached to it.
-  MicronTrackerToolType::Pointer tool3 = MicronTrackerToolType::New();
-  std::string markerNamePointer = "sPointer";
-  tool3->RequestSetMarkerName( markerNamePointer );  
-  tracker->RequestAddTool( tool3 );
-
-  std::cout << "RequestOpen()" << std::endl;
-  tracker->RequestOpen();
-
-  std::cout << "RequestInitialize()" << std::endl;
-  tracker->RequestInitialize();
-
-  std::cout << tracker << std::endl;
-
-  std::cout << "GetNumberOfTools()" << std::endl;
-  unsigned int ntools = tracker->GetNumberOfTools();
-
-  std::cout << "NumberOfTools : " << ntools << std::endl;
-
-  std::cout << "RequestStartTracking()" << std::endl;
-  tracker->RequestStartTracking();
-
-  for(unsigned int i=0; i<500; i++)
-    {
-    tracker->RequestUpdateStatus();
-    }
-  
-  std::cout << "RequestStopTracking()" << std::endl;
-  tracker->RequestStopTracking();
-
-  std::cout << "RequestClose()" << std::endl;
-  tracker->RequestClose();
+  typedef igstk::MicronTrackerToolNew  MicronTrackerToolType;
 
   std::cout << "[PASSED]" << std::endl;
 

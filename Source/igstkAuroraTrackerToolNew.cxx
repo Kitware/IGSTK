@@ -22,6 +22,7 @@
 #endif
 
 #include "igstkAuroraTrackerToolNew.h"
+#include <sstream>
 
 namespace igstk
 {
@@ -204,6 +205,13 @@ void AuroraTrackerToolNew::SetPortNumberProcessing( )
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerToolNew::SetPortNumberProcessing called ...\n");
   m_PortNumber = m_PortNumberToBeSet;
+
+  //Set the tracker tool unique identifier to the port number. If a
+  //channel number is specified a unique identifier will be regenerated
+  //using port and channel number information
+  std::stringstream identifierStream;
+  identifierStream << m_PortNumber;
+  this->SetTrackerToolIdentifier( identifierStream.str() );
 }
 
 /** Report Invalid port number specified */ 
@@ -222,6 +230,12 @@ void AuroraTrackerToolNew::SetChannelNumberProcessing( )
     "igstk::AuroraTrackerToolNew::SetChannelNumberProcessing called ...\n");
   m_ChannelNumber = m_ChannelNumberToBeSet;
   m_ChannelNumberSpecified = true;
+
+  //FIXME: Generate a unique identifier using the port and channel number
+  //
+  std::stringstream identifierStream;
+  identifierStream << m_PortNumber << "_" << m_ChannelNumber;
+  this->SetTrackerToolIdentifier( identifierStream.str() );
 }
 
 /** Report Invalid channel number specified */ 

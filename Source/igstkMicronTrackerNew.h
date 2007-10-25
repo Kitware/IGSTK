@@ -25,7 +25,7 @@
 #pragma warning( disable : 4284 )
 #endif
 
-#include "igstkMicronTrackerTool.h" 
+#include "igstkMicronTrackerToolNew.h" 
 #include "igstkTrackerNew.h"
 
 #include "Markers.h"
@@ -54,7 +54,7 @@ public:
 
   /** typedefs for the tool */
   /** The should be converted to the new Tool class */
-  typedef igstk::MicronTrackerTool              MicronTrackerToolType;
+  typedef igstk::MicronTrackerToolNew           MicronTrackerToolType;
   typedef MicronTrackerToolType::Pointer        MicronTrackerToolPointer;
   typedef MicronTrackerToolType::ConstPointer   MicronTrackerToolConstPointer;
 
@@ -81,9 +81,7 @@ public:
   /** Load markers template */
   void LoadMarkerTemplate( std::string filename );
 
-  /** Add the tracker tool std::map container */
-  void RequestAddTool( MicronTrackerToolType * trackerTool );
- 
+  void RequestAddTool( std::string identifier, MicronTrackerToolType * trackerTool );
 protected:
 
   MicronTrackerNew(void);

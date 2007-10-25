@@ -219,11 +219,11 @@ bool MicronTrackerNew::SetUpCameras()
 }
 
 /** Request adding a tool to the tracker */
-void MicronTrackerNew::RequestAddTool( MicronTrackerToolType * trackerTool )
+void MicronTrackerNew::RequestAddTool( std::string identifier, MicronTrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, "MicronTrackerNew::InternalClose called ...\n");  
 
-  Superclass::RequestAddTool( trackerTool );
+  Superclass::RequestAddTool( identifier, trackerTool );
 
   //populate std::map with the marker name and corresponding transform
   //REVISIT this..there should be an easier way of doing this

@@ -16,6 +16,7 @@
 =========================================================================*/
 
 #include "igstkTrackerToolNew.h"
+#include "igstkTrackerNew.h"
 #include "igstkEvents.h"
 
 
@@ -81,6 +82,20 @@ TrackerToolNew::RequestInitialize( )
   igstkLogMacro( DEBUG, "igstk::TrackerToolNew::RequestInitialize called...\n");
   igstkPushInputMacro( InitializeTool );
   this->m_StateMachine.ProcessInputs();
+}
+
+void 
+TrackerToolNew::RequestAttachToTracker( TrackerNew * tracker )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::RequestAttachToTracker called...\n");
+  tracker->RequestAddTool( m_TrackerToolIdentifier, this );
+}
+
+void 
+TrackerToolNew::SetTrackerToolIdentifier( std::string identifier )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::SetTrackerToolIdentifier called...\n");
+  m_TrackerToolIdentifier = identifier;
 }
 
 /** The "AttemptToInitialize" method attempts to initialize the tracker to    ol */

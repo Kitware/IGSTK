@@ -109,9 +109,12 @@ private:
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( WirelessTrackerToolSelected );
   igstkDeclareStateMacro( WiredTrackerToolSelected );
-  igstkDeclareStateMacro( PortNumberSpecified );
-  igstkDeclareStateMacro( SROMFileNameSpecified );
-  igstkDeclareStateMacro( ToolIdSpecified );
+  igstkDeclareStateMacro( WirelessTrackerToolPortNumberSpecified );
+  igstkDeclareStateMacro( WiredTrackerToolPortNumberSpecified );
+  igstkDeclareStateMacro( WirelessTrackerToolSROMFileNameSpecified );
+  igstkDeclareStateMacro( WiredTrackerToolSROMFileNameSpecified );
+  igstkDeclareStateMacro( WirelessTrackerToolToolIdSpecified );
+  igstkDeclareStateMacro( WiredTrackerToolToolIdSpecified );
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( SelectWiredTrackerTool );

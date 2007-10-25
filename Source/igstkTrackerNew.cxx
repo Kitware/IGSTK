@@ -596,17 +596,20 @@ void TrackerNew::AttemptToUpdateStatusProcessing( void )
                         "called ...\n");
 
   // Set all tools to "not updated"
-  unsigned int numPorts = m_Ports.size();
-  for (unsigned int portNumber = 0; portNumber < numPorts; portNumber++)
+  //
+  typedef TrackerToolsContainerType::iterator  InputConstIterator;
+
+  InputConstIterator inputItr = m_TrackerTools.begin();
+  InputConstIterator inputEnd = m_TrackerTools.end();
+
+  unsigned int toolId = 0;
+
+  while( inputItr != inputEnd )
     {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    unsigned int numTools = port->GetNumberOfTools();
-    for (unsigned int toolNumber = 0; toolNumber < numTools; toolNumber++)
-      {
-      port->GetTool( toolNumber )->SetUpdated(false);
-      }
+    (inputItr->second)->SetUpdated(false);
+    ++inputItr;
     }
-      
+ 
   // wait for a new transform to be available, it would be nice if
   // "Wait" had a time limit like pthread_cond_timedwait() on Unix or
   // WaitForSingleObject() on Windows
@@ -633,80 +636,38 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::UpdateStatusSuccessProcessing "
                  "called ...\n");
 
-  // calibrate transforms for all tools that were updated
-  unsigned int numPorts = m_Ports.size();
-  for (unsigned int portNumber = 0; portNumber < numPorts; portNumber++)
+  typedef TrackerToolsContainerType::iterator  InputConstIterator;
+
+  InputConstIterator inputItr = m_TrackerTools.begin();
+  InputConstIterator inputEnd = m_TrackerTools.end();
+
+  while( inputItr != inputEnd )
     {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    unsigned int numTools = port->GetNumberOfTools();
-    for (unsigned int toolNumber = 0; toolNumber < numTools; toolNumber++)
+    if ( (inputItr->second)->GetUpdated() ) 
       {
-      TrackerToolPointer tool = port->GetTool( toolNumber );
-      
-      if ( tool->GetUpdated() &&
-           ( !m_ApplyingReferenceTool || m_ReferenceTool->GetUpdated() ) )
-        {
-        TransformType transform = tool->GetRawTransform();
+      TransformType transform = (inputItr->second)->GetRawTransform();
 
-        ToolCalibrationTransformType toolCalibrationTransform
-                                    = tool->GetToolCalibrationTransform();
+      TransformType::VersorType rotation;
+      TransformType::VectorType translation;
 
-        
-        // T ' = P * R^-1 * T * C
-        //
-        // where:
-        // " T " is the original tool transform reported by the device,
-        // " R^-1 " is the inverse of the transform for the reference tool,
-        // " P " is the Patient transform (it specifies the position of
-        //       the reference with respect to patient coordinates), and
-        // " T ' " is the transformation that is reported to the spatial 
-        // objects
-        // " C " is the tool calibration transform.
-        
+      // Get the rotation and translation with ToolCalibrationTransform
+      rotation = transform.GetRotation();
+      translation = transform.GetTranslation();
 
-        TransformType::VersorType rotation;
-        TransformType::VectorType translation;
+      // FIXME: IS THIS NECESSARY
+      // applying ReferenceTool
 
-        // start with ToolCalibrationTransform
-        rotation = toolCalibrationTransform.GetRotation();
-        translation = toolCalibrationTransform.GetTranslation();
+      const double timeToExpiration = transform.GetExpirationTime() - 
+                                      transform.GetStartTime();
 
-        // transform by the tracker's tool transform
-        rotation = transform.GetRotation()*rotation;
-        translation = transform.GetRotation().Transform(translation);
-        translation += transform.GetTranslation();
+      TransformType toolTransform;
+      toolTransform.SetTranslationAndRotation( translation, rotation,
+                        transform.GetError(),
+                        timeToExpiration );
 
-        // applying ReferenceTool
-        if ( m_ApplyingReferenceTool )
-          {
-          // since this is an inverse transform, apply translation first
-          TransformType::VersorType inverseRotation =
-            m_ReferenceTool->GetRawTransform().GetRotation().GetReciprocal();
-
-          translation -= m_ReferenceTool->GetRawTransform().GetTranslation();
-          translation = inverseRotation.Transform(translation);
-          rotation = inverseRotation*rotation;
-
-          // also include the reference tool's ToolCalibrationTransform
-          inverseRotation = m_ReferenceTool->GetToolCalibrationTransform().
-                                             GetRotation().GetReciprocal();
-          translation -= m_ReferenceTool->GetToolCalibrationTransform().
-                                             GetTranslation();
-          translation = inverseRotation.Transform(translation);
-          rotation = inverseRotation*rotation;
-          }
-
-        const double timeToExpiration = transform.GetExpirationTime() - 
-                                        transform.GetStartTime();
-
-        TransformType toolTransform;
-        toolTransform.SetTranslationAndRotation( translation, rotation,
-                          transform.GetError(),
-                          timeToExpiration );
-
-        tool->RequestSetTransform( toolTransform );
-        }
+      (inputItr->second)->RequestSetTransform( toolTransform );
       }
+    ++inputItr;
     }
 
   this->InvokeEvent( TrackerUpdateStatusEvent() );  
@@ -827,13 +788,11 @@ void TrackerNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
     }
 }
 
-
-/** Request adding a tool to the tracker */
-void TrackerNew::RequestAddTool( TrackerToolType * trackerTool )
+/** Request adding a tool to the tracker  */
+void TrackerNew::RequestAddTool( std::string trackerToolIdentifier, TrackerToolType * trackerTool )
 {
-  // FIXME: thread this in the State Machine
-  m_TrackerTools.push_back( trackerTool );
-  // FIXCS trackerTool->RequestAttachToSpatialObjectParent( this->m_CoordinateReferenceSystem );
+  m_TrackerTools[ trackerToolIdentifier ] = trackerTool; 
+  // FIX trackerTool->RequestAttachToSpatialObjectParent( this->m_CoordinateReferenceSystem );
 }
 
 /** Return the coordinate system associated with this tracker */
