@@ -56,7 +56,7 @@ public:
 
 public:
 
-  igstkFriendClassMacro( Tracker );
+  igstkFriendClassMacro( TrackerNew );
 
   typedef TrackerNew        TrackerType;
   typedef Transform         TransformType;
