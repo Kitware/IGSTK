@@ -156,8 +156,8 @@ public:
   bool HasQuitted() {return m_HasQuitted;}
 
   /** Methods for Converting Events into State Machine Inputs */
-  igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,
-                                     AxialBoundsInput );
+  igstkLoadedEventTransductionMacro( AxialSliceBounds,
+                                     AxialBounds );
 
   UltrasoundGuidedRFAImplementation();
   ~UltrasoundGuidedRFAImplementation();

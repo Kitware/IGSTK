@@ -89,12 +89,12 @@ public:
 
 
   /** Methods for Converting Events into State Machine Inputs */
-  igstkLoadedEventTransductionMacro( AxialSliceBoundsEvent,
-                                     AxialBoundsInput );
-  igstkLoadedEventTransductionMacro( SagittalSliceBoundsEvent, 
-                                     SagittalBoundsInput );
-  igstkLoadedEventTransductionMacro( CoronalSliceBoundsEvent,  
-                                     CoronalBoundsInput );
+  igstkLoadedEventTransductionMacro( AxialSliceBounds,
+                                     AxialBounds );
+  igstkLoadedEventTransductionMacro( SagittalSliceBounds, 
+                                     SagittalBounds );
+  igstkLoadedEventTransductionMacro( CoronalSliceBounds,
+                                     CoronalBounds );
 
   igstkObserverObjectMacro( ImageSpatialObject,
                     ImageReaderType::ImageModifiedEvent,ImageSpatialObjectType)
