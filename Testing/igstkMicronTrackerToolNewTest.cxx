@@ -37,6 +37,7 @@ int igstkMicronTrackerToolNewTest( int, char * [] )
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
   std::string markerNameTT = "TTblock";
+ 
   trackerTool->RequestSetMarkerName( markerNameTT );  
  
   trackerTool->RequestInitialize();

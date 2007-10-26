@@ -41,6 +41,10 @@
 #include "igstkViewNew.h"
 #include "igstkViewNew2D.h"
 #include "igstkViewNew3D.h"
+#include "igstkTrackerNew.h"
+#include "igstkTrackerToolNew.h"
+#include "igstkPolarisTrackerToolNew.h"
+#include "igstkAuroraTrackerToolNew.h"
 
 namespace igstk 
 {
@@ -176,6 +180,11 @@ int main( int argc, char * argv [] )
 
   igstkTestExportStateMachine1( igstk::Tracker, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory,skipLoops );
+
+  igstkTestExportStateMachine1( igstk::TrackerNew, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::TrackerToolNew, outputDirectory,skipLoops );
+  igstkTestExportStateMachine1( igstk::PolarisTrackerToolNew, outputDirectory,skipLoops );
+  igstkTestExportStateMachine1( igstk::AuroraTrackerToolNew, outputDirectory,skipLoops );
 
   // Exporting Abstract classes by creating derived surrogates for them.
   igstkTestExportStateMachine1( igstk::SpatialObjectSurrogate, outputDirectory, 
