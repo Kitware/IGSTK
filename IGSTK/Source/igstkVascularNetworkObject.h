@@ -104,10 +104,10 @@ private:
   void ReportInvalidRequestProcessing();
 
   igstkLoadedObjectEventTransductionMacro(
-    SpatialObjectModifiedEvent, VesselReceivedInput );
+    SpatialObjectModified, VesselReceived );
 
   igstkEventTransductionMacro(
-    SpatialObjectNotAvailableEvent, VesselNotFoundInput );
+    SpatialObjectNotAvailable, VesselNotFound );
 
 };
 

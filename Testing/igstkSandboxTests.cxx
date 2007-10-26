@@ -35,6 +35,7 @@ void RegisterTests()
   REGISTER_TEST(igstkSocketCommunicationTest);
   REGISTER_TEST(igstkViewNewTest);
   REGISTER_TEST(igstkTrackerToolNewTest);
+  REGISTER_TEST(igstkTransductionMacroTest);
   REGISTER_TEST(igstkGenericImageSpatialObjectTest);
   REGISTER_TEST(igstkDICOMGenericImageReaderTest);
   REGISTER_TEST(igstkPivotCalibrationAlgorithmTest);

@@ -184,11 +184,11 @@ private:
 
   /** Transduction macros that will convert received events 
    *  into StateMachine inputs */
-  igstkLoadedEventTransductionMacro( TransformModifiedEvent, 
-                                     SpatialObjectTransformInput );
+  igstkLoadedEventTransductionMacro( TransformModified, 
+                                     SpatialObjectTransform );
 
-  igstkEventTransductionMacro( TransformNotAvailableEvent, 
-                                     TransformNotAvailableInput ); 
+  igstkEventTransductionMacro( TransformNotAvailable, 
+                                     TransformNotAvailable); 
 
   /** Internal temporary variable to use when connecting to a SpatialObject */
   SpatialObjectType::Pointer    m_SpatialObjectToAdd;

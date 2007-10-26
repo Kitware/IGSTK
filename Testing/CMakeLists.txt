@@ -82,6 +82,7 @@ SET(SandboxTests_SRCS
   igstkVascularNetworkObjectTest.cxx
   igstkViewNewTest.cxx
   igstkTrackerToolNewTest.cxx
+  igstkTransductionMacroTest.cxx
   )
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
@@ -114,6 +115,7 @@ ADD_TEST( igstkLandmarkUltrasoundCalibrationTest ${IGSTKSandbox_TESTS} igstkLand
 ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunicationTest)
 ADD_TEST( igstkViewNewTest ${IGSTKSandbox_TESTS} igstkViewNewTest)
 ADD_TEST( igstkTrackerToolNewTest ${IGSTKSandbox_TESTS} igstkTrackerToolNewTest)
+ADD_TEST( igstkTransductionMacroTest ${IGSTKSandbox_TESTS} igstkTransductionMacroTest)
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
 ADD_TEST( igstkCoordinateReferenceSystemTest ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest)
 ADD_TEST( igstkCoordinateReferenceSystemTest2 ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest2)

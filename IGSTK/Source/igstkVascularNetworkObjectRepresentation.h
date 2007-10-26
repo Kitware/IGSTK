@@ -111,10 +111,10 @@ private:
   VascularNetworkObjectType::ConstPointer m_VascularNetworkObjectToAdd;
  
   igstkLoadedObjectEventTransductionMacro(
-    VesselObjectModifiedEvent, VesselReceivedInput );
+    VesselObjectModified, VesselReceived );
 
   igstkEventTransductionMacro(
-    VesselObjectNotAvailableEvent, VesselNotFoundInput );
+    VesselObjectNotAvailable, VesselNotFound );
 
 };
 

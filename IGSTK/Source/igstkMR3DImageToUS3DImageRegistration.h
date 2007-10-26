@@ -194,10 +194,10 @@ private:
 
   
   /** Methods for Converting Events into State Machine Inputs */
-  igstkLoadedEventTransductionMacro( TransformModifiedEvent,
-                                     MRImageTransformInput );
-  igstkLoadedEventTransductionMacro( TransformModifiedEvent ,
-                                     USImageTransformInput );
+  igstkLoadedEventTransductionMacro( TransformModified,
+                                     MRImageTransform );
+  igstkLoadedEventTransductionMacro( TransformModified ,
+                                     USImageTransform );
 
   /** Variable to save the calibration transform */
   TransformType                     m_RegistrationTransform;

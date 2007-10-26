@@ -269,17 +269,18 @@ public:  \
 #define igstkEventTransductionMacro( event, input ) \
 private: \
   ReceptorObserverPointer m_Observer##event##input;  \
-  void Callback##event##input( const ::itk::EventObject & ) \
+  void Callback##event##input##Input( const ::itk::EventObject & ) \
   { \
-    m_StateMachine.PushInput( m_##input ); \
+    igstkPushInputMacro( input ); \
+    m_StateMachine.ProcessInputs(); \
   } \
 public: \
-  void Observe##event(const ::itk::Object * object ) \
+  void Observe##event##Event(const ::itk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this, \
-                                          & Self::Callback##event##input ); \
-    object->AddObserver( ::igstk::event(),m_Observer##event##input ); \
+                                          & Self::Callback##event##input##Input ); \
+    object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
     } 
 
 
@@ -289,47 +290,49 @@ public: \
 #define igstkLoadedEventTransductionMacro( event, input ) \
 private: \
   ReceptorObserverPointer m_Observer##event##input;  \
-  ::igstk::event::PayloadType                 m_##input##ToBeSet; \
-  void Callback##event##input( const ::itk::EventObject & eventvar ) \
+  ::igstk::event##Event::PayloadType m_##input##InputToBeSet; \
+  void Callback##event##input##Input( const ::itk::EventObject & eventvar ) \
   { \
-  const ::igstk::event * realevent = \
-                      dynamic_cast < const ::igstk::event * > ( &eventvar ); \
+  const ::igstk::event##Event * realevent = \
+      dynamic_cast < const ::igstk::event##Event * > ( &eventvar ); \
     if( realevent ) \
       { \
-      m_##input##ToBeSet = realevent->Get(); \
-      m_StateMachine.PushInput( m_##input ); \
+      m_##input##InputToBeSet = realevent->Get(); \
+      igstkPushInputMacro( input ); \
+      m_StateMachine.ProcessInputs(); \
       } \
   } \
 public: \
- void Observe##input(const ::itk::Object * object ) \
+ void Observe##input##Input(const ::itk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this,\
-                                           & Self::Callback##event##input ); \
-    object->AddObserver( ::igstk::event(),m_Observer##event##input ); \
+                                           & Self::Callback##event##input##Input ); \
+    object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
     }
 
 #define igstkLoadedObjectEventTransductionMacro( event, input ) \
 private: \
   ReceptorObserverPointer m_Observer##event##input;  \
-  ::igstk::event::PayloadType *                m_##input##ToBeSet; \
-  void Callback##event##input( const ::itk::EventObject & eventvar ) \
+  ::igstk::event##Event::PayloadType *  m_##input##InputToBeSet; \
+  void Callback##event##input##Input( const ::itk::EventObject & eventvar ) \
   { \
-  const ::igstk::event * realevent = \
-                      dynamic_cast < const ::igstk::event * > ( &eventvar ); \
+  const ::igstk::event##Event * realevent = \
+     dynamic_cast < const ::igstk::event##Event * > ( &eventvar ); \
     if( realevent ) \
       { \
-      m_##input##ToBeSet = realevent->Get(); \
-      m_StateMachine.PushInput( m_##input ); \
+      m_##input##InputToBeSet = realevent->Get(); \
+      igstkPushInputMacro( input ); \
+      m_StateMachine.ProcessInputs(); \
       } \
   } \
 public: \
- void Observe##input(const ::itk::Object * object ) \
+ void Observe##input##Input(const ::itk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this,\
-                                           & Self::Callback##event##input ); \
-    object->AddObserver( ::igstk::event(),m_Observer##event##input ); \
+                                           & Self::Callback##event##input##Input ); \
+    object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
     }
 
 
