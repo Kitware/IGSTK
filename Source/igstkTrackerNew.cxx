@@ -410,7 +410,7 @@ void TrackerNew::CommunicationEstablishmentSuccessProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerNew::CommunicationEstablishmentSuccessProcessing called ...\n");
 
-  this->InvokeEvent( TrackerOpenEvent() );
+  this->InvokeEvent( TrackerNewOpenEvent() );
 }
 
 
@@ -420,7 +420,7 @@ void TrackerNew::CommunicationEstablishmentFailureProcessing( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::"
                  "CommunicationEstablishmentFailureProcessing called ...\n");
 
-  this->InvokeEvent( TrackerOpenErrorEvent() );
+  this->InvokeEvent( TrackerNewOpenErrorEvent() );
 }
 
 /** The Reset methods force the tracker to the
@@ -479,7 +479,7 @@ void TrackerNew::ToolsActivationSuccessProcessing( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::ToolsActivationSuccessProcessing "
                  "called ...\n");
 
-  this->InvokeEvent( TrackerInitializeEvent() );
+  this->InvokeEvent( TrackerNewInitializeEvent() );
 }
 
 /** Post-processing after ports and tools setup has failed. */ 
@@ -488,7 +488,7 @@ void TrackerNew::ToolsActivationFailureProcessing( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::ToolsActivationFailureProcessing "
                  "called ...\n");
 
-  this->InvokeEvent( TrackerInitializeErrorEvent() );
+  this->InvokeEvent( TrackerNewInitializeErrorEvent() );
 }
 
 /** The "AttemptToStartTracking" method attempts to start tracking. */
@@ -512,7 +512,7 @@ void TrackerNew::StartTrackingSuccessProcessing( void )
   // going from AttemptingToTrackState to TrackingState
   this->EnterTrackingStateProcessing();
 
-  this->InvokeEvent( TrackerStartTrackingEvent() );
+  this->InvokeEvent( TrackerNewStartTrackingEvent() );
 }
 
 /** Post-processing after start tracking has failed. */ 
@@ -521,7 +521,7 @@ void TrackerNew::StartTrackingFailureProcessing( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::StartTrackingFailureProcessing "
                  "called ...\n");
 
-  this->InvokeEvent( TrackerStartTrackingErrorEvent() );
+  this->InvokeEvent( TrackerNewStartTrackingErrorEvent() );
 }
 
 /** The "AttemptToStopTracking" method attempts to stop tracking. */
@@ -546,7 +546,7 @@ void TrackerNew::StopTrackingSuccessProcessing( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::StopTrackingSuccessProcessing "
                  "called ...\n");
 
-  this->InvokeEvent( TrackerStopTrackingEvent() );  
+  this->InvokeEvent( TrackerNewStopTrackingEvent() );  
 }
 
 /** Post-processing after start tracking has failed. */ 
@@ -557,7 +557,7 @@ void TrackerNew::StopTrackingFailureProcessing( void )
   // going from AttemptingToStopTrackingState to TrackingState
   this->EnterTrackingStateProcessing();
 
-  this->InvokeEvent( TrackerStopTrackingErrorEvent() );  
+  this->InvokeEvent( TrackerNewStopTrackingErrorEvent() );  
 }
 
 /** Needs to be called every time when entering tracking state. */ 
@@ -670,7 +670,7 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
     ++inputItr;
     }
 
-  this->InvokeEvent( TrackerUpdateStatusEvent() );  
+  this->InvokeEvent( TrackerNewUpdateStatusEvent() );  
 }
 
 /** This method is called when a call to RequestUpdateStatus failed */
@@ -679,7 +679,7 @@ void TrackerNew::UpdateStatusFailureProcessing( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::UpdateStatusFailureProcessing "
                  "called ...\n");
 
-  this->InvokeEvent( TrackerUpdateStatusErrorEvent() );  
+  this->InvokeEvent( TrackerNewUpdateStatusErrorEvent() );  
 }
 
 
@@ -749,7 +749,7 @@ void TrackerNew::CloseCommunicationSuccessProcessing( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::"
                  "CloseCommunicationSuccessProcessing called ...\n");
 
-  this->InvokeEvent( TrackerCloseEvent() );
+  this->InvokeEvent( TrackerNewCloseEvent() );
 }
 
 /** Post-processing after close tracking has failed. */ 
@@ -758,7 +758,7 @@ void TrackerNew::CloseCommunicationFailureProcessing( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::"
                  "CloseCommunicationFailureProcessing called ...\n");
 
-  this->InvokeEvent( TrackerCloseErrorEvent() );
+  this->InvokeEvent( TrackerNewCloseErrorEvent() );
 }
 
 /** Print object information */

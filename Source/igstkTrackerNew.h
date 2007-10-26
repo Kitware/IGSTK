@@ -37,29 +37,29 @@
 namespace igstk
 {
 
-itkEventMacro( TrackerEvent,                               StringEvent);
-itkEventMacro( TrackerErrorEvent,                          TrackerEvent);
+itkEventMacro( TrackerNewEvent,                               StringEvent);
+itkEventMacro( TrackerNewErrorEvent,                          TrackerNewEvent);
 
-itkEventMacro( TrackerOpenEvent,                           TrackerEvent);
-itkEventMacro( TrackerOpenErrorEvent,                      TrackerErrorEvent);
+itkEventMacro( TrackerNewOpenEvent,                           TrackerNewEvent);
+itkEventMacro( TrackerNewOpenErrorEvent,                      TrackerNewErrorEvent);
 
-itkEventMacro( TrackerCloseEvent,                          TrackerEvent);
-itkEventMacro( TrackerCloseErrorEvent,                     TrackerErrorEvent);
+itkEventMacro( TrackerNewCloseEvent,                          TrackerNewEvent);
+itkEventMacro( TrackerNewCloseErrorEvent,                     TrackerNewErrorEvent);
 
-itkEventMacro( TrackerInitializeEvent,                     TrackerEvent);
-itkEventMacro( TrackerInitializeErrorEvent,                TrackerErrorEvent);
+itkEventMacro( TrackerNewInitializeEvent,                     TrackerNewEvent);
+itkEventMacro( TrackerNewInitializeErrorEvent,                TrackerNewErrorEvent);
 
-itkEventMacro( TrackerStartTrackingEvent,                  TrackerEvent);
-itkEventMacro( TrackerStartTrackingErrorEvent,             TrackerErrorEvent);
+itkEventMacro( TrackerNewStartTrackingEvent,                  TrackerNewEvent);
+itkEventMacro( TrackerNewStartTrackingErrorEvent,             TrackerNewErrorEvent);
 
-itkEventMacro( TrackerStopTrackingEvent,                   TrackerEvent);
-itkEventMacro( TrackerStopTrackingErrorEvent,              TrackerErrorEvent);
+itkEventMacro( TrackerNewStopTrackingEvent,                   TrackerNewEvent);
+itkEventMacro( TrackerNewStopTrackingErrorEvent,              TrackerNewErrorEvent);
 
-itkEventMacro( TrackerUpdateStatusEvent,                   TrackerEvent);
-itkEventMacro( TrackerUpdateStatusErrorEvent,              TrackerErrorEvent);
+itkEventMacro( TrackerNewUpdateStatusEvent,                   TrackerNewEvent);
+itkEventMacro( TrackerNewUpdateStatusErrorEvent,              TrackerNewErrorEvent);
 
 
-/** \class Tracker
+/** \class TrackerNew
  *  \brief Superclass for concrete IGSTK Tracker classes.
  *
  *  This class presents a generic interface for tracking the

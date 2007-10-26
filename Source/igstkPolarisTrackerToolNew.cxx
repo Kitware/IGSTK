@@ -113,7 +113,7 @@ PolarisTrackerToolNew::PolarisTrackerToolNew():m_StateMachine(this)
   // Transitions from WirelessTrackerToolPortNumberSpecified
   igstkAddTransitionMacro( WirelessTrackerToolPortNumberSpecified,
                            ValidSROMFileName,
-                           WirelessTrackerToolPortNumberSpecified,
+                           WirelessTrackerToolSROMFileNameSpecified,
                            SetSROMFileName);
 
   igstkAddTransitionMacro( WirelessTrackerToolPortNumberSpecified,
