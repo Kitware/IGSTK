@@ -36,6 +36,7 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( AttemptingToInitializeTrackerTool );
   igstkAddStateMacro( Initialized );
+  igstkAddStateMacro( AttemptingToAttachTrackerToolToTracker );
   igstkAddStateMacro( Attached );
   igstkAddStateMacro( NotAvailable );
   igstkAddStateMacro( Tracked );
@@ -45,8 +46,11 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
 
   // Set the input descriptors
   igstkAddInputMacro( InitializeTool );
-  igstkAddInputMacro( Success); 
-  igstkAddInputMacro( Failure); 
+  igstkAddInputMacro( ToolInitializationSuccess ); 
+  igstkAddInputMacro( ToolInitializationFailure ); 
+  igstkAddInputMacro( AttachToolToTracker ); 
+  igstkAddInputMacro( AttachmentToTrackerSuccess ); 
+  igstkAddInputMacro( AttachmentToTrackerFailure ); 
 
 
   m_StateMachine.SetReadyToRun();
@@ -61,14 +65,32 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
 
   // Transitions from the AttemptingToInitialize
   igstkAddTransitionMacro( AttemptingToInitializeTrackerTool,
-                           Success,
+                           ToolInitializationSuccess,
                            Initialized,
                            TrackerToolInitializationSuccess );
 
   igstkAddTransitionMacro( AttemptingToInitializeTrackerTool,
-                           Failure,
+                           ToolInitializationFailure,
                            Idle,
                            TrackerToolInitializationFailure );
+
+  // Transition from Initialized state
+  igstkAddTransitionMacro( Initialized,
+                           AttachToolToTracker,
+                           AttemptingToAttachTrackerToolToTracker,
+                           AttemptToAttachTrackerToolToTracker);
+
+ // Transitions from the AttemptingToAttachTrackerToolToTracker
+  igstkAddTransitionMacro( AttemptingToAttachTrackerToolToTracker,
+                           AttachmentToTrackerSuccess,
+                           Attached,
+                           TrackerToolAttachmentToTrackerSuccess );
+
+  igstkAddTransitionMacro( AttemptingToAttachTrackerToolToTracker,
+                           AttachmentToTrackerFailure,
+                           Initialized,
+                           TrackerToolAttachmentToTrackerFailure );
+
  
 }
 
@@ -98,7 +120,7 @@ TrackerToolNew::SetTrackerToolIdentifier( std::string identifier )
   m_TrackerToolIdentifier = identifier;
 }
 
-/** The "AttemptToInitialize" method attempts to initialize the tracker to    ol */
+/** The "AttemptToInitializeProcessing" method attempts to initialize the tracker tool */
 void TrackerToolNew::AttemptToInitializeProcessing( void )
 {
   igstkLogMacro( DEBUG, 
@@ -107,8 +129,22 @@ void TrackerToolNew::AttemptToInitializeProcessing( void )
   bool  result = this->GetTrackerToolInitialized();
   
   m_StateMachine.PushInputBoolean( result,
-                                   m_SuccessInput,
-                                   m_FailureInput );
+                                   m_ToolInitializationSuccessInput,
+                                   m_ToolInitializationFailureInput );
+}
+
+/** The "AttemptToAttachTrackerToolToTracker" method attempts to attach the tracker tool
+ * to the tracker */
+void TrackerToolNew::AttemptToAttachTrackerToolToTrackerProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+                 "igstk::TrackerToolNew::AttemptToAttachTrackerToolToTracker called ...\n");
+
+  // FIXME: Add code to verify if the the tool is attached successfully or not
+  bool result = true;
+  m_StateMachine.PushInputBoolean( result,
+                                   m_AttachmentToTrackerSuccessInput,
+                                   m_AttachmentToTrackerFailureInput );
 }
 
 /** The "GetTrackerToolInitialized" methods returns a boolean indicating
@@ -144,7 +180,27 @@ void TrackerToolNew::TrackerToolInitializationFailureProcessing( void )
   std::cerr << "TrackerTool Initialization failed: Make sure to establish the required tool parameters " << std::endl;
 }
 
+/** Post-processing after a successful tracker tool to tracker attachment attempt . */ 
+void TrackerToolNew::TrackerToolAttachmentToTrackerSuccessProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerToolNew::TrackerToolAttachmentToTrackerSuccessiProcessing called ...\n");
 
+
+  // FIXME: convert this std::cout to an event 
+  std::cout << "TrackerToolNew attached to the tracker succesfully: " << std::endl;
+}
+
+/** Post-processing after a failed attachment attempt . */ 
+void TrackerToolNew::TrackerToolAttachmentToTrackerFailureProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerToolNew::TrackerToolInitializationFailureProcessing called ...\n");
+
+
+  // FIXME: convert this std::cout to an event 
+  std::cerr << "TrackerTool to tracker attachment attempt failed " << std::endl;
+}
 
 /** This method should only be available to the Tracker */
 void 

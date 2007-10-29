@@ -162,14 +162,18 @@ private:
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( InitializeTool );
-  igstkDeclareInputMacro( Success );
-  igstkDeclareInputMacro( Failure );
+  igstkDeclareInputMacro( ToolInitializationSuccess );
+  igstkDeclareInputMacro( ToolInitializationFailure );
+  igstkDeclareInputMacro( AttachToolToTracker );
+  igstkDeclareInputMacro( AttachmentToTrackerSuccess );
+  igstkDeclareInputMacro( AttachmentToTrackerFailure );
   
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( AttemptingToInitializeTrackerTool );
   igstkDeclareStateMacro( Initialized );
+  igstkDeclareStateMacro( AttemptingToAttachTrackerToolToTracker );
   igstkDeclareStateMacro( Attached );
   igstkDeclareStateMacro( NotAvailable );
   igstkDeclareStateMacro( Tracked );
@@ -177,11 +181,21 @@ private:
   /** Attempt method to initialize */
   void AttemptToInitializeProcessing( void );
 
+  /** Attempt method to attach tracker tool to the tracker */
+  void AttemptToAttachTrackerToolToTrackerProcessing( void );
+
   /** Post-processing after a successful tracker tool initialization */
   void TrackerToolInitializationSuccessProcessing( void );
 
   /** Post-processing after a failed tracker tool initialization */
   void TrackerToolInitializationFailureProcessing( void );
+
+  /** Post-processing after a successful tracker tool to tracker 
+      attachment attempt . */ 
+  void TrackerToolAttachmentToTrackerSuccessProcessing( void );
+
+  /** Post-processing after a failed attachment attempt . */ 
+ void TrackerToolAttachmentToTrackerFailureProcessing( void );
 
 };
 
