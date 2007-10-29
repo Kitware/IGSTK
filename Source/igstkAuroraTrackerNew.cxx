@@ -169,6 +169,15 @@ AuroraTrackerNew::ResultType AuroraTrackerNew::InternalOpen( void )
   return result;
 }
 
+/** Verify tracker tool information*/
+AuroraTrackerNew::ResultType
+AuroraTrackerNew 
+::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+{
+  //FIXME: verify the tracker tool information provided by the user
+  return SUCCESS;
+}
+ 
 /** Close communication with the tracking device. */
 AuroraTrackerNew::ResultType AuroraTrackerNew::InternalClose( void )
 {

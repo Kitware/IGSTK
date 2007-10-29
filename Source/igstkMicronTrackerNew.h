@@ -116,6 +116,9 @@ protected:
   /** Reset the tracking device to put it back to its original state. */
   virtual ResultType InternalReset( void );
 
+  /** Verify tracker tool information */
+  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
+
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 

@@ -789,11 +789,39 @@ void TrackerNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 /** Request adding a tool to the tracker  */
-void TrackerNew::RequestAddTool( std::string trackerToolIdentifier, TrackerToolType * trackerTool )
+TrackerNew::ResultType 
+TrackerNew::
+RequestAddTool( std::string trackerToolIdentifier, TrackerToolType * trackerTool )
 {
-  m_TrackerTools[ trackerToolIdentifier ] = trackerTool; 
-  // FIX trackerTool->RequestAttachToSpatialObjectParent( this->m_CoordinateReferenceSystem );
+  // Verify the tracker tool information before adding it to the
+  // tracker. The conditions that need be verified depend on 
+  // the tracker type. For example, for MicronTracker, the 
+  // the tracker should have access to the template file of the
+  // Marker that is attached to the tracker tool. 
+  if ( VerifyTrackerToolInformation( trackerTool ) )
+    {
+    m_TrackerTools[ trackerToolIdentifier ] = trackerTool; 
+    return SUCCESS;
+    }
+  else
+    {
+    return FAILURE;
+    }
+    
+  // FIX: Add a code to attach the coordinate system of the tracker tool to 
+  // the tracker. Something like
+  // trackerTool->RequestAttachToSpatialObjectParent( this->m_CoordinateReferenceSystem );
 }
+
+/** Verify tracker tool information*/
+TrackerNew::ResultType TrackerNew
+::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+{
+  //This method will be overridden in the derived classes.
+  //as the tracker tool information is different for different tracker types
+  return SUCCESS;
+}
+ 
 
 /** Return the coordinate system associated with this tracker */
 const TrackerNew::CoordinateReferenceSystemType *

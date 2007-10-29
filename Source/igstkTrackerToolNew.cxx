@@ -110,7 +110,11 @@ void
 TrackerToolNew::RequestAttachToTracker( TrackerNew * tracker )
 {
   igstkLogMacro( DEBUG, "igstk::TrackerToolNew::RequestAttachToTracker called...\n");
-  tracker->RequestAddTool( m_TrackerToolIdentifier, this );
+
+  m_Tracker = tracker;
+  igstkPushInputMacro( AttachToolToTracker );
+  this->m_StateMachine.ProcessInputs();
+
 }
 
 void 
@@ -141,6 +145,7 @@ void TrackerToolNew::AttemptToAttachTrackerToolToTrackerProcessing( void )
                  "igstk::TrackerToolNew::AttemptToAttachTrackerToolToTracker called ...\n");
 
   // FIXME: Add code to verify if the the tool is attached successfully or not
+  m_Tracker->RequestAddTool( m_TrackerToolIdentifier, this );
   bool result = true;
   m_StateMachine.PushInputBoolean( result,
                                    m_AttachmentToTrackerSuccessInput,

@@ -172,6 +172,14 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalOpen( void )
   return result;
 }
 
+/** Verify tracker tool information*/
+PolarisTrackerNew::ResultType PolarisTrackerNew
+::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+{
+  //FIXME: verify the tracker tool information provided by the user
+  return SUCCESS;
+}
+ 
 /** Close communication with the tracking device. */
 PolarisTrackerNew::ResultType PolarisTrackerNew::InternalClose( void )
 {

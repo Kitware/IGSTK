@@ -156,24 +156,25 @@ public:
   ports and tools when the tracker is in tracking state. */
   void RequestUpdateStatus( void );
 
-  /** Add a tracker tool to this tracker  */
-  void RequestAddTool( std::string TrackerToolIdentifier, TrackerToolType * trackerTool );
-
-  /** Set the time period over which a tool transform should be considered
+ /** Set the time period over which a tool transform should be considered
    *  valid. */
   igstkSetMacro( ValidityTime, TimePeriodType );
 
   /** Get the validity time. */
   igstkGetMacro( ValidityTime, TimePeriodType );
 
-
-protected:
-
   typedef enum 
     { 
     FAILURE=0, 
     SUCCESS
     } ResultType;
+
+
+  /** Add a tracker tool to this tracker  */
+  ResultType RequestAddTool( std::string TrackerToolIdentifier, TrackerToolType * trackerTool );
+
+protected:
+
 
   TrackerNew(void);
 
@@ -244,7 +245,21 @@ protected:
    * Tracker tools need access to this reference system in order to use it
    * as parent in the scene graph. */
   const CoordinateReferenceSystemType * GetCoordinateReferenceSystem() const;
- 
+
+  /** Verify if a tracker tool information is correct before adding/attaching
+   *  it to the tracker. 
+   * This method is used to verify the information supplied by 
+   * the user about the tracker tool. The information depends on
+   * the tracker type. For example, during the intitalization step
+   * of the MicronTracker, location of the directory containing 
+   * marker template files is specified. If the user tries to attach
+   * a tracker tool with a marker type whose template file is not stored in
+   * this directory, this method will return failure. Similarly, the 
+   * method returns failure,  if the toolID specified by the user during
+   * the tracker tool intialization does not match with the tool id 
+   * read from the SROM file*/
+  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * ); 
+
 private:
 
   /** Pulse generator for driving the rate of tracker updates. */

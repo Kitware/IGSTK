@@ -197,6 +197,7 @@ private:
   /** Post-processing after a failed attachment attempt . */ 
  void TrackerToolAttachmentToTrackerFailureProcessing( void );
 
+  TrackerNew        * m_Tracker;
 };
 
 std::ostream& operator<<(std::ostream& os, const TrackerToolNew& o);

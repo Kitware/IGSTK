@@ -221,7 +221,7 @@ bool MicronTrackerNew::SetUpCameras()
 /** Request adding a tool to the tracker */
 void MicronTrackerNew::RequestAddTool( std::string identifier, MicronTrackerToolType * trackerTool )
 {
-  igstkLogMacro( DEBUG, "MicronTrackerNew::InternalClose called ...\n");  
+  igstkLogMacro( DEBUG, "MicronTrackerNew::RequestAddTool called ...\n");  
 
   Superclass::RequestAddTool( identifier, trackerTool );
 
@@ -242,7 +242,15 @@ void MicronTrackerNew::RequestAddTool( std::string identifier, MicronTrackerTool
            << trackerTool->GetMarkerName() << std::endl;
 }
 
-
+/** Verify tracker tool information*/
+MicronTrackerNew::ResultType
+MicronTrackerNew
+::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+{
+  //FIXME: verify the tracker tool information provided by the user
+  return SUCCESS;
+}
+ 
 /** Detach camera . */
 MicronTrackerNew::ResultType MicronTrackerNew::InternalClose( void )
 {
