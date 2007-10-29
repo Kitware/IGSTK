@@ -24,6 +24,11 @@
 #include <iostream>
 #include <fstream>
 
+#include "igstkVTKLoggerOutput.h"
+
+#include "itklogger.h"
+#include "itkstdstreamlogoutput.h"
+
 #include "igstkPolarisTrackerToolNew.h"
 
 
@@ -45,11 +50,26 @@ int igstkTrackerToolNewTest( int argc, char ** argv )
     return EXIT_FAILURE;
     }
 
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
+                                                = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
+                                       // VTK OutputWindow -> logger
 
   typedef igstk::PolarisTrackerToolNew      TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+
+  trackerTool->OverrideVTKWindow();
+  trackerTool->SetLogger( logger );
  
   // Select tracker tool to be wired or wireless
   if ( argv[0] ) 

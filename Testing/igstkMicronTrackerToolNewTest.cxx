@@ -24,18 +24,53 @@
 #include <iostream>
 #include <fstream>
 
+#include "igstkVTKLoggerOutput.h"
+
+#include "itkLogger.h"
+#include "itkStdStreamLogOutput.h"
+
+
+
 #include "igstkMicronTrackerToolNew.h"
 
 
-int igstkMicronTrackerToolNewTest( int, char * [] )
+int igstkMicronTrackerToolNewTest( int argc, char ** argv  )
 {
   igstk::RealTimeClock::Initialize();
+
+  typedef itk::Logger                   LoggerType; 
+  typedef itk::StdStreamLogOutput       LogOutputType;
+
+  if( argc < 2 )
+    {
+    std::cerr << " Usage: " << argv[0] << "\t" 
+                            << "Type( 0 for Wireless, 1 for Wired )"
+                            << "Port Number"
+                            << "[SROM file]"
+                            << "[tool Id]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
+                                                = igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
+                                       // VTK OutputWindow -> logger
+
 
   typedef igstk::MicronTrackerToolNew           TrackerToolType;
   typedef TrackerToolType::TransformType        TransformType;
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
+  trackerTool->SetLogger( logger );
   std::string markerNameTT = "TTblock";
  
   trackerTool->RequestSetMarkerName( markerNameTT );  
