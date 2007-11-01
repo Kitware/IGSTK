@@ -87,7 +87,7 @@ public:
     {
     if( parent != NULL )
        {
-       CoordinateReferenceSystem & referenceSystem = 
+       const CoordinateReferenceSystem* referenceSystem = 
        igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( parent );
        // this->m_CoordinateSystemParentToBeSet = parent;
 
@@ -179,7 +179,7 @@ protected:
 
   /** Returns the ITK spatial object that is contained inside this IGSTK 
    *  spatial object */
-  SpatialObjectType * GetInternalSpatialObject();
+  SpatialObjectType * GetInternalSpatialObject() const;
 
 private:
   
@@ -188,8 +188,8 @@ private:
   SpatialObjectType::Pointer   m_SpatialObjectToBeSet;
 
   /** Parent Spatial Object */
-  Self::Pointer                m_Parent;
-  Self::Pointer                m_ParentToBeSet;
+  Self::ConstPointer                m_Parent;
+  Self::ConstPointer                m_ParentToBeSet;
 
   /** Internal Transform and temporary transform. 
    *  This transform can represent the relationship to the parent

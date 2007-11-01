@@ -171,7 +171,7 @@ void SpatialObject::AttachToSpatialObjectParentProcessing()
 
 /** Return the internal pointer to the SpatialObject */
 SpatialObject::SpatialObjectType * 
-SpatialObject::GetInternalSpatialObject()
+SpatialObject::GetInternalSpatialObject() const
 {
   return m_SpatialObject;
 }
