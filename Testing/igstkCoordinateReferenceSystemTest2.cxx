@@ -21,6 +21,79 @@
 #include "itkStdStreamLogOutput.h"
 
 
+class CoordinateReferenceSystemObserver : public ::itk::Command
+{
+public:
+  typedef igstk::CoordinateReferenceSystemTransformToEvent  EventType;
+  typedef igstk::CoordinateReferenceSystemTransformToResult PayloadType;
+
+  /** Standard class typedefs. */
+  typedef CoordinateReferenceSystemObserver         Self;
+  typedef ::itk::Command                            Superclass;
+  typedef ::itk::SmartPointer<Self>        Pointer;
+  typedef ::itk::SmartPointer<const Self>  ConstPointer;
+  
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(CoordinateReferenceSystemObserver, ::itk::Command);
+  itkNewMacro(CoordinateReferenceSystemObserver);
+
+  CoordinateReferenceSystemObserver()
+    {
+    m_GotPayload = false;
+    }
+
+  ~CoordinateReferenceSystemObserver()
+    {
+
+    }
+
+  void ClearPayload()
+    {
+    m_GotPayload = false;
+    }
+
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    m_GotPayload = false;
+    if( EventType().CheckEvent( &event ) )
+      {
+      const EventType * transformEvent = 
+                dynamic_cast< const EventType *>( &event );
+      if( transformEvent )
+        {
+        m_Payload = transformEvent->Get();
+        m_GotPayload = true;
+        }
+      }
+    else
+      {
+      std::cout << "Got unexpected event : " << std::endl;
+      event.Print(std::cout);
+      }
+    }
+
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    this->Execute(static_cast<const itk::Object*>(caller), event);
+    }
+
+  bool GotPayload()
+    {
+    return m_GotPayload;
+    }
+
+  PayloadType GetPayload()
+    {
+    return m_Payload;
+    }
+
+protected:
+
+  PayloadType   m_Payload;
+  bool          m_GotPayload;
+
+};
+
 int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 {
 
@@ -32,6 +105,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   typedef TimeStampType::TimePeriodType       TimePeriodType;
   typedef CoordSysType::Pointer       CoordinateSystemPointer;
   typedef CoordSysType::ConstPointer  ConstCoordinateSystemPointer;
+  typedef CoordinateReferenceSystemObserver::EventType CoordinateSystemEventType;
 
   const TransformType::ErrorType              transformErrorValue = 1e-5;
   const TimePeriodType aReallyLongTime 
@@ -44,7 +118,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   logOutput->SetStream( std::cout );
 
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( LoggerType::DEBUG );
+  logger->SetPriorityLevel( LoggerType::CRITICAL );
 
   //
   //
@@ -60,7 +134,10 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   CoordinateSystemPointer root = CoordSysType::New();
   root->SetName( "root" );
   root->SetLogger( logger );
-  std::cout << "Root identifier : " << root->GetIdentifier() << std::endl;
+
+
+  CoordinateReferenceSystemObserver::Pointer rootObserver = CoordinateReferenceSystemObserver::New();
+  root->AddObserver( CoordinateSystemEventType(), rootObserver );
 
   CoordinateSystemPointer A = CoordSysType::New();
   A->SetName( "A" );
@@ -68,44 +145,44 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 
   CoordinateSystemPointer B = CoordSysType::New();
   B->SetName( "B" );
-  B->SetLogger( logger );
+  // B->SetLogger( logger );
 
   CoordinateSystemPointer C = CoordSysType::New();
   C->SetName( "C" );
-  C->SetLogger( logger );
+  // C->SetLogger( logger );
 
   CoordinateSystemPointer D = CoordSysType::New();
   D->SetName( "D" );
-  D->SetLogger( logger );
+  // D->SetLogger( logger );
 
   CoordinateSystemPointer E = CoordSysType::New();
   E->SetName( "E" );
-  E->SetLogger( logger );
+  // E->SetLogger( logger );
 
   CoordinateSystemPointer F = CoordSysType::New();
   F->SetName( "F" );
-  F->SetLogger( logger );
+  // F->SetLogger( logger );
 
   CoordinateSystemPointer G = CoordSysType::New();
   G->SetName( "G" );
-  G->SetLogger( logger );
+  // G->SetLogger( logger );
 
   TransformType identity;
   identity.SetToIdentity(aReallyLongTime);
-  root->SetTransformAndParent(identity, NULL);
-  root->SetTransformAndParent(identity, root);
+  root->RequestSetTransformAndParent(identity, NULL);
+  root->RequestSetTransformAndParent(identity, root);
   root->Print(std::cout);
 
   TransformType TARoot;
   TARoot.SetToIdentity(aReallyLongTime);
-  A->SetTransformAndParent(TARoot, root);
+  A->RequestSetTransformAndParent(TARoot, root);
 
   TransformType TBRoot;
   TBRoot.SetToIdentity(aReallyLongTime);
   TransformType::VersorType tbrootRotation;
   tbrootRotation.SetRotationAroundX(vnl_math::pi/2.0);
   TBRoot.SetRotation(tbrootRotation, transformErrorValue, aReallyLongTime);
-  B->SetTransformAndParent(TBRoot, root);
+  B->RequestSetTransformAndParent(TBRoot, root);
 
   TransformType TCA;
   TransformType::VectorType trans;
@@ -113,198 +190,151 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   trans[1] = 0;
   trans[2] = 0;
   TCA.SetTranslation(trans, transformErrorValue, aReallyLongTime);
-  C->SetTransformAndParent(TCA, A);
+  C->RequestSetTransformAndParent(TCA, A);
 
   TransformType TDB;
   TDB.SetToIdentity(aReallyLongTime);
-  D->SetTransformAndParent(TDB, B);
+  D->RequestSetTransformAndParent(TDB, B);
 
   TransformType TFC;
   TFC.SetToIdentity(aReallyLongTime);
-  F->SetTransformAndParent(TFC, C);
+  F->RequestSetTransformAndParent(TFC, C);
 
   TransformType TGA;
   TGA.SetToIdentity(aReallyLongTime);
-  G->SetTransformAndParent(TGA, A);
-
-  CoordSysType::ConstPointer ancestor;
-  ancestor = CoordSysType::GetLowestCommonAncestor(root, A);
-  std::cout << "root and A has ancestor: " 
-            << ancestor->GetName() << std::endl;
-
-  ancestor = CoordSysType::GetLowestCommonAncestor(root, B);
-  std::cout << "root and B has ancestor: " 
-            << ancestor->GetName() << std::endl;
-
-  ancestor = CoordSysType::GetLowestCommonAncestor(root, C);
-  std::cout << "root and C has ancestor: " 
-            << ancestor->GetName() << std::endl;
-
-  ancestor = CoordSysType::GetLowestCommonAncestor(root, D);
-  std::cout << "root and D has ancestor: " 
-            << ancestor->GetName() << std::endl;
-
-  ancestor = CoordSysType::GetLowestCommonAncestor(A, B);
-  std::cout << "A and B has ancestor: " 
-            <<  ancestor->GetName() << std::endl;
-
-  ancestor = CoordSysType::GetLowestCommonAncestor(C, D);
-  std::cout << "C and D has ancestor: " 
-            <<  ancestor->GetName() << std::endl;
-
-  ancestor = CoordSysType::GetLowestCommonAncestor(A, C);
-  std::cout << "A and C has ancestor: " 
-            <<  ancestor->GetName() << std::endl;
-  
-  // NULL pointer return
-  ancestor = CoordSysType::GetLowestCommonAncestor(E, C); 
-  const char* ancestorName;
-  if (ancestor.IsNull())
-    {
-    ancestorName = "NULL";
-    }
-  else
-    {
-    ancestorName = ancestor->GetName();
-    }
-  std::cout << "E and C has ancestor: " <<  ancestorName << std::endl;
-
-  ancestor = CoordSysType::GetLowestCommonAncestor(NULL, NULL);
-  if (ancestor.IsNull())
-    {
-    ancestorName = "NULL";
-    }
-  else
-    {
-    ancestorName = ancestor->GetName();
-    }
-  std::cout << "NULL and NULL has ancestor: " <<  ancestorName << std::endl;
-
-  ancestor = CoordSysType::GetLowestCommonAncestor(NULL, E);
-  if (ancestor.IsNull())
-    {
-    ancestorName = "NULL";
-    }
-  else
-    {
-    ancestorName = ancestor->GetName();
-    }
-  std::cout << "NULL and E has ancestor : " <<  ancestorName << std::endl; 
-
-  ancestor = CoordSysType::GetLowestCommonAncestor(E, NULL);
-  if (ancestor.IsNull())
-    {
-    ancestorName = "NULL";
-    }
-  else
-    {
-    ancestorName = ancestor->GetName();
-    }
-  std::cout << "E and NULL has ancestor : " <<  ancestorName << std::endl; 
-
-  ancestor = CoordSysType::GetLowestCommonAncestor(F, G);
-  if (ancestor.IsNull())
-    {
-    ancestorName = "NULL";
-    }
-  else
-    {
-    ancestorName = ancestor->GetName();
-    }
-  std::cout << "F and G has ancestor : " << ancestorName << std::endl; 
-  
-  ancestor = CoordSysType::GetLowestCommonAncestor(G, G);
-  if (ancestor.IsNull())
-    {
-    ancestorName = "NULL";
-    }
-  else
-    {
-    ancestorName = ancestor->GetName();
-    }
-  std::cout << "G and G has ancestor : " << ancestorName << std::endl; 
-
-  ancestor = CoordSysType::GetLowestCommonAncestor(root, root);
-  if (ancestor.IsNull())
-    {
-    ancestorName = "NULL";
-    }
-  else
-    {
-    ancestorName = ancestor->GetName();
-    }
-  std::cout << "root and root has ancestor : " << ancestorName << std::endl; 
-
+  G->RequestSetTransformAndParent(TGA, A);
 
   std::cout << "Checking transform from root to A : ";
-  TransformType TRootA = CoordSysType::GetTransformBetween(root,A);
-  if (TRootA.IsNumericallyEquivalent(TARoot.GetInverse()) == false)
+  
+  root->RequestComputeTransformTo(A);
+
+  TransformType TRootA;
+  if (rootObserver->GotPayload())
+    {
+    TRootA = rootObserver->GetPayload().m_Transform;
+
+    if (TRootA.IsNumericallyEquivalent(TARoot.GetInverse()) == false)
+      {
+      testPassed = EXIT_FAILURE;
+      std::cout << "FAILED!" << std::endl;
+      }
+    else
+      {
+      std::cout << "passed." << std::endl;
+      }
+    }
+  else
     {
     testPassed = EXIT_FAILURE;
     std::cout << "FAILED!" << std::endl;
-    }
-  else
-    {
-    std::cout << "passed." << std::endl;
     }
 
   std::cout << "Checking transform from root to B : ";
-  TransformType TRootB = CoordSysType::GetTransformBetween(root,B);
-  if (TRootB.IsNumericallyEquivalent(TBRoot.GetInverse()) == false)
+  rootObserver->ClearPayload();
+
+  root->RequestComputeTransformTo(B);
+  TransformType TRootB;
+
+  if (rootObserver->GotPayload())
     {
-    testPassed = EXIT_FAILURE;
-    std::cout << "FAILED!" << std::endl;
+    TRootB = rootObserver->GetPayload().m_Transform;
+
+    if (TRootB.IsNumericallyEquivalent(TBRoot.GetInverse()) == false)
+      {
+      testPassed = EXIT_FAILURE;
+      std::cout << "FAILED!" << std::endl;
+      }
+    else
+      {
+      std::cout << "passed." << std::endl;
+      }
     }
   else
     {
-    std::cout << "passed." << std::endl;
+    testPassed = EXIT_FAILURE;
+    std::cout << "FAILED!" << std::endl;
     }
 
   std::cout << "Checking transform from root to C : "; 
-  TransformType TRootC = CoordSysType::GetTransformBetween(root,C);
-  TransformType TCRoot = TransformType::TransformCompose(TARoot, TCA);
-  if (TRootC.IsNumericallyEquivalent(TCRoot.GetInverse()) == false)
+  rootObserver->ClearPayload();
+  root->RequestComputeTransformTo(C);
+  TransformType TRootC;
+
+  if (rootObserver->GotPayload())
     {
-    testPassed = EXIT_FAILURE;
-    std::cout << "FAILED!" << std::endl;
+    TRootC = rootObserver->GetPayload().m_Transform;
+
+    TransformType TCRoot = TransformType::TransformCompose(TARoot, TCA);
+    if (TRootC.IsNumericallyEquivalent(TCRoot.GetInverse()) == false)
+      {
+      testPassed = EXIT_FAILURE;
+      std::cout << "FAILED!" << std::endl;
+      }
+    else
+      {
+      std::cout << "passed." << std::endl;
+      }
     }
   else
     {
-    std::cout << "passed." << std::endl;
+    testPassed = EXIT_FAILURE;
+    std::cout << "FAILED!" << std::endl;
     }
 
   std::cout << "Checking transform from root to D : "; 
-  TransformType TRootD = CoordSysType::GetTransformBetween(root,D);
-  TransformType TDRoot = TransformType::TransformCompose(TBRoot, TDB);
-  if (TRootD.IsNumericallyEquivalent(TDRoot.GetInverse()) == false)
+  rootObserver->ClearPayload();
+  root->RequestComputeTransformTo(D);
+  TransformType TRootD;
+  if (rootObserver->GotPayload())
+    {
+    TRootD = rootObserver->GetPayload().m_Transform;
+
+    TransformType TDRoot = TransformType::TransformCompose(TBRoot, TDB);
+    if (TRootD.IsNumericallyEquivalent(TDRoot.GetInverse()) == false)
+      {
+      testPassed = EXIT_FAILURE;
+      std::cout << "FAILED!" << std::endl;
+      }
+    else
+      {
+      std::cout << "passed." << std::endl;
+      }
+    }
+  else
     {
     testPassed = EXIT_FAILURE;
     std::cout << "FAILED!" << std::endl;
     }
-  else
-    {
-    std::cout << "passed." << std::endl;
-    }
+
 
   std::cout << "Checking transform from root to E : " ;
   TimeStampType now;
   now.SetStartTimeNowAndExpireAfter(0);
 
-  TransformType TRootE = CoordSysType::GetTransformBetween(root,E);
-  // Should never be valid since root and E are disconnected.
-  if (TRootE.GetExpirationTime() >= now.GetExpirationTime())
+  rootObserver->ClearPayload();
+  // root->RequestComputeTransformTo(E);
+  TransformType TRootE;
+  if (rootObserver->GotPayload())
     {
+    // Disconnected, shouldn't get a transform
     testPassed = EXIT_FAILURE;
     std::cout << "FAILED!" << std::endl;
-    std::cout << TRootE.GetExpirationTime() << std::endl;
-    std::cout << now.GetExpirationTime() << std::endl;
     }
   else
     {
     std::cout << "passed." << std::endl;
     }
- 
-  return testPassed;
 
+  root->RequestSetTransformAndParent( identity, A );
+
+  root->RequestComputeTransformTo( NULL );
+  root->RequestComputeTransformTo( root );
+
+  root->SetReportTiming( true );
+
+  CoordinateSystemPointer Leak = CoordSysType::New();
+  Leak->SetName( "Leak" );
+
+  return testPassed;
 }
 
