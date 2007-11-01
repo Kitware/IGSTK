@@ -202,5 +202,7 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::ViewNew2D, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::ViewNew3D, outputDirectory, skipLoops );
 
+  igstkTestExportStateMachine1( igstk::CoordinateReferenceSystem, outputDirectory, skipLoops );
+
   return EXIT_SUCCESS;
 }
