@@ -117,13 +117,13 @@ CoordinateReferenceSystem
   /** Invalid inputs to AttemptingComputeTransformTo :
        NullParent, ThisParent, ValidParent, ParentCausesCycle, NullCoordinateReferenceSystem
        ThisCoordinateReferenceSystem, ValidCoordinateReferenceSystem */
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, NullParent, AttemptingComputeTransformToInInitialized, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, ThisParent, AttemptingComputeTransformToInInitialized, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, ValidParent, AttemptingComputeTransformToInInitialized, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, ParentCausesCycle, AttemptingComputeTransformToInInitialized, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, NullCoordinateReferenceSystem, AttemptingComputeTransformToInInitialized, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, ThisCoordinateReferenceSystem, AttemptingComputeTransformToInInitialized, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, ValidCoordinateReferenceSystem, AttemptingComputeTransformToInInitialized, InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, NullParent, AttemptingComputeTransformTo, InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, ThisParent, AttemptingComputeTransformTo, InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, ValidParent, AttemptingComputeTransformTo, InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, ParentCausesCycle, AttemptingComputeTransformTo, InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, NullCoordinateReferenceSystem, AttemptingComputeTransformTo, InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, ThisCoordinateReferenceSystem, AttemptingComputeTransformTo, InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, ValidCoordinateReferenceSystem, AttemptingComputeTransformTo, InvalidRequest );
 
   m_ReportTiming = false;
 
@@ -249,14 +249,14 @@ void CoordinateReferenceSystem
 void CoordinateReferenceSystem
 ::ComputeTransformToValidTargetProcessing()
 {
-  if ( NULL == this->m_ComputeTransformToTarget )
+  if (this->m_ComputeTransformToTarget.IsNull()) //( NULL == this->m_ComputeTransformToTarget )
     {
     igstkPushInputMacro( Disconnected );
     m_StateMachine.ProcessInputs();
     return;
     }
 
-  if ( this == this->m_ComputeTransformToTarget )
+  if (this->m_ComputeTransformToTarget == this) //( this == this->m_ComputeTransformToTarget )
     {
     this->m_ComputedTransform = igstk::Transform();
     this->m_ComputedTransform.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
