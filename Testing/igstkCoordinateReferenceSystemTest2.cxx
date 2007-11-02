@@ -40,21 +40,27 @@ public:
   CoordinateReferenceSystemObserver()
     {
     m_GotPayload = false;
+    m_Payload.m_Destination = NULL;
+    m_Payload.m_Source = NULL;
     }
 
   ~CoordinateReferenceSystemObserver()
     {
-
+    m_GotPayload = false;
+    m_Payload.m_Destination = NULL;
+    m_Payload.m_Source = NULL;
     }
 
   void ClearPayload()
     {
     m_GotPayload = false;
+    m_Payload.m_Destination = NULL;
+    m_Payload.m_Source = NULL;
     }
 
   void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
-    m_GotPayload = false;
+    this->ClearPayload();
     if( EventType().CheckEvent( &event ) )
       {
       const EventType * transformEvent = 
@@ -145,27 +151,27 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 
   CoordinateSystemPointer B = CoordSysType::New();
   B->SetName( "B" );
-  // B->SetLogger( logger );
+  B->SetLogger( logger );
 
   CoordinateSystemPointer C = CoordSysType::New();
   C->SetName( "C" );
-  // C->SetLogger( logger );
+  C->SetLogger( logger );
 
   CoordinateSystemPointer D = CoordSysType::New();
   D->SetName( "D" );
-  // D->SetLogger( logger );
+  D->SetLogger( logger );
 
   CoordinateSystemPointer E = CoordSysType::New();
   E->SetName( "E" );
-  // E->SetLogger( logger );
+  E->SetLogger( logger );
 
   CoordinateSystemPointer F = CoordSysType::New();
   F->SetName( "F" );
-  // F->SetLogger( logger );
+  F->SetLogger( logger );
 
   CoordinateSystemPointer G = CoordSysType::New();
   G->SetName( "G" );
-  // G->SetLogger( logger );
+  G->SetLogger( logger );
 
   TransformType identity;
   identity.SetToIdentity(aReallyLongTime);
@@ -230,7 +236,6 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     }
 
   std::cout << "Checking transform from root to B : ";
-  rootObserver->ClearPayload();
 
   root->RequestComputeTransformTo(B);
   TransformType TRootB;
@@ -256,7 +261,6 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     }
 
   std::cout << "Checking transform from root to C : "; 
-  rootObserver->ClearPayload();
   root->RequestComputeTransformTo(C);
   TransformType TRootC;
 
@@ -282,7 +286,6 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     }
 
   std::cout << "Checking transform from root to D : "; 
-  rootObserver->ClearPayload();
   root->RequestComputeTransformTo(D);
   TransformType TRootD;
   if (rootObserver->GotPayload())
@@ -311,8 +314,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   TimeStampType now;
   now.SetStartTimeNowAndExpireAfter(0);
 
-  rootObserver->ClearPayload();
-  // root->RequestComputeTransformTo(E);
+  root->RequestComputeTransformTo(E);
   TransformType TRootE;
   if (rootObserver->GotPayload())
     {
@@ -326,6 +328,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     }
 
   root->RequestSetTransformAndParent( identity, A );
+  root->RequestSetTransformAndParent( identity, B );
 
   root->RequestComputeTransformTo( NULL );
   root->RequestComputeTransformTo( root );
@@ -334,6 +337,8 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 
   CoordinateSystemPointer Leak = CoordSysType::New();
   Leak->SetName( "Leak" );
+
+  rootObserver->ClearPayload();
 
   return testPassed;
 }
