@@ -116,9 +116,6 @@ private:
   igstkDeclareInputMacro( ThisParent                     );
   igstkDeclareInputMacro( ValidParent                    );
   igstkDeclareInputMacro( ParentCausesCycle              );
-
-  // igstkDeclareInputMacro( NoCommonAncestor               );
-  // igstkDeclareInputMacro( CommonAncestorFound            );
   
   igstkDeclareInputMacro( AncestorFound                  );
   igstkDeclareInputMacro( Disconnected                   );
@@ -162,12 +159,18 @@ private:
 
   void InvalidRequestProcessing();
 
+  /** Purposely not implemented. */
+  CoordinateReferenceSystem& operator= ( const CoordinateReferenceSystem& );
+  CoordinateReferenceSystem( const CoordinateReferenceSystem& );
+
 public:
+  /** Development only */
   void SetReportTiming(bool val)
     {
     m_ReportTiming = val;
     }
 
+  /** Development only */
   bool GetReportTiming()
     {
     return m_ReportTiming;
@@ -198,6 +201,27 @@ public:
 
     }
 
+  CoordinateReferenceSystemTransformToResult(
+      const CoordinateReferenceSystemTransformToResult& in)
+    {
+    m_Transform = in.m_Transform;
+    m_Source = in.m_Source;
+    m_Destination = in.m_Destination;
+    }
+
+  CoordinateReferenceSystemTransformToResult &operator = ( 
+      const CoordinateReferenceSystemTransformToResult& in)
+    {
+    if (this != &in)
+      {
+      m_Transform = in.m_Transform;
+      m_Source = in.m_Source;
+      m_Destination = in.m_Destination;
+      }
+    return *this;
+    }
+
+
   inline void Initialize(const Transform& trans, 
                   const CoordinateReferenceSystem* src,
                   const CoordinateReferenceSystem* dst)
@@ -212,39 +236,8 @@ public:
   CoordinateReferenceSystem::ConstPointer   m_Destination;
 };
 
-
-
 igstkLoadedEventMacro( CoordinateReferenceSystemTransformToEvent, 
                   IGSTKEvent, CoordinateReferenceSystemTransformToResult );
-
-
-/*
-class CoordinateReferenceSystemLowestCommonAncestorResult
-{
-public:
-
-  CoordinateReferenceSystemLowestCommonAncestorResult()
-    {
-
-    }
-
-  void Initialize(const CoordinateReferenceSystem* node1,
-                  const CoordinateReferenceSystem* node2,
-                  const CoordinateReferenceSystem* ancestor)
-    {
-    m_Node1 = node1;
-    m_Node2 = node2;
-    m_Ancestor = ancestor;
-    }
-
-  CoordinateReferenceSystem::ConstPointer   m_Node1;
-  CoordinateReferenceSystem::ConstPointer   m_Node2;
-  CoordinateReferenceSystem::ConstPointer   m_Ancestor;
-};
-
-igstkLoadedEventMacro( CoordinateReferenceSystemLowestCommonAncestorEvent, 
-  IGSTKEvent, CoordinateReferenceSystemLowestCommonAncestorResult );
-*/
 
 class CoordinateReferenceSystemTransformToErrorResult
 {
@@ -255,21 +248,35 @@ public:
 
     }
 
-  inline void Initialize(const CoordinateReferenceSystem* node1,
-                  const CoordinateReferenceSystem* node2)
+  CoordinateReferenceSystemTransformToErrorResult(
+      const CoordinateReferenceSystemTransformToErrorResult& in)
     {
-    m_Node1 = node1;
-    m_Node2 = node2;
+    m_Source = in.m_Source;
+    m_Destination = in.m_Destination;
     }
 
-  CoordinateReferenceSystem::ConstPointer   m_Node1;
-  CoordinateReferenceSystem::ConstPointer   m_Node2;
+  CoordinateReferenceSystemTransformToErrorResult &operator = ( 
+      const CoordinateReferenceSystemTransformToErrorResult& in)
+    {
+    if (this != &in)
+      {
+      m_Source = in.m_Source;
+      m_Destination = in.m_Destination;
+      }
+    return *this;
+    }
+
+  inline void Initialize(const CoordinateReferenceSystem* src,
+                  const CoordinateReferenceSystem* dst)
+    {
+    m_Source = src;
+    m_Destination = dst;
+    }
+
+  CoordinateReferenceSystem::ConstPointer   m_Source;
+  CoordinateReferenceSystem::ConstPointer   m_Destination;
 };
 
-/*
-igstkLoadedEventMacro( CoordinateReferenceSystemTransformToErrorEvent, 
-  IGSTKEvent, CoordinateReferenceSystemTransformToErrorResult );
-*/
 igstkLoadedEventMacro( CoordinateReferenceSystemTransformToNullTargetEvent, IGSTKEvent, CoordinateReferenceSystemTransformToErrorResult );
 igstkLoadedEventMacro( CoordinateReferenceSystemTransformToDisconnectedEvent, IGSTKEvent, CoordinateReferenceSystemTransformToErrorResult );
 

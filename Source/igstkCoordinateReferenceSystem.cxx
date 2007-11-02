@@ -28,7 +28,7 @@ CoordinateReferenceSystem
       Will prevent destructor from being called if
       m_Parent is never set.
   */
-  this->m_Parent = this; 
+  this->m_Parent = NULL; 
 
   /** Default transform is identity */
   this->m_TransformToParent.SetToIdentity( 
@@ -450,12 +450,12 @@ CoordinateReferenceSystem
   CoordinateReferenceSystemConstPointer bTempPrev = NULL;
 
   for(bTemp = bSmart; 
-      (bTemp != NULL && bTempPrev != bTemp); 
+      (bTemp != NULL); // && bTempPrev != bTemp); 
       bTemp = bTemp->m_Parent)
     {
     aTempPrev = NULL;
     for(aTemp = aSmart; 
-        (aTemp != NULL && aTempPrev != aTemp); 
+        (aTemp != NULL); // && aTempPrev != aTemp); 
         aTemp = aTemp->m_Parent)
       {
       if (aTemp == bTemp)
@@ -489,13 +489,15 @@ CoordinateReferenceSystem
     {
     return true;
     }
-  /** Self loop at the top of the tree */
-  else if (this->m_Parent == this)
+  /** The top of the tree */
+  else if (this->m_Parent.IsNull())
     {
     return false;
     }
   /** If we're not "target", can our parent
-      reach "target"? */
+      reach "target"? Note, if parent was 
+      NULL, we'd be executing the branch 
+      above. */
   else
     {
     return this->m_Parent->CanReach(target);
