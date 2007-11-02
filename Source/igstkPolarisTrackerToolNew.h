@@ -138,9 +138,19 @@ private:
   std::string m_ToolIdToBeSet;
   std::string m_ToolId;
 
+  /** boolean to indicate if the tracker tool initialized or not*/
   bool m_TrackerToolInitialized;
+
+  /** boolean to indicate if a tool id is specified or not */
   bool m_ToolIdSpecified;
+
+  /** boolean to indicate if SROM filename is specified or not */
   bool m_SROMFileNameSpecified;
+
+  /** boolean to indicate if a wireless or wired tracker tool
+   * type is selected  */
+  bool m_WirelessTrackerToolSelected;
+
 };  
 
 

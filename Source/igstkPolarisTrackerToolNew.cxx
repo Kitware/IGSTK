@@ -40,6 +40,9 @@ PolarisTrackerToolNew::PolarisTrackerToolNew():m_StateMachine(this)
   // ToolId Specified
   m_ToolIdSpecified = false;
 
+  // Wireless tool selected
+  m_WirelessTrackerToolSelected  = false;
+
   // States
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( WirelessTrackerToolSelected );
@@ -241,6 +244,8 @@ void PolarisTrackerToolNew::ReportWirelessTrackerToolSelectedProcessing( )
     "igstk::PolarisTrackerToolNew::ReportWirelessTrackerToolSelected called ...\n");
 
   std::cout << "Wireless Tracker tool selected " << std::endl;
+
+  m_WirelessTrackerToolSelected = true;
 }
 
 /** Report wired tracker tool selected */ 
@@ -264,6 +269,14 @@ void PolarisTrackerToolNew::SetPortNumberProcessing( )
   
   // For polaris tracker, port number could be used as a unique identifier
   this->SetTrackerToolIdentifier( identifierStream.str() );
+
+  // if the tool is wired type and if the port number is set, we can
+  // "declare" the tracker tool initialized. The user can also specify
+  // SROM file and tool id.  
+  if ( ! m_WirelessTrackerToolSelected )
+    {
+    m_TrackerToolInitialized = true;
+    }
 }
 
 /** Report Invalid port number specified */ 
@@ -283,6 +296,11 @@ void PolarisTrackerToolNew::SetSROMFileNameProcessing( )
 
   m_SROMFileName = m_SROMFileNameToBeSet;
   m_SROMFileNameSpecified = true;
+
+  //At this point, port number and SROM file are specified. For wireless
+  //tracker tools this is the minimum requirement. The tool can be "declared"
+  //intialized.
+  m_TrackerToolInitialized = true;
 }
 
 /** Report Invalid SROM filename specified */ 

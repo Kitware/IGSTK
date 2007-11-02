@@ -255,10 +255,7 @@ MicronTrackerNew
 {
   igstkLogMacro( DEBUG, "MicronTrackerNew::VerifyTrackerToolInformation called ...\n");  
 
-  //FIXME: verify the tracker tool information provided by the user
   unsigned int totalNumberOfTemplates = Markers_TemplatesCount();
-
-  std::cout << "TotalNumberOfTemplates: " << totalNumberOfTemplates << std::endl;
 
   // FIXME: change the code to use std::string
   int markerHandle;
@@ -283,11 +280,11 @@ MicronTrackerNew
 
     if( micronTrackerTool->GetMarkerName() == templateName )
       {
-      std::cout << "Tracker tool template found " << std::endl;
       return SUCCESS;
       }
     }
 
+  std::cerr << "Tracker tool template NOT FOUND" << std::endl;
   return FAILURE;
 }
  
