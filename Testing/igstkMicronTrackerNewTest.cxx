@@ -114,7 +114,7 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   tracker = igstk::MicronTrackerNew::New();
 
   tracker->AddObserver( itk::AnyEvent(), my_command);
-  //tracker->SetLogger( logger );
+  tracker->SetLogger( logger );
 
   std::string calibrationFilesDirectory = argv[1];
   tracker->SetCameraCalibrationFilesDirectory( 
@@ -127,7 +127,29 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   tracker->LoadMarkerTemplate( markerTemplateDirectory );
 
   // Add tracker tools
-  typedef igstk::MicronTrackerToolNew  MicronTrackerToolType;
+  typedef igstk::MicronTrackerToolNew  TrackerToolType;
+
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+  trackerTool->SetLogger( logger );
+  std::string markerNameTT = "TTblock";
+  trackerTool->RequestSetMarkerName( markerNameTT );  
+  trackerTool->RequestInitialize();
+  trackerTool->RequestAttachToTracker( tracker );
+
+  TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
+  trackerTool2->SetLogger( logger );
+  std::string markerNamesPointer = "sPointer";
+  trackerTool2->RequestSetMarkerName( markerNamesPointer );  
+  trackerTool2->RequestInitialize();
+  trackerTool2->RequestAttachToTracker( tracker );
+
+  TrackerToolType::Pointer trackerTool3 = TrackerToolType::New();
+  trackerTool3->SetLogger( logger );
+  std::string inValidMarkerName = "InValidMarkerName";
+  trackerTool3->RequestSetMarkerName( inValidMarkerName );  
+  trackerTool3->RequestInitialize();
+  trackerTool3->RequestAttachToTracker( tracker );
+
 
   std::cout << "[PASSED]" << std::endl;
 

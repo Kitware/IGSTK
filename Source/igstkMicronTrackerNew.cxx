@@ -114,7 +114,13 @@ MicronTrackerNew::LoadMarkerTemplate( std::string filename )
   char * markerTemplateDirectory = 
             const_cast< char *> ( m_MarkerTemplateDirectory.c_str() );
  
-  Markers_LoadTemplates( markerTemplateDirectory );
+  unsigned int  status = Markers_LoadTemplates( markerTemplateDirectory );
+
+  //FIXME: translate unsigned int status value to actual error message
+  if ( status != 0 )
+    {
+    std::cerr << "Error loading the templates " << std::endl; 
+    }
 }
 
 MicronTrackerNew::ResultType MicronTrackerNew::InternalOpen( void )
@@ -247,8 +253,42 @@ MicronTrackerNew::ResultType
 MicronTrackerNew
 ::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 {
+  igstkLogMacro( DEBUG, "MicronTrackerNew::VerifyTrackerToolInformation called ...\n");  
+
   //FIXME: verify the tracker tool information provided by the user
-  return SUCCESS;
+  unsigned int totalNumberOfTemplates = Markers_TemplatesCount();
+
+  std::cout << "TotalNumberOfTemplates: " << totalNumberOfTemplates << std::endl;
+
+  // FIXME: change the code to use std::string
+  int markerHandle;
+  char tempString[400];
+  std::string templateName;
+
+  MicronTrackerToolType * micronTrackerTool  = 
+        dynamic_cast< MicronTrackerToolType *> ( trackerTool );
+
+  for (unsigned int idx=0 ; idx < totalNumberOfTemplates ; idx++ )
+    {
+    Markers_TemplateItemGet( idx, &markerHandle);
+    
+    memset((void *)tempString, 0 , sizeof(tempString));
+    int b;
+    unsigned int status = Marker_NameGet( markerHandle, tempString, sizeof(tempString), &b);
+
+    if ( status == 0 ) {
+      tempString[b] = '\0';
+    }
+    templateName = std::string(tempString);
+
+    if( micronTrackerTool->GetMarkerName() == templateName )
+      {
+      std::cout << "Tracker tool template found " << std::endl;
+      return SUCCESS;
+      }
+    }
+
+  return FAILURE;
 }
  
 /** Detach camera . */
