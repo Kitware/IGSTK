@@ -54,6 +54,11 @@ public:
   /** Request set the ToolId */
   void RequestSetToolId( std::string toolId );
 
+  /** Request select 5DOF tracker tool */
+  void RequestSelect5DOFTrackerTool( );
+
+  /** Request select 6DOF tracker tool */
+  void RequestSelect6DOFTrackerTool( );
 
 protected:
 
@@ -89,6 +94,12 @@ private:
   /** Report Invalid Tool Id filename specified */ 
   void ReportInValidToolIdSpecifiedProcessing( );
 
+  /** Report 5DOF tracker tool selected */
+  void Report5DOFTrackerToolSelectedProcessing();
+
+  /** Report 6DOF tracker tool selected */
+  void Report6DOFTrackerToolSelectedProcessing();
+
   AuroraTrackerToolNew(const Self&);    //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
 
@@ -98,12 +109,22 @@ private:
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
-  igstkDeclareStateMacro( PortNumberSpecified );
-  igstkDeclareStateMacro( ChannelNumberSpecified );
-  igstkDeclareStateMacro( SROMFileNameSpecified );
-  igstkDeclareStateMacro( ToolIdSpecified );
+  igstkDeclareStateMacro( 5DOFTrackerToolSelected );
+  igstkDeclareStateMacro( 6DOFTrackerToolSelected );
+  igstkDeclareStateMacro( 5DOFTrackerToolPortNumberSpecified );
+  igstkDeclareStateMacro( 6DOFTrackerToolPortNumberSpecified );
+  igstkDeclareStateMacro( 5DOFTrackerToolChannelNumberSpecified );
+  igstkDeclareStateMacro( 5DOFTrackerToolSROMFileNameSpecified );
+  igstkDeclareStateMacro( 6DOFTrackerToolSROMFileNameSpecified );
+  igstkDeclareStateMacro( 5DOFTrackerToolToolIdSpecified );
+  igstkDeclareStateMacro( 6DOFTrackerToolToolIdSpecified );
+
 
   /** Inputs to the State Machine */
+  igstkDeclareInputMacro( Select5DOFTrackerTool );
+  igstkDeclareInputMacro( Select6DOFTrackerTool );
+  igstkDeclareInputMacro( 5DOFTrackerToolSelected );
+  igstkDeclareInputMacro( 6DOFTrackerToolSelected );
   igstkDeclareInputMacro( ValidPortNumber );
   igstkDeclareInputMacro( InValidPortNumber );
   igstkDeclareInputMacro( ValidChannelNumber );
@@ -133,6 +154,8 @@ private:
   bool m_ToolIdSpecified;
   bool m_SROMFileNameSpecified;
   bool m_ChannelNumberSpecified;
+
+  bool m_5DOFTrackerToolSelected;
 
 };  
 

@@ -33,6 +33,9 @@ AuroraTrackerToolNew::AuroraTrackerToolNew():m_StateMachine(this)
   //Tracker tool initialization flag
   m_TrackerToolInitialized = false;
 
+  //Disable 5DOF tracker tool mode
+  m_5DOFTrackerToolSelected = false;
+
   // SROM file flag
   m_SROMFileNameSpecified = false;
 
@@ -44,12 +47,19 @@ AuroraTrackerToolNew::AuroraTrackerToolNew():m_StateMachine(this)
 
   // States
   igstkAddStateMacro( Idle );
-  igstkAddStateMacro( PortNumberSpecified );
-  igstkAddStateMacro( ChannelNumberSpecified );
-  igstkAddStateMacro( SROMFileNameSpecified );
-  igstkAddStateMacro( ToolIdSpecified );
+  igstkAddStateMacro( 5DOFTrackerToolSelected );
+  igstkAddStateMacro( 6DOFTrackerToolSelected );
+  igstkAddStateMacro( 5DOFTrackerToolPortNumberSpecified );
+  igstkAddStateMacro( 6DOFTrackerToolPortNumberSpecified );
+  igstkAddStateMacro( 5DOFTrackerToolChannelNumberSpecified );
+  igstkAddStateMacro( 5DOFTrackerToolSROMFileNameSpecified );
+  igstkAddStateMacro( 6DOFTrackerToolSROMFileNameSpecified );
+  igstkAddStateMacro( 5DOFTrackerToolToolIdSpecified );
+  igstkAddStateMacro( 6DOFTrackerToolToolIdSpecified );
 
   // Set the input descriptors
+  igstkAddInputMacro( Select5DOFTrackerTool );
+  igstkAddInputMacro( Select6DOFTrackerTool );
   igstkAddInputMacro( ValidPortNumber ); 
   igstkAddInputMacro( InValidPortNumber ); 
   igstkAddInputMacro( ValidChannelNumber ); 
@@ -65,52 +75,98 @@ AuroraTrackerToolNew::AuroraTrackerToolNew():m_StateMachine(this)
 
   // Transitions from the Idle
   igstkAddTransitionMacro( Idle,
+                           Select5DOFTrackerTool,
+                           5DOFTrackerToolSelected,
+                           Report5DOFTrackerToolSelected);
+  // Transitions from the Idle
+  igstkAddTransitionMacro( Idle,
+                           Select6DOFTrackerTool,
+                           6DOFTrackerToolSelected,
+                           Report6DOFTrackerToolSelected);
+
+
+  // Transitions from 5DOFTrackerToolSelected 
+  igstkAddTransitionMacro( 5DOFTrackerToolSelected,
                            ValidPortNumber,
-                           PortNumberSpecified,
+                           5DOFTrackerToolPortNumberSpecified,
                            SetPortNumber);
 
-  igstkAddTransitionMacro( Idle,
+  igstkAddTransitionMacro( 5DOFTrackerToolSelected,
                            InValidPortNumber,
-                           Idle,
+                           5DOFTrackerToolSelected,
                            ReportInValidPortNumberSpecified );
 
-  // Transitions from PortNumberSpecified
-  igstkAddTransitionMacro( PortNumberSpecified,
+  // Transitions from 6DOFTrackerToolSelected 
+  igstkAddTransitionMacro( 6DOFTrackerToolSelected,
+                           ValidPortNumber,
+                           6DOFTrackerToolPortNumberSpecified,
+                           SetPortNumber);
+
+  igstkAddTransitionMacro( 6DOFTrackerToolSelected,
+                           InValidPortNumber,
+                           6DOFTrackerToolSelected,
+                           ReportInValidPortNumberSpecified );
+
+
+  // Transitions from 5DOFTrackerToolPortNumberSpecified
+  igstkAddTransitionMacro( 5DOFTrackerToolPortNumberSpecified,
                            ValidChannelNumber,
-                           ChannelNumberSpecified,
+                           5DOFTrackerToolChannelNumberSpecified,
                            SetChannelNumber);
 
-  igstkAddTransitionMacro( PortNumberSpecified,
+  igstkAddTransitionMacro( 5DOFTrackerToolPortNumberSpecified,
                            InValidChannelNumber,
-                           PortNumberSpecified,
+                           5DOFTrackerToolPortNumberSpecified,
                            ReportInValidChannelNumberSpecified);
 
-  // Transitions from ChannelNumberSpecified
-  igstkAddTransitionMacro( ChannelNumberSpecified,
+  // Transitions from 5DOFTrackerToolChannelNumberSpecified
+  igstkAddTransitionMacro( 5DOFTrackerToolChannelNumberSpecified,
                            ValidSROMFileName,
-                           SROMFileNameSpecified,
+                           5DOFTrackerToolSROMFileNameSpecified,
                            SetSROMFileName);
 
-  igstkAddTransitionMacro( ChannelNumberSpecified,
+  igstkAddTransitionMacro( 5DOFTrackerToolChannelNumberSpecified,
                            InValidSROMFileName,
-                           ChannelNumberSpecified,
+                           5DOFTrackerToolChannelNumberSpecified,
                            ReportInValidSROMFileSpecified);
 
-  // Transitions from SROMFileNameSpecified
-  igstkAddTransitionMacro( SROMFileNameSpecified,
+  // Transitions from 6DOFTrackerToolPortNumberSpecified 
+  igstkAddTransitionMacro( 6DOFTrackerToolPortNumberSpecified,
+                           ValidSROMFileName,
+                           6DOFTrackerToolSROMFileNameSpecified,
+                           SetSROMFileName);
+
+  igstkAddTransitionMacro( 6DOFTrackerToolPortNumberSpecified,
+                           InValidSROMFileName,
+                           6DOFTrackerToolPortNumberSpecified,
+                           ReportInValidSROMFileSpecified);
+
+
+  // Transitions from 5DOFTrackerToolSROMFileNameSpecified
+  igstkAddTransitionMacro( 5DOFTrackerToolSROMFileNameSpecified,
                            ValidToolId,
-                           ToolIdSpecified,
+                           5DOFTrackerToolToolIdSpecified,
                            SetToolId);
 
-  igstkAddTransitionMacro( SROMFileNameSpecified,
+  igstkAddTransitionMacro( 5DOFTrackerToolSROMFileNameSpecified,
                            InValidToolId,
-                           SROMFileNameSpecified,
+                           5DOFTrackerToolSROMFileNameSpecified,
+                           ReportInValidToolIdSpecified);
+
+  // Transitions from SROMFileNameSpecified
+  igstkAddTransitionMacro( 6DOFTrackerToolSROMFileNameSpecified,
+                           ValidToolId,
+                           6DOFTrackerToolToolIdSpecified,
+                           SetToolId);
+
+  igstkAddTransitionMacro( 6DOFTrackerToolSROMFileNameSpecified,
+                           InValidToolId,
+                           6DOFTrackerToolSROMFileNameSpecified,
                            ReportInValidToolIdSpecified);
 
 
   // Inputs to the state machine
   igstkSetInitialStateMacro( Idle );
-
 
 }
 
@@ -123,6 +179,26 @@ AuroraTrackerToolNew::~AuroraTrackerToolNew()
 void AuroraTrackerToolNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+}
+
+/** Request to set 5DOF tracker tool*/
+void AuroraTrackerToolNew::RequestSelect5DOFTrackerTool()
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::AuroraTrackerToolNew::RequestSelect5DOFTrackerTool called ...\n");
+
+  m_StateMachine.PushInput( m_5DOFTrackerToolSelectedInput ); 
+  m_StateMachine.ProcessInputs();
+}
+
+/** Request to set 6DOF tracker tool*/
+void AuroraTrackerToolNew::RequestSelect6DOFTrackerTool()
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::AuroraTrackerToolNew::RequestSelect6DOFTrackerTool called ...\n");
+
+  m_StateMachine.PushInput( m_6DOFTrackerToolSelectedInput ); 
+  m_StateMachine.ProcessInputs();
 }
 
 /** Request the state machine to set the port number */
@@ -212,6 +288,26 @@ void AuroraTrackerToolNew::SetPortNumberProcessing( )
   std::stringstream identifierStream;
   identifierStream << m_PortNumber;
   this->SetTrackerToolIdentifier( identifierStream.str() );
+}
+
+/** Report 5DOF tracker tool selected */ 
+void AuroraTrackerToolNew::Report5DOFTrackerToolSelectedProcessing( )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::AuroraTrackerToolNew::Report5DOFTrackerToolSelectedProcessing called ...\n");
+
+  std::cout << "5DOF Tracker tool selected " << std::endl;
+
+  m_5DOFTrackerToolSelected = true;
+}
+
+/** Report 6DOF tracker tool selected */ 
+void AuroraTrackerToolNew::Report6DOFTrackerToolSelectedProcessing( )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::AuroraTrackerToolNew::Report6DOFTrackerToolSelectedProcessing called ...\n");
+
+  std::cout << "6DOF Tracker tool selected " << std::endl;
 }
 
 /** Report Invalid port number specified */ 
