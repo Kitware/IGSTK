@@ -518,7 +518,7 @@ void
 CoordinateReferenceSystem
 ::InvalidRequestProcessing()
 {
-
+  igstkLogMacro( WARNING, "Invalid request made to the State Machine" );
 }
 
 } // end namespace igstk
