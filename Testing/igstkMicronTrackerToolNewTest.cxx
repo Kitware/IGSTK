@@ -41,16 +41,6 @@ int igstkMicronTrackerToolNewTest( int argc, char ** argv  )
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
 
-  if( argc < 2 )
-    {
-    std::cerr << " Usage: " << argv[0] << "\t" 
-                            << "Type( 0 for Wireless, 1 for Wired )"
-                            << "Port Number"
-                            << "[SROM file]"
-                            << "[tool Id]" << std::endl;
-    return EXIT_FAILURE;
-    }
-
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );

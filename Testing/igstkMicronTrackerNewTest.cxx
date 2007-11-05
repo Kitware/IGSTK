@@ -150,7 +150,6 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   trackerTool3->RequestInitialize();
   trackerTool3->RequestAttachToTracker( tracker );
 
-
   std::cout << "[PASSED]" << std::endl;
 
   return EXIT_SUCCESS;

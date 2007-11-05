@@ -30,6 +30,10 @@
 namespace igstk
 {
 
+//Initialize static variables
+std::map< unsigned int, std::string> MicronTrackerNew::m_ErrorCodeContainer;
+bool MicronTrackerNew::m_ErrorCodeListCreated = false;
+
 /** Constructor: Initializes all internal variables. */
 MicronTrackerNew::MicronTrackerNew(void):m_StateMachine(this)
 {
@@ -54,6 +58,14 @@ MicronTrackerNew::MicronTrackerNew(void):m_StateMachine(this)
   // initialize selected camera
   m_SelectedCamera = NULL;
 
+  // Create error code list if it hasn't been
+  // created.
+  //
+  if ( ! m_ErrorCodeListCreated )
+    {
+    this->CreateErrorCodeList();
+    m_ErrorCodeListCreated = true;
+    }
 }
 
 /** Destructor */
@@ -72,6 +84,79 @@ MicronTrackerNew::~MicronTrackerNew(void)
   if ( m_Persistence != NULL )
     {
     delete m_Persistence;
+    }
+}
+
+/** Create a map data structure containing MTC error code and description */
+void MicronTrackerNew::CreateErrorCodeList()
+{
+  m_ErrorCodeContainer[0]  = "OK"; 
+  m_ErrorCodeContainer[1]  = "Invalid object handle";
+  m_ErrorCodeContainer[2]  = "Reentrant access - library is not thread-safe";
+  m_ErrorCodeContainer[3]  = "Internal MicronTracker software error";
+  m_ErrorCodeContainer[4]  = "Null pointer parameter";
+  m_ErrorCodeContainer[5]  = "Out of memory";
+  m_ErrorCodeContainer[6]  = "Parameter out of range";
+  m_ErrorCodeContainer[7]  = "String parameter too long";
+  m_ErrorCodeContainer[8]  = "Insufficient space allocated by the client to the output buffer";
+  m_ErrorCodeContainer[9]  = "Camera not initialized";
+  m_ErrorCodeContainer[10] = "Camera already initialized - cannot be initialized twice";
+  m_ErrorCodeContainer[11] = "Camera initialization failed";
+  m_ErrorCodeContainer[12] = "MTC is incompatible with a software module it calls";
+  m_ErrorCodeContainer[13] = "Calibration file error: unrecognized camera model";
+  m_ErrorCodeContainer[14] = "Path not set";
+  m_ErrorCodeContainer[15] = "Cannot access the directory specified";
+  m_ErrorCodeContainer[16] = "Write to file failed";
+  m_ErrorCodeContainer[17] = "Invalid Index parameter";
+  m_ErrorCodeContainer[18] = "Invalid SideI parameter";
+  m_ErrorCodeContainer[19] = "Invalid Divisor parameter";
+  m_ErrorCodeContainer[20] = "Attempting to access an item of an empty IntCollection";
+  m_ErrorCodeContainer[21] = "Insufficient samples";
+  m_ErrorCodeContainer[22] = "Insufficient samples that fit within the acceptance tolerance";
+  m_ErrorCodeContainer[23] = "Odd number of vector samples";
+  m_ErrorCodeContainer[24] = "Less than 2 vectors";
+  m_ErrorCodeContainer[25] = "More than maximum vectors per facet";
+  m_ErrorCodeContainer[26] = "Error exceeds tolerance";
+  m_ErrorCodeContainer[27] = "Insufficient angle between vectors";
+  m_ErrorCodeContainer[28] = "First vector is shorter than the second";
+  m_ErrorCodeContainer[29] = "Vector lengths are too similar";
+  m_ErrorCodeContainer[30] = "Template vector has 0 length";
+  m_ErrorCodeContainer[31] = "The template has not been created or loaded";
+  m_ErrorCodeContainer[32] = "Template file is corrupt";
+  m_ErrorCodeContainer[33] = "Maximum number of marker templates allowed exceeded";
+  m_ErrorCodeContainer[34] = "Geometries of different facets are too similar";
+  m_ErrorCodeContainer[35] = "Noncompliant facet definition";
+  m_ErrorCodeContainer[36] = "The SampledVectorPairsCollection contains non-Vector handles";
+  m_ErrorCodeContainer[37] = "Empty pixels buffer";
+  m_ErrorCodeContainer[38] = "Dimensions do not match";
+  m_ErrorCodeContainer[39] = "File open failed";
+  m_ErrorCodeContainer[40] = "File read failed";
+  m_ErrorCodeContainer[41] = "File write failed";
+  m_ErrorCodeContainer[42] = "Cannot open calibration file (typically named [driver]_[ser num].calib";
+  m_ErrorCodeContainer[43] = "Not a calibration file";
+  m_ErrorCodeContainer[44] = "Calibration file contents corrupt";
+  m_ErrorCodeContainer[45] = "Calibration file was not generated from this camera";
+  m_ErrorCodeContainer[46] = "Calibration file not loaded";
+  m_ErrorCodeContainer[47] = "Incorrect file version";
+  m_ErrorCodeContainer[48] = "Input image location is out of bounds of the measurement volume";
+  m_ErrorCodeContainer[49] = "Input image locations do not triangulate to a valid 3-D point";
+  m_ErrorCodeContainer[50] = "Transform between coordinate spaces is unknown";
+  m_ErrorCodeContainer[51] = "The given camera object was not found in the cameras array";
+  m_ErrorCodeContainer[52] = "Feature Data unavailable for the current frame";
+  m_ErrorCodeContainer[53] = "Feature Data is corrupt or incompatible with the current version";
+  m_ErrorCodeContainer[54] = "XYZ position is outside of calibrated field of view";
+  m_ErrorCodeContainer[55] = "Grab frame error";
+}
+
+const std::string  MicronTrackerNew::GetErrorDescription( unsigned int code )
+{
+  if ( code >= 0 && code <= 55 )
+    {
+    return MicronTrackerNew::m_ErrorCodeContainer[code];
+    } 
+  else
+    {
+    return "Unknown error code";
     }
 }
 
@@ -116,10 +201,10 @@ MicronTrackerNew::LoadMarkerTemplate( std::string filename )
  
   unsigned int  status = Markers_LoadTemplates( markerTemplateDirectory );
 
-  //FIXME: translate unsigned int status value to actual error message
   if ( status != 0 )
     {
-    std::cerr << "Error loading the templates " << std::endl; 
+    std::cerr << "Error loading the templates: " << MicronTrackerNew::GetErrorDescription( status ) 
+                                                << std::endl; 
     }
 }
 
@@ -293,8 +378,7 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "MicronTrackerNew::InternalClose called ...\n");  
   m_Cameras->Detach();
- 
-  //TODO: parse detach procedure result 
+  
   return SUCCESS;
 }
 
@@ -442,11 +526,11 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalThreadedUpdateStatus( voi
     }
 
   // process frame
-  int completionCode = m_Markers->processFrame( m_SelectedCamera ); 
+  unsigned int completionCode = m_Markers->processFrame( m_SelectedCamera ); 
 
   if ( completionCode != 0 ) 
     {
-    std::cout << "Error in processing frame " << std::endl;
+    std::cerr << "Error in processing frame: " << MicronTrackerNew::GetErrorDescription( completionCode ) << std::endl;
     m_BufferLock->Unlock();
     return FAILURE;
     }

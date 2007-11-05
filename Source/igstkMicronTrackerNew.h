@@ -82,6 +82,7 @@ public:
   void LoadMarkerTemplate( std::string filename );
 
   void RequestAddTool( std::string identifier, MicronTrackerToolType * trackerTool );
+
 protected:
 
   MicronTrackerNew(void);
@@ -122,6 +123,14 @@ protected:
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
+  /** Create an associative container that maps error code to error
+    * descritpion */
+  static void CreateErrorCodeList();
+
+  /** Get Error description given the error code */
+  static const std::string GetErrorDescription( unsigned int ); 
+
+
 private:
 
   /** Initialize camera and algorithm attributes such as Frame interleave
@@ -155,7 +164,13 @@ private:
   typedef std::map< std::string, std::vector < double > > 
                                 TrackerToolTransformContainerType; 
 
- TrackerToolTransformContainerType     m_ToolTransformBuffer;
+  TrackerToolTransformContainerType     m_ToolTransformBuffer;
+
+  /** Error map container */
+  static std::map< unsigned int, std::string>     m_ErrorCodeContainer;
+
+  /** boolean to indicate if error code list is created */
+  static bool m_ErrorCodeListCreated;
 };
 
 }
