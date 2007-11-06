@@ -286,10 +286,17 @@ void CoordinateReferenceSystem
 {
   this->m_ComputeTransformToTimer.Start();
 
-  igstkLogMacro(DEBUG, this->GetName() << " and "
-                        << m_ComputeTransformToTarget->GetName()
+  igstkLogMacro(DEBUG, "0x" << this
+                        << " [" << this->GetName() 
+                        << "] " 
+                        << " and "
+                        "0x" << m_ComputeTransformToTarget.GetPointer()
+                        << " [" << m_ComputeTransformToTarget->GetName()
+                        << "] " 
                         << " have lowest common ancestor : "
-                        << this->m_LowestCommonAncestor->GetName()
+                        "0x" << this->m_LowestCommonAncestor.GetPointer()
+                        << " [" << this->m_LowestCommonAncestor->GetName()
+                        << "] "
                         << "\n" );
 
   Transform thisToAncestor   = 
@@ -519,6 +526,22 @@ CoordinateReferenceSystem
 ::InvalidRequestProcessing()
 {
   igstkLogMacro( WARNING, "Invalid request made to the State Machine" );
+}
+
+/**
+void 
+CoordinateReferenceSystem
+::RequestDetach()
+{
+  // FIXME -- implement
+}
+*/
+
+void 
+CoordinateReferenceSystem
+::RequestGetTransformToParent()
+{
+  this->RequestComputeTransformTo(this->m_Parent);
 }
 
 } // end namespace igstk

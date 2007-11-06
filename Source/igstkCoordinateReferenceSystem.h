@@ -44,31 +44,41 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( CoordinateReferenceSystem, Object )
 
+  /** Tries to set the parent coordinate system and 
+   *  the transform from this coordinate system to
+   *  the parent. 
+   */
   void RequestSetTransformAndParent(Transform t, const CoordinateReferenceSystem* parent);
 
-  /** Helper method. */
-  void RequestGetTransformToParent()
-    {
-    this->RequestComputeTransformTo(this->m_Parent);
-    }
+  /** Request the transform to parent. */
+  void RequestGetTransformToParent();
 
+  /** Request that a transform is computed to targetCoordSys
+   *   This method generates three possible events:
+   *     CoordinateReferenceSystemTransformToEvent
+   *     CoordinateReferenceSystemTransformToNullTargetEvent
+   *     CoordinateReferenceSystemTransformToDisconnectedEvent
+   *
+   *   CoordinateReferenceSystemTransformToEvent is returned if the transform is 
+   *   successfully computed. Otherwise, one of the other events is generated.
+   */
   void RequestComputeTransformTo(const CoordinateReferenceSystem* targetCoordSys);
 
-  void RequestDetach();
-
-  //
-  // Development only
-  //
+  /** void RequestDetach(); */
+  
+  /**  Development only */
   void SetName(const std::string& name)
     {
     this->m_Name = name;
     }
 
+  /**  Development only */
   void SetName(const char* name)
     {
     this->SetName(std::string(name));
     }
 
+  /**  Development only */
   std::string GetName() const
     {
     return m_Name;
@@ -88,9 +98,9 @@ private:
   Transform           m_TransformToParent;    // Transform relating this node to the parent 
   std::string         m_Name;                 // Name this coordinate system for debugging.
 
-  //-------------------------------------------------------------
-  // State machine
-  //-------------------------------------------------------------
+  /** 
+   * State machine
+   */
 
   // Initial state
   igstkDeclareStateMacro( Initialized );
