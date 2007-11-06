@@ -176,10 +176,152 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalOpen( void )
 PolarisTrackerNew::ResultType PolarisTrackerNew
 ::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 {
-  //FIXME: verify the tracker tool information provided by the user
+  //Verify that 
+  //
+  //1) the tracker tool information provided by the user matches with
+  //the information available in the SROM file.
+  //
+  //2) the tool is actually attached to the correct physical port
+  //for a wired tool.
+  //
+  //To get the tool information
+  // - If it is wireless
+  //    == SROM file has to be loaded and port handle created.
+  // - If it is wired
+  //    == If SROM file is specified
+  //        == Load the SROM file and create a port handle
+  //    == Otherwise, create a port handle     
+  //
+  // Initialize 
+  // repeat as necessary (in case multi-channel tools are used) 
   //
   //
-  // 
+  // keep list of tools that fail to initialize, so we don't keep retrying,
+  // the largest port handle possible is 0xFF, or 256
+  
+  int alreadyAttemptedPINIT[256];
+  for (int ph = 0; ph < 256; ph++)
+    {
+    alreadyAttemptedPINIT[ph] = 0;
+    }
+
+  for (int safetyCount = 0; safetyCount < 256; safetyCount++)
+    {
+    m_CommandInterpreter->PHSR(
+      CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
+    
+    if (this->CheckError(m_CommandInterpreter) == FAILURE)
+      {
+      break;
+      }
+
+    // the number of tools not yet initialized
+    unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+    int foundNewTool = 0;
+
+    // try to initialize all port handles
+    for (unsigned int tool = 0; tool < ntools; tool++)
+      {
+      const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
+      // only call PINIT on tools that didn't fail last time
+      // (the &0xFF makes sure index is < 256)
+      if (!alreadyAttemptedPINIT[(ph & 0xFF)])
+        {
+        alreadyAttemptedPINIT[(ph & 0xFF)] = 1;
+        m_CommandInterpreter->PINIT(ph);
+        if (this->CheckError(m_CommandInterpreter) == SUCCESS)
+          {
+          foundNewTool = 1;
+          }
+        }
+      }
+
+    // exit if no new tools were initialized this round
+    if (!foundNewTool)
+      {
+      break;
+      }
+    }
+
+   // FIXME: Request assignment of port handle 
+   // THIS SHOULD PROBABLY BE NDI_UNINITIALIZED_HANDLES
+   //
+  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_UNENABLED_HANDLES);
+
+  unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+  
+  for (unsigned int tool = 0; tool < ntools; tool++)
+    {
+    const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
+    m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
+
+    // tool identity and type information
+    char identity[512];
+    m_CommandInterpreter->GetPHINFToolInfo(identity);
+
+    // use tool type information to figure out mode for enabling
+    int mode = CommandInterpreterType::NDI_DYNAMIC;
+
+    if (identity[1] == CommandInterpreterType::NDI_TYPE_BUTTON)
+      { // button-box or foot pedal
+      mode = CommandInterpreterType::NDI_BUTTON_BOX;
+      }
+    else if (identity[1] == CommandInterpreterType::NDI_TYPE_REFERENCE)
+      { // reference
+      mode = CommandInterpreterType::NDI_STATIC;
+      }
+
+    // IS there a need to enable it 
+    //m_CommandInterpreter->PENA(ph, mode);
+
+    // print any warnings
+    this->CheckError(m_CommandInterpreter);
+    }
+
+  // get information for all tools
+  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ALL_HANDLES);
+
+  ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+
+  for (unsigned int tool = 0; tool < ntools; tool++)
+    {
+    const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
+    m_CommandInterpreter->PHINF(ph,
+                                CommandInterpreterType::NDI_PORT_LOCATION |
+                                CommandInterpreterType::NDI_PART_NUMBER |
+                                CommandInterpreterType::NDI_BASIC );
+
+    if (this->CheckError(m_CommandInterpreter) == FAILURE)
+      {
+      continue;
+      }
+
+    // get the physical port identifier
+    char location[512];
+    m_CommandInterpreter->GetPHINFPortLocation(location);
+
+    // physical port number
+    unsigned int port = 0;
+
+    // the value of m_PortHandle should only be set for wired,
+    // for wireless tools it is set in LoadVirtualSROM
+    if (location[9] == '0') // wired tool
+      {
+      unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
+      if (ndiport > 0 && ndiport <= NumberOfPorts)
+        {
+        port = ndiport - 1;
+        }
+      }
+    else // wireless tool
+      {
+      // Check tool information...
+      }
+
+    const int status = m_CommandInterpreter->GetPHINFPortStatus();
+
+    }
+
   return SUCCESS;
 }
  
