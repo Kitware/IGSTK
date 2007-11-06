@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkPolarisTrackerTestNew.cxx
+  Module:    igstkPolarisTrackerNewTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -39,6 +39,7 @@
 
 #include "igstkSerialCommunicationSimulator.h"
 #include "igstkPolarisTrackerNew.h"
+#include "igstkPolarisTrackerToolNew.h"
 #include "igstkTransform.h"
 
 class PolarisTrackerNewTestCommand : public itk::Command 
@@ -171,54 +172,6 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   tracker->RequestInitialize();
 
   std::cout << tracker << std::endl;
-
-  std::cout << "GetNumberOfTools()" << std::endl;
-  unsigned int ntools = tracker->GetNumberOfTools();
-
-  std::cout << "NumberOfTools : " << ntools << std::endl;
-
-  std::cout << "RequestStartTracking()" << std::endl;
-  tracker->RequestStartTracking();
-
-  typedef igstk::Transform            TransformType;
-  typedef ::itk::Vector<double, 3>    VectorType;
-  typedef ::itk::Versor<double>       VersorType;
-
-  for(unsigned int i=0; i<10; i++)
-    {
-    tracker->RequestUpdateStatus();
-    for (unsigned int port = 0; port < 4; port++)
-      {
-      TransformType             transform;
-      VectorType                position;
-
-      tracker->GetToolTransform( port, 0, transform );
-      position = transform.GetTranslation();
-      std::cout << "Port " << port << "  Position = (" << position[0]
-                << "," << position[1] << "," << position[2]
-                << ")" << std::endl;
-      }
-    }
-  
-  std::cout << "RequestReset()" << std::endl;
-  tracker->RequestReset();
-  
-  std::cout << "RequestInitialize()" << std::endl;
-  tracker->RequestInitialize();
-  
-  std::cout << "RequestStartTracking()" << std::endl;
-  tracker->RequestStartTracking();
-
-  std::cout << "RequestStopTracking()" << std::endl;
-  tracker->RequestStopTracking();
-
-  std::cout << "RequestClose()" << std::endl;
-  tracker->RequestClose();
-
-  std::cout << "CloseCommunication()" << std::endl;
-  serialComm->CloseCommunication();
-
-  std::cout << "[PASSED]" << std::endl;
 
   return EXIT_SUCCESS;
 }
