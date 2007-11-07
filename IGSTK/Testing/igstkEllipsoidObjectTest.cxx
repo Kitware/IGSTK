@@ -246,7 +246,9 @@ worldReference->SetLogger( logger );
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   ellipsoidObject->RequestSetTransform( transform );
+#endif
 
   typedef ::igstk::EllipsoidObjectTest::TransformObserver TransformObserverType;
 
@@ -262,8 +264,10 @@ worldReference->SetLogger( logger );
   ellipsoidObject->RequestSetTransform( transform );
 #endif
  
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   ellipsoidObject->RequestGetTransform();
-  
+#endif
+
   if( !transformObserver->GotTransform() )
     {
     std::cerr << "The EllipsoidObject did not returned a Transform event" 
