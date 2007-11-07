@@ -126,7 +126,9 @@ int main( int, char * [] )
 
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
     ellipsoid->RequestSetTransform( transform );
+#endif
     // EndCodeSnippet
 
     // BeginLatex

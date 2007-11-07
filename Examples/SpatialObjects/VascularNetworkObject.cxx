@@ -87,7 +87,9 @@ int main( int , char *[] )
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   vasculature->RequestAddObject(vessel);
+#endif
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //

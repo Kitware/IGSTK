@@ -49,7 +49,9 @@ int main(int , char** )
   transform.SetTranslationAndRotation(
            translation, rotation, errorValue, validityTimeInMilliseconds );
  
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   UltrasoundProbe->RequestSetTransform( transform );
+#endif
 
   // Create the UltrasoundProbe representation
   typedef igstk::UltrasoundProbeObjectRepresentation USProbeRepresentationType;

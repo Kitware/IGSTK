@@ -64,7 +64,9 @@ int main( int , char *[] )
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   sphere1->RequestAddObject(sphere2);
+#endif
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
@@ -75,7 +77,9 @@ int main( int , char *[] )
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   sphere1->GetObject(0)->Print(std::cout);
+#endif
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
@@ -91,7 +95,9 @@ int main( int , char *[] )
 // Software Guide : BeginCodeSnippet
   igstk::Transform transform;
   transform.SetTranslation(10,0.001,10);
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   sphere1->RequestSetTransform(transform);
+#endif
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
@@ -120,7 +126,9 @@ int main( int , char *[] )
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   sphere1->RequestGetTransform();
+#endif
   if( !transformObserver->GotTransform() )
     {
     std::cerr << "Sphere1 did not returned a Transform event" << std::endl;
@@ -154,9 +162,13 @@ int main( int , char *[] )
 //
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   group->RequestAddObject(sphere1);
+#endif
   SpatialObjectType::Pointer sphere3 = SpatialObjectType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   group->RequestAddObject(sphere3);
+#endif
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 // 

@@ -50,8 +50,9 @@ int main(int , char** )
 
   std::cout << "Transform to static ellipsoid = " << transform << std::endl;
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   ellipsoid->RequestSetTransform( transform );
-
+#endif
 
   // Create the ellipsoid representation
   igstk::EllipsoidObjectRepresentation::Pointer 
