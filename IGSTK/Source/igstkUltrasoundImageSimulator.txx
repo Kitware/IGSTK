@@ -343,8 +343,9 @@ UltrasoundImageSimulator< TImageGeometricModel >
   HelperType::SetITKImage( this, m_USImage.GetPointer() );
 
   // Update the transform of the image 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_USImage->RequestSetTransform(m_Transform);
-
+#endif
 }
 
 
