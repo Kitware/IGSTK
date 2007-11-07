@@ -340,8 +340,10 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   meshObject->RequestSetTransform( transform );
 #endif
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   meshObject->RequestGetTransform();
-  
+#endif
+
   if( !transformObserver->GotTransform() )
     {
     std::cerr << "The MeshObject did not returned ";
@@ -455,7 +457,9 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   meshObject->RequestSetTransform( transform );
+#endif
 
   while(1)
     {
