@@ -23,7 +23,7 @@ namespace igstk
 UltrasoundProbeObject::UltrasoundProbeObject():m_StateMachine(this)
 {
   m_UltrasoundProbeSpatialObject = UltrasoundProbeSpatialObjectType::New();
-  this->RequestSetSpatialObject( m_UltrasoundProbeSpatialObject );
+  this->RequestSetInternalSpatialObject( m_UltrasoundProbeSpatialObject );
 } 
 
 /** Destructor */
