@@ -24,7 +24,9 @@ VascularNetworkObject::VascularNetworkObject():m_StateMachine(this)
 {
 
   // Observe the superclass
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   this->ObserveVesselReceivedInput( this );
+#endif
 
   igstkAddInputMacro( GetVessel );
   igstkAddInputMacro( VesselReceived );
@@ -55,12 +57,14 @@ void VascularNetworkObject::SearchForVesselProcessing()
 /** This function reports the vessel */
 void VascularNetworkObject::ReportVesselProcessing()
 {
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   VesselObjectType * vessel = 
     static_cast< VesselObjectType * >( m_VesselReceivedInputToBeSet );
 
   VesselObjectModifiedEvent  event;
   event.Set( const_cast<VesselObjectType*>(vessel)  );
   this->InvokeEvent( event );
+#endif
 }
 
 

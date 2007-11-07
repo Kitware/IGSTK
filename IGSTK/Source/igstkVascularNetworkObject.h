@@ -103,11 +103,13 @@ private:
   /** Report when a request has been made at an incorrect time. */
   void ReportInvalidRequestProcessing();
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   igstkLoadedObjectEventTransductionMacro(
     SpatialObjectModified, VesselReceived );
 
   igstkEventTransductionMacro(
     SpatialObjectNotAvailable, VesselNotFound );
+#endif
 
 };
 
