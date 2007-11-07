@@ -216,7 +216,9 @@ void ObjectRepresentation::RequestGetTransformProcessing()
 {
   igstkLogMacro( DEBUG, "RequestUpdatePositionProcessing called ....");
   // The response should be sent back in an event
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_SpatialObject->RequestGetTransform();
+#endif
 }
 
 

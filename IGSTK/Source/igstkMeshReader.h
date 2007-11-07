@@ -47,7 +47,9 @@ public:
     imageSpatialObject->SetMesh( reader->GetITKMesh() );  
     ::igstk::Transform transform;
     transform.SetToIdentity( TimeStamp::GetLongestPossibleTime() );
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
     imageSpatialObject->RequestSetTransform( transform );
+#endif
     }
 
 }; // end of MeshReaderToMeshSpatialObject class
