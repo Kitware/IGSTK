@@ -56,10 +56,12 @@ protected:
     }
   ~ChildObserver() {}
 public:
-    
+
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   typedef ::igstk::SpatialObjectModifiedEvent      PositiveEventType;
   typedef ::igstk::SpatialObjectNotAvailableEvent  NegativeEventType;
-        
+#endif
+
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
     const itk::Object * constCaller = caller;
@@ -73,6 +75,7 @@ public:
     m_GotChild = false;
     m_GotChildNotAvailableMessage = true;
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
     if( PositiveEventType().CheckEvent( &event ) )
       {
       const PositiveEventType * spatialObjectEvent = 
@@ -96,7 +99,8 @@ public:
         m_GotChildNotAvailableMessage = true;
         }
       }
-
+#endif
+    
     }
 
   bool GotChild() const
@@ -269,8 +273,10 @@ int igstkGroupObjectTest( int, char * [] )
 
   ChildObserverType::Pointer childObserver = ChildObserverType::New();
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   group->AddObserver( igstk::SpatialObjectModifiedEvent(), childObserver );
   group->AddObserver( igstk::SpatialObjectNotAvailableEvent(), childObserver );
+#endif
 
   for( unsigned int childId = 0; 
        childId < maximumNumberOfChildrenToTry; childId++ )

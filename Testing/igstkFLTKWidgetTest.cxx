@@ -170,8 +170,9 @@ int igstkFLTKWidgetTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
     ellipsoid->RequestSetTransform( transform );
-
+#endif
 
     translation[1] = -0.25;  // translate the cylinder along Y
     translation[2] = -2.00;  // translate the cylinder along Z
@@ -180,7 +181,9 @@ int igstkFLTKWidgetTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
     cylinder->RequestSetTransform( transform );
+#endif
 
     ViewNew2DType::Pointer view2D = ViewNew2DType::New();
     view2D->SetLogger( logger );
