@@ -108,8 +108,9 @@ int main( int , char *[] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds2 );
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   cone->RequestSetTransform( transform );
-
+#endif
 
   typedef igstk::CylinderObject CylinderObjectType;
   CylinderObjectType::Pointer cylinder = CylinderObjectType ::New();
@@ -127,10 +128,11 @@ int main( int , char *[] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds2 );
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   cylinder->RequestSetTransform( transform );
-
   cone->RequestGetTransform();
   cylinder->RequestGetTransform();
+#endif
 
   std::cout << "Reference System A " << std::endl;
   // FIXCS referenceA->Print( std::cout );
