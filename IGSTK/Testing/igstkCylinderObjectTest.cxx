@@ -244,8 +244,10 @@ int igstkCylinderObjectTest( int, char * [] )
   cylinderObject->RequestSetTransform( transform );
 #endif
   
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   cylinderObject->RequestGetTransform();
-  
+#endif
+
   if( !transformObserver->GotTransform() )
     {
     std::cerr << "The CylinderObject did not returned \
