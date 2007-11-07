@@ -25,7 +25,8 @@ GroupObject::GroupObject():m_StateMachine(this)
 {
   // Create the Group Spatial Object
   m_GroupSpatialObject = GroupSpatialObjectType::New();
-  this->RequestSetSpatialObject( m_GroupSpatialObject );
+
+  this->RequestSetInternalSpatialObject( m_GroupSpatialObject );
 
   igstkAddInputMacro( AddChildValid );
   igstkAddInputMacro( AddChildInvalid );
@@ -113,16 +114,20 @@ void GroupObject::AddChildProcessing()
 /** Return a child from the group */
 void GroupObject::GetChildProcessing()
 {
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   SpatialObjectModifiedEvent event;
   event.Set( m_ChildrenArray[ m_ChildIdToGet ] );
   this->InvokeEvent( event );
+#endif
 }
 
 /** Return a child from the group */
 void GroupObject::ReportNoChildAvailableProcessing()
 {
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   SpatialObjectNotAvailableEvent event;
   this->InvokeEvent( event );
+#endif
 }
 
 /** Null operation for a State Machine transition */
