@@ -268,8 +268,10 @@ int igstkAxesObjectTest( int, char * [] )
   AxesObject->RequestSetTransform( transform );
 #endif
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   AxesObject->RequestGetTransform();
-  
+#endif
+
   if( !transformObserver->GotTransform() )
     {
     std::cerr << "The AxesObject did not returned a Transform event" 

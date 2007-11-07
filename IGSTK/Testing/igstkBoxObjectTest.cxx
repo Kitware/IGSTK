@@ -266,8 +266,10 @@ int igstkBoxObjectTest( int, char * [] )
   BoxObject->RequestSetTransform( transform );
 #endif
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   BoxObject->RequestGetTransform();
-  
+#endif
+
   if( !transformObserver->GotTransform() )
     {
     std::cerr << "The BoxObject did not returned a Transform event" 

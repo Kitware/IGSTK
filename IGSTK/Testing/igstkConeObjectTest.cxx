@@ -257,8 +257,10 @@ int igstkConeObjectTest( int, char * [] )
   ConeObject->RequestSetTransform( transform );
 #endif
   
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   ConeObject->RequestGetTransform();
-  
+#endif
+
   if( !transformObserver->GotTransform() )
     {
     std::cerr << "The ConeObject did not returned a Transform event" 
