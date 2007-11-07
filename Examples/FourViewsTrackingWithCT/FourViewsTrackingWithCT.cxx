@@ -1010,7 +1010,9 @@ void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
     if( m_CTImageObserver->GetCTImage()->IsInside( p ) )
       {
       m_ImageLandmarkTransformToBeSet = tmevent->Get();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
       m_Ellipsoid->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
+#endif
       ImageSpatialObjectType::IndexType index;
       m_CTImageObserver->GetCTImage()
                           ->TransformPhysicalPointToIndex( p, index);

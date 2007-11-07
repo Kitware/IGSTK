@@ -247,7 +247,9 @@ public:
           ptnew.SetRadius(pt->GetRadius());
           newVessel->AddPoint(ptnew);
           }
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
         newNetwork->RequestAddObject(newVessel);
+#endif
         }
 
       igstk::VascularNetworkObjectRepresentation::Pointer tubeRepresentation 

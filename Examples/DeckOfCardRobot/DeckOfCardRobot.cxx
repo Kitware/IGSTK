@@ -83,7 +83,9 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   transform.SetToIdentity( -1 );
 
   m_PickedPoint                   = EllipsoidType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_PickedPoint->RequestSetTransform( transform );
+#endif
   m_PickedPointRepresentation     = EllipsoidRepresentationType::New();
   m_PickedPoint->SetRadius( 4, 4, 4 );  
   m_PickedPointRepresentation->RequestSetEllipsoidObject( m_PickedPoint );
@@ -91,7 +93,9 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_PickedPointRepresentation->SetOpacity(1.0);
 
   m_NeedleTip                   = EllipsoidType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_NeedleTip->RequestSetTransform( transform );
+#endif
   m_NeedleTipRepresentation     = EllipsoidRepresentationType::New();
   m_NeedleTip->SetRadius( 4, 4, 4 );  
   m_NeedleTipRepresentation->RequestSetEllipsoidObject( m_NeedleTip );
@@ -99,7 +103,9 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_NeedleTipRepresentation->SetOpacity(1.0);
 
   m_Needle                    = CylinderType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_Needle->RequestSetTransform( transform );
+#endif
   m_NeedleRepresentation      = CylinderRepresentationType::New();
   m_Needle->SetRadius( 1.5 );   //   1.5 mm
   m_Needle->SetHeight( 100 );   // 200.0 mm
@@ -108,7 +114,9 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_NeedleRepresentation->SetOpacity(1.0);
 
   m_NeedleHolder                    = CylinderType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_NeedleHolder->RequestSetTransform( transform );
+#endif
   m_NeedleHolderRepresentation      = CylinderRepresentationType::New();
   m_NeedleHolder->SetRadius( 8 );   //   16 mm
   m_NeedleHolder->SetHeight( 45 );   // 45 mm
@@ -117,7 +125,9 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_NeedleHolderRepresentation->SetOpacity(0.5);
 
   m_Box                   = BoxType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_Box->RequestSetTransform( transform );
+#endif
   m_BoxRepresentation     = BoxRepresentationType::New();
   m_Box->SetSize( 38, 38, 1 );
   m_BoxRepresentation->RequestSetBoxObject( m_Box );
@@ -125,7 +135,9 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_BoxRepresentation->SetOpacity( 0.5 );
 
   m_TargetPoint                 = EllipsoidType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_TargetPoint->RequestSetTransform( transform );
+#endif
   m_TargetRepresentation        = EllipsoidRepresentationType::New();
   m_TargetPoint->SetRadius( 3, 3, 3 );
   m_TargetRepresentation->RequestSetEllipsoidObject( m_TargetPoint );
@@ -133,7 +145,9 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_TargetRepresentation->SetOpacity( 1 );
  
   m_EntryPoint                  = EllipsoidType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_EntryPoint->RequestSetTransform( transform );
+#endif
   m_EntryRepresentation         = EllipsoidRepresentationType::New();
   m_EntryPoint->SetRadius( 3, 3, 3 );
   m_EntryRepresentation->RequestSetEllipsoidObject( m_EntryPoint );
@@ -502,10 +516,12 @@ void DeckOfCardRobot::RegistrationProcessing()
     //this->RegistrationError->value( 
     //           m_Registration->m_meanRegistrationError );
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
     m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
     m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
     m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
     m_Box->RequestSetTransform( m_RobotTransformToBeSet );
+#endif
     m_RobotTransform = m_RobotTransformToBeSet;
     m_RobotCurrentTransform = m_RobotTransformToBeSet;
     Fl::wait(0.01);
@@ -756,7 +772,9 @@ void DeckOfCardRobot::DrawPickedPoint( const itk::EventObject & event)
       {
       m_ImageLandmarkTransformToBeSet = tmevent->Get();
       
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
       m_PickedPoint->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
+#endif
       ImageSpatialObjectType::IndexType index;
       m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
       igstkLogMacro( DEBUG, index <<"\n")
@@ -790,13 +808,17 @@ void DeckOfCardRobot::RequestSetEntryPoint()
 
 void DeckOfCardRobot::DrawTargetPointProcessing()
 {
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_TargetPoint->RequestSetTransform( m_TargetTransform );
+#endif
 }
 
 void DeckOfCardRobot::DrawPathProcessing()
 {
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_TargetPoint->RequestSetTransform( m_TargetTransform );
   m_EntryPoint->RequestSetTransform( m_EntryTransform );
+#endif
 
   float a = 0.0;
   if( this->CalculateRobotMovement() )
@@ -871,9 +893,11 @@ void DeckOfCardRobot::DrawPathProcessing()
     m_PathRepresentationCoronal->SetOpacity( a );
     m_PathRepresentation3D->SetOpacity( a );
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
     m_NeedleTip->RequestSetTransform( m_RobotTransform );
     m_Needle->RequestSetTransform( m_RobotTransform ); 
     m_NeedleHolder->RequestSetTransform( m_RobotTransform );
+#endif
     m_RobotCurrentTransform = m_RobotTransform;
     this->NeedleSlider->maximum(0);
     this->NeedleSlider->value( 0 );
@@ -929,9 +953,11 @@ void DeckOfCardRobot::HomeRobotProcessing()
                               m_HomeRobotSuccessInput, m_HomeRobotFailureInput);
   
   // FIXME --> Needle State Machine Logic, success/failure
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_Needle->RequestSetTransform( m_RobotTransform ); 
   m_NeedleTip->RequestSetTransform( m_RobotTransform );
   m_NeedleHolder->RequestSetTransform( m_RobotTransform );
+#endif
   m_RobotCurrentTransform = m_RobotTransform;
   Fl::wait(0.01);
   igstk::PulseGenerator::CheckTimeouts();
@@ -957,9 +983,11 @@ void DeckOfCardRobot::TargetingRobotProcessing()
                   m_TargetingRobotSuccessInput, m_TargetingRobotFailureInput);
 
   // FIXME --> Needle State Machine Logic, success/failure
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_Needle->RequestSetTransform( m_RobotTransformToBeSet ); 
   m_NeedleTip->RequestSetTransform( m_RobotTransformToBeSet );
   m_NeedleHolder->RequestSetTransform( m_RobotTransformToBeSet );
+#endif
   m_RobotCurrentTransform = m_RobotTransformToBeSet;
   Fl::wait(0.01);
   igstk::PulseGenerator::CheckTimeouts();
@@ -1135,8 +1163,10 @@ void DeckOfCardRobot::RequestInsertNeedle()
   m_NeedleTransformToBeSet = m_RobotCurrentTransform;
   m_NeedleTransformToBeSet.SetTranslation( translation, 0.1, 1e300);
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_Needle->RequestSetTransform( m_NeedleTransformToBeSet );
   m_NeedleTip->RequestSetTransform( m_NeedleTransformToBeSet );
+#endif
 
   // Update target distance
   igstk::Transform::VectorType vect2 = m_TargetTransform.GetTranslation()
@@ -1242,9 +1272,11 @@ void DeckOfCardRobot::DisableObliqueView()
 void DeckOfCardRobot::AnimateRobotMove( igstk::Transform TCurrent, 
                                         igstk::Transform TToBeSet, int steps )
 {
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_Needle->RequestSetTransform( TCurrent );
   m_NeedleTip->RequestSetTransform( TCurrent );
   m_NeedleHolder->RequestSetTransform( TCurrent );
+#endif
   Fl::wait(0.1);
   igstk::PulseGenerator::CheckTimeouts();
 
@@ -1275,9 +1307,11 @@ void DeckOfCardRobot::AnimateRobotMove( igstk::Transform TCurrent,
     
     transform.SetTranslationAndRotation( translation, rotation, 0.1, 1e300 );
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
     m_NeedleTip->RequestSetTransform( transform );
     m_Needle->RequestSetTransform( transform ); 
     m_NeedleHolder->RequestSetTransform( transform );
+#endif
 
     Fl::wait(0.1);
     igstk::PulseGenerator::CheckTimeouts();
