@@ -31,7 +31,7 @@ ImageSpatialObject< TPixelType, VDimension >
 {
   // Create the image spatial object
   m_ImageSpatialObject = ImageSpatialObjectType::New();
-  this->RequestSetSpatialObject( m_ImageSpatialObject );
+  this->RequestSetInternalSpatialObject( m_ImageSpatialObject );
 
   // initialize the logger 
   m_Logger = NULL;
