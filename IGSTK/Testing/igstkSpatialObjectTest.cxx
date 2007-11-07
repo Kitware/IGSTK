@@ -42,19 +42,26 @@ public:
 
   bool TestMethods()
     {
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
     this->RequestAddObject( NULL );        // Test with null pointer
-    this->RequestSetSpatialObject( NULL ); // Test with null pointer
+#endif
+    this->RequestSetInternalSpatialObject( NULL ); // Test with null pointer
 
     Self::Pointer sibling = Self::New();   // Test with valid pointer
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
     this->RequestAddObject( sibling );
-      
+#endif
+
     typedef SpatialObject::SpatialObjectType SpatialObjectType;
     SpatialObjectType::Pointer so = SpatialObjectType::New();
-    this->RequestSetSpatialObject( so );   // Test with valid pointer
+    this->RequestSetInternalSpatialObject( so );   // Test with valid pointer
 
-    sibling->RequestSetSpatialObject( so );
+    sibling->RequestSetInternalSpatialObject( so );
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
     this->RequestAddObject( sibling );
-      
+#endif
+
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
     const Self * me1 = dynamic_cast< const Self *>( this->GetObject(  0  ) );
     if( !me1 )
       {
@@ -68,6 +75,7 @@ public:
       std::cerr << "Error in GetObject() with invalid Id" << std::endl;
       return false;
       }
+#endif
 
     return true;
   }
@@ -203,7 +211,9 @@ int igstkSpatialObjectTest( int, char * [] )
   for(unsigned int i=0; i<50; i++)
     {
     igstk::PulseGenerator::CheckTimeouts();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
     dummyObject->RequestGetTransform();
+#endif
     }
 
   tracker->RequestStopTracking();
