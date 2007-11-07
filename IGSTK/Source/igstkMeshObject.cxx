@@ -29,7 +29,7 @@ MeshObject::MeshObject():m_StateMachine(this)
   // Create the mesh Spatial Object
   m_MeshSpatialObject = MeshSpatialObjectType::New();
   m_MeshSpatialObject->SetMesh(m_Mesh);
-  this->RequestSetSpatialObject( m_MeshSpatialObject );
+  this->RequestSetInternalSpatialObject( m_MeshSpatialObject );
 } 
 
 /** Destructor */
