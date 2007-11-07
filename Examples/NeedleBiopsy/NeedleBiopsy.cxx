@@ -88,7 +88,9 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   transform.SetToIdentity( 100 );
 
   m_PickedPoint                   = EllipsoidType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_PickedPoint->RequestSetTransform( transform );
+#endif
   m_PickedPointRepresentation     = EllipsoidRepresentationType::New();
   //m_PickedPointRepresentation->SetLogger( logger );
   m_PickedPoint->SetRadius( 5, 5, 5 );  
@@ -97,7 +99,9 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_PickedPointRepresentation->SetOpacity(1.0);
 
   m_NeedleTip                   = EllipsoidType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_NeedleTip->RequestSetTransform( transform );
+#endif
   m_NeedleTipRepresentation     = EllipsoidRepresentationType::New();
   m_NeedleTip->SetRadius( 5, 5, 5 );  
   m_NeedleTipRepresentation->RequestSetEllipsoidObject( m_NeedleTip );
@@ -105,7 +109,9 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_NeedleTipRepresentation->SetOpacity(1.0);
 
   m_Needle                    = CylinderType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_Needle->RequestSetTransform( transform );
+#endif
   m_NeedleRepresentation      = CylinderRepresentationType::New();
   m_Needle->SetRadius( 1.5 );   //   1.5 mm
   m_Needle->SetHeight( 100 );   // 200.0 mm
@@ -114,7 +120,9 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_NeedleRepresentation->SetOpacity(1.0);
 
   m_TargetPoint                 = EllipsoidType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_TargetPoint->RequestSetTransform( transform );
+#endif
   m_TargetRepresentation        = EllipsoidRepresentationType::New();
   m_TargetPoint->SetRadius( 6, 6, 6 );
   m_TargetRepresentation->RequestSetEllipsoidObject( m_TargetPoint );
@@ -122,7 +130,9 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_TargetRepresentation->SetOpacity( 0.6 );
  
   m_EntryPoint                  = EllipsoidType::New();
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_EntryPoint->RequestSetTransform( transform );
+#endif
   m_EntryRepresentation         = EllipsoidRepresentationType::New();
   m_EntryPoint->SetRadius( 6, 6, 6 );
   m_EntryRepresentation->RequestSetEllipsoidObject( m_EntryPoint );
@@ -1136,7 +1146,9 @@ void NeedleBiopsy::DrawPickedPoint( const itk::EventObject & event)
 
       std::cout<< m_ImageLandmarkTransformToBeSet << std::endl;
       
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
       m_PickedPoint->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
+#endif
       ImageSpatialObjectType::IndexType index;
       m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
       igstkLogMacro( DEBUG, index <<"\n")
@@ -1200,13 +1212,17 @@ void NeedleBiopsy::RequestSetEntryPoint()
 
 void NeedleBiopsy::DrawTargetPointProcessing()
 {
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_TargetPoint->RequestSetTransform( m_TargetTransform );
+#endif
 }
 
 void NeedleBiopsy::DrawPathProcessing()
 {
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_TargetPoint->RequestSetTransform( m_TargetTransform );
   m_EntryPoint->RequestSetTransform( m_EntryTransform );
+#endif
 
   m_Path->Clear();
   
@@ -1225,7 +1241,9 @@ void NeedleBiopsy::DrawPathProcessing()
 
   igstk::Transform transform;
   transform.SetToIdentity( 1e300 );
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_Path->RequestSetTransform( transform );
+#endif
 
   this->DisplayAxial->RequestRemoveObject( m_PathRepresentationAxial );
   this->DisplaySagittal->RequestRemoveObject( m_PathRepresentationSagittal );
