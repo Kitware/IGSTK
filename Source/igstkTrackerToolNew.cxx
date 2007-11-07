@@ -226,7 +226,9 @@ TrackerToolNew::RequestAttachSpatialObject( SpatialObject * spatialObject )
 {
   // Note: the ToolCalibrationTransform should be the transform relating
   //       the spatial object to the tracker tool. FIXME.
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   spatialObject->RequestAttachToTrackerTool( this->m_CoordinateReferenceSystem );
+#endif
 }
 
 /** Print object information */

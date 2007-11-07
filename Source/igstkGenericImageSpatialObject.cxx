@@ -298,7 +298,7 @@ GenericImageSpatialObject
   CreatePipelineMacro( float );
   CreatePipelineMacro( double );
 
-  this->RequestSetSpatialObject( this->m_GenericSpatialObject );
+  this->RequestSetInternalSpatialObject( this->m_GenericSpatialObject );
 
   this->m_VtkImporter->Update();
 
