@@ -21,6 +21,7 @@
 namespace igstk
 { 
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED 
 
 /** Constructor */
 SpatialObject::SpatialObject():m_StateMachine(this)
@@ -347,5 +348,257 @@ SpatialObject::ReportInvalidRequestProcessing()
 {
   igstkLogMacro( WARNING, "Invalid request made to the State Machine" );
 }
+#else // USE_SPATIAL_OBJECT_DEPRECATED not defined
+/** 
+ *  This version is the new API. There are no deprecated methods for the 
+ *  implementation below.
+ */
 
+/** Constructor */
+SpatialObject::SpatialObject():m_StateMachine(this)
+{
+  m_CoordinateReferenceSystem = CoordinateReferenceSystem::New();
+
+  this->ObserveTransformFoundInput( m_CoordinateReferenceSystem );
+  this->ObserveCoordinateReferenceSystemTransformToNullTargetEvent( m_CoordinateReferenceSystem );
+  this->ObserveCoordinateReferenceSystemTransformToDisconnectedEvent( m_CoordinateReferenceSystem );
+
+  m_SpatialObject = NULL;
+
+  igstkAddInputMacro( InternalSpatialObjectNull );
+  igstkAddInputMacro( InternalSpatialObjectValid );
+  igstkAddInputMacro( TransformAndParent );
+  igstkAddInputMacro( NullParentCoordinateSystem );
+  igstkAddInputMacro( NullParent );
+  igstkAddInputMacro( GetTransformToParent );
+  igstkAddInputMacro( ValidTargetCoordinateSystem );
+  igstkAddInputMacro( TransformFound );
+  igstkAddInputMacro( DisconnectedTargetCoordinateSystem );
+
+  igstkAddStateMacro( Initial  );
+  igstkAddStateMacro( AttachedToParent );
+  igstkAddStateMacro( AttemptingComputeTransformTo );
+  igstkAddStateMacro( InitialAttemptingComputeTransformTo );
+
+  igstkAddTransitionMacro( Initial, NullParent, 
+                           Initial, NullParent );
+  igstkAddTransitionMacro( Initial, NullParentCoordinateSystem, 
+                           Initial, NullParentCoordinateSystem );
+  igstkAddTransitionMacro( Initial, GetTransformToParent, 
+                           Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, TransformAndParent, 
+                           AttachedToParent, TransformAndParent );
+  igstkAddTransitionMacro( Initial, ValidTargetCoordinateSystem, 
+                           InitialAttemptingComputeTransformTo, ValidTargetCoordinateSystem);
+  igstkAddTransitionMacro( Initial, InternalSpatialObjectNull, 
+                           Initial,  ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, InternalSpatialObjectValid, 
+                           Initial,  SetInternalSpatialObject );
+  igstkAddTransitionMacro( Initial, TransformFound, 
+                           Initial, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttachedToParent, TransformAndParent, 
+                           AttachedToParent, TransformAndParent );
+  igstkAddTransitionMacro( AttachedToParent, GetTransformToParent, 
+                           AttachedToParent, GetTransformToParent );
+  igstkAddTransitionMacro( AttachedToParent, ValidTargetCoordinateSystem, 
+                           AttemptingComputeTransformTo, 
+                                              ValidTargetCoordinateSystem );
+  igstkAddTransitionMacro( AttachedToParent, InternalSpatialObjectNull, 
+                           AttachedToParent, InternalSpatialObjectNull );
+  igstkAddTransitionMacro( AttachedToParent, InternalSpatialObjectValid, 
+                           AttachedToParent, SetInternalSpatialObject );
+  igstkAddTransitionMacro( AttachedToParent, NullParentCoordinateSystem, 
+                           AttachedToParent, NullParentCoordinateSystem);
+  igstkAddTransitionMacro( AttachedToParent, NullParent,
+                           AttachedToParent, NullParent);
+  igstkAddTransitionMacro( AttachedToParent, TransformFound,
+                           AttachedToParent, ReportInvalidRequest);
+  igstkAddTransitionMacro( AttachedToParent, DisconnectedTargetCoordinateSystem,
+                           AttachedToParent, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, NullTargetCoordinateSystem, 
+                           AttachedToParent,             ReportInvalidRequest); // Change to an error proc
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, DisconnectedTargetCoordinateSystem, 
+                           AttachedToParent,             ReportInvalidRequest); // Change to an error proc
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, TransformFound, 
+                           AttachedToParent,             TransformFound ); 
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, TransformAndParent,
+                           AttemptingComputeTransformTo, ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, GetTransformToParent,
+                           AttemptingComputeTransformTo, ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, ValidTargetCoordinateSystem,
+                           AttemptingComputeTransformTo, ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, InternalSpatialObjectNull,
+                           AttemptingComputeTransformTo, ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, InternalSpatialObjectValid,
+                           AttemptingComputeTransformTo, ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, NullParent,
+                           AttemptingComputeTransformTo, ReportInvalidRequest);
+
+
+
+  igstkAddTransitionMacro( InitialAttemptingComputeTransformTo, NullTargetCoordinateSystem, 
+                           Initial,                             ReportInvalidRequest); // Change to an error proc
+  igstkAddTransitionMacro( InitialAttemptingComputeTransformTo, DisconnectedTargetCoordinateSystem, 
+                           Initial,                             ReportInvalidRequest); // Change to an error proc
+  igstkAddTransitionMacro( InitialAttemptingComputeTransformTo, TransformFound, 
+                           Initial,                             TransformFound ); 
+  
+  igstkSetInitialStateMacro( Initial );
+  m_StateMachine.SetReadyToRun();
+
+} 
+
+/** Destructor */
+SpatialObject::~SpatialObject()  
+{
+}
+
+/** Print Self function */
+void SpatialObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  if( this->m_SpatialObject )
+    {
+    os << indent << "Internal Spatial Object = ";
+    os << this->m_SpatialObject.GetPointer() << std::endl;
+    }
+}
+
+/** Request setting the ITK spatial object that provide internal 
+ *  functionalities. */
+void SpatialObject
+::RequestSetInternalSpatialObject( SpatialObjectType * spatialObject )
+{  
+  m_SpatialObjectToBeSet = spatialObject;
+
+  if( m_SpatialObjectToBeSet.IsNull() )
+    {
+    igstkPushInputMacro( InternalSpatialObjectNull );
+    m_StateMachine.ProcessInputs();
+    }
+  else 
+    {
+    igstkPushInputMacro( InternalSpatialObjectValid );
+    m_StateMachine.ProcessInputs();
+    }
+}
+ 
+/** Null operation for a State Machine transition */
+void SpatialObject::NoProcessing()
+{
+}
+
+
+/** Set the ITK spatial object that provide internal functionalities.
+ * This method should only be called from the StateMachine */
+void SpatialObject::SetInternalSpatialObjectProcessing()
+{
+  m_SpatialObject = m_SpatialObjectToBeSet;
+}
+
+/** Return the internal pointer to the SpatialObject */
+SpatialObject::SpatialObjectType * 
+SpatialObject::GetInternalSpatialObject() const
+{
+  return m_SpatialObject;
+}
+
+/** Report that an invalid or suspicious operation has been requested.
+ * This may mean that an error condition has arised in one of the
+ * componenta that interact with this SpatialObject. */
+void
+SpatialObject::ReportInvalidRequestProcessing()
+{
+  igstkLogMacro( WARNING, "Invalid request made to the State Machine" );
+}
+
+const CoordinateReferenceSystem * 
+SpatialObject::GetCoordinateReferenceSystem() const
+{
+  return m_CoordinateReferenceSystem;
+}
+
+void
+SpatialObject::NullParentCoordinateSystemProcessing()
+{
+  igstkLogMacro( WARNING, "Parent's coordinate reference system was NULL when trying to SetTransformAndParent." );
+}
+
+void
+SpatialObject::NullParentProcessing()
+{
+  igstkLogMacro( WARNING, "Parent object was NULL when trying to SetTransformAndParent." );
+}
+
+
+void
+SpatialObject
+::ValidTargetCoordinateSystemProcessing()
+{
+  /** Event transduction macros handle the results */
+  this->m_CoordinateReferenceSystem->RequestComputeTransformTo( 
+                                          this->m_TargetCoordinateSystem );
+}
+
+
+void 
+SpatialObject
+::RequestGetTransformToParent() 
+{
+  igstkPushInputMacro( GetTransformToParent );
+  m_StateMachine.ProcessInputs();
+  return;
+};
+
+void
+SpatialObject
+::GetTransformToParentProcessing()
+{
+  CoordinateReferenceSystemTransformToResult payload;
+  payload.m_Source = m_CoordinateReferenceSystem;
+  payload.m_Destination = this->m_CoordinateSystemParent;
+  payload.m_Transform = this->m_TransformToParent;
+
+  CoordinateReferenceSystemTransformToEvent event;
+  event.Set( payload );
+
+  this->InvokeEvent( event );
+}
+
+void
+SpatialObject
+::TransformAndParentProcessing()
+{
+  this->m_CoordinateSystemParent = this->m_CoordinateSystemParentToBeSet;
+  this->m_TransformToParent = this->m_TransformToParentToBeSet;
+
+  this->m_CoordinateReferenceSystem->RequestSetTransformAndParent( 
+                                      this->m_TransformToParentToBeSet,
+                                      this->m_CoordinateSystemParentToBeSet);
+
+}
+
+void
+SpatialObject
+::TransformFoundProcessing()
+{
+  CoordinateReferenceSystemTransformToResult payload = this->m_TransformFoundInputToBeSet;
+
+  CoordinateReferenceSystemTransformToEvent event;
+  event.Set( payload );
+
+  this->InvokeEvent( event );
+}
+
+void
+SpatialObject
+::InternalSpatialObjectNullProcessing()
+{
+  igstkLogMacro( WARNING, "Spatial object was NULL when trying to SetInternalSpatialObject." );
+}
+
+#endif // USE_SPATIAL_OBJECT_DEPRECATED
 } // end namespace igstk
