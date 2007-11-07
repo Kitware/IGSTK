@@ -47,6 +47,13 @@ namespace igstk
  * \ingroup Object
  */
 
+/** This define will be used to turn on/off deprecated functionality
+ *  as we switch over to the new SpatialObject/CoordinateReferenceSystem API.
+ *  This define is **TEMPORARY** and will go away once the new API is in 
+ *  place. 
+ */
+#define USE_SPATIAL_OBJECT_DEPRECATED
+
 class SpatialObject : public Object
 {
 
