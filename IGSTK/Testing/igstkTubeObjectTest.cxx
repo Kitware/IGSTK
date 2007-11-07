@@ -275,8 +275,10 @@ int igstkTubeObjectTest( int, char * [] )
   TubeObject->RequestSetTransform( transform );
 #endif
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   TubeObject->RequestGetTransform();
-  
+#endif
+
   if( !transformObserver->GotTransform() )
     {
     std::cerr << "The TubeObject did not returned a Transform event" 

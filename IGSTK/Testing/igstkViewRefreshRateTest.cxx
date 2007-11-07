@@ -220,7 +220,9 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
     ellipsoid->RequestSetTransform( transform );
+#endif
 
     // Exercise the code for resizing the window
     form->resize(100, 100, 600, 300);

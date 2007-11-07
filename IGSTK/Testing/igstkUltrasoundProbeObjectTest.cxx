@@ -311,8 +311,10 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   UltrasoundProbeObject->RequestSetTransform( transform );
 #endif
   
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   UltrasoundProbeObject->RequestGetTransform();
-  
+#endif
+
   if( !transformObserver->GotTransform() )
     {
     std::cerr << "The UltrasoundProbeObject did not returned \

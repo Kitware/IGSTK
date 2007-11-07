@@ -226,8 +226,10 @@ int igstkVesselObjectTest( int, char * [] )
   VesselObject->RequestSetTransform( transform );
 #endif
   
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   VesselObject->RequestGetTransform();
-  
+#endif
+
   if( !transformObserver->GotTransform() )
     {
     std::cerr << "The VesselObject did not returned a Transform event" 
