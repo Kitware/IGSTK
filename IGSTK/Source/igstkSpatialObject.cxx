@@ -306,14 +306,16 @@ void SpatialObject::RequestAttachToTrackerTool(
     {
     igstkPushInputMacro( TrackerToolNull );
     m_StateMachine.ProcessInputs();
+    return;
     }
   else 
     {
     igstkPushInputMacro( TrackerToolValid );
     m_StateMachine.ProcessInputs();
+    return;
     }
 
-  m_StateMachine.ProcessInputs();
+//  m_StateMachine.ProcessInputs();
 }
 
 
