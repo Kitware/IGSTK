@@ -287,7 +287,7 @@ int igstkViewNewTest( int, char * [] )
               << std::endl;
 
     // Add the ellipsoid and cylinder representations to the view
-    view3D->RequestAddObject( AxesRepresentation );
+    // FIXCS view3D->RequestAddObject( AxesRepresentation );
     view3D->RequestAddObject( ellipsoidRepresentation );
     view3D->RequestAddObject( cylinderRepresentation );
     view3D->RequestStart();
@@ -327,7 +327,7 @@ int igstkViewNewTest( int, char * [] )
     view2D->RequestStart();
 
     // Add the ellipsoid and cylinder representations to the view
-    view2D->RequestAddObject( AxesRepresentation );
+    // FIXCS view2D->RequestAddObject( AxesRepresentation );
     view2D->RequestAddObject( ellipsoidRepresentation );
     view2D->RequestAddObject( cylinderRepresentation );
 

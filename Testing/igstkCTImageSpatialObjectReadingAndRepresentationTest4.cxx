@@ -152,7 +152,7 @@ int main( int argc, char* argv[] )
 
   view->RequestAddObject( imageRepresentation );
   view->RequestAddObject( boxObjectRepresentation );
-  view->RequestAddObject( AxesRepresentation );
+  // FIXCS view->RequestAddObject( AxesRepresentation );
 
   view->SetRefreshRate( 30 );
   view->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
@@ -161,7 +161,7 @@ int main( int argc, char* argv[] )
   view->SetCameraViewUp( 0, 0, 1.0 );
 
   // this will indirectly call CreateActors() 
-  view->RequestAddObject( AxesRepresentation );
+  // FIXCS view->RequestAddObject( AxesRepresentation );
   view->RequestResetCamera();
   view->RequestStart();
 

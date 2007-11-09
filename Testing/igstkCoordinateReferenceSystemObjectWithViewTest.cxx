@@ -244,7 +244,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   view2D->SetCameraViewUp( 0, 0, 1.0 );
 
   // this will indirectly call CreateActors() 
-  view2D->RequestAddObject( AxesRepresentation );
+  // FIXCS view2D->RequestAddObject( AxesRepresentation );
   view2D->RequestResetCamera();
   view2D->RequestStart();
 
