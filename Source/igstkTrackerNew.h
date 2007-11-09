@@ -34,6 +34,10 @@
 #include "igstkPulseGenerator.h"
 #include "igstkTrackerToolNew.h"
 
+#include "igstkCoordinateReferenceSystemDelegator.h"
+#include "igstkCoordinateSystemInterfaceMacros.h"
+
+
 namespace igstk
 {
 
@@ -241,11 +245,6 @@ protected:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
-  /** Get reference system. This is the reference frame of the Tracker itself.
-   * Tracker tools need access to this reference system in order to use it
-   * as parent in the scene graph. */
-  const CoordinateReferenceSystemType * GetCoordinateReferenceSystem() const;
-
   /** Verify if a tracker tool information is correct before adding/attaching
    *  it to the tracker. 
    * This method is used to verify the information supplied by 
@@ -283,9 +282,6 @@ private:
   TrackerToolPointer        m_ReferenceTool;
   unsigned int              m_ReferenceToolPortNumber;
   unsigned int              m_ReferenceToolNumber;
-
-  /** Coordinate Reference System */
-  CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;
 
   /** Validity time */
   TimePeriodType            m_ValidityTime;
@@ -421,6 +417,10 @@ private:
 
   /** Always called when entering tracking state. */
   void ExitTrackingStateProcessing( void );
+
+  /** Define the coordinate system interface 
+   */
+  igstkCoordinateSystemClassInterfaceMacro();
 
 };
 

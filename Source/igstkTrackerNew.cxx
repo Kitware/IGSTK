@@ -29,6 +29,9 @@ namespace igstk
 /** Constructor */
 TrackerNew::TrackerNew(void) :  m_StateMachine( this ) 
 {
+  /** Coordinate system interface */
+  igstkCoordinateSystemClassInterfaceConstructorMacro();
+
   // Set the state descriptors
   igstkAddStateMacro( Idle ); 
   igstkAddStateMacro( AttemptingToEstablishCommunication ); 
@@ -207,8 +210,6 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
   m_Threader = itk::MultiThreader::New();
   m_ThreadingEnabled = false;
 
-  // Create the coordinate reference system of the TrackerNew
-  m_CoordinateReferenceSystem = CoordinateReferenceSystemType::New();
 }
 
 
@@ -820,14 +821,6 @@ TrackerNew::ResultType TrackerNew
   //This method will be overridden in the derived classes.
   //as the tracker tool information is different for different tracker types
   return SUCCESS;
-}
- 
-
-/** Return the coordinate system associated with this tracker */
-const TrackerNew::CoordinateReferenceSystemType *
-TrackerNew::GetCoordinateReferenceSystem() const
-{
-  return m_CoordinateReferenceSystem;
 }
 
 /** Thread function for tracking */
