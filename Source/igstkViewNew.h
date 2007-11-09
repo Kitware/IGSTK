@@ -45,6 +45,8 @@ class vtkRenderer;
 #include "igstkEvents.h"   
 #include "igstkAnnotation2D.h"   
 #include "igstkRenderWindowInteractor.h"   
+#include "igstkCoordinateReferenceSystemDelegator.h"
+#include "igstkCoordinateSystemInterfaceMacros.h"
 
 namespace igstk {
 
@@ -290,6 +292,9 @@ private:
   ViewNew(const ViewNew& ); // purposely not implemented
   ViewNew& operator=(const ViewNew& ); // purposely not implemented
 
+  /** Define the coordinate system interface 
+   */
+  igstkCoordinateSystemClassInterfaceMacro();
 };
 
 std::ostream& operator<<(std::ostream& os, const ViewNew& o);

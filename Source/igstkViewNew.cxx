@@ -43,6 +43,9 @@ namespace igstk
 ViewNew::ViewNew() : 
 m_StateMachine(this)
 { 
+  /** Coordinate system interface */
+  igstkCoordinateSystemClassInterfaceConstructorMacro();
+
   igstkLogMacro( DEBUG, "Constructor() called ...\n");
   
   m_Logger = NULL;
