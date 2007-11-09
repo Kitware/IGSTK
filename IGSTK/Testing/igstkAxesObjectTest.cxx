@@ -220,7 +220,7 @@ int igstkAxesObjectTest( int, char * [] )
   // End of the GUI creation
 
   // this will indirectly call CreateActors() 
-  view2D->RequestAddObject( AxesRepresentation );
+  // FIXCS view2D->RequestAddObject( AxesRepresentation );
   view2D->SetLogger( logger );
     
   std::cout << "[PASSED]" << std::endl;

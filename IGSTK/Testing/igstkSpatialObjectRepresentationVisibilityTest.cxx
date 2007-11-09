@@ -347,7 +347,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   form->show();
   
   // this will indirectly call CreateActors() 
-  view3D->RequestAddObject( AxesRepresentation );
+  // FIXCS view3D->RequestAddObject( AxesRepresentation );
   view3D->RequestAddObject( ellipsoidRepresentation1  );
   view3D->RequestAddObject( ellipsoidRepresentation2 );
   view3D->RequestAddObject( ellipsoidRepresentation3 );
