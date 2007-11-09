@@ -262,6 +262,7 @@ SET(IGSTKSandbox_HEADS
   igstkContourObjectRepresentation.h
   igstkContourVascularNetworkObjectRepresentation.h
   igstkCoordinateReferenceSystem.h
+  igstkCoordinateReferenceSystemDelegator.h
   igstkCrosshairs2D.h
   igstkDICOMGenericImageReader.h
   igstkGenericImageSpatialObject.h
@@ -328,6 +329,7 @@ SET(IGSTKSandbox_SRCS
   igstkContourObjectRepresentation.cxx
   igstkContourVascularNetworkObjectRepresentation.cxx
   igstkCoordinateReferenceSystem.cxx
+  igstkCoordinateReferenceSystemDelegator.cxx
   igstkCrosshairs2D.cxx
   igstkDICOMGenericImageReader.cxx
   igstkGenericImageSpatialObject.cxx
