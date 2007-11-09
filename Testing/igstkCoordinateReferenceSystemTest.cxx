@@ -29,20 +29,108 @@
 #include "itkStdStreamLogOutput.h"
 #include "igstkVTKLoggerOutput.h"
 
+namespace CoordinateReferenceSystemTest
+{
+class CoordinateReferenceSystemObserver : public ::itk::Command
+{
+public:
+  typedef igstk::CoordinateReferenceSystemTransformToEvent  EventType;
+  typedef igstk::CoordinateReferenceSystemTransformToResult PayloadType;
+
+  /** Standard class typedefs. */
+  typedef CoordinateReferenceSystemObserver         Self;
+  typedef ::itk::Command                            Superclass;
+  typedef ::itk::SmartPointer<Self>        Pointer;
+  typedef ::itk::SmartPointer<const Self>  ConstPointer;
+  
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(CoordinateReferenceSystemObserver, ::itk::Command);
+  itkNewMacro(CoordinateReferenceSystemObserver);
+
+  CoordinateReferenceSystemObserver()
+    {
+    m_GotPayload = false;
+    m_Payload.m_Destination = NULL;
+    m_Payload.m_Source = NULL;
+    }
+
+  ~CoordinateReferenceSystemObserver()
+    {
+    m_GotPayload = false;
+    m_Payload.m_Destination = NULL;
+    m_Payload.m_Source = NULL;
+    }
+
+  void ClearPayload()
+    {
+    m_GotPayload = false;
+    m_Payload.m_Destination = NULL;
+    m_Payload.m_Source = NULL;
+    }
+
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    this->ClearPayload();
+    if( EventType().CheckEvent( &event ) )
+      {
+      const EventType * transformEvent = 
+                dynamic_cast< const EventType *>( &event );
+      if( transformEvent )
+        {
+        m_Payload = transformEvent->Get();
+        m_GotPayload = true;
+        }
+      }
+    else
+      {
+      std::cout << "Got unexpected event : " << std::endl;
+      event.Print(std::cout);
+      }
+    }
+
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    this->Execute(static_cast<const itk::Object*>(caller), event);
+    }
+
+  bool GotPayload()
+    {
+    return m_GotPayload;
+    }
+
+  PayloadType GetPayload()
+    {
+    return m_Payload;
+    }
+
+protected:
+
+  PayloadType   m_Payload;
+  bool          m_GotPayload;
+
+};
+
+}
+
 int igstkCoordinateReferenceSystemTest( int, char * [] )
 {
+  int testResult = EXIT_SUCCESS;
+
+  std::cout << "Running igstkCoordinateReferenceSystemTest " << std::endl;
 
   igstk::RealTimeClock::Initialize();
 
   typedef itk::Logger              LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef CoordinateReferenceSystemTest::CoordinateReferenceSystemObserver
+                                                                ObserverType;
+  typedef ObserverType::EventType CoordinateSystemEventType;
 
-  // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( itk::Logger::INFO );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
@@ -54,6 +142,10 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
   typedef igstk::CoordinateReferenceSystem  ObjectType;
   ObjectType::Pointer coordinateSystemA = ObjectType::New();
   coordinateSystemA->SetLogger( logger );
+
+  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+  coordinateSystemA->AddObserver( CoordinateSystemEventType(), 
+                                  coordSystemAObserver );
 
   // Test GetTransform()
   std::cout << "Testing Set/GetTransform(): ";
@@ -75,59 +167,60 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
 
   ObjectType::Pointer coordinateSystemRoot = ObjectType::New();
 
-  coordinateSystemA->RequestSetTransformAndParent( transform1, coordinateSystemRoot );
+  coordinateSystemA->RequestSetTransformAndParent( transform1, 
+                                                   coordinateSystemRoot );
 
   coordinateSystemA->RequestComputeTransformTo(coordinateSystemRoot);
-  // Need to get transform from an observer
+  /** Need to get transform from an observer */
   igstk::Transform  transform1b;
-
-  igstk::Transform::VectorType translation1b = transform1b.GetTranslation();
-  for( unsigned int i=0; i<3; i++ )
+  if (coordSystemAObserver->GotPayload())
     {
-    if( fabs( translation1b[i]  - translation[i] ) > tolerance )
+    transform1b = coordSystemAObserver->GetPayload().m_Transform;
+
+    igstk::Transform::VectorType translation1b=transform1b.GetTranslation();
+
+    for( unsigned int i=0; i<3; i++ )
       {
-      std::cerr << "Translation component is out of range [FAILED]" 
-                << std::endl;
-      std::cerr << "input  translation = " << translation << std::endl;
-      std::cerr << "output translation = " << translation1b << std::endl;
-      return EXIT_FAILURE;
+      if( fabs( translation1b[i]  - translation[i] ) > tolerance )
+        {
+        std::cerr << "Translation component is out of range [FAILED]" 
+                  << std::endl;
+        std::cerr << "input  translation = " << translation << std::endl;
+        std::cerr << "output translation = " << translation1b << std::endl;
+        testResult = EXIT_FAILURE;
+        }
       }
-    }
 
-  igstk::Transform::VersorType rotation1b = transform1b.GetRotation();
-  if( fabs( rotation1b.GetX() - rotation.GetX() ) > tolerance ||
-      fabs( rotation1b.GetY() - rotation.GetY() ) > tolerance ||
-      fabs( rotation1b.GetZ() - rotation.GetZ() ) > tolerance ||
-      fabs( rotation1b.GetW() - rotation.GetW() ) > tolerance     )
+    igstk::Transform::VersorType rotation1b = transform1b.GetRotation();
+    if( fabs( rotation1b.GetX() - rotation.GetX() ) > tolerance ||
+        fabs( rotation1b.GetY() - rotation.GetY() ) > tolerance ||
+        fabs( rotation1b.GetZ() - rotation.GetZ() ) > tolerance ||
+        fabs( rotation1b.GetW() - rotation.GetW() ) > tolerance     )
+      {
+      std::cerr << "Rotation component is out of range [FAILED]" 
+                << std::endl;
+      std::cerr << "input  rotation = " << rotation   << std::endl;
+      std::cerr << "output rotation = " << rotation1b << std::endl;
+      testResult = EXIT_FAILURE;
+      }
+
+    if (testResult == EXIT_SUCCESS)
+      {
+      std::cout << " [PASSED]" << std::endl;
+      }
+    } // GotPayload
+  else
     {
-    std::cerr << "Rotation component is out of range [FAILED]" << std::endl;
-    std::cerr << "input  rotation = " << rotation   << std::endl;
-    std::cerr << "output rotation = " << rotation1b << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  std::cout << "[PASSED]" << std::endl;
-
-  // typedef igstk::CoordinateReferenceSystem::IdentifierType  IdentifierType;
-  // IdentifierType nodeId  = coordinateSystemA->GetIdentifier();
-  // IdentifierType rootId1 = coordinateSystemRoot->GetIdentifier();
-  /* FIXCS
-  IdentifierType rootId2 = coordinateSystemA->GetRootIdentifier();
-  IdentifierType rootId3 = coordinateSystemRoot->GetRootIdentifier();
-
-  std::cout << "Node Identifier   = " << nodeId << std::endl;
-  std::cout << "Root Identifier 1 = " << rootId1 << std::endl;
-  std::cout << "Root Identifier 2 = " << rootId2 << std::endl;
-  std::cout << "Root Identifier 3 = " << rootId3 << std::endl;
-
-  if( rootId1 != rootId2 || rootId1 != rootId3 )
-    {
-    std::cerr << "Failure in GetRootIdentifier() method" << std::endl;
-    }
-  */
+    testResult = EXIT_FAILURE;
+    std::cout << "No transform computed. [FAILED]" << std::endl;
+    } // GotPayload failed
 
   ObjectType::Pointer coordinateSystemB = ObjectType::New();
   coordinateSystemB->SetLogger( logger );
+
+  ObserverType::Pointer coordSystemBObserver = ObserverType::New();
+  coordinateSystemB->AddObserver( CoordinateSystemEventType(), 
+                                  coordSystemBObserver );
 
   translation[0] = 3;
   translation[1] = 5;
@@ -140,51 +233,73 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
   transform2.SetTranslationAndRotation( 
     translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  coordinateSystemB->RequestSetTransformAndParent( transform2, coordinateSystemA );
+  coordinateSystemB->RequestSetTransformAndParent( transform2, 
+                                                   coordinateSystemA );
 
   // Verify the computation of the transform to the root
-  igstk::Transform  transform3a  = igstk::Transform::TransformCompose( transform1, transform2 );
+  igstk::Transform  transform3a  = igstk::Transform::TransformCompose( 
+                                                    transform1, transform2 );
 
   coordinateSystemB->RequestComputeTransformTo(coordinateSystemRoot);
-  // Need to get transform from an observer.
+
+  /** Need to get transform from an observer */
   igstk::Transform  transform3b;
 
+  std::cout << "Testing Set/GetTransform(): ";
 
-  igstk::Transform::VectorType translation3a = transform3a.GetTranslation();
-  igstk::Transform::VectorType translation3b = transform3b.GetTranslation();
-
-  for( unsigned int i=0; i<3; i++ )
+  if (coordSystemBObserver->GotPayload())
     {
-    if( fabs( translation3a[i]  - translation3b[i] ) > tolerance )
+    transform3b = coordSystemBObserver->GetPayload().m_Transform;
+
+    typedef igstk::Transform::VectorType TransformVectorType;
+
+    TransformVectorType translation3a = transform3a.GetTranslation();
+    TransformVectorType translation3b = transform3b.GetTranslation();
+
+    for( unsigned int i=0; i<3; i++ )
       {
-      std::cerr << "Translation component is out of range [FAILED]" 
-                << std::endl;
-      std::cerr << "input  translation = " << translation3a << std::endl;
-      std::cerr << "output translation = " << translation3b << std::endl;
-      return EXIT_FAILURE;
+      if( fabs( translation3a[i]  - translation3b[i] ) > tolerance )
+        {
+        std::cerr << "Translation component is out of range [FAILED]" 
+                  << std::endl;
+        std::cerr << "input  translation = " << translation3a << std::endl;
+        std::cerr << "output translation = " << translation3b << std::endl;
+        testResult = EXIT_FAILURE;
+        }
       }
-    }
 
-  igstk::Transform::VersorType rotation3a = transform3a.GetRotation();
-  igstk::Transform::VersorType rotation3b = transform3b.GetRotation();
+    igstk::Transform::VersorType rotation3a = transform3a.GetRotation();
+    igstk::Transform::VersorType rotation3b = transform3b.GetRotation();
 
-  if( fabs( rotation3a.GetX() - rotation3b.GetX() ) > tolerance ||
-      fabs( rotation3a.GetY() - rotation3b.GetY() ) > tolerance ||
-      fabs( rotation3a.GetZ() - rotation3b.GetZ() ) > tolerance ||
-      fabs( rotation3a.GetW() - rotation3b.GetW() ) > tolerance     )
+    if( fabs( rotation3a.GetX() - rotation3b.GetX() ) > tolerance ||
+        fabs( rotation3a.GetY() - rotation3b.GetY() ) > tolerance ||
+        fabs( rotation3a.GetZ() - rotation3b.GetZ() ) > tolerance ||
+        fabs( rotation3a.GetW() - rotation3b.GetW() ) > tolerance     )
+      {
+      std::cerr << "Rotation component is out of range [FAILED]" 
+                << std::endl;
+      std::cerr << "input  rotation = " << rotation3a << std::endl;
+      std::cerr << "output rotation = " << rotation3b << std::endl;
+      testResult = EXIT_FAILURE;
+      }
+
+    if (testResult == EXIT_SUCCESS)
+      {
+      std::cout << " [PASSED]" << std::endl;
+      }
+    } // GotPayload
+  else
     {
-    std::cerr << "Rotation component is out of range [FAILED]" << std::endl;
-    std::cerr << "input  rotation = " << rotation3a << std::endl;
-    std::cerr << "output rotation = " << rotation3b << std::endl;
-    return EXIT_FAILURE;
-    }
+    testResult = EXIT_FAILURE;
+    std::cout << "No transform computed. [FAILED]" << std::endl;
+    } // GotPayload failed
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
     std::cout << "Test Failing due to error messages ";
     std::cout << " received in vtkLoggerOutput" << std::endl;
-    return EXIT_FAILURE;
+    testResult = EXIT_FAILURE;
     }
 
-  return EXIT_SUCCESS;
+  return testResult;
 }
