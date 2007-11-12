@@ -20,7 +20,8 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-
+namespace CoordinateReferenceSystemTest2
+{
 class CoordinateReferenceSystemObserver : public ::itk::Command
 {
 public:
@@ -100,6 +101,38 @@ protected:
 
 };
 
+/** Using this could make debugging painful... */
+igstk::Transform GetRandomTransform()
+{
+  igstk::Transform::VectorType translation;
+  igstk::Transform::VersorType rotation;
+
+  /** Rescale and shift the translation values to 
+   *  prevent large numbers from taking up too
+   *  many bits to construct precise answers and
+   *  to allow for negative numbers */
+  const double rescale = 100.0 * static_cast<double>(RAND_MAX);
+  const double shift = 50.0;
+
+  translation[0] = static_cast<double>(rand())*rescale - shift;
+  translation[1] = static_cast<double>(rand())*rescale - shift;
+  translation[2] = static_cast<double>(rand())*rescale - shift;
+
+  double x = static_cast<double>(rand())/static_cast<double>(RAND_MAX);
+  double y = static_cast<double>(rand())/static_cast<double>(RAND_MAX);
+  double z = static_cast<double>(rand())/static_cast<double>(RAND_MAX);
+  double w = static_cast<double>(rand())/static_cast<double>(RAND_MAX);
+  rotation.Set(x, y, z, w);
+
+  igstk::Transform result;
+  result.SetTranslationAndRotation( translation, 
+                                    rotation,
+                                    1e-5, // error tol
+                                    igstk::TimeStamp::GetLongestPossibleTime() );
+  return result;
+}
+}
+
 int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 {
 
@@ -111,11 +144,17 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   typedef TimeStampType::TimePeriodType       TimePeriodType;
   typedef CoordSysType::Pointer       CoordinateSystemPointer;
   typedef CoordSysType::ConstPointer  ConstCoordinateSystemPointer;
-  typedef CoordinateReferenceSystemObserver::EventType CoordinateSystemEventType;
+  typedef CoordinateReferenceSystemTest2::CoordinateReferenceSystemObserver
+                                         CoordinateReferenceSystemObserver;
+
+  typedef CoordinateReferenceSystemTest2::CoordinateReferenceSystemObserver
+                                       ::EventType CoordinateSystemEventType;
 
   const TransformType::ErrorType              transformErrorValue = 1e-5;
   const TimePeriodType aReallyLongTime 
                                    = TimeStampType::GetLongestPossibleTime();
+
+  const double tol = 1.0e-15;
 
   int testPassed = EXIT_SUCCESS;
 
@@ -132,9 +171,9 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   //                               | | 
   //                             --   --
   //                            |       |
-  //                        --- A       B
-  //                       |    |       |
-  //                       G    C       D
+  //                        --- A --    B
+  //                       |    |   |   |
+  //                       G    C   H   D
   //                            |
   //                            F
   CoordinateSystemPointer root = CoordSysType::New();
@@ -173,18 +212,34 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   G->SetName( "G" );
   G->SetLogger( logger );
 
+  CoordinateSystemPointer H = CoordSysType::New();
+  H->SetName( "H" );
+  H->SetLogger( logger );
+
+
   TransformType identity;
   identity.SetToIdentity(aReallyLongTime);
   root->RequestSetTransformAndParent(identity, NULL);
   root->RequestSetTransformAndParent(identity, root);
   root->Print(std::cout);
 
-  TransformType TARoot;
-  TARoot.SetToIdentity(aReallyLongTime);
+  std::cout << "                                            " << std::endl;
+  std::cout << "                              root        E " << std::endl;
+  std::cout << "                               | |          " << std::endl;
+  std::cout << "                             --   --        " << std::endl;
+  std::cout << "                            |       |       " << std::endl;
+  std::cout << "                        --- A --    B       " << std::endl;
+  std::cout << "                       |    |   |   |       " << std::endl;
+  std::cout << "                       G    C   H   D       " << std::endl; 
+  std::cout << "                            |               " << std::endl;
+  std::cout << "                            F               " << std::endl;
+  std::cout << std::endl;
+
+
+  TransformType TARoot = CoordinateReferenceSystemTest2::GetRandomTransform();
   A->RequestSetTransformAndParent(TARoot, root);
 
   TransformType TBRoot;
-  TBRoot.SetToIdentity(aReallyLongTime);
   TransformType::VersorType tbrootRotation;
   tbrootRotation.SetRotationAroundX(vnl_math::pi/2.0);
   TBRoot.SetRotation(tbrootRotation, transformErrorValue, aReallyLongTime);
@@ -198,17 +253,17 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   TCA.SetTranslation(trans, transformErrorValue, aReallyLongTime);
   C->RequestSetTransformAndParent(TCA, A);
 
-  TransformType TDB;
-  TDB.SetToIdentity(aReallyLongTime);
+  TransformType TDB = CoordinateReferenceSystemTest2::GetRandomTransform();
   D->RequestSetTransformAndParent(TDB, B);
 
-  TransformType TFC;
-  TFC.SetToIdentity(aReallyLongTime);
+  TransformType TFC = CoordinateReferenceSystemTest2::GetRandomTransform();
   F->RequestSetTransformAndParent(TFC, C);
 
-  TransformType TGA;
-  TGA.SetToIdentity(aReallyLongTime);
+  TransformType TGA = CoordinateReferenceSystemTest2::GetRandomTransform();
   G->RequestSetTransformAndParent(TGA, A);
+
+  TransformType THA = CoordinateReferenceSystemTest2::GetRandomTransform();
+  H->RequestSetTransformAndParent(THA, A);
 
   std::cout << "Checking transform from root to A : ";
   
@@ -219,10 +274,12 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     {
     TRootA = rootObserver->GetPayload().m_Transform;
 
-    if (TRootA.IsNumericallyEquivalent(TARoot.GetInverse()) == false)
+    if (TRootA.IsNumericallyEquivalent(TARoot.GetInverse(), tol) == false)
       {
       testPassed = EXIT_FAILURE;
       std::cout << "FAILED!" << std::endl;
+      std::cout << "Requested transform: " << TRootA << std::endl;
+      std::cout << "Expected transform: " << TARoot.GetInverse() << std::endl;
       }
     else
       {
@@ -232,7 +289,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   else
     {
     testPassed = EXIT_FAILURE;
-    std::cout << "FAILED!" << std::endl;
+    std::cout << "FAILED! rootObserver did not get event." << std::endl;
     }
 
   std::cout << "Checking transform from root to B : ";
@@ -244,10 +301,12 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     {
     TRootB = rootObserver->GetPayload().m_Transform;
 
-    if (TRootB.IsNumericallyEquivalent(TBRoot.GetInverse()) == false)
+    if (TRootB.IsNumericallyEquivalent(TBRoot.GetInverse(), tol) == false)
       {
       testPassed = EXIT_FAILURE;
       std::cout << "FAILED!" << std::endl;
+      std::cout << "Requested transform: " << TRootB << std::endl;
+      std::cout << "Expected transform: " << TBRoot.GetInverse() << std::endl;
       }
     else
       {
@@ -257,7 +316,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   else
     {
     testPassed = EXIT_FAILURE;
-    std::cout << "FAILED!" << std::endl;
+    std::cout << "FAILED! rootObserver did not get event." << std::endl;
     }
 
   std::cout << "Checking transform from root to C : "; 
@@ -269,10 +328,12 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     TRootC = rootObserver->GetPayload().m_Transform;
 
     TransformType TCRoot = TransformType::TransformCompose(TARoot, TCA);
-    if (TRootC.IsNumericallyEquivalent(TCRoot.GetInverse()) == false)
+    if (TRootC.IsNumericallyEquivalent(TCRoot.GetInverse(), tol) == false)
       {
       testPassed = EXIT_FAILURE;
       std::cout << "FAILED!" << std::endl;
+      std::cout << "Requested transform: " << TRootC << std::endl;
+      std::cout << "Expected transform: " << TCRoot.GetInverse() << std::endl;
       }
     else
       {
@@ -282,7 +343,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   else
     {
     testPassed = EXIT_FAILURE;
-    std::cout << "FAILED!" << std::endl;
+    std::cout << "FAILED! rootObserver did not get event." << std::endl;
     }
 
   std::cout << "Checking transform from root to D : "; 
@@ -293,10 +354,12 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     TRootD = rootObserver->GetPayload().m_Transform;
 
     TransformType TDRoot = TransformType::TransformCompose(TBRoot, TDB);
-    if (TRootD.IsNumericallyEquivalent(TDRoot.GetInverse()) == false)
+    if (TRootD.IsNumericallyEquivalent(TDRoot.GetInverse(), tol) == false)
       {
       testPassed = EXIT_FAILURE;
       std::cout << "FAILED!" << std::endl;
+      std::cout << "Requested transform: " << TRootD << std::endl;
+      std::cout << "Expected transform: " << TDRoot.GetInverse() << std::endl;
       }
     else
       {
@@ -306,7 +369,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   else
     {
     testPassed = EXIT_FAILURE;
-    std::cout << "FAILED!" << std::endl;
+    std::cout << "FAILED! rootObserver did not get event." << std::endl;
     }
 
 
@@ -314,13 +377,15 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   TimeStampType now;
   now.SetStartTimeNowAndExpireAfter(0);
 
+  rootObserver->ClearPayload();
+
   root->RequestComputeTransformTo(E);
   TransformType TRootE;
   if (rootObserver->GotPayload())
     {
     // Disconnected, shouldn't get a transform
     testPassed = EXIT_FAILURE;
-    std::cout << "FAILED!" << std::endl;
+    std::cout << "FAILED! rootObserver got unexpected event." << std::endl;
     }
   else
     {
@@ -335,10 +400,76 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 
   root->SetReportTiming( true );
 
-  CoordinateSystemPointer Leak = CoordSysType::New();
-  Leak->SetName( "Leak" );
-
   rootObserver->ClearPayload();
+
+  CoordinateReferenceSystemObserver::Pointer FObserver = 
+                                    CoordinateReferenceSystemObserver::New();
+  F->AddObserver( CoordinateSystemEventType(), FObserver );
+  F->RequestComputeTransformTo(G);
+
+  std::cout << "Checking transform from F to G : ";
+  if (FObserver->GotPayload())
+    {
+    TransformType TFG = FObserver->GetPayload().m_Transform;
+
+    TransformType TFGTrue = 
+              TransformType
+                    ::TransformCompose( TGA.GetInverse(),
+                                TransformType::TransformCompose(TCA, TFC));
+
+    if (TFGTrue.IsNumericallyEquivalent( TFG, tol ) == false)
+      {
+      std::cout << "FAILED!" << std::endl;
+      std::cout << "Requested transform: " << TFG << std::endl;
+      std::cout << "Expected transform: " << TFGTrue << std::endl;
+      testPassed = EXIT_FAILURE;
+      }
+    else
+      {
+      std::cout << "passed." << std::endl;
+      }
+    }
+  else
+    {
+    std::cout << "FAILED! FObserver did not get event." << std::endl;
+    testPassed = EXIT_FAILURE;
+    }
+
+  std::cout << "Checking transform from D to F : ";
+
+  CoordinateReferenceSystemObserver::Pointer DObserver = 
+                                    CoordinateReferenceSystemObserver::New();
+  D->AddObserver( CoordinateSystemEventType(), DObserver );
+  D->RequestComputeTransformTo(F);
+
+  if (DObserver->GotPayload())
+    {
+    TransformType TDF = DObserver->GetPayload().m_Transform;
+
+    TransformType TDRoot = TransformType::TransformCompose(TBRoot, TDB);
+    TransformType TFRoot = TransformType::TransformCompose(TARoot, 
+                                  TransformType::TransformCompose(TCA, TFC));
+    TransformType TDFTrue = TransformType
+                             ::TransformCompose(TFRoot.GetInverse(), TDRoot);
+
+    if (TDFTrue.IsNumericallyEquivalent( TDF, tol ) == false)
+      {
+      std::cout << "FAILED!" << std::endl;
+      std::cout << "Requested transform: " << TDF << std::endl;
+      std::cout << "Expected transform: " << TDFTrue << std::endl;
+      testPassed = EXIT_FAILURE;
+      }
+    else
+      {
+      std::cout << "passed." << std::endl;
+      }
+    }
+  else
+    {
+    std::cout << "FAILED! - DObserver did not get event." << std::endl;
+    testPassed = EXIT_FAILURE;
+    }
+
 
   return testPassed;
 }
