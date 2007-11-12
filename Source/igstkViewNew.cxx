@@ -228,6 +228,8 @@ m_StateMachine(this)
 
   m_PulseGenerator = PulseGenerator::New();
   m_Reporter = ::itk::Object::New();
+  /** Coordinate system API needs to use the same object for events. */
+  m_CoordinateReferenceSystemDelegator->RequestSetReporter( m_Reporter );
 
   m_PulseObserver = ObserverType::New();
   m_PulseObserver->SetCallbackFunction( this, & ViewNew::RefreshRender );
