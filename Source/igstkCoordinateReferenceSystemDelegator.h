@@ -162,10 +162,10 @@ private:
   /** Typedef, Receptor observer, & callback for watching
    *  CoordinateReferenceSystem events.
    */
-  typedef ::itk::ReceptorMemberCommand< Self >   ReceptorObserverType; 
+  typedef ::itk::ReceptorMemberCommand< Self > CoordinateSystemObserverType;
 
   /** Make an observer to watch events on the CoordinateReferenceSystem. */
-  ReceptorObserverType::Pointer m_CoordinateReferenceSystemObserver;
+  CoordinateSystemObserverType::Pointer m_CoordinateReferenceSystemObserver;
 
   /** Call back used by the coordinate system observer which
    *  catches events and re-invokes them.

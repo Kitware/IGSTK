@@ -11,7 +11,7 @@ CoordinateReferenceSystemDelegator
 {
   m_Reporter = this;
 
-  m_CoordinateReferenceSystemObserver = ReceptorObserverType::New();
+  m_CoordinateReferenceSystemObserver = CoordinateSystemObserverType::New();
   m_CoordinateReferenceSystemObserver->SetCallbackFunction(this, &Self::ObserverCallback);
 
   m_CoordinateReferenceSystem = CoordinateReferenceSystem::New();

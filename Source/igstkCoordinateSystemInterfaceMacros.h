@@ -37,8 +37,8 @@ public: \
 private: \
   CoordinateReferenceSystemDelegator::Pointer \
                                   m_CoordinateReferenceSystemDelegator; \
-  typedef ::itk::ReceptorMemberCommand< Self >   ReceptorObserverType;  \
-  ReceptorObserverType::Pointer m_CoordinateReferenceSystemObserver; \
+  typedef ::itk::ReceptorMemberCommand< Self > CoordinateSystemObserverType; \
+  CoordinateSystemObserverType::Pointer m_CoordinateReferenceSystemObserver; \
   void ObserverCallback(const ::itk::EventObject & eventvar) \
     { \
     this->InvokeEvent( eventvar ); \
@@ -59,7 +59,7 @@ private: \
  *  igstkCoordinateSystemClassInterfaceMacro in its class header.
  */
 #define igstkCoordinateSystemClassInterfaceConstructorMacro() \
-  m_CoordinateReferenceSystemObserver = ReceptorObserverType::New(); \
+  m_CoordinateReferenceSystemObserver = CoordinateSystemObserverType::New(); \
   m_CoordinateReferenceSystemDelegator = \
                           CoordinateReferenceSystemDelegator::New(); \
   m_CoordinateReferenceSystemDelegator->RequestSetReporter( this );
