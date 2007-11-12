@@ -71,6 +71,7 @@ INCLUDE_DIRECTORIES (
 
 # Add your new tests here
 SET(SandboxTests_SRCS
+  igstkSpatialObjectCoordinateSystemTest.cxx
   igstkCoordinateReferenceSystemTest.cxx
   igstkCoordinateReferenceSystemTest2.cxx
   igstkCoordinateReferenceSystemTest3.cxx

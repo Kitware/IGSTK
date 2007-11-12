@@ -28,6 +28,7 @@
 void RegisterTests()
 {
   // Register Sandbox tests
+  REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest);
   REGISTER_TEST(igstkCoordinateReferenceSystemTest);
   REGISTER_TEST(igstkCoordinateReferenceSystemTest2);
   REGISTER_TEST(igstkCoordinateReferenceSystemTest3);
