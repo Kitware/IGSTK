@@ -173,20 +173,36 @@ Transform
 
 bool 
 Transform
-::IsNumericallyEquivalent( const Transform& inputTransform )
+::IsNumericallyEquivalent( const Transform& inputTransform, double tol )
 {
-  // Add Dimension to class interface?
-  static const int Dimension = 3;
+  /** Dimension hardcoded into typedefs in the class */
+  static const int translationDimension = VectorType::Dimension;
 
-  if (m_Rotation != inputTransform.m_Rotation)
+  VersorType thisVersor = GetRotation();
+  VersorType inputVersor = inputTransform.GetRotation();
+
+  /** Evaluate the quaternion ratio between the versors
+   *  ...similar to itkVersor::operator== */
+  VersorType ratio = thisVersor * inputVersor.GetReciprocal();
+  
+  const itk::NumericTraits< double >::AccumulateType 
+                                        square = ratio.GetW() * ratio.GetW();
+  
+  double versorErr = vcl_fabs(1.0f - square );
+
+  /** Perhaps this tolerance should reflect the fact that 
+   *  we're squaring W */
+  if( versorErr > tol )
     {
     return false;
     }
 
-  for (int i = 0; i < Dimension; i++)
+  /** Compare the translation components */
+  for (int i = 0; i < translationDimension; i++)
     {
-    // vnl_math::eps is defined for doubles...
-    if (fabs(m_Translation[i] - inputTransform.m_Translation[i]) > vnl_math::eps)
+    double componentErr = vcl_fabs(m_Translation[i] 
+                                          - inputTransform.m_Translation[i]);
+    if (componentErr > tol)
       {
       return false;
       }

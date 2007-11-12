@@ -170,7 +170,7 @@ public:
   /** Compare two transforms for equivalence */
   bool operator==( const Transform & inputTransform );
   bool operator!=( const Transform & inputTransform );
-  bool IsNumericallyEquivalent( const Transform& inputTransform );
+  bool IsNumericallyEquivalent( const Transform& inputTransform, double tol = vnl_math::eps );
 
 
   /** Resets the Transform to an Identity Transform */
