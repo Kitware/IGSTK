@@ -22,32 +22,36 @@
 #include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#include "igstkViewNew3D.h"
+#include "igstkCoordinateReferenceSystemDelegator.h"
+#include "igstkTrackerNew.h"
+
 namespace SpatialObjectCoordinateSystemTest
 {
-class SpatialObjectObserver : public ::itk::Command
+class CoordinateSystemObserver : public ::itk::Command
 {
 public:
   typedef igstk::CoordinateReferenceSystemTransformToEvent  EventType;
   typedef igstk::CoordinateReferenceSystemTransformToResult PayloadType;
 
   /** Standard class typedefs. */
-  typedef SpatialObjectObserver         Self;
+  typedef CoordinateSystemObserver         Self;
   typedef ::itk::Command                            Superclass;
   typedef ::itk::SmartPointer<Self>        Pointer;
   typedef ::itk::SmartPointer<const Self>  ConstPointer;
   
   /** Run-time type information (and related methods). */
-  itkTypeMacro(SpatialObjectObserver, ::itk::Command);
-  itkNewMacro(SpatialObjectObserver);
+  itkTypeMacro(CoordinateSystemObserver, ::itk::Command);
+  itkNewMacro(CoordinateSystemObserver);
 
-  SpatialObjectObserver()
+  CoordinateSystemObserver()
     {
     m_GotPayload = false;
     m_Payload.m_Destination = NULL;
     m_Payload.m_Source = NULL;
     }
 
-  ~SpatialObjectObserver()
+  ~CoordinateSystemObserver()
     {
     m_GotPayload = false;
     m_Payload.m_Destination = NULL;
@@ -104,20 +108,23 @@ protected:
 };
 }
 
+
 int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
 {
   typedef igstk::EllipsoidObject              EllipsoidObjectType;
   typedef igstk::EllipsoidObject::Pointer     EllipsoidObjectPointer;
-  typedef SpatialObjectCoordinateSystemTest::SpatialObjectObserver 
+  typedef SpatialObjectCoordinateSystemTest::CoordinateSystemObserver 
                                                                 ObserverType;
   typedef ObserverType::EventType             CoordinateSystemEventType;
   typedef itk::Logger                         LoggerType; 
   typedef itk::StdStreamLogOutput             LogOutputType;
   
+  const double tol = 1e-15;
+
   igstk::TimeStamp::TimePeriodType aReallyLongTime = 
                                 igstk::TimeStamp::GetLongestPossibleTime();
 
-  igstk::Transform::ErrorType errorVal = 1e-5;
+  igstk::Transform::ErrorType errorVal = 1e-15;
 
   LoggerType::Pointer logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -156,13 +163,14 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   igstk::Transform getTE1ToE2;
 
 #ifndef USE_SPATIAL_OBJECT_DEPRECATED
+  std::cout << "Testing ellipsoid1->RequestComputeTransformTo(ellipsoid2) : ";
   ellipsoid1->RequestComputeTransformTo(ellipsoid2.GetPointer());
   
   if( ellipsoid1Observer->GotPayload() )
     {
     getTE1ToE2 = ellipsoid1Observer->GetPayload().m_Transform;
 
-    if (getTE1ToE2.IsNumericallyEquivalent( transformE2ToE1.GetInverse() )
+    if (getTE1ToE2.IsNumericallyEquivalent( transformE2ToE1.GetInverse(), tol )
                                                                     == false)
       {
       testStatus = EXIT_FAILURE;
@@ -179,6 +187,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
     std::cout << "FAILED! [NO EVENT]" << std::endl;
     }
 
+  std::cout << "Testing ellipsoid2->RequestComputeTransformTo(ellipsoid1) : ";
   igstk::Transform getTE2ToE1;
   ellipsoid2->RequestComputeTransformTo(ellipsoid1.GetPointer());
 
@@ -186,7 +195,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
     {
     getTE2ToE1 = ellipsoid2Observer->GetPayload().m_Transform;
 
-    if (getTE2ToE1.IsNumericallyEquivalent( transformE2ToE1 ) == false)
+    if (getTE2ToE1.IsNumericallyEquivalent( transformE2ToE1, tol ) == false)
       {
       testStatus = EXIT_FAILURE;
       std::cout << "FAILED!" << std::endl;
@@ -207,6 +216,115 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   ellipsoid1->SetLogger( logger );
   ellipsoid1->RequestGetTransformToParent();
 #endif
+
+  typedef igstk::ViewNew3D ViewType;
+
+  igstk::Transform identity;
+  identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
+
+  ObserverType::Pointer viewObserver = ObserverType::New();
+  ViewType::Pointer view = ViewType::New();
+  view->AddObserver( CoordinateSystemEventType(), viewObserver );
+  igstk::Transform viewToParent = identity;
+  view->RequestSetTransformAndParent( viewToParent, ellipsoid1.GetPointer() );
+
+  std::cout << "Testing view->RequestGetTransformToParent() : ";
+  view->RequestGetTransformToParent();
+  if (viewObserver->GotPayload() == true )
+    {
+    igstk::Transform viewToParentObs = viewObserver->GetPayload().m_Transform;
+    if (viewToParentObs.IsNumericallyEquivalent( viewToParent, tol ) == true)
+      {
+      std::cout << "passed." << std::endl;
+      }
+    else
+      {
+      testStatus = EXIT_FAILURE;
+      std::cout << "FAILED! [Numeric equivalency test]" << std::endl;
+      }
+    }
+  else
+    {
+    testStatus = EXIT_FAILURE;
+    std::cout << "FAILED! [No event]" << std::endl;
+    }
+
+  std::cout << "Testing view->RequestComputeTransformTo( ellipsoid2 ) : ";
+  view->RequestComputeTransformTo( ellipsoid2.GetPointer() );
+  if (viewObserver->GotPayload() == true )
+    {
+    igstk::Transform viewToEllipsoid2Obs = viewObserver->GetPayload().m_Transform;
+    igstk::Transform viewToEllipsoid2 = 
+                      igstk::Transform::TransformCompose(
+                              transformE2ToE1.GetInverse(), viewToParent);
+
+    if (viewToEllipsoid2Obs.IsNumericallyEquivalent( viewToEllipsoid2, tol ) == true)
+      {
+      std::cout << "passed." << std::endl;
+      }
+    else
+      {
+      testStatus = EXIT_FAILURE;
+      std::cout << "FAILED! [Numeric equivalency test]" << std::endl;
+      }
+    }
+  else
+    {
+    testStatus = EXIT_FAILURE;
+    std::cout << "FAILED! [No event]" << std::endl;
+    }
+  igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( ellipsoid2.GetPointer() );
+
+  ObserverType::Pointer trackerObserver = ObserverType::New();
+  igstk::TrackerNew::Pointer tracker = igstk::TrackerNew::New();
+  tracker->AddObserver( CoordinateSystemEventType(), trackerObserver );
+
+  igstk::Transform trackerToParent = identity;
+  tracker->RequestSetTransformAndParent( trackerToParent, view.GetPointer() );
+  tracker->RequestComputeTransformTo( ellipsoid1.GetPointer() );
+  std::cout << "Testing tracker->RequestComputeTransformTo( ellipsoid1 ) : ";
+  if (trackerObserver->GotPayload() == true )
+    {
+    igstk::Transform trackerToEllipsoid1Obs = trackerObserver->GetPayload().m_Transform;
+
+    igstk::Transform trackerToEllipsoid = igstk::Transform::TransformCompose( viewToParent, trackerToParent);
+    if (trackerToEllipsoid1Obs.IsNumericallyEquivalent( trackerToEllipsoid, tol ) == true)
+      {
+      std::cout << "passed." << std::endl;
+      }
+    else
+      {
+      testStatus = EXIT_FAILURE;
+      std::cout << "FAILED! [Numeric equivalency test]" << std::endl;
+      }
+    }
+  else
+    {
+    testStatus = EXIT_FAILURE;
+    std::cout << "FAILED! [No event]" << std::endl;
+    }
+
+  std::cout << "Testing tracker->RequestGetTransformToParent() : ";
+  tracker->RequestGetTransformToParent();
+  if (trackerObserver->GotPayload() == true )
+    {
+    igstk::Transform trackerToParentObs = trackerObserver->GetPayload().m_Transform;
+
+    if (trackerToParentObs.IsNumericallyEquivalent( trackerToParent, tol ) == true)
+      {
+      std::cout << "passed." << std::endl;      
+      }
+    else
+      {
+      testStatus = EXIT_FAILURE;
+      std::cout << "FAILED! [Numeric equivalency test]" << std::endl;
+      }
+    }
+  else
+    {
+    testStatus = EXIT_FAILURE;
+    std::cout << "FAILED! [No event]" << std::endl;
+    }
 
   return testStatus;
 }
