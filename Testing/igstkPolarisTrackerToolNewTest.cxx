@@ -78,7 +78,7 @@ int igstkPolarisTrackerToolNewTest( int argc, char ** argv )
     }
   else
     {
-    trackerTool->RequestSelectWirelessTrackerTool();
+    trackerTool->RequestSelectWiredTrackerTool();
     }
 
   // Set the port number 
