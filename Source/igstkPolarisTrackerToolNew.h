@@ -57,6 +57,15 @@ public:
   /** Request set the ToolId */
   void RequestSetToolId( std::string toolId );
 
+  /** Check if the tracker tool is wireless type */
+  bool IsToolWirelessType();
+
+  /** Check if SROM file name specified*/
+  bool IsSROMFileNameSpecified();
+
+  /** Get SROM file name */
+  std::string GetSROMFileName();
+
 protected:
 
   PolarisTrackerToolNew();

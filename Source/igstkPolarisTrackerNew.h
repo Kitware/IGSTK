@@ -20,7 +20,7 @@
 
 #include "igstkSerialCommunication.h"
 #include "igstkNDICommandInterpreter.h"
-#include "igstkPolarisTrackerTool.h"
+#include "igstkPolarisTrackerToolNew.h"
 #include "igstkTrackerNew.h"
 
 namespace igstk
@@ -63,7 +63,7 @@ public:
 
   /** typedefs for the tool */
   /** FIXME: this needs to be converted to the new TOOL */
-  typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;
+  typedef igstk::PolarisTrackerToolNew           PolarisTrackerToolType;
   typedef PolarisTrackerToolType::Pointer        PolarisTrackerToolPointer;
   typedef PolarisTrackerToolType::ConstPointer   PolarisTrackerToolConstPointer;
 
@@ -184,6 +184,9 @@ private:
 
   /** The command interpreter */
   CommandInterpreterType::Pointer  m_CommandInterpreter;
+
+  /** Port handle storing vector container */
+  std::vector< int >     m_PortHandleContainer; 
 };
 
 }

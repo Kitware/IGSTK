@@ -225,6 +225,24 @@ void PolarisTrackerToolNew::RequestSetSROMFileName( std::string filename )
     }
 }
 
+/** Check if the tool is wireless type*/
+bool PolarisTrackerToolNew::IsToolWirelessType( )
+{
+  return m_WirelessTrackerToolSelected;
+}
+
+/** Check if the SROM filename is specified */
+bool PolarisTrackerToolNew::IsSROMFileNameSpecified( )
+{
+  return m_SROMFileNameSpecified;
+}
+
+/** Get SROM filename */ 
+std::string PolarisTrackerToolNew::GetSROMFileName( )
+{
+  return m_SROMFileName;
+}
+
 /** Request the state machine to set the tool id */
 void PolarisTrackerToolNew::RequestSetToolId( std::string toolId )
 {
