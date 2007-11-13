@@ -55,7 +55,7 @@ namespace igstk
  *  This define is **TEMPORARY** and will go away once the new API is in 
  *  place. 
  */
-#define USE_SPATIAL_OBJECT_DEPRECATED
+// #define USE_SPATIAL_OBJECT_DEPRECATED
 
 #ifdef USE_SPATIAL_OBJECT_DEPRECATED
 
