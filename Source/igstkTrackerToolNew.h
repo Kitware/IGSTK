@@ -108,6 +108,10 @@ public:
  * tracker*/
   virtual void RequestAttachToTracker( TrackerType * );
 
+  /** The "RequestDetach" method detaches the tracker tool from the 
+ * tracker*/
+  virtual void RequestDetach( );
+
 protected:
 
   TrackerToolNew(void);
@@ -165,8 +169,12 @@ private:
   igstkDeclareInputMacro( ToolInitializationSuccess );
   igstkDeclareInputMacro( ToolInitializationFailure );
   igstkDeclareInputMacro( AttachToolToTracker );
+  igstkDeclareInputMacro( DetachTrackerToolFromTracker ); 
   igstkDeclareInputMacro( AttachmentToTrackerSuccess );
   igstkDeclareInputMacro( AttachmentToTrackerFailure );
+  igstkDeclareInputMacro( DetachmentFromTrackerSuccess );
+  igstkDeclareInputMacro( DetachmentFromTrackerFailure );
+ 
   
 
   /** States for the State Machine */
@@ -175,6 +183,7 @@ private:
   igstkDeclareStateMacro( Initialized );
   igstkDeclareStateMacro( AttemptingToAttachTrackerToolToTracker );
   igstkDeclareStateMacro( Attached );
+  igstkDeclareStateMacro( AttemptingToDetachTrackerToolFromTracker );
   igstkDeclareStateMacro( NotAvailable );
   igstkDeclareStateMacro( Tracked );
 
@@ -195,7 +204,17 @@ private:
   void TrackerToolAttachmentToTrackerSuccessProcessing( void );
 
   /** Post-processing after a failed attachment attempt . */ 
- void TrackerToolAttachmentToTrackerFailureProcessing( void );
+  void TrackerToolAttachmentToTrackerFailureProcessing( void );
+
+  /** Attempt method to detach tracker tool from the tracker */
+  void AttemptToDetachTrackerToolFromTrackerProcessing( void );
+
+  /** Post-processing after a successful detachment of the tracker tool
+   *  from the tracker. */ 
+  void TrackerToolDetachmentFromTrackerSuccessProcessing( void );
+
+  /** Post-processing after a failed detachment attempt . */ 
+  void TrackerToolDetachmentFromTrackerFailureProcessing( void );
 
   TrackerNew        * m_Tracker;
 };

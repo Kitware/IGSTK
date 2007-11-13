@@ -814,6 +814,15 @@ RequestAddTool( std::string trackerToolIdentifier, TrackerToolType * trackerTool
   // trackerTool->RequestAttachToSpatialObjectParent( this->m_CoordinateReferenceSystem );
 }
 
+/** Request remove a tool from the tracker  */
+TrackerNew::ResultType 
+TrackerNew::
+RequestRemoveTool( std::string trackerToolIdentifier, TrackerToolType * trackerTool )
+{
+  // FIXME: remove tracker tool from the tracker
+  return SUCCESS;
+}
+
 /** Verify tracker tool information*/
 TrackerNew::ResultType TrackerNew
 ::VerifyTrackerToolInformation( TrackerToolType * trackerTool )

@@ -173,9 +173,11 @@ public:
     SUCCESS
     } ResultType;
 
-
   /** Add a tracker tool to this tracker  */
   ResultType RequestAddTool( std::string TrackerToolIdentifier, TrackerToolType * trackerTool );
+
+  /** Request a tracker tool from this tracker  */
+  ResultType RequestRemoveTool( std::string TrackerToolIdentifier, TrackerToolType * trackerTool );
 
 protected:
 

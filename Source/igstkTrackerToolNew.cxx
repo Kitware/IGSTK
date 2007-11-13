@@ -38,6 +38,7 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
   igstkAddStateMacro( Initialized );
   igstkAddStateMacro( AttemptingToAttachTrackerToolToTracker );
   igstkAddStateMacro( Attached );
+  igstkAddStateMacro( AttemptingToDetachTrackerToolFromTracker );
   igstkAddStateMacro( NotAvailable );
   igstkAddStateMacro( Tracked );
 
@@ -51,6 +52,9 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
   igstkAddInputMacro( AttachToolToTracker ); 
   igstkAddInputMacro( AttachmentToTrackerSuccess ); 
   igstkAddInputMacro( AttachmentToTrackerFailure ); 
+  igstkAddInputMacro( DetachTrackerToolFromTracker ); 
+  igstkAddInputMacro( DetachmentFromTrackerSuccess ); 
+  igstkAddInputMacro( DetachmentFromTrackerFailure ); 
 
 
   m_StateMachine.SetReadyToRun();
@@ -91,7 +95,24 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
                            Initialized,
                            TrackerToolAttachmentToTrackerFailure );
 
- 
+  // Transitions from the Attached state
+  igstkAddTransitionMacro( Attached,
+                           DetachTrackerToolFromTracker,
+                           AttemptingToDetachTrackerToolFromTracker,
+                           AttemptToDetachTrackerToolFromTracker );
+
+
+  // Transitions from the AttemptingToDetachTrackerToolFromTracker
+  igstkAddTransitionMacro( AttemptingToDetachTrackerToolFromTracker,
+                           DetachmentFromTrackerSuccess,
+                           Idle,
+                           TrackerToolDetachmentFromTrackerSuccess );
+
+  igstkAddTransitionMacro( AttemptingToDetachTrackerToolFromTracker,
+                           DetachmentFromTrackerFailure,
+                           Attached,
+                           TrackerToolDetachmentFromTrackerFailure );
+
 }
 
 TrackerToolNew::~TrackerToolNew(void)
@@ -117,6 +138,17 @@ TrackerToolNew::RequestAttachToTracker( TrackerNew * tracker )
 
 }
 
+void 
+TrackerToolNew::RequestDetach( )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::RequestDetach called...\n");
+
+  igstkPushInputMacro( DetachTrackerToolFromTracker );
+  this->m_StateMachine.ProcessInputs();
+}
+
+/** The "SetTrackerToolIdentifier" method assigns an identifier to the tracker
+ * tool*/
 void 
 TrackerToolNew::SetTrackerToolIdentifier( std::string identifier )
 {
@@ -149,6 +181,21 @@ void TrackerToolNew::AttemptToAttachTrackerToolToTrackerProcessing( void )
                                    m_AttachmentToTrackerSuccessInput,
                                    m_AttachmentToTrackerFailureInput );
 }
+
+/** The "AttemptToDetachTrackerToolFromTracker" method attempts to detach the tracker tool
+ * to the tracker */
+void TrackerToolNew::AttemptToDetachTrackerToolFromTrackerProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+                 "igstk::TrackerToolNew::AttemptToAttachTrackerToolToTracker called ...\n");
+
+  //FIXME: implement a method in the tracker class to detach the tool
+  bool result = m_Tracker->RequestRemoveTool( m_TrackerToolIdentifier, this );
+  m_StateMachine.PushInputBoolean( result,
+                                   m_DetachmentFromTrackerSuccessInput,
+                                   m_DetachmentFromTrackerFailureInput );
+}
+
 
 /** The "GetTrackerToolInitialized" methods returns a boolean indicating
  * if the tracker tool is initialized or not. This method is to be overriden in
@@ -203,6 +250,29 @@ void TrackerToolNew::TrackerToolAttachmentToTrackerFailureProcessing( void )
 
   // FIXME: convert this std::cout to an event 
   std::cerr << "TrackerTool to tracker attachment attempt failed " << std::endl;
+}
+
+/** Post-processing after a successful detachment of the tracker tool from the
+ * tracker. */ 
+void TrackerToolNew::TrackerToolDetachmentFromTrackerSuccessProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerToolNew::TrackerToolDetachmentFromTrackerSuccessProcessing called ...\n");
+
+
+  // FIXME: convert this std::cout to an event 
+  std::cout << "TrackerToolNew detached from the tracker successfully: " << std::endl;
+}
+
+/** Post-processing after a failed detachment . */ 
+void TrackerToolNew::TrackerToolDetachmentFromTrackerFailureProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerToolNew::TrackerToolDetachmentFromTrackerFailureProcessing called ...\n");
+
+
+  // FIXME: convert this std::cout to an event 
+  std::cerr << "Detachment of the TrackerTool from the tracker failed " << std::endl;
 }
 
 /** This method should only be available to the Tracker */
