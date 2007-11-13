@@ -94,7 +94,7 @@ int main(int argc, char** argv)
 
   std::cout << "Transform to static ellipsoid = " << transform << std::endl;
 
-#ifndef USE_SPATIAL_OBJECT_DEPRECATED
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   ellipsoid->RequestSetTransform( transform );
 #endif
 
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
   transform.SetTranslationAndRotation( 
 translation, rotation, errorValue, validityTimeInMilliseconds );
 
-#ifndef USE_SPATIAL_OBJECT_DEPRECATED
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   cylinder->RequestSetTransform( transform );
 #endif
 

@@ -172,7 +172,7 @@ int igstkQTWidgetTest( int argc, char * argv[])
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-#ifndef USE_SPATIAL_OBJECT_DEPRECATED
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
     ellipsoid->RequestSetTransform( transform );
 #endif
 
@@ -183,7 +183,7 @@ int igstkQTWidgetTest( int argc, char * argv[])
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-#ifndef USE_SPATIAL_OBJECT_DEPRECATED
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
     cylinder->RequestSetTransform( transform );
 #endif
 
