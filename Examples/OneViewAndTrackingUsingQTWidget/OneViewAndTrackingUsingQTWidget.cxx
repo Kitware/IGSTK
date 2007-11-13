@@ -94,7 +94,9 @@ int main(int argc, char** argv)
 
   std::cout << "Transform to static ellipsoid = " << transform << std::endl;
 
+#ifndef USE_SPATIAL_OBJECT_DEPRECATED
   ellipsoid->RequestSetTransform( transform );
+#endif
 
   translation[1] = -0.25;  // translate the cylinder along Y
   translation[2] = -2.00;  // translate the cylinder along Z
@@ -103,8 +105,9 @@ int main(int argc, char** argv)
   transform.SetTranslationAndRotation( 
 translation, rotation, errorValue, validityTimeInMilliseconds );
 
+#ifndef USE_SPATIAL_OBJECT_DEPRECATED
   cylinder->RequestSetTransform( transform );
-
+#endif
 
   // instantiate a 3D view 
   typedef igstk::ViewNew3D        ViewNew3DType;

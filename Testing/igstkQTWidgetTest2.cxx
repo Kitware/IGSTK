@@ -122,7 +122,9 @@ int igstkQTWidgetTest2( int argc, char * argv[])
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
   
+#ifndef USE_SPATIAL_OBJECT_DEPRECATED
     ellipsoid->RequestSetTransform( transform );
+#endif
 
     // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );
