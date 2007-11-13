@@ -173,5 +173,32 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
 
   std::cout << tracker << std::endl;
 
+#ifndef IGSTK_SIMULATOR_TEST
+
+  // Initialize wired tracker tool
+  typedef igstk::PolarisTrackerToolNew      TrackerToolType;
+  typedef TrackerToolType::TransformType    TransformType;
+    
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+
+  trackerTool->SetLogger( logger );
+
+  //Select wired tracker tool
+  trackerTool->RequestSelectWiredTrackerTool();
+
+  //Set the port number to zero
+  trackerTool->RequestSetPort( 0 );
+
+  //Initialize
+  trackerTool->RequestInitialize();
+
+  //Attach to the tracker
+  trackerTool->RequestAttachToTracker( tracker );
+
+  std::cout << trackerTool << std::endl;
+
+
+#endif
+
   return EXIT_SUCCESS;
 }
