@@ -83,8 +83,6 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   typedef itk::StdStreamLogOutput       LogOutputType;
 
   igstk::PolarisTrackerToolNew::Pointer tool = igstk::PolarisTrackerToolNew::New();
-  std::cout << tool->GetNameOfClass() << std::endl;
-  std::cout << tool << std::endl;
 
 #ifdef IGSTK_SIMULATOR_TEST
     igstk::SerialCommunicationSimulator::Pointer 
@@ -164,39 +162,41 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
 #ifdef IGSTK_SIMULATOR_TEST
   std::string romFile = igstkDataDirectory + "/";
   romFile = romFile + "ta2p0003-3-120.rom";
-  std::cout << "AttachSROMFileNameToPort()" << std::endl;
-  tracker->AttachSROMFileNameToPort( 3, romFile.c_str() );
 #endif /* IGSTK_SIMULATOR_TEST */
 
-  std::cout << "RequestInitialize()" << std::endl;
-  tracker->RequestInitialize();
-
-  std::cout << tracker << std::endl;
-
 #ifndef IGSTK_SIMULATOR_TEST
-
   // Initialize wired tracker tool
   typedef igstk::PolarisTrackerToolNew      TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
-    
+  
+  // instantiate and attach wired tracker tool  
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
-
   trackerTool->SetLogger( logger );
-
   //Select wired tracker tool
   trackerTool->RequestSelectWiredTrackerTool();
-
   //Set the port number to zero
-  trackerTool->RequestSetPort( 0 );
-
+  trackerTool->RequestSetPortNumber( 1 );
   //Initialize
   trackerTool->RequestInitialize();
-
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
 
-  std::cout << trackerTool << std::endl;
-
+  // instantiate and attach wireless tracker tool
+  std::cout << "Instantiate second tracker tool: " << std::endl;
+  TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
+  trackerTool2->SetLogger( logger );
+  //Select wireless tracker tool
+  trackerTool2->RequestSelectWirelessTrackerTool();
+  //Set the SROM file 
+  std::string dataDirectory = IGSTK_DATA_ROOT;
+  std::string romFile = dataDirectory + "/";
+  romFile = romFile + "ta2p0003-3-120.rom";
+  std::cout << "SROM file: " << romFile << std::endl;
+  trackerTool2->RequestSetSROMFileName( romFile );
+  //Initialize
+  trackerTool2->RequestInitialize();
+  //Attach to the tracker
+  trackerTool2->RequestAttachToTracker( tracker );
 
 #endif
 

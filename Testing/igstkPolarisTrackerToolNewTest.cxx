@@ -88,7 +88,7 @@ int igstkPolarisTrackerToolNewTest( int argc, char ** argv )
 
   inputstream >> portNumber;
 
-  trackerTool->RequestSetPort( portNumber );
+  trackerTool->RequestSetPortNumber( portNumber );
 
   // Set the SROM filename if specified 
   if ( argc >= 3 )

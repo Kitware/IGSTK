@@ -239,7 +239,9 @@ void TrackerNew::RequestClose( void )
 }
 
 
-/** The "RequestInitialize" method initializes a newly opened device. */
+/** The "RequestInitialize" method initializes a newly opened device.
+ *  FIXME: */
+
 void TrackerNew::RequestInitialize( void )
 {
   igstkLogMacro( DEBUG, "igstk::TrackerNew::RequestInitialize called ...\n");

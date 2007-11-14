@@ -43,7 +43,7 @@ public:
 
   /** Request setting the port number. The tool can only be attached to a
    * Tracker after its port number has been defined */
-  void RequestSetPort( unsigned int portNumber );
+  void RequestSetPortNumber( unsigned int portNumber );
 
   /** Set the TrackerTool to be wired */
   void RequestSelectWiredTrackerTool(); 
@@ -65,6 +65,9 @@ public:
 
   /** Get SROM file name */
   std::string GetSROMFileName();
+
+  /** Get tracker tool port number */
+  unsigned int GetPortNumber();
 
 protected:
 

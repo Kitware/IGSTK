@@ -65,7 +65,6 @@ PolarisTrackerToolNew::PolarisTrackerToolNew():m_StateMachine(this)
   igstkAddInputMacro( ValidToolId ); 
   igstkAddInputMacro( InValidToolId ); 
 
-  m_StateMachine.SetReadyToRun();
 
   // Programming the state machine transitions:
 
@@ -93,14 +92,14 @@ PolarisTrackerToolNew::PolarisTrackerToolNew():m_StateMachine(this)
 
   // Transitions from the WirelessTrackerToolSelected
   igstkAddTransitionMacro( WirelessTrackerToolSelected,
-                           ValidPortNumber,
-                           WirelessTrackerToolPortNumberSpecified,
-                           SetPortNumber);
+                           ValidSROMFileName,
+                           WirelessTrackerToolSROMFileNameSpecified,
+                           SetSROMFileName);
 
   igstkAddTransitionMacro( WirelessTrackerToolSelected,
-                           InValidPortNumber,
+                           InValidSROMFileName,
                            WirelessTrackerToolSelected,
-                           ReportInValidPortNumberSpecified );
+                           ReportInValidSROMFileSpecified );
 
   // Transitions from WiredTrackerToolPortNumberSpecified
   igstkAddTransitionMacro( WiredTrackerToolPortNumberSpecified,
@@ -151,6 +150,8 @@ PolarisTrackerToolNew::PolarisTrackerToolNew():m_StateMachine(this)
   // Inputs to the state machine
   igstkSetInitialStateMacro( Idle );
 
+  m_StateMachine.SetReadyToRun();
+
 }
 
 /** Destructor */
@@ -185,10 +186,10 @@ void PolarisTrackerToolNew::RequestSelectWirelessTrackerTool( )
 }
  
 /** Request the state machine to set the port number */
-void PolarisTrackerToolNew::RequestSetPort( unsigned int portNumber )
+void PolarisTrackerToolNew::RequestSetPortNumber( unsigned int portNumber )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::PolarisTrackerToolNew::RequestSetPort called ...\n");
+    "igstk::PolarisTrackerToolNew::RequestSetPortNumber called ...\n");
 
   if ( portNumber > 255 )
     {
@@ -212,7 +213,7 @@ void PolarisTrackerToolNew::RequestSetSROMFileName( std::string filename )
   //FIXME do more filename validation
   //Check if the file exists
   
-  if ( filename != "" )
+  if ( filename == "" )
     {
     m_StateMachine.PushInput( m_InValidSROMFileNameInput );
     m_StateMachine.ProcessInputs();
@@ -241,6 +242,12 @@ bool PolarisTrackerToolNew::IsSROMFileNameSpecified( )
 std::string PolarisTrackerToolNew::GetSROMFileName( )
 {
   return m_SROMFileName;
+}
+
+/** Get Port number */ 
+unsigned int PolarisTrackerToolNew::GetPortNumber( )
+{
+  return m_PortNumber;
 }
 
 /** Request the state machine to set the tool id */

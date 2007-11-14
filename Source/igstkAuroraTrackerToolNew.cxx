@@ -202,10 +202,10 @@ void AuroraTrackerToolNew::RequestSelect6DOFTrackerTool()
 }
 
 /** Request the state machine to set the port number */
-void AuroraTrackerToolNew::RequestSetPort( unsigned int portNumber )
+void AuroraTrackerToolNew::RequestSetPortNumber( unsigned int portNumber )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::AuroraTrackerToolNew::RequestSetPort called ...\n");
+    "igstk::AuroraTrackerToolNew::RequestSetPortNumber called ...\n");
 
   if ( portNumber > 255 )
     {

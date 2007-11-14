@@ -203,6 +203,10 @@ PolarisTrackerNew::ResultType PolarisTrackerNew
   //
   //
   // If the tool is wireless type or wired with SROM file specified, load the SROM file and set the port handle
+  //
+  //
+  //
+  igstkLogMacro( DEBUG, "PolarisTrackerNew::VerifyTrackerToolInformation called ...\n");
 
   PolarisTrackerToolType * polarisTrackerTool = 
              dynamic_cast< PolarisTrackerToolType * > ( trackerTool );   
@@ -261,33 +265,42 @@ PolarisTrackerNew::ResultType PolarisTrackerNew
   else
     {
     //search ports with uninitialized handles
-    m_CommandInterpreter->PHSR(
-      CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
-    
-    if (this->CheckError(m_CommandInterpreter) == FAILURE)
+    // initialize ports waiting to be initialized,  
+    // repeat as necessary (in case multi-channel tools are used) 
+
+    bool foundNewTool = false;
+
+    for (int safetyCount = 0; safetyCount < 256; safetyCount++)
       {
-      std::cerr << "Error searching for uninitialized ports"  << std::endl;
-      return FAILURE;
+      m_CommandInterpreter->PHSR(
+        CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
+      
+      if (this->CheckError(m_CommandInterpreter) == FAILURE)
+        {
+        std::cerr << "Error searching for uninitialized ports"  << std::endl;
+        return FAILURE;
+        }
+
+      unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+
+      // Make sure there is one and only one uninitialized port
+      if ( ntools == 0 )
+        {
+        continue;
+        }
+
+        // The toolnumber will be assigned to 0 by default
+        unsigned int toolNumber = 0; 
+        ph = m_CommandInterpreter->GetPHSRHandle( toolNumber );
+        foundNewTool = true;
+        break;
       }
 
-    unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
-
-    // Make sure there is one and only one uninitialized port
-    if ( ntools == 0 )
+     if( !foundNewTool )
       {
-      std::cerr << "Found no uninitialized port" << std::endl;
+      std::cerr << "Couldn't find uninitialized port" << std::endl;
       return FAILURE;
       }
-
-    if ( ntools > 1 )
-      {
-      std::cerr << "Found more than one uninitialized ports " << std::endl;
-      return FAILURE;
-      }
-
-      // The toolnumber will be assigned to 0 by default
-      unsigned int toolNumber = 0; 
-      ph = m_CommandInterpreter->GetPHSRHandle( toolNumber );
     }  
 
   // Once we got the port handle, we can continue on with initializing
@@ -298,19 +311,19 @@ PolarisTrackerNew::ResultType PolarisTrackerNew
 
   if (this->CheckError(m_CommandInterpreter) == SUCCESS)
     {
-    std::cout << "Port initialized successfully " << std::endl;
+    std::cout << "Port handle initialized successfully " << std::endl;
     }
   else
     {
     std::cerr << "Failure initializing the port" << std::endl;
     }
 
-  // Enable port
   m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
 
   // tool identity and type information
   char identity[512];
   m_CommandInterpreter->GetPHINFToolInfo(identity);
+  std::cout << "Tool Information: " << identity << std::endl; 
 
   // use tool type information to figure out mode for enabling
   int mode = CommandInterpreterType::NDI_DYNAMIC;
@@ -349,8 +362,6 @@ PolarisTrackerNew::ResultType PolarisTrackerNew
   // physical port number
   unsigned int port = 0;
 
-  // the value of m_PortHandle should only be set for wired,
-  // for wireless tools it is set in LoadVirtualSROM
   if (location[9] == '0') // wired tool
     {
     unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
@@ -358,6 +369,14 @@ PolarisTrackerNew::ResultType PolarisTrackerNew
       {
       port = ndiport - 1;
       std::cout << "Port number: " << port << std::endl;
+      // Verify port number specified 
+      if ( port != polarisTrackerTool->GetPortNumber() )
+        {
+        std::cerr << "The tracker tool is probably inserted into the wrong port: " 
+                  << "The port number specified for the tool doesn't match with " 
+                     "what is detected from the hardware" << std::endl;
+        return FAILURE;
+        }
       }
     }
   else // wireless tool
@@ -369,9 +388,24 @@ PolarisTrackerNew::ResultType PolarisTrackerNew
 
   std::cout<< "Port status information: " << status << std::endl;
 
-  // Verify the tracker tool information and store the port handle
-  // FIXME: Add the check logic
-  //
+
+  // tool status
+  std::cout << "Tool status: " <<  m_CommandInterpreter->GetPHINFPortStatus() << std::endl;
+
+  // tool type
+  std::cout<< "Tool type: " << m_CommandInterpreter->GetPHINFToolType() << std::endl;   
+
+  // tool part number
+  char partNumber[21];
+  m_CommandInterpreter->GetPHINFPartNumber( partNumber ) ;
+  std::cout<< "Part number: " << partNumber << std::endl; 
+
+  // tool accessories
+  std::cout<< "Tool accessories: " << m_CommandInterpreter->GetPHINFAccessories() << std::endl;
+
+  // tool marker type
+  std::cout << "Marker type: " << m_CommandInterpreter->GetPHINFMarkerType() << std::endl;
+
   this->m_PortHandleContainer.push_back( ph );
 
   return SUCCESS;
