@@ -77,13 +77,6 @@ public:
     * object to the tracker object. */
   void SetCommunication( CommunicationType *communication );
 
-  /** Get the number of tools that have been detected. */
-  igstkGetMacro( NumberOfTools, unsigned int );
-
-  /** Specify an SROM file to be used with a passive or custom tool. */
-  void AttachSROMFileNameToPort( const unsigned int portNum, 
-                                 std::string  fileName );
-
 protected:
 
   PolarisTrackerNew(void);
@@ -138,7 +131,9 @@ private:
   /** A mutex for multithreaded access to the buffer arrays */
   ::itk::MutexLock::Pointer  m_BufferLock;
 
-  /** A buffer for holding tool transforms */
+  /** A buffer for holding tool transforms
+ *   DEPRECATED */
+  
   double m_TransformBuffer[NumberOfPorts][8];
 
   /** A buffer for holding status of tools */
@@ -147,34 +142,8 @@ private:
   /** A buffer for holding absent status of tools */
   int m_AbsentBuffer[NumberOfPorts];
 
-  /** Load a virtual SROM, given the file name of the ROM file */
-  bool LoadVirtualSROM( const unsigned int port, 
-                        const std::string SROMFileName);
-
-  /** Clear the virtual SROM for a tool */
-  void ClearVirtualSROM( const unsigned int port );
-
-  /** Enable all tool ports that have tools plugged into them.
-   * {The reference tool port is enabled as a static tool.} */
-  void EnableToolPorts( void );
-
-  /** Disable all enabled tool ports. */
-  void DisableToolPorts( void );
-
   /** Helper function for reporting interpreter errors. */
   ResultType CheckError( CommandInterpreterType * );
-
-  /** Information about which tool ports are enabled. */
-  int m_PortEnabled[NumberOfPorts];
-
-  /** The tool handles that the device has provides us with. */
-  int m_PortHandle[NumberOfPorts];
-
-  /** Total number of tools detected. */
-  unsigned int   m_NumberOfTools;
-
-  /** Names of the SROM files for passive tools and custom tools. */
-  std::string    m_SROMFileNames[NumberOfPorts];
 
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;
@@ -187,6 +156,20 @@ private:
 
   /** Port handle storing vector container */
   std::vector< int >     m_PortHandleContainer; 
+
+  /** Container holding absent status of tools */
+  std::vector< int >     m_ToolAbsentStatusContainer; 
+
+  /** Container holding status of the tools */
+  std::vector< int >     m_ToolStatusContainer; 
+
+
+  /** A buffer to hold tool transforms */
+  typedef std::map< int , std::vector < double > > 
+                                TrackerToolTransformContainerType; 
+
+  TrackerToolTransformContainerType     m_ToolTransformBuffer;
+
 };
 
 }

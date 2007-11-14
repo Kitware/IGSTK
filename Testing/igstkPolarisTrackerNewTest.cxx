@@ -198,6 +198,30 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   //Attach to the tracker
   trackerTool2->RequestAttachToTracker( tracker );
 
+  //initialize tracker
+  tracker->RequestInitialize();
+
+  //start tracking 
+  tracker->RequestStartTracking();
+
+  for(unsigned int i=0; i<10; i++)
+    {
+    tracker->RequestUpdateStatus();
+    }
+  
+  std::cout << "RequestStopTracking()" << std::endl;
+  tracker->RequestStopTracking();
+
+  std::cout << "RequestClose()" << std::endl;
+  tracker->RequestClose();
+
+  std::cout << "CloseCommunication()" << std::endl;
+  serialComm->CloseCommunication();
+
+  std::cout << "[PASSED]" << std::endl;
+
+ 
+
 #endif
 
   return EXIT_SUCCESS;
