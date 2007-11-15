@@ -111,7 +111,7 @@ igstk::Transform GetRandomTransform()
    *  prevent large numbers from taking up too
    *  many bits to construct precise answers and
    *  to allow for negative numbers */
-  const double rescale = 100.0 * static_cast<double>(RAND_MAX);
+  const double rescale = 100.0 / static_cast<double>(RAND_MAX);
   const double shift = 50.0;
 
   translation[0] = static_cast<double>(rand())*rescale - shift;
