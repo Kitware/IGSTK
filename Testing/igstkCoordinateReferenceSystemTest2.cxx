@@ -154,7 +154,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   const TimePeriodType aReallyLongTime 
                                    = TimeStampType::GetLongestPossibleTime();
 
-  const double tol = 1.0e-15;
+  const double tol = 1.0e-12;
 
   int testPassed = EXIT_SUCCESS;
 
