@@ -121,7 +121,6 @@ private:
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( WirelessTrackerToolSelected );
   igstkDeclareStateMacro( WiredTrackerToolSelected );
-  igstkDeclareStateMacro( WirelessTrackerToolPortNumberSpecified );
   igstkDeclareStateMacro( WiredTrackerToolPortNumberSpecified );
   igstkDeclareStateMacro( WirelessTrackerToolSROMFileNameSpecified );
   igstkDeclareStateMacro( WiredTrackerToolSROMFileNameSpecified );

@@ -47,7 +47,6 @@ PolarisTrackerToolNew::PolarisTrackerToolNew():m_StateMachine(this)
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( WirelessTrackerToolSelected );
   igstkAddStateMacro( WiredTrackerToolSelected );
-  igstkAddStateMacro( WirelessTrackerToolPortNumberSpecified );
   igstkAddStateMacro( WiredTrackerToolPortNumberSpecified );
   igstkAddStateMacro( WirelessTrackerToolSROMFileNameSpecified );
   igstkAddStateMacro( WiredTrackerToolSROMFileNameSpecified );
@@ -111,18 +110,6 @@ PolarisTrackerToolNew::PolarisTrackerToolNew():m_StateMachine(this)
                            InValidSROMFileName,
                            WiredTrackerToolPortNumberSpecified,
                            ReportInValidSROMFileSpecified);
-
-  // Transitions from WirelessTrackerToolPortNumberSpecified
-  igstkAddTransitionMacro( WirelessTrackerToolPortNumberSpecified,
-                           ValidSROMFileName,
-                           WirelessTrackerToolSROMFileNameSpecified,
-                           SetSROMFileName);
-
-  igstkAddTransitionMacro( WirelessTrackerToolPortNumberSpecified,
-                           InValidSROMFileName,
-                           WirelessTrackerToolPortNumberSpecified,
-                           ReportInValidSROMFileSpecified);
-
 
   // Transitions from WiredTrackerToolSROMFileNameSpecified
   igstkAddTransitionMacro( WiredTrackerToolSROMFileNameSpecified,
