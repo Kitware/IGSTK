@@ -118,7 +118,7 @@ protected:
   virtual ResultType InternalReset( void );
 
   /** Verify tracker tool information */
-  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
+  virtual ResultType VerifyTrackerToolInformation( std::string trackerToolIdentifier, TrackerToolType * );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

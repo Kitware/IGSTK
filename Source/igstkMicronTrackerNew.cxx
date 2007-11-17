@@ -336,7 +336,7 @@ void MicronTrackerNew::RequestAddTool( std::string identifier, MicronTrackerTool
 /** Verify tracker tool information*/
 MicronTrackerNew::ResultType
 MicronTrackerNew
-::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+::VerifyTrackerToolInformation( std::string trackerToolIdentifier, TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, "MicronTrackerNew::VerifyTrackerToolInformation called ...\n");  
 

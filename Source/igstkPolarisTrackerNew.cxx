@@ -373,7 +373,6 @@ PolarisTrackerNew::ResultType PolarisTrackerNew
 
   std::cout<< "Port status information: " << status << std::endl;
 
-
   // tool status
   std::cout << "Tool status: " <<  m_CommandInterpreter->GetPHINFPortStatus() << std::endl;
 
@@ -391,14 +390,16 @@ PolarisTrackerNew::ResultType PolarisTrackerNew
   // tool marker type
   std::cout << "Marker type: " << m_CommandInterpreter->GetPHINFMarkerType() << std::endl;
 
+  std::string trackerToolIdentifier = polarisTrackerTool->GetTrackerToolIdentifier();
+
   // add it to the port handle container 
-  this->m_PortHandleContainer.push_back( ph );
+  this->m_PortHandleContainer[ trackerToolIdentifier ] = ph;
 
   // add it to the tool absent status 
-  this->m_ToolAbsentStatusContainer.push_back( 0 ) ;
+  this->m_ToolAbsentStatusContainer[ trackerToolIdentifier ] = 0;
 
   // add it to the tool status container
-  this->m_ToolStatusContainer.push_back( 0 );
+  this->m_ToolStatusContainer[ trackerToolIdentifier ] = 0;
 
   return SUCCESS;
 }
@@ -486,25 +487,30 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
 
   m_BufferLock->Lock();
 
-  for( unsigned int tool=0; tool < m_PortHandleContainer.size() ; tool++ )
+  typedef std::map< std::string, int >::const_iterator  ConstIteratorType;
+
+  ConstIteratorType inputItr = m_PortHandleContainer.begin();
+  ConstIteratorType inputEnd = m_PortHandleContainer.end();
+
+  while( inputItr != inputEnd )
     {
-    std::cout << "Updating transform for tool: " << tool << std::endl;
-    const int portStatus = m_ToolStatusContainer[tool];
+    std::cout << "Updating transform for tool: " << inputItr->first << std::endl;
+    const int portStatus = m_ToolStatusContainer[inputItr->first];
 
     // only report tools that are enabled
     if ((portStatus & mflags) != mflags) 
       {
       igstkLogMacro( DEBUG, "PolarisTrackerNew::InternalUpdateStatus: " <<
-                     "tool " << tool << " is not available \n");
+                     "tool " << inputItr->first << " is not available \n");
       continue;
       }
 
     // only report tools that are in view
-    if (m_ToolAbsentStatusContainer[tool])
+    if (m_ToolAbsentStatusContainer[inputItr->first])
       {
       // there should be a method to set that the tool is not in view
       igstkLogMacro( DEBUG, "PolarisTrackerNew::InternalUpdateStatus: " <<
-                     "tool " << tool << " is not in view\n");
+                     "tool " << inputItr->first << " is not in view\n");
       continue;
       }
 
@@ -514,17 +520,17 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
     typedef TransformType::VectorType TranslationType;
     TranslationType translation;
 
-    translation[0] = m_ToolTransformBuffer[tool][4];
-    translation[1] = m_ToolTransformBuffer[tool][5];
-    translation[2] = m_ToolTransformBuffer[tool][6];
+    translation[0] = (m_ToolTransformBuffer[inputItr->first])[4];
+    translation[1] = m_ToolTransformBuffer[inputItr->first][5];
+    translation[2] = m_ToolTransformBuffer[inputItr->first][6];
 
     typedef TransformType::VersorType RotationType;
     RotationType rotation;
     const double normsquared = 
-      m_ToolTransformBuffer[tool][0]*m_ToolTransformBuffer[tool][0] +
-      m_ToolTransformBuffer[tool][1]*m_ToolTransformBuffer[tool][1] +
-      m_ToolTransformBuffer[tool][2]*m_ToolTransformBuffer[tool][2] +
-      m_ToolTransformBuffer[tool][3]*m_ToolTransformBuffer[tool][3];
+      m_ToolTransformBuffer[inputItr->first][0]*m_ToolTransformBuffer[inputItr->first][0] +
+      m_ToolTransformBuffer[inputItr->first][1]*m_ToolTransformBuffer[inputItr->first][1] +
+      m_ToolTransformBuffer[inputItr->first][2]*m_ToolTransformBuffer[inputItr->first][2] +
+      m_ToolTransformBuffer[inputItr->first][3]*m_ToolTransformBuffer[inputItr->first][3];
 
     // don't allow null quaternions
     if (normsquared < 1e-6)
@@ -536,22 +542,26 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
     else
       {
       // ITK quaternions are in xyzw order, not wxyz order
-      rotation.Set(m_ToolTransformBuffer[tool][1],
-                   m_ToolTransformBuffer[tool][2],
-                   m_ToolTransformBuffer[tool][3],
-                   m_ToolTransformBuffer[tool][0]);
+      rotation.Set(m_ToolTransformBuffer[inputItr->first][1],
+                   m_ToolTransformBuffer[inputItr->first][2],
+                   m_ToolTransformBuffer[inputItr->first][3],
+                   m_ToolTransformBuffer[inputItr->first][0]);
       }
 
     // retool NDI error value
     typedef TransformType::ErrorType  ErrorType;
-    ErrorType errorValue = m_ToolTransformBuffer[tool][7];
+    ErrorType errorValue = m_ToolTransformBuffer[inputItr->first][7];
 
     transform.SetToIdentity(this->GetValidityTime());
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         this->GetValidityTime());
 
     // FIXME: set the transform to the parent
+    // FOR NOW, use SetToolTransform method
     //
+    this->SetToolTransform( inputItr->first, transform );
+
+    ++inputItr;
     }
   m_BufferLock->Unlock();
 
@@ -591,12 +601,18 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalThreadedUpdateStatus( v
 
   if (result == SUCCESS)
     {
-    for( unsigned int tool=0; tool < m_PortHandleContainer.size() ; tool++ )
+
+    typedef std::map< std::string, int >::iterator  IteratorType;
+
+    IteratorType inputItr = m_PortHandleContainer.begin();
+    IteratorType inputEnd = m_PortHandleContainer.end();
+
+    while( inputItr != inputEnd )
       {
-      m_ToolAbsentStatusContainer[tool] = 0;
-      m_ToolStatusContainer[tool] = 0;
+      m_ToolAbsentStatusContainer[inputItr->first] = 0;
+      m_ToolStatusContainer[inputItr->first] = 0;
  
-      unsigned int ph = m_PortHandleContainer[tool];
+      unsigned int ph = inputItr->second;
       if ( ph )
         {
         continue;
@@ -615,9 +631,11 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalThreadedUpdateStatus( v
           }
         }
 
-      m_ToolAbsentStatusContainer[tool] = absent;
-      m_ToolStatusContainer[tool] = status;
-      m_ToolTransformBuffer[tool] = transform;
+      m_ToolAbsentStatusContainer[inputItr->first] = absent;
+      m_ToolStatusContainer[inputItr->first] = status;
+      m_ToolTransformBuffer[inputItr->first] = transform;
+
+      ++inputItr;
       }
     }
 

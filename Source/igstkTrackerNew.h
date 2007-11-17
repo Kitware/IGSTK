@@ -179,8 +179,19 @@ public:
   /** Request a tracker tool from this tracker  */
   ResultType RequestRemoveTool( std::string TrackerToolIdentifier, TrackerToolType * trackerTool );
 
-protected:
+  /** Set the tracker tool tranform using the unique identifier 
+    * FIXME: this method SHOULD BE REMOVED once the coordinate system is properly
+    * setup. This method is added to debug if transforms are correctly read from
+    * the tracker.*/
+  void SetToolTransform( std::string identifier, TransformType transform ); 
 
+  /** Get the tracker tool tranform using the unique identifier 
+    * FIXME: this method SHOULD BE REMOVED once the coordinate system is properly
+    * setup. This method is added to debug if transforms are correctly read from
+    * the tracker.*/
+  void GetToolTransform( std::string identifier, TransformType & transform ); 
+
+protected:
 
   TrackerNew(void);
 
@@ -260,6 +271,11 @@ protected:
    * the tracker tool intialization does not match with the tool id 
    * read from the SROM file*/
   virtual ResultType VerifyTrackerToolInformation( TrackerToolType * ); 
+
+  /** Access method for the tracker tool container. This method 
+    * is useful in the derived classes to access the unique identifiers 
+    * of the tracker tools */
+  TrackerToolsContainerType GetTrackerToolContainer() const;
 
 private:
 

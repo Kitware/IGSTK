@@ -112,6 +112,12 @@ public:
  * tracker*/
   virtual void RequestDetach( );
 
+  /** Access the unique identifier to the tracker tool 
+    * FIXME: when the tracker becomes a friend class of the
+    * tracker tool: this method 
+    * should be moved to private section */
+  std::string GetTrackerToolIdentifier( );
+
 protected:
 
   TrackerToolNew(void);
@@ -121,10 +127,10 @@ protected:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
+  /** Set a unique identifier to the tracker tool */
   void SetTrackerToolIdentifier( std::string identifier );
 
-
-private:
+  private:
 
   /** Position and Orientation of the tool */
   TransformType      m_Transform;   // FIXME: This is deprecated due to Bug 5474.

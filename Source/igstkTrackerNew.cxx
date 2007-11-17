@@ -825,6 +825,33 @@ RequestRemoveTool( std::string trackerToolIdentifier, TrackerToolType * trackerT
   return SUCCESS;
 }
 
+/** Set the tracker tool tranform using the unique identifier 
+    * FIXME: this method SHOULD BE REMOVED once the coordinate system is properly
+    * setup. This method is added to verify if transforms are correctly read from
+    * the tracker.*/
+void TrackerNew::SetToolTransform( std::string toolIdentifier, TransformType transform ) 
+{     
+  // check if a tracker tool with this identifier is stored in the container
+  m_TrackerTools[ toolIdentifier ]->SetRawTransform( transform );
+}
+
+/** Get the tracker tool tranform using the unique identifier 
+    * FIXME: this method SHOULD BE REMOVED once the coordinate system is properly
+    * setup. This method is added to debug if transforms are correctly read from
+    * the tracker.*/
+void TrackerNew::GetToolTransform( std::string toolIdentifier,
+                                TransformType & transform )
+{
+  TrackerToolConstPointer tool = m_TrackerTools[ toolIdentifier ];
+  transform = tool->GetTransform();
+}
+
+TrackerNew::TrackerToolsContainerType 
+TrackerNew::GetTrackerToolContainer() const
+{
+  return m_TrackerTools;
+}
+
 /** Verify tracker tool information*/
 TrackerNew::ResultType TrackerNew
 ::VerifyTrackerToolInformation( TrackerToolType * trackerTool )

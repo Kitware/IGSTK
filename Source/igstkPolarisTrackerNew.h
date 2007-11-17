@@ -154,18 +154,18 @@ private:
   /** The command interpreter */
   CommandInterpreterType::Pointer  m_CommandInterpreter;
 
-  /** Port handle storing vector container */
-  std::vector< int >     m_PortHandleContainer; 
+  /** Port handle container indexed by the tracker tool unique 
+   * identifier */
+  std::map< std::string, int >     m_PortHandleContainer;
 
   /** Container holding absent status of tools */
-  std::vector< int >     m_ToolAbsentStatusContainer; 
+  std::map< std::string, int >     m_ToolAbsentStatusContainer; 
 
   /** Container holding status of the tools */
-  std::vector< int >     m_ToolStatusContainer; 
-
+  std::map< std::string, int >  m_ToolStatusContainer; 
 
   /** A buffer to hold tool transforms */
-  typedef std::map< int , std::vector < double > > 
+  typedef std::map< std::string , std::vector < double > > 
                                 TrackerToolTransformContainerType; 
 
   TrackerToolTransformContainerType     m_ToolTransformBuffer;

@@ -156,6 +156,15 @@ TrackerToolNew::SetTrackerToolIdentifier( std::string identifier )
   m_TrackerToolIdentifier = identifier;
 }
 
+/** The "GetTrackerToolIdentifier" method assigns an identifier to the tracker
+ * tool*/
+std::string 
+TrackerToolNew::GetTrackerToolIdentifier( )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::GetTrackerToolIdentifier called...\n");
+  return m_TrackerToolIdentifier;
+}
+
 /** The "AttemptToInitializeProcessing" method attempts to initialize the tracker tool */
 void TrackerToolNew::AttemptToInitializeProcessing( void )
 {
