@@ -181,6 +181,8 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
 
+if( 0 )
+  {  
   // instantiate and attach wireless tracker tool
   std::cout << "Instantiate second tracker tool: " << std::endl;
   TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
@@ -197,6 +199,7 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   trackerTool2->RequestInitialize();
   //Attach to the tracker
   trackerTool2->RequestAttachToTracker( tracker );
+  }
 
   //initialize tracker
   tracker->RequestInitialize();
@@ -204,9 +207,28 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   //start tracking 
   tracker->RequestStartTracking();
 
+  typedef igstk::Transform            TransformType;
+  typedef ::itk::Vector<double, 3>    VectorType;
+  typedef ::itk::Versor<double>       VersorType;
+
+
   for(unsigned int i=0; i<10; i++)
     {
+    std::cout << "Updating tranform: Start " << std::endl;
     tracker->RequestUpdateStatus();
+    std::cout << "Updating tranform End: " << std::endl;
+
+    TransformType             transform;
+    VectorType                position;
+
+    tracker->GetToolTransform( 
+      trackerTool->GetTrackerToolIdentifier(), transform );
+
+    position = transform.GetTranslation();
+    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
     }
   
   std::cout << "RequestStopTracking()" << std::endl;
