@@ -561,7 +561,7 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
     // FIXME: set the transform to the parent
     // FOR NOW, use SetToolTransform method
     //
-    this->SetToolTransform( inputItr->first, transform );
+    this->SetToolTransform( inputItr->first, transform ); 
 
     ++inputItr;
     }
@@ -615,7 +615,7 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalThreadedUpdateStatus( v
       m_ToolStatusContainer[inputItr->first] = 0;
  
       unsigned int ph = inputItr->second;
-      if ( ph )
+      if ( ph == 0 )
         {
         ++inputItr;
         continue;
