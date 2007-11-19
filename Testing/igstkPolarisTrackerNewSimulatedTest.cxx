@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkPolarisTrackerNewTest.cxx
+  Module:    igstkPolarisTrackerNewSimulatedTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -69,7 +69,7 @@ public:
     }
 };
 
-int igstkPolarisTrackerNewTest( int argc, char * argv[] )
+int igstkPolarisTrackerNewSimulatedTest( int argc, char * argv[] )
 {
 
   igstk::RealTimeClock::Initialize();
@@ -77,10 +77,11 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   typedef itk::Logger                   LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
 
-  if( argc < 3 )
+  if( argc < 4 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Logger_Output_filename "
+                            << "Simulation_filename "
                             << "Wireless_SROM_filename "
                             << std::endl;
     return EXIT_FAILURE;
@@ -89,13 +90,8 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
 
   igstk::PolarisTrackerToolNew::Pointer tool = igstk::PolarisTrackerToolNew::New();
 
-#ifdef WIN32
-  igstk::SerialCommunicationForWindows::Pointer 
-                     serialComm = igstk::SerialCommunicationForWindows::New();
-#else
-  igstk::SerialCommunicationForPosix::Pointer
-                       serialComm = igstk::SerialCommunicationForPosix::New();
-#endif /* WIN32 */
+  igstk::SerialCommunicationSimulator::Pointer 
+                      serialComm = igstk::SerialCommunicationSimulator::New();
 
   PolarisTrackerNewTestCommand::Pointer 
                                 my_command = PolarisTrackerNewTestCommand::New();
@@ -123,8 +119,8 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
-  serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerNewTest.txt" );
-  serialComm->SetCapture( true );
+  std::string simulationFile = argv[2];
+  serialComm->SetFileName( simulationFile.c_str() );
 
   serialComm->OpenCommunication();
 
@@ -164,7 +160,7 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   //Select wireless tracker tool
   trackerTool2->RequestSelectWirelessTrackerTool();
   //Set the SROM file 
-  std::string romFile = argv[2];
+  std::string romFile = argv[3];
   std::cout << "SROM file: " << romFile << std::endl;
   trackerTool2->RequestSetSROMFileName( romFile );
   //Initialize

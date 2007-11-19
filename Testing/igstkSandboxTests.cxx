@@ -69,7 +69,14 @@ void RegisterTests()
 #endif
 
 #ifdef IGSTK_TEST_AURORA_ATTACHED
-  REGISTER_TEST(igstkAuroraTrackerTest);
+  REGISTER_TEST(igstkAuroraTrackerNewTest);
 #endif
+
+  // Tests depend on data
+#ifdef IGSTK_DATA_ROOT
+  REGISTER_TEST(igstkPolarisTrackerNewSimulatedTest);
+#endif
+
+
 
 }
