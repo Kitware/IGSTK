@@ -79,16 +79,11 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
                             << "MicronTracker camera calibration file"
                             << "MicronTracker initialization file"
                             << "Marker template directory "
-                            << "Output directory" << std::endl;
+                            << "Logger Output directory" << std::endl;
     return EXIT_FAILURE;
     }
 
-  /*
-  std::string outputDirectory = argv[4];
-  std::string testName = argv[0];
-  std::string filename = outputDirectory +"/";
-  filename = filename + testName;
-  filename = filename + "LoggerOutput.txt";
+  std::string filename = argv[4];
   std::cout << "Logger output saved here:\n";
   std::cout << filename << "\n"; 
 
@@ -97,14 +92,6 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();  
   logOutput->SetStream( loggerFile );
-  logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG);
-  */
-
-  /* dump debug information to the standard output */
-  LoggerType::Pointer   logger = LoggerType::New();
-  LogOutputType::Pointer logOutput = LogOutputType::New();  
-  logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG);
 
@@ -143,12 +130,48 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   trackerTool2->RequestInitialize();
   trackerTool2->RequestAttachToTracker( tracker );
 
-  TrackerToolType::Pointer trackerTool3 = TrackerToolType::New();
-  trackerTool3->SetLogger( logger );
-  std::string inValidMarkerName = "InValidMarkerName";
-  trackerTool3->RequestSetMarkerName( inValidMarkerName );  
-  trackerTool3->RequestInitialize();
-  trackerTool3->RequestAttachToTracker( tracker );
+  //initialize tracker
+  tracker->RequestInitialize();
+
+  //start tracking 
+  tracker->RequestStartTracking();
+
+  typedef igstk::Transform            TransformType;
+  typedef ::itk::Vector<double, 3>    VectorType;
+  typedef ::itk::Versor<double>       VersorType;
+
+  for(unsigned int i=0; i<400; i++)
+    {
+    tracker->RequestUpdateStatus();
+
+    TransformType             transform;
+    VectorType                position;
+
+    tracker->GetToolTransform( 
+      trackerTool->GetTrackerToolIdentifier(), transform );
+
+    position = transform.GetTranslation();
+    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+
+    tracker->GetToolTransform( 
+      trackerTool2->GetTrackerToolIdentifier(), transform );
+
+    position = transform.GetTranslation();
+    std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+ 
+    }
+  
+  std::cout << "RequestStopTracking()" << std::endl;
+  tracker->RequestStopTracking();
+
+  std::cout << "RequestClose()" << std::endl;
+  tracker->RequestClose();
 
   std::cout << "[PASSED]" << std::endl;
 
