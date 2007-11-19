@@ -492,8 +492,8 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalUpdateStatus()
                                         this->GetValidityTime());
 
     //FIXME: replace the SetToolTransform method
-    //this->SetToolTransform(toolId, transform);
-    //
+    //With a connection to the parent
+    this->SetToolTransform( inputItr->first, transform);
     ++inputItr;
     ++toolId;
     }
