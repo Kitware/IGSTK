@@ -502,6 +502,7 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
       {
       igstkLogMacro( DEBUG, "PolarisTrackerNew::InternalUpdateStatus: " <<
                      "tool " << inputItr->first << " is not available \n");
+      ++inputItr;
       continue;
       }
 
@@ -511,6 +512,7 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
       // there should be a method to set that the tool is not in view
       igstkLogMacro( DEBUG, "PolarisTrackerNew::InternalUpdateStatus: " <<
                      "tool " << inputItr->first << " is not in view\n");
+      ++inputItr;
       continue;
       }
 
@@ -615,6 +617,7 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalThreadedUpdateStatus( v
       unsigned int ph = inputItr->second;
       if ( ph )
         {
+        ++inputItr;
         continue;
         }
 
