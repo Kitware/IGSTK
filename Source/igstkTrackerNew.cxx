@@ -832,7 +832,7 @@ RequestRemoveTool( std::string trackerToolIdentifier, TrackerToolType * trackerT
 void TrackerNew::SetToolTransform( std::string toolIdentifier, TransformType transform ) 
 {     
   // check if a tracker tool with this identifier is stored in the container
-  m_TrackerTools[ toolIdentifier ]->SetRawTransform( transform );
+  m_TrackerTools[ toolIdentifier ]->RequestSetTransform( transform );
 }
 
 /** Get the tracker tool tranform using the unique identifier 
