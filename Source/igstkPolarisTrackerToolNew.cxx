@@ -24,6 +24,8 @@
 #include "igstkPolarisTrackerToolNew.h"
 #include <sstream>
 
+#include <itksys/SystemTools.hxx>
+
 namespace igstk
 {
 
@@ -309,10 +311,20 @@ void PolarisTrackerToolNew::SetSROMFileNameProcessing( )
   m_SROMFileName = m_SROMFileNameToBeSet;
   m_SROMFileNameSpecified = true;
 
-  //At this point, port number and SROM file are specified. For wireless
+  //At this point, SROM file is specified. For wireless
   //tracker tools this is the minimum requirement. The tool can be "declared"
   //intialized.
-  m_TrackerToolInitialized = true;
+  if ( m_WirelessTrackerToolSelected )
+    {
+    m_TrackerToolInitialized = true;
+
+    //unique identifer needs to be established 
+    //use the root name of the SROM file
+    std::string identifier = 
+          itksys::SystemTools::GetFilenameWithoutExtension( m_SROMFileName );
+  
+    this->SetTrackerToolIdentifier( identifier );
+    }
 }
 
 /** Report Invalid SROM filename specified */ 
