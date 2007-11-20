@@ -135,17 +135,6 @@ private:
   /** A mutex for multithreaded access to the buffer arrays */
   ::itk::MutexLock::Pointer  m_BufferLock;
 
-  /** A buffer for holding tool transforms
- *   DEPRECATED */
-  
-  double m_TransformBuffer[NumberOfPorts][8];
-
-  /** A buffer for holding status of tools */
-  int m_StatusBuffer[NumberOfPorts];
-
-  /** A buffer for holding absent status of tools */
-  int m_AbsentBuffer[NumberOfPorts];
-
   /** Helper function for reporting interpreter errors. */
   ResultType CheckError( CommandInterpreterType * );
 

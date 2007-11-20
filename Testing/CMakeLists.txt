@@ -137,8 +137,12 @@ igstkPolarisTrackerToolNewTest)
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
 IF(IGSTK_TEST_AURORA_ATTACHED)
-  ADD_TEST(igstkAuroraTrackerNewTest ${IGSTKSandbox_TESTS}
-igstkAuroraTrackerNewTest)
+  ADD_TEST(igstkAuroraTrackerNewTest 
+           ${IGSTKSandbox_TESTS}
+           igstkAuroraTrackerNewTest
+           ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAuroraTrackerNewTestLoggerOutput.txt
+           ${IGSTK_TEST_POLARIS_PORT_NUMBER}
+           )
   ADD_TEST(igstkAuroraTrackerToolNewTest ${IGSTKSandbox_TESTS}
 igstkAuroraTrackerToolNewTest)
 ENDIF(IGSTK_TEST_AURORA_ATTACHED)
@@ -265,6 +269,17 @@ ADD_TEST( igstkPolarisTrackerNewSimulatedTest
 
 SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkPolarisTrackerNewSimulatedTest.cxx)
+
+
+ADD_TEST( igstkAuroraTrackerNewSimulatedTest  
+              ${IGSTKSandbox_TESTS}
+              igstkAuroraTrackerNewSimulatedTest
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAuroraTrackerNewSimulatedTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/aurora_stream_multichan_11_11_2005.txt
+              ${IGSTK_DATA_ROOT}/aurora_multichan.rom              )
+
+SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkAuroraTrackerNewSimulatedTest.cxx)
 
 IF(IGSTKSandbox_DATA_ROOT)
   SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")

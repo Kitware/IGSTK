@@ -27,7 +27,7 @@
 #include "igstkAuroraTrackerToolNew.h"
 
 
-int igstkTrackerToolNewTest( int, char * [] )
+int igstkAuroraTrackerToolNewTest( int, char * [] )
 {
   igstk::RealTimeClock::Initialize();
 

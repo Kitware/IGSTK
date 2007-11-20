@@ -20,7 +20,7 @@
 
 #include "igstkSerialCommunication.h"
 #include "igstkNDICommandInterpreter.h"
-#include "igstkAuroraTrackerTool.h"
+#include "igstkAuroraTrackerToolNew.h"
 #include "igstkTrackerNew.h"
 
 namespace igstk
@@ -35,57 +35,48 @@ namespace igstk
   * The use of two 5DOF tools on a single port is supported.
   * In order to use the Aurora in this configuration, a 
   * splitter for the port is required, as well as an SROM
-  * file that can work with the two tools in question.  The
-  * AttachSROMFilenameToPort() method is used to associate
-  * the SROM with the port.
+  * file that can work with the two tools in question. 
   *
   * \ingroup Tracker
   *
   */
 
-
 class AuroraTrackerNew : public TrackerNew
 {
 public:
 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( AuroraTrackerNew, TrackerNew )
+
+public:
+
   /** typedefs for the tool */
- // FIXME: this needs to be converted to the new Aurora tracker tool
-  typedef igstk::AuroraTrackerTool              AuroraTrackerToolType;
+  /** FIXME: this needs to be converted to the new TOOL */
+  typedef igstk::AuroraTrackerToolNew           AuroraTrackerToolType;
   typedef AuroraTrackerToolType::Pointer        AuroraTrackerToolPointer;
   typedef AuroraTrackerToolType::ConstPointer   AuroraTrackerToolConstPointer;
 
   /** number of ports to allow */
-  itkStaticConstMacro( NumberOfPorts, unsigned int, 4 );
-  itkStaticConstMacro( NumberOfChannels, unsigned int, 2 );
-
-  /** typedef for command interpreter */
-  typedef igstk::NDICommandInterpreter   CommandInterpreterType;
+  itkStaticConstMacro( NumberOfPorts, unsigned int, 12 );
 
   /** communication type */
   typedef igstk::SerialCommunication     CommunicationType;
 
-  /** typedef for internal boolean return type */
-  typedef TrackerNew::ResultType   ResultType;
-
-  /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( AuroraTrackerNew, TrackerNew )
-
   /** The SetCommunication method is used to attach a communication
     * object to the tracker object. */
   void SetCommunication( CommunicationType *communication );
-
-  /** Get the number of tools that have been detected. */
-  igstkGetMacro( NumberOfTools, unsigned int );
-
-  /** Specify an SROM file to be used with a custom tool. */
-  void AttachSROMFileNameToPort( const unsigned int portNum,
-                                 std::string  fileName );
 
 protected:
 
   AuroraTrackerNew(void);
 
   virtual ~AuroraTrackerNew(void);
+
+  /** typedef for command interpreter */
+  typedef igstk::NDICommandInterpreter   CommandInterpreterType;
+
+  /** typedef for internal boolean return type */
+  typedef TrackerNew::ResultType   ResultType;
 
   /** Open communication with the tracking device. */
   virtual ResultType InternalOpen( void );
@@ -118,49 +109,26 @@ protected:
   /** Verify tracker tool information */
   virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
 
+  /** Remove tracker tool entry from internal containers */ 
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+                                     std::string trackerToolIdentifier ); 
+
   /** Print object information */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
 
 private:
 
+  AuroraTrackerNew(const Self&);   //purposely not implemented
+  void operator=(const Self&);   //purposely not implemented
+
   /** A mutex for multithreaded access to the buffer arrays */
-  itk::MutexLock::Pointer  m_BufferLock;
-
-  /** A buffer for holding tool transforms */
-  double m_TransformBuffer[NumberOfPorts][NumberOfChannels][8];
-
-  /** A buffer for holding status of tools */
-  int m_StatusBuffer[NumberOfPorts][NumberOfChannels];
+  ::itk::MutexLock::Pointer  m_BufferLock;
 
   /** A buffer for holding absent status of tools */
-  int m_AbsentBuffer[NumberOfPorts][NumberOfChannels];
-
-  /** Load a virtual SROM onto the tools.
-   * Called from EnableToolPorts() */
-  bool LoadVirtualSROM( const unsigned int port,
-                        const std::string SROMFileName );
-
-  /** Enable all tool ports that have tools plugged into them.
-   * {The reference tool port is enabled as a static tool.} */
-  void EnableToolPorts( void );
-
-  /** Disable all enabled tool ports. */
-  void DisableToolPorts( void );
+  int m_AbsentBuffer[NumberOfPorts];
 
   /** Helper function for reporting interpreter errors. */
   ResultType CheckError( CommandInterpreterType * );
-
-  /** Information about which tool ports are enabled. */
-  int m_PortEnabled[NumberOfPorts][NumberOfChannels];
-
-  /** The tool handles that the device has provides us with. */
-  int m_PortHandle[NumberOfPorts][NumberOfChannels];
-
-  /** Total number of tools detected. */
-  unsigned int   m_NumberOfTools;
-
-  /** Names of the SROM files for special tools. */
-  std::string    m_PortSROMFileNames[NumberOfPorts];
 
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;
@@ -170,6 +138,23 @@ private:
 
   /** The command interpreter */
   CommandInterpreterType::Pointer  m_CommandInterpreter;
+
+  /** Port handle container indexed by the tracker tool unique 
+   * identifier */
+  std::map< std::string, int >     m_PortHandleContainer;
+
+  /** Container holding absent status of tools */
+  std::map< std::string, int >     m_ToolAbsentStatusContainer; 
+
+  /** Container holding status of the tools */
+  std::map< std::string, int >  m_ToolStatusContainer; 
+
+  /** A buffer to hold tool transforms */
+  typedef std::map< std::string , std::vector < double > > 
+                                TrackerToolTransformContainerType; 
+
+  TrackerToolTransformContainerType     m_ToolTransformBuffer;
+
 };
 
 }

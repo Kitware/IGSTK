@@ -75,6 +75,7 @@ void RegisterTests()
   // Tests depend on data
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkPolarisTrackerNewSimulatedTest);
+  REGISTER_TEST(igstkAuroraTrackerNewSimulatedTest);
 #endif
 
 

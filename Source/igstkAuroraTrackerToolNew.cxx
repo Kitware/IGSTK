@@ -383,4 +383,30 @@ void AuroraTrackerToolNew::ReportInValidToolIdSpecifiedProcessing( )
   std::cerr << "Invalid  Tool id specified " << std::endl;
 }
 
+/** Check if the SROM filename is specified */
+bool AuroraTrackerToolNew::IsSROMFileNameSpecified( )
+{
+  return m_SROMFileNameSpecified;
+}
+
+/** Get SROM filename */ 
+std::string AuroraTrackerToolNew::GetSROMFileName( )
+{
+  return m_SROMFileName;
+}
+
+/** Get Port number */ 
+unsigned int AuroraTrackerToolNew::GetPortNumber( )
+{
+  return m_PortNumber;
+}
+
+/** The "GetTrackerToolInitialized" method returns true if the tracker tool * is initialized */ 
+bool
+AuroraTrackerToolNew::GetTrackerToolInitialized( )
+{
+  igstkLogMacro( DEBUG, "igstk::AuroraTrackerToolNew::GetTrackerToolInitialized called...\n");
+  return m_TrackerToolInitialized;
+}
+
 }

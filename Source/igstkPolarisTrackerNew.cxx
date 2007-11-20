@@ -22,7 +22,6 @@
 #endif
 
 #include "igstkPolarisTrackerNew.h"
-#include "igstkTrackerPort.h"
 
 #include <iostream>
 #include <fstream>

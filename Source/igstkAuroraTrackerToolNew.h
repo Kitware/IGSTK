@@ -60,6 +60,15 @@ public:
   /** Request select 6DOF tracker tool */
   void RequestSelect6DOFTrackerTool( );
 
+  /** Check if SROM file name specified*/
+  bool IsSROMFileNameSpecified();
+
+  /** Get SROM file name */
+  std::string GetSROMFileName();
+
+  /** Get tracker tool port number */
+  unsigned int GetPortNumber();
+
 protected:
 
   AuroraTrackerToolNew();
@@ -105,7 +114,7 @@ private:
 
   /** Get boolean variable to check if the tracker tool is 
    * initialized or not */
-  igstkGetMacro( TrackerToolInitialized, bool );
+  virtual bool GetTrackerToolInitialized(); 
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
