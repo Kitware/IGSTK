@@ -103,6 +103,7 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   tracker->AddObserver( itk::AnyEvent(), my_command);
   tracker->SetLogger( logger );
 
+  // Set necessary parameters of the tracker
   std::string calibrationFilesDirectory = argv[1];
   tracker->SetCameraCalibrationFilesDirectory( 
                             calibrationFilesDirectory );
@@ -112,6 +113,10 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
 
   std::string markerTemplateDirectory = argv[3];
   tracker->LoadMarkerTemplate( markerTemplateDirectory );
+
+
+  // Start communication
+  tracker->RequestOpen();
 
   // Add tracker tools
   typedef igstk::MicronTrackerToolNew  TrackerToolType;
