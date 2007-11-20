@@ -129,7 +129,7 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
     ADD_TEST( igstkPolarisTrackerNewTest  
               ${IGSTKSandbox_TESTS}
               igstkPolarisTrackerNewTest
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerNewSimulatedTestLoggerOutput.txt
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerNewTestLoggerOutput.txt
               ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
               )
   ADD_TEST(igstkPolarisTrackerToolNewTest ${IGSTKSandbox_TESTS}
@@ -254,6 +254,18 @@ IF(IGSTKSandbox_USE_MicronTracker)
 
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+
+ADD_TEST( igstkPolarisTrackerNewSimulatedTest  
+              ${IGSTKSandbox_TESTS}
+              igstkPolarisTrackerNewSimulatedTest
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerNewSimulatedTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/polaris_stream_11_05_2005.txt
+              ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
+              )
+
+SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkPolarisTrackerNewSimulatedTest.cxx)
+
 IF(IGSTKSandbox_DATA_ROOT)
   SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
   IF (IGSTKSandbox_USE_FLTK)
@@ -283,17 +295,6 @@ IF(IGSTKSandbox_DATA_ROOT)
 
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkCTImageSpatialObjectReadingAndRepresentationTest2.cxx)
-
-    ADD_TEST( igstkPolarisTrackerNewSimulatedTest  
-              ${IGSTKSandbox_TESTS}
-              igstkPolarisTrackerNewSimulatedTest
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerNewSimulatedTestLoggerOutput.txt
-              ${IGSTK_DATA_ROOT}/polaris_stream_11_05_2005.txt
-              ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
-              )
-
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkPolarisTrackerNewSimulatedTest.cxx)
 
   ENDIF (IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_DATA_ROOT)
