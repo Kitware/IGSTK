@@ -177,7 +177,7 @@ public:
   ResultType RequestAddTool( std::string TrackerToolIdentifier, TrackerToolType * trackerTool );
 
   /** Request a tracker tool from this tracker  */
-  ResultType RequestRemoveTool( std::string TrackerToolIdentifier, TrackerToolType * trackerTool );
+  ResultType RequestRemoveTool( std::string TrackerToolIdentifier );
 
   /** Set the tracker tool tranform using the unique identifier 
     * FIXME: this method SHOULD BE REMOVED once the coordinate system is properly
@@ -271,6 +271,11 @@ protected:
    * the tracker tool intialization does not match with the tool id 
    * read from the SROM file*/
   virtual ResultType VerifyTrackerToolInformation( TrackerToolType * ); 
+
+  /** This method will remove entries of the traceker tool from internal
+    *    data containers */
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+                                     std::string trackerToolIdentifier ); 
 
   /** Access method for the tracker tool container. This method 
     * is useful in the derived classes to access the unique identifiers 

@@ -675,6 +675,17 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalThreadedUpdateStatus( voi
   return SUCCESS;
 }
 
+MicronTrackerNew::ResultType 
+MicronTrackerNew::
+RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier ) 
+{
+  // remove the tool from the Transform buffer container
+  this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
+
+  return SUCCESS;
+}
+
+
 /** Print Self function */
 void MicronTrackerNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {

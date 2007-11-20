@@ -199,7 +199,7 @@ void TrackerToolNew::AttemptToDetachTrackerToolFromTrackerProcessing( void )
                  "igstk::TrackerToolNew::AttemptToAttachTrackerToolToTracker called ...\n");
 
   //FIXME: implement a method in the tracker class to detach the tool
-  bool result = m_Tracker->RequestRemoveTool( m_TrackerToolIdentifier, this );
+  bool result = m_Tracker->RequestRemoveTool( m_TrackerToolIdentifier );
   m_StateMachine.PushInputBoolean( result,
                                    m_DetachmentFromTrackerSuccessInput,
                                    m_DetachmentFromTrackerFailureInput );

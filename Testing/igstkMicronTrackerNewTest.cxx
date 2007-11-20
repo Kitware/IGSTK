@@ -145,7 +145,7 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  for(unsigned int i=0; i<400; i++)
+  for(unsigned int i=0; i<10; i++)
     {
     tracker->RequestUpdateStatus();
 
@@ -172,6 +172,34 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
  
     }
   
+  std::cout << "RequestStopTracking()" << std::endl;
+  tracker->RequestStopTracking();
+
+  //Remove one of the tracker tools and restart tracking
+  std::cout << "Detach the tracker tool from the tracker" << std::endl;
+  trackerTool2->RequestDetach( );
+
+  // restart tracking
+  tracker->RequestStartTracking();
+
+  for(unsigned int i=0; i<10; i++)
+    {
+    tracker->RequestUpdateStatus();
+
+    TransformType             transform;
+    VectorType                position;
+
+    tracker->GetToolTransform( 
+      trackerTool->GetTrackerToolIdentifier(), transform );
+
+    position = transform.GetTranslation();
+    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+
+    }
+
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
 

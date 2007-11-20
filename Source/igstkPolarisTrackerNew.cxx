@@ -404,6 +404,26 @@ PolarisTrackerNew::ResultType PolarisTrackerNew
   return SUCCESS;
 }
  
+PolarisTrackerNew::ResultType 
+PolarisTrackerNew::
+RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier ) 
+{
+  // remove the tool from port handle container
+  this->m_PortHandleContainer.erase( trackerToolIdentifier );
+
+  // remove the tool from absent status container 
+  this->m_ToolAbsentStatusContainer.erase( trackerToolIdentifier );
+
+  // remove the tool from  tool status container
+  this->m_ToolStatusContainer.erase( trackerToolIdentifier );
+
+  // remove the tool from the Transform buffer container
+  this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
+
+  return SUCCESS;
+}
+
+
 /** Close communication with the tracking device. */
 PolarisTrackerNew::ResultType PolarisTrackerNew::InternalClose( void )
 {

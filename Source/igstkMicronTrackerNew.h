@@ -128,6 +128,9 @@ protected:
   /** Get Error description given the error code */
   static const std::string GetErrorDescription( unsigned int ); 
 
+  /** Remove tracker tool entry from internal containers */ 
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+                                     std::string trackerToolIdentifier ); 
 
 private:
 

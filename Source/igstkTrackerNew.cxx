@@ -822,9 +822,19 @@ RequestAddTool( std::string trackerToolIdentifier, TrackerToolType * trackerTool
 /** Request remove a tool from the tracker  */
 TrackerNew::ResultType 
 TrackerNew::
-RequestRemoveTool( std::string trackerToolIdentifier, TrackerToolType * trackerTool )
+RequestRemoveTool( std::string trackerToolIdentifier )
 {
-  // FIXME: remove tracker tool from the tracker
+  this->m_TrackerTools.erase( trackerToolIdentifier );
+  this->RemoveTrackerToolFromInternalDataContainers( trackerToolIdentifier ); 
+  return SUCCESS;
+}
+
+/** This method will be overriden in the derived classes. Different types of trackers
+ * contain different internal tool containers */
+TrackerNew::ResultType 
+TrackerNew::
+RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier ) 
+{
   return SUCCESS;
 }
 
