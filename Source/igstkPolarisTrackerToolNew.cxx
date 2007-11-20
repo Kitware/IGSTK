@@ -239,6 +239,14 @@ unsigned int PolarisTrackerToolNew::GetPortNumber( )
   return m_PortNumber;
 }
 
+/** The "GetTrackerToolInitialized" method returns true if the tracker tool * is initialized */ 
+bool
+PolarisTrackerToolNew::GetTrackerToolInitialized( )
+{
+  igstkLogMacro( DEBUG, "igstk::PolarisTrackerToolNew::GetTrackerToolInitialized called...\n");
+  return m_TrackerToolInitialized;
+}
+
 /** Request the state machine to set the tool id */
 void PolarisTrackerToolNew::RequestSetToolId( std::string toolId )
 {

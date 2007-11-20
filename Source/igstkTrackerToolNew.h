@@ -168,7 +168,7 @@ private:
 
   /** Get boolean variable to check if the tracker tool is 
    * initialized or not */
-  bool GetTrackerToolInitialized( );
+  virtual bool GetTrackerToolInitialized( );
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( InitializeTool );

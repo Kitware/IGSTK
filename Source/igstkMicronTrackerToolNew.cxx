@@ -44,6 +44,15 @@ void MicronTrackerToolNew::RequestSetMarkerName( std::string markerName )
   m_TrackerToolInitialized = true;
 }
 
+/** The "GetTrackerToolInitialized" method returns true if the tracker tool * is initialized */ 
+bool
+MicronTrackerToolNew::GetTrackerToolInitialized( )
+{
+  igstkLogMacro( DEBUG, "igstk::PolarisTrackerToolNew::GetTrackerToolInitialized called...\n");
+  return m_TrackerToolInitialized;
+}
+
+
 /** Print Self function */
 void MicronTrackerToolNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {

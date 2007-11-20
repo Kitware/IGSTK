@@ -62,7 +62,7 @@ private:
 
   /** Get boolean variable to check if the tracker tool is 
    * initialized or not */
-  igstkGetMacro( TrackerToolInitialized, bool );
+  virtual bool GetTrackerToolInitialized(); 
 
   MicronTrackerToolNew(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented

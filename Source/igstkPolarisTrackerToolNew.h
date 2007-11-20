@@ -108,7 +108,7 @@ private:
 
   /** Get boolean variable to check if the tracker tool is 
    * initialized or not */
-  igstkGetMacro( TrackerToolInitialized, bool );
+  virtual bool GetTrackerToolInitialized(); 
 
   /** Get boolean variable to check if SROM file is specified */
   igstkGetMacro( SROMFileNameSpecified, bool );

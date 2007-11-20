@@ -205,12 +205,11 @@ void TrackerToolNew::AttemptToDetachTrackerToolFromTrackerProcessing( void )
                                    m_DetachmentFromTrackerFailureInput );
 }
 
-
 /** The "GetTrackerToolInitialized" methods returns a boolean indicating
  * if the tracker tool is initialized or not. This method is to be overriden in
  * the dervied classes
  */
-bool  TrackerToolNew::GetTrackerToolInitialized()
+bool TrackerToolNew::GetTrackerToolInitialized()
 {
   igstkLogMacro( DEBUG, "igstk::TrackerToolNew::GetTrackerToolInitialized called ...\n");
   return true;
