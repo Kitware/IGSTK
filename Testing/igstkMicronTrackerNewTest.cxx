@@ -76,10 +76,10 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   if( argc < 5 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
-                            << "MicronTracker camera calibration file"
-                            << "MicronTracker initialization file"
-                            << "Marker template directory "
-                            << "Logger Output directory" << std::endl;
+                            << "MicronTracker_Camera_Calibration_file" << "\t"
+                            << "MicronTracker_initialization_file"  << "\t"
+                            << "Marker_template_directory " << "\t"
+                            << "Logger_Output_directory" << std::endl;
     return EXIT_FAILURE;
     }
 
