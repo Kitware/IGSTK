@@ -42,6 +42,9 @@ void MicronTrackerToolNew::RequestSetMarkerName( std::string markerName )
 {
   this->m_MarkerName = markerName;
   m_TrackerToolInitialized = true;
+
+  // For MicronTracker, marker name is used as a unique identifier
+  this->SetTrackerToolIdentifier( m_MarkerName ); 
 }
 
 /** The "GetTrackerToolInitialized" method returns true if the tracker tool * is initialized */ 

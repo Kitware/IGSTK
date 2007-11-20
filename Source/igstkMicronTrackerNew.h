@@ -81,8 +81,6 @@ public:
   /** Load markers template */
   void LoadMarkerTemplate( std::string filename );
 
-  void RequestAddTool( std::string identifier, MicronTrackerToolType * trackerTool );
-
 protected:
 
   MicronTrackerNew(void);
@@ -118,7 +116,7 @@ protected:
   virtual ResultType InternalReset( void );
 
   /** Verify tracker tool information */
-  virtual ResultType VerifyTrackerToolInformation( std::string trackerToolIdentifier, TrackerToolType * );
+  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

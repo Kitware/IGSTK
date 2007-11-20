@@ -309,37 +309,14 @@ bool MicronTrackerNew::SetUpCameras()
   return result;
 }
 
-/** Request adding a tool to the tracker */
-void MicronTrackerNew::RequestAddTool( std::string identifier, MicronTrackerToolType * trackerTool )
-{
-  igstkLogMacro( DEBUG, "MicronTrackerNew::RequestAddTool called ...\n");  
-
-  Superclass::RequestAddTool( identifier, trackerTool );
-
-  //populate std::map with the marker name and corresponding transform
-  //REVISIT this..there should be an easier way of doing this
-  std::vector< double > transform;
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 1.0 );
-
-  m_ToolTransformBuffer[ trackerTool->GetMarkerName() ] = transform;
-
-  std::cout << " Adding a trackertool with marker:\t " 
-           << trackerTool->GetMarkerName() << std::endl;
-}
-
 /** Verify tracker tool information*/
 MicronTrackerNew::ResultType
 MicronTrackerNew
-::VerifyTrackerToolInformation( std::string trackerToolIdentifier, TrackerToolType * trackerTool )
+::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, "MicronTrackerNew::VerifyTrackerToolInformation called ...\n");  
 
+  // Verify that the template file for the marker is found
   unsigned int totalNumberOfTemplates = Markers_TemplatesCount();
 
   // FIXME: change the code to use std::string
@@ -365,6 +342,17 @@ MicronTrackerNew
 
     if( micronTrackerTool->GetMarkerName() == templateName )
       {
+      std::vector< double > transform;
+      transform.push_back( 0.0 );
+      transform.push_back( 0.0 );
+      transform.push_back( 0.0 );
+      transform.push_back( 0.0 );
+      transform.push_back( 0.0 );
+      transform.push_back( 0.0 );
+      transform.push_back( 1.0 );
+
+      std::cout << " Adding tracker tool with: " << micronTrackerTool->GetMarkerName() << std::endl; 
+      m_ToolTransformBuffer[ micronTrackerTool->GetMarkerName() ] = transform;
       return SUCCESS;
       }
     }
@@ -510,7 +498,6 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalThreadedUpdateStatus( voi
 {
   igstkLogMacro( DEBUG, "MicronTrackerNew::InternalThreadedUpdateStatus "
                  "called ...\n");
-  std::cout << "InternalThreadedUpdateStatus called... " << std::endl;
 
   // Send the commands to the device that will get the transforms
   // for all of the tools.
@@ -624,9 +611,9 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalThreadedUpdateStatus( voi
           Xform3D* t2c; // tooltip to camera xform
           t2c = t2m->concatenate(Marker2CurrCameraXf);
           std::cout.setf(ios::fixed,ios::floatfield); 
-          std::cout << "\tTIP XYZ=" << setprecision(5) << t2c->getShift(0) << "\t" 
+         /* std::cout << "\tTIP XYZ=" << setprecision(5) << t2c->getShift(0) << "\t" 
                             << t2c->getShift(1) << "\t"
-                            << t2c->getShift(2) << std::endl;
+                            << t2c->getShift(2) << std::endl; */
           delete t2c;
           }
 
@@ -646,10 +633,10 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalThreadedUpdateStatus( voi
         quaternion[3] = Marker2CurrCameraXf->getQuaternion(3);
 
         std::cout.setf(ios::fixed,ios::floatfield); 
-        std::cout << "\t Versor = " << setprecision(5) << quaternion[0] << "\t"
+
+        /* std::cout << "\t Versor = " << setprecision(5) << quaternion[0] << "\t"
                                     << quaternion[1]  << "\t" << quaternion[2] << "\t"
-                                    << quaternion[3] << std::endl;
-                                    
+                                    << quaternion[3] << std::endl; */
 
         transform.push_back( quaternion[0] ); 
         transform.push_back( quaternion[1] ); 

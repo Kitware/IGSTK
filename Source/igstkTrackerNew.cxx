@@ -796,6 +796,9 @@ TrackerNew::ResultType
 TrackerNew::
 RequestAddTool( std::string trackerToolIdentifier, TrackerToolType * trackerTool )
 {
+  igstkLogMacro( DEBUG, "igstk::TrackerNew::"
+                 "RequestAddTool called ...\n");
+
   // Verify the tracker tool information before adding it to the
   // tracker. The conditions that need be verified depend on 
   // the tracker type. For example, for MicronTracker, the 
@@ -856,6 +859,9 @@ TrackerNew::GetTrackerToolContainer() const
 TrackerNew::ResultType TrackerNew
 ::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 {
+  igstkLogMacro( DEBUG, "igstk::TrackerNew::"
+                 "VerifyTrackerToolInformation called ...\n");
+
   //This method will be overridden in the derived classes.
   //as the tracker tool information is different for different tracker types
   return SUCCESS;
