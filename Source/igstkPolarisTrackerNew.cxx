@@ -407,6 +407,12 @@ PolarisTrackerNew::ResultType
 PolarisTrackerNew::
 RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier ) 
 {
+  // disable the port handle
+  m_CommandInterpreter->PDIS( m_PortHandleContainer[ trackerToolIdentifier] );  
+
+  // print warning if failed to disable
+  this->CheckError(m_CommandInterpreter);
+
   // remove the tool from port handle container
   this->m_PortHandleContainer.erase( trackerToolIdentifier );
 
@@ -418,6 +424,8 @@ RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier )
 
   // remove the tool from the Transform buffer container
   this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
+
+  
 
   return SUCCESS;
 }
