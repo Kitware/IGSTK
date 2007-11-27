@@ -495,9 +495,10 @@ AuroraTrackerNew::ResultType AuroraTrackerNew::InternalUpdateStatus()
   ConstIteratorType inputItr = m_PortHandleContainer.begin();
   ConstIteratorType inputEnd = m_PortHandleContainer.end();
 
+  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+
   while( inputItr != inputEnd )
     {
-    std::cout << "Updating transform for tool: " << inputItr->first << std::endl;
     const int portStatus = m_ToolStatusContainer[inputItr->first];
 
     // only report tools that are enabled
@@ -515,9 +516,15 @@ AuroraTrackerNew::ResultType AuroraTrackerNew::InternalUpdateStatus()
       // there should be a method to set that the tool is not in view
       igstkLogMacro( DEBUG, "AuroraTrackerNew::InternalUpdateStatus: " <<
                      "tool " << inputItr->first << " is not in view\n");
+
+      // report to the tracker tool that the tracker is not available 
+     (trackerToolContainer[inputItr->first])->ReportTrackingToolNotAvailable();
       ++inputItr;
       continue;
       }
+
+    // report to the tracker tool that the tracker is Visible 
+    (trackerToolContainer[inputItr->first])->ReportTrackingToolIsInVisibleState();
 
     // create the transform
     TransformType transform;
