@@ -401,6 +401,12 @@ unsigned int AuroraTrackerToolNew::GetPortNumber( )
   return m_PortNumber;
 }
 
+/** Check if the tracker tool is 5DOF or 6DOF */ 
+bool AuroraTrackerToolNew::IsTrackerTool5DOF( )
+{
+  return m_5DOFTrackerToolSelected;
+}
+
 /** The "GetTrackerToolInitialized" method returns true if the tracker tool * is initialized */ 
 bool
 AuroraTrackerToolNew::GetTrackerToolInitialized( )

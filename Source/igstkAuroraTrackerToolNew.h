@@ -69,6 +69,9 @@ public:
   /** Get tracker tool port number */
   unsigned int GetPortNumber();
 
+  /** Check if the tracker tool selected is 5DOF or 6DOF */
+  bool IsTrackerTool5DOF();
+ 
 protected:
 
   AuroraTrackerToolNew();
