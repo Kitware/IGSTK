@@ -353,6 +353,7 @@ MicronTrackerNew
 
       std::cout << " Adding tracker tool with: " << micronTrackerTool->GetMarkerName() << std::endl; 
       m_ToolTransformBuffer[ micronTrackerTool->GetMarkerName() ] = transform;
+      m_ToolStatusContainer[micronTrackerTool->GetMarkerName()] = 0;
       return SUCCESS;
       }
     }
@@ -447,10 +448,24 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalUpdateStatus()
   InputConstIterator inputItr = m_ToolTransformBuffer.begin();
   InputConstIterator inputEnd = m_ToolTransformBuffer.end();
 
+  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+
   unsigned int toolId = 0;
 
   while( inputItr != inputEnd )
     {
+    // only report tools that are in view
+    if (! m_ToolStatusContainer[inputItr->first])
+      {
+      // there should be a method to set that the tool is not in view
+      igstkLogMacro( DEBUG, "MicronTrackerNew::InternalUpdateStatus: " <<
+                     "tool " << inputItr->first << " is not in view\n");
+      // report to the tracker tool that the tracker is not available 
+      (trackerToolContainer[inputItr->first])->ReportTrackingToolNotAvailable();
+      ++inputItr;
+      continue;
+      }
+
     // create the transform
     TransformType transform;
 
@@ -651,6 +666,7 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalThreadedUpdateStatus( voi
         if( markerItr != m_ToolTransformBuffer.end() )
           {
           m_ToolTransformBuffer[ marker->getName() ] = transform;
+          m_ToolStatusContainer[ marker->getName() ] = 1;
           }
         else
           {

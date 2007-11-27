@@ -172,6 +172,10 @@ private:
 
   /** boolean to indicate if error code list is created */
   static bool m_ErrorCodeListCreated;
+
+  /** Container holding status of the tools */
+  std::map< std::string, int >  m_ToolStatusContainer; 
+
 };
 
 }
