@@ -253,8 +253,7 @@ void TrackerToolNew::TrackerToolInitializationSuccessProcessing( void )
     "igstk::TrackerToolNew::TrackerToolInitializationSuccessProcessing called ...\n");
 
 
-  // FIXME: convert this std::cout to an event 
-  std::cout << "TrackerToolNew Initialized succesfully: " << std::endl;
+  this->InvokeEvent( TrackerToolNewInitializationEvent() );
 }
 
 
@@ -264,9 +263,7 @@ void TrackerToolNew::TrackerToolInitializationFailureProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerToolNew::TrackerToolInitializationFailureProcessing called ...\n");
 
-
-  // FIXME: convert this std::cout to an event 
-  std::cerr << "TrackerTool Initialization failed: Make sure to establish the required tool parameters " << std::endl;
+  this->InvokeEvent( TrackerToolNewInitializationErrorEvent() );
 }
 
 /** Post-processing after a successful tracker tool to tracker attachment attempt . */ 
@@ -275,9 +272,7 @@ void TrackerToolNew::TrackerToolAttachmentToTrackerSuccessProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerToolNew::TrackerToolAttachmentToTrackerSuccessiProcessing called ...\n");
 
-
-  // FIXME: convert this std::cout to an event 
-  std::cout << "TrackerToolNew attached to the tracker succesfully: " << std::endl;
+  this->InvokeEvent( TrackerToolNewAttachmentToTrackerEvent() );
 }
 
 /** Post-processing after a failed attachment attempt . */ 
@@ -286,9 +281,7 @@ void TrackerToolNew::TrackerToolAttachmentToTrackerFailureProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerToolNew::TrackerToolInitializationFailureProcessing called ...\n");
 
-
-  // FIXME: convert this std::cout to an event 
-  std::cerr << "TrackerTool to tracker attachment attempt failed " << std::endl;
+  this->InvokeEvent( TrackerToolNewAttachmentToTrackerErrorEvent() );
 }
 
 /** Post-processing after a successful detachment of the tracker tool from the
@@ -298,9 +291,7 @@ void TrackerToolNew::TrackerToolDetachmentFromTrackerSuccessProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerToolNew::TrackerToolDetachmentFromTrackerSuccessProcessing called ...\n");
 
-
-  // FIXME: convert this std::cout to an event 
-  std::cout << "TrackerToolNew detached from the tracker successfully: " << std::endl;
+  this->InvokeEvent( TrackerToolNewDetachmentFromTrackerEvent() );
 }
 
 /** Post-processing after a failed detachment . */ 
@@ -310,8 +301,7 @@ void TrackerToolNew::TrackerToolDetachmentFromTrackerFailureProcessing( void )
     "igstk::TrackerToolNew::TrackerToolDetachmentFromTrackerFailureProcessing called ...\n");
 
 
-  // FIXME: convert this std::cout to an event 
-  std::cerr << "Detachment of the TrackerTool from the tracker failed " << std::endl;
+  this->InvokeEvent( TrackerToolNewDetachmentFromTrackerErrorEvent() );
 }
 
 /** Report tracker tool is in a tracked state */ 
@@ -320,9 +310,7 @@ void TrackerToolNew::ReportTrackerToolVisibleStateProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerToolNew::ReportTrackerToolVisibleStateProcessing called ...\n");
 
-
-  // FIXME: convert this std::cout to an event
-  std::cout << "Tracker tool in tracked state" << std::endl;
+  this->InvokeEvent( TrackerToolNewMadeTransitionToTrackedStateEvent() );
 }
 
 /** Report tracker tool not available state*/ 
@@ -331,9 +319,7 @@ void TrackerToolNew::ReportTrackerToolNotAvailableProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerToolNew::ReportTrackerToolNotAvailableProcessing called ...\n");
 
-
-  // FIXME: convert this std::cout to an event
-  std::cout << "Tracker tool is not available to be tracked" << std::endl;
+  this->InvokeEvent( TrackerToolNewNotAvailableToBeTrackedEvent() );
 }
 
 /** Report tracking started */ 
@@ -342,8 +328,7 @@ void TrackerToolNew::ReportTrackingStartedProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerToolNew::ReportTrackingStarted called ...\n");
 
-  // FIXME: convert this std::cout to an event
-  std::cout << "Tracking of the tracker tool started" << std::endl;
+  this->InvokeEvent( ToolTrackingStartedEvent() );
 }
 
 /** Report tracking stopped */ 
@@ -352,9 +337,7 @@ void TrackerToolNew::ReportTrackingStoppedProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerToolNew::ReportTrackingStopped called ...\n");
 
-
-  // FIXME: convert this std::cout to an event
-  std::cout << "Tracking of the tracker tool stopped " << std::endl;
+  this->InvokeEvent( ToolTrackingStoppedEvent() );
 }
 
 /** Push TrackingStarted state input to the tracker tool */

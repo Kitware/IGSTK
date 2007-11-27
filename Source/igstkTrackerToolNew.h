@@ -28,6 +28,19 @@
 namespace igstk
 {
 
+itkEventMacro( TrackerToolNewEvent,StringEvent);
+itkEventMacro( TrackerToolNewErrorEvent,TrackerToolNewEvent);
+itkEventMacro( TrackerToolNewInitializationEvent,TrackerToolNewEvent);
+itkEventMacro( TrackerToolNewInitializationErrorEvent,TrackerToolNewErrorEvent);
+itkEventMacro( TrackerToolNewAttachmentToTrackerEvent,TrackerToolNewEvent);
+itkEventMacro( TrackerToolNewAttachmentToTrackerErrorEvent,TrackerToolNewErrorEvent);
+itkEventMacro( TrackerToolNewDetachmentFromTrackerEvent,TrackerToolNewEvent);
+itkEventMacro( TrackerToolNewDetachmentFromTrackerErrorEvent,TrackerToolNewErrorEvent);
+itkEventMacro( TrackerToolNewMadeTransitionToTrackedStateEvent,TrackerToolNewEvent);
+itkEventMacro( TrackerToolNewNotAvailableToBeTrackedEvent,TrackerToolNewEvent);
+itkEventMacro( ToolTrackingStartedEvent,TrackerToolNewEvent);
+itkEventMacro( ToolTrackingStoppedEvent,TrackerToolNewEvent);
+
 class TrackerNew;
 
 /**  \class TrackerToolNew
