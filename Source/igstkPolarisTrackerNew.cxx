@@ -325,7 +325,16 @@ PolarisTrackerNew::ResultType PolarisTrackerNew
   m_CommandInterpreter->PENA(ph, mode);
 
   // print any warnings
-  this->CheckError(m_CommandInterpreter);
+  if(this->CheckError(m_CommandInterpreter) == SUCCESS)
+    {
+    std::cout << "Port handle enabled successfully " << std::endl;
+    }
+  else
+    {
+    std::cerr << "Failure enabling the port handle" << std::endl;
+    return FAILURE;
+    }
+
 
   //tool information
   m_CommandInterpreter->PHINF(ph,
@@ -519,9 +528,10 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
   ConstIteratorType inputItr = m_PortHandleContainer.begin();
   ConstIteratorType inputEnd = m_PortHandleContainer.end();
 
+  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+
   while( inputItr != inputEnd )
     {
-    std::cout << "Updating transform for tool: " << inputItr->first << std::endl;
     const int portStatus = m_ToolStatusContainer[inputItr->first];
 
     // only report tools that are enabled
@@ -539,9 +549,16 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
       // there should be a method to set that the tool is not in view
       igstkLogMacro( DEBUG, "PolarisTrackerNew::InternalUpdateStatus: " <<
                      "tool " << inputItr->first << " is not in view\n");
+
+      // report to the tracker tool that the tracker is not available 
+     (trackerToolContainer[inputItr->first])->ReportTrackingToolNotAvailable();
+ 
       ++inputItr;
       continue;
       }
+
+    // report to the tracker tool that the tracker is Visible 
+    (trackerToolContainer[inputItr->first])->ReportTrackingToolIsInVisibleState();
 
     // create the transform
     TransformType transform;
@@ -550,8 +567,12 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
     TranslationType translation;
 
     translation[0] = (m_ToolTransformBuffer[inputItr->first])[4];
-    translation[1] = m_ToolTransformBuffer[inputItr->first][5];
-    translation[2] = m_ToolTransformBuffer[inputItr->first][6];
+    translation[1] = (m_ToolTransformBuffer[inputItr->first])[5];
+    translation[2] = (m_ToolTransformBuffer[inputItr->first])[6];
+
+    /* std::cout << "\t\t: Translation:\t" << translation[0] << "\t" 
+                                        << translation[1] << "\t"
+                                        << translation[2] << std::endl; */
 
     typedef TransformType::VersorType RotationType;
     RotationType rotation;
@@ -650,6 +671,8 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalThreadedUpdateStatus( v
 
       double transformRecorded[8];
       const int tstatus = m_CommandInterpreter->GetTXTransform(ph, transformRecorded);
+     // std::cout << "Transform update status for: " << inputItr->first << std::endl;
+    //  std::cout << "\t\tStatus = " << tstatus << std::endl;
       const int absent = (tstatus != CommandInterpreterType::NDI_VALID);
       const int status = m_CommandInterpreter->GetTXPortStatus(ph);
 

@@ -512,6 +512,20 @@ void TrackerNew::StartTrackingSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::TrackerNew::StartTrackingSuccessProcessing "
                  "called ...\n");
+
+  // Report to all the tracker tools that tracking has been started
+  typedef TrackerToolsContainerType::iterator  InputConstIterator;
+
+  InputConstIterator inputItr = m_TrackerTools.begin();
+  InputConstIterator inputEnd = m_TrackerTools.end();
+
+  while( inputItr != inputEnd )
+    {
+    (inputItr->second)->ReportTrackingStarted();
+    ++inputItr;
+    }
+
+
   // going from AttemptingToTrackState to TrackingState
   this->EnterTrackingStateProcessing();
 
@@ -548,6 +562,18 @@ void TrackerNew::StopTrackingSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::TrackerNew::StopTrackingSuccessProcessing "
                  "called ...\n");
+
+  // Report to all the tracker tools that tracking has been stopped
+  typedef TrackerToolsContainerType::iterator  InputConstIterator;
+
+  InputConstIterator inputItr = m_TrackerTools.begin();
+  InputConstIterator inputEnd = m_TrackerTools.end();
+
+  while( inputItr != inputEnd )
+    {
+    (inputItr->second)->ReportTrackingStopped();
+    ++inputItr;
+    }
 
   this->InvokeEvent( TrackerNewStopTrackingEvent() );  
 }

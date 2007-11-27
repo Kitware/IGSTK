@@ -52,6 +52,10 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
   igstkAddInputMacro( AttachToolToTracker ); 
   igstkAddInputMacro( AttachmentToTrackerSuccess ); 
   igstkAddInputMacro( AttachmentToTrackerFailure ); 
+  igstkAddInputMacro( TrackingStarted ); 
+  igstkAddInputMacro( TrackingStopped ); 
+  igstkAddInputMacro( TrackerToolVisible ); 
+  igstkAddInputMacro( TrackerToolNotAvailable ); 
   igstkAddInputMacro( DetachTrackerToolFromTracker ); 
   igstkAddInputMacro( DetachmentFromTrackerSuccess ); 
   igstkAddInputMacro( DetachmentFromTrackerFailure ); 
@@ -100,6 +104,33 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
                            DetachTrackerToolFromTracker,
                            AttemptingToDetachTrackerToolFromTracker,
                            AttemptToDetachTrackerToolFromTracker );
+
+  igstkAddTransitionMacro( Attached,
+                           TrackingStarted,
+                           NotAvailable,
+                           ReportTrackingStarted );
+
+  // Transition from NotAvailable state
+  igstkAddTransitionMacro( NotAvailable,
+                           TrackerToolVisible,
+                           Tracked,
+                           ReportTrackerToolVisibleState );
+
+  igstkAddTransitionMacro( NotAvailable,
+                           TrackingStopped,
+                           Attached,
+                           ReportTrackingStopped );
+
+  // Transition from Tracked state
+  igstkAddTransitionMacro( Tracked,
+                           TrackerToolNotAvailable,
+                           NotAvailable,
+                           ReportTrackerToolNotAvailable );
+
+  igstkAddTransitionMacro( Tracked,
+                           TrackingStopped,
+                           Attached,
+                           ReportTrackingStopped );
 
 
   // Transitions from the AttemptingToDetachTrackerToolFromTracker
@@ -281,6 +312,85 @@ void TrackerToolNew::TrackerToolDetachmentFromTrackerFailureProcessing( void )
 
   // FIXME: convert this std::cout to an event 
   std::cerr << "Detachment of the TrackerTool from the tracker failed " << std::endl;
+}
+
+/** Report tracker tool is in a tracked state */ 
+void TrackerToolNew::ReportTrackerToolVisibleStateProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerToolNew::ReportTrackerToolVisibleStateProcessing called ...\n");
+
+
+  // FIXME: convert this std::cout to an event
+  std::cout << "Tracker tool in tracked state" << std::endl;
+}
+
+/** Report tracker tool not available state*/ 
+void TrackerToolNew::ReportTrackerToolNotAvailableProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerToolNew::ReportTrackerToolNotAvailableProcessing called ...\n");
+
+
+  // FIXME: convert this std::cout to an event
+  std::cout << "Tracker tool is not available to be tracked" << std::endl;
+}
+
+/** Report tracking started */ 
+void TrackerToolNew::ReportTrackingStartedProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerToolNew::ReportTrackingStarted called ...\n");
+
+  // FIXME: convert this std::cout to an event
+  std::cout << "Tracking of the tracker tool started" << std::endl;
+}
+
+/** Report tracking stopped */ 
+void TrackerToolNew::ReportTrackingStoppedProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerToolNew::ReportTrackingStopped called ...\n");
+
+
+  // FIXME: convert this std::cout to an event
+  std::cout << "Tracking of the tracker tool stopped " << std::endl;
+}
+
+/** Push TrackingStarted state input to the tracker tool */
+void TrackerToolNew::ReportTrackingStarted( )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::ReportTrackingStarted called...\n");
+
+  igstkPushInputMacro( TrackingStarted );
+  this->m_StateMachine.ProcessInputs();
+}
+
+/** Push TrackingStarted state input to the tracker tool */
+void TrackerToolNew::ReportTrackingStopped( )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::ReportTrackingStopped called...\n");
+
+  igstkPushInputMacro( TrackingStopped );
+  this->m_StateMachine.ProcessInputs();
+}
+
+/** Push TrackerToolNotAvailable input to the tracker tool */
+void TrackerToolNew::ReportTrackingToolNotAvailable( )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::ReportTrackingToolNotAvailable called...\n");
+
+  igstkPushInputMacro( TrackerToolNotAvailable );
+  this->m_StateMachine.ProcessInputs();
+}
+
+/** Push TrackerToolVisible input to the tracker tool  */
+void TrackerToolNew::ReportTrackingToolIsInVisibleState( )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::ReportTrackingToolIsInVisibleState called...\n");
+
+  igstkPushInputMacro( TrackerToolVisible );
+  this->m_StateMachine.ProcessInputs();
 }
 
 /** This method should only be available to the Tracker */

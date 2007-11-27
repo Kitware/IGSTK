@@ -118,6 +118,30 @@ public:
     * should be moved to private section */
   std::string GetTrackerToolIdentifier( );
 
+  /** Push TrackingStarted input to the tracker tool 
+    * FIXME: when the tracker becomes a friend class of the
+    * tracker tool: this method 
+    * should be moved to private section */
+  virtual void ReportTrackingStarted( );
+
+  /** Push TrackingStopped input to the tracker tool 
+    * FIXME: when the tracker becomes a friend class of the
+    * tracker tool: this method 
+    * should be moved to private section */
+  virtual void ReportTrackingStopped( );
+
+  /** Push TrackerToolNotAvailable input to the tracker tool 
+    * FIXME: when the tracker becomes a friend class of the
+    * tracker tool: this method 
+    * should be moved to private section */
+  virtual void ReportTrackingToolNotAvailable( );
+
+  /** Push TrackerToolVisible input to the tracker tool 
+    * FIXME: when the tracker becomes a friend class of the
+    * tracker tool: this method 
+    * should be moved to private section */
+  virtual void ReportTrackingToolIsInVisibleState( );
+
 protected:
 
   TrackerToolNew(void);
@@ -175,6 +199,10 @@ private:
   igstkDeclareInputMacro( ToolInitializationSuccess );
   igstkDeclareInputMacro( ToolInitializationFailure );
   igstkDeclareInputMacro( AttachToolToTracker );
+  igstkDeclareInputMacro( TrackingStarted );
+  igstkDeclareInputMacro( TrackingStopped );
+  igstkDeclareInputMacro( TrackerToolNotAvailable );
+  igstkDeclareInputMacro( TrackerToolVisible );
   igstkDeclareInputMacro( DetachTrackerToolFromTracker ); 
   igstkDeclareInputMacro( AttachmentToTrackerSuccess );
   igstkDeclareInputMacro( AttachmentToTrackerFailure );
@@ -221,6 +249,18 @@ private:
 
   /** Post-processing after a failed detachment attempt . */ 
   void TrackerToolDetachmentFromTrackerFailureProcessing( void );
+
+  /** Report tracker tool is in visible state*/ 
+  void ReportTrackerToolVisibleStateProcessing( void );
+
+  /** Report tracker tool not available state*/ 
+  void ReportTrackerToolNotAvailableProcessing( void );
+
+  /** Report tracking started */ 
+  void ReportTrackingStartedProcessing( void );
+
+  /** Report tracking stopped */ 
+  void ReportTrackingStoppedProcessing( void );
 
   TrackerNew        * m_Tracker;
 };
