@@ -55,13 +55,13 @@ using namespace std;
 namespace igstk
 {
 
-class XMLLogger: public itk::Logger
+class XMLLogger: public igstk::Logger
 {
 public:
 
   typedef XMLLogger                                   Self;
   typedef itk::SmartPointer<Self>                     Pointer;
-  typedef itk::Logger                                 Superclass;
+  typedef igstk::Logger                                 Superclass;
   
   igstkNewMacro(Self);
 
