@@ -17,7 +17,7 @@
 #ifndef __igstkMacros_h
 #define __igstkMacros_h
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkCommand.h"
 
 /** \file igstkMacros.h defines standard system-wide macros, constants, 
@@ -44,9 +44,12 @@ namespace igstk
 {         \
   if (this->GetLogger() ) \
     {  \
-    ::itk::OStringStream message; \
-    message << y; \
-    this->GetLogger()->Write(::itk::Logger::x, message.str()); \
+    if (this->GetLogger()->ShouldBuildMessage( ::igstk::Logger::x ) ) \
+      { \
+      ::itk::OStringStream message; \
+      message << y; \
+      this->GetLogger()->Write(::itk::Logger::x, message.str()); \
+      } \
     }  \
 }
 
@@ -58,9 +61,12 @@ namespace igstk
 {         \
   if (obj->GetLogger() ) \
     {  \
-    ::itk::OStringStream message; \
-    message << y; \
-    obj->GetLogger()->Write(::itk::Logger::x, message.str()); \
+    if (obj->GetLogger()->ShouldBuildMessage( ::igstk::Logger::x ) ) \
+      { \
+      ::itk::OStringStream message; \
+      message << y; \
+      obj->GetLogger()->Write(::itk::Logger::x, message.str()); \
+      } \
     }  \
 }
 
@@ -72,9 +78,12 @@ namespace igstk
 {         \
   if ( logger ) \
     {  \
-    ::itk::OStringStream message; \
-    message << y; \
-    logger->Write(::itk::Logger::x, message.str()); \
+    if (logger->ShouldBuildMessage( ::igstk::Logger::x )) \
+      { \
+      ::itk::OStringStream message; \
+      message << y; \
+      logger->Write(::itk::Logger::x, message.str()); \
+      } \
     }  \
 }
 
@@ -132,7 +141,7 @@ static Pointer New(void) \
  * LoggerType must be defined before this macro is used. */
 #define  igstkLoggerMacro() \
 public: \
-  typedef ::itk::Logger                  LoggerType; \
+  typedef ::igstk::Logger                LoggerType; \
 protected: \
   LoggerType* GetLogger() const { return m_Logger; } \
 private: \

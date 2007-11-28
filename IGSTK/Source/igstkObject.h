@@ -21,6 +21,7 @@
 #include "itkObject.h"
 #include "itkLogger.h"
 
+#include "igstkLogger.h"
 #include "igstkMacros.h"
 
 
@@ -52,7 +53,7 @@ public:
   igstkTypeMacro( Object, ::itk::Object );  
   igstkNewMacro( Self );  
   
-  typedef ::itk::Logger                  LoggerType; 
+  typedef igstk::Logger                    LoggerType;
 
   /** Connect the Logger for this class */
   void SetLogger( LoggerType * logger );
