@@ -201,6 +201,19 @@ void ObjectRepresentation::SetOpacity(float alpha)
 
 
 /** Request Update the object representation (i.e vtkActors). */
+void ObjectRepresentation::RequestUpdateRepresentation( 
+                                        const TimeStamp & time, 
+                                        const CoordinateReferenceSystem* cs )
+{
+  igstkLogMacro( DEBUG, "RequestUpdateRepresentation at time"
+                          << time );
+  m_TimeToRender = time;
+  m_TargetCoordinateSystem = cs;
+  igstkPushInputMacro( UpdateRepresentation );
+  m_StateMachine.ProcessInputs();
+  m_TargetCoordinateSystem = NULL; // Break reference.
+}
+
 void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
 {
   igstkLogMacro( DEBUG, "RequestUpdateRepresentation at time"
@@ -218,6 +231,9 @@ void ObjectRepresentation::RequestGetTransformProcessing()
   // The response should be sent back in an event
 #ifdef USE_SPATIAL_OBJECT_DEPRECATED  
   m_SpatialObject->RequestGetTransform();
+#else
+  m_SpatialObject->RequestComputeTransformTo( 
+                                          this->m_TargetCoordinateSystem.GetPointer() );
 #endif
 }
 
@@ -225,7 +241,7 @@ void ObjectRepresentation::RequestGetTransformProcessing()
 /** Receive the Transform from the SpatialObject via a transduction macro. */
 void ObjectRepresentation::ReceiveSpatialObjectTransformProcessing()
 {
-  m_SpatialObjectTransform = m_SpatialObjectTransformInputToBeSet;
+  m_SpatialObjectTransform = m_SpatialObjectTransformInputToBeSet.m_Transform;
 
   vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
 

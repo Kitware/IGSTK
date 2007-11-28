@@ -28,6 +28,7 @@
 #include <igstkEvents.h>
 #include "itksys/SystemTools.hxx"
 #include "vtkViewport.h"
+#include "igstkCoordinateReferenceSystem.h"
 
 #if defined(__APPLE__) && defined(VTK_USE_CARBON)
 #include "vtkCarbonRenderWindow.h"
@@ -185,6 +186,12 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this)
 
   m_PulseGenerator = PulseGenerator::New();
   m_Reporter = ::itk::Object::New();
+
+  /** Coordinate system API needs to use the same object for events. */
+  m_CoordinateReferenceSystemObserver = CoordinateSystemObserverType::New(); 
+  m_CoordinateReferenceSystemDelegator = 
+                          CoordinateReferenceSystemDelegator::New(); 
+  m_CoordinateReferenceSystemDelegator->RequestSetReporter( m_Reporter );
 
   m_PulseObserver = ObserverType::New();
   m_PulseObserver->SetCallbackFunction( this, & View::RefreshRender );
@@ -420,9 +427,10 @@ void View::RefreshRender()
   // scene will be rendered.
   ObjectListType::iterator itr    = m_Objects.begin();
   ObjectListType::iterator endItr = m_Objects.end();
+  const CoordinateReferenceSystem* thisCS = igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( this );
   while( itr != endItr )
     {
-    (*itr)->RequestUpdateRepresentation( renderTime );
+    (*itr)->RequestUpdateRepresentation( renderTime, thisCS );
     (*itr)->RequestUpdatePosition( renderTime );
     ++itr;
     }

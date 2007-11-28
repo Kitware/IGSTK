@@ -30,7 +30,7 @@
 #include "igstkMacros.h"
 #include "igstkSpatialObject.h"
 #include "igstkStateMachine.h"
-
+#include "igstkCoordinateReferenceSystem.h"
 
 namespace igstk
 {
@@ -84,8 +84,13 @@ public:
   igstkGetMacro( Actors, ActorsListType );
 
   /** update the visual representation with changes in the geometry */
-  virtual void RequestUpdateRepresentation( const TimeStamp & time );
+  virtual void RequestUpdateRepresentation( const TimeStamp & time, 
+                                            const CoordinateReferenceSystem* cs );
 
+
+  /** DEPRECATED */
+  virtual void RequestUpdateRepresentation( const TimeStamp & time );
+  /** DEPRECATED */
 
   /** DEPRECATED !!! DELETE THIS METHOD */
   void RequestUpdatePosition( const TimeStamp & time ) {};
@@ -184,11 +189,12 @@ private:
 
   /** Transduction macros that will convert received events 
    *  into StateMachine inputs */
-  igstkLoadedEventTransductionMacro( TransformModified, 
-                                     SpatialObjectTransform );
-
   igstkEventTransductionMacro( TransformNotAvailable, 
                                      TransformNotAvailable); 
+
+  igstkLoadedEventTransductionMacro( 
+                            CoordinateReferenceSystemTransformTo
+                                                , SpatialObjectTransform );
 
   /** Internal temporary variable to use when connecting to a SpatialObject */
   SpatialObjectType::Pointer    m_SpatialObjectToAdd;
@@ -211,6 +217,8 @@ private:
   /** States for the Visibility State Machine */
   igstkDeclareStateMacro( Visible );
   igstkDeclareStateMacro( Invisible );
+
+  CoordinateReferenceSystem::ConstPointer m_TargetCoordinateSystem;
 };
 
 } // end namespace igstk

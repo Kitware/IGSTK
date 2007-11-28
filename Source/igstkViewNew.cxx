@@ -526,9 +526,10 @@ void ViewNew::RefreshRender()
   // scene will be rendered.
   ObjectListType::iterator itr    = m_Objects.begin();
   ObjectListType::iterator endItr = m_Objects.end();
+  const CoordinateReferenceSystem* thisCS = igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( this );  
   while( itr != endItr )
     {
-    (*itr)->RequestUpdateRepresentation( renderTime );
+    (*itr)->RequestUpdateRepresentation( renderTime, thisCS );
     ++itr;
     }
 

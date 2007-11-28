@@ -282,6 +282,19 @@ private:
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( Refreshing );
 
+  /** Define the coordinate system interface 
+   */
+  igstkCoordinateSystemClassInterfaceMacro();
+  
+  /** Temporary way to adapt the coordinate system macro 
+   *  above. We will need to find a longer term solution 
+   *  if this class's API remains the same.
+   */
+  void InvokeEvent( const ::itk::EventObject & e)
+    {
+    this->m_Reporter->InvokeEvent( e );
+    }
+
 };
 
 std::ostream& operator<<(std::ostream& os, const View& o);
