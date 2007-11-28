@@ -72,7 +72,7 @@ int main( int argc, char * argv[] )
 
   typedef PrincipalAxisCalibrationType::VectorType          VectorType;
   typedef PrincipalAxisCalibrationType::CovariantVectorType CovariantVectorType;
-  typedef itk::Logger                                       LoggerType; 
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput                           LogOutputType;
 // EndCodeSnippet
 

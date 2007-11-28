@@ -139,7 +139,9 @@ int main(int , char** )
   m_GUI->Display1->Update();
 
   // Setup the logging system
-  itk::Logger::Pointer logger = itk::Logger::New();
+  typedef igstk::Object::LoggerType             LoggerType;
+
+  LoggerType::Pointer logger = LoggerType::New();
   itk::StdStreamLogOutput::Pointer logOutput = itk::StdStreamLogOutput::New();
   itk::StdStreamLogOutput::Pointer fileOutput = itk::StdStreamLogOutput::New();
   

@@ -50,7 +50,7 @@ int main( int, char * [] )
 
   // BeginCodeSnippet
   typedef igstk::View3D            View3DType;
-  typedef itk::Logger              LoggerType;
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   // EndCodeSnippet
 

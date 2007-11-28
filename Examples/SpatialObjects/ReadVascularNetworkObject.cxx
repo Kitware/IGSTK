@@ -72,7 +72,7 @@ int main( int argc, char *argv[] )
 //
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
-  typedef itk::Logger              LoggerType;
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
 
   LoggerType::Pointer   logger = LoggerType::New();
