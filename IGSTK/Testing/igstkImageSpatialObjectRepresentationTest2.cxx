@@ -53,7 +53,7 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
   
-  typedef itk::Logger              LoggerType;
+  typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   
   // logger object created for logging mouse activities
