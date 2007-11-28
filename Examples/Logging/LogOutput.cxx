@@ -62,6 +62,8 @@
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Text_Buffer.H>
 
+#include "igstkObject.h"
+
 #undef _MSC_VER
 #include "itkLoggerThreadWrapper.h"
 #define _MSC_VER
@@ -102,7 +104,9 @@ int main( int argc, char* argv[] )
   fileLogOutput->SetStream( fout );
 
   // Creating a logger object
-  itk::Logger::Pointer   logger = itk::Logger::New();
+  typedef igstk::Object::LoggerType             IGSTKLoggerType;
+
+  IGSTKLoggerType::Pointer   logger = IGSTKLoggerType::New();
   logger->SetName( "MainLogger" );
 
   // Attaching LogOutput objects to a logger
@@ -121,7 +125,9 @@ int main( int argc, char* argv[] )
   itk::LoggerManager::Pointer manager = itk::LoggerManager::New();
 
   // Creating a logger object through the LoggerManager object
-  itk::Logger::Pointer logger2 = 
+  typedef itk::Logger ITKLoggerType;
+
+  ITKLoggerType::Pointer logger2 = 
     manager->CreateLogger( "org.itk.logTester.logger", 
     itk::LoggerBase::DEBUG, itk::LoggerBase::CRITICAL );
 
@@ -130,6 +136,7 @@ int main( int argc, char* argv[] )
 
   // Testing to print a debug message
   manager->Write(itk::LoggerBase::DEBUG, "This is a DEBUG message.\n");
+
 
   // EndCodeSnippet
 
