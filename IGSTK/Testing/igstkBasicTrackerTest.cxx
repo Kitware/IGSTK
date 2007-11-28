@@ -211,7 +211,8 @@ int igstkBasicTrackerTest( int, char * [] )
 
 
   igstk::TestingTracker::Pointer tracker = igstk::TestingTracker::New();
-  itk::Logger::Pointer logger = itk::Logger::New();
+  typedef igstk::Object::LoggerType             LoggerType;
+  LoggerType::Pointer logger = LoggerType::New();
 
   // create the outputs for the logger
   itk::StdStreamLogOutput::Pointer fileLogOutput1 = 
