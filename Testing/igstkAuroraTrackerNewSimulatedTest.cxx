@@ -151,9 +151,6 @@ int igstkAuroraTrackerNewSimulatedTest( int argc, char * argv[] )
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
 
-  //initialize tracker
-  tracker->RequestInitialize();
-
   //start tracking 
   tracker->RequestStartTracking();
 

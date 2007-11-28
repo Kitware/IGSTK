@@ -137,9 +137,6 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   trackerTool2->RequestAttachToTracker( tracker );
   trackerTool2->AddObserver( itk::AnyEvent(), my_command);
 
-  //initialize tracker
-  tracker->RequestInitialize();
-
   //start tracking 
   tracker->RequestStartTracking();
 

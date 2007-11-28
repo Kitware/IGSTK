@@ -176,9 +176,6 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   //Add observer to listen to events throw by the tracker tool
   trackerTool2->AddObserver( itk::AnyEvent(), my_command);
 
-  //initialize tracker
-  tracker->RequestInitialize();
-
   //start tracking 
   tracker->RequestStartTracking();
 

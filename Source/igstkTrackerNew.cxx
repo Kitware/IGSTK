@@ -37,8 +37,6 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
   igstkAddStateMacro( AttemptingToEstablishCommunication ); 
   igstkAddStateMacro( AttemptingToCloseCommunication); 
   igstkAddStateMacro( CommunicationEstablished );
-  igstkAddStateMacro( AttemptingToActivateTools ); 
-  igstkAddStateMacro( ToolsActive ); 
   igstkAddStateMacro( AttemptingToTrack ); 
   igstkAddStateMacro( AttemptingToStopTracking); 
   igstkAddStateMacro( Tracking ); 
@@ -46,7 +44,6 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
   
   // Set the input descriptors
   igstkAddInputMacro( EstablishCommunication);
-  igstkAddInputMacro( ActivateTools); 
   igstkAddInputMacro( StartTracking); 
   igstkAddInputMacro( UpdateStatus); 
   igstkAddInputMacro( StopTracking); 
@@ -76,9 +73,9 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
 
   // Transitions from CommunicationEstablished
   igstkAddTransitionMacro( CommunicationEstablished,
-                           ActivateTools,
-                           AttemptingToActivateTools,
-                           AttemptToActivateTools );
+                           StartTracking,
+                           AttemptingToTrack,
+                           AttemptToStartTracking );
 
   igstkAddTransitionMacro( CommunicationEstablished,
                            CloseCommunication,
@@ -90,33 +87,6 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
                            CommunicationEstablished,
                            ResetFromCommunicatingState );
 
-  // Transitions from AttemptingToActivateTools
-  igstkAddTransitionMacro( AttemptingToActivateTools,
-                           Success,
-                           ToolsActive,
-                           ToolsActivationSuccess );
-
-  igstkAddTransitionMacro( AttemptingToActivateTools,
-                           Failure,
-                           CommunicationEstablished,
-                           ToolsActivationFailure );
-
-  // Transitions from ToolsActive
-  igstkAddTransitionMacro( ToolsActive,
-                           StartTracking,
-                           AttemptingToTrack,
-                           AttemptToStartTracking );
-
-  igstkAddTransitionMacro( ToolsActive,
-                           CloseCommunication,
-                           AttemptingToCloseCommunication,
-                           CloseFromToolsActiveState );
-
-  igstkAddTransitionMacro( ToolsActive,
-                           Reset,
-                           CommunicationEstablished,
-                           ResetFromToolsActiveState );
-
   // Transitions from AttemptingToTrack
   igstkAddTransitionMacro( AttemptingToTrack,
                            Success,
@@ -125,7 +95,7 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToTrack,
                            Failure,
-                           ToolsActive,
+                           CommunicationEstablished,
                            StartTrackingFailure );
 
   // Transitions from Tracking
@@ -163,7 +133,7 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
   // Transitions from AttemptingToStopTracking
   igstkAddTransitionMacro( AttemptingToStopTracking,
                            Success,
-                           ToolsActive,
+                           CommunicationEstablished,
                            StopTrackingSuccess );
 
   igstkAddTransitionMacro( AttemptingToStopTracking,
@@ -237,18 +207,6 @@ void TrackerNew::RequestClose( void )
   igstkPushInputMacro( CloseCommunication );
   m_StateMachine.ProcessInputs();
 }
-
-
-/** The "RequestInitialize" method initializes a newly opened device.
- *  FIXME: */
-
-void TrackerNew::RequestInitialize( void )
-{
-  igstkLogMacro( DEBUG, "igstk::TrackerNew::RequestInitialize called ...\n");
-  igstkPushInputMacro( ActivateTools );
-  this->m_StateMachine.ProcessInputs();
-}
-
 
 /** The "RequestReset" tracker method should be used to bring the tracker
  * to some defined default state. */
@@ -328,27 +286,6 @@ TrackerNew::ResultType TrackerNew::InternalReset( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::InternalReset called ...\n");
   return SUCCESS;
 }
-
-
-/** The "InternalActivateTools" method activates tools.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-TrackerNew::ResultType TrackerNew::InternalActivateTools( void )
-{
-  igstkLogMacro( DEBUG, "igstk::TrackerNew::InternalActivateTools called ...\n");
-  return SUCCESS;
-}
-
-
-/** The "InternalDeactivateTools" method deactivates tools.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-TrackerNew::ResultType TrackerNew::InternalDeactivateTools( void )
-{
-  igstkLogMacro( DEBUG, "igstk::TrackerNew::InternalDeactivateTools called ...\n");
-  return SUCCESS;
-}
-
 
 /** The "InternalStartTracking" method starts tracking.
  *  This method is to be overridden by a descendant class 
@@ -461,20 +398,6 @@ void TrackerNew::ResetFromCommunicatingStateProcessing( void )
     igstkLogMacro( DEBUG, "igstk::TrackerNew::InternalReset failed ...\n");
     }
 }
-
-/** The "AttemptToActivateTools" method attempts to activate tools. */
-void TrackerNew::AttemptToActivateToolsProcessing( void )
-{
-  igstkLogMacro( DEBUG,
-           "igstk::TrackerNew::AttemptToActivateToolsProcessing called ...\n");
-
-  ResultType result = this->InternalActivateTools();
-  
-  m_StateMachine.PushInputBoolean( (bool)result,
-                                   m_SuccessInput,
-                                   m_FailureInput );
-}
-  
 
 /** Post-processing after ports and tools setup has been successful. */ 
 void TrackerNew::ToolsActivationSuccessProcessing( void )
@@ -724,30 +647,10 @@ void TrackerNew::CloseFromTrackingStateProcessing( void )
 
   ResultType result = this->InternalStopTracking();
 
+  // detach all the tracker tools from the tracker
+  this->DetachAllTrackerToolsFromTracker();
+  
   if( result == SUCCESS )
-    {
-    result = this->InternalDeactivateTools();
-    if ( result == SUCCESS )
-      {
-      result = this->InternalClose();
-      }
-    }
-
-  m_StateMachine.PushInputBoolean( (bool)result,
-                                   m_SuccessInput,
-                                   m_FailureInput );
-}
-
-/** The "CloseFromToolsActiveStateProcessing" method closes tracker
- *  in use, when the tracker is in active tools state. */
-void TrackerNew::CloseFromToolsActiveStateProcessing( void)
-{
-  igstkLogMacro( DEBUG, "igstk::TrackerNew::"
-                 "CloseFromToolsActiveStateProcessing called ...\n");
-
-  ResultType result = this->InternalDeactivateTools();
-
-  if ( result == SUCCESS )
     {
     result = this->InternalClose();
     }
@@ -757,6 +660,22 @@ void TrackerNew::CloseFromToolsActiveStateProcessing( void)
                                    m_FailureInput );
 }
 
+/** Detach all tracker tools from the tracker */
+void TrackerNew::DetachAllTrackerToolsFromTracker()
+{
+  typedef TrackerToolsContainerType::iterator  InputConstIterator;
+
+  InputConstIterator inputItr = m_TrackerTools.begin();
+  InputConstIterator inputEnd = m_TrackerTools.end();
+
+  while( inputItr != inputEnd )
+    {
+    this->RemoveTrackerToolFromInternalDataContainers( inputItr->first ); 
+    this->m_TrackerTools.erase( inputItr->first );
+    ++inputItr;
+    }
+}
+ 
 /** The "CloseFromCommunicatingStateProcessing" method closes
  *  tracker in use, when the tracker is in communicating state. */
 void TrackerNew::CloseFromCommunicatingStateProcessing( void )
@@ -764,6 +683,9 @@ void TrackerNew::CloseFromCommunicatingStateProcessing( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::"
                  "CloseFromCommunicatingStateProcessing called ...\n");
 
+  // Detach all the tracker tools from the tracker
+  this->DetachAllTrackerToolsFromTracker();
+  
   ResultType result = this->InternalClose();
 
   m_StateMachine.PushInputBoolean( (bool)result,

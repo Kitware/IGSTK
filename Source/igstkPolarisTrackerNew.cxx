@@ -416,6 +416,23 @@ PolarisTrackerNew::ResultType
 PolarisTrackerNew::
 RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier ) 
 {
+  igstkLogMacro( DEBUG, "PolarisTrackerNew::RemoveTrackerToolFromInternalDataContainers called ...\n");
+  // if SROM file has been loaded for this tracker tool, clear it first.
+  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+  PolarisTrackerToolType * polarisTrackerTool = 
+             dynamic_cast< PolarisTrackerToolType * > (
+                        trackerToolContainer[trackerToolIdentifier] );   
+
+  if ( polarisTrackerTool != NULL ) 
+    {
+    bool SROMFileSpecified  = polarisTrackerTool->IsSROMFileNameSpecified();
+
+    if( SROMFileSpecified )
+      {
+      m_CommandInterpreter->PHF( m_PortHandleContainer[trackerToolIdentifier] );
+      }
+    }
+    
   // disable the port handle
   m_CommandInterpreter->PDIS( m_PortHandleContainer[ trackerToolIdentifier] );  
 
@@ -434,8 +451,6 @@ RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier )
   // remove the tool from the Transform buffer container
   this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
 
-  
-
   return SUCCESS;
 }
 
@@ -451,25 +466,6 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalClose( void )
                              CommandInterpreterType::NDI_NOHANDSHAKE);
 
   return this->CheckError(m_CommandInterpreter);
-}
-
-/** Activate the tools attached to the tracking device. */
-PolarisTrackerNew::ResultType PolarisTrackerNew::InternalActivateTools( void )
-{
-  //FIXME: this method seems like it wont be necessary any more as the tracker
-  //tools get initialized when they get attached to the tracker
-  igstkLogMacro( DEBUG, "PolarisTrackerNew::InternalActivateTools called ...\n");
-
-  ResultType result = SUCCESS;
-
-  return result;
-}
-
-/** Deactivate the tools attached to the tracking device. */
-PolarisTrackerNew::ResultType PolarisTrackerNew::InternalDeactivateTools( void )
-{
-  //FIXME: add code to disable the handles and clean up the SROM file  
-  return SUCCESS;
 }
 
 /** Put the tracking device into tracking mode. */

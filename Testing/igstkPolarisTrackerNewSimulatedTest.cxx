@@ -168,9 +168,6 @@ int igstkPolarisTrackerNewSimulatedTest( int argc, char * argv[] )
   //Attach to the tracker
   trackerTool2->RequestAttachToTracker( tracker );
 
-  //initialize tracker
-  tracker->RequestInitialize();
-
   //start tracking 
   tracker->RequestStartTracking();
 

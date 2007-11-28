@@ -368,29 +368,6 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalClose( void )
   return SUCCESS;
 }
 
-/** Activate the tools attached to the tracking device. */
-MicronTrackerNew::ResultType MicronTrackerNew::InternalActivateTools( void )
-{
-  igstkLogMacro( DEBUG, "MicronTrackerNew::InternalActivateTools called ...\n");
-
-  // There is no need to invoke a special command to activate the tools 
-
-  return SUCCESS;
-}
-
-/** Deactivate the tools attached to the tracking device. */
-MicronTrackerNew::ResultType MicronTrackerNew::InternalDeactivateTools( void )
-{
-  igstkLogMacro( DEBUG, "MicronTrackerNew::InternalDeactivateTools called ...\n");
-
-  // Communicate with the device to deactivate all tools (depending
-  // on the tracker, there might not be anything to do here).
-
-  // Return SUCCESS or FAILURE depending on whether communication
-  // was successfully opened, without error
-  return SUCCESS;
-}
-
 /** Put the tracking device into tracking mode. */
 MicronTrackerNew::ResultType MicronTrackerNew::InternalStartTracking( void )
 {

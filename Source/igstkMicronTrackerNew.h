@@ -93,12 +93,6 @@ protected:
   /** Close communication with the tracking device. */
   virtual ResultType InternalClose( void );
 
-  /** Activate the tools attached to the tracking device. */
-  virtual ResultType InternalActivateTools( void );
-
-  /** Deactivate the tools attached to the tracking device. */
-  virtual ResultType InternalDeactivateTools( void );
-
   /** Put the tracking device into tracking mode. */
   virtual ResultType InternalStartTracking( void );
 

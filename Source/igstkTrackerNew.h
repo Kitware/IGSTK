@@ -218,16 +218,6 @@ protected:
       and responsible for device-specific processing */
   virtual ResultType InternalReset( void );
 
-  /** The "InternalActivateTools" method activates tools.
-      This method is to be overridden by a descendant class 
-      and responsible for device-specific processing */
-  virtual ResultType InternalActivateTools( void );
-
-  /** The "InternalDeactivateTools" method deactivates tools.
-      This method is to be overridden by a descendant class 
-      and responsible for device-specific processing */
-  virtual ResultType InternalDeactivateTools( void );
-
   /** The "InternalStartTracking" method starts tracking.
       This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
@@ -332,8 +322,6 @@ private:
   igstkDeclareStateMacro( AttemptingToEstablishCommunication );
   igstkDeclareStateMacro( AttemptingToCloseCommunication );
   igstkDeclareStateMacro( CommunicationEstablished );
-  igstkDeclareStateMacro( AttemptingToActivateTools );
-  igstkDeclareStateMacro( ToolsActive );
   igstkDeclareStateMacro( AttemptingToTrack );
   igstkDeclareStateMacro( Tracking );
   igstkDeclareStateMacro( AttemptingToUpdate );
@@ -341,7 +329,6 @@ private:
 
   /** List of Inputs */
   igstkDeclareInputMacro( EstablishCommunication );
-  igstkDeclareInputMacro( ActivateTools );
   igstkDeclareInputMacro( StartTracking );
   igstkDeclareInputMacro( UpdateStatus );
   igstkDeclareInputMacro( StopTracking );
@@ -358,10 +345,6 @@ private:
       tracking device. */
   void AttemptToOpenProcessing( void );
   
-  /** The "AttemptToActivateToolsProcessing" method attempts 
-   *  to activate tools. */
-  void AttemptToActivateToolsProcessing( void );
-
   /** The "AttemptToStartTrackingProcessing" method attempts 
    *  to start tracking. */
   void AttemptToStartTrackingProcessing( void );
@@ -384,10 +367,6 @@ private:
   /** The "CloseFromTrackingStateProcessing" method closes tracker in
       use, when the tracker is in tracking state. */
   void CloseFromTrackingStateProcessing( void );
-
-  /** The "CloseFromToolsActiveStateProcessing" method closes tracker
-      in use, when the tracker is in active tools state. */
-  void CloseFromToolsActiveStateProcessing( void);
 
   /** The "CloseFromCommunicatingStateProcessing" method closes
       tracker in use, when the tracker is in communicating state. */
@@ -440,6 +419,9 @@ private:
 
   /** Always called when entering tracking state. */
   void ExitTrackingStateProcessing( void );
+
+  /** Detach all tracker tools from the tracker */
+  void DetachAllTrackerToolsFromTracker();
 
   /** Define the coordinate system interface 
    */
