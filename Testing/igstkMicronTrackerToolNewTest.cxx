@@ -38,7 +38,7 @@ int igstkMicronTrackerToolNewTest( int argc, char ** argv  )
 {
   igstk::RealTimeClock::Initialize();
 
-  typedef itk::Logger                   LoggerType; 
+  typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
   LoggerType::Pointer   logger = LoggerType::New();
