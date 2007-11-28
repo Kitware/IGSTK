@@ -25,7 +25,7 @@
 #include <set>
 
 #include "itkCommand.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkVector.h"
 #include "itkVersor.h"
@@ -74,8 +74,8 @@ int igstkPolarisTrackerNewSimulatedTest( int argc, char * argv[] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef itk::Logger                   LoggerType; 
-  typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef igstk::Object::LoggerType       LoggerType; 
+  typedef itk::StdStreamLogOutput         LogOutputType;
 
   if( argc < 4 )
     {

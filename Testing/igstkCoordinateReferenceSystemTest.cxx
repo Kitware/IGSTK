@@ -120,7 +120,7 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef itk::Logger              LoggerType;
+  typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   typedef CoordinateReferenceSystemTest::CoordinateReferenceSystemObserver
                                                                 ObserverType;
@@ -130,7 +130,7 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::INFO );
+  logger->SetPriorityLevel( LoggerType::INFO );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 

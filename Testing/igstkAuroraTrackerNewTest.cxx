@@ -74,7 +74,7 @@ int igstkAuroraTrackerNewTest( int argc, char * argv[] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef itk::Logger                   LoggerType; 
+  typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
   if( argc < 2 )
@@ -110,7 +110,7 @@ int igstkAuroraTrackerNewTest( int argc, char * argv[] )
   LogOutputType::Pointer logOutput = LogOutputType::New();  
   logOutput->SetStream( loggerFile );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG);
+  logger->SetPriorityLevel( LoggerType::DEBUG);
 
   serialComm->AddObserver( itk::AnyEvent(), my_command);
 
