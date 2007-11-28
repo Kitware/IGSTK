@@ -182,7 +182,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef itk::Logger              LoggerType;
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
 
   // logger object created for logging mouse activities

@@ -35,7 +35,7 @@ int igstkToolCalibrationTest( int, char * [] )
   // Define type used in the calibration class
   typedef igstk::ToolCalibration    CalibrationType;
 
-  typedef itk::Logger                                      LoggerType; 
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput                          LogOutputType;
 
   // Logger object created for logging calibration computation
