@@ -147,7 +147,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   RepresentationType::Pointer  representation = RepresentationType::New();
 
-  typedef itk::Logger              LoggerType;
+  typedef igstk::Object::LoggerType LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   
   // logger object created for logging mouse activities
@@ -155,7 +155,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( LoggerType::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
