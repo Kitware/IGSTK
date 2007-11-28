@@ -24,10 +24,10 @@
 #include <iostream>
 #include <fstream>
 #include "itkStdStreamLogOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkRealTimeClock.h"
-
+#include "igstkObject.h"
 
 int igstkVTKLoggerOutputTest( int, char * [] )
 {
@@ -45,7 +45,9 @@ int igstkVTKLoggerOutputTest( int, char * [] )
     foutput->SetStream(fout);
 
     // Create an ITK Logger
-    itk::Logger::Pointer logger = itk::Logger::New();
+    typedef igstk::Object::LoggerType             LoggerType;
+
+    LoggerType::Pointer logger = LoggerType::New();
 
     std::cout << "Testing igstk::VTKLoggerOutput" << std::endl;
 
