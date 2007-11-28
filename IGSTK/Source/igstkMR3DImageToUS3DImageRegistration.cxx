@@ -50,7 +50,7 @@ public:
 
   typedef itk::RegularStepGradientDescentOptimizer   OptimizerType;
   typedef const OptimizerType*                       OptimizerPointer;
-  typedef ::itk::Logger                              LoggerType; 
+  typedef ::igstk::Object::LoggerType                LoggerType; 
 
   void SetLogger( LoggerType * logger )
     {
