@@ -280,6 +280,8 @@ SET(IGSTKSandbox_HEADS
 # vtkImagePlaneWidget2D.h
 #  vtkImagePlaneWidget2DInteractionListener.h
 
+  igstkLogger.h
+
 # Refactored tracker classs 
   igstkTrackerNew.h
   igstkTrackerToolNew.h
@@ -350,6 +352,8 @@ SET(IGSTKSandbox_SRCS
 #  igstkMRImageSpatialObjectImagePlaneRepresentation.cxx
 #  vtkImagePlaneWidget2D.cxx
 #  vtkImagePlaneWidget2DInteractionListener.cxx
+
+  igstkLogger.cxx
 
 # Refactored tracker classs 
   igstkTrackerNew.cxx
