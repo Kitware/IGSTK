@@ -881,8 +881,18 @@ void TrackerNew::SetToolTransform( std::string toolIdentifier, TransformType tra
 void TrackerNew::GetToolTransform( std::string toolIdentifier,
                                 TransformType & transform )
 {
-  TrackerToolConstPointer tool = m_TrackerTools[ toolIdentifier ];
-  transform = tool->GetTransform();
+  typedef TrackerToolsContainerType::iterator InputIterator;
+  InputIterator toolItr = m_TrackerTools.find( toolIdentifier );
+
+  if( toolItr != m_TrackerTools.end() )
+    {
+    TrackerToolConstPointer tool = m_TrackerTools[ toolIdentifier ];
+    transform = tool->GetTransform();
+    }
+  else
+    {
+    std::cerr << "Tracker tool is not currently attached to the tracker " << std::endl;
+    }
 }
 
 TrackerNew::TrackerToolsContainerType 

@@ -121,11 +121,21 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
                            Attached,
                            ReportTrackingStopped );
 
+  igstkAddTransitionMacro( NotAvailable,
+                           TrackerToolNotAvailable,
+                           NotAvailable,
+                           No );
+
   // Transition from Tracked state
   igstkAddTransitionMacro( Tracked,
                            TrackerToolNotAvailable,
                            NotAvailable,
                            ReportTrackerToolNotAvailable );
+
+  igstkAddTransitionMacro( Tracked,
+                           TrackerToolVisible,
+                           Tracked,
+                           No );
 
   igstkAddTransitionMacro( Tracked,
                            TrackingStopped,
@@ -374,6 +384,20 @@ void TrackerToolNew::ReportTrackingToolIsInVisibleState( )
 
   igstkPushInputMacro( TrackerToolVisible );
   this->m_StateMachine.ProcessInputs();
+}
+
+/** Report invalid request */
+void TrackerToolNew::ReportInvalidRequestProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::ReportInvalidRequestProcessing called...\n");
+
+  this->InvokeEvent( InvalidRequestErrorEvent() );
+}
+
+/** No Processing for this state machine transition*/
+void TrackerToolNew::NoProcessing( void )
+{
+
 }
 
 /** This method should only be available to the Tracker */

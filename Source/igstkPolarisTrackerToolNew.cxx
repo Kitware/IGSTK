@@ -198,11 +198,7 @@ void PolarisTrackerToolNew::RequestSetSROMFileName( std::string filename )
 {
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTrackerToolNew::RequestSetSROMFileName called ...\n");
-
-  //FIXME do more filename validation
-  //Check if the file exists
-  
-  if ( filename == "" )
+  if ( filename == "" || !itksys::SystemTools::FileExists( filename.c_str() ) )
     {
     m_StateMachine.PushInput( m_InValidSROMFileNameInput );
     m_StateMachine.ProcessInputs();

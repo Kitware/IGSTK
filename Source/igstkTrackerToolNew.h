@@ -275,6 +275,12 @@ private:
   /** Report tracking stopped */ 
   void ReportTrackingStoppedProcessing( void );
 
+  /** Report invalid request */ 
+  void ReportInvalidRequestProcessing( void );
+
+  /** No operation for state machine transition */ 
+  void NoProcessing( void );
+
   TrackerNew        * m_Tracker;
 };
 

@@ -248,8 +248,6 @@ bool MicronTrackerNew::Initialize()
             const_cast< char *> ( m_InitializationFile.c_str() );
   this->m_Persistence->setPath( initializationFilename );
 
-  std::cout << "Initialization file: " << initializationFilename << std::endl;
-
   this->m_Persistence->setSection ("General");
 
   //Setting the TemplateMatchToleranceMM property in the Markers object
@@ -351,7 +349,6 @@ MicronTrackerNew
       transform.push_back( 0.0 );
       transform.push_back( 1.0 );
 
-      std::cout << " Adding tracker tool with: " << micronTrackerTool->GetMarkerName() << std::endl; 
       m_ToolTransformBuffer[ micronTrackerTool->GetMarkerName() ] = transform;
       m_ToolStatusContainer[micronTrackerTool->GetMarkerName()] = 0;
       return SUCCESS;
@@ -457,7 +454,6 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalUpdateStatus()
     // only report tools that are in view
     if (! m_ToolStatusContainer[inputItr->first])
       {
-      // there should be a method to set that the tool is not in view
       igstkLogMacro( DEBUG, "MicronTrackerNew::InternalUpdateStatus: " <<
                      "tool " << inputItr->first << " is not in view\n");
       // report to the tracker tool that the tracker is not available 
@@ -465,6 +461,8 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalUpdateStatus()
       ++inputItr;
       continue;
       }
+    // report to the tracker tool that the tracker is Visible 
+    (trackerToolContainer[inputItr->first])->ReportTrackingToolIsInVisibleState();
 
     // create the transform
     TransformType transform;
@@ -570,7 +568,7 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalThreadedUpdateStatus( voi
   // process identified markers
   Collection* markersCollection = new Collection(this->m_Markers->identifiedMarkers(this->m_SelectedCamera));
  
-  std::cout << "\tNumber of identified markers: \t" <<  markersCollection->count() << std::endl;
+  //std::cout << "\tNumber of identified markers: \t" <<  markersCollection->count() << std::endl;
 
   if (markersCollection->count() == 0) 
     {
@@ -588,8 +586,8 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalThreadedUpdateStatus( voi
       Collection* facetsCollection = new Collection(marker->identifiedFacets(this->m_SelectedCamera));
       for (unsigned int facetNum = 1; facetNum <= facetsCollection->count(); facetNum++)
         {
-        std::cout << "Marker number= " << markerNum << "\tFacet number= " 
-                  << facetNum << "\t name=" << marker->getName() << std::endl;
+        /* std::cout << "Marker number= " << markerNum << "\tFacet number= " 
+                  << facetNum << "\t name=" << marker->getName() << std::endl; */
         }
       delete facetsCollection;
 
@@ -606,10 +604,10 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalThreadedUpdateStatus( voi
         translation[1] = Marker2CurrCameraXf->getShift(1);
         translation[2] = Marker2CurrCameraXf->getShift(2);
       
-        std::cout.setf(ios::fixed,ios::floatfield); 
+        /* std::cout.setf(ios::fixed,ios::floatfield); 
         std::cout << "\tOrigin XYZ= " << setprecision(5) << translation[0] << "\t" 
                             << translation[1] << "\t"
-                            << translation[2] << std::endl;
+                            << translation[2] << std::endl; */
 
         // If there's a tooltip, add it
         // Marker to tooltip is set using 
