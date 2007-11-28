@@ -130,7 +130,7 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
               ${IGSTKSandbox_TESTS}
               igstkPolarisTrackerNewTest
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerNewTestLoggerOutput.txt
-              ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
+              ${IGSTKSandbox_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
               )
   ADD_TEST(igstkPolarisTrackerToolNewTest ${IGSTKSandbox_TESTS}
 igstkPolarisTrackerToolNewTest)
