@@ -40,7 +40,7 @@ int igstkPrincipalAxisCalibrationTest( int, char * [] )
 
   typedef PrincipalAxisCalibrationType::VectorType          VectorType;
   typedef PrincipalAxisCalibrationType::CovariantVectorType CovariantVectorType;
-  typedef itk::Logger                                       LoggerType; 
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput                           LogOutputType;
 
   // Logger object created for logging calibration computation
