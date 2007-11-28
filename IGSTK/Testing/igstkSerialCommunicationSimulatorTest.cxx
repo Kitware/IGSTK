@@ -63,7 +63,7 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 {
   igstk::RealTimeClock::Initialize();
 
-  typedef itk::Logger                   LoggerType; 
+  typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
   igstk::SerialCommunicationSimulator::Pointer 

@@ -113,7 +113,8 @@ int igstkPulseGeneratorTest( int, char * [] )
   bool bEnd = false;
   ObserverType::Pointer observer = ObserverType::New();
 
-  itk::Logger::Pointer logger = itk::Logger::New();
+  typedef igstk::Object::LoggerType   LoggerType;
+  LoggerType::Pointer logger = LoggerType::New();
   itk::StdStreamLogOutput::Pointer logOutput = itk::StdStreamLogOutput::New();
   logOutput->SetStream( std::cout );
 
