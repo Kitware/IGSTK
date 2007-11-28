@@ -78,7 +78,7 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef itk::Logger                   LoggerType; 
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
   igstk::PolarisTrackerTool::Pointer tool = igstk::PolarisTrackerTool::New();

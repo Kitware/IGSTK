@@ -41,7 +41,7 @@ int igstkPivotCalibrationTest( int, char * [] )
   typedef PivotCalibrationType::VectorType  VectorType;
   typedef PivotCalibrationType::PointType   PointType;
   typedef PivotCalibrationType::ErrorType   ErrorType;
-  typedef itk::Logger                       LoggerType; 
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput           LogOutputType;
 
   // Logger object created for logging calibration computation
