@@ -127,6 +127,7 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   trackerTool->RequestSetMarkerName( markerNameTT );  
   trackerTool->RequestInitialize();
   trackerTool->RequestAttachToTracker( tracker );
+  trackerTool->AddObserver( itk::AnyEvent(), my_command);
 
   TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
   trackerTool2->SetLogger( logger );
@@ -134,6 +135,7 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   trackerTool2->RequestSetMarkerName( markerNamesPointer );  
   trackerTool2->RequestInitialize();
   trackerTool2->RequestAttachToTracker( tracker );
+  trackerTool2->AddObserver( itk::AnyEvent(), my_command);
 
   //initialize tracker
   tracker->RequestInitialize();
@@ -145,7 +147,7 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  for(unsigned int i=0; i<10; i++)
+  for(unsigned int i=0; i<20; i++)
     {
     tracker->RequestUpdateStatus();
 
@@ -177,12 +179,13 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
 
   //Remove one of the tracker tools and restart tracking
   std::cout << "Detach the tracker tool from the tracker" << std::endl;
-  trackerTool2->RequestDetach( );
+  trackerTool->RequestDetach( );
 
   // restart tracking
+
   tracker->RequestStartTracking();
 
-  for(unsigned int i=0; i<10; i++)
+  for(unsigned int i=0; i<20; i++)
     {
     tracker->RequestUpdateStatus();
 
@@ -190,10 +193,10 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
     VectorType                position;
 
     tracker->GetToolTransform( 
-      trackerTool->GetTrackerToolIdentifier(), transform );
+      trackerTool2->GetTrackerToolIdentifier(), transform );
 
     position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+    std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
               << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;

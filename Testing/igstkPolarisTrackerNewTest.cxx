@@ -159,23 +159,22 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   //Add observer to listen to events throw by the tracker tool
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
 
-
   // instantiate and attach wireless tracker tool
-  //std::cout << "Instantiate second tracker tool: " << std::endl;
-  //TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
-  //trackerTool2->SetLogger( logger );
+  std::cout << "Instantiate second tracker tool: " << std::endl;
+  TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
+  trackerTool2->SetLogger( logger );
   //Select wireless tracker tool
-  //trackerTool2->RequestSelectWirelessTrackerTool();
+  trackerTool2->RequestSelectWirelessTrackerTool();
   //Set the SROM file 
-  //std::string romFile = argv[2];
-  //std::cout << "SROM file: " << romFile << std::endl;
-  //trackerTool2->RequestSetSROMFileName( romFile );
+  std::string romFile = argv[2];
+  std::cout << "SROM file: " << romFile << std::endl;
+  trackerTool2->RequestSetSROMFileName( romFile );
   //Initialize
-  //trackerTool2->RequestInitialize();
+  trackerTool2->RequestInitialize();
   //Attach to the tracker
-  //trackerTool2->RequestAttachToTracker( tracker );
+  trackerTool2->RequestAttachToTracker( tracker );
   //Add observer to listen to events throw by the tracker tool
-  //trackerTool2->AddObserver( itk::AnyEvent(), my_command);
+  trackerTool2->AddObserver( itk::AnyEvent(), my_command);
 
   //initialize tracker
   tracker->RequestInitialize();
@@ -190,9 +189,6 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
 
   for(unsigned int i=0; i<100; i++)
     {
-  
-    std::cout << "\n\n Iteration: " << i << std::endl;
-
     tracker->RequestUpdateStatus();
 
     TransformType             transform;
@@ -207,7 +203,7 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
 
-   /* tracker->GetToolTransform( 
+    tracker->GetToolTransform( 
       trackerTool2->GetTrackerToolIdentifier(), transform );
 
     position = transform.GetTranslation();
@@ -215,8 +211,34 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
               << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
-   */
- 
+    }
+  
+  std::cout << "RequestStopTracking()" << std::endl;
+  tracker->RequestStopTracking();
+
+  //Remove one of the tracker tools and restart tracking
+  std::cout << "Detach the tracker tool from the tracker" << std::endl;
+  trackerTool2->RequestDetach( );
+
+  // restart tracking
+
+  tracker->RequestStartTracking();
+
+  for(unsigned int i=0; i<100; i++)
+    {
+    tracker->RequestUpdateStatus();
+
+    TransformType             transform;
+    VectorType                position;
+
+    tracker->GetToolTransform( 
+      trackerTool->GetTrackerToolIdentifier(), transform );
+
+    position = transform.GetTranslation();
+    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
     }
   
   std::cout << "RequestStopTracking()" << std::endl;
@@ -227,9 +249,6 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
 
   std::cout << "CloseCommunication()" << std::endl;
   serialComm->CloseCommunication();
-
-  std::cout << "[PASSED]" << std::endl;
-
 
   return EXIT_SUCCESS;
 }
