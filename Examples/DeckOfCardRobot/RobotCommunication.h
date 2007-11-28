@@ -138,7 +138,7 @@ public:
   typedef SocketCommunicationType::Pointer      SocketCommunicationPointerType;
   typedef SocketCommunicationType::ResultType   ResultType;
 
-  typedef itk::Logger                           LoggerType; 
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput               LogOutputType;
   
   RobotCommunication() {}
