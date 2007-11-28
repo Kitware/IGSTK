@@ -116,7 +116,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   typedef SpatialObjectCoordinateSystemTest::CoordinateSystemObserver 
                                                                 ObserverType;
   typedef ObserverType::EventType             CoordinateSystemEventType;
-  typedef itk::Logger                         LoggerType; 
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput             LogOutputType;
   
   const double tol = 1e-15;

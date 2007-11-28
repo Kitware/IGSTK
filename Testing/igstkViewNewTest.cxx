@@ -158,7 +158,7 @@ int igstkViewNewTest( int, char * [] )
   bool bEnd    = false;
   bool bResize = false;
 
-  typedef itk::Logger              LoggerType;
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   
   // logger object created for logging mouse activities
@@ -291,7 +291,7 @@ int igstkViewNewTest( int, char * [] )
     view3D->RequestAddObject( ellipsoidRepresentation );
     view3D->RequestAddObject( cylinderRepresentation );
     view3D->RequestStart();
- 
+
     while( !bEnd )
       {
       igstk::PulseGenerator::CheckTimeouts();

@@ -53,7 +53,7 @@ public:
   typedef std::vector< VectorType >       VectorArrayType;
   typedef std::vector< VersorType >       VersorArrayType;
 
-  typedef ::itk::Logger                   LoggerType; 
+  typedef igstk::Object::LoggerType       LoggerType;
   typedef ::itk::StdStreamLogOutput       LogOutputType;
 
   typedef ::itk::ReceptorMemberCommand< Self >   ReceptorObserverType;

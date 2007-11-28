@@ -43,7 +43,7 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction1( void* data)
   typedef SocketCommunicationType::Pointer      SocketCommunicationPointerType;
   typedef SocketCommunicationType::ResultType   ResultType;
   typedef itk::MultiThreader::ThreadInfoStruct* ThreadInfoStructPointerType;
-  typedef itk::Logger                           LoggerType; 
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput               LogOutputType;
   
 
@@ -155,7 +155,7 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction2( void* data)
   typedef SocketCommunicationType::Pointer      SocketCommunicationPointerType;
   typedef SocketCommunicationType::ResultType   ResultType;
   typedef itk::MultiThreader::ThreadInfoStruct* ThreadInfoStructPointerType;
-  typedef itk::Logger                           LoggerType; 
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput               LogOutputType;
   
 
@@ -255,7 +255,7 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction1( void* data)
   typedef SocketCommunicationType::Pointer      SocketCommunicationPointerType;
   typedef SocketCommunicationType::ResultType   ResultType;
   typedef itk::MultiThreader::ThreadInfoStruct* ThreadInfoStructPointerType;
-  typedef itk::Logger                           LoggerType; 
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput               LogOutputType;
 
   LoggerType::Pointer                       logger = LoggerType::New();
@@ -342,7 +342,7 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction2( void* data)
   typedef SocketCommunicationType::Pointer      SocketCommunicationPointerType;
   typedef SocketCommunicationType::ResultType   ResultType;
   typedef itk::MultiThreader::ThreadInfoStruct* ThreadInfoStructPointerType;
-  typedef itk::Logger                           LoggerType; 
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput               LogOutputType;
 
   LoggerType::Pointer                       logger = LoggerType::New();
