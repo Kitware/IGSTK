@@ -28,7 +28,6 @@
 
 #include "igstkObject.h"
 #include "igstkStateMachine.h"
-#include "igstkTrackerPort.h"
 #include "igstkTransform.h"
 #include "igstkAxesObject.h"
 #include "igstkPulseGenerator.h"
@@ -123,11 +122,6 @@ public:
   typedef TrackerToolType::Pointer           TrackerToolPointer;
   typedef TrackerToolType::ConstPointer      TrackerToolConstPointer;
   typedef std::map< std::string, TrackerToolType *>  TrackerToolsContainerType;
-
-  /** typedefs for the TrackerPort class */
-  typedef igstk::TrackerPort                TrackerPortType;
-  typedef TrackerPortType::Pointer          TrackerPortPointer;
-  typedef std::vector< TrackerPortPointer > TrackerPortVectorType; // FIXME: DEPRECATED: Ports are specific to Polaris and Aurora.
 
   /** typedefs for the coordinate reference system */
   typedef AxesObject                        CoordinateReferenceSystemType;
@@ -239,12 +233,6 @@ protected:
       and responsible for device-specific processing */
   virtual ResultType InternalThreadedUpdateStatus( void );
 
-  /** The "AddPort" method adds a port to the tracker. */
-  void AddPort( TrackerPortType * port);
-
-  /** The "ClearPorts" clears all the ports. */
-  void ClearPorts( void );
-
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
@@ -280,11 +268,6 @@ private:
   /** Pulse observer for receiving the events from the pulse generator. */
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
   ObserverType::Pointer     m_PulseObserver;
-
-  /** Vector of all tool ports on the tracker */
-  // FIXME: THIS IS DEPRECATED. Ports are only for Polaris and Aurora and are
-  // now contained in their corresponding tracker tools.
-  TrackerPortVectorType     m_Ports; // DEPRECATED
 
   // An associative container of TrackerTool Pointer with 
   // TrackerTool identifier used as a Key

@@ -33,17 +33,6 @@ namespace igstk
   * Spectra.  These devices are manufactured by
   * Northern Digital Inc. of Waterloo, Ontario, Canada.
   *
-  * IMPORTANT NOTE ABOUT PASSIVE TOOLS: the mapping that this
-  * class provides between igstk::Tracker ports and the actual
-  * device ports on the Polaris can be confusing.  Tracker ports
-  * numbered 0, 1, and 2 map to wired Polaris ports 1, 2 and 3.
-  * Note that the Vicra does not have wired ports, and Tracker
-  * ports 0, 1, 2 are completely inactive when the Vicra is used.
-  * Tracker ports numbered 3 and above are for use with passive
-  * (wireless) tools.  To use passive tools, you must call the
-  * PolarisTracker::AttachSROMFilenameToPort() method to associate
-  * an SROM with a port that is numbered between 3 and 11.
-  *
   * Tracking of the silvered markers individually is not possible,
   * the markers must be configured as a tool before they can
   * be tracked.
@@ -62,13 +51,9 @@ public:
 public:
 
   /** typedefs for the tool */
-  /** FIXME: this needs to be converted to the new TOOL */
   typedef igstk::PolarisTrackerToolNew           PolarisTrackerToolType;
   typedef PolarisTrackerToolType::Pointer        PolarisTrackerToolPointer;
   typedef PolarisTrackerToolType::ConstPointer   PolarisTrackerToolConstPointer;
-
-  /** number of ports to allow */
-  itkStaticConstMacro( NumberOfPorts, unsigned int, 12 );
 
   /** communication type */
   typedef igstk::SerialCommunication     CommunicationType;

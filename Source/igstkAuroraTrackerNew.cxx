@@ -327,6 +327,9 @@ AuroraTrackerNew::ResultType AuroraTrackerNew
   if (location[9] == '0') // wired tool
     {
     unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
+
+    //FIXME: checking against the maximum number of ports might not be necessary
+    const unsigned int NumberOfPorts = 12;
     if (ndiport > 0 && ndiport <= NumberOfPorts)
       {
       port = ndiport - 1;

@@ -182,13 +182,10 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
 
 }
 
-
 /** Destructor */
 TrackerNew::~TrackerNew(void)
 {
-  m_Ports.clear();
 }
-
 
 /** The "RequestOpen" method attempts to open communication with the
  *  tracking device. */
@@ -244,19 +241,6 @@ void TrackerNew::RequestUpdateStatus( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::RequestUpdateStatus called ...\n");
   igstkPushInputMacro( UpdateStatus );
   m_StateMachine.ProcessInputs();
-}
-
-/** The "AddPort" method adds a port to the tracker. */
-void TrackerNew::AddPort( TrackerPortType * port )
-{
-  TrackerPortPointer portPtr = port;
-  this->m_Ports.push_back( portPtr );
-}
-
-/** The "ClearPorts" clears all the ports. */
-void TrackerNew::ClearPorts( void )
-{
-  this->m_Ports.clear();
 }
 
 /** The "InternalOpen" method opens communication with a tracking device.
@@ -728,15 +712,6 @@ void TrackerNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
     }
 
   os << indent << "ValidityTime: " << this->m_ValidityTime << std::endl;
-
-  os << indent << "Number of ports: " << this->m_Ports.size() << std::endl;
-  for(unsigned int i=0; i < m_Ports.size(); ++i )
-    {
-    if( this->m_Ports[i] )
-      {
-      os << indent << *this->m_Ports[i] << std::endl;
-      }
-    }
 }
 
 /** Request adding a tool to the tracker  */

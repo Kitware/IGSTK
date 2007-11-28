@@ -51,13 +51,9 @@ public:
 public:
 
   /** typedefs for the tool */
-  /** FIXME: this needs to be converted to the new TOOL */
   typedef igstk::AuroraTrackerToolNew           AuroraTrackerToolType;
   typedef AuroraTrackerToolType::Pointer        AuroraTrackerToolPointer;
   typedef AuroraTrackerToolType::ConstPointer   AuroraTrackerToolConstPointer;
-
-  /** number of ports to allow */
-  itkStaticConstMacro( NumberOfPorts, unsigned int, 12 );
 
   /** communication type */
   typedef igstk::SerialCommunication     CommunicationType;
@@ -117,9 +113,6 @@ private:
 
   /** A mutex for multithreaded access to the buffer arrays */
   ::itk::MutexLock::Pointer  m_BufferLock;
-
-  /** A buffer for holding absent status of tools */
-  int m_AbsentBuffer[NumberOfPorts];
 
   /** Helper function for reporting interpreter errors. */
   ResultType CheckError( CommandInterpreterType * );
