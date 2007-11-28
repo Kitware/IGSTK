@@ -50,15 +50,15 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
     return EXIT_FAILURE;
     }
   
-  typedef itk::Logger              LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType     LoggerType;
+  typedef itk::StdStreamLogOutput       LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( LoggerType::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
