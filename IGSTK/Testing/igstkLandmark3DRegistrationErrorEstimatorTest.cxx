@@ -124,7 +124,7 @@ int igstkLandmark3DRegistrationErrorEstimatorTest( int argv, char * argc[] )
   std::cout << "Testing igstk::Landmark3DRegistrationErrorEstimator" 
             << std::endl;
 
-  typedef itk::Logger                   LoggerType;
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
  
   typedef igstk::Landmark3DRegistration

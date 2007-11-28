@@ -165,7 +165,7 @@ int igstkLandmark3DRegistrationTest( int argv, char * argc[] )
   igstk::RealTimeClock::Initialize();
   std::cout << "Testing igstk::Landmark3DRegistration" << std::endl;
 
-  typedef itk::Logger                   LoggerType;
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
     
   typedef igstk::Landmark3DRegistration
