@@ -25,7 +25,7 @@
 
 #include "itkObject.h"
 #include "itkEventObject.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkMacros.h"
@@ -339,7 +339,7 @@ private:
   bool                    m_Capture;
   
   /** Logger for recording */
-  itk::Logger::Pointer    m_Recorder;
+  igstk::Object::LoggerType::Pointer    m_Recorder;
   
   /** LogOutput for File output stream */
   itk::StdStreamLogOutput::Pointer  m_CaptureFileOutput;

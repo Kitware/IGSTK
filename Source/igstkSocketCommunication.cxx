@@ -766,7 +766,7 @@ SocketCommunication::InternalOpenCommunicationProcessing( void )
 
       if( m_Recorder.IsNull() )
         {
-        m_Recorder = itk::Logger::New();
+        m_Recorder = igstk::Object::LoggerType::New();
         m_Recorder->SetPriorityLevel(itk::Logger::DEBUG);
         m_Recorder->SetLevelForFlushing(itk::Logger::DEBUG);
         }
