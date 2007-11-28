@@ -97,7 +97,7 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
 #endif /* IGSTK_SIMULATOR_TEST */
 
   typedef igstk::NDICommandInterpreter  CommandInterpreterType;
-  typedef itk::Logger                   LoggerType; 
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
    
   NDICommandInterpreterTestCommand::Pointer errorCommand =
