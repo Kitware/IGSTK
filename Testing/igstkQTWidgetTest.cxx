@@ -115,7 +115,7 @@ int igstkQTWidgetTest( int argc, char * argv[])
 
   bool bEnd = false;
 
-  typedef itk::Logger              LoggerType;
+  typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   
   // logger object created for logging mouse activities
