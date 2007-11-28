@@ -253,7 +253,9 @@ int main(int , char** )
   // \ref{Chapter:Logging} on page \pageref{Chapter:Logging}.
   // EndLatex
   // BeginCodeSnippet
-  itk::Logger::Pointer logger = itk::Logger::New();
+  typedef igstk::Object::LoggerType             LoggerType;
+
+  LoggerType::Pointer logger = LoggerType::New();
   itk::StdStreamLogOutput::Pointer logOutput = itk::StdStreamLogOutput::New();
   itk::StdStreamLogOutput::Pointer fileOutput = itk::StdStreamLogOutput::New();
     
