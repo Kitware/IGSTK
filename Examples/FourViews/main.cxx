@@ -25,7 +25,7 @@
 
 int main(int , char** )
 { 
-  typedef itk::Logger              LoggerType;
+  typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   
   FourViewsImplementation   application;

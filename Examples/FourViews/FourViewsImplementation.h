@@ -84,7 +84,7 @@ public:
     this->DisplayCoronal->RequestStop();
     }
     
-  void SetLogger(itk::Logger * logger)
+  void SetLogger(igstk::Object::LoggerType * logger)
     {
     m_Logger = logger;
     }
@@ -271,7 +271,7 @@ public:
 private:
 
   igstk::VascularNetworkObject::ConstPointer  m_TubeGroup;
-  itk::Logger::Pointer                        m_Logger;
+  igstk::Object::LoggerType::Pointer                        m_Logger;
   std::list<igstk::VascularNetworkObjectRepresentation::Pointer> 
                                               m_VesselRepresentationList;
 
