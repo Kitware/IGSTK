@@ -57,7 +57,7 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
 
   ReaderType::Pointer  reader = ReaderType::New();
 
-  typedef itk::Logger              LoggerType;
+  typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   
   // logger object created for logging mouse activities
@@ -65,7 +65,7 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( LoggerType::DEBUG );
 
   reader->SetLogger( logger );
 
