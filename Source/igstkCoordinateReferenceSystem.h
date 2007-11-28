@@ -36,6 +36,23 @@ namespace igstk
  *  
  * \ingroup Object
  */
+class CoordinateReferenceSystem;
+
+namespace Friends 
+{
+
+class CoordinateReferenceSystemHelper
+{
+public:
+  template <class T>
+  static const CoordinateReferenceSystem* GetCoordinateReferenceSystem( const T * input )
+    {
+    return input->GetCoordinateReferenceSystem();  // private
+    }
+};
+
+} // end of Friends namespace 
+
 
 class CoordinateReferenceSystem : public Object
 {
@@ -173,6 +190,14 @@ private:
   CoordinateReferenceSystem& operator= ( const CoordinateReferenceSystem& );
   CoordinateReferenceSystem( const CoordinateReferenceSystem& );
 
+  /** So we can behave like higher-level objects with coordinate systems. */
+  const CoordinateReferenceSystem* GetCoordinateReferenceSystem() const
+    {
+    return this;
+    }
+
+  igstkFriendClassMacro( igstk::Friends::CoordinateReferenceSystemHelper ); 
+
 public:
   /** Development only */
   void SetReportTiming(bool val)
@@ -294,21 +319,6 @@ igstkLoadedEventMacro( CoordinateReferenceSystemTransformToDisconnectedEvent, IG
 igstkEventMacro( CoordinateReferenceSystemNullParentEvent, IGSTKEvent );
 igstkEventMacro( CoordinateReferenceSystemThisParentEvent, IGSTKEvent );
 igstkLoadedConstObjectEventMacro( CoordinateReferenceSystemParentCycleEvent, IGSTKEvent, CoordinateReferenceSystem );
-
-namespace Friends 
-{
-
-class CoordinateReferenceSystemHelper
-{
-public:
-  template <class T>
-  static const CoordinateReferenceSystem* GetCoordinateReferenceSystem( const T * input )
-    {
-    return input->GetCoordinateReferenceSystem();  // private
-    }
-};
-
-} // end of Friends namespace 
 
 } // end namespace igstk
 
