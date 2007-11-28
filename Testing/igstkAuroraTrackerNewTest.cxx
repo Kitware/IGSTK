@@ -145,9 +145,10 @@ int igstkAuroraTrackerNewTest( int argc, char * argv[] )
   typedef igstk::AuroraTrackerToolNew      TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
-  // instantiate tracker tool  
+  // instantiate tracker tool with 6DOF 
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->SetLogger( logger );
+  trackerTool->RequestSelect6DOFTrackerTool();
   //Set the port number to zero
   trackerTool->RequestSetPortNumber( 0 );
   //Initialize
