@@ -27,7 +27,7 @@ int igstkCoordinateReferenceSystemTest3(int argc, char* argv[])
   const int depth = 10;
   const int numIters = 100000;
 
-  typedef itk::Logger                         LoggerType; 
+  typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput             LogOutputType;
   typedef igstk::CoordinateReferenceSystem CoordinateReferenceSystem;
   typedef CoordinateReferenceSystem::Pointer CoordinateSystemPointer;
