@@ -52,7 +52,7 @@ int igstkLandmarkUltrasoundCalibrationTest( int argc, char * argv [] )
   typedef LandmarkUltrasoundCalibrationType::TransformType TransformType;
   typedef LandmarkUltrasoundCalibrationType::SpacingType   SpacingType;
   typedef LandmarkUltrasoundCalibrationType::ErrorType     ErrorType;
-  typedef itk::Logger                                      LoggerType; 
+  typedef igstk::Object::LoggerType                        LoggerType;
   typedef itk::StdStreamLogOutput                          LogOutputType;
 
   // Logger object created for logging calibration computation
