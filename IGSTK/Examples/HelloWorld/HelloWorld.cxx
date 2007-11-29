@@ -98,7 +98,7 @@
 // EndLatex
 
 // BeginCodeSnippet
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 // EndCodeSnippet
 
