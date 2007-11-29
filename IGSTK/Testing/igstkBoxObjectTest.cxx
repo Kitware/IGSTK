@@ -29,7 +29,7 @@
 #include "igstkView2D.h"
 #include "igstkRealTimeClock.h"
 #include "igstkVTKLoggerOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
@@ -105,8 +105,8 @@ int igstkBoxObjectTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef itk::Logger              LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType              LoggerType;
+  typedef itk::StdStreamLogOutput             LogOutputType;
 
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
