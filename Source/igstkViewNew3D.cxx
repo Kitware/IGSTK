@@ -27,6 +27,12 @@ ViewNew3D::ViewNew3D( ) : m_StateMachine(this) , ViewNew()
                                      vtkInteractorStyleTrackballCamera::New();
   this->SetInteractorStyle( interactorStyle );
   interactorStyle->Delete();
+
+  /** FIXME: This needs to be called sometime to move us to the 
+   *  InteractorInitialized state. We need to decide if this is the right
+   *  place to initialize the interactor.
+   */
+  this->RequestInitializeRenderWindowInteractor();
 }
 
 /** Destructor */

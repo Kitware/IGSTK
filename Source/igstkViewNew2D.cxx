@@ -29,6 +29,12 @@ ViewNew2D::ViewNew2D() : m_StateMachine(this), ViewNew()
 
   // initialize the orientation to be axial
   this->m_Orientation = Axial;
+
+  /** FIXME: This needs to be called sometime to move us to the 
+   *  InteractorInitialized state. We need to decide if this is the right
+   *  place to initialize the interactor.
+   */
+  this->RequestInitializeRenderWindowInteractor();
 }
 
 /** Destructor */
