@@ -30,7 +30,7 @@
 #include "stdio.h"
 #include "time.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkMultiThreader.h"
 

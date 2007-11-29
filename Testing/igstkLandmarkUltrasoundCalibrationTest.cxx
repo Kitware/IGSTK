@@ -24,7 +24,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkSystemInformation.h"

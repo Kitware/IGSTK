@@ -27,7 +27,7 @@
 
 #include "igstkVTKLoggerOutput.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkPolarisTrackerToolNew.h"

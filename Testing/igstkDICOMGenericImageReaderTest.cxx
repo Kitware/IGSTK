@@ -21,7 +21,7 @@
 
 #include "igstkDICOMGenericImageReader.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 /* FIXME: This Event must be added, once we have the generic image.

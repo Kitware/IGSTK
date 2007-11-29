@@ -30,7 +30,7 @@
 #include "igstkFLTKWidget.h"
 #include "igstkRealTimeClock.h"
 #include "igstkVTKLoggerOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkTransformObserverTestHelper.h"

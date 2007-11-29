@@ -36,7 +36,7 @@
 #include "igstkVTKLoggerOutput.h"
 #include "igstkQTWidget.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 int igstkQTWidgetTest2( int argc, char * argv[]) 

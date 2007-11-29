@@ -34,7 +34,7 @@
 // FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #include "igstkAxesObjectRepresentation.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 namespace ViewNewTest {

@@ -29,7 +29,7 @@
 #include "igstkPoint3D.h"
 #include "igstkTransform.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 

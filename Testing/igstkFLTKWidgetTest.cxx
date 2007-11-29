@@ -32,7 +32,7 @@
 #include "igstkVTKLoggerOutput.h"
 #include "igstkFLTKWidget.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 namespace FLTKWidgetTest{

@@ -28,7 +28,7 @@
 #include "igstkTubeObject.h"
 #include "igstkRealTimeClock.h"
 #include "igstkVTKLoggerOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 // FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 

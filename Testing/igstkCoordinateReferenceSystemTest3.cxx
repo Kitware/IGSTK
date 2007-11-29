@@ -17,7 +17,7 @@
 
 #include "igstkTransform.h"
 #include "igstkCoordinateReferenceSystem.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkTimeProbe.h"
 
