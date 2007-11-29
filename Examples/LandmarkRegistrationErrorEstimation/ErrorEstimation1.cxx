@@ -50,7 +50,7 @@
 #include "igstkLandmark3DRegistrationErrorEstimator.h"
 // EndCodeSnippet
 #include "igstkVTKLoggerOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkMacro.h"
 
@@ -175,7 +175,7 @@ int main( int argv, char * argc[] )
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( LoggerType::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   typedef igstk::VTKLoggerOutput LoggerOutputType;

@@ -60,7 +60,7 @@
 #include "igstkSerialCommunicationForPosix.h"
 #endif
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 //#define UGRFA_USE_FOB

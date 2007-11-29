@@ -42,7 +42,7 @@
 #include "igstkPrincipalAxisCalibration.h"
 // EndCodeSnippet
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 // BeginLatex

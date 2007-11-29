@@ -29,7 +29,7 @@
 #include "FourViews.h"
 #include "igstkVascularNetworkObjectRepresentation.h"
 #include "igstkMeshObjectRepresentation.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "igstkVascularNetworkReader.h"
 #include "igstkMeshReader.h"
 #include <itkStdStreamLogOutput.h>

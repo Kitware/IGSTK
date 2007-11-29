@@ -36,6 +36,7 @@
 #include "igstkMacros.h"
 #include "itkObject.h"
 #include "itkLogger.h"
+#include "igstkLogger.h"
 // BeginLatex
 //
 // First, we begin by including header files for using LogOutput objects.
@@ -114,7 +115,7 @@ int main( int argc, char* argv[] )
   logger->AddLogOutput( fileLogOutput );
 
   // Setting a priority level for a logger
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( IGSTKLoggerType::DEBUG );
 
   // Testing to print a debug message
   logger->Debug("Debug message\n");

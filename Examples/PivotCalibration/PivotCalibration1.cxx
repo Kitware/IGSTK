@@ -42,7 +42,7 @@
 #include "igstkPivotCalibration.h"
 // EndCodeSnippet
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 // BeginLatex
@@ -81,7 +81,7 @@ int main( int argc, char * argv[] )
   typedef PivotCalibrationType::VectorType  VectorType;
   typedef PivotCalibrationType::PointType   PointType;
   typedef PivotCalibrationType::ErrorType   ErrorType;
-  typedef igstk::Object::LoggerType             LoggerType;
+  typedef igstk::Object::LoggerType         LoggerType;
   typedef itk::StdStreamLogOutput           LogOutputType;
 // EndCodeSnippet
 
@@ -108,7 +108,7 @@ int main( int argc, char * argv[] )
 
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( LoggerType::DEBUG );
 
   pivot->SetLogger( logger );
 // EndCodeSnippet

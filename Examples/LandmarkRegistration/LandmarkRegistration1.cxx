@@ -43,7 +43,7 @@
 // EndCodeSnippet
  
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkObject.h"
 #include "itkCommand.h"
@@ -278,7 +278,7 @@ int main( int argv, char * argc[] )
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( LoggerType::DEBUG );
   landmarkRegister->SetLogger( logger );
 // EndCodeSnippet
    

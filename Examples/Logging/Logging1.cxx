@@ -20,7 +20,7 @@
 #endif
 
 #include "itkObject.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkMacros.h"
 #include <fstream>
@@ -149,7 +149,7 @@ int main( int argc, char* argv[] )
   logOutput2->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
   logger->AddLogOutput( logOutput2 );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( LoggerType::DEBUG );
   // EndCodeSnippet
 
   // BeginLatex

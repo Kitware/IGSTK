@@ -43,7 +43,7 @@
 #include "igstkPivotCalibrationReader.h"
 // EndCodeSnippet
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 // BeginLatex
