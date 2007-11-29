@@ -33,7 +33,7 @@
 #include "igstkSerialCommunicationForPosix.h"
 #endif
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include "ui_OneViewAndTrackingUsingQTWidgetGUI.h"
@@ -42,7 +42,7 @@ class OneViewAndTrackingUsingQTWidgetGUI : public QMainWindow
 {
   Q_OBJECT
 
-  typedef itk::Logger              LoggerType; 
+  typedef igstk::Object::LoggerType              LoggerType; 
   typedef itk::StdStreamLogOutput  LogOutputType;
 
   typedef igstk::QMouseTracker     TrackerType;

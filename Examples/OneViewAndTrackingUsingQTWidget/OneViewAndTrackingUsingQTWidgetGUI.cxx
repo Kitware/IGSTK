@@ -14,7 +14,6 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#
 #include <QtGui>
 #include "OneViewAndTrackingUsingQTWidgetGUI.moc"
 #include "OneViewAndTrackingUsingQTWidgetGUI.h"
