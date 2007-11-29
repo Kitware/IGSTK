@@ -34,9 +34,9 @@ class vtkRenderer;
 
 // ITK headers
 #include "itkCommand.h"
-#include "itkLogger.h"
 
 // IGSTK headers
+#include "igstkLogger.h"
 #include "igstkObject.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"

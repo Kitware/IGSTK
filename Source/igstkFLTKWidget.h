@@ -35,7 +35,7 @@ class vtkRenderWindowInteractor;
 
 // ITK headers
 #include "itkCommand.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 
 // IGSTK headers
 #include "igstkMacros.h"
