@@ -26,7 +26,7 @@
 #include "igstkPulseGenerator.h"
 #include "itkCommand.h"
 #include "igstkEvents.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include <FL/Fl.H>

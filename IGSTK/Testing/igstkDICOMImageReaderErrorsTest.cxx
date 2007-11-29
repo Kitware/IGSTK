@@ -22,7 +22,7 @@
 #include "igstkDICOMImageReader.h"
 #include "igstkImageSpatialObject.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkCommand.h"
 #include "itkStdStreamLogOutput.h"
 #include <itksys/SystemTools.hxx>

@@ -23,7 +23,7 @@
 #include "igstkImageSpatialObject.h"
 #include "igstkCTImageReader.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkCommand.h"
 #include "itkStdStreamLogOutput.h"
 

@@ -24,7 +24,7 @@
 #pragma warning( disable : 4355 )
 #endif
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
 #include "igstkRealTimeClock.h"

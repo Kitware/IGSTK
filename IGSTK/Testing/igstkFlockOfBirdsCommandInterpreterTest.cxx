@@ -26,7 +26,7 @@
 #include <cctype>
 
 #include "itkCommand.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkVector.h"
 #include "itkVersor.h"

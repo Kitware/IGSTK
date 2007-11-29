@@ -21,7 +21,7 @@
 
 #include "igstkMRImageSpatialObjectRepresentation.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 int igstkMRImageSpatialObjectRepresentationTest( int , char* [] )

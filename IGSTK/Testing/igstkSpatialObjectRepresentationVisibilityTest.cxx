@@ -29,7 +29,7 @@
 #include "igstkViewNew3D.h"
 #include "igstkFLTKWidget.h"
 #include "igstkVTKLoggerOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 // FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"

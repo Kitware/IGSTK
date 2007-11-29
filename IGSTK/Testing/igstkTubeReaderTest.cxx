@@ -21,7 +21,7 @@
 
 #include "igstkTubeReader.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 int igstkTubeReaderTest( int argc, char * argv [] )

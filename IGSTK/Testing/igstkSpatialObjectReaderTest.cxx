@@ -21,7 +21,7 @@
 
 #include "igstkSpatialObjectReader.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 int igstkSpatialObjectReaderTest( int argc, char * argv [] )

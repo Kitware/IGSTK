@@ -22,7 +22,7 @@
 #include "igstkMRImageReader.h"
 #include "itkImageFileWriter.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 namespace MRImageReaderTest

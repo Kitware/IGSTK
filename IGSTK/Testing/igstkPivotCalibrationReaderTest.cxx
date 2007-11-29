@@ -25,7 +25,7 @@
 #include "igstkPivotCalibrationReader.h"
 #include <itksys/SystemTools.hxx>
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 namespace ToolCalibrationTest

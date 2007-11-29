@@ -25,7 +25,7 @@
 #include "igstkView2D.h"
 #include "igstkCTImageReader.h"
 #include "igstkVTKLoggerOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkEvents.h"
 

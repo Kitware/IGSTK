@@ -22,7 +22,7 @@
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkCTImageReader.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 namespace CTImageSpatialObjectRepresentationTest

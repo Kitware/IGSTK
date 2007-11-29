@@ -21,7 +21,7 @@
 
 #include "igstkVascularNetworkReader.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkView3D.h"
 #include "igstkVascularNetworkObjectRepresentation.h"

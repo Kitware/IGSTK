@@ -24,7 +24,7 @@
 #include <fstream>
 
 #include <itksys/SystemTools.hxx>
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkPivotCalibration.h"

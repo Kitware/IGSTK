@@ -21,7 +21,7 @@
 
 #include "igstkMeshReader.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 int igstkMeshReaderTest( int argc, char * argv [] )

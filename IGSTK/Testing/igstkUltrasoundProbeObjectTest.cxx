@@ -28,7 +28,7 @@
 #include "igstkUltrasoundProbeObjectRepresentation.h"
 #include "igstkView2D.h"
 #include "igstkVTKLoggerOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM

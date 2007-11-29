@@ -21,7 +21,7 @@
 #endif
 
 #include "igstkEvents.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"

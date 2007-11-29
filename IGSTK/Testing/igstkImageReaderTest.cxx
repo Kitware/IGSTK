@@ -22,7 +22,7 @@
 #include "igstkImageReader.h"
 #include "igstkImageSpatialObject.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 int igstkImageReaderTest( int , char* [] )
