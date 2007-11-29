@@ -31,7 +31,7 @@
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkVTKLoggerOutput.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 namespace ViewTest
@@ -119,8 +119,8 @@ int igstkViewTest( int, char * [] )
 
   bool bEnd = false;
 
-  typedef itk::Logger              LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType    LoggerType;
+  typedef itk::StdStreamLogOutput   LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
