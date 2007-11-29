@@ -136,7 +136,7 @@ igstk::Transform GetRandomTransform()
 int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 {
 
-  typedef igstk::Logger                         LoggerType; 
+  typedef igstk::Object::LoggerType           LoggerType; 
   typedef itk::StdStreamLogOutput             LogOutputType;
   typedef igstk::CoordinateReferenceSystem    CoordSysType;
   typedef igstk::Transform                    TransformType;
