@@ -18,7 +18,7 @@
 #ifndef __igstkSpatialObject_h
 #define __igstkSpatialObject_h
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkSpatialObject.h"
 
 #include "igstkMacros.h"

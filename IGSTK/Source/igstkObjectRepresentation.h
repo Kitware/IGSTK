@@ -24,7 +24,7 @@
 
 #include <vector>
 #include "itkCommand.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "vtkProp.h"
 #include "igstkObject.h"
 #include "igstkMacros.h"
