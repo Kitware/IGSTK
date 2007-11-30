@@ -26,10 +26,10 @@
 namespace igstk
 {
 
-/** Constructor (initializes Polaris-specific tool values) */
+/** Constructor (configures Polaris-specific tool values) */
 MicronTrackerToolNew::MicronTrackerToolNew():m_StateMachine(this)
 {
-  m_TrackerToolInitialized = false;
+  m_TrackerToolConfigured = false;
 }
 
 /** Destructor */
@@ -41,18 +41,18 @@ MicronTrackerToolNew::~MicronTrackerToolNew()
 void MicronTrackerToolNew::RequestSetMarkerName( std::string markerName )
 {
   this->m_MarkerName = markerName;
-  m_TrackerToolInitialized = true;
+  m_TrackerToolConfigured = true;
 
   // For MicronTracker, marker name is used as a unique identifier
   this->SetTrackerToolIdentifier( m_MarkerName ); 
 }
 
-/** The "GetTrackerToolInitialized" method returns true if the tracker tool * is initialized */ 
+/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker tool * is configured */ 
 bool
-MicronTrackerToolNew::GetTrackerToolInitialized( )
+MicronTrackerToolNew::CheckIfTrackerToolIsConfigured( )
 {
-  igstkLogMacro( DEBUG, "igstk::PolarisTrackerToolNew::GetTrackerToolInitialized called...\n");
-  return m_TrackerToolInitialized;
+  igstkLogMacro( DEBUG, "igstk::PolarisTrackerToolNew::CheckIfTrackerToolIsConfigured called...\n");
+  return m_TrackerToolConfigured;
 }
 
 

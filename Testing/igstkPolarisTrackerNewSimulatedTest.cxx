@@ -148,8 +148,8 @@ int igstkPolarisTrackerNewSimulatedTest( int argc, char * argv[] )
   trackerTool->RequestSelectWiredTrackerTool();
   //Set the port number to zero
   trackerTool->RequestSetPortNumber( 0 );
-  //Initialize
-  trackerTool->RequestInitialize();
+  //Configure
+  trackerTool->RequestConfigure();
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
 
@@ -163,8 +163,8 @@ int igstkPolarisTrackerNewSimulatedTest( int argc, char * argv[] )
   std::string romFile = argv[3];
   std::cout << "SROM file: " << romFile << std::endl;
   trackerTool2->RequestSetSROMFileName( romFile );
-  //Initialize
-  trackerTool2->RequestInitialize();
+  //Configure
+  trackerTool2->RequestConfigure();
   //Attach to the tracker
   trackerTool2->RequestAttachToTracker( tracker );
 

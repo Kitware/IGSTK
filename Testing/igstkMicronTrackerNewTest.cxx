@@ -125,7 +125,7 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   trackerTool->SetLogger( logger );
   std::string markerNameTT = "TTblock";
   trackerTool->RequestSetMarkerName( markerNameTT );  
-  trackerTool->RequestInitialize();
+  trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
 
@@ -133,7 +133,7 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   trackerTool2->SetLogger( logger );
   std::string markerNamesPointer = "sPointer";
   trackerTool2->RequestSetMarkerName( markerNamesPointer );  
-  trackerTool2->RequestInitialize();
+  trackerTool2->RequestConfigure();
   trackerTool2->RequestAttachToTracker( tracker );
   trackerTool2->AddObserver( itk::AnyEvent(), my_command);
 

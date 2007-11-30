@@ -27,11 +27,11 @@
 namespace igstk
 {
 
-/** Constructor (initializes Aurora-specific tool values) */
+/** Constructor (configures Aurora-specific tool values) */
 AuroraTrackerToolNew::AuroraTrackerToolNew():m_StateMachine(this)
 {
   //Tracker tool initialization flag
-  m_TrackerToolInitialized = false;
+  m_TrackerToolConfigured = false;
 
   //Disable 5DOF tracker tool mode
   m_5DOFTrackerToolSelected = false;
@@ -407,12 +407,12 @@ bool AuroraTrackerToolNew::IsTrackerTool5DOF( )
   return m_5DOFTrackerToolSelected;
 }
 
-/** The "GetTrackerToolInitialized" method returns true if the tracker tool * is initialized */ 
+/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker tool * is configured */ 
 bool
-AuroraTrackerToolNew::GetTrackerToolInitialized( )
+AuroraTrackerToolNew::CheckIfTrackerToolIsConfigured( )
 {
-  igstkLogMacro( DEBUG, "igstk::AuroraTrackerToolNew::GetTrackerToolInitialized called...\n");
-  return m_TrackerToolInitialized;
+  igstkLogMacro( DEBUG, "igstk::AuroraTrackerToolNew::CheckIfTrackerToolIsConfigured called...\n");
+  return m_TrackerToolConfigured;
 }
 
 }

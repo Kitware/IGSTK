@@ -30,8 +30,8 @@ namespace igstk
 
 itkEventMacro( TrackerToolNewEvent,StringEvent);
 itkEventMacro( TrackerToolNewErrorEvent,TrackerToolNewEvent);
-itkEventMacro( TrackerToolNewInitializationEvent,TrackerToolNewEvent);
-itkEventMacro( TrackerToolNewInitializationErrorEvent,TrackerToolNewErrorEvent);
+itkEventMacro( TrackerToolNewConfigurationEvent,TrackerToolNewEvent);
+itkEventMacro( TrackerToolNewConfigurationErrorEvent,TrackerToolNewErrorEvent);
 itkEventMacro( TrackerToolNewAttachmentToTrackerEvent,TrackerToolNewEvent);
 itkEventMacro( TrackerToolNewAttachmentToTrackerErrorEvent,TrackerToolNewErrorEvent);
 itkEventMacro( TrackerToolNewDetachmentFromTrackerEvent,TrackerToolNewEvent);
@@ -112,8 +112,8 @@ public:
    */
   void RequestAttachSpatialObject( SpatialObject * );
 
-  /** The "RequestInitialize" method attempts to initialize the tracker tool */
-  virtual void RequestInitialize( void );
+  /** The "RequestConfigure" method attempts to configure the tracker tool */
+  virtual void RequestConfigure( void );
 
   /** The "RequestAttachToTracker" method attaches the tracker tool to a
  * tracker*/
@@ -189,13 +189,13 @@ protected:
 private:
 
   /** Get boolean variable to check if the tracker tool is 
-   * initialized or not */
-  virtual bool GetTrackerToolInitialized( );
+   * configured or not */
+  virtual bool CheckIfTrackerToolIsConfigured( );
 
   /** Inputs to the State Machine */
-  igstkDeclareInputMacro( InitializeTool );
-  igstkDeclareInputMacro( ToolInitializationSuccess );
-  igstkDeclareInputMacro( ToolInitializationFailure );
+  igstkDeclareInputMacro( ConfigureTool );
+  igstkDeclareInputMacro( ToolConfigurationSuccess );
+  igstkDeclareInputMacro( ToolConfigurationFailure );
   igstkDeclareInputMacro( AttachToolToTracker );
   igstkDeclareInputMacro( TrackingStarted );
   igstkDeclareInputMacro( TrackingStopped );
@@ -211,25 +211,25 @@ private:
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
-  igstkDeclareStateMacro( AttemptingToInitializeTrackerTool );
-  igstkDeclareStateMacro( Initialized );
+  igstkDeclareStateMacro( AttemptingToConfigureTrackerTool );
+  igstkDeclareStateMacro( Configured );
   igstkDeclareStateMacro( AttemptingToAttachTrackerToolToTracker );
   igstkDeclareStateMacro( Attached );
   igstkDeclareStateMacro( AttemptingToDetachTrackerToolFromTracker );
   igstkDeclareStateMacro( NotAvailable );
   igstkDeclareStateMacro( Tracked );
 
-  /** Attempt method to initialize */
-  void AttemptToInitializeProcessing( void );
+  /** Attempt method to configure */
+  void AttemptToConfigureProcessing( void );
 
   /** Attempt method to attach tracker tool to the tracker */
   void AttemptToAttachTrackerToolToTrackerProcessing( void );
 
-  /** Post-processing after a successful tracker tool initialization */
-  void TrackerToolInitializationSuccessProcessing( void );
+  /** Post-processing after a successful tracker tool configuration */
+  void TrackerToolConfigurationSuccessProcessing( void );
 
-  /** Post-processing after a failed tracker tool initialization */
-  void TrackerToolInitializationFailureProcessing( void );
+  /** Post-processing after a failed tracker tool configuration */
+  void TrackerToolConfigurationFailureProcessing( void );
 
   /** Post-processing after a successful tracker tool to tracker 
       attachment attempt . */ 

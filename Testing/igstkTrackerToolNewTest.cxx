@@ -36,7 +36,7 @@ int igstkTrackerToolNewTest( int, char * [] )
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
-  trackerTool->RequestInitialize();
+  trackerTool->RequestConfigure();
 
   std::cout << trackerTool << std::endl;
 

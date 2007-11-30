@@ -104,7 +104,7 @@ int igstkPolarisTrackerToolNewTest( int argc, char ** argv )
     trackerTool->RequestSetToolId( toolId );
     }
 
-  trackerTool->RequestInitialize();
+  trackerTool->RequestConfigure();
 
   std::cout << trackerTool << std::endl;
 

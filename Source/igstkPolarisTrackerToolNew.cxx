@@ -29,12 +29,12 @@
 namespace igstk
 {
 
-/** Constructor (initializes Polaris-specific tool values) */
+/** Constructor (configures Polaris-specific tool values) */
 PolarisTrackerToolNew::PolarisTrackerToolNew():m_StateMachine(this)
 {
 
-  //Tracker tool initialization flag
-  m_TrackerToolInitialized = false;
+  //Tracker tool configuration flag
+  m_TrackerToolConfigured = false;
 
   // SROM file flag
   m_SROMFileNameSpecified = false;
@@ -235,12 +235,12 @@ unsigned int PolarisTrackerToolNew::GetPortNumber( )
   return m_PortNumber;
 }
 
-/** The "GetTrackerToolInitialized" method returns true if the tracker tool * is initialized */ 
+/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker tool * is configured */ 
 bool
-PolarisTrackerToolNew::GetTrackerToolInitialized( )
+PolarisTrackerToolNew::CheckIfTrackerToolIsConfigured( )
 {
-  igstkLogMacro( DEBUG, "igstk::PolarisTrackerToolNew::GetTrackerToolInitialized called...\n");
-  return m_TrackerToolInitialized;
+  igstkLogMacro( DEBUG, "igstk::PolarisTrackerToolNew::CheckIfTrackerToolIsConfigured called...\n");
+  return m_TrackerToolConfigured;
 }
 
 /** Request the state machine to set the tool id */
@@ -289,11 +289,11 @@ void PolarisTrackerToolNew::SetPortNumberProcessing( )
   this->SetTrackerToolIdentifier( identifierStream.str() );
 
   // if the tool is wired type and if the port number is set, we can
-  // "declare" the tracker tool initialized. The user can also specify
+  // "declare" the tracker tool configured. The user can also specify
   // SROM file and tool id.  
   if ( ! m_WirelessTrackerToolSelected )
     {
-    m_TrackerToolInitialized = true;
+    m_TrackerToolConfigured = true;
     }
 }
 
@@ -320,7 +320,7 @@ void PolarisTrackerToolNew::SetSROMFileNameProcessing( )
   //intialized.
   if ( m_WirelessTrackerToolSelected )
     {
-    m_TrackerToolInitialized = true;
+    m_TrackerToolConfigured = true;
 
     //unique identifer needs to be established 
     //use the root name of the SROM file

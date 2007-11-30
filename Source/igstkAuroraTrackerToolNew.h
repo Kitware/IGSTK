@@ -116,8 +116,8 @@ private:
   void operator=(const Self&);       //purposely not implemented
 
   /** Get boolean variable to check if the tracker tool is 
-   * initialized or not */
-  virtual bool GetTrackerToolInitialized(); 
+   * configured or not */
+  virtual bool CheckIfTrackerToolIsConfigured(); 
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
@@ -162,7 +162,7 @@ private:
   std::string m_ToolIdToBeSet;
   std::string m_ToolId;
 
-  bool m_TrackerToolInitialized;
+  bool m_TrackerToolConfigured;
   bool m_ToolIdSpecified;
   bool m_SROMFileNameSpecified;
   bool m_ChannelNumberSpecified;

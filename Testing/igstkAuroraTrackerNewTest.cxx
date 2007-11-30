@@ -151,8 +151,8 @@ int igstkAuroraTrackerNewTest( int argc, char * argv[] )
   trackerTool->RequestSelect6DOFTrackerTool();
   //Set the port number to zero
   trackerTool->RequestSetPortNumber( 0 );
-  //Initialize
-  trackerTool->RequestInitialize();
+  //Configure
+  trackerTool->RequestConfigure();
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
 

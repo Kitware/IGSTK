@@ -61,15 +61,15 @@ protected:
 private:
 
   /** Get boolean variable to check if the tracker tool is 
-   * initialized or not */
-  virtual bool GetTrackerToolInitialized(); 
+   * configured or not */
+  virtual bool CheckIfTrackerToolIsConfigured(); 
 
   MicronTrackerToolNew(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
 
   std::string m_MarkerName;
 
-  bool m_TrackerToolInitialized;
+  bool m_TrackerToolConfigured;
 
 };  
 

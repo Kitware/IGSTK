@@ -65,7 +65,7 @@ int igstkMicronTrackerToolNewTest( int argc, char ** argv  )
  
   trackerTool->RequestSetMarkerName( markerNameTT );  
  
-  trackerTool->RequestInitialize();
+  trackerTool->RequestConfigure();
 
   std::cout << trackerTool << std::endl;
 

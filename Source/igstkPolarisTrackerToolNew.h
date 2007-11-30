@@ -108,7 +108,7 @@ private:
 
   /** Get boolean variable to check if the tracker tool is 
    * initialized or not */
-  virtual bool GetTrackerToolInitialized(); 
+  virtual bool CheckIfTrackerToolIsConfigured(); 
 
   /** Get boolean variable to check if SROM file is specified */
   igstkGetMacro( SROMFileNameSpecified, bool );
@@ -150,7 +150,7 @@ private:
   std::string m_ToolId;
 
   /** boolean to indicate if the tracker tool initialized or not*/
-  bool m_TrackerToolInitialized;
+  bool m_TrackerToolConfigured;
 
   /** boolean to indicate if a tool id is specified or not */
   bool m_ToolIdSpecified;
