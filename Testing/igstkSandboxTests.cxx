@@ -66,6 +66,7 @@ void RegisterTests()
 
 #ifdef IGSTK_TEST_POLARIS_ATTACHED
   REGISTER_TEST(igstkPolarisTrackerNewTest);
+  REGISTER_TEST(igstkPolarisTrackerNewTest2);
 #endif
 
 #ifdef IGSTK_TEST_AURORA_ATTACHED

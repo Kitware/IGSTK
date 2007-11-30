@@ -90,6 +90,10 @@ SET(SandboxTests_SRCS
 IF(IGSTK_TEST_POLARIS_ATTACHED)
   SET(SandboxTests_SRCS ${SandboxTests_SRCS}
     igstkPolarisTrackerNewTest.cxx )
+
+  SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+    igstkPolarisTrackerNewTest2.cxx )
+
   SET(SandboxTests_SRCS ${SandboxTests_SRCS}
     igstkPolarisTrackerToolNewTest.cxx
   )
@@ -129,6 +133,13 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
     ADD_TEST( igstkPolarisTrackerNewTest  
               ${IGSTKSandbox_TESTS}
               igstkPolarisTrackerNewTest
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerNewTestLoggerOutput.txt
+              ${IGSTKSandbox_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
+              )
+
+    ADD_TEST( igstkPolarisTrackerNewTest2  
+              ${IGSTKSandbox_TESTS}
+              igstkPolarisTrackerNewTest2
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerNewTestLoggerOutput.txt
               ${IGSTKSandbox_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
               )
