@@ -25,12 +25,15 @@ namespace igstk
 
 TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
 {
+  /** Coordinate system interface */
+  igstkCoordinateSystemClassInterfaceConstructorMacro();
+
   // Initialize the variables
-  m_RawTransform.SetToIdentity( 1e300 );  // FIXME: DEPRECATED: This is now the Transform to parent between the m_CoordinateReferenceSystem of this tool and the m_CoordinateReferenceSystem of the Tracker.
-  m_ToolCalibrationTransform.SetToIdentity( 1e300 );  // FIXME : DEPRECATED: This is now the Transfrom To Parent of the spatial object attached to this tool.
+  m_RawTransform.SetToIdentity( 1e300 );  
+  m_CalibrationTransform.SetToIdentity( 1e300 );  
   m_Updated = false; // not yet updated
 
-  m_CoordinateReferenceSystem = CoordinateReferenceSystemType::New();
+//  m_CoordinateReferenceSystem = CoordinateReferenceSystemType::New();
 
   // States
   igstkAddStateMacro( Idle );
@@ -400,7 +403,8 @@ void TrackerToolNew::NoProcessing( void )
 
 }
 
-/** This method should only be available to the Tracker */
+/** Method to set the transform (compsition of raw and calibration transform)
+ * This method should only be called by the Tracker */
 void 
 TrackerToolNew::RequestSetTransform( const TransformType & transform )
 {
@@ -411,6 +415,20 @@ TrackerToolNew::RequestSetTransform( const TransformType & transform )
   this->InvokeEvent( event );
 }
 
+/** Method to set the calibration transfrom for the tracker tool */ 
+void 
+TrackerToolNew::RequestSetCalibrationTransform( const CalibrationTransformType & transform )
+{
+  m_CalibrationTransform = transform;
+}
+
+/** Method to set the raw transfrom for the tracker tool */ 
+void 
+TrackerToolNew::RequestSetRawTransform( const TransformType & transform )
+{
+  m_RawTransform = transform;
+}
+
 /** Attach and spatial object to be tracked.
  *  FIXME: Add a state machine to this class and pass first this 
  *         request through the transition matrix. Then invoke a
@@ -419,7 +437,7 @@ TrackerToolNew::RequestSetTransform( const TransformType & transform )
 void
 TrackerToolNew::RequestAttachSpatialObject( SpatialObject * spatialObject )
 {
-  // Note: the ToolCalibrationTransform should be the transform relating
+  // Note: the CalibrationTransform should be the transform relating
   //       the spatial object to the tracker tool. FIXME.
 #ifdef USE_SPATIAL_OBJECT_DEPRECATED
   spatialObject->RequestAttachToTrackerTool( this->m_CoordinateReferenceSystem );
@@ -431,12 +449,11 @@ void TrackerToolNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Transform: " << this->m_Transform << std::endl;
-  os << indent << "RawTransform: " << this->m_RawTransform << std::endl;
-  os << indent << "ToolCalibrationTransform: "
-               << this->m_ToolCalibrationTransform << std::endl;
+  os << indent << "Transform: "     << this->m_Transform << std::endl;
+  os << indent << "Raw transform: " << this->m_RawTransform << std::endl;
+  os << indent << "CalibrationTransform: "
+               << this->m_CalibrationTransform << std::endl;
 }
-
 
 std::ostream& operator<<(std::ostream& os, const TrackerToolNew& o)
 {

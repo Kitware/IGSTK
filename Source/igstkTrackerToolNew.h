@@ -52,7 +52,6 @@ class TrackerNew;
   *  and error associated with the measurement used.
   *
   *
-  *
   *  \image html  igstkTrackerToolNew.png  "TrackerToolNew State Machine Diagram"
   *  \image latex igstkTrackerToolNew.eps  "TrackerToolNew State Machine Diagram" 
   *
@@ -73,7 +72,7 @@ public:
 
   typedef TrackerNew        TrackerType;
   typedef Transform         TransformType;
-  typedef Transform         ToolCalibrationTransformType;
+  typedef Transform         CalibrationTransformType;
   typedef double            ErrorType;
   typedef double            TimePeriodType;
 
@@ -83,27 +82,26 @@ public:
   /** Get the tool transform. */
   igstkGetMacro( Transform, TransformType ); // FIXME : DEPRECATED : A REQUEST SHOULD BE MADE OR THIS SHOULD BE PRIVATE ONLY TO BE USED BY THE TRACKER.
 
-  /** Set the tool transform (called by Tracker). */
+  /** Set the transform (composition of the raw and calibration transform ). */
   void RequestSetTransform( const TransformType & transform ); // FIXME: MUST BE PRIVATE : THE TRACKER MUST BE A FRIEND
 
   /** Get the calibration transform for this tool. */
-  igstkGetMacro( ToolCalibrationTransform, ToolCalibrationTransformType );
+  igstkGetMacro( CalibrationTransform, CalibrationTransformType );
 
-  /** Set the calibration transform for this tool. */
-  igstkSetMacro( ToolCalibrationTransform, ToolCalibrationTransformType );
+  /** Request set the calibration transform for this tool. */
+  void RequestSetCalibrationTransform( const CalibrationTransformType & );
 
-  /** Get the raw, uncalibrated transform for this tool. */
+  /** Request set the raw transform for this tool. */
+  void RequestSetRawTransform( const TransformType & );
+
+  /** Get the raw transform for this tool. */
   igstkGetMacro( RawTransform, TransformType );
-
-  /** Set the raw, uncalibrated transform for this tool. */
-  igstkSetMacro( RawTransform, TransformType );
 
   /** Get whether the tool was updated during tracker UpdateStatus() */
   igstkGetMacro( Updated, bool );
 
   /** Get whether the tool was updated during tracker UpdateStatus() */
   igstkSetMacro( Updated, bool );
-
   
   /** Request attaching the SpatialObject given as argument as an
    *  object to track with this tracker tool. The SpatialObject will
@@ -169,27 +167,14 @@ protected:
 
   private:
 
-  /** Position and Orientation of the tool */
-  TransformType      m_Transform;   // FIXME: This is deprecated due to Bug 5474.
-                                    // This transform should now be computed by the Spatial objects
-                                    // that serve as the coordinate reference systems.
-                                    // This transform is computed as the composition of the 
-                                    // callibration transform (SO -> TrackerToolNew) and the
-                                    // raw transform (TrackerToolNew -> Tracker ).
-
-  /** Raw transform for the tool */
-  TransformType      m_RawTransform; // FIXME: This is deprecated due to Bug 5474. 
-                                     // This transform is now stored in the parent 
-                                     // child relationship between the TrackerToolNew
-                                     // and the Tracker. E.g. all uses of m_RawTransform
-                                     // should become m_CoordinateReferenceSystem->GetTransformToParent();
+  /** Composition of the raw and calibration transform*/
+  TransformType      m_Transform;   
 
   /** Calibration transform for the tool */
-  ToolCalibrationTransformType      m_ToolCalibrationTransform; // FIXME: This is deprecated due to Bug 5474.
-                                    // This transform is now the transform between the spatial object being
-                                    // tracked and the coordinate system of this tracker tool.
-                                    // When a spatial object is attached to a tracker tool, it becomes the child
-                                    // of the tracker tool.
+  CalibrationTransformType      m_CalibrationTransform; 
+
+  /** raw transform for the tool */
+  TransformType                 m_RawTransform; 
 
   /** Updated flag */
   bool               m_Updated;
@@ -282,6 +267,11 @@ private:
   void NoProcessing( void );
 
   TrackerNew        * m_Tracker;
+
+  /** Define the coordinate system interface 
+   */
+  igstkCoordinateSystemClassInterfaceMacro();
+
 };
 
 std::ostream& operator<<(std::ostream& os, const TrackerToolNew& o);

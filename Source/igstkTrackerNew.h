@@ -111,11 +111,8 @@ public:
   typedef Transform                      TransformType;
   typedef double                         ErrorType;
 
-  /** typedefs for PatientTransform */
-  typedef Transform                      PatientTransformType;
-
-  /** typedefs for ToolCalibrationTransform */
-  typedef Transform                      ToolCalibrationTransformType;
+  /** typedefs for CalibrationTransform */
+  typedef Transform                      CalibrationTransformType;
 
   /** typedefs from igstk::TrackerTool class */
   typedef igstk::TrackerToolNew              TrackerToolType;
@@ -135,9 +132,6 @@ public:
    *  It generates a TrackerCloseEvent if successful,
    *  or a TrackerCloseErrorEvent if not successful. */
   void RequestClose( void );
-
-  /** The "RequestInitialize" method initializes a newly opened device. */
-  void RequestInitialize( void );
 
   /** The "RequestReset" tracker method should be used to bring the tracker
   to some defined default state. */
@@ -173,17 +167,14 @@ public:
   /** Request a tracker tool from this tracker  */
   ResultType RequestRemoveTool( std::string TrackerToolIdentifier );
 
-  /** Set the tracker tool tranform using the unique identifier 
-    * FIXME: this method SHOULD BE REMOVED once the coordinate system is properly
-    * setup. This method is added to debug if transforms are correctly read from
-    * the tracker.*/
+  /** Set the tracker tool tranform using the unique identifier */
   void SetToolTransform( std::string identifier, TransformType transform ); 
 
-  /** Get the tracker tool tranform using the unique identifier 
-    * FIXME: this method SHOULD BE REMOVED once the coordinate system is properly
-    * setup. This method is added to debug if transforms are correctly read from
-    * the tracker.*/
+  /** Get the tracker tool tranform using the unique identifier  */
   void GetToolTransform( std::string identifier, TransformType & transform ); 
+
+  /** Set a reference tracker tool */
+  void RequestSetReferenceTool( TrackerToolType * trackerTool );
 
 protected:
 
@@ -276,8 +267,6 @@ private:
   /** The reference tool */
   bool                      m_ApplyingReferenceTool;
   TrackerToolPointer        m_ReferenceTool;
-  unsigned int              m_ReferenceToolPortNumber;
-  unsigned int              m_ReferenceToolNumber;
 
   /** Validity time */
   TimePeriodType            m_ValidityTime;

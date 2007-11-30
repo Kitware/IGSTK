@@ -187,6 +187,41 @@ TrackerNew::~TrackerNew(void)
 {
 }
 
+/** This method sets the reference tool. */
+void TrackerNew::RequestSetReferenceTool( TrackerToolType * trackerTool )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerNew::RequestStartTracking called ...\n");
+  // connect the reference tracker tool the tracker 
+  TransformType identityTransform;
+  identityTransform.SetToIdentity( 
+                    igstk::TimeStamp::GetLongestPossibleTime() );
+  
+  trackerTool->RequestSetTransformAndParent( identityTransform, this );
+
+  if( trackerTool != NULL )
+    {
+    // check if it is already attached to the tracker
+    typedef TrackerToolsContainerType::iterator InputIterator;
+    InputIterator toolItr = 
+                m_TrackerTools.find( trackerTool->GetTrackerToolIdentifier() );
+
+    if( toolItr != m_TrackerTools.end() )
+      {
+      m_ApplyingReferenceTool = true;
+      m_ReferenceTool = trackerTool;
+
+      // FIXME: Connect the coordinate system of all the other tracker tools to
+      //  the reference tracker tool. In other words, make reference tracker tool
+      //  the parent of all the other tracker tools.
+      }
+    else
+      {
+      std::cerr << "Request to use a tracker tool as a reference has failed."
+                << "The tracker tool is not attached to the tracker " << std::endl;
+      }
+   }
+}
+
 /** The "RequestOpen" method attempts to open communication with the
  *  tracking device. */
 void TrackerNew::RequestOpen( void )
@@ -579,19 +614,54 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
 
   while( inputItr != inputEnd )
     {
-    if ( (inputItr->second)->GetUpdated() ) 
+    if ( (inputItr->second)->GetUpdated() &&
+           ( !m_ApplyingReferenceTool || m_ReferenceTool->GetUpdated() ) ) 
       {
       TransformType transform = (inputItr->second)->GetRawTransform();
 
       TransformType::VersorType rotation;
       TransformType::VectorType translation;
 
-      // Get the rotation and translation with ToolCalibrationTransform
-      rotation = transform.GetRotation();
+
       translation = transform.GetTranslation();
 
-      // FIXME: IS THIS NECESSARY
+      CalibrationTransformType toolCalibrationTransform
+                                    = (inputItr->second)->GetCalibrationTransform();
+
+      rotation = toolCalibrationTransform.GetRotation();
+      translation = toolCalibrationTransform.GetTranslation();
+
+      // transform by the tracker's tool transform
+      rotation = transform.GetRotation()*rotation;
+      translation = transform.GetRotation().Transform(translation);
+      translation += transform.GetTranslation();
+
+      // T ' = R^-1 * T * C
+      //
+      // where:
+      // " T " is the raw transform reported by the device,
+      // " C " is the tool calibration transform.
+      // " R^-1 " is the inverse of the transform for the reference tool,
       // applying ReferenceTool
+      if ( m_ApplyingReferenceTool )
+        {
+        // since this is an inverse transform, apply translation first
+        TransformType::VersorType inverseRotation =
+          m_ReferenceTool->GetRawTransform().GetRotation().GetReciprocal();
+
+        translation -= m_ReferenceTool->GetRawTransform().GetTranslation();
+        translation = inverseRotation.Transform(translation);
+        rotation = inverseRotation*rotation;
+
+        // also include the reference tool's ToolCalibrationTransform
+        inverseRotation = m_ReferenceTool->GetCalibrationTransform().
+                                           GetRotation().GetReciprocal();
+        translation -= m_ReferenceTool->GetCalibrationTransform().
+                                           GetTranslation();
+        translation = inverseRotation.Transform(translation);
+        rotation = inverseRotation*rotation;
+
+        }
 
       const double timeToExpiration = transform.GetExpirationTime() - 
                                       transform.GetStartTime();
@@ -601,7 +671,19 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
                         transform.GetError(),
                         timeToExpiration );
 
+      // FIXME: For debugging purpose set the tool transform. This will be
+      // removed.
       (inputItr->second)->RequestSetTransform( toolTransform );
+
+      // set transfrom with respect to the reference tool
+      if ( m_ApplyingReferenceTool )
+        {        
+        (inputItr->second)->RequestSetTransformAndParent( toolTransform, m_ReferenceTool.GetPointer() );
+        }
+      else
+        {
+        (inputItr->second)->RequestSetTransformAndParent( toolTransform, this );
+        }
       }
     ++inputItr;
     }
@@ -730,6 +812,17 @@ RequestAddTool( std::string trackerToolIdentifier, TrackerToolType * trackerTool
   if ( VerifyTrackerToolInformation( trackerTool ) )
     {
     m_TrackerTools[ trackerToolIdentifier ] = trackerTool; 
+
+    //connect the tracker tool coordinate system to the tracker
+    //system. By default, make the tracker coordinate system to 
+    //be a parent of the tracker tool coordinate system
+    //If a reference tracker tool is specified, the reference
+    //tracker tool will become the parent of all the tracker tools.
+    TransformType identityTransform;
+    identityTransform.SetToIdentity( 
+                    igstk::TimeStamp::GetLongestPossibleTime() );
+ 
+    trackerTool->RequestSetTransformAndParent( identityTransform, this );
     return SUCCESS;
     }
   else
@@ -761,20 +854,8 @@ RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier )
   return SUCCESS;
 }
 
-/** Set the tracker tool tranform using the unique identifier 
-    * FIXME: this method SHOULD BE REMOVED once the coordinate system is properly
-    * setup. This method is added to verify if transforms are correctly read from
-    * the tracker.*/
-void TrackerNew::SetToolTransform( std::string toolIdentifier, TransformType transform ) 
-{     
-  // check if a tracker tool with this identifier is stored in the container
-  m_TrackerTools[ toolIdentifier ]->RequestSetTransform( transform );
-}
-
-/** Get the tracker tool tranform using the unique identifier 
-    * FIXME: this method SHOULD BE REMOVED once the coordinate system is properly
-    * setup. This method is added to debug if transforms are correctly read from
-    * the tracker.*/
+/** Get the tracker tool transform (composition of raw and calibration transform)
+ *  using the unique identifier tracker.*/
 void TrackerNew::GetToolTransform( std::string toolIdentifier,
                                 TransformType & transform )
 {

@@ -604,11 +604,10 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
     transform.SetToIdentity(this->GetValidityTime());
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         this->GetValidityTime());
-
-    // FIXME: set the transform to the parent
-    // FOR NOW, use SetToolTransform method
-    //
-    this->SetToolTransform( inputItr->first, transform ); 
+  
+    // set the raw transform
+    (trackerToolContainer[inputItr->first])->RequestSetRawTransform( transform );
+    (trackerToolContainer[inputItr->first])->SetUpdated( true );
 
     ++inputItr;
     }
