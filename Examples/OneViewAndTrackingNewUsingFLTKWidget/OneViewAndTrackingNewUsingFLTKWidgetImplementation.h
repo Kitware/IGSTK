@@ -44,6 +44,8 @@ public:
   typedef itk::StdStreamLogOutput  LogOutputType;
 
   typedef igstk::PolarisTrackerNew     TrackerType;
+  typedef igstk::PolarisTrackerToolNew TrackerToolType;
+  typedef TrackerToolType::TransformType    TransformType;
 
 #ifdef WIN32
   typedef igstk::SerialCommunicationForWindows  CommunicationType;
@@ -95,6 +97,19 @@ public:
 
     m_Tracker->RequestOpen();
 
+    // Create tracker tool and attach it to the tracker
+    // instantiate and attach wired tracker tool  
+    m_TrackerTool = TrackerToolType::New();
+    m_TrackerTool->SetLogger( m_Logger );
+    //Select wired tracker tool
+    m_TrackerTool->RequestSelectWiredTrackerTool();
+    //Set the port number to zero
+    m_TrackerTool->RequestSetPortNumber( 0 );
+    //Configure
+    m_TrackerTool->RequestConfigure();
+    //Attach to the tracker
+    m_TrackerTool->RequestAttachToTracker( m_Tracker );
+
     m_Tracking = false;
 
     //enable interaction by default
@@ -131,16 +146,28 @@ public:
     Display3D->RequestDisableInteractions();
     }
  
-  void AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
+  void AttachObjectToTrackerTool( igstk::SpatialObject * objectToTrack )
     {
-    // Attach a spatial object
+    // connect the reference tracker tool the tracker 
+    TransformType identityTransform;
+    identityTransform.SetToIdentity( 
+                      igstk::TimeStamp::GetLongestPossibleTime() );
+   
+    // Attach a spatial object to the tracker tool
+    objectToTrack->RequestSetTransformAndParent( identityTransform, m_TrackerTool.GetPointer() );
+    }
+
+  void GetTrackerToolTransform( TransformType & transform )
+    {
+    m_Tracker->GetToolTransform( m_TrackerTool->GetTrackerToolIdentifier(), transform ); 
     }
 
 private:
 
-  LoggerType::Pointer     m_Logger;
-  LogOutputType::Pointer  m_LogOutput;
-  TrackerType::Pointer    m_Tracker;
+  LoggerType::Pointer         m_Logger;
+  LogOutputType::Pointer      m_LogOutput;
+  TrackerType::Pointer        m_Tracker;
+  TrackerToolType::Pointer    m_TrackerTool;
 
   CommunicationType::Pointer m_Communication;
 

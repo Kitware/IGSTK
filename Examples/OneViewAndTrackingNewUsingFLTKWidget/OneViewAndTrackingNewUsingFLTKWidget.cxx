@@ -109,13 +109,24 @@ int main(int , char** )
 
   application.Show();
 
-  // Associate the Spatial Object to the tracker
-  application.AttachObjectToTrack( cylinder );
+  // Associate the Spatial Object to the tracker tool
+  application.AttachObjectToTrackerTool ( cylinder );
+
+  igstk::Transform             toolTransform; 
+  igstk::Transform::VectorType position;
 
   while( !application.HasQuitted() )
     {
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
+
+    application.GetTrackerToolTransform( toolTransform );
+
+    position = toolTransform.GetTranslation();
+    std::cout << "Trackertool:" 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
     }
 
   return EXIT_SUCCESS;
