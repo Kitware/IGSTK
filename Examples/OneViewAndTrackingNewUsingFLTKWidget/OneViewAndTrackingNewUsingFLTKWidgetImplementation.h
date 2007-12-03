@@ -33,6 +33,7 @@
 #endif
 
 #include "igstkLogger.h"
+#include "igstkViewNew.h"
 #include "itkStdStreamLogOutput.h"
 
 class OneViewAndTrackingNewUsingFLTKWidgetImplementation : 
@@ -81,6 +82,9 @@ public:
 
     m_Logger->SetPriorityLevel( LoggerType::DEBUG );
     m_Tracker->SetLogger( m_Logger );
+
+    // set validity time of the tracker transforms
+    m_Tracker->SetValidityTime( 1e20 );
 
     m_Communication = CommunicationType::New();
     m_Communication->SetLogger( m_Logger );
@@ -148,7 +152,6 @@ public:
  
   void AttachObjectToTrackerTool( igstk::SpatialObject * objectToTrack )
     {
-    // connect the reference tracker tool the tracker 
     TransformType identityTransform;
     identityTransform.SetToIdentity( 
                       igstk::TimeStamp::GetLongestPossibleTime() );
@@ -160,6 +163,16 @@ public:
   void GetTrackerToolTransform( TransformType & transform )
     {
     m_Tracker->GetToolTransform( m_TrackerTool->GetTrackerToolIdentifier(), transform ); 
+    }
+
+  void AttachTrackerToView( igstk::ViewNew * view )
+    {
+    TransformType identityTransform;
+    identityTransform.SetToIdentity( 
+                      igstk::TimeStamp::GetLongestPossibleTime() );
+   
+    // Attach a viewer to the tracker 
+    m_Tracker->RequestSetTransformAndParent( identityTransform, view );
     }
 
 private:
