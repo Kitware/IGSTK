@@ -395,6 +395,9 @@ private:
   /** Detach all tracker tools from the tracker */
   void DetachAllTrackerToolsFromTracker();
 
+  /** Report invalid request */ 
+  void ReportInvalidRequestProcessing( void );
+
   /** Define the coordinate system interface 
    */
   igstkCoordinateSystemClassInterfaceMacro();

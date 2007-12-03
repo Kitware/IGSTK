@@ -87,6 +87,21 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
                            CommunicationEstablished,
                            ResetFromCommunicatingState );
 
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           StopTracking,
+                           CommunicationEstablished,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           EstablishCommunication,
+                           CommunicationEstablished,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           UpdateStatus,
+                           CommunicationEstablished,
+                           ReportInvalidRequest );
+
   // Transitions from AttemptingToTrack
   igstkAddTransitionMacro( AttemptingToTrack,
                            Success,
@@ -936,6 +951,14 @@ ITK_THREAD_RETURN_TYPE TrackerNew::TrackingThreadFunction(void* pInfoStruct)
                       "out of " << totalCount << "updates." << std::endl );
 
   return ITK_THREAD_RETURN_VALUE;
+}
+
+/** Report invalid request */
+void TrackerNew::ReportInvalidRequestProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerNew::ReportInvalidRequestProcessing called...\n");
+
+  this->InvokeEvent( InvalidRequestErrorEvent() );
 }
 
 }
