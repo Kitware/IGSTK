@@ -1,0 +1,16 @@
+PROJECT(OneViewAndTrackingNewUsingFLTKWidget)
+  
+SET(OneViewAndTrackingNewUsingFLTKWidget_GUI_SRCS
+  OneViewAndTrackingNewUsingFLTKWidgetGUI.fl
+  )
+  
+SET(OneViewAndTrackingNewUsingFLTKWidget_SRCS
+  OneViewAndTrackingNewUsingFLTKWidget.cxx
+  )
+
+FLTK_WRAP_UI(OneViewAndTrackingNewUsingFLTKWidget ${OneViewAndTrackingNewUsingFLTKWidget_GUI_SRCS})
+ADD_EXECUTABLE(OneViewAndTrackingNewUsingFLTKWidget ${OneViewAndTrackingNewUsingFLTKWidget_FLTK_UI_SRCS} ${OneViewAndTrackingNewUsingFLTKWidget_SRCS})
+TARGET_LINK_LIBRARIES(OneViewAndTrackingNewUsingFLTKWidget IGSTKSandbox)
+
+
+
