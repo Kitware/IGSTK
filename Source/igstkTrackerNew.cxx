@@ -151,6 +151,11 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
                            AttemptingToTrack,
                            AttemptToStartTracking );
 
+  igstkAddTransitionMacro( TrackerToolAttached,
+                           AttachTrackerTool,
+                           AttemptingToAttachTrackerTool,
+                           AttemptToAttachTrackerTool );
+
 
   // Transitions from AttemptingToTrack
   igstkAddTransitionMacro( AttemptingToTrack,
