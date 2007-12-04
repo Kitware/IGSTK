@@ -30,6 +30,7 @@ IF (IGSTK_USE_FLTK)
     )
   IF (IGSTKSandbox_USE_MicronTracker) 
     SUBDIRS( OneViewAndTrackingUsingMicronTracker)
+    SUBDIRS( OneViewAndTrackingNewUsingMicronTracker)
   ENDIF(IGSTKSandbox_USE_MicronTracker) 
 ENDIF (IGSTK_USE_FLTK)
 

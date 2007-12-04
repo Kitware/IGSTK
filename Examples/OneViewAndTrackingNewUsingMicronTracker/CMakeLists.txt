@@ -1,0 +1,16 @@
+PROJECT(OneViewAndTrackingNewUsingMicronTracker)
+  
+SET(OneViewAndTrackingNewUsingMicronTracker_GUI_SRCS
+  OneViewAndTrackingNewUsingMicronTrackerGUI.fl
+  )
+  
+SET(OneViewAndTrackingNewUsingMicronTracker_SRCS
+  OneViewAndTrackingNewUsingMicronTracker.cxx
+  )
+
+FLTK_WRAP_UI(OneViewAndTrackingNewUsingMicronTracker ${OneViewAndTrackingNewUsingMicronTracker_GUI_SRCS})
+ADD_EXECUTABLE(OneViewAndTrackingNewUsingMicronTracker ${OneViewAndTrackingNewUsingMicronTracker_FLTK_UI_SRCS} ${OneViewAndTrackingNewUsingMicronTracker_SRCS})
+TARGET_LINK_LIBRARIES(OneViewAndTrackingNewUsingMicronTracker IGSTKSandbox)
+
+
+
