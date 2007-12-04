@@ -61,6 +61,9 @@ itkEventMacro( TrackerNewStopTrackingErrorEvent,              TrackerNewErrorEve
 itkEventMacro( TrackerNewUpdateStatusEvent,                   TrackerNewEvent);
 itkEventMacro( TrackerNewUpdateStatusErrorEvent,              TrackerNewErrorEvent);
 
+itkEventMacro( AttachingTrackerToolToTrackerNewEvent,         TrackerNewEvent);
+itkEventMacro( AttachingTrackerToolToTrackerNewErrorEvent,    TrackerNewErrorEvent);
+
 
 /** \class TrackerNew
  *  \brief Superclass for concrete IGSTK Tracker classes.
@@ -161,8 +164,8 @@ public:
     SUCCESS
     } ResultType;
 
-  /** Add a tracker tool to this tracker  */
-  ResultType RequestAddTool( std::string TrackerToolIdentifier, TrackerToolType * trackerTool );
+  /** Attach a tracker tool to this tracker  */
+  void RequestAttachTool( std::string TrackerToolIdentifier, TrackerToolType * trackerTool );
 
   /** Request a tracker tool from this tracker  */
   ResultType RequestRemoveTool( std::string TrackerToolIdentifier );
@@ -294,6 +297,8 @@ private:
   igstkDeclareStateMacro( AttemptingToEstablishCommunication );
   igstkDeclareStateMacro( AttemptingToCloseCommunication );
   igstkDeclareStateMacro( CommunicationEstablished );
+  igstkDeclareStateMacro( AttemptingToAttachTrackerTool );
+  igstkDeclareStateMacro( TrackerToolAttached );
   igstkDeclareStateMacro( AttemptingToTrack );
   igstkDeclareStateMacro( Tracking );
   igstkDeclareStateMacro( AttemptingToUpdate );
@@ -302,6 +307,7 @@ private:
   /** List of Inputs */
   igstkDeclareInputMacro( EstablishCommunication );
   igstkDeclareInputMacro( StartTracking );
+  igstkDeclareInputMacro( AttachTrackerTool );
   igstkDeclareInputMacro( UpdateStatus );
   igstkDeclareInputMacro( StopTracking );
   igstkDeclareInputMacro( Reset );
@@ -323,6 +329,10 @@ private:
 
   /** The "AttemptToStopTrackingProcessing" method attempts to stop tracking. */
   void AttemptToStopTrackingProcessing( void );
+
+  /** The "AttemptToAttachTrackerToolProcessing" method attempts 
+   *  to attach a tracker tool to the tracker . */
+  void AttemptToAttachTrackerToolProcessing( void );
 
   /** The "AttemptToUpdateStatusProcessing" method attempts to update status
       during tracking. */
@@ -374,6 +384,14 @@ private:
   /** Post-processing after start tracking has failed. */ 
   void StartTrackingFailureProcessing( void );
 
+  /** Post-processing after attaching a tracker tool
+     has been successful. */ 
+  void AttachingTrackerToolSuccessProcessing( void );
+
+  /** Post-processing after an attempt to attach a tracker tool
+   *  has failed. */ 
+  void AttachingTrackerToolFailureProcessing( void );
+
   /** Post-processing after stop tracking has been successful. */ 
   void StopTrackingSuccessProcessing( void );
 
@@ -402,6 +420,8 @@ private:
    */
   igstkCoordinateSystemClassInterfaceMacro();
 
+  std::string m_IdentifierForTrackerToolToBeAttached;
+  TrackerToolType   * m_TrackerToolToBeAttached;
 };
 
 }

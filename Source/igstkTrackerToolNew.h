@@ -153,6 +153,12 @@ public:
     * should be moved to private section */
   virtual void ReportTrackingToolIsInVisibleState( );
 
+  /** Report successful tracker tool attachment */ 
+  void ReportSuccessfulTrackerToolAttachment();
+
+  /** Report failure in tracker tool attachment attempt */ 
+  void ReportFailedTrackerToolAttachment();
+
 protected:
 
   TrackerToolNew(void);

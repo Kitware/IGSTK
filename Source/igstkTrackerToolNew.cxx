@@ -229,10 +229,27 @@ void TrackerToolNew::AttemptToAttachTrackerToolToTrackerProcessing( void )
   igstkLogMacro( DEBUG, 
                  "igstk::TrackerToolNew::AttemptToAttachTrackerToolToTracker called ...\n");
 
-  bool result = m_Tracker->RequestAddTool( m_TrackerToolIdentifier, this );
-  m_StateMachine.PushInputBoolean( result,
-                                   m_AttachmentToTrackerSuccessInput,
-                                   m_AttachmentToTrackerFailureInput );
+  m_Tracker->RequestAttachTool( m_TrackerToolIdentifier, this );
+}
+
+/** Report successful tracker tool attachment */ 
+void TrackerToolNew::ReportSuccessfulTrackerToolAttachment() 
+{
+  igstkLogMacro( DEBUG, 
+                 "igstk::TrackerToolNew::ReportSuccessfulTrackerToolAttachment called ...\n");
+
+  igstkPushInputMacro( AttachmentToTrackerSuccess );
+  this->m_StateMachine.ProcessInputs();
+}
+
+/** Report failure in tracker tool attachment attempt */ 
+void TrackerToolNew::ReportFailedTrackerToolAttachment()
+{
+  igstkLogMacro( DEBUG, 
+                 "igstk::TrackerToolNew::ReportFailedTrackerToolAttachment called ...\n");
+
+  igstkPushInputMacro( AttachmentToTrackerFailure );
+  this->m_StateMachine.ProcessInputs();
 }
 
 /** The "AttemptToDetachTrackerToolFromTracker" method attempts to detach the tracker tool

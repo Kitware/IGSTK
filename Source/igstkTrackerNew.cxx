@@ -36,6 +36,8 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
   igstkAddStateMacro( Idle ); 
   igstkAddStateMacro( AttemptingToEstablishCommunication ); 
   igstkAddStateMacro( AttemptingToCloseCommunication); 
+  igstkAddStateMacro( AttemptingToAttachTrackerTool );
+  igstkAddStateMacro( TrackerToolAttached );
   igstkAddStateMacro( CommunicationEstablished );
   igstkAddStateMacro( AttemptingToTrack ); 
   igstkAddStateMacro( AttemptingToStopTracking); 
@@ -44,6 +46,7 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
   
   // Set the input descriptors
   igstkAddInputMacro( EstablishCommunication);
+  igstkAddInputMacro( AttachTrackerTool);
   igstkAddInputMacro( StartTracking); 
   igstkAddInputMacro( UpdateStatus); 
   igstkAddInputMacro( StopTracking); 
@@ -59,6 +62,30 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
                            EstablishCommunication,
                            AttemptingToEstablishCommunication,
                            AttemptToOpen );
+  igstkAddTransitionMacro( Idle,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           StopTracking,
+                           Idle,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           AttachTrackerTool,
+                           Idle,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           UpdateStatus,
+                           Idle,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           Reset,
+                           Idle,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           CloseCommunication,
+                           Idle,
+                           ReportInvalidRequest );
 
   // Transitions from the AttemptingToEstablishCommunication
   igstkAddTransitionMacro( AttemptingToEstablishCommunication,
@@ -72,6 +99,11 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
                            CommunicationEstablishmentFailure );
 
   // Transitions from CommunicationEstablished
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           AttachTrackerTool,
+                           AttemptingToAttachTrackerTool,
+                           AttemptToAttachTrackerTool );
+
   igstkAddTransitionMacro( CommunicationEstablished,
                            StartTracking,
                            AttemptingToTrack,
@@ -101,6 +133,24 @@ TrackerNew::TrackerNew(void) :  m_StateMachine( this )
                            UpdateStatus,
                            CommunicationEstablished,
                            ReportInvalidRequest );
+
+  // Transitions from AttemptingToAttachTrackerTool
+  igstkAddTransitionMacro( AttemptingToAttachTrackerTool,
+                           Success,
+                           TrackerToolAttached,
+                           AttachingTrackerToolSuccess );
+
+  igstkAddTransitionMacro( AttemptingToAttachTrackerTool,
+                           Failure,
+                           CommunicationEstablished,
+                           AttachingTrackerToolFailure );
+
+  // Transitions from TrackerToolAttached
+  igstkAddTransitionMacro( TrackerToolAttached,
+                           StartTracking,
+                           AttemptingToTrack,
+                           AttemptToStartTracking );
+
 
   // Transitions from AttemptingToTrack
   igstkAddTransitionMacro( AttemptingToTrack,
@@ -498,6 +548,47 @@ void TrackerNew::StartTrackingFailureProcessing( void )
   this->InvokeEvent( TrackerNewStartTrackingErrorEvent() );
 }
 
+/** Post-processing after attaching a tracker tool to the tracker
+ *  has been successful. */ 
+void TrackerNew::AttachingTrackerToolSuccessProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerNew::AttachingTrackerToolSuccessProcessing "
+                 "called ...\n");
+
+  m_TrackerTools[ m_IdentifierForTrackerToolToBeAttached ] 
+                                   = m_TrackerToolToBeAttached; 
+
+  // report to the tracker tool that the attachment has been 
+  // successful
+  m_TrackerToolToBeAttached->ReportSuccessfulTrackerToolAttachment();
+
+  //connect the tracker tool coordinate system to the tracker
+  //system. By default, make the tracker coordinate system to 
+  //be a parent of the tracker tool coordinate system
+  //If a reference tracker tool is specified, the reference
+  //tracker tool will become the parent of all the tracker tools.
+  TransformType identityTransform;
+  identityTransform.SetToIdentity( 
+                  igstk::TimeStamp::GetLongestPossibleTime() );
+
+  m_TrackerToolToBeAttached->RequestSetTransformAndParent( identityTransform, this );
+
+  this->InvokeEvent( AttachingTrackerToolToTrackerNewEvent() );
+}
+
+/** Post-processing after attaching a tracker tool to the tracker
+ *  has failed. */ 
+void TrackerNew::AttachingTrackerToolFailureProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerNew::AttachingTrackerToolFailureProcessing "
+                 "called ...\n");
+
+  // report to the tracker tool that the attachment has failed
+  m_TrackerToolToBeAttached->ReportFailedTrackerToolAttachment();
+
+  this->InvokeEvent( AttachingTrackerToolToTrackerNewErrorEvent() );
+}
+ 
 /** The "AttemptToStopTracking" method attempts to stop tracking. */
 void TrackerNew::AttemptToStopTrackingProcessing( void )
 {
@@ -812,42 +903,37 @@ void TrackerNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 /** Request adding a tool to the tracker  */
-TrackerNew::ResultType 
+void
 TrackerNew::
-RequestAddTool( std::string trackerToolIdentifier, TrackerToolType * trackerTool )
+RequestAttachTool( std::string trackerToolIdentifier, TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, "igstk::TrackerNew::"
-                 "RequestAddTool called ...\n");
+                 "RequestAttachTool called ...\n");
+ 
+  m_IdentifierForTrackerToolToBeAttached = trackerToolIdentifier; 
+  m_TrackerToolToBeAttached = trackerTool;
+  
+  igstkPushInputMacro( AttachTrackerTool );
+  this->m_StateMachine.ProcessInputs();
+}
+
+/** The "AttemptToAttachTrackerToolProcessing" method attempts to
+ * add a tracker tool to the tracker */
+void TrackerNew::AttemptToAttachTrackerToolProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+                 "igstk::TrackerNew::AttemptToAttachTrackerToolProcessing called ...\n");
 
   // Verify the tracker tool information before adding it to the
   // tracker. The conditions that need be verified depend on 
   // the tracker type. For example, for MicronTracker, the 
   // the tracker should have access to the template file of the
   // Marker that is attached to the tracker tool. 
-  if ( VerifyTrackerToolInformation( trackerTool ) )
-    {
-    m_TrackerTools[ trackerToolIdentifier ] = trackerTool; 
-
-    //connect the tracker tool coordinate system to the tracker
-    //system. By default, make the tracker coordinate system to 
-    //be a parent of the tracker tool coordinate system
-    //If a reference tracker tool is specified, the reference
-    //tracker tool will become the parent of all the tracker tools.
-    TransformType identityTransform;
-    identityTransform.SetToIdentity( 
-                    igstk::TimeStamp::GetLongestPossibleTime() );
+  ResultType result = VerifyTrackerToolInformation( m_TrackerToolToBeAttached );
  
-    trackerTool->RequestSetTransformAndParent( identityTransform, this );
-    return SUCCESS;
-    }
-  else
-    {
-    return FAILURE;
-    }
-    
-  // FIX: Add a code to attach the coordinate system of the tracker tool to 
-  // the tracker. Something like
-  // trackerTool->RequestAttachToSpatialObjectParent( this->m_CoordinateReferenceSystem );
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
 /** Request remove a tool from the tracker  */
