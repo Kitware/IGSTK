@@ -317,27 +317,14 @@ MicronTrackerNew
   // Verify that the template file for the marker is found
   unsigned int totalNumberOfTemplates = Markers_TemplatesCount();
 
-  // FIXME: change the code to use std::string
-  int markerHandle;
-  char tempString[400];
-  std::string templateName;
 
   MicronTrackerToolType * micronTrackerTool  = 
         dynamic_cast< MicronTrackerToolType *> ( trackerTool );
 
   for (unsigned int idx=0 ; idx < totalNumberOfTemplates ; idx++ )
     {
-    Markers_TemplateItemGet( idx, &markerHandle);
-    
-    memset((void *)tempString, 0 , sizeof(tempString));
-    int b;
-    unsigned int status = Marker_NameGet( markerHandle, tempString, sizeof(tempString), &b);
-
-    if ( status == 0 ) {
-      tempString[b] = '\0';
-    }
-    templateName = std::string(tempString);
-
+    std::string templateName;
+    this->m_Markers->getTemplateItemName(idx, templateName );
     if( micronTrackerTool->GetMarkerName() == templateName )
       {
       std::vector< double > transform;
