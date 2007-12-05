@@ -64,17 +64,6 @@ int main(int argc, char** argv )
 
   std::cout << "Transform to static ellipsoid = " << transform << std::endl;
 
-
-  igstk::Transform transformToView;
-  igstk::Transform::VectorType translationToView;
-  translationToView[0] = 0.0;
-  translationToView[1] = 0.0;
-  translationToView[2] = 0.0;
-  igstk::Transform::VersorType rotationToView;
-  rotationToView.Set( 0.0, 1.0, 0.0, 1.0 );
-  transformToView.SetTranslationAndRotation(
-      translationToView, rotationToView, errorValue, validityTimeInMilliseconds );
-
   // Create the ellipsoid representation
   igstk::EllipsoidObjectRepresentation::Pointer 
         ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
@@ -99,6 +88,9 @@ int main(int argc, char** argv )
   typedef igstk::ViewNew3D        ViewNew3DType;
   ViewNew3DType::Pointer view3D = ViewNew3DType::New();
 
+  // set a logger
+  view3D->SetLogger( application.GetLogger() );
+
   // Make the view the parent of the tracker 
   application.AttachTrackerToView( view3D ); 
 
@@ -108,10 +100,12 @@ int main(int argc, char** argv )
   // Set the refresh rate and start 
   // the pulse generators of the views.
 
-  view3D->SetRefreshRate( 30 );
+  view3D->SetRefreshRate( 1 );
   view3D->RequestStart();
-  //view3D->SetCameraPosition(0.0, 0.0, -600.0);
-  view3D->SetCameraPosition(-225.0,100.00,-1600.0);
+  view3D->SetCameraPosition(60.0,-20.0,520.0);
+
+  application.Display3D->RequestSetView( view3D );
+  application.Show();
 
   std::string  CameraCalibrationFileDirectory = argv[1];
   std::string InitializationFile = argv[2];
@@ -120,7 +114,6 @@ int main(int argc, char** argv )
   application.InitializeTracker( InitializationFile, CameraCalibrationFileDirectory, markerTemplateDirectory );
   application.ConfigureTrackerToolsAndAttachToTheTracker();
 
-  application.Display3D->RequestSetView( view3D );
 
   // Associate the cylinder spatial object to the first tracker tool 
   application.AttachObjectToTrackerTool ( 1, cylinder );
@@ -128,7 +121,6 @@ int main(int argc, char** argv )
   // Associate the ellispsoid spatial object to the second tracker tool 
   application.AttachObjectToTrackerTool ( 2, ellipsoid );
 
-  application.Show();
 
   igstk::Transform             toolTransform; 
   igstk::Transform::VectorType position;
@@ -138,15 +130,24 @@ int main(int argc, char** argv )
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
 
-    application.GetTrackerToolTransform( toolTransform );
+    if( application.IsTrackingTurnedOn())
+      {
+      application.GetTrackerToolTransform( 1, toolTransform );
 
-    position = toolTransform.GetTranslation();
-    std::cout << "Trackertool:" 
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      position = toolTransform.GetTranslation();
+      std::cout << "Trackertool1:" 
+                << "  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
 
+      application.GetTrackerToolTransform( 2, toolTransform );
 
+      position = toolTransform.GetTranslation();
+      std::cout << "Trackertool2:" 
+                << "  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+      }
     }
 
   return EXIT_SUCCESS;

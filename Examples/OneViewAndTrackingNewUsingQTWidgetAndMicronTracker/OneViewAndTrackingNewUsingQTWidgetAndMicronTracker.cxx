@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    OneViewAndTrackingNewUsingFLTKWidget.cxx
+  Module:    OneViewAndTrackingNewUsingQTWidgetAndMicronTracker.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -20,21 +20,21 @@
 #pragma warning( disable : 4284 )
 #endif
 
-#include "OneViewAndTrackingNewUsingFLTKWidgetImplementation.h"
+//QT header file
+#include <QApplication>
+#include <QtTest/QTest>
+
+#include "OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI.h"
 #include "igstkViewNew3D.h"
-#include "igstkEllipsoidObject.h"
-#include "igstkCylinderObject.h"
-#include "igstkEllipsoidObjectRepresentation.h"
-#include "igstkCylinderObjectRepresentation.h"
+#include "igstkVTKLoggerOutput.h"
 
-
-int main(int , char** )
+int main(int argc, char** argv)
 { 
 
   igstk::RealTimeClock::Initialize();
+  QApplication app(argc, argv);
 
   if( argc < 4 )
-
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "MicronTracker_Camera_Calibration_file" << "\t"
@@ -44,8 +44,26 @@ int main(int , char** )
     }
 
  
- 
-  OneViewAndTrackingNewUsingFLTKWidgetImplementation   application;
+
+  OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI   mainWindow;
+
+  typedef igstk::Object::LoggerType              LoggerType;
+  typedef itk::StdStreamLogOutput             LogOutputType;
+  
+  // logger object created for logging mouse activities
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( LoggerType::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
+                                                igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
+                                       // VTK OutputWindow -> logger
+
 
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
@@ -61,8 +79,7 @@ int main(int , char** )
   // Create the cylinder 
   igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
   cylinder->SetRadius(1.0);
-  //cylinder->SetHeight(300.0);  // about the size of a needle
-  cylinder->SetHeight(50.0);  // about the size of a needle
+  cylinder->SetHeight(300.0);  // about the size of a needle
 
   // Create the cylinder representation
   igstk::CylinderObjectRepresentation::Pointer 
@@ -75,66 +92,60 @@ int main(int , char** )
   typedef igstk::ViewNew3D        ViewNew3DType;
   ViewNew3DType::Pointer view3D = ViewNew3DType::New();
 
-  /** We pass the bare pointer so that the compiler can figure out the type
-      for the templated method. */
-  ellipsoid->RequestSetTransformAndParent( transformToView, 
-                                           view3D.GetPointer() );
+  view3D->SetLogger( logger );
 
-  /* cylinder->RequestSetTransformAndParent( transform, 
-                                          ellipsoid.GetPointer() ); */
-
-  // Make the view the parent of the tracker 
-  application.AttachTrackerToView( view3D ); 
-
+  mainWindow.AttachTrackerToView( view3D );
 
   view3D->RequestAddObject( ellipsoidRepresentation );
   view3D->RequestAddObject( cylinderRepresentation );
- 
-  // Set the refresh rate and start 
-  // the pulse generators of the views.
-
   view3D->SetRefreshRate( 30 );
   view3D->RequestStart();
-  //view3D->SetCameraPosition(0.0, 0.0, -600.0);
   view3D->SetCameraPosition(-225.0,100.00,-1600.0);
-
-  application.Display3D->RequestSetView( view3D );
-
-  application.Show();
+  
+  mainWindow.SetView( view3D );
+  mainWindow.show();
 
   std::string  CameraCalibrationFileDirectory = argv[1];
   std::string InitializationFile = argv[2];
   std::string markerTemplateDirectory = argv[3];
 
-  application.InitializeTracker( InitializationFile, CameraCalibrationFileDirectory, markerTemplateDirectory );
-  application.ConfigureTrackerToolsAndAttachToTheTracker();
+  mainWindow.InitializeTracker( InitializationFile, CameraCalibrationFileDirectory, markerTemplateDirectory );
+  mainWindow.ConfigureTrackerToolsAndAttachToTheTracker();
+
 
   // Associate the cylinder spatial object to the first tracker tool 
-  application.AttachObjectToTrackerTool ( 1, cylinder );
+  mainWindow.AttachObjectToTrackerTool ( 1, cylinder );
 
   // Associate the ellispsoid spatial object to the second tracker tool 
-  application.AttachObjectToTrackerTool ( 2, ellipsoid );
+  mainWindow.AttachObjectToTrackerTool ( 2, ellipsoid );
+
 
   igstk::Transform             toolTransform; 
   igstk::Transform::VectorType position;
 
-  while( !application.HasQuitted() )
+  while(! mainWindow.HasQuitted())
     {
-    Fl::wait(0.001);
+    QTest::qWait(10);
     igstk::PulseGenerator::CheckTimeouts();
 
-    application.GetTrackerToolTransform( toolTransform );
+    if( mainWindow.IsTrackingTurnedOn())
+      {
+      mainWindow.GetTrackerToolTransform( 1, toolTransform );
 
-    position = toolTransform.GetTranslation();
-    std::cout << "Trackertool:" 
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      position = toolTransform.GetTranslation();
+      std::cout << "Trackertool1:" 
+                << "  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
 
-    std::cout << "CylinderSpatialObject:"
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      mainWindow.GetTrackerToolTransform( 2, toolTransform );
+
+      position = toolTransform.GetTranslation();
+      std::cout << "Trackertool2:" 
+                << "  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+      }
 
     }
 

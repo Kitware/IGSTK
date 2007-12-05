@@ -76,6 +76,9 @@ public:
     m_Tracker->SetValidityTime( 1e20 );
 
     m_Tracking = false;
+
+    // connect a logger to the view
+    Display3D->SetLogger( m_Logger );
     }
 
   void InitializeTracker( std::string InitializationFile, std::string CameraCalibrationFileDirectory, std::string markerTemplateDirectory )
@@ -91,15 +94,18 @@ public:
   void ConfigureTrackerToolsAndAttachToTheTracker()
     {
     // Create two tracker tools and attach them to the tracker
+    std::cout << " Attaching tracker tool with TTblock marker" << std::endl;
     m_TrackerTool = TrackerToolType::New();
-    m_TrackerTool->SetLogger( m_Logger );
+    //m_TrackerTool->SetLogger( m_Logger );
     std::string markerNameTT = "TTblock";
     m_TrackerTool->RequestSetMarkerName( markerNameTT );  
     m_TrackerTool->RequestConfigure();
     m_TrackerTool->RequestAttachToTracker( m_Tracker );
 
+
+    std::cout << " Attaching tracker tool with sPointer marker" << std::endl;
     m_TrackerTool2 = TrackerToolType::New();
-    m_TrackerTool2->SetLogger( m_Logger );
+    //m_TrackerTool2->SetLogger( m_Logger );
     std::string markerNamesPointer = "sPointer";
     m_TrackerTool2->RequestSetMarkerName( markerNamesPointer );  
     m_TrackerTool2->RequestConfigure();
@@ -121,12 +127,22 @@ public:
     m_Tracking = true;
     m_Tracker->RequestStartTracking();
     }
+
+  bool IsTrackingTurnedOn()
+    {
+    return m_Tracking;
+    }
   
   void DisableTracking()
     {
     m_Tracker->RequestReset();
     m_Tracker->RequestStopTracking();
     m_Tracking = false;
+    }
+
+  LoggerType * GetLogger()
+    {
+    return m_Logger;
     }
 
   void EnableInteraction()
@@ -171,9 +187,20 @@ public:
       }
     }
 
-  void GetTrackerToolTransform( TransformType & transform )
+  void GetTrackerToolTransform( int trackerToolNumber, TransformType & transform )
     {
-    m_Tracker->GetToolTransform( m_TrackerTool->GetTrackerToolIdentifier(), transform ); 
+    if ( trackerToolNumber == 1 )
+      {
+      m_Tracker->GetToolTransform( m_TrackerTool->GetTrackerToolIdentifier(), transform ); 
+      }
+    else if ( trackerToolNumber == 2)
+      {
+      m_Tracker->GetToolTransform( m_TrackerTool2->GetTrackerToolIdentifier(), transform ); 
+      }
+    else
+      {
+      std::cerr << "Unavailable tracker tool number is specified" << std::endl;
+      }
     }
 
 private:

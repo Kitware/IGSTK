@@ -35,8 +35,9 @@ IF (IGSTK_USE_FLTK)
 ENDIF (IGSTK_USE_FLTK)
 
 IF (IGSTKSandbox_USE_Qt)
-  SUBDIRS(
-    OneViewAndTrackingUsingQTWidget
-    )
+  SUBDIRS( OneViewAndTrackingUsingQTWidget )
+    IF (IGSTKSandbox_USE_MicronTracker) 
+      SUBDIRS( OneViewAndTrackingNewUsingQTWidgetAndMicronTracker )
+    ENDIF(IGSTKSandbox_USE_MicronTracker) 
 ENDIF (IGSTKSandbox_USE_Qt)
 
