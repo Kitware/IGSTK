@@ -217,6 +217,9 @@ m_StateMachine(this)
                            Refreshing, SetRenderWindowSize );
   igstkAddTransitionMacro( Refreshing, InValidRenderWindowSize,
                            Refreshing, ReportInvalidRenderWindowSize);
+  igstkAddTransitionMacro( Refreshing, InitializeInteractor,
+                           Refreshing, ReportInvalidRequest);
+ 
  
 
   igstkSetInitialStateMacro( Idle );
