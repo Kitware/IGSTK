@@ -33,24 +33,38 @@ int main(int , char** )
 
   igstk::RealTimeClock::Initialize();
 
-  if( argc < 4 )
-
-    {
-    std::cerr << " Usage: " << argv[0] << "\t" 
-                            << "MicronTracker_Camera_Calibration_file" << "\t"
-                            << "MicronTracker_initialization_file"  << "\t"
-                            << "Marker_template_directory " << std::endl; 
-    return EXIT_FAILURE;
-    }
-
- 
- 
   OneViewAndTrackingNewUsingFLTKWidgetImplementation   application;
 
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
   ellipsoid->SetRadius(200,200,300); // about a human skull
   
+  double validityTimeInMilliseconds = 1e20; // in seconds
+  igstk::Transform transform;
+  igstk::Transform::VectorType translation;
+  translation[0] = 0.0;
+  translation[1] = 0.0;
+  translation[2] = 0.0;
+  igstk::Transform::VersorType rotation;
+  rotation.Set( 0.0, 0.0, 0.0, 1.0 );
+  igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
+
+  transform.SetTranslationAndRotation( 
+      translation, rotation, errorValue, validityTimeInMilliseconds );
+
+  std::cout << "Transform to static ellipsoid = " << transform << std::endl;
+
+
+  igstk::Transform transformToView;
+  igstk::Transform::VectorType translationToView;
+  translationToView[0] = 0.0;
+  translationToView[1] = 0.0;
+  translationToView[2] = 0.0;
+  igstk::Transform::VersorType rotationToView;
+  rotationToView.Set( 0.0, 1.0, 0.0, 1.0 );
+  transformToView.SetTranslationAndRotation(
+      translationToView, rotationToView, errorValue, validityTimeInMilliseconds );
+
   // Create the ellipsoid representation
   igstk::EllipsoidObjectRepresentation::Pointer 
         ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
@@ -98,22 +112,13 @@ int main(int , char** )
   //view3D->SetCameraPosition(0.0, 0.0, -600.0);
   view3D->SetCameraPosition(-225.0,100.00,-1600.0);
 
+
   application.Display3D->RequestSetView( view3D );
 
   application.Show();
 
-  std::string  CameraCalibrationFileDirectory = argv[1];
-  std::string InitializationFile = argv[2];
-  std::string markerTemplateDirectory = argv[3];
-
-  application.InitializeTracker( InitializationFile, CameraCalibrationFileDirectory, markerTemplateDirectory );
-  application.ConfigureTrackerToolsAndAttachToTheTracker();
-
-  // Associate the cylinder spatial object to the first tracker tool 
-  application.AttachObjectToTrackerTool ( 1, cylinder );
-
-  // Associate the ellispsoid spatial object to the second tracker tool 
-  application.AttachObjectToTrackerTool ( 2, ellipsoid );
+  // Associate the Spatial Object to the tracker tool
+  application.AttachObjectToTrackerTool ( cylinder );
 
   igstk::Transform             toolTransform; 
   igstk::Transform::VectorType position;
