@@ -267,8 +267,8 @@ void TrackerToolNew::AttemptToDetachTrackerToolFromTrackerProcessing( void )
 }
 
 /** The "CheckIfTrackerToolIsConfigured" methods returns a boolean indicating
- * if the tracker tool is configured or not. This method is to be overriden in
- * the dervied classes
+ * if the tracker tool is configured or not. This method is to be overwritten in
+ * the derived classes
  */
 bool TrackerToolNew::CheckIfTrackerToolIsConfigured()
 {
@@ -420,7 +420,7 @@ void TrackerToolNew::NoProcessing( void )
 
 }
 
-/** Method to set the transform (compsition of raw and calibration transform)
+/** Method to set the transform (composition of raw and calibration transform)
  * This method should only be called by the Tracker */
 void 
 TrackerToolNew::RequestSetTransform( const TransformType & transform )
@@ -432,14 +432,14 @@ TrackerToolNew::RequestSetTransform( const TransformType & transform )
   this->InvokeEvent( event );
 }
 
-/** Method to set the calibration transfrom for the tracker tool */ 
+/** Method to set the calibration transform for the tracker tool */ 
 void 
 TrackerToolNew::RequestSetCalibrationTransform( const CalibrationTransformType & transform )
 {
   m_CalibrationTransform = transform;
 }
 
-/** Method to set the raw transfrom for the tracker tool */ 
+/** Method to set the raw transform for the tracker tool */ 
 void 
 TrackerToolNew::RequestSetRawTransform( const TransformType & transform )
 {
