@@ -112,7 +112,7 @@ int igstkAuroraTrackerNewSimulatedTest( int argc, char * argv[] )
 
   serialComm->SetLogger( logger );
 
-  serialComm->SetPortNumber( IGSTK_TEST_POLARIS_PORT_NUMBER );
+  serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );

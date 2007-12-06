@@ -152,7 +152,7 @@ IF(IGSTK_TEST_AURORA_ATTACHED)
            ${IGSTKSandbox_TESTS}
            igstkAuroraTrackerNewTest
            ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAuroraTrackerNewTestLoggerOutput.txt
-           ${IGSTK_TEST_POLARIS_PORT_NUMBER}
+           ${IGSTK_TEST_AURORA_PORT_NUMBER}
            )
   ADD_TEST(igstkAuroraTrackerToolNewTest ${IGSTKSandbox_TESTS}
 igstkAuroraTrackerToolNewTest)
