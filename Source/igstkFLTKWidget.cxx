@@ -38,7 +38,7 @@ namespace igstk
 FLTKWidget::FLTKWidget( int x, int y, int w, int h, const char *l ) : 
 Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
 { 
-  igstkLogMacro( DEBUG, "Constructor() called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::Constructor() called ...\n");
   
   m_Logger = NULL;
   
@@ -88,7 +88,7 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
 /** Destructor */
 FLTKWidget::~FLTKWidget()
 {
-  igstkLogMacro( DEBUG, "FLTKWidget Destructor() called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::igstkFLTKWidgeti::Destructor() called ...\n");
 
   if ( ! m_View.IsNull() ) 
     {
@@ -151,7 +151,7 @@ void FLTKWidget::SetReporter( ::itk::Object * reporter )
 unsigned long FLTKWidget::AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer )
 {
-  igstkLogMacro( DEBUG, "AddObserver() called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::AddObserver() called ...\n");
   
   if ( m_Reporter.IsNull() )
     {
@@ -163,7 +163,7 @@ unsigned long FLTKWidget::AddObserver( const ::itk::EventObject & event,
 /** Request set View */
 void FLTKWidget::RequestSetView( const ViewType* view )
 {
-  igstkLogMacro( DEBUG, "RequestSetView called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::RequestSetView called ...\n");
 
   if ( view == NULL )
     {
@@ -181,7 +181,7 @@ void FLTKWidget::RequestSetView( const ViewType* view )
 /** Connect view  */
 void FLTKWidget::ConnectViewProcessing( )
 {
-  igstkLogMacro( DEBUG, "ConnectViewProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::ConnectViewProcessing called ...\n");
 
   this->m_ProxyView.Connect( m_View );
   
@@ -230,7 +230,7 @@ void FLTKWidget::SetRenderWindowID(void)
 /** Request enable interactions */
 void FLTKWidget::RequestEnableInteractions()
 {
-  igstkLogMacro( DEBUG, "RequestEnableInteractions() called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::RequestEnableInteractions() called ...\n");
   igstkPushInputMacro( EnableInteractions );
   m_StateMachine.ProcessInputs();
 }
@@ -239,7 +239,7 @@ void FLTKWidget::RequestEnableInteractions()
 /** Request disable interactions */
 void FLTKWidget::RequestDisableInteractions()
 {
-  igstkLogMacro( DEBUG, "RequestDisableInteractions() called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::RequestDisableInteractions() called ...\n");
   igstkPushInputMacro( DisableInteractions );
   m_StateMachine.ProcessInputs();
 }
@@ -247,14 +247,14 @@ void FLTKWidget::RequestDisableInteractions()
 /** */
 void FLTKWidget::EnableInteractionsProcessing()
 {
-  igstkLogMacro( DEBUG, "EnableInteractionsProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::EnableInteractionsProcessing() called ...\n");
   m_InteractionHandling = true;
 }
 
 /** */
 void FLTKWidget::DisableInteractionsProcessing()
 {
-  igstkLogMacro( DEBUG, "DisableInteractionsProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::DisableInteractionsProcessing() called ...\n");
   m_InteractionHandling = false;
 }
 
@@ -262,7 +262,7 @@ void FLTKWidget::DisableInteractionsProcessing()
 /** FLTK event handlers */
 void FLTKWidget::flush(void)
 {
-  igstkLogMacro( DEBUG, "flush() called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::flush() called ...\n");
   // err, we don't want to do any fansy pansy Fl_Gl_Window stuff, so we
   // bypass all of it (else we'll get our front and back buffers in all
   // kinds of tangles, and need extra glXSwapBuffers() calls and all that)
@@ -272,7 +272,7 @@ void FLTKWidget::flush(void)
 /** Draw function */
 void FLTKWidget::draw(void)
 {
-  igstkLogMacro( DEBUG, "draw() called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::draw() called ...\n");
 
   // make sure the vtk part knows where and how large we are
   //
@@ -310,7 +310,7 @@ void FLTKWidget::hide()
 /** Resize function */
 void FLTKWidget::resize( int x, int y, int w, int h ) 
 {
-  igstkLogMacro( DEBUG, "resize() called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::resize() called ...\n");
 
   // make sure VTK knows about the new situation
   if ( ! m_View.IsNull() )
@@ -326,7 +326,7 @@ void FLTKWidget::resize( int x, int y, int w, int h )
 /** main FLTK event handler */
 int FLTKWidget::handle( int event ) 
 {
-  igstkLogMacro( DEBUG, "handle() called ...\n");
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::handle() called ...\n");
 
   vtkRenderWindowInteractor * renderWindowInteractor = 
                                                    m_RenderWindowInteractor;

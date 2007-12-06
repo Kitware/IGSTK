@@ -46,7 +46,7 @@ m_StateMachine(this)
   /** Coordinate system interface */
   igstkCoordinateSystemClassInterfaceConstructorMacro();
 
-  igstkLogMacro( DEBUG, "Constructor() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::Constructor() called ...\n");
   
   m_Logger = NULL;
   
@@ -245,7 +245,7 @@ m_StateMachine(this)
 /** Destructor */
 ViewNew::~ViewNew()
 {
-  igstkLogMacro( DEBUG, "ViewNew Destructor() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::Destructor() called ...\n");
   
   m_PulseGenerator->RequestStop();
 
@@ -310,20 +310,20 @@ void ViewNew::InitializeRenderWindowInteractorProcessing()
 unsigned long ViewNew::AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer )
 {
-  igstkLogMacro( DEBUG, "AddObserver() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::AddObserver() called ...\n");
   return m_Reporter->AddObserver( event, observer );
 }
 
 void ViewNew::RemoveObserver( unsigned long tag )
 {
-  igstkLogMacro( DEBUG, "RemoveObserver() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RemoveObserver() called ...\n");
   m_Reporter->RemoveObserver( tag );
 }
 
 /** */
 void ViewNew::RequestAddActor( vtkProp * actor )
 {
-  igstkLogMacro( DEBUG, "RequestAddActor() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RequestAddActor() called ...\n");
   m_ActorToBeAdded = actor;
   if( !actor )
     {
@@ -340,7 +340,7 @@ void ViewNew::RequestAddActor( vtkProp * actor )
 /** */
 void ViewNew::AddActorProcessing()
 {
-  igstkLogMacro( DEBUG, "AddActorProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::AddActorProcessing() called ...\n");
   m_Renderer->AddActor( m_ActorToBeAdded );
 }
 
@@ -348,7 +348,7 @@ void ViewNew::AddActorProcessing()
 /** */
 void ViewNew::RequestRemoveActor( vtkProp * actor )
 {
-  igstkLogMacro( DEBUG, "RequestRemoveActor() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RequestRemoveActor() called ...\n");
   m_ActorToBeRemoved = actor;
   if( !actor )
     {
@@ -366,14 +366,14 @@ void ViewNew::RequestRemoveActor( vtkProp * actor )
 /** */
 void ViewNew::RemoveActorProcessing()
 {
-  igstkLogMacro( DEBUG, "RemoveActorProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RemoveActorProcessing() called ...\n");
   m_Renderer->RemoveActor( m_ActorToBeRemoved );
 }
 
 /** */
 void ViewNew::RequestResetCamera()
 {
-  igstkLogMacro( DEBUG, "RequestResetCamera() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RequestResetCamera() called ...\n");
   igstkPushInputMacro( ResetCamera );
   m_StateMachine.ProcessInputs();
 }
@@ -381,7 +381,7 @@ void ViewNew::RequestResetCamera()
 /** */
 void ViewNew::ResetCameraProcessing()
 {
-  igstkLogMacro( DEBUG, "ResetCameraProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::ResetCameraProcessing() called ...\n");
   m_Renderer->ResetCamera();
   m_Camera->SetClippingRange( 0.1, 10000);
 }
@@ -389,7 +389,7 @@ void ViewNew::ResetCameraProcessing()
 /** */
 void ViewNew::StartProcessing()
 {
-  igstkLogMacro( DEBUG, "StartProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::StartProcessing() called ...\n");
   // the internal pulse generator will control the redraws
   m_PulseGenerator->RequestStart();
 }
@@ -397,7 +397,7 @@ void ViewNew::StartProcessing()
 /** */
 void ViewNew::StopProcessing()
 {
-  igstkLogMacro( DEBUG, "StopProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::StopProcessing() called ...\n");
   // the internal pulse generator will control the redraws
   m_PulseGenerator->RequestStop();
 }
@@ -405,7 +405,7 @@ void ViewNew::StopProcessing()
 /** Set RenderWindow size */
 void ViewNew::SetRenderWindowSizeProcessing()
 {
-  igstkLogMacro( DEBUG, "SetRenderWindowSizeProcessing(...) called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::SetRenderWindowSizeProcessing(...) called ...\n");
 
   m_RenderWindowInteractor->UpdateSize( m_RenderWindowWidthToBeSet,
                                         m_RenderWindowHeightToBeSet);
@@ -429,7 +429,7 @@ void ViewNew::SetRenderWindowSizeProcessing()
 /** Set camera position */
 void ViewNew::RequestSetRenderWindowSize( int width , int height )
 {
-  igstkLogMacro( DEBUG, "RequestSetRenderWindowSize(...) called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RequestSetRenderWindowSize(...) called ...\n");
 
   const int * size = m_RenderWindowInteractor->GetSize();
     
@@ -456,35 +456,35 @@ void ViewNew::RequestSetRenderWindowSize( int width , int height )
 /** Set camera position */
 void ViewNew::SetCameraPosition( double x, double y, double z )
 {
-  igstkLogMacro( DEBUG, "SetCameraPosition(...) called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::SetCameraPosition(...) called ...\n");
   m_Camera->SetPosition( x,y,z );
 }
 
 /** Set camera focal point */
 void ViewNew::SetFocalPoint( double x, double y, double z )
 {
-  igstkLogMacro( DEBUG, "SetFocalPoint(...) called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::SetFocalPoint(...) called ...\n");
   m_Camera->SetFocalPoint( x,y,z );
 }
 
 /** Set camera view up vector */
 void ViewNew::SetCameraViewUp( double vx, double vy, double vz )
 {
-  igstkLogMacro( DEBUG, "RequestSetViewUp(...) called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RequestSetViewUp(...) called ...\n");
   m_Camera->SetViewUp( vx,vy,vz );
 }
 
 /** Set camera clipping range */
 void ViewNew::SetClippingRange( double dNear, double dFar)
 {
-  igstkLogMacro( DEBUG, "SetClippingRange(...) called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::SetClippingRange(...) called ...\n");
   m_Camera->SetClippingRange( dNear, dFar );
 }
 
 /** Turn on/off parallel projection */
 void ViewNew::SetParallelProjection( bool flag )
 {
-  igstkLogMacro( DEBUG, "SetParallelProjection(...) called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::SetParallelProjection(...) called ...\n");
   m_Camera->SetParallelProjection( flag );
 }
 
@@ -492,7 +492,7 @@ void ViewNew::SetParallelProjection( bool flag )
 void ViewNew::
 SetRendererBackgroundColor( double red, double green, double blue)
 {
-  igstkLogMacro( DEBUG, "SetRendererBackgroundColor(...) called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::SetRendererBackgroundColor(...) called ...\n");
   m_Renderer->SetBackground( red, green, blue );
 }
 
@@ -500,14 +500,14 @@ SetRendererBackgroundColor( double red, double green, double blue)
 void ViewNew::
 SetCameraZoomFactor( double factor )
 {
-  igstkLogMacro( DEBUG, "SetCameraZoomFactor(...) called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::SetCameraZoomFactor(...) called ...\n");
   m_Camera->Zoom( factor );
 }
 
 /** Define the refresh rate by programming the internal pulse generator */
 void ViewNew::SetRefreshRate( double frequencyHz )
 {
-  igstkLogMacro( DEBUG, "SetRefreshRate() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::SetRefreshRate() called ...\n");
   // Let the state machine of the pulse generator manage this request
   m_PulseGenerator->RequestSetFrequency( frequencyHz );
 }
@@ -516,7 +516,7 @@ void ViewNew::SetRefreshRate( double frequencyHz )
  * the pulse generator. */
 void ViewNew::RefreshRender()
 {
-  igstkLogMacro( DEBUG, "RefreshRender() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RefreshRender() called ...\n");
 
   // First, compute the time at which we
   // estimate that the scene will be rendered
@@ -546,7 +546,7 @@ void ViewNew::RefreshRender()
 /** Request for Adding an object to the ViewNew */
 void ViewNew::RequestAddObject( ObjectRepresentation* pointer )
 {
-  igstkLogMacro( DEBUG, "RequestAddObject() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RequestAddObject() called ...\n");
 
   m_ObjectToBeAdded = pointer;
 
@@ -574,7 +574,7 @@ void ViewNew::RequestAddObject( ObjectRepresentation* pointer )
 /** Request for adding annotation */
 void ViewNew::RequestAddAnnotation2D ( Annotation2D::Pointer annotation )
 {
-  igstkLogMacro( DEBUG, "RequestAddAnnotation2D() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RequestAddAnnotation2D() called ...\n");
 
   m_Annotation2DToBeAdded = annotation;
 
@@ -595,7 +595,7 @@ void ViewNew::RequestAddAnnotation2D ( Annotation2D::Pointer annotation )
  * with a valid value in the ObjectToBeAdded. */
 void ViewNew::AddObjectProcessing()
 {
-  igstkLogMacro( DEBUG, "AddObjectProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::AddObjectProcessing() called ...\n");
   
   m_Objects.push_back( m_ObjectToBeAdded );
   m_RenderWindowInteractor->Modified();
@@ -614,7 +614,7 @@ void ViewNew::AddObjectProcessing()
 
 void ViewNew::AddAnnotation2DProcessing( )
 {
-  igstkLogMacro( DEBUG, "AddAnnotation2DProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::AddAnnotation2DProcessing called ...\n");
   
   const int * size = m_RenderWindowInteractor->GetSize();
   std::cout << "RenderWindowInteractor size: " << size[0] <<",";
@@ -635,7 +635,7 @@ void ViewNew::AddAnnotation2DProcessing( )
 /** Request for removing a spatial object from the ViewNew */
 void ViewNew::RequestRemoveObject( ObjectRepresentation* pointer )
 {
-  igstkLogMacro( DEBUG, "RequestRemoveObject() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RequestRemoveObject() called ...\n");
 
   m_ObjectToBeRemoved = pointer;
   
@@ -668,7 +668,7 @@ void ViewNew::RequestRemoveObject( ObjectRepresentation* pointer )
  * m_IteratorToObjectToBeRemoved is valid. */
 void ViewNew::RemoveObjectProcessing()
 {
-  igstkLogMacro( DEBUG, "RemoveObjectProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RemoveObjectProcessing() called ...\n");
 
   m_Objects.erase( m_IteratorToObjectToBeRemoved );
   m_RenderWindowInteractor->Modified();
@@ -690,7 +690,7 @@ void ViewNew::RemoveObjectProcessing()
  * */
 void ViewNew::RequestStart()
 {
-  igstkLogMacro( DEBUG, "RequestStart() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RequestStart() called ...\n");
 
   igstkPushInputMacro( StartRefreshing );
   m_StateMachine.ProcessInputs();
@@ -702,7 +702,7 @@ void ViewNew::RequestStart()
  * */
 void ViewNew::RequestStop()
 {
-  igstkLogMacro( DEBUG, "RequestStop() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RequestStop() called ...\n");
 
   igstkPushInputMacro( StopRefreshing );
   m_StateMachine.ProcessInputs();
@@ -713,7 +713,7 @@ void ViewNew::RequestStop()
  *  The fileformat must be PNG. */
 void ViewNew::RequestSaveScreenShot( const std::string & filename )
 {
-  igstkLogMacro( DEBUG, "RequestSaveScreenShot() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::RequestSaveScreenShot() called ...\n");
 
   std::string fileNameExtension =
         ::itksys::SystemTools::GetFilenameLastExtension( filename );
@@ -770,7 +770,7 @@ void ViewNew::SaveScreenShotWhileRefreshingProcessing()
 /** Save current screenshot in idle state */
 void ViewNew::SaveScreenShotWhileIdleProcessing()
 {
-  igstkLogMacro( DEBUG, "SaveScreenShotWhileIdleProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::SaveScreenShotWhileIdleProcessing() called ...\n");
   
   this->SaveScreenShot();
 }
@@ -778,7 +778,7 @@ void ViewNew::SaveScreenShotWhileIdleProcessing()
 /** Save current screenshot */
 void ViewNew::SaveScreenShot()
 {
-  igstkLogMacro( DEBUG, "SaveScreenShot() called ...\n");
+  igstkLogMacro( DEBUG, "igstkViewNew::SaveScreenShot() called ...\n");
 
   vtkWindowToImageFilter * windowToImageFilter = 
                                               vtkWindowToImageFilter::New();

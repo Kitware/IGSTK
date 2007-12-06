@@ -96,7 +96,7 @@ QVTKWidget( parent, f ), m_StateMachine(this), m_ProxyView(this)
 /** Destructor */
 QTWidget::~QTWidget()
 {
-  igstkLogMacro( DEBUG, "Destructor called ...\n");
+  igstkLogMacro( DEBUG, "igstkQTWidget::Destructor called ...\n");
 
   if ( m_PointPicker != NULL )
     {
@@ -135,7 +135,7 @@ void QTWidget::SetReporter( ::itk::Object * reporter )
 unsigned long QTWidget::AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer )
 {
-  igstkLogMacro( DEBUG, "AddObserver() called ...\n");
+  igstkLogMacro( DEBUG, "igstkQTWidget::AddObserver() called ...\n");
   
   if ( m_Reporter.IsNull() )
     {
@@ -148,7 +148,7 @@ unsigned long QTWidget::AddObserver( const ::itk::EventObject & event,
 /** Request set view */
 void QTWidget::RequestSetView( const ViewType* view)
 {
-  igstkLogMacro( DEBUG, "RequestSetView called ...\n");
+  igstkLogMacro( DEBUG, "igstkQTWidget::RequestSetView called ...\n");
 
   if ( view == NULL )
     {
@@ -166,7 +166,7 @@ void QTWidget::RequestSetView( const ViewType* view)
 /** Set View */
 void QTWidget::ConnectViewProcessing( )
 {
-  igstkLogMacro( DEBUG, "ConnectViewProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstkQTWidget::ConnectViewProcessing called ...\n");
 
   this->m_ProxyView.Connect( m_View );
   this->SetRenderWindow( this->m_Renderer->GetRenderWindow());
@@ -185,7 +185,7 @@ void QTWidget::ConnectViewProcessing( )
 /** Request enable interactions */
 void QTWidget::RequestEnableInteractions()
 {
-  igstkLogMacro( DEBUG, "RequestEnableInteractions() called ...\n");
+  igstkLogMacro( DEBUG, "igstkQTWidget::RequestEnableInteractions() called ...\n");
   igstkPushInputMacro( EnableInteractions );
   m_StateMachine.ProcessInputs();
 }
@@ -194,7 +194,7 @@ void QTWidget::RequestEnableInteractions()
 /** Request disable interactions */
 void QTWidget::RequestDisableInteractions()
 {
-  igstkLogMacro( DEBUG, "RequestDisableInteractions() called ...\n");
+  igstkLogMacro( DEBUG, "igstkQTWidget::RequestDisableInteractions() called ...\n");
   igstkPushInputMacro( DisableInteractions );
   m_StateMachine.ProcessInputs();
 }
@@ -202,14 +202,14 @@ void QTWidget::RequestDisableInteractions()
 /** */
 void QTWidget::EnableInteractionsProcessing()
 {
-  igstkLogMacro( DEBUG, "EnableInteractionsProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstkQTWidget::EnableInteractionsProcessing() called ...\n");
   m_InteractionHandling = true;
 }
 
 /** */
 void QTWidget::DisableInteractionsProcessing()
 {
-  igstkLogMacro( DEBUG, "DisableInteractionsProcessing() called ...\n");
+  igstkLogMacro( DEBUG, "igstkQTWidget::DisableInteractionsProcessing() called ...\n");
   m_InteractionHandling = false;
 }
 
