@@ -135,8 +135,6 @@ private:
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( Select5DOFTrackerTool );
   igstkDeclareInputMacro( Select6DOFTrackerTool );
-  igstkDeclareInputMacro( 5DOFTrackerToolSelected );
-  igstkDeclareInputMacro( 6DOFTrackerToolSelected );
   igstkDeclareInputMacro( ValidPortNumber );
   igstkDeclareInputMacro( InValidPortNumber );
   igstkDeclareInputMacro( ValidChannelNumber );

@@ -69,8 +69,6 @@ AuroraTrackerToolNew::AuroraTrackerToolNew():m_StateMachine(this)
   igstkAddInputMacro( ValidToolId ); 
   igstkAddInputMacro( InValidToolId ); 
 
-  m_StateMachine.SetReadyToRun();
-
   // Programming the state machine transitions:
 
   // Transitions from the Idle
@@ -167,6 +165,7 @@ AuroraTrackerToolNew::AuroraTrackerToolNew():m_StateMachine(this)
 
   // Inputs to the state machine
   igstkSetInitialStateMacro( Idle );
+  m_StateMachine.SetReadyToRun();
 
 }
 
@@ -187,7 +186,7 @@ void AuroraTrackerToolNew::RequestSelect5DOFTrackerTool()
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerToolNew::RequestSelect5DOFTrackerTool called ...\n");
 
-  m_StateMachine.PushInput( m_5DOFTrackerToolSelectedInput ); 
+  m_StateMachine.PushInput( m_Select5DOFTrackerToolInput ); 
   m_StateMachine.ProcessInputs();
 }
 
@@ -197,7 +196,7 @@ void AuroraTrackerToolNew::RequestSelect6DOFTrackerTool()
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerToolNew::RequestSelect6DOFTrackerTool called ...\n");
 
-  m_StateMachine.PushInput( m_6DOFTrackerToolSelectedInput ); 
+  m_StateMachine.PushInput( m_Select6DOFTrackerToolInput ); 
   m_StateMachine.ProcessInputs();
 }
 
