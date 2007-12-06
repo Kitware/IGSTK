@@ -45,9 +45,6 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
   igstkAddStateMacro( NotAvailable );
   igstkAddStateMacro( Tracked );
 
-  // Inputs to the state machine
-  igstkSetInitialStateMacro( Idle );
-
   // Set the input descriptors
   igstkAddInputMacro( ConfigureTool );
   igstkAddInputMacro( ToolConfigurationSuccess ); 
@@ -63,8 +60,6 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
   igstkAddInputMacro( DetachmentFromTrackerSuccess ); 
   igstkAddInputMacro( DetachmentFromTrackerFailure ); 
 
-
-  m_StateMachine.SetReadyToRun();
 
   // Programming the state machine transitions:
 
@@ -156,6 +151,11 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
                            DetachmentFromTrackerFailure,
                            Attached,
                            TrackerToolDetachmentFromTrackerFailure );
+
+  // Inputs to the state machine
+  igstkSetInitialStateMacro( Idle );
+
+  m_StateMachine.SetReadyToRun();
 
 }
 
