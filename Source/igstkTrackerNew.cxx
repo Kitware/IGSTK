@@ -840,17 +840,19 @@ void TrackerNew::CloseFromTrackingStateProcessing( void )
 /** Detach all tracker tools from the tracker */
 void TrackerNew::DetachAllTrackerToolsFromTracker()
 {
+
   typedef TrackerToolsContainerType::iterator  InputConstIterator;
 
-  InputConstIterator inputItr = m_TrackerTools.begin();
+  InputConstIterator inputItr = m_TrackerTools.begin();  
   InputConstIterator inputEnd = m_TrackerTools.end();
 
   while( inputItr != inputEnd )
     {
     this->RemoveTrackerToolFromInternalDataContainers( inputItr->first ); 
-    this->m_TrackerTools.erase( inputItr->first );
     ++inputItr;
     }
+
+  m_TrackerTools.clear();
 }
  
 /** The "CloseFromCommunicatingStateProcessing" method closes
