@@ -23,6 +23,7 @@
 
 #include "igstkAuroraTrackerToolNew.h"
 #include <sstream>
+#include <itksys/SystemTools.hxx>
 
 namespace igstk
 {
@@ -246,10 +247,7 @@ void AuroraTrackerToolNew::RequestSetSROMFileName( std::string filename )
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerToolNew::RequestSetSROMFileName called ...\n");
 
-  //FIXME do more filename validation
-  //Check if the file exists
-  
-  if ( filename != "" )
+  if ( filename == "" || !itksys::SystemTools::FileExists( filename.c_str() ) )
     {
     m_StateMachine.PushInput( m_InValidSROMFileNameInput );
     m_StateMachine.ProcessInputs();
@@ -287,6 +285,15 @@ void AuroraTrackerToolNew::SetPortNumberProcessing( )
   std::stringstream identifierStream;
   identifierStream << m_PortNumber;
   this->SetTrackerToolIdentifier( identifierStream.str() );
+
+  // For 6DOF type tracker tool, once port number is specified, the
+  // tracker tool can be marked as configured and can be attached to the
+  // tracker. Specification of SROM file and tool ID is optional.
+  if ( ! m_5DOFTrackerToolSelected ) 
+    {
+    m_TrackerToolConfigured = true;
+    }
+  // For 5DOF type tracker tool, channel number must be specified
 }
 
 /** Report 5DOF tracker tool selected */ 
@@ -331,6 +338,11 @@ void AuroraTrackerToolNew::SetChannelNumberProcessing( )
   std::stringstream identifierStream;
   identifierStream << m_PortNumber << "_" << m_ChannelNumber;
   this->SetTrackerToolIdentifier( identifierStream.str() );
+
+  // for 5DOF type tracker tool, once port and channel number are specified, the
+  // tracker tool can be marked as configured and can be attached to the
+  // tracker. Specification of SROM file and tool ID is optional.
+  m_TrackerToolConfigured = true;
 }
 
 /** Report Invalid channel number specified */ 
@@ -341,8 +353,6 @@ void AuroraTrackerToolNew::ReportInValidChannelNumberSpecifiedProcessing( )
   std::cerr << "Invalid channel number specified " << std::endl;
 
 }
-
-
 
 /** Set valid SROM filename */ 
 void AuroraTrackerToolNew::SetSROMFileNameProcessing( )
