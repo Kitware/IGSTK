@@ -255,7 +255,8 @@ protected:
   /** Coordinate Reference System */
   CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;
 
-  TrackerNew        * m_Tracker;
+  /** Tracker to which the tool will be attached to */
+  TrackerNew        * m_TrackerToAttachTo;
 
   /** Define the coordinate system interface 
    */
