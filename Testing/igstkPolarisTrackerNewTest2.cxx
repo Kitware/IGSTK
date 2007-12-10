@@ -288,8 +288,7 @@ int igstkPolarisTrackerNewTest2( int argc, char * argv[] )
 
     //There are two ways of accessing the transform
     //First option: use GetToolTransform method
-    tracker->GetToolTransform( 
-      trackerTool2->GetTrackerToolIdentifier(), transform );
+    transform = trackerTool2->GetCalibratedRawTransform();
 
     position = transform.GetTranslation();
     std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 

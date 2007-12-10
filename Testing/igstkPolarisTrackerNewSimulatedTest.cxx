@@ -183,18 +183,14 @@ int igstkPolarisTrackerNewSimulatedTest( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-    tracker->GetToolTransform( 
-      trackerTool->GetTrackerToolIdentifier(), transform );
-
+    transform = trackerTool->GetCalibratedRawTransform();
     position = transform.GetTranslation();
     std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
               << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
 
-    tracker->GetToolTransform( 
-      trackerTool2->GetTrackerToolIdentifier(), transform );
-
+    transform = trackerTool2->GetCalibratedRawTransform();
     position = transform.GetTranslation();
     std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
               << "  Position = (" << position[0]

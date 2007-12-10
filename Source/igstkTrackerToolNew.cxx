@@ -28,9 +28,12 @@ TrackerToolNew::TrackerToolNew(void):m_StateMachine(this)
   /** Coordinate system interface */
   igstkCoordinateSystemClassInterfaceConstructorMacro();
 
-  // Configure the variables
+  // set all transforms to identity 
   m_RawTransform.SetToIdentity( 1e300 );  
+  m_CalibratedRawTransform.SetToIdentity( 1e300 );
+  m_CalibratedRawTransformWithRespectToReferenceTrackerTool.SetToIdentity( 1e300 );
   m_CalibrationTransform.SetToIdentity( 1e300 );  
+
   m_Updated = false; // not yet updated
 
 //  m_CoordinateReferenceSystem = CoordinateReferenceSystemType::New();
@@ -420,13 +423,15 @@ void TrackerToolNew::NoProcessing( void )
 
 }
 
-/** Method to set the transform (composition of raw and calibration transform)
+/** Method to set the calibrated raw transform with respect to 
+ *  a reference tracker tool.
  * This method should only be called by the Tracker */
 void 
-TrackerToolNew::SetTransform( const TransformType & transform )
+TrackerToolNew
+::SetCalibratedRawTransformWithRespectToReferenceTrackerTool( const TransformType & transform )
 {
-  m_Transform = transform;
-
+  m_CalibratedRawTransformWithRespectToReferenceTrackerTool = 
+                                                         transform;
   TransformModifiedEvent event;
   event.Set( transform );
   this->InvokeEvent( event );
@@ -445,6 +450,14 @@ void
 TrackerToolNew::SetRawTransform( const TransformType & transform )
 {
   m_RawTransform = transform;
+}
+
+/** Method to set the calibrated raw transform for the tracker tool
+ *  This method should only be called by the Tracker */ 
+void 
+TrackerToolNew::SetCalibratedRawTransform( const TransformType & transform )
+{
+  m_CalibratedRawTransform = transform;
 }
 
 /** Attach and spatial object to be tracked.
@@ -467,10 +480,13 @@ void TrackerToolNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Transform: "     << this->m_Transform << std::endl;
+  os << indent << "Transform: "    
+     << this->m_CalibratedRawTransformWithRespectToReferenceTrackerTool << std::endl;
   os << indent << "Raw transform: " << this->m_RawTransform << std::endl;
   os << indent << "CalibrationTransform: "
                << this->m_CalibrationTransform << std::endl;
+  os << indent << "Calibrated raw transform: "
+               << this->m_CalibratedRawTransform << std::endl;
 }
 
 std::ostream& operator<<(std::ostream& os, const TrackerToolNew& o)

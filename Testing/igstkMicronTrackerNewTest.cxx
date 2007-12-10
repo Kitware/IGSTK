@@ -144,25 +144,31 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  for(unsigned int i=0; i<20; i++)
+  for(unsigned int i=0; i<100; i++)
     {
     tracker->RequestUpdateStatus();
 
     TransformType             transform;
     VectorType                position;
 
-    tracker->GetToolTransform( 
-      trackerTool->GetTrackerToolIdentifier(), transform );
-
+    transform = trackerTool->GetCalibratedRawTransform();
     position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+    std::cout << "Trackertool calibrated raw transform:" 
+              << trackerTool->GetTrackerToolIdentifier() 
               << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
 
-    tracker->GetToolTransform( 
-      trackerTool2->GetTrackerToolIdentifier(), transform );
+    transform = trackerTool->GetRawTransform();
+    position = transform.GetTranslation();
+    std::cout << "Trackertool raw transform :" 
+              << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
 
+
+    transform = trackerTool2->GetCalibratedRawTransform();
     position = transform.GetTranslation();
     std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
               << "  Position = (" << position[0]
@@ -182,15 +188,14 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
 
   tracker->RequestStartTracking();
 
-  for(unsigned int i=0; i<20; i++)
+  for(unsigned int i=0; i<100; i++)
     {
     tracker->RequestUpdateStatus();
 
     TransformType             transform;
     VectorType                position;
 
-    tracker->GetToolTransform( 
-      trackerTool2->GetTrackerToolIdentifier(), transform );
+    transform = trackerTool2->GetCalibratedRawTransform();
 
     position = transform.GetTranslation();
     std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 

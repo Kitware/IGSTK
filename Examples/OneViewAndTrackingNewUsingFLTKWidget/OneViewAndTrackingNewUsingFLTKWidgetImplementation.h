@@ -162,7 +162,7 @@ public:
 
   void GetTrackerToolTransform( TransformType & transform )
     {
-    m_Tracker->GetToolTransform( m_TrackerTool->GetTrackerToolIdentifier(), transform ); 
+    transform = m_TrackerTool->GetRawTransform();
     }
 
   void AttachTrackerToView( igstk::ViewNew * view )

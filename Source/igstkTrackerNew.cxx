@@ -730,12 +730,22 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
       {
       TransformType transform = (inputItr->second)->GetRawTransform();
 
+      const double timeToExpiration = transform.GetExpirationTime() - 
+                                      transform.GetStartTime();
+
       TransformType::VersorType rotation;
       TransformType::VectorType translation;
 
-
       translation = transform.GetTranslation();
+      rotation    = transform.GetRotation();
 
+      TransformType toolRawTransform;
+      toolRawTransform.SetTranslationAndRotation( translation, rotation,
+                        transform.GetError(),
+                        timeToExpiration );
+
+      (inputItr->second)->SetRawTransform( toolRawTransform );
+ 
       CalibrationTransformType toolCalibrationTransform
                                     = (inputItr->second)->GetCalibrationTransform();
 
@@ -747,6 +757,14 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
       translation = transform.GetRotation().Transform(translation);
       translation += transform.GetTranslation();
 
+      TransformType toolCalibratedRawTransform;
+      toolCalibratedRawTransform.SetTranslationAndRotation( translation, rotation,
+                        transform.GetError(),
+                        timeToExpiration );
+
+
+      (inputItr->second)->SetCalibratedRawTransform( toolCalibratedRawTransform );
+        
       // T ' = R^-1 * T * C
       //
       // where:
@@ -754,6 +772,8 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
       // " C " is the tool calibration transform.
       // " R^-1 " is the inverse of the transform for the reference tool,
       // applying ReferenceTool
+      
+      TransformType toolCalibratedRawTransformWRTReferencetrackertool;
       if ( m_ApplyingReferenceTool )
         {
         // since this is an inverse transform, apply translation first
@@ -772,28 +792,24 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
         translation = inverseRotation.Transform(translation);
         rotation = inverseRotation*rotation;
 
+        toolCalibratedRawTransformWRTReferencetrackertool.SetTranslationAndRotation( 
+                          translation, rotation,
+                          transform.GetError(),
+                          timeToExpiration );
+
+        (inputItr->second)->SetCalibratedRawTransformWithRespectToReferenceTrackerTool( 
+                                             toolCalibratedRawTransformWRTReferencetrackertool );
         }
-
-      const double timeToExpiration = transform.GetExpirationTime() - 
-                                      transform.GetStartTime();
-
-      TransformType toolTransform;
-      toolTransform.SetTranslationAndRotation( translation, rotation,
-                        transform.GetError(),
-                        timeToExpiration );
-
-      // FIXME: For debugging purpose set the tool transform. This will be
-      // removed.
-      (inputItr->second)->SetTransform( toolTransform );
 
       // set transfrom with respect to the reference tool
       if ( m_ApplyingReferenceTool )
         {        
-        (inputItr->second)->RequestSetTransformAndParent( toolTransform, m_ReferenceTool.GetPointer() );
+        (inputItr->second)->RequestSetTransformAndParent( 
+                                      toolCalibratedRawTransformWRTReferencetrackertool, m_ReferenceTool.GetPointer() );
         }
       else
         {
-        (inputItr->second)->RequestSetTransformAndParent( toolTransform, this );
+        (inputItr->second)->RequestSetTransformAndParent( toolCalibratedRawTransform, this );
         }
       }
     ++inputItr;
@@ -960,25 +976,6 @@ TrackerNew::
 RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier ) 
 {
   return SUCCESS;
-}
-
-/** Get the tracker tool transform (composition of raw and calibration transform)
- *  using the unique identifier tracker.*/
-void TrackerNew::GetToolTransform( std::string toolIdentifier,
-                                TransformType & transform )
-{
-  typedef TrackerToolsContainerType::iterator InputIterator;
-  InputIterator toolItr = m_TrackerTools.find( toolIdentifier );
-
-  if( toolItr != m_TrackerTools.end() )
-    {
-    TrackerToolConstPointer tool = m_TrackerTools[ toolIdentifier ];
-    transform = tool->GetTransform();
-    }
-  else
-    {
-    std::cerr << "Tracker tool is not currently attached to the tracker " << std::endl;
-    }
 }
 
 TrackerNew::TrackerToolsContainerType 

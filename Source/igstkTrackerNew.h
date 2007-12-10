@@ -173,9 +173,6 @@ public:
   /** Set the tracker tool tranform using the unique identifier */
   void SetToolTransform( std::string identifier, TransformType transform ); 
 
-  /** Get the tracker tool tranform using the unique identifier  */
-  void GetToolTransform( std::string identifier, TransformType & transform ); 
-
   /** Set a reference tracker tool */
   void RequestSetReferenceTool( TrackerToolType * trackerTool );
 

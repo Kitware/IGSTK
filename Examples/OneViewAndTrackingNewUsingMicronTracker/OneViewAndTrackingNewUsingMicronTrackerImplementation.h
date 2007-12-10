@@ -191,11 +191,11 @@ public:
     {
     if ( trackerToolNumber == 1 )
       {
-      m_Tracker->GetToolTransform( m_TrackerTool->GetTrackerToolIdentifier(), transform ); 
+      transform = m_TrackerTool->GetRawTransform();
       }
     else if ( trackerToolNumber == 2)
       {
-      m_Tracker->GetToolTransform( m_TrackerTool2->GetTrackerToolIdentifier(), transform ); 
+      transform = m_TrackerTool2->GetRawTransform();
       }
     else
       {

@@ -42,9 +42,6 @@ itkEventMacro( ToolTrackingStartedEvent,TrackerToolNewEvent);
 itkEventMacro( ToolTrackingStoppedEvent,TrackerToolNewEvent);
 
 class TrackerNew;
-class PolarisTrackerNew;
-class AuroraTrackerNew;
-class MicronTrackerNew;
 
 /**  \class TrackerToolNew
   *  \brief Generic implementation of the Tracker tool.
@@ -86,7 +83,8 @@ public:
   typedef AxesObject        CoordinateReferenceSystemType;
   
   /** Get the tool transform. */
-  igstkGetMacro( Transform, TransformType ); 
+  igstkGetMacro( CalibratedRawTransformWithRespectToReferenceTrackerTool,
+                                   TransformType ); 
 
   /** Get the calibration transform for this tool. */
   igstkGetMacro( CalibrationTransform, CalibrationTransformType );
@@ -96,6 +94,9 @@ public:
 
   /** Get the raw transform for this tool. */
   igstkGetMacro( RawTransform, TransformType );
+
+  /** Get calibrated raw transform for this tool. */
+  igstkGetMacro( CalibratedRawTransform, TransformType );
 
   /** Get whether the tool was updated during tracker UpdateStatus() */
   igstkGetMacro( Updated, bool );
@@ -155,11 +156,16 @@ protected:
   /** Report failure in tracker tool attachment attempt */ 
   void ReportFailedTrackerToolAttachment();
 
-  /** Set the transform (composition of the raw and calibration transform ). */
-  void SetTransform( const TransformType & transform ); 
+  /** Set calibrated raw transform with respect to a reference
+    * tracker tool */
+  void SetCalibratedRawTransformWithRespectToReferenceTrackerTool
+                                ( const TransformType & transform ); 
 
   /** Set the raw transform for this tool. */
   void SetRawTransform( const TransformType & );
+
+  /** Set the calibrated raw transform for this tool. */
+  void SetCalibratedRawTransform( const TransformType & );
 
   /** Set whether the tool was updated during tracker UpdateStatus() */
   igstkSetMacro( Updated, bool );
@@ -240,11 +246,16 @@ protected:
   /** No operation for state machine transition */ 
   void NoProcessing( void );
 
-  /** Composition of the raw and calibration transform*/
-  TransformType      m_Transform;   
+  /** Calibrated raw transform with respect to reference
+    * tracker tool */
+  TransformType      
+       m_CalibratedRawTransformWithRespectToReferenceTrackerTool;   
 
   /** Calibration transform for the tool */
   CalibrationTransformType      m_CalibrationTransform; 
+
+  /** Calibration transform for the tool */
+  CalibrationTransformType      m_CalibratedRawTransform; 
 
   /** raw transform for the tool */
   TransformType                 m_RawTransform; 
