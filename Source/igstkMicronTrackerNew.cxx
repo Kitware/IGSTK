@@ -457,7 +457,7 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalUpdateStatus()
                                         this->GetValidityTime());
 
     // set the raw transform
-    (trackerToolContainer[inputItr->first])->RequestSetRawTransform( transform );
+    (trackerToolContainer[inputItr->first])->SetRawTransform( transform );
     (trackerToolContainer[inputItr->first])->SetUpdated( true );
 
     ++inputItr;

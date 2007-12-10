@@ -784,7 +784,7 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
 
       // FIXME: For debugging purpose set the tool transform. This will be
       // removed.
-      (inputItr->second)->RequestSetTransform( toolTransform );
+      (inputItr->second)->SetTransform( toolTransform );
 
       // set transfrom with respect to the reference tool
       if ( m_ApplyingReferenceTool )

@@ -69,6 +69,9 @@ public:
 public:
 
   igstkFriendClassMacro( TrackerNew );
+  igstkFriendClassMacro( PolarisTrackerNew );
+  igstkFriendClassMacro( AuroraTrackerNew );
+  igstkFriendClassMacro( MicronTrackerNew );
 
   typedef TrackerNew        TrackerType;
   typedef Transform         TransformType;
@@ -80,29 +83,20 @@ public:
   typedef AxesObject        CoordinateReferenceSystemType;
   
   /** Get the tool transform. */
-  igstkGetMacro( Transform, TransformType ); // FIXME : DEPRECATED : A REQUEST SHOULD BE MADE OR THIS SHOULD BE PRIVATE ONLY TO BE USED BY THE TRACKER.
-
-  /** Set the transform (composition of the raw and calibration transform ). */
-  void RequestSetTransform( const TransformType & transform ); // FIXME: MUST BE PRIVATE : THE TRACKER MUST BE A FRIEND
+  igstkGetMacro( Transform, TransformType ); 
 
   /** Get the calibration transform for this tool. */
   igstkGetMacro( CalibrationTransform, CalibrationTransformType );
 
-  /** Request set the calibration transform for this tool. */
-  void RequestSetCalibrationTransform( const CalibrationTransformType & );
-
-  /** Request set the raw transform for this tool. */
-  void RequestSetRawTransform( const TransformType & );
+  /**  Set the calibration transform for this tool. */
+  void SetCalibrationTransform( const CalibrationTransformType & );
 
   /** Get the raw transform for this tool. */
   igstkGetMacro( RawTransform, TransformType );
 
   /** Get whether the tool was updated during tracker UpdateStatus() */
   igstkGetMacro( Updated, bool );
-
-  /** Get whether the tool was updated during tracker UpdateStatus() */
-  igstkSetMacro( Updated, bool );
-  
+ 
   /** Request attaching the SpatialObject given as argument as an
    *  object to track with this tracker tool. The SpatialObject will
    *  become a child of the coordinate reference system of this TrackerToolNew,
@@ -123,41 +117,8 @@ public:
  * tracker*/
   virtual void RequestDetach( );
 
-  /** Access the unique identifier to the tracker tool 
-    * FIXME: when the tracker becomes a friend class of the
-    * tracker tool: this method 
-    * should be moved to private section */
+  /** Access the unique identifier to the tracker tool */
   std::string GetTrackerToolIdentifier( );
-
-  /** Push TrackingStarted input to the tracker tool 
-    * FIXME: when the tracker becomes a friend class of the
-    * tracker tool: this method 
-    * should be moved to private section */
-  virtual void ReportTrackingStarted( );
-
-  /** Push TrackingStopped input to the tracker tool 
-    * FIXME: when the tracker becomes a friend class of the
-    * tracker tool: this method 
-    * should be moved to private section */
-  virtual void ReportTrackingStopped( );
-
-  /** Push TrackerToolNotAvailable input to the tracker tool 
-    * FIXME: when the tracker becomes a friend class of the
-    * tracker tool: this method 
-    * should be moved to private section */
-  virtual void ReportTrackingToolNotAvailable( );
-
-  /** Push TrackerToolVisible input to the tracker tool 
-    * FIXME: when the tracker becomes a friend class of the
-    * tracker tool: this method 
-    * should be moved to private section */
-  virtual void ReportTrackingToolIsInVisibleState( );
-
-  /** Report successful tracker tool attachment */ 
-  void ReportSuccessfulTrackerToolAttachment();
-
-  /** Report failure in tracker tool attachment attempt */ 
-  void ReportFailedTrackerToolAttachment();
 
 protected:
 
@@ -171,28 +132,34 @@ protected:
   /** Set a unique identifier to the tracker tool */
   void SetTrackerToolIdentifier( std::string identifier );
 
-  private:
+ private:
 
-  /** Composition of the raw and calibration transform*/
-  TransformType      m_Transform;   
+ /** Push TrackingStarted input to the tracker tool */
+  virtual void ReportTrackingStarted( );
 
-  /** Calibration transform for the tool */
-  CalibrationTransformType      m_CalibrationTransform; 
+  /** Push TrackingStopped input to the tracker tool  */
+  virtual void ReportTrackingStopped( );
 
-  /** raw transform for the tool */
-  TransformType                 m_RawTransform; 
+  /** Push TrackerToolNotAvailable input to the tracker tool */
+  virtual void ReportTrackingToolNotAvailable( );
 
-  /** Updated flag */
-  bool               m_Updated;
+  /** Push TrackerToolVisible input to the tracker tool */
+  virtual void ReportTrackingToolIsInVisibleState( );
 
-  /** Unique identifier of the tracker tool */
-  std::string        m_TrackerToolIdentifier;
+  /** Report successful tracker tool attachment */ 
+  void ReportSuccessfulTrackerToolAttachment();
 
-  /** Coordinate Reference System */
-  CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;
+  /** Report failure in tracker tool attachment attempt */ 
+  void ReportFailedTrackerToolAttachment();
 
+  /** Set the transform (composition of the raw and calibration transform ). */
+  void SetTransform( const TransformType & transform ); 
 
-private:
+  /** Set the raw transform for this tool. */
+  void SetRawTransform( const TransformType & );
+
+  /** Set whether the tool was updated during tracker UpdateStatus() */
+  igstkSetMacro( Updated, bool );
 
   /** Get boolean variable to check if the tracker tool is 
    * configured or not */
@@ -213,8 +180,6 @@ private:
   igstkDeclareInputMacro( DetachmentFromTrackerSuccess );
   igstkDeclareInputMacro( DetachmentFromTrackerFailure );
  
-  
-
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( AttemptingToConfigureTrackerTool );
@@ -271,6 +236,24 @@ private:
 
   /** No operation for state machine transition */ 
   void NoProcessing( void );
+
+  /** Composition of the raw and calibration transform*/
+  TransformType      m_Transform;   
+
+  /** Calibration transform for the tool */
+  CalibrationTransformType      m_CalibrationTransform; 
+
+  /** raw transform for the tool */
+  TransformType                 m_RawTransform; 
+
+  /** Updated flag */
+  bool               m_Updated;
+
+  /** Unique identifier of the tracker tool */
+  std::string        m_TrackerToolIdentifier;
+
+  /** Coordinate Reference System */
+  CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;
 
   TrackerNew        * m_Tracker;
 
