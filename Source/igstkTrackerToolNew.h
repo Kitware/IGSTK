@@ -42,6 +42,9 @@ itkEventMacro( ToolTrackingStartedEvent,TrackerToolNewEvent);
 itkEventMacro( ToolTrackingStoppedEvent,TrackerToolNewEvent);
 
 class TrackerNew;
+class PolarisTrackerNew;
+class AuroraTrackerNew;
+class MicronTrackerNew;
 
 /**  \class TrackerToolNew
   *  \brief Generic implementation of the Tracker tool.
