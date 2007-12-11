@@ -171,7 +171,7 @@ int igstkAuroraTrackerNewTest( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-    transform = trackerTool->GetCalibratedRawTransform();
+    transform = trackerTool->GetCalibratedTransform();
 
     position = transform.GetTranslation();
     std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 

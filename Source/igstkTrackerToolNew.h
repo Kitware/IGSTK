@@ -86,7 +86,7 @@ public:
   typedef AxesObject        CoordinateReferenceSystemType;
   
   /** Get the tool transform. */
-  igstkGetMacro( CalibratedRawTransformWithRespectToReferenceTrackerTool,
+  igstkGetMacro( CalibratedTransformWithRespectToReferenceTrackerTool,
                                    TransformType ); 
 
   /** Get the calibration transform for this tool. */
@@ -99,7 +99,7 @@ public:
   igstkGetMacro( RawTransform, TransformType );
 
   /** Get calibrated raw transform for this tool. */
-  igstkGetMacro( CalibratedRawTransform, TransformType );
+  igstkGetMacro( CalibratedTransform, TransformType );
 
   /** Get whether the tool was updated during tracker UpdateStatus() */
   igstkGetMacro( Updated, bool );
@@ -161,14 +161,14 @@ protected:
 
   /** Set calibrated raw transform with respect to a reference
     * tracker tool */
-  void SetCalibratedRawTransformWithRespectToReferenceTrackerTool
+  void SetCalibratedTransformWithRespectToReferenceTrackerTool
                                 ( const TransformType & transform ); 
 
   /** Set the raw transform for this tool. */
   void SetRawTransform( const TransformType & );
 
   /** Set the calibrated raw transform for this tool. */
-  void SetCalibratedRawTransform( const TransformType & );
+  void SetCalibratedTransform( const TransformType & );
 
   /** Set whether the tool was updated during tracker UpdateStatus() */
   igstkSetMacro( Updated, bool );
@@ -252,13 +252,13 @@ protected:
   /** Calibrated raw transform with respect to reference
     * tracker tool */
   TransformType      
-       m_CalibratedRawTransformWithRespectToReferenceTrackerTool;   
+       m_CalibratedTransformWithRespectToReferenceTrackerTool;   
 
   /** Calibration transform for the tool */
   CalibrationTransformType      m_CalibrationTransform; 
 
-  /** Calibration transform for the tool */
-  CalibrationTransformType      m_CalibratedRawTransform; 
+  /** Calibrated raw transform for the tool */
+  CalibrationTransformType      m_CalibratedTransform; 
 
   /** raw transform for the tool */
   TransformType                 m_RawTransform; 

@@ -733,14 +733,14 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
       const double timeToExpiration = transform.GetExpirationTime() - 
                                       transform.GetStartTime();
 
-      TransformType::VersorType rotation;
-      TransformType::VectorType translation;
+      TransformType::VersorType rotationRaw;
+      TransformType::VectorType translationRaw;
 
-      translation = transform.GetTranslation();
-      rotation    = transform.GetRotation();
+      translationRaw = transform.GetTranslation();
+      rotationRaw    = transform.GetRotation();
 
       TransformType toolRawTransform;
-      toolRawTransform.SetTranslationAndRotation( translation, rotation,
+      toolRawTransform.SetTranslationAndRotation( translationRaw, rotationRaw,
                         transform.GetError(),
                         timeToExpiration );
 
@@ -748,22 +748,24 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
  
       CalibrationTransformType toolCalibrationTransform
                                     = (inputItr->second)->GetCalibrationTransform();
+      
+      TransformType::VersorType rotationCalibrated;
+      TransformType::VectorType translationCalibrated;
 
-      rotation = toolCalibrationTransform.GetRotation();
-      translation = toolCalibrationTransform.GetTranslation();
+      rotationCalibrated = toolCalibrationTransform.GetRotation();
+      translationCalibrated = toolCalibrationTransform.GetTranslation();
 
       // transform by the tracker's tool transform
-      rotation = transform.GetRotation()*rotation;
-      translation = transform.GetRotation().Transform(translation);
-      translation += transform.GetTranslation();
+      rotationCalibrated = transform.GetRotation()*rotationCalibrated;
+      translationCalibrated = transform.GetRotation().Transform(translationCalibrated);
+      translationCalibrated += transform.GetTranslation();
 
-      TransformType toolCalibratedRawTransform;
-      toolCalibratedRawTransform.SetTranslationAndRotation( translation, rotation,
+      TransformType toolCalibratedTransform;
+      toolCalibratedTransform.SetTranslationAndRotation( translationCalibrated, rotationCalibrated,
                         transform.GetError(),
                         timeToExpiration );
 
-
-      (inputItr->second)->SetCalibratedRawTransform( toolCalibratedRawTransform );
+      (inputItr->second)->SetCalibratedTransform( toolCalibratedTransform );
         
       // T ' = R^-1 * T * C
       //
@@ -772,44 +774,58 @@ void TrackerNew::UpdateStatusSuccessProcessing( void )
       // " C " is the tool calibration transform.
       // " R^-1 " is the inverse of the transform for the reference tool,
       // applying ReferenceTool
-      
-      TransformType toolCalibratedRawTransformWRTReferencetrackertool;
+
+      TransformType::VersorType 
+           rotationCalibratedWRTReferenceTrackerTool = rotationCalibrated;
+
+      TransformType::VectorType 
+           translationCalibratedWRTReferenceTrackerTool = translationCalibrated;
+
       if ( m_ApplyingReferenceTool )
         {
         // since this is an inverse transform, apply translation first
         TransformType::VersorType inverseRotation =
           m_ReferenceTool->GetRawTransform().GetRotation().GetReciprocal();
 
-        translation -= m_ReferenceTool->GetRawTransform().GetTranslation();
-        translation = inverseRotation.Transform(translation);
-        rotation = inverseRotation*rotation;
+        translationCalibratedWRTReferenceTrackerTool -= 
+               m_ReferenceTool->GetRawTransform().GetTranslation();
+
+        translationCalibratedWRTReferenceTrackerTool =
+               inverseRotation.Transform(translationCalibratedWRTReferenceTrackerTool);
+
+        rotationCalibratedWRTReferenceTrackerTool = 
+                       inverseRotation*rotationCalibratedWRTReferenceTrackerTool;
 
         // also include the reference tool's ToolCalibrationTransform
         inverseRotation = m_ReferenceTool->GetCalibrationTransform().
                                            GetRotation().GetReciprocal();
-        translation -= m_ReferenceTool->GetCalibrationTransform().
+        translationCalibratedWRTReferenceTrackerTool -= m_ReferenceTool->GetCalibrationTransform().
                                            GetTranslation();
-        translation = inverseRotation.Transform(translation);
-        rotation = inverseRotation*rotation;
+        translationCalibratedWRTReferenceTrackerTool = 
+                 inverseRotation.Transform(translationCalibratedWRTReferenceTrackerTool);
 
-        toolCalibratedRawTransformWRTReferencetrackertool.SetTranslationAndRotation( 
-                          translation, rotation,
-                          transform.GetError(),
-                          timeToExpiration );
-
-        (inputItr->second)->SetCalibratedRawTransformWithRespectToReferenceTrackerTool( 
-                                             toolCalibratedRawTransformWRTReferencetrackertool );
+        rotationCalibratedWRTReferenceTrackerTool = 
+                 inverseRotation*rotationCalibratedWRTReferenceTrackerTool;
         }
+
+      TransformType toolCalibratedTransformWRTReferenceTrackerTool;
+      toolCalibratedTransformWRTReferenceTrackerTool.SetTranslationAndRotation( 
+                        translationCalibratedWRTReferenceTrackerTool,
+                        rotationCalibratedWRTReferenceTrackerTool,
+                        transform.GetError(),
+                        timeToExpiration );
+      (inputItr->second)->SetCalibratedTransformWithRespectToReferenceTrackerTool( 
+                                           toolCalibratedTransformWRTReferenceTrackerTool );
 
       // set transfrom with respect to the reference tool
       if ( m_ApplyingReferenceTool )
         {        
         (inputItr->second)->RequestSetTransformAndParent( 
-                                      toolCalibratedRawTransformWRTReferencetrackertool, m_ReferenceTool.GetPointer() );
+                                      toolCalibratedTransformWRTReferenceTrackerTool, m_ReferenceTool.GetPointer() );
         }
       else
         {
-        (inputItr->second)->RequestSetTransformAndParent( toolCalibratedRawTransform, this );
+        (inputItr->second)->RequestSetTransformAndParent( toolCalibratedTransform, this );
         }
       }
     ++inputItr;

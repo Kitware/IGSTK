@@ -151,7 +151,7 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-    transform = trackerTool->GetCalibratedRawTransform();
+    transform = trackerTool->GetCalibratedTransform();
     position = transform.GetTranslation();
     std::cout << "Trackertool calibrated raw transform:" 
               << trackerTool->GetTrackerToolIdentifier() 
@@ -167,8 +167,16 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
 
+    transform = 
+      trackerTool->GetCalibratedTransformWithRespectToReferenceTrackerTool();
+    position = transform.GetTranslation();
+    std::cout << "Trackertool calibrated transform WRT reference:" 
+              << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
 
-    transform = trackerTool2->GetCalibratedRawTransform();
+    transform = trackerTool2->GetCalibratedTransform();
     position = transform.GetTranslation();
     std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
               << "  Position = (" << position[0]
@@ -195,7 +203,7 @@ int igstkMicronTrackerNewTest( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-    transform = trackerTool2->GetCalibratedRawTransform();
+    transform = trackerTool2->GetCalibratedTransform();
 
     position = transform.GetTranslation();
     std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
