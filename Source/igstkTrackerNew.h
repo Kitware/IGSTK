@@ -221,22 +221,21 @@ protected:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
-  /** Verify if a tracker tool information is correct before adding/attaching
-   *  it to the tracker. 
-   * This method is used to verify the information supplied by 
+  /** Verify if a tracker tool information is correct before attaching
+   *  it to the tracker. This method is used to verify the information supplied by 
    * the user about the tracker tool. The information depends on
-   * the tracker type. For example, during the intitalization step
+   * the tracker type. For example, during the configuration step
    * of the MicronTracker, location of the directory containing 
    * marker template files is specified. If the user tries to attach
    * a tracker tool with a marker type whose template file is not stored in
-   * this directory, this method will return failure. Similarly, the 
-   * method returns failure,  if the toolID specified by the user during
-   * the tracker tool intialization does not match with the tool id 
-   * read from the SROM file*/
+   * this directory, this method will return failure. Similarly, for
+   * PolarisTracker, the method returns failure,  if the toolID specified
+   * by the user during the tracker tool configuration step does not
+   * match with the tool id read from the SROM file*/
   virtual ResultType VerifyTrackerToolInformation( TrackerToolType * ); 
 
   /** This method will remove entries of the traceker tool from internal
-    *    data containers */
+    * data containers */
   virtual ResultType RemoveTrackerToolFromInternalDataContainers(
                                      TrackerToolType * trackerTool ); 
 
