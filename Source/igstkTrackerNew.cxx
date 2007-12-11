@@ -1058,6 +1058,39 @@ ITK_THREAD_RETURN_TYPE TrackerNew::TrackingThreadFunction(void* pInfoStruct)
   return ITK_THREAD_RETURN_VALUE;
 }
 
+/** Report to the tracker tool that the tool is not available */
+void 
+TrackerNew::ReportTrackingToolNotAvailable( TrackerToolType * trackerTool )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerNew::ReportTrackingToolNotAvailable called...\n");
+  trackerTool->ReportTrackingToolNotAvailable();
+}
+
+/** Report to the tracker tool that the tool is Visible */
+void 
+TrackerNew::ReportTrackingToolVisible( TrackerToolType * trackerTool )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerNew::ReportTrackingToolVisible called...\n");
+  trackerTool->ReportTrackingToolVisible();
+}
+
+/** Set raw transform */
+void 
+TrackerNew::SetTrackerToolRawTransform( TrackerToolType * trackerTool, TransformType transform )
+{
+  igstkLogMacro( DEBUG, "igstk::TrackerNew::SetRawTransform called...\n");
+  trackerTool->SetRawTransform( transform );
+}
+
+/** Turn on/off update flag of the tracker tool */
+void 
+TrackerNew::SetTrackerToolTransformUpdate( TrackerToolType * trackerTool, bool flag )
+{
+  igstkLogMacro( DEBUG, 
+     "igstk::TrackerNew::SetTrackerToolTransformUpdate called...\n");
+  trackerTool->SetUpdated( flag ); 
+}
+
 /** Report invalid request */
 void TrackerNew::ReportInvalidRequestProcessing( void )
 {

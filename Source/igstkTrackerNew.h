@@ -244,6 +244,18 @@ protected:
     * of the tracker tools */
   TrackerToolsContainerType GetTrackerToolContainer() const;
 
+  /** Report to tracker tool that it is not available for tracking */
+  void ReportTrackingToolNotAvailable( TrackerToolType * trackerTool );
+
+  /** Report to tracker tool that it is visible */
+  void ReportTrackingToolVisible( TrackerToolType * trackerTool );
+
+  /** Set tracker tool raw transform */
+  void SetTrackerToolRawTransform( TrackerToolType * trackerTool, TransformType transform );
+
+  /** Turn on/off update flag of the tracker tool */
+  void SetTrackerToolTransformUpdate( TrackerToolType * trackerTool, bool flag );
+
 private:
 
   /** Pulse generator for driving the rate of tracker updates. */

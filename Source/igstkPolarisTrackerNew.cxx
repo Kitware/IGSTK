@@ -551,15 +551,14 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
                      "tool " << inputItr->first << " is not in view\n");
 
       // report to the tracker tool that the tracker is not available 
-     (trackerToolContainer[inputItr->first])->ReportTrackingToolNotAvailable();
- 
+      this->ReportTrackingToolNotAvailable( trackerToolContainer[inputItr->first] );
       ++inputItr;
       continue;
       }
 
     // report to the tracker tool that the tracker is Visible 
-    (trackerToolContainer[inputItr->first])->ReportTrackingToolIsInVisibleState();
-
+    this->ReportTrackingToolVisible( trackerToolContainer[inputItr->first] );
+ 
     // create the transform
     TransformType transform;
 
@@ -607,8 +606,8 @@ PolarisTrackerNew::ResultType PolarisTrackerNew::InternalUpdateStatus()
                                         this->GetValidityTime());
   
     // set the raw transform
-    (trackerToolContainer[inputItr->first])->SetRawTransform( transform );
-    (trackerToolContainer[inputItr->first])->SetUpdated( true );
+    this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
+    this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
 
     ++inputItr;
     }

@@ -72,9 +72,6 @@ public:
 public:
 
   igstkFriendClassMacro( TrackerNew );
-  igstkFriendClassMacro( PolarisTrackerNew );
-  igstkFriendClassMacro( AuroraTrackerNew );
-  igstkFriendClassMacro( MicronTrackerNew );
 
   typedef TrackerNew        TrackerType;
   typedef Transform         TransformType;
@@ -151,7 +148,7 @@ protected:
   virtual void ReportTrackingToolNotAvailable( );
 
   /** Push TrackerToolVisible input to the tracker tool */
-  virtual void ReportTrackingToolIsInVisibleState( );
+  virtual void ReportTrackingToolVisible( );
 
   /** Report successful tracker tool attachment */ 
   void ReportSuccessfulTrackerToolAttachment();

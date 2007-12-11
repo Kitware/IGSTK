@@ -401,9 +401,9 @@ void TrackerToolNew::ReportTrackingToolNotAvailable( )
 }
 
 /** Push TrackerToolVisible input to the tracker tool  */
-void TrackerToolNew::ReportTrackingToolIsInVisibleState( )
+void TrackerToolNew::ReportTrackingToolVisible( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::ReportTrackingToolIsInVisibleState called...\n");
+  igstkLogMacro( DEBUG, "igstk::TrackerToolNew::ReportTrackingToolVisible called...\n");
 
   igstkPushInputMacro( TrackerToolVisible );
   this->m_StateMachine.ProcessInputs();
