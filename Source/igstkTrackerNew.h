@@ -64,6 +64,7 @@ itkEventMacro( TrackerNewUpdateStatusErrorEvent,              TrackerNewErrorEve
 itkEventMacro( AttachingTrackerToolToTrackerNewEvent,         TrackerNewEvent);
 itkEventMacro( AttachingTrackerToolToTrackerNewErrorEvent,    TrackerNewErrorEvent);
 
+class TrackerToolNew;
 
 /** \class TrackerNew
  *  \brief Superclass for concrete IGSTK Tracker classes.
@@ -106,6 +107,8 @@ public:
   igstkStandardClassTraitsMacro( TrackerNew, Object )
 
 public:
+
+  igstkFriendClassMacro( TrackerToolNew );
 
   /** typedef for times used by the tracker */
   typedef Transform::TimePeriodType      TimePeriodType;
@@ -163,15 +166,6 @@ public:
     FAILURE=0, 
     SUCCESS
     } ResultType;
-
-  /** Attach a tracker tool to this tracker  */
-  void RequestAttachTool( std::string TrackerToolIdentifier, TrackerToolType * trackerTool );
-
-  /** Request a tracker tool from this tracker  */
-  ResultType RequestRemoveTool( std::string TrackerToolIdentifier );
-
-  /** Set the tracker tool tranform using the unique identifier */
-  void SetToolTransform( std::string identifier, TransformType transform ); 
 
   /** Set a reference tracker tool */
   void RequestSetReferenceTool( TrackerToolType * trackerTool );
@@ -244,7 +238,7 @@ protected:
   /** This method will remove entries of the traceker tool from internal
     *    data containers */
   virtual ResultType RemoveTrackerToolFromInternalDataContainers(
-                                     std::string trackerToolIdentifier ); 
+                                     TrackerToolType * trackerTool ); 
 
   /** Access method for the tracker tool container. This method 
     * is useful in the derived classes to access the unique identifiers 
@@ -312,6 +306,13 @@ private:
 
   igstkDeclareInputMacro( Success );
   igstkDeclareInputMacro( Failure );
+
+  /** Attach a tracker tool to the tracker. This method
+   *  should be called by the tracker tool.  */
+  void RequestAttachTool( TrackerToolType * trackerTool );
+
+  /** Request to remove a tracker tool from this tracker  */
+  ResultType RequestRemoveTool( TrackerToolType * trackerTool );
 
   /** Thread function for tracking */
   static ITK_THREAD_RETURN_TYPE TrackingThreadFunction(void* pInfoStruct);
@@ -417,7 +418,6 @@ private:
    */
   igstkCoordinateSystemClassInterfaceMacro();
 
-  std::string m_IdentifierForTrackerToolToBeAttached;
   TrackerToolType   * m_TrackerToolToBeAttached;
 };
 

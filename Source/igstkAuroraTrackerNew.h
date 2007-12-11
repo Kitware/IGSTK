@@ -101,7 +101,7 @@ protected:
 
   /** Remove tracker tool entry from internal containers */ 
   virtual ResultType RemoveTrackerToolFromInternalDataContainers(
-                                     std::string trackerToolIdentifier ); 
+                                     TrackerToolType * trackerTool ); 
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 

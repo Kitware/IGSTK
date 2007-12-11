@@ -232,7 +232,7 @@ void TrackerToolNew::AttemptToAttachTrackerToolToTrackerProcessing( void )
   igstkLogMacro( DEBUG, 
                  "igstk::TrackerToolNew::AttemptToAttachTrackerToolToTracker called ...\n");
 
-  m_TrackerToAttachTo->RequestAttachTool( m_TrackerToolIdentifier, this );
+  m_TrackerToAttachTo->RequestAttachTool( this );
 }
 
 /** Report successful tracker tool attachment */ 
@@ -262,8 +262,8 @@ void TrackerToolNew::AttemptToDetachTrackerToolFromTrackerProcessing( void )
   igstkLogMacro( DEBUG, 
                  "igstk::TrackerToolNew::AttemptToAttachTrackerToolToTracker called ...\n");
 
-  //FIXME: implement a method in the tracker class to detach the tool
-  bool result = m_TrackerToAttachTo->RequestRemoveTool( m_TrackerToolIdentifier );
+  //implement a method in the tracker class to detach the tool
+  bool result = m_TrackerToAttachTo->RequestRemoveTool( this ); 
   m_StateMachine.PushInputBoolean( result,
                                    m_DetachmentFromTrackerSuccessInput,
                                    m_DetachmentFromTrackerFailureInput );

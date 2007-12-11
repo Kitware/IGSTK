@@ -656,8 +656,10 @@ MicronTrackerNew::ResultType MicronTrackerNew::InternalThreadedUpdateStatus( voi
 
 MicronTrackerNew::ResultType 
 MicronTrackerNew::
-RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier ) 
+RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
 {
+  std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
+
   // remove the tool from the Transform buffer container
   this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
 

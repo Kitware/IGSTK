@@ -386,8 +386,9 @@ AuroraTrackerNew::ResultType AuroraTrackerNew
  
 AuroraTrackerNew::ResultType 
 AuroraTrackerNew::
-RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier ) 
+RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
 {
+  std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
   // disable the port handle
   m_CommandInterpreter->PDIS( m_PortHandleContainer[ trackerToolIdentifier] );  
 

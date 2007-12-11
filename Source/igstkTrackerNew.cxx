@@ -560,7 +560,7 @@ void TrackerNew::AttachingTrackerToolSuccessProcessing( void )
   igstkLogMacro( DEBUG, "igstk::TrackerNew::AttachingTrackerToolSuccessProcessing "
                  "called ...\n");
 
-  m_TrackerTools[ m_IdentifierForTrackerToolToBeAttached ] 
+  m_TrackerTools[ m_TrackerToolToBeAttached->GetTrackerToolIdentifier() ] 
                                    = m_TrackerToolToBeAttached; 
 
   // report to the tracker tool that the attachment has been 
@@ -880,7 +880,7 @@ void TrackerNew::DetachAllTrackerToolsFromTracker()
 
   while( inputItr != inputEnd )
     {
-    this->RemoveTrackerToolFromInternalDataContainers( inputItr->first ); 
+    this->RemoveTrackerToolFromInternalDataContainers( inputItr->second ); 
     ++inputItr;
     }
 
@@ -944,12 +944,11 @@ void TrackerNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
 /** Request adding a tool to the tracker  */
 void
 TrackerNew::
-RequestAttachTool( std::string trackerToolIdentifier, TrackerToolType * trackerTool )
+RequestAttachTool( TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, "igstk::TrackerNew::"
                  "RequestAttachTool called ...\n");
  
-  m_IdentifierForTrackerToolToBeAttached = trackerToolIdentifier; 
   m_TrackerToolToBeAttached = trackerTool;
   
   igstkPushInputMacro( AttachTrackerTool );
@@ -978,10 +977,10 @@ void TrackerNew::AttemptToAttachTrackerToolProcessing( void )
 /** Request remove a tool from the tracker  */
 TrackerNew::ResultType 
 TrackerNew::
-RequestRemoveTool( std::string trackerToolIdentifier )
+RequestRemoveTool( TrackerToolType * trackerTool )
 {
-  this->m_TrackerTools.erase( trackerToolIdentifier );
-  this->RemoveTrackerToolFromInternalDataContainers( trackerToolIdentifier ); 
+  this->m_TrackerTools.erase( trackerTool->GetTrackerToolIdentifier() );
+  this->RemoveTrackerToolFromInternalDataContainers( trackerTool ); 
   return SUCCESS;
 }
 
@@ -989,7 +988,7 @@ RequestRemoveTool( std::string trackerToolIdentifier )
  * contain different internal tool containers */
 TrackerNew::ResultType 
 TrackerNew::
-RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier ) 
+RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
 {
   return SUCCESS;
 }

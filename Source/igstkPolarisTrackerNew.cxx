@@ -417,14 +417,15 @@ PolarisTrackerNew::ResultType PolarisTrackerNew
  
 PolarisTrackerNew::ResultType 
 PolarisTrackerNew::
-RemoveTrackerToolFromInternalDataContainers( std::string trackerToolIdentifier ) 
+RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
 {
   igstkLogMacro( DEBUG, "PolarisTrackerNew::RemoveTrackerToolFromInternalDataContainers called ...\n");
   // if SROM file has been loaded for this tracker tool, clear it first.
   TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
   PolarisTrackerToolType * polarisTrackerTool = 
-             dynamic_cast< PolarisTrackerToolType * > (
-                        trackerToolContainer[trackerToolIdentifier] );   
+             dynamic_cast< PolarisTrackerToolType * > ( trackerTool );   
+
+  std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
 
   if ( polarisTrackerTool != NULL ) 
     {
