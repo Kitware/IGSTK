@@ -41,8 +41,6 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( PolarisTrackerToolNew, TrackerToolNew )
 
-  igstkFriendClassMacro( PolarisTrackerNew );
-
   /** Request setting the port number. The tool can only be attached to a
    * Tracker after its port number has been defined */
   void RequestSetPortNumber( unsigned int portNumber );
