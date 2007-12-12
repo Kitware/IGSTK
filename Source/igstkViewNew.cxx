@@ -610,6 +610,10 @@ void ViewNew::AddObjectProcessing()
     this->RequestAddActor(*actorIt);
     actorIt++;
     } 
+
+  //after the object is added, set the temp smart point to NULL, so that
+  //the reference count of the object decrements
+  m_ObjectToBeAdded = NULL;
 }
 
 void ViewNew::AddAnnotation2DProcessing( )
@@ -682,6 +686,10 @@ void ViewNew::RemoveObjectProcessing()
     this->RequestRemoveActor(*actorIt);
     actorIt++;
     } 
+
+  //after the object is removed, set the temp smart point to NULL, so that
+  //the reference count of the object decrements
+  m_ObjectToBeRemoved = NULL;
 }
 
 
