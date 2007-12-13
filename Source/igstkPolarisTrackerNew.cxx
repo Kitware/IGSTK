@@ -176,19 +176,6 @@ PolarisTrackerNew::ResultType PolarisTrackerNew
   //        == Load the SROM file and create a port handle
   //    == Otherwise, create a port handle     
   //
-  // 3) Get port handle
-  //
-  // Initialize 
-  // repeat as necessary (in case multi-channel tools are used) 
-  //
-  //
-  // keep list of tools that fail to initialize, so we don't keep retrying,
-  // the largest port handle possible is 0xFF, or 256
-  //
-  //
-  // If the tool is wireless type or wired with SROM file specified, load the SROM file and set the port handle
-  //
-  //
   //
   igstkLogMacro( DEBUG, "PolarisTrackerNew::VerifyTrackerToolInformation called ...\n");
 
