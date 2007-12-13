@@ -143,4 +143,20 @@ void RealTimeClock::PrintSelf( std::ostream& os, itk::Indent indent )
   os << indent << "Origin : " << m_Origin << std::endl;
 }
 
-}
+namespace // Anonymous namespace
+{
+class RealTimeClockInitializer
+  {
+  public:
+    RealTimeClockInitializer()
+      {
+      igstk::RealTimeClock::Initialize();
+      }
+  }; // end RealTimeClockInitializer
+
+RealTimeClockInitializer globalIGSTKRealTimeClockInitialization;
+
+}; // Anonymous namespace
+
+} // igstk namespace
+
