@@ -229,12 +229,10 @@ void ObjectRepresentation::RequestGetTransformProcessing()
 {
   igstkLogMacro( DEBUG, "RequestUpdatePositionProcessing called ....");
   // The response should be sent back in an event
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-  m_SpatialObject->RequestGetTransform();
-#else
+
   m_SpatialObject->RequestComputeTransformTo( 
                                           this->m_TargetCoordinateSystem.GetPointer() );
-#endif
+
 }
 
 
