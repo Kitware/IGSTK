@@ -25,7 +25,7 @@
 #include <QtTest/QTest>
 
 #include "OneViewAndTrackingUsingQTWidgetGUI.h"
-#include "igstkViewNew3D.h"
+#include "igstkView3D.h"
 #include "igstkVTKLoggerOutput.h"
 
 int main(int argc, char** argv)
@@ -110,8 +110,8 @@ translation, rotation, errorValue, validityTimeInMilliseconds );
 #endif
 
   // instantiate a 3D view 
-  typedef igstk::ViewNew3D        ViewNew3DType;
-  ViewNew3DType::Pointer view3D = ViewNew3DType::New();
+  typedef igstk::View3D        View3DType;
+  View3DType::Pointer view3D = View3DType::New();
 
   view3D->SetLogger( logger );
 

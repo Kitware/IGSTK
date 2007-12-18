@@ -21,7 +21,7 @@
 #endif
 
 #include "OneViewAndTrackingNewUsingMicronTrackerImplementation.h"
-#include "igstkViewNew3D.h"
+#include "igstkView3D.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
@@ -85,8 +85,8 @@ int main(int argc, char** argv )
   cylinderRepresentation->SetOpacity(1.0);
 
   // instantiate a 3D view 
-  typedef igstk::ViewNew3D        ViewNew3DType;
-  ViewNew3DType::Pointer view3D = ViewNew3DType::New();
+  typedef igstk::View3D        View3DType;
+  View3DType::Pointer view3D = View3DType::New();
 
   // set a logger
   view3D->SetLogger( application.GetLogger() );

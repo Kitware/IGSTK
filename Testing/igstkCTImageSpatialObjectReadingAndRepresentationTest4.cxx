@@ -16,7 +16,7 @@
 =========================================================================*/
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
-#include "igstkViewNew3D.h"
+#include "igstkView3D.h"
 #include "igstkFLTKWidget.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
@@ -83,7 +83,7 @@ int main( int argc, char* argv[] )
 
   reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(), ctImageObserver);
 
-  typedef igstk::ViewNew3D  View3DType;
+  typedef igstk::View3D  View3DType;
   View3DType::Pointer view = View3DType::New();
 
   typedef igstk::FLTKWidget      FLTKWidgetType;

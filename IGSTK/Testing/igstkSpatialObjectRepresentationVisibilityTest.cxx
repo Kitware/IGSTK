@@ -26,7 +26,7 @@
 #include "igstkConfigure.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
-#include "igstkViewNew3D.h"
+#include "igstkView3D.h"
 #include "igstkFLTKWidget.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
@@ -82,7 +82,7 @@ public:
     std::cerr << "Execute( const * ) should not be called" << std::endl;
     }
 
-  void SetView( ::igstk::ViewNew * view )
+  void SetView( ::igstk::View * view )
     {
     m_View = view;
     if( m_View )
@@ -129,7 +129,7 @@ private:
   unsigned long              m_PulseCounter;
   unsigned long              m_NumberOfPulsesToStop;
   Fl_Window *                m_Form;
-  ::igstk::ViewNew::Pointer  m_View;
+  ::igstk::View::Pointer  m_View;
   bool *                     m_End;
 };
 
@@ -328,7 +328,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   ellipsoidRepresentation3->SetOpacity( 1.0 );
   
  
-  typedef igstk::ViewNew3D  View3DType;
+  typedef igstk::View3D  View3DType;
 
   View3DType::Pointer view3D = View3DType::New();
   view3D->SetLogger( logger );

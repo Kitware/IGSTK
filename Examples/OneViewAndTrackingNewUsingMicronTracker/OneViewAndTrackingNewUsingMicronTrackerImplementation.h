@@ -27,7 +27,7 @@
 #include "OneViewAndTrackingNewUsingMicronTrackerGUI.h"
 #include "igstkMicronTrackerNew.h"
 #include "igstkLogger.h"
-#include "igstkViewNew.h"
+#include "igstkView.h"
 #include "itkStdStreamLogOutput.h"
 
 class OneViewAndTrackingNewUsingMicronTrackerImplementation : 
@@ -155,7 +155,7 @@ public:
     Display3D->RequestDisableInteractions();
     }
 
-  void AttachTrackerToView( igstk::ViewNew * view )
+  void AttachTrackerToView( igstk::View * view )
     {
     TransformType identityTransform;
     identityTransform.SetToIdentity( 

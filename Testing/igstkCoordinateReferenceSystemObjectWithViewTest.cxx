@@ -26,7 +26,7 @@
 // FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 // FIXCS #include "igstkCoordinateReferenceSystemObject.h"
 #include "igstkAxesObjectRepresentation.h"
-#include "igstkViewNew2D.h"
+#include "igstkView2D.h"
 #include "igstkFLTKWidget.h"
 #include "igstkRealTimeClock.h"
 #include "igstkVTKLoggerOutput.h"
@@ -143,7 +143,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   // testing actors
   std::cout << "Testing actors : ";
 
-  typedef igstk::ViewNew2D  View2DType;
+  typedef igstk::View2D  View2DType;
 
   View2DType::Pointer view2D = View2DType::New();
   view2D->SetLogger( logger );

@@ -27,6 +27,8 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#include "igstkFLTKWidget.h"
+
 namespace Annotation2DTest
 {
 igstkObserverObjectMacro(CTImage,
@@ -143,13 +145,22 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
     
   typedef igstk::View2D  View2DType;
 
-  View2DType * view2D = new View2DType( 10,10,512,512,"2D View");
+  View2DType::Pointer view2D = View2DType::New();
+
+  // Create an FLTK minimal GUI
+  typedef igstk::FLTKWidget      FLTKWidgetType;
+
+  // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget2D = 
+                      new FLTKWidgetType( 10,10,280,280,"2D View");
+  fltkWidget2D->RequestSetView( view2D );
+  fltkWidget2D->SetLogger( logger );
+    
 
   form->end();
   form->show();
 
   view2D->SetLogger( logger ); 
-  view2D->RequestEnableInteractions();
 
   // Add spatialobject
   view2D->RequestAddObject( representation );
@@ -160,12 +171,10 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   // Center the camera in order to make visible
   // all the objects in the scene.
   view2D->RequestResetCamera();
-
   
   // Start the pulse generator of the View 
-  view2D->RequestSetRefreshRate( 20 );
+  view2D->SetRefreshRate( 20 );
   view2D->RequestStart();
-
 
   // Do manual redraws
   for( unsigned int i=0; i < 100; i++)
@@ -175,7 +184,7 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
     Fl::check();   // trigger FLTK redraws
     }
 
-  delete view2D;
+  delete fltkWidget2D;
   delete form;
   
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )

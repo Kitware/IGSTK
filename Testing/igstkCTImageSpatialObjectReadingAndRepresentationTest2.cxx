@@ -21,7 +21,7 @@
 
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
-#include "igstkViewNew2D.h"
+#include "igstkView2D.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -140,8 +140,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
   representation->RequestSetImageSpatialObject( 
                            ctImageObserver->GetCTImage() );
 
-  typedef igstk::ViewNew2D  ViewNew2DType;
-  ViewNew2DType::Pointer view2D = ViewNew2DType::New();
+  typedef igstk::View2D  View2DType;
+  View2DType::Pointer view2D = View2DType::New();
   view2D->SetLogger( logger );
     
   view2D->RequestResetCamera();
@@ -180,7 +180,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
   // Do manual redraws for each orientation while changing slice numbers
     {
     representation->RequestSetOrientation( RepresentationType::Axial );
-    view2D->RequestSetOrientation( igstk::ViewNew2D::Axial );
+    view2D->RequestSetOrientation( igstk::View2D::Axial );
     view2D->RequestResetCamera();
     for(unsigned int i=0; i<10; i++)
       {
@@ -194,7 +194,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
 
     {
     representation->RequestSetOrientation( RepresentationType::Sagittal );
-    view2D->RequestSetOrientation( igstk::ViewNew2D::Sagittal );
+    view2D->RequestSetOrientation( igstk::View2D::Sagittal );
     view2D->RequestResetCamera();
     for(unsigned int i=0; i<10; i++)
       {
@@ -208,7 +208,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
 
     {
     representation->RequestSetOrientation( RepresentationType::Coronal );
-    view2D->RequestSetOrientation( igstk::ViewNew2D::Coronal );
+    view2D->RequestSetOrientation( igstk::View2D::Coronal );
     view2D->RequestResetCamera();
     for(unsigned int i=0; i<10; i++)
       {

@@ -17,8 +17,8 @@ class TwoViews {open
       Fl_Box Display1 {
         label {Display 1}
         xywh {5 5 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView3D.h>}
-        class {igstk::View3D}
+        code0 {\#include <igstkFLTKWidget.h>}
+        class {igstk::FLTKWidget}
       }
       Fl_Light_Button TrackingBt {
         label Tracking
@@ -29,8 +29,8 @@ class TwoViews {open
       Fl_Box Display2 {
         label {Display 2}
         xywh {395 5 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView3D.h>}
-        class {igstk::View3D}
+        code0 {\#include <igstkFLTKWidget.h>}
+        class {igstk::FLTKWidget}
       }
       Fl_Button {} {
         label Quit

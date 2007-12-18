@@ -37,7 +37,6 @@ void RegisterTests()
   REGISTER_TEST(igstkGroupObjectTest);
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
-  REGISTER_TEST(igstkViewNewTest);
   REGISTER_TEST(igstkTrackerToolNewTest);
   REGISTER_TEST(igstkTransductionMacroTest);
   REGISTER_TEST(igstkGenericImageSpatialObjectTest);

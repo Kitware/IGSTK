@@ -23,6 +23,7 @@
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkView2D.h"
+#include "igstkFLTKWidget.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -138,14 +139,20 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
   typedef igstk::View2D  View2DType;
+  // Create an FLTK minimal GUI
+  typedef igstk::FLTKWidget      FLTKWidgetType;
 
-  View2DType * view2D = new View2DType( 10,10,512,512,"2D View");
-
+  View2DType::Pointer view2D = View2DType::New();
+  // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget2D = 
+                      new FLTKWidgetType( 10,10,280,280,"2D View");
+  fltkWidget2D->RequestSetView( view2D );
+  fltkWidget2D->SetLogger( logger );
+ 
   form->end();
   form->show();
 
   view2D->SetLogger( logger ); 
-  view2D->RequestEnableInteractions();
 
   view2D->RequestAddObject( representation );
     
@@ -153,7 +160,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   view2D->RequestResetCamera();
 
   // Configuring the view refresh rate
-  view2D->RequestSetRefreshRate( 40 );
+  view2D->SetRefreshRate( 40 );
   view2D->RequestStart();
 
   // Do manual redraws
@@ -405,7 +412,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
       }
     }
 
-  delete view2D;
+  delete fltkWidget2D;
   delete form;
  
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )

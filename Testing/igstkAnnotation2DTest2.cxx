@@ -21,7 +21,7 @@
 
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
-#include "igstkViewNew2D.h"
+#include "igstkView2D.h"
 #include "igstkAnnotation2D.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
@@ -148,7 +148,7 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532," Annotation View Test");
     
-  typedef igstk::ViewNew2D  View2DType;
+  typedef igstk::View2D  View2DType;
 
   View2DType::Pointer view2D = View2DType::New();
 

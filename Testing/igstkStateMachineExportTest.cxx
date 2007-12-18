@@ -38,9 +38,6 @@
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
 #include "igstkObjectRepresentation.h"
-#include "igstkViewNew.h"
-#include "igstkViewNew2D.h"
-#include "igstkViewNew3D.h"
 #include "igstkTrackerNew.h"
 #include "igstkTrackerToolNew.h"
 #include "igstkPolarisTrackerNew.h"
@@ -197,10 +194,6 @@ int main( int argc, char * argv [] )
                                                                     skipLoops );
   igstkTestExportStateMachine1( igstk::ObjectRepresentationSurrogate, 
                                                    outputDirectory, skipLoops );
-  // The View New classes
-  igstkTestExportStateMachine1( igstk::ViewNew, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::ViewNew2D, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::ViewNew3D, outputDirectory, skipLoops );
 
   igstkTestExportStateMachine1( igstk::CoordinateReferenceSystem, outputDirectory, skipLoops );
 

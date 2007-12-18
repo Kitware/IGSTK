@@ -24,24 +24,20 @@
 #pragma warning( disable : 4284 )
 #endif
 
-// FLTK headers
-#include <FL/Fl.H>
-#include <FL/Fl_Gl_Window.H>
+// VTK declarations
+class vtkRenderWindow;
+class vtkCamera;
+class vtkProp;
+class vtkInteractorStyle;
+class vtkRenderer;
 
-// VTK headers
-#include "vtkRenderWindow.h"
-#include "vtkRenderer.h"
-#include "vtkCamera.h"
-#include "vtkIndent.h"
-#include "vtkWorldPointPicker.h"
-#include "vtkCommand.h"
-#include "vtkInteractorStyle.h"
 
 // ITK headers
 #include "itkCommand.h"
-#include "igstkLogger.h"
 
 // IGSTK headers
+#include "igstkLogger.h"
+#include "igstkObject.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
 #include "igstkPulseGenerator.h"
@@ -49,53 +45,48 @@
 #include "igstkEvents.h"   
 #include "igstkAnnotation2D.h"   
 #include "igstkRenderWindowInteractor.h"   
+#include "igstkCoordinateReferenceSystemDelegator.h"
+#include "igstkCoordinateSystemInterfaceMacros.h"
 
 namespace igstk {
 
 /** \class View
+ *  
+ *  \brief Base class for View2D and View3D.
  * 
- * \brief Base class for all View2D and View3D classes that display scenes in a
- * VTK controlled window attached to the GUI.
+ *  The functionality of the View class is to aggregate all the graphical
+ *  representations of spatial objects into one scene.
  *
  * \ingroup Object
  */
-class View : public Fl_Gl_Window
+class View : public Object 
 {
 
 public:
-    
-  typedef View          Self;
-  typedef Fl_Gl_Window  Superclass;
 
-  igstkTypeMacro( View, Fl_Gl_Window );
-  
+  /** Macro with standard traits declarations. */
+   igstkStandardClassTraitsMacro( View, Object );
+ 
   /** Set the desired frequency for refreshing the view. It is not worth to
    * attempt to go faster than your monitor, nor more than double than your
    * trackers */
-  void RequestSetRefreshRate( double frequency );
-  
+  void SetRefreshRate( double frequency );
+ 
   /** Add an observer to this View class */
   unsigned long AddObserver( const ::itk::EventObject & event, 
-                                                   ::itk::Command * observer );
-
+                                                 ::itk::Command * observer );
   /** Remove an observer to this View class */
   void  RemoveObserver( unsigned long tag );
   
-  /** Object representation types */
-  typedef ObjectRepresentation::Pointer     ObjectPointer;
-  typedef std::list< ObjectPointer >        ObjectListType; 
-  typedef ObjectListType::iterator          ObjectListIterator;
-  typedef ObjectListType::const_iterator    ObjectListConstIterator;
-
   /** Add an object representation to the list of children and associate it
    * with a specific view. */ 
   void RequestAddObject( ObjectRepresentation* object ); 
 
   /** Add annotation to the view */
-  void RequestAddAnnotation2D( Annotation2D *  annotation ); 
+  void RequestAddAnnotation2D( Annotation2D::Pointer  annotation ); 
 
-  /** Remove the object passed as arguments from the list of children, only if
-   * it is associated to a particular view. */ 
+  /** Remove the object passed as arguments from the list of children, only 
+   * if it is associated to a particular view. */ 
   void RequestRemoveObject( ObjectRepresentation* object ); 
 
   /** Request to save a screen shot into a file. The file format MUST be PNG
@@ -104,32 +95,11 @@ public:
    * */
   void RequestSaveScreenShot( const std::string & filename );
 
-  /** Declarations needed for the State Machine */
-  igstkStateMachineMacro();
-
   /** Print the object information in a stream. */
   void Print( std::ostream& os, ::itk::Indent indent=0) const;
 
-
   /** Set up variables, types and methods related to the Logger */
   igstkLoggerMacro()
-
-
-protected:
-
-  View( int x, int y, int w, int h, const char *l="");
-  virtual ~View( void );
-
-public:
-  
-  /** Update the display in order to render the new content of the scene */
-  void Update();
- 
-  /** Disable user interactions with the window via mouse and keyboard */
-  void RequestDisableInteractions();
-
-  /** Enable user interactions with the window via mouse and keyboard */
-  void RequestEnableInteractions();
 
   /** Request to return the camera to a known position */
   void RequestResetCamera();
@@ -140,21 +110,37 @@ public:
   /** Request Stopping the periodic refreshing of the view */
   void RequestStop();
 
-  /** Overloaded version of hide() that will Finalize() the vtkRenderWindow.
-   * This call to Finalize() is needed to prevent secondary effects when
-   * destroying a vtkRenderWindow on which we called SetWindowId(). */
-  void hide();
+  /** Set Camera position */
+  void SetCameraPosition( double x, double y, double z);
+  
+  /** Set camera focal point */
+  void SetFocalPoint( double x, double y, double z);
+
+  /** Set Camera View Up vector */
+  void SetCameraViewUp( double vx, double vy, double vz);
+
+  /** Set Clipping range */
+  void SetClippingRange( double dNear, double dFar );
+
+  /** Turn on/off parallel projection */
+  void SetParallelProjection( bool flag );
+
+  /** Set renderer background color */
+  void SetRendererBackgroundColor(
+                    double red, double green, double blue );
+
+  /** Set camera zoom factor */
+  void SetCameraZoomFactor( double rate );
+
+  friend class ViewProxyBase;
 
 protected:
-  
-  // Fl_Gl_Window overrides
-  void flush(void);
-  void draw( void );
-  void resize( int x, int y, int w, int h );
-  virtual int  handle( int event );
-   
+
+  View( );
+  virtual ~View( void );
+
   /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
  
   /** Default Camera */
   vtkCamera             * m_Camera;
@@ -162,38 +148,28 @@ protected:
   /** Set the interactor style in the derived classes */
   void SetInteractorStyle( vtkInteractorStyle * style );
 
-private:
-  
-  vtkRenderWindow       * m_RenderWindow;
-  vtkRenderer           * m_Renderer;
-
-  typedef vtkWorldPointPicker  PickerType;
-  PickerType            * m_PointPicker;
-  
-  bool                    m_InteractionHandling;
-
-  /** Render Window Interactor */
-  RenderWindowInteractor  * m_RenderWindowInteractor;
-
-  /** Member variables for holding temptative arguments of functions.
-   *  This is needed for implementing a layer of security that decouples
-   *  user invokations from the actual state of this class */
-  vtkProp            * m_ActorToBeAdded;
-  vtkProp            * m_ActorToBeRemoved;
-  Annotation2D       * m_Annotation2DToBeAdded; 
-  
-  typedef itk::SimpleMemberCommand< Self >   ObserverType;
-
-  PulseGenerator::Pointer   m_PulseGenerator;
-  ObserverType::Pointer     m_PulseObserver;
-  ::itk::Object::Pointer    m_Reporter;
-
-  /** List of the children object plug to the spatial object. */
-  ObjectListType m_Objects; 
+  /** Set the size of the render window */
+  void RequestSetRenderWindowSize( int width, int height );
+ 
+  /** Request initialize the RenderWindow interactor */
+  void RequestInitializeRenderWindowInteractor();
 
 private:
 
-  /** Methods that will only be invoked by the State Machine */
+  /** Get renderer */ 
+  vtkRenderer *  GetRenderer() const;
+ 
+  /** Get render window */
+  vtkRenderWindow * GetRenderWindow() const;
+
+  /** Get render window interactor */
+  RenderWindowInteractor *  GetRenderWindowInteractor() const;
+
+  /** Get reporter */ 
+  ::itk::Object::Pointer GetReporter() const;
+
+  /** Initialize the interactor */
+  void InitializeRenderWindowInteractorProcessing();
 
   /** Add and remove vtk Actors. Intended to be called only by the state
    * machine */
@@ -210,7 +186,10 @@ private:
   /** Method that will refresh the view.. and the GUI */
   void RefreshRender();
 
+  /** Request add actor */
   void RequestAddActor( vtkProp * actor );
+
+  /** Request remove actor */
   void RequestRemoveActor( vtkProp * actor );
   
   /** Report any invalid request to the logger */
@@ -232,31 +211,57 @@ private:
   /** Reports when a filename for the screen shot is not valid */
   void ReportInvalidScreenShotFileNameProcessing();
 
+  /** Set render window size */
+  void SetRenderWindowSizeProcessing(); 
+
+  /** Report invalid render window size*/
+  void ReportInvalidRenderWindowSizeProcessing();
+ 
   /** This should be called by the state machine */
   void StartProcessing();
   void StopProcessing();
   
-  /** Change the window size */
-  void UpdateSize(int x, int y);
-  
   /** Reset the settings of the camera */  
   void ResetCameraProcessing();
   
-  /** Disable keyboard and mouse interactions */
-  void DisableInteractionsProcessing();
-
-  /** Enable keyboard and mouse interactions */
-  void EnableInteractionsProcessing();
-
 private:
+ 
+  vtkRenderWindow       * m_RenderWindow;
+  vtkRenderer           * m_Renderer;
+
+  /** Render Window Interactor */
+  RenderWindowInteractor  * m_RenderWindowInteractor;
+
+  /** Member variables for holding temptative arguments of functions.
+   *  This is needed for implementing a layer of security that decouples
+   *  user invokations from the actual state of this class */
+  vtkProp            * m_ActorToBeAdded;
+  vtkProp            * m_ActorToBeRemoved;
+
+  Annotation2D::Pointer       m_Annotation2DToBeAdded; 
   
+  typedef itk::SimpleMemberCommand< Self >   ObserverType;
+
+  PulseGenerator::Pointer   m_PulseGenerator;
+  ObserverType::Pointer     m_PulseObserver;
+  ::itk::Object::Pointer    m_Reporter;
+
+  /** Object representation types */
+  typedef ObjectRepresentation::Pointer     ObjectPointer;
+  typedef std::list< ObjectPointer >        ObjectListType; 
+  typedef ObjectListType::const_iterator    ObjectListConstIterator;
+
+  /** List of the children object plug to the spatial object. */
+  ObjectListType m_Objects; 
+ 
   // Arguments for methods to be invoked by the state machine.
-  //
   ObjectRepresentation::Pointer m_ObjectToBeAdded;
   ObjectRepresentation::Pointer m_ObjectToBeRemoved;
   ObjectListType::iterator      m_IteratorToObjectToBeRemoved;
   std::string                   m_ScreenShotFileName;
-
+  int                           m_RenderWindowWidthToBeSet;
+  int                           m_RenderWindowHeightToBeSet;
+ 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidAddActor );
   igstkDeclareInputMacro( NullAddActor );
@@ -271,30 +276,25 @@ private:
   igstkDeclareInputMacro( InexistingRemoveObject );
   igstkDeclareInputMacro( NullRemoveObject );
   igstkDeclareInputMacro( ResetCamera );
-  igstkDeclareInputMacro( EnableInteractions );
-  igstkDeclareInputMacro( DisableInteractions );
   igstkDeclareInputMacro( StartRefreshing );
   igstkDeclareInputMacro( StopRefreshing );
   igstkDeclareInputMacro( ValidScreenShotFileName );
   igstkDeclareInputMacro( InvalidScreenShotFileName );
+  igstkDeclareInputMacro( ValidRenderWindowSize );
+  igstkDeclareInputMacro( InValidRenderWindowSize );
+  igstkDeclareInputMacro( InitializeInteractor );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( InteractorInitialized );
   igstkDeclareStateMacro( Refreshing );
+
+  View(const View& ); // purposely not implemented
+  View& operator=(const View& ); // purposely not implemented
 
   /** Define the coordinate system interface 
    */
   igstkCoordinateSystemClassInterfaceMacro();
-  
-  /** Temporary way to adapt the coordinate system macro 
-   *  above. We will need to find a longer term solution 
-   *  if this class's API remains the same.
-   */
-  void InvokeEvent( const ::itk::EventObject & e)
-    {
-    this->m_Reporter->InvokeEvent( e );
-    }
-
 };
 
 std::ostream& operator<<(std::ostream& os, const View& o);

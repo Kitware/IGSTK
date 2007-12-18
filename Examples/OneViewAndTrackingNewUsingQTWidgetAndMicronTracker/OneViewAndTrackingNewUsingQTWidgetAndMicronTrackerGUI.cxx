@@ -134,7 +134,7 @@ void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::OnQuitAction()
     }
 }
 
-void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::SetView( igstk::ViewNew * view )
+void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::SetView( igstk::View * view )
 {
   ui.Display3D->RequestSetView (view);
   ui.Display3D->AddObserver( igstk::TransformModifiedEvent(), 
@@ -207,7 +207,7 @@ bool OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::HasQuitted( )
 }
 
 void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
-::AttachTrackerToView( igstk::ViewNew * view )
+::AttachTrackerToView( igstk::View * view )
 {
   TransformType identityTransform;
   identityTransform.SetToIdentity( 

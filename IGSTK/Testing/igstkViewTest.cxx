@@ -22,6 +22,7 @@
 #endif
 
 #include <iostream>
+#include "igstkViewProxy.h"
 #include "igstkView2D.h"
 #include "igstkView3D.h"
 #include "igstkEvents.h"
@@ -30,35 +31,31 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkVTKLoggerOutput.h"
+// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
+#include "igstkAxesObjectRepresentation.h"
 
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-namespace ViewTest
-{
+namespace ViewTest {
   
 class ViewObserver : public ::itk::Command 
 {
 public:
   
   typedef  ViewObserver               Self;
-  typedef  ::itk::Command             Superclass;
-  typedef  ::itk::SmartPointer<Self>  Pointer;
+  typedef  ::itk::Command                Superclass;
+  typedef  ::itk::SmartPointer<Self>     Pointer;
   itkNewMacro( Self );
 
 protected:
   ViewObserver() 
     {
     m_PulseCounter = 0;
-    m_Form = 0;
     m_View = 0;
     }
 public:
 
-  void SetForm( Fl_Window * form )
-    {
-    m_Form = form;
-    }
   void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
     std::cerr << "Execute( const * ) should not be called" << std::endl;
@@ -78,13 +75,23 @@ public:
     m_End = end;
     }
 
+  void SetResizeFlag( bool * resize )
+    {
+    m_Resize = resize;
+    }
+
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
     if( ::igstk::RefreshEvent().CheckEvent( &event ) )
       {
       m_PulseCounter++;
 
-      if( m_PulseCounter > 20 )
+      if( m_PulseCounter == 10 )
+        {
+        *m_Resize = true; 
+        }                
+   
+      if( m_PulseCounter > 50 )
         {
         if( m_View )
           {
@@ -101,26 +108,58 @@ public:
     }
 private:
   
-  unsigned long       m_PulseCounter;
-  Fl_Window *         m_Form;
-  ::igstk::View *     m_View;
-  bool *              m_End;
+  unsigned long         m_PulseCounter;
+  ::igstk::View    * m_View;
+  bool *                m_End;
+  bool *                m_Resize;
+};
 
+
+// This is an ad-hoc Widget that emulate the actions
+// of an actual GUI Widget.
+class DummyWidget 
+{
+public:
+  typedef ::igstk::ViewProxy< DummyWidget > ProxyType;
+  typedef ::igstk::View                  ViewType;
+
+  friend class ::igstk::ViewProxy< DummyWidget >;
+
+  void SetView( ViewType * view )
+    {
+    m_View = view;
+    this->m_ProxyView.Connect( m_View );
+    m_ProxyView.SetRenderWindowSize( m_View, 300, 300 );
+    }
+
+private:
+  ProxyType           m_ProxyView;
+  ViewType::Pointer   m_View; 
+
+  // Fake methods needed to satisfy the API exposed to the ViewProxy
+  void SetRenderer( vtkRenderer * ) {};
+  void SetRenderWindowInteractor( vtkRenderWindowInteractor * ) {};
+  void SetReporter ( ::itk::Object::Pointer ) {};
 };
 
 }
+
+#define TESTView2D
+#define TESTView3D
 
 int igstkViewTest( int, char * [] )
 {
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::View2D  View2DType;
-  typedef igstk::View3D  View3DType;
+  typedef igstk::View2D              View2DType;
+  typedef igstk::View3D              View3DType;
+  typedef ViewTest::ViewObserver  ObserverType;
 
-  bool bEnd = false;
+  bool bEnd    = false;
+  bool bResize = false;
 
-  typedef igstk::Object::LoggerType    LoggerType;
-  typedef itk::StdStreamLogOutput   LogOutputType;
+  typedef igstk::Object::LoggerType             LoggerType;
+  typedef itk::StdStreamLogOutput  LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -139,10 +178,29 @@ int igstkViewTest( int, char * [] )
 
   try
     {
+    // Define the World coordinate system
+    /* FIXCS
+    typedef igstk::WorldCoordinateReferenceSystemObject  
+      WorldReferenceSystemType;
+
+    WorldReferenceSystemType::Pointer worldReference =
+      WorldReferenceSystemType::New();
+
+    // make the Z axis very small to avoid disturbing the 2D view
+    worldReference->SetSize(1.0,1.0,0.001); 
+    */
+
+    // Define a representation for the coordinate system
+    typedef igstk::AxesObjectRepresentation  RepresentationType;
+    RepresentationType::Pointer AxesRepresentation = RepresentationType::New();
+    // FIXCS AxesRepresentation->RequestSetAxesObject( worldReference );
+
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
     
+    // FIXCS ellipsoid->RequestAttachToSpatialObjectParent( worldReference );
+
     // Create the ellipsoid representation
     igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
                              igstk::EllipsoidObjectRepresentation::New();
@@ -155,6 +213,7 @@ int igstkViewTest( int, char * [] )
     igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
     cylinder->SetRadius(0.1);
     cylinder->SetHeight(0.5);
+    // FIXCS cylinder->RequestAttachToSpatialObjectParent( worldReference );
 
     // Create the cylinder representation
     igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation =
@@ -164,10 +223,12 @@ int igstkViewTest( int, char * [] )
     cylinderRepresentation->SetColor(1.0,0.0,0.0);
     cylinderRepresentation->SetOpacity(1.0);
 
-    const double validityTimeInMilliseconds = 1e300; // 100 seconds
+    const double validityTimeInMilliseconds = 
+      igstk::TimeStamp::GetLongestPossibleTime();
+
     igstk::Transform transform;
     igstk::Transform::VectorType translation;
-    translation[0] = 0;
+    translation[0] = 0.5;
     translation[1] = 0;
     translation[2] = 0;
     igstk::Transform::VersorType rotation;
@@ -177,147 +238,144 @@ int igstkViewTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-    ellipsoid->RequestSetTransform( transform );
-#endif
+    // FIXCS ellipsoid->RequestSetTransformToSpatialObjectParent( transform );
 
-    translation[1] = -0.25;  // translate the cylinder along Y
-    translation[2] = -2.00;  // translate the cylinder along Z
-    rotation.Set( 0.7071, 0.0, 0.0, 0.7071 );
+
+    const double cylinderAngle = 30.0 * vcl_atan(1.0) / 45.0; // 30 degrees in radians
+    const double rx = vcl_sin( cylinderAngle / 2.0 );
+    const double rw = vcl_cos( cylinderAngle / 2.0 );
+    translation[0] =  0.0;
+    translation[1] =  0.5;  // translate the cylinder along Y
+    translation[2] =  0.0;  // translate the cylinder along Z
+    rotation.Set( rx, 0.0, 0.0, rw );
 
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-    cylinder->RequestSetTransform( transform );
-#endif
+    // FIXCS cylinder->RequestSetTransformToSpatialObjectParent( transform );
 
     cylinderRepresentation->SetLogger( logger );
   
-    // Create an FLTK minimal GUI
-    Fl_Window * form = new Fl_Window(601,301,"View Test");
-    
-    View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
-    View3DType * view3D = new View3DType(310,10,280,280,"3D View");
+#ifdef TESTView3D
+    { // create a scope for the view3D
 
+    // Test the 3D view
+    View3DType::Pointer view3D = View3DType::New();
+
+    // Use a surrogate Widget to initialize the view
+    ViewTest::DummyWidget dummyWidget2;
+    dummyWidget2.SetView( view3D );
+
+    ObserverType::Pointer viewObserver2 = ObserverType::New();
+    
+    bEnd = false;
+    bResize = false;
+
+    viewObserver2->SetView( view3D );
+    viewObserver2->SetEndFlag( &bEnd );
+    viewObserver2->SetResizeFlag( &bResize );
+
+    // FIXCS worldReference->SetSize(1.0,1.0,1.0); 
+
+    view3D->SetRefreshRate( 30 );
+    view3D->SetRendererBackgroundColor( 0.8, 0.9, 0.8 );
+    view3D->SetCameraPosition( 5.0, 2.0, 1.0 ); // Looking from a diagonal
+    view3D->SetFocalPoint( 0.0, 0.0, 0.0 );   // Looking at the origin
+    view3D->SetCameraViewUp( 0.0, 0.0, 1.0 ); // Z axis up
     // Exercise GetNameOfClass() method
-    std::cout << view2D->View2DType::Superclass::GetNameOfClass() << std::endl;
-    std::cout << view3D->GetNameOfClass() << std::endl;
-    std::cout << view3D->GetNameOfClass() << std::endl;
-      
-    form->end();
-    // End of the GUI creation
+    std::cout << view3D->View3DType::Superclass::GetNameOfClass() 
+              << std::endl;
 
-    form->show();
-
-    // Exercice some view functions
-    view2D->Update();
-    
-    view2D->RequestResetCamera();
-    view2D->RequestEnableInteractions();
-    
-    view3D->RequestResetCamera();
-    view3D->RequestEnableInteractions();
-    
-    // Add the ellipsoid to the view
-    view2D->RequestAddObject( ellipsoidRepresentation );
-    
-    // Add the cylinder to the view
-    view3D->RequestAddObject( cylinderRepresentation );
-    
-    // Exercise error conditions.
-    //
-    // Attempt to add an object that already exists.
+    // Add the ellipsoid and cylinder representations to the view
+    // FIXCS view3D->RequestAddObject( AxesRepresentation );
     view3D->RequestAddObject( ellipsoidRepresentation );
-
-
-    // Set the refresh rate and start 
-    // the pulse generators of the views.
-    view2D->RequestSetRefreshRate( 30 );
-    view3D->RequestSetRefreshRate( 10 );
-
-    view2D->RequestStart();
+    view3D->RequestAddObject( cylinderRepresentation );
     view3D->RequestStart();
 
-    // Do manual redraws
-    for(unsigned int i=0; i<10; i++)
+    while( !bEnd )
       {
-      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
-      Fl::check();       // trigger FLTK redraws
       }
+    view3D->RequestStop();
+    // Exercise the screenshot option with a valid filename
+    view3D->RequestStop();
+    view3D->RequestSaveScreenShot("igstkViewTestScreenshot2.png");
+   
+    } // end of view3D scope
+#endif
 
-    view2D->RequestDisableInteractions();
-    view3D->RequestDisableInteractions();
+
+#ifdef TESTView2D
+    // create a scope to destroy the view2D at the end
+    {
+    View2DType::Pointer view2D = View2DType::New();
+    view2D->SetLogger( logger );
+
+    // Exercise GetNameOfClass() method
+    std::cout << view2D->View2DType::Superclass::GetNameOfClass() 
+              << std::endl;
+
+    ViewTest::DummyWidget dummyWidget;
+
+    dummyWidget.SetView( view2D );
+
+
+    view2D->SetRefreshRate( 30 );
+    view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
+    view2D->RequestSetOrientation( View2DType::Axial );
+   
+    view2D->RequestStart();
+
+    // Add the ellipsoid and cylinder representations to the view
+    // FIXCS view2D->RequestAddObject( AxesRepresentation );
+    view2D->RequestAddObject( ellipsoidRepresentation );
+    view2D->RequestAddObject( cylinderRepresentation );
+
 
     // Remove the ellipsoid from the view
     view2D->RequestRemoveObject( ellipsoidRepresentation );
-    
-    // Remove the cylinder from the view
-    view3D->RequestRemoveObject( cylinderRepresentation );
-
-    // Exercise error conditions.
-    //
-    // Attempt to remove an object that already was removed
-    view3D->RequestRemoveObject( ellipsoidRepresentation );
-
-
-    // Exercise error conditions.
-    //
-    // Attempt to add an object with null pointer
-    view3D->RequestAddObject( 0 );
-    
-    // Exercise error conditions.
-    //
-    // Attempt to remove an object with null pointer
-    view3D->RequestRemoveObject( 0 );
-
-    // Exercise error conditions.
-    //
-    // Attempt to add an annotation with a null pointer
-    view3D->RequestAddAnnotation2D( 0 );
- 
-    // Do automatic redraws using the internal PulseGenerator
+    // Add it back
     view2D->RequestAddObject( ellipsoidRepresentation );
-    view3D->RequestAddObject( cylinderRepresentation );
-    typedef ViewTest::ViewObserver ObserverType;
+    
+    // Create an observer in order to count number of view redraws
     ObserverType::Pointer viewObserver = ObserverType::New();
     
-    viewObserver->SetView( view3D );
-    viewObserver->SetForm( form );
-    viewObserver->SetEndFlag( &bEnd );
+    bEnd = false;
+    bResize = false;
 
-    // Exercise the code for resizing the window
-    form->resize(100, 100, 600, 300);
+    viewObserver->SetView( view2D );
+    viewObserver->SetEndFlag( &bEnd );
+    viewObserver->SetResizeFlag( &bResize );
 
     // Exercise and test the Print() methods
     view2D->Print( std::cout, 0 );
-    view3D->Print( std::cout, 0 );
 
     std::cout << *view2D << std::endl;
-    std::cout << *view3D << std::endl;
+
+    view2D->RequestStart();
 
     while(1)
       {
-      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
       if( bEnd )
         {
         break;
         }
+      
+      // modify the render window  
+      if ( bResize )
+        {
+        bResize = false;
+        } 
       }
 
     // Exercise the screenshot option with a valid filename
+    view2D->RequestStop();
     view2D->RequestSaveScreenShot("igstkViewTestScreenshot1.png");
-    
-    // Exercise the screenshot option with an valid filename
-    view2D->RequestSaveScreenShot("igstkViewTestScreenshot1.jpg");
+    } // end of view2D scope
+#endif
 
-    // at this point the observer should have hid the form
 
-    delete view2D;
-    delete view3D;
-    delete form;
     }
   catch(...)
     {

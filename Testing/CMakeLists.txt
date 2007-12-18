@@ -84,7 +84,6 @@ SET(SandboxTests_SRCS
   igstkLandmarkUltrasoundCalibrationTest.cxx
   igstkSocketCommunicationTest.cxx
   igstkVascularNetworkObjectTest.cxx
-  igstkViewNewTest.cxx
   igstkTrackerToolNewTest.cxx
   igstkTransductionMacroTest.cxx
   )
@@ -121,7 +120,6 @@ ADD_TEST( igstkLandmarkUltrasoundCalibrationTest ${IGSTKSandbox_TESTS} igstkLand
   )
 
 ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunicationTest)
-ADD_TEST( igstkViewNewTest ${IGSTKSandbox_TESTS} igstkViewNewTest)
 ADD_TEST( igstkTrackerToolNewTest ${IGSTKSandbox_TESTS} igstkTrackerToolNewTest)
 ADD_TEST( igstkTransductionMacroTest ${IGSTKSandbox_TESTS} igstkTransductionMacroTest)
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)

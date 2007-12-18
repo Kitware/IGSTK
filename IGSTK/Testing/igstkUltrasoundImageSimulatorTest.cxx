@@ -30,6 +30,7 @@
 #include "igstkUltrasoundImageSimulator.h"
 #include "igstkUSImageObjectRepresentation.h"
 #include "igstkView2D.h"
+#include "igstkFLTKWidget.h"
 
 namespace UltrasoundImageSimulatorTest
 {
@@ -117,8 +118,15 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
   Fl_Window * form = new Fl_Window(532,532,"UltrasoundImageSimulatorTest");
     
   typedef igstk::View2D  View2DType;
+  typedef igstk::FLTKWidget      FLTKWidgetType;
 
-  View2DType * view2D = new View2DType( 10,10,512,512,"2D View");
+  View2DType::Pointer view2D = View2DType::New();
+
+  // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget2D = 
+                    new FLTKWidgetType( 10,10,280,280,"2D View");
+  fltkWidget2D->RequestSetView( view2D );
+
 
   form->end();
   form->show();
@@ -139,7 +147,7 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
   imageRepresentation->RequestSetSliceNumber( 0 );
   
   view2D->RequestResetCamera();
-  view2D->RequestSetRefreshRate( 30 );
+  view2D->SetRefreshRate( 30 );
   view2D->RequestStart();
 
   Fl::wait(1.0);  
@@ -154,7 +162,7 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
   std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
   view2D->RequestSaveScreenShot( filename );
 
-  delete view2D;
+  delete fltkWidget2D;
   delete form;
 
   return EXIT_SUCCESS;

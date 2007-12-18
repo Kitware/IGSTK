@@ -15,35 +15,35 @@
 
 =========================================================================*/
 #include "igstkViewProxyBase.h"
-#include "igstkViewNew.h"
+#include "igstkView.h"
 
 namespace igstk {
 
-vtkRenderer * ViewProxyBase::GetRenderer( ViewNew * view )
+vtkRenderer * ViewProxyBase::GetRenderer( View * view )
 {
   return view->GetRenderer();
 } 
 
 vtkRenderWindowInteractor * 
-ViewProxyBase::GetRenderWindowInteractor( ViewNew * view )
+ViewProxyBase::GetRenderWindowInteractor( View * view )
 {
   return view->GetRenderWindowInteractor();
 } 
 
 ::itk::Object::Pointer  
-ViewProxyBase::GetReporter( ViewNew * view )
+ViewProxyBase::GetReporter( View * view )
 {
   return view->GetReporter();
 } 
 
 void
-ViewProxyBase::InitializeInteractor( ViewNew * view )
+ViewProxyBase::InitializeInteractor( View * view )
 {
   view->RequestInitializeRenderWindowInteractor();
 }
 
 void 
-ViewProxyBase::SetRenderWindowSize( ViewNew * view, int width, int height )
+ViewProxyBase::SetRenderWindowSize( View * view, int width, int height )
 {
   view->RequestSetRenderWindowSize( width, height );
 }

@@ -25,6 +25,7 @@
 #include "igstkBoxObject.h"
 #include "igstkBoxObjectRepresentation.h"
 #include "igstkView2D.h"
+#include "igstkFLTKWidget.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -305,14 +306,21 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
   typedef igstk::View2D  View2DType;
+  // Create an FLTK minimal GUI
+  typedef igstk::FLTKWidget      FLTKWidgetType;
 
-  View2DType * view2D = new View2DType( 10,10,512,512,"2D View");
+  View2DType::Pointer view2D = View2DType::New();
 
+  // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget2D = 
+                      new FLTKWidgetType( 10,10,280,280,"2D View");
+  fltkWidget2D->RequestSetView( view2D );
+  fltkWidget2D->SetLogger( logger );
+  
   form->end();
   form->show();
 
   view2D->SetLogger( logger ); 
-  view2D->RequestEnableInteractions();
 
   // Add the image object representation to the view
   view2D->RequestAddObject( imageRepresentation );
@@ -355,7 +363,7 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   imageRepresentation->RequestSetSliceNumber( 0 );
   
   view2D->RequestResetCamera();
-  view2D->RequestSetRefreshRate( 30 );
+  view2D->SetRefreshRate( 30 );
   view2D->RequestStart();
   Fl::wait(1.0);  
   igstk::PulseGenerator::CheckTimeouts();
@@ -375,7 +383,7 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
   view2D->RequestSaveScreenShot( filename );
 
-  delete view2D;
+  delete fltkWidget2D;
   delete form;
  
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )

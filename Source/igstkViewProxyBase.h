@@ -17,7 +17,7 @@
 #ifndef __igstkViewProxyBase_h
 #define __igstkViewProxyBase_h
 
-#include "igstkViewNew.h"
+#include "igstkView.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindowInteractor.h"
 
@@ -37,11 +37,11 @@ class ViewProxyBase
 public:
 
 protected:
-  vtkRenderer *               GetRenderer( ViewNew * view );
-  vtkRenderWindowInteractor * GetRenderWindowInteractor( ViewNew * view );
-  ::itk::Object::Pointer      GetReporter( ViewNew * view );
-  void                        InitializeInteractor( ViewNew * view );
-  void                        SetRenderWindowSize( ViewNew * view, int width, int height );
+  vtkRenderer *               GetRenderer( View * view );
+  vtkRenderWindowInteractor * GetRenderWindowInteractor( View * view );
+  ::itk::Object::Pointer      GetReporter( View * view );
+  void                        InitializeInteractor( View * view );
+  void                        SetRenderWindowSize( View * view, int width, int height );
 
 private:
 

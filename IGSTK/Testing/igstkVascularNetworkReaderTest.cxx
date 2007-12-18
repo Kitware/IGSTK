@@ -24,6 +24,7 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkView3D.h"
+#include "igstkFLTKWidget.h"
 #include "igstkVascularNetworkObjectRepresentation.h"
 #include "igstkVTKLoggerOutput.h"
 
@@ -164,14 +165,21 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
   Fl_Window * form = new Fl_Window(532,532,"Vascular Network View Test");
     
   typedef igstk::View3D  View3DType;
+  // Create an FLTK minimal GUI
+  typedef igstk::FLTKWidget      FLTKWidgetType;
+   
+  View3DType::Pointer view3D = View3DType::New();
 
-  View3DType * view3D = new View3DType( 10,10,512,512,"3D View");
-
+  // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget3D = 
+                      new FLTKWidgetType( 10,10,280,280,"2D View");
+  fltkWidget3D->RequestSetView( view3D );
+  fltkWidget3D->SetLogger( logger );
+ 
   form->end();
   form->show();
 
   view3D->SetLogger( logger ); 
-  view3D->RequestEnableInteractions();
 
   // Create the vascular network representation
   typedef igstk::VascularNetworkObjectRepresentation 
@@ -189,7 +197,7 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
   view3D->RequestAddObject( vascularNetworkRepresentation );
 
   view3D->RequestResetCamera();
-  view3D->RequestSetRefreshRate( 30 );
+  view3D->SetRefreshRate( 30 );
   view3D->RequestStart();
   Fl::wait(1.0);  
   igstk::PulseGenerator::CheckTimeouts();
@@ -209,7 +217,7 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
             << filename.c_str() << std::endl;
   view3D->RequestSaveScreenShot( filename );
 
-  delete view3D;
+  delete fltkWidget3D;
   delete form;
  
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )

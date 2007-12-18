@@ -29,8 +29,8 @@
 // Software Guide : EndLatex 
 
 #include "igstkBoxObjectRepresentation.h"
-#include <FL/Fl_Window.h>
-#include <igstkView3D.h>
+#include "igstkFLTKWidget.h"
+#include "igstkView3D.h"
 
 int main( int , char *[] )
 {
@@ -58,8 +58,19 @@ int main( int , char *[] )
   Fl_Window * form = new Fl_Window(512,262,"Sharing Object Representations");
 
   typedef igstk::View3D  View3DType;
-  View3DType * view3D1 = new View3DType(6,6,250,260,"View 3D 1");
-  View3DType * view3D2 = new View3DType(260,6,250,260,"View 3D 2");
+  typedef igstk::FLTKWidget      FLTKWidgetType;
+
+  View3DType::Pointer view3D1 = View3DType::New();
+  View3DType::Pointer view3D2 = View3DType::New();
+
+  // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget3D1 = 
+                    new FLTKWidgetType( 10,10,280,280,"View 3D 1");
+  fltkWidget3D1->RequestSetView( view3D1 );
+  
+  FLTKWidgetType * fltkWidget3D2 = 
+                    new FLTKWidgetType( 310,10,280,280,"View 3D 2");
+  fltkWidget3D2->RequestSetView( view3D2 );
 
   form->end();
   form->show();
@@ -100,13 +111,11 @@ int main( int , char *[] )
   view3D2->RequestAddObject( cubeRepresentation2  );
 // Software Guide : EndCodeSnippet
 
-  view3D1->RequestSetRefreshRate( 0.1 );
-  view3D1->RequestEnableInteractions();
+  view3D1->SetRefreshRate( 0.1 );
   view3D1->RequestStart();
   view3D1->RequestResetCamera();
   
-  view3D2->RequestSetRefreshRate( 0.1 );
-  view3D2->RequestEnableInteractions();
+  view3D2->SetRefreshRate( 0.1 );
   view3D2->RequestStart();
   view3D2->RequestResetCamera();
 
@@ -136,7 +145,6 @@ int main( int , char *[] )
   view3D2->RequestAddObject( cubeRepresentation->Copy() );
 // Software Guide : EndCodeSnippet
   view3D2->RequestResetCamera();
-  view3D2->Update();
 
   while(form->visible())
     {
@@ -144,8 +152,8 @@ int main( int , char *[] )
     igstk::PulseGenerator::CheckTimeouts();
     }
 
-  delete view3D1;
-  delete view3D2;
+  delete fltkWidget3D1;
+  delete fltkWidget3D2;
   delete form;
 
   return EXIT_SUCCESS;

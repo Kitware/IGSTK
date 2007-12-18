@@ -27,7 +27,7 @@
 #include <QtTest/QTest>
 
 #include <iostream>
-#include "igstkViewNew2D.h"
+#include "igstkView2D.h"
 #include "igstkEvents.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
@@ -68,11 +68,11 @@ int igstkQTWidgetTest2( int argc, char * argv[])
     qtMainWindow->setFixedSize(601,301);
 
     typedef igstk::QTWidget      QTWidgetType;
-    typedef igstk::ViewNew2D  ViewNew2DType;
+    typedef igstk::View2D  View2DType;
 
     //Instantiate widget and view component
     QTWidgetType * qtWidget2D = new QTWidgetType();
-    ViewNew2DType::Pointer view2D = ViewNew2DType::New();
+    View2DType::Pointer view2D = View2DType::New();
     view2D->SetLogger( logger );
     view2D->RequestResetCamera();
 
@@ -81,7 +81,7 @@ int igstkQTWidgetTest2( int argc, char * argv[])
 
     //Instantiate a second widget and a view component
     QTWidgetType * qtWidget2D2 = new QTWidgetType();
-    ViewNew2DType::Pointer view2D2 = ViewNew2DType::New();
+    View2DType::Pointer view2D2 = View2DType::New();
     view2D2->SetLogger( logger );
     view2D2->RequestResetCamera();
 

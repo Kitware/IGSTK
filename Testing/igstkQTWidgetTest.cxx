@@ -26,7 +26,7 @@
 #include <QtTest/QTest>
 
 #include <iostream>
-#include "igstkViewNew2D.h"
+#include "igstkView2D.h"
 #include "igstkEvents.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
@@ -62,7 +62,7 @@ public:
     std::cerr << "Execute( const * ) should not be called" << std::endl;
     }
 
-  void SetView( ::igstk::ViewNew * view )
+  void SetView( ::igstk::View * view )
     {
     m_View = view;
     if( m_View )
@@ -100,7 +100,7 @@ public:
 private:
   
   unsigned long       m_PulseCounter;
-  ::igstk::ViewNew *  m_View;
+  ::igstk::View *  m_View;
   bool *              m_End;
 
 };
@@ -111,7 +111,7 @@ int igstkQTWidgetTest( int argc, char * argv[])
 {
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::ViewNew2D  ViewNew2DType;
+  typedef igstk::View2D  View2DType;
 
   bool bEnd = false;
 
@@ -187,7 +187,7 @@ int igstkQTWidgetTest( int argc, char * argv[])
     cylinder->RequestSetTransform( transform );
 #endif
 
-    ViewNew2DType::Pointer view2D = ViewNew2DType::New();
+    View2DType::Pointer view2D = View2DType::New();
     view2D->SetLogger( logger );
     
     view2D->RequestResetCamera();

@@ -25,7 +25,7 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkMicronTrackerNew.h"
-#include "igstkViewNew.h"
+#include "igstkView.h"
 #include "igstkTransform.h"
 
 #ifdef WIN32
@@ -63,13 +63,13 @@ public:
   void GetTrackerToolTransform( int trackerToolNumber, TransformType & transform );
   void InitializeTracker( std::string InitializationFile, std::string CameraCalibrationFileDirectory, std::string markerTemplateDirectory );
   void ConfigureTrackerToolsAndAttachToTheTracker();
-  void SetView( igstk::ViewNew * view );
+  void SetView( igstk::View * view );
   bool IsTrackingTurnedOn()
     {
     return m_Tracking;
     }
 
-  void AttachTrackerToView( igstk::ViewNew * view);
+  void AttachTrackerToView( igstk::View * view);
  
   bool HasQuitted();
 

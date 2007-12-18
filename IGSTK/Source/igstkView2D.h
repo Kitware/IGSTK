@@ -39,18 +39,8 @@ namespace igstk {
 class View2D : public View 
 {
 public:
-  typedef View2D    Self;
-  typedef View      Superclass;
 
-  igstkTypeMacro( View2D, View );
-   
-  /** Constructor. The parameters of this constructor are related to the FLTK
-   * box class. They include the screen coordinates of the upper left
-   * coordinate, its width and height, and a string associated to the label */
-  View2D( int x, int y, int w, int h, const char *l="");
-
-  /** Destructor */
-  ~View2D( void );
+  igstkStandardClassTraitsMacro( View2D, View );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
@@ -70,10 +60,11 @@ public:
   void RequestSetOrientation( const OrientationType & orientation );
 
 protected:
+  /** Constructor */
+  View2D( );
 
-  /** This method implements the user interactions with the view. It is an
-   * overload of a virtual medthod defined for FLTK classes. */
-  int  handle( int event );
+  /** Destructor */
+  ~View2D( void );
 
 private:
 

@@ -25,7 +25,7 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkQMouseTracker.h"
-#include "igstkViewNew.h"
+#include "igstkView.h"
 
 #ifdef WIN32
 #include "igstkSerialCommunicationForWindows.h"
@@ -57,7 +57,7 @@ public:
   OneViewAndTrackingUsingQTWidgetGUI();
   ~OneViewAndTrackingUsingQTWidgetGUI();
   void AttachObjectToTrack( igstk::SpatialObject *objectToTrack);
-  void SetView( igstk::ViewNew * view );
+  void SetView( igstk::View * view );
   bool HasQuitted();
 
 public slots:

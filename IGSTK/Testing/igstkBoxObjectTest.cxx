@@ -219,7 +219,7 @@ int igstkBoxObjectTest( int, char * [] )
   std::cout << "Testing actors : ";
 
   typedef igstk::View2D  View2DType;
-  View2DType * view2D = new View2DType(0,0,200,200,"View 2D");
+  View2DType::Pointer view2D = View2DType::New();
   
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( BoxRepresentation );
@@ -343,7 +343,6 @@ int igstkBoxObjectTest( int, char * [] )
 
   std::cout << "Test [DONE]" << std::endl;
 
-  delete view2D;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {

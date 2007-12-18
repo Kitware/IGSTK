@@ -22,7 +22,7 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-#include "igstkViewNew3D.h"
+#include "igstkView3D.h"
 #include "igstkCoordinateReferenceSystemDelegator.h"
 #include "igstkTrackerNew.h"
 
@@ -217,7 +217,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   ellipsoid1->RequestGetTransformToParent();
 #endif
 
-  typedef igstk::ViewNew3D ViewType;
+  typedef igstk::View3D ViewType;
 
   igstk::Transform identity;
   identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());

@@ -33,7 +33,7 @@
 #endif
 
 #include "igstkLogger.h"
-#include "igstkViewNew.h"
+#include "igstkView.h"
 #include "itkStdStreamLogOutput.h"
 
 class OneViewAndTrackingNewUsingFLTKWidgetImplementation : 
@@ -165,7 +165,7 @@ public:
     transform = m_TrackerTool->GetRawTransform();
     }
 
-  void AttachTrackerToView( igstk::ViewNew * view )
+  void AttachTrackerToView( igstk::View * view )
     {
     TransformType identityTransform;
     identityTransform.SetToIdentity( 

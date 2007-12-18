@@ -22,7 +22,7 @@
 #endif
 
 #include <iostream>
-#include "igstkViewNew2D.h"
+#include "igstkView2D.h"
 #include "igstkEvents.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
@@ -55,7 +55,7 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
 {
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::ViewNew2D  ViewNew2DType;
+  typedef igstk::View2D  View2DType;
 
   if( argc < 3 )
     {
@@ -132,7 +132,7 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
 //    ellipsoid->RequestSetTransform( transform ); // DEPRECATED
     // FIXCS ellipsoid->RequestSetTransformToSpatialObjectParent( transform );
 
-    ViewNew2DType::Pointer view2D = ViewNew2DType::New();
+    View2DType::Pointer view2D = View2DType::New();
     
     view2D->RequestResetCamera();
     view2D->RequestAddObject( ellipsoidRepresentation );

@@ -21,7 +21,7 @@
 #endif
 
 #include "OneViewAndTrackingNewUsingFLTKWidgetImplementation.h"
-#include "igstkViewNew3D.h"
+#include "igstkView3D.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
@@ -86,8 +86,8 @@ int main(int , char** )
   cylinderRepresentation->SetOpacity(1.0);
 
   // instantiate a 3D view 
-  typedef igstk::ViewNew3D        ViewNew3DType;
-  ViewNew3DType::Pointer view3D = ViewNew3DType::New();
+  typedef igstk::View3D        View3DType;
+  View3DType::Pointer view3D = View3DType::New();
 
   /** We pass the bare pointer so that the compiler can figure out the type
       for the templated method. */

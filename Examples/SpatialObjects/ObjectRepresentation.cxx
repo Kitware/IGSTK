@@ -33,6 +33,7 @@
 #include "igstkBoxObjectRepresentation.h"
 #include <FL/Fl_Window.h>
 #include <igstkView3D.h>
+#include <igstkFLTKWidget.h>
 // Software Guide : EndCodeSnippet
 
 int main( int , char *[] )
@@ -102,7 +103,16 @@ int main( int , char *[] )
   Fl_Window * form = new Fl_Window(512,512,"Displaying my first object");
 
   typedef igstk::View3D  View3DType;
-  View3DType * view3D = new View3DType(6,6,500,500,"View 3D");
+
+  // Create an FLTK minimal GUI
+  typedef igstk::FLTKWidget      FLTKWidgetType;
+
+  View3DType::Pointer view3D = View3DType::New();
+
+  // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget3D = 
+                      new FLTKWidgetType( 10,10,280,280,"2D View");
+  fltkWidget3D->RequestSetView( view3D );
 
   form->end();
   form->show();
@@ -119,13 +129,12 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// We set the refresh rate of the view and we enable interactions.
+// We set the refresh rate of the view
 //
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-  view3D->RequestSetRefreshRate( 0.1 );
-  view3D->RequestEnableInteractions();
+  view3D->SetRefreshRate( 0.1 );
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
@@ -154,13 +163,13 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// At the end, we delete the view3D and form since they are not using
+// At the end, we delete the fltkWidget3D and form since they are not using
 // smart pointers.
 //
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-  delete view3D;
+  delete fltkWidget3D;
   delete form;
 // Software Guide : EndCodeSnippet
   return EXIT_SUCCESS;

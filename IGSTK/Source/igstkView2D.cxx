@@ -15,13 +15,13 @@
 
 =========================================================================*/
 #include "igstkView2D.h"
-
 #include "vtkInteractorStyleImage.h"
+#include "vtkCamera.h"
 
 namespace igstk {
 
 /** Constructor */
-View2D::View2D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
+View2D::View2D() : m_StateMachine(this), View()
 {
   vtkInteractorStyleImage * interactorStyle = vtkInteractorStyleImage::New();
   this->SetInteractorStyle( interactorStyle );
@@ -29,6 +29,12 @@ View2D::View2D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
 
   // initialize the orientation to be axial
   this->m_Orientation = Axial;
+
+  /** FIXME: This needs to be called sometime to move us to the 
+   *  InteractorInitialized state. We need to decide if this is the right
+   *  place to initialize the interactor.
+   */
+  this->RequestInitializeRenderWindowInteractor();
 }
 
 /** Destructor */
@@ -36,14 +42,6 @@ View2D::~View2D()
 {
   this->SetInteractorStyle( NULL );
 }
-
-
-/** Main FLTK event handler */
-int View2D::handle( int event ) 
-{
-  return View::handle( event );
-}
-
 
 /** Print object information */
 void View2D::PrintSelf( std::ostream& os, ::itk::Indent indent ) const

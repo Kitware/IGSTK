@@ -31,6 +31,8 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#include "igstkFLTKWidget.h"
+
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
 // FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
@@ -263,12 +265,18 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   Fl_Window * form = new Fl_Window(512,512,"View2D Test");
 
   typedef igstk::View2D  View2DType;
-  View2DType * view2D = new View2DType(6,6,500,500,"View 2D");
+  // Create an FLTK minimal GUI
+  typedef igstk::FLTKWidget      FLTKWidgetType;
+
+  View2DType::Pointer view2D = View2DType::New();
   view2D->SetLogger( logger );
 
-  form->end();
-  // End of the GUI creation
+  // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget2D = 
+                      new FLTKWidgetType( 10,10,280,280,"2D View");
+  fltkWidget2D->RequestSetView( view2D );
 
+  form->end();
   form->show();
   
 
@@ -394,9 +402,8 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   typedef ::igstk::UltrasoundProbeObjectTest::ViewObserver ObserverType;
   ObserverType::Pointer viewObserver = ObserverType::New();
   
-  view2D->RequestSetRefreshRate( 20 );
+  view2D->SetRefreshRate( 20 );
   view2D->RequestResetCamera();
-  view2D->RequestEnableInteractions();
 
   viewObserver->SetView( view2D );
   viewObserver->SetForm( form );
@@ -416,7 +423,7 @@ int igstkUltrasoundProbeObjectTest( int, char * [] )
   
   std::cout << "Test [DONE]" << std::endl;
 
-  delete view2D;
+  delete fltkWidget2D;
   delete form;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )

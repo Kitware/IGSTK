@@ -32,6 +32,8 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#include "igstkFLTKWidget.h"
+
 #ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
 // FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #endif
@@ -148,6 +150,7 @@ int igstkAxesObjectTest( int, char * [] )
   // FIXCS AxesObject->RequestAttachToSpatialObjectParent( worldReference );
 #endif 
 
+
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetSize() : ";
   AxesObject->SetSize(10,20,30);
@@ -211,10 +214,19 @@ int igstkAxesObjectTest( int, char * [] )
   std::cout << "Testing actors : ";
 
   typedef igstk::View2D  View2DType;
+  typedef igstk::FLTKWidget      FLTKWidgetType;
+
+
+  View2DType::Pointer view2D = View2DType::New();
 
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(301,301,"AxesObjectTest");
-  View2DType * view2D = new View2DType(0,0,300,300,"View 2D");
+
+  // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget2D = 
+                    new FLTKWidgetType( 10,10,280,280,"2D View");
+  fltkWidget2D->RequestSetView( view2D );
+
   
   form->end();
   // End of the GUI creation
@@ -228,7 +240,6 @@ int igstkAxesObjectTest( int, char * [] )
   form->show();
 
   view2D->RequestResetCamera();
-  view2D->RequestEnableInteractions();
  
   // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
   // geometrical parameters should trigger an update in the representation
@@ -308,7 +319,7 @@ int igstkAxesObjectTest( int, char * [] )
 
   std::cout << "[PASSED]" << std::endl;
 
-  view2D->RequestSetRefreshRate( 30 );
+  view2D->SetRefreshRate( 30 );
   view2D->RequestStart();
 
   // Do manual redraws
@@ -352,7 +363,7 @@ int igstkAxesObjectTest( int, char * [] )
   // Exercise the screenshot option with a valid filename
   view2D->RequestSaveScreenShot("igstkAxesObjectTestScreenshot1.png");
     
-  delete view2D;
+  delete fltkWidget2D;
   delete form;
 
   std::cout << "Test [DONE]" << std::endl;

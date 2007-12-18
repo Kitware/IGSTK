@@ -40,7 +40,7 @@ class vtkRenderWindowInteractor;
 // IGSTK headers
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
-#include "igstkViewNew.h"
+#include "igstkView.h"
 #include "igstkViewProxy.h"
 
 namespace igstk {
@@ -56,7 +56,7 @@ public:
   typedef FLTKWidget          Self;
   typedef Fl_Gl_Window        Superclass;
 
-  typedef ViewNew             ViewType;
+  typedef View             ViewType;
 
   typedef vtkWorldPointPicker  PickerType;
 

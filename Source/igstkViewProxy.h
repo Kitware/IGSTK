@@ -17,7 +17,7 @@
 #ifndef __igstkViewProxy_h
 #define __igstkViewProxy_h
 
-#include "igstkViewNew.h"
+#include "igstkView.h"
 #include "igstkViewProxyBase.h"
 
 namespace igstk {
@@ -53,7 +53,7 @@ public:
     this->m_Widget = t;
     }
 
-  void Connect ( ViewNew * view )
+  void Connect ( View * view )
     {
     vtkRenderer * renderer =
         ViewProxyBase::GetRenderer( view );
@@ -71,7 +71,7 @@ public:
     ViewProxyBase::InitializeInteractor( view );
     }  
 
-  void SetRenderWindowSize( ViewNew * view, int width, int height )
+  void SetRenderWindowSize( View * view, int width, int height )
     {
     ViewProxyBase::SetRenderWindowSize( view, width, height );
 

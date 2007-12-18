@@ -41,6 +41,8 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#include "igstkFLTKWidget.h"
+
 namespace ViewRefreshRateTest
 {
   
@@ -174,8 +176,9 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
     // Create an FLTK minimal GUI
     Fl_Window * form = new Fl_Window(601,301,"View Refresh Rate Test");
     
-    View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
-    View3DType * view3D = new View3DType(310,10,280,280,"3D View");
+    View2DType::Pointer view2D = View2DType::New();
+    View3DType::Pointer view3D = View3DType::New();
+
     view2D->SetLogger( logger );
     view3D->SetLogger( logger );
 
@@ -185,19 +188,13 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
     form->show();
     
     view2D->RequestResetCamera();
-    view2D->RequestEnableInteractions();
-    
     view3D->RequestResetCamera();
-    view3D->RequestEnableInteractions();
     
  
     // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );
     view3D->RequestAddObject( ellipsoidRepresentation );
     
-    view2D->RequestDisableInteractions();
-    view3D->RequestDisableInteractions();
-
     bool bEnd = false;
 
     typedef ViewRefreshRateTest::ViewObserver ObserverType;
@@ -233,10 +230,10 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
       static_cast< unsigned long >( refreshRate * expectedNumberOfSeconds );
 
     // Set the refresh rate for the view that we are validating
-    view2D->RequestSetRefreshRate( refreshRate );
+    view2D->SetRefreshRate( refreshRate );
 
     // Make it compete with another view that refreshes at double the rate.
-    view3D->RequestSetRefreshRate( refreshRate * 2 );
+    view3D->SetRefreshRate( refreshRate * 2 );
 
     viewObserver->SetNumberOfPulsesToStop( numberOfPulsesToStop );
     
@@ -285,8 +282,6 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
   
     // at this point the observer should have hid the form
 
-    delete view2D;
-    delete view3D;
     delete form;
     }
   catch(...)

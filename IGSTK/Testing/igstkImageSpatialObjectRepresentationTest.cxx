@@ -23,6 +23,7 @@
 #include "igstkImageSpatialObjectRepresentation.h"
 #include "igstkImageSpatialObject.h"
 #include "igstkView2D.h"
+#include "igstkFLTKWidget.h"
 #include "igstkCTImageReader.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
@@ -233,8 +234,16 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
   typedef igstk::View2D  View2DType;
+  // Create an FLTK minimal GUI
+  typedef igstk::FLTKWidget      FLTKWidgetType;
 
-  View2DType * view2D = new View2DType( 10,10,512,512,"2D View");
+  View2DType::Pointer view2D = View2DType::New();
+
+  // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget2D = 
+                      new FLTKWidgetType( 10,10,280,280,"2D View");
+  fltkWidget2D->RequestSetView( view2D );
+  fltkWidget2D->SetLogger( logger );
 
   view2D->SetLogger( logger );
 
@@ -344,7 +353,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   
   // Set and initialize the pulse generator of the view 
-  view2D->RequestSetRefreshRate( 30 );
+  view2D->SetRefreshRate( 30 );
   view2D->RequestStart();
  
 
@@ -440,7 +449,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     }
 
 
-  delete view2D;
+  delete fltkWidget2D;
   delete form;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )

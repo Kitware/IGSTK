@@ -33,6 +33,7 @@
 #include "igstkRealTimeClock.h"
 
 #include "vtkInteractorObserver.h"
+#include "igstkView3D.h"
 
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -211,33 +212,32 @@ int main(int , char** )
   meshRepresentation->RequestSetMeshObject( mesh );
   meshRepresentation->SetColor(1,0,0);
 
+  // instantiate a 3D view 
+  typedef igstk::View3D        View3DType;
+  View3DType::Pointer view3D = View3DType::New();
+  View3DType::Pointer view3D2 = View3DType::New();
+
+  m_GUI->Display1->RequestSetView( view3D );
+  m_GUI->Display2->RequestSetView( view3D2 );
+
   igstk::Transform displayTransform;
   displayTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  m_GUI->Display1->RequestSetTransformAndParent( displayTransform, mesh.GetPointer() );
-  m_GUI->Display2->RequestSetTransformAndParent( displayTransform, ellipsoid.GetPointer() );
+  view3D->RequestSetTransformAndParent( displayTransform, mesh.GetPointer() );
+  view3D2->RequestSetTransformAndParent( displayTransform, ellipsoid.GetPointer() );
 
   // Add another Object representations to the second display
-  m_GUI->Display2->RequestAddObject( ellipsoidRepresentation->Copy() );
-  m_GUI->Display2->RequestAddObject( cylinderRepresentation->Copy() );
-  m_GUI->Display2->RequestAddObject( meshRepresentation->Copy() );
+  view3D2->RequestAddObject( ellipsoidRepresentation->Copy() );
+  view3D2->RequestAddObject( cylinderRepresentation->Copy() );
+  view3D2->RequestAddObject( meshRepresentation->Copy() );
 
-  m_GUI->Display1->RequestAddObject( ellipsoidRepresentation );
-  m_GUI->Display1->RequestAddObject( cylinderRepresentation );
-  m_GUI->Display1->RequestAddObject( tubeRepresentation );
-  m_GUI->Display1->RequestAddObject( meshRepresentation );
+  view3D->RequestAddObject( ellipsoidRepresentation );
+  view3D->RequestAddObject( cylinderRepresentation );
+  view3D->RequestAddObject( tubeRepresentation );
+  view3D->RequestAddObject( meshRepresentation );
 
-  m_GUI->Display2->RequestResetCamera();
-  m_GUI->Display2->Update();
-
-  // Enable interactions
-  m_GUI->Display2->RequestEnableInteractions();
-
-  m_GUI->Display1->RequestResetCamera();
-  m_GUI->Display1->Update();
-
-  // Enable interactions
-  m_GUI->Display1->RequestEnableInteractions();
+  view3D2->RequestResetCamera();
+  view3D->RequestResetCamera();
 
   // Create a tracker
   igstk::MouseTracker::Pointer tracker = igstk::MouseTracker::New();
@@ -253,8 +253,6 @@ int main(int , char** )
 
   m_GUI->SetTracker( tracker );
   
-  m_GUI->Display1->Update();
-
   // Setup the logging system
   typedef igstk::Object::LoggerType             LoggerType;
 
@@ -269,15 +267,15 @@ int main(int , char** )
   fileOutput->SetStream( ofs );
   logger->AddLogOutput( logOutput );
  
-  m_GUI->Display1->SetLogger( logger ); 
-  m_GUI->Display2->SetLogger( logger ); 
+  view3D->SetLogger( logger ); 
+  view3D2->SetLogger( logger ); 
   tracker->SetLogger( logger );
 
-  m_GUI->Display1->RequestSetRefreshRate( 30 ); // 30 Hz
-  m_GUI->Display2->RequestSetRefreshRate( 30 ); // 30 Hz
+  view3D->SetRefreshRate( 30 ); // 30 Hz
+  view3D2->SetRefreshRate( 30 ); // 30 Hz
 
-  m_GUI->Display1->RequestStart();
-  m_GUI->Display2->RequestStart();
+  view3D->RequestStart();
+  view3D2->RequestStart();
 
   typedef igstk::Transform::VersorType  VersorType;
   VersorType versor0 = GetRandomVersorNear( 
@@ -306,8 +304,8 @@ int main(int , char** )
     versor1 = versor2;
     }
 
-  m_GUI->Display1->RequestStop();
-  m_GUI->Display2->RequestStop();
+  view3D->RequestStop();
+  view3D2->RequestStop();
 
   tracker->RequestStopTracking();
   tracker->RequestClose();

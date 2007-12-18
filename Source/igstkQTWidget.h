@@ -38,7 +38,7 @@ PURPOSE.  See the above copyright notices for more information.
 // IGSTK headers
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
-#include "igstkViewNew.h"
+#include "igstkView.h"
 #include "igstkViewProxy.h"
 
 #include "QVTKWidget.h"
@@ -55,7 +55,7 @@ public:
     
   typedef QTWidget          Self;
   typedef QVTKWidget        Superclass;
-  typedef ViewNew           ViewType; 
+  typedef View           ViewType; 
 
   typedef vtkWorldPointPicker  PickerType;
 
