@@ -30,16 +30,115 @@
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkMeshObjectRepresentation.h"
 #include "igstkMouseTracker.h"
+#include "igstkRealTimeClock.h"
+
 #include "vtkInteractorObserver.h"
 
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+namespace 
+{
+
+/** This method creates a random versor. */
+igstk::Transform::VersorType GetRandomVersor()
+{
+  igstk::Transform::VersorType rotation;
+  double x = static_cast<double>(rand())/static_cast<double>(RAND_MAX);
+  double y = static_cast<double>(rand())/static_cast<double>(RAND_MAX);
+  double z = static_cast<double>(rand())/static_cast<double>(RAND_MAX);
+  double w = static_cast<double>(rand())/static_cast<double>(RAND_MAX);
+  rotation.Set(x, y, z, w);
+
+  return rotation;
+}
+
+/** This method creates a random versor whose values are "near" a
+ *  supplied versor.
+ */
+igstk::Transform::VersorType GetRandomVersorNear( 
+                                     const igstk::Transform::VersorType& versorIn,
+                                     double lambda)
+{
+
+  igstk::Transform::VersorType rotation;
+  double x = lambda * static_cast<double>(rand())/static_cast<double>(RAND_MAX)
+             + versorIn.GetX();
+  double y = lambda * static_cast<double>(rand())/static_cast<double>(RAND_MAX)
+             + versorIn.GetY();
+  double z = lambda * static_cast<double>(rand())/static_cast<double>(RAND_MAX)
+             + versorIn.GetZ();
+  double w = lambda * static_cast<double>(rand())/static_cast<double>(RAND_MAX)
+             + versorIn.GetW();
+  rotation.Set(x, y, z, w);
+
+  return rotation;
+
+}
+
+/** This method creates a random versor whose change from versorIn1 is about
+ *  the same as the change from versorIn0 to versorIn1.
+ */
+igstk::Transform::VersorType GetRandomVersorNear( 
+                                     const igstk::Transform::VersorType& versorIn0,
+                                     const igstk::Transform::VersorType& versorIn1,
+                                     double lambda)
+{
+
+  double x = lambda * static_cast<double>(rand())/static_cast<double>(RAND_MAX) +
+             (versorIn1.GetX() - versorIn0.GetX()) +
+             versorIn1.GetX();
+  double y = lambda * static_cast<double>(rand())/static_cast<double>(RAND_MAX) +
+             (versorIn1.GetY() - versorIn0.GetY()) +
+             versorIn1.GetY();
+  double z = lambda * static_cast<double>(rand())/static_cast<double>(RAND_MAX) +
+             (versorIn1.GetZ() - versorIn0.GetZ()) +
+             versorIn1.GetZ();
+  double w = lambda * static_cast<double>(rand())/static_cast<double>(RAND_MAX) +
+             (versorIn1.GetW() - versorIn0.GetW()) +
+             versorIn1.GetW();
+
+  igstk::Transform::VersorType rotation;
+  rotation.Set(x, y, z, w);
+
+  return rotation;
+}
+
+} // anonymous namespace
+
 int main(int , char** )
 { 
+  igstk::RealTimeClock::Initialize();
+
   TwoViews* m_GUI = new TwoViews();
 
   m_GUI->MainWindow->show();
+
+  /**
+   *  Coordinate systems:
+   *       
+   *                        Mesh
+   *                          | 
+   *              ------------------------
+   *              |           |           |
+   *          Ellipsoid     Tube       Display1
+   *              |
+   *        -----------
+   *       |           |
+   *    Display2    Cylinder 
+   *
+   *  Display1 looks at the scene from with respect to the coordinates 
+   *  of the mesh since the transform from Display1 to Mesh is identity.
+   *
+   *  Display2 looks at the scene with respect to the ellipsoid.
+   *
+   *  While the ellipsoid rotates, Display1 shows the movement with respect
+   *  to the mesh. Display2 shows the scene with respect to the ellipsoid,
+   *  so as the ellipsoid rotates with respect to the mesh, the mesh appears
+   *  to move in Display2. The rotation of the ellipsoid is visible through
+   *  the movement of the cylinder which is attached to the ellipsoid.
+   *
+   */
 
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
@@ -55,20 +154,19 @@ int main(int , char** )
   // Create the cylinder 
   igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
   cylinder->SetRadius(0.1);
-  cylinder->SetHeight(3);
+  cylinder->SetHeight(9);
+
+  igstk::Transform cylinderTransform;
+  cylinderTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  // cylinder is relative to the ellipsoid.
+  cylinder->RequestSetTransformAndParent( cylinderTransform, ellipsoid.GetPointer() );
 
   // Create the cylinder representation
   igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation = 
                                   igstk::CylinderObjectRepresentation::New();
   cylinderRepresentation->RequestSetCylinderObject( cylinder );
-  cylinderRepresentation->SetColor(1.0,0.0,0.0);
+  cylinderRepresentation->SetColor(1.0,1.0,0.0);
   cylinderRepresentation->SetOpacity(1.0);
-
-  // Add the ellipsoid to the view
-  m_GUI->Display1->RequestAddObject( ellipsoidRepresentation );
-
-  // Add the cylinder to the view
-  m_GUI->Display1->RequestAddObject( cylinderRepresentation );
 
   // Create the tube 
   igstk::TubeObject::Pointer tube = igstk::TubeObject::New();
@@ -86,7 +184,6 @@ int main(int , char** )
                                      igstk::TubeObjectRepresentation::New();
   tubeRepresentation->RequestSetTubeObject( tube );
   tubeRepresentation->SetColor(0,0,1.0);
-  m_GUI->Display1->RequestAddObject( tubeRepresentation );
 
   // Create the mesh 
   igstk::MeshObject::Pointer mesh = igstk::MeshObject::New();
@@ -96,17 +193,39 @@ int main(int , char** )
   mesh->AddPoint(3,0,0,9);
   mesh->AddTetrahedronCell(0,0,1,2,3);
 
+  igstk::Transform ellipsoidToMeshTransform;
+  ellipsoidToMeshTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  // Ellipsoid is relative to the mesh.
+  ellipsoid->RequestSetTransformAndParent( ellipsoidToMeshTransform, mesh.GetPointer() );
+  
+  igstk::Transform tubeTransform;
+  tubeTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  // Tube is relative to the mesh
+  tube->RequestSetTransformAndParent( tubeTransform, mesh.GetPointer() );
+
   // Create the cylinder representation
   igstk::MeshObjectRepresentation::Pointer meshRepresentation = 
                                       igstk::MeshObjectRepresentation::New();
   meshRepresentation->RequestSetMeshObject( mesh );
   meshRepresentation->SetColor(1,0,0);
-  m_GUI->Display1->RequestAddObject( meshRepresentation );
 
+  igstk::Transform displayTransform;
+  displayTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  m_GUI->Display1->RequestSetTransformAndParent( displayTransform, mesh.GetPointer() );
+  m_GUI->Display2->RequestSetTransformAndParent( displayTransform, ellipsoid.GetPointer() );
 
   // Add another Object representations to the second display
   m_GUI->Display2->RequestAddObject( ellipsoidRepresentation->Copy() );
   m_GUI->Display2->RequestAddObject( cylinderRepresentation->Copy() );
+  m_GUI->Display2->RequestAddObject( meshRepresentation->Copy() );
+
+  m_GUI->Display1->RequestAddObject( ellipsoidRepresentation );
+  m_GUI->Display1->RequestAddObject( cylinderRepresentation );
+  m_GUI->Display1->RequestAddObject( tubeRepresentation );
+  m_GUI->Display1->RequestAddObject( meshRepresentation );
 
   m_GUI->Display2->RequestResetCamera();
   m_GUI->Display2->Update();
@@ -133,9 +252,7 @@ int main(int , char** )
   tracker->AttachObjectToTrackerTool( toolPort, toolNumber, ellipsoid );
 
   m_GUI->SetTracker( tracker );
-
   
-  m_GUI->Display1->RequestRemoveObject( cylinderRepresentation );
   m_GUI->Display1->Update();
 
   // Setup the logging system
@@ -147,7 +264,6 @@ int main(int , char** )
   
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   std::ofstream ofs( "logTwoViews.txt" );
   fileOutput->SetStream( ofs );
@@ -163,11 +279,31 @@ int main(int , char** )
   m_GUI->Display1->RequestStart();
   m_GUI->Display2->RequestStart();
 
+  typedef igstk::Transform::VersorType  VersorType;
+  VersorType versor0 = GetRandomVersorNear( 
+                                    ellipsoidToMeshTransform.GetRotation(),
+                                    0.05 );
+  VersorType versor1 = ellipsoidToMeshTransform.GetRotation();
+
   while(1)
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();   // trigger FLTK redraws
+
+    igstk::Transform::VersorType versor2 = GetRandomVersorNear( versor0, 
+                                                                versor1, 
+                                                                0.01 );
+    // Transform should not expire before the next render.
+    ellipsoidToMeshTransform.SetRotation( versor2,
+                                          1e-5,
+                                          60 ); 
+
+    ellipsoid->RequestSetTransformAndParent( ellipsoidToMeshTransform, 
+                                             mesh.GetPointer()          );
+    
+    versor0 = versor1;
+    versor1 = versor2;
     }
 
   m_GUI->Display1->RequestStop();
