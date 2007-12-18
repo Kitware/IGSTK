@@ -382,6 +382,36 @@ void ViewNew::RequestResetCamera()
 void ViewNew::ResetCameraProcessing()
 {
   igstkLogMacro( DEBUG, "igstkViewNew::ResetCameraProcessing() called ...\n");
+
+  /** Before resetting the camera, make sure that that object
+   *  representations are up to date. Representations need to be
+   *  updated to make sure they are in the right position,
+   *  and sized correctly so the reset camera parameters make
+   *  sense. This will also make sure that the object
+   *  representations have a valid transform, which should
+   *  make them visible.
+   */
+
+  /** First, compute the time at which we
+   *  estimate that the scene will be rendered. */
+  TimeStamp renderTime;
+  double frequency = m_PulseGenerator->GetFrequency();
+
+  /** Frequency is in hertz but period is expected to be in milliseconds
+   *  Transform is valid for one pulse. */
+  renderTime.SetStartTimeNowAndExpireAfter( 1000.0 / frequency );
+
+  /** Second, notify all the representation objects of the time at which this
+   *  scene will be rendered. */
+  ObjectListType::iterator itr    = m_Objects.begin();
+  ObjectListType::iterator endItr = m_Objects.end();
+  const CoordinateReferenceSystem* thisCS = igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( this );
+  while( itr != endItr )
+    {
+    (*itr)->RequestUpdateRepresentation( renderTime, thisCS );
+    ++itr;
+    }
+
   m_Renderer->ResetCamera();
   m_Camera->SetClippingRange( 0.1, 10000);
 }
