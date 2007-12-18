@@ -82,7 +82,6 @@ public:
   /** Get the VTK actors */
   igstkGetMacro( Actors, ActorsListType );
 
-  friend class ViewNew;
   friend class View;
 
   /** REMOVE this when QView class is removed from the sandbox */
