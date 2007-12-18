@@ -19,6 +19,7 @@
 #include "igstkCoordinateReferenceSystem.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
+#include "igstkRealTimeClock.h"
 
 namespace CoordinateReferenceSystemTest2
 {
@@ -156,6 +157,8 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 
   const double tol = 1.0e-12;
 
+  igstk::RealTimeClock::Initialize();
+
   int testPassed = EXIT_SUCCESS;
 
   LoggerType::Pointer logger = LoggerType::New();
@@ -292,6 +295,9 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     std::cout << "FAILED! rootObserver did not get event." << std::endl;
     }
 
+  // Break references in the observer.
+  rootObserver->ClearPayload();
+
   std::cout << "Checking transform from root to B : ";
 
   root->RequestComputeTransformTo(B);
@@ -318,6 +324,9 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     testPassed = EXIT_FAILURE;
     std::cout << "FAILED! rootObserver did not get event." << std::endl;
     }
+
+  // Break references in the observer.
+  rootObserver->ClearPayload();
 
   std::cout << "Checking transform from root to C : "; 
   root->RequestComputeTransformTo(C);
@@ -346,6 +355,9 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     std::cout << "FAILED! rootObserver did not get event." << std::endl;
     }
 
+  // Break references in the observer.
+  rootObserver->ClearPayload();
+
   std::cout << "Checking transform from root to D : "; 
   root->RequestComputeTransformTo(D);
   TransformType TRootD;
@@ -372,12 +384,12 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     std::cout << "FAILED! rootObserver did not get event." << std::endl;
     }
 
+  // Break references in the observer.
+  rootObserver->ClearPayload();
 
   std::cout << "Checking transform from root to E : " ;
   TimeStampType now;
   now.SetStartTimeNowAndExpireAfter(0);
-
-  rootObserver->ClearPayload();
 
   root->RequestComputeTransformTo(E);
   TransformType TRootE;
@@ -392,15 +404,19 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     std::cout << "passed." << std::endl;
     }
 
+  // Break references in the observer.
+  rootObserver->ClearPayload();
+
   root->RequestSetTransformAndParent( identity, A );
   root->RequestSetTransformAndParent( identity, B );
 
   root->RequestComputeTransformTo( NULL );
   root->RequestComputeTransformTo( root );
 
-  root->SetReportTiming( true );
-
+  // Break references in the observer.
   rootObserver->ClearPayload();
+
+  root->SetReportTiming( true );
 
   CoordinateReferenceSystemObserver::Pointer FObserver = 
                                     CoordinateReferenceSystemObserver::New();
@@ -435,11 +451,15 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     testPassed = EXIT_FAILURE;
     }
 
+  // Break references in the observer.
+  FObserver->ClearPayload();
+
   std::cout << "Checking transform from D to F : ";
 
   CoordinateReferenceSystemObserver::Pointer DObserver = 
                                     CoordinateReferenceSystemObserver::New();
   D->AddObserver( CoordinateSystemEventType(), DObserver );
+
   D->RequestComputeTransformTo(F);
 
   if (DObserver->GotPayload())
@@ -470,6 +490,8 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     testPassed = EXIT_FAILURE;
     }
 
+  // Break references in the observer.
+  DObserver->ClearPayload();
 
   return testPassed;
 }
