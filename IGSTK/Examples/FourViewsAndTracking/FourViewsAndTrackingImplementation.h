@@ -203,6 +203,17 @@ public:
     this->DisplaySagittal->Update();
     }
 
+  void ConnectViewsToSpatialObjectParent( igstk::SpatialObject* so )
+    {
+    igstk::Transform trans;
+    trans.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+    this->Display3D->RequestSetTransformAndParent( trans, so );
+    this->DisplayAxial->RequestSetTransformAndParent( trans, so );
+    this->DisplayCoronal->RequestSetTransformAndParent( trans, so );
+    this->DisplaySagittal->RequestSetTransformAndParent( trans, so );
+    }
+
 private:
 
   LoggerType::Pointer     m_Logger;
