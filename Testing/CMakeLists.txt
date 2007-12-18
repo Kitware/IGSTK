@@ -75,6 +75,8 @@ SET(SandboxTests_SRCS
   igstkCoordinateReferenceSystemTest.cxx
   igstkCoordinateReferenceSystemTest2.cxx
   igstkCoordinateReferenceSystemTest3.cxx
+  igstkCoordinateReferenceSystemDelegatorTest.cxx
+  igstkSpatialObjectCoordinateSystemTest3.cxx
   igstkGroupObjectTest.cxx
   igstkPivotCalibrationAlgorithmTest.cxx
   igstkDICOMGenericImageReaderTest.cxx
@@ -126,6 +128,8 @@ ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCal
 ADD_TEST( igstkCoordinateReferenceSystemTest ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest)
 ADD_TEST( igstkCoordinateReferenceSystemTest2 ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest2)
 ADD_TEST( igstkCoordinateReferenceSystemTest3 ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest3)
+ADD_TEST( igstkCoordinateReferenceSystemDelegatorTest ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemDelegatorTest)
+ADD_TEST( igstkSpatialObjectCoordinateSystemTest3 ${IGSTKSandbox_TESTS} igstkSpatialObjectCoordinateSystemTest3)
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 
