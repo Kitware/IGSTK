@@ -146,14 +146,18 @@ int main( int, char * [] )
     // EndLatex
 
     // BeginCodeSnippet
-    Fl_Window * form = new Fl_Window(601,301,"View Test");
-    WindowWidgetType * fltkWidget = new WindowWidgetType(310,10,280,280,"3D View");
+    Fl_Window * form = new Fl_Window(301,301,"View Test");
+    WindowWidgetType * fltkWidget = new WindowWidgetType(10,10,280,280,"3D View");
+
+    View3DType::Pointer view3D = View3DType::New();
+
+    fltkWidget->RequestSetView( view3D );
+
     form->end();
     form->show();
     // EndCodeSnippet
     
     // BeginCodeSnippet
-    View3DType::Pointer view3D = View3DType::New();
 
     // EndCodeSnippet
 
