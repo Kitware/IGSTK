@@ -618,19 +618,20 @@ void NeedleBiopsy::InitializeTrackerProcessing()
 
   toolCalibrationTransform.SetTranslationAndRotation( translation, 
                                                              rotation, 0.1, -1);
-  m_Tracker->SetToolCalibrationTransform( TrackerToolPort->value(), 
-                                                   0, toolCalibrationTransform);
+
+  // FIXME m_Tracker->SetToolCalibrationTransform( TrackerToolPort->value(), 
+  // FIXME                                                 0, toolCalibrationTransform);
   m_Tracker->RequestOpen();
-  m_Tracker->AttachSROMFileNameToPort( TrackerToolPort->value(), 
-                                                 TrackerToolSROMFile->value() );
-  m_Tracker->AttachSROMFileNameToPort( ReferenceToolPort->value(), 
-                                               ReferenceToolSROMFile->value() );
-  m_Tracker->SetReferenceTool( UseReferenceTool->value(), 
-                                                 ReferenceToolPort->value(), 0);
-  m_Tracker->RequestInitialize();
+  // FIXME m_Tracker->AttachSROMFileNameToPort( TrackerToolPort->value(), 
+  // FIXME                                               TrackerToolSROMFile->value() );
+  // FIXME m_Tracker->AttachSROMFileNameToPort( ReferenceToolPort->value(), 
+  // FIXME                                              ReferenceToolSROMFile->value() );
+  // FIXME m_Tracker->SetReferenceTool( UseReferenceTool->value(), 
+  // FIXME                                               ReferenceToolPort->value(), 0);
+  // FIXME m_Tracker->RequestInitialize();
   m_Tracker->RequestStartTracking();
-  m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(),
-             m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
+  // FIXME m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(),
+  // FIXME           m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
 }
 
 void NeedleBiopsy::RequestAddImageLandmark()
@@ -758,8 +759,8 @@ void NeedleBiopsy::GetTrackerTransform()
 {
   igstkLogMacro2( m_Logger, DEBUG, "Tracker::GetToolTransform called...\n" )
   m_Tracker->RequestUpdateStatus();
-  m_Tracker->GetToolTransform( 
-               TrackerToolPort->value(), 0, m_TrackerLandmarkTransformToBeSet );
+  // FIXME m_Tracker->GetToolTransform( 
+  // FIXME              TrackerToolPort->value(), 0, m_TrackerLandmarkTransformToBeSet );
 }
 
 void NeedleBiopsy::RequestClearTrackerLandmarks()
@@ -817,10 +818,10 @@ void NeedleBiopsy::StartTrackingProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
                          "NeedleBiopsy::StartTrackingProcessing called ... \n" )
-  m_Tracker->AttachObjectToTrackerTool( TrackerToolPort->value(), 0, m_Needle );
+  // FIXME m_Tracker->AttachObjectToTrackerTool( TrackerToolPort->value(), 0, m_Needle );
 
-  m_Tracker->AttachObjectToTrackerTool( 
-                                     TrackerToolPort->value(), 0, m_NeedleTip );
+  // FIXME m_Tracker->AttachObjectToTrackerTool( 
+  // FIXME                                    TrackerToolPort->value(), 0, m_NeedleTip );
   m_Tracker->RequestStartTracking();
   m_PulseGenerator->RequestStart();   
   /** We don't have observer for tracker, we are actively reading the 
@@ -837,7 +838,7 @@ void NeedleBiopsy::Tracking()
 {
   igstkLogMacro( DEBUG,  "Pulse Events...\n" )
   igstk::Transform transform;
-  m_Tracker->GetToolTransform( TrackerToolPort->value(), 0, transform );
+  // FIXME m_Tracker->GetToolTransform( TrackerToolPort->value(), 0, transform );
   
   ImageSpatialObjectType::PointType    p;
   p[0] = transform.GetTranslation()[0];
@@ -1112,7 +1113,7 @@ void NeedleBiopsy
                                      ( igstk::TransformModifiedEvent *) & event;
     m_ImageToTrackerTransform = tmevent->Get();
     
-    m_Tracker->SetPatientTransform( m_ImageToTrackerTransform );
+    // FIXME m_Tracker->SetPatientTransform( m_ImageToTrackerTransform );
     
     igstkLogMacro( DEBUG, 
                  "Registration Transform" << m_ImageToTrackerTransform << "\n");
