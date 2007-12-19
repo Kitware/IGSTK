@@ -58,6 +58,11 @@ PivotCalibrationFLTKWidgetExample::PivotCalibrationFLTKWidgetExample()
                                 this->m_errorObserver );
   this->m_tracker->AddObserver( igstk::TrackerUpdateStatusErrorEvent(), 
                                 this->m_errorObserver );
+
+  
+                 // create tracket tool at connect it to tracker
+  this->m_tool = igstk::PolarisTrackerTool::New();  
+  this->m_tool->RequestAttachToTracker( this->m_tracker );
 }
 
 void 
@@ -73,27 +78,34 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
 
          //if already initialized, shutdown everything and reinitialize
   if( this->m_initialized )  
-  {
+    {
     this->m_initialized = false;
     this->m_tracker->RequestStopTracking();
     if( this->m_errorObserver->Error() ) 
-    {    
+      {    
       this->m_errorObserver->ClearError();
       return;
-    }
+      }
     this->m_tracker->RequestClose();
     if( this->m_errorObserver->Error() ) 
-    {    
+      {    
       this->m_errorObserver->ClearError();
       return;
-    }
+      }
     this->m_serialCommunication->CloseCommunication();
     if( this->m_errorObserver->Error() ) 
-    {    
+      {    
       this->m_errorObserver->ClearError();
       return;
+      }
+            //(re)initialize tracker
+    this->m_tracker->RequestReset();
+    if( this->m_errorObserver->Error() ) 
+      {
+      this->m_errorObserver->ClearError();
+      return;
+      }
     }
-  }
 
   this->m_serialCommunication->SetPortNumber( comPort );
   this->m_serialCommunication->SetParity( PARITY );
@@ -107,7 +119,7 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
   if( !sromFileName.empty() )
   {                 //UI tool ports begin at 1 while internally igstk starts
                     //at 0
-    this->m_tracker->AttachSROMFileNameToPort( toolPort-1, sromFileName );
+    this->m_tool->RequestSetSROMFileName( sromFileName );
   }
   
          //open serial communication
@@ -126,14 +138,7 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
     this->m_errorObserver->ClearError();
     return;
   }
-            //(re)initialize tracker
-  this->m_tracker->RequestInitialize();
-  if( this->m_errorObserver->Error() ) 
-  {
-    this->m_errorObserver->ClearError();
-    return;
-  }
-       //start tracking
+        //start tracking
   this->m_tracker->RequestStartTracking();
   if( this->m_errorObserver->Error() ) 
   {

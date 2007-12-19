@@ -3,6 +3,7 @@
 
 #include "itkCommand.h"
 #include "igstkPolarisTracker.h"
+#include "igstkPolarisTrackerTool.h"
 #include "igstkSerialCommunication.h"
 #include "PivotCalibrationFLTKWidgetExampleUI.h"
 
@@ -72,6 +73,7 @@ private:
 
 
   igstk::PolarisTracker::Pointer m_tracker;
+  igstk::PolarisTrackerTool::Pointer m_tool;
   igstk::SerialCommunication::Pointer m_serialCommunication;
   TrackingErrorObserver::Pointer m_errorObserver;
   bool m_initialized;
