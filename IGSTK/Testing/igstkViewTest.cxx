@@ -56,6 +56,12 @@ protected:
     }
 public:
 
+  void ResetCounter()
+    {
+    m_PulseCounter = 0;
+    *m_End = false;
+    }
+
   void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
     std::cerr << "Execute( const * ) should not be called" << std::endl;
@@ -109,7 +115,7 @@ public:
 private:
   
   unsigned long         m_PulseCounter;
-  ::igstk::View    * m_View;
+  ::igstk::View       * m_View;
   bool *                m_End;
   bool *                m_Resize;
 };
@@ -262,6 +268,7 @@ int igstkViewTest( int, char * [] )
     viewObserver2->SetView( view3D );
     viewObserver2->SetEndFlag( &bEnd );
     viewObserver2->SetResizeFlag( &bResize );
+    viewObserver2->ResetCounter();
 
     worldReference->SetSize(1.0,1.0,1.0); 
 
@@ -295,7 +302,6 @@ int igstkViewTest( int, char * [] )
     } // end of view3D scope
 #endif
 
-
 #ifdef TESTView2D
     // create a scope to destroy the view2D at the end
     {
@@ -307,30 +313,8 @@ int igstkViewTest( int, char * [] )
               << std::endl;
 
     ViewTest::DummyWidget dummyWidget;
-
     dummyWidget.SetView( view2D );
 
-
-    view2D->SetRefreshRate( 30 );
-    view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
-    view2D->RequestSetOrientation( View2DType::Axial );
-   
-    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-    view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
-
-    view2D->RequestStart();
-
-    // Add the ellipsoid and cylinder representations to the view
-    view2D->RequestAddObject( AxesRepresentation );
-    view2D->RequestAddObject( ellipsoidRepresentation );
-    view2D->RequestAddObject( cylinderRepresentation );
-
-
-    // Remove the ellipsoid from the view
-    view2D->RequestRemoveObject( ellipsoidRepresentation );
-    // Add it back
-    view2D->RequestAddObject( ellipsoidRepresentation );
-    
     // Create an observer in order to count number of view redraws
     ObserverType::Pointer viewObserver = ObserverType::New();
     
@@ -340,12 +324,41 @@ int igstkViewTest( int, char * [] )
     viewObserver->SetView( view2D );
     viewObserver->SetEndFlag( &bEnd );
     viewObserver->SetResizeFlag( &bResize );
+    viewObserver->ResetCounter();
 
+
+    view2D->SetRefreshRate( 30 );
+    view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
+    view2D->RequestSetOrientation( View2DType::Axial );
+   
+    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+
+    // Add the ellipsoid and cylinder representations to the view
+    view2D->RequestAddObject( AxesRepresentation );
+    view2D->RequestAddObject( ellipsoidRepresentation );
+    view2D->RequestAddObject( cylinderRepresentation );
+
+    // Remove the ellipsoid from the view
+    view2D->RequestRemoveObject( ellipsoidRepresentation );
+    // Add it back
+    view2D->RequestAddObject( ellipsoidRepresentation );
+    
     // Exercise and test the Print() methods
     view2D->Print( std::cout, 0 );
 
     std::cout << *view2D << std::endl;
 
+    view2D->RequestStart();
+
+    while( !bEnd )
+      {
+      igstk::PulseGenerator::CheckTimeouts();
+      }
+    view2D->RequestStop();
+
+    // Now test resizing the window:
+    viewObserver->ResetCounter();
     view2D->RequestStart();
 
     while(1)
@@ -368,7 +381,6 @@ int igstkViewTest( int, char * [] )
     view2D->RequestSaveScreenShot("igstkViewTestScreenshot1.png");
     } // end of view2D scope
 #endif
-
 
     }
   catch(...)
