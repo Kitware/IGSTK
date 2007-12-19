@@ -47,6 +47,7 @@ else             this->DisableTracking();}
       }
     }
     code {this->hasQuitted = false;
+} {}
   }
   Function {~FourViewsAndTrackingGUI()} {open return_type virtual
   } {
