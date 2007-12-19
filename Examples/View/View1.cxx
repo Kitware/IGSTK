@@ -113,27 +113,32 @@ int main( int, char * [] )
     // BeginLatex
     // 
     // Next, the FLTK main window and an OpenGL FLTK Widget object are
-    // instantiated:
+    // instantiated, and the FLTK form is completed by calling its \code{end()}
+    // method.
     //
     // EndLatex
 
     // BeginCodeSnippet
     Fl_Window * form = new Fl_Window(301,301,"View Test");
     WindowWidgetType * fltkWidget = new WindowWidgetType(10,10,280,280,"3D View");
-
-    View3DType::Pointer view3D = View3DType::New();
-
-
-    fltkWidget->RequestSetView( view3D );
-
     form->end();
+    // EndCodeSnippet
+
+
+    // BeginLatex
+    // 
+    // The View object is instantiated and then is connected to the FLTK Widget
+    // by using the \code{RequestSetView()} method, and at that point the FLTK
+    // form can be displayed by calling its \code{show()} method.
+    //
+    // EndLatex
+
+    // BeginCodeSnippet
+    View3DType::Pointer view3D = View3DType::New();
+    fltkWidget->RequestSetView( view3D );
     form->show();
     // EndCodeSnippet
     
-    // BeginCodeSnippet
-
-    // EndCodeSnippet
-
    
     // BeginLatex
     // 
@@ -211,7 +216,7 @@ int main( int, char * [] )
     // EndLatex
 
     // BeginCodeSnippet
-    for(unsigned int i=0; i<1000; i++)
+    for(unsigned int i=0; i<100; i++)
       {
       Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
