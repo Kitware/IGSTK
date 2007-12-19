@@ -25,7 +25,7 @@
 #endif
 
 #include "OneViewAndTrackingNewUsingMicronTrackerGUI.h"
-#include "igstkMicronTrackerNew.h"
+#include "igstkMicronTracker.h"
 #include "igstkLogger.h"
 #include "igstkView.h"
 #include "itkStdStreamLogOutput.h"
@@ -38,8 +38,8 @@ public:
   typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
 
-  typedef igstk::MicronTrackerNew     TrackerType;
-  typedef igstk::MicronTrackerToolNew TrackerToolType;
+  typedef igstk::MicronTracker     TrackerType;
+  typedef igstk::MicronTrackerTool TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
 public:
