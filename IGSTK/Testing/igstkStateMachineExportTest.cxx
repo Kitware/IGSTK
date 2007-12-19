@@ -37,6 +37,10 @@
 #include "igstkPulseGenerator.h"
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
+#include "igstkPolarisTracker.h"
+#include "igstkPolarisTrackerTool.h"
+#include "igstkAuroraTracker.h"
+#include "igstkAuroraTrackerTool.h"
 #include "igstkSpatialObject.h"
 #include "igstkSpatialObjectReader.h"
 #include "igstkCTImageReader.h"
@@ -246,6 +250,11 @@ int main( int argc, char * argv [] )
                                                                     skipLoops );
   igstkTestExportStateMachine1( igstk::Tracker, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory,skipLoops );
+  igstkTestExportStateMachine1( igstk::AuroraTracker, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::AuroraTrackerTool, outputDirectory,skipLoops );
+  igstkTestExportStateMachine1( igstk::PolarisTracker, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::PolarisTrackerTool, outputDirectory,skipLoops );
+ 
   igstkTestExportStateMachine1( igstk::Landmark3DRegistration, outputDirectory, 
                                                                     skipLoops );
   igstkTestExportStateMachine1( igstk::Landmark3DRegistrationErrorEstimator, 

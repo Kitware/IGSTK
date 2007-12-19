@@ -35,15 +35,9 @@
 #include "igstkImageSpatialObjectRepresentation.h"
 #include "igstkObliqueImageSpatialObjectRepresentation.h"
 #include "igstkSpatialObject.h"
-#include "igstkTracker.h"
-#include "igstkTrackerTool.h"
 #include "igstkObjectRepresentation.h"
-#include "igstkTrackerNew.h"
-#include "igstkTrackerToolNew.h"
-#include "igstkPolarisTrackerNew.h"
-#include "igstkPolarisTrackerToolNew.h"
-#include "igstkAuroraTrackerNew.h"
-#include "igstkAuroraTrackerToolNew.h"
+#include "igstkMicronTracker.h"
+#include "igstkMicronTrackerTool.h"
 
 namespace igstk 
 {
@@ -173,21 +167,15 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::SocketCommunication, 
                                 outputDirectory, skipLoops );
 
+  igstkTestExportStateMachine1( igstk::MicronTracker, 
+                                outputDirectory, skipLoops );
+
+  igstkTestExportStateMachine1( igstk::MicronTrackerTool, 
+                                outputDirectory, skipLoops );
+
   igstkTestExportStateMachine1( 
                           igstk::ObliqueImageSpatialObjectRepresentationType, 
                           outputDirectory, skipLoops );
-
-  igstkTestExportStateMachine1( igstk::Tracker, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory,skipLoops );
-
-  igstkTestExportStateMachine1( igstk::TrackerNew, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::TrackerToolNew, outputDirectory,skipLoops );
-
-  igstkTestExportStateMachine1( igstk::PolarisTrackerNew, outputDirectory,skipLoops );
-  igstkTestExportStateMachine1( igstk::PolarisTrackerToolNew, outputDirectory,skipLoops );
-
-  igstkTestExportStateMachine1( igstk::AuroraTrackerNew, outputDirectory,skipLoops );
-  igstkTestExportStateMachine1( igstk::AuroraTrackerToolNew, outputDirectory,skipLoops );
 
   // Exporting Abstract classes by creating derived surrogates for them.
   igstkTestExportStateMachine1( igstk::SpatialObjectSurrogate, outputDirectory, 
