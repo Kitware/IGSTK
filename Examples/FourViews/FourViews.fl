@@ -10,29 +10,29 @@ class FourViews {open
       label {IGSTK: Four Quadrants Example} open
       xywh {573 292 775 710} type Double resizable visible
     } {
-      Fl_Box Display3D {
+      Fl_Box Display3DWidget {
         label {Display 3D}
         xywh {5 5 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView3D.h>}
-        class {igstk::View3D}
+        code0 {\#include <igstkFLTKWidget.h>}
+        class {igstk::FLTKWidget}
       }
-      Fl_Box DisplayAxial {
+      Fl_Box DisplayAxialWidget {
         label {Display Axial}
         xywh {388 5 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView2D.h>}
-        class {igstk::View2D}
+        code0 {\#include <igstkFLTKWidget.h>}
+        class {igstk::FLTKWidget}
       }
-      Fl_Box DisplaySagittal {
+      Fl_Box DisplaySagittalWidget {
         label {Display Sagittal}
         xywh {388 338 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView2D.h>}
-        class {igstk::View2D}
+        code0 {\#include <igstkFLTKWidget.h>}
+        class {igstk::FLTKWidget}
       }
-      Fl_Box DisplayCoronal {
+      Fl_Box DisplayCoronalWidget {
         label {Display Coronal}
         xywh {5 338 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView2D.h>}
-        class {igstk::View2D}
+        code0 {\#include <igstkFLTKWidget.h>}
+        class {igstk::FLTKWidget}
       }
       Fl_Button QuitButton {
         label Quit
@@ -58,10 +58,10 @@ class FourViews {open
   }
   Function {~FourViews()} {return_type virtual
   } {
-    code {delete Display3D;
-delete DisplayAxial;
-delete DisplaySagittal;
-delete DisplayCoronal;} {selected
+    code {delete Display3DWidget;
+delete DisplayAxialWidget;
+delete DisplaySagittalWidget;
+delete DisplayCoronalWidget;} {selected
     }
   }
   Function {Quit()} {return_type {virtual void}

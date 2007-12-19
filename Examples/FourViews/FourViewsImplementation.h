@@ -34,13 +34,16 @@
 #include "igstkMeshReader.h"
 #include <itkStdStreamLogOutput.h>
 #include "FL/Fl_File_Chooser.H"
+#include "igstkView2D.h"
+#include "igstkView3D.h"
 
 class FourViewsImplementation : public FourViews
 {
 
 public:
 
-  typedef igstk::View2D ViewType;
+  typedef igstk::View2D ViewType2D;
+  typedef igstk::View3D ViewType3D;
 
   igstkObserverObjectMacro(VascularNetwork,
                      igstk::VascularNetworkObjectModifiedEvent,
@@ -52,25 +55,35 @@ public:
   
   FourViewsImplementation()
     {
+    this->Display3D = ViewType3D::New();
+    this->DisplayAxial = ViewType2D::New();
+    this->DisplayCoronal = ViewType2D::New();
+    this->DisplaySagittal = ViewType2D::New();
+
+    this->Display3DWidget->RequestSetView( this->Display3D );
+    this->DisplayAxialWidget->RequestSetView( this->DisplayAxial );
+    this->DisplayCoronalWidget->RequestSetView( this->DisplayCoronal );
+    this->DisplaySagittalWidget->RequestSetView( this->DisplaySagittal );
+
     // Set up the four quadrant views
-    this->Display3D->RequestEnableInteractions();
-    this->Display3D->RequestSetRefreshRate( 60 ); // 60 Hz
+    this->Display3DWidget->RequestEnableInteractions();
+    this->Display3D->SetRefreshRate( 60 ); // 60 Hz
     this->Display3D->RequestStart();
 
-    this->DisplayAxial->RequestEnableInteractions();
-    this->DisplayAxial->RequestSetRefreshRate( 60 ); // 60 Hz
+    this->DisplayAxialWidget->RequestEnableInteractions();
+    this->DisplayAxial->SetRefreshRate( 60 ); // 60 Hz
     this->DisplayAxial->RequestStart();
-    this->DisplayAxial->RequestSetOrientation( ViewType::Axial );
+    this->DisplayAxial->RequestSetOrientation( ViewType2D::Axial );
 
-    this->DisplayCoronal->RequestEnableInteractions();
-    this->DisplayCoronal->RequestSetRefreshRate( 60 ); // 60 Hz
+    this->DisplayCoronalWidget->RequestEnableInteractions();
+    this->DisplayCoronal->SetRefreshRate( 60 ); // 60 Hz
     this->DisplayCoronal->RequestStart();
-    this->DisplayCoronal->RequestSetOrientation( ViewType::Coronal );
+    this->DisplayCoronal->RequestSetOrientation( ViewType2D::Coronal );
 
-    this->DisplaySagittal->RequestEnableInteractions();
-    this->DisplaySagittal->RequestSetRefreshRate( 60 ); // 60 Hz
+    this->DisplaySagittalWidget->RequestEnableInteractions();
+    this->DisplaySagittal->SetRefreshRate( 60 ); // 60 Hz
     this->DisplaySagittal->RequestStart();
-    this->DisplaySagittal->RequestSetOrientation( ViewType::Sagittal );
+    this->DisplaySagittal->RequestSetOrientation( ViewType2D::Sagittal );
       
     m_TubeGroup = NULL;
     m_Logger = NULL;
@@ -93,13 +106,13 @@ public:
   void ResetCameras()
     {
     this->Display3D->RequestResetCamera();
-    this->Display3D->Update();
+    // this->Display3D->Update();
     this->DisplayAxial->RequestResetCamera();
-    this->DisplayAxial->Update();
+    // this->DisplayAxial->Update();
     this->DisplayCoronal->RequestResetCamera();
-    this->DisplayCoronal->Update();
+    // this->DisplayCoronal->Update();
     this->DisplaySagittal->RequestResetCamera();
-    this->DisplaySagittal->Update();
+    // this->DisplaySagittal->Update();
     }
  
   void AddTube( igstk::VascularNetworkObjectRepresentation 
@@ -247,9 +260,6 @@ public:
           ptnew.SetRadius(pt->GetRadius());
           newVessel->AddPoint(ptnew);
           }
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
-        newNetwork->RequestAddObject(newVessel);
-#endif
         }
 
       igstk::VascularNetworkObjectRepresentation::Pointer tubeRepresentation 
@@ -259,10 +269,10 @@ public:
       tubeRepresentation->SetOpacity(1.0);
       this->AddTube( tubeRepresentation );
      
-      this->Display3D->redraw();
-      this->DisplayAxial->redraw();
-      this->DisplayCoronal->redraw();
-      this->DisplaySagittal->redraw();
+      this->Display3DWidget->redraw();
+      this->DisplayAxialWidget->redraw();
+      this->DisplayCoronalWidget->redraw();
+      this->DisplaySagittalWidget->redraw();
 
       Fl::check();
       }
@@ -274,6 +284,11 @@ private:
   igstk::Object::LoggerType::Pointer                        m_Logger;
   std::list<igstk::VascularNetworkObjectRepresentation::Pointer> 
                                               m_VesselRepresentationList;
+
+  ViewType2D::Pointer DisplayAxial;
+  ViewType2D::Pointer DisplayCoronal;
+  ViewType2D::Pointer DisplaySagittal;
+  ViewType3D::Pointer Display3D;
 
 };
 
