@@ -55,7 +55,7 @@ int main( int , char *[] )
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-  Fl_Window * form = new Fl_Window(512,262,"Sharing Object Representations");
+  Fl_Window * form = new Fl_Window(600,300,"Sharing Object Representations");
 
   typedef igstk::View3D  View3DType;
   typedef igstk::FLTKWidget      FLTKWidgetType;
@@ -110,6 +110,23 @@ int main( int , char *[] )
 // Software Guide : BeginCodeSnippet
   view3D2->RequestAddObject( cubeRepresentation2  );
 // Software Guide : EndCodeSnippet
+
+
+// Software Guide : BeginLatex
+//
+// A spatial relationship must be established between the Views and the Object
+// to be visualized. In this case we define it as an identity transform, which
+// means that both of them refer to the same coordinate system.
+//
+// Software Guide : EndLatex 
+// Software Guide : BeginCodeSnippet
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  view3D1->RequestSetTransformAndParent( transform, cube.GetPointer() );
+  view3D2->RequestSetTransformAndParent( transform, cube.GetPointer() );
+// Software Guide : EndCodeSnippet
+
 
   view3D1->SetRefreshRate( 0.1 );
   view3D1->RequestStart();
