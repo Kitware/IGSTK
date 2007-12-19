@@ -271,7 +271,6 @@ SET(IGSTKSandbox_HEADS
   igstkObliqueImageSpatialObjectRepresentation.h
   igstkPivotCalibrationNew.h
   igstkPivotCalibrationAlgorithm.h
-  igstkPivotCalibrationFLTKWidget.h
   igstkPoint3D.h
   igstkSocketCommunication.h
   igstkVideoGrabber.h
@@ -309,6 +308,7 @@ IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
       igstkFLTKWidget.h
+      igstkPivotCalibrationFLTKWidget.h
      )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
@@ -339,7 +339,6 @@ SET(IGSTKSandbox_SRCS
   igstkObliqueImageSpatialObjectRepresentation.txx
   igstkPivotCalibrationNew.cxx
   igstkPivotCalibrationAlgorithm.cxx
-  igstkPivotCalibrationFLTKWidget.cxx
   igstkPoint3D.cxx
   igstkSocketCommunication.cxx
   igstkVideoGrabber.cxx
@@ -378,6 +377,7 @@ IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKSandbox_SRCS
     ${IGSTKSandbox_SRCS}
     igstkFLTKWidget.cxx
+    igstkPivotCalibrationFLTKWidget.cxx
     )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
