@@ -278,7 +278,7 @@ int main(int , char** )
                                     0.05 );
   VersorType versor1 = ellipsoidToMeshTransform.GetRotation();
 
-  while( m_GUI->Showing )
+  while( m_GUI->m_Showing )
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
