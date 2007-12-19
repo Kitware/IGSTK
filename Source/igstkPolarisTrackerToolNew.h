@@ -18,7 +18,7 @@
 #ifndef __igstkPolarisTrackerToolNew_h
 #define __igstkPolarisTrackerToolNew_h
 
-#include "igstkTrackerToolNew.h"
+#include "igstkTrackerTool.h"
 
 namespace igstk
 {
