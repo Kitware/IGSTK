@@ -24,7 +24,7 @@
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
-#include "igstkMicronTrackerNew.h"
+#include "igstkMicronTracker.h"
 #include "igstkView.h"
 #include "igstkTransform.h"
 
@@ -46,8 +46,8 @@ class OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI : public QMainWindow
   typedef igstk::Object::LoggerType              LoggerType; 
   typedef itk::StdStreamLogOutput  LogOutputType;
 
-  typedef igstk::MicronTrackerNew                TrackerType;
-  typedef igstk::MicronTrackerToolNew TrackerToolType;
+  typedef igstk::MicronTracker                TrackerType;
+  typedef igstk::MicronTrackerTool TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
 #ifdef WIN32
