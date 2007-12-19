@@ -14,8 +14,7 @@ class NeedleBiopsyGUI {open
       label {IGSTK: Needle Biopsy Demo Application}
       callback {Quit();} open
       xywh {675 211 930 732} type Double box PLASTIC_UP_BOX resizable
-      code0 {\#include "igstkView2D.h"}
-      code1 {\#include "igstkView3D.h"} visible
+      code0 {\#include "igstkFLTKWidget.h"} visible
     } {
       Fl_Group ControlGroup {
         xywh {0 0 165 690} box DOWN_BOX
@@ -125,25 +124,25 @@ else
       Fl_Group ViewerGroup {
         xywh {165 0 768 692} box DOWN_BOX
       } {
-        Fl_Box DisplayAxial {
+        Fl_Box DisplayAxialWidget {
           label {Display Axial}
           xywh {165 0 380 330} box FLAT_BOX color 0 labelcolor 7
-          class {igstk::View2D}
+          class {igstk::FLTKWidget}
         }
-        Fl_Box DisplaySagittal {
+        Fl_Box DisplaySagittalWidget {
           label {Display Sagittal}
           xywh {550 0 380 330} box FLAT_BOX color 0 labelcolor 7
-          class {igstk::View2D}
+          class {igstk::FLTKWidget}
         }
-        Fl_Box Display3D {
+        Fl_Box Display3DWidget {
           label {Display 3D}
           xywh {550 345 380 330} box FLAT_BOX color 0 labelcolor 7
-          class {igstk::View3D}
+          class {igstk::FLTKWidget}
         }
-        Fl_Box DisplayCoronal {
+        Fl_Box DisplayCoronalWidget {
           label {Display Coronal}
           xywh {165 345 380 330} box FLAT_BOX color 0 labelcolor 7
-          class {igstk::View2D}
+          class {igstk::FLTKWidget}
         }
         Fl_Value_Slider AxialSlider {
           callback {this->RequestResliceImage();}
@@ -280,10 +279,10 @@ OffsetZ->value( -157.5 );} {}
   }
   Function {~NeedleBiopsyGUI()} {return_type virtual
   } {
-    code {delete DisplayAxial;
-delete DisplayCoronal;
-delete DisplaySagittal;
-delete Display3D;} {}
+    code {delete DisplayAxialWidget;
+delete DisplayCoronalWidget;
+delete DisplaySagittalWidget;
+delete Display3DWidget;} {}
   }
   Function {RequestSetPatientName()} {open return_type {virtual void}
   } {}

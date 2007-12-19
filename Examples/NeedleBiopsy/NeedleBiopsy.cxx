@@ -25,6 +25,16 @@ PURPOSE.  See the above copyright notices for more information.
 /** Constructor: Initializes all internal variables. */
 NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
 {  
+  this->Display3D = ViewType3D::New();
+  this->DisplayAxial = ViewType2D::New();
+  this->DisplayCoronal = ViewType2D::New();
+  this->DisplaySagittal = ViewType2D::New();
+
+  this->Display3DWidget->RequestSetView( this->Display3D );
+  this->DisplayAxialWidget->RequestSetView( this->DisplayAxial );
+  this->DisplayCoronalWidget->RequestSetView( this->DisplayCoronal );
+  this->DisplaySagittalWidget->RequestSetView( this->DisplaySagittal );
+
   /** Setup logger, for all other igstk components. */
   m_Logger   = LoggerType::New();
 
@@ -998,27 +1008,27 @@ void NeedleBiopsy::ConnectImageRepresentationProcessing()
   this->Display3D->RequestAddObject( m_EntryRepresentation->Copy() );
 
   this->Display3D->RequestResetCamera();
-  this->Display3D->Update();
-  this->Display3D->RequestEnableInteractions();
-  this->Display3D->RequestSetRefreshRate( 30 ); // 30 Hz
+  // this->Display3D->Update();
+  this->Display3DWidget->RequestEnableInteractions();
+  this->Display3D->SetRefreshRate( 30 ); // 30 Hz
   this->Display3D->RequestStart();
   
   this->DisplaySagittal->RequestResetCamera();
-  this->DisplaySagittal->Update();
-  this->DisplaySagittal->RequestEnableInteractions();
-  this->DisplaySagittal->RequestSetRefreshRate( 30 ); // 30 Hz
+  // this->DisplaySagittal->Update();
+  this->DisplaySagittalWidget->RequestEnableInteractions();
+  this->DisplaySagittal->SetRefreshRate( 30 ); // 30 Hz
   this->DisplaySagittal->RequestStart();
 
   this->DisplayCoronal->RequestResetCamera();
-  this->DisplayCoronal->Update();
-  this->DisplayCoronal->RequestEnableInteractions();
-  this->DisplayCoronal->RequestSetRefreshRate( 30 ); // 30 Hz
+  // this->DisplayCoronal->Update();
+  this->DisplayCoronalWidget->RequestEnableInteractions();
+  this->DisplayCoronal->SetRefreshRate( 30 ); // 30 Hz
   this->DisplayCoronal->RequestStart();  
 
   this->DisplayAxial->RequestResetCamera();
-  this->DisplayAxial->Update();
-  this->DisplayAxial->RequestEnableInteractions();
-  this->DisplayAxial->RequestSetRefreshRate( 30 ); // 30 Hz
+  // this->DisplayAxial->Update();
+  this->DisplayAxialWidget->RequestEnableInteractions();
+  this->DisplayAxial->SetRefreshRate( 30 ); // 30 Hz
   this->DisplayAxial->RequestStart();
   
   // Request information about the slices. The answers will be 

@@ -48,6 +48,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkAnnotation2D.h"
 
+#include "igstkView2D.h"
+#include "igstkView3D.h"
+
 class NeedleBiopsy : public NeedleBiopsyGUI
 {
 public:
@@ -336,6 +339,14 @@ private:
 
   /** Resetting the state of the application */
   void Reset();
+
+  typedef igstk::View2D ViewType2D;
+  typedef igstk::View3D ViewType3D;
+
+  ViewType2D::Pointer DisplayAxial;
+  ViewType2D::Pointer DisplayCoronal;
+  ViewType2D::Pointer DisplaySagittal;
+  ViewType3D::Pointer Display3D;
 
 };
 
