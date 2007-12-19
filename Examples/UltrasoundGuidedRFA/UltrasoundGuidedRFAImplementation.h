@@ -94,10 +94,12 @@ public:
   typedef itk::StdStreamLogOutput       LogOutputType;
 
 #ifdef UGRFA_USE_FOB
-  typedef igstk::FlockOfBirdsTracker    TrackerType;
+  typedef igstk::FlockOfBirdsTracker       TrackerType;
+  typedef igstk::FlockOfBirdsTrackerTool   TrackerToolType;
   #define TRACKER_TOOL_PORT 0
 #else
-  typedef igstk::PolarisTracker         TrackerType;
+  typedef igstk::PolarisTracker            TrackerType;
+  typedef igstk::PolarisTrackerTool        TrackerToolType;
   #define TRACKER_TOOL_PORT 0
 #endif
 
@@ -170,6 +172,7 @@ private:
 
   LogOutputType::Pointer                          m_LogOutput;
   TrackerType::Pointer                            m_Tracker;
+  TrackerToolType::Pointer                        m_TrackerTool;
   CommunicationType::Pointer                      m_Communication;
 
   View2DType::Pointer                             m_View2D;

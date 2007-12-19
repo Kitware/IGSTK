@@ -26,6 +26,8 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
                                                          :m_StateMachine(this)
 {
   m_Tracker = TrackerType::New();
+
+  m_TrackerTool = TrackerToolType::New();
  
   m_Logger = LoggerType::New();
   m_LogOutput = LogOutputType::New();
@@ -70,8 +72,14 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
                                    igstk::SerialCommunication::HandshakeOff );
 #endif
 
+
   m_Tracker->SetCommunication(m_Communication);
   m_Communication->OpenCommunication();
+
+  m_TrackerTool->RequestSelectWiredTrackerTool();
+  m_TrackerTool->RequestSetPortNumber( 0 );
+  m_TrackerTool->RequestConfigure();
+  m_TrackerTool->RequestAttachToTracker( m_Tracker );
 
   /** Tool calibration transform */
   igstk::Transform toolCalibrationTransform;
@@ -88,14 +96,17 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   //rotation2.SetRotationAroundX(3.141597/2.0);
   rotation2.SetRotationAroundX(3.141597);
 
-  rotation = rotation2*rotation;
+  rotation = rotation2 * rotation;
   
   translation = rotation.Transform(translation);
 
-  toolCalibrationTransform.SetTranslationAndRotation(translation,
-                                                  rotation,0.0001,100000000);
-  m_Tracker->SetToolCalibrationTransform( TRACKER_TOOL_PORT, 0, 
-                                          toolCalibrationTransform);
+  const double transformError = 0.0001;
+  
+  toolCalibrationTransform.SetTranslationAndRotation(
+    translation, rotation, transformError,
+    igstk::TimeStamp::GetLongestPossibleTime() );
+
+  m_TrackerTool->SetCalibrationTransform( toolCalibrationTransform );
 
   /** Tool calibration transform */
   igstk::Transform patientTransform;
@@ -104,22 +115,7 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   translationP[1] = 0;
   translationP[2] = -1500;
 
-  igstk::Transform::VersorType rotationP;
-  //rotationP.SetRotationAroundY(-3.141597/2.0);
-  rotationP.SetRotationAroundZ(-3.141597/2.0);
-    
-  igstk::Transform::VersorType rotation2P;
-  //rotation2P.SetRotationAroundZ(3.141597/2.0);
-  rotation2P.SetRotationAroundY(3.141597);
-   
-  rotationP = rotation2P*rotationP;
-
-  patientTransform.SetTranslationAndRotation(translationP,
-                                             rotationP,0.0001,100000000);
-  m_Tracker->SetPatientTransform(patientTransform);
-
   m_Tracker->RequestOpen();
-  m_Tracker->RequestInitialize();
 
   this->Display2D->RequestSetView( this->m_View2D );
   this->Display3D->RequestSetView( this->m_View3D );
@@ -244,9 +240,11 @@ void UltrasoundGuidedRFAImplementation
 void UltrasoundGuidedRFAImplementation
 ::AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
 {
-  const unsigned int toolNumber = 0;
-  m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, toolNumber, 
-                                                        objectToTrack );
+  igstk::Transform  identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+ 
+  // Attach a spatial object to the tracker tool
+  objectToTrack->RequestSetTransformAndParent( identityTransform, m_TrackerTool.GetPointer() );
 }
 
 /** Load a liver surface */
@@ -461,11 +459,10 @@ void UltrasoundGuidedRFAImplementation
   typedef igstk::Transform            TransformType;
   typedef TransformType::VectorType   VectorType;
 
-  TransformType             transform;
-  VectorType                position;
+  TransformType  transform = 
+    m_TrackerTool->GetCalibratedTransformWithRespectToReferenceTrackerTool();
 
-  m_Tracker->GetToolTransform( 0, 0, transform );
-  position = transform.GetTranslation();
+  VectorType     position = transform.GetTranslation();
   m_ObliquePoint[0] = position[0]-(512*0.78125/2);
   m_ObliquePoint[1] = position[1];
   m_ObliquePoint[2] = position[2];
