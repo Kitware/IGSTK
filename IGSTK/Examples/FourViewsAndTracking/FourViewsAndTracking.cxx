@@ -29,7 +29,6 @@ int main(int , char** )
 
   FourViewsAndTrackingImplementation   application;
 
-  application.Show();
 
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
@@ -102,6 +101,9 @@ int main(int , char** )
   application.ConnectViewsToSpatialObjectParent( ellipsoid );
 
   application.ResetCameras();
+
+  // Show the main GUI window
+  application.Show();
 
   while( !application.HasQuitted() )
     {

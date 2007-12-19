@@ -137,28 +137,20 @@ public:
 
     // Set up the four quadrant views
     this->Display3D->RequestResetCamera();
-    //this->Display3D->Update();
     this->Display3DWidget->RequestEnableInteractions();
     this->Display3D->SetRefreshRate( 60 ); // 60 Hz
-    this->Display3D->RequestStart();
 
     this->DisplayAxial->RequestResetCamera();
-    //this->DisplayAxial->Update();
     this->DisplayAxialWidget->RequestEnableInteractions();
     this->DisplayAxial->SetRefreshRate( 60 ); // 60 Hz
-    this->DisplayAxial->RequestStart();
 
     this->DisplayCoronal->RequestResetCamera();
-    //this->DisplayCoronal->Update();
     this->DisplayCoronalWidget->RequestEnableInteractions();
     this->DisplayCoronal->SetRefreshRate( 60 ); // 60 Hz
-    this->DisplayCoronal->RequestStart();
 
     this->DisplaySagittal->RequestResetCamera();
-    //this->DisplaySagittal->Update();
     this->DisplaySagittalWidget->RequestEnableInteractions();
     this->DisplaySagittal->SetRefreshRate( 60 ); // 60 Hz
-    this->DisplaySagittal->RequestStart();
       
     m_Tracking = false;
     }
@@ -214,12 +206,24 @@ public:
     this->DisplayAxial->RequestResetCamera();
     this->DisplayCoronal->RequestResetCamera();
     this->DisplaySagittal->RequestResetCamera();
-
-    // this->Display3D->Update();
-    // this->DisplayAxial->Update();
-    // this->DisplayCoronal->Update();
-    // this->DisplaySagittal->Update();
     }
+
+  void StartViews()
+    {
+    this->Display3D->RequestStart();
+    this->DisplayAxial->RequestStart();
+    this->DisplayCoronal->RequestStart();
+    this->DisplaySagittal->RequestStart();
+    }
+
+  void StopViews()
+    {
+    this->Display3D->RequestStop();
+    this->DisplayAxial->RequestStop();
+    this->DisplayCoronal->RequestStop();
+    this->DisplaySagittal->RequestStop();
+    }
+
 
   void ConnectViewsToSpatialObjectParent( igstk::SpatialObject* so )
     {

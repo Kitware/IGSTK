@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 class FourViewsAndTrackingGUI {open
@@ -46,33 +46,37 @@ else             this->DisableTracking();}
         xywh {670 675 85 25}
       }
     }
-    code {this->hasQuitted = false;
-} {}
+    code {this->hasQuitted = false;} {}
   }
   Function {~FourViewsAndTrackingGUI()} {open return_type virtual
   } {
     code {delete Display3DWidget;
 delete DisplayAxialWidget;
 delete DisplaySagittalWidget;
-delete DisplayCoronalWidget;} {selected
-    }
+delete DisplayCoronalWidget;} {}
   }
   Function {Quit()} {return_type {virtual void}
   } {
-    code {mainWindow->hide();
+    code {this->StopViews();
+mainWindow->hide();
 this->hasQuitted = true;} {}
   }
   Function {Show()} {return_type {virtual void}
   } {
-    code {mainWindow->show();} {}
+    code {mainWindow->show();
+this->StartViews();} {}
   }
-  Function {EnableTracking()} {open return_type {virtual void}
+  Function {EnableTracking()} {return_type {virtual void}
   } {}
-  Function {DisableTracking()} {open return_type {virtual void}
+  Function {DisableTracking()} {return_type {virtual void}
   } {}
   decl {bool hasQuitted;} {}
   Function {HasQuitted()} {return_type {virtual bool}
   } {
     code {return this->hasQuitted;} {}
   }
+  Function {StartViews()} {open return_type {virtual void}
+  } {}
+  Function {StopViews()} {open selected return_type {virtual void}
+  } {}
 } 
