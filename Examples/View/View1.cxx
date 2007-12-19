@@ -109,6 +109,7 @@ int main( int, char * [] )
     ellipsoidRepresentation->SetOpacity(1.0);
     // EndCodeSnippet
 
+
     // BeginLatex
     // 
     // Next, the FLTK main window and an OpenGL FLTK Widget object are
@@ -121,6 +122,7 @@ int main( int, char * [] )
     WindowWidgetType * fltkWidget = new WindowWidgetType(10,10,280,280,"3D View");
 
     View3DType::Pointer view3D = View3DType::New();
+
 
     fltkWidget->RequestSetView( view3D );
 
@@ -135,22 +137,8 @@ int main( int, char * [] )
    
     // BeginLatex
     // 
-    // The ellipsoid is added to the scene using the \code{RequestAddObject}
-    // method and then the scope of the camera is reset in order to make sure
-    // that the object is visible in the window.
-    //
-    // EndLatex
-
-    // BeginCodeSnippet
-    view3D->RequestAddObject( ellipsoidRepresentation );
-    view3D->RequestResetCamera();
-    // EndCodeSnippet
-
-
-    // BeginLatex
-    // 
-    // A geometrical transformation can then be applied to the ellipsoid spatial
-    // object as follows:
+    // A geometrical transformation can then be applied to define the spatial
+    // relationship between the view and the ellipsoid object as follows:
     // 
     // EndLatex
 
@@ -170,18 +158,27 @@ int main( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-//    ellipsoid->RequestSetTransformAndParent( transform, view3D.GetPointer() );
-    view3D->RequestSetTransformAndParent( transform, ellipsoid.GetPointer() );
+    ellipsoid->RequestSetTransformAndParent( transform, view3D.GetPointer() );
     // EndCodeSnippet
 
 
+    // BeginLatex
+    // 
+    // The ellipsoid is added to the scene using the \code{RequestAddObject}
+    // method and then the scope of the camera is reset in order to make sure
+    // that the object is visible in the window.
     //
-    // Set the position of the camera in the coordinate system of the View.
-    //
+    // EndLatex
+
+    // BeginCodeSnippet
+    view3D->RequestAddObject( ellipsoidRepresentation );
+
     view3D->SetCameraPosition( 0, 0, -1 );
     view3D->SetCameraViewUp( 0, -1, 0 );
     view3D->SetFocalPoint( 0, 0, 0 );
+
     view3D->RequestResetCamera();
+    // EndCodeSnippet
 
 
     // BeginLatex
