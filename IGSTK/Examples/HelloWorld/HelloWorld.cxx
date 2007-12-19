@@ -182,6 +182,11 @@ int main(int , char** )
   cylinder->SetRadius(0.1);
   cylinder->SetHeight(3);
 
+  // Add the position of the cylinder with respect to the View.
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  cylinder->RequestSetTransformAndParent( transform, m_GUI->View.GetPointer() );
+
   igstk::CylinderObjectRepresentation::Pointer 
           cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
   cylinderRepresentation->RequestSetCylinderObject( cylinder );
@@ -196,10 +201,9 @@ int main(int , char** )
   // 
   // EndLatex
   // BeginCodeSnippet
-  m_GUI->Display->RequestAddObject( ellipsoidRepresentation );
-  m_GUI->Display->RequestAddObject( cylinderRepresentation );
-  m_GUI->Display->RequestResetCamera();
-  m_GUI->Display->Update();
+  m_GUI->View->RequestAddObject( ellipsoidRepresentation );
+  m_GUI->View->RequestAddObject( cylinderRepresentation );
+  m_GUI->View->RequestResetCamera();
   // EndCodeSnippet
 
   // BeginLatex
@@ -269,23 +273,25 @@ int main(int , char** )
   // EndCodeSnippet
   
   // BeginLatex
-  // By connecting the logger to the Display and the Tracker, messages from 
+  // By connecting the logger to the View and the Tracker, messages from 
   // these components are redirected to the logger, as follows: 
   // EndLatex
   // BeginCodeSnippet
-  m_GUI->Display->SetLogger( logger ); 
+  m_GUI->View->SetLogger( logger ); 
   tracker->SetLogger( logger );
   // EndCodeSnippet
 
 
   // BeginLatex
-  // Next, the refresh frequency of the display window is set. After the
-  // \code{RequestStart()} function is called, the pulse generator inside the
-  // display window will start ticking, and will call the display to update
-  // itself 60 times per second, as follows: EndLatex
+  // Next, the refresh frequency of the display window is set. The
+  // \code{Show()} method of the GUI will invoke internally the
+  // \code{RequestStart()} method of the View. After the \code{RequestStart()}
+  // function is called, the pulse generator inside the display window will
+  // start ticking, and will call the display to update itself 60 times per
+  // second, as follows: EndLatex
   // BeginCodeSnippet
-  m_GUI->Display->RequestSetRefreshRate( 60 ); 
-  m_GUI->Display->RequestStart();
+  m_GUI->View->SetRefreshRate( 60 ); 
+  m_GUI->Show();
   // EndCodeSnippet
 
   // BeginLatex
