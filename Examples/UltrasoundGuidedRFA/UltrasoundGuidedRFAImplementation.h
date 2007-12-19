@@ -39,7 +39,6 @@
 #include "igstkMeshObject.h"
 #include "igstkMeshObjectRepresentation.h"
 #include "igstkObliqueContourMeshObjectRepresentation.h"
-//#include "igstkContourMeshObjectRepresentation.h"
 #include "igstkContourVascularNetworkObjectRepresentation.h"
 #include "igstkVascularNetworkReader.h"
 #include "igstkVascularNetworkObject.h"
@@ -171,8 +170,10 @@ private:
   igstk::MeshObjectRepresentation::Pointer        m_LiverRepresentation;
   igstk::ObliqueContourMeshObjectRepresentation::Pointer 
                                                   m_ContourLiverRepresentation;
-  //ContourMeshObjectRepresentation::Pointer m_ContourLiverRepresentation;
   
+  igstk::View3D::Pointer                          m_View3D;
+  igstk::View2D::Pointer                          m_View2D;
+
   igstk::ContourVascularNetworkObjectRepresentation::Pointer 
                                         m_ContourVascularNetworkRepresentation;
 

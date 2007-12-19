@@ -1,25 +1,28 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 class UltrasoundGuidedRFA {open
 } {
-  Function {UltrasoundGuidedRFA()} {} {
+  Function {UltrasoundGuidedRFA()} {open
+  } {
     Fl_Window mainWindow {
-      label {IGSTK: Ultrasound-Guided RFA Application}
-      xywh {672 125 789 470} type Double resizable visible
+      label {IGSTK: Ultrasound-Guided RFA Application} open selected
+      xywh {672 125 785 470} type Double resizable
+      code0 {\#include "igstkView2D.h"}
+      code1 {\#include "igstkView3D.h"} visible
     } {
       Fl_Box Display3D {
         label {Display 3D}
         xywh {420 10 365 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView3D.h>}
-        class {igstk::View3D}
+        code0 {\#include <igstkFLTKWidget.h>}
+        class {igstk::FLTKWidget}
       }
       Fl_Box Display2D {
         label {Display 2D}
         xywh {10 10 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView2D.h>}
-        class {igstk::View2D}
+        code0 {\#include <igstkFLTKWidget.h>}
+        class {igstk::FLTKWidget}
       }
       Fl_Light_Button TrackingButton {
         label Tracking
@@ -63,7 +66,7 @@ else             this->DisableTracking();}
     code {delete Display2D;
 delete Display3D;} {}
   }
-  Function {Quit()} {open selected return_type {virtual void}
+  Function {Quit()} {open return_type {virtual void}
   } {}
   Function {Show()} {return_type {virtual void}
   } {

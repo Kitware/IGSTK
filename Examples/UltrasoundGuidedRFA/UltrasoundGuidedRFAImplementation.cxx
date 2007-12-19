@@ -48,6 +48,9 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   m_Logger->SetPriorityLevel( LoggerType::DEBUG );
   //m_Tracker->SetLogger( m_Logger );
 
+  m_View2D = igstk::View2D::New();
+  m_View3D = igstk::View3D::New();
+
 #ifdef UGRFA_USE_FOB
   m_Communication = CommunicationType::New();
   //m_Communication->SetLogger( m_Logger );
@@ -117,18 +120,17 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
   m_Tracker->RequestOpen();
   m_Tracker->RequestInitialize();
 
-  // Set up the four quadrant views
-  this->Display3D->RequestResetCamera();
-  this->Display3D->Update();
-  this->Display3D->RequestEnableInteractions();
-  this->Display3D->RequestSetRefreshRate( 60 ); // 60 Hz
-  this->Display3D->RequestStart();
+  this->Display2D->RequestSetView( this->m_View2D );
+  this->Display3D->RequestSetView( this->m_View3D );
 
-  this->Display2D->RequestResetCamera();
-  this->Display2D->Update();
-  this->Display2D->RequestEnableInteractions();
-  this->Display2D->RequestSetRefreshRate( 60 ); // 60 Hz
-  this->Display2D->RequestStart();
+  // Set up the four quadrant views
+  this->m_View3D->RequestResetCamera();
+  this->m_View3D->SetRefreshRate( 60 ); // 60 Hz
+  this->m_View3D->RequestStart();
+
+  this->m_View2D->RequestResetCamera();
+  this->m_View2D->SetRefreshRate( 60 ); // 60 Hz
+  this->m_View2D->RequestStart();
       
   m_Tracking = false;
 
@@ -170,8 +172,8 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
 UltrasoundGuidedRFAImplementation
 ::~UltrasoundGuidedRFAImplementation()
 {
-  this->Display3D->RequestStop();
-  this->Display2D->RequestStop();
+  this->m_View3D->RequestStop();
+  this->m_View2D->RequestStop();
   this->m_Tracker->RequestReset();
   this->m_Tracker->RequestStopTracking();
   this->m_Tracker->RequestClose();
@@ -225,16 +227,16 @@ void UltrasoundGuidedRFAImplementation
 ::AddProbe( igstk::UltrasoundProbeObjectRepresentation 
             * cylinderRepresentation )
 {
-  //this->Display2D->RequestAddObject(    cylinderRepresentation->Copy() );
-  this->Display3D->RequestAddObject(    cylinderRepresentation->Copy() );
+  //this->m_View2D->RequestAddObject(    cylinderRepresentation->Copy() );
+  this->m_View3D->RequestAddObject(    cylinderRepresentation->Copy() );
 }
 
 /** Add Axes to the display */
 void UltrasoundGuidedRFAImplementation
 ::AddAxes( igstk::AxesObjectRepresentation * cylinderRepresentation )
 {
-  //this->Display2D->RequestAddObject(    cylinderRepresentation->Copy() );
-  this->Display3D->RequestAddObject(    cylinderRepresentation->Copy() );
+  //this->m_View2D->RequestAddObject(    cylinderRepresentation->Copy() );
+  this->m_View3D->RequestAddObject(    cylinderRepresentation->Copy() );
 }
 
 /** Add object to track */
@@ -260,7 +262,7 @@ void UltrasoundGuidedRFAImplementation
     m_LiverRepresentation->RequestSetMeshObject( m_MeshReader->GetOutput() );
     m_LiverRepresentation->SetColor(1.0,0.0,0.0);
     m_LiverRepresentation->SetOpacity(1.0);
-    this->Display3D->RequestAddObject(m_LiverRepresentation);
+    this->m_View3D->RequestAddObject(m_LiverRepresentation);
     /*
     m_ContourLiverRepresentation->RequestSetMeshObject( 
                                                   m_MeshReader->GetOutput() );
@@ -268,7 +270,7 @@ void UltrasoundGuidedRFAImplementation
     //                                  ContourMeshObjectRepresentation::Axial);
     m_ContourLiverRepresentation->SetColor(1.0,0.0,0.0);
     m_ContourLiverRepresentation->SetOpacity(1.0);
-    this->Display2D->RequestAddObject(m_ContourLiverRepresentation);
+    this->m_View2D->RequestAddObject(m_ContourLiverRepresentation);
     */
     }
 }
@@ -296,7 +298,7 @@ void UltrasoundGuidedRFAImplementation
                               vascularNetworkObserver->GetVascularNetwork() );
     //m_VascularNetworkRepresentation->SetColor(1.0,0.0,0.0);
     //m_VascularNetworkRepresentation->SetOpacity(1.0);
-    this->Display3D->RequestAddObject( m_VascularNetworkRepresentation );
+    this->m_View3D->RequestAddObject( m_VascularNetworkRepresentation );
 
     // Represent as a 2D contour on the 2D View
     m_ContourVascularNetworkRepresentation->RequestSetVascularNetworkObject( 
@@ -306,7 +308,7 @@ void UltrasoundGuidedRFAImplementation
     m_ContourVascularNetworkRepresentation->SetColor(1.0,1.0,1.0);
     m_ContourVascularNetworkRepresentation->SetOpacity(1.0);
 
-    this->Display2D->RequestAddObject(m_ContourVascularNetworkRepresentation);
+    this->m_View2D->RequestAddObject(m_ContourVascularNetworkRepresentation);
     }
 }
 
@@ -349,7 +351,7 @@ void UltrasoundGuidedRFAImplementation
     m_LiverMRRepresentation->SetWindowLevel(52,52);
     m_LiverMRRepresentation->RequestSetOrientation(
                                             MRImageRepresentationType::Axial);
-    this->Display3D->RequestAddObject( m_LiverMRRepresentation );
+    this->m_View3D->RequestAddObject( m_LiverMRRepresentation );
 
     m_ObliqueLiverMRRepresentation->RequestSetImageSpatialObject(
                                                 mrImageObserver->GetMRImage());
@@ -363,8 +365,8 @@ void UltrasoundGuidedRFAImplementation
 
     m_StateMachine.ProcessInputs();
 
-    this->Display2D->RequestAddObject( m_ObliqueLiverMRRepresentation );
-    this->Display2D->RequestResetCamera();
+    this->m_View2D->RequestAddObject( m_ObliqueLiverMRRepresentation );
+    this->m_View2D->RequestResetCamera();
     }
 }
 
@@ -402,8 +404,8 @@ void UltrasoundGuidedRFAImplementation
     m_LiverUSRepresentation->RequestSetImageSpatialObject(
                                               usImageObserver->GetUSImage());
     m_LiverUSRepresentation->SetWindowLevel(255/2.0,255/2.0);
-    this->Display2D->RequestAddObject( m_LiverUSRepresentation );
-    this->Display2D->RequestResetCamera();
+    this->m_View2D->RequestAddObject( m_LiverUSRepresentation );
+    this->m_View2D->RequestResetCamera();
     }
 }
 
@@ -440,7 +442,7 @@ void UltrasoundGuidedRFAImplementation
   m_ContourLiverRepresentation->RequestSetVector2OnThePlane(v2);
   m_ContourLiverRepresentation->RequestReslice();
   
-  this->Display2D->RequestResetCamera();
+  this->m_View2D->RequestResetCamera();
 
 }
 
@@ -490,7 +492,7 @@ void UltrasoundGuidedRFAImplementation
   m_ContourLiverRepresentation->RequestSetVector2OnThePlane(v2);
   m_ContourLiverRepresentation->RequestReslice();
 
-  this->Display2D->RequestResetCamera();
+  this->m_View2D->RequestResetCamera();
 
   // Generate 
   /*m_USSimulator->RequestSetTransform(transform);
