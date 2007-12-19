@@ -48,6 +48,8 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkAuroraTracker.h"
+#include "igstkView2D.h"
+#include "igstkView3D.h"
 // EndCodeSnippet
 
 #ifdef WIN32
@@ -78,6 +80,20 @@ public:
 
   FourViewsAndTrackingImplementation()
     {
+    this->Display3D = ViewType3D::New();
+    this->DisplayAxial = ViewType2D::New();
+    this->DisplayCoronal = ViewType2D::New();
+    this->DisplaySagittal = ViewType2D::New();
+
+    this->DisplayAxial->RequestSetOrientation( ViewType2D::Axial );
+    this->DisplaySagittal->RequestSetOrientation( ViewType2D::Sagittal );
+    this->DisplayCoronal->RequestSetOrientation( ViewType2D::Coronal );
+
+    this->Display3DWidget->RequestSetView( this->Display3D );
+    this->DisplayAxialWidget->RequestSetView( this->DisplayAxial );
+    this->DisplayCoronalWidget->RequestSetView( this->DisplayCoronal );
+    this->DisplaySagittalWidget->RequestSetView( this->DisplaySagittal );
+
     m_Tracker = TrackerType::New();
     m_Logger = LoggerType::New();
     m_LogOutput = LogOutputType::New();
@@ -117,29 +133,31 @@ public:
     m_Tracker->RequestOpen();
     m_Tracker->RequestInitialize();
 
+
+
     // Set up the four quadrant views
     this->Display3D->RequestResetCamera();
-    this->Display3D->Update();
-    this->Display3D->RequestEnableInteractions();
-    this->Display3D->RequestSetRefreshRate( 60 ); // 60 Hz
+    //this->Display3D->Update();
+    this->Display3DWidget->RequestEnableInteractions();
+    this->Display3D->SetRefreshRate( 60 ); // 60 Hz
     this->Display3D->RequestStart();
 
     this->DisplayAxial->RequestResetCamera();
-    this->DisplayAxial->Update();
-    this->DisplayAxial->RequestEnableInteractions();
-    this->DisplayAxial->RequestSetRefreshRate( 60 ); // 60 Hz
+    //this->DisplayAxial->Update();
+    this->DisplayAxialWidget->RequestEnableInteractions();
+    this->DisplayAxial->SetRefreshRate( 60 ); // 60 Hz
     this->DisplayAxial->RequestStart();
 
     this->DisplayCoronal->RequestResetCamera();
-    this->DisplayCoronal->Update();
-    this->DisplayCoronal->RequestEnableInteractions();
-    this->DisplayCoronal->RequestSetRefreshRate( 60 ); // 60 Hz
+    //this->DisplayCoronal->Update();
+    this->DisplayCoronalWidget->RequestEnableInteractions();
+    this->DisplayCoronal->SetRefreshRate( 60 ); // 60 Hz
     this->DisplayCoronal->RequestStart();
 
     this->DisplaySagittal->RequestResetCamera();
-    this->DisplaySagittal->Update();
-    this->DisplaySagittal->RequestEnableInteractions();
-    this->DisplaySagittal->RequestSetRefreshRate( 60 ); // 60 Hz
+    //this->DisplaySagittal->Update();
+    this->DisplaySagittalWidget->RequestEnableInteractions();
+    this->DisplaySagittal->SetRefreshRate( 60 ); // 60 Hz
     this->DisplaySagittal->RequestStart();
       
     m_Tracking = false;
@@ -197,10 +215,10 @@ public:
     this->DisplayCoronal->RequestResetCamera();
     this->DisplaySagittal->RequestResetCamera();
 
-    this->Display3D->Update();
-    this->DisplayAxial->Update();
-    this->DisplayCoronal->Update();
-    this->DisplaySagittal->Update();
+    // this->Display3D->Update();
+    // this->DisplayAxial->Update();
+    // this->DisplayCoronal->Update();
+    // this->DisplaySagittal->Update();
     }
 
   void ConnectViewsToSpatialObjectParent( igstk::SpatialObject* so )
@@ -215,6 +233,8 @@ public:
     }
 
 private:
+  typedef igstk::View2D ViewType2D;
+  typedef igstk::View3D ViewType3D;
 
   LoggerType::Pointer     m_Logger;
   LogOutputType::Pointer  m_LogOutput;
@@ -225,6 +245,11 @@ private:
   bool                    m_Tracking;
     
   std::ofstream           m_LogFile;
+
+  ViewType2D::Pointer DisplayAxial;
+  ViewType2D::Pointer DisplayCoronal;
+  ViewType2D::Pointer DisplaySagittal;
+  ViewType3D::Pointer Display3D;
 };
 
 
