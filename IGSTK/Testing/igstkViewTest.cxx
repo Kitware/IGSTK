@@ -31,6 +31,7 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkVTKLoggerOutput.h"
+#include "igstkAxesObject.h"
 #include "igstkAxesObjectRepresentation.h"
 
 #include "igstkLogger.h"
@@ -178,15 +179,16 @@ int igstkViewTest( int, char * [] )
   try
     {
     // Define a representation for the coordinate system
+    igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
+
     typedef igstk::AxesObjectRepresentation  RepresentationType;
     RepresentationType::Pointer AxesRepresentation = RepresentationType::New();
-    // FIXCS AxesRepresentation->RequestSetAxesObject( worldReference );
+    AxesRepresentation->RequestSetAxesObject( worldReference );
 
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
     
-    // FIXCS ellipsoid->RequestAttachToSpatialObjectParent( worldReference );
 
     // Create the ellipsoid representation
     igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
@@ -200,7 +202,6 @@ int igstkViewTest( int, char * [] )
     igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
     cylinder->SetRadius(0.1);
     cylinder->SetHeight(0.5);
-    // FIXCS cylinder->RequestAttachToSpatialObjectParent( worldReference );
 
     // Create the cylinder representation
     igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation =
@@ -225,7 +226,7 @@ int igstkViewTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    // FIXCS ellipsoid->RequestSetTransformToSpatialObjectParent( transform );
+    ellipsoid->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
 
 
     const double cylinderAngle = 30.0 * vcl_atan(1.0) / 45.0; // 30 degrees in radians
@@ -239,7 +240,7 @@ int igstkViewTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    // FIXCS cylinder->RequestSetTransformToSpatialObjectParent( transform );
+    cylinder->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
 
     cylinderRepresentation->SetLogger( logger );
   
@@ -262,7 +263,7 @@ int igstkViewTest( int, char * [] )
     viewObserver2->SetEndFlag( &bEnd );
     viewObserver2->SetResizeFlag( &bResize );
 
-    // FIXCS worldReference->SetSize(1.0,1.0,1.0); 
+    worldReference->SetSize(1.0,1.0,1.0); 
 
     view3D->SetRefreshRate( 30 );
     view3D->SetRendererBackgroundColor( 0.8, 0.9, 0.8 );
@@ -273,8 +274,11 @@ int igstkViewTest( int, char * [] )
     std::cout << view3D->View3DType::Superclass::GetNameOfClass() 
               << std::endl;
 
+    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    view3D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+
     // Add the ellipsoid and cylinder representations to the view
-    // FIXCS view3D->RequestAddObject( AxesRepresentation );
+    view3D->RequestAddObject( AxesRepresentation );
     view3D->RequestAddObject( ellipsoidRepresentation );
     view3D->RequestAddObject( cylinderRepresentation );
     view3D->RequestStart();
@@ -311,10 +315,13 @@ int igstkViewTest( int, char * [] )
     view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
     view2D->RequestSetOrientation( View2DType::Axial );
    
+    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+
     view2D->RequestStart();
 
     // Add the ellipsoid and cylinder representations to the view
-    // FIXCS view2D->RequestAddObject( AxesRepresentation );
+    view2D->RequestAddObject( AxesRepresentation );
     view2D->RequestAddObject( ellipsoidRepresentation );
     view2D->RequestAddObject( cylinderRepresentation );
 
