@@ -28,6 +28,24 @@
 /** Constructor: Initializes all internal variables. */
 DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
 {  
+  ViewType2D::Pointer DisplayAxial;
+  ViewType2D::Pointer DisplayCoronal;
+  ViewType2D::Pointer DisplaySagittal;
+  ViewType3D::Pointer Display3D;
+  ViewType2D::Pointer DisplayOblique;
+
+  this->Display3D = ViewType3D::New();
+  this->DisplayAxial = ViewType2D::New();
+  this->DisplayCoronal = ViewType2D::New();
+  this->DisplaySagittal = ViewType2D::New();
+  this->DisplayOblique = ViewType2D::New();
+
+  this->Display3DWidget->RequestSetView( this->Display3D );
+  this->DisplayAxialWidget->RequestSetView( this->DisplayAxial );
+  this->DisplayCoronalWidget->RequestSetView( this->DisplayCoronal );
+  this->DisplaySagittalWidget->RequestSetView( this->DisplaySagittal );
+  this->DisplayObliqueWidget->RequestSetView( this->DisplayOblique );
+
   /** Setup logger, for all other igstk components. */
   m_Logger   = LoggerType::New();
 
@@ -661,27 +679,27 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->Display3D->RequestAddObject( m_EntryRepresentation->Copy() );
 
   this->Display3D->RequestResetCamera();
-  this->Display3D->Update();
-  this->Display3D->RequestEnableInteractions();
-  this->Display3D->RequestSetRefreshRate( 30 ); // 30 Hz
+  // this->Display3D->Update();
+  this->Display3DWidget->RequestEnableInteractions();
+  this->Display3D->SetRefreshRate( 30 ); // 30 Hz
   this->Display3D->RequestStart();
   
   this->DisplaySagittal->RequestResetCamera();
-  this->DisplaySagittal->Update();
-  this->DisplaySagittal->RequestEnableInteractions();
-  this->DisplaySagittal->RequestSetRefreshRate( 30 ); // 30 Hz
+  // this->DisplaySagittal->Update();
+  this->DisplaySagittalWidget->RequestEnableInteractions();
+  this->DisplaySagittal->SetRefreshRate( 30 ); // 30 Hz
   this->DisplaySagittal->RequestStart();
 
   this->DisplayCoronal->RequestResetCamera();
-  this->DisplayCoronal->Update();
-  this->DisplayCoronal->RequestEnableInteractions();
-  this->DisplayCoronal->RequestSetRefreshRate( 30 ); // 30 Hz
+  // this->DisplayCoronal->Update();
+  this->DisplayCoronalWidget->RequestEnableInteractions();
+  this->DisplayCoronal->SetRefreshRate( 30 ); // 30 Hz
   this->DisplayCoronal->RequestStart();  
 
   this->DisplayAxial->RequestResetCamera();
-  this->DisplayAxial->Update();
-  this->DisplayAxial->RequestEnableInteractions();
-  this->DisplayAxial->RequestSetRefreshRate( 30 ); // 30 Hz
+  // this->DisplayAxial->Update();
+  this->DisplayAxialWidget->RequestEnableInteractions();
+  this->DisplayAxial->SetRefreshRate( 30 ); // 30 Hz
   this->DisplayAxial->RequestStart();
   
   // Request information about the slices. The answers will be 
@@ -1210,11 +1228,11 @@ void DeckOfCardRobot::RequestInsertNeedle()
 
   ResliceImage( index );
 
-  if ( this->DisplayOblique->visible())
+  if ( this->DisplayObliqueWidget->visible())
     {
     m_ImageRepresentationOblique->RequestSetOriginPointOnThePlane( p );
     m_ImageRepresentationOblique->RequestReslice();  
-    this->DisplayOblique->Update();
+    // this->DisplayOblique->Update();
     }
 }
 
@@ -1254,9 +1272,9 @@ void DeckOfCardRobot::CreateObliqueView()
   m_ImageRepresentationOblique->RequestReslice(); 
   
   this->DisplayOblique->RequestResetCamera();
-  this->DisplayOblique->Update();
-  this->DisplayOblique->RequestEnableInteractions();
-  this->DisplayOblique->RequestSetRefreshRate( 30 ); // 30 Hz
+  // this->DisplayOblique->Update();
+  this->DisplayObliqueWidget->RequestEnableInteractions();
+  this->DisplayOblique->SetRefreshRate( 30 ); // 30 Hz
   this->DisplayOblique->RequestStart();  
   
 }
@@ -1265,7 +1283,7 @@ void DeckOfCardRobot::DisableObliqueView()
 {
   m_ImageRepresentationOblique->RequestSetImageSpatialObject( NULL );
   this->DisplayOblique->RequestRemoveObject( m_ImageRepresentationOblique );
-  this->DisplayOblique->RequestDisableInteractions();
+  this->DisplayObliqueWidget->RequestDisableInteractions();
   this->DisplayOblique->RequestStop();
 }
 

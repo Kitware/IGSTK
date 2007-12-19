@@ -47,6 +47,9 @@
 
 #include "itkVersorRigid3DTransform.h"
 
+#include "igstkView2D.h"
+#include "igstkView3D.h"
+
 class DeckOfCardRobot : public DeckOfCardRobotGUI
 {
 public:
@@ -280,6 +283,16 @@ private:
   void DisableObliqueView();
   void AnimateRobotMove( igstk::Transform TCurrent, 
                                          igstk::Transform TToBeSet, int steps);
+
+
+  typedef igstk::View2D ViewType2D;
+  typedef igstk::View3D ViewType3D;
+
+  ViewType2D::Pointer DisplayAxial;
+  ViewType2D::Pointer DisplayCoronal;
+  ViewType2D::Pointer DisplaySagittal;
+  ViewType3D::Pointer Display3D;
+  ViewType2D::Pointer DisplayOblique;
 
 };
 
