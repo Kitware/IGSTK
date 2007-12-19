@@ -50,6 +50,7 @@ void RegisterTests()
   REGISTER_TEST(igstkFLTKWidgetTest);
   REGISTER_TEST(igstkFLTKWidgetTest2);
   REGISTER_TEST(igstkAnnotation2DTest2);
+  REGISTER_TEST(igstkMouseTrackerToolTest);
 #endif /* IGSTKSandbox_USE_FLTK */
 
 #ifdef IGSTKSandbox_USE_Qt

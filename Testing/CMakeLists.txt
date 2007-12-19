@@ -149,6 +149,9 @@ ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4
   ${IGSTK_DATA_ROOT}/Input/E000192 )
 # END OF FIXME
 
+    ADD_TEST( igstkMouseTrackerToolTest ${IGSTKSandbox_TESTS} igstkMouseTrackerToolTest)
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkMouseTrackerToolTest.cxx)
+
     ADD_TEST( igstkFLTKWidgetTest ${IGSTKSandbox_TESTS} igstkFLTKWidgetTest)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkFLTKWidgetTest.cxx)
 

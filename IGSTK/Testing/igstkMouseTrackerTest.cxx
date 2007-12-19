@@ -31,7 +31,7 @@
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkMouseTracker.h"
-#include "igstkPolarisTrackerTool.h"
+#include "igstkMouseTrackerTool.h"
 
 class MouseTrackerTestCommand : public itk::Command 
 {
@@ -97,20 +97,14 @@ int igstkMouseTrackerTest( int, char * [] )
 
   tracker->RequestOpen();
 
-  /* FIXME: for now just use Polaris tracker tool. Any tracker tool
-   * type would work. But for the future, implement Mouse specific
-   * tracker tool type */
-
-  typedef igstk::PolarisTrackerTool      TrackerToolType;
+  typedef igstk::MouseTrackerTool      TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
   // instantiate and attach wired tracker tool  
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->SetLogger( logger );
-  //Select wired tracker tool
-  trackerTool->RequestSelectWiredTrackerTool();
-  //Set the port number to zero
-  trackerTool->RequestSetPortNumber( 0 );
+  std::string mouseName = "PS/s";
+  trackerTool->RequestSetMouseName( mouseName );
   //Configure
   trackerTool->RequestConfigure();
   //Attach to the tracker
@@ -136,7 +130,8 @@ int igstkMouseTrackerTest( int, char * [] )
 
     position = transform.GetTranslation();
 
-    std::cout << "Mouse Position -> ( " << position[0] << "," 
+    std::cout << "Mouse:" << trackerTool->GetTrackerToolIdentifier() 
+                          <<  "\t" <<  "( " << position[0] << "," 
             << position[1] << "," << position[2] << ")" << std::endl;
     }
   

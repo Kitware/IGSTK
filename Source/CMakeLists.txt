@@ -313,6 +313,7 @@ IF(IGSTKSandbox_USE_FLTK)
       ${IGSTKSandbox_HEADS}
       igstkFLTKWidget.h
       igstkPivotCalibrationFLTKWidget.h
+      igstkMouseTrackerTool.h
      )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
@@ -374,6 +375,7 @@ IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKSandbox_SRCS
     ${IGSTKSandbox_SRCS}
     igstkFLTKWidget.cxx
+    igstkMouseTrackerTool.cxx
     igstkPivotCalibrationFLTKWidget.cxx
     )
 ENDIF(IGSTKSandbox_USE_FLTK)
