@@ -99,11 +99,7 @@ IF(IGSTK_USE_FLTK)
       ${IGSTK_HEADS}
       igstkFLTKTextBufferLogOutput.h
       igstkFLTKTextLogOutput.h
-# FIXME: comment out the Mouse tracker class just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#
-#     igstkMouseTracker.h
+      igstkMouseTracker.h
       igstkView.h
       igstkView2D.h
       igstkView3D.h
@@ -197,10 +193,7 @@ SET(IGSTK_SRCS
 IF(IGSTK_USE_FLTK)
   SET(IGSTK_SRCS
       ${IGSTK_SRCS}
-# FIXME: comment out the Mouse tracker class just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#     igstkMouseTracker.cxx
+      igstkMouseTracker.cxx
       igstkFLTKTextBufferLogOutput.cxx
       igstkFLTKTextLogOutput.cxx
       igstkView.cxx

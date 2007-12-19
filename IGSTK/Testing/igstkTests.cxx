@@ -115,8 +115,7 @@ void RegisterTests()
   REGISTER_TEST(igstkMeshObjectTest);
   REGISTER_TEST(igstkPulseGeneratorTest);
   REGISTER_TEST(igstkTubeObjectTest);
-//FIXME
-//  REGISTER_TEST(igstktouseTrackerTest);
+  REGISTER_TEST(igstkMouseTrackerTest);
   REGISTER_TEST(igstkViewTest);
   REGISTER_TEST(igstkViewRefreshRateTest);
   REGISTER_TEST(igstkUltrasoundProbeObjectTest);

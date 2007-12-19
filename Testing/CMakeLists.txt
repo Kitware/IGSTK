@@ -367,11 +367,7 @@ IF (IGSTK_USE_FLTK)
     igstkAxesObjectTest.cxx
     igstkBoxObjectTest.cxx
     igstkConeObjectTest.cxx
-# FIXME: comment out the Mouse tracker test just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#
-#   igstkMouseTrackerTest.cxx
+    igstkMouseTrackerTest.cxx
     igstkUltrasoundImageSimulatorTest.cxx
     igstkUltrasoundProbeObjectTest.cxx
   )
@@ -707,7 +703,7 @@ SOURCE_GROUP(TestsModified FILES ${TestsModifiedFiles})
 
 #-----------------------------------------------------------------------------
 # Add testing executables
-ADD_EXECUTABLE(igstkLatestTests ${IGSTK_SOURCE_DIR}/Testing/igstkTests.cxx ${IGSTKLatestTests_SRCS})
+ADD_EXECUTABLE(igstkLatestTests ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/igstkTests.cxx ${IGSTKLatestTests_SRCS})
 TARGET_LINK_LIBRARIES(igstkLatestTests IGSTKSandbox)
 
 #ADD_EXECUTABLE(igstkSystemInformation igstkSystemInformation.cxx)
