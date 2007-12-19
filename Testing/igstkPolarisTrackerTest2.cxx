@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkPolarisTrackerNewTest.cxx
+  Module:    igstkPolarisTrackerTest2.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -38,19 +38,98 @@
 #endif
 
 #include "igstkSerialCommunicationSimulator.h"
-#include "igstkPolarisTrackerNew.h"
-#include "igstkPolarisTrackerToolNew.h"
+#include "igstkPolarisTracker.h"
+#include "igstkPolarisTrackerTool.h"
 #include "igstkTransform.h"
 
-class PolarisTrackerNewTestCommand : public itk::Command 
+class CoordinateReferenceSystemObserver : public ::itk::Command
 {
 public:
-  typedef  PolarisTrackerNewTestCommand   Self;
+  typedef igstk::CoordinateReferenceSystemTransformToEvent  EventType;
+  typedef igstk::CoordinateReferenceSystemTransformToResult PayloadType;
+
+  /** Standard class typedefs. */
+  typedef CoordinateReferenceSystemObserver         Self;
+  typedef ::itk::Command                            Superclass;
+  typedef ::itk::SmartPointer<Self>        Pointer;
+  typedef ::itk::SmartPointer<const Self>  ConstPointer;
+  
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(CoordinateReferenceSystemObserver, ::itk::Command);
+  itkNewMacro(CoordinateReferenceSystemObserver);
+
+  CoordinateReferenceSystemObserver()
+    {
+    m_GotPayload = false;
+    m_Payload.m_Destination = NULL;
+    m_Payload.m_Source = NULL;
+    }
+
+  ~CoordinateReferenceSystemObserver()
+    {
+    m_GotPayload = false;
+    m_Payload.m_Destination = NULL;
+    m_Payload.m_Source = NULL;
+    }
+
+  void ClearPayload()
+    {
+    m_GotPayload = false;
+    m_Payload.m_Destination = NULL;
+    m_Payload.m_Source = NULL;
+    }
+
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    this->ClearPayload();
+    if( EventType().CheckEvent( &event ) )
+      {
+      const EventType * transformEvent = 
+                dynamic_cast< const EventType *>( &event );
+      if( transformEvent )
+        {
+        m_Payload = transformEvent->Get();
+        m_GotPayload = true;
+        }
+      }
+    else
+      {
+      std::cout << "Got unexpected event : " << std::endl;
+      event.Print(std::cout);
+      }
+    }
+
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    this->Execute(static_cast<const itk::Object*>(caller), event);
+    }
+
+  bool GotPayload()
+    {
+    return m_GotPayload;
+    }
+
+  PayloadType GetPayload()
+    {
+    return m_Payload;
+    }
+
+protected:
+
+  PayloadType   m_Payload;
+  bool          m_GotPayload;
+
+};
+
+class PolarisTrackerTest2Command : public itk::Command 
+{
+public:
+  typedef  PolarisTrackerTest2Command   Self;
   typedef  itk::Command                Superclass;
   typedef itk::SmartPointer<Self>      Pointer;
   itkNewMacro( Self );
 protected:
-  PolarisTrackerNewTestCommand() {};
+  PolarisTrackerTest2Command() {};
 
 public:
   void Execute(itk::Object *caller, const itk::EventObject & event)
@@ -69,7 +148,7 @@ public:
     }
 };
 
-int igstkPolarisTrackerNewTest( int argc, char * argv[] )
+int igstkPolarisTrackerTest2( int argc, char * argv[] )
 {
 
   igstk::RealTimeClock::Initialize();
@@ -87,7 +166,7 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
     }
 
 
-  igstk::PolarisTrackerToolNew::Pointer tool = igstk::PolarisTrackerToolNew::New();
+  igstk::PolarisTrackerTool::Pointer tool = igstk::PolarisTrackerTool::New();
 
 #ifdef WIN32
   igstk::SerialCommunicationForWindows::Pointer 
@@ -97,9 +176,14 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
                        serialComm = igstk::SerialCommunicationForPosix::New();
 #endif /* WIN32 */
 
-  PolarisTrackerNewTestCommand::Pointer 
-                                my_command = PolarisTrackerNewTestCommand::New();
+  PolarisTrackerTest2Command::Pointer 
+                                my_command = PolarisTrackerTest2Command::New();
 
+  typedef CoordinateReferenceSystemObserver ObserverType;
+  typedef ObserverType::EventType CoordinateSystemEventType;
+
+  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+ 
   std::string filename = argv[1];
   std::cout << "Logger output saved here:\n";
   std::cout << filename << "\n"; 
@@ -123,14 +207,14 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
-  serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerNewTest.txt" );
+  serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerTest2.txt" );
   serialComm->SetCapture( true );
 
   serialComm->OpenCommunication();
 
-  igstk::PolarisTrackerNew::Pointer  tracker;
+  igstk::PolarisTracker::Pointer  tracker;
 
-  tracker = igstk::PolarisTrackerNew::New();
+  tracker = igstk::PolarisTracker::New();
 
   tracker->AddObserver( itk::AnyEvent(), my_command);
 
@@ -142,7 +226,7 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
 
-  typedef igstk::PolarisTrackerToolNew      TrackerToolType;
+  typedef igstk::PolarisTrackerTool      TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
   // instantiate and attach wired tracker tool  
@@ -158,6 +242,10 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   trackerTool->RequestAttachToTracker( tracker );
   //Add observer to listen to events throw by the tracker tool
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
+  //Add observer to listen to transform events 
+  trackerTool->AddObserver( CoordinateSystemEventType(), 
+                                  coordSystemAObserver );
+
 
   // instantiate and attach wireless tracker tool
   std::cout << "Instantiate second tracker tool: " << std::endl;
@@ -175,6 +263,12 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
   trackerTool2->RequestAttachToTracker( tracker );
   //Add observer to listen to events throw by the tracker tool
   trackerTool2->AddObserver( itk::AnyEvent(), my_command);
+  //Add observer to listen to transform events 
+  trackerTool2->AddObserver( CoordinateSystemEventType(), 
+                                  coordSystemAObserver );
+
+  //Use the first trackertool as a reference
+  tracker->RequestSetReferenceTool( trackerTool );
 
   //start tracking 
   tracker->RequestStartTracking();
@@ -191,14 +285,9 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-    transform = trackerTool->GetCalibratedTransform();
 
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
-
+    //There are two ways of accessing the transform
+    //First option: use GetToolTransform method
     transform = trackerTool2->GetCalibratedTransform();
 
     position = transform.GetTranslation();
@@ -206,33 +295,17 @@ int igstkPolarisTrackerNewTest( int argc, char * argv[] )
               << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
-    }
-  
-  std::cout << "RequestStopTracking()" << std::endl;
-  tracker->RequestStopTracking();
 
-  //Remove one of the tracker tools and restart tracking
-  std::cout << "Detach the tracker tool from the tracker" << std::endl;
-  trackerTool2->RequestDetach( );
-
-  // restart tracking
-
-  tracker->RequestStartTracking();
-
-  for(unsigned int i=0; i<100; i++)
-    {
-    tracker->RequestUpdateStatus();
-
-    TransformType             transform;
-    VectorType                position;
-
-    transform = trackerTool->GetCalibratedTransform();
-
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+    //Second option: use coordinate system convenience method
+    trackerTool2->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotPayload())
+      {
+      transform = coordSystemAObserver->GetPayload().m_Transform;
+      position = transform.GetTranslation();
+      std::cout << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
+      }
     }
   
   std::cout << "RequestStopTracking()" << std::endl;

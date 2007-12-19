@@ -37,7 +37,6 @@ void RegisterTests()
   REGISTER_TEST(igstkGroupObjectTest);
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
-  REGISTER_TEST(igstkTrackerToolNewTest);
   REGISTER_TEST(igstkTransductionMacroTest);
   REGISTER_TEST(igstkGenericImageSpatialObjectTest);
   REGISTER_TEST(igstkDICOMGenericImageReaderTest);
@@ -61,24 +60,14 @@ void RegisterTests()
 
 #ifdef IGSTKSandbox_USE_MicronTracker
   REGISTER_TEST(igstkMicronTrackerTest);
-  REGISTER_TEST(igstkMicronTrackerNewTest);
-  REGISTER_TEST(igstkMicronTrackerToolNewTest);
+  REGISTER_TEST(igstkMicronTrackerToolTest);
 #endif /* IGSTKSandbox_USE_MicronTracker */
 
 #ifdef IGSTK_TEST_POLARIS_ATTACHED
-  REGISTER_TEST(igstkPolarisTrackerNewTest);
-  REGISTER_TEST(igstkPolarisTrackerNewTest2);
+  REGISTER_TEST(igstkPolarisTrackerTest2);
 #endif
 
-#ifdef IGSTK_TEST_AURORA_ATTACHED
-  REGISTER_TEST(igstkAuroraTrackerNewTest);
-#endif
 
-  // Tests depend on data
-#ifdef IGSTK_DATA_ROOT
-  REGISTER_TEST(igstkPolarisTrackerNewSimulatedTest);
-  REGISTER_TEST(igstkAuroraTrackerNewSimulatedTest);
-#endif
 
 
 

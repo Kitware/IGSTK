@@ -28,6 +28,19 @@
 namespace igstk
 {
 
+itkEventMacro( TrackerToolEvent,StringEvent);
+itkEventMacro( TrackerToolErrorEvent,TrackerToolEvent);
+itkEventMacro( TrackerToolConfigurationEvent,TrackerToolEvent);
+itkEventMacro( TrackerToolConfigurationErrorEvent,TrackerToolErrorEvent);
+itkEventMacro( TrackerToolAttachmentToTrackerEvent,TrackerToolEvent);
+itkEventMacro( TrackerToolAttachmentToTrackerErrorEvent,TrackerToolErrorEvent);
+itkEventMacro( TrackerToolDetachmentFromTrackerEvent,TrackerToolEvent);
+itkEventMacro( TrackerToolDetachmentFromTrackerErrorEvent,TrackerToolErrorEvent);
+itkEventMacro( TrackerToolMadeTransitionToTrackedStateEvent,TrackerToolEvent);
+itkEventMacro( TrackerToolNotAvailableToBeTrackedEvent,TrackerToolEvent);
+itkEventMacro( ToolTrackingStartedEvent,TrackerToolEvent);
+itkEventMacro( ToolTrackingStoppedEvent,TrackerToolEvent);
+
 class Tracker;
 
 /**  \class TrackerTool
@@ -37,7 +50,6 @@ class Tracker;
   *  a tracker. This may contain hardware specific details of 
   *  the tool, along with the fields for position, orientation
   *  and error associated with the measurement used.
-  *
   *
   *
   *  \image html  igstkTrackerTool.png  "TrackerTool State Machine Diagram"
@@ -58,23 +70,9 @@ public:
 
   igstkFriendClassMacro( Tracker );
 
-  /** Tool types */
-  typedef enum
-    {
-    UnknownTool         = 0x00,             // unidentified tool type
-    TrackedReference    = 0x01,
-    TrackedPointer      = 0x02,
-    FootPedal           = 0x03,
-    SoftwareDefinedTool = 0x04,
-    TrackedMicroscope   = 0x05,
-    TrackedCArm         = 0x0A,
-    TrackedCatheter     = 0x0B,
-    } ToolType;
-
-public:
-
+  typedef Tracker        TrackerType;
   typedef Transform         TransformType;
-  typedef Transform         ToolCalibrationTransformType;
+  typedef Transform         CalibrationTransformType;
   typedef double            ErrorType;
   typedef double            TimePeriodType;
 
@@ -82,39 +80,24 @@ public:
   typedef AxesObject        CoordinateReferenceSystemType;
   
   /** Get the tool transform. */
-  igstkGetMacro( Transform, TransformType ); // FIXME : DEPRECATED : A REQUEST SHOULD BE MADE OR THIS SHOULD BE PRIVATE ONLY TO BE USED BY THE TRACKER.
-
-  /** Set the tool transform (called by Tracker). */
-  void RequestSetTransform( const TransformType & transform ); // FIXME: MUST BE PRIVATE : THE TRACKER MUST BE A FRIEND
-
-  /** Get the validity period for this tool. */
-  igstkGetMacro( ValidityPeriod, TimePeriodType ); // FIXME : DEPRECATED : NOT USED
-
-  /** Set the validity period for this tool. */
-  igstkSetMacro( ValidityPeriod, TimePeriodType ); // FIXME : DEPRECATED : NOT USED
-  
-  /** Get the ToolType (set by subclasses of this class) */
-  igstkGetMacro( ToolType, ToolType ); // FIXME : DEPRECATED : NOT USED
+  igstkGetMacro( CalibratedTransformWithRespectToReferenceTrackerTool,
+                                   TransformType ); 
 
   /** Get the calibration transform for this tool. */
-  igstkGetMacro( ToolCalibrationTransform, ToolCalibrationTransformType );
+  igstkGetMacro( CalibrationTransform, CalibrationTransformType );
 
-  /** Set the calibration transform for this tool. */
-  igstkSetMacro( ToolCalibrationTransform, ToolCalibrationTransformType );
+  /**  Set the calibration transform for this tool. */
+  void SetCalibrationTransform( const CalibrationTransformType & );
 
-  /** Get the raw, uncalibrated transform for this tool. */
+  /** Get the raw transform for this tool. */
   igstkGetMacro( RawTransform, TransformType );
 
-  /** Set the raw, uncalibrated transform for this tool. */
-  igstkSetMacro( RawTransform, TransformType );
+  /** Get calibrated raw transform for this tool. */
+  igstkGetMacro( CalibratedTransform, TransformType );
 
   /** Get whether the tool was updated during tracker UpdateStatus() */
   igstkGetMacro( Updated, bool );
-
-  /** Get whether the tool was updated during tracker UpdateStatus() */
-  igstkSetMacro( Updated, bool );
-
-  
+ 
   /** Request attaching the SpatialObject given as argument as an
    *  object to track with this tracker tool. The SpatialObject will
    *  become a child of the coordinate reference system of this TrackerTool,
@@ -124,70 +107,171 @@ public:
    */
   void RequestAttachSpatialObject( SpatialObject * );
 
+  /** The "RequestConfigure" method attempts to configure the tracker tool */
+  virtual void RequestConfigure( void );
+
+  /** The "RequestAttachToTracker" method attaches the tracker tool to a
+ * tracker*/
+  virtual void RequestAttachToTracker( TrackerType * );
+
+  /** The "RequestDetach" method detaches the tracker tool from the 
+ * tracker*/
+  virtual void RequestDetach( );
+
+  /** Access the unique identifier to the tracker tool */
+  std::string GetTrackerToolIdentifier( );
+
 protected:
 
   TrackerTool(void);
 
   ~TrackerTool(void);
 
-  igstkSetMacro( ToolType, ToolType );
-
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
+  /** Set a unique identifier to the tracker tool */
+  void SetTrackerToolIdentifier( std::string identifier );
 
-private:
+ private:
 
-  /** Position and Orientation of the tool */
-  TransformType      m_Transform;   // FIXME: This is deprecated due to Bug 5474.
-                                    // This transform should now be computed by the Spatial objects
-                                    // that serve as the coordinate reference systems.
-                                    // This transform is computed as the composition of the 
-                                    // callibration transform (SO -> TrackerTool) and the
-                                    // raw transform (TrackerTool -> Tracker ).
+ /** Push TrackingStarted input to the tracker tool */
+  virtual void ReportTrackingStarted( );
 
-  /** Time in milliseconds for which this tool will be reporting results */
-  TimePeriodType     m_ValidityPeriod;  // FIXME: DEPRECATED: THIS IS NOT BEING USED : The Transform has its own validity time.
-  
-  /** The type of the tool reflecting the property of the tool */
-  ToolType           m_ToolType;    // FIXME : DEPRECATED : NOT IN USE
-  
-  /** Raw transform for the tool */
-  TransformType      m_RawTransform; // FIXME: This is deprecated due to Bug 5474. 
-                                     // This transform is now stored in the parent 
-                                     // child relationship between the TrackerTool
-                                     // and the Tracker. E.g. all uses of m_RawTransform
-                                     // should become m_CoordinateReferenceSystem->GetTransformToParent();
+  /** Push TrackingStopped input to the tracker tool  */
+  virtual void ReportTrackingStopped( );
+
+  /** Push TrackerToolNotAvailable input to the tracker tool */
+  virtual void ReportTrackingToolNotAvailable( );
+
+  /** Push TrackerToolVisible input to the tracker tool */
+  virtual void ReportTrackingToolVisible( );
+
+  /** Report successful tracker tool attachment */ 
+  void ReportSuccessfulTrackerToolAttachment();
+
+  /** Report failure in tracker tool attachment attempt */ 
+  void ReportFailedTrackerToolAttachment();
+
+  /** Set calibrated raw transform with respect to a reference
+    * tracker tool */
+  void SetCalibratedTransformWithRespectToReferenceTrackerTool
+                                ( const TransformType & transform ); 
+
+  /** Set the raw transform for this tool. */
+  void SetRawTransform( const TransformType & );
+
+  /** Set the calibrated raw transform for this tool. */
+  void SetCalibratedTransform( const TransformType & );
+
+  /** Set whether the tool was updated during tracker UpdateStatus() */
+  igstkSetMacro( Updated, bool );
+
+  /** Get boolean variable to check if the tracker tool is 
+   * configured or not */
+  virtual bool CheckIfTrackerToolIsConfigured( );
+
+  /** Inputs to the State Machine */
+  igstkDeclareInputMacro( ConfigureTool );
+  igstkDeclareInputMacro( ToolConfigurationSuccess );
+  igstkDeclareInputMacro( ToolConfigurationFailure );
+  igstkDeclareInputMacro( AttachToolToTracker );
+  igstkDeclareInputMacro( TrackingStarted );
+  igstkDeclareInputMacro( TrackingStopped );
+  igstkDeclareInputMacro( TrackerToolNotAvailable );
+  igstkDeclareInputMacro( TrackerToolVisible );
+  igstkDeclareInputMacro( DetachTrackerToolFromTracker ); 
+  igstkDeclareInputMacro( AttachmentToTrackerSuccess );
+  igstkDeclareInputMacro( AttachmentToTrackerFailure );
+  igstkDeclareInputMacro( DetachmentFromTrackerSuccess );
+  igstkDeclareInputMacro( DetachmentFromTrackerFailure );
+ 
+  /** States for the State Machine */
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( AttemptingToConfigureTrackerTool );
+  igstkDeclareStateMacro( Configured );
+  igstkDeclareStateMacro( AttemptingToAttachTrackerToolToTracker );
+  igstkDeclareStateMacro( Attached );
+  igstkDeclareStateMacro( AttemptingToDetachTrackerToolFromTracker );
+  igstkDeclareStateMacro( NotAvailable );
+  igstkDeclareStateMacro( Tracked );
+
+  /** Attempt method to configure */
+  void AttemptToConfigureProcessing( void );
+
+  /** Attempt method to attach tracker tool to the tracker */
+  void AttemptToAttachTrackerToolToTrackerProcessing( void );
+
+  /** Post-processing after a successful tracker tool configuration */
+  void TrackerToolConfigurationSuccessProcessing( void );
+
+  /** Post-processing after a failed tracker tool configuration */
+  void TrackerToolConfigurationFailureProcessing( void );
+
+  /** Post-processing after a successful tracker tool to tracker 
+      attachment attempt . */ 
+  void TrackerToolAttachmentToTrackerSuccessProcessing( void );
+
+  /** Post-processing after a failed attachment attempt . */ 
+  void TrackerToolAttachmentToTrackerFailureProcessing( void );
+
+  /** Attempt method to detach tracker tool from the tracker */
+  void AttemptToDetachTrackerToolFromTrackerProcessing( void );
+
+  /** Post-processing after a successful detachment of the tracker tool
+   *  from the tracker. */ 
+  void TrackerToolDetachmentFromTrackerSuccessProcessing( void );
+
+  /** Post-processing after a failed detachment attempt . */ 
+  void TrackerToolDetachmentFromTrackerFailureProcessing( void );
+
+  /** Report tracker tool is in visible state*/ 
+  void ReportTrackerToolVisibleStateProcessing( void );
+
+  /** Report tracker tool not available state*/ 
+  void ReportTrackerToolNotAvailableProcessing( void );
+
+  /** Report tracking started */ 
+  void ReportTrackingStartedProcessing( void );
+
+  /** Report tracking stopped */ 
+  void ReportTrackingStoppedProcessing( void );
+
+  /** Report invalid request */ 
+  void ReportInvalidRequestProcessing( void );
+
+  /** No operation for state machine transition */ 
+  void NoProcessing( void );
+
+  /** Calibrated raw transform with respect to reference
+    * tracker tool */
+  TransformType      
+       m_CalibratedTransformWithRespectToReferenceTrackerTool;   
 
   /** Calibration transform for the tool */
-  ToolCalibrationTransformType      m_ToolCalibrationTransform; // FIXME: This is deprecated due to Bug 5474.
-                                    // This transform is now the transform between the spatial object being
-                                    // tracked and the coordinate system of this tracker tool.
-                                    // When a spatial object is attached to a tracker tool, it becomes the child
-                                    // of the tracker tool.
+  CalibrationTransformType      m_CalibrationTransform; 
+
+  /** Calibrated raw transform for the tool */
+  CalibrationTransformType      m_CalibratedTransform; 
+
+  /** raw transform for the tool */
+  TransformType                 m_RawTransform; 
 
   /** Updated flag */
   bool               m_Updated;
 
+  /** Unique identifier of the tracker tool */
+  std::string        m_TrackerToolIdentifier;
+
   /** Coordinate Reference System */
   CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;
 
+  /** Tracker to which the tool will be attached to */
+  Tracker        * m_TrackerToAttachTo;
 
-private:
-
-  /** Inputs to the State Machine */
-  igstkDeclareInputMacro( Initialize );
-  
-
-  /** States for the State Machine */
-  igstkDeclareStateMacro( Initial );
-  igstkDeclareStateMacro( Invalid );
-  igstkDeclareStateMacro( NotAvailable );
-  igstkDeclareStateMacro( Available );
-  igstkDeclareStateMacro( Initialized );
-  igstkDeclareStateMacro( Tracking );
-  igstkDeclareStateMacro( Visible );
-
+  /** Define the coordinate system interface 
+   */
+  igstkCoordinateSystemClassInterfaceMacro();
 
 };
 

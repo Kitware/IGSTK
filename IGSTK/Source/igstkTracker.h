@@ -19,6 +19,7 @@
 #define __igstkTracker_h
 
 #include <vector>
+#include <map>
 
 #include "itkMutexLock.h"
 #include "itkConditionVariable.h"
@@ -27,10 +28,14 @@
 
 #include "igstkObject.h"
 #include "igstkStateMachine.h"
-#include "igstkTrackerPort.h"
 #include "igstkTransform.h"
 #include "igstkAxesObject.h"
 #include "igstkPulseGenerator.h"
+#include "igstkTrackerTool.h"
+
+#include "igstkCoordinateReferenceSystemDelegator.h"
+#include "igstkCoordinateSystemInterfaceMacros.h"
+
 
 namespace igstk
 {
@@ -56,6 +61,10 @@ itkEventMacro( TrackerStopTrackingErrorEvent,              TrackerErrorEvent);
 itkEventMacro( TrackerUpdateStatusEvent,                   TrackerEvent);
 itkEventMacro( TrackerUpdateStatusErrorEvent,              TrackerErrorEvent);
 
+itkEventMacro( AttachingTrackerToolToTrackerEvent,         TrackerEvent);
+itkEventMacro( AttachingTrackerToolToTrackerErrorEvent,    TrackerErrorEvent);
+
+class TrackerTool;
 
 /** \class Tracker
  *  \brief Superclass for concrete IGSTK Tracker classes.
@@ -99,6 +108,8 @@ public:
 
 public:
 
+  igstkFriendClassMacro( TrackerTool );
+
   /** typedef for times used by the tracker */
   typedef Transform::TimePeriodType      TimePeriodType;
 
@@ -106,22 +117,14 @@ public:
   typedef Transform                      TransformType;
   typedef double                         ErrorType;
 
-  /** typedefs for PatientTransform */
-  typedef Transform                      PatientTransformType;
-
-  /** typedefs for ToolCalibrationTransform */
-  typedef Transform                      ToolCalibrationTransformType;
+  /** typedefs for CalibrationTransform */
+  typedef Transform                      CalibrationTransformType;
 
   /** typedefs from igstk::TrackerTool class */
-  typedef igstk::TrackerTool                TrackerToolType;
-  typedef TrackerToolType::Pointer          TrackerToolPointer;
-  typedef TrackerToolType::ConstPointer     TrackerToolConstPointer;
-  typedef std::vector< TrackerToolPointer > TrackerToolVectorType;
-
-  /** typedefs for the TrackerPort class */
-  typedef igstk::TrackerPort                TrackerPortType;
-  typedef TrackerPortType::Pointer          TrackerPortPointer;
-  typedef std::vector< TrackerPortPointer > TrackerPortVectorType; // FIXME: DEPRECATED: Ports are specific to Polaris and Aurora.
+  typedef igstk::TrackerTool              TrackerToolType;
+  typedef TrackerToolType::Pointer           TrackerToolPointer;
+  typedef TrackerToolType::ConstPointer      TrackerToolConstPointer;
+  typedef std::map< std::string, TrackerToolType *>  TrackerToolsContainerType;
 
   /** typedefs for the coordinate reference system */
   typedef AxesObject                        CoordinateReferenceSystemType;
@@ -135,9 +138,6 @@ public:
    *  It generates a TrackerCloseEvent if successful,
    *  or a TrackerCloseErrorEvent if not successful. */
   void RequestClose( void );
-
-  /** The "RequestInitialize" method initializes a newly opened device. */
-  void RequestInitialize( void );
 
   /** The "RequestReset" tracker method should be used to bring the tracker
   to some defined default state. */
@@ -154,99 +154,23 @@ public:
   ports and tools when the tracker is in tracking state. */
   void RequestUpdateStatus( void );
 
- 
-  /** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
-   * port numbered "portNumber" in the variable "position". Note that this
-   * variable represents the position and orientation of the tool in 3D space.
-   * 
-   * FIXME: This method is DEPRECATED. Transforms are passed directly to 
-   *        TrackerTools, and then to Spatial objects. Application developers
-   *        do not need access to the transforms.
-   * */
-  void GetToolTransform( unsigned int portNumber, unsigned int toolNumber,
-                         TransformType &position ) const;
-
-  /** Associate a TrackerTool to an object to be tracked. This is a one-to-one
-   * association and cannot be changed during the life of the application 
-   *
-   *  FIXME: This method is now DEPRECATED. Instead use the RequestAttachSpatialObject() 
-   *         on a TrackerTool object and then add the Tracker tool to this Tracker using 
-   *         the method RequestAddTool( tool ).
-   */
-  void AttachObjectToTrackerTool( unsigned int portNumber, 
-                                  unsigned int toolNumber,
-                                  SpatialObject * objectToTrack );
-  
-  /** Add a tracker tool to this tracker 
-   * FIXME: This has yet to be inserted in the State Machine. */
-  void RequestAddTool( TrackerToolType * trackerTool );
-
-  /** The "SetReferenceTool" sets the reference tool. */
-  // FIXME: This method is DEPRECATED. It will be replaced with a 
-  //        RequestAttachToReferenceTool, and that tool will be used
-  //        as the parent of the coordinate reference system.
-  void SetReferenceTool( bool applyReferenceTool, unsigned int portNumber,
-                         unsigned int toolNumber );
-
-  /** The "GetReferenceTool" gets the reference tool.
-   * If the reference tool is not applied, it returns false.
-   * Otherwise, it returns true. */
-   // FIXME: This method is DEPRECATED. Nobody should need access to 
-   // the reference tool.
-  bool GetReferenceTool( unsigned int &portNumber,
-                         unsigned int &toolNumber ) const;
-
-  /** The "SetPatientTransform" sets PatientTransform.
-
-    T ' = P * R^-1 * T * C
-
-    where:
-    " T " is the original tool transform reported by the device,
-    " R^-1 " is the inverse of the transform for the reference tool,
-    " P " is the Patient transform (it specifies the position of the reference
-    with respect to patient coordinates), and
-    " T ' " is the transformation that is reported to the spatial objects
-    " C " is the tool calibration transform.
-  */
-  // FIXME: DEPRECATED. This is no longer used, now that a graph scene manages
-  // the relative positions of spatial objects.
-  void SetPatientTransform( const PatientTransformType& _arg );
-
-  /** The "GetPatientTransform" gets PatientTransform. */
-  // FIXME: DEPRECATED. This is no longer used, now that a graph scene manages
-  // the relative positions of spatial objects.
-  PatientTransformType GetPatientTransform() const; 
-
-  /** The "SetToolCalibrationTransform" sets the tool calibration transform */
-  // FIXME: DEPRECATED. The calibration transform is now set simply as the 
-  // object to parent transform in the SpatialObject attached to the trackertool.
-  void SetToolCalibrationTransform( unsigned int portNumber,
-                                    unsigned int toolNumber,
-                                    const ToolCalibrationTransformType& t );
-
-  /** Get the tool calibration transform. */
-  // FIXME: DEPRECATED. The calibration transform is now set simply as the 
-  // object to parent transform in the SpatialObject attached to the trackertool.
-  // Nobody should need to access this transform.
-  ToolCalibrationTransformType GetToolCalibrationTransform(
-                             unsigned int portNumber,
-                             unsigned int toolNumber) const;
-
-  /** Set the time period over which a tool transform should be considered
+ /** Set the time period over which a tool transform should be considered
    *  valid. */
   igstkSetMacro( ValidityTime, TimePeriodType );
 
   /** Get the validity time. */
   igstkGetMacro( ValidityTime, TimePeriodType );
 
-
-protected:
-
   typedef enum 
     { 
     FAILURE=0, 
     SUCCESS
     } ResultType;
+
+  /** Set a reference tracker tool */
+  void RequestSetReferenceTool( TrackerToolType * trackerTool );
+
+protected:
 
   Tracker(void);
 
@@ -273,16 +197,6 @@ protected:
       and responsible for device-specific processing */
   virtual ResultType InternalReset( void );
 
-  /** The "InternalActivateTools" method activates tools.
-      This method is to be overridden by a descendant class 
-      and responsible for device-specific processing */
-  virtual ResultType InternalActivateTools( void );
-
-  /** The "InternalDeactivateTools" method deactivates tools.
-      This method is to be overridden by a descendant class 
-      and responsible for device-specific processing */
-  virtual ResultType InternalDeactivateTools( void );
-
   /** The "InternalStartTracking" method starts tracking.
       This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
@@ -304,36 +218,44 @@ protected:
       and responsible for device-specific processing */
   virtual ResultType InternalThreadedUpdateStatus( void );
 
-  /** The "AddPort" method adds a port to the tracker. */
-  void AddPort( TrackerPortType * port);
-
-  /** The "ClearPorts" clears all the ports. */
-  void ClearPorts( void );
-
-  /** The "SetToolTransform" sets the position of tool numbered "toolNumber" on
-   * port numbered "portNumber" by the content of variable "position". Note
-   * that this variable represents the position and orientation of the tool in
-   * 3D space.  */
-  // FIXME : DEPRECATED ports are specific to Polaris and Aura
-  void SetToolTransform( unsigned int portNumber, unsigned int toolNumber,
-                         const TransformType & position );
-  // NEW: This method replaces the old SetToolTransform() above.
-  void SetToolTransform( unsigned int toolId, const TransformType & transform )
-    {
-    // FIXME: Quick and dirty implementation. A good implementation should
-    // verify the id to avoid out of bounds segmentation faults.
-    TrackerToolType * tool = m_TrackerTools[toolId];
-    tool->RequestSetTransform( transform );
-    }
-
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
-  /** Get reference system. This is the reference frame of the Tracker itself.
-   * Tracker tools need access to this reference system in order to use it
-   * as parent in the scene graph. */
-  const CoordinateReferenceSystemType * GetCoordinateReferenceSystem() const;
- 
+  /** Verify if a tracker tool information is correct before attaching
+   *  it to the tracker. This method is used to verify the information supplied by 
+   * the user about the tracker tool. The information depends on
+   * the tracker type. For example, during the configuration step
+   * of the MicronTracker, location of the directory containing 
+   * marker template files is specified. If the user tries to attach
+   * a tracker tool with a marker type whose template file is not stored in
+   * this directory, this method will return failure. Similarly, for
+   * PolarisTracker, the method returns failure,  if the toolID specified
+   * by the user during the tracker tool configuration step does not
+   * match with the tool id read from the SROM file*/
+  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * ); 
+
+  /** This method will remove entries of the traceker tool from internal
+    * data containers */
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+                                     TrackerToolType * trackerTool ); 
+
+  /** Access method for the tracker tool container. This method 
+    * is useful in the derived classes to access the unique identifiers 
+    * of the tracker tools */
+  TrackerToolsContainerType GetTrackerToolContainer() const;
+
+  /** Report to tracker tool that it is not available for tracking */
+  void ReportTrackingToolNotAvailable( TrackerToolType * trackerTool );
+
+  /** Report to tracker tool that it is visible */
+  void ReportTrackingToolVisible( TrackerToolType * trackerTool );
+
+  /** Set tracker tool raw transform */
+  void SetTrackerToolRawTransform( TrackerToolType * trackerTool, TransformType transform );
+
+  /** Turn on/off update flag of the tracker tool */
+  void SetTrackerToolTransformUpdate( TrackerToolType * trackerTool, bool flag );
+
 private:
 
   /** Pulse generator for driving the rate of tracker updates. */
@@ -343,25 +265,13 @@ private:
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
   ObserverType::Pointer     m_PulseObserver;
 
-  /** Vector of all tool ports on the tracker */
-  // FIXME: THIS IS DEPRECATED. Ports are only for Polaris and Aurora and are
-  // now contained in their corresponding tracker tools.
-  TrackerPortVectorType     m_Ports; // DEPRECATED
-
-  // NEW: an array of tracker tools replace the array of ports
-  TrackerToolVectorType     m_TrackerTools;
+  // An associative container of TrackerTool Pointer with 
+  // TrackerTool identifier used as a Key
+  TrackerToolsContainerType           m_TrackerTools;
   
   /** The reference tool */
   bool                      m_ApplyingReferenceTool;
   TrackerToolPointer        m_ReferenceTool;
-  unsigned int              m_ReferenceToolPortNumber;
-  unsigned int              m_ReferenceToolNumber;
-
-  /** Patient Transform */
-  PatientTransformType      m_PatientTransform;  // FIXME: This is DEPRECATED due to Bug 5474
-
-  /** Coordinate Reference System */
-  CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;
 
   /** Validity time */
   TimePeriodType            m_ValidityTime;
@@ -389,8 +299,8 @@ private:
   igstkDeclareStateMacro( AttemptingToEstablishCommunication );
   igstkDeclareStateMacro( AttemptingToCloseCommunication );
   igstkDeclareStateMacro( CommunicationEstablished );
-  igstkDeclareStateMacro( AttemptingToActivateTools );
-  igstkDeclareStateMacro( ToolsActive );
+  igstkDeclareStateMacro( AttemptingToAttachTrackerTool );
+  igstkDeclareStateMacro( TrackerToolAttached );
   igstkDeclareStateMacro( AttemptingToTrack );
   igstkDeclareStateMacro( Tracking );
   igstkDeclareStateMacro( AttemptingToUpdate );
@@ -398,8 +308,8 @@ private:
 
   /** List of Inputs */
   igstkDeclareInputMacro( EstablishCommunication );
-  igstkDeclareInputMacro( ActivateTools );
   igstkDeclareInputMacro( StartTracking );
+  igstkDeclareInputMacro( AttachTrackerTool );
   igstkDeclareInputMacro( UpdateStatus );
   igstkDeclareInputMacro( StopTracking );
   igstkDeclareInputMacro( Reset );
@@ -408,6 +318,13 @@ private:
   igstkDeclareInputMacro( Success );
   igstkDeclareInputMacro( Failure );
 
+  /** Attach a tracker tool to the tracker. This method
+   *  should be called by the tracker tool.  */
+  void RequestAttachTool( TrackerToolType * trackerTool );
+
+  /** Request to remove a tracker tool from this tracker  */
+  ResultType RequestRemoveTool( TrackerToolType * trackerTool );
+
   /** Thread function for tracking */
   static ITK_THREAD_RETURN_TYPE TrackingThreadFunction(void* pInfoStruct);
 
@@ -415,16 +332,16 @@ private:
       tracking device. */
   void AttemptToOpenProcessing( void );
   
-  /** The "AttemptToActivateToolsProcessing" method attempts 
-   *  to activate tools. */
-  void AttemptToActivateToolsProcessing( void );
-
   /** The "AttemptToStartTrackingProcessing" method attempts 
    *  to start tracking. */
   void AttemptToStartTrackingProcessing( void );
 
   /** The "AttemptToStopTrackingProcessing" method attempts to stop tracking. */
   void AttemptToStopTrackingProcessing( void );
+
+  /** The "AttemptToAttachTrackerToolProcessing" method attempts 
+   *  to attach a tracker tool to the tracker . */
+  void AttemptToAttachTrackerToolProcessing( void );
 
   /** The "AttemptToUpdateStatusProcessing" method attempts to update status
       during tracking. */
@@ -441,10 +358,6 @@ private:
   /** The "CloseFromTrackingStateProcessing" method closes tracker in
       use, when the tracker is in tracking state. */
   void CloseFromTrackingStateProcessing( void );
-
-  /** The "CloseFromToolsActiveStateProcessing" method closes tracker
-      in use, when the tracker is in active tools state. */
-  void CloseFromToolsActiveStateProcessing( void);
 
   /** The "CloseFromCommunicatingStateProcessing" method closes
       tracker in use, when the tracker is in communicating state. */
@@ -480,6 +393,14 @@ private:
   /** Post-processing after start tracking has failed. */ 
   void StartTrackingFailureProcessing( void );
 
+  /** Post-processing after attaching a tracker tool
+     has been successful. */ 
+  void AttachingTrackerToolSuccessProcessing( void );
+
+  /** Post-processing after an attempt to attach a tracker tool
+   *  has failed. */ 
+  void AttachingTrackerToolFailureProcessing( void );
+
   /** Post-processing after stop tracking has been successful. */ 
   void StopTrackingSuccessProcessing( void );
 
@@ -498,6 +419,17 @@ private:
   /** Always called when entering tracking state. */
   void ExitTrackingStateProcessing( void );
 
+  /** Detach all tracker tools from the tracker */
+  void DetachAllTrackerToolsFromTracker();
+
+  /** Report invalid request */ 
+  void ReportInvalidRequestProcessing( void );
+
+  /** Define the coordinate system interface 
+   */
+  igstkCoordinateSystemClassInterfaceMacro();
+
+  TrackerToolType   * m_TrackerToolToBeAttached;
 };
 
 }

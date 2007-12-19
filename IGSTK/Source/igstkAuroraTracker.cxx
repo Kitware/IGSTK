@@ -22,7 +22,9 @@
 #endif
 
 #include "igstkAuroraTracker.h"
-#include "igstkTrackerPort.h"
+
+#include <iostream>
+#include <fstream>
 
 namespace igstk
 {
@@ -31,27 +33,11 @@ namespace igstk
 AuroraTracker::AuroraTracker(void):m_StateMachine(this)
 {
   m_CommandInterpreter = CommandInterpreterType::New();
-  m_NumberOfTools = 0;
-  for (unsigned int port = 0; port < NumberOfPorts; port++)
-    {
-    TrackerPortPointer tport = TrackerPortType::New();
-    for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
-      {
-      AuroraTrackerToolPointer tool = AuroraTrackerToolType::New();
-      tport->AddTool(tool);
-      this->m_PortEnabled[port][channel] = 0;
-      this->m_PortHandle[port][channel] = 0;
-      }
-    this->AddPort(tport);
-    }
 
   this->SetThreadingEnabled( true );
 
-  // lock for the thread buffer
+  m_BaudRate = CommunicationType::BaudRate9600; 
   m_BufferLock = itk::MutexLock::New();
-
-  // the baud rate is changed if SetCommunication is called
-  m_BaudRate = CommunicationType::BaudRate9600;
 }
 
 /** Destructor */
@@ -59,31 +45,33 @@ AuroraTracker::~AuroraTracker(void)
 {
 }
 
+
 /** Helper function for reporting interpreter errors. */
 AuroraTracker::ResultType
 AuroraTracker::CheckError(CommandInterpreterType *interpreter)
 {
   const int errnum = interpreter->GetError();
+
   if (errnum)
     {
-    // convert errnum to a hexadecimal string
+    // convert errnum to a hexidecimal string
     itk::OStringStream os;
     os << "0x";
     os.width(2);
     os.fill('0');
     os << std::hex << std::uppercase << errnum;
-    igstkLogMacro( WARNING, "Aurora Error " << os.str() << ": " <<
+    igstkLogMacro( WARNING, "Polaris Error " << os.str() << ": " <<
                    interpreter->ErrorString(errnum) << "\n");
 
-    igstkLogMacro( WARNING, interpreter->ErrorString(errnum) << "\n");
     return FAILURE;
     }
 
   return SUCCESS;
 }
 
+
 /** Set the communication object, it will be initialized as necessary
-  * for use with the Aurora */
+  * for use with the Polaris */
 void AuroraTracker::SetCommunication( CommunicationType *communication )
 {
   igstkLogMacro( DEBUG, "AuroraTracker:: Entered SetCommunication ...\n");
@@ -168,6 +156,261 @@ AuroraTracker::ResultType AuroraTracker::InternalOpen( void )
   return result;
 }
 
+/** Verify tracker tool information*/
+AuroraTracker::ResultType AuroraTracker
+::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+{
+  //Verify that 
+  //
+  //1) the tracker tool information provided by the user matches with
+  //the information available in the SROM file.
+  //
+  //
+  //To get the tool information
+  //    == SROM file has to be loaded and port handle created.
+  //
+  igstkLogMacro( DEBUG, "AuroraTracker::VerifyTrackerToolInformation called ...\n");
+
+  AuroraTrackerToolType * auroraTrackerTool = 
+             dynamic_cast< AuroraTrackerToolType * > ( trackerTool );   
+
+  bool SROMFileSpecified  = auroraTrackerTool->IsSROMFileNameSpecified();
+
+  // port handle
+  int ph;
+
+  if( SROMFileSpecified ) 
+    {
+    std::ifstream sromFile; 
+    std::string SROMFileName = auroraTrackerTool->GetSROMFileName();
+    sromFile.open(SROMFileName.c_str(), std::ios::binary );
+
+    if (!sromFile.is_open())
+      {
+      igstkLogMacro( WARNING, "AuroraTracker::Failing to open"
+                     << SROMFileName << " ...\n");
+      return FAILURE;
+      }
+
+    // most SROM files don't contain the whole 1024 bytes, they only
+    // contain whatever is necessary, so the rest should be filled with zero
+    char data[1024]; 
+    memset( data, 0, 1024 );
+    sromFile.read( data, 1024 );
+    sromFile.close();
+
+    // the "port" must be set to "**" to support the Vicra
+    m_CommandInterpreter->PHRQ("********", // device number
+                               "*",        // TIU or SCU
+                               "1",        // wired or wireless
+                               "**",       // port
+                               "**");      // channel
+
+    if (this->CheckError(m_CommandInterpreter) == FAILURE)
+      {
+      return FAILURE;
+      }
+
+    ph = m_CommandInterpreter->GetPHRQHandle();
+
+    for ( unsigned int i = 0; i < 1024; i += 64)
+      {
+      // holds hexidecimal data to be sent to device
+      char hexbuffer[129]; 
+      
+      // convert data to hexidecimal and write to virtual SROM in
+      // 64-byte chunks
+      m_CommandInterpreter->HexEncode(hexbuffer, &data[i], 64);
+      m_CommandInterpreter->PVWR(ph, i, hexbuffer);
+      }
+    }
+  else
+    {
+    //search ports with uninitialized handles
+    // initialize ports waiting to be initialized,  
+    // repeat as necessary (in case multi-channel tools are used) 
+
+    bool foundNewTool = false;
+
+    for (int safetyCount = 0; safetyCount < 256; safetyCount++)
+      {
+      m_CommandInterpreter->PHSR(
+        CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
+      
+      if (this->CheckError(m_CommandInterpreter) == FAILURE)
+        {
+        std::cerr << "Error searching for uninitialized ports"  << std::endl;
+        return FAILURE;
+        }
+
+      unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+
+      // Make sure there is one and only one uninitialized port
+      if ( ntools == 0 )
+        {
+        continue;
+        }
+
+        // The toolnumber will be assigned to 0 by default
+        unsigned int toolNumber = 0; 
+        ph = m_CommandInterpreter->GetPHSRHandle( toolNumber );
+        foundNewTool = true;
+        break;
+      }
+
+     if( !foundNewTool )
+      {
+      std::cerr << "Couldn't find uninitialized port" << std::endl;
+      return FAILURE;
+      }
+    }  
+
+  // Once we got the port handle, we can continue on with initializing
+  // and enabling the port
+
+  // initialize the port 
+  m_CommandInterpreter->PINIT(ph);
+
+  if (this->CheckError(m_CommandInterpreter) == SUCCESS)
+    {
+    std::cout << "Port handle initialized successfully " << std::endl;
+    }
+  else
+    {
+    std::cerr << "Failure initializing the port" << std::endl;
+    }
+
+  m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
+
+  // tool identity and type information
+  char identity[512];
+  m_CommandInterpreter->GetPHINFToolInfo(identity);
+  std::cout << "Tool Information: " << identity << std::endl; 
+
+  // use tool type information to figure out mode for enabling
+  int mode = CommandInterpreterType::NDI_DYNAMIC;
+
+  if (identity[1] == CommandInterpreterType::NDI_TYPE_BUTTON)
+    { // button-box or foot pedal
+    mode = CommandInterpreterType::NDI_BUTTON_BOX;
+    }
+  else if (identity[1] == CommandInterpreterType::NDI_TYPE_REFERENCE)
+    { // reference
+    mode = CommandInterpreterType::NDI_STATIC;
+    }
+
+  // enable the tool
+  m_CommandInterpreter->PENA(ph, mode);
+
+  // print any warnings
+  this->CheckError(m_CommandInterpreter);
+
+  //tool information
+  m_CommandInterpreter->PHINF(ph,
+                                CommandInterpreterType::NDI_PORT_LOCATION |
+                                CommandInterpreterType::NDI_PART_NUMBER |
+                                CommandInterpreterType::NDI_BASIC );
+
+  if (this->CheckError(m_CommandInterpreter) == FAILURE)
+    {
+    std::cerr  << "Error while trying to get tool information" << std::endl;
+    return FAILURE;
+    }
+
+  // get the physical port identifier
+  char location[512];
+  m_CommandInterpreter->GetPHINFPortLocation(location);
+
+  // physical port number
+  unsigned int port = 0;
+
+  if (location[9] == '0') // wired tool
+    {
+    unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
+
+    //FIXME: checking against the maximum number of ports might not be necessary
+    const unsigned int NumberOfPorts = 12;
+    if (ndiport > 0 && ndiport <= NumberOfPorts)
+      {
+      port = ndiport - 1;
+      std::cout << "Port number: " << port << std::endl;
+      // Verify port number specified 
+      if ( port != auroraTrackerTool->GetPortNumber() )
+        {
+        std::cerr << "The tracker tool is probably inserted into the wrong port: " 
+                  << "The port number specified for the tool doesn't match with " 
+                     "what is detected from the hardware" << std::endl;
+        return FAILURE;
+        }
+      }
+    }
+  else // wireless tool
+    {
+    std::cout<< "Tool is wireless" << std::endl;
+    }
+
+  const int status = m_CommandInterpreter->GetPHINFPortStatus();
+
+  std::cout<< "Port status information: " << status << std::endl;
+
+  // tool status
+  std::cout << "Tool status: " <<  m_CommandInterpreter->GetPHINFPortStatus() << std::endl;
+
+  // tool type
+  std::cout<< "Tool type: " << m_CommandInterpreter->GetPHINFToolType() << std::endl;   
+
+  // tool part number
+  char partNumber[21];
+  m_CommandInterpreter->GetPHINFPartNumber( partNumber ) ;
+  std::cout<< "Part number: " << partNumber << std::endl; 
+
+  // tool accessories
+  std::cout<< "Tool accessories: " << m_CommandInterpreter->GetPHINFAccessories() << std::endl;
+
+  // tool marker type
+  std::cout << "Marker type: " << m_CommandInterpreter->GetPHINFMarkerType() << std::endl;
+
+  std::string trackerToolIdentifier = auroraTrackerTool->GetTrackerToolIdentifier();
+
+  // add it to the port handle container 
+  this->m_PortHandleContainer[ trackerToolIdentifier ] = ph;
+
+  // add it to the tool absent status 
+  this->m_ToolAbsentStatusContainer[ trackerToolIdentifier ] = 0;
+
+  // add it to the tool status container
+  this->m_ToolStatusContainer[ trackerToolIdentifier ] = 0;
+
+  return SUCCESS;
+}
+ 
+AuroraTracker::ResultType 
+AuroraTracker::
+RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
+{
+  std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
+  // disable the port handle
+  m_CommandInterpreter->PDIS( m_PortHandleContainer[ trackerToolIdentifier] );  
+
+  // print warning if failed to disable
+  this->CheckError(m_CommandInterpreter);
+
+  // remove the tool from port handle container
+  this->m_PortHandleContainer.erase( trackerToolIdentifier );
+
+  // remove the tool from absent status container 
+  this->m_ToolAbsentStatusContainer.erase( trackerToolIdentifier );
+
+  // remove the tool from  tool status container
+  this->m_ToolStatusContainer.erase( trackerToolIdentifier );
+
+  // remove the tool from the Transform buffer container
+  this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
+
+  return SUCCESS;
+}
+
+
 /** Close communication with the tracking device. */
 AuroraTracker::ResultType AuroraTracker::InternalClose( void )
 {
@@ -179,55 +422,6 @@ AuroraTracker::ResultType AuroraTracker::InternalClose( void )
                              CommandInterpreterType::NDI_NOHANDSHAKE);
 
   return this->CheckError(m_CommandInterpreter);
-}
-
-/** Activate the tools attached to the tracking device. */
-AuroraTracker::ResultType AuroraTracker::InternalActivateTools( void )
-{
-  igstkLogMacro( DEBUG, "AuroraTracker::InternalActivateTools called ...\n");
-
-  ResultType result = SUCCESS;
-
-  // load any SROMS that are needed
-  for (unsigned int i = 0; i < NumberOfPorts && result == SUCCESS; i++)
-    {
-    if (!m_PortSROMFileNames[i].empty())
-      {
-      result = FAILURE;
-      if (this->LoadVirtualSROM(i, m_PortSROMFileNames[i]))
-        {
-        result = SUCCESS;
-        }
-      }
-    }
-
-  if (result == SUCCESS)
-    {
-    this->EnableToolPorts();
-
-    m_NumberOfTools = 0;
-
-    for(unsigned int port = 0; port < NumberOfPorts; port++)
-      {
-      for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
-        {
-        if( this->m_PortEnabled[port][channel] )
-          {
-          m_NumberOfTools++;
-          }
-        }
-      }
-    }
-
-  return result;
-}
-
-/** Deactivate the tools attached to the tracking device. */
-AuroraTracker::ResultType AuroraTracker::InternalDeactivateTools( void )
-{
-  this->DisableToolPorts();
-
-  return SUCCESS;
 }
 
 /** Put the tracking device into tracking mode. */
@@ -268,11 +462,11 @@ AuroraTracker::ResultType AuroraTracker::InternalReset( void )
   return result;
 }
 
+
 /** Update the status and the transforms for all TrackerTools. */
 AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
 {
   igstkLogMacro( DEBUG, "AuroraTracker::InternalUpdateStatus called ...\n");
-
 
   // these flags are set for tools that can be used for tracking
   const unsigned long mflags = (CommandInterpreterType::NDI_TOOL_IN_PORT |
@@ -281,71 +475,90 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
 
   m_BufferLock->Lock();
 
-  for (unsigned int port = 0; port < NumberOfPorts; port++) 
+  typedef std::map< std::string, int >::const_iterator  ConstIteratorType;
+
+  ConstIteratorType inputItr = m_PortHandleContainer.begin();
+  ConstIteratorType inputEnd = m_PortHandleContainer.end();
+
+  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+
+  while( inputItr != inputEnd )
     {
-    for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
+    const int portStatus = m_ToolStatusContainer[inputItr->first];
+
+    // only report tools that are enabled
+    if ((portStatus & mflags) != mflags) 
       {
-      // convert m_StatusBuffer flags from NDI to vtkTracker format
-      const int portStatus = m_StatusBuffer[port][channel];
-
-      // only report tools that are enabled
-      if ((portStatus & mflags) != mflags) 
-        {
-        continue;
-        }
-
-      // only report tools that are in view
-      if (m_AbsentBuffer[port][channel])
-        {
-        // there should be a method to set that the tool is not in view
-        igstkLogMacro( DEBUG, "AuroraTracker::InternalUpdateStatus: " <<
-                       "tool " << port << " is not in view\n");
-        continue;
-        }
-
-      // create the transform
-      TransformType transform;
-      const double *ndiTransform = m_TransformBuffer[port][channel];
-
-      typedef TransformType::VectorType TranslationType;
-      TranslationType translation;
-
-      translation[0] = ndiTransform[4];
-      translation[1] = ndiTransform[5];
-      translation[2] = ndiTransform[6];
-
-      typedef TransformType::VersorType RotationType;
-      RotationType rotation;
-      const double normsquared = (ndiTransform[0]*ndiTransform[0] +
-                                  ndiTransform[1]*ndiTransform[1] +
-                                  ndiTransform[2]*ndiTransform[2] +
-                                  ndiTransform[3]*ndiTransform[3]);
-
-      // don't allow null quaternions
-      if (normsquared < 1e-6)
-        {
-        rotation.Set(0.0, 0.0, 0.0, 1.0);
-        igstkLogMacro( WARNING, "AuroraTracker::InternUpdateStatus: bad "
-                       "quaternion, norm=" << sqrt(normsquared) << "\n");
-        }
-      else
-        {
-        rotation.Set(ndiTransform[1], ndiTransform[2], ndiTransform[3],
-                     ndiTransform[0]);
-        }
-
-      // report NDI error value
-      typedef TransformType::ErrorType  ErrorType;
-      ErrorType errorValue = ndiTransform[7];
-
-      transform.SetToIdentity(this->GetValidityTime());
-      transform.SetTranslationAndRotation(translation, rotation, errorValue,
-                                          this->GetValidityTime());
-
-      this->SetToolTransform(port, channel, transform);
+      igstkLogMacro( DEBUG, "AuroraTracker::InternalUpdateStatus: " <<
+                     "tool " << inputItr->first << " is not available \n");
+      ++inputItr;
+      continue;
       }
-    }
 
+    // only report tools that are in view
+    if (m_ToolAbsentStatusContainer[inputItr->first])
+      {
+      // there should be a method to set that the tool is not in view
+      igstkLogMacro( DEBUG, "AuroraTracker::InternalUpdateStatus: " <<
+                     "tool " << inputItr->first << " is not in view\n");
+
+      // report to the tracker tool that the tracker is not available 
+      this->ReportTrackingToolNotAvailable(trackerToolContainer[inputItr->first]);
+      ++inputItr;
+      continue;
+      }
+
+    // report to the tracker tool that the tracker is Visible 
+    this->ReportTrackingToolVisible(trackerToolContainer[inputItr->first]);
+
+    // create the transform
+    TransformType transform;
+
+    typedef TransformType::VectorType TranslationType;
+    TranslationType translation;
+
+    translation[0] = (m_ToolTransformBuffer[inputItr->first])[4];
+    translation[1] = m_ToolTransformBuffer[inputItr->first][5];
+    translation[2] = m_ToolTransformBuffer[inputItr->first][6];
+
+    typedef TransformType::VersorType RotationType;
+    RotationType rotation;
+    const double normsquared = 
+      m_ToolTransformBuffer[inputItr->first][0]*m_ToolTransformBuffer[inputItr->first][0] +
+      m_ToolTransformBuffer[inputItr->first][1]*m_ToolTransformBuffer[inputItr->first][1] +
+      m_ToolTransformBuffer[inputItr->first][2]*m_ToolTransformBuffer[inputItr->first][2] +
+      m_ToolTransformBuffer[inputItr->first][3]*m_ToolTransformBuffer[inputItr->first][3];
+
+    // don't allow null quaternions
+    if (normsquared < 1e-6)
+      {
+      rotation.Set(0.0, 0.0, 0.0, 1.0);
+      igstkLogMacro( WARNING, "AuroraTracker::InternUpdateStatus: bad "
+                     "quaternion, norm=" << sqrt(normsquared) << "\n");
+      }
+    else
+      {
+      // ITK quaternions are in xyzw order, not wxyz order
+      rotation.Set(m_ToolTransformBuffer[inputItr->first][1],
+                   m_ToolTransformBuffer[inputItr->first][2],
+                   m_ToolTransformBuffer[inputItr->first][3],
+                   m_ToolTransformBuffer[inputItr->first][0]);
+      }
+
+    // retool NDI error value
+    typedef TransformType::ErrorType  ErrorType;
+    ErrorType errorValue = m_ToolTransformBuffer[inputItr->first][7];
+
+    transform.SetToIdentity(this->GetValidityTime());
+    transform.SetTranslationAndRotation(translation, rotation, errorValue,
+                                        this->GetValidityTime());
+
+    // set the raw transform
+    this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
+    this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+
+    ++inputItr;
+    }
   m_BufferLock->Unlock();
 
   return SUCCESS;
@@ -371,57 +584,55 @@ AuroraTracker::ResultType AuroraTracker::InternalThreadedUpdateStatus( void )
   // the first 4 values are a quaternion
   // the next 3 values are an x,y,z position
   // the final value is an error estimate in the range [0,1]
-  unsigned int port;   // physical port number
-  unsigned int channel; // channel on port
-  for (port = 0; port < NumberOfPorts; port++)
-    {
-    for (channel = 0; channel < NumberOfChannels; channel++)
-      {
-      m_TransformBuffer[port][channel][0] = 1.0;
-      m_TransformBuffer[port][channel][1] = 0.0;
-      m_TransformBuffer[port][channel][2] = 0.0;
-      m_TransformBuffer[port][channel][3] = 0.0;
-      m_TransformBuffer[port][channel][4] = 0.0;
-      m_TransformBuffer[port][channel][5] = 0.0;
-      m_TransformBuffer[port][channel][6] = 0.0;
-      m_TransformBuffer[port][channel][7] = 0.0;
-      }
-    }
+  //
+  std::vector < double > transform;
+  transform.push_back ( 1.0 );
+  transform.push_back ( 0.0 );
+  transform.push_back ( 0.0 );
+  transform.push_back ( 0.0 );
+  transform.push_back ( 0.0 );
+  transform.push_back ( 0.0 );
+  transform.push_back ( 0.0 );
+  transform.push_back ( 0.0 );
 
   if (result == SUCCESS)
     {
-    unsigned long frame[NumberOfPorts][NumberOfChannels];
-    for (port = 0; port < NumberOfPorts; port++)
+
+    typedef std::map< std::string, int >::iterator  IteratorType;
+
+    IteratorType inputItr = m_PortHandleContainer.begin();
+    IteratorType inputEnd = m_PortHandleContainer.end();
+
+    while( inputItr != inputEnd )
       {
-      for (channel = 0; channel < NumberOfChannels; channel++)
+      m_ToolAbsentStatusContainer[inputItr->first] = 0;
+      m_ToolStatusContainer[inputItr->first] = 0;
+ 
+      unsigned int ph = inputItr->second;
+      if ( ph == 0 )
         {
-        const int ph = this->m_PortHandle[port][channel];
-        m_AbsentBuffer[port][channel] = 0;
-        m_StatusBuffer[port][channel] = 0;
-
-        frame[port][channel] = 0;
-        if (ph == 0)
-          {
-          continue;
-          }
-
-        double transform[8];
-        const int tstatus = m_CommandInterpreter->GetTXTransform(ph,transform);
-        const int absent = (tstatus != CommandInterpreterType::NDI_VALID);
-        const int status = m_CommandInterpreter->GetTXPortStatus(ph);
-        frame[port][channel] = m_CommandInterpreter->GetTXFrame(ph);
-
-        if (!absent)
-          {
-          for(unsigned int i = 0; i < 8; i++ )
-            {
-            m_TransformBuffer[port][channel][i] = transform[i];
-            }
-          }
-
-        m_AbsentBuffer[port][channel] = absent;
-        m_StatusBuffer[port][channel] = status;
+        ++inputItr;
+        continue;
         }
+
+      double transformRecorded[8];
+      const int tstatus = m_CommandInterpreter->GetTXTransform(ph, transformRecorded);
+      const int absent = (tstatus != CommandInterpreterType::NDI_VALID);
+      const int status = m_CommandInterpreter->GetTXPortStatus(ph);
+
+      if (!absent)
+        {
+        for( unsigned int i = 0; i < 8; i++ )
+          {
+          transform[i] = transformRecorded[i];
+          }
+        }
+
+      m_ToolAbsentStatusContainer[inputItr->first] = absent;
+      m_ToolStatusContainer[inputItr->first] = status;
+      m_ToolTransformBuffer[inputItr->first] = transform;
+
+      ++inputItr;
       }
     }
 
@@ -434,324 +645,12 @@ AuroraTracker::ResultType AuroraTracker::InternalThreadedUpdateStatus( void )
   return result;
 }
 
-/** Specify an SROM file to be used with a custom tool or splitter. */
-void AuroraTracker::AttachSROMFileNameToPort( const unsigned int portNum,
-                                              std::string fileName )
-{
-  igstkLogMacro( DEBUG, "AuroraTracker::AttachSROMFileNameToPort called..\n");
-
-  if ( portNum < NumberOfPorts )
-    {
-    m_PortSROMFileNames[portNum] = fileName;
-    }
-}
-
-/** Load a virtual SROM, given the file name of the ROM file */
-bool AuroraTracker::LoadVirtualSROM( const unsigned int port,
-                                     const std::string SROMFileName) 
-{
-  igstkLogMacro( DEBUG, "AuroraTracker::LoadVirtualSROM called...\n");
-
-  std::ifstream sromFile;
-  sromFile.open(SROMFileName.c_str(), std::ios::binary );
-
-  if (!sromFile.is_open())
-    {
-    igstkLogMacro( WARNING, "AuroraTracker::LoadVirtualSROM: couldn't "
-                   "find SROM file " << SROMFileName << " ...\n");
-    return false;
-    }
-
-  // most SROM files don't contain the whole 1024 bytes, they only
-  // contain whatever is necessary, so the rest should be filled with zero
-  char data[1024]; 
-  memset( data, 0, 1024 );
-  sromFile.read( data, 1024 );
-  sromFile.close();
-
-  // unless SROM is successfully written, this method returns "false"
-  bool returnValue = false;
-
-  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ALL_HANDLES);
-  if (this->CheckError(m_CommandInterpreter) == SUCCESS)
-    {
-    unsigned int numHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
-    bool foundPort = false;
-    for (unsigned int handleIndex = 0;
-         handleIndex < numHandles && !foundPort;
-         handleIndex++)
-      {
-      int handleInfo = m_CommandInterpreter->GetPHSRInformation(handleIndex);
-
-      if (handleInfo & CommandInterpreterType::NDI_TOOL_IN_PORT)
-        {
-        int ph = m_CommandInterpreter->GetPHSRHandle(handleIndex);
-
-        // check what the port and channel numbers are
-        m_CommandInterpreter->PHINF(ph,
-                                    CommandInterpreterType::NDI_BASIC |
-                                    CommandInterpreterType::NDI_PORT_LOCATION);
-
-        if (this->CheckError(m_CommandInterpreter) == SUCCESS)
-          {
-          // the port and channel are read in as text, so convert to
-          // int, note that Aurora starts counting ports at "1"
-          char location[256];
-          m_CommandInterpreter->GetPHINFPortLocation(location);
-          unsigned int auroraPort = (location[10]-'0')*10 + (location[11]-'0');
-
-          if (port + 1 == auroraPort)
-            {
-            foundPort = 1;
-            int successfulWrite = 1;
-            for (unsigned int address = 0;
-                 address < 1024 && successfulWrite;
-                 address += 64)
-              {
-              returnValue = false;
-
-              // holds hexadecimal data to be sent to device
-              char hexbuffer[129];
-    
-              // convert data to hexadecimal and write to virtual SROM in
-              // 64-byte chunks
-              m_CommandInterpreter->HexEncode(hexbuffer, &data[address], 64);
-              m_CommandInterpreter->PVWR(ph, address, hexbuffer);
-              // check for successful write
-              successfulWrite =
-                (this->CheckError(m_CommandInterpreter) == SUCCESS);
-              }
-            // return true if all chunks successfully written
-            if (successfulWrite)
-              {
-              returnValue = true;
-              }
-            }
-          }
-        }
-      }
-    }
-
-  return returnValue;
-}
-
-/** Enable all tool ports that are occupied.
-  * This method follows the "wired" flowchart in the
-  * NDI Polaris and Aurora Combined Application Programmer's Interface
-  * Guide */
-void AuroraTracker::EnableToolPorts()
-{
-  // reset our information about the tool ports
-  for (unsigned int port = 0; port < NumberOfPorts; port++)
-    {
-    for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
-      {
-      this->m_PortHandle[port][channel] = 0;
-      this->m_PortEnabled[port][channel] = 0;
-      }
-    }
-  
-  // keep list of tools that fail to initialize, so we don't keep retrying,
-  // the largest port handle possible is 0xFF, or 256
-  int alreadyAttemptedPINIT[256];
-  for (int ph = 0; ph < 256; ph++)
-    {
-    alreadyAttemptedPINIT[ph] = 0;
-    }
-
-  // this is the "outer loop" from the flow chart, loop 256 times maximum
-  unsigned int count = 0;
-  while (count < 256)
-    {
-    // free ports that are waiting to be freed
-    m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_STALE_HANDLES);
-    unsigned int nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
-    unsigned int iHandle;
-    for (iHandle = 0; iHandle < nHandles; iHandle++)
-      {
-      const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
-      m_CommandInterpreter->PHF(ph);
-      
-      // if an error occurs, print the error but don't abort
-      this->CheckError(m_CommandInterpreter);
-
-      // allow this port handle to be re-initialized
-      alreadyAttemptedPINIT[ph] = 0;
-      }
-
-    // initialize ports waiting to be initialized,  
-    // repeat as necessary (in case multi-channel tools are used) 
-    while (count++ < 256)
-      {
-      m_CommandInterpreter->PHSR(
-        CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
-    
-      if (this->CheckError(m_CommandInterpreter) == FAILURE)
-        {
-        break;
-        }
-
-      nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
-      int foundNewTool = 0;
-
-      // try to initialize all port handles
-      for (iHandle = 0; iHandle < nHandles; iHandle++)
-        {
-        const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
-        // only call PINIT on tools that didn't fail last time
-        // (the &0xFF makes sure index is < 256)
-        if (!alreadyAttemptedPINIT[(ph & 0xFF)])
-          {
-          alreadyAttemptedPINIT[(ph & 0xFF)] = 1;
-          m_CommandInterpreter->PINIT(ph);
-          if (this->CheckError(m_CommandInterpreter) == SUCCESS)
-            {
-            foundNewTool = 1;
-            }
-          }
-        }
-
-      // exit the inner loop if no new tools were initialized this round
-      if (!foundNewTool)
-        {
-        break;
-        }
-      }
-
-    // enable all initialized tools
-    m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_UNENABLED_HANDLES);
-
-    nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
-  
-    // we are done if there are no handles to enable
-    if (nHandles == 0)
-      {
-      break;
-      }
-
-    for (iHandle = 0; iHandle < nHandles; iHandle++)
-      {
-      const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
-      m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
-
-      // tool identity and type information
-      char identity[512];
-      m_CommandInterpreter->GetPHINFToolInfo(identity);
-
-      // use tool type information to figure out mode for enabling
-      int mode = CommandInterpreterType::NDI_DYNAMIC;
-
-      if (identity[1] == CommandInterpreterType::NDI_TYPE_BUTTON)
-        { // button-box or foot pedal
-        mode = CommandInterpreterType::NDI_BUTTON_BOX;
-        }
-      else if (identity[1] == CommandInterpreterType::NDI_TYPE_REFERENCE)
-        { // reference
-        mode = CommandInterpreterType::NDI_STATIC;
-        }
-
-      // enable the tool
-      m_CommandInterpreter->PENA(ph, mode);
-
-      // print any warnings
-      this->CheckError(m_CommandInterpreter);
-      }
-    }
-
-  // get information for all tools
-  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ALL_HANDLES);
-
-  unsigned int nHandles = m_CommandInterpreter->GetPHSRNumberOfHandles();
-
-  for (unsigned int iHandle = 0; iHandle < nHandles; iHandle++)
-    {
-    const int ph = m_CommandInterpreter->GetPHSRHandle(iHandle);
-    m_CommandInterpreter->PHINF(ph,
-                                CommandInterpreterType::NDI_PORT_LOCATION |
-                                CommandInterpreterType::NDI_PART_NUMBER |
-                                CommandInterpreterType::NDI_BASIC );
-
-    if (this->CheckError(m_CommandInterpreter) == FAILURE)
-      {
-      continue;
-      }
-
-    // get the physical port identifier
-    char location[512];
-    m_CommandInterpreter->GetPHINFPortLocation(location);
-
-    unsigned int port = (location[10]-'0')*10 + (location[11]-'0') - 1;
-    unsigned int channel = 0;
-
-    if (port < NumberOfPorts)
-      {
-      // assign handle to the next available channel
-      for (channel = 0; channel < NumberOfChannels; channel++)
-        {
-        if (this->m_PortHandle[port][channel] == 0)
-          {
-          this->m_PortHandle[port][channel] = ph;
-          break;
-          }
-        }
-      }
-
-    const int status = m_CommandInterpreter->GetPHINFPortStatus();
-
-    if (port < NumberOfPorts && channel < NumberOfChannels)
-      {
-      this->m_PortEnabled[port][channel] = 
-        ((status & CommandInterpreterType::NDI_ENABLED) != 0);
-      }
-    }
-}
-
-/** Disable all tool ports. */
-void AuroraTracker::DisableToolPorts( void )
-{
-  // disable all enabled tools
-  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ENABLED_HANDLES);
-  unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
-
-  for (unsigned int tool = 0; tool < ntools; tool++)
-    {
-    const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
-    m_CommandInterpreter->PDIS( ph );
-
-    // print warning if failed to disable
-    this->CheckError(m_CommandInterpreter);
-    }
-
-  // disable the enabled ports
-  for (unsigned int port = 0; port < NumberOfPorts; port++)
-    {
-    for (unsigned int channel = 0; channel < NumberOfChannels; channel++)
-      {
-      this->m_PortEnabled[port][channel] = 0;
-      }
-    }
-}
-
-
 /** Print Self function */
 void AuroraTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  for( unsigned int i = 0; i < NumberOfPorts; i++ )
-    {
-    for ( unsigned int j = 0; j < NumberOfChannels; j++)
-      {
-      if (m_PortHandle[i][j] != 0 || j == 0)
-        {
-        os << indent << "Port " << i << " Channel " << j
-           << " PortHandle: " << m_PortHandle[i][j] << std::endl;
-        os << indent << "Port " << i << " Channel " << j
-           << " PortEnabled: " << m_PortEnabled[i][j] << std::endl;
-        }
-      }
-    }
-  os << indent << "Number of tools: " << m_NumberOfTools << std::endl;
 }
+
 
 } // end of namespace igstk

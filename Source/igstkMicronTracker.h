@@ -53,7 +53,8 @@ class MicronTracker : public Tracker
 public:
 
   /** typedefs for the tool */
-  typedef igstk::MicronTrackerTool              MicronTrackerToolType;
+  /** The should be converted to the new Tool class */
+  typedef igstk::MicronTrackerTool           MicronTrackerToolType;
   typedef MicronTrackerToolType::Pointer        MicronTrackerToolPointer;
   typedef MicronTrackerToolType::ConstPointer   MicronTrackerToolConstPointer;
 
@@ -80,9 +81,6 @@ public:
   /** Load markers template */
   void LoadMarkerTemplate( std::string filename );
 
-  /** Add the tracker tool std::map container */
-  void RequestAddTool( MicronTrackerToolType * trackerTool );
- 
 protected:
 
   MicronTracker(void);
@@ -94,12 +92,6 @@ protected:
 
   /** Close communication with the tracking device. */
   virtual ResultType InternalClose( void );
-
-  /** Activate the tools attached to the tracking device. */
-  virtual ResultType InternalActivateTools( void );
-
-  /** Deactivate the tools attached to the tracking device. */
-  virtual ResultType InternalDeactivateTools( void );
 
   /** Put the tracking device into tracking mode. */
   virtual ResultType InternalStartTracking( void );
@@ -117,8 +109,22 @@ protected:
   /** Reset the tracking device to put it back to its original state. */
   virtual ResultType InternalReset( void );
 
+  /** Verify tracker tool information */
+  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
+
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+  /** Create an associative container that maps error code to error
+    * descritpion */
+  static void CreateErrorCodeList();
+
+  /** Get Error description given the error code */
+  static const std::string GetErrorDescription( unsigned int ); 
+
+  /** Remove tracker tool entry from internal containers */ 
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+                                     TrackerToolType * trackerTool ); 
 
 private:
 
@@ -153,7 +159,17 @@ private:
   typedef std::map< std::string, std::vector < double > > 
                                 TrackerToolTransformContainerType; 
 
- TrackerToolTransformContainerType     m_ToolTransformBuffer;
+  TrackerToolTransformContainerType     m_ToolTransformBuffer;
+
+  /** Error map container */
+  static std::map< unsigned int, std::string>     m_ErrorCodeContainer;
+
+  /** boolean to indicate if error code list is created */
+  static bool m_ErrorCodeListCreated;
+
+  /** Container holding status of the tools */
+  std::map< std::string, int >  m_ToolStatusContainer; 
+
 };
 
 }

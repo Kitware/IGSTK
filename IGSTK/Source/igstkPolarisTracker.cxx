@@ -22,7 +22,6 @@
 #endif
 
 #include "igstkPolarisTracker.h"
-#include "igstkTrackerPort.h"
 
 #include <iostream>
 #include <fstream>
@@ -34,20 +33,6 @@ namespace igstk
 PolarisTracker::PolarisTracker(void):m_StateMachine(this)
 {
   m_CommandInterpreter = CommandInterpreterType::New();
-  m_NumberOfTools = 0;
-  for (unsigned int i = 0; i < NumberOfPorts; i++)
-    {
-    this->m_PortEnabled[i] = 0;
-    this->m_PortHandle[i] = 0;
-    }
-
-  for (unsigned int j = 0; j < NumberOfPorts; j++)
-    { 
-    PolarisTrackerToolPointer tool = PolarisTrackerToolType::New();
-    TrackerPortPointer port = TrackerPortType::New();
-    port->AddTool(tool);
-    this->AddPort(port);
-    }
 
   this->SetThreadingEnabled( true );
 
@@ -171,6 +156,296 @@ PolarisTracker::ResultType PolarisTracker::InternalOpen( void )
   return result;
 }
 
+/** Verify tracker tool information*/
+PolarisTracker::ResultType PolarisTracker
+::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+{
+  //Verify that 
+  //
+  //1) the tracker tool information provided by the user matches with
+  //the information available in the SROM file.
+  //
+  //2) the tool is actually attached to the correct physical port
+  //for a wired tool.
+  //
+  //To get the tool information
+  // - If it is wireless
+  //    == SROM file has to be loaded and port handle created.
+  // - If it is wired
+  //    == If SROM file is specified
+  //        == Load the SROM file and create a port handle
+  //    == Otherwise, create a port handle     
+  //
+  //
+  igstkLogMacro( DEBUG, "PolarisTracker::VerifyTrackerToolInformation called ...\n");
+
+  PolarisTrackerToolType * polarisTrackerTool = 
+             dynamic_cast< PolarisTrackerToolType * > ( trackerTool );   
+
+  bool wirelessTool = polarisTrackerTool->IsToolWirelessType();
+  bool SROMFileSpecified  = polarisTrackerTool->IsSROMFileNameSpecified();
+
+  // port handle
+  int ph;
+
+  if( wirelessTool || SROMFileSpecified ) 
+    {
+    std::ifstream sromFile; 
+    std::string SROMFileName = polarisTrackerTool->GetSROMFileName();
+    sromFile.open(SROMFileName.c_str(), std::ios::binary );
+
+    if (!sromFile.is_open())
+      {
+      igstkLogMacro( WARNING, "PolarisTracker::Failing to open"
+                     << SROMFileName << " ...\n");
+      return FAILURE;
+      }
+
+    // most SROM files don't contain the whole 1024 bytes, they only
+    // contain whatever is necessary, so the rest should be filled with zero
+    char data[1024]; 
+    memset( data, 0, 1024 );
+    sromFile.read( data, 1024 );
+    sromFile.close();
+
+    // the "port" must be set to "**" to support the Vicra
+    m_CommandInterpreter->PHRQ("********", // device number
+                               "*",        // TIU or SCU
+                               "1",        // wired or wireless
+                               "**",       // port
+                               "**");      // channel
+
+    if (this->CheckError(m_CommandInterpreter) == FAILURE)
+      {
+      return FAILURE;
+      }
+
+    ph = m_CommandInterpreter->GetPHRQHandle();
+
+    for ( unsigned int i = 0; i < 1024; i += 64)
+      {
+      // holds hexidecimal data to be sent to device
+      char hexbuffer[129]; 
+      
+      // convert data to hexidecimal and write to virtual SROM in
+      // 64-byte chunks
+      m_CommandInterpreter->HexEncode(hexbuffer, &data[i], 64);
+      m_CommandInterpreter->PVWR(ph, i, hexbuffer);
+      }
+    }
+  else
+    {
+    //search ports with uninitialized handles
+    // initialize ports waiting to be initialized,  
+    // repeat as necessary (in case multi-channel tools are used) 
+
+    bool foundNewTool = false;
+
+    for (int safetyCount = 0; safetyCount < 256; safetyCount++)
+      {
+      m_CommandInterpreter->PHSR(
+        CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
+      
+      if (this->CheckError(m_CommandInterpreter) == FAILURE)
+        {
+        std::cerr << "Error searching for uninitialized ports"  << std::endl;
+        return FAILURE;
+        }
+
+      unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+
+      // Make sure there is one and only one uninitialized port
+      if ( ntools == 0 )
+        {
+        continue;
+        }
+
+        // The toolnumber will be assigned to 0 by default
+        unsigned int toolNumber = 0; 
+        ph = m_CommandInterpreter->GetPHSRHandle( toolNumber );
+        foundNewTool = true;
+        break;
+      }
+
+     if( !foundNewTool )
+      {
+      std::cerr << "Couldn't find uninitialized port" << std::endl;
+      return FAILURE;
+      }
+    }  
+
+  // Once we got the port handle, we can continue on with initializing
+  // and enabling the port
+
+  // initialize the port 
+  m_CommandInterpreter->PINIT(ph);
+
+  if (this->CheckError(m_CommandInterpreter) == SUCCESS)
+    {
+    std::cout << "Port handle initialized successfully " << std::endl;
+    }
+  else
+    {
+    std::cerr << "Failure initializing the port" << std::endl;
+    }
+
+  m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
+
+  // tool identity and type information
+  char identity[512];
+  m_CommandInterpreter->GetPHINFToolInfo(identity);
+  std::cout << "Tool Information: " << identity << std::endl; 
+
+  // use tool type information to figure out mode for enabling
+  int mode = CommandInterpreterType::NDI_DYNAMIC;
+
+  if (identity[1] == CommandInterpreterType::NDI_TYPE_BUTTON)
+    { // button-box or foot pedal
+    mode = CommandInterpreterType::NDI_BUTTON_BOX;
+    }
+  else if (identity[1] == CommandInterpreterType::NDI_TYPE_REFERENCE)
+    { // reference
+    mode = CommandInterpreterType::NDI_STATIC;
+    }
+
+  // enable the tool
+  m_CommandInterpreter->PENA(ph, mode);
+
+  // print any warnings
+  if(this->CheckError(m_CommandInterpreter) == SUCCESS)
+    {
+    std::cout << "Port handle enabled successfully " << std::endl;
+    }
+  else
+    {
+    std::cerr << "Failure enabling the port handle" << std::endl;
+    return FAILURE;
+    }
+
+
+  //tool information
+  m_CommandInterpreter->PHINF(ph,
+                                CommandInterpreterType::NDI_PORT_LOCATION |
+                                CommandInterpreterType::NDI_PART_NUMBER |
+                                CommandInterpreterType::NDI_BASIC );
+
+  if (this->CheckError(m_CommandInterpreter) == FAILURE)
+    {
+    std::cerr  << "Error while trying to get tool information" << std::endl;
+    return FAILURE;
+    }
+
+  // get the physical port identifier
+  char location[512];
+  m_CommandInterpreter->GetPHINFPortLocation(location);
+
+  // physical port number
+  unsigned int port = 0;
+
+  if (location[9] == '0') // wired tool
+    {
+    unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
+
+    //FIXME: checking against the maximum number of ports might not be necessary
+    const unsigned int NumberOfPorts = 12;
+    if (ndiport > 0 && ndiport <= NumberOfPorts)
+      {
+      port = ndiport - 1;
+      std::cout << "Port number: " << port << std::endl;
+      // Verify port number specified 
+      if ( port != polarisTrackerTool->GetPortNumber() )
+        {
+        std::cerr << "The tracker tool is probably inserted into the wrong port: " 
+                  << "The port number specified for the tool doesn't match with " 
+                     "what is detected from the hardware" << std::endl;
+        return FAILURE;
+        }
+      }
+    }
+  else // wireless tool
+    {
+    std::cout<< "Tool is wireless" << std::endl;
+    }
+
+  const int status = m_CommandInterpreter->GetPHINFPortStatus();
+
+  std::cout<< "Port status information: " << status << std::endl;
+
+  // tool status
+  std::cout << "Tool status: " <<  m_CommandInterpreter->GetPHINFPortStatus() << std::endl;
+
+  // tool type
+  std::cout<< "Tool type: " << m_CommandInterpreter->GetPHINFToolType() << std::endl;   
+
+  // tool part number
+  char partNumber[21];
+  m_CommandInterpreter->GetPHINFPartNumber( partNumber ) ;
+  std::cout<< "Part number: " << partNumber << std::endl; 
+
+  // tool accessories
+  std::cout<< "Tool accessories: " << m_CommandInterpreter->GetPHINFAccessories() << std::endl;
+
+  // tool marker type
+  std::cout << "Marker type: " << m_CommandInterpreter->GetPHINFMarkerType() << std::endl;
+
+  std::string trackerToolIdentifier = polarisTrackerTool->GetTrackerToolIdentifier();
+
+  // add it to the port handle container 
+  this->m_PortHandleContainer[ trackerToolIdentifier ] = ph;
+
+  // add it to the tool absent status 
+  this->m_ToolAbsentStatusContainer[ trackerToolIdentifier ] = 0;
+
+  // add it to the tool status container
+  this->m_ToolStatusContainer[ trackerToolIdentifier ] = 0;
+
+  return SUCCESS;
+}
+ 
+PolarisTracker::ResultType 
+PolarisTracker::
+RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
+{
+  igstkLogMacro( DEBUG, "PolarisTracker::RemoveTrackerToolFromInternalDataContainers called ...\n");
+  // if SROM file has been loaded for this tracker tool, clear it first.
+  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+  PolarisTrackerToolType * polarisTrackerTool = 
+             dynamic_cast< PolarisTrackerToolType * > ( trackerTool );   
+
+  std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
+
+  if ( polarisTrackerTool != NULL ) 
+    {
+    bool SROMFileSpecified  = polarisTrackerTool->IsSROMFileNameSpecified();
+
+    if( SROMFileSpecified )
+      {
+      m_CommandInterpreter->PHF( m_PortHandleContainer[trackerToolIdentifier] );
+      }
+    }
+    
+  // disable the port handle
+  m_CommandInterpreter->PDIS( m_PortHandleContainer[ trackerToolIdentifier] );  
+
+  // print warning if failed to disable
+  this->CheckError(m_CommandInterpreter);
+
+  // remove the tool from port handle container
+  this->m_PortHandleContainer.erase( trackerToolIdentifier );
+
+  // remove the tool from absent status container 
+  this->m_ToolAbsentStatusContainer.erase( trackerToolIdentifier );
+
+  // remove the tool from  tool status container
+  this->m_ToolStatusContainer.erase( trackerToolIdentifier );
+
+  // remove the tool from the Transform buffer container
+  this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
+
+  return SUCCESS;
+}
+
+
 /** Close communication with the tracking device. */
 PolarisTracker::ResultType PolarisTracker::InternalClose( void )
 {
@@ -182,61 +457,6 @@ PolarisTracker::ResultType PolarisTracker::InternalClose( void )
                              CommandInterpreterType::NDI_NOHANDSHAKE);
 
   return this->CheckError(m_CommandInterpreter);
-}
-
-/** Activate the tools attached to the tracking device. */
-PolarisTracker::ResultType PolarisTracker::InternalActivateTools( void )
-{
-  igstkLogMacro( DEBUG, "PolarisTracker::InternalActivateTools called ...\n");
-
-  ResultType result = SUCCESS;
-
-  // Load any SROMS that are needed
-  for (unsigned int i = 0; i < NumberOfPorts && result == SUCCESS; i++)
-    { 
-    if (!m_SROMFileNames[i].empty())
-      {
-      result = FAILURE;
-      if (this->LoadVirtualSROM(i, m_SROMFileNames[i]))
-        {
-        result = SUCCESS;
-        }
-      }
-    }
-
-  if (result == SUCCESS)
-    {
-    this->EnableToolPorts();
-
-    m_NumberOfTools = 0;
-
-    for(unsigned int i = 0; i < NumberOfPorts; i++)
-      { 
-      if( this->m_PortEnabled[i] )
-        {
-        m_NumberOfTools++;
-        }
-      }
-    }
-
-  return result;
-}
-
-/** Deactivate the tools attached to the tracking device. */
-PolarisTracker::ResultType PolarisTracker::InternalDeactivateTools( void )
-{
-  for (unsigned int i = 0; i < NumberOfPorts; i++)
-    { 
-    if (!m_SROMFileNames[i].empty() &&
-        this->m_PortHandle[i] != 0)
-      {
-      this->ClearVirtualSROM(i);
-      }
-    }
-
-  this->DisableToolPorts();
-
-  return SUCCESS;
 }
 
 /** Put the tracking device into tracking mode. */
@@ -290,43 +510,63 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
 
   m_BufferLock->Lock();
 
-  for (unsigned int port = 0; port < NumberOfPorts; port++) 
+  typedef std::map< std::string, int >::const_iterator  ConstIteratorType;
+
+  ConstIteratorType inputItr = m_PortHandleContainer.begin();
+  ConstIteratorType inputEnd = m_PortHandleContainer.end();
+
+  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+
+  while( inputItr != inputEnd )
     {
-    // convert m_StatusBuffer flags from NDI to vtkTracker format
-    const int portStatus = m_StatusBuffer[port];
+    const int portStatus = m_ToolStatusContainer[inputItr->first];
 
     // only report tools that are enabled
     if ((portStatus & mflags) != mflags) 
       {
+      igstkLogMacro( DEBUG, "PolarisTracker::InternalUpdateStatus: " <<
+                     "tool " << inputItr->first << " is not available \n");
+      ++inputItr;
       continue;
       }
 
     // only report tools that are in view
-    if (m_AbsentBuffer[port])
+    if (m_ToolAbsentStatusContainer[inputItr->first])
       {
       // there should be a method to set that the tool is not in view
       igstkLogMacro( DEBUG, "PolarisTracker::InternalUpdateStatus: " <<
-                     "tool " << port << " is not in view\n");
+                     "tool " << inputItr->first << " is not in view\n");
+
+      // report to the tracker tool that the tracker is not available 
+      this->ReportTrackingToolNotAvailable( trackerToolContainer[inputItr->first] );
+      ++inputItr;
       continue;
       }
 
+    // report to the tracker tool that the tracker is Visible 
+    this->ReportTrackingToolVisible( trackerToolContainer[inputItr->first] );
+ 
     // create the transform
     TransformType transform;
 
     typedef TransformType::VectorType TranslationType;
     TranslationType translation;
 
-    translation[0] = m_TransformBuffer[port][4];
-    translation[1] = m_TransformBuffer[port][5];
-    translation[2] = m_TransformBuffer[port][6];
+    translation[0] = (m_ToolTransformBuffer[inputItr->first])[4];
+    translation[1] = (m_ToolTransformBuffer[inputItr->first])[5];
+    translation[2] = (m_ToolTransformBuffer[inputItr->first])[6];
+
+    /* std::cout << "\t\t: Translation:\t" << translation[0] << "\t" 
+                                        << translation[1] << "\t"
+                                        << translation[2] << std::endl; */
 
     typedef TransformType::VersorType RotationType;
     RotationType rotation;
     const double normsquared = 
-      m_TransformBuffer[port][0]*m_TransformBuffer[port][0] +
-      m_TransformBuffer[port][1]*m_TransformBuffer[port][1] +
-      m_TransformBuffer[port][2]*m_TransformBuffer[port][2] +
-      m_TransformBuffer[port][3]*m_TransformBuffer[port][3];
+      m_ToolTransformBuffer[inputItr->first][0]*m_ToolTransformBuffer[inputItr->first][0] +
+      m_ToolTransformBuffer[inputItr->first][1]*m_ToolTransformBuffer[inputItr->first][1] +
+      m_ToolTransformBuffer[inputItr->first][2]*m_ToolTransformBuffer[inputItr->first][2] +
+      m_ToolTransformBuffer[inputItr->first][3]*m_ToolTransformBuffer[inputItr->first][3];
 
     // don't allow null quaternions
     if (normsquared < 1e-6)
@@ -338,21 +578,25 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
     else
       {
       // ITK quaternions are in xyzw order, not wxyz order
-      rotation.Set(m_TransformBuffer[port][1],
-                   m_TransformBuffer[port][2],
-                   m_TransformBuffer[port][3],
-                   m_TransformBuffer[port][0]);
+      rotation.Set(m_ToolTransformBuffer[inputItr->first][1],
+                   m_ToolTransformBuffer[inputItr->first][2],
+                   m_ToolTransformBuffer[inputItr->first][3],
+                   m_ToolTransformBuffer[inputItr->first][0]);
       }
 
-    // report NDI error value
+    // retool NDI error value
     typedef TransformType::ErrorType  ErrorType;
-    ErrorType errorValue = m_TransformBuffer[port][7];
+    ErrorType errorValue = m_ToolTransformBuffer[inputItr->first][7];
 
     transform.SetToIdentity(this->GetValidityTime());
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         this->GetValidityTime());
+  
+    // set the raw transform
+    this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
+    this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
 
-    this->SetToolTransform(port, 0, transform);
+    ++inputItr;
     }
   m_BufferLock->Unlock();
 
@@ -379,50 +623,57 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
   // the first 4 values are a quaternion
   // the next 3 values are an x,y,z position
   // the final value is an error estimate in the range [0,1]
-  for (unsigned int port = 0; port < NumberOfPorts; port++)
-    {
-    m_TransformBuffer[port][0] = 1.0;
-    m_TransformBuffer[port][1] = 0.0;
-    m_TransformBuffer[port][2] = 0.0;
-    m_TransformBuffer[port][3] = 0.0;
-    m_TransformBuffer[port][4] = 0.0;
-    m_TransformBuffer[port][5] = 0.0;
-    m_TransformBuffer[port][6] = 0.0;
-    m_TransformBuffer[port][7] = 0.0;
-    }
+  //
+  std::vector < double > transform;
+  transform.push_back ( 1.0 );
+  transform.push_back ( 0.0 );
+  transform.push_back ( 0.0 );
+  transform.push_back ( 0.0 );
+  transform.push_back ( 0.0 );
+  transform.push_back ( 0.0 );
+  transform.push_back ( 0.0 );
+  transform.push_back ( 0.0 );
 
   if (result == SUCCESS)
     {
-    unsigned long frame[ NumberOfPorts ];
-    for (unsigned int port = 0; port < NumberOfPorts; port++)
-      { 
-      // port handle reported by device
-      const int ph = this->m_PortHandle[port];
-      m_AbsentBuffer[port] = 0;
-      m_StatusBuffer[port] = 0;
 
-      frame[port] = 0;
-      if (ph == 0)
+    typedef std::map< std::string, int >::iterator  IteratorType;
+
+    IteratorType inputItr = m_PortHandleContainer.begin();
+    IteratorType inputEnd = m_PortHandleContainer.end();
+
+    while( inputItr != inputEnd )
+      {
+      m_ToolAbsentStatusContainer[inputItr->first] = 0;
+      m_ToolStatusContainer[inputItr->first] = 0;
+ 
+      unsigned int ph = inputItr->second;
+      if ( ph == 0 )
         {
+        ++inputItr;
         continue;
         }
 
-      double transform[8];
-      const int tstatus = m_CommandInterpreter->GetTXTransform(ph, transform);
+      double transformRecorded[8];
+      const int tstatus = m_CommandInterpreter->GetTXTransform(ph, transformRecorded);
+     // std::cout << "Transform update status for: " << inputItr->first << std::endl;
+    //  std::cout << "\t\tStatus = " << tstatus << std::endl;
       const int absent = (tstatus != CommandInterpreterType::NDI_VALID);
       const int status = m_CommandInterpreter->GetTXPortStatus(ph);
-      frame[port] = m_CommandInterpreter->GetTXFrame(ph);
 
       if (!absent)
         {
         for( unsigned int i = 0; i < 8; i++ )
           {
-          m_TransformBuffer[port][i] = transform[i];
+          transform[i] = transformRecorded[i];
           }
         }
 
-      m_AbsentBuffer[port] = absent;
-      m_StatusBuffer[port] = status;
+      m_ToolAbsentStatusContainer[inputItr->first] = absent;
+      m_ToolStatusContainer[inputItr->first] = status;
+      m_ToolTransformBuffer[inputItr->first] = transform;
+
+      ++inputItr;
       }
     }
 
@@ -435,310 +686,11 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
   return result;
 }
 
-/** Specify an SROM file to be used with a passive or custom tool. */
-void PolarisTracker::AttachSROMFileNameToPort( const unsigned int portNum,
-                                               std::string fileName )
-{
-  igstkLogMacro( DEBUG, "PolarisTracker::AttachSROMFileNameToPort called..\n");
-
-  // the first 3 ports are active, don't allow SROMS for them
-  if ( (portNum >= 3) && (portNum < NumberOfPorts) )
-    {
-    m_SROMFileNames[portNum] = fileName;
-    }
-}
-
-/** Load a virtual SROM, given the file name of the ROM file */
-bool PolarisTracker::LoadVirtualSROM( const unsigned int tool,
-                                      const std::string SROMFileName) 
-{
-  igstkLogMacro( DEBUG, "PolarisTracker::LoadVirtualSROM called...\n");
-
-  if (this->m_PortHandle[tool] != 0)
-    {
-    igstkLogMacro( WARNING, "An SROM has already been loaded for tool "
-                   << tool << "\n");
-    return false;
-    }
-
-  std::ifstream sromFile;
-  sromFile.open(SROMFileName.c_str(), std::ios::binary );
-
-  if (!sromFile.is_open())
-    {
-    igstkLogMacro( WARNING, "PolarisTracker::LoadVirtualSROM: couldn't "
-                   "find SROM file " << SROMFileName << " ...\n");
-    return false;
-    }
-
-  // most SROM files don't contain the whole 1024 bytes, they only
-  // contain whatever is necessary, so the rest should be filled with zero
-  char data[1024]; 
-  memset( data, 0, 1024 );
-  sromFile.read( data, 1024 );
-  sromFile.close();
-
-  // the "port" must be set to "**" to support the Vicra
-  m_CommandInterpreter->PHRQ("********", // device number
-                             "*",        // TIU or SCU
-                             "1",        // wired or wireless
-                             "**",       // port
-                             "**");      // channel
-
-  if (this->CheckError(m_CommandInterpreter) == FAILURE)
-    {
-    return false;
-    }
- 
-  const int ph = m_CommandInterpreter->GetPHRQHandle();
-
-  for ( unsigned int i = 0; i < 1024; i += 64)
-    {
-    // holds hexidecimal data to be sent to device
-    char hexbuffer[129]; 
-    
-    // convert data to hexidecimal and write to virtual SROM in
-    // 64-byte chunks
-    m_CommandInterpreter->HexEncode(hexbuffer, &data[i], 64);
-    m_CommandInterpreter->PVWR(ph, i, hexbuffer);
-    }
-
-  // set the port handle for the tool
-  this->m_PortEnabled[tool] = 0;
-  this->m_PortHandle[tool] = ph;
-
-  return true;
-}
-
-/** Clear a previously loaded SROM. */
-void PolarisTracker::ClearVirtualSROM(const unsigned int tool)
-{
-  igstkLogMacro( DEBUG, "PolarisTracker::ClearVirtualSROM called...\n");
-
-  const int ph = this->m_PortHandle[tool];
-  m_CommandInterpreter->PHF(ph);
-
-  this->m_PortEnabled[tool] = 0;
-  this->m_PortHandle[tool] = 0;
-}
-
-/** Enable all tool ports that are occupied. */
-void PolarisTracker::EnableToolPorts()
-{
-  igstkLogMacro( DEBUG, "PolarisTracker::EnableToolPorts called...\n");
-
-  // reset our information about the wired ports
-  for (unsigned int port = 0; port < 3; port++)
-    {
-    this->m_PortHandle[port] = 0;
-    }
-  for (unsigned int port = 0; port < NumberOfPorts; port++)
-    {
-    this->m_PortEnabled[port] = 0;
-    }
-
-  // free ports that are waiting to be freed
-  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_STALE_HANDLES);
-  unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
-  unsigned int tool;
-  for (tool = 0; tool < ntools; tool++)
-    {
-    const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
-    m_CommandInterpreter->PHF(ph);
-
-    // if failed to release handle, print error but continue on
-    this->CheckError(m_CommandInterpreter);
-    }
-
-  // keep list of tools that fail to initialize, so we don't keep retrying,
-  // the largest port handle possible is 0xFF, or 256
-  int alreadyAttemptedPINIT[256];
-  for (int ph = 0; ph < 256; ph++)
-    {
-    alreadyAttemptedPINIT[ph] = 0;
-    }
-
-  // initialize ports waiting to be initialized,  
-  // repeat as necessary (in case multi-channel tools are used) 
-  for (int safetyCount = 0; safetyCount < 256; safetyCount++)
-    {
-    m_CommandInterpreter->PHSR(
-      CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
-    
-    if (this->CheckError(m_CommandInterpreter) == FAILURE)
-      {
-      break;
-      }
-
-    ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
-    int foundNewTool = 0;
-
-    // try to initialize all port handles
-    for (tool = 0; tool < ntools; tool++)
-      {
-      const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
-      // only call PINIT on tools that didn't fail last time
-      // (the &0xFF makes sure index is < 256)
-      if (!alreadyAttemptedPINIT[(ph & 0xFF)])
-        {
-        alreadyAttemptedPINIT[(ph & 0xFF)] = 1;
-        m_CommandInterpreter->PINIT(ph);
-        if (this->CheckError(m_CommandInterpreter) == SUCCESS)
-          {
-          foundNewTool = 1;
-          }
-        }
-      }
-
-    // exit if no new tools were initialized this round
-    if (!foundNewTool)
-      {
-      break;
-      }
-    }
-
-  // enable initialized tools
-  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_UNENABLED_HANDLES);
-
-  ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
-  
-  for (tool = 0; tool < ntools; tool++)
-    {
-    const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
-    m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
-
-    // tool identity and type information
-    char identity[512];
-    m_CommandInterpreter->GetPHINFToolInfo(identity);
-
-    // use tool type information to figure out mode for enabling
-    int mode = CommandInterpreterType::NDI_DYNAMIC;
-
-    if (identity[1] == CommandInterpreterType::NDI_TYPE_BUTTON)
-      { // button-box or foot pedal
-      mode = CommandInterpreterType::NDI_BUTTON_BOX;
-      }
-    else if (identity[1] == CommandInterpreterType::NDI_TYPE_REFERENCE)
-      { // reference
-      mode = CommandInterpreterType::NDI_STATIC;
-      }
-
-    // enable the tool
-    m_CommandInterpreter->PENA(ph, mode);
-
-    // print any warnings
-    this->CheckError(m_CommandInterpreter);
-    }
-
-  // get information for all tools
-  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ALL_HANDLES);
-
-  ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
-
-  for (tool = 0; tool < ntools; tool++)
-    {
-    const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
-    m_CommandInterpreter->PHINF(ph,
-                                CommandInterpreterType::NDI_PORT_LOCATION |
-                                CommandInterpreterType::NDI_PART_NUMBER |
-                                CommandInterpreterType::NDI_BASIC );
-
-    if (this->CheckError(m_CommandInterpreter) == FAILURE)
-      {
-      continue;
-      }
-
-    // get the physical port identifier
-    char location[512];
-    m_CommandInterpreter->GetPHINFPortLocation(location);
-
-    // physical port number
-    unsigned int port = 0;
-
-    // the value of m_PortHandle should only be set for wired,
-    // for wireless tools it is set in LoadVirtualSROM
-    if (location[9] == '0') // wired tool
-      {
-      unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
-      if (ndiport > 0 && ndiport <= NumberOfPorts)
-        {
-        port = ndiport - 1;
-        this->m_PortHandle[port] = ph;
-        }
-      }
-    else // wireless tool
-      {
-      for (port = 0; port < NumberOfPorts; port++)
-        {
-        if (this->m_PortHandle[port] == ph)
-          {
-          break;
-          }
-        }
-      if (port >= NumberOfPorts)
-        {
-        igstkLogMacro( WARNING, "PolarisTracker::EnableToolPorts: "
-                       "cant find port for port handle\n" );
-        continue;
-        }
-      }
-
-    const int status = m_CommandInterpreter->GetPHINFPortStatus();
-
-    this->m_PortEnabled[port] = 
-      ((status & CommandInterpreterType::NDI_ENABLED) != 0);
-    }
-}
-
-/** Disable all tool ports. */
-void PolarisTracker::DisableToolPorts( void )
-{
-  igstkLogMacro( DEBUG, "PolarisTracker::DisableToolPorts called...\n");
-
-  // disable all enabled tools
-  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_ENABLED_HANDLES);
-  unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
-
-  for (unsigned int tool = 0; tool < ntools; tool++)
-    {
-    const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
-    m_CommandInterpreter->PDIS( ph );
-
-    // print warning if failed to disable
-    this->CheckError(m_CommandInterpreter);
-    }
-
-  // disable the enabled ports
-  for (unsigned int port = 0; port < NumberOfPorts; port++)
-    {
-    this->m_PortEnabled[port] = 0;
-    }
-}
-
-
 /** Print Self function */
 void PolarisTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  unsigned int i;
-
-  for( i = 0; i < NumberOfPorts; ++i )
-    {
-    os << indent << "Port " << i << " Enabled: " << m_PortEnabled[i] 
-       << std::endl;
-    }
-  for( i = 0; i < NumberOfPorts; ++i )
-    {
-    os << indent << "Port " << i << " Handle: " << m_PortHandle[i] 
-       << std::endl;
-    }
-  os << indent << "Number of tools: " << m_NumberOfTools << std::endl;
-  for( i = 0; i < NumberOfPorts; ++i )
-    {
-    os << indent << "SROM filename " << i << " : " << m_SROMFileNames[i]
-       << std::endl;
-    }
 }
 
 

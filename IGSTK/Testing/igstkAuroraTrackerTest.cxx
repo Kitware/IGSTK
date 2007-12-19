@@ -36,16 +36,18 @@
 #else
 #include "igstkSerialCommunicationForPosix.h"
 #endif
+
 #include "igstkSerialCommunicationSimulator.h"
 #include "igstkAuroraTracker.h"
+#include "igstkAuroraTrackerTool.h"
 #include "igstkTransform.h"
 
 class AuroraTrackerTestCommand : public itk::Command 
 {
 public:
   typedef  AuroraTrackerTestCommand   Self;
-  typedef  itk::Command               Superclass;
-  typedef itk::SmartPointer<Self>     Pointer;
+  typedef  itk::Command                Superclass;
+  typedef itk::SmartPointer<Self>      Pointer;
   itkNewMacro( Self );
 protected:
   AuroraTrackerTestCommand() {};
@@ -67,49 +69,38 @@ public:
     }
 };
 
-#ifdef IGSTK_SIMULATOR_TEST
-int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
-#else  /* IGSTK_SIMULATOR_TEST */
 int igstkAuroraTrackerTest( int argc, char * argv[] )
-#endif
 {
 
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::Object::LoggerType             LoggerType;
+  typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
-  igstk::AuroraTrackerTool::Pointer tool = igstk::AuroraTrackerTool::New();
-  std::cout << "AuroraTrackerTool class name : " 
-            << tool->GetNameOfClass() << std::endl;
-  std::cout << tool << std::endl;
+  if( argc < 2 )
+    {
+    std::cerr << " Usage: " << argv[0] << "\t" 
+                            << "Logger_Output_filename " <<"\t"
+                            << "Port number"  <<"\t" 
+                            << std::endl;
+    return EXIT_FAILURE;
+    }
 
-#ifdef IGSTK_SIMULATOR_TEST
-    igstk::SerialCommunicationSimulator::Pointer 
-                      serialComm = igstk::SerialCommunicationSimulator::New();
-#else  /* IGSTK_SIMULATOR_TEST */
+
+  igstk::AuroraTrackerTool::Pointer tool = igstk::AuroraTrackerTool::New();
+
 #ifdef WIN32
   igstk::SerialCommunicationForWindows::Pointer 
                      serialComm = igstk::SerialCommunicationForWindows::New();
 #else
-  igstk::SerialCommunicationForPosix::Pointer 
+  igstk::SerialCommunicationForPosix::Pointer
                        serialComm = igstk::SerialCommunicationForPosix::New();
 #endif /* WIN32 */
-#endif /* IGSTK_SIMULATOR_TEST */
 
   AuroraTrackerTestCommand::Pointer 
-                                 my_command = AuroraTrackerTestCommand::New();
+                                my_command = AuroraTrackerTestCommand::New();
 
-  // logger object created 
-  std::string testName;
-  if (argc > 0)
-    {
-    testName = argv[0];
-    }
-  std::string outputDirectory = IGSTK_TEST_OUTPUT_DIR;
-  std::string filename = outputDirectory +"/";
-  filename = filename + testName;
-  filename = filename + "LoggerOutput.txt";
+  std::string filename = argv[1];
   std::cout << "Logger output saved here:\n";
   std::cout << filename << "\n"; 
 
@@ -119,31 +110,21 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
   LogOutputType::Pointer logOutput = LogOutputType::New();  
   logOutput->SetStream( loggerFile );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG);
+  logger->SetPriorityLevel( LoggerType::DEBUG);
 
   serialComm->AddObserver( itk::AnyEvent(), my_command);
 
   serialComm->SetLogger( logger );
 
-  serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
+  serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
-#ifdef IGSTK_SIMULATOR_TEST
-  // load a previously captured file
-  std::string igstkDataDirectory = IGSTK_DATA_ROOT;
-  std::string inputDirectory = igstkDataDirectory + "/Input";
-  std::string simulationFile = (inputDirectory + "/" +
-                                "aurora_stream_multichan_11_11_2005.txt");
-  serialComm->SetFileName( simulationFile.c_str() );
-#else /* IGSTK_SIMULATOR_TEST */
-  serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
   serialComm->SetCaptureFileName( "RecordedStreamByAuroraTrackerTest.txt" );
   serialComm->SetCapture( true );
-#endif /* IGSTK_SIMULATOR_TEST */
 
   serialComm->OpenCommunication();
 
@@ -155,64 +136,50 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
 
   tracker->SetLogger( logger );
 
-#ifdef IGSTK_SIMULATOR_TEST
-  std::string romFile = inputDirectory + "/" + "aurora_multichan.rom";
-  std::cout << "AttachSROMFileNameToPort()" << std::endl;
-  tracker->AttachSROMFileNameToPort( 0, romFile.c_str() );
-#endif /* IGSTK_SIMULATOR_TEST */
-
   std::cout << "SetCommunication()" << std::endl;
   tracker->SetCommunication( serialComm );
 
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
 
-  std::cout << "RequestInitialize()" << std::endl;
-  tracker->RequestInitialize();
+  typedef igstk::AuroraTrackerTool      TrackerToolType;
+  typedef TrackerToolType::TransformType    TransformType;
 
-  std::cout << tracker << std::endl;
+  // instantiate tracker tool with 6DOF 
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+  trackerTool->SetLogger( logger );
+  trackerTool->RequestSelect6DOFTrackerTool();
+  //Set the port number to zero
+  trackerTool->RequestSetPortNumber( 0 );
+  //Configure
+  trackerTool->RequestConfigure();
+  //Attach to the tracker
+  trackerTool->RequestAttachToTracker( tracker );
 
-  std::cout << "GetNumberOfTools()" << std::endl;
-  unsigned int ntools = tracker->GetNumberOfTools();
-
-  std::cout << "NumberOfTools : " << ntools << std::endl;
-
-  std::cout << "RequestStartTracking()" << std::endl;
+  //start tracking 
   tracker->RequestStartTracking();
 
   typedef igstk::Transform            TransformType;
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  for(unsigned int i=0; i<10; i++)
+
+  for(unsigned int i=0; i<400; i++)
     {
     tracker->RequestUpdateStatus();
-    for (unsigned int port = 0; port < 4; port++)
-      {
-      for (unsigned int channel = 0; channel < 2; channel++)
-        {
-        TransformType             transform;
-        VectorType                position;
 
-        tracker->GetToolTransform( port, channel, transform );
-        position = transform.GetTranslation();
-        std::cout << "Port, Channel (" << port << "," << channel
-                  << ") Position = (" << position[0]
-                  << "," << position[1] << "," << position[2]
-                  << ")" << std::endl;
-        }
-      }
+    TransformType             transform;
+    VectorType                position;
+
+    transform = trackerTool->GetCalibratedTransform();
+
+    position = transform.GetTranslation();
+    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
     }
   
-  std::cout << "RequestReset()" << std::endl;
-  tracker->RequestReset();
-  
-  std::cout << "RequestInitialize()" << std::endl;
-  tracker->RequestInitialize();
-  
-  std::cout << "RequestStartTracking()" << std::endl;
-  tracker->RequestStartTracking();
-
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
 
@@ -223,6 +190,7 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
   serialComm->CloseCommunication();
 
   std::cout << "[PASSED]" << std::endl;
+
 
   return EXIT_SUCCESS;
 }

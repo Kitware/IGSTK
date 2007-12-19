@@ -32,31 +32,11 @@ int igstkTrackerToolTest( int, char * [] )
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::TrackerTool                 TrackerToolType;
-  typedef TrackerToolType::TransformType     TransformType;
-  typedef TrackerToolType::ErrorType         ErrorType;
-  typedef TrackerToolType::ErrorType         TimePeriodType;
+  typedef TrackerToolType::TransformType        TransformType;
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
-  TransformType   transform   = trackerTool->GetTransform();
-    
-  std::cout << "TrackerTool Transform : " << transform << std::endl;
-
-  TimePeriodType period = 10.0; // measures are valid for 10 milliseconds
-  trackerTool->SetValidityPeriod( period );
-
-  TimePeriodType period2 = trackerTool->GetValidityPeriod();
-   
-  std::cout << "Validity Period : " << period2 << std::endl;
-
-  if( fabs( period2 - period ) > 1e-6 )
-    {
-    std::cerr << "ERROR: inconsistency between ";
-    std::cerr << " SetValidityPeriod() and GetValidityPeriod() " << std::endl;
-    std::cerr << " set period = " << period  << std::endl;
-    std::cerr << " get period = " << period2 << std::endl;
-    return EXIT_FAILURE;
-    }
+  trackerTool->RequestConfigure();
 
   std::cout << trackerTool << std::endl;
 

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkPolarisTrackerToolNewTest.cxx
+  Module:    igstkPolarisTrackerToolTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -30,10 +30,10 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-#include "igstkPolarisTrackerToolNew.h"
+#include "igstkPolarisTrackerTool.h"
 
 
-int igstkPolarisTrackerToolNewTest( int argc, char ** argv )
+int igstkPolarisTrackerToolTest( int argc, char ** argv )
 {
   
   igstk::RealTimeClock::Initialize();
@@ -64,7 +64,7 @@ int igstkPolarisTrackerToolNewTest( int argc, char ** argv )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
                                        // VTK OutputWindow -> logger
 
-  typedef igstk::PolarisTrackerToolNew      TrackerToolType;
+  typedef igstk::PolarisTrackerTool      TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();

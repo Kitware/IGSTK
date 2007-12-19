@@ -76,19 +76,14 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   if( argc < 5 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
-                            << "MicronTracker camera calibration file"
-                            << "MicronTracker initialization file"
-                            << "Marker template directory "
-                            << "Output directory" << std::endl;
+                            << "MicronTracker_Camera_Calibration_file" << "\t"
+                            << "MicronTracker_initialization_file"  << "\t"
+                            << "Marker_template_directory " << "\t"
+                            << "Logger_Output_directory" << std::endl;
     return EXIT_FAILURE;
     }
 
-  /*
-  std::string outputDirectory = argv[4];
-  std::string testName = argv[0];
-  std::string filename = outputDirectory +"/";
-  filename = filename + testName;
-  filename = filename + "LoggerOutput.txt";
+  std::string filename = argv[4];
   std::cout << "Logger output saved here:\n";
   std::cout << filename << "\n"; 
 
@@ -99,14 +94,6 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   logOutput->SetStream( loggerFile );
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG);
-  */
-
-  /* dump debug information to the standard output */
-  LoggerType::Pointer   logger = LoggerType::New();
-  LogOutputType::Pointer logOutput = LogOutputType::New();  
-  logOutput->SetStream( std::cout );
-  logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG);
 
 
   igstk::MicronTracker::Pointer  tracker;
@@ -114,8 +101,9 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   tracker = igstk::MicronTracker::New();
 
   tracker->AddObserver( itk::AnyEvent(), my_command);
-  //tracker->SetLogger( logger );
+  tracker->SetLogger( logger );
 
+  // Set necessary parameters of the tracker
   std::string calibrationFilesDirectory = argv[1];
   tracker->SetCameraCalibrationFilesDirectory( 
                             calibrationFilesDirectory );
@@ -126,48 +114,105 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   std::string markerTemplateDirectory = argv[3];
   tracker->LoadMarkerTemplate( markerTemplateDirectory );
 
-  // Add tracker tools
-  typedef igstk::MicronTrackerTool  MicronTrackerToolType;
 
-  // Add a tracker tool with "TTblock" marker type attached to it.
-  MicronTrackerToolType::Pointer tool1 = MicronTrackerToolType::New();
-  std::string markerNameTT = "TTblock";
-  tool1->RequestSetMarkerName( markerNameTT );  
-  tracker->RequestAddTool( tool1 );
-
-  // Add a tracker tool with "a" marker type attached to it.
-  MicronTrackerToolType::Pointer tool2 = MicronTrackerToolType::New();
-  std::string markerNameA = "a";
-  tool2->RequestSetMarkerName( markerNameA );  
-  tracker->RequestAddTool( tool2 );
-
-  // Add a tracker tool with "sPointer" marker type attached to it.
-  MicronTrackerToolType::Pointer tool3 = MicronTrackerToolType::New();
-  std::string markerNamePointer = "sPointer";
-  tool3->RequestSetMarkerName( markerNamePointer );  
-  tracker->RequestAddTool( tool3 );
-
-  std::cout << "RequestOpen()" << std::endl;
+  // Start communication
   tracker->RequestOpen();
 
-  std::cout << "RequestInitialize()" << std::endl;
-  tracker->RequestInitialize();
+  // Add tracker tools
+  typedef igstk::MicronTrackerTool  TrackerToolType;
 
-  std::cout << tracker << std::endl;
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+  trackerTool->SetLogger( logger );
+  std::string markerNameTT = "TTblock";
+  trackerTool->RequestSetMarkerName( markerNameTT );  
+  trackerTool->RequestConfigure();
+  trackerTool->RequestAttachToTracker( tracker );
+  trackerTool->AddObserver( itk::AnyEvent(), my_command);
 
-  std::cout << "GetNumberOfTools()" << std::endl;
-  unsigned int ntools = tracker->GetNumberOfTools();
+  TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
+  trackerTool2->SetLogger( logger );
+  std::string markerNamesPointer = "sPointer";
+  trackerTool2->RequestSetMarkerName( markerNamesPointer );  
+  trackerTool2->RequestConfigure();
+  trackerTool2->RequestAttachToTracker( tracker );
+  trackerTool2->AddObserver( itk::AnyEvent(), my_command);
 
-  std::cout << "NumberOfTools : " << ntools << std::endl;
-
-  std::cout << "RequestStartTracking()" << std::endl;
+  //start tracking 
   tracker->RequestStartTracking();
 
-  for(unsigned int i=0; i<500; i++)
+  typedef igstk::Transform            TransformType;
+  typedef ::itk::Vector<double, 3>    VectorType;
+  typedef ::itk::Versor<double>       VersorType;
+
+  for(unsigned int i=0; i<100; i++)
     {
     tracker->RequestUpdateStatus();
+
+    TransformType             transform;
+    VectorType                position;
+
+    transform = trackerTool->GetCalibratedTransform();
+    position = transform.GetTranslation();
+    std::cout << "Trackertool calibrated raw transform:" 
+              << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+
+    transform = trackerTool->GetRawTransform();
+    position = transform.GetTranslation();
+    std::cout << "Trackertool raw transform :" 
+              << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+
+    transform = 
+      trackerTool->GetCalibratedTransformWithRespectToReferenceTrackerTool();
+    position = transform.GetTranslation();
+    std::cout << "Trackertool calibrated transform WRT reference:" 
+              << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+
+    transform = trackerTool2->GetCalibratedTransform();
+    position = transform.GetTranslation();
+    std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+ 
     }
   
+  std::cout << "RequestStopTracking()" << std::endl;
+  tracker->RequestStopTracking();
+
+  //Remove one of the tracker tools and restart tracking
+  std::cout << "Detach the tracker tool from the tracker" << std::endl;
+  trackerTool->RequestDetach( );
+
+  // restart tracking
+
+  tracker->RequestStartTracking();
+
+  for(unsigned int i=0; i<100; i++)
+    {
+    tracker->RequestUpdateStatus();
+
+    TransformType             transform;
+    VectorType                position;
+
+    transform = trackerTool2->GetCalibratedTransform();
+
+    position = transform.GetTranslation();
+    std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+
+    }
+
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
 

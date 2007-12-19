@@ -24,7 +24,7 @@
 
 #include "igstkView3D.h"
 #include "igstkCoordinateReferenceSystemDelegator.h"
-#include "igstkTrackerNew.h"
+#include "igstkTracker.h"
 
 namespace SpatialObjectCoordinateSystemTest
 {
@@ -276,7 +276,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( ellipsoid2.GetPointer() );
 
   ObserverType::Pointer trackerObserver = ObserverType::New();
-  igstk::TrackerNew::Pointer tracker = igstk::TrackerNew::New();
+  igstk::Tracker::Pointer tracker = igstk::Tracker::New();
   tracker->AddObserver( CoordinateSystemEventType(), trackerObserver );
 
   igstk::Transform trackerToParent = identity;

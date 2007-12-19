@@ -9,9 +9,12 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(IGSTK_HEADS
-  igstkFlockOfBirdsCommandInterpreter.h
-  igstkFlockOfBirdsTracker.h
-  igstkFlockOfBirdsTrackerTool.h
+# FIXME: comment out the FlockOfBirds class just for the
+# time being. It requires major work to make it consistent 
+# with the new Tracker API
+#  igstkFlockOfBirdsCommandInterpreter.h
+#  igstkFlockOfBirdsTracker.h
+#  igstkFlockOfBirdsTrackerTool.h
   igstkUSImageObject.h
   igstkUSImageObjectRepresentation.h
   igstkUSImageReader.h
@@ -96,7 +99,11 @@ IF(IGSTK_USE_FLTK)
       ${IGSTK_HEADS}
       igstkFLTKTextBufferLogOutput.h
       igstkFLTKTextLogOutput.h
-      igstkMouseTracker.h
+# FIXME: comment out the Mouse tracker class just for the
+# time being. It requires major work to make it consistent 
+# with the new Tracker API
+#
+#     igstkMouseTracker.h
       igstkView.h
       igstkView2D.h
       igstkView3D.h
@@ -106,9 +113,13 @@ ENDIF(IGSTK_USE_FLTK)
 # The implementation files
 
 SET(IGSTK_SRCS
-  igstkFlockOfBirdsCommandInterpreter.cxx
-  igstkFlockOfBirdsTracker.cxx
-  igstkFlockOfBirdsTrackerTool.cxx
+# FIXME: comment out the FlockOfBirds class just for the
+# time being. It requires major work to make it consistent 
+# with the new Tracker API
+#
+#  igstkFlockOfBirdsCommandInterpreter.cxx
+#  igstkFlockOfBirdsTracker.cxx
+#  igstkFlockOfBirdsTrackerTool.cxx
   igstkUSImageObject.cxx
   igstkUSImageObjectRepresentation.cxx
   igstkUSImageReader.cxx
@@ -186,7 +197,10 @@ SET(IGSTK_SRCS
 IF(IGSTK_USE_FLTK)
   SET(IGSTK_SRCS
       ${IGSTK_SRCS}
-      igstkMouseTracker.cxx
+# FIXME: comment out the Mouse tracker class just for the
+# time being. It requires major work to make it consistent 
+# with the new Tracker API
+#     igstkMouseTracker.cxx
       igstkFLTKTextBufferLogOutput.cxx
       igstkFLTKTextLogOutput.cxx
       igstkView.cxx
@@ -269,7 +283,11 @@ SET(IGSTKSandbox_HEADS
   igstkLandmarkUltrasoundCalibration.h
   igstkObliqueContourMeshObjectRepresentation.h
   igstkObliqueImageSpatialObjectRepresentation.h
-  igstkPivotCalibrationNew.h
+
+# FIXME: comment out the PivotCalibration class just for the
+# time being. It requires major work to make it consistent 
+# with the new Tracker API
+#  igstkPivotCalibrationNew.h
   igstkPivotCalibrationAlgorithm.h
   igstkPoint3D.h
   igstkSocketCommunication.h
@@ -280,23 +298,16 @@ SET(IGSTKSandbox_HEADS
 
   igstkLogger.h
 
-# Refactored tracker classs 
-  igstkTrackerNew.h
-  igstkTrackerToolNew.h
-  igstkPolarisTrackerNew.h
-  igstkPolarisTrackerToolNew.h
-  igstkAuroraTrackerNew.h
-  igstkAuroraTrackerToolNew.h
 )
 
 IF(IGSTKSandbox_USE_Qt)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
-      igstkQMouseTracker.h
-      igstkSimulatedTracker.h
-      igstkQView.h
-      igstkQView2D.h
-      igstkQView3D.h
+# FIXME: comment out the QMouseTracker, SimulatedTracker class just for the
+# time being. It requires major work to make it consistent 
+# with the new Tracker API
+#     igstkQMouseTracker.h
+#      igstkSimulatedTracker.h
       igstkQTWidget.h
 #      igstkImageSpatialObjectImagePlaneRepresentation.h
 #      igstkCTImageSpatialObjectImagePlaneRepresentation.h
@@ -317,10 +328,6 @@ IF(IGSTKSandbox_USE_MicronTracker)
       ${IGSTKSandbox_HEADS}
       igstkMicronTracker.h
       igstkMicronTrackerTool.h
-
-# Refactored classes
-      igstkMicronTrackerNew.h
-      igstkMicronTrackerToolNew.h
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
@@ -337,7 +344,11 @@ SET(IGSTKSandbox_SRCS
   igstkLandmarkUltrasoundCalibration.cxx
   igstkObliqueContourMeshObjectRepresentation.cxx
   igstkObliqueImageSpatialObjectRepresentation.txx
-  igstkPivotCalibrationNew.cxx
+
+# FIXME: comment out the PivotCalibration class just for the
+# time being. It requires major work to make it consistent 
+# with the new API
+#  igstkPivotCalibrationNew.cxx
   igstkPivotCalibrationAlgorithm.cxx
   igstkPoint3D.cxx
   igstkSocketCommunication.cxx
@@ -352,23 +363,16 @@ SET(IGSTKSandbox_SRCS
 
   igstkLogger.cxx
 
-# Refactored tracker classs 
-  igstkTrackerNew.cxx
-  igstkTrackerToolNew.cxx
-  igstkPolarisTrackerNew.cxx
-  igstkPolarisTrackerToolNew.cxx
-  igstkAuroraTrackerNew.cxx
-  igstkAuroraTrackerToolNew.cxx
 )
 
 IF(IGSTKSandbox_USE_Qt)
   SET(IGSTKSandbox_SRCS
     ${IGSTKSandbox_SRCS}
-    igstkQMouseTracker.cxx
-    igstkSimulatedTracker.cxx
-    igstkQView.cxx
-    igstkQView2D.cxx
-    igstkQView3D.cxx
+# FIXME: comment out the QMouseTracker and SimulatedTracker classes just for the
+# time being. It requires major work to make it consistent 
+# with the new Tracker API
+#    igstkQMouseTracker.cxx
+#    igstkSimulatedTracker.cxx
     igstkQTWidget.cxx
     )
 ENDIF(IGSTKSandbox_USE_Qt)
@@ -386,10 +390,6 @@ IF(IGSTKSandbox_USE_MicronTracker)
       ${IGSTKSandbox_SRCS}
       igstkMicronTracker.cxx
       igstkMicronTrackerTool.cxx
-
-# Refactored classes
-      igstkMicronTrackerNew.cxx
-      igstkMicronTrackerToolNew.cxx
  
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
