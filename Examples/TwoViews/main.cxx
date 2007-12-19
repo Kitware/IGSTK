@@ -239,12 +239,18 @@ int main(int , char** )
 
   // Initialize the tracker
   tracker->RequestOpen();
-  tracker->RequestInitialize();
   tracker->SetScaleFactor( 100.0 );
 
-  const unsigned int toolPort = 0;
-  const unsigned int toolNumber = 0;
-  tracker->AttachObjectToTrackerTool( toolPort, toolNumber, ellipsoid );
+  // FIXME: This TrackerTool type should be replaced with a MouseTrackerTool
+  igstk::TrackerTool::Pointer trackerTool = igstk::TrackerTool::New();
+
+  trackerTool->RequestConfigure();
+  trackerTool->RequestAttachToTracker( tracker );
+
+  igstk::Transform  identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+ 
+  ellipsoid->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
 
   m_GUI->SetTracker( tracker );
   
