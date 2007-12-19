@@ -111,7 +111,7 @@ int main( int , char *[] )
 
   // instantiate FLTK widget 
   FLTKWidgetType * fltkWidget3D = 
-                      new FLTKWidgetType( 10,10,280,280,"2D View");
+                      new FLTKWidgetType( 6,6,500,500,"3D View");
   fltkWidget3D->RequestSetView( view3D );
 
   form->end();
@@ -141,6 +141,21 @@ int main( int , char *[] )
 // Finally we request the view to start rendering the scene.
 //
 // Software Guide : EndLatex 
+
+
+// Software Guide : BeginLatex
+//
+// A spatial relationship must be established between the View and the Object
+// to be visualized. In this case we define it as an identity transform, which
+// means that both of them refer to the same coordinate system.
+//
+// Software Guide : EndLatex 
+// Software Guide : BeginCodeSnippet
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  cube->RequestSetTransformAndParent( transform, view3D.GetPointer() );
+// Software Guide : EndCodeSnippet
 
 // Software Guide : BeginCodeSnippet
   view3D->RequestStart();
