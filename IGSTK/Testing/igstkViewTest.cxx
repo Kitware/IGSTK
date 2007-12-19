@@ -31,7 +31,6 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkVTKLoggerOutput.h"
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #include "igstkAxesObjectRepresentation.h"
 
 #include "igstkLogger.h"
@@ -178,18 +177,6 @@ int igstkViewTest( int, char * [] )
 
   try
     {
-    // Define the World coordinate system
-    /* FIXCS
-    typedef igstk::WorldCoordinateReferenceSystemObject  
-      WorldReferenceSystemType;
-
-    WorldReferenceSystemType::Pointer worldReference =
-      WorldReferenceSystemType::New();
-
-    // make the Z axis very small to avoid disturbing the 2D view
-    worldReference->SetSize(1.0,1.0,0.001); 
-    */
-
     // Define a representation for the coordinate system
     typedef igstk::AxesObjectRepresentation  RepresentationType;
     RepresentationType::Pointer AxesRepresentation = RepresentationType::New();
