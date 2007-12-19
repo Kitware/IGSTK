@@ -29,7 +29,7 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
     
   m_Logger = LoggerType::New();
   m_LogOutput = LogOutputType::New();
-  m_LogFile.open("C:/Julien/logUltrasoundGuidedRFA.txt");
+  m_LogFile.open("logUltrasoundGuidedRFA.txt");
   if( !m_LogFile.fail() )
     {
     m_LogOutput->SetStream( m_LogFile );
@@ -39,7 +39,8 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
     std::cerr << "Problem opening Log file, using cerr instead " << std::endl;
     m_LogOutput->SetStream( std::cerr );
     }
-  //m_Logger->AddLogOutput( m_LogOutput );
+  m_Logger->AddLogOutput( m_LogOutput );
+
   // add stdout for debug purposes
   LogOutputType::Pointer coutLogOutput = LogOutputType::New();
   coutLogOutput->SetStream( std::cout );

@@ -6,22 +6,25 @@ class UltrasoundGuidedRFA {open
 } {
   Function {UltrasoundGuidedRFA()} {open
   } {
+    code {this->m_View2D = igstk::View2D::New();
+this->m_View3D = igstk::View3D::New();} {}
     Fl_Window mainWindow {
       label {IGSTK: Ultrasound-Guided RFA Application} open selected
       xywh {672 125 785 470} type Double resizable
       code0 {\#include "igstkView2D.h"}
-      code1 {\#include "igstkView3D.h"} visible
+      code1 {\#include "igstkView3D.h"}
+      code2 {\#include "igstkFLTKWidget.h"} visible
     } {
       Fl_Box Display3D {
         label {Display 3D}
         xywh {420 10 365 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkFLTKWidget.h>}
+        code0 {o->RequestSetView( this->m_View3D );}
         class {igstk::FLTKWidget}
       }
       Fl_Box Display2D {
         label {Display 2D}
         xywh {10 10 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkFLTKWidget.h>}
+        code0 {o->RequestSetView( this->m_View2D );}
         class {igstk::FLTKWidget}
       }
       Fl_Light_Button TrackingButton {
@@ -86,4 +89,8 @@ delete Display3D;} {}
   } {}
   Function {SetSliceNumber(unsigned int)} {open return_type {virtual void}
   } {}
+  decl {igstk::View2D::Pointer    m_View2D;} {public
+  }
+  decl {igstk::View3D::Pointer    m_View3D;} {public
+  }
 } 
