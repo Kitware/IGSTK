@@ -1,19 +1,21 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 class OneViewAndTrackingGUI {open
 } {
-  Function {OneViewAndTrackingGUI()} {} {
+  Function {OneViewAndTrackingGUI()} {open
+  } {
     Fl_Window mainWindow {
       label {IGSTK: Tracking example} open
       xywh {497 96 990 695} type Double resizable visible
     } {
       Fl_Box Display3D {
-        label {Display 3D} selected
+        label {Display 3D}
         xywh {0 0 995 665} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView3D.h>}
-        class {igstk::View3D}
+        code0 {\#include "igstkFLTKWidget.h"}
+        code1 {\#include "igstkView3D.h"}
+        class {igstk::FLTKWidget}
       }
       Fl_Light_Button TrackingButton {
         label Tracking
@@ -27,20 +29,26 @@ else             this->DisableTracking();}
         xywh {95 670 85 25}
       }
     }
-    code {this->hasQuitted = false;} {}
+    code {this->hasQuitted = false;
+this->View3D = igstk::View3D::New();
+this->Display3D->RequestSetView( this->View3D );} {}
   }
   Function {~OneViewAndTrackingGUI()} {open return_type virtual
   } {
     code {delete Display3D;} {}
   }
-  Function {Quit()} {return_type {virtual void}
+  Function {Quit()} {open return_type {virtual void}
   } {
-    code {mainWindow->hide();
+    code {this->Display3D->RequestDisableInteractions();
+this->View3D->RequestStop();
+this->mainWindow->hide();
 this->hasQuitted = true;} {}
   }
-  Function {Show()} {return_type {virtual void}
+  Function {Show()} {open return_type {virtual void}
   } {
-    code {mainWindow->show();} {}
+    code {this->mainWindow->show();
+this->Display3D->RequestEnableInteractions();
+this->View3D->RequestStart();} {}
   }
   Function {EnableTracking()} {open return_type {virtual void}
   } {}
@@ -51,4 +59,6 @@ this->hasQuitted = true;} {}
     code {return this->hasQuitted;} {}
   }
   decl {bool hasQuitted;} {}
+  decl {igstk::View3D::Pointer   View3D;} {selected public
+  }
 } 

@@ -92,17 +92,18 @@ int main(int , char** )
   application.AttachObjectToTrack( cylinder );
 
   // View coordinate system is with respect to the ellipsoid.
-  application.Display3D->RequestSetTransformAndParent( identity, ellipsoid.GetPointer() );
+  application.View3D->RequestSetTransformAndParent( identity, ellipsoid.GetPointer() );
 
-  application.Display3D->RequestResetCamera();
-  application.Display3D->Update();
+  application.View3D->RequestResetCamera();
+  application.View3D->SetRefreshRate( 60 ); // 60 Hz
+
+  application.Show();
 
   while( !application.HasQuitted() )
     {
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
     }
-
 
   return EXIT_SUCCESS;
 }

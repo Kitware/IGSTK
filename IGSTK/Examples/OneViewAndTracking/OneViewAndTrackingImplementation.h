@@ -99,13 +99,6 @@ public:
     m_Tracker->RequestOpen();
     m_Tracker->RequestInitialize();
 
-    // Set up the four quadrant views
-    this->Display3D->RequestResetCamera();
-    this->Display3D->Update();
-    this->Display3D->RequestEnableInteractions();
-    this->Display3D->RequestSetRefreshRate( 60 ); // 60 Hz
-    this->Display3D->RequestStart();
-   
     m_Tracking = false;
     }
 
@@ -132,13 +125,13 @@ public:
   void AddCylinder( igstk::CylinderObjectRepresentation 
                                                     * cylinderRepresentation )
     {
-    this->Display3D->RequestAddObject( cylinderRepresentation->Copy() );
+    this->View3D->RequestAddObject( cylinderRepresentation->Copy() );
     }
   
   void AddEllipsoid( igstk::EllipsoidObjectRepresentation * 
       ellipsoidRepresentation )
     {
-    this->Display3D->RequestAddObject( ellipsoidRepresentation->Copy() );
+    this->View3D->RequestAddObject( ellipsoidRepresentation->Copy() );
     }
 
   void AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
