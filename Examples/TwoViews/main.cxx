@@ -30,6 +30,7 @@
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkMeshObjectRepresentation.h"
 #include "igstkMouseTracker.h"
+#include "igstkMouseTrackerTool.h"
 #include "igstkRealTimeClock.h"
 
 #include "vtkInteractorObserver.h"
@@ -241,9 +242,9 @@ int main(int , char** )
   tracker->RequestOpen();
   tracker->SetScaleFactor( 100.0 );
 
-  // FIXME: This TrackerTool type should be replaced with a MouseTrackerTool
-  igstk::TrackerTool::Pointer trackerTool = igstk::TrackerTool::New();
+  igstk::MouseTrackerTool::Pointer trackerTool = igstk::MouseTrackerTool::New();
 
+  trackerTool->RequestSetMouseName("Mouse1");
   trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
 
