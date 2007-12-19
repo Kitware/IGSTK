@@ -125,19 +125,27 @@ PivotCalibrationFLTKWidget::RequestInitialize( unsigned int n,
 }
 
 void 
+PivotCalibrationFLTKWidget::RequestReset()
+{
+  Fl::warning("The method RequestReset() is not implemented");
+}
+
+void 
 PivotCalibrationFLTKWidget::RequestComputeCalibration()
 {
   std::ostringstream msg;
 
   this->m_calibrateButton->deactivate();
 
-  for(unsigned int i=this->m_delay; i>0; i-=1000 ) {
+  for(unsigned int i=this->m_delay; i>0; i-=1000 )
+    {
     msg.str("");
     msg<<"Data acquisition starts in "<<(int)(i/1000)<<" seconds."; 
     this->m_output->value(msg.str().c_str());
     Fl::check();
-    ::Sleep(1000);
-  }
+    Fl::wait(0.001);
+    }
+
   this->m_output->value("");
   Fl::check();
   this->m_pivotCalibration->RequestComputeCalibration();

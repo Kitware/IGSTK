@@ -66,9 +66,9 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
               //gather the information from the UI
   igstk::SerialCommunication::PortNumberType comPort = 
     static_cast<igstk::SerialCommunication::PortNumberType> ( this->m_comPortChoice->value() );
-  unsigned int toolPort = this->m_toolPortSlider->value();
-  unsigned int delay = this->m_delaySlider->value();
-  unsigned int numberOfFrames = this->m_numberOfFramesSlider->value(); 
+  unsigned int toolPort = static_cast<unsigned int>( this->m_toolPortSlider->value() );
+  unsigned int delay = static_cast<unsigned int>( this->m_delaySlider->value() );
+  unsigned int numberOfFrames = static_cast<unsigned int>( this->m_numberOfFramesSlider->value() ); 
   std::string sromFileName = this->m_SROMFileNameTextField->value();
 
          //if already initialized, shutdown everything and reinitialize
@@ -142,7 +142,7 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
   }
   this->m_initialized = true;
   this->m_pivotCalibrationFLTKWidget->RequestSetDelay( delay );
-  igstk::Tracker::Pointer genericTracker = this->m_tracker;
+  igstk::Tracker::Pointer genericTracker = this->m_tracker.GetPointer();
 
   this->m_pivotCalibrationFLTKWidget->RequestInitialize(numberOfFrames,
                                                         genericTracker,

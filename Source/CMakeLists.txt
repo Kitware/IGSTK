@@ -269,7 +269,9 @@ SET(IGSTKSandbox_HEADS
   igstkLandmarkUltrasoundCalibration.h
   igstkObliqueContourMeshObjectRepresentation.h
   igstkObliqueImageSpatialObjectRepresentation.h
+  igstkPivotCalibrationNew.h
   igstkPivotCalibrationAlgorithm.h
+  igstkPivotCalibrationFLTKWidget.h
   igstkPoint3D.h
   igstkSocketCommunication.h
   igstkVideoGrabber.h
@@ -335,7 +337,9 @@ SET(IGSTKSandbox_SRCS
   igstkLandmarkUltrasoundCalibration.cxx
   igstkObliqueContourMeshObjectRepresentation.cxx
   igstkObliqueImageSpatialObjectRepresentation.txx
+  igstkPivotCalibrationNew.cxx
   igstkPivotCalibrationAlgorithm.cxx
+  igstkPivotCalibrationFLTKWidget.cxx
   igstkPoint3D.cxx
   igstkSocketCommunication.cxx
   igstkVideoGrabber.cxx

@@ -97,6 +97,9 @@ public:
   unsigned long AddObserver( const itk::EventObject & event, 
                              itk::Command *command ) const;
 
+  /** This method needs to be implemented (check with Ziv) 
+   * In the meantime we display a warning message. */
+  void RequestReset();
  
 private:
 
