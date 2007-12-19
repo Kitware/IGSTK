@@ -22,8 +22,7 @@ class FourViewsTrackingWithCTGUI {open
     Fl_Window mainWindow {
       label {IGSTK: Four Veiws Tracking With CT Images Example} open
       xywh {102 272 1145 735} type Double box PLASTIC_UP_BOX resizable
-      code0 {\#include "igstkView2D.h"}
-      code1 {\#include "igstkView3D.h"} visible
+      code0 {\#include "igstkFLTKWidget.h"} visible
     } {
       Fl_Group ControlGroup {
         xywh {0 0 375 690} box DOWN_BOX
@@ -101,25 +100,25 @@ else
       Fl_Group ViewerGroup {
         xywh {375 0 770 692} box DOWN_BOX
       } {
-        Fl_Box DisplayAxial {
+        Fl_Box DisplayAxialWidget {
           label {Display Axial}
           xywh {376 1 380 330} box FLAT_BOX color 0 labelcolor 7
-          class {igstk::View2D}
+          class {igstk::FLTKWidget}
         }
-        Fl_Box DisplaySagittal {
+        Fl_Box DisplaySagittalWidget {
           label {Display Sagittal}
           xywh {765 1 380 330} box FLAT_BOX color 0 labelcolor 7
-          class {igstk::View2D}
+          class {igstk::FLTKWidget}
         }
-        Fl_Box Display3D {
+        Fl_Box Display3DWidget {
           label {Display 3D}
           xywh {765 346 380 330} box FLAT_BOX color 0 labelcolor 7
-          class {igstk::View3D}
+          class {igstk::FLTKWidget}
         }
-        Fl_Box DisplayCoronal {
+        Fl_Box DisplayCoronalWidget {
           label {Display Coronal}
           xywh {376 346 380 330} box FLAT_BOX color 0 labelcolor 7
-          class {igstk::View2D}
+          class {igstk::FLTKWidget}
         }
         Fl_Value_Slider AxialSlider {
           callback {this->RequestResliceImage();}
@@ -144,10 +143,10 @@ QuitButton->callback( Quit );} {}
   }
   Function {~FourViewsTrackingWithCTGUI()} {open return_type virtual
   } {
-    code {delete DisplayAxial;
-delete DisplayCoronal;
-delete DisplaySagittal;
-delete Display3D;} {selected
+    code {delete DisplayAxialWidget;
+delete DisplayCoronalWidget;
+delete DisplaySagittalWidget;
+delete Display3DWidget;} {selected
     }
   }
   Function {RequestSetPatientName()} {open return_type {virtual void}
