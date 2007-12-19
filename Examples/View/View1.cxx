@@ -170,8 +170,19 @@ int main( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    ellipsoid->RequestSetTransformAndParent( transform, view3D.GetPointer() );
+//    ellipsoid->RequestSetTransformAndParent( transform, view3D.GetPointer() );
+    view3D->RequestSetTransformAndParent( transform, ellipsoid.GetPointer() );
     // EndCodeSnippet
+
+
+    //
+    // Set the position of the camera in the coordinate system of the View.
+    //
+    view3D->SetCameraPosition( 0, 0, -1 );
+    view3D->SetCameraViewUp( 0, -1, 0 );
+    view3D->SetFocalPoint( 0, 0, 0 );
+    view3D->RequestResetCamera();
+
 
     // BeginLatex
     //
