@@ -111,35 +111,6 @@ int main( int, char * [] )
 
     // BeginLatex
     // 
-    // A geometrical transformation can then be applied to the ellipsoid spatial
-    // object as follows:
-    // 
-    // EndLatex
-
-    // BeginCodeSnippet
-    const double validityTimeInMilliseconds = 
-      igstk::TimeStamp::GetLongestPossibleTime();
-
-    igstk::Transform transform;
-    igstk::Transform::VectorType translation;
-    translation[0] = 0;
-    translation[1] = 10;
-    translation[2] = 10;
-    igstk::Transform::VersorType rotation;
-    rotation.Set( 0.0, 0.0, 0.0, 1.0 );
-    igstk::Transform::ErrorType errorValue = 10; // 10 millimeters
-
-    transform.SetTranslationAndRotation( 
-        translation, rotation, errorValue, validityTimeInMilliseconds );
-
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-    ellipsoid->RequestSetTransform( transform ); // FIXME
-#endif
-
-    // EndCodeSnippet
-
-    // BeginLatex
-    // 
     // Next, the FLTK main window and an OpenGL FLTK Widget object are
     // instantiated:
     //
@@ -173,6 +144,33 @@ int main( int, char * [] )
     // BeginCodeSnippet
     view3D->RequestAddObject( ellipsoidRepresentation );
     view3D->RequestResetCamera();
+    // EndCodeSnippet
+
+
+    // BeginLatex
+    // 
+    // A geometrical transformation can then be applied to the ellipsoid spatial
+    // object as follows:
+    // 
+    // EndLatex
+
+    // BeginCodeSnippet
+    const double validityTimeInMilliseconds = 
+      igstk::TimeStamp::GetLongestPossibleTime();
+
+    igstk::Transform transform;
+    igstk::Transform::VectorType translation;
+    translation[0] = 0;
+    translation[1] = 0;
+    translation[2] = 0;
+    igstk::Transform::VersorType rotation;
+    rotation.Set( 0.0, 0.0, 0.0, 1.0 );
+    igstk::Transform::ErrorType errorValue = 10; // 10 millimeters
+
+    transform.SetTranslationAndRotation( 
+        translation, rotation, errorValue, validityTimeInMilliseconds );
+
+    ellipsoid->RequestSetTransformAndParent( transform, view3D.GetPointer() );
     // EndCodeSnippet
 
     // BeginLatex
