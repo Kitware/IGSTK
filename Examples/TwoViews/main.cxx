@@ -113,8 +113,6 @@ int main(int , char** )
 
   TwoViews* m_GUI = new TwoViews();
 
-  m_GUI->MainWindow->show();
-
   /**
    *  Coordinate systems:
    *       
@@ -219,6 +217,9 @@ int main(int , char** )
 
   m_GUI->Display1->RequestSetView( view3D );
   m_GUI->Display2->RequestSetView( view3D2 );
+
+  // show() can be called after the RequestSetView() invocations.
+  m_GUI->MainWindow->show();
 
   igstk::Transform displayTransform;
   displayTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
