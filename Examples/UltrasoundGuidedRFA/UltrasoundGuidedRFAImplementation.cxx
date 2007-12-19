@@ -26,7 +26,7 @@ UltrasoundGuidedRFAImplementation::UltrasoundGuidedRFAImplementation()
                                                          :m_StateMachine(this)
 {
   m_Tracker = TrackerType::New();
-    
+ 
   m_Logger = LoggerType::New();
   m_LogOutput = LogOutputType::New();
   m_LogFile.open("logUltrasoundGuidedRFA.txt");

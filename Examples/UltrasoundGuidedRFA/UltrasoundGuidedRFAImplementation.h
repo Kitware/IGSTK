@@ -50,6 +50,8 @@
 #include "igstkUSImageObjectRepresentation.h"
 #include "igstkObliqueImageSpatialObjectRepresentation.h"
 #include "igstkUltrasoundImageSimulator.h"
+#include "igstkView2D.h"
+#include "igstkView3D.h"
 
 #include "FL/Fl_File_Chooser.H"
 
@@ -125,6 +127,9 @@ public:
   typedef igstk::USImageObjectRepresentation        USImageRepresentationType;
   typedef igstk::USImageReader                      USImageReaderType;
 
+  typedef igstk::View2D                             View2DType;
+  typedef igstk::View3D                             View3DType;
+
 #ifdef WIN32
   typedef igstk::SerialCommunicationForWindows  CommunicationType;
 #else
@@ -166,6 +171,11 @@ private:
   LogOutputType::Pointer                          m_LogOutput;
   TrackerType::Pointer                            m_Tracker;
   CommunicationType::Pointer                      m_Communication;
+
+  View2DType::Pointer                             m_View2D;
+  View3DType::Pointer                             m_View3D;
+
+  
   LiverReaderType::Pointer                        m_MeshReader;
   igstk::MeshObjectRepresentation::Pointer        m_LiverRepresentation;
   igstk::ObliqueContourMeshObjectRepresentation::Pointer 
