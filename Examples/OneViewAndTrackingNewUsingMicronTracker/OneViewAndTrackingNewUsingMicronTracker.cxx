@@ -97,13 +97,6 @@ int main(int argc, char** argv )
   view3D->RequestAddObject( ellipsoidRepresentation );
   view3D->RequestAddObject( cylinderRepresentation );
  
-  // Set the refresh rate and start 
-  // the pulse generators of the views.
-
-  view3D->SetRefreshRate( 1 );
-  view3D->RequestStart();
-  view3D->SetCameraPosition(60.0,-20.0,520.0);
-
   application.Display3D->RequestSetView( view3D );
   application.Show();
 
@@ -124,6 +117,14 @@ int main(int argc, char** argv )
 
   igstk::Transform             toolTransform; 
   igstk::Transform::VectorType position;
+
+  // Set the refresh rate and start 
+  // the pulse generators of the views.
+
+  view3D->SetRefreshRate( 1 );
+  view3D->SetCameraPosition(60.0,-20.0,520.0);
+  view3D->RequestStart();
+
 
   while( !application.HasQuitted() )
     {
