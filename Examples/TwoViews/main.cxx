@@ -119,13 +119,14 @@ int main(int , char** )
    *       
    *                        Mesh
    *                          | 
-   *              ------------------------
-   *              |           |           |
-   *          Ellipsoid     Tube       Display1
-   *              |
-   *        -----------
-   *       |           |
-   *    Display2    Cylinder 
+   *              --------------------------------------
+   *              |           |           |             |
+   *          Ellipsoid     Tube       Display1      Tracker
+   *              |                                     | 
+   *        -----------                            TrackerTool   
+   *       |           |                                |  
+   *    Display2    Cylinder                       Ellipsoid2
+   *
    *
    *  Display1 looks at the scene from with respect to the coordinates 
    *  of the mesh since the transform from Display1 to Mesh is identity.
@@ -137,6 +138,8 @@ int main(int , char** )
    *  so as the ellipsoid rotates with respect to the mesh, the mesh appears
    *  to move in Display2. The rotation of the ellipsoid is visible through
    *  the movement of the cylinder which is attached to the ellipsoid.
+   *
+   *  A second ellipsoid is controlled by a MouseTracker.
    *
    */
 
@@ -150,6 +153,18 @@ int main(int , char** )
   ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
   ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
   ellipsoidRepresentation->SetOpacity(1.0);
+
+  // Create the ellipsoid to be tracked
+  igstk::EllipsoidObject::Pointer ellipsoid2 = igstk::EllipsoidObject::New();
+  ellipsoid2->SetRadius(1,0.5,2);
+  
+  // Create the ellipsoid representation
+  igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation2 = 
+                                 igstk::EllipsoidObjectRepresentation::New();
+  ellipsoidRepresentation2->RequestSetEllipsoidObject( ellipsoid2 );
+  ellipsoidRepresentation2->SetColor(0.0,0.0,1.0);  // make it blue
+  ellipsoidRepresentation2->SetOpacity(1.0);
+
 
   // Create the cylinder 
   igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
@@ -224,10 +239,12 @@ int main(int , char** )
 
   // Add another Object representations to the second display
   m_GUI->m_View3D2->RequestAddObject( ellipsoidRepresentation->Copy() );
+  m_GUI->m_View3D2->RequestAddObject( ellipsoidRepresentation2->Copy() );
   m_GUI->m_View3D2->RequestAddObject( cylinderRepresentation->Copy() );
   m_GUI->m_View3D2->RequestAddObject( meshRepresentation->Copy() );
 
   m_GUI->m_View3D->RequestAddObject( ellipsoidRepresentation );
+  m_GUI->m_View3D->RequestAddObject( ellipsoidRepresentation2 );
   m_GUI->m_View3D->RequestAddObject( cylinderRepresentation );
   m_GUI->m_View3D->RequestAddObject( tubeRepresentation );
   m_GUI->m_View3D->RequestAddObject( meshRepresentation );
@@ -251,7 +268,11 @@ int main(int , char** )
   igstk::Transform  identityTransform;
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
  
-  ellipsoid->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
+  // Connect the second ellipsoid to the tracker tool.
+  ellipsoid2->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
+
+  // Set the tracker to the reference system of the mesh.
+  tracker->RequestSetTransformAndParent( identityTransform, mesh.GetPointer() );
 
   m_GUI->SetTracker( tracker );
   
