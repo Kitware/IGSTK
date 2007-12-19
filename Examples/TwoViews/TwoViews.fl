@@ -1,15 +1,18 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 class TwoViews {open
 } {
+  decl {typedef igstk::View3D  View3DType;} {public
+  }
+  decl {typedef View3DType::Pointer  View3DPointer;} {public
+  }
   decl {typedef igstk::Tracker   TrackerType;} {public
   }
   decl {typedef TrackerType::Pointer  TrackerPointer;} {public
   }
-  Function {TwoViews()} {open
-  } {
+  Function {TwoViews()} {} {
     Fl_Window MainWindow {
       label {IGSTK: Two Views Example} open
       xywh {495 249 780 375} type Double resizable visible
@@ -17,7 +20,8 @@ class TwoViews {open
       Fl_Box Display1 {
         label {Display 1}
         xywh {5 5 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkFLTKWidget.h>}
+        code0 {\#include "igstkFLTKWidget.h"}
+        code1 {\#include "igstkView3D.h"}
         class {igstk::FLTKWidget}
       }
       Fl_Light_Button TrackingBt {
@@ -38,18 +42,31 @@ class TwoViews {open
         xywh {690 345 85 25}
       }
     }
+    code {this->m_View3D  = View3DType::New();
+this->m_View3D2 = View3DType::New();
+
+this->Display1->RequestSetView( this->m_View3D );
+this->Display2->RequestSetView( this->m_View3D2 );
+
+this->m_Showing = false;} {}
   }
   Function {~TwoViews()} {return_type virtual
   } {
     code {delete Display1;
-delete Display2;} {selected
-    }
+delete Display2;} {}
+  }
+  Function {Show()} {} {
+    code {this->m_Showing = true;
+this->MainWindow->show();} {}
   }
   Function {Quit()} {return_type {virtual void}
   } {
-    code {this->MainWindow->hide();} {}
+    code {this->m_View3D->RequestStop();
+this->m_View3D2->RequestStop();
+this->MainWindow->hide();
+this->m_Showing = false;} {}
   }
-  Function {SetTracking( bool tracking )} {open return_type {virtual void}
+  Function {SetTracking( bool tracking )} {return_type {virtual void}
   } {
     code {if( tracking )
   {
@@ -65,4 +82,10 @@ else
     code {this->m_Tracker = tracker;} {}
   }
   decl {TrackerPointer m_Tracker;} {}
+  decl {View3DPointer m_View3D;} {public
+  }
+  decl {View3DPointer m_View3D2;} {public
+  }
+  decl {bool m_Showing;} {selected public
+  }
 } 

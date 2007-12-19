@@ -210,35 +210,29 @@ int main(int , char** )
   meshRepresentation->RequestSetMeshObject( mesh );
   meshRepresentation->SetColor(1,0,0);
 
-  // instantiate a 3D view 
-  typedef igstk::View3D        View3DType;
-  View3DType::Pointer view3D = View3DType::New();
-  View3DType::Pointer view3D2 = View3DType::New();
 
-  m_GUI->Display1->RequestSetView( view3D );
-  m_GUI->Display2->RequestSetView( view3D2 );
-
-  // show() can be called after the RequestSetView() invocations.
-  m_GUI->MainWindow->show();
+  // show() can be called after the RequestSetView() invocations, which are set
+  // now in the constructor of the TwoViews class.
+  m_GUI->Show();
 
   igstk::Transform displayTransform;
   displayTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  view3D->RequestSetTransformAndParent( displayTransform, mesh.GetPointer() );
-  view3D2->RequestSetTransformAndParent( displayTransform, ellipsoid.GetPointer() );
+  m_GUI->m_View3D->RequestSetTransformAndParent( displayTransform, mesh.GetPointer() );
+  m_GUI->m_View3D2->RequestSetTransformAndParent( displayTransform, ellipsoid.GetPointer() );
 
   // Add another Object representations to the second display
-  view3D2->RequestAddObject( ellipsoidRepresentation->Copy() );
-  view3D2->RequestAddObject( cylinderRepresentation->Copy() );
-  view3D2->RequestAddObject( meshRepresentation->Copy() );
+  m_GUI->m_View3D2->RequestAddObject( ellipsoidRepresentation->Copy() );
+  m_GUI->m_View3D2->RequestAddObject( cylinderRepresentation->Copy() );
+  m_GUI->m_View3D2->RequestAddObject( meshRepresentation->Copy() );
 
-  view3D->RequestAddObject( ellipsoidRepresentation );
-  view3D->RequestAddObject( cylinderRepresentation );
-  view3D->RequestAddObject( tubeRepresentation );
-  view3D->RequestAddObject( meshRepresentation );
+  m_GUI->m_View3D->RequestAddObject( ellipsoidRepresentation );
+  m_GUI->m_View3D->RequestAddObject( cylinderRepresentation );
+  m_GUI->m_View3D->RequestAddObject( tubeRepresentation );
+  m_GUI->m_View3D->RequestAddObject( meshRepresentation );
 
-  view3D2->RequestResetCamera();
-  view3D->RequestResetCamera();
+  m_GUI->m_View3D2->RequestResetCamera();
+  m_GUI->m_View3D->RequestResetCamera();
 
   // Create a tracker
   igstk::MouseTracker::Pointer tracker = igstk::MouseTracker::New();
@@ -268,15 +262,15 @@ int main(int , char** )
   fileOutput->SetStream( ofs );
   logger->AddLogOutput( logOutput );
  
-  view3D->SetLogger( logger ); 
-  view3D2->SetLogger( logger ); 
+  m_GUI->m_View3D->SetLogger( logger ); 
+  m_GUI->m_View3D2->SetLogger( logger ); 
   tracker->SetLogger( logger );
 
-  view3D->SetRefreshRate( 30 ); // 30 Hz
-  view3D2->SetRefreshRate( 30 ); // 30 Hz
+  m_GUI->m_View3D->SetRefreshRate( 30 ); // 30 Hz
+  m_GUI->m_View3D2->SetRefreshRate( 30 ); // 30 Hz
 
-  view3D->RequestStart();
-  view3D2->RequestStart();
+  m_GUI->m_View3D->RequestStart();
+  m_GUI->m_View3D2->RequestStart();
 
   typedef igstk::Transform::VersorType  VersorType;
   VersorType versor0 = GetRandomVersorNear( 
@@ -284,7 +278,7 @@ int main(int , char** )
                                     0.05 );
   VersorType versor1 = ellipsoidToMeshTransform.GetRotation();
 
-  while(1)
+  while( m_GUI->Showing )
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
@@ -305,8 +299,8 @@ int main(int , char** )
     versor1 = versor2;
     }
 
-  view3D->RequestStop();
-  view3D2->RequestStop();
+  m_GUI->m_View3D->RequestStop();
+  m_GUI->m_View3D2->RequestStop();
 
   tracker->RequestStopTracking();
   tracker->RequestClose();
