@@ -81,6 +81,7 @@
 
 // BeginCodeSnippet
 #include "igstkMouseTracker.h"
+#include "igstkMouseTrackerTool.h"
 // EndCodeSnippet
 
 
@@ -232,21 +233,31 @@ int main(int , char** )
   // EndLatex
   // BeginCodeSnippet
   igstk::MouseTracker::Pointer tracker = igstk::MouseTracker::New();
-  tracker->RequestOpen();
-  tracker->RequestInitialize();
-  tracker->SetScaleFactor( 100.0 );
-  // EndCodeSnippet
 
-  // BeginLatex
-  // Now, the previously created spatial object is attached to the tracker and 
-  // the tracker is set to monitor the mouse events from the user interface.
-  // The tool port and tool number is the naming convention from NDI trackers 
-  // (refer to Chapter \ref{Chapter:Tracker} on page \pageref{Chapter:Tracker}).
-  // EndLatex
-  // BeginCodeSnippet
-  const unsigned int toolPort = 0;
-  const unsigned int toolNumber = 0;
-  tracker->AttachObjectToTrackerTool( toolPort, toolNumber, ellipsoid );
+  tracker->RequestOpen();
+  tracker->SetScaleFactor( 100.0 );
+
+  typedef igstk::MouseTrackerTool      TrackerToolType;
+  typedef TrackerToolType::TransformType    TransformType;
+
+  // instantiate and attach wired tracker tool  
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+  std::string mouseName = "PS/2";
+  trackerTool->RequestSetMouseName( mouseName );
+  //Configure
+  trackerTool->RequestConfigure();
+  //Attach to the tracker
+  trackerTool->RequestAttachToTracker( tracker );
+  //Add observer to listen to events throw by the tracker tool
+
+  // EndCodeSnippet
+  //
+  TransformType identityTransform;
+  identityTransform.SetToIdentity( 
+                      igstk::TimeStamp::GetLongestPossibleTime() );
+   
+  ellipsoid->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
+
   m_GUI->SetTracker( tracker );
   // EndCodeSnippet
 
