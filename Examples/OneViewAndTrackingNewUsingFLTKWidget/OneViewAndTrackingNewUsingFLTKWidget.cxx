@@ -104,6 +104,11 @@ int main(int , char** )
   view3D->RequestAddObject( ellipsoidRepresentation );
   view3D->RequestAddObject( cylinderRepresentation );
  
+
+  application.Display3D->RequestSetView( view3D );
+
+  application.Show();
+
   // Set the refresh rate and start 
   // the pulse generators of the views.
 
@@ -112,10 +117,6 @@ int main(int , char** )
   //view3D->SetCameraPosition(0.0, 0.0, -600.0);
   view3D->SetCameraPosition(-225.0,100.00,-1600.0);
 
-
-  application.Display3D->RequestSetView( view3D );
-
-  application.Show();
 
   // Associate the Spatial Object to the tracker tool
   application.AttachObjectToTrackerTool ( cylinder );
