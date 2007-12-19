@@ -136,8 +136,10 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 
   toolCalibrationTransform.SetTranslationAndRotation(translation, 
                                                      rotation, 0.1, 10000);
+  /* FIXME
   m_Tracker->SetToolCalibrationTransform( TRACKER_TOOL_PORT, 0,
                                           toolCalibrationTransform);
+  */
 
   m_ImageToTrackerTransform.SetToIdentity( 10000 );
   m_ImageLandmarkTransform.SetToIdentity( 10000 );
@@ -503,12 +505,16 @@ void FourViewsTrackingWithCT::InitializeTrackerProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
           "FourViewsTrackingWithCT::InitializeTrackerProcessing called ... \n" )
   m_Tracker->RequestOpen();
+  /* FIXME
   m_Tracker->AttachSROMFileNameToPort( 
                                     TRACKER_TOOL_PORT, TRACKER_TOOL_SROM_FILE );
   m_Tracker->RequestInitialize();
+  */
   m_Tracker->RequestStartTracking();
+  /* FIXME 
   m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(), 
              m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
+  */
 }
 
 void FourViewsTrackingWithCT::RequestAddImageLandmark()
@@ -637,8 +643,10 @@ void FourViewsTrackingWithCT::GetTrackerTransform()
 {
   igstkLogMacro2( m_Logger, DEBUG, "Tracker::GetToolTransform called...\n" )
   m_Tracker->RequestUpdateStatus();
+  /* FIXME
   m_Tracker->GetToolTransform( 
                       TRACKER_TOOL_PORT, 0, m_TrackerLandmarkTransformToBeSet );
+   */
 }
 
 void FourViewsTrackingWithCT::RequestClearTrackerLandmarks()
@@ -698,8 +706,10 @@ void FourViewsTrackingWithCT::StartTrackingProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
               "FourViewsTrackingWithCT::StartTrackingProcessing called ... \n" )
 
+  /* FIXME
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Cylinder );
   m_Tracker->AttachObjectToTrackerTool( TRACKER_TOOL_PORT, 0, m_Ellipsoid );
+   */
   m_Tracker->RequestStartTracking();
   m_PulseGenerator->RequestStart();   
   /** We don't have observer for tracker, we are actively reading the transform 
@@ -716,7 +726,9 @@ void FourViewsTrackingWithCT::Tracking()
   //m_Tracker->UpdateStatus();
   igstk::Transform transform;
   //transform = m_Ellipsoid->GetTransform();
+  /* FIXME
   m_Tracker->GetToolTransform( TRACKER_TOOL_PORT, 0, transform );
+  */ 
   //m_Ellipsoid->RequestSetTransform( transform );
 
   ImageSpatialObjectType::PointType    p;
@@ -966,8 +978,10 @@ void FourViewsTrackingWithCT
                                        igstk::TransformModifiedEvent *) & event;
     m_ImageToTrackerTransform = tmevent->Get();
     
+    /* FIXME
     m_Tracker->SetPatientTransform( m_ImageToTrackerTransform );
-    
+    */
+
     igstkLogMacro( DEBUG, 
                  "Registration Transform" << m_ImageToTrackerTransform << "\n");
     igstkLogMacro( DEBUG, "Registration Transform Inverse" 
