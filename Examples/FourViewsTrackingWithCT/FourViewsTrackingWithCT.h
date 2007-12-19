@@ -300,14 +300,6 @@ private:
   /** Resetting the state of the application */
   void Reset();
 
-  typedef igstk::View2D ViewType2D;
-  typedef igstk::View3D ViewType3D;
-
-  ViewType2D::Pointer DisplayAxial;
-  ViewType2D::Pointer DisplayCoronal;
-  ViewType2D::Pointer DisplaySagittal;
-  ViewType3D::Pointer Display3D;
-
 };
 
 

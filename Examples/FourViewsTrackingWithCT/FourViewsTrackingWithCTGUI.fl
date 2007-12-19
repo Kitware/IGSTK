@@ -22,7 +22,9 @@ class FourViewsTrackingWithCTGUI {open
     Fl_Window mainWindow {
       label {IGSTK: Four Veiws Tracking With CT Images Example} open
       xywh {102 272 1145 735} type Double box PLASTIC_UP_BOX resizable
-      code0 {\#include "igstkFLTKWidget.h"} visible
+      code0 {\#include "igstkFLTKWidget.h"} 
+      code1 {\#include <igstkView2D.h>}
+      code2 {\#include <igstkView3D.h>} visible
     } {
       Fl_Group ControlGroup {
         xywh {0 0 375 690} box DOWN_BOX
@@ -100,22 +102,22 @@ else
       Fl_Group ViewerGroup {
         xywh {375 0 770 692} box DOWN_BOX
       } {
-        Fl_Box DisplayAxialWidget {
+        Fl_Box m_DisplayAxialWidget {
           label {Display Axial}
           xywh {376 1 380 330} box FLAT_BOX color 0 labelcolor 7
           class {igstk::FLTKWidget}
         }
-        Fl_Box DisplaySagittalWidget {
+        Fl_Box m_DisplaySagittalWidget {
           label {Display Sagittal}
           xywh {765 1 380 330} box FLAT_BOX color 0 labelcolor 7
           class {igstk::FLTKWidget}
         }
-        Fl_Box Display3DWidget {
+        Fl_Box m_Display3DWidget {
           label {Display 3D}
           xywh {765 346 380 330} box FLAT_BOX color 0 labelcolor 7
           class {igstk::FLTKWidget}
         }
-        Fl_Box DisplayCoronalWidget {
+        Fl_Box m_DisplayCoronalWidget {
           label {Display Coronal}
           xywh {376 346 380 330} box FLAT_BOX color 0 labelcolor 7
           class {igstk::FLTKWidget}
@@ -137,16 +139,28 @@ else
         xywh {0 690 1145 60} box DOWN_BOX
       }
     }
-    code {mainWindow->show();
+    code {
+m_DisplayAxial = igstk::View2D::New();
+m_DisplayCoronal = igstk::View2D::New();
+m_DisplaySagittal = igstk::View2D::New();
+m_Display3D = igstk::View3D::New();
+this->m_DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
+this->m_DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
+this->m_DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );
+this->m_DisplayAxialWidget->RequestSetView( this->m_DisplayAxial );
+this->m_DisplayCoronalWidget->RequestSetView( this->m_DisplayCoronal );
+this->m_DisplaySagittalWidget->RequestSetView( this->m_DisplaySagittal );
+this->m_Display3DWidget->RequestSetView( this->m_Display3D );
+mainWindow->show();
 mainWindow->callback( Quit );
 QuitButton->callback( Quit );} {}
   }
   Function {~FourViewsTrackingWithCTGUI()} {open return_type virtual
   } {
-    code {delete DisplayAxialWidget;
-delete DisplayCoronalWidget;
-delete DisplaySagittalWidget;
-delete Display3DWidget;} {selected
+    code {delete m_DisplayAxialWidget;
+delete m_DisplayCoronalWidget;
+delete m_DisplaySagittalWidget;
+delete m_Display3DWidget;} {selected
     }
   }
   Function {RequestSetPatientName()} {open return_type {virtual void}
@@ -173,4 +187,9 @@ delete Display3DWidget;} {selected
   } {}
   Function {RequestReset()} {open return_type {virtual void}
   } {}
+  decl { protected: igstk::View2D::Pointer m_DisplayAxial;
+  igstk::View2D::Pointer m_DisplayCoronal;
+  igstk::View2D::Pointer m_DisplaySagittal;
+  igstk::View3D::Pointer m_Display3D;
+} {}  
 } 

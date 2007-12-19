@@ -56,20 +56,6 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
     return;
     }
 
-  this->Display3D = ViewType3D::New();
-  this->DisplayAxial = ViewType2D::New();
-  this->DisplayCoronal = ViewType2D::New();
-  this->DisplaySagittal = ViewType2D::New();
-
-  this->DisplayAxial->RequestSetOrientation( ViewType2D::Axial );
-  this->DisplaySagittal->RequestSetOrientation( ViewType2D::Sagittal );
-  this->DisplayCoronal->RequestSetOrientation( ViewType2D::Coronal );
-
-  this->Display3DWidget->RequestSetView( this->Display3D );
-  this->DisplayAxialWidget->RequestSetView( this->DisplayAxial );
-  this->DisplayCoronalWidget->RequestSetView( this->DisplayCoronal );
-  this->DisplaySagittalWidget->RequestSetView( this->DisplaySagittal );
-
   /** Initialize all member variables and set logger */
   m_ImageReader = ImageReaderType::New();
   m_ImageReader->SetLogger( m_Logger );
@@ -173,16 +159,16 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ViewPickerObserver->SetCallbackFunction( this, 
                                    &FourViewsTrackingWithCT::DrawPickedPoint );
 
-  this->DisplayAxial->AddObserver( igstk::TransformModifiedEvent(), 
+  this->m_DisplayAxial->AddObserver( igstk::TransformModifiedEvent(), 
                                    m_ViewPickerObserver );
-  this->DisplaySagittal->AddObserver( igstk::TransformModifiedEvent(), 
+  this->m_DisplaySagittal->AddObserver( igstk::TransformModifiedEvent(), 
                                       m_ViewPickerObserver );
-  this->DisplayCoronal->AddObserver( igstk::TransformModifiedEvent(), 
+  this->m_DisplayCoronal->AddObserver( igstk::TransformModifiedEvent(), 
                                      m_ViewPickerObserver );
 
-  this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
-  this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
-  this->DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );
+  this->m_DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
+  this->m_DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
+  this->m_DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );
 
   m_ImageRepresentationAxial    = ImageRepresentationType::New();
   m_ImageRepresentationSagittal = ImageRepresentationType::New();
@@ -857,54 +843,54 @@ void FourViewsTrackingWithCT::ConnectImageRepresentationProcessing()
   m_ImageRepresentationCoronal3D->RequestSetOrientation( 
                                              ImageRepresentationType::Coronal );
 
-  this->DisplayAxial->RequestRemoveObject( m_ImageRepresentationAxial );
-  this->DisplaySagittal->RequestRemoveObject( m_ImageRepresentationSagittal );
-  this->DisplayCoronal->RequestRemoveObject( m_ImageRepresentationCoronal );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationAxial3D );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationSagittal3D );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationCoronal3D );
+  this->m_DisplayAxial->RequestRemoveObject( m_ImageRepresentationAxial );
+  this->m_DisplaySagittal->RequestRemoveObject( m_ImageRepresentationSagittal );
+  this->m_DisplayCoronal->RequestRemoveObject( m_ImageRepresentationCoronal );
+  this->m_Display3D->RequestRemoveObject( m_ImageRepresentationAxial3D );
+  this->m_Display3D->RequestRemoveObject( m_ImageRepresentationSagittal3D );
+  this->m_Display3D->RequestRemoveObject( m_ImageRepresentationCoronal3D );
 
-  this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
-  this->DisplayAxial->RequestAddObject( m_EllipsoidRepresentation->Copy() );
-  this->DisplayAxial->RequestAddObject( m_CylinderRepresentation->Copy() );
+  this->m_DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
+  this->m_DisplayAxial->RequestAddObject( m_EllipsoidRepresentation->Copy() );
+  this->m_DisplayAxial->RequestAddObject( m_CylinderRepresentation->Copy() );
 
-  this->DisplaySagittal->RequestAddObject( m_ImageRepresentationSagittal );
-  this->DisplaySagittal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
-  this->DisplaySagittal->RequestAddObject( m_CylinderRepresentation->Copy() );
+  this->m_DisplaySagittal->RequestAddObject( m_ImageRepresentationSagittal );
+  this->m_DisplaySagittal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
+  this->m_DisplaySagittal->RequestAddObject( m_CylinderRepresentation->Copy() );
 
-  this->DisplayCoronal->RequestAddObject( m_ImageRepresentationCoronal );
-  this->DisplayCoronal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
-  this->DisplayCoronal->RequestAddObject( m_CylinderRepresentation->Copy() );
+  this->m_DisplayCoronal->RequestAddObject( m_ImageRepresentationCoronal );
+  this->m_DisplayCoronal->RequestAddObject( m_EllipsoidRepresentation->Copy() );
+  this->m_DisplayCoronal->RequestAddObject( m_CylinderRepresentation->Copy() );
 
-  this->Display3D->RequestAddObject( m_ImageRepresentationAxial3D );
-  this->Display3D->RequestAddObject( m_ImageRepresentationSagittal3D );
-  this->Display3D->RequestAddObject( m_ImageRepresentationCoronal3D );
-  this->Display3D->RequestAddObject( m_EllipsoidRepresentation->Copy() );
-  this->Display3D->RequestAddObject( m_CylinderRepresentation->Copy() );
+  this->m_Display3D->RequestAddObject( m_ImageRepresentationAxial3D );
+  this->m_Display3D->RequestAddObject( m_ImageRepresentationSagittal3D );
+  this->m_Display3D->RequestAddObject( m_ImageRepresentationCoronal3D );
+  this->m_Display3D->RequestAddObject( m_EllipsoidRepresentation->Copy() );
+  this->m_Display3D->RequestAddObject( m_CylinderRepresentation->Copy() );
 
-  this->Display3D->RequestResetCamera();
+  this->m_Display3D->RequestResetCamera();
   // this->Display3D->Update();
-  this->Display3DWidget->RequestEnableInteractions();
-  this->Display3D->SetRefreshRate( 30 ); // 30 Hz
-  this->Display3D->RequestStart();
+  this->m_Display3DWidget->RequestEnableInteractions();
+  this->m_Display3D->SetRefreshRate( 30 ); // 30 Hz
+  this->m_Display3D->RequestStart();
   
-  this->DisplaySagittal->RequestResetCamera();
+  this->m_DisplaySagittal->RequestResetCamera();
   // this->DisplaySagittal->Update();
-  this->DisplaySagittalWidget->RequestEnableInteractions();
-  this->DisplaySagittal->SetRefreshRate( 30 ); // 30 Hz
-  this->DisplaySagittal->RequestStart();
+  this->m_DisplaySagittalWidget->RequestEnableInteractions();
+  this->m_DisplaySagittal->SetRefreshRate( 30 ); // 30 Hz
+  this->m_DisplaySagittal->RequestStart();
 
-  this->DisplayCoronal->RequestResetCamera();
+  this->m_DisplayCoronal->RequestResetCamera();
   // this->DisplayCoronal->Update();
-  this->DisplayCoronalWidget->RequestEnableInteractions();
-  this->DisplayCoronal->SetRefreshRate( 30 ); // 30 Hz
-  this->DisplayCoronal->RequestStart();  
+  this->m_DisplayCoronalWidget->RequestEnableInteractions();
+  this->m_DisplayCoronal->SetRefreshRate( 30 ); // 30 Hz
+  this->m_DisplayCoronal->RequestStart();  
 
-  this->DisplayAxial->RequestResetCamera();
+  this->m_DisplayAxial->RequestResetCamera();
   // this->DisplayAxial->Update();
-  this->DisplayAxialWidget->RequestEnableInteractions();
-  this->DisplayAxial->SetRefreshRate( 30 ); // 30 Hz
-  this->DisplayAxial->RequestStart();
+  this->m_DisplayAxialWidget->RequestEnableInteractions();
+  this->m_DisplayAxial->SetRefreshRate( 30 ); // 30 Hz
+  this->m_DisplayAxial->RequestStart();
   
   // Request information about the slices. The answers will be 
   // received in the form of events.
@@ -1025,6 +1011,12 @@ void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
     // We should check if GetCTImage() returns a valid image or guarantee
     // that there is always a valid CTImage.
     // Clicking inside a viewport without an image can cause a segfault.
+    if( m_CTImageObserver->GetCTImage().IsNull() )
+      {
+      igstkLogMacro( WARNING,  "NULL CT Image.\n" )
+      return;
+      }
+
     if( m_CTImageObserver->GetCTImage()->IsInside( p ) )
       {
       m_ImageLandmarkTransformToBeSet = tmevent->Get();
@@ -1067,24 +1059,24 @@ void FourViewsTrackingWithCT::Reset()
   this->ClearImageLandmarksProcessing();
   this->ClearTrackerLandmarksProcessing();
 
-  this->DisplayAxial->RequestStop();
-  this->DisplaySagittal->RequestStop();
-  this->DisplayCoronal->RequestStop();
-  this->Display3D->RequestStop();
+  this->m_DisplayAxial->RequestStop();
+  this->m_DisplaySagittal->RequestStop();
+  this->m_DisplayCoronal->RequestStop();
+  this->m_Display3D->RequestStop();
 
-  this->DisplayAxialWidget->RequestDisableInteractions();
-  this->DisplaySagittalWidget->RequestDisableInteractions();
-  this->DisplayCoronalWidget->RequestDisableInteractions();
-  this->Display3DWidget->RequestDisableInteractions();
+  this->m_DisplayAxialWidget->RequestDisableInteractions();
+  this->m_DisplaySagittalWidget->RequestDisableInteractions();
+  this->m_DisplayCoronalWidget->RequestDisableInteractions();
+  this->m_Display3DWidget->RequestDisableInteractions();
 
-  this->DisplayAxial->RequestRemoveObject( m_ImageRepresentationAxial );
-  this->DisplaySagittal->RequestRemoveObject( m_ImageRepresentationSagittal );
-  this->DisplayCoronal->RequestRemoveObject( m_ImageRepresentationCoronal );
+  this->m_DisplayAxial->RequestRemoveObject( m_ImageRepresentationAxial );
+  this->m_DisplaySagittal->RequestRemoveObject( m_ImageRepresentationSagittal );
+  this->m_DisplayCoronal->RequestRemoveObject( m_ImageRepresentationCoronal );
 
 
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationAxial3D );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationSagittal3D );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationCoronal3D );
+  this->m_Display3D->RequestRemoveObject( m_ImageRepresentationAxial3D );
+  this->m_Display3D->RequestRemoveObject( m_ImageRepresentationSagittal3D );
+  this->m_Display3D->RequestRemoveObject( m_ImageRepresentationCoronal3D );
 
   // this->DisplayAxial->Update();
   // this->DisplaySagittal->Update();
