@@ -45,7 +45,9 @@ class OneViewAndTrackingUsingQTWidgetGUI : public QMainWindow
   typedef igstk::Object::LoggerType              LoggerType; 
   typedef itk::StdStreamLogOutput  LogOutputType;
 
-  typedef igstk::QMouseTracker     TrackerType;
+  typedef igstk::QMouseTracker         TrackerType;
+//  typedef igstk::QMouseTrackerTool     TrackerToolType;  FIXME
+  typedef igstk::TrackerTool     TrackerToolType;
 
 #ifdef WIN32
   typedef igstk::SerialCommunicationForWindows  CommunicationType;
@@ -70,9 +72,10 @@ private:
 
   Ui::MainWindow ui;
 
-  LoggerType::Pointer     m_Logger;
-  LogOutputType::Pointer  m_LogOutput;
-  TrackerType::Pointer    m_Tracker;
+  LoggerType::Pointer         m_Logger;
+  LogOutputType::Pointer      m_LogOutput;
+  TrackerType::Pointer        m_Tracker;
+  TrackerToolType::Pointer    m_Tool;
 
   CommunicationType::Pointer m_Communication;
 

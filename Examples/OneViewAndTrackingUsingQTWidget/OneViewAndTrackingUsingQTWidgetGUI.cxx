@@ -24,6 +24,7 @@ OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
   this->CreateActions();
 
   m_Tracker = TrackerType::New();
+  m_Tool = TrackerToolType::New();
 
   m_Logger = LoggerType::New();
   m_LogOutput = LogOutputType::New();
@@ -49,8 +50,10 @@ OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
   m_Tracker->SetLogger( m_Logger );
 
   m_Tracker->RequestOpen();
-  m_Tracker->RequestInitialize();
   m_Tracker->SetScaleFactor( 100.0 );
+
+  // m_Tool->RequestSetMouseName("Mouse1");  FIXME
+  m_Tool->RequestAttachToTracker( m_Tracker );
 
   m_Tracking = false;
   m_GUIQuit  = false;
@@ -135,10 +138,9 @@ void
 OneViewAndTrackingUsingQTWidgetGUI::
 AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
 {
-  const unsigned int toolPort = 0;
-  const unsigned int toolNumber = 0;
-  m_Tracker->AttachObjectToTrackerTool( 
-      toolPort, toolNumber, objectToTrack );
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  objectToTrack->RequestSetTransformAndParent( transform, m_Tool.GetPointer() );
 }
 
 bool OneViewAndTrackingUsingQTWidgetGUI::HasQuitted( ) 
