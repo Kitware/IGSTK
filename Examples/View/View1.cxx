@@ -38,6 +38,8 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#include "igstkFLTKWidget.h"
+
 int main( int, char * [] )
 {
   igstk::RealTimeClock::Initialize();
@@ -49,9 +51,10 @@ int main( int, char * [] )
   // EndLatex
 
   // BeginCodeSnippet
-  typedef igstk::View3D            View3DType;
-  typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::FLTKWidget           WindowWidgetType;
+  typedef igstk::View3D               View3DType;
+  typedef igstk::Object::LoggerType   LoggerType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
   // EndCodeSnippet
 
   // logger object created for logging mouse activities
@@ -114,7 +117,9 @@ int main( int, char * [] )
     // EndLatex
 
     // BeginCodeSnippet
-    const double validityTimeInMilliseconds = 1e300; // 100 seconds
+    const double validityTimeInMilliseconds = 
+      igstk::TimeStamp::GetLongestPossibleTime();
+
     igstk::Transform transform;
     igstk::Transform::VectorType translation;
     translation[0] = 0;
@@ -126,36 +131,44 @@ int main( int, char * [] )
 
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
+
 #ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-    ellipsoid->RequestSetTransform( transform );
+    ellipsoid->RequestSetTransform( transform ); // FIXME
 #endif
+
     // EndCodeSnippet
 
     // BeginLatex
     // 
-    // Next, the FLTK window and a view object are instantiated:
+    // Next, the FLTK main window and an OpenGL FLTK Widget object are
+    // instantiated:
     //
     // EndLatex
 
     // BeginCodeSnippet
     Fl_Window * form = new Fl_Window(601,301,"View Test");
-    View3DType * view3D = new View3DType(310,10,280,280,"3D View");
+    WindowWidgetType * fltkWidget = new WindowWidgetType(310,10,280,280,"3D View");
     form->end();
     form->show();
     // EndCodeSnippet
     
-    view3D->RequestResetCamera();
-    view3D->RequestEnableInteractions();
+    // BeginCodeSnippet
+    View3DType::Pointer view3D = View3DType::New();
+
+    // EndCodeSnippet
+
    
     // BeginLatex
     // 
     // The ellipsoid is added to the scene using the \code{RequestAddObject}
-    // method as follows:
+    // method and then the scope of the camera is reset in order to make sure
+    // that the object is visible in the window.
     //
     // EndLatex
 
     // BeginCodeSnippet
     view3D->RequestAddObject( ellipsoidRepresentation );
+    view3D->RequestResetCamera();
     // EndCodeSnippet
 
     // BeginLatex
@@ -169,7 +182,7 @@ int main( int, char * [] )
     // EndLatex
 
     // BeginCodeSnippet
-    view3D->RequestSetRefreshRate( 30 );
+    view3D->SetRefreshRate( 30 );
     view3D->RequestStart();
     // EndCodeSnippet
 
@@ -188,7 +201,7 @@ int main( int, char * [] )
     // EndLatex
 
     // BeginCodeSnippet
-    for(unsigned int i=0; i<10; i++)
+    for(unsigned int i=0; i<1000; i++)
       {
       Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
@@ -209,7 +222,7 @@ int main( int, char * [] )
     view3D->RequestStop();
     // EndCodeSnippet
 
-    delete view3D;
+    delete fltkWidget;
     delete form;
     }
   catch(...)
