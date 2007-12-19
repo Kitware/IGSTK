@@ -39,12 +39,12 @@ int main(int , char** )
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
   ellipsoid->SetRadius(200,200,300); // about a human skull
   
-  double validityTimeInMilliseconds = 1e20; // in seconds
+  double validityTimeInMilliseconds = igstk::TimeStamp::GetLongestPossibleTime(); 
   igstk::Transform transform;
   igstk::Transform::VectorType translation;
   translation[0] = 0.0;
   translation[1] = 0.0;
-  translation[2] = 0.0;
+  translation[2] = 150.0; // at edge of ellipsoid
   igstk::Transform::VersorType rotation;
   rotation.Set( 0.0, 0.0, 0.0, 1.0 );
   igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
@@ -53,7 +53,6 @@ int main(int , char** )
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
   std::cout << "Transform to static ellipsoid = " << transform << std::endl;
-
 
   igstk::Transform transformToView;
   igstk::Transform::VectorType translationToView;
@@ -75,8 +74,7 @@ int main(int , char** )
   // Create the cylinder 
   igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
   cylinder->SetRadius(1.0);
-  //cylinder->SetHeight(300.0);  // about the size of a needle
-  cylinder->SetHeight(50.0);  // about the size of a needle
+  cylinder->SetHeight(50.0);
 
   // Create the cylinder representation
   igstk::CylinderObjectRepresentation::Pointer 
@@ -94,17 +92,15 @@ int main(int , char** )
   ellipsoid->RequestSetTransformAndParent( transformToView, 
                                            view3D.GetPointer() );
 
-  /* cylinder->RequestSetTransformAndParent( transform, 
-                                          ellipsoid.GetPointer() ); */
+  cylinder->RequestSetTransformAndParent( transform, 
+                                           ellipsoid.GetPointer() ); 
 
   // Make the view the parent of the tracker 
   application.AttachTrackerToView( view3D ); 
 
-
   view3D->RequestAddObject( ellipsoidRepresentation );
   view3D->RequestAddObject( cylinderRepresentation );
  
-
   application.Display3D->RequestSetView( view3D );
 
   application.Show();
@@ -114,9 +110,7 @@ int main(int , char** )
 
   view3D->SetRefreshRate( 30 );
   view3D->RequestStart();
-  //view3D->SetCameraPosition(0.0, 0.0, -600.0);
-  view3D->SetCameraPosition(-225.0,100.00,-1600.0);
-
+  view3D->RequestResetCamera();
 
   // Associate the Spatial Object to the tracker tool
   application.AttachObjectToTrackerTool ( cylinder );
