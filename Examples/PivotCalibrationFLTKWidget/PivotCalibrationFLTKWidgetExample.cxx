@@ -147,11 +147,13 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
   }
   this->m_initialized = true;
   this->m_pivotCalibrationFLTKWidget->RequestSetDelay( delay );
-  igstk::Tracker::Pointer genericTracker = this->m_tracker.GetPointer();
+
+  igstk::Tracker * genericTracker = this->m_tracker.GetPointer();
+  igstk::TrackerTool * genericTrackerTool = this->m_tool.GetPointer();
 
   this->m_pivotCalibrationFLTKWidget->RequestInitialize(numberOfFrames,
                                                         genericTracker,
-                                                        toolPort );  
+                                                        genericTrackerTool );  
 }
 
 void 
