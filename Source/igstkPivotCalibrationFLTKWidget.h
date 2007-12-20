@@ -84,8 +84,9 @@ public:
    *  fails a message box will be displayed.
    *  The method generates two  events: InitializationSuccessEvent and 
    *  InitializationFailureEvent. */
-  void RequestInitialize( unsigned int n, igstk::Tracker::Pointer &tracker, 
-                          unsigned int toolPort, unsigned int toolChannel = 0 );
+  void RequestInitialize( unsigned int n, 
+                          igstk::Tracker * tracker, 
+                          igstk::TrackerTool * trackerTool ); 
 
   /** This method sets the delay in seconds between the moment the 
    *  "Calibrate" button is pressed and the begining of data acquistion. */

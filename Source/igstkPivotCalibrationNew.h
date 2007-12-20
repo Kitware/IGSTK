@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkPivotCalibrationNew.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #ifndef __igstkPivotCalibrationNew_h
 #define __igstkPivotCalibrationNew_h
 
@@ -6,6 +23,7 @@
 #include "igstkEvents.h"
 #include "igstkObject.h"
 #include "igstkTracker.h"
+#include "igstkTrackerTool.h"
 #include "igstkPivotCalibrationAlgorithm.h"
 
 namespace igstk
@@ -42,8 +60,9 @@ public:
    *  tool is connected to the given port and channel. 
    *  The method generates two  events: InitializationSuccessEvent and 
    *  InitializationFailureEvent. */
-  void RequestInitialize( unsigned int n, igstk::Tracker::Pointer &tracker, 
-                          unsigned int toolPort, unsigned int toolChannel = 0);
+  void RequestInitialize( unsigned int n, 
+                          igstk::Tracker * tracker, 
+                          igstk::TrackerTool * trackerTool );
 
   /** This method performs the data acquisition and calibration. It generates 
    *  several events: CalibrationSuccessEvent, CalibrationFailureEvent, 
@@ -214,13 +233,11 @@ private:
              //transformations used for pivot calibration                            
   std::vector< PivotCalibrationAlgorithm::TransformType > m_Transforms;
               //tracker used for pivot calibration
-  Tracker::Pointer m_TmpTracker;
-  Tracker::Pointer m_Tracker;
+  Tracker::Pointer      m_TmpTracker;
+  Tracker::Pointer      m_Tracker;
              //tool we want to calibrate
-  unsigned int m_TmpToolPort;
-  unsigned int m_ToolPort;
-  unsigned int m_TmpToolChannel;  
-  unsigned int m_ToolChannel;
+  TrackerTool::Pointer  m_TmpTrackerTool;
+  TrackerTool::Pointer  m_TrackerTool;
           //number of transformation we want to acquire
   unsigned int m_TmpRequiredNumberOfTransformations;
   unsigned int m_RequiredNumberOfTransformations;

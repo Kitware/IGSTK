@@ -1,3 +1,19 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkPivotCalibrationNew.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #include "igstkPivotCalibrationNew.h"
 
 /*
@@ -246,16 +262,13 @@ PivotCalibrationNew::~PivotCalibrationNew()
 
 void 
 PivotCalibrationNew::RequestInitialize( unsigned int n, 
-                                        igstk::Tracker::Pointer &tracker, 
-                                        unsigned int toolPort, 
-                                        unsigned int toolChannel)
+                                        igstk::Tracker     * tracker, 
+                                        igstk::TrackerTool * trackerTool )
 {
   igstkLogMacro( DEBUG, "igstk::PivotCalibrationNew::"
                  "RequestInitialize called...\n");
   this->m_TmpRequiredNumberOfTransformations = n;
   this->m_TmpTracker = tracker;
-  this->m_TmpToolPort = toolPort;
-  this->m_TmpToolChannel = toolChannel;  
   igstkPushInputMacro( Initialize );
   this->m_StateMachine.ProcessInputs();
 }
@@ -324,8 +337,7 @@ PivotCalibrationNew::InitializeProcessing()
   else 
   {
     this->m_Tracker = this->m_TmpTracker;
-    this->m_ToolPort = this->m_TmpToolPort;
-    this->m_ToolChannel = this->m_TmpToolChannel;
+    this->m_TrackerTool = this->m_TmpTrackerTool;
     this->m_RequiredNumberOfTransformations = this->m_TmpRequiredNumberOfTransformations;
     this->m_Transforms.clear();
     this->m_PivotCalibrationAlgorithm->RequestResetCalibration();
@@ -392,7 +404,8 @@ PivotCalibrationNew::ComputeCalibrationProcessing()
       else 
       {
         numberOfAcquisitionAttempts++;
-        this->m_Tracker->GetToolTransform( this->m_ToolPort, this->m_ToolChannel, currentTransform);        
+        currentTransform = 
+          this->m_TrackerTool->GetCalibratedTransformWithRespectToReferenceTrackerTool();
                      //For the transformation to be valid for our purposes it 
                      //must be valid as defined by its internal time span, in 
                      //addition IGSTK will not update the returned 
@@ -525,9 +538,8 @@ PivotCalibrationNew::PrintSelf( std::ostream& os,
   Superclass::PrintSelf(os, indent);
   os << indent << "Tracker: " << std::endl;
   os << indent << this->m_Tracker << std::endl;
-  os << indent << "Tool information: " << std::endl;
-  os << indent << "port " << this->m_ToolPort << ", channel ";
-  os << this->m_ToolChannel << std::endl;
+  os << indent << "Tool : " << std::endl;
+  os << indent << this->m_TrackerTool << std::endl;
   os << indent << "Required number of transformations: " << std::endl;
   os << indent << m_RequiredNumberOfTransformations << std::endl;
 }

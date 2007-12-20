@@ -108,20 +108,18 @@ PivotCalibrationFLTKWidget::~PivotCalibrationFLTKWidget()
 
 void 
 PivotCalibrationFLTKWidget::RequestInitialize( unsigned int n, 
-                                                   igstk::Tracker::Pointer &tracker, 
-                                                   unsigned int toolPort, 
-                                                   unsigned int toolChannel )
+                                               igstk::Tracker * tracker, 
+                                               igstk::TrackerTool * trackerTool )
 {
               //update the description of the current tool 
   std::ostringstream toolDescription;
   toolDescription.str("");
-  toolDescription<<"Tool port: "<< toolPort<<"    Tool channel: "<<toolChannel; 
-  this->m_toolDescription->value(toolDescription.str().c_str());
+
+  // FIXME : this->m_toolDescription->value(toolDescription.str().c_str());
+  // Get name from the TrackerTool itself.
+  //
             //try to initialize
-  this->m_pivotCalibration->RequestInitialize( n, 
-                                               tracker, 
-                                               toolPort, 
-                                               toolChannel ); 
+  this->m_pivotCalibration->RequestInitialize( n, tracker, trackerTool ); 
 }
 
 void 

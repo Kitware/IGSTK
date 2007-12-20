@@ -280,7 +280,8 @@ SET(IGSTKSandbox_HEADS
 # FIXME: comment out the PivotCalibration class just for the
 # time being. It requires major work to make it consistent 
 # with the new Tracker API
-#  igstkPivotCalibrationNew.h
+  igstkPivotCalibrationNew.h
+
   igstkPivotCalibrationAlgorithm.h
   igstkPoint3D.h
   igstkSocketCommunication.h
@@ -342,7 +343,8 @@ SET(IGSTKSandbox_SRCS
 # FIXME: comment out the PivotCalibration class just for the
 # time being. It requires major work to make it consistent 
 # with the new API
-#  igstkPivotCalibrationNew.cxx
+  igstkPivotCalibrationNew.cxx
+
   igstkPivotCalibrationAlgorithm.cxx
   igstkPoint3D.cxx
   igstkSocketCommunication.cxx
