@@ -67,8 +67,9 @@ class FourViewsAndTrackingImplementation : public FourViewsAndTrackingGUI
 public:
 
   typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
-  typedef igstk::AuroraTracker     TrackerType;
+  typedef itk::StdStreamLogOutput               LogOutputType;
+  typedef igstk::AuroraTracker                  TrackerType;
+  typedef igstk::AuroraTrackerTool              TrackerToolType;
 
 #ifdef WIN32
   typedef igstk::SerialCommunicationForWindows  CommunicationType;
@@ -95,6 +96,7 @@ public:
     this->DisplaySagittalWidget->RequestSetView( this->DisplaySagittal );
 
     m_Tracker = TrackerType::New();
+    m_TrackerTool = TrackerToolType::New();
     m_Logger = LoggerType::New();
     m_LogOutput = LogOutputType::New();
     m_LogFile.open("logFourViewsAndTracking.txt");
@@ -130,10 +132,11 @@ public:
 
     m_Communication->OpenCommunication();
 
+    const unsigned int toolPort = 0;
+    m_TrackerTool->RequestSetPortNumber( toolPort );
+    m_TrackerTool->RequestAttachToTracker( m_Tracker );
+
     m_Tracker->RequestOpen();
-    m_Tracker->RequestInitialize();
-
-
 
     // Set up the four quadrant views
     this->Display3D->RequestResetCamera();
@@ -195,9 +198,9 @@ public:
 
   void AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
     {
-    const unsigned int toolPort = 0;
-    const unsigned int toolNumber = 0;
-    m_Tracker->AttachObjectToTrackerTool( toolPort, toolNumber, objectToTrack );
+    igstk::Transform transform;
+    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    objectToTrack->RequestSetTransformAndParent( transform, m_TrackerTool.GetPointer() );
     }
 
   void ResetCameras()
@@ -240,9 +243,10 @@ private:
   typedef igstk::View2D ViewType2D;
   typedef igstk::View3D ViewType3D;
 
-  LoggerType::Pointer     m_Logger;
-  LogOutputType::Pointer  m_LogOutput;
-  TrackerType::Pointer    m_Tracker;
+  LoggerType::Pointer             m_Logger;
+  LogOutputType::Pointer          m_LogOutput;
+  TrackerType::Pointer            m_Tracker;
+  TrackerToolType::Pointer        m_TrackerTool;
 
   CommunicationType::Pointer m_Communication;
 
