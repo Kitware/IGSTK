@@ -36,8 +36,11 @@
 #include "igstkObliqueImageSpatialObjectRepresentation.h"
 #include "igstkSpatialObject.h"
 #include "igstkObjectRepresentation.h"
+
+#ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTracker.h"
 #include "igstkMicronTrackerTool.h"
+#endif
 
 namespace igstk 
 {
@@ -167,11 +170,13 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::SocketCommunication, 
                                 outputDirectory, skipLoops );
 
+#ifdef IGSTKSandbox_USE_MicronTracker
   igstkTestExportStateMachine1( igstk::MicronTracker, 
                                 outputDirectory, skipLoops );
 
   igstkTestExportStateMachine1( igstk::MicronTrackerTool, 
                                 outputDirectory, skipLoops );
+#endif
 
   igstkTestExportStateMachine1( 
                           igstk::ObliqueImageSpatialObjectRepresentationType, 
