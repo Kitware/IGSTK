@@ -43,7 +43,7 @@ void RegisterTests()
   REGISTER_TEST(igstkToolCalibrationTest);
   REGISTER_TEST(igstkVesselObjectTest);
 
-//  REGISTER_TEST(igstkBasicTrackerTest);
+  REGISTER_TEST(igstkBasicTrackerTest);
   REGISTER_TEST(igstkBinaryDataTest);
   REGISTER_TEST(igstkCommunicationTest);
   REGISTER_TEST(igstkCTImageSpatialObjectTest);
@@ -98,7 +98,7 @@ void RegisterTests()
   REGISTER_TEST(igstkNDICommandInterpreterSimulatedTest);
   REGISTER_TEST(igstkNDICommandInterpreterStressTest);
   REGISTER_TEST(igstkPolarisTrackerSimulatedTest);
-//  REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
+  REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
   REGISTER_TEST(igstkSpatialObjectReaderTest);
   REGISTER_TEST(igstkTubeReaderTest);
 #endif
