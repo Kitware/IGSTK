@@ -43,10 +43,11 @@ class OneViewAndTrackingImplementation : public OneViewAndTrackingGUI
 {
 public:
 
-  typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType       LoggerType;
+  typedef itk::StdStreamLogOutput         LogOutputType;
 
-  typedef igstk::AuroraTracker     TrackerType;
+  typedef igstk::AuroraTracker            TrackerType;
+  typedef igstk::AuroraTrackerTool        TrackerToolType;
 
 #ifdef WIN32
   typedef igstk::SerialCommunicationForWindows  CommunicationType;
@@ -59,6 +60,7 @@ public:
   OneViewAndTrackingImplementation()
     {
     m_Tracker = TrackerType::New();
+    m_TrackerTool = TrackerToolType::New();
 
     m_Logger = LoggerType::New();
     m_LogOutput = LogOutputType::New();
@@ -96,8 +98,11 @@ public:
 
     m_Communication->OpenCommunication();
 
+    const unsigned int toolPort = 0;
+    m_TrackerTool->RequestSetPortNumber( toolPort );
+    m_TrackerTool->RequestAttachToTracker( m_Tracker );
+
     m_Tracker->RequestOpen();
-    m_Tracker->RequestInitialize();
 
     m_Tracking = false;
     }
@@ -136,17 +141,17 @@ public:
 
   void AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
     {
-    const unsigned int toolPort = 0;
-    const unsigned int toolNumber = 0;
-    m_Tracker->AttachObjectToTrackerTool( 
-        toolPort, toolNumber, objectToTrack );
+    igstk::Transform transform;
+    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    objectToTrack->RequestSetTransformAndParent( transform, m_TrackerTool.GetPointer() );
     }
 
 private:
 
-  LoggerType::Pointer     m_Logger;
-  LogOutputType::Pointer  m_LogOutput;
-  TrackerType::Pointer    m_Tracker;
+  LoggerType::Pointer         m_Logger;
+  LogOutputType::Pointer      m_LogOutput;
+  TrackerType::Pointer        m_Tracker;
+  TrackerToolType::Pointer    m_TrackerTool;
 
   CommunicationType::Pointer m_Communication;
 
