@@ -328,11 +328,7 @@ SET(IGSTKTests_SRCS
   igstkUSImageObjectTest.cxx
   igstkUSImageObjectRepresentationTest.cxx
   igstkToolCalibrationTest.cxx
-# FIXME: comment out the  BasicTracker test just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#
-# igstkBasicTrackerTest.cxx
+  igstkBasicTrackerTest.cxx
   igstkBinaryDataTest.cxx
   igstkCommunicationTest.cxx
   igstkCTImageSpatialObjectTest.cxx
@@ -423,11 +419,8 @@ IF (IGSTK_DATA_ROOT)
               ${IGSTK_DATA_ROOT}/polaris_stream_11_05_2005.txt
               ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
               )
-# FIXME: comment out the SerialCommunicationSimulator tests just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#
-#  ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS} igstkSerialCommunicationSimulatorTest)
+
+  ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS} igstkSerialCommunicationSimulatorTest)
 
   ADD_TEST( igstkDICOMImageReaderTest ${IGSTK_TESTS} igstkDICOMImageReaderTest
        ${IGSTK_DATA_ROOT}/Input/E000192 )
@@ -636,13 +629,7 @@ IF(IGSTK_DATA_ROOT)
     igstkNDICommandInterpreterSimulatedTest.cxx
     igstkNDICommandInterpreterStressTest.cxx
     igstkPolarisTrackerSimulatedTest.cxx
-
-# FIXME: comment out the SerialCommunicationSimulator tests just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#
-#
-#    igstkSerialCommunicationSimulatorTest.cxx
+    igstkSerialCommunicationSimulatorTest.cxx
   )
 ENDIF(IGSTK_DATA_ROOT)
 
