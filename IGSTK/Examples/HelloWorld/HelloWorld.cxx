@@ -248,7 +248,6 @@ int main(int , char** )
   trackerTool->RequestConfigure();
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
-  //Add observer to listen to events throw by the tracker tool
 
   // EndCodeSnippet
   //
@@ -257,6 +256,9 @@ int main(int , char** )
                       igstk::TimeStamp::GetLongestPossibleTime() );
    
   ellipsoid->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
+
+  // Attach a viewer to the tracker 
+  tracker->RequestSetTransformAndParent( identityTransform, m_GUI->View.GetPointer() );
 
   m_GUI->SetTracker( tracker );
   // EndCodeSnippet
@@ -312,10 +314,28 @@ int main(int , char** )
   // out. The command is as follows:
   // EndLatex
   // BeginCodeSnippet
+  //
+  //
+
+  typedef ::itk::Vector<double, 3>    VectorType;
+  typedef ::itk::Versor<double>       VersorType;
+
   while( !m_GUI->HasQuitted() )
     {
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
+
+    TransformType             transform;
+    VectorType                position;
+
+    transform = trackerTool->GetCalibratedTransform();
+
+    position = transform.GetTranslation();
+    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+
     }
   // EndCodeSnippet
 
