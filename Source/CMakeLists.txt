@@ -92,6 +92,9 @@ SET(IGSTK_HEADS
   igstkMeshReader.h
   igstkGroupObject.h
   igstkTubeGroupObject.h
+  igstkView.h
+  igstkView2D.h
+  igstkView3D.h
 )
 
 IF(IGSTK_USE_FLTK)
@@ -100,9 +103,6 @@ IF(IGSTK_USE_FLTK)
       igstkFLTKTextBufferLogOutput.h
       igstkFLTKTextLogOutput.h
       igstkMouseTracker.h
-      igstkView.h
-      igstkView2D.h
-      igstkView3D.h
       )
 ENDIF(IGSTK_USE_FLTK)
 
@@ -188,6 +188,9 @@ SET(IGSTK_SRCS
   igstkMeshReader.cxx
   igstkGroupObject.cxx
   igstkTubeGroupObject.cxx
+  igstkView.cxx
+  igstkView2D.cxx
+  igstkView3D.cxx
 )
 
 IF(IGSTK_USE_FLTK)
@@ -196,9 +199,6 @@ IF(IGSTK_USE_FLTK)
       igstkMouseTracker.cxx
       igstkFLTKTextBufferLogOutput.cxx
       igstkFLTKTextLogOutput.cxx
-      igstkView.cxx
-      igstkView2D.cxx
-      igstkView3D.cxx
       )
 ENDIF(IGSTK_USE_FLTK)
 
