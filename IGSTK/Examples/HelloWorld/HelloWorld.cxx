@@ -196,15 +196,13 @@ int main(int , char** )
   // EndCodeSnippet
   
   // BeginLatex
-  // Next, the spatial objects are added to the view, and the camera position
-  // is reset to observe all objects in the scene, as follows:
+  // Next, the spatial objects are added to the view as follows:
   //
   // 
   // EndLatex
   // BeginCodeSnippet
   m_GUI->View->RequestAddObject( ellipsoidRepresentation );
   m_GUI->View->RequestAddObject( cylinderRepresentation );
-  m_GUI->View->RequestResetCamera();
   // EndCodeSnippet
 
   // BeginLatex
@@ -258,7 +256,7 @@ int main(int , char** )
   ellipsoid->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
 
   // Attach a viewer to the tracker 
-  tracker->RequestSetTransformAndParent( identityTransform, m_GUI->View.GetPointer() );
+  m_GUI->View->RequestSetTransformAndParent( identityTransform, tracker.GetPointer() );
 
   m_GUI->SetTracker( tracker );
   // EndCodeSnippet
@@ -305,6 +303,20 @@ int main(int , char** )
   // BeginCodeSnippet
   m_GUI->View->SetRefreshRate( 60 ); 
   m_GUI->Show();
+  // EndCodeSnippet
+
+  // BeginLatex
+  // Here we reset the camera position so that we can observe all objects
+  // in the scene. We have deferred this call to shortly before the main
+  // event loop so that all the coordinate systems have been set up. 
+  // 
+  // We need to have coordinate system connections between the view and 
+  // each object that we wish to display. For instance, the cylinder's 
+  // coordinate system is attached directly to the view. The ellipsoid, 
+  // however, is attached to the tracker tool. The tracker tool is attached 
+  // to the tracker, which has an attached view. 
+  // BeginCodeSnippet
+  m_GUI->View->RequestResetCamera();
   // EndCodeSnippet
 
   // BeginLatex
