@@ -121,9 +121,13 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 
   serialComm->OpenCommunication();
 
-  igstk::AuroraTracker::Pointer  tracker;
+  igstk::AuroraTracker::Pointer       tracker;
+  igstk::AuroraTrackerTool::Pointer   tool;
 
   tracker = igstk::AuroraTracker::New();
+  tool    = igstk::AuroraTrackerTool::New();
+
+  tool->RequestAttachToTracker( tracker );
 
   tracker->SetLogger( logger );
 
@@ -137,8 +141,6 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 
   std::cout << tracker << std::endl;
 
-  tracker->RequestInitialize();
-
   tracker->RequestStartTracking();
 
   typedef igstk::Transform            TransformType;
@@ -151,7 +153,7 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
   for(int i=0; i<10; i++)
     {
     tracker->RequestUpdateStatus();
-    tracker->GetToolTransform( 0, 0, transitions );
+    transitions = tool->GetRawTransform();
     position = transitions.GetTranslation();
     std::cout << "Position = (" << position[0] << "," 
               << position[1] << "," << position[2] << ")" << std::endl;
