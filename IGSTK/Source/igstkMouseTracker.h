@@ -1,4 +1,5 @@
 /*=========================================================================
+
   Program:   Image Guided Surgery Software Toolkit
   Module:    igstkMouseTracker.h
   Language:  C++

@@ -31,19 +31,13 @@ namespace igstk
 QMouseTracker::QMouseTracker():m_StateMachine(this)
 {
   m_ScaleFactor = 1.0;
+  this->SetValidityTime(100.0);
 }
 
 QMouseTracker::~QMouseTracker()
 {
 }
 
-void QMouseTracker::Initialize()
-{
-  igstkLogMacro( DEBUG, "QMouseTracker::Initialize called ...\n");
-  m_ValidityTime = 100.0; // 100.0 milliseconds
-  ((Tracker*)(this))->RequestInitialize();
-}
-    
 QMouseTracker::ResultType QMouseTracker::InternalOpen( void )
 {
   return SUCCESS;
@@ -73,26 +67,32 @@ QMouseTracker::ResultType QMouseTracker::InternalClose( void )
 {
   return SUCCESS;
 }
-
-QMouseTracker::ResultType QMouseTracker::InternalActivateTools( void )
+ 
+QMouseTracker::ResultType QMouseTracker
+::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 {
-  igstkLogMacro( DEBUG, "QMouseTracker::InternalActivateTools called ...\n");
-  m_ValidityTime = 100.0; // 100.0 milliseconds
-  m_Port = TrackerPortType::New();
-  m_Tool = TrackerToolType::New();
-  m_Port->AddTool( m_Tool );
-  this->AddPort( m_Port );
   return SUCCESS;
 }
-    
+
 QMouseTracker::ResultType QMouseTracker::InternalUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "QMouseTracker::InternalUpdateStatus called ...\n");
 
+  typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
+
+  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+ 
+  ConstIteratorType inputItr = trackerToolContainer.begin();
+  ConstIteratorType inputEnd = trackerToolContainer.end();
+ 
   typedef igstk::Transform   TransformType;
   TransformType transform;
-  transform.SetToIdentity( m_ValidityTime );
-  
+
+  while( inputItr != inputEnd )
+    {
+    transform.SetToIdentity( this->GetValidityTime() );
+
+
   QPoint mousePosition = QCursor::pos();
 
   typedef TransformType::VectorType PositionType;
@@ -104,33 +104,21 @@ QMouseTracker::ResultType QMouseTracker::InternalUpdateStatus( void )
   typedef TransformType::ErrorType  ErrorType;
   ErrorType errorValue = 0.5; // +/- half Pixel Uncertainty
 
-  transform.SetTranslation( position, errorValue, m_ValidityTime );
-  this->SetToolTransform( 0, 0, transform );
+  transform.SetTranslation( position, errorValue, this->GetValidityTime() );
+
+    // set the raw transform
+    this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
+    this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+    ++inputItr;
+    }
 
   return SUCCESS;
 }
  
-void QMouseTracker::GetTransform(TransformType & transform)
-{
-  this->GetToolTransform(0, 0, transform);
-}
-
 /** Print Self function */
 void QMouseTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-
-  os << indent << "Validity Time: " << m_ValidityTime << std::endl;
-  
-  if( this->m_Tool )
-    {
-    os << indent << *m_Tool << std::endl;
-    }
-  
-  if( this->m_Port )
-    {
-    os << indent << *m_Port << std::endl;
-    }
 
   os << indent << "Scale Factor: " << m_ScaleFactor << std::endl;
 }

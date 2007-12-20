@@ -297,11 +297,11 @@ SET(IGSTKSandbox_HEADS
 IF(IGSTKSandbox_USE_Qt)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
-# FIXME: comment out the QMouseTracker, SimulatedTracker class just for the
+# FIXME: comment out the SimulatedTracker class just for the
 # time being. It requires major work to make it consistent 
 # with the new Tracker API
-#     igstkQMouseTracker.h
 #      igstkSimulatedTracker.h
+      igstkQMouseTracker.h
       igstkQTWidget.h
 #      igstkImageSpatialObjectImagePlaneRepresentation.h
 #      igstkCTImageSpatialObjectImagePlaneRepresentation.h
@@ -364,11 +364,11 @@ SET(IGSTKSandbox_SRCS
 IF(IGSTKSandbox_USE_Qt)
   SET(IGSTKSandbox_SRCS
     ${IGSTKSandbox_SRCS}
-# FIXME: comment out the QMouseTracker and SimulatedTracker classes just for the
+# FIXME: comment out the and SimulatedTracker classes just for the
 # time being. It requires major work to make it consistent 
 # with the new Tracker API
-#    igstkQMouseTracker.cxx
 #    igstkSimulatedTracker.cxx
+    igstkQMouseTracker.cxx
     igstkQTWidget.cxx
     )
 ENDIF(IGSTKSandbox_USE_Qt)

@@ -86,7 +86,7 @@ MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
  
   typedef igstk::Transform   TransformType;
   TransformType transform;
- 
+
   while( inputItr != inputEnd )
     {
     transform.SetToIdentity( this->GetValidityTime() );
@@ -105,6 +105,7 @@ MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
     ErrorType errorValue = 0.5; // +/- half Pixel Uncertainty
 
     transform.SetTranslation( position, errorValue, this->GetValidityTime() );
+
     // set the raw transform
     this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
     this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
@@ -118,7 +119,7 @@ MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
 void MouseTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  
+
   os << indent << "Scale Factor: " << m_ScaleFactor << std::endl;
 }
 
