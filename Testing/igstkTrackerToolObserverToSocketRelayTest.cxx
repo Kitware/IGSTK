@@ -51,9 +51,9 @@ int igstkTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
   trackerTool->RequestAttachToTracker( tracker );
 
   toolObserver->RequestSetTrackerTool( trackerTool );
+  toolObserver->RequestSetHostName( argv[1] );
   toolObserver->RequestSetPort( atoi( argv[2] ) );
   toolObserver->RequestStart();
-  toolObserver->RequestSetHostName( argv[1] );
 
   tracker->RequestOpen();
   tracker->RequestStartTracking();
