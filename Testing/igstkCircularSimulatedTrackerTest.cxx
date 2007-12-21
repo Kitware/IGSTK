@@ -25,6 +25,8 @@
 
 #include "igstkAxesObject.h"
 #include "igstkAxesObjectRepresentation.h"
+#include "igstkBoxObject.h"
+#include "igstkBoxObjectRepresentation.h"
 #include "igstkView2D.h"
 #include "igstkFLTKWidget.h"
 #include "igstkRealTimeClock.h"
@@ -34,16 +36,14 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
 {
   igstk::RealTimeClock::Initialize();
 
+  //
+  // Create a Axes object to provide a visual reference
+  //
   typedef igstk::AxesObject    AxesObjectType;
   AxesObjectType::Pointer axesObject = AxesObjectType::New();
 
   typedef igstk::AxesObjectRepresentation  RepresentationType;
   RepresentationType::Pointer axesRepresentation = RepresentationType::New();
-
-  // Test Property
-  std::cout << "Testing Property : ";
-  axesRepresentation->SetColor(0.1,0.2,0.3);
-  axesRepresentation->SetOpacity(0.4);
 
   axesRepresentation->RequestSetAxesObject( axesObject );
 
@@ -67,6 +67,31 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
+  typedef igstk::CircularSimulatedTracker     TrackerType;
+  typedef igstk::TrackerTool                  TrackerToolType;
+
+  TrackerType::Pointer      tracker     = TrackerType::New();
+  TrackerToolType::Pointer  trackerTool = TrackerToolType::New();
+
+  trackerTool->RequestConfigure();
+  trackerTool->RequestAttachToTracker( tracker );
+
+  typedef igstk::BoxObject                ToolObjectType;
+  typedef igstk::BoxObjectRepresentation  ToolRepresentationType;
+
+  ToolObjectType::Pointer toolObject = ToolObjectType::New();
+  ToolRepresentationType::Pointer toolRepresentation = ToolRepresentationType::New();
+
+  toolRepresentation->RequestSetBoxObject( toolObject );
+
+  // Connect the objects in the scene to a coordinate reference system.
+  tracker->RequestSetTransformAndParent( transform, axesObject.GetPointer() );
+  toolObject->RequestSetTransformAndParent( transform, trackerTool.GetPointer() );
+  view2D->RequestSetTransformAndParent( transform, axesObject.GetPointer() );
+
+  tracker->RequestOpen();
+  tracker->RequestStartTracking();
+
   view2D->SetRefreshRate( 30 );
   view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
   view2D->SetCameraPosition( 100.0, 100.0, 100.0 );
@@ -84,6 +109,11 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();       // trigger FLTK redraws
     }
+
+  view2D->RequestStop();
+
+  tracker->RequestStopTracking();
+  tracker->RequestClose();
 
   delete fltkWidget2D;
   delete form;
