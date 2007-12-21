@@ -166,6 +166,20 @@ public: \
       this->m_##name = ""; \
       } \
     this->Modified(); \
+  } \
+  virtual void Set##name (const std::string & _arg) \
+  { \
+    this->Set##name( _arg.c_str() ); \
+  } \
+
+
+/** Get character string.  Creates member Get"name"() 
+ * (e.g., SetFilename(char *)). The macro assumes that
+ * the class member (name) is declared as a type std::string. */
+#define igstkGetStringMacro(name) \
+  virtual const char* Get##name () const \
+  { \
+    return this->m_##name.c_str(); \
   }
 
 
