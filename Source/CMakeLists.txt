@@ -302,6 +302,7 @@ IF(IGSTKSandbox_USE_Qt)
 # with the new Tracker API
 #      igstkSimulatedTracker.h
       igstkQMouseTracker.h
+      igstkQMouseTrackerTool.h
       igstkQTWidget.h
 #      igstkImageSpatialObjectImagePlaneRepresentation.h
 #      igstkCTImageSpatialObjectImagePlaneRepresentation.h
@@ -369,6 +370,7 @@ IF(IGSTKSandbox_USE_Qt)
 # with the new Tracker API
 #    igstkSimulatedTracker.cxx
     igstkQMouseTracker.cxx
+    igstkQMouseTrackerTool.cxx
     igstkQTWidget.cxx
     )
 ENDIF(IGSTKSandbox_USE_Qt)
