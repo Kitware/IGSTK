@@ -183,14 +183,14 @@ int igstkSpatialObjectTest( int, char * [] )
   typedef igstk::SpatialObjectTest::MyTracker   TrackerType;
   TrackerType::Pointer  tracker = TrackerType::New();
 
+  // FIXCS tracker->RequestAttachToSpatialObjectParent( worldReference );
+
+  tracker->RequestOpen();
+
   typedef igstk::TrackerTool                TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->RequestAttachToTracker( tracker );
-
-  // FIXCS tracker->RequestAttachToSpatialObjectParent( worldReference );
-
-  tracker->RequestOpen();
 
   TransformType identityTransform;
   identityTransform.SetToIdentity( 

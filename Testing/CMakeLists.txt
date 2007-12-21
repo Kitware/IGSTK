@@ -488,22 +488,17 @@ IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
   ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
 
-# FIXME: comment out the SpatialObjectRepresenation test just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#
-#
-#  ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest 
-#              ${IGSTK_TESTS}
-#              --compare ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest.png 
-#                        ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png 
-#              --toleranceIntensity 10
-#              --toleranceRadius    5
-#              --toleranceNumberOfPixels 5 
-#              igstkSpatialObjectRepresentationVisibilityTest
-#              ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png
-#              ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
-#          )
+  ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest 
+              ${IGSTK_TESTS}
+              --compare ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest.png 
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+             igstkSpatialObjectRepresentationVisibilityTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
+          )
 
   IF (IGSTK_DATA_ROOT)
 
@@ -643,11 +638,7 @@ IF(IGSTK_USE_FLTK)
     igstkTubeObjectTest.cxx
     igstkViewTest.cxx
     igstkViewRefreshRateTest.cxx
-# FIXME: comment out the SpatialObjectRepresenation test just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#
-#  igstkSpatialObjectRepresentationVisibilityTest.cxx
+    igstkSpatialObjectRepresentationVisibilityTest.cxx
   )
   IF(IGSTK_DATA_ROOT)
     SET(IGSTKTests_SRCS

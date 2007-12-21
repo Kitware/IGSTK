@@ -119,8 +119,7 @@ void RegisterTests()
   REGISTER_TEST(igstkViewRefreshRateTest);
   REGISTER_TEST(igstkUltrasoundProbeObjectTest);
 
-//FIXME
-//  REGISTER_TEST(igstkSpatialObjectRepresentationVisibilityTest);
+  REGISTER_TEST(igstkSpatialObjectRepresentationVisibilityTest);
 
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAnnotation2DTest);
