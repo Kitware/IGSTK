@@ -38,7 +38,7 @@ MouseTrackerTool::~MouseTrackerTool()
 }
 
 /** Request set mouse name */
-void MouseTrackerTool::RequestSetMouseName( std::string mouseName )
+void MouseTrackerTool::RequestSetMouseName( const MouseNameType & mouseName )
 {
   this->m_MouseName = mouseName;
   m_TrackerToolConfigured = true;

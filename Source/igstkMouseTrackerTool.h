@@ -36,12 +36,13 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( MouseTrackerTool, TrackerTool )
 
-  /** Get Tracker tool mouse name */
-  igstkGetMacro( MouseName, std::string );
+  typedef std::string       MouseNameType;
 
- /** Set tracker tool mouse name
- **/
- void RequestSetMouseName( std::string mouseName); 
+  /** Get Tracker tool mouse name */
+  igstkGetStringMacro( MouseName );
+
+  /** Set tracker tool mouse name */
+  virtual void RequestSetMouseName( const MouseNameType & MouseName ); 
 
 protected:
 
@@ -60,7 +61,7 @@ private:
   MouseTrackerTool(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
 
-  std::string m_MouseName;
+  MouseNameType   m_MouseName;
 
   bool m_TrackerToolConfigured;
 
