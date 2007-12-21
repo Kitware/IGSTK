@@ -70,8 +70,6 @@ protected:
 
 private:
 
-  int                         m_Port;
-
   ObserverType::Pointer       m_Observer;
 
   TrackerTool::ConstPointer   m_TrackerTool;
@@ -81,6 +79,10 @@ private:
   vtkSocketCommunicator     * m_SocketCommunicator;
 
   vtkMatrix4x4              * m_Matrix;
+
+  unsigned int                m_Tag;
+
+  int                         m_Port;
 
   std::string                 m_HostName;
 };

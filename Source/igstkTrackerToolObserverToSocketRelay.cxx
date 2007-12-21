@@ -111,7 +111,7 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
 
   igstk::Transform transform = transformEvent->Get();
 
-  transform.ExportTransform( this->m_Matrix );
+  transform.ExportTransform( *(this->m_Matrix) );
 
   unsigned int counter = 0;
   double dataToBeSent[ numberOfParametersToSend ];
