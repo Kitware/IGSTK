@@ -85,6 +85,7 @@ SET(SandboxTests_SRCS
   igstkSocketCommunicationTest.cxx
   igstkVascularNetworkObjectTest.cxx
   igstkTransductionMacroTest.cxx
+  igstkTrackerToolObserverToSocketRelayTest.cxx
   )
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
@@ -114,6 +115,13 @@ ADD_TEST( igstkLandmarkUltrasoundCalibrationTest ${IGSTKSandbox_TESTS} igstkLand
 
 ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunicationTest)
 ADD_TEST( igstkTransductionMacroTest ${IGSTKSandbox_TESTS} igstkTransductionMacroTest)
+
+ADD_TEST( igstkTrackerToolObserverToSocketRelayTest 
+  ${IGSTKSandbox_TESTS} 
+  igstkTrackerToolObserverToSocketRelayTest
+  localhost 16666
+  )
+
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
 ADD_TEST( igstkCoordinateReferenceSystemTest ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest)
 ADD_TEST( igstkCoordinateReferenceSystemTest2 ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest2)
