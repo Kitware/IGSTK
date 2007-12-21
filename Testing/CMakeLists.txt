@@ -195,6 +195,14 @@ ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4
     SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
               igstkCoordinateReferenceSystemObjectWithViewTest.cxx)
 
+    ADD_TEST( igstkCircularSimulatedTrackerTest
+              ${IGSTKSandbox_TESTS}
+              igstkCircularSimulatedTrackerTest
+              )
+
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
+              igstkCircularSimulatedTrackerTest.cxx)
+
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF(IGSTKSandbox_USE_Qt)
