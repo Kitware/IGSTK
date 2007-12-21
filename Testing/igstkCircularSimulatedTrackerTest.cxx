@@ -27,7 +27,7 @@
 #include "igstkAxesObjectRepresentation.h"
 #include "igstkBoxObject.h"
 #include "igstkBoxObjectRepresentation.h"
-#include "igstkView2D.h"
+#include "igstkView3D.h"
 #include "igstkFLTKWidget.h"
 #include "igstkRealTimeClock.h"
 #include "igstkCircularSimulatedTracker.h"
@@ -47,17 +47,17 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
 
   axesRepresentation->RequestSetAxesObject( axesObject );
 
-  typedef igstk::View2D  View2DType;
+  typedef igstk::View3D  View3DType;
 
-  View2DType::Pointer view2D = View2DType::New();
+  View3DType::Pointer view3D = View3DType::New();
     
   typedef igstk::FLTKWidget      FLTKWidgetType;
 
   // Create an FLTK minimal GUI
-  Fl_Window * form = new Fl_Window(301,301,"CoordinateReferenceSystemObjectWithViewTest");
-  FLTKWidgetType * fltkWidget2D = new FLTKWidgetType(0,0,300,300,"View 2D");
+  Fl_Window * form = new Fl_Window(600,600,"Circular Tracker");
+  FLTKWidgetType * fltkWidget = new FLTKWidgetType(0,0,600,600,"FLTKWidget");
 
-  fltkWidget2D->RequestSetView( view2D );
+  fltkWidget->RequestSetView( view3D );
 
   form->end();
   // End of the GUI creation
@@ -87,38 +87,39 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
   // Connect the objects in the scene to a coordinate reference system.
   tracker->RequestSetTransformAndParent( transform, axesObject.GetPointer() );
   toolObject->RequestSetTransformAndParent( transform, trackerTool.GetPointer() );
-  view2D->RequestSetTransformAndParent( transform, axesObject.GetPointer() );
+  view3D->RequestSetTransformAndParent( transform, axesObject.GetPointer() );
 
   tracker->RequestOpen();
   tracker->RequestStartTracking();
 
-  view2D->SetRefreshRate( 30 );
-  view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
-  view2D->SetCameraPosition( 100.0, 100.0, 100.0 );
-  view2D->SetFocalPoint( 0.0, 0.0, 0.0 );
-  view2D->SetCameraViewUp( 0, 0, 1.0 );
+  view3D->SetRefreshRate( 30 );
+  view3D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
+  view3D->SetCameraPosition( 100.0, 100.0, 100.0 );
+  view3D->SetFocalPoint( 0.0, 0.0, 0.0 );
+  view3D->SetCameraViewUp( 0, 0, 1.0 );
 
-  view2D->RequestAddObject( axesRepresentation );
+  view3D->RequestAddObject( axesRepresentation );
+  view3D->RequestAddObject( toolRepresentation );
 
-  view2D->RequestResetCamera();
-  view2D->RequestStart();
+  view3D->RequestResetCamera();
+  view3D->RequestStart();
 
-  for(unsigned int i=0; i<500; i++)
+  for( unsigned int i = 0; i < 3000; i++ )
     {
-    Fl::wait(0.01);
+    Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
-    Fl::check();       // trigger FLTK redraws
+    Fl::check();
     }
 
-  view2D->RequestStop();
+  view3D->RequestStop();
 
   tracker->RequestStopTracking();
   tracker->RequestClose();
 
-  delete fltkWidget2D;
-  delete form;
+  form->hide();
 
-  std::cout << "Test [DONE]" << std::endl;
+  delete fltkWidget;
+  delete form;
 
   return EXIT_SUCCESS;
 }
