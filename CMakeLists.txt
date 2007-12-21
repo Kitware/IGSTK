@@ -133,6 +133,9 @@ IF(IGSTKSandbox_USE_Qt)
 
 ENDIF(IGSTKSandbox_USE_Qt)
 
+# Enable the option for building classes for sending transform data through sockets
+OPTION(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS "Setup classes for sending Tracker data through sockets" OFF)
+
 # Enable test for hardware. This includes human supervised tests
 # for the Trackers
 OPTION(IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING "Build human supervised tests for Trackers" OFF)

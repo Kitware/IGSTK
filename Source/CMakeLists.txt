@@ -286,9 +286,15 @@ SET(IGSTKSandbox_HEADS
 # vtkImagePlaneWidget2D.h
 # vtkImagePlaneWidget2DInteractionListener.h
 
-  igstkTrackerToolObserverToSocketRelay.h
   igstkLogger.h
 )
+
+IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
+  SET(IGSTKSandbox_HEADS
+    ${IGSTKSandbox_HEADS}
+    igstkTrackerToolObserverToSocketRelay.h
+    )
+ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
 IF(IGSTKSandbox_USE_Qt)
   SET(IGSTKSandbox_HEADS
@@ -355,6 +361,13 @@ SET(IGSTKSandbox_SRCS
 
 )
 
+IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
+  SET(IGSTKSandbox_SRCS
+    ${IGSTKSandbox_SRCS}
+    igstkTrackerToolObserverToSocketRelay.cxx
+    )
+ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
+
 IF(IGSTKSandbox_USE_Qt)
   SET(IGSTKSandbox_SRCS
     ${IGSTKSandbox_SRCS}
@@ -392,6 +405,11 @@ SET(EXTRA_LIBS)
 IF(IGSTKSandbox_USE_FLTK)
   SET(EXTRA_LIBS ${EXTRA_LIBS} ${FLTK_LIBRARIES})
 ENDIF(IGSTKSandbox_USE_FLTK)
+
+IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} vtkParallel)
+ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
+
 
 IF(IGSTKSandbox_USE_Qt)
   IF(APPLE)
