@@ -271,6 +271,7 @@ SET(IGSTKSandbox_HEADS
   igstkCoordinateReferenceSystem.h
   igstkCoordinateReferenceSystemDelegator.h
   igstkCrosshairs2D.h
+  igstkCircularSimulatedTracker.h
   igstkDICOMGenericImageReader.h
   igstkGenericImageSpatialObject.h
   igstkLandmarkUltrasoundCalibration.h
@@ -335,6 +336,7 @@ SET(IGSTKSandbox_SRCS
   igstkCoordinateReferenceSystem.cxx
   igstkCoordinateReferenceSystemDelegator.cxx
   igstkCrosshairs2D.cxx
+  igstkCircularSimulatedTracker.cxx
   igstkDICOMGenericImageReader.cxx
   igstkGenericImageSpatialObject.cxx
   igstkLandmarkUltrasoundCalibration.cxx
