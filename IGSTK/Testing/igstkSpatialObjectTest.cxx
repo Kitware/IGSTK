@@ -25,6 +25,7 @@
 
 #include "igstkSpatialObject.h"
 #include "igstkTracker.h"
+#include "igstkTrackerTool.h"
 // FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 
 #include "igstkTransformObserverTestHelper.h"
@@ -95,9 +96,6 @@ public:
 
     typedef Superclass::TransformType           TransformType;
 
-    void GetTransform(TransformType & transform) 
-          { this->GetToolTransform(0, 0, transform); }
-
 protected:
     MyTracker():m_StateMachine(this) 
       {
@@ -114,44 +112,38 @@ protected:
     typedef TransformType::ErrorType            ErrorType;
 
     virtual ResultType InternalOpen( void ) { return SUCCESS; }
-    virtual ResultType InternalActivateTools( void ) 
-      {
-      igstkLogMacro( DEBUG, "MyTracker::InternalActivateTools called ...\n");
-      TrackerPortType::Pointer port = TrackerPortType::New();
-      port->AddTool( TrackerToolType::New() );
-      this->AddPort( port );
-      return SUCCESS;
-      }
     virtual ResultType InternalStartTracking( void ) { return SUCCESS; }
     virtual ResultType InternalUpdateStatus( void ) 
       { 
+
+      typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
+      TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+     
+      ConstIteratorType inputItr = trackerToolContainer.begin();
+      ConstIteratorType inputEnd = trackerToolContainer.end();
+     
+      typedef igstk::Transform   TransformType;
       TransformType transform;
-      transform.SetToIdentity( m_ValidityTime );
-      
-      m_Position[0] += 1.0;  // drift along a vector (1.0, 2.0, 3.0)
-      m_Position[1] += 2.0;  // just to simulate a linear movement
-      m_Position[2] += 3.0;  // being tracked in space.
 
-      ErrorType errorValue = 0.5; 
+      while( inputItr != inputEnd )
+        {
+        transform.SetToIdentity( this->GetValidityTime() );
+        m_Position[0] += 1.0;  // drift along a vector (1.0, 2.0, 3.0)
+        m_Position[1] += 2.0;  // just to simulate a linear movement
+        m_Position[2] += 3.0;  // being tracked in space.
 
-      transform.SetTranslation( m_Position, errorValue, m_ValidityTime );
-      this->SetToolTransform( 0, 0, transform );
+        ErrorType errorValue = 0.5; 
+        transform.SetTranslation( m_Position, errorValue, m_ValidityTime );
+        // set the raw transform
+        this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
+        this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+        ++inputItr;
+        }
 
-      std::cout << "MyTracker::InternalUpdateStatus() " 
-                << m_Position << std::endl;
-  
       return SUCCESS; 
       }
     virtual ResultType InternalReset( void ) { return SUCCESS; }
     virtual ResultType InternalStopTracking( void ) { return SUCCESS; }
-    virtual ResultType InternalDeactivateTools( void ) 
-      { 
-      m_Port = TrackerPortType::New();
-      m_Tool = TrackerToolType::New();
-      m_Port->AddTool( m_Tool );
-      this->AddPort( m_Port );
-      return SUCCESS; 
-      }
     virtual ResultType InternalClose( void ) { return SUCCESS; }
 
 private:
@@ -160,11 +152,8 @@ private:
     void operator=(const Self&); //purposely not implemented
 
     typedef TrackerTool                 TrackerToolType;
-    typedef TrackerPort                 TrackerPortType;
     typedef Transform::TimePeriodType   TimePeriodType;
     TimePeriodType                      m_ValidityTime;
-    TrackerPortType::Pointer            m_Port;
-    TrackerToolType::Pointer            m_Tool;
     PositionType                        m_Position;
 };
 
@@ -194,15 +183,20 @@ int igstkSpatialObjectTest( int, char * [] )
   typedef igstk::SpatialObjectTest::MyTracker   TrackerType;
   TrackerType::Pointer  tracker = TrackerType::New();
 
-  const unsigned int toolPort = 0;
-  const unsigned int toolNumber = 0;
+  typedef igstk::TrackerTool                TrackerToolType;
+  typedef TrackerToolType::TransformType    TransformType;
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+  trackerTool->RequestAttachToTracker( tracker );
 
   // FIXCS tracker->RequestAttachToSpatialObjectParent( worldReference );
 
   tracker->RequestOpen();
-  tracker->RequestInitialize();
 
-  tracker->AttachObjectToTrackerTool( toolPort, toolNumber, dummyObject );
+  TransformType identityTransform;
+  identityTransform.SetToIdentity( 
+                      igstk::TimeStamp::GetLongestPossibleTime() );
+   
+  dummyObject->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
 
   dummyObject->Print( std::cout );
   

@@ -58,8 +58,7 @@ void RegisterTests()
   REGISTER_TEST(igstkPivotCalibrationTest);
   REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
 
-//FIXME
-//  REGISTER_TEST(igstkSpatialObjectTest);
+  REGISTER_TEST(igstkSpatialObjectTest);
   REGISTER_TEST(igstkSerialCommunicationTest);
   REGISTER_TEST(igstkStateMachineErrorsTest);
   REGISTER_TEST(igstkStateMachineTest);

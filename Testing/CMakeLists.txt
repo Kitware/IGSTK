@@ -343,12 +343,7 @@ SET(IGSTKTests_SRCS
   igstkPivotCalibrationTest.cxx
   igstkPrincipalAxisCalibrationTest.cxx
   igstkSerialCommunicationTest.cxx
-# FIXME: comment out the SpatialObject test just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#
-#
-# igstkSpatialObjectTest.cxx
+  igstkSpatialObjectTest.cxx
   igstkStateMachineErrorsTest.cxx
   igstkStateMachineTest.cxx
   igstkStringEventTest.cxx
