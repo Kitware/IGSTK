@@ -294,6 +294,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   calibrationTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
   // FIXCS ellipsoidObject3->RequestSetCalibrationTransformToTrackerTool( calibrationTransform );
 #endif
+  trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
   // FIXCS tracker->RequestAttachToSpatialObjectParent( worldReference );
 
@@ -426,6 +427,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   view3D->RequestStart();
 
   tracker->RequestOpen();
+  trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
 
   TrackerType::TransformType identityTransform;

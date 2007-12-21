@@ -190,6 +190,7 @@ int igstkSpatialObjectTest( int, char * [] )
   typedef igstk::TrackerTool                TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+  trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
 
   TransformType identityTransform;

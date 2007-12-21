@@ -100,6 +100,7 @@ public:
 
     const unsigned int toolPort = 0;
     m_TrackerTool->RequestSetPortNumber( toolPort );
+    m_TrackerTool->RequestConfigure();
     m_TrackerTool->RequestAttachToTracker( m_Tracker );
 
     m_Tracker->RequestOpen();

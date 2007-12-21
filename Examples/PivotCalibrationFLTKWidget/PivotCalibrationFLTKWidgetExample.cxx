@@ -62,6 +62,7 @@ PivotCalibrationFLTKWidgetExample::PivotCalibrationFLTKWidgetExample()
   
                  // create tracket tool at connect it to tracker
   this->m_tool = igstk::PolarisTrackerTool::New();  
+  this->m_tool->RequestConfigure();
   this->m_tool->RequestAttachToTracker( this->m_tracker );
 }
 

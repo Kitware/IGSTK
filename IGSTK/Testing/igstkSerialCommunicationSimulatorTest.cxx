@@ -127,6 +127,7 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
   tracker = igstk::AuroraTracker::New();
   tool    = igstk::AuroraTrackerTool::New();
 
+  tool->RequestConfigure();
   tool->RequestAttachToTracker( tracker );
 
   tracker->SetLogger( logger );

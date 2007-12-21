@@ -248,6 +248,7 @@ int igstkBasicTrackerTest( int, char * [] )
   igstk::Transform::VersorType rotation;
   igstk::Transform transform;
 
+  tool->RequestConfigure();
   tool->RequestAttachToTracker( tracker );
   referenceTool->RequestAttachToTracker( tracker );
 
