@@ -42,6 +42,7 @@ void RegisterTests()
   REGISTER_TEST(igstkGenericImageSpatialObjectTest);
   REGISTER_TEST(igstkDICOMGenericImageReaderTest);
   REGISTER_TEST(igstkPivotCalibrationAlgorithmTest);
+  REGISTER_TEST(igstkTrackerToolObserverToSocketRelayTest);
   REGISTER_TEST(igstkVascularNetworkObjectTest);
 
 #ifdef IGSTKSandbox_USE_FLTK
