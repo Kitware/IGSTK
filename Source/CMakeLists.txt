@@ -356,9 +356,7 @@ SET(IGSTKSandbox_SRCS
 #  vtkImagePlaneWidget2D.cxx
 #  vtkImagePlaneWidget2DInteractionListener.cxx
 
-  igstkTrackerToolObserverToSocketRelay.cxx
   igstkLogger.cxx
-
 )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
