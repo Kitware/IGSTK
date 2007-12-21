@@ -277,22 +277,17 @@ SET(IGSTKSandbox_HEADS
   igstkLandmarkUltrasoundCalibration.h
   igstkObliqueContourMeshObjectRepresentation.h
   igstkObliqueImageSpatialObjectRepresentation.h
-
-# FIXME: comment out the PivotCalibration class just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
   igstkPivotCalibrationNew.h
-
   igstkPivotCalibrationAlgorithm.h
   igstkPoint3D.h
   igstkSocketCommunication.h
   igstkVideoGrabber.h
   igstkImageSliceRepresentation.h
 # vtkImagePlaneWidget2D.h
-#  vtkImagePlaneWidget2DInteractionListener.h
+# vtkImagePlaneWidget2DInteractionListener.h
 
+  igstkTrackerToolObserverToSocketRelay.h
   igstkLogger.h
-
 )
 
 IF(IGSTKSandbox_USE_Qt)
@@ -342,12 +337,7 @@ SET(IGSTKSandbox_SRCS
   igstkLandmarkUltrasoundCalibration.cxx
   igstkObliqueContourMeshObjectRepresentation.cxx
   igstkObliqueImageSpatialObjectRepresentation.txx
-
-# FIXME: comment out the PivotCalibration class just for the
-# time being. It requires major work to make it consistent 
-# with the new API
   igstkPivotCalibrationNew.cxx
-
   igstkPivotCalibrationAlgorithm.cxx
   igstkPoint3D.cxx
   igstkSocketCommunication.cxx
@@ -360,6 +350,7 @@ SET(IGSTKSandbox_SRCS
 #  vtkImagePlaneWidget2D.cxx
 #  vtkImagePlaneWidget2DInteractionListener.cxx
 
+  igstkTrackerToolObserverToSocketRelay.cxx
   igstkLogger.cxx
 
 )
