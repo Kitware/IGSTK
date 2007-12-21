@@ -430,11 +430,10 @@ void
 TrackerTool
 ::SetCalibratedTransformWithRespectToReferenceTrackerTool( const TransformType & transform )
 {
-  m_CalibratedTransformWithRespectToReferenceTrackerTool = 
-                                                         transform;
-  TransformModifiedEvent event;
-  event.Set( transform );
-  this->InvokeEvent( event );
+  m_CalibratedTransformWithRespectToReferenceTrackerTool = transform;
+  TransformModifiedEvent transformEvent;
+  transformEvent.Set( transform );
+  this->InvokeEvent( transformEvent );
 }
 
 /** Method to set the calibration transform for the tracker tool */ 
