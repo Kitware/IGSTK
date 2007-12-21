@@ -52,7 +52,7 @@ OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
   m_Tracker->RequestOpen();
   m_Tracker->SetScaleFactor( 100.0 );
 
-  // m_Tool->RequestSetMouseName("Mouse1");  FIXME
+  m_Tool->RequestSetMouseName("Mouse1");
   m_Tool->RequestAttachToTracker( m_Tracker );
 
   m_Tracking = false;
