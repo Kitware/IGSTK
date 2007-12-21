@@ -92,7 +92,8 @@ TrackerToolObserverToSocketRelay::RequestStart()
     std::cerr << "Client error: Could not connect to the server." << std::endl;
     }
 
-  this->m_Tag = 0;
+  //this->m_Tag = 0;
+  this->m_Tag = 17;
 }
  
 
@@ -110,6 +111,8 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
   const igstk::TransformModifiedEvent * transformEvent = static_cast< const igstk::TransformModifiedEvent * >( &event );
 
   igstk::Transform transform = transformEvent->Get();
+
+  std::cout << "Sending transform " << transform << std::endl;
 
   transform.ExportTransform( *(this->m_Matrix) );
 
@@ -129,7 +132,7 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
     std::cerr << "Client error: Error sending data." << std::endl;
     }
 
-  this->m_Tag++;
+  //this->m_Tag++;
 }
  
 
