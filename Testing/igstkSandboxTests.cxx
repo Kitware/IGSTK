@@ -33,7 +33,6 @@ void RegisterTests()
   REGISTER_TEST(igstkCoordinateReferenceSystemTest2);
   REGISTER_TEST(igstkCoordinateReferenceSystemTest3);
   REGISTER_TEST(igstkCoordinateReferenceSystemDelegatorTest);
-  REGISTER_TEST(igstkCircularSimulatedTrackerTest);
   REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest3);
   REGISTER_TEST(igstkGroupObjectTest);
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
@@ -52,6 +51,7 @@ void RegisterTests()
   REGISTER_TEST(igstkCoordinateReferenceSystemObjectWithViewTest);
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest2);
+  REGISTER_TEST(igstkCircularSimulatedTrackerTest);
   REGISTER_TEST(igstkFLTKWidgetTest);
   REGISTER_TEST(igstkFLTKWidgetTest2);
   REGISTER_TEST(igstkAnnotation2DTest2);
