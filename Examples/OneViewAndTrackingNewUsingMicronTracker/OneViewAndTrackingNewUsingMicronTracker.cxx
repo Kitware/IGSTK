@@ -74,8 +74,7 @@ int main(int argc, char** argv )
   // Create the cylinder 
   igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
   cylinder->SetRadius(1.0);
-  //cylinder->SetHeight(300.0);  // about the size of a needle
-  cylinder->SetHeight(50.0);  // about the size of a needle
+  cylinder->SetHeight(300.0);
 
   // Create the cylinder representation
   igstk::CylinderObjectRepresentation::Pointer 
@@ -121,8 +120,9 @@ int main(int argc, char** argv )
   // Set the refresh rate and start 
   // the pulse generators of the views.
 
-  view3D->SetRefreshRate( 1 );
-  view3D->SetCameraPosition(60.0,-20.0,520.0);
+  view3D->SetRefreshRate( 30 );
+  view3D->RequestResetCamera();
+
   view3D->RequestStart();
 
 
