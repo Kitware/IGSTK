@@ -162,7 +162,7 @@ public:
                       igstk::TimeStamp::GetLongestPossibleTime() );
    
     // Attach a viewer to the tracker 
-    m_Tracker->RequestSetTransformAndParent( identityTransform, view );
+    view->RequestSetTransformAndParent( identityTransform, m_Tracker.GetPointer() );
     }
 
 
