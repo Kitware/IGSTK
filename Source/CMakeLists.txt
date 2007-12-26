@@ -280,6 +280,7 @@ SET(IGSTKSandbox_HEADS
   igstkPivotCalibrationNew.h
   igstkPivotCalibrationAlgorithm.h
   igstkPoint3D.h
+  igstkSimulatedTracker.h
   igstkSocketCommunication.h
   igstkVideoGrabber.h
   igstkImageSliceRepresentation.h
@@ -299,10 +300,6 @@ ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 IF(IGSTKSandbox_USE_Qt)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
-# FIXME: comment out the SimulatedTracker class just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#      igstkSimulatedTracker.h
       igstkQMouseTracker.h
       igstkQMouseTrackerTool.h
       igstkQTWidget.h
@@ -357,6 +354,7 @@ SET(IGSTKSandbox_SRCS
 #  vtkImagePlaneWidget2DInteractionListener.cxx
 
   igstkLogger.cxx
+  igstkSimulatedTracker.cxx
 )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -369,10 +367,6 @@ ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 IF(IGSTKSandbox_USE_Qt)
   SET(IGSTKSandbox_SRCS
     ${IGSTKSandbox_SRCS}
-# FIXME: comment out the and SimulatedTracker classes just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#    igstkSimulatedTracker.cxx
     igstkQMouseTracker.cxx
     igstkQMouseTrackerTool.cxx
     igstkQTWidget.cxx

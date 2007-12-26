@@ -37,43 +37,14 @@ CircularSimulatedTracker::~CircularSimulatedTracker()
 {
 }
 
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalOpen( void )
+CircularSimulatedTracker::ResultType 
+CircularSimulatedTracker::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }
 
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalStartTracking( void )
-{
-  return SUCCESS;
-}
-
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalReset( void )
-{
-  return SUCCESS;
-}
-
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalStopTracking( void )
-{
-  return SUCCESS;
-}
-
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalDeactivateTools( void )
-{
-  return SUCCESS;
-}
-
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalClose( void )
-{
-  return SUCCESS;
-}
- 
-CircularSimulatedTracker::ResultType CircularSimulatedTracker
-::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
-{
-  return SUCCESS;
-}
-
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalUpdateStatus( void )
+CircularSimulatedTracker::ResultType 
+CircularSimulatedTracker::InternalUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "CircularSimulatedTracker::InternalUpdateStatus called ...\n");
 

@@ -47,11 +47,6 @@ public:
 
   typedef Superclass::TransformType           TransformType;
 
-  /** Initialize the tracker */
-  void Initialize();
-
-  /** Get the transform */ 
-  void GetTransform(TransformType & transform);
 
 protected:
 
@@ -62,8 +57,6 @@ protected:
   typedef Tracker::ResultType                 ResultType;
 
   virtual ResultType InternalOpen( void );
-
-  virtual ResultType InternalActivateTools( void );
 
   virtual ResultType InternalStartTracking( void );
 
@@ -77,6 +70,9 @@ protected:
 
   virtual ResultType InternalClose( void );
 
+  /** Verify tracker tool information */
+  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
+
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
@@ -84,27 +80,6 @@ private:
 
   SimulatedTracker(const Self&);  //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-
-  typedef TrackerTool                 TrackerToolType;
-  typedef TrackerPort                 TrackerPortType;
-
-  typedef Transform::TimePeriodType   TimePeriodType;
-
-  TimePeriodType                      m_ValidityTime;
-
-  TrackerToolType::Pointer            m_Tool;
-
-  TrackerPortType::Pointer            m_Port;
-
-  double                              m_Parameter;
-
-  typedef TransformType::VectorType   PositionType;
-  typedef TransformType::VersorType   RotationType;
-  
-  void  IncrementParameter();
-
-  PositionType    GetNextPosition();
-  RotationType    GetNextRotation();
 
 };
 

@@ -18,7 +18,7 @@ PURPOSE.  See the above copyright notices for more information.
 #ifndef __igstkCircularSimulatedTracker_h
 #define __igstkCircularSimulatedTracker_h
 
-#include "igstkTracker.h"
+#include "igstkSimulatedTracker.h"
 
 namespace igstk
 {
@@ -34,12 +34,12 @@ namespace igstk
  *
  *   \ingroup Trackers
  */
-class CircularSimulatedTracker : public Tracker
+class CircularSimulatedTracker : public SimulatedTracker
 {
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( CircularSimulatedTracker, Tracker )
+  igstkStandardClassTraitsMacro( CircularSimulatedTracker, SimulatedTracker )
 
   typedef Superclass::TransformType           TransformType;
 
@@ -53,21 +53,9 @@ protected:
 
   virtual ~CircularSimulatedTracker();
 
-  typedef Tracker::ResultType                 ResultType;
-
-  virtual ResultType InternalOpen( void );
-
-  virtual ResultType InternalStartTracking( void );
+  typedef Superclass::ResultType         ResultType;
 
   virtual ResultType InternalUpdateStatus( void );
-
-  virtual ResultType InternalReset( void );
-
-  virtual ResultType InternalStopTracking( void );
-
-  virtual ResultType InternalDeactivateTools( void );
-
-  virtual ResultType InternalClose( void );
 
   /** Verify tracker tool information */
   virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
