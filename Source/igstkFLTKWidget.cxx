@@ -21,9 +21,8 @@
 
 #include "igstkFLTKWidget.h"
 
-#if !defined(WIN32) && !defined(_WIN32)
+// This include is needed both in Linux and Windows
 #include <FL/x.H>
-#endif
 
 #include "vtkRenderer.h"
 #include "vtkRenderWindowInteractor.h"
