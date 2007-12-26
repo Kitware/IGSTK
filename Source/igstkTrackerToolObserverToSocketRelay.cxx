@@ -35,6 +35,8 @@ TrackerToolObserverToSocketRelay::TrackerToolObserverToSocketRelay():m_StateMach
   this->m_Observer->SetCallbackFunction( this, & Self::ResendTransformThroughSocket );
 
   this->m_SocketController   = vtkSocketController::New();
+  this->m_SocketController->Initialize();
+
   this->m_SocketCommunicator = vtkSocketCommunicator::New();
 
   this->m_Matrix = vtkMatrix4x4::New();
@@ -85,8 +87,6 @@ TrackerToolObserverToSocketRelay::RequestStart()
   std::cout << "Trying to connect to host = " << hostname << std::endl;
   std::cout << "In port = " << this->m_Port << std::endl;
 
-  this->m_SocketController->Initialize();
-
   if( !this->m_SocketCommunicator->ConnectTo( hostname, this->m_Port ) )
     {
     std::cerr << "Client error: Could not connect to the server." << std::endl;
@@ -100,7 +100,7 @@ TrackerToolObserverToSocketRelay::RequestStart()
 void
 TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * caller, const itk::EventObject & event )
 {
-
+  std::cout << "TrackerToolObserverToSocketRelay::ResendTransformThroughSocket() " << std::endl;
   //
   // We send 12 parameters: 3x3 from the rotation matrix plus 3 from the
   // translation vector.
@@ -108,7 +108,7 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
   const int numberOfParametersToSend = 12;
 
 
-  const igstk::TransformModifiedEvent * transformEvent = static_cast< const igstk::TransformModifiedEvent * >( &event );
+  const TransformModifiedEvent * transformEvent = static_cast< const TransformModifiedEvent * >( &event );
 
   igstk::Transform transform = transformEvent->Get();
 
