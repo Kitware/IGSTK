@@ -60,8 +60,6 @@ protected:
 
   virtual ResultType InternalStartTracking( void );
 
-  virtual ResultType InternalUpdateStatus( void );
-
   virtual ResultType InternalReset( void );
 
   virtual ResultType InternalStopTracking( void );
@@ -72,6 +70,12 @@ protected:
 
   /** Verify tracker tool information */
   virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
+
+  /** This is the most important method of the SimulatedTracker family.
+   *  This method must be overloaded in derived classes in order to
+   *  provide a particular pattern of movement.
+   */
+  virtual ResultType InternalUpdateStatus( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

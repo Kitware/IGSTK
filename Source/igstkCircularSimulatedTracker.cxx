@@ -38,12 +38,6 @@ CircularSimulatedTracker::~CircularSimulatedTracker()
 }
 
 CircularSimulatedTracker::ResultType 
-CircularSimulatedTracker::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
-{
-  return SUCCESS;
-}
-
-CircularSimulatedTracker::ResultType 
 CircularSimulatedTracker::InternalUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "CircularSimulatedTracker::InternalUpdateStatus called ...\n");
@@ -79,7 +73,9 @@ CircularSimulatedTracker::InternalUpdateStatus( void )
     ++inputItr;
     }
 
-  this->m_Angle += 0.01; // incremt angle
+  std::cout << transform << std::endl;
+
+  this->m_Angle += 0.01; // increment angle
 
   return SUCCESS;
 }

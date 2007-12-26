@@ -55,10 +55,10 @@ protected:
 
   typedef Superclass::ResultType         ResultType;
 
+  /** This is the most important method of this class. It computes the
+   * transform that will be passed to the TrackerTool. 
+   */
   virtual ResultType InternalUpdateStatus( void );
-
-  /** Verify tracker tool information */
-  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

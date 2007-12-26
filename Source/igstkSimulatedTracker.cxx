@@ -64,6 +64,17 @@ SimulatedTracker::ResultType SimulatedTracker::InternalClose( void )
   return SUCCESS;
 }
 
+SimulatedTracker::ResultType 
+SimulatedTracker::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+{
+  return SUCCESS;
+}
+
+SimulatedTracker::ResultType 
+SimulatedTracker::InternalUpdateStatus( void )
+{
+  igstkLogMacro( DEBUG, "SimulatedTracker::InternalUpdateStatus MUST BE OVERLOADED ...\n");
+}
 
 
 /** Print Self function */
