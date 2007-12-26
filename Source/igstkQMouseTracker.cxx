@@ -30,7 +30,7 @@ namespace igstk
 
 QMouseTracker::QMouseTracker():m_StateMachine(this)
 {
-  m_ScaleFactor = 1.0;
+  this->m_ScaleFactor = 1.0;
   this->SetValidityTime(100.0);
 }
 
@@ -92,19 +92,18 @@ QMouseTracker::ResultType QMouseTracker::InternalUpdateStatus( void )
     {
     transform.SetToIdentity( this->GetValidityTime() );
 
+    QPoint mousePosition = QCursor::pos();
 
-  QPoint mousePosition = QCursor::pos();
+    typedef TransformType::VectorType PositionType;
+    PositionType  position;
+    position[0] = mousePosition.x() / this->m_ScaleFactor;
+    position[1] = mousePosition.y() / this->m_ScaleFactor;
+    position[2] = 0;
 
-  typedef TransformType::VectorType PositionType;
-  PositionType  position;
-  position[0] = mousePosition.x() / m_ScaleFactor;
-  position[1] = mousePosition.y() / m_ScaleFactor;
-  position[2] = 0;
+    typedef TransformType::ErrorType  ErrorType;
+    ErrorType errorValue = 0.5; // +/- half Pixel Uncertainty
 
-  typedef TransformType::ErrorType  ErrorType;
-  ErrorType errorValue = 0.5; // +/- half Pixel Uncertainty
-
-  transform.SetTranslation( position, errorValue, this->GetValidityTime() );
+    transform.SetTranslation( position, errorValue, this->GetValidityTime() );
 
     // set the raw transform
     this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
@@ -120,7 +119,7 @@ void QMouseTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Scale Factor: " << m_ScaleFactor << std::endl;
+  os << indent << "Scale Factor: " << this->m_ScaleFactor << std::endl;
 }
 
 }
