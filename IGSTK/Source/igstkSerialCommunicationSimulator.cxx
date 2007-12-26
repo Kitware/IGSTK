@@ -27,7 +27,7 @@
 #include <string.h>
 
 // includes for Sleep
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
 #include <windows.h>
 #else
 #include <time.h>
@@ -204,7 +204,7 @@ SerialCommunicationSimulator::InternalSendBreak( void )
 
 void SerialCommunicationSimulator::InternalSleep( unsigned int milliseconds )
 {
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
   // use Windows sleep function
   ::Sleep(milliseconds);
 #else
