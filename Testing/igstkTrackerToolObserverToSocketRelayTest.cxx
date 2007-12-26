@@ -25,6 +25,7 @@
 
 #include "igstkRealTimeClock.h"
 #include "igstkCircularSimulatedTracker.h"
+#include "igstkSimulatedTrackerTool.h"
 #include "igstkTrackerToolObserverToSocketRelay.h"
 
 int igstkTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
@@ -40,13 +41,14 @@ int igstkTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::CircularSimulatedTracker               TrackerType;
-  typedef igstk::TrackerTool                            TrackerToolType;
+  typedef igstk::SimulatedTrackerTool                   TrackerToolType;
   typedef igstk::TrackerToolObserverToSocketRelay       ObserverType;
 
   TrackerType::Pointer      tracker      = TrackerType::New();
   TrackerToolType::Pointer  trackerTool  = TrackerToolType::New();
   ObserverType::Pointer     toolObserver = ObserverType::New();
 
+  trackerTool->RequestSetName("Tool_1");
   trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
 
