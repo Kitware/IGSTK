@@ -21,9 +21,8 @@
 #pragma warning( disable : 4786 )
 #endif
 
-#define DEBUGMTC
-
 #include "igstkMicronTracker.h"
+#include <itksys/SystemTools.hxx>
 
 #include <sstream>
 
@@ -57,6 +56,9 @@ MicronTracker::MicronTracker(void):m_StateMachine(this)
 
   // initialize selected camera
   m_SelectedCamera = NULL;
+
+  // Camera light coolness
+  m_CameraLightCoolness = 0.1;
 
   // Create error code list if it hasn't been
   // created.
@@ -238,44 +240,62 @@ bool MicronTracker::Initialize()
   igstkLogMacro( DEBUG, "MicronTracker::Initialize called ...\n");
 
   bool result = true;
-
-  if ( m_InitializationFile == "" )
+  if ( m_InitializationFile == "" || !itksys::SystemTools::FileExists( m_InitializationFile.c_str() ) ) 
     {
-    std::cerr << "Initialization file (.ini ) is not set" << std::endl;
+    std::cerr << "Initialization file (.ini ) is not properly set" << std::endl;
     return FAILURE;
     }
   char * initializationFilename = 
             const_cast< char *> ( m_InitializationFile.c_str() );
   this->m_Persistence->setPath( initializationFilename );
-
   this->m_Persistence->setSection ("General");
 
-  //Setting the TemplateMatchToleranceMM property in the Markers object
-  double defaultTempMatchToleranceMM = 1.0;
+  /* The LightCoolness property provides an indication to the camera of how the
+  illumination spectrum is distributed, allowing it to correct for the difference
+  between the calibration light spectrum and the measurement light spectrum.
+  The LightCoolness value indicates the balance between reds (warm) and blue (cool)
+  colors in the lighting.*/ 
   double defaultLightCoolness = 0.1;
-
+  // light coolness value will be set on the camera after it is attached. 
+  m_CameraLightCoolness = 
+      this->m_Persistence->retrieveDouble(
+         "LightCoolness", defaultLightCoolness);
+  
+  
+  //Sets the template match tolerance (in millimeters).
+  //This tolerance determines the sensitivity of the MicronTracker to deviations
+  //between the measured relative positions of XPoints and their relative positions
+  //as described in the facet templates . The lower the tolerance, the more 
+  //likely it is tracking would be momentarily lost under some
+  //circumstances (poor lighting, large distance), but the more closely the geometry
+  //of different markers can be without the possibility of accidentally confusing
+  //them.
+  double defaultTempMatchToleranceMM = 1.0;
   this->m_Markers->setTemplateMatchToleranceMM( 
       this->m_Persistence->retrieveDouble(
          "TemplateMatchToleranceMM", defaultTempMatchToleranceMM) );
   
+  //Selects which image footprint size to use for the XPoint detection algorithm.
+  //Smaller XPoint footprint is 9 pixels in diameter, while the regular size is 11.
+  //Using the smaller footprint allows to detect smaller markers at larger distances
+  //from the camera, at the expense of reduced accuracy near the far end of the FOM.
   bool defaultSmallerXPFootprint = true;
-  int  defaultExtrapolatedFrames = 5;
-
   bool SmallerXPFootprint = 
             (bool)(this->m_Persistence->retrieveInt(
                        "DetectSmallMarkers", defaultSmallerXPFootprint));
+  this->m_Markers->setSmallerXPFootprint(SmallerXPFootprint);
 
+
+  // ExtrapolatedFrames controls the number of future frames for which the
+  // markers, which have been identified in the current frame, are remembered.
+  // The predicted locations of the remembered markers can then be reported if
+  // not found in the future frames. Setting this property to 0 disables
+  // extrapolation.
+  int  defaultExtrapolatedFrames = 5;
   int ExtrapolatedFrames = this->m_Persistence->retrieveInt(
                         "ExtrapolatedFrames", defaultExtrapolatedFrames);
-
-  this->m_Markers->setSmallerXPFootprint(SmallerXPFootprint);
   this->m_Markers->setExtrapolatedFrames(ExtrapolatedFrames);
 
-  //could have been clipped
-  this->m_Persistence->saveInt("ExtrapolatedFrames", 
-                               this->m_Markers->getExtrapolatedFrames());
-
-  /* Markers directory might need to be created: TODO!!! */
   
   return result;
 }
@@ -286,6 +306,13 @@ bool MicronTracker::SetUpCameras()
 
   bool result = true;
 
+  if ( m_CalibrationFilesDirectory == "" || 
+       !itksys::SystemTools::FileExists( m_CalibrationFilesDirectory.c_str() ) ) 
+    {
+    std::cerr << "Camera calibration directory is not properly set" << std::endl;
+    return FAILURE;
+    }
+ 
   this->m_Cameras->SetCameraCalibrationFilesDirectory( this->m_CalibrationFilesDirectory );
   int success = this->m_Cameras->AttachAvailableCameras();
 
@@ -298,9 +325,13 @@ bool MicronTracker::SetUpCameras()
     }
   else
     {
+    //This tracker implementation only handles a single camera. However, MTC
+    //library provides 
     if ( this->m_Cameras->getCount() >= 1 ) 
       {
       this->m_SelectedCamera = this->m_Cameras->m_vCameras[0];
+      // set the camera Light coolness parameter
+      this->m_SelectedCamera->setLightCoolness( m_CameraLightCoolness );
       } 
     }
 
@@ -441,7 +472,6 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
     typedef TransformType::VersorType RotationType;
     RotationType rotation;
 
-    //TODO: Check the quaternions order. xyzw
     rotation.Set( (inputItr->second)[3],
                    (inputItr->second)[4],
                    (inputItr->second)[5],
@@ -500,41 +530,9 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     return FAILURE;
     }
 
-#ifdef DEBUGMTC 
-    unsigned char **laddr;
-    unsigned char **raddr;
-    m_SelectedCamera->getImages( &laddr, &raddr);
-    int width = m_SelectedCamera->getXRes();
-    int height = m_SelectedCamera->getYRes();
-
-    unsigned int size = width*height;
-    const char* copyPixels = (char *) laddr;
-
-    unsigned int counter = 0; 
-    std::stringstream leftImageNameStream;
-    leftImageNameStream << "dataLeft" << counter << ".bin";
-    
-    std::string leftImageName = leftImageNameStream.str(); 
-    ofstream myFile (leftImageName.c_str(), ios::out | ios::binary);
-    myFile.write (copyPixels, size );
-    myFile.close();
-
-    std::stringstream rightImageNameStream;
-    rightImageNameStream << "dataRight" << counter << ".bin";
-    
-    std::string rightImageName = rightImageNameStream.str(); 
-    const char* copyPixelsRight = (char *) raddr;
-    ofstream myFileRight (rightImageName.c_str(), ios::out | ios::binary);
-    myFileRight.write (copyPixelsRight, size );
-    myFileRight.close();
-
-#endif
- 
   // process identified markers
   Collection* markersCollection = new Collection(this->m_Markers->identifiedMarkers(this->m_SelectedCamera));
  
-  //std::cout << "\tNumber of identified markers: \t" <<  markersCollection->count() << std::endl;
-
   if (markersCollection->count() == 0) 
     {
     delete markersCollection; 
@@ -547,74 +545,38 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     Marker * marker = new Marker(markersCollection->itemI(markerNum));
     if (marker->wasIdentified(this->m_SelectedCamera) )
       {
-      //output facet information for each marker
-      Collection* facetsCollection = new Collection(marker->identifiedFacets(this->m_SelectedCamera));
-      for (unsigned int facetNum = 1; facetNum <= facetsCollection->count(); facetNum++)
-        {
-        /* std::cout << "Marker number= " << markerNum << "\tFacet number= " 
-                  << facetNum << "\t name=" << marker->getName() << std::endl; */
-        }
-      delete facetsCollection;
-
-
       //Get postion and pose information 
       Xform3D* Marker2CurrCameraXf = NULL;
       Marker2CurrCameraXf = marker->marker2CameraXf(this->m_SelectedCamera->Handle());
 
       if(Marker2CurrCameraXf != NULL)
         {
-        double translation[3];
-
-        translation[0] = Marker2CurrCameraXf->getShift(0);
-        translation[1] = Marker2CurrCameraXf->getShift(1);
-        translation[2] = Marker2CurrCameraXf->getShift(2);
-      
-        /* std::cout.setf(ios::fixed,ios::floatfield); 
-        std::cout << "\tOrigin XYZ= " << setprecision(5) << translation[0] << "\t" 
-                            << translation[1] << "\t"
-                            << translation[2] << std::endl; */
-
-        // If there's a tooltip, add it
-        // Marker to tooltip is set using 
-        // Marker_Tooltip2MarkerXfSet method or it can be 
-        // specified in the marker template file in the
-        // marker's coordinate system
-        Xform3D* t2m; // tooltip to marker xform
-        double svec[3];
-        t2m = marker->tooltip2MarkerXf();
-        t2m->getShiftVector(svec);
-
-        if (svec[0] != 0 || svec[1] != 0 || svec[2] != 0) 
-          { 
-          Xform3D* t2c; // tooltip to camera xform
-          t2c = t2m->concatenate(Marker2CurrCameraXf);
-          std::cout.setf(ios::fixed,ios::floatfield); 
-         /* std::cout << "\tTIP XYZ=" << setprecision(5) << t2c->getShift(0) << "\t" 
-                            << t2c->getShift(1) << "\t"
-                            << t2c->getShift(2) << std::endl; */
-          delete t2c;
-          }
+        // Tooltip calibration information which could be available in the 
+        // marker template file will not be used here. If needed, the calibration
+        // transform should be set to the tracker tool using the 
+        // SetCalibrationTransform method in the trackertool and the Tracker
+        // base class will computed the composition.
 
         // Add the translation and rotation to the transform buffer
         std::vector < double > transform;
 
+        double translation[3];
         //the first three are translation
+        translation[0] = Marker2CurrCameraXf->getShift(0);
+        translation[1] = Marker2CurrCameraXf->getShift(1);
+        translation[2] = Marker2CurrCameraXf->getShift(2);
+
         transform.push_back( translation[0] ); 
         transform.push_back( translation[1] ); 
         transform.push_back( translation[2] ); 
 
         //the next four are quaternion
         double quaternion[4];
-        quaternion[0] = Marker2CurrCameraXf->getQuaternion(0);
-        quaternion[1] = Marker2CurrCameraXf->getQuaternion(1);
-        quaternion[2] = Marker2CurrCameraXf->getQuaternion(2);
+    
+        quaternion[0] = -1.0 * Marker2CurrCameraXf->getQuaternion(0);
+        quaternion[1] = -1.0 * Marker2CurrCameraXf->getQuaternion(1);
+        quaternion[2] = -1.0 * Marker2CurrCameraXf->getQuaternion(2);
         quaternion[3] = Marker2CurrCameraXf->getQuaternion(3);
-
-        std::cout.setf(ios::fixed,ios::floatfield); 
-
-        /* std::cout << "\t Versor = " << setprecision(5) << quaternion[0] << "\t"
-                                    << quaternion[1]  << "\t" << quaternion[2] << "\t"
-                                    << quaternion[3] << std::endl; */
 
         transform.push_back( quaternion[0] ); 
         transform.push_back( quaternion[1] ); 
@@ -636,8 +598,6 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
           std::cout << "\tNo TrackerTool is attached to this marker: " 
                     << marker->getName() << std::endl;
           }
-
-        delete t2m;
         }
       }
     // DO NOT delete marker. This is a possible bug in Marker class.

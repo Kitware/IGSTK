@@ -155,6 +155,9 @@ private:
   Cameras     * m_Cameras;
   MCamera     * m_SelectedCamera;
 
+  /** Camera light coolness value */
+  double        m_CameraLightCoolness;
+
   /** A buffer to hold tool transforms */
   typedef std::map< std::string, std::vector < double > > 
                                 TrackerToolTransformContainerType; 
