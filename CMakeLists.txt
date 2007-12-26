@@ -55,6 +55,14 @@ IF(WIN32)
   ENDIF(DISABLE_MSVC8_DEPRECATED_WARNINGS)
 ENDIF(WIN32)
 
+
+# The symbol WIN32 is not always defined. Most commonly it is _WIN32
+# we add here the definition for WIN32.
+IF(WIN32)
+  ADD_DEFINITIONS(-DWIN32)
+ENDIF(WIN32)
+
+
 #
 #  FIND ITK
 #
