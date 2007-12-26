@@ -52,28 +52,32 @@ CircularSimulatedTracker::InternalUpdateStatus( void )
   typedef igstk::Transform   TransformType;
   TransformType transform;
 
+  transform.SetToIdentity( this->GetValidityTime() );
+
+  typedef TransformType::VectorType PositionType;
+  PositionType  position;
+  position[0] = cos( this->m_Angle ) * this->m_Radius;
+  position[1] = sin( this->m_Angle ) * this->m_Radius;
+  position[2] = 0;
+
+  typedef TransformType::ErrorType  ErrorType;
+  ErrorType errorValue = 0.5; // +/- half Pixel Uncertainty
+
+  transform.SetTranslation( position, errorValue, this->GetValidityTime() );
+
+  std::cout << "CircularSimulatedTracker::InternalUpdateStatus() Begin" << std::endl;
+  std::cout << "Angle = " << this->m_Angle << std::endl;
+  std::cout << transform << std::endl;
+
+  // set the raw transform in all the tracker tools
   while( inputItr != inputEnd )
     {
-    transform.SetToIdentity( this->GetValidityTime() );
-
-    typedef TransformType::VectorType PositionType;
-    PositionType  position;
-    position[0] = cos( this->m_Angle ) * this->m_Radius;
-    position[1] = sin( this->m_Angle ) * this->m_Radius;
-    position[2] = 0;
-
-    typedef TransformType::ErrorType  ErrorType;
-    ErrorType errorValue = 0.5; // +/- half Pixel Uncertainty
-
-    transform.SetTranslation( position, errorValue, this->GetValidityTime() );
-
-    // set the raw transform
     this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
     this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+    std::cout << "SetTrackerToolRawTransform() " << std::endl;
     ++inputItr;
     }
-
-  std::cout << transform << std::endl;
+  std::cout << "CircularSimulatedTracker::InternalUpdateStatus() End" << std::endl;
 
   this->m_Angle += 0.01; // increment angle
 
