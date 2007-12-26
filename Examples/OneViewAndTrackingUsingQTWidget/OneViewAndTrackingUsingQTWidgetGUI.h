@@ -27,13 +27,7 @@
 #include "igstkQMouseTracker.h"
 #include "igstkQMouseTrackerTool.h"
 #include "igstkView.h"
-
-#if defined(WIN32) || defined(_WIN32)
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
-
+#include "igstkSerialCommunication.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
@@ -43,17 +37,11 @@ class OneViewAndTrackingUsingQTWidgetGUI : public QMainWindow
 {
   Q_OBJECT
 
-  typedef igstk::Object::LoggerType              LoggerType; 
-  typedef itk::StdStreamLogOutput  LogOutputType;
-
+  typedef igstk::Object::LoggerType    LoggerType; 
+  typedef itk::StdStreamLogOutput      LogOutputType;
   typedef igstk::QMouseTracker         TrackerType;
   typedef igstk::QMouseTrackerTool     TrackerToolType;
-
-#if defined(WIN32) || defined(_WIN32)
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix    CommunicationType;
-#endif
+  typedef igstk::SerialCommunication   CommunicationType;
 
 public:
   OneViewAndTrackingUsingQTWidgetGUI();

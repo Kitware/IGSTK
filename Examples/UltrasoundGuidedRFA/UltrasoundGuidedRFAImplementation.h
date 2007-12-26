@@ -55,12 +55,7 @@
 
 #include "FL/Fl_File_Chooser.H"
 
-#if defined(WIN32) || defined(_WIN32)
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
-
+#include "igstkSerialCommunication.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
@@ -132,11 +127,7 @@ public:
   typedef igstk::View2D                             View2DType;
   typedef igstk::View3D                             View3DType;
 
-#if defined(WIN32) || defined(_WIN32)
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix    CommunicationType;
-#endif
+  typedef igstk::SerialCommunication                CommunicationType;
 
 public:
 

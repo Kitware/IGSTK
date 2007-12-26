@@ -31,12 +31,7 @@
 #include "itkVersor.h"
 
 #include "igstkSystemInformation.h"
-#if defined(WIN32) || defined(_WIN32)
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
-
+#include "igstkSerialCommunication.h"
 #include "igstkSerialCommunicationSimulator.h"
 #include "igstkPolarisTracker.h"
 #include "igstkPolarisTrackerTool.h"

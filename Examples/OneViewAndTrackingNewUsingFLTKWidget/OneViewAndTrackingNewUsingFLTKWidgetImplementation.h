@@ -26,12 +26,7 @@
 
 #include "OneViewAndTrackingNewUsingFLTKWidgetGUI.h"
 #include "igstkPolarisTracker.h"
-#if defined(WIN32) || defined(_WIN32)
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
-
+#include "igstkSerialCommunication.h"
 #include "igstkLogger.h"
 #include "igstkView.h"
 #include "itkStdStreamLogOutput.h"
@@ -47,12 +42,7 @@ public:
   typedef igstk::PolarisTracker             TrackerType;
   typedef igstk::PolarisTrackerTool         TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
-
-#if defined(WIN32) || defined(_WIN32)
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix    CommunicationType;
-#endif
+  typedef igstk::SerialCommunication        CommunicationType;
 
 public:
 

@@ -33,10 +33,27 @@
 
 #include "igstkBinaryData.h"
 #include "igstkSerialCommunication.h"
+#if defined(WIN32) || defined(_WIN32)
+#include "igstkSerialCommunicationForWindows.h"
+#else
+#include "igstkSerialCommunicationForPosix.h"
+#endif
 
 
 namespace igstk
 { 
+
+SerialCommunication::Pointer SerialCommunication::New(void)
+{ 
+  Pointer smartPtr;
+  #if defined(WIN32) || defined(_WIN32)
+  smartPtr = SerialCommunicationForWindows::New();
+  #else
+  smartPtr = SerialCommunicationForPosix::New();
+  #endif
+  return smartPtr;
+} 
+
 
 /** Constructor */
 SerialCommunication::SerialCommunication() :  m_StateMachine( this )

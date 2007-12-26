@@ -31,12 +31,7 @@
 #include "itkVersor.h"
 
 #include "igstkSystemInformation.h"
-#if defined(WIN32) || defined(_WIN32)
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
-
+#include "igstkSerialCommunication.h"
 #include "igstkSerialCommunicationSimulator.h"
 #include "igstkPolarisTracker.h"
 #include "igstkPolarisTrackerTool.h"
@@ -168,13 +163,8 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
 
   igstk::PolarisTrackerTool::Pointer tool = igstk::PolarisTrackerTool::New();
 
-#if defined(WIN32) || defined(_WIN32)
-  igstk::SerialCommunicationForWindows::Pointer 
-                     serialComm = igstk::SerialCommunicationForWindows::New();
-#else
-  igstk::SerialCommunicationForPosix::Pointer
-                       serialComm = igstk::SerialCommunicationForPosix::New();
-#endif
+  igstk::SerialCommunication::Pointer 
+                     serialComm = igstk::SerialCommunication::New();
 
   PolarisTrackerTest2Command::Pointer 
                                 my_command = PolarisTrackerTest2Command::New();

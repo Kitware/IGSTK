@@ -33,12 +33,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkLandmark3DRegistration.h"
 
 #include "igstkSandboxConfigure.h"
-#if defined(WIN32) || defined(_WIN32)
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
-
+#include "igstkSerialCommunication.h"
 #include "igstkPolarisTracker.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
@@ -84,14 +79,10 @@ public:
   typedef RegistrationType::TransformType               TransformType;
 
   /** typedefs for the communication */
-#if defined(WIN32) || defined(_WIN32)
-  typedef igstk::SerialCommunicationForWindows               CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix                 CommunicationType;
-#endif
+  typedef igstk::SerialCommunication                    CommunicationType;
 
   /** typedefs for the tracker */
-  typedef igstk::PolarisTracker                                TrackerType;
+  typedef igstk::PolarisTracker                         TrackerType;
 
   /** Public request methods from the GUI. */
   virtual void RequestSetPatientName();

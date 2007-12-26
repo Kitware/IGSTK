@@ -27,13 +27,7 @@
 #include "igstkMicronTracker.h"
 #include "igstkView.h"
 #include "igstkTransform.h"
-
-#if defined(WIN32) || defined(_WIN32)
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
-
+#include "igstkSerialCommunication.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
@@ -43,18 +37,13 @@ class OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI : public QMainWindow
 {
   Q_OBJECT
 
-  typedef igstk::Object::LoggerType              LoggerType; 
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType            LoggerType; 
+  typedef itk::StdStreamLogOutput              LogOutputType;
 
-  typedef igstk::MicronTracker                TrackerType;
-  typedef igstk::MicronTrackerTool TrackerToolType;
-  typedef TrackerToolType::TransformType    TransformType;
-
-#if defined(WIN32) || defined(_WIN32)
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix    CommunicationType;
-#endif
+  typedef igstk::MicronTracker                 TrackerType;
+  typedef igstk::MicronTrackerTool             TrackerToolType;
+  typedef TrackerToolType::TransformType       TransformType;
+  typedef igstk::SerialCommunication           CommunicationType;
 
 public:
   OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI();

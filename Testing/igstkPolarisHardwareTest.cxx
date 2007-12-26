@@ -21,12 +21,7 @@
 
 #include "igstkTrackerHardwareTestHelper.h"
 #include "igstkPolarisTracker.h"
-
-#if defined(WIN32) || defined(_WIN32)
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
+#include "igstkSerialCommunication.h"
 
 int igstkPolarisHardwareTest( int argc, char* argv[] )
 {
@@ -42,12 +37,7 @@ int igstkPolarisHardwareTest( int argc, char* argv[] )
   typedef igstk::TrackerHardwareTestHelper    TestHelperType;
   typedef igstk::PolarisTracker               TrackerType;
   typedef igstk::PolarisTrackerTool           TrackerToolType;
-
-#if defined(WIN32) || defined(_WIN32)
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix    CommunicationType;
-#endif
+  typedef igstk::SerialCommunication          CommunicationType;
  
   TestHelperType::Pointer tester = TestHelperType::New();
 

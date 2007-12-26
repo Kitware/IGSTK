@@ -30,21 +30,13 @@
 
 #include "igstkSystemInformation.h"
 #include "igstkEvents.h"
-#if defined(WIN32) || defined(_WIN32)
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
+#include "igstkSerialCommunication.h"
 
 class SerialCommunicationTestCommand : public itk::Command 
 {
 public:
 
-#if defined(WIN32) || defined(_WIN32)
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix  CommunicationType;
-#endif
+  typedef igstk::SerialCommunication     CommunicationType;
 
   typedef  SerialCommunicationTestCommand   Self;
   typedef  itk::Command                     Superclass;
@@ -72,14 +64,10 @@ int igstkSerialCommunicationTest( int argc, char * argv[] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::Object::LoggerType             LoggerType;
+  typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
-#if defined(WIN32) || defined(_WIN32)
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix  CommunicationType;
-#endif
+  typedef igstk::SerialCommunication    CommunicationType;
 
   // this is set if the test failed in any way
   int testStatus = EXIT_SUCCESS;

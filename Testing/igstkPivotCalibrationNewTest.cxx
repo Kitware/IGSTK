@@ -9,12 +9,9 @@
 #ifdef PIVOT_CALIBRATION_SIMULATOR_TEST
   #include "igstkSerialCommunicationSimulator.h"
 #else //a tracker is actually in  use
-#if defined(WIN32) || defined(_WIN32) //running on a windows system
-  #include <igstkSerialCommunicationForWindows.h>
-#else //running on a unix system
-  #include <igstkSerialCommunicationForPosix.h>
-#endif
-        //when a tracker is connected and you want to record the data 
+#include "igstkSerialCommunication.h"
+
+//when a tracker is connected and you want to record the data 
 //#define RECORD_DATA 
 
 #endif
@@ -261,10 +258,7 @@ int exitFailure( igstk::SerialCommunication::Pointer &communication,
   serialComm->SetFileName( simulationFile.c_str() );
   trackerSerialCommunication = serialComm;
 #else  //a tracker is actually in  use
-#if defined(WIN32) || defined(_WIN32)  //running on a windows system
-  trackerSerialCommunication = igstk::SerialCommunicationForWindows::New();
-#else  //running on a unix system
-  trackerSerialCommunication = igstk::SerialCommunicationForPosix::New();
+  trackerSerialCommunication = igstk::SerialCommunication::New();
 #endif
 
 #ifdef RECORD_DATA 

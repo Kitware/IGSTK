@@ -100,13 +100,16 @@ public:
 
   typedef Communication::ResultType      ResultType;
 
-  typedef SerialCommunication            Self;
-  typedef Communication                  Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
+  /** Standard traits of a basic class */
+  igstkStandardClassBasicTraitsMacro( SerialCommunication, Communication );
 
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( SerialCommunication, Communication );
+  /** Customized New method that will return the implementation of
+   * SerialCommunication that is appropriate for this platform.  
+   * \sa SerialCommunicationForWindows 
+   * \sa SerialCommunicationForPosix
+   */
+  static Pointer New(void);
+
 
   /** Specify which serial port to use.  If communication is open,
    *  this has no effect until communication is closed and reopened. */

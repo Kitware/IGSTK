@@ -34,11 +34,7 @@
 
 #include "igstkSystemInformation.h"
 #include "igstkNDICommandInterpreter.h"
-#if defined(WIN32) || defined(_WIN32)
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
+#include "igstkSerialCommunication.h"
 #include "igstkSerialCommunicationSimulator.h"
 
 
@@ -89,11 +85,7 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
 #ifdef IGSTK_SIMULATOR_TEST
   typedef igstk::SerialCommunicationSimulator   CommunicationType;
 #else  /* IGSTK_SIMULATOR_TEST */
-#if defined(WIN32) || defined(_WIN32)
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix    CommunicationType;
-#endif /* WIN32 */
+  typedef igstk::SerialCommunication            CommunicationType;
 #endif /* IGSTK_SIMULATOR_TEST */
 
   typedef igstk::NDICommandInterpreter  CommandInterpreterType;
