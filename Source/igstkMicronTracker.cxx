@@ -260,7 +260,17 @@ bool MicronTracker::Initialize()
   m_CameraLightCoolness = 
       this->m_Persistence->retrieveDouble(
          "LightCoolness", defaultLightCoolness);
-  
+ 
+
+  /* PredictiveFramesInterleave controls the number of predictive-only matching
+  *frames inserted between each subsequent full-matching frames. A valued of 0
+  *means that all frames are full-matching (require more computing resource). 
+  *A value of 3, for example, means that 3 out of every 4 frames would be 
+  *predictive-only */
+  int defaultFrameInterleave = 0;
+  this->m_Markers->setPredictiveFramesInterleave(
+  this->m_Persistence->retrieveInt("PredictiveFramesInterleave",
+       defaultFrameInterleave) ); 
   
   //Sets the template match tolerance (in millimeters).
   //This tolerance determines the sensitivity of the MicronTracker to deviations
