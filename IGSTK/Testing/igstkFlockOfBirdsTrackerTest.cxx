@@ -31,7 +31,7 @@
 #include "itkVersor.h"
 
 #include "igstkSystemInformation.h"
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
 #include "igstkSerialCommunicationForWindows.h"
 #else
 #include "igstkSerialCommunicationForPosix.h"
@@ -87,7 +87,7 @@ int igstkFlockOfBirdsTrackerTest( int argc, char * argv[] )
     igstk::SerialCommunicationSimulator::Pointer serialComm 
                                  = igstk::SerialCommunicationSimulator::New();
 #else  /* IGSTK_SIMULATOR_TEST */
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
   igstk::SerialCommunicationForWindows::Pointer serialComm 
                                  = igstk::SerialCommunicationForWindows::New();
 #else

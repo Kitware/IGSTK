@@ -33,7 +33,7 @@ void igstkSystemInformationPrintFile(const char* name, ostream& os)
     return;
     }
 
-#ifdef _WIN32
+#if defined(WIN32) || defined(_WIN32)
   ifstream fin(name, ios::in | ios::binary);
 #else
   ifstream fin(name, ios::in);

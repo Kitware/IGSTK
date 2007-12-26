@@ -31,7 +31,7 @@
 #include "itkVersor.h"
 
 #include "igstkSystemInformation.h"
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
 #include "igstkSerialCommunicationForWindows.h"
 #else
 #include "igstkSerialCommunicationForPosix.h"
@@ -89,13 +89,13 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
 
   igstk::AuroraTrackerTool::Pointer tool = igstk::AuroraTrackerTool::New();
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
   igstk::SerialCommunicationForWindows::Pointer 
                      serialComm = igstk::SerialCommunicationForWindows::New();
 #else
   igstk::SerialCommunicationForPosix::Pointer
                        serialComm = igstk::SerialCommunicationForPosix::New();
-#endif /* WIN32 */
+#endif
 
   AuroraTrackerTestCommand::Pointer 
                                 my_command = AuroraTrackerTestCommand::New();

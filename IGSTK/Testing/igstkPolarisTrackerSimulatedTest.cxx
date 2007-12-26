@@ -31,7 +31,7 @@
 #include "itkVersor.h"
 
 #include "igstkSystemInformation.h"
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
 #include "igstkSerialCommunicationForWindows.h"
 #else
 #include "igstkSerialCommunicationForPosix.h"

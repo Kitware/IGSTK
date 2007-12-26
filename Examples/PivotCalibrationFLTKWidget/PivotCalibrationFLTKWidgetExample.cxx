@@ -1,7 +1,7 @@
 #include "PivotCalibrationFLTKWidgetExample.h"
 #include <FL/fl_ask.H>
 
-#ifdef WIN32 //running on a windows system
+#if defined(WIN32) || defined(_WIN32)  //running on a windows system
   #include <igstkSerialCommunicationForWindows.h>
 #else //running on a unix system
   #include <igstkSerialCommunicationForPosix.h>
@@ -28,7 +28,7 @@ PivotCalibrationFLTKWidgetExample::PivotCalibrationFLTKWidgetExample()
   this->m_errorObserver = TrackingErrorObserver::New();
 
      //create serial communication
-#ifdef WIN32 //running on a windows system
+#if defined(WIN32) || defined(_WIN32)   //running on a windows system
     this->m_serialCommunication = igstk::SerialCommunicationForWindows::New();
 #else  //running on a unix system
   this->m_serialCommunication = igstk::SerialCommunicationForPosix::New();

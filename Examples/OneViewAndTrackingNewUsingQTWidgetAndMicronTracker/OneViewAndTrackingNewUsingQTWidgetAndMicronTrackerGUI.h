@@ -28,7 +28,7 @@
 #include "igstkView.h"
 #include "igstkTransform.h"
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
 #include "igstkSerialCommunicationForWindows.h"
 #else
 #include "igstkSerialCommunicationForPosix.h"
@@ -50,7 +50,7 @@ class OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI : public QMainWindow
   typedef igstk::MicronTrackerTool TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
   typedef igstk::SerialCommunicationForWindows  CommunicationType;
 #else
   typedef igstk::SerialCommunicationForPosix    CommunicationType;

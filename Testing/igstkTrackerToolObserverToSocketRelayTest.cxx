@@ -60,7 +60,7 @@ int igstkTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
 
   for( unsigned int i = 0; i < 100; i++ )
     {
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
     Sleep(10);
 #else
     usleep(10);

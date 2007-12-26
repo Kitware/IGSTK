@@ -75,7 +75,7 @@
 #include "igstkView3D.h"
 #endif
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
 #include "igstkSerialCommunicationForWindows.h"
 #else
 #include "igstkSerialCommunicationForPosix.h"
@@ -307,7 +307,7 @@ int main( int argc, char * argv [] )
                                                    outputDirectory, skipLoops );
   // Export the state diagrams for the Serial Communication classes according
   // to the current platform.
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
   igstkTestExportStateMachine1( igstk::SerialCommunicationForWindows, 
                                                    outputDirectory, skipLoops );
 #else

@@ -20,7 +20,10 @@
 #endif
 
 #include "igstkFLTKWidget.h"
+
+#if !defined(WIN32) && !defined(_WIN32)
 #include <FL/x.H>
+#endif
 
 #include "vtkRenderer.h"
 #include "vtkRenderWindowInteractor.h"
@@ -101,7 +104,7 @@ FLTKWidget::~FLTKWidget()
 
       if ( renderWindow != NULL )
         {
-        #if defined(WIN32)
+        #if defined(WIN32) || defined(_WIN32)
           renderWindow->SetWindowId( NULL );
         #endif
         }
@@ -221,7 +224,7 @@ void FLTKWidget::SetRenderWindowID(void)
   #else
     renderWindow->SetWindowId( (void *)fl_xid( this ) );
   #endif
-  #if !defined(WIN32) && !defined(__APPLE__)
+  #if !defined(WIN32) && !defined(_WIN32) && !defined(__APPLE__)
     renderWindow->SetDisplayId( fl_display );
   #endif
 

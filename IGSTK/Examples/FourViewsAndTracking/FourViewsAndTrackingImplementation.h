@@ -52,7 +52,7 @@
 #include "igstkView3D.h"
 // EndCodeSnippet
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
 #include "igstkSerialCommunicationForWindows.h"
 #else
 #include "igstkSerialCommunicationForPosix.h"
@@ -71,7 +71,7 @@ public:
   typedef igstk::AuroraTracker                  TrackerType;
   typedef igstk::AuroraTrackerTool              TrackerToolType;
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
   typedef igstk::SerialCommunicationForWindows  CommunicationType;
 #else
   typedef igstk::SerialCommunicationForPosix    CommunicationType;

@@ -33,7 +33,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkLandmark3DRegistration.h"
 
 #include "igstkSandboxConfigure.h"
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
 #include "igstkSerialCommunicationForWindows.h"
 #else
 #include "igstkSerialCommunicationForPosix.h"
@@ -84,7 +84,7 @@ public:
   typedef RegistrationType::TransformType               TransformType;
 
   /** typedefs for the communication */
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
   typedef igstk::SerialCommunicationForWindows               CommunicationType;
 #else
   typedef igstk::SerialCommunicationForPosix                 CommunicationType;
