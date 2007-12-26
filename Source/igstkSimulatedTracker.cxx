@@ -73,7 +73,8 @@ SimulatedTracker::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 SimulatedTracker::ResultType 
 SimulatedTracker::InternalUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "SimulatedTracker::InternalUpdateStatus MUST BE OVERLOADED ...\n");
+  igstkLogMacro( DEBUG, "SimulatedTracker::InternalUpdateStatus MUST BE OVERLOADED BY DERIVED CLASSES...\n");
+  return FAILURE;
 }
 
 
