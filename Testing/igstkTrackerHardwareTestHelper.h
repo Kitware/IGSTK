@@ -134,7 +134,14 @@ public:
 
     const unsigned int toolNumber = 0;
 
-    this->m_TrackerTool->RequestAttachSpatialObject( this->m_SpatialObject );
+    //this->m_TrackerTool->RequestAttachSpatialObject( this->m_SpatialObject );
+    igstk::Transform identity;
+    identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    this->m_SpatialObject->RequestSetTransformAndParent( 
+                                          identity,
+                                          this->m_TrackerTool.GetPointer() );
+                                                
+
     this->m_Tracker->RequestAddTool( this->m_TrackerTool );
 
     //  PREVIOUS: DEPRECATED METHOD : DELETE FROM HERE : FIXME

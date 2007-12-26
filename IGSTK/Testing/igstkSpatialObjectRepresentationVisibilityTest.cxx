@@ -289,7 +289,10 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   */
 
 #ifdef OBJECTTRACKED
-  trackerTool->RequestAttachSpatialObject( ellipsoidObject3 );
+  igstk::Transform identity;
+  identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  ellipsoidObject3->RequestSetTransformAndParent( identity, trackerTool.GetPointer() );
+  // trackerTool->RequestAttachSpatialObject( ellipsoidObject3 );
   igstk::Transform calibrationTransform;
   calibrationTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
   // FIXCS ellipsoidObject3->RequestSetCalibrationTransformToTrackerTool( calibrationTransform );

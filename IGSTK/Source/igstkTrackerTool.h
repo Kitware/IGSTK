@@ -98,15 +98,6 @@ public:
   /** Get whether the tool was updated during tracker UpdateStatus() */
   igstkGetMacro( Updated, bool );
  
-  /** Request attaching the SpatialObject given as argument as an
-   *  object to track with this tracker tool. The SpatialObject will
-   *  become a child of the coordinate reference system of this TrackerTool,
-   *  and in this way its transform to world coordinates will be computed
-   *  by composing its callibration transform with the transform relating
-   *  the TrackerTool and the Tracker 
-   */
-  void RequestAttachSpatialObject( SpatialObject * );
-
   /** The "RequestConfigure" method attempts to configure the tracker tool */
   virtual void RequestConfigure( void );
 

@@ -459,21 +459,6 @@ TrackerTool::SetCalibratedTransform( const TransformType & transform )
   m_CalibratedTransform = transform;
 }
 
-/** Attach and spatial object to be tracked.
- *  FIXME: Add a state machine to this class and pass first this 
- *         request through the transition matrix. Then invoke a
- *         AttachSpatialObjectProcessing() method.
- */
-void
-TrackerTool::RequestAttachSpatialObject( SpatialObject * spatialObject )
-{
-  // Note: the CalibrationTransform should be the transform relating
-  //       the spatial object to the tracker tool. FIXME.
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
-  spatialObject->RequestAttachToTrackerTool( this->m_CoordinateReferenceSystem );
-#endif
-}
-
 /** Print object information */
 void TrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
