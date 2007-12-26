@@ -275,7 +275,7 @@ int igstkViewTest( int, char * [] )
     view3D->SetRefreshRate( 30 );
     view3D->SetRendererBackgroundColor( 0.8, 0.9, 0.8 );
     view3D->SetCameraPosition( 5.0, 2.0, 1.0 ); // Looking from a diagonal
-    view3D->SetFocalPoint( 0.0, 0.0, 0.0 );   // Looking at the origin
+    view3D->SetCameraFocalPoint( 0.0, 0.0, 0.0 );   // Looking at the origin
     view3D->SetCameraViewUp( 0.0, 0.0, 1.0 ); // Z axis up
     // Exercise GetNameOfClass() method
     std::cout << view3D->View3DType::Superclass::GetNameOfClass() 

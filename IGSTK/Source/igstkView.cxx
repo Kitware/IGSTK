@@ -491,9 +491,9 @@ void View::SetCameraPosition( double x, double y, double z )
 }
 
 /** Set camera focal point */
-void View::SetFocalPoint( double x, double y, double z )
+void View::SetCameraFocalPoint( double x, double y, double z )
 {
-  igstkLogMacro( DEBUG, "igstkView::SetFocalPoint(...) called ...\n");
+  igstkLogMacro( DEBUG, "igstkView::SetCameraFocalPoint(...) called ...\n");
   m_Camera->SetFocalPoint( x,y,z );
 }
 
@@ -505,16 +505,16 @@ void View::SetCameraViewUp( double vx, double vy, double vz )
 }
 
 /** Set camera clipping range */
-void View::SetClippingRange( double dNear, double dFar)
+void View::SetCameraClippingRange( double dNear, double dFar)
 {
-  igstkLogMacro( DEBUG, "igstkView::SetClippingRange(...) called ...\n");
+  igstkLogMacro( DEBUG, "igstkView::SetCameraClippingRange(...) called ...\n");
   m_Camera->SetClippingRange( dNear, dFar );
 }
 
 /** Turn on/off parallel projection */
-void View::SetParallelProjection( bool flag )
+void View::SetCameraParallelProjection( bool flag )
 {
-  igstkLogMacro( DEBUG, "igstkView::SetParallelProjection(...) called ...\n");
+  igstkLogMacro( DEBUG, "igstkView::SetCameraParallelProjection(...) called ...\n");
   m_Camera->SetParallelProjection( flag );
 }
 

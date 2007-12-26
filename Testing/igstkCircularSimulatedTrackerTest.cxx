@@ -95,7 +95,7 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
   view3D->SetRefreshRate( 30 );
   view3D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
   view3D->SetCameraPosition( 100.0, 100.0, 100.0 );
-  view3D->SetFocalPoint( 0.0, 0.0, 0.0 );
+  view3D->SetCameraFocalPoint( 0.0, 0.0, 0.0 );
   view3D->SetCameraViewUp( 0, 0, 1.0 );
 
   view3D->RequestAddObject( axesRepresentation );

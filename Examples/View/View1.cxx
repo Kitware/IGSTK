@@ -180,7 +180,7 @@ int main( int, char * [] )
 
     view3D->SetCameraPosition( 0, 0, -1 );
     view3D->SetCameraViewUp( 0, -1, 0 );
-    view3D->SetFocalPoint( 0, 0, 0 );
+    view3D->SetCameraFocalPoint( 0, 0, 0 );
 
     view3D->RequestResetCamera();
     // EndCodeSnippet

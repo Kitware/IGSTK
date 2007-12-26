@@ -157,7 +157,7 @@ int main( int argc, char* argv[] )
   view->SetRefreshRate( 30 );
   view->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
   view->SetCameraPosition( 1000.0, 500.0, 250.0 );
-  view->SetFocalPoint( 0.0, 0.0, 0.0 );
+  view->SetCameraFocalPoint( 0.0, 0.0, 0.0 );
   view->SetCameraViewUp( 0, 0, 1.0 );
 
   // this will indirectly call CreateActors() 

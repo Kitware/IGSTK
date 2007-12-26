@@ -114,16 +114,16 @@ public:
   void SetCameraPosition( double x, double y, double z);
   
   /** Set camera focal point */
-  void SetFocalPoint( double x, double y, double z);
+  void SetCameraFocalPoint( double x, double y, double z);
 
   /** Set Camera View Up vector */
   void SetCameraViewUp( double vx, double vy, double vz);
 
   /** Set Clipping range */
-  void SetClippingRange( double dNear, double dFar );
+  void SetCameraClippingRange( double dNear, double dFar );
 
   /** Turn on/off parallel projection */
-  void SetParallelProjection( bool flag );
+  void SetCameraParallelProjection( bool flag );
 
   /** Set renderer background color */
   void SetRendererBackgroundColor(

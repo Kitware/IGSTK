@@ -240,7 +240,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   view2D->SetRefreshRate( 30 );
   view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
   view2D->SetCameraPosition( 100.0, 100.0, 100.0 );
-  view2D->SetFocalPoint( 0.0, 0.0, 0.0 );
+  view2D->SetCameraFocalPoint( 0.0, 0.0, 0.0 );
   view2D->SetCameraViewUp( 0, 0, 1.0 );
 
   // this will indirectly call CreateActors() 
