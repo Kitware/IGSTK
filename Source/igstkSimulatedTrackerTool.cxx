@@ -37,13 +37,13 @@ SimulatedTrackerTool::~SimulatedTrackerTool()
 {
 }
 
-/** Request set mouse name */
-void SimulatedTrackerTool::RequestSetName( const NameType & mouseName )
+/** Request set name */
+void SimulatedTrackerTool::RequestSetName( const NameType & name )
 {
-  this->m_Name = mouseName;
+  this->m_Name = name;
   m_TrackerToolConfigured = true;
 
-  // For Tracker, mouse name is used as a unique identifier
+  // For Tracker, name is used as a unique identifier
   this->SetTrackerToolIdentifier( m_Name ); 
 }
 
