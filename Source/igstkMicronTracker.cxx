@@ -362,7 +362,7 @@ MicronTracker
   MicronTrackerToolType * micronTrackerTool  = 
         dynamic_cast< MicronTrackerToolType *> ( trackerTool );
 
-  for (unsigned int idx=0 ; idx < totalNumberOfTemplates ; idx++ )
+  for (unsigned int idx=1 ; idx < totalNumberOfTemplates ; idx++ )
     {
     std::string templateName;
     this->m_Markers->getTemplateItemName(idx, templateName );
