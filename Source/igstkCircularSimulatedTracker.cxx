@@ -63,7 +63,7 @@ CircularSimulatedTracker::InternalUpdateStatus( void )
   position[2] = 0;
 
   typedef TransformType::ErrorType  ErrorType;
-  ErrorType errorValue = 0.5; // +/- half Pixel Uncertainty
+  ErrorType errorValue = 0.5; // +/- half millimeter Uncertainty
 
   transform.SetTranslation( position, errorValue, this->GetValidityTime() );
 
@@ -75,13 +75,17 @@ CircularSimulatedTracker::InternalUpdateStatus( void )
     ++inputItr;
     }
 
-  const RealTimeClock::TimeStampType timeNow = RealTimeClock::GetTimeStamp();
-  const RealTimeClock::TimeStampType timeLapseInSeconds = 
-    1000.0 * ( timeNow - this->m_TimeOfLastUpdate );
-
+  const double MillisecondsToSeconds = 1.0 / 1000.0;
   const double DegreesToRadians = ( atan(1.0) / 45.0 );
 
+  const RealTimeClock::TimeStampType timeNow = RealTimeClock::GetTimeStamp();
+  const RealTimeClock::TimeStampType timeLapseInSeconds = 
+    MillisecondsToSeconds * ( timeNow - this->m_TimeOfLastUpdate );
+
+
   this->m_Angle += DegreesToRadians * this->m_AngularSpeed * timeLapseInSeconds;
+
+  this->m_TimeOfLastUpdate = timeNow;
 
   return SUCCESS;
 }
