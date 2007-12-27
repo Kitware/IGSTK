@@ -129,26 +129,21 @@ private:
   /** Set render window ID */
   void SetRenderWindowID();
 
-  /** Set the reporter */
-  void SetReporter( ::itk::Object * reporter );
-
 private:
 
   bool m_InteractionHandling;
   
-  ViewType::Pointer m_View; 
+  ViewType::Pointer               m_View; 
 
-  ProxyType         m_ProxyView;
+  ProxyType                       m_ProxyView;
 
-  vtkRenderer       *m_Renderer; 
+  vtkRenderer                   * m_Renderer; 
 
-  bool               m_RenderWindowIDSet;
+  bool                            m_RenderWindowIDSet;
 
-  vtkRenderWindowInteractor       *m_RenderWindowInteractor; 
+  vtkRenderWindowInteractor     * m_RenderWindowInteractor; 
 
-
-  PickerType                  * m_PointPicker;
-  ::itk::Object::Pointer        m_Reporter;
+  PickerType                    * m_PointPicker;
  
    /** States for the State Machine */
   igstkDeclareStateMacro( Idle );

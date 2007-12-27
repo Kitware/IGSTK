@@ -139,24 +139,18 @@ private:
 
   /** Set VTK render window interactor */
   void SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
-  /** Set the reporter */
-  void SetReporter( ::itk::Object * reporter );
 
   /** Set VTK point picker */ 
   void SetPointPicker( PickerType * picker );
  
 private:
-  ViewType::Pointer       m_View;
 
-
+  ViewType::Pointer             m_View;
   PickerType                  * m_PointPicker;
-  ::itk::Object::Pointer        m_Reporter;
- 
-  ProxyType                             m_ProxyView;
-  vtkRenderer                         * m_Renderer;
-  vtkRenderWindowInteractor           * m_RenderWindowInteractor;
-
-  bool                    m_InteractionHandling;
+  ProxyType                     m_ProxyView;
+  vtkRenderer                 * m_Renderer;
+  vtkRenderWindowInteractor   * m_RenderWindowInteractor;
+  bool                          m_InteractionHandling;
 
    /** States for the State Machine */
   igstkDeclareStateMacro( Idle );

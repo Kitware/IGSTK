@@ -47,7 +47,6 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
   this->end();
 
   m_PointPicker = PickerType::New(); 
-  m_Reporter    = NULL; 
 
   //Turn on interaction handling
   m_InteractionHandling = true;
@@ -143,23 +142,16 @@ FLTKWidget::GetRenderWindowInteractor( ) const
   return ( this->m_RenderWindowInteractor );
 }
 
-
-/** Set the reporter */
-void FLTKWidget::SetReporter( ::itk::Object * reporter )
-{
-  this->m_Reporter = reporter;
-}
-
 unsigned long FLTKWidget::AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer )
 {
   igstkLogMacro( DEBUG, "igstkFLTKWidget::AddObserver() called ...\n");
   
-  if ( m_Reporter.IsNull() )
+  if ( m_View.IsNull() )
     {
     return 0; 
     }
-  return m_Reporter->AddObserver( event, observer );
+  return m_View->AddObserver( event, observer );
 }
 
 /** Request set View */
@@ -433,7 +425,7 @@ int FLTKWidget::handle( int event )
           igstk::TransformModifiedEvent transformEvent;
           transformEvent.Set( transform );
 
-          m_Reporter->InvokeEvent( transformEvent );
+          m_View->InvokeEvent( transformEvent );
           }
           break;
         case FL_MIDDLE_MOUSE:

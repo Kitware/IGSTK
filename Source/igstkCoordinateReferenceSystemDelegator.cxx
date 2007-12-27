@@ -91,15 +91,13 @@ CoordinateReferenceSystemDelegator
 
 void
 CoordinateReferenceSystemDelegator
-::RequestSetReporter(::itk::Object::Pointer obj)
+::RequestSetReporter( const Object * reporter )
 {
-  /** State machine-ize? */
-  if (obj.IsNotNull())
+  /** FIXME State machine-ize? */
+  if( reporter != NULL )
     {
-    m_Reporter = obj;
+    this->m_Reporter = reporter;
     }
 }
 
-} // igstk
-
-
+} // end igstk namespace

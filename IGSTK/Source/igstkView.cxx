@@ -230,10 +230,7 @@ m_StateMachine(this)
   m_ActorToBeRemoved = 0;
 
   m_PulseGenerator = PulseGenerator::New();
-  m_Reporter = ::itk::Object::New();
-  /** Coordinate system API needs to use the same object for events. */
-  m_CoordinateReferenceSystemDelegator->RequestSetReporter( m_Reporter );
-
+  
   m_PulseObserver = ObserverType::New();
   m_PulseObserver->SetCallbackFunction( this, & View::RefreshRender );
 
@@ -277,12 +274,6 @@ RenderWindowInteractor *  View::GetRenderWindowInteractor() const
 return this->m_RenderWindowInteractor; 
 }
 
-/** Get reporter */ 
-::itk::Object::Pointer View::GetReporter() const
-{
-return this->m_Reporter; 
-}
-
 /** Request initialize render window interactor */
 void View::RequestInitializeRenderWindowInteractor()
 {
@@ -305,19 +296,6 @@ void View::InitializeRenderWindowInteractorProcessing()
     {
     m_RenderWindowInteractor->Initialize();
     }
-}
-
-unsigned long View::AddObserver( const ::itk::EventObject & event, 
-                              ::itk::Command * observer )
-{
-  igstkLogMacro( DEBUG, "igstkView::AddObserver() called ...\n");
-  return m_Reporter->AddObserver( event, observer );
-}
-
-void View::RemoveObserver( unsigned long tag )
-{
-  igstkLogMacro( DEBUG, "igstkView::RemoveObserver() called ...\n");
-  m_Reporter->RemoveObserver( tag );
 }
 
 /** */
@@ -570,7 +548,7 @@ void View::RefreshRender()
   m_RenderWindowInteractor->Render();
 
   // Last, report to observers that a refresh event took place.
-  m_Reporter->InvokeEvent( RefreshEvent() );
+  this->InvokeEvent( RefreshEvent() );
 }
 
 /** Request for Adding an object to the View */

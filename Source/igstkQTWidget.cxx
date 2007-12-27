@@ -61,7 +61,6 @@ QVTKWidget( parent, f ), m_StateMachine(this), m_ProxyView(this)
   m_View = ViewType::New();
 
   m_PointPicker = PickerType::New(); 
-  m_Reporter    = NULL; 
 
   m_Renderer = NULL;
   m_RenderWindowInteractor = NULL;
@@ -125,23 +124,17 @@ QTWidget::GetRenderWindowInteractor( )
 }
 
 
-/** Set the reporter */
-void QTWidget::SetReporter( ::itk::Object * reporter )
-{
-  this->m_Reporter = reporter;
-}
-
 /** Add observer */
 unsigned long QTWidget::AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer )
 {
   igstkLogMacro( DEBUG, "igstkQTWidget::AddObserver() called ...\n");
   
-  if ( m_Reporter.IsNull() )
+  if ( m_View.IsNull() )
     {
     return 0;
     }
-  return m_Reporter->AddObserver( event, observer );
+  return m_View->AddObserver( event, observer );
 }
 
 
@@ -320,7 +313,7 @@ QTWidget
       igstk::TransformModifiedEvent transformEvent;
       transformEvent.Set( transform );
 
-      m_Reporter->InvokeEvent( transformEvent );
+      m_View->InvokeEvent( transformEvent );
 
       break;
       }
@@ -390,7 +383,7 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
     igstk::TransformModifiedEvent transformEvent;
     transformEvent.Set(transform);
     
-    m_Reporter->InvokeEvent(transformEvent);
+    m_View->InvokeEvent(transformEvent);
     }
 }
 

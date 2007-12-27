@@ -72,12 +72,6 @@ public:
    * trackers */
   void SetRefreshRate( double frequency );
  
-  /** Add an observer to this View class */
-  unsigned long AddObserver( const ::itk::EventObject & event, 
-                                                 ::itk::Command * observer );
-  /** Remove an observer to this View class */
-  void  RemoveObserver( unsigned long tag );
-  
   /** Add an object representation to the list of children and associate it
    * with a specific view. */ 
   void RequestAddObject( ObjectRepresentation* object ); 
@@ -165,9 +159,6 @@ private:
   /** Get render window interactor */
   RenderWindowInteractor *  GetRenderWindowInteractor() const;
 
-  /** Get reporter */ 
-  ::itk::Object::Pointer GetReporter() const;
-
   /** Initialize the interactor */
   void InitializeRenderWindowInteractorProcessing();
 
@@ -244,7 +235,6 @@ private:
 
   PulseGenerator::Pointer   m_PulseGenerator;
   ObserverType::Pointer     m_PulseObserver;
-  ::itk::Object::Pointer    m_Reporter;
 
   /** Object representation types */
   typedef ObjectRepresentation::Pointer     ObjectPointer;

@@ -43,7 +43,7 @@ public:
   igstkStandardClassTraitsMacro( CoordinateReferenceSystemDelegator, Object )
   
   /** Set the object to use for reporting events. */
-  void RequestSetReporter(::itk::Object::Pointer obj);
+  void RequestSetReporter( const Object * reporter );
 
   /** This method implements the construction of a coordinate system graph by 
    *  defining the parent of this object and the Transforms defining their
@@ -157,7 +157,7 @@ private:
   /** A pointer to an object through which to send events.
    *  By default, m_Reporter = this.
    */
-  ::itk::Object::Pointer m_Reporter;
+  Object::ConstPointer m_Reporter;
 
   /** Typedef, Receptor observer, & callback for watching
    *  CoordinateReferenceSystem events.

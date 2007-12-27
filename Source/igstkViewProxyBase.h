@@ -39,7 +39,6 @@ public:
 protected:
   vtkRenderer *               GetRenderer( View * view );
   vtkRenderWindowInteractor * GetRenderWindowInteractor( View * view );
-  ::itk::Object::Pointer      GetReporter( View * view );
   void                        InitializeInteractor( View * view );
   void                        SetRenderWindowSize( View * view, int width, int height );
 

@@ -131,7 +131,7 @@ public:
 
   friend class ::igstk::ViewProxy< DummyWidget >;
 
-  void SetView( ViewType * view )
+  void RequestSetView( ViewType * view )
     {
     m_View = view;
     this->m_ProxyView.Connect( m_View );
@@ -145,7 +145,6 @@ private:
   // Fake methods needed to satisfy the API exposed to the ViewProxy
   void SetRenderer( vtkRenderer * ) {};
   void SetRenderWindowInteractor( vtkRenderWindowInteractor * ) {};
-  void SetReporter ( ::itk::Object::Pointer ) {};
 };
 
 }
@@ -258,7 +257,7 @@ int igstkViewTest( int, char * [] )
 
     // Use a surrogate Widget to initialize the view
     ViewTest::DummyWidget dummyWidget2;
-    dummyWidget2.SetView( view3D );
+    dummyWidget2.RequestSetView( view3D );
 
     ObserverType::Pointer viewObserver2 = ObserverType::New();
     
@@ -313,7 +312,7 @@ int igstkViewTest( int, char * [] )
               << std::endl;
 
     ViewTest::DummyWidget dummyWidget;
-    dummyWidget.SetView( view2D );
+    dummyWidget.RequestSetView( view2D );
 
     // Create an observer in order to count number of view redraws
     ObserverType::Pointer viewObserver = ObserverType::New();

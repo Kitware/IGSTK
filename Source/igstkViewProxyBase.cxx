@@ -30,12 +30,6 @@ ViewProxyBase::GetRenderWindowInteractor( View * view )
   return view->GetRenderWindowInteractor();
 } 
 
-::itk::Object::Pointer  
-ViewProxyBase::GetReporter( View * view )
-{
-  return view->GetReporter();
-} 
-
 void
 ViewProxyBase::InitializeInteractor( View * view )
 {
