@@ -266,9 +266,25 @@ public:
     m_Destination = dst;
     }
 
+  const Transform & GetTransform() const
+    {
+    return this->m_Transform;
+    }
+  const CoordinateReferenceSystem * GetSource() const
+    {
+    return this->m_Source;
+    }
+  const CoordinateReferenceSystem * GetDestination() const
+    {
+    return this->m_Destination;
+    }
+
+private:
+
   Transform                                 m_Transform;
   CoordinateReferenceSystem::ConstPointer   m_Source;
   CoordinateReferenceSystem::ConstPointer   m_Destination;
+
 };
 
 igstkLoadedEventMacro( CoordinateReferenceSystemTransformToEvent, 
