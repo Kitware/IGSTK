@@ -79,7 +79,6 @@ SET(IGSTK_HEADS
   igstkTransform.h
   igstkToken.h
   igstkTracker.h
-  igstkTrackerPort.h
   igstkTrackerTool.h
   igstkTubeObject.h
   igstkTubeObjectRepresentation.h
@@ -175,7 +174,6 @@ SET(IGSTK_SRCS
   igstkTimeStamp.cxx
   igstkToken.cxx
   igstkTracker.cxx
-  igstkTrackerPort.cxx
   igstkTrackerTool.cxx
   igstkTransform.cxx
   igstkTubeObject.cxx

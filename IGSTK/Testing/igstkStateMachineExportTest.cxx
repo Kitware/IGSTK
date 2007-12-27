@@ -56,7 +56,6 @@
 #include "igstkCTImageSpatialObject.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkSerialCommunication.h"
-#include "igstkSerialCommunicationBase.h"
 #include "igstkMRImageSpatialObject.h"
 #include "igstkMRImageSpatialObjectRepresentation.h"
 #include "igstkAxesObjectRepresentation.h"
@@ -71,9 +70,13 @@
 #include "igstkRealTimeClock.h"
 #include "igstkMR3DImageToUS3DImageRegistration.h"
 
-#if IGSTK_USE_FLTK
 #include "igstkView2D.h"
 #include "igstkView3D.h"
+
+#if defined(WIN32) || defined(_WIN32)
+#include "igstkSerialCommunicationForWindows.h"
+#else
+#include "igstkSerialCommunicationForPosix.h"
 #endif
 
 namespace igstk 

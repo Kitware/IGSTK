@@ -65,7 +65,6 @@ void RegisterTests()
   REGISTER_TEST(igstkStringEventTest);
   REGISTER_TEST(igstkTimeStampTest);
   REGISTER_TEST(igstkTokenTest);
-  REGISTER_TEST(igstkTrackerPortTest);
   REGISTER_TEST(igstkTrackerToolTest);
   REGISTER_TEST(igstkTransformTest);  
   REGISTER_TEST(igstkVTKLoggerOutputTest);

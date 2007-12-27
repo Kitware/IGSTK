@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkStateMachineExportTest.cxx
+  Module:    igstkStateMachineExportTest2.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$

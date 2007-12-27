@@ -325,9 +325,9 @@ ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation
 TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon)
 
 
-ADD_EXECUTABLE(igstkStateMachineExportTest igstkStateMachineExportTest.cxx)
-ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
-TARGET_LINK_LIBRARIES(igstkStateMachineExportTest IGSTKSandbox)
+ADD_EXECUTABLE(igstkStateMachineExportTest2 igstkStateMachineExportTest2.cxx)
+ADD_TEST(igstkStateMachineExportTest2 ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest2 ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
+TARGET_LINK_LIBRARIES(igstkStateMachineExportTest2 IGSTKSandbox)
 
 # Configure a header needed by SystemInformation.
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
@@ -373,7 +373,6 @@ SET(IGSTKTests_SRCS
   igstkStringEventTest.cxx
   igstkTimeStampTest.cxx
   igstkTokenTest.cxx
-  igstkTrackerPortTest.cxx
   igstkTrackerToolTest.cxx
   igstkTransformTest.cxx
   igstkVTKLoggerOutputTest.cxx
@@ -710,6 +709,7 @@ TARGET_LINK_LIBRARIES(igstkLatestTests IGSTKSandbox)
 #ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation)
 #TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon)
 
-#ADD_EXECUTABLE(igstkStateMachineExportTest igstkStateMachineExportTest.cxx)
-#ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
-#TARGET_LINK_LIBRARIES(igstkStateMachineExportTest IGSTK)
+ADD_EXECUTABLE(igstkStateMachineExportTest ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/igstkStateMachineExportTest.cxx)
+ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
+TARGET_LINK_LIBRARIES(igstkStateMachineExportTest IGSTKSandbox)
+
