@@ -55,7 +55,7 @@ protected:
 
 public:
 
-  typedef ::igstk::TransformModifiedEvent  EventType;
+  typedef ::igstk::CoordinateReferenceSystemTransformToEvent   EventType;
         
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
@@ -65,6 +65,7 @@ public:
 
   void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
+    std::cout << "Event name = " << event.GetEventName() << std::endl;
     m_GotTransform = false;
     if( EventType().CheckEvent( &event ) )
       {
@@ -72,7 +73,8 @@ public:
                  dynamic_cast< const EventType *>( &event );
       if( transformEvent )
         {
-        m_Transform = transformEvent->Get();
+        m_TransformToResult = transformEvent->Get();
+        m_Transform = m_TransformToResult.GetTransform();
         m_GotTransform = true;
         }
       }
@@ -90,8 +92,13 @@ public:
       
 private:
 
-  ::igstk::Transform  m_Transform;
-  bool                m_GotTransform;
+  typedef ::igstk::CoordinateReferenceSystemTransformToResult TransformToResultType;
+  typedef ::igstk::Transform                                  TransformType;
+  
+  TransformToResultType   m_TransformToResult;
+  TransformType           m_Transform;
+  
+  bool                    m_GotTransform;
 
 };
 
@@ -251,8 +258,9 @@ int igstkAxesObjectTest( int, char * [] )
   TransformObserverType::Pointer transformObserver 
                                                = TransformObserverType::New();
 
-  AxesObject->AddObserver( ::igstk::TransformModifiedEvent(), 
-                                                          transformObserver );
+  AxesObject->AddObserver(
+    igstk::CoordinateReferenceSystemTransformToEvent(), transformObserver );
+
   
   AxesObject->RequestSetTransformAndParent( transform, view2D.GetPointer() );
 
