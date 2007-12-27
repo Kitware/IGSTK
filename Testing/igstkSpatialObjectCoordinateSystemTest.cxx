@@ -90,18 +90,24 @@ public:
     this->Execute(static_cast<const itk::Object*>(caller), event);
     }
 
-  bool GotPayload()
+  bool GotPayload() const
     {
     return m_GotPayload;
     }
 
-  PayloadType GetPayload()
+  const PayloadType & GetPayload() const
     {
     return m_Payload;
     }
 
+  const Transform & GetTransform() const
+    {
+    return m_Payload.GetTransform();
+    }
+
 protected:
 
+  Transform     m_Transform;
   PayloadType   m_Payload;
   bool          m_GotPayload;
 
@@ -168,7 +174,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   
   if( ellipsoid1Observer->GotPayload() )
     {
-    getTE1ToE2 = ellipsoid1Observer->GetPayload().m_Transform;
+    getTE1ToE2 = ellipsoid1Observer->GetTransform();
 
     if (getTE1ToE2.IsNumericallyEquivalent( transformE2ToE1.GetInverse(), tol )
                                                                     == false)
@@ -193,7 +199,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
 
   if( ellipsoid2Observer->GotPayload() )
     {
-    getTE2ToE1 = ellipsoid2Observer->GetPayload().m_Transform;
+    getTE2ToE1 = ellipsoid2Observer->GetTransform();
 
     if (getTE2ToE1.IsNumericallyEquivalent( transformE2ToE1, tol ) == false)
       {
@@ -232,7 +238,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   view->RequestGetTransformToParent();
   if (viewObserver->GotPayload() == true )
     {
-    igstk::Transform viewToParentObs = viewObserver->GetPayload().m_Transform;
+    igstk::Transform viewToParentObs = viewObserver->GetTransform();
     if (viewToParentObs.IsNumericallyEquivalent( viewToParent, tol ) == true)
       {
       std::cout << "passed." << std::endl;
@@ -253,7 +259,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   view->RequestComputeTransformTo( ellipsoid2.GetPointer() );
   if (viewObserver->GotPayload() == true )
     {
-    igstk::Transform viewToEllipsoid2Obs = viewObserver->GetPayload().m_Transform;
+    igstk::Transform viewToEllipsoid2Obs = viewObserver->GetTransform();
     igstk::Transform viewToEllipsoid2 = 
                       igstk::Transform::TransformCompose(
                               transformE2ToE1.GetInverse(), viewToParent);
@@ -285,7 +291,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   std::cout << "Testing tracker->RequestComputeTransformTo( ellipsoid1 ) : ";
   if (trackerObserver->GotPayload() == true )
     {
-    igstk::Transform trackerToEllipsoid1Obs = trackerObserver->GetPayload().m_Transform;
+    igstk::Transform trackerToEllipsoid1Obs = trackerObserver->GetTransform();
 
     igstk::Transform trackerToEllipsoid = igstk::Transform::TransformCompose( viewToParent, trackerToParent);
     if (trackerToEllipsoid1Obs.IsNumericallyEquivalent( trackerToEllipsoid, tol ) == true)
@@ -308,7 +314,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   tracker->RequestGetTransformToParent();
   if (trackerObserver->GotPayload() == true )
     {
-    igstk::Transform trackerToParentObs = trackerObserver->GetPayload().m_Transform;
+    igstk::Transform trackerToParentObs = trackerObserver->GetTransform();
 
     if (trackerToParentObs.IsNumericallyEquivalent( trackerToParent, tol ) == true)
       {

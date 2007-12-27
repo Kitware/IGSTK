@@ -99,18 +99,24 @@ public:
     this->Execute(static_cast<const itk::Object*>(caller), event);
     }
 
-  bool GotPayload()
+  bool GotPayload() const
     {
     return m_GotPayload;
     }
 
-  PayloadType GetPayload()
+  const PayloadType & GetPayload() const
     {
     return m_Payload;
     }
 
+  const Transform & GetTransform() const
+    {
+    return m_Payload.GetTransform();
+    }
+
 protected:
 
+  Transform     m_Transform;
   PayloadType   m_Payload;
   bool          m_GotPayload;
 
@@ -290,7 +296,7 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
     trackerTool2->RequestGetTransformToParent();
     if (coordSystemAObserver->GotPayload())
       {
-      transform = coordSystemAObserver->GetPayload().m_Transform;
+      transform = coordSystemAObserver->GetTransform();
       position = transform.GetTranslation();
       std::cout << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]

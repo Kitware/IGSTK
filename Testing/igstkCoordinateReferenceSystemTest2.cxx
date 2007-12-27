@@ -85,18 +85,24 @@ public:
     this->Execute(static_cast<const itk::Object*>(caller), event);
     }
 
-  bool GotPayload()
+  bool GotPayload() const
     {
     return m_GotPayload;
     }
 
-  PayloadType GetPayload()
+  const PayloadType & GetPayload() const
     {
     return m_Payload;
     }
 
+  const Transform & GetTransform() const
+    {
+    return m_Payload.GetTransform();
+    }
+
 protected:
 
+  Transform     m_Transform;
   PayloadType   m_Payload;
   bool          m_GotPayload;
 
@@ -275,7 +281,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   TransformType TRootA;
   if (rootObserver->GotPayload())
     {
-    TRootA = rootObserver->GetPayload().m_Transform;
+    TRootA = rootObserver->GetTransform();
 
     if (TRootA.IsNumericallyEquivalent(TARoot.GetInverse(), tol) == false)
       {
@@ -305,7 +311,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 
   if (rootObserver->GotPayload())
     {
-    TRootB = rootObserver->GetPayload().m_Transform;
+    TRootB = rootObserver->GetTransform();
 
     if (TRootB.IsNumericallyEquivalent(TBRoot.GetInverse(), tol) == false)
       {
@@ -334,7 +340,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 
   if (rootObserver->GotPayload())
     {
-    TRootC = rootObserver->GetPayload().m_Transform;
+    TRootC = rootObserver->GetTransform();
 
     TransformType TCRoot = TransformType::TransformCompose(TARoot, TCA);
     if (TRootC.IsNumericallyEquivalent(TCRoot.GetInverse(), tol) == false)
@@ -363,7 +369,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   TransformType TRootD;
   if (rootObserver->GotPayload())
     {
-    TRootD = rootObserver->GetPayload().m_Transform;
+    TRootD = rootObserver->GetTransform();
 
     TransformType TDRoot = TransformType::TransformCompose(TBRoot, TDB);
     if (TRootD.IsNumericallyEquivalent(TDRoot.GetInverse(), tol) == false)
@@ -426,7 +432,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   std::cout << "Checking transform from F to G : ";
   if (FObserver->GotPayload())
     {
-    TransformType TFG = FObserver->GetPayload().m_Transform;
+    TransformType TFG = FObserver->GetTransform();
 
     TransformType TFGTrue = 
               TransformType
@@ -464,7 +470,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 
   if (DObserver->GotPayload())
     {
-    TransformType TDF = DObserver->GetPayload().m_Transform;
+    TransformType TDF = DObserver->GetTransform();
 
     TransformType TDRoot = TransformType::TransformCompose(TBRoot, TDB);
     TransformType TFRoot = TransformType::TransformCompose(TARoot, 

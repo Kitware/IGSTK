@@ -93,18 +93,25 @@ public:
     this->Execute(static_cast<const itk::Object*>(caller), event);
     }
 
-  bool GotPayload()
+  bool GotPayload() const
     {
     return m_GotPayload;
     }
 
-  PayloadType GetPayload()
+  const PayloadType & GetPayload() const
     {
     return m_Payload;
     }
 
+  const Transform & GetTransform() const
+    {
+    return m_Payload.GetTransform();
+    }
+
+
 protected:
 
+  Transform     m_Transform;
   PayloadType   m_Payload;
   bool          m_GotPayload;
 
@@ -175,7 +182,7 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
   igstk::Transform  transform1b;
   if (coordSystemAObserver->GotPayload())
     {
-    transform1b = coordSystemAObserver->GetPayload().m_Transform;
+    transform1b = coordSystemAObserver->GetTransform();
 
     igstk::Transform::VectorType translation1b=transform1b.GetTranslation();
 
@@ -249,7 +256,7 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
 
   if (coordSystemBObserver->GotPayload())
     {
-    transform3b = coordSystemBObserver->GetPayload().m_Transform;
+    transform3b = coordSystemBObserver->GetTransform();
 
     typedef igstk::Transform::VectorType TransformVectorType;
 
