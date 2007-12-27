@@ -491,7 +491,7 @@ ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
     ADD_TEST( igstkPolarisTrackerTest  
-              ${IGSTK_TESTS}}
+              ${IGSTK_TESTS}
               igstkPolarisTrackerTest
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTestLoggerOutput.txt
               ${IGSTKSandbox_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
