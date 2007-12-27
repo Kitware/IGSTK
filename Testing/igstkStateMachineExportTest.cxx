@@ -36,6 +36,7 @@
 #include "igstkObliqueImageSpatialObjectRepresentation.h"
 #include "igstkSpatialObject.h"
 #include "igstkObjectRepresentation.h"
+#include "igstkSandboxConfigure.h"
 
 #ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTracker.h"
