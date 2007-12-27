@@ -34,10 +34,6 @@
 
 #include "igstkFLTKWidget.h"
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
-#endif
-
 namespace igstk
 {
 namespace AxesObjectTest
@@ -125,18 +121,6 @@ int igstkAxesObjectTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
                                        // VTK OutputWindow -> logger
   
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  /* FIXCS
-  typedef igstk::WorldCoordinateReferenceSystemObject  
-    WorldReferenceSystemType;
-
-  WorldReferenceSystemType::Pointer worldReference =
-    WorldReferenceSystemType::New();
-
-  worldReference->SetLogger( logger );
-  */
-#endif 
-
   typedef igstk::AxesObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer AxesRepresentation 
                                             = ObjectRepresentationType::New();
@@ -146,10 +130,6 @@ int igstkAxesObjectTest( int, char * [] )
   ObjectType::Pointer AxesObject = ObjectType::New();
   AxesObject->SetLogger( logger );
     
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  // FIXCS AxesObject->RequestAttachToSpatialObjectParent( worldReference );
-#endif 
-
 
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetSize() : ";
@@ -229,17 +209,18 @@ int igstkAxesObjectTest( int, char * [] )
 
   
   form->end();
+  
   // End of the GUI creation
 
+  form->show();
+
   // this will indirectly call CreateActors() 
-  // FIXCS view2D->RequestAddObject( AxesRepresentation );
+  view2D->RequestAddObject( AxesRepresentation );
   view2D->SetLogger( logger );
     
   std::cout << "[PASSED]" << std::endl;
 
-  form->show();
 
-  view2D->RequestResetCamera();
  
   // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
   // geometrical parameters should trigger an update in the representation
@@ -273,15 +254,9 @@ int igstkAxesObjectTest( int, char * [] )
   AxesObject->AddObserver( ::igstk::TransformModifiedEvent(), 
                                                           transformObserver );
   
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  // FIXCS AxesObject->RequestSetTransformToSpatialObjectParent( transform );
-#else
-  AxesObject->RequestSetTransform( transform );
-#endif
+  AxesObject->RequestSetTransformAndParent( transform, view2D.GetPointer() );
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-  AxesObject->RequestGetTransform();
-#endif
+  AxesObject->RequestGetTransformToParent();
 
   if( !transformObserver->GotTransform() )
     {
@@ -319,6 +294,7 @@ int igstkAxesObjectTest( int, char * [] )
 
   std::cout << "[PASSED]" << std::endl;
 
+  view2D->RequestResetCamera();
   view2D->SetRefreshRate( 30 );
   view2D->RequestStart();
 
