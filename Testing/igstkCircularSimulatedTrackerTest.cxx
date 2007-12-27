@@ -30,6 +30,7 @@
 #include "igstkView3D.h"
 #include "igstkFLTKWidget.h"
 #include "igstkRealTimeClock.h"
+#include "igstkSimulatedTrackerTool.h"
 #include "igstkCircularSimulatedTracker.h"
 
 int igstkCircularSimulatedTrackerTest( int , char * [] )
@@ -68,11 +69,12 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
   typedef igstk::CircularSimulatedTracker     TrackerType;
-  typedef igstk::TrackerTool                  TrackerToolType;
+  typedef igstk::SimulatedTrackerTool         TrackerToolType;
 
   TrackerType::Pointer      tracker     = TrackerType::New();
   TrackerToolType::Pointer  trackerTool = TrackerToolType::New();
 
+  trackerTool->RequestSetName("Circle1");
   trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
 
@@ -80,17 +82,19 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
   typedef igstk::BoxObjectRepresentation  ToolRepresentationType;
 
   ToolObjectType::Pointer toolObject = ToolObjectType::New();
-  ToolRepresentationType::Pointer toolRepresentation = ToolRepresentationType::New();
+  toolObject->SetSize( 10.0, 10.0, 10.0 );
 
+  ToolRepresentationType::Pointer toolRepresentation = ToolRepresentationType::New();
   toolRepresentation->RequestSetBoxObject( toolObject );
+  toolRepresentation->SetColor( 1.0, 0.5, 0.5 );
 
   // Connect the objects in the scene to a coordinate reference system.
   tracker->RequestSetTransformAndParent( transform, axesObject.GetPointer() );
-  toolObject->RequestSetTransformAndParent( transform, trackerTool.GetPointer() );
+  toolObject->RequestSetTransformAndParent( transform, axesObject.GetPointer() );
   view3D->RequestSetTransformAndParent( transform, axesObject.GetPointer() );
 
   tracker->RequestOpen();
-  tracker->RequestStartTracking();
+  tracker->SetRadius( 100.0 );
 
   view3D->SetRefreshRate( 30 );
   view3D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
@@ -104,7 +108,27 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
   view3D->RequestResetCamera();
   view3D->RequestStart();
 
-  for( unsigned int i = 0; i < 3000; i++ )
+  tracker->RequestStartTracking();
+
+  // Show first the cube at the origin. 
+  for( unsigned int i = 0; i < 300; i++ )
+    {
+    Fl::wait(0.01);
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();
+    }
+
+  view3D->RequestStop();
+  tracker->RequestStopTracking();
+
+  toolObject->RequestSetTransformAndParent( transform, trackerTool.GetPointer() );
+  toolRepresentation->SetColor( 0.5, 1.0, 0.5 );
+
+  view3D->RequestStart();
+  tracker->RequestStartTracking();
+
+  // Show now the cube being tracked
+  for( unsigned int i = 0; i < 300; i++ )
     {
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
@@ -112,8 +136,8 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
     }
 
   view3D->RequestStop();
-
   tracker->RequestStopTracking();
+
   tracker->RequestClose();
 
   form->hide();
