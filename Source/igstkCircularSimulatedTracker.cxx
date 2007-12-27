@@ -30,6 +30,8 @@ CircularSimulatedTracker::CircularSimulatedTracker():m_StateMachine(this)
 {
   this->m_Radius = 1.0;
   this->m_Angle = 0.0;
+  this->m_AngularSpeed = 0.01;   // degrees per second
+  this->m_TimeOfLastUpdate = RealTimeClock::GetTimeStamp();
   this->SetValidityTime(1000.0); // one second (1000 milliseconds).
 }
 
@@ -65,21 +67,21 @@ CircularSimulatedTracker::InternalUpdateStatus( void )
 
   transform.SetTranslation( position, errorValue, this->GetValidityTime() );
 
-  std::cout << "CircularSimulatedTracker::InternalUpdateStatus() Begin" << std::endl;
-  std::cout << "Angle = " << this->m_Angle << std::endl;
-  std::cout << transform << std::endl;
-
   // set the raw transform in all the tracker tools
   while( inputItr != inputEnd )
     {
     this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
     this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
-    std::cout << "SetTrackerToolRawTransform() " << std::endl;
     ++inputItr;
     }
-  std::cout << "CircularSimulatedTracker::InternalUpdateStatus() End" << std::endl;
 
-  this->m_Angle += 0.01; // increment angle
+  const RealTimeClock::TimeStampType timeNow = RealTimeClock::GetTimeStamp();
+  const RealTimeClock::TimeStampType timeLapseInSeconds = 
+    1000.0 * ( timeNow - this->m_TimeOfLastUpdate );
+
+  const double DegreesToRadians = ( atan(1.0) / 45.0 );
+
+  this->m_Angle += DegreesToRadians * this->m_AngularSpeed * timeLapseInSeconds;
 
   return SUCCESS;
 }
@@ -90,6 +92,9 @@ void CircularSimulatedTracker::PrintSelf( std::ostream& os, itk::Indent indent )
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Radius: " << this->m_Radius << std::endl;
+  os << indent << "Angle: " << this->m_Angle << std::endl;
+  os << indent << "Angular Speed: " << this->m_AngularSpeed << std::endl;
+  os << indent << "Time of Last Update : " << this->m_TimeOfLastUpdate << std::endl;
 }
 
 }

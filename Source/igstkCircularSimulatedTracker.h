@@ -47,6 +47,10 @@ public:
   igstkSetMacro( Radius, double );
   igstkGetMacro( Radius, double );
 
+  /** Angular Speed measured in degrees per second */
+  igstkSetMacro( AngularSpeed, double );
+  igstkGetMacro( AngularSpeed, double );
+
 protected:
 
   CircularSimulatedTracker();
@@ -54,6 +58,7 @@ protected:
   virtual ~CircularSimulatedTracker();
 
   typedef Superclass::ResultType         ResultType;
+  typedef RealTimeClock::TimeStampType   TimeType;
 
   /** This is the most important method of this class. It computes the
    * transform that will be passed to the TrackerTool. 
@@ -68,8 +73,10 @@ private:
   CircularSimulatedTracker(const Self&);  //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  double   m_Radius;
-  double   m_Angle;
+  double      m_Radius;
+  double      m_Angle;
+  double      m_AngularSpeed;
+  TimeType    m_TimeOfLastUpdate;
 };
 
 }
