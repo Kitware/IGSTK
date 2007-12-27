@@ -239,7 +239,7 @@ void ObjectRepresentation::RequestGetTransformProcessing()
 /** Receive the Transform from the SpatialObject via a transduction macro. */
 void ObjectRepresentation::ReceiveSpatialObjectTransformProcessing()
 {
-  m_SpatialObjectTransform = m_SpatialObjectTransformInputToBeSet.m_Transform;
+  m_SpatialObjectTransform = m_SpatialObjectTransformInputToBeSet.GetTransform();
 
   vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
 
