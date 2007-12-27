@@ -50,22 +50,19 @@ public:
   CoordinateReferenceSystemObserver()
     {
     m_GotPayload = false;
-    m_Payload.m_Destination = NULL;
-    m_Payload.m_Source = NULL;
+    m_Payload.Clear();
     }
 
   ~CoordinateReferenceSystemObserver()
     {
     m_GotPayload = false;
-    m_Payload.m_Destination = NULL;
-    m_Payload.m_Source = NULL;
+    m_Payload.Clear();
     }
 
   void ClearPayload()
     {
     m_GotPayload = false;
-    m_Payload.m_Destination = NULL;
-    m_Payload.m_Source = NULL;
+    m_Payload.Clear();
     }
 
   void Execute(const itk::Object *caller, const itk::EventObject & event)

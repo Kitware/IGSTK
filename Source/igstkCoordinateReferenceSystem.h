@@ -233,7 +233,8 @@ public:
 
   CoordinateReferenceSystemTransformToResult()
     {
-
+    m_Source = NULL;
+    m_Destination = NULL;
     }
 
   CoordinateReferenceSystemTransformToResult(
@@ -244,7 +245,7 @@ public:
     m_Destination = in.m_Destination;
     }
 
-  CoordinateReferenceSystemTransformToResult &operator = ( 
+  const CoordinateReferenceSystemTransformToResult &operator = ( 
       const CoordinateReferenceSystemTransformToResult& in)
     {
     if (this != &in)
@@ -256,6 +257,12 @@ public:
     return *this;
     }
 
+  inline void Clear()
+    {
+    m_Transform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
+    m_Source = NULL;
+    m_Destination = NULL;
+    }
 
   inline void Initialize(const Transform& trans, 
                   const CoordinateReferenceSystem* src,

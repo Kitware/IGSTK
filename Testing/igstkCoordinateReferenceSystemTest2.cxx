@@ -39,25 +39,24 @@ public:
   itkTypeMacro(CoordinateReferenceSystemObserver, ::itk::Command);
   itkNewMacro(CoordinateReferenceSystemObserver);
 
+  typedef ::igstk::Transform       TransformType;
+
   CoordinateReferenceSystemObserver()
     {
     m_GotPayload = false;
-    m_Payload.m_Destination = NULL;
-    m_Payload.m_Source = NULL;
+    m_Payload.Clear();
     }
 
   ~CoordinateReferenceSystemObserver()
     {
     m_GotPayload = false;
-    m_Payload.m_Destination = NULL;
-    m_Payload.m_Source = NULL;
+    m_Payload.Clear();
     }
 
   void ClearPayload()
     {
     m_GotPayload = false;
-    m_Payload.m_Destination = NULL;
-    m_Payload.m_Source = NULL;
+    m_Payload.Clear();
     }
 
   void Execute(const itk::Object *caller, const itk::EventObject & event)
@@ -95,14 +94,14 @@ public:
     return m_Payload;
     }
 
-  const Transform & GetTransform() const
+  const TransformType & GetTransform() const
     {
     return m_Payload.GetTransform();
     }
 
 protected:
 
-  Transform     m_Transform;
+  TransformType m_Transform;
   PayloadType   m_Payload;
   bool          m_GotPayload;
 
