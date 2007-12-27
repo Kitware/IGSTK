@@ -48,6 +48,8 @@ int igstkTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
   TrackerToolType::Pointer  trackerTool  = TrackerToolType::New();
   ObserverType::Pointer     toolObserver = ObserverType::New();
 
+  tracker->RequestOpen();
+
   trackerTool->RequestSetName("Tool_1");
   trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
@@ -57,7 +59,6 @@ int igstkTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
   toolObserver->RequestSetPort( atoi( argv[2] ) );
   toolObserver->RequestStart();
 
-  tracker->RequestOpen();
   tracker->RequestStartTracking();
 
   for( unsigned int i = 0; i < 100; i++ )
