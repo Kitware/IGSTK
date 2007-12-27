@@ -91,6 +91,7 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
   SET(SandboxTests_SRCS
     ${SandboxTests_SRCS}
     igstkTrackerToolObserverToSocketRelayTest.cxx
+    igstkTransformSocketListenerTest.cxx
     )
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
@@ -123,6 +124,12 @@ ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunic
 ADD_TEST( igstkTransductionMacroTest ${IGSTKSandbox_TESTS} igstkTransductionMacroTest)
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
+  ADD_TEST( igstkTransformSocketListenerTest 
+    ${IGSTKSandbox_TESTS} 
+    igstkTransformSocketListenerTest
+    16666
+    )
+
   ADD_TEST( igstkTrackerToolObserverToSocketRelayTest 
     ${IGSTKSandbox_TESTS} 
     igstkTrackerToolObserverToSocketRelayTest
