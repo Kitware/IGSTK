@@ -27,6 +27,8 @@
 #include "igstkAxesObjectRepresentation.h"
 #include "igstkBoxObject.h"
 #include "igstkBoxObjectRepresentation.h"
+#include "igstkCylinderObject.h"
+#include "igstkCylinderObjectRepresentation.h"
 #include "igstkView3D.h"
 #include "igstkFLTKWidget.h"
 #include "igstkRealTimeClock.h"
@@ -65,13 +67,20 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
 
   form->show();
 
-  igstk::Transform transform;
-  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  Fl::wait(0.5);
 
   typedef igstk::CircularSimulatedTracker     TrackerType;
   typedef igstk::SimulatedTrackerTool         TrackerToolType;
 
   TrackerType::Pointer      tracker     = TrackerType::New();
+
+  const double speedInDegreesPerSecond = 5.0;
+  const double radiusInMillimeters = 2.0;
+
+  tracker->RequestOpen();
+  tracker->SetRadius( radiusInMillimeters );
+  tracker->SetAngularSpeed( speedInDegreesPerSecond );
+
   TrackerToolType::Pointer  trackerTool = TrackerToolType::New();
 
   trackerTool->RequestSetName("Circle1");
@@ -82,53 +91,68 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
   typedef igstk::BoxObjectRepresentation  ToolRepresentationType;
 
   ToolObjectType::Pointer toolObject = ToolObjectType::New();
-  toolObject->SetSize( 10.0, 10.0, 10.0 );
+  toolObject->SetSize( 1.0, 1.0, 1.0 );
 
   ToolRepresentationType::Pointer toolRepresentation = ToolRepresentationType::New();
   toolRepresentation->RequestSetBoxObject( toolObject );
   toolRepresentation->SetColor( 1.0, 0.5, 0.5 );
 
-  // Connect the objects in the scene to a coordinate reference system.
-  tracker->RequestSetTransformAndParent( transform, axesObject.GetPointer() );
-  toolObject->RequestSetTransformAndParent( transform, axesObject.GetPointer() );
-  view3D->RequestSetTransformAndParent( transform, axesObject.GetPointer() );
+  typedef igstk::CylinderObject                TargetObjectType;
+  typedef igstk::CylinderObjectRepresentation  TargetRepresentationType;
 
-  tracker->RequestOpen();
-  tracker->SetRadius( 100.0 );
+  TargetObjectType::Pointer targetObject = TargetObjectType::New();
+  targetObject->SetRadius( 0.1 );
+  targetObject->SetHeight( 2.0 );
+
+  TargetRepresentationType::Pointer targetRepresentation = TargetRepresentationType::New();
+  targetRepresentation->RequestSetCylinderObject( targetObject );
+  targetRepresentation->SetColor( 0.5, 0.5, 1.0 );
+
+  igstk::Transform identity;
+  identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+
+  igstk::Transform cylinderTransform;
+  cylinderTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  // Connect the objects in the scene to a coordinate reference system.
+  tracker->RequestSetTransformAndParent( identity, axesObject.GetPointer() );
+  toolObject->RequestSetTransformAndParent( identity, trackerTool.GetPointer() );
+  targetObject->RequestSetTransformAndParent( cylinderTransform, axesObject.GetPointer() );
+  view3D->RequestSetTransformAndParent( identity, axesObject.GetPointer() );
 
   view3D->SetRefreshRate( 30 );
   view3D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
-  view3D->SetCameraPosition( 100.0, 100.0, 100.0 );
+  view3D->SetCameraPosition( 100.0, 100.0, 50.0 );
   view3D->SetCameraFocalPoint( 0.0, 0.0, 0.0 );
   view3D->SetCameraViewUp( 0, 0, 1.0 );
 
   view3D->RequestAddObject( axesRepresentation );
   view3D->RequestAddObject( toolRepresentation );
+  view3D->RequestAddObject( targetRepresentation );
 
   view3D->RequestResetCamera();
   view3D->RequestStart();
 
-  tracker->RequestStartTracking();
-
-  // Show first the cube at the origin. 
-  for( unsigned int i = 0; i < 300; i++ )
+  for( unsigned int i = 0; i < 100; i++ )
     {
     Fl::wait(0.01);
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();
     }
 
-//   view3D->RequestStop();  FIXME : Figure out why the view can't be stopped and restarted !!
-  tracker->RequestStopTracking();
-
-  toolObject->RequestSetTransformAndParent( transform, trackerTool.GetPointer() );
-  toolRepresentation->SetColor( 0.5, 1.0, 0.5 );
-
-//  view3D->RequestStart();  FIXME : Figure out why the view can't be stopped and restarted !!
   tracker->RequestStartTracking();
 
+//  view3D->RequestStop();  FIXME : Figure out why the view can't be stopped and restarted !!
+//  tracker->RequestStopTracking();
+
+//  toolRepresentation->SetColor( 0.5, 1.0, 0.5 );
+
+//  view3D->RequestStart();  FIXME : Figure out why the view can't be stopped and restarted !!
+//  tracker->RequestStartTracking();
+
   // Show now the cube being tracked
-  for( unsigned int i = 0; i < 300; i++ )
+  for( unsigned int i = 0; i < 3000; i++ )
     {
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
