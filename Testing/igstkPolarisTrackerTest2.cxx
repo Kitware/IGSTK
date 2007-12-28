@@ -42,6 +42,7 @@ class CoordinateReferenceSystemObserver : public ::itk::Command
 public:
   typedef igstk::CoordinateReferenceSystemTransformToEvent  EventType;
   typedef igstk::CoordinateReferenceSystemTransformToResult PayloadType;
+  typedef igstk::Transform                                  TransformType;
 
   /** Standard class typedefs. */
   typedef CoordinateReferenceSystemObserver         Self;
@@ -106,14 +107,14 @@ public:
     return m_Payload;
     }
 
-  const Transform & GetTransform() const
+  const TransformType & GetTransform() const
     {
     return m_Payload.GetTransform();
     }
 
 protected:
 
-  Transform     m_Transform;
+  TransformType m_Transform;
   PayloadType   m_Payload;
   bool          m_GotPayload;
 
@@ -219,7 +220,7 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
 
-  typedef igstk::PolarisTrackerTool      TrackerToolType;
+  typedef igstk::PolarisTrackerTool         TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
   // instantiate and attach wired tracker tool  
