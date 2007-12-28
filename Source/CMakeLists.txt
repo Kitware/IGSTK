@@ -23,6 +23,7 @@ SET(IGSTK_HEADS
   igstkVascularNetworkObjectRepresentation.h
   igstkVascularNetworkReader.h
   igstkVesselObject.h
+  igstkVesselObjectRepresentation.h
   igstkToolCalibrationReader.h
   igstkToolCalibration.h
   igstkPivotCalibrationReader.h
@@ -123,6 +124,7 @@ SET(IGSTK_SRCS
   igstkVascularNetworkObjectRepresentation.cxx
   igstkVascularNetworkReader.cxx
   igstkVesselObject.cxx
+  igstkVesselObjectRepresentation.cxx
   igstkToolCalibration.cxx
   igstkToolCalibrationReader.txx
   igstkPivotCalibrationReader.cxx
