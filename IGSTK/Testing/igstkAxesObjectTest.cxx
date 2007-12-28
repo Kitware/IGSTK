@@ -84,6 +84,7 @@ int igstkAxesObjectTest( int, char * [] )
 
   testHelper.TestRepresentationProperties();
   testHelper.ExercisePrintSelf();
+  testHelper.TestTransform();
   testHelper.ExerciseDisplay();
 
   // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
@@ -94,7 +95,6 @@ int igstkAxesObjectTest( int, char * [] )
   
   representation->SetColor(0.3,0.7,0.2);
 
-  testHelper.TestTransform();
   testHelper.TestRepresentationCopy();
   testHelper.ExerciseScreenShot();
 

@@ -150,31 +150,6 @@ void ExercisePrintSelf()
   }
 
 
-void ExerciseDisplay()
-  {
-  // testing actors
-  std::cout << "Testing actors : ";
-
-  this->m_Form->show();
-
-  // this will indirectly call CreateActors() 
-  this->m_View->RequestAddObject( this->m_Representation );
-
-  this->m_View->RequestResetCamera();
-  this->m_View->SetRefreshRate( 30 );
-  this->m_View->RequestStart();
-
-  // Do manual redraws
-  for(unsigned int i=0; i<10; i++)
-    {
-    Fl::wait(0.01);
-    igstk::PulseGenerator::CheckTimeouts();
-    Fl::check();       // trigger FLTK redraws
-    }
- 
-  std::cout << "[PASSED]" << std::endl;
-  }
-
 void TestTransform()
   {
   // Test GetTransform()
@@ -235,6 +210,32 @@ void TestTransform()
     this->m_TestPassed = false;
     }
 
+  std::cout << "[PASSED]" << std::endl;
+  }
+
+
+void ExerciseDisplay()
+  {
+  // testing actors
+  std::cout << "Testing actors : ";
+
+  this->m_Form->show();
+
+  // this will indirectly call CreateActors() 
+  this->m_View->RequestAddObject( this->m_Representation );
+
+  this->m_View->RequestResetCamera();
+  this->m_View->SetRefreshRate( 30 );
+  this->m_View->RequestStart();
+
+  // Do manual redraws
+  for(unsigned int i=0; i<100; i++)
+    {
+    Fl::wait(0.01);
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();       // trigger FLTK redraws
+    }
+ 
   std::cout << "[PASSED]" << std::endl;
   }
 
