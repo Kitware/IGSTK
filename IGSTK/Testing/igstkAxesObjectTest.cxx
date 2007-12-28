@@ -85,25 +85,20 @@ int igstkAxesObjectTest( int, char * [] )
   testHelper.TestRepresentationProperties();
   testHelper.ExercisePrintSelf();
   testHelper.TestTransform();
-std::cout << "AZUCAR01" << std::endl;
   testHelper.ExerciseDisplay();
-std::cout << "AZUCAR02" << std::endl;
 
   // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
   // geometrical parameters should trigger an update in the representation
   // class.
   std::cout << "Testing UpdateRepresentationFromGeometry() : ";
-std::cout << "AZUCAR03" << std::endl;
   object->SetSize( 20.0, 30.0, 40.0 );
-std::cout << "AZUCAR04" << std::endl;
   
+std::cout << "FIXME: segmentation fault in next line" << std::endl;
   representation->SetColor(0.3,0.7,0.2);
+std::cout << "FIXME: segmentation fault in previous line" << std::endl;
 
-std::cout << "AZUCAR05" << std::endl;
   testHelper.TestRepresentationCopy();
-std::cout << "AZUCAR06" << std::endl;
   testHelper.ExerciseScreenShot();
-std::cout << "AZUCAR07" << std::endl;
 
   return testHelper.GetFinalTestStatus();
 }
