@@ -92,6 +92,7 @@ int igstkConeObjectTest( int, char * [] )
   // class.
   std::cout << "Testing UpdateRepresentationFromGeometry() : ";
   object->SetRadius( 10.0 );
+  object->SetHeight( 17.0 );
 
   representation->SetColor(0.3,0.7,0.2);
   

@@ -221,6 +221,8 @@ void ExerciseDisplay()
 
   this->m_Form->show();
 
+  Fl::wait(1.0); // give time for the window to be created
+
   // this will indirectly call CreateActors() 
   this->m_View->RequestAddObject( this->m_Representation );
 
