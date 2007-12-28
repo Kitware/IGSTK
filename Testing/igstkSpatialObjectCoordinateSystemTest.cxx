@@ -44,6 +44,8 @@ public:
   itkTypeMacro(CoordinateSystemObserver, ::itk::Command);
   itkNewMacro(CoordinateSystemObserver);
 
+  typedef ::igstk::Transform              TransformType;
+
   CoordinateSystemObserver()
     {
     m_GotPayload = false;
@@ -97,14 +99,14 @@ public:
     return m_Payload;
     }
 
-  const Transform & GetTransform() const
+  const TransformType & GetTransform() const
     {
     return m_Payload.GetTransform();
     }
 
 protected:
 
-  Transform     m_Transform;
+  TransformType m_Transform;
   PayloadType   m_Payload;
   bool          m_GotPayload;
 
