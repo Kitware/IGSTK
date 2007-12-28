@@ -31,73 +31,8 @@
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
-
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
-#endif
-
-namespace igstk
-{
-namespace BoxObjectTest
-{
-
-class TransformObserver : public ::itk::Command 
-{
-public:
-  typedef  TransformObserver          Self;
-  typedef  ::itk::Command             Superclass;
-  typedef  ::itk::SmartPointer<Self>  Pointer;
-  itkNewMacro( Self );
-
-protected:
-  TransformObserver() 
-    {
-    m_GotTransform = false;
-    }
-  ~TransformObserver() {}
-public:
-    
-  typedef ::igstk::TransformModifiedEvent  EventType;
-        
-  void Execute(itk::Object *caller, const itk::EventObject & event)
-    {
-    const itk::Object * constCaller = caller;
-    this->Execute( constCaller, event );
-    }
-
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
-    {
-    m_GotTransform = false;
-    if( EventType().CheckEvent( &event ) )
-      {
-      const EventType * transformEvent = 
-                 dynamic_cast< const EventType *>( &event );
-      if( transformEvent )
-        {
-        m_Transform = transformEvent->Get();
-        m_GotTransform = true;
-        }
-      }
-    }
-
-  bool GotTransform() const
-    {
-    return m_GotTransform;
-    }
-
-  const ::igstk::Transform & GetTransform() const
-    {
-    return m_Transform;
-    }
-        
-private:
-
-  ::igstk::Transform  m_Transform;
-  bool                m_GotTransform;
-};
-
-} // end namespace BoxObjectTest
-} // end namespace igstk
+#include "igstkFLTKWidget.h"
+#include "igstkTransformObserverTestHelper.h"
 
 
 int igstkBoxObjectTest( int, char * [] )
@@ -105,8 +40,8 @@ int igstkBoxObjectTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::Object::LoggerType              LoggerType;
-  typedef itk::StdStreamLogOutput             LogOutputType;
+  typedef igstk::Object::LoggerType     LoggerType;
+  typedef itk::StdStreamLogOutput       LogOutputType;
 
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -120,32 +55,17 @@ int igstkBoxObjectTest( int, char * [] )
                                                 = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
-                                       // OutputWindow -> logger
-
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  /* FIXCS
-  typedef igstk::WorldCoordinateReferenceSystemObject  
-    WorldReferenceSystemType;
-
-  WorldReferenceSystemType::Pointer worldReference =
-    WorldReferenceSystemType::New();
-
-  worldReference->SetLogger( logger );
-  */
-#endif 
+                                       // VTK OutputWindow -> logger
 
   typedef igstk::BoxObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer BoxRepresentation 
-                                              = ObjectRepresentationType::New();
+                                            = ObjectRepresentationType::New();
   BoxRepresentation->SetLogger( logger );
 
   typedef igstk::BoxObject  ObjectType;
   ObjectType::Pointer BoxObject = ObjectType::New();
   BoxObject->SetLogger( logger );
     
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  // FIXCS BoxObject->RequestAttachToSpatialObjectParent( worldReference );
-#endif 
 
   // Test Set/GetRadius()
   std::cout << "Testing Set/GetSize() : ";
@@ -219,13 +139,33 @@ int igstkBoxObjectTest( int, char * [] )
   std::cout << "Testing actors : ";
 
   typedef igstk::View2D  View2DType;
+  typedef igstk::FLTKWidget      FLTKWidgetType;
+
+
   View2DType::Pointer view2D = View2DType::New();
+
+  // Create an FLTK minimal GUI
+  Fl_Window * form = new Fl_Window(301,301,"AxesObjectTest");
+
+  // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget2D = 
+                    new FLTKWidgetType( 10,10,280,280,"2D View");
+  fltkWidget2D->RequestSetView( view2D );
+
   
+  form->end();
+  
+  // End of the GUI creation
+
+  form->show();
+
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( BoxRepresentation );
   view2D->SetLogger( logger );
     
   std::cout << "[PASSED]" << std::endl;
+
+
 
   // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
   // geometrical parameters should trigger an update in the representation
@@ -235,12 +175,11 @@ int igstkBoxObjectTest( int, char * [] )
 
   BoxRepresentation->SetColor(0.3,0.7,0.2);
   
-
   // Test GetTransform()
   std::cout << "Testing Set/GetTransform(): ";
 
   const double tolerance = 1e-8;
-  double validityTimeInMilliseconds = 20000.0;  // 20 seconds
+  double validityTimeInMilliseconds = 20000.0; // 20 seconds
   igstk::Transform transform;
   igstk::Transform::VectorType translation;
   translation[0] = 0;
@@ -253,22 +192,19 @@ int igstkBoxObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  typedef ::igstk::BoxObjectTest::TransformObserver  TransformObserverType;
+
+  typedef ::igstk::TransformObserverTestHelper  TransformObserverType;
 
   TransformObserverType::Pointer transformObserver 
-                                                 = TransformObserverType::New();
+                                               = TransformObserverType::New();
 
-  BoxObject->AddObserver( ::igstk::TransformModifiedEvent(),transformObserver );
+  BoxObject->AddObserver(
+    igstk::CoordinateReferenceSystemTransformToEvent(), transformObserver );
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  // FIXCS BoxObject->RequestSetTransformToSpatialObjectParent( transform );
-#else
-  BoxObject->RequestSetTransform( transform );
-#endif
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-  BoxObject->RequestGetTransform();
-#endif
+  BoxObject->RequestSetTransformAndParent( transform, view2D.GetPointer() );
+
+  BoxObject->RequestGetTransformToParent();
 
   if( !transformObserver->GotTransform() )
     {
@@ -306,6 +242,19 @@ int igstkBoxObjectTest( int, char * [] )
 
   std::cout << "[PASSED]" << std::endl;
 
+  view2D->RequestResetCamera();
+  view2D->SetRefreshRate( 30 );
+  view2D->RequestStart();
+
+  // Do manual redraws
+  for(unsigned int i=0; i<10; i++)
+    {
+    Fl::wait(0.01);
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();       // trigger FLTK redraws
+    }
+
+
   // Testing the Copy() function
   std::cout << "Testing Copy(): ";
   ObjectRepresentationType::Pointer copy = BoxRepresentation->Copy();
@@ -341,13 +290,18 @@ int igstkBoxObjectTest( int, char * [] )
   std::cout << BoxRepresentation << std::endl;
   std::cout << BoxObjectA << std::endl;
 
-  std::cout << "Test [DONE]" << std::endl;
+  // Exercise the screenshot option with a valid filename
+  view2D->RequestSaveScreenShot("igstkBoxObjectTestScreenshot1.png");
+    
+  delete fltkWidget2D;
+  delete form;
 
+  std::cout << "Test [DONE]" << std::endl;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
     return EXIT_FAILURE;
     }
-  
+
   return EXIT_SUCCESS;
 }

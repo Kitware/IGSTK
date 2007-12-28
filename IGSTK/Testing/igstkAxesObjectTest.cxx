@@ -31,79 +31,8 @@
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
-
 #include "igstkFLTKWidget.h"
-
-namespace igstk
-{
-namespace AxesObjectTest
-{
-class TransformObserver : public ::itk::Command 
-{
-public:
-  typedef  TransformObserver          Self;
-  typedef  ::itk::Command             Superclass;
-  typedef  ::itk::SmartPointer<Self>  Pointer;
-  itkNewMacro( Self );
-
-protected:
-  TransformObserver() 
-    {
-    m_GotTransform = false;
-    }
-  ~TransformObserver() {}
-
-public:
-
-  typedef ::igstk::CoordinateReferenceSystemTransformToEvent   EventType;
-        
-  void Execute(itk::Object *caller, const itk::EventObject & event)
-    {
-    const itk::Object * constCaller = caller;
-    this->Execute( constCaller, event );
-    }
-
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
-    {
-    std::cout << "Event name = " << event.GetEventName() << std::endl;
-    m_GotTransform = false;
-    if( EventType().CheckEvent( &event ) )
-      {
-      const EventType * transformEvent = 
-                 dynamic_cast< const EventType *>( &event );
-      if( transformEvent )
-        {
-        m_TransformToResult = transformEvent->Get();
-        m_Transform = m_TransformToResult.GetTransform();
-        m_GotTransform = true;
-        }
-      }
-    }
-
-  bool GotTransform() const
-    {
-    return m_GotTransform;
-    }
-
-  const ::igstk::Transform & GetTransform() const
-    {
-    return m_Transform;
-    }
-      
-private:
-
-  typedef ::igstk::CoordinateReferenceSystemTransformToResult TransformToResultType;
-  typedef ::igstk::Transform                                  TransformType;
-  
-  TransformToResultType   m_TransformToResult;
-  TransformType           m_Transform;
-  
-  bool                    m_GotTransform;
-
-};
-
-} // end namespace AxesObjectTest
-} // end namespace igstk
+#include "igstkTransformObserverTestHelper.h"
 
 
 int igstkAxesObjectTest( int, char * [] )
@@ -119,15 +48,15 @@ int igstkAxesObjectTest( int, char * [] )
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( LoggerType::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
-                                             = igstk::VTKLoggerOutput::New();
+                                                = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
                                        // VTK OutputWindow -> logger
-  
+
   typedef igstk::AxesObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer AxesRepresentation 
                                             = ObjectRepresentationType::New();
@@ -228,7 +157,7 @@ int igstkAxesObjectTest( int, char * [] )
   std::cout << "[PASSED]" << std::endl;
 
 
- 
+
   // Testing UpdateRepresentationFromGeometry. Changing the Spatial Object
   // geometrical parameters should trigger an update in the representation
   // class.
@@ -253,7 +182,7 @@ int igstkAxesObjectTest( int, char * [] )
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
 
-  typedef ::igstk::AxesObjectTest::TransformObserver  TransformObserverType;
+  typedef ::igstk::TransformObserverTestHelper  TransformObserverType;
 
   TransformObserverType::Pointer transformObserver 
                                                = TransformObserverType::New();
@@ -261,7 +190,7 @@ int igstkAxesObjectTest( int, char * [] )
   AxesObject->AddObserver(
     igstk::CoordinateReferenceSystemTransformToEvent(), transformObserver );
 
-  
+
   AxesObject->RequestSetTransformAndParent( transform, view2D.GetPointer() );
 
   AxesObject->RequestGetTransformToParent();

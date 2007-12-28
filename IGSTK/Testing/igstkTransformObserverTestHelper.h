@@ -43,8 +43,8 @@ protected:
   ~TransformObserverTestHelper() {}
 public:
     
-  typedef igstk::TransformModifiedEvent       PositiveEventType;
-  typedef igstk::TransformNotAvailableEvent   NegativeEventType;
+  typedef ::igstk::CoordinateReferenceSystemTransformToEvent   PositiveEventType;
+  typedef ::igstk::TransformNotAvailableEvent   NegativeEventType;
         
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
@@ -64,7 +64,8 @@ public:
                  dynamic_cast< const PositiveEventType *>( &event );
       if( transformEvent )
         {
-        m_Transform = transformEvent->Get();
+        m_TransformToResult = transformEvent->Get();
+        m_Transform = m_TransformToResult.GetTransform();
         m_GotTransform = true;
         m_GotTransformNotAvailableMessage = false;
         }
@@ -99,7 +100,12 @@ public:
         
 private:
 
-  ::igstk::Transform  m_Transform;
+  typedef ::igstk::CoordinateReferenceSystemTransformToResult TransformToResultType;
+  typedef ::igstk::Transform                                  TransformType;
+  
+  TransformToResultType   m_TransformToResult;
+  TransformType           m_Transform;
+  
   bool                m_GotTransform;
   bool                m_GotTransformNotAvailableMessage;
 };
