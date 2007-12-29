@@ -63,7 +63,12 @@ public:
 
     this->m_Widget->SetRenderer( renderer ); 
     this->m_Widget->SetRenderWindowInteractor( interactor ); 
-    this->m_Widget->RequestSetView ( view );
+     
+    // There is no need to call Widget->RequestSetView( view ) 
+    // because this Connect() method is normally called as a 
+    // consequence of calling Widget->RequestSetView(). In other
+    // words, the view is already set in the Widget by the time
+    // the Connect method is called.
 
     ViewProxyBase::InitializeInteractor( view );
     }  

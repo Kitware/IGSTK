@@ -131,6 +131,11 @@ public:
 
   friend class ::igstk::ViewProxy< DummyWidget >;
 
+  // Constructor must connect the Widget to the Proxy.
+  DummyWidget():m_ProxyView(this)
+    {
+    }
+
   void RequestSetView( ViewType * view )
     {
     m_View = view;
