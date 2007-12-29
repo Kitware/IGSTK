@@ -166,6 +166,11 @@ m_StateMachine(this)
                            InteractorInitialized,  ReportInvalidRequest );
   igstkAddTransitionMacro( InteractorInitialized, ResetCamera,
                            InteractorInitialized,  ResetCamera );
+  igstkAddTransitionMacro( InteractorInitialized, ValidScreenShotFileName,
+                           InteractorInitialized,  
+                            SaveScreenShotWhileInteractorInitialized );
+  igstkAddTransitionMacro( InteractorInitialized, InvalidScreenShotFileName,
+                           InteractorInitialized,  ReportInvalidScreenShotFileName );
 
   igstkAddTransitionMacro( Idle, ValidScreenShotFileName,
                            Idle, SaveScreenShotWhileIdle )
@@ -790,6 +795,15 @@ void View::SaveScreenShotWhileIdleProcessing()
   
   this->SaveScreenShot();
 }
+
+/** Save current screenshot in InteractorInitialized state */
+void View::SaveScreenShotWhileInteractorInitializedProcessing()
+{
+  igstkLogMacro( DEBUG, "igstkView::SaveScreenShotWhileInteractorInitializedProcessing() called ...\n");
+  
+  this->SaveScreenShot();
+}
+
 
 /** Save current screenshot */
 void View::SaveScreenShot()

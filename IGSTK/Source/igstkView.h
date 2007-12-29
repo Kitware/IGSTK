@@ -186,10 +186,13 @@ private:
   /** Report any invalid request to the logger */
   void ReportInvalidRequestProcessing();
 
-  /** Save a screenshot of the current rendered scene while in idle state */
+  /** Save a screenshot of the current rendered scene while in Idle state */
   void SaveScreenShotWhileIdleProcessing();
   
-  /** Save a screenshot of the current rendered scene while in refreshing
+  /** Save a screenshot of the current rendered scene while in InteractorInitialized state */
+  void SaveScreenShotWhileInteractorInitializedProcessing();
+  
+  /** Save a screenshot of the current rendered scene while in Refreshing
    * state */
   void SaveScreenShotWhileRefreshingProcessing();
 
