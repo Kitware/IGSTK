@@ -208,7 +208,7 @@ m_StateMachine(this)
   igstkAddTransitionMacro( Refreshing, StartRefreshing,
                            Refreshing,  ReportInvalidRequest );
   igstkAddTransitionMacro( Refreshing, StopRefreshing,
-                           Idle,  Stop );
+                           InteractorInitialized,  Stop );
   igstkAddTransitionMacro( Refreshing, ValidScreenShotFileName,
                            Refreshing, SaveScreenShotWhileRefreshing )
   igstkAddTransitionMacro( Refreshing, InvalidScreenShotFileName,
