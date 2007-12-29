@@ -353,6 +353,9 @@ int igstkViewTest( int, char * [] )
 
     std::cout << *view2D << std::endl;
 
+    // Auto adjust the camera zoom factor
+    view2D->RequestResetCamera(); 
+
     view2D->RequestStart();
 
     while( !bEnd )
