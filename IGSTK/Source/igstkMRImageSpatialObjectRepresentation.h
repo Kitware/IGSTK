@@ -40,10 +40,15 @@ public:
   igstkStandardClassTraitsMacro( MRImageSpatialObjectRepresentation, \
                     ImageSpatialObjectRepresentation< MRImageSpatialObject > )
 
+  /** Return a copy of the current object representation.
+   * \warning This method does not connect the ImageSpatialObject of the
+   * original. */
+  Pointer Copy() const;
+
 protected:
 
   MRImageSpatialObjectRepresentation( void );
-  virtual ~MRImageSpatialObjectRepresentation( void ) {};
+  virtual ~MRImageSpatialObjectRepresentation( void );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

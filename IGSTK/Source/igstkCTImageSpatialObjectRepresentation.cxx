@@ -26,6 +26,21 @@ CTImageSpatialObjectRepresentation
 
 } 
 
+/** Method that clones this object */
+CTImageSpatialObjectRepresentation::Pointer
+CTImageSpatialObjectRepresentation
+::Copy() const
+{
+  igstkLogMacro( DEBUG, "igstk::CTImageSpatialObjectRepresentation\
+                        ::Copy called...\n");
+
+  Pointer newOR = Self::New();
+  newOR->SetColor( this->GetRed(), this->GetGreen(), this->GetBlue() );
+  newOR->SetOpacity( this->GetOpacity() );
+
+  return newOR;
+}
+
 /** Print Self function */
 void CTImageSpatialObjectRepresentation
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
