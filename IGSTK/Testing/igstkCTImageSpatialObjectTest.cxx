@@ -19,19 +19,56 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#ifdef ConnectObjectToRepresentationMacro
+#undef ConnectObjectToRepresentationMacro
+#endif
+
+#define ConnectObjectToRepresentationMacro( object, representation ) \
+  representation->RequestSetImageSpatialObject( object );
+
+
 #include "igstkCTImageSpatialObject.h"
+#include "igstkCTImageSpatialObjectRepresentation.h"
+#include "igstkSpatialObjectTestHelper.h"
 
 
 int igstkCTImageSpatialObjectTest( int , char* [] )
 {
 
-  igstk::RealTimeClock::Initialize();
+  typedef signed short    PixelType;
+  const unsigned int      Dimension = 3;
 
+  typedef igstk::CTImageSpatialObject                   ObjectType;
+  typedef igstk::CTImageSpatialObjectRepresentation     RepresentationType;
 
-  typedef igstk::CTImageSpatialObject         ImageSpatialObjectType;
+  typedef igstk::SpatialObjectTestHelper<
+    ObjectType, RepresentationType > TestHelperType;
 
-  /* Instantiate one CT image */
-  ImageSpatialObjectType::Pointer ctImage =  ImageSpatialObjectType::New();
+  //
+  // The helper constructor intializes all the elements needed for the test.
+  //
+  TestHelperType  testHelper;
+
+  ObjectType         * object         = testHelper.GetSpatialObject();
+  RepresentationType * representation = testHelper.GetRepresentation();
+
+  //
+  //  Tests that are specific to this type of SpatialObject
+  //
+  //
+  //  None.
+  //
+
+  testHelper.TestRepresentationProperties();
+  testHelper.ExercisePrintSelf();
+  testHelper.TestTransform();
+  testHelper.ExerciseDisplay();
+
+ 
+  testHelper.TestRepresentationCopy();
+  testHelper.ExerciseScreenShot();
+
+  return testHelper.GetFinalTestStatus();
 
   return EXIT_SUCCESS;
 }
