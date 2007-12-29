@@ -174,8 +174,11 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
   ActorsListType::iterator it = m_Actors.begin();
   while(it != m_Actors.end())
     {
-    vtkActor * va = static_cast<vtkActor*>(*it);
-    va->GetProperty()->SetColor(m_Color[0], m_Color[1], m_Color[2]);
+    vtkActor * va = dynamic_cast< vtkActor * >( *it );
+    if( va != NULL )
+      {
+      va->GetProperty()->SetColor(m_Color[0], m_Color[1], m_Color[2]);
+      }
     it++;
     }
 }
