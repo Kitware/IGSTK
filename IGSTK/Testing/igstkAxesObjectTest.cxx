@@ -93,9 +93,10 @@ int igstkAxesObjectTest( int, char * [] )
   std::cout << "Testing UpdateRepresentationFromGeometry() : ";
   object->SetSize( 20.0, 30.0, 40.0 );
   
-std::cout << "FIXME: segmentation fault in next line" << std::endl;
+  // Note that this is done here only for the formality of the test.
+  // In practice, this call will not actually change the colors of the
+  // Axes object representation. See vtkAxesActor for an explanation.
   representation->SetColor(0.3,0.7,0.2);
-std::cout << "FIXME: segmentation fault in previous line" << std::endl;
 
   testHelper.TestRepresentationCopy();
   testHelper.ExerciseScreenShot();
