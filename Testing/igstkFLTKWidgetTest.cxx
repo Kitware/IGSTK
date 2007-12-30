@@ -25,6 +25,7 @@
 #include "igstkView2D.h"
 #include "igstkView3D.h"
 #include "igstkEvents.h"
+#include "igstkAxesObject.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
@@ -79,7 +80,7 @@ public:
       {
       m_PulseCounter++;
 
-      if( m_PulseCounter > 20 )
+      if( m_PulseCounter > 30 )
         {
         if( m_View )
           {
@@ -97,7 +98,7 @@ public:
 private:
   
   unsigned long       m_PulseCounter;
-  ::igstk::View *  m_View;
+  ::igstk::View     * m_View;
   bool *              m_End;
 
 };
@@ -121,7 +122,7 @@ int igstkFLTKWidgetTest( int, char * [] )
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( itk::Logger::CRITICAL );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
@@ -132,6 +133,9 @@ int igstkFLTKWidgetTest( int, char * [] )
 
   try
     {
+    // Create the referene system
+    igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
+   
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
@@ -170,9 +174,7 @@ int igstkFLTKWidgetTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-    ellipsoid->RequestSetTransform( transform );
-#endif
+    ellipsoid->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
 
     translation[1] = -0.25;  // translate the cylinder along Y
     translation[2] = -2.00;  // translate the cylinder along Z
@@ -181,22 +183,22 @@ int igstkFLTKWidgetTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-    cylinder->RequestSetTransform( transform );
-#endif
+    cylinder->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
 
     View2DType::Pointer view2D = View2DType::New();
     view2D->SetLogger( logger );
     
-    view2D->RequestResetCamera();
-    view2D->RequestAddObject( ellipsoidRepresentation );
-
     View3DType::Pointer view3D = View3DType::New();
     view3D->SetLogger( logger );
 
-    view3D->RequestResetCamera();
-    
+    igstk::Transform identityTransform;
+    identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+    view2D->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+    view3D->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+
     // Add the cylinder to the view
+    view2D->RequestAddObject( ellipsoidRepresentation );
     view3D->RequestAddObject( cylinderRepresentation );
 
     // Create an FLTK minimal GUI
@@ -234,6 +236,9 @@ int igstkFLTKWidgetTest( int, char * [] )
     form->end();
     form->show();
 
+    view3D->RequestResetCamera();
+    view2D->RequestResetCamera();
+
     view2D->RequestStart();
     view3D->RequestStart();
 
@@ -243,14 +248,10 @@ int igstkFLTKWidgetTest( int, char * [] )
     viewObserver->SetView( view3D );
     viewObserver->SetEndFlag( &bEnd );
 
-    while(1)
+    while( !bEnd )
       {
       Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
-      if( bEnd )
-        {
-        break;
-        }
       }
 
     //Test a widget without a view connected to it 
