@@ -178,6 +178,7 @@ ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4
     ADD_TEST( igstkFLTKWidgetTest ${IGSTKSandbox_TESTS} igstkFLTKWidgetTest)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkFLTKWidgetTest.cxx)
 
+    # A first test to compare the one screenshot from a FLTKWidget
     ADD_TEST( igstkFLTKWidgetTest2
               ${IGSTKSandbox_TESTS}
               --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot1.png 
@@ -190,6 +191,7 @@ ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4
                         ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png 
               )
 
+    # A second test to compare the second screenshot
     ADD_TEST( igstkFLTKWidgetTest2_2
               ${IGSTKSandbox_TESTS}
               --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot2.png 
