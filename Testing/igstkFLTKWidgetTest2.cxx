@@ -24,11 +24,11 @@
 #include <iostream>
 #include "igstkView2D.h"
 #include "igstkEvents.h"
+#include "igstkAxesObject.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkFLTKWidget.h"
 
@@ -92,19 +92,14 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
 
   try
     {
-    // create the World coordinate reference system
-    /* FIXCS
-    igstk::WorldCoordinateReferenceSystemObject::Pointer worldReference =
-      igstk::WorldCoordinateReferenceSystemObject::New();
-    */
-
+    // Create the referene system
+    igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
+   
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
     
     ellipsoid->SetLogger( logger );
-
-    // FIXCS ellipsoid->RequestAttachToSpatialObjectParent( worldReference );
 
     // Create the ellipsoid representation
     igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
@@ -129,34 +124,35 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-//    ellipsoid->RequestSetTransform( transform ); // DEPRECATED
-    // FIXCS ellipsoid->RequestSetTransformToSpatialObjectParent( transform );
+    ellipsoid->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
 
     View2DType::Pointer view2D = View2DType::New();
-    
-    view2D->RequestResetCamera();
-    view2D->RequestAddObject( ellipsoidRepresentation );
 
+    igstk::Transform identityTransform;
+    identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+    view2D->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+   
 
     // Create an FLTK minimal GUI
-    typedef FLTKWidgetTest2 FLTKWidgetType;
-
-    // End of the GUI creation
-
-    // Set the refresh rate and start 
-    // the pulse generators of the views.
-    view2D->SetRefreshRate( 10 );
+    typedef FLTKWidgetTest2    WidgetType;
 
     Fl_Window * form = new Fl_Window(512,512,"View Test");
     
     // instantiate FLTK widget 
-    FLTKWidgetType * fltkWidget2D = 
-                      new FLTKWidgetType( 10,10,280,280,"2D View");
-    fltkWidget2D->RequestSetView( view2D );
+    WidgetType * widget2D = new WidgetType( 10,10,280,280,"2D View");
+    widget2D->RequestSetView( view2D );
     
     form->end();
     form->show();
+    // End of the GUI creation
 
+    view2D->RequestAddObject( ellipsoidRepresentation );
+//    view2D->RequestResetCamera();
+
+    // Set the refresh rate and start 
+    // the pulse generators of the views.
+    view2D->SetRefreshRate( 10 );
     view2D->RequestStart();
 
     std::string ScreenShotFileName = argv[1];
@@ -173,7 +169,7 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
     std::string ScreenShotFileName2 = argv[2];
 
     // resize the widget
-    fltkWidget2D->resize(10,10,490,490);
+    widget2D->resize(10,10,490,490);
     for(unsigned int i=0; i<100; i++)
       {
       Fl::wait(0.01);
@@ -181,7 +177,7 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
       }
     view2D->RequestSaveScreenShot( ScreenShotFileName2 );
 
-    delete fltkWidget2D;
+    delete widget2D;
     delete form;
     }
   catch(...)
