@@ -197,56 +197,41 @@ int igstkFLTKWidgetTest( int, char * [] )
     view2D->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
     view3D->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
 
-    // Add the cylinder to the view
+    // Add the cylinder and ellipsoid to the views
     view2D->RequestAddObject( ellipsoidRepresentation );
     view3D->RequestAddObject( cylinderRepresentation );
 
-    // Create an FLTK minimal GUI
-    typedef igstk::FLTKWidget      FLTKWidgetType;
-
-    // End of the GUI creation
-
-    // Set the refresh rate and start 
-    // the pulse generators of the views.
+    // Set the refresh rate of the views.
     view2D->SetRefreshRate( 10 );
-
-    // Set the refresh rate and start 
-    // the pulse generators of the views.
     view3D->SetRefreshRate( 10 );
 
+    typedef igstk::FLTKWidget      WidgetType;
     Fl_Window * form = new Fl_Window(601,301,"View Test");
     
-    // instantiate FLTK widget 
-    FLTKWidgetType * fltkWidget2D = 
-                      new FLTKWidgetType( 10,10,280,280,"2D View");
-    fltkWidget2D->RequestSetView( view2D );
-    fltkWidget2D->SetLogger( logger );
+    // instantiate FLTK widgets 
+    WidgetType * widget2D = new WidgetType( 10,10,280,280,"2D View");
+    widget2D->RequestSetView( view2D );
     
-    FLTKWidgetType * fltkWidget3D = 
-                      new FLTKWidgetType( 310,10,280,280,"3D View");
-    fltkWidget3D->RequestSetView( view3D );
-    fltkWidget3D->SetLogger( logger );
-
-    // Add the cylinder to the view 2D
-    view2D->RequestAddObject( cylinderRepresentation );
-
-    // Add the ellipsoid to the view 3D
-    view3D->RequestAddObject( ellipsoidRepresentation );
+    WidgetType * widget3D = new WidgetType( 310,10,280,280,"3D View");
+    widget3D->RequestSetView( view3D );
 
     form->end();
     form->show();
 
+    widget2D->SetLogger( logger );
+    widget3D->SetLogger( logger );
+
     view3D->RequestResetCamera();
     view2D->RequestResetCamera();
-
-    view2D->RequestStart();
-    view3D->RequestStart();
 
     typedef FLTKWidgetTest::ViewObserver ObserverType;
     ObserverType::Pointer viewObserver = ObserverType::New();
     
     viewObserver->SetView( view3D );
     viewObserver->SetEndFlag( &bEnd );
+
+    view2D->RequestStart();
+    view3D->RequestStart();
 
     while( !bEnd )
       {
@@ -255,13 +240,13 @@ int igstkFLTKWidgetTest( int, char * [] )
       }
 
     //Test a widget without a view connected to it 
-    FLTKWidgetType * fltkWidget3DWithoutViewConnected = 
-                      new FLTKWidgetType( 310,10,280,280,"3D View");
-    fltkWidget3DWithoutViewConnected->SetLogger( logger );
+    WidgetType * widget3DWithoutViewConnected = 
+                      new WidgetType( 310,10,280,280,"3D View");
+    widget3DWithoutViewConnected->SetLogger( logger );
 
-    delete fltkWidget2D;
-    delete fltkWidget3D;
-    delete fltkWidget3DWithoutViewConnected;
+    delete widget2D;
+    delete widget3D;
+    delete widget3DWithoutViewConnected;
     delete form;
     }
   catch(...)
