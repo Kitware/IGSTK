@@ -150,13 +150,13 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
 
   tracker->RequestStartTracking();
 
-//  view3D->RequestStop();  FIXME : Figure out why the view can't be stopped and restarted !!
-//  tracker->RequestStopTracking();
+  view3D->RequestStop();
+  tracker->RequestStopTracking();
 
-//  toolRepresentation->SetColor( 0.5, 1.0, 0.5 );
+  toolRepresentation->SetColor( 0.5, 1.0, 0.5 );
 
-//  view3D->RequestStart();  FIXME : Figure out why the view can't be stopped and restarted !!
-//  tracker->RequestStartTracking();
+  view3D->RequestStart();
+  tracker->RequestStartTracking();
 
   // Show now the cube being tracked
   for( unsigned int i = 0; i < 3000; i++ )
