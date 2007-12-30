@@ -32,11 +32,10 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 #include "igstkAxesObjectRepresentation.h"
 
-#include "igstkTracker.h"
-#include "igstkTrackerTool.h"
+#include "igstkCircularSimulatedTracker.h"
+#include "igstkSimulatedTrackerTool.h"
 
 #define OBJECTTRACKED
 
@@ -129,78 +128,8 @@ private:
   unsigned long              m_PulseCounter;
   unsigned long              m_NumberOfPulsesToStop;
   Fl_Window *                m_Form;
-  ::igstk::View::Pointer  m_View;
+  ::igstk::View::Pointer     m_View;
   bool *                     m_End;
-};
-
-class MyTracker : public Tracker
-{
-public:
-
-    /** Macro with standard traits declarations. */
-    igstkStandardClassTraitsMacro( MyTracker, Tracker )
-
-    typedef Superclass::TransformType           TransformType;
-
-protected:
-    MyTracker():m_StateMachine(this) 
-      {
-      m_Position[0] = 0.0;
-      m_Position[1] = 0.0;
-      m_Position[2] = 0.0;
-
-      m_ValidityTime = 100.0; // 100.0 milliseconds
-      }
-    virtual ~MyTracker() {};
-
-    typedef Tracker::ResultType                 ResultType;
-    typedef TransformType::VectorType           PositionType;
-    typedef TransformType::ErrorType            ErrorType;
-
-    virtual ResultType InternalOpen( void ) { return SUCCESS; }
-    virtual ResultType InternalStartTracking( void ) { return SUCCESS; }
-    virtual ResultType InternalUpdateStatus( void ) 
-      { 
-
-      typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
-      TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
-     
-      ConstIteratorType inputItr = trackerToolContainer.begin();
-      ConstIteratorType inputEnd = trackerToolContainer.end();
-     
-      typedef igstk::Transform   TransformType;
-      TransformType transform;
-
-      while( inputItr != inputEnd )
-        {
-        transform.SetToIdentity( this->GetValidityTime() );
-        m_Position[0] += 1.0;  // drift along a vector (1.0, 2.0, 3.0)
-        m_Position[1] += 2.0;  // just to simulate a linear movement
-        m_Position[2] += 3.0;  // being tracked in space.
-
-        ErrorType errorValue = 0.5; 
-        transform.SetTranslation( m_Position, errorValue, m_ValidityTime );
-        // set the raw transform
-        this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
-        this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
-        ++inputItr;
-        }
-
-      return SUCCESS; 
-      }
-    virtual ResultType InternalReset( void ) { return SUCCESS; }
-    virtual ResultType InternalStopTracking( void ) { return SUCCESS; }
-    virtual ResultType InternalClose( void ) { return SUCCESS; }
-
-private:
-
-    MyTracker(const Self&);  //purposely not implemented
-    void operator=(const Self&); //purposely not implemented
-
-    typedef TrackerTool                 TrackerToolType;
-    typedef Transform::TimePeriodType   TimePeriodType;
-    TimePeriodType                      m_ValidityTime;
-    PositionType                        m_Position;
 };
 
 } // end of VisibilityObjectTest namespace
@@ -239,21 +168,14 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow 
 
-  /* FIXCS
-  typedef igstk::WorldCoordinateReferenceSystemObject  
-    WorldReferenceSystemType;
-
-  WorldReferenceSystemType::Pointer worldReference =
-    WorldReferenceSystemType::New();
-  */
-
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
   typedef igstk::AxesObjectRepresentation  RepresentationType;
-  RepresentationType::Pointer AxesRepresentation = RepresentationType::New();
-  // FIXCS AxesRepresentation->RequestSetAxesObject( worldReference );
-  // FIXCS worldReference->SetSize( 0.5, 0.5, 0.5 );
+  RepresentationType::Pointer axesRepresentation = RepresentationType::New();
+  axesRepresentation->RequestSetAxesObject( worldReference );
+  worldReference->SetSize( 0.5, 0.5, 0.5 );
 
-  typedef ::igstk::VisibilityObjectTest::MyTracker    TrackerType;
-  typedef ::igstk::TrackerTool                        TrackerToolType;
+  typedef ::igstk::CircularSimulatedTracker    TrackerType;
+  typedef ::igstk::SimulatedTrackerTool        TrackerToolType;
 
   TrackerType::Pointer       tracker     = TrackerType::New();
   TrackerToolType::Pointer   trackerTool = TrackerToolType::New();
@@ -280,30 +202,27 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   ObjectType::Pointer ellipsoidObject3 = ObjectType::New();
   ellipsoidObject3->SetLogger( logger );
  
-  /* FIXCS
-  ellipsoidObject1->RequestAttachToSpatialObjectParent( worldReference );
-  ellipsoidObject2->RequestAttachToSpatialObjectParent( worldReference );
+  igstk::Transform identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  ellipsoidObject1->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+  ellipsoidObject2->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+
 #ifdef OBJECTFIXED
-  ellipsoidObject3->RequestAttachToSpatialObjectParent( worldReference );
+  ellipsoidObject3->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
 #endif
-  */
+
 
 #ifdef OBJECTTRACKED
-  igstk::Transform identity;
-  identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  ellipsoidObject3->RequestSetTransformAndParent( identity, trackerTool.GetPointer() );
-  // trackerTool->RequestAttachSpatialObject( ellipsoidObject3 );
+  ellipsoidObject3->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
   igstk::Transform calibrationTransform;
   calibrationTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
-  // FIXCS ellipsoidObject3->RequestSetCalibrationTransformToTrackerTool( calibrationTransform );
+  trackerTool->SetCalibrationTransform( calibrationTransform );
 #endif
-  trackerTool->RequestConfigure();
-  trackerTool->RequestAttachToTracker( tracker );
-  // FIXCS tracker->RequestAttachToSpatialObjectParent( worldReference );
 
-  igstk::Transform trackerTransform;
-  trackerTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
-  // FIXCS tracker->RequestSetTransformToSpatialObjectParent( trackerTransform );
+  trackerTool->RequestSetName("tool1");
+  trackerTool->RequestConfigure();
+  tracker->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
 
    
   ellipsoidRepresentation1->RequestSetEllipsoidObject(ellipsoidObject1);
@@ -329,19 +248,23 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   Fl_Window * form = new Fl_Window(512,512,"Visibility Test");
   FLTKWidgetType * fltkWidget = new FLTKWidgetType(6,6,500,500,"View 2D");
-
-  fltkWidget->RequestSetView( view3D );
   
   form->end();
   // End of the GUI creation
 
   form->show();
   
+  igstk::PulseGenerator::Sleep(500);
+
+  fltkWidget->RequestSetView( view3D );
+
   // this will indirectly call CreateActors() 
-  // FIXCS view3D->RequestAddObject( AxesRepresentation );
+  view3D->RequestAddObject( axesRepresentation );
   view3D->RequestAddObject( ellipsoidRepresentation1  );
   view3D->RequestAddObject( ellipsoidRepresentation2 );
   view3D->RequestAddObject( ellipsoidRepresentation3 );
+
+  view3D->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
 
   double validityTimeInMilliseconds = 1000; // 1 second
   igstk::Transform transform1;
@@ -372,12 +295,10 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   const unsigned long numberOfPulsesToStop = 
     static_cast< unsigned long >( refreshRate * numberOfSeconds );
 
-  view3D->RequestStart();
-
   transform1.SetTranslationAndRotation( 
       translation1, rotation, errorValue, validityTimeInMilliseconds );
 
-  // FIXCS ellipsoidObject1->RequestSetTransformToSpatialObjectParent( transform1 );
+  ellipsoidObject1->RequestSetTransformAndParent( transform1, worldReference.GetPointer() );
 
   // This is the transform for the permanent object.
   igstk::Transform transform2;
@@ -390,7 +311,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
       translation2, rotation, errorValue, 
       ::igstk::TimeStamp::GetLongestPossibleTime() );
 
-  // FIXCS ellipsoidObject2->RequestSetTransformToSpatialObjectParent( transform2 );
+  ellipsoidObject2->RequestSetTransformAndParent( transform2, worldReference.GetPointer() );
 
   
 #ifdef OBJECTFIXED
@@ -405,17 +326,20 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
       translation3, rotation, errorValue, 
       ::igstk::TimeStamp::GetLongestPossibleTime() );
 
-  ellipsoidObject3->RequestSetTransformToSpatialObjectParent( transform3 );
+  ellipsoidObject3->RequestSetTransformAndParent( transform3, worldReference.GetPointer() );
 #endif
+
+
+  view3D->RequestResetCamera();
+  view3D->RequestStart();
 
 
   // Stabilize the transient period where the camera
   // must be reset.
-  for(unsigned int k=0; k<10; k++)
+  for(unsigned int k=0; k<100; k++)
     {
-    Fl::wait(0.05);
+    igstk::PulseGenerator::Sleep(20);
     igstk::PulseGenerator::CheckTimeouts();
-    view3D->RequestResetCamera();
     }
 
  
@@ -430,16 +354,9 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   view3D->RequestStart();
 
   tracker->RequestOpen();
-  trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
 
-  TrackerType::TransformType identityTransform;
-  identityTransform.SetToIdentity( 
-                      igstk::TimeStamp::GetLongestPossibleTime() );
-   
-
   tracker->RequestStartTracking();
-
 
   while(1)
     {
