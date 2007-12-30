@@ -26,14 +26,8 @@
 #include <string>
 #include <string.h>
 
-// includes for Sleep
-#if defined(WIN32) || defined(_WIN32)
-#include <windows.h>
-#else
-#include <time.h>
-#endif
-
 #include "igstkSerialCommunicationSimulator.h"
+#include "igstkPulseGenerator.h"
 
 
 namespace igstk
@@ -204,16 +198,7 @@ SerialCommunicationSimulator::InternalSendBreak( void )
 
 void SerialCommunicationSimulator::InternalSleep( unsigned int milliseconds )
 {
-#if defined(WIN32) || defined(_WIN32)
-  // use Windows sleep function
-  ::Sleep(milliseconds);
-#else
-  // use posix sleep function
-  struct timespec sleep_time, dummy;
-  sleep_time.tv_sec = milliseconds/1000;
-  sleep_time.tv_nsec = (milliseconds - sleep_time.tv_sec*1000)*1000000;
-  nanosleep(&sleep_time,&dummy);
-#endif
+  PulseGenerator::Sleep( milliseconds );
 }
 
 

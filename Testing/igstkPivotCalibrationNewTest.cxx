@@ -247,7 +247,7 @@ int exitFailure( igstk::SerialCommunication::Pointer &communication,
   igstk::PivotCalibrationNew::Pointer pivotCalibration = 
     igstk::PivotCalibrationNew::New();
   const unsigned int DELAY_BEFORE_REQUEST_CALIBRATION = 5000; //5sec delay 
-  const unsigned int DELAY_INCREMENT = 1000;
+  const unsigned int DELAY_INCREMENT = 1000; // in milliseconds
 
 #ifdef PIVOT_CALIBRATION_SIMULATOR_TEST
   igstk::SerialCommunicationSimulator::Pointer 
@@ -375,7 +375,7 @@ int exitFailure( igstk::SerialCommunication::Pointer &communication,
                              //starts data acquisition
   for(unsigned int i=DELAY_BEFORE_REQUEST_CALIBRATION; i>0; i-=DELAY_INCREMENT) {
     std::cout<<"Starting data acquisition in "<< i/1000 <<" seconds.\r";
-    ::Sleep(DELAY_INCREMENT);
+    PulseGenerator::Sleep(DELAY_INCREMENT);
   }
   std::cout<<endl;
                   //request calibration, starts the data acquisition and 
@@ -486,7 +486,7 @@ int exitFailure( igstk::SerialCommunication::Pointer &communication,
   std::cout<<"\t****Please place tool outside working volume****\n";
   for(unsigned int i=DELAY_BEFORE_REQUEST_CALIBRATION ; i>0; i-=DELAY_INCREMENT) {
     std::cout<<"Starting data acquisition in "<< i/1000 <<" seconds.\r";
-    ::Sleep(DELAY_INCREMENT);
+    PulseGenerator::Sleep(DELAY_INCREMENT);
   }
   std::cout<<endl;
                   //request calibration, starts the data acquisition and 
@@ -534,7 +534,7 @@ int exitFailure( igstk::SerialCommunication::Pointer &communication,
   std::cout<<"\n\t****Please acquire data with a stationary tool****\n";
   for(unsigned int i=DELAY_BEFORE_REQUEST_CALIBRATION ; i>0; i-=DELAY_INCREMENT) {
     std::cout<<"Starting data acquisition in "<< i/1000 <<" seconds.\r";
-    ::Sleep(DELAY_INCREMENT);
+    PulseGenerator::Sleep(DELAY_INCREMENT);
   }
   std::cout<<endl;
                   //request calibration, starts the data acquisition and 
@@ -566,7 +566,7 @@ int exitFailure( igstk::SerialCommunication::Pointer &communication,
   std::cout<<"\t****Please pivot the tracked tool****\n";
   for(unsigned int i=DELAY_BEFORE_REQUEST_CALIBRATION ; i>0; i-=DELAY_INCREMENT) {
     std::cout<<"Starting data acquisition in "<< i/1000 <<" seconds.\r";
-    ::Sleep(DELAY_INCREMENT);
+    PulseGenerator::Sleep(DELAY_INCREMENT);
   }
   std::cout<<endl;
                   //request calibration, starts the data acquisition and 

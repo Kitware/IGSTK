@@ -17,12 +17,7 @@
 #include "RobotCommunication.h"
 #include <string.h>
 
-// For Sleep
-#if defined (_WIN32) || defined (WIN32)
-#include <windows.h>
-#else
-#include <time.h>
-#endif
+#include "igstkPulseGenerator.h"
 
 // On MSVC and Borland, snprintf is not defined but _snprintf is.
 // This should probably be checked by CMake instead of here.
@@ -147,12 +142,8 @@ bool RobotCommunication::Init()
     }
 
   // to prevent communication timeout
-  #if defined (_WIN32) || defined (WIN32)
-  Sleep(3000);            // Windows Sleep uses miliseconds
-  #else
-  usleep( 3000 * 1000 );  // linux usleep uses microsecond
-  #endif
-  
+  const unsigned int millisecondsWait = 3000;
+  igstk::PulseGenerator::Sleep(millisecondsWait);
   
 
   if (!ASYNCMODE) 

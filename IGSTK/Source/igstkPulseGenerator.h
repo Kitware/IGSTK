@@ -77,6 +77,9 @@ public:
    * counting */
   static void CheckTimeouts();
 
+  /** Sleep for a number of milliseconds */
+  static void Sleep( unsigned int milliseconds );
+
 protected:
 
   /** Constructor is protected in order to enforce 

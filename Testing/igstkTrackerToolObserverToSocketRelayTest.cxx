@@ -63,11 +63,7 @@ int igstkTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
 
   for( unsigned int i = 0; i < 100; i++ )
     {
-#if defined(WIN32) || defined(_WIN32)
-    Sleep(10);
-#else
-    usleep(10);
-#endif
+    igstk::PulseGenerator::Sleep(10);
     igstk::PulseGenerator::CheckTimeouts();
     }
 

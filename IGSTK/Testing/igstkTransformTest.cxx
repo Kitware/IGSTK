@@ -24,14 +24,8 @@
 #include <math.h>
 #include <iostream>
 #include "igstkTransform.h"
+#include "igstkPulseGenerator.h"
 
-// includes for Sleep
-#if defined (_WIN32) || defined (WIN32)
-#include <windows.h>
-#else
-#include <time.h>
-#include <unistd.h>
-#endif
 
 int igstkTransformTest( int, char * [] )
 {
@@ -245,12 +239,7 @@ int igstkTransformTest( int, char * [] )
 
     tinv.SetTranslationAndRotation( translation, rotation, lagerError, 
                                                                 longerPeriod );
-    
-#if defined (_WIN32) || defined (WIN32)
-    ::Sleep( 250 );            // Windows Sleep uses miliseconds
-#else
-    usleep( 250 * 1000 );  // linux usleep uses microsecond
-#endif
+    igstk::PulseGenerator::Sleep(250);
 
     std::cout << "Composing two transforms" << std::endl;
     std::cout << "Transform t1 = " << t1 << std::endl;
