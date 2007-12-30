@@ -37,7 +37,6 @@
 #include "igstkCircularSimulatedTracker.h"
 #include "igstkSimulatedTrackerTool.h"
 
-#define OBJECTTRACKED
 
 namespace igstk
 {
@@ -61,9 +60,17 @@ protected:
     m_PulseCounter = 0;
     m_NumberOfPulsesToStop = 50;
     m_View = 0;
+    m_End = NULL;
     }
 public:
 
+  void Reset()
+    {
+    if( m_End )
+      {
+      *m_End = false;
+      }
+    }
   void SetEndFlag( bool * end )
     {
     m_End = end;
@@ -98,14 +105,6 @@ public:
 
       if( m_PulseCounter > m_NumberOfPulsesToStop )
         {
-        if( m_View )
-          {
-          m_View->RequestStop();
-          } 
-        else
-          {
-          std::cerr << "View pointer is NULL " << std::endl;
-          }
         *m_End = true;
         return;
         }
@@ -194,29 +193,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   ObjectType::Pointer ellipsoidObject3 = ObjectType::New();
   ellipsoidObject3->SetLogger( logger );
  
-  igstk::Transform identityTransform;
-  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-
-  ellipsoidObject1->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
-  ellipsoidObject2->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
-
-#ifdef OBJECTFIXED
-  ellipsoidObject3->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
-#endif
-
-
-#ifdef OBJECTTRACKED
-  ellipsoidObject3->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
-  igstk::Transform calibrationTransform;
-  calibrationTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
-  trackerTool->SetCalibrationTransform( calibrationTransform );
-#endif
-
-  trackerTool->RequestSetName("tool1");
-  trackerTool->RequestConfigure();
-  tracker->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
-
-   
+ 
   ellipsoidRepresentation1->RequestSetEllipsoidObject(ellipsoidObject1);
   ellipsoidRepresentation1->SetColor( 0.0, 0.0, 1.0 );
   ellipsoidRepresentation1->SetOpacity( 1.0 );
@@ -240,6 +217,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   WidgetType * widget = new WidgetType( 500, 500 );
   
+  // At this point the View should be displayed
   widget->RequestSetView( view3D );
 
   // this will indirectly call CreateActors() 
@@ -247,6 +225,9 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   view3D->RequestAddObject( ellipsoidRepresentation1  );
   view3D->RequestAddObject( ellipsoidRepresentation2 );
   view3D->RequestAddObject( ellipsoidRepresentation3 );
+
+  igstk::Transform identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
   view3D->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
 
@@ -260,24 +241,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   rotation.Set( 0.707, 0.0, 0.707, 0.0 );
   igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
 
-
-
   
-  bool bEnd = false;
-  const double refreshRate = 20.0;
-
-  typedef ::igstk::VisibilityObjectTest::ViewObserver  ViewObserverType;
-  ViewObserverType::Pointer viewObserver = ViewObserverType::New();
-
-  view3D->SetRefreshRate( refreshRate );
-
-  viewObserver->SetView( view3D );
-  viewObserver->SetEndFlag( &bEnd );
-
-  const unsigned long numberOfSeconds = 3;
-  const unsigned long numberOfPulsesToStop = 
-    static_cast< unsigned long >( refreshRate * numberOfSeconds );
-
   transform1.SetTranslationAndRotation( 
       translation1, rotation, errorValue, validityTimeInMilliseconds );
 
@@ -297,7 +261,6 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   ellipsoidObject2->RequestSetTransformAndParent( transform2, worldReference.GetPointer() );
 
   
-#ifdef OBJECTFIXED
   // This is the transform for the permanent object.
   igstk::Transform transform3;
   igstk::Transform::VectorType translation3;
@@ -310,19 +273,49 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
       ::igstk::TimeStamp::GetLongestPossibleTime() );
 
   ellipsoidObject3->RequestSetTransformAndParent( transform3, worldReference.GetPointer() );
-#endif
 
 
   view3D->RequestResetCamera();
-  view3D->RequestStart();
 
+  bool bEnd = false;
+  const double refreshRate = 20.0;
 
-  // Stabilize the transient period where the camera
-  // must be reset.
-  for(unsigned int k=0; k<100; k++)
+  typedef ::igstk::VisibilityObjectTest::ViewObserver  ViewObserverType;
+  ViewObserverType::Pointer viewObserver = ViewObserverType::New();
+
+  view3D->SetRefreshRate( refreshRate );
+
+  viewObserver->SetView( view3D );
+  viewObserver->SetEndFlag( &bEnd );
+
+  const unsigned long numberOfSeconds = 2;
+  const unsigned long numberOfPulsesToStop = 
+    static_cast< unsigned long >( refreshRate * numberOfSeconds );
+
+  const unsigned int numberOfFlicks = 4;
+
+  for( unsigned int i=0; i<numberOfFlicks; i++)
     {
-    igstk::PulseGenerator::Sleep(20);
-    igstk::PulseGenerator::CheckTimeouts();
+    viewObserver->SetNumberOfPulsesToStop( numberOfPulsesToStop );
+    viewObserver->Reset();
+
+    transform1.SetTranslationAndRotation( 
+        translation1, rotation, errorValue, validityTimeInMilliseconds );
+
+    ellipsoidObject1->RequestSetTransformAndParent( transform1, worldReference.GetPointer() );
+
+    std::cout << "Flick " << i <<  "   end flag =  " << bEnd << std::endl;
+
+    view3D->RequestStart();
+
+    while( !bEnd )
+      {
+      igstk::PulseGenerator::Sleep(20);
+      igstk::PulseGenerator::CheckTimeouts();
+      }
+
+    view3D->RequestStop();
+
     }
 
  
@@ -331,17 +324,37 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   bool screenShotTaken = false;
 
+  //
+  //  Now visualize the object 3 under tracking
+  //
+  ellipsoidObject3->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
+  igstk::Transform calibrationTransform;
+  calibrationTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
+  trackerTool->SetCalibrationTransform( calibrationTransform );
+
+  trackerTool->RequestSetName("tool1");
+  trackerTool->RequestConfigure();
+  tracker->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+
+ 
   // restart the count of the observer
   viewObserver->SetNumberOfPulsesToStop( numberOfPulsesToStop );
-  bEnd = false;
+  viewObserver->Reset();
+
   view3D->RequestStart();
 
+  const double speedInDegreesPerSecond = 36.0;
+  const double radiusInMillimeters = 2.0;
+
   tracker->RequestOpen();
+  tracker->SetRadius( radiusInMillimeters );
+  tracker->SetAngularSpeed( speedInDegreesPerSecond );
+  
   trackerTool->RequestAttachToTracker( tracker );
 
   tracker->RequestStartTracking();
 
-  while(1)
+  while( !bEnd )
     {
     igstk::PulseGenerator::Sleep(20);
     if ( ! screenShotTaken )  
@@ -350,16 +363,13 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
       screenShotTaken = true;
       }
     igstk::PulseGenerator::CheckTimeouts();
-    if( bEnd )
-      {
-      break;
-      }
     }
   
   tracker->RequestStopTracking();
   tracker->RequestClose();
 
   view3D->RequestSaveScreenShot( screenShotFileName2 );
+  view3D->RequestStop();
 
   delete widget;
 
