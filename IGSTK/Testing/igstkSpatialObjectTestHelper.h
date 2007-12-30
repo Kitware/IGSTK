@@ -23,7 +23,7 @@
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
-#include "igstkFLTKWidget.h"
+#include "igstkDefaultWidget.h"
 #include "igstkTransformObserverTestHelper.h"
 
 namespace igstk
@@ -41,7 +41,7 @@ public:
   typedef typename ObjectType::Pointer          ObjectPointer;
   typedef typename RepresentationType::Pointer  RepresentationPointer;
   typedef igstk::View2D                         View2DType;
-  typedef igstk::FLTKWidget                     FLTKWidgetType;
+  typedef igstk::DefaultWidget                  WidgetType;
   typedef igstk::TransformObserverTestHelper    TransformObserverType;
 
 
@@ -78,12 +78,8 @@ SpatialObjectTestHelper()
 
   // Setup the Widget and View
   this->m_View   = View2DType::New();
-  this->m_Form   = new Fl_Window(301,301,"ObjectTest");
-  this->m_Widget = new FLTKWidgetType( 10,10,280,280,"2D View");
+  this->m_Widget = new WidgetType( 280, 280 );
 
-  this->m_Widget->RequestSetView( this->m_View );
-  
-  this->m_Form->end();
   // End of the GUI creation
 
   this->m_View->SetLogger( this->m_Logger );
@@ -96,7 +92,6 @@ SpatialObjectTestHelper()
 ~SpatialObjectTestHelper()
   {
   delete this->m_Widget;
-  delete this->m_Form;
   }
 
 ObjectType * GetSpatialObject()
@@ -219,9 +214,7 @@ void ExerciseDisplay()
   // testing actors
   std::cout << "Testing actors : ";
 
-  this->m_Form->show();
-
-  Fl::wait(1.0); // give time for the window to be created
+  this->m_Widget->RequestSetView( this->m_View );
 
   // this will indirectly call CreateActors() 
   this->m_View->RequestAddObject( this->m_Representation );
@@ -230,12 +223,13 @@ void ExerciseDisplay()
   this->m_View->SetRefreshRate( 30 );
   this->m_View->RequestStart();
 
+  const unsigned int millisecondsWait = 10;
+
   // Do manual redraws
   for(unsigned int i=0; i<100; i++)
     {
-    Fl::wait(0.01);
+    igstk::PulseGenerator::Sleep( millisecondsWait );
     igstk::PulseGenerator::CheckTimeouts();
-    Fl::check();       // trigger FLTK redraws
     }
  
   std::cout << "[PASSED]" << std::endl;
@@ -312,8 +306,7 @@ private:
   ObjectPointer                        m_SpatialObject;
   RepresentationPointer                m_Representation;
   View2DType::Pointer                  m_View;
-  Fl_Window                          * m_Form;
-  FLTKWidgetType                     * m_Widget; 
+  WidgetType                         * m_Widget; 
   TransformObserverType::Pointer       m_TransformObserver;
   bool                                 m_TestPassed;
  

@@ -37,6 +37,8 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+#include "igstkDefaultWidget.h"
+
 namespace ViewTest {
   
 class ViewObserver : public ::itk::Command 
@@ -118,38 +120,6 @@ private:
   ::igstk::View       * m_View;
   bool *                m_End;
   bool *                m_Resize;
-};
-
-
-// This is an ad-hoc Widget that emulate the actions
-// of an actual GUI Widget.
-class DummyWidget 
-{
-public:
-  typedef ::igstk::ViewProxy< DummyWidget > ProxyType;
-  typedef ::igstk::View                  ViewType;
-
-  friend class ::igstk::ViewProxy< DummyWidget >;
-
-  // Constructor must connect the Widget to the Proxy.
-  DummyWidget():m_ProxyView(this)
-    {
-    }
-
-  void RequestSetView( ViewType * view )
-    {
-    m_View = view;
-    this->m_ProxyView.Connect( m_View );
-    m_ProxyView.SetRenderWindowSize( m_View, 300, 300 );
-    }
-
-private:
-  ProxyType           m_ProxyView;
-  ViewType::Pointer   m_View; 
-
-  // Fake methods needed to satisfy the API exposed to the ViewProxy
-  void SetRenderer( vtkRenderer * ) {};
-  void SetRenderWindowInteractor( vtkRenderWindowInteractor * ) {};
 };
 
 }
@@ -261,7 +231,7 @@ int igstkViewTest( int, char * [] )
     View3DType::Pointer view3D = View3DType::New();
 
     // Use a surrogate Widget to initialize the view
-    ViewTest::DummyWidget dummyWidget2;
+    igstk::DefaultWidget dummyWidget2(300,300);
     dummyWidget2.RequestSetView( view3D );
 
     ObserverType::Pointer viewObserver2 = ObserverType::New();
@@ -316,7 +286,7 @@ int igstkViewTest( int, char * [] )
     std::cout << view2D->View2DType::Superclass::GetNameOfClass() 
               << std::endl;
 
-    ViewTest::DummyWidget dummyWidget;
+    igstk::DefaultWidget dummyWidget(300,300);
     dummyWidget.RequestSetView( view2D );
 
     // Create an observer in order to count number of view redraws
