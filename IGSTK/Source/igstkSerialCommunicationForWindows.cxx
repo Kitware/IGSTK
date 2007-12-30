@@ -21,6 +21,7 @@
 
 #include "igstkConfigure.h"
 #include "igstkSerialCommunicationForWindows.h"
+#include "igstkPulseGenerator.h"
 
 
 namespace igstk
