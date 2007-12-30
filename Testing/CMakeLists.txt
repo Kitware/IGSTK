@@ -375,6 +375,7 @@ SET(IGSTKTests_SRCS
   igstkPrincipalAxisCalibrationTest.cxx
   igstkSerialCommunicationTest.cxx
   igstkSpatialObjectTest.cxx
+  igstkSpatialObjectRepresentationVisibilityTest.cxx
   igstkStateMachineErrorsTest.cxx
   igstkStateMachineTest.cxx
   igstkStringEventTest.cxx
@@ -404,6 +405,20 @@ FOREACH(TestFiles ${IGSTKTests_SRCS})
   GET_FILENAME_COMPONENT(TestProgram ${TestFiles} NAME_WE)
   ADD_TEST(${TestProgram} ${IGSTK_TESTS} ${TestProgram})
 ENDFOREACH(TestFiles)
+
+# Add generic test that require input data
+ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest 
+            ${IGSTK_TESTS}
+            --compare ${IGSTKSandbox_BASELINE_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png 
+                      ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png 
+            --toleranceIntensity 10
+            --toleranceRadius    5
+            --toleranceNumberOfPixels 5 
+           igstkSpatialObjectRepresentationVisibilityTest
+            ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png
+            ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
+        )
+
 
 #-----------------------------------------------------------------------------
 # Tests need data input
@@ -517,18 +532,6 @@ IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkTubeObjectTest ${IGSTK_TESTS} igstkTubeObjectTest)
   ADD_TEST(igstkViewTest ${IGSTK_TESTS} igstkViewTest)
   ADD_TEST(igstkViewRefreshRateTest ${IGSTK_TESTS} igstkViewRefreshRateTest)
-
-  ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest 
-              ${IGSTK_TESTS}
-              --compare ${IGSTKSandbox_BASELINE_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png 
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png 
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5 
-             igstkSpatialObjectRepresentationVisibilityTest
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
-          )
 
   IF (IGSTK_DATA_ROOT)
 
@@ -668,7 +671,6 @@ IF(IGSTK_USE_FLTK)
     igstkTubeObjectTest.cxx
     igstkViewTest.cxx
     igstkViewRefreshRateTest.cxx
-    igstkSpatialObjectRepresentationVisibilityTest.cxx
   )
   IF(IGSTK_DATA_ROOT)
     SET(IGSTKTests_SRCS

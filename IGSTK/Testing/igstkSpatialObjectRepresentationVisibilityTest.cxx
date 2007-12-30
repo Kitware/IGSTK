@@ -27,7 +27,7 @@
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkView3D.h"
-#include "igstkFLTKWidget.h"
+#include "igstkDefaultWidget.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -60,16 +60,9 @@ protected:
     {
     m_PulseCounter = 0;
     m_NumberOfPulsesToStop = 50;
-    m_Form = 0;
     m_View = 0;
     }
 public:
-
-  void SetForm( Fl_Window * form )
-    {
-    m_Form = form;
-    m_PulseCounter = 0;
-    }
 
   void SetEndFlag( bool * end )
     {
@@ -127,7 +120,6 @@ private:
 
   unsigned long              m_PulseCounter;
   unsigned long              m_NumberOfPulsesToStop;
-  Fl_Window *                m_Form;
   ::igstk::View::Pointer     m_View;
   bool *                     m_End;
 };
@@ -243,20 +235,12 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   View3DType::Pointer view3D = View3DType::New();
   view3D->SetLogger( logger );
  
-  // Create an FLTK minimal GUI
-  typedef igstk::FLTKWidget      FLTKWidgetType;
+  // Create an minimal GUI
+  typedef igstk::DefaultWidget      WidgetType;
 
-  Fl_Window * form = new Fl_Window(512,512,"Visibility Test");
-  FLTKWidgetType * fltkWidget = new FLTKWidgetType(6,6,500,500,"View 2D");
+  WidgetType * widget = new WidgetType( 500, 500 );
   
-  form->end();
-  // End of the GUI creation
-
-  form->show();
-  
-  igstk::PulseGenerator::Sleep(500);
-
-  fltkWidget->RequestSetView( view3D );
+  widget->RequestSetView( view3D );
 
   // this will indirectly call CreateActors() 
   view3D->RequestAddObject( axesRepresentation );
@@ -288,7 +272,6 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   view3D->SetRefreshRate( refreshRate );
 
   viewObserver->SetView( view3D );
-  viewObserver->SetForm( form );
   viewObserver->SetEndFlag( &bEnd );
 
   const unsigned long numberOfSeconds = 3;
@@ -360,7 +343,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   while(1)
     {
-    Fl::wait(0.001);
+    igstk::PulseGenerator::Sleep(20);
     if ( ! screenShotTaken )  
       {
       view3D->RequestSaveScreenShot( screenShotFileName1 );
@@ -378,8 +361,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   view3D->RequestSaveScreenShot( screenShotFileName2 );
 
-  delete fltkWidget;
-  delete form;
+  delete widget;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
