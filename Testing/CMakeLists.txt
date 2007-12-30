@@ -520,7 +520,7 @@ IF(IGSTK_USE_FLTK)
 
   ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest 
               ${IGSTK_TESTS}
-              --compare ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest.png 
+              --compare ${IGSTKSandbox_BASELINE_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png 
                         ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png 
               --toleranceIntensity 10
               --toleranceRadius    5
