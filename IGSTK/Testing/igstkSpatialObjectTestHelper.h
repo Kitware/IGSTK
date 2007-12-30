@@ -59,7 +59,7 @@ SpatialObjectTestHelper()
   // logger object created for logging mouse activities
   this->m_LogOutput->SetStream( std::cout );
   this->m_Logger->AddLogOutput( this->m_LogOutput );
-  this->m_Logger->SetPriorityLevel( LoggerType::DEBUG );
+  this->m_Logger->SetPriorityLevel( LoggerType::CRITICAL );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   this->m_VtkLoggerOutput = igstk::VTKLoggerOutput::New();
