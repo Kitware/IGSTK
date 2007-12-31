@@ -42,7 +42,7 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
 
   if( argc < 2 )
     {
-    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  " << std::endl;
+    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  [Screenshotfilename] " << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -186,6 +186,11 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();   // trigger FLTK redraws
+    }
+
+  if( argc > 2 )
+    {
+    view2D->RequestSaveScreenShot( argv[2] );
     }
 
   delete widget2D;

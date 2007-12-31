@@ -492,8 +492,12 @@ IF (IGSTK_DATA_ROOT)
        ${IGSTK_DATA_ROOT}/Input/E000192Mod ${IGSTKSandbox_DICOM_TEST_OUTPUT_DIR})
 
   IF (IGSTK_USE_FLTK)
-    ADD_TEST( igstkAnnotation2DTest ${IGSTK_TESTS} igstkAnnotation2DTest
-              ${IGSTK_DATA_ROOT}/Input/E000192 )
+    ADD_TEST( igstkAnnotation2DTest1 ${IGSTK_TESTS} 
+       --compare ${IGSTKSandbox_BASELINE_DIR}/igstkAnnotation2DTest1ScreenShot.png
+       ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest1ScreenShot.png
+              igstkAnnotation2DTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest1ScreenShot.png)
   ENDIF (IGSTK_USE_FLTK)
 
 ENDIF(IGSTK_DATA_ROOT)
