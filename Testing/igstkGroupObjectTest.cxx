@@ -24,13 +24,13 @@
 #include <iostream>
 
 #include "igstkConfigure.h"
+#include "igstkAxesObject.h"
 #include "igstkGroupObject.h"
 #include "igstkTubeObject.h"
 #include "igstkRealTimeClock.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 
 #include "igstkTransformObserverTestHelper.h"
 
@@ -57,10 +57,8 @@ protected:
   ~ChildObserver() {}
 public:
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   typedef ::igstk::SpatialObjectModifiedEvent      PositiveEventType;
   typedef ::igstk::SpatialObjectNotAvailableEvent  NegativeEventType;
-#endif
 
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
@@ -75,7 +73,6 @@ public:
     m_GotChild = false;
     m_GotChildNotAvailableMessage = true;
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
     if( PositiveEventType().CheckEvent( &event ) )
       {
       const PositiveEventType * spatialObjectEvent = 
@@ -99,7 +96,6 @@ public:
         m_GotChildNotAvailableMessage = true;
         }
       }
-#endif
     
     }
 
@@ -150,21 +146,17 @@ int igstkGroupObjectTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow -> logger
 
-  /* FIXCS 
-  typedef igstk::WorldCoordinateReferenceSystemObject  
-    WorldReferenceSystemType;
-
-  WorldReferenceSystemType::Pointer worldReference =
-    WorldReferenceSystemType::New();
-
-  worldReference->SetLogger( logger );
-  */
+  // Create the referene system
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
 
   typedef igstk::GroupObject  ObjectType;
   ObjectType::Pointer group = ObjectType::New();
   group->SetLogger( logger );
     
-  // FIXCS group->RequestAttachToSpatialObjectParent( worldReference );
+  igstk::Transform identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  group->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
 
   // Testing PrintSelf()
   group->Print(std::cout);
@@ -193,11 +185,12 @@ int igstkGroupObjectTest( int, char * [] )
   TransformObserverType::Pointer transformObserver 
                                                  = TransformObserverType::New();
 
-  group->AddObserver( igstk::TransformModifiedEvent(),transformObserver );
-  // FIXCS group->RequestSetTransformToSpatialObjectParent( transform );
+  group->AddObserver(
+    igstk::CoordinateReferenceSystemTransformToEvent(), transformObserver );
 
-  /* FIXCS
-  group->RequestGetTransformToWorld();
+  group->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+
+  group->RequestGetTransformToParent();
   
   if( !transformObserver->GotTransform() )
     {
@@ -205,7 +198,6 @@ int igstkGroupObjectTest( int, char * [] )
               << std::endl;
     return EXIT_FAILURE;
     }
-  */      
 
   igstk::Transform  transform2 = transformObserver->GetTransform();
 
@@ -249,6 +241,9 @@ int igstkGroupObjectTest( int, char * [] )
 
   ChildObjectType::Pointer children[ maximumNumberOfChildrenToTry ];
 
+  igstk::Transform childTransform;
+  childTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
   for( unsigned int birthId = 0; birthId < maximumNumberOfChildrenToTry; birthId++ )
     {
     ChildObjectType::Pointer newBorn = ChildObjectType::New();
@@ -258,7 +253,7 @@ int igstkGroupObjectTest( int, char * [] )
     // note that RequestAddChild will call internally
     // the RequestAttachToSpatialObjectParent() method
     //
-    group->RequestAddChild( newBorn );
+    group->RequestAddChild( childTransform, newBorn );
   
     if( group->GetNumberOfChildren()  != birthId+1 )
       {
@@ -273,10 +268,8 @@ int igstkGroupObjectTest( int, char * [] )
 
   ChildObserverType::Pointer childObserver = ChildObserverType::New();
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   group->AddObserver( igstk::SpatialObjectModifiedEvent(), childObserver );
   group->AddObserver( igstk::SpatialObjectNotAvailableEvent(), childObserver );
-#endif
 
   for( unsigned int childId = 0; 
        childId < maximumNumberOfChildrenToTry; childId++ )

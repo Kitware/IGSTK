@@ -34,6 +34,7 @@
 namespace igstk
 {
 
+
 /** \class SpatialObject
  * 
  * \brief This class encapsulates an ITK spatial object with the goal of
@@ -110,6 +111,9 @@ private:
   igstkCoordinateSystemClassInterfaceMacro();
 
 };
+
+igstkLoadedObjectEventMacro( SpatialObjectModifiedEvent, IGSTKEvent, SpatialObject );
+igstkEventMacro( SpatialObjectNotAvailableEvent, IGSTKEvent );
 
 } // end namespace igstk
 

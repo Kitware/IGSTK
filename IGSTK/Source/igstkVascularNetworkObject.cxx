@@ -92,9 +92,10 @@ unsigned long VascularNetworkObject
 }
 
 /** Request adding a child to the group */
-void VascularNetworkObject::RequestAddVessel( VesselObjectType * vessel )
+void VascularNetworkObject::RequestAddVessel( 
+  const Transform & transform, VesselObjectType * vessel )
 {
-  this->Superclass::RequestAddChild( vessel );
+  this->Superclass::RequestAddChild( transform, vessel );
 }
 
 /** Report that an invalid or suspicious operation has been requested.

@@ -53,7 +53,7 @@ public:
   
   /** Request Adding a Vessel to the list of children. Note that this
    * method may invoke the RequestAddChild() method in the superclass. */
-  void RequestAddVessel( VesselObjectType * child );
+  void RequestAddVessel( const Transform & transform, VesselObjectType * child );
  
   /** Return the output vessel as an event with payload. */
   void RequestGetVessel(unsigned long id);

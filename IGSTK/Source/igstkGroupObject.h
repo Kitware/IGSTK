@@ -54,9 +54,9 @@ public:
   unsigned long GetNumberOfChildren() const;
   
   /** Request Adding a SpatialObject to the list of children.  Note that this
-   * method invoke the reciprocal RequestAttachToSpatialObjectParent() method
-   * on the child. */
-  void RequestAddChild( SpatialObject * child );
+   * method invoke the reciprocal RequestSetTransformAndParent(transform,parent)
+   * method on the child. */
+  void RequestAddChild( const Transform & transform, SpatialObject * child );
 
   /** Request to get the child identified with a given childId number */
   void RequestGetChild( unsigned long childId );
@@ -103,6 +103,7 @@ private:
   void ReportInvalidRequestProcessing();
 
   SpatialObject  *   m_ChildToAdd;
+  Transform          m_TransformToAdd;
   unsigned long      m_ChildIdToGet;
 };
 

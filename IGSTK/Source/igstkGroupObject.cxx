@@ -64,9 +64,10 @@ unsigned long GroupObject::GetNumberOfChildren() const
 }
 
 /** Request adding a child to the group */
-void GroupObject::RequestAddChild( SpatialObject * child )
+void GroupObject::RequestAddChild( const Transform & transform, SpatialObject * child )
 {
   m_ChildToAdd = child;
+  m_TransformToAdd = transform;
   if( m_ChildToAdd == NULL )
     {
     igstkPushInputMacro( AddChildInvalid );
@@ -108,26 +109,22 @@ void GroupObject::RequestGetChild( unsigned long childID )
 void GroupObject::AddChildProcessing()
 {
   m_ChildrenArray.push_back( m_ChildToAdd );
-  // FIXCS m_ChildToAdd->RequestAttachToSpatialObjectParent( this );
+  m_ChildToAdd->RequestSetTransformAndParent( m_TransformToAdd, this );
 }
 
 /** Return a child from the group */
 void GroupObject::GetChildProcessing()
 {
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   SpatialObjectModifiedEvent event;
   event.Set( m_ChildrenArray[ m_ChildIdToGet ] );
   this->InvokeEvent( event );
-#endif
 }
 
 /** Return a child from the group */
 void GroupObject::ReportNoChildAvailableProcessing()
 {
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   SpatialObjectNotAvailableEvent event;
   this->InvokeEvent( event );
-#endif
 }
 
 /** Null operation for a State Machine transition */

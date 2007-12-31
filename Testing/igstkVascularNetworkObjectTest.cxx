@@ -245,12 +245,15 @@ int igstkVascularNetworkObjectTest( int, char * [] )
 
   VesselObjectType::Pointer vessels[ maximumNumberOfVesselrenToTry ];
 
+  igstk::Transform vesselTransform;
+  vesselTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
   for( unsigned int birthId = 0; birthId < maximumNumberOfVesselrenToTry; birthId++ )
     {
     VesselObjectType::Pointer newBorn = VesselObjectType::New();
     vessels[ birthId ] = newBorn;
   
-    network->RequestAddVessel( newBorn );
+    network->RequestAddVessel( vesselTransform, newBorn );
   
     if( network->GetNumberOfVessels()  != birthId+1 )
       {
