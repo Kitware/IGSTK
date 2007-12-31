@@ -54,7 +54,7 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( itk::Logger::CRITICAL );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
@@ -140,31 +140,35 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   // Invoke the print function
   annotation->Print( std::cout );
 
-  // Create an FLTK minimal GUI
-  Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
-    
   typedef igstk::View2D  View2DType;
 
   View2DType::Pointer view2D = View2DType::New();
 
+  typedef igstk::FLTKWidget      WidgetType;
+
   // Create an FLTK minimal GUI
-  typedef igstk::FLTKWidget      FLTKWidgetType;
+  Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
 
   // instantiate FLTK widget 
-  FLTKWidgetType * fltkWidget2D = 
-                      new FLTKWidgetType( 10,10,280,280,"2D View");
-  fltkWidget2D->RequestSetView( view2D );
-  fltkWidget2D->SetLogger( logger );
-    
+  WidgetType * widget2D = new WidgetType( 10,10,512,512,"2D View");
 
   form->end();
+
+  widget2D->RequestSetView( view2D );
+
   form->show();
 
   view2D->SetLogger( logger ); 
+  widget2D->SetLogger( logger );
 
   // Add spatialobject
   view2D->RequestAddObject( representation );
   
+  // Link the coordinate systems of the view and the image
+  igstk::Transform identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  view2D->RequestSetTransformAndParent( identityTransform, ctImageObserver->GetCTImage().GetPointer() );
+
   // Add annotation
   view2D->RequestAddAnnotation2D( annotation );
 
@@ -177,14 +181,14 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   view2D->RequestStart();
 
   // Do manual redraws
-  for( unsigned int i=0; i < 100; i++)
+  for( unsigned int i=0; i < 500; i++)
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();   // trigger FLTK redraws
     }
 
-  delete fltkWidget2D;
+  delete widget2D;
   delete form;
   
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
