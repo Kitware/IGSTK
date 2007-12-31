@@ -117,6 +117,11 @@ public:
     m_Tracker->RequestClose();
     }
   
+  LoggerType * GetLogger()
+    {
+    return m_Logger;
+    }
+
   void EnableTracking()
     {
     m_Tracking = true;
@@ -148,6 +153,12 @@ public:
    
     // Attach a spatial object to the tracker tool
     objectToTrack->RequestSetTransformAndParent( identityTransform, m_TrackerTool.GetPointer() );
+    }
+
+  void AddTool( TrackerToolType * tool)
+    {
+    tool->RequestConfigure();
+    tool->RequestAttachToTracker( m_Tracker );
     }
 
   void GetTrackerToolTransform( TransformType & transform )

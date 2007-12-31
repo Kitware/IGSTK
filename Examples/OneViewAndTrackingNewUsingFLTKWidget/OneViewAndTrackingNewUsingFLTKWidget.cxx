@@ -26,6 +26,9 @@
 #include "igstkCylinderObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
+#include "igstkAxesObject.h"
+#include "igstkAxesObjectRepresentation.h"
+#include "igstkPolarisTrackerTool.h"
 
 
 int main(int , char** )
@@ -34,6 +37,14 @@ int main(int , char** )
   igstk::RealTimeClock::Initialize();
 
   OneViewAndTrackingNewUsingFLTKWidgetImplementation   application;
+
+  // define a tracker tool type
+  typedef igstk::PolarisTrackerTool      TrackerToolType;
+
+  // instantiate a 3D view 
+  typedef igstk::View3D        View3DType;
+  View3DType::Pointer view3D = View3DType::New();
+  view3D->SetLogger( application.GetLogger() );
 
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
@@ -70,6 +81,7 @@ int main(int , char** )
   ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
   ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
   ellipsoidRepresentation->SetOpacity(1.0);
+  view3D->RequestAddObject( ellipsoidRepresentation );
 
   // Create the cylinder 
   igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
@@ -82,60 +94,58 @@ int main(int , char** )
   cylinderRepresentation->RequestSetCylinderObject( cylinder );
   cylinderRepresentation->SetColor(1.0,0.0,0.0);
   cylinderRepresentation->SetOpacity(1.0);
+  view3D->RequestAddObject( cylinderRepresentation );
 
-  // instantiate a 3D view 
-  typedef igstk::View3D        View3DType;
-  View3DType::Pointer view3D = View3DType::New();
+  // Make axes for the tracker coordinates.
+  igstk::AxesObject::Pointer trackerAxes = igstk::AxesObject::New();
+  trackerAxes->SetSize(300, 300, 300);
 
-  /** We pass the bare pointer so that the compiler can figure out the type
-      for the templated method. */
-  ellipsoid->RequestSetTransformAndParent( transformToView, 
-                                           view3D.GetPointer() );
+  igstk::AxesObjectRepresentation::Pointer trackerAxesRepresentation =
+    igstk::AxesObjectRepresentation::New();
+  trackerAxesRepresentation->RequestSetAxesObject( trackerAxes );
+  view3D->RequestAddObject( trackerAxesRepresentation );
 
-  cylinder->RequestSetTransformAndParent( transform, 
-                                           ellipsoid.GetPointer() ); 
+  // Make axes to display the tracker tool coordinates.
+  igstk::AxesObject::Pointer toolAxes = igstk::AxesObject::New();
+  toolAxes->SetSize( 300, 200, 100 );
+
+  igstk::AxesObjectRepresentation::Pointer toolAxesRepresentation = 
+    igstk::AxesObjectRepresentation::New();
+  toolAxesRepresentation->RequestSetAxesObject( toolAxes );
+  view3D->RequestAddObject( toolAxesRepresentation );
 
   // Make the view the parent of the tracker 
   application.AttachTrackerToView( view3D ); 
-
-  view3D->RequestAddObject( ellipsoidRepresentation );
-  view3D->RequestAddObject( cylinderRepresentation );
  
   application.Display3D->RequestSetView( view3D );
+  // Create tracker tool and attach it to the tracker
+  // instantiate and attach wired tracker tool  
+  TrackerToolType::Pointer trackerTool =  TrackerToolType::New();
+  trackerTool->SetLogger( application.GetLogger() );
+  //Select wired tracker tool
+  trackerTool->RequestSelectWiredTrackerTool();
+  //Set the port number to zero
+  trackerTool->RequestSetPortNumber( 0 );
+  // add the tool to the tracker
+  application.AddTool( trackerTool );
+ 
+  view3D->RequestResetCamera();
 
   application.Show();
 
+  // insert a delay
+  Fl::wait(0.1);
+
   // Set the refresh rate and start 
   // the pulse generators of the views.
-
   view3D->SetRefreshRate( 30 );
   view3D->RequestStart();
-  view3D->RequestResetCamera();
 
-  // Associate the Spatial Object to the tracker tool
-  application.AttachObjectToTrackerTool ( cylinder );
-
-  igstk::Transform             toolTransform; 
-  igstk::Transform::VectorType position;
 
   while( !application.HasQuitted() )
     {
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
-
-    application.GetTrackerToolTransform( toolTransform );
-
-    position = toolTransform.GetTranslation();
-    std::cout << "Trackertool:" 
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
-
-    std::cout << "CylinderSpatialObject:"
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
-
     }
 
   return EXIT_SUCCESS;
