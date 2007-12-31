@@ -287,8 +287,12 @@ IF(IGSTKSandbox_DATA_ROOT)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkObliqueImageSpatialObjectRepresentationTest.cxx)
 
-    ADD_TEST( igstkAnnotation2DTest2 ${IGSTKSandbox_TESTS} igstkAnnotation2DTest2
-              ${IGSTK_DATA_ROOT}/Input/E000192 )
+    ADD_TEST( igstkAnnotation2DTest2 ${IGSTKSandbox_TESTS} 
+       --compare ${IGSTKSandbox_BASELINE_DIR}/igstkAnnotation2DTest2ScreenShot.png
+       ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png
+              igstkAnnotation2DTest2
+              ${IGSTK_DATA_ROOT}/Input/E000192
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkAnnotation2DTest2.cxx)
 

@@ -41,11 +41,11 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
 
   if( argc < 2 )
     {
-    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  " << std::endl;
+    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  [Screenshotfilename] " << std::endl;
     return EXIT_FAILURE;
     }
   
-  typedef igstk::Object::LoggerType     LoggerType;
+  typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
   
   // logger object created for logging mouse activities
@@ -53,7 +53,7 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( LoggerType::DEBUG );
+  logger->SetPriorityLevel( LoggerType::CRITICAL );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
@@ -145,18 +145,39 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   // Invoke the print function
   annotation->Print( std::cout );
 
-  // Create an FLTK minimal GUI
-  Fl_Window * form = new Fl_Window(532,532," Annotation View Test");
-    
   typedef igstk::View2D  View2DType;
 
   View2DType::Pointer view2D = View2DType::New();
 
+  typedef igstk::FLTKWidget      WidgetType;
+
+  // Create an FLTK minimal GUI
+  Fl_Window * form = new Fl_Window(532,532,"Annotation2D Test");
+
+  // instantiate FLTK widget 
+  WidgetType * widget2D = new WidgetType( 10,10,512,512,"2D View");
+
+  form->end();
+
+  widget2D->RequestSetView( view2D );
+
+  form->show();
+
+  Fl::wait( 1.00 );
+
+  form->resizable( form );
+
   view2D->SetLogger( logger ); 
+  widget2D->SetLogger( logger );
 
   // Add spatialobject
   view2D->RequestAddObject( representation );
-  
+
+  // Link the coordinate systems of the view and the image
+  igstk::Transform identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  view2D->RequestSetTransformAndParent( identityTransform, ctImageObserver->GetCTImage().GetPointer() );
+
   // Add annotation
   view2D->RequestAddAnnotation2D( annotation );
 
@@ -168,23 +189,8 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   view2D->SetRefreshRate( 20 );
   view2D->RequestStart();
 
-  // Create an FLTK minimal GUI
-  typedef igstk::FLTKWidget      FLTKWidgetType;
-  
-  // instantiate FLTK widget 
-  FLTKWidgetType * fltkWidget2D = 
-                    new FLTKWidgetType( 10,10,512,512,"2D View");
-  fltkWidget2D->RequestSetView( view2D );
-  fltkWidget2D->SetLogger( logger );
-
-  view2D->RequestStart();
-
-  form->resizable( form );
-  form->end();
-  form->show();
-
   // Do manual redraws
-  for( unsigned int i=0; i < 100; i++)
+  for( unsigned int i=0; i < 200; i++)
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
@@ -200,14 +206,19 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   annotation->RequestSetFontSize( 0, 10 );
 
   // Do manual redraws
-  for( unsigned int i=0; i < 100; i++)
+  for( unsigned int i=0; i < 200; i++)
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();   // trigger FLTK redraws
     }
 
-  delete fltkWidget2D;
+  if( argc > 2 )
+    {
+    view2D->RequestSaveScreenShot( argv[2] );
+    }
+
+  delete widget2D;
   delete form;
   
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )

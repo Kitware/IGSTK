@@ -26,7 +26,6 @@
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
-
 #include "igstkFLTKWidget.h"
 
 namespace Annotation2DTest
@@ -54,7 +53,7 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::CRITICAL );
+  logger->SetPriorityLevel( LoggerType::CRITICAL );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
@@ -130,7 +129,7 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   annotation->RequestSetAnnotationText ( 1, "Corner 1");
   annotation->RequestSetAnnotationText ( 2, "Corner 2");
   annotation->RequestSetAnnotationText ( 3, "Corner 3");
-  
+
   // Add an invalid index for testing purpose 
   annotation->RequestSetAnnotationText ( 10, "Invalid index");
 
@@ -147,7 +146,7 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   typedef igstk::FLTKWidget      WidgetType;
 
   // Create an FLTK minimal GUI
-  Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
+  Fl_Window * form = new Fl_Window(532,532,"Annotation2D Test");
 
   // instantiate FLTK widget 
   WidgetType * widget2D = new WidgetType( 10,10,512,512,"2D View");
@@ -158,12 +157,14 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
 
   form->show();
 
+  Fl::wait( 1.00 );
+
   view2D->SetLogger( logger ); 
   widget2D->SetLogger( logger );
 
   // Add spatialobject
   view2D->RequestAddObject( representation );
-  
+
   // Link the coordinate systems of the view and the image
   igstk::Transform identityTransform;
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
@@ -175,13 +176,13 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   // Center the camera in order to make visible
   // all the objects in the scene.
   view2D->RequestResetCamera();
-  
+
   // Start the pulse generator of the View 
   view2D->SetRefreshRate( 20 );
   view2D->RequestStart();
 
   // Do manual redraws
-  for( unsigned int i=0; i < 500; i++)
+  for( unsigned int i=0; i < 200; i++)
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
