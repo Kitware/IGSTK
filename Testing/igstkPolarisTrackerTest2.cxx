@@ -240,30 +240,6 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   trackerTool->AddObserver( CoordinateSystemEventType(), 
                                   coordSystemAObserver );
 
-
-  // instantiate and attach wireless tracker tool
-  std::cout << "Instantiate second tracker tool: " << std::endl;
-  TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
-  trackerTool2->SetLogger( logger );
-  //Select wireless tracker tool
-  trackerTool2->RequestSelectWirelessTrackerTool();
-  //Set the SROM file 
-  std::string romFile = argv[2];
-  std::cout << "SROM file: " << romFile << std::endl;
-  trackerTool2->RequestSetSROMFileName( romFile );
-  //Configure
-  trackerTool2->RequestConfigure();
-  //Attach to the tracker
-  trackerTool2->RequestAttachToTracker( tracker );
-  //Add observer to listen to events throw by the tracker tool
-  trackerTool2->AddObserver( itk::AnyEvent(), my_command);
-  //Add observer to listen to transform events 
-  trackerTool2->AddObserver( CoordinateSystemEventType(), 
-                                  coordSystemAObserver );
-
-  //Use the first trackertool as a reference
-  tracker->RequestSetReferenceTool( trackerTool );
-
   //start tracking 
   tracker->RequestStartTracking();
 
@@ -281,17 +257,17 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
 
 
     //There are two ways of accessing the transform
-    //First option: use GetToolTransform method
-    transform = trackerTool2->GetCalibratedTransform();
+    //First option: use GetCalibratedTransform method
+    transform = trackerTool->GetCalibratedTransform();
 
     position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
+    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
               << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
 
     //Second option: use coordinate system convenience method
-    trackerTool2->RequestGetTransformToParent();
+    trackerTool->RequestGetTransformToParent();
     if (coordSystemAObserver->GotPayload())
       {
       transform = coordSystemAObserver->GetTransform();
