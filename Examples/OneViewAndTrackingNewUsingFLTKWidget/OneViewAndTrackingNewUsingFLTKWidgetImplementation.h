@@ -90,20 +90,7 @@ public:
     m_Communication->OpenCommunication();
 
     m_Tracker->RequestOpen();
-
-    // Create tracker tool and attach it to the tracker
-    // instantiate and attach wired tracker tool  
-    m_TrackerTool = TrackerToolType::New();
-    m_TrackerTool->SetLogger( m_Logger );
-    //Select wired tracker tool
-    m_TrackerTool->RequestSelectWiredTrackerTool();
-    //Set the port number to zero
-    m_TrackerTool->RequestSetPortNumber( 0 );
-    //Configure
-    m_TrackerTool->RequestConfigure();
-    //Attach to the tracker
-    m_TrackerTool->RequestAttachToTracker( m_Tracker );
-
+    
     m_Tracking = false;
 
     //enable interaction by default
@@ -120,6 +107,11 @@ public:
   LoggerType * GetLogger()
     {
     return m_Logger;
+    }
+
+  const TrackerType::Pointer GetTracker()
+    {
+    return m_Tracker;
     }
 
   void EnableTracking()
@@ -145,35 +137,10 @@ public:
     Display3D->RequestDisableInteractions();
     }
  
-  void AttachObjectToTrackerTool( igstk::SpatialObject * objectToTrack )
-    {
-    TransformType identityTransform;
-    identityTransform.SetToIdentity( 
-                      igstk::TimeStamp::GetLongestPossibleTime() );
-   
-    // Attach a spatial object to the tracker tool
-    objectToTrack->RequestSetTransformAndParent( identityTransform, m_TrackerTool.GetPointer() );
-    }
-
   void AddTool( TrackerToolType * tool)
     {
     tool->RequestConfigure();
     tool->RequestAttachToTracker( m_Tracker );
-    }
-
-  void GetTrackerToolTransform( TransformType & transform )
-    {
-    transform = m_TrackerTool->GetRawTransform();
-    }
-
-  void AttachTrackerToView( igstk::View * view )
-    {
-    TransformType identityTransform;
-    identityTransform.SetToIdentity( 
-                      igstk::TimeStamp::GetLongestPossibleTime() );
-   
-    // Attach a viewer to the tracker 
-    m_Tracker->RequestSetTransformAndParent( identityTransform, view );
     }
 
 private:
@@ -181,7 +148,6 @@ private:
   LoggerType::Pointer         m_Logger;
   LogOutputType::Pointer      m_LogOutput;
   TrackerType::Pointer        m_Tracker;
-  TrackerToolType::Pointer    m_TrackerTool;
 
   CommunicationType::Pointer m_Communication;
 

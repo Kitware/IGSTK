@@ -45,36 +45,14 @@ int main(int , char** )
   typedef igstk::View3D        View3DType;
   View3DType::Pointer view3D = View3DType::New();
   view3D->SetLogger( application.GetLogger() );
+  application.Display3D->RequestSetView( view3D );
+  application.Display3D->RequestEnableInteractions();
 
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
   ellipsoid->SetRadius(200,200,300); // about a human skull
   
   double validityTimeInMilliseconds = igstk::TimeStamp::GetLongestPossibleTime(); 
-  igstk::Transform transform;
-  igstk::Transform::VectorType translation;
-  translation[0] = 0.0;
-  translation[1] = 0.0;
-  translation[2] = 150.0; // at edge of ellipsoid
-  igstk::Transform::VersorType rotation;
-  rotation.Set( 0.0, 0.0, 0.0, 1.0 );
-  igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
-
-  transform.SetTranslationAndRotation( 
-      translation, rotation, errorValue, validityTimeInMilliseconds );
-
-  std::cout << "Transform to static ellipsoid = " << transform << std::endl;
-
-  igstk::Transform transformToView;
-  igstk::Transform::VectorType translationToView;
-  translationToView[0] = 0.0;
-  translationToView[1] = 0.0;
-  translationToView[2] = 0.0;
-  igstk::Transform::VersorType rotationToView;
-  rotationToView.Set( 0.0, 1.0, 0.0, 1.0 );
-  transformToView.SetTranslationAndRotation(
-      translationToView, rotationToView, errorValue, validityTimeInMilliseconds );
-
   // Create the ellipsoid representation
   igstk::EllipsoidObjectRepresentation::Pointer 
         ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
@@ -114,10 +92,7 @@ int main(int , char** )
   toolAxesRepresentation->RequestSetAxesObject( toolAxes );
   view3D->RequestAddObject( toolAxesRepresentation );
 
-  // Make the view the parent of the tracker 
-  application.AttachTrackerToView( view3D ); 
- 
-  application.Display3D->RequestSetView( view3D );
+
   // Create tracker tool and attach it to the tracker
   // instantiate and attach wired tracker tool  
   TrackerToolType::Pointer trackerTool =  TrackerToolType::New();
@@ -128,6 +103,25 @@ int main(int , char** )
   trackerTool->RequestSetPortNumber( 0 );
   // add the tool to the tracker
   application.AddTool( trackerTool );
+
+  /** Attach axes to the camera coordinates. */
+  double aLongTime = igstk::TimeStamp::GetLongestPossibleTime();
+
+  igstk::Transform identity;
+  identity.SetToIdentity( aLongTime );
+ 
+  trackerAxes->RequestSetTransformAndParent( 
+                                     identity, 
+                                     application.GetTracker().GetPointer() );
+  
+  /** Attache axes to the tool coordinates. */
+  toolAxes->RequestSetTransformAndParent( identity, 
+                                          trackerTool.GetPointer() );
+
+  /** Attach the view to the tracker coordinates */
+  view3D->RequestSetTransformAndParent( 
+                                    identity, 
+                                    application.GetTracker().GetPointer() );
  
   view3D->RequestResetCamera();
 
@@ -138,7 +132,7 @@ int main(int , char** )
 
   // Set the refresh rate and start 
   // the pulse generators of the views.
-  view3D->SetRefreshRate( 30 );
+  view3D->SetRefreshRate( 60 );
   view3D->RequestStart();
 
 
