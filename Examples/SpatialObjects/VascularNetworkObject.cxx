@@ -82,14 +82,12 @@ int main( int , char *[] )
 //
 // We then add the newly created vessel to the vasculature.  Since the
 // \code{VascularNetworkObject} derives from \code{GroupObject}, we use the
-// superclass \code{RequestAddObject()} function:
+// superclass \code{RequestAddVessel()} function:
 //
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
-  vasculature->RequestAddObject(vessel);
-#endif
+  vasculature->RequestAddVessel(vessel);
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
