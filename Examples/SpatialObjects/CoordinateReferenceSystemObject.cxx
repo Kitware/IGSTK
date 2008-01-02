@@ -40,29 +40,6 @@ int main( int , char *[] )
 //
 // Software Guide : EndLatex 
 
-// Software Guide : BeginCodeSnippet
-  /* FIXCS
-  typedef igstk::WorldCoordinateReferenceSystemObject WorldReferenceSystemType;
-  WorldReferenceSystemType::Pointer worldReference = 
-     WorldReferenceSystemType ::New();
-   */
-// Software Guide : EndCodeSnippet
-
-// Software Guide : BeginCodeSnippet
-  // FIXCS typedef igstk::CoordinateReferenceSystemObject ReferenceSystemType;
-  // FIXCS ReferenceSystemType::Pointer referenceA = ReferenceSystemType ::New();
-// Software Guide : EndCodeSnippet
-
-// Software Guide : BeginLatex
-//
-// The reference system must be attached to the
-// WorldCoordinateReferenceSystemObject.  
-//
-// Software Guide : EndLatex 
-
-// Software Guide : BeginCodeSnippet
-  // FIXCS referenceA->RequestAttachToSpatialObjectParent( worldReference );
-// Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
 // 
@@ -87,7 +64,6 @@ int main( int , char *[] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  // FIXCS referenceA->RequestSetTransform( transform );
 // Software Guide : EndCodeSnippet
 
   typedef igstk::ConeObject ConeObjectType;
@@ -95,8 +71,6 @@ int main( int , char *[] )
 
   cone->SetRadius(10.0);
   cone->SetHeight(20.0);
-
-  // FIXCS cone->RequestAttachToSpatialObjectParent( referenceA );
 
   double validityTimeInMilliseconds2 = 200.0;
 
@@ -108,17 +82,13 @@ int main( int , char *[] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds2 );
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-  cone->RequestSetTransform( transform );
-#endif
-
   typedef igstk::CylinderObject CylinderObjectType;
   CylinderObjectType::Pointer cylinder = CylinderObjectType ::New();
 
   cylinder->SetRadius(10.0);
   cylinder->SetHeight(20.0);
 
-  // FIXCS cylinder->RequestAttachToSpatialObjectParent( referenceA );
+  cylinder->RequestSetTransformAndParent( transform, cone.GetPointer() );
 
   translation[0] = -10.0;
   translation[1] =   0.0;
@@ -128,14 +98,7 @@ int main( int , char *[] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds2 );
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-  cylinder->RequestSetTransform( transform );
-  cone->RequestGetTransform();
-  cylinder->RequestGetTransform();
-#endif
-
-  std::cout << "Reference System A " << std::endl;
-  // FIXCS referenceA->Print( std::cout );
+  cylinder->RequestSetTransformAndParent( transform, cone.GetPointer() );
 
   std::cout << "Cone " << std::endl;
   cone->Print( std::cout );
