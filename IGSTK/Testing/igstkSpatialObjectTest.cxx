@@ -26,7 +26,6 @@
 #include "igstkSpatialObject.h"
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
 
 #include "igstkTransformObserverTestHelper.h"
 
@@ -43,40 +42,15 @@ public:
 
   bool TestMethods()
     {
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
-    this->RequestAddObject( NULL );        // Test with null pointer
-#endif
     this->RequestSetInternalSpatialObject( NULL ); // Test with null pointer
 
     Self::Pointer sibling = Self::New();   // Test with valid pointer
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
-    this->RequestAddObject( sibling );
-#endif
 
     typedef SpatialObject::SpatialObjectType SpatialObjectType;
     SpatialObjectType::Pointer so = SpatialObjectType::New();
     this->RequestSetInternalSpatialObject( so );   // Test with valid pointer
 
     sibling->RequestSetInternalSpatialObject( so );
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
-    this->RequestAddObject( sibling );
-#endif
-
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
-    const Self * me1 = dynamic_cast< const Self *>( this->GetObject(  0  ) );
-    if( !me1 )
-      {
-      std::cerr << "Error in GetObject() with valid Id" << std::endl;
-      return false;
-      }
-    
-    const Self * me2 = dynamic_cast< const Self *>( this->GetObject( 100 ) );
-    if( me2 )
-      {
-      std::cerr << "Error in GetObject() with invalid Id" << std::endl;
-      return false;
-      }
-#endif
 
     return true;
   }
