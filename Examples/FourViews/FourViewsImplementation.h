@@ -136,7 +136,7 @@ public:
 
   void AddMesh( igstk::MeshObjectRepresentation * meshRepresentation )
     {
-    this->Display3D->RequestAddObject(       meshRepresentation->Copy() );
+    this->Display3D->RequestAddObject(       meshRepresentation         );
     this->DisplayAxial->RequestAddObject(    meshRepresentation->Copy() );
     this->DisplayCoronal->RequestAddObject(  meshRepresentation->Copy() );
     this->DisplaySagittal->RequestAddObject( meshRepresentation->Copy() );
@@ -192,7 +192,13 @@ public:
       {
       meshReader->RequestSetFileName(filename);
       meshReader->RequestReadObject();
+
       igstk::MeshObject::ConstPointer mesh = meshReader->GetOutput();
+
+      igstk::Transform identity;
+      identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+      this->SetDisplayTransformsAndParents( identity, mesh.GetPointer() );
 
       // Create the object representations for the mesh
       igstk::MeshObjectRepresentation::Pointer meshRepresentation =
@@ -279,6 +285,15 @@ public:
     }
 
 private:
+  template <class ParentType>
+  void SetDisplayTransformsAndParents( igstk::Transform transform,
+                                       ParentType* parent)
+  {
+  this->Display3D->RequestSetTransformAndParent( transform, parent );
+  this->DisplayAxial->RequestSetTransformAndParent( transform, parent );
+  this->DisplayCoronal->RequestSetTransformAndParent( transform, parent );
+  this->DisplaySagittal->RequestSetTransformAndParent( transform, parent );
+  }
 
   igstk::VascularNetworkObject::ConstPointer  m_TubeGroup;
   igstk::Object::LoggerType::Pointer                        m_Logger;
