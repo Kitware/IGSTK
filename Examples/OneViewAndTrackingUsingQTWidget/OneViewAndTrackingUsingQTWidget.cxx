@@ -92,22 +92,17 @@ int main(int argc, char** argv)
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  std::cout << "Transform to static ellipsoid = " << transform << std::endl;
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
-  ellipsoid->RequestSetTransform( transform );
-#endif
 
   translation[1] = -0.25;  // translate the cylinder along Y
   translation[2] = -2.00;  // translate the cylinder along Z
   rotation.Set( 0.7071, 0.0, 0.0, 0.7071 );
 
   transform.SetTranslationAndRotation( 
-translation, rotation, errorValue, validityTimeInMilliseconds );
+  translation, rotation, errorValue, validityTimeInMilliseconds );
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
-  cylinder->RequestSetTransform( transform );
-#endif
+  // cylinder coordinates are relative to the ellipse
+  cylinder->RequestSetTransformAndParent( transform, ellipsoid.GetPointer() );
 
   // instantiate a 3D view 
   typedef igstk::View3D        View3DType;
