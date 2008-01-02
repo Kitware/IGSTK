@@ -28,6 +28,8 @@
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkAxesObject.h"
 #include "igstkAxesObjectRepresentation.h"
+#include "igstkBoxObject.h"
+#include "igstkBoxObjectRepresentation.h"
 #include "igstkPolarisTrackerTool.h"
 
 
@@ -53,18 +55,23 @@ int main(int , char** )
   ellipsoid->SetRadius(200,200,300); // about a human skull
   
   double validityTimeInMilliseconds = igstk::TimeStamp::GetLongestPossibleTime(); 
-  // Create the ellipsoid representation
-  igstk::EllipsoidObjectRepresentation::Pointer 
-        ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
-  ellipsoidRepresentation->RequestSetEllipsoidObject( ellipsoid );
-  ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
-  ellipsoidRepresentation->SetOpacity(1.0);
-  view3D->RequestAddObject( ellipsoidRepresentation );
+
+  // Create a box representing the active 4 marker planar rigid body
+  // probe
+  igstk::BoxObject::Pointer box = igstk::BoxObject::New();
+  box->SetSize(10, 100, 100); // long down x
+
+  igstk::BoxObjectRepresentation::Pointer
+          boxRepresentation = igstk::BoxObjectRepresentation::New();
+  boxRepresentation->RequestSetBoxObject( box );
+  boxRepresentation->SetColor( 1.0, 1.0, 0.0 );
+  boxRepresentation->SetOpacity( 1.0 );
+  view3D->RequestAddObject( boxRepresentation );
 
   // Create the cylinder 
   igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
-  cylinder->SetRadius(1.0);
-  cylinder->SetHeight(50.0);
+  cylinder->SetRadius(10.0);
+  cylinder->SetHeight(300.0);
 
   // Create the cylinder representation
   igstk::CylinderObjectRepresentation::Pointer 
@@ -117,12 +124,34 @@ int main(int , char** )
   /** Attache axes to the tool coordinates. */
   toolAxes->RequestSetTransformAndParent( identity, 
                                           trackerTool.GetPointer() );
+  /** Attach the box representing the tracker tool to the tracker tool 
+   *  coordinates.
+   */
+  box->RequestSetTransformAndParent( identity, trackerTool.GetPointer() );
+
+  /** Attach the cylinder coordinates the box. 
+   *  The rotation is used to rotate the cylinder so that
+   *  it is pointing down the long (x) axis of the box.
+   */
+  const double err = 1e-5;
+  igstk::Transform cylinderToBoxTransform;
+  cylinderToBoxTransform.SetToIdentity( aLongTime );
+  igstk::Transform::VersorType cylinderVersor;
+  cylinderVersor.Set(0, 1, 0, 0); 
+  cylinderToBoxTransform.SetRotation( cylinderVersor, err, aLongTime );
+  cylinder->RequestSetTransformAndParent( cylinderToBoxTransform, 
+                                          box.GetPointer() );
 
   /** Attach the view to the tracker coordinates */
   view3D->RequestSetTransformAndParent( 
                                     identity, 
                                     application.GetTracker().GetPointer() );
- 
+  view3D->SetCameraFocalPoint( 0.0, 0.0 , 0.0 );
+  view3D->SetCameraPosition( 0.0,0.0 , 600.0 );
+  view3D->SetCameraViewUp( -1.0, 0.0 , 0.0 );
+  view3D->SetCameraClippingRange( 150.0 , 1600.0 );
+  view3D->SetCameraParallelProjection( true );
+
   view3D->RequestResetCamera();
 
   application.Show();
