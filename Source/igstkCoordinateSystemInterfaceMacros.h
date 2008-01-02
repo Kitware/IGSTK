@@ -60,10 +60,28 @@ private: \
  */
 #define igstkCoordinateSystemClassInterfaceConstructorMacro() \
   m_CoordinateReferenceSystemObserver = CoordinateSystemObserverType::New(); \
+  m_CoordinateReferenceSystemObserver->SetCallbackFunction(this, &Self::ObserverCallback); \
   m_CoordinateReferenceSystemDelegator = \
                           CoordinateReferenceSystemDelegator::New(); \
-  m_CoordinateReferenceSystemDelegator->RequestSetReporter( this );
+  m_CoordinateReferenceSystemDelegator->AddObserver( \
+    CoordinateReferenceSystemTransformToNullTargetEvent() \
+    , m_CoordinateReferenceSystemObserver ); \
+  m_CoordinateReferenceSystemDelegator->AddObserver( \
+    CoordinateReferenceSystemTransformToDisconnectedEvent() \
+    , m_CoordinateReferenceSystemObserver ); \
+  m_CoordinateReferenceSystemDelegator->AddObserver( \
+    CoordinateReferenceSystemNullParentEvent() \
+    , m_CoordinateReferenceSystemObserver ); \
+  m_CoordinateReferenceSystemDelegator->AddObserver( \
+    CoordinateReferenceSystemThisParentEvent() \
+    , m_CoordinateReferenceSystemObserver ); \
+  m_CoordinateReferenceSystemDelegator->AddObserver( \
+    CoordinateReferenceSystemParentCycleEvent() \
+    , m_CoordinateReferenceSystemObserver ); \
+  m_CoordinateReferenceSystemDelegator->AddObserver( \
+    CoordinateReferenceSystemTransformToEvent() \
+    , m_CoordinateReferenceSystemObserver ); 
 
-}
+} // end namespace igstk
 
 #endif // #ifndef __igstkCoordinateSystemInterfaceMacros_h

@@ -42,9 +42,6 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( CoordinateReferenceSystemDelegator, Object )
   
-  /** Set the object to use for reporting events. */
-  void RequestSetReporter( const Object * reporter );
-
   /** This method implements the construction of a coordinate system graph by 
    *  defining the parent of this object and the Transforms defining their
    *  relative position and orientation */
@@ -153,11 +150,6 @@ private:
 
   /** Called when RequestComputeTransformTo is passed a null target. */
   void NullTargetProcessing();
-
-  /** A pointer to an object through which to send events.
-   *  By default, m_Reporter = this.
-   */
-  Object::ConstPointer m_Reporter;
 
   /** Typedef, Receptor observer, & callback for watching
    *  CoordinateReferenceSystem events.

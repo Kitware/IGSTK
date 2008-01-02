@@ -9,8 +9,6 @@ namespace igstk
 CoordinateReferenceSystemDelegator
 ::CoordinateReferenceSystemDelegator() : m_StateMachine(this)
 {
-  m_Reporter = this;
-
   m_CoordinateReferenceSystemObserver = CoordinateSystemObserverType::New();
   m_CoordinateReferenceSystemObserver->SetCallbackFunction(this, &Self::ObserverCallback);
 
@@ -66,7 +64,7 @@ CoordinateReferenceSystemDelegator::
 ObserverCallback(const ::itk::EventObject & eventvar)
 {
   /** Re-invoke the event */
-  this->m_Reporter->InvokeEvent( eventvar );
+  this->InvokeEvent( eventvar );
 }
 
 const CoordinateReferenceSystem * 
@@ -87,17 +85,6 @@ CoordinateReferenceSystemDelegator
 ::NullParentProcessing()
 {
   igstkLogMacro( WARNING, "Null parent!" );
-}
-
-void
-CoordinateReferenceSystemDelegator
-::RequestSetReporter( const Object * reporter )
-{
-  /** FIXME State machine-ize? */
-  if( reporter != NULL )
-    {
-    this->m_Reporter = reporter;
-    }
 }
 
 } // end igstk namespace
