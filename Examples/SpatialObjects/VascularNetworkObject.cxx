@@ -78,16 +78,21 @@ int main( int , char *[] )
   pt.SetRadius(20);
   vessel->AddPoint(pt);
 // Software Guide : EndCodeSnippet
+
 // Software Guide : BeginLatex
 //
 // We then add the newly created vessel to the vasculature.  Since the
 // \code{VascularNetworkObject} derives from \code{GroupObject}, we use the
-// superclass \code{RequestAddVessel()} function:
+// superclass \code{RequestAddVessel()} function. This requirest to provide
+// the \doxygen{Transform} that relates the vessel to the vascular tree.
 //
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-  vasculature->RequestAddVessel(vessel);
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  vasculature->RequestAddVessel( transform, vessel );
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
