@@ -167,7 +167,6 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
 
   igstk::Transform getTE1ToE2;
 
-#ifndef USE_SPATIAL_OBJECT_DEPRECATED
   std::cout << "Testing ellipsoid1->RequestComputeTransformTo(ellipsoid2) : ";
   ellipsoid1->RequestComputeTransformTo(ellipsoid2.GetPointer());
   
@@ -220,7 +219,6 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
 
   ellipsoid1->SetLogger( logger );
   ellipsoid1->RequestGetTransformToParent();
-#endif
 
   typedef igstk::View3D ViewType;
 
