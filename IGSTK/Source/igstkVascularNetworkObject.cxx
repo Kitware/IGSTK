@@ -22,11 +22,9 @@ namespace igstk
 /** Constructor */
 VascularNetworkObject::VascularNetworkObject():m_StateMachine(this)
 {
-
   // Observe the superclass
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   this->ObserveVesselReceivedInput( this );
-#endif
+  this->ObserveSpatialObjectNotAvailableEvent( this );
 
   igstkAddInputMacro( GetVessel );
   igstkAddInputMacro( VesselReceived );
@@ -37,7 +35,7 @@ VascularNetworkObject::VascularNetworkObject():m_StateMachine(this)
 
   igstkAddTransitionMacro( Init, GetVessel, AttemtingToGetVessel, SearchForVessel );
   igstkAddTransitionMacro( AttemtingToGetVessel, VesselReceived, Init, ReportVessel );
-  igstkAddTransitionMacro( AttemtingToGetVessel, VesselNotFound, Init, ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemtingToGetVessel, VesselNotFound, Init, ReportVesselNotFound );
 
   igstkSetInitialStateMacro( Init );
 
@@ -57,14 +55,12 @@ void VascularNetworkObject::SearchForVesselProcessing()
 /** This function reports the vessel */
 void VascularNetworkObject::ReportVesselProcessing()
 {
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   VesselObjectType * vessel = 
     static_cast< VesselObjectType * >( m_VesselReceivedInputToBeSet );
 
   VesselObjectModifiedEvent  event;
   event.Set( const_cast<VesselObjectType*>(vessel)  );
   this->InvokeEvent( event );
-#endif
 }
 
 
@@ -111,6 +107,13 @@ void VascularNetworkObject
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+}
+
+/** This function reports the vessel */
+void VascularNetworkObject::ReportVesselNotFoundProcessing()
+{
+  VesselObjectNotAvailableEvent  event;
+  this->InvokeEvent( event );
 }
 
 } // end namespace igstk
