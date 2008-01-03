@@ -114,7 +114,7 @@ public:
     m_Communication->SetLogger( m_Logger );
     m_Communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
     m_Communication->SetParity( igstk::SerialCommunication::NoParity );
-    m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
+    m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
     m_Communication->SetDataBits( igstk::SerialCommunication::DataBits8 );
     m_Communication->SetStopBits( igstk::SerialCommunication::StopBits1 );
     m_Communication->SetHardwareHandshake( 

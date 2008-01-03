@@ -36,7 +36,7 @@ PolarisTracker::PolarisTracker(void):m_StateMachine(this)
 
   this->SetThreadingEnabled( true );
 
-  m_BaudRate = CommunicationType::BaudRate9600; 
+  m_BaudRate = CommunicationType::BaudRate115200; 
   m_BufferLock = itk::MutexLock::New();
 }
 
@@ -125,7 +125,7 @@ PolarisTracker::ResultType PolarisTracker::InternalOpen( void )
     // NDICommandInterpreter::SetCommunication() in order to communicate
     // with the just-turned-on device which has a default baud rate of 9600
     CommandInterpreterType::COMMBaudType baudRateForCOMM = 
-      CommandInterpreterType::NDI_9600;
+      CommandInterpreterType::NDI_115200;
 
     switch (m_BaudRate)
       {

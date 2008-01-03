@@ -51,7 +51,7 @@ int igstkPolarisHardwareTest( int argc, char* argv[] )
   CommunicationType::Pointer communication = CommunicationType::New();
   communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
   communication->SetParity( igstk::SerialCommunication::NoParity );
-  communication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
+  communication->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
   communication->SetDataBits( igstk::SerialCommunication::DataBits8 );
   communication->SetStopBits( igstk::SerialCommunication::StopBits1 );
   communication->SetHardwareHandshake( 

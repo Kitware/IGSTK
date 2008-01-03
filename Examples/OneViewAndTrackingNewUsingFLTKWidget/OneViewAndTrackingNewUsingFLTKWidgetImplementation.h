@@ -70,7 +70,7 @@ public:
     coutLogOutput->SetStream( std::cout );
     m_Logger->AddLogOutput( coutLogOutput );
 
-    m_Logger->SetPriorityLevel( LoggerType::DEBUG );
+    m_Logger->SetPriorityLevel( LoggerType::CRITICAL );
     m_Tracker->SetLogger( m_Logger );
 
     // set validity time of the tracker transforms
@@ -80,7 +80,7 @@ public:
     m_Communication->SetLogger( m_Logger );
     m_Communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
     m_Communication->SetParity( igstk::SerialCommunication::NoParity );
-    m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
+    m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
     m_Communication->SetDataBits( igstk::SerialCommunication::DataBits8 );
     m_Communication->SetStopBits( igstk::SerialCommunication::StopBits1 );
     m_Communication->SetHardwareHandshake( 

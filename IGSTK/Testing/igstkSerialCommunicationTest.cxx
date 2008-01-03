@@ -107,7 +107,7 @@ int igstkSerialCommunicationTest( int argc, char * argv[] )
 
   serialComm->SetPortNumber( CommunicationType::PortNumber0 );
   serialComm->SetParity( CommunicationType::NoParity );
-  serialComm->SetBaudRate( CommunicationType::BaudRate9600 );
+  serialComm->SetBaudRate( CommunicationType::BaudRate115200 );
   serialComm->SetDataBits( CommunicationType::DataBits8 );
   serialComm->SetStopBits( CommunicationType::StopBits1 );
   serialComm->SetHardwareHandshake( CommunicationType::HandshakeOff );

@@ -62,7 +62,7 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
   this->SetTimeoutPeriod(1000);
 
   m_PortNumber = PortNumber0;
-  m_BaudRate = BaudRate9600;
+  m_BaudRate = BaudRate115200;
   m_DataBits = DataBits8;
   m_Parity = NoParity;
   m_StopBits = StopBits1;
