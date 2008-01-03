@@ -32,6 +32,7 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkQTWidget.h"
+#include "igstkAxesObject.h"
 
 namespace CTImageSpatialObjectReadingAndRepresentationTest3
 {
@@ -165,6 +166,16 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest3(
   qtWidget2D->RequestSetView( view2D );
   qtWidget2D->SetLogger( logger );
   qtMainWindow->setCentralWidget( qtWidget2D );
+
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
+
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  CTImagePointer image = ctImageObserver->GetCTImage();
+  image->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+
 
   view2D->SetRefreshRate( 40 );
   view2D->RequestStart();

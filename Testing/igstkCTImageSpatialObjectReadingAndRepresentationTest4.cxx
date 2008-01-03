@@ -21,7 +21,7 @@
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
+#include "igstkAxesObject.h"
 #include "igstkBoxObject.h"
 #include "igstkBoxObjectRepresentation.h"
 #include "igstkAxesObjectRepresentation.h"
@@ -56,16 +56,13 @@ int main( int argc, char* argv[] )
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);  
 
-  /* FIXCS 
-  typedef igstk::WorldCoordinateReferenceSystemObject  WorldReferenceSystemType;
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
 
-  WorldReferenceSystemType::Pointer worldReference = WorldReferenceSystemType::New();
   worldReference->SetSize(10,10,10);
-  */
 
   typedef igstk::AxesObjectRepresentation  AxesRepresentationType;
   AxesRepresentationType::Pointer AxesRepresentation = AxesRepresentationType::New();
-  // FIXCS AxesRepresentation->RequestSetAxesObject( worldReference );
+  AxesRepresentation->RequestSetAxesObject( worldReference );
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -123,8 +120,8 @@ int main( int argc, char* argv[] )
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  // FIXCS ctImage->RequestAttachToSpatialObjectParent( worldReference );
-  // FIXCS ctImage->RequestSetTransformToSpatialObjectParent( transform );
+  ctImage->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  view->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
 
   typedef igstk::CTImageSpatialObjectRepresentation RepresentationType;
   RepresentationType::Pointer imageRepresentation = RepresentationType::New();
@@ -138,9 +135,10 @@ int main( int argc, char* argv[] )
   BoxObjectType::Pointer  boxObject = BoxObjectType::New();
 
   boxObject->SetSize( 10, 10, 10 );
-  // FIXCS boxObject->RequestAttachToSpatialObjectParent( worldReference );
+  boxObject->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+
   transform.SetToIdentity( 1000 ); // 1 second
-  // FIXCS boxObject->RequestSetTransformToSpatialObjectParent( transform );
+  boxObject->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
  
   typedef igstk::BoxObjectRepresentation BoxRepresentationType;
   BoxRepresentationType::Pointer boxObjectRepresentation = BoxRepresentationType::New();
@@ -152,7 +150,7 @@ int main( int argc, char* argv[] )
 
   view->RequestAddObject( imageRepresentation );
   view->RequestAddObject( boxObjectRepresentation );
-  // FIXCS view->RequestAddObject( AxesRepresentation );
+  view->RequestAddObject( AxesRepresentation );
 
   view->SetRefreshRate( 30 );
   view->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
@@ -161,7 +159,7 @@ int main( int argc, char* argv[] )
   view->SetCameraViewUp( 0, 0, 1.0 );
 
   // this will indirectly call CreateActors() 
-  // FIXCS view->RequestAddObject( AxesRepresentation );
+  view->RequestAddObject( AxesRepresentation );
   view->RequestResetCamera();
   view->RequestStart();
 

@@ -579,7 +579,7 @@ IF(IGSTK_USE_FLTK)
           ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png
           )
 
-    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest
+    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest1
               ${IGSTK_TESTS}
               --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
                         ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png

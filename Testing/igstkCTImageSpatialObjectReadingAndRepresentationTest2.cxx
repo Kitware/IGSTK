@@ -26,6 +26,7 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkFLTKWidget.h"
+#include "igstkAxesObject.h"
 
 namespace CTImageSpatialObjectReadingAndRepresentationTest2
 {
@@ -148,16 +149,24 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
   view2D->RequestAddObject( representation );
    
   // Create an FLTK minimal GUI
-  typedef igstk::FLTKWidget      FLTKWidgetType;
+  typedef igstk::FLTKWidget      WidgetType;
 
   Fl_Window * form = new Fl_Window(532,532,"View Test");
-  FLTKWidgetType * fltkWidget2D = 
-                      new FLTKWidgetType( 10,10,512,512,"2D View");
-  fltkWidget2D->RequestSetView( view2D );
-  fltkWidget2D->SetLogger( logger );
+  WidgetType * widget2D = new WidgetType( 10,10,512,512,"2D View");
+  widget2D->RequestSetView( view2D );
+  widget2D->SetLogger( logger );
 
   form->end();
   form->show();
+
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
+
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  CTImagePointer image = ctImageObserver->GetCTImage();
+  image->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
 
   view2D->SetRefreshRate( 40 );
   view2D->RequestStart();
@@ -220,7 +229,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
       }
     }
 
-  delete fltkWidget2D;
+  delete widget2D;
   delete form;
  
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
