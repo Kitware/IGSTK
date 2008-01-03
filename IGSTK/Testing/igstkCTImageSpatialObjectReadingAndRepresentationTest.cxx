@@ -27,10 +27,7 @@
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
-
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
-#endif
+#include "igstkAxesObject.h"
 
 namespace CTImageSpatialObjectReadingAndRepresentationTest
 {
@@ -69,17 +66,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow -> logger
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  /* FIXCS
-  typedef igstk::WorldCoordinateReferenceSystemObject  
-    WorldReferenceSystemType;
-
-  WorldReferenceSystemType::Pointer worldReference =
-    WorldReferenceSystemType::New();
-
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
   worldReference->SetLogger( logger );
-  */
-#endif 
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -140,14 +128,13 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     
   typedef igstk::View2D  View2DType;
   // Create an FLTK minimal GUI
-  typedef igstk::FLTKWidget      FLTKWidgetType;
+  typedef igstk::FLTKWidget      WidgetType;
 
   View2DType::Pointer view2D = View2DType::New();
   // instantiate FLTK widget 
-  FLTKWidgetType * fltkWidget2D = 
-                      new FLTKWidgetType( 10,10,280,280,"2D View");
-  fltkWidget2D->RequestSetView( view2D );
-  fltkWidget2D->SetLogger( logger );
+  WidgetType * widget2D = new WidgetType( 10,10,512,512,"2D View");
+  widget2D->RequestSetView( view2D );
+  widget2D->SetLogger( logger );
  
   form->end();
   form->show();
@@ -220,12 +207,11 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
 
   ctImage->SetLogger( logger );
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  // FIXCS ctImage->RequestAttachToSpatialObjectParent( worldReference );
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  // FIXCS ctImage->RequestSetTransformToSpatialObjectParent( transform );
-#endif 
+
+  ctImage->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
 
   representation->RequestSetImageSpatialObject( ctImage );
                            
@@ -342,12 +328,9 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
 
     ctImage->SetLogger( logger );
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-    // FIXCS ctImage->RequestAttachToSpatialObjectParent( worldReference );
     igstk::Transform transform;
     transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-    // FIXCS ctImage->RequestSetTransformToSpatialObjectParent( transform );
-#endif 
+    ctImage->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
 
     representation->RequestSetImageSpatialObject( ctImage );
 
@@ -412,7 +395,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
       }
     }
 
-  delete fltkWidget2D;
+  delete widget2D;
   delete form;
  
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
