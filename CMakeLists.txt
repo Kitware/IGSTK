@@ -180,11 +180,17 @@ ENDIF(IGSTKSandbox_BUILD_EXAMPLES)
 OPTION(IGSTKSandbox_USE_MicronTracker "Connect MicronTracker" OFF)
 
 IF(IGSTKSandbox_USE_MicronTracker)
-  FIND_PATH(MTC_INCLUDE_DIRECTORY MTC.h)
+  FIND_PATH(MTC_INCLUDE_DIRECTORY MTC.h
+  "C:/Program Files/Claron Technology/MicronTracker/Dist"
+  DOC "Directory where the MTC.h file is located")
   INCLUDE_DIRECTORIES( ${MTC_INCLUDE_DIRECTORY} )
   INCLUDE_DIRECTORIES( ${IGSTKSandbox_SOURCE_DIR}/Utilities/MicronTracker/src )
 
-  FIND_LIBRARY( MTC_LIBRARY MTC )
+  FIND_LIBRARY( MTC_LIBRARY 
+    NAMES MTC MTC.dll 
+    PATHS "C:/Program Files/Claron Technology/MicronTracker/Dist"
+    DOC "Full path to the MTC.dll file"
+    )
   GET_FILENAME_COMPONENT( MTC_LIBRARY_DIRS ${MTC_LIBRARY} PATH )
   LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
