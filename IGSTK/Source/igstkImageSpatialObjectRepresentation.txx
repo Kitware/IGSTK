@@ -437,11 +437,16 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   if( this->m_ImageTransformObserver->GotImageTransform() ) 
     {
     this->m_ImageTransform = this->m_ImageTransformObserver->GetImageTransform();
-    // FIXME: Convert here the m_ImageTransform to the basic transform
-    // of the ImageActor. See vtkProp3D SetPosition() and SetOrientation()
-    // methods. The parent class will only use the UserTransform of the actor.
-    this->m_ImageActor->SetPosition(0,0,0);
-    this->m_ImageActor->SetOrientation(0,0,0);
+
+    // Image Actor takes care of the image origin position internally.
+    this->m_ImageActor->SetPosition(0,0,0); 
+
+    vtkMatrix4x4 * imageTransformMatrix = vtkMatrix4x4::New();
+
+    this->m_ImageTransform.ExportTransform( *imageTransformMatrix );
+
+    this->m_ImageActor->SetUserMatrix( imageTransformMatrix );
+    imageTransformMatrix->Delete();
     }
 
   this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
