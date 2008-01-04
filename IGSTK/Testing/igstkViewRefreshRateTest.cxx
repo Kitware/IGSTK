@@ -135,7 +135,7 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
 
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( itk::Logger::CRITICAL );
 
   LogOutputType::Pointer logOutput = LogOutputType::New();
 
