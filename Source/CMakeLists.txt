@@ -283,7 +283,7 @@ SET(IGSTKSandbox_HEADS
   igstkPoint3D.h
   igstkSimulatedTracker.h
   igstkSocketCommunication.h
-  igstkVideoGrabber.h
+  #  igstkVideoGrabber.h
   igstkImageSliceRepresentation.h
 # vtkImagePlaneWidget2D.h
 # vtkImagePlaneWidget2DInteractionListener.h
@@ -346,7 +346,7 @@ SET(IGSTKSandbox_SRCS
   igstkPivotCalibrationAlgorithm.cxx
   igstkPoint3D.cxx
   igstkSocketCommunication.cxx
-  igstkVideoGrabber.cxx
+#  igstkVideoGrabber.cxx
   igstkViewProxyBase.cxx
   igstkImageSliceRepresentation.txx
 #  igstkImageSpatialObjectImagePlaneRepresentation.txx
