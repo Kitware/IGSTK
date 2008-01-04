@@ -215,7 +215,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   // Create an minimal GUI
   typedef igstk::DefaultWidget      WidgetType;
 
-  WidgetType * widget = new WidgetType( 500, 500 );
+  WidgetType * widget = new WidgetType( 512, 512 );
   
   // At this point the View should be displayed
   widget->RequestSetView( view3D );
