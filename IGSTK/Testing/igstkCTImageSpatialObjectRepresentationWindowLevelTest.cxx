@@ -27,10 +27,7 @@
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
-
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
-#endif
+#include "igstkAxesObject.h"
 
 namespace CTImageSpatialObjectReadingAndRepresentationTest
 {
@@ -59,7 +56,7 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( LoggerType::DEBUG );
+  logger->SetPriorityLevel( LoggerType::CRITICAL );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
@@ -67,17 +64,9 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow -> logger
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  /* FIXCS
-  typedef igstk::WorldCoordinateReferenceSystemObject  
-    WorldReferenceSystemType;
 
-  WorldReferenceSystemType::Pointer worldReference =
-    WorldReferenceSystemType::New();
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();  
 
-  worldReference->SetLogger( logger );
-  */
-#endif 
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -110,15 +99,14 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
     
   typedef igstk::View2D  View2DType;
   // Create an FLTK minimal GUI
-  typedef igstk::FLTKWidget      FLTKWidgetType;
+  typedef igstk::FLTKWidget      WidgetType;
 
   View2DType::Pointer view2D = View2DType::New();
 
   // instantiate FLTK widget 
-  FLTKWidgetType * fltkWidget2D = 
-                      new FLTKWidgetType( 10,10,280,280,"2D View");
-  fltkWidget2D->RequestSetView( view2D );
-  fltkWidget2D->SetLogger( logger );
+  WidgetType * widget2D = new WidgetType( 10,10,512,512,"2D View");
+  widget2D->RequestSetView( view2D );
+  widget2D->SetLogger( logger );
 
   form->end();
   form->show();
@@ -134,8 +122,6 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
 
   view2D->RequestAddObject( representation );
     
-  // Reseting the camera after reading the image is more effective
-  view2D->RequestResetCamera();
 
   // Configuring the view refresh rate
   view2D->SetRefreshRate( 40 );
@@ -171,12 +157,11 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
 
   CTImagePointer ctImage = ctImageObserver->GetCTImage();
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  // FIXCS ctImage->RequestAttachToSpatialObjectParent( worldReference );
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  // FIXCS ctImage->RequestSetTransformToSpatialObjectParent( transform );
-#endif 
+
+  ctImage->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
 
 
   representation->RequestSetImageSpatialObject( ctImage );
@@ -218,7 +203,7 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
   
 
 
-  delete fltkWidget2D;
+  delete widget2D;
   delete form;
  
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
