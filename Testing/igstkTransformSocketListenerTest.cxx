@@ -21,10 +21,10 @@
 
 int igstkTransformSocketListenerTest(int argc, char * argv[])
 {
-  if( argc < 2 )
+  if( argc < 3 )
     {
     std::cerr << "Usage : " << std::endl;
-    std::cerr << argv[0] << " portNumber " << std::endl;
+    std::cerr << argv[0] << " portNumber numberOfTransformsExpected" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -51,7 +51,9 @@ int igstkTransformSocketListenerTest(int argc, char * argv[])
   // Test receiving some supported types of arrays
   double data[scMsgLength];
 
-  for(unsigned int i=0; i<200; i++)
+  const unsigned int numberOfTransformsExpected = atoi( argv[2] );
+
+  for(unsigned int i=0; i<numberOfTransformsExpected; i++)
     {
     int tag = 17;
     if (!comm->Receive(data, scMsgLength, 1, tag))

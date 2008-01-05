@@ -34,10 +34,10 @@
 int igstkPolarisTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
 {
 
-  if( argc < 3 )
+  if( argc < 4 )
     {
     std::cerr << "Usage: " << std::endl;
-    std::cerr << argv[0] << " hostname portnumber " << std::endl;
+    std::cerr << argv[0] << " hostname portnumber numberOfTransformsToSend" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -83,7 +83,9 @@ int igstkPolarisTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
 
   tracker->RequestStartTracking();
 
-  for( unsigned int i = 0; i < 100; i++ )
+  const unsigned int numberOfTransformsToSend = atoi( argv[3] );
+
+  for( unsigned int i = 0; i < numberOfTransformsToSend; i++ )
     {
     igstk::PulseGenerator::Sleep(10);
     igstk::PulseGenerator::CheckTimeouts();

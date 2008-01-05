@@ -128,19 +128,19 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
   ADD_TEST( igstkTransformSocketListenerTest 
     ${IGSTKSandbox_TESTS} 
     igstkTransformSocketListenerTest
-    16666
+    16666 1000
     )
 
   ADD_TEST( igstkTrackerToolObserverToSocketRelayTest 
     ${IGSTKSandbox_TESTS} 
     igstkTrackerToolObserverToSocketRelayTest
-    localhost 16666
+    localhost 16666 1000
     )
 
   ADD_TEST( igstkPolarisTrackerToolObserverToSocketRelayTest 
     ${IGSTKSandbox_TESTS} 
     igstkPolarisTrackerToolObserverToSocketRelayTest
-    localhost 16666
+    localhost 16666 1000
     )
 
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
